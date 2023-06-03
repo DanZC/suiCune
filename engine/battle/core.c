@@ -258,7 +258,7 @@ quit:
 
 void Stubbed_Increments5_a89a(void){
     RET;
-    LD_A(BANK(s5_a89a));  // MBC30 bank used by JP Crystal// inaccessible by MBC3
+    LD_A(MBANK(as5_a89a));  // MBC30 bank used by JP Crystal// inaccessible by MBC3
     CALL(aOpenSRAM);
     LD_HL(s5_a89a + 1);  // address of MBC30 bank
     INC_hl;

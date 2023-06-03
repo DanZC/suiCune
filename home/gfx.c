@@ -132,7 +132,7 @@ void LoadFontsExtra2(void) {
 
 void DecompressRequest2bpp(void) {
     PUSH_DE;
-    LD_A(BANK(sScratch));
+    LD_A(MBANK(asScratch));
     CALL(aOpenSRAM);
     PUSH_BC;
 

@@ -266,7 +266,7 @@ void ClearWRAM_Conv(void) {
 void ClearsScratch(void) {
         //  Wipe the first 32 bytes of sScratch
 
-    LD_A(BANK(sScratch));
+    LD_A(MBANK(asScratch));
     CALL(aOpenSRAM);
     LD_HL(sScratch);
     LD_BC(0x20);
@@ -280,7 +280,7 @@ void ClearsScratch(void) {
 void ClearsScratch_Conv(void) {
     // LD_A(BANK(sScratch));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(BANK(sScratch));
+    OpenSRAM_Conv(MBANK(asScratch));
 
     // LD_HL(sScratch);
     // LD_BC(0x20);

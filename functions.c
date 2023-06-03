@@ -2130,4 +2130,7 @@ void init_function_pointers(void) {
 
     // engine/phone/phonering_copytilemapatonce.c
     CONVERTED(PhoneRing_CopyTilemapAtOnce);
+    
+    // engine/battle/check_battle_scene.c
+    REDIRECTED(CheckBattleScene);
 }

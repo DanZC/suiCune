@@ -209,7 +209,7 @@
 //#include "engine/events/battle_tower/get_trainer_class.h"
 #include "engine/battle/sliding_intro.h"
 //#include "mobile/print_opp_message.h"
-//#include "engine/battle/check_battle_scene.h"
+#include "engine/battle/check_battle_scene.h"
 //#include "engine/movie/gbc_only.h"
 //#include "engine/events/poke_seer.h"
 

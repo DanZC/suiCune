@@ -124,7 +124,7 @@ void Function1040d4(void) {
 Function:
     LD_A(0x1);
     LDH_addr_A(rVBK);
-    LD_A(BANK(w3_d800));
+    LD_A(MBANK(aw3_d800));
     LDH_addr_A(rSVBK);
     LD_DE(w3_d800);
     LDH_A_addr(hBGMapAddress + 1);
@@ -149,7 +149,7 @@ void Function1040fb(void) {
 Function:
     LD_A(0x1);
     LDH_addr_A(rVBK);
-    LD_A(BANK(w3_d800));
+    LD_A(MBANK(aw3_d800));
     LDH_addr_A(rSVBK);
     LD_HL(w3_d800);
     CALL(mHDMATransferToWRAMBank3);
@@ -500,7 +500,7 @@ void HDMATransfer2bpp(void) {
     // switch to WRAM bank 6
     LDH_A_addr(rSVBK);
     PUSH_AF;
-    LD_A(BANK(wScratchTilemap));
+    LD_A(MBANK(awScratchTilemap));
     LDH_addr_A(rSVBK);
 
     PUSH_BC;
@@ -570,7 +570,7 @@ loop:
 bankswitch:
     LDH_A_addr(rSVBK);
     PUSH_AF;
-    LD_A(BANK(wScratchTilemap));
+    LD_A(MBANK(awScratchTilemap));
     LDH_addr_A(rSVBK);
 
     PUSH_BC;

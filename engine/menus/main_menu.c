@@ -224,7 +224,7 @@ next:
     CP_A(TRUE);
     LD_A(MAINMENU_CONTINUE);
     RET_NZ ;
-    LD_A(BANK(sNumDailyMysteryGiftPartnerIDs));
+    LD_A(MBANK(asNumDailyMysteryGiftPartnerIDs));
     CALL(aOpenSRAM);
     LD_A_addr(sNumDailyMysteryGiftPartnerIDs);
     CP_A(-1);  // locked?

@@ -1,0 +1,1 @@
+void CheckBattleScene(void);

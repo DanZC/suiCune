@@ -252,6 +252,27 @@ void GetFarWRAMByte(void){
 
 }
 
+uint8_t GetFarWRAMByte_Conv(uint8_t bank, uint16_t address){
+    // LDH_addr_A(hTempBank);
+    gb_write(hTempBank, bank);
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    uint8_t svbk = gb_read(rSVBK);
+    // LDH_A_addr(hTempBank);
+    // LDH_addr_A(rSVBK);
+    gb_write(rSVBK, bank);
+    // LD_A_hl;
+    // LDH_addr_A(hFarByte);
+    gb_write(hFarByte, gb_read(address));
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    gb_write(rSVBK, svbk);
+    // LDH_A_addr(hFarByte);
+    // RET;
+    return gb_read(hFarByte);
+}
+
+
 void GetFarWRAMWord(void){
     //  //  unreferenced
     LDH_addr_A(hTempBank);
