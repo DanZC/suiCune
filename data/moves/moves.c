@@ -254,3 +254,9 @@ const struct Move Moves[] = {
     [WHIRLPOOL]     = {WHIRLPOOL,    EFFECT_TRAP_TARGET,        15, WATER,         70, 15,   0},
     [BEAT_UP]       = {BEAT_UP,      EFFECT_BEAT_UP,            10, DARK,         100, 10,   0},
 };
+
+#if defined(__cplusplus) || defined(_MSC_VER)
+static_assert(lengthof(Moves) == NUM_ATTACKS + 1, "");
+#else
+_Static_assert(lengthof(Moves) == NUM_ATTACKS + 1, "");
+#endif

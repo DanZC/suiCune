@@ -70,3 +70,9 @@ const uint8_t TrainerEncounterMusic[] = {
     [GRUNTF]       = {MUSIC_ROCKET_ENCOUNTER}, // gruntf
     [MYSTICALMAN]  = {MUSIC_HIKER_ENCOUNTER}, // mysticalman
 };
+
+#if defined(__cplusplus) || defined(_MSC_VER)
+static_assert(lengthof(TrainerEncounterMusic) == NUM_TRAINER_CLASSES + 1, "");
+#else
+_Static_assert(lengthof(TrainerEncounterMusic) == NUM_TRAINER_CLASSES + 1, "");
+#endif

@@ -426,3 +426,8 @@ const uint8_t* const Marts[] = {
     [MART_UNDERGROUND]     = MartUnderground
 };
 
+#if defined(__cplusplus) || defined(_MSC_VER)
+static_assert(lengthof(Marts) == NUM_FRUIT_TREES, "");
+#else
+_Static_assert(lengthof(Marts) == NUM_MARTS, "");
+#endif

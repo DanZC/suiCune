@@ -2133,4 +2133,10 @@ void init_function_pointers(void) {
     
     // engine/battle/check_battle_scene.c
     REDIRECTED(CheckBattleScene);
+
+    // engine/rtc/print_hours_mins.c
+    // REDIRECTED(String_PM);
+    REDIRECTED(PrintHoursMins);
+    // REDIRECTED(String_AM);
+    // REDIRECTED(PrintFiveDigitNumber);
 }

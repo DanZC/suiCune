@@ -21,3 +21,9 @@ const struct Emote Emotes[] = {
     [EMOTE_BOULDER_DUST] = {mBoulderDustGFX, 2, 0xfe},
     [EMOTE_GRASS_RUSTLE] = {mGrassRustleGFX, 1, 0xfe},
 };
+
+#if defined(__cplusplus) || defined(_MSC_VER)
+static_assert(lengthof(Emotes) == NUM_EMOTES, "");
+#else
+_Static_assert(lengthof(Emotes) == NUM_EMOTES, "");
+#endif

@@ -33,3 +33,9 @@ const uint8_t FruitTreeItems[] = {
     [FRUITTREE_PEWTER_CITY_2]   = MINT_BERRY,
     [FRUITTREE_FUCHSIA_CITY]    = BURNT_BERRY,
 };
+
+#if defined(__cplusplus) || defined(_MSC_VER)
+static_assert(lengthof(FruitTreeItems) == NUM_FRUIT_TREES, "");
+#else
+_Static_assert(lengthof(FruitTreeItems) == NUM_FRUIT_TREES, "");
+#endif

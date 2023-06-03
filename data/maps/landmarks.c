@@ -205,3 +205,9 @@ const struct Landmark Landmarks[] = {
     { 20,  68, Route28Name},
     {140, 116, FastShipName},
 };
+
+#if defined(__cplusplus) || defined(_MSC_VER)
+static_assert(lengthof(Landmarks) == NUM_LANDMARKS, "");
+#else
+_Static_assert(lengthof(Landmarks) == NUM_LANDMARKS, "");
+#endif
