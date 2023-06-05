@@ -44,6 +44,9 @@ ENDM
 #define depixel2(x, y) do { LD_DE(((x * TILE_WIDTH) << 8) | (y * TILE_WIDTH)); } while(0)
 #define depixel4(x, y, x2, y2) do { LD_DE((((x * TILE_WIDTH) + x2) << 8) | ((y * TILE_WIDTH) + y2)); } while(0)
 
+#define pixel2(x, y) (((x * TILE_WIDTH) << 8) | (y * TILE_WIDTH))
+#define pixel4(x, y, x2, y2) ((((x * TILE_WIDTH) + x2) << 8) | ((y * TILE_WIDTH) + y2))
+
 /*
 
 #define depixel ldpixel de,

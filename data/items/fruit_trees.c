@@ -1,0 +1,41 @@
+#include "../../constants.h"
+
+const uint8_t FruitTreeItems[] = {
+// entries correspond to FRUITTREE_* constants
+    [FRUITTREE_ROUTE_29]        = BERRY,
+    [FRUITTREE_ROUTE_30_1]      = BERRY,
+    [FRUITTREE_ROUTE_38]        = BERRY,
+    [FRUITTREE_ROUTE_46_1]      = BERRY,
+    [FRUITTREE_ROUTE_30_2]      = PSNCUREBERRY,
+    [FRUITTREE_ROUTE_33]        = PSNCUREBERRY,
+    [FRUITTREE_ROUTE_31]        = BITTER_BERRY,
+    [FRUITTREE_ROUTE_43]        = BITTER_BERRY,
+    [FRUITTREE_VIOLET_CITY]     = PRZCUREBERRY,
+    [FRUITTREE_ROUTE_46_2]      = PRZCUREBERRY,
+    [FRUITTREE_ROUTE_35]        = MYSTERYBERRY,
+    [FRUITTREE_ROUTE_45]        = MYSTERYBERRY,
+    [FRUITTREE_ROUTE_36]        = ICE_BERRY,
+    [FRUITTREE_ROUTE_26]        = ICE_BERRY,
+    [FRUITTREE_ROUTE_39]        = MINT_BERRY,
+    [FRUITTREE_ROUTE_44]        = BURNT_BERRY,
+    [FRUITTREE_ROUTE_37_1]      = RED_APRICORN,
+    [FRUITTREE_ROUTE_37_2]      = BLU_APRICORN,
+    [FRUITTREE_ROUTE_37_3]      = BLK_APRICORN,
+    [FRUITTREE_AZALEA_TOWN]     = WHT_APRICORN,
+    [FRUITTREE_ROUTE_42_1]      = PNK_APRICORN,
+    [FRUITTREE_ROUTE_42_2]      = GRN_APRICORN,
+    [FRUITTREE_ROUTE_42_3]      = YLW_APRICORN,
+    [FRUITTREE_ROUTE_11]        = BERRY,
+    [FRUITTREE_ROUTE_2]         = PSNCUREBERRY,
+    [FRUITTREE_ROUTE_1]         = BITTER_BERRY,
+    [FRUITTREE_ROUTE_8]         = PRZCUREBERRY,
+    [FRUITTREE_PEWTER_CITY_1]   = ICE_BERRY,
+    [FRUITTREE_PEWTER_CITY_2]   = MINT_BERRY,
+    [FRUITTREE_FUCHSIA_CITY]    = BURNT_BERRY,
+};
+
+#if defined(__cplusplus) || defined(_MSC_VER)
+static_assert(lengthof(FruitTreeItems) == NUM_FRUIT_TREES, "");
+#else
+_Static_assert(lengthof(FruitTreeItems) == NUM_FRUIT_TREES, "");
+#endif

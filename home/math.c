@@ -1,5 +1,6 @@
 #include "../constants.h"
 #include "math.h"
+#include "../engine/math/math.h"
 
 void SimpleMultiply(void){
     //  Return a * c.
@@ -19,7 +20,8 @@ loop:
 
 }
 
-void SimpleMultiply_Conv(void)
+//  Return a * c.
+void SimpleMultiply_Conv_Old(void)
 {
     uint16_t temp = REG_BC;
     if(REG_A == 0) return;
@@ -32,6 +34,19 @@ void SimpleMultiply_Conv(void)
     } while(REG_B != 0);
 
     REG_BC = temp;
+}
+
+//  Return a * c.
+uint8_t SimpleMultiply_Conv(uint8_t a, uint8_t c)
+{
+    if(a == 0) return 0;
+    uint8_t out = a;
+    do {
+        out += c;
+        a--;
+    } while(a != 0);
+
+    return out;
 }
 
 void SimpleDivide(void){
@@ -48,7 +63,7 @@ loop:
 
 }
 
-void SimpleDivide_Conv(void)
+void SimpleDivide_Conv_Old(void)
 {
     REG_B = 0;
     uint8_t cont = 1;
@@ -64,6 +79,26 @@ void SimpleDivide_Conv(void)
     REG_A += REG_C;
 }
 
+//  Divide a by c. Return quotient b and remainder a.
+struct DivideResult_t SimpleDivide_Conv(uint8_t dividend, uint8_t divisor)
+{
+    struct DivideResult_t result;
+    result.quot = 0;
+    uint8_t cont = 1;
+    do {
+        result.quot++;
+        if(dividend < divisor)
+        {
+            cont = 0;
+        }
+        dividend -= divisor;
+    } while(cont);
+    result.quot--;
+    dividend += divisor;
+    result.rem = dividend;
+    return result;
+}
+
 void Multiply(void){
     //  Multiply hMultiplicand (3 bytes) by hMultiplier. Result in hProduct.
 //  All values are big endian.
@@ -75,6 +110,25 @@ void Multiply(void){
     POP_BC;
     POP_HL;
     RET;
+
+}
+
+//  Multiply hMultiplicand (3 bytes) by hMultiplier. Result in hProduct.
+//  All values are big endian.
+void Multiply_Conv(void){
+    // PUSH_HL;
+    // PUSH_BC;
+
+    bank_push(BANK(av_Multiply));
+
+    // CALLFAR(av_Multiply);
+    v_Multiply_Conv();
+
+    bank_pop;
+
+    // POP_BC;
+    // POP_HL;
+    // RET;
 
 }
 

@@ -1,5 +1,6 @@
 #include "../constants.h"
 #include "hm_moves.h"
+#include "array.h"
 
 //  HM moves can't be forgotten
 
@@ -15,7 +16,7 @@ NotHM:
 
 }
 
-uint8_t IsHM_Conv(uint8_t a){
+bool IsHM_Conv(uint8_t a){
     return (a >= HM01);
 }
 
@@ -35,4 +36,8 @@ HMMoves:
     //db ['WHIRLPOOL'];
     //db ['-1'];  // end
 */
+}
+
+bool IsHMMove_Conv(uint8_t a){
+    return IsInArray_Conv(mIsHMMove_HMMoves, 1, a) != 0xFFFF;
 }

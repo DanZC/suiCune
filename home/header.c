@@ -6,8 +6,15 @@ void FarCall(void) {
 }
 
 void Bankswitch(void) {
-    LDH_addr_A(hROMBank);
-    LD_addr_A(MBC3RomBank);
+    // LDH_addr_A(hROMBank);
+    // LD_addr_A(MBC3RomBank);
+    gb_write(hROMBank, REG_A);
+    gb_write(MBC3RomBank, REG_A);
+}
+
+void Bankswitch_Conv(uint8_t new_bank) {
+    gb_write(hROMBank, new_bank);
+    gb_write(MBC3RomBank, new_bank);
 }
 
 void JumpTable(void) {

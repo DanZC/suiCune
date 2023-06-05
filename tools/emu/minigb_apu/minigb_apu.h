@@ -9,7 +9,7 @@
 
 #include <stdint.h>
 
-#define AUDIO_SAMPLE_RATE	48000.0
+#define AUDIO_SAMPLE_RATE	32768
 
 #define DMG_CLOCK_FREQ		4194304.0
 #define SCREEN_REFRESH_CYCLES	70224.0
@@ -18,7 +18,7 @@
 #define AUDIO_SAMPLES		((unsigned)(AUDIO_SAMPLE_RATE / VERTICAL_SYNC))
 
 /**
- * Fill allocated buffer "data" with "len" number of 32-bit floating point
+ * Fill allocated buffer "data" with "len" number of 16-bit signed integer
  * samples (native endian order) in stereo interleaved format.
  */
 void audio_callback(void *ptr, uint8_t *data, int len);

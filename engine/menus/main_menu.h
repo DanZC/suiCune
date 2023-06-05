@@ -1,0 +1,12 @@
+void MobileMenuGFX(void);
+void MainMenu(void);
+void MainMenuItems(void);
+void MainMenu_GetWhichMenu(void);
+void MainMenuJoypadLoop(void);
+void MainMenu_PrintCurrentTimeAndDay(void);
+void ClearTilemapEtc(void);
+void MainMenu_NewGame(void);
+void MainMenu_Option(void);
+void MainMenu_Continue(void);
+void MainMenu_MysteryGift(void);
+//#include "gfx/mobile/mobile_menu.2bpp"

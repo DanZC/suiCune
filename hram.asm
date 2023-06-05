@@ -158,9 +158,8 @@ hRandomSub:: db
 
 hUnusedBackup:: db
 
-hBattleTurn::
+hBattleTurn:: db
 ; Which trainer's turn is it? 0: player, 1: opponent trainer
-	db
 
 hCGBPalUpdate:: db
 hCGB::          db
@@ -170,9 +169,9 @@ hDMATransfer:: db
 hMobile:: db
 hSystemBooted:: db
 
-if DEF(_DEBUG)
-hDebugRoomMenuPage::
-endc
+; if DEF(_DEBUG)
+; hDebugRoomMenuPage::
+; endc
 hClockResetTrigger:: db
 
 	ds 19

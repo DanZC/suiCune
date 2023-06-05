@@ -9,6 +9,7 @@ toolDir = os.path.dirname(os.path.realpath(__file__))
 charMapFile = f"{toolDir}/../charmap.asm"
 funcMapFile = f"{toolDir}/../funcmap.h"
 functionsFile = f"{toolDir}/../functions.h"
+functionsCFile = f"{toolDir}/../functions.c"
 
 currentFunc = ""
 funcList = []
@@ -314,6 +315,10 @@ def parse_asm(asm):
         if len(asm) == 2:
             asm.append("vBGMap0")
         return f"{opcode}({(asm[0])}, {(asm[1])}, {asm[2]});"
+    elif opcode in ("depixel", "bcpixel"):
+        if len(asm) == 4:
+            return f"{opcode}4({(asm[0])}, {(asm[1])}, {asm[2]}, {asm[3]})"
+        return f"{opcode}2({(asm[0])}, {(asm[1])})"
     elif opcode in ("lb"):
         return f"LD{register[asm[0]]}(({(asm[1])} << 8) | {(asm[2])});"
     elif opcode in ("ln"):
@@ -356,8 +361,8 @@ def main():
     funcsKnownAddr = list(i.split(",")[1].strip(" )") for i in funcsFile if i[:7] == "FUNCMAP")
 
     funcsConverted = []  # Get a list of functions already added to functionsFile, so they aren't added again
-    if os.path.exists(functionsFile):
-        with open(functionsFile, "r", encoding="utf8") as inFile:
+    if os.path.exists(functionsCFile):
+        with open(functionsCFile, "r", encoding="utf8") as inFile:
             funcsFile = inFile.read().split("\n")
         for i in funcsFile:
             if re.search("(CONVERTED|REDIRECTED)", i):
@@ -395,9 +400,9 @@ def main():
                 cFile.write(f"//#include {inc.replace('.asm', '.h')}\n")
     newFuncs = list(set(funcList) - set(funcsConverted))
     if len(newFuncs):
-        if os.path.exists(functionsFile):
-            os.remove(functionsFile)
-            with open(functionsFile, "w", encoding="utf8") as fFile:
+        if os.path.exists(functionsCFile):
+            os.remove(functionsCFile)
+            with open(functionsCFile, "w", encoding="utf8") as fFile:
                 for line in funcsFile:
                     fFile.write(f"{line}\n")
                 fFile.write(f"\n{tab}// {args.fileName.replace('.asm', '.c').strip('./')}\n")

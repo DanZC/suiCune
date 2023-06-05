@@ -5,7 +5,7 @@ void LoadTilemapToTempTilemap(void){
     //  Load wTilemap into wTempTilemap
     LDH_A_addr(rSVBK);
     PUSH_AF;
-    LD_A(BANK(wTempTilemap));
+    LD_A(MBANK(awTempTilemap));
     LDH_addr_A(rSVBK);
     hlcoord(0, 0, wTilemap);
     decoord(0, 0, wTempTilemap);
@@ -31,7 +31,7 @@ void LoadTempTilemapToTilemap(void){
     //  Load wTempTilemap into wTilemap
     LDH_A_addr(rSVBK);
     PUSH_AF;
-    LD_A(BANK(wTempTilemap));
+    LD_A(MBANK(awTempTilemap));
     LDH_addr_A(rSVBK);
     hlcoord(0, 0, wTempTilemap);
     decoord(0, 0, wTilemap);

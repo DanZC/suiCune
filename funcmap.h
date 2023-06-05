@@ -1,3 +1,5 @@
+#ifndef FUNCMAP_H
+#define FUNCMAP_H
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -42898,3 +42900,5 @@ FUNCMAP(OddEggProbabilities, 0x1FB552U)
 FUNCMAP(OddEggs, 0x1FB56EU)
 
 #include "data/predef_pointers.h"
+
+#endif //FUNCMAP_H

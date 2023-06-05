@@ -1,5 +1,8 @@
 #include "../constants.h"
 #include "map.h"
+#include "copy.h"
+#include "array.h"
+#include "gfx.h"
 
 //  Functions dealing with rendering and interacting with maps.
 
@@ -10,6 +13,10 @@ void ClearUnusedMapBuffer(void){
     CALL(aByteFill);
     RET;
 
+}
+
+void ClearUnusedMapBuffer_Conv(void){
+    ByteFill_Conv(wUnusedMapBuffer, (wUnusedMapBufferEnd - wUnusedMapBuffer), 0);
 }
 
 void CheckScenes(void){
@@ -198,9 +205,8 @@ ok:
     LD_E_A;
     IF_NC goto next;
     INC_D;
-
-next:
     }
+next:
     for(int rept = 0; rept < METATILE_WIDTH; rept++){
     LD_A_hli;
     LD_de_A;
@@ -1073,6 +1079,25 @@ void CallScript(void){
 
 }
 
+void CallScript_Conv(uint8_t a, uint16_t hl){
+//  Call a script at a:hl.
+
+    // LD_addr_A(wScriptBank);
+    // LD_A_L;
+    // LD_addr_A(wScriptPos);
+    // LD_A_H;
+    // LD_addr_A(wScriptPos + 1);
+    gb_write(wScriptBank, a);
+    gb_write16(wScriptPos, hl);
+
+    // LD_A(PLAYEREVENT_MAPSCRIPT);
+    // LD_addr_A(wScriptRunning);
+    gb_write(wScriptRunning, PLAYEREVENT_MAPSCRIPT);
+
+    // SCF;
+    // RET;
+}
+
 void CallMapScript(void){
 //  Call a script at hl in the current bank if there isn't already a script running
     LD_A_addr(wScriptRunning);
@@ -1081,6 +1106,19 @@ void CallMapScript(void){
     CALL(aGetMapScriptsBank);
     JR(mCallScript);
 
+}
+
+void CallMapScript_Conv(uint16_t hl){
+//  Call a script at hl in the current bank if there isn't already a script running
+    // LD_A_addr(wScriptRunning);
+    // AND_A_A;
+    // RET_NZ ;
+    if(gb_read(wScriptRunning) != 0)
+        return;
+    
+    // CALL(aGetMapScriptsBank);
+    // JR(mCallScript);
+    return CallScript_Conv(GetMapScriptsBank_Conv(), hl);
 }
 
 void RunMapCallback(void){
@@ -1328,7 +1366,7 @@ void UnmaskObject(void){
 }
 //  if DEF(_DEBUG)
 void ComputeROMXChecksum(void) {
-#if _DEBUG
+#if defined(_DEBUG) && !defined(_MSC_VER)
     LDH_A_addr(hROMBank);
     PUSH_AF;
     LD_A_C;
@@ -1558,7 +1596,7 @@ void LoadTilesetGFX(void){
 
     LDH_A_addr(rSVBK);
     PUSH_AF;
-    LD_A(BANK(wDecompressScratch));
+    LD_A(MBANK(awDecompressScratch));
     LDH_addr_A(rSVBK);
 
     LD_A_E;
@@ -1572,7 +1610,7 @@ void LoadTilesetGFX(void){
 
     LDH_A_addr(rVBK);
     PUSH_AF;
-    LD_A(BANK(vTiles5));
+    LD_A(MBANK(avTiles5));
     LDH_addr_A(rVBK);
 
     LD_HL(wDecompressScratch + 0x60 * LEN_2BPP_TILE);
@@ -2320,6 +2358,45 @@ void GetAnyMapPointer(void){
 
 }
 
+uint16_t GetMapPointer_Conv(void){
+    return GetAnyMapPointer_Conv(gb_read(wMapGroup), gb_read(wMapNumber));
+}
+
+uint16_t GetAnyMapPointer_Conv(uint8_t group, uint8_t map){
+//  Prior to calling this function, you must have switched banks so that
+//  MapGroupPointers is visible.
+
+//  inputs:
+//  b = map group, c = map number
+
+//  outputs:
+//  hl points to the map within its group
+    //PUSH_BC;  // save map number for later
+
+// get pointer to map group
+
+    //DEC_B;
+    //LD_C_B;
+    //LD_B(0);
+    //LD_HL(mMapGroupPointers);
+    //ADD_HL_BC;
+    //ADD_HL_BC;
+    uint16_t hl = mMapGroupPointers + (2 * (group - 1));
+
+    //LD_A_hli;
+    //LD_H_hl;
+    //LD_L_A;
+    //POP_BC;  // restore map number
+    uint16_t gptr = gb_read16(hl);
+
+// find the cth map within the group
+    //DEC_C;
+    //LD_B(0);
+    //LD_A(MAP_LENGTH);
+    //CALL(aAddNTimes);
+    return gptr + ((map - 1) * MAP_LENGTH);
+}
+
 void GetMapField(void){
 //  Extract data from the current map's group entry.
 
@@ -2335,6 +2412,18 @@ void GetMapField(void){
     LD_A_addr(wMapNumber);
     LD_C_A;
     return GetAnyMapField();
+}
+
+uint16_t GetMapField_Conv(uint16_t offset){
+//  Extract data from the current map's group entry.
+
+//  inputs:
+//  de = offset of desired data within the map (a MAP_* constant)
+
+//  outputs:
+//  bc = data from the current map's field
+//  (e.g., de = MAP_TILESET would return a pointer to the tileset id)
+    return GetAnyMapField_Conv(offset, gb_read(wMapGroup), gb_read(wMapNumber));
 }
 
 void GetAnyMapField(void){
@@ -2355,6 +2444,15 @@ void GetAnyMapField(void){
     RST(aBankswitch);
     RET;
 
+}
+
+uint16_t GetAnyMapField_Conv(uint16_t offset, uint8_t group, uint8_t map)
+{
+    bank_push(BANK(aMapGroupPointers));
+    uint16_t base = GetAnyMapPointer_Conv(group, map);
+    uint16_t data = gb_read16(base + offset);
+    bank_pop;
+    return data;
 }
 
 void SwitchToMapAttributesBank(void){
@@ -2412,6 +2510,16 @@ void CopyMapPartial(void){
 
 }
 
+//  Copy map data bank, tileset, environment, and map data address
+//  from the current map's entry within its group.
+void CopyMapPartial_Conv(void){
+    bank_push(BANK(aMapGroupPointers));
+
+    CopyBytes_Conv(wMapPartial, GetMapPointer_Conv(), (wMapPartialEnd - wMapPartial));
+
+    bank_pop;
+}
+
 void SwitchToMapScriptsBank(void){
     LD_A_addr(wMapScriptsBank);
     RST(aBankswitch);
@@ -2419,10 +2527,18 @@ void SwitchToMapScriptsBank(void){
 
 }
 
+void SwitchToMapScriptsBank_Conv(void){
+    Bankswitch_Conv(gb_read(wMapScriptsBank));
+}
+
 void GetMapScriptsBank(void){
     LD_A_addr(wMapScriptsBank);
     RET;
 
+}
+
+uint8_t GetMapScriptsBank_Conv(void){
+    return gb_read(wMapScriptsBank);
 }
 
 void GetAnyMapBlocksBank(void){
@@ -2512,6 +2628,10 @@ void GetAnyMapTileset(void){
 
 }
 
+uint8_t GetAnyMapTileset_Conv(uint8_t group, uint8_t map){
+    return (uint8_t)(GetAnyMapField_Conv(MAP_TILESET, group, map));
+}
+
 void GetWorldMapLocation(void){
 //  given a map group/id in bc, return its location on the Pokégear map.
     PUSH_HL;
@@ -2527,6 +2647,12 @@ void GetWorldMapLocation(void){
     POP_HL;
     RET;
 
+}
+
+uint8_t GetWorldMapLocation_Conv(uint8_t group, uint8_t map){
+//  given a map group/id in bc, return its location on the Pokégear map.
+    uint16_t data = GetAnyMapField_Conv(MAP_LOCATION, group, map);
+    return (uint8_t)(data & 0xFF);
 }
 
 void GetMapMusic(void){
@@ -2581,11 +2707,36 @@ clearedmahogany:
     return GetMapTimeOfDay();
 }
 
+uint16_t GetMapMusic_Conv(void){
+    uint16_t music = GetMapField_Conv(MAP_MUSIC);
+    if(music == MUSIC_MAHOGANY_MART)
+    {
+        if(!(gb_read(wStatusFlags2) & (1 << STATUSFLAGS2_ROCKETS_IN_MAHOGANY_F)))
+        {
+            return MUSIC_CHERRYGROVE_CITY;
+        }
+        return MUSIC_ROCKET_HIDEOUT;
+    }
+    if(music & (1 << RADIO_TOWER_MUSIC_F))
+    {
+        if(!(gb_read(wStatusFlags2) & (1 << STATUSFLAGS2_ROCKETS_IN_RADIO_TOWER_F)))
+        {
+            return music & (RADIO_TOWER_MUSIC - 1);
+        }
+        return MUSIC_ROCKET_OVERTURE;
+    }
+    return music;
+}
+
 void GetMapTimeOfDay(void){
     CALL(aGetPhoneServiceTimeOfDayByte);
     AND_A(0xf);
     RET;
 
+}
+
+uint8_t GetMapTimeOfDay_Conv(void){
+    return GetPhoneServiceTimeOfDayByte_Conv() & 0xF;
 }
 
 void GetMapPhoneService(void){
@@ -2594,6 +2745,10 @@ void GetMapPhoneService(void){
     SWAP_A;
     RET;
 
+}
+
+uint8_t GetMapPhoneService_Conv(void){
+    return (GetPhoneServiceTimeOfDayByte_Conv() & 0xF0) >> 4;
 }
 
 void GetPhoneServiceTimeOfDayByte(void){
@@ -2610,6 +2765,10 @@ void GetPhoneServiceTimeOfDayByte(void){
 
 }
 
+uint8_t GetPhoneServiceTimeOfDayByte_Conv(void){
+    return (uint8_t)(GetMapField_Conv(MAP_PALETTE) & 0xFF);
+}
+
 void GetFishingGroup(void){
     PUSH_DE;
     PUSH_HL;
@@ -2624,6 +2783,10 @@ void GetFishingGroup(void){
     POP_DE;
     RET;
 
+}
+
+uint8_t GetFishingGroup_Conv(void){
+    return (uint8_t)(GetMapField_Conv(MAP_FISHGROUP) & 0xFF);
 }
 
 void LoadMapTileset(void){
@@ -2645,6 +2808,11 @@ void LoadMapTileset(void){
     POP_HL;
     RET;
 
+}
+
+void LoadMapTileset_Conv(void){
+    uint16_t hl = AddNTimes_Conv(mTilesets, TILESET_LENGTH, gb_read(wMapTileset));
+    FarCopyBytes_Conv(wTilesetBank, BANK(aTilesets), hl, TILESET_LENGTH);
 }
 
 void DummyEndPredef(void){

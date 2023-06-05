@@ -8,3 +8,5 @@
 
 #define ldcoord_a(x, y, origin) LD_addr_A(((y) * SCREEN_WIDTH) + (x) + (origin))
 #define lda_coord(x, y, origin) LD_A_addr(((y) * SCREEN_WIDTH) + (x) + (origin))
+
+#define coord(x, y, origin) (((y) * SCREEN_WIDTH) + (x) + (origin))

@@ -2882,6 +2882,9 @@ uint8_t gb_colour_hash(void) {
  */
 void gb_reset(void) {
     init_function_pointers();
+    hram = (struct hram_s*)gb.hram;
+    vram = (struct vram_s*)gb.vram;
+
     gb.gb_halt = 0;
     gb.gb_ime = 1;
     gb.gb_bios_enable = 0;
@@ -3491,6 +3494,7 @@ void cleanup(void) {
 }
 
 int main(int argc, char* argv[]) {
+    (void)argc, (void)argv;
     atexit(cleanup);
     enum gb_init_error_e gb_ret;
     int ret = EXIT_SUCCESS;
@@ -3629,7 +3633,7 @@ int main(int argc, char* argv[]) {
         SDL_AudioSpec want, have;
 
         want.freq = AUDIO_SAMPLE_RATE;
-        want.format = AUDIO_F32SYS,
+        want.format = AUDIO_S16SYS,
         want.channels = 2;
         want.samples = AUDIO_SAMPLES;
         want.callback = audio_callback;

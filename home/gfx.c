@@ -1,5 +1,6 @@
 #include "../constants.h"
 #include "gfx.h"
+#include "copy.h"
 
 #define TILES_PER_CYCLE (8)
 #define MOBILE_TILES_PER_CYCLE (6)
@@ -131,7 +132,7 @@ void LoadFontsExtra2(void) {
 
 void DecompressRequest2bpp(void) {
     PUSH_DE;
-    LD_A(BANK(sScratch));
+    LD_A(MBANK(asScratch));
     CALL(aOpenSRAM);
     PUSH_BC;
 
@@ -162,6 +163,20 @@ void FarCopyBytes(void) {
     POP_AF;
     RST(aBankswitch);
     RET;
+}
+
+//  copy bc bytes from a:hl to de
+void FarCopyBytes_Conv(uint16_t de, uint8_t a, uint16_t hl, uint16_t bc) {
+    // LDH_addr_A(hTempBank);
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+    // LDH_A_addr(hTempBank);
+    // RST(aBankswitch);
+    bank_push(a);
+
+    CopyBytes_Conv(de, hl, bc);
+
+    bank_pop;
 }
 
 void FarCopyBytesDouble(void) {

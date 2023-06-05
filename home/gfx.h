@@ -9,6 +9,7 @@ void LoadFontsExtra(void);
 void LoadFontsExtra2(void);
 void DecompressRequest2bpp(void);
 void FarCopyBytes(void);
+void FarCopyBytes_Conv(uint16_t de, uint8_t a, uint16_t hl, uint16_t bc);
 void FarCopyBytesDouble(void);
 void Request2bpp(void);
 void Request1bpp(void);

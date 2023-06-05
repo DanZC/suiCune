@@ -1,5 +1,6 @@
 #include "../../constants.h"
 #include "dma_transfer.h"
+#include "../../home/delay.h"
 
 void HDMATransferAttrmapAndTilemapToWRAMBank3(void) {
     LD_HL(mHDMATransferAttrmapAndTilemapToWRAMBank3_Function);
@@ -124,7 +125,7 @@ void Function1040d4(void) {
 Function:
     LD_A(0x1);
     LDH_addr_A(rVBK);
-    LD_A(BANK(w3_d800));
+    LD_A(MBANK(aw3_d800));
     LDH_addr_A(rSVBK);
     LD_DE(w3_d800);
     LDH_A_addr(hBGMapAddress + 1);
@@ -149,7 +150,7 @@ void Function1040fb(void) {
 Function:
     LD_A(0x1);
     LDH_addr_A(rVBK);
-    LD_A(BANK(w3_d800));
+    LD_A(MBANK(aw3_d800));
     LDH_addr_A(rSVBK);
     LD_HL(w3_d800);
     CALL(mHDMATransferToWRAMBank3);
@@ -190,6 +191,51 @@ Function:
     RET;
 }
 
+static void OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Function(void) {
+    // Transfer wAttrmap and Tilemap to BGMap
+    // Fill vBGAttrs with $00
+    // Fill vBGTiles with " "
+    // decoord(0, 0, wAttrmap);
+    // LD_HL(wScratchAttrmap);
+    // CALL(mPadAttrmapForHDMATransfer);
+    PadAttrmapForHDMATransfer_Conv(wScratchAttrmap, coord(0, 0, wAttrmap));
+    // decoord(0, 0, wTilemap);
+    // LD_HL(wScratchTilemap);
+    // CALL(mPadTilemapForHDMATransfer);
+    PadTilemapForHDMATransfer_Conv(wScratchTilemap, coord(0, 0, wTilemap));
+    // CALL(mDelayFrame);
+    DelayFrame();
+
+    // NOP;
+    // LDH_A_addr(rVBK);
+    // PUSH_AF;
+    uint8_t vbk = gb_read(rVBK);
+    // LD_A(0x1);
+    // LDH_addr_A(rVBK);
+    gb_write(rVBK, 0x1);
+    // LD_HL(wScratchAttrmap);
+    // CALL(mHDMATransfer_Wait123Scanlines_toBGMap);
+    HDMATransfer_Wait123Scanlines_toBGMap_Conv(wScratchAttrmap);
+    // LD_A(0x0);
+    // LDH_addr_A(rVBK);
+    gb_write(rVBK, 0x0);
+    // LD_HL(wScratchTilemap);
+    // CALL(mHDMATransfer_Wait123Scanlines_toBGMap);
+    HDMATransfer_Wait123Scanlines_toBGMap_Conv(wScratchTilemap);
+    // POP_AF;
+    // LDH_addr_A(rVBK);
+    gb_write(rVBK, vbk);
+    // NOP;
+    // RET;
+}
+
+void OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv(void) {
+    //  OpenText
+    // LD_HL(mOpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Function);
+    // JP(mCallInSafeGFXMode);
+    return CallInSafeGFXMode_Conv(OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Function);
+}
+
 void Mobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap(void) {
     LD_HL(mMobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Function);
     JP(mCallInSafeGFXMode);
@@ -227,7 +273,7 @@ void CallInSafeGFXMode(void) {
     LDH_addr_A(hMapAnims);
     LDH_A_addr(rSVBK);
     PUSH_AF;
-    LD_A(BANK(wScratchTilemap));
+    LD_A(MBANK(awScratchTilemap));
     LDH_addr_A(rSVBK);
     LDH_A_addr(rVBK);
     PUSH_AF;
@@ -246,6 +292,49 @@ void CallInSafeGFXMode(void) {
 
 _hl_:
     JP_hl;
+}
+
+void CallInSafeGFXMode_Conv(void(*hl)(void)) {
+    // LDH_A_addr(hBGMapMode);
+    // PUSH_AF;
+    uint8_t bgmapmode = gb_read(hBGMapMode);
+    // LDH_A_addr(hMapAnims);
+    // PUSH_AF;
+    uint8_t mapanims = gb_read(hMapAnims);
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    // LDH_addr_A(hMapAnims);
+    gb_write(hBGMapMode, 0);
+    gb_write(hMapAnims, 0);
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    uint8_t svbk = gb_read(rSVBK);
+    // LD_A(MBANK(awScratchTilemap));
+    // LDH_addr_A(rSVBK);
+    gb_write(rSVBK, MBANK(awScratchTilemap));
+    // LDH_A_addr(rVBK);
+    // PUSH_AF;
+    uint8_t vbk = gb_read(rVBK);
+
+    // CALL(mCallInSafeGFXMode__hl_);
+    hl();
+
+    // POP_AF;
+    // LDH_addr_A(rVBK);
+    gb_write(rVBK, vbk);
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    gb_write(rSVBK, svbk);
+    // POP_AF;
+    // LDH_addr_A(hMapAnims);
+    gb_write(hMapAnims, mapanims);
+    // POP_AF;
+    // LDH_addr_A(hBGMapMode);
+    gb_write(hBGMapMode, bgmapmode);
+    // RET;
+
+// _hl_:
+//     JP_hl;
 }
 
 void HDMATransferToWRAMBank3(void) {
@@ -288,6 +377,20 @@ void HDMATransfer_Wait123Scanlines_toBGMap(void) {
     LD_E_A;
     LD_C(2 * SCREEN_HEIGHT);
     JR(mHDMATransfer_Wait123Scanlines);
+}
+
+void HDMATransfer_Wait123Scanlines_toBGMap_Conv(uint16_t hl) {
+    //  HDMA transfer from hl to [hBGMapAddress]
+    //  hBGMapAddress -> de
+    //  2 * SCREEN_HEIGHT -> c
+    //  $7b --> b
+    // LDH_A_addr(hBGMapAddress + 1);
+    // LD_D_A;
+    // LDH_A_addr(hBGMapAddress);
+    // LD_E_A;
+    // LD_C(2 * SCREEN_HEIGHT);
+    // JR(mHDMATransfer_Wait123Scanlines);
+    return HDMATransfer_Wait123Scanlines_Conv(hl, gb_read16(hBGMapAddress), 2 * SCREEN_HEIGHT);
 }
 
 void HDMATransfer_NoDI(void) {
@@ -357,6 +460,12 @@ loop3:
 void HDMATransfer_Wait123Scanlines(void) {
     LD_B(0x7b);
     JR(mv_continue_HDMATransfer);
+}
+
+void HDMATransfer_Wait123Scanlines_Conv(uint16_t hl, uint16_t de, uint8_t c) {
+    // LD_B(0x7b);
+    // JR(mv_continue_HDMATransfer);
+    return v_continue_HDMATransfer_Conv(hl, de, c, 0x7b);
 }
 
 void HDMATransfer_Wait127Scanlines(void) {
@@ -430,6 +539,78 @@ final_ly_loop:
     RET;
 }
 
+void v_continue_HDMATransfer_Conv(uint16_t hl, uint16_t de, uint8_t c, uint8_t b) {
+    //  a lot of waiting around for hardware registers
+    // [rHDMA1, rHDMA2] = hl & $fff0
+    // LD_A_H;
+    // LDH_addr_A(rHDMA1);
+    gb_write(rHDMA1, HIGH(hl));
+    // LD_A_L;
+    // AND_A(0xf0);  // high nybble
+    // LDH_addr_A(rHDMA2);
+    gb_write(rHDMA2, (uint8_t)(hl & 0xf0));  // high nybble
+    // [rHDMA3, rHDMA4] = de & $1ff0
+    // LD_A_D;
+    // AND_A(0x1f);  // lower 5 bits
+    // LDH_addr_A(rHDMA3);
+    gb_write(rHDMA3, HIGH(de) & 0x1f);
+    // LD_A_E;
+    // AND_A(0xf0);  // high nybble
+    // LDH_addr_A(rHDMA4);
+    gb_write(rHDMA4, (uint8_t)(de & 0xf0));  // high nybble
+    // e = c | %10000000
+    // LD_A_C;
+    // DEC_C;
+    // OR_A(0x80);
+    // LD_E_A;
+    // d = b - c + 1
+    // LD_A_B;
+    // SUB_A_C;
+    // LD_D_A;
+    // while [rLY] >= d: pass
+    de = ((uint16_t)(b - c + 1) << 8) | (c | 0b10000000);
+
+ly_loop:;
+    // LDH_A_addr(rLY);
+    // CP_A_D;
+    // IF_NC goto ly_loop;
+
+    // NOP;
+    // while [rSTAT] & 3: pass
+
+rstat_loop_1:;
+    // LDH_A_addr(rSTAT);
+    // AND_A(0x3);
+    // IF_NZ goto rstat_loop_1;
+    //  while not [rSTAT] & 3: pass
+
+rstat_loop_2:;
+    // LDH_A_addr(rSTAT);
+    // AND_A(0x3);
+    // IF_Z goto rstat_loop_2;
+    //  load the 5th byte of HDMA
+    // LD_A_E;
+    // DEC_A;  // patch
+    // LDH_addr_A(rHDMA5);
+    gb_write(rHDMA5, LOW(de));
+    // wait until rLY advances (c + 1) times
+    // LDH_A_addr(rLY);
+    // INC_C;
+    // LD_HL(rLY);
+
+final_ly_loop:;
+    // CP_A_hl;
+    // IF_Z goto final_ly_loop;
+    // LD_A_hl;
+    // DEC_C;
+    // IF_NZ goto final_ly_loop;
+    // LD_HL(rHDMA5);
+    // RES_hl(7);
+    // NOP;
+
+    // RET;
+}
+
 void v_LoadHDMAParameters(void) {
     LD_A_H;
     LDH_addr_A(rHDMA1);
@@ -448,10 +629,18 @@ void PadTilemapForHDMATransfer(void) {
     JR(mPadMapForHDMATransfer);
 }
 
+void PadTilemapForHDMATransfer_Conv(uint16_t hl, uint16_t de) {
+    return PadMapForHDMATransfer_Conv(hl, de, 0x7f);
+}
+
 void PadAttrmapForHDMATransfer(void) {
     LD_C(0x0);
 
     return PadMapForHDMATransfer();
+}
+
+void PadAttrmapForHDMATransfer_Conv(uint16_t hl, uint16_t de) {
+    return PadMapForHDMATransfer_Conv(hl, de, 0x0);
 }
 
 void PadMapForHDMATransfer(void) {
@@ -495,12 +684,60 @@ loop3:
     RET;
 }
 
+//  pad a 20x18 map to 32x18 for HDMA transfer
+void PadMapForHDMATransfer_Conv(uint16_t hl, uint16_t de, uint8_t c) {
+    //  back up the padding value in c to hMapObjectIndex
+    // LDH_A_addr(hMapObjectIndex);
+    // PUSH_AF;
+    // uint8_t mapobjidx = gb_read(hMapObjectIndex);
+    // LD_A_C;
+    // LDH_addr_A(hMapObjectIndex);
+    // gb_write(hMapObjectIndex, c);
+
+    //  for each row on the screen
+    // LD_C(SCREEN_HEIGHT);
+
+    for(uint8_t r = SCREEN_HEIGHT; r > 0; --r) {
+        //  for each tile in the row
+        // LD_B(SCREEN_WIDTH);
+
+        for(uint8_t b = SCREEN_WIDTH; b > 0; --b) {
+            //  copy from de to hl
+            // LD_A_de;
+            // INC_DE;
+            // LD_hli_A;
+            gb_write(hl++, gb_read(de++));
+            // DEC_B;
+            // IF_NZ goto loop2;
+        }
+
+        //  load the original padding value of c into hl for 32 - 20 = 12 rows
+        // LDH_A_addr(hMapObjectIndex);
+        // LD_B(BG_MAP_WIDTH - SCREEN_WIDTH);
+
+        for(uint8_t b = (BG_MAP_WIDTH - SCREEN_WIDTH); b > 0; --b) {
+            // LD_hli_A;
+            gb_write(hl++, c);
+            // DEC_B;
+            // IF_NZ goto loop3;
+        }
+
+        // DEC_C;
+        // IF_NZ goto loop1;
+    }
+
+    //  restore the original value of hMapObjectIndex
+    // POP_AF;
+    // LDH_addr_A(hMapObjectIndex);
+    // RET;
+}
+
 void HDMATransfer2bpp(void) {
     // 2bpp when [rLCDC] & $80
     // switch to WRAM bank 6
     LDH_A_addr(rSVBK);
     PUSH_AF;
-    LD_A(BANK(wScratchTilemap));
+    LD_A(MBANK(awScratchTilemap));
     LDH_addr_A(rSVBK);
 
     PUSH_BC;
@@ -570,7 +807,7 @@ loop:
 bankswitch:
     LDH_A_addr(rSVBK);
     PUSH_AF;
-    LD_A(BANK(wScratchTilemap));
+    LD_A(MBANK(awScratchTilemap));
     LDH_addr_A(rSVBK);
 
     PUSH_BC;

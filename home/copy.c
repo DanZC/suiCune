@@ -1,5 +1,6 @@
 #include "../constants.h"
 #include "copy.h"
+#include "call_regs.h"
 
 void CopyBytes(void){
     //  copy bc bytes from hl to de
@@ -21,7 +22,7 @@ HandleLoop:
 
 }
 
-void CopyBytes_Conv(void){
+void CopyBytes_Conv_Old(void){
     //  copy bc bytes from hl to de
     REG_B++;  // we bail the moment b hits 0, so include the last run
     REG_C++;  // same thing// include last byte
@@ -32,6 +33,16 @@ void CopyBytes_Conv(void){
         gb_write(REG_DE++, REG_A);
     }
     return;
+}
+
+//  copy bc bytes from hl to de
+void CopyBytes_Conv(uint16_t de, uint16_t hl, uint16_t bc){
+    bc++; // we bail the moment bc hits 0, so include the last run
+
+    while(--bc != 0)
+    {
+        gb_write(de++, gb_read(hl++));
+    }
 }
 
 void SwapBytes(void){
@@ -60,25 +71,24 @@ Loop:
 
 }
 
-void SwapBytes_Conv(void){
-    //  swap bc bytes between hl and de
-    // Input
-    //   hl: buffer a
-    //   de: buffer b
-    //   bc: byte count
-
+//  swap bc bytes between hl and de
+// Input
+//   hl: buffer a
+//   de: buffer b
+//   bc: byte count
+void SwapBytes_Conv(uint16_t hl, uint16_t de, uint16_t bc){
     do {
         // stash [hl] away on the stack
-        uint8_t temp = gb_read(REG_HL);
+        uint8_t temp = gb_read(hl);
 
         // copy a byte from [de] to [hl]
-        gb_write(REG_HL++, gb_read(REG_DE));
+        gb_write(hl++, gb_read(de));
 
         // retrieve the previous value of [hl]// put it in [de]
-        gb_write(REG_DE++, temp);
+        gb_write(de++, temp);
 
         // handle loop stuff
-    } while(--REG_BC != 0);
+    } while(--bc != 0);
 }
 
 void ByteFill(void){
@@ -99,7 +109,7 @@ HandleLoop:
 
 }
 
-void ByteFill_Conv(void){
+void ByteFill_Conv_Old(void){
     //  fill bc bytes with the value of a, starting at hl
     REG_B++;  // we bail the moment b hits 0, so include the last run
     REG_C++;  // same thing// include last byte
@@ -109,6 +119,16 @@ void ByteFill_Conv(void){
         gb_write(REG_HL++, REG_A);
     }
     return;
+}
+
+//  fill bc bytes with the value of a, starting at hl
+void ByteFill_Conv(uint16_t ptr, uint16_t len, uint8_t value){
+    len++;  // we bail the moment b hits 0, so include the last run
+
+    while(--len != 0)
+    {
+        gb_write(ptr++, value);
+    }
 }
 
 void GetFarByte(void){
@@ -134,7 +154,7 @@ void GetFarByte(void){
 
 }
 
-void GetFarByte_Conv(void){
+void GetFarByte_Conv_Old(void){
     //  retrieve a single byte from a:hl, and return it in a.
     // bankswitch to new bank
     uint8_t temp = gb_read(hROMBank);
@@ -149,6 +169,22 @@ void GetFarByte_Conv(void){
 
     // return retrieved value in a
     REG_A = farbyte;
+}
+
+//  retrieve a single byte from a:hl, and return it in a.
+uint8_t GetFarByte_Conv(uint8_t a, uint16_t hl){
+    // bankswitch to new bank
+    uint8_t temp = gb_read(hROMBank);
+    Bankswitch_Conv(a);
+
+    // get byte from new bank
+    uint8_t farbyte = gb_read(hl);
+
+    // bankswitch to previous bank
+    Bankswitch_Conv(temp);
+
+    // return retrieved value
+    return farbyte;
 }
 
 void GetFarWord(void){
@@ -170,6 +206,20 @@ void GetFarWord(void){
     RST(aBankswitch);
     RET;
 
+}
+
+//  retrieve a word from a:hl, and return it in hl.
+uint16_t GetFarWord_Conv(uint8_t a, uint16_t hl){
+    // bankswitch to new bank
+    uint8_t temp = gb_read(hROMBank);
+    Bankswitch_Conv(a);
+
+// get word from new bank, put it in hl
+    uint16_t far_word = gb_read16(hl);
+
+// bankswitch to previous bank and return
+    Bankswitch_Conv(temp);
+    return far_word;
 }
 
 void FarCopyWRAM(void){
@@ -201,6 +251,27 @@ void GetFarWRAMByte(void){
     RET;
 
 }
+
+uint8_t GetFarWRAMByte_Conv(uint8_t bank, uint16_t address){
+    // LDH_addr_A(hTempBank);
+    gb_write(hTempBank, bank);
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    uint8_t svbk = gb_read(rSVBK);
+    // LDH_A_addr(hTempBank);
+    // LDH_addr_A(rSVBK);
+    gb_write(rSVBK, bank);
+    // LD_A_hl;
+    // LDH_addr_A(hFarByte);
+    gb_write(hFarByte, gb_read(address));
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    gb_write(rSVBK, svbk);
+    // LDH_A_addr(hFarByte);
+    // RET;
+    return gb_read(hFarByte);
+}
+
 
 void GetFarWRAMWord(void){
     //  //  unreferenced

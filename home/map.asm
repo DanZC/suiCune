@@ -1150,27 +1150,27 @@ UnmaskObject::
 	ld [hl], 0 ; unmasked
 	ret
 
-if DEF(_DEBUG)
-ComputeROMXChecksum::
-	ldh a, [hROMBank]
-	push af
-	ld a, c
-	rst Bankswitch
-	ld hl, $4000 ; ROMX start
-.loop
-	ld a, [hli]
-	add e
-	ld e, a
-	ld a, d
-	adc 0
-	ld d, a
-	ld a, h
-	cp $80 ; HIGH(ROMX end)
-	jr c, .loop
-	pop af
-	rst Bankswitch
-	ret
-endc
+; if DEF(_DEBUG)
+; ComputeROMXChecksum::
+; 	ldh a, [hROMBank]
+; 	push af
+; 	ld a, c
+; 	rst Bankswitch
+; 	ld hl, $4000 ; ROMX start
+; .loop
+; 	ld a, [hli]
+; 	add e
+; 	ld e, a
+; 	ld a, d
+; 	adc 0
+; 	ld d, a
+; 	ld a, h
+; 	cp $80 ; HIGH(ROMX end)
+; 	jr c, .loop
+; 	pop af
+; 	rst Bankswitch
+; 	ret
+; endc
 
 ScrollMapUp::
 	hlcoord 0, 0

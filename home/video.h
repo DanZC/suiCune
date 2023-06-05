@@ -1,5 +1,7 @@
 void DMATransfer(void);
+bool DMATransfer_Conv(void);
 void UpdateBGMapBuffer(void);
+bool UpdateBGMapBuffer_Conv(void);
 void WaitTop(void);
 void UpdateBGMap(void);
 void Serve1bppRequest(void);

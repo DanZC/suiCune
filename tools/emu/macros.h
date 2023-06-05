@@ -2699,6 +2699,7 @@
 // Pokegold macros
 
 #define BANK(x) ((x) >> 14)
+#define MBANK(x) ((x) >> 16)
 #define HIGH(x) (((x) >> 8) & 0xFF)
 #define LOW(x) ((x)&0xFF)
 
@@ -2778,6 +2779,22 @@
         REG_HL = gb_read16((uint16_t)dest + (2 * index));\
         JP_hl;\
     } while(0)
+
+#define bank_push(bank) \
+    uint8_t oldBank = gb_read(hROMBank);\
+    Bankswitch_Conv(bank);
+
+#define bank_pop Bankswitch_Conv(oldBank);
+
+#define farcall(_x, ...) \
+    do {                                                     \
+        uint8_t oldBank = gb_read(hROMBank);                 \
+        Bankswitch_Conv(BANK(a##_x));                        \
+        _x##_Conv(__VA_ARGS__);                              \
+        Bankswitch_Conv(oldBank);                            \
+    } while (0)
+
+#define bit_test(_x, _n) (((_x) >> (_n)) & 0x1)
 
 #define calc_sin_wave \
     do {\

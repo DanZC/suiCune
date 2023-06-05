@@ -1,5 +1,6 @@
 #include "../constants.h"
 #include "time_palettes.h"
+#include "time.h"
 
 void UpdateTimeAndPals(void){
     //  update time and time-sensitive palettes
@@ -29,4 +30,23 @@ void UpdateTimePals(void){
         CALLFAR(av_UpdateTimePals);
     RET;
 
+}
+
+void UpdateTimeAndPals_Conv(void){
+    //  update time and time-sensitive palettes
+
+//  rtc enabled?
+    if(gb_read(wSpriteUpdatesEnabled) == 0)
+        return;
+
+    UpdateTime_Conv();
+
+//  obj update on?
+    uint8_t vram_state = gb_read(wVramState);
+    BIT_(vram_state, 0);  // obj update
+    IF_Z return;
+
+    CALLFAR(av_TimeOfDayPals);
+
+    return TimeOfDayPals();
 }

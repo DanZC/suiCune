@@ -1,8 +1,14 @@
 void CopyBytes(void);
+void CopyBytes_Conv(uint16_t de, uint16_t hl, uint16_t bc);
 void SwapBytes(void);
+void SwapBytes_Conv(uint16_t hl, uint16_t de, uint16_t bc);
 void ByteFill(void);
+void ByteFill_Conv(uint16_t ptr, uint16_t len, uint8_t value);
 void GetFarByte(void);
+uint8_t GetFarByte_Conv(uint8_t a, uint16_t hl);
 void GetFarWord(void);
+uint16_t GetFarWord_Conv(uint8_t a, uint16_t hl);
 void FarCopyWRAM(void);
 void GetFarWRAMByte(void);
+uint8_t GetFarWRAMByte_Conv(uint8_t bank, uint16_t address);
 void GetFarWRAMWord(void);

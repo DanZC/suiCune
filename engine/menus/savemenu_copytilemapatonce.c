@@ -26,11 +26,11 @@ wait:
     // IF_C goto wait;
 
     NOP;
-    LD_A(BANK(vBGMap2));
+    LD_A(MBANK(avBGMap2));
     LDH_addr_A(rVBK);
     hlcoord(0, 0, wAttrmap);
     CALL(aSaveMenu_CopyTilemapAtOnce_CopyBGMapViaStack);
-    LD_A(BANK(vBGMap0));
+    LD_A(MBANK(avBGMap0));
     LDH_addr_A(rVBK);
     hlcoord(0, 0, wTilemap);
     CALL(aSaveMenu_CopyTilemapAtOnce_CopyBGMapViaStack);

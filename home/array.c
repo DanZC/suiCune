@@ -30,7 +30,7 @@ InArray:
 
 }
 
-void IsInArray_Conv(void)
+void IsInArray_Conv_Old(void)
 {
     REG_B = 0;
     REG_C = REG_A;
@@ -52,6 +52,23 @@ void IsInArray_Conv(void)
     }
 }
 
+//  Find value a for every de bytes in array hl.
+//  Return index if found, otherwise 0xffff
+uint16_t IsInArray_Conv(uint16_t hl, uint16_t de, uint8_t a)
+{
+    uint8_t b = 0;
+    while(1)
+    {
+        uint8_t byte = gb_read(hl);
+        if(byte == 0xFF)
+            return 0xFFFF;
+        if(byte == a)
+            return b;
+        b++;
+        hl += de;
+    }
+}
+
 void SkipNames(void){
     //  Skip a names.
     LD_BC(NAME_LENGTH);
@@ -66,15 +83,14 @@ loop:
 
 }
 
-void SkipNames_Conv(void)
+//  Skip a names.
+uint16_t SkipNames_Conv(uint16_t hl, uint8_t a)
 {
-    REG_BC = NAME_LENGTH;
-    if(REG_A == 0) return;
+    if(a == 0) return hl;
     do {
-        REG_HL += REG_BC;
-        REG_A--;
-    } while(REG_A != 0);
-    return;
+        hl += NAME_LENGTH;
+    } while(--a != 0);
+    return hl;
 }
 
 void AddNTimes(void){
@@ -90,11 +106,20 @@ loop:
 
 }
 
-void AddNTimes_Conv(void)
+void AddNTimes_Conv_Old(void)
 {
     if(REG_A == 0) return;
     do {
         REG_HL += REG_BC;
         REG_A--;
     } while(REG_A != 0);
+}
+
+uint16_t AddNTimes_Conv(uint16_t bc, uint16_t hl, uint8_t a)
+{
+    if(a == 0) return hl;
+    do {
+        hl += bc;
+    } while(--a != 0);
+    return hl;
 }

@@ -1,5 +1,7 @@
 #include "../constants.h"
 #include "time.h"
+#include "sram.h"
+#include "../engine/rtc/rtc.h"
 
 //  Functions relating to the timer interrupt and the real-time-clock.
 
@@ -28,6 +30,12 @@ void LatchClock(void){
 
 }
 
+//  latch clock counter data
+void LatchClock_Conv(void){
+    gb_write(MBC3LatchClock, 0);
+    gb_write(MBC3LatchClock, 1);
+}
+
 void UpdateTime(void){
         CALL(aGetClock);
     CALL(aFixDays);
@@ -35,6 +43,13 @@ void UpdateTime(void){
     FARCALL(aGetTimeOfDay);
     RET;
 
+}
+
+void UpdateTime_Conv(void) {
+    GetClock_Conv();
+    FixDays_Conv();
+    FixTime_Conv();
+    GetTimeOfDay_Conv();
 }
 
 void GetClock(void){
@@ -77,6 +92,46 @@ void GetClock(void){
     CALL(aCloseSRAM);
     RET;
 
+}
+
+//  store clock data in hRTCDayHi-hRTCSeconds
+void GetClock_Conv(void){
+//  enable clock r/w
+    gb_write(MBC3SRamEnable, SRAM_ENABLE);
+
+//  clock data is 'backwards' in hram
+
+    LatchClock_Conv();
+    //LD_HL(MBC3SRamBank);
+    //LD_DE(MBC3RTC);
+    const uint16_t hl = MBC3SRamBank;
+    const uint16_t de = MBC3RTC;
+
+    gb_write(hl, RTC_S);
+    REG_A = gb_read(de);
+    maskbits(60, 0);
+    gb_write(hRTCSeconds, REG_A);
+
+    gb_write(hl, RTC_M);
+    REG_A = gb_read(de);
+    maskbits(60, 0);
+    gb_write(hRTCMinutes, REG_A);
+
+    gb_write(hl, RTC_H);
+    REG_A = gb_read(de);
+    maskbits(24, 0);
+    gb_write(hRTCHours, REG_A);
+
+    gb_write(hl, RTC_DL);
+    REG_A = gb_read(de);
+    gb_write(hRTCDayLo, REG_A);
+
+    gb_write(hl, RTC_DH);
+    REG_A = gb_read(de);
+    gb_write(hRTCDayHi, REG_A);
+
+//  unlatch clock / disable clock r/w
+    CloseSRAM();
 }
 
 void FixDays(void){
@@ -147,6 +202,71 @@ quit:
 
 }
 
+//  fix day count
+uint8_t FixDays_Conv(void){
+//  mod by 140
+
+//  check if day count > 255 (bit 8 set)
+    uint8_t lo;
+    uint8_t hi = gb_read(hRTCDayHi);  // DH
+    uint8_t status = 0;
+    if((hi & (1 << 0)) == 0)
+    {
+        //  quit if fewer than 140 days have passed
+        lo = gb_read(hRTCDayLo);
+        if(lo < 140) return status;
+
+    //  mod 140
+
+        do {
+            uint16_t temp = lo - 140;
+            REG_F_C = (temp & 0xFF00)? 1: 0;
+            lo -= 140;
+        } while(REG_F_C == 0);
+        lo += 140;
+
+    //  update dl
+        gb_write(hRTCDayLo, lo);
+
+    //  flag for sRTCStatusFlags
+        status = 0b00100000;
+    }
+    else 
+    {
+    //  reset dh (bit 8)
+        RES_(hi, 0);
+        gb_write(hRTCDayHi, hi);
+
+    //  mod 140
+    //  mod twice since bit 8 (DH) was set
+        lo = gb_read(hRTCDayLo);
+        do {
+            uint16_t temp = lo - 140;
+            REG_F_C = (temp & 0xFF00)? 1: 0;
+            lo -= 140;
+        } while(REG_F_C == 0);
+        do {
+            uint16_t temp = lo - 140;
+            REG_F_C = (temp & 0xFF00)? 1: 0;
+            lo -= 140;
+        } while(REG_F_C == 0);
+        lo += 140;
+
+    //  update dl
+        gb_write(hRTCDayLo, lo);
+
+    //  flag for sRTCStatusFlags
+        status = 0b00100000;
+    }
+
+    //  update clock with modded day value
+    // PUSH_AF;
+    // CALL(aSetClock);
+    // POP_AF;
+    SetClock_Conv();
+    return status;
+}
+
 void FixTime(void){
     //  add ingame time (set at newgame) to current time
 //  store time in wCurDay, hHours, hMinutes, hSeconds
@@ -200,6 +320,49 @@ updatehr:
 
 }
 
+//  add ingame time (set at newgame) to current time
+//  store time in wCurDay, hHours, hMinutes, hSeconds
+void FixTime_Conv(void){
+//  second
+    uint8_t curr_sec = gb_read(hRTCSeconds);
+    uint8_t start_sec = gb_read(wStartSecond);
+    uint8_t sec = curr_sec + start_sec;
+    if(sec >= 60)
+    {
+        sec -= 60;
+    }
+    gb_write(hSeconds, sec);
+
+//  minute
+    REG_F_C = 0;  // carry is set, so turn it off
+    uint8_t curr_min = gb_read(hRTCMinutes);
+    uint8_t start_min = gb_read(wStartMinute);
+    uint8_t min = curr_min + start_min + REG_F_C;
+    if(min >= 60)
+    {
+        min -= 60;
+    }
+    gb_write(hMinutes, min);
+
+//  hour
+    REG_F_C = 0;  // carry is set, so turn it off
+    uint8_t curr_hr = gb_read(hRTCHours);
+    uint8_t start_hr = gb_read(wStartHour);
+    uint8_t hr = curr_hr + start_hr + REG_F_C;
+    if(hr >= 24)
+    {
+        hr -= 24;
+    }
+    gb_write(hHours, hr);
+
+//  day
+    REG_F_C = 0;  // carry is set, so turn it off
+    uint8_t curr_day = gb_read(hRTCDayLo);
+    uint8_t start_day = gb_read(wStartDay);
+    uint8_t day = curr_day + start_day + REG_F_C;
+    gb_write(wCurDay, day);
+}
+
 void InitTimeOfDay(void){
         XOR_A_A;
     LD_addr_A(wStringBuffer2);
@@ -207,6 +370,19 @@ void InitTimeOfDay(void){
     LD_addr_A(wStringBuffer2 + 3);
     JR(mInitTime);
 
+}
+
+void InitTimeOfDay_Conv(void){
+    // XOR_A_A;
+    // LD_addr_A(wStringBuffer2);
+    gb_write(wStringBuffer2, 0);
+
+    // LD_A(0);  // useless
+    // LD_addr_A(wStringBuffer2 + 3);
+    gb_write(wStringBuffer2 + 3, 0);
+
+    // JR(mInitTime);
+    InitTime_Conv();
 }
 
 void InitDayOfWeek(void){
@@ -221,10 +397,48 @@ void InitDayOfWeek(void){
 
 }
 
+void InitDayOfWeek_Conv(void){
+    // CALL(aUpdateTime);
+    UpdateTime_Conv();
+
+    // LDH_A_addr(hHours);
+    // LD_addr_A(wStringBuffer2 + 1);
+    gb_write(wStringBuffer2 + 1, gb_read(hHours));
+
+    // LDH_A_addr(hMinutes);
+    // LD_addr_A(wStringBuffer2 + 2);
+    gb_write(wStringBuffer2 + 2, gb_read(hMinutes));
+
+    // LDH_A_addr(hSeconds);
+    // LD_addr_A(wStringBuffer2 + 3);
+    gb_write(wStringBuffer2 + 3, gb_read(hSeconds));
+
+    // JR(mInitTime);  // useless
+}
+
 void InitTime(void){
         FARCALL(av_InitTime);
     RET;
 
+}
+
+void InitTime_Conv(void){
+    bank_push(BANK(av_InitTime));
+    v_InitTime_Conv();
+    bank_pop;
+}
+
+static void ClearClock_ClearhRTC_Conv() {
+    gb_write(hRTCSeconds, 0);
+    gb_write(hRTCMinutes, 0);
+    gb_write(hRTCHours, 0);
+    gb_write(hRTCDayLo, 0);
+    gb_write(hRTCDayHi, 0);
+}
+
+void ClearClock_Conv(void){
+    ClearClock_ClearhRTC_Conv();
+    SetClock_Conv();
 }
 
 void ClearClock(void){
@@ -242,6 +456,47 @@ ClearhRTC:
     LDH_addr_A(hRTCDayHi);
     RET;
 
+}
+
+//  set clock data from hram
+void SetClock_Conv(void){
+//  enable clock r/w
+    gb_write(MBC3SRamEnable, SRAM_ENABLE);
+
+//  set clock data
+//  stored 'backwards' in hram
+
+    LatchClock_Conv();
+    const uint16_t hl = MBC3SRamBank;
+    const uint16_t de = MBC3RTC;
+
+//  seems to be a halt check that got partially commented out
+//  this block is totally pointless
+    // LD_hl(RTC_DH);
+    // LD_A_de;
+    // BIT_A(6);  // halt
+    // LD_de_A;
+
+//  seconds
+    gb_write(hl, RTC_S);
+    gb_write(de, gb_read(hRTCSeconds));
+//  minutes
+    gb_write(hl, RTC_M);
+    gb_write(de, gb_read(hRTCMinutes));
+//  hours
+    gb_write(hl, RTC_H);
+    gb_write(de, gb_read(hRTCHours));
+//  day lo
+    gb_write(hl, RTC_DL);
+    gb_write(de, gb_read(hRTCDayLo));
+//  day hi
+    gb_write(hl, RTC_DH);
+    uint8_t dayhi = gb_read(hRTCDayHi);
+    RES_(dayhi, 6);  // make sure timer is active
+    gb_write(de, dayhi);
+
+//  cleanup
+    CloseSRAM();  // unlatch clock, disable clock r/w
 }
 
 void SetClock(void){
@@ -298,7 +553,7 @@ void ClearRTCStatus(void){
 //  clear sRTCStatusFlags
     XOR_A_A;
     PUSH_AF;
-    LD_A(BANK(sRTCStatusFlags));
+    LD_A(MBANK(asRTCStatusFlags));
     CALL(aOpenSRAM);
     POP_AF;
     LD_addr_A(sRTCStatusFlags);
@@ -311,7 +566,7 @@ void RecordRTCStatus(void){
     //  append flags to sRTCStatusFlags
     LD_HL(sRTCStatusFlags);
     PUSH_AF;
-    LD_A(BANK(sRTCStatusFlags));
+    LD_A(MBANK(asRTCStatusFlags));
     CALL(aOpenSRAM);
     POP_AF;
     OR_A_hl;
@@ -321,12 +576,47 @@ void RecordRTCStatus(void){
 
 }
 
+//  append flags to sRTCStatusFlags
+void RecordRTCStatus_Conv(uint8_t a){
+    // LD_HL(sRTCStatusFlags);
+    uint16_t hl = sRTCStatusFlags;
+
+    // PUSH_AF;
+    // LD_A(BANK(sRTCStatusFlags));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asRTCStatusFlags));
+
+    // POP_AF;
+    // OR_A_hl;
+    // LD_hl_A;
+    gb_write(hl, a | gb_read(hl));
+
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+}
+
 void CheckRTCStatus(void){
     //  check sRTCStatusFlags
-    LD_A(BANK(sRTCStatusFlags));
+    LD_A(MBANK(asRTCStatusFlags));
     CALL(aOpenSRAM);
     LD_A_addr(sRTCStatusFlags);
     CALL(aCloseSRAM);
     RET;
 
+}
+
+//  check sRTCStatusFlags
+uint8_t CheckRTCStatus_Conv(void){
+    // LD_A(BANK(sRTCStatusFlags));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asRTCStatusFlags));
+
+    // LD_A_addr(sRTCStatusFlags);
+    uint8_t flags = gb_read(sRTCStatusFlags);
+    
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+
+    // RET;
+    return flags;
 }

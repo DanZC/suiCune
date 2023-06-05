@@ -1,5 +1,9 @@
 #include "../constants.h"
 #include "vblank.h"
+#include "game_time.h"
+#include "joypad.h"
+#include "palettes.h"
+#include "video.h"
 
 //  VBlank is the interrupt responsible for updating VRAM.
 
@@ -20,6 +24,13 @@ wait:
     IF_NZ goto wait;
     return;
 }
+
+void VBlank1_Conv(void);
+void VBlank2_Conv(void);
+void VBlank3_Conv(void);
+void VBlank4_Conv(void);
+void VBlank5_Conv(void);
+void VBlank6_Conv(void);
 
 void VBlank(void) {
     PUSH_AF;
@@ -73,6 +84,33 @@ VBlanks:
     // dw ['VBlank0'];  // just in case
 
     return VBlank0();
+}
+
+void VBlank_Conv(void)
+{
+    PUSH_AF;
+    PUSH_BC;
+    PUSH_DE;
+    PUSH_HL;
+
+    switch(gb_read(hVBlank) & 7)
+    {
+        case 7:
+        case 0: VBlank0_Conv(); break;
+        case 1: VBlank1_Conv(); break;
+        case 2: VBlank2_Conv(); break;
+        case 3: VBlank3_Conv(); break;
+        case 4: VBlank4_Conv(); break;
+        case 5: VBlank5_Conv(); break;
+        case 6: VBlank6_Conv(); break;
+    }
+
+    GameTimer_Conv();
+
+    POP_HL;
+    POP_DE;
+    POP_BC;
+    POP_AF;
 }
 
 void VBlank0(void) {
@@ -179,6 +217,145 @@ ok2:
     RET;
 }
 
+void VBlank0_Conv(void) {
+        //  normal operation
+
+    //  rng
+    //  scx, scy, wy, wx
+    //  bg map buffer
+    //  palettes
+    //  dma transfer
+    //  bg map
+    //  tiles
+    //  oam
+    //  joypad
+    //  sound
+
+    uint8_t temp, carry, delay;
+
+    // inc frame counter
+    // LD_HL(hVBlankCounter);
+    // INC_hl;
+    // gb_write(hVBlankCounter, gb_read(hVBlankCounter) + 1);
+    hram->hVBlankCounter++;
+
+    // advance random variables
+    // LDH_A_addr(rDIV);
+    // LD_B_A;
+    // LDH_A_addr(hRandomAdd);
+    // ADC_A_B;
+    // LDH_addr_A(hRandomAdd);
+    temp = gb_read(rDIV);
+    carry = ((uint16_t)temp + (uint16_t)gb_read(hRandomAdd) > 0xff)? 1: 0;
+    gb_write(hRandomAdd, (temp + gb_read(hRandomAdd) + REG_F_C) & 0xff);
+    REG_F_C = carry;
+
+    // LDH_A_addr(rDIV);
+    // LD_B_A;
+    // LDH_A_addr(hRandomSub);
+    // SBC_A_B;
+    // LDH_addr_A(hRandomSub);
+    temp = gb_read(rDIV);
+    carry = (temp > hram->hRandomSub)? 1: 0;
+    hram->hRandomSub = (temp - hram->hRandomSub - REG_F_C) & 0xff;
+    // gb_write(hRandomSub, (temp - gb_read(hRandomSub) - REG_F_C) & 0xff);
+    REG_F_C = carry;
+
+    // LDH_A_addr(hROMBank);
+    // LDH_addr_A(hROMBankBackup);
+    gb_write(hROMBankBackup, gb_read(hROMBank));
+
+    // LDH_A_addr(hSCX);
+    // LDH_addr_A(rSCX);
+    gb_write(rSCX, gb_read(hSCX));
+
+    // LDH_A_addr(hSCY);
+    // LDH_addr_A(rSCY);
+    gb_write(rSCY, gb_read(hSCY));
+
+    // LDH_A_addr(hWY);
+    // LDH_addr_A(rWY);
+    gb_write(rWY, gb_read(hWY));
+
+    // LDH_A_addr(hWX);
+    // LDH_addr_A(rWX);
+    gb_write(rWX, gb_read(hWX));
+
+    // There's only time to call one of these in one vblank.
+    // Calls are in order of priority.
+
+    do {
+        // CALL(aUpdateBGMapBuffer);
+        // IF_C goto done;
+        if(UpdateBGMapBuffer_Conv()) break;
+
+        // CALL(aUpdatePalsIfCGB);
+        // IF_C goto done;
+        if(UpdateCGBPals_Conv()) break;
+
+        // CALL(aDMATransfer);
+        // IF_C break;
+        if(DMATransfer_Conv()) break;
+
+        CALL(aUpdateBGMap);
+        // UpdateBGMap_Conv();
+
+        // These have their own timing checks.
+
+        CALL(aServe2bppRequest);
+        CALL(aServe1bppRequest);
+        CALL(aAnimateTileset);
+    } while(0);
+done:
+    
+    // LDH_A_addr(hOAMUpdate);
+    // AND_A_A;
+    // IF_NZ goto done_oam;
+    if(gb_read(hOAMUpdate) == 0)
+        TransferVirtualOAM();
+    
+    // vblank-sensitive operations are done
+
+    // XOR_A_A;
+    // LD_addr_A(wVBlankOccurred);
+    gb_write(wVBlankOccurred, 0);
+
+    // LD_A_addr(wOverworldDelay);
+    // AND_A_A;
+    // IF_Z goto ok;
+    delay = gb_read(wOverworldDelay);
+    if(delay != 0) {
+        // DEC_A;
+        // LD_addr_A(wOverworldDelay);
+        gb_write(wOverworldDelay, delay - 1);
+    }
+    
+    // LD_A_addr(wTextDelayFrames);
+    // AND_A_A;
+    // IF_Z goto ok2;
+    delay = gb_read(wTextDelayFrames);
+    if(delay != 0) {
+        // DEC_A;
+        // LD_addr_A(wTextDelayFrames);
+        gb_write(wTextDelayFrames, delay - 1);
+    }
+    
+    // CALL(aUpdateJoypad);
+    UpdateJoypad_Conv();
+
+    // LD_A(BANK(av_UpdateSound));
+    // RST(mBankswitch);
+    Bankswitch_Conv(BANK(av_UpdateSound));
+    CALL(av_UpdateSound);
+    // LDH_A_addr(hROMBankBackup);
+    // RST(mBankswitch);
+    Bankswitch_Conv(gb_read(hROMBankBackup));
+
+    // LDH_A_addr(hSeconds);
+    // LDH_addr_A(hUnusedBackup);
+    gb_write(hUnusedBackup, gb_read(hSeconds));
+}
+
 void VBlank2(void) {
         //  sound only
 
@@ -195,6 +372,15 @@ void VBlank2(void) {
     XOR_A_A;
     LD_addr_A(wVBlankOccurred);
     RET;
+}
+
+void VBlank2_Conv(void) {
+    gb_write(hROMBankBackup, gb_read(hROMBank));
+    Bankswitch_Conv(BANK(av_UpdateSound));
+    CALL(av_UpdateSound);
+    Bankswitch_Conv(gb_read(hROMBankBackup));
+    gb_write(wVBlankOccurred, 0);
+    // CALL(aVBlank2);
 }
 
 void VBlank1(void) {
@@ -262,6 +448,10 @@ done:
     LD_A_B;
     LDH_addr_A(rIF);
     RET;
+}
+
+void VBlank1_Conv(void) {
+    CALL(aVBlank1);
 }
 
 void UpdatePals(void) {
@@ -349,6 +539,10 @@ done:
     RET;
 }
 
+void VBlank3_Conv(void) {
+    CALL(aVBlank3);
+}
+
 void VBlank4(void) {
         //  bg map
     //  tiles
@@ -379,6 +573,10 @@ void VBlank4(void) {
     LDH_A_addr(hROMBankBackup);
     RST(mBankswitch);
     RET;
+}
+
+void VBlank4_Conv(void) {
+    CALL(aVBlank4);
 }
 
 void VBlank5(void) {
@@ -431,6 +629,10 @@ done:
     RET;
 }
 
+void VBlank5_Conv(void) {
+    CALL(aVBlank5);
+}
+
 void VBlank6(void) {
         //  palettes
     //  tiles
@@ -463,4 +665,8 @@ done:
     LDH_A_addr(hROMBankBackup);
     RST(mBankswitch);
     RET;
+}
+
+void VBlank6_Conv(void) {
+    CALL(aVBlank6);
 }

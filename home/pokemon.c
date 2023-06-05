@@ -1,5 +1,6 @@
 #include "../constants.h"
 #include "pokemon.h"
+#include "array.h"
 
 void IsAPokemon(void){
     //  Return carry if species a is not a Pokemon.
@@ -20,6 +21,20 @@ Pokemon:
         AND_A_A;
     RET;
 
+}
+
+bool IsAPokemon_Conv(uint8_t species) {
+    // Pokemon index 0 is not a pokemon
+    if(species == 0) return false;
+
+    // Eggs are pokemon
+    if(species == EGG) return true;
+
+    // Pokemon indicies in range are pokemon
+    if(species <= NUM_POKEMON) return true;
+
+    // Everything else is not a pokemon
+    return false;
 }
 
 void DrawBattleHPBar(void){
@@ -221,6 +236,30 @@ void LoadCry(void){
 
 }
 
+uint16_t LoadCry_Conv(uint8_t a){
+    //  Load cry bc.
+    int16_t index = GetCryIndex_Conv(a);
+    if(index < 0) return 0;
+    uint16_t i = (uint16_t)index;
+
+    uint8_t oldBank = gb_read(hROMBank);
+    Bankswitch_Conv(BANK(aPokemonCries));
+
+    uint16_t hl = mPokemonCries + (MON_CRY_LENGTH * i);
+
+    uint16_t de = gb_read16(hl);
+    hl += 2;
+
+    gb_write(wCryPitch, gb_read(hl++));
+    gb_write(wCryPitch + 1, gb_read(hl++));
+    gb_write(wCryLength, gb_read(hl++));
+    gb_write(wCryLength + 1, gb_read(hl));
+
+    Bankswitch_Conv(oldBank);
+
+    return de;
+}
+
 void GetCryIndex(void){
         AND_A_A;
     IF_Z goto no;
@@ -238,6 +277,12 @@ no:
         SCF;
     RET;
 
+}
+
+int16_t GetCryIndex_Conv(uint8_t index){
+    if(index == 0 || index >= (NUM_POKEMON + 1))
+        return -1;
+    return (index - 1);
 }
 
 void PrintLevel(void){
@@ -347,6 +392,49 @@ end:
 
 }
 
+void CopyBytes_Conv(uint16_t de, uint16_t hl, uint16_t bc);
+
+void GetBaseData_Conv(void){
+    uint8_t oldBank = gb_read(hROMBank);
+    Bankswitch_Conv(BANK(aBaseData));
+
+//  Egg doesn't have BaseData
+    uint8_t species = gb_read(wCurSpecies);
+    if(species == EGG)
+    {
+        //LD_DE(mUnusedEggPic);
+
+    //  Sprite dimensions
+        gb_write(wBasePicSize, 0x55);  // 5x5
+
+    //  Beta front and back sprites
+    //  (see pokegold-spaceworld's data/pokemon/base_stats/*)
+        gb_write16(wBaseUnusedFrontpic,     mUnusedEggPic);
+        gb_write16(wBaseUnusedFrontpic + 2, mUnusedEggPic);
+    }
+    else 
+    {
+
+    //  Get BaseData
+        species--;
+        //DEC_A;
+        uint16_t hl = mBaseData + (BASE_DATA_SIZE * species);
+        uint16_t de = wCurBaseData;
+        CopyBytes_Conv(de, hl, BASE_DATA_SIZE);
+        //LD_BC(BASE_DATA_SIZE);
+        //LD_HL(mBaseData);
+        //CALL(aAddNTimes);
+        //LD_DE(wCurBaseData);
+        //LD_BC(BASE_DATA_SIZE);
+        //CALL(aCopyBytes);
+    }
+
+    //  Replace Pokedex # with species
+    gb_write(wBaseDexNo, gb_read(wCurSpecies));
+
+    Bankswitch_Conv(oldBank);
+}
+
 void GetCurNickname(void){
         LD_A_addr(wCurPartyMon);
     LD_HL(wPartyMonNicknames);
@@ -374,4 +462,33 @@ void GetNickname(void){
     POP_HL;
     RET;
 
+}
+
+//  Get nickname a from list hl.
+void GetNickname_Conv(uint16_t hl, uint8_t a){
+    // PUSH_HL;
+    // PUSH_BC;
+
+    // CALL(aSkipNames);
+    hl = SkipNames_Conv(hl, a);
+
+    // LD_DE(wStringBuffer1);
+
+    CopyBytes_Conv(wStringBuffer1, hl, MON_NAME_LENGTH);
+
+    //PUSH_DE;
+    //LD_BC(MON_NAME_LENGTH);
+    //CALL(aCopyBytes);
+    //POP_DE;
+
+    CALLFAR(aCorrectNickErrors);
+
+    // POP_BC;
+    // POP_HL;
+    // RET;
+
+}
+
+void GetCurNickname_Conv(void){
+    return GetNickname_Conv(wPartyMonNicknames, gb_read(wCurPartyMon));
 }

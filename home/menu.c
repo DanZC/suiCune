@@ -1,5 +1,6 @@
 #include "../constants.h"
 #include "menu.h"
+#include "copy.h"
 
 void Load2DMenuData(void) {
     PUSH_HL;
@@ -77,7 +78,9 @@ void GetMenuJoypad(void) {
 
 void GetMenuJoypad_Conv(void)
 {
-    REG_A = ((gb_read(hJoyLast) & D_PAD) | (gb_read(hJoyPressed) & BUTTONS));
+    uint8_t pad_last = (gb_read(hJoyLast) & (D_PAD));
+    uint8_t button_last = (gb_read(hJoyPressed) & (BUTTONS));
+    REG_A = (pad_last | button_last);
 }
 
 void PlaceHollowCursor(void) {
@@ -98,11 +101,8 @@ void HideCursor(void) {
     RET;
 }
 
-void HideCursor_Conv(void)
-{
-    REG_L = gb_read(wCursorCurrentTile);
-    REG_H = gb_read(wCursorCurrentTile + 1);
-    gb_write(REG_HL, 0x7f);
+void HideCursor_Conv(void){
+    gb_write(gb_read16(wCursorCurrentTile), 0x7f);
 }
 
 void PushWindow(void) {
@@ -177,6 +177,15 @@ loop:
     RET;
 }
 
+void PopWindow_Conv(uint16_t hl) {
+    uint8_t i = wMenuHeaderEnd - wMenuHeader;
+    uint16_t de = wMenuHeader;
+
+    do {
+        gb_write(de++, gb_read(hl--));
+    } while(--i != 0);
+}
+
 void GetMenuBoxDims(void) {
     LD_A_addr(wMenuBorderTopCoord);  // top
     LD_B_A;
@@ -189,6 +198,15 @@ void GetMenuBoxDims(void) {
     SUB_A_C;
     LD_C_A;
     RET;
+}
+
+void GetMenuBoxDims_Conv(uint8_t* w, uint8_t* h) {
+    uint8_t top = gb_read(wMenuBorderTopCoord);  // top
+    uint8_t bottom = gb_read(wMenuBorderBottomCoord);  // bottom
+    uint8_t left = gb_read(wMenuBorderLeftCoord); // left
+    uint8_t right = gb_read(wMenuBorderRightCoord); // right
+    *h = bottom - top; 
+    *w = right - left;
 }
 
 void CopyMenuData(void) {
@@ -210,6 +228,28 @@ void CopyMenuData(void) {
     RET;
 }
 
+void CopyMenuData_Conv(void) {
+    // LD_HL(wMenuDataPointer);
+    uint16_t hl = wMenuDataPointer;
+
+    // LD_A_hli;
+    uint16_t l = gb_read(hl++);
+
+    // LD_H_hl;
+    // LD_L_A;
+    uint16_t h = gb_read(hl);
+    hl = (h << 8) | l;
+
+    // LD_DE(wMenuData);
+    uint16_t de = wMenuData;
+
+    // LD_BC(wMenuDataEnd - wMenuData);
+    uint16_t bc = (wMenuDataEnd - wMenuData);
+
+    // CALL(aCopyBytes);
+    CopyBytes_Conv(de, hl, bc);
+}
+
 void GetWindowStackTop(void) {
     LD_HL(wWindowStackPointer);
     LD_A_hli;
@@ -220,6 +260,12 @@ void GetWindowStackTop(void) {
     LD_H_hl;
     LD_L_A;
     RET;
+}
+
+uint16_t GetWindowStackTop_Conv(void) {
+    uint16_t hl = (gb_read(wWindowStackPointer + 1) << 8) | gb_read(wWindowStackPointer);
+    hl = (gb_read(hl + 2) << 8) | gb_read(hl + 1);
+    return hl;
 }
 
 void PlaceVerticalMenuItems(void) {
@@ -320,6 +366,16 @@ void MenuBoxCoord2Tile(void) {
     return Coord2Tile();
 }
 
+uint16_t MenuBoxCoord2Tile_Conv(void) {
+    // LD_A_addr(wMenuBorderLeftCoord);
+    // LD_C_A;
+    // LD_A_addr(wMenuBorderTopCoord);
+    // LD_B_A;
+    // fallthrough
+
+    return Coord2Tile_Conv(gb_read(wMenuBorderLeftCoord), gb_read(wMenuBorderTopCoord));
+}
+
 void Coord2Tile(void) {
     //  Return the address of wTilemap(c, b) in hl.
     XOR_A_A;
@@ -340,6 +396,45 @@ void Coord2Tile(void) {
     bccoord(0, 0, wTilemap);
     ADD_HL_BC;
     RET;
+}
+
+//  Return the address of wTilemap(c, b) in hl.
+uint16_t Coord2Tile_Conv(uint8_t c, uint8_t b) {
+    // XOR_A_A;
+    // LD_H_A;
+    // LD_L_B;
+    uint16_t hl = b;
+
+    // LD_A_C;
+    uint16_t a = c;
+
+    // LD_B_H;
+    // LD_C_L;
+    uint16_t bc = hl;
+
+    // ADD_HL_HL;
+    // ADD_HL_HL;
+    hl += (2 * hl);
+
+    // ADD_HL_BC;
+    hl += bc;
+
+    // ADD_HL_HL;
+    // ADD_HL_HL;
+    hl += (2 * hl);
+
+    // LD_C_A;
+    // XOR_A_A;
+    // LD_B_A;
+    // ADD_HL_BC;
+    hl += a;
+
+    // bccoord(0, 0, wTilemap);
+    // ADD_HL_BC;
+    hl += coord(0, 0, wTilemap);
+
+    // RET;
+    return hl;
 }
 
 void MenuBoxCoord2Attr(void) {
@@ -381,6 +476,13 @@ void LoadMenuHeader(void) {
     RET;
 }
 
+void LoadMenuHeader_Conv(uint16_t hl) {
+    // CALL(aCopyMenuHeader);
+    CopyMenuHeader_Conv(hl);
+    CALL(aPushWindow);
+    RET;
+}
+
 void CopyMenuHeader(void) {
     LD_DE(wMenuHeader);
     LD_BC(wMenuHeaderEnd - wMenuHeader);
@@ -390,9 +492,26 @@ void CopyMenuHeader(void) {
     RET;
 }
 
+void CopyMenuHeader_Conv(uint16_t hl) {
+    // LD_DE(wMenuHeader);
+    // LD_BC(wMenuHeaderEnd - wMenuHeader);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv(wMenuHeader, hl, (wMenuHeaderEnd - wMenuHeader));
+
+    // LDH_A_addr(hROMBank);
+    // LD_addr_A(wMenuDataBank);
+    gb_write(wMenuDataBank, gb_read(hROMBank));
+}
+
 void StoreMenuCursorPosition(void) {
     LD_addr_A(wMenuCursorPosition);
     RET;
+}
+
+void StoreMenuCursorPosition_Conv(uint8_t a) {
+    // LD_addr_A(wMenuCursorPosition);
+    // RET;
+    gb_write(wMenuCursorPosition, a);
 }
 
 void MenuTextbox(void) {
@@ -886,7 +1005,7 @@ void ClearWindowData(void) {
 
     LDH_A_addr(rSVBK);
     PUSH_AF;
-    LD_A(BANK(wWindowStack));
+    LD_A(MBANK(awWindowStack));
     LDH_addr_A(rSVBK);
 
     XOR_A_A;
@@ -910,6 +1029,40 @@ ClearMenuData:
     XOR_A_A;
     CALL(aByteFill);
     RET;
+}
+
+void ClearWindowData_Conv(void) {
+    ByteFill_Conv(wMenuMetadata, (wMenuMetadataEnd - wMenuMetadata), 0);
+    ByteFill_Conv(wMenuHeader, (wMenuHeaderEnd - wMenuHeader), 0);
+    ByteFill_Conv(wMenuData, (wMenuDataEnd - wMenuData), 0);
+    ByteFill_Conv(wMoreMenuData, (wMoreMenuDataEnd - wMoreMenuData), 0);
+
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    uint8_t oldvbk = gb_read(rSVBK);
+
+    // LD_A(BANK(wWindowStack));
+    // LDH_addr_A(rSVBK);
+    gb_write(rSVBK, MBANK(awWindowStack));
+
+    // XOR_A_A;
+    // LD_HL(wWindowStackBottom);
+    // LD_hld_A;
+    gb_write(wWindowStackBottom, 0);
+    // LD_hld_A;
+    gb_write(wWindowStackBottom - 1, 0);
+
+    // LD_A_L;
+    // LD_addr_A(wWindowStackPointer);
+    gb_write(wWindowStackPointer, LOW(wWindowStackBottom - 2));
+    // LD_A_H;
+    // LD_addr_A(wWindowStackPointer + 1);
+    gb_write(wWindowStackPointer + 1, HIGH(wWindowStackBottom - 2));
+
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    gb_write(rSVBK, oldvbk);
+    // RET;
 }
 
 void MenuClickSound(void) {

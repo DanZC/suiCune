@@ -1,0 +1,9 @@
+void QueueBattleAnimation(void);
+void DeinitBattleAnimation(void);
+void InitBattleAnimation(void);
+void BattleAnimOAMUpdate(void);
+void InitBattleAnimBuffer(void);
+void GetBattleAnimTileOffset(void);
+void v_ExecuteBGEffects(void);
+void v_QueueBGEffect(void);
+//#include "data/battle_anims/objects.h"

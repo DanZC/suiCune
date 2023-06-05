@@ -1,5 +1,7 @@
 #include "../constants.h"
 #include "init.h"
+#include "sram.h"
+#include "copy.h"
 
 void Reset(void) {
         NOP;
@@ -65,7 +67,8 @@ void Init(void) {
 wait:
         LDH_A_addr(rLY);
     CP_A(LY_VBLANK + 1);
-    IF_NZ goto wait;
+    // IF_NZ goto wait;
+    NOP;
 
     XOR_A_A;
     LDH_addr_A(rLCDC);
@@ -195,6 +198,27 @@ clear:
     RET;
 }
 
+static void ClearVRAM_clear_Conv(void) {
+    // LD_HL(VRAM_Begin);
+    // LD_BC(VRAM_End - VRAM_Begin);
+    // XOR_A_A;
+    // CALL(aByteFill);
+    ByteFill_Conv(VRAM_Begin, (VRAM_End - VRAM_Begin), 0);
+}
+
+//  Wipe VRAM banks 0 and 1
+void ClearVRAM_Conv(void) {
+    // LD_A(1);
+    // LDH_addr_A(rVBK);
+    gb_write(rVBK, 1);
+    ClearVRAM_clear_Conv();
+
+    // XOR_A_A;  // 0
+    // LDH_addr_A(rVBK);
+    gb_write(rVBK, 0);
+    ClearVRAM_clear_Conv();
+}
+
 void ClearWRAM(void) {
         //  Wipe swappable WRAM banks (1-7)
     //  Assumes CGB or AGB
@@ -215,10 +239,34 @@ bank_loop:
     RET;
 }
 
+//  Wipe swappable WRAM banks (1-7)
+//  Assumes CGB or AGB
+void ClearWRAM_Conv(void) {
+    // LD_A(1);
+    uint8_t a = 1;
+
+    do {
+        // PUSH_AF;
+        // LDH_addr_A(rSVBK);
+        gb_write(rSVBK, a);
+
+        // XOR_A_A;
+        // LD_HL(WRAM1_Begin);
+        // LD_BC(WRAM1_End - WRAM1_Begin);
+        // CALL(aByteFill);
+        ByteFill_Conv(WRAM1_Begin, (WRAM1_End - WRAM1_Begin), 0);
+
+        // POP_AF;
+        // INC_A;
+        // CP_A(8);
+        // IF_NC goto bank_loop;  // Should be jr c
+    } while(++a < 8);
+}
+
 void ClearsScratch(void) {
         //  Wipe the first 32 bytes of sScratch
 
-    LD_A(BANK(sScratch));
+    LD_A(MBANK(asScratch));
     CALL(aOpenSRAM);
     LD_HL(sScratch);
     LD_BC(0x20);
@@ -226,4 +274,21 @@ void ClearsScratch(void) {
     CALL(aByteFill);
     CALL(aCloseSRAM);
     RET;
+}
+
+//  Wipe the first 32 bytes of sScratch
+void ClearsScratch_Conv(void) {
+    // LD_A(BANK(sScratch));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asScratch));
+
+    // LD_HL(sScratch);
+    // LD_BC(0x20);
+    // XOR_A_A;
+    // CALL(aByteFill);
+    ByteFill_Conv(sScratch, 0x20, 0);
+
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
 }

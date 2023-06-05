@@ -40,6 +40,17 @@ mod:
 
 }
 
+uint8_t GetWeekday_Conv(void){
+    // LD_A_addr(wCurDay);
+    uint8_t day = gb_read(wCurDay);
+// mod:
+//         SUB_A(7);
+//     IF_NC goto mod;
+//     ADD_A(7);
+//     RET;
+    return day % 7;
+}
+
 void SetSeenAndCaughtMon(void){
         PUSH_AF;
     LD_C_A;

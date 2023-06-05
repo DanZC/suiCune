@@ -508,7 +508,7 @@ void GetBallAnimPal(void) {
     LD_HL(mBallColors);
     LDH_A_addr(rSVBK);
     PUSH_AF;
-    LD_A(BANK(wCurItem));
+    LD_A(MBANK(awCurItem));
     LDH_addr_A(rSVBK);
     LD_A_addr(wCurItem);
     LD_E_A;

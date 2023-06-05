@@ -8,3 +8,5 @@ void VBlank3(void);
 void VBlank4(void);
 void VBlank5(void);
 void VBlank6(void);
+void VBlank_Conv(void);
+void VBlank0_Conv(void);
