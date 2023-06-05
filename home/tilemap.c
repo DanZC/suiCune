@@ -96,8 +96,7 @@ dmg:
 }
 
 void ApplyTilemap_Conv(void) {
-    if(gb_read(hCGB) == 0 || gb_read(wSpriteUpdatesEnabled) == 0)
-    {
+    if(gb_read(hCGB) == 0 || gb_read(wSpriteUpdatesEnabled) == 0) {
         //  WaitBGMap
         gb_write(hBGMapMode, 1);
         // LD_C(4);
@@ -238,7 +237,7 @@ loop:
     LDH_A_addr(hTilesPerCycle);
     DEC_A;
     LDH_addr_A(hTilesPerCycle);
-    // IF_NZ goto loop;
+    IF_NZ goto loop;
 
     LDH_A_addr(hSPBuffer);
     LD_L_A;

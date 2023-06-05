@@ -45,11 +45,9 @@ void DelayFrames(void){
 
 
 void DelayFrames_Conv(uint8_t count) {
-    do
-    {
+    do {
         //  Wait for one frame
-        gb_write(wVBlankOccurred, 1);
-        CALL(aVBlank);
+        VBlank_Conv();
         gb_finish_frame();
     } while(--count > 0);
 }

@@ -553,7 +553,7 @@ void ClearRTCStatus(void){
 //  clear sRTCStatusFlags
     XOR_A_A;
     PUSH_AF;
-    LD_A(BANK(sRTCStatusFlags));
+    LD_A(MBANK(asRTCStatusFlags));
     CALL(aOpenSRAM);
     POP_AF;
     LD_addr_A(sRTCStatusFlags);
@@ -566,7 +566,7 @@ void RecordRTCStatus(void){
     //  append flags to sRTCStatusFlags
     LD_HL(sRTCStatusFlags);
     PUSH_AF;
-    LD_A(BANK(sRTCStatusFlags));
+    LD_A(MBANK(asRTCStatusFlags));
     CALL(aOpenSRAM);
     POP_AF;
     OR_A_hl;
@@ -584,7 +584,7 @@ void RecordRTCStatus_Conv(uint8_t a){
     // PUSH_AF;
     // LD_A(BANK(sRTCStatusFlags));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(BANK(sRTCStatusFlags));
+    OpenSRAM_Conv(MBANK(asRTCStatusFlags));
 
     // POP_AF;
     // OR_A_hl;
@@ -597,7 +597,7 @@ void RecordRTCStatus_Conv(uint8_t a){
 
 void CheckRTCStatus(void){
     //  check sRTCStatusFlags
-    LD_A(BANK(sRTCStatusFlags));
+    LD_A(MBANK(asRTCStatusFlags));
     CALL(aOpenSRAM);
     LD_A_addr(sRTCStatusFlags);
     CALL(aCloseSRAM);
@@ -609,7 +609,7 @@ void CheckRTCStatus(void){
 uint8_t CheckRTCStatus_Conv(void){
     // LD_A(BANK(sRTCStatusFlags));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(BANK(sRTCStatusFlags));
+    OpenSRAM_Conv(MBANK(asRTCStatusFlags));
 
     // LD_A_addr(sRTCStatusFlags);
     uint8_t flags = gb_read(sRTCStatusFlags);

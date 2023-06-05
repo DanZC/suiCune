@@ -2786,6 +2786,16 @@
 
 #define bank_pop Bankswitch_Conv(oldBank);
 
+#define farcall(_x, ...) \
+    do {                                                     \
+        uint8_t oldBank = gb_read(hROMBank);                 \
+        Bankswitch_Conv(BANK(a##_x));                        \
+        _x##_Conv(__VA_ARGS__);                              \
+        Bankswitch_Conv(oldBank);                            \
+    } while (0)
+
+#define bit_test(_x, _n) (((_x) >> (_n)) & 0x1)
+
 #define calc_sin_wave \
     do {\
         AND_A(0b111111); \

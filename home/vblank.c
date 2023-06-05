@@ -236,7 +236,8 @@ void VBlank0_Conv(void) {
     // inc frame counter
     // LD_HL(hVBlankCounter);
     // INC_hl;
-    gb_write(hVBlankCounter, gb_read(hVBlankCounter) + 1);
+    // gb_write(hVBlankCounter, gb_read(hVBlankCounter) + 1);
+    hram->hVBlankCounter++;
 
     // advance random variables
     // LDH_A_addr(rDIV);
@@ -255,7 +256,7 @@ void VBlank0_Conv(void) {
     // SBC_A_B;
     // LDH_addr_A(hRandomSub);
     temp = gb_read(rDIV);
-    carry = (temp > gb_read(hRandomSub))? 1: 0;
+    carry = (temp > hram->hRandomSub)? 1: 0;
     hram->hRandomSub = (temp - hram->hRandomSub - REG_F_C) & 0xff;
     // gb_write(hRandomSub, (temp - gb_read(hRandomSub) - REG_F_C) & 0xff);
     REG_F_C = carry;
@@ -374,7 +375,12 @@ void VBlank2(void) {
 }
 
 void VBlank2_Conv(void) {
-    CALL(aVBlank2);
+    gb_write(hROMBankBackup, gb_read(hROMBank));
+    Bankswitch_Conv(BANK(av_UpdateSound));
+    CALL(av_UpdateSound);
+    Bankswitch_Conv(gb_read(hROMBankBackup));
+    gb_write(wVBlankOccurred, 0);
+    // CALL(aVBlank2);
 }
 
 void VBlank1(void) {

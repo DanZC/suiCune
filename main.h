@@ -8,7 +8,7 @@
 //#include "engine/gfx/load_push_oam.h"
 #include "engine/overworld/map_objects.h"
 #include "engine/menus/intro_menu.h"
-//#include "engine/overworld/init_map.h"
+#include "engine/overworld/init_map.h"
 //#include "engine/pokemon/learn.h"
 //#include "engine/pokemon/correct_nick_errors.h"
 #include "engine/math/math.h"
@@ -188,7 +188,7 @@
 //#include "engine/events/checksave.h"
 //#include "data/maps/scenes.h"
 //#include "engine/overworld/load_map_part.h"
-//#include "engine/phone/phonering_copytilemapatonce.h"
+#include "engine/phone/phonering_copytilemapatonce.h"
 
 // SECTION "bank13_2", ROMX
 
@@ -209,7 +209,7 @@
 //#include "engine/events/battle_tower/get_trainer_class.h"
 #include "engine/battle/sliding_intro.h"
 //#include "mobile/print_opp_message.h"
-//#include "engine/battle/check_battle_scene.h"
+#include "engine/battle/check_battle_scene.h"
 //#include "engine/movie/gbc_only.h"
 //#include "engine/events/poke_seer.h"
 
@@ -597,7 +597,7 @@
 
 // SECTION "bank77", ROMX
 
-//#include "engine/rtc/print_hours_mins.h"
+#include "engine/rtc/print_hours_mins.h"
 //#include "engine/events/diploma.h"
 //#include "engine/pokedex/pokedex_3.h"
 //#include "engine/events/catch_tutorial_input.h"

@@ -144,7 +144,7 @@ void SaveRTC(void){
     LD_A(RTC_DH);
     LD_addr_A(MBC3SRamBank);
     RES_hl(7);
-    LD_A(BANK(sRTCStatusFlags));
+    LD_A(MBANK(asRTCStatusFlags));
     LD_addr_A(MBC3SRamBank);
     XOR_A_A;
     LD_addr_A(sRTCStatusFlags);
@@ -170,7 +170,7 @@ void SaveRTC_Conv(void){
 
     // LD_A(BANK(sRTCStatusFlags));
     // LD_addr_A(MBC3SRamBank);
-    gb_write(MBC3SRamBank, BANK(sRTCStatusFlags));
+    gb_write(MBC3SRamBank, MBANK(asRTCStatusFlags));
 
     // XOR_A_A;
     // LD_addr_A(sRTCStatusFlags);
@@ -280,7 +280,7 @@ void ClockContinue(void){
 time_overflow:
     FARCALL(aClearDailyTimers);
     FARCALL(aFunction170923);
-    LD_A(BANK(s5_aa8c));  // aka BANK(s5_b2fa)
+    LD_A(MBANK(as5_aa8c));  // aka BANK(s5_b2fa)
     CALL(aOpenSRAM);
     LD_A_addr(s5_aa8c);
     INC_A;
@@ -339,7 +339,7 @@ void ClockContinue_Conv(void){
 
     // LD_A(BANK(s5_aa8c));  // aka BANK(s5_b2fa)
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(BANK(s5_aa8c));
+    OpenSRAM_Conv(MBANK(as5_aa8c));
 
     // LD_A_addr(s5_aa8c);
     // INC_A;

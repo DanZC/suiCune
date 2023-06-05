@@ -1,1106 +1,363 @@
-//  ScriptCommandTable indexes (see engine/overworld/scripting.asm)
+// ScriptCommandTable indexes (see engine/overworld/scripting.asm)
+#define _dw(_w) LOW(_w), HIGH(_w)
+#define _dba(_a) BANK(a##_a), _dw(m##_a)
+#define _dt(_t) _dw(_t), (((_t) >> 16) & 0xff)
+#define MAP_ID(_a) MAPGROUP_##_a, MAP_##_a
 
-#define _DW(_w) LO(_w), HI(_w)
-#define _DBA(_a) BANK(_a), _DW(_a)
-
-/*
-	const_def
-
-	const scall_command ; $00
-scall: MACRO
-	db scall_command
-	dw \1 ; pointer
-ENDM
-*/
+#define overloadselect2(_1,_2,NAME,...) NAME
+#define overloadselect3(_1,_2,_3,NAME,...) NAME
+#define overloadselect6(_1,_2,_3,_4,_5,_6,NAME,...) NAME
 
 enum {
-    CMD_SCALL,
-    CMD_SJUMP = 0x03,
-    CMD_FARSJUMP,
-    CMD_MEMJUMP,
-    CMD_IFEQUAL,
-    CMD_IFNOTEQUAL,
-    CMD_IFFALSE,
-    CMD_IFTRUE,
+    CMD_SCALL, // $00
+    CMD_FARSCALL, // $01
+    CMD_MEMCALL, // $02
+    CMD_SJUMP, // $03
+    CMD_FARSJUMP, // $04
+    CMD_MEMJUMP, // $05
+    CMD_IFEQUAL, // $06
+    CMD_IFNOTEQUAL, // $07
+    CMD_IFFALSE, // $08
+    CMD_IFTRUE, // $09
+    CMD_IFGREATER, // $0a
+    CMD_IFLESS, // $0b
+    CMD_JUMPSTD, // $0c
+    CMD_CALLSTD, // $0d
+    CMD_CALLASM, // $0e
+    CMD_SPECIAL, // $0f
+    CMD_MEMCALLASM, // $10
+    CMD_CHECKMAPSCENE, // $11
+    CMD_SETMAPSCENE, // $12
+    CMD_CHECKSCENE, // $13
+    CMD_SETSCENE, // $14
+    CMD_SETVAL, // $15
+    CMD_ADDVAL, // $16
+    CMD_RANDOM, // $17
+    CMD_CHECKVER, // $18
+    CMD_READMEM, // $19
+    CMD_WRITEMEM, // $1a
+    CMD_LOADMEM, // $1b
+    CMD_READVAR, // $1c
+    CMD_WRITEVAR, // $1d
+    CMD_LOADVAR, // $1e
+    CMD_GIVEITEM, // $1f
+    CMD_TAKEITEM, // $20
+    CMD_CHECKITEM, // $21
+    CMD_GIVEMONEY, // $22
+    CMD_TAKEMONEY, // $23
+    CMD_CHECKMONEY, // $24
+    CMD_GIVECOINS, // $25
+    CMD_TAKECOINS, // $26
+    CMD_CHECKCOINS, // $27
+    CMD_ADDCELLNUM, // $28
+    CMD_DELCELLNUM, // $29
+    CMD_CHECKCELLNUM, // $2a
+    CMD_CHECKTIME, // $2b
+    CMD_CHECKPOKE, // $2c
+    CMD_GIVEPOKE, // $2d
+    CMD_GIVEEGG, // $2e
+    CMD_GIVEPOKEMAIL, // $2f
+    CMD_CHECKPOKEMAIL, // $30
+    CMD_CHECKEVENT, // $31
+    CMD_CLEAREVENT, // $32
+    CMD_SETEVENT, // $33
+    CMD_CHECKFLAG, // $34
+    CMD_CLEARFLAG, // $35
+    CMD_SETFLAG, // $36
+    CMD_WILDON, // $37
+    CMD_WILDOFF, // $38
+    CMD_XYCOMPARE, // $39
+    CMD_WARPMOD, // $3a
+    CMD_BLACKOUTMOD, // $3b
+    CMD_WARP, // $3c
+    CMD_GETMONEY, // $3d
+    CMD_GETCOINS, // $3e
+    CMD_GETNUM, // $3f
+    CMD_GETMONNAME, // $40
+    CMD_GETITEMNAME, // $41
+    CMD_GETCURLANDMARKNAME, // $42
+    CMD_GETTRAINERNAME, // $43
+    CMD_GETSTRING, // $44
+    CMD_ITEMNOTIFY, // $45
+    CMD_POCKETISFULL, // $46
+    CMD_OPENTEXT, // $47
+    CMD_REFRESHSCREEN, // $48
+    CMD_CLOSETEXT, // $49
+    CMD_WRITEUNUSEDBYTE, // $4a
+    CMD_FARWRITETEXT, // $4b
+    CMD_WRITETEXT, // $4c
+    CMD_REPEATTEXT, // $4d
+    CMD_YESORNO, // $4e
+    CMD_LOADMENU, // $4f
+    CMD_CLOSEWINDOW, // $50
+    CMD_JUMPTEXTFACEPLAYER, // $51
+    CMD_FARJUMPTEXT, // $52
+    CMD_JUMPTEXT, // $53
+    CMD_WAITBUTTON, // $54
+    CMD_PROMPTBUTTON, // $55
+    CMD_POKEPIC, // $56
+    CMD_CLOSEPOKEPIC, // $57
+    CMD__2DMENU, // $58
+    CMD_VERTICALMENU, // $59
+    CMD_LOADPIKACHUDATA, // $5a
+    CMD_RANDOMWILDMON, // $5b
+    CMD_LOADTEMPTRAINER, // $5c
+    CMD_LOADWILDMON, // $5d
+    CMD_LOADTRAINER, // $5e
+    CMD_STARTBATTLE, // $5f
+    CMD_RELOADMAPAFTERBATTLE, // $60
+    CMD_CATCHTUTORIAL, // $61
+    CMD_TRAINERTEXT, // $62
+    CMD_TRAINERFLAGACTION, // $63
+    CMD_WINLOSSTEXT, // $64
+    CMD_SCRIPTTALKAFTER, // $65
+    CMD_ENDIFJUSTBATTLED, // $66
+    CMD_CHECKJUSTBATTLED, // $67
+    CMD_SETLASTTALKED, // $68
+    CMD_APPLYMOVEMENT, // $69
+    CMD_APPLYMOVEMENTLASTTALKED, // $6a
+    CMD_FACEPLAYER, // $6b
+    CMD_FACEOBJECT, // $6c
+    CMD_VARIABLESPRITE, // $6d
+    CMD_DISAPPEAR, // $6e
+    CMD_APPEAR, // $6f
+    CMD_FOLLOW, // $70
+    CMD_STOPFOLLOW, // $71
+    CMD_MOVEOBJECT, // $72
+    CMD_WRITEOBJECTXY, // $73
+    CMD_LOADEMOTE, // $74
+    CMD_SHOWEMOTE, // $75
+    CMD_TURNOBJECT, // $76
+    CMD_FOLLOWNOTEXACT, // $77
+    CMD_EARTHQUAKE, // $78
+    CMD_CHANGEMAPBLOCKS, // $79
+    CMD_CHANGEBLOCK, // $7a
+    CMD_RELOADMAP, // $7b
+    CMD_RELOADMAPPART, // $7c
+    CMD_WRITECMDQUEUE, // $7d
+    CMD_DELCMDQUEUE, // $7e
+    CMD_PLAYMUSIC, // $7f
+    CMD_ENCOUNTERMUSIC, // $80
+    CMD_MUSICFADEOUT, // $81
+    CMD_PLAYMAPMUSIC, // $82
+    CMD_DONTRESTARTMAPMUSIC, // $83
+    CMD_CRY, // $84
+    CMD_PLAYSOUND, // $85
+    CMD_WAITSFX, // $86
+    CMD_WARPSOUND, // $87
+    CMD_SPECIALSOUND, // $88
+    CMD_AUTOINPUT, // $89
+    CMD_NEWLOADMAP, // $8a
+    CMD_PAUSE, // $8b
+    CMD_DEACTIVATEFACING, // $8c
+    CMD_SDEFER, // $8d
+    CMD_WARPCHECK, // $8e
+    CMD_STOPANDSJUMP, // $8f
+    CMD_ENDCALLBACK, // $90
+    CMD_END, // $91
+    CMD_RELOADEND, // $92
+    CMD_ENDALL, // $93
+    CMD_POKEMART, // $94
+    CMD_ELEVATOR, // $95
+    CMD_TRADE, // $96
+    CMD_ASKFORPHONENUMBER, // $97
+    CMD_PHONECALL, // $98
+    CMD_HANGUP, // $99
+    CMD_DESCRIBEDECORATION, // $9a
+    CMD_FRUITTREE, // $9b
+    CMD_SPECIALPHONECALL, // $9c
+    CMD_CHECKPHONECALL, // $9d
+    CMD_VERBOSEGIVEITEM, // $9e
+    CMD_VERBOSEGIVEITEMVAR, // $9f
+    CMD_SWARM, // $a0
+    CMD_HALLOFFAME, // $a1
+    CMD_CREDITS, // $a2
+    CMD_WARPFACING, // $a3
+    CMD_BATTLETOWERTEXT, // $a4
+    CMD_GETLANDMARKNAME, // $a5
+    CMD_GETTRAINERCLASSNAME, // $a6
+    CMD_GETNAME, // $a7
+    CMD_WAIT, // $a8
+    CMD_CHECKSAVE, // $a9
 };
-
-#define EV_SCALL(ptr) CMD_SCALL, _DW(ptr)
-
-/*
-	const farscall_command ; $01
-farscall: MACRO
-	db farscall_command
-	dba \1
-ENDM
-
-	const memcall_command ; $02
-memcall: MACRO
-	db memcall_command
-	dw \1 ; pointer
-ENDM
-
-	const sjump_command ; $03
-sjump: MACRO
-	db sjump_command
-	dw \1 ; pointer
-ENDM
-
-*/
-
-#define EV_SJUMP(ptr) CMD_SJUMP, _DW(ptr)
-
-/*
-
-	const farsjump_command ; $04
-farsjump: MACRO
-	db farsjump_command
-	dba \1
-ENDM
-
-	const memjump_command ; $05
-memjump: MACRO
-	db memjump_command
-	dw \1 ; pointer
-ENDM
-
-	const ifequal_command ; $06
-ifequal: MACRO
-	db ifequal_command
-	db \1 ; byte
-	dw \2 ; pointer
-ENDM
-*/
-
-#define EV_IFEQUAL(byte, ptr) CMD_IFEQUAL, byte, _DW(ptr)
-
-/*
-	const ifnotequal_command ; $07
-ifnotequal: MACRO
-	db ifnotequal_command
-	db \1 ; byte
-	dw \2 ; pointer
-ENDM
-*/
-
-#define EV_IFNOTEQUAL(byte, ptr) CMD_IFNOTEQUAL, byte, _DW(ptr)
-
-/*
-
-	const iffalse_command ; $08
-iffalse: MACRO
-	db iffalse_command
-	dw \1 ; pointer
-ENDM
-*/
-
-#define EV_IFFALSE(ptr) CMD_IFFALSE, _DW(ptr)
-
-/*
-	const iftrue_command ; $09
-iftrue: MACRO
-	db iftrue_command
-	dw \1 ; pointer
-ENDM
-*//*
-	const ifgreater_command ; $0a
-ifgreater: MACRO
-	db ifgreater_command
-	db \1 ; byte
-	dw \2 ; pointer
-ENDM
-*//*
-	const ifless_command ; $0b
-ifless: MACRO
-	db ifless_command
-	db \1 ; byte
-	dw \2 ; pointer
-ENDM
-*//*
-	const jumpstd_command ; $0c
-jumpstd: MACRO
-	db jumpstd_command
-	dw (\1StdScript - StdScripts) / 3
-ENDM
-*//*
-	const callstd_command ; $0d
-callstd: MACRO
-	db callstd_command
-	dw (\1StdScript - StdScripts) / 3
-ENDM
-*//*
-	const callasm_command ; $0e
-callasm: MACRO
-	db callasm_command
-	dba \1
-ENDM
-*//*
-	const special_command ; $0f
-special: MACRO
-	db special_command
-	dw (\1Special - SpecialsPointers) / 3
-ENDM
-*//*
-	const memcallasm_command ; $10
-memcallasm: MACRO
-	db memcallasm_command
-	dw \1 ; asm
-ENDM
-*//*
-	const checkmapscene_command ; $11
-checkmapscene: MACRO
-	db checkmapscene_command
-	map_id \1 ; map
-ENDM
-*//*
-	const setmapscene_command ; $12
-setmapscene: MACRO
-	db setmapscene_command
-	map_id \1 ; map
-	db \2 ; scene_id
-ENDM
-*//*
-	const checkscene_command ; $13
-checkscene: MACRO
-	db checkscene_command
-ENDM
-*//*
-	const setscene_command ; $14
-setscene: MACRO
-	db setscene_command
-	db \1 ; scene_id
-ENDM
-*//*
-	const setval_command ; $15
-setval: MACRO
-	db setval_command
-	db \1 ; value
-ENDM
-
-	const addval_command ; $16
-addval: MACRO
-	db addval_command
-	db \1 ; value
-ENDM
-
-	const random_command ; $17
-random: MACRO
-	db random_command
-	db \1 ; input
-ENDM
-
-	const checkver_command ; $18
-checkver: MACRO
-	db checkver_command
-ENDM
-
-	const readmem_command ; $19
-readmem: MACRO
-	db readmem_command
-	dw \1 ; address
-ENDM
-
-	const writemem_command ; $1a
-writemem: MACRO
-	db writemem_command
-	dw \1 ; address
-ENDM
-
-	const loadmem_command ; $1b
-loadmem: MACRO
-	db loadmem_command
-	dw \1 ; address
-	db \2 ; value
-ENDM
-
-	const readvar_command ; $1c
-readvar: MACRO
-	db readvar_command
-	db \1 ; variable_id
-ENDM
-
-	const writevar_command ; $1d
-writevar: MACRO
-	db writevar_command
-	db \1 ; variable_id
-ENDM
-
-	const loadvar_command ; $1e
-loadvar: MACRO
-if STRIN("\1", "VAR_") != 1
-; LEGACY: Support for the old name of "loadmem"
-	loadmem \1, \2
-else
-	db loadvar_command
-	db \1 ; variable_id
-	db \2 ; value
-endc
-ENDM
-
-	const giveitem_command ; $1f
-giveitem: MACRO
-if _NARG == 1
-	giveitem \1, 1
-else
-	db giveitem_command
-	db \1 ; item
-	db \2 ; quantity
-endc
-ENDM
-
-	const takeitem_command ; $20
-takeitem: MACRO
-if _NARG == 1
-	takeitem \1, 1
-else
-	db takeitem_command
-	db \1 ; item
-	db \2 ; quantity
-endc
-ENDM
-
-	const checkitem_command ; $21
-checkitem: MACRO
-	db checkitem_command
-	db \1 ; item
-ENDM
-
-	const givemoney_command ; $22
-givemoney: MACRO
-	db givemoney_command
-	db \1 ; account
-	dt \2 ; money
-ENDM
-
-	const takemoney_command ; $23
-takemoney: MACRO
-	db takemoney_command
-	db \1 ; account
-	dt \2 ; money
-ENDM
-
-	const checkmoney_command ; $24
-checkmoney: MACRO
-	db checkmoney_command
-	db \1 ; account
-	dt \2 ; money
-ENDM
-
-	const givecoins_command ; $25
-givecoins: MACRO
-	db givecoins_command
-	dw \1 ; coins
-ENDM
-
-	const takecoins_command ; $26
-takecoins: MACRO
-	db takecoins_command
-	dw \1 ; coins
-ENDM
-
-	const checkcoins_command ; $27
-checkcoins: MACRO
-	db checkcoins_command
-	dw \1 ; coins
-ENDM
-
-	const addcellnum_command ; $28
-addcellnum: MACRO
-	db addcellnum_command
-	db \1 ; person
-ENDM
-
-	const delcellnum_command ; $29
-delcellnum: MACRO
-	db delcellnum_command
-	db \1 ; person
-ENDM
-
-	const checkcellnum_command ; $2a
-checkcellnum: MACRO
-	db checkcellnum_command
-	db \1 ; person
-ENDM
-
-	const checktime_command ; $2b
-checktime: MACRO
-	db checktime_command
-	db \1 ; time
-ENDM
-
-	const checkpoke_command ; $2c
-checkpoke: MACRO
-	db checkpoke_command
-	db \1 ; pkmn
-ENDM
-
-	const givepoke_command ; $2d
-givepoke: MACRO
-if _NARG == 2
-	givepoke \1, \2, NO_ITEM, FALSE
-elif _NARG == 3
-	givepoke \1, \2, \3, FALSE
-elif _NARG == 5
-	givepoke \1, \2, \3, TRUE, \4, \5
-else
-	db givepoke_command
-	db \1 ; pokemon
-	db \2 ; level
-	db \3 ; item
-	db \4 ; trainer
-if \4
-	dw \5 ; nickname_pointer
-	dw \6 ; ot_name_pointer
-endc
-endc
-ENDM
-
-	const giveegg_command ; $2e
-giveegg: MACRO
-	db giveegg_command
-	db \1 ; pkmn
-	db \2 ; level
-ENDM
-
-	const givepokemail_command ; $2f
-givepokemail: MACRO
-	db givepokemail_command
-	dw \1 ; pointer
-ENDM
-
-	const checkpokemail_command ; $30
-checkpokemail: MACRO
-	db checkpokemail_command
-	dw \1 ; pointer
-ENDM
-
-	const checkevent_command ; $31
-checkevent: MACRO
-	db checkevent_command
-	dw \1 ; event_flag
-ENDM
-
-	const clearevent_command ; $32
-clearevent: MACRO
-	db clearevent_command
-	dw \1 ; event_flag
-ENDM
-
-	const setevent_command ; $33
-setevent: MACRO
-	db setevent_command
-	dw \1 ; event_flag
-ENDM
-
-	const checkflag_command ; $34
-checkflag: MACRO
-	db checkflag_command
-	dw \1 ; engine_flag
-ENDM
-
-	const clearflag_command ; $35
-clearflag: MACRO
-	db clearflag_command
-	dw \1 ; engine_flag
-ENDM
-
-	const setflag_command ; $36
-setflag: MACRO
-	db setflag_command
-	dw \1 ; engine_flag
-ENDM
-
-	const wildon_command ; $37
-wildon: MACRO
-	db wildon_command
-ENDM
-
-	const wildoff_command ; $38
-wildoff: MACRO
-	db wildoff_command
-ENDM
-
-	const xycompare_command ; $39
-xycompare: MACRO
-	db xycompare_command
-	dw \1 ; pointer
-ENDM
-
-	const warpmod_command ; $3a
-warpmod: MACRO
-	db warpmod_command
-	db \1 ; warp_id
-	map_id \2 ; map
-ENDM
-
-	const blackoutmod_command ; $3b
-blackoutmod: MACRO
-	db blackoutmod_command
-	map_id \1 ; map
-ENDM
-
-	const warp_command ; $3c
-warp: MACRO
-	db warp_command
-	map_id \1 ; map
-	db \2 ; x
-	db \3 ; y
-ENDM
-
-	const getmoney_command ; $3d
-getmoney: MACRO
-	db getmoney_command
-	db \2 ; account
-	db \1 ; string_buffer
-ENDM
-
-	const getcoins_command ; $3e
-getcoins: MACRO
-	db getcoins_command
-	db \1 ; string_buffer
-ENDM
-
-	const getnum_command ; $3f
-getnum: MACRO
-	db getnum_command
-	db \1 ; string_buffer
-ENDM
-
-	const getmonname_command ; $40
-getmonname: MACRO
-	db getmonname_command
-	db \2 ; pokemon
-	db \1 ; string_buffer
-ENDM
-
-	const getitemname_command ; $41
-getitemname: MACRO
-	db getitemname_command
-	db \2 ; item
-	db \1 ; string_buffer
-ENDM
-
-	const getcurlandmarkname_command ; $42
-getcurlandmarkname: MACRO
-	db getcurlandmarkname_command
-	db \1 ; string_buffer
-ENDM
-
-	const gettrainername_command ; $43
-gettrainername: MACRO
-	db gettrainername_command
-	db \2 ; trainer_group
-	db \3 ; trainer_id
-	db \1 ; string_buffer
-ENDM
-
-	const getstring_command ; $44
-getstring: MACRO
-	db getstring_command
-	dw \2 ; text_pointer
-	db \1 ; string_buffer
-ENDM
-
-	const itemnotify_command ; $45
-itemnotify: MACRO
-	db itemnotify_command
-ENDM
-
-	const pocketisfull_command ; $46
-pocketisfull: MACRO
-	db pocketisfull_command
-ENDM
-
-	const opentext_command ; $47
-opentext: MACRO
-	db opentext_command
-ENDM
-
-	const refreshscreen_command ; $48
-refreshscreen: MACRO
-if _NARG == 0
-	refreshscreen 0
-else
-	db refreshscreen_command
-	db \1 ; dummy
-endc
-ENDM
-
-	const closetext_command ; $49
-closetext: MACRO
-	db closetext_command
-ENDM
-
-	const writeunusedbyte_command ; $4a
-writeunusedbyte: MACRO
-	db writeunusedbyte_command
-	db \1 ; byte
-ENDM
-
-	const farwritetext_command ; $4b
-farwritetext: MACRO
-	db farwritetext_command
-	dba \1
-ENDM
-
-	const writetext_command ; $4c
-writetext: MACRO
-	db writetext_command
-	dw \1 ; text_pointer
-ENDM
-
-	const repeattext_command ; $4d
-repeattext: MACRO
-	db repeattext_command
-	db \1 ; byte
-	db \2 ; byte
-ENDM
-
-	const yesorno_command ; $4e
-yesorno: MACRO
-	db yesorno_command
-ENDM
-
-	const loadmenu_command ; $4f
-loadmenu: MACRO
-	db loadmenu_command
-	dw \1 ; menu_header
-ENDM
-
-	const closewindow_command ; $50
-closewindow: MACRO
-	db closewindow_command
-ENDM
-
-	const jumptextfaceplayer_command ; $51
-jumptextfaceplayer: MACRO
-	db jumptextfaceplayer_command
-	dw \1 ; text_pointer
-ENDM
-
-	const farjumptext_command ; $52
-farjumptext: MACRO
-	db farjumptext_command
-	dba \1
-ENDM
-
-	const jumptext_command ; $53
-jumptext: MACRO
-	db jumptext_command
-	dw \1 ; text_pointer
-ENDM
-
-	const waitbutton_command ; $54
-waitbutton: MACRO
-	db waitbutton_command
-ENDM
-
-	const promptbutton_command ; $55
-promptbutton: MACRO
-	db promptbutton_command
-ENDM
-
-	const pokepic_command ; $56
-pokepic: MACRO
-	db pokepic_command
-	db \1 ; pokemon
-ENDM
-
-	const closepokepic_command ; $57
-closepokepic: MACRO
-	db closepokepic_command
-ENDM
-
-	const _2dmenu_command ; $58
-_2dmenu: MACRO
-	db _2dmenu_command
-ENDM
-
-	const verticalmenu_command ; $59
-verticalmenu: MACRO
-	db verticalmenu_command
-ENDM
-
-	const loadpikachudata_command ; $5a
-loadpikachudata: MACRO
-	db loadpikachudata_command
-ENDM
-
-	const randomwildmon_command ; $5b
-randomwildmon: MACRO
-	db randomwildmon_command
-ENDM
-
-	const loadtemptrainer_command ; $5c
-loadtemptrainer: MACRO
-	db loadtemptrainer_command
-ENDM
-
-	const loadwildmon_command ; $5d
-loadwildmon: MACRO
-	db loadwildmon_command
-	db \1 ; pokemon
-	db \2 ; level
-ENDM
-
-	const loadtrainer_command ; $5e
-loadtrainer: MACRO
-	db loadtrainer_command
-	db \1 ; trainer_group
-	db \2 ; trainer_id
-ENDM
-
-	const startbattle_command ; $5f
-startbattle: MACRO
-	db startbattle_command
-ENDM
-
-	const reloadmapafterbattle_command ; $60
-reloadmapafterbattle: MACRO
-	db reloadmapafterbattle_command
-ENDM
-
-	const catchtutorial_command ; $61
-catchtutorial: MACRO
-	db catchtutorial_command
-	db \1 ; byte
-ENDM
-
-	const trainertext_command ; $62
-trainertext: MACRO
-	db trainertext_command
-	db \1 ; text_id
-ENDM
-
-	const trainerflagaction_command ; $63
-trainerflagaction: MACRO
-	db trainerflagaction_command
-	db \1 ; action
-ENDM
-
-	const winlosstext_command ; $64
-winlosstext: MACRO
-	db winlosstext_command
-	dw \1 ; win_text_pointer
-	dw \2 ; loss_text_pointer
-ENDM
-
-	const scripttalkafter_command ; $65
-scripttalkafter: MACRO
-	db scripttalkafter_command
-ENDM
-
-	const endifjustbattled_command ; $66
-endifjustbattled: MACRO
-	db endifjustbattled_command
-ENDM
-
-	const checkjustbattled_command ; $67
-checkjustbattled: MACRO
-	db checkjustbattled_command
-ENDM
-
-	const setlasttalked_command ; $68
-setlasttalked: MACRO
-	db setlasttalked_command
-	db \1 ; object id
-ENDM
-
-	const applymovement_command ; $69
-applymovement: MACRO
-	db applymovement_command
-	db \1 ; object id
-	dw \2 ; data
-ENDM
-
-	const applymovementlasttalked_command ; $6a
-applymovementlasttalked: MACRO
-	db applymovementlasttalked_command
-	dw \1 ; data
-ENDM
-
-	const faceplayer_command ; $6b
-faceplayer: MACRO
-	db faceplayer_command
-ENDM
-
-	const faceobject_command ; $6c
-faceobject: MACRO
-	db faceobject_command
-	db \1 ; object1
-	db \2 ; object2
-ENDM
-
-	const variablesprite_command ; $6d
-variablesprite: MACRO
-	db variablesprite_command
-	db \1 - SPRITE_VARS ; byte
-	db \2 ; sprite
-ENDM
-
-	const disappear_command ; $6e
-disappear: MACRO
-	db disappear_command
-	db \1 ; object id
-ENDM
-
-	const appear_command ; $6f
-appear: MACRO
-	db appear_command
-	db \1 ; object id
-ENDM
-
-	const follow_command ; $70
-follow: MACRO
-	db follow_command
-	db \1 ; object2
-	db \2 ; object1
-ENDM
-
-	const stopfollow_command ; $71
-stopfollow: MACRO
-	db stopfollow_command
-ENDM
-
-	const moveobject_command ; $72
-moveobject: MACRO
-	db moveobject_command
-	db \1 ; object id
-	db \2 ; x
-	db \3 ; y
-ENDM
-
-	const writeobjectxy_command ; $73
-writeobjectxy: MACRO
-	db writeobjectxy_command
-	db \1 ; object id
-ENDM
-
-	const loademote_command ; $74
-loademote: MACRO
-	db loademote_command
-	db \1 ; bubble
-ENDM
-
-	const showemote_command ; $75
-showemote: MACRO
-	db showemote_command
-	db \1 ; bubble
-	db \2 ; object id
-	db \3 ; time
-ENDM
-
-	const turnobject_command ; $76
-turnobject: MACRO
-	db turnobject_command
-	db \1 ; object id
-	db \2 ; facing
-ENDM
-
-	const follownotexact_command ; $77
-follownotexact: MACRO
-	db follownotexact_command
-	db \1 ; object2
-	db \2 ; object1
-ENDM
-
-	const earthquake_command ; $78
-earthquake: MACRO
-	db earthquake_command
-	db \1 ; param
-ENDM
-
-	const changemapblocks_command ; $79
-changemapblocks: MACRO
-	db changemapblocks_command
-	dba \1 ; map_data_pointer
-ENDM
-
-	const changeblock_command ; $7a
-changeblock: MACRO
-	db changeblock_command
-	db \1 ; x
-	db \2 ; y
-	db \3 ; block
-ENDM
-
-	const reloadmap_command ; $7b
-reloadmap: MACRO
-	db reloadmap_command
-ENDM
-
-	const reloadmappart_command ; $7c
-reloadmappart: MACRO
-	db reloadmappart_command
-ENDM
-
-	const writecmdqueue_command ; $7d
-writecmdqueue: MACRO
-	db writecmdqueue_command
-	dw \1 ; queue_pointer
-ENDM
-
-	const delcmdqueue_command ; $7e
-delcmdqueue: MACRO
-	db delcmdqueue_command
-	db \1 ; byte
-ENDM
-
-	const playmusic_command ; $7f
-playmusic: MACRO
-	db playmusic_command
-	dw \1 ; music_pointer
-ENDM
-
-	const encountermusic_command ; $80
-encountermusic: MACRO
-	db encountermusic_command
-ENDM
-
-	const musicfadeout_command ; $81
-musicfadeout: MACRO
-	db musicfadeout_command
-	dw \1 ; music
-	db \2 ; fadetime
-ENDM
-
-	const playmapmusic_command ; $82
-playmapmusic: MACRO
-	db playmapmusic_command
-ENDM
-
-	const dontrestartmapmusic_command ; $83
-dontrestartmapmusic: MACRO
-	db dontrestartmapmusic_command
-ENDM
-
-	const cry_command ; $84
-cry: MACRO
-	db cry_command
-	dw \1 ; cry_id
-ENDM
-
-	const playsound_command ; $85
-playsound: MACRO
-	db playsound_command
-	dw \1 ; sound_pointer
-ENDM
-
-	const waitsfx_command ; $86
-waitsfx: MACRO
-	db waitsfx_command
-ENDM
-
-	const warpsound_command ; $87
-warpsound: MACRO
-	db warpsound_command
-ENDM
-
-	const specialsound_command ; $88
-specialsound: MACRO
-	db specialsound_command
-ENDM
-
-	const autoinput_command ; $89
-autoinput: MACRO
-	db autoinput_command
-	dba \1
-ENDM
-
-	const newloadmap_command ; $8a
-newloadmap: MACRO
-	db newloadmap_command
-	db \1 ; which_method
-ENDM
-
-	const pause_command ; $8b
-pause: MACRO
-	db pause_command
-	db \1 ; length
-ENDM
-
-	const deactivatefacing_command ; $8c
-deactivatefacing: MACRO
-	db deactivatefacing_command
-	db \1 ; time
-ENDM
-
-	const sdefer_command ; $8d
-sdefer: MACRO
-	db sdefer_command
-	dw \1 ; pointer
-ENDM
-
-	const warpcheck_command ; $8e
-warpcheck: MACRO
-	db warpcheck_command
-ENDM
-
-	const stopandsjump_command ; $8f
-stopandsjump: MACRO
-	db stopandsjump_command
-	dw \1 ; pointer
-ENDM
-
-	const endcallback_command ; $90
-endcallback: MACRO
-	db endcallback_command
-ENDM
-
-	const end_command ; $91
-end: MACRO
-	db end_command
-ENDM
-
-	const reloadend_command ; $92
-reloadend: MACRO
-	db reloadend_command
-	db \1 ; which_method
-ENDM
-
-	const endall_command ; $93
-endall: MACRO
-	db endall_command
-ENDM
-
-	const pokemart_command ; $94
-pokemart: MACRO
-	db pokemart_command
-	db \1 ; dialog_id
-	dw \2 ; mart_id
-ENDM
-
-	const elevator_command ; $95
-elevator: MACRO
-	db elevator_command
-	dw \1 ; floor_list_pointer
-ENDM
-
-	const trade_command ; $96
-trade: MACRO
-	db trade_command
-	db \1 ; trade_id
-ENDM
-
-	const askforphonenumber_command ; $97
-askforphonenumber: MACRO
-	db askforphonenumber_command
-	db \1 ; number
-ENDM
-
-	const phonecall_command ; $98
-phonecall: MACRO
-	db phonecall_command
-	dw \1 ; caller_name
-ENDM
-
-	const hangup_command ; $99
-hangup: MACRO
-	db hangup_command
-ENDM
-
-	const describedecoration_command ; $9a
-describedecoration: MACRO
-	db describedecoration_command
-	db \1 ; byte
-ENDM
-
-	const fruittree_command ; $9b
-fruittree: MACRO
-	db fruittree_command
-	db \1 ; tree_id
-ENDM
-
-	const specialphonecall_command ; $9c
-specialphonecall: MACRO
-	db specialphonecall_command
-	dw \1 ; call_id
-ENDM
-
-	const checkphonecall_command ; $9d
-checkphonecall: MACRO
-	db checkphonecall_command
-ENDM
-
-	const verbosegiveitem_command ; $9e
-verbosegiveitem: MACRO
-if _NARG == 1
-	verbosegiveitem \1, 1
-else
-	db verbosegiveitem_command
-	db \1 ; item
-	db \2 ; quantity
-endc
-ENDM
-
-	const verbosegiveitemvar_command ; $9f
-verbosegiveitemvar: MACRO
-	db verbosegiveitemvar_command
-	db \1 ; item
-	db \2 ; var
-ENDM
-
-	const swarm_command ; $a0
-swarm: MACRO
-	db swarm_command
-	db \1 ; flag
-	map_id \2 ; map
-ENDM
-
-	const halloffame_command ; $a1
-halloffame: MACRO
-	db halloffame_command
-ENDM
-
-	const credits_command ; $a2
-credits: MACRO
-	db credits_command
-ENDM
-
-	const warpfacing_command ; $a3
-warpfacing: MACRO
-	db warpfacing_command
-	db \1 ; facing
-	map_id \2 ; map
-	db \3 ; x
-	db \4 ; y
-ENDM
-
-	const battletowertext_command ; $a4
-battletowertext: MACRO
-	db battletowertext_command
-	db \1 ; bttext_id
-ENDM
-
-	const getlandmarkname_command ; $a5
-getlandmarkname: MACRO
-	db getlandmarkname_command
-	db \2 ; landmark_id
-	db \1 ; string_buffer
-ENDM
-
-	const gettrainerclassname_command ; $a6
-gettrainerclassname: MACRO
-	db gettrainerclassname_command
-	db \2 ; trainer_group
-	db \1 ; string_buffer
-ENDM
-
-	const getname_command ; $a7
-getname: MACRO
-	db getname_command
-	db \2 ; type
-	db \3 ; id
-	db \1 ; memory
-ENDM
-
-	const wait_command ; $a8
-wait: MACRO
-	db wait_command
-	db \1 ; duration
-ENDM
-
-	const checksave_command ; $a9
-checksave: MACRO
-	db checksave_command
-ENDM
-*/
+#define ev_scall(_a1) CMD_SCALL, _dw(_a1)
+#define ev_farscall(_a1) CMD_FARSCALL, _dba(_a1)
+#define ev_memcall(_a1) CMD_MEMCALL, _dw(_a1)
+#define ev_sjump(_a1) CMD_SJUMP, _dw(_a1)
+#define ev_farsjump(_a1) CMD_FARSJUMP, _dba(_a1)
+#define ev_memjump(_a1) CMD_MEMJUMP, _dw(_a1)
+#define ev_ifequal(_a1, _a2) CMD_IFEQUAL, _a1, _dw(_a2)
+#define ev_ifnotequal(_a1, _a2) CMD_IFNOTEQUAL, _a1, _dw(_a2)
+#define ev_iffalse(_a1) CMD_IFFALSE, _dw(_a1)
+#define ev_iftrue(_a1) CMD_IFTRUE, _dw(_a1)
+#define ev_ifgreater(_a1, _a2) CMD_IFGREATER, _a1, _dw(_a2)
+#define ev_ifless(_a1, _a2) CMD_IFLESS, _a1, _dw(_a2)
+#define ev_jumpstd(_a1) CMD_JUMPSTD, _dw((a##_a1##StdScript - aStdScripts) / 3)
+#define ev_callstd(_a1) CMD_CALLSTD, _dw((a##_a1##StdScript - aStdScripts) / 3)
+#define ev_callasm(_a1) CMD_CALLASM, _dba(_a1)
+#define ev_special(_a1) CMD_SPECIAL, _dw((a##_a1##Special - aSpecialsPointers) / 3)
+#define ev_memcallasm(_a1) CMD_MEMCALLASM, _dw(_a1)
+#define ev_checkmapscene(_a1) CMD_CHECKMAPSCENE, MAP_ID(_a1)
+#define ev_setmapscene(_a1, _a2) CMD_SETMAPSCENE, MAP_ID(_a1), _a2
+#define ev_checkscene CMD_CHECKSCENE
+#define ev_setscene(_a1) CMD_SETSCENE, _a1
+#define ev_setval(_a1) CMD_SETVAL, _a1
+#define ev_addval(_a1) CMD_ADDVAL, _a1
+#define ev_random(_a1) CMD_RANDOM, _a1
+#define ev_checkver CMD_CHECKVER
+#define ev_readmem(_a1) CMD_READMEM, _dw(_a1)
+#define ev_writemem(_a1) CMD_WRITEMEM, _dw(_a1)
+#define ev_loadmem(_a1, _a2) CMD_LOADMEM, _dw(_a1), _a2
+#define ev_readvar(_a1) CMD_READVAR, _a1
+#define ev_writevar(_a1) CMD_WRITEVAR, _a1
+#define ev_loadvar(_a1, _a2) CMD_LOADVAR, _a1, _a2
+#define ev_giveitem1(_a1, _a2) CMD_GIVEITEM, _a1, _a2
+#define ev_giveitem2(_a1) CMD_GIVEITEM, _a1, 1
+#define ev_giveitem(...) overloadselect2(__VA_ARGS__, ev_giveitem2, ev_giveitem1)(__VA_ARGS__)
+#define ev_takeitem1(_a1, _a2) CMD_TAKEITEM, _a1, _a2
+#define ev_takeitem2(_a1) CMD_TAKEITEM, _a1, 1
+#define ev_takeitem(...) overloadselect2(__VA_ARGS__, ev_takeitem2, ev_takeitem1)(__VA_ARGS__)
+#define ev_checkitem(_a1) CMD_CHECKITEM, _a1
+#define ev_givemoney(_a1, _a2) CMD_GIVEMONEY, _a1, _dt(_a2)
+#define ev_takemoney(_a1, _a2) CMD_TAKEMONEY, _a1, _dt(_a2)
+#define ev_checkmoney(_a1, _a2) CMD_CHECKMONEY, _a1, _dt(_a2)
+#define ev_givecoins(_a1) CMD_GIVECOINS, _dw(_a1)
+#define ev_takecoins(_a1) CMD_TAKECOINS, _dw(_a1)
+#define ev_checkcoins(_a1) CMD_CHECKCOINS, _dw(_a1)
+#define ev_addcellnum(_a1) CMD_ADDCELLNUM, _a1
+#define ev_delcellnum(_a1) CMD_DELCELLNUM, _a1
+#define ev_checkcellnum(_a1) CMD_CHECKCELLNUM, _a1
+#define ev_checktime(_a1) CMD_CHECKTIME, _a1
+#define ev_checkpoke(_a1) CMD_CHECKPOKE, _a1
+#define ev_givepoke2(_a1, _a2) CMD_GIVEPOKE, _a1, _a2, NO_ITEM, FALSE
+#define ev_givepoke3(_a1, _a2, _a3) CMD_GIVEPOKE, _a1, _a2, _a3, FALSE
+#define ev_givepoke5(_a1, _a2, _a3, _a4, _a5) CMD_GIVEPOKE, _a1, _a2, _a3, TRUE, _dw(_a4), _dw(_a5)
+#define ev_givepoke6(_a1, _a2, _a3, _a4, _a5, _a6) CMD_GIVEPOKE, _a1, _a2, _a3, _a4, _dw(_a5), _dw(_a6)
+#define ev_givepoke(...) overloadselect6(__VA_ARGS__, ev_givepoke6, ev_givepoke5, error, ev_givepoke3, ev_givepoke2, error)(__VA_ARGS__)
+#define ev_giveegg(_a1, _a2) CMD_GIVEEGG, _a1, _a2
+#define ev_givepokemail(_a1) CMD_GIVEPOKEMAIL, _dw(_a1)
+#define ev_checkpokemail(_a1) CMD_CHECKPOKEMAIL, _dw(_a1)
+#define ev_checkevent(_a1) CMD_CHECKEVENT, _dw(_a1)
+#define ev_clearevent(_a1) CMD_CLEAREVENT, _dw(_a1)
+#define ev_setevent(_a1) CMD_SETEVENT, _dw(_a1)
+#define ev_checkflag(_a1) CMD_CHECKFLAG, _dw(_a1)
+#define ev_clearflag(_a1) CMD_CLEARFLAG, _dw(_a1)
+#define ev_setflag(_a1) CMD_SETFLAG, _dw(_a1)
+#define ev_wildon CMD_WILDON
+#define ev_wildoff CMD_WILDOFF
+#define ev_xycompare(_a1) CMD_XYCOMPARE, _dw(_a1)
+#define ev_warpmod(_a1, _a2) CMD_WARPMOD, _a1, MAP_ID(_a2)
+#define ev_blackoutmod(_a1) CMD_BLACKOUTMOD, MAP_ID(_a1)
+#define ev_warp(_a1, _a2, _a3) CMD_WARP, MAP_ID(_a1), _a2, _a3
+#define ev_getmoney(_a1, _a2) CMD_GETMONEY, _a2, _a1
+#define ev_getcoins(_a1) CMD_GETCOINS, _a1
+#define ev_getnum(_a1) CMD_GETNUM, _a1
+#define ev_getmonname(_a1, _a2) CMD_GETMONNAME, _a2, _a1
+#define ev_getitemname(_a1, _a2) CMD_GETITEMNAME, _a2, _a1
+#define ev_getcurlandmarkname(_a1) CMD_GETCURLANDMARKNAME, _a1
+#define ev_gettrainername(_a1, _a2, _a3) CMD_GETTRAINERNAME, _a2, _a3, _a1
+#define ev_getstring(_a1, _a2) CMD_GETSTRING, _dw(_a2), _a1
+#define ev_itemnotify CMD_ITEMNOTIFY
+#define ev_pocketisfull CMD_POCKETISFULL
+#define ev_opentext CMD_OPENTEXT
+#define ev_refreshscreen CMD_REFRESHSCREEN, 0
+#define ev_refreshscreen1(_a1) CMD_REFRESHSCREEN, _a1
+#define ev_closetext CMD_CLOSETEXT
+#define ev_writeunusedbyte(_a1) CMD_WRITEUNUSEDBYTE, _a1
+#define ev_farwritetext(_a1) CMD_FARWRITETEXT, _dba(_a1)
+#define ev_writetext(_a1) CMD_WRITETEXT, _dw(_a1)
+#define ev_repeattext(_a1, _a2) CMD_REPEATTEXT, _a1, _a2
+#define ev_yesorno CMD_YESORNO
+#define ev_loadmenu(_a1) CMD_LOADMENU, _dw(_a1)
+#define ev_closewindow CMD_CLOSEWINDOW
+#define ev_jumptextfaceplayer(_a1) CMD_JUMPTEXTFACEPLAYER, _dw(_a1)
+#define ev_farjumptext(_a1) CMD_FARJUMPTEXT, _dba(_a1)
+#define ev_jumptext(_a1) CMD_JUMPTEXT, _dw(_a1)
+#define ev_waitbutton CMD_WAITBUTTON
+#define ev_promptbutton CMD_PROMPTBUTTON
+#define ev_pokepic(_a1) CMD_POKEPIC, _a1
+#define ev_closepokepic CMD_CLOSEPOKEPIC
+#define ev__2dmenu CMD__2DMENU
+#define ev_verticalmenu CMD_VERTICALMENU
+#define ev_loadpikachudata CMD_LOADPIKACHUDATA
+#define ev_randomwildmon CMD_RANDOMWILDMON
+#define ev_loadtemptrainer CMD_LOADTEMPTRAINER
+#define ev_loadwildmon(_a1, _a2) CMD_LOADWILDMON, _a1, _a2
+#define ev_loadtrainer(_a1, _a2) CMD_LOADTRAINER, _a1, _a2
+#define ev_startbattle CMD_STARTBATTLE
+#define ev_reloadmapafterbattle CMD_RELOADMAPAFTERBATTLE
+#define ev_catchtutorial(_a1) CMD_CATCHTUTORIAL, _a1
+#define ev_trainertext(_a1) CMD_TRAINERTEXT, _a1
+#define ev_trainerflagaction(_a1) CMD_TRAINERFLAGACTION, _a1
+#define ev_winlosstext(_a1, _a2) CMD_WINLOSSTEXT, _dw(_a1), _dw(_a2)
+#define ev_scripttalkafter CMD_SCRIPTTALKAFTER
+#define ev_endifjustbattled CMD_ENDIFJUSTBATTLED
+#define ev_checkjustbattled CMD_CHECKJUSTBATTLED
+#define ev_setlasttalked(_a1) CMD_SETLASTTALKED, _a1
+#define ev_applymovement(_a1, _a2) CMD_APPLYMOVEMENT, _a1, _dw(_a2)
+#define ev_applymovementlasttalked(_a1) CMD_APPLYMOVEMENTLASTTALKED, _dw(_a1)
+#define ev_faceplayer CMD_FACEPLAYER
+#define ev_faceobject(_a1, _a2) CMD_FACEOBJECT, _a1, _a2
+#define ev_variablesprite(_a1, _a2) CMD_VARIABLESPRITE, _a1, _a2
+#define ev_disappear(_a1) CMD_DISAPPEAR, _a1
+#define ev_appear(_a1) CMD_APPEAR, _a1
+#define ev_follow(_a1, _a2) CMD_FOLLOW, _a1, _a2
+#define ev_stopfollow CMD_STOPFOLLOW
+#define ev_moveobject(_a1, _a2, _a3) CMD_MOVEOBJECT, _a1, _a2, _a3
+#define ev_writeobjectxy(_a1) CMD_WRITEOBJECTXY, _a1
+#define ev_loademote(_a1) CMD_LOADEMOTE, _a1
+#define ev_showemote(_a1, _a2, _a3) CMD_SHOWEMOTE, _a1, _a2, _a3
+#define ev_turnobject(_a1, _a2) CMD_TURNOBJECT, _a1, _a2
+#define ev_follownotexact(_a1, _a2) CMD_FOLLOWNOTEXACT, _a1, _a2
+#define ev_earthquake(_a1) CMD_EARTHQUAKE, _a1
+#define ev_changemapblocks(_a1) CMD_CHANGEMAPBLOCKS, _dba(_a1)
+#define ev_changeblock(_a1, _a2, _a3) CMD_CHANGEBLOCK, _a1, _a2, _a3
+#define ev_reloadmap CMD_RELOADMAP
+#define ev_reloadmappart CMD_RELOADMAPPART
+#define ev_writecmdqueue(_a1) CMD_WRITECMDQUEUE, _dw(_a1)
+#define ev_delcmdqueue(_a1) CMD_DELCMDQUEUE, _a1
+#define ev_playmusic(_a1) CMD_PLAYMUSIC, _dw(_a1)
+#define ev_encountermusic CMD_ENCOUNTERMUSIC
+#define ev_musicfadeout(_a1, _a2) CMD_MUSICFADEOUT, _dw(_a1), _a2
+#define ev_playmapmusic CMD_PLAYMAPMUSIC
+#define ev_dontrestartmapmusic CMD_DONTRESTARTMAPMUSIC
+#define ev_cry(_a1) CMD_CRY, _dw(_a1)
+#define ev_playsound(_a1) CMD_PLAYSOUND, _dw(_a1)
+#define ev_waitsfx CMD_WAITSFX
+#define ev_warpsound CMD_WARPSOUND
+#define ev_specialsound CMD_SPECIALSOUND
+#define ev_autoinput(_a1) CMD_AUTOINPUT, _dba(_a1)
+#define ev_newloadmap(_a1) CMD_NEWLOADMAP, _a1
+#define ev_pause(_a1) CMD_PAUSE, _a1
+#define ev_deactivatefacing(_a1) CMD_DEACTIVATEFACING, _a1
+#define ev_sdefer(_a1) CMD_SDEFER, _dw(_a1)
+#define ev_warpcheck CMD_WARPCHECK
+#define ev_stopandsjump(_a1) CMD_STOPANDSJUMP, _dw(_a1)
+#define ev_endcallback CMD_ENDCALLBACK
+#define ev_end CMD_END
+#define ev_reloadend(_a1) CMD_RELOADEND, _a1
+#define ev_endall CMD_ENDALL
+#define ev_pokemart(_a1, _a2) CMD_POKEMART, _a1, _dw(_a2)
+#define ev_elevator(_a1) CMD_ELEVATOR, _dw(_a1)
+#define ev_trade(_a1) CMD_TRADE, _a1
+#define ev_askforphonenumber(_a1) CMD_ASKFORPHONENUMBER, _a1
+#define ev_phonecall(_a1) CMD_PHONECALL, _dw(_a1)
+#define ev_hangup CMD_HANGUP
+#define ev_describedecoration(_a1) CMD_DESCRIBEDECORATION, _a1
+#define ev_fruittree(_a1) CMD_FRUITTREE, _a1
+#define ev_specialphonecall(_a1) CMD_SPECIALPHONECALL, _dw(_a1)
+#define ev_checkphonecall CMD_CHECKPHONECALL
+#define ev_verbosegiveitem2(_a1, _a2) CMD_VERBOSEGIVEITEM, _a1, _a2
+#define ev_verbosegiveitem1(_a1) CMD_VERBOSEGIVEITEM, _a1, 1
+#define ev_verbosegiveitem(...) overloadselect2(__VA_ARGS__, ev_verbosegiveitem2, ev_verbosegiveitem1)(__VA_ARGS__)
+#define ev_verbosegiveitemvar(_a1, _a2) CMD_VERBOSEGIVEITEMVAR, _a1, _a2
+#define ev_swarm(_a1, _a2) CMD_SWARM, _a1, MAP_ID(_a2)
+#define ev_halloffame CMD_HALLOFFAME
+#define ev_credits CMD_CREDITS
+#define ev_warpfacing(_a1, _a2, _a3, _a4) CMD_WARPFACING, _a1, MAP_ID(_a2), _a3, _a4
+#define ev_battletowertext(_a1) CMD_BATTLETOWERTEXT, _a1
+#define ev_getlandmarkname(_a1, _a2) CMD_GETLANDMARKNAME, _a2, _a1
+#define ev_gettrainerclassname(_a1, _a2) CMD_GETTRAINERCLASSNAME, _a2, _a1
+#define ev_getname(_a1, _a2, _a3) CMD_GETNAME, _a2, _a3, _a1
+#define ev_wait(_a1) CMD_WAIT, _a1
+#define ev_checksave CMD_CHECKSAVE

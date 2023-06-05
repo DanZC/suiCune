@@ -73,7 +73,7 @@ done:
     hram->hInMenu = REG_A;
     POP_AF;
     LDH_addr_A(rSVBK);
-    // RET;
+    RET;
 
 
 InitRAMAddrs:

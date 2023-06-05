@@ -1,5 +1,8 @@
 #include "../../constants.h"
 #include "map_objects.h"
+#include "../../home/copy.h"
+#include "../../home/map_objects.h"
+#include "../../home/menu.h"
 
 // INCLUDE "data/sprites/facings.asm"
 
@@ -190,11 +193,31 @@ void HandleFrozenObjectAction(void) {
     return v_CallFrozenObjectAction();
 }
 
+void HandleFrozenObjectAction_Conv(uint16_t bc) {
+    // SET_PC(aHandleFrozenObjectAction);
+    // LD_HL(OBJECT_FLAGS1);
+    // ADD_HL_BC;
+    // BIT_hl(INVISIBLE_F);
+    // JR_NZ(mSetFacingStanding);
+    if(bit_test(gb_read(bc + OBJECT_FLAGS1), INVISIBLE_F)) {
+        SetFacing_Standing_Conv(bc);
+    }
+    return v_CallFrozenObjectAction_Conv(bc);
+}
+
 void v_CallFrozenObjectAction(void) {
     SET_PC(av_CallFrozenObjectAction);
     //  use second column (frozen)
     LD_DE(mObjectActionPairPointers + 2);
     JR(mCallObjectAction);  // pointless
+}
+
+void v_CallFrozenObjectAction_Conv(uint16_t bc) {
+    // SET_PC(av_CallFrozenObjectAction);
+    //  use second column (frozen)
+    // LD_DE(mObjectActionPairPointers + 2);
+    // JR(mCallObjectAction);  // pointless
+    return CallObjectAction_Conv(bc, mObjectActionPairPointers + 2);
 }
 
 void CallObjectAction(void) {
@@ -216,6 +239,27 @@ void CallObjectAction(void) {
     // INCLUDE "engine/overworld/map_object_action.asm"
 
     return CopyNextCoordsTileToStandingCoordsTile();
+}
+
+void CallObjectAction_Conv(uint16_t bc, uint16_t de) {
+    // SET_PC(aCallObjectAction);
+    // LD_HL(OBJECT_ACTION);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    uint8_t action = gb_read(bc + OBJECT_ACTION);
+    // LD_L_A;
+    // LD_H(0);
+    // ADD_HL_HL;
+    // ADD_HL_HL;
+    // ADD_HL_DE;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    uint16_t ptr = gb_read(de + (action * 4));
+    // CALL(av_hl_);
+    REG_BC = bc;
+    CALL(ptr);
+    // RET;
 }
 
 void CopyNextCoordsTileToStandingCoordsTile(void) {
@@ -2640,6 +2684,45 @@ ok:
     RET;
 }
 
+void UpdateAllObjectsFrozen_Conv(void) {
+    // SET_PC(aUpdateAllObjectsFrozen);
+    // LD_A_addr(wVramState);
+    // BIT_A(0);
+    // RET_Z;
+    if(!bit_test(gb_read(wVramState), 0))
+        return;
+    
+    // LD_BC(wObjectStructs);
+    // XOR_A_A;
+    uint8_t a = 0;
+    uint16_t bc = wObjectStructs;
+
+// loop:
+
+    do {
+        // LDH_addr_A(hMapObjectIndex);
+        gb_write(hMapObjectIndex, a);
+        // CALL(aDoesObjectHaveASprite);
+        // IF_Z goto ok;
+        if(!DoesObjectHaveASprite_Conv(bc)) {
+            // CALL(aUpdateObjectFrozen);
+            UpdateObjectFrozen_Conv(bc);
+        }
+    // ok:
+        // LD_HL(OBJECT_LENGTH);
+        // ADD_HL_BC;
+        // LD_B_H;
+        // LD_C_L;
+        bc += OBJECT_LENGTH;
+        // LDH_A_addr(hMapObjectIndex);
+        a = gb_read(hMapObjectIndex);
+        // INC_A;
+        // CP_A(NUM_OBJECT_STRUCTS);
+        // IF_NZ goto loop;
+    } while(++a != NUM_OBJECT_STRUCTS);
+    // RET;
+}
+
 void RespawnPlayerAndOpponent(void) {
     SET_PC(aRespawnPlayerAndOpponent);
     //  called at battle start
@@ -2722,6 +2805,29 @@ void UpdateObjectFrozen(void) {
     RET;
 }
 
+bool UpdateObjectFrozen_Conv(uint16_t bc) {
+    // SET_PC(aUpdateObjectFrozen);
+    // PUSH_BC;
+    // CALL(aCheckObjectCoveredByTextbox);
+    // POP_BC;
+    // JR_C(mSetFacing_Standing);
+    if(CheckObjectCoveredByTextbox_Conv(bc))
+        return SetFacing_Standing_Conv(bc);
+    
+    // CALL(aCheckObjectOnScreen);
+    // JR_C(mSetFacing_Standing);
+    if(CheckObjectOnScreen_Conv(bc))
+        return SetFacing_Standing_Conv(bc);
+    
+    // CALL(aUpdateObjectNextTile);
+    UpdateObjectNextTile_Conv(bc);
+    // FARCALL(aHandleFrozenObjectAction);  // no need to farcall
+    HandleFrozenObjectAction_Conv(bc);
+    // XOR_A_A;
+    // RET;
+    return false;
+}
+
 void UpdateRespawnedObjectFrozen(void) {
     SET_PC(aUpdateRespawnedObjectFrozen);
     CALL(aCheckObjectOnScreen);
@@ -2740,6 +2846,16 @@ void SetFacing_Standing(void) {
     RET;
 }
 
+bool SetFacing_Standing_Conv(uint16_t bc) {
+    // LD_HL(OBJECT_FACING_STEP);
+    // ADD_HL_BC;
+    // LD_hl(STANDING);
+    gb_write(bc + OBJECT_FACING_STEP, STANDING);
+    // SCF;
+    // RET;
+    return true;
+}
+
 void UpdateObjectNextTile(void) {
     SET_PC(aUpdateObjectNextTile);
     PUSH_BC;
@@ -2756,6 +2872,28 @@ void UpdateObjectNextTile(void) {
     LD_hl_A;
     FARCALL(aUpdateTallGrassFlags);  // no need to farcall
     RET;
+}
+
+void UpdateObjectNextTile_Conv(uint16_t bc) {
+    // SET_PC(aUpdateObjectNextTile);
+    // PUSH_BC;
+    // LD_HL(OBJECT_NEXT_MAP_X);
+    // ADD_HL_BC;
+    // LD_D_hl;
+    // LD_HL(OBJECT_NEXT_MAP_Y);
+    // ADD_HL_BC;
+    // LD_E_hl;
+    REG_DE = (gb_read(bc + OBJECT_NEXT_MAP_X) << 8) | gb_read(bc + OBJECT_NEXT_MAP_Y);
+    // GetCoordTile
+    CALL(aGetCoordTile);
+    // POP_BC;
+    // LD_HL(OBJECT_NEXT_TILE);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    gb_write(bc + OBJECT_NEXT_TILE, REG_A);
+    // FARCALL(aUpdateTallGrassFlags);  // no need to farcall
+    CALL(aUpdateTallGrassFlags);
+    // RET;
 }
 
 void CheckObjectOnScreen(void) {
@@ -2795,6 +2933,50 @@ nope:
 
     SCF;
     RET;
+}
+
+bool CheckObjectOnScreen_Conv(uint16_t bc) {
+    // LD_HL(OBJECT_NEXT_MAP_X);
+    // ADD_HL_BC;
+    // LD_D_hl;
+    uint8_t x = gb_read(bc + OBJECT_NEXT_MAP_X) + 1;
+    // LD_HL(OBJECT_NEXT_MAP_Y);
+    // ADD_HL_BC;
+    // LD_E_hl;
+    uint8_t y = gb_read(bc + OBJECT_NEXT_MAP_Y) + 1;
+    // INC_D;
+    // INC_E;
+    // LD_A_addr(wXCoord);
+    // CP_A_D;
+    // IF_Z goto equal_x;
+    // IF_NC goto nope;
+    // ADD_A(MAPOBJECT_SCREEN_WIDTH - 1);
+    // CP_A_D;
+    // IF_C goto nope;
+    uint8_t n = gb_read(wXCoord);
+    if(n == x || (n < x && (n + (MAPOBJECT_SCREEN_WIDTH - 1) >= x))) {
+    // equal_x:
+
+        // LD_A_addr(wYCoord);
+        n = gb_read(wYCoord);
+        // CP_A_E;
+        // IF_Z goto equal_y;
+        // IF_NC goto nope;
+        // ADD_A(MAPOBJECT_SCREEN_HEIGHT - 1);
+        // CP_A_E;
+        // IF_C goto nope;
+        if(n == y || (n < y && (n + (MAPOBJECT_SCREEN_HEIGHT - 1) >= y))) {
+        // equal_y:
+
+            // XOR_A_A;
+            // RET;
+            return false;
+        }
+    }
+// nope:
+    // SCF;
+    // RET;
+    return true;
 }
 
 void CheckObjectCoveredByTextbox(void) {
@@ -2939,6 +3121,171 @@ nope:
 
     SCF;
     RET;
+}
+
+bool CheckObjectCoveredByTextbox_Conv(uint16_t bc) {
+    // SET_PC(aCheckObjectCoveredByTextbox);
+    //  Check whether the object fits in the screen width.
+    // LD_A_addr(wPlayerBGMapOffsetX);
+    // LD_D_A;
+    // LD_HL(OBJECT_SPRITE_X_OFFSET);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // LD_HL(OBJECT_SPRITE_X);
+    // ADD_HL_BC;
+    // ADD_A_hl;
+    // ADD_A_D;
+    uint8_t x = gb_read(bc + OBJECT_SPRITE_X_OFFSET) + gb_read(bc + OBJECT_SPRITE_X) + gb_read(wPlayerBGMapOffsetX);
+    // CP_A(0xf0);
+    // IF_NC goto ok1;
+    // CP_A(SCREEN_WIDTH_PX);
+    // JP_NC(mCheckObjectCoveredByTextbox_nope);
+    if(x >= 0xf0 || x < SCREEN_WIDTH_PX) {
+        // ok1:
+        //  Account for objects currently moving left/right.
+        // AND_A(0b00000111);
+        // LD_D(2);
+        // CP_A(TILE_WIDTH / 2);
+        // IF_C goto ok2;
+        // LD_D(3);
+        uint8_t d = ((x & 0b00000111) >= TILE_WIDTH / 2)? 3: 2;
+        // ok2:
+
+        //  Convert pixels to tiles.
+        // LD_A_hl;
+        // SRL_A;
+        // SRL_A;
+        // SRL_A;
+        // CP_A(SCREEN_WIDTH);
+        // IF_C goto ok3;
+        x = gb_read(bc + OBJECT_SPRITE_X) << 3;
+        if(x >= SCREEN_WIDTH)
+            x -= BG_MAP_WIDTH;
+        // SUB_A(BG_MAP_WIDTH);
+
+        // ok3:
+
+        // LDH_addr_A(hCurSpriteXCoord);
+        gb_write(hCurSpriteXCoord, x);
+
+        // //  Check whether the object fits in the screen height.
+        // LD_A_addr(wPlayerBGMapOffsetY);
+        // LD_E_A;
+        // LD_HL(OBJECT_SPRITE_Y_OFFSET);
+        // ADD_HL_BC;
+        // LD_A_hl;
+        // LD_HL(OBJECT_SPRITE_Y);
+        // ADD_HL_BC;
+        // ADD_A_hl;
+        // ADD_A_E;
+        uint8_t y = gb_read(bc + OBJECT_SPRITE_Y_OFFSET) + gb_read(bc + OBJECT_SPRITE_Y) + gb_read(wPlayerBGMapOffsetY);
+        // CP_A(0xf0);
+        // IF_NC goto ok4;
+        // CP_A(SCREEN_HEIGHT_PX);
+        // IF_NC goto nope;
+        if(y >= 0xf0 || y < SCREEN_HEIGHT_PX) {
+        // ok4:
+
+            //  Account for objects currently moving up/down.
+            // AND_A(0b00000111);
+            // LD_E(2);
+            // CP_A(TILE_WIDTH / 2);
+            // IF_C goto ok5;
+            // LD_E(3);
+            uint8_t e = ((y & 0b00000111) >= TILE_WIDTH / 2)? 3: 2;
+
+        // ok5:
+
+            //  Convert pixels to tiles.
+            // LD_A_hl;
+            // SRL_A;
+            // SRL_A;
+            // SRL_A;
+            // CP_A(SCREEN_HEIGHT);
+            // IF_C goto ok6;
+            // SUB_A(BG_MAP_HEIGHT);
+            y = gb_read(bc + OBJECT_SPRITE_Y) << 3;
+            if(y >= SCREEN_HEIGHT)
+                y -= BG_MAP_HEIGHT;
+
+        // ok6:
+
+        //     LDH_addr_A(hCurSpriteYCoord);
+            gb_write(hCurSpriteYCoord, y);
+
+            //  Account for big objects that are twice as wide and high.
+            // LD_HL(OBJECT_PALETTE);
+            // ADD_HL_BC;
+            // BIT_hl(BIG_OBJECT_F);
+            // IF_Z goto ok7;
+            if(bit_test(gb_read(bc + OBJECT_PALETTE), BIG_OBJECT_F)) {
+                // LD_A_D;
+                // ADD_A(2);
+                // LD_D_A;
+                // LD_A_E;
+                // ADD_A(2);
+                // LD_E_A;
+                d &= 2;
+                e &= 2;
+            }
+
+
+        // ok7:
+
+        //     LD_A_D;
+        //     LDH_addr_A(hCurSpriteXPixel);
+            gb_write(hCurSpriteXPixel, d);
+
+        // loop:
+            do {
+                // LDH_A_addr(hCurSpriteXPixel);
+                // LD_D_A;
+                d = gb_read(hCurSpriteXPixel);
+                // LDH_A_addr(hCurSpriteYCoord);
+                // ADD_A_E;
+                // DEC_A;
+                uint8_t ycoord = (gb_read(hCurSpriteYCoord) + e) - 1;
+                // CP_A(SCREEN_HEIGHT);
+                // IF_NC goto ok9;
+                if(ycoord >= SCREEN_HEIGHT) 
+                    continue;
+                // LD_B_A;
+
+                do {
+                // next:
+                    // LDH_A_addr(hCurSpriteXCoord);
+                    // ADD_A_D;
+                    // DEC_A;
+                    uint8_t xcoord = (gb_read(hCurSpriteXCoord) + d) - 1;
+                    // CP_A(SCREEN_WIDTH);
+                    // IF_NC goto ok8;
+                    if(xcoord >= SCREEN_WIDTH)
+                        continue;
+                    // LD_C_A;
+                    // PUSH_BC;
+                    // CALL(aCoord2Tile);
+                    // POP_BC;
+                    // //  NPCs disappear if standing on tile $60-$7f (or $e0-$ff),
+                    // //  since those IDs are for text characters and textbox frames.
+                    // LD_A_hl;
+                    // CP_A(FIRST_REGULAR_TEXT_CHAR);
+                    // IF_NC goto nope;
+                    if(gb_read(Coord2Tile_Conv(xcoord, ycoord)) >= FIRST_REGULAR_TEXT_CHAR)
+                        return true;
+                // ok8:
+                    // DEC_D;
+                    // IF_NZ goto next;
+                } while(--d != 0);
+            // ok9:
+                // DEC_E;
+                // IF_NZ goto loop;
+            } while(--e != 0);
+            // AND_A_A;
+            // RET;
+            return false;
+        }
+    }
+    return true;
 }
 
 void HandleNPCStep(void) {
@@ -3340,6 +3687,66 @@ loop:
     RET;
 }
 
+void v_UpdateSprites_Conv(void) {
+    // SET_PC(av_UpdateSprites);
+    // LD_A_addr(wVramState);
+    // BIT_A(0);
+    // RET_Z;
+    if(!((gb_read(wVramState) >> (0)) & 0x1))
+        return;
+    
+    // XOR_A_A;
+    // LDH_addr_A(hUsedSpriteIndex);
+    gb_write(hUsedSpriteIndex, 0);
+    // LDH_A_addr(hOAMUpdate);
+    uint8_t temp = gb_read(hOAMUpdate);
+    // PUSH_AF;
+    // LD_A(1);
+    // LDH_addr_A(hOAMUpdate);
+    gb_write(hOAMUpdate, 1);
+    // CALL(aInitSprites);
+    InitSprites();
+    // CALL(av_UpdateSprites_fill);
+    
+// fill:
+
+    // LD_A_addr(wVramState);
+    // BIT_A(1);
+    // LD_B(NUM_SPRITE_OAM_STRUCTS * SPRITEOAMSTRUCT_LENGTH);
+    // IF_Z goto ok;
+    // LD_B((NUM_SPRITE_OAM_STRUCTS - 12) * SPRITEOAMSTRUCT_LENGTH);
+    uint8_t b = (!((gb_read(wVramState) >> (1)) & 0x1))? ((NUM_SPRITE_OAM_STRUCTS - 12) * SPRITEOAMSTRUCT_LENGTH) : NUM_SPRITE_OAM_STRUCTS * SPRITEOAMSTRUCT_LENGTH;
+
+// ok:
+
+    // LDH_A_addr(hUsedSpriteIndex);
+    // CP_A_B;
+    // RET_NC;
+    uint8_t sprite_idx = gb_read(hUsedSpriteIndex);
+    if(sprite_idx >= b)
+        return;
+    
+    // LD_L_A;
+    // LD_H(HIGH(wVirtualOAM));
+    uint16_t hl = (wVirtualOAM & 0xff00) | sprite_idx;
+    // LD_DE(SPRITEOAMSTRUCT_LENGTH);
+    // LD_A_B;
+    // LD_C(SCREEN_HEIGHT_PX + 2 * TILE_WIDTH);
+
+    do {
+        // LD_hl_C;  // y
+        gb_write(hl, SCREEN_HEIGHT_PX + 2 * TILE_WIDTH);
+        // ADD_HL_DE;
+        hl += SPRITEOAMSTRUCT_LENGTH;
+        // CP_A_L;
+        // IF_NZ goto loop;
+    } while(b != (uint8_t)LOW(hl));
+    // RET;
+    // POP_AF;
+    // LDH_addr_A(hOAMUpdate);
+    gb_write(hOAMUpdate, temp);
+}
+
 void ApplyBGMapAnchorToObjects(void) {
     SET_PC(aApplyBGMapAnchorToObjects);
     PUSH_HL;
@@ -3392,255 +3799,318 @@ skip:
     return InitSprites();
 }
 
+static void InitSprites_DeterminePriorities(void) {
+    // XOR_A_A;
+    // LD_HL(wObjectPriorities);
+    // LD_BC(NUM_OBJECT_STRUCTS);
+    // CALL(aByteFill);
+    ByteFill_Conv(wObjectPriorities, NUM_OBJECT_STRUCTS, 0);
+    uint8_t d = 0;
+    uint16_t bc = wObjectStructs;
+    uint16_t hl = wObjectPriorities;
+    uint8_t e;
+    // LD_D(0);
+    // LD_BC(wObjectStructs);
+    // LD_HL(wObjectPriorities);
+
+    do {
+        // PUSH_HL;
+        // CALL(aDoesObjectHaveASprite);
+        // IF_Z goto skip;
+        // LD_HL(OBJECT_FACING_STEP);
+        // ADD_HL_BC;
+        // LD_A_hl;
+        // CP_A(STANDING);
+        // IF_Z goto skip;
+        if(!DoesObjectHaveASprite_Conv(bc) || gb_read(bc + OBJECT_FACING_STEP) == (uint8_t)STANDING) {
+        // skip:
+
+        //     LD_HL(OBJECT_LENGTH);
+        //     ADD_HL_BC;
+        //     LD_B_H;
+        //     LD_C_L;
+        //     POP_HL;
+        //     goto next;
+            bc = bc + OBJECT_LENGTH;
+        }
+        else {
+            //  Define the sprite priority.
+            // LD_E(PRIORITY_LOW);
+            // LD_HL(OBJECT_FLAGS2);
+            // ADD_HL_BC;
+            BIT_hl(LOW_PRIORITY_F);
+            // IF_NZ goto add;
+            if(((gb_read(bc + OBJECT_FLAGS2) >> (LOW_PRIORITY_F)) & 0x1)) {
+                e = PRIORITY_LOW;
+            }
+            // BIT_hl(HIGH_PRIORITY_F);
+            // IF_Z goto add;
+            else if(!((gb_read(bc + OBJECT_FLAGS2) >> (HIGH_PRIORITY_F)) & 0x1)) {
+                e = PRIORITY_NORM;
+            }
+            else {
+                e = PRIORITY_HIGH;
+            }
+// add:
+            // LD_HL(OBJECT_LENGTH);
+            // ADD_HL_BC;
+            // LD_B_H;
+            // LD_C_L;
+            bc = bc + OBJECT_LENGTH;
+            // POP_HL;
+            // LD_A_D;
+            // OR_A_E;
+            // LD_hli_A;
+            gb_write(hl++, d | e);
+        }
+        // INC_D;
+        // LD_A_D;
+        // CP_A(NUM_OBJECT_STRUCTS);
+        // IF_NZ goto loop;
+    } while(++d != NUM_OBJECT_STRUCTS);
+    // RET;
+}
+
+static uint16_t InitSprites_GetObjectStructPointer(uint8_t a) {
+    // LD_C_A;
+    // LD_B(0);
+    // LD_HL(mInitSprites_Addresses);
+    // ADD_HL_BC;
+    // ADD_HL_BC;
+    uint16_t hl = mInitSprites_Addresses + (a * 2);
+    // LD_C_hl;
+    // INC_HL;
+    // LD_B_hl;
+    // RET;
+    return gb_read16(hl);
+}
+
+static bool InitSprites_InitSprite(uint16_t bc) {
+    // LD_HL(OBJECT_SPRITE_TILE);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    uint8_t tile = gb_read(bc + OBJECT_SPRITE_TILE);
+    // AND_A(~(1 << 7));
+    // LDH_addr_A(hCurSpriteTile);
+    gb_write(hCurSpriteTile, tile & ~(1 << 7));
+    // XOR_A_A;
+    // BIT_hl(7);
+    // IF_NZ goto not_vram1;
+    // OR_A(VRAM_BANK_1);
+    uint8_t a = 0;
+    a |= (!((tile >> (7)) & 0x1))? VRAM_BANK_1: 0;
+
+    // LD_HL(OBJECT_FLAGS2);
+    // ADD_HL_BC;
+    // LD_E_hl;
+    // BIT_E(OBJ_FLAGS2_7);
+    // IF_Z goto not_priority;
+    // OR_A(PRIORITY);
+    uint8_t flags2 = gb_read(bc + OBJECT_FLAGS2);
+    a |= (!!((flags2 >> (OBJ_FLAGS2_7)) & 0x1))? PRIORITY: 0;
+
+// not_priority:
+
+    // BIT_E(USE_OBP1_F);
+    // IF_Z goto not_obp_num;
+    // OR_A(OBP_NUM);
+    a |= (!!((flags2 >> (USE_OBP1_F)) & 0x1))? OBP_NUM: 0;
+
+// not_obp_num:
+
+    // LD_HL(OBJECT_PALETTE);
+    // ADD_HL_BC;
+    // LD_D_A;
+    // LD_A_hl;
+    // AND_A(PALETTE_MASK);
+    // OR_A_D;
+    // LD_D_A;
+    uint8_t pal = (gb_read(bc + OBJECT_PALETTE) & PALETTE_MASK) | a;
+    // XOR_A_A;
+    // BIT_E(OVERHEAD_F);
+    // IF_Z goto not_overhead;
+    // OR_A(PRIORITY);
+    a = (!!((flags2 >> (OVERHEAD_F)) & 0x1))? PRIORITY: 0;
+
+// not_overhead:
+
+    // LDH_addr_A(hCurSpriteOAMFlags);
+    gb_write(hCurSpriteOAMFlags, a);
+    // LD_HL(OBJECT_SPRITE_X);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    uint8_t x = gb_read(bc + OBJECT_SPRITE_X);
+    // LD_HL(OBJECT_SPRITE_X_OFFSET);
+    // ADD_HL_BC;
+    // ADD_A_hl;
+    // ADD_A(8);
+    // LD_E_A;
+    x += gb_read(bc + OBJECT_SPRITE_X_OFFSET) + 8;
+    // LD_A_addr(wPlayerBGMapOffsetX);
+    // ADD_A_E;
+    x += gb_read(wPlayerBGMapOffsetX);
+    // LDH_addr_A(hCurSpriteXPixel);
+    gb_write(hCurSpriteXPixel, x);
+
+    // LD_HL(OBJECT_SPRITE_Y);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // LD_HL(OBJECT_SPRITE_Y_OFFSET);
+    // ADD_HL_BC;
+    // ADD_A_hl;
+    // ADD_A(12);
+    // LD_E_A;
+    // LD_A_addr(wPlayerBGMapOffsetY);
+    // ADD_A_E;
+    // LDH_addr_A(hCurSpriteYPixel);
+    gb_write(hCurSpriteYPixel, gb_read(bc + OBJECT_SPRITE_Y) + gb_read(bc + OBJECT_SPRITE_Y_OFFSET) + 12 + gb_read(wPlayerBGMapOffsetY));
+    // LD_HL(OBJECT_FACING_STEP);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    uint8_t step = gb_read(bc + OBJECT_FACING_STEP);
+    // CP_A(STANDING);
+    // JP_Z(mInitSprites_done);
+    // CP_A(NUM_FACINGS);
+    // JP_NC(mInitSprites_done);
+    if(step != (uint8_t)STANDING && step < NUM_FACINGS) {
+        // LD_L_A;
+        // LD_H(0);
+        // ADD_HL_HL;
+        // LD_BC(mFacings);
+        // ADD_HL_BC;
+        uint16_t hl = mFacings + 2*step;
+        // LD_A_hli;
+        // LD_H_hl;
+        // LD_L_A;
+        // LDH_A_addr(hUsedSpriteIndex);
+        uint8_t l = gb_read(hl++);
+        hl = gb_read(hl)<<8 | l;
+        // LD_C_A;
+        // LD_B(HIGH(wVirtualOAM));
+        bc = ((wVirtualOAM & 0xff00)<<8) | gb_read(hUsedSpriteIndex);
+        // LD_A_hli;
+        // LDH_addr_A(hUsedSpriteTile);
+        a = gb_read(hl++);
+        gb_write(hUsedSpriteTile, a);
+
+        // ADD_A_C;
+        a += LOW(bc);
+        // CP_A(LOW(wVirtualOAMEnd));
+        if(a >= LOW(wVirtualOAMEnd)) {
+
+        // full:
+
+            // SCF;
+            // RET;
+            return false;
+        }
+        // IF_NC goto full;
+
+    // addsprite:
+        do {
+            // LDH_A_addr(hCurSpriteYPixel);
+            // ADD_A_hl;
+            // INC_HL;
+            // LD_bc_A;  // y
+            // INC_C;
+            gb_write(bc++, gb_read(hCurSpriteYPixel) + gb_read(hl++));
+            // LDH_A_addr(hCurSpriteXPixel);
+            // ADD_A_hl;
+            // INC_HL;
+            // LD_bc_A;  // x
+            // INC_C;
+            gb_write(bc++, gb_read(hCurSpriteYPixel) + gb_read(hl++));
+            // LD_E_hl;
+            // INC_HL;
+            uint8_t id = gb_read(hl++);
+            // LDH_A_addr(hCurSpriteTile);
+            // BIT_E(ABSOLUTE_TILE_ID_F);
+            // IF_Z goto nope1;
+            // XOR_A_A;
+            a = (!((id >> (ABSOLUTE_TILE_ID_F)) & 0x1))? gb_read(hCurSpriteTile): 0;
+
+        // nope1:
+
+            // ADD_A_hl;
+            // INC_HL;
+            // LD_bc_A;  // tile id
+            // INC_C;
+            gb_write(bc++, a + gb_read(hl++));
+            // LD_A_E;
+            // BIT_A(RELATIVE_ATTRIBUTES_F);
+            // IF_Z goto nope2;
+            // LDH_A_addr(hCurSpriteOAMFlags);
+            // OR_A_E;
+            a = (!((id >> (RELATIVE_ATTRIBUTES_F)) & 0x1))? gb_read(hCurSpriteOAMFlags) | id: id;
+
+        // nope2:
+
+            // AND_A(OBP_NUM | X_FLIP | Y_FLIP | PRIORITY);
+            // OR_A_D;
+            // LD_bc_A;  // attributes
+            // INC_C;
+            gb_write(bc++, pal | (a & (OBP_NUM | X_FLIP | Y_FLIP | PRIORITY)));
+            // LDH_A_addr(hUsedSpriteTile);
+            // DEC_A;
+            // LDH_addr_A(hUsedSpriteTile);
+            a = gb_read(hUsedSpriteTile) - 1;
+            gb_write(hUsedSpriteTile, a);
+            // IF_NZ goto addsprite;
+            if(a != 0) continue;
+            // LD_A_C;
+            // LDH_addr_A(hUsedSpriteIndex);
+            gb_write(hUsedSpriteIndex, LOW(bc));
+        } while(0);
+    }
+
+    // XOR_A_A;
+    // RET;
+    return true;
+}
+
+static void InitSprites_InitSpritesByPriority(uint8_t c) {
+    uint16_t hl = (wObjectPriorities);
+
+    while(1) {
+        // LD_A_hli;
+        // LD_D_A;
+        // AND_A(0xf0);
+        // RET_Z;
+        uint8_t d = gb_read(hl++);
+        if((d & 0xf0) == 0)
+            return;
+        // CP_A_C;
+        // IF_NZ goto next_sprite;
+        if((d & 0xf0) == c)
+            continue;
+        
+        // PUSH_BC;
+        // PUSH_HL;
+        // LD_A_D;
+        // AND_A(0xf);
+        // CALL(aInitSprites_GetObjectStructPointer);
+        uint16_t ptr = InitSprites_GetObjectStructPointer(d & 0xf);
+        // CALL(aInitSprites_InitSprite);
+        InitSprites_InitSprite(ptr);
+        // POP_HL;
+        // POP_BC;
+    }
+}
+
 void InitSprites(void) {
-    SET_PC(aInitSprites);
-    CALL(aInitSprites_DeterminePriorities);
-    LD_C(PRIORITY_HIGH);
-    CALL(aInitSprites_InitSpritesByPriority);
-    LD_C(PRIORITY_NORM);
-    CALL(aInitSprites_InitSpritesByPriority);
-    LD_C(PRIORITY_LOW);
-    CALL(aInitSprites_InitSpritesByPriority);
-    RET;
-
-DeterminePriorities:
-
-    XOR_A_A;
-    LD_HL(wObjectPriorities);
-    LD_BC(NUM_OBJECT_STRUCTS);
-    CALL(aByteFill);
-    LD_D(0);
-    LD_BC(wObjectStructs);
-    LD_HL(wObjectPriorities);
-
-loop:
-
-    PUSH_HL;
-    CALL(aDoesObjectHaveASprite);
-    IF_Z goto skip;
-    LD_HL(OBJECT_FACING_STEP);
-    ADD_HL_BC;
-    LD_A_hl;
-    CP_A(STANDING);
-    IF_Z goto skip;
-    //  Define the sprite priority.
-    LD_E(PRIORITY_LOW);
-    LD_HL(OBJECT_FLAGS2);
-    ADD_HL_BC;
-    BIT_hl(LOW_PRIORITY_F);
-    IF_NZ goto add;
-    LD_E(PRIORITY_NORM);
-    BIT_hl(HIGH_PRIORITY_F);
-    IF_Z goto add;
-    LD_E(PRIORITY_HIGH);
-    goto add;
-
-skip:
-
-    LD_HL(OBJECT_LENGTH);
-    ADD_HL_BC;
-    LD_B_H;
-    LD_C_L;
-    POP_HL;
-    goto next;
-
-add:
-
-    LD_HL(OBJECT_LENGTH);
-    ADD_HL_BC;
-    LD_B_H;
-    LD_C_L;
-    POP_HL;
-    LD_A_D;
-    OR_A_E;
-    LD_hli_A;
-
-next:
-
-    INC_D;
-    LD_A_D;
-    CP_A(NUM_OBJECT_STRUCTS);
-    IF_NZ goto loop;
-    RET;
-
-InitSpritesByPriority:
-
-    LD_HL(wObjectPriorities);
-
-next_sprite:
-
-    LD_A_hli;
-    LD_D_A;
-    AND_A(0xf0);
-    RET_Z;
-    CP_A_C;
-    IF_NZ goto next_sprite;
-    PUSH_BC;
-    PUSH_HL;
-    LD_A_D;
-    AND_A(0xf);
-    CALL(aInitSprites_GetObjectStructPointer);
-    CALL(aInitSprites_InitSprite);
-    POP_HL;
-    POP_BC;
-    goto next_sprite;
-
-InitSprite:
-
-    LD_HL(OBJECT_SPRITE_TILE);
-    ADD_HL_BC;
-    LD_A_hl;
-    AND_A(~(1 << 7));
-    LDH_addr_A(hCurSpriteTile);
-    XOR_A_A;
-    BIT_hl(7);
-    IF_NZ goto not_vram1;
-    OR_A(VRAM_BANK_1);
-
-not_vram1:
-
-    LD_HL(OBJECT_FLAGS2);
-    ADD_HL_BC;
-    LD_E_hl;
-    BIT_E(OBJ_FLAGS2_7);
-    IF_Z goto not_priority;
-    OR_A(PRIORITY);
-
-not_priority:
-
-    BIT_E(USE_OBP1_F);
-    IF_Z goto not_obp_num;
-    OR_A(OBP_NUM);
-
-not_obp_num:
-
-    LD_HL(OBJECT_PALETTE);
-    ADD_HL_BC;
-    LD_D_A;
-    LD_A_hl;
-    AND_A(PALETTE_MASK);
-    OR_A_D;
-    LD_D_A;
-    XOR_A_A;
-    BIT_E(OVERHEAD_F);
-    IF_Z goto not_overhead;
-    OR_A(PRIORITY);
-
-not_overhead:
-
-    LDH_addr_A(hCurSpriteOAMFlags);
-    LD_HL(OBJECT_SPRITE_X);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_HL(OBJECT_SPRITE_X_OFFSET);
-    ADD_HL_BC;
-    ADD_A_hl;
-    ADD_A(8);
-    LD_E_A;
-    LD_A_addr(wPlayerBGMapOffsetX);
-    ADD_A_E;
-    LDH_addr_A(hCurSpriteXPixel);
-    LD_HL(OBJECT_SPRITE_Y);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_HL(OBJECT_SPRITE_Y_OFFSET);
-    ADD_HL_BC;
-    ADD_A_hl;
-    ADD_A(12);
-    LD_E_A;
-    LD_A_addr(wPlayerBGMapOffsetY);
-    ADD_A_E;
-    LDH_addr_A(hCurSpriteYPixel);
-    LD_HL(OBJECT_FACING_STEP);
-    ADD_HL_BC;
-    LD_A_hl;
-    CP_A(STANDING);
-    JP_Z(mInitSprites_done);
-    CP_A(NUM_FACINGS);
-    JP_NC(mInitSprites_done);
-    LD_L_A;
-    LD_H(0);
-    ADD_HL_HL;
-    LD_BC(mFacings);
-    ADD_HL_BC;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    LDH_A_addr(hUsedSpriteIndex);
-    LD_C_A;
-    LD_B(HIGH(wVirtualOAM));
-    LD_A_hli;
-    LDH_addr_A(hUsedSpriteTile);
-    ADD_A_C;
-    CP_A(LOW(wVirtualOAMEnd));
-    IF_NC goto full;
-
-addsprite:
-
-    LDH_A_addr(hCurSpriteYPixel);
-    ADD_A_hl;
-    INC_HL;
-    LD_bc_A;  // y
-    INC_C;
-    LDH_A_addr(hCurSpriteXPixel);
-    ADD_A_hl;
-    INC_HL;
-    LD_bc_A;  // x
-    INC_C;
-    LD_E_hl;
-    INC_HL;
-    LDH_A_addr(hCurSpriteTile);
-    BIT_E(ABSOLUTE_TILE_ID_F);
-    IF_Z goto nope1;
-    XOR_A_A;
-
-nope1:
-
-    ADD_A_hl;
-    INC_HL;
-    LD_bc_A;  // tile id
-    INC_C;
-    LD_A_E;
-    BIT_A(RELATIVE_ATTRIBUTES_F);
-    IF_Z goto nope2;
-    LDH_A_addr(hCurSpriteOAMFlags);
-    OR_A_E;
-
-nope2:
-
-    AND_A(OBP_NUM | X_FLIP | Y_FLIP | PRIORITY);
-    OR_A_D;
-    LD_bc_A;  // attributes
-    INC_C;
-    LDH_A_addr(hUsedSpriteTile);
-    DEC_A;
-    LDH_addr_A(hUsedSpriteTile);
-    IF_NZ goto addsprite;
-    LD_A_C;
-    LDH_addr_A(hUsedSpriteIndex);
-
-done:
-
-    XOR_A_A;
-    RET;
-
-full:
-
-    SCF;
-    RET;
-
-GetObjectStructPointer:
-
-    LD_C_A;
-    LD_B(0);
-    LD_HL(mInitSprites_Addresses);
-    ADD_HL_BC;
-    ADD_HL_BC;
-    LD_C_hl;
-    INC_HL;
-    LD_B_hl;
-    RET;
-
+    // SET_PC(aInitSprites);
+    // CALL(aInitSprites_DeterminePriorities);
+    InitSprites_DeterminePriorities();
+    // LD_C(PRIORITY_HIGH);
+    // CALL(aInitSprites_InitSpritesByPriority);
+    // LD_C(PRIORITY_NORM);
+    // CALL(aInitSprites_InitSpritesByPriority);
+    // LD_C(PRIORITY_LOW);
+    // CALL(aInitSprites_InitSpritesByPriority);
+    InitSprites_InitSpritesByPriority(PRIORITY_HIGH);
+    InitSprites_InitSpritesByPriority(PRIORITY_NORM);
+    InitSprites_InitSpritesByPriority(PRIORITY_LOW);
+    // RET;
 /* Currently not used?
 Addresses:
 

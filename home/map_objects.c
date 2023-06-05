@@ -1,5 +1,7 @@
 #include "../constants.h"
 #include "map_objects.h"
+#include "../engine/overworld/map_objects.h"
+#include "array.h"
 
 //  Functions handling map objects.
 
@@ -690,6 +692,21 @@ void UpdateSprites(void){
 
 }
 
+void UpdateSprites_Conv(void){
+    // LD_A_addr(wVramState);
+    // BIT_A(0);
+    // RET_Z ;
+    if(!((gb_read(wVramState) >> (0)) & 0x1))
+        return;
+
+    // FARCALL(aUpdateAllObjectsFrozen);
+    // FARCALL(av_UpdateSprites);
+    farcall(UpdateAllObjectsFrozen);
+    farcall(v_UpdateSprites);
+    // RET;
+
+}
+
 void GetObjectStruct(void){
         LD_BC(OBJECT_LENGTH);
     LD_HL(wObjectStructs);
@@ -700,6 +717,16 @@ void GetObjectStruct(void){
 
 }
 
+uint16_t GetObjectStruct_Conv(uint8_t a){
+    // LD_BC(OBJECT_LENGTH);
+    // LD_HL(wObjectStructs);
+    // CALL(aAddNTimes);
+    // LD_B_H;
+    // LD_C_L;
+    // RET;
+    return AddNTimes_Conv(OBJECT_LENGTH, wObjectStructs, a);
+}
+
 void DoesObjectHaveASprite(void){
         LD_HL(OBJECT_SPRITE);
     ADD_HL_BC;
@@ -707,6 +734,15 @@ void DoesObjectHaveASprite(void){
     AND_A_A;
     RET;
 
+}
+
+bool DoesObjectHaveASprite_Conv(uint16_t bc){
+    //     LD_HL(OBJECT_SPRITE);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // AND_A_A;
+    // RET;
+    return gb_read(OBJECT_SPRITE + bc) != 0;
 }
 
 void SetSpriteDirection(void){
@@ -725,11 +761,39 @@ void SetSpriteDirection(void){
 
 }
 
+void SetSpriteDirection_Conv(uint16_t bc, uint8_t a){
+    // preserves other flags
+    // PUSH_AF;
+    // LD_HL(OBJECT_FACING);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // AND_A(0b11110011);
+    // LD_E_A;
+    // POP_AF;
+    uint8_t e = gb_read(bc + OBJECT_FACING) & 0b11110011;
+    // maskbits(NUM_DIRECTIONS, 2);
+    // OR_A_E;
+    // LD_hl_A;
+    gb_write(bc + OBJECT_FACING, e | (a & ((NUM_DIRECTIONS - 1) << 2)));
+    // RET;
+
+}
+
 void GetSpriteDirection(void){
         LD_HL(OBJECT_FACING);
     ADD_HL_BC;
     LD_A_hl;
     maskbits(NUM_DIRECTIONS, 2);
     RET;
+
+}
+
+uint8_t GetSpriteDirection_Conv(uint16_t bc){
+    // LD_HL(OBJECT_FACING);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    return gb_read(bc + OBJECT_FACING) & ((NUM_DIRECTIONS - 1) << 2);
+    // maskbits(NUM_DIRECTIONS, 2);
+    // RET;
 
 }

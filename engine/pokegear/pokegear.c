@@ -11,6 +11,7 @@
 #include "../../home/lcd.h"
 #include "../gfx/player_gfx.h"
 #include "../../audio/engine.h"
+#include "../rtc/print_hours_mins.h"
 
 //  Pokégear cards
 enum {
@@ -65,6 +66,7 @@ void PokeGear(void){
     CALL(aDelayFrame);
 
 loop:
+    SET_PC(aPokeGear_loop);
     CALL(aUpdateTime);
     CALL(aJoyTextDelay);
     LD_A_addr(wJumptableIndex);
@@ -1074,12 +1076,12 @@ quit:
 
 
 UpdateClock:
-    PEEK("UpdateClock");
+    // PEEK("UpdateClock");
     SET_PC(aPokegearClock_Joypad_UpdateClock);
     XOR_A_A;
     LDH_addr_A(hBGMapMode);
-    CALL(aPokegear_UpdateClock);
-    // Pokegear_UpdateClock();
+    // CALL(aPokegear_UpdateClock);
+    Pokegear_UpdateClock_Conv();
     LD_A(0x1);
     LDH_addr_A(hBGMapMode);
     RET;
@@ -1088,17 +1090,19 @@ UpdateClock:
 
 void PokegearClock_Joypad_UpdateClock(void) {
     SET_PC(aPokegearClock_Joypad_UpdateClock);
-    PEEK("UpdateClock");
+    // PEEK("UpdateClock");
     XOR_A_A;
     LDH_addr_A(hBGMapMode);
-    CALL(aPokegear_UpdateClock);
+    // CALL(aPokegear_UpdateClock);
     // Pokegear_UpdateClock();
+    Pokegear_UpdateClock_Conv();
     LD_A(0x1);
     LDH_addr_A(hBGMapMode);
     RET;
 }
 
 void Pokegear_UpdateClock(void){
+    PEEK("UpdateClock");
     hlcoord(3, 5, wTilemap);
     LD_BC((5 << 8) | 14);
     CALL(aClearBox);
@@ -1126,13 +1130,18 @@ GearTodayText:
 }
 
 void Pokegear_UpdateClock_Conv(void){
+    PEEK("UpdateClock");
     ClearBox_Conv(coord(3, 5, wTilemap), ((5 << 8) | 14));
-    LDH_A_addr(hHours);
-    LD_B_A;
-    LDH_A_addr(hMinutes);
-    LD_C_A;
-    decoord(6, 8, wTilemap);
-    FARCALL(aPrintHoursMins);
+    // LDH_A_addr(hHours);
+    // LD_B_A;
+    // LDH_A_addr(hMinutes);
+    // LD_C_A;
+    // REG_B = gb_read(hHours);
+    // REG_C = gb_read(hMinutes);
+    // REG_DE = coord(6, 8, wTilemap);
+    // decoord(6, 8, wTilemap);
+    // FARCALL(aPrintHoursMins);
+    farcall(PrintHoursMins, coord(6, 8, wTilemap), gb_read(hHours), gb_read(hMinutes));
     // bank_push(aPrintHoursMins);
     // bank_pop;
     // LD_HL(mPokegear_UpdateClock_GearTodayText);
@@ -1447,6 +1456,7 @@ void PokegearRadio_Joypad(void){
     AND_A_A;
     RET_Z ;
     RST(aFarCall);
+    return;
     //RET;
 
 

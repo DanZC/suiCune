@@ -1,4 +1,11 @@
-struct TextCmdState;
+struct TextCmdState
+{
+    uint16_t hl;
+    uint16_t bc;
+    uint16_t de;
+    uint16_t hltemp;
+};
+
 void ClearBox(void);
 void ClearBox_Conv(uint16_t hl, uint16_t bc);
 void FillBoxWithByte(void);

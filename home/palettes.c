@@ -503,6 +503,7 @@ ok:
 void CopyPals_Conv(uint16_t hl, uint16_t de, uint8_t b, uint8_t c){
     do {
         // PUSH_BC;
+        uint8_t bsaved = b;
         // LD_C(NUM_PAL_COLORS);
         uint8_t n = NUM_PAL_COLORS;
 
@@ -515,13 +516,13 @@ void CopyPals_Conv(uint16_t hl, uint16_t de, uint8_t b, uint8_t c){
         //  get pal color
             // LD_A_B;
             // maskbits(1 << PAL_COLOR_SIZE, 0);
-            uint8_t palc = b & (0b111);
+            uint8_t palc = b & (0b11);
         //  2 bytes per color
             // ADD_A_A;
             // LD_L_A;
             // LD_H(0);
             // ADD_HL_DE;
-            hl += (2 * palc);
+            hl = de + (2 * palc);
 
             // LD_E_hl;
             // INC_HL;
@@ -559,10 +560,11 @@ void CopyPals_Conv(uint16_t hl, uint16_t de, uint8_t b, uint8_t c){
         // INC_D;
     // ok:
         // LD_E_A;
-        de += 8;
+        de += PALETTE_SIZE;
 
     //  how many more pals?
         // POP_BC;
+        b = bsaved;
         // DEC_C;
         // JR_NZ (mCopyPals);
     } while(--c != 0);

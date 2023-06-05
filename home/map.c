@@ -1079,6 +1079,25 @@ void CallScript(void){
 
 }
 
+void CallScript_Conv(uint8_t a, uint16_t hl){
+//  Call a script at a:hl.
+
+    // LD_addr_A(wScriptBank);
+    // LD_A_L;
+    // LD_addr_A(wScriptPos);
+    // LD_A_H;
+    // LD_addr_A(wScriptPos + 1);
+    gb_write(wScriptBank, a);
+    gb_write16(wScriptPos, hl);
+
+    // LD_A(PLAYEREVENT_MAPSCRIPT);
+    // LD_addr_A(wScriptRunning);
+    gb_write(wScriptRunning, PLAYEREVENT_MAPSCRIPT);
+
+    // SCF;
+    // RET;
+}
+
 void CallMapScript(void){
 //  Call a script at hl in the current bank if there isn't already a script running
     LD_A_addr(wScriptRunning);
@@ -1087,6 +1106,19 @@ void CallMapScript(void){
     CALL(aGetMapScriptsBank);
     JR(mCallScript);
 
+}
+
+void CallMapScript_Conv(uint16_t hl){
+//  Call a script at hl in the current bank if there isn't already a script running
+    // LD_A_addr(wScriptRunning);
+    // AND_A_A;
+    // RET_NZ ;
+    if(gb_read(wScriptRunning) != 0)
+        return;
+    
+    // CALL(aGetMapScriptsBank);
+    // JR(mCallScript);
+    return CallScript_Conv(GetMapScriptsBank_Conv(), hl);
 }
 
 void RunMapCallback(void){

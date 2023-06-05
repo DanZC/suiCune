@@ -188,8 +188,7 @@ struct SpriteData
 
 struct TrainerClassAttr
 {
-    uint8_t item_1;
-    uint8_t item_2;
+    uint8_t items[2];
     uint8_t baseMoney;
     uint16_t aiMoveWeights;
     uint16_t aiItemSwitch;
@@ -648,4 +647,10 @@ struct BattleBGEffect
     uint8_t jumptableIndex;
     uint8_t battleTurn;
     uint8_t param;
+};
+
+struct CustomMartItem
+{
+    uint8_t id;
+    uint16_t price;
 };

@@ -17,3 +17,5 @@
 #include "macros/scripts/gfx_anims.h"
 
 //#include "macros/legacy.h"
+
+#define lengthof(_arr) (sizeof(_arr) / sizeof(_arr[0]))

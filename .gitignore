@@ -25,6 +25,7 @@ gfx/pokemon/*/frames.asm
 # tool binaries and directories
 *.exe
 build/
+test/
 suiCune
 
 # precompiled python

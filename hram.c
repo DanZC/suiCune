@@ -5,7 +5,7 @@
 
 #define check_field(_fld) static_assert(offsetof(struct hram_s, _fld) == (_fld - 0xff80), "");
 #else
-#define check_field(_fld) _Static_assert(__builtin_offsetof(struct hram_s, _fld) == (_fld - 0xff80), "")
+#define check_field(_fld) _Static_assert(__builtin_offsetof(struct hram_s, _fld) == (_fld - 0xff80), "");
 #endif
 
 struct hram_s* hram;

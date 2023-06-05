@@ -95,66 +95,123 @@ void DoBattleBGEffectFunction(void) {
     JP_hl;
 }
 
-void BattleBGEffects(void) {
-    SET_PC(aBattleBGEffects);
-    //  entries correspond to ANIM_BG_* constants
-    // dw ['BattleBGEffect_End'];
-    // dw ['BattleBGEffect_FlashInverted'];
-    // dw ['BattleBGEffect_FlashWhite'];
-    // dw ['BattleBGEffect_WhiteHues'];
-    // dw ['BattleBGEffect_BlackHues'];
-    // dw ['BattleBGEffect_AlternateHues'];
-    // dw ['BattleBGEffect_CycleOBPalsGrayAndYellow'];
-    // dw ['BattleBGEffect_CycleMidOBPalsGrayAndYellow'];
-    // dw ['BattleBGEffect_CycleBGPals_Inverted'];
-    // dw ['BattleBGEffect_HideMon'];
-    // dw ['BattleBGEffect_ShowMon'];
-    // dw ['BattleBGEffect_EnterMon'];
-    // dw ['BattleBGEffect_ReturnMon'];
-    // dw ['BattleBGEffect_Surf'];
-    // dw ['BattleBGEffect_Whirlpool'];
-    // dw ['BattleBGEffect_Teleport'];
-    // dw ['BattleBGEffect_NightShade'];
-    // dw ['BattleBGEffect_BattlerObj_1Row'];
-    // dw ['BattleBGEffect_BattlerObj_2Row'];
-    // dw ['BattleBGEffect_DoubleTeam'];
-    // dw ['BattleBGEffect_AcidArmor'];
-    // dw ['BattleBGEffect_RapidFlash'];
-    // dw ['BattleBGEffect_FadeMonToLight'];
-    // dw ['BattleBGEffect_FadeMonToBlack'];
-    // dw ['BattleBGEffect_FadeMonToLightRepeating'];
-    // dw ['BattleBGEffect_FadeMonToBlackRepeating'];
-    // dw ['BattleBGEffect_CycleMonLightDarkRepeating'];
-    // dw ['BattleBGEffect_FlashMonRepeating'];
-    // dw ['BattleBGEffect_FadeMonsToBlackRepeating'];
-    // dw ['BattleBGEffect_FadeMonToWhiteWaitFadeBack'];
-    // dw ['BattleBGEffect_FadeMonFromWhite'];
-    // dw ['BattleBGEffect_ShakeScreenX'];
-    // dw ['BattleBGEffect_ShakeScreenY'];
-    // dw ['BattleBGEffect_Withdraw'];
-    // dw ['BattleBGEffect_BounceDown'];
-    // dw ['BattleBGEffect_Dig'];
-    // dw ['BattleBGEffect_Tackle'];
-    // dw ['BattleBGEffect_BodySlam'];
-    // dw ['BattleBGEffect_WobbleMon'];
-    // dw ['BattleBGEffect_RemoveMon'];
-    // dw ['BattleBGEffect_WaveDeformMon'];
-    // dw ['BattleBGEffect_Psychic'];
-    // dw ['BattleBGEffect_BetaSendOutMon1'];
-    // dw ['BattleBGEffect_BetaSendOutMon2'];
-    // dw ['BattleBGEffect_Flail'];
-    // dw ['BattleBGEffect_BetaPursuit'];
-    // dw ['BattleBGEffect_Rollout'];
-    // dw ['BattleBGEffect_VitalThrow'];
-    // dw ['BattleBGEffect_StartWater'];
-    // dw ['BattleBGEffect_Water'];
-    // dw ['BattleBGEffect_EndWater'];
-    // dw ['BattleBGEffect_VibrateMon'];
-    // dw ['BattleBGEffect_WobblePlayer'];
-    // dw ['BattleBGEffect_WobbleScreen'];
+// void BattleBGEffects(void) {
+//     SET_PC(aBattleBGEffects);
+//     //  entries correspond to ANIM_BG_* constants
+//     // dw ['BattleBGEffect_End'];
+//     // dw ['BattleBGEffect_FlashInverted'];
+//     // dw ['BattleBGEffect_FlashWhite'];
+//     // dw ['BattleBGEffect_WhiteHues'];
+//     // dw ['BattleBGEffect_BlackHues'];
+//     // dw ['BattleBGEffect_AlternateHues'];
+//     // dw ['BattleBGEffect_CycleOBPalsGrayAndYellow'];
+//     // dw ['BattleBGEffect_CycleMidOBPalsGrayAndYellow'];
+//     // dw ['BattleBGEffect_CycleBGPals_Inverted'];
+//     // dw ['BattleBGEffect_HideMon'];
+//     // dw ['BattleBGEffect_ShowMon'];
+//     // dw ['BattleBGEffect_EnterMon'];
+//     // dw ['BattleBGEffect_ReturnMon'];
+//     // dw ['BattleBGEffect_Surf'];
+//     // dw ['BattleBGEffect_Whirlpool'];
+//     // dw ['BattleBGEffect_Teleport'];
+//     // dw ['BattleBGEffect_NightShade'];
+//     // dw ['BattleBGEffect_BattlerObj_1Row'];
+//     // dw ['BattleBGEffect_BattlerObj_2Row'];
+//     // dw ['BattleBGEffect_DoubleTeam'];
+//     // dw ['BattleBGEffect_AcidArmor'];
+//     // dw ['BattleBGEffect_RapidFlash'];
+//     // dw ['BattleBGEffect_FadeMonToLight'];
+//     // dw ['BattleBGEffect_FadeMonToBlack'];
+//     // dw ['BattleBGEffect_FadeMonToLightRepeating'];
+//     // dw ['BattleBGEffect_FadeMonToBlackRepeating'];
+//     // dw ['BattleBGEffect_CycleMonLightDarkRepeating'];
+//     // dw ['BattleBGEffect_FlashMonRepeating'];
+//     // dw ['BattleBGEffect_FadeMonsToBlackRepeating'];
+//     // dw ['BattleBGEffect_FadeMonToWhiteWaitFadeBack'];
+//     // dw ['BattleBGEffect_FadeMonFromWhite'];
+//     // dw ['BattleBGEffect_ShakeScreenX'];
+//     // dw ['BattleBGEffect_ShakeScreenY'];
+//     // dw ['BattleBGEffect_Withdraw'];
+//     // dw ['BattleBGEffect_BounceDown'];
+//     // dw ['BattleBGEffect_Dig'];
+//     // dw ['BattleBGEffect_Tackle'];
+//     // dw ['BattleBGEffect_BodySlam'];
+//     // dw ['BattleBGEffect_WobbleMon'];
+//     // dw ['BattleBGEffect_RemoveMon'];
+//     // dw ['BattleBGEffect_WaveDeformMon'];
+//     // dw ['BattleBGEffect_Psychic'];
+//     // dw ['BattleBGEffect_BetaSendOutMon1'];
+//     // dw ['BattleBGEffect_BetaSendOutMon2'];
+//     // dw ['BattleBGEffect_Flail'];
+//     // dw ['BattleBGEffect_BetaPursuit'];
+//     // dw ['BattleBGEffect_Rollout'];
+//     // dw ['BattleBGEffect_VitalThrow'];
+//     // dw ['BattleBGEffect_StartWater'];
+//     // dw ['BattleBGEffect_Water'];
+//     // dw ['BattleBGEffect_EndWater'];
+//     // dw ['BattleBGEffect_VibrateMon'];
+//     // dw ['BattleBGEffect_WobblePlayer'];
+//     // dw ['BattleBGEffect_WobbleScreen'];
 
-    return BattleBGEffect_End();
-}
+//     return BattleBGEffect_End();
+// }
+
+void(*const BattleBGEffects[])(void) = {
+    BattleBGEffect_End,
+    BattleBGEffect_FlashInverted,
+    BattleBGEffect_FlashWhite,
+    BattleBGEffect_WhiteHues,
+    BattleBGEffect_BlackHues,
+    BattleBGEffect_AlternateHues,
+    BattleBGEffect_CycleOBPalsGrayAndYellow,
+    BattleBGEffect_CycleMidOBPalsGrayAndYellow,
+    BattleBGEffect_CycleBGPals_Inverted,
+    BattleBGEffect_HideMon,
+    BattleBGEffect_ShowMon,
+    BattleBGEffect_EnterMon,
+    BattleBGEffect_ReturnMon,
+    BattleBGEffect_Surf,
+    BattleBGEffect_Whirlpool,
+    BattleBGEffect_Teleport,
+    BattleBGEffect_NightShade,
+    BattleBGEffect_BattlerObj_1Row,
+    BattleBGEffect_BattlerObj_2Row,
+    BattleBGEffect_DoubleTeam,
+    BattleBGEffect_AcidArmor,
+    BattleBGEffect_RapidFlash,
+    BattleBGEffect_FadeMonToLight,
+    BattleBGEffect_FadeMonToBlack,
+    BattleBGEffect_FadeMonToLightRepeating,
+    BattleBGEffect_FadeMonToBlackRepeating,
+    BattleBGEffect_CycleMonLightDarkRepeating,
+    BattleBGEffect_FlashMonRepeating,
+    BattleBGEffect_FadeMonsToBlackRepeating,
+    BattleBGEffect_FadeMonToWhiteWaitFadeBack,
+    BattleBGEffect_FadeMonFromWhite,
+    BattleBGEffect_ShakeScreenX,
+    BattleBGEffect_ShakeScreenY,
+    BattleBGEffect_Withdraw,
+    BattleBGEffect_BounceDown,
+    BattleBGEffect_Dig,
+    BattleBGEffect_Tackle,
+    BattleBGEffect_BodySlam,
+    BattleBGEffect_WobbleMon,
+    BattleBGEffect_RemoveMon,
+    BattleBGEffect_WaveDeformMon,
+    BattleBGEffect_Psychic,
+    BattleBGEffect_BetaSendOutMon1,
+    BattleBGEffect_BetaSendOutMon2,
+    BattleBGEffect_Flail,
+    BattleBGEffect_BetaPursuit,
+    BattleBGEffect_Rollout,
+    BattleBGEffect_VitalThrow,
+    BattleBGEffect_StartWater,
+    BattleBGEffect_Water,
+    BattleBGEffect_EndWater,
+    BattleBGEffect_VibrateMon,
+    BattleBGEffect_WobblePlayer,
+    BattleBGEffect_WobbleScreen,
+};
 
 void BattleBGEffect_End(void) {
     SET_PC(aBattleBGEffect_End);

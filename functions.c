@@ -344,7 +344,7 @@ void init_function_pointers(void) {
     // REDIRECTED(GetMenuIndexSet);
     // REDIRECTED(PlaceNthMenuStrings);
     // REDIRECTED(StoreMenuCursorPosition);
-    // REDIRECTED(ClearWindowData);
+    REDIRECTED(ClearWindowData);
 
     // home/mobile.c
     // REDIRECTED(Function3f9f);
@@ -544,7 +544,7 @@ void init_function_pointers(void) {
     // REDIRECTED(PlaceGenderedPlayerName);
     // REDIRECTED(PlaceWatashi);
     // REDIRECTED(PlacePOKeText);
-    // REDIRECTED(FillBoxWithByte);
+    REDIRECTED(FillBoxWithByte);
     // REDIRECTED(GameFreakText);
     // REDIRECTED(TextCommand_DOTS);
     // REDIRECTED(NullChar);
@@ -1137,7 +1137,7 @@ void init_function_pointers(void) {
     // REDIRECTED(PadMapForHDMATransfer);
     // REDIRECTED(HDMATransferTilemapToWRAMBank3);
     // REDIRECTED(ReloadMapPart);
-    // REDIRECTED(OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
+    REDIRECTED(OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
     // REDIRECTED(CallInSafeGFXMode);
     // REDIRECTED(v_LoadHDMAParameters);
     // REDIRECTED(PadAttrmapForHDMATransfer);
@@ -2185,7 +2185,7 @@ void init_function_pointers(void) {
     // REDIRECTED(FindFirstAliveMonAndStartBattle);
 
     // engine/battle/sliding_intro.c
-    REDIRECTED(BattleIntroSlidingPics);
+    CONVERTED(BattleIntroSlidingPics);
 
     // engine/rtc/rtc.c
     // REDIRECTED(SaveRTC);
@@ -2209,4 +2209,21 @@ void init_function_pointers(void) {
 
     // engine/battle/hidden_power.c
     // REDIRECTED(HiddenPowerDamage);
+
+    // engine/phone/phonering_copytilemapatonce.c
+    CONVERTED(PhoneRing_CopyTilemapAtOnce);
+    
+    // engine/battle/check_battle_scene.c
+    REDIRECTED(CheckBattleScene);
+
+    // engine/rtc/print_hours_mins.c
+    // REDIRECTED(String_PM);
+    REDIRECTED(PrintHoursMins);
+    // REDIRECTED(String_AM);
+    // REDIRECTED(PrintFiveDigitNumber);
+
+    // engine/overworld/init_map.c
+    REDIRECTED(HDMATransfer_FillBGMap0WithBlack);
+    REDIRECTED(LoadFonts_NoOAMUpdate);
+    REDIRECTED(ReanchorBGMap_NoOAMUpdate);
 }

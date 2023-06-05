@@ -10,4 +10,5 @@ void GetFarWord(void);
 uint16_t GetFarWord_Conv(uint8_t a, uint16_t hl);
 void FarCopyWRAM(void);
 void GetFarWRAMByte(void);
+uint8_t GetFarWRAMByte_Conv(uint8_t bank, uint16_t address);
 void GetFarWRAMWord(void);
