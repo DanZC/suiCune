@@ -83,6 +83,13 @@ void CopyTilemapAtOnce(void) {
     JR(mv_CopyTilemapAtOnce);
 }
 
+void CopyAttrmapAndTilemapToWRAMBank3(void) {
+    SET_PC(aCopyAttrmapAndTilemapToWRAMBank3);
+    //  //  unreferenced
+    FARCALL(aHDMATransferAttrmapAndTilemapToWRAMBank3);
+    RET;
+}
+
 void v_CopyTilemapAtOnce(void) {
     SET_PC(av_CopyTilemapAtOnce);
     LDH_A_addr(hBGMapMode);

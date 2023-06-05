@@ -3,6 +3,21 @@
 
 //  Functions relating to the timer interrupt and the real-time-clock.
 
+void Timer(void){
+    //  //  unreferenced
+    PUSH_AF;
+    LDH_A_addr(hMobile);
+    AND_A_A;
+    IF_Z goto not_mobile;
+    CALL(aMobileTimer);
+
+
+not_mobile:
+        POP_AF;
+    RET;
+
+}
+
 void LatchClock(void){
     //  latch clock counter data
     LD_A(0);
@@ -274,6 +289,20 @@ void SetClock(void){
 
 //  cleanup
     CALL(aCloseSRAM);  // unlatch clock, disable clock r/w
+    RET;
+
+}
+
+void ClearRTCStatus(void){
+    //  //  unreferenced
+//  clear sRTCStatusFlags
+    XOR_A_A;
+    PUSH_AF;
+    LD_A(BANK(sRTCStatusFlags));
+    CALL(aOpenSRAM);
+    POP_AF;
+    LD_addr_A(sRTCStatusFlags);
+    CALL(aCloseSRAM);
     RET;
 
 }

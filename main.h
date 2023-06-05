@@ -39,7 +39,7 @@
 //#include "engine/pokemon/bills_pc_top.h"
 //#include "engine/pokemon/breedmon_level_growth.h"
 //#include "engine/events/bug_contest/caught_mon.h"
-#include "engine/items/item_effects.h"
+//#include "engine/items/item_effects.h"
 //#include "engine/battle_anims/pokeball_wobble.h"
 //#include "engine/pokemon/knows_move.h"
 
@@ -156,7 +156,7 @@
 
 //#include "engine/pokedex/pokedex.h"
 //#include "data/moves/moves.h"
-#include "engine/pokemon/evolve.h"
+//#include "engine/pokemon/evolve.h"
 
 // SECTION "bank11", ROMX
 
@@ -431,7 +431,7 @@
 
 //#include "engine/menus/options_menu.h"
 //#include "engine/movie/splash.h"
-#include "engine/movie/intro.h"
+//#include "engine/movie/intro.h"
 
 // SECTION "Audio", ROMX
 

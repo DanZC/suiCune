@@ -24,11 +24,16 @@ Then run suiCune to launch
 
 ***For Visual Studio***
 
+- Download the latest SDL2 VC devel libraries
+- Extract SDL2 into `deps/` and rename the `SDL2-{version}` to just `SDL2`
+	- `deps/SDL2/`
 - Run `generate.bat` for Visual Studio 2022
 	- Edit `generate.bat` `vs2022` line to whatever you want
 	- All platforms and IDEs available [here](https://premake.github.io/docs/Using-Premake/)
 - Open the solution in the newly created `build` folder
 - Build
+- ???
+- Profit
 
 
 **Process (Beginning)**

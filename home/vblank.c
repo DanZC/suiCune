@@ -63,7 +63,7 @@ void VBlank(void) {
     RET;
 
 VBlanks:
-    // dw ['VBlank0'];
+        // dw ['VBlank0'];
     // dw ['VBlank1'];
     // dw ['VBlank2'];
     // dw ['VBlank3'];
@@ -76,7 +76,7 @@ VBlanks:
 }
 
 void VBlank0(void) {
-    //  normal operation
+        //  normal operation
 
     //  rng
     //  scx, scy, wy, wx
@@ -90,7 +90,6 @@ void VBlank0(void) {
     //  sound
 
     // inc frame counter
-    //hVBlankCounter++;
     LD_HL(hVBlankCounter);
     INC_hl;
 

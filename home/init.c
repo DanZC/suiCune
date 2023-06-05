@@ -102,7 +102,7 @@ ByteFill:
     LD_A(1);
     LDH_addr_A(rSVBK);
     CALL(aClearVRAM);
-    ClearSprites();
+    CALL(aClearSprites);
     CALL(aClearsScratch);
 
     LD_A(BANK(aWriteOAMDMACodeToHRAM));  // aka BANK(GameInit)

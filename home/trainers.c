@@ -228,6 +228,33 @@ NotFacing:
 
 }
 
+void CheckTrainerFlag(void){
+    //  //  unreferenced
+    PUSH_BC;
+    LD_HL(OBJECT_MAP_OBJECT_INDEX);
+    ADD_HL_BC;
+    LD_A_hl;
+    CALL(aGetMapObject);
+    LD_HL(MAPOBJECT_SCRIPT_POINTER);
+    ADD_HL_BC;
+    LD_A_hli;
+    LD_H_hl;
+    LD_L_A;
+    CALL(aGetMapScriptsBank);
+    CALL(aGetFarWord);
+    LD_D_H;
+    LD_E_L;
+    PUSH_DE;
+    LD_B(CHECK_FLAG);
+    CALL(aEventFlagAction);
+    POP_DE;
+    LD_A_C;
+    AND_A_A;
+    POP_BC;
+    RET;
+
+}
+
 void PrintWinLossText(void){
         LD_A_addr(wBattleType);
     CP_A(BATTLETYPE_CANLOSE);

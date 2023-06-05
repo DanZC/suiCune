@@ -1,4 +1,4 @@
-char IsAPokemon(char wCurPartySpecies);
+void IsAPokemon(void);
 void DrawBattleHPBar(void);
 void PrepMonFrontpic(void);
 void v_PrepMonFrontpic(void);
@@ -12,6 +12,7 @@ void GetCryIndex(void);
 void PrintLevel(void);
 void PrintLevel_Force3Digits(void);
 void Print8BitNumLeftAlign(void);
+void GetNthMove(void);
 void GetBaseData(void);
 void GetCurNickname(void);
 void GetNickname(void);

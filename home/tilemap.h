@@ -5,6 +5,7 @@ void IsCGB(void);
 void ApplyTilemap(void);
 void CGBOnly_CopyTilemapAtOnce(void);
 void CopyTilemapAtOnce(void);
+void CopyAttrmapAndTilemapToWRAMBank3(void);
 void v_CopyTilemapAtOnce(void);
 void v_CopyTilemapAtOnce_CopyBGMapViaStack(void);
 void SetPalettes(void);

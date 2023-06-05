@@ -482,19 +482,19 @@ void ParseMusicCommand(void) {
                                               Music_ToggleSFX,
                                               Music_PitchSlide,
                                               Music_Vibrato,
-                                              MusicNone,
+                                              MusicE2,
                                               Music_ToggleNoise,
                                               Music_ForceStereoPanning,
                                               Music_Volume,
                                               Music_PitchOffset,
-                                              MusicNone,
-                                              MusicNone,
+                                              MusicE7,
+                                              MusicE8,
                                               Music_TempoRelative,
                                               Music_RestartChannel,
                                               Music_NewSong,
                                               Music_SFXPriorityOn,
                                               Music_SFXPriorityOff,
-                                              MusicNone,
+                                              MusicEE,
                                               Music_StereoPanning,
                                               Music_SFXToggleNoise,
                                               MusicNone,
@@ -592,6 +592,28 @@ void Music_JumpIf(void) {
         curChan->musicAddress += 2;  // skip pointer
 }
 
+void MusicEE(void) {
+    //  unused
+    //  conditional jump
+    //  checks a byte in ram corresponding to the current channel
+    //  params: 2
+    //         ll hh
+
+    //  if ????, jump
+    // get channel
+    if (channelJumpCondition[curChannel & 3]) {
+        channelJumpCondition[curChannel & 3] = 0;  // reset jump flag
+        curChan->musicAddress = (GetMusicByte() | (GetMusicByte() << 8));
+    } else
+        curChan->musicAddress += 2;  // skip pointer
+}
+
+void MusicE2(void) {
+    //  unused
+    //  params: 1
+    GetMusicByte();
+}
+
 void Music_Vibrato(void) {
     //  vibrato
     //  params: 2
@@ -631,6 +653,12 @@ void Music_PitchOffset(void) {
     curChan->pitchOffset = ((GetMusicByte() << 8) | GetMusicByte());  // reverse byte order
 }
 
+void MusicE7(void) {
+    //  unused
+    //  params: 1
+    GetMusicByte();
+}
+
 void Music_DutyCyclePattern(void) {
     //  sequence of 4 duty cycles to be looped
     //  params: 1 (4 2-bit duty cycle arguments)
@@ -638,6 +666,12 @@ void Music_DutyCyclePattern(void) {
     curChan->dutyCyclePattern = GetMusicByte();
     curChan->dutyCyclePattern = (curChan->dutyCyclePattern >> 2) | (curChan->dutyCyclePattern << 6);
     curChan->dutyCycle = curChan->dutyCyclePattern & 0xC0;
+}
+
+void MusicE8(void) {
+    //  unused
+    //  params: 1
+    GetMusicByte();
 }
 
 void Music_ToggleSFX(void) {

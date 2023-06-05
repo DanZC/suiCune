@@ -3,6 +3,17 @@
 
 //  LCD handling
 
+void Function547(void) {
+        //  //  unreferenced
+    LDH_A_addr(hLCDCPointer);
+    CP_A(LOW(rSCX));
+    RET_NZ;
+    LD_C_A;
+    LD_A_addr(wLYOverrides);
+    LDH_c_A;
+    RET;
+}
+
 void LCD(void) {  // called from the rendering function, once per line
     if (gb_read(hLCDCPointer)) {
         gb_write(0xFF00 | gb_read(hLCDCPointer), gb_read(wLYOverrides + gb.gb_reg.LY));

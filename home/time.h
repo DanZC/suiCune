@@ -1,3 +1,4 @@
+void Timer(void);
 void LatchClock(void);
 void UpdateTime(void);
 void GetClock(void);
@@ -8,5 +9,6 @@ void InitDayOfWeek(void);
 void InitTime(void);
 void ClearClock(void);
 void SetClock(void);
+void ClearRTCStatus(void);
 void RecordRTCStatus(void);
 void CheckRTCStatus(void);

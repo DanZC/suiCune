@@ -63,5 +63,3 @@ deps/
 
 # macos files
 .DS_STORE
-lib/SDL2.dll
-lib/SDL2_image.dll

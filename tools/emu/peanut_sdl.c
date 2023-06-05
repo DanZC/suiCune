@@ -1093,18 +1093,14 @@ void gb_run_frame(void) {
             if (gb.cpu_reg.pc < 0x8000) {
                 int absAddress = gb.cpu_reg.pc + (gb.cpu_reg.pc < 0x4000 ? 0 : ((gb.selected_rom_bank - 1) * ROM_BANK_SIZE));
                 if (convertedFunc[absAddress] != NULL) {
-#ifdef DEBUG
-                    PEEK("");
-                    printf("FUN: %x\n", absAddress);
-#endif // DEBUG
+                    // PEEK("");
+                    // printf("FUN: %x\n", absAddress);
                     convertedFunc[absAddress]();
                     if (gb.cpu_reg.pc == 0x18) gb_finish_frame();
                     return;
                 }
             }
-#ifdef DEBUG
-            PEEK("EMU");
-#endif
+            // PEEK("EMU");
             if (gb.cpu_reg.pc == 0x38 || gb.cpu_reg.pc == 0) exit(0);  // crash
             /* Obtain opcode */
             opcode = (gb.gb_halt ? 0x00 : gb_read(gb.cpu_reg.pc++));
