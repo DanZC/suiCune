@@ -8,14 +8,6 @@
 #include "pokedex_flags.h"
 #include "../charmap.h"
 
-struct TextCmdState
-{
-    uint16_t hl;
-    uint16_t bc;
-    uint16_t de;
-    uint16_t hltemp;
-};
-
 void ClearBox(void) {
     //  Fill a c*b box at hl with blank tiles.
     LD_A(0x7f);

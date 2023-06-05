@@ -1,6 +1,8 @@
 #include "../constants.h"
 #include "window.h"
 #include "menu.h"
+#include "../engine/overworld/init_map.h"
+#include "../engine/gfx/dma_transfer.h"
 
 void RefreshScreen(void){
         CALL(aClearWindowData);
@@ -17,6 +19,29 @@ void RefreshScreen(void){
     RST(aBankswitch);
     RET;
 
+}
+
+void RefreshScreen_Conv(void){
+    // CALL(aClearWindowData);
+    ClearWindowData_Conv();
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+    // LD_A(BANK(aReanchorBGMap_NoOAMUpdate));  // aka BANK(LoadFonts_NoOAMUpdate)
+    // RST(aBankswitch);
+    uint8_t oldbank = gb_read(hROMBank);
+    Bankswitch_Conv(BANK(aReanchorBGMap_NoOAMUpdate));
+
+    CALL(aReanchorBGMap_NoOAMUpdate);
+    // ReanchorBGMap_NoOAMUpdate();
+    // CALL(av_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
+    v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv();
+    CALL(aLoadFonts_NoOAMUpdate);
+    // LoadFonts_NoOAMUpdate();
+
+    // POP_AF;
+    // RST(aBankswitch);
+    Bankswitch_Conv(oldbank);
+    // RET;
 }
 
 void CloseText(void){
@@ -70,6 +95,29 @@ void OpenText(void){
 
 }
 
+void OpenText_Conv(void){
+    // CALL(aClearWindowData);
+    ClearWindowData_Conv();
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+    // LD_A(BANK(aReanchorBGMap_NoOAMUpdate));  // aka BANK(LoadFonts_NoOAMUpdate)
+    // RST(aBankswitch);
+    uint8_t oldbank = gb_read(hROMBank);
+    Bankswitch_Conv(BANK(aReanchorBGMap_NoOAMUpdate));
+
+    CALL(aReanchorBGMap_NoOAMUpdate);  // clear bgmap
+    CALL(aSpeechTextbox);
+    // CALL(av_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);  // anchor bgmap
+    v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv();  // anchor bgmap
+    CALL(aLoadFonts_NoOAMUpdate);  // load font
+    // POP_AF;
+    // RST(aBankswitch);
+    Bankswitch_Conv(oldbank);
+
+    // RET;
+
+}
+
 void v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap(void){
     LDH_A_addr(hOAMUpdate);
     PUSH_AF;
@@ -82,6 +130,23 @@ void v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap(void){
     LDH_addr_A(hOAMUpdate);
     RET;
 
+}
+
+void v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv(void){
+    // LDH_A_addr(hOAMUpdate);
+    // PUSH_AF;
+    // LD_A(0x1);
+    // LDH_addr_A(hOAMUpdate);
+    uint8_t oldoamupdate = gb_read(hOAMUpdate);
+    gb_write(hOAMUpdate, 0x1);
+
+    // FARCALL(aOpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
+    farcall(OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
+
+    // POP_AF;
+    // LDH_addr_A(hOAMUpdate);
+    // RET;
+    gb_write(hOAMUpdate, oldoamupdate);
 }
 
 void SafeUpdateSprites(void){

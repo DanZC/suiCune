@@ -1055,7 +1055,7 @@ void init_function_pointers(void) {
     // REDIRECTED(PadMapForHDMATransfer);
     // REDIRECTED(HDMATransferTilemapToWRAMBank3);
     // REDIRECTED(ReloadMapPart);
-    // REDIRECTED(OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
+    REDIRECTED(OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
     // REDIRECTED(CallInSafeGFXMode);
     // REDIRECTED(v_LoadHDMAParameters);
     // REDIRECTED(PadAttrmapForHDMATransfer);
@@ -2139,4 +2139,9 @@ void init_function_pointers(void) {
     REDIRECTED(PrintHoursMins);
     // REDIRECTED(String_AM);
     // REDIRECTED(PrintFiveDigitNumber);
+
+    // engine/overworld/init_map.c
+    REDIRECTED(HDMATransfer_FillBGMap0WithBlack);
+    REDIRECTED(LoadFonts_NoOAMUpdate);
+    REDIRECTED(ReanchorBGMap_NoOAMUpdate);
 }

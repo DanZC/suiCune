@@ -310,10 +310,11 @@ void PrintNum(void) {
 //  Bit 5: money if set (unless left-aligned without leading zeros)
 //  Bit 6: left-aligned if set
 //  Bit 7: print leading zeros if set
-void PrintNum_Conv(uint16_t hl, uint16_t de, uint8_t b, uint8_t c) {
+uint16_t PrintNum_Conv(uint16_t hl, uint16_t de, uint8_t b, uint8_t c) {
     bank_push(BANK(av_PrintNum));
-    v_PrintNum_Conv(hl, de, b, c);
+    hl = v_PrintNum_Conv(hl, de, b, c);
     bank_pop;
+    return hl;
 }
 
 void MobilePrintNum(void) {

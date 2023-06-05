@@ -11,6 +11,7 @@
 #include "../../home/lcd.h"
 #include "../gfx/player_gfx.h"
 #include "../../audio/engine.h"
+#include "../rtc/print_hours_mins.h"
 
 //  Pokégear cards
 enum {
@@ -65,6 +66,7 @@ void PokeGear(void){
     CALL(aDelayFrame);
 
 loop:
+    SET_PC(aPokeGear_loop);
     CALL(aUpdateTime);
     CALL(aJoyTextDelay);
     LD_A_addr(wJumptableIndex);
@@ -1100,6 +1102,7 @@ void PokegearClock_Joypad_UpdateClock(void) {
 }
 
 void Pokegear_UpdateClock(void){
+    PEEK("UpdateClock");
     hlcoord(3, 5, wTilemap);
     LD_BC((5 << 8) | 14);
     CALL(aClearBox);
@@ -1133,11 +1136,12 @@ void Pokegear_UpdateClock_Conv(void){
     // LD_B_A;
     // LDH_A_addr(hMinutes);
     // LD_C_A;
-    REG_B = gb_read(hHours);
-    REG_C = gb_read(hMinutes);
-    REG_DE = coord(6, 8, wTilemap);
+    // REG_B = gb_read(hHours);
+    // REG_C = gb_read(hMinutes);
+    // REG_DE = coord(6, 8, wTilemap);
     // decoord(6, 8, wTilemap);
-    FARCALL(aPrintHoursMins);
+    // FARCALL(aPrintHoursMins);
+    farcall(PrintHoursMins, coord(6, 8, wTilemap), gb_read(hHours), gb_read(hMinutes));
     // bank_push(aPrintHoursMins);
     // bank_pop;
     // LD_HL(mPokegear_UpdateClock_GearTodayText);
