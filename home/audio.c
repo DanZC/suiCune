@@ -71,6 +71,45 @@ end:
     RET;                     // ret
 }
 
+void PlayMusic_Conv(uint16_t music) {
+    PUSH_HL;  // push hl
+    PUSH_DE;  // push de
+    PUSH_BC;  // push bc
+    PUSH_AF;  // push af
+
+    // LDH_A_addr(hROMBank);      // ldh a, [hROMBank]
+    // PUSH_AF;                   // push af
+    uint8_t oldbank = gb_read(hROMBank);
+    // LD_A(BANK(av_PlayMusic));  // ld a, BANK(_PlayMusic) ; aka BANK(_InitSound)
+    // LDH_addr_A(hROMBank);      // ldh [hROMBank], a
+    gb_write(hROMBank, BANK(av_PlayMusic));
+    // LD_addr_A(MBC3RomBank);    // ld [MBC3RomBank], a
+    gb_write(MBC3RomBank, BANK(av_PlayMusic));
+
+    // LD_A_E;             // ld a, e
+    // AND_A_A;            // and a
+    // IF_Z goto nomusic;  // jr z, .nomusic
+    if(LOW(music) == 0) {
+        v_InitSound();  // call _InitSound
+    }
+    else {
+        v_PlayMusic(music);
+    }
+    // goto end;  // jr .end
+
+// end:
+    // POP_AF;                  // pop af
+    // LDH_addr_A(hROMBank);    // ldh [hROMBank], a
+    gb_write(hROMBank, oldbank);
+    // LD_addr_A(MBC3RomBank);  // ld [MBC3RomBank], a
+    gb_write(MBC3RomBank, oldbank);
+    POP_AF;                  // pop af
+    POP_BC;                  // pop bc
+    POP_DE;                  // pop de
+    POP_HL;                  // pop hl
+    // RET;                     // ret
+}
+
 void PlayMusic2(void) {
     SET_PC(0x3DB9U);
     //  Stop playing music, then play music de.

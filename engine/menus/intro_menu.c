@@ -2,13 +2,14 @@
 #include "intro_menu.h"
 #include <stdio.h>
 #include <string.h>
+#include "../../home/audio.h"
 
 void Intro_MainMenu() {
-    PlayMusic(MUSIC_NONE);
+    PlayMusic_Conv(MUSIC_NONE);
     CALL(aDelayFrame);
     LD_A_E;
     LD_addr_A(wMapMusic);
-    PlayMusic(MUSIC_MAIN_MENU);
+    PlayMusic_Conv(MUSIC_MAIN_MENU);
     FARCALL(aMainMenu);
     JP(mStartTitleScreen);
 }
@@ -1553,15 +1554,15 @@ void Copyright(void) {
 }
 
 void CopyrightString(void) {
-    // ©1995-2001 Nintendo
+    // ï¿½1995-2001 Nintendo
         //db ['0x60', '0x61', '0x62', '0x63', '0x64', '0x65', '0x66'];
         //db ['0x67', '0x68', '0x69', '0x6a', '0x6b', '0x6c'];
 
-    // ©1995-2001 Creatures inc.
+    // ï¿½1995-2001 Creatures inc.
         //next ['0x60', '0x61', '0x62', '0x63', '0x64', '0x65', '0x66']
         //db ['0x6d', '0x6e', '0x6f', '0x70', '0x71', '0x72', '0x7a', '0x7b', '0x7c'];
 
-    // ©1995-2001 GAME FREAK inc.
+    // ï¿½1995-2001 GAME FREAK inc.
         //next ['0x60', '0x61', '0x62', '0x63', '0x64', '0x65', '0x66']
         //db ['0x73', '0x74', '0x75', '0x76', '0x77', '0x78', '0x79', '0x7a', '0x7b', '0x7c'];
 

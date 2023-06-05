@@ -7,9 +7,10 @@
 #include "input.h"
 
 static int config_handler(void* user, const char* section, const char* name, const char* value) {
+    (void)user;
     if (strcmp(section, "keys") == 0) {
         SDL_Scancode primary, secondary;
-        sscanf(value, "%d %d", &primary, &secondary);
+        sscanf(value, "%d %d", (int*)&primary, (int*)&secondary);
         input_register_key(name, primary, secondary);
     }
     else if (strcmp(section, "mouse") == 0) {

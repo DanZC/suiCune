@@ -1,6 +1,7 @@
 void InitSound(void);
 void UpdateSound(void);
 void PlayMusic(void);
+void PlayMusic_Conv(uint16_t);
 void PlayMusic2(void);
 void PlayCry(void);
 void PlaySFX(void);
