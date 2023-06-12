@@ -2794,6 +2794,28 @@
         Bankswitch_Conv(oldBank);                            \
     } while (0)
 
+#define gb_readbuffer(buffer, addr)                 \
+    do {                                            \
+        for(int i = 0; i < sizeof(buffer); ++i) {   \
+            buffer[i] = gb_read(addr + i);          \
+        }                                           \
+    } while(0)
+
+#define gb_readstruct(dest, addr)                   \
+    do {                                            \
+        uint8_t* d = (uint8_t*)&dest;               \
+        for(int i = 0; i < sizeof(dest); ++i) {     \
+            d[i] = gb_read(addr + i);               \
+        }                                           \
+    } while(0)
+
+#define gb_writebuffer(buffer, addr)                \
+    do {                                            \
+        for(int i = 0; i < sizeof(buffer); ++i) {   \
+            gb_write(addr + i, buffer[i]);          \
+        }                                           \
+    } while(0)
+
 #define bit_test(_x, _n) (((_x) >> (_n)) & 0x1)
 
 #define calc_sin_wave \

@@ -102,7 +102,7 @@ void init_function_pointers(void) {
     REDIRECTED(SafeLoadTempTilemapToTilemap);
 
     // home/decompress.c
-    REDIRECTED(Decompress);
+    CONVERTED(Decompress);
     REDIRECTED(FarDecompress);
 
     // home/delay.c
