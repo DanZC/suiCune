@@ -58,7 +58,7 @@ enum {
 // - wPlayerStats and wEnemyStats (see wram.asm)
 // - party_struct and battle_struct members (see macros/wram.asm)
 enum {
-    STAT_HP,
+    STAT_HP = 1,
     STAT_ATK,
     STAT_DEF,
     STAT_SPD,

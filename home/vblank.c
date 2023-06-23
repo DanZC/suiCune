@@ -231,7 +231,7 @@ void VBlank0_Conv(void) {
     //  joypad
     //  sound
 
-    uint8_t temp, carry, delay;
+    uint8_t temp, carry;
 
     // inc frame counter
     // LD_HL(hVBlankCounter);
@@ -318,26 +318,29 @@ done:
 
     // XOR_A_A;
     // LD_addr_A(wVBlankOccurred);
-    gb_write(wVBlankOccurred, 0);
+    // gb_write(wVBlankOccurred, 0);
+    wram->wVBlankOccurred = 0;
 
     // LD_A_addr(wOverworldDelay);
     // AND_A_A;
     // IF_Z goto ok;
-    delay = gb_read(wOverworldDelay);
-    if(delay != 0) {
+    // delay = gb_read(wOverworldDelay);
+    if(wram->wOverworldDelay != 0) {
         // DEC_A;
         // LD_addr_A(wOverworldDelay);
-        gb_write(wOverworldDelay, delay - 1);
+        // gb_write(wOverworldDelay, delay - 1);
+        wram->wOverworldDelay--;
     }
     
     // LD_A_addr(wTextDelayFrames);
     // AND_A_A;
     // IF_Z goto ok2;
-    delay = gb_read(wTextDelayFrames);
-    if(delay != 0) {
+    // delay = gb_read(wTextDelayFrames);
+    if(wram->wTextDelayFrames != 0) {
         // DEC_A;
         // LD_addr_A(wTextDelayFrames);
-        gb_write(wTextDelayFrames, delay - 1);
+        wram->wTextDelayFrames--;
+        // gb_write(wTextDelayFrames, delay - 1);
     }
     
     // CALL(aUpdateJoypad);

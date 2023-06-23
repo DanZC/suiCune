@@ -237,6 +237,24 @@ void FarCopyWRAM(void){
 
 }
 
+void FarCopyWRAM_Conv(uint8_t a, uint16_t de, uint16_t hl, uint16_t bc){
+    // LDH_addr_A(hTempBank);
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    uint8_t svbk = gb_read(rSVBK);
+    gb_write(rSVBK, a);
+    // LDH_A_addr(hTempBank);
+    // LDH_addr_A(rSVBK);
+
+    // CALL(aCopyBytes);
+    CopyBytes_Conv(de, hl, bc);
+
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // RET;
+    gb_write(rSVBK, svbk);
+}
+
 void GetFarWRAMByte(void){
         LDH_addr_A(hTempBank);
     LDH_A_addr(rSVBK);
@@ -254,7 +272,6 @@ void GetFarWRAMByte(void){
 
 uint8_t GetFarWRAMByte_Conv(uint8_t bank, uint16_t address){
     // LDH_addr_A(hTempBank);
-    gb_write(hTempBank, bank);
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     uint8_t svbk = gb_read(rSVBK);

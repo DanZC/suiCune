@@ -17,11 +17,11 @@ void CrystalIntro(void){
     PUSH_AF;
     // CALL(aCrystalIntro_InitRAMAddrs);
     CrystalIntro_InitRAMAddrs();
-    PEEK("");
 
 // loop:
     while(1)
     {
+        SET_PC(mCrystalIntro_loop);
         CALL(aJoyTextDelay);
         // JoyTextDelay_Conv();
         LDH_A_addr(hJoyLast);
@@ -89,17 +89,18 @@ InitRAMAddrs:
 }
 
 void CrystalIntro_InitRAMAddrs(void){
-    XOR_A_A;
-    LDH_addr_A(hVBlank);
-    // hram->hVBlank = 0;
-    LD_A(0x1);
-    LDH_addr_A(hInMenu);
-    // hram->hInMenu = 0x1;
-    XOR_A_A;
-    LDH_addr_A(hMapAnims);
-    // hram->hMapAnims = 0;
-    REG_A = 0;
-    LD_addr_A(wJumptableIndex);
+    // XOR_A_A;
+    // LDH_addr_A(hVBlank);
+    hram->hVBlank = 0;
+    // LD_A(0x1);
+    // LDH_addr_A(hInMenu);
+    hram->hInMenu = 0x1;
+    // XOR_A_A;
+    // LDH_addr_A(hMapAnims);
+    hram->hMapAnims = 0;
+    // REG_A = 0;
+    // LD_addr_A(wJumptableIndex);
+    wram->wJumptableIndex = 0;
     // RET;
 }
 
@@ -202,8 +203,9 @@ void IntroScenes(void){
 }
 
 void NextIntroScene(void){
-    LD_HL(wJumptableIndex);
-    INC_hl;
+    // LD_HL(wJumptableIndex);
+    // INC_hl;
+    wram->wJumptableIndex++;
     // gb_write(wJumptableIndex, gb_read(wJumptableIndex) + 1);
     RET;
 

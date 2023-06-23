@@ -20,3 +20,17 @@ loop:
     RET;
 
 }
+
+//  Copies the name from de to wStringBuffer2
+void CopyName1_Conv(uint16_t de) {
+    return CopyName2_Conv(wStringBuffer2, de);
+}
+
+//  Copies the name from de to hl
+void CopyName2_Conv(uint16_t hl, uint16_t de){
+    uint8_t a;
+    do {
+        a = gb_read(de++);
+        gb_write(hl++, a);
+    } while(a != 0x50);
+}

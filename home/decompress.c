@@ -860,8 +860,8 @@ void Decompress_Conv2(uint8_t* de, const uint8_t* hl){
     // We bail the moment they hit 0.
         if(bit_test(ctrl, LZ_RW)) {
             //  Repeat decompressed data from output.
-            uint16_t hltemp = hl;
-            uint8_t a = gb_read(hl++);
+            const uint8_t* hltemp = hl;
+            uint8_t a = *(hl++);
             if(!bit_test(a, 7)) {
                 //  Positive offsets are two bytes.
             // add to starting output address
@@ -951,6 +951,4 @@ void Decompress_Conv2(uint8_t* de, const uint8_t* hl){
             *(de++) = *(hl++);
         }
     }
-    // fprintf(out, "END");
-    // fclose(out);
 }

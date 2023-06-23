@@ -32,7 +32,7 @@ SRCS   := tools/emu/peanut_sdl.c tools/emu/minigb_apu/minigb_apu.c \
 	$(wildcard engine/pokegear/*.c) \
 	$(wildcard engine/rtc/*.c) \
 	$(wildcard input_system/*.c) \
-	functions.c hram.c vram.c 
+	functions.c hram.c vram.c wram.c
 #	$(wildcard ../*/*/*/*.c)
 CFLAGS += $(shell sdl2-config --cflags)
 
