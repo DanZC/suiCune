@@ -45,6 +45,18 @@ void CopyBytes_Conv(uint16_t de, uint16_t hl, uint16_t bc){
     }
 }
 
+//  copy bc bytes from hl to de
+void CopyBytes_Conv2(void* de, const void* hl, uint16_t bc){
+    bc++; // we bail the moment bc hits 0, so include the last run
+    uint8_t *d = de;
+    const uint8_t *s = hl;
+
+    while(--bc != 0)
+    {
+        *(d++) = *(s++);
+    }
+}
+
 void SwapBytes(void){
     //  swap bc bytes between hl and de
 
@@ -91,6 +103,27 @@ void SwapBytes_Conv(uint16_t hl, uint16_t de, uint16_t bc){
     } while(--bc != 0);
 }
 
+//  swap bc bytes between hl and de
+// Input
+//   hl: buffer a
+//   de: buffer b
+//   bc: byte count
+void SwapBytes_Conv2(void* hl, void* de, uint16_t bc){
+    uint8_t *a = hl, *b = de;
+    do {
+        // stash [hl] away on the stack
+        uint8_t temp = *a;
+
+        // copy a byte from [de] to [hl]
+        *(a++) = *(b);
+
+        // retrieve the previous value of [hl]// put it in [de]
+        *(b++) = temp;
+
+        // handle loop stuff
+    } while(--bc != 0);
+}
+
 void ByteFill(void){
     //  fill bc bytes with the value of a, starting at hl
     INC_B;  // we bail the moment b hits 0, so include the last run
@@ -128,6 +161,16 @@ void ByteFill_Conv(uint16_t ptr, uint16_t len, uint8_t value){
     while(--len != 0)
     {
         gb_write(ptr++, value);
+    }
+}
+
+void ByteFill_Conv2(void* ptr, uint16_t len, uint8_t value){
+    uint8_t* p = ptr;
+    len++;  // we bail the moment b hits 0, so include the last run
+
+    while(--len != 0)
+    {
+        *p = value;
     }
 }
 

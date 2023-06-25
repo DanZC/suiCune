@@ -2,6 +2,7 @@
 #include "map_objects.h"
 #include "../engine/overworld/map_objects.h"
 #include "array.h"
+#include "../data/collision/collision_permissions.h"
 
 //  Functions handling map objects.
 
@@ -94,6 +95,14 @@ void GetPlayerStandingTile(void){
 
 }
 
+uint8_t GetPlayerStandingTile_Conv(void){
+    // LD_A_addr(wPlayerStandingTile);
+    // CALL(aGetTileCollision);
+    // LD_B_A;
+    // RET;
+    return GetTileCollision_Conv(wram->wPlayerStruct.standingTile);
+}
+
 void CheckOnWater(void){
         LD_A_addr(wPlayerStandingTile);
     CALL(aGetTileCollision);
@@ -102,6 +111,19 @@ void CheckOnWater(void){
     AND_A_A;
     RET;
 
+}
+
+bool CheckOnWater_Conv(void){
+    // LD_A_addr(wPlayerStandingTile);
+    // CALL(aGetTileCollision);
+    uint8_t col = GetTileCollision_Conv(wram->wPlayerStruct.standingTile);
+    // SUB_A(WATER_TILE);
+    // RET_Z ;
+    if(col == WATER_TILE)
+        return true;
+    // AND_A_A;
+    // RET;
+    return false;
 }
 
 void GetTileCollision(void){
@@ -132,6 +154,34 @@ void GetTileCollision(void){
 
 }
 
+    //  Get the collision type of tile a.
+uint8_t GetTileCollision_Conv(uint8_t a){
+    // PUSH_DE;
+    // PUSH_HL;
+
+    // LD_HL(mTileCollisionTable);
+    // LD_E_A;
+    // LD_D(0);
+    // ADD_HL_DE;
+
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+    // LD_A(BANK(aTileCollisionTable));
+    // RST(aBankswitch);
+    // LD_E_hl;
+    // POP_AF;
+    // RST(aBankswitch);
+    uint8_t e = TileCollisionTable[a];
+
+    // LD_A_E;
+    // AND_A(0xf);  // lo nybble only
+    return e & 0xf;  // lo nybble only
+
+    // POP_HL;
+    // POP_DE;
+    // RET;
+}
+
 void CheckGrassTile(void){
         LD_D_A;
     AND_A(0xf0);
@@ -160,6 +210,22 @@ water:
 
 }
 
+bool CheckGrassTile_Conv(uint8_t col){
+    uint8_t a = col & 0xf0;
+    if(a == HI_NYBBLE_TALL_GRASS) {
+        if((col & LO_NYBBLE_GRASS) == 0)
+            return true;
+        return false;
+    }
+    if(a == HI_NYBBLE_WATER) {
+        //  For some reason, the above code is duplicated down here.
+        if((col & LO_NYBBLE_GRASS) == 0)
+            return true;
+        return false;
+    }
+    return false;
+}
+
 void CheckSuperTallGrassTile(void){
         CP_A(COLL_LONG_GRASS);
     RET_Z ;
@@ -168,12 +234,32 @@ void CheckSuperTallGrassTile(void){
 
 }
 
+bool CheckSuperTallGrassTile_Conv(uint8_t a){
+    // CP_A(COLL_LONG_GRASS);
+    // RET_Z ;
+    if(a == COLL_LONG_GRASS)
+        return true;
+    // CP_A(COLL_LONG_GRASS_1C);
+    // RET;
+    return a == COLL_LONG_GRASS_1C;
+}
+
 void CheckCutTreeTile(void){
         CP_A(COLL_CUT_TREE);
     RET_Z ;
     CP_A(COLL_CUT_TREE_1A);
     RET;
 
+}
+
+bool CheckCutTreeTile_Conv(uint8_t a){
+    // CP_A(COLL_CUT_TREE);
+    // RET_Z ;
+    if(a == COLL_CUT_TREE)
+        return true;
+    // CP_A(COLL_CUT_TREE_1A);
+    // RET;
+    return a == COLL_CUT_TREE_1A;
 }
 
 void CheckHeadbuttTreeTile(void){
@@ -192,6 +278,14 @@ void CheckCounterTile(void){
 
 }
 
+bool CheckCounterTile_Conv(uint8_t a){
+    // CP_A(COLL_COUNTER);
+    // RET_Z ;
+    // CP_A(COLL_COUNTER_98);
+    // RET;
+    return (a == COLL_COUNTER || a == COLL_COUNTER_98);
+}
+
 void CheckPitTile(void){
         CP_A(COLL_PIT);
     RET_Z ;
@@ -208,6 +302,20 @@ void CheckIceTile(void){
     SCF;
     RET;
 
+}
+
+bool CheckIceTile_Conv(uint8_t a){
+    // CP_A(COLL_ICE);
+    // RET_Z ;
+    if(a == COLL_ICE)
+        return true;
+    // CP_A(COLL_ICE_2B);
+    // RET_Z ;
+    if(a == COLL_ICE_2B)
+        return true;
+    // SCF;
+    // RET;
+    return false;
 }
 
 void CheckWhirlpoolTile(void){
@@ -229,6 +337,16 @@ void CheckWaterfallTile(void){
 
 }
 
+bool CheckWaterfallTile_Conv(uint8_t a){
+    // CP_A(COLL_WATERFALL);
+    // RET_Z ;
+    if(a == COLL_WATERFALL)
+        return true;
+    // CP_A(COLL_CURRENT_DOWN);
+    // RET;
+    return a == COLL_CURRENT_DOWN;
+}
+
 void CheckStandingOnEntrance(void){
         LD_A_addr(wPlayerStandingTile);
     CP_A(COLL_DOOR);
@@ -242,6 +360,20 @@ void CheckStandingOnEntrance(void){
 
 }
 
+bool CheckStandingOnEntrance_Conv(void){
+    // LD_A_addr(wPlayerStandingTile);
+    uint8_t a = wram->wPlayerStruct.standingTile;
+    // CP_A(COLL_DOOR);
+    // RET_Z ;
+    // CP_A(COLL_DOOR_79);
+    // RET_Z ;
+    // CP_A(COLL_STAIRCASE);
+    // RET_Z ;
+    // CP_A(COLL_CAVE);
+    // RET;
+    return a == COLL_DOOR || a == COLL_DOOR_79 || a == COLL_STAIRCASE || a == COLL_CAVE;
+}
+
 void GetMapObject(void){
     //  Return the location of map object a in bc.
     LD_HL(wMapObjects);
@@ -251,6 +383,17 @@ void GetMapObject(void){
     LD_C_L;
     RET;
 
+}
+
+//  Return the location of map object a in bc.
+struct MapObject* GetMapObject_Conv(uint8_t a){
+    // LD_HL(wMapObjects);
+    // LD_BC(MAPOBJECT_LENGTH);
+    // CALL(aAddNTimes);
+    // LD_B_H;
+    // LD_C_L;
+    // RET;
+    return wram->wMapObject + a;
 }
 
 void CheckObjectVisibility(void){
@@ -272,6 +415,28 @@ not_visible:
         SCF;
     RET;
 
+}
+
+//  Sets carry if the object is not visible on the screen.
+bool CheckObjectVisibility_Conv(uint8_t a){
+    // LDH_addr_A(hMapObjectIndex);
+    // CALL(aGetMapObject);
+    hram->hMapObjectIndex = a;
+    struct MapObject* mobj = GetMapObject_Conv(a);
+    // LD_HL(MAPOBJECT_OBJECT_STRUCT_ID);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // CP_A(-1);
+    // IF_Z goto not_visible;
+    if(mobj->structId == 0xff) 
+        return false;
+    // LDH_addr_A(hObjectStructIndex);
+    hram->hObjectStructIndex = mobj->structId;
+    // CALL(aGetObjectStruct);
+    GetObjectStruct_Conv(mobj->structId);
+    // AND_A_A;
+    // RET;
+    return true;
 }
 
 void CheckObjectTime(void){
@@ -493,6 +658,41 @@ void LoadMovementDataPointer(void){
 
 }
 
+//  Load the movement data pointer for object a.
+void LoadMovementDataPointer_Conv(uint8_t a, uint16_t hl, uint16_t bc){
+    // LD_addr_A(wMovementObject);
+    wram->wMovementObject = a;
+    // LDH_A_addr(hROMBank);
+    // LD_addr_A(wMovementDataBank);
+    wram->wMovementDataBank = hram->hROMBank;
+    // LD_A_L;
+    // LD_addr_A(wMovementDataAddress);
+    // LD_A_H;
+    // LD_addr_A(wMovementDataAddress + 1);
+    wram->wMovementDataAddress = hl;
+    // LD_A_addr(wMovementObject);
+    // CALL(aCheckObjectVisibility);
+    // RET_C ;
+    if(!CheckObjectVisibility_Conv(a))
+        return;
+
+    // LD_HL(OBJECT_MOVEMENTTYPE);
+    // ADD_HL_BC;
+    // LD_hl(SPRITEMOVEDATA_SCRIPTED);
+    gb_write(bc + OBJECT_MOVEMENTTYPE, SPRITEMOVEDATA_SCRIPTED);
+
+    // LD_HL(OBJECT_STEP_TYPE);
+    // ADD_HL_BC;
+    // LD_hl(STEP_TYPE_RESET);
+    gb_write(bc + OBJECT_STEP_TYPE, STEP_TYPE_RESET);
+
+    // LD_HL(wVramState);
+    // SET_hl(7);
+    wram->wVramState |= (1 << 7);
+    // AND_A_A;
+    // RET;
+}
+
 void FindFirstEmptyObjectStruct(void){
     //  Returns the index of the first empty object struct in A and its address in HL, then sets carry.
 //  If all object structs are occupied, A = 0 and Z is set.
@@ -525,6 +725,37 @@ done:
     POP_BC;
     RET;
 
+}
+
+//  Returns the index of the first empty object struct.
+//  If all object structs are occupied, returns 0xffff
+uint16_t FindFirstEmptyObjectStruct_Conv(void) {
+    // PUSH_BC;
+    // PUSH_DE;
+    // LD_HL(wObjectStructs);
+    // LD_DE(OBJECT_LENGTH);
+    // LD_C(NUM_OBJECT_STRUCTS);
+    for(uint8_t i = 0; i < NUM_OBJECT_STRUCTS; ++i) {
+        // LD_A_hl;
+        // AND_A_A;
+        // IF_Z goto l_break;
+        if(wram->wObjectStruct[i].sprite == 0) {
+        // l_break:
+            // LD_A(NUM_OBJECT_STRUCTS);
+            // SUB_A_C;
+            // SCF;
+            return i;
+        }
+        // ADD_HL_DE;
+        // DEC_C;
+        // IF_NZ goto loop;
+        // XOR_A_A;
+        // goto done;
+    }
+    // POP_DE;
+    // POP_BC;
+    // RET;
+    return 0xffff;
 }
 
 void GetSpriteMovementFunction(void){
@@ -717,14 +948,15 @@ void GetObjectStruct(void){
 
 }
 
-uint16_t GetObjectStruct_Conv(uint8_t a){
+struct Object* GetObjectStruct_Conv(uint8_t a){
     // LD_BC(OBJECT_LENGTH);
     // LD_HL(wObjectStructs);
     // CALL(aAddNTimes);
     // LD_B_H;
     // LD_C_L;
     // RET;
-    return AddNTimes_Conv(OBJECT_LENGTH, wObjectStructs, a);
+    // return AddNTimes_Conv(OBJECT_LENGTH, wObjectStructs, a);
+    return &wram->wObjectStruct[a];
 }
 
 void DoesObjectHaveASprite(void){
@@ -736,13 +968,14 @@ void DoesObjectHaveASprite(void){
 
 }
 
-bool DoesObjectHaveASprite_Conv(uint16_t bc){
+bool DoesObjectHaveASprite_Conv(struct Object* bc){
     //     LD_HL(OBJECT_SPRITE);
     // ADD_HL_BC;
     // LD_A_hl;
     // AND_A_A;
     // RET;
-    return gb_read(OBJECT_SPRITE + bc) != 0;
+    return bc->sprite != 0;
+    // return gb_read(OBJECT_SPRITE + bc) != 0;
 }
 
 void SetSpriteDirection(void){
@@ -788,12 +1021,12 @@ void GetSpriteDirection(void){
 
 }
 
-uint8_t GetSpriteDirection_Conv(uint16_t bc){
+uint8_t GetSpriteDirection_Conv(struct Object* bc){
     // LD_HL(OBJECT_FACING);
     // ADD_HL_BC;
     // LD_A_hl;
-    return gb_read(bc + OBJECT_FACING) & ((NUM_DIRECTIONS - 1) << 2);
+    return bc->facing & ((NUM_DIRECTIONS - 1) << 2);
+    // return gb_read(bc + OBJECT_FACING) & ((NUM_DIRECTIONS - 1) << 2);
     // maskbits(NUM_DIRECTIONS, 2);
     // RET;
-
 }

@@ -8,6 +8,8 @@
 #define PACKED __attribute__((packed))
 #endif
 
+#define UNUSED
+
 // A struct representing WRAM.
 struct PACKED wram_s
 {
@@ -102,8 +104,8 @@ struct PACKED wram_s
             // WRAM
             struct PACKED {
                 // WRAM0
-                uint16_t wLZAddress;
-                uint8_t wLZBank;
+                uint16_t wLZAddress; // unused
+                uint8_t wLZBank; // unused
                 uint8_t skip_4[1];
                 uint8_t wBoxAlignment;
                 uint8_t wInputType;

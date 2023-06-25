@@ -116,12 +116,12 @@ void init_function_pointers(void) {
 
     // home/fade.c
     // REDIRECTED(TimeOfDayFade);
-    // REDIRECTED(RotateThreePalettesRight);
+    REDIRECTED(RotateThreePalettesRight);
     // REDIRECTED(IncGradGBPalTable_04);
-    // REDIRECTED(RotateFourPalettesRight);
+    REDIRECTED(RotateFourPalettesRight);
     // REDIRECTED(IncGradGBPalTable_14);
     // REDIRECTED(IncGradGBPalTable_12);
-    // REDIRECTED(RotateThreePalettesLeft);
+    REDIRECTED(RotateThreePalettesLeft);
     // REDIRECTED(IncGradGBPalTable_02);
     // REDIRECTED(IncGradGBPalTable_08);
     // REDIRECTED(IncGradGBPalTable_07);
@@ -131,10 +131,10 @@ void init_function_pointers(void) {
     // REDIRECTED(IncGradGBPalTable_01);
     // REDIRECTED(IncGradGBPalTable_10);
     // REDIRECTED(IncGradGBPalTable_15);
-    // REDIRECTED(RotatePalettesLeft);
-    // REDIRECTED(RotatePalettesRight);
+    REDIRECTED(RotatePalettesLeft);
+    REDIRECTED(RotatePalettesRight);
     // REDIRECTED(IncGradGBPalTable_13);
-    // REDIRECTED(RotateFourPalettesLeft);
+    REDIRECTED(RotateFourPalettesLeft);
     // REDIRECTED(IncGradGBPalTable_00);
     // REDIRECTED(IncGradGBPalTable_05);
     // REDIRECTED(IncGradGBPalTable_09);
@@ -2226,4 +2226,27 @@ void init_function_pointers(void) {
     REDIRECTED(HDMATransfer_FillBGMap0WithBlack);
     REDIRECTED(LoadFonts_NoOAMUpdate);
     REDIRECTED(ReanchorBGMap_NoOAMUpdate);
+
+    // engine/overworld/map_object_action.c
+    // REDIRECTED(SetFacingStanding);
+    // REDIRECTED(SetFacingWeirdTree);
+    // REDIRECTED(SetFacingGrassShake);
+    // REDIRECTED(SetFacingEmote);
+    // REDIRECTED(CounterclockwiseSpinAction);
+    // REDIRECTED(SetFacingFreezeBounce);
+    // REDIRECTED(SetFacingStandAction);
+    // REDIRECTED(SetFacingBigDollAsym);
+    // REDIRECTED(SetFacingBigDollSym);
+    // REDIRECTED(SetFacingBigDoll);
+    // REDIRECTED(SetFacingFish);
+    // REDIRECTED(SetFacingSkyfall);
+    // REDIRECTED(SetFacingStepAction);
+    // REDIRECTED(ObjectActionPairPointers);
+    // REDIRECTED(SetFacingCounterclockwiseSpin2);
+    // REDIRECTED(SetFacingBounce);
+    // REDIRECTED(SetFacingBoulderDust);
+    // REDIRECTED(SetFacingCurrent);
+    // REDIRECTED(SetFacingShadow);
+    // REDIRECTED(SetFacingCounterclockwiseSpin);
+    // REDIRECTED(SetFacingBumpAction);
 }

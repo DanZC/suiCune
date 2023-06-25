@@ -1,8 +1,6 @@
 #include "../constants.h"
 #include "decompress.h"
 
-static uint8_t LZBank;
-
 void FarDecompress(void){
     //  Decompress graphics data from a:hl to de.
 
@@ -20,10 +18,9 @@ void FarDecompress(void){
 
 }
 
+//  Decompress graphics data from a:hl to de.
 void FarDecompress_Conv(uint8_t bank, uint16_t src, uint16_t dest){
-    //  Decompress graphics data from a:hl to de.
     // gb_write(wLZBank, bank);
-    LZBank = bank;
     bank_push(bank);
 
     Decompress_Conv(dest, src);

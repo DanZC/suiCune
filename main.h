@@ -182,7 +182,7 @@
 
 //#include "engine/tilesets/map_palettes.h"
 //#include "gfx/tileset_palette_maps.h"
-//#include "data/collision/collision_permissions.h"
+#include "data/collision/collision_permissions.h"
 //#include "engine/menus/empty_sram.h"
 #include "engine/menus/savemenu_copytilemapatonce.h"
 //#include "engine/events/checksave.h"

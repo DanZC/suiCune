@@ -93,7 +93,7 @@ void VBlank_Conv(void)
     PUSH_DE;
     PUSH_HL;
 
-    switch(gb_read(hVBlank) & 7)
+    switch(hram->hVBlank & 7)
     {
         case 7:
         case 0: VBlank0_Conv(); break;

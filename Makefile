@@ -20,6 +20,7 @@ TARGET := $(NAME)
 SRCS   := tools/emu/peanut_sdl.c tools/emu/minigb_apu/minigb_apu.c \
 	$(wildcard home/*.c) \
 	$(wildcard audio/*.c) \
+	$(wildcard data/collision/*.c) \
 	$(wildcard engine/battle/*.c) \
 	$(wildcard engine/battle_anims/*.c) \
 	$(wildcard engine/gfx/*.c) \
@@ -67,16 +68,19 @@ clean:
 	$(RM) $(SRCS:.c=.$(OBJEXT)) $(TARGET) \
 	$(wildcard home/*.o) \
 	$(wildcard audio/*.o) \
+	$(wildcard data/collision/*.o) \
 	$(wildcard engine/battle/*.o) \
 	$(wildcard engine/battle_anims/*.o) \
 	$(wildcard engine/gfx/*.o) \
 	$(wildcard engine/items/*.o) \
+	$(wildcard engine/math/*.o) \
 	$(wildcard engine/menus/*.o) \
 	$(wildcard engine/movie/*.o) \
 	$(wildcard engine/overworld/*.o) \
 	$(wildcard engine/phone/*.o) \
 	$(wildcard engine/pokegear/*.o) \
-	$(wildcard engine/rtc/*.o)
+	$(wildcard engine/rtc/*.o) \
+	$(wildcard input_system/*.o)
 #	$(wildcard ../*/*/*/*.o)
 
 # rom.o: pokecrystal/pokecrystal.gbc
