@@ -21,11 +21,9 @@ void CheckBattleScene(void){
 //  Return carry if battle scene is turned off.
     SET_PC(aCheckBattleScene);
     if(CheckBattleScene_Conv()) {
-        PEEK("Scene on.");
         AND_A_A;
     } else { 
         SCF;
-        PEEK("Scene off.");
     }
     RET;
 

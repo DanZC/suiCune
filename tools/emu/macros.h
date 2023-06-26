@@ -2786,6 +2786,12 @@
 
 #define bank_pop Bankswitch_Conv(oldBank);
 
+#define wbank_push(_bank) \
+    uint8_t svbk = gb_read(rSVBK);\
+    gb_write(rSVBK, _bank);
+
+#define wbank_pop gb_write(rSVBK, svbk);
+
 #define farcall(_x, ...) \
     do {                                                     \
         uint8_t oldBank = gb_read(hROMBank);                 \

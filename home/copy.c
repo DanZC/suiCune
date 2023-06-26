@@ -170,7 +170,7 @@ void ByteFill_Conv2(void* ptr, uint16_t len, uint8_t value){
 
     while(--len != 0)
     {
-        *p = value;
+        *(p++) = value;
     }
 }
 

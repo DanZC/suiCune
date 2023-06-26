@@ -1134,8 +1134,10 @@ typedef enum {
 } TitlescreenOption;
 
 void IntroSequence(void){
+// Comment the two lines below to remove the copyright splash screen.
     CALLFAR(aSplashScreen);
     JR_C (mStartTitleScreen);
+// Comment the line below to remove the intro movie.
     FARCALL(aCrystalIntro);
 
 // fallthrough
@@ -1146,7 +1148,7 @@ void IntroSequence(void){
 void StartTitleScreen(void){
     LDH_A_addr(rSVBK);
     PUSH_AF;
-    LD_A(BANK(wLYOverrides));
+    LD_A(MBANK(awLYOverrides));
     LDH_addr_A(rSVBK);
 
     CALL(aStartTitleScreen_TitleScreen);
@@ -1179,19 +1181,27 @@ loop:
     CALL(aUpdateTimePals);
     LD_A_addr(wTitleScreenSelectedOption);
     //CP_A(NUM_TITLESCREENOPTIONS);
-    IF_C goto ok;
-    XOR_A_A;
+    // IF_C goto ok;
+    // XOR_A_A;
 
-ok:
-    LD_E_A;
-    LD_D(0);
-    LD_HL(mStartTitleScreen_dw);
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    JP_hl;
+// ok:
+    // LD_E_A;
+    // LD_D(0);
+    // LD_HL(mStartTitleScreen_dw);
+    // ADD_HL_DE;
+    // ADD_HL_DE;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // JP_hl;
+    switch(REG_A) {
+        default:
+        case TITLESCREENOPTION_MAIN_MENU:           return Intro_MainMenu();
+        case TITLESCREENOPTION_DELETE_SAVE_DATA:    return DeleteSaveData();
+        case TITLESCREENOPTION_RESTART:             return IntroSequence();
+        case TITLESCREENOPTION_UNUSED:              return IntroSequence();
+        case TITLESCREENOPTION_RESET_CLOCK:         return ResetClock();
+    }
 
 
 dw:

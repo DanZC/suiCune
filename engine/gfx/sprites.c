@@ -16,6 +16,23 @@ loop:
 
 }
 
+void ClearSpriteAnims_Conv(void){
+    // LD_HL(wSpriteAnimData);
+    // LD_BC(wSpriteAnimDataEnd - wSpriteAnimData);
+    uint16_t hl = wSpriteAnimData;
+    uint16_t bc = wSpriteAnimDataEnd - wSpriteAnimData;
+
+    do {
+        // LD_hl(0);
+        gb_write(hl++, 0);
+        // INC_HL;
+        // DEC_BC;
+        // LD_A_C;
+        // OR_A_B;
+        // IF_NZ goto loop;
+    } while(--bc != 0);
+}
+
 void PlaySpriteAnimationsAndDelayFrame(void){
     CALL(aPlaySpriteAnimations);
     CALL(aDelayFrame);
@@ -235,6 +252,132 @@ nonzero:
 
 }
 
+//  Initialize animation a at pixel x=e, y=d
+//  Find if there's any room in the wSpriteAnimationStructs array, which is 10x16
+struct SpriteAnim* v_InitSpriteAnimStruct_Conv(uint8_t a, uint16_t de){
+    // PUSH_DE;
+    // PUSH_AF;
+    // LD_HL(wSpriteAnimationStructs);
+    // LD_E(NUM_SPRITE_ANIM_STRUCTS);
+    struct SpriteAnim* hl = wram->wSpriteAnim;
+    uint8_t e = NUM_SPRITE_ANIM_STRUCTS;
+
+// loop:
+    do {
+        // LD_A_hl;
+        // AND_A_A;
+        // IF_Z goto found;
+        if(hl->index == 0) {
+        //  Back up the structure address to bc.
+            // LD_C_L;
+            // LD_B_H;
+            struct SpriteAnim* bc = hl;
+
+        //  Increment [wSpriteAnimCount], skipping a 0 value.
+            // LD_HL(wSpriteAnimCount);
+            // INC_hl;
+            // LD_A_hl;
+            // AND_A_A;
+            // IF_NZ goto nonzero;
+            // INC_hl;
+            if(++wram->wSpriteAnimCount == 0)
+                wram->wSpriteAnimCount++;
+        
+        //  Get row a of SpriteAnimSeqData, copy the pointer into de
+            // POP_AF;
+            // LD_E_A;
+            // LD_D(0);
+            // LD_HL(mSpriteAnimSeqData);
+            // ADD_HL_DE;
+            // ADD_HL_DE;
+            // ADD_HL_DE;
+            // LD_E_L;
+            // LD_D_H;
+            uint16_t de2 = mSpriteAnimSeqData + (a * 3);
+        //  Set hl to the first field (field 0) in the current structure.
+            // LD_HL(SPRITEANIMSTRUCT_INDEX);
+            // ADD_HL_BC;
+        //  Load the index.
+            // LD_A_addr(wSpriteAnimCount);
+            // LD_hli_A;  // SPRITEANIMSTRUCT_INDEX
+            bc->index = wram->wSpriteAnimCount;
+        //  Copy the table entry to the next two fields.
+            // LD_A_de;
+            // LD_hli_A;  // SPRITEANIMSTRUCT_FRAMESET_ID
+            // INC_DE;
+            bc->framesetID = gb_read(de2++);
+            // LD_A_de;
+            // LD_hli_A;  // SPRITEANIMSTRUCT_ANIM_SEQ_ID
+            // INC_DE;
+            bc->animSeqID = gb_read(de2++);
+        //  Look up the third field in the wSpriteAnimDict mapping.
+        //  Take the mapped value and load it in.
+            // LD_A_de;
+            // CALL(aGetSpriteAnimVTile);
+            // LD_hli_A;  // SPRITEANIMSTRUCT_TILE_ID
+            bc->tileID = GetSpriteAnimVTile_Conv(gb_read(de2));
+            // POP_DE;
+        //  Set hl to field 4 (X coordinate).  Kinda pointless, because we're presumably already here.
+            // LD_HL(SPRITEANIMSTRUCT_XCOORD);
+            // ADD_HL_BC;
+        //  Load the original value of de into here.
+            // LD_A_E;
+            // LD_hli_A;  // SPRITEANIMSTRUCT_XCOORD
+            // LD_A_D;
+            // LD_hli_A;  // SPRITEANIMSTRUCT_YCOORD
+            bc->xCoord = LOW(de);
+            bc->yCoord = HIGH(de);
+        //  load 0 into the next four fields
+            // XOR_A_A;
+            // LD_hli_A;  // SPRITEANIMSTRUCT_XOFFSET
+            // LD_hli_A;  // SPRITEANIMSTRUCT_YOFFSET
+            bc->xOffset = 0;
+            bc->yOffset = 0;
+            // XOR_A_A;
+            // LD_hli_A;  // SPRITEANIMSTRUCT_DURATION
+            // LD_hli_A;  // SPRITEANIMSTRUCT_DURATIONOFFSET
+            bc->duration = 0;
+            bc->durationOffset = 0;
+        //  load -1 into the next field
+            // DEC_A;
+            // LD_hli_A;  // SPRITEANIMSTRUCT_FRAME
+            bc->frameIndex = 0xff; // -1
+        //  load 0 into the last five fields
+            // XOR_A_A;
+            // LD_hli_A;  // SPRITEANIMSTRUCT_JUMPTABLE_INDEX
+            // LD_hli_A;  // SPRITEANIMSTRUCT_VAR1
+            // LD_hli_A;  // SPRITEANIMSTRUCT_VAR2
+            // LD_hli_A;  // SPRITEANIMSTRUCT_VAR3
+            // LD_hl_A;  // SPRITEANIMSTRUCT_VAR4
+            bc->jumptableIndex = 0;
+            bc->var1 = 0;
+            bc->var2 = 0;
+            bc->var3 = 0;
+            bc->var4 = 0;
+        //  back up the address of the first field to wSpriteAnimAddrBackup
+            // LD_A_C;
+            // LD_addr_A(wSpriteAnimAddrBackup);
+            // LD_A_B;
+            // LD_addr_A(wSpriteAnimAddrBackup + 1);
+            wram->wSpriteAnimAddrBackup = wSpriteAnimationStructs + ((int)(bc - wram->wSpriteAnim) * SPRITEANIMSTRUCT_LENGTH);
+            return bc;
+            // RET;
+        }
+        // LD_BC(SPRITEANIMSTRUCT_LENGTH);
+        // ADD_HL_BC;
+        hl++;
+        // DEC_E;
+        // IF_NZ goto loop;
+    } while(--e != 0);
+//  We've reached the end.  There is no more room here.
+//  Return carry.
+    // POP_AF;
+    // POP_DE;
+    // SCF;
+    // RET;
+    return NULL;
+}
+
 void DeinitializeSprite(void){
 //  Clear the index field of the struct in bc.
     LD_HL(SPRITEANIMSTRUCT_INDEX);
@@ -242,6 +385,15 @@ void DeinitializeSprite(void){
     LD_hl(0);
     RET;
 
+}
+
+//  Clear the index field of the struct in bc.
+void DeinitializeSprite_Conv(struct SpriteAnim* bc){
+    // LD_HL(SPRITEANIMSTRUCT_INDEX);
+    // ADD_HL_BC;
+    // LD_hl(0);
+    // RET;
+    bc->index = 0;
 }
 
 void DeinitializeAllSprites(void){
@@ -452,6 +604,39 @@ done:
 
 }
 
+//  a = wSpriteAnimDict[a] if a in wSpriteAnimDict else vtile offset $00
+uint8_t GetSpriteAnimVTile_Conv(uint8_t a){
+    // PUSH_HL;
+    // PUSH_BC;
+    // LD_HL(wSpriteAnimDict);
+    // LD_B_A;
+    // LD_C(NUM_SPRITEANIMDICT_ENTRIES);
+    uint8_t* hl = wram->wSpriteAnimDict;
+    uint8_t c = NUM_SPRITEANIMDICT_ENTRIES;
+
+// loop:
+    do {
+        // LD_A_hli;
+        uint8_t key = *(hl++);
+        // CP_A_B;
+        // IF_Z goto ok;
+        if(key == a) {
+            // LD_A_hl;
+            return *hl;
+        }
+        // INC_HL;
+        hl++;
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(--c != 0);
+    // XOR_A_A;
+    return 0;
+// done:
+    // POP_BC;
+    // POP_HL;
+    // RET;
+}
+
 void v_ReinitSpriteAnimFrame(void){
     LD_HL(SPRITEANIMSTRUCT_FRAMESET_ID);
     ADD_HL_BC;
@@ -464,6 +649,21 @@ void v_ReinitSpriteAnimFrame(void){
     LD_hl(-1);
     RET;
 
+}
+
+void v_ReinitSpriteAnimFrame_Conv(struct SpriteAnim* bc, uint8_t a){
+    // LD_HL(SPRITEANIMSTRUCT_FRAMESET_ID);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    bc->framesetID = a;
+    // LD_HL(SPRITEANIMSTRUCT_DURATION);
+    // ADD_HL_BC;
+    // LD_hl(0);
+    bc->duration = 0;
+    // LD_HL(SPRITEANIMSTRUCT_FRAME);
+    // ADD_HL_BC;
+    // LD_hl(-1);
+    bc->frameIndex = 0xff; // -1
 }
 
 void GetSpriteAnimFrame(void){

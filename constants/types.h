@@ -10,6 +10,12 @@ union Register
     };
 };
 
+struct ByteWord 
+{
+    uint8_t byte;
+    uint16_t word;
+};
+
 // Configurable types
 
 typedef uint8_t species_t; // Mon species type

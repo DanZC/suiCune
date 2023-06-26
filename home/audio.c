@@ -235,6 +235,60 @@ done:
     RET;     // ret
 }
 
+//  Return true if any SFX channels are active.
+bool CheckSFX_Conv(void) {
+    if (chan[CHAN5]->channelOn) return true;
+    if (chan[CHAN6]->channelOn) return true;
+    if (chan[CHAN7]->channelOn) return true;
+    if (chan[CHAN8]->channelOn) return true;
+    return false;
+}
+
+//  Play sound effect de.
+//  Sound effects are ordered by priority (highest to lowest)
+void PlaySFX_Conv(uint16_t de) {
+    PUSH_HL;  // push hl
+    PUSH_DE;  // push de
+    PUSH_BC;  // push bc
+    PUSH_AF;  // push af
+
+    // ; Is something already playing?
+    // CALL(aCheckSFX);  // call CheckSFX
+    // IF_NC goto play;  // jr nc, .play
+        // ; Does it have priority?
+        // LD_A_addr(wCurSFX);  // ld a, [wCurSFX]
+        // CP_A_E;              // cp e
+        // IF_C goto done;      // jr c, .done
+    if(!CheckSFX_Conv() || (wram->wCurSFX >= LOW(de))) {
+        // LDH_A_addr(hROMBank);    // ldh a, [hROMBank]
+        // PUSH_AF;                 // push af
+        // LD_A(BANK(av_PlaySFX));  // ld a, BANK(_PlaySFX)
+        // LDH_addr_A(hROMBank);    // ldh [hROMBank], a
+        // LD_addr_A(MBC3RomBank);  // ld [MBC3RomBank], a
+        uint8_t oldbank = hram->hROMBank;
+        hram->hROMBank = BANK(av_PlaySFX);
+        gb_write(MBC3RomBank, hram->hROMBank);
+
+        // LD_A_E;              // ld a, e
+        // LD_addr_A(wCurSFX);  // ld [wCurSFX], a
+        wram->wCurSFX = LOW(de);
+        REG_DE = de;
+        v_PlaySFX();         // call _PlaySFX
+
+        // POP_AF;                  // pop af
+        // LDH_addr_A(hROMBank);    // ldh [hROMBank], a
+        // LD_addr_A(MBC3RomBank);  // ld [MBC3RomBank], a
+        hram->hROMBank = oldbank;
+        gb_write(MBC3RomBank, oldbank);
+    }
+
+    POP_AF;  // pop af
+    POP_BC;  // pop bc
+    POP_DE;  // pop de
+    POP_HL;  // pop hl
+    // RET;     // ret
+}
+
 void WaitPlaySFX(void) {
     WaitSFX();
     CALL(aPlaySFX);  // call PlaySFX

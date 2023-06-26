@@ -168,7 +168,7 @@ void DecompressRequest2bpp_Conv(uint8_t b, uint16_t hl, uint8_t c) {
 
     // LD_DE(sScratch);
     // CALL(aRequest2bpp);
-    Request2bpp_Conv(b, sScratch, c, hl);
+    Request2bpp_Conv(b, sScratch, hl, c);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // RET;
@@ -381,7 +381,7 @@ wait2:
 }
 
 //  Load 2bpp at b:de to occupy c tiles of hl.
-void Request2bpp_Conv(uint8_t b, uint16_t de, uint8_t c, uint16_t hl) {
+void Request2bpp_Conv(uint8_t b, uint16_t de, uint16_t hl, uint8_t c) {
     uint16_t size = c << 4;
     switch (de >> 14) {
         case 0:  // 0x0000 - 0x3FFF
@@ -500,7 +500,7 @@ wait2:
 }
 
 //  Load 1bpp at b:de to occupy c tiles of hl.
-void Request1bpp_Conv(uint8_t b, uint16_t de, uint8_t c, uint16_t hl) {
+void Request1bpp_Conv(uint8_t b, uint16_t de, uint16_t hl, uint8_t c) {
     uint16_t size = c << 3;
     uint32_t source = de;
     switch (de >> 14) {
@@ -543,7 +543,7 @@ void Get2bpp_Conv(uint8_t b, uint16_t de, uint16_t hl, uint8_t c) {
     // JP_NZ(mRequest2bpp);
     // fallthrough
     if(bit_test(gb_read(rLCDC), rLCDC_ENABLE)) {
-        return Request2bpp_Conv(b, de, c, hl);
+        return Request2bpp_Conv(b, de, hl, c);
     }
 
     return Copy2bpp_Conv(b, de, hl, c);
@@ -613,7 +613,7 @@ void Get1bpp_Conv(uint16_t hl, uint8_t b, uint16_t de, uint8_t c) {
     // BIT_A(rLCDC_ENABLE);
     // JP_NZ(mRequest1bpp);
     if(bit_test(gb_read(rLCDC), rLCDC_ENABLE)) {
-        return Request1bpp_Conv(b, de, c, hl);
+        return Request1bpp_Conv(b, de, hl, c);
     }
     // fallthrough
 
