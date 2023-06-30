@@ -387,7 +387,7 @@ static void update_noise(int16_t *restrict samples)
 /**
  * SDL2 style audio callback function.
  */
-void audio_callback(void *userdata, void *stream, int len)
+void audio_callback(void *userdata, uint8_t *stream, int len)
 {
 	int16_t *samples = (int16_t *)stream;
 

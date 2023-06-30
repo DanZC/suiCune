@@ -1,5 +1,6 @@
 #include "../../constants.h"
 #include "sprites.h"
+#include "../math/sine.h"
 
 void ClearSpriteAnims(void){
     LD_HL(wSpriteAnimData);
@@ -777,7 +778,7 @@ uint8_t AddOrSubtractX_Conv(uint16_t hl){
     // LD_HL(wCurSpriteOAMFlags);
     // BIT_hl(OAM_X_FLIP);
     // IF_Z goto ok;
-    if(bit_test(wCurSpriteOAMFlags, OAM_X_FLIP))
+    if(!bit_test(wram->wCurSpriteOAMFlags, OAM_X_FLIP))
         return a;
 // -8 - a
     // ADD_A(8);
@@ -1226,7 +1227,8 @@ void Sprites_Cosine(void){
 //  a = d * cos(a * pi/32)
     ADD_A(0b010000);  // cos(x) = sin(x + pi/2)
 // fallthrough
-    return Sprites_Sine();
+    REG_A = v_Sine_Conv(REG_A, REG_D);
+    // return Sprites_Sine();
 }
 
 //  a = d * cos(a * pi/32)
@@ -1240,107 +1242,15 @@ void Sprites_Sine(void){
 //  a = d * sin(a * pi/32)
     
     //calc_sine_wave ['?']
+    REG_A = v_Sine_Conv(REG_A, REG_D);
 
-    return AnimateEndOfExpBar();
+    // return AnimateEndOfExpBar();
 }
 
 //  a = d * sin(a * pi/32)
 uint8_t Sprites_Sine_Conv(uint8_t a, uint8_t d){   
     //calc_sine_wave ['?']
-    // and %111111
-	// cp  %100000
-	// jr nc, .negative\@
-    if((a & 0x3f) < 0x20) {
-    // .apply\@
-        // ld e, a
-        // ld a, d
-        // ld d, 0
-    // if _NARG == 1
-        // ld hl, \1
-    // else
-        // ld hl, .sinetable\@
-    // endc
-        // add hl, de
-        // add hl, de
-        uint16_t hl = mSprites_Sine_sinetable_u55894 + 2*a;
-        // ld e, [hl]
-        // inc hl
-        // ld d, [hl]
-        union Register de = {.reg=gb_read16(hl)};
-        // ld hl, 0
-        hl = 0;
-        uint8_t carry;
-        do {
-        // .multiply\@ ; factor amplitude
-            // srl a
-            carry = d & 1;
-            d = d >> 1;
-            // jr nc, .even\@
-            if(carry)
-                hl += de.reg;// add hl, de
-        // .even\@
-            // sla e
-            carry = (de.lo >> 7);
-            de.lo = de.lo << 1;
-            // rl d
-            de.hi = (de.hi >> 7) | (de.hi << 1);
-            // and a
-            // jr nz, .multiply\@
-        } while(d != 0);
-        // ret
-        // call .apply\@
-        // ld a, h
-        // ret
-        return HIGH(hl);
-    }
-    else {
-    // .negative\@
-        // and %011111
-        a &= 0b011111;
-        // call .apply\@
-    // .apply\@
-        // ld e, a
-        // ld a, d
-        // ld d, 0
-    // if _NARG == 1
-        // ld hl, \1
-    // else
-        // ld hl, .sinetable\@
-    // endc
-        // add hl, de
-        // add hl, de
-        uint16_t hl = mSprites_Sine_sinetable_u55894 + 2*a;
-        // ld e, [hl]
-        // inc hl
-        // ld d, [hl]
-        union Register de = {.reg=gb_read16(hl)};
-        // ld hl, 0
-        hl = 0;
-        uint8_t carry;
-        do {
-        // .multiply\@ ; factor amplitude
-            // srl a
-            carry = d & 1;
-            d = d >> 1;
-            // jr nc, .even\@
-            if(carry)
-                hl += de.reg;// add hl, de
-        // .even\@
-            // sla e
-            carry = (de.lo >> 7);
-            de.lo = de.lo << 1;
-            // rl d
-            de.hi = (de.hi >> 7) | (de.hi << 1);
-            // and a
-            // jr nz, .multiply\@
-        } while(d != 0);
-        // ld a, h
-        // xor $ff
-        // inc a
-        return (HIGH(hl) ^ 0xff) + 1;
-        // ret
-    }
-    return 0;
+    return v_Sine_Conv(a, d);
 }
 
 void AnimateEndOfExpBar(void){

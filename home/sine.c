@@ -1,5 +1,6 @@
 #include "../constants.h"
 #include "sine.h"
+#include "../engine/math/sine.h"
 
 void Cosine(void){
     //  //  unreferenced
@@ -11,8 +12,9 @@ void Cosine(void){
 
 void Sine(void){
     //  a = d * sin(a * pi/32)
-    LD_E_A;
-    HOMECALL(av_Sine);
-    RET;
+    // LD_E_A;
+    // HOMECALL(av_Sine);
+    // RET;
+    REG_A = v_Sine_Conv(REG_A, REG_D);
 
 }

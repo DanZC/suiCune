@@ -104,7 +104,12 @@ void CrystalIntro(void){
             break;
         // CALL(aIntroSceneJumper);
         IntroSceneJumper();
-        FARCALL(aPlaySpriteAnimations);
+        {
+            bank_push(BANK(aPlaySpriteAnimations));
+            // FARCALL(aPlaySpriteAnimations);
+            PlaySpriteAnimations_Conv();
+            bank_pop;
+        }
         // CALL(aDelayFrame);
         DelayFrame();
         // JP(mCrystalIntro_loop);

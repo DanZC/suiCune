@@ -475,8 +475,8 @@ void init_function_pointers(void) {
     // REDIRECTED(SetBitsForTimeCapsuleRequestIfNotLinked);
 
     // home/sine.c
-    // REDIRECTED(Cosine);
-    // REDIRECTED(Sine);
+    REDIRECTED(Cosine);
+    REDIRECTED(Sine);
 
     // home/sprite_anims.c
     // REDIRECTED(InitSpriteAnimStruct);
@@ -2096,10 +2096,10 @@ void init_function_pointers(void) {
     REDIRECTED(GetSpriteAnimFrame);
     // REDIRECTED(InitSpriteAnimBuffer);
     // REDIRECTED(AnimateEndOfExpBar);
-    //REDIRECTED(Sprites_Sine);
+    REDIRECTED(Sprites_Sine);
     REDIRECTED(UpdateAnimFrame);
     REDIRECTED(AddOrSubtractX);
-    //REDIRECTED(Sprites_Cosine);
+    REDIRECTED(Sprites_Cosine);
     // REDIRECTED(DeinitializeAllSprites);
     // REDIRECTED(v_ReinitSpriteAnimFrame);
     // REDIRECTED(v_InitSpriteAnimStruct);
@@ -2249,4 +2249,7 @@ void init_function_pointers(void) {
     // REDIRECTED(SetFacingShadow);
     // REDIRECTED(SetFacingCounterclockwiseSpin);
     // REDIRECTED(SetFacingBumpAction);
+
+    // engine/math/sine.c
+    // REDIRECTED(v_Sine);
 }
