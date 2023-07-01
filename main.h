@@ -145,7 +145,7 @@
 //#include "engine/battle/ai/items.h"
 //#include "engine/battle/ai/scoring.h"
 //#include "engine/battle/read_trainer_attributes.h"
-//#include "engine/battle/read_trainer_party.h"
+#include "engine/battle/read_trainer_party.h"
 
 // SECTION "Battle Core", ROMX
 
@@ -589,7 +589,7 @@
 //#include "data/items/names.h"
 //#include "engine/items/print_item_description.h"
 //#include "data/moves/names.h"
-//#include "engine/overworld/landmarks.h"
+#include "engine/overworld/landmarks.h"
 
 // SECTION "Print Party", ROMX
 

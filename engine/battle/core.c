@@ -1,9 +1,12 @@
 #include "../../constants.h"
 #include "core.h"
+#include "../../home/array.h"
+#include "../../data/trainers/leaders.h"
 
 //  Core components of the battle engine.
 
 void DoBattle(void){
+    PEEK("");
     XOR_A_A;
     LD_addr_A(wBattleParticipantsNotFainted);
     LD_addr_A(wBattleParticipantsIncludingFainted);
@@ -38,6 +41,7 @@ alive:
 
 not_linked:
     LD_A_addr(wBattleMode);
+    printf("wBattleMode = %s\n", (wram->wBattleMode == TRAINER_BATTLE)? "trainer": "wild");
     DEC_A;
     IF_Z goto wild;
     XOR_A_A;
@@ -2904,9 +2908,29 @@ void IsKantoGymLeader(void){
 
 }
 
+bool IsKantoGymLeader_Conv(uint8_t a){
+    // LD_HL(mKantoGymLeaders);
+    // JR(mIsGymLeaderCommon);
+    for(uint8_t i = 0; KantoGymLeaders[i] != 0xff; ++i) {
+        if(a == KantoGymLeaders[i])
+            return true;
+    }
+    return false;
+}
+
 void IsGymLeader(void){
     LD_HL(mGymLeaders);
     return IsGymLeaderCommon();
+}
+
+bool IsGymLeader_Conv(uint8_t a){
+    // LD_HL(mGymLeaders);
+    // JR(mIsGymLeaderCommon);
+    for(uint8_t i = 0; GymLeaders[i] != 0xff; ++i) {
+        if(a == GymLeaders[i])
+            return true;
+    }
+    return false;
 }
 
 void IsGymLeaderCommon(void){
@@ -8965,6 +8989,7 @@ void StartBattle(void){
 //  This check prevents you from entering a battle without any Pokemon.
 //  Those using walk-through-walls to bypass getting a Pokemon experience
 //  the effects of this check.
+    PEEK("");
     LD_A_addr(wPartyCount);
     AND_A_A;
     RET_Z ;
@@ -8979,6 +9004,33 @@ void StartBattle(void){
     SCF;
     RET;
 
+}
+
+bool StartBattle_Conv(void){
+//  This check prevents you from entering a battle without any Pokemon.
+//  Those using walk-through-walls to bypass getting a Pokemon experience
+//  the effects of this check.
+    // LD_A_addr(wPartyCount);
+    // AND_A_A;
+    // RET_Z ;
+    if(wram->wPartyCount == 0)
+        return false;
+
+    // LD_A_addr(wTimeOfDayPal);
+    // PUSH_AF;
+    uint8_t pal = wram->wTimeOfDayPal;
+    // CALL(aBattleIntro);
+    BattleIntro();
+    // CALL(aDoBattle);
+    DoBattle();
+    // CALL(aExitBattle);
+    ExitBattle();
+    // POP_AF;
+    // LD_addr_A(wTimeOfDayPal);
+    wram->wTimeOfDayPal = pal;
+    // SCF;
+    // RET;
+    return true;
 }
 
 void CallDoBattle(void){
@@ -9047,12 +9099,16 @@ Trainer:
 void InitEnemy(void){
     LD_A_addr(wOtherTrainerClass);
     AND_A_A;
-    JP_NZ (mInitEnemyTrainer);  // trainer
-    JP(mInitEnemyWildmon);  // wild
+    // JP_NZ (mInitEnemyTrainer);  // trainer
+    // JP(mInitEnemyWildmon);  // wild
+    IF_NZ
+        return InitEnemyTrainer();
+    return InitEnemyWildmon();
 
 }
 
 void BackUpBGMap2(void){
+    PEEK("");
     LDH_A_addr(rSVBK);
     PUSH_AF;
     LD_A(MBANK(awDecompressScratch));
@@ -9078,6 +9134,7 @@ void BackUpBGMap2(void){
 }
 
 void InitEnemyTrainer(void){
+    PEEK("");
     LD_addr_A(wTrainerClass);
     FARCALL(aStubbedTrainerRankings_TrainerBattles);
     XOR_A_A;
@@ -10011,6 +10068,7 @@ BlankBGMap:
     LD_DE(wDecompressScratch);
     hlbgcoord(0, 0, vBGMap0);
     //LD_BC((BANK(@) << 8) | (BG_MAP_WIDTH * BG_MAP_HEIGHT) / LEN_2BPP_TILE);
+    LD_BC((BANK(aInitBattleDisplay_BlankBGMap) << 8) | (BG_MAP_WIDTH * BG_MAP_HEIGHT) / LEN_2BPP_TILE);
     CALL(aRequest2bpp);
 
     POP_AF;

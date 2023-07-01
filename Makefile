@@ -21,6 +21,7 @@ SRCS   := tools/emu/peanut_sdl.c tools/emu/minigb_apu/minigb_apu.c \
 	$(wildcard home/*.c) \
 	$(wildcard audio/*.c) \
 	$(wildcard data/collision/*.c) \
+	$(wildcard data/trainers/*.c) \
 	$(wildcard engine/battle/*.c) \
 	$(wildcard engine/battle_anims/*.c) \
 	$(wildcard engine/gfx/*.c) \
@@ -69,6 +70,7 @@ clean:
 	$(wildcard home/*.o) \
 	$(wildcard audio/*.o) \
 	$(wildcard data/collision/*.o) \
+	$(wildcard data/trainers/*.o) \
 	$(wildcard engine/battle/*.o) \
 	$(wildcard engine/battle_anims/*.o) \
 	$(wildcard engine/gfx/*.o) \

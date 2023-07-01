@@ -1494,14 +1494,14 @@ void init_function_pointers(void) {
     // REDIRECTED(ScoreMonTypeMatchups);
     // REDIRECTED(OfferSwitch);
     // REDIRECTED(ApplyBrnEffectOnAttack);
-    // REDIRECTED(DoBattle);
+    REDIRECTED(DoBattle);
     // REDIRECTED(PlayerPartyMonEntrance);
     // REDIRECTED(PursuitSwitch);
     // REDIRECTED(CompareMovePriority);
     // REDIRECTED(ParsePlayerAction);
     // REDIRECTED(IsGymLeaderCommon);
     // REDIRECTED(AddBattleMoneyToAccount);
-    // REDIRECTED(StartBattle);
+    REDIRECTED(StartBattle);
     // REDIRECTED(Battle_EnemyFirst);
     // REDIRECTED(InitBattleMon);
     // REDIRECTED(IsMobileBattle);
@@ -1525,7 +1525,7 @@ void init_function_pointers(void) {
     // REDIRECTED(GoMonText);
     // REDIRECTED(ResidualDamage);
     // REDIRECTED(BattleStartMessage);
-    // REDIRECTED(EnemySwitch);
+    REDIRECTED(EnemySwitch);
     // REDIRECTED(BattleTurn);
     // REDIRECTED(EnemyTurn_EndOpponentProtectEndureDestinyBond);
     // REDIRECTED(GetSixteenthMaxHP);
@@ -1542,7 +1542,7 @@ void init_function_pointers(void) {
     // REDIRECTED(AskUseNextPokemon);
     // REDIRECTED(HandlePerishSong);
     // REDIRECTED(ResetEnemyStatLevels);
-    // REDIRECTED(ShowSetEnemyMonAndSendOutAnimation);
+    REDIRECTED(ShowSetEnemyMonAndSendOutAnimation);
     // REDIRECTED(ExpPointsText);
     // REDIRECTED(PlayerTurn_EndOpponentProtectEndureDestinyBond);
     // REDIRECTED(UseConfusionHealingItem);
@@ -1581,7 +1581,7 @@ void init_function_pointers(void) {
     // REDIRECTED(NewBattleMonStatus);
     // REDIRECTED(AddBattleParticipant);
     // REDIRECTED(LoadEnemyMonToSwitchTo);
-    // REDIRECTED(InitEnemyTrainer);
+    REDIRECTED(InitEnemyTrainer);
     // REDIRECTED(UpdateHPBarBattleHuds);
     // REDIRECTED(LoadEnemyMon);
     // REDIRECTED(LoadBattleMenu2);
@@ -1616,7 +1616,7 @@ void init_function_pointers(void) {
     // REDIRECTED(ForcePlayerMonChoice);
     // REDIRECTED(NewEnemyMonStatus);
     // REDIRECTED(AddLastLinkBattleToLinkRecord);
-    // REDIRECTED(BackUpBGMap2);
+    REDIRECTED(BackUpBGMap2);
     // REDIRECTED(BattleMenuPKMN_Loop);
     // REDIRECTED(Call_PlayBattleAnim_OnlyIfVisible);
     // REDIRECTED(GetMoveEffect);
@@ -1635,7 +1635,7 @@ void init_function_pointers(void) {
     // REDIRECTED(Text_MonGainedExpPoint);
     // REDIRECTED(IsGymLeader);
     // REDIRECTED(LinkBattleSendReceiveAction);
-    // REDIRECTED(InitEnemy);
+    REDIRECTED(InitEnemy);
     // REDIRECTED(BattleCheckShininess);
     // REDIRECTED(v_BattleRandom);
     // REDIRECTED(ForcePickSwitchMonInBattle);
@@ -1658,7 +1658,7 @@ void init_function_pointers(void) {
     // REDIRECTED(BattleCheckPlayerShininess);
     // REDIRECTED(GetEnemyMonDVs);
     // REDIRECTED(EmptyBattleTextbox);
-    // REDIRECTED(BattleIntro);
+    REDIRECTED(BattleIntro);
     // REDIRECTED(HasEnemyFainted);
     // REDIRECTED(EnemyPartyMonEntrance);
     // REDIRECTED(GetBattleMonBackpic_DoAnim);
@@ -2252,4 +2252,22 @@ void init_function_pointers(void) {
 
     // engine/math/sine.c
     // REDIRECTED(v_Sine);
+
+    // engine/overworld/landmarks.c
+    REDIRECTED(RegionCheck);
+    REDIRECTED(GetLandmarkName);
+    REDIRECTED(GetLandmarkCoords);
+
+    // engine/battle/read_trainer_party.c
+    REDIRECTED(TrainerType1);
+    REDIRECTED(CopyTrainerName);
+    REDIRECTED(TrainerType3);
+    REDIRECTED(ReadTrainerParty);
+    // REDIRECTED(TrainerTypes);
+    REDIRECTED(TrainerType4);
+    REDIRECTED(TrainerType2);
+    REDIRECTED(Battle_GetTrainerName);
+    REDIRECTED(IncompleteCopyNameFunction);
+    REDIRECTED(ComputeTrainerReward);
+    REDIRECTED(GetTrainerName);
 }

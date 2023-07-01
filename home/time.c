@@ -131,7 +131,7 @@ void GetClock_Conv(void){
     gb_write(hRTCDayHi, REG_A);
 
 //  unlatch clock / disable clock r/w
-    CloseSRAM();
+    CloseSRAM_Conv();
 }
 
 void FixDays(void){

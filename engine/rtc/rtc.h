@@ -6,6 +6,7 @@ void GetTimeOfDay_Conv(void);
 void TimesOfDay(void);
 void BetaTimesOfDay(void);
 void StageRTCTimeForSave(void);
+void StageRTCTimeForSave_Conv(void);
 void SaveRTC(void);
 void StartClock(void);
 void StartClock_Conv(void);

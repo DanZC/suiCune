@@ -81,22 +81,36 @@ match:
 
 }
 
-void GetTimeOfDay_Conv(void){
 //  get time of day based on the current hour
-    uint8_t hour = gb_read(hHours);  // hour
-    uint16_t hl = mTimesOfDay;
+void GetTimeOfDay_Conv(void){
+    //  hours for the time of day
+    //  0400-0959 morn | 1000-1759 day | 1800-0359 nite
+    static const uint8_t TimesOfDay[][2] = {
+        {MORN_HOUR, NITE_F},
+        {DAY_HOUR, MORN_F},
+        {NITE_HOUR, DAY_F},
+        {MAX_HOUR, NITE_F},
+        {0xff, MORN_F}
+    };
+
+    uint8_t hour = hram->hHours;  // hour
+    // uint16_t hl = mTimesOfDay;
+    uint8_t i = 0;
 
     do {
     //  if we're within the given time period,
     //  get the corresponding time of day
-        if(hour < gb_read(hl)) break;
+        // if(hour < gb_read(hl)) break;
+        if(hour < TimesOfDay[i][0]) break;
     //  else, get the next entry
-        hl+=2;
+        // hl+=2;
+        i++;
     //  try again
     } while(1);
 
 //  get time of day
-    gb_write(wTimeOfDay, gb_read(++hl));
+    // gb_write(wTimeOfDay, gb_read(++hl));
+    wram->wTimeOfDay = TimesOfDay[i][1];
 }
 
 void TimesOfDay(void){
@@ -136,6 +150,23 @@ void StageRTCTimeForSave(void){
 
 }
 
+void StageRTCTimeForSave_Conv(void){
+    UpdateTime_Conv();
+    // LD_HL(wRTC);
+    // LD_A_addr(wCurDay);
+    // LD_hli_A;
+    wram->wRTC[0] = wram->wCurDay;
+    // LDH_A_addr(hHours);
+    // LD_hli_A;
+    wram->wRTC[1] = hram->hHours;
+    // LDH_A_addr(hMinutes);
+    // LD_hli_A;
+    wram->wRTC[2] = hram->hMinutes;
+    // LDH_A_addr(hSeconds);
+    // LD_hli_A;
+    wram->wRTC[3] = hram->hSeconds;
+}
+
 void SaveRTC(void){
     LD_A(SRAM_ENABLE);
     LD_addr_A(MBC3SRamEnable);
@@ -166,7 +197,7 @@ void SaveRTC_Conv(void){
     // LD_addr_A(MBC3SRamBank);
     // RES_hl(7);
     gb_write(MBC3SRamBank, RTC_DH);
-    gb_write(MBC3RTC, gb_read(MBC3RTC) ^ (1 << 7));
+    gb_write(MBC3RTC, gb_read(MBC3RTC) & ~(1 << 7));
 
     // LD_A(BANK(sRTCStatusFlags));
     // LD_addr_A(MBC3SRamBank);
@@ -245,7 +276,7 @@ uint8_t v_FixDays_Conv(void){
     // IF_NZ goto set_bit_7;
     // BIT_hl(6);
     // IF_NZ goto set_bit_7;
-    if((hi & (1 << 7)) && (hi & (1 << 6)))
+    if(bit_test(hi, 7) || bit_test(hi, 6))
     {
         // Day count exceeds 16383
         // LD_A(0b10000000);
