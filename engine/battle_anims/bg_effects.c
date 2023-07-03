@@ -86,13 +86,14 @@ void DoBattleBGEffectFunction(void) {
     ADD_HL_BC;
     LD_E_hl;
     LD_D(0);
-    LD_HL(mBattleBGEffects);
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    JP_hl;
+    // LD_HL(mBattleBGEffects);
+    // ADD_HL_DE;
+    // ADD_HL_DE;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // JP_hl;
+    BattleBGEffects[REG_DE]();
 }
 
 // void BattleBGEffects(void) {

@@ -331,7 +331,7 @@ void UpdateEnemyMonInParty_Conv(void){
     // LD_A_addr(wBattleMode);
     // DEC_A;
     // RET_Z ;
-    if(gb_read(wBattleMode) - 1 == 0)
+    if(wram->wBattleMode == WILD_BATTLE)
         return;
 
     // LD_A_addr(wCurOTMon);

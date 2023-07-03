@@ -4,6 +4,7 @@ void VBlank0(void);
 void VBlank2(void);
 void VBlank1(void);
 void UpdatePals(void);
+bool UpdatePals_Conv(void);
 void VBlank3(void);
 void VBlank4(void);
 void VBlank5(void);

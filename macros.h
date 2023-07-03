@@ -13,7 +13,7 @@
 #include "macros/scripts/text.h"
 #include "macros/scripts/movement.h"
 //#include "macros/scripts/battle_commands.h"
-//#include "macros/scripts/battle_anims.h"
+#include "macros/scripts/battle_anims.h"
 #include "macros/scripts/gfx_anims.h"
 
 //#include "macros/legacy.h"

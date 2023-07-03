@@ -387,7 +387,7 @@
 // SECTION "Move Animations", ROMX
 
 //#include "engine/events/bug_contest/display_stats.h"
-//#include "engine/battle_anims/anim_commands.h"
+#include "engine/battle_anims/anim_commands.h"
 #include "engine/battle_anims/core.h"
 #include "engine/battle_anims/functions.h"
 //#include "engine/battle_anims/helpers.h"
