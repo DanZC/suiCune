@@ -20,12 +20,15 @@ void PlayBattleAnim(void){
 }
 
 void v_PlayBattleAnim(void){
-    LD_C(6);
+    // LD_C(6);
 
-wait:
-    CALL(aBattleAnimDelayFrame);
-    DEC_C;
-    IF_NZ goto wait;
+// wait:
+    // CALL(aBattleAnimDelayFrame);
+    // DEC_C;
+    // IF_NZ goto wait;
+    for(uint8_t c = 0; c < 6; ++c) {
+        CALL(aBattleAnimDelayFrame);
+    }
 
     CALL(aBattleAnimAssignPals);
     CALL(aBattleAnimRequestPals);

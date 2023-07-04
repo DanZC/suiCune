@@ -13,3 +13,6 @@
 #define coordidx(x, y) (((y) * SCREEN_WIDTH) + (x))
 
 #define bgcoord(x, y, origin) (((y) * SCREEN_WIDTH) + (x) + (origin))
+
+#define dwcoord(x, y) (((y) * SCREEN_WIDTH) + (x) + wTilemap)
+#define dwcoordidx(x, y) (((y) * SCREEN_WIDTH) + (x))

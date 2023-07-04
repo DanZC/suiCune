@@ -16,6 +16,12 @@ struct ByteWord
     uint16_t word;
 };
 
+struct Coords
+{
+    int8_t x;
+    int8_t y;
+};
+
 // Configurable types
 
 typedef uint8_t species_t; // Mon species type
@@ -864,6 +870,14 @@ struct CustomMartItem
 {
     uint8_t id;
     uint16_t price;
+};
+
+struct WildGrassMons
+{
+    uint8_t mapGroup;
+    uint8_t mapNumber;
+    uint8_t encounterRates[3];
+    struct { species_t species; uint8_t level; } mons[3][7];
 };
 
 #if defined(__cplusplus) || defined(_MSC_VER)

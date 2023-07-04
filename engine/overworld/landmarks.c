@@ -1,5 +1,6 @@
 #include "../../constants.h"
 #include "landmarks.h"
+#include "../../data/maps/landmarks.h"
 #include "../../home/map.h"
 
 void GetLandmarkCoords(void){
@@ -17,6 +18,23 @@ void GetLandmarkCoords(void){
     POP_HL;
     RET;
 
+}
+
+//  Return coordinates (d, e) of landmark e.
+struct Coords GetLandmarkCoords_Conv(uint8_t e){
+    // PUSH_HL;
+    // LD_L_E;
+    // LD_H(0);
+    // ADD_HL_HL;
+    // ADD_HL_HL;
+    // LD_DE(mLandmarks);
+    // ADD_HL_DE;
+    // LD_A_hli;
+    // LD_E_A;
+    // LD_D_hl;
+    // POP_HL;
+    // RET;
+    return (struct Coords){.x = Landmarks[e].x, .y = Landmarks[e].y};
 }
 
 void GetLandmarkName(void){

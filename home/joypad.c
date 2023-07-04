@@ -702,6 +702,7 @@ void WaitPressAorB_BlinkCursor(void) {
     LDH_addr_A(hObjectStructIndex);
 
 loop:
+    CALL(aDelayFrame);
         PUSH_HL;
     hlcoord(18, 17, wTilemap);
     CALL(aBlinkCursor);

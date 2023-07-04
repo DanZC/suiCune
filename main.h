@@ -138,7 +138,7 @@
 
 // SECTION "Effect Commands", ROMX
 
-//#include "engine/battle/effect_commands.h"
+#include "engine/battle/effect_commands.h"
 
 // SECTION "Enemy Trainers", ROMX
 

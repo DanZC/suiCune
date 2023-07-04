@@ -632,8 +632,85 @@ done:
     RET;
 }
 
+//  scx, scy
+//  palettes
+//  bg map
+//  tiles
+//  oam
+//  sound / lcd stat
 void VBlank3_Conv(void) {
-    CALL(aVBlank3);
+    // CALL(aVBlank3);
+    // LDH_A_addr(hROMBank);
+    // LDH_addr_A(hROMBankBackup);
+    hram->hROMBankBackup = hram->hROMBank;
+
+    // LDH_A_addr(hSCX);
+    // LDH_addr_A(rSCX);
+    // LDH_A_addr(hSCY);
+    // LDH_addr_A(rSCY);
+    gb_write(rSCX, hram->hSCX);
+    gb_write(rSCY, hram->hSCY);
+
+    // LDH_A_addr(hCGBPalUpdate);
+    // AND_A_A;
+    // CALL_NZ(aForceUpdateCGBPals);
+    // IF_C goto done;
+    if(hram->hCGBPalUpdate == 0 || !ForceUpdateCGBPals_Conv()) {
+
+        CALL(aUpdateBGMap);
+        CALL(aServe2bppRequest_VBlank);
+
+        TransferVirtualOAM();
+    }
+// done:
+    
+    // XOR_A_A;
+    // LD_addr_A(wVBlankOccurred);
+    wram->wVBlankOccurred = 0;
+
+    // LDH_A_addr(rIF);
+    // PUSH_AF;
+    uint8_t i_f = gb_read(rIF);
+    // XOR_A_A;
+    // LDH_addr_A(rIF);
+    gb_write(rIF, 0);
+    // LD_A(1 << LCD_STAT);
+    // LDH_addr_A(rIE);
+    gb_write(rIE, 1 << LCD_STAT);
+    // LDH_addr_A(rIF);
+    gb_write(rIF, 1 << LCD_STAT);
+
+    // NOP;
+    // LD_A(BANK(av_UpdateSound));
+    // RST(mBankswitch);
+    Bankswitch_Conv(BANK(av_UpdateSound));
+    CALL(av_UpdateSound);
+    // LDH_A_addr(hROMBankBackup);
+    // RST(mBankswitch);
+    Bankswitch_Conv(hram->hROMBankBackup);
+    // NOP;
+
+    // request lcdstat
+    // LDH_A_addr(rIF);
+    // LD_B_A;
+    // and any other ints
+    // POP_AF;
+    // OR_A_B;
+    // LD_B_A;
+    uint8_t b = gb_read(rIF) | i_f;
+    // reset ints
+    // XOR_A_A;
+    // LDH_addr_A(rIF);
+    gb_write(rIF, 0);
+    // enable ints besides joypad
+    // LD_A(IE_DEFAULT);
+    // LDH_addr_A(rIE);
+    gb_write(rIE, IE_DEFAULT);
+    // request ints
+    // LD_A_B;
+    // LDH_addr_A(rIF);
+    gb_write(rIF, b);
+    // RET;
 }
 
 void VBlank4(void) {
