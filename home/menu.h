@@ -2,6 +2,7 @@ void Load2DMenuData(void);
 void StaticMenuJoypad(void);
 void ScrollingMenuJoypad(void);
 void GetMenuJoypad(void);
+uint8_t GetMenuJoypad_Conv(void);
 void PlaceHollowCursor(void);
 void HideCursor(void);
 void PushWindow(void);

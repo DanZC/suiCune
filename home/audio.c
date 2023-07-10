@@ -1,6 +1,7 @@
 #include "../constants.h"
 #include "audio.h"
 #include "../audio/engine.h"
+#include "delay.h"
 
 extern struct Channel *chan[8];
 
@@ -312,6 +313,17 @@ void WaitSFX(void) {  // infinite loop until sfx is done playing
     POP_DE;
     POP_BC;
     POP_AF;
+}
+
+// infinite loop until sfx is done playing
+void WaitSFX_Conv(void) {  
+    while (1) {
+        if ((!chan[CHAN5]->channelOn) &&
+            (!chan[CHAN6]->channelOn) &&
+            (!chan[CHAN7]->channelOn) &&
+            (!chan[CHAN8]->channelOn)) break;
+        DelayFrame();
+    }
 }
 
 void IsSFXPlaying(void) {

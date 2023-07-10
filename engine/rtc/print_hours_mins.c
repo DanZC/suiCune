@@ -76,53 +76,64 @@ place_am_pm:
 
 //  Prints hours and minutes to tilemap destination de.
 //  Hours in b, minutes in c
-void PrintHoursMins_Conv(uint16_t de, uint8_t b, uint8_t c){
+void PrintHoursMins_Conv(uint8_t* de, uint8_t b, uint8_t c){
+    static const char String_AM[] = "AM@";
+    static const char String_PM[] = "PM@";
+
     // LD_A_B;
     // CP_A(12);
     // PUSH_AF;
     // IF_C goto AM;
-    uint16_t am_pm_str;
+    // uint16_t am_pm_str;
+    const char* am_pm_str;
     if(b < 12) {
         // OR_A_A;
         // IF_NZ goto PM;
         // LD_A(12);
-        am_pm_str = mString_AM;
+        // am_pm_str = mString_AM;
+        am_pm_str = String_AM;
         if(b == 0) 
             b = 12;
     }
     // IF_Z goto PM;
     else if(b > 12) {
-        am_pm_str = mString_PM;
+        // am_pm_str = mString_PM;
+        am_pm_str = String_PM;
         b -= 12;
     }
     else {
-        am_pm_str = mString_PM;
+        // am_pm_str = mString_PM;
+        am_pm_str = String_PM;
     }
     // SUB_A(12);
     // goto PM;
     // LD_B_A;
 //  Crazy stuff happening with the stack
     // PUSH_BC;
-    gb_write(--REG_SP, b);
-    gb_write(--REG_SP, c);
+    // gb_write(--REG_SP, b);
+    // gb_write(--REG_SP, c);
+    uint8_t values[] = {c, b};
     // LD_HL_SP(1);
     // PUSH_DE;
     // PUSH_HL;
     // POP_DE;
     // POP_HL;
-    uint16_t hl = de;
-    de = REG_SP + 1;
+    // uint16_t hl = de;
+    uint8_t* hl = de;
+    // de = REG_SP + 1;
     // LD_hl(0x7f);
-    gb_write(hl, 0x7f);
+    // gb_write(hl, 0x7f);
     // LD_BC((1 << 8) | 2);
-    REG_HL = hl;
-    REG_DE = de;
-    REG_BC = ((1 << 8) | 2);
-    CALL(aPrintNum);
+    // REG_HL = hl;
+    // REG_DE = de;
+    // REG_BC = ((1 << 8) | 2);
+    // CALL(aPrintNum);
+    hl = PrintNum_Conv2(hl, values + 1, 1, 2);
     // hl = PrintNum_Conv(hl, de, 1, 2);
     // LD_hl(0x9c);
     // INC_HL;
-    gb_write(REG_HL++, 0x9c);
+    // gb_write(REG_HL++, 0x9c);
+    *(hl++) = 0x9c;
     // LD_D_H;
     // LD_E_L;
     // LD_HL_SP(0);
@@ -130,13 +141,14 @@ void PrintHoursMins_Conv(uint16_t de, uint8_t b, uint8_t c){
     // PUSH_HL;
     // POP_DE;
     // POP_HL;
-    de = REG_SP;
-    REG_DE = de;
-    REG_BC = (((PRINTNUM_LEADINGZEROS | 1) << 8) | 2);
-    CALL(aPrintNum);
+    // de = REG_SP;
+    // REG_DE = de;
+    // REG_BC = ((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
+    // CALL(aPrintNum);
     // hl = PrintNum_Conv(hl, de, 1 | PRINTNUM_LEADINGZEROS, 2);
-    hl = REG_HL;
-    REG_SP += 2;
+    hl = PrintNum_Conv2(hl, values, 1 | PRINTNUM_LEADINGZEROS, 2);
+    // hl = REG_HL;
+    // REG_SP += 2;
     // POP_BC;
     // LD_DE(mString_AM);
     // POP_AF;
@@ -144,6 +156,7 @@ void PrintHoursMins_Conv(uint16_t de, uint8_t b, uint8_t c){
     // LD_DE(mString_PM);
     // INC_HL;
     // CALL(aPlaceString);
-    PlaceString_Conv(&(struct TextCmdState){.de = am_pm_str, .hl = hl + 1, .bc = (b << 8) | c}, hl + 1);
+    PlaceStringSimple(Utf8ToCrystal(am_pm_str), hl + 1);
+    // PlaceString_Conv(&(struct TextCmdState){.de = Utf8ToCrystal(am_pm_str), .hl = hl + 1, .bc = (b << 8) | c}, hl + 1);
     // RET;
 }

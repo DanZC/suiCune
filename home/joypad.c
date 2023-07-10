@@ -1,6 +1,8 @@
 #include "../constants.h"
 #include "joypad.h"
 #include "delay.h"
+#include "audio.h"
+#include "../charmap.h"
 
 void Joypad(void) {
         //  Replaced by UpdateJoypad, called from VBlank instead of the useless
@@ -637,16 +639,16 @@ void JoyTextDelay_Conv(void) {
     // AND_A_A;
     // LDH_A_addr(hJoyPressed);
     // IF_Z goto ok;
-    if(gb_read(hInMenu) != 0)
+    if(hram->hInMenu != 0)
     {
         // LDH_A_addr(hJoyDown);
         // LDH_addr_A(hJoyLast);
-        gb_write(hJoyLast, gb_read(hJoyDown));
+        hram->hJoyLast = hram->hJoyDown;
     }
     else 
     {
         // LDH_addr_A(hJoyLast);
-        gb_write(hJoyLast, gb_read(hJoyPressed));
+        hram->hJoyLast = hram->hJoyPressed;
     }
 
     // LDH_A_addr(hJoyPressed);
@@ -853,6 +855,7 @@ load_cursor_state:
 }
 
 void PromptButton_wait_input_Conv(void) {
+    PEEK("");
     // LDH_A_addr(hOAMUpdate);
     // PUSH_AF;
     uint8_t temp = gb_read(hOAMUpdate);
@@ -900,6 +903,7 @@ void PromptButton_wait_input_Conv(void) {
             // IF_NZ goto received_input;
             if((gb_read(hJoyPressed) & (A_BUTTON | B_BUTTON)) != 0)
             {
+                PEEK("received_input");
             // received_input:
                 // POP_AF;
                 // LDH_addr_A(hOAMUpdate);
@@ -931,7 +935,7 @@ void PromptButton_Conv(void) {
     // LD_A_addr(wLinkMode);
     // AND_A_A;
     // IF_NZ goto link;
-    if(gb_read(wLinkMode) != 0)
+    if(wram->wLinkMode != 0)
     {
         // LD_C(65);
         // JP(mDelayFrames);
@@ -941,10 +945,12 @@ void PromptButton_Conv(void) {
     // CALL(aPromptButton_wait_input);
     PromptButton_wait_input_Conv();
 
-    PUSH_DE;
-    LD_DE(SFX_READ_TEXT_2);
-    CALL(aPlaySFX);
-    POP_DE;
+    PEEK("after");
+    // PUSH_DE;
+    // LD_DE(SFX_READ_TEXT_2);
+    // CALL(aPlaySFX);
+    // POP_DE;
+    PlaySFX_Conv(SFX_READ_TEXT_2);
     // RET;
 }
 
@@ -1002,19 +1008,19 @@ void BlinkCursor_Conv(uint16_t hl) {
     // CP_A_B;
     // POP_BC;
     // IF_NZ goto place_arrow;
-    if(gb_read(hl) != 0xee)
+    if(gb_read(hl) != CHAR_DOWN_CURSOR)
     {
 // place_arrow:
         // LDH_A_addr(hMapObjectIndex);
         // AND_A_A;
         // RET_Z;
-        idx = gb_read(hMapObjectIndex);
+        idx = hram->hMapObjectIndex;
         if(idx == 0)
             return;
         
         // DEC_A;
         // LDH_addr_A(hMapObjectIndex);
-        gb_write(hMapObjectIndex, --idx);
+        hram->hMapObjectIndex = --idx;
 
         // RET_NZ;
         if(idx != 0)
@@ -1022,13 +1028,13 @@ void BlinkCursor_Conv(uint16_t hl) {
         
         // DEC_A;
         // LDH_addr_A(hMapObjectIndex);
-        gb_write(hMapObjectIndex, --idx);
+        hram->hMapObjectIndex = --idx;
 
         // LDH_A_addr(hObjectStructIndex);
         // DEC_A;
         // LDH_addr_A(hObjectStructIndex);
-        idx = gb_read(hObjectStructIndex);
-        gb_write(hObjectStructIndex, --idx);
+        idx = hram->hObjectStructIndex;
+        hram->hObjectStructIndex = --idx;
 
         // RET_NZ;
         if(idx != 0)
@@ -1036,11 +1042,11 @@ void BlinkCursor_Conv(uint16_t hl) {
         
         // LD_A(6);
         // LDH_addr_A(hObjectStructIndex);
-        gb_write(hObjectStructIndex, 6);
+        hram->hObjectStructIndex = 6;
 
         // LD_A(0xee);
         // LD_hl_A;
-        gb_write(hl, 0xee);
+        gb_write(hl, CHAR_DOWN_CURSOR);
 
         // RET;
         return;
@@ -1049,8 +1055,8 @@ void BlinkCursor_Conv(uint16_t hl) {
     // LDH_A_addr(hMapObjectIndex);
     // DEC_A;
     // LDH_addr_A(hMapObjectIndex);
-    idx = gb_read(hMapObjectIndex);
-    gb_write(hMapObjectIndex, --idx);
+    idx = hram->hMapObjectIndex;
+    hram->hMapObjectIndex = --idx;
 
     // RET_NZ;
     if(idx != 0)
@@ -1059,8 +1065,8 @@ void BlinkCursor_Conv(uint16_t hl) {
     // LDH_A_addr(hObjectStructIndex);
     // DEC_A;
     // LDH_addr_A(hObjectStructIndex);
-    idx = gb_read(hObjectStructIndex);
-    gb_write(hObjectStructIndex, --idx);
+    idx = hram->hObjectStructIndex;
+    hram->hObjectStructIndex = --idx;
 
     // RET_NZ;
     if(idx != 0)
@@ -1068,15 +1074,15 @@ void BlinkCursor_Conv(uint16_t hl) {
 
     // LD_A(0x7a);
     // LD_hl_A;
-    gb_write(hl, 0x7a);
+    gb_write(hl, CHAR_FRAME_TOP);
 
     // LD_A(-1);
     // LDH_addr_A(hMapObjectIndex);
-    gb_write(hMapObjectIndex, -1);
+    hram->hMapObjectIndex = 0xff;
 
     // LD_A(6);
     // LDH_addr_A(hObjectStructIndex);
-    gb_write(hObjectStructIndex, 6);
+    hram->hObjectStructIndex = 6;
     
     // RET;
     return;

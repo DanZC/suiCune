@@ -161,7 +161,7 @@ void v_ResetWRAM(void) {
 
     CALL(aSetDefaultBoxNames);
 
-    LD_A(BANK(sBoxCount));
+    LD_A(MBANK(asBoxCount));
     CALL(aOpenSRAM);
     LD_HL(sBoxCount);
     CALL(av_ResetWRAM_InitList);
@@ -191,7 +191,7 @@ void v_ResetWRAM(void) {
     LD_addr_A(wRoamMon2MapNumber);
     LD_addr_A(wRoamMon3MapNumber);
 
-    LD_A(BANK(sMysteryGiftItem));  // aka BANK(sMysteryGiftUnlocked)
+    LD_A(MBANK(asMysteryGiftItem));  // aka BANK(sMysteryGiftUnlocked)
     CALL(aOpenSRAM);
     LD_HL(sMysteryGiftItem);
     XOR_A_A;
@@ -355,7 +355,7 @@ void InitializeWorld(void) {
 }
 
 void LoadOrRegenerateLuckyIDNumber(void) {
-    LD_A(BANK(sLuckyIDNumber));
+    LD_A(MBANK(asLuckyIDNumber));
     CALL(aOpenSRAM);
     LD_A_addr(wCurDay);
     INC_A;

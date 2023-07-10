@@ -22,6 +22,12 @@ struct Coords
     int8_t y;
 };
 
+struct BankAddr
+{
+    uint8_t bank;
+    uint16_t addr;
+};
+
 // Configurable types
 
 typedef uint8_t species_t; // Mon species type

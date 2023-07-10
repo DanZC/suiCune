@@ -8,6 +8,7 @@ void PlaySFX(void);
 void PlaySFX_Conv(uint16_t de);
 void WaitPlaySFX(void);
 void WaitSFX(void);
+void WaitSFX_Conv(void);
 void IsSFXPlaying(void);
 void MaxVolume(void);
 void LowVolume(void);

@@ -414,6 +414,7 @@ void InitDayOfWeek_Conv(void){
     gb_write(wStringBuffer2 + 3, gb_read(hSeconds));
 
     // JR(mInitTime);  // useless
+    return InitTime_Conv();
 }
 
 void InitTime(void){

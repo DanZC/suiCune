@@ -1,5 +1,7 @@
 #include "../../constants.h"
 #include "read_trainer_party.h"
+#include "../../home/sram.h"
+#include "../../home/copy.h"
 
 void ReadTrainerParty(void){
     PEEK("");
@@ -389,6 +391,24 @@ void Battle_GetTrainerName(void){
     return GetTrainerName();
 }
 
+uint8_t* Battle_GetTrainerName_Conv(void){
+    // LD_A_addr(wInBattleTowerBattle);
+    // BIT_A(0);
+    // LD_HL(wOTPlayerName);
+    // JP_NZ (mCopyTrainerName);
+    if(bit_test(wram->wInBattleTowerBattle, 0))
+        return CopyTrainerName_Conv(wram->wOTPlayerName);
+
+    // LD_A_addr(wOtherTrainerID);
+    // LD_B_A;
+    uint8_t b = wram->wOtherTrainerID;
+    // LD_A_addr(wOtherTrainerClass);
+    // LD_C_A;
+    uint8_t c = wram->wOtherTrainerClass;
+
+    return GetTrainerName_Conv(b, c);
+}
+
 void GetTrainerName(void){
     LD_A_C;
     CP_A(CAL);
@@ -435,6 +455,82 @@ skip:
     return CopyTrainerName();
 }
 
+uint8_t* GetTrainerName_Conv(uint8_t tid, uint8_t tclass){
+    // LD_A_C;
+    // CP_A(CAL);
+    // IF_NZ goto not_cal2;
+    if(tclass == CAL) {
+
+        // LD_A(MBANK(asMysteryGiftTrainerHouseFlag));
+        // CALL(aOpenSRAM);
+        OpenSRAM_Conv(MBANK(asMysteryGiftTrainerHouseFlag));
+        // LD_A_addr(sMysteryGiftTrainerHouseFlag);
+        // AND_A_A;
+        uint8_t flag = gb_read(sMysteryGiftTrainerHouseFlag);
+        // CALL(aCloseSRAM);
+        CloseSRAM_Conv();
+        // IF_Z goto not_cal2;
+        if(flag != 0) {
+
+            // LD_A(BANK(asMysteryGiftPartnerName));
+            // CALL(aOpenSRAM);
+            OpenSRAM_Conv(MBANK(asMysteryGiftPartnerName));
+            // LD_HL(sMysteryGiftPartnerName);
+            // CALL(aCopyTrainerName);
+            // JP(mCloseSRAM);
+            uint8_t* name = CopyTrainerName_Conv(GBToRAMAddr(sMysteryGiftPartnerName));
+            CloseSRAM_Conv();
+            return name;
+        }
+    }
+    PUSH_AF;
+    PUSH_BC; 
+    PUSH_DE;
+    PUSH_HL;
+
+
+// not_cal2:
+    bank_push(BANK(aTrainerGroups));
+    REG_C = tclass;
+    REG_B = tid;
+    DEC_C;
+    PUSH_BC;
+    LD_B(0);
+    LD_HL(mTrainerGroups);
+    ADD_HL_BC;
+    ADD_HL_BC;
+    LD_A_hli;
+    LD_H_hl;
+    LD_L_A;
+    POP_BC;
+
+
+// loop:
+    // DEC_B;
+    // JR_Z (mCopyTrainerName);
+    while(--REG_B != 0) {
+
+
+    // skip:
+        do {
+            // LD_A_hli;
+            // CP_A(0xff);
+            // IF_NZ goto skip;
+        } while(gb_read(REG_HL++) != 0xff);
+        // goto loop;
+    }
+
+    CopyTrainerName_Conv(GBToRAMAddr(REG_HL));
+
+    POP_HL;
+    POP_DE;
+    POP_BC;
+    POP_AF;
+    bank_pop;
+    // return CopyTrainerName();
+    return wram->wStringBuffer1;
+}
+
 void CopyTrainerName(void){
     LD_DE(wStringBuffer1);
     PUSH_DE;
@@ -443,6 +539,17 @@ void CopyTrainerName(void){
     POP_DE;
     RET;
 
+}
+
+uint8_t* CopyTrainerName_Conv(const uint8_t* hl){
+    // LD_DE(wStringBuffer1);
+    // PUSH_DE;
+    // LD_BC(NAME_LENGTH);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wStringBuffer1, hl, NAME_LENGTH);
+    // POP_DE;
+    // RET;
+    return wram->wStringBuffer1;
 }
 
 void IncompleteCopyNameFunction(void){

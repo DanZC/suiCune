@@ -73,6 +73,45 @@ copy:
     return RegionCheck();
 }
 
+//  Copy the name of landmark e to wStringBuffer1.
+void GetLandmarkName_Conv(uint8_t e){
+    // PUSH_HL;
+    // PUSH_DE;
+    // PUSH_BC;
+
+    // LD_L_E;
+    // LD_H(0);
+    // ADD_HL_HL;
+    // ADD_HL_HL;
+    // LD_DE(mLandmarks + 2);
+    // ADD_HL_DE;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    const char* name = Landmarks[e].name;
+
+    // LD_DE(wStringBuffer1);
+    // LD_C(18);
+    CopyUTF8NStringToGB(wStringBuffer1, 18, name);
+
+
+// copy:
+    // LD_A_hli;
+    // LD_de_A;
+    // INC_DE;
+    // DEC_C;
+    // IF_NZ goto copy;
+
+    // POP_BC;
+    // POP_DE;
+    // POP_HL;
+    // RET;
+
+// INCLUDE "data/maps/landmarks.asm"
+
+    // return RegionCheck();
+}
+
 void RegionCheck(void){
 //  Checks if the player is in Kanto or Johto.
 //  If in Johto, returns 0 in e.

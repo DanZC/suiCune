@@ -453,7 +453,7 @@ void BattleTextbox_Conv(uint16_t hl){
 
     // POP_HL;
     // CALL(aPrintTextboxText);
-    PrintTextboxText_Conv(hl);
+    PrintTextboxText_Conv(GBToRAMAddr(hl));
     // RET;
 }
 
