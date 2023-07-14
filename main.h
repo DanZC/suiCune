@@ -12,7 +12,7 @@
 //#include "engine/pokemon/learn.h"
 //#include "engine/pokemon/correct_nick_errors.h"
 #include "engine/math/math.h"
-//#include "data/items/attributes.h"
+#include "data/items/attributes.h"
 //#include "engine/overworld/npc_movement.h"
 //#include "engine/events/happiness_egg.h"
 //#include "engine/events/shuckle.h"
@@ -32,7 +32,7 @@
 #include "engine/math/print_num.h"
 //#include "engine/pokemon/health.h"
 //#include "engine/events/overworld.h"
-//#include "engine/items/items.h"
+#include "engine/items/items.h"
 //#include "engine/overworld/player_step.h"
 //#include "engine/battle/anim_hp_bar.h"
 //#include "engine/pokemon/move_mon.h"
@@ -255,7 +255,7 @@
 // SECTION "bank20", ROMX
 
 //#include "engine/overworld/player_movement.h"
-//#include "engine/events/engine_flags.h"
+#include "engine/events/engine_flags.h"
 //#include "engine/overworld/variables.h"
 //#include "data/text/battle.h"
 //#include "engine/debug/color_picker.h"
@@ -295,6 +295,9 @@
 #include "engine/pokegear/pokegear.h"
 //#include "engine/events/fish.h"
 //#include "engine/games/slot_machine.h"
+
+// SECTION "Events", ROMX
+#include "engine/overworld/events.h"
 
 // SECTION "Phone Scripts 1", ROMX
 

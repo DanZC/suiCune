@@ -1,5 +1,6 @@
 #include "../constants.h"
 #include "item.h"
+#include "../engine/items/items.h"
 
 void DoItemEffect(void){
         FARCALL(av_DoItemEffect);
@@ -17,6 +18,19 @@ void CheckTossableItem(void){
     POP_HL;
     RET;
 
+}
+
+//  Return false if item can't be removed from the bag.
+bool CheckTossableItem_Conv(item_t item){
+    // PUSH_HL;
+    // PUSH_DE;
+    // PUSH_BC;
+    // FARCALL(av_CheckTossableItem);
+    // POP_BC;
+    // POP_DE;
+    // POP_HL;
+    // RET;
+    return v_CheckTossableItem_Conv(item);
 }
 
 void TossItem(void){
@@ -80,4 +94,28 @@ void CheckItem(void){
     POP_HL;
     RET;
 
+}
+
+bool CheckItem_Conv(item_t item, item_t* hl){
+    // PUSH_HL;
+    // PUSH_DE;
+    // PUSH_BC;
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+    // LD_A(BANK(av_CheckItem));
+    // RST(aBankswitch);
+    bank_push(BANK(av_CheckItem));
+
+    // CALL(av_CheckItem);
+    bool b = v_CheckItem_Conv(item, hl);
+
+    // POP_BC;
+    // LD_A_B;
+    // RST(aBankswitch);
+    bank_pop;
+    // POP_BC;
+    // POP_DE;
+    // POP_HL;
+    // RET;
+    return b;
 }

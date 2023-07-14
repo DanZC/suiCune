@@ -2732,13 +2732,13 @@ struct PACKED wram_s
                 uint8_t wKantoBadges[((NUM_KANTO_BADGES) + 7) / 8];
                 uint8_t wTMsHMs[NUM_TMS + NUM_HMS];
                 uint8_t wNumItems;
-                uint8_t wItems[MAX_ITEMS * 2 + 1];
+                item_t wItems[MAX_ITEMS * 2 + 1];
                 uint8_t wNumKeyItems;
-                uint8_t wKeyItems[MAX_KEY_ITEMS + 1];
+                item_t wKeyItems[MAX_KEY_ITEMS + 1];
                 uint8_t wNumBalls;
-                uint8_t wBalls[MAX_BALLS * 2 + 1];
+                item_t wBalls[MAX_BALLS * 2 + 1];
                 uint8_t wNumPCItems;
-                uint8_t wPCItems[MAX_PC_ITEMS * 2 + 1];
+                item_t wPCItems[MAX_PC_ITEMS * 2 + 1];
                 // bit 0: map
                 // bit 1: radio
                 // bit 2: phone

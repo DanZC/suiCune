@@ -74,7 +74,7 @@ copy:
 }
 
 //  Copy the name of landmark e to wStringBuffer1.
-void GetLandmarkName_Conv(uint8_t e){
+uint8_t* GetLandmarkName_Conv(uint8_t e){
     // PUSH_HL;
     // PUSH_DE;
     // PUSH_BC;
@@ -110,6 +110,7 @@ void GetLandmarkName_Conv(uint8_t e){
 // INCLUDE "data/maps/landmarks.asm"
 
     // return RegionCheck();
+    return wram->wStringBuffer1;
 }
 
 void RegionCheck(void){

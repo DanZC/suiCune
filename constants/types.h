@@ -65,19 +65,13 @@ struct BattleAnim
 
 struct ItemAttr
 {
-    union
-    {
-        uint16_t price;
-        struct {
-            uint8_t priceLo;
-            uint8_t priceHi;
-        };
-    };
+    uint16_t price;
     uint8_t effect;
     uint8_t param;
     uint8_t permissions;
     uint8_t pocket;
-    uint8_t help;
+    uint8_t helpField: 4;
+    uint8_t helpBattle: 4;
 };
 
 struct Map
@@ -885,6 +879,28 @@ struct WildGrassMons
     uint8_t encounterRates[3];
     struct { species_t species; uint8_t level; } mons[3][7];
 };
+
+struct Script;
+
+typedef bool (*Script_fn_t)(struct Script*);
+
+struct ScriptPosition
+{
+    Script_fn_t fn;
+    int position;
+};
+
+struct Script
+{
+    Script_fn_t fn;
+    size_t args[16];
+    uint8_t var;
+    int position;
+    uint16_t stack_ptr;
+    struct ScriptPosition stack[32];
+};
+
+typedef struct Script script_s;
 
 #if defined(__cplusplus) || defined(_MSC_VER)
 #pragma pack(pop)

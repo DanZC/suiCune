@@ -208,6 +208,7 @@ enum {
     tmName##_TMNUM = tmId,                         \
     TM_##tmName = tmName##_TMNUM + TM_ITEM_OFFSET, \
     tmNum##_MOVE = TM_##tmName,                    \
+    tmNum = tmNum##_MOVE,                          \
 };
 
 add_tm(TM01, 1, DYNAMICPUNCH);
@@ -274,6 +275,7 @@ add_tm(TM50, 50, NIGHTMARE);
     hmName##_TMNUM = hmId,                         \
     HM_##hmName = hmName##_TMNUM + TM_ITEM_OFFSET, \
     hmNum##_MOVE = HM_##hmName,                    \
+    hmNum = hmNum##_MOVE,                          \
 };
 
 add_hm(HM01, 51, CUT);
