@@ -1,11 +1,17 @@
+#include <stdbool.h>
+#pragma once
+
 // wInputType::
 #define AUTO_INPUT 0xff
 
 // wDebugFlags::
-enum {
-    DEBUG_BATTLE_F,
-    DEBUG_FIELD_F,
+struct wDebugFlags {
+    bool DEBUG_BATTLE_F;
+    bool DEBUG_FIELD_F;
 };
+
+extern struct wDebugFlags debugFlags;
+//struct wDebugFlags debugFlags = { false, false };
 // wCurDexMode::
 enum {
     DEXMODE_NEW,

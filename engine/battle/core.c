@@ -3,6 +3,8 @@
 #include "../../home/array.h"
 #include "../../data/trainers/leaders.h"
 
+//struct wDebugFlags debugFlags;
+
 //  Core components of the battle engine.
 
 void DoBattle(void){
@@ -2672,10 +2674,14 @@ void WinTrainerBattle(void){
 
 skip_heal:
 
-    LD_A_addr(wDebugFlags);
-    BIT_A(DEBUG_BATTLE_F);
-    IF_NZ goto skip_win_loss_text;
-    CALL(aPrintWinLossText);
+    //LD_A_addr(wDebugFlags);
+    //BIT_A(DEBUG_BATTLE_F);
+    //IF_NZ goto skip_win_loss_text;
+    //CALL(aPrintWinLossText);
+
+    if (debugFlags.DEBUG_BATTLE_F) {
+        CALL(aPrintWinLossText);
+    }
 
 skip_win_loss_text:
 
@@ -3326,10 +3332,14 @@ void LostBattle(void){
     LD_C(40);
     CALL(aDelayFrames);
 
-    LD_A_addr(wDebugFlags);
-    BIT_A(DEBUG_BATTLE_F);
-    IF_NZ goto skip_win_loss_text;
-    CALL(aPrintWinLossText);
+    //LD_A_addr(wDebugFlags);
+    //BIT_A(DEBUG_BATTLE_F);
+    //IF_NZ goto skip_win_loss_text;
+    //CALL(aPrintWinLossText);
+
+    if (debugFlags.DEBUG_BATTLE_F) {
+        CALL(aPrintWinLossText);
+    }
 
 skip_win_loss_text:
     RET;

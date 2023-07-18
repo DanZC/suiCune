@@ -18,6 +18,8 @@ struct wram_s* wram;
 #define check_wramx_field_mapped(_fld, _bank, _wvar) _Static_assert(offsetof(struct wram_s, _fld) - (0x1000 * (_bank)) == (_wvar - WRAM_1_ADDR), "")
 #endif
 
+struct wDebugFlags debugFlags = { false, false };
+
 //#if defined(__cplusplus) || defined(_MSC_VER)
 void check_wram_fields() {
 //#else
@@ -72,7 +74,9 @@ check_wram0_field(wInputType);
 check_wram0_field(wAutoInputAddress);
 check_wram0_field(wAutoInputBank);
 check_wram0_field(wAutoInputLength);
-check_wram0_field(wDebugFlags);
+
+//check_wram0_field(wDebugFlags);
+
 check_wram0_field(wGameLogicPaused);
 check_wram0_field(wSpriteUpdatesEnabled);
 check_wram0_field(wUnusedScriptByte);

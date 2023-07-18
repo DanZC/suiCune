@@ -1,3 +1,4 @@
+#pragma once
 // SFX indexes (see audio/sfx_pointers.asm)
 enum {
     SFX_DEX_FANFARE_50_79,            // 00

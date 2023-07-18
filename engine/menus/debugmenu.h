@@ -1,7 +1,7 @@
 #pragma once
-void debugMenu();
-void debugMenuOptionField();
-void debugMenuOptionFight();
-void debugMenuOptionSubGames();
-void debugMenuOptionMonsterTest();
-void debugMenuOptionName();
+// We'll need to define structs or types to represent things like menus
+typedef struct {
+    int id;
+    const char* name;
+    void (*handler)(void);
+} MenuOption;

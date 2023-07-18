@@ -1,6 +1,8 @@
 #include "../constants.h"
 #include "flag.h"
 
+//struct wDebugFlags debugFlags;
+
 void ResetMapBufferEventFlags(void){
         XOR_A_A;
     LD_HL(wEventFlags);
@@ -190,9 +192,13 @@ void CheckBPressedDebug(void){
     //  //  unreferenced
 //  Used in debug ROMs to walk through walls and avoid encounters.
 
-    LD_A_addr(wDebugFlags);
-    BIT_A(DEBUG_FIELD_F);
-    RET_Z ;
+    //LD_A_addr(wDebugFlags);
+    //BIT_A(DEBUG_FIELD_F);
+    //RET_Z ;
+
+    if (debugFlags.DEBUG_BATTLE_F) {
+        RET_Z;
+    }
 
     LDH_A_addr(hJoyDown);
     BIT_A(B_BUTTON_F);
@@ -215,10 +221,11 @@ void xor_a_dec_a(void){
 
 void CheckFieldDebug(void){
     //  //  unreferenced
-    PUSH_HL;
-    LD_HL(wDebugFlags);
-    BIT_hl(DEBUG_FIELD_F);
-    POP_HL;
-    RET;
-
+    ///PUSH_HL;
+    //LD_HL(wDebugFlags);
+    //BIT_hl(DEBUG_FIELD_F);
+    //POP_HL;
+    //RET;
+    if (debugFlags.DEBUG_FIELD_F) {
+    }
 }
