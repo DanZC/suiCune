@@ -3773,9 +3773,9 @@ ignore_substitute:
     LD_addr_A(wEnemyMonHP);
 #if defined(_DEBUG)
     PUSH_AF;
-    LD_A(BANK(sSkipBattle));
+    //LD_A(BANK(sSkipBattle));
     CALL(aOpenSRAM);
-    LD_A_addr(sSkipBattle);
+    //LD_A_addr(sSkipBattle);
     CALL(aCloseSRAM);
     OR_A_A;
 // If [sSkipBattle] is nonzero, skip the "jr nc, .no_underflow" check,

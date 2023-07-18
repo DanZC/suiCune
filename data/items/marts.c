@@ -427,7 +427,7 @@ const uint8_t* const Marts[] = {
 };
 
 #if defined(__cplusplus) || defined(_MSC_VER)
-static_assert(lengthof(Marts) == NUM_FRUIT_TREES, "");
+static_assert(lengthof(Marts) == NUM_MARTS, "");
 #else
 _Static_assert(lengthof(Marts) == NUM_MARTS, "");
 #endif

@@ -3495,6 +3495,9 @@ void cleanup(void) {
 }
 
 int main(int argc, char* argv[]) {
+
+    check_wram_fields();
+
     (void)argc, (void)argv;
     atexit(cleanup);
     enum gb_init_error_e gb_ret;

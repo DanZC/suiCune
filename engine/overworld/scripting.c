@@ -3143,7 +3143,7 @@ void Script_checkver_duplicate(void){
     RET;
 
 
-gs_version:
+//gs_version:
     //db ['GS_VERSION'];
 
 }

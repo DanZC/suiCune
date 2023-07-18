@@ -1,8 +1,13 @@
 #include "input.h"
 #include <SDL2/SDL_events.h>
 #include <string.h>
-#include <SDL_scancode.h>
 #include "uthash.h"
+
+#if defined(__cplusplus) || defined(_MSC_VER)
+#include <SDL2/SDL_scancode.h>
+#else
+#include <SDL_scancode.h>
+#endif
 
 key_map_item* keys = NULL;
 mouse_button_map_item* mouse_buttons = NULL;

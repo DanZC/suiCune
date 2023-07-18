@@ -1,5 +1,6 @@
 #pragma once
 #include "constants.h"
+#include "stdint.h"
 
 #if defined(__cplusplus) || defined(_MSC_VER)
 #pragma pack(push, 1)
@@ -102,7 +103,7 @@ struct PACKED wram_s
                 uint8_t wDontPlayMapMusicOnReload;
             };
             // WRAM
-            struct PACKED {
+            struct {
                 // WRAM0
                 uint16_t wLZAddress; // unused
                 uint8_t wLZBank; // unused
@@ -138,10 +139,10 @@ struct PACKED wram_s
                 uint8_t skip_7[2];
                 uint8_t wMovementByteWasControlSwitch;
                 union {
-                    struct PACKED {
+                    struct {
                         uint8_t wObjectPriorities[NUM_OBJECT_STRUCTS];
                     };
-                    struct PACKED {
+                    struct {
                         uint16_t wMovementPointer;
                         uint8_t skip_8[3];
                         uint8_t wTempObjectCopyMapObjectIndex;
@@ -167,8 +168,9 @@ struct PACKED wram_s
                 // bit 1: left
                 // bit 0: right
                 uint8_t wTilePermissions;
+                uint8_t section_pad_0[1]; // Padding for WRAM
             };
-            uint8_t section_pad_0[1]; // Padding for WRAM
+            //uint8_t section_pad_0[1]; // Padding for WRAM
             // wSpriteAnims
             struct PACKED {
                 // WRAM0
@@ -1117,7 +1119,7 @@ struct PACKED wram_s
                         // _DEBUG
                         // )
                     };
-                    struct PACKED {
+                    //struct PACKED {
                         // // WRAM0
                         // // debug room RTC values
                         // uint8_t wDebugRoomRTCSec;
@@ -1154,9 +1156,8 @@ struct PACKED wram_s
                         //         // debug room GB ID values
                         //         uint16_t wDebugRoomGBID;
                         //     };
-                        // };
+                         //};
                         // endc
-                    };
                 };
             };
             uint8_t section_pad_1[12]; // Padding for Overworld Map
@@ -3182,8 +3183,8 @@ struct PACKED wram_s
     // bank 4
     union {
         uint8_t wram4[0x1000];
-        struct PACKED {
-        };
+        //struct PACKED {
+        //};
     };
     // bank 5
     union {

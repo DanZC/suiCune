@@ -2007,7 +2007,7 @@ loop2:
     RET;
 
 
-FadePals:
+//FadePals:
 // INCLUDE "gfx/intro/fade.pal"
 
     // return CrystalIntro_InitUnownAnim();
@@ -2421,11 +2421,11 @@ got_pointer:
     RET;
 
 
-pal1:
+//pal1:
 // INCLUDE "gfx/intro/unown_1.pal"
 
 
-pal2:
+//pal2:
 // INCLUDE "gfx/intro/unown_2.pal"
 
     // return Intro_FadeUnownWordPals();
@@ -2483,7 +2483,7 @@ void Intro_FadeUnownWordPals(void){
     RET;
 
 
-FastFadePalettes:
+//FastFadePalettes:
 // hue = 31
 //     for(int rept = 0; rept < 8; rept++){
 //     //rgb ['hue', 'hue', 'hue']
@@ -2493,7 +2493,7 @@ FastFadePalettes:
 //     }
 
 
-SlowFadePalettes:
+//SlowFadePalettes:
 // hue = 31
 //     for(int rept = 0; rept < 16; rept++){
 //     //rgb ['hue', 'hue', 'hue']

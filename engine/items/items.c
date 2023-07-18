@@ -166,7 +166,7 @@ bool v_CheckItem_Conv(item_t item, item_t* hl){
         // RST(aJumpTable);
         switch(pocket)
         {
-            case ITEM_POCKET: goto Item;
+            //case ITEM_POCKET: goto Item;
             case KEY_ITEM_POCKET: goto KeyItem;
             case BALL_POCKET: goto Ball;
             case TM_HM_POCKET: goto TMHM;
@@ -205,7 +205,7 @@ bool v_CheckItem_Conv(item_t item, item_t* hl){
         return CheckKeyItems_Conv(pocket);
 
 
-    Item:
+    //Item:
         // LD_H_D;
         // LD_L_E;
     }
