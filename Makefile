@@ -20,8 +20,15 @@ TARGET := $(NAME)
 SRCS   := tools/emu/peanut_sdl.c tools/emu/minigb_apu/minigb_apu.c \
 	$(wildcard home/*.c) \
 	$(wildcard audio/*.c) \
+	$(wildcard data/battle/*.c) \
+	$(wildcard data/collision/*.c) \
+	$(wildcard data/events/*.c) \
+	$(wildcard data/items/*.c) \
+	$(wildcard data/maps/*.c) \
+	$(wildcard data/trainers/*.c) \
 	$(wildcard engine/battle/*.c) \
 	$(wildcard engine/battle_anims/*.c) \
+	$(wildcard engine/events/*.c) \
 	$(wildcard engine/gfx/*.c) \
 	$(wildcard engine/items/*.c) \
 	$(wildcard engine/math/*.c) \
@@ -31,7 +38,9 @@ SRCS   := tools/emu/peanut_sdl.c tools/emu/minigb_apu/minigb_apu.c \
 	$(wildcard engine/phone/*.c) \
 	$(wildcard engine/pokegear/*.c) \
 	$(wildcard engine/rtc/*.c) \
-	functions.c hram.c vram.c 
+	$(wildcard input_system/*.c) \
+	$(wildcard util/*.c) \
+	functions.c hram.c vram.c wram.c
 #	$(wildcard ../*/*/*/*.c)
 CFLAGS += $(shell sdl2-config --cflags)
 
@@ -66,16 +75,26 @@ clean:
 	$(RM) $(SRCS:.c=.$(OBJEXT)) $(TARGET) \
 	$(wildcard home/*.o) \
 	$(wildcard audio/*.o) \
+	$(wildcard data/battle/*.o) \
+	$(wildcard data/collision/*.o) \
+	$(wildcard data/events/*.o) \
+	$(wildcard data/items/*.o) \
+	$(wildcard data/maps/*.o) \
+	$(wildcard data/trainers/*.o) \
 	$(wildcard engine/battle/*.o) \
 	$(wildcard engine/battle_anims/*.o) \
+	$(wildcard engine/events/*.o) \
 	$(wildcard engine/gfx/*.o) \
 	$(wildcard engine/items/*.o) \
+	$(wildcard engine/math/*.o) \
 	$(wildcard engine/menus/*.o) \
 	$(wildcard engine/movie/*.o) \
 	$(wildcard engine/overworld/*.o) \
 	$(wildcard engine/phone/*.o) \
 	$(wildcard engine/pokegear/*.o) \
-	$(wildcard engine/rtc/*.o)
+	$(wildcard engine/rtc/*.o) \
+	$(wildcard input_system/*.o) \
+	$(wildcard util/*.o)
 #	$(wildcard ../*/*/*/*.o)
 
 # rom.o: pokecrystal/pokecrystal.gbc

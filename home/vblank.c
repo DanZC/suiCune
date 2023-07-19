@@ -93,7 +93,7 @@ void VBlank_Conv(void)
     PUSH_DE;
     PUSH_HL;
 
-    switch(gb_read(hVBlank) & 7)
+    switch(hram->hVBlank & 7)
     {
         case 7:
         case 0: VBlank0_Conv(); break;
@@ -217,21 +217,19 @@ ok2:
     RET;
 }
 
+//  normal operation
+//  rng
+//  scx, scy, wy, wx
+//  bg map buffer
+//  palettes
+//  dma transfer
+//  bg map
+//  tiles
+//  oam
+//  joypad
+//  sound
 void VBlank0_Conv(void) {
-        //  normal operation
-
-    //  rng
-    //  scx, scy, wy, wx
-    //  bg map buffer
-    //  palettes
-    //  dma transfer
-    //  bg map
-    //  tiles
-    //  oam
-    //  joypad
-    //  sound
-
-    uint8_t temp, carry, delay;
+    uint8_t temp, carry;
 
     // inc frame counter
     // LD_HL(hVBlankCounter);
@@ -311,33 +309,36 @@ done:
     // LDH_A_addr(hOAMUpdate);
     // AND_A_A;
     // IF_NZ goto done_oam;
-    if(gb_read(hOAMUpdate) == 0)
+    if(hram->hOAMUpdate == 0)
         TransferVirtualOAM();
     
     // vblank-sensitive operations are done
 
     // XOR_A_A;
     // LD_addr_A(wVBlankOccurred);
-    gb_write(wVBlankOccurred, 0);
+    // gb_write(wVBlankOccurred, 0);
+    wram->wVBlankOccurred = 0;
 
     // LD_A_addr(wOverworldDelay);
     // AND_A_A;
     // IF_Z goto ok;
-    delay = gb_read(wOverworldDelay);
-    if(delay != 0) {
+    // delay = gb_read(wOverworldDelay);
+    if(wram->wOverworldDelay != 0) {
         // DEC_A;
         // LD_addr_A(wOverworldDelay);
-        gb_write(wOverworldDelay, delay - 1);
+        // gb_write(wOverworldDelay, delay - 1);
+        wram->wOverworldDelay--;
     }
     
     // LD_A_addr(wTextDelayFrames);
     // AND_A_A;
     // IF_Z goto ok2;
-    delay = gb_read(wTextDelayFrames);
-    if(delay != 0) {
+    // delay = gb_read(wTextDelayFrames);
+    if(wram->wTextDelayFrames != 0) {
         // DEC_A;
         // LD_addr_A(wTextDelayFrames);
-        gb_write(wTextDelayFrames, delay - 1);
+        wram->wTextDelayFrames--;
+        // gb_write(wTextDelayFrames, delay - 1);
     }
     
     // CALL(aUpdateJoypad);
@@ -375,11 +376,11 @@ void VBlank2(void) {
 }
 
 void VBlank2_Conv(void) {
-    gb_write(hROMBankBackup, gb_read(hROMBank));
+    hram->hROMBankBackup = hram->hROMBank;
     Bankswitch_Conv(BANK(av_UpdateSound));
     CALL(av_UpdateSound);
-    Bankswitch_Conv(gb_read(hROMBankBackup));
-    gb_write(wVBlankOccurred, 0);
+    Bankswitch_Conv(hram->hROMBankBackup);
+    wram->wVBlankOccurred = 0;
     // CALL(aVBlank2);
 }
 
@@ -450,8 +451,87 @@ done:
     RET;
 }
 
+//  scx, scy
+//  palettes
+//  bg map
+//  tiles
+//  oam
+//  sound / lcd stat
 void VBlank1_Conv(void) {
-    CALL(aVBlank1);
+    // CALL(aVBlank1);
+    // LDH_A_addr(hROMBank);
+    // LDH_addr_A(hROMBankBackup);
+    hram->hROMBankBackup = hram->hROMBank;
+
+    // LDH_A_addr(hSCX);
+    // LDH_addr_A(rSCX);
+    // LDH_A_addr(hSCY);
+    // LDH_addr_A(rSCY);
+    gb_write(rSCX, hram->hSCX);
+    gb_write(rSCY, hram->hSCY);
+
+    // CALL(aUpdatePals);
+    // IF_C goto done;
+    if(!UpdatePals_Conv()) {
+
+        CALL(aUpdateBGMap);
+        CALL(aServe2bppRequest_VBlank);
+
+        TransferVirtualOAM();
+    }
+
+// done:
+    //     XOR_A_A;
+    // LD_addr_A(wVBlankOccurred);
+    wram->wVBlankOccurred = 0;
+
+    // get requested ints
+    // LDH_A_addr(rIF);
+    // LD_B_A;
+    uint8_t b = gb_read(rIF);
+    // discard requested ints
+    // XOR_A_A;
+    // LDH_addr_A(rIF);
+    gb_write(rIF, 0);
+    // enable lcd stat
+    // LD_A(1 << LCD_STAT);
+    // LDH_addr_A(rIE);
+    gb_write(rIE, 1 << LCD_STAT);
+    // rerequest serial int if applicable (still disabled)
+    // request lcd stat
+    // LD_A_B;
+    // AND_A(1 << SERIAL);
+    // OR_A(1 << LCD_STAT);
+    // LDH_addr_A(rIF);
+    gb_write(rIF, (b & (1 << SERIAL)) | (1 << LCD_STAT));
+
+    // NOP;
+    // LD_A(BANK(av_UpdateSound));
+    // RST(mBankswitch);
+    Bankswitch_Conv(BANK(av_UpdateSound));
+    CALL(av_UpdateSound);
+    // LDH_A_addr(hROMBankBackup);
+    // RST(mBankswitch);
+    Bankswitch_Conv(hram->hROMBankBackup);
+    // NOP;
+
+    // get requested ints
+    // LDH_A_addr(rIF);
+    // LD_B_A;
+    b = gb_read(rIF);
+    // discard requested ints
+    // XOR_A_A;
+    // LDH_addr_A(rIF);
+    gb_write(rIF, 0);
+    // enable ints besides joypad
+    // LD_A(IE_DEFAULT);
+    // LDH_addr_A(rIE);
+    gb_write(rIE, IE_DEFAULT);
+    // rerequest ints
+    // LD_A_B;
+    // LDH_addr_A(rIF);
+    gb_write(rIF, b);
+    // RET;
 }
 
 void UpdatePals(void) {
@@ -471,6 +551,19 @@ void UpdatePals(void) {
 
     AND_A_A;
     RET;
+}
+
+//  update pals for either dmg or cgb
+bool UpdatePals_Conv(void) {
+    if(hram->hCGB != 0)
+        return UpdateCGBPals_Conv();
+
+    // update gb pals
+    gb_write(rBGP, wram->wBGP);
+    gb_write(rOBP0, wram->wOBP0);
+    gb_write(rOBP1, wram->wOBP1);
+
+    return false;
 }
 
 void VBlank3(void) {
@@ -539,8 +632,85 @@ done:
     RET;
 }
 
+//  scx, scy
+//  palettes
+//  bg map
+//  tiles
+//  oam
+//  sound / lcd stat
 void VBlank3_Conv(void) {
-    CALL(aVBlank3);
+    // CALL(aVBlank3);
+    // LDH_A_addr(hROMBank);
+    // LDH_addr_A(hROMBankBackup);
+    hram->hROMBankBackup = hram->hROMBank;
+
+    // LDH_A_addr(hSCX);
+    // LDH_addr_A(rSCX);
+    // LDH_A_addr(hSCY);
+    // LDH_addr_A(rSCY);
+    gb_write(rSCX, hram->hSCX);
+    gb_write(rSCY, hram->hSCY);
+
+    // LDH_A_addr(hCGBPalUpdate);
+    // AND_A_A;
+    // CALL_NZ(aForceUpdateCGBPals);
+    // IF_C goto done;
+    if(hram->hCGBPalUpdate == 0 || !ForceUpdateCGBPals_Conv()) {
+
+        CALL(aUpdateBGMap);
+        CALL(aServe2bppRequest_VBlank);
+
+        TransferVirtualOAM();
+    }
+// done:
+    
+    // XOR_A_A;
+    // LD_addr_A(wVBlankOccurred);
+    wram->wVBlankOccurred = 0;
+
+    // LDH_A_addr(rIF);
+    // PUSH_AF;
+    uint8_t i_f = gb_read(rIF);
+    // XOR_A_A;
+    // LDH_addr_A(rIF);
+    gb_write(rIF, 0);
+    // LD_A(1 << LCD_STAT);
+    // LDH_addr_A(rIE);
+    gb_write(rIE, 1 << LCD_STAT);
+    // LDH_addr_A(rIF);
+    gb_write(rIF, 1 << LCD_STAT);
+
+    // NOP;
+    // LD_A(BANK(av_UpdateSound));
+    // RST(mBankswitch);
+    Bankswitch_Conv(BANK(av_UpdateSound));
+    CALL(av_UpdateSound);
+    // LDH_A_addr(hROMBankBackup);
+    // RST(mBankswitch);
+    Bankswitch_Conv(hram->hROMBankBackup);
+    // NOP;
+
+    // request lcdstat
+    // LDH_A_addr(rIF);
+    // LD_B_A;
+    // and any other ints
+    // POP_AF;
+    // OR_A_B;
+    // LD_B_A;
+    uint8_t b = gb_read(rIF) | i_f;
+    // reset ints
+    // XOR_A_A;
+    // LDH_addr_A(rIF);
+    gb_write(rIF, 0);
+    // enable ints besides joypad
+    // LD_A(IE_DEFAULT);
+    // LDH_addr_A(rIE);
+    gb_write(rIE, IE_DEFAULT);
+    // request ints
+    // LD_A_B;
+    // LDH_addr_A(rIF);
+    gb_write(rIF, b);
+    // RET;
 }
 
 void VBlank4(void) {

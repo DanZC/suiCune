@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 #include "minigb_apu/minigb_apu.h"
 #include "peanut_gb.h"
@@ -2882,8 +2882,9 @@ uint8_t gb_colour_hash(void) {
  */
 void gb_reset(void) {
     init_function_pointers();
-    hram = (struct hram_s*)gb.hram;
+    hram = (struct hram_s*)&gb.hram[HRAM_ADDR - IO_ADDR];
     vram = (struct vram_s*)gb.vram;
+    wram = (struct wram_s*)gb.wram;
 
     gb.gb_halt = 0;
     gb.gb_ime = 1;

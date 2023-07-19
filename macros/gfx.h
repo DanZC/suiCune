@@ -15,6 +15,8 @@ endr
 ENDM
 */
 
+#define rgb(_r,_g,_b) ((((_r)&0x1f) << 0) | (((_g)&0x1f) << 5) | (((_b)&0x1f) << 10))
+
 // extracts the middle two colors from a 2bpp binary palette
 // example usage:
 // INCBIN "foo.gbcpal", middle_colors

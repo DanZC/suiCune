@@ -10,8 +10,36 @@ union Register
     };
 };
 
+struct ByteWord 
+{
+    uint8_t byte;
+    uint16_t word;
+};
+
+struct Coords
+{
+    int8_t x;
+    int8_t y;
+};
+
+struct BankAddr
+{
+    uint8_t bank;
+    uint16_t addr;
+};
+
+// Configurable types
+
+typedef uint8_t species_t; // Mon species type
+typedef uint8_t dex_t;     // Dex number type
+typedef uint8_t item_t;    // Item id type
+typedef uint8_t move_t;    // Move id type
 
 // ROM structs
+
+#if defined(__cplusplus) || defined(_MSC_VER)
+#pragma pack(push, 1)
+#endif
 
 struct BattleAnim
 {
@@ -37,19 +65,13 @@ struct BattleAnim
 
 struct ItemAttr
 {
-    union
-    {
-        uint16_t price;
-        struct {
-            uint8_t priceLo;
-            uint8_t priceHi;
-        };
-    };
+    uint16_t price;
     uint8_t effect;
     uint8_t param;
     uint8_t permissions;
     uint8_t pocket;
-    uint8_t help;
+    uint8_t helpField: 4;
+    uint8_t helpBattle: 4;
 };
 
 struct Map
@@ -64,7 +86,12 @@ struct Map
     uint8_t fishGroup;
 };
 
-struct Object
+#if defined(__cplusplus) || defined(_MSC_VER)
+struct 
+#else
+struct __attribute__((packed))
+#endif
+Object
 {
     uint8_t sprite;
     uint8_t mapObjectIndex;
@@ -101,7 +128,12 @@ struct Object
     uint8_t padding[8];
 };
 
-struct NPCTrade
+#if defined(__cplusplus) || defined(_MSC_VER)
+struct 
+#else
+struct __attribute__((packed))
+#endif
+NPCTrade
 {
     uint8_t dialog;
     uint8_t giveMon;
@@ -114,7 +146,12 @@ struct NPCTrade
     uint16_t gender;
 };
 
-struct PhoneContact
+#if defined(__cplusplus) || defined(_MSC_VER)
+struct 
+#else
+struct __attribute__((packed))
+#endif
+PhoneContact
 {
     uint8_t trainerClass; // 0x0
     uint8_t trainerNumber; // 0x1
@@ -128,9 +165,13 @@ struct PhoneContact
     } script[2]; // 0x04-0x0B
 };
 
+#if defined(__cplusplus) || defined(_MSC_VER)
 struct BaseMon
+#else
+struct __attribute__((packed)) BaseMon
+#endif
 {
-    uint8_t dexNo;
+    dex_t dexNo;
     union
     {
         uint8_t stats[6];
@@ -177,7 +218,11 @@ struct BaseMon
 };
 
 
+#if defined(__cplusplus) || defined(_MSC_VER)
 struct SpriteData
+#else
+struct __attribute__((packed)) SpriteData
+#endif
 {
     uint16_t addr;
     uint8_t size;
@@ -188,7 +233,7 @@ struct SpriteData
 
 struct TrainerClassAttr
 {
-    uint8_t items[2];
+    item_t items[2];
     uint8_t baseMoney;
     uint16_t aiMoveWeights;
     uint16_t aiItemSwitch;
@@ -196,13 +241,18 @@ struct TrainerClassAttr
 
 // WRAM structs
 
-struct BoxMon
+#if defined(__cplusplus) || defined(_MSC_VER)
+struct 
+#else
+struct __attribute__((packed))
+#endif
+BoxMon
 {
-    uint8_t species;
-    uint8_t item;
-    uint8_t moves[NUM_MOVES];
+    species_t species;
+    item_t item;
+    move_t moves[NUM_MOVES];
     uint16_t id;
-    uint8_t exp;
+    uint8_t exp[3];
     union 
     {
         uint16_t statExp[5];
@@ -231,7 +281,12 @@ struct BoxMon
     uint8_t level;
 };
 
-struct PartyMon
+#if defined(__cplusplus) || defined(_MSC_VER)
+struct 
+#else
+struct __attribute__((packed))
+#endif
+PartyMon
 {
     struct BoxMon mon;
     uint8_t status;
@@ -252,40 +307,109 @@ struct PartyMon
     };
 };
 
+#if defined(__cplusplus) || defined(_MSC_VER)
+struct 
+#else
+struct __attribute__((packed))
+#endif
+RedBoxMon
+{
+    species_t species;
+    uint16_t HP;
+    uint8_t boxLevel;
+    uint8_t status;
+    union {
+        uint8_t types[2];
+        struct 
+        {
+            uint8_t type1;
+            uint8_t type2;
+        };
+    };
+    uint8_t catchRate;
+    move_t moves[NUM_MOVES];
+    uint16_t id;
+    uint8_t exp[3];
+    union 
+    {
+        uint16_t statExp[5];
+        struct 
+        {
+            uint16_t hpExp;
+            uint16_t atkExp;
+            uint16_t defExp;
+            uint16_t speExp;
+            uint16_t spcExp;
+        };
+    };
+    uint16_t dvs;
+    uint8_t pp[NUM_MOVES];
+};
+
+#if defined(__cplusplus) || defined(_MSC_VER)
+struct 
+#else
+struct __attribute__((packed))
+#endif
+RedPartyMon
+{
+    struct RedBoxMon boxmon;
+    uint8_t level;
+    union 
+    {
+        uint16_t stats[5];
+        struct 
+        {
+            uint16_t maxHP;
+            uint16_t attack;
+            uint16_t defense;
+            uint16_t speed;
+            uint16_t spcl;
+        };
+    };
+};
+
+#if defined(__cplusplus) || defined(_MSC_VER)
+struct 
+#else
+struct __attribute__((packed))
+#endif
+BattleMon 
+{
+    species_t species;
+    item_t item;
+    move_t moves[NUM_MOVES];
+    uint16_t dvs;
+    uint8_t pp[NUM_MOVES];
+    uint8_t happiness;
+    uint8_t level;
+    uint8_t status[2];
+    uint16_t hp;
+    uint16_t maxHP;
+    union // Big endian
+    {
+        uint8_t stats[5][2];
+        struct 
+        {
+            uint8_t attack[2];
+            uint8_t defense[2];
+            uint8_t speed[2];
+            uint8_t spclAtk[2];
+            uint8_t spclDef[2];
+        };
+    };
+    union 
+    {
+        uint8_t types[2];
+        struct 
+        {
+            uint8_t type1;
+            uint8_t type2;
+        };
+    };
+};
+
 /*
-
-red_box_struct: MACRO
-\1Species::    db
-\1HP::         dw
-\1BoxLevel::   db
-\1Status::     db
-\1Type::
-\1Type1::      db
-\1Type2::      db
-\1CatchRate::  db
-\1Moves::      ds NUM_MOVES
-\1ID::         dw
-\1Exp::        ds 3
-\1HPExp::      dw
-\1AttackExp::  dw
-\1DefenseExp:: dw
-\1SpeedExp::   dw
-\1SpecialExp:: dw
-\1DVs::        dw
-\1PP::         ds NUM_MOVES
-ENDM
-
-red_party_struct: MACRO
-	red_box_struct \1
-\1Level::      db
-\1Stats::
-\1MaxHP::      dw
-\1Attack::     dw
-\1Defense::    dw
-\1Speed::      dw
-\1Special::    dw
-ENDM
-
 battle_struct: MACRO
 \1Species::   db
 \1Item::      db
@@ -309,11 +433,15 @@ battle_struct: MACRO
 \1StructEnd::
 ENDM
 */
-
-struct Box
+#if defined(__cplusplus) || defined(_MSC_VER)
+struct
+#else
+struct __attribute__((packed)) 
+#endif
+Box
 {
     uint8_t count;
-    uint8_t species[MONS_PER_BOX + 1];
+    species_t species[MONS_PER_BOX + 1];
     struct BoxMon mons[MONS_PER_BOX];
     uint8_t monOT[NAME_LENGTH][MONS_PER_BOX];
     uint8_t monNicknames[MON_NAME_LENGTH][MONS_PER_BOX];
@@ -330,6 +458,53 @@ struct MapConnection
     uint8_t connectionStripYOffset;
     uint8_t connectionStripXOffset;
     uint16_t connectionWindow;
+};
+
+#if defined(__cplusplus) || defined(_MSC_VER)
+struct
+#else
+struct __attribute__((packed)) 
+#endif
+Channel_
+{
+    uint16_t musicId;
+    uint8_t musicBank;
+    uint8_t flags1; // 0:on/off 1:subroutine 2:looping 3:sfx 4:noise 5:rest
+    uint8_t flags2; // 0:vibrato on/off 1:pitch slide 2:duty cycle pattern 4:pitch offset
+    uint8_t flags3; // 0:vibrato up/down 1:pitch slide direction
+    uint16_t musicAddress;
+    uint16_t lastMusicAddress;
+    uint16_t unused;
+    uint8_t noteFlags; // 5:rest
+    uint8_t condition; // conditional jumps
+    uint8_t dutyCycle; // bits 6-7 (0:12.5% 1:25% 2:50% 3:75%)
+    uint8_t volumeEnvelope; // hi:volume lo:fade
+    uint16_t frequency; // 11 bits
+    uint8_t pitch; // 0:rest 1-c:note
+    uint8_t octave; // 7-0 (0 is highest)
+    uint8_t transposition; // raises existing octaves (to repeat phrases)
+    uint8_t noteDuration; // frames remaining for the current note
+    uint8_t field16[2];
+    uint8_t loopCount;
+    uint16_t tempo;
+    uint8_t tracks; // hi:left lo:right
+    uint8_t dutyCyclePattern;
+    uint8_t vibratoDelayCount; // initialized by vibratoDelay
+    uint8_t vibratoDelay; // number of frames a note plays until vibrato starts
+    uint8_t vibratoExtent;
+    uint8_t vibratoRate; // hi:frames for each alt lo:frames to the next alt
+    uint16_t pitchSlideTarget; // frequency endpoint for pitch slide
+    uint8_t pitchSlideAmount;
+    uint8_t pitchSlideAmountFraction;
+    uint8_t field25[2];
+    uint16_t pitchOffset;
+    uint8_t field29;
+    uint8_t field2a[2];
+    uint8_t field2c;
+    uint8_t noteLength; // frames per 16th note
+    uint8_t field2e;
+    uint8_t field2f;
+    uint8_t field30[2];
 };
 
 /*
@@ -404,20 +579,29 @@ mailmsg: MACRO
 ENDM
 
 */
-
-struct MailMsg
+#if defined(__cplusplus) || defined(_MSC_VER)
+struct
+#else
+struct __attribute__((packed)) 
+#endif
+MailMsg
 {
     uint8_t message[NAME_LENGTH + 1];
     uint8_t author[PLAYER_NAME_LENGTH];
     uint16_t nationality;
     uint16_t authorID;
-    uint8_t species;
+    species_t species;
     uint8_t type;
 };
 
-struct Roamer
+#if defined(__cplusplus) || defined(_MSC_VER)
+struct
+#else
+struct __attribute__((packed)) 
+#endif
+Roamer
 {
-    uint8_t species;
+    species_t species;
     uint8_t level;
     uint8_t mapGroup;
     uint8_t mapNumber;
@@ -434,7 +618,7 @@ struct BugContestWinner
 
 struct HOFMon
 {
-    uint8_t species;
+    species_t species;
     uint16_t id;
     uint16_t DVs;
     uint8_t level;
@@ -456,9 +640,14 @@ struct LinkBattleRecord
     uint16_t draws;
 };
 
-struct TradeMon
+#if defined(__cplusplus) || defined(_MSC_VER)
+struct
+#else
+struct __attribute__((packed)) 
+#endif
+TradeMon
 {
-    uint8_t species;
+    species_t species;
     uint8_t speciesName[MON_NAME_LENGTH];
     uint8_t nickname[MON_NAME_LENGTH];
     uint8_t senderName[NAME_LENGTH];
@@ -479,7 +668,12 @@ struct Move
     uint8_t effectChance;
 };
 
-struct SlotReel
+#if defined(__cplusplus) || defined(_MSC_VER)
+struct
+#else
+struct __attribute__((packed)) 
+#endif
+SlotReel
 {
     uint8_t reelAction;
     uint16_t tilemapAddr;
@@ -611,7 +805,29 @@ sprite_anim_struct: MACRO
 \1Var3::           ds 1
 \1Var4::           ds 1
 ENDM
+*/
 
+struct SpriteAnim
+{
+    uint8_t index;
+    uint8_t framesetID;
+    uint8_t animSeqID;
+    uint8_t tileID;
+    uint8_t xCoord;
+    uint8_t yCoord;
+    uint8_t xOffset;
+    uint8_t yOffset;
+    uint8_t duration;
+    uint8_t durationOffset;
+    uint8_t frameIndex;
+    uint8_t jumptableIndex;
+    uint8_t var1;
+    uint8_t var2;
+    uint8_t var3;
+    uint8_t var4;
+};
+
+/*
 battle_anim_struct: MACRO
 \1Index::          db
 \1OAMFlags::       db
@@ -632,6 +848,7 @@ battle_anim_struct: MACRO
 \1Var2::           db
 	ds 7
 ENDM
+*//*
 
 battle_bg_effect: MACRO
 \1Function::       db
@@ -654,3 +871,37 @@ struct CustomMartItem
     uint8_t id;
     uint16_t price;
 };
+
+struct WildGrassMons
+{
+    uint8_t mapGroup;
+    uint8_t mapNumber;
+    uint8_t encounterRates[3];
+    struct { species_t species; uint8_t level; } mons[3][7];
+};
+
+struct Script;
+
+typedef bool (*Script_fn_t)(struct Script*);
+
+struct ScriptPosition
+{
+    Script_fn_t fn;
+    int position;
+};
+
+struct Script
+{
+    Script_fn_t fn;
+    size_t args[16];
+    uint8_t var;
+    int position;
+    uint16_t stack_ptr;
+    struct ScriptPosition stack[32];
+};
+
+typedef struct Script script_s;
+
+#if defined(__cplusplus) || defined(_MSC_VER)
+#pragma pack(pop)
+#endif

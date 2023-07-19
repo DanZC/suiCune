@@ -2786,6 +2786,12 @@
 
 #define bank_pop Bankswitch_Conv(oldBank);
 
+#define wbank_push(_bank) \
+    uint8_t svbk = gb_read(rSVBK);\
+    gb_write(rSVBK, _bank);
+
+#define wbank_pop gb_write(rSVBK, svbk);
+
 #define farcall(_x, ...) \
     do {                                                     \
         uint8_t oldBank = gb_read(hROMBank);                 \
@@ -2793,6 +2799,28 @@
         _x##_Conv(__VA_ARGS__);                              \
         Bankswitch_Conv(oldBank);                            \
     } while (0)
+
+#define gb_readbuffer(buffer, addr)                 \
+    do {                                            \
+        for(int i = 0; i < sizeof(buffer); ++i) {   \
+            buffer[i] = gb_read(addr + i);          \
+        }                                           \
+    } while(0)
+
+#define gb_readstruct(dest, addr)                   \
+    do {                                            \
+        uint8_t* d = (uint8_t*)&dest;               \
+        for(int i = 0; i < sizeof(dest); ++i) {     \
+            d[i] = gb_read(addr + i);               \
+        }                                           \
+    } while(0)
+
+#define gb_writebuffer(buffer, addr)                \
+    do {                                            \
+        for(int i = 0; i < sizeof(buffer); ++i) {   \
+            gb_write(addr + i, buffer[i]);          \
+        }                                           \
+    } while(0)
 
 #define bit_test(_x, _n) (((_x) >> (_n)) & 0x1)
 

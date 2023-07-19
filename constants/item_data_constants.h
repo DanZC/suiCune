@@ -10,6 +10,8 @@ enum {
     ITEMATTR_STRUCT_LENGTH,
 };
 #define ITEMATTR_PRICE ITEMATTR_PRICE_LO
+
+#define ITEMPRICE_NONE 0x9999
 // item types
 enum {
     ITEM = 1,     // 1

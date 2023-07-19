@@ -1,6 +1,7 @@
 #include "../constants.h"
 #include "string.h"
 #include "copy.h"
+#include "../charmap.h"
 
 void InitString(void){
     //  Init a string of length c.
@@ -76,12 +77,12 @@ void v_InitString_Conv(uint16_t hl, uint16_t de, uint8_t len){
 
         // CP_A(0x50);
         // IF_Z goto blank;
-        if(a == 0x50)
+        if(a == CHAR_TERM)
             break;
         
         // CP_A(0x7f);
         // IF_NZ goto notblank;
-        if(a != 0x7f) 
+        if(a != CHAR_SPACE) 
         {
             // notblank:
             //     POP_BC;

@@ -154,6 +154,7 @@ loop:
     POP_HL;
     LD_DE(wDecompressScratch);
     //LD_B(BANK(@));
+    LD_B(BANK(aConvertTrainerBattlePokeballTilesTo2bpp));
     LD_C(0x28);
     CALL(aRequest2bpp);
     POP_AF;

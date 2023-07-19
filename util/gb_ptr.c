@@ -1,0 +1,120 @@
+#include "../constants.h"
+#include "gb_ptr.h"
+
+bool IsROMAddr(uint32_t addr) {
+    return ((addr & 0xffff) < 0x8000);
+}
+
+struct priv_t {
+    /* Pointer to allocated memory holding GB file. */
+    uint8_t *rom;
+    /* Pointer to allocated memory holding save file. */
+    uint8_t *cart_ram;
+};
+
+// Converts a GB rom address to a real address.
+static void* GBROMToRAMAddr(uint16_t hl) {
+    if(hl < ROM_N_ADDR) {
+        return ((struct priv_t*)gb.direct.priv)->rom + (hl - ROM_0_ADDR);
+    }
+    else {
+        return ((struct priv_t*)gb.direct.priv)->rom + (ROM_BANK_SIZE * (gb.selected_rom_bank)) + (hl - ROM_N_ADDR);
+    }
+}
+
+// Converts a GB address to a real address.
+void* GBToRAMAddr(uint16_t hl) {
+    if(hl < 0x8000)
+        return GBROMToRAMAddr(hl);
+    if(hl >= WRAM0_Begin && hl < WRAM0_End) {
+        return wram->wram0 + (hl - WRAM0_Begin);
+    }
+    if(hl >= WRAM1_Begin && hl < WRAM1_End) {
+        return wram->wram0 + (0x1000 * (gb.cgb.wramBank - 1)) + (hl - WRAM0_Begin);
+    }
+    if(hl >= HRAM_Begin && hl < HRAM_End) {
+        return (uint8_t*)hram + (hl - HRAM_Begin);
+    }
+    if(hl >= VRAM_Begin && hl < VRAM_End) {
+        return (uint8_t*)vram + (VRAM_BANK_SIZE * gb_read(rVBK)) + (hl - VRAM_Begin);
+    }
+    if(hl >= SRAM_Begin && hl < SRAM_End) {
+        return ((struct priv_t*)gb.direct.priv)->cart_ram + (0x2000 * gb.cart_ram_bank) + (hl - SRAM_Begin);
+    }
+    return NULL;
+}
+
+// Converts a GB rom address to a real address.
+static void* AbsGBROMToRAMAddr(uint32_t hl) {
+    struct BankAddr ba = AbsROMAddrToBankAddr(hl);
+    return ((struct priv_t*)gb.direct.priv)->rom + (ROM_BANK_SIZE * (ba.bank)) + (ba.addr - ROM_0_ADDR);
+}
+
+// Converts a GB absolute ram address to real address.
+void* AbsGBToRAMAddr(uint32_t hl) {
+    if(IsROMAddr(hl))
+        return AbsGBROMToRAMAddr(hl);
+    struct BankAddr ba = AbsRAMAddrToBankAddr(hl);
+    if(ba.addr >= WRAM0_Begin && ba.addr < WRAM0_End) {
+        return wram->wram0 + (ba.addr - WRAM0_Begin);
+    }
+    if(ba.addr >= WRAM1_Begin && ba.addr < WRAM1_End) {
+        return wram->wram0 + (0x1000 * ba.bank) + (ba.addr - WRAM0_Begin);
+    }
+    if(ba.addr >= HRAM_Begin && ba.addr < HRAM_End) {
+        return (uint8_t*)hram + (ba.addr - HRAM_Begin);
+    }
+    if(ba.addr >= VRAM_Begin && ba.addr < VRAM_End) {
+        return (uint8_t*)vram + (VRAM_BANK_SIZE * ba.bank) + (ba.addr - VRAM_Begin);
+    }
+    if(hl >= SRAM_Begin && hl < SRAM_End) {
+        return ((struct priv_t*)gb.direct.priv)->cart_ram + (0x2000 * ba.bank) + (ba.addr - SRAM_Begin);
+    }
+    return NULL;
+}
+
+// Converts a real address to a GB address.
+uint16_t RAMAddrToGB(void* addr) {
+    uint8_t* p = addr;
+    if((p - wram->wram0) >= 0 && (p - wram->wram0) < 0x1000)
+        return WRAM0_Begin + (p - wram->wram0);
+    if((p - wram->wram1) >= 0 && (p - wram->wram1) < 0x6000)
+        return WRAM1_Begin + (p - wram->wram1);
+    if((p - (uint8_t*)hram) >= 0 && (p - (uint8_t*)hram) < (long long)sizeof(*hram))
+        return HRAM_Begin + (p - (uint8_t*)hram);
+    if((p - (uint8_t*)vram) >= 0 && (p - (uint8_t*)vram) < (long long)sizeof(*vram))
+        return VRAM_Begin + (p - (uint8_t*)vram);
+    if((p - ((struct priv_t*)gb.direct.priv)->rom) >= 0 && (p - ((struct priv_t*)gb.direct.priv)->rom) < ROM_BANK_SIZE)
+        return ROM_0_ADDR + (p - ((struct priv_t*)gb.direct.priv)->rom);
+    if((p - ((struct priv_t*)gb.direct.priv)->rom) >= ROM_BANK_SIZE && (p - ((struct priv_t*)gb.direct.priv)->rom) < ROM_BANK_SIZE * 128)
+        return ROM_N_ADDR + ((p - ((struct priv_t*)gb.direct.priv)->rom) & 0x3fff);
+    if((p - ((struct priv_t*)gb.direct.priv)->cart_ram) >= 0 && (p - ((struct priv_t*)gb.direct.priv)->cart_ram) < SRAM_SIZE)
+        return SRAM_Begin + (p - ((struct priv_t*)gb.direct.priv)->cart_ram);
+    return 0;
+}
+
+// Converts a real address to a GB absolute ram address.
+uint32_t RAMAddrToAbsGB(void* addr) {
+    uint8_t* p = addr;
+    if((wram->wram0 - p) >= 0 && (wram->wram0 - p) < 0x1000)
+        return WRAM0_Begin + (wram->wram0 - p);
+    if((wram->wram1 - p) >= 0 && (wram->wram1 - p) < 0x6000)
+        return (WRAM1_Begin + (wram->wram1 - p)) | (((wram->wram0 - p) / 0x1000) << 16);
+    if(((uint8_t*)hram - p) >= 0 && ((uint8_t*)hram - p) < (long long)sizeof(*hram))
+        return HRAM_Begin + ((uint8_t*)hram - p);
+    if(((uint8_t*)vram - p) >= 0 && ((uint8_t*)vram - p) < (long long)sizeof(*vram))
+        return (VRAM_Begin + ((uint8_t*)vram - p)) | ((((uint8_t*)vram - p) / VRAM_BANK_SIZE) << 16);
+    return 0;
+}
+
+struct BankAddr AbsRAMAddrToBankAddr(uint32_t addr) {
+    return (struct BankAddr) {.bank = (uint8_t)MBANK(addr), .addr = (uint16_t)(addr & 0xffff)};
+}
+
+struct BankAddr AbsROMAddrToBankAddr(uint32_t addr) {
+    return (struct BankAddr) {.bank = (uint8_t)BANK(addr), .addr = (uint16_t)(addr & 0x3fff)};
+}
+
+uint32_t BankAddrToAbsRAMAddr(uint8_t bank, uint16_t addr) {
+    return (uint32_t)(addr | (bank << 16));
+}

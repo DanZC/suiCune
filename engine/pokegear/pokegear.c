@@ -2,6 +2,7 @@
 #include "pokegear.h"
 #include "../../home/gfx.h"
 #include "../../home/map.h"
+#include "../../home/delay.h"
 #include "../../home/decompress.h"
 #include "../../home/copy.h"
 #include "../../home/palettes.h"
@@ -1091,13 +1092,17 @@ UpdateClock:
 void PokegearClock_Joypad_UpdateClock(void) {
     SET_PC(aPokegearClock_Joypad_UpdateClock);
     // PEEK("UpdateClock");
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
     // CALL(aPokegear_UpdateClock);
     // Pokegear_UpdateClock();
     Pokegear_UpdateClock_Conv();
-    LD_A(0x1);
-    LDH_addr_A(hBGMapMode);
+    DelayFrames_Conv(4);
+    // LD_A(0x1);
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 1;
+    DelayFrames_Conv(4);
     RET;
 }
 
@@ -1141,13 +1146,13 @@ void Pokegear_UpdateClock_Conv(void){
     // REG_DE = coord(6, 8, wTilemap);
     // decoord(6, 8, wTilemap);
     // FARCALL(aPrintHoursMins);
-    farcall(PrintHoursMins, coord(6, 8, wTilemap), gb_read(hHours), gb_read(hMinutes));
+    farcall(PrintHoursMins, wram->wTilemap + coordidx(6, 8), gb_read(hHours), gb_read(hMinutes));
     // bank_push(aPrintHoursMins);
     // bank_pop;
     // LD_HL(mPokegear_UpdateClock_GearTodayText);
     // bccoord(6, 6, wTilemap);
     // CALL(aPlaceHLTextAtBC);
-    PlaceHLTextAtBC_Conv(mPokegear_UpdateClock_GearTodayText, coord(6, 6, wTilemap));
+    PlaceHLTextAtBC_Conv(GBToRAMAddr(mPokegear_UpdateClock_GearTodayText), wram->wTilemap + coordidx(6, 6));
 }
 
 void PokegearMap_CheckRegion(void){

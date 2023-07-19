@@ -1,10 +1,14 @@
 void ExecuteBGEffects(void);
+void ExecuteBGEffects_Conv(void);
 void QueueBGEffect(void);
 void EndBattleBGEffect(void);
+void EndBattleBGEffect_Conv(struct BattleBGEffect* bc);
 void DoBattleBGEffectFunction(void);
+void DoBattleBGEffectFunction_Conv(struct BattleBGEffect* bc);
 // void BattleBGEffects(void);
 extern void(*const BattleBGEffects[54])(void);
 void BattleBGEffect_End(void);
+void BattleBGEffect_End_Conv(struct BattleBGEffect* bc);
 void BatttleBGEffects_GetNamedJumptablePointer(void);
 void BattleBGEffects_AnonJumptable(void);
 void BattleBGEffects_IncAnonJumptableIndex(void);

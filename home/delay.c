@@ -20,8 +20,8 @@ halt:
 
 void DelayFrame(void){
     //  Wait for one frame
-    gb_finish_frame();
     VBlank_Conv();
+    gb_finish_frame();
     // do {
     //     gb_finish_frame();
     //     CALL(aVBlank);

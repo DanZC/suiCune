@@ -1,6 +1,8 @@
 #include "../../constants.h"
 #include "bg_effects.h"
 
+// static int8_t* lBattlePicResizeTempPointer;
+
 // const_def ['?']
 // const ['BGSQUARE_SIX']
 // const ['BGSQUARE_FOUR']
@@ -8,6 +10,22 @@
 // const ['BGSQUARE_SEVEN']
 // const ['BGSQUARE_FIVE']
 // const ['BGSQUARE_THREE']
+enum {
+    BGSQUARE_SIX,
+    BGSQUARE_FOUR,
+    BGSQUARE_TWO,
+    BGSQUARE_SEVEN,
+    BGSQUARE_FIVE,
+    BGSQUARE_THREE,
+};
+
+
+struct BGSquare
+{
+    uint8_t w: 4;
+    uint8_t h: 4;
+    uint16_t ptr;
+};
 
 //  BG effects for use in battle animations.
 
@@ -35,6 +53,40 @@ next:
     ADD_HL_BC;
     DEC_E;
     IF_NZ goto loop;
+    RET;
+}
+
+void ExecuteBGEffects_Conv(void) {
+    // SET_PC(aExecuteBGEffects);
+    // LD_HL(wActiveBGEffects);
+    struct BattleBGEffect* hl = wram->wBGEffect;
+    // LD_E(NUM_BG_EFFECTS);
+    uint8_t e = NUM_BG_EFFECTS;
+
+    do {
+    // loop:
+
+        // LD_A_hl;
+        // AND_A_A;
+        // IF_Z goto next;
+        if(hl->function != 0) {
+            // LD_C_L;
+            // LD_B_H;
+            // PUSH_HL;
+            // PUSH_DE;
+            // CALL(aDoBattleBGEffectFunction);
+            DoBattleBGEffectFunction_Conv(hl);
+            // POP_DE;
+            // POP_HL;
+        }
+    // next:
+
+        // LD_BC(BG_EFFECT_STRUCT_LENGTH);
+        // ADD_HL_BC;
+        hl++;
+        // DEC_E;
+        // IF_NZ goto loop;
+    } while(--e != 0);
     RET;
 }
 
@@ -80,19 +132,45 @@ void EndBattleBGEffect(void) {
     RET;
 }
 
+void EndBattleBGEffect_Conv(struct BattleBGEffect* bc) {
+    // SET_PC(aEndBattleBGEffect);
+    // LD_HL(BG_EFFECT_STRUCT_FUNCTION);
+    // ADD_HL_BC;
+    // LD_hl(0);
+    // RET;
+    bc->function = 0;
+}
+
 void DoBattleBGEffectFunction(void) {
     SET_PC(aDoBattleBGEffectFunction);
     LD_HL(BG_EFFECT_STRUCT_FUNCTION);
     ADD_HL_BC;
     LD_E_hl;
     LD_D(0);
-    LD_HL(mBattleBGEffects);
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    JP_hl;
+    // LD_HL(mBattleBGEffects);
+    // ADD_HL_DE;
+    // ADD_HL_DE;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // JP_hl;
+    BattleBGEffects[REG_DE]();
+}
+
+void DoBattleBGEffectFunction_Conv(struct BattleBGEffect* bc) {
+    // SET_PC(aDoBattleBGEffectFunction);
+    // LD_HL(BG_EFFECT_STRUCT_FUNCTION);
+    // ADD_HL_BC;
+    // LD_E_hl;
+    // LD_D(0);
+    // LD_HL(mBattleBGEffects);
+    // ADD_HL_DE;
+    // ADD_HL_DE;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // JP_hl;
+    BattleBGEffects[bc->function]();
 }
 
 // void BattleBGEffects(void) {
@@ -219,6 +297,13 @@ void BattleBGEffect_End(void) {
     RET;
 }
 
+void BattleBGEffect_End_Conv(struct BattleBGEffect* bc) {
+    // SET_PC(aBattleBGEffect_End);
+    // CALL(aEndBattleBGEffect);
+    // RET;
+    return EndBattleBGEffect_Conv(bc);
+}
+
 void BatttleBGEffects_GetNamedJumptablePointer(void) {
     SET_PC(aBatttleBGEffects_GetNamedJumptablePointer);
     LD_HL(BG_EFFECT_STRUCT_JT_INDEX);
@@ -254,6 +339,15 @@ void BattleBGEffects_IncAnonJumptableIndex(void) {
     ADD_HL_BC;
     INC_hl;
     RET;
+}
+
+void BattleBGEffects_IncAnonJumptableIndex_Conv(struct BattleBGEffect* bc) {
+    // SET_PC(aBattleBGEffects_IncAnonJumptableIndex);
+    // LD_HL(BG_EFFECT_STRUCT_JT_INDEX);
+    // ADD_HL_BC;
+    // INC_hl;
+    bc->jumptableIndex++;
+    // RET;
 }
 
 void BattleBGEffect_FlashInverted(void) {
@@ -483,14 +577,15 @@ Pals:
 void BattleBGEffect_HideMon(void) {
     SET_PC(aBattleBGEffect_HideMon);
     // CALL(aBattleBGEffects_AnonJumptable);
+    uint8_t index = gb_read(REG_BC + BG_EFFECT_STRUCT_JT_INDEX);
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) return BattleBGEffects_IncAnonJumptableIndex();
-    if (REG_BC == 2) return BattleBGEffects_IncAnonJumptableIndex();
-    if (REG_BC == 3) return BattleBGEffects_IncAnonJumptableIndex();
-    if (REG_BC == 4) goto four;
+    if (index == 0) goto zero;
+    if (index == 1) return BattleBGEffects_IncAnonJumptableIndex();
+    if (index == 2) return BattleBGEffects_IncAnonJumptableIndex();
+    if (index == 3) return BattleBGEffects_IncAnonJumptableIndex();
+    if (index == 4) goto four;
 
 zero:
 
@@ -568,15 +663,16 @@ EnemyData:
 void BattleBGEffect_BattlerObj_1Row(void) {
     SET_PC(aBattleBGEffect_BattlerObj_1Row);
     // CALL(aBattleBGEffects_AnonJumptable);
+    uint8_t index = gb_read(REG_BC + BG_EFFECT_STRUCT_JT_INDEX);
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) return BattleBGEffects_IncAnonJumptableIndex();
-    if (REG_BC == 3) return BattleBGEffects_IncAnonJumptableIndex();
-    if (REG_BC == 4) return BattleBGEffects_IncAnonJumptableIndex();
-    if (REG_BC == 5) goto five;
+    if (index == 0) goto zero;
+    if (index == 1) goto one;
+    if (index == 2) return BattleBGEffects_IncAnonJumptableIndex();
+    if (index == 3) return BattleBGEffects_IncAnonJumptableIndex();
+    if (index == 4) return BattleBGEffects_IncAnonJumptableIndex();
+    if (index == 5) goto five;
 
 zero:
 
@@ -649,15 +745,16 @@ five:
 void BattleBGEffect_BattlerObj_2Row(void) {
     SET_PC(aBattleBGEffect_BattlerObj_2Row);
     // CALL(aBattleBGEffects_AnonJumptable);
+    uint8_t index = gb_read(REG_BC + BG_EFFECT_STRUCT_JT_INDEX);
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) return BattleBGEffects_IncAnonJumptableIndex();
-    if (REG_BC == 3) return BattleBGEffects_IncAnonJumptableIndex();
-    if (REG_BC == 4) return BattleBGEffects_IncAnonJumptableIndex();
-    if (REG_BC == 5) goto five;
+    if (index == 0) goto zero;
+    if (index == 1) goto one;
+    if (index == 2) return BattleBGEffects_IncAnonJumptableIndex();
+    if (index == 3) return BattleBGEffects_IncAnonJumptableIndex();
+    if (index == 4) return BattleBGEffects_IncAnonJumptableIndex();
+    if (index == 5) goto five;
 
 zero:
 
@@ -737,14 +834,15 @@ void BattleBGEffect_RemoveMon(void) {
     SET_PC(aBattleBGEffect_RemoveMon);
     //  Slides mon out of screen
     // CALL(aBattleBGEffects_AnonJumptable);
+    uint8_t index = gb_read(REG_BC + BG_EFFECT_STRUCT_JT_INDEX);
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) return BattleBGEffects_IncAnonJumptableIndex();
-    if (REG_BC == 3) return BattleBGEffects_IncAnonJumptableIndex();
-    if (REG_BC == 4) goto four;
+    if (index == 0) goto zero;
+    if (index == 1) goto one;
+    if (index == 2) return BattleBGEffects_IncAnonJumptableIndex();
+    if (index == 3) return BattleBGEffects_IncAnonJumptableIndex();
+    if (index == 4) goto four;
 
 zero:
 
@@ -894,6 +992,46 @@ EnemyData:
 }
 
 void BattleBGEffect_ReturnMon(void) {
+// PlayerData:
+    // static const int8_t PlayerData[] = {
+    //     // db ['0', '0x31', '0'];
+    //     // db ['-2', '0x66', '0'];
+    //     // db ['1', '0x31', '1'];
+    //     // db ['-2', '0x44', '1'];
+    //     // db ['2', '0x31', '2'];
+    //     // db ['-2', '0x22', '2'];
+    //     // db ['-3', '0x00', '0'];
+    //     // db ['-1'];
+    //     0, 0x31, 0,
+    //     -2, 0x66, 0,
+    //     1, 0x31, 1,
+    //     -2, 0x44, 1,
+    //     2, 0x31, 2,
+    //     -2, 0x22, 2,
+    //     -3, 0x00, 0,
+    //     -1,
+    // };
+
+// EnemyData:
+    // static const int8_t EnemyData[] = {
+    //     // db ['3', '0x00', '3'];
+    //     // db ['-2', '0x77', '3'];
+    //     // db ['4', '0x00', '4'];
+    //     // db ['-2', '0x55', '4'];
+    //     // db ['5', '0x00', '5'];
+    //     // db ['-2', '0x33', '5'];
+    //     // db ['-3', '0x00', '0'];
+    //     // db ['-1'];
+    //     3, 0x00, 3,
+    //     -2, 0x77, 3,
+    //     4, 0x00, 4,
+    //     -2, 0x55, 4,
+    //     5, 0x00, 5,
+    //     -2, 0x33, 5,
+    //     -3, 0x00, 0,
+    //     -1,
+    // };
+
     SET_PC(aBattleBGEffect_ReturnMon);
     CALL(aBGEffect_CheckBattleTurn);
     IF_NZ goto player_turn;
@@ -912,43 +1050,59 @@ okay:
     LD_addr_A(wBattlePicResizeTempPointer + 1);
     CALL(aBattleBGEffect_RunPicResizeScript);
     RET;
-
-PlayerData:
-
-    // db ['0', '0x31', '0'];
-    // db ['-2', '0x66', '0'];
-    // db ['1', '0x31', '1'];
-    // db ['-2', '0x44', '1'];
-    // db ['2', '0x31', '2'];
-    // db ['-2', '0x22', '2'];
-    // db ['-3', '0x00', '0'];
-    // db ['-1'];
-
-EnemyData:
-
-    // db ['3', '0x00', '3'];
-    // db ['-2', '0x77', '3'];
-    // db ['4', '0x00', '4'];
-    // db ['-2', '0x55', '4'];
-    // db ['5', '0x00', '5'];
-    // db ['-2', '0x33', '5'];
-    // db ['-3', '0x00', '0'];
-    // db ['-1'];
-
-    return BattleBGEffect_RunPicResizeScript();
 }
 
 void BattleBGEffect_RunPicResizeScript(void) {
+// BGSquares:
+
+    // bgsquare: MACRO
+    //     dn \1, \2
+    //     dw \3
+    // ENDM
+    // bgsquare ['6', '6', '.SixBySix']
+    // bgsquare ['4', '4', '.FourByFour']
+    // bgsquare ['2', '2', '.TwoByTwo']
+    // bgsquare ['7', '7', '.SevenBySeven']
+    // bgsquare ['5', '5', '.FiveByFive']
+    // bgsquare ['3', '3', '.ThreeByThree']
+
+    static const struct BGSquare BGSquares[] = {
+        [BGSQUARE_SIX]   = {.w = 6, .h = 6, .ptr=mBattleBGEffect_RunPicResizeScript_SixBySix},
+        [BGSQUARE_FOUR]  = {.w = 4, .h = 4, .ptr=mBattleBGEffect_RunPicResizeScript_FourByFour},
+        [BGSQUARE_TWO]   = {.w = 2, .h = 2, .ptr=mBattleBGEffect_RunPicResizeScript_TwoByTwo},
+        [BGSQUARE_SEVEN] = {.w = 7, .h = 7, .ptr=mBattleBGEffect_RunPicResizeScript_SevenBySeven},
+        [BGSQUARE_FIVE]  = {.w = 5, .h = 5, .ptr=mBattleBGEffect_RunPicResizeScript_FiveByFive},
+        [BGSQUARE_THREE] = {.w = 3, .h = 3, .ptr=mBattleBGEffect_RunPicResizeScript_ThreeByThree},
+    };
+
+// Coords:
+
+    // dwcoord ['2', '6'];
+    // dwcoord ['3', '8'];
+    // dwcoord ['4', '10'];
+    // dwcoord ['12', '0'];
+    // dwcoord ['13', '2'];
+    // dwcoord ['14', '4'];
+    static const uint16_t Coords[] = {
+        dwcoord(2, 6),
+        dwcoord(3, 8),
+        dwcoord(4, 10),
+        dwcoord(12, 0),
+        dwcoord(13, 2),
+        dwcoord(14, 4),
+    };
+
     SET_PC(aBattleBGEffect_RunPicResizeScript);
     // CALL(aBattleBGEffects_AnonJumptable);
+    uint8_t index = gb_read(REG_BC + BG_EFFECT_STRUCT_JT_INDEX);
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) return BattleBGEffects_IncAnonJumptableIndex();
-    if (REG_BC == 2) return BattleBGEffects_IncAnonJumptableIndex();
-    if (REG_BC == 3) goto restart;
-    if (REG_BC == 4) goto end;
+    if (index == 0) goto zero;
+    if (index == 1) return BattleBGEffects_IncAnonJumptableIndex();
+    if (index == 2) return BattleBGEffects_IncAnonJumptableIndex();
+    if (index == 3) goto restart;
+    if (index == 4) goto end;
 
 zero:
 
@@ -965,11 +1119,11 @@ zero:
     ADD_HL_DE;
     ADD_HL_DE;
     LD_A_hl;
-    CP_A(-1);
+    CP_A(0xff);
     IF_Z goto end;
-    CP_A(-2);
+    CP_A(0xfe);
     IF_Z goto clear;
-    CP_A(-3);
+    CP_A(0xfd);
     IF_Z goto skip;
     CALL(aBattleBGEffect_RunPicResizeScript_PlaceGraphic);
 
@@ -1017,12 +1171,13 @@ ClearBox:
     //  get coords
     LD_E_hl;
     LD_D(0);
-    LD_HL(mBattleBGEffect_RunPicResizeScript_Coords);
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
+    // LD_HL(mBattleBGEffect_RunPicResizeScript_Coords);
+    // ADD_HL_DE;
+    // ADD_HL_DE;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    REG_HL = Coords[REG_DE];
     CALL(aClearBox);
     POP_BC;
     RET;
@@ -1034,22 +1189,25 @@ PlaceGraphic:
     PUSH_HL;
     LD_E_hl;
     LD_D(0);
-    LD_HL(mBattleBGEffect_RunPicResizeScript_BGSquares);
-    ADD_HL_DE;
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_B_A;
-    AND_A(0xf);
-    LD_C_A;
-    LD_A_B;
-    SWAP_A;
-    AND_A(0xf);
-    LD_B_A;
+    // LD_HL(mBattleBGEffect_RunPicResizeScript_BGSquares);
+    // ADD_HL_DE;
+    // ADD_HL_DE;
+    // ADD_HL_DE;
+    // LD_A_hli;
+    // LD_B_A;
+    // AND_A(0xf);
+    // LD_C_A;
+    REG_C = BGSquares[REG_DE].h;
+    // LD_A_B;
+    // SWAP_A;
+    // AND_A(0xf);
+    // LD_B_A;
+    REG_B = BGSquares[REG_DE].w;
     //  store pointer
-    LD_E_hl;
-    INC_HL;
-    LD_D_hl;
+    // LD_E_hl;
+    // INC_HL;
+    // LD_D_hl;
+    REG_DE = BGSquares[REG_DE].ptr;
     //  get byte
     POP_HL;
     INC_HL;
@@ -1059,12 +1217,13 @@ PlaceGraphic:
     PUSH_DE;
     LD_E_hl;
     LD_D(0);
-    LD_HL(mBattleBGEffect_RunPicResizeScript_Coords);
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
+    // LD_HL(mBattleBGEffect_RunPicResizeScript_Coords);
+    // ADD_HL_DE;
+    // ADD_HL_DE;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    REG_HL = Coords[REG_DE];
     POP_DE;
     //  fill box
 
@@ -1091,29 +1250,6 @@ col:
     IF_NZ goto row;
     POP_BC;
     RET;
-
-Coords:
-
-    // dwcoord ['2', '6'];
-    // dwcoord ['3', '8'];
-    // dwcoord ['4', '10'];
-    // dwcoord ['12', '0'];
-    // dwcoord ['13', '2'];
-    // dwcoord ['14', '4'];
-
-BGSquares:
-
-    // bgsquare: MACRO
-    //     dn \1, \2
-    //     dw \3
-    // ENDM
-
-    // bgsquare ['6', '6', '.SixBySix']
-    // bgsquare ['4', '4', '.FourByFour']
-    // bgsquare ['2', '2', '.TwoByTwo']
-    // bgsquare ['7', '7', '.SevenBySeven']
-    // bgsquare ['5', '5', '.FiveByFive']
-    // bgsquare ['3', '3', '.ThreeByThree']
 
 SixBySix:
 
@@ -1166,12 +1302,13 @@ ThreeByThree:
 void BattleBGEffect_Surf(void) {
     SET_PC(aBattleBGEffect_Surf);
     // CALL(aBattleBGEffects_AnonJumptable);
+    uint8_t index = gb_read(REG_BC + BG_EFFECT_STRUCT_JT_INDEX);
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
+    if (index == 0) goto zero;
+    if (index == 1) goto one;
+    if (index == 2) goto two;
 
 zero:
 
@@ -1247,12 +1384,13 @@ okay:
 void BattleBGEffect_Whirlpool(void) {
     SET_PC(aBattleBGEffect_Whirlpool);
     // CALL(aBattleBGEffects_AnonJumptable);
+    uint8_t index = gb_read(REG_BC + BG_EFFECT_STRUCT_JT_INDEX);
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
+    if (index == 0) goto zero;
+    if (index == 1) goto one;
+    if (index == 2) goto two;
 
 zero:
 
@@ -1336,12 +1474,13 @@ void BattleBGEffect_Psychic(void) {
     SET_PC(aBattleBGEffect_Psychic);
     //  Hardcoded to always affect opponent
     // CALL(aBattleBGEffects_AnonJumptable);
+    uint8_t index = gb_read(REG_BC + BG_EFFECT_STRUCT_JT_INDEX);
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
+    if (index == 0) goto zero;
+    if (index == 1) goto one;
+    if (index == 2) goto two;
 
 zero:
 
@@ -1380,12 +1519,13 @@ two:
 void BattleBGEffect_Teleport(void) {
     SET_PC(aBattleBGEffect_Teleport);
     // CALL(aBattleBGEffects_AnonJumptable);
+    uint8_t index = gb_read(REG_BC + BG_EFFECT_STRUCT_JT_INDEX);
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
+    if (index == 0) goto zero;
+    if (index == 1) goto one;
+    if (index == 2) goto two;
 
 zero:
 
@@ -1411,12 +1551,13 @@ two:
 void BattleBGEffect_NightShade(void) {
     SET_PC(aBattleBGEffect_NightShade);
     // CALL(aBattleBGEffects_AnonJumptable);
+    uint8_t index = gb_read(REG_BC + BG_EFFECT_STRUCT_JT_INDEX);
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
+    if (index == 0) goto zero;
+    if (index == 1) goto one;
+    if (index == 2) goto two;
 
 zero:
 
@@ -1445,15 +1586,16 @@ two:
 void BattleBGEffect_DoubleTeam(void) {
     SET_PC(aBattleBGEffect_DoubleTeam);
     // CALL(aBattleBGEffects_AnonJumptable);
+    uint8_t index = gb_read(REG_BC + BG_EFFECT_STRUCT_JT_INDEX);
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
-    if (REG_BC == 3) goto three;
-    if (REG_BC == 4) goto four;
-    if (REG_BC == 5) goto five;
+    if (index == 0) goto zero;
+    if (index == 1) goto one;
+    if (index == 2) goto two;
+    if (index == 3) goto three;
+    if (index == 4) goto four;
+    if (index == 5) goto five;
 
 zero:
 
@@ -1553,12 +1695,13 @@ five:
 void BattleBGEffect_AcidArmor(void) {
     SET_PC(aBattleBGEffect_AcidArmor);
     // CALL(aBattleBGEffects_AnonJumptable);
+    uint8_t index = gb_read(REG_BC + BG_EFFECT_STRUCT_JT_INDEX);
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
+    if (index == 0) goto zero;
+    if (index == 1) goto one;
+    if (index == 2) goto two;
 
 zero:
 
@@ -1626,12 +1769,13 @@ two:
 void BattleBGEffect_Withdraw(void) {
     SET_PC(aBattleBGEffect_Withdraw);
     // CALL(aBattleBGEffects_AnonJumptable);
+    uint8_t index = gb_read(REG_BC + BG_EFFECT_STRUCT_JT_INDEX);
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
+    if (index == 0) goto zero;
+    if (index == 1) goto one;
+    if (index == 2) goto two;
 
 zero:
 
@@ -1681,13 +1825,14 @@ two:
 void BattleBGEffect_Dig(void) {
     SET_PC(aBattleBGEffect_Dig);
     // CALL(aBattleBGEffects_AnonJumptable);
+    uint8_t index = gb_read(REG_BC + BG_EFFECT_STRUCT_JT_INDEX);
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
-    if (REG_BC == 3) goto three;
+    if (index == 0) goto zero;
+    if (index == 1) goto one;
+    if (index == 2) goto two;
+    if (index == 3) goto three;
 
 zero:
 
@@ -1759,13 +1904,14 @@ three:
 void BattleBGEffect_Tackle(void) {
     SET_PC(aBattleBGEffect_Tackle);
     // CALL(aBattleBGEffects_AnonJumptable);
+    uint8_t index = gb_read(REG_BC + BG_EFFECT_STRUCT_JT_INDEX);
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) return Tackle_MoveForward();
-    if (REG_BC == 2) return Tackle_ReturnMove();
-    if (REG_BC == 3) goto three;
+    if (index == 0) goto zero;
+    if (index == 1) return Tackle_MoveForward();
+    if (index == 2) return Tackle_ReturnMove();
+    if (index == 3) goto three;
 
 zero:
 
@@ -1805,13 +1951,14 @@ three:
 void BattleBGEffect_BodySlam(void) {
     SET_PC(aBattleBGEffect_BodySlam);
     // CALL(aBattleBGEffects_AnonJumptable);
+    uint8_t index = gb_read(REG_BC + BG_EFFECT_STRUCT_JT_INDEX);
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) return Tackle_MoveForward();
-    if (REG_BC == 2) return Tackle_ReturnMove();
-    if (REG_BC == 3) goto three;
+    if (index == 0) goto zero;
+    if (index == 1) return Tackle_MoveForward();
+    if (index == 2) return Tackle_ReturnMove();
+    if (index == 3) goto three;
 
 zero:
 
@@ -1973,13 +2120,14 @@ void BattleBGEffect_BetaPursuit(void) {
     SET_PC(aBattleBGEffect_BetaPursuit);
     //  //  unused
     // CALL(aBattleBGEffects_AnonJumptable);
+    uint8_t index = gb_read(REG_BC + BG_EFFECT_STRUCT_JT_INDEX);
 
 anon_dw:
 
-    if (REG_BC == 0) return VitalThrow_MoveBackwards();
-    if (REG_BC == 1) return Tackle_MoveForward();
-    if (REG_BC == 2) return Tackle_ReturnMove();
-    if (REG_BC == 3) goto three;
+    if (index == 0) return VitalThrow_MoveBackwards();
+    if (index == 1) return Tackle_MoveForward();
+    if (index == 2) return Tackle_ReturnMove();
+    if (index == 3) goto three;
 
 three:
 
@@ -2019,14 +2167,15 @@ okay:
 void BattleBGEffect_VitalThrow(void) {
     SET_PC(aBattleBGEffect_VitalThrow);
     // CALL(aBattleBGEffects_AnonJumptable);
+    uint8_t index = gb_read(REG_BC + BG_EFFECT_STRUCT_JT_INDEX);
 
 anon_dw:
 
-    if (REG_BC == 0) return VitalThrow_MoveBackwards();
-    if (REG_BC == 1) return Tackle_MoveForward();
-    if (REG_BC == 2) goto two;
-    if (REG_BC == 3) return Tackle_ReturnMove();
-    if (REG_BC == 4) goto four;
+    if (index == 0) return VitalThrow_MoveBackwards();
+    if (index == 1) return Tackle_MoveForward();
+    if (index == 2) goto two;
+    if (index == 3) return Tackle_ReturnMove();
+    if (index == 4) goto four;
 
 four:
 
@@ -2041,12 +2190,13 @@ void BattleBGEffect_WobbleMon(void) {
     SET_PC(aBattleBGEffect_WobbleMon);
     //  Similar to BattleBGEffect_WobblePlayer, except it can affect either side and the sine movement has a radius of 8 instead of 6 and it moves at twice the rate
     // CALL(aBattleBGEffects_AnonJumptable);
+    uint8_t index = gb_read(REG_BC + BG_EFFECT_STRUCT_JT_INDEX);
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
+    if (index == 0) goto zero;
+    if (index == 1) goto one;
+    if (index == 2) goto two;
 
 zero:
 
@@ -2086,12 +2236,13 @@ two:
 void BattleBGEffect_Flail(void) {
     SET_PC(aBattleBGEffect_Flail);
     // CALL(aBattleBGEffects_AnonJumptable);
+    uint8_t index = gb_read(REG_BC + BG_EFFECT_STRUCT_JT_INDEX);
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
+    if (index == 0) goto zero;
+    if (index == 1) goto one;
+    if (index == 2) goto two;
 
 zero:
 
@@ -2147,12 +2298,13 @@ two:
 void BattleBGEffect_WaveDeformMon(void) {
     SET_PC(aBattleBGEffect_WaveDeformMon);
     // CALL(aBattleBGEffects_AnonJumptable);
+    uint8_t index = gb_read(REG_BC + BG_EFFECT_STRUCT_JT_INDEX);
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
+    if (index == 0) goto zero;
+    if (index == 1) goto one;
+    if (index == 2) goto two;
 
 zero:
 
@@ -2197,12 +2349,13 @@ reset:
 void BattleBGEffect_BounceDown(void) {
     SET_PC(aBattleBGEffect_BounceDown);
     // CALL(aBattleBGEffects_AnonJumptable);
+    uint8_t index = gb_read(REG_BC + BG_EFFECT_STRUCT_JT_INDEX);
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
+    if (index == 0) goto zero;
+    if (index == 1) goto one;
+    if (index == 2) goto two;
 
 zero:
 
@@ -2255,15 +2408,16 @@ void BattleBGEffect_BetaSendOutMon1(void) {
     SET_PC(aBattleBGEffect_BetaSendOutMon1);
     //  //  unused
     // CALL(aBattleBGEffects_AnonJumptable);
+    uint8_t index = gb_read(REG_BC + BG_EFFECT_STRUCT_JT_INDEX);
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
-    if (REG_BC == 3) goto three;
-    if (REG_BC == 4) goto four;
-    if (REG_BC == 5) goto five;
+    if (index == 0) goto zero;
+    if (index == 1) goto one;
+    if (index == 2) goto two;
+    if (index == 3) goto three;
+    if (index == 4) goto four;
+    if (index == 5) goto five;
 
 zero:
 
@@ -2387,11 +2541,12 @@ void BattleBGEffect_BetaSendOutMon2(void) {
     SET_PC(aBattleBGEffect_BetaSendOutMon2);
     //  //  unused
     // CALL(aBattleBGEffects_AnonJumptable);
+    uint8_t index = gb_read(REG_BC + BG_EFFECT_STRUCT_JT_INDEX);
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
+    if (index == 0) goto zero;
+    if (index == 1) goto one;
 
 zero:
 
@@ -2429,16 +2584,18 @@ done:
 
 void BattleBGEffect_FadeMonsToBlackRepeating(void) {
     SET_PC(aBattleBGEffect_FadeMonsToBlackRepeating);
+    uint8_t index;
     LDH_A_addr(hCGB);
     AND_A_A;
     IF_NZ goto cgb;
+    index = gb_read(REG_BC + BG_EFFECT_STRUCT_JT_INDEX);
     // CALL(aBattleBGEffects_AnonJumptable);
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
+    if (index == 0) goto zero;
+    if (index == 1) goto one;
+    if (index == 2) goto two;
 
 zero:
 
@@ -2527,15 +2684,16 @@ loop2:
 
 cgb:
 
-    LD_DE(mBattleBGEffect_FadeMonsToBlackRepeating_Jumptable);
-    CALL(aBatttleBGEffects_GetNamedJumptablePointer);
-    JP_hl;
+    // LD_DE(mBattleBGEffect_FadeMonsToBlackRepeating_Jumptable);
+    // CALL(aBatttleBGEffects_GetNamedJumptablePointer);
+    // JP_hl;
+    index = gb_read(REG_BC + BG_EFFECT_STRUCT_JT_INDEX);
 
 Jumptable:
 
-    if (REG_BC == 0) goto cgb_zero;
-    if (REG_BC == 1) goto cgb_one;
-    if (REG_BC == 2) goto cgb_two;
+    if (index == 0) goto cgb_zero;
+    if (index == 1) goto cgb_one;
+    if (index == 2) goto cgb_two;
 
 cgb_zero:
 
@@ -2744,11 +2902,12 @@ void BattleBGEffect_VibrateMon(void) {
     //  Moves mon back and forth sideways for $20 frames
     //  BG_EFFECT_STRUCT_BATTLE_TURN = BG_EFFECT_TARGET or BG_EFFECT_USER
     // CALL(aBattleBGEffects_AnonJumptable);
+    uint8_t index = gb_read(REG_BC + BG_EFFECT_STRUCT_JT_INDEX);
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
+    if (index == 0) goto zero;
+    if (index == 1) goto one;
 
 zero:
 
@@ -2796,12 +2955,13 @@ void BattleBGEffect_WobblePlayer(void) {
     SET_PC(aBattleBGEffect_WobblePlayer);
     //  Always affects the player
     // CALL(aBattleBGEffects_AnonJumptable);
+    uint8_t index = gb_read(REG_BC + BG_EFFECT_STRUCT_JT_INDEX);
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
+    if (index == 0) goto zero;
+    if (index == 1) goto one;
+    if (index == 2) goto two;
 
 zero:
 
@@ -2982,21 +3142,24 @@ zero:
 
 void BGEffect_RapidCyclePals(void) {
     SET_PC(aBGEffect_RapidCyclePals);
+    uint8_t index;
     //  Last index in DE: $fe signals a loop, $ff signals end
     LDH_A_addr(hCGB);
     AND_A_A;
-    IF_NZ goto cgb;
-    PUSH_DE;
-    LD_DE(mBGEffect_RapidCyclePals_Jumptable_DMG);
-    CALL(aBatttleBGEffects_GetNamedJumptablePointer);
-    POP_DE;
-    JP_hl;
+    IF_NZ goto Jumptable_CGB;
+    // IF_NZ goto cgb;
+    // PUSH_DE;
+    // LD_DE(mBGEffect_RapidCyclePals_Jumptable_DMG);
+    // CALL(aBatttleBGEffects_GetNamedJumptablePointer);
+    // POP_DE;
+    // JP_hl;
 
 Jumptable_DMG:
 
-    if (REG_BC == 0) goto zero_dmg;
-    if (REG_BC == 1) goto one_dmg;
-    if (REG_BC == 2) goto two_dmg;
+    index = gb_read(REG_BC + BG_EFFECT_STRUCT_JT_INDEX);
+    if (index == 0) goto zero_dmg;
+    if (index == 1) goto one_dmg;
+    if (index == 2) goto two_dmg;
 
 zero_dmg:
 
@@ -3053,21 +3216,22 @@ two_dmg:
     CALL(aEndBattleBGEffect);
     RET;
 
-cgb:
+// cgb:
 
-    PUSH_DE;
-    LD_DE(mBGEffect_RapidCyclePals_Jumptable_CGB);
-    CALL(aBatttleBGEffects_GetNamedJumptablePointer);
-    POP_DE;
-    JP_hl;
+    // PUSH_DE;
+    // LD_DE(mBGEffect_RapidCyclePals_Jumptable_CGB);
+    // CALL(aBatttleBGEffects_GetNamedJumptablePointer);
+    // POP_DE;
+    // JP_hl;
 
 Jumptable_CGB:
 
-    if (REG_BC == 0) goto zero_cgb;
-    if (REG_BC == 1) goto one_cgb;
-    if (REG_BC == 2) goto two_cgb;
-    if (REG_BC == 3) goto three_cgb;
-    if (REG_BC == 4) goto four_cgb;
+    index = gb_read(REG_BC + BG_EFFECT_STRUCT_JT_INDEX);
+    if (index == 0) goto zero_cgb;
+    if (index == 1) goto one_cgb;
+    if (index == 2) goto two_cgb;
+    if (index == 3) goto three_cgb;
+    if (index == 4) goto four_cgb;
 
 zero_cgb:
 

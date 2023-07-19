@@ -1,5 +1,6 @@
 #include "../../constants.h"
 #include "functions.h"
+#include "../math/sine.h"
 
 void DoBattleAnimFrame(void) {
     SET_PC(aDoBattleAnimFrame);
@@ -7,13 +8,97 @@ void DoBattleAnimFrame(void) {
     ADD_HL_BC;
     LD_E_hl;
     LD_D(0);
-    LD_HL(mDoBattleAnimFrame_Jumptable);
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    JP_hl;
+    // LD_HL(mDoBattleAnimFrame_Jumptable);
+    // ADD_HL_DE;
+    // ADD_HL_DE;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // JP_hl;
+    switch(REG_DE) {
+        case BATTLEANIMFUNC_NULL: CALL(aBattleAnimFunction_Null); break;
+        case BATTLEANIMFUNC_USER_TO_TARGET: CALL(aBattleAnimFunction_MoveFromUserToTarget); break;
+        case BATTLEANIMFUNC_USER_TO_TARGET_DISAPPEAR: CALL(aBattleAnimFunction_MoveFromUserToTargetAndDisappear); break;
+        case BATTLEANIMFUNC_MOVE_IN_CIRCLE: CALL(aBattleAnimFunction_MoveInCircle); break;
+        case BATTLEANIMFUNC_WAVE_TO_TARGET: CALL(aBattleAnimFunction_MoveWaveToTarget); break;
+        case BATTLEANIMFUNC_THROW_TO_TARGET: CALL(aBattleAnimFunction_ThrowFromUserToTarget); break;
+        case BATTLEANIMFUNC_THROW_TO_TARGET_DISAPPEAR: CALL(aBattleAnimFunction_ThrowFromUserToTargetAndDisappear); break;
+        case BATTLEANIMFUNC_DROP: CALL(aBattleAnimFunction_Drop); break;
+        case BATTLEANIMFUNC_USER_TO_TARGET_SPIN: CALL(aBattleAnimFunction_MoveFromUserToTargetSpinAround); break;
+        case BATTLEANIMFUNC_SHAKE: CALL(aBattleAnimFunction_Shake); break;
+        case BATTLEANIMFUNC_FIRE_BLAST: CALL(aBattleAnimFunction_FireBlast); break;
+        case BATTLEANIMFUNC_RAZOR_LEAF: CALL(aBattleAnimFunction_FireBlast); break;
+        case BATTLEANIMFUNC_BUBBLE: CALL(aBattleAnimFunction_FireBlast); break;
+        case BATTLEANIMFUNC_SURF: CALL(aBattleAnimFunction_Surf); break;
+        case BATTLEANIMFUNC_SING: CALL(aBattleAnimFunction_Sing); break;
+        case BATTLEANIMFUNC_WATER_GUN: CALL(aBattleAnimFunction_WaterGun); break;
+        case BATTLEANIMFUNC_EMBER: CALL(aBattleAnimFunction_Ember); break;
+        case BATTLEANIMFUNC_POWDER: CALL(aBattleAnimFunction_Powder); break;
+        case BATTLEANIMFUNC_POKEBALL: CALL(aBattleAnimFunction_PokeBall); break;
+        case BATTLEANIMFUNC_POKEBALL_BLOCKED: CALL(aBattleAnimFunction_PokeBallBlocked); break;
+        case BATTLEANIMFUNC_RECOVER: CALL(aBattleAnimFunction_Recover); break;
+        case BATTLEANIMFUNC_THUNDER_WAVE: CALL(aBattleAnimFunction_ThunderWave); break;
+        case BATTLEANIMFUNC_CLAMP_ENCORE: CALL(aBattleAnimFunction_Clamp_Encore); break;
+        case BATTLEANIMFUNC_BITE: CALL(aBattleAnimFunction_Bite); break;
+        case BATTLEANIMFUNC_SOLAR_BEAM: CALL(aBattleAnimFunction_SolarBeam); break;
+        case BATTLEANIMFUNC_GUST: CALL(aBattleAnimFunction_Gust); break;
+        case BATTLEANIMFUNC_RAZOR_WIND: CALL(aBattleAnimFunction_RazorWind); break;
+        case BATTLEANIMFUNC_KICK: CALL(aBattleAnimFunction_Kick); break;
+        case BATTLEANIMFUNC_ABSORB: CALL(aBattleAnimFunction_Absorb); break;
+        case BATTLEANIMFUNC_EGG: CALL(aBattleAnimFunction_Egg); break;
+        case BATTLEANIMFUNC_MOVE_UP: CALL(aBattleAnimFunction_MoveUp); break;
+        case BATTLEANIMFUNC_WRAP: CALL(aBattleAnimFunction_Wrap); break;
+        case BATTLEANIMFUNC_LEECH_SEED: CALL(aBattleAnimFunction_LeechSeed); break;
+        case BATTLEANIMFUNC_SOUND: CALL(aBattleAnimFunction_Sound); break;
+        case BATTLEANIMFUNC_CONFUSE_RAY: CALL(aBattleAnimFunction_ConfuseRay); break;
+        case BATTLEANIMFUNC_DIZZY: CALL(aBattleAnimFunction_Dizzy); break;
+        case BATTLEANIMFUNC_AMNESIA: CALL(aBattleAnimFunction_Amnesia); break;
+        case BATTLEANIMFUNC_FLOAT_UP: CALL(aBattleAnimFunction_FloatUp); break;
+        case BATTLEANIMFUNC_DIG: CALL(aBattleAnimFunction_Dig); break;
+        case BATTLEANIMFUNC_STRING: CALL(aBattleAnimFunction_String); break;
+        case BATTLEANIMFUNC_PARALYZED: CALL(aBattleAnimFunction_Paralyzed); break;
+        case BATTLEANIMFUNC_SPIRAL_DESCENT: CALL(aBattleAnimFunction_SpiralDescent); break;
+        case BATTLEANIMFUNC_POISON_GAS: CALL(aBattleAnimFunction_PoisonGas); break;
+        case BATTLEANIMFUNC_HORN: CALL(aBattleAnimFunction_Horn); break;
+        case BATTLEANIMFUNC_NEEDLE: CALL(aBattleAnimFunction_Needle); break;
+        case BATTLEANIMFUNC_PETAL_DANCE: CALL(aBattleAnimFunction_PetalDance); break;
+        case BATTLEANIMFUNC_THIEF_PAYDAY: CALL(aBattleAnimFunction_ThiefPayday); break;
+        case BATTLEANIMFUNC_ABSORB_CIRCLE: CALL(aBattleAnimFunction_AbsorbCircle); break;
+        case BATTLEANIMFUNC_BONEMERANG: CALL(aBattleAnimFunction_Bonemerang); break;
+        case BATTLEANIMFUNC_SHINY: CALL(aBattleAnimFunction_Shiny); break;
+        case BATTLEANIMFUNC_SKY_ATTACK: CALL(aBattleAnimFunction_SkyAttack); break;
+        case BATTLEANIMFUNC_GROWTH_SWORDS_DANCE: CALL(aBattleAnimFunction_GrowthSwordsDance); break;
+        case BATTLEANIMFUNC_SMOKE_FLAME_WHEEL: CALL(aBattleAnimFunction_SmokeFlameWheel); break;
+        case BATTLEANIMFUNC_PRESENT_SMOKESCREEN: CALL(aBattleAnimFunction_PresentSmokescreen); break;
+        case BATTLEANIMFUNC_STRENGTH_SEISMIC_TOSS: CALL(aBattleAnimFunction_StrengthSeismicToss); break;
+        case BATTLEANIMFUNC_SPEED_LINE: CALL(aBattleAnimFunction_SpeedLine); break;
+        case BATTLEANIMFUNC_SLUDGE: CALL(aBattleAnimFunction_Sludge); break;
+        case BATTLEANIMFUNC_METRONOME_HAND: CALL(aBattleAnimFunction_MetronomeHand); break;
+        case BATTLEANIMFUNC_METRONOME_SPARKLE_SKETCH: CALL(aBattleAnimFunction_MetronomeSparkleSketch); break;
+        case BATTLEANIMFUNC_AGILITY: CALL(aBattleAnimFunction_Agility); break;
+        case BATTLEANIMFUNC_SACRED_FIRE: CALL(aBattleAnimFunction_SacredFire); break;
+        case BATTLEANIMFUNC_SAFEGUARD_PROTECT: CALL(aBattleAnimFunction_SafeguardProtect); break;
+        case BATTLEANIMFUNC_LOCK_ON_MIND_READER: CALL(aBattleAnimFunction_LockOnMindReader); break;
+        case BATTLEANIMFUNC_SPIKES: CALL(aBattleAnimFunction_Spikes); break;
+        case BATTLEANIMFUNC_HEAL_BELL_NOTES: CALL(aBattleAnimFunction_HealBellNotes); break;
+        case BATTLEANIMFUNC_BATON_PASS: CALL(aBattleAnimFunction_BatonPass); break;
+        case BATTLEANIMFUNC_CONVERSION: CALL(aBattleAnimFunction_Conversion); break;
+        case BATTLEANIMFUNC_ENCORE_BELLY_DRUM: CALL(aBattleAnimFunction_EncoreBellyDrum); break;
+        case BATTLEANIMFUNC_SWAGGER_MORNING_SUN: CALL(aBattleAnimFunction_SwaggerMorningSun); break;
+        case BATTLEANIMFUNC_HIDDEN_POWER: CALL(aBattleAnimFunction_HiddenPower); break;
+        case BATTLEANIMFUNC_CURSE: CALL(aBattleAnimFunction_Curse); break;
+        case BATTLEANIMFUNC_PERISH_SONG: CALL(aBattleAnimFunction_PerishSong); break;
+        case BATTLEANIMFUNC_RAPID_SPIN: CALL(aBattleAnimFunction_RapidSpin); break;
+        case BATTLEANIMFUNC_BETA_PURSUIT: CALL(aBattleAnimFunction_BetaPursuit); break;
+        case BATTLEANIMFUNC_RAIN_SANDSTORM: CALL(aBattleAnimFunction_RainSandstorm); break;
+        case BATTLEANIMFUNC_ANIM_OBJ_B0: CALL(aBattleAnimFunction_AnimObjB0); break;
+        case BATTLEANIMFUNC_PSYCH_UP: CALL(aBattleAnimFunction_PsychUp); break;
+        case BATTLEANIMFUNC_ANCIENT_POWER: CALL(aBattleAnimFunction_AncientPower); break;
+        case BATTLEANIMFUNC_ROCK_SMASH: CALL(aBattleAnimFunction_RockSmash); break;
+        case BATTLEANIMFUNC_COTTON: CALL(aBattleAnimFunction_Cotton); break;
+        default: break;
+    }
+    RET;
 
 Jumptable:
 
@@ -4996,8 +5081,9 @@ void BattleAnim_Sine(void) {
     SET_PC(aBattleAnim_Sine);
     //  a = d * sin(a * pi/32)
     // calc_sine_wave ['BattleAnimSineWave']
+    REG_A = v_Sine_Conv(REG_A, REG_D);
 
-    return BattleAnim_Sine_e();
+    // return BattleAnim_Sine_e();
 }
 
 void BattleAnim_Sine_e(void) {

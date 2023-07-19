@@ -76,11 +76,11 @@ void GetMenuJoypad(void) {
     RET;
 }
 
-void GetMenuJoypad_Conv(void)
+uint8_t GetMenuJoypad_Conv(void)
 {
-    uint8_t pad_last = (gb_read(hJoyLast) & (D_PAD));
-    uint8_t button_last = (gb_read(hJoyPressed) & (BUTTONS));
-    REG_A = (pad_last | button_last);
+    uint8_t pad_last = (hram->hJoyLast & (D_PAD));
+    uint8_t button_last = (hram->hJoyPressed & (BUTTONS));
+    return (pad_last | button_last);
 }
 
 void PlaceHollowCursor(void) {

@@ -3,6 +3,7 @@
 #include "../../home/copy.h"
 #include "../../home/sram.h"
 
+// Returns false if battle scene is turned off.
 bool CheckBattleScene_Conv(void) {
     uint8_t linkMode = GetFarWRAMByte_Conv(MBANK(awLinkMode), wLinkMode);
     if(linkMode == LINK_MOBILE) {
@@ -14,18 +15,16 @@ bool CheckBattleScene_Conv(void) {
         CloseSRAM_Conv();
         return bit_test(c, 0);
     }
-    return !bit_test(gb_read(wOptions), BATTLE_SCENE);
+    return !bit_test(wram->wOptions, BATTLE_SCENE);
 }
 
 void CheckBattleScene(void){
 //  Return carry if battle scene is turned off.
     SET_PC(aCheckBattleScene);
     if(CheckBattleScene_Conv()) {
-        PEEK("Scene on.");
         AND_A_A;
     } else { 
         SCF;
-        PEEK("Scene off.");
     }
     RET;
 

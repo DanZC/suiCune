@@ -1,5 +1,11 @@
 #include "../../constants.h"
 #include "start_battle.h"
+#include "core.h"
+#include "../../home/delay.h"
+#include "../../home/audio.h"
+#include "../../home/text.h"
+#include "../../home/clear_sprites.h"
+#include "../overworld/landmarks.h"
 
 void ShowLinkBattleParticipants(void){
 //  If we're not in a communications room,
@@ -15,6 +21,26 @@ void ShowLinkBattleParticipants(void){
     CALL(aClearSprites);
     RET;
 
+}
+
+//  If we're not in a communications room,
+//  we don't need to be here.
+void ShowLinkBattleParticipants_Conv(void){
+    // LD_A_addr(wLinkMode);
+    // AND_A_A;
+    // RET_Z ;
+    if(wram->wLinkMode == 0)
+        return;
+
+    FARCALL(av_ShowLinkBattleParticipants);
+    // LD_C(150);
+    // CALL(aDelayFrames);
+    DelayFrames_Conv(150);
+    // CALL(aClearTilemap);
+    ClearTilemap_Conv();
+    // CALL(aClearSprites);
+    ClearSprites_Conv();
+    // RET;
 }
 
 void FindFirstAliveMonAndStartBattle(void){
@@ -163,6 +189,163 @@ done:
     POP_HL;
     RET;
 
+}
+
+void PlayBattleMusic_Conv(void){
+    // PUSH_HL;
+    // PUSH_DE;
+    // PUSH_BC;
+
+    // XOR_A_A;
+    // LD_addr_A(wMusicFade);
+    wram->wMusicFade = 0;
+    // LD_DE(MUSIC_NONE);
+    // CALL(aPlayMusic);
+    PlayMusic_Conv(MUSIC_NONE);
+    // CALL(aDelayFrame);
+    DelayFrame();
+    CALL(aMaxVolume);
+
+    uint16_t de;
+    // LD_A_addr(wBattleType);
+    // CP_A(BATTLETYPE_SUICUNE);
+    // LD_DE(MUSIC_SUICUNE_BATTLE);
+    // JP_Z (mPlayBattleMusic_done);
+    // CP_A(BATTLETYPE_ROAMING);
+    // JP_Z (mPlayBattleMusic_done);
+    if(wram->wBattleType == BATTLETYPE_SUICUNE || wram->wBattleType == BATTLETYPE_ROAMING) {
+        de = MUSIC_SUICUNE_BATTLE;
+    }
+
+// Are we fighting a trainer?
+    // LD_A_addr(wOtherTrainerClass);
+    // AND_A_A;
+    // IF_NZ goto trainermusic;
+    else if(wram->wOtherTrainerClass != 0) {
+    // trainermusic:
+        // LD_DE(MUSIC_CHAMPION_BATTLE);
+        // CP_A(CHAMPION);
+        // IF_Z goto done;
+        // CP_A(RED);
+        // IF_Z goto done;
+        if(wram->wOtherTrainerClass == CHAMPION || wram->wOtherTrainerClass == RED) {
+            de = MUSIC_CHAMPION_BATTLE;
+        }
+
+    // They should have included EXECUTIVEM, EXECUTIVEF, and SCIENTIST too...
+        // LD_DE(MUSIC_ROCKET_BATTLE);
+        // CP_A(GRUNTM);
+        // IF_Z goto done;
+        // CP_A(GRUNTF);
+        // IF_Z goto done;
+        else if(wram->wOtherTrainerClass == GRUNTM || wram->wOtherTrainerClass == GRUNTF
+             || wram->wOtherTrainerClass == EXECUTIVEM || wram->wOtherTrainerClass == EXECUTIVEF) {
+            de = MUSIC_ROCKET_BATTLE;
+        }
+
+        // LD_DE(MUSIC_KANTO_GYM_LEADER_BATTLE);
+        // FARCALL(aIsKantoGymLeader);
+        // IF_C goto done;
+        else if(IsKantoGymLeader_Conv(wram->wOtherTrainerClass)) {
+            de = MUSIC_KANTO_GYM_LEADER_BATTLE;
+        }
+
+    // IsGymLeader also counts CHAMPION, RED, and the Kanto gym leaders
+    // but they have been taken care of before this
+        // LD_DE(MUSIC_JOHTO_GYM_LEADER_BATTLE);
+        // FARCALL(aIsGymLeader);
+        // IF_C goto done;
+        else if(IsGymLeader_Conv(wram->wOtherTrainerClass)) {
+            de = MUSIC_JOHTO_GYM_LEADER_BATTLE;
+        }
+
+        // LD_DE(MUSIC_RIVAL_BATTLE);
+        // LD_A_addr(wOtherTrainerClass);
+        // CP_A(RIVAL1);
+        // IF_Z goto done;
+        else if(wram->wOtherTrainerClass == RIVAL1) {
+            de = MUSIC_RIVAL_BATTLE;
+        }
+        // CP_A(RIVAL2);
+        // IF_NZ goto othertrainer;
+
+        // LD_A_addr(wOtherTrainerID);
+        // CP_A(RIVAL2_2_CHIKORITA);  // Rival in Indigo Plateau
+        // IF_C goto done;
+        // LD_DE(MUSIC_CHAMPION_BATTLE);
+        // goto done;
+        else if(wram->wOtherTrainerClass == RIVAL2) {
+            if(wram->wOtherTrainerID < RIVAL2_2_CHIKORITA) {
+                de = MUSIC_RIVAL_BATTLE;
+            }
+            else {
+                de = MUSIC_CHAMPION_BATTLE;
+            }
+        }
+
+
+    // othertrainer:
+        // LD_A_addr(wLinkMode);
+        // AND_A_A;
+        // IF_NZ goto johtotrainer;
+        else if(wram->wLinkMode != 0) {
+            de = MUSIC_JOHTO_TRAINER_BATTLE;
+        }
+
+        // FARCALL(aRegionCheck);
+        // LD_A_E;
+        // AND_A_A;
+        // IF_NZ goto kantotrainer;
+        else if(RegionCheck_Conv() != 0) {
+            de = MUSIC_KANTO_TRAINER_BATTLE;
+        }
+
+
+    // johtotrainer:
+        // LD_DE(MUSIC_JOHTO_TRAINER_BATTLE);
+        // goto done;
+        else {
+            de = MUSIC_JOHTO_TRAINER_BATTLE;
+        }
+
+
+    // kantotrainer:
+        // LD_DE(MUSIC_KANTO_TRAINER_BATTLE);
+    }
+
+    // FARCALL(aRegionCheck);
+    // LD_A_E;
+    // AND_A_A;
+    // IF_NZ goto kantowild;
+    else if(RegionCheck_Conv() != JOHTO_REGION) {
+    // kantowild:
+        // LD_DE(MUSIC_KANTO_WILD_BATTLE);
+        // goto done;
+        de = MUSIC_KANTO_WILD_BATTLE;
+    }
+
+    // LD_DE(MUSIC_JOHTO_WILD_BATTLE);
+    // LD_A_addr(wTimeOfDay);
+    // CP_A(NITE_F);
+    // IF_NZ goto done;
+    else if(wram->wTimeOfDay != NITE_F) {
+        de = MUSIC_JOHTO_WILD_BATTLE;
+    }
+    // LD_DE(MUSIC_JOHTO_WILD_BATTLE_NIGHT);
+    // goto done;
+    else {
+        de = MUSIC_JOHTO_WILD_BATTLE_NIGHT;
+    }
+
+
+// done:
+    // CALL(aPlayMusic);
+    PlayMusic_Conv(de);
+
+    // POP_BC;
+    // POP_DE;
+    // POP_HL;
+    // RET;
 }
 
 void ClearBattleRAM(void){

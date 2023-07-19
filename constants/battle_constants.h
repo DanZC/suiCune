@@ -58,7 +58,7 @@ enum {
 // - wPlayerStats and wEnemyStats (see wram.asm)
 // - party_struct and battle_struct members (see macros/wram.asm)
 enum {
-    STAT_HP,
+    STAT_HP = 1,
     STAT_ATK,
     STAT_DEF,
     STAT_SPD,
@@ -81,7 +81,7 @@ enum {
 
 // battle classes (wBattleMode values)
 enum {
-    WILD_BATTLE,
+    WILD_BATTLE = 1,
     TRAINER_BATTLE,
 };
 
@@ -163,7 +163,7 @@ enum {  // Should always be in pairs
 // status condition bit flags
 #define SLP 0b111  // 0-7 turns
 enum {
-    PSN,
+    PSN = 3,
     BRN,
     FRZ,
     PAR,

@@ -1,9 +1,5 @@
 #include "../../constants.h"
-
-struct Flypoint {
-    uint8_t landmark;
-    uint8_t spawn;
-};
+#include "flypoints.h"
 
 const struct Flypoint Flypoints[] = {
 // entries correspond to FLY_* constants

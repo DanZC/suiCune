@@ -8,6 +8,409 @@
 
 // INCLUDE "data/sprites/map_objects.asm"
 
+// INCLUDE "engine/overworld/map_object_action.asm"
+// void ObjectActionPairPointers(void){
+//     //table_width ['2 + 2', 'ObjectActionPairPointers']
+// //  normal action,                  frozen action
+//     //dw ['SetFacingStanding', 'SetFacingStanding'];
+//     //dw ['SetFacingStandAction', 'SetFacingCurrent'];
+//     //dw ['SetFacingStepAction', 'SetFacingCurrent'];
+//     //dw ['SetFacingBumpAction', 'SetFacingCurrent'];
+//     //dw ['SetFacingCounterclockwiseSpin', 'SetFacingCurrent'];
+//     //dw ['SetFacingCounterclockwiseSpin2', 'SetFacingStanding'];
+//     //dw ['SetFacingFish', 'SetFacingFish'];
+//     //dw ['SetFacingShadow', 'SetFacingStanding'];
+//     //dw ['SetFacingEmote', 'SetFacingEmote'];
+//     //dw ['SetFacingBigDollSym', 'SetFacingBigDollSym'];
+//     //dw ['SetFacingBounce', 'SetFacingFreezeBounce'];
+//     //dw ['SetFacingWeirdTree', 'SetFacingCurrent'];
+//     //dw ['SetFacingBigDollAsym', 'SetFacingBigDollAsym'];
+//     //dw ['SetFacingBigDoll', 'SetFacingBigDoll'];
+//     //dw ['SetFacingBoulderDust', 'SetFacingStanding'];
+//     //dw ['SetFacingGrassShake', 'SetFacingStanding'];
+//     //dw ['SetFacingSkyfall', 'SetFacingCurrent'];
+//     //assert_table_length ['NUM_OBJECT_ACTIONS']
+
+//     return SetFacingStanding();
+// }
+
+static void SetFacingStanding(struct Object* bc);
+static void SetFacingCurrent(struct Object* bc);
+static void SetFacingStandAction(struct Object* bc);
+static void SetFacingStepAction(struct Object* bc);
+static void SetFacingSkyfall(struct Object* bc);
+static void SetFacingBumpAction(struct Object* bc);
+static void SetFacingCounterclockwiseSpin(struct Object* bc);
+static void SetFacingCounterclockwiseSpin2(struct Object* bc);
+static void CounterclockwiseSpinAction(struct Object* bc);
+static void SetFacingFish(struct Object* bc);
+static void SetFacingShadow(struct Object* bc);
+static void SetFacingEmote(struct Object* bc);
+static void SetFacingBigDollSym(struct Object* bc);
+static void SetFacingBounce(struct Object* bc);
+static void SetFacingFreezeBounce(struct Object* bc);
+static void SetFacingWeirdTree(struct Object* bc);
+static void SetFacingBigDollAsym(struct Object* bc);
+static void SetFacingBigDoll(struct Object* bc);
+static void SetFacingBoulderDust(struct Object* bc);
+static void SetFacingGrassShake(struct Object* bc);
+
+//  entries correspond to OBJECT_ACTION_* constants (see constants/map_object_constants.asm)
+static void (*const ObjectActionPairPointers[][2])(struct Object*) = {
+    //                                 normal action,                      frozen action
+    [OBJECT_ACTION_00]              = {SetFacingStanding,                  SetFacingStanding},
+    [OBJECT_ACTION_STAND]           = {SetFacingStandAction,               SetFacingCurrent},
+    [OBJECT_ACTION_STEP]            = {SetFacingStepAction,                SetFacingCurrent},
+    [OBJECT_ACTION_BUMP]            = {SetFacingBumpAction,                SetFacingCurrent},
+    [OBJECT_ACTION_SPIN]            = {SetFacingCounterclockwiseSpin,      SetFacingCurrent},
+    [OBJECT_ACTION_SPIN_FLICKER]    = {SetFacingCounterclockwiseSpin2,     SetFacingStanding},
+    [OBJECT_ACTION_FISHING]         = {SetFacingFish,                      SetFacingFish},
+    [OBJECT_ACTION_SHADOW]          = {SetFacingShadow,                    SetFacingStanding},
+    [OBJECT_ACTION_EMOTE]           = {SetFacingEmote,                     SetFacingEmote},
+    [OBJECT_ACTION_BIG_DOLL_SYM]    = {SetFacingBigDollSym,                SetFacingBigDollSym},
+    [OBJECT_ACTION_BOUNCE]          = {SetFacingBounce,                    SetFacingFreezeBounce},
+    [OBJECT_ACTION_WEIRD_TREE]      = {SetFacingWeirdTree,                 SetFacingCurrent},
+    [OBJECT_ACTION_BIG_DOLL_ASYM]   = {SetFacingBigDollAsym,               SetFacingBigDollAsym},
+    [OBJECT_ACTION_BIG_DOLL]        = {SetFacingBigDoll,                   SetFacingBigDoll},
+    [OBJECT_ACTION_BOULDER_DUST]    = {SetFacingBoulderDust,               SetFacingStanding},
+    [OBJECT_ACTION_GRASS_SHAKE]     = {SetFacingGrassShake,                SetFacingStanding},
+    [OBJECT_ACTION_SKYFALL]         = {SetFacingSkyfall,                   SetFacingCurrent},
+};
+
+void SetFacingStanding(struct Object* bc){
+    bc->facingStep = STANDING;
+}
+
+void SetFacingCurrent(struct Object* bc){
+    bc->facingStep = GetSpriteDirection_Conv(bc);
+}
+
+void SetFacingStandAction(struct Object* bc){
+    if(bc->facingStep & 1)
+        return SetFacingStepAction(bc);
+    return SetFacingCurrent(bc);
+}
+
+void SetFacingStepAction(struct Object* bc){
+    // LD_HL(OBJECT_FLAGS1);
+    // ADD_HL_BC;
+    // BIT_hl(SLIDING_F);
+    // JP_NZ (mSetFacingCurrent);
+    if(bit_test(bc->flags1, SLIDING_F))
+        return SetFacingCurrent(bc);
+
+    // LD_HL(OBJECT_STEP_FRAME);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // INC_A;
+    // AND_A(0b00001111);
+    // LD_hl_A;
+    bc->stepFrame = (bc->stepFrame + 1) & 0b00001111;
+    // RRCA;
+    // RRCA;
+    // a = (a >> 1) | (a << 7); 
+    // a = (a >> 1) | (a << 7); 
+    // maskbits(NUM_DIRECTIONS, 0);
+    // LD_D_A;
+    uint8_t d = (bc->stepFrame & 0b00001100) >> 2;
+
+    // CALL(aGetSpriteDirection);
+    // OR_A(FACING_STEP_DOWN_0);  // useless
+    // OR_A_D;
+    // LD_HL(OBJECT_FACING_STEP);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    bc->facingStep = GetSpriteDirection_Conv(bc) | d;
+    // RET;
+}
+
+void SetFacingSkyfall(struct Object* bc){
+    // LD_HL(OBJECT_FLAGS1);
+    // ADD_HL_BC;
+    // BIT_hl(SLIDING_F);
+    // JP_NZ (mSetFacingCurrent);
+    if(bit_test(bc->flags1, SLIDING_F))
+        return SetFacingCurrent(bc);
+
+    // LD_HL(OBJECT_STEP_FRAME);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // ADD_A(2);
+    // AND_A(0b00001111);
+    // LD_hl_A;
+    bc->stepFrame = (bc->stepFrame + 2) & 0b00001111;
+
+    // RRCA;
+    // RRCA;
+    // maskbits(NUM_DIRECTIONS, 0);
+    // LD_D_A;
+    uint8_t d = (bc->stepFrame & 0b00001100) >> 2;
+
+    // CALL(aGetSpriteDirection);
+    // OR_A(FACING_STEP_DOWN_0);  // useless
+    // OR_A_D;
+    // LD_HL(OBJECT_FACING_STEP);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    // RET;
+    bc->facingStep = GetSpriteDirection_Conv(bc) | d;
+}
+
+void SetFacingBumpAction(struct Object* bc){
+    // LD_HL(OBJECT_FLAGS1);
+    // ADD_HL_BC;
+    // BIT_hl(SLIDING_F);
+    // JP_NZ (mSetFacingCurrent);
+    if(bit_test(bc->flags1, SLIDING_F))
+        return SetFacingCurrent(bc);
+
+    // LD_HL(OBJECT_STEP_FRAME);
+    // ADD_HL_BC;
+    // INC_hl;
+    bc->stepFrame++;
+
+    // LD_A_hl;
+    // RRCA;
+    // RRCA;
+    // RRCA;
+    // maskbits(NUM_DIRECTIONS, 0);
+    // LD_D_A;
+    uint8_t d = (bc->stepFrame & 0b11000) >> 3;
+
+    // CALL(aGetSpriteDirection);
+    // OR_A(FACING_STEP_DOWN_0);  // useless
+    // OR_A_D;
+    // LD_HL(OBJECT_FACING_STEP);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    // RET;
+    bc->facingStep = GetSpriteDirection_Conv(bc) | d;
+}
+
+void SetFacingCounterclockwiseSpin(struct Object* bc){
+    // CALL(aCounterclockwiseSpinAction);
+    CounterclockwiseSpinAction(bc);
+    // LD_HL(OBJECT_FACING);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // OR_A(FACING_STEP_DOWN_0);  // useless
+    // LD_HL(OBJECT_FACING_STEP);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    bc->facingStep = bc->facing;
+    // RET;
+}
+
+void SetFacingCounterclockwiseSpin2(struct Object* bc){
+    // CALL(aCounterclockwiseSpinAction);
+    CounterclockwiseSpinAction(bc);
+    // JP(mSetFacingStanding);
+    return SetFacingStanding(bc);
+}
+
+//  Here, OBJECT_STEP_FRAME consists of two 2-bit components,
+//  using only bits 0,1 and 4,5.
+//  bits 0,1 is a timer (4 overworld frames)
+//  bits 4,5 determines the facing - the direction is counterclockwise.
+void CounterclockwiseSpinAction(struct Object* bc){
+    // LD_HL(OBJECT_STEP_FRAME);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // AND_A(0b11110000);
+    // LD_E_A;
+    uint8_t e = bc->stepFrame & 0b11110000;
+
+    // LD_A_hl;
+    // INC_A;
+    // AND_A(0b00001111);
+    // LD_D_A;
+    uint8_t d = (bc->stepFrame + 1) & 0b00001111;
+    // CP_A(4);
+    // IF_C goto ok;
+    if(d >= 4) {
+
+        // LD_D(0);
+        // LD_A_E;
+        // ADD_A(0x10);
+        // AND_A(0b00110000);
+        // LD_E_A;
+        d = 0;
+        e = (e + 0x10) & 0b00110000;
+    }
+
+    // LD_A_D;
+    // OR_A_E;
+    // LD_hl_A;
+    bc->stepFrame = d | e;
+
+    // SWAP_E;
+    e = (e >> 4) | (e << 4);
+    // LD_D(0);
+
+    
+    static const uint8_t facings[] = {OW_DOWN, OW_RIGHT, OW_UP, OW_LEFT};
+    // LD_HL(mCounterclockwiseSpinAction_facings);
+    // ADD_HL_DE;
+    // LD_A_hl;
+
+    // LD_HL(OBJECT_FACING);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    // RET;
+    bc->facing = facings[e];
+}
+
+void SetFacingFish(struct Object* bc){
+    // CALL(aGetSpriteDirection);
+    uint8_t a = GetSpriteDirection_Conv(bc);
+    // RRCA;
+    // RRCA;
+    // ADD_A(FACING_FISH_DOWN);
+    a = ((a & 0b11) << 6) + FACING_FISH_DOWN;
+    // LD_HL(OBJECT_FACING_STEP);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    // RET;
+    bc->facingStep = a;
+}
+
+void SetFacingShadow(struct Object* bc){
+    // LD_HL(OBJECT_FACING_STEP);
+    // ADD_HL_BC;
+    // LD_hl(FACING_SHADOW);
+    // RET;
+    bc->facingStep = FACING_SHADOW;
+}
+
+void SetFacingEmote(struct Object* bc){
+    // LD_HL(OBJECT_FACING_STEP);
+    // ADD_HL_BC;
+    // LD_hl(FACING_EMOTE);
+    // RET;
+    bc->facingStep = FACING_EMOTE;
+}
+
+void SetFacingBigDollSym(struct Object* bc){
+    // LD_HL(OBJECT_FACING_STEP);
+    // ADD_HL_BC;
+    // LD_hl(FACING_BIG_DOLL_SYM);
+    // RET;
+    bc->facingStep = FACING_BIG_DOLL_SYM;
+}
+
+void SetFacingBounce(struct Object* bc){
+    // LD_HL(OBJECT_STEP_FRAME);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // INC_A;
+    // AND_A(0b00001111);
+    // LD_hl_A;
+    bc->stepFrame = (bc->stepFrame + 1) & 0b00001111;
+    // AND_A(0b00001000);
+    // JR_Z (mSetFacingFreezeBounce);
+    if(!(bc->stepFrame & 0b00001000))
+        return SetFacingFreezeBounce(bc);
+    // LD_HL(OBJECT_FACING_STEP);
+    // ADD_HL_BC;
+    // LD_hl(FACING_STEP_UP_0);
+    // RET;
+    bc->facingStep = FACING_STEP_UP_0;
+}
+
+void SetFacingFreezeBounce(struct Object* bc){
+    // LD_HL(OBJECT_FACING_STEP);
+    // ADD_HL_BC;
+    // LD_hl(FACING_STEP_DOWN_0);
+    // RET;
+    bc->facingStep = FACING_STEP_DOWN_0;
+}
+
+void SetFacingWeirdTree(struct Object* bc){
+    // LD_HL(OBJECT_STEP_FRAME);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // INC_A;
+    // LD_hl_A;
+    bc->stepFrame++;
+    // maskbits(NUM_DIRECTIONS, 2);
+    // RRCA;
+    // RRCA;
+    // ADD_A(FACING_WEIRD_TREE_0);
+    // LD_HL(OBJECT_FACING_STEP);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    // RET;
+    bc->facingStep = ((bc->stepFrame & (3 << 2)) >> 2) + FACING_WEIRD_TREE_0;
+}
+
+void SetFacingBigDollAsym(struct Object* bc){
+    // LD_HL(OBJECT_FACING_STEP);
+    // ADD_HL_BC;
+    // LD_hl(FACING_BIG_DOLL_ASYM);
+    // RET;
+    bc->facingStep = FACING_BIG_DOLL_ASYM;
+}
+
+void SetFacingBigDoll(struct Object* bc){
+    // LD_A_addr(wVariableSprites + SPRITE_BIG_DOLL - SPRITE_VARS);
+    uint8_t a = wram->wVariableSprites[SPRITE_BIG_DOLL - SPRITE_VARS];
+    // LD_D(FACING_BIG_DOLL_SYM);  // symmetric
+    // CP_A(SPRITE_BIG_SNORLAX);
+    // IF_Z goto ok;
+    // CP_A(SPRITE_BIG_LAPRAS);
+    // IF_Z goto ok;
+    // LD_D(FACING_BIG_DOLL_ASYM);  // asymmetric
+
+
+// ok:
+    // LD_HL(OBJECT_FACING_STEP);
+    // ADD_HL_BC;
+    // LD_hl_D;
+    // RET;
+    bc->facingStep = (a == SPRITE_BIG_SNORLAX || a == SPRITE_BIG_LAPRAS)? FACING_BIG_DOLL_SYM: FACING_BIG_DOLL_ASYM;
+}
+
+void SetFacingBoulderDust(struct Object* bc){
+    // LD_HL(OBJECT_STEP_FRAME);
+    // ADD_HL_BC;
+    // INC_hl;
+    bc->stepFrame++;
+    // LD_A_hl;
+
+    // LD_HL(OBJECT_FACING_STEP);
+    // ADD_HL_BC;
+    // AND_A(2);
+    // LD_A(FACING_BOULDER_DUST_1);
+    // IF_Z goto ok;
+    // INC_A;
+    //assert ['FACING_BOULDER_DUST_1 + 1 == FACING_BOULDER_DUST_2'];
+
+// ok:
+    // LD_hl_A;
+    // RET;
+    bc->facingStep = ((bc->stepFrame & 2) == 0)? FACING_BOULDER_DUST_1: FACING_BOULDER_DUST_2;
+}
+
+void SetFacingGrassShake(struct Object* bc){
+    // LD_HL(OBJECT_STEP_FRAME);
+    // ADD_HL_BC;
+    // INC_hl;
+    bc->stepFrame++;
+    // LD_A_hl;
+    // LD_HL(OBJECT_FACING_STEP);
+    // ADD_HL_BC;
+    // AND_A(4);
+    // LD_A(FACING_GRASS_1);
+    // IF_Z goto ok;
+    // INC_A;  // FACING_GRASS_2
+
+
+// ok:
+    // LD_hl_A;
+    // RET;
+    bc->facingStep = ((bc->stepFrame & 4) == 0)? FACING_GRASS_1: FACING_GRASS_2;
+}
+
 void DeleteMapObject(void) {
     SET_PC(aDeleteMapObject);
     PUSH_BC;
@@ -34,6 +437,43 @@ ok:
 
     POP_BC;
     RET;
+}
+
+void DeleteMapObject_Conv(struct Object* obj) {
+    // SET_PC(aDeleteMapObject);
+    // PUSH_BC;
+    // LD_HL(OBJECT_MAP_OBJECT_INDEX);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    uint8_t a = obj->mapObjectIndex;
+    // PUSH_AF;
+    // LD_H_B;
+    // LD_L_C;
+    // LD_BC(OBJECT_LENGTH);
+    // XOR_A_A;
+    // CALL(aByteFill);
+    ByteFill_Conv((obj - wram->wObjectStruct) + wObjectStructs, OBJECT_LENGTH, 0);
+    // POP_AF;
+    // CP_A(-1);
+    // IF_Z goto ok;
+    if(a == 0xff)
+        return;
+    
+    // BIT_A(7);
+    // IF_NZ goto ok;
+    if(bit_test(a, 7))
+        return;
+    
+    // CALL(aGetMapObject);
+    // LD_HL(OBJECT_SPRITE);
+    // ADD_HL_BC;
+    // LD_hl(-1);
+    GetMapObject_Conv(a)->sprite = 0xff;
+
+// ok:
+
+    // POP_BC;
+    // RET;
 }
 
 void HandleObjectStep(void) {
@@ -193,14 +633,14 @@ void HandleFrozenObjectAction(void) {
     return v_CallFrozenObjectAction();
 }
 
-void HandleFrozenObjectAction_Conv(uint16_t bc) {
+void HandleFrozenObjectAction_Conv(struct Object* bc) {
     // SET_PC(aHandleFrozenObjectAction);
     // LD_HL(OBJECT_FLAGS1);
     // ADD_HL_BC;
     // BIT_hl(INVISIBLE_F);
     // JR_NZ(mSetFacingStanding);
-    if(bit_test(gb_read(bc + OBJECT_FLAGS1), INVISIBLE_F)) {
-        SetFacing_Standing_Conv(bc);
+    if(bit_test(bc->flags1, INVISIBLE_F)) {
+        return SetFacing_Standing_Conv(bc), (void)0;
     }
     return v_CallFrozenObjectAction_Conv(bc);
 }
@@ -212,12 +652,12 @@ void v_CallFrozenObjectAction(void) {
     JR(mCallObjectAction);  // pointless
 }
 
-void v_CallFrozenObjectAction_Conv(uint16_t bc) {
+void v_CallFrozenObjectAction_Conv(struct Object* bc) {
     // SET_PC(av_CallFrozenObjectAction);
     //  use second column (frozen)
     // LD_DE(mObjectActionPairPointers + 2);
     // JR(mCallObjectAction);  // pointless
-    return CallObjectAction_Conv(bc, mObjectActionPairPointers + 2);
+    return CallObjectAction_Conv(bc, 1);
 }
 
 void CallObjectAction(void) {
@@ -236,17 +676,15 @@ void CallObjectAction(void) {
     CALL(av_hl_);
     RET;
 
-    // INCLUDE "engine/overworld/map_object_action.asm"
-
     return CopyNextCoordsTileToStandingCoordsTile();
 }
 
-void CallObjectAction_Conv(uint16_t bc, uint16_t de) {
+void CallObjectAction_Conv(struct Object* bc, int column) {
     // SET_PC(aCallObjectAction);
     // LD_HL(OBJECT_ACTION);
     // ADD_HL_BC;
     // LD_A_hl;
-    uint8_t action = gb_read(bc + OBJECT_ACTION);
+    uint8_t action = bc->action;
     // LD_L_A;
     // LD_H(0);
     // ADD_HL_HL;
@@ -255,11 +693,12 @@ void CallObjectAction_Conv(uint16_t bc, uint16_t de) {
     // LD_A_hli;
     // LD_H_hl;
     // LD_L_A;
-    uint16_t ptr = gb_read(de + (action * 4));
+    // uint16_t ptr = gb_read(de + (action * 4));
     // CALL(av_hl_);
-    REG_BC = bc;
-    CALL(ptr);
+    // REG_BC = bc;
+    // CALL(ptr);
     // RET;
+    return ObjectActionPairPointers[action][column](bc);
 }
 
 void CopyNextCoordsTileToStandingCoordsTile(void) {
@@ -2695,7 +3134,7 @@ void UpdateAllObjectsFrozen_Conv(void) {
     // LD_BC(wObjectStructs);
     // XOR_A_A;
     uint8_t a = 0;
-    uint16_t bc = wObjectStructs;
+    struct Object* bc = wram->wObjectStruct;
 
 // loop:
 
@@ -2713,7 +3152,7 @@ void UpdateAllObjectsFrozen_Conv(void) {
         // ADD_HL_BC;
         // LD_B_H;
         // LD_C_L;
-        bc += OBJECT_LENGTH;
+        bc++;
         // LDH_A_addr(hMapObjectIndex);
         a = gb_read(hMapObjectIndex);
         // INC_A;
@@ -2805,7 +3244,7 @@ void UpdateObjectFrozen(void) {
     RET;
 }
 
-bool UpdateObjectFrozen_Conv(uint16_t bc) {
+bool UpdateObjectFrozen_Conv(struct Object* bc) {
     // SET_PC(aUpdateObjectFrozen);
     // PUSH_BC;
     // CALL(aCheckObjectCoveredByTextbox);
@@ -2846,11 +3285,11 @@ void SetFacing_Standing(void) {
     RET;
 }
 
-bool SetFacing_Standing_Conv(uint16_t bc) {
+bool SetFacing_Standing_Conv(struct Object* bc) {
     // LD_HL(OBJECT_FACING_STEP);
     // ADD_HL_BC;
     // LD_hl(STANDING);
-    gb_write(bc + OBJECT_FACING_STEP, STANDING);
+    bc->facingStep = STANDING;
     // SCF;
     // RET;
     return true;
@@ -2874,7 +3313,7 @@ void UpdateObjectNextTile(void) {
     RET;
 }
 
-void UpdateObjectNextTile_Conv(uint16_t bc) {
+void UpdateObjectNextTile_Conv(struct Object* bc) {
     // SET_PC(aUpdateObjectNextTile);
     // PUSH_BC;
     // LD_HL(OBJECT_NEXT_MAP_X);
@@ -2883,14 +3322,14 @@ void UpdateObjectNextTile_Conv(uint16_t bc) {
     // LD_HL(OBJECT_NEXT_MAP_Y);
     // ADD_HL_BC;
     // LD_E_hl;
-    REG_DE = (gb_read(bc + OBJECT_NEXT_MAP_X) << 8) | gb_read(bc + OBJECT_NEXT_MAP_Y);
+    REG_DE = (bc->nextMapX << 8) | gb_read(bc->nextMapY);
     // GetCoordTile
     CALL(aGetCoordTile);
     // POP_BC;
     // LD_HL(OBJECT_NEXT_TILE);
     // ADD_HL_BC;
     // LD_hl_A;
-    gb_write(bc + OBJECT_NEXT_TILE, REG_A);
+    bc->nextTile = REG_A;
     // FARCALL(aUpdateTallGrassFlags);  // no need to farcall
     CALL(aUpdateTallGrassFlags);
     // RET;
@@ -2935,15 +3374,15 @@ nope:
     RET;
 }
 
-bool CheckObjectOnScreen_Conv(uint16_t bc) {
+bool CheckObjectOnScreen_Conv(struct Object* bc) {
     // LD_HL(OBJECT_NEXT_MAP_X);
     // ADD_HL_BC;
     // LD_D_hl;
-    uint8_t x = gb_read(bc + OBJECT_NEXT_MAP_X) + 1;
+    uint8_t x = bc->nextMapX + 1;
     // LD_HL(OBJECT_NEXT_MAP_Y);
     // ADD_HL_BC;
     // LD_E_hl;
-    uint8_t y = gb_read(bc + OBJECT_NEXT_MAP_Y) + 1;
+    uint8_t y = bc->nextMapY + 1;
     // INC_D;
     // INC_E;
     // LD_A_addr(wXCoord);
@@ -2953,12 +3392,12 @@ bool CheckObjectOnScreen_Conv(uint16_t bc) {
     // ADD_A(MAPOBJECT_SCREEN_WIDTH - 1);
     // CP_A_D;
     // IF_C goto nope;
-    uint8_t n = gb_read(wXCoord);
+    uint8_t n = wram->wXCoord;
     if(n == x || (n < x && (n + (MAPOBJECT_SCREEN_WIDTH - 1) >= x))) {
     // equal_x:
 
         // LD_A_addr(wYCoord);
-        n = gb_read(wYCoord);
+        n = wram->wYCoord;
         // CP_A_E;
         // IF_Z goto equal_y;
         // IF_NC goto nope;
@@ -3123,7 +3562,7 @@ nope:
     RET;
 }
 
-bool CheckObjectCoveredByTextbox_Conv(uint16_t bc) {
+bool CheckObjectCoveredByTextbox_Conv(struct Object* bc) {
     // SET_PC(aCheckObjectCoveredByTextbox);
     //  Check whether the object fits in the screen width.
     // LD_A_addr(wPlayerBGMapOffsetX);
@@ -3135,7 +3574,7 @@ bool CheckObjectCoveredByTextbox_Conv(uint16_t bc) {
     // ADD_HL_BC;
     // ADD_A_hl;
     // ADD_A_D;
-    uint8_t x = gb_read(bc + OBJECT_SPRITE_X_OFFSET) + gb_read(bc + OBJECT_SPRITE_X) + gb_read(wPlayerBGMapOffsetX);
+    uint8_t x = bc->spriteXOffset + bc->spriteX + wram->wPlayerBGMapOffsetX;
     // CP_A(0xf0);
     // IF_NC goto ok1;
     // CP_A(SCREEN_WIDTH_PX);
@@ -3158,7 +3597,7 @@ bool CheckObjectCoveredByTextbox_Conv(uint16_t bc) {
         // SRL_A;
         // CP_A(SCREEN_WIDTH);
         // IF_C goto ok3;
-        x = gb_read(bc + OBJECT_SPRITE_X) << 3;
+        x = bc->spriteX << 3;
         if(x >= SCREEN_WIDTH)
             x -= BG_MAP_WIDTH;
         // SUB_A(BG_MAP_WIDTH);
@@ -3166,7 +3605,7 @@ bool CheckObjectCoveredByTextbox_Conv(uint16_t bc) {
         // ok3:
 
         // LDH_addr_A(hCurSpriteXCoord);
-        gb_write(hCurSpriteXCoord, x);
+        hram->hCurSpriteXCoord = x;
 
         // //  Check whether the object fits in the screen height.
         // LD_A_addr(wPlayerBGMapOffsetY);
@@ -3178,7 +3617,7 @@ bool CheckObjectCoveredByTextbox_Conv(uint16_t bc) {
         // ADD_HL_BC;
         // ADD_A_hl;
         // ADD_A_E;
-        uint8_t y = gb_read(bc + OBJECT_SPRITE_Y_OFFSET) + gb_read(bc + OBJECT_SPRITE_Y) + gb_read(wPlayerBGMapOffsetY);
+        uint8_t y = bc->spriteYOffset + bc->spriteY + wram->wPlayerBGMapOffsetY;
         // CP_A(0xf0);
         // IF_NC goto ok4;
         // CP_A(SCREEN_HEIGHT_PX);
@@ -3204,21 +3643,21 @@ bool CheckObjectCoveredByTextbox_Conv(uint16_t bc) {
             // CP_A(SCREEN_HEIGHT);
             // IF_C goto ok6;
             // SUB_A(BG_MAP_HEIGHT);
-            y = gb_read(bc + OBJECT_SPRITE_Y) << 3;
+            y = bc->spriteY << 3;
             if(y >= SCREEN_HEIGHT)
                 y -= BG_MAP_HEIGHT;
 
         // ok6:
 
         //     LDH_addr_A(hCurSpriteYCoord);
-            gb_write(hCurSpriteYCoord, y);
+            hram->hCurSpriteYCoord = y;
 
             //  Account for big objects that are twice as wide and high.
             // LD_HL(OBJECT_PALETTE);
             // ADD_HL_BC;
             // BIT_hl(BIG_OBJECT_F);
             // IF_Z goto ok7;
-            if(bit_test(gb_read(bc + OBJECT_PALETTE), BIG_OBJECT_F)) {
+            if(bit_test(bc->palette, BIG_OBJECT_F)) {
                 // LD_A_D;
                 // ADD_A(2);
                 // LD_D_A;
@@ -3234,17 +3673,17 @@ bool CheckObjectCoveredByTextbox_Conv(uint16_t bc) {
 
         //     LD_A_D;
         //     LDH_addr_A(hCurSpriteXPixel);
-            gb_write(hCurSpriteXPixel, d);
+            hram->hCurSpriteXPixel = d;
 
         // loop:
             do {
                 // LDH_A_addr(hCurSpriteXPixel);
                 // LD_D_A;
-                d = gb_read(hCurSpriteXPixel);
+                d = hram->hCurSpriteXPixel;
                 // LDH_A_addr(hCurSpriteYCoord);
                 // ADD_A_E;
                 // DEC_A;
-                uint8_t ycoord = (gb_read(hCurSpriteYCoord) + e) - 1;
+                uint8_t ycoord = (hram->hCurSpriteYCoord + e) - 1;
                 // CP_A(SCREEN_HEIGHT);
                 // IF_NC goto ok9;
                 if(ycoord >= SCREEN_HEIGHT) 
@@ -3256,7 +3695,7 @@ bool CheckObjectCoveredByTextbox_Conv(uint16_t bc) {
                     // LDH_A_addr(hCurSpriteXCoord);
                     // ADD_A_D;
                     // DEC_A;
-                    uint8_t xcoord = (gb_read(hCurSpriteXCoord) + d) - 1;
+                    uint8_t xcoord = (hram->hCurSpriteXCoord + d) - 1;
                     // CP_A(SCREEN_WIDTH);
                     // IF_NC goto ok8;
                     if(xcoord >= SCREEN_WIDTH)
@@ -3806,7 +4245,7 @@ static void InitSprites_DeterminePriorities(void) {
     // CALL(aByteFill);
     ByteFill_Conv(wObjectPriorities, NUM_OBJECT_STRUCTS, 0);
     uint8_t d = 0;
-    uint16_t bc = wObjectStructs;
+    struct Object* bc = wram->wObjectStruct;
     uint16_t hl = wObjectPriorities;
     uint8_t e;
     // LD_D(0);
@@ -3822,7 +4261,7 @@ static void InitSprites_DeterminePriorities(void) {
         // LD_A_hl;
         // CP_A(STANDING);
         // IF_Z goto skip;
-        if(!DoesObjectHaveASprite_Conv(bc) || gb_read(bc + OBJECT_FACING_STEP) == (uint8_t)STANDING) {
+        if(!DoesObjectHaveASprite_Conv(bc) || bc->facingStep == (uint8_t)STANDING) {
         // skip:
 
         //     LD_HL(OBJECT_LENGTH);
@@ -3831,21 +4270,21 @@ static void InitSprites_DeterminePriorities(void) {
         //     LD_C_L;
         //     POP_HL;
         //     goto next;
-            bc = bc + OBJECT_LENGTH;
+            bc++;
         }
         else {
             //  Define the sprite priority.
             // LD_E(PRIORITY_LOW);
             // LD_HL(OBJECT_FLAGS2);
             // ADD_HL_BC;
-            BIT_hl(LOW_PRIORITY_F);
+            // BIT_hl(LOW_PRIORITY_F);
             // IF_NZ goto add;
-            if(((gb_read(bc + OBJECT_FLAGS2) >> (LOW_PRIORITY_F)) & 0x1)) {
+            if(((bc->flags2 >> (LOW_PRIORITY_F)) & 0x1)) {
                 e = PRIORITY_LOW;
             }
             // BIT_hl(HIGH_PRIORITY_F);
             // IF_Z goto add;
-            else if(!((gb_read(bc + OBJECT_FLAGS2) >> (HIGH_PRIORITY_F)) & 0x1)) {
+            else if(!((bc->flags2 >> (HIGH_PRIORITY_F)) & 0x1)) {
                 e = PRIORITY_NORM;
             }
             else {
@@ -3856,7 +4295,7 @@ static void InitSprites_DeterminePriorities(void) {
             // ADD_HL_BC;
             // LD_B_H;
             // LD_C_L;
-            bc = bc + OBJECT_LENGTH;
+            bc++;
             // POP_HL;
             // LD_A_D;
             // OR_A_E;

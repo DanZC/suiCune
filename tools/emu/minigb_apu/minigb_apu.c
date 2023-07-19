@@ -106,7 +106,7 @@ static int32_t vol_l, vol_r;
 static int16_t hipass(struct chan *c, int16_t sample)
 {
 #if ENABLE_HIPASS
-	float fsample = (sample / 32768.f);
+	float fsample = ((float)sample / 32768.f);
 	float out = fsample - c->capacitor; 
 	c->capacitor = fsample - (out * 0.996f);
 	return (int16_t)(out * 32768);
@@ -203,7 +203,7 @@ static void update_sweep(struct chan *c)
 	}
 }
 
-static void update_square(int16_t *restrict samples, const bool ch2)
+static void update_square(int16_t *samples, const bool ch2)
 {
 	uint32_t freq;
 	struct chan* c = chans + ch2;
@@ -264,7 +264,7 @@ static uint8_t wave_sample(const unsigned int pos, const unsigned int volume)
 	return volume ? (sample >> (volume - 1)) : 0;
 }
 
-static void update_wave(int16_t *restrict samples)
+static void update_wave(int16_t *samples)
 {
 	uint32_t freq;
 	struct chan *c = chans + 2;
@@ -387,14 +387,14 @@ static void update_noise(int16_t *restrict samples)
 /**
  * SDL2 style audio callback function.
  */
-void audio_callback(void *userdata, uint8_t *restrict stream, int len)
+void audio_callback(void *userdata, uint8_t *stream, int len)
 {
 	int16_t *samples = (int16_t *)stream;
 
 	/* Appease unused variable warning. */
 	(void)userdata;
 
-	memset(stream, 0, len);
+	memset(samples, 0, len);
 
 	update_square(samples, 0);
 	update_square(samples, 1);

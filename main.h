@@ -7,12 +7,12 @@
 //#include "engine/link/place_waiting_text.h"
 //#include "engine/gfx/load_push_oam.h"
 #include "engine/overworld/map_objects.h"
-//#include "engine/menus/intro_menu.h"
+#include "engine/menus/intro_menu.h"
 #include "engine/overworld/init_map.h"
 //#include "engine/pokemon/learn.h"
 //#include "engine/pokemon/correct_nick_errors.h"
 #include "engine/math/math.h"
-//#include "data/items/attributes.h"
+#include "data/items/attributes.h"
 //#include "engine/overworld/npc_movement.h"
 //#include "engine/events/happiness_egg.h"
 //#include "engine/events/shuckle.h"
@@ -32,7 +32,7 @@
 #include "engine/math/print_num.h"
 //#include "engine/pokemon/health.h"
 //#include "engine/events/overworld.h"
-//#include "engine/items/items.h"
+#include "engine/items/items.h"
 //#include "engine/overworld/player_step.h"
 //#include "engine/battle/anim_hp_bar.h"
 //#include "engine/pokemon/move_mon.h"
@@ -71,7 +71,7 @@
 // SECTION "bank5", ROMX
 
 #include "engine/rtc/rtc.h"
-//#include "engine/overworld/overworld.h"
+#include "engine/overworld/overworld.h"
 //#include "engine/overworld/tile_events.h"
 //#include "engine/menus/save.h"
 //#include "engine/overworld/spawn_points.h"
@@ -138,14 +138,14 @@
 
 // SECTION "Effect Commands", ROMX
 
-//#include "engine/battle/effect_commands.h"
+#include "engine/battle/effect_commands.h"
 
 // SECTION "Enemy Trainers", ROMX
 
 //#include "engine/battle/ai/items.h"
 //#include "engine/battle/ai/scoring.h"
 //#include "engine/battle/read_trainer_attributes.h"
-//#include "engine/battle/read_trainer_party.h"
+#include "engine/battle/read_trainer_party.h"
 
 // SECTION "Battle Core", ROMX
 
@@ -182,7 +182,7 @@
 
 //#include "engine/tilesets/map_palettes.h"
 //#include "gfx/tileset_palette_maps.h"
-//#include "data/collision/collision_permissions.h"
+#include "data/collision/collision_permissions.h"
 //#include "engine/menus/empty_sram.h"
 #include "engine/menus/savemenu_copytilemapatonce.h"
 //#include "engine/events/checksave.h"
@@ -255,7 +255,7 @@
 // SECTION "bank20", ROMX
 
 //#include "engine/overworld/player_movement.h"
-//#include "engine/events/engine_flags.h"
+#include "engine/events/engine_flags.h"
 //#include "engine/overworld/variables.h"
 //#include "data/text/battle.h"
 //#include "engine/debug/color_picker.h"
@@ -295,6 +295,9 @@
 #include "engine/pokegear/pokegear.h"
 //#include "engine/events/fish.h"
 //#include "engine/games/slot_machine.h"
+
+// SECTION "Events", ROMX
+#include "engine/overworld/events.h"
 
 // SECTION "Phone Scripts 1", ROMX
 
@@ -387,7 +390,7 @@
 // SECTION "Move Animations", ROMX
 
 //#include "engine/events/bug_contest/display_stats.h"
-//#include "engine/battle_anims/anim_commands.h"
+#include "engine/battle_anims/anim_commands.h"
 #include "engine/battle_anims/core.h"
 #include "engine/battle_anims/functions.h"
 //#include "engine/battle_anims/helpers.h"
@@ -589,7 +592,7 @@
 //#include "data/items/names.h"
 //#include "engine/items/print_item_description.h"
 //#include "data/moves/names.h"
-//#include "engine/overworld/landmarks.h"
+#include "engine/overworld/landmarks.h"
 
 // SECTION "Print Party", ROMX
 

@@ -29,6 +29,49 @@ count:
 
 }
 
+static unsigned int popcount8(uint8_t x)
+{
+    unsigned int count;
+    for(count = 0; x; count++) {
+        x &= x - 1;
+    }
+    return count;
+}
+
+//  Count the number of set bits in b bytes starting from hl.
+//  Return in a, c and [wNumSetBits].
+uint8_t CountSetBits_Conv(uint16_t hl, uint8_t b){
+    // LD_C(0);
+    uint8_t c = 0;
+
+// next:
+    // LD_A_hli;
+    // LD_E_A;
+    // LD_D(8);
+
+
+// count:
+    // SRL_E;
+    // LD_A(0);
+    // ADC_A_C;
+    // LD_C_A;
+    // DEC_D;
+    // IF_NZ goto count;
+
+    // DEC_B;
+    // IF_NZ goto next;
+
+    for(uint8_t i = 0; i < b; ++i) {
+        c += (uint8_t)popcount8(gb_read(hl + i));
+    }
+
+    // LD_A_C;
+    // LD_addr_A(wNumSetBits);
+    // RET;
+    wram->wNumSetBits = c;
+    return c;
+}
+
 void GetWeekday(void){
         LD_A_addr(wCurDay);
 
@@ -42,7 +85,7 @@ mod:
 
 uint8_t GetWeekday_Conv(void){
     // LD_A_addr(wCurDay);
-    uint8_t day = gb_read(wCurDay);
+    uint8_t day = wram->wCurDay;
 // mod:
 //         SUB_A(7);
 //     IF_NC goto mod;
