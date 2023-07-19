@@ -927,7 +927,7 @@ void UpdateSprites_Conv(void){
     // LD_A_addr(wVramState);
     // BIT_A(0);
     // RET_Z ;
-    if(!((gb_read(wVramState) >> (0)) & 0x1))
+    if(!bit_test(wram->wVramState, 0))
         return;
 
     // FARCALL(aUpdateAllObjectsFrozen);
@@ -994,7 +994,7 @@ void SetSpriteDirection(void){
 
 }
 
-void SetSpriteDirection_Conv(uint16_t bc, uint8_t a){
+void SetSpriteDirection_Conv(struct Object* bc, uint8_t a){
     // preserves other flags
     // PUSH_AF;
     // LD_HL(OBJECT_FACING);
@@ -1003,11 +1003,11 @@ void SetSpriteDirection_Conv(uint16_t bc, uint8_t a){
     // AND_A(0b11110011);
     // LD_E_A;
     // POP_AF;
-    uint8_t e = gb_read(bc + OBJECT_FACING) & 0b11110011;
+    uint8_t e = bc->facing & 0b11110011;
     // maskbits(NUM_DIRECTIONS, 2);
     // OR_A_E;
     // LD_hl_A;
-    gb_write(bc + OBJECT_FACING, e | (a & ((NUM_DIRECTIONS - 1) << 2)));
+    bc->facing =  e | (a & ((NUM_DIRECTIONS - 1) << 2));
     // RET;
 
 }

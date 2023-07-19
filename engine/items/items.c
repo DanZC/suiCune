@@ -261,6 +261,37 @@ not_pc:
 
 }
 
+uint8_t GetPocketCapacity_Conv(item_t* pocket){
+    // LD_C(MAX_ITEMS);
+    // LD_A_E;
+    // CP_A(LOW(wNumItems));
+    // IF_NZ goto not_bag;
+    // LD_A_D;
+    // CP_A(HIGH(wNumItems));
+    // RET_Z ;
+    if(pocket == wram->wItems) {
+        return MAX_ITEMS;
+    }
+
+// not_bag:
+    // LD_C(MAX_PC_ITEMS);
+    // LD_A_E;
+    // CP_A(LOW(wNumPCItems));
+    // IF_NZ goto not_pc;
+    // LD_A_D;
+    // CP_A(HIGH(wNumPCItems));
+    // RET_Z ;
+    if(pocket == wram->wPCItems) {
+        return MAX_PC_ITEMS;
+    }
+
+
+// not_pc:
+    // LD_C(MAX_BALLS);
+    // RET;
+    return MAX_BALLS;
+}
+
 void PutItemInPocket(void){
     LD_D_H;
     LD_E_L;
@@ -453,7 +484,7 @@ bool CheckTheItem_Conv(item_t item, item_t* hl){
         a = *(hl++);
         // CP_A(-1);
         // IF_Z goto done;
-        if(a == 0xff)
+        if(a == (item_t)-1)
             return false;
         // CP_A_C;
         // IF_NZ goto loop;
@@ -490,6 +521,32 @@ nope:
     AND_A_A;
     RET;
 
+}
+
+bool ReceiveKeyItem_Conv(item_t item){
+    // LD_HL(wNumKeyItems);
+    // LD_A_hli;
+    // CP_A(MAX_KEY_ITEMS);
+    // IF_NC goto nope;
+    if(wram->wNumKeyItems >= MAX_KEY_ITEMS)
+        return false;
+    // LD_C_A;
+    // LD_B(0);
+    // ADD_HL_BC;
+    // LD_A_addr(wCurItem);
+    // LD_hli_A;
+    wram->wKeyItems[wram->wNumKeyItems++] = item;
+    // LD_hl(-1);
+    wram->wKeyItems[wram->wNumKeyItems] = (item_t)-1;
+    // LD_HL(wNumKeyItems);
+    // INC_hl;
+    // SCF;
+    // RET;
+    return true;
+
+// nope:
+    // AND_A_A;
+    // RET;
 }
 
 void TossKeyItem(void){
@@ -673,7 +730,7 @@ bool CheckTMHM_Conv(uint8_t c){
     uint8_t* hl = wram->wTMsHMs;
     // ADD_HL_BC;
     // LD_A_hl;
-    uint8_t a = hl[--c];
+    uint8_t a = hl[c - 1];
     // AND_A_A;
     // RET_Z ;
     if(a == 0)
@@ -785,6 +842,19 @@ void CheckSelectableItem(void){
     AND_A_A;
     RET;
 
+}
+
+//  Return false if item can't be selected.
+bool CheckSelectableItem_Conv(item_t item){
+    // LD_A(ITEMATTR_PERMISSIONS);
+    // CALL(aGetItemAttr);
+    // BIT_A(CANT_SELECT_F);
+    // JR_NZ (mItemAttr_ReturnCarry);
+    if(bit_test(ItemAttributes[item].permissions, CANT_SELECT_F))
+        return false;
+    // AND_A_A;
+    // RET;
+    return true;
 }
 
 void CheckItemPocket(void){

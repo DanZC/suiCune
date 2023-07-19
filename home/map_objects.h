@@ -51,6 +51,6 @@ struct Object* GetObjectStruct_Conv(uint8_t a);
 void DoesObjectHaveASprite(void);
 bool DoesObjectHaveASprite_Conv(struct Object* bc);
 void SetSpriteDirection(void);
-void SetSpriteDirection_Conv(uint16_t bc, uint8_t a);
+void SetSpriteDirection_Conv(struct Object* bc, uint8_t a);
 void GetSpriteDirection(void);
 uint8_t GetSpriteDirection_Conv(struct Object* bc);

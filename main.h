@@ -71,7 +71,7 @@
 // SECTION "bank5", ROMX
 
 #include "engine/rtc/rtc.h"
-//#include "engine/overworld/overworld.h"
+#include "engine/overworld/overworld.h"
 //#include "engine/overworld/tile_events.h"
 //#include "engine/menus/save.h"
 //#include "engine/overworld/spawn_points.h"

@@ -6,9 +6,12 @@
 #include "../../home/copy_name.h"
 #include "../../home/map.h"
 #include "../../home/item.h"
+#include "../../home/map_objects.h"
+#include "../../home/joypad.h"
 #include "../battle/read_trainer_party.h"
 #include "../events/engine_flags.h"
 #include "landmarks.h"
+#include "overworld.h"
 
 //  Event scripting commands.
 
@@ -37,10 +40,10 @@ void ScriptEvents(void){
             //dw ['WaitScript'];
         switch(wram->wScriptMode)
         {
-            case 0: CALL(aEndScript); break;
-            case 1: CALL(aRunScriptCommand); break;
-            case 2: CALL(aWaitScriptMovement); break;
-            case 3: CALL(aWaitScript); break;
+            case SCRIPT_OFF: CALL(aEndScript); break;
+            case SCRIPT_READ: CALL(aRunScriptCommand); break;
+            case SCRIPT_WAIT_MOVEMENT: CALL(aWaitScriptMovement); break;
+            case SCRIPT_WAIT: CALL(aWaitScript); break;
         }
         // CALL(aCheckScript);
         // IF_NZ goto loop;
@@ -93,10 +96,185 @@ void WaitScriptMovement(void){
 
 }
 
+#include "../../macros/scripts/events.h"
+
 void RunScriptCommand(void){
     CALL(aGetScriptByte);
-    LD_HL(mScriptCommandTable);
-    RST(aJumpTable);
+    // LD_HL(mScriptCommandTable);
+    // RST(aJumpTable);
+    switch(REG_A)
+    {
+        case CMD_SCALL: CALL(aScript_scall); break; // $00
+        case CMD_FARSCALL: CALL(aScript_farscall); break; // $01
+        case CMD_MEMCALL: CALL(aScript_memcall); break; // $02
+        case CMD_SJUMP: CALL(aScript_sjump); break; // $03
+        case CMD_FARSJUMP: CALL(aScript_farsjump); break; // $04
+        case CMD_MEMJUMP: CALL(aScript_memjump); break; // $05
+        case CMD_IFEQUAL: CALL(aScript_ifequal); break; // $06
+        case CMD_IFNOTEQUAL: CALL(aScript_ifnotequal); break; // $07
+        case CMD_IFFALSE: CALL(aScript_iffalse); break; // $08
+        case CMD_IFTRUE: CALL(aScript_iftrue); break; // $09
+        case CMD_IFGREATER: CALL(aScript_ifgreater); break; // $0a
+        case CMD_IFLESS: CALL(aScript_ifless); break; // $0b
+        case CMD_JUMPSTD: CALL(aScript_jumpstd); break; // $0c
+        case CMD_CALLSTD: CALL(aScript_callstd); break; // $0d
+        case CMD_CALLASM: CALL(aScript_callasm); break; // $0e
+        case CMD_SPECIAL: CALL(aScript_special); break; // $0f
+        case CMD_MEMCALLASM: CALL(aScript_memcallasm); break; // $10
+        case CMD_CHECKMAPSCENE: CALL(aScript_checkmapscene); break; // $11
+        case CMD_SETMAPSCENE: CALL(aScript_setmapscene); break; // $12
+        case CMD_CHECKSCENE: CALL(aScript_checkscene); break; // $13
+        case CMD_SETSCENE: CALL(aScript_setscene); break; // $14
+        case CMD_SETVAL: CALL(aScript_setval); break; // $15
+        case CMD_ADDVAL: CALL(aScript_addval); break; // $16
+        case CMD_RANDOM: CALL(aScript_random); break; // $17
+        case CMD_CHECKVER: CALL(aScript_checkver); break; // $18
+        case CMD_READMEM: CALL(aScript_readmem); break; // $19
+        case CMD_WRITEMEM: CALL(aScript_writemem); break; // $1a
+        case CMD_LOADMEM: CALL(aScript_loadmem); break; // $1b
+        case CMD_READVAR: CALL(aScript_readvar); break; // $1c
+        case CMD_WRITEVAR: CALL(aScript_writevar); break; // $1d
+        case CMD_LOADVAR: CALL(aScript_loadvar); break; // $1e
+        case CMD_GIVEITEM: CALL(aScript_giveitem); break; // $1f
+        case CMD_TAKEITEM: CALL(aScript_takeitem); break; // $20
+        case CMD_CHECKITEM: CALL(aScript_checkitem); break; // $21
+        case CMD_GIVEMONEY: CALL(aScript_givemoney); break; // $22
+        case CMD_TAKEMONEY: CALL(aScript_takemoney); break; // $23
+        case CMD_CHECKMONEY: CALL(aScript_checkmoney); break; // $24
+        case CMD_GIVECOINS: CALL(aScript_givecoins); break; // $25
+        case CMD_TAKECOINS: CALL(aScript_takecoins); break; // $26
+        case CMD_CHECKCOINS: CALL(aScript_checkcoins); break; // $27
+        case CMD_ADDCELLNUM: CALL(aScript_addcellnum); break; // $28
+        case CMD_DELCELLNUM: CALL(aScript_delcellnum); break; // $29
+        case CMD_CHECKCELLNUM: CALL(aScript_checkcellnum); break; // $2a
+        case CMD_CHECKTIME: CALL(aScript_checktime); break; // $2b
+        case CMD_CHECKPOKE: CALL(aScript_checkpoke); break; // $2c
+        case CMD_GIVEPOKE: CALL(aScript_givepoke); break; // $2d
+        case CMD_GIVEEGG: CALL(aScript_giveegg); break; // $2e
+        case CMD_GIVEPOKEMAIL: CALL(aScript_givepokemail); break; // $2f
+        case CMD_CHECKPOKEMAIL: CALL(aScript_checkpokemail); break; // $30
+        case CMD_CHECKEVENT: CALL(aScript_checkevent); break; // $31
+        case CMD_CLEAREVENT: CALL(aScript_clearevent); break; // $32
+        case CMD_SETEVENT: CALL(aScript_setevent); break; // $33
+        case CMD_CHECKFLAG: CALL(aScript_checkflag); break; // $34
+        case CMD_CLEARFLAG: CALL(aScript_clearflag); break; // $35
+        case CMD_SETFLAG: CALL(aScript_setflag); break; // $36
+        case CMD_WILDON: CALL(aScript_wildon); break; // $37
+        case CMD_WILDOFF: CALL(aScript_wildoff); break; // $38
+        case CMD_XYCOMPARE: CALL(aScript_xycompare); break; // $39
+        case CMD_WARPMOD: CALL(aScript_warpmod); break; // $3a
+        case CMD_BLACKOUTMOD: CALL(aScript_blackoutmod); break; // $3b
+        case CMD_WARP: CALL(aScript_warp); break; // $3c
+        case CMD_GETMONEY: CALL(aScript_getmoney); break; // $3d
+        case CMD_GETCOINS: CALL(aScript_getcoins); break; // $3e
+        case CMD_GETNUM: CALL(aScript_getnum); break; // $3f
+        case CMD_GETMONNAME: CALL(aScript_getmonname); break; // $40
+        case CMD_GETITEMNAME: CALL(aScript_getitemname); break; // $41
+        case CMD_GETCURLANDMARKNAME: CALL(aScript_getcurlandmarkname); break; // $42
+        case CMD_GETTRAINERNAME: CALL(aScript_gettrainername); break; // $43
+        case CMD_GETSTRING: CALL(aScript_getstring); break; // $44
+        case CMD_ITEMNOTIFY: CALL(aScript_itemnotify); break; // $45
+        case CMD_POCKETISFULL: CALL(aScript_pocketisfull); break; // $46
+        case CMD_OPENTEXT: CALL(aScript_opentext); break; // $47
+        case CMD_REFRESHSCREEN: CALL(aScript_refreshscreen); break; // $48
+        case CMD_CLOSETEXT: CALL(aScript_closetext); break; // $49
+        case CMD_WRITEUNUSEDBYTE: CALL(aScript_writeunusedbyte); break; // $4a
+        case CMD_FARWRITETEXT: CALL(aScript_farwritetext); break; // $4b
+        case CMD_WRITETEXT: CALL(aScript_writetext); break; // $4c
+        case CMD_REPEATTEXT: CALL(aScript_repeattext); break; // $4d
+        case CMD_YESORNO: CALL(aScript_yesorno); break; // $4e
+        case CMD_LOADMENU: CALL(aScript_loadmenu); break; // $4f
+        case CMD_CLOSEWINDOW: CALL(aScript_closewindow); break; // $50
+        case CMD_JUMPTEXTFACEPLAYER: CALL(aScript_jumptextfaceplayer); break; // $51
+        case CMD_FARJUMPTEXT: CALL(aScript_farjumptext); break; // $52
+        case CMD_JUMPTEXT: CALL(aScript_jumptext); break; // $53
+        case CMD_WAITBUTTON: CALL(aScript_waitbutton); break; // $54
+        case CMD_PROMPTBUTTON: CALL(aScript_promptbutton); break; // $55
+        case CMD_POKEPIC: CALL(aScript_pokepic); break; // $56
+        case CMD_CLOSEPOKEPIC: CALL(aScript_closepokepic); break; // $57
+        case CMD__2DMENU: CALL(aScript__2dmenu); break; // $58
+        case CMD_VERTICALMENU: CALL(aScript_verticalmenu); break; // $59
+        case CMD_LOADPIKACHUDATA: CALL(aScript_loadpikachudata); break; // $5a
+        case CMD_RANDOMWILDMON: CALL(aScript_randomwildmon); break; // $5b
+        case CMD_LOADTEMPTRAINER: CALL(aScript_loadtemptrainer); break; // $5c
+        case CMD_LOADWILDMON: CALL(aScript_loadwildmon); break; // $5d
+        case CMD_LOADTRAINER: CALL(aScript_loadtrainer); break; // $5e
+        case CMD_STARTBATTLE: CALL(aScript_startbattle); break; // $5f
+        case CMD_RELOADMAPAFTERBATTLE: CALL(aScript_reloadmapafterbattle); break; // $60
+        case CMD_CATCHTUTORIAL: CALL(aScript_catchtutorial); break; // $61
+        case CMD_TRAINERTEXT: CALL(aScript_trainertext); break; // $62
+        case CMD_TRAINERFLAGACTION: CALL(aScript_trainerflagaction); break; // $63
+        case CMD_WINLOSSTEXT: CALL(aScript_winlosstext); break; // $64
+        case CMD_SCRIPTTALKAFTER: CALL(aScript_scripttalkafter); break; // $65
+        case CMD_ENDIFJUSTBATTLED: CALL(aScript_endifjustbattled); break; // $66
+        case CMD_CHECKJUSTBATTLED: CALL(aScript_checkjustbattled); break; // $67
+        case CMD_SETLASTTALKED: CALL(aScript_setlasttalked); break; // $68
+        case CMD_APPLYMOVEMENT: CALL(aScript_applymovement); break; // $69
+        case CMD_APPLYMOVEMENTLASTTALKED: CALL(aScript_applymovementlasttalked); break; // $6a
+        case CMD_FACEPLAYER: CALL(aScript_faceplayer); break; // $6b
+        case CMD_FACEOBJECT: CALL(aScript_faceobject); break; // $6c
+        case CMD_VARIABLESPRITE: CALL(aScript_variablesprite); break; // $6d
+        case CMD_DISAPPEAR: CALL(aScript_disappear); break; // $6e
+        case CMD_APPEAR: CALL(aScript_appear); break; // $6f
+        case CMD_FOLLOW: CALL(aScript_follow); break; // $70
+        case CMD_STOPFOLLOW: CALL(aScript_stopfollow); break; // $71
+        case CMD_MOVEOBJECT: CALL(aScript_moveobject); break; // $72
+        case CMD_WRITEOBJECTXY: CALL(aScript_writeobjectxy); break; // $73
+        case CMD_LOADEMOTE: CALL(aScript_loademote); break; // $74
+        case CMD_SHOWEMOTE: CALL(aScript_showemote); break; // $75
+        case CMD_TURNOBJECT: CALL(aScript_turnobject); break; // $76
+        case CMD_FOLLOWNOTEXACT: CALL(aScript_follownotexact); break; // $77
+        case CMD_EARTHQUAKE: CALL(aScript_earthquake); break; // $78
+        case CMD_CHANGEMAPBLOCKS: CALL(aScript_changemapblocks); break; // $79
+        case CMD_CHANGEBLOCK: CALL(aScript_changeblock); break; // $7a
+        case CMD_RELOADMAP: CALL(aScript_reloadmap); break; // $7b
+        case CMD_RELOADMAPPART: CALL(aScript_reloadmappart); break; // $7c
+        case CMD_WRITECMDQUEUE: CALL(aScript_writecmdqueue); break; // $7d
+        case CMD_DELCMDQUEUE: CALL(aScript_delcmdqueue); break; // $7e
+        case CMD_PLAYMUSIC: CALL(aScript_playmusic); break; // $7f
+        case CMD_ENCOUNTERMUSIC: CALL(aScript_encountermusic); break; // $80
+        case CMD_MUSICFADEOUT: CALL(aScript_musicfadeout); break; // $81
+        case CMD_PLAYMAPMUSIC: CALL(aScript_playmapmusic); break; // $82
+        case CMD_DONTRESTARTMAPMUSIC: CALL(aScript_dontrestartmapmusic); break; // $83
+        case CMD_CRY: CALL(aScript_cry); break; // $84
+        case CMD_PLAYSOUND: CALL(aScript_playsound); break; // $85
+        case CMD_WAITSFX: CALL(aScript_waitsfx); break; // $86
+        case CMD_WARPSOUND: CALL(aScript_warpsound); break; // $87
+        case CMD_SPECIALSOUND: CALL(aScript_specialsound); break; // $88
+        case CMD_AUTOINPUT: CALL(aScript_autoinput); break; // $89
+        case CMD_NEWLOADMAP: CALL(aScript_newloadmap); break; // $8a
+        case CMD_PAUSE: CALL(aScript_pause); break; // $8b
+        case CMD_DEACTIVATEFACING: CALL(aScript_deactivatefacing); break; // $8c
+        case CMD_SDEFER: CALL(aScript_sdefer); break; // $8d
+        case CMD_WARPCHECK: CALL(aScript_warpcheck); break; // $8e
+        case CMD_STOPANDSJUMP: CALL(aScript_stopandsjump); break; // $8f
+        case CMD_ENDCALLBACK: CALL(aScript_endcallback); break; // $90
+        case CMD_END: CALL(aScript_end); break; // $91
+        case CMD_RELOADEND: CALL(aScript_reloadend); break; // $92
+        case CMD_ENDALL: CALL(aScript_endall); break; // $93
+        case CMD_POKEMART: CALL(aScript_pokemart); break; // $94
+        case CMD_ELEVATOR: CALL(aScript_elevator); break; // $95
+        case CMD_TRADE: CALL(aScript_trade); break; // $96
+        case CMD_ASKFORPHONENUMBER: CALL(aScript_askforphonenumber); break; // $97
+        case CMD_PHONECALL: CALL(aScript_phonecall); break; // $98
+        case CMD_HANGUP: CALL(aScript_hangup); break; // $99
+        case CMD_DESCRIBEDECORATION: CALL(aScript_describedecoration); break; // $9a
+        case CMD_FRUITTREE: CALL(aScript_fruittree); break; // $9b
+        case CMD_SPECIALPHONECALL: CALL(aScript_specialphonecall); break; // $9c
+        case CMD_CHECKPHONECALL: CALL(aScript_checkphonecall); break; // $9d
+        case CMD_VERBOSEGIVEITEM: CALL(aScript_verbosegiveitem); break; // $9e
+        case CMD_VERBOSEGIVEITEMVAR: CALL(aScript_verbosegiveitemvar); break; // $9f
+        case CMD_SWARM: CALL(aScript_swarm); break; // $a0
+        case CMD_HALLOFFAME: CALL(aScript_halloffame); break; // $a1
+        case CMD_CREDITS: CALL(aScript_credits); break; // $a2
+        case CMD_WARPFACING: CALL(aScript_warpfacing); break; // $a3
+        case CMD_BATTLETOWERTEXT: CALL(aScript_battletowertext); break; // $a4
+        case CMD_GETLANDMARKNAME: CALL(aScript_getlandmarkname); break; // $a5
+        case CMD_GETTRAINERCLASSNAME: CALL(aScript_gettrainerclassname); break; // $a6
+        case CMD_GETNAME: CALL(aScript_getname); break; // $a7
+        case CMD_WAIT: CALL(aScript_wait); break; // $a8
+        case CMD_CHECKSAVE: CALL(aScript_checksave); break; // $a9
+    }
     RET;
 
 }
@@ -386,19 +564,29 @@ void Script_jumptext(void){
 
 }
 
-void JumpTextFacePlayerScript(void){
+#include "../../util/scripting_macros.h"
+
+bool JumpTextFacePlayerScript(script_s* s){
+    SCRIPT_BEGIN
     //faceplayer ['?']
-    return JumpTextScript();
+    faceplayer;
+    // return JumpTextScript();
+    SCRIPT_FALLTHROUGH(JumpTextScript)
 }
 
-void JumpTextScript(void){
+bool JumpTextScript(script_s* s){
+    SCRIPT_BEGIN
     //opentext ['?']
+    opentext;
     //repeattext ['-1', '-1']
+    repeattext(0xffff);
     //waitbutton ['?']
+    waitbutton;
     //closetext ['?']
+    closetext;
     //end ['?']
-
-    return Script_farjumptext();
+    SCRIPT_END
+    // return Script_farjumptext();
 }
 
 void Script_farjumptext(void){
@@ -463,9 +651,44 @@ done:
 
 }
 
+void Script_repeattext_Conv(script_s* s, uint16_t hl){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // LD_L_A;
+    // CALL(aGetScriptByte);
+    // LD_H_A;
+    // CP_A(-1);
+    // IF_NZ goto done;
+    // LD_A_L;
+    // CP_A(-1);
+    // IF_NZ goto done;
+    if(hl == 0xffff)
+        return;
+    // LD_HL(wScriptTextBank);
+    // LD_A_hli;
+    // LD_B_A;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    REG_B = wram->wScriptTextBank;
+    REG_HL = wram->wScriptTextAddr;
+    CALL(aMapTextbox);
+    // RET;
+
+
+// done:
+    // RET;
+}
+
 void Script_waitbutton(void){
     JP(mWaitButton);
 
+}
+
+void Script_waitbutton_Conv(script_s* s){
+    (void)s;
+    // JP(mWaitButton);
+    return WaitButton_Conv();
 }
 
 void Script_promptbutton(void){
@@ -1078,6 +1301,38 @@ void Script_faceplayer(void){
 
 }
 
+void Script_faceplayer_Conv(script_s* s){
+    (void)s;
+    // LDH_A_addr(hLastTalked);
+    // AND_A_A;
+    // RET_Z ;
+    if(hram->hLastTalked == 0)
+        return;
+    // LD_D(0x0);
+    // LDH_A_addr(hLastTalked);
+    // LD_E_A;
+    PUSH_AF;
+    PUSH_BC;
+    PUSH_DE;
+    PUSH_HL;
+    REG_DE = hram->hLastTalked;
+    FARCALL(aGetRelativeFacing);
+    // LD_A_D;
+    // ADD_A_A;
+    // ADD_A_A;
+    // LD_E_A;
+    // LDH_A_addr(hLastTalked);
+    // LD_D_A;
+    // CALL(aApplyObjectFacing);
+    ApplyObjectFacing_Conv(hram->hLastTalked, REG_D << 2);
+    POP_HL;
+    POP_DE;
+    POP_BC;
+    POP_AF;
+    // RET;
+
+}
+
 void Script_faceobject(void){
     CALL(aGetScriptByte);
     CALL(aGetScriptObject);
@@ -1176,6 +1431,75 @@ loop:
     IF_NZ goto loop;
     RET;
 
+}
+
+static void ApplyObjectFacing_DisableTextTiles(void) {
+// DisableTextTiles:
+    CALL(aLoadMapPart);
+    // hlcoord(0, 0, wTilemap);
+    // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
+    uint8_t* hl = wram->wTilemap + coordidx(0, 0);
+    uint16_t bc = SCREEN_WIDTH * SCREEN_HEIGHT;
+
+// loop:
+    do {
+        // RES_hl(7);
+        *(hl++) &= (1 << 7) ^ 0xff;
+        // INC_HL;
+        // DEC_BC;
+        // LD_A_B;
+        // OR_A_C;
+        // IF_NZ goto loop;
+    } while(--bc != 0);
+    // RET;
+}
+
+bool ApplyObjectFacing_Conv(uint8_t d, uint8_t e){
+    // LD_A_D;
+    // PUSH_DE;
+    // CALL(aCheckObjectVisibility);
+    // IF_C goto not_visible;
+    if(!CheckObjectVisibility_Conv(d))
+        return false;
+    struct Object* bc = GetObjectStruct_Conv(hram->hObjectStructIndex);
+    // LD_HL(OBJECT_SPRITE);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // PUSH_BC;
+    // CALL(aDoesSpriteHaveFacings);
+    // POP_BC;
+    // IF_C goto not_visible;  // STILL_SPRITE
+    if(!v_DoesSpriteHaveFacings_Conv(bc->sprite))
+        return false;
+    // LD_HL(OBJECT_FLAGS1);
+    // ADD_HL_BC;
+    // BIT_hl(FIXED_FACING_F);s
+    // IF_NZ goto not_visible;
+    if(bit_test(bc->flags1, FIXED_FACING_F))
+        return false;
+    // POP_DE;
+    // LD_A_E;
+    // CALL(aSetSpriteDirection);
+    SetSpriteDirection_Conv(bc, e);
+    // LD_HL(wVramState);
+    // BIT_hl(6);
+    // IF_NZ goto text_state;
+    if(!bit_test(wram->wVramState, 6)) {
+        // CALL(aApplyObjectFacing_DisableTextTiles);
+        ApplyObjectFacing_DisableTextTiles();
+    }
+
+// text_state:
+    // CALL(aUpdateSprites);
+    UpdateSprites_Conv();
+    // RET;
+    return true;
+
+
+// not_visible:
+    // POP_DE;
+    // SCF;
+    // RET;
 }
 
 void Script_variablesprite(void){
@@ -1898,6 +2222,15 @@ void Script_addval(void){
 
 }
 
+void Script_addval_Conv(script_s* s, uint8_t val){
+    // CALL(aGetScriptByte);
+    // LD_HL(wScriptVar);
+    // ADD_A_hl;
+    // LD_hl_A;
+    // RET;
+    s->var += val;
+}
+
 void Script_random(void){
     CALL(aGetScriptByte);
     LD_addr_A(wScriptVar);
@@ -2189,6 +2522,20 @@ void Script_getcoins(void){
 
 }
 
+void Script_getcoins_Conv(script_s* s, uint8_t a){
+    (void)s;
+    // CALL(aResetStringBuffer1);
+    ResetStringBuffer1_Conv();
+    // LD_HL(wStringBuffer1);
+    // LD_DE(wCoins);
+    // LD_BC((PRINTNUM_LEFTALIGN | 2 << 8) | 6);
+    // CALL(aPrintNum);
+    PrintNum_Conv2(wram->wStringBuffer1, (uint8_t*)&wram->wCoins, (PRINTNUM_LEFTALIGN | 2), 6);
+    // LD_DE(wStringBuffer1);
+    // JP(mGetStringBuffer);
+    return GetStringBuffer_Conv(a, wram->wStringBuffer1);
+}
+
 void Script_getnum(void){
     CALL(aResetStringBuffer1);
     LD_DE(wScriptVar);
@@ -2428,6 +2775,24 @@ void LoadMoneyAmountToMem(void){
     POP_BC;
     RET;
 
+}
+
+void LoadMoneyAmountToMem_Conv(uint32_t amount){
+    // LD_BC(hMoneyTemp);
+    // PUSH_BC;
+    // CALL(aGetScriptByte);
+    // LD_bc_A;
+    hram->hMoneyTemp[0] = (uint8_t)(amount & 0xff);
+    // INC_BC;
+    // CALL(aGetScriptByte);
+    // LD_bc_A;
+    hram->hMoneyTemp[1] = (uint8_t)((amount >> 8) & 0xff);
+    // INC_BC;
+    // CALL(aGetScriptByte);
+    // LD_bc_A;
+    hram->hMoneyTemp[2] = (uint8_t)((amount >> 16) & 0xff);
+    // POP_BC;
+    // RET;
 }
 
 void Script_givecoins(void){
@@ -2933,6 +3298,12 @@ void Script_opentext(void){
 
 }
 
+void Script_opentext_Conv(script_s* s){
+    (void)s;
+    CALL(aOpenText);
+    // RET;
+}
+
 void Script_refreshscreen(void){
     CALL(aRefreshScreen);
     CALL(aGetScriptByte);
@@ -2959,6 +3330,13 @@ void Script_closetext(void){
     CALL(aCloseText);
     RET;
 
+}
+
+void Script_closetext_Conv(script_s* s){
+    (void)s;
+    CALL(av_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
+    CALL(aCloseText);
+    // RET;
 }
 
 void Script_autoinput(void){

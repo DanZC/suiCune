@@ -10,6 +10,7 @@ void StopAutoInput_Conv(void);
 void JoyTitleScreenInput(void);
 void JoyWaitAorB(void);
 void WaitButton(void);
+void WaitButton_Conv(void);
 void JoyTextDelay(void);
 void JoyTextDelay_Conv(void);
 void WaitPressAorB_BlinkCursor(void);
