@@ -2880,4 +2880,31 @@ void init_function_pointers(void) {
     // REDIRECTED(CheckWarpConnxnScriptFlag);
     // REDIRECTED(HandleMapObjects);
     // REDIRECTED(CheckBit5_ScriptFlags2);
+
+    // engine/overworld/overworld.c
+    // REDIRECTED(v_GetSpritePalette);
+    // REDIRECTED(LoadEmote);
+    // REDIRECTED(AddOutdoorSprites);
+    // REDIRECTED(GetMonSprite);
+    // REDIRECTED(GetUsedSprites);
+    // REDIRECTED(RefreshSprites);
+    // REDIRECTED(v_DoesSpriteHaveFacings);
+    // REDIRECTED(LoadUsedSpritesGFX);
+    // REDIRECTED(GetPlayerSprite);
+    // REDIRECTED(GetUsedSprite);
+    // REDIRECTED(v_RefreshSprites);
+    // REDIRECTED(LoadAndSortSprites);
+    // REDIRECTED(v_UpdatePlayerSprite);
+    // REDIRECTED(ArrangeUsedSprites);
+    // REDIRECTED(AddSpriteGFX);
+    // REDIRECTED(SafeGetSprite);
+    // REDIRECTED(LoadSpriteGFX);
+    // REDIRECTED(v_ClearSprites);
+    // REDIRECTED(GetEmote2bpp);
+    // REDIRECTED(AddIndoorSprites);
+    // REDIRECTED(AddMapSprites);
+    // REDIRECTED(GetSprite);
+    // REDIRECTED(SortUsedSprites);
+    // REDIRECTED(GetSpriteLength);
+    // REDIRECTED(LoadMiscTiles);
 }

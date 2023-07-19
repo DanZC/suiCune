@@ -32,7 +32,7 @@ void WaitBGMap_Conv(void) {
     //  Tell VBlank to update BG Map
     // LD_A(1);  // BG Map 0 tiles
     // LDH_addr_A(hBGMapMode);
-    gb_write(hBGMapMode, 1);  // BG Map 0 tiles 
+    hram->hBGMapMode = 1;  // BG Map 0 tiles 
 
     //  Wait for it to do its magic
     // LD_C(4);

@@ -2,6 +2,7 @@
 #include "joypad.h"
 #include "delay.h"
 #include "audio.h"
+#include "tilemap.h"
 #include "../charmap.h"
 
 void Joypad(void) {
@@ -582,20 +583,21 @@ void WaitButton(void) {
 void WaitButton_Conv(void) {
     // LDH_A_addr(hOAMUpdate);
     // PUSH_AF;
-    uint8_t tempOAMUpdate = gb_read(hOAMUpdate);
+    uint8_t tempOAMUpdate = hram->hOAMUpdate;
 
     // LD_A(1);
     // LDH_addr_A(hOAMUpdate);
-    gb_write(hOAMUpdate, 1);
+    hram->hOAMUpdate = 1;
 
-    CALL(aWaitBGMap);
+    // CALL(aWaitBGMap);
+    WaitBGMap_Conv();
 
     // CALL(aJoyWaitAorB);
     JoyWaitAorB_Conv();
 
     // POP_AF;
     // LDH_addr_A(hOAMUpdate);
-    gb_write(hOAMUpdate, tempOAMUpdate);
+    hram->hOAMUpdate = tempOAMUpdate;
     
     // RET;
 }

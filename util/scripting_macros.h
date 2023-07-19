@@ -24,6 +24,11 @@
 #define scall_far(_f, _p)   SCRIPT_CALLGOTO(_f, _p)
 #define end                 SCRIPT_END2
 #define getcurlandmarkname  SCRIPT_EVCMD(Script_getcurlandmarkname_Conv)
+#define faceplayer          SCRIPT_EVCMD(Script_faceplayer_Conv)
+#define opentext            SCRIPT_EVCMD(Script_opentext_Conv)
+#define repeattext(_hl)     SCRIPT_EVCMD(Script_repeattext_Conv, _hl)
+#define closetext           SCRIPT_EVCMD(Script_closetext_Conv)
+#define waitbutton          SCRIPT_EVCMD(Script_waitbutton_Conv)
 #define ret                 SCRIPT_RET
 
 #define far_label(_name)    case _name:
