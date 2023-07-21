@@ -2,104 +2,136 @@
 #include "read_trainer_party.h"
 #include "../../home/sram.h"
 #include "../../home/copy.h"
+#include "../../data/trainers/parties.h"
 
 void ReadTrainerParty(void){
     PEEK("");
-    LD_A_addr(wInBattleTowerBattle);
-    BIT_A(0);
-    RET_NZ ;
+    // LD_A_addr(wInBattleTowerBattle);
+    // BIT_A(0);
+    // RET_NZ ;
+    if(bit_test(wram->wInBattleTowerBattle, 0))
+        return;
 
-    LD_A_addr(wLinkMode);
-    AND_A_A;
-    RET_NZ ;
+    // LD_A_addr(wLinkMode);
+    // AND_A_A;
+    // RET_NZ ;
+    if(wram->wLinkMode != LINK_NULL)
+        return;
 
-    LD_HL(wOTPartyCount);
-    XOR_A_A;
-    LD_hli_A;
-    DEC_A;
-    LD_hl_A;
+    // LD_HL(wOTPartyCount);
+    // XOR_A_A;
+    // LD_hli_A;
+    // DEC_A;
+    // LD_hl_A;
+    wram->wOTPartyCount = 0;
+    wram->wOTPartySpecies[0] = 0xff;
 
-    LD_HL(wOTPartyMons);
-    LD_BC(PARTYMON_STRUCT_LENGTH * PARTY_LENGTH);
-    XOR_A_A;
-    CALL(aByteFill);
+    // LD_HL(wOTPartyMons);
+    // LD_BC(PARTYMON_STRUCT_LENGTH * PARTY_LENGTH);
+    // XOR_A_A;
+    // CALL(aByteFill);
+    ByteFill_Conv2(wram->wOTPartyMon, sizeof(wram->wOTPartyMon), 0);
 
-    LD_A_addr(wOtherTrainerClass);
-    CP_A(CAL);
-    IF_NZ goto not_cal2;
-    LD_A_addr(wOtherTrainerID);
-    CP_A(CAL2);
-    IF_Z goto cal2;
-    LD_A_addr(wOtherTrainerClass);
-
-not_cal2:
-
-    DEC_A;
-    LD_C_A;
-    LD_B(0);
-    LD_HL(mTrainerGroups);
-    ADD_HL_BC;
-    ADD_HL_BC;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-
-    LD_A_addr(wOtherTrainerID);
-    LD_B_A;
-
-skip_trainer:
-    DEC_B;
-    IF_Z goto got_trainer;
-
-loop:
-    LD_A_hli;
-    CP_A(-1);
-    IF_NZ goto loop;
-    goto skip_trainer;
-
-got_trainer:
-
-
-skip_name:
-    LD_A_hli;
-    CP_A(0x50);
-    IF_NZ goto skip_name;
-
-    LD_A_hli;
-    LD_C_A;
-    LD_B(0);
-    LD_D_H;
-    LD_E_L;
-    // LD_HL(mTrainerTypes);
-    // ADD_HL_BC;
-    // ADD_HL_BC;
-    // LD_A_hli;
-    // LD_H_hl;
-    // LD_L_A;
-    // LD_BC(mReadTrainerParty_done);
-    // PUSH_BC;
-    // JP_hl;
-    switch(REG_BC)
-    {
-        case TRAINERTYPE_NORMAL: CALL(aTrainerType1); break;
-        case TRAINERTYPE_MOVES: CALL(aTrainerType2); break;
-        case TRAINERTYPE_ITEM: CALL(aTrainerType3); break;
-        case TRAINERTYPE_ITEM_MOVES: CALL(aTrainerType4); break;
+    // LD_A_addr(wOtherTrainerClass);
+    // CP_A(CAL);
+    // IF_NZ goto not_cal2;
+    // LD_A_addr(wOtherTrainerID);
+    // CP_A(CAL2);
+    // LD_A_addr(wOtherTrainerClass);
+    uint8_t tclass = wram->wOtherTrainerClass;
+    if(tclass == CAL && wram->wOtherTrainerID == CAL2) {
+        // IF_Z goto cal2;
+    // cal2:
+        // LD_A(MBANK(asMysteryGiftTrainer));
+        // CALL(aOpenSRAM);
+        OpenSRAM_Conv(MBANK(asMysteryGiftTrainer));
+        // LD_DE(sMysteryGiftTrainer);
+        // CALL(aTrainerType2);
+        REG_DE = sMysteryGiftTrainer;
+        TrainerType2();
+        // CALL(aCloseSRAM);
+        CloseSRAM_Conv();
+        // goto done;
     }
+    else {
+
+    // not_cal2:
+
+        // DEC_A;
+        // LD_C_A;
+        // LD_B(0);
+        // LD_HL(mTrainerGroups);
+        // ADD_HL_BC;
+        // ADD_HL_BC;
+        // LD_A_hli;
+        // LD_H_hl;
+        // LD_L_A;
+        const struct TrainerParty * group = TrainerGroups[tclass - 1];
+
+        // LD_A_addr(wOtherTrainerID);
+        // LD_B_A;
+
+    // skip_trainer:
+        // DEC_B;
+        // IF_Z goto got_trainer;
+
+    // loop:
+        // LD_A_hli;
+        // CP_A(-1);
+        // IF_NZ goto loop;
+        // goto skip_trainer;
+
+    // got_trainer:
+        const struct TrainerParty *de = group + (wram->wOtherTrainerID - 1);
 
 
+    // skip_name:
+        // LD_A_hli;
+        // CP_A(0x50);
+        // IF_NZ goto skip_name;
+
+        // LD_A_hli;
+        // LD_C_A;
+        // LD_B(0);
+        // LD_D_H;
+        // LD_E_L;
+        // LD_HL(mTrainerTypes);
+        // ADD_HL_BC;
+        // ADD_HL_BC;
+        // LD_A_hli;
+        // LD_H_hl;
+        // LD_L_A;
+        // LD_BC(mReadTrainerParty_done);
+        // PUSH_BC;
+        // JP_hl;
+        PUSH_AF;
+        PUSH_BC;
+        PUSH_DE;
+        PUSH_HL;
+        switch(de->trainer_type)
+        {
+            case TRAINERTYPE_NORMAL: TrainerType1_Conv(de); break;
+            case TRAINERTYPE_MOVES: TrainerType2_Conv(de); break;
+            case TRAINERTYPE_ITEM: TrainerType3_Conv(de); break;
+            case TRAINERTYPE_ITEM_MOVES: CALL(aTrainerType4); break;
+        }
+        POP_HL;
+        POP_DE;
+        POP_BC;
+        POP_AF;
+    }
 done:
     // JP(mComputeTrainerReward);
-    return ComputeTrainerReward();
-
-
-cal2:
-    LD_A(MBANK(asMysteryGiftTrainer));
-    CALL(aOpenSRAM);
-    LD_DE(sMysteryGiftTrainer);
-    CALL(aTrainerType2);
-    CALL(aCloseSRAM);
-    goto done;
+    PUSH_AF;
+    PUSH_BC;
+    PUSH_DE;
+    PUSH_HL;
+    ComputeTrainerReward();
+    POP_HL;
+    POP_DE;
+    POP_BC;
+    POP_AF;
+    return;
 }
 
 // void TrainerTypes(void){
@@ -140,6 +172,36 @@ loop:
     goto loop;
 
     return TrainerType2();
+}
+
+void TrainerType1_Conv(const struct TrainerParty* de){
+//  normal (level, species)
+    // LD_H_D;
+    // LD_L_E;
+
+    for(uint8_t i = 0; i < de->size; ++i) {
+    // loop:
+        // LD_A_hli;
+        // CP_A(0xff);
+        // RET_Z ;
+
+        // LD_addr_A(wCurPartyLevel);
+        wram->wCurPartyLevel = de->pnormal[i].level;
+        printf("level=%d ", wram->wCurPartyLevel);
+        // LD_A_hli;
+        // LD_addr_A(wCurPartySpecies);
+        wram->wCurPartySpecies = de->pnormal[i].species;
+        printf("species=%d\n", wram->wCurPartySpecies);
+        // LD_A(OTPARTYMON);
+        // LD_addr_A(wMonType);
+        wram->wMonType = OTPARTYMON;
+        // PUSH_HL;
+        PREDEF(pTryAddMonToParty);
+        // POP_HL;
+        // goto loop;
+    }
+
+    // return TrainerType2();
 }
 
 void TrainerType2(void){
@@ -225,6 +287,100 @@ copied_pp:
     return TrainerType3();
 }
 
+void TrainerType2_Conv(const struct TrainerParty* de){
+//  moves
+    // LD_H_D;
+    // LD_L_E;
+
+    for(uint8_t i = 0; i < de->size; ++i) {
+    // loop:
+        // LD_A_hli;
+        // CP_A(0xff);
+        // RET_Z ;
+
+        // LD_addr_A(wCurPartyLevel);
+        wram->wCurPartyLevel = de->pmoves[i].level;
+        // LD_A_hli;
+        // LD_addr_A(wCurPartySpecies);
+        wram->wCurPartySpecies = de->pnormal[i].species;
+        // LD_A(OTPARTYMON);
+        // LD_addr_A(wMonType);
+        wram->wMonType = OTPARTYMON;
+
+        // PUSH_HL;
+        PREDEF(pTryAddMonToParty);
+        // LD_A_addr(wOTPartyCount);
+        // DEC_A;
+        // LD_HL(wOTPartyMon1Moves);
+        // LD_BC(PARTYMON_STRUCT_LENGTH);
+        // CALL(aAddNTimes);
+        // LD_D_H;
+        // LD_E_L;
+        // POP_HL;
+
+        for(uint8_t j = 0; j < NUM_MOVES; ++j) {
+        // LD_B(NUM_MOVES);
+
+        // copy_moves:
+            // LD_A_hli;
+            // LD_de_A;
+            // INC_DE;
+            // DEC_B;
+            // IF_NZ goto copy_moves;
+            wram->wOTPartyMon[wram->wOTPartyCount - 1].mon.moves[j] = de->pmoves[i].moves[j];
+        }
+
+        // PUSH_HL;
+
+        // LD_A_addr(wOTPartyCount);
+        // DEC_A;
+        // LD_HL(wOTPartyMon1Species);
+        // LD_BC(PARTYMON_STRUCT_LENGTH);
+        // CALL(aAddNTimes);
+        // LD_D_H;
+        // LD_E_L;
+        // LD_HL(MON_PP);
+        // ADD_HL_DE;
+        // PUSH_HL;
+        // LD_HL(MON_MOVES);
+        // ADD_HL_DE;
+        // POP_DE;
+
+        // LD_B(NUM_MOVES);
+        uint8_t j = 0;
+        while(j < NUM_MOVES && de->pmoves[i].moves[j] != NO_MOVE) {
+        // copy_pp:
+            // LD_A_hli;
+            // AND_A_A;
+            // IF_Z goto copied_pp;
+
+            // PUSH_HL;
+            // PUSH_BC;
+            // DEC_A;
+            uint8_t a = de->pmoves[i].moves[j] - 1;
+            // LD_HL(mMoves + MOVE_PP);
+            // LD_BC(MOVE_LENGTH);
+            // CALL(aAddNTimes);
+            // LD_A(BANK(aMoves));
+            // CALL(aGetFarByte);
+            // POP_BC;
+            // POP_HL;
+
+            // LD_de_A;
+            // INC_DE;
+            // DEC_B;
+            // IF_NZ goto copy_pp;
+            wram->wOTPartyMon[wram->wOTPartyCount - 1].mon.PP[j] = GetFarByte_Conv(BANK(aMoves), (mMoves + MOVE_PP) + MOVE_LENGTH*a);
+        }
+
+    // copied_pp:
+
+        // POP_HL;
+        // goto loop;
+    }
+    // return TrainerType3();
+}
+
 void TrainerType3(void){
 //  item
     LD_H_D;
@@ -253,6 +409,44 @@ loop:
     LD_A_hli;
     LD_de_A;
     goto loop;
+
+    return TrainerType4();
+}
+
+//  item
+void TrainerType3_Conv(const struct TrainerParty* de){
+    // LD_H_D;
+    // LD_L_E;
+
+    for(uint8_t i = 0; i < de->size; ++i) {
+    // loop:
+        // LD_A_hli;
+        // CP_A(0xff);
+        // RET_Z ;
+
+        // LD_addr_A(wCurPartyLevel);
+        // LD_A_hli;
+        wram->wCurPartyLevel = de->pitem[i].level;
+        // LD_addr_A(wCurPartySpecies);
+        wram->wCurPartySpecies = de->pitem[i].species;
+        // LD_A(OTPARTYMON);
+        // LD_addr_A(wMonType);
+        wram->wMonType = OTPARTYMON;
+        // PUSH_HL;
+        PREDEF(pTryAddMonToParty);
+        // LD_A_addr(wOTPartyCount);
+        // DEC_A;
+        // LD_HL(wOTPartyMon1Item);
+        // LD_BC(PARTYMON_STRUCT_LENGTH);
+        // CALL(aAddNTimes);
+        // LD_D_H;
+        // LD_E_L;
+        // POP_HL;
+        // LD_A_hli;
+        // LD_de_A;
+        wram->wOTPartyMon[wram->wOTPartyCount - 1].mon.item = de->pitem[i].item;
+        // goto loop;
+    }
 
     return TrainerType4();
 }
@@ -373,7 +567,7 @@ void ComputeTrainerReward(void){
     LD_hli_A;
     LDH_A_addr(hProduct + 3);
     LD_hl_A;
-    RET;
+    // RET;
 
 }
 
@@ -456,6 +650,7 @@ skip:
 }
 
 uint8_t* GetTrainerName_Conv(uint8_t tid, uint8_t tclass){
+    PEEK("");
     // LD_A_C;
     // CP_A(CAL);
     // IF_NZ goto not_cal2;
@@ -483,50 +678,46 @@ uint8_t* GetTrainerName_Conv(uint8_t tid, uint8_t tclass){
             return name;
         }
     }
-    PUSH_AF;
-    PUSH_BC; 
-    PUSH_DE;
-    PUSH_HL;
-
 
 // not_cal2:
-    bank_push(BANK(aTrainerGroups));
-    REG_C = tclass;
-    REG_B = tid;
-    DEC_C;
-    PUSH_BC;
-    LD_B(0);
-    LD_HL(mTrainerGroups);
-    ADD_HL_BC;
-    ADD_HL_BC;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    POP_BC;
+    // bank_push(BANK(aTrainerGroups));
+    // REG_C = tclass;
+    // REG_B = tid;
+    // DEC_C;
+    // PUSH_BC;
+    // LD_B(0);
+    // LD_HL(mTrainerGroups);
+    // ADD_HL_BC;
+    // ADD_HL_BC;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // POP_BC;
 
 
 // loop:
     // DEC_B;
     // JR_Z (mCopyTrainerName);
-    while(--REG_B != 0) {
+    // while(--REG_B != 0) {
 
 
     // skip:
-        do {
-            // LD_A_hli;
-            // CP_A(0xff);
-            // IF_NZ goto skip;
-        } while(gb_read(REG_HL++) != 0xff);
+        // do {
+        //     // LD_A_hli;
+        //     // CP_A(0xff);
+        //     // IF_NZ goto skip;
+        // } while(gb_read(REG_HL++) != 0xff);
         // goto loop;
-    }
+    // }
 
-    CopyTrainerName_Conv(GBToRAMAddr(REG_HL));
+    // CopyTrainerName_Conv(GBToRAMAddr(REG_HL));
+    CopyTrainerName_Conv(Utf8ToCrystal(TrainerGroups[tclass - 1][tid].name));
 
-    POP_HL;
-    POP_DE;
-    POP_BC;
-    POP_AF;
-    bank_pop;
+    // POP_HL;
+    // POP_DE;
+    // POP_BC;
+    // POP_AF;
+    // bank_pop;
     // return CopyTrainerName();
     return wram->wStringBuffer1;
 }

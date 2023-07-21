@@ -4017,6 +4017,7 @@ void ClearEnemyMonBox(void){
 }
 
 void ShowBattleTextEnemySentOut(void){
+    PEEK("");
     CALLFAR(aBattle_GetTrainerName);
     LD_HL(mBattleText_EnemySentOut);
     CALL(aStdBattleTextbox);
@@ -4025,6 +4026,7 @@ void ShowBattleTextEnemySentOut(void){
 }
 
 void ShowSetEnemyMonAndSendOutAnimation(void){
+    PEEK("");
     LD_A_addr(wTempEnemyMonSpecies);
     LD_addr_A(wCurPartySpecies);
     LD_addr_A(wCurSpecies);

@@ -1525,7 +1525,7 @@ void init_function_pointers(void) {
     // REDIRECTED(GoMonText);
     // REDIRECTED(ResidualDamage);
     // REDIRECTED(BattleStartMessage);
-    REDIRECTED(EnemySwitch);
+    // REDIRECTED(EnemySwitch);
     // REDIRECTED(BattleTurn);
     // REDIRECTED(EnemyTurn_EndOpponentProtectEndureDestinyBond);
     // REDIRECTED(GetSixteenthMaxHP);
@@ -1542,7 +1542,7 @@ void init_function_pointers(void) {
     // REDIRECTED(AskUseNextPokemon);
     // REDIRECTED(HandlePerishSong);
     // REDIRECTED(ResetEnemyStatLevels);
-    REDIRECTED(ShowSetEnemyMonAndSendOutAnimation);
+    // REDIRECTED(ShowSetEnemyMonAndSendOutAnimation);
     // REDIRECTED(ExpPointsText);
     // REDIRECTED(PlayerTurn_EndOpponentProtectEndureDestinyBond);
     // REDIRECTED(UseConfusionHealingItem);
@@ -2262,13 +2262,13 @@ void init_function_pointers(void) {
     REDIRECTED(TrainerType1);
     REDIRECTED(CopyTrainerName);
     REDIRECTED(TrainerType3);
-    REDIRECTED(ReadTrainerParty);
+    CONVERTED(ReadTrainerParty);
     // REDIRECTED(TrainerTypes);
     REDIRECTED(TrainerType4);
     REDIRECTED(TrainerType2);
     REDIRECTED(Battle_GetTrainerName);
     REDIRECTED(IncompleteCopyNameFunction);
-    REDIRECTED(ComputeTrainerReward);
+    CONVERTED(ComputeTrainerReward);
     REDIRECTED(GetTrainerName);
 
     // engine/battle_anims/anim_commands.c

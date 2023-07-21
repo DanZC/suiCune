@@ -1129,6 +1129,11 @@ skip1:
 //  Bit 7: print leading zeros if set
 uint8_t* v_PrintNum_Conv2(uint8_t* hl, const uint8_t* de, uint8_t b, uint8_t c){
     // PUSH_BC;
+    switch(b & 0xf) {
+        case 2: printf("%s: Printing %d digits of %u\n", __func__, c & 0xf, (de[1] + (de[0] << 8))); break;
+        case 3: printf("%s: Printing %d digits of %u\n", __func__, c & 0xf, (de[2] + (de[1] << 8) + (de[0] << 16))); break;
+        case 4: printf("%s: Printing %d digits of %u\n", __func__, c & 0xf, (de[3] + (de[2] << 8) + (de[1] << 16) + (de[0] << 24))); break;
+    }
 
 //  increments the pointer unless leading zeroes are not being printed,
 //  the number is left-aligned, and no nonzero digits have been printed yet

@@ -23,7 +23,7 @@ Pokemon:
 
 }
 
-bool IsAPokemon_Conv(uint8_t species) {
+bool IsAPokemon_Conv(species_t species) {
     // Pokemon index 0 is not a pokemon
     if(species == 0) return false;
 

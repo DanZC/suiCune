@@ -1,8 +1,11 @@
 void ReadTrainerParty(void);
 // void TrainerTypes(void);
 void TrainerType1(void);
+void TrainerType1_Conv(const struct TrainerParty* de);
 void TrainerType2(void);
+void TrainerType2_Conv(const struct TrainerParty* de);
 void TrainerType3(void);
+void TrainerType3_Conv(const struct TrainerParty* de);
 void TrainerType4(void);
 void ComputeTrainerReward(void);
 void Battle_GetTrainerName(void);

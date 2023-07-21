@@ -1,5 +1,5 @@
 void IsAPokemon(void);
-bool IsAPokemon_Conv(uint8_t species);
+bool IsAPokemon_Conv(species_t species);
 void DrawBattleHPBar(void);
 void PrepMonFrontpic(void);
 void v_PrepMonFrontpic(void);

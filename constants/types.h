@@ -880,6 +880,47 @@ struct WildGrassMons
     struct { species_t species; uint8_t level; } mons[3][7];
 };
 
+struct TrainerPartyNormal 
+{
+    uint8_t level;
+    species_t species;
+};
+
+struct TrainerPartyMoves 
+{
+    uint8_t level;
+    species_t species;
+    move_t moves[4];
+};
+
+struct TrainerPartyItem 
+{
+    uint8_t level;
+    species_t species;
+    item_t item;
+};
+
+struct TrainerPartyItemMoves 
+{
+    uint8_t level;
+    species_t species;
+    item_t item;
+    move_t moves[4];
+};
+
+struct TrainerParty
+{
+    const char* const name;
+    uint8_t trainer_type;
+    uint8_t size;
+    union {
+        const struct TrainerPartyNormal* const pnormal;
+        const struct TrainerPartyMoves* const pmoves;
+        const struct TrainerPartyItem* const pitem;
+        const struct TrainerPartyItemMoves* const pitemmoves;
+    };
+};
+
 struct Script;
 
 typedef bool (*Script_fn_t)(struct Script*);

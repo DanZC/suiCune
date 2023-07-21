@@ -193,8 +193,8 @@ void BattleAnimFunction_Null(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
 
 one:
 
@@ -300,8 +300,8 @@ void BattleAnimFunction_MoveInCircle(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
 
 zero:
 
@@ -357,8 +357,8 @@ void BattleAnimFunction_MoveFromUserToTarget(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
 
 one:
 
@@ -405,18 +405,18 @@ void BattleAnimFunction_PokeBall(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
-    if (REG_BC == 3) goto three;
-    if (REG_BC == 4) goto four;
-    if (REG_BC == 5) goto five;
-    if (REG_BC == 6) goto six;
-    if (REG_BC == 7) goto seven;
-    if (REG_BC == 8) goto eight;
-    if (REG_BC == 9) goto nine;
-    if (REG_BC == 10) goto ten;
-    if (REG_BC == 11) goto eleven;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 2) goto two;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 3) goto three;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 4) goto four;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 5) goto five;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 6) goto six;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 7) goto seven;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 8) goto eight;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 9) goto nine;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 10) goto ten;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 11) goto eleven;
 
 zero:
     //
@@ -543,9 +543,9 @@ void BattleAnimFunction_PokeBallBlocked(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 2) goto two;
 
 zero:
 
@@ -629,11 +629,11 @@ void BattleAnimFunction_Ember(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
-    if (REG_BC == 3) goto three;
-    if (REG_BC == 4) goto four;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 2) goto two;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 3) goto three;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 4) goto four;
 
 zero:
 
@@ -683,8 +683,8 @@ void BattleAnimFunction_Drop(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
 
 zero:
 
@@ -740,10 +740,10 @@ void BattleAnimFunction_MoveFromUserToTargetSpinAround(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
-    if (REG_BC == 3) goto three;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 2) goto two;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 3) goto three;
 
 zero:
 
@@ -873,9 +873,9 @@ void BattleAnimFunction_Shake(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 2) goto two;
 
 zero:
 
@@ -931,16 +931,16 @@ void BattleAnimFunction_FireBlast(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
-    if (REG_BC == 3) goto three;
-    if (REG_BC == 4) goto four;
-    if (REG_BC == 5) goto five;
-    if (REG_BC == 6) goto six;
-    if (REG_BC == 7) goto seven;
-    if (REG_BC == 8) goto eight;
-    if (REG_BC == 9) goto nine;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 2) goto two;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 3) goto three;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 4) goto four;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 5) goto five;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 6) goto six;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 7) goto seven;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 8) goto eight;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 9) goto nine;
 
 zero:
 
@@ -1052,15 +1052,15 @@ void BattleAnimFunction_RazorLeaf(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
-    if (REG_BC == 3) goto three;
-    if (REG_BC == 4) goto four;
-    if (REG_BC == 5) goto five;
-    if (REG_BC == 6) goto six;
-    if (REG_BC == 7) goto seven;
-    if (REG_BC == 8) goto eight;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 2) goto two;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 3) goto three;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 4) goto four;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 5) goto five;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 6) goto six;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 7) goto seven;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 8) goto eight;
 
 zero:
 
@@ -1270,8 +1270,8 @@ void BattleAnimFunction_RockSmash(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
 
 zero:
 
@@ -1341,9 +1341,9 @@ void BattleAnimFunction_Bubble(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 2) goto two;
 
 zero:
 
@@ -1438,11 +1438,11 @@ void BattleAnimFunction_Surf(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
-    if (REG_BC == 3) goto three;
-    if (REG_BC == 4) goto four;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 2) goto two;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 3) goto three;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 4) goto four;
 
 zero:
 
@@ -1537,8 +1537,8 @@ void BattleAnimFunction_Sing(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
 
 zero:
 
@@ -1581,10 +1581,10 @@ void BattleAnimFunction_WaterGun(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
-    if (REG_BC == 3) goto three;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 2) goto two;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 3) goto three;
 
 zero:
 
@@ -1692,8 +1692,8 @@ void BattleAnimFunction_Recover(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
 
 zero:
 
@@ -1768,10 +1768,10 @@ void BattleAnimFunction_ThunderWave(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
-    if (REG_BC == 3) goto three;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 2) goto two;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 3) goto three;
 
 one:
 
@@ -1800,13 +1800,13 @@ void BattleAnimFunction_Clamp_Encore(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
-    if (REG_BC == 3) goto three;
-    if (REG_BC == 4) goto four;
-    if (REG_BC == 5) goto five;
-    if (REG_BC == 6) goto six;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 2) goto two;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 3) goto three;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 4) goto four;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 5) goto five;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 6) goto six;
 
 zero:
 
@@ -1906,13 +1906,13 @@ void BattleAnimFunction_Bite(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
-    if (REG_BC == 3) goto three;
-    if (REG_BC == 4) goto four;
-    if (REG_BC == 5) goto five;
-    if (REG_BC == 6) goto six;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 2) goto two;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 3) goto three;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 4) goto four;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 5) goto five;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 6) goto six;
 
 zero:
 
@@ -1998,8 +1998,8 @@ void BattleAnimFunction_SolarBeam(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
 
 zero:
 
@@ -2063,11 +2063,11 @@ void BattleAnimFunction_Gust(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
-    if (REG_BC == 3) goto three;
-    if (REG_BC == 4) goto four;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 2) goto two;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 3) goto three;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 4) goto four;
 
 zero:
 
@@ -2245,9 +2245,9 @@ void BattleAnimFunction_Wrap(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 2) goto two;
 
 one:
 
@@ -2275,10 +2275,10 @@ void BattleAnimFunction_LeechSeed(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
-    if (REG_BC == 3) goto three;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 2) goto two;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 3) goto three;
 
 zero:
 
@@ -2385,9 +2385,9 @@ void BattleAnimFunction_Spikes(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 2) goto two;
 
 zero:
 
@@ -2435,11 +2435,11 @@ void BattleAnimFunction_Kick(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;  // Jump Kick, Hi Jump Kick
-    // dw ['.three'];  // Rolling Kick
-    // dw ['.four'];  // Rolling Kick (continued)
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 2) goto two;  // Jump Kick, Hi Jump Kick
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 3) goto three;  // Rolling Kick
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 4) goto four;  // Rolling Kick (continued)
 
 zero:
 
@@ -2808,8 +2808,8 @@ void BattleAnimFunction_Sound(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
 
 zero:
 
@@ -2899,8 +2899,8 @@ void BattleAnimFunction_ConfuseRay(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
 
 zero:
 
@@ -2977,8 +2977,8 @@ void BattleAnimFunction_Dizzy(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
 
 zero:
 
@@ -3062,9 +3062,9 @@ void BattleAnimFunction_Amnesia(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 2) goto two;
 
 zero:
 
@@ -3160,8 +3160,8 @@ void BattleAnimFunction_String(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
 
 zero:
 
@@ -3194,8 +3194,8 @@ void BattleAnimFunction_Paralyzed(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
 
 zero:
 
@@ -3353,7 +3353,7 @@ void BattleAnimFunction_PoisonGas(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
     // dw ['BattleAnimFunction_SpiralDescent'];
 
 zero:
@@ -3492,9 +3492,9 @@ void BattleAnimFunction_PresentSmokescreen(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 2) goto two;
 
 zero:
 
@@ -3561,10 +3561,10 @@ void BattleAnimFunction_Horn(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
-    if (REG_BC == 3) goto three;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 2) goto two;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 3) goto three;
 
 zero:
 
@@ -3638,9 +3638,9 @@ void BattleAnimFunction_Needle(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 2) goto two;
 
 zero:
 
@@ -3704,8 +3704,8 @@ void BattleAnimFunction_ThiefPayday(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
 
 zero:
 
@@ -3879,8 +3879,8 @@ void BattleAnimFunction_Bonemerang(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
 
 zero:
 
@@ -3928,8 +3928,8 @@ void BattleAnimFunction_Shiny(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
 
 zero:
 
@@ -3966,10 +3966,10 @@ void BattleAnimFunction_SkyAttack(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
-    if (REG_BC == 3) goto three;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 2) goto two;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 3) goto three;
 
 zero:
 
@@ -4111,9 +4111,9 @@ void BattleAnimFunction_StrengthSeismicToss(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 2) goto two;
 
 zero:
 
@@ -4195,8 +4195,8 @@ void BattleAnimFunction_SpeedLine(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
 
 zero:
 
@@ -4234,9 +4234,9 @@ void BattleAnimFunction_Sludge(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 2) goto two;
 
 zero:
 
@@ -4335,8 +4335,8 @@ void BattleAnimFunction_Agility(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
 
 zero:
 
@@ -4391,9 +4391,9 @@ void BattleAnimFunction_LockOnMindReader(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 2) goto two;
 
 zero:
 
@@ -4469,8 +4469,8 @@ void BattleAnimFunction_HealBellNotes(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
 
 zero:
 
@@ -4626,9 +4626,9 @@ void BattleAnimFunction_HiddenPower(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 2) goto two;
 
 zero:
 
@@ -4679,8 +4679,8 @@ void BattleAnimFunction_Curse(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
 
 one:
 
@@ -4768,10 +4768,10 @@ void BattleAnimFunction_BetaPursuit(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
-    if (REG_BC == 3) goto three;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 2) goto two;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 3) goto three;
 
 zero:
 
@@ -4833,10 +4833,10 @@ void BattleAnimFunction_RainSandstorm(void) {
 
 anon_dw:
 
-    if (REG_BC == 0) goto zero;
-    if (REG_BC == 1) goto one;
-    if (REG_BC == 2) goto two;
-    if (REG_BC == 3) goto three;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 0) goto zero;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 1) goto one;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 2) goto two;
+    if (gb_read(REG_BC + BATTLEANIMSTRUCT_JUMPTABLE_INDEX) == 3) goto three;
 
 zero:
 
