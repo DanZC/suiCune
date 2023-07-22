@@ -337,10 +337,6 @@ inc:
 
 }
 
-#define bit_z(x, n) (!(((x) >> (n)) & 0x1))
-#define bit_nz(x, n) ((((x) >> (n)) & 0x1))
-#define res_bit(x, bit) x &= (1 << (bit)) ^ 0xff
-
 static void v_PrintNum_PrintDigit_Conv(uint16_t* hl, uint16_t* de, uint8_t* d)
 {
     // DEC_E;
@@ -477,7 +473,7 @@ skip1:
     //  prints a leading zero unless they are turned off in the flags
         // BIT_D(7);  // print leading zeroes?
         // RET_Z ;
-        if(bit_z(*d, 7))
+        if(!bit_test(*d, 7))
             return;
         
         // LD_hl(0xf6);
@@ -492,14 +488,14 @@ skip1:
     // IF_NZ goto done;
     // BIT_D(5);
     // IF_Z goto done;
-    if(gb_read(hPrintNumBuffer + 0) == 0 && bit_nz(*d, 5))
+    if(gb_read(hPrintNumBuffer + 0) == 0 && bit_test(*d, 5))
     {
         // LD_A(0xf0);
         // LD_hli_A;
         gb_write((*hl)++, 0xf0);
 
         // RES_D(5);
-        res_bit(*d, 5);
+        bit_reset(*d, 5);
     }
 
     // LD_A(0xf6);
@@ -541,7 +537,7 @@ uint16_t v_PrintNum_Conv(uint16_t hl, uint16_t de, uint8_t b, uint8_t c){
 //  increments the pointer unless leading zeroes are not being printed,
 //  the number is left-aligned, and no nonzero digits have been printed yet
 #define v_PrintNum_AdvancePointer() do {\
-    if(bit_z(d, 7) && bit_nz(d, 6)){\
+    if(!bit_test(d, 7) && bit_test(d, 6)){\
         if(gb_read(hPrintNumBuffer + 0) == 0)\
             break;\
     }\
@@ -561,14 +557,14 @@ uint16_t v_PrintNum_Conv(uint16_t hl, uint16_t de, uint8_t b, uint8_t c){
 
     // BIT_B(5);
     // IF_Z goto main;
-    if(bit_z(b, 5)) 
+    if(!bit_test(b, 5)) 
     {
         // goto main
     }
 
     // BIT_B(7);
     // IF_NZ goto moneyflag;
-    else if(bit_nz(b, 7)) 
+    else if(bit_test(b, 7)) 
     {
     // moneyflag:
     //   //  101xxxxx or 011xxxxx
@@ -577,12 +573,12 @@ uint16_t v_PrintNum_Conv(uint16_t hl, uint16_t de, uint8_t b, uint8_t c){
         gb_write(hl++, 0xf0);
 
         // RES_B(5);  // 100xxxxx or 010xxxxx
-        res_bit(b, 5);
+        bit_reset(b, 5);
     }
 
     // BIT_B(6);
     // IF_Z goto main;
-    else if(bit_z(b, 6)) 
+    else if(!bit_test(b, 6)) 
     {
         // goto main
     }
@@ -596,7 +592,7 @@ uint16_t v_PrintNum_Conv(uint16_t hl, uint16_t de, uint8_t b, uint8_t c){
         gb_write(hl++, 0xf0);
 
         // RES_B(5);  // 100xxxxx or 010xxxxx
-        res_bit(b, 5);
+        bit_reset(b, 5);
     }
 
 // main:
@@ -844,13 +840,13 @@ modded_10:
             // IF_NZ goto stop;
             // BIT_D(5);
             // IF_Z goto stop;
-            if(gb_read(hPrintNumBuffer + 0) == 0 && bit_nz(d, 5))
+            if(gb_read(hPrintNumBuffer + 0) == 0 && bit_test(d, 5))
             {
                 // LD_A(0xf0);
                 // LD_hli_A;
                 gb_write(hl++, 0xf0);
                 // RES_D(5);
-                res_bit(d, 5);
+                bit_reset(d, 5);
             }
         // stop:
             // POP_AF;
@@ -883,7 +879,7 @@ modded_10:
     //  prints a leading zero unless they are turned off in the flags
         // BIT_D(7);  // print leading zeroes?
         // RET_Z ;
-        if(bit_nz(d, 7))
+        if(bit_test(d, 7))
         {
             // LD_hl(0xf6);
             // RET;
@@ -906,13 +902,13 @@ modded_10:
         // IF_NZ goto stop;
         // BIT_D(5);
         // IF_Z goto stop;
-        if(gb_read(hPrintNumBuffer + 0) == 0 && bit_nz(d, 5))
+        if(gb_read(hPrintNumBuffer + 0) == 0 && bit_test(d, 5))
         {
             // LD_A(0xf0);
             // LD_hli_A;
             gb_write(hl++, 0xf0);
             // RES_D(5);
-            res_bit(d, 5);
+            bit_reset(d, 5);
         }
     // stop:
         // POP_AF;
@@ -1067,11 +1063,12 @@ skip1:
     //  prints a leading zero unless they are turned off in the flags
         // BIT_D(7);  // print leading zeroes?
         // RET_Z ;
-        if(bit_z(*d, PRINTNUM_LEADINGZEROS_F))
+        if(!bit_test(*d, PRINTNUM_LEADINGZEROS_F))
             return;
         
         // LD_hl(0xf6);
         *(*hl) = CHAR_0;
+        printf("0");
 
         // RET;
         return;
@@ -1082,14 +1079,15 @@ skip1:
     // IF_NZ goto done;
     // BIT_D(5);
     // IF_Z goto done;
-    if(hram->hPrintNumBuffer[0] == 0 && bit_nz(*d, PRINTNUM_MONEY_F))
+    if(hram->hPrintNumBuffer[0] == 0 && bit_test(*d, PRINTNUM_MONEY_F))
     {
         // LD_A(0xf0);
         // LD_hli_A;
         *((*hl)++) = CHAR_MONEY_ICON;
+        printf("$_");
 
         // RES_D(5);
-        res_bit(*d, PRINTNUM_MONEY_F);
+        bit_reset(*d, PRINTNUM_MONEY_F);
     }
 
     // LD_A(0xf6);
@@ -1098,6 +1096,7 @@ skip1:
 
     // LD_hl_A;
     *(*hl) = a;
+    printf("%c", c + '0');
 
     // LDH_addr_A(hPrintNumBuffer + 0);
     hram->hPrintNumBuffer[0] = a;
@@ -1112,12 +1111,30 @@ skip1:
     ++(*hl);
     // LD_hl(0xf2);
     *(*hl) = CHAR_DOT;
+    printf("_.");
     
     // RET;
     return;
 }
 
 #undef v_PrintNum_AdvancePointer
+
+//  increments the pointer unless leading zeroes are not being printed,
+//  the number is left-aligned, and no nonzero digits have been printed yet
+static void v_PrintNum_AdvancePointer(uint8_t** hl, uint8_t d) {
+    if(bit_test(d, PRINTNUM_LEADINGZEROS_F) || !bit_test(d, PRINTNUM_LEFTALIGN_F)) {
+        (*hl)++;
+        printf("_");
+        return;
+    }
+    if(hram->hPrintNumBuffer[0] == 0) {
+        printf("-");
+        return;
+    }
+    (*hl)++;
+    printf("_");
+}
+
 //  Print c digits of the b-byte value from de to hl.
 //  Allows 2 to 7 digits. For 1-digit numbers, add
 //  the value to char "0" instead of calling PrintNum.
@@ -1137,11 +1154,11 @@ uint8_t* v_PrintNum_Conv2(uint8_t* hl, const uint8_t* de, uint8_t b, uint8_t c){
 
 //  increments the pointer unless leading zeroes are not being printed,
 //  the number is left-aligned, and no nonzero digits have been printed yet
-#define v_PrintNum_AdvancePointer() do {\
-    if(!(!bit_test(d, PRINTNUM_LEADINGZEROS_F) && bit_test(d, PRINTNUM_LEFTALIGN_F) && hram->hPrintNumBuffer[0] == 0)){\
-        hl++;\
-    }\
-} while(0)
+// #define v_PrintNum_AdvancePointer() do {
+//     if(!(!bit_test(d, PRINTNUM_LEADINGZEROS_F) && bit_test(d, PRINTNUM_LEFTALIGN_F) && hram->hPrintNumBuffer[0] == 0)){
+//         hl++;
+//     }
+// } while(0)
 //     BIT_D(7);  // print leading zeroes?
 //     IF_NZ goto inc;
 //     BIT_D(6);  // left alignment or right alignment?
@@ -1170,9 +1187,10 @@ uint8_t* v_PrintNum_Conv2(uint8_t* hl, const uint8_t* de, uint8_t b, uint8_t c){
         // LD_A(0xf0);
         // LD_hli_A;
         *(hl++) = 0xf0;
+        printf("$_");
 
         // RES_B(5);  // 100xxxxx or 010xxxxx
-        res_bit(b, PRINTNUM_MONEY_F);
+        bit_reset(b, PRINTNUM_MONEY_F);
     }
 
     // BIT_B(6);
@@ -1191,7 +1209,7 @@ uint8_t* v_PrintNum_Conv2(uint8_t* hl, const uint8_t* de, uint8_t b, uint8_t c){
         *(hl++) = CHAR_MONEY_ICON;
 
         // RES_B(5);  // 100xxxxx or 010xxxxx
-        res_bit(b, PRINTNUM_MONEY_F);
+        bit_reset(b, PRINTNUM_MONEY_F);
     }
 
 // main:
@@ -1301,7 +1319,7 @@ uint8_t* v_PrintNum_Conv2(uint8_t* hl, const uint8_t* de, uint8_t b, uint8_t c){
         v_PrintNum_PrintDigit_Conv2(&hl, &d, &e);
 
         // CALL(av_PrintNum_AdvancePointer);
-        v_PrintNum_AdvancePointer();
+        v_PrintNum_AdvancePointer(&hl, d);
 
         // fallthrough
     case 6:
@@ -1322,7 +1340,7 @@ uint8_t* v_PrintNum_Conv2(uint8_t* hl, const uint8_t* de, uint8_t b, uint8_t c){
         v_PrintNum_PrintDigit_Conv2(&hl, &d, &e);
 
         // CALL(av_PrintNum_AdvancePointer);
-        v_PrintNum_AdvancePointer();
+        v_PrintNum_AdvancePointer(&hl, d);
 
         // fallthrough
     case 5:
@@ -1343,7 +1361,7 @@ uint8_t* v_PrintNum_Conv2(uint8_t* hl, const uint8_t* de, uint8_t b, uint8_t c){
         v_PrintNum_PrintDigit_Conv2(&hl, &d, &e);
 
         // CALL(av_PrintNum_AdvancePointer);
-        v_PrintNum_AdvancePointer();
+        v_PrintNum_AdvancePointer(&hl, d);
 
         // fallthrough
     case 4:
@@ -1358,13 +1376,13 @@ uint8_t* v_PrintNum_Conv2(uint8_t* hl, const uint8_t* de, uint8_t b, uint8_t c){
 
         // LD_A(LOW(1000));
         // LDH_addr_A(hPrintNumBuffer + 6);
-        hram->hPrintNumBuffer[5] = LOW(1000);
+        hram->hPrintNumBuffer[6] = LOW(1000);
 
         // CALL(av_PrintNum_PrintDigit);
         v_PrintNum_PrintDigit_Conv2(&hl, &d, &e);
 
         // CALL(av_PrintNum_AdvancePointer);
-        v_PrintNum_AdvancePointer();
+        v_PrintNum_AdvancePointer(&hl, d);
 
     // fallthrough
     case 3:
@@ -1385,7 +1403,7 @@ uint8_t* v_PrintNum_Conv2(uint8_t* hl, const uint8_t* de, uint8_t b, uint8_t c){
         v_PrintNum_PrintDigit_Conv2(&hl, &d, &e);
 
         // CALL(av_PrintNum_AdvancePointer);
-        v_PrintNum_AdvancePointer();
+        v_PrintNum_AdvancePointer(&hl, d);
 
         // fallthrough
     case 2:
@@ -1428,9 +1446,10 @@ modded_10:
     a %= 10;
     b = a;
     // LDH_A_addr(hPrintNumBuffer + 0);
+    a = hram->hPrintNumBuffer[0] | c;
     // OR_A_C;
     // IF_NZ goto money;
-    if((hram->hPrintNumBuffer[0] | c) != 0)
+    if(a != 0)
     {
     // money:
         // CALL(av_PrintNum_PrintYen);
@@ -1447,8 +1466,9 @@ modded_10:
                 // LD_A(0xf0);
                 // LD_hli_A;
                 *(hl++) = CHAR_MONEY_ICON;
+                printf("$_");
                 // RES_D(5);
-                res_bit(d, PRINTNUM_MONEY_F);
+                bit_reset(d, PRINTNUM_MONEY_F);
             }
         // stop:
             // POP_AF;
@@ -1459,7 +1479,8 @@ modded_10:
         // ADD_A_C;
         // LD_hl_A;
         // POP_AF;
-        *(hl) = c + 0xf6;
+        *(hl) = c + CHAR_0;
+        printf("%c^", c + '0');
 
         // LDH_addr_A(hPrintNumBuffer + 0);
         hram->hPrintNumBuffer[0] = a;
@@ -1470,8 +1491,10 @@ modded_10:
         if(e == 0)
         {
             // INC_HL;
+            hl++;
             // LD_hl(0xf2);
-            *(++hl) = 0xf2;
+            *hl = CHAR_DOT;
+            printf("_.");
         }
     }
     else 
@@ -1486,6 +1509,7 @@ modded_10:
             // LD_hl(0xf6);
             // RET;
             *(hl) = CHAR_0;
+            printf("0*");
         }
         // goto money_leading_zero;
     }
@@ -1493,7 +1517,7 @@ modded_10:
 
 // money_leading_zero:
     // CALL(av_PrintNum_AdvancePointer);
-    v_PrintNum_AdvancePointer();
+    v_PrintNum_AdvancePointer(&hl, d);
 
     // CALL(av_PrintNum_PrintYen);
     do {
@@ -1509,8 +1533,9 @@ modded_10:
             // LD_A(0xf0);
             // LD_hli_A;
             *(hl++) = CHAR_MONEY_ICON;
+            printf("$_");
             // RES_D(5);
-            res_bit(d, PRINTNUM_MONEY_F);
+            bit_reset(d, PRINTNUM_MONEY_F);
         }
     // stop:
         // POP_AF;
@@ -1520,6 +1545,7 @@ modded_10:
     // ADD_A_B;
     // LD_hli_A;
     *(hl++) = b + CHAR_0;
+    printf("%c_\n", b + '0');
 
     // POP_DE;
     // POP_BC;

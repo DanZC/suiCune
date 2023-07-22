@@ -25,7 +25,9 @@ void FarCall_hl(void) {
     PUSH_AF;
     LDH_A_addr(hTempBank);
     RST(aBankswitch);
-    CALL(aFarCall_JumpToHL);
+    // CALL(aFarCall_JumpToHL);
+    CALL_hl;
+    PEEK("Return from far call.");
     // fallthrough
 
     return ReturnFarCall();

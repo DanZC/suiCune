@@ -2822,7 +2822,15 @@
         }                                           \
     } while(0)
 
+#define CALL_de CALL(REG_DE + (REG_DE < 0x4000 ? 0 : ((gb.selected_rom_bank - 1) * ROM_BANK_SIZE)))
+
+#define CALL_hl CALL(REG_HL + (REG_HL < 0x4000 ? 0 : ((gb.selected_rom_bank - 1) * ROM_BANK_SIZE)))
+
 #define bit_test(_x, _n) (((_x) >> (_n)) & 0x1)
+
+#define bit_reset(_x, _n) _x &= ~(1 << (_n))
+
+#define bit_set(_x, _n) _x |= (1 << (_n))
 
 #define calc_sin_wave \
     do {\

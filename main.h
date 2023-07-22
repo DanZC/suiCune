@@ -143,7 +143,7 @@
 // SECTION "Enemy Trainers", ROMX
 
 //#include "engine/battle/ai/items.h"
-//#include "engine/battle/ai/scoring.h"
+#include "engine/battle/ai/scoring.h"
 //#include "engine/battle/read_trainer_attributes.h"
 #include "engine/battle/read_trainer_party.h"
 
@@ -161,7 +161,7 @@
 // SECTION "bank11", ROMX
 
 //#include "engine/events/fruit_trees.h"
-//#include "engine/battle/ai/move.h"
+#include "engine/battle/ai/move.h"
 //#include "engine/pokedex/pokedex_2.h"
 //#include "engine/pokemon/mail.h"
 
