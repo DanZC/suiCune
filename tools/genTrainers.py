@@ -15,20 +15,6 @@ partyCFile = f"{dataDir}/trainers/parties.c"
 
 CBegin = '''#include "../../constants.h"
 
-#define party_moves(_name, ...) {.name = _name, TRAINERTYPE_MOVES, .size = sizeof((const struct TrainerPartyMoves[]){__VA_ARGS__}) / sizeof(struct TrainerPartyMoves), .pmoves = (const struct TrainerPartyMoves[]){##__VA_ARGS__}}
-#define mon_moves(_lvl, _mon, _moves) {_lvl, _mon, _moves}
-#define moves4(_move1, _move2, _move3, _move4) {_move1, _move2, _move3, _move4}
-#define moves3(_move1, _move2, _move3) {_move1, _move2, _move3, NO_MOVE}
-#define moves2(_move1, _move2) {_move1, _move2, NO_MOVE, NO_MOVE}
-#define moves1(_move1) {_move1, NO_MOVE, NO_MOVE, NO_MOVE}
-#define overloadselect4(_1,_2,_3,_4,NAME,...) NAME
-#define moves(...) overloadselect4(__VA_ARGS__, moves4, moves3, moves2, moves1, error)(__VA_ARGS__)
-#define party_normal(_name, ...) {.name = _name, TRAINERTYPE_NORMAL, .size = sizeof((const struct TrainerPartyNormal[]){__VA_ARGS__}) / sizeof(struct TrainerPartyNormal), .pnormal = (const struct TrainerPartyNormal[]){##__VA_ARGS__}}
-#define mon_normal(_lvl, _mon) {_lvl, _mon}
-#define party_item(_name, ...) {.name = _name, TRAINERTYPE_ITEM, .size = sizeof((const struct TrainerPartyItem[]){__VA_ARGS__}) / sizeof(struct TrainerPartyItem), .pitem = (const struct TrainerPartyItem[]){##__VA_ARGS__}}
-#define mon_item(_lvl, _mon, _item) {_lvl, _mon, _item}
-#define party_item_moves(_name, ...) {.name = _name, TRAINERTYPE_ITEM_MOVES, .size = sizeof((const struct TrainerPartyItemMoves[]){__VA_ARGS__}) / sizeof(struct TrainerPartyItemMoves), .pitem = (const struct TrainerPartyItemMoves[]){##__VA_ARGS__}}
-#define mon_item_moves(_lvl, _mon, _item, _moves) {_lvl, _mon, _item, _moves}
 '''
 
 @dataclass
@@ -174,47 +160,47 @@ def trainer_group_to_c(group: Group):
     out += '\n'
     for party in group.parties:
         if party.ptype == 'NORMAL':
-            out += f'{tab}party_normal("{party.name}",\n'
+            out += f'{tab}{{"{party.name}", TRAINERTYPE_{party.ptype}, .size={len(party.mons)}, .pnormal=(struct TrainerPartyNormal[]){{\n'
             for i, mon in enumerate(party.mons):
-                out += f'{tab*2}mon_normal({mon.level}, {mon.species})'
+                out += f'{tab*2}{{.level={mon.level}, .species={mon.species}}}'
                 if i < len(party.mons) - 1:
                     out += ','
                 out += '\n'
-            out += f'{tab}),\n'
+            out += f'{tab}}}}},\n'
         elif party.ptype == 'ITEM':
-            out += f'{tab}party_item("{party.name}",\n'
+            out += f'{tab}{{"{party.name}", TRAINERTYPE_{party.ptype}, .size={len(party.mons)}, .pitem=(struct TrainerPartyItem[]){{\n'
             for i, mon in enumerate(party.mons):
-                out += f'{tab*2}mon_item({mon.level}, {mon.species}, {mon.item})'
+                out += f'{tab*2}{{.level={mon.level}, .species={mon.species}, .item={mon.item}}}'
                 if i < len(party.mons) - 1:
                     out += ','
                 out += '\n'
-            out += f'{tab}),\n'
+            out += f'{tab}}}}},\n'
         elif party.ptype == 'MOVES':
-            out += f'{tab}party_moves("{party.name}",\n'
+            out += f'{tab}{{"{party.name}", TRAINERTYPE_{party.ptype}, .size={len(party.mons)}, .pmoves=(struct TrainerPartyMoves[]){{\n'
             for i, mon in enumerate(party.mons):
-                out += f'{tab*2}mon_moves({mon.level}, {mon.species}, moves('
+                out += f'{tab*2}{{.level={mon.level}, .species={mon.species}, .moves={{'
                 for j, mv in enumerate(mon.moves):
                     out += f'{mv}'
                     if j < len(mon.moves) - 1:
                         out += ', '
-                out += '))'
+                out += f'}}}}'
                 if i < len(party.mons) - 1:
                     out += ','
                 out += '\n'
-            out += f'{tab}),\n'
+            out += f'{tab}}}}},\n'
         elif party.ptype == 'ITEM_MOVES':
-            out += f'{tab}party_item_moves("{party.name}",\n'
+            out += f'{tab}{{"{party.name}", TRAINERTYPE_{party.ptype}, .size={len(party.mons)}, .pitemmoves=(struct TrainerPartyItemMoves[]){{\n'
             for i, mon in enumerate(party.mons):
-                out += f'{tab*2}mon_item_moves({mon.level}, {mon.species}, {mon.item}, moves('
+                out += f'{tab*2}{{.level={mon.level}, .species={mon.species}, .item={mon.item}, .moves={{'
                 for j, mv in enumerate(mon.moves):
                     out += f'{mv}'
                     if j < len(mon.moves) - 1:
                         out += ', '
-                out += '))'
+                out += f'}}}}'
                 if i < len(party.mons) - 1:
                     out += ','
                 out += '\n'
-            out += f'{tab}),\n'
+            out += f'{tab}}}}},\n'
     out += '};\n'
     return out
 

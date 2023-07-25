@@ -13,6 +13,7 @@
 #include <string.h>
 
 #include <SDL2/SDL.h>
+#include <physfs.h>
 
 #include "minigb_apu/minigb_apu.h"
 #include "peanut_gb.h"
@@ -3503,6 +3504,17 @@ int main(int argc, char* argv[]) {
 #if defined(_WIN32)
     SDL_setenv("SDL_AUDIODRIVER", "directsound", SDL_TRUE);
 #endif
+
+    if(!PHYSFS_init(argv[0])) {
+        char buf[128];
+        snprintf(buf, sizeof(buf),
+                 "Unable to initialise PhysFS: %s\n", PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", buf, NULL);
+        ret = EXIT_FAILURE;
+        goto out;
+    }
+
+    PHYSFS_mount("./assets.zip", NULL, 1);
 
     /* Initialise frontend implementation, in this case, SDL2. */
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER | SDL_INIT_AUDIO) < 0) {

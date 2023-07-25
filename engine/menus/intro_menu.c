@@ -3,12 +3,18 @@
 #include <stdio.h>
 #include <string.h>
 #include "../../home/audio.h"
+#include "../../home/delay.h"
+#include "../../home/string.h"
+#include "../../home/copy.h"
+#include "../../home/copy_name.h"
 
 void Intro_MainMenu() {
     PlayMusic_Conv(MUSIC_NONE);
-    CALL(aDelayFrame);
-    LD_A_E;
-    LD_addr_A(wMapMusic);
+    // CALL(aDelayFrame);
+    DelayFrame();
+    // LD_A_E;
+    // LD_addr_A(wMapMusic);
+    wram->wMapMusic = MUSIC_NONE;
     PlayMusic_Conv(MUSIC_MAIN_MENU);
     FARCALL(aMainMenu);
     JP(mStartTitleScreen);
@@ -870,6 +876,14 @@ void OakText7(void) {
 }
 
 void NamePlayer(void) {
+// Chris:
+    //db ['"CHRIS@@@@@@"'];
+    static const char Chris[] = "CHRIS@@@@@@";
+
+// Kris:
+    //db ['"KRIS@@@@@@@"'];
+    static const char Kris[] = "KRIS@@@@@@@";
+
     FARCALL(aMovePlayerPicRight);
     FARCALL(aShowPlayerNamingChoices);
     LD_A_addr(wMenuCursorY);
@@ -900,25 +914,24 @@ NewName:
     CALL(aGetSGBLayout);
     CALL(aRotateThreePalettesLeft);
 
-    LD_HL(wPlayerName);
-    LD_DE(mNamePlayer_Chris);
-    LD_A_addr(wPlayerGender);
-    BIT_A(PLAYERGENDER_FEMALE_F);
-    IF_Z goto Male;
-    LD_DE(mNamePlayer_Kris);
+    // LD_HL(wPlayerName);
+    // LD_DE(mNamePlayer_Chris);
+    // LD_A_addr(wPlayerGender);
+    // BIT_A(PLAYERGENDER_FEMALE_F);
+    // IF_Z goto Male;
+    if(bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F)) {
+        InitName_Conv2(wram->wPlayerName, Utf8ToCrystal(Kris));
+    }
+    // LD_DE(mNamePlayer_Kris);
 
-Male:
-    CALL(aInitName);
+// Male:
+    // CALL(aInitName);
+    else {
+        InitName_Conv2(wram->wPlayerName, Utf8ToCrystal(Chris));
+    }
     RET;
 
-
-Chris:
-    //db ['"CHRIS@@@@@@"'];
-
-Kris:
-    //db ['"KRIS@@@@@@@"'];
-
-    return GSShowPlayerNamingChoices();
+    // return GSShowPlayerNamingChoices();
 }
 
 void GSShowPlayerNamingChoices(void) {
@@ -934,15 +947,16 @@ void GSShowPlayerNamingChoices(void) {
 }
 
 void StorePlayerName(void) {
-    LD_A(0x50);
-    LD_BC(NAME_LENGTH);
-    LD_HL(wPlayerName);
-    CALL(aByteFill);
-    LD_HL(wPlayerName);
-    LD_DE(wStringBuffer2);
-    CALL(aCopyName2);
+    // LD_A(0x50);
+    // LD_BC(NAME_LENGTH);
+    // LD_HL(wPlayerName);
+    // CALL(aByteFill);
+    ByteFill_Conv2(wram->wPlayerName, NAME_LENGTH, 0x50);
+    // LD_HL(wPlayerName);
+    // LD_DE(wStringBuffer2);
+    // CALL(aCopyName2);
+    CopyName2_Conv2(wram->wPlayerName, wram->wStringBuffer2);
     RET;
-
 }
 
 void ShrinkPlayer(void) {

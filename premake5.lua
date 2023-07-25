@@ -15,12 +15,14 @@ workspace "suiCune"
 	warnings "extra"
 
 	syslibdirs {
-        ".\\deps\\SDL2\\lib\\x86\\"
+        ".\\deps\\SDL2\\lib\\x86\\",
+        ".\\deps\\physfs\\lib\\x86\\"
 	}
 
 	includedirs {
 		".\\src\\",
-        ".\\deps\\SDL2\\include\\"
+        ".\\deps\\SDL2\\include\\",
+        ".\\deps\\physfs\\include\\"
 	}
 
 	platforms {
@@ -51,6 +53,7 @@ workspace "suiCune"
 		warnings "off"
 
 		links {
+            "physfs",
             "SDL2",
             "SDL2main",
 		}

@@ -722,7 +722,7 @@ void init_function_pointers(void) {
     //REDIRECTED(OakText5);
     //REDIRECTED(OakText6);
     //REDIRECTED(OakText2);
-    //REDIRECTED(StorePlayerName);
+    CONVERTED(StorePlayerName);
     //REDIRECTED(OakText4);
     //REDIRECTED(GSShowPlayerNamingChoices);
     //REDIRECTED(ShrinkPlayer);

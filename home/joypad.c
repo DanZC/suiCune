@@ -350,7 +350,7 @@ void GetJoypad_Conv(void) {
 
     //  The player input can be automated using an input stream.
     //  See more below.
-    uint8_t inputType = gb_read(wInputType);
+    uint8_t inputType = wram->wInputType;
     if(inputType == AUTO_INPUT)
     {
         //  Use a predetermined input stream (used in the catching tutorial).
@@ -358,14 +358,14 @@ void GetJoypad_Conv(void) {
         //  A value of $ff will immediately end the stream.
 
         //  Read from the input stream.
-        uint8_t oldBank = gb_read(hROMBank);
-        uint8_t autoInputBank = gb_read(wAutoInputBank);
+        uint8_t oldBank = hram->hROMBank;
+        uint8_t autoInputBank = wram->wAutoInputBank;
         Bankswitch_Conv(autoInputBank);
 
         uint16_t hl = gb_read16(wAutoInputAddress);
 
         //  We only update when the input duration has expired.
-        uint8_t len = gb_read(wAutoInputLength);
+        uint8_t len = wram->wAutoInputLength;
         if(len == 0)
         {
             //  An input of $ff will end the stream.
@@ -379,7 +379,7 @@ void GetJoypad_Conv(void) {
             {
                 //  A duration of $ff will end the stream indefinitely.
                 uint8_t duration = gb_read(hl++);
-                gb_write(wAutoInputLength, duration);
+                wram->wAutoInputLength = duration;
                 if(duration != 0xFF)
                 {
                     //  On to the next input...
@@ -393,16 +393,16 @@ void GetJoypad_Conv(void) {
                 }
             }
             Bankswitch_Conv(oldBank);
-            gb_write(hJoyPressed, input);  // pressed
-            gb_write(hJoyDown, input);     // input
+            hram->hJoyPressed = input;  // pressed
+            hram->hJoyDown = input;     // input
         }
         else 
         {
             //  Until then, don't change anything.
-            len--;
-            gb_write(wAutoInputLength, len);
+            wram->wAutoInputLength = --len;
             Bankswitch_Conv(oldBank);
         }
+        return;
     }
     else 
     {
