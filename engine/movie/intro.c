@@ -60,7 +60,7 @@ static void Intro_RustleGrass_Conv(void);
 static void Intro_SetCGBPalUpdate(void);
 static void Intro_ClearBGPals_Conv(void);
 static void Intro_DecompressRequest2bpp_128Tiles_Conv(uint16_t hl, uint16_t de);
-static void Intro_DecompressRequest2bpp_255Tiles_Conv(uint16_t hl, uint16_t de);
+// static void Intro_DecompressRequest2bpp_255Tiles_Conv(uint16_t hl, uint16_t de);
 static void Intro_DecompressRequest2bpp_64Tiles_Conv(uint16_t hl, uint16_t de);
 static void Intro_ResetLYOverrides_Conv(void);
 static void Intro_PerspectiveScrollBG_Conv(void);
@@ -290,11 +290,13 @@ static void IntroScene1(void){
     // LD_HL(mIntroUnownsGFX);
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
     // CALL(aIntro_DecompressRequest2bpp_128Tiles);
-    Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroUnownsGFX, vTiles2 + LEN_2BPP_TILE * 0x00);
+    // Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroUnownsGFX, vTiles2 + LEN_2BPP_TILE * 0x00);
+    LoadPNG2bppAssetToVRAM(vram->vTiles2, "gfx/intro/unowns.png");
     // LD_HL(mIntroPulseGFX);
     // LD_DE(vTiles0 + LEN_2BPP_TILE * 0x00);
     // CALL(aIntro_DecompressRequest2bpp_128Tiles);
-    Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroPulseGFX, vTiles0 + LEN_2BPP_TILE * 0x00);
+    // Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroPulseGFX, vTiles0 + LEN_2BPP_TILE * 0x00);
+    LoadPNG2bppAssetToVRAM(vram->vTiles0, "gfx/intro/pulse.png");
     // LD_HL(mIntroUnownATilemap);
     // debgcoord(0, 0, vBGMap0);
     // CALL(aIntro_DecompressRequest2bpp_64Tiles);
@@ -405,7 +407,8 @@ static void IntroScene3(void){
     // LD_HL(mIntroBackgroundGFX);
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
     // CALL(aIntro_DecompressRequest2bpp_128Tiles);
-    Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroBackgroundGFX, vTiles2 + LEN_2BPP_TILE * 0x00);
+    // Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroBackgroundGFX, vTiles2 + LEN_2BPP_TILE * 0x00);
+    LoadPNG2bppAssetToVRAM(vram->vTiles2, "gfx/intro/background.png");
     // LD_HL(mIntroBackgroundTilemap);
     // debgcoord(0, 0, vBGMap0);
     // CALL(aIntro_DecompressRequest2bpp_64Tiles);
@@ -504,11 +507,13 @@ static void IntroScene5(void){
     // LD_HL(mIntroUnownsGFX);
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
     // CALL(aIntro_DecompressRequest2bpp_128Tiles);
-    Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroUnownsGFX, vTiles2 + LEN_2BPP_TILE * 0x00);
+    // Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroUnownsGFX, vTiles2 + LEN_2BPP_TILE * 0x00);
+    LoadPNG2bppAssetToVRAM(vram->vTiles2, "gfx/intro/unowns.png");
     // LD_HL(mIntroPulseGFX);
     // LD_DE(vTiles0 + LEN_2BPP_TILE * 0x00);
     // CALL(aIntro_DecompressRequest2bpp_128Tiles);
-    Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroPulseGFX, vTiles0 + LEN_2BPP_TILE * 0x00);
+    // Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroPulseGFX, vTiles0 + LEN_2BPP_TILE * 0x00);
+    LoadPNG2bppAssetToVRAM(vram->vTiles0, "gfx/intro/pulse.png");
     // LD_HL(mIntroUnownHITilemap);
     // debgcoord(0, 0, vBGMap0);
     // CALL(aIntro_DecompressRequest2bpp_64Tiles);
@@ -643,7 +648,8 @@ static void IntroScene7(void){
     // LD_HL(mIntroPichuWooperGFX);
     // LD_DE(vTiles0 + LEN_2BPP_TILE * 0x00);
     // CALL(aIntro_DecompressRequest2bpp_128Tiles);
-    Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroPichuWooperGFX, vTiles0 + LEN_2BPP_TILE * 0x00);
+    // Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroPichuWooperGFX, vTiles0 + LEN_2BPP_TILE * 0x00);
+    LoadPNG2bppAssetToVRAM(vram->vTiles3, "gfx/intro/pichu_wooper.png");
 
     // LD_A(0x0);
     // LDH_addr_A(rVBK);
@@ -651,12 +657,14 @@ static void IntroScene7(void){
     // LD_HL(mIntroSuicuneRunGFX);
     // LD_DE(vTiles0 + LEN_2BPP_TILE * 0x00);
     // CALL(aIntro_DecompressRequest2bpp_255Tiles);
-    Intro_DecompressRequest2bpp_255Tiles_Conv(mIntroSuicuneRunGFX, vTiles0 + LEN_2BPP_TILE * 0x00);
+    // Intro_DecompressRequest2bpp_255Tiles_Conv(mIntroSuicuneRunGFX, vTiles0 + LEN_2BPP_TILE * 0x00);
+    LoadPNG2bppAssetToVRAM(vram->vTiles0, "gfx/intro/suicune_run.png");
 
     // LD_HL(mIntroBackgroundGFX);
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
     // CALL(aIntro_DecompressRequest2bpp_128Tiles);
-    Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroBackgroundGFX, vTiles2 + LEN_2BPP_TILE * 0x00);
+    // Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroBackgroundGFX, vTiles2 + LEN_2BPP_TILE * 0x00);
+    LoadPNG2bppAssetToVRAM(vram->vTiles2, "gfx/intro/background.png");
 
     // LD_HL(mIntroBackgroundTilemap);
     // debgcoord(0, 0, vBGMap0);
@@ -1083,11 +1091,13 @@ static void IntroScene13(void){
     // LD_HL(mIntroSuicuneRunGFX);
     // LD_DE(vTiles0 + LEN_2BPP_TILE * 0x00);
     // CALL(aIntro_DecompressRequest2bpp_255Tiles);
-    Intro_DecompressRequest2bpp_255Tiles_Conv(mIntroSuicuneRunGFX, vTiles0 + LEN_2BPP_TILE * 0x00);
+    // Intro_DecompressRequest2bpp_255Tiles_Conv(mIntroSuicuneRunGFX, vTiles0 + LEN_2BPP_TILE * 0x00);
+    LoadPNG2bppAssetToVRAM(vram->vTiles0, "gfx/intro/suicune_run.png");
     // LD_HL(mIntroBackgroundGFX);
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
     // CALL(aIntro_DecompressRequest2bpp_128Tiles);
-    Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroBackgroundGFX, vTiles2 + LEN_2BPP_TILE * 0x00);
+    // Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroBackgroundGFX, vTiles2 + LEN_2BPP_TILE * 0x00);
+    LoadPNG2bppAssetToVRAM(vram->vTiles2, "gfx/intro/background.png");
     // LD_HL(mIntroBackgroundTilemap);
     // debgcoord(0, 0, vBGMap0);
     // CALL(aIntro_DecompressRequest2bpp_64Tiles);
@@ -1234,16 +1244,19 @@ static void IntroScene15(void){
     // LD_HL(mIntroSuicuneJumpGFX);
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
     // CALL(aIntro_DecompressRequest2bpp_128Tiles);
-    Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroSuicuneJumpGFX, vTiles2 + LEN_2BPP_TILE * 0x00);
+    // Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroSuicuneJumpGFX, vTiles2 + LEN_2BPP_TILE * 0x00);
+    LoadPNG2bppAssetToVRAM(vram->vTiles2, "gfx/intro/suicune_jump.png");
     // LD_HL(mIntroUnownBackGFX);
     // LD_DE(vTiles0 + LEN_2BPP_TILE * 0x00);
     // CALL(aIntro_DecompressRequest2bpp_128Tiles);
-    Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroUnownBackGFX, vTiles0 + LEN_2BPP_TILE * 0x00);
+    // Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroUnownBackGFX, vTiles0 + LEN_2BPP_TILE * 0x00);
+    LoadPNG2bppAssetToVRAM(vram->vTiles0, "gfx/intro/unown_back.png");
     // LD_DE(mIntroGrass4GFX);
     // LD_HL(vTiles1 + LEN_2BPP_TILE * 0x00);
     // LD_BC((BANK(aIntroGrass4GFX) << 8) | 1);
     // CALL(aRequest2bpp);
-    Request2bpp_Conv(BANK(aIntroGrass4GFX), mIntroGrass4GFX, vTiles1 + LEN_2BPP_TILE * 0x00, 1);
+    // Request2bpp_Conv(BANK(aIntroGrass4GFX), mIntroGrass4GFX, vTiles1 + LEN_2BPP_TILE * 0x00, 1);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles1, "gfx/intro/grass4.png", 0, 1);
     // LD_HL(mIntroSuicuneJumpTilemap);
     // debgcoord(0, 0, vBGMap0);
     // CALL(aIntro_DecompressRequest2bpp_64Tiles);
@@ -1360,7 +1373,8 @@ static void IntroScene17(void){
     // LD_HL(mIntroSuicuneCloseGFX);
     // LD_DE(vTiles1 + LEN_2BPP_TILE * 0x00);
     // CALL(aIntro_DecompressRequest2bpp_255Tiles);
-    Intro_DecompressRequest2bpp_255Tiles_Conv(mIntroSuicuneCloseGFX, vTiles1 + LEN_2BPP_TILE * 0x00);
+    // Intro_DecompressRequest2bpp_255Tiles_Conv(mIntroSuicuneCloseGFX, vTiles1 + LEN_2BPP_TILE * 0x00);
+    LoadPNG2bppAssetToVRAM(vram->vTiles1, "gfx/intro/suicune_close.png");
     // LD_HL(mIntroSuicuneCloseTilemap);
     // debgcoord(0, 0, vBGMap0);
     // CALL(aIntro_DecompressRequest2bpp_64Tiles);
@@ -1460,16 +1474,19 @@ static void IntroScene19(void){
     // LD_HL(mIntroSuicuneBackGFX);
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
     // CALL(aIntro_DecompressRequest2bpp_128Tiles);
-    Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroSuicuneBackGFX, vTiles2 + LEN_2BPP_TILE * 0x00);
+    // Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroSuicuneBackGFX, vTiles2 + LEN_2BPP_TILE * 0x00);
+    LoadPNG2bppAssetToVRAM(vram->vTiles2, "gfx/intro/suicune_back.png");
     // LD_HL(mIntroUnownsGFX);
     // LD_DE(vTiles1 + LEN_2BPP_TILE * 0x00);
     // CALL(aIntro_DecompressRequest2bpp_128Tiles);
-    Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroUnownsGFX, vTiles1 + LEN_2BPP_TILE * 0x00);
+    // Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroUnownsGFX, vTiles1 + LEN_2BPP_TILE * 0x00);
+    LoadPNG2bppAssetToVRAM(vram->vTiles1, "gfx/intro/unowns.png");
     // LD_DE(mIntroGrass4GFX);
     // LD_HL(vTiles1 + LEN_2BPP_TILE * 0x7f);
     // LD_BC((BANK(aIntroGrass4GFX) << 8) | 1);
     // CALL(aRequest2bpp);
-    Request2bpp_Conv(BANK(aIntroGrass4GFX), mIntroGrass4GFX, vTiles1 + LEN_2BPP_TILE * 0x7f, 1);
+    // Request2bpp_Conv(BANK(aIntroGrass4GFX), mIntroGrass4GFX, vTiles1 + LEN_2BPP_TILE * 0x7f, 1);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles1 + LEN_2BPP_TILE * 0x7f, "gfx/intro/grass4.png", 0, 1);
     // LD_HL(mIntroSuicuneBackTilemap);
     // debgcoord(0, 0, vBGMap0);
     // CALL(aIntro_DecompressRequest2bpp_64Tiles);
@@ -1853,7 +1870,8 @@ static void IntroScene26(void){
     // LD_HL(mIntroCrystalUnownsGFX);
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
     // CALL(aIntro_DecompressRequest2bpp_128Tiles);
-    Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroCrystalUnownsGFX, vTiles2 + LEN_2BPP_TILE * 0x00);
+    // Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroCrystalUnownsGFX, vTiles2 + LEN_2BPP_TILE * 0x00);
+    LoadPNG2bppAssetToVRAM(vram->vTiles2, "gfx/intro/crystal_unowns.png");
     // LD_HL(mIntroCrystalUnownsTilemap);
     // debgcoord(0, 0, vBGMap0);
     // CALL(aIntro_DecompressRequest2bpp_64Tiles);
@@ -2902,13 +2920,14 @@ void Intro_DecompressRequest2bpp_255Tiles(void){
 
 }
 
-static void Intro_DecompressRequest2bpp_255Tiles_Conv(uint16_t hl, uint16_t de) {
-    uint8_t svbk = gb_read(rSVBK);
-    gb_write(rSVBK, MBANK(awDecompressScratch));
-    Decompress_Conv(wDecompressScratch, hl);
-    Request2bpp_Conv(0x01, wDecompressScratch, de, 255);
-    gb_write(rSVBK, svbk);
-}
+// Unused
+// static void Intro_DecompressRequest2bpp_255Tiles_Conv(uint16_t hl, uint16_t de) {
+//     uint8_t svbk = gb_read(rSVBK);
+//     gb_write(rSVBK, MBANK(awDecompressScratch));
+//     Decompress_Conv(wDecompressScratch, hl);
+//     Request2bpp_Conv(0x01, wDecompressScratch, de, 255);
+//     gb_write(rSVBK, svbk);
+// }
 
 void Intro_DecompressRequest2bpp_64Tiles(void){
     LDH_A_addr(rSVBK);

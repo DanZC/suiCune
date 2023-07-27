@@ -263,8 +263,4 @@ const struct ItemAttr ItemAttributes[] = {
 	// assert_table_length $100
 };
 
-#if defined(__cplusplus) || defined(_MSC_VER)
 static_assert(lengthof(ItemAttributes) == 0x100, "");
-#else
-_Static_assert(lengthof(ItemAttributes) == 0x100, "");
-#endif

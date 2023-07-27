@@ -155,6 +155,10 @@ def trainer_group_to_c(group: Group):
     out = f'const struct TrainerParty {group.name}[]'
     out += ' = {'
     if len(group.parties) == 0:
+        out += f'''
+{tab}// VS complains about empty arrays, so there is a dummy item here.
+{tab}{{"?@", TRAINERTYPE_NORMAL, .size=0, .pnormal=NULL}},
+'''
         out += '};\n'
         return out
     out += '\n'
@@ -256,7 +260,7 @@ def json2c():
         out += trainer_group_to_c(group) + '\n'
         out2 += f'{tab}{group.name},\n'
     
-    out2 += '};\n'
+    out2 += '};\n\nstatic_assert(lengthof(TrainerGroups) == NUM_TRAINER_CLASSES, "");'
 
     with open(partyCFile, mode='w', encoding='utf8') as f:
         f.write(CBegin + out + out2)

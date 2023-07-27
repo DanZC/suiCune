@@ -19,3 +19,7 @@
 //#include "macros/legacy.h"
 
 #define lengthof(_arr) (sizeof(_arr) / sizeof(_arr[0]))
+
+#if !(defined(__cplusplus) || defined(_MSC_VER))
+#define static_assert _Static_assert
+#endif

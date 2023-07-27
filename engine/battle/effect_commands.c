@@ -3771,7 +3771,7 @@ ignore_substitute:
     LD_addr_A(wHPBuffer2 + 1);
     SBC_A_B;
     LD_addr_A(wEnemyMonHP);
-#if defined(_DEBUG)
+#if defined(_DEBUG) && !defined(_MSC_VER)
     PUSH_AF;
     LD_A(BANK(sSkipBattle));
     CALL(aOpenSRAM);

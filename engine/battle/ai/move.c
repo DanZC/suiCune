@@ -2,7 +2,25 @@
 #include "move.h"
 #include "scoring.h"
 
-static void (*const AIScoringPointers[])(void);
+//  entries correspond to AI_* constants
+static void (*const AIScoringPointers[])(void) = {
+    AI_Basic,
+    AI_Setup,
+    AI_Types,
+    AI_Offensive,
+    AI_Smart,
+    AI_Opportunist,
+    AI_Aggressive,
+    AI_Cautious,
+    AI_Status,
+    AI_Risky,
+    AI_None,
+    AI_None,
+    AI_None,
+    AI_None,
+    AI_None,
+    AI_None,
+};
 
 void AIChooseMove(void){
     (void)AIScoringPointers;
@@ -244,23 +262,3 @@ ChooseMove:
     //dw ['AI_None'];
 
 // }
-
-//  entries correspond to AI_* constants
-static void (*const AIScoringPointers[])(void) = {
-    AI_Basic,
-    AI_Setup,
-    AI_Types,
-    AI_Offensive,
-    AI_Smart,
-    AI_Opportunist,
-    AI_Aggressive,
-    AI_Cautious,
-    AI_Status,
-    AI_Risky,
-    AI_None,
-    AI_None,
-    AI_None,
-    AI_None,
-    AI_None,
-    AI_None,
-};

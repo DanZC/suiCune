@@ -357,8 +357,4 @@ const struct TrainerClassAttr TrainerClassAttributes[] = {
     },
 };
 
-#if defined(__cplusplus) || defined(_MSC_VER)
 static_assert(lengthof(TrainerClassAttributes) == NUM_TRAINER_CLASSES + 1, "");
-#else
-_Static_assert(lengthof(TrainerClassAttributes) == NUM_TRAINER_CLASSES + 1, "");
-#endif

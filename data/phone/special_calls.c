@@ -1,5 +1,5 @@
 #include "../../constants.h"
-
+#if 0 // Disable for now
 struct SpecialCall {
     bool (*condition)(void);
     uint8_t contact;
@@ -28,4 +28,5 @@ const struct SpecialCall SpecialPhoneCallList[] = {
 static_assert(lengthof(SpecialPhoneCallList) == NUM_SPECIALCALLS + 1, "");
 #else 
 _Static_assert(lengthof(SpecialPhoneCallList) == NUM_SPECIALCALLS + 1, "");
+#endif
 #endif

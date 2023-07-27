@@ -153,7 +153,10 @@ const struct TrainerParty Rival1Group[] = {
     }},
 };
 
-const struct TrainerParty PokemonProfGroup[] = {};
+const struct TrainerParty PokemonProfGroup[] = {
+    // VS complains about empty arrays, so there is a dummy item here.
+    {"DUMMY@", TRAINERTYPE_NORMAL, .size=0, .pnormal=NULL},
+};
 
 const struct TrainerParty WillGroup[] = {
     {"WILL@", TRAINERTYPE_MOVES, .size=5, .pmoves=(struct TrainerPartyMoves[]){
@@ -2605,3 +2608,5 @@ const struct TrainerParty* TrainerGroups[] = {
     GruntFGroup,
     MysticalmanGroup,
 };
+
+static_assert(lengthof(TrainerGroups) == NUM_TRAINER_CLASSES, "");

@@ -2,7 +2,7 @@
 #define _dw(_w) LOW(_w), HIGH(_w)
 #define _dba(_a) BANK(a##_a), _dw(m##_a)
 #define _dt(_t) _dw(_t), (((_t) >> 16) & 0xff)
-#define MAP_ID(_a) MAPGROUP_##_a, MAP_##_a
+#define MAP_ID(_a) GROUP_##_a, MAP_##_a
 
 #define overloadselect2(_1,_2,NAME,...) NAME
 #define overloadselect3(_1,_2,_3,NAME,...) NAME

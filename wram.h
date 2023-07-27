@@ -1117,7 +1117,7 @@ struct PACKED wram_s
                         // _DEBUG
                         // )
                     };
-                    struct PACKED {
+                    // struct PACKED {
                         // // WRAM0
                         // // debug room RTC values
                         // uint8_t wDebugRoomRTCSec;
@@ -1156,7 +1156,7 @@ struct PACKED wram_s
                         //     };
                         // };
                         // endc
-                    };
+                    // };
                 };
             };
             uint8_t section_pad_1[12]; // Padding for Overworld Map
@@ -3183,6 +3183,7 @@ struct PACKED wram_s
     union {
         uint8_t wram4[0x1000];
         struct PACKED {
+            uint8_t dummy_w4_c000;
         };
     };
     // bank 5

@@ -3,6 +3,8 @@
 struct wram_s* wram;
 
 #if defined(__cplusplus) || defined(_MSC_VER)
+#include <stddef.h>
+
 #define check_wram0_field(_fld) static_assert(offsetof(struct wram_s, _fld) == (_fld - WRAM_0_ADDR), "")
 #define check_wramx_field(_fld, _bank) static_assert(offsetof(struct wram_s, _fld) - (0x1000 * (_bank)) == (_fld - WRAM_1_ADDR), "")
 

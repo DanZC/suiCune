@@ -15,7 +15,7 @@ void v_ReceiveItem(void){
     RET;
 
 
-Pockets:
+// Pockets:
 //  entries correspond to item types
     //dw ['.Item'];
     //dw ['.KeyItem'];
@@ -63,7 +63,7 @@ void v_TossItem(void){
     RET;
 
 
-Pockets:
+// Pockets:
 //  entries correspond to item types
     //dw ['.Item'];
     //dw ['.KeyItem'];
@@ -114,7 +114,7 @@ void v_CheckItem(void){
     RET;
 
 
-Pockets:
+// Pockets:
 //  entries correspond to item types
     //dw ['.Item'];
     //dw ['.KeyItem'];
@@ -175,7 +175,7 @@ bool v_CheckItem_Conv(item_t item, item_t* hl){
         return false;
 
 
-    Pockets:
+    // Pockets:
     //  entries correspond to item types
         //dw ['.Item'];
         //dw ['.KeyItem'];
@@ -206,6 +206,7 @@ bool v_CheckItem_Conv(item_t item, item_t* hl){
 
 
     Item:
+        ;
         // LD_H_D;
         // LD_L_E;
     }

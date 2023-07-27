@@ -1,7 +1,7 @@
 #include "input.h"
 #include <SDL2/SDL_events.h>
 #include <string.h>
-#include <SDL_scancode.h>
+#include <SDL2/SDL_scancode.h>
 #include "uthash.h"
 
 key_map_item* keys = NULL;
