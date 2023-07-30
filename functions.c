@@ -2028,11 +2028,11 @@ void init_function_pointers(void) {
     // REDIRECTED(ClearTilemapEtc);
     // REDIRECTED(MainMenu_Continue);
     // REDIRECTED(MainMenu_Option);
-    // REDIRECTED(MainMenu_MysteryGift);
+    REDIRECTED(MainMenu_MysteryGift);
     // REDIRECTED(MainMenuJoypadLoop);
     // REDIRECTED(MainMenu_PrintCurrentTimeAndDay);
     // REDIRECTED(MobileMenuGFX);
-    // REDIRECTED(MainMenu_GetWhichMenu);
+    REDIRECTED(MainMenu_GetWhichMenu);
     // REDIRECTED(MainMenu);
     // REDIRECTED(MainMenu_NewGame);
 
@@ -2161,14 +2161,14 @@ void init_function_pointers(void) {
     // REDIRECTED(GetPlayerBackpic);
     // REDIRECTED(TrainerCardGFX);
     // REDIRECTED(ShowPlayerNamingChoices);
-    // REDIRECTED(GetChrisBackpic);
+    REDIRECTED(GetChrisBackpic);
     // REDIRECTED(MovePlayerPic);
     // REDIRECTED(KrisCardPic);
     // REDIRECTED(ChrisPic);
     // REDIRECTED(HOF_LoadTrainerFrontpic);
     // REDIRECTED(GetPlayerNameArray);
     // REDIRECTED(GetPlayerIcon);
-    // REDIRECTED(GetKrisBackpic);
+    REDIRECTED(GetKrisBackpic);
     // REDIRECTED(GetCardPic);
     // REDIRECTED(DrawIntroPlayerPic);
     // REDIRECTED(BetaLoadPlayerTrainerClass);
@@ -3025,4 +3025,31 @@ void init_function_pointers(void) {
     REDIRECTED(AI_Smart_Confuse);
     REDIRECTED(AI_Smart_Reversal);
     REDIRECTED(AI_Smart_Mimic);
+
+    // engine/menus/menu.c
+    // REDIRECTED(v_2DMenu_);
+    // REDIRECTED(Init2DMenuCursorPosition);
+    // REDIRECTED(Menu_WasButtonPressed);
+    // REDIRECTED(v_ExitMenu);
+    // REDIRECTED(Function241d5);
+    // REDIRECTED(Move2DMenuCursor);
+    // REDIRECTED(Place2DMenuItemStrings);
+    // REDIRECTED(Get2DMenuNumberOfColumns);
+    // REDIRECTED(Get2DMenuNumberOfRows);
+    // REDIRECTED(v_InitVerticalMenuCursor);
+    // REDIRECTED(Get2DMenuSelection);
+    // REDIRECTED(MobileMenuJoypad);
+    // REDIRECTED(RestoreOverworldMapTiles);
+    // REDIRECTED(Draw2DMenu);
+    // REDIRECTED(v_StaticMenuJoypad);
+    // REDIRECTED(v_InterpretMobileMenu);
+    // REDIRECTED(v_InterpretBattleMenu);
+    // REDIRECTED(Mobile_GetMenuSelection);
+    // REDIRECTED(v_ScrollingMenuJoypad);
+    // REDIRECTED(Error_Cant_ExitMenu);
+    // REDIRECTED(v_PushWindow);
+    // REDIRECTED(Do2DMenuRTCJoypad);
+    // REDIRECTED(Place2DMenuCursor);
+    // REDIRECTED(v_2DMenuInterpretJoypad);
+    // REDIRECTED(MenuJoypadLoop);
 }

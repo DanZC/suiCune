@@ -123,3 +123,13 @@ uint16_t AddNTimes_Conv(uint16_t bc, uint16_t hl, uint8_t a)
     } while(--a != 0);
     return hl;
 }
+
+// hl = hl + (bc * a)
+uint8_t* AddNTimes_Conv2(uint8_t* hl, uint16_t bc, uint8_t a)
+{
+    if(a == 0) return hl;
+    do {
+        hl += bc;
+    } while(--a != 0);
+    return hl;
+}

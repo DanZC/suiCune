@@ -1,6 +1,10 @@
 #include "../constants.h"
 #include "menu.h"
 #include "copy.h"
+#include "text.h"
+#include "map_objects.h"
+#include "audio.h"
+#include "../charmap.h"
 
 void Load2DMenuData(void) {
     PUSH_HL;
@@ -76,8 +80,7 @@ void GetMenuJoypad(void) {
     RET;
 }
 
-uint8_t GetMenuJoypad_Conv(void)
-{
+uint8_t GetMenuJoypad_Conv(void) {
     uint8_t pad_last = (hram->hJoyLast & (D_PAD));
     uint8_t button_last = (hram->hJoyPressed & (BUTTONS));
     return (pad_last | button_last);
@@ -88,8 +91,18 @@ void PlaceHollowCursor(void) {
     LD_A_hli;
     LD_H_hl;
     LD_L_A;
-    LD_hl(0xec);
+    LD_hl(CHAR_RIGHT_CURSOR_SEL);
     RET;
+}
+
+void PlaceHollowCursor_Conv(void) {
+    // LD_HL(wCursorCurrentTile);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // LD_hl(CHAR_RIGHT_CURSOR_SEL);
+    // RET;
+    *(uint8_t*)GBToRAMAddr(wram->wCursorCurrentTile) = CHAR_RIGHT_CURSOR_SEL;
 }
 
 void HideCursor(void) {
@@ -97,12 +110,12 @@ void HideCursor(void) {
     LD_A_hli;
     LD_H_hl;
     LD_L_A;
-    LD_hl(0x7f);
+    LD_hl(CHAR_SPACE);
     RET;
 }
 
 void HideCursor_Conv(void){
-    gb_write(gb_read16(wCursorCurrentTile), 0x7f);
+    gb_write(gb_read16(wCursorCurrentTile), CHAR_SPACE);
 }
 
 void PushWindow(void) {
@@ -201,10 +214,10 @@ void GetMenuBoxDims(void) {
 }
 
 void GetMenuBoxDims_Conv(uint8_t* w, uint8_t* h) {
-    uint8_t top = gb_read(wMenuBorderTopCoord);  // top
-    uint8_t bottom = gb_read(wMenuBorderBottomCoord);  // bottom
-    uint8_t left = gb_read(wMenuBorderLeftCoord); // left
-    uint8_t right = gb_read(wMenuBorderRightCoord); // right
+    uint8_t top = wram->wMenuBorderTopCoord;  // top
+    uint8_t bottom = wram->wMenuBorderBottomCoord;  // bottom
+    uint8_t left = wram->wMenuBorderLeftCoord; // left
+    uint8_t right = wram->wMenuBorderRightCoord; // right
     *h = bottom - top; 
     *w = right - left;
 }
@@ -304,12 +317,60 @@ loop:
     JP(mPlaceString);
 }
 
+void PlaceVerticalMenuItems_Conv(void) {
+    CALL(aCopyMenuData);
+    LD_HL(wMenuDataPointer);
+    LD_E_hl;
+    INC_HL;
+    LD_D_hl;
+    CALL(aGetMenuTextStartCoord);
+    CALL(aCoord2Tile);  // hl now contains the tilemap address where we will start printing text.
+    INC_DE;
+    LD_A_de;  // Number of items
+    INC_DE;
+    LD_B_A;
+
+loop:
+    PUSH_BC;
+    CALL(aPlaceString);
+    INC_DE;
+    LD_BC(2 * SCREEN_WIDTH);
+    ADD_HL_BC;
+    POP_BC;
+    DEC_B;
+    IF_NZ goto loop;
+
+    LD_A_addr(wMenuDataFlags);
+    BIT_A(4);
+    RET_Z;
+
+    CALL(aMenuBoxCoord2Tile);
+    LD_A_de;
+    LD_C_A;
+    INC_DE;
+    LD_B(0);
+    ADD_HL_BC;
+    JP(mPlaceString);
+}
+
 void MenuBox(void) {
     CALL(aMenuBoxCoord2Tile);
     CALL(aGetMenuBoxDims);
     DEC_B;
     DEC_C;
     JP(mTextbox);
+}
+
+void MenuBox_Conv(void) {
+    uint8_t w, h;
+    // CALL(aMenuBoxCoord2Tile);
+    uint8_t* ptr = MenuBoxCoord2Tile_Conv();
+    // CALL(aGetMenuBoxDims);
+    GetMenuBoxDims_Conv(&w, &h);
+    // DEC_B;
+    // DEC_C;
+    // JP(mTextbox);
+    return Textbox_Conv2(ptr, w - 1, h - 1);
 }
 
 void GetMenuTextStartCoord(void) {
@@ -366,14 +427,14 @@ void MenuBoxCoord2Tile(void) {
     return Coord2Tile();
 }
 
-uint16_t MenuBoxCoord2Tile_Conv(void) {
+uint8_t* MenuBoxCoord2Tile_Conv(void) {
     // LD_A_addr(wMenuBorderLeftCoord);
     // LD_C_A;
     // LD_A_addr(wMenuBorderTopCoord);
     // LD_B_A;
     // fallthrough
 
-    return Coord2Tile_Conv(gb_read(wMenuBorderLeftCoord), gb_read(wMenuBorderTopCoord));
+    return Coord2Tile_Conv(wram->wMenuBorderLeftCoord, wram->wMenuBorderTopCoord);
 }
 
 void Coord2Tile(void) {
@@ -399,7 +460,7 @@ void Coord2Tile(void) {
 }
 
 //  Return the address of wTilemap(c, b) in hl.
-uint16_t Coord2Tile_Conv(uint8_t c, uint8_t b) {
+uint8_t* Coord2Tile_Conv(uint8_t c, uint8_t b) {
     // XOR_A_A;
     // LD_H_A;
     // LD_L_B;
@@ -431,10 +492,9 @@ uint16_t Coord2Tile_Conv(uint8_t c, uint8_t b) {
 
     // bccoord(0, 0, wTilemap);
     // ADD_HL_BC;
-    hl += coord(0, 0, wTilemap);
 
     // RET;
-    return hl;
+    return wram->wTilemap + hl;
 }
 
 void MenuBoxCoord2Attr(void) {
@@ -566,8 +626,9 @@ void Call_ExitMenu(void) {
 }
 
 void VerticalMenu(void) {
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
     CALL(aMenuBox);
     CALL(aUpdateSprites);
     CALL(aPlaceVerticalMenuItems);
@@ -589,6 +650,41 @@ cancel:
 okay:
     AND_A_A;
     RET;
+}
+
+// Displays a vertical menu. Returns false if the player cancels out of the menu.
+bool VerticalMenu_Conv(void) {
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    uint8_t a = 0;
+    // CALL(aMenuBox);
+    MenuBox_Conv();
+    // CALL(aUpdateSprites);
+    UpdateSprites_Conv();
+    // CALL(aPlaceVerticalMenuItems);
+    // CALL(aApplyTilemap);
+    // CALL(aCopyMenuData);
+    // LD_A_addr(wMenuDataFlags);
+    // BIT_A(7);
+    // IF_Z goto cancel;
+    if(!bit_test(wram->wMenuDataFlags, 7))
+        return false;
+    // CALL(aInitVerticalMenuCursor);
+    // CALL(aStaticMenuJoypad);
+    // CALL(aMenuClickSound);
+    MenuClickSound_Conv(0);
+    // BIT_A(1);
+    // IF_Z goto okay;
+    return !bit_test(a, 1);
+
+// cancel:
+    // SCF;
+    // RET;
+
+// okay:
+    // AND_A_A;
+    // RET;
 }
 
 void GetMenu2(void) {
@@ -1079,12 +1175,40 @@ nosound:
     RET;
 }
 
+void MenuClickSound_Conv(uint8_t a) {
+    // PUSH_AF;
+    // AND_A(A_BUTTON | B_BUTTON);
+    // IF_Z goto nosound;
+    if(a & (A_BUTTON | B_BUTTON)) {
+        // LD_HL(wMenuFlags);
+        // BIT_hl(3);
+        // IF_NZ goto nosound;
+        if(!bit_test(wram->wMenuFlags, 3)) {
+            // CALL(aPlayClickSFX);
+            PlayClickSFX_Conv();
+        }
+    }
+
+// nosound:
+    // POP_AF;
+    // RET;
+}
+
 void PlayClickSFX(void) {
     PUSH_DE;
     LD_DE(SFX_READ_TEXT_2);
     CALL(aPlaySFX);
     POP_DE;
     RET;
+}
+
+void PlayClickSFX_Conv(void) {
+    // PUSH_DE;
+    // LD_DE(SFX_READ_TEXT_2);
+    // CALL(aPlaySFX);
+    // POP_DE;
+    // RET;
+    return PlaySFX_Conv(SFX_READ_TEXT_2);
 }
 
 void MenuTextboxWaitButton(void) {

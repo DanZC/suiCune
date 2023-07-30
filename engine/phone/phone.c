@@ -762,11 +762,11 @@ void WrongNumber(void){
     //db ['TRAINER_NONE', 'PHONE_00'];
     //dba ['.script']
 
-script:
+// script:
     //writetext ['.PhoneWrongNumberText']
     //end ['?']
 
-PhoneWrongNumberText:
+// PhoneWrongNumberText:
     //text_far ['_PhoneWrongNumberText']
     //text_end ['?']
 

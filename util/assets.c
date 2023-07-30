@@ -118,7 +118,7 @@ static void CopyPNG2bppColorTileToGB(uint8_t* dest, const uint8_t* src, int stri
         dest[yy * 2 + 0] = 0;
         dest[yy * 2 + 1] = 0;
         for(int xx = 0; xx < 8; ++xx) {
-            const uint8_t* start = &src[(yy*stride*n) + xx*n];
+            const uint8_t* start = &src[((yy*stride) + xx)*n];
             uint32_t pixel = 0;
             for(int i = n - 1; i >= 0; --i) {
                 pixel = (pixel << 8) | start[i];
@@ -156,11 +156,11 @@ void LoadPNG2bppAssetToVRAM(void* dest, const char* filename) {
         fprintf(stderr, "%s: Load error on image %s. Reason: %s\n", __func__, filename, stbi_failure_reason());
         exit(-1);
     }
-    // printf("%d-channel %dx%d image\n", n, x, y);
+    printf("%d-channel %dx%d image\n", n, x, y);
     FreeAsset(a);
     int numTiles = (y / 8) * (x / 8);
     int tilesPerRow = (x / 8);
-    // printf("%d tiles to write.\n", numTiles);
+    printf("%d tiles to write.\n", numTiles);
     if(n == 1) {
         for(int i = 0; i < numTiles; ++i) {
             CopyPNG2bppGrayTileToGB(&d[i * LEN_2BPP_TILE], &pix[(((i/tilesPerRow)*8)*x) + ((i%tilesPerRow)*8)], x);
@@ -173,7 +173,7 @@ void LoadPNG2bppAssetToVRAM(void* dest, const char* filename) {
         //     printf("Color %d: r=%d, g=%d, b=%d\n", i, palette[i] & 0xff, (palette[i] & 0xff00) >> 8, (palette[i] & 0xff0000) >> 16);
         // }
         for(int i = 0; i < numTiles; ++i) {
-            CopyPNG2bppColorTileToGB(&d[i * LEN_2BPP_TILE], &pix[(((i/tilesPerRow)*8*n)*x) + ((i%tilesPerRow)*8*n)], x, n, palette);
+            CopyPNG2bppColorTileToGB(&d[i * LEN_2BPP_TILE], &pix[((((i/tilesPerRow)*8)*x) + ((i%tilesPerRow)*8))*n], x, n, palette);
         }
     }
     stbi_image_free(pix);

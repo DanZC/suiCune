@@ -181,11 +181,12 @@ void GetPlayerBackpic(void){
 }
 
 void GetChrisBackpic(void){
-    LD_HL(mChrisBackpic);
-    LD_B(BANK(aChrisBackpic));
-    LD_DE(vTiles2 + LEN_2BPP_TILE * 0x31);
-    LD_C(7 * 7);
-    PREDEF(pDecompressGet2bpp);
+    // LD_HL(mChrisBackpic);
+    // LD_B(BANK(aChrisBackpic));
+    // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x31);
+    // LD_C(7 * 7);
+    // PREDEF(pDecompressGet2bpp);
+    LoadPNG2bppAssetToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x31, "gfx/player/chris_back.png");
     RET;
 
 }
@@ -277,10 +278,11 @@ void KrisPic(void){
 
 void GetKrisBackpic(void){
 //  Kris's backpic is uncompressed.
-    LD_DE(mKrisBackpic);
-    LD_HL(vTiles2 + LEN_2BPP_TILE * 0x31);
-    LD_BC((BANK(aKrisBackpic) << 8) | 7 * 7);  // dimensions
-    CALL(aGet2bpp);
+    // LD_DE(mKrisBackpic);
+    // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x31);
+    // LD_BC((BANK(aKrisBackpic) << 8) | 7 * 7);  // dimensions
+    // CALL(aGet2bpp);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x31, "gfx/player/kris_back.png", 0, 7 * 7);
     RET;
 
 }

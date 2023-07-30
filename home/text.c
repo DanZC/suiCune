@@ -277,7 +277,7 @@ void TextboxBorder_Conv2(uint8_t* hl, uint8_t b, uint8_t c) {
     // Top
     *(hl++) = id++;
     TEXTBOXBORDER_PLACECHARS(c);
-    *(hl) = id;
+    *(hl) = ++id;
 
     hl = temphl + SCREEN_WIDTH;
 

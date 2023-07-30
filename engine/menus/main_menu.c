@@ -1,6 +1,8 @@
 #include "../../constants.h"
 #include "main_menu.h"
 
+void DebugMenu(void);
+
 // MainMenuItems indexes
 enum {
     MAINMENU_NEW_GAME,  // 0
@@ -233,7 +235,7 @@ next:
 // This check makes no difference.
     LD_A_addr(wStatusFlags);
     BIT_A(STATUSFLAGS_MAIN_MENU_MOBILE_CHOICES_F);
-    LD_A(MAINMENU_CONTINUE);
+    LD_A(MAINMENU_MYSTERY); // MAINMENU_CONTINUE
     IF_Z goto ok;
     goto ok;
 
@@ -243,7 +245,7 @@ ok:
 
 
 ok2:
-    LD_A(MAINMENU_CONTINUE);
+    LD_A(MAINMENU_MYSTERY); // MAINMENU_CONTINUE
     RET;
 
 
@@ -436,7 +438,8 @@ void MainMenu_Continue(void){
 }
 
 void MainMenu_MysteryGift(void){
-    FARCALL(aMysteryGift);
+    // FARCALL(aMysteryGift);
+    DebugMenu();
     RET;
 
 }

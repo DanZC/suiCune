@@ -3709,7 +3709,7 @@ bool CheckObjectCoveredByTextbox_Conv(struct Object* bc) {
                     // LD_A_hl;
                     // CP_A(FIRST_REGULAR_TEXT_CHAR);
                     // IF_NC goto nope;
-                    if(gb_read(Coord2Tile_Conv(xcoord, ycoord)) >= FIRST_REGULAR_TEXT_CHAR)
+                    if(*(Coord2Tile_Conv(xcoord, ycoord)) >= FIRST_REGULAR_TEXT_CHAR)
                         return true;
                 // ok8:
                     // DEC_D;

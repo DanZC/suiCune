@@ -97,7 +97,7 @@
 // SECTION "bank9", ROMX
 
 //#include "data/text_buffers.h"
-//#include "engine/menus/menu.h"
+#include "engine/menus/menu.h"
 //#include "engine/items/update_item_description.h"
 //#include "engine/events/pokepic.h"
 //#include "engine/overworld/map_objects_2.h"
