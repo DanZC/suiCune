@@ -3,6 +3,9 @@
 #include "../../home/delay.h"
 #include "../../home/menu.h"
 #include "../../home/array.h"
+#include "../../home/time_palettes.h"
+#include "../../home/joypad.h"
+#include "../../home/tilemap.h"
 
 void v_2DMenu_(void){
     LD_HL(mCopyMenuData);
@@ -135,12 +138,27 @@ void Get2DMenuNumberOfColumns(void){
 
 }
 
+uint8_t Get2DMenuNumberOfColumns_Conv(void){
+    // LD_A_addr(wMenuData_2DMenuDimensions);
+    // AND_A(0xf);
+    // RET;
+    return wram->wMenuData_2DMenuDimensions & 0xf;
+}
+
 void Get2DMenuNumberOfRows(void){
     LD_A_addr(wMenuData_2DMenuDimensions);
     SWAP_A;
     AND_A(0xf);
     RET;
 
+}
+
+uint8_t Get2DMenuNumberOfRows_Conv(void){
+    // LD_A_addr(wMenuData_2DMenuDimensions);
+    // SWAP_A;
+    // AND_A(0xf);
+    // RET;
+    return (wram->wMenuData_2DMenuDimensions >> 4) & 0xf;
 }
 
 void Place2DMenuItemStrings(void){
@@ -294,6 +312,12 @@ void v_StaticMenuJoypad(void){
     return v_ScrollingMenuJoypad();
 }
 
+void v_StaticMenuJoypad_Conv(void){
+    // CALL(aPlace2DMenuCursor);
+    Place2DMenuCursor_Conv();
+    return v_ScrollingMenuJoypad_Conv();
+}
+
 void v_ScrollingMenuJoypad(void){
     LD_HL(w2DMenuFlags2);
     RES_hl(7);
@@ -304,6 +328,20 @@ void v_ScrollingMenuJoypad(void){
     LDH_addr_A(hBGMapMode);
     RET;
 
+}
+
+void v_ScrollingMenuJoypad_Conv(void){
+    // LD_HL(w2DMenuFlags2);
+    // RES_hl(7);
+    bit_reset(wram->w2DMenuFlags2, 7);
+    // LDH_A_addr(hBGMapMode);
+    // PUSH_AF;
+    uint8_t temp = hram->hBGMapMode;
+    // CALL(aMenuJoypadLoop);
+    // POP_AF;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = temp;
+    // RET;
 }
 
 void MobileMenuJoypad(void){
@@ -404,6 +442,56 @@ BGMap_OAM:
 
 }
 
+static void MenuJoypadLoop_BGMap_OAM(void) {
+// BGMap_OAM:
+    // LDH_A_addr(hOAMUpdate);
+    // PUSH_AF;
+    uint8_t temp = hram->hOAMUpdate;
+    // LD_A(0x1);
+    // LDH_addr_A(hOAMUpdate);
+    hram->hOAMUpdate = 0x1;
+    // CALL(aWaitBGMap);
+    WaitBGMap_Conv();
+    // POP_AF;
+    // LDH_addr_A(hOAMUpdate);
+    hram->hOAMUpdate = temp;
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    // RET;
+}
+
+void MenuJoypadLoop_Conv(void){
+    do {
+    // loop:
+        // CALL(aMove2DMenuCursor);
+        Move2DMenuCursor_Conv();
+        // CALL(aMenuJoypadLoop_BGMap_OAM);
+        MenuJoypadLoop_BGMap_OAM();
+        // CALL(aDo2DMenuRTCJoypad);
+        // IF_NC return;
+        if(!Do2DMenuRTCJoypad_Conv()) 
+            return;
+        // CALL(av_2DMenuInterpretJoypad);
+        // IF_C return;
+        if(v_2DMenuInterpretJoypad_Conv())
+            return;
+        // LD_A_addr(w2DMenuFlags1);
+        // BIT_A(7);
+        // IF_NZ goto done;
+        if(bit_test(wram->w2DMenuFlags1, 7))
+            return;
+        // CALL(aGetMenuJoypad);
+        // LD_B_A;
+        // LD_A_addr(wMenuJoypadFilter);
+        // AND_A_B;
+        // IF_Z goto loop;
+    } while((GetMenuJoypad_Conv() & wram->wMenuJoypadFilter) == 0);
+
+// done:
+    // RET;
+}
+
 void Do2DMenuRTCJoypad(void){
 
 loopRTC:
@@ -416,6 +504,25 @@ loopRTC:
     AND_A_A;
     RET;
 
+}
+
+// Return true if button was pressed. False otherwise.
+bool Do2DMenuRTCJoypad_Conv(void){
+    do {
+    // loopRTC:
+        // CALL(aUpdateTimeAndPals);
+        UpdateTimeAndPals_Conv();
+        // CALL(aMenu_WasButtonPressed);
+        // RET_C ;
+        if(Menu_WasButtonPressed_Conv())
+            return true;
+        // LD_A_addr(w2DMenuFlags1);
+        // BIT_A(7);
+        // IF_Z goto loopRTC;
+    } while(!bit_test(wram->w2DMenuFlags1, 7));
+    // AND_A_A;
+    // RET;
+    return false;
 }
 
 void Menu_WasButtonPressed(void){
@@ -433,6 +540,41 @@ skip_to_joypad:
     SCF;
     RET;
 
+}
+
+static void Menu_WasButtonPressed_Conv_PlaySpriteAnimationsAndDelayFrame(void) {
+    PUSH_AF;
+    PUSH_BC;
+    PUSH_DE;
+    PUSH_HL;
+    CALLFAR(aPlaySpriteAnimationsAndDelayFrame);
+    POP_HL;
+    POP_DE;
+    POP_BC;
+    POP_AF;
+}
+
+bool Menu_WasButtonPressed_Conv(void){
+    // LD_A_addr(w2DMenuFlags1);
+    // BIT_A(6);
+    // IF_Z goto skip_to_joypad;
+    if(bit_test(wram->w2DMenuFlags1, 6)) {
+        // CALLFAR(aPlaySpriteAnimationsAndDelayFrame);
+        Menu_WasButtonPressed_Conv_PlaySpriteAnimationsAndDelayFrame();
+    }
+
+
+// skip_to_joypad:
+    // CALL(aJoyTextDelay);
+    JoyTextDelay_Conv();
+    // CALL(aGetMenuJoypad);
+    // AND_A_A;
+    // RET_Z ;
+    if(!GetMenuJoypad_Conv())
+        return false;
+    // SCF;
+    // RET;
+    return true;
 }
 
 void v_2DMenuInterpretJoypad(void){
@@ -576,6 +718,214 @@ a_b_start_select:
 
 }
 
+bool v_2DMenuInterpretJoypad_Conv(void){
+    // CALL(aGetMenuJoypad);
+    uint8_t a = GetMenuJoypad_Conv();
+    // BIT_A(A_BUTTON_F);
+    // JP_NZ (mv_2DMenuInterpretJoypad_a_b_start_select);
+    // BIT_A(B_BUTTON_F);
+    // JP_NZ (mv_2DMenuInterpretJoypad_a_b_start_select);
+    // BIT_A(SELECT_F);
+    // JP_NZ (mv_2DMenuInterpretJoypad_a_b_start_select);
+    // BIT_A(START_F);
+    // JP_NZ (mv_2DMenuInterpretJoypad_a_b_start_select);
+    if(bit_test(a, A_BUTTON_F) || bit_test(a, B_BUTTON_F) || bit_test(a, SELECT_F) || bit_test(a, START_F)) {
+    // a_b_start_select:
+        // XOR_A_A;
+        // RET;
+        return false;
+    }
+    // BIT_A(D_RIGHT_F);
+    // IF_NZ goto d_right;
+    if(bit_test(a, D_RIGHT_F)) {
+    // d_right:
+        // LD_HL(wMenuCursorX);
+        // LD_A_addr(w2DMenuNumCols);
+        // CP_A_hl;
+        // IF_Z goto check_wrap_around_right;
+        if(wram->w2DMenuNumCols != wram->wMenuCursorX) {
+            // INC_hl;
+            wram->wMenuCursorX++;
+            // XOR_A_A;
+            // RET;
+            return false;
+        }
+
+
+    // check_wrap_around_right:
+        // LD_A_addr(w2DMenuFlags1);
+        // BIT_A(4);
+        // IF_NZ goto wrap_around_right;
+        if(!bit_test(wram->w2DMenuFlags1, 4)) {
+            // BIT_A(0);
+            // JP_NZ (mv_2DMenuInterpretJoypad_set_bit_7);
+            if(bit_test(wram->w2DMenuFlags1, 0)) {
+            // set_bit_7:
+                // LD_HL(w2DMenuFlags2);
+                // SET_hl(7);
+                bit_set(wram->w2DMenuFlags2, 7);
+                // SCF;
+                // RET;
+                return true;
+            }
+            // XOR_A_A;
+            // RET;
+            return false;
+        }
+
+
+    // wrap_around_right:
+        // LD_hl(0x1);
+        wram->wMenuCursorX = 0x1;
+        // XOR_A_A;
+        // RET;
+        return false;
+    }
+    // BIT_A(D_LEFT_F);
+    // IF_NZ goto d_left;
+    if(bit_test(a, D_LEFT_F)) {
+    // d_left:
+        // LD_HL(wMenuCursorX);
+        // LD_A_hl;
+        // DEC_A;
+        // IF_Z goto check_wrap_around_left;
+        if(wram->wMenuCursorX - 1 != 0) {
+            // LD_hl_A;
+            --wram->wMenuCursorX;
+            // XOR_A_A;
+            // RET;
+            return false;
+        }
+
+
+    // check_wrap_around_left:
+        // LD_A_addr(w2DMenuFlags1);
+        // BIT_A(4);
+        // IF_NZ goto wrap_around_left;
+        if(bit_test(wram->w2DMenuFlags1, 4)) {
+            // BIT_A(1);
+            // JP_NZ (mv_2DMenuInterpretJoypad_set_bit_7);
+            if(bit_test(wram->w2DMenuFlags1, 1)) {
+            // set_bit_7:
+                // LD_HL(w2DMenuFlags2);
+                // SET_hl(7);
+                bit_set(wram->w2DMenuFlags2, 7);
+                // SCF;
+                // RET;
+                return true;
+            }
+            // XOR_A_A;
+            // RET;
+            return false;
+        }
+
+
+    // wrap_around_left:
+        // LD_A_addr(w2DMenuNumCols);
+        // LD_hl_A;
+        wram->wMenuCursorX = wram->w2DMenuNumCols;
+        // XOR_A_A;
+        // RET;
+        return false;
+    }
+    // BIT_A(D_UP_F);
+    // IF_NZ goto d_up;
+    if(bit_test(a, D_UP_F)) {
+    // d_up:
+        // LD_HL(wMenuCursorY);
+        // LD_A_hl;
+        // DEC_A;
+        // IF_Z goto check_wrap_around_up;
+        if(wram->wMenuCursorY - 1 != 0) {
+            // LD_hl_A;
+            --wram->wMenuCursorY;
+            // XOR_A_A;
+            // RET;
+            return false;
+        }
+
+
+    // check_wrap_around_up:
+        // LD_A_addr(w2DMenuFlags1);
+        // BIT_A(5);
+        // IF_NZ goto wrap_around_up;
+        if(!bit_test(wram->w2DMenuFlags1, 5)) {
+            // BIT_A(2);
+            // JP_NZ (mv_2DMenuInterpretJoypad_set_bit_7);
+            if(bit_test(wram->w2DMenuFlags1, 2)) {
+            // set_bit_7:
+                // LD_HL(w2DMenuFlags2);
+                // SET_hl(7);
+                bit_set(wram->w2DMenuFlags2, 7);
+                // SCF;
+                // RET;
+                return true;
+            }
+            // XOR_A_A;
+            // RET;
+            return false;
+        }
+
+
+    // wrap_around_up:
+        // LD_A_addr(w2DMenuNumRows);
+        // LD_hl_A;
+        wram->wMenuCursorY = wram->w2DMenuNumRows;
+        // XOR_A_A;
+        // RET;
+        return false;
+    }
+    // BIT_A(D_DOWN_F);
+    // IF_NZ goto d_down;
+    if(bit_test(a, D_DOWN_F)) {
+    // d_down:
+        // LD_HL(wMenuCursorY);
+        // LD_A_addr(w2DMenuNumRows);
+        // CP_A_hl;
+        // IF_Z goto check_wrap_around_down;
+        if(wram->wMenuCursorY != wram->w2DMenuNumRows) {
+            // INC_hl;
+            ++wram->wMenuCursorY;
+            // XOR_A_A;
+            // RET;
+            return false;
+        }
+
+
+    // check_wrap_around_down:
+        // LD_A_addr(w2DMenuFlags1);
+        // BIT_A(5);
+        // IF_NZ goto wrap_around_down;
+        if(!bit_test(wram->w2DMenuFlags1, 5)) {
+            // BIT_A(3);
+            // JP_NZ (mv_2DMenuInterpretJoypad_set_bit_7);
+            if(bit_test(wram->w2DMenuFlags1, 3)) {
+            // set_bit_7:
+                // LD_HL(w2DMenuFlags2);
+                // SET_hl(7);
+                bit_set(wram->w2DMenuFlags2, 7);
+                // SCF;
+                // RET;
+                return true;
+            }
+            // XOR_A_A;
+            // RET;
+            return false;
+        }
+
+
+    // wrap_around_down:
+        // LD_hl(0x1);
+        wram->wMenuCursorY = 0x1;
+        // XOR_A_A;
+        // RET;
+        return false;
+    }
+    // AND_A_A;
+    // RET;
+    return false;
+}
+
 void Move2DMenuCursor(void){
     LD_HL(wCursorCurrentTile);
     LD_A_hli;
@@ -587,6 +937,23 @@ void Move2DMenuCursor(void){
     LD_A_addr(wCursorOffCharacter);
     LD_hl_A;
     return Place2DMenuCursor();
+}
+
+void Move2DMenuCursor_Conv(void){
+    // LD_HL(wCursorCurrentTile);
+    uint8_t* hl = GBToRAMAddr(wram->wCursorCurrentTile);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // LD_A_hl;
+    // CP_A(0xed);
+    if(*hl == 0xed) {
+        // JR_NZ (mPlace2DMenuCursor);
+        // LD_A_addr(wCursorOffCharacter);
+        // LD_hl_A;
+        *hl = wram->wCursorOffCharacter;
+    }
+    return Place2DMenuCursor_Conv();
 }
 
 void Place2DMenuCursor(void){

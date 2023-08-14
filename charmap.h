@@ -202,6 +202,21 @@
 #define CHAR_AMPERSAND  ((uint8_t)'\xe6') // "&"
 
 /*
+	charmap "(",         $9a
+	charmap ")",         $9b
+	charmap ":",         $9c
+	charmap ";",         $9d
+	charmap "[",         $9e
+	charmap "]",         $9f
+*/
+#define CHAR_LPAREN     ((uint8_t)'\x9a') // "("
+#define CHAR_RPAREN     ((uint8_t)'\x9b') // ")"
+#define CHAR_COLON2     ((uint8_t)'\x9c') // ":"
+#define CHAR_SEMICOLON  ((uint8_t)'\x9d') // ";"
+#define CHAR_LBRACKET   ((uint8_t)'\x9e') // "["
+#define CHAR_RBRACKET   ((uint8_t)'\x9f') // "]"
+
+/*
 	charmap "'d",        $d0
 	charmap "'l",        $d1
 	charmap "'m",        $d2

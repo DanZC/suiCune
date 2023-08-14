@@ -4,7 +4,9 @@
 #include "text.h"
 #include "map_objects.h"
 #include "audio.h"
+#include "tilemap.h"
 #include "../charmap.h"
+#include "../engine/menus/menu.h"
 
 void Load2DMenuData(void) {
     PUSH_HL;
@@ -58,10 +60,26 @@ void StaticMenuJoypad(void) {
     RET;
 }
 
+uint8_t StaticMenuJoypad_Conv(void) {
+    // CALLFAR(av_StaticMenuJoypad);
+    v_StaticMenuJoypad_Conv();
+    // CALL(aGetMenuJoypad);
+    // RET;
+    return GetMenuJoypad_Conv();
+}
+
 void ScrollingMenuJoypad(void) {
     CALLFAR(av_ScrollingMenuJoypad);
     CALL(aGetMenuJoypad);
     RET;
+}
+
+uint8_t ScrollingMenuJoypad_Conv(void) {
+    // CALLFAR(av_ScrollingMenuJoypad);
+    v_ScrollingMenuJoypad_Conv();
+    // CALL(aGetMenuJoypad);
+    // RET;
+    return GetMenuJoypad_Conv();
 }
 
 void GetMenuJoypad(void) {
@@ -133,6 +151,12 @@ void ExitMenu(void) {
 void InitVerticalMenuCursor(void) {
     CALLFAR(av_InitVerticalMenuCursor);
     RET;
+}
+
+void InitVerticalMenuCursor_Conv(void) {
+    // CALLFAR(av_InitVerticalMenuCursor);
+    // RET;
+    return v_InitVerticalMenuCursor_Conv();
 }
 
 void CloseWindow(void) {
@@ -243,24 +267,20 @@ void CopyMenuData(void) {
 
 void CopyMenuData_Conv(void) {
     // LD_HL(wMenuDataPointer);
-    uint16_t hl = wMenuDataPointer;
 
     // LD_A_hli;
-    uint16_t l = gb_read(hl++);
-
     // LD_H_hl;
     // LD_L_A;
-    uint16_t h = gb_read(hl);
-    hl = (h << 8) | l;
+    const void* hl = GBToRAMAddr(wram->wMenuDataPointer);
 
     // LD_DE(wMenuData);
-    uint16_t de = wMenuData;
+    void* de = &wram->wMenuDataFlags;
 
     // LD_BC(wMenuDataEnd - wMenuData);
     uint16_t bc = (wMenuDataEnd - wMenuData);
 
     // CALL(aCopyBytes);
-    CopyBytes_Conv(de, hl, bc);
+    CopyBytes_Conv2(de, hl, bc);
 }
 
 void GetWindowStackTop(void) {
@@ -318,39 +338,56 @@ loop:
 }
 
 void PlaceVerticalMenuItems_Conv(void) {
-    CALL(aCopyMenuData);
-    LD_HL(wMenuDataPointer);
-    LD_E_hl;
-    INC_HL;
-    LD_D_hl;
-    CALL(aGetMenuTextStartCoord);
-    CALL(aCoord2Tile);  // hl now contains the tilemap address where we will start printing text.
-    INC_DE;
-    LD_A_de;  // Number of items
-    INC_DE;
-    LD_B_A;
+    // CALL(aCopyMenuData);
+    CopyMenuData_Conv();
+    // LD_HL(wMenuDataPointer);
+    // LD_E_hl;
+    // INC_HL;
+    // LD_D_hl;
+    uint8_t* de = GBToRAMAddr(wram->wMenuDataPointer);
+    // CALL(aGetMenuTextStartCoord);
+    uint8_t b, c;
+    GetMenuTextStartCoord_Conv(&b, &c);
+    // CALL(aCoord2Tile);  // hl now contains the tilemap address where we will start printing text.
+    uint8_t* hl = Coord2Tile_Conv(c, b);
+    // INC_DE;
+    // LD_A_de;  // Number of items
+    b = *(++de);
+    // INC_DE;
+    // LD_B_A;
+    de++;
+    struct TextCmdState st = {.de = de, .hl = hl};
 
-loop:
-    PUSH_BC;
-    CALL(aPlaceString);
-    INC_DE;
-    LD_BC(2 * SCREEN_WIDTH);
-    ADD_HL_BC;
-    POP_BC;
-    DEC_B;
-    IF_NZ goto loop;
+    do {
+    // loop:
+        // PUSH_BC;
+        // CALL(aPlaceString);
+        PlaceString_Conv(&st, st.hl);
+        // INC_DE;
+        st.de++;
+        // LD_BC(2 * SCREEN_WIDTH);
+        // ADD_HL_BC;
+        st.hl += 2 * SCREEN_WIDTH;
+        // POP_BC;
+        // DEC_B;
+        // IF_NZ goto loop;
+    } while(--b != 0);
 
-    LD_A_addr(wMenuDataFlags);
-    BIT_A(4);
-    RET_Z;
+    // LD_A_addr(wMenuDataFlags);
+    // BIT_A(4);
+    // RET_Z;
+    if(!bit_test(wram->wMenuDataFlags, 4))
+        return;
 
-    CALL(aMenuBoxCoord2Tile);
-    LD_A_de;
-    LD_C_A;
-    INC_DE;
-    LD_B(0);
-    ADD_HL_BC;
-    JP(mPlaceString);
+    // CALL(aMenuBoxCoord2Tile);
+    // LD_A_de;
+    // LD_C_A;
+    // INC_DE;
+    // LD_B(0);
+    // ADD_HL_BC;
+    st.hl = MenuBoxCoord2Tile_Conv() + *(st.de++);
+    // JP(mPlaceString);
+    return PlaceString_Conv(&st, st.hl);
 }
 
 void MenuBox(void) {
@@ -395,6 +432,38 @@ bit_6_set:
 
 bit_7_clear:
     RET;
+}
+
+void GetMenuTextStartCoord_Conv(uint8_t* b, uint8_t* c) {
+    // LD_A_addr(wMenuBorderTopCoord);
+    // LD_B_A;
+    // INC_B;
+    *b = wram->wMenuBorderTopCoord + 1;
+    // LD_A_addr(wMenuBorderLeftCoord);
+    // LD_C_A;
+    // INC_C;
+    *c = wram->wMenuBorderLeftCoord + 1;
+    //  bit 6: if not set, leave extra room on top
+    // LD_A_addr(wMenuDataFlags);
+    // BIT_A(6);
+    // IF_NZ goto bit_6_set;
+    if(!bit_test(wram->wMenuDataFlags, 6)) {
+        // INC_B;
+        ++(*b);
+    }
+
+// bit_6_set:
+    //  bit 7: if set, leave extra room on the left
+    // LD_A_addr(wMenuDataFlags);
+    // BIT_A(7);
+    // IF_Z goto bit_7_clear;
+    if(bit_test(wram->wMenuDataFlags, 7)) {
+        // INC_C;
+        ++(*c);
+    }
+
+// bit_7_clear:
+    // RET;
 }
 
 void ClearMenuBoxInterior(void) {
@@ -657,23 +726,27 @@ bool VerticalMenu_Conv(void) {
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = 0;
-    uint8_t a = 0;
     // CALL(aMenuBox);
     MenuBox_Conv();
     // CALL(aUpdateSprites);
     UpdateSprites_Conv();
     // CALL(aPlaceVerticalMenuItems);
+    PlaceVerticalMenuItems_Conv();
     // CALL(aApplyTilemap);
+    ApplyTilemap_Conv();
     // CALL(aCopyMenuData);
+    CopyMenuData_Conv();
     // LD_A_addr(wMenuDataFlags);
     // BIT_A(7);
     // IF_Z goto cancel;
     if(!bit_test(wram->wMenuDataFlags, 7))
         return false;
     // CALL(aInitVerticalMenuCursor);
+    InitVerticalMenuCursor_Conv();
     // CALL(aStaticMenuJoypad);
+    const uint8_t a = StaticMenuJoypad_Conv();
     // CALL(aMenuClickSound);
-    MenuClickSound_Conv(0);
+    MenuClickSound_Conv(a);
     // BIT_A(1);
     // IF_Z goto okay;
     return !bit_test(a, 1);
@@ -911,6 +984,39 @@ skip:
     RET;
 }
 
+uint8_t* GetMenuIndexSet_Conv(void) {
+    // LD_HL(wMenuDataIndicesPointer);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    uint8_t* hl = GBToRAMAddr(wram->wMenuDataIndicesPointer);
+    // LD_A_addr(wWhichIndexSet);
+    // AND_A_A;
+    // IF_Z goto skip;
+    if(wram->wWhichIndexSet != 0) {
+        // LD_B_A;
+        // LD_C(-1);
+        uint8_t b = wram->wWhichIndexSet;
+        do {
+        // loop:
+            // LD_A_hli;
+            // CP_A_C;
+            // IF_NZ goto loop;
+            // DEC_B;
+            // IF_NZ goto loop;
+        } while(*(hl++) != 0xff || --b != 0);
+    }
+
+// skip:
+    // LD_D_H;
+    // LD_E_L;
+    // LD_A_hl;
+    // LD_addr_A(wMenuDataItems);
+    wram->wMenuDataItems = *hl;
+    // RET;
+    return hl;
+}
+
 void RunMenuItemPrintingFunction(void) {
     CALL(aMenuBoxCoord2Tile);
     LD_BC(2 * SCREEN_WIDTH + 2);
@@ -967,12 +1073,29 @@ void GetScrollingMenuJoypad(void) {
     JR(mContinueGettingMenuJoypad);
 }
 
+bool GetScrollingMenuJoypad_Conv(void) {
+    // CALL(aScrollingMenuJoypad);
+    // LD_HL(wMenuJoypadFilter);
+    // AND_A_hl;
+    // JR(mContinueGettingMenuJoypad);
+    return ContinueGettingMenuJoypad_Conv(ScrollingMenuJoypad_Conv() & wram->wMenuJoypadFilter);
+}
+
 void GetStaticMenuJoypad(void) {
     XOR_A_A;
     LD_addr_A(wMenuJoypad);
     CALL(aStaticMenuJoypad);
 
     return ContinueGettingMenuJoypad();
+}
+
+bool GetStaticMenuJoypad_Conv(void) {
+    // XOR_A_A;
+    // LD_addr_A(wMenuJoypad);
+    wram->wMenuJoypad = 0;
+    // CALL(aStaticMenuJoypad);
+
+    return ContinueGettingMenuJoypad_Conv(StaticMenuJoypad_Conv());
 }
 
 void ContinueGettingMenuJoypad(void) {
@@ -1024,6 +1147,73 @@ b_start:
     LD_addr_A(wMenuSelection);
     SCF;
     RET;
+}
+
+bool ContinueGettingMenuJoypad_Conv(uint8_t a) {
+    // BIT_A(A_BUTTON_F);
+    // IF_NZ goto a_button;
+    if(bit_test(a, A_BUTTON_F)) {
+    // a_button:
+        // LD_A(A_BUTTON);
+        // LD_addr_A(wMenuJoypad);
+        wram->wMenuJoypad = A_BUTTON;
+    }
+    // BIT_A(B_BUTTON_F);
+    // IF_NZ goto b_start;
+    // BIT_A(START_F);
+    // IF_NZ goto b_start;
+    else if(bit_test(a, B_BUTTON_F) || bit_test(a, START_F)) {
+    // b_start:
+        // LD_A(B_BUTTON);
+        // LD_addr_A(wMenuJoypad);
+        wram->wMenuJoypad = B_BUTTON;
+        // LD_A(-1);
+        // LD_addr_A(wMenuSelection);
+        wram->wMenuSelection = 0xff;
+        // SCF;
+        // RET;
+        return true;
+    }
+    // BIT_A(D_RIGHT_F);
+    // IF_NZ goto d_right;
+    else if(bit_test(a, D_RIGHT_F)) {
+    // d_right:
+        // LD_A(D_RIGHT);
+        // LD_addr_A(wMenuJoypad);
+        // goto done;
+        wram->wMenuJoypad = D_RIGHT;
+    }
+    // BIT_A(D_LEFT_F);
+    // IF_NZ goto d_left;
+    else if(bit_test(a, D_LEFT_F)) {
+    // d_left:
+        // LD_A(D_LEFT);
+        // LD_addr_A(wMenuJoypad);
+        // goto done;
+        wram->wMenuJoypad = D_LEFT;
+    }
+    // XOR_A_A;
+    // LD_addr_A(wMenuJoypad);
+    // goto done;
+    else {
+        wram->wMenuJoypad = 0;
+    }
+
+// done:
+    // CALL(aGetMenuIndexSet);
+    // LD_A_addr(wMenuCursorY);
+    // LD_L_A;
+    // LD_H(0);
+    // ADD_HL_DE;
+    // LD_A_hl;
+    // LD_addr_A(wMenuSelection);
+    wram->wMenuSelection = GetMenuIndexSet_Conv()[wram->wMenuCursorY];
+    // LD_A_addr(wMenuCursorY);
+    // LD_addr_A(wMenuCursorPosition);
+    wram->wMenuCursorPosition = wram->wMenuCursorY;
+    // AND_A_A;
+    // RET;
+    return false;
 }
 
 void PlaceMenuStrings(void) {

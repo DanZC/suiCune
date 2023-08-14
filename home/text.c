@@ -8,6 +8,7 @@
 #include "pokedex_flags.h"
 #include "audio.h"
 #include "print_bcd.h"
+#include "map_objects.h"
 #include "../engine/battle/read_trainer_party.h"
 #include "../charmap.h"
 
@@ -462,7 +463,8 @@ void SetUpTextbox(void) {
 
 void SetUpTextbox_Conv(void) {
     SpeechTextbox_Conv();
-    CALL(aUpdateSprites);
+    // CALL(aUpdateSprites);
+    UpdateSprites_Conv();
     ApplyTilemap_Conv();
 }
 

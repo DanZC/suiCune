@@ -96,17 +96,18 @@ dmg:
 }
 
 void ApplyTilemap_Conv(void) {
-    if(gb_read(hCGB) == 0 || gb_read(wSpriteUpdatesEnabled) == 0) {
+    if(hram->hCGB == 0 || wram->wSpriteUpdatesEnabled == 0) {
         //  WaitBGMap
-        gb_write(hBGMapMode, 1);
+        hram->hBGMapMode = 1;
         // LD_C(4);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(4);
+        return DelayFrames_Conv(4);
     }
-
-    gb_write(hBGMapMode, 1);
-    // JR(mCopyTilemapAtOnce);
-    return CopyTilemapAtOnce_Conv();
+    else {
+        hram->hBGMapMode = 1;
+        // JR(mCopyTilemapAtOnce);
+        return CopyTilemapAtOnce_Conv();
+    }
 }
 
 void CGBOnly_CopyTilemapAtOnce(void) {

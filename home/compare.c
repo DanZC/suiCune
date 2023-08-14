@@ -28,6 +28,19 @@ bool CompareBytes_Conv(uint16_t de, uint16_t hl, uint8_t c){
     return true;
 }
 
+//  Compare c bytes at de and hl.
+//  Return z if they all match.
+bool CompareBytes_Conv2(const void* de, const void* hl, uint8_t c){
+    const uint8_t* de_ = de;
+    const uint8_t* hl_ = hl;
+    do {
+        if(*(de_) != *(hl_)) 
+            return false;
+        de_++, hl_++;
+    } while(--c != 0);
+    return true;
+}
+
 bool Test_CompareBytes(void)
 {
     uint16_t de = REG_DE;
@@ -71,6 +84,19 @@ bool CompareBytesLong_Conv(uint16_t de, uint16_t hl, uint16_t bc){
         if(gb_read(de) != gb_read(hl)) 
             return false;
         de++, hl++;
+    } while(--bc != 0);
+    return true;
+}
+
+//  Compare bc bytes at de and hl.
+//  Return true if they all match.
+bool CompareBytesLong_Conv2(const void* de, const void* hl, uint16_t bc){
+    const uint8_t* de_ = de;
+    const uint8_t* hl_ = hl;
+    do {
+        if(*(de_) != *(hl_)) 
+            return false;
+        de_++, hl_++;
     } while(--bc != 0);
     return true;
 }

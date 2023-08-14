@@ -2,6 +2,7 @@
 #include "print_hours_mins.h"
 #include "../../home/print_text.h"
 #include "../../home/text.h"
+#include "../../charmap.h"
 
 void PrintFiveDigitNumber(void){
 //  //  unreferenced
@@ -133,7 +134,7 @@ void PrintHoursMins_Conv(uint8_t* de, uint8_t b, uint8_t c){
     // LD_hl(0x9c);
     // INC_HL;
     // gb_write(REG_HL++, 0x9c);
-    *(hl++) = 0x9c;
+    *(hl++) = CHAR_COLON2;
     // LD_D_H;
     // LD_E_L;
     // LD_HL_SP(0);
