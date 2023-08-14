@@ -8,49 +8,73 @@
 #include "../../home/menu.h"
 #include "../../home/text.h"
 #include "../../charmap.h"
-
-typedef enum {
-    DEBUGMENU_FIGHT,
-    DEBUGMENU_FIELD,
-    DEBUGMENU_SOUNDTEST,
-    DEBUGMENU_SUBGAME,
-    DEBUGMENU_POKEDEX,
-    DEBUGMENU_TRAINERGEAR,
-    NUM_DEBUGMENU_OPTIONS
+typedef struct {
+    const char* name;
+    void (*handler)(void); // This function is called when the option is selected
 } DebugMenuOption;
 
-static const char* DebugMenuStrings[] = {
-    [DEBUGMENU_FIGHT] = "FIGHT@",
-    [DEBUGMENU_FIELD] = "FIELD@",
-    [DEBUGMENU_SOUNDTEST] = "SOUND@",
-    [DEBUGMENU_SUBGAME] = "subgame@",
-    [DEBUGMENU_POKEDEX] = "<POKe>DEX@",
-    [DEBUGMENU_TRAINERGEAR] = "TRAINERGEAR@",
+void Handler_Fight(void);
+void Handler_Link(void);
+void Handler_Field(void);
+void Handler_SoundTest(void);
+void Handler_Subgame(void);
+void Handler_Anime(void);
+void Handler_Graphics(void);
+void Handler_Pokedex(void);
+void Handler_Trainergear(void);
+
+DebugMenuOption debugMenuOptions[] = {
+    {"FIGHT@", Handler_Fight},
+    {"LINK@", Handler_Link},
+    {"FIELD@", Handler_Field},
+    {"SOUND@", Handler_SoundTest},
+    {"MINIGAME@", Handler_Subgame},
+    {"ANIME@", Handler_Anime},
+    {"GRAPHICS@", Handler_Graphics},
+    {"POKEDEX@", Handler_Pokedex},
+    {"POKEGEAR@", Handler_Trainergear}
 };
 
-void DebugMenu_PrintStrings(void) {
+#define MAX_OPTIONS_PER_PAGE 7
+
+static uint8_t cursorIndex = 0;
+static uint8_t currentPage = 0;
+
+void DebugMenu_PrintStrings() {
     uint8_t* hl = wram->wTilemap + coordidx(2, 1);
-    for(int i = 0; i < NUM_DEBUGMENU_OPTIONS; ++i) {
-        PlaceStringSimple(Utf8ToCrystal(DebugMenuStrings[i]), hl);
-        hl = wram->wTilemap + coordidx(2, 1 + (i + 1) * 2);
+    uint8_t start = currentPage * MAX_OPTIONS_PER_PAGE;
+    uint8_t end = start + MAX_OPTIONS_PER_PAGE;
+    if (end > sizeof(debugMenuOptions) / sizeof(DebugMenuOption)) {
+        end = sizeof(debugMenuOptions) / sizeof(DebugMenuOption);
     }
+    for(uint8_t i = start; i < end; ++i) {
+        PlaceStringSimple(Utf8ToCrystal(debugMenuOptions[i].name), hl);
+        hl = wram->wTilemap + coordidx(2, 1 + (i - start + 1) * 2);
+    }
+    char buf[10];
+    sprintf(buf, "PAGE%d@", currentPage + 1);
+    PlaceStringSimple(Utf8ToCrystal(buf), hl);
 }
 
-static uint8_t gDebugMenuCursorIndex = 0;
-
 void DebugMenu_PlaceCursor(void) {
-    wram->wTilemap[coordidx(1, gDebugMenuCursorIndex*2 + 1)] = CHAR_RIGHT_CURSOR;
+    wram->wTilemap[coordidx(1, cursorIndex*2 + 1)] = CHAR_RIGHT_CURSOR;
 }
 
 void DebugMenu_MoveCursor(int8_t dir) {
-    wram->wTilemap[coordidx(1, gDebugMenuCursorIndex*2 + 1)] = CHAR_SPACE;
-    int next = (int)gDebugMenuCursorIndex + dir;
-    if(next >= NUM_DEBUGMENU_OPTIONS) 
-        gDebugMenuCursorIndex = 0;
+    wram->wTilemap[coordidx(1, cursorIndex*2 + 1)] = CHAR_SPACE;
+    int next = (int)cursorIndex + dir;
+
+    uint8_t numberOfOptions = sizeof(debugMenuOptions) / sizeof(DebugMenuOption);
+    uint8_t maxIndexOnPage = (currentPage == (numberOfOptions - 1) / MAX_OPTIONS_PER_PAGE) ?
+                             (numberOfOptions - 1) % MAX_OPTIONS_PER_PAGE + 1 :
+                             MAX_OPTIONS_PER_PAGE;
+
+    if(next > maxIndexOnPage) 
+        cursorIndex = 0;
     else if(next < 0)
-        gDebugMenuCursorIndex = NUM_DEBUGMENU_OPTIONS - 1;
+        cursorIndex = maxIndexOnPage;
     else 
-        gDebugMenuCursorIndex = (uint8_t)next;
+        cursorIndex = (uint8_t)next;
     DebugMenu_PlaceCursor();
 }
 
@@ -72,9 +96,13 @@ void DebugMenu(void) {
             continue;
         }
         if(hram->hJoyPressed & (A_BUTTON)) {
-            switch(gDebugMenuCursorIndex) {
-                default: continue;
-                case DEBUGMENU_SOUNDTEST: DebugMenu_SoundTest(); break;
+            uint8_t numberOfOptions = sizeof(debugMenuOptions) / sizeof(DebugMenuOption);
+            if(cursorIndex == MAX_OPTIONS_PER_PAGE || 
+                currentPage * MAX_OPTIONS_PER_PAGE + cursorIndex >= numberOfOptions) {
+                currentPage = (currentPage + 1) % ((numberOfOptions + MAX_OPTIONS_PER_PAGE - 1) / MAX_OPTIONS_PER_PAGE);
+                cursorIndex = 0;
+            } else {
+                debugMenuOptions[currentPage * MAX_OPTIONS_PER_PAGE + cursorIndex].handler();
             }
             PlayMusic_Conv(MUSIC_MOBILE_ADAPTER_MENU);
             MenuBox_Conv();
@@ -88,6 +116,42 @@ void DebugMenu(void) {
     }
     PlayMusic_Conv(MUSIC_NONE);
     DelayFrame();
+}
+
+void Handler_Fight(void) {
+    // TODO: Implement this function
+}
+
+void Handler_Link(void) {
+    // TODO: Implement this function
+}
+
+void Handler_Field(void) {
+    // TODO: Implement this function
+}
+
+void Handler_SoundTest(void) {
+    // TODO: Implement this function
+}
+
+void Handler_Subgame(void) {
+    // TODO: Implement this function
+}
+
+void Handler_Anime(void) {
+    // TODO: Implement this function
+}
+
+void Handler_Graphics(void) {
+    // TODO: Implement this function
+}
+
+void Handler_Pokedex(void) {
+    // TODO: Implement this function
+}
+
+void Handler_Trainergear(void) {
+    // TODO: Implement this function
 }
 
 static const char* DebugMenu_MusicNames[] = {
