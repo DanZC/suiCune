@@ -2639,6 +2639,7 @@ done_switch:
 
 void WinTrainerBattle(void){
 //  Player won the battle
+    PEEK("");
     CALL(aStopDangerSound);
     LD_A(0x1);
     LD_addr_A(wBattleLowHealthAlarm);
@@ -2679,7 +2680,8 @@ skip_heal:
 
 skip_win_loss_text:
 
-    JP(mWinTrainerBattle_give_money);
+    // JP(mWinTrainerBattle_give_money);
+    goto give_money;
 
 
 mobile:
@@ -2711,6 +2713,7 @@ battle_tower:
 
 
 give_money:
+    PEEK("give_money");
     LD_A_addr(wAmuletCoin);
     AND_A_A;
     CALL_NZ (aWinTrainerBattle_DoubleReward);
@@ -2769,6 +2772,7 @@ done:
 
 
 KeepItAll:
+    PEEK("KeepItAll");
     LD_HL(mGotMoneyForWinningText);
     JP(mStdBattleTextbox);
 

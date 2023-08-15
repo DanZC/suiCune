@@ -7,7 +7,11 @@
 #include "../../home/joypad.h"
 #include "../../home/menu.h"
 #include "../../home/text.h"
+#include "../../home/tilemap.h"
 #include "../../charmap.h"
+#include "../../data/trainers/class_names.h"
+#include "../../data/trainers/parties.h"
+
 typedef struct {
     const char* name;
     void (*handler)(void); // This function is called when the option is selected
@@ -23,7 +27,7 @@ void Handler_Graphics(void);
 void Handler_Pokedex(void);
 void Handler_Trainergear(void);
 
-DebugMenuOption debugMenuOptions[] = {
+static DebugMenuOption debugMenuOptions[] = {
     {"FIGHT@", Handler_Fight},
     {"LINK@", Handler_Link},
     {"FIELD@", Handler_Field},
@@ -36,12 +40,13 @@ DebugMenuOption debugMenuOptions[] = {
 };
 
 #define MAX_OPTIONS_PER_PAGE 7
+#define MAX_OPTION_STRING_LENGTH 8
 
 static uint8_t cursorIndex = 0;
 static uint8_t currentPage = 0;
 
 void DebugMenu_PrintStrings() {
-    uint8_t* hl = wram->wTilemap + coordidx(2, 1);
+    uint8_t* hl = wram->wTilemap + coordidx(6, 1);
     uint8_t start = currentPage * MAX_OPTIONS_PER_PAGE;
     uint8_t end = start + MAX_OPTIONS_PER_PAGE;
     if (end > sizeof(debugMenuOptions) / sizeof(DebugMenuOption)) {
@@ -49,7 +54,7 @@ void DebugMenu_PrintStrings() {
     }
     for(uint8_t i = start; i < end; ++i) {
         PlaceStringSimple(Utf8ToCrystal(debugMenuOptions[i].name), hl);
-        hl = wram->wTilemap + coordidx(2, 1 + (i - start + 1) * 2);
+        hl = wram->wTilemap + coordidx(6, 1 + (i - start + 1) * 2);
     }
     char buf[10];
     sprintf(buf, "PAGE%d@", currentPage + 1);
@@ -57,11 +62,11 @@ void DebugMenu_PrintStrings() {
 }
 
 void DebugMenu_PlaceCursor(void) {
-    wram->wTilemap[coordidx(1, cursorIndex*2 + 1)] = CHAR_RIGHT_CURSOR;
+    wram->wTilemap[coordidx(5, cursorIndex*2 + 1)] = CHAR_RIGHT_CURSOR;
 }
 
 void DebugMenu_MoveCursor(int8_t dir) {
-    wram->wTilemap[coordidx(1, cursorIndex*2 + 1)] = CHAR_SPACE;
+    wram->wTilemap[coordidx(5, cursorIndex*2 + 1)] = CHAR_SPACE;
     int next = (int)cursorIndex + dir;
 
     uint8_t numberOfOptions = sizeof(debugMenuOptions) / sizeof(DebugMenuOption);
@@ -78,11 +83,17 @@ void DebugMenu_MoveCursor(int8_t dir) {
     DebugMenu_PlaceCursor();
 }
 
+#define DEBUG_MENU_MUSIC MUSIC_NONE
+
+static void DebugMenu_MenuBox(void) {
+    return Textbox_Conv2(Coord2Tile_Conv(4, 0), (MAX_OPTIONS_PER_PAGE + 1) * 2, MAX_OPTION_STRING_LENGTH + 1);
+}
+
 void DebugMenu(void) {
     PlayMusic_Conv(MUSIC_NONE);
     DelayFrame();
-    PlayMusic_Conv(MUSIC_MOBILE_ADAPTER_MENU);
-    MenuBox_Conv();
+    PlayMusic_Conv(DEBUG_MENU_MUSIC);
+    DebugMenu_MenuBox();
     DebugMenu_PrintStrings();
     DebugMenu_PlaceCursor();
     while(1)
@@ -101,11 +112,11 @@ void DebugMenu(void) {
                 currentPage * MAX_OPTIONS_PER_PAGE + cursorIndex >= numberOfOptions) {
                 currentPage = (currentPage + 1) % ((numberOfOptions + MAX_OPTIONS_PER_PAGE - 1) / MAX_OPTIONS_PER_PAGE);
                 cursorIndex = 0;
+                PlayClickSFX_Conv();
             } else {
                 debugMenuOptions[currentPage * MAX_OPTIONS_PER_PAGE + cursorIndex].handler();
             }
-            PlayMusic_Conv(MUSIC_MOBILE_ADAPTER_MENU);
-            MenuBox_Conv();
+            DebugMenu_MenuBox();
             DebugMenu_PrintStrings();
             DebugMenu_PlaceCursor();
             continue;
@@ -120,6 +131,8 @@ void DebugMenu(void) {
 
 void Handler_Fight(void) {
     // TODO: Implement this function
+    DebugMenu_BattleTest();
+    PlayMusic_Conv(DEBUG_MENU_MUSIC);
 }
 
 void Handler_Link(void) {
@@ -131,7 +144,8 @@ void Handler_Field(void) {
 }
 
 void Handler_SoundTest(void) {
-    // TODO: Implement this function
+    DebugMenu_SoundTest();
+    PlayMusic_Conv(DEBUG_MENU_MUSIC);
 }
 
 void Handler_Subgame(void) {
@@ -171,7 +185,7 @@ static const char* DebugMenu_SoundNames[] = {
 
 static void DebugMenu_SoundTest_PlaceMusicName(uint16_t track) {
     ClearBox_Conv2(wram->wTilemap + coordidx(2, 2), SCREEN_WIDTH - 4, 1);
-    if(track >= lengthof(DebugMenu_MusicNames)) {
+    if(track >= lengthof(DebugMenu_MusicNames) || DebugMenu_MusicNames[track] == NULL) {
         char buf[10];
         sprintf(buf, "M%03X", track);
         PlaceStringSimple(Utf8ToCrystal(buf), wram->wTilemap + coordidx(2, 2));
@@ -183,7 +197,7 @@ static void DebugMenu_SoundTest_PlaceMusicName(uint16_t track) {
 
 static void DebugMenu_SoundTest_PlaceSoundName(uint16_t track) {
     ClearBox_Conv2(wram->wTilemap + coordidx(2, 6), SCREEN_WIDTH - 4, 1);
-    if(track >= lengthof(DebugMenu_SoundNames)) {
+    if(track >= lengthof(DebugMenu_SoundNames) || DebugMenu_SoundNames[track] == NULL) {
         char buf[10];
         sprintf(buf, "SE%03X", track);
         PlaceStringSimple(Utf8ToCrystal(buf), wram->wTilemap + coordidx(2, 6));
@@ -274,6 +288,177 @@ void DebugMenu_SoundTest(void) {
             } else {
                 PlaySFX_Conv(sound);
             }
+        }
+        DelayFrame();
+    }
+    PlayMusic_Conv(MUSIC_NONE);
+    ClearBox_Conv2(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, SCREEN_HEIGHT);
+    DelayFrame();
+}
+
+static void DebugMenu_BattleTest_StartBattle(uint8_t tclass, uint8_t tid) {
+    SAFECALL(aClearTilemap);
+    WaitBGMap_Conv();
+    DelayFrames_Conv(10);
+
+    // Rival name and Player name are null by default. 
+    Utf8ToCrystalBuffer(wram->wRivalName, NAME_LENGTH, "???@");
+    Utf8ToCrystalBuffer(wram->wPlayerName, NAME_LENGTH, "PLAYER@");
+
+    wram->wBattleType = BATTLETYPE_NORMAL;
+    wram->wInBattleTowerBattle = 0;
+    wram->wLinkMode = LINK_NULL;
+
+    wram->wBattleScriptFlags = (1 << 7) | 1;
+    wram->wOtherTrainerClass = tclass;
+    wram->wOtherTrainerID = tid + 1;
+
+    // wram->wMapScriptsBank = BANK(aRedWinLossText);
+    // wram->wLossTextPointer = 0;
+    // wram->wWinTextPointer = mRedWinLossText;
+
+    // Skip winloss text, if possible
+    bit_set(wram->wDebugFlags, DEBUG_BATTLE_F);
+
+    // Add Pokemon to party
+    wram->wCurPartySpecies = DRAGONITE;
+    wram->wCurPartyLevel = 100;
+    wram->wPartyCount = 0;
+    wram->wMonType = PARTYMON;
+    {
+        wbank_push(MBANK(awPartyMon1));
+        PREDEF(pTryAddMonToParty);
+        wbank_pop;
+    }
+    wbank_push(MBANK(awInBattleTowerBattle));
+    SAFECALL(aBufferScreen);
+    SAFECALL(aBattleIntro);
+    SAFECALL(aDoBattle);
+    SAFECALL(aExitBattle);
+
+    bit_reset(wram->wDebugFlags, DEBUG_BATTLE_F);
+
+    wbank_pop;
+    SAFECALL(aClearTilemap);
+    WaitBGMap_Conv();
+    SAFECALL(aLoadFontsExtra);
+    SAFECALL(aLoadStandardFont);
+    PlayMusic_Conv(MUSIC_NONE);
+    DelayFrame();
+}
+
+static void DebugMenu_BattleTest_GetNextTrainer(uint8_t* tclass, uint8_t* tid) {
+    if(++(*tid) < TrainerGroups[*tclass - 1].count) {
+        return;
+    }
+    else if(++(*tclass) <= MYSTICALMAN) {
+        *tid = 0;
+        return;
+    }
+    *tclass = FALKNER;
+    *tid = FALKNER1;
+}
+
+static void DebugMenu_BattleTest_GetNextTrainerClass(uint8_t* tclass, uint8_t* tid) {
+    if(++(*tclass) > MYSTICALMAN) {
+        *tclass = FALKNER;
+        *tid = 0;
+        return;
+    }
+    while(TrainerGroups[*tclass - 1].count == 0) {
+        if(++(*tclass) > MYSTICALMAN) {
+            *tclass = FALKNER;
+            *tid = 0;
+            return;
+        }
+    }
+    *tid = 0;
+}
+
+static void DebugMenu_BattleTest_GetPrevTrainer(uint8_t* tclass, uint8_t* tid) {
+    if(*tid == 0) {
+        if(*tclass == FALKNER) {
+            *tclass = MYSTICALMAN;
+            return;
+        }
+        --(*tclass);
+        *tid = TrainerGroups[*tclass - 1].count - 1;
+        return;
+    }
+    --(*tid);
+}
+
+static void DebugMenu_BattleTest_GetPrevTrainerClass(uint8_t* tclass, uint8_t* tid) {
+    if((*tclass)-- == 0) {
+        *tclass = MYSTICALMAN;
+        *tid = 0;
+        return;
+    }
+    while(TrainerGroups[*tclass - 1].count == 0) {
+        if((*tclass)-- == 0) {
+            *tclass = MYSTICALMAN;
+            *tid = 0;
+            return;
+        }
+    }
+    *tid = 0;
+}
+
+void DebugMenu_BattleTest_PlaceTrainerName(uint8_t tclass, uint8_t tid) {
+    char buffer[16];
+    sprintf(buffer, "CLASS- %s", TrainerClassNames[tclass - 1]);
+    PlaceStringSimple(U82C(buffer), wram->wTilemap + coordidx(2, 2));
+    sprintf(buffer, "   ID- %02d:%02d", tclass, tid);
+    PlaceStringSimple(U82C(buffer), wram->wTilemap + coordidx(2, 4));
+    sprintf(buffer, " NAME- %s", TrainerGroups[tclass - 1].parties[tid].name);
+    PlaceStringSimple(U82C(buffer), wram->wTilemap + coordidx(2, 6));
+}
+
+void DebugMenu_BattleTest(void) {
+    PlayMusic_Conv(MUSIC_NONE);
+    DelayFrame();
+
+    uint8_t tclass = PSYCHIC_T; 
+    uint8_t tid = NATHAN;
+
+    ClearBox_Conv2(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, SCREEN_HEIGHT);
+    Textbox_Conv2(wram->wTilemap + coordidx(TEXTBOX_X, TEXTBOX_Y), TEXTBOX_INNERH, TEXTBOX_INNERW);
+    PlaceStringSimple(Utf8ToCrystal("A- FIGHT  LR- MV<LINE>B- BACK@"), wram->wTilemap + coordidx(TEXTBOX_INNERX, TEXTBOX_INNERY));
+    DebugMenu_BattleTest_PlaceTrainerName(tclass, tid);
+
+    while(1)
+    {
+        wram->wDisableTextAcceleration = 0;
+        GetJoypad_Conv();
+        int8_t hdir = -((hram->hJoyPressed & D_LEFT)? 1: 0) + ((hram->hJoyPressed & D_RIGHT)? 1: 0);
+        int8_t vdir = -((hram->hJoyPressed & D_UP)? 1: 0) + ((hram->hJoyPressed & D_DOWN)? 1: 0);
+        if(hdir > 0) {
+            DebugMenu_BattleTest_GetNextTrainer(&tclass, &tid);
+            ClearBox_Conv2(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, 7);
+            DebugMenu_BattleTest_PlaceTrainerName(tclass, tid);
+        }
+        else if(hdir < 0) {
+            DebugMenu_BattleTest_GetPrevTrainer(&tclass, &tid);
+            ClearBox_Conv2(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, 7);
+            DebugMenu_BattleTest_PlaceTrainerName(tclass, tid);
+        }
+        if(vdir > 0) {
+            DebugMenu_BattleTest_GetNextTrainerClass(&tclass, &tid);
+            ClearBox_Conv2(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, 7);
+            DebugMenu_BattleTest_PlaceTrainerName(tclass, tid);
+        }
+        else if(vdir < 0) {
+            DebugMenu_BattleTest_GetPrevTrainerClass(&tclass, &tid);
+            ClearBox_Conv2(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, 7);
+            DebugMenu_BattleTest_PlaceTrainerName(tclass, tid);
+        }
+        if(hram->hJoyPressed & (B_BUTTON)) 
+            break;
+        if(hram->hJoyPressed & (A_BUTTON)) {
+            DebugMenu_BattleTest_StartBattle(tclass, tid);
+            Textbox_Conv2(wram->wTilemap + coordidx(TEXTBOX_X, TEXTBOX_Y), TEXTBOX_INNERH, TEXTBOX_INNERW);
+            PlaceStringSimple(Utf8ToCrystal("A- FIGHT  LR- MV<LINE>B- BACK@"), wram->wTilemap + coordidx(TEXTBOX_INNERX, TEXTBOX_INNERY));
+            DebugMenu_BattleTest_PlaceTrainerName(tclass, tid);
         }
         DelayFrame();
     }

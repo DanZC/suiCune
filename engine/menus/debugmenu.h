@@ -11,6 +11,7 @@ void DebugMenu_MoveCursor(int8_t dir);
 void DebugMenu_PlaceCursor(void);
 void DebugMenu(void);
 void DebugMenu_SoundTest(void);
+void DebugMenu_BattleTest(void);
 // void debugMenuOptionField();
 // void debugMenuOptionFight();
 // void debugMenuOptionSubGames();

@@ -2822,6 +2822,32 @@
         }                                           \
     } while(0)
 
+#define SAVE_REGS                                    \
+    do {                                            \
+        PUSH_AF;                                    \
+        PUSH_BC;                                    \
+        PUSH_DE;                                    \
+        PUSH_HL;                                    \
+    } while (0)
+
+#define RESTORE_REGS                                 \
+    do {                                            \
+        POP_HL;                                     \
+        POP_DE;                                     \
+        POP_BC;                                     \
+        POP_AF;                                     \
+    } while (0)
+
+#define SAFECALL(_x)                                \
+    do {                                            \
+        SAVE_REGS;                                  \
+        uint8_t oldBank = gb_read(hROMBank);        \
+        Bankswitch_Conv(BANK(_x));                  \
+        CALL(_x);                                   \
+        Bankswitch_Conv(oldBank);                   \
+        RESTORE_REGS;                               \
+    } while (0)
+
 #define CALL_de CALL(REG_DE + (REG_DE < 0x4000 ? 0 : ((gb.selected_rom_bank - 1) * ROM_BANK_SIZE)))
 
 #define CALL_hl CALL(REG_HL + (REG_HL < 0x4000 ? 0 : ((gb.selected_rom_bank - 1) * ROM_BANK_SIZE)))

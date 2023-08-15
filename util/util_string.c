@@ -271,6 +271,8 @@ uint16_t PrintCrystalStringFromGB(uint16_t ptr) {
             case CHAR_LINE: printf("<LINE>"); break;
             case CHAR_SCROLL: printf("<SCROLL>"); break;
             case CHAR_DONE: printf("<DONE>"); break;
+            case CHAR_PLAYER: printf("<PLAYER>"); break;
+            case CHAR_PLAY_G: printf("<PLAY_G>"); break;
             case CHAR_COMMA: printf(","); break;
             case CHAR_SINGLE_QUOTE: printf("'"); break;
             case CHAR_FWD_SLASH: printf("/"); break;
@@ -288,9 +290,72 @@ uint16_t PrintCrystalStringFromGB(uint16_t ptr) {
             case CHAR_APOS_V: printf("'v"); break;
             case CHAR_APOS_R: printf("'r"); break;
             case CHAR_APOS_T: printf("'t"); break;
+            case CHAR_MONEY_ICON: printf("$"); break;
             default: printf("?"); break;
         }
         c = gb_read(++ptr);
+    }
+    return ptr + 1;
+}
+
+// Prints Crystal encoded string from RAM address to standard output as UTF-8 text.
+uint8_t* PrintCrystalStringFromRAM(uint8_t* ptr) {
+    uint8_t c = *(ptr);
+    char buf[2];
+    buf[1] = '\0';
+    while(c != CHAR_TERM && c != CHAR_DONE && c != CHAR_PROMPT) {
+        if(c >= CHAR_A && c <= CHAR_Z) {
+            buf[0] = 'A' + (c - CHAR_A);
+            printf("%s", buf);
+            c = *(++ptr);
+            continue;
+        }
+        if(c >= CHAR_a && c <= CHAR_z) {
+            buf[0] = 'a' + (c - CHAR_a);
+            printf("%s", buf);
+            c = *(++ptr);
+            continue;
+        }
+        if(c >= CHAR_0) {
+            buf[0] = '0' + (c - CHAR_0);
+            printf("%s", buf);
+            c = *(++ptr);
+            continue;
+        }
+        switch(c) {
+            case CHAR_SPACE: printf(" "); break;
+            case CHAR_POKe: printf("#"); break;
+            case CHAR_CR: printf("<CR>"); break;
+            case CHAR_PARA: printf("<PARA>"); break;
+            case CHAR_LF: printf("<LF>"); break;
+            case CHAR_CONT: printf("<CONT>"); break;
+            case CHAR__CONT: printf("<_CONT>"); break;
+            case CHAR_LINE: printf("<LINE>"); break;
+            case CHAR_SCROLL: printf("<SCROLL>"); break;
+            case CHAR_DONE: printf("<DONE>"); break;
+            case CHAR_PLAYER: printf("<PLAYER>"); break;
+            case CHAR_PLAY_G: printf("<PLAY_G>"); break;
+            case CHAR_COMMA: printf(","); break;
+            case CHAR_SINGLE_QUOTE: printf("'"); break;
+            case CHAR_FWD_SLASH: printf("/"); break;
+            case CHAR_PERIOD: printf("."); break;
+            case CHAR_DOT: printf("."); break;
+            case CHAR_EMARK: printf("!"); break;
+            case CHAR_QMARK: printf("?"); break;
+            case CHAR_ELLIPSIS: printf("…"); break;
+            case CHAR_SIXDOTS: printf("<……>"); break;
+            case CHAR_ID: printf("<ID>"); break;
+            case CHAR_APOS_D: printf("'d"); break;
+            case CHAR_APOS_S: printf("'s"); break;
+            case CHAR_APOS_M: printf("'m"); break;
+            case CHAR_APOS_L: printf("'l"); break;
+            case CHAR_APOS_V: printf("'v"); break;
+            case CHAR_APOS_R: printf("'r"); break;
+            case CHAR_APOS_T: printf("'t"); break;
+            case CHAR_MONEY_ICON: printf("$"); break;
+            default: printf("?"); break;
+        }
+        c = *(++ptr);
     }
     return ptr + 1;
 }

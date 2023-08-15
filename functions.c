@@ -1678,7 +1678,7 @@ void init_function_pointers(void) {
     // REDIRECTED(Stubbed_Increments5_a89a);
     // REDIRECTED(BattleCheckEnemyShininess);
     // REDIRECTED(MonFaintedAnimation);
-    // REDIRECTED(WinTrainerBattle);
+    REDIRECTED(WinTrainerBattle);
     // REDIRECTED(EnemyTriesToFlee);
     // REDIRECTED(CheckFaint_EnemyThenPlayer);
     // REDIRECTED(TryToRunAwayFromBattle);

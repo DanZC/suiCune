@@ -921,6 +921,20 @@ struct TrainerParty
     };
 };
 
+struct TrainerGroup 
+{
+    const struct TrainerParty* const parties;
+    size_t count;
+};
+
+struct DVSet
+{
+    uint8_t atk: 4;
+    uint8_t def: 4;
+    uint8_t spd: 4;
+    uint8_t spc: 4;
+};
+
 struct Script;
 
 typedef bool (*Script_fn_t)(struct Script*);

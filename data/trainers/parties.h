@@ -1,3 +1,3 @@
 #pragma once
 
-extern const struct TrainerParty* TrainerGroups[];
+extern const struct TrainerGroup TrainerGroups[];

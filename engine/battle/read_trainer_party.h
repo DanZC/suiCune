@@ -7,6 +7,7 @@ void TrainerType2_Conv(const struct TrainerParty* de);
 void TrainerType3(void);
 void TrainerType3_Conv(const struct TrainerParty* de);
 void TrainerType4(void);
+void TrainerType4_Conv(const struct TrainerParty* de);
 void ComputeTrainerReward(void);
 void Battle_GetTrainerName(void);
 uint8_t* Battle_GetTrainerName_Conv(void);
