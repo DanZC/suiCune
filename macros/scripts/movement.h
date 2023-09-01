@@ -7,26 +7,31 @@
 /*turn_head: MACRO
         db movement_turn_head | \1
 ENDM*/
+#define turn_head(_dir) (movement_turn_head | _dir)
 
 #define movement_turn_step 0x04
 /*turn_step: MACRO
         db movement_turn_step | \1
 ENDM*/
+#define turn_step(_dir) (movement_turn_step | _dir)
 
 #define movement_slow_step 0x08
 /*slow_step: MACRO
         db movement_slow_step | \1
 ENDM*/
+#define slow_step(_dir) (movement_slow_step | _dir)
 
 #define movement_step 0x0c
 /*step: MACRO
         db movement_step | \1
 ENDM*/
+#define step(_dir) (movement_step | _dir)
 
 #define movement_big_step 0x10
 /*big_step: MACRO
         db movement_big_step | \1
 ENDM*/
+#define big_step(_dir) (movement_big_step | _dir)
 
 #define movement_slow_slide_step 0x14
 /*slow_slide_step: MACRO

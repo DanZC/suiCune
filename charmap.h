@@ -92,6 +92,7 @@
 #define CHAR_SPACE   ('\x7f') // " "
 
 /*
+	charmap "<BOLD_D>",  $63 ; unused
 	charmap "<BOLD_V>",  $69
 	charmap "<BOLD_S>",  $6a
 	charmap "<COLON>",   $6d ; colon with tinier dots than ":"
@@ -101,6 +102,7 @@
 	charmap "”",         $73 ; closing quote
 	charmap "…",         $75 ; ellipsis
 */
+#define CHAR_BOLD_D      ('\x63') // "<BOLD_D>"
 #define CHAR_BOLD_V      ('\x69') // "<BOLD_V>"
 #define CHAR_BOLD_S      ('\x6a') // "<BOLD_S>"
 #define CHAR_COLON       ('\x6d') // "<COLON>", colon with tinier dots than ":"

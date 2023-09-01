@@ -1,5 +1,6 @@
 #include "../constants.h"
 #include "flag.h"
+#include "../engine/events/engine_flags.h"
 
 void ResetMapBufferEventFlags(void){
         XOR_A_A;
@@ -10,7 +11,7 @@ void ResetMapBufferEventFlags(void){
 }
 
 void ResetMapBufferEventFlags_Conv(void){
-    gb_write(wEventFlags, 0);
+    wram->wEventFlags[0] = 0;
 }
 
 void ResetBikeFlags(void){
@@ -44,10 +45,10 @@ outdoors:
 }
 
 void ResetFlashIfOutOfCave_Conv(void){
-    uint8_t env = gb_read(wEnvironment);
+    uint8_t env = wram->wEnvironment;
     if(env == ROUTE || env == TOWN)
     {
-        gb_write(wStatusFlags, gb_read(wStatusFlags) & ((1 << STATUSFLAGS_FLASH_F) ^ 0xFF));
+        wram->wStatusFlags &= ((1 << STATUSFLAGS_FLASH_F) ^ 0xFF);
     }
 }
 
@@ -134,6 +135,10 @@ void EventFlagAction_Conv(uint16_t bit, uint8_t func){
     FlagAction_Conv(wEventFlags, bit, func);
 }
 
+uint8_t EventFlagAction_Conv2(uint16_t bit, uint8_t func){
+    return FlagAction_Conv2(wram->wEventFlags, bit, func);
+}
+
 //  Perform action b on bit de in flag array hl.
 void FlagAction_Conv(uint16_t flag, uint16_t bit, uint8_t func){
 
@@ -166,6 +171,40 @@ void FlagAction_Conv(uint16_t flag, uint16_t bit, uint8_t func){
     }
 }
 
+//  Perform action b on bit de in flag array hl.
+uint8_t FlagAction_Conv2(uint8_t* flag, uint16_t bit, uint8_t func){
+
+//  inputs:
+//  b: function
+//     0  RESET_FLAG  clear bit
+//     1  SET_FLAG    set bit
+//     2  CHECK_FLAG  check bit
+//  de: bit number
+//  hl: pointer to the flag array
+
+// get index within the byte
+    uint8_t index = bit & 7;
+
+// shift de right by three bits (get the index within memory)
+    flag += bit >> 3;
+    
+// check b's value: 0, 1, 2
+    if(func < SET_FLAG) {
+        // clear bit
+        *flag &= (1 << index) ^ 0xFF;
+        return *flag;
+    }
+    if(func == SET_FLAG) {
+        // set bit
+        *flag |= (1 << index);
+        return *flag;
+    }
+    else {
+        // check bit
+        return (*flag & (1 << index));
+    }
+}
+
 void CheckReceivedDex(void){
         LD_DE(ENGINE_POKEDEX);
     LD_B(CHECK_FLAG);
@@ -176,14 +215,8 @@ void CheckReceivedDex(void){
 
 }
 
-void CheckReceivedDex_Conv(void){
-    REG_DE = ENGINE_POKEDEX;
-    REG_B = CHECK_FLAG;
-    FARCALL(aEngineFlagAction);
-    REG_A = REG_C;
-    REG_F_Z = (REG_A == 0);
-    RET;
-
+bool CheckReceivedDex_Conv(void){
+    return EngineFlagAction_Conv(ENGINE_POKEDEX, CHECK_FLAG);
 }
 
 void CheckBPressedDebug(void){
@@ -200,10 +233,29 @@ void CheckBPressedDebug(void){
 
 }
 
+//  //  unreferenced
+//  Used in debug ROMs to walk through walls and avoid encounters.
+bool CheckBPressedDebug_Conv(void){
+    // LD_A_addr(wDebugFlags);
+    // BIT_A(DEBUG_FIELD_F);
+    // RET_Z ;
+
+    // LDH_A_addr(hJoyDown);
+    // BIT_A(B_BUTTON_F);
+    // RET;
+    return bit_test(wram->wDebugFlags, DEBUG_FIELD_F) && bit_test(hram->hJoyDown, B_BUTTON_F);
+}
+
 void xor_a(void){
         XOR_A_A;
     RET;
 
+}
+
+uint8_t xor_a_Conv(uint8_t a){
+    // XOR_A_A;
+    // RET;
+    return a ^ a;
 }
 
 void xor_a_dec_a(void){
@@ -211,6 +263,13 @@ void xor_a_dec_a(void){
     DEC_A;
     RET;
 
+}
+
+uint8_t xor_a_dec_a_Conv(uint8_t a){
+    // XOR_A_A;
+    // DEC_A;
+    // RET;
+    return (a ^ a) - 1;
 }
 
 void CheckFieldDebug(void){
@@ -221,4 +280,9 @@ void CheckFieldDebug(void){
     POP_HL;
     RET;
 
+}
+
+bool CheckFieldDebug_Conv(void){
+    //  //  unreferenced
+    return bit_test(wram->wDebugFlags, DEBUG_FIELD_F);
 }

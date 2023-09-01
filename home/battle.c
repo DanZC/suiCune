@@ -4,6 +4,7 @@
 #include "copy.h"
 #include "text.h"
 #include "tilemap.h"
+#include "map_objects.h"
 
 void GetPartyParamLocation(void){
     //  Get the location of parameter a from wCurPartyMon in hl
@@ -49,6 +50,13 @@ uint16_t GetPartyLocation_Conv(uint16_t hl, uint8_t a){
     return AddNTimes_Conv(PARTYMON_STRUCT_LENGTH, hl, a);
 }
 
+//  Add the length of a PartyMon struct to hl a times.
+struct PartyMon* GetPartyLocation_Conv2(struct PartyMon* hl, uint8_t a){
+    // LD_BC(PARTYMON_STRUCT_LENGTH);
+    // JP(mAddNTimes);
+    return hl + a;
+}
+
 void GetDexNumber(void){
     //  //  unreferenced
 //  Probably used in gen 1 to convert index number to dex number
@@ -88,7 +96,7 @@ uint16_t UserPartyAttr_Conv(uint8_t a){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto ot;
-    if(gb_read(hBattleTurn) != 0)
+    if(hram->hBattleTurn != 0)
     {
         // JR(mOTPartyAttr);
         return OTPartyAttr_Conv(a);
@@ -116,7 +124,7 @@ uint16_t OpponentPartyAttr_Conv(uint8_t a){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto ot;
-    if(gb_read(hBattleTurn) == 0)
+    if(hram->hBattleTurn == 0)
     {
         // JR(mOTPartyAttr);
         return OTPartyAttr_Conv(a);
@@ -198,7 +206,7 @@ void ResetDamage_Conv(void){
     // XOR_A_A;
     // LD_addr_A(wCurDamage);
     // LD_addr_A(wCurDamage + 1);
-    gb_write16(wCurDamage, 0);
+    wram->wCurDamage = 0;
 }
 
 void SetPlayerTurn(void){
@@ -211,7 +219,7 @@ void SetPlayerTurn(void){
 void SetPlayerTurn_Conv(void){
     // XOR_A_A;
     // LDH_addr_A(hBattleTurn);
-    gb_write(hBattleTurn, 0); // Player's turn
+    hram->hBattleTurn = 0; // Player's turn
 }
 
 void SetEnemyTurn(void){
@@ -224,7 +232,7 @@ void SetEnemyTurn(void){
 void SetEnemyTurn_Conv(void){
     // LD_A(1);
     // LDH_addr_A(hBattleTurn);
-    gb_write(hBattleTurn, 1); // Enemy's turn
+    hram->hBattleTurn = 1; // Enemy's turn
 }
 
 void UpdateOpponentInParty(void){
@@ -247,7 +255,7 @@ void UpdateOpponentInParty_Conv(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // JR_Z (mUpdateEnemyMonInParty);
-    if(gb_read(hBattleTurn) == 0)
+    if(hram->hBattleTurn == 0)
         return UpdateEnemyMonInParty_Conv();
 
     // JR(mUpdateBattleMonInParty);
@@ -258,7 +266,7 @@ void UpdateUserInParty_Conv(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // JR_Z (mUpdateBattleMonInParty);
-    if(gb_read(hBattleTurn) == 0)
+    if(hram->hBattleTurn == 0)
         return UpdateBattleMonInParty_Conv();
     
     // JR(mUpdateEnemyMonInParty);
@@ -277,7 +285,7 @@ void UpdateBattleMonInParty(void){
 void UpdateBattleMonInParty_Conv(void){
     // LD_A_addr(wCurBattleMon);
     // return UpdateBattleMon();
-    return UpdateBattleMon_Conv(gb_read(wCurBattleMon));
+    return UpdateBattleMon_Conv(wram->wCurBattleMon);
 }
 
 void UpdateBattleMon(void){
@@ -446,7 +454,8 @@ void BattleTextbox_Conv(uint16_t hl){
     // CALL(aMobileTextBorder);
     MobileTextBorder_Conv();
 
-    CALL(aUpdateSprites);
+    // CALL(aUpdateSprites);
+    UpdateSprites_Conv();
 
     // CALL(aApplyTilemap);
     ApplyTilemap_Conv();

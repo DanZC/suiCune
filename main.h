@@ -196,7 +196,7 @@
 //#include "engine/rtc/reset_password.h"
 //#include "engine/menus/delete_save.h"
 //#include "data/tilesets.h"
-//#include "engine/smallflag.h"
+#include "engine/smallflag.h"
 //#include "engine/gfx/trademon_frontpic.h"
 //#include "engine/events/pokerus/check_pokerus.h"
 //#include "engine/events/lucky_number.h"
@@ -442,7 +442,7 @@
 
 // SECTION "bank3E", ROMX
 
-//#include "engine/gfx/load_font.h"
+#include "engine/gfx/load_font.h"
 //#include "engine/link/time_capsule.h"
 //#include "engine/events/name_rater.h"
 //#include "engine/events/play_slow_cry.h"

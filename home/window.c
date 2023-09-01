@@ -3,6 +3,8 @@
 #include "menu.h"
 #include "../engine/overworld/init_map.h"
 #include "../engine/gfx/dma_transfer.h"
+#include "delay.h"
+#include "map_objects.h"
 
 void RefreshScreen(void){
         CALL(aClearWindowData);
@@ -170,6 +172,37 @@ void SafeUpdateSprites(void){
     LDH_addr_A(hOAMUpdate);
     RET;
 
+}
+
+void SafeUpdateSprites_Conv(void){
+    // LDH_A_addr(hOAMUpdate);
+    // PUSH_AF;
+    uint8_t oamupdate = hram->hOAMUpdate;
+    // LDH_A_addr(hBGMapMode);
+    // PUSH_AF;
+    uint8_t bgmapmode = hram->hBGMapMode;
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    // LD_A(0x1);
+    // LDH_addr_A(hOAMUpdate);
+    hram->hOAMUpdate = 0x1;
+
+    // CALL(aUpdateSprites);
+    UpdateSprites_Conv();
+
+    // XOR_A_A;
+    // LDH_addr_A(hOAMUpdate);
+    hram->hOAMUpdate = 0x0;
+    // CALL(aDelayFrame);
+    DelayFrame();
+    // POP_AF;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = bgmapmode;
+    // POP_AF;
+    // LDH_addr_A(hOAMUpdate);
+    hram->hOAMUpdate = oamupdate;
+    // RET;
 }
 
 void SetCarryFlag(void){

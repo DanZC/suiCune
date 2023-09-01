@@ -1,5 +1,6 @@
 #include "../constants.h"
 #include "pokedex_flags.h"
+#include "../engine/smallflag.h"
 
 void CountSetBits(void){
     //  Count the number of set bits in b bytes starting from hl.
@@ -95,7 +96,7 @@ uint8_t GetWeekday_Conv(void){
 }
 
 void SetSeenAndCaughtMon(void){
-        PUSH_AF;
+    PUSH_AF;
     LD_C_A;
     LD_HL(wPokedexCaught);
     LD_B(SET_FLAG);
@@ -106,6 +107,19 @@ void SetSeenAndCaughtMon(void){
     return SetSeenMon();
 }
 
+void SetSeenAndCaughtMon_Conv(dex_t c){
+    // PUSH_AF;
+    // LD_C_A;
+    // LD_HL(wPokedexCaught);
+    // LD_B(SET_FLAG);
+    // CALL(aPokedexFlagAction);
+    PokedexFlagAction_Conv(wram->wPokedexCaught, c, SET_FLAG);
+    // POP_AF;
+// fallthrough
+
+    return SetSeenMon_Conv(c);
+}
+
 void SetSeenMon(void){
         LD_C_A;
     LD_HL(wPokedexSeen);
@@ -114,12 +128,28 @@ void SetSeenMon(void){
 
 }
 
+void SetSeenMon_Conv(dex_t c){
+    // LD_C_A;
+    // LD_HL(wPokedexSeen);
+    // LD_B(SET_FLAG);
+    // JR(mPokedexFlagAction);
+    PokedexFlagAction_Conv(wram->wPokedexSeen, c, SET_FLAG);
+}
+
 void CheckCaughtMon(void){
         LD_C_A;
     LD_HL(wPokedexCaught);
     LD_B(CHECK_FLAG);
     JR(mPokedexFlagAction);
 
+}
+
+bool CheckCaughtMon_Conv(dex_t c){
+    // LD_C_A;
+    // LD_HL(wPokedexCaught);
+    // LD_B(CHECK_FLAG);
+    // JR(mPokedexFlagAction);
+    return PokedexFlagAction_Conv(wram->wPokedexCaught, c, CHECK_FLAG);
 }
 
 void CheckSeenMon(void){
@@ -131,11 +161,28 @@ void CheckSeenMon(void){
     return PokedexFlagAction();
 }
 
+bool CheckSeenMon_Conv(dex_t c){
+    // LD_C_A;
+    // LD_HL(wPokedexSeen);
+    // LD_B(CHECK_FLAG);
+// fallthrough
+    return PokedexFlagAction_Conv(wram->wPokedexSeen, c, CHECK_FLAG);
+}
+
 void PokedexFlagAction(void){
-        LD_D(0);
+    LD_D(0);
     PREDEF(pSmallFarFlagAction);
     LD_A_C;
     AND_A_A;
     RET;
 
+}
+
+bool PokedexFlagAction_Conv(uint8_t* hl, dex_t c, uint8_t b){
+    // LD_D(0);
+    // PREDEF(pSmallFarFlagAction);
+    // LD_A_C;
+    // AND_A_A;
+    // RET;
+    return SmallFarFlagAction_Conv(hl, (uint8_t)c, b) != 0;
 }

@@ -1,6 +1,7 @@
 #include "../../constants.h"
 #include "dma_transfer.h"
 #include "../../home/delay.h"
+#include "../../home/gfx.h"
 
 void HDMATransferAttrmapAndTilemapToWRAMBank3(void) {
     LD_HL(mHDMATransferAttrmapAndTilemapToWRAMBank3_Function);
@@ -775,6 +776,56 @@ void HDMATransfer2bpp(void) {
     POP_AF;
     LDH_addr_A(rSVBK);
     RET;
+}
+
+void HDMATransfer2bpp_Conv(uint8_t b, uint16_t de, uint16_t hl, uint8_t c) {
+    // 2bpp when [rLCDC] & $80
+    // switch to WRAM bank 6
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(MBANK(awScratchTilemap));
+    // LDH_addr_A(rSVBK);
+    wbank_push(MBANK(awScratchTilemap));
+
+    // PUSH_BC;
+    // PUSH_HL;
+
+    // Copy c tiles of the 2bpp from b:de to wScratchTilemap
+    // LD_A_B;  // bank
+    // LD_L_C;  // number of tiles
+    // LD_H(0x0);
+    // multiply by 16 (16 bytes of a 2bpp = 8 x 8 tile)
+    // ADD_HL_HL;
+    // ADD_HL_HL;
+    // ADD_HL_HL;
+    // ADD_HL_HL;
+    // LD_B_H;
+    // LD_C_L;
+    // LD_H_D;  // address
+    // LD_L_E;
+    // LD_DE(wScratchTilemap);
+    // CALL(mFarCopyBytes);
+    FarCopyBytes_Conv(wScratchTilemap, b, de, c * LEN_2BPP_TILE);
+
+    // POP_HL;
+    // POP_BC;
+
+    // PUSH_BC;
+    // CALL(mDelayFrame);
+    DelayFrame();
+    // POP_BC;
+
+    // LD_D_H;
+    // LD_E_L;
+    // LD_HL(wScratchTilemap);
+    // CALL(mHDMATransfer_Wait127Scanlines);
+    HDMATransfer_Wait123Scanlines_Conv(wScratchTilemap, hl, c);
+
+    // restore the previous bank
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // RET;
+    wbank_pop;
 }
 
 void HDMATransfer1bpp(void) {

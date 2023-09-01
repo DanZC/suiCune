@@ -2528,7 +2528,7 @@ void SwitchToMapScriptsBank(void){
 }
 
 void SwitchToMapScriptsBank_Conv(void){
-    Bankswitch_Conv(gb_read(wMapScriptsBank));
+    Bankswitch_Conv(wram->wMapScriptsBank);
 }
 
 void GetMapScriptsBank(void){

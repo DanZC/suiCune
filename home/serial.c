@@ -1,5 +1,6 @@
 #include "../constants.h"
 #include "serial.h"
+#include "delay.h"
 
 void Serial(void){
     //  The serial interrupt.
@@ -268,6 +269,173 @@ short_delay_loop:
 
 }
 
+static void Serial_ExchangeByte_ShortDelay(void) {
+    DelayFrame();
+}
+
+uint8_t Serial_ExchangeByte_Conv(uint8_t* hl){ 
+timeout_loop:
+    // XOR_A_A;
+    // LDH_addr_A(hSerialReceivedNewData);
+    hram->hSerialReceivedNewData = 0;
+    // LDH_A_addr(hSerialConnectionStatus);
+    // CP_A(USING_INTERNAL_CLOCK);
+    // IF_NZ goto not_player_2;
+    if(hram->hSerialConnectionStatus == USING_INTERNAL_CLOCK) {
+        // LD_A((0 << rSC_ON) | (1 << rSC_CLOCK));
+        // LDH_addr_A(rSC);
+        gb_write(rSC, (0 << rSC_ON) | (1 << rSC_CLOCK));
+        // LD_A((1 << rSC_ON) | (1 << rSC_CLOCK));
+        // LDH_addr_A(rSC);
+        gb_write(rSC, (1 << rSC_ON) | (1 << rSC_CLOCK));
+    }
+
+// not_player_2:
+    do {
+    // loop:
+        // LDH_A_addr(hSerialReceivedNewData);
+        // AND_A_A;
+        // IF_NZ goto await_new_data;
+        if(hram->hSerialReceivedNewData != 0)
+            goto await_new_data;
+        // LDH_A_addr(hSerialConnectionStatus);
+        // CP_A(USING_EXTERNAL_CLOCK);
+        if(hram->hSerialConnectionStatus != USING_EXTERNAL_CLOCK || !CheckLinkTimeoutFramesNonzero_Conv()) {
+        // not_player_1_or_timed_out:
+            // LDH_A_addr(rIE);
+            // AND_A((1 << SERIAL) | (1 << TIMER) | (1 << LCD_STAT) | (1 << VBLANK));
+            // CP_A(1 << SERIAL);
+            // IF_NZ goto loop;
+            if((gb_read(rIE) & ((1 << SERIAL) | (1 << TIMER) | (1 << LCD_STAT) | (1 << VBLANK))) != (1 << SERIAL))
+                continue;
+            // LD_A_addr(wLinkByteTimeout);
+            // DEC_A;
+            // LD_addr_A(wLinkByteTimeout);
+            // IF_NZ goto loop;
+            // LD_A_addr(wLinkByteTimeout + 1);
+            // DEC_A;
+            // LD_addr_A(wLinkByteTimeout + 1);
+            // IF_NZ goto loop;
+            if(--wram->wLinkByteTimeout != 0)
+                continue;
+            // LDH_A_addr(hSerialConnectionStatus);
+            // CP_A(USING_EXTERNAL_CLOCK);
+            // IF_Z goto await_new_data;
+            if(hram->hSerialConnectionStatus != USING_EXTERNAL_CLOCK) {
+
+                // LD_A(255);
+
+            // long_delay_loop:
+                // DEC_A;
+                // IF_NZ goto long_delay_loop;
+            }
+
+        await_new_data:
+            // XOR_A_A;
+            // LDH_addr_A(hSerialReceivedNewData);
+            hram->hSerialReceivedNewData = 0;
+            // LDH_A_addr(rIE);
+            // AND_A((1 << SERIAL) | (1 << TIMER) | (1 << LCD_STAT) | (1 << VBLANK));
+            // SUB_A(1 << SERIAL);
+            // IF_NZ goto non_serial_interrupts_enabled;
+            if((gb_read(rIE) & ((1 << SERIAL) | (1 << TIMER) | (1 << LCD_STAT) | (1 << VBLANK))) - (1 << SERIAL) == 0) {
+
+            // a == 0
+                //assert ['LOW(SERIAL_LINK_BYTE_TIMEOUT) == 0'];
+                // LD_addr_A(wLinkByteTimeout);
+                // LD_A(HIGH(SERIAL_LINK_BYTE_TIMEOUT));
+                // LD_addr_A(wLinkByteTimeout + 1);
+                wram->wLinkByteTimeout = SERIAL_LINK_BYTE_TIMEOUT;
+            }
+
+
+        // non_serial_interrupts_enabled:
+            // LDH_A_addr(hSerialReceive);
+            // CP_A(SERIAL_NO_DATA_BYTE);
+            // RET_NZ ;
+            if(hram->hSerialReceive != SERIAL_NO_DATA_BYTE)
+                return hram->hSerialReceive;
+            // CALL(aCheckLinkTimeoutFramesNonzero);
+            // IF_Z goto timed_out;
+            if(!CheckLinkTimeoutFramesNonzero_Conv()) {
+            // timed_out:
+                // LDH_A_addr(rIE);
+                // AND_A((1 << SERIAL) | (1 << TIMER) | (1 << LCD_STAT) | (1 << VBLANK));
+                // CP_A(1 << SERIAL);
+                // LD_A(SERIAL_NO_DATA_BYTE);
+                // RET_Z ;
+                if((gb_read(rIE) & ((1 << SERIAL) | (1 << TIMER) | (1 << LCD_STAT) | (1 << VBLANK))) == (1 << SERIAL)) {
+                    return SERIAL_NO_DATA_BYTE;
+                }
+                // LD_A_hl;
+                // LDH_addr_A(hSerialSend);
+                hram->hSerialSend = *hl;
+                // CALL(aDelayFrame);
+                DelayFrame();
+                // JP(mSerial_ExchangeByte_timeout_loop);
+                goto timeout_loop;
+            }
+            // PUSH_HL;
+            union Register r = {.reg = wram->wLinkTimeoutFrames};
+            // LD_HL(wLinkTimeoutFrames + 1);
+            // LD_A_hl;
+            // DEC_A;
+            // LD_hld_A;
+            // INC_A;
+            // IF_NZ goto no_rollover;
+            if(r.hi-- == 0) {
+                r.lo--;
+            }
+            // DEC_hl;
+            wram->wLinkTimeoutFrames = r.reg;
+
+
+        // no_rollover:
+            // POP_HL;
+            // CALL(aCheckLinkTimeoutFramesNonzero);
+            // JR_Z (mSerialDisconnected);
+            if(!CheckLinkTimeoutFramesNonzero_Conv())
+                return SerialDisconnected_Conv(0);
+
+        // ShortDelay:
+            // LD_A(15);
+
+        // short_delay_loop:
+            // DEC_A;
+            // IF_NZ goto short_delay_loop;
+            // RET;
+        }
+        // IF_NZ goto not_player_1_or_timed_out;
+        // CALL(aCheckLinkTimeoutFramesNonzero);
+        // IF_Z goto not_player_1_or_timed_out;
+        // CALL(aSerial_ExchangeByte_ShortDelay);
+        Serial_ExchangeByte_ShortDelay();
+        // PUSH_HL;
+        // LD_HL(wLinkTimeoutFrames + 1);
+        union Register r2 = {.reg = wram->wLinkTimeoutFrames};
+        // INC_hl;
+        // IF_NZ goto no_rollover_up;
+        if(++r2.hi == 0) {
+            // DEC_HL;
+            // INC_hl;
+            r2.lo++;
+        }
+
+        wram->wLinkTimeoutFrames = r2.reg;
+
+    // no_rollover_up:
+        // POP_HL;
+        // CALL(aCheckLinkTimeoutFramesNonzero);
+        // IF_NZ goto loop;
+        if(!CheckLinkTimeoutFramesNonzero_Conv())
+            break;
+        
+        return SerialDisconnected_Conv(0);
+    } while(1);
+    // JP(mSerialDisconnected);
+    return 0;
+}
+
 void CheckLinkTimeoutFramesNonzero(void){
         PUSH_HL;
     LD_HL(wLinkTimeoutFrames);
@@ -275,12 +443,20 @@ void CheckLinkTimeoutFramesNonzero(void){
     OR_A_hl;
     POP_HL;
     RET;
+}
+
+bool CheckLinkTimeoutFramesNonzero_Conv(void){
+    // PUSH_HL;
+    // LD_HL(wLinkTimeoutFrames);
+    // LD_A_hli;
+    // OR_A_hl;
+    // POP_HL;
+    // RET;
+    return wram->wLinkTimeoutFrames != 0;
+}
 
 //  This sets wLinkTimeoutFrames to $ffff, since
 //  a is always 0 when it is called.
-    return SerialDisconnected();
-}
-
 void SerialDisconnected(void){
         DEC_A;
     LD_addr_A(wLinkTimeoutFrames);
@@ -289,6 +465,18 @@ void SerialDisconnected(void){
 
 //  This is used to check that both players entered the same Cable Club room.
     return Serial_ExchangeSyncBytes();
+}
+
+//  This sets wLinkTimeoutFrames to $ffff, since
+//  a is always 0 when it is called.
+uint8_t SerialDisconnected_Conv(uint8_t a){
+    // DEC_A;
+    --a;
+    // LD_addr_A(wLinkTimeoutFrames);
+    // LD_addr_A(wLinkTimeoutFrames + 1);
+    wram->wLinkTimeoutFrames = (a << 8) | a;
+    // RET;
+    return a;
 }
 
 void Serial_ExchangeSyncBytes(void){

@@ -5,4 +5,5 @@ void OpenText_Conv(void);
 void v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap(void);
 void v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv(void);
 void SafeUpdateSprites(void);
+void SafeUpdateSprites_Conv(void);
 void SetCarryFlag(void);

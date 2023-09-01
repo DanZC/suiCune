@@ -99,6 +99,7 @@ void GetMapAttributesBank(void);
 void GetAnyMapAttributesBank(void);
 void CopyMapPartial(void);
 void SwitchToMapScriptsBank(void);
+void SwitchToMapScriptsBank_Conv(void);
 void GetMapScriptsBank(void);
 uint8_t GetMapScriptsBank_Conv(void);
 void GetAnyMapBlocksBank(void);

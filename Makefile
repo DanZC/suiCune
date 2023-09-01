@@ -39,6 +39,7 @@ SRCS   := tools/emu/peanut_sdl.c tools/emu/minigb_apu/minigb_apu.c \
 	$(wildcard engine/phone/*.c) \
 	$(wildcard engine/pokegear/*.c) \
 	$(wildcard engine/rtc/*.c) \
+	$(wildcard engine/*.c) \
 	$(wildcard input_system/*.c) \
 	$(wildcard util/*.c) \
 	functions.c hram.c vram.c wram.c
@@ -95,6 +96,7 @@ clean:
 	$(wildcard engine/phone/*.o) \
 	$(wildcard engine/pokegear/*.o) \
 	$(wildcard engine/rtc/*.o) \
+	$(wildcard engine/*.o) \
 	$(wildcard input_system/*.o) \
 	$(wildcard util/*.o)
 #	$(wildcard ../*/*/*/*.o)

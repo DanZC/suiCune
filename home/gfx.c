@@ -3,6 +3,7 @@
 #include "copy.h"
 #include "decompress.h"
 #include "sram.h"
+#include "../engine/gfx/load_font.h"
 
 #define TILES_PER_CYCLE (8)
 #define MOBILE_TILES_PER_CYCLE (6)
@@ -15,6 +16,19 @@ void Get2bppViaHDMA(void) {
     HOMECALL(aHDMATransfer2bpp);
 
     RET;
+}
+
+void Get2bppViaHDMA_Conv(uint8_t b, uint16_t de, uint16_t hl, uint8_t c) {
+    // LDH_A_addr(rLCDC);
+    // BIT_A(rLCDC_ENABLE);
+    // JP_Z(mCopy2bpp);
+    if(!bit_test(gb_read(rLCDC), rLCDC_ENABLE)) {
+        return Copy2bpp_Conv(b, de, hl, c);
+    }
+
+    // HOMECALL(aHDMATransfer2bpp);
+
+    // RET;
 }
 
 void Get1bppViaHDMA(void) {
@@ -111,19 +125,41 @@ void UpdatePlayerSprite(void) {
 }
 
 void LoadStandardFont(void) {
-    FARCALL(av_LoadStandardFont);
+    // FARCALL(av_LoadStandardFont);
+    v_LoadStandardFont_Conv();
     RET;
 }
 
+void LoadStandardFont_Conv(void) {
+    // FARCALL(av_LoadStandardFont);
+    // RET;
+    return v_LoadStandardFont_Conv();
+}
+
 void LoadFontsBattleExtra(void) {
-    FARCALL(av_LoadFontsBattleExtra);
+    // FARCALL(av_LoadFontsBattleExtra);
+    v_LoadFontsBattleExtra_Conv();
     RET;
+}
+
+void LoadFontsBattleExtra_Conv(void) {
+    // FARCALL(av_LoadFontsBattleExtra);
+    // RET;
+    return v_LoadFontsBattleExtra_Conv();
 }
 
 void LoadFontsExtra(void) {
     FARCALL(av_LoadFontsExtra1);
     FARCALL(av_LoadFontsExtra2);
     RET;
+}
+
+void LoadFontsExtra_Conv(void) {
+    // FARCALL(av_LoadFontsExtra1);
+    // FARCALL(av_LoadFontsExtra2);
+    // RET;
+    v_LoadFontsExtra1_Conv();
+    v_LoadFontsExtra2_Conv();
 }
 
 void LoadFontsExtra2(void) {

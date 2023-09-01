@@ -3052,4 +3052,21 @@ void init_function_pointers(void) {
     // REDIRECTED(Place2DMenuCursor);
     // REDIRECTED(v_2DMenuInterpretJoypad);
     // REDIRECTED(MenuJoypadLoop);
+
+    // engine/smallflag.c
+    REDIRECTED(SmallFarFlagAction);
+
+    // engine/gfx/load_font.c
+    REDIRECTED(v_LoadFontsExtra2);
+    REDIRECTED(StatsScreen_LoadFont);
+    // REDIRECTED(EnableHDMAForGraphics);
+    REDIRECTED(LoadHPBar);
+    REDIRECTED(LoadBattleFontsHPBar);
+    REDIRECTED(Get2bppOptionalHDMA);
+    REDIRECTED(v_LoadFontsBattleExtra);
+    REDIRECTED(v_LoadFontsExtra1);
+    REDIRECTED(v_LoadStandardFont);
+    REDIRECTED(LoadStatsScreenPageTilesGFX);
+    REDIRECTED(Get1bppOptionalHDMA);
+    REDIRECTED(LoadFrame);
 }

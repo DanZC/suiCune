@@ -1,8 +1,11 @@
 void Serial(void);
 void Serial_ExchangeBytes(void);
 void Serial_ExchangeByte(void);
+uint8_t Serial_ExchangeByte_Conv(uint8_t* hl);
 void CheckLinkTimeoutFramesNonzero(void);
+bool CheckLinkTimeoutFramesNonzero_Conv(void);
 void SerialDisconnected(void);
+uint8_t SerialDisconnected_Conv(uint8_t a);
 void Serial_ExchangeSyncBytes(void);
 void Serial_PrintWaitingTextAndSyncAndExchangeNybble(void);
 void Serial_SyncAndExchangeNybble(void);

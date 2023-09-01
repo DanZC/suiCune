@@ -1,5 +1,10 @@
 #include "../constants.h"
 #include "trainers.h"
+#include "map_objects.h"
+#include "flag.h"
+#include "map.h"
+#include "copy.h"
+#include "gfx.h"
 
 void CheckTrainerBattle(void){
         LDH_A_addr(hROMBank);
@@ -13,6 +18,24 @@ void CheckTrainerBattle(void){
     RST(aBankswitch);
     RET;
 
+}
+
+bool CheckTrainerBattle_Conv(void){
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+    uint8_t oldBank = hram->hROMBank;
+
+    // CALL(aSwitchToMapScriptsBank);
+    SwitchToMapScriptsBank_Conv();
+    // CALL(av_CheckTrainerBattle);
+    bool b = v_CheckTrainerBattle_Conv();
+
+    // POP_BC;
+    // LD_A_B;
+    // RST(aBankswitch);
+    Bankswitch_Conv(oldBank);
+    // RET;
+    return b;
 }
 
 void v_CheckTrainerBattle(void){
@@ -110,6 +133,120 @@ startbattle:
 
 }
 
+//  Check if any trainer on the map sees the player and wants to battle.
+bool v_CheckTrainerBattle_Conv(void){
+//  Skip the player object.
+    // LD_A(1);
+    // LD_DE(wMap1Object);
+    uint8_t a = 1;
+    struct MapObject* de = AbsGBToRAMAddr(awMap1Object);
+
+
+    // loop:
+    do {
+        
+    //  Start a battle if the object:
+        // PUSH_AF;
+        // PUSH_DE;
+
+    //  Has a sprite
+        // LD_HL(MAPOBJECT_SPRITE);
+        // ADD_HL_DE;
+        // LD_A_hl;
+        // AND_A_A;
+        // IF_Z goto next;
+        if(de->sprite == 0)
+            continue;
+
+    //  Is a trainer
+        // LD_HL(MAPOBJECT_COLOR);
+        // ADD_HL_DE;
+        // LD_A_hl;
+        // AND_A(0xf);
+        // CP_A(OBJECTTYPE_TRAINER);
+        // IF_NZ goto next;
+        if((de->objectColor & 0xf) != OBJECTTYPE_TRAINER)
+            continue;
+
+    //  Is visible on the map
+        // LD_HL(MAPOBJECT_OBJECT_STRUCT_ID);
+        // ADD_HL_DE;
+        // LD_A_hl;
+        // CP_A(-1);
+        // IF_Z goto next;
+        if(de->structId == 0xff)
+            continue;
+
+    //  Is facing the player...
+        // CALL(aGetObjectStruct);
+        struct Object* obj = GetObjectStruct_Conv(de->structId);
+        // CALL(aFacingPlayerDistance_bc);
+        struct FacingDist fdist = FacingPlayerDistance_bc_Conv(obj);
+        // IF_NC goto next;
+        if(!fdist.facing)
+            continue;
+
+    //  ...within their sight range
+        // LD_HL(MAPOBJECT_RANGE);
+        // ADD_HL_DE;
+        // LD_A_hl;
+        // CP_A_B;
+        // IF_C goto next;
+        if(de->objectRange < fdist.dist)
+            continue;
+
+    //  And hasn't already been beaten
+        // PUSH_BC;
+        // PUSH_DE;
+        // LD_HL(MAPOBJECT_SCRIPT_POINTER);
+        // ADD_HL_DE;
+        // LD_A_hli;
+        // LD_H_hl;
+        // LD_L_A;
+        // LD_E_hl;
+        // INC_HL;
+        // LD_D_hl;
+        // LD_B(CHECK_FLAG);
+        // CALL(aEventFlagAction);
+        // LD_A_C;
+        // POP_DE;
+        // POP_BC;
+        // AND_A_A;
+        // IF_Z goto startbattle;
+        if(EventFlagAction_Conv2(gb_read16(de->objectScript), CHECK_FLAG)) {
+        // startbattle:
+            // POP_DE;
+            // POP_AF;
+            // LDH_addr_A(hLastTalked);
+            hram->hLastTalked = a;
+            // LD_A_B;
+            // LD_addr_A(wSeenTrainerDistance);
+            wram->wSeenTrainerDistance = fdist.dist;
+            // LD_A_C;
+            // LD_addr_A(wSeenTrainerDirection);
+            wram->wSeenTrainerDirection = fdist.dir;
+            // JR(mLoadTrainer_continue);
+            return LoadTrainer_continue_Conv();
+        }
+
+
+    // next:
+        // POP_DE;
+        // LD_HL(MAPOBJECT_LENGTH);
+        // ADD_HL_DE;
+        // LD_D_H;
+        // LD_E_L;
+
+        // POP_AF;
+        // INC_A;
+        // CP_A(NUM_OBJECTS);
+        // IF_NZ goto loop;
+    } while(de++, ++a != NUM_OBJECTS);
+    // XOR_A_A;
+    // RET;
+    return false;
+}
+
 void TalkToTrainer(void){
         LD_A(1);
     LD_addr_A(wSeenTrainerDistance);
@@ -117,6 +254,17 @@ void TalkToTrainer(void){
     LD_addr_A(wSeenTrainerDirection);
 
     return LoadTrainer_continue();
+}
+
+bool TalkToTrainer_Conv(void){
+    // LD_A(1);
+    // LD_addr_A(wSeenTrainerDistance);
+    wram->wSeenTrainerDistance = 1;
+    // LD_A(-1);
+    // LD_addr_A(wSeenTrainerDirection);
+    wram->wSeenTrainerDirection = 0xff;
+
+    return LoadTrainer_continue_Conv();
 }
 
 void LoadTrainer_continue(void){
@@ -141,6 +289,32 @@ void LoadTrainer_continue(void){
 
 }
 
+bool LoadTrainer_continue_Conv(void){
+    // CALL(aGetMapScriptsBank);
+    // LD_addr_A(wSeenTrainerBank);
+    wram->wSeenTrainerBank = GetMapScriptsBank_Conv();
+
+    // LDH_A_addr(hLastTalked);
+    // CALL(aGetMapObject);
+    struct MapObject* bc = GetMapObject_Conv(hram->hLastTalked);
+
+    // LD_HL(MAPOBJECT_SCRIPT_POINTER);
+    // ADD_HL_BC;
+    // LD_A_addr(wSeenTrainerBank);
+    // CALL(aGetFarWord);
+    // LD_DE(wTempTrainer);
+    // LD_BC(wTempTrainerEnd - wTempTrainer);
+    // LD_A_addr(wSeenTrainerBank);
+    // CALL(aFarCopyBytes);
+    CopyBytes_Conv2(&wram->wTempTrainerEventFlag, AbsGBToRAMAddr((wram->wSeenTrainerBank << 14) | bc->objectScript), (&wram->wRunningTrainerBattleScript - (uint8_t*)&wram->wTempTrainerEventFlag));
+    // XOR_A_A;
+    // LD_addr_A(wRunningTrainerBattleScript);
+    wram->wRunningTrainerBattleScript = 0;
+    // SCF;
+    // RET;
+    return true;
+}
+
 void FacingPlayerDistance_bc(void){
         PUSH_DE;
     CALL(aFacingPlayerDistance);
@@ -149,6 +323,113 @@ void FacingPlayerDistance_bc(void){
     POP_DE;
     RET;
 
+}
+
+struct FacingDist FacingPlayerDistance_bc_Conv(struct Object* bc){
+    // PUSH_DE;
+    // CALL(aFacingPlayerDistance);
+    // LD_B_D;
+    // LD_C_E;
+    // POP_DE;
+    // RET;
+    return FacingPlayerDistance_Conv(bc);
+}
+
+//  Return carry if the sprite at bc is facing the player,
+//  its distance in d, and its direction in e.
+struct FacingDist FacingPlayerDistance_Conv(struct Object* bc){
+    // LD_HL(OBJECT_NEXT_MAP_X);  // x
+    // ADD_HL_BC;
+    // LD_D_hl;
+    uint8_t d = bc->nextMapX;
+
+    // LD_HL(OBJECT_NEXT_MAP_Y);  // y
+    // ADD_HL_BC;
+    // LD_E_hl;
+    uint8_t e = bc->nextMapY;
+
+    // LD_A_addr(wPlayerStandingMapX);
+    // CP_A_D;
+    // IF_Z goto CheckY;
+    if(wram->wPlayerStruct.mapX == d) {
+    // CheckY:
+        // LD_A_addr(wPlayerStandingMapY);
+        // SUB_A_E;
+        // IF_Z goto NotFacing;
+        if(wram->wPlayerStruct.mapY == e)
+            return (struct FacingDist){.facing = false, .dist = d, .dir = e};
+        // IF_NC goto Above;
+        else if(wram->wPlayerStruct.mapY < e) {
+        //  Below
+            // CPL;
+            // INC_A;
+            // LD_D_A;
+            // LD_E(OW_UP);
+            d = (wram->wPlayerStruct.mapY ^ 0xff) + 1;
+            e = OW_UP;
+        }
+        else {
+
+
+        // Above:
+            // LD_D_A;
+            d = wram->wPlayerStruct.mapY;
+            // LD_E(OW_DOWN);
+            e = OW_DOWN;
+        }
+    }
+
+    // LD_A_addr(wPlayerStandingMapY);
+    // CP_A_E;
+    // IF_Z goto CheckX;
+    else if(wram->wPlayerStruct.mapY == e) {
+    // CheckX:
+        // LD_A_addr(wPlayerStandingMapX);
+        // SUB_A_D;
+        // IF_Z goto NotFacing;
+        if(wram->wPlayerStruct.mapX == d) 
+            return (struct FacingDist){.facing = false, .dist = d, .dir = e};
+        // IF_NC goto Left;
+        if(wram->wPlayerStruct.mapX < d) { 
+            //  Right
+            // CPL;
+            // INC_A;
+            // LD_D_A;
+            // LD_E(OW_LEFT);
+            d = (wram->wPlayerStruct.mapX ^ 0xff) + 1;
+            e = OW_LEFT;
+        }
+        else {
+
+        // Left:
+            // LD_D_A;
+            // LD_E(OW_RIGHT);
+            d = wram->wPlayerStruct.mapX;
+            e = OW_RIGHT;
+        }
+    }
+    else {
+        // AND_A_A;
+        // RET;
+        return (struct FacingDist){.facing = false, .dist = d, .dir = e};
+    }
+
+
+// CheckFacing:
+    // CALL(aGetSpriteDirection);
+    // CP_A_E;
+    // IF_NZ goto NotFacing;
+    if(GetSpriteDirection_Conv(bc) != e)
+        return (struct FacingDist){.facing = false, .dist = d, .dir = e};
+    else
+        return (struct FacingDist){.facing = true, .dist = d, .dir = e};
+    // SCF;
+    // RET;
+
+
+// NotFacing:
+    // AND_A_A;
+    // RET;
 }
 
 void FacingPlayerDistance(void){

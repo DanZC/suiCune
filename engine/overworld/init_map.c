@@ -1,5 +1,8 @@
 #include "../../constants.h"
 #include "init_map.h"
+#include "../../home/gfx.h"
+#include "../../home/sprite_updates.h"
+#include "../../home/window.h"
 
 void ReanchorBGMap_NoOAMUpdate(void){
     CALL(aDelayFrame);
@@ -85,6 +88,37 @@ LoadGFX:
     CALL(aLoadStandardFont);
     RET;
 
+}
+
+static void LoadFonts_NoOAMUpdate_LoadGFX(void) {
+// LoadGFX:
+    // CALL(aLoadFontsExtra);
+    LoadFontsExtra_Conv();
+    // LD_A(0x90);
+    // LDH_addr_A(hWY);
+    hram->hWY = 0x90;
+    // CALL(aSafeUpdateSprites);
+    SafeUpdateSprites_Conv();
+    // CALL(aLoadStandardFont);
+    LoadStandardFont_Conv();
+    // RET;
+}
+
+void LoadFonts_NoOAMUpdate_Conv(void){
+    // LDH_A_addr(hOAMUpdate);
+    // PUSH_AF;
+    uint8_t temp = hram->hOAMUpdate;
+    // LD_A(0x1);
+    // LDH_addr_A(hOAMUpdate);
+    hram->hOAMUpdate = 0x1;
+
+    // CALL(aLoadFonts_NoOAMUpdate_LoadGFX);
+    LoadFonts_NoOAMUpdate_LoadGFX();
+
+    // POP_AF;
+    // LDH_addr_A(hOAMUpdate);
+    // RET;
+    hram->hOAMUpdate = temp;
 }
 
 void HDMATransfer_FillBGMap0WithBlack(void){

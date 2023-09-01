@@ -29,5 +29,6 @@ void PadAttrmapForHDMATransfer_Conv(uint16_t hl, uint16_t de);
 void PadMapForHDMATransfer(void);
 void PadMapForHDMATransfer_Conv(uint16_t hl, uint16_t de, uint8_t c);
 void HDMATransfer2bpp(void);
+void HDMATransfer2bpp_Conv(uint8_t b, uint16_t de, uint16_t hl, uint8_t c);
 void HDMATransfer1bpp(void);
 void HDMATransfer_OnlyTopFourRows(void);

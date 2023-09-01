@@ -33,10 +33,10 @@ void DecrementMovementBufferCount(void){
 }
 
 void DecrementMovementBufferCount_Conv(void){
-    uint8_t count = gb_read(wMovementBufferCount);
+    uint8_t count = wram->wMovementBufferCount;
     if(count == 0)
         return;
-    gb_write(wMovementBufferCount, --count);
+    wram->wMovementBufferCount = --count;
 }
 
 void AppendToMovementBuffer(void){
@@ -56,9 +56,7 @@ void AppendToMovementBuffer(void){
 }
 
 void AppendToMovementBuffer_Conv(uint8_t a){
-    uint8_t e = gb_read(wMovementBufferCount);
-    gb_write(wMovementBufferCount, gb_read(wMovementBufferCount) + 1);
-    gb_write(wMovementBuffer + e, a);
+    wram->wMovementBuffer[wram->wMovementBufferCount++] = a;
 }
 
 void AppendToMovementBufferNTimes(void){
@@ -88,6 +86,21 @@ void AppendToMovementBufferNTimes_Conv(uint8_t n, uint8_t a){
         n--;
     }
 }
+
+static const uint8_t ComputePathToWalkToPlayer_MovementData[] = {
+    slow_step(DOWN),
+    slow_step(UP),
+    slow_step(LEFT),
+    slow_step(RIGHT),
+    step(DOWN),
+    step(UP),
+    step(LEFT),
+    step(RIGHT),
+    big_step(DOWN),
+    big_step(UP),
+    big_step(LEFT),
+    big_step(RIGHT),
+};
 
 void ComputePathToWalkToPlayer_Conv(void){
     PUSH_AF;
@@ -159,7 +172,7 @@ MovementData:
 }
 
 uint8_t ComputePathToWalkToPlayer_GetMovementData_Conv(uint8_t b, uint8_t a){
-    return gb_read(mComputePathToWalkToPlayer_MovementData + (b * 3) + a);
+    return ComputePathToWalkToPlayer_MovementData[(b << 2) + a];
 }
 
 void ComputePathToWalkToPlayer(void){
