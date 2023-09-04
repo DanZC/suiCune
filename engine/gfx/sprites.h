@@ -39,6 +39,7 @@ void AnimateEndOfExpBar(void);
 void EndOfExpBarGFX(void);
 void SGBEndOfExpBarGFX(void);
 void ClearSpriteAnims2(void);
+void ClearSpriteAnims2_Conv(void);
 //#include "data/sprite_anims/sequences.h"
 #include "./sprite_anims.h"
 //#include "data/sprite_anims/framesets.h"

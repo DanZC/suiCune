@@ -134,7 +134,7 @@
 //#include "engine/pokemon/print_move_description.h"
 //#include "engine/events/pokerus/pokerus.h"
 #include "engine/battle/start_battle.h"
-//#include "engine/gfx/place_graphic.h"
+#include "engine/gfx/place_graphic.h"
 
 // SECTION "Effect Commands", ROMX
 
@@ -471,7 +471,7 @@
 //#include "engine/link/mystery_gift.h"
 //#include "engine/battle/used_move_text.h"
 //#include "mobile/mobile_41.h"
-//#include "engine/gfx/load_overworld_font.h"
+#include "engine/gfx/load_overworld_font.h"
 
 // SECTION "mobile42", ROMX
 

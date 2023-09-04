@@ -1,7 +1,10 @@
 void BetaLoadPlayerTrainerClass(void);
 void MovePlayerPicRight(void);
+void MovePlayerPicRight_Conv(void);
 void MovePlayerPicLeft(void);
+void MovePlayerPicLeft_Conv(void);
 void MovePlayerPic(void);
+void MovePlayerPic_Conv(uint8_t* hl, uint16_t de);
 void ShowPlayerNamingChoices(void);
 void GetPlayerNameArray(void);
 void GetPlayerIcon(void);

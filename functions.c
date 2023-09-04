@@ -3069,4 +3069,10 @@ void init_function_pointers(void) {
     REDIRECTED(LoadStatsScreenPageTilesGFX);
     REDIRECTED(Get1bppOptionalHDMA);
     REDIRECTED(LoadFrame);
+
+    // engine/gfx/place_graphic.c
+    REDIRECTED(PlaceGraphic);
+
+    // engine/gfx/load_overworld_font.c
+    REDIRECTED(LoadOverworldFont);
 }

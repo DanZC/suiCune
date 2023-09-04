@@ -1,5 +1,9 @@
 #include "../../constants.h"
 #include "player_gfx.h"
+#include "place_graphic.h"
+#include "../../home/delay.h"
+#include "../../home/tilemap.h"
+#include "../../home/text.h"
 
 void BetaLoadPlayerTrainerClass(void){
 //  //  unreferenced
@@ -23,6 +27,13 @@ void MovePlayerPicRight(void){
 
 }
 
+void MovePlayerPicRight_Conv(void){
+    // hlcoord(6, 4, wTilemap);
+    // LD_DE(1);
+    // JR(mMovePlayerPic);
+    return MovePlayerPic_Conv(wram->wTilemap + coordidx(6, 4), 1);
+}
+
 void MovePlayerPicLeft(void){
     hlcoord(13, 4, wTilemap);
     LD_DE(-1);
@@ -31,8 +42,16 @@ void MovePlayerPicLeft(void){
     return MovePlayerPic();
 }
 
-void MovePlayerPic(void){
+void MovePlayerPicLeft_Conv(void){
+    // hlcoord(13, 4, wTilemap);
+    // LD_DE(-1);
+// fallthrough
+
+    return MovePlayerPic_Conv(wram->wTilemap + coordidx(13, 4), 0xffff);
+}
+
 //  Move player pic at hl by de * 7 tiles.
+void MovePlayerPic(void){
     LD_C(0x8);
 
 loop:
@@ -68,6 +87,55 @@ loop:
     goto loop;
 
     return ShowPlayerNamingChoices();
+}
+
+//  Move player pic at hl by de * 7 tiles.
+void MovePlayerPic_Conv(uint8_t* hl, uint16_t de){
+    // LD_C(0x8);
+    uint8_t c = 0x8;
+
+    while(1) {
+    // loop:
+        // PUSH_BC;
+        // PUSH_HL;
+        // PUSH_DE;
+        // XOR_A_A;
+        // LDH_addr_A(hBGMapMode);
+        hram->hBGMapMode = 0;
+        // LD_BC((7 << 8) | 7);
+        // PREDEF(pPlaceGraphic);
+        PlaceGraphic_Conv(hl, 7, 7);
+        // XOR_A_A;
+        // LDH_addr_A(hBGMapThird);
+        hram->hBGMapThird = 0;
+        // CALL(aWaitBGMap);
+        WaitBGMap_Conv();
+        // CALL(aDelayFrame);
+        DelayFrame();
+        // POP_DE;
+        // POP_HL;
+        // ADD_HL_DE;
+        hl += de;
+        // POP_BC;
+        // DEC_C;
+        // RET_Z ;
+        if(--c == 0)
+            return;
+        // PUSH_HL;
+        // PUSH_BC;
+        // LD_A_L;
+        // SUB_A_E;
+        // LD_L_A;
+        // LD_A_H;
+        // SBC_A_D;
+        // LD_H_A;
+        // LD_BC((7 << 8) | 7);
+        // CALL(aClearBox);
+        ClearBox_Conv2(hl - de, 7, 7);
+        // POP_BC;
+        // POP_HL;
+        // goto loop;
+    }
 }
 
 void ShowPlayerNamingChoices(void){

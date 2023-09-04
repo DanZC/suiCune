@@ -1356,3 +1356,30 @@ loop:
     RET;
 
 }
+
+void ClearSpriteAnims2_Conv(void){
+    // PUSH_HL;
+    // PUSH_DE;
+    // PUSH_BC;
+    // PUSH_AF;
+    // LD_HL(wSpriteAnimData);
+    // LD_BC(wSpriteAnimDataEnd - wSpriteAnimData);
+    uint8_t* hl = wram->wSpriteAnimDict;
+
+// loop:
+    do {
+        // LD_hl(0);
+        *hl = 0;
+        // INC_HL;
+        hl++;
+        // DEC_BC;
+        // LD_A_C;
+        // OR_A_B;
+        // IF_NZ goto loop;
+    } while(hl != wram->wSpriteAnimDataEnd);
+    // POP_AF;
+    // POP_BC;
+    // POP_DE;
+    // POP_HL;
+    // RET;
+}
