@@ -1,0 +1,47 @@
+#include "../constants.h"
+#include "../gfx/icons.h"
+
+const char *IconPointers[] = {
+// entries correspond to ICON_* constants (see constants/icon_constants.asm)
+	[ICON_NULL] = NullIcon,
+	[ICON_POLIWAG] = PoliwagIcon,
+	[ICON_JIGGLYPUFF] = JigglypuffIcon,
+	[ICON_DIGLETT] = DiglettIcon,
+	[ICON_PIKACHU] = PikachuIcon,
+	[ICON_STARYU] = StaryuIcon,
+	[ICON_FISH] = FishIcon,
+	[ICON_BIRD] = BirdIcon,
+	[ICON_MONSTER] = MonsterIcon,
+	[ICON_CLEFAIRY] = ClefairyIcon,
+	[ICON_ODDISH] = OddishIcon,
+	[ICON_BUG] = BugIcon,
+	[ICON_GHOST] = GhostIcon,
+	[ICON_LAPRAS] = LaprasIcon,
+	[ICON_HUMANSHAPE] = HumanshapeIcon,
+	[ICON_FOX] = FoxIcon,
+	[ICON_EQUINE] = EquineIcon,
+	[ICON_SHELL] = ShellIcon,
+	[ICON_BLOB] = BlobIcon,
+	[ICON_SERPENT] = SerpentIcon,
+	[ICON_VOLTORB] = VoltorbIcon,
+	[ICON_SQUIRTLE] = SquirtleIcon,
+	[ICON_BULBASAUR] = BulbasaurIcon,
+	[ICON_CHARMANDER] = CharmanderIcon,
+	[ICON_CATERPILLAR] = CaterpillarIcon,
+	[ICON_UNOWN] = UnownIcon,
+	[ICON_GEODUDE] = GeodudeIcon,
+	[ICON_FIGHTER] = FighterIcon,
+	[ICON_EGG] = EggIcon,
+	[ICON_JELLYFISH] = JellyfishIcon,
+	[ICON_MOTH] = MothIcon,
+	[ICON_BAT] = BatIcon,
+	[ICON_SNORLAX] = SnorlaxIcon,
+	[ICON_HO_OH] = HoOhIcon,
+	[ICON_LUGIA] = LugiaIcon,
+	[ICON_GYARADOS] = GyaradosIcon,
+	[ICON_SLOWPOKE] = SlowpokeIcon,
+	[ICON_SUDOWOODO] = SudowoodoIcon,
+	[ICON_BIGMON] = BigmonIcon,
+};
+
+static_assert(lengthof(IconPointers) == NUM_ICONS + 1);

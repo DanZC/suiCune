@@ -479,3 +479,22 @@ void GetHPPal(void) {
     INC_D;  // HP_RED
     RET;
 }
+
+//  Get palette for hp bar pixel length e in d.
+uint8_t GetHPPal_Conv(uint8_t e) {
+    // LD_D(HP_GREEN);
+    // LD_A_E;
+    // CP_A((HP_BAR_LENGTH_PX * 50 / 100));  // 24
+    // RET_NC;
+    if(e >= (HP_BAR_LENGTH_PX * 50 / 100))
+        return HP_GREEN;
+    // INC_D;                                // HP_YELLOW
+    // CP_A((HP_BAR_LENGTH_PX * 21 / 100));  // 10
+    // RET_NC;
+    else if(e >= (HP_BAR_LENGTH_PX * 21 / 100))
+        return HP_YELLOW;
+    // INC_D;  // HP_RED
+    // RET;
+    else
+        return HP_RED;
+}

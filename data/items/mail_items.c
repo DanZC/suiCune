@@ -1,6 +1,6 @@
 #include "../../constants.h"
 
-const uint8_t MailItems[] = {
+const item_t MailItems[] = {
     FLOWER_MAIL,
     SURF_MAIL,
     LITEBLUEMAIL,

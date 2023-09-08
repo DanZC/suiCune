@@ -254,7 +254,7 @@ void GetChrisBackpic(void){
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x31);
     // LD_C(7 * 7);
     // PREDEF(pDecompressGet2bpp);
-    LoadPNG2bppAssetToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x31, "gfx/player/chris_back.png");
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x31, "gfx/player/chris_back.png", 0, 7 * 7);
     RET;
 
 }

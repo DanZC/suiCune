@@ -215,7 +215,7 @@
 
 // SECTION "bank14", ROMX
 
-//#include "engine/pokemon/party_menu.h"
+#include "engine/pokemon/party_menu.h"
 //#include "engine/events/poisonstep.h"
 //#include "engine/events/sweet_scent.h"
 //#include "engine/events/squirtbottle.h"
@@ -286,7 +286,7 @@
 //#include "engine/events/magnet_train.h"
 //#include "engine/battle/battlestart_copytilemapatonce.h"
 #include "engine/gfx/sprites.h"
-//#include "engine/gfx/mon_icons.h"
+#include "engine/gfx/mon_icons.h"
 
 // SECTION "bank24", ROMX
 
@@ -341,7 +341,7 @@
 //#include "engine/events/treemons.h"
 //#include "engine/events/fishing_gfx.h"
 #include "engine/pokegear/radio.h"
-//#include "engine/pokemon/mail_2.h"
+#include "engine/pokemon/mail_2.h"
 
 // SECTION "Phone Scripts 2", ROMX
 

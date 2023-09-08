@@ -69,6 +69,21 @@ uint16_t IsInArray_Conv(uint16_t hl, uint16_t de, uint8_t a)
     }
 }
 
+//  Find value a for every de bytes in array hl.
+//  Return index if found, otherwise 0xffff
+uint16_t IsInArray_Conv_Item(const item_t* hl, item_t a) {
+    uint16_t b = 0;
+    while(1)
+    {
+        if(*hl == (item_t)-1)
+            return 0xFFFF;
+        if(*hl == a)
+            return b;
+        b++;
+        hl++;
+    }
+}
+
 void SkipNames(void){
     //  Skip a names.
     LD_BC(NAME_LENGTH);

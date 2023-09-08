@@ -24,3 +24,4 @@ void GetSGBLayout(void);
 void GetSGBLayout_Conv(void);
 void SetHPPal(void);
 void GetHPPal(void);
+uint8_t GetHPPal_Conv(uint8_t e);
