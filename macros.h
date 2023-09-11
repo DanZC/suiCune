@@ -8,7 +8,7 @@
 #include "macros/coords.h"
 
 #include "macros/scripts/audio.h"
-//#include "macros/scripts/maps.h"
+#include "macros/scripts/maps.h"
 //#include "macros/scripts/events.h"
 #include "macros/scripts/text.h"
 #include "macros/scripts/movement.h"

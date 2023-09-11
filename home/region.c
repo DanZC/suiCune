@@ -45,7 +45,7 @@ uint8_t IsInJohto_Conv(void){
     //REG_B = gb_read(wMapGroup);
     //REG_C = gb_read(wMapNumber);
     //CALL(aGetWorldMapLocation);
-    uint8_t landmark = GetWorldMapLocation_Conv(gb_read(wMapGroup), gb_read(wMapNumber));
+    uint8_t landmark = GetWorldMapLocation_Conv(wram->wMapGroup, wram->wMapNumber);
 
     if(landmark == LANDMARK_FAST_SHIP)
         return JOHTO_REGION;
@@ -55,7 +55,7 @@ uint8_t IsInJohto_Conv(void){
         //REG_B = gb_read(wBackupMapGroup);
         //REG_C = gb_read(wBackupMapNumber);
         //CALL(aGetWorldMapLocation);
-        landmark = GetWorldMapLocation_Conv(gb_read(wBackupMapGroup), gb_read(wBackupMapNumber));
+        landmark = GetWorldMapLocation_Conv(wram->wBackupMapGroup, wram->wBackupMapNumber);
     }
 
     if(landmark >= KANTO_LANDMARK)

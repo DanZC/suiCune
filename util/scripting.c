@@ -4,23 +4,6 @@
 
 struct TextCmdState;
 
-struct TextCmd
-{
-    uint8_t cmd;
-    union {
-        const char* const text;
-        uint8_t* const ram;
-        void (*const as)(struct TextCmdState*);
-        int end;
-    };
-};
-
-#define text_start(_s) {TX_START, .text=_s},
-#define text_ram(_r)   {TX_RAM, .ram=_r},
-#define text_asm(_fn)  {TX_START_ASM, .as=_fn},
-#define text_end       {TX_END, .ram=NULL},
-#define wram_ptr(_p)   (gb.wram + (WRAM_BANK_SIZE * (MBANK(a##_p))) + (_p - WRAM_0_ADDR))
-
 #include "scripting.h"
 
 void Script_Pop(script_s* s) {
@@ -59,6 +42,7 @@ void Script_Ret(script_s* s) {
     Script_Pop(s);
 }
 
+#include "text_cmd.h"
 #include "scripting_macros.h"
 #include "../engine/overworld/scripting.h"
 

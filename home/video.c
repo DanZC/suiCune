@@ -26,7 +26,7 @@ bool DMATransfer_Conv(void) {
     // LDH_A_addr(hDMATransfer);
     // AND_A_A;
     // RET_Z;
-    uint8_t value = gb_read(hDMATransfer);
+    uint8_t value = hram->hDMATransfer;
     if(value == 0) 
         return false;
 
@@ -38,7 +38,7 @@ bool DMATransfer_Conv(void) {
 
     // XOR_A_A;
     // LDH_addr_A(hDMATransfer);
-    gb_write(hDMATransfer, 0);
+    hram->hDMATransfer = 0;
     // SCF;
     // RET;
     return true;

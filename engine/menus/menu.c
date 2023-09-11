@@ -6,6 +6,7 @@
 #include "../../home/time_palettes.h"
 #include "../../home/joypad.h"
 #include "../../home/tilemap.h"
+#include "../../home/text.h"
 
 void v_2DMenu_(void){
     LD_HL(mCopyMenuData);
@@ -1088,7 +1089,7 @@ void Place2DMenuCursor_Conv(void){
 void v_PushWindow(void){
     LDH_A_addr(rSVBK);
     PUSH_AF;
-    LD_A(BANK(wWindowStack));
+    LD_A(MBANK(awWindowStack));
     LDH_addr_A(rSVBK);
 
     LD_HL(wWindowStackPointer);
@@ -1200,7 +1201,7 @@ void v_ExitMenu(void){
 
     LDH_A_addr(rSVBK);
     PUSH_AF;
-    LD_A(BANK(wWindowStack));
+    LD_A(MBANK(awWindowStack));
     LDH_addr_A(rSVBK);
 
     CALL(aGetWindowStackTop);
@@ -1235,6 +1236,65 @@ done:
     DEC_hl;
     RET;
 
+}
+
+void v_ExitMenu_Conv(void){
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(MBANK(awWindowStack));
+    // LDH_addr_A(rSVBK);
+    wbank_push(MBANK(awWindowStack));
+
+    // CALL(aGetWindowStackTop);
+    // LD_A_L;
+    // OR_A_H;
+    // JP_Z (mError_Cant_ExitMenu);
+    uint16_t hl = GetWindowStackTop_Conv();
+    if(hl == 0) {
+        return Error_Cant_ExitMenu_Conv();
+    }
+    // LD_A_L;
+    // LD_addr_A(wWindowStackPointer);
+    // LD_A_H;
+    // LD_addr_A(wWindowStackPointer + 1);
+    wram->wWindowStackPointer = hl;
+    // CALL(aPopWindow);
+    PopWindow_Conv(hl);
+    // LD_A_addr(wMenuFlags);
+    // BIT_A(0);
+    // IF_Z goto loop;
+    if(bit_test(wram->wMenuFlags, 0)) {
+        // LD_D_H;
+        // LD_E_L;
+        // CALL(aRestoreTileBackup);
+        RestoreTileBackup_Conv(GBToRAMAddr(hl));
+    }
+
+
+// loop:
+    // CALL(aGetWindowStackTop);
+    hl = GetWindowStackTop_Conv();
+    // LD_A_H;
+    // OR_A_L;
+    // IF_Z goto done;
+    if(hl != 0) {
+        // CALL(aPopWindow);
+        PopWindow_Conv(hl);
+    }
+
+
+// done:
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    wbank_pop;
+    // LD_HL(wWindowStackSize);
+    // DEC_hl;
+    wram->wWindowStackSize--;
+    // RET;
 }
 
 void RestoreOverworldMapTiles(void){
@@ -1289,6 +1349,30 @@ WindowPoppingErrorText:
     //text_end ['?']
 
     return v_InitVerticalMenuCursor();
+}
+
+#include "../../util/text_cmd.h"
+void Error_Cant_ExitMenu_Conv(void){
+    // static const struct TextCmd WindowPoppingErrorText[] = {
+    //     text_far(v_WindowPoppingErrorText),
+    //     text_end
+    // };
+    LD_HL(mError_Cant_ExitMenu_WindowPoppingErrorText);
+    CALL(aPrintText);
+    // PrintText_Conv(WindowPoppingErrorText);
+    // CALL(aWaitBGMap);
+    WaitBGMap_Conv();
+
+infinite_loop:
+    DelayFrame();
+    goto infinite_loop;
+
+
+// WindowPoppingErrorText:
+    //text_far ['_WindowPoppingErrorText']
+    //text_end ['?']
+
+    // return v_InitVerticalMenuCursor();
 }
 
 void v_InitVerticalMenuCursor(void){

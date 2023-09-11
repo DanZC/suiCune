@@ -111,7 +111,8 @@ void OpenText_Conv(void){
     CALL(aSpeechTextbox);
     // CALL(av_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);  // anchor bgmap
     v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv();  // anchor bgmap
-    CALL(aLoadFonts_NoOAMUpdate);  // load font
+    // CALL(aLoadFonts_NoOAMUpdate);  // load font
+    LoadFonts_NoOAMUpdate_Conv();
     // POP_AF;
     // RST(aBankswitch);
     Bankswitch_Conv(oldbank);
@@ -139,8 +140,8 @@ void v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv(void){
     // PUSH_AF;
     // LD_A(0x1);
     // LDH_addr_A(hOAMUpdate);
-    uint8_t oldoamupdate = gb_read(hOAMUpdate);
-    gb_write(hOAMUpdate, 0x1);
+    uint8_t oldoamupdate = hram->hOAMUpdate;
+    hram->hOAMUpdate = 0x1;
 
     // FARCALL(aOpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
     farcall(OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
@@ -148,7 +149,7 @@ void v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv(void){
     // POP_AF;
     // LDH_addr_A(hOAMUpdate);
     // RET;
-    gb_write(hOAMUpdate, oldoamupdate);
+    hram->hOAMUpdate = oldoamupdate;
 }
 
 void SafeUpdateSprites(void){

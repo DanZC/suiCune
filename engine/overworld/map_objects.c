@@ -3,6 +3,7 @@
 #include "../../home/copy.h"
 #include "../../home/map_objects.h"
 #include "../../home/menu.h"
+#include "../../home/map.h"
 
 // INCLUDE "data/sprites/facings.asm"
 
@@ -817,6 +818,30 @@ void EndSpriteMovement(void) {
     RET;
 }
 
+void EndSpriteMovement_Conv(struct Object* bc) {
+    // SET_PC(aEndSpriteMovement);
+    // XOR_A_A;
+    // LD_HL(OBJECT_STEP_FRAME);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    bc->stepFrame = 0;
+    // LD_HL(OBJECT_MOVEMENT_BYTE_INDEX);
+    // ADD_HL_BC;
+    // LD_hli_A;
+    bc->movementByteIndex = 0;
+    // LD_hli_A;  // OBJECT_1C
+    bc->field_1C = 0;
+    // LD_hli_A;  // OBJECT_1D
+    bc->field_1D = 0;
+    // LD_hl_A;   // OBJECT_1E
+    bc->field_1E = 0;
+    // LD_HL(OBJECT_DIRECTION_WALKING);
+    // ADD_HL_BC;
+    // LD_hl(STANDING);
+    bc->dirWalking = STANDING;
+    // RET;
+}
+
 void InitStep(void) {
     SET_PC(aInitStep);
     LD_HL(OBJECT_DIRECTION_WALKING);
@@ -835,6 +860,30 @@ void InitStep(void) {
     // fallthrough
 
     return GetNextTile();
+}
+
+void InitStep_Conv(struct Object* bc, uint8_t a) {
+    // SET_PC(aInitStep);
+    // LD_HL(OBJECT_DIRECTION_WALKING);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    bc->dirWalking = a;
+    // LD_HL(OBJECT_FLAGS1);
+    // ADD_HL_BC;
+    // BIT_hl(FIXED_FACING_F);
+    // JR_NZ(mGetNextTile);
+    if(!bit_test(bc->flags1, FIXED_FACING_F)) {
+        // ADD_A_A;
+        // ADD_A_A;
+        // AND_A(0b00001100);
+        // LD_HL(OBJECT_FACING);
+        // ADD_HL_BC;
+        // LD_hl_A;
+        bc->facing = (a << 2) & 0b00001100;
+    }
+    // fallthrough
+
+    return GetNextTile_Conv(bc);
 }
 
 void GetNextTile(void) {
@@ -870,6 +919,45 @@ void GetNextTile(void) {
     RET;
 }
 
+void GetNextTile_Conv(struct Object* bc) {
+    // SET_PC(aGetNextTile);
+    // CALL(aGetStepVector);
+    struct StepVector sv = GetStepVector_Conv(bc);
+    // LD_HL(OBJECT_STEP_DURATION);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    bc->stepDuration = sv.duration;
+    // LD_A_D;
+    // CALL(aGetStepVectorSign);
+    // LD_HL(OBJECT_MAP_X);
+    // ADD_HL_BC;
+    // ADD_A_hl;
+
+    // LD_HL(OBJECT_NEXT_MAP_X);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    bc->nextMapX = bc->mapX + GetStepVectorSign_Conv(sv.x);
+    // LD_D_A;
+    // LD_A_E;
+    // CALL(aGetStepVectorSign);
+    // LD_HL(OBJECT_MAP_Y);
+    // ADD_HL_BC;
+    // ADD_A_hl;
+    // LD_HL(OBJECT_NEXT_MAP_Y);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    bc->nextMapY = bc->mapY + GetStepVectorSign_Conv(sv.y);
+    // LD_E_A;
+    // PUSH_BC;
+    // CALL(aGetCoordTile);
+    // POP_BC;
+    // LD_HL(OBJECT_NEXT_TILE);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    bc->nextTile = GetCoordTile_Conv(bc->nextMapX, bc->nextMapY);
+    // RET;
+}
+
 void AddStepVector(void) {
     SET_PC(aAddStepVector);
     CALL(aGetStepVector);
@@ -884,6 +972,26 @@ void AddStepVector(void) {
     ADD_A_E;
     LD_hl_A;
     RET;
+}
+
+struct StepVector AddStepVector_Conv(struct Object* bc) {
+    // SET_PC(aAddStepVector);
+    // CALL(aGetStepVector);
+    struct StepVector sv = GetStepVector_Conv(bc);
+    // LD_HL(OBJECT_SPRITE_X);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // ADD_A_D;
+    // LD_hl_A;
+    bc->spriteX += sv.x;
+    // LD_HL(OBJECT_SPRITE_Y);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // ADD_A_E;
+    // LD_hl_A;
+    bc->spriteY += sv.y;
+    // RET;
+    return sv;
 }
 
 void GetStepVector(void) {
@@ -908,27 +1016,70 @@ void GetStepVector(void) {
     RET;
 }
 
-void StepVectors(void) {
-    SET_PC(aStepVectors);
+struct StepVector GetStepVector_Conv(struct Object* bc) {
+    // SET_PC(aGetStepVector);
+    //  Return (x, y, duration, speed) in (d, e, a, h).
+    // LD_HL(OBJECT_DIRECTION_WALKING);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // AND_A(0b00001111);
+    // ADD_A_A;
+    // ADD_A_A;
+    // LD_L_A;
+    // LD_H(0);
+    // LD_DE(mStepVectors);
+    // ADD_HL_DE;
+    // LD_D_hl;
+    
+    // INC_HL;
+    // LD_E_hl;
+    // INC_HL;
+    // LD_A_hli;
+    // LD_H_hl;
+    // RET;
+    return StepVectors[bc->dirWalking & 0b00001111];
+}
+
+const struct StepVector StepVectors[] = {
     //  x,  y, duration, speed
     // slow
-    // db ['0', '1', '16', '1'];
-    // db ['0', '-1', '16', '1'];
-    // db ['-1', '0', '16', '1'];
-    // db ['1', '0', '16', '1'];
+    { 0,  1, 16, 1},
+    { 0, -1, 16, 1},
+    {-1,  0, 16, 1},
+    { 1,  0, 16, 1},
     // normal
-    // db ['0', '2', '8', '2'];
-    // db ['0', '-2', '8', '2'];
-    // db ['-2', '0', '8', '2'];
-    // db ['2', '0', '8', '2'];
+    { 0,  2,  8, 2},
+    { 0, -2,  8, 2},
+    {-2,  0,  8, 2},
+    { 2,  0,  8, 2},
     // fast
-    // db ['0', '4', '4', '4'];
-    // db ['0', '-4', '4', '4'];
-    // db ['-4', '0', '4', '4'];
-    // db ['4', '0', '4', '4'];
+    { 0,  4,  4, 4},
+    { 0, -4,  4, 4},
+    {-4,  0,  4, 4},
+    { 4,  0,  4, 4}
+};
 
-    return GetStepVectorSign();
-}
+// void StepVectors(void) {
+//     SET_PC(aStepVectors);
+//     //  x,  y, duration, speed
+//     // slow
+//     // db ['0', '1', '16', '1'];
+//     // db ['0', '-1', '16', '1'];
+//     // db ['-1', '0', '16', '1'];
+//     // db ['1', '0', '16', '1'];
+//     // normal
+//     // db ['0', '2', '8', '2'];
+//     // db ['0', '-2', '8', '2'];
+//     // db ['-2', '0', '8', '2'];
+//     // db ['2', '0', '8', '2'];
+//     // fast
+//     // db ['0', '4', '4', '4'];
+//     // db ['0', '-4', '4', '4'];
+//     // db ['-4', '0', '4', '4'];
+//     // db ['4', '0', '4', '4'];
+
+//     return GetStepVectorSign();
+// }
 
 void GetStepVectorSign(void) {
     SET_PC(aGetStepVectorSign);
@@ -937,9 +1088,22 @@ void GetStepVectorSign(void) {
     LD_A(1);
     RET_NC;  // +1 to +127
     LD_A(-1);
-    // ret     ['?']  // -127 to -1
+    RET;  // -127 to -1
+}
 
-    return UpdatePlayerStep();
+int8_t GetStepVectorSign_Conv(int8_t a) {
+    // SET_PC(aGetStepVectorSign);
+    // ADD_A_A;
+    // RET_Z;  // 0 or 128 (-128)
+    if(a == 0)
+        return 0;
+    // LD_A(1);
+    // RET_NC;  // +1 to +127
+    if(a > 0)
+        return 1;
+    // LD_A(-1);
+    // RET;  // -127 to -1
+    return -1;
 }
 
 void UpdatePlayerStep(void) {
@@ -959,6 +1123,30 @@ void UpdatePlayerStep(void) {
     LD_HL(wPlayerStepFlags);
     SET_hl(PLAYERSTEP_CONTINUE_F);
     RET;
+}
+
+void UpdatePlayerStep_Conv(struct Object* bc) {
+    // SET_PC(aUpdatePlayerStep);
+    // LD_HL(OBJECT_DIRECTION_WALKING);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // AND_A(0b00000011);
+    // LD_addr_A(wPlayerStepDirection);
+    wram->wPlayerStepDirection = bc->dirWalking & 0b00000011;
+    // CALL(aAddStepVector);
+    struct StepVector sv = AddStepVector_Conv(bc);
+    // LD_A_addr(wPlayerStepVectorX);
+    // ADD_A_D;
+    // LD_addr_A(wPlayerStepVectorX);
+    wram->wPlayerStepVectorX += sv.x;
+    // LD_A_addr(wPlayerStepVectorY);
+    // ADD_A_E;
+    // LD_addr_A(wPlayerStepVectorY);
+    wram->wPlayerStepVectorY += sv.y;
+    // LD_HL(wPlayerStepFlags);
+    // SET_hl(PLAYERSTEP_CONTINUE_F);
+    bit_set(wram->wPlayerStepFlags, PLAYERSTEP_CONTINUE_F);
+    // RET;
 }
 
 void GetMapObjectField(void) {

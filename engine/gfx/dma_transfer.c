@@ -298,15 +298,15 @@ _hl_:
 void CallInSafeGFXMode_Conv(void(*hl)(void)) {
     // LDH_A_addr(hBGMapMode);
     // PUSH_AF;
-    uint8_t bgmapmode = gb_read(hBGMapMode);
+    uint8_t bgmapmode = hram->hBGMapMode;
     // LDH_A_addr(hMapAnims);
     // PUSH_AF;
-    uint8_t mapanims = gb_read(hMapAnims);
+    uint8_t mapanims = hram->hMapAnims;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     // LDH_addr_A(hMapAnims);
-    gb_write(hBGMapMode, 0);
-    gb_write(hMapAnims, 0);
+    hram->hBGMapMode = 0;
+    hram->hMapAnims = 0;
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     uint8_t svbk = gb_read(rSVBK);
@@ -328,10 +328,10 @@ void CallInSafeGFXMode_Conv(void(*hl)(void)) {
     gb_write(rSVBK, svbk);
     // POP_AF;
     // LDH_addr_A(hMapAnims);
-    gb_write(hMapAnims, mapanims);
+    hram->hMapAnims = mapanims;
     // POP_AF;
     // LDH_addr_A(hBGMapMode);
-    gb_write(hBGMapMode, bgmapmode);
+    hram->hBGMapMode = bgmapmode;
     // RET;
 
 // _hl_:

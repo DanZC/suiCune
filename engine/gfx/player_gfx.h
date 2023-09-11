@@ -17,6 +17,7 @@ void GetPlayerBackpic(void);
 void GetChrisBackpic(void);
 void HOF_LoadTrainerFrontpic(void);
 void DrawIntroPlayerPic(void);
+void DrawIntroPlayerPic_Conv(void);
 void ChrisPic(void);
 void KrisPic(void);
 void GetKrisBackpic(void);

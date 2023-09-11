@@ -3,6 +3,8 @@
 #include "copy.h"
 #include "array.h"
 #include "gfx.h"
+#include "palettes.h"
+#include "../engine/overworld/load_map_part.h"
 
 //  Functions dealing with rendering and interacting with maps.
 
@@ -122,6 +124,14 @@ void OverworldTextModeSwitch(void){
 
 }
 
+void OverworldTextModeSwitch_Conv(void){
+    // CALL(aLoadMapPart);
+    LoadMapPart_Conv();
+    // CALL(aSwapTextboxPalettes);
+    SwapTextboxPalettes_Conv();
+    // RET;
+}
+
 void LoadMapPart(void){
     LDH_A_addr(hROMBank);
     PUSH_AF;
@@ -143,6 +153,33 @@ void LoadMapPart(void){
     RST(aBankswitch);
     RET;
 
+}
+
+void LoadMapPart_Conv(void){
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+
+    // LD_A_addr(wTilesetBlocksBank);
+    // RST(aBankswitch);
+    bank_push(wram->wTilesetBlocksBank);
+    // CALL(aLoadMetatiles);
+    LoadMetatiles_Conv();
+
+    // LD_A(0x60);
+    // hlcoord(0, 0, wTilemap);
+    // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
+    // CALL(aByteFill);
+    ByteFill_Conv2(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH * SCREEN_HEIGHT, 0x60);
+
+    // LD_A(BANK(av_LoadMapPart));
+    // RST(aBankswitch);
+    // CALL(av_LoadMapPart);
+    v_LoadMapPart_Conv();
+
+    // POP_AF;
+    // RST(aBankswitch);
+    // RET;
+    bank_pop;
 }
 
 void LoadMetatiles(void){
@@ -236,6 +273,122 @@ ok2:
     DEC_B;
     JP_NZ (mLoadMetatiles_row);
     RET;
+
+}
+
+void LoadMetatiles_Conv(void){
+// de <- wOverworldMapAnchor
+    // LD_A_addr(wOverworldMapAnchor);
+    // LD_E_A;
+    // LD_A_addr(wOverworldMapAnchor + 1);
+    // LD_D_A;
+    uint8_t* de = GBToRAMAddr(wram->wOverworldMapAnchor);
+    // LD_HL(wSurroundingTiles);
+    uint8_t* hl = wram->wSurroundingTiles;
+    // LD_B(SCREEN_META_HEIGHT);
+    uint8_t b = SCREEN_META_HEIGHT;
+
+    do {
+    // row:
+        // PUSH_DE;
+        uint8_t* de2 = de;
+        // PUSH_HL;
+        uint8_t* hl2 = hl;
+        // LD_C(SCREEN_META_WIDTH);
+        uint8_t c = SCREEN_META_WIDTH;
+
+        do {
+        // col:
+            // PUSH_DE;
+            uint8_t* de3 = de;
+            // PUSH_HL;
+            uint8_t* hl3 = hl;
+        // Load the current map block.
+        // If the current map block is a border block, load the border block.
+            // LD_A_de;
+            // AND_A_A;
+            // IF_NZ goto ok;
+            uint8_t a = *de;
+            if(a == 0) {
+                // LD_A_addr(wMapBorderBlock);
+                a = wram->wMapBorderBlock;
+            }
+
+        // ok:
+        // Load the current wSurroundingTiles address into de.
+            // LD_E_L;
+            // LD_D_H;
+            de = hl;
+        // Set hl to the address of the current metatile data ([wTilesetBlocksAddress] + (a) tiles).
+        // This is buggy// it wraps around past 128 blocks.
+        // To fix, uncomment the line below.
+            // ADD_A_A;  // Comment or delete this line to fix the above bug.
+            // LD_L_A;
+            // LD_H(0);
+        // add hl, hl
+            // ADD_HL_HL;
+            // ADD_HL_HL;
+            // ADD_HL_HL;
+            // LD_A_addr(wTilesetBlocksAddress);
+            // ADD_A_L;
+            // LD_L_A;
+            // LD_A_addr(wTilesetBlocksAddress + 1);
+            // ADC_A_H;
+            // LD_H_A;
+            hl = GBToRAMAddr(wram->wTilesetBlocksAddress + a);
+
+        // copy the 4x4 metatile
+            for(int rept = 0; rept < METATILE_WIDTH - 1; rept++){
+                for(int rept2 = 0; rept2 < METATILE_WIDTH; rept2++){
+                    // LD_A_hli;
+                    // LD_de_A;
+                    // INC_DE;
+                    *(de++) = *(hl++);
+                }
+                // LD_A_E;
+                // ADD_A(SURROUNDING_WIDTH - METATILE_WIDTH);
+                // LD_E_A;
+                // IF_NC goto next;
+                // INC_D;
+                de += (SURROUNDING_WIDTH - METATILE_WIDTH);
+            }
+        // next:
+            for(int rept = 0; rept < METATILE_WIDTH; rept++){
+                // LD_A_hli;
+                // LD_de_A;
+                // INC_DE;
+                *(de++) = *(hl++);
+            }
+        // Next metatile
+            // POP_HL;
+            // LD_DE(METATILE_WIDTH);
+            // ADD_HL_DE;
+            hl = hl3 + METATILE_WIDTH;
+            // POP_DE;
+            // INC_DE;
+            de = de3 + 1;
+            // DEC_C;
+            // JP_NZ (mLoadMetatiles_col);
+        } while(--c != 0);
+    // Next metarow
+        // POP_HL;
+        // LD_DE(SURROUNDING_WIDTH * METATILE_WIDTH);
+        // ADD_HL_DE;
+        hl = hl2 + SURROUNDING_WIDTH * METATILE_WIDTH;
+        // POP_DE;
+        // LD_A_addr(wMapWidth);
+        // ADD_A(MAP_CONNECTION_PADDING_WIDTH * 2);
+        // ADD_A_E;
+        // LD_E_A;
+        // IF_NC goto ok2;
+        // INC_D;
+        de = de2 + wram->wMapWidth + (MAP_CONNECTION_PADDING_WIDTH * 2);
+
+    // ok2:
+        // DEC_B;
+        // JP_NZ (mLoadMetatiles_row);
+    } while(--b != 0);
+    // RET;
 
 }
 
@@ -2038,6 +2191,55 @@ nope:
 
 }
 
+//  Get the collision byte for tile d, e
+uint8_t GetCoordTile_Conv(uint8_t d, uint8_t e){
+    // CALL(aGetBlockLocation);
+    uint8_t* hl = GetBlockLocation_Conv(d, e);
+    // LD_A_hl;
+    uint8_t a = *hl;
+    // AND_A_A;
+    // IF_Z goto nope;
+    if(a == 0)
+        return 0xff;
+    // LD_L_A;
+    // LD_H(0);
+    // ADD_HL_HL;
+    // ADD_HL_HL;
+    // LD_A_addr(wTilesetCollisionAddress);
+    // LD_C_A;
+    // LD_A_addr(wTilesetCollisionAddress + 1);
+    // LD_B_A;
+    // ADD_HL_BC;
+    hl = AbsGBToRAMAddr((wram->wTilesetCollisionBank << 14) | (wram->wTilesetCollisionAddress + (a << 2)));
+    // RR_D;
+    // IF_NC goto nocarry;
+    // INC_HL;
+    if(d & 1) {
+        hl++;
+    }
+
+
+// nocarry:
+    // RR_E;
+    // IF_NC goto nocarry2;
+    if(e & 1) {
+        // INC_HL;
+        // INC_HL;
+        hl += 2;
+    }
+
+// nocarry2:
+    // LD_A_addr(wTilesetCollisionBank);
+    // CALL(aGetFarByte);
+    return *hl;
+    // RET;
+
+
+// nope:
+    // LD_A(-1);
+    // RET;
+}
+
 void GetBlockLocation(void){
     LD_A_addr(wMapWidth);
     ADD_A(6);
@@ -2070,6 +2272,52 @@ nope:
     ADD_HL_BC;
     RET;
 
+}
+
+uint8_t* GetBlockLocation_Conv(uint8_t d, uint8_t e){
+    // LD_A_addr(wMapWidth);
+    // ADD_A(6);
+    // LD_C_A;
+    // LD_B(0);
+    union Register bc = {.reg=wram->wMapWidth + 6};
+    // LD_HL(wOverworldMapBlocks + 1);
+    // ADD_HL_BC;
+    uint8_t* hl = wram->wOverworldMapBlocks + 1 + bc.reg;
+    // LD_A_E;
+    // SRL_A;
+    // IF_Z goto nope;
+    // AND_A_A;
+    uint8_t a = e >> 1;
+    uint8_t c = 0;
+    while(a != 0) {
+    // loop:
+        // SRL_A;
+        // IF_NC goto ok;
+        if((a & 1)) {
+            // ADD_HL_BC;
+            hl += bc.reg;
+        }
+        a >>= 1;
+
+    // ok:
+        // SLA_C;
+        c = bc.lo >> 7;
+        bc.lo = (uint8_t)((int8_t)bc.lo << 1);
+        // RL_B;
+        bc.hi = (bc.hi << 1) + c;
+        // AND_A_A;
+        // IF_NZ goto loop;
+    }
+
+
+// nope:
+    // LD_C_D;
+    // SRL_C;
+    // LD_B(0);
+    // ADD_HL_BC;
+    hl += d >> 1;
+    // RET;
+    return hl;
 }
 
 void CheckFacingBGEvent(void){

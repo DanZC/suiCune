@@ -148,6 +148,14 @@ void ExitMenu(void) {
     RET;
 }
 
+void ExitMenu_Conv(void) {
+    // PUSH_AF;
+    // CALLFAR(av_ExitMenu);
+    // POP_AF;
+    // RET;
+    return v_ExitMenu_Conv();
+}
+
 void InitVerticalMenuCursor(void) {
     CALLFAR(av_InitVerticalMenuCursor);
     RET;
@@ -166,6 +174,18 @@ void CloseWindow(void) {
     CALL(aUpdateSprites);
     POP_AF;
     RET;
+}
+
+void CloseWindow_Conv(void) {
+    // PUSH_AF;
+    // CALL(aExitMenu);
+    ExitMenu_Conv();
+    // CALL(aApplyTilemap);
+    ApplyTilemap_Conv();
+    // CALL(aUpdateSprites);
+    UpdateSprites_Conv();
+    // POP_AF;
+    // RET;
 }
 
 void RestoreTileBackup(void) {
@@ -199,6 +219,59 @@ col:
     IF_NZ goto row;
 
     RET;
+}
+
+static uint8_t* RestoreTileBackup_copy(uint8_t* de, uint8_t* hl) {
+    // CALL(aGetMenuBoxDims);
+    // INC_B;
+    // INC_C;
+    uint8_t b, c, c2;
+    GetMenuBoxDims_Conv(&b, &c);
+    b++, c++;
+    uint8_t* hl2;
+
+    do {
+    // row:
+        // PUSH_BC;
+        c2 = c;
+        // PUSH_HL;
+        hl2 = hl;
+
+        do {
+        // col:
+            // LD_A_de;
+            // LD_hli_A;
+            *(hl++) = *(de--);
+            // DEC_DE;
+            // DEC_C;
+            // IF_NZ goto col;
+        } while(--c != 0);
+
+        // POP_HL;
+        hl = hl2;
+        // LD_BC(SCREEN_WIDTH);
+        // ADD_HL_BC;
+        hl += SCREEN_WIDTH;
+        // POP_BC;
+        c = c2;
+        // DEC_B;
+        // IF_NZ goto row;
+    } while(--b != 0);
+
+    // RET;
+    return de;
+}
+
+void RestoreTileBackup_Conv(uint8_t* de) {
+    // CALL(aMenuBoxCoord2Tile);
+    uint8_t* hl = MenuBoxCoord2Tile_Conv();
+    // CALL(aRestoreTileBackup_copy);
+    de = RestoreTileBackup_copy(de, hl);
+    // CALL(aMenuBoxCoord2Attr);
+    hl = MenuBoxCoord2Attr_Conv();
+    // CALL(aRestoreTileBackup_copy);
+    RestoreTileBackup_copy(de, hl);
+    // RET;
 }
 
 void PopWindow(void) {
@@ -576,6 +649,15 @@ void MenuBoxCoord2Attr(void) {
     return Coord2Attr();
 }
 
+uint8_t* MenuBoxCoord2Attr_Conv(void) {
+    // LD_A_addr(wMenuBorderLeftCoord);
+    // LD_C_A;
+    // LD_A_addr(wMenuBorderTopCoord);
+    // LD_B_A;
+    // fallthrough
+    return Coord2Attr_Conv(wram->wMenuBorderLeftCoord, wram->wMenuBorderTopCoord);
+}
+
 void Coord2Attr(void) {
     //  //  unreferenced
     //  Return the address of wAttrmap(c, b) in hl.
@@ -597,6 +679,44 @@ void Coord2Attr(void) {
     bccoord(0, 0, wAttrmap);
     ADD_HL_BC;
     RET;
+}
+
+//  //  unreferenced
+//  Return the address of wAttrmap(c, b) in hl.
+uint8_t* Coord2Attr_Conv(uint8_t c, uint8_t b) {
+    // XOR_A_A;
+    // LD_H_A;
+    // LD_L_B;
+    uint16_t hl = b;
+
+    // LD_A_C;
+    uint16_t a = c;
+
+    // LD_B_H;
+    // LD_C_L;
+    uint16_t bc = hl;
+
+    // ADD_HL_HL;
+    // ADD_HL_HL;
+    hl <<= 2;
+
+    // ADD_HL_BC;
+    hl += bc;
+
+    // ADD_HL_HL;
+    // ADD_HL_HL;
+    hl <<= 2;
+
+    // LD_C_A;
+    // XOR_A_A;
+    // LD_B_A;
+    // ADD_HL_BC;
+    hl += a;
+
+    // bccoord(0, 0, wAttrmap);
+    // ADD_HL_BC;
+    // RET;
+    return wram->wAttrmap + hl;
 }
 
 void LoadMenuHeader(void) {

@@ -3181,4 +3181,11 @@ void init_function_pointers(void) {
     // REDIRECTED(UseOnWhichPKMNString);
     // REDIRECTED(WhichPKMNString);
     // REDIRECTED(PlacePartyMonStatus);
+
+    // engine/overworld/load_map_part.c
+    CONVERTED(v_LoadMapPart);
+
+    // engine/tilesets/map_palettes.c
+    REDIRECTED(v_ScrollBGMapPalettes);
+    REDIRECTED(v_SwapTextboxPalettes);
 }

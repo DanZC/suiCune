@@ -17,4 +17,5 @@ void ClearVBank1_Conv(void);
 void GSReloadPalettes(void);
 void ReloadSpritesNoPalettes(void);
 void SwapTextboxPalettes(void);
+void SwapTextboxPalettes_Conv(void);
 void ScrollBGMapPalettes(void);

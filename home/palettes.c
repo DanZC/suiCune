@@ -1,6 +1,7 @@
 #include "../constants.h"
 #include "palettes.h"
 #include "copy.h"
+#include "../engine/tilesets/map_palettes.h"
 
 //  Functions dealing with palettes.
 
@@ -628,9 +629,14 @@ void ReloadSpritesNoPalettes(void){
 }
 
 void SwapTextboxPalettes(void){
-        HOMECALL(av_SwapTextboxPalettes);
+    HOMECALL(av_SwapTextboxPalettes);
     RET;
+}
 
+void SwapTextboxPalettes_Conv(void){
+    // HOMECALL(av_SwapTextboxPalettes);
+    // RET;
+    return v_SwapTextboxPalettes_Conv();
 }
 
 void ScrollBGMapPalettes(void){

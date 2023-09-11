@@ -180,14 +180,14 @@
 
 // SECTION "bank13", ROMX
 
-//#include "engine/tilesets/map_palettes.h"
+#include "engine/tilesets/map_palettes.h"
 //#include "gfx/tileset_palette_maps.h"
 #include "data/collision/collision_permissions.h"
 //#include "engine/menus/empty_sram.h"
 #include "engine/menus/savemenu_copytilemapatonce.h"
 //#include "engine/events/checksave.h"
 //#include "data/maps/scenes.h"
-//#include "engine/overworld/load_map_part.h"
+#include "engine/overworld/load_map_part.h"
 #include "engine/phone/phonering_copytilemapatonce.h"
 
 // SECTION "bank13_2", ROMX

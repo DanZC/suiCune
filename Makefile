@@ -42,6 +42,7 @@ SRCS   := tools/emu/peanut_sdl.c tools/emu/minigb_apu/minigb_apu.c \
 	$(wildcard engine/pokegear/*.c) \
 	$(wildcard engine/pokemon/*.c) \
 	$(wildcard engine/rtc/*.c) \
+	$(wildcard engine/tilesets/*.c) \
 	$(wildcard engine/*.c) \
 	$(wildcard gfx/*.c) \
 	$(wildcard input_system/*.c) \
@@ -103,6 +104,7 @@ clean:
 	$(wildcard engine/pokegear/*.o) \
 	$(wildcard engine/pokemon/*.o) \
 	$(wildcard engine/rtc/*.o) \
+	$(wildcard engine/tilesets/*.o) \
 	$(wildcard engine/*.o) \
 	$(wildcard gfx/*.o) \
 	$(wildcard input_system/*.o) \

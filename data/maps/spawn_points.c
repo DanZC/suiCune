@@ -1,8 +1,6 @@
 #include "../../constants.h"
 #include "spawn_points.h"
 
-#define MAP_ID(_a) GROUP_##_a, MAP_##_a
-
 // entries correspond to SPAWN_* constants
 const struct Spawn SpawnPoints[] = {
     //                     MAP                                   COORD

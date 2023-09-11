@@ -332,6 +332,46 @@ got_pic:
 
 }
 
+//  Draw the player pic at (6,4).
+void DrawIntroPlayerPic_Conv(void){
+//  Get class
+    // LD_E(CHRIS);
+    // LD_A_addr(wPlayerGender);
+    // BIT_A(PLAYERGENDER_FEMALE_F);
+    // IF_Z goto got_class;
+    // LD_E(KRIS);
+
+// got_class:
+    // LD_A_E;
+    // LD_addr_A(wTrainerClass);
+    wram->wTrainerClass = (bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))? KRIS: CHRIS;
+
+//  Load pic
+    // LD_DE(mChrisPic);
+    // LD_A_addr(wPlayerGender);
+    // BIT_A(PLAYERGENDER_FEMALE_F);
+    // IF_Z goto got_pic;
+    // LD_DE(mKrisPic);
+    const char* pic = (bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))? "gfx/player/kris.png": "gfx/player/chris.png";
+
+// got_pic:
+    // LD_HL(vTiles2);
+    // LD_B(BANK(aChrisPic));  // aka BANK(KrisPic)
+    // LD_C(7 * 7);  // dimensions
+    // CALL(aGet2bpp);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2, pic, 0, 7 * 7);
+
+//  Draw
+    // XOR_A_A;
+    // LDH_addr_A(hGraphicStartTile);
+    hram->hGraphicStartTile = 0;
+    // hlcoord(6, 4, wTilemap);
+    // LD_BC((7 << 8) | 7);
+    // PREDEF(pPlaceGraphic);
+    PlaceGraphic_Conv(coord(6, 4, wram->wTilemap), 7, 7);
+    // RET;
+}
+
 void ChrisPic(void){
 // INCBIN "gfx/player/chris.2bpp"
 
