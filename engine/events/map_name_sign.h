@@ -1,0 +1,13 @@
+void InitMapNameSign(void);
+void InitMapNameSign_Conv(void);
+void PlaceMapNameSign(void);
+void LoadMapNameSignGFX(void);
+void LoadMapNameSignGFX_Conv(void);
+void InitMapNameFrame(void);
+void InitMapNameFrame_Conv(void);
+void PlaceMapNameCenterAlign(void);
+void PlaceMapNameCenterAlign_Conv(void);
+void InitMapSignAttrmap(void);
+void InitMapSignAttrmap_Conv(uint8_t* hl, uint8_t b, uint8_t c);
+void PlaceMapNameFrame(void);
+void PlaceMapNameFrame_Conv(void);

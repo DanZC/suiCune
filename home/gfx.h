@@ -3,6 +3,7 @@ void Get1bppViaHDMA(void);
 void FarCopyBytesDouble_DoubleBankSwitch(void);
 void SafeHDMATransfer(void);
 void UpdatePlayerSprite(void);
+void UpdatePlayerSprite_Conv(void);
 void LoadStandardFont(void);
 void LoadStandardFont_Conv(void);
 void LoadFontsBattleExtra(void);

@@ -565,6 +565,14 @@ void CheckOutdoorMap(void){
 
 }
 
+bool CheckOutdoorMap_Conv(uint8_t a){
+    // CP_A(ROUTE);
+    // RET_Z ;
+    // CP_A(TOWN);
+    // RET;
+    return (a == ROUTE || a == TOWN);
+}
+
 void CheckIndoorMap(void){
     CP_A(INDOOR);
     RET_Z ;
@@ -575,6 +583,18 @@ void CheckIndoorMap(void){
     CP_A(GATE);
     RET;
 
+}
+
+bool CheckIndoorMap_Conv(uint8_t a){
+    // CP_A(INDOOR);
+    // RET_Z ;
+    // CP_A(CAVE);
+    // RET_Z ;
+    // CP_A(DUNGEON);
+    // RET_Z ;
+    // CP_A(GATE);
+    // RET;
+    return (a == INDOOR || a == CAVE || a == DUNGEON || a == GATE);
 }
 
 void CheckUnknownMap(void){
@@ -2846,6 +2866,20 @@ void GetMapEnvironment(void){
     POP_HL;
     RET;
 
+}
+
+uint8_t GetMapEnvironment_Conv(void){
+    // PUSH_HL;
+    // PUSH_DE;
+    // PUSH_BC;
+    // LD_DE(MAP_ENVIRONMENT);
+    // CALL(aGetMapField);
+    // LD_A_C;
+    // POP_BC;
+    // POP_DE;
+    // POP_HL;
+    // RET;
+    return GetMapField_Conv(MAP_ENVIRONMENT);
 }
 
 void Map_DummyFunction(void){

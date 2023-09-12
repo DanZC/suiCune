@@ -23,7 +23,7 @@
 //#include "engine/overworld/player_object.h"
 //#include "engine/math/sine.h"
 //#include "engine/predef.h"
-//#include "engine/gfx/color.h"
+#include "engine/gfx/color.h"
 
 // SECTION "bank3", ROMX
 
@@ -170,7 +170,7 @@
 //#include "engine/menus/init_gender.h"
 //#include "engine/items/pack_kris.h"
 //#include "engine/events/move_tutor.h"
-//#include "engine/gfx/crystal_layouts.h"
+#include "engine/gfx/crystal_layouts.h"
 //#include "engine/events/celebi.h"
 #include "engine/menus/main_menu.h"
 //#include "mobile/mobile_menu.h"
@@ -336,7 +336,7 @@
 
 // SECTION "bank2E", ROMX
 
-//#include "engine/events/map_name_sign.h"
+#include "engine/events/map_name_sign.h"
 //#include "engine/events/checkforhiddenitems.h"
 //#include "engine/events/treemons.h"
 //#include "engine/events/fishing_gfx.h"

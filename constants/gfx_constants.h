@@ -8,7 +8,7 @@
 #define PAL_COLOR_SIZE 2
 #define PALETTE_SIZE (NUM_PAL_COLORS * PAL_COLOR_SIZE)
 
-#define PALRGB_WHITE palred 31 + palgreen 31 + palblue 31  // 0x7fff
+#define PALRGB_WHITE 0x7fff // palred 31 + palgreen 31 + palblue 31  // 0x7fff
 
 #define SCREEN_WIDTH 20                                // tiles
 #define SCREEN_HEIGHT 18                               // tiles

@@ -13,18 +13,18 @@ asset_s LoadAsset(const char* filename) {
     #if !defined(NO_PHYSFS)
     PHYSFS_File* file = PHYSFS_openRead(filename);
     if(!file) {
-        fprintf(stderr, "LoadAsset Error: %s", PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
+        fprintf(stderr, "%s Error: %s\nfilename=%s", __func__, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()), filename);
         return (asset_s){NULL, 0};
     }
     int64_t size = PHYSFS_fileLength(file);
     if(size == -1) {
-        fprintf(stderr, "LoadAsset Error: %s", PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
+        fprintf(stderr, "%s Error: %s", __func__, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
         PHYSFS_close(file);
         return (asset_s){NULL, 0};
     }
     uint8_t* buf = malloc((size_t)size);
     if(buf == NULL) {
-        fprintf(stderr, "LoadAsset Error: Bad malloc.");
+        fprintf(stderr, "%s Error: Bad malloc.", __func__);
         return (asset_s){NULL, 0};
     }
     PHYSFS_readBytes(file, buf, (size_t)size);
@@ -55,12 +55,12 @@ asset_s LoadAsset(const char* filename) {
 asset_s LoadAssetToBuffer(void* buffer, size_t buf_size, const char* filename) {
     PHYSFS_File* file = PHYSFS_openRead(filename);
     if(!file) {
-        fprintf(stderr, "LoadAsset Error: %s", PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
+        fprintf(stderr, "%s Error: %s\nfilename=%s", __func__, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()), filename);
         return (asset_s){NULL, 0};
     }
     int64_t size = PHYSFS_fileLength(file);
     if(size == -1) {
-        fprintf(stderr, "LoadAsset Error: %s", PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
+        fprintf(stderr, "%s Error: %s", __func__, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
         PHYSFS_close(file);
         return (asset_s){NULL, 0};
     }
@@ -75,18 +75,18 @@ asset_s LoadTextAsset(const char* filename) {
     #if !defined(NO_PHYSFS)
     PHYSFS_File* file = PHYSFS_openRead(filename);
     if(!file) {
-        fprintf(stderr, "LoadAsset Error: %s", PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
+        fprintf(stderr, "%s Error: %s\nfilename=%s", __func__, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()), filename);
         return (asset_s){NULL, 0};
     }
     int64_t size = PHYSFS_fileLength(file);
     if(size == -1) {
-        fprintf(stderr, "LoadAsset Error: %s", PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
+        fprintf(stderr, "%s Error: %s", __func__, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
         PHYSFS_close(file);
         return (asset_s){NULL, 0};
     }
     uint8_t* buf = malloc((size_t)size + 1);
     if(buf == NULL) {
-        fprintf(stderr, "LoadAsset Error: Bad malloc.");
+        fprintf(stderr, "%s Error: Bad malloc.", __func__);
         return (asset_s){NULL, 0};
     }
     PHYSFS_readBytes(file, buf, (size_t)size);

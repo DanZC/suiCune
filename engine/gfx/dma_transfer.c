@@ -2,6 +2,7 @@
 #include "dma_transfer.h"
 #include "../../home/delay.h"
 #include "../../home/gfx.h"
+#include "../../home/copy.h"
 
 void HDMATransferAttrmapAndTilemapToWRAMBank3(void) {
     LD_HL(mHDMATransferAttrmapAndTilemapToWRAMBank3_Function);
@@ -474,6 +475,11 @@ void HDMATransfer_Wait127Scanlines(void) {
     return v_continue_HDMATransfer();
 }
 
+void HDMATransfer_Wait127Scanlines_Conv(uint16_t hl, uint16_t de, uint8_t c) {
+    // LD_B(0x7f);
+    return v_continue_HDMATransfer_Conv(hl, de, c, 0x7f);
+}
+
 void v_continue_HDMATransfer(void) {
     //  a lot of waiting around for hardware registers
     // [rHDMA1, rHDMA2] = hl & $fff0
@@ -940,4 +946,68 @@ inner_loop:
     DEC_B;
     IF_NZ goto outer_loop;
     RET;
+}
+
+static void HDMATransfer_OnlyTopFourRows_Copy(uint8_t* hl, uint8_t* de) {
+    // LD_B(4);
+    uint8_t b = 4;
+
+    do {
+    // outer_loop:
+        // LD_C(SCREEN_WIDTH);
+        uint8_t c = SCREEN_WIDTH;
+
+        do {
+        // inner_loop:
+            // LD_A_de;
+            // LD_hli_A;
+            // INC_DE;
+            *(hl++) = *(de++);
+            // DEC_C;
+            // IF_NZ goto inner_loop;
+        } while(--c != 0);
+        // LD_A_L;
+        // ADD_A(BG_MAP_WIDTH - SCREEN_WIDTH);
+        // LD_L_A;
+        // LD_A_H;
+        // ADC_A(0);
+        // LD_H_A;
+        hl += BG_MAP_WIDTH - SCREEN_WIDTH;
+        // DEC_B;
+        // IF_NZ goto outer_loop;
+    } while(--b != 0);
+    // RET;
+}
+
+static void HDMATransfer_OnlyTopFourRows_Function(void) {
+// Function:
+    // LD_HL(wScratchTilemap);
+    // decoord(0, 0, wTilemap);
+    // CALL(mHDMATransfer_OnlyTopFourRows_Copy);
+    HDMATransfer_OnlyTopFourRows_Copy(wram->wScratchTilemap, wram->wTilemap);
+    // LD_HL(wScratchTilemap + 0x80);
+    // decoord(0, 0, wAttrmap);
+    // CALL(mHDMATransfer_OnlyTopFourRows_Copy);
+    HDMATransfer_OnlyTopFourRows_Copy(wram->wScratchTilemap + 0x80, wram->wAttrmap);
+    // LD_A(0x1);
+    // LDH_addr_A(rVBK);
+    // LD_C(0x8);
+    // LD_HL(wScratchTilemap + 0x80);
+    // debgcoord(0, 0, vBGMap1);
+    // CALL(mHDMATransfer_Wait127Scanlines);
+    CopyBytes_Conv2(vram->vBGMap3, wram->wScratchTilemap + 0x80, 0x8 * LEN_2BPP_TILE);
+    // LD_A(0x0);
+    // LDH_addr_A(rVBK);
+    // LD_C(0x8);
+    // LD_HL(wScratchTilemap);
+    // debgcoord(0, 0, vBGMap1);
+    // CALL(mHDMATransfer_Wait127Scanlines);
+    CopyBytes_Conv2(vram->vBGMap1, wram->wScratchTilemap, 0x8 * LEN_2BPP_TILE);
+    // RET;
+}
+
+void HDMATransfer_OnlyTopFourRows_Conv(void) {
+    // LD_HL(mHDMATransfer_OnlyTopFourRows_Function);
+    // JP(mCallInSafeGFXMode);
+    return CallInSafeGFXMode_Conv(HDMATransfer_OnlyTopFourRows_Function);
 }

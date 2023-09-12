@@ -1,5 +1,11 @@
 #include "../../constants.h"
 #include "overworld.h"
+#include "../../home/map.h"
+#include "../gfx/mon_icons.h"
+#include "../../data/sprites/player_sprites.h"
+#include "../../data/sprites/emotes.h"
+#include "../../data/sprites/sprite_mons.h"
+#include "../../data/sprites/sprites.h"
 
 void GetEmote2bpp(void){
     LD_A(0x1);
@@ -20,6 +26,20 @@ void v_UpdatePlayerSprite(void){
     CALL(aGetUsedSprite);
     RET;
 
+}
+
+void v_UpdatePlayerSprite_Conv(void){
+    // CALL(aGetPlayerSprite);
+    GetPlayerSprite_Conv();
+    // LD_A_addr(wUsedSprites);
+    // LDH_addr_A(hUsedSpriteIndex);
+    hram->hUsedSpriteIndex = wram->wUsedSprites[0];
+    // LD_A_addr(wUsedSprites + 1);
+    // LDH_addr_A(hUsedSpriteTile);
+    hram->hUsedSpriteTile = wram->wUsedSprites[1];
+    // CALL(aGetUsedSprite);
+    GetUsedSprite_Conv();
+    // RET;
 }
 
 void v_RefreshSprites(void){
@@ -114,6 +134,73 @@ finish:
     return AddMapSprites();
 }
 
+//  Get Chris or Kris's sprite.
+void GetPlayerSprite_Conv(void){
+    const uint8_t (*hl)[2];
+    // LD_HL(mChrisStateSprites);
+    // LD_A_addr(wPlayerSpriteSetupFlags);
+    // BIT_A(PLAYERSPRITESETUP_FEMALE_TO_MALE_F);
+    // IF_NZ goto go;
+    // LD_A_addr(wPlayerGender);
+    // BIT_A(PLAYERGENDER_FEMALE_F);
+    // IF_Z goto go;
+    if(bit_test(wram->wPlayerSpriteSetupFlags, PLAYERSPRITESETUP_FEMALE_TO_MALE_F)
+    || !bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F)) {
+        hl = ChrisStateSprites;
+    }
+    else {
+        hl = KrisStateSprites;
+    }
+    // LD_HL(mKrisStateSprites);
+
+
+// go:
+    // LD_A_addr(wPlayerState);
+    // LD_C_A;
+    uint8_t c = wram->wPlayerState;
+
+    do {
+    // loop:
+        // LD_A_hli;
+        // CP_A_C;
+        // IF_Z goto good;
+        if((*hl)[0] == c) {
+            wram->wUsedSprites[0] = (*hl)[1];
+            wram->wPlayerStruct.sprite = (*hl)[1];
+            wram->wPlayerObject.sprite = (*hl)[1];
+            return;
+        }
+        // INC_HL;
+        hl++;
+        // CP_A(-1);
+        // IF_NZ goto loop;
+    } while((*hl)[0] != 0xff);
+
+//  Any player state not in the array defaults to Chris's sprite.
+    // XOR_A_A;  // ld a, PLAYER_NORMAL
+    // LD_addr_A(wPlayerState);
+    // LD_A(SPRITE_CHRIS);
+    wram->wPlayerState = PLAYER_NORMAL;
+    wram->wUsedSprites[0] = SPRITE_CHRIS;
+    wram->wPlayerStruct.sprite = SPRITE_CHRIS;
+    wram->wPlayerObject.sprite = SPRITE_CHRIS;
+    // goto finish;
+    return;
+
+
+// good:
+    // LD_A_hl;
+
+
+// finish:
+    // LD_addr_A(wUsedSprites + 0);
+    // LD_addr_A(wPlayerSprite);
+    // LD_addr_A(wPlayerObjectSprite);
+    // RET;
+
+// INCLUDE "data/sprites/player_sprites.asm"
+}
+
 void AddMapSprites(void){
     CALL(aGetMapEnvironment);
     CALL(aCheckOutdoorMap);
@@ -198,12 +285,43 @@ outdoor:
 
 }
 
+void LoadMiscTiles_Conv(void){
+    // LD_A_addr(wSpriteFlags);
+    // BIT_A(6);
+    // RET_NZ ;
+    if(bit_test(wram->wSpriteFlags, 6))
+        return;
+
+    // LD_C(EMOTE_SHADOW);
+    // FARCALL(aLoadEmote);
+    LoadEmote_Conv(EMOTE_SHADOW);
+    // CALL(aGetMapEnvironment);
+    // CALL(aCheckOutdoorMap);
+    // LD_C(EMOTE_GRASS_RUSTLE);
+    // IF_Z goto outdoor;
+    // LD_C(EMOTE_BOULDER_DUST);
+    uint8_t c = CheckOutdoorMap_Conv(GetMapEnvironment_Conv())? EMOTE_GRASS_RUSTLE: EMOTE_BOULDER_DUST;
+
+// outdoor:
+    // FARCALL(aLoadEmote);
+    // RET;
+    LoadEmote_Conv(c);
+}
+
 void SafeGetSprite(void){
     PUSH_HL;
     CALL(aGetSprite);
     POP_HL;
     RET;
 
+}
+
+struct SpriteLoadData SafeGetSprite_Conv(uint8_t a){
+    // PUSH_HL;
+    // CALL(aGetSprite);
+    // POP_HL;
+    // RET;
+    return GetSprite_Conv(a);
 }
 
 void GetSprite(void){
@@ -233,6 +351,39 @@ void GetSprite(void){
     LD_H_A;
     RET;
 
+}
+
+struct SpriteLoadData GetSprite_Conv(uint8_t a){
+    // CALL(aGetMonSprite);
+    // RET_C ;
+    struct SpriteLoadData res = GetMonSprite_Conv(a);
+    if(res.flag)
+        return res;
+
+    // LD_HL(mOverworldSprites + SPRITEDATA_ADDR);
+    // DEC_A;
+    // LD_C_A;
+    // LD_B(0);
+    // LD_A(NUM_SPRITEDATA_FIELDS);
+    // CALL(aAddNTimes);
+    const struct OverworldSprite* hl = &OverworldSprites[res.type - 1];
+// load the address into de
+    // LD_A_hli;
+    // LD_E_A;
+    // LD_A_hli;
+    // LD_D_A;
+// load the length into c
+    // LD_A_hli;
+    // SWAP_A;
+    // LD_C_A;
+// load the sprite bank into both b and h
+    // LD_B_hl;
+    // LD_A_hli;
+// load the sprite type into l
+    // LD_L_hl;
+    // LD_H_A;
+    // RET;
+    return (struct SpriteLoadData){.path=hl->path, .length=hl->length, .type=hl->type};
 }
 
 void GetMonSprite(void){
@@ -306,6 +457,88 @@ NoBreedmon:
 
 }
 
+//  Return carry if a monster sprite was loaded.
+struct SpriteLoadData GetMonSprite_Conv(uint8_t a){
+    // CP_A(SPRITE_POKEMON);
+    // IF_C goto Normal;
+    if(a < SPRITE_POKEMON) {
+    // Normal:
+        // AND_A_A;
+        // RET;
+        return (struct SpriteLoadData){.flag=false, .type=a};
+    }
+    // CP_A(SPRITE_DAY_CARE_MON_1);
+    // IF_Z goto BreedMon1;
+    uint8_t e;
+    if(a == SPRITE_DAY_CARE_MON_1) {
+    // BreedMon1:
+        // LD_A_addr(wBreedMon1Species);
+        // goto Mon;
+        e = wram->wBreedMon1.species;
+    }
+    // CP_A(SPRITE_DAY_CARE_MON_2);
+    // IF_Z goto BreedMon2;
+    else if(a == SPRITE_DAY_CARE_MON_2) {
+    // BreedMon2:
+        // LD_A_addr(wBreedMon2Species);
+        e = wram->wBreedMon2.species;
+    }
+    // CP_A(SPRITE_VARS);
+    // IF_NC goto Variable;
+    else if(a >= SPRITE_VARS) {
+    // Variable:
+        // SUB_A(SPRITE_VARS);
+        // LD_E_A;
+        e = a - SPRITE_VARS;
+        // LD_D(0);
+        // LD_HL(wVariableSprites);
+        // ADD_HL_DE;
+        // LD_A_hl;
+        a = wram->wVariableSprites[e];
+        // AND_A_A;
+        // JP_NZ (mGetMonSprite);
+        if(a != 0)
+            return GetMonSprite_Conv(a);
+        return (struct SpriteLoadData){.flag=false, .type=WALKING_SPRITE};
+    }
+
+    else {
+    // Icon:
+        // SUB_A(SPRITE_POKEMON);
+        // LD_E_A;
+        // LD_D(0);
+        // LD_HL(mSpriteMons);
+        // ADD_HL_DE;
+        // LD_A_hl;
+        e = SpriteMons[a-SPRITE_POKEMON];
+        // goto Mon;
+    }
+
+// Mon:
+    // LD_E_A;
+    // AND_A_A;
+    // IF_Z goto NoBreedmon;
+    if(e != 0) {
+        // FARCALL(aLoadOverworldMonIcon);
+        struct IconData icn = LoadOverworldMonIcon_Conv(e);
+
+        // LD_L(WALKING_SPRITE);
+        // LD_H(0);
+        // SCF;
+        // RET;
+        return (struct SpriteLoadData){.flag=true, .type=WALKING_SPRITE, .path=icn.path, .length=icn.c};
+    }
+
+
+// NoBreedmon:
+    // LD_A(WALKING_SPRITE);
+    // LD_L(WALKING_SPRITE);
+    // LD_H(0);
+    // AND_A_A;
+    // RET;
+    return (struct SpriteLoadData){.flag=false, .type=WALKING_SPRITE};
+}
+
 void v_DoesSpriteHaveFacings(void){
 //  Checks to see whether we can apply a facing to a sprite.
 //  Returns carry unless the sprite is a Pokemon or a Still Sprite.
@@ -341,7 +574,7 @@ bool v_DoesSpriteHaveFacings_Conv(uint8_t a){
     // CP_A(SPRITE_POKEMON);
     // IF_NC goto only_down;
     if(a >= SPRITE_POKEMON)
-        return true;
+        return false;
 
     // PUSH_HL;
     // PUSH_BC;
@@ -359,11 +592,9 @@ bool v_DoesSpriteHaveFacings_Conv(uint8_t a){
     bank_pop;
     // CP_A(STILL_SPRITE);
     // IF_NZ goto only_down;
-    if(a != STILL_SPRITE) 
-        return true;
+    return (a != STILL_SPRITE);
     // SCF;
     // RET;
-    return false;
 
 // only_down:
     // AND_A_A;
@@ -390,6 +621,30 @@ is_pokemon:
     LD_C_A;
     RET;
 
+}
+
+uint8_t v_GetSpritePalette_Conv(uint8_t c){
+    // LD_A_C;
+    // CALL(aGetMonSprite);
+    // IF_C goto is_pokemon;
+    struct SpriteLoadData res = GetMonSprite_Conv(c);
+    if(res.flag) {
+    // is_pokemon:
+        // XOR_A_A;
+        // LD_C_A;
+        // RET;
+        return 0;
+    }
+
+    // LD_HL(mOverworldSprites + SPRITEDATA_PALETTE);
+    // DEC_A;
+    // LD_C_A;
+    // LD_B(0);
+    // LD_A(NUM_SPRITEDATA_FIELDS);
+    // CALL(aAddNTimes);
+    // LD_C_hl;
+    // RET;
+    return OverworldSprites[res.type - 1].pal;
 }
 
 void LoadAndSortSprites(void){
@@ -767,6 +1022,98 @@ bankswitch:
 
 }
 
+//  Return the address of tile (a) in (hl).
+static uint8_t* GetUsedSprite_GetTileAddr(uint8_t a) {
+    uint8_t* hl = vram->vTiles0;
+    // AND_A(0x7f);
+    // LD_L_A;
+    // LD_H(0);
+    // for(int rept = 0; rept < 4; rept++){
+    //     ADD_HL_HL;
+    // }
+    // LD_A_L;
+    // ADD_A(LOW(vTiles0));
+    // LD_L_A;
+    // LD_A_H;
+    // ADC_A(HIGH(vTiles0));
+    // LD_H_A;
+    return hl + ((a & 0x7f) << 4);
+    // RET;
+}
+
+void GetUsedSprite_CopyToVram(struct SpriteLoadData* sd, uint8_t* hl, uint16_t start) {
+    // LDH_A_addr(rVBK);
+    // PUSH_AF;
+    // LD_A_addr(wSpriteFlags);
+    // BIT_A(5);
+    // LD_A(0x1);
+    // IF_Z goto bankswitch;
+    // LD_A(0x0);
+
+
+// bankswitch:
+    // LDH_addr_A(rVBK);
+    // CALL(aGet2bpp);
+    LoadPNG2bppAssetSectionToVRAM(hl, sd->path, start, sd->length);
+    // POP_AF;
+    // LDH_addr_A(rVBK);
+    // RET;
+}
+
+void GetUsedSprite_Conv(void){
+    // LDH_A_addr(hUsedSpriteIndex);
+    // CALL(aSafeGetSprite);
+    struct SpriteLoadData sd = SafeGetSprite_Conv(hram->hUsedSpriteIndex);
+    // LDH_A_addr(hUsedSpriteTile);
+    // CALL(aGetUsedSprite_GetTileAddr);
+    uint8_t* hl = GetUsedSprite_GetTileAddr(hram->hUsedSpriteTile);
+    // PUSH_HL;
+    // PUSH_DE;
+    // PUSH_BC;
+    // LD_A_addr(wSpriteFlags);
+    // BIT_A(7);
+    // IF_NZ goto skip;
+    if(!bit_test(wram->wSpriteFlags, 7)) {
+        // CALL(aGetUsedSprite_CopyToVram);
+        GetUsedSprite_CopyToVram(&sd, hl, 0);
+    }
+
+// skip:
+    // POP_BC;
+    // LD_L_C;
+    // LD_H(0x0);
+    // for(int rept = 0; rept < 4; rept++){
+    // ADD_HL_HL;
+    // }
+    // POP_DE;
+    // ADD_HL_DE;
+    // LD_D_H;
+    // LD_E_L;
+    // POP_HL;
+    uint16_t de = (sd.length << 4);
+
+    // LD_A_addr(wSpriteFlags);
+    // BIT_A(5);
+    // IF_NZ goto done;
+    // BIT_A(6);
+    // IF_NZ goto done;
+
+    // LDH_A_addr(hUsedSpriteIndex);
+    // CALL(av_DoesSpriteHaveFacings);
+    // IF_C goto done;
+    if(!((wram->wSpriteFlags & ((1 << 6) | (1 << 5)))
+     || v_DoesSpriteHaveFacings_Conv(hram->hUsedSpriteIndex))) {
+        // LD_A_H;
+        // ADD_A(HIGH(vTiles1 - vTiles0));
+        // LD_H_A;
+        // CALL(aGetUsedSprite_CopyToVram);
+        GetUsedSprite_CopyToVram(&sd, hl + sizeof(vram->vTiles0), de);
+    }
+
+// done:
+    // RET;
+}
+
 void LoadEmote(void){
 //  Get the address of the pointer to emote c.
     LD_A_C;
@@ -795,6 +1142,52 @@ void LoadEmote(void){
     RET_Z ;
     CALL(aGetEmote2bpp);
     RET;
+
+// INCLUDE "data/sprites/emotes.asm"
+
+// INCLUDE "data/sprites/sprite_mons.asm"
+
+// INCLUDE "data/maps/outdoor_sprites.asm"
+
+// INCLUDE "data/sprites/sprites.asm"
+
+}
+
+void LoadEmote_Conv(uint8_t c){
+//  Get the address of the pointer to emote c.
+    // LD_A_C;
+    // LD_BC(EMOTE_LENGTH);
+    // LD_HL(mEmotes);
+    // CALL(aAddNTimes);
+    const struct Emote* hl = Emotes + c;
+//  Load the emote address into de
+    // LD_E_hl;
+    // INC_HL;
+    // LD_D_hl;
+    const char* path = hl->graphicsPath;
+//  load the length of the emote (in tiles) into c
+    // INC_HL;
+    // LD_C_hl;
+    // SWAP_C;
+    uint8_t size = hl->length << 4;
+//  load the emote pointer bank into b
+    // INC_HL;
+    // LD_B_hl;
+//  load the VRAM destination into hl
+    // INC_HL;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    uint8_t tile = hl->startingTile;
+//  if the emote has a length of 0, do not proceed (error handling)
+    // LD_A_C;
+    // AND_A_A;
+    // RET_Z ;
+    if(size == 0)
+        return;
+    // CALL(aGetEmote2bpp);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles3 + tile * LEN_2BPP_TILE, path, 0, size);
+    // RET;
 
 // INCLUDE "data/sprites/emotes.asm"
 

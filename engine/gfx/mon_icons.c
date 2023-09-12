@@ -37,11 +37,6 @@ void LoadOverworldMonIcon(void){
 
 }
 
-struct IconData {
-    const char* path;
-    uint8_t c;
-};
-
 struct IconData LoadOverworldMonIcon_Conv(species_t e){
     // LD_A_E;
     // CALL(aReadMonMenuIcon);
@@ -56,7 +51,7 @@ struct IconData LoadOverworldMonIcon_Conv(species_t e){
     // LD_B(BANK(aIcons));
     // LD_C(8);
     // RET;
-    return (struct IconData){.path=IconPointers[e], 8};
+    return (struct IconData){.path=IconPointers[ReadMonMenuIcon_Conv(e)], 8};
 }
 
 void LoadMenuMonIcon(void){

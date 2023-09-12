@@ -4,6 +4,7 @@
 #include "decompress.h"
 #include "sram.h"
 #include "../engine/gfx/load_font.h"
+#include "../engine/overworld/overworld.h"
 
 #define TILES_PER_CYCLE (8)
 #define MOBILE_TILES_PER_CYCLE (6)
@@ -120,8 +121,15 @@ done:
 }
 
 void UpdatePlayerSprite(void) {
-    FARCALL(av_UpdatePlayerSprite);
+    // FARCALL(av_UpdatePlayerSprite);
+    v_UpdatePlayerSprite_Conv();
     RET;
+}
+
+void UpdatePlayerSprite_Conv(void) {
+    // FARCALL(av_UpdatePlayerSprite);
+    // RET;
+    return v_UpdatePlayerSprite_Conv();
 }
 
 void LoadStandardFont(void) {

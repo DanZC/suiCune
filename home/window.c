@@ -3,8 +3,12 @@
 #include "menu.h"
 #include "../engine/overworld/init_map.h"
 #include "../engine/gfx/dma_transfer.h"
+#include "../engine/gfx/load_overworld_font.h"
+#include "../engine/events/map_name_sign.h"
+#include "text.h"
 #include "delay.h"
 #include "map_objects.h"
+#include "gfx.h"
 
 void RefreshScreen(void){
         CALL(aClearWindowData);
@@ -30,19 +34,16 @@ void RefreshScreen_Conv(void){
     // PUSH_AF;
     // LD_A(BANK(aReanchorBGMap_NoOAMUpdate));  // aka BANK(LoadFonts_NoOAMUpdate)
     // RST(aBankswitch);
-    uint8_t oldbank = gb_read(hROMBank);
-    Bankswitch_Conv(BANK(aReanchorBGMap_NoOAMUpdate));
 
-    CALL(aReanchorBGMap_NoOAMUpdate);
-    // ReanchorBGMap_NoOAMUpdate();
+    // CALL(aReanchorBGMap_NoOAMUpdate);
+    ReanchorBGMap_NoOAMUpdate_Conv();
     // CALL(av_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
     v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv();
-    CALL(aLoadFonts_NoOAMUpdate);
-    // LoadFonts_NoOAMUpdate();
+    // CALL(aLoadFonts_NoOAMUpdate);
+    LoadFonts_NoOAMUpdate_Conv();
 
     // POP_AF;
     // RST(aBankswitch);
-    Bankswitch_Conv(oldbank);
     // RET;
 }
 
@@ -79,6 +80,49 @@ CloseText:
 
 }
 
+void CloseText_Conv(void){
+    // LDH_A_addr(hOAMUpdate);
+    // PUSH_AF;
+    // LD_A(0x1);
+    // LDH_addr_A(hOAMUpdate);
+    uint8_t oldoamupdate = hram->hOAMUpdate;
+    hram->hOAMUpdate = 0x1;
+
+    // CALL(aCloseText_CloseText);
+// CloseText:
+    // CALL(aClearWindowData);
+    ClearWindowData_Conv();
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    // CALL(aOverworldTextModeSwitch);
+    // CALL(av_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
+    v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv();
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    // CALL(aSafeUpdateSprites);
+    SafeUpdateSprites_Conv();
+    // LD_A(0x90);
+    // LDH_addr_A(hWY);
+    hram->hWY = 0x90;
+    // CALL(aUpdatePlayerSprite);
+    UpdatePlayerSprite_Conv();
+    // FARCALL(aInitMapNameSign);
+    InitMapNameSign_Conv();
+    // FARCALL(aLoadOverworldFont);
+    LoadOverworldFont_Conv();
+    // RET;
+
+    // POP_AF;
+    // LDH_addr_A(hOAMUpdate);
+    hram->hOAMUpdate = oldoamupdate;
+    // LD_HL(wVramState);
+    // RES_hl(6);
+    // RET;
+    bit_reset(wram->wVramState, 6);
+}
+
 void OpenText(void){
     CALL(aClearWindowData);
     LDH_A_addr(hROMBank);
@@ -104,18 +148,17 @@ void OpenText_Conv(void){
     // PUSH_AF;
     // LD_A(BANK(aReanchorBGMap_NoOAMUpdate));  // aka BANK(LoadFonts_NoOAMUpdate)
     // RST(aBankswitch);
-    uint8_t oldbank = gb_read(hROMBank);
-    Bankswitch_Conv(BANK(aReanchorBGMap_NoOAMUpdate));
 
-    CALL(aReanchorBGMap_NoOAMUpdate);  // clear bgmap
-    CALL(aSpeechTextbox);
+    // CALL(aReanchorBGMap_NoOAMUpdate);  // clear bgmap
+    ReanchorBGMap_NoOAMUpdate_Conv();
+    // CALL(aSpeechTextbox);
+    SpeechTextbox_Conv2();
     // CALL(av_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);  // anchor bgmap
     v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv();  // anchor bgmap
     // CALL(aLoadFonts_NoOAMUpdate);  // load font
     LoadFonts_NoOAMUpdate_Conv();
     // POP_AF;
     // RST(aBankswitch);
-    Bankswitch_Conv(oldbank);
 
     // RET;
 

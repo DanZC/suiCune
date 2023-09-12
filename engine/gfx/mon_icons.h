@@ -1,4 +1,10 @@
+#pragma once
+struct IconData {
+    const char* path;
+    uint8_t c;
+};
 void LoadOverworldMonIcon(void);
+struct IconData LoadOverworldMonIcon_Conv(species_t e);
 void LoadMenuMonIcon(void);
 void Unused_GetPartyMenuMonIcon(void);
 void Mobile_InitAnimatedMonIcon(void);
