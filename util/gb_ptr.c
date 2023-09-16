@@ -33,10 +33,10 @@ void* GBToRAMAddr(uint16_t hl) {
         return wram->wram0 + (0x1000 * (gb.cgb.wramBank - 1)) + (hl - WRAM0_Begin);
     }
     if(hl >= HRAM_Begin && hl < HRAM_End) {
-        return (uint8_t*)hram + (hl - HRAM_Begin);
+        return (gb.hram + 0x80) + (hl - HRAM_Begin);
     }
     if(hl >= VRAM_Begin && hl < VRAM_End) {
-        return (uint8_t*)vram + (VRAM_BANK_SIZE * gb_read(rVBK)) + (hl - VRAM_Begin);
+        return gb.vram + (VRAM_BANK_SIZE * gb.cgb.vramBank) + (hl - VRAM_Begin);
     }
     if(hl >= SRAM_Begin && hl < SRAM_End) {
         return ((struct priv_t*)gb.direct.priv)->cart_ram + (0x2000 * gb.cart_ram_bank) + (hl - SRAM_Begin);
@@ -117,4 +117,23 @@ struct BankAddr AbsROMAddrToBankAddr(uint32_t addr) {
 
 uint32_t BankAddrToAbsRAMAddr(uint8_t bank, uint16_t addr) {
     return (uint32_t)(addr | (bank << 16));
+}
+
+void SafeCallGB(uint32_t address, struct cpu_registers_s* regs) {
+    SAVE_REGS;
+    if(regs != &gb.cpu_reg)
+    {
+        for(unsigned i = 0; i < sizeof(struct cpu_registers_s); i++) {
+            ((uint8_t*)&gb.cpu_reg)[i] = ((uint8_t*)regs)[i];
+        }
+        FARCALL(address);
+        for(unsigned i = 0; i < sizeof(struct cpu_registers_s); i++) {
+            ((uint8_t*)regs)[i] = ((uint8_t*)&gb.cpu_reg)[i];
+        }
+    }
+    else 
+    {
+        FARCALL(address);
+    }
+    RESTORE_REGS;
 }

@@ -1,6 +1,7 @@
 #include "../constants.h"
 #include "names.h"
 #include "copy.h"
+#include "../data/pokemon/names.h"
 
 void NamesPointers(void){
     //  entries correspond to GetName constants (see constants/text_constants.asm)
@@ -330,12 +331,12 @@ void GetPokemonName_Conv(void){
     // LD_E_A;
     // LD_H(0);
     // LD_L_A;
-    uint16_t de = gb_read(wNamedObjectIndex);
+    uint16_t de = gb_read(wNamedObjectIndex) - 1;
     uint16_t hl = de;
 
     // ADD_HL_HL;
     // ADD_HL_HL;
-    hl += (2 * hl);
+    hl <<= 2;
 
     // ADD_HL_DE;
     hl += de;
@@ -364,6 +365,60 @@ void GetPokemonName_Conv(void){
     // RST(aBankswitch);
     // RET;
     Bankswitch_Conv(tempBank);
+}
+
+//  Get Pokemon name for wNamedObjectIndex.
+uint8_t* GetPokemonName_Conv2(void){
+
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+    // PUSH_HL;
+
+    // LD_A(BANK(aPokemonNames));
+    // RST(aBankswitch);
+    bank_push(BANK(aPokemonNames));
+
+//  Each name is ten characters
+    // LD_A_addr(wNamedObjectIndex);
+    // DEC_A;
+    // LD_D(0);
+    // LD_E_A;
+    // LD_H(0);
+    // LD_L_A;
+    uint16_t de = wram->wNamedObjectIndex - 1;
+    const char* hl = PokemonNames[de];
+
+    // ADD_HL_HL;
+    // ADD_HL_HL;
+
+    // ADD_HL_DE;
+
+    // ADD_HL_HL;
+
+    // LD_DE(mPokemonNames);
+    // ADD_HL_DE;
+    // hl += (NAME_LENGTH - 1) * de;
+
+//  Terminator
+    // LD_DE(wStringBuffer1);
+    // PUSH_DE;
+    // LD_BC(MON_NAME_LENGTH - 1);
+    // CALL(aCopyBytes);
+    // CopyBytes_Conv2(wram->wStringBuffer1, hl, (MON_NAME_LENGTH - 1));
+    Utf8ToCrystalBuffer(wram->wStringBuffer1, MON_NAME_LENGTH, hl);
+
+    // LD_HL(wStringBuffer1 + MON_NAME_LENGTH - 1);
+    // LD_hl(0x50);
+    // POP_DE;
+    // wram->wStringBuffer1[MON_NAME_LENGTH - 1] = 0x50;
+
+    // POP_HL;
+    // POP_AF;
+    // RST(aBankswitch);
+    // RET;
+    // Bankswitch_Conv(tempBank);
+    bank_pop;
+    return wram->wStringBuffer1;
 }
 
 void GetItemName(void){
@@ -426,6 +481,41 @@ uint16_t GetItemName_Conv(void){
     // POP_HL;
     // RET;
     return wStringBuffer1;
+}
+
+uint8_t* GetItemName_Conv2(void){
+    //  Get item name for wNamedObjectIndex.
+
+    // PUSH_HL;
+    // PUSH_BC;
+    // LD_A_addr(wNamedObjectIndex);
+    uint8_t a = wram->wNamedObjectIndex;
+
+    // CP_A(TM01);
+    // IF_NC goto TM;
+    if(a >= TM01)
+    {
+    TM:
+        // CALL(aGetTMHMName);
+        GetTMHMName_Conv();
+    }
+    else 
+    {
+        // LD_addr_A(wCurSpecies);
+        wram->wCurSpecies = a;
+
+        // LD_A(ITEM_NAME);
+        // LD_addr_A(wNamedObjectType);
+        wram->wNamedObjectType = ITEM_NAME;
+
+        // CALL(aGetName);
+        GetName_Conv();
+    }
+    // LD_DE(wStringBuffer1);
+    // POP_BC;
+    // POP_HL;
+    // RET;
+    return wram->wStringBuffer1;
 }
 
 void GetTMHMName(void){

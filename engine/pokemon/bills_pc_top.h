@@ -1,0 +1,14 @@
+void v_BillsPC(void);
+void BillsPC_SeeYa(void);
+void BillsPC_MovePKMNMenu(void);
+void BillsPC_DepositMenu(void);
+void BillsPC_Deposit_CheckPartySize(void);
+void CheckCurPartyMonFainted(void);
+void BillsPC_WithdrawMenu(void);
+void BillsPC_Withdraw_CheckPartySize(void);
+void PCCantTakeText(void);
+void BillsPC_ChangeBoxMenu(void);
+void ClearPCItemScreen(void);
+void CopyBoxmonToTempMon(void);
+void CopyBoxmonToTempMon_Conv(void);
+void LoadBoxMonListing(void);

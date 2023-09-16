@@ -15,6 +15,7 @@ void LoadBetaPokerPalettes(void);
 void ApplyMonOrTrainerPals(void);
 void ApplyHPBarPals(void);
 void LoadStatsScreenPals(void);
+bool LoadStatsScreenPals_Conv(uint8_t c);
 void LoadMailPalettes(void);
 void CopyFourPalettes(void);
 void CopyPalettes(void);

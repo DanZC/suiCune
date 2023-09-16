@@ -21,3 +21,10 @@ struct TextCmd {
 #define text_asm(_fn)  {TX_START_ASM, .as=_fn},
 #define text_end       {TX_END, .ram=NULL},
 #define wram_ptr(_p)   (gb.wram + (WRAM_BANK_SIZE * (MBANK(a##_p))) + (_p - WRAM_0_ADDR))
+
+#define t_line      "<LINE>"
+#define t_next      "<NEXT>"
+#define t_cont      "<CONT>"
+#define t_para      "<PARA>"
+#define t_sixdots   "<……>"
+#define t__cont     "<_CONT>"

@@ -1,6 +1,9 @@
 #include "../constants.h"
 #include "pokemon.h"
 #include "array.h"
+#include "print_text.h"
+#include "../engine/gfx/place_graphic.h"
+#include "../engine/gfx/load_pics.h"
 
 void IsAPokemon(void){
     //  Return carry if species a is not a Pokemon.
@@ -135,6 +138,46 @@ not_pokemon:
     LD_addr_A(wCurPartySpecies);
     RET;
 
+}
+
+void PrepMonFrontpic_Conv(uint8_t* hl){
+    // LD_A(0x1);
+    // LD_addr_A(wBoxAlignment);
+    wram->wBoxAlignment = 0x1;
+    return v_PrepMonFrontpic_Conv(hl);
+}
+
+void v_PrepMonFrontpic_Conv(uint8_t* hl){
+    // LD_A_addr(wCurPartySpecies);
+    // CALL(aIsAPokemon);
+    // IF_C goto not_pokemon;
+    if(IsAPokemon_Conv(wram->wCurPartySpecies)) {
+
+        // PUSH_HL;
+        // LD_DE(vTiles2);
+        // PREDEF(pGetMonFrontpic);
+        GetMonFrontpic_Conv(vram->vTiles2);
+        // POP_HL;
+        // XOR_A_A;
+        // LDH_addr_A(hGraphicStartTile);
+        // LD_BC((7 << 8) | 7);
+        // PREDEF(pPlaceGraphic);
+        PlaceGraphicYStagger_Conv(hl, 7, 7);
+        // XOR_A_A;
+        // LD_addr_A(wBoxAlignment);
+        wram->wBoxAlignment = 0;
+        // RET;
+        return;
+    }
+
+// not_pokemon:
+    // XOR_A_A;
+    // LD_addr_A(wBoxAlignment);
+    wram->wBoxAlignment = 0;
+    // INC_A;
+    // LD_addr_A(wCurPartySpecies);
+    // RET;
+    wram->wCurPartySpecies = 1;
 }
 
 void PlayStereoCry(void){
@@ -304,6 +347,29 @@ void PrintLevel(void){
 
 }
 
+//  Print wTempMonLevel at hl
+void PrintLevel_Conv(uint8_t* hl){
+    // LD_A_addr(wTempMonLevel);
+    // LD_hl(0x6e);
+    // INC_HL;
+    uint8_t a = wram->wTempMon.mon.level;
+    *(hl++) = 0x6e;
+
+//  How many digits?
+    if(a < 100) {
+        // LD_C(2);
+        // CP_A(100);  // This is distinct from MAX_LEVEL.
+        // JR_C (mPrint8BitNumLeftAlign);
+        return Print8BitNumLeftAlign_Conv(hl, a, 2);
+    }
+
+//  3-digit numbers overwrite the :L.
+    // DEC_HL;
+    // INC_C;
+    // JR(mPrint8BitNumLeftAlign);
+    return Print8BitNumLeftAlign_Conv(hl - 1, a, 3);
+}
+
 void PrintLevel_Force3Digits(void){
     //  Print :L and all 3 digits
     LD_hl(0x6e);
@@ -319,6 +385,16 @@ void Print8BitNumLeftAlign(void){
     LD_B(PRINTNUM_LEFTALIGN | 1);
     JP(mPrintNum);
 
+}
+
+void Print8BitNumLeftAlign_Conv(uint8_t* hl, uint8_t a, uint8_t c){
+    // LD_addr_A(wTextDecimalByte);
+    wram->wTextDecimalByte = a;
+    // LD_DE(wTextDecimalByte);
+    // LD_B(PRINTNUM_LEFTALIGN | 1);
+    // JP(mPrintNum);
+    PrintNum_Conv2(hl, &wram->wTextDecimalByte, PRINTNUM_LEFTALIGN | 1, c);
+    return;
 }
 
 void GetNthMove(void){
@@ -399,7 +475,7 @@ void GetBaseData_Conv(void){
     Bankswitch_Conv(BANK(aBaseData));
 
 //  Egg doesn't have BaseData
-    uint8_t species = gb_read(wCurSpecies);
+    uint8_t species = wram->wCurSpecies;
     if(species == EGG)
     {
         //LD_DE(mUnusedEggPic);

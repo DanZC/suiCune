@@ -1,6 +1,7 @@
 #include "../../constants.h"
 #include "load_font.h"
 #include "../../home/gfx.h"
+#include "../../gfx/font.h"
 #include "../../charmap.h"
 
 // INCLUDE "gfx/font.asm"
@@ -156,7 +157,7 @@ void v_LoadFontsBattleExtra_Conv(void){
     // LD_DE(mFontBattleExtra);
     // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x60);
     // LD_BC((BANK(aFontBattleExtra) << 8) | 25);
-    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x60, "gfx/font/font_battle_extra.png", 0, 25);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x60, FontBattleExtra, 0, 25);
     // CALL(aGet2bppViaHDMA);
     // JR(mLoadFrame);
     return LoadFrame_Conv();
@@ -226,6 +227,23 @@ void LoadBattleFontsHPBar(void){
     return LoadHPBar();
 }
 
+void LoadBattleFontsHPBar_Conv(void){
+    // LD_DE(mFontBattleExtra);
+    // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x60);
+    // LD_BC((BANK(aFontBattleExtra) << 8) | 12);
+    // CALL(aGet2bppViaHDMA);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x60, FontBattleExtra, 0, 12);
+    // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x70);
+    // LD_DE(mFontBattleExtra + 16 * LEN_2BPP_TILE);  // "<DO>"
+    // LD_BC((BANK(aFontBattleExtra) << 8) | 3);  // "<DO>" to "『"
+    // CALL(aGet2bppViaHDMA);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x70, FontBattleExtra, 16, 3);
+    // CALL(aLoadFrame);
+    LoadFrame_Conv();
+
+    return LoadHPBar_Conv();
+}
+
 void LoadHPBar(void){
     LD_DE(mEnemyHPBarBorderGFX);
     LD_HL(vTiles2 + LEN_2BPP_TILE * 0x6c);
@@ -245,6 +263,30 @@ void LoadHPBar(void){
     CALL(aGet2bppViaHDMA);
     RET;
 
+}
+
+void LoadHPBar_Conv(void){
+    // LD_DE(mEnemyHPBarBorderGFX);
+    // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x6c);
+    // LD_BC((BANK(aEnemyHPBarBorderGFX) << 8) | 4);
+    // CALL(aGet1bppViaHDMA);
+    LoadPNG1bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x6c, EnemyHPBarBorderGFX, 0, 4);
+    // LD_DE(mHPExpBarBorderGFX);
+    // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x73);
+    // LD_BC((BANK(aHPExpBarBorderGFX) << 8) | 6);
+    // CALL(aGet1bppViaHDMA);
+    LoadPNG1bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x73, HPExpBarBorderGFX, 0, 6);
+    // LD_DE(mExpBarGFX);
+    // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x55);
+    // LD_BC((BANK(aExpBarGFX) << 8) | 9);
+    // CALL(aGet2bppViaHDMA);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x55, ExpBarGFX, 0, 9);
+    // LD_DE(mMobilePhoneTilesGFX + 7 * LEN_2BPP_TILE);  // mobile phone icon
+    // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x5e);
+    // LD_BC((BANK(aMobilePhoneTilesGFX) << 8) | 2);
+    // CALL(aGet2bppViaHDMA);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x5e, MobilePhoneTilesGFX, 7, 2);
+    // RET;
 }
 
 void StatsScreen_LoadFont(void){
@@ -268,6 +310,32 @@ void StatsScreen_LoadFont(void){
     return LoadStatsScreenPageTilesGFX();
 }
 
+void StatsScreen_LoadFont_Conv(void){
+    // CALL(av_LoadFontsBattleExtra);
+    v_LoadFontsBattleExtra_Conv();
+    // LD_DE(mEnemyHPBarBorderGFX);
+    // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x6c);
+    // LD_BC((BANK(aEnemyHPBarBorderGFX) << 8) | 4);
+    // CALL(aGet1bppViaHDMA);
+    LoadPNG1bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x6c, EnemyHPBarBorderGFX, 0, 4);
+    // LD_DE(mHPExpBarBorderGFX);
+    // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x78);
+    // LD_BC((BANK(aHPExpBarBorderGFX) << 8) | 1);
+    // CALL(aGet1bppViaHDMA);
+    LoadPNG1bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x78, HPExpBarBorderGFX, 0, 1);
+    // LD_DE(mHPExpBarBorderGFX + 3 * LEN_1BPP_TILE);
+    // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x76);
+    // LD_BC((BANK(aHPExpBarBorderGFX) << 8) | 2);
+    // CALL(aGet1bppViaHDMA);
+    LoadPNG1bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x76, HPExpBarBorderGFX, 3, 2);
+    // LD_DE(mExpBarGFX);
+    // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x55);
+    // LD_BC((BANK(aExpBarGFX) << 8) | 8);
+    // CALL(aGet2bppViaHDMA);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x55, ExpBarGFX, 0, 8);
+    return LoadStatsScreenPageTilesGFX_Conv();
+}
+
 void LoadStatsScreenPageTilesGFX(void){
     LD_DE(mStatsScreenPageTilesGFX);
     LD_HL(vTiles2 + LEN_2BPP_TILE * 0x31);
@@ -275,4 +343,13 @@ void LoadStatsScreenPageTilesGFX(void){
     CALL(aGet2bppViaHDMA);
     RET;
 
+}
+
+void LoadStatsScreenPageTilesGFX_Conv(void){
+    // LD_DE(mStatsScreenPageTilesGFX);
+    // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x31);
+    // LD_BC((BANK(aStatsScreenPageTilesGFX) << 8) | 17);
+    // CALL(aGet2bppViaHDMA);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x31, StatsScreenPageTilesGFX, 0, 17);
+    // RET;
 }

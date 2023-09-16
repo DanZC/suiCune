@@ -11,6 +11,9 @@
 #include "../../charmap.h"
 #include "../../data/trainers/class_names.h"
 #include "../../data/trainers/parties.h"
+#include "../../engine/gfx/load_font.h"
+#include "../../engine/gfx/place_graphic.h"
+#include "../../home/copy.h"
 
 typedef struct {
     const char* name;
@@ -158,6 +161,8 @@ void Handler_Anime(void) {
 
 void Handler_Graphics(void) {
     // TODO: Implement this function
+    DebugMenu_GFXTest();
+    PlayMusic_Conv(DEBUG_MENU_MUSIC);
 }
 
 void Handler_Pokedex(void) {
@@ -464,5 +469,50 @@ void DebugMenu_BattleTest(void) {
     }
     PlayMusic_Conv(MUSIC_NONE);
     ClearBox_Conv2(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, SCREEN_HEIGHT);
+    DelayFrame();
+}
+
+void DebugMenu_GFXTest(void) {
+    hram->hBGMapMode = 0;
+    ClearBox_Conv2(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, SCREEN_HEIGHT);
+    ByteFill_Conv2(vram->vTiles0, 2048, 0);
+    ByteFill_Conv2(vram->vTiles1, 2048, 0);
+    ByteFill_Conv2(vram->vTiles2, 2048, 0);
+    v_LoadStandardFont_Conv();
+    StatsScreen_LoadFont_Conv();
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2, "gfx/pokemon/charizard/front.png", 0, 7 * 7);
+    PlaceStringSimple(U82C("--0123456789ABCDEF--"), coord(0, 0, wram->wTilemap));
+    for(int i = 0; i < 10; i++) {
+        *coord(0, i + 1, wram->wTilemap) = CHAR_0 + i;
+    }
+    for(int i = 0; i < 6; i++) {
+        *coord(0, i + 11, wram->wTilemap) = CHAR_A + i;
+    }
+    for(int i = 0; i < 256; i++) {
+        *coord((i & 0xf) + 2, ((i & 0xf0) >> 4) + 1, wram->wTilemap) = i;
+    }
+    WaitBGMap_Conv();
+    DelayFrame();
+
+    while(1)
+    {
+        wram->wDisableTextAcceleration = 0;
+        GetJoypad_Conv();
+        if(hram->hJoyPressed & (B_BUTTON)) 
+            break;
+        if(hram->hJoyPressed & (A_BUTTON))  {
+            hram->hGraphicStartTile = 0;
+            PlaceGraphic_Conv(coord(0, 0, wram->wTilemap), 7, 7);
+        }
+        DelayFrame();
+    }
+
+    ClearBox_Conv2(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, SCREEN_HEIGHT);
+    ByteFill_Conv2(vram->vTiles0, 2048, 0);
+    ByteFill_Conv2(vram->vTiles1, 2048, 0);
+    ByteFill_Conv2(vram->vTiles2, 2048, 0);
+    v_LoadFontsExtra1_Conv();
+    v_LoadFontsExtra2_Conv();
+    v_LoadStandardFont_Conv();
     DelayFrame();
 }

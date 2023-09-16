@@ -188,13 +188,13 @@ static void CopyPNG2bppColorTileToGB(uint8_t* dest, const uint8_t* src, int stri
             for(int i = n - 1; i >= 0; --i) {
                 pixel = (pixel << 8) | start[i];
             }
-            if(pixel == pal[0]) {
+            if(pixel == pal[3]) {
                 pixel = 0x3;
-            } else if(pixel == pal[1]) {
-                pixel = 0x2;
             } else if(pixel == pal[2]) {
+                pixel = 0x2;
+            } else if(pixel == pal[1]) {
                 pixel = 0x1;
-            } else if(pixel == pal[3]) {
+            } else if(pixel == pal[0]) {
                 pixel = 0x0;
             } else {
                 fprintf(stderr, "%s: Pixel error #%06X.\n", __func__, pixel);
@@ -297,7 +297,7 @@ void LoadPNG1bppAssetSectionToVRAM(void* dest, const char* filename, int start_t
         fprintf(stderr, "%s: Load error on image %s. Reason: %s\n", __func__, filename, stbi_failure_reason());
         exit(-1);
     }
-    // printf("%d-channel %dx%d image\n", n, x, y);
+    printf("1bpp %d-channel %dx%d image (%s)\n", n, x, y, filename);
     FreeAsset(a);
     int numTiles = (((y / 8) * (x / 8)) - start_tile > tile_count)? tile_count: ((y / 8) * (x / 8)) - start_tile;
     int tilesPerRow = (x / 8);
@@ -335,7 +335,7 @@ void LoadPNG2bppAssetSectionToVRAM(void* dest, const char* filename, int start_t
         fprintf(stderr, "%s: Load error on image %s. Reason: %s\n", __func__, filename, stbi_failure_reason());
         exit(-1);
     }
-    // printf("%d-channel %dx%d image\n", n, x, y);
+    printf("2bpp %d-channel %dx%d image (%s)\n", n, x, y, filename);
     FreeAsset(a);
     int numTiles = (((y / 8) * (x / 8)) - start_tile > tile_count)? tile_count: ((y / 8) * (x / 8)) - start_tile;
     int tilesPerRow = (x / 8);
@@ -352,7 +352,7 @@ void LoadPNG2bppAssetSectionToVRAM(void* dest, const char* filename, int start_t
         //     printf("Color %d: r=%d, g=%d, b=%d\n", i, palette[i] & 0xff, (palette[i] & 0xff00) >> 8, (palette[i] & 0xff0000) >> 16);
         // }
         for(int i = 0; i < numTiles; ++i) {
-            CopyPNG2bppColorTileToGB(&d[i * LEN_2BPP_TILE], &pix[(((i/tilesPerRow)*8*n)*x) + ((i%tilesPerRow)*8*n)], x, n, palette);
+            CopyPNG2bppColorTileToGB(&d[i * LEN_2BPP_TILE], &pix[((((start_tile+i)/tilesPerRow)*8*n)*x) + (((start_tile+i)%tilesPerRow)*8*n)], x, n, palette);
         }
     }
     stbi_image_free(pix);
@@ -395,7 +395,7 @@ static void ParsePalFromText(uint16_t* dest, size_t dest_size, const char* text,
     }
 }
 
-void LoadPaletteAssetToBuffer(void* dest, size_t dest_size, const char* filename, size_t color_count) {
+void LoadPaletteAssetToBuffer(void* dest, size_t dest_size, const char* filename, size_t pal_count) {
     uint16_t* d = dest;
     asset_s a = LoadTextAsset(filename);
 
@@ -404,7 +404,21 @@ void LoadPaletteAssetToBuffer(void* dest, size_t dest_size, const char* filename
 
     const char* text = a.ptr;
 
-    ParsePalFromText(d, dest_size, text, color_count * NUM_PAL_COLORS);
+    ParsePalFromText(d, dest_size, text, pal_count * NUM_PAL_COLORS);
+
+    FreeAsset(a);
+}
+
+void LoadPaletteAssetColorsToBuffer(void* dest, size_t dest_size, const char* filename, size_t color_count) {
+    uint16_t* d = dest;
+    asset_s a = LoadTextAsset(filename);
+
+    if(!a.ptr)
+        return;
+
+    const char* text = a.ptr;
+
+    ParsePalFromText(d, dest_size, text, color_count);
 
     FreeAsset(a);
 }

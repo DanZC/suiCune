@@ -23,5 +23,6 @@ void GetMemSGBLayout(void);
 void GetSGBLayout(void);
 void GetSGBLayout_Conv(void);
 void SetHPPal(void);
+void SetHPPal_Conv(uint8_t* hl, uint8_t e);
 void GetHPPal(void);
 uint8_t GetHPPal_Conv(uint8_t e);

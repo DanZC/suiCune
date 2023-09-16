@@ -68,6 +68,7 @@ extern void (*convertedFunc[])(void);
 #include "wram.h"
 #include "util/util_string.h"
 #include "util/gb_ptr.h"
+#include "util/text_cmd.h"
 #include "util/assets.h"
 
 extern struct gb_s gb;

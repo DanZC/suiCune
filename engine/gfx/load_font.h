@@ -12,7 +12,11 @@ void v_LoadFontsBattleExtra_Conv(void);
 void LoadFrame(void);
 void LoadFrame_Conv(void);
 void LoadBattleFontsHPBar(void);
+void LoadBattleFontsHPBar_Conv(void);
 void LoadHPBar(void);
+void LoadHPBar_Conv(void);
 void StatsScreen_LoadFont(void);
+void StatsScreen_LoadFont_Conv(void);
 void LoadStatsScreenPageTilesGFX(void);
+void LoadStatsScreenPageTilesGFX_Conv(void);
 //#include "gfx/font.h"

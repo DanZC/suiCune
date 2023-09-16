@@ -41,6 +41,26 @@ Function:
     RET;
 }
 
+static void HDMATransferTilemapToWRAMBank3_Function(void) {
+    // decoord(0, 0, wTilemap);
+    // LD_HL(wScratchTilemap);
+    // CALL(mPadTilemapForHDMATransfer);
+    PadTilemapForHDMATransfer_Conv2(wram->wScratchTilemap, wram->wTilemap);
+    // LD_A(0x0);
+    // LDH_addr_A(rVBK);
+    gb_write(rVBK, 0x0);
+    // LD_HL(wScratchTilemap);
+    // CALL(mHDMATransferToWRAMBank3);
+    HDMATransferToWRAMBank3_Conv(wram->wScratchTilemap);
+    // RET;
+}
+
+void HDMATransferTilemapToWRAMBank3_Conv(void) {
+    // LD_HL(mHDMATransferTilemapToWRAMBank3_Function);
+    // JP(mCallInSafeGFXMode);
+    CallInSafeGFXMode_Conv(HDMATransferTilemapToWRAMBank3_Function);
+}
+
 void HDMATransferAttrmapToWRAMBank3(void) {
     LD_HL(mHDMATransferAttrmapToWRAMBank3_Function);
     JP(mCallInSafeGFXMode);
@@ -347,6 +367,14 @@ void HDMATransferToWRAMBank3(void) {
     return WaitDMATransfer();
 }
 
+void HDMATransferToWRAMBank3_Conv(uint8_t* hl) {
+    // CALL(mv_LoadHDMAParameters);
+    // LD_A(0x23);
+    // LDH_addr_A(hDMATransfer);
+    DelayFrame();
+    CopyBytes_Conv2(GBToRAMAddr(0x8000 + (hram->hBGMapAddress & 0x1ff0)), hl, (0x23 + 1) * 10);
+}
+
 void WaitDMATransfer(void) {
 loop:
     CALL(mDelayFrame);
@@ -640,6 +668,10 @@ void PadTilemapForHDMATransfer_Conv(uint16_t hl, uint16_t de) {
     return PadMapForHDMATransfer_Conv(hl, de, 0x7f);
 }
 
+void PadTilemapForHDMATransfer_Conv2(uint8_t* hl, const uint8_t* de) {
+    return PadMapForHDMATransfer_Conv2(hl, de, 0x7f);
+}
+
 void PadAttrmapForHDMATransfer(void) {
     LD_C(0x0);
 
@@ -648,6 +680,10 @@ void PadAttrmapForHDMATransfer(void) {
 
 void PadAttrmapForHDMATransfer_Conv(uint16_t hl, uint16_t de) {
     return PadMapForHDMATransfer_Conv(hl, de, 0x0);
+}
+
+void PadAttrmapForHDMATransfer_Conv2(uint8_t* hl, const uint8_t* de) {
+    return PadMapForHDMATransfer_Conv2(hl, de, 0x0);
 }
 
 void PadMapForHDMATransfer(void) {
@@ -725,6 +761,54 @@ void PadMapForHDMATransfer_Conv(uint16_t hl, uint16_t de, uint8_t c) {
         for(uint8_t b = (BG_MAP_WIDTH - SCREEN_WIDTH); b > 0; --b) {
             // LD_hli_A;
             gb_write(hl++, c);
+            // DEC_B;
+            // IF_NZ goto loop3;
+        }
+
+        // DEC_C;
+        // IF_NZ goto loop1;
+    }
+
+    //  restore the original value of hMapObjectIndex
+    // POP_AF;
+    // LDH_addr_A(hMapObjectIndex);
+    // RET;
+}
+
+//  pad a 20x18 map to 32x18 for HDMA transfer
+void PadMapForHDMATransfer_Conv2(uint8_t* hl, const uint8_t* de, uint8_t c) {
+    //  back up the padding value in c to hMapObjectIndex
+    // LDH_A_addr(hMapObjectIndex);
+    // PUSH_AF;
+    // uint8_t mapobjidx = gb_read(hMapObjectIndex);
+    // LD_A_C;
+    // LDH_addr_A(hMapObjectIndex);
+    // gb_write(hMapObjectIndex, c);
+
+    //  for each row on the screen
+    // LD_C(SCREEN_HEIGHT);
+
+    for(uint8_t r = SCREEN_HEIGHT; r > 0; --r) {
+        //  for each tile in the row
+        // LD_B(SCREEN_WIDTH);
+
+        for(uint8_t b = SCREEN_WIDTH; b > 0; --b) {
+            //  copy from de to hl
+            // LD_A_de;
+            // INC_DE;
+            // LD_hli_A;
+            *(hl++) = *(de++);
+            // DEC_B;
+            // IF_NZ goto loop2;
+        }
+
+        //  load the original padding value of c into hl for 32 - 20 = 12 rows
+        // LDH_A_addr(hMapObjectIndex);
+        // LD_B(BG_MAP_WIDTH - SCREEN_WIDTH);
+
+        for(uint8_t b = (BG_MAP_WIDTH - SCREEN_WIDTH); b > 0; --b) {
+            // LD_hli_A;
+            *(hl++) = c;
             // DEC_B;
             // IF_NZ goto loop3;
         }

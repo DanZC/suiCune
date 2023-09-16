@@ -466,6 +466,15 @@ void SetHPPal(void) {
     RET;
 }
 
+//  Set palette for hp bar pixel length e at hl.
+void SetHPPal_Conv(uint8_t* hl, uint8_t e) {
+    // SET_PC(aSetHPPal);
+    // CALL(aGetHPPal);
+    // LD_hl_D;
+    // RET;
+    *hl = GetHPPal_Conv(e);
+}
+
 void GetHPPal(void) {
     SET_PC(aGetHPPal);
     //  Get palette for hp bar pixel length e in d.

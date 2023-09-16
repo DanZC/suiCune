@@ -341,6 +341,15 @@ playing:
     RET;      // ret
 }
 
+//  Return false if no sound effect is playing.
+// The inverse of CheckSFX.
+bool IsSFXPlaying_Conv(void) {
+    return (chan[CHAN5]->channelOn)
+        || (chan[CHAN6]->channelOn)
+        || (chan[CHAN7]->channelOn)
+        || (chan[CHAN8]->channelOn);
+}
+
 void MaxVolume(void) {
     LD_A(MAX_VOLUME);    // ld a, MAX_VOLUME
     LD_addr_A(wVolume);  // ld [wVolume], a

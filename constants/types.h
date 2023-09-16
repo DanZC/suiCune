@@ -10,6 +10,12 @@ union Register
     };
 };
 
+struct FlagA 
+{
+    bool flag;
+    uint8_t a;
+};
+
 struct ByteWord 
 {
     uint8_t byte;

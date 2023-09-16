@@ -1,5 +1,6 @@
 void HDMATransferAttrmapAndTilemapToWRAMBank3(void);
 void HDMATransferTilemapToWRAMBank3(void);
+void HDMATransferTilemapToWRAMBank3_Conv(void);
 void HDMATransferAttrmapToWRAMBank3(void);
 void ReloadMapPart(void);
 void Mobile_ReloadMapPart(void);
@@ -11,6 +12,7 @@ void Mobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap(void);
 void CallInSafeGFXMode(void);
 void CallInSafeGFXMode_Conv(void(*hl)(void));
 void HDMATransferToWRAMBank3(void);
+void HDMATransferToWRAMBank3_Conv(uint8_t* hl);
 void WaitDMATransfer(void);
 void HDMATransfer_Wait127Scanlines_toBGMap(void);
 void HDMATransfer_Wait123Scanlines_toBGMap(void);
@@ -24,10 +26,13 @@ void v_continue_HDMATransfer_Conv(uint16_t hl, uint16_t de, uint8_t c, uint8_t b
 void v_LoadHDMAParameters(void);
 void PadTilemapForHDMATransfer(void);
 void PadTilemapForHDMATransfer_Conv(uint16_t hl, uint16_t de);
+void PadTilemapForHDMATransfer_Conv2(uint8_t* hl, const uint8_t* de);
 void PadAttrmapForHDMATransfer(void);
 void PadAttrmapForHDMATransfer_Conv(uint16_t hl, uint16_t de);
+void PadAttrmapForHDMATransfer_Conv2(uint8_t* hl, const uint8_t* de);
 void PadMapForHDMATransfer(void);
 void PadMapForHDMATransfer_Conv(uint16_t hl, uint16_t de, uint8_t c);
+void PadMapForHDMATransfer_Conv2(uint8_t* hl, const uint8_t* de, uint8_t c);
 void HDMATransfer2bpp(void);
 void HDMATransfer2bpp_Conv(uint8_t b, uint16_t de, uint16_t hl, uint8_t c);
 void HDMATransfer1bpp(void);

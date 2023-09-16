@@ -463,6 +463,42 @@ void LoadStatsScreenPals(void){
 
 }
 
+bool LoadStatsScreenPals_Conv(uint8_t c){
+    // CALL(aCheckCGB);
+    // RET_Z ;
+    if(hram->hCGB == 0)
+        return false;
+
+    uint8_t pal_buf[6];
+    LoadPaletteAssetColorsToArray(pal_buf, "gfx/stats/stats.pal", 3);
+    // LD_HL(mStatsScreenPals);
+    // LD_B(0);
+    // DEC_C;
+    // ADD_HL_BC;
+    // ADD_HL_BC;
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(BANK(wBGPals1));
+    // LDH_addr_A(rSVBK);
+    // LD_A_hli;
+    // LD_addr_A(wBGPals1 + PALETTE_SIZE * 0);
+    wram->wBGPals1[PALETTE_SIZE * 0] = pal_buf[(c-1) << 1];
+    // LD_addr_A(wBGPals1 + PALETTE_SIZE * 2);
+    wram->wBGPals1[PALETTE_SIZE * 2] = pal_buf[(c-1) << 1];
+    // LD_A_hl;
+    // LD_addr_A(wBGPals1 + PALETTE_SIZE * 0 + 1);
+    wram->wBGPals1[PALETTE_SIZE * 0 + 1] = pal_buf[((c-1) << 1) + 1];
+    // LD_addr_A(wBGPals1 + PALETTE_SIZE * 2 + 1);
+    wram->wBGPals1[PALETTE_SIZE * 0 + 1] = pal_buf[((c-1) << 1) + 1];
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // CALL(aApplyPals);
+    ApplyPals_Conv();
+    // LD_A(0x1);
+    // RET;
+    return true;
+}
+
 void LoadMailPalettes(void){
     LD_L_E;
     LD_H(0);
