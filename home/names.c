@@ -1,9 +1,13 @@
 #include "../constants.h"
 #include "names.h"
 #include "copy.h"
+#include "../charmap.h"
 #include "../data/pokemon/names.h"
+#include "../data/moves/names.h"
+#include "../data/items/names.h"
+#include "../data/trainers/class_names.h"
 
-void NamesPointers(void){
+const char (*const NamesPointers[])[20] = {
     //  entries correspond to GetName constants (see constants/text_constants.asm)
     //dba ['PokemonNames']  // MON_NAME (not used// jumps to GetPokemonName)
     //dba ['MoveNames']  // MOVE_NAME
@@ -13,9 +17,12 @@ void NamesPointers(void){
     //dbw ['0', 'wOTPartyMonOTs']  // ENEMY_OT_NAME
     //dba ['TrainerClassNames']  // TRAINER_NAME
     //dbw ['4', 'MoveDescriptions']  // MOVE_DESC_NAME_BROKEN (wrong bank)
-
-    return GetName();
-}
+    [MON_NAME] = PokemonNames,
+    [MOVE_NAME] = MoveNames,
+    [DUMMY_NAME] = NULL,
+    [ITEM_NAME] = ItemNames,
+    [TRAINER_NAME] = TrainerClassNames,
+};
 
 void GetName(void){
     //  Return name wCurSpecies from name list wNamedObjectType in wStringBuffer1.
@@ -158,6 +165,78 @@ void GetName_Conv(void){
     // POP_AF;
     // RST(aBankswitch);
     Bankswitch_Conv(tempBank);
+}
+
+//  Return name index from name list type in wStringBuffer1.
+uint8_t* GetName_Conv2(uint8_t type, uint8_t index){
+
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+    // PUSH_HL;
+    // PUSH_BC;
+    // PUSH_DE;
+
+    // LD_A_addr(wNamedObjectType);
+    // CP_A(MON_NAME);
+    // IF_NZ goto NotPokeName;
+    if(type == MON_NAME) 
+    {
+        // LD_A_addr(wCurSpecies);
+        // LD_addr_A(wNamedObjectIndex);
+
+        // CALL(aGetPokemonName);
+        wram->wNamedObjectIndex = wram->wCurSpecies;
+        GetPokemonName_Conv();
+        
+        // LD_HL(MON_NAME_LENGTH);
+        // ADD_HL_DE;
+
+        // LD_E_L;
+        // LD_D_H;
+        return wram->wStringBuffer1;
+    } 
+    else 
+    {    
+        // LD_A_addr(wNamedObjectType);
+        // DEC_A;
+        // LD_E_A;
+        // LD_D(0);
+
+        // LD_HL(mNamesPointers);
+
+        // ADD_HL_DE;
+        // ADD_HL_DE;
+        // ADD_HL_DE;
+
+        // LD_A_hli;
+        // RST(aBankswitch);
+
+        // LD_A_hli;
+        // LD_H_hl;
+        // LD_L_A;
+
+        ByteFill_Conv2(wram->wStringBuffer1, sizeof(wram->wStringBuffer1), CHAR_TERM);
+        // LD_A_addr(wCurSpecies);
+        // DEC_A;
+        // CALL(aGetNthString);
+        uint8_t* hl = U82CA(wram->wStringBuffer1, NamesPointers[type][index - 1]);
+
+        // LD_DE(wStringBuffer1);
+        // LD_BC(ITEM_NAME_LENGTH);
+        // CALL(aCopyBytes);
+        return hl;
+    }
+
+    // LD_A_E;
+    // LD_addr_A(wUnusedNamesPointer);
+    // LD_A_D;
+    // LD_addr_A(wUnusedNamesPointer + 1);
+
+    // POP_DE;
+    // POP_BC;
+    // POP_HL;
+    // POP_AF;
+    // RST(aBankswitch);
 }
 
 void GetNthString(void){
@@ -368,7 +447,7 @@ void GetPokemonName_Conv(void){
 }
 
 //  Get Pokemon name for wNamedObjectIndex.
-uint8_t* GetPokemonName_Conv2(void){
+uint8_t* GetPokemonName_Conv2(uint8_t index){
 
     // LDH_A_addr(hROMBank);
     // PUSH_AF;
@@ -376,7 +455,6 @@ uint8_t* GetPokemonName_Conv2(void){
 
     // LD_A(BANK(aPokemonNames));
     // RST(aBankswitch);
-    bank_push(BANK(aPokemonNames));
 
 //  Each name is ten characters
     // LD_A_addr(wNamedObjectIndex);
@@ -385,8 +463,6 @@ uint8_t* GetPokemonName_Conv2(void){
     // LD_E_A;
     // LD_H(0);
     // LD_L_A;
-    uint16_t de = wram->wNamedObjectIndex - 1;
-    const char* hl = PokemonNames[de];
 
     // ADD_HL_HL;
     // ADD_HL_HL;
@@ -405,7 +481,7 @@ uint8_t* GetPokemonName_Conv2(void){
     // LD_BC(MON_NAME_LENGTH - 1);
     // CALL(aCopyBytes);
     // CopyBytes_Conv2(wram->wStringBuffer1, hl, (MON_NAME_LENGTH - 1));
-    Utf8ToCrystalBuffer(wram->wStringBuffer1, MON_NAME_LENGTH, hl);
+    U82CB(wram->wStringBuffer1, MON_NAME_LENGTH, PokemonNames[index - 1]);
 
     // LD_HL(wStringBuffer1 + MON_NAME_LENGTH - 1);
     // LD_hl(0x50);
@@ -417,7 +493,6 @@ uint8_t* GetPokemonName_Conv2(void){
     // RST(aBankswitch);
     // RET;
     // Bankswitch_Conv(tempBank);
-    bank_pop;
     return wram->wStringBuffer1;
 }
 

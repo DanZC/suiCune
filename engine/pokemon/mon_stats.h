@@ -3,6 +3,7 @@ void DrawEnemyHP(void);
 void DrawHP(void);
 void PrintTempMonStats(void);
 void GetGender(void);
+struct FlagA GetGender_Conv(void);
 void ListMovePP(void);
 void BrokenPlacePPUnits(void);
 void Unused_PlaceEnemyHPLevel(void);

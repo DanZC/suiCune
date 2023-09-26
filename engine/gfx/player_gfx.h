@@ -18,10 +18,10 @@ void GetChrisBackpic(void);
 void HOF_LoadTrainerFrontpic(void);
 void DrawIntroPlayerPic(void);
 void DrawIntroPlayerPic_Conv(void);
-void ChrisPic(void);
-void KrisPic(void);
+// void ChrisPic(void);
+// void KrisPic(void);
 void GetKrisBackpic(void);
-void KrisBackpic(void);
+// void KrisBackpic(void);
 //#include "data/player_names.h"
 //#include "gfx/trainer_card/chris_card.2bpp"
 //#include "gfx/trainer_card/kris_card.2bpp"

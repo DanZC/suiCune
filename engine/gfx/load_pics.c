@@ -138,7 +138,7 @@ void GetMonFrontpic_Conv(uint8_t* de){
     // PUSH_AF;
     uint8_t svbk = gb_read(rSVBK);
     // CALL(av_GetFrontpic);
-    v_GetFrontpic_Conv(de);
+    v_GetFrontpic_Conv(de, 0);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     gb_write(rSVBK, svbk);
@@ -162,7 +162,7 @@ void GetAnimatedFrontpic(void){
 
 }
 
-void GetAnimatedFrontpic_Conv(uint8_t* de){
+void GetAnimatedFrontpic_Conv(uint8_t* de, uint8_t frame){
     // LD_A_addr(wCurPartySpecies);
     // LD_addr_A(wCurSpecies);
     wram->wCurSpecies = wram->wCurPartySpecies;
@@ -177,7 +177,7 @@ void GetAnimatedFrontpic_Conv(uint8_t* de){
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = 0;
     // CALL(av_GetFrontpic);
-    v_GetFrontpic_Conv(de);
+    v_GetFrontpic_Conv(de, frame);
     // CALL(aGetAnimatedEnemyFrontpic);
     GetAnimatedEnemyFrontpic_Conv(de);
     // POP_AF;
@@ -215,7 +215,7 @@ void v_GetFrontpic(void){
 
 }
 
-void v_GetFrontpic_Conv(uint8_t* de){
+void v_GetFrontpic_Conv(uint8_t* de, uint8_t frame){
     // PUSH_DE;
     // CALL(aGetBaseData);
     GetBaseData_Conv();
@@ -223,6 +223,7 @@ void v_GetFrontpic_Conv(uint8_t* de){
     // AND_A(0xf);
     // LD_B_A;
     uint8_t b = wram->wBasePicSize & 0xf;
+    uint8_t c = (wram->wBasePicSize & 0xf0) >> 4;
     // PUSH_BC;
     // CALL(aGetFrontpicPointer);
     const char* de2 = GetFrontpicPointer_Conv();
@@ -231,7 +232,9 @@ void v_GetFrontpic_Conv(uint8_t* de){
     // LD_A_B;
     // LD_DE(wDecompressEnemyFrontpic);
     // CALL(aFarDecompress);
-    LoadPNG2bppAssetSectionToVRAM(wram->wDecompressEnemyFrontpic, de2, 0, ((wram->wBasePicSize & 0xf0) >> 4) * b);
+    int size = c * b;
+    printf("Loading frame %d (tile %d, base %d,%d) of %s.\n", frame, size * frame, b, c, de2);
+    LoadPNG2bppAssetSectionToVRAM(wram->wDecompressEnemyFrontpic, de2, size * frame, size);
     // POP_BC;
     // LD_HL(wDecompressScratch);
     // LD_DE(wDecompressEnemyFrontpic);

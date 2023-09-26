@@ -5,6 +5,27 @@
 #include "../../home/tilemap.h"
 #include "../../home/text.h"
 
+// void ChrisPic(void){
+// INCBIN "gfx/player/chris.2bpp"
+
+    // return KrisPic();
+// }
+
+// void KrisPic(void){
+// INCBIN "gfx/player/kris.2bpp"
+
+    // return GetKrisBackpic();
+// }
+
+// void KrisBackpic(void){
+// INCBIN "gfx/player/kris_back.2bpp"
+
+// }
+
+static const char ChrisPic[] = "gfx/player/chris.png";
+static const char KrisPic[] = "gfx/player/kris.png";
+static const char KrisBackpic[] = "gfx/player/kris_back.png";
+
 void BetaLoadPlayerTrainerClass(void){
 //  //  unreferenced
     LD_C(CAL);
@@ -255,7 +276,7 @@ void GetChrisBackpic(void){
     // LD_C(7 * 7);
     // PREDEF(pDecompressGet2bpp);
     LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x31, "gfx/player/chris_back.png", 0, 7 * 7);
-    RET;
+    // RET;
 
 }
 
@@ -352,7 +373,7 @@ void DrawIntroPlayerPic_Conv(void){
     // BIT_A(PLAYERGENDER_FEMALE_F);
     // IF_Z goto got_pic;
     // LD_DE(mKrisPic);
-    const char* pic = (bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))? "gfx/player/kris.png": "gfx/player/chris.png";
+    const char* pic = (bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))? KrisPic: ChrisPic;
 
 // got_pic:
     // LD_HL(vTiles2);
@@ -372,30 +393,13 @@ void DrawIntroPlayerPic_Conv(void){
     // RET;
 }
 
-void ChrisPic(void){
-// INCBIN "gfx/player/chris.2bpp"
-
-    return KrisPic();
-}
-
-void KrisPic(void){
-// INCBIN "gfx/player/kris.2bpp"
-
-    return GetKrisBackpic();
-}
-
 void GetKrisBackpic(void){
 //  Kris's backpic is uncompressed.
     // LD_DE(mKrisBackpic);
     // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x31);
     // LD_BC((BANK(aKrisBackpic) << 8) | 7 * 7);  // dimensions
     // CALL(aGet2bpp);
-    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x31, "gfx/player/kris_back.png", 0, 7 * 7);
-    RET;
-
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x31, KrisBackpic, 0, 7 * 7);
+    // RET;
 }
 
-void KrisBackpic(void){
-// INCBIN "gfx/player/kris_back.2bpp"
-
-}

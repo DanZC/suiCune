@@ -1,3 +1,3 @@
 #pragma once
 
-extern const char* TrainerClassNames[];
+extern const char TrainerClassNames[][20];

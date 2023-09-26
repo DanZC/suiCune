@@ -8,12 +8,16 @@
 #include "../../home/menu.h"
 #include "../../home/text.h"
 #include "../../home/tilemap.h"
+#include "../../home/copy.h"
 #include "../../charmap.h"
 #include "../../data/trainers/class_names.h"
 #include "../../data/trainers/parties.h"
-#include "../../engine/gfx/load_font.h"
-#include "../../engine/gfx/place_graphic.h"
-#include "../../home/copy.h"
+#include "../gfx/load_font.h"
+#include "../gfx/place_graphic.h"
+#include "../gfx/load_pics.h"
+#include "../gfx/pic_animation.h"
+#include "../gfx/dma_transfer.h"
+#include "../pokemon/stats_screen.h"
 
 typedef struct {
     const char* name;
@@ -29,6 +33,8 @@ void Handler_Anime(void);
 void Handler_Graphics(void);
 void Handler_Pokedex(void);
 void Handler_Trainergear(void);
+void Handler_Stats(void);
+void Handler_Pics(void);
 
 static DebugMenuOption debugMenuOptions[] = {
     {"FIGHT@", Handler_Fight},
@@ -39,7 +45,9 @@ static DebugMenuOption debugMenuOptions[] = {
     {"ANIME@", Handler_Anime},
     {"GRAPHICS@", Handler_Graphics},
     {"POKEDEX@", Handler_Pokedex},
-    {"POKEGEAR@", Handler_Trainergear}
+    {"POKEGEAR@", Handler_Trainergear},
+    {"STATS@", Handler_Stats},
+    {"PICS@", Handler_Pics},
 };
 
 #define MAX_OPTIONS_PER_PAGE 7
@@ -171,6 +179,18 @@ void Handler_Pokedex(void) {
 
 void Handler_Trainergear(void) {
     // TODO: Implement this function
+}
+
+void Handler_Stats(void) {
+    // TODO: Implement this function
+    DebugMenu_Stats();
+    PlayMusic_Conv(DEBUG_MENU_MUSIC);
+}
+
+void Handler_Pics(void) {
+    // TODO: Implement this function
+    DebugMenu_Pics();
+    PlayMusic_Conv(DEBUG_MENU_MUSIC);
 }
 
 static const char* DebugMenu_MusicNames[] = {
@@ -410,7 +430,7 @@ static void DebugMenu_BattleTest_GetPrevTrainerClass(uint8_t* tclass, uint8_t* t
 }
 
 void DebugMenu_BattleTest_PlaceTrainerName(uint8_t tclass, uint8_t tid) {
-    char buffer[16];
+    char buffer[32];
     sprintf(buffer, "CLASS- %s", TrainerClassNames[tclass - 1]);
     PlaceStringSimple(U82C(buffer), wram->wTilemap + coordidx(2, 2));
     sprintf(buffer, "   ID- %02d:%02d", tclass, tid);
@@ -514,5 +534,112 @@ void DebugMenu_GFXTest(void) {
     v_LoadFontsExtra1_Conv();
     v_LoadFontsExtra2_Conv();
     v_LoadStandardFont_Conv();
+    DelayFrame();
+}
+
+void DebugMenu_Stats(void) {
+    Utf8ToCrystalBuffer(wram->wPlayerName, NAME_LENGTH, "PLAYER@");
+
+    wram->wCurPartySpecies = CHARIZARD;
+    wram->wCurPartyLevel = 100;
+    wram->wPartyCount = 0;
+    wram->wMonType = PARTYMON;
+    {
+        wbank_push(MBANK(awPartyMon1));
+        PREDEF(pTryAddMonToParty);
+        wbank_pop;
+    }
+
+    wram->wCurPartyMon = 0;
+
+    SAFECALL(aStatsScreenInit);
+
+    ClearTilemap_Conv2();
+    ByteFill_Conv2(vram->vTiles0, 2048, 0);
+    ByteFill_Conv2(vram->vTiles1, 2048, 0);
+    ByteFill_Conv2(vram->vTiles2, 2048, 0);
+    v_LoadFontsExtra1_Conv();
+    v_LoadFontsExtra2_Conv();
+    v_LoadStandardFont_Conv();
+    TextboxPalette_Conv2(wram->wTilemap, SCREEN_WIDTH, SCREEN_HEIGHT);
+    WaitBGMap_Conv();
+    DelayFrame();
+}
+
+void DebugMenu_Pics_PlaceStrings(species_t* sp) {
+    char buf[32];
+    sprintf(buf, "ID   - %03d@", *sp);
+    PlaceStringSimple(U82C(buf), coord(0, 0, wram->wTilemap));
+    struct BaseData* hl = AbsGBToRAMAddr(aBaseData);
+    uint8_t size = hl[*sp - 1].picSize;
+    sprintf(buf, "SIZE - %d, %d@", size & 0xf, size >> 4);
+    ClearBox_Conv2(coord(0, 2, wram->wTilemap), SCREEN_WIDTH, 1);
+    PlaceStringSimple(U82C(buf), coord(0, 2, wram->wTilemap));
+}
+
+static void DebugMenu_Pics_DoAnim(species_t sp) {
+    ClearBox_Conv2(coord(2, 4, wram->wTilemap), 7, 7);
+
+    DelayFrame();
+
+    wram->wUnownLetter = UNOWN_A;
+    wram->wCurPartySpecies = sp;
+    GetAnimatedFrontpic_Conv(vram->vTiles2 + LEN_2BPP_TILE * 0x00, 0);
+    LoadMonAnimation_Conv(coord(2, 4, wram->wTilemap), 0x0, ANIM_MON_MENU);
+    SetPalettes_Conv();
+
+    while(!SetUpPokeAnim_Conv()) {
+        HDMATransferTilemapToWRAMBank3_Conv();
+    }
+}
+
+void DebugMenu_Pics(void) {
+    ClearTilemap_Conv2();
+    v_LoadStandardFont_Conv();
+    
+    DelayFrame();
+
+    species_t s = BULBASAUR;
+    DebugMenu_Pics_PlaceStrings(&s);
+    DebugMenu_Pics_DoAnim(s);
+
+    while(1)
+    {
+        GetJoypad_Conv();
+
+        if(hram->hJoyPressed & (B_BUTTON))
+            break;
+        
+        int8_t dir = -((hram->hJoyPressed & D_LEFT)? 1: 0) + ((hram->hJoyPressed & D_RIGHT)? 1: 0);
+        if(dir < 0) {
+            if(s == BULBASAUR) s = CELEBI;
+            else s--;
+            DebugMenu_Pics_PlaceStrings(&s);
+            HDMATransferTilemapToWRAMBank3_Conv();
+            continue;
+        }
+        else if(dir > 0) {
+            if(s == CELEBI) s = BULBASAUR;
+            else s++;
+            DebugMenu_Pics_PlaceStrings(&s);
+            HDMATransferTilemapToWRAMBank3_Conv();
+            continue;
+        }
+
+        if(hram->hJoyPressed & (A_BUTTON)) {
+            DebugMenu_Pics_DoAnim(s);
+        }
+        DelayFrame();
+    }
+
+    ClearTilemap_Conv2();
+    ByteFill_Conv2(vram->vTiles0, 2048, 0);
+    ByteFill_Conv2(vram->vTiles1, 2048, 0);
+    ByteFill_Conv2(vram->vTiles2, 2048, 0);
+    v_LoadFontsExtra1_Conv();
+    v_LoadFontsExtra2_Conv();
+    v_LoadStandardFont_Conv();
+    TextboxPalette_Conv2(wram->wTilemap, SCREEN_WIDTH, SCREEN_HEIGHT);
+    WaitBGMap_Conv();
     DelayFrame();
 }

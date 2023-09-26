@@ -237,6 +237,45 @@ struct __attribute__((packed)) SpriteData
     uint8_t palette;
 };
 
+#pragma pack(push, 1)
+struct BaseData
+{
+    dex_t dexNo;
+    uint8_t HP;
+    uint8_t attack;
+    uint8_t defense;
+    uint8_t speed;
+    uint8_t specialAttack;
+    uint8_t specialDefense;
+    union {
+        uint8_t types[2];
+        struct {
+            uint8_t type1;
+            uint8_t type2;
+        };
+    };
+    uint8_t catchRate;
+    uint8_t exp;
+    union {
+        uint8_t items[2];
+        struct {
+            uint8_t item1;
+            uint8_t item2;
+        };
+    };
+    uint8_t gender;
+    uint8_t unknown1;
+    uint8_t eggSteps;
+    uint8_t unknown2;
+    uint8_t picSize;
+    uint16_t unusedFrontpic;
+    uint16_t unusedBackpic;
+    uint8_t growthRate;
+    uint8_t eggGroups;
+    uint8_t TMHM[((NUM_TM_HM_TUTOR) + 7) / 8];
+};
+#pragma pack(pop)
+
 struct TrainerClassAttr
 {
     item_t items[2];

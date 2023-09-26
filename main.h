@@ -397,7 +397,7 @@
 
 // SECTION "Pic Animations 1", ROMX
 
-//#include "engine/gfx/pic_animation.h"
+#include "engine/gfx/pic_animation.h"
 //#include "gfx/pokemon/anim_pointers.h"
 //#include "gfx/pokemon/anims.h"
 //#include "gfx/pokemon/idle_pointers.h"

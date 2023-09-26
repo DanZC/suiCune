@@ -3,6 +3,7 @@
 #include "../../home/names.h"
 #include "../../home/copy.h"
 #include "../../home/text.h"
+#include "../../charmap.h"
 
 void DrawPlayerHP(void){
     LD_A(0x1);
@@ -272,117 +273,139 @@ Genderless:
 //         f = c:  genderless
 //  This is determined by comparing the Attack and Speed DVs
 //  with the species' gender ratio.
-// struct FlagA GetGender_Conv(void){
-// //  Figure out what type of monster struct we're looking at.
+struct FlagA GetGender_Conv(void){
+//  Figure out what type of monster struct we're looking at.
 
-// //  0: PartyMon
-//     LD_HL(wPartyMon1DVs);
-//     LD_BC(PARTYMON_STRUCT_LENGTH);
-//     LD_A_addr(wMonType);
-//     AND_A_A;
-//     IF_Z goto PartyMon;
+    uint16_t DVs = 0;
+    switch(wram->wMonType) {
+//  0: PartyMon
+    // LD_HL(wPartyMon1DVs);
+    // LD_BC(PARTYMON_STRUCT_LENGTH);
+    // LD_A_addr(wMonType);
+    // AND_A_A;
+    // IF_Z goto PartyMon;
+    case PARTYMON:
+        DVs = wram->wPartyMon[wram->wCurPartyMon].mon.DVs;
+        break;
 
-// //  1: OTPartyMon
-//     LD_HL(wOTPartyMon1DVs);
-//     DEC_A;
-//     IF_Z goto PartyMon;
+//  1: OTPartyMon
+    // LD_HL(wOTPartyMon1DVs);
+    // DEC_A;
+    // IF_Z goto PartyMon;
+    case OTPARTYMON:
+        DVs = wram->wOTPartyMon[wram->wCurPartyMon].mon.DVs;
+        break;
 
-// //  2: sBoxMon
-//     LD_HL(sBoxMon1DVs);
-//     LD_BC(BOXMON_STRUCT_LENGTH);
-//     DEC_A;
-//     IF_Z goto sBoxMon;
+//  2: sBoxMon
+    // LD_HL(sBoxMon1DVs);
+    // LD_BC(BOXMON_STRUCT_LENGTH);
+    // DEC_A;
+    // IF_Z goto sBoxMon;
+    case BOXMON:
+        break;
 
-// //  3: Unknown
-//     LD_HL(wTempMonDVs);
-//     DEC_A;
-//     IF_Z goto DVs;
+//  3: Unknown
+    // LD_HL(wTempMonDVs);
+    // DEC_A;
+    // IF_Z goto DVs;
+    case TEMPMON:
+        DVs = wram->wTempMon.mon.DVs;
+        break;
 
-// //  else: WildMon
-//     LD_HL(wEnemyMonDVs);
-//     goto DVs;
+//  else: WildMon
+    // LD_HL(wEnemyMonDVs);
+    // goto DVs;
+    default:
+    case WILDMON:
+        DVs = wram->wEnemyMon.dvs;
+        break;
 
-// //  Get our place in the party/box.
+//  Get our place in the party/box.
 
 
 // PartyMon:
 
 // sBoxMon:
-//     LD_A_addr(wCurPartyMon);
-//     CALL(aAddNTimes);
+    // LD_A_addr(wCurPartyMon);
+    // CALL(aAddNTimes);
 
-
+    }
 // DVs:
-// //  sBoxMon data is read directly from SRAM.
-//     LD_A_addr(wMonType);
-//     CP_A(BOXMON);
-//     LD_A(BANK(sBox));
-//     CALL_Z (aOpenSRAM);
+//  sBoxMon data is read directly from SRAM.
+    // LD_A_addr(wMonType);
+    // CP_A(BOXMON);
+    // LD_A(BANK(sBox));
+    // CALL_Z (aOpenSRAM);
 
-// //  Attack DV
-//     LD_A_hli;
-//     AND_A(0xf0);
-//     LD_B_A;
-// //  Speed DV
-//     LD_A_hl;
-//     AND_A(0xf0);
-//     SWAP_A;
+//  Attack DV
+    // LD_A_hli;
+    // AND_A(0xf0);
+    // LD_B_A;
+//  Speed DV
+    // LD_A_hl;
+    // AND_A(0xf0);
+    // SWAP_A;
 
-// //  Put our DVs together.
-//     OR_A_B;
-//     LD_B_A;
+//  Put our DVs together.
+    // OR_A_B;
+    // LD_B_A;
+    uint8_t b = (uint8_t)((DVs & 0xf0) | ((DVs & 0xf000) >> 12));
 
-// //  Close SRAM if we were dealing with a sBoxMon.
-//     LD_A_addr(wMonType);
-//     CP_A(BOXMON);
-//     CALL_Z (aCloseSRAM);
+//  Close SRAM if we were dealing with a sBoxMon.
+    // LD_A_addr(wMonType);
+    // CP_A(BOXMON);
+    // CALL_Z (aCloseSRAM);
 
-// //  We need the gender ratio to do anything with this.
-//     PUSH_BC;
-//     LD_A_addr(wCurPartySpecies);
-//     DEC_A;
-//     LD_HL(mBaseData + BASE_GENDER);
-//     LD_BC(BASE_DATA_SIZE);
-//     CALL(aAddNTimes);
-//     POP_BC;
+//  We need the gender ratio to do anything with this.
+    // PUSH_BC;
+    // LD_A_addr(wCurPartySpecies);
+    // DEC_A;
+    // LD_HL(mBaseData + BASE_GENDER);
+    // LD_BC(BASE_DATA_SIZE);
+    // CALL(aAddNTimes);
+    // POP_BC;
 
-//     LD_A(BANK(aBaseData));
-//     CALL(aGetFarByte);
+    // LD_A(BANK(aBaseData));
+    // CALL(aGetFarByte);
+    uint8_t a = GetFarByte_Conv(BANK(aBaseData), mBaseData + BASE_GENDER + (BASE_DATA_SIZE * wram->wCurPartySpecies));
 
-// //  The higher the ratio, the more likely the monster is to be female.
+//  The higher the ratio, the more likely the monster is to be female.
 
-//     CP_A(GENDER_UNKNOWN);
-//     IF_Z goto Genderless;
+    // CP_A(GENDER_UNKNOWN);
+    // IF_Z goto Genderless;
+    if(a == (uint8_t)GENDER_UNKNOWN)
+    // Genderless:
+        // SCF;
+        // RET;
+        return (struct FlagA){.a = 0, .flag = true};
 
-//     AND_A_A;  // GENDER_F0?
-//     IF_Z goto Male;
-
-//     CP_A(GENDER_F100);
-//     IF_Z goto Female;
-
-// //  Values below the ratio are male, and vice versa.
-//     CP_A_B;
-//     IF_C goto Male;
-
-
-// Female:
-//     // XOR_A_A;
-//     // RET;
-//     return (struct FlagA){.a = 0, .flag = false};
+    // AND_A_A;  // GENDER_F0?
+    // IF_Z goto Male;
+    if(a == GENDER_F0)
+    // Male:
+        // LD_A(1);
+        // AND_A_A;
+        // RET;
+        return (struct FlagA){.a = 1, .flag = false};
 
 
+    // CP_A(GENDER_F100);
+    // IF_Z goto Female;
+//  Values below the ratio are male, and vice versa.
+    // CP_A_B;
+    // IF_C goto Male;
+    if(a == GENDER_F100 || a >= b) {
+    // Female:
+        // XOR_A_A;
+        // RET;
+        return (struct FlagA){.a = 0, .flag = false};
+    }
 // Male:
-//     // LD_A(1);
-//     // AND_A_A;
-//     // RET;
-//     return (struct FlagA){.a = 1, .flag = false};
-
-
-// Genderless:
-//     // SCF;
-//     // RET;
-//     return (struct FlagA){.a = 0, .flag = true};
-// }
+    // LD_A(1);
+    // AND_A_A;
+    // RET;
+    return (struct FlagA){.a = 1, .flag = false};
+}
 
 void ListMovePP(void){
     LD_A_addr(wNumMoves);
@@ -791,17 +814,14 @@ void ListMoves_Conv(uint8_t* hl){
         // PUSH_HL;
         // PUSH_HL;
         // LD_addr_A(wCurSpecies);
-        wram->wCurSpecies = *de;
         // LD_A(MOVE_NAME);
         // LD_addr_A(wNamedObjectType);
-        wram->wNamedObjectType = MOVE_NAME;
         // CALL(aGetName);
-        GetName_Conv();
         // LD_DE(wStringBuffer1);
         // POP_HL;
         // PUSH_BC;
         // CALL(aPlaceString);
-        PlaceStringSimple(wram->wStringBuffer1, hl);
+        PlaceStringSimple(GetName_Conv2(MOVE_NAME, *de), hl);
         // POP_BC;
         // LD_A_B;
         // LD_addr_A(wNumMoves);
@@ -833,7 +853,7 @@ void ListMoves_Conv(uint8_t* hl){
     // nonmove_loop:
         // PUSH_AF;
         // LD_hl(0xe3);
-        *hl = 0xe3;
+        *hl = CHAR_DASH;
         // LD_A_addr(wListMovesLineSpacing);
         // LD_C_A;
         // LD_B(0);

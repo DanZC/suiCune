@@ -2,6 +2,8 @@
 #include "pokemon.h"
 #include "array.h"
 #include "print_text.h"
+#include "audio.h"
+#include "copy.h"
 #include "../engine/gfx/place_graphic.h"
 #include "../engine/gfx/load_pics.h"
 
@@ -202,11 +204,31 @@ void PlayStereoCry2(void){
 
 }
 
+//  Don't wait for the cry to end.
+//  Used during pic animations.
+void PlayStereoCry2_Conv(species_t species){
+    // PUSH_AF;
+    // LD_A(1);
+    // LD_addr_A(wStereoPanningMask);
+    wram->wStereoPanningMask = 1;
+    // POP_AF;
+    // JP(mv_PlayMonCry);
+    return v_PlayMonCry_Conv(species);
+}
+
 void PlayMonCry(void){
         CALL(aPlayMonCry2);
     CALL(aWaitSFX);
     RET;
 
+}
+
+void PlayMonCry_Conv(species_t species){
+    // CALL(aPlayMonCry2);
+    PlayMonCry2_Conv(species);
+    // CALL(aWaitSFX);
+    WaitSFX_Conv();
+    // RET;
 }
 
 void PlayMonCry2(void){
@@ -219,6 +241,20 @@ void PlayMonCry2(void){
     CALL(av_PlayMonCry);
     RET;
 
+}
+
+//  Don't wait for the cry to end.
+void PlayMonCry2_Conv(species_t species){
+    // PUSH_AF;
+    // XOR_A_A;
+    // LD_addr_A(wStereoPanningMask);
+    wram->wStereoPanningMask = 0;
+    // LD_addr_A(wCryTracks);
+    wram->wCryTracks = 0;
+    // POP_AF;
+    // CALL(av_PlayMonCry);
+    v_PlayMonCry_Conv(species);
+    // RET;
 }
 
 void v_PlayMonCry(void){
@@ -240,6 +276,35 @@ done:
     POP_HL;
     RET;
 
+}
+
+void v_PlayMonCry_Conv(species_t species){
+    // PUSH_HL;
+    // PUSH_DE;
+    // PUSH_BC;
+
+    // CALL(aGetCryIndex);
+    // IF_C goto done;
+
+    int16_t idx = GetCryIndex_Conv(species);
+    if(idx == -1)
+        return;
+
+    // LD_E_C;
+    // LD_D_B;
+    // CALL(aPlayCry);
+
+    PUSH_DE;
+    REG_DE = (uint16_t)idx;
+    PlayCry();
+    POP_DE;
+
+
+// done:
+    // POP_BC;
+    // POP_DE;
+    // POP_HL;
+    // RET;
 }
 
 void LoadCry(void){
@@ -279,7 +344,7 @@ void LoadCry(void){
 
 }
 
-uint16_t LoadCry_Conv(uint8_t a){
+uint16_t LoadCry_Conv(species_t a){
     //  Load cry bc.
     int16_t index = GetCryIndex_Conv(a);
     if(index < 0) return 0;
@@ -322,7 +387,7 @@ no:
 
 }
 
-int16_t GetCryIndex_Conv(uint8_t index){
+int16_t GetCryIndex_Conv(species_t index){
     if(index == 0 || index >= (NUM_POKEMON + 1))
         return -1;
     return (index - 1);
@@ -468,12 +533,7 @@ end:
 
 }
 
-void CopyBytes_Conv(uint16_t de, uint16_t hl, uint16_t bc);
-
 void GetBaseData_Conv(void){
-    uint8_t oldBank = gb_read(hROMBank);
-    Bankswitch_Conv(BANK(aBaseData));
-
 //  Egg doesn't have BaseData
     uint8_t species = wram->wCurSpecies;
     if(species == EGG)
@@ -481,7 +541,7 @@ void GetBaseData_Conv(void){
         //LD_DE(mUnusedEggPic);
 
     //  Sprite dimensions
-        gb_write(wBasePicSize, 0x55);  // 5x5
+        wram->wBasePicSize = 0x55;  // 5x5
 
     //  Beta front and back sprites
     //  (see pokegold-spaceworld's data/pokemon/base_stats/*)
@@ -492,11 +552,9 @@ void GetBaseData_Conv(void){
     {
 
     //  Get BaseData
-        species--;
         //DEC_A;
-        uint16_t hl = mBaseData + (BASE_DATA_SIZE * species);
-        uint16_t de = wCurBaseData;
-        CopyBytes_Conv(de, hl, BASE_DATA_SIZE);
+        struct BaseData* hl = AbsGBToRAMAddr(aBaseData);
+        CopyBytes_Conv2(&wram->wBaseDexNo, hl + (species - 1), sizeof(struct BaseData));
         //LD_BC(BASE_DATA_SIZE);
         //LD_HL(mBaseData);
         //CALL(aAddNTimes);
@@ -506,9 +564,7 @@ void GetBaseData_Conv(void){
     }
 
     //  Replace Pokedex # with species
-    gb_write(wBaseDexNo, gb_read(wCurSpecies));
-
-    Bankswitch_Conv(oldBank);
+    wram->wBaseDexNo = wram->wCurSpecies;
 }
 
 void GetCurNickname(void){

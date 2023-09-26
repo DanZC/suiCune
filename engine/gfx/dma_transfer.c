@@ -61,6 +61,27 @@ void HDMATransferTilemapToWRAMBank3_Conv(void) {
     CallInSafeGFXMode_Conv(HDMATransferTilemapToWRAMBank3_Function);
 }
 
+static void HDMATransferAttrmapToWRAMBank3_Function(void) {
+// Function:
+    // decoord(0, 0, wAttrmap);
+    // LD_HL(wScratchAttrmap);
+    // CALL(mPadAttrmapForHDMATransfer);
+    PadAttrmapForHDMATransfer_Conv2(wram->wScratchAttrmap, coord(0, 0, wram->wAttrmap));
+    // LD_A(0x1);
+    // LDH_addr_A(rVBK);
+    gb_write(rVBK, 0x1);
+    // LD_HL(wScratchAttrmap);
+    // CALL(mHDMATransferToWRAMBank3);
+    HDMATransferToWRAMBank3_Conv(wram->wScratchAttrmap);
+    // RET;
+}
+
+void HDMATransferAttrmapToWRAMBank3_Conv(void) {
+    // LD_HL(mHDMATransferAttrmapToWRAMBank3_Function);
+    // JP(mCallInSafeGFXMode);
+    CallInSafeGFXMode_Conv(HDMATransferAttrmapToWRAMBank3_Function);
+}
+
 void HDMATransferAttrmapToWRAMBank3(void) {
     LD_HL(mHDMATransferAttrmapToWRAMBank3_Function);
     JP(mCallInSafeGFXMode);

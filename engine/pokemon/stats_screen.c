@@ -15,6 +15,7 @@
 #include "../gfx/load_pics.h"
 #include "../gfx/dma_transfer.h"
 #include "../gfx/color.h"
+#include "../gfx/pic_animation.h"
 #include "bills_pc.h"
 #include "stats_screen.h"
 #include "tempmon.h"
@@ -238,37 +239,34 @@ void (*const StatsScreenPointerTable[])(void) = {
 };
 
 void StatsScreen_WaitAnim(void){
-    SAVE_REGS;
     // LD_HL(wStatsScreenFlags);
     // BIT_hl(6);
     // IF_NZ goto try_anim;
-    if(bit_test(wram->wStatsScreenFlags, 6))
-        goto try_anim;
+    if(bit_test(wram->wStatsScreenFlags, 6)) {
+    // try_anim:
+        // FARCALL(aSetUpPokeAnim);
+        // IF_NC goto finish;
+        if(SetUpPokeAnim_Conv()) {
+            // LD_HL(wStatsScreenFlags);
+            // RES_hl(6);
+            bit_reset(wram->wStatsScreenFlags, 6);
+        }
+    }
     // BIT_hl(5);
     // IF_NZ goto finish;
-    if(bit_test(wram->wStatsScreenFlags, 5))
-        goto finish;
-    // CALL(aDelayFrame);
-    // RET;
-    DelayFrame();
-    RESTORE_REGS;
-    return;
+    else if(!bit_test(wram->wStatsScreenFlags, 5)) {
+        // CALL(aDelayFrame);
+        // RET;
+        DelayFrame();
+        return;
+    }
 
-
-try_anim:
-    FARCALL(aSetUpPokeAnim);
-    IF_NC goto finish;
-    // LD_HL(wStatsScreenFlags);
-    // RES_hl(6);
-    bit_reset(wram->wStatsScreenFlags, 6);
-
-finish:
+// finish:
     // LD_HL(wStatsScreenFlags);
     // RES_hl(5);
     bit_reset(wram->wStatsScreenFlags, 5);
     // FARCALL(aHDMATransferTilemapToWRAMBank3);
     HDMATransferTilemapToWRAMBank3_Conv();
-    RESTORE_REGS;
     // RET;
 }
 
@@ -304,7 +302,7 @@ void MonStatsInit(void){
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv();
+    ClearTilemap_Conv2();
     // FARCALL(aHDMATransferTilemapToWRAMBank3);
     HDMATransferTilemapToWRAMBank3_Conv();
     // CALL(aStatsScreen_CopyToTempMon);
@@ -874,25 +872,21 @@ static void StatsScreen_PlaceHPBar(void) {
     // RET;
 }
 
-void StatsScreen_PlaceGenderChar(uint8_t* hl) {
-    SAVE_REGS;
+static void StatsScreen_PlaceGenderChar(uint8_t* hl) {
     // PUSH_HL;
-    FARCALL(aGetGender);
+    // FARCALL(aGetGender);
+    struct FlagA res = GetGender_Conv();
     // POP_HL;
-    if(REG_F_C) {
-        RESTORE_REGS;
-        // RET;
-        return;
-    }
     // RET_C ;
+    if(res.flag)
+        return;
     // LD_A(0xef);
     // IF_NZ goto got_gender;
     // LD_A(0xf5);
 
 // got_gender:
     // LD_hl_A;
-    *hl = (REG_F_Z)? 0xf5: 0xef;
-    RESTORE_REGS;
+    *hl = (res.a == 0)? CHAR_FEMALE_ICON: CHAR_MALE_ICON;
     // RET;
 }
 
@@ -934,13 +928,12 @@ void StatsScreen_InitUpperHalf(void){
     // hlcoord(9, 4, wTilemap);
     // LD_A(0xf3);
     // LD_hli_A;
-    *coord(9, 4, wram->wTilemap) = 0xf3;
+    *coord(9, 4, wram->wTilemap) = CHAR_FWD_SLASH;
     // LD_A_addr(wBaseDexNo);
     // LD_addr_A(wNamedObjectIndex);
-    wram->wNamedObjectIndex = wram->wBaseDexNo;
     // CALL(aGetPokemonName);
     // CALL(aPlaceString);
-    PlaceStringSimple(GetPokemonName_Conv2(), coord(9, 4, wram->wTilemap) + 1);
+    PlaceStringSimple(GetPokemonName_Conv2(wram->wBaseDexNo), coord(9, 4, wram->wTilemap) + 1);
     // CALL(aStatsScreen_PlaceHorizontalDivider);
     StatsScreen_PlaceHorizontalDivider();
     // CALL(aStatsScreen_PlacePageSwitchArrows);
@@ -952,13 +945,11 @@ void StatsScreen_InitUpperHalf(void){
     return;
 
 
-NicknamePointers:
+// NicknamePointers:
     //dw ['wPartyMonNicknames'];
     //dw ['wOTPartyMonNicknames'];
     //dw ['sBoxMonNicknames'];
     //dw ['wBufferMonNickname'];
-
-    return StatsScreen_PlaceVerticalDivider();
 }
 
 void StatsScreen_PlaceVerticalDivider(void){
@@ -1022,7 +1013,7 @@ static void StatsScreen_LoadGFX_ClearBox(void) {
     // hlcoord(0, 8, wTilemap);
     // LD_BC((10 << 8) | 20);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(0, 8, wram->wTilemap), 10, 20);
+    ClearBox_Conv2(coord(0, 8, wram->wTilemap), 20, 10);
     // RET;
 }
 
@@ -1083,9 +1074,7 @@ void StatsScreen_LoadGFX(void){
     if(bit_test(wram->wStatsScreenFlags, 4)) {
     // place_frontpic:
         // CALL(aStatsScreen_PlaceFrontpic);
-        SAVE_REGS;
         StatsScreen_PlaceFrontpic();
-        RESTORE_REGS;
         // RET;
         return;
     }
@@ -1318,12 +1307,12 @@ void LoadGreenPage(void){
     wram->wListMovesLineSpacing = SCREEN_WIDTH * 2;
     // PREDEF(pListMoves);
     ListMoves_Conv(coord(8, 10, wram->wTilemap));
-    SAVE_REGS;
-    hlcoord(12, 11, wTilemap);
-    LD_A(SCREEN_WIDTH * 2);
-    LD_addr_A(wListMovesLineSpacing);
-    PREDEF(pListMovePP);
-    RESTORE_REGS;
+    //  SAVE_REGS;
+    //  hlcoord(12, 11, wTilemap);
+    //  LD_A(SCREEN_WIDTH * 2);
+    //  LD_addr_A(wListMovesLineSpacing);
+    //  PREDEF(pListMovePP);
+    //  RESTORE_REGS;
     // RET;
     return;
 }
@@ -1440,11 +1429,12 @@ static void StatsScreen_PlaceFrontpic_get_animation(void) {
     StatsScreen_LoadTextboxSpaceGFX();
     //  LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
     //  PREDEF(pGetAnimatedFrontpic);
-    //  GetAnimatedFrontpic_Conv(vram->vTiles2 + LEN_2BPP_TILE * 0x00);
+    GetAnimatedFrontpic_Conv(vram->vTiles2 + LEN_2BPP_TILE * 0x00, 0);
     //  hlcoord(0, 0, wTilemap);
     //  LD_D(0x0);
     //  LD_E(ANIM_MON_MENU);
     //  PREDEF(pLoadMonAnimation);
+    LoadMonAnimation_Conv(coord(0, 0, wram->wTilemap), 0x0, ANIM_MON_MENU);
     // LD_HL(wStatsScreenFlags);
     // SET_hl(6);
     bit_set(wram->wStatsScreenFlags, 6);
@@ -1482,11 +1472,10 @@ void StatsScreen_PlaceFrontpic(void){
     if(res.flag) {
     // egg:
         // CALL(aStatsScreen_PlaceFrontpic_AnimateEgg);
-        StatsScreen_PlaceFrontpic_AnimateMon();
-        SAVE_REGS;
-        LD_A_addr(wCurPartySpecies);
-        CALL(aPlayMonCry2);
-        RESTORE_REGS;
+        StatsScreen_PlaceFrontpic_AnimateEgg();
+        // LD_A_addr(wCurPartySpecies);
+        // CALL(aPlayMonCry2);
+        PlayMonCry2_Conv(wram->wCurPartySpecies);
         // CALL(aSetPalettes);
         SetPalettes_Conv();
         // RET;
@@ -1508,10 +1497,9 @@ void StatsScreen_PlaceFrontpic(void){
     SetPalettes_Conv();
     // CALL(aStatsScreen_PlaceFrontpic_AnimateMon);
     StatsScreen_PlaceFrontpic_AnimateMon();
-    SAVE_REGS;
-    LD_A_addr(wCurPartySpecies);
-    CALL(aPlayMonCry2);
-    RESTORE_REGS;
+    // LD_A_addr(wCurPartySpecies);
+    // CALL(aPlayMonCry2);
+    PlayMonCry2_Conv(wram->wCurPartySpecies);
     // RET;
     return;
 
