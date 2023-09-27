@@ -1,4 +1,5 @@
 void CheckShininess(void);
+bool CheckShininess_Conv(uint16_t bc);
 void Unused_CheckShininess(void);
 void SGB_ApplyCreditsPals(void);
 void InitPartyMenuPalettes(void);
@@ -22,17 +23,23 @@ void CopyPalettes(void);
 void GetPredefPal(void);
 void LoadHLPaletteIntoDE(void);
 void LoadPalette_White_Col1_Col2_Black(void);
+uint16_t* LoadPalette_White_Col1_Col2_Black_Conv(uint16_t* de, const uint16_t* hl);
 void FillBoxCGB(void);
+void FillBoxCGB_Conv(uint8_t* hl, uint8_t b, uint8_t c, uint8_t a);
 void ResetBGPals(void);
+void ResetBGPals_Conv(void);
 void WipeAttrmap(void);
 void ApplyPals(void);
 void ApplyPals_Conv(void);
 void ApplyAttrmap(void);
+void ApplyAttrmap_Conv(void);
 void CGB_ApplyPartyMenuHPPals(void);
+void CGB_ApplyPartyMenuHPPals_Conv(void);
 void InitPartyMenuOBPals(void);
 void GetBattlemonBackpicPalettePointer(void);
 void GetEnemyFrontpicPalettePointer(void);
 void GetPlayerOrMonPalettePointer(void);
+uint16_t* GetPlayerOrMonPalettePointer_Conv(uint16_t* dest, uint8_t a, uint16_t bc);
 void GetFrontpicPalettePointer(void);
 void GetTrainerPalettePointer(void);
 void GetMonPalettePointer(void);
@@ -40,7 +47,9 @@ void CGBCopyBattleObjectPals(void);
 void BattleObjectPals(void);
 void CGBCopyTwoPredefObjectPals(void);
 void v_GetMonPalettePointer(void);
+const char* v_GetMonPalettePointer_Conv(species_t a);
 void GetMonNormalOrShinyPalettePointer(void);
+uint16_t* GetMonNormalOrShinyPalettePointer_Conv(uint16_t* dest, species_t a, uint16_t bc);
 void PushSGBPals(void);
 void v_PushSGBPals(void);
 void InitSGBBorder(void);
@@ -62,6 +71,8 @@ void SGBDelayCycles(void);
 // void SGBBorderGFX(void);
 // void HPBarPals(void);
 // void ExpBarPalette(void);
+extern const char HPBarPals[];
+extern const char ExpBarPalette[];
 void LoadMapPals(void);
 extern const char PartyMenuBGMobilePalette[];
 extern const char PartyMenuBGPalette[];
@@ -81,7 +92,7 @@ extern const char SlotMachinePals[];
 //#include "gfx/intro/gs_magikarp_bg.pal"
 //#include "gfx/intro/gs_magikarp_ob.pal"
 //#include "gfx/mail/mail.pal"
-//#include "engine/gfx/cgb_layouts.h"
+#include "cgb_layouts.h"
 //#include "gfx/battle_anims/battle_anims.pal"
 //#include "gfx/sgb/blk_packets.h"
 //#include "gfx/sgb/pal_packets.h"

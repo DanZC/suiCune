@@ -6,6 +6,7 @@
 #include "copy.h"
 #include "../engine/gfx/place_graphic.h"
 #include "../engine/gfx/load_pics.h"
+#include "../charmap.h"
 
 void IsAPokemon(void){
     //  Return carry if species a is not a Pokemon.
@@ -106,6 +107,87 @@ done:
     POP_HL;
     RET;
 
+}
+
+//  Draw an HP bar d tiles long at hl
+//  Fill it up to e pixels
+void DrawBattleHPBar_Conv(uint8_t* hl, uint8_t d, uint8_t e, uint8_t b, uint8_t c){
+    // PUSH_HL;
+    // PUSH_DE;
+    // PUSH_BC;
+
+//  Place 'HP:'
+    // LD_A(0x60);
+    // LD_hli_A;
+    *(hl++) = 0x60;
+    // LD_A(0x61);
+    // LD_hli_A;
+    *(hl++) = 0x61;
+
+//  Draw a template
+    // PUSH_HL;
+    uint8_t* hl2 = hl;
+    // LD_A(0x62);  // empty bar
+
+    do {
+    // template:
+        // LD_hli_A;
+        *(hl++) = 0x62;
+        // DEC_D;
+        // IF_NZ goto template;
+    } while(--d != 0);
+    // LD_A(0x6b);  // bar end
+    // ADD_A_B;
+    // LD_hl_A;
+    *(hl) = 0x6b + b;
+    // POP_HL;
+    hl = hl2;
+
+//  Safety check # pixels
+    // LD_A_E;
+    // AND_A_A;
+    // IF_NZ goto fill;
+    if(e == 0) {
+        // LD_A_C;
+        // AND_A_A;
+        // IF_Z goto done;
+        if(c == 0)
+            return;
+        // LD_E(1);
+        e = 1;
+    }
+
+    do {
+    // fill:
+        //  Keep drawing tiles until pixel length is reached
+        // LD_A_E;
+        // SUB_A(TILE_WIDTH);
+        // IF_C goto lastbar;
+        if(e < TILE_WIDTH) {
+        // lastbar:
+            // LD_A(0x62);  // empty bar
+            // ADD_A_E;  // + e
+            // LD_hl_A;
+            *hl = 0x62 + e;
+            break;
+        }
+
+        // LD_E_A;
+        e -= TILE_WIDTH;
+        // LD_A(0x6a);  // full bar
+        // LD_hli_A;
+        *(hl++) = 0x6a;
+        // LD_A_E;
+        // AND_A_A;
+        // IF_Z goto done;
+        // goto fill;
+    } while(e != 0);
+
+// done:
+    // POP_BC;
+    // POP_DE;
+    // POP_HL;
+    // RET;
 }
 
 void PrepMonFrontpic(void){

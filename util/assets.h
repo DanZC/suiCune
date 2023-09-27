@@ -20,7 +20,9 @@ void LoadPNG2bppAssetSectionToVRAM(void* dest, const char* filename, int start_t
 
 void LoadPaletteAssetToBuffer(void* dest, size_t dest_size, const char* filename, size_t count);
 #define LoadPaletteAssetToArray(_arr, _filename, _count) LoadPaletteAssetToBuffer(_arr, sizeof(_arr), _filename, _count)
-void LoadPaletteAssetColorsToBuffer(void* dest, size_t dest_size, const char* filename, size_t color_count);
-#define LoadPaletteAssetColorsToArray(_arr, _filename, _count) LoadPaletteAssetColorsToBuffer(_arr, sizeof(_arr), _filename, _count)
+void LoadPaletteAssetColorsToBuffer(void* dest, size_t dest_size, const char* filename, size_t color_idx, size_t color_count);
+#define LoadPaletteAssetColorsToArray(_arr, _filename, _start, _count) LoadPaletteAssetColorsToBuffer(_arr, sizeof(_arr), _filename, _start, _count)
+
+void ExtractPaletteFromPNGAssetToBuffer(void* dest, const char* filename);
 
 void* Load2bppBinaryAssetToBuffer(void* buffer, size_t buf_size, const char* filename, size_t start, size_t count);

@@ -3,6 +3,7 @@
 #include "copy.h"
 #include "palettes.h"
 #include "delay.h"
+#include "../engine/gfx/cgb_layouts.h"
 
 void ClearBGPalettes(void) {
     SET_PC(aClearBGPalettes);
@@ -442,12 +443,14 @@ sgb:
 }
 
 //  load sgb packets unless dmg
-void GetSGBLayout_Conv(void) {
+void GetSGBLayout_Conv(uint8_t b) {
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // IF_NZ goto sgb;
-    if(gb_read(hCGB) != 0)
-        PREDEF_JUMP(pLoadSGBLayout);
+    if(gb_read(hCGB) != 0) {
+        // PREDEF_JUMP(pLoadSGBLayout);
+        LoadSGBLayoutCGB_Conv(b);
+    }
 
     // LDH_A_addr(hSGB);
     // AND_A_A;

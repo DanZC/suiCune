@@ -21,7 +21,7 @@ void ClearPalettes(void);
 void ClearPalettes_Conv(void);
 void GetMemSGBLayout(void);
 void GetSGBLayout(void);
-void GetSGBLayout_Conv(void);
+void GetSGBLayout_Conv(uint8_t e);
 void SetHPPal(void);
 void SetHPPal_Conv(uint8_t* hl, uint8_t e);
 void GetHPPal(void);

@@ -1,6 +1,9 @@
 #include "../../constants.h"
 #include "color.h"
 #include "../../home/copy.h"
+#include "../../data/pokemon/pic_pointers.h"
+#include "../../data/pokemon/unown_pic_pointers.h"
+#include "../../data/pokemon/palettes.h"
 
 // INCLUDE "engine/gfx/sgb_layouts.asm"
 
@@ -48,6 +51,54 @@ not_shiny:
     AND_A_A;
     RET;
 
+}
+
+//  Check if a mon is shiny by DVs at bc.
+//  Return true if shiny.
+bool CheckShininess_Conv(uint16_t bc){
+    // LD_L_C;
+    // LD_H_B;
+    union Register hl = {.reg = bc};
+
+//  Attack
+    // LD_A_hl;
+    // AND_A(1 << SHINY_ATK_BIT);
+    // IF_Z goto not_shiny;
+    if((hl.lo & (1 << SHINY_ATK_BIT)) == 0)
+        return false;
+
+//  Defense
+    // LD_A_hli;
+    // AND_A(0xf);
+    // CP_A(SHINY_DEF_VAL);
+    // IF_NZ goto not_shiny;
+    if((hl.lo & 0xf) != SHINY_DEF_VAL)
+        return false;
+
+//  Speed
+    // LD_A_hl;
+    // AND_A(0xf0);
+    // CP_A(SHINY_SPD_VAL << 4);
+    // IF_NZ goto not_shiny;
+    if(((hl.hi & 0xf0) >> 4) != SHINY_SPD_VAL)
+        return false;
+
+//  Special
+    // LD_A_hl;
+    // AND_A(0xf);
+    // CP_A(SHINY_SPC_VAL);
+    // IF_NZ goto not_shiny;
+    if((hl.hi & 0xf) != SHINY_SPC_VAL)
+        return false;
+
+//  shiny
+    // SCF;
+    // RET;
+    return true;
+
+// not_shiny:
+    // AND_A_A;
+    // RET;
 }
 
 void Unused_CheckShininess(void){
@@ -470,7 +521,7 @@ bool LoadStatsScreenPals_Conv(uint8_t c){
         return false;
 
     uint8_t pal_buf[6];
-    LoadPaletteAssetColorsToArray(pal_buf, "gfx/stats/stats.pal", 3);
+    LoadPaletteAssetColorsToArray(pal_buf, "gfx/stats/stats.pal", 0, 3);
     // LD_HL(mStatsScreenPals);
     // LD_B(0);
     // DEC_C;
@@ -640,6 +691,47 @@ loop:
 
 }
 
+uint16_t* LoadPalette_White_Col1_Col2_Black_Conv(uint16_t* de, const uint16_t* hl){
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(BANK(wBGPals1));
+    // LDH_addr_A(rSVBK);
+
+    // LD_A(LOW(PALRGB_WHITE));
+    // LD_de_A;
+    // INC_DE;
+    // LD_A(HIGH(PALRGB_WHITE));
+    // LD_de_A;
+    // INC_DE;
+    *(de++) = PALRGB_WHITE;
+
+    // LD_C(2 * PAL_COLOR_SIZE);
+    uint8_t c = 2;
+
+    do {
+    // loop:
+        // LD_A_hli;
+        // LD_de_A;
+        *(de++) = *(hl++);
+        // INC_DE;
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(--c != 0);
+
+    // XOR_A_A;
+    // LD_de_A;
+    // INC_DE;
+    // LD_de_A;
+    // INC_DE;
+
+    *(de++) = 0;
+
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // RET;
+    return de;
+}
+
 void FillBoxCGB(void){
 
 row:
@@ -658,6 +750,30 @@ col:
     IF_NZ goto row;
     RET;
 
+}
+
+void FillBoxCGB_Conv(uint8_t* hl, uint8_t b, uint8_t c, uint8_t a){
+
+    for(uint8_t y = 0; y < b; y++) {
+    // row:
+        // PUSH_BC;
+        // PUSH_HL;
+
+        for(uint8_t x = 0; x < c; ++x) {
+        // col:
+            // LD_hli_A;
+            *coord(x, y, hl) = a;
+            // DEC_C;
+            // IF_NZ goto col;
+        }
+        // POP_HL;
+        // LD_BC(SCREEN_WIDTH);
+        // ADD_HL_BC;
+        // POP_BC;
+        // DEC_B;
+        // IF_NZ goto row;
+    }
+    // RET;
 }
 
 void ResetBGPals(void){
@@ -699,13 +815,62 @@ loop:
 
 }
 
-void WipeAttrmap(void){
-    hlcoord(0, 0, wAttrmap);
-    LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
-    XOR_A_A;
-    CALL(aByteFill);
-    RET;
+void ResetBGPals_Conv(void){
+    // PUSH_AF;
+    // PUSH_BC;
+    // PUSH_DE;
+    // PUSH_HL;
 
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(BANK(wBGPals1));
+    // LDH_addr_A(rSVBK);
+
+    // LD_HL(wBGPals1);
+    uint8_t* hl = wram->wBGPals1;
+    // LD_C(1 * PALETTE_SIZE);
+
+// loop:
+    for(int i = 0; i < PALETTE_SIZE; i++) {
+        // LD_A(0xff);
+        // LD_hli_A;
+        *(hl++) = 0xff;
+        // LD_hli_A;
+        *(hl++) = 0xff;
+        // LD_hli_A;
+        *(hl++) = 0xff;
+        // LD_hli_A;
+        *(hl++) = 0xff;
+        // XOR_A_A;
+        // LD_hli_A;
+        *(hl++) = 0;
+        // LD_hli_A;
+        *(hl++) = 0;
+        // LD_hli_A;
+        *(hl++) = 0;
+        // LD_hli_A;
+        *(hl++) = 0;
+        // DEC_C;
+        // IF_NZ goto loop;
+    }
+
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+
+    // POP_HL;
+    // POP_DE;
+    // POP_BC;
+    // POP_AF;
+    // RET;
+}
+
+void WipeAttrmap(void){
+    // hlcoord(0, 0, wAttrmap);
+    // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
+    // XOR_A_A;
+    // CALL(aByteFill);
+    // RET;
+    return ByteFill_Conv2(wram->wAttrmap, SCREEN_WIDTH * SCREEN_HEIGHT, 0);
 }
 
 void ApplyPals(void){
@@ -773,11 +938,66 @@ okay:
     LD_A(0x0);
     LDH_addr_A(rVBK);
     RET;
-
-//  CGB layout for SCGB_PARTY_MENU_HP_BARS
-    return CGB_ApplyPartyMenuHPPals();
 }
 
+void ApplyAttrmap_Conv(void){
+    // LDH_A_addr(rLCDC);
+    // BIT_A(rLCDC_ENABLE);
+    // IF_Z goto UpdateVBank1;
+    // LDH_A_addr(hBGMapMode);
+    // PUSH_AF;
+    // LD_A(0x2);
+    // LDH_addr_A(hBGMapMode);
+    // CALL(aDelayFrame);
+    // CALL(aDelayFrame);
+    // CALL(aDelayFrame);
+    // CALL(aDelayFrame);
+    // POP_AF;
+    // LDH_addr_A(hBGMapMode);
+    // RET;
+
+
+// UpdateVBank1:
+    // hlcoord(0, 0, wAttrmap);
+    // debgcoord(0, 0, vBGMap0);
+    uint8_t* hl = coord(0, 0, wram->wAttrmap);
+    uint8_t* de = bgcoord(0, 0, vram->vBGMap2);
+    // LD_B(SCREEN_HEIGHT);
+    uint8_t b = SCREEN_HEIGHT;
+    // LD_A(0x1);
+    // LDH_addr_A(rVBK);
+
+    do {
+    // row:
+        // LD_C(SCREEN_WIDTH);
+        uint8_t c = SCREEN_WIDTH;
+
+        do {
+        // col:
+            // LD_A_hli;
+            // LD_de_A;
+            // INC_DE;
+            *(de++) = *(hl++);
+            // DEC_C;
+            // IF_NZ goto col;
+        } while(--c != 0);
+        // LD_A(BG_MAP_WIDTH - SCREEN_WIDTH);
+        // ADD_A_E;
+        // IF_NC goto okay;
+        // INC_D;
+
+    // okay:
+        // LD_E_A;
+        de += (BG_MAP_WIDTH - SCREEN_WIDTH);
+        // DEC_B;
+        // IF_NZ goto row;
+    } while(--b != 0);
+    // LD_A(0x0);
+    // LDH_addr_A(rVBK);
+    // RET;
+}
+
+//  CGB layout for SCGB_PARTY_MENU_HP_BARS
 void CGB_ApplyPartyMenuHPPals(void){
     LD_HL(wHPPals);
     LD_A_addr(wSGBPals);
@@ -806,6 +1026,38 @@ done:
     CALL(aFillBoxCGB);
     RET;
 
+}
+
+void CGB_ApplyPartyMenuHPPals_Conv(void){
+    // LD_HL(wHPPals);
+    // LD_A_addr(wSGBPals);
+    // LD_E_A;
+    // LD_D(0);
+    // ADD_HL_DE;
+    // LD_E_L;
+    // LD_D_H;
+    // LD_A_de;
+    // INC_A;
+    // LD_E_A;
+    uint8_t e = wram->wHPPals[wram->wSGBPals[0]] + 1;
+    // hlcoord(11, 2, wAttrmap);
+    uint8_t* hl = coord(11, 2, wram->wAttrmap) + (2 * SCREEN_WIDTH * wram->wSGBPals[0]);
+    // LD_BC(2 * SCREEN_WIDTH);
+    // LD_A_addr(wSGBPals);
+
+// loop:
+    // AND_A_A;
+    // IF_Z goto done;
+    // ADD_HL_BC;
+    // DEC_A;
+    // goto loop;
+
+// done:
+    // LD_BC((2 << 8) | 8);
+    // LD_A_E;
+    // CALL(aFillBoxCGB);
+    FillBoxCGB_Conv(hl, 2, 8, e);
+    // RET;
 }
 
 void InitPartyMenuOBPals(void){
@@ -859,6 +1111,35 @@ male:
     LD_HL(mPlayerPalette);
     RET;
 
+}
+
+const char PlayerPalette[] = "gfx/trainers/cal.png";
+const char KrisPalette[] = "gfx/trainers/falkner.png";
+
+uint16_t* GetPlayerOrMonPalettePointer_Conv(uint16_t* dest, uint8_t a, uint16_t bc){
+    // AND_A_A;
+    // JP_NZ (mGetMonNormalOrShinyPalettePointer);
+    if(a != 0) {
+        return GetMonNormalOrShinyPalettePointer_Conv(dest, a, bc);
+    }
+    // LD_A_addr(wPlayerSpriteSetupFlags);
+    // BIT_A(PLAYERSPRITESETUP_FEMALE_TO_MALE_F);
+    // IF_NZ goto male;
+    if(bit_test(wram->wPlayerSpriteSetupFlags, PLAYERSPRITESETUP_FEMALE_TO_MALE_F) || wram->wPlayerGender == MALE) {
+        ExtractPaletteFromPNGAssetToBuffer(dest, PlayerPalette);
+        return dest;
+    }
+    // LD_A_addr(wPlayerGender);
+    // AND_A_A;
+    // IF_Z goto male;
+    // LD_HL(mKrisPalette);
+    // RET;
+    ExtractPaletteFromPNGAssetToBuffer(dest, KrisPalette);
+    return dest;
+
+// male:
+    // LD_HL(mPlayerPalette);
+    // RET;
 }
 
 void GetFrontpicPalettePointer(void){
@@ -956,6 +1237,21 @@ void v_GetMonPalettePointer(void){
 
 }
 
+const char* v_GetMonPalettePointer_Conv(species_t a){
+    // LD_L_A;
+    // LD_H(0);
+    // ADD_HL_HL;
+    // ADD_HL_HL;
+    // ADD_HL_HL;
+    // LD_BC(mPokemonPalettes);
+    // ADD_HL_BC;
+    // RET;
+    if(a == UNOWN) {
+        return UnownPicPointers[UNOWN_A-1][0];
+    }
+    return PokemonPicPointers[a-1][0];
+}
+
 void GetMonNormalOrShinyPalettePointer(void){
     PUSH_BC;
     CALL(av_GetMonPalettePointer);
@@ -969,6 +1265,46 @@ void GetMonNormalOrShinyPalettePointer(void){
     }
     RET;
 
+}
+
+static uint16_t* GetCustomMonPalette(uint16_t* dest, species_t a, bool shiny) {
+    for(size_t i = 0; i < 4; ++i) {
+        if(PokemonCustomPals[i].id == a) {
+            CopyBytes_Conv2(dest, PokemonCustomPals[i].pals + (shiny * 2), 2 * sizeof(uint16_t));
+            return dest;
+        }
+    }
+    CopyBytes_Conv2(dest, PokemonCustomPals[0].pals + (shiny * 2), 2 * sizeof(uint16_t));
+    return dest;
+}
+
+uint16_t* GetMonNormalOrShinyPalettePointer_Conv(uint16_t* dest, species_t a, uint16_t bc){
+    // PUSH_BC;
+    // CALL(av_GetMonPalettePointer);
+    // POP_BC;
+    // PUSH_HL;
+    // CALL(aCheckShininess);
+    // POP_HL;
+    // RET_NC ;
+    if(!CheckShininess_Conv(bc)) {
+    // for(int rept = 0; rept < 4; rept++){
+    // INC_HL;
+    // }
+    // RET;
+        if(v_GetMonPalettePointer_Conv(a) == NULL)
+            return GetCustomMonPalette(dest, a, false);
+        ExtractPaletteFromPNGAssetToBuffer(dest, v_GetMonPalettePointer_Conv(a));
+        // First palette color should be ignored 
+        dest[0] = dest[1];
+        dest[1] = dest[2];
+        return dest;
+    }
+    else {
+        if(PokemonShinyPals[a] == NULL)
+            return GetCustomMonPalette(dest, a, true);
+        LoadPaletteAssetColorsToBuffer(dest, 4 * sizeof(uint16_t), PokemonShinyPals[a], 0, 2);
+        return dest;
+    }
 }
 
 void PushSGBPals(void){
@@ -1370,6 +1706,22 @@ loop:
 
 }
 
+//  clear bc bytes of data starting from de
+void ClearBytes_Conv(uint8_t* de, size_t bc){
+    for(size_t i = 0; i < bc; ++i) {
+        // XOR_A_A;
+        // LD_de_A;
+        // INC_DE;
+        de[i] = 0;
+        // DEC_BC;
+        // LD_A_C;
+        // OR_A_B;
+        // IF_NZ goto loop;
+    }
+    // RET;
+
+}
+
 void DrawDefaultTiles(void){
 //  Draw 240 tiles (2/3 of the screen) from tiles in VRAM
     hlbgcoord(0, 0, vBGMap0);  // BG Map 0
@@ -1441,6 +1793,9 @@ wait:
 
 //     return ExpBarPalette();
 // }
+
+const char HPBarPals[] = "gfx/battle/hp_bar.pal";
+const char ExpBarPalette[] = "gfx/battle/exp_bar.pal";
 
 // void ExpBarPalette(void){
 // // INCLUDE "gfx/battle/exp_bar.pal"

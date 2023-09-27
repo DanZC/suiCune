@@ -30,7 +30,7 @@
 //#include "engine/events/checktime.h"
 //#include "engine/events/specials.h"
 #include "engine/math/print_num.h"
-//#include "engine/pokemon/health.h"
+#include "engine/pokemon/health.h"
 //#include "engine/events/overworld.h"
 #include "engine/items/items.h"
 //#include "engine/overworld/player_step.h"
@@ -39,7 +39,7 @@
 #include "engine/pokemon/bills_pc_top.h"
 //#include "engine/pokemon/breedmon_level_growth.h"
 //#include "engine/events/bug_contest/caught_mon.h"
-//#include "engine/items/item_effects.h"
+#include "engine/items/item_effects.h"
 //#include "engine/battle_anims/pokeball_wobble.h"
 //#include "engine/pokemon/knows_move.h"
 

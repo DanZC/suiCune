@@ -587,9 +587,7 @@ bool v_DoesSpriteHaveFacings_Conv(uint8_t a){
     // LD_A_hl;
     // POP_BC;
     // POP_HL;
-    bank_push(BANK(aOverworldSprites));
-    a = gb_read((mOverworldSprites + SPRITEDATA_TYPE) + (a - 1) * NUM_SPRITEDATA_FIELDS);
-    bank_pop;
+    a = OverworldSprites[a-1].type;
     // CP_A(STILL_SPRITE);
     // IF_NZ goto only_down;
     return (a != STILL_SPRITE);
@@ -1024,7 +1022,6 @@ bankswitch:
 
 //  Return the address of tile (a) in (hl).
 static uint8_t* GetUsedSprite_GetTileAddr(uint8_t a) {
-    uint8_t* hl = vram->vTiles0;
     // AND_A(0x7f);
     // LD_L_A;
     // LD_H(0);
@@ -1037,7 +1034,7 @@ static uint8_t* GetUsedSprite_GetTileAddr(uint8_t a) {
     // LD_A_H;
     // ADC_A(HIGH(vTiles0));
     // LD_H_A;
-    return hl + ((a & 0x7f) << 4);
+    return vram->vTiles0 + ((a & 0x7f) << 4);
     // RET;
 }
 
@@ -1046,6 +1043,9 @@ void GetUsedSprite_CopyToVram(struct SpriteLoadData* sd, uint8_t* hl, uint16_t s
     // PUSH_AF;
     // LD_A_addr(wSpriteFlags);
     // BIT_A(5);
+    if(!bit_test(wram->wSpriteFlags, 5)) {
+        hl += VRAM_BANK_SIZE;
+    }
     // LD_A(0x1);
     // IF_Z goto bankswitch;
     // LD_A(0x0);

@@ -20,6 +20,7 @@
 #include "stats_screen.h"
 #include "tempmon.h"
 #include "mon_stats.h"
+#include "health.h"
 
 enum {
     PINK_PAGE = 1,  // 1
@@ -857,18 +858,15 @@ static void StatsScreen_PlaceHPBar(void) {
     // LD_A_hli;
     // LD_D_A;
     // LD_E_hl;
-    SAVE_REGS;
-    REG_BC = HIGH(wram->wTempMon.HP) | (LOW(wram->wTempMon.HP) << 8);
-    REG_DE = HIGH(wram->wTempMon.maxHP) | (LOW(wram->wTempMon.maxHP) << 8);
-    FARCALL(aComputeHPBarPixels);
+    // FARCALL(aComputeHPBarPixels);
     // LD_HL(wCurHPPal);
     // CALL(aSetHPPal);
-    SetHPPal_Conv(&wram->wCurHPPal, REG_E);
-    LD_B(SCGB_STATS_SCREEN_HP_PALS);
-    CALL(aGetSGBLayout);
+    SetHPPal_Conv(&wram->wCurHPPal, ComputeHPBarPixels_Conv(wram->wTempMon.HP, wram->wTempMon.maxHP));
+    // LD_B(SCGB_STATS_SCREEN_HP_PALS);
+    // CALL(aGetSGBLayout);
+    GetSGBLayout_Conv(SCGB_STATS_SCREEN_HP_PALS);
     // CALL(aDelayFrame);
     DelayFrame();
-    RESTORE_REGS;
     // RET;
 }
 
@@ -998,6 +996,8 @@ void StatsScreen_PlaceShinyIcon(void){
     // LD_BC(wTempMonDVs);
     // FARCALL(aCheckShininess);
     // RET_NC ;
+    if(!CheckShininess_Conv(wram->wTempMon.mon.DVs))
+        return;
     // hlcoord(19, 0, wTilemap);
     // LD_hl(0x3f);
     // RET;
@@ -1104,7 +1104,7 @@ static void LoadPinkPage_PrintNextLevel(uint8_t* hl) {
     // RET;
 }
 
-static void LoadPinkPage_CalcExpToNextLevel(void) {
+void LoadPinkPage_CalcExpToNextLevel(void) {
     // LD_A_addr(wTempMonLevel);
     // CP_A(MAX_LEVEL);
     // IF_Z goto AlreadyAtMaxLevel;
@@ -1156,10 +1156,11 @@ void LoadPinkPage(void){
     static const char ToStr[] = "TO@";
     static const char PkrsStr[] = "#RUS@";
 
-    //  SAVE_REGS;
-    //  hlcoord(0, 9, wTilemap);
-    //  LD_B(0x0);
-    //  PREDEF(pDrawPlayerHP);
+    // SAVE_REGS;
+    // hlcoord(0, 9, wTilemap);
+    // LD_B(0x0);
+    // PREDEF(pDrawPlayerHP);
+    DrawPlayerHP_Conv(coord(0, 9, wram->wTilemap), 0x0);
     // hlcoord(8, 9, wTilemap);
     // LD_hl(0x41);  // right HP/exp bar end cap
     *coord(8, 9, wram->wTilemap) = 0x41;
@@ -1219,7 +1220,7 @@ void LoadPinkPage(void){
     for(uint8_t b = 0; b < 10; b++) {
     // vertical_divider:
         // LD_hl_A;
-        coord(9, 8, wram->wTilemap)[SCREEN_WIDTH * b] = 0x31;
+        *coord(9, 8 + b, wram->wTilemap) = 0x31;
         // ADD_HL_DE;
         // DEC_B;
         // IF_NZ goto vertical_divider;
@@ -1307,68 +1308,97 @@ void LoadGreenPage(void){
     wram->wListMovesLineSpacing = SCREEN_WIDTH * 2;
     // PREDEF(pListMoves);
     ListMoves_Conv(coord(8, 10, wram->wTilemap));
-    //  SAVE_REGS;
-    //  hlcoord(12, 11, wTilemap);
-    //  LD_A(SCREEN_WIDTH * 2);
-    //  LD_addr_A(wListMovesLineSpacing);
-    //  PREDEF(pListMovePP);
-    //  RESTORE_REGS;
+    // hlcoord(12, 11, wTilemap);
+    // LD_A(SCREEN_WIDTH * 2);
+    // LD_addr_A(wListMovesLineSpacing);
+    wram->wListMovesLineSpacing = SCREEN_WIDTH * 2;
+    // PREDEF(pListMovePP);
+    ListMovePP_Conv(coord(12, 11, wram->wTilemap));
     // RET;
     return;
 }
 
-void LoadBluePage(void){
-    CALL(aLoadBluePage_PlaceOTInfo);
-    hlcoord(10, 8, wTilemap);
-    LD_DE(SCREEN_WIDTH);
-    LD_B(10);
-    LD_A(0x31);  // vertical divider
+// void IDNoString(void){
+    //db ['"<ID>№.@"'];
 
-vertical_divider:
-    LD_hl_A;
-    ADD_HL_DE;
-    DEC_B;
-    IF_NZ goto vertical_divider;
-    hlcoord(11, 8, wTilemap);
-    LD_BC(6);
-    PREDEF(pPrintTempMonStats);
+    // return OTString();
+// }
+static const char IDNoString[] = "<ID>№.@";
+static const char OTString[] = "OT/@";
+
+// void OTString(void){
+    //db ['"OT/@"'];
+
+    // return StatsScreen_PlaceFrontpic();
+// }
+
+static void LoadBluePage_PlaceOTInfo(void) {
+    // LD_DE(mIDNoString);
+    // hlcoord(0, 9, wTilemap);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(IDNoString), coord(0, 9, wram->wTilemap));
+    // LD_DE(mOTString);
+    // hlcoord(0, 12, wTilemap);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(OTString), coord(0, 12, wram->wTilemap));
+    // hlcoord(2, 10, wTilemap);
+    // LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 5);
+    // LD_DE(wTempMonID);
+    // CALL(aPrintNum);
+    PrintNum_Conv2(coord(2, 10, wram->wTilemap), &wram->wTempMon.mon.id, PRINTNUM_LEADINGZEROS | 2, 5);
+    // LD_HL(mLoadBluePage_OTNamePointers);
+    // CALL(aGetNicknamenamePointer);
+    // CALL(aCopyNickname);
+    // FARCALL(aCorrectNickErrors);
+    // hlcoord(2, 13, wTilemap);
+    // CALL(aPlaceString);
+    PlaceStringSimple(CopyNickname_Conv(GetNicknamenamePointer_Conv()), coord(2, 13, wram->wTilemap));
+    // LD_A_addr(wTempMonCaughtGender);
+    uint8_t genloc = wram->wTempMon.mon.caughtGenderLocation;
+    // AND_A_A;
+    // IF_Z goto done;
+    // CP_A(0x7f);
+    // IF_Z goto done;
+    if(genloc == 0
+    || genloc == 0x7f) {
+        return;
+    }
+    // AND_A(CAUGHT_GENDER_MASK);
+    // LD_A(0xef);
+    // IF_Z goto got_gender;
+    // LD_A(0xf5);
+
+// got_gender:
+    // hlcoord(9, 13, wTilemap);
+    // LD_hl_A;
+    *coord(9, 13, wram->wTilemap) = ((genloc & CAUGHT_GENDER_MASK) == 0)? CHAR_MALE_ICON: CHAR_FEMALE_ICON;
+
+// done:
+    // RET;
+}
+
+void LoadBluePage(void){
+    // CALL(aLoadBluePage_PlaceOTInfo);
+    LoadBluePage_PlaceOTInfo();
+    // hlcoord(10, 8, wTilemap);
+    // LD_DE(SCREEN_WIDTH);
+    // LD_B(10);
+    // LD_A(0x31);  // vertical divider
+
+    for(uint8_t i = 0; i < 10; i++) {
+    // vertical_divider:
+        // LD_hl_A;
+        // ADD_HL_DE;
+        *coord(10, 8 + i, wram->wTilemap) = 0x31;  // vertical divider
+        // DEC_B;
+        // IF_NZ goto vertical_divider;
+    }
+    // hlcoord(11, 8, wTilemap);
+    // LD_BC(6);
+    // PREDEF(pPrintTempMonStats);
+    PrintTempMonStats_Conv(coord(11, 8, wram->wTilemap), 6);
     // RET;
     return;
-
-
-PlaceOTInfo:
-    LD_DE(mIDNoString);
-    hlcoord(0, 9, wTilemap);
-    CALL(aPlaceString);
-    LD_DE(mOTString);
-    hlcoord(0, 12, wTilemap);
-    CALL(aPlaceString);
-    hlcoord(2, 10, wTilemap);
-    LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 5);
-    LD_DE(wTempMonID);
-    CALL(aPrintNum);
-    LD_HL(mLoadBluePage_OTNamePointers);
-    CALL(aGetNicknamenamePointer);
-    CALL(aCopyNickname);
-    FARCALL(aCorrectNickErrors);
-    hlcoord(2, 13, wTilemap);
-    CALL(aPlaceString);
-    LD_A_addr(wTempMonCaughtGender);
-    AND_A_A;
-    IF_Z goto done;
-    CP_A(0x7f);
-    IF_Z goto done;
-    AND_A(CAUGHT_GENDER_MASK);
-    LD_A(0xef);
-    IF_Z goto got_gender;
-    LD_A(0xf5);
-
-got_gender:
-    hlcoord(9, 13, wTilemap);
-    LD_hl_A;
-
-done:
-    RET;
 
 
 OTNamePointers:
@@ -1379,22 +1409,6 @@ OTNamePointers:
 
     // return IDNoString();
 }
-
-// void IDNoString(void){
-    //db ['"<ID>№.@"'];
-
-    // return OTString();
-// }
-
-const char IDNoString[] = "<ID>№.@";
-
-const char OTString[] = "OT/@";
-
-// void OTString(void){
-    //db ['"OT/@"'];
-
-    // return StatsScreen_PlaceFrontpic();
-// }
 
 static void StatsScreen_PlaceFrontpic_AnimateMon(void) {
     // LD_HL(wStatsScreenFlags);
@@ -1504,56 +1518,56 @@ void StatsScreen_PlaceFrontpic(void){
     return;
 
 
-AnimateMon:
-    LD_HL(wStatsScreenFlags);
-    SET_hl(5);
-    LD_A_addr(wCurPartySpecies);
-    CP_A(UNOWN);
-    IF_Z goto unown;
-    hlcoord(0, 0, wTilemap);
-    CALL(aPrepMonFrontpic);
-    RET;
+// AnimateMon:
+    // LD_HL(wStatsScreenFlags);
+    // SET_hl(5);
+    // LD_A_addr(wCurPartySpecies);
+    // CP_A(UNOWN);
+    // IF_Z goto unown;
+    // hlcoord(0, 0, wTilemap);
+    // CALL(aPrepMonFrontpic);
+    // RET;
 
 
-unown:
-    XOR_A_A;
-    LD_addr_A(wBoxAlignment);
-    hlcoord(0, 0, wTilemap);
-    CALL(av_PrepMonFrontpic);
-    RET;
+// unown:
+    // XOR_A_A;
+    // LD_addr_A(wBoxAlignment);
+    // hlcoord(0, 0, wTilemap);
+    // CALL(av_PrepMonFrontpic);
+    // RET;
 
 
-AnimateEgg:
-    LD_A_addr(wCurPartySpecies);
-    CP_A(UNOWN);
-    IF_Z goto unownegg;
-    LD_A(TRUE);
-    LD_addr_A(wBoxAlignment);
-    CALL(aStatsScreen_PlaceFrontpic_get_animation);
-    RET;
+// AnimateEgg:
+    // LD_A_addr(wCurPartySpecies);
+    // CP_A(UNOWN);
+    // IF_Z goto unownegg;
+    // LD_A(TRUE);
+    // LD_addr_A(wBoxAlignment);
+    // CALL(aStatsScreen_PlaceFrontpic_get_animation);
+    // RET;
 
 
-unownegg:
-    XOR_A_A;
-    LD_addr_A(wBoxAlignment);
-    CALL(aStatsScreen_PlaceFrontpic_get_animation);
-    RET;
+// unownegg:
+    // XOR_A_A;
+    // LD_addr_A(wBoxAlignment);
+    // CALL(aStatsScreen_PlaceFrontpic_get_animation);
+    // RET;
 
 
-get_animation:
-    LD_A_addr(wCurPartySpecies);
-    CALL(aIsAPokemon);
-    RET_C ;
-    CALL(aStatsScreen_LoadTextboxSpaceGFX);
-    LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
-    PREDEF(pGetAnimatedFrontpic);
-    hlcoord(0, 0, wTilemap);
-    LD_D(0x0);
-    LD_E(ANIM_MON_MENU);
-    PREDEF(pLoadMonAnimation);
-    LD_HL(wStatsScreenFlags);
-    SET_hl(6);
-    RET;
+// get_animation:
+    // LD_A_addr(wCurPartySpecies);
+    // CALL(aIsAPokemon);
+    // RET_C ;
+    // CALL(aStatsScreen_LoadTextboxSpaceGFX);
+    // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
+    // PREDEF(pGetAnimatedFrontpic);
+    // hlcoord(0, 0, wTilemap);
+    // LD_D(0x0);
+    // LD_E(ANIM_MON_MENU);
+    // PREDEF(pLoadMonAnimation);
+    // LD_HL(wStatsScreenFlags);
+    // SET_hl(6);
+    // RET;
 
 }
 

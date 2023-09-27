@@ -4,6 +4,10 @@
 #include "../../home/copy.h"
 #include "../../home/text.h"
 #include "../../charmap.h"
+#include "../items/item_effects.h"
+#include "../../home/print_text.h"
+#include "../../home/pokemon.h"
+#include "health.h"
 
 void DrawPlayerHP(void){
     LD_A(0x1);
@@ -11,11 +15,24 @@ void DrawPlayerHP(void){
 
 }
 
+void DrawPlayerHP_Conv(uint8_t* hl, uint8_t b){
+    // LD_A(0x1);
+    // JR(mDrawHP);
+    return DrawHP_Conv(hl, b, 0x1);
+}
+
 void DrawEnemyHP(void){
     LD_A(0x2);
 
     return DrawHP();
 }
+
+void DrawEnemyHP_Conv(uint8_t* hl, uint8_t b){
+    // LD_A(0x2);
+    // JR(mDrawHP);
+    return DrawHP_Conv(hl, b, 0x2);
+}
+
 
 void DrawHP(void){
     LD_addr_A(wWhichHPBar);
@@ -100,6 +117,107 @@ not_boxmon_2:
 
 }
 
+void DrawHP_Conv(uint8_t* hl, uint8_t b, uint8_t which){
+    // LD_addr_A(wWhichHPBar);
+    wram->wWhichHPBar = which;
+    // PUSH_HL;
+    // PUSH_BC;
+// box mons have full HP
+    // LD_A_addr(wMonType);
+    // CP_A(BOXMON);
+    // IF_Z goto at_least_1_hp;
+
+    // LD_A_addr(wTempMonHP);
+    // LD_B_A;
+    // LD_A_addr(wTempMonHP + 1);
+    // LD_C_A;
+
+//  Any HP?
+    // OR_A_B;
+    // IF_NZ goto at_least_1_hp;
+    union Register bc = {.hi=LOW(wram->wTempMon.HP), .lo=HIGH(wram->wTempMon.HP)};
+    union Register de;
+    if(wram->wMonType != BOXMON && wram->wTempMon.HP == 0) {
+        // XOR_A_A;
+        // LD_C_A;
+        bc.lo = 0;
+        // LD_E_A;
+        de.lo = 0;
+        // LD_A(6);
+        // LD_D_A;
+        de.hi = 6;
+        // JP(mDrawHP_fainted);
+    }
+    else {
+    // at_least_1_hp:
+        // LD_A_addr(wTempMonMaxHP);
+        // LD_D_A;
+        de.hi = LOW(wram->wTempMon.maxHP);
+        // LD_A_addr(wTempMonMaxHP + 1);
+        // LD_E_A;
+        de.lo = HIGH(wram->wTempMon.maxHP);
+        // LD_A_addr(wMonType);
+        // CP_A(BOXMON);
+        // IF_NZ goto not_boxmon;
+
+        if(wram->wMonType == BOXMON)
+            // LD_B_D;
+            // LD_C_E;
+            bc.reg = de.reg;
+
+
+    // not_boxmon:
+        // PREDEF(pComputeHPBarPixels);
+        de.lo = ComputeHPBarPixels_Conv(bc.reg, de.reg);
+        // LD_A(6);
+        // LD_D_A;
+        de.hi = 6;
+        // LD_C_A;
+        bc.lo = 6;
+    }
+
+
+// fainted:
+    // LD_A_C;
+    // POP_BC;
+    // LD_C_A;
+    // POP_HL;
+    // PUSH_DE;
+    // PUSH_HL;
+    // PUSH_HL;
+    // CALL(aDrawBattleHPBar);
+    DrawBattleHPBar_Conv(hl, de.hi, de.lo, b, bc.lo);
+    // POP_HL;
+
+//  Print HP
+    // bccoord(1, 1, 0);
+    // ADD_HL_BC;
+    // LD_DE(wTempMonHP);
+    // LD_A_addr(wMonType);
+    // CP_A(BOXMON);
+    // IF_NZ goto not_boxmon_2;
+    // LD_DE(wTempMonMaxHP);
+    void* maxhpval = ((wram->wMonType == BOXMON)? &wram->wTempMon.maxHP: &wram->wTempMon.HP);
+
+// not_boxmon_2:
+    // LD_BC((2 << 8) | 3);
+    // CALL(aPrintNum);
+    hl = PrintNum_Conv2(hl + coord(1, 1, 0), maxhpval, 2, 3);
+
+    // LD_A(0xf3);
+    // LD_hli_A;
+    *(hl++) = CHAR_FWD_SLASH;
+
+//  Print max HP
+    // LD_DE(wTempMonMaxHP);
+    // LD_BC((2 << 8) | 3);
+    // CALL(aPrintNum);
+    PrintNum_Conv2(hl, &wram->wTempMon.maxHP, 2, 3);
+    // POP_HL;
+    // POP_DE;
+    // RET;
+}
+
 void PrintTempMonStats(void){
 //  Print wTempMon's stats at hl, with spacing bc.
     PUSH_BC;
@@ -142,6 +260,58 @@ StatNames:
     //next ['"@"']
 
     return GetGender();
+}
+
+//  Print wTempMon's stats at hl, with spacing bc.
+void PrintTempMonStats_Conv(uint8_t* hl, uint16_t bc){
+    static const char StatNames[] = "ATTACK" \
+        t_next "DEFENSE" \
+        t_next "SPCL.ATK" \
+        t_next "SPCL.DEF" \
+        t_next "SPEED" \
+        t_next "@";
+
+    // PUSH_BC;
+    // PUSH_HL;
+    // LD_DE(mPrintTempMonStats_StatNames);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(StatNames), hl);
+    // POP_HL;
+    // POP_BC;
+    // ADD_HL_BC;
+    // LD_BC(SCREEN_WIDTH);
+    // ADD_HL_BC;
+    hl += bc + SCREEN_WIDTH;
+    // LD_DE(wTempMonAttack);
+    // LD_BC((2 << 8) | 3);
+    // CALL(aPrintTempMonStats_PrintStat);
+    PrintNum_Conv2(hl, &wram->wTempMon.attack, 2, 3);
+    hl += SCREEN_WIDTH * 2;
+    // LD_DE(wTempMonDefense);
+    // CALL(aPrintTempMonStats_PrintStat);
+    PrintNum_Conv2(hl, &wram->wTempMon.defense, 2, 3);
+    hl += SCREEN_WIDTH * 2;
+    // LD_DE(wTempMonSpclAtk);
+    // CALL(aPrintTempMonStats_PrintStat);
+    PrintNum_Conv2(hl, &wram->wTempMon.spclAtk, 2, 3);
+    hl += SCREEN_WIDTH * 2;
+    // LD_DE(wTempMonSpclDef);
+    // CALL(aPrintTempMonStats_PrintStat);
+    PrintNum_Conv2(hl, &wram->wTempMon.spclDef, 2, 3);
+    hl += SCREEN_WIDTH * 2;
+    // LD_DE(wTempMonSpeed);
+    // JP(mPrintNum);
+    PrintNum_Conv2(hl, &wram->wTempMon.speed, 2, 3);
+    hl += SCREEN_WIDTH * 2;
+
+
+// PrintStat:
+    // PUSH_HL;
+    // CALL(aPrintNum);
+    // POP_HL;
+    // LD_DE(SCREEN_WIDTH * 2);
+    // ADD_HL_DE;
+    // RET;
 }
 
 void GetGender(void){
@@ -500,6 +670,129 @@ load_loop:
     IF_NZ goto load_loop;
     RET;
 
+}
+
+static uint8_t* ListMovePP_load_loop(uint8_t* hl, uint8_t a, uint16_t de, uint8_t c) {
+    do {
+// load_loop:
+        // LD_hli_A;
+        hl[0] = a;
+        // LD_hld_A;
+        hl[1] = a;
+        // ADD_HL_DE;
+        hl += de;
+        // DEC_C;
+        // IF_NZ goto load_loop;
+    } while(--c != 0);
+    // RET;
+    return hl;
+}
+
+void ListMovePP_Conv(uint8_t* hl){
+    // LD_A_addr(wNumMoves);
+    // INC_A;
+    // LD_C_A;
+    uint8_t c = wram->wNumMoves + 1;
+    // LD_A(NUM_MOVES);
+    // SUB_A_C;
+    // LD_B_A;
+    // PUSH_HL;
+    // LD_A_addr(wListMovesLineSpacing);
+    // LD_E_A;
+    // LD_D(0);
+    // LD_A(0x3e);  // P
+    // CALL(aListMovePP_load_loop);
+    uint8_t* hl2 = ListMovePP_load_loop(hl, 0x3e, wram->wListMovesLineSpacing, c);
+    // LD_A_B;
+    // AND_A_A;
+    // IF_Z goto skip;
+    if(NUM_MOVES - c != 0) {
+        // LD_C_A;
+        // LD_A(0xe3);
+        // CALL(aListMovePP_load_loop);
+        ListMovePP_load_loop(hl2, 0xe3, wram->wListMovesLineSpacing, NUM_MOVES - c);
+    }
+
+
+// skip:
+    // POP_HL;
+    // INC_HL;
+    // INC_HL;
+    // INC_HL;
+    // LD_D_H;
+    // LD_E_L;
+    uint8_t* de = hl + 3;
+    // LD_HL(wTempMonMoves);
+    move_t* moves = wram->wTempMon.mon.moves;
+    // LD_B(0);
+    uint8_t b = 0;
+
+    do {
+    // loop:
+        // LD_A_hli;
+        // AND_A_A;
+        // IF_Z goto done;
+        move_t a = *(moves++);
+        if(a == NO_MOVE)
+            return;
+        // PUSH_BC;
+        // PUSH_HL;
+        // PUSH_DE;
+        // LD_HL(wMenuCursorY);
+        // LD_A_hl;
+        // PUSH_AF;
+        uint8_t oldcursorY = wram->wMenuCursorY;
+        // LD_hl_B;
+        wram->wMenuCursorY = b;
+        // PUSH_HL;
+        // CALLFAR(aGetMaxPPOfMove);
+        uint8_t maxpp = GetMaxPPOfMove_Conv(&wram->wTempMon, TEMPMON, b);
+        // POP_HL;
+        // POP_AF;
+        // LD_hl_A;
+        wram->wMenuCursorY = oldcursorY;
+        // POP_DE;
+        // POP_HL;
+        // PUSH_HL;
+        // LD_BC(wTempMonPP - (wTempMonMoves + 1));
+        // ADD_HL_BC;
+        // LD_A_hl;
+        // AND_A(0x3f);
+        // LD_addr_A(wStringBuffer1 + 4);
+        uint8_t monpp = wram->wTempMon.mon.PP[b];
+        // LD_H_D;
+        // LD_L_E;
+        // PUSH_HL;
+        uint8_t* hl3 = de;
+        // LD_DE(wStringBuffer1 + 4);
+        // LD_BC((1 << 8) | 2);
+        // CALL(aPrintNum);
+        hl3 = PrintNum_Conv2(hl3, &monpp, 1, 2);
+        // LD_A(0xf3);
+        // LD_hli_A;
+        *(hl3++) = CHAR_FWD_SLASH;
+        // LD_DE(wTempPP);
+        // LD_BC((1 << 8) | 2);
+        // CALL(aPrintNum);
+        hl3 = PrintNum_Conv2(hl3, &maxpp, 1, 2);
+        // POP_HL;
+        // LD_A_addr(wListMovesLineSpacing);
+        // LD_E_A;
+        // LD_D(0);
+        // ADD_HL_DE;
+        // LD_D_H;
+        // LD_E_L;
+        de += wram->wListMovesLineSpacing;
+        // POP_HL;
+        // POP_BC;
+        // INC_B;
+        // LD_A_B;
+        // CP_A(NUM_MOVES);
+        // IF_NZ goto loop;
+    } while(++b != NUM_MOVES);
+
+// done:
+    // RET;
 }
 
 void BrokenPlacePPUnits(void){

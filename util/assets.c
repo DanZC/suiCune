@@ -360,9 +360,10 @@ void LoadPNG2bppAssetSectionToVRAM(void* dest, const char* filename, int start_t
 
 // static char pal_text_buffer[32];
 
-static void ParsePalFromText(uint16_t* dest, size_t dest_size, const char* text, size_t count) {
+static void ParsePalFromText(uint16_t* dest, size_t dest_size, const char* text, size_t start, size_t count) {
     const char* s = text;
     size_t written = 0;
+    size_t passed = 0;
     int r, g, b;
     while(*s) {
         const char* s2 = s;
@@ -380,6 +381,8 @@ static void ParsePalFromText(uint16_t* dest, size_t dest_size, const char* text,
                 sscanf_s(s, " ");
                 sscanf_s(s, "%d, %d, %d", &r, &g, &b);
                 // printf("%llu: %02d, %02d, %02d\n", written, r, g, b);
+                if(passed++ < start)
+                    goto nextline;
                 *(dest++) = rgb(r, g, b);
                 written++;
                 if(written == dest_size || written == count)
@@ -404,12 +407,12 @@ void LoadPaletteAssetToBuffer(void* dest, size_t dest_size, const char* filename
 
     const char* text = a.ptr;
 
-    ParsePalFromText(d, dest_size, text, pal_count * NUM_PAL_COLORS);
+    ParsePalFromText(d, dest_size, text, 0, pal_count * NUM_PAL_COLORS);
 
     FreeAsset(a);
 }
 
-void LoadPaletteAssetColorsToBuffer(void* dest, size_t dest_size, const char* filename, size_t color_count) {
+void LoadPaletteAssetColorsToBuffer(void* dest, size_t dest_size, const char* filename, size_t color_idx, size_t color_count) {
     uint16_t* d = dest;
     asset_s a = LoadTextAsset(filename);
 
@@ -418,9 +421,40 @@ void LoadPaletteAssetColorsToBuffer(void* dest, size_t dest_size, const char* fi
 
     const char* text = a.ptr;
 
-    ParsePalFromText(d, dest_size, text, color_count);
+    printf("Loading %lld colors from palette file (%s)\n", color_count, filename);
+    ParsePalFromText(d, dest_size, text, color_idx, color_count);
 
     FreeAsset(a);
+}
+
+// Loads a 2bpp PNG asset from an archive, extracts the color palette from it,
+// and writes the result to dest.
+void ExtractPaletteFromPNGAssetToBuffer(void* dest, const char* filename) {
+    uint16_t* d = dest;
+    asset_s a = LoadAsset(filename);
+    // printf("Loaded asset %s (%lld bytes)\n", filename, a.size);
+    if(!a.ptr) {
+        exit(-1);
+    }
+    int x, y, n;
+    uint8_t* pix = stbi_load_from_memory(a.ptr, (int)a.size, &x, &y, &n, 0);
+    if(!pix) {
+        fprintf(stderr, "%s: Load error on image %s. Reason: %s\n", __func__, filename, stbi_failure_reason());
+        exit(-1);
+    }
+    printf("Extracting colors from %d-channel %dx%d image (%s)\n", n, x, y, filename);
+    FreeAsset(a);
+
+    // Hack to make palette conversion work.
+    const uint8_t* palette = (uint8_t*)&stbi_g_png_palette[0];
+    // for(int i = 0; i < 4; ++i) {
+    //     printf("Color %d: r=%d, g=%d, b=%d\n", i, palette[i] & 0xff, (palette[i] & 0xff00) >> 8, (palette[i] & 0xff0000) >> 16);
+    // }
+    for(int i = 0; i < n; ++i) {
+        d[i] = rgb(palette[i*4 + 0] >> 3, palette[i*4 + 1] >> 3, palette[i*4 + 2] >> 3);
+    }
+
+    stbi_image_free(pix);
 }
 
 // Loads count segments from asset file from archive to a user-provided buffer of size buf_size,

@@ -1,4 +1,5 @@
 #include "../../constants.h"
+#include "moves.h"
 
 const struct Move Moves[] = {
 // entries correspond to move ids (see constants/move_constants.h)
