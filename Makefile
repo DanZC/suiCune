@@ -30,6 +30,7 @@ SRCS   := tools/emu/peanut_sdl.c tools/emu/minigb_apu/minigb_apu.c \
 	$(wildcard data/pokemon/*.c) \
 	$(wildcard data/sprites/*.c) \
 	$(wildcard data/trainers/*.c) \
+	$(wildcard data/types/*.c) \
 	$(wildcard engine/battle/*.c) \
 	$(wildcard engine/battle/ai/*.c) \
 	$(wildcard engine/battle_anims/*.c) \
@@ -94,6 +95,7 @@ clean:
 	$(wildcard data/pokemon/*.o) \
 	$(wildcard data/sprites/*.o) \
 	$(wildcard data/trainers/*.o) \
+	$(wildcard data/types/*.o) \
 	$(wildcard engine/battle/*.o) \
 	$(wildcard engine/battle/ai/*.o) \
 	$(wildcard engine/battle_anims/*.o) \

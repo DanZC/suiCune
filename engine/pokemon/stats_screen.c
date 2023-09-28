@@ -11,6 +11,7 @@
 #include "../../home/joypad.h"
 #include "../../home/sram.h"
 #include "../../home/print_text.h"
+#include "../battle/core.h"
 #include "../gfx/load_font.h"
 #include "../gfx/load_pics.h"
 #include "../gfx/dma_transfer.h"
@@ -21,6 +22,8 @@
 #include "tempmon.h"
 #include "mon_stats.h"
 #include "health.h"
+#include "experience.h"
+#include "types.h"
 
 enum {
     PINK_PAGE = 1,  // 1
@@ -1090,7 +1093,7 @@ static void LoadPinkPage_PrintNextLevel(uint8_t* hl) {
     uint8_t a = wram->wTempMon.mon.level;
     // CP_A(MAX_LEVEL);
     // IF_Z goto AtMaxLevel;
-    if(a == MAX_LEVEL) {
+    if(a != MAX_LEVEL) {
         // INC_A;
         // LD_addr_A(wTempMonLevel);
         ++wram->wTempMon.mon.level;
@@ -1119,31 +1122,35 @@ void LoadPinkPage_CalcExpToNextLevel(void) {
         // LD_hl_A;
         wram->wExpToNextLevel[2] = 0;
         // RET;
+        return;
     }
     // INC_A;
     // LD_D_A;
-    SAVE_REGS;
-    REG_D = wram->wTempMon.mon.level + 1;
-    FARCALL(aCalcExpAtLevel);
-    RESTORE_REGS;
+    // SAVE_REGS;
+    // REG_D = wram->wTempMon.mon.level + 1;
+    // FARCALL(aCalcExpAtLevel);
+    // RESTORE_REGS;
+    uint32_t xp = CalcExpAtLevel_Conv(wram->wTempMon.mon.level + 1);
+    uint32_t cur_xp = (uint32_t)wram->wTempMon.mon.exp[2] + 
+        ((uint32_t)wram->wTempMon.mon.exp[1] << 8) +
+        ((uint32_t)wram->wTempMon.mon.exp[0] << 16);
+    uint32_t diff = xp - cur_xp;
     // LD_HL(wTempMonExp + 2);
     // LD_HL(wTempMonExp + 2);
     // LDH_A_addr(hQuotient + 3);
     // SUB_A_hl;
     // DEC_HL;
     // LD_addr_A(wExpToNextLevel + 2);
-    wram->wExpToNextLevel[2] = (hram->hQuotient >> 24) - wram->wTempMon.mon.exp[2];
-    uint8_t borrow = (((hram->hQuotient >> 24) & 0xff) < wram->wTempMon.mon.exp[2]);
+    wram->wExpToNextLevel[0] = (diff >> 16) & 0xff;
     // LDH_A_addr(hQuotient + 2);
     // SBC_A_hl;
     // DEC_HL;
     // LD_addr_A(wExpToNextLevel + 1);
-    wram->wExpToNextLevel[1] = (hram->hQuotient >> 16) - wram->wTempMon.mon.exp[1] - borrow;
-    borrow = ((hram->hQuotient >> 16) & 0xff) < wram->wTempMon.mon.exp[1];
+    wram->wExpToNextLevel[1] = (diff >> 8) & 0xff;
     // LDH_A_addr(hQuotient + 1);
     // SBC_A_hl;
     // LD_addr_A(wExpToNextLevel);
-    wram->wExpToNextLevel[0] = (hram->hQuotient >> 8) - wram->wTempMon.mon.exp[0] - borrow;
+    wram->wExpToNextLevel[2] = diff & 0xff;
     // RET;
 }
 
@@ -1156,7 +1163,6 @@ void LoadPinkPage(void){
     static const char ToStr[] = "TO@";
     static const char PkrsStr[] = "#RUS@";
 
-    // SAVE_REGS;
     // hlcoord(0, 9, wTilemap);
     // LD_B(0x0);
     // PREDEF(pDrawPlayerHP);
@@ -1210,8 +1216,9 @@ void LoadPinkPage(void){
     }
 
 // done_status:
-    //  hlcoord(1, 15, wTilemap);
-    //  PREDEF(pPrintMonTypes);
+    // hlcoord(1, 15, wTilemap);
+    // PREDEF(pPrintMonTypes);
+    PrintMonTypes_Conv(coord(1, 15, wram->wTilemap));
     // hlcoord(9, 8, wTilemap);
     // LD_DE(SCREEN_WIDTH);
     // LD_B(10);
@@ -1252,12 +1259,12 @@ void LoadPinkPage(void){
     // hlcoord(14, 14, wTilemap);
     // CALL(aPlaceString);
     PlaceStringSimple(U82C(ToStr), coord(14, 14, wram->wTilemap));
-    //  hlcoord(11, 16, wTilemap);
-    //  LD_A_addr(wTempMonLevel);
-    //  LD_B_A;
-    //  LD_DE(wTempMonExp + 2);
-    //  PREDEF(pFillInExpBar);
-    //  RESTORE_REGS;
+    // hlcoord(11, 16, wTilemap);
+    // LD_A_addr(wTempMonLevel);
+    // LD_B_A;
+    // LD_DE(wTempMonExp + 2);
+    // PREDEF(pFillInExpBar);
+    FillInExpBar_Conv(coord(11, 16, wram->wTilemap), wram->wTempMon.mon.level, wram->wTempMon.mon.exp + 2);
     // hlcoord(10, 16, wTilemap);
     // LD_hl(0x40);  // left exp bar end cap
     *coord(10, 16, wram->wTilemap) = 0x40;
@@ -1401,7 +1408,7 @@ void LoadBluePage(void){
     return;
 
 
-OTNamePointers:
+// OTNamePointers:
     //dw ['wPartyMonOTs'];
     //dw ['wOTPartyMonOTs'];
     //dw ['sBoxMonOTs'];

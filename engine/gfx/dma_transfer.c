@@ -393,7 +393,7 @@ void HDMATransferToWRAMBank3_Conv(uint8_t* hl) {
     // LD_A(0x23);
     // LDH_addr_A(hDMATransfer);
     DelayFrame();
-    CopyBytes_Conv2(GBToRAMAddr(0x8000 + (hram->hBGMapAddress & 0x1ff0)), hl, (0x23 + 1) * 10 * 2);
+    CopyBytes_Conv2(GBToRAMAddr(0x8000 + (hram->hBGMapAddress & 0x1ff0)), hl, 1024); // (0x23 + 1) * 10 * 2);
 }
 
 void WaitDMATransfer(void) {

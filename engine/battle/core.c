@@ -2,6 +2,7 @@
 #include "core.h"
 #include "../../home/array.h"
 #include "../../data/trainers/leaders.h"
+#include "../pokemon/experience.h"
 
 //  Core components of the battle engine.
 
@@ -8766,6 +8767,11 @@ void FillInExpBar(void){
 
 }
 
+void FillInExpBar_Conv(uint8_t* hl, uint8_t b, const uint8_t* de) {
+    uint8_t pct = CalcExpBar_Conv(b, de);
+    PlaceExpBar_Conv(hl + 7, pct);
+}
+
 void CalcExpBar(void){
 //  Calculate the percent exp between this level and the next
 //  Level in b
@@ -8869,6 +8875,118 @@ done:
 
 }
 
+//  Calculate the percent exp between this level and the next
+uint8_t CalcExpBar_Conv(uint8_t b, const uint8_t* de){
+//  Level in b
+    // PUSH_DE;
+    // LD_D_B;
+    // PUSH_DE;
+    // CALLFAR(aCalcExpAtLevel);
+    uint32_t exp = CalcExpAtLevel_Conv(b);
+    // POP_DE;
+//  exp at current level gets pushed to the stack
+    // LD_HL(hMultiplicand);
+    // LD_A_hli;
+    // PUSH_AF;
+    // LD_A_hli;
+    // PUSH_AF;
+    // LD_A_hl;
+    // PUSH_AF;
+//  next level
+    // INC_D;
+    // CALLFAR(aCalcExpAtLevel);
+    uint32_t next = CalcExpAtLevel_Conv(b + 1);
+//  back up the next level exp, and subtract the two levels
+    // LD_HL(hMultiplicand + 2);
+    // LD_A_hl;
+    // LDH_addr_A(hMathBuffer + 2);
+    // POP_BC;
+    // SUB_A_B;
+    // LD_hld_A;
+    // LD_A_hl;
+    // LDH_addr_A(hMathBuffer + 1);
+    // POP_BC;
+    // SBC_A_B;
+    // LD_hld_A;
+    // LD_A_hl;
+    // LDH_addr_A(hMathBuffer);
+    // POP_BC;
+    // SBC_A_B;
+    // LD_hl_A;
+    // POP_DE;
+
+    // LD_HL(hMultiplicand + 1);
+    // LD_A_hli;
+    // PUSH_AF;
+    // LD_A_hl;
+    // PUSH_AF;
+    uint32_t l = next - exp;
+
+//  get the amount of exp remaining to the next level
+    uint32_t cur_exp = (de[0])
+        + (de[-1] << 8)
+        + (de[-2] << 16);
+
+    uint32_t h = cur_exp - exp;
+    // LD_A_de;
+    // DEC_DE;
+    // LD_C_A;
+    // LDH_A_addr(hMathBuffer + 2);
+    // SUB_A_C;
+    // LD_hld_A;
+    // LD_A_de;
+    // DEC_DE;
+    // LD_B_A;
+    // LDH_A_addr(hMathBuffer + 1);
+    // SBC_A_B;
+    // LD_hld_A;
+    // LD_A_de;
+    // LD_C_A;
+    // LDH_A_addr(hMathBuffer);
+    // SBC_A_C;
+    // LD_hld_A;
+    // XOR_A_A;
+    // LD_hl_A;
+    // LD_A(64);
+    // LDH_addr_A(hMultiplier);
+    // CALL(aMultiply);
+    // POP_AF;
+    // LD_C_A;
+    // POP_AF;
+    // LD_B_A;
+
+// loop:
+    // LD_A_B;
+    // AND_A_A;
+    // IF_Z goto done;
+    // SRL_B;
+    // RR_C;
+    // LD_HL(hProduct);
+    // SRL_hl;
+    // INC_HL;
+    // RR_hl;
+    // INC_HL;
+    // RR_hl;
+    // INC_HL;
+    // RR_hl;
+    // goto loop;
+
+
+// done:
+    // LD_A_C;
+    // LDH_addr_A(hDivisor);
+    // LD_B(4);
+    // CALL(aDivide);
+    // LDH_A_addr(hQuotient + 3);
+    // LD_B_A;
+    // LD_A(0x40);
+    // SUB_A_B;
+    // LD_B_A;
+    // RET;
+
+    return (uint8_t)((64 * h) / l);
+}
+
 void PlaceExpBar(void){
     LD_C(0x8);  // number of tiles
 
@@ -8905,6 +9023,63 @@ skip:
 finish:
     RET;
 
+}
+
+void PlaceExpBar_Conv(uint8_t* hl, uint8_t b){
+    // LD_C(0x8);  // number of tiles
+    uint8_t c = 0x8;
+
+    while(1)
+    {
+    // loop1:
+        // LD_A_B;
+        // SUB_A(0x8);
+        // IF_C goto next;
+        if(b < 0x8)
+            break;
+        // LD_B_A;
+        b -= 0x8;
+        // LD_A(0x6a);  // full bar
+        // LD_hld_A;
+        *(hl--) = 0x6a;
+        // DEC_C;
+        // IF_Z goto finish;
+        if(--c == 0)
+            return;
+        // goto loop1;
+    }
+
+
+// next:
+    // ADD_A(0x8);
+    // IF_Z goto loop2;
+    uint8_t a;
+    if(b != 0x0) {
+        // ADD_A(0x54);  // tile to the left of small exp bar tile
+        a = b + 0x54;
+    }
+    else {
+        a = 0x62;
+    }
+    // goto skip;
+
+
+    do {
+    // loop2:
+        // LD_A(0x62);  // empty bar
+
+    // skip:
+        // LD_hld_A;
+        *(hl--) = a;
+        // LD_A(0x62);  // empty bar
+        a = 0x62;
+        // DEC_C;
+        // IF_NZ goto loop2;
+    } while(--c != 0);
+
+
+// finish:
+    // RET;
 }
 
 void GetBattleMonBackpic(void){

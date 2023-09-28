@@ -283,11 +283,11 @@ void v_CGB_StatsScreenHPPals(void){
     // LD_BC(wTempMonDVs);
     // CALL(aGetPlayerOrMonPalettePointer);
     GetPlayerOrMonPalettePointer_Conv(palbuf, wram->wCurSpecies, wram->wTempMon.mon.DVs);
-    de = LoadPalette_White_Col1_Col2_Black_Conv(de, palbuf);
     // CALL(aLoadPalette_White_Col1_Col2_Black);  // mon palette
+    de = LoadPalette_White_Col1_Col2_Black_Conv(de, palbuf);
     // LD_HL(mExpBarPalette);
-    // CALL(aLoadPalette_White_Col1_Col2_Black);  // exp palette
     LoadPaletteAssetColorsToArray(palbuf, ExpBarPalette, 0, 2);
+    // CALL(aLoadPalette_White_Col1_Col2_Black);  // exp palette
     de = LoadPalette_White_Col1_Col2_Black_Conv(de, palbuf);
     // LD_HL(mStatsScreenPagePals);
     // LD_DE(wBGPals1 + PALETTE_SIZE * 3);

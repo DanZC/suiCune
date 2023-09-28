@@ -520,7 +520,7 @@ bool LoadStatsScreenPals_Conv(uint8_t c){
     if(hram->hCGB == 0)
         return false;
 
-    uint8_t pal_buf[6];
+    uint16_t pal_buf[3];
     LoadPaletteAssetColorsToArray(pal_buf, "gfx/stats/stats.pal", 0, 3);
     // LD_HL(mStatsScreenPals);
     // LD_B(0);
@@ -533,14 +533,14 @@ bool LoadStatsScreenPals_Conv(uint8_t c){
     // LDH_addr_A(rSVBK);
     // LD_A_hli;
     // LD_addr_A(wBGPals1 + PALETTE_SIZE * 0);
-    wram->wBGPals1[PALETTE_SIZE * 0] = pal_buf[(c-1) << 1];
+    wram->wBGPals1[PALETTE_SIZE * 0] = LOW(pal_buf[c-1]);
     // LD_addr_A(wBGPals1 + PALETTE_SIZE * 2);
-    wram->wBGPals1[PALETTE_SIZE * 2] = pal_buf[(c-1) << 1];
+    wram->wBGPals1[PALETTE_SIZE * 2] = LOW(pal_buf[c-1]);
     // LD_A_hl;
     // LD_addr_A(wBGPals1 + PALETTE_SIZE * 0 + 1);
-    wram->wBGPals1[PALETTE_SIZE * 0 + 1] = pal_buf[((c-1) << 1) + 1];
+    wram->wBGPals1[PALETTE_SIZE * 0 + 1] = HIGH(pal_buf[c-1]);
     // LD_addr_A(wBGPals1 + PALETTE_SIZE * 2 + 1);
-    wram->wBGPals1[PALETTE_SIZE * 0 + 1] = pal_buf[((c-1) << 1) + 1];
+    wram->wBGPals1[PALETTE_SIZE * 2 + 1] = HIGH(pal_buf[c-1]);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // CALL(aApplyPals);

@@ -3636,7 +3636,7 @@ uint8_t GetMaxPPOfMove_Conv(void* mon, uint8_t montype, uint8_t n){
     // LD_A(BANK(aMoves));
     // CALL(aGetFarByte);
     // LD_B_A;
-    uint8_t pp = Moves[*move - 1].pp;
+    uint8_t pp = Moves[*move].pp;
     // LD_DE(wStringBuffer1);
     // LD_de_A;
     // POP_HL;

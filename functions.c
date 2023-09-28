@@ -3753,4 +3753,14 @@ void init_function_pointers(void) {
     // REDIRECTED(GetMthMoveOfCurrentMon);
     // REDIRECTED(CantUseItemMessage);
     // REDIRECTED(HealHP_SFX_GFX);
+
+    // engine/pokemon/experience.c
+    REDIRECTED(CalcExpAtLevel);
+    REDIRECTED(CalcLevel);
+
+    // engine/pokemon/types.c
+    REDIRECTED(PrintMoveType);
+    REDIRECTED(PrintType);
+    REDIRECTED(PrintMonTypes);
+    REDIRECTED(GetTypeName);
 }
