@@ -11,5 +11,5 @@ const item_t MailItems[] = {
     BLUESKY_MAIL,
     MUSIC_MAIL,
     MIRAGE_MAIL,
-    0xff,
+    (item_t)-1,
 };

@@ -1351,7 +1351,6 @@ WindowPoppingErrorText:
     return v_InitVerticalMenuCursor();
 }
 
-#include "../../util/text_cmd.h"
 void Error_Cant_ExitMenu_Conv(void){
     // static const struct TextCmd WindowPoppingErrorText[] = {
     //     text_far(v_WindowPoppingErrorText),

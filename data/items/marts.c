@@ -1,23 +1,23 @@
 #include "../../constants.h"
 
-const uint8_t MartCherrygrove[] = {
+const item_t MartCherrygrove[] = {
     POTION,
     ANTIDOTE,
     PARLYZ_HEAL,
     AWAKENING,
-    0xff
+    (item_t)-1
 };
 
-const uint8_t MartCherrygroveDex[] = {
+const item_t MartCherrygroveDex[] = {
     POKE_BALL,
     POTION,
     ANTIDOTE,
     PARLYZ_HEAL,
     AWAKENING,
-    0xff
+    (item_t)-1
 };
 
-const uint8_t MartViolet[] = {
+const item_t MartViolet[] = {
     POKE_BALL,
     POTION,
     ESCAPE_ROPE,
@@ -28,10 +28,10 @@ const uint8_t MartViolet[] = {
     X_ATTACK,
     X_SPEED,
     FLOWER_MAIL,
-    0xff
+    (item_t)-1
 };
 
-const uint8_t MartAzalea[] = {
+const item_t MartAzalea[] = {
     CHARCOAL,
     POKE_BALL,
     POTION,
@@ -41,20 +41,20 @@ const uint8_t MartAzalea[] = {
     ANTIDOTE,
     PARLYZ_HEAL,
     FLOWER_MAIL,
-    0xff
+    (item_t)-1
 };
 
 
-const uint8_t MartCianwood[] = {
+const item_t MartCianwood[] = {
     POTION,
     SUPER_POTION,
     HYPER_POTION,
     FULL_HEAL,
     REVIVE,
-    0xff
+    (item_t)-1
 };
 
-const uint8_t MartGoldenrod2F1[] = {
+const item_t MartGoldenrod2F1[] = {
     POTION,
     SUPER_POTION,
     ANTIDOTE,
@@ -62,10 +62,10 @@ const uint8_t MartGoldenrod2F1[] = {
     AWAKENING,
     BURN_HEAL,
     ICE_HEAL,
-    0xff
+    (item_t)-1
 };
 
-const uint8_t MartGoldenrod2F2[] = {
+const item_t MartGoldenrod2F2[] = {
     POKE_BALL,
     GREAT_BALL,
     ESCAPE_ROPE,
@@ -74,10 +74,10 @@ const uint8_t MartGoldenrod2F2[] = {
     FULL_HEAL,
     POKE_DOLL,
     FLOWER_MAIL,
-    0xff
+    (item_t)-1
 };
 
-const uint8_t MartGoldenrod3F[] = {
+const item_t MartGoldenrod3F[] = {
 
     X_SPEED,
     X_SPECIAL,
@@ -86,56 +86,56 @@ const uint8_t MartGoldenrod3F[] = {
     DIRE_HIT,
     GUARD_SPEC,
     X_ACCURACY,
-    0xff
+    (item_t)-1
 };
 
-const uint8_t MartGoldenrod4F[] = {
+const item_t MartGoldenrod4F[] = {
 
     PROTEIN,
     IRON,
     CARBOS,
     CALCIUM,
     HP_UP,
-    0xff
+    (item_t)-1
 };
 
-const uint8_t MartGoldenrod5F1[] = {
+const item_t MartGoldenrod5F1[] = {
 
     TM_THUNDERPUNCH,
     TM_FIRE_PUNCH,
     TM_ICE_PUNCH,
-    0xff
+    (item_t)-1
 };
 
-const uint8_t MartGoldenrod5F2[] = {
-
-    TM_THUNDERPUNCH,
-    TM_FIRE_PUNCH,
-    TM_ICE_PUNCH,
-    TM_HEADBUTT,
-    0xff
-};
-
-const uint8_t MartGoldenrod5F3[] = {
-
-    TM_THUNDERPUNCH,
-    TM_FIRE_PUNCH,
-    TM_ICE_PUNCH,
-    TM_ROCK_SMASH,
-    0xff
-};
-
-const uint8_t MartGoldenrod5F4[] = {
+const item_t MartGoldenrod5F2[] = {
 
     TM_THUNDERPUNCH,
     TM_FIRE_PUNCH,
     TM_ICE_PUNCH,
     TM_HEADBUTT,
-    TM_ROCK_SMASH,
-    0xff
+    (item_t)-1
 };
 
-const uint8_t MartOlivine[] = {
+const item_t MartGoldenrod5F3[] = {
+
+    TM_THUNDERPUNCH,
+    TM_FIRE_PUNCH,
+    TM_ICE_PUNCH,
+    TM_ROCK_SMASH,
+    (item_t)-1
+};
+
+const item_t MartGoldenrod5F4[] = {
+
+    TM_THUNDERPUNCH,
+    TM_FIRE_PUNCH,
+    TM_ICE_PUNCH,
+    TM_HEADBUTT,
+    TM_ROCK_SMASH,
+    (item_t)-1
+};
+
+const item_t MartOlivine[] = {
 
     GREAT_BALL,
     SUPER_POTION,
@@ -146,10 +146,10 @@ const uint8_t MartOlivine[] = {
     ICE_HEAL,
     SUPER_REPEL,
     SURF_MAIL,
-    0xff
+    (item_t)-1
 };
 
-const uint8_t MartEcruteak[] = {
+const item_t MartEcruteak[] = {
 
     POKE_BALL,
     GREAT_BALL,
@@ -161,19 +161,19 @@ const uint8_t MartEcruteak[] = {
     BURN_HEAL,
     ICE_HEAL,
     REVIVE,
-    0xff
+    (item_t)-1
 };
 
-const uint8_t MartMahogany1[] = {
+const item_t MartMahogany1[] = {
 
     TINYMUSHROOM,
     SLOWPOKETAIL,
     POKE_BALL,
     POTION,
-    0xff
+    (item_t)-1
 };
 
-const uint8_t MartMahogany2[] = {
+const item_t MartMahogany2[] = {
 
     RAGECANDYBAR,
     GREAT_BALL,
@@ -184,10 +184,10 @@ const uint8_t MartMahogany2[] = {
     SUPER_REPEL,
     REVIVE,
     FLOWER_MAIL,
-    0xff
+    (item_t)-1
 };
 
-const uint8_t MartBlackthorn[] = {
+const item_t MartBlackthorn[] = {
 
     GREAT_BALL,
     ULTRA_BALL,
@@ -198,10 +198,10 @@ const uint8_t MartBlackthorn[] = {
     MAX_REPEL,
     X_DEFEND,
     X_ATTACK,
-    0xff
+    (item_t)-1
 };
 
-const uint8_t MartViridian[] = {
+const item_t MartViridian[] = {
 
     ULTRA_BALL,
     HYPER_POTION,
@@ -212,10 +212,10 @@ const uint8_t MartViridian[] = {
     AWAKENING,
     BURN_HEAL,
     FLOWER_MAIL,
-    0xff
+    (item_t)-1
 };
 
-const uint8_t MartPewter[] = {
+const item_t MartPewter[] = {
 
     GREAT_BALL,
     SUPER_POTION,
@@ -224,10 +224,10 @@ const uint8_t MartPewter[] = {
     PARLYZ_HEAL,
     AWAKENING,
     BURN_HEAL,
-    0xff
+    (item_t)-1
 };
 
-const uint8_t MartCerulean[] = {
+const item_t MartCerulean[] = {
 
     GREAT_BALL,
     ULTRA_BALL,
@@ -238,10 +238,10 @@ const uint8_t MartCerulean[] = {
     X_ATTACK,
     DIRE_HIT,
     SURF_MAIL,
-    0xff
+    (item_t)-1
 };
 
-const uint8_t MartLavender[] = {
+const item_t MartLavender[] = {
 
     GREAT_BALL,
     POTION,
@@ -251,10 +251,10 @@ const uint8_t MartLavender[] = {
     PARLYZ_HEAL,
     AWAKENING,
     BURN_HEAL,
-    0xff
+    (item_t)-1
 };
 
-const uint8_t MartVermilion[] = {
+const item_t MartVermilion[] = {
 
     ULTRA_BALL,
     SUPER_POTION,
@@ -264,10 +264,10 @@ const uint8_t MartVermilion[] = {
     AWAKENING,
     BURN_HEAL,
     LITEBLUEMAIL,
-    0xff
+    (item_t)-1
 };
 
-const uint8_t MartCeladon2F1[] = {
+const item_t MartCeladon2F1[] = {
 
     POTION,
     SUPER_POTION,
@@ -276,10 +276,10 @@ const uint8_t MartCeladon2F1[] = {
     REVIVE,
     SUPER_REPEL,
     MAX_REPEL,
-    0xff
+    (item_t)-1
 };
 
-const uint8_t MartCeladon2F2[] = {
+const item_t MartCeladon2F2[] = {
 
     POKE_BALL,
     GREAT_BALL,
@@ -291,36 +291,36 @@ const uint8_t MartCeladon2F2[] = {
     ICE_HEAL,
     AWAKENING,
     PARLYZ_HEAL,
-    0xff
+    (item_t)-1
 };
 
-const uint8_t MartCeladon3F[] = {
+const item_t MartCeladon3F[] = {
 
     TM_HIDDEN_POWER,
     TM_SUNNY_DAY,
     TM_PROTECT,
     TM_RAIN_DANCE,
     TM_SANDSTORM,
-    0xff
+    (item_t)-1
 };
 
-const uint8_t MartCeladon4F[] = {
+const item_t MartCeladon4F[] = {
     POKE_DOLL,
     LOVELY_MAIL,
     SURF_MAIL,
-    0xff
+    (item_t)-1
 };
 
-const uint8_t MartCeladon5F1[] = {
+const item_t MartCeladon5F1[] = {
     HP_UP,
     PROTEIN,
     IRON,
     CARBOS,
     CALCIUM,
-    0xff
+    (item_t)-1
 };
 
-const uint8_t MartCeladon5F2[] = {
+const item_t MartCeladon5F2[] = {
     X_ACCURACY,
     GUARD_SPEC,
     DIRE_HIT,
@@ -328,10 +328,10 @@ const uint8_t MartCeladon5F2[] = {
     X_DEFEND,
     X_SPEED,
     X_SPECIAL,
-    0xff
+    (item_t)-1
 };
 
-const uint8_t MartFuchsia[] = {
+const item_t MartFuchsia[] = {
     GREAT_BALL,
     ULTRA_BALL,
     SUPER_POTION,
@@ -339,10 +339,10 @@ const uint8_t MartFuchsia[] = {
     FULL_HEAL,
     MAX_REPEL,
     FLOWER_MAIL,
-    0xff
+    (item_t)-1
 };
 
-const uint8_t MartSaffron[] = {
+const item_t MartSaffron[] = {
     GREAT_BALL,
     ULTRA_BALL,
     HYPER_POTION,
@@ -351,20 +351,20 @@ const uint8_t MartSaffron[] = {
     X_ATTACK,
     X_DEFEND,
     FLOWER_MAIL,
-    0xff
+    (item_t)-1
 };
 
-const uint8_t MartMtMoon[] = {
+const item_t MartMtMoon[] = {
     POKE_DOLL,
     FRESH_WATER,
     SODA_POP,
     LEMONADE,
     REPEL,
     PORTRAITMAIL,
-    0xff
+    (item_t)-1
 };
 
-const uint8_t MartIndigoPlateau[] = {
+const item_t MartIndigoPlateau[] = {
     ULTRA_BALL,
     MAX_REPEL,
     HYPER_POTION,
@@ -372,24 +372,24 @@ const uint8_t MartIndigoPlateau[] = {
     FULL_RESTORE,
     REVIVE,
     FULL_HEAL,
-    0xff
+    (item_t)-1
 };
 
-const uint8_t MartUnderground[] = {
+const item_t MartUnderground[] = {
     ENERGYPOWDER,
     ENERGY_ROOT,
     HEAL_POWDER,
     REVIVAL_HERB,
-    0xff
+    (item_t)-1
 };
 
-const uint8_t DefaultMart[] = {
+const item_t DefaultMart[] = {
     POKE_BALL,
     POTION,
-    0xff
+    (item_t)-1
 };
 
-const uint8_t* const Marts[] = {
+const item_t* const Marts[] = {
     [MART_CHERRYGROVE]     = MartCherrygrove,
     [MART_CHERRYGROVE_DEX] = MartCherrygroveDex,
     [MART_VIOLET]          = MartViolet,

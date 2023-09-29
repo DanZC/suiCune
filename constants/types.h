@@ -913,7 +913,7 @@ struct BattleBGEffect
 
 struct CustomMartItem
 {
-    uint8_t id;
+    item_t id;
     uint16_t price;
 };
 

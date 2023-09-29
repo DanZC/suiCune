@@ -93,7 +93,7 @@ asset_s LoadTextAsset(const char* filename) {
     PHYSFS_close(file);
     buf[size] = '\0';
     #else 
-    FILE* file = fopen(filename, "rb");
+    FILE* file = fopen(filename, "r");
     if(!file) {
         fprintf(stderr, "LoadAsset Error");
         return (asset_s){NULL, 0};

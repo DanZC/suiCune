@@ -1,3 +1,3 @@
 #pragma once
 
-extern const uint8_t* const Marts[];
+extern const item_t* const Marts[];

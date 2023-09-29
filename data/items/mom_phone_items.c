@@ -9,7 +9,7 @@ struct MomPhoneItem {
     uint32_t moneyToTrigger;
     uint32_t cost;
     uint8_t kind;
-    uint8_t item;
+    item_t item;
 };
 
 const struct MomPhoneItem MomItems_1[] = {

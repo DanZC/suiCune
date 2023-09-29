@@ -24,6 +24,7 @@
 #include "peanut_gb.h"
 #include "../../home/lcd.h"
 #include "rom_patches.h"
+#include "../../util/record.h"
 
 struct gb_s gb;
 #define ROM_SIZE 0x200000
@@ -3324,6 +3325,18 @@ void get_input(void) {
                         gb.direct.joypad_bits.select = 0;
                         break;
 
+                    case SDLK_INSERT:
+                        TakeScreenshot(NULL);
+                        break;
+
+                    case SDLK_F7:
+                        StartRecording(NULL, NULL);
+                        break;
+
+                    case SDLK_F5:
+                        StopAndSaveRecording();
+                        break;
+
                     case SDLK_z:
                         gb.direct.joypad_bits.a = 0;
                         break;
@@ -3432,6 +3445,9 @@ void sdl_loop(void) {
         rtc_timer -= 1000;
         gb_tick_rtc();
     }
+
+    // If we're recording, copy the framebuffer to video buffer and keep going.
+    RecordFrame();
 
     /* Copy frame buffer to SDL screen. */
     SDL_UpdateTexture(texture, NULL, &priv.fb, LCD_WIDTH * sizeof(uint16_t));

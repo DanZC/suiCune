@@ -2,7 +2,7 @@
 
 // referenced by TryEnemyFlee and FastBallMultiplier
 
-const uint8_t SometimesFleeMons[] = {
+const species_t SometimesFleeMons[] = {
     MAGNEMITE,
     GRIMER,
     TANGELA,
@@ -16,10 +16,10 @@ const uint8_t SometimesFleeMons[] = {
     UNOWN,
     SNUBBULL,
     HERACROSS,
-    0xff,
+    -1,
 };
 
-const uint8_t OftenFleeMons[] = {
+const species_t OftenFleeMons[] = {
     CUBONE,
     ARTICUNO,
     ZAPDOS,
@@ -31,13 +31,13 @@ const uint8_t OftenFleeMons[] = {
     -1,
 };
 
-const uint8_t AlwaysFleeMons[] = {
+const species_t AlwaysFleeMons[] = {
     RAIKOU,
     ENTEI,
     -1,
 };
 
-const uint8_t* FleeMons[] = {
+const species_t* FleeMons[] = {
     SometimesFleeMons,
     OftenFleeMons,
     AlwaysFleeMons

@@ -66,3 +66,7 @@ deps/
 .DS_STORE
 tools/polished-map-master/
 tools/blk_to_tmx.py
+
+# screenshots and recordings
+screenshot*.bmp
+recording*.mp4
