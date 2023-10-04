@@ -47,6 +47,7 @@ ENDM*/
 /*fast_slide_step: MACRO
         db movement_fast_slide_step | \1
 ENDM*/
+#define fast_slide_step(_dir) (movement_fast_slide_step | _dir)
 
 #define movement_turn_away 0x20
 /*turn_away: MACRO
@@ -72,6 +73,7 @@ ENDM*/
 /*jump_step: MACRO
         db movement_jump_step | \1
 ENDM*/
+#define jump_step(_dir) (movement_jump_step | _dir)
 
 #define movement_fast_jump_step 0x34
 /*fast_jump_step: MACRO

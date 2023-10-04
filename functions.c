@@ -168,7 +168,7 @@ void init_function_pointers(void) {
     REDIRECTED(SafeHDMATransfer);
     REDIRECTED(Copy2bpp);
     REDIRECTED(DecompressRequest2bpp);
-    REDIRECTED(UpdatePlayerSprite);
+    CONVERTED(UpdatePlayerSprite);
     REDIRECTED(LoadStandardFont);
     REDIRECTED(Request1bpp);
     REDIRECTED(Request2bpp);
@@ -2712,7 +2712,7 @@ void init_function_pointers(void) {
     // REDIRECTED(Script_loadtemptrainer);
     // REDIRECTED(Script_getname);
     // REDIRECTED(Script_end);
-    // REDIRECTED(Script_newloadmap);
+    REDIRECTED(Script_newloadmap);
     // REDIRECTED(Script_checkver);
     // REDIRECTED(Script_writemem);
     // REDIRECTED(Script_stopandsjump);
@@ -2840,7 +2840,7 @@ void init_function_pointers(void) {
     // REDIRECTED(PlayerMovementPointers);
     // REDIRECTED(ChangeDirectionScript);
     // REDIRECTED(InvalidEventScript);
-    // REDIRECTED(WarpToSpawnPoint);
+    CONVERTED(WarpToSpawnPoint);
     // REDIRECTED(LandAfterPitfallScript);
     // REDIRECTED(EdgeWarpScript);
     // REDIRECTED(EnableCoordEvents);
@@ -2861,7 +2861,7 @@ void init_function_pointers(void) {
     // REDIRECTED(EnableWarpsConnxns);
     // REDIRECTED(HatchEggScript);
     // REDIRECTED(DoPlayerEvent);
-    // REDIRECTED(ResetOverworldDelay);
+    CONVERTED(ResetOverworldDelay);
     // REDIRECTED(PlayerEvents);
     // REDIRECTED(StartMap);
     // REDIRECTED(HandleMap);
@@ -3763,4 +3763,78 @@ void init_function_pointers(void) {
     REDIRECTED(PrintType);
     REDIRECTED(PrintMonTypes);
     REDIRECTED(GetTypeName);
+
+    // engine/events/specials.c
+    // REDIRECTED(CheckLuckyNumberShowFlag);
+    // REDIRECTED(MapRadio);
+    // REDIRECTED(CheckCoinsAndCoinCase);
+    // REDIRECTED(ResetLuckyNumberShowFlag);
+    // REDIRECTED(GetMysteryGiftItem);
+    // REDIRECTED(PrintDiploma);
+    // REDIRECTED(CheckMysteryGift);
+    // REDIRECTED(UnusedCheckUnusedTwoDayTimer);
+    // REDIRECTED(UnusedSetSeenMon);
+    // REDIRECTED(GameCornerPrizeMonCheckDex);
+    // REDIRECTED(Special);
+    // REDIRECTED(PlayersHousePC);
+    // REDIRECTED(UnownPrinter);
+    // REDIRECTED(CardFlip);
+    // REDIRECTED(ClearBGPalettesBufferScreen);
+    // REDIRECTED(StoreSwarmMapIndices);
+    // REDIRECTED(SlotMachine);
+    // REDIRECTED(ScriptReturnCarry);
+    // REDIRECTED(CheckPokerus);
+    // REDIRECTED(NameRival);
+    // REDIRECTED(DisplayLinkRecord);
+    // REDIRECTED(StartGameCornerGame);
+    // REDIRECTED(Diploma);
+    // REDIRECTED(ActivateFishingSwarm);
+    // REDIRECTED(UnusedMemoryGame);
+    // REDIRECTED(TrainerHouse);
+    // REDIRECTED(FindPartyMonAtLeastThatHappy);
+    // REDIRECTED(OverworldTownMap);
+    // REDIRECTED(GameboyCheck);
+    // REDIRECTED(PlayCurMonCry);
+    // REDIRECTED(SnorlaxAwake);
+    // REDIRECTED(SetPlayerPalette);
+    // REDIRECTED(FindPartyMonAboveLevel);
+    // REDIRECTED(FadeOutMusic);
+    // REDIRECTED(UnusedDummySpecial);
+    // REDIRECTED(FindPartyMonThatSpecies);
+    // REDIRECTED(FoundNone);
+    // REDIRECTED(FindPartyMonThatSpeciesYourTrainerID);
+    // REDIRECTED(NameRater);
+    // REDIRECTED(FoundOne);
+    // REDIRECTED(UnownPuzzle);
+    // REDIRECTED(BugContestJudging);
+
+    // engine/overworld/player_movement.c
+    // REDIRECTED(StopPlayerForEvent);
+    CONVERTED(DoPlayerMovement);
+    // REDIRECTED(CheckStandingOnIce);
+
+    // engine/overworld/npc_movement.c
+    // REDIRECTED(GetSideWallDirectionMask);
+    // REDIRECTED(CanObjectMoveInDirection);
+    // REDIRECTED(HasObjectReachedMovementLimit);
+    // REDIRECTED(CanObjectLeaveTile);
+    // REDIRECTED(IsNPCAtCoord);
+    // REDIRECTED(WillObjectRemainOnWater);
+    // REDIRECTED(WillObjectBumpIntoSomeoneElse);
+    // REDIRECTED(IsNPCAtPlayerCoord);
+    // REDIRECTED(WillObjectBumpIntoWater);
+    // REDIRECTED(IsObjectFacingSomeoneElse);
+    // REDIRECTED(IsObjectMovingOffEdgeOfScreen);
+    // REDIRECTED(WillObjectBumpIntoTile);
+    // REDIRECTED(CheckFacingObject);
+    // REDIRECTED(WillObjectBumpIntoLand);
+    // REDIRECTED(WillObjectIntersectBigObject);
+
+    // engine/overworld/tile_events.c
+    // REDIRECTED(CheckDirectionalWarp);
+    // REDIRECTED(CheckGrassCollision);
+    // REDIRECTED(CheckCutCollision);
+    REDIRECTED(GetWarpSFX);
+    // REDIRECTED(CheckWarpCollision);
+    // REDIRECTED(CheckWarpFacingDown);
 }

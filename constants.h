@@ -63,6 +63,7 @@ extern void (*convertedFunc[])(void);
 #include "constants/battle_tower_constants.h"
 
 #include "constants/types.h"
+#include "data/events/special_pointers.h"
 
 #include "vram.h"
 #include "wram.h"

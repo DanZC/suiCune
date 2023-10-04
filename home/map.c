@@ -4,6 +4,10 @@
 #include "array.h"
 #include "gfx.h"
 #include "palettes.h"
+#include "text.h"
+#include "window.h"
+#include "tilemap.h"
+#include "../engine/overworld/tile_events.h"
 #include "../engine/overworld/load_map_part.h"
 
 //  Functions dealing with rendering and interacting with maps.
@@ -417,12 +421,45 @@ void CheckWarpTile(void){
 
 }
 
+bool CheckWarpTile_Conv(void){
+    // CALL(aGetDestinationWarpNumber);
+    // RET_NC ;
+    struct FlagA res = GetDestinationWarpNumber_Conv();
+    if(!res.flag)
+        return false;
+
+    // PUSH_BC;
+    // FARCALL(aCheckDirectionalWarp);
+    // POP_BC;
+    // RET_NC ;
+    if(CheckDirectionalWarp_Conv())
+        return true;
+
+    // CALL(aCopyWarpData);
+    CopyWarpData_Conv(res.a);
+    // SCF;
+    // RET;
+    return true;
+}
+
 void WarpCheck(void){
     CALL(aGetDestinationWarpNumber);
     RET_NC ;
     CALL(aCopyWarpData);
     RET;
 
+}
+
+bool WarpCheck_Conv(void){
+    // CALL(aGetDestinationWarpNumber);
+    // RET_NC ;
+    struct FlagA res = GetDestinationWarpNumber_Conv();
+    if(!res.flag)
+        return false;
+    // CALL(aCopyWarpData);
+    // RET;
+    CopyWarpData_Conv(res.a);
+    return true;
 }
 
 void GetDestinationWarpNumber(void){
@@ -506,6 +543,106 @@ IncreaseHLTwice:
 
 }
 
+static_assert(sizeof(struct WarpEventData) == WARP_EVENT_SIZE);
+
+static struct FlagA GetDestinationWarpNumber_Function(void) {
+    // LD_A_addr(wPlayerStandingMapY);
+    // SUB_A(4);
+    // LD_E_A;
+    uint8_t e = wram->wPlayerStruct.nextMapY - 4;
+    // LD_A_addr(wPlayerStandingMapX);
+    // SUB_A(4);
+    // LD_D_A;
+    uint8_t d = wram->wPlayerStruct.nextMapX - 4;
+    // LD_A_addr(wCurMapWarpCount);
+    // AND_A_A;
+    // RET_Z ;
+    if(wram->wCurMapWarpCount == 0)
+        return flag_a(0xff, false);
+
+    // LD_C_A;
+    uint8_t c = wram->wCurMapWarpCount;
+    // LD_HL(wCurMapWarpsPointer);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    const struct WarpEventData* hl = GBToRAMAddr(wram->wCurMapWarpsPointer);
+
+    do {
+    // loop:
+        // PUSH_HL;
+        // LD_A_hli;
+        // CP_A_E;
+        // IF_NZ goto next;
+        // LD_A_hli;
+        // CP_A_D;
+        // IF_NZ goto next;
+        // goto found_warp;
+        if(hl->y == e && hl->x == d) {
+        // found_warp:
+            // POP_HL;
+            // CALL(aGetDestinationWarpNumber_IncreaseHLTwice);
+            // RET_NC ;  // never encountered
+
+            // LD_A_addr(wCurMapWarpCount);
+            // INC_A;
+            // SUB_A_C;
+            // LD_C_A;
+            uint8_t a = (wram->wCurMapWarpCount + 1) - c;
+            // SCF;
+            // RET;
+            return flag_a(a, true);
+
+
+        // IncreaseHLTwice:
+            // INC_HL;
+            // INC_HL;
+            // SCF;
+            // RET;
+        }
+
+
+    // next:
+        // POP_HL;
+        // LD_A(WARP_EVENT_SIZE);
+        // ADD_A_L;
+        // LD_L_A;
+        // IF_NC goto okay;
+        // INC_H;
+
+
+    // okay:
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(hl++, --c != 0);
+    // XOR_A_A;
+    // RET;
+    return flag_a(0xff, false);
+}
+
+struct FlagA GetDestinationWarpNumber_Conv(void){
+    // FARCALL(aCheckWarpCollision);
+    // RET_NC ;
+    if(!CheckWarpCollision_Conv())
+        return flag_a(0xff, false);
+
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+    uint8_t bank = hram->hROMBank;
+
+    // CALL(aSwitchToMapScriptsBank);
+    SwitchToMapScriptsBank_Conv();
+    // CALL(aGetDestinationWarpNumber_GetDestinationWarpNumber);
+    struct FlagA res = GetDestinationWarpNumber_Function();
+
+    // POP_DE;
+    // LD_A_D;
+    // RST(aBankswitch);
+    Bankswitch_Conv(bank);
+    // RET;
+    return res;
+}
+
 void CopyWarpData(void){
     LDH_A_addr(hROMBank);
     PUSH_AF;
@@ -555,6 +692,80 @@ skip:
     SCF;
     RET;
 
+}
+
+static void CopyWarpData_Function(uint8_t c) {
+    // PUSH_BC;
+    // LD_HL(wCurMapWarpsPointer);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    const struct WarpEventData* hl = GBToRAMAddr(wram->wCurMapWarpsPointer);
+    // LD_A_C;
+    // DEC_A;
+    // LD_BC(WARP_EVENT_SIZE);
+    // CALL(aAddNTimes);
+    hl += c - 1;
+    // LD_BC(2);  // warp number
+    // ADD_HL_BC;
+    // LD_A_hli;
+    uint8_t a = hl->warpNumber;
+    // CP_A(-1);
+    // IF_NZ goto skip;
+    if(a == 0xff) {
+        // LD_HL(wBackupWarpNumber);
+        // LD_A_hli;
+        // POP_BC;
+        // LD_addr_A(wNextWarp);
+        wram->wNextWarp = wram->wBackupWarpNumber;
+        // LD_A_hli;
+        // LD_addr_A(wNextMapGroup);
+        wram->wNextMapGroup = wram->wBackupMapGroup;
+        // LD_A_hli;
+        // LD_addr_A(wNextMapNumber);
+        wram->wNextMapNumber = wram->wBackupMapNumber;
+    }
+    else {
+    // skip:
+        // POP_BC;
+        // LD_addr_A(wNextWarp);
+        wram->wNextWarp = a;
+        // LD_A_hli;
+        // LD_addr_A(wNextMapGroup);
+        wram->wNextMapGroup = hl->mapGroup;
+        // LD_A_hli;
+        // LD_addr_A(wNextMapNumber);
+        wram->wNextMapNumber = hl->mapNumber;
+    }
+
+    // LD_A_C;
+    // LD_addr_A(wPrevWarp);
+    wram->wPrevWarp = c;
+    // LD_A_addr(wMapGroup);
+    // LD_addr_A(wPrevMapGroup);
+    wram->wPrevMapGroup = wram->wMapGroup;
+    // LD_A_addr(wMapNumber);
+    // LD_addr_A(wPrevMapNumber);
+    wram->wPrevMapNumber = wram->wMapNumber;
+    // SCF;
+    // RET;
+}
+
+void CopyWarpData_Conv(uint8_t c){
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+    uint8_t bank = hram->hROMBank;
+
+    // CALL(aSwitchToMapScriptsBank);
+    SwitchToMapScriptsBank_Conv();
+    // CALL(aCopyWarpData_CopyWarpData);
+    CopyWarpData_Function(c);
+
+    // POP_AF;
+    // RST(aBankswitch);
+    Bankswitch_Conv(bank);
+    // SCF;
+    // RET;
 }
 
 void CheckOutdoorMap(void){
@@ -1252,7 +1463,7 @@ void CallScript(void){
 
 }
 
-void CallScript_Conv(uint8_t a, uint16_t hl){
+uint8_t CallScript_Conv(uint8_t a, uint16_t hl){
 //  Call a script at a:hl.
 
     // LD_addr_A(wScriptBank);
@@ -1269,6 +1480,7 @@ void CallScript_Conv(uint8_t a, uint16_t hl){
 
     // SCF;
     // RET;
+    return PLAYEREVENT_MAPSCRIPT;
 }
 
 void CallMapScript(void){
@@ -1281,13 +1493,13 @@ void CallMapScript(void){
 
 }
 
-void CallMapScript_Conv(uint16_t hl){
+uint8_t CallMapScript_Conv(uint16_t hl){
 //  Call a script at hl in the current bank if there isn't already a script running
     // LD_A_addr(wScriptRunning);
     // AND_A_A;
     // RET_NZ ;
-    if(gb_read(wScriptRunning) != 0)
-        return;
+    if(wram->wScriptRunning != 0)
+        return 0;
     
     // CALL(aGetMapScriptsBank);
     // JR(mCallScript);
@@ -1391,6 +1603,35 @@ void MapTextbox(void){
     RST(aBankswitch);
     RET;
 
+}
+
+void MapTextbox_Conv(const struct TextCmd* text){
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+
+    // LD_A_B;
+    // RST(aBankswitch);
+
+    // PUSH_HL;
+    // CALL(aSpeechTextbox);
+    SpeechTextbox_Conv2();
+    // CALL(aSafeUpdateSprites);
+    SafeUpdateSprites_Conv();
+    // LD_A(1);
+    // LDH_addr_A(hOAMUpdate);
+    hram->hOAMUpdate = 1;
+    // CALL(aApplyTilemap);
+    ApplyTilemap_Conv();
+    // POP_HL;
+    // CALL(aPrintTextboxText);
+    PrintTextboxText_Conv2(text);
+    // XOR_A_A;
+    // LDH_addr_A(hOAMUpdate);
+    hram->hOAMUpdate = 0;
+
+    // POP_AF;
+    // RST(aBankswitch);
+    // RET;
 }
 
 void Call_a_de(void){

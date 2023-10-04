@@ -26,6 +26,7 @@ void SpecialMapMusic(void);
 void GetMapMusic_MaybeSpecial(void);
 void PlaceBCDNumberSprite(void);
 void CheckSFX(void);
+bool CheckSFX_Conv(void);
 void TerminateExpBarSound(void);
 void ChannelsOff(void);
 void SFXChannelsOff(void);

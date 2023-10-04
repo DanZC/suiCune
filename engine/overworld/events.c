@@ -1,6 +1,9 @@
 #include "../../constants.h"
 #include "../../util/scripting.h"
+#include "../../util/scripting_macros.h"
 #include "events.h"
+#include "../../home/map.h"
+#include "player_movement.h"
 
 // INCLUDE "constants.asm"
 
@@ -247,11 +250,13 @@ void MaxOverworldDelay(void){
     return ResetOverworldDelay();
 }
 
-void ResetOverworldDelay(void){
-    LD_A_addr(mMaxOverworldDelay);
-    LD_addr_A(wOverworldDelay);
-    RET;
+#define MAX_OVERWORLD_DELAY 2
 
+void ResetOverworldDelay(void){
+    // LD_A_addr(mMaxOverworldDelay);
+    // LD_addr_A(wOverworldDelay);
+    wram->wOverworldDelay = MAX_OVERWORLD_DELAY;
+    // RET;
 }
 
 void NextOverworldFrame(void){
@@ -922,6 +927,84 @@ void PlayerMovement(void){
 
 }
 
+struct FlagA PlayerMovement_Conv(void){
+    // FARCALL(aDoPlayerMovement);
+    // LD_A_C;
+    uint8_t a = DoPlayerMovement_Conv();
+    // LD_HL(mPlayerMovementPointers);
+    // RST(aJumpTable);
+    switch(a) {
+    //  entries correspond to PLAYERMOVEMENT_* constants
+        //table_width ['2', 'PlayerMovementPointers']
+        //dw ['.normal'];
+        //dw ['.warp'];
+        //dw ['.turn'];
+        //dw ['.force_turn'];
+        //dw ['.finish'];
+        //dw ['.continue'];
+        //dw ['.exit_water'];
+        //dw ['.jump'];
+        //assert_table_length ['NUM_PLAYER_MOVEMENTS']
+
+    case PLAYERMOVEMENT_NORMAL:
+    // normal:
+    case PLAYERMOVEMENT_FINISH:
+    // finish:
+        // XOR_A_A;
+        // LD_C_A;
+        // RET;
+        return (struct FlagA){.a = 0, .flag = false};
+
+    case PLAYERMOVEMENT_JUMP:
+    // jump:
+        // CALL(aSetMinTwoStepWildEncounterCooldown);
+        // XOR_A_A;
+        // LD_C_A;
+        // RET;
+        return (struct FlagA){.a = 0, .flag = false};
+
+    case PLAYERMOVEMENT_WARP:
+    // warp:
+        // LD_A(PLAYEREVENT_WARP);
+        // LD_C_A;
+        // SCF;
+        // RET;
+        return (struct FlagA){.a = PLAYEREVENT_WARP, .flag = true};
+
+    case PLAYERMOVEMENT_TURN:
+    // turn:
+        // LD_A(PLAYEREVENT_JOYCHANGEFACING);
+        // LD_C_A;
+        // SCF;
+        // RET;
+        return (struct FlagA){.a = PLAYEREVENT_JOYCHANGEFACING, .flag = true};
+
+    case PLAYERMOVEMENT_FORCE_TURN:
+    // force_turn:
+    //  force the player to move in some direction
+        // LD_A(BANK(aScript_ForcedMovement));
+        // LD_HL(mScript_ForcedMovement);
+        // CALL(aCallScript);
+        // LD_C_A;
+        // SCF;
+        // RET;
+        return (struct FlagA){.a = CallScript_Conv(BANK(aScript_ForcedMovement), mScript_ForcedMovement), .flag = true};
+
+    case PLAYERMOVEMENT_CONTINUE:
+    // continue_:
+    case PLAYERMOVEMENT_EXIT_WATER:
+    // exit_water:
+        // LD_A(-1);
+        // LD_C_A;
+        // AND_A_A;
+        // RET;
+        return (struct FlagA){.a = 0xff, .flag = false};
+    }
+    // LD_A_C;
+    // RET;
+    return (struct FlagA){.a = 0, .flag = false};
+}
+
 void PlayerMovementPointers(void){
 //  entries correspond to PLAYERMOVEMENT_* constants
     //table_width ['2', 'PlayerMovementPointers']
@@ -1195,14 +1278,12 @@ void PlayerEventScriptPointers(void){
     //dba ['ChangeDirectionScript']  // PLAYEREVENT_JOYCHANGEFACING
     //dba ['InvalidEventScript']  // (NUM_PLAYER_EVENTS)
     //assert_table_length ['NUM_PLAYER_EVENTS + 1']
-
-    return InvalidEventScript();
 }
 
-void InvalidEventScript(void){
+bool InvalidEventScript(script_s* s){
+    SCRIPT_BEGIN
     //end ['?']
-
-    return UnusedPlayerEventScript();
+    SCRIPT_END
 }
 
 void UnusedPlayerEventScript(void){
@@ -1267,11 +1348,12 @@ void ChangeDirectionScript(void){
 }
 
 void WarpToSpawnPoint(void){
-    LD_HL(wStatusFlags2);
-    RES_hl(STATUSFLAGS2_SAFARI_GAME_F);
-    RES_hl(STATUSFLAGS2_BUG_CONTEST_TIMER_F);
-    RET;
-
+    // LD_HL(wStatusFlags2);
+    // RES_hl(STATUSFLAGS2_SAFARI_GAME_F);
+    // RES_hl(STATUSFLAGS2_BUG_CONTEST_TIMER_F);
+    // RET;
+    bit_reset(wram->wStatusFlags2, STATUSFLAGS2_SAFARI_GAME_F);
+    bit_reset(wram->wStatusFlags2, STATUSFLAGS2_BUG_CONTEST_TIMER_F);
 }
 
 void RunMemScript(void){

@@ -158,6 +158,6 @@ void PrintHoursMins_Conv(uint8_t* de, uint8_t b, uint8_t c){
     // INC_HL;
     // CALL(aPlaceString);
     PlaceStringSimple(Utf8ToCrystal(am_pm_str), hl + 1);
-    // PlaceString_Conv(&(struct TextCmdState){.de = Utf8ToCrystal(am_pm_str), .hl = hl + 1, .bc = (b << 8) | c}, hl + 1);
+    // PlaceString_Conv(&(struct TextPrintState){.de = Utf8ToCrystal(am_pm_str), .hl = hl + 1, .bc = (b << 8) | c}, hl + 1);
     // RET;
 }

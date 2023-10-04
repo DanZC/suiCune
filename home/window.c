@@ -187,7 +187,7 @@ void v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv(void){
     hram->hOAMUpdate = 0x1;
 
     // FARCALL(aOpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
-    farcall(OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
+    OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv();
 
     // POP_AF;
     // LDH_addr_A(hOAMUpdate);

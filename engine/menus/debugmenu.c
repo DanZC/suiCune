@@ -169,7 +169,8 @@ void Handler_Anime(void) {
 
 void Handler_Graphics(void) {
     // TODO: Implement this function
-    DebugMenu_GFXTest();
+    // DebugMenu_GFXTest();
+    ShowTestText();
     PlayMusic_Conv(DEBUG_MENU_MUSIC);
 }
 

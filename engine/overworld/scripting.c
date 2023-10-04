@@ -8,11 +8,14 @@
 #include "../../home/item.h"
 #include "../../home/map_objects.h"
 #include "../../home/joypad.h"
+#include "../../home/window.h"
 #include "../battle/read_trainer_party.h"
 #include "../events/engine_flags.h"
 #include "landmarks.h"
 #include "overworld.h"
+#include "../events/specials.h"
 
+static const struct TextCmd* lScriptText = NULL;
 //  Event scripting commands.
 
 void EnableScriptMode(void){
@@ -522,6 +525,17 @@ void Script_special(void){
 
 }
 
+void Script_special_Conv(script_s* s, uint16_t de){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // LD_E_A;
+    // CALL(aGetScriptByte);
+    // LD_D_A;
+    // FARCALL(aSpecial);
+    // RET;
+    Special_Conv(de);
+}
+
 void Script_memcallasm(void){
     CALL(aGetScriptByte);
     LD_L_A;
@@ -551,6 +565,20 @@ void Script_jumptextfaceplayer(void){
 
 }
 
+void Script_jumptextfaceplayer_Conv(script_s* s, const struct TextCmd* text){
+    // LD_A_addr(wScriptBank);
+    // LD_addr_A(wScriptTextBank);
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wScriptTextAddr);
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wScriptTextAddr + 1);
+    lScriptText = text;
+    // LD_B(BANK(aJumpTextFacePlayerScript));
+    // LD_HL(mJumpTextFacePlayerScript);
+    // JP(mScriptJump);
+    Script_Goto(s, JumpTextFacePlayerScript);
+}
+
 void Script_jumptext(void){
     LD_A_addr(wScriptBank);
     LD_addr_A(wScriptTextBank);
@@ -562,6 +590,20 @@ void Script_jumptext(void){
     LD_HL(mJumpTextScript);
     JP(mScriptJump);
 
+}
+
+void Script_jumptext_Conv(script_s* s, const struct TextCmd* text){
+    // LD_A_addr(wScriptBank);
+    // LD_addr_A(wScriptTextBank);
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wScriptTextAddr);
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wScriptTextAddr + 1);
+    lScriptText = text;
+    // LD_B(BANK(aJumpTextScript));
+    // LD_HL(mJumpTextScript);
+    // JP(mScriptJump);
+    Script_Goto(s, JumpTextScript);
 }
 
 #include "../../util/scripting_macros.h"
@@ -614,6 +656,19 @@ void Script_writetext(void){
 
 }
 
+void Script_writetext_Conv(script_s* s, const struct TextCmd* text){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // LD_L_A;
+    // CALL(aGetScriptByte);
+    // LD_H_A;
+    // LD_A_addr(wScriptBank);
+    // LD_B_A;
+    // CALL(aMapTextbox);
+    // RET;
+    return MapTextbox_Conv(text);
+}
+
 void Script_farwritetext(void){
     CALL(aGetScriptByte);
     LD_B_A;
@@ -662,7 +717,7 @@ void Script_repeattext_Conv(script_s* s, uint16_t hl){
     // LD_A_L;
     // CP_A(-1);
     // IF_NZ goto done;
-    if(hl == 0xffff)
+    if(hl != 0xffff)
         return;
     // LD_HL(wScriptTextBank);
     // LD_A_hli;
@@ -670,9 +725,10 @@ void Script_repeattext_Conv(script_s* s, uint16_t hl){
     // LD_A_hli;
     // LD_H_hl;
     // LD_L_A;
-    REG_B = wram->wScriptTextBank;
-    REG_HL = wram->wScriptTextAddr;
-    CALL(aMapTextbox);
+    // REG_B = wram->wScriptTextBank;
+    // REG_HL = wram->wScriptTextAddr;
+    // CALL(aMapTextbox);
+    MapTextbox_Conv(lScriptText);
     // RET;
 
 
@@ -3300,7 +3356,8 @@ void Script_opentext(void){
 
 void Script_opentext_Conv(script_s* s){
     (void)s;
-    CALL(aOpenText);
+    // CALL(aOpenText);
+    OpenText_Conv();
     // RET;
 }
 
@@ -3309,6 +3366,14 @@ void Script_refreshscreen(void){
     CALL(aGetScriptByte);
     RET;
 
+}
+
+void Script_refreshscreen_Conv(script_s* s){
+    (void)s;
+    // CALL(aRefreshScreen);
+    // CALL(aGetScriptByte);
+    // RET;
+    RefreshScreen_Conv();
 }
 
 void Script_writeunusedbyte(void){
@@ -3334,8 +3399,10 @@ void Script_closetext(void){
 
 void Script_closetext_Conv(script_s* s){
     (void)s;
-    CALL(av_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
-    CALL(aCloseText);
+    // CALL(av_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
+    v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv();
+    // CALL(aCloseText);
+    CloseText_Conv();
     // RET;
 }
 

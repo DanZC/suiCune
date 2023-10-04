@@ -730,6 +730,39 @@ void CopyNextCoordsTileToStandingCoordsTile(void) {
     RET;
 }
 
+uint8_t CopyNextCoordsTileToStandingCoordsTile_Conv(struct Object* bc) {
+    // SET_PC(aCopyNextCoordsTileToStandingCoordsTile);
+    // LD_HL(OBJECT_NEXT_MAP_X);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // LD_HL(OBJECT_MAP_X);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    bc->mapX = bc->nextMapX;
+    // LD_HL(OBJECT_NEXT_MAP_Y);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // LD_HL(OBJECT_MAP_Y);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    bc->mapY = bc->nextMapY;
+    // LD_HL(OBJECT_NEXT_TILE);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // LD_HL(OBJECT_STANDING_TILE);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    bc->standingTile = bc->nextTile;
+    // CALL(aSetTallGrassFlags);
+    SetTallGrassFlags_Conv(bc, bc->nextTile);
+    // LD_HL(OBJECT_NEXT_TILE);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // CALL(aUselessAndA);
+    // RET;
+    return bc->nextTile;
+}
+
 void CopyStandingCoordsTileToNextCoordsTile(void) {
     SET_PC(aCopyStandingCoordsTileToNextCoordsTile);
     LD_HL(OBJECT_MAP_X);
@@ -792,6 +825,30 @@ reset:
     ADD_HL_BC;
     RES_hl(OVERHEAD_F);
     RET;
+}
+
+void SetTallGrassFlags_Conv(struct Object* bc, uint8_t a) {
+    // SET_PC(aSetTallGrassFlags);
+    // CALL(aCheckSuperTallGrassTile);
+    // IF_Z goto set;
+    // CALL(aCheckGrassTile);
+    // IF_C goto reset;
+    if(!CheckSuperTallGrassTile_Conv(a) && !CheckGrassTile_Conv(a)) {
+    // reset:
+        // LD_HL(OBJECT_FLAGS2);
+        // ADD_HL_BC;
+        // RES_hl(OVERHEAD_F);
+        bit_reset(bc->flags2, OVERHEAD_F);
+        // RET;
+    }
+    else {
+    // set:
+        // LD_HL(OBJECT_FLAGS2);
+        // ADD_HL_BC;
+        // SET_hl(OVERHEAD_F);
+        bit_set(bc->flags2, OVERHEAD_F);
+        // RET;
+    }
 }
 
 void UselessAndA(void) {
@@ -4433,7 +4490,7 @@ static void InitSprites_DeterminePriorities(void) {
     // CALL(aByteFill);
     ByteFill_Conv(wObjectPriorities, NUM_OBJECT_STRUCTS, 0);
     uint8_t d = 0;
-    struct Object* bc = wram->wObjectStruct;
+    struct Object* bc = &wram->wPlayerStruct;
     uint16_t hl = wObjectPriorities;
     uint8_t e;
     // LD_D(0);

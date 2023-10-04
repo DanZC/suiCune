@@ -1,0 +1,17 @@
+void CanObjectMoveInDirection(void);
+void WillObjectBumpIntoWater(void);
+void WillObjectBumpIntoLand(void);
+void WillObjectBumpIntoTile(void);
+void CanObjectLeaveTile(void);
+void GetSideWallDirectionMask(void);
+void WillObjectRemainOnWater(void);
+void CheckFacingObject(void);
+void WillObjectBumpIntoSomeoneElse(void);
+void IsObjectFacingSomeoneElse(void);
+void IsNPCAtCoord(void);
+struct Object* IsNPCAtCoord_Conv(uint8_t d, uint8_t e);
+void HasObjectReachedMovementLimit(void);
+void IsObjectMovingOffEdgeOfScreen(void);
+void IsNPCAtPlayerCoord(void);
+bool WillObjectIntersectBigObject_Conv(struct Object* bc, uint8_t d, uint8_t e);
+void WillObjectIntersectBigObject(void);

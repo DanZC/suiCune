@@ -429,7 +429,7 @@ void PlaceVerticalMenuItems_Conv(void) {
     // INC_DE;
     // LD_B_A;
     de++;
-    struct TextCmdState st = {.de = de, .hl = hl};
+    struct TextPrintState st = {.de = de, .hl = hl};
 
     do {
     // loop:

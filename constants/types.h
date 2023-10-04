@@ -16,6 +16,8 @@ struct FlagA
     uint8_t a;
 };
 
+#define flag_a(_a, _flag) (struct FlagA){.a = _a, .flag = _flag}
+
 struct ByteWord 
 {
     uint8_t byte;
@@ -131,7 +133,51 @@ Object
     uint8_t field_1D;
     uint8_t field_1E;
     uint8_t field_1F;
-    uint8_t padding[8];
+    uint8_t range;
+    uint8_t padding[7];
+};
+
+#if defined(__cplusplus) || defined(_MSC_VER)
+struct 
+#else
+struct __attribute__((packed))
+#endif
+Object2
+{
+    uint8_t sprite;
+    uint8_t mapObjectIndex;
+    uint8_t spriteTile;
+    uint8_t movementType;
+    uint8_t flags1;
+    uint8_t flags2;
+    uint8_t palette;
+    uint8_t walking;
+    uint8_t direction;
+    uint8_t stepType;
+    uint8_t stepDuration;
+    uint8_t action;
+    uint8_t stepFrame;
+    uint8_t facing;
+    uint8_t standingTile;
+    uint8_t lastTile;
+    uint8_t standingMapX;
+    uint8_t standingMapY;
+    uint8_t lastMapX;
+    uint8_t lastMapY;
+    uint8_t initX;
+    uint8_t initY;
+    uint8_t radius;
+    uint8_t spriteX;
+    uint8_t spriteY;
+    uint8_t spriteXOffset;
+    uint8_t spriteYOffset;
+    uint8_t movementByteIndex;
+    uint8_t field_1C;
+    uint8_t field_1D;
+    uint8_t field_1E;
+    uint8_t field_1F;
+    uint8_t range;
+    uint8_t padding[7];
 };
 
 #if defined(__cplusplus) || defined(_MSC_VER)
@@ -1000,8 +1046,37 @@ struct Script
     struct ScriptPosition stack[32];
 };
 
+#if defined(__cplusplus) || defined(_MSC_VER)
+struct 
+#else
+struct __attribute__((packed))
+#endif
+WarpEventData
+{
+    uint8_t y;
+    uint8_t x;
+    uint8_t warpNumber;
+    uint8_t mapGroup;
+    uint8_t mapNumber;
+};
+
 typedef struct Script script_s;
 
 #if defined(__cplusplus) || defined(_MSC_VER)
 #pragma pack(pop)
 #endif
+
+struct TextPrintState
+{
+    uint8_t* hl;
+    uint8_t* bc;
+    uint8_t* de;
+    uint8_t* hltemp;
+};
+
+struct TextCmdState
+{
+    uint8_t* bc; // Tilemap cursor
+    uint8_t* temp;
+    const struct TextCmd* hl; // Current text command
+};

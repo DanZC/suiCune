@@ -2,7 +2,7 @@
 #include "../home/audio.h"
 #include "../home/delay.h"
 
-struct TextCmdState;
+struct TextPrintState;
 
 #include "scripting.h"
 
@@ -73,11 +73,6 @@ void Script_waitsfx_Conv(struct Script* s) {
 void Script_playsound_Conv(struct Script* s, uint16_t sfx) {
     (void)s;
     PlaySFX_Conv(sfx);
-    return;
-}
-
-void Script_writetext_Conv(struct Script* s, const struct TextCmd* text) {
-    (void)s, (void)text;
     return;
 }
 

@@ -100,7 +100,7 @@ uint8_t GetPlayerStandingTile_Conv(void){
     // CALL(aGetTileCollision);
     // LD_B_A;
     // RET;
-    return GetTileCollision_Conv(wram->wPlayerStruct.standingTile);
+    return GetTileCollision_Conv(wram->wPlayerStruct.nextTile);
 }
 
 void CheckOnWater(void){
@@ -116,7 +116,7 @@ void CheckOnWater(void){
 bool CheckOnWater_Conv(void){
     // LD_A_addr(wPlayerStandingTile);
     // CALL(aGetTileCollision);
-    uint8_t col = GetTileCollision_Conv(wram->wPlayerStruct.standingTile);
+    uint8_t col = GetTileCollision_Conv(wram->wPlayerStruct.nextTile);
     // SUB_A(WATER_TILE);
     // RET_Z ;
     if(col == WATER_TILE)
@@ -270,6 +270,14 @@ void CheckHeadbuttTreeTile(void){
 
 }
 
+bool CheckHeadbuttTreeTile_Conv(uint8_t a){
+    // CP_A(COLL_HEADBUTT_TREE);
+    // RET_Z ;
+    // CP_A(COLL_HEADBUTT_TREE_1D);
+    // RET;
+    return (a == COLL_HEADBUTT_TREE) || (a == COLL_HEADBUTT_TREE_1D);
+}
+
 void CheckCounterTile(void){
         CP_A(COLL_COUNTER);
     RET_Z ;
@@ -292,6 +300,14 @@ void CheckPitTile(void){
     CP_A(COLL_PIT_68);
     RET;
 
+}
+
+bool CheckPitTile_Conv(uint8_t a){
+    // CP_A(COLL_PIT);
+    // RET_Z ;
+    // CP_A(COLL_PIT_68);
+    // RET;
+    return a == COLL_PIT || a == COLL_PIT_68;
 }
 
 void CheckIceTile(void){
@@ -329,6 +345,17 @@ void CheckWhirlpoolTile(void){
 
 }
 
+bool CheckWhirlpoolTile_Conv(uint8_t a){
+    // NOP;
+    // CP_A(COLL_WHIRLPOOL);
+    // RET_Z ;
+    // CP_A(COLL_WHIRLPOOL_2C);
+    // RET_Z ;
+    // SCF;
+    return (a == COLL_WHIRLPOOL || a == COLL_WHIRLPOOL_2C);
+    // RET;
+}
+
 void CheckWaterfallTile(void){
         CP_A(COLL_WATERFALL);
     RET_Z ;
@@ -362,7 +389,7 @@ void CheckStandingOnEntrance(void){
 
 bool CheckStandingOnEntrance_Conv(void){
     // LD_A_addr(wPlayerStandingTile);
-    uint8_t a = wram->wPlayerStruct.standingTile;
+    uint8_t a = wram->wPlayerStruct.nextTile;
     // CP_A(COLL_DOOR);
     // RET_Z ;
     // CP_A(COLL_DOOR_79);
@@ -393,7 +420,7 @@ struct MapObject* GetMapObject_Conv(uint8_t a){
     // LD_B_H;
     // LD_C_L;
     // RET;
-    return wram->wMapObject + a;
+    return &wram->wPlayerObject + a;
 }
 
 void CheckObjectVisibility(void){
@@ -956,7 +983,7 @@ struct Object* GetObjectStruct_Conv(uint8_t a){
     // LD_C_L;
     // RET;
     // return AddNTimes_Conv(OBJECT_LENGTH, wObjectStructs, a);
-    return &wram->wObjectStruct[a];
+    return &wram->wPlayerStruct + a;
 }
 
 void DoesObjectHaveASprite(void){

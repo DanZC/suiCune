@@ -452,6 +452,13 @@ void PrintTextboxText_Conv(uint8_t* hl) {
     PlaceHLTextAtBC_Conv(hl, wram->wTilemap + coordidx(TEXTBOX_INNERX, TEXTBOX_INNERY));
 }
 
+void PrintTextboxText_Conv2(const struct TextCmd* hl) {
+    // bccoord(TEXTBOX_INNERX, TEXTBOX_INNERY, wTilemap);
+    // CALL(aPlaceHLTextAtBC);
+    // RET;
+    PlaceHLTextAtBC_Conv2(wram->wTilemap + coordidx(TEXTBOX_INNERX, TEXTBOX_INNERY), hl);
+}
+
 void SetUpTextbox(void) {
     PUSH_HL;
     CALL(aSpeechTextbox);
@@ -475,7 +482,7 @@ void PlaceString(void) {
     return PlaceNextChar();
 }
 
-void PlaceString_Conv(struct TextCmdState* state, uint8_t* hl) {
+void PlaceString_Conv(struct TextPrintState* state, uint8_t* hl) {
     // fallthrough
     // PEEK("");
     state->hltemp = state->hl;
@@ -487,7 +494,7 @@ void PlaceString_Conv(struct TextCmdState* state, uint8_t* hl) {
 // Places string de at position hl.
 void PlaceStringSimple(uint8_t* de, uint8_t* hl) {
     // fallthrough
-    return PlaceString_Conv(&(struct TextCmdState){.de = de, .hl = hl, .bc = 0, .hltemp = hl}, hl);
+    return PlaceString_Conv(&(struct TextPrintState){.de = de, .hl = hl, .bc = 0, .hltemp = hl}, hl);
 }
 
 void PlaceNextChar(void) {
@@ -500,7 +507,7 @@ void PlaceNextChar(void) {
     RET;
 }
 
-void PlaceNextChar_Conv(struct TextCmdState* state) {
+void PlaceNextChar_Conv(struct TextPrintState* state) {
     while(1)
     {
         uint8_t c = *state->de;
@@ -626,7 +633,7 @@ void NextChar(void) {
     JP(mPlaceNextChar);
 }
 
-void NextChar_Conv(struct TextCmdState* state) {
+void NextChar_Conv(struct TextPrintState* state) {
     // INC_DE;
     state->de++;
     // JP(mPlaceNextChar);
@@ -819,7 +826,7 @@ place:
     JP(mNextChar);
 }
 
-void CheckDict_Conv(struct TextCmdState* state, uint8_t a) {
+void CheckDict_Conv(struct TextPrintState* state, uint8_t a) {
     // dict: MACRO
     // assert CHARLEN(\1) == 1
     // if \1 == 0
@@ -894,7 +901,7 @@ void MobileScriptChar(void) {
     // ENDM
 }
 
-void MobileScriptChar_Conv(struct TextCmdState* state) {
+void MobileScriptChar_Conv(struct TextPrintState* state) {
     (void)state;
     // LD_C_L;
     // LD_B_H;
@@ -916,7 +923,7 @@ void PrintMomsName(void) {
     return PrintPlayerName();
 }
 
-void PrintMomsName_Conv(struct TextCmdState* state) {
+void PrintMomsName_Conv(struct TextPrintState* state) {
     // print_name wMomsName
     return PlaceCommandCharacter_Conv(state, wram->wMomsName);
 }
@@ -927,7 +934,7 @@ void PrintPlayerName(void) {
     return PrintRivalName();
 }
 
-void PrintPlayerName_Conv(struct TextCmdState* state) {
+void PrintPlayerName_Conv(struct TextPrintState* state) {
     // print_name wPlayerName
     return PlaceCommandCharacter_Conv(state, wram->wPlayerName);
 }
@@ -938,7 +945,7 @@ void PrintRivalName(void) {
     return PrintRedsName();
 }
 
-void PrintRivalName_Conv(struct TextCmdState* state) {
+void PrintRivalName_Conv(struct TextPrintState* state) {
     // print_name wRivalName
     return PlaceCommandCharacter_Conv(state, wram->wRivalName);
 }
@@ -949,7 +956,7 @@ void PrintRedsName(void) {
     return PrintGreensName();
 }
 
-void PrintRedsName_Conv(struct TextCmdState* state) {
+void PrintRedsName_Conv(struct TextPrintState* state) {
     // print_name wRedsName
     return PlaceCommandCharacter_Conv(state, wram->wRedsName);
 }
@@ -960,7 +967,7 @@ void PrintGreensName(void) {
     return TrainerChar();
 }
 
-void PrintGreensName_Conv(struct TextCmdState* state) {
+void PrintGreensName_Conv(struct TextPrintState* state) {
     // print_name wGreensName
     return PlaceCommandCharacter_Conv(state, wram->wGreensName);
 }
@@ -971,7 +978,7 @@ void TrainerChar(void) {
     return TMChar();
 }
 
-void TrainerChar_Conv(struct TextCmdState* state) {
+void TrainerChar_Conv(struct TextPrintState* state) {
     //  print_name TrainerCharText
     PlaceCommandCharacter_Conv(state, Utf8ToCrystal("TRAINER@"));
 }
@@ -982,7 +989,7 @@ void TMChar(void) {
     return PCChar();
 }
 
-void TMChar_Conv(struct TextCmdState* state) {
+void TMChar_Conv(struct TextPrintState* state) {
     //  print_name TMCharText
     PlaceCommandCharacter_Conv(state, Utf8ToCrystal("TM@"));
 }
@@ -993,7 +1000,7 @@ void PCChar(void) {
     return RocketChar();
 }
 
-void PCChar_Conv(struct TextCmdState* state) {
+void PCChar_Conv(struct TextPrintState* state) {
     //  print_name PCCharText
     PlaceCommandCharacter_Conv(state, Utf8ToCrystal("PC@"));
 }
@@ -1004,7 +1011,7 @@ void RocketChar(void) {
     return PlacePOKe();
 }
 
-void RocketChar_Conv(struct TextCmdState* state) {
+void RocketChar_Conv(struct TextPrintState* state) {
     //  print_name RocketCharText
     PlaceCommandCharacter_Conv(state, Utf8ToCrystal("ROCKET@")); // mRocketCharText
 }
@@ -1015,7 +1022,7 @@ void PlacePOKe(void) {
     return PlaceKougeki();
 }
 
-void PlacePOKe_Conv(struct TextCmdState* state) {
+void PlacePOKe_Conv(struct TextPrintState* state) {
     //  print_name PlacePOKeText
     PlaceCommandCharacter_Conv(state, Utf8ToCrystal("POKé@")); // mPlacePOKeText
 }
@@ -1025,7 +1032,7 @@ void PlaceKougeki(void) {
     return SixDotsChar();
 }
 
-void PlaceKougeki_Conv(struct TextCmdState* state) {
+void PlaceKougeki_Conv(struct TextPrintState* state) {
     // print_name KougekiText
     PlaceCommandCharacter_Conv(state, Utf8ToCrystal("@")); // mKougekiText
 }
@@ -1036,7 +1043,7 @@ void SixDotsChar(void) {
     return PlacePKMN();
 }
 
-void SixDotsChar_Conv(struct TextCmdState* state) {
+void SixDotsChar_Conv(struct TextPrintState* state) {
     // print_name SixDotsCharText
     PlaceCommandCharacter_Conv(state, Utf8ToCrystal("……@")); // mSixDotsCharText
 }
@@ -1047,7 +1054,7 @@ void PlacePKMN(void) {
     return PlacePOKE();
 }
 
-void PlacePKMN_Conv(struct TextCmdState* state) {
+void PlacePKMN_Conv(struct TextPrintState* state) {
     // print_name PlacePKMNText
     PlaceCommandCharacter_Conv(state, Utf8ToCrystal("<PK><MN>@")); // mPlacePKMNText
 }
@@ -1058,7 +1065,7 @@ void PlacePOKE(void) {
     return PlaceJPRoute();
 }
 
-void PlacePOKE_Conv(struct TextCmdState* state) {
+void PlacePOKE_Conv(struct TextPrintState* state) {
     // print_name PlacePOKEText
     PlaceCommandCharacter_Conv(state, Utf8ToCrystal("<PO><KE>@")); // mPlacePOKEText
 }
@@ -1069,7 +1076,7 @@ void PlaceJPRoute(void) {
     return PlaceWatashi();
 }
 
-void PlaceJPRoute_Conv(struct TextCmdState* state) {
+void PlaceJPRoute_Conv(struct TextPrintState* state) {
     // print_name PlaceJPRouteText
     PlaceCommandCharacter_Conv(state, Utf8ToCrystal("@")); // mPlaceJPRouteText
 }
@@ -1080,7 +1087,7 @@ void PlaceWatashi(void) {
     return PlaceKokoWa();
 }
 
-void PlaceWatashi_Conv(struct TextCmdState* state) {
+void PlaceWatashi_Conv(struct TextPrintState* state) {
     // print_name PlaceWatashiText
     PlaceCommandCharacter_Conv(state, Utf8ToCrystal("@")); // mPlaceWatashiText
 }
@@ -1091,7 +1098,7 @@ void PlaceKokoWa(void) {
     return PlaceMoveTargetsName();
 }
 
-void PlaceKokoWa_Conv(struct TextCmdState* state) {
+void PlaceKokoWa_Conv(struct TextPrintState* state) {
     // print_name PlaceKokoWaText
     PlaceCommandCharacter_Conv(state, Utf8ToCrystal("@")); // mPlaceKokoWaText
 }
@@ -1102,7 +1109,7 @@ void PlaceMoveTargetsName(void) {
     JR(mPlaceBattlersName);
 }
 
-void PlaceMoveTargetsName_Conv(struct TextCmdState* state) {
+void PlaceMoveTargetsName_Conv(struct TextPrintState* state) {
     // LDH_A_addr(hBattleTurn);
     // XOR_A(1);
     // JR(mPlaceBattlersName);
@@ -1116,7 +1123,7 @@ void PlaceMoveUsersName(void) {
     return PlaceBattlersName();
 }
 
-void PlaceMoveUsersName_Conv(struct TextCmdState* state) {
+void PlaceMoveUsersName_Conv(struct TextPrintState* state) {
     // LDH_A_addr(hBattleTurn);
     // fallthrough
     return PlaceBattlersName_Conv(state, hram->hBattleTurn != 0);
@@ -1139,7 +1146,7 @@ enemy:
     JR(mPlaceCommandCharacter);
 }
 
-void PlaceBattlersName_Conv(struct TextCmdState* state, bool is_enemy) {
+void PlaceBattlersName_Conv(struct TextPrintState* state, bool is_enemy) {
     // PUSH_DE;
     // AND_A_A;
     // IF_NZ goto enemy;
@@ -1154,7 +1161,7 @@ void PlaceBattlersName_Conv(struct TextCmdState* state, bool is_enemy) {
 // enemy:
     // LD_DE(mEnemyText);
     // CALL(aPlaceString);
-    struct TextCmdState temp = {.hl = state->hl, .de = Utf8ToCrystal("Enemy @"), .bc = state->bc};
+    struct TextPrintState temp = {.hl = state->hl, .de = Utf8ToCrystal("Enemy @"), .bc = state->bc};
     PlaceString_Conv(&temp, state->hl);
     // LD_H_B;
     // LD_L_C;
@@ -1198,7 +1205,7 @@ linkbattle:
     JR(mPlaceCommandCharacter);
 }
 
-void PlaceEnemysName_Conv(struct TextCmdState* state) {
+void PlaceEnemysName_Conv(struct TextPrintState* state) {
     // PUSH_DE;
 
     // LD_A_addr(wLinkMode);
@@ -1226,7 +1233,7 @@ void PlaceEnemysName_Conv(struct TextCmdState* state) {
 
     // LD_DE(wOTClassName);
     // CALL(aPlaceString);
-    struct TextCmdState temp = {.hl = state->hl, .de = wram->wOTClassName, .bc = state->bc};
+    struct TextPrintState temp = {.hl = state->hl, .de = wram->wOTClassName, .bc = state->bc};
     PlaceString_Conv(&temp, state->hl);
     // LD_H_B;
     // LD_L_C;
@@ -1260,11 +1267,11 @@ void PlaceGenderedPlayerName(void) {
     JR(mPlaceCommandCharacter);
 }
 
-void PlaceGenderedPlayerName_Conv(struct TextCmdState* state) {
+void PlaceGenderedPlayerName_Conv(struct TextPrintState* state) {
     // PUSH_DE;
     // LD_DE(wPlayerName);
     // CALL(aPlaceString);
-    struct TextCmdState temp = {.hl = state->hl, .de = wram->wPlayerName, .bc = state->bc};
+    struct TextPrintState temp = {.hl = state->hl, .de = wram->wPlayerName, .bc = state->bc};
     PlaceString_Conv(&temp, state->hl);
     // LD_H_B;
     // LD_L_C;
@@ -1290,8 +1297,8 @@ void PlaceCommandCharacter(void) {
     JP(mNextChar);
 }
 
-void PlaceCommandCharacter_Conv(struct TextCmdState* state, uint8_t* de) {
-    struct TextCmdState tempstate = {.hl = state->hl, .de = de, .bc = state->bc};
+void PlaceCommandCharacter_Conv(struct TextPrintState* state, uint8_t* de) {
+    struct TextPrintState tempstate = {.hl = state->hl, .de = de, .bc = state->bc};
     // CALL(aPlaceString);
     PlaceString_Conv(&tempstate, state->hl);
 
@@ -1378,7 +1385,7 @@ void NextLineChar(void) {
     JP(mNextChar);
 }
 
-void NextLineChar_Conv(struct TextCmdState* state) {
+void NextLineChar_Conv(struct TextPrintState* state) {
     // POP_HL;
     // LD_BC(SCREEN_WIDTH * 2);
     // ADD_HL_BC;
@@ -1397,7 +1404,7 @@ void LineFeedChar(void) {
     JP(mNextChar);
 }
 
-void LineFeedChar_Conv(struct TextCmdState* state) {
+void LineFeedChar_Conv(struct TextPrintState* state) {
     // POP_HL;
     // LD_BC(SCREEN_WIDTH);
     // ADD_HL_BC;
@@ -1452,7 +1459,7 @@ done2:
     JP(mNextChar);
 }
 
-void CarriageReturnChar_Conv(struct TextCmdState* state) {
+void CarriageReturnChar_Conv(struct TextPrintState* state) {
     // PEEK("");
     // POP_HL;
     uint8_t* hl = state->hltemp;
@@ -1532,7 +1539,7 @@ void LineChar(void) {
     JP(mNextChar);
 }
 
-void LineChar_Conv(struct TextCmdState* state) {
+void LineChar_Conv(struct TextPrintState* state) {
     // PEEK("");
     // POP_HL;
     // hlcoord(TEXTBOX_INNERX, TEXTBOX_INNERY + 2, wTilemap);
@@ -1568,7 +1575,7 @@ linkbattle:
     JP(mNextChar);
 }
 
-void Paragraph_Conv(struct TextCmdState* state) {
+void Paragraph_Conv(struct TextPrintState* state) {
     // PEEK("");
     // PUSH_DE;
 
@@ -1629,7 +1636,7 @@ communication:
     return v_ContTextNoPause();
 }
 
-void v_ContText_Conv(struct TextCmdState* state) {
+void v_ContText_Conv(struct TextPrintState* state) {
     // PEEK("");
     // LD_A_addr(wLinkMode);
     // OR_A_A;
@@ -1666,7 +1673,7 @@ void v_ContTextNoPause(void) {
     JP(mNextChar);
 }
 
-void v_ContTextNoPause_Conv(struct TextCmdState* state) {
+void v_ContTextNoPause_Conv(struct TextPrintState* state) {
     // PEEK("");
     // PUSH_DE;
     uint8_t* de = state->de;
@@ -1702,7 +1709,7 @@ cont:
     return PlaceDexEnd();
 }
 
-void ContText_Conv(struct TextCmdState* state) {
+void ContText_Conv(struct TextPrintState* state) {
     // PUSH_DE;
     uint8_t* de = state->de;
     // LD_DE(mContText_cont);
@@ -1733,7 +1740,7 @@ void PlaceDexEnd(void) {
 
 //  Ends a Pokédex entry in Gen 1.
 //  Dex entries are now regular strings.
-void PlaceDexEnd_Conv(struct TextCmdState* state) {
+void PlaceDexEnd_Conv(struct TextPrintState* state) {
     // LD_hl(0xe8);
     *(state->hl) = 0xe8;
     // POP_HL;
@@ -1761,7 +1768,7 @@ ok:
     return DoneText();
 }
 
-void PromptText_Conv(struct TextCmdState* state) {
+void PromptText_Conv(struct TextPrintState* state) {
     // LD_A_addr(wLinkMode);
     // CP_A(LINK_COLOSSEUM);
     // IF_Z goto ok;
@@ -1803,7 +1810,7 @@ stop:
     return NullChar();
 }
 
-void DoneText_Conv(struct TextCmdState* state) {
+void DoneText_Conv(struct TextPrintState* state) {
     static const uint8_t stop[] = {
         TX_END, TX_END,
     };
@@ -1823,7 +1830,7 @@ void NullChar(void) {
     JP(mNextChar);
 }
 
-void NullChar_Conv(struct TextCmdState* state) {
+void NullChar_Conv(struct TextPrintState* state) {
     // LD_A(0xe6);
     // LD_hli_A;
     *(state->hl++) = CHAR_QMARK;
@@ -1866,7 +1873,7 @@ row:
     RET;
 }
 
-void TextScroll_Conv(struct TextCmdState* state) {
+void TextScroll_Conv(struct TextPrintState* state) {
     // hlcoord(TEXTBOX_INNERX, TEXTBOX_INNERY, wTilemap);
     // decoord(TEXTBOX_INNERX, TEXTBOX_INNERY - 1, wTilemap);
     state->hl = wram->wTilemap + coordidx(TEXTBOX_INNERX, TEXTBOX_INNERY);
@@ -2003,7 +2010,7 @@ void PlaceFarString(void) {
     RET;
 }
 
-void PlaceFarString_Conv(uint8_t bank, struct TextCmdState* state, uint8_t* hl) {
+void PlaceFarString_Conv(uint8_t bank, struct TextPrintState* state, uint8_t* hl) {
     // LD_B_A;
     // LDH_A_addr(hROMBank);
     // PUSH_AF;
@@ -2063,7 +2070,7 @@ void PlaceHLTextAtBC_Conv(uint8_t* hl, uint8_t* bc) {
     uint8_t tflags = wram->wTextboxFlags;
     wram->wTextboxFlags = tflags | (1 << NO_TEXT_DELAY_F);
 
-    struct TextCmdState state = {.hl = hl, .bc = bc, .de = 0};
+    struct TextPrintState state = {.hl = hl, .bc = bc, .de = 0};
 
     uint8_t cmd;
     while(1)
@@ -2073,6 +2080,25 @@ void PlaceHLTextAtBC_Conv(uint8_t* hl, uint8_t* bc) {
             break;
         // CALL(aDoTextUntilTerminator_TextCommand);
         DoTextUntilTerminator_TextCommand_Conv(&state, cmd);
+    }
+
+    wram->wTextboxFlags = tflags;
+}
+
+void PlaceHLTextAtBC_Conv2(uint8_t* bc, const struct TextCmd* hl) {
+    uint8_t tflags = wram->wTextboxFlags;
+    wram->wTextboxFlags = tflags | (1 << NO_TEXT_DELAY_F);
+
+    struct TextCmdState state = {.hl = hl, .bc = bc};
+
+    const struct TextCmd* cmd;
+    while(1)
+    {
+        cmd = state.hl++;
+        if(cmd->cmd == TX_END)
+            break;
+        // CALL(aDoTextUntilTerminator_TextCommand);
+        DoTextUntilTerminator_TextCommand_Conv2(&state, cmd);
     }
 
     wram->wTextboxFlags = tflags;
@@ -2090,7 +2116,7 @@ void DoTextUntilTerminator(void) {
     // JR(mDoTextUntilTerminator);
 }
 
-void (*const TextCommands[])(struct TextCmdState*) = {
+void (*const TextCommands[])(struct TextPrintState*) = {
     [TX_START] = TextCommand_START_Conv,
     [TX_RAM] = TextCommand_RAM_Conv,
     [TX_BCD] = TextCommand_BCD_Conv,
@@ -2116,13 +2142,35 @@ void (*const TextCommands[])(struct TextCmdState*) = {
     [TX_FAR] = TextCommand_FAR_Conv
 };
 
-#if defined(__cplusplus) || defined(_MSC_VER)
-static_assert(sizeof(TextCommands) / sizeof(void(*)(void)) == NUM_TEXT_CMDS, "");
-#else
-_Static_assert(sizeof(TextCommands) / sizeof(void(*)(void)) == NUM_TEXT_CMDS, "");
-#endif
+void (*const TextCommands2[])(struct TextCmdState*, const struct TextCmd*) = {
+    [TX_START] = TextCommand_START_Conv2,
+    [TX_RAM] = TextCommand_RAM_Conv2,
+    [TX_BCD] = TextCommand_BCD_Conv2,
+    [TX_MOVE] = TextCommand_MOVE_Conv2,
+    [TX_BOX] = TextCommand_BOX_Conv2,
+    [TX_LOW] = TextCommand_LOW_Conv2,
+    [TX_PROMPT_BUTTON] = TextCommand_PROMPT_BUTTON_Conv2,
+    [TX_SCROLL] = TextCommand_SCROLL_Conv2,
+    [TX_START_ASM] = TextCommand_START_ASM_Conv2,
+    [TX_DECIMAL] = TextCommand_DECIMAL_Conv2,
+    [TX_PAUSE] = TextCommand_PAUSE_Conv2,
+    [TX_SOUND_DEX_FANFARE_50_79] = TextCommand_SOUND_Conv2,
+    [TX_DOTS] = TextCommand_DOTS_Conv2,
+    [TX_WAIT_BUTTON] = TextCommand_WAIT_BUTTON_Conv2,
+    [TX_SOUND_DEX_FANFARE_20_49] = TextCommand_SOUND_Conv2,
+    [TX_SOUND_ITEM] = TextCommand_SOUND_Conv2,
+    [TX_SOUND_CAUGHT_MON] = TextCommand_SOUND_Conv2,
+    [TX_SOUND_DEX_FANFARE_80_109] = TextCommand_SOUND_Conv2,
+    [TX_SOUND_FANFARE] = TextCommand_SOUND_Conv2,
+    [TX_SOUND_SLOT_MACHINE_START] = TextCommand_SOUND_Conv2,
+    [TX_STRINGBUFFER] = TextCommand_STRINGBUFFER_Conv2,
+    [TX_DAY] = TextCommand_DAY_Conv2,
+    [TX_FAR] = TextCommand_FAR_Conv2
+};
 
-void DoTextUntilTerminator_Conv(struct TextCmdState* state) {
+static_assert(sizeof(TextCommands) / sizeof(void(*)(void)) == NUM_TEXT_CMDS, "");
+
+void DoTextUntilTerminator_Conv(struct TextPrintState* state) {
     while(1)
     {
         // LD_A_hli;
@@ -2136,6 +2184,25 @@ void DoTextUntilTerminator_Conv(struct TextCmdState* state) {
         // CALL(aDoTextUntilTerminator_TextCommand);
         // DoTextUntilTerminator_TextCommand_Conv(state, cmd);
         TextCommands[cmd](state);
+
+        // JR(mDoTextUntilTerminator);
+    }
+}
+
+void DoTextUntilTerminator_Conv2(struct TextCmdState* state) {
+    while(1)
+    {
+        // LD_A_hli;
+        const struct TextCmd* cmd = state->hl++;
+
+        // CP_A(TX_END);
+        // RET_Z;
+        if(cmd->cmd == TX_END)
+            return;
+        
+        // CALL(aDoTextUntilTerminator_TextCommand);
+        // DoTextUntilTerminator_TextCommand_Conv(state, cmd);
+        TextCommands2[cmd->cmd](state, cmd);
 
         // JR(mDoTextUntilTerminator);
     }
@@ -2184,8 +2251,12 @@ void DoTextUntilTerminator_TextCommand(void) {
     RET;
 }
 
-void DoTextUntilTerminator_TextCommand_Conv(struct TextCmdState* state, uint8_t cmd) {
+void DoTextUntilTerminator_TextCommand_Conv(struct TextPrintState* state, uint8_t cmd) {
     TextCommands[cmd](state);
+}
+
+void DoTextUntilTerminator_TextCommand_Conv2(struct TextCmdState* state, const struct TextCmd* cmd) {
+    TextCommands2[cmd->cmd](state, cmd);
 }
 
 // void TextCommands(void) {
@@ -2233,7 +2304,7 @@ void TextCommand_START(void) {
 }
 
 //  write text until "@"
-void TextCommand_START_Conv(struct TextCmdState* state) {
+void TextCommand_START_Conv(struct TextPrintState* state) {
     // PEEK("");
     // LD_D_H;
     // LD_E_L;
@@ -2244,13 +2315,31 @@ void TextCommand_START_Conv(struct TextCmdState* state) {
     // CALL(aPlaceString);
     printf("text $%04x\n", RAMAddrToGB(state->de));
     PlaceString_Conv(state, state->bc);
-    // struct TextCmdState tempstate = {.hl = state->bc, .de = state->hl};
+    // struct TextPrintState tempstate = {.hl = state->bc, .de = state->hl};
 
     // LD_H_D;
     // LD_L_E;
     state->hl = state->de;
     // INC_HL;
     state->hl++;
+    // RET;
+}
+
+//  write text until "@"
+void TextCommand_START_Conv2(struct TextCmdState* state, const struct TextCmd* cmd) {
+    // PEEK("");
+    // LD_D_H;
+    // LD_E_L;
+    // LD_H_B;
+    // LD_L_C;
+    // CALL(aPlaceString);
+    struct TextPrintState temp = {.hl = state->bc, .de = U82C(cmd->text)};
+    PlaceString_Conv(&temp, state->bc);
+    // struct TextPrintState tempstate = {.hl = state->bc, .de = state->hl};
+
+    // LD_H_D;
+    // LD_L_E;
+    // INC_HL;
     // RET;
 }
 
@@ -2268,7 +2357,7 @@ void TextCommand_RAM(void) {
     RET;
 }
 
-void TextCommand_RAM_Conv(struct TextCmdState* state) {
+void TextCommand_RAM_Conv(struct TextPrintState* state) {
     // PEEK("");
     //  write text from a ram address (little endian)
     // LD_A_hli;
@@ -2285,10 +2374,34 @@ void TextCommand_RAM_Conv(struct TextCmdState* state) {
     // LD_H_B;
     // LD_L_C;
     // CALL(aPlaceString);
-    struct TextCmdState temp = {.hl = state->bc, .de = de, .bc = state->bc};
+    struct TextPrintState temp = {.hl = state->bc, .de = de, .bc = state->bc};
     PlaceString_Conv(&temp, state->bc);
     // POP_HL;
     state->de = temp.de;
+    state->bc = temp.bc;
+    // RET;
+}
+
+void TextCommand_RAM_Conv2(struct TextCmdState* state, const struct TextCmd* cmd) {
+    // PEEK("");
+    //  write text from a ram address (little endian)
+    // LD_A_hli;
+    // LD_E_A;
+    // LD_A_hli;
+    // LD_D_A;
+    // uint16_t addr = (uint16_t)(state->hl[0] | (state->hl[1] << 8));
+    // state->hl += 2;
+    // printf("text_ram $%04x\n", addr);
+
+    // uint8_t* de = GBToRAMAddr(addr);
+
+    // PUSH_HL;
+    // LD_H_B;
+    // LD_L_C;
+    // CALL(aPlaceString);
+    struct TextPrintState temp = {.hl = state->bc, .de = cmd->ram, .bc = state->bc};
+    PlaceString_Conv(&temp, state->bc);
+    // POP_HL;
     state->bc = temp.bc;
     // RET;
 }
@@ -2320,7 +2433,7 @@ void TextCommand_FAR(void) {
 }
 
 //  write text from a different bank (little endian)
-void TextCommand_FAR_Conv(struct TextCmdState* state) {
+void TextCommand_FAR_Conv(struct TextPrintState* state) {
     // PEEK("");
     // LDH_A_addr(hROMBank);
     // PUSH_AF;
@@ -2367,6 +2480,42 @@ void TextCommand_FAR_Conv(struct TextCmdState* state) {
     // RET;
 }
 
+//  write text from a different text command ptr (little endian)
+void TextCommand_FAR_Conv2(struct TextCmdState* state, const struct TextCmd* cmd) {
+    // PEEK("");
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+
+    // LD_A_hli;
+    // LD_E_A;
+    // LD_A_hli;
+    // LD_D_A;
+    const struct TextCmd* de = cmd->far_ptr;
+
+    // LD_A_hli;
+
+    // LDH_addr_A(hROMBank);
+    // LD_addr_A(MBC3RomBank);
+
+    // PUSH_HL;
+
+    // LD_H_D;
+    // LD_L_E;
+    struct TextCmdState temp = {.hl = de, .bc = state->bc};
+
+    // CALL(aDoTextUntilTerminator);
+    DoTextUntilTerminator_Conv2(&temp);
+
+    // POP_HL;
+    state->bc = temp.bc;
+
+    // POP_AF;
+    // LDH_addr_A(hROMBank);
+    // LD_addr_A(MBC3RomBank);
+
+    // RET;
+}
+
 void TextCommand_BCD(void) {
     //  write bcd from address, typically ram
     LD_A_hli;
@@ -2386,7 +2535,7 @@ void TextCommand_BCD(void) {
 }
 
 //  write bcd from address, typically ram
-void TextCommand_BCD_Conv(struct TextCmdState* state) {
+void TextCommand_BCD_Conv(struct TextPrintState* state) {
     PEEK("");
     // LD_A_hli;
     // LD_E_A;
@@ -2411,6 +2560,27 @@ void TextCommand_BCD_Conv(struct TextCmdState* state) {
     // RET;
 }
 
+//  write bcd from address, typically ram
+void TextCommand_BCD_Conv2(struct TextCmdState* state, const struct TextCmd* cmd) {
+    // LD_A_hli;
+    // LD_E_A;
+    // LD_A_hli;
+    // LD_D_A;
+
+    // LD_A_hli;
+
+    // PUSH_HL;
+    // LD_H_B;
+    // LD_L_C;
+    // LD_C_A;
+    // CALL(aPrintBCDNumber);
+    state->bc = PrintBCDNumber_Conv(state->bc, cmd->bcd_addr, cmd->bcd_flags);
+    // LD_B_H;
+    // LD_C_L;
+    // POP_HL;
+    // RET;
+}
+
 void TextCommand_MOVE(void) {
     //  move to a new tile
     LD_A_hli;
@@ -2423,7 +2593,7 @@ void TextCommand_MOVE(void) {
 }
 
 //  move to a new tile
-void TextCommand_MOVE_Conv(struct TextCmdState* state) {
+void TextCommand_MOVE_Conv(struct TextPrintState* state) {
     PEEK("");
     // LD_A_hli;
     // LD_addr_A(wMenuScrollPosition + 2);
@@ -2437,6 +2607,22 @@ void TextCommand_MOVE_Conv(struct TextCmdState* state) {
 
     gb_write16(wMenuScrollPosition + 2, newTile);
     state->bc = wram->wTilemap + (newTile - wTilemap);
+}
+
+//  move to a new tile
+void TextCommand_MOVE_Conv2(struct TextCmdState* state, const struct TextCmd* cmd) {
+    // PEEK("");
+    // LD_A_hli;
+    // LD_addr_A(wMenuScrollPosition + 2);
+    // LD_C_A;
+    // LD_A_hli;
+    // LD_addr_A(wMenuScrollPosition + 2 + 1);
+    // LD_B_A;
+    // RET;
+    uint16_t newTile = cmd->coord;
+
+    gb_write16(wMenuScrollPosition + 2, wTilemap + newTile);
+    state->bc = wram->wTilemap + newTile;
 }
 
 void TextCommand_BOX(void) {
@@ -2458,7 +2644,7 @@ void TextCommand_BOX(void) {
 }
 
 //  draw a box (height, width)
-void TextCommand_BOX_Conv(struct TextCmdState* state) {
+void TextCommand_BOX_Conv(struct TextPrintState* state) {
     PEEK("");
     // LD_A_hli;
     // LD_E_A;
@@ -2486,6 +2672,33 @@ void TextCommand_BOX_Conv(struct TextCmdState* state) {
     // RET;
 }
 
+//  draw a box (height, width)
+void TextCommand_BOX_Conv2(struct TextCmdState* state, const struct TextCmd* cmd) {
+    (void)state;
+    // LD_A_hli;
+    // LD_E_A;
+    // LD_A_hli;
+    // LD_D_A;
+    uint8_t* de = wram->wTilemap + cmd->box_coord;
+
+    // LD_A_hli;
+    // LD_B_A;
+    uint8_t b = cmd->box_h;
+
+    // LD_A_hli;
+    // LD_C_A;
+    uint8_t c = cmd->box_w;
+
+    // PUSH_HL;
+    // LD_H_D;
+    // LD_L_E;
+    // CALL(aTextbox);
+    Textbox_Conv2(de, b, c);
+
+    // POP_HL;
+    // RET;
+}
+
 void TextCommand_LOW(void) {
     //  write text at (1,16)
     bccoord(TEXTBOX_INNERX, TEXTBOX_INNERY + 2, wTilemap);
@@ -2493,8 +2706,16 @@ void TextCommand_LOW(void) {
 }
 
 //  write text at (1,16)
-void TextCommand_LOW_Conv(struct TextCmdState* state) {
+void TextCommand_LOW_Conv(struct TextPrintState* state) {
     PEEK("");
+    // bccoord(TEXTBOX_INNERX, TEXTBOX_INNERY + 2, wTilemap);
+    state->bc = wram->wTilemap + coordidx(TEXTBOX_INNERX, TEXTBOX_INNERY + 2);
+    // RET;
+}
+
+//  write text at (1,16)
+void TextCommand_LOW_Conv2(struct TextCmdState* state, const struct TextCmd* cmd) {
+    (void)cmd;
     // bccoord(TEXTBOX_INNERX, TEXTBOX_INNERY + 2, wTilemap);
     state->bc = wram->wTilemap + coordidx(TEXTBOX_INNERX, TEXTBOX_INNERY + 2);
     // RET;
@@ -2519,7 +2740,7 @@ void TextCommand_PROMPT_BUTTON(void) {
 }
 
 //  wait for button press
-void TextCommand_PROMPT_BUTTON_Conv(struct TextCmdState* state) {
+void TextCommand_PROMPT_BUTTON_Conv(struct TextPrintState* state) {
     PEEK("");
     (void)state;
     // LD_A_addr(wLinkMode);
@@ -2531,6 +2752,35 @@ void TextCommand_PROMPT_BUTTON_Conv(struct TextCmdState* state) {
     // JP_Z(mTextCommand_WAIT_BUTTON);
     if(linkMode == LINK_COLOSSEUM || linkMode == LINK_MOBILE)
         return TextCommand_WAIT_BUTTON_Conv(state);
+
+    // PUSH_HL;
+    // uint16_t hltemp = state->hl;
+    // CALL(aLoadBlinkingCursor);
+    LoadBlinkingCursor_Conv();
+
+    // PUSH_BC;
+    // CALL(aPromptButton);
+    // POP_BC;
+    PromptButton_Conv();
+
+    // CALL(aUnloadBlinkingCursor);
+    UnloadBlinkingCursor_Conv();
+    // POP_HL;
+    // RET;
+}
+
+//  wait for button press
+void TextCommand_PROMPT_BUTTON_Conv2(struct TextCmdState* state, const struct TextCmd* cmd) {
+    (void)state, (void)cmd;
+    // LD_A_addr(wLinkMode);
+    uint8_t linkMode = wram->wLinkMode;
+
+    // CP_A(LINK_COLOSSEUM);
+    // JP_Z(mTextCommand_WAIT_BUTTON);
+    // CP_A(LINK_MOBILE);
+    // JP_Z(mTextCommand_WAIT_BUTTON);
+    if(linkMode == LINK_COLOSSEUM || linkMode == LINK_MOBILE)
+        return TextCommand_WAIT_BUTTON_Conv2(state, cmd);
 
     // PUSH_HL;
     // uint16_t hltemp = state->hl;
@@ -2562,7 +2812,7 @@ void TextCommand_SCROLL(void) {
 
 //  pushes text up two lines and sets the BC cursor to the border tile
 //  below the first character column of the text box.
-void TextCommand_SCROLL_Conv(struct TextCmdState* state) {
+void TextCommand_SCROLL_Conv(struct TextPrintState* state) {
     PEEK("");
     // PUSH_HL;
     uint8_t* hltemp = state->hl;
@@ -2574,6 +2824,24 @@ void TextCommand_SCROLL_Conv(struct TextCmdState* state) {
     TextScroll_Conv(state);
     // POP_HL;
     state->hl = hltemp;
+    // bccoord(TEXTBOX_INNERX, TEXTBOX_INNERY + 2, wTilemap);
+    state->bc = wram->wTilemap + coordidx(TEXTBOX_INNERX, TEXTBOX_INNERY + 2);
+    // RET;
+}
+
+//  pushes text up two lines and sets the BC cursor to the border tile
+//  below the first character column of the text box.
+void TextCommand_SCROLL_Conv2(struct TextCmdState* state, const struct TextCmd* cmd) {
+    (void)cmd;
+    // PUSH_HL;
+    // CALL(aUnloadBlinkingCursor);
+    UnloadBlinkingCursor_Conv();
+    // CALL(aTextScroll);
+    // CALL(aTextScroll);
+    struct TextPrintState temp = {.hl = state->bc, .bc = state->bc, .hltemp = state->bc};
+    TextScroll_Conv(&temp);
+    TextScroll_Conv(&temp);
+    // POP_HL;
     // bccoord(TEXTBOX_INNERX, TEXTBOX_INNERY + 2, wTilemap);
     state->bc = wram->wTilemap + coordidx(TEXTBOX_INNERX, TEXTBOX_INNERY + 2);
     // RET;
@@ -2592,7 +2860,7 @@ not_rom:
 }
 
 //  run assembly code
-void TextCommand_START_ASM_Conv(struct TextCmdState* state) {
+void TextCommand_START_ASM_Conv(struct TextPrintState* state) {
     // BIT_H(7);
     // IF_NZ goto not_rom;
     // if((state->hl & 0x8000) != 0)
@@ -2630,6 +2898,35 @@ void TextCommand_START_ASM_Conv(struct TextCmdState* state) {
     return;
 }
 
+//  run assembly code
+void TextCommand_START_ASM_Conv2(struct TextCmdState* state, const struct TextCmd* cmd) {
+    // BIT_H(7);
+    // IF_NZ goto not_rom;
+    // if((state->hl & 0x8000) != 0)
+    // {
+    // not_rom:
+        // LD_A(TX_END);
+        // LD_hl_A;
+        // RET;
+        // gb_write(state->hl, TX_END);
+        // return;
+    // }
+    // REG_HL = state->hl;
+    // JP_hl;
+    // PUSH_AF;
+    // PUSH_BC;
+    // PUSH_DE;
+    // PUSH_HL;
+    // PEEK("");
+    cmd->as(state);
+    // PEEK("after");
+    // POP_HL;
+    // POP_DE;
+    // POP_BC;
+    // POP_AF;
+    return;
+}
+
 void TextCommand_DECIMAL(void) {
     //  print a decimal number
     LD_A_hli;
@@ -2656,7 +2953,7 @@ void TextCommand_DECIMAL(void) {
 }
 
 //  print a decimal number
-void TextCommand_DECIMAL_Conv(struct TextCmdState* state) {
+void TextCommand_DECIMAL_Conv(struct TextPrintState* state) {
     PEEK("");
     // LD_A_hli;
     // LD_E_A;
@@ -2707,6 +3004,43 @@ void TextCommand_DECIMAL_Conv(struct TextCmdState* state) {
     // RET;
 }
 
+//  print a decimal number
+void TextCommand_DECIMAL_Conv2(struct TextCmdState* state, const struct TextCmd* cmd) {
+    // LD_A_hli;
+    // LD_E_A;
+    // LD_A_hli;
+    // LD_D_A;
+    // uint16_t de = gb_read16(state->hl);
+    uint8_t* de = cmd->dec_addr;
+
+    // LD_A_hli;
+    // PUSH_HL;
+    // uint8_t a = gb_read(state->hl++);
+    uint8_t a = cmd->bytes;
+
+    // LD_H_B;
+    // LD_L_C;
+    // LD_B_A;
+    // AND_A(0xf);
+    // LD_C_A;
+    uint8_t c = cmd->digits;
+
+    // LD_A_B;
+    // AND_A(0xf0);
+    // SWAP_A;
+    // SET_A(PRINTNUM_LEFTALIGN_F);
+    // LD_B_A;
+    uint8_t b = ((a & 0xf0) >> 4) | (1 << PRINTNUM_LEFTALIGN_F);
+
+    // CALL(aPrintNum);
+    state->bc = PrintNum_Conv2(state->bc, de, b, c);
+
+    // LD_B_H;
+    // LD_C_L;
+    // POP_HL;
+    // RET;
+}
+
 void TextCommand_PAUSE(void) {
     //  wait for button press or 30 frames
     PUSH_HL;
@@ -2725,9 +3059,33 @@ done:
 }
 
 //  wait for button press or 30 frames
-void TextCommand_PAUSE_Conv(struct TextCmdState* state) {
+void TextCommand_PAUSE_Conv(struct TextPrintState* state) {
     PEEK("");
     (void)state;
+    // PUSH_HL;
+    // PUSH_BC;
+    // CALL(aGetJoypad);
+    GetJoypad_Conv();
+
+    // LDH_A_addr(hJoyDown);
+    // AND_A(A_BUTTON | B_BUTTON);
+    // IF_NZ goto done;
+    if(((hram->hJoyDown) & (A_BUTTON | B_BUTTON)) == 0)
+    {
+        // LD_C(30);
+        // CALL(aDelayFrames);
+        DelayFrames_Conv(30);
+    }
+
+// done:
+    // POP_BC;
+    // POP_HL;
+    // RET;
+}
+
+//  wait for button press or 30 frames
+void TextCommand_PAUSE_Conv2(struct TextCmdState* state, const struct TextCmd* cmd) {
+    (void)state, (void)cmd;
     // PUSH_HL;
     // PUSH_BC;
     // CALL(aGetJoypad);
@@ -2809,7 +3167,7 @@ static const uint8_t TextSFX[] =
 };
 
 //  play a sound effect from TextSFX
-void TextCommand_SOUND_Conv(struct TextCmdState* state) {
+void TextCommand_SOUND_Conv(struct TextPrintState* state) {
     PEEK("");
     // PUSH_BC;
     // DEC_HL;
@@ -2858,6 +3216,56 @@ void TextCommand_SOUND_Conv(struct TextCmdState* state) {
     // RET;
 }
 
+//  play a sound effect from TextSFX
+void TextCommand_SOUND_Conv2(struct TextCmdState* state, const struct TextCmd* cmd) {
+    (void)state;
+    // PUSH_BC;
+    // DEC_HL;
+    
+    // LD_A_hli;
+    // LD_B_A;
+    uint8_t b = cmd->cmd;
+    if(b == TX_SOUND_FANFARE)
+        printf("sound_fanfare\n");
+    else
+        printf("sound_unk\n");
+    // PUSH_HL;
+    // LD_HL(mTextSFX);
+
+    for(int i = 0; ; i += 2)
+    {
+        // LD_A_hli;
+        uint8_t a = TextSFX[i];
+        // CP_A(-1);
+        // IF_Z goto done;
+        if(a == 0xff)
+            break;
+        // CP_A_B;
+        // IF_Z goto play;
+        if(a == b)
+        {
+        // play:
+            // PUSH_DE;
+            // LD_E_hl;
+            // INC_HL;
+            // LD_D_hl;
+            PlaySFX_Conv(TextSFX[i+1]);
+            WaitSFX_Conv();
+            // CALL(aPlaySFX);
+            // CALL(aWaitSFX);
+            // POP_DE;
+            break;
+        }
+        // INC_HL;
+        // INC_HL;
+    }
+
+// done:
+    // POP_HL;
+    // POP_BC;
+    // RET;
+}
+
 void TextCommand_CRY(void) {
     //  //  unreferenced
     //  play a pokemon cry
@@ -2872,11 +3280,27 @@ void TextCommand_CRY(void) {
     RET;
 }
 
-void TextCommand_CRY_Conv(struct TextCmdState* state) {
+void TextCommand_CRY_Conv(struct TextPrintState* state) {
     PEEK("");
     //  //  unreferenced
     //  play a pokemon cry
     (void)state;
+    // PUSH_DE;
+    // LD_E_hl;
+    // INC_HL;
+    // LD_D_hl;
+    // CALL(aPlayMonCry);
+    // POP_DE;
+    // POP_HL;
+    // POP_BC;
+    // RET;
+    return;
+}
+
+void TextCommand_CRY_Conv2(struct TextCmdState* state, const struct TextCmd* cmd) {
+    //  //  unreferenced
+    //  play a pokemon cry
+    (void)state, (void)cmd;
     // PUSH_DE;
     // LD_E_hl;
     // INC_HL;
@@ -2920,11 +3344,53 @@ next:
 }
 
 //  wait for button press or 30 frames while printing "…"s
-void TextCommand_DOTS_Conv(struct TextCmdState* state) {
+void TextCommand_DOTS_Conv(struct TextPrintState* state) {
     PEEK("");
     // LD_A_hli;
     // LD_D_A;
     uint8_t d = *(state->hl++);
+    // PUSH_HL;
+    // LD_H_B;
+    // LD_L_C;
+    uint8_t* hl = state->bc;
+    
+    do {
+        // PUSH_DE;
+        // LD_A(0x75);
+        // LD_hli_A;
+        *(hl++) = 0x75;
+        
+        // CALL(aGetJoypad);
+        GetJoypad_Conv();
+
+        // LDH_A_addr(hJoyDown);
+        // AND_A(A_BUTTON | B_BUTTON);
+        // IF_NZ goto next;
+        if(((hram->hJoyDown) & (A_BUTTON | B_BUTTON)) == 0)
+        {
+            // LD_C(10);
+            // CALL(aDelayFrames);
+            DelayFrames_Conv(10);
+        }
+
+        // POP_DE;
+        // DEC_D;
+        // IF_NZ goto loop;
+    } while(--d != 0);
+
+    // LD_B_H;
+    // LD_C_L;
+    state->bc = hl;
+
+    // POP_HL;
+    // RET;
+}
+
+//  wait for button press or 30 frames while printing "…"s
+void TextCommand_DOTS_Conv2(struct TextCmdState* state, const struct TextCmd* cmd) {
+    // LD_A_hli;
+    // LD_D_A;
+    uint8_t d = cmd->n;
     // PUSH_HL;
     // LD_H_B;
     // LD_L_C;
@@ -2973,9 +3439,21 @@ void TextCommand_WAIT_BUTTON(void) {
 }
 
 //  wait for button press
-void TextCommand_WAIT_BUTTON_Conv(struct TextCmdState* state) {
+void TextCommand_WAIT_BUTTON_Conv(struct TextPrintState* state) {
     PEEK("");
     (void)state;
+    // PUSH_HL;
+    // PUSH_BC;
+    // CALL(aPromptButton);
+    // POP_BC;
+    // POP_HL;
+    // RET;
+    PromptButton_Conv();
+}
+
+//  wait for button press
+void TextCommand_WAIT_BUTTON_Conv2(struct TextCmdState* state, const struct TextCmd* cmd) {
+    (void)state, (void)cmd;
     // PUSH_HL;
     // PUSH_BC;
     // CALL(aPromptButton);
@@ -3020,7 +3498,7 @@ void TextCommand_STRINGBUFFER(void) {
 //  4: wStringBuffer1
 //  5: wEnemyMonNickname
 //  6: wBattleMonNickname
-void TextCommand_STRINGBUFFER_Conv(struct TextCmdState* state) {
+void TextCommand_STRINGBUFFER_Conv(struct TextPrintState* state) {
     PEEK("");
     // LD_A_hli;
     // PUSH_HL;
@@ -3052,11 +3530,58 @@ void TextCommand_STRINGBUFFER_Conv(struct TextCmdState* state) {
     // LD_H_B;
     // LD_L_C;
     // CALL(aPlaceString);
-    struct TextCmdState temp = {.de = de, .hl = state->bc};
+    struct TextPrintState temp = {.de = de, .hl = state->bc};
     PlaceString_Conv(&temp, state->bc);
 
     state->bc = temp.bc;
     state->de = temp.de;
+    // POP_HL;
+    // RET;
+}
+
+//  Print a string from one of the following:
+//  0: wStringBuffer3
+//  1: wStringBuffer4
+//  2: wStringBuffer5
+//  3: wStringBuffer2
+//  4: wStringBuffer1
+//  5: wEnemyMonNickname
+//  6: wBattleMonNickname
+void TextCommand_STRINGBUFFER_Conv2(struct TextCmdState* state, const struct TextCmd* cmd) {
+    // LD_A_hli;
+    // PUSH_HL;
+    uint8_t stringId = cmd->n;
+
+    // LD_E_A;
+    // LD_D(0);
+    // LD_HL(mStringBufferPointers);
+    // ADD_HL_DE;
+    // ADD_HL_DE;
+    // LD_A(BANK(aStringBufferPointers));
+    // CALL(aGetFarWord);
+    // uint16_t ptr = GetFarWord_Conv(BANK(aStringBufferPointers), 
+    //     mStringBufferPointers + (2 * stringId));
+    uint8_t* de;
+    switch(stringId) {
+        case 0: de = wram->wStringBuffer3; break;
+        case 1: de = wram->wStringBuffer4; break;
+        case 2: de = wram->wStringBuffer5; break;
+        case 3: de = wram->wStringBuffer2; break;
+        case 4: de = wram->wStringBuffer1; break;
+        case 5: de = wram->wEnemyMonNickname; break;
+        case 6: de = wram->wBattleMonNickname; break;
+        default: de = NULL; break;
+    }
+
+    // LD_D_H;
+    // LD_E_L;
+    // LD_H_B;
+    // LD_L_C;
+    // CALL(aPlaceString);
+    struct TextPrintState temp = {.de = de, .hl = state->bc};
+    PlaceString_Conv(&temp, state->bc);
+
+    state->bc = temp.bc;
     // POP_HL;
     // RET;
 }
@@ -3122,7 +3647,7 @@ Day:
 }
 
 //  print the day of the week
-void TextCommand_DAY_Conv(struct TextCmdState* state) {
+void TextCommand_DAY_Conv(struct TextPrintState* state) {
     PEEK("");
     static const char* Days[] = {
         "SUN@",
@@ -3157,7 +3682,7 @@ void TextCommand_DAY_Conv(struct TextCmdState* state) {
     uint8_t* de = Utf8ToCrystal(Days[wd]);
 
     // POP_HL;
-    struct TextCmdState temp = {.hl = state->bc, .de = de, .bc = state->bc};
+    struct TextPrintState temp = {.hl = state->bc, .de = de, .bc = state->bc};
     // CALL(aPlaceString);
     PlaceString_Conv(&temp, state->bc);
 
@@ -3167,7 +3692,7 @@ void TextCommand_DAY_Conv(struct TextCmdState* state) {
 
     // LD_DE(mTextCommand_DAY_Day);
     // CALL(aPlaceString);
-    struct TextCmdState temp2 = {.hl = hl, .de = Utf8ToCrystal(Day), .bc = temp.bc};
+    struct TextPrintState temp2 = {.hl = hl, .de = Utf8ToCrystal(Day), .bc = temp.bc};
     PlaceString_Conv(&temp2, hl);
     // POP_HL;
     state->de = temp2.de;
@@ -3208,4 +3733,57 @@ Satur:
 Day:
     //    db "DAY@"
 */
+}
+
+//  print the day of the week
+void TextCommand_DAY_Conv2(struct TextCmdState* state, const struct TextCmd* cmd) {
+    (void)cmd;
+    static const char* Days[] = {
+        "SUN@",
+        "MON@",
+        "TUES@",
+        "WEDNES@",
+        "THURS@",
+        "FRI@",
+        "SATUR@",
+    };
+
+    static const char* Day = "DAY@";
+
+    // CALL(aGetWeekday);
+    uint8_t wd = GetWeekday_Conv();
+
+    // PUSH_HL;
+    // PUSH_BC;
+    // LD_C_A;
+    // LD_B(0);
+    // LD_HL(mTextCommand_DAY_Days);
+    // ADD_HL_BC;
+    // ADD_HL_BC;
+    // uint16_t hl = mTextCommand_DAY_Days + (2 * wd);
+
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // LD_D_H;
+    // LD_E_L;
+    // uint16_t de = gb_read16(hl);
+    uint8_t* de = Utf8ToCrystal(Days[wd]);
+
+    // POP_HL;
+    struct TextPrintState temp = {.hl = state->bc, .de = de, .bc = state->bc};
+    // CALL(aPlaceString);
+    PlaceString_Conv(&temp, state->bc);
+
+    // LD_H_B;
+    // LD_L_C;
+    uint8_t* hl = temp.bc;
+
+    // LD_DE(mTextCommand_DAY_Day);
+    // CALL(aPlaceString);
+    struct TextPrintState temp2 = {.hl = hl, .de = Utf8ToCrystal(Day), .bc = temp.bc};
+    PlaceString_Conv(&temp2, hl);
+    // POP_HL;
+    state->bc = temp2.bc;
+    // RET;
 }

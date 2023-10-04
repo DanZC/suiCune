@@ -236,15 +236,6 @@ done:
     RET;     // ret
 }
 
-//  Return true if any SFX channels are active.
-bool CheckSFX_Conv(void) {
-    if (chan[CHAN5]->channelOn) return true;
-    if (chan[CHAN6]->channelOn) return true;
-    if (chan[CHAN7]->channelOn) return true;
-    if (chan[CHAN8]->channelOn) return true;
-    return false;
-}
-
 //  Play sound effect de.
 //  Sound effects are ordered by priority (highest to lowest)
 void PlaySFX_Conv(uint16_t de) {
@@ -617,6 +608,15 @@ void CheckSFX(void) {
 playing:
     SCF;
     RET;
+}
+
+//  Return true if any SFX channels are active.
+bool CheckSFX_Conv(void) {
+    if (chan[CHAN5]->channelOn) return true;
+    if (chan[CHAN6]->channelOn) return true;
+    if (chan[CHAN7]->channelOn) return true;
+    if (chan[CHAN8]->channelOn) return true;
+    return false;
 }
 
 void TerminateExpBarSound(void) {

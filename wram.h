@@ -2020,16 +2020,18 @@ struct PACKED wram_s
                             };
                             struct PACKED {
                                 // player movement data
-                                //union wCurInput
-                                uint8_t wFacingTileID;
+                                union {
+                                    uint8_t wCurInput;
+                                    uint8_t wFacingTileID;
+                                };
                                 uint8_t wWalkingIntoNPC;
                                 uint8_t wWalkingIntoLand;
                                 uint8_t wWalkingIntoEdgeWarp;
                                 uint8_t wMovementAnimation;
-                                uint8_t wWalkingDirection;
+                                int8_t wWalkingDirection;
                                 uint8_t wFacingDirection;
-                                uint8_t wWalkingX;
-                                uint8_t wWalkingY;
+                                int8_t wWalkingX;
+                                int8_t wWalkingY;
                                 uint8_t wWalkingTile;
                                 uint8_t skip_76[6];
                                 uint8_t wPlayerTurningDirection;

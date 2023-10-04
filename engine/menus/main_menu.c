@@ -496,7 +496,7 @@ static void MainMenu_PrintCurrentTimeAndDay_PrintDayOfWeek(uint8_t wd, uint8_t* 
     // LD_E_L;
     // POP_HL;
     // CALL(aPlaceString);
-    struct TextCmdState st = {.hl=de, .de=Utf8ToCrystal(Days[wd])};
+    struct TextPrintState st = {.hl=de, .de=Utf8ToCrystal(Days[wd])};
     PlaceString_Conv(&st, de);
     // LD_H_B;
     // LD_L_C;

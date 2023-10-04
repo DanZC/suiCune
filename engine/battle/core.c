@@ -3,6 +3,7 @@
 #include "../../home/array.h"
 #include "../../data/trainers/leaders.h"
 #include "../pokemon/experience.h"
+#include "../gfx/pic_animation.h"
 
 //  Core components of the battle engine.
 
@@ -4065,10 +4066,11 @@ not_shiny:
     FARCALL(aCheckBattleScene);
     IF_C goto cry_no_anim;
 
-    hlcoord(12, 0, wTilemap);
-    LD_D(0x0);
-    LD_E(ANIM_MON_SLOW);
-    PREDEF(pAnimateFrontpic);
+    // hlcoord(12, 0, wTilemap);
+    // LD_D(0x0);
+    // LD_E(ANIM_MON_SLOW);
+    // PREDEF(pAnimateFrontpic);
+    AnimateFrontpic_Conv(coord(12, 0, wram->wTilemap), 0x0, ANIM_MON_SLOW);
     goto skip_cry;
 
 
@@ -10401,10 +10403,11 @@ not_shiny:
     FARCALL(aCheckBattleScene);
     IF_C goto cry_no_anim;
 
-    hlcoord(12, 0, wTilemap);
-    LD_D(0x0);
-    LD_E(ANIM_MON_NORMAL);
-    PREDEF(pAnimateFrontpic);
+    // hlcoord(12, 0, wTilemap);
+    // LD_D(0x0);
+    // LD_E(ANIM_MON_NORMAL);
+    // PREDEF(pAnimateFrontpic);
+    AnimateFrontpic_Conv(coord(12, 0, wram->wTilemap), 0x0, ANIM_MON_NORMAL);
     goto skip_cry;  // cry is played during the animation
 
 

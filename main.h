@@ -13,7 +13,7 @@
 //#include "engine/pokemon/correct_nick_errors.h"
 #include "engine/math/math.h"
 #include "data/items/attributes.h"
-//#include "engine/overworld/npc_movement.h"
+#include "engine/overworld/npc_movement.h"
 //#include "engine/events/happiness_egg.h"
 //#include "engine/events/shuckle.h"
 //#include "engine/events/haircut.h"
@@ -72,7 +72,7 @@
 
 #include "engine/rtc/rtc.h"
 #include "engine/overworld/overworld.h"
-//#include "engine/overworld/tile_events.h"
+#include "engine/overworld/tile_events.h"
 //#include "engine/menus/save.h"
 //#include "engine/overworld/spawn_points.h"
 //#include "engine/overworld/map_setup.h"
@@ -254,7 +254,7 @@
 
 // SECTION "bank20", ROMX
 
-//#include "engine/overworld/player_movement.h"
+#include "engine/overworld/player_movement.h"
 #include "engine/events/engine_flags.h"
 //#include "engine/overworld/variables.h"
 //#include "data/text/battle.h"
