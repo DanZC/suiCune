@@ -151,7 +151,7 @@ void LoadOW_BGPal7(void){
     // LD_A(BANK(wBGPals1));
     // CALL(aFarCopyWRAM);
     CopyBytes_Conv2(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT, Palette_TextBG7, 1 * PALETTE_SIZE);
-    RET;
+    // RET;
 }
 
 // void Palette_TextBG7(void){

@@ -9,10 +9,12 @@
 #include "../../home/map_objects.h"
 #include "../../home/joypad.h"
 #include "../../home/window.h"
+#include "../battle/core.h"
 #include "../battle/read_trainer_party.h"
 #include "../events/engine_flags.h"
 #include "landmarks.h"
 #include "overworld.h"
+#include "map_objects.h"
 #include "../events/specials.h"
 
 static const struct TextCmd* lScriptText = NULL;
@@ -1281,6 +1283,18 @@ void GetScriptObject(void){
 
 }
 
+uint8_t GetScriptObject_Conv(uint8_t a){
+    // AND_A_A;  // PLAYER?
+    // RET_Z ;
+    // CP_A(LAST_TALKED);
+    // RET_Z ;
+    if(a == 0 || a == (uint8_t)LAST_TALKED)
+        return a;
+    // DEC_A;
+    // RET;
+    return a - 1;
+}
+
 void Script_setlasttalked(void){
     CALL(aGetScriptByte);
     CALL(aGetScriptObject);
@@ -1289,12 +1303,30 @@ void Script_setlasttalked(void){
 
 }
 
+void Script_setlasttalked_Conv(script_s* s, uint8_t a){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // CALL(aGetScriptObject);
+    // LDH_addr_A(hLastTalked);
+    hram->hLastTalked = GetScriptObject_Conv(a);
+    // RET;
+}
+
 void Script_applymovement(void){
     CALL(aGetScriptByte);
     CALL(aGetScriptObject);
     LD_C_A;
 
     return ApplyMovement();
+}
+
+void Script_applymovement_Conv(script_s* s, uint8_t a, const uint8_t* hl){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // CALL(aGetScriptObject);
+    // LD_C_A;
+
+    return ApplyMovement_Conv(GetScriptObject_Conv(a), hl);
 }
 
 void ApplyMovement(void){
@@ -1323,6 +1355,38 @@ void ApplyMovement(void){
 
 }
 
+void ApplyMovement_Conv(uint8_t c, const uint8_t* hl){
+    // PUSH_BC;
+    // LD_A_C;
+    // FARCALL(aFreezeAllOtherObjects);
+    // POP_BC;
+    FreezeAllOtherObjects_Conv(c);
+
+    // PUSH_BC;
+    // CALL(aUnfreezeFollowerObject);
+    v_UnfreezeFollowerObject_Conv(c);
+    // POP_BC;
+
+
+    // CALL(aGetScriptByte);
+    // LD_L_A;
+    // CALL(aGetScriptByte);
+    // LD_H_A;
+    // LD_A_addr(wScriptBank);
+    // LD_B_A;
+    // CALL(aGetMovementData);
+    // RET_C ;
+    if(!GetMovementData_Conv(c, hl))
+        return;
+
+    // LD_A(SCRIPT_WAIT_MOVEMENT);
+    // LD_addr_A(wScriptMode);
+    wram->wScriptMode = SCRIPT_WAIT_MOVEMENT;
+    // CALL(aStopScript);
+    // RET;
+    StopScript();
+}
+
 void UnfreezeFollowerObject(void){
     FARCALL(av_UnfreezeFollowerObject);
     RET;
@@ -1336,6 +1400,15 @@ void Script_applymovementlasttalked(void){
     LD_C_A;
     JP(mApplyMovement);
 
+}
+
+//  apply movement to last talked
+void Script_applymovementlasttalked_Conv(script_s* s, const uint8_t* hl){
+    (void)s;
+    // LDH_A_addr(hLastTalked);
+    // LD_C_A;
+    // JP(mApplyMovement);
+    return ApplyMovement_Conv(hram->hLastTalked, hl);
 }
 
 void Script_faceplayer(void){
@@ -1750,19 +1823,13 @@ void Script_earthquake(void){
 script:
     //applymovement ['PLAYER', 'wEarthquakeMovementDataBuffer']
     //end ['?']
-
-    return EarthquakeMovement();
 }
 
-void EarthquakeMovement(void){
-    //step_shake ['16']  // the 16 gets overwritten with the script byte
-    //step_sleep ['16']  // the 16 gets overwritten with the lower 6 bits of the script byte
-    //step_end ['?']
-
-End:
-
-    return Script_loadpikachudata();
-}
+const uint8_t EarthquakeMovement[] = {
+    step_shake(16),  // the 16 gets overwritten with the script byte
+    step_sleep(16),  // the 16 gets overwritten with the lower 6 bits of the script byte
+    movement_step_end
+};
 
 void Script_loadpikachudata(void){
     LD_A(PIKACHU);
@@ -1778,6 +1845,14 @@ void Script_randomwildmon(void){
     LD_addr_A(wBattleScriptFlags);
     RET;
 
+}
+
+void Script_randomwildmon_Conv(script_s* s){
+    (void)s;
+    // XOR_A_A;
+    // LD_addr_A(wBattleScriptFlags);
+    // RET;
+    wram->wBattleScriptFlags = 0;
 }
 
 void Script_loadtemptrainer(void){
@@ -1821,6 +1896,19 @@ void Script_startbattle(void){
     LD_addr_A(wScriptVar);
     RET;
 
+}
+
+void Script_startbattle_Conv(script_s* s){
+    (void)s;
+    // CALL(aBufferScreen);
+    BufferScreen_Conv();
+    // PREDEF(pStartBattle);
+    StartBattle_Conv();
+    // LD_A_addr(wBattleResult);
+    // AND_A(~BATTLERESULT_BITMASK);
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = wram->wBattleResult & ~BATTLERESULT_BITMASK;
+    // RET;
 }
 
 void Script_catchtutorial(void){

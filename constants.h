@@ -76,4 +76,5 @@ extern struct gb_s gb;
 extern struct hram_s *hram;
 extern struct vram_s *vram;
 extern struct wram_s *wram;
+extern script_s gCurScript;
 #endif

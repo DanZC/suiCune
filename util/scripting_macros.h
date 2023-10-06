@@ -32,6 +32,10 @@
 #define repeattext(_hl)         SCRIPT_EVCMD(Script_repeattext_Conv, _hl)
 #define closetext               SCRIPT_EVCMD(Script_closetext_Conv)
 #define waitbutton              SCRIPT_EVCMD(Script_waitbutton_Conv)
+#define setlasttalked(_o)       SCRIPT_EVCMD(Script_setlasttalked_Conv, _o)
+#define applymovement(_o, _mv)  SCRIPT_EVCMD(Script_applymovement_Conv, _o, _mv)
+#define randomwildmon           SCRIPT_EVCMD(Script_randomwildmon_Conv)
+#define startbattle             SCRIPT_EVCMD(Script_startbattle_Conv)
 #define ret                     SCRIPT_RET
 
 #define far_label(_name)    case _name:

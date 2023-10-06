@@ -8,6 +8,7 @@
 #include "../../home/map.h"
 #include "../gfx/color.h"
 #include "../gfx/crystal_layouts.h"
+#include "map_objects.h"
 
 void ReanchorBGMap_NoOAMUpdate(void){
     CALL(aDelayFrame);
@@ -124,6 +125,7 @@ static void ReanchorBGMap_NoOAMUpdate_ReanchorBGMap(void) {
     // LDH_addr_A(hSCY);
     hram->hSCY = 0;
     // CALL(aApplyBGMapAnchorToObjects);
+    ApplyBGMapAnchorToObjects_Conv();
     // RET;
 }
 
@@ -247,33 +249,34 @@ void HDMATransfer_FillBGMap0WithBlack_Conv(void){
     // PUSH_AF;
     // LD_A(MBANK(awDecompressScratch));
     // LDH_addr_A(rSVBK);
-    wbank_push(MBANK(awDecompressScratch));
+    // wbank_push(MBANK(awDecompressScratch));
 
     // LD_A(0x60);
     // LD_HL(wDecompressScratch);
     // LD_BC(wScratchAttrmap - wDecompressScratch);
     // CALL(aByteFill);
-    ByteFill_Conv(wDecompressScratch, wScratchAttrmap - wDecompressScratch, 0x60);
+    ByteFill_Conv2(wram->wDecompressScratch, wScratchAttrmap - wDecompressScratch, 0x60);
     // LD_A(HIGH(wDecompressScratch));
     // LDH_addr_A(rHDMA1);
-    gb_write(rHDMA1, HIGH(wDecompressScratch));
+    // gb_write(rHDMA1, HIGH(wDecompressScratch));
     // LD_A(LOW(wDecompressScratch));
     // LDH_addr_A(rHDMA2);
-    gb_write(rHDMA2, LOW(wDecompressScratch));
+    // gb_write(rHDMA2, LOW(wDecompressScratch));
     // LD_A(HIGH(vBGMap0 - VRAM_Begin));
     // LDH_addr_A(rHDMA3);
-    gb_write(rHDMA3, HIGH(vBGMap0 - VRAM_Begin));
+    // gb_write(rHDMA3, HIGH(vBGMap0 - VRAM_Begin));
     // LD_A(LOW(vBGMap0 - VRAM_Begin));
     // LDH_addr_A(rHDMA4);
-    gb_write(rHDMA4, LOW(vBGMap0 - VRAM_Begin));
+    // gb_write(rHDMA4, LOW(vBGMap0 - VRAM_Begin));
     // LD_A(0x3f);
     // LDH_addr_A(hDMATransfer);
-    hram->hDMATransfer = 0x3f;
+    // hram->hDMATransfer = 0x3f;
     // CALL(aDelayFrame);
     DelayFrame();
+    CopyBytes_Conv2(vram->vBGMap0, wram->wDecompressScratch, wScratchAttrmap - wDecompressScratch);
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // RET;
-    wbank_pop;
+    // wbank_pop;
 }

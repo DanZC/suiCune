@@ -3,6 +3,9 @@
 #include "../engine/overworld/map_objects.h"
 #include "array.h"
 #include "../data/collision/collision_permissions.h"
+#include "../data/sprites/map_objects.h"
+
+const uint8_t* gMovementDataAddr;
 
 //  Functions handling map objects.
 
@@ -720,6 +723,43 @@ void LoadMovementDataPointer_Conv(uint8_t a, uint16_t hl, uint16_t bc){
     // RET;
 }
 
+//  Load the movement data pointer for object a.
+bool LoadMovementDataPointer_Conv2(uint8_t a, const uint8_t* hl){
+    // LD_addr_A(wMovementObject);
+    wram->wMovementObject = a;
+    // LDH_A_addr(hROMBank);
+    // LD_addr_A(wMovementDataBank);
+    wram->wMovementDataBank = hram->hROMBank;
+    // LD_A_L;
+    // LD_addr_A(wMovementDataAddress);
+    // LD_A_H;
+    // LD_addr_A(wMovementDataAddress + 1);
+    gMovementDataAddr = hl;
+    // LD_A_addr(wMovementObject);
+    // CALL(aCheckObjectVisibility);
+    // RET_C ;
+    if(!CheckObjectVisibility_Conv(a))
+        return false;
+
+    struct Object* bc = (&wram->wPlayerStruct + a);
+    // LD_HL(OBJECT_MOVEMENTTYPE);
+    // ADD_HL_BC;
+    // LD_hl(SPRITEMOVEDATA_SCRIPTED);
+    bc->movementType = SPRITEMOVEDATA_SCRIPTED;
+
+    // LD_HL(OBJECT_STEP_TYPE);
+    // ADD_HL_BC;
+    // LD_hl(STEP_TYPE_RESET);
+    bc->stepType = STEP_TYPE_RESET;
+
+    // LD_HL(wVramState);
+    // SET_hl(7);
+    bit_set(wram->wVramState, 7);
+    // AND_A_A;
+    // RET;
+    return true;
+}
+
 void FindFirstEmptyObjectStruct(void){
     //  Returns the index of the first empty object struct in A and its address in HL, then sets carry.
 //  If all object structs are occupied, A = 0 and Z is set.
@@ -756,7 +796,7 @@ done:
 
 //  Returns the index of the first empty object struct.
 //  If all object structs are occupied, returns 0xffff
-uint16_t FindFirstEmptyObjectStruct_Conv(void) {
+struct Object* FindFirstEmptyObjectStruct_Conv(void) {
     // PUSH_BC;
     // PUSH_DE;
     // LD_HL(wObjectStructs);
@@ -766,12 +806,12 @@ uint16_t FindFirstEmptyObjectStruct_Conv(void) {
         // LD_A_hl;
         // AND_A_A;
         // IF_Z goto l_break;
-        if(wram->wObjectStruct[i].sprite == 0) {
+        if((&wram->wPlayerStruct + i)->sprite == 0) {
         // l_break:
             // LD_A(NUM_OBJECT_STRUCTS);
             // SUB_A_C;
             // SCF;
-            return i;
+            return &wram->wPlayerStruct + i;
         }
         // ADD_HL_DE;
         // DEC_C;
@@ -782,7 +822,7 @@ uint16_t FindFirstEmptyObjectStruct_Conv(void) {
     // POP_DE;
     // POP_BC;
     // RET;
-    return 0xffff;
+    return NULL;
 }
 
 void GetSpriteMovementFunction(void){
@@ -894,6 +934,83 @@ CopyData:
     LD_hl_A;
     RET;
 
+}
+
+static void CopySpriteMovementData_CopyData(struct Object* de, uint8_t a) {
+    // LD_HL(OBJECT_MOVEMENTTYPE);
+    // ADD_HL_DE;
+    // LD_hl_A;
+    de->movementType = a;
+
+    // PUSH_DE;
+    // LD_E_A;
+    // LD_D(0);
+    // LD_HL(mSpriteMovementData + SPRITEMOVEATTR_FACING);
+    // for(int rept = 0; rept < NUM_SPRITEMOVEDATA_FIELDS; rept++){
+    // ADD_HL_DE;
+    // }
+    // LD_B_H;
+    // LD_C_L;
+    // POP_DE;
+    const struct SpriteMoveData* bc = &SpriteMovementData[a];
+
+    // LD_A_bc;
+    // INC_BC;
+    // RLCA;
+    // RLCA;
+    // maskbits(NUM_DIRECTIONS, 2);
+    // LD_HL(OBJECT_FACING);
+    // ADD_HL_DE;
+    // LD_hl_A;
+    de->facing = (bc->facing << 2) & 0b1100;
+
+    // LD_A_bc;
+    // INC_BC;
+    // LD_HL(OBJECT_ACTION);
+    // ADD_HL_DE;
+    // LD_hl_A;
+    de->action = bc->action;
+
+    // LD_A_bc;
+    // INC_BC;
+    // LD_HL(OBJECT_FLAGS1);
+    // ADD_HL_DE;
+    // LD_hl_A;
+    de->flags1 = bc->flags1;
+
+    // LD_A_bc;
+    // INC_BC;
+    // LD_HL(OBJECT_FLAGS2);
+    // ADD_HL_DE;
+    // LD_hl_A;
+    de->flags2 = bc->flags2;
+
+    // LD_A_bc;
+    // INC_BC;
+    // LD_HL(OBJECT_PALETTE);
+    // ADD_HL_DE;
+    // LD_hl_A;
+    de->palette = bc->palette;
+    // RET;
+}
+
+void CopySpriteMovementData_Conv(struct Object* de, uint8_t a){
+    // LD_L_A;
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+    // LD_A(BANK(aSpriteMovementData));
+    // RST(aBankswitch);
+    // LD_A_L;
+    // PUSH_BC;
+
+    // CALL(aCopySpriteMovementData_CopyData);
+    CopySpriteMovementData_CopyData(de, a);
+
+    // POP_BC;
+    // POP_AF;
+    // RST(aBankswitch);
+
+    // RET;
 }
 
 void v_GetMovementByte(void){

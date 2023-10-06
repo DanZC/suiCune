@@ -20,7 +20,7 @@
 
 // SECTION "bank2", ROMX
 
-//#include "engine/overworld/player_object.h"
+#include "engine/overworld/player_object.h"
 //#include "engine/math/sine.h"
 //#include "engine/predef.h"
 #include "engine/gfx/color.h"

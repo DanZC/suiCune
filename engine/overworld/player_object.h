@@ -1,0 +1,18 @@
+void BlankScreen(void);
+void SpawnPlayer(void);
+void PlayerObjectTemplate(void);
+void CopyDECoordsToMapObject(void);
+void PlayerSpawn_ConvertCoords(void);
+void WriteObjectXY(void);
+void RefreshPlayerCoords(void);
+void CopyObjectStruct(void);
+void CopyMapObjectToObjectStruct(void);
+void InitializeVisibleSprites(void);
+void CheckObjectEnteringVisibleRange(void);
+void CopyTempObjectToObjectStruct(void);
+void CopyTempObjectToObjectStruct_Conv(struct Object* de);
+void TrainerWalkToPlayer(void);
+void SurfStartStep(void);
+void FollowNotExact(void);
+void GetRelativeFacing(void);
+void QueueFollowerFirstStep(void);

@@ -4,6 +4,10 @@
 #include "../../home/map_objects.h"
 #include "../../home/menu.h"
 #include "../../home/map.h"
+#include "player_object.h"
+#include "movement.h"
+
+uint8_t (*gMovementPointer)(void);
 
 // INCLUDE "data/sprites/facings.asm"
 
@@ -805,6 +809,32 @@ ok:
     RET;
 }
 
+void UpdateTallGrassFlags_Conv(struct Object* bc) {
+    // SET_PC(aUpdateTallGrassFlags);
+    // LD_HL(OBJECT_FLAGS2);
+    // ADD_HL_BC;
+    // BIT_hl(OVERHEAD_F);
+    // IF_Z goto ok;
+    if(bit_test(bc->flags2, OVERHEAD_F)) {
+        // LD_HL(OBJECT_NEXT_TILE);
+        // ADD_HL_BC;
+        // LD_A_hl;
+        // CALL(aSetTallGrassFlags);
+        SetTallGrassFlags_Conv(bc, bc->nextTile);
+    }
+// ok:
+    // LD_HL(OBJECT_NEXT_TILE);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // CALL(aUselessAndA);
+    // RET_C;  // never happens
+    // LD_HL(OBJECT_STANDING_TILE);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // CALL(aUselessAndA);
+    // RET;
+}
+
 void SetTallGrassFlags(void) {
     SET_PC(aSetTallGrassFlags);
     CALL(aCheckSuperTallGrassTile);
@@ -1241,6 +1271,30 @@ ok:
 
     LD_A(SPRITEMOVEDATA_STANDING_DOWN);
     RET;
+}
+
+uint8_t RestoreDefaultMovement_Conv(struct Object* bc) {
+    // SET_PC(aRestoreDefaultMovement);
+    // LD_HL(OBJECT_MAP_OBJECT_INDEX);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // CP_A(-1);
+    // IF_Z goto ok;
+    if(bc->mapObjectIndex == 0xff) {
+    // ok:
+        // LD_A(SPRITEMOVEDATA_STANDING_DOWN);
+        // RET;
+        return SPRITEMOVEDATA_STANDING_DOWN;
+    }
+    // PUSH_BC;
+    // CALL(aGetMapObject);
+    struct MapObject* obj = GetMapObject_Conv(bc->mapObjectIndex);
+    // LD_HL(MAPOBJECT_MOVEMENT);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // POP_BC;
+    // RET;
+    return obj->objectMovement;
 }
 
 void ObjectMovementByte_ZeroAnonJumptableIndex(void) {
@@ -3011,10 +3065,18 @@ void v_GetMovementObject(void) {
     JP(mHandleMovementData);
 }
 
-void GetMovementObject(void) {
-    SET_PC(aGetMovementObject);
-    LD_A_addr(wMovementObject);
-    RET;
+void v_GetMovementObject_Conv(struct Object* bc) {
+    // SET_PC(av_GetMovementObject);
+    // LD_HL(mGetMovementObject);
+    // JP(mHandleMovementData);
+    HandleMovementData_Conv(bc, GetMovementObject);
+}
+
+uint8_t GetMovementObject(void) {
+    // SET_PC(aGetMovementObject);
+    // LD_A_addr(wMovementObject);
+    // RET;
+    return wram->wMovementObject;
 }
 
 void HandleMovementData(void) {
@@ -3041,20 +3103,54 @@ StorePointer:
     RET;
 }
 
+void HandleMovementData_Conv(struct Object* bc, uint8_t (*hl)(void)) {
+    // SET_PC(aHandleMovementData);
+    // CALL(aHandleMovementData_StorePointer);
+    // StorePointer:
+    // LD_A_L;
+    // LD_addr_A(wMovementPointer);
+    // LD_A_H;
+    // LD_addr_A(wMovementPointer + 1);
+    gMovementPointer = hl;
+    // RET;
+    do {
+    // loop:
+
+        // XOR_A_A;
+        // LD_addr_A(wMovementByteWasControlSwitch);
+        wram->wMovementByteWasControlSwitch = 0;
+        // CALL(aJumpMovementPointer);
+        uint8_t a = JumpMovementPointer_Conv();
+        // CALL(aDoMovementFunction);
+        DoMovementFunction_Conv(bc, a);
+        // LD_A_addr(wMovementByteWasControlSwitch);
+        // AND_A_A;
+        // IF_NZ goto loop;
+    } while(wram->wMovementByteWasControlSwitch != 0);
+    // RET;
+}
+
 void JumpMovementPointer(void) {
     SET_PC(aJumpMovementPointer);
-    LD_HL(wMovementPointer);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    JP_hl;
+    // LD_HL(wMovementPointer);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // JP_hl;
+    REG_A = JumpMovementPointer_Conv();
+    RET;
+}
+
+uint8_t JumpMovementPointer_Conv(void) {
+    return gMovementPointer();
 }
 
 void ContinueReadingMovement(void) {
-    SET_PC(aContinueReadingMovement);
-    LD_A(1);
-    LD_addr_A(wMovementByteWasControlSwitch);
-    RET;
+    // SET_PC(aContinueReadingMovement);
+    // LD_A(1);
+    // LD_addr_A(wMovementByteWasControlSwitch);
+    wram->wMovementByteWasControlSwitch = 1;
+    // RET;
 }
 
 void DoMovementFunction(void) {
@@ -3069,6 +3165,18 @@ void DoMovementFunction(void) {
     // INCLUDE "engine/overworld/movement.asm"
 
     return ApplyMovementToFollower();
+}
+
+void DoMovementFunction_Conv(struct Object* bc, uint8_t a) {
+    // SET_PC(aDoMovementFunction);
+    // PUSH_AF;
+    // CALL(aApplyMovementToFollower);
+    ApplyMovementToFollower_Conv(a);
+    // POP_AF;
+    // LD_HL(mMovementPointers);
+    // RST(aJumpTable);
+    // RET;
+    return MovementPointers[a](bc);
 }
 
 void ApplyMovementToFollower(void) {
@@ -3103,6 +3211,48 @@ void ApplyMovementToFollower(void) {
     POP_AF;
     LD_hl_A;
     RET;
+}
+
+void ApplyMovementToFollower_Conv(uint8_t a) {
+    // SET_PC(aApplyMovementToFollower);
+    // LD_E_A;
+    // LD_A_addr(wObjectFollow_Follower);
+    // CP_A(-1);
+    // RET_Z;
+    if(wram->wObjectFollow_Follower == 0xff)
+        return;
+    // LD_A_addr(wObjectFollow_Leader);
+    // LD_D_A;
+    // LDH_A_addr(hMapObjectIndex);
+    // CP_A_D;
+    // RET_NZ;
+    if(hram->hMapObjectIndex != wram->wObjectFollow_Leader)
+        return;
+    // LD_A_E;
+    // CP_A(movement_step_sleep);
+    // RET_Z;
+    // CP_A(movement_step_end);
+    // RET_Z;
+    // CP_A(movement_step_4b);
+    // RET_Z;
+    // CP_A(movement_step_bump);
+    // RET_Z;
+    // CP_A(movement_slow_step);
+    // RET_C;
+    if(a == movement_step_sleep || a == movement_step_end || a == movement_step_4b || a == movement_step_bump || a < movement_slow_step)
+        return;
+    // PUSH_AF;
+    // LD_HL(wFollowerMovementQueueLength);
+    // INC_hl;
+    // LD_E_hl;
+    // LD_D(0);
+    uint16_t de = ++wram->wFollowerMovementQueueLength;
+    // LD_HL(wFollowMovementQueue);
+    // ADD_HL_DE;
+    // POP_AF;
+    // LD_hl_A;
+    wram->wFollowMovementQueue[de] = a;
+    // RET;
 }
 
 void GetFollowerNextMovementByte(void) {
@@ -3179,6 +3329,27 @@ ShadowObject:
     return SpawnStrengthBoulderDust();
 }
 
+void SpawnShadow_Conv(struct Object* bc) {
+    static const uint8_t ShadowObject[] = {
+        0x00, PAL_OW_SILVER, SPRITEMOVEDATA_SHADOW,
+    };
+    // SET_PC(aSpawnShadow);
+    // PUSH_BC;
+    // LD_DE(mSpawnShadow_ShadowObject);
+    // CALL(aCopyTempObjectData);
+    CopyTempObjectData_Conv(bc, ShadowObject);
+    // CALL(aInitTempObject);
+    InitTempObject_Conv();
+    // POP_BC;
+    // RET;
+
+// ShadowObject:
+
+    // vtile, palette, movement
+    // db ['0x00', 'PAL_OW_SILVER', 'SPRITEMOVEDATA_SHADOW'];
+    // return SpawnStrengthBoulderDust();
+}
+
 void SpawnStrengthBoulderDust(void) {
     SET_PC(aSpawnStrengthBoulderDust);
     PUSH_BC;
@@ -3213,6 +3384,28 @@ EmoteObject:
     return ShakeGrass();
 }
 
+void SpawnEmote_Conv(struct Object* bc) {
+    static const uint8_t EmoteObject[] = {
+        0x00, PAL_OW_SILVER, SPRITEMOVEDATA_EMOTE,
+    };
+    // SET_PC(aSpawnEmote);
+    // PUSH_BC;
+    // LD_DE(mSpawnEmote_EmoteObject);
+    // CALL(aCopyTempObjectData);
+    CopyTempObjectData_Conv(bc, EmoteObject);
+    // CALL(aInitTempObject);
+    InitTempObject_Conv();
+    // POP_BC;
+    // RET;
+
+// EmoteObject:
+
+    // vtile, palette, movement
+    // db ['0x00', 'PAL_OW_SILVER', 'SPRITEMOVEDATA_EMOTE'];
+
+    // return ShakeGrass();
+}
+
 void ShakeGrass(void) {
     SET_PC(aShakeGrass);
     PUSH_BC;
@@ -3228,6 +3421,28 @@ GrassObject:
     // db ['0x00', 'PAL_OW_TREE', 'SPRITEMOVEDATA_GRASS'];
 
     return ShakeScreen();
+}
+
+void ShakeGrass_Conv(struct Object* bc) {
+    static const uint8_t GrassObject[] = {
+        0x00, PAL_OW_TREE, SPRITEMOVEDATA_GRASS,
+    };
+    // SET_PC(aShakeGrass);
+    // PUSH_BC;
+    // LD_DE(mShakeGrass_GrassObject);
+    // CALL(aCopyTempObjectData);
+    CopyTempObjectData_Conv(bc, GrassObject);
+    // CALL(aInitTempObject);
+    InitTempObject_Conv();
+    // POP_BC;
+    // RET;
+
+// GrassObject:
+
+    // vtile, palette, movement
+    // db ['0x00', 'PAL_OW_TREE', 'SPRITEMOVEDATA_GRASS'];
+
+    // return ShakeScreen();
 }
 
 void ShakeScreen(void) {
@@ -3248,6 +3463,31 @@ ScreenShakeObject:
     // db ['0x00', 'PAL_OW_SILVER', 'SPRITEMOVEDATA_SCREENSHAKE'];
 
     return DespawnEmote();
+}
+
+void ShakeScreen_Conv(struct Object* bc, uint8_t a) {
+    static const uint8_t ScreenShakeObject[] = {
+        0x00, PAL_OW_SILVER, SPRITEMOVEDATA_SCREENSHAKE,
+    };
+    // SET_PC(aShakeScreen);
+    // PUSH_BC;
+    // PUSH_AF;
+    // LD_DE(mShakeScreen_ScreenShakeObject);
+    // CALL(aCopyTempObjectData);
+    CopyTempObjectData_Conv(bc, ScreenShakeObject);
+    // POP_AF;
+    // LD_addr_A(wTempObjectCopyRange);
+    wram->wTempObjectCopyRange = a;
+    // CALL(aInitTempObject);
+    InitTempObject_Conv();
+    // POP_BC;
+    // RET;
+
+// ScreenShakeObject:
+
+    // vtile, palette, movement
+    // db ['0x00', 'PAL_OW_SILVER', 'SPRITEMOVEDATA_SCREENSHAKE'];
+    // return DespawnEmote();
 }
 
 void DespawnEmote(void) {
@@ -3294,6 +3534,56 @@ next:
     RET;
 }
 
+void DespawnEmote_Conv(struct Object* bc) {
+    (void)bc;
+    // SET_PC(aDespawnEmote);
+    // PUSH_BC;
+    // LDH_A_addr(hMapObjectIndex);
+    // LD_C_A;
+    // CALL(aDespawnEmote_DeleteEmote);
+    // POP_BC;
+    // RET;
+
+// DeleteEmote:
+
+    // LD_DE(wObjectStructs);
+    // LD_A(NUM_OBJECT_STRUCTS);
+    for(size_t i = 0; i < NUM_OBJECT_STRUCTS; ++i) {
+    // loop:
+        struct Object* const de = (&wram->wPlayerStruct + i);
+        // PUSH_AF;
+        // LD_HL(OBJECT_FLAGS1);
+        // ADD_HL_DE;
+        // BIT_hl(EMOTE_OBJECT_F);
+        // IF_Z goto next;
+        if(!bit_test(de->flags1, EMOTE_OBJECT_F))
+            continue;
+        // LD_HL(OBJECT_SPRITE);
+        // ADD_HL_DE;
+        // LD_A_hl;
+        // AND_A_A;
+        // IF_Z goto next;
+        if(de->sprite == 0)
+            continue;
+        // PUSH_BC;
+        // XOR_A_A;
+        // LD_BC(OBJECT_LENGTH);
+        // CALL(aByteFill);
+        // POP_BC;
+        ByteFill_Conv2(de, sizeof(*de), 0);
+
+    // next:
+        // LD_HL(OBJECT_LENGTH);
+        // ADD_HL_DE;
+        // LD_D_H;
+        // LD_E_L;
+        // POP_AF;
+        // DEC_A;
+        // IF_NZ goto loop;
+    }
+    // RET;
+}
+
 void InitTempObject(void) {
     SET_PC(aInitTempObject);
     CALL(aFindFirstEmptyObjectStruct);
@@ -3302,6 +3592,20 @@ void InitTempObject(void) {
     LD_E_L;
     FARCALL(aCopyTempObjectToObjectStruct);
     RET;
+}
+
+void InitTempObject_Conv(void) {
+    // SET_PC(aInitTempObject);
+    // CALL(aFindFirstEmptyObjectStruct);
+    struct Object* de = FindFirstEmptyObjectStruct_Conv();
+    // RET_NC;
+    if(de == NULL)
+        return;
+    // LD_D_H;
+    // LD_E_L;
+    // FARCALL(aCopyTempObjectToObjectStruct);
+    CopyTempObjectToObjectStruct_Conv(de);
+    // RET;
 }
 
 void CopyTempObjectData(void) {
@@ -3340,6 +3644,51 @@ void CopyTempObjectData(void) {
     RET;
 }
 
+void CopyTempObjectData_Conv(struct Object* bc, const uint8_t* de) {
+    // SET_PC(aCopyTempObjectData);
+    //  load into wTempObjectCopy:
+    //  -1, -1, [de], [de + 1], [de + 2], [hMapObjectIndex], [NextMapX], [NextMapY], -1
+    //  This spawns the object at the same place as whichever object is loaded into bc.
+    // LD_HL(wTempObjectCopyMapObjectIndex);
+    // LD_hl(-1);
+    wram->wTempObjectCopyMapObjectIndex = 0xff;
+    // INC_HL;
+    // LD_hl(-1);
+    wram->wTempObjectCopySprite = 0xff;
+    // INC_HL;
+    // LD_A_de;
+    // INC_DE;
+    // LD_hli_A;
+    wram->wTempObjectCopySpriteVTile = *(de++);
+    // LD_A_de;
+    // INC_DE;
+    // LD_hli_A;
+    wram->wTempObjectCopyPalette = *(de++);
+    // LD_A_de;
+    // LD_hli_A;
+    wram->wTempObjectCopyMovement = *(de++);
+    // LDH_A_addr(hMapObjectIndex);
+    // LD_hli_A;
+    wram->wTempObjectCopyRange = hram->hMapObjectIndex;
+    // PUSH_HL;
+    // LD_HL(OBJECT_NEXT_MAP_X);
+    // ADD_HL_BC;
+    // LD_D_hl;
+    // LD_HL(OBJECT_NEXT_MAP_Y);
+    // ADD_HL_BC;
+    // LD_E_hl;
+    // POP_HL;
+    // LD_hl_D;
+    wram->wTempObjectCopyX = bc->nextMapX;
+    // INC_HL;
+    // LD_hl_E;
+    // INC_HL;
+    wram->wTempObjectCopyY = bc->nextMapY;
+    // LD_hl(-1);
+    wram->wTempObjectCopyRadius = 0xff;
+    // RET;
+}
+
 void UpdateAllObjectsFrozen(void) {
     SET_PC(aUpdateAllObjectsFrozen);
     LD_A_addr(wVramState);
@@ -3373,19 +3722,19 @@ void UpdateAllObjectsFrozen_Conv(void) {
     // LD_A_addr(wVramState);
     // BIT_A(0);
     // RET_Z;
-    if(!bit_test(gb_read(wVramState), 0))
+    if(!bit_test(wram->wVramState, 0))
         return;
     
     // LD_BC(wObjectStructs);
     // XOR_A_A;
     uint8_t a = 0;
-    struct Object* bc = wram->wObjectStruct;
+    struct Object* bc = &wram->wPlayerStruct;
 
 // loop:
 
     do {
         // LDH_addr_A(hMapObjectIndex);
-        gb_write(hMapObjectIndex, a);
+        hram->hMapObjectIndex = a;
         // CALL(aDoesObjectHaveASprite);
         // IF_Z goto ok;
         if(!DoesObjectHaveASprite_Conv(bc)) {
@@ -3399,7 +3748,7 @@ void UpdateAllObjectsFrozen_Conv(void) {
         // LD_C_L;
         bc++;
         // LDH_A_addr(hMapObjectIndex);
-        a = gb_read(hMapObjectIndex);
+        a = hram->hMapObjectIndex;
         // INC_A;
         // CP_A(NUM_OBJECT_STRUCTS);
         // IF_NZ goto loop;
@@ -4175,6 +4524,26 @@ void FreezeAllOtherObjects(void) {
     RET;
 }
 
+bool FreezeAllOtherObjects_Conv(uint8_t c) {
+    // SET_PC(aFreezeAllOtherObjects);
+    // LD_A_C;
+    // CALL(aCheckObjectVisibility);
+    // RET_C;
+    if(!CheckObjectVisibility_Conv(c))
+        return false;
+    // PUSH_BC;
+    // CALL(aFreezeAllObjects);
+    FreezeAllObjects_Conv();
+    // POP_BC;
+    // LD_HL(OBJECT_FLAGS2);
+    // ADD_HL_BC;
+    // RES_hl(FROZEN_F);
+    bit_reset((&wram->wPlayerStruct + c)->flags2, FROZEN_F);
+    // XOR_A_A;
+    // RET;
+    return true;
+}
+
 void FreezeObject(void) {
     SET_PC(aFreezeObject);
     //  //  unreferenced
@@ -4214,6 +4583,38 @@ next:
     RET;
 }
 
+void FreezeAllObjects_Conv(void) {
+    // SET_PC(aFreezeAllObjects);
+    // LD_BC(wObjectStructs);
+    // XOR_A_A;
+
+    for(size_t i = 0; i < NUM_OBJECT_STRUCTS; ++i) {
+    // loop:
+        // PUSH_AF;
+        struct Object* bc = (&wram->wPlayerStruct + i);
+        // CALL(aDoesObjectHaveASprite);
+        // IF_Z goto next;
+        if(!DoesObjectHaveASprite_Conv(bc))
+            continue;
+        // LD_HL(OBJECT_FLAGS2);
+        // ADD_HL_BC;
+        // SET_hl(FROZEN_F);
+        bit_set(bc->flags2, FROZEN_F);
+
+    // next:
+
+        // LD_HL(OBJECT_LENGTH);
+        // ADD_HL_BC;
+        // LD_B_H;
+        // LD_C_L;
+        // POP_AF;
+        // INC_A;
+        // CP_A(NUM_OBJECT_STRUCTS);
+        // IF_NZ goto loop;
+    }
+    // RET;
+}
+
 void v_UnfreezeFollowerObject(void) {
     SET_PC(av_UnfreezeFollowerObject);
     LD_A_addr(wObjectFollow_Leader);
@@ -4235,6 +4636,38 @@ void v_UnfreezeFollowerObject(void) {
     ADD_HL_BC;
     RES_hl(FROZEN_F);
     RET;
+}
+
+void v_UnfreezeFollowerObject_Conv(uint8_t c) {
+    // SET_PC(av_UnfreezeFollowerObject);
+    // LD_A_addr(wObjectFollow_Leader);
+    // CP_A(-1);
+    // RET_Z;
+    if(wram->wObjectFollow_Leader == 0xff)
+        return;
+    // PUSH_BC;
+    // CALL(aGetObjectStruct);
+    struct Object* bc2 = GetObjectStruct_Conv(wram->wObjectFollow_Leader);
+    // LD_HL(OBJECT_MAP_OBJECT_INDEX);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // POP_BC;
+    // CP_A_C;
+    // RET_NZ;
+    if(bc2->mapObjectIndex != c)
+        return;
+    // LD_A_addr(wObjectFollow_Follower);
+    // CP_A(-1);
+    // RET_Z;
+    if(wram->wObjectFollow_Follower == 0xff)
+        return;
+    // CALL(aGetObjectStruct);
+    struct Object* bc = GetObjectStruct_Conv(wram->wObjectFollow_Follower);
+    // LD_HL(OBJECT_FLAGS2);
+    // ADD_HL_BC;
+    // RES_hl(FROZEN_F);
+    bit_reset(bc->flags2, FROZEN_F);
+    // RET;
 }
 
 void UnfreezeAllObjects(void) {
@@ -4481,6 +4914,62 @@ skip:
 #define PRIORITY_HIGH (0x30)
 
     return InitSprites();
+}
+
+void ApplyBGMapAnchorToObjects_Conv(void) {
+    // SET_PC(aApplyBGMapAnchorToObjects);
+    // PUSH_HL;
+    // PUSH_DE;
+    // PUSH_BC;
+    // LD_A_addr(wPlayerBGMapOffsetX);
+    // LD_D_A;
+    uint8_t d = wram->wPlayerBGMapOffsetX;
+    // LD_A_addr(wPlayerBGMapOffsetY);
+    // LD_E_A;
+    uint8_t e = wram->wPlayerBGMapOffsetY;
+    // LD_BC(wObjectStructs);
+    // LD_A(NUM_OBJECT_STRUCTS);
+    for(size_t i = 0; i < NUM_OBJECT_STRUCTS; ++i) {
+    // loop:
+
+        // PUSH_AF;
+        struct Object* bc = (&wram->wPlayerStruct + i);
+        // CALL(aDoesObjectHaveASprite);
+        // IF_Z goto skip;
+        if(!DoesObjectHaveASprite_Conv(bc))
+            continue;
+        // LD_HL(OBJECT_SPRITE_X);
+        // ADD_HL_BC;
+        // LD_A_hl;
+        // ADD_A_D;
+        // LD_hl_A;
+        bc->spriteX += d;
+        // LD_HL(OBJECT_SPRITE_Y);
+        // ADD_HL_BC;
+        // LD_A_hl;
+        // ADD_A_E;
+        // LD_hl_A;
+        bc->spriteY += e;
+
+    // skip:
+
+        // LD_HL(OBJECT_LENGTH);
+        // ADD_HL_BC;
+        // LD_B_H;
+        // LD_C_L;
+        // POP_AF;
+        // DEC_A;
+        // IF_NZ goto loop;
+    }
+    // XOR_A_A;
+    // LD_addr_A(wPlayerBGMapOffsetX);
+    wram->wPlayerBGMapOffsetX = 0;
+    // LD_addr_A(wPlayerBGMapOffsetY);
+    wram->wPlayerBGMapOffsetY = 0;
+    // POP_BC;
+    // POP_DE;
+    // POP_HL;
+    // RET;
 }
 
 static void InitSprites_DeterminePriorities(void) {

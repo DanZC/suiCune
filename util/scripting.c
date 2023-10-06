@@ -106,3 +106,5 @@ bool OtherScript(script_s* s) {
     waitsfx;
     SCRIPT_END
 }
+
+script_s gCurScript;

@@ -37,11 +37,13 @@ ENDM*/
 /*slow_slide_step: MACRO
         db movement_slow_slide_step | \1
 ENDM*/
+#define slow_slide_step(_dir) (movement_slow_slide_step | _dir)
 
 #define movement_slide_step 0x18
 /*slide_step: MACRO
         db movement_slide_step | \1
 ENDM*/
+#define slide_step(_dir) (movement_slide_step | _dir)
 
 #define movement_fast_slide_step 0x1c
 /*fast_slide_step: MACRO
@@ -53,21 +55,25 @@ ENDM*/
 /*turn_away: MACRO
         db movement_turn_away | \1
 ENDM*/
+#define turn_away(_dir) (movement_turn_away | _dir)
 
 #define movement_turn_in 0x24
 /*turn_in: MACRO
         db movement_turn_in | \1
 ENDM*/
+#define turn_in(_dir) (movement_turn_in | _dir)
 
 #define movement_turn_waterfall 0x28
 /*turn_waterfall: MACRO
         db movement_turn_waterfall | \1
 ENDM*/
+#define turn_waterfall(_dir) (movement_turn_waterfall | _dir)
 
 #define movement_slow_jump_step 0x2c
 /*slow_jump_step: MACRO
         db movement_slow_jump_step | \1
 ENDM*/
+#define slow_jump_step(_dir) (movement_slow_jump_step | _dir)
 
 #define movement_jump_step 0x30
 /*jump_step: MACRO
@@ -79,6 +85,7 @@ ENDM*/
 /*fast_jump_step: MACRO
         db movement_fast_jump_step | \1
 ENDM*/
+#define fast_jump_step(_dir) (movement_fast_jump_step | _dir)
 
 // const_inc = 1
 
@@ -123,6 +130,7 @@ else
         db movement_step_sleep + 8, \1
 endc
 ENDM*/
+#define step_sleep(_x) (movement_step_sleep + (_x - 1))
 
 // const_skip 8 // all step_sleep values
 
@@ -172,6 +180,7 @@ ENDM*/
         db movement_step_dig
         db \1 // length
 ENDM*/
+#define step_dig(_l) movement_step_dig, _l
 
 #define movement_step_bump 0x50
 /*step_bump: MACRO
@@ -203,6 +212,7 @@ ENDM*/
         db movement_step_shake
         db \1 // displacement
 ENDM*/
+#define step_shake(_d) movement_step_shake, _d
 
 #define movement_tree_shake 0x56
 /*tree_shake: MACRO

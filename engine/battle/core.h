@@ -223,6 +223,7 @@ void GetEnemyMonFrontpic(void);
 void DropEnemySub(void);
 void GetEnemyMonFrontpic_DoAnim(void);
 void StartBattle(void);
+bool StartBattle_Conv(void);
 void CallDoBattle(void);
 void BattleIntro(void);
 void LoadTrainerOrWildMonPic(void);

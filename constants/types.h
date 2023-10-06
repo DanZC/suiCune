@@ -36,6 +36,11 @@ struct BankAddr
     uint16_t addr;
 };
 
+struct MapId {
+    uint8_t mapNumber;
+    uint8_t mapGroup;
+};
+
 // Configurable types
 
 typedef uint8_t species_t; // Mon species type
@@ -969,6 +974,20 @@ struct WildGrassMons
     uint8_t mapNumber;
     uint8_t encounterRates[3];
     struct { species_t species; uint8_t level; } mons[3][7];
+};
+
+struct WildWaterMons
+{
+    uint8_t mapGroup;
+    uint8_t mapNumber;
+    uint8_t encounterRate;
+    struct { species_t species; uint8_t level; } mons[3];
+};
+
+union WildMons
+{
+    const struct WildGrassMons* grassMons;
+    const struct WildWaterMons* waterMons;
 };
 
 struct TrainerPartyNormal 

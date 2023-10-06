@@ -9,6 +9,7 @@
 #include "delay.h"
 #include "map_objects.h"
 #include "gfx.h"
+#include "map.h"
 
 void RefreshScreen(void){
         CALL(aClearWindowData);
@@ -96,6 +97,7 @@ void CloseText_Conv(void){
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = 0;
     // CALL(aOverworldTextModeSwitch);
+    OverworldTextModeSwitch_Conv();
     // CALL(av_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
     v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv();
     // XOR_A_A;

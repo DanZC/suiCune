@@ -1438,10 +1438,10 @@ ClearMenuData:
 }
 
 void ClearWindowData_Conv(void) {
-    ByteFill_Conv(wMenuMetadata, (wMenuMetadataEnd - wMenuMetadata), 0);
-    ByteFill_Conv(wMenuHeader, (wMenuHeaderEnd - wMenuHeader), 0);
-    ByteFill_Conv(wMenuData, (wMenuDataEnd - wMenuData), 0);
-    ByteFill_Conv(wMoreMenuData, (wMoreMenuDataEnd - wMoreMenuData), 0);
+    ByteFill_Conv2(&wram->wWindowStackPointer, (wMenuMetadataEnd - wMenuMetadata), 0);
+    ByteFill_Conv2(&wram->wMenuFlags, (wMenuHeaderEnd - wMenuHeader), 0);
+    ByteFill_Conv2(&wram->wMenuDataFlags, (wMenuDataEnd - wMenuData), 0);
+    ByteFill_Conv2(&wram->w2DMenuCursorInitY, (wMoreMenuDataEnd - wMoreMenuData), 0);
 
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
@@ -1454,16 +1454,15 @@ void ClearWindowData_Conv(void) {
     // XOR_A_A;
     // LD_HL(wWindowStackBottom);
     // LD_hld_A;
-    gb_write(wWindowStackBottom, 0);
+    wram->wWindowStackBottom[0] = 0;
     // LD_hld_A;
-    gb_write(wWindowStackBottom - 1, 0);
+    wram->wWindowStackBottom[-1] = 0;
 
     // LD_A_L;
     // LD_addr_A(wWindowStackPointer);
-    gb_write(wWindowStackPointer, LOW(wWindowStackBottom - 2));
+    wram->wWindowStackPointer = wWindowStackBottom - 2;
     // LD_A_H;
     // LD_addr_A(wWindowStackPointer + 1);
-    gb_write(wWindowStackPointer + 1, HIGH(wWindowStackBottom - 2));
 
     // POP_AF;
     // LDH_addr_A(rSVBK);

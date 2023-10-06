@@ -383,8 +383,15 @@ static struct FlagA DoPlayerMovement_TryStep(void) {
         return DoPlayerMovement_TrySurf();
     
     // Athletic, wall phasing, blazing speed, running shoes.
-    if(hram->hJoyDown & B_BUTTON)
+    if(hram->hJoyDown & B_BUTTON) {
+        uint8_t npc = DoPlayerMovement_CheckNPC();
+        if(npc == 0 || npc == 2)
+            return (struct FlagA) {.a = 0, .flag = false};
+        struct FlagA res = DoPlayerMovement_CheckWarp();
+        if(res.flag)
+            return res;
         return (struct FlagA) {.a = DoPlayerMovement_DoStep(STEP_BIKE), .flag = true};
+    }
 
     // CALL(aDoPlayerMovement_CheckLandPerms);
     // IF_C goto bump;

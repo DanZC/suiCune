@@ -7,6 +7,7 @@
 #include "text.h"
 #include "window.h"
 #include "tilemap.h"
+#include "map_objects.h"
 #include "../engine/overworld/tile_events.h"
 #include "../engine/overworld/load_map_part.h"
 
@@ -132,7 +133,7 @@ void OverworldTextModeSwitch_Conv(void){
     // CALL(aLoadMapPart);
     LoadMapPart_Conv();
     // CALL(aSwapTextboxPalettes);
-    SwapTextboxPalettes_Conv();
+    // SwapTextboxPalettes_Conv();
     // RET;
 }
 
@@ -339,7 +340,7 @@ void LoadMetatiles_Conv(void){
             // LD_A_addr(wTilesetBlocksAddress + 1);
             // ADC_A_H;
             // LD_H_A;
-            hl = GBToRAMAddr(wram->wTilesetBlocksAddress + a);
+            hl = GBToRAMAddr(wram->wTilesetBlocksAddress + (a << 4));
 
         // copy the 4x4 metatile
             for(int rept = 0; rept < METATILE_WIDTH - 1; rept++){
@@ -1483,6 +1484,28 @@ uint8_t CallScript_Conv(uint8_t a, uint16_t hl){
     return PLAYEREVENT_MAPSCRIPT;
 }
 
+uint8_t CallScript_Conv2(Script_fn_t hl){
+//  Call a script at a:hl.
+
+    // LD_addr_A(wScriptBank);
+    // LD_A_L;
+    // LD_addr_A(wScriptPos);
+    // LD_A_H;
+    // LD_addr_A(wScriptPos + 1);
+    gCurScript.fn = hl;
+    gCurScript.position = 0;
+    ByteFill_Conv2(gCurScript.stack, sizeof(gCurScript.stack), 0);
+    gCurScript.stack_ptr = 0;
+
+    // LD_A(PLAYEREVENT_MAPSCRIPT);
+    // LD_addr_A(wScriptRunning);
+    wram->wScriptRunning = PLAYEREVENT_MAPSCRIPT;
+
+    // SCF;
+    // RET;
+    return PLAYEREVENT_MAPSCRIPT;
+}
+
 void CallMapScript(void){
 //  Call a script at hl in the current bank if there isn't already a script running
     LD_A_addr(wScriptRunning);
@@ -1671,6 +1694,23 @@ void GetMovementData(void){
     RST(aBankswitch);
     RET;
 
+}
+
+//  Initialize the movement data for object c at hl
+bool GetMovementData_Conv(uint8_t c, const uint8_t* hl){
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+    // LD_A_B;
+    // RST(aBankswitch);
+
+    // LD_A_C;
+    // CALL(aLoadMovementDataPointer);
+
+    // POP_HL;
+    // LD_A_H;
+    // RST(aBankswitch);
+    // RET;
+    return LoadMovementDataPointer_Conv2(c, hl);
 }
 
 void GetScriptByte(void){
@@ -2089,6 +2129,46 @@ col:
     DEC_C;
     IF_NZ goto row;
     RET;
+
+}
+
+void BufferScreen_Conv(void){
+    // LD_HL(wOverworldMapAnchor);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    const uint8_t* hl = AbsGBToRAMAddr(awOverworldMapAnchor);
+    // LD_DE(wScreenSave);
+    uint8_t* de = wram->wScreenSave;
+    // LD_C(SCREEN_META_HEIGHT);
+    // LD_B(SCREEN_META_WIDTH);
+
+    for(uint8_t c = 0; c < SCREEN_META_HEIGHT; ++c) {
+    // row:
+        // PUSH_BC;
+        // PUSH_HL;
+
+        for(uint8_t b = 0; b < SCREEN_META_WIDTH; ++b) {
+        // col:
+            // LD_A_hli;
+            // LD_de_A;
+            // INC_DE;
+            *(de++) = *(hl++);
+            // DEC_B;
+            // IF_NZ goto col;
+        }
+        // POP_HL;
+        // LD_A_addr(wMapWidth);
+        // ADD_A(6);
+        // LD_C_A;
+        // LD_B(0);
+        // ADD_HL_BC;
+        hl += wram->wMapWidth + 6;
+        // POP_BC;
+        // DEC_C;
+        // IF_NZ goto row;
+    }
+    // RET;
 
 }
 

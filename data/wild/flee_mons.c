@@ -1,4 +1,5 @@
 #include "../../constants.h"
+#include "flee_mons.h"
 
 // referenced by TryEnemyFlee and FastBallMultiplier
 

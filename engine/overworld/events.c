@@ -3,7 +3,10 @@
 #include "../../util/scripting_macros.h"
 #include "events.h"
 #include "../../home/map.h"
+#include "../../home/map_objects.h"
 #include "player_movement.h"
+#include "tile_events.h"
+#include "wildmons.h"
 
 // INCLUDE "constants.asm"
 
@@ -37,17 +40,17 @@ Jumptable:
 }
 
 void DisableEvents(void){
-    XOR_A_A;
-    LD_addr_A(wScriptFlags2);
-    RET;
-
+    // XOR_A_A;
+    // LD_addr_A(wScriptFlags2);
+    // RET;
+    wram->wScriptFlags2 = 0;
 }
 
 void EnableEvents(void){
-    LD_A(0xff);
-    LD_addr_A(wScriptFlags2);
-    RET;
-
+    // LD_A(0xff);
+    // LD_addr_A(wScriptFlags2);
+    // RET;
+    wram->wScriptFlags2 = 0xff;
 }
 
 void CheckBit5_ScriptFlags2(void){
@@ -485,6 +488,22 @@ void CheckWildEncounterCooldown(void){
     SCF;
     RET;
 
+}
+
+bool CheckWildEncounterCooldown_Conv(void){
+    // LD_HL(wWildEncounterCooldown);
+    // LD_A_hl;
+    // AND_A_A;
+    // RET_Z ;
+    if(wram->wWildEncounterCooldown == 0)
+        return false;
+    // DEC_hl;
+    // RET_Z ;
+    if(--wram->wWildEncounterCooldown == 0)
+        return false;
+    // SCF;
+    // RET;
+    return true;
 }
 
 void SetUpFiveStepWildEncounterCooldown(void){
@@ -1503,13 +1522,63 @@ done:
 
 }
 
-void WildBattleScript(void){
+//  Random encounter
+struct FlagA RandomEncounter_Conv(void){
+    // CALL(aCheckWildEncounterCooldown);
+    // IF_C goto nope;
+    if(CheckWildEncounterCooldown_Conv())
+        return flag_a(1, false);
+    // CALL(aCanUseSweetScent);
+    // IF_NC goto nope;
+    if(!CanUseSweetScent_Conv())
+        return flag_a(1, false);
+    // LD_HL(wStatusFlags2);
+    // BIT_hl(STATUSFLAGS2_BUG_CONTEST_TIMER_F);
+    // IF_NZ goto bug_contest;
+    if(bit_test(wram->wStatusFlags2, STATUSFLAGS2_BUG_CONTEST_TIMER_F)) {
+    // bug_contest:
+        // CALL(av_TryWildEncounter_BugContest);
+        // IF_NC goto nope;
+        // goto ok_bug_contest;
+    // ok_bug_contest:
+        // LD_A(BANK(aBugCatchingContestBattleScript));
+        // LD_HL(mBugCatchingContestBattleScript);
+        // goto done;
+    }
+    // FARCALL(aTryWildEncounter);
+    // IF_NZ goto nope;
+    if(!TryWildEncounter_Conv())
+        return flag_a(1, false);
+    // goto ok;
+
+
+// nope:
+    // LD_A(1);
+    // AND_A_A;
+    // RET;
+
+// ok:
+    // LD_A(BANK(aWildBattleScript));
+    // LD_HL(mWildBattleScript);
+    // goto done;
+
+
+// done:
+    // CALL(aCallScript);
+    // SCF;
+    // RET;
+    return flag_a(CallScript_Conv2(WildBattleScript), true);
+}
+
+bool WildBattleScript(script_s* s){
+    SCRIPT_BEGIN
     //randomwildmon ['?']
+    randomwildmon
     //startbattle ['?']
+    startbattle
     //reloadmapafterbattle ['?']
     //end ['?']
-
-    return CanUseSweetScent();
+    SCRIPT_END
 }
 
 void CanUseSweetScent(void){
@@ -1537,6 +1606,38 @@ no:
     AND_A_A;
     RET;
 
+}
+
+bool CanUseSweetScent_Conv(void){
+    // LD_HL(wStatusFlags);
+    // BIT_hl(STATUSFLAGS_NO_WILD_ENCOUNTERS_F);
+    // IF_NZ goto no;
+    if(bit_test(wram->wStatusFlags, STATUSFLAGS_NO_WILD_ENCOUNTERS_F))
+        return false;
+    // LD_A_addr(wEnvironment);
+    uint8_t a = wram->wEnvironment;
+    // CP_A(CAVE);
+    // IF_Z goto ice_check;
+    // CP_A(DUNGEON);
+    // IF_Z goto ice_check;
+    // FARCALL(aCheckGrassCollision);
+    // IF_NC goto no;
+    if(a != CAVE && a != DUNGEON && !CheckGrassCollision_Conv())
+        return false;
+
+// ice_check:
+    // LD_A_addr(wPlayerStandingTile);
+    // CALL(aCheckIceTile);
+    // IF_Z goto no;
+    if(CheckIceTile_Conv(wram->wPlayerStruct.nextTile))
+        return false;
+    // SCF;
+    // RET;
+    return true;
+
+// no:
+    // AND_A_A;
+    // RET;
 }
 
 void v_TryWildEncounter_BugContest(void){
