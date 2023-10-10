@@ -4127,6 +4127,21 @@ loop:
 
 }
 
+void ResetEnemyStatLevels_Conv(void){
+    // LD_A(BASE_STAT_LEVEL);
+    // LD_B(NUM_LEVEL_STATS);
+    // LD_HL(wEnemyStatLevels);
+
+    for(int i = 0; i < NUM_LEVEL_STATS; ++i) {
+    // loop:
+        // LD_hli_A;
+        // DEC_B;
+        // IF_NZ goto loop;
+        wram->wEnemyStatLevels[i] = BASE_STAT_LEVEL;
+    }
+    // RET;
+}
+
 void CheckPlayerPartyForFitMon(void){
 //  Has the player any mon in his Party that can fight?
     LD_A_addr(wPartyCount);

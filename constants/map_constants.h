@@ -42,7 +42,7 @@ enum {
 
 #define NUM_MAP_GROUPS MAPGROUP_CHERRYGROVE
 
-#define map_const(name, x, w, h) enum { \
+#define map_const(name, w, h, x) enum { \
     GROUP_##name = CURRENT_MAP_GROUP,   \
     MAP_##name = x,                     \
     name##_WIDTH = w,                   \

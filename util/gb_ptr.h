@@ -2,6 +2,8 @@
 
 bool IsROMAddr(uint32_t addr);
 void* GBToRAMAddr(uint16_t hl);
+void* AbsGBROMToRAMAddr(uint32_t hl);
+void* AbsGBBankAddrToRAMAddr(uint8_t bank, uint16_t addr);
 void* AbsGBToRAMAddr(uint32_t hl);
 uint16_t RAMAddrToGB(void* addr);
 uint32_t RAMAddrToAbsGB(void* addr);

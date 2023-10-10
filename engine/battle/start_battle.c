@@ -2,8 +2,10 @@
 #include "start_battle.h"
 #include "core.h"
 #include "../../home/delay.h"
+#include "../../home/copy.h"
 #include "../../home/audio.h"
 #include "../../home/text.h"
+#include "../../home/menu.h"
 #include "../../home/clear_sprites.h"
 #include "../overworld/landmarks.h"
 
@@ -397,5 +399,81 @@ void ClearBattleRAM(void){
     LD_hli_A;
     LD_hl(HIGH(vBGMap0));
     RET;
+
+}
+
+void ClearBattleRAM_Conv(void){
+    // XOR_A_A;
+    // LD_addr_A(wBattlePlayerAction);
+    // LD_addr_A(wBattleResult);
+    wram->wBattlePlayerAction = 0;
+    wram->wBattleResult = 0;
+
+    // LD_HL(wPartyMenuCursor);
+    // LD_hli_A;
+    wram->wPartyMenuCursor = 0;
+    // LD_hli_A;
+    wram->wItemsPocketCursor = 0;
+    // LD_hli_A;
+    wram->wKeyItemsPocketCursor = 0;
+    // LD_hl_A;
+    wram->wBallsPocketCursor = 0;
+
+    // LD_addr_A(wMenuScrollPosition);
+    wram->wMenuScrollPosition[0] = 0;
+    // LD_addr_A(wCriticalHit);
+    wram->wCriticalHit = 0;
+    // LD_addr_A(wBattleMonSpecies);
+    wram->wBattleMon.species = 0;
+    // LD_addr_A(wBattleParticipantsNotFainted);
+    wram->wBattleParticipantsNotFainted = 0;
+    // LD_addr_A(wCurBattleMon);
+    wram->wCurBattleMon = 0;
+    // LD_addr_A(wForcedSwitch);
+    wram->wForcedSwitch = 0;
+    // LD_addr_A(wTimeOfDayPal);
+    wram->wTimeOfDayPal = 0;
+    // LD_addr_A(wPlayerTurnsTaken);
+    wram->wPlayerTurnsTaken = 0;
+    // LD_addr_A(wEnemyTurnsTaken);
+    wram->wEnemyTurnsTaken = 0;
+    // LD_addr_A(wEvolvableFlags);
+    wram->wEvolvableFlags[0] = 0;
+
+    // LD_HL(wPlayerHPPal);
+    // LD_hli_A;
+    wram->wPlayerHPPal = 0;
+    // LD_hl_A;
+    wram->wEnemyHPPal = 0;
+
+    // LD_HL(wBattleMonDVs);
+    // LD_hli_A;
+    // LD_hl_A;
+    wram->wBattleMon.dvs = 0;
+
+    // LD_HL(wEnemyMonDVs);
+    // LD_hli_A;
+    // LD_hl_A;
+    wram->wEnemyMon.dvs = 0;
+
+//  Clear the entire BattleMons area
+    // LD_HL(wBattle);
+    // LD_BC(wBattleEnd - wBattle);
+    // XOR_A_A;
+    // CALL(aByteFill);
+    ByteFill_Conv2(&wram->wEnemyMoveStruct.animation, wBattleEnd - wBattle, 0);
+
+    // CALLFAR(aResetEnemyStatLevels);
+    ResetEnemyStatLevels_Conv();
+
+    // CALL(aClearWindowData);
+    ClearWindowData_Conv();
+
+    // LD_HL(hBGMapAddress);
+    // XOR_A_A;  // LOW(vBGMap0)
+    // LD_hli_A;
+    // LD_hl(HIGH(vBGMap0));
+    hram->hBGMapAddress = vBGMap0;
+    // RET;
 
 }

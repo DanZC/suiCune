@@ -1,7 +1,7 @@
 void DoBattleTransition(void);
 void LoadTrainerBattlePokeballTiles(void);
 void ConvertTrainerBattlePokeballTilesTo2bpp(void);
-void TrainerBattlePokeballTiles(void);
+// void TrainerBattlePokeballTiles(void);
 void BattleTransitionJumptable(void);
 void StartTrainerBattle_DetermineWhichAnimation(void);
 void StartTrainerBattle_Finish(void);

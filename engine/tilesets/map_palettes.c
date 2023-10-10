@@ -64,7 +64,6 @@ void v_SwapTextboxPalettes_Conv(void){
     do {
     // loop:
         // PUSH_BC;
-        uint8_t b2 = b;
         // LD_C(SCREEN_WIDTH);
         uint8_t c = SCREEN_WIDTH;
 
@@ -73,12 +72,9 @@ void v_SwapTextboxPalettes_Conv(void){
             // LD_A_hl;
             uint8_t a = *hl;
             // PUSH_HL;
-            uint8_t* hl2 = hl;
             // SRL_A;
-            uint8_t cy = a & 1;
-            a = a >> 1;
             // IF_C goto UpperNybble;
-            if(!cy) {
+            if(!(a & 1)) {
                 // LD_HL(wTilesetPalettes);
                 // ADD_A_hl;
                 // LD_L_A;
@@ -87,7 +83,7 @@ void v_SwapTextboxPalettes_Conv(void){
                 // LD_H_A;
                 // LD_A_hl;
                 // AND_A(0xf);
-                a = gb_read(wram->wTilesetPalettes + a) & 0xf;
+                *de = (*(uint8_t*)AbsGBBankAddrToRAMAddr(BANK(av_SwapTextboxPalettes), wram->wTilesetPalettes + (a >> 1))) & 0xf;
                 // goto next;
             }
             else {
@@ -101,22 +97,21 @@ void v_SwapTextboxPalettes_Conv(void){
                 // LD_A_hl;
                 // SWAP_A;
                 // AND_A(0xf);
-                a = (gb_read(wram->wTilesetPalettes + a) & 0xf0) >> 4;
+                *de = ((*(uint8_t*)AbsGBBankAddrToRAMAddr(BANK(av_SwapTextboxPalettes), wram->wTilesetPalettes + (a >> 1))) & 0xf0) >> 4;
             }
         // next:
             // POP_HL;
-            hl = hl2;
             // LD_de_A;
-            *(de++) = a;
             // RES_hl(7);
-            bit_reset(*(hl++), 7);
+            bit_reset(*hl, 7);
             // INC_HL;
+            hl++;
             // INC_DE;
+            de++;
             // DEC_C;
             // IF_NZ goto innerloop;
         } while(--c != 0);
         // POP_BC;
-        b = b2;
         // DEC_B;
         // IF_NZ goto loop;
     } while(--b != 0);

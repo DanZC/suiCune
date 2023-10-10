@@ -10,6 +10,11 @@
 #include "map_objects.h"
 #include "../engine/overworld/tile_events.h"
 #include "../engine/overworld/load_map_part.h"
+#include "../data/maps/maps.h"
+#include "../data/maps/scenes.h"
+
+const struct MapAttr* gMapAttrPointer;
+const uint8_t* gCurMapSceneScriptPointer;
 
 //  Functions dealing with rendering and interacting with maps.
 
@@ -69,6 +74,35 @@ void GetCurrentMapSceneID(void){
 
 }
 
+//  Grabs the wram map scene script pointer for the current map and loads it into wCurMapSceneScriptPointer.
+//  If there is no scene, both bytes of wCurMapSceneScriptPointer are wiped clean.
+//  Copy the current map group and number into bc.  This is needed for GetMapSceneID.
+uint16_t GetCurrentMapSceneID_Conv(void){
+    // LD_A_addr(wMapGroup);
+    // LD_B_A;
+    // LD_A_addr(wMapNumber);
+    // LD_C_A;
+//  Blank out wCurMapSceneScriptPointer
+    // XOR_A_A;
+    // LD_addr_A(wCurMapSceneScriptPointer);
+    // LD_addr_A(wCurMapSceneScriptPointer + 1);
+    gCurMapSceneScriptPointer = NULL;
+    // CALL(aGetMapSceneID);
+    // RET_C ;  // The map is not in the scene script table
+    uint8_t* id = GetMapSceneID_Conv2(wram->wMapGroup, wram->wMapNumber);
+    if(id == NULL)
+        return (wram->wMapGroup << 8) | wram->wMapNumber;
+//  Load the scene script pointer from de into wCurMapSceneScriptPointer
+    // LD_A_E;
+    // LD_addr_A(wCurMapSceneScriptPointer);
+    // LD_A_D;
+    // LD_addr_A(wCurMapSceneScriptPointer + 1);
+    gCurMapSceneScriptPointer = id;
+    // XOR_A_A;
+    // RET;
+    return (wram->wMapGroup << 8) | wram->wMapNumber;
+}
+
 void GetMapSceneID(void){
 //  Searches the scene_var table for the map group and number loaded in bc, and returns the wram pointer in de.
 //  If the map is not in the scene_var table, returns carry.
@@ -122,6 +156,68 @@ done:
 
 }
 
+//  Searches the scene_var table for the map group and number loaded in bc, and returns the wram pointer in de.
+//  If the map is not in the scene_var table, returns null.
+uint8_t* GetMapSceneID_Conv2(uint8_t group, uint8_t map){
+    // PUSH_BC;
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+    // LD_A(BANK(aMapScenes));
+    // RST(aBankswitch);
+
+    // LD_HL(mMapScenes);
+    const struct SceneVar* hl = MapScenes;
+
+    while(1) {
+    // loop:
+        // PUSH_HL;
+        // LD_A_hli;  // map group, or terminator
+        uint8_t a = hl->group;
+        // CP_A(-1);
+        // IF_Z goto end;  // the current map is not in the scene_var table
+        if(a == 0xff)
+            return NULL;
+        // CP_A_B;
+        // IF_NZ goto next;  // map group did not match
+        // LD_A_hli;  // map number
+        // CP_A_C;
+        // IF_NZ goto next;  // map number did not match
+        if(a == group && hl->map == map)
+            break;
+        // goto found;  // we found our map
+
+
+    // next:
+        // POP_HL;
+        // LD_DE(4);  // scene_var size
+        // ADD_HL_DE;
+        hl++;
+        // goto loop;
+    }
+
+
+// end:
+    // SCF;
+    // goto done;
+
+
+// found:
+    // LD_E_hl;
+    // INC_HL;
+    // LD_D_hl;
+
+
+// done:
+    // POP_HL;
+    // POP_BC;
+    // LD_A_B;
+    // RST(aBankswitch);
+
+    // POP_BC;
+    // RET;
+    return hl->var;
+}
+
 void OverworldTextModeSwitch(void){
     CALL(aLoadMapPart);
     CALL(aSwapTextboxPalettes);
@@ -133,7 +229,7 @@ void OverworldTextModeSwitch_Conv(void){
     // CALL(aLoadMapPart);
     LoadMapPart_Conv();
     // CALL(aSwapTextboxPalettes);
-    // SwapTextboxPalettes_Conv();
+    SwapTextboxPalettes_Conv();
     // RET;
 }
 
@@ -166,7 +262,7 @@ void LoadMapPart_Conv(void){
 
     // LD_A_addr(wTilesetBlocksBank);
     // RST(aBankswitch);
-    bank_push(wram->wTilesetBlocksBank);
+    // bank_push(wram->wTilesetBlocksBank);
     // CALL(aLoadMetatiles);
     LoadMetatiles_Conv();
 
@@ -184,7 +280,7 @@ void LoadMapPart_Conv(void){
     // POP_AF;
     // RST(aBankswitch);
     // RET;
-    bank_pop;
+    // bank_pop;
 }
 
 void LoadMetatiles(void){
@@ -340,7 +436,7 @@ void LoadMetatiles_Conv(void){
             // LD_A_addr(wTilesetBlocksAddress + 1);
             // ADC_A_H;
             // LD_H_A;
-            hl = GBToRAMAddr(wram->wTilesetBlocksAddress + (a << 4));
+            hl = AbsGBROMToRAMAddr((wram->wTilesetBlocksBank << 14) + wram->wTilesetBlocksAddress + (a << 4));
 
         // copy the 4x4 metatile
             for(int rept = 0; rept < METATILE_WIDTH - 1; rept++){
@@ -2986,6 +3082,42 @@ uint16_t GetAnyMapPointer_Conv(uint8_t group, uint8_t map){
     return gptr + ((map - 1) * MAP_LENGTH);
 }
 
+const struct MapHeader* GetMapPointer_Conv2(void){
+    return GetAnyMapPointer_Conv2(wram->wMapGroup, wram->wMapNumber);
+}
+
+//  inputs:
+//  b = map group, c = map number
+//  outputs:
+//  hl points to the map within its group
+const struct MapHeader* GetAnyMapPointer_Conv2(uint8_t group, uint8_t map){
+//  Prior to calling this function, you must have switched banks so that
+//  MapGroupPointers is visible.
+    //PUSH_BC;  // save map number for later
+
+// get pointer to map group
+
+    //DEC_B;
+    //LD_C_B;
+    //LD_B(0);
+    //LD_HL(mMapGroupPointers);
+    //ADD_HL_BC;
+    //ADD_HL_BC;
+    const struct MapHeader* hl = MapGroupPointers[group - 1];
+
+    //LD_A_hli;
+    //LD_H_hl;
+    //LD_L_A;
+    //POP_BC;  // restore map number
+
+// find the cth map within the group
+    //DEC_C;
+    //LD_B(0);
+    //LD_A(MAP_LENGTH);
+    //CALL(aAddNTimes);
+    return hl + (map - 1);
+}
+
 void GetMapField(void){
 //  Extract data from the current map's group entry.
 
@@ -3109,6 +3241,15 @@ void CopyMapPartial_Conv(void){
     bank_pop;
 }
 
+//  Copy map data bank, tileset, environment, and map data address
+//  from the current map's entry within its group.
+void CopyMapPartial_Conv2(void){
+    const struct MapHeader* mp = GetMapPointer_Conv2();
+    wram->wMapTileset = mp->tileset;
+    wram->wEnvironment = mp->environment;
+    gMapAttrPointer = mp->attr;
+}
+
 void SwitchToMapScriptsBank(void){
     LD_A_addr(wMapScriptsBank);
     RST(aBankswitch);
@@ -3175,6 +3316,20 @@ void GetMapAttributesPointer(void){
 
 }
 
+const struct MapAttr* GetMapAttributesPointer_Conv2(void){
+//  returns the current map's data pointer in hl.
+    // PUSH_BC;
+    // PUSH_DE;
+    // LD_DE(MAP_MAPATTRIBUTES);
+    // CALL(aGetMapField);
+    // LD_L_C;
+    // LD_H_B;
+    // POP_DE;
+    // POP_BC;
+    // RET;
+    return GetMapPointer_Conv2()->attr;
+}
+
 void GetMapEnvironment(void){
     PUSH_HL;
     PUSH_DE;
@@ -3203,6 +3358,20 @@ uint8_t GetMapEnvironment_Conv(void){
     return GetMapField_Conv(MAP_ENVIRONMENT);
 }
 
+uint8_t GetMapEnvironment_Conv2(void){
+    // PUSH_HL;
+    // PUSH_DE;
+    // PUSH_BC;
+    // LD_DE(MAP_ENVIRONMENT);
+    // CALL(aGetMapField);
+    // LD_A_C;
+    // POP_BC;
+    // POP_DE;
+    // POP_HL;
+    // RET;
+    return GetMapPointer_Conv2()->environment;
+}
+
 void Map_DummyFunction(void){
 //  //  unreferenced
     RET;
@@ -3223,6 +3392,10 @@ void GetAnyMapEnvironment(void){
 
 }
 
+uint8_t GetAnyMapEnvironment_Conv2(uint8_t group, uint8_t map){
+    return GetAnyMapPointer_Conv2(group, map)->environment;
+}
+
 void GetAnyMapTileset(void){
     LD_DE(MAP_TILESET);
     CALL(aGetAnyMapField);
@@ -3233,6 +3406,10 @@ void GetAnyMapTileset(void){
 
 uint8_t GetAnyMapTileset_Conv(uint8_t group, uint8_t map){
     return (uint8_t)(GetAnyMapField_Conv(MAP_TILESET, group, map));
+}
+
+uint8_t GetAnyMapTileset_Conv2(uint8_t group, uint8_t map){
+    return GetAnyMapPointer_Conv2(group, map)->tileset;
 }
 
 void GetWorldMapLocation(void){
@@ -3256,6 +3433,11 @@ uint8_t GetWorldMapLocation_Conv(uint8_t group, uint8_t map){
 //  given a map group/id in bc, return its location on the Pokégear map.
     uint16_t data = GetAnyMapField_Conv(MAP_LOCATION, group, map);
     return (uint8_t)(data & 0xFF);
+}
+
+//  given a map group/id in bc, return its location on the Pokégear map.
+uint8_t GetWorldMapLocation_Conv2(uint8_t group, uint8_t map){
+    return GetAnyMapPointer_Conv2(group, map)->location;
 }
 
 void GetMapMusic(void){
@@ -3331,6 +3513,27 @@ uint16_t GetMapMusic_Conv(void){
     return music;
 }
 
+uint16_t GetMapMusic_Conv2(void){
+    uint16_t music = GetMapPointer_Conv2()->music;
+    if(music == MUSIC_MAHOGANY_MART)
+    {
+        if(!bit_test(wram->wStatusFlags2, STATUSFLAGS2_ROCKETS_IN_MAHOGANY_F))
+        {
+            return MUSIC_CHERRYGROVE_CITY;
+        }
+        return MUSIC_ROCKET_HIDEOUT;
+    }
+    if(bit_test(music, RADIO_TOWER_MUSIC_F))
+    {
+        if(!bit_test(wram->wStatusFlags2, STATUSFLAGS2_ROCKETS_IN_RADIO_TOWER_F))
+        {
+            return music & (RADIO_TOWER_MUSIC - 1);
+        }
+        return MUSIC_ROCKET_OVERTURE;
+    }
+    return music;
+}
+
 void GetMapTimeOfDay(void){
     CALL(aGetPhoneServiceTimeOfDayByte);
     AND_A(0xf);
@@ -3390,6 +3593,10 @@ void GetFishingGroup(void){
 
 uint8_t GetFishingGroup_Conv(void){
     return (uint8_t)(GetMapField_Conv(MAP_FISHGROUP) & 0xFF);
+}
+
+uint8_t GetFishingGroup_Conv2(void){
+    return GetMapPointer_Conv2()->fishingGroup;
 }
 
 void LoadMapTileset(void){

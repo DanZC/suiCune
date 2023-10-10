@@ -88,7 +88,7 @@
 
 // SECTION "Roofs", ROMX
 
-//#include "engine/tilesets/mapgroup_roofs.h"
+#include "engine/tilesets/mapgroup_roofs.h"
 
 // SECTION "Clock Reset", ROMX
 

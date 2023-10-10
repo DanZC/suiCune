@@ -24,6 +24,8 @@
 #define checkflag(_flag)        SCRIPT_EVCMD(Script_checkflag_Conv, _flag)
 #define scall(_f)               SCRIPT_CALL(_f)
 #define scall_far(_f, _p)       SCRIPT_CALLGOTO(_f, _p)
+#define sjump(_f)               SCRIPT_GOTOPOS(_f, 0)
+#define sjump_far(_f, _p)       SCRIPT_GOTOPOS(_f, _p)
 #define s_end                   SCRIPT_END2
 #define special(_s)             SCRIPT_EVCMD(Script_special_Conv, SP_##_s)
 #define getcurlandmarkname      SCRIPT_EVCMD(Script_getcurlandmarkname_Conv)

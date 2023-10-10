@@ -1,6 +1,8 @@
 #include "../../constants.h"
 #include "battle_transition.h"
 
+static const char TrainerBattlePokeballTiles[] = "gfx/overworld/trainer_battle_pokeball_tiles.png";
+
 //  BattleTransitionJumptable.Jumptable indexes
 #define BATTLETRANSITION_CAVE     (0x01)
 #define BATTLETRANSITION_CAVE_STRONGER (0x09)
@@ -133,6 +135,33 @@ void LoadTrainerBattlePokeballTiles(void){
 
 }
 
+//  Load the tiles used in the Pokeball Graphic that fills the screen
+//  at the start of every Trainer battle.
+void LoadTrainerBattlePokeballTiles_Conv(void){
+    // LD_DE(mTrainerBattlePokeballTiles);
+    // LD_HL(vTiles0 + LEN_2BPP_TILE * BATTLETRANSITION_SQUARE);
+    // LD_B(BANK(aTrainerBattlePokeballTiles));
+    // LD_C(2);
+    // CALL(aRequest2bpp);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles0 + LEN_2BPP_TILE * BATTLETRANSITION_SQUARE, TrainerBattlePokeballTiles, 0, 2);
+
+    // LDH_A_addr(rVBK);
+    // PUSH_AF;
+    // LD_A(0x1);
+    // LDH_addr_A(rVBK);
+
+    // LD_DE(mTrainerBattlePokeballTiles);
+    // LD_HL(vTiles3 + LEN_2BPP_TILE * BATTLETRANSITION_SQUARE);
+    // LD_B(BANK(aTrainerBattlePokeballTiles));
+    // LD_C(2);
+    // CALL(aRequest2bpp);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles3 + LEN_2BPP_TILE * BATTLETRANSITION_SQUARE, TrainerBattlePokeballTiles, 0, 2);
+
+    // POP_AF;
+    // LDH_addr_A(rVBK);
+    // RET;
+}
+
 void ConvertTrainerBattlePokeballTilesTo2bpp(void){
     LDH_A_addr(rSVBK);
     PUSH_AF;
@@ -163,82 +192,120 @@ loop:
 
 }
 
-void TrainerBattlePokeballTiles(void){
-// INCBIN "gfx/overworld/trainer_battle_pokeball_tiles.2bpp"
-
-    return BattleTransitionJumptable();
-}
-
 void BattleTransitionJumptable(void){
     //jumptable ['.Jumptable', 'wJumptableIndex']
-    fast_jumptable(mBattleTransitionJumptable_Jumptable, wJumptableIndex);
-
-
-Jumptable:
+    // fast_jumptable(mBattleTransitionJumptable_Jumptable, wJumptableIndex);
+    switch(wram->wJumptableIndex) {
+// Jumptable:
     //dw ['StartTrainerBattle_DetermineWhichAnimation'];  // 00
+        case 0x00: CALL(aStartTrainerBattle_DetermineWhichAnimation); break;
 
 // BATTLETRANSITION_CAVE
     //dw ['StartTrainerBattle_LoadPokeBallGraphics'];  // 01
+        case 0x01: CALL(aStartTrainerBattle_LoadPokeBallGraphics); break;
     //dw ['StartTrainerBattle_SetUpBGMap'];  // 02
+        case 0x02: CALL(aStartTrainerBattle_SetUpBGMap); break;
     //dw ['StartTrainerBattle_Flash'];  // 03
+        case 0x03: CALL(aStartTrainerBattle_Flash); break;
     //dw ['StartTrainerBattle_Flash'];  // 04
+        case 0x04: CALL(aStartTrainerBattle_Flash); break;
     //dw ['StartTrainerBattle_Flash'];  // 05
+        case 0x05: CALL(aStartTrainerBattle_Flash); break;
     //dw ['StartTrainerBattle_NextScene'];  // 06
+        case 0x06: CALL(aStartTrainerBattle_NextScene); break;
     //dw ['StartTrainerBattle_SetUpForWavyOutro'];  // 07
+        case 0x07: CALL(aStartTrainerBattle_SetUpForWavyOutro); break;
     //dw ['StartTrainerBattle_SineWave'];  // 08
+        case 0x08: CALL(aStartTrainerBattle_SineWave); break;
 
 // BATTLETRANSITION_CAVE_STRONGER
     //dw ['StartTrainerBattle_LoadPokeBallGraphics'];  // 09
+        case 0x09: CALL(aStartTrainerBattle_LoadPokeBallGraphics); break;
     //dw ['StartTrainerBattle_SetUpBGMap'];  // 0a
+        case 0x0a: CALL(aStartTrainerBattle_SetUpBGMap); break;
     //dw ['StartTrainerBattle_Flash'];  // 0b
+        case 0x0b: CALL(aStartTrainerBattle_Flash); break;
     //dw ['StartTrainerBattle_Flash'];  // 0c
+        case 0x0c: CALL(aStartTrainerBattle_Flash); break;
     //dw ['StartTrainerBattle_Flash'];  // 0d
+        case 0x0d: CALL(aStartTrainerBattle_Flash); break;
     //dw ['StartTrainerBattle_NextScene'];  // 0e
+        case 0x0e: CALL(aStartTrainerBattle_NextScene); break;
 // There is no setup for this one
     //dw ['StartTrainerBattle_ZoomToBlack'];  // 0f
+        case 0x0f: CALL(aStartTrainerBattle_ZoomToBlack); break;
 
 // BATTLETRANSITION_NO_CAVE
     //dw ['StartTrainerBattle_LoadPokeBallGraphics'];  // 10
+        case 0x10: CALL(aStartTrainerBattle_LoadPokeBallGraphics); break;
     //dw ['StartTrainerBattle_SetUpBGMap'];  // 11
+        case 0x11: CALL(aStartTrainerBattle_SetUpBGMap); break;
     //dw ['StartTrainerBattle_Flash'];  // 12
+        case 0x12: CALL(aStartTrainerBattle_Flash); break;
     //dw ['StartTrainerBattle_Flash'];  // 13
+        case 0x13: CALL(aStartTrainerBattle_Flash); break;
     //dw ['StartTrainerBattle_Flash'];  // 14
+        case 0x14: CALL(aStartTrainerBattle_Flash); break;
     //dw ['StartTrainerBattle_NextScene'];  // 15
+        case 0x15: CALL(aStartTrainerBattle_NextScene); break;
     //dw ['StartTrainerBattle_SetUpForSpinOutro'];  // 16
+        case 0x16: CALL(aStartTrainerBattle_SetUpForSpinOutro); break;
     //dw ['StartTrainerBattle_SpinToBlack'];  // 17
+        case 0x17: CALL(aStartTrainerBattle_SpinToBlack); break;
 
 // BATTLETRANSITION_NO_CAVE_STRONGER
     //dw ['StartTrainerBattle_LoadPokeBallGraphics'];  // 18
+        case 0x18: CALL(aStartTrainerBattle_LoadPokeBallGraphics); break;
     //dw ['StartTrainerBattle_SetUpBGMap'];  // 19
+        case 0x19: CALL(aStartTrainerBattle_SetUpBGMap); break;
     //dw ['StartTrainerBattle_Flash'];  // 1a
+        case 0x1a: CALL(aStartTrainerBattle_Flash); break;
     //dw ['StartTrainerBattle_Flash'];  // 1b
+        case 0x1b: CALL(aStartTrainerBattle_Flash); break;
     //dw ['StartTrainerBattle_Flash'];  // 1c
+        case 0x1c: CALL(aStartTrainerBattle_Flash); break;
     //dw ['StartTrainerBattle_NextScene'];  // 1d
+        case 0x1d: CALL(aStartTrainerBattle_NextScene); break;
     //dw ['StartTrainerBattle_SetUpForRandomScatterOutro'];  // 1e
+        case 0x1e: CALL(aStartTrainerBattle_SetUpForRandomScatterOutro); break;
     //dw ['StartTrainerBattle_SpeckleToBlack'];  // 1f
+        case 0x1f: CALL(aStartTrainerBattle_SpeckleToBlack); break;
 
 // BATTLETRANSITION_FINISH
     //dw ['StartTrainerBattle_Finish'];  // 20
+        case 0x20: CALL(aStartTrainerBattle_Finish); break;
+    }
+
+    RET;
+}
 
 //  transition animations
-    //const_def ['?']
-    //const ['TRANS_CAVE']
-    //const ['TRANS_CAVE_STRONGER']
-    //const ['TRANS_NO_CAVE']
-    //const ['TRANS_NO_CAVE_STRONGER']
+//const_def ['?']
+enum {
+    TRANS_CAVE,
+    TRANS_CAVE_STRONGER,
+    TRANS_NO_CAVE,
+    TRANS_NO_CAVE_STRONGER,
+};
 
 //  transition animation bits
 #define TRANS_STRONGER_F (0)  //  bit set in TRANS_CAVE_STRONGER and TRANS_NO_CAVE_STRONGER
 #define TRANS_NO_CAVE_F (1)  //  bit set in TRANS_NO_CAVE and TRANS_NO_CAVE_STRONGER
-
-    return StartTrainerBattle_DetermineWhichAnimation();
-}
 
 void StartTrainerBattle_DetermineWhichAnimation(void){
 //  The screen flashes a different number of times depending on the level of
 //  your lead Pokemon relative to the opponent's.
 //  BUG: wBattleMonLevel and wEnemyMonLevel are not set at this point, so whatever
 //  values happen to be there will determine the animation.
+
+    static const uint8_t StartingPoints[] = {
+    //  entries correspond to TRANS_* constants
+        [TRANS_CAVE]             = BATTLETRANSITION_CAVE,
+        [TRANS_CAVE_STRONGER]    = BATTLETRANSITION_CAVE_STRONGER,
+        [TRANS_NO_CAVE]          = BATTLETRANSITION_NO_CAVE,
+        [TRANS_NO_CAVE_STRONGER] = BATTLETRANSITION_NO_CAVE_STRONGER,
+    };
+
     LD_DE(0);
     LD_A_addr(wBattleMonLevel);
     ADD_A(3);
@@ -258,19 +325,12 @@ not_stronger:
     SET_E(TRANS_NO_CAVE_F);
 
 cave:
-    LD_HL(mStartTrainerBattle_DetermineWhichAnimation_StartingPoints);
-    ADD_HL_DE;
-    LD_A_hl;
+    // LD_HL(mStartTrainerBattle_DetermineWhichAnimation_StartingPoints);
+    // ADD_HL_DE;
+    // LD_A_hl;
+    REG_A = StartingPoints[REG_E];
     LD_addr_A(wJumptableIndex);
     RET;
-
-
-StartingPoints:
-//  entries correspond to TRANS_* constants
-    //db ['BATTLETRANSITION_CAVE'];
-    //db ['BATTLETRANSITION_CAVE_STRONGER'];
-    //db ['BATTLETRANSITION_NO_CAVE'];
-    //db ['BATTLETRANSITION_NO_CAVE_STRONGER'];
 
     return StartTrainerBattle_Finish();
 }

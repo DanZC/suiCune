@@ -1079,6 +1079,75 @@ WarpEventData
     uint8_t mapNumber;
 };
 
+struct CoordEvent
+{
+    uint8_t sceneId;
+    uint8_t y;
+    uint8_t x;
+    Script_fn_t script;
+};
+
+struct BGEvent
+{
+    uint8_t y;
+    uint8_t x;
+    uint8_t function;
+    Script_fn_t script;
+};
+
+struct ObjEvent
+{
+    uint8_t sprite;
+    uint8_t y;
+    uint8_t x;
+    uint8_t movement;
+    uint8_t radius;
+    int8_t h1;
+    int8_t h2;
+    uint8_t color;
+    uint8_t function;
+    uint8_t sightRange;
+    int16_t eventFlag;
+    Script_fn_t script;
+};
+
+struct MapEvents
+{
+    const uint8_t warp_event_count;
+    const struct WarpEventData* const warp_events;
+
+    const uint8_t coord_event_count;
+    const struct CoordEvent* const coord_events;
+
+    const uint8_t bg_event_count;
+    const struct BGEvent* const bg_events;
+
+    const uint8_t obj_event_count;
+    const struct ObjEvent* const obj_events;
+};
+
+struct MapAttr
+{
+    uint8_t borderBlock;
+    uint8_t width;
+    uint8_t height;
+    const char* const blocksPath;
+    const Script_fn_t scripts;
+    const struct MapEvents* const events;
+};
+
+struct MapHeader
+{
+    const struct MapAttr* const attr;
+    uint8_t tileset;
+    uint8_t environment;
+    uint8_t location;
+    uint16_t music;
+    uint8_t phoneService;
+    uint8_t timeOfDay;
+    uint8_t fishingGroup;
+};
+
 typedef struct Script script_s;
 
 #if defined(__cplusplus) || defined(_MSC_VER)

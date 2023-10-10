@@ -2010,7 +2010,7 @@ void init_function_pointers(void) {
     REDIRECTED(StartTrainerBattle_Flash);
     REDIRECTED(StartTrainerBattle_Finish);
     REDIRECTED(StartTrainerBattle_SpinToBlack);
-    REDIRECTED(TrainerBattlePokeballTiles);
+    // REDIRECTED(TrainerBattlePokeballTiles);
     REDIRECTED(StartTrainerBattle_SineWave);
     REDIRECTED(UnusedWaitBGMapOnce);
     REDIRECTED(ConvertTrainerBattlePokeballTilesTo2bpp);
@@ -3956,4 +3956,7 @@ void init_function_pointers(void) {
     REDIRECTED(PlayerSpawn_ConvertCoords);
     REDIRECTED(PlayerObjectTemplate);
     REDIRECTED(CheckObjectEnteringVisibleRange);
+
+    // engine/tilesets/mapgroup_roofs.c
+    CONVERTED(LoadMapGroupRoof);
 }

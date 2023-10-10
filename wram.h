@@ -400,15 +400,20 @@ struct PACKED wram_s
                         uint8_t wPlayerAccLevel;
                         uint8_t wPlayerEvaLevel;
                         uint8_t skip_16[1];
+                        union {
                         //union wEnemyStatLevels
-                        uint8_t wEnemyAtkLevel;
-                        uint8_t wEnemyDefLevel;
-                        uint8_t wEnemySpdLevel;
-                        uint8_t wEnemySAtkLevel;
-                        uint8_t wEnemySDefLevel;
-                        uint8_t wEnemyAccLevel;
-                        uint8_t wEnemyEvaLevel;
-                        uint8_t skip_17[1];
+                            uint8_t wEnemyStatLevels[NUM_LEVEL_STATS];
+                            struct {
+                                uint8_t wEnemyAtkLevel;
+                                uint8_t wEnemyDefLevel;
+                                uint8_t wEnemySpdLevel;
+                                uint8_t wEnemySAtkLevel;
+                                uint8_t wEnemySDefLevel;
+                                uint8_t wEnemyAccLevel;
+                                uint8_t wEnemyEvaLevel;
+                                uint8_t skip_17[1];
+                            };
+                        };
                         uint8_t wEnemyTurnsTaken;
                         uint8_t wPlayerTurnsTaken;
                         uint8_t skip_18[1];
@@ -2210,7 +2215,10 @@ struct PACKED wram_s
                 uint8_t wMetatileStandingY;
                 uint8_t wMetatileStandingX;
                 //union wMapPartial
-                uint8_t wMapAttributesBank;
+                union {
+                    uint8_t wMapPartial;
+                    uint8_t wMapAttributesBank;
+                };
                 uint8_t wMapTileset;
                 uint8_t wEnvironment;
                 uint16_t wMapAttributesPointer;

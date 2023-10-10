@@ -45,9 +45,40 @@ void* GBToRAMAddr(uint16_t hl) {
 }
 
 // Converts a GB rom address to a real address.
-static void* AbsGBROMToRAMAddr(uint32_t hl) {
+void* AbsGBROMToRAMAddr(uint32_t hl) {
     struct BankAddr ba = AbsROMAddrToBankAddr(hl);
-    return ((struct priv_t*)gb.direct.priv)->rom + (ROM_BANK_SIZE * (ba.bank)) + (ba.addr - ROM_0_ADDR);
+    if(ba.bank == 0)
+        return ((struct priv_t*)gb.direct.priv)->rom + (ba.addr - ROM_0_ADDR);
+    return ((struct priv_t*)gb.direct.priv)->rom + (ROM_BANK_SIZE * (ba.bank)) + (ba.addr - ROM_N_ADDR);
+}
+
+// Converts a GB rom bank and address to a real address.
+static void* AbsGBROMBankAddrToRAMAddr(uint8_t bank, uint16_t addr) {
+    if(bank == 0)
+        return ((struct priv_t*)gb.direct.priv)->rom + (addr - ROM_0_ADDR);
+    return ((struct priv_t*)gb.direct.priv)->rom + (ROM_BANK_SIZE * (bank)) + (addr - ROM_N_ADDR);
+}
+
+// Converts a GB bank and address to a real address.
+void* AbsGBBankAddrToRAMAddr(uint8_t bank, uint16_t addr) {
+    if(addr < 0x8000)
+        return AbsGBROMBankAddrToRAMAddr(bank, addr);
+    if(addr >= WRAM0_Begin && addr < WRAM0_End) {
+        return wram->wram0 + (addr - WRAM0_Begin);
+    }
+    if(addr >= WRAM1_Begin && addr < WRAM1_End) {
+        return wram->wram0 + (0x1000 * bank) + (addr - WRAM0_Begin);
+    }
+    if(addr >= HRAM_Begin && addr < HRAM_End) {
+        return (uint8_t*)hram + (addr - HRAM_Begin);
+    }
+    if(addr >= VRAM_Begin && addr < VRAM_End) {
+        return (uint8_t*)vram + (VRAM_BANK_SIZE * bank) + (addr - VRAM_Begin);
+    }
+    if(addr >= SRAM_Begin && addr < SRAM_End) {
+        return ((struct priv_t*)gb.direct.priv)->cart_ram + (0x2000 * bank) + (addr - SRAM_Begin);
+    }
+    return NULL;
 }
 
 // Converts a GB absolute ram address to real address.

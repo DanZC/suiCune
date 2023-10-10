@@ -108,6 +108,7 @@ void ShowBattleTextEnemySentOut(void);
 void ShowSetEnemyMonAndSendOutAnimation(void);
 void NewEnemyMonStatus(void);
 void ResetEnemyStatLevels(void);
+void ResetEnemyStatLevels_Conv(void);
 void CheckPlayerPartyForFitMon(void);
 void CheckIfCurPartyMonIsFitToFight(void);
 void TryToRunAwayFromBattle(void);

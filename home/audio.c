@@ -2,6 +2,7 @@
 #include "audio.h"
 #include "../audio/engine.h"
 #include "delay.h"
+#include "map.h"
 
 extern struct Channel *chan[8];
 
@@ -441,6 +442,43 @@ done:
     RET;     // ret
 }
 
+void PlayMapMusic_Conv(void) {
+    // SET_PC(0x3E9DU);
+    // PUSH_HL;  // push hl
+    // PUSH_DE;  // push de
+    // PUSH_BC;  // push bc
+    // PUSH_AF;  // push af
+
+    // CALL(aGetMapMusic_MaybeSpecial);  // call GetMapMusic_MaybeSpecial
+    // LD_A_addr(wMapMusic);             // ld a, [wMapMusic]
+    // CP_A_E;                           // cp e
+    // IF_Z goto done;                   // jr z, .done
+    uint16_t music = GetMapMusic_MaybeSpecial_Conv();
+    if(music == wram->wMapMusic)
+        return;
+
+    // PUSH_DE;               // push de
+    // LD_DE(MUSIC_NONE);     // ld de, MUSIC_NONE
+    // CALL(aPlayMusic);      // call PlayMusic
+    PlayMusic_Conv(MUSIC_NONE);
+    // CALL(aDelayFrame);     // call DelayFrame
+    DelayFrame();
+    // POP_DE;                // pop de
+    // LD_A_E;                // ld a, e
+    // LD_addr_A(wMapMusic);  // ld [wMapMusic], a
+    wram->wMapMusic = (uint8_t)(music & 0xff);
+    // CALL(aPlayMusic);      // call PlayMusic
+    PlayMusic_Conv(music);
+
+// done:
+    // SET_PC(0x3EBCU);
+    // POP_AF;  // pop af
+    // POP_BC;  // pop bc
+    // POP_DE;  // pop de
+    // POP_HL;  // pop hl
+    // RET;     // ret
+}
+
 void PlayMapMusicBike(void) {
     SET_PC(0x3EC1U);
     //  If the player's on a bike, play the bike music instead of the map music
@@ -553,11 +591,72 @@ ranking:
     RET;                                        // ret
 }
 
+uint16_t SpecialMapMusic_Conv(void) {
+    // LD_A_addr(wPlayerState);  // ld a, [wPlayerState]
+    // CP_A(PLAYER_SURF);        // cp PLAYER_SURF
+    // IF_Z goto surf;           // jr z, .surf
+    // CP_A(PLAYER_SURF_PIKA);   // cp PLAYER_SURF_PIKA
+    // IF_Z goto surf;           // jr z, .surf
+    if(wram->wPlayerState == PLAYER_SURF || wram->wPlayerState == PLAYER_SURF_PIKA) {
+    // surf:
+        // LD_DE(MUSIC_SURF);  // ld de, MUSIC_SURF
+        // SCF;                // scf
+        // RET;                // ret
+        return MUSIC_SURF;
+    }
+
+    // LD_A_addr(wStatusFlags2);                 // ld a, [wStatusFlags2]
+    // BIT_A(STATUSFLAGS2_BUG_CONTEST_TIMER_F);  // bit STATUSFLAGS2_BUG_CONTEST_TIMER_F, a
+    // IF_NZ goto contest;                       // jr nz, .contest
+    if(bit_test(wram->wStatusFlags2, STATUSFLAGS2_BUG_CONTEST_TIMER_F)) {
+    // contest:
+        // LD_A_addr(wMapGroup);                     // ld a, [wMapGroup]
+        // CP_A(GROUP_ROUTE_35_NATIONAL_PARK_GATE);  // cp GROUP_ROUTE_35_NATIONAL_PARK_GATE
+        // IF_NZ goto no;                            // jr nz, .no
+        // LD_A_addr(wMapNumber);                    // ld a, [wMapNumber]
+        // CP_A(MAP_ROUTE_35_NATIONAL_PARK_GATE);    // cp MAP_ROUTE_35_NATIONAL_PARK_GATE
+        // IF_Z goto ranking;                        // jr z, .ranking
+        // CP_A(MAP_ROUTE_36_NATIONAL_PARK_GATE);    // cp MAP_ROUTE_36_NATIONAL_PARK_GATE
+        // IF_NZ goto no;                            // jr nz, .no
+        if(wram->wMapGroup == GROUP_ROUTE_35_NATIONAL_PARK_GATE 
+        && (wram->wMapNumber == MAP_ROUTE_35_NATIONAL_PARK_GATE || wram->wMapNumber == MAP_ROUTE_36_NATIONAL_PARK_GATE)) {
+            return MUSIC_BUG_CATCHING_CONTEST_RANKING;
+        }
+
+    // ranking:
+        // LD_DE(MUSIC_BUG_CATCHING_CONTEST_RANKING);  // ld de, MUSIC_BUG_CATCHING_CONTEST_RANKING
+        // SCF;                                        // scf
+        // RET;                                        // ret
+    }
+
+// no:
+    // AND_A_A;  // and a
+    // RET;      // ret
+    return MUSIC_NONE;
+
+// bike:
+    //
+    // LD_DE(MUSIC_BICYCLE);  // ld de, MUSIC_BICYCLE
+    // SCF;                   // scf
+    // RET;                   // ret
+}
+
 void GetMapMusic_MaybeSpecial(void) {
     CALL(aSpecialMapMusic);  // call SpecialMapMusic
     RET_C;                   // ret c
     CALL(aGetMapMusic);      // call GetMapMusic
     RET;                     // ret
+}
+
+uint16_t GetMapMusic_MaybeSpecial_Conv(void) {
+    // CALL(aSpecialMapMusic);  // call SpecialMapMusic
+    // RET_C;                   // ret c
+    uint16_t music = SpecialMapMusic_Conv();
+    if(music != MUSIC_NONE)
+        return music;
+    // CALL(aGetMapMusic);      // call GetMapMusic
+    // RET;                     // ret
+    return GetMapMusic_Conv2();
 }
 
 void PlaceBCDNumberSprite(void) {
