@@ -12,6 +12,10 @@
 #include "../engine/overworld/load_map_part.h"
 #include "../data/maps/maps.h"
 #include "../data/maps/scenes.h"
+#include "../engine/overworld/scripting.h"
+#include "../util/scripting_macros.h"
+#include "../util/scripting.h"
+#include "../data/text/common.h"
 
 const struct MapAttr* gMapAttrPointer;
 const uint8_t* gCurMapSceneScriptPointer;
@@ -1841,46 +1845,43 @@ void GetScriptByte(void){
 
 }
 
-void ObjectEvent(void){
-    //jumptextfaceplayer ['ObjectEventText']
-
-    return ObjectEventText();
+bool ObjectEvent(script_s* s){
+    SCRIPT_BEGIN
+    jumptextfaceplayer(ObjectEventText);
+    SCRIPT_END
+    // return ObjectEventText();
 }
 
-void ObjectEventText(void){
-    //text_far ['_ObjectEventText']
-    //text_end ['?']
+const struct TextCmd ObjectEventText[] = {
+    text_far(v_ObjectEventText)
+    text_end
+};
 
-    return BGEvent();
-}
-
-void BGEvent(void){
+bool BGEvent(script_s* s) {
 //  //  unreferenced
-    //jumptext ['BGEventText']
-
-    return BGEventText();
+    SCRIPT_BEGIN
+    jumptext(BGEventText);
+    SCRIPT_END
+    // return BGEventText();
 }
 
-void BGEventText(void){
-    //text_far ['_BGEventText']
-    //text_end ['?']
+const struct TextCmd BGEventText[] = {
+    text_far(v_BGEventText)
+    text_end
+};
 
-    return CoordinatesEvent();
-}
-
-void CoordinatesEvent(void){
+bool CoordinatesEvent(script_s* s){
 //  //  unreferenced
-    //jumptext ['CoordinatesEventText']
-
-    return CoordinatesEventText();
+    SCRIPT_BEGIN
+    jumptext(CoordinatesEventText);
+    SCRIPT_END
+    // return CoordinatesEventText();
 }
 
-void CoordinatesEventText(void){
-    //text_far ['_CoordinatesEventText']
-    //text_end ['?']
-
-    return CheckObjectMask();
-}
+const struct TextCmd CoordinatesEventText[] = {
+    text_far(v_CoordinatesEventText)
+    text_end
+};
 
 void CheckObjectMask(void){
     LDH_A_addr(hMapObjectIndex);

@@ -9,7 +9,8 @@
 #define SCRIPT_GOTOPOS(_s, _p)  Script_GotoPos(s, _s, _p); return false; case SCRIPT_MAX_FARLABELS + __LINE__:
 #define SCRIPT_END2             s->position = SCRIPT_MAX_FARLABELS + __LINE__; return true; case SCRIPT_MAX_FARLABELS + __LINE__: return true;
 #define SCRIPT_EVCMD(_cmd, ...) s->position = SCRIPT_MAX_FARLABELS + __LINE__; _cmd(s, ##__VA_ARGS__); return false; case SCRIPT_MAX_FARLABELS + __LINE__:
-#define SCRIPT_IFTRUE(_s)       s->position = SCRIPT_MAX_FARLABELS + __LINE__; if(wram->wScriptVar) Script_Goto(s, _s); return; case SCRIPT_MAX_FARLABELS + __LINE__:
+#define SCRIPT_IFTRUE(_s)       s->position = SCRIPT_MAX_FARLABELS + __LINE__; if(wram->wScriptVar) Script_Goto(s, _s); return false; case SCRIPT_MAX_FARLABELS + __LINE__:
+#define SCRIPT_IFFALSE(_s)      s->position = SCRIPT_MAX_FARLABELS + __LINE__; if(!wram->wScriptVar) Script_Goto(s, _s); return false; case SCRIPT_MAX_FARLABELS + __LINE__:
 #define SCRIPT_FALLTHROUGH(_s)  default: Script_Goto(s, _s); return false; } return true;
 
 #define writetext(_t)           SCRIPT_EVCMD(Script_writetext_Conv, _t)
@@ -17,8 +18,12 @@
 #define jumptextfaceplayer(_t)  SCRIPT_EVCMD(Script_jumptextfaceplayer_Conv, _t)
 #define checkscene              SCRIPT_EVCMD(Script_checkscene_Conv)
 #define pause(_a)               SCRIPT_EVCMD(Script_pause_Conv, _a)
+#define promptbutton            SCRIPT_EVCMD(Script_promptbutton_Conv)
 #define waitsfx                 SCRIPT_EVCMD(Script_waitsfx_Conv)
 #define playsound(_sfx)         SCRIPT_EVCMD(Script_playsound_Conv, _sfx)
+#define specialsound            SCRIPT_EVCMD(Script_specialsound_Conv)
+#define itemnotify              SCRIPT_EVCMD(Script_itemnotify_Conv)
+#define pocketisfull            SCRIPT_EVCMD(Script_pocketisfull_Conv)
 #define setflag(_flag)          SCRIPT_EVCMD(Script_setflag_Conv, _flag)
 #define clearflag(_flag)        SCRIPT_EVCMD(Script_clearflag_Conv, _flag)
 #define checkflag(_flag)        SCRIPT_EVCMD(Script_checkflag_Conv, _flag)
@@ -30,6 +35,7 @@
 #define special(_s)             SCRIPT_EVCMD(Script_special_Conv, SP_##_s)
 #define getcurlandmarkname      SCRIPT_EVCMD(Script_getcurlandmarkname_Conv)
 #define faceplayer              SCRIPT_EVCMD(Script_faceplayer_Conv)
+#define refreshscreen           SCRIPT_EVCMD(Script_refreshscreen_Conv)
 #define opentext                SCRIPT_EVCMD(Script_opentext_Conv)
 #define repeattext(_hl)         SCRIPT_EVCMD(Script_repeattext_Conv, _hl)
 #define closetext               SCRIPT_EVCMD(Script_closetext_Conv)
@@ -38,6 +44,8 @@
 #define applymovement(_o, _mv)  SCRIPT_EVCMD(Script_applymovement_Conv, _o, _mv)
 #define randomwildmon           SCRIPT_EVCMD(Script_randomwildmon_Conv)
 #define startbattle             SCRIPT_EVCMD(Script_startbattle_Conv)
-#define ret                     SCRIPT_RET
+#define s_ret                   SCRIPT_RET
+#define iftrue(_s)              SCRIPT_IFTRUE(_s)
+#define iffalse(_s)             SCRIPT_IFFALSE(_s)
 
 #define far_label(_name)    case _name:

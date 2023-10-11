@@ -130,6 +130,8 @@ void CloseText_Conv(void){
 }
 
 void OpenText(void){
+    OpenText_Conv();
+    RET;
     CALL(aClearWindowData);
     LDH_A_addr(hROMBank);
     PUSH_AF;

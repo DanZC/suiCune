@@ -201,12 +201,18 @@ static const char* DebugMenu_MusicNames[] = {
     [MUSIC_ROUTE_3] = "ROUTE 3@",
     [MUSIC_ROUTE_12] = "ROUTE 12@",
     [MUSIC_MAGNET_TRAIN] = "MAGNET TRAIN@",
-    [MUSIC_KANTO_GYM_LEADER_BATTLE] = "BATTLE KANTO GYM@",
+    [MUSIC_KANTO_GYM_LEADER_BATTLE] = "BATTLE KANTO G@",
+    [MUSIC_BICYCLE] = "BICYCLE@",
+    [MUSIC_DARK_CAVE] = "DARK CAVE@",
+    [MUSIC_DRAGONS_DEN] = "DRGNS DEN@",
 };
 
 static const char* DebugMenu_SoundNames[] = {
     [SFX_DEX_FANFARE_50_79] = "DEX FAN 50 79@",
     [SFX_ITEM] = "ITEM@",
+    [SFX_CALL] = "CALL@",
+    [SFX_HANG_UP] = "HANG UP@",
+    [SFX_NO_SIGNAL] = "NO SIGNAL@",
 };
 
 static void DebugMenu_SoundTest_PlaceMusicName(uint16_t track) {

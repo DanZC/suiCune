@@ -54,33 +54,7 @@ no_scene:
     return;
 }
 
-void Script_pause_Conv(struct Script* s, uint8_t a) {
-    (void)s;
-    if(a != 0) {
-        wram->wScriptDelay = a;
-    }
-    do {
-        DelayFrames_Conv(2);
-    } while(--wram->wScriptDelay != 0);
-}
-
-void Script_waitsfx_Conv(struct Script* s) {
-    (void)s;
-    WaitSFX_Conv();
-    return;
-}
-
-void Script_playsound_Conv(struct Script* s, uint16_t sfx) {
-    (void)s;
-    PlaySFX_Conv(sfx);
-    return;
-}
-
-const struct TextCmd ReceivedItemText[] = {
-    text_start("@")
-    text_ram(wram_ptr(wStringBuffer1))
-    text_end
-};
+#include "../data/text/std_text.h"
 
 enum {
     ReceiveItemScript_lbl1 = 1

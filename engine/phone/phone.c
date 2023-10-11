@@ -6,6 +6,10 @@
 #include "../../home/delay.h"
 #include "../../home/text.h"
 #include "../../home/map_objects.h"
+#include "../overworld/scripting.h"
+#include "../../util/scripting_macros.h"
+#include "../../util/scripting.h"
+#include "../../data/text/common.h"
 
 void AddPhoneNumber(void){
     CALL(av_CheckCellNum);
@@ -786,22 +790,24 @@ void WrongNumber(void){
 //     return Script_SpecialBillCall();
 // }
 
-#include "../../macros/scripts/events.h"
-const uint8_t Script_ReceivePhoneCall[] = {
-    ev_refreshscreen,
-    ev_callasm(RingTwice_StartCall),
-    ev_memcall(wCallerContact + PHONE_CONTACT_SCRIPT2_BANK),
-    ev_waitbutton,
-    ev_callasm(HangUp),
-    ev_closetext,
-    ev_callasm(InitCallReceiveDelay),
-    ev_end
-};
+bool Script_ReceivePhoneCall(script_s* s) {
+    SCRIPT_BEGIN
+    refreshscreen
+    RingTwice_StartCall();
+    // scall(wCallerContact + PHONE_CONTACT_SCRIPT2_BANK);
+    waitbutton
+    HangUp();
+    closetext
+    // InitCallReceiveDelay();
+    SCRIPT_END
+}
 
-const uint8_t SpecialBillCall[] = {
-    ev_callasm(Script_SpecialBillCall_LoadBillScript),
-    ev_sjump(aScript_ReceivePhoneCall)
-};
+bool Script_SpecialBillCall(script_s* s) {
+    SCRIPT_BEGIN
+    Script_SpecialBillCall_LoadBillScript();
+    sjump(Script_ReceivePhoneCall);
+    SCRIPT_END
+}
 
 void Script_SpecialBillCall_LoadBillScript(void) {
     return LoadCallerScript_Conv(PHONE_BILL);
@@ -820,11 +826,13 @@ void Script_SpecialBillCall_LoadBillScript(void) {
 
 // }
 
-const uint8_t Script_SpecialElmCall[] = {
-    ev_callasm(Script_SpecialElmCall_LoadElmScript),
-    ev_pause(30),
-    ev_sjump(aScript_ReceivePhoneCall),
-};
+bool Script_SpecialElmCall(script_s* s) {
+    SCRIPT_BEGIN
+    Script_SpecialElmCall_LoadElmScript();
+    pause(30);
+    sjump(Script_ReceivePhoneCall);
+    SCRIPT_END
+}
 
 void Script_SpecialElmCall_LoadElmScript(void) {
     return LoadCallerScript_Conv(PHONE_ELM);
@@ -944,12 +952,11 @@ void HangUp_Beep(void){
 
 }
 
-void PhoneClickText(void){
-    //text_far ['_PhoneClickText']
-    //text_end ['?']
-
-    return HangUp_BoopOn();
-}
+const struct TextCmd PhoneClickText[] = {
+    text_far(v_PhoneClickText)
+    text_end
+    // return HangUp_BoopOn();
+};
 
 void HangUp_BoopOn(void){
     LD_HL(mPhoneEllipseText);
@@ -958,12 +965,12 @@ void HangUp_BoopOn(void){
 
 }
 
-void PhoneEllipseText(void){
+// void PhoneEllipseText(void){
     //text_far ['_PhoneEllipseText']
     //text_end ['?']
 
-    return HangUp_BoopOff();
-}
+    // return HangUp_BoopOff();
+// }
 
 void HangUp_BoopOff(void){
     CALL(aSpeechTextbox);
@@ -1172,47 +1179,39 @@ void GetCallerLocation(void){
 
 // INCLUDE "data/phone/special_calls.asm"
 
-    return PhoneOutOfAreaScript();
 }
 
-void PhoneOutOfAreaScript(void){
-    //writetext ['PhoneOutOfAreaText']
-    //end ['?']
-
-    return PhoneOutOfAreaText();
+bool PhoneOutOfAreaScript(script_s* s){
+    SCRIPT_BEGIN
+    writetext(PhoneOutOfAreaText);
+    SCRIPT_END
 }
 
-void PhoneOutOfAreaText(void){
-    //text_far ['_PhoneOutOfAreaText']
-    //text_end ['?']
+const struct TextCmd PhoneOutOfAreaText[] = {
+    text_far(v_PhoneOutOfAreaText)
+    text_end
+};
 
-    return PhoneScript_JustTalkToThem();
+bool PhoneScript_JustTalkToThem(script_s* s){
+    SCRIPT_BEGIN
+    writetext(PhoneJustTalkToThemText);
+    SCRIPT_END
 }
 
-void PhoneScript_JustTalkToThem(void){
-    //writetext ['PhoneJustTalkToThemText']
-    //end ['?']
+const struct TextCmd PhoneJustTalkToThemText[] = {
+    text_far(v_PhoneJustTalkToThemText)
+    text_end
+};
 
-    return PhoneJustTalkToThemText();
-}
-
-void PhoneJustTalkToThemText(void){
-    //text_far ['_PhoneJustTalkToThemText']
-    //text_end ['?']
-
-    return PhoneThankYouTextScript();
-}
-
-void PhoneThankYouTextScript(void){
+bool PhoneThankYouTextScript(script_s* s){
 //  //  unreferenced
-    //writetext ['PhoneThankYouText']
-    //end ['?']
-
-    return PhoneThankYouText();
+    SCRIPT_BEGIN
+    writetext(PhoneThankYouText)
+    SCRIPT_END
 }
 
-void PhoneThankYouText(void){
-    //text_far ['_PhoneThankYouText']
-    //text_end ['?']
+const struct TextCmd PhoneThankYouText[] = {
+    text_far(v_PhoneThankYouText)
+    text_end
+};
 
-}

@@ -1553,7 +1553,7 @@ void init_function_pointers(void) {
     // REDIRECTED(HasUserFainted);
     // REDIRECTED(ResetPlayerStatLevels);
     // REDIRECTED(ReadAndPrintLinkBattleRecord);
-    // REDIRECTED(BreakAttraction);
+    // CONVERTED(BreakAttraction);
     // REDIRECTED(FillInExpBar);
     // REDIRECTED(GetHalfMaxHP);
     // REDIRECTED(GetPartymonItem);

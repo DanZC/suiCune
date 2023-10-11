@@ -822,12 +822,12 @@ void OakSpeech(void) {
 
 }
 
-void OakText1(void) {
+// void OakText1(void) {
     //text_far ['_OakText1']
     //text_end ['?']
 
-    return OakText2();
-}
+    // return OakText2();
+// }
 
 void OakText2(void) {
     //text_far ['_OakText2']

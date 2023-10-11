@@ -131,7 +131,7 @@ static void ReanchorBGMap_NoOAMUpdate_ReanchorBGMap(void) {
 
 void ReanchorBGMap_NoOAMUpdate_Conv(void){
     // CALL(aDelayFrame);
-    DelayFrame();
+    // DelayFrame();
     // LDH_A_addr(hOAMUpdate);
     // PUSH_AF;
     uint8_t oam = hram->hOAMUpdate;

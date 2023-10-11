@@ -1,6 +1,8 @@
 #include "../../constants.h"
 #include "../../util/scripting.h"
 #include "scripting.h"
+#include "../../home/audio.h"
+#include "../../home/delay.h"
 #include "../../home/copy.h"
 #include "../../home/print_text.h"
 #include "../../home/copy_name.h"
@@ -8,6 +10,7 @@
 #include "../../home/item.h"
 #include "../../home/map_objects.h"
 #include "../../home/joypad.h"
+#include "../../home/tilemap.h"
 #include "../../home/window.h"
 #include "../battle/core.h"
 #include "../battle/read_trainer_party.h"
@@ -16,6 +19,9 @@
 #include "overworld.h"
 #include "map_objects.h"
 #include "../events/specials.h"
+#include "../items/items.h"
+#include "../../data/text/common.h"
+#include "../../data/items/pocket_names.h"
 
 static const struct TextCmd* lScriptText = NULL;
 //  Event scripting commands.
@@ -612,25 +618,17 @@ void Script_jumptext_Conv(script_s* s, const struct TextCmd* text){
 
 bool JumpTextFacePlayerScript(script_s* s){
     SCRIPT_BEGIN
-    //faceplayer ['?']
     faceplayer;
-    // return JumpTextScript();
     SCRIPT_FALLTHROUGH(JumpTextScript)
 }
 
 bool JumpTextScript(script_s* s){
     SCRIPT_BEGIN
-    //opentext ['?']
     opentext;
-    //repeattext ['-1', '-1']
     repeattext(0xffff);
-    //waitbutton ['?']
     waitbutton;
-    //closetext ['?']
     closetext;
-    //end ['?']
     SCRIPT_END
-    // return Script_farjumptext();
 }
 
 void Script_farjumptext(void){
@@ -762,6 +760,24 @@ void Script_promptbutton(void){
 
 }
 
+void Script_promptbutton_Conv(script_s* s){
+    (void)s;
+    // LDH_A_addr(hOAMUpdate);
+    // PUSH_AF;
+    uint8_t oamupdate = hram->hOAMUpdate;
+    // LD_A(0x1);
+    // LDH_addr_A(hOAMUpdate);
+    hram->hOAMUpdate = 0x1;
+    // CALL(aWaitBGMap);
+    WaitBGMap_Conv();
+    // CALL(aPromptButton);
+    PromptButton_Conv();
+    // POP_AF;
+    // LDH_addr_A(hOAMUpdate);
+    // RET;
+    hram->hOAMUpdate = oamupdate;
+}
+
 void Script_yesorno(void){
     CALL(aYesNoBox);
     LD_A(FALSE);
@@ -863,32 +879,29 @@ void Script_verbosegiveitem(void){
 }
 
 void GiveItemScript_DummyFunction(void){
-    RET;
+    // RET;
 
 }
 
-void GiveItemScript(void){
-    //callasm ['GiveItemScript_DummyFunction']
-    //writetext ['.ReceivedItemText']
-    //iffalse ['.Full']
-    //waitsfx ['?']
-    //specialsound ['?']
-    //waitbutton ['?']
-    //itemnotify ['?']
-    //end ['?']
-
+bool GiveItemScript(script_s* s){
+    static const struct TextCmd ReceivedItemText[] = {
+        text_far(v_ReceivedItemText)
+        text_end
+    };
+    SCRIPT_BEGIN
+    GiveItemScript_DummyFunction();
+    writetext(ReceivedItemText)
+    if(wram->wScriptVar == FALSE) goto Full;
+    waitsfx
+    specialsound
+    waitbutton
+    itemnotify
+    s_end
 
 Full:
-    //promptbutton ['?']
-    //pocketisfull ['?']
-    //end ['?']
-
-
-ReceivedItemText:
-    //text_far ['_ReceivedItemText']
-    //text_end ['?']
-
-    return Script_verbosegiveitemvar();
+    promptbutton
+    pocketisfull
+    SCRIPT_END
 }
 
 void Script_verbosegiveitemvar(void){
@@ -931,6 +944,19 @@ void Script_itemnotify(void){
 
 }
 
+void Script_itemnotify_Conv(script_s* s){
+    (void)s;
+    // CALL(aGetPocketName);
+    GetPocketName_Conv();
+    // CALL(aCurItemName);
+    // LD_B(BANK(aPutItemInPocketText));
+    // LD_HL(mPutItemInPocketText);
+    // CALL(aMapTextbox);
+    MapTextbox_Conv(PutItemInPocketText);
+    // RET;
+
+}
+
 void Script_pocketisfull(void){
     CALL(aGetPocketName);
     CALL(aCurItemName);
@@ -939,6 +965,18 @@ void Script_pocketisfull(void){
     CALL(aMapTextbox);
     RET;
 
+}
+
+void Script_pocketisfull_Conv(script_s* s){
+    (void)s;
+    // CALL(aGetPocketName);
+    GetPocketName_Conv();
+    // CALL(aCurItemName);
+    // LD_B(BANK(aPocketIsFullText));
+    // LD_HL(mPocketIsFullText);
+    // CALL(aMapTextbox);
+    MapTextbox_Conv(PocketIsFullText);
+    // RET;
 }
 
 void Script_specialsound(void){
@@ -954,6 +992,35 @@ play:
     CALL(aWaitSFX);
     RET;
 
+}
+
+void Script_specialsound_Conv(script_s* s){
+    (void)s;
+    // FARCALL(aCheckItemPocket);
+    // LD_A_addr(wItemAttributeValue);
+    uint8_t pocket = CheckItemPocket_Conv(wram->wCurItem);
+    // CP_A(TM_HM);
+    // LD_DE(SFX_GET_TM);
+    // IF_Z goto play;
+    // LD_DE(SFX_ITEM);
+    if(pocket == TM_HM) {
+    // play:
+        // CALL(aPlaySFX);
+        PlaySFX_Conv(SFX_GET_TM);
+        // CALL(aWaitSFX);
+        WaitSFX_Conv();
+        // RET;
+        return;
+    }
+    else {
+    // play:
+        // CALL(aPlaySFX);
+        PlaySFX_Conv(SFX_ITEM);
+        // CALL(aWaitSFX);
+        WaitSFX_Conv();
+        // RET;
+        return;
+    }
 }
 
 void GetPocketName(void){
@@ -978,6 +1045,27 @@ void GetPocketName(void){
     return CurItemName();
 }
 
+uint8_t* GetPocketName_Conv(void){
+    // FARCALL(aCheckItemPocket);
+    // LD_A_addr(wItemAttributeValue);
+    // DEC_A;
+    // LD_HL(mItemPocketNames);
+    // maskbits(NUM_POCKETS, 0);
+    // ADD_A_A;
+    // LD_E_A;
+    // LD_D(0);
+    // ADD_HL_DE;
+    // LD_A_hli;
+    // LD_D_hl;
+    // LD_E_A;
+    // LD_HL(wStringBuffer3);
+    // CALL(aCopyName2);
+    return Utf8ToCrystalBuffer(wram->wStringBuffer3, sizeof(wram->wStringBuffer3), ItemPocketNames[CheckItemPocket_Conv(wram->wCurItem)]);
+    // RET;
+
+// INCLUDE "data/items/pocket_names.asm"
+}
+
 void CurItemName(void){
     LD_A_addr(wCurItem);
     LD_addr_A(wNamedObjectIndex);
@@ -986,19 +1074,19 @@ void CurItemName(void){
 
 }
 
-void PutItemInPocketText(void){
-    //text_far ['_PutItemInPocketText']
-    //text_end ['?']
+const struct TextCmd PutItemInPocketText[] = {
+    text_far(v_PutItemInPocketText)
+    text_end
 
-    return PocketIsFullText();
-}
+    // return PocketIsFullText();
+};
 
-void PocketIsFullText(void){
-    //text_far ['_PocketIsFullText']
-    //text_end ['?']
+const struct TextCmd PocketIsFullText[] = {
+    text_far(v_PocketIsFullText)
+    text_end
 
-    return Script_pokemart();
-}
+    // return Script_pokemart();
+};
 
 void Script_pokemart(void){
     CALL(aGetScriptByte);
@@ -1245,10 +1333,28 @@ void Script_playsound(void){
 
 }
 
+void Script_playsound_Conv(script_s* s, uint16_t sfx){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // LD_E_A;
+    // CALL(aGetScriptByte);
+    // LD_D_A;
+    // CALL(aPlaySFX);
+    // RET;
+    return PlaySFX_Conv(sfx);
+}
+
 void Script_waitsfx(void){
     CALL(aWaitSFX);
     RET;
 
+}
+
+void Script_waitsfx_Conv(script_s* s){
+    (void)s;
+    // CALL(aWaitSFX);
+    // RET;
+    return WaitSFX_Conv();
 }
 
 void Script_warpsound(void){
@@ -3521,6 +3627,16 @@ loop:
     IF_NZ goto loop;
     RET;
 
+}
+
+void Script_pause_Conv(struct Script* s, uint8_t a) {
+    (void)s;
+    if(a != 0) {
+        wram->wScriptDelay = a;
+    }
+    do {
+        DelayFrames_Conv(2);
+    } while(--wram->wScriptDelay != 0);
 }
 
 void Script_deactivatefacing(void){

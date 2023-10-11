@@ -9,13 +9,18 @@
 
 void DoBattle(void){
     PEEK("");
-    XOR_A_A;
-    LD_addr_A(wBattleParticipantsNotFainted);
-    LD_addr_A(wBattleParticipantsIncludingFainted);
-    LD_addr_A(wBattlePlayerAction);
-    LD_addr_A(wBattleEnded);
-    INC_A;
-    LD_addr_A(wBattleHasJustStarted);
+    // XOR_A_A;
+    // LD_addr_A(wBattleParticipantsNotFainted);
+    wram->wBattleParticipantsNotFainted = 0;
+    // LD_addr_A(wBattleParticipantsIncludingFainted);
+    wram->wBattleParticipantsIncludingFainted = 0;
+    // LD_addr_A(wBattlePlayerAction);
+    wram->wBattlePlayerAction = 0;
+    // LD_addr_A(wBattleEnded);
+    wram->wBattleEnded = FALSE;
+    // INC_A;
+    // LD_addr_A(wBattleHasJustStarted);
+    wram->wBattleHasJustStarted = TRUE;
     LD_HL(wOTPartyMon1HP);
     LD_BC(PARTYMON_STRUCT_LENGTH - 1);
     LD_D(BATTLEACTION_SWITCH1 - 1);
@@ -48,9 +53,12 @@ not_linked:
     IF_Z goto wild;
     XOR_A_A;
     LD_addr_A(wEnemySwitchMonIndex);
-    CALL(aNewEnemyMonStatus);
-    CALL(aResetEnemyStatLevels);
-    CALL(aBreakAttraction);
+    // CALL(aNewEnemyMonStatus);
+    NewEnemyMonStatus_Conv();
+    // CALL(aResetEnemyStatLevels);
+    ResetEnemyStatLevels_Conv();
+    // CALL(aBreakAttraction);
+    BreakAttraction();
     CALL(aEnemySwitch);
 
 
@@ -678,6 +686,41 @@ quit:
     SCF;
     RET;
 
+}
+
+bool CheckPlayerLockedIn_Conv(void){
+    // LD_A_addr(wPlayerSubStatus4);
+    // AND_A(1 << SUBSTATUS_RECHARGE);
+    // JP_NZ (mCheckPlayerLockedIn_quit);
+    if(wram->wPlayerSubStatus4 & (1 << SUBSTATUS_RECHARGE))
+        return true;
+
+    // LD_HL(wEnemySubStatus3);
+    // RES_hl(SUBSTATUS_FLINCHED);
+    bit_reset(wram->wEnemySubStatus3, SUBSTATUS_FLINCHED);
+    // LD_HL(wPlayerSubStatus3);
+    // RES_hl(SUBSTATUS_FLINCHED);
+    bit_reset(wram->wPlayerSubStatus3, SUBSTATUS_FLINCHED);
+
+    // LD_A_hl;
+    // AND_A(1 << SUBSTATUS_CHARGED | 1 << SUBSTATUS_RAMPAGE);
+    // JP_NZ (mCheckPlayerLockedIn_quit);
+    if(wram->wPlayerSubStatus3 & (1 << SUBSTATUS_CHARGED | 1 << SUBSTATUS_RAMPAGE))
+        return true;
+
+    // LD_HL(wPlayerSubStatus1);
+    // BIT_hl(SUBSTATUS_ROLLOUT);
+    // JP_NZ (mCheckPlayerLockedIn_quit);
+    if(bit_test(wram->wPlayerSubStatus1, SUBSTATUS_ROLLOUT))
+        return true;
+
+    // AND_A_A;
+    // RET;
+    return false;
+
+// quit:
+    // SCF;
+    // RET;
 }
 
 void ParsePlayerAction(void){
@@ -4114,6 +4157,48 @@ void NewEnemyMonStatus(void){
 
 }
 
+void NewEnemyMonStatus_Conv(void){
+    // XOR_A_A;
+    // LD_addr_A(wLastPlayerCounterMove);
+    wram->wLastPlayerCounterMove = NO_MOVE;
+    // LD_addr_A(wLastEnemyCounterMove);
+    wram->wLastEnemyCounterMove = NO_MOVE;
+    // LD_addr_A(wLastEnemyMove);
+    wram->wLastEnemyMove = NO_MOVE;
+    // LD_HL(wEnemySubStatus1);
+    // for(int rept = 0; rept < 4; rept++){
+    // LD_hli_A;
+    // }
+    wram->wEnemySubStatus1 = 0;
+    wram->wEnemySubStatus2 = 0;
+    wram->wEnemySubStatus3 = 0;
+    wram->wEnemySubStatus4 = 0;
+    // LD_hl_A;
+    wram->wEnemySubStatus5 = 0;
+    // LD_addr_A(wEnemyDisableCount);
+    wram->wEnemyDisableCount = 0;
+    // LD_addr_A(wEnemyFuryCutterCount);
+    wram->wEnemyFuryCutterCount = 0;
+    // LD_addr_A(wEnemyProtectCount);
+    wram->wEnemyProtectCount = 0;
+    // LD_addr_A(wEnemyRageCounter);
+    wram->wEnemyRageCounter = 0;
+    // LD_addr_A(wEnemyDisabledMove);
+    wram->wEnemyDisabledMove = NO_MOVE;
+    // LD_addr_A(wEnemyMinimized);
+    wram->wEnemyMinimized = FALSE;
+    // LD_addr_A(wPlayerWrapCount);
+    wram->wPlayerWrapCount = 0;
+    // LD_addr_A(wEnemyWrapCount);
+    wram->wEnemyWrapCount = 0;
+    // LD_addr_A(wEnemyTurnsTaken);
+    wram->wEnemyTurnsTaken = 0;
+    // LD_HL(wPlayerSubStatus5);
+    // RES_hl(SUBSTATUS_CANT_RUN);
+    bit_reset(wram->wPlayerSubStatus5, SUBSTATUS_CANT_RUN);
+    // RET;
+}
+
 void ResetEnemyStatLevels(void){
     LD_A(BASE_STAT_LEVEL);
     LD_B(NUM_LEVEL_STATS);
@@ -4665,12 +4750,13 @@ void NewBattleMonStatus(void){
 }
 
 void BreakAttraction(void){
-    LD_HL(wPlayerSubStatus1);
-    RES_hl(SUBSTATUS_IN_LOVE);
-    LD_HL(wEnemySubStatus1);
-    RES_hl(SUBSTATUS_IN_LOVE);
-    RET;
-
+    // LD_HL(wPlayerSubStatus1);
+    // RES_hl(SUBSTATUS_IN_LOVE);
+    bit_reset(wram->wPlayerSubStatus1, SUBSTATUS_IN_LOVE);
+    // LD_HL(wEnemySubStatus1);
+    // RES_hl(SUBSTATUS_IN_LOVE);
+    bit_reset(wram->wEnemySubStatus1, SUBSTATUS_IN_LOVE);
+    // RET;
 }
 
 void SpikesDamage(void){
