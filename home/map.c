@@ -440,7 +440,7 @@ void LoadMetatiles_Conv(void){
             // LD_A_addr(wTilesetBlocksAddress + 1);
             // ADC_A_H;
             // LD_H_A;
-            hl = AbsGBROMToRAMAddr((wram->wTilesetBlocksBank << 14) + wram->wTilesetBlocksAddress + (a << 4));
+            hl = AbsGBROMBankAddrToRAMAddr(wram->wTilesetBlocksBank, wram->wTilesetBlocksAddress + (a << 4));
 
         // copy the 4x4 metatile
             for(int rept = 0; rept < METATILE_WIDTH - 1; rept++){

@@ -7,6 +7,7 @@
 #include "../engine/gfx/place_graphic.h"
 #include "../engine/gfx/load_pics.h"
 #include "../charmap.h"
+#include "../data/pokemon/base_stats.h"
 
 void IsAPokemon(void){
     //  Return carry if species a is not a Pokemon.
@@ -635,8 +636,43 @@ void GetBaseData_Conv(void){
 
     //  Get BaseData
         //DEC_A;
-        struct BaseData* hl = AbsGBToRAMAddr(aBaseData);
+        static_assert(BASE_DATA_SIZE == sizeof(struct BaseData));
+        const struct BaseData* hl = AbsGBROMToRAMAddr(aBaseData);
+        
         CopyBytes_Conv2(&wram->wBaseDexNo, hl + (species - 1), sizeof(struct BaseData));
+        //LD_BC(BASE_DATA_SIZE);
+        //LD_HL(mBaseData);
+        //CALL(aAddNTimes);
+        //LD_DE(wCurBaseData);
+        //LD_BC(BASE_DATA_SIZE);
+        //CALL(aCopyBytes);
+    }
+
+    //  Replace Pokedex # with species
+    wram->wBaseDexNo = wram->wCurSpecies;
+}
+
+void GetBaseData_Conv2(species_t species){
+//  Egg doesn't have BaseData
+    if(species == EGG)
+    {
+        //LD_DE(mUnusedEggPic);
+
+    //  Sprite dimensions
+        wram->wBasePicSize = 0x55;  // 5x5
+
+    //  Beta front and back sprites
+    //  (see pokegold-spaceworld's data/pokemon/base_stats/*)
+        gb_write16(wBaseUnusedFrontpic,     mUnusedEggPic);
+        gb_write16(wBaseUnusedFrontpic + 2, mUnusedEggPic);
+    }
+    else 
+    {
+
+    //  Get BaseData
+        //DEC_A;
+        const struct BaseData* hl = BasePokemonData + (species - 1);
+        CopyBytes_Conv2(&wram->wBaseDexNo, hl, sizeof(struct BaseData));
         //LD_BC(BASE_DATA_SIZE);
         //LD_HL(mBaseData);
         //CALL(aAddNTimes);

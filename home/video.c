@@ -403,6 +403,214 @@ row:
     RET;
 }
 
+static void UpdateBGMap_update(uint8_t* dst, const uint8_t* hl) {
+    // LD_addr_SP(hSPBuffer);
+
+    const uint8_t* sp;
+    //  Which third?
+    // LDH_A_addr(hBGMapThird);
+    // AND_A_A;  // 0
+    // IF_Z goto top;
+    // DEC_A;  // 1
+    // IF_Z goto middle;
+    // 2
+    const uint8_t map_third = hram->hBGMapThird;
+    switch(map_third) {
+
+#define THIRD_HEIGHT (SCREEN_HEIGHT / 3)
+    
+    default:
+    case 2:
+        //  bottom
+        // LD_DE(2 * THIRD_HEIGHT * SCREEN_WIDTH);
+        // ADD_HL_DE;
+        // LD_SP_HL;
+        sp = hl + (2 * THIRD_HEIGHT * SCREEN_WIDTH);
+
+        // LDH_A_addr(hBGMapAddress + 1);
+        // LD_H_A;
+        // LDH_A_addr(hBGMapAddress);
+        // LD_L_A;
+
+        // LD_DE(2 * THIRD_HEIGHT * BG_MAP_WIDTH);
+        // ADD_HL_DE;
+        dst += (2 * THIRD_HEIGHT * BG_MAP_WIDTH);
+
+        //  Next time: top third
+        // XOR_A_A;
+        hram->hBGMapThird = 0;
+        // goto start;
+        break;
+
+    case 1:
+    // middle:
+        // LD_DE(THIRD_HEIGHT * SCREEN_WIDTH);
+        // ADD_HL_DE;
+        // LD_SP_HL;
+        sp = hl + (THIRD_HEIGHT * SCREEN_WIDTH);
+
+        // LDH_A_addr(hBGMapAddress + 1);
+        // LD_H_A;
+        // LDH_A_addr(hBGMapAddress);
+        // LD_L_A;
+
+        // LD_DE(THIRD_HEIGHT * BG_MAP_WIDTH);
+        // ADD_HL_DE;
+        dst += (THIRD_HEIGHT * BG_MAP_WIDTH);
+
+        //  Next time: bottom third
+        // LD_A(2);
+        hram->hBGMapThird = 2;
+        // goto start;
+        break;
+    
+    case 0:
+    // top:
+        // LD_SP_HL;
+        sp = hl;
+
+        // LDH_A_addr(hBGMapAddress + 1);
+        // LD_H_A;
+        // LDH_A_addr(hBGMapAddress);
+        // LD_L_A;
+
+        //  Next time: middle third
+        // LD_A(1);
+        hram->hBGMapThird = 1;
+        break;
+    }
+
+// start:
+    //  Which third to update next time
+    // LDH_addr_A(hBGMapThird);
+
+    //  Rows of tiles in a third
+    // LD_A(THIRD_HEIGHT);
+    uint8_t a = THIRD_HEIGHT;
+
+    //  Discrepancy between wTilemap and BGMap
+    // LD_BC(BG_MAP_WIDTH - (SCREEN_WIDTH - 1));
+
+    do {
+    // row:
+        //  Copy a row of 20 tiles
+        for (int rept = 0; rept < SCREEN_WIDTH / 2 - 1; rept++) {
+            // POP_DE;
+            // LD_hl_E;
+            // INC_L;
+            *(dst++) = *(sp++);
+            // LD_hl_D;
+            // INC_L;
+            *(dst++) = *(sp++);
+        }
+        // POP_DE;
+        // LD_hl_E;
+        // INC_L;
+        *(dst++) = *(sp++);
+        // LD_hl_D;
+        *dst = *(sp++);
+
+        // ADD_HL_BC;
+        dst += (BG_MAP_WIDTH - (SCREEN_WIDTH - 1));
+        // DEC_A;
+        // IF_NZ goto row;
+    } while(--a != 0);
+
+    // LDH_A_addr(hSPBuffer);
+    // LD_L_A;
+    // LDH_A_addr(hSPBuffer + 1);
+    // LD_H_A;
+    // LD_SP_HL;
+    // RET;
+}
+
+static void UpdateBGMap_Tiles(uint8_t* dst) {
+    // hlcoord(0, 0, wTilemap);
+    return UpdateBGMap_update(dst, coord(0, 0, wram->wTilemap));
+}
+
+static void UpdateBGMap_Attr(uint8_t* dst) {
+    // LD_A(1);
+    // LDH_addr_A(rVBK);
+
+    // hlcoord(0, 0, wAttrmap);
+    // CALL(aUpdateBGMap_update);
+    return UpdateBGMap_update(dst, coord(0, 0, wram->wAttrmap));
+
+    // LD_A(0);
+    // LDH_addr_A(rVBK);
+    // RET;
+}
+
+//  Update the BG Map, in thirds, from wTilemap and wAttrmap.
+void UpdateBGMap_Conv(void) {
+    // LDH_A_addr(hBGMapMode);
+    // AND_A_A;  // 0
+    // RET_Z;
+    if(hram->hBGMapMode == 0)
+        return;
+
+    //  BG Map 0
+    // DEC_A;  // 1
+    // IF_Z goto Tiles;
+    if(hram->hBGMapMode == 1)
+        return UpdateBGMap_Tiles(GBToRAMAddr(hram->hBGMapAddress));
+    // DEC_A;  // 2
+    // IF_Z goto Attr;
+    if(hram->hBGMapMode == 2)
+        return UpdateBGMap_Attr(GBToRAMAddr(hram->hBGMapAddress) + VRAM_BANK_SIZE);
+
+    //  BG Map 1
+    // DEC_A;  // useless
+
+    // LDH_A_addr(hBGMapAddress);
+    // LD_L_A;
+    // LDH_A_addr(hBGMapAddress + 1);
+    // LD_H_A;
+    // PUSH_HL;
+
+    // XOR_A_A;  // LOW(vBGMap1)
+    // LDH_addr_A(hBGMapAddress);
+    // LD_A(HIGH(vBGMap1));
+    // LDH_addr_A(hBGMapAddress + 1);
+
+    // LDH_A_addr(hBGMapMode);
+    // PUSH_AF;
+    uint8_t bgmapmode = hram->hBGMapMode;
+    // CP_A(3);
+    // CALL_Z(aUpdateBGMap_Tiles);
+    if(bgmapmode == 3) {
+        UpdateBGMap_Tiles(vram->vBGMap1);
+    }
+    // POP_AF;
+    // CP_A(4);
+    // CALL_Z(aUpdateBGMap_Attr);
+    if(bgmapmode == 4) {
+        UpdateBGMap_Attr(vram->vBGMap3);
+    }
+
+    // POP_HL;
+    // LD_A_L;
+    // LDH_addr_A(hBGMapAddress);
+    // LD_A_H;
+    // LDH_addr_A(hBGMapAddress + 1);
+    // RET;
+
+// Attr:
+    // LD_A(1);
+    // LDH_addr_A(rVBK);
+
+    // hlcoord(0, 0, wAttrmap);
+    // CALL(aUpdateBGMap_update);
+
+    // LD_A(0);
+    // LDH_addr_A(rVBK);
+    // RET;
+
+// Tiles:
+    // hlcoord(0, 0, wTilemap);
+}
+
 void Serve1bppRequest(void) {
     //  Only call during the first fifth of VBlank
 

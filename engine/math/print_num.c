@@ -1068,7 +1068,7 @@ skip1:
         
         // LD_hl(0xf6);
         *(*hl) = CHAR_0;
-        printf("0");
+        // printf("0");
 
         // RET;
         return;
@@ -1084,7 +1084,7 @@ skip1:
         // LD_A(0xf0);
         // LD_hli_A;
         *((*hl)++) = CHAR_MONEY_ICON;
-        printf("$_");
+        // printf("$_");
 
         // RES_D(5);
         bit_reset(*d, PRINTNUM_MONEY_F);
@@ -1096,7 +1096,7 @@ skip1:
 
     // LD_hl_A;
     *(*hl) = a;
-    printf("%c", c + '0');
+    // printf("%c", c + '0');
 
     // LDH_addr_A(hPrintNumBuffer + 0);
     hram->hPrintNumBuffer[0] = a;
@@ -1111,7 +1111,7 @@ skip1:
     ++(*hl);
     // LD_hl(0xf2);
     *(*hl) = CHAR_DOT;
-    printf("_.");
+    // printf("_.");
     
     // RET;
     return;
@@ -1124,15 +1124,15 @@ skip1:
 static void v_PrintNum_AdvancePointer(uint8_t** hl, uint8_t d) {
     if(bit_test(d, PRINTNUM_LEADINGZEROS_F) || !bit_test(d, PRINTNUM_LEFTALIGN_F)) {
         (*hl)++;
-        printf("_");
+        // printf("_");
         return;
     }
     if(hram->hPrintNumBuffer[0] == 0) {
-        printf("-");
+        // printf("-");
         return;
     }
     (*hl)++;
-    printf("_");
+    // printf("_");
 }
 
 //  Print c digits of the b-byte value from de to hl.
@@ -1146,12 +1146,15 @@ static void v_PrintNum_AdvancePointer(uint8_t** hl, uint8_t d) {
 //  Bit 7: print leading zeros if set
 uint8_t* v_PrintNum_Conv2(uint8_t* hl, const uint8_t* de, uint8_t b, uint8_t c){
     // PUSH_BC;
+#define PRINT_DEBUG_PRINTNUM_CALL 0
+#if PRINT_DEBUG_PRINTNUM_CALL
     switch(b & 0xf) {
+        case 1: printf("%s: Printing %d digits of %u\n", __func__, c & 0xf, de[0]); break;
         case 2: printf("%s: Printing %d digits of %u\n", __func__, c & 0xf, (de[1] + (de[0] << 8))); break;
         case 3: printf("%s: Printing %d digits of %u\n", __func__, c & 0xf, (de[2] + (de[1] << 8) + (de[0] << 16))); break;
         case 4: printf("%s: Printing %d digits of %u\n", __func__, c & 0xf, (de[3] + (de[2] << 8) + (de[1] << 16) + (de[0] << 24))); break;
     }
-
+#endif
 //  increments the pointer unless leading zeroes are not being printed,
 //  the number is left-aligned, and no nonzero digits have been printed yet
 // #define v_PrintNum_AdvancePointer() do {
@@ -1466,7 +1469,7 @@ modded_10:
                 // LD_A(0xf0);
                 // LD_hli_A;
                 *(hl++) = CHAR_MONEY_ICON;
-                printf("$_");
+                // printf("$_");
                 // RES_D(5);
                 bit_reset(d, PRINTNUM_MONEY_F);
             }
@@ -1480,7 +1483,7 @@ modded_10:
         // LD_hl_A;
         // POP_AF;
         *(hl) = c + CHAR_0;
-        printf("%c^", c + '0');
+        // printf("%c^", c + '0');
 
         // LDH_addr_A(hPrintNumBuffer + 0);
         hram->hPrintNumBuffer[0] = a;
@@ -1494,7 +1497,7 @@ modded_10:
             hl++;
             // LD_hl(0xf2);
             *hl = CHAR_DOT;
-            printf("_.");
+            // printf("_.");
         }
     }
     else 
@@ -1509,7 +1512,7 @@ modded_10:
             // LD_hl(0xf6);
             // RET;
             *(hl) = CHAR_0;
-            printf("0*");
+            // printf("0*");
         }
         // goto money_leading_zero;
     }
@@ -1533,7 +1536,7 @@ modded_10:
             // LD_A(0xf0);
             // LD_hli_A;
             *(hl++) = CHAR_MONEY_ICON;
-            printf("$_");
+            // printf("$_");
             // RES_D(5);
             bit_reset(d, PRINTNUM_MONEY_F);
         }
@@ -1545,7 +1548,7 @@ modded_10:
     // ADD_A_B;
     // LD_hli_A;
     *(hl++) = b + CHAR_0;
-    printf("%c_\n", b + '0');
+    // printf("%c_\n", b + '0');
 
     // POP_DE;
     // POP_BC;

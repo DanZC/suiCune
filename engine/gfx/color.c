@@ -2099,6 +2099,7 @@ const char PartyMenuOBPals[] = "gfx/stats/party_menu_ob.pal";
 const char UnusedBattleObjectPals[] = "gfx/battle_anims/unused_battle_anims.pal";
 const char UnusedGSTitleBGPals[] = "gfx/title/unused_gs_bg.pal";
 const char UnusedGSTitleOBPals[] = "gfx/title/unused_gs_fg.pal";
+
 const char MalePokegearPals[] = "gfx/pokegear/pokegear.pal";
 const char FemalePokegearPals[] = "gfx/pokegear/pokegear_f.pal";
 const char BetaPokerPals[] = "gfx/beta_poker/beta_poker.pal";

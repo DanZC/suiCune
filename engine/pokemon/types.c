@@ -166,6 +166,10 @@ void PrintType_Conv(uint8_t* hl, uint8_t b){
     // LD_E_A;
     // LD_D_hl;
     // POP_HL;
+    if(b >= TYPES_END) {
+        PlaceStringSimple(U82C(TypeNames[CURSE_TYPE]), hl);
+        return;
+    }
 
     // JP(mPlaceString);
     PlaceStringSimple(U82C(TypeNames[b]), hl);

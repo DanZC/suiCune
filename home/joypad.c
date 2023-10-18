@@ -4,6 +4,10 @@
 #include "audio.h"
 #include "tilemap.h"
 #include "../charmap.h"
+#include "time_palettes.h"
+#include "../engine/events/catch_tutorial_input.h"
+
+const uint8_t* gAutoInputAddress = NULL;
 
 void Joypad(void) {
         //  Replaced by UpdateJoypad, called from VBlank instead of the useless
@@ -24,9 +28,9 @@ void ClearJoypad(void) {
 
 void ClearJoypad_Conv(void) {
     //  Pressed this frame (delta)
-    gb_write(hJoyPressed, 0);
+    hram->hJoyPressed = 0;
     //  Currently pressed
-    gb_write(hJoyDown, 0);
+    hram->hJoyDown = 0;
 }
 
 void UpdateJoypad(void) {
@@ -445,6 +449,117 @@ void GetJoypad_Conv(void) {
     //return StartAutoInput();
 }
 
+//  Update mirror joypad input from hJoypadDown (real input)
+void GetJoypad_Conv2(void) {
+    //  hJoyReleased: released this frame (delta)
+    //  hJoyPressed: pressed this frame (delta)
+    //  hJoyDown: currently pressed
+
+    //  bit 0 A
+    //      1 B
+    //      2 SELECT
+    //      3 START
+    //      4 RIGHT
+    //      5 LEFT
+    //      6 UP
+    //      7 DOWN
+
+    //PUSH_AF;
+    //PUSH_HL;
+    //PUSH_DE;
+    //PUSH_BC;
+
+    //  The player input can be automated using an input stream.
+    //  See more below.
+    uint8_t inputType = wram->wInputType;
+    if(inputType == AUTO_INPUT)
+    {
+        //  Use a predetermined input stream (used in the catching tutorial).
+        //  Stream format: [input][duration]
+        //  A value of $ff will immediately end the stream.
+
+        //  Read from the input stream.
+        const uint8_t* hl = gAutoInputAddress;
+
+        //  We only update when the input duration has expired.
+        uint8_t len = wram->wAutoInputLength;
+        if(len == 0)
+        {
+            //  An input of $ff will end the stream.
+            uint8_t input = *(hl++);
+            if(input == 0xFF) 
+            {
+                StopAutoInput_Conv();
+                input = NO_INPUT;
+            }
+            else 
+            {
+                //  A duration of $ff will end the stream indefinitely.
+                uint8_t duration = *(hl++);
+                wram->wAutoInputLength = duration;
+                if(duration != 0xFF)
+                {
+                    //  On to the next input...
+                    gAutoInputAddress = hl;
+                }
+                else 
+                {
+                    //  The current input is overwritten.
+                    hl -= 2;
+                    input = NO_INPUT;
+                }
+            }
+            hram->hJoyPressed = input;  // pressed
+            hram->hJoyDown = input;     // input
+        }
+        else 
+        {
+            //  Until then, don't change anything.
+            wram->wAutoInputLength = --len;
+        }
+        return;
+    }
+    else 
+    {
+
+        //  To get deltas, take this and last frame's input.
+        uint8_t real_input = hram->hJoypadDown;  // real input
+        uint8_t last_input = hram->hJoyDown;  // last frame mirror
+        //LDH_A_addr(hJoypadDown);  // real input
+        //LD_B_A;
+        //LDH_A_addr(hJoyDown);  // last frame mirror
+        //LD_E_A;
+
+        //  Released this frame:
+        hram->hJoyReleased = (real_input ^ last_input) & last_input;
+        //XOR_A_B;
+        //LD_D_A;
+        //AND_A_E;
+        //LDH_addr_A(hJoyReleased);
+
+        //  Pressed this frame:
+        //LD_A_D;
+        //AND_A_B;
+        //LDH_addr_A(hJoyPressed);
+        hram->hJoyPressed = (real_input ^ last_input) & real_input;
+
+        //  It looks like the collective presses got commented out here.
+        //LD_C_A;
+
+        //  Currently pressed:
+        hram->hJoyDown = real_input;  // frame input
+        //LD_A_B;
+        //LDH_addr_A(hJoyDown);  // frame input
+    }
+    //POP_BC;
+    //POP_DE;
+    //POP_HL;
+    //POP_AF;
+    //RET;
+
+    //return StartAutoInput();
+}
+
 void StartAutoInput(void) {
         //  Start reading automated input stream at a:hl.
 
@@ -481,6 +596,19 @@ void StartAutoInput_Conv(uint16_t hl, uint8_t a) {
     gb_write(wInputType, AUTO_INPUT);
 }
 
+//  Start reading automated input stream at hl.
+void StartAutoInput_Conv2(const uint8_t* hl) {
+    gAutoInputAddress = hl;
+    //  Start reading the stream immediately.
+    wram->wAutoInputLength = 0;
+    //  Reset input mirrors.
+    hram->hJoyPressed = 0;   // pressed this frame
+    hram->hJoyReleased = 0;  // released this frame
+    hram->hJoyDown = 0;      // currently pressed
+
+    wram->wInputType = AUTO_INPUT;
+}
+
 void StopAutoInput(void) {
         //  Clear variables related to automated input.
     XOR_A_A;
@@ -501,6 +629,14 @@ void StopAutoInput_Conv(void) {
     gb_write(wAutoInputLength, 0);
     //  Back to normal input.
     gb_write(wInputType, 0);
+}
+
+void StopAutoInput_Conv2(void) {
+    //  Clear variables related to automated input.
+    gAutoInputAddress = NULL;
+    wram->wAutoInputLength = 0;
+    //  Back to normal input.
+    wram->wInputType = 0;
 }
 
 void JoyTitleScreenInput(void) {
@@ -562,7 +698,8 @@ void JoyWaitAorB_Conv(void) {
         if((gb_read(hJoyPressed) & (A_BUTTON | B_BUTTON)) != 0)
             break;
         
-        CALL(aUpdateTimeAndPals);
+        // CALL(aUpdateTimeAndPals);
+        UpdateTimeAndPals_Conv();
 
         // goto loop;
     } while(1);
@@ -635,7 +772,7 @@ restartframedelay:
 
 void JoyTextDelay_Conv(void) {
     // CALL(aGetJoypad);
-    GetJoypad_Conv();
+    GetJoypad_Conv2();
 
     // LDH_A_addr(hInMenu);
     // AND_A_A;
@@ -656,18 +793,18 @@ void JoyTextDelay_Conv(void) {
     // LDH_A_addr(hJoyPressed);
     // AND_A_A;
     // IF_Z goto checkframedelay;
-    if(gb_read(hJoyPressed) == 0)
+    if(hram->hJoyPressed == 0)
     {
 // checkframedelay:
         // LD_A_addr(wTextDelayFrames);
         // AND_A_A;
         // IF_Z goto restartframedelay;
-        if(gb_read(wTextDelayFrames) == 0)
+        if(wram->wTextDelayFrames == 0)
         {
     // restartframedelay:
             // LD_A(5);
             // LD_addr_A(wTextDelayFrames);
-            gb_write(wTextDelayFrames, 5);
+            wram->wTextDelayFrames = 5;
 
             // RET;
             return;
@@ -675,7 +812,7 @@ void JoyTextDelay_Conv(void) {
 
         // XOR_A_A;
         // LDH_addr_A(hJoyLast);
-        gb_write(hJoyLast, 0);
+        hram->hJoyLast = 0;
 
         // RET;
         return;
@@ -683,7 +820,7 @@ void JoyTextDelay_Conv(void) {
     
     // LD_A(15);
     // LD_addr_A(wTextDelayFrames);
-    gb_write(wTextDelayFrames, 15);
+    wram->wTextDelayFrames = 15;
 
     // RET;
     return;
@@ -733,26 +870,26 @@ loop:
 void WaitPressAorB_BlinkCursor_Conv(void) {
     // LDH_A_addr(hMapObjectIndex);
     // PUSH_AF;
-    uint8_t mapObjIdx = gb_read(hMapObjectIndex);
+    uint8_t mapObjIdx = hram->hMapObjectIndex;
 
     // LDH_A_addr(hObjectStructIndex);
     // PUSH_AF;
-    uint8_t objStructIdx = gb_read(hObjectStructIndex);
+    uint8_t objStructIdx = hram->hObjectStructIndex;
 
     // XOR_A_A;
     // LDH_addr_A(hMapObjectIndex);
-    gb_write(hMapObjectIndex, 0);
+    hram->hMapObjectIndex = 0;
 
     // LD_A(6);
     // LDH_addr_A(hObjectStructIndex);
-    gb_write(hObjectStructIndex, 6);
+    hram->hObjectStructIndex = 6;
 
     do {
         // PUSH_HL;
         // hlcoord(18, 17, wTilemap);
         // CALL(aBlinkCursor);
         // POP_HL;
-        BlinkCursor_Conv(coord(18, 17, wTilemap));
+        BlinkCursor_Conv2(coord(18, 17, wram->wTilemap));
 
         // CALL(aJoyTextDelay);
         JoyTextDelay_Conv();
@@ -760,15 +897,15 @@ void WaitPressAorB_BlinkCursor_Conv(void) {
         // LDH_A_addr(hJoyLast);
         // AND_A(A_BUTTON | B_BUTTON);
         // IF_Z goto loop;
-    } while((gb_read(hJoyLast) & (A_BUTTON | B_BUTTON)) == 0);
+    } while((hram->hJoyLast & (A_BUTTON | B_BUTTON)) == 0);
 
     // POP_AF;
     // LDH_addr_A(hObjectStructIndex);
-    gb_write(hObjectStructIndex, objStructIdx);
+    hram->hObjectStructIndex = objStructIdx;
 
     // POP_AF;
     // LDH_addr_A(hMapObjectIndex);
-    gb_write(hMapObjectIndex, mapObjIdx);
+    hram->hMapObjectIndex = mapObjIdx;
 
     // RET;
     return;
@@ -791,7 +928,7 @@ void SimpleWaitPressAorB_Conv(void) {
         JoyTextDelay_Conv();
         // LDH_A_addr(hJoyLast);
         // AND_A(A_BUTTON | B_BUTTON);
-    } while((gb_read(hJoyLast) & (A_BUTTON | B_BUTTON)) == 0);
+    } while((hram->hJoyLast & (A_BUTTON | B_BUTTON)) == 0);
     // IF_Z goto loop;
     // RET;
 }
@@ -860,16 +997,16 @@ void PromptButton_wait_input_Conv(void) {
     PEEK("");
     // LDH_A_addr(hOAMUpdate);
     // PUSH_AF;
-    uint8_t temp = gb_read(hOAMUpdate);
+    uint8_t temp = hram->hOAMUpdate;
 
     // LD_A(0x1);
     // LDH_addr_A(hOAMUpdate);
-    gb_write(hOAMUpdate, 1);
+    hram->hOAMUpdate = 1;
 
     // LD_A_addr(wInputType);
     // OR_A_A;
     // IF_Z goto input_wait_loop;
-    if(gb_read(wInputType) == 0)
+    if(wram->wInputType == 0)
     {
     // input_wait_loop:
         do {
@@ -880,18 +1017,18 @@ void PromptButton_wait_input_Conv(void) {
                 // LDH_A_addr(hVBlankCounter);
                 // AND_A(0b00010000);  // bit 4, a
                 // IF_Z goto cursor_off;
-                if((gb_read(hVBlankCounter) & 0b00010000) == 0)
+                if((hram->hVBlankCounter & 0b00010000) == 0)
                 {
                 // cursor_off:
                     // lda_coord(17, 17, wTilemap);
                     // ldcoord_a(18, 17, wTilemap);
-                    gb_write(coord(18, 17, wTilemap), gb_read(coord(17, 17, wTilemap)));
+                    *coord(18, 17, wram->wTilemap) = *coord(17, 17, wram->wTilemap);
                 }
                 else 
                 {
                     // LD_A(0xee);
                     // ldcoord_a(18, 17, wTilemap);
-                    gb_write(coord(18, 17, wTilemap), 0xee);
+                    *coord(18, 17, wram->wTilemap) = CHAR_DOWN_CURSOR;
                 }
 
                 // RET;
@@ -903,23 +1040,24 @@ void PromptButton_wait_input_Conv(void) {
             // LDH_A_addr(hJoyPressed);
             // AND_A(A_BUTTON | B_BUTTON);
             // IF_NZ goto received_input;
-            if((gb_read(hJoyPressed) & (A_BUTTON | B_BUTTON)) != 0)
+            if((hram->hJoyPressed & (A_BUTTON | B_BUTTON)) != 0)
             {
                 PEEK("received_input");
             // received_input:
                 // POP_AF;
                 // LDH_addr_A(hOAMUpdate);
-                gb_write(hOAMUpdate, temp);
+                hram->hOAMUpdate = temp;
 
                 // RET;
                 return;
             }
 
-            CALL(aUpdateTimeAndPals);
+            // CALL(aUpdateTimeAndPals);
+            UpdateTimeAndPals_Conv();
 
             // LD_A(0x1);
             // LDH_addr_A(hBGMapMode);
-            gb_write(hBGMapMode, 0x1);
+            hram->hBGMapMode = 0x1;
 
             // CALL(aDelayFrame);
             DelayFrame();
@@ -927,7 +1065,8 @@ void PromptButton_wait_input_Conv(void) {
             // goto input_wait_loop;
         } while(1);
     }
-    FARCALL(av_DudeAutoInput_A);
+    // FARCALL(av_DudeAutoInput_A);
+    v_DudeAutoInput_A();
 }
 
 //  Show a blinking cursor in the lower right-hand
@@ -1077,6 +1216,96 @@ void BlinkCursor_Conv(uint16_t hl) {
     // LD_A(0x7a);
     // LD_hl_A;
     gb_write(hl, CHAR_FRAME_TOP);
+
+    // LD_A(-1);
+    // LDH_addr_A(hMapObjectIndex);
+    hram->hMapObjectIndex = 0xff;
+
+    // LD_A(6);
+    // LDH_addr_A(hObjectStructIndex);
+    hram->hObjectStructIndex = 6;
+    
+    // RET;
+    return;
+}
+
+void BlinkCursor_Conv2(uint8_t* hl) {
+    uint8_t idx;
+
+    // PUSH_BC;
+    // LD_A_hl;
+    // LD_B_A;
+    // LD_A(0xee);
+    // CP_A_B;
+    // POP_BC;
+    // IF_NZ goto place_arrow;
+    if(*hl != CHAR_DOWN_CURSOR)
+    {
+// place_arrow:
+        // LDH_A_addr(hMapObjectIndex);
+        // AND_A_A;
+        // RET_Z;
+        idx = hram->hMapObjectIndex;
+        if(idx == 0)
+            return;
+        
+        // DEC_A;
+        // LDH_addr_A(hMapObjectIndex);
+        hram->hMapObjectIndex = --idx;
+
+        // RET_NZ;
+        if(idx != 0)
+            return;
+        
+        // DEC_A;
+        // LDH_addr_A(hMapObjectIndex);
+        hram->hMapObjectIndex = --idx;
+
+        // LDH_A_addr(hObjectStructIndex);
+        // DEC_A;
+        // LDH_addr_A(hObjectStructIndex);
+        idx = hram->hObjectStructIndex;
+        hram->hObjectStructIndex = --idx;
+
+        // RET_NZ;
+        if(idx != 0)
+            return;
+        
+        // LD_A(6);
+        // LDH_addr_A(hObjectStructIndex);
+        hram->hObjectStructIndex = 6;
+
+        // LD_A(0xee);
+        // LD_hl_A;
+        *hl = CHAR_DOWN_CURSOR;
+
+        // RET;
+        return;
+    }
+
+    // LDH_A_addr(hMapObjectIndex);
+    // DEC_A;
+    // LDH_addr_A(hMapObjectIndex);
+    idx = hram->hMapObjectIndex;
+    hram->hMapObjectIndex = --idx;
+
+    // RET_NZ;
+    if(idx != 0)
+        return;
+    
+    // LDH_A_addr(hObjectStructIndex);
+    // DEC_A;
+    // LDH_addr_A(hObjectStructIndex);
+    idx = hram->hObjectStructIndex;
+    hram->hObjectStructIndex = --idx;
+
+    // RET_NZ;
+    if(idx != 0)
+        return;
+
+    // LD_A(0x7a);
+    // LD_hl_A;
+    *hl = CHAR_FRAME_TOP;
 
     // LD_A(-1);
     // LDH_addr_A(hMapObjectIndex);

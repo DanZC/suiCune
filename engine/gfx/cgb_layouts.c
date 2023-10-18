@@ -242,26 +242,32 @@ not_mobile:
 }
 
 void v_CGB_PokegearPals(void){
-    LD_A_addr(wPlayerGender);
-    BIT_A(PLAYERGENDER_FEMALE_F);
-    IF_Z goto male;
-    LD_HL(mFemalePokegearPals);
-    goto got_pals;
+    uint16_t palbuf[6 * NUM_PAL_COLORS];
+    // LD_A_addr(wPlayerGender);
+    // BIT_A(PLAYERGENDER_FEMALE_F);
+    // IF_Z goto male;
+    // LD_HL(mFemalePokegearPals);
+    // goto got_pals;
 
 
-male:
-    LD_HL(mMalePokegearPals);
+// male:
+    // LD_HL(mMalePokegearPals);
 
-got_pals:
-    LD_DE(wBGPals1);
-    LD_BC(6 * PALETTE_SIZE);
-    LD_A(BANK(wBGPals1));
-    CALL(aFarCopyWRAM);
-    CALL(aApplyPals);
-    LD_A(TRUE);
-    LDH_addr_A(hCGBPalUpdate);
-    RET;
+    const char* palpath = (bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))? FemalePokegearPals: MalePokegearPals;
 
+// got_pals:
+    LoadPaletteAssetColorsToArray(palbuf, palpath, 0, 6 * NUM_PAL_COLORS);
+    // LD_DE(wBGPals1);
+    // LD_BC(6 * PALETTE_SIZE);
+    // LD_A(BANK(wBGPals1));
+    // CALL(aFarCopyWRAM);
+    CopyBytes_Conv2(wram->wBGPals1, palbuf, 6 * PALETTE_SIZE);
+    // CALL(aApplyPals);
+    ApplyPals_Conv();
+    // LD_A(TRUE);
+    // LDH_addr_A(hCGBPalUpdate);
+    hram->hCGBPalUpdate = TRUE;
+    // RET;
 }
 
 void v_CGB_StatsScreenHPPals(void){

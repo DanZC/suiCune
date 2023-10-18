@@ -460,7 +460,7 @@ void PlaceVerticalMenuItems_Conv(void) {
     // ADD_HL_BC;
     st.hl = MenuBoxCoord2Tile_Conv() + *(st.de++);
     // JP(mPlaceString);
-    return PlaceString_Conv(&st, st.hl);
+    PlaceString_Conv(&st, st.hl);
 }
 
 void MenuBox(void) {

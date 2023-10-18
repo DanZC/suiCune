@@ -384,6 +384,20 @@ loop:
     goto loop;           // jr .loop
 }
 
+//  Skip a frames of music.
+void SkipMusic_Conv(uint8_t a) {
+
+    while(a) {
+    // loop:
+        // AND_A_A;             // and a
+        // RET_Z;               // ret z
+        // DEC_A;               // dec a
+        --a;
+        CALL(aUpdateSound);  // call UpdateSound
+        // goto loop;           // jr .loop
+    }
+}
+
 void FadeToMapMusic(void) {
     PUSH_HL;  // push hl
     PUSH_DE;  // push de
@@ -514,6 +528,51 @@ play:
     RET;     // ret
 }
 
+void PlayMapMusicBike_Conv(void) {
+    // SET_PC(0x3EC1U);
+    //  If the player's on a bike, play the bike music instead of the map music
+    // PUSH_HL;  // push hl
+    // PUSH_DE;  // push de
+    // PUSH_BC;  // push bc
+    // PUSH_AF;  // push af
+
+    // XOR_A_A;                               // xor a
+    // LD_addr_A(wDontPlayMapMusicOnReload);  // ld [wDontPlayMapMusicOnReload], a
+    wram->wDontPlayMapMusicOnReload = FALSE;
+    // LD_DE(MUSIC_BICYCLE);                  // ld de, MUSIC_BICYCLE
+    // LD_A_addr(wPlayerState);               // ld a, [wPlayerState]
+    // CP_A(PLAYER_BIKE);                     // cp PLAYER_BIKE
+    // IF_Z goto play;                        // jr z, .play
+    // CALL(aGetMapMusic_MaybeSpecial);       // call GetMapMusic_MaybeSpecial
+    uint16_t music;
+    if(wram->wPlayerState == PLAYER_BIKE)
+        music = MUSIC_BICYCLE;
+    else
+        music = GetMapMusic_MaybeSpecial_Conv();
+
+// play:
+    // SET_PC(0x3ED6U);
+    // PUSH_DE;            // push de
+    // LD_DE(MUSIC_NONE);  // ld de, MUSIC_NONE
+    // CALL(aPlayMusic);   // call PlayMusic
+    PlayMusic_Conv(MUSIC_NONE);
+    // CALL(aDelayFrame);  // call DelayFrame
+    DelayFrame();
+    // POP_DE;             // pop de
+
+    // LD_A_E;                // ld a, e
+    // LD_addr_A(wMapMusic);  // ld [wMapMusic], a
+    wram->wMapMusic = (uint8_t)(music & 0xff);
+    // CALL(aPlayMusic);      // call PlayMusic
+    PlayMusic_Conv(music);
+
+    // POP_AF;  // pop af
+    // POP_BC;  // pop bc
+    // POP_DE;  // pop de
+    // POP_HL;  // pop hl
+    // RET;     // ret
+}
+
 void TryRestartMapMusic(void) {
     SET_PC(0x3EEDU);
     LD_A_addr(wDontPlayMapMusicOnReload);  // ld a, [wDontPlayMapMusicOnReload]
@@ -547,6 +606,29 @@ void RestartMapMusic(void) {
     POP_DE;                // pop de
     POP_HL;                // pop hl
     RET;                   // ret
+}
+
+void RestartMapMusic_Conv(void) {
+    // SET_PC(0x3F05U);
+    // PUSH_HL;               // push hl
+    // PUSH_DE;               // push de
+    // PUSH_BC;               // push bc
+    // PUSH_AF;               // push af
+    // LD_DE(MUSIC_NONE);     // ld de, MUSIC_NONE
+    // CALL(aPlayMusic);      // call PlayMusic
+    PlayMusic_Conv(MUSIC_NONE);
+    // CALL(aDelayFrame);     // call DelayFrame
+    DelayFrame();
+    // LD_A_addr(wMapMusic);  // ld a, [wMapMusic]
+    // LD_E_A;                // ld e, a
+    // LD_D(0);               // ld d, 0
+    // CALL(aPlayMusic);      // call PlayMusic
+    PlayMusic_Conv(wram->wMapMusic);
+    // POP_AF;                // pop af
+    // POP_BC;                // pop bc
+    // POP_DE;                // pop de
+    // POP_HL;                // pop hl
+    // RET;                   // ret
 }
 
 void SpecialMapMusic(void) {

@@ -292,12 +292,17 @@ struct __attribute__((packed)) SpriteData
 struct BaseData
 {
     dex_t dexNo;
-    uint8_t HP;
-    uint8_t attack;
-    uint8_t defense;
-    uint8_t speed;
-    uint8_t specialAttack;
-    uint8_t specialDefense;
+    union {
+        uint8_t stats[6];
+        struct {
+            uint8_t HP;
+            uint8_t attack;
+            uint8_t defense;
+            uint8_t speed;
+            uint8_t specialAttack;
+            uint8_t specialDefense;
+        };
+    };
     union {
         uint8_t types[2];
         struct {

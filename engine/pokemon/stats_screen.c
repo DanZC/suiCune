@@ -563,7 +563,7 @@ set_carry:
 
 bool StatsScreen_GetJoypad_Conv(uint8_t* a){
     // CALL(aGetJoypad);
-    GetJoypad_Conv();
+    GetJoypad_Conv2();
     // LD_A_addr(wMonType);
     // CP_A(TEMPMON);
     // IF_NZ goto not_tempmon;

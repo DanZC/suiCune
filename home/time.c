@@ -324,43 +324,43 @@ updatehr:
 //  store time in wCurDay, hHours, hMinutes, hSeconds
 void FixTime_Conv(void){
 //  second
-    uint8_t curr_sec = gb_read(hRTCSeconds);
-    uint8_t start_sec = gb_read(wStartSecond);
+    uint8_t curr_sec = hram->hRTCSeconds;
+    uint8_t start_sec = wram->wStartSecond;
     uint8_t sec = curr_sec + start_sec;
     if(sec >= 60)
     {
         sec -= 60;
     }
-    gb_write(hSeconds, sec);
+    hram->hSeconds = sec;
 
 //  minute
-    REG_F_C = 0;  // carry is set, so turn it off
-    uint8_t curr_min = gb_read(hRTCMinutes);
-    uint8_t start_min = gb_read(wStartMinute);
-    uint8_t min = curr_min + start_min + REG_F_C;
+    // REG_F_C = 0;  // carry is set, so turn it off
+    uint8_t curr_min = hram->hRTCMinutes;
+    uint8_t start_min = wram->wStartMinute;
+    uint8_t min = curr_min + start_min;
     if(min >= 60)
     {
         min -= 60;
     }
-    gb_write(hMinutes, min);
+    hram->hMinutes = min;
 
 //  hour
-    REG_F_C = 0;  // carry is set, so turn it off
-    uint8_t curr_hr = gb_read(hRTCHours);
-    uint8_t start_hr = gb_read(wStartHour);
-    uint8_t hr = curr_hr + start_hr + REG_F_C;
+    // REG_F_C = 0;  // carry is set, so turn it off
+    uint8_t curr_hr = hram->hRTCHours;
+    uint8_t start_hr = wram->wStartHour;
+    uint8_t hr = curr_hr + start_hr;
     if(hr >= 24)
     {
         hr -= 24;
     }
-    gb_write(hHours, hr);
+    hram->hHours = hr;
 
 //  day
-    REG_F_C = 0;  // carry is set, so turn it off
-    uint8_t curr_day = gb_read(hRTCDayLo);
-    uint8_t start_day = gb_read(wStartDay);
-    uint8_t day = curr_day + start_day + REG_F_C;
-    gb_write(wCurDay, day);
+    // REG_F_C = 0;  // carry is set, so turn it off
+    uint8_t curr_day = hram->hRTCDayLo;
+    uint8_t start_day = wram->wStartDay;
+    uint8_t day = curr_day + start_day;
+    wram->wCurDay = day;
 }
 
 void InitTimeOfDay(void){

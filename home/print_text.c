@@ -103,14 +103,14 @@ void PrintLetterDelay_Conv(void) {
     // LD_A_addr(wOptions);
     // BIT_A(NO_TEXT_SCROLL);
     // RET_NZ;
-    if((gb_read(wOptions) >> NO_TEXT_SCROLL) & 0x1)
+    if(bit_test(wram->wOptions, NO_TEXT_SCROLL))
         return;
 
     //  non-scrolling text?
     // LD_A_addr(wTextboxFlags);
     // BIT_A(NO_TEXT_DELAY_F);
     // RET_Z;
-    if(!((gb_read(wTextboxFlags) >> NO_TEXT_DELAY_F) & 0x1))
+    if(!bit_test(wram->wTextboxFlags, NO_TEXT_DELAY_F))
         return;
 
     // PUSH_HL;
@@ -120,24 +120,24 @@ void PrintLetterDelay_Conv(void) {
     // LD_HL(hOAMUpdate);
     // LD_A_hl;
     // PUSH_AF;
-    uint8_t tempOAM = gb_read(hOAMUpdate);
+    uint8_t tempOAM = hram->hOAMUpdate;
 
     //  orginally turned oam update off...
     //     ld a, 1
     // LD_hl_A;
-    gb_write(hOAMUpdate, tempOAM); // Remove this?
+    hram->hOAMUpdate = tempOAM; // Remove this?
 
     //  force fast scroll?
     // LD_A_addr(wTextboxFlags);
     // BIT_A(FAST_TEXT_DELAY_F);
     // IF_Z goto fast;
-    if(!((gb_read(wTextboxFlags) >> FAST_TEXT_DELAY_F) & 0x1))
+    if(!bit_test(wram->wTextboxFlags, FAST_TEXT_DELAY_F))
     {
     // fast:
         // LD_A(TEXT_DELAY_FAST);
     // updatedelay:
         // LD_addr_A(wTextDelayFrames);
-        gb_write(wTextDelayFrames, TEXT_DELAY_FAST);
+        wram->wTextDelayFrames = TEXT_DELAY_FAST;
     }
     else 
     {
@@ -146,49 +146,19 @@ void PrintLetterDelay_Conv(void) {
         // AND_A(0b111);
     // updatedelay:
         // LD_addr_A(wTextDelayFrames);
-        gb_write(wTextDelayFrames, gb_read(wOptions) & 0b111);
+        wram->wTextDelayFrames = (wram->wOptions & 0b111);
     }
 
-checkjoypad:
+    while(1) {
+    // checkjoypad:
     // CALL(aGetJoypad);
-    GetJoypad_Conv();
+        GetJoypad_Conv2();
 
-    //  input override
-    // LD_A_addr(wDisableTextAcceleration);
-    // AND_A_A;
-    // IF_NZ goto wait;
-    if(gb_read(wDisableTextAcceleration) != 0)
-    {
-    // wait:
-        // LD_A_addr(wTextDelayFrames);
+        //  input override
+        // LD_A_addr(wDisableTextAcceleration);
         // AND_A_A;
-        // IF_NZ goto checkjoypad;
-        if(wram->wTextDelayFrames != 0) {
-            DelayFrame();
-            goto checkjoypad;
-        }
-    // end:
-        // POP_AF;
-        // LDH_addr_A(hOAMUpdate);
-        gb_write(hOAMUpdate, tempOAM);
-
-        // POP_BC;
-        // POP_DE;
-        // POP_HL;
-        // RET;
-        return;
-    }
-
-    //  Wait one frame if holding A or B.
-    // LDH_A_addr(hJoyDown);
-    // BIT_A(A_BUTTON_F);
-    // IF_Z goto checkb;
-    else if(!((gb_read(hJoyDown) >> A_BUTTON_F) & 0x1))
-    {
-    // checkb:
-        // BIT_A(B_BUTTON_F);
-        // IF_Z goto wait;
-        if(!((gb_read(hJoyDown) >> B_BUTTON_F) & 0x1))
+        // IF_NZ goto wait;
+        if(wram->wDisableTextAcceleration != 0)
         {
         // wait:
             // LD_A_addr(wTextDelayFrames);
@@ -196,12 +166,12 @@ checkjoypad:
             // IF_NZ goto checkjoypad;
             if(wram->wTextDelayFrames != 0) {
                 DelayFrame();
-                goto checkjoypad;
+                continue;
             }
         // end:
             // POP_AF;
             // LDH_addr_A(hOAMUpdate);
-            gb_write(hOAMUpdate, tempOAM);
+            hram->hOAMUpdate = tempOAM;
 
             // POP_BC;
             // POP_DE;
@@ -209,6 +179,54 @@ checkjoypad:
             // RET;
             return;
         }
+
+        //  Wait one frame if holding A or B.
+        // LDH_A_addr(hJoyDown);
+        // BIT_A(A_BUTTON_F);
+        // IF_Z goto checkb;
+        else if(!bit_test(hram->hJoyDown, A_BUTTON_F))
+        {
+        // checkb:
+            // BIT_A(B_BUTTON_F);
+            // IF_Z goto wait;
+            if(!bit_test(hram->hJoyDown, B_BUTTON_F))
+            {
+            // wait:
+                // LD_A_addr(wTextDelayFrames);
+                // AND_A_A;
+                // IF_NZ goto checkjoypad;
+                if(wram->wTextDelayFrames != 0) {
+                    DelayFrame();
+                    continue;
+                }
+            // end:
+                // POP_AF;
+                // LDH_addr_A(hOAMUpdate);
+                hram->hOAMUpdate = tempOAM;
+
+                // POP_BC;
+                // POP_DE;
+                // POP_HL;
+                // RET;
+                return;
+            }
+        // delay:
+            // CALL(aDelayFrame);
+            // goto end;
+            DelayFrame();
+        // end:
+            // POP_AF;
+            // LDH_addr_A(hOAMUpdate);
+            hram->hOAMUpdate = tempOAM;
+
+            // POP_BC;
+            // POP_DE;
+            // POP_HL;
+            // RET;
+            return;
+        }
+
+        // goto delay;
     // delay:
         // CALL(aDelayFrame);
         // goto end;
@@ -216,7 +234,7 @@ checkjoypad:
     // end:
         // POP_AF;
         // LDH_addr_A(hOAMUpdate);
-        gb_write(hOAMUpdate, tempOAM);
+        hram->hOAMUpdate = tempOAM;
 
         // POP_BC;
         // POP_DE;
@@ -224,22 +242,6 @@ checkjoypad:
         // RET;
         return;
     }
-
-    // goto delay;
-// delay:
-    // CALL(aDelayFrame);
-    // goto end;
-    DelayFrame();
-// end:
-    // POP_AF;
-    // LDH_addr_A(hOAMUpdate);
-    gb_write(hOAMUpdate, tempOAM);
-
-    // POP_BC;
-    // POP_DE;
-    // POP_HL;
-    // RET;
-    return;
 
 //     goto delay;
 

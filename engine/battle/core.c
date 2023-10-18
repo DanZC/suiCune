@@ -1,9 +1,11 @@
 #include "../../constants.h"
 #include "core.h"
 #include "../../home/array.h"
+#include "../../home/delay.h"
 #include "../../data/trainers/leaders.h"
 #include "../pokemon/experience.h"
 #include "../gfx/pic_animation.h"
+#include "../gfx/color.h"
 
 //  Core components of the battle engine.
 
@@ -37,34 +39,38 @@ loop:
 alive:
     LD_A_D;
     LD_addr_A(wBattleAction);
-    LD_A_addr(wLinkMode);
-    AND_A_A;
-    IF_Z goto not_linked;
+    // LD_A_addr(wLinkMode);
+    // AND_A_A;
+    // IF_Z goto not_linked;
 
-    LDH_A_addr(hSerialConnectionStatus);
-    CP_A(USING_INTERNAL_CLOCK);
-    IF_Z goto player_2;
+    // LDH_A_addr(hSerialConnectionStatus);
+    // CP_A(USING_INTERNAL_CLOCK);
+    // IF_Z goto player_2;
+    if(wram->wLinkMode == 0 || hram->hSerialConnectionStatus != USING_INTERNAL_CLOCK) {
+    // not_linked:
+        // LD_A_addr(wBattleMode);
+        printf("wBattleMode = %s\n", (wram->wBattleMode == TRAINER_BATTLE)? "trainer": "wild");
+        // DEC_A;
+        // IF_Z goto wild;
+        if(wram->wBattleMode != WILD_BATTLE) {
+            // XOR_A_A;
+            // LD_addr_A(wEnemySwitchMonIndex);
+            wram->wEnemySwitchMonIndex = 0;
+            // CALL(aNewEnemyMonStatus);
+            NewEnemyMonStatus_Conv();
+            // CALL(aResetEnemyStatLevels);
+            ResetEnemyStatLevels_Conv();
+            // CALL(aBreakAttraction);
+            BreakAttraction();
+            CALL(aEnemySwitch);
+        }
 
 
-not_linked:
-    LD_A_addr(wBattleMode);
-    printf("wBattleMode = %s\n", (wram->wBattleMode == TRAINER_BATTLE)? "trainer": "wild");
-    DEC_A;
-    IF_Z goto wild;
-    XOR_A_A;
-    LD_addr_A(wEnemySwitchMonIndex);
-    // CALL(aNewEnemyMonStatus);
-    NewEnemyMonStatus_Conv();
-    // CALL(aResetEnemyStatLevels);
-    ResetEnemyStatLevels_Conv();
-    // CALL(aBreakAttraction);
-    BreakAttraction();
-    CALL(aEnemySwitch);
-
-
-wild:
-    LD_C(40);
-    CALL(aDelayFrames);
+    // wild:
+        // LD_C(40);
+        // CALL(aDelayFrames);
+        DelayFrames_Conv(40);
+    }
 
 
 player_2:
@@ -4529,10 +4535,22 @@ void BattleCheckPlayerShininess(void){
 
 }
 
+bool BattleCheckPlayerShininess_Conv(void){
+    // CALL(aGetPartyMonDVs);
+    // JR(mBattleCheckShininess);
+    return BattleCheckShininess_Conv(GetPartyMonDVs_Conv());
+}
+
 void BattleCheckEnemyShininess(void){
     CALL(aGetEnemyMonDVs);
 
     return BattleCheckShininess();
+}
+
+bool BattleCheckEnemyShininess_Conv(void){
+    // CALL(aGetEnemyMonDVs);
+
+    return BattleCheckShininess_Conv(GetEnemyMonDVs_Conv());
 }
 
 void BattleCheckShininess(void){
@@ -4541,6 +4559,14 @@ void BattleCheckShininess(void){
     CALLFAR(aCheckShininess);
     RET;
 
+}
+
+bool BattleCheckShininess_Conv(uint16_t dvs){
+    // LD_B_H;
+    // LD_C_L;
+    // CALLFAR(aCheckShininess);
+    // RET;
+    return CheckShininess_Conv(dvs);
 }
 
 void GetPartyMonDVs(void){
@@ -4552,6 +4578,19 @@ void GetPartyMonDVs(void){
     LD_A_addr(wCurBattleMon);
     JP(mGetPartyLocation);
 
+}
+
+uint16_t GetPartyMonDVs_Conv(void){
+    // LD_HL(wBattleMonDVs);
+    // LD_A_addr(wPlayerSubStatus5);
+    // BIT_A(SUBSTATUS_TRANSFORMED);
+    // RET_Z ;
+    if(!bit_test(wram->wPlayerSubStatus5, SUBSTATUS_TRANSFORMED))
+        return wram->wBattleMon.dvs;
+    // LD_HL(wPartyMon1DVs);
+    // LD_A_addr(wCurBattleMon);
+    // JP(mGetPartyLocation);
+    return wram->wPartyMon[wram->wCurBattleMon].mon.DVs;
 }
 
 void GetEnemyMonDVs(void){
@@ -4567,6 +4606,25 @@ void GetEnemyMonDVs(void){
     LD_A_addr(wCurOTMon);
     JP(mGetPartyLocation);
 
+}
+
+uint16_t GetEnemyMonDVs_Conv(void){
+    // LD_HL(wEnemyMonDVs);
+    // LD_A_addr(wEnemySubStatus5);
+    // BIT_A(SUBSTATUS_TRANSFORMED);
+    // RET_Z ;
+    if(!bit_test(wram->wEnemySubStatus5, SUBSTATUS_TRANSFORMED))
+        return wram->wEnemyMon.dvs;
+    // LD_HL(wEnemyBackupDVs);
+    // LD_A_addr(wBattleMode);
+    // DEC_A;
+    // RET_Z ;
+    if(wram->wBattleMode == WILD_BATTLE)
+        return wram->wEnemyBackupDVs;
+    // LD_HL(wOTPartyMon1DVs);
+    // LD_A_addr(wCurOTMon);
+    // JP(mGetPartyLocation);
+    return wram->wOTPartyMon[wram->wCurOTMon].mon.DVs;
 }
 
 void ResetPlayerStatLevels(void){

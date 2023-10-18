@@ -404,6 +404,52 @@ dmg:
 
 }
 
+void DmgToCgbObjPal0_Conv(uint8_t a){
+    // LDH_addr_A(rOBP0);
+    gb_write(rOBP0, a);
+    // PUSH_AF;
+
+//  Don't need to be here if not CGB
+    // LDH_A_addr(hCGB);
+    // AND_A_A;
+    // IF_Z goto dmg;
+    if(hram->hCGB == 0) {
+    // dmg:
+        // POP_AF;
+        // RET;
+        return;
+    }
+
+    // PUSH_HL;
+    // PUSH_DE;
+    // PUSH_BC;
+
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(MBANK(awOBPals2));
+    // LDH_addr_A(rSVBK);
+    wbank_push(MBANK(awOBPals2));
+
+    // LD_HL(wOBPals2 + PALETTE_SIZE * 0);
+    // LD_DE(wOBPals1 + PALETTE_SIZE * 0);
+    // LDH_A_addr(rOBP0);
+    // LD_B_A;
+    // LD_C(1);
+    // CALL(aCopyPals);
+    CopyPals_Conv(wOBPals2 + PALETTE_SIZE * 0, wOBPals1 + PALETTE_SIZE * 0, gb_read(rOBP0), 1);
+    // LD_A(TRUE);
+    // LDH_addr_A(hCGBPalUpdate);
+    hram->hCGBPalUpdate = TRUE;
+
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    wbank_pop;
+
+    // POP_BC;
+    // POP_DE;
+    // POP_HL;
+}
+
 void DmgToCgbObjPal1(void){
         LDH_addr_A(rOBP1);
     PUSH_AF;
@@ -591,7 +637,7 @@ void ClearVBank1(void){
 }
 
 void ClearVBank1_Conv(void){
-    if(gb_read(hCGB) == 0) 
+    if(hram->hCGB == 0) 
         return;
 
     gb_write(rVBK, 1);

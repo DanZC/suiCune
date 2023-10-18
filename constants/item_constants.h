@@ -290,7 +290,20 @@ add_hm(HM07, 57, WATERFALL);
 #define NUM_HMS (WATERFALL_TMNUM - NUM_TMS)
 
 #define NUM_TM_HM (NUM_TMS + NUM_HMS)
-#define NUM_TM_HM_TUTOR (NUM_TM_HM + 3)
+
+#define add_mt(mtNum, mtId, mtName) enum {         \
+    mtName##_TMNUM = mtId,                         \
+    MT_##mtName = mtName##_TMNUM + TM_ITEM_OFFSET, \
+    mtNum##_MOVE = MT_##mtName,                    \
+    mtNum = mtNum##_MOVE,                          \
+};
+
+add_mt(MT01, 58, FLAMETHROWER);
+add_mt(MT02, 59, THUNDERBOLT);
+add_mt(MT03, 60, ICE_BEAM);
+
+#define NUM_TUTORS (ICE_BEAM_TMNUM - NUM_TM_HM)
+#define NUM_TM_HM_TUTOR (NUM_TM_HM + NUM_TUTORS)
 
 #define ITEM_FA 0xFA
 

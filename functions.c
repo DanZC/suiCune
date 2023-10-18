@@ -1336,7 +1336,7 @@ void init_function_pointers(void) {
     //REDIRECTED(BuenasPasswordName);
     // REDIRECTED(Pokegear_FinishTilemap);
     // REDIRECTED(LoadStation_RocketRadio);
-    REDIRECTED(PokeGear);
+    CONVERTED(PokeGear);
     // REDIRECTED(TownMapPlayerIcon);
     //REDIRECTED(NotBuenasPasswordName);
     // REDIRECTED(Radio_BackUpFarCallParams);
@@ -3959,4 +3959,17 @@ void init_function_pointers(void) {
 
     // engine/tilesets/mapgroup_roofs.c
     CONVERTED(LoadMapGroupRoof);
+
+    // engine/events/catch_tutorial.c
+    CONVERTED(CatchTutorial);
+
+    // engine/events/catch_tutorial_input.c
+    CONVERTED(v_DudeAutoInput_DownA);
+    CONVERTED(v_DudeAutoInput_RightA);
+    CONVERTED(v_DudeAutoInput_A);
+    // REDIRECTED(DudeAutoInputs);
+    // CONVERTED(v_DudeAutoInput);
+    // REDIRECTED(DudeAutoInput_DownA);
+    // REDIRECTED(DudeAutoInput_RightA);
+    // REDIRECTED(DudeAutoInput_A);
 }

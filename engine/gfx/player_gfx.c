@@ -4,6 +4,7 @@
 #include "../../home/delay.h"
 #include "../../home/tilemap.h"
 #include "../../home/text.h"
+#include "../../gfx/sprites.h"
 
 // void ChrisPic(void){
 // INCBIN "gfx/player/chris.2bpp"
@@ -219,6 +220,15 @@ void GetPlayerIcon_Conv(uint16_t* ptr, uint8_t* bank){
         *ptr = mKrisSpriteGFX;
         *bank = BANK(aKrisSpriteGFX);
     }
+}
+
+const char* GetPlayerIcon_Conv2(void){
+    if(bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))
+    {
+        // Load Kris graphics
+        return KrisSpriteGFX;
+    }
+    return ChrisSpriteGFX;
 }
 
 void GetCardPic(void){

@@ -36,17 +36,17 @@ void UpdateTimeAndPals_Conv(void){
     //  update time and time-sensitive palettes
 
 //  rtc enabled?
-    if(gb_read(wSpriteUpdatesEnabled) == 0)
+    if(wram->wSpriteUpdatesEnabled == FALSE)
         return;
 
     UpdateTime_Conv();
 
 //  obj update on?
-    uint8_t vram_state = gb_read(wVramState);
-    BIT_(vram_state, 0);  // obj update
-    IF_Z return;
+    uint8_t vram_state = wram->wVramState;
+    if(!bit_test(vram_state, 0))  // obj update
+        return;
 
+    SAVE_REGS;
     CALLFAR(av_TimeOfDayPals);
-
-    return TimeOfDayPals();
+    RESTORE_REGS;
 }

@@ -203,7 +203,7 @@
 //#include "engine/pokemon/caught_data.h"
 //#include "engine/pokemon/search2.h"
 #include "engine/pokemon/stats_screen.h"
-//#include "engine/events/catch_tutorial.h"
+#include "engine/events/catch_tutorial.h"
 //#include "engine/movie/evolution_animation.h"
 //#include "engine/movie/init_hof_credits.h"
 //#include "engine/events/battle_tower/get_trainer_class.h"
@@ -603,7 +603,7 @@
 #include "engine/rtc/print_hours_mins.h"
 //#include "engine/events/diploma.h"
 //#include "engine/pokedex/pokedex_3.h"
-//#include "engine/events/catch_tutorial_input.h"
+#include "engine/events/catch_tutorial_input.h"
 //#include "engine/pokegear/townmap_convertlinebreakcharacters.h"
 
 // SECTION "European Mail", ROMX

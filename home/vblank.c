@@ -475,6 +475,7 @@ void VBlank1_Conv(void) {
     if(!UpdatePals_Conv()) {
 
         CALL(aUpdateBGMap);
+        // UpdateBGMap_Conv();
         CALL(aServe2bppRequest_VBlank);
 
         TransferVirtualOAM();
@@ -714,7 +715,7 @@ void VBlank3_Conv(void) {
 }
 
 void VBlank4(void) {
-        //  bg map
+    //  bg map
     //  tiles
     //  oam
     //  joypad
@@ -745,8 +746,43 @@ void VBlank4(void) {
     RET;
 }
 
+//  bg map
+//  tiles
+//  oam
+//  joypad
+//  serial
+//  sound
 void VBlank4_Conv(void) {
-    CALL(aVBlank4);
+    // CALL(aVBlank4);
+    // LDH_A_addr(hROMBank);
+    // LDH_addr_A(hROMBankBackup);
+    hram->hROMBankBackup = hram->hROMBank;
+
+    CALL(aUpdateBGMap);
+    // UpdateBGMap_Conv();
+    CALL(aServe2bppRequest);
+
+    TransferVirtualOAM();  // TransferVirtualOAM
+
+    // CALL(aUpdateJoypad);
+    UpdateJoypad_Conv();
+
+    // XOR_A_A;
+    // LD_addr_A(wVBlankOccurred);
+    wram->wVBlankOccurred = 0;
+
+    CALL(aAskSerial);
+
+    // LD_A(BANK(av_UpdateSound));
+    // RST(mBankswitch);
+    // CALL(av_UpdateSound);
+    Bankswitch_Conv(BANK(av_UpdateSound));
+    CALL(av_UpdateSound);
+
+    // LDH_A_addr(hROMBankBackup);
+    // RST(mBankswitch);
+    Bankswitch_Conv(hram->hROMBankBackup);
+    // RET;
 }
 
 void VBlank5(void) {

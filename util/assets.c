@@ -53,6 +53,7 @@ asset_s LoadAsset(const char* filename) {
 // If the buffer size is less than the size of the file being loaded, the 
 // data loaded will be truncated to the buffer size.
 asset_s LoadAssetToBuffer(void* buffer, size_t buf_size, const char* filename) {
+#if !defined(NO_PHYSFS)
     PHYSFS_File* file = PHYSFS_openRead(filename);
     if(!file) {
         fprintf(stderr, "%s Error: %s\nfilename=%s", __func__, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()), filename);
@@ -67,12 +68,30 @@ asset_s LoadAssetToBuffer(void* buffer, size_t buf_size, const char* filename) {
     size_t rsize = ((size_t)size > buf_size)? buf_size: (size_t)size;
     PHYSFS_readBytes(file, buffer, rsize);
     PHYSFS_close(file);
+#else 
+    FILE* file = fopen(filename, "rb");
+    if(!file) {
+        fprintf(stderr, "%s Error\nfilename=%s", __func__, filename);
+        return (asset_s){NULL, 0};
+    }
+    fseek(file, 0, SEEK_END);
+    int64_t size = ftello(file);
+    fseek(file, 0, SEEK_SET);
+    // uint8_t* buf = malloc((size_t)size);
+    // if(buf == NULL) {
+    //     fprintf(stderr, "LoadAsset Error: Bad malloc.");
+    //     return (asset_s){NULL, 0};
+    // }
+    size_t rsize = ((size_t)size > buf_size)? buf_size: (size_t)size;
+    fread(buf, (size_t)rsize, 1, file);
+    fclose(file);
+#endif
     return (asset_s){buffer, rsize};
 }
 
 // Loads text asset file from archive to a heap-allocated buffer.
 asset_s LoadTextAsset(const char* filename) {
-    #if !defined(NO_PHYSFS)
+#if !defined(NO_PHYSFS)
     PHYSFS_File* file = PHYSFS_openRead(filename);
     if(!file) {
         fprintf(stderr, "%s Error: %s\nfilename=%s", __func__, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()), filename);
@@ -92,7 +111,7 @@ asset_s LoadTextAsset(const char* filename) {
     PHYSFS_readBytes(file, buf, (size_t)size);
     PHYSFS_close(file);
     buf[size] = '\0';
-    #else 
+#else 
     FILE* file = fopen(filename, "r");
     if(!file) {
         fprintf(stderr, "LoadAsset Error");
@@ -101,14 +120,15 @@ asset_s LoadTextAsset(const char* filename) {
     fseek(file, 0, SEEK_END);
     int64_t size = ftello(file);
     fseek(file, 0, SEEK_SET);
-    uint8_t* buf = malloc((size_t)size);
+    uint8_t* buf = malloc((size_t)size + 1);
     if(buf == NULL) {
         fprintf(stderr, "LoadAsset Error: Bad malloc.");
         return (asset_s){NULL, 0};
     }
     fread(buf, (size_t)size, 1, file);
     fclose(file);
-    #endif
+    buf[size] = '\0';
+#endif
     return (asset_s){buf, (size_t)size};
 }
 
@@ -259,7 +279,7 @@ void LoadPNG2bppAssetToVRAM(void* dest, const char* filename) {
         fprintf(stderr, "%s: Load error on image %s. Reason: %s\n", __func__, filename, stbi_failure_reason());
         exit(-1);
     }
-    printf("%d-channel %dx%d image\n", n, x, y);
+    printf("2bpp %d-channel %dx%d image (%s)\n", n, x, y, filename);
     FreeAsset(a);
     int numTiles = (y / 8) * (x / 8);
     int tilesPerRow = (x / 8);

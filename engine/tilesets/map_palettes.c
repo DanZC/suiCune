@@ -83,7 +83,7 @@ void v_SwapTextboxPalettes_Conv(void){
                 // LD_H_A;
                 // LD_A_hl;
                 // AND_A(0xf);
-                *de = (*(uint8_t*)AbsGBBankAddrToRAMAddr(BANK(av_SwapTextboxPalettes), wram->wTilesetPalettes + (a >> 1))) & 0xf;
+                *de = (*(uint8_t*)AbsGBROMBankAddrToRAMAddr(BANK(av_SwapTextboxPalettes), wram->wTilesetPalettes + (a >> 1))) & 0xf;
                 // goto next;
             }
             else {
@@ -97,7 +97,7 @@ void v_SwapTextboxPalettes_Conv(void){
                 // LD_A_hl;
                 // SWAP_A;
                 // AND_A(0xf);
-                *de = ((*(uint8_t*)AbsGBBankAddrToRAMAddr(BANK(av_SwapTextboxPalettes), wram->wTilesetPalettes + (a >> 1))) & 0xf0) >> 4;
+                *de = ((*(uint8_t*)AbsGBROMBankAddrToRAMAddr(BANK(av_SwapTextboxPalettes), wram->wTilesetPalettes + (a >> 1))) & 0xf0) >> 4;
             }
         // next:
             // POP_HL;

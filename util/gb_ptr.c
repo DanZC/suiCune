@@ -48,12 +48,12 @@ void* GBToRAMAddr(uint16_t hl) {
 void* AbsGBROMToRAMAddr(uint32_t hl) {
     struct BankAddr ba = AbsROMAddrToBankAddr(hl);
     if(ba.bank == 0)
-        return ((struct priv_t*)gb.direct.priv)->rom + (ba.addr - ROM_0_ADDR);
-    return ((struct priv_t*)gb.direct.priv)->rom + (ROM_BANK_SIZE * (ba.bank)) + (ba.addr - ROM_N_ADDR);
+        return ((struct priv_t*)gb.direct.priv)->rom + (ba.addr & 0x3fff);
+    return ((struct priv_t*)gb.direct.priv)->rom + (ROM_BANK_SIZE * (ba.bank)) + (ba.addr & 0x3fff);
 }
 
 // Converts a GB rom bank and address to a real address.
-static void* AbsGBROMBankAddrToRAMAddr(uint8_t bank, uint16_t addr) {
+void* AbsGBROMBankAddrToRAMAddr(uint8_t bank, uint16_t addr) {
     if(bank == 0)
         return ((struct priv_t*)gb.direct.priv)->rom + (addr - ROM_0_ADDR);
     return ((struct priv_t*)gb.direct.priv)->rom + (ROM_BANK_SIZE * (bank)) + (addr - ROM_N_ADDR);

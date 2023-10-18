@@ -20,12 +20,12 @@ loop:
 void ClearSpriteAnims_Conv(void){
     // LD_HL(wSpriteAnimData);
     // LD_BC(wSpriteAnimDataEnd - wSpriteAnimData);
-    uint16_t hl = wSpriteAnimData;
+    uint8_t* hl = wram->wSpriteAnimDict;
     uint16_t bc = wSpriteAnimDataEnd - wSpriteAnimData;
 
     do {
         // LD_hl(0);
-        gb_write(hl++, 0);
+        *(hl++) = 0;
         // INC_HL;
         // DEC_BC;
         // LD_A_C;
