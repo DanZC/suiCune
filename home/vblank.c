@@ -295,8 +295,8 @@ void VBlank0_Conv(void) {
         // IF_C break;
         if(DMATransfer_Conv()) break;
 
-        CALL(aUpdateBGMap);
-        // UpdateBGMap_Conv();
+        // CALL(aUpdateBGMap);
+        UpdateBGMap_Conv();
 
         // These have their own timing checks.
 

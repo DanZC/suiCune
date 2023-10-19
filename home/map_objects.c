@@ -1076,8 +1076,9 @@ void UpdateSprites_Conv(void){
 
     // FARCALL(aUpdateAllObjectsFrozen);
     // FARCALL(av_UpdateSprites);
-    farcall(UpdateAllObjectsFrozen);
-    farcall(v_UpdateSprites);
+    UpdateAllObjectsFrozen_Conv();
+
+    v_UpdateSprites_Conv();
     // RET;
 
 }

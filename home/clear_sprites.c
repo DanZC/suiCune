@@ -17,10 +17,10 @@ loop:
 
 //  Erase OAM data
 void ClearSprites_Conv(void){
-    uint16_t hl = wVirtualOAM;
+    uint8_t* hl = (uint8_t*)wram->wVirtualOAMSprite;
     uint8_t b = (wVirtualOAMEnd - wVirtualOAM);
     do {
-        gb_write(hl++, 0);
+        (*hl++) = 0;
     } while(--b != 0);
 }
 

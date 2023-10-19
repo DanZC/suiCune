@@ -131,7 +131,7 @@ static void ReanchorBGMap_NoOAMUpdate_ReanchorBGMap(void) {
 
 void ReanchorBGMap_NoOAMUpdate_Conv(void){
     // CALL(aDelayFrame);
-    // DelayFrame();
+    DelayFrame();
     // LDH_A_addr(hOAMUpdate);
     // PUSH_AF;
     uint8_t oam = hram->hOAMUpdate;
@@ -272,8 +272,8 @@ void HDMATransfer_FillBGMap0WithBlack_Conv(void){
     // LDH_addr_A(hDMATransfer);
     // hram->hDMATransfer = 0x3f;
     // CALL(aDelayFrame);
-    DelayFrame();
     CopyBytes_Conv2(vram->vBGMap0, wram->wDecompressScratch, wScratchAttrmap - wDecompressScratch);
+    DelayFrame();
 
     // POP_AF;
     // LDH_addr_A(rSVBK);

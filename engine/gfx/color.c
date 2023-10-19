@@ -212,13 +212,13 @@ void Intro_LoadMagikarpPalettes(void){
     LD_HL(mIntro_LoadMagikarpPalettes_MagikarpBGPal);
     LD_DE(wBGPals1);
     LD_BC(1 * PALETTE_SIZE);
-    LD_A(BANK(wBGPals1));
+    LD_A(MBANK(awBGPals1));
     CALL(aFarCopyWRAM);
 
     LD_HL(mIntro_LoadMagikarpPalettes_MagikarpOBPal);
     LD_DE(wOBPals1);
     LD_BC(1 * PALETTE_SIZE);
-    LD_A(BANK(wOBPals1));
+    LD_A(MBANK(awOBPals1));
     CALL(aFarCopyWRAM);
 
     CALL(aApplyPals);

@@ -14,7 +14,7 @@ loop:
     SLA_B;
     DEC_A;
     IF_NZ goto loop;
-    LD_A(BANK(sOpenedInvalidSRAM));
+    LD_A(MBANK(asOpenedInvalidSRAM));
     CALL(aOpenSRAM);
     LD_A_addr(sOpenedInvalidSRAM);
     OR_A_B;
@@ -56,7 +56,7 @@ void OpenSRAM_Conv(uint8_t a){
         SLA_B;
         DEC_A;
         IF_NZ goto loop;
-        LD_A(BANK(sOpenedInvalidSRAM));
+        LD_A(MBANK(asOpenedInvalidSRAM));
         CALL(aOpenSRAM);
         LD_A_addr(sOpenedInvalidSRAM);
         OR_A_B;

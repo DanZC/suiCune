@@ -919,7 +919,7 @@ void init_function_pointers(void) {
     REDIRECTED(StepFunction_Standing);
     // REDIRECTED(Field1c_ZeroAnonJumptableIndex);
     REDIRECTED(StepFunction_16);
-    // REDIRECTED(HideAllObjects);
+    CONVERTED(HideAllObjects);
     // REDIRECTED(MovementFunction_BigStanding);
     // REDIRECTED(StopFollow);
     // REDIRECTED(JumpMovementPointer);
@@ -2001,20 +2001,20 @@ void init_function_pointers(void) {
 
     // engine/battle/battle_transition.c
     REDIRECTED(StartTrainerBattle_ZoomToBlack);
-    REDIRECTED(StartTrainerBattle_NextScene);
+    CONVERTED(StartTrainerBattle_NextScene);
     REDIRECTED(BattleTransitionJumptable);
-    REDIRECTED(StartTrainerBattle_SetUpForSpinOutro);
-    REDIRECTED(DoBattleTransition);
-    REDIRECTED(PokeBallTransition);
-    REDIRECTED(StartTrainerBattle_SetUpBGMap);
-    REDIRECTED(StartTrainerBattle_Flash);
-    REDIRECTED(StartTrainerBattle_Finish);
-    REDIRECTED(StartTrainerBattle_SpinToBlack);
+    CONVERTED(StartTrainerBattle_SetUpForSpinOutro);
+    CONVERTED(DoBattleTransition);
+    // REDIRECTED(PokeBallTransition);
+    CONVERTED(StartTrainerBattle_SetUpBGMap);
+    CONVERTED(StartTrainerBattle_Flash);
+    CONVERTED(StartTrainerBattle_Finish);
+    CONVERTED(StartTrainerBattle_SpinToBlack);
     // REDIRECTED(TrainerBattlePokeballTiles);
     REDIRECTED(StartTrainerBattle_SineWave);
     REDIRECTED(UnusedWaitBGMapOnce);
     REDIRECTED(ConvertTrainerBattlePokeballTilesTo2bpp);
-    REDIRECTED(StartTrainerBattle_DetermineWhichAnimation);
+    CONVERTED(StartTrainerBattle_DetermineWhichAnimation);
     REDIRECTED(StartTrainerBattle_SetUpForWavyOutro);
     REDIRECTED(StartTrainerBattle_SpeckleToBlack);
     REDIRECTED(WipeLYOverrides);

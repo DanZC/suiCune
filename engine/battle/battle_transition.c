@@ -1,5 +1,14 @@
 #include "../../constants.h"
 #include "battle_transition.h"
+#include "../overworld/init_map.h"
+#include "../../home/delay.h"
+#include "../../home/map_objects.h"
+#include "../../home/tilemap.h"
+#include "../../home/copy.h"
+#include "../../home/palettes.h"
+#include "../../home/clear_sprites.h"
+#include "../overworld/map_objects.h"
+#include "../math/sine.h"
 
 static const char TrainerBattlePokeballTiles[] = "gfx/overworld/trainer_battle_pokeball_tiles.png";
 
@@ -14,99 +23,134 @@ static const char TrainerBattlePokeballTiles[] = "gfx/overworld/trainer_battle_p
 #define BATTLETRANSITION_SQUARE (0xFE)  //  $fe
 #define BATTLETRANSITION_BLACK (0xFF)  //  $ff
 
+static void DoBattleTransition_InitGFX(void) {
+    // LD_A_addr(wLinkMode);
+    // CP_A(LINK_MOBILE);
+    // IF_Z goto mobile;
+    if(wram->wLinkMode == LINK_MOBILE) {
+    // mobile:
+        // CALL(aLoadTrainerBattlePokeballTiles);
+        LoadTrainerBattlePokeballTiles_Conv();
+    }
+    else {
+        // FARCALL(aReanchorBGMap_NoOAMUpdate);
+        ReanchorBGMap_NoOAMUpdate_Conv();
+        // CALL(aUpdateSprites);
+        UpdateSprites_Conv();
+        // CALL(aDelayFrame);
+        DelayFrame();
+        // CALL(aDoBattleTransition_NonMobile_LoadPokeballTiles);
+        LoadTrainerBattlePokeballTiles_Conv();
+        // CALL(aBattleStart_CopyTilemapAtOnce);
+        CopyTilemapAtOnce_Conv();
+        // goto resume;
+    }
+// resume:
+    // LD_A(SCREEN_HEIGHT_PX);
+    // LDH_addr_A(hWY);
+    hram->hWY = SCREEN_HEIGHT_PX;
+    // CALL(aDelayFrame);
+    DelayFrame();
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    // LD_HL(wJumptableIndex);
+    // XOR_A_A;
+    // LD_hli_A;
+    wram->wJumptableIndex = 0;
+    // LD_hli_A;
+    wram->wBattleTransitionCounter = 0;
+    // LD_hl_A;
+    wram->wBattleTransitionSpinQuadrant = 0;
+    // CALL(aWipeLYOverrides);
+    WipeLYOverrides_Conv();
+    // RET;
+
+
+// NonMobile_LoadPokeballTiles:
+    // CALL(aLoadTrainerBattlePokeballTiles);
+    // hlbgcoord(0, 0, vBGMap0);
+    // CALL(aConvertTrainerBattlePokeballTilesTo2bpp);
+    // RET;
+}
+
 void DoBattleTransition(void){
-    CALL(aDoBattleTransition_InitGFX);
-    LDH_A_addr(rBGP);
-    LD_addr_A(wBGP);
-    LDH_A_addr(rOBP0);
-    LD_addr_A(wOBP0);
-    LDH_A_addr(rOBP1);
-    LD_addr_A(wOBP1);
-    CALL(aDelayFrame);
-    LD_HL(hVBlank);
-    LD_A_hl;
-    PUSH_AF;
-    LD_hl(0x1);
+    PEEK("");
+    // CALL(aDoBattleTransition_InitGFX);
+    DoBattleTransition_InitGFX();
+    // LDH_A_addr(rBGP);
+    // LD_addr_A(wBGP);
+    wram->wBGP = gb_read(rBGP);
+    // LDH_A_addr(rOBP0);
+    // LD_addr_A(wOBP0);
+    wram->wOBP0 = gb_read(rOBP0);
+    // LDH_A_addr(rOBP1);
+    // LD_addr_A(wOBP1);
+    wram->wOBP1 = gb_read(rOBP1);
+    // CALL(aDelayFrame);
+    DelayFrame();
+    // LD_HL(hVBlank);
+    // LD_A_hl;
+    // PUSH_AF;
+    uint8_t vblank = hram->hVBlank;
+    // LD_hl(0x1);
+    hram->hVBlank = 0x1;
+
+    while(1) {
+    // loop:
+        // LD_A_addr(wJumptableIndex);
+        // BIT_A(7);  // BATTLETRANSITION_END?
+        // IF_NZ goto done;
+        if(bit_test(wram->wJumptableIndex, 7))
+            break;
+        CALL(aBattleTransitionJumptable);
+        // CALL(aDelayFrame);
+        DelayFrame();
+        // goto loop;
+    }
 
 
-loop:
-    LD_A_addr(wJumptableIndex);
-    BIT_A(7);  // BATTLETRANSITION_END?
-    IF_NZ goto done;
-    CALL(aBattleTransitionJumptable);
-    CALL(aDelayFrame);
-    goto loop;
+// done:
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(MBANK(awBGPals1));
+    // LDH_addr_A(rSVBK);
 
+    // LD_HL(wBGPals1);
+    // LD_BC(8 * PALETTE_SIZE);
+    // XOR_A_A;
+    // CALL(aByteFill);
+    ByteFill_Conv2(wram->wBGPals1, 0, 8 * PALETTE_SIZE);
 
-done:
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(MBANK(awBGPals1));
-    LDH_addr_A(rSVBK);
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
 
-    LD_HL(wBGPals1);
-    LD_BC(8 * PALETTE_SIZE);
-    XOR_A_A;
-    CALL(aByteFill);
+    // LD_A(0b11111111);
+    // LD_addr_A(wBGP);
+    wram->wBGP = 0b11111111;
+    // CALL(aDmgToCgbBGPals);
+    DmgToCgbBGPals_Conv(0b11111111);
+    // CALL(aDelayFrame);
+    DelayFrame();
+    // XOR_A_A;
+    // LDH_addr_A(hLCDCPointer);
+    hram->hLCDCPointer = 0;
+    // LDH_addr_A(hLYOverrideStart);
+    hram->hLYOverrideStart = 0;
+    // LDH_addr_A(hLYOverrideEnd);
+    hram->hLYOverrideStart = 0;
+    // LDH_addr_A(hSCY);
+    hram->hSCY = 0;
 
-    POP_AF;
-    LDH_addr_A(rSVBK);
-
-    LD_A(0b11111111);
-    LD_addr_A(wBGP);
-    CALL(aDmgToCgbBGPals);
-    CALL(aDelayFrame);
-    XOR_A_A;
-    LDH_addr_A(hLCDCPointer);
-    LDH_addr_A(hLYOverrideStart);
-    LDH_addr_A(hLYOverrideEnd);
-    LDH_addr_A(hSCY);
-
-    LD_A(0x1);  // unnecessary bankswitch?
-    LDH_addr_A(rSVBK);
-    POP_AF;
-    LDH_addr_A(hVBlank);
-    CALL(aDelayFrame);
+    // LD_A(0x1);  // unnecessary bankswitch?
+    // LDH_addr_A(rSVBK);
+    // POP_AF;
+    // LDH_addr_A(hVBlank);
+    hram->hVBlank = vblank;
+    // CALL(aDelayFrame);
+    DelayFrame();
+    PEEK("end");
     RET;
-
-
-InitGFX:
-    LD_A_addr(wLinkMode);
-    CP_A(LINK_MOBILE);
-    IF_Z goto mobile;
-    FARCALL(aReanchorBGMap_NoOAMUpdate);
-    CALL(aUpdateSprites);
-    CALL(aDelayFrame);
-    CALL(aDoBattleTransition_NonMobile_LoadPokeballTiles);
-    CALL(aBattleStart_CopyTilemapAtOnce);
-    goto resume;
-
-
-mobile:
-    CALL(aLoadTrainerBattlePokeballTiles);
-
-
-resume:
-    LD_A(SCREEN_HEIGHT_PX);
-    LDH_addr_A(hWY);
-    CALL(aDelayFrame);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    LD_HL(wJumptableIndex);
-    XOR_A_A;
-    LD_hli_A;
-    LD_hli_A;
-    LD_hl_A;
-    CALL(aWipeLYOverrides);
-    RET;
-
-
-NonMobile_LoadPokeballTiles:
-    CALL(aLoadTrainerBattlePokeballTiles);
-    hlbgcoord(0, 0, vBGMap0);
-    CALL(aConvertTrainerBattlePokeballTilesTo2bpp);
-    RET;
-
 }
 
 void LoadTrainerBattlePokeballTiles(void){
@@ -195,6 +239,7 @@ loop:
 void BattleTransitionJumptable(void){
     //jumptable ['.Jumptable', 'wJumptableIndex']
     // fast_jumptable(mBattleTransitionJumptable_Jumptable, wJumptableIndex);
+    SAVE_REGS;
     switch(wram->wJumptableIndex) {
 // Jumptable:
     //dw ['StartTrainerBattle_DetermineWhichAnimation'];  // 00
@@ -275,7 +320,7 @@ void BattleTransitionJumptable(void){
     //dw ['StartTrainerBattle_Finish'];  // 20
         case 0x20: CALL(aStartTrainerBattle_Finish); break;
     }
-
+    RESTORE_REGS;
     RET;
 }
 
@@ -292,9 +337,9 @@ enum {
 #define TRANS_STRONGER_F (0)  //  bit set in TRANS_CAVE_STRONGER and TRANS_NO_CAVE_STRONGER
 #define TRANS_NO_CAVE_F (1)  //  bit set in TRANS_NO_CAVE and TRANS_NO_CAVE_STRONGER
 
-void StartTrainerBattle_DetermineWhichAnimation(void){
 //  The screen flashes a different number of times depending on the level of
 //  your lead Pokemon relative to the opponent's.
+void StartTrainerBattle_DetermineWhichAnimation(void){
 //  BUG: wBattleMonLevel and wEnemyMonLevel are not set at this point, so whatever
 //  values happen to be there will determine the animation.
 
@@ -306,110 +351,141 @@ void StartTrainerBattle_DetermineWhichAnimation(void){
         [TRANS_NO_CAVE_STRONGER] = BATTLETRANSITION_NO_CAVE_STRONGER,
     };
 
-    LD_DE(0);
-    LD_A_addr(wBattleMonLevel);
-    ADD_A(3);
-    LD_HL(wEnemyMonLevel);
-    CP_A_hl;
-    IF_NC goto not_stronger;
-    SET_E(TRANS_STRONGER_F);
+    // LD_DE(0);
+    uint8_t e = 0;
+    // LD_A_addr(wBattleMonLevel);
+    // ADD_A(3);
+    // LD_HL(wEnemyMonLevel);
+    // CP_A_hl;
+    // IF_NC goto not_stronger;
+    if(wram->wBattleMon.level + 3 < wram->wEnemyMon.level) {
+        // SET_E(TRANS_STRONGER_F);
+        bit_set(e, TRANS_STRONGER_F);
+    }
 
-not_stronger:
-    LD_A_addr(wEnvironment);
-    CP_A(CAVE);
-    IF_Z goto cave;
-    CP_A(ENVIRONMENT_5);
-    IF_Z goto cave;
-    CP_A(DUNGEON);
-    IF_Z goto cave;
-    SET_E(TRANS_NO_CAVE_F);
-
-cave:
+// not_stronger:
+    // LD_A_addr(wEnvironment);
+    // CP_A(CAVE);
+    // IF_Z goto cave;
+    // CP_A(ENVIRONMENT_5);
+    // IF_Z goto cave;
+    // CP_A(DUNGEON);
+    // IF_Z goto cave;
+    if(wram->wEnvironment != CAVE && wram->wEnvironment != ENVIRONMENT_5 && wram->wEnvironment != DUNGEON) {
+        // SET_E(TRANS_NO_CAVE_F);
+        bit_set(e, TRANS_NO_CAVE_F);
+    }
+// cave:
     // LD_HL(mStartTrainerBattle_DetermineWhichAnimation_StartingPoints);
     // ADD_HL_DE;
     // LD_A_hl;
-    REG_A = StartingPoints[REG_E];
-    LD_addr_A(wJumptableIndex);
-    RET;
-
-    return StartTrainerBattle_Finish();
+    // LD_addr_A(wJumptableIndex);
+    wram->wJumptableIndex = StartingPoints[e];
+    // RET;
 }
 
 void StartTrainerBattle_Finish(void){
-    CALL(aClearSprites);
-    LD_A(BATTLETRANSITION_END);
-    LD_addr_A(wJumptableIndex);
-    RET;
+    // CALL(aClearSprites);
+    ClearSprites_Conv();
+    // LD_A(BATTLETRANSITION_END);
+    // LD_addr_A(wJumptableIndex);
+    wram->wJumptableIndex = BATTLETRANSITION_END;
+    // RET;
 
 }
 
 void StartTrainerBattle_NextScene(void){
-    LD_HL(wJumptableIndex);
-    INC_hl;
-    RET;
+    // LD_HL(wJumptableIndex);
+    // INC_hl;
+    wram->wJumptableIndex++;
+    // RET;
 
 }
 
 void StartTrainerBattle_SetUpBGMap(void){
-    CALL(aStartTrainerBattle_NextScene);
-    XOR_A_A;
-    LD_addr_A(wBattleTransitionCounter);
-    LDH_addr_A(hBGMapMode);
-    RET;
+    // CALL(aStartTrainerBattle_NextScene);
+    StartTrainerBattle_NextScene();
+    // XOR_A_A;
+    // LD_addr_A(wBattleTransitionCounter);
+    wram->wBattleTransitionCounter = 0;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    // RET;
 
 }
 
+#define dc(a, b, c, d) ((a & 0x3) << 6) | ((b & 0x3) << 4) | ((c & 0x3) << 2) | (d & 0x3)
+
+static bool StartTrainerBattle_Flash_DoFlashAnimation(void) {
+    static const uint8_t pals[] = {
+        dc(3, 3, 2, 1),
+        dc(3, 3, 3, 2),
+        dc(3, 3, 3, 3),
+        dc(3, 3, 3, 2),
+        dc(3, 3, 2, 1),
+        dc(3, 2, 1, 0),
+        dc(2, 1, 0, 0),
+        dc(1, 0, 0, 0),
+        dc(0, 0, 0, 0),
+        dc(1, 0, 0, 0),
+        dc(2, 1, 0, 0),
+        dc(3, 2, 1, 0),
+        dc(0, 0, 0, 1),
+    };
+
+    // LD_A_addr(wTimeOfDayPalset);
+    // CP_A(DARKNESS_PALSET);
+    // IF_Z goto done;
+    if(wram->wTimeOfDayPalset == DARKNESS_PALSET) {
+    // done:
+        // XOR_A_A;
+        // LD_addr_A(wBattleTransitionCounter);
+        wram->wBattleTransitionCounter = 0;
+        // SCF;
+        // RET;
+        return true;
+    }
+    // LD_HL(wBattleTransitionCounter);
+    // LD_A_hl;
+    uint8_t a = wram->wBattleTransitionCounter++;
+    // INC_hl;
+    // SRL_A;
+    // LD_E_A;
+    // LD_D(0);
+    // LD_HL(mStartTrainerBattle_Flash_pals);
+    // ADD_HL_DE;
+    // LD_A_hl;
+    a = pals[a >> 1];
+    // CP_A(0b00000001);
+    // IF_Z goto done;
+    if(a != 0b00000001) {
+        // LD_addr_A(wBGP);
+        wram->wBGP = a;
+        // CALL(aDmgToCgbBGPals);
+        DmgToCgbBGPals_Conv(a);
+        // AND_A_A;
+        // RET;
+        return false;
+    }
+    else {
+    // done:
+        // XOR_A_A;
+        // LD_addr_A(wBattleTransitionCounter);
+        wram->wBattleTransitionCounter = 0;
+        // SCF;
+        // RET;
+        return true;
+    }
+}
+
 void StartTrainerBattle_Flash(void){
-    CALL(aStartTrainerBattle_Flash_DoFlashAnimation);
-    RET_NC ;
-    CALL(aStartTrainerBattle_NextScene);
-    RET;
-
-
-DoFlashAnimation:
-    LD_A_addr(wTimeOfDayPalset);
-    CP_A(DARKNESS_PALSET);
-    IF_Z goto done;
-    LD_HL(wBattleTransitionCounter);
-    LD_A_hl;
-    INC_hl;
-    SRL_A;
-    LD_E_A;
-    LD_D(0);
-    LD_HL(mStartTrainerBattle_Flash_pals);
-    ADD_HL_DE;
-    LD_A_hl;
-    CP_A(0b00000001);
-    IF_Z goto done;
-    LD_addr_A(wBGP);
-    CALL(aDmgToCgbBGPals);
-    AND_A_A;
-    RET;
-
-
-done:
-    XOR_A_A;
-    LD_addr_A(wBattleTransitionCounter);
-    SCF;
-    RET;
-
-
-pals:
-    //dc ['3', '3', '2', '1']
-    //dc ['3', '3', '3', '2']
-    //dc ['3', '3', '3', '3']
-    //dc ['3', '3', '3', '2']
-    //dc ['3', '3', '2', '1']
-    //dc ['3', '2', '1', '0']
-    //dc ['2', '1', '0', '0']
-    //dc ['1', '0', '0', '0']
-    //dc ['0', '0', '0', '0']
-    //dc ['1', '0', '0', '0']
-    //dc ['2', '1', '0', '0']
-    //dc ['3', '2', '1', '0']
-    //dc ['0', '0', '0', '1']
-
-    return StartTrainerBattle_SetUpForWavyOutro();
+    // CALL(aStartTrainerBattle_Flash_DoFlashAnimation);
+    // RET_NC ;
+    if(!StartTrainerBattle_Flash_DoFlashAnimation())
+        return;
+    // CALL(aStartTrainerBattle_NextScene);
+    // RET;
+    StartTrainerBattle_NextScene();
 }
 
 void StartTrainerBattle_SetUpForWavyOutro(void){
@@ -477,171 +553,204 @@ loop:
 }
 
 void StartTrainerBattle_SetUpForSpinOutro(void){
-    FARCALL(aRespawnPlayerAndOpponent);
-    LD_A(MBANK(awLYOverrides));
-    LDH_addr_A(rSVBK);
-    CALL(aStartTrainerBattle_NextScene);
-    XOR_A_A;
-    LD_addr_A(wBattleTransitionCounter);
-    RET;
+    // FARCALL(aRespawnPlayerAndOpponent);
+    RespawnPlayerAndOpponent_Conv();
+    // LD_A(MBANK(awLYOverrides));
+    // LDH_addr_A(rSVBK);
+    // CALL(aStartTrainerBattle_NextScene);
+    StartTrainerBattle_NextScene();
+    // XOR_A_A;
+    // LD_addr_A(wBattleTransitionCounter);
+    wram->wBattleTransitionCounter = 0;
+    // RET;
 
 }
 
+typedef struct {
+    uint8_t quadrant;
+    const int8_t*  const wedge;
+    uint8_t* const coord;
+} spin_quadrant_s;
+
 void StartTrainerBattle_SpinToBlack(void){
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    LD_A_addr(wBattleTransitionCounter);
-    LD_E_A;
-    LD_D(0);
-    LD_HL(mStartTrainerBattle_SpinToBlack_spin_quadrants);
-    for(int rept = 0; rept < 5; rept++){
-    ADD_HL_DE;
-    }
-    LD_A_hli;
-    CP_A(-1);
-    IF_Z goto end;
-    LD_addr_A(wBattleTransitionSineWaveOffset);
-    CALL(aStartTrainerBattle_SpinToBlack_load);
-    LD_A(1);
-    LDH_addr_A(hBGMapMode);
-    CALL(aDelayFrame);
-    CALL(aDelayFrame);
-    LD_HL(wBattleTransitionCounter);
-    INC_hl;
-    RET;
-
-
-end:
-    LD_A(1);
-    LDH_addr_A(hBGMapMode);
-    CALL(aDelayFrame);
-    CALL(aDelayFrame);
-    CALL(aDelayFrame);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    LD_A(BATTLETRANSITION_FINISH);
-    LD_addr_A(wJumptableIndex);
-    RET;
+static const int8_t wedge1[] = {2, 3, 5, 4, 9, -1};
+static const int8_t wedge2[] = {1, 1, 2, 2, 4, 2, 4, 2, 3, -1};
+static const int8_t wedge3[] = {2, 1, 3, 1, 4, 1, 4, 1, 4, 1, 3, 1, 2, 1, 1, 1, 1, -1};
+static const int8_t wedge4[] = {4, 1, 4, 0, 3, 1, 3, 0, 2, 1, 2, 0, 1, -1};
+static const int8_t wedge5[] = {4, 0, 3, 0, 3, 0, 2, 0, 2, 0, 1, 0, 1, 0, 1, -1};
 
 //  quadrants
-    //const_def ['?']
-    //const ['UPPER_LEFT']
-    //const ['UPPER_RIGHT']
-    //const ['LOWER_LEFT']
-    //const ['LOWER_RIGHT']
+    enum {
+        UPPER_LEFT,
+        UPPER_RIGHT,
+        LOWER_LEFT,
+        LOWER_RIGHT,
+    };
 
 //  quadrant bits
 #define RIGHT_QUADRANT_F (0)  //  bit set in UPPER_RIGHT and LOWER_RIGHT
 #define LOWER_QUADRANT_F (1)  //  bit set in LOWER_LEFT and LOWER_RIGHT
+#define spin_quadrant(_0, _1, _2, _3) (spin_quadrant_s){_0, _1, .coord=coord(_2, _3, ((struct wram_s*)gb.wram)->wTilemap)}
 
-
-spin_quadrants:
+    static const spin_quadrant_s spin_quadrants[] = {
 // spin_quadrant: MACRO
 //     db \1
 //     dw \2
 //     dwcoord \3, \4
 // ENDM
-    //spin_quadrant ['UPPER_LEFT', '.wedge1', '1', '6']
-    //spin_quadrant ['UPPER_LEFT', '.wedge2', '0', '3']
-    //spin_quadrant ['UPPER_LEFT', '.wedge3', '1', '0']
-    //spin_quadrant ['UPPER_LEFT', '.wedge4', '5', '0']
-    //spin_quadrant ['UPPER_LEFT', '.wedge5', '9', '0']
-    //spin_quadrant ['UPPER_RIGHT', '.wedge5', '10', '0']
-    //spin_quadrant ['UPPER_RIGHT', '.wedge4', '14', '0']
-    //spin_quadrant ['UPPER_RIGHT', '.wedge3', '18', '0']
-    //spin_quadrant ['UPPER_RIGHT', '.wedge2', '19', '3']
-    //spin_quadrant ['UPPER_RIGHT', '.wedge1', '18', '6']
-    //spin_quadrant ['LOWER_RIGHT', '.wedge1', '18', '11']
-    //spin_quadrant ['LOWER_RIGHT', '.wedge2', '19', '14']
-    //spin_quadrant ['LOWER_RIGHT', '.wedge3', '18', '17']
-    //spin_quadrant ['LOWER_RIGHT', '.wedge4', '14', '17']
-    //spin_quadrant ['LOWER_RIGHT', '.wedge5', '10', '17']
-    //spin_quadrant ['LOWER_LEFT', '.wedge5', '9', '17']
-    //spin_quadrant ['LOWER_LEFT', '.wedge4', '5', '17']
-    //spin_quadrant ['LOWER_LEFT', '.wedge3', '1', '17']
-    //spin_quadrant ['LOWER_LEFT', '.wedge2', '0', '14']
-    //spin_quadrant ['LOWER_LEFT', '.wedge1', '1', '11']
-    //db ['-1'];
+        spin_quadrant(UPPER_LEFT, wedge1, 1, 6),
+        spin_quadrant(UPPER_LEFT, wedge2, 0, 3),
+        spin_quadrant(UPPER_LEFT, wedge3, 1, 0),
+        spin_quadrant(UPPER_LEFT, wedge4, 5, 0),
+        spin_quadrant(UPPER_LEFT, wedge5, 9, 0),
+        spin_quadrant(UPPER_RIGHT, wedge5, 10, 0),
+        spin_quadrant(UPPER_RIGHT, wedge4, 14, 0),
+        spin_quadrant(UPPER_RIGHT, wedge3, 18, 0),
+        spin_quadrant(UPPER_RIGHT, wedge2, 19, 3),
+        spin_quadrant(UPPER_RIGHT, wedge1, 18, 6),
+        spin_quadrant(LOWER_RIGHT, wedge1, 18, 11),
+        spin_quadrant(LOWER_RIGHT, wedge2, 19, 14),
+        spin_quadrant(LOWER_RIGHT, wedge3, 18, 17),
+        spin_quadrant(LOWER_RIGHT, wedge4, 14, 17),
+        spin_quadrant(LOWER_RIGHT, wedge5, 10, 17),
+        spin_quadrant(LOWER_LEFT, wedge5, 9, 17),
+        spin_quadrant(LOWER_LEFT, wedge4, 5, 17),
+        spin_quadrant(LOWER_LEFT, wedge3, 1, 17),
+        spin_quadrant(LOWER_LEFT, wedge2, 0, 14),
+        spin_quadrant(LOWER_LEFT, wedge1, 1, 11),
+        spin_quadrant(0xff, NULL, 0, 0),
+    };
 
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    // LD_A_addr(wBattleTransitionCounter);
+    // LD_E_A;
+    // LD_D(0);
+    // LD_HL(mStartTrainerBattle_SpinToBlack_spin_quadrants);
+    // for(int rept = 0; rept < 5; rept++){
+    // ADD_HL_DE;
+    // }
+    // LD_A_hli;
+    // CP_A(-1);
+    // IF_Z goto end;
+    if(spin_quadrants[wram->wBattleTransitionCounter].quadrant != 0xff) {
+        // LD_addr_A(wBattleTransitionSineWaveOffset);
+        wram->wBattleTransitionSpinQuadrant = spin_quadrants[wram->wBattleTransitionCounter].quadrant;
+        // CALL(aStartTrainerBattle_SpinToBlack_load);
+        // load:
+        // LD_A_hli;
+        // LD_E_A;
+        // LD_A_hli;
+        // LD_D_A;
+        const int8_t* de = spin_quadrants[wram->wBattleTransitionCounter].wedge;
+        // LD_A_hli;
+        // LD_H_hl;
+        // LD_L_A;
+        uint8_t* hl = spin_quadrants[wram->wBattleTransitionCounter].coord;
 
-load:
-    LD_A_hli;
-    LD_E_A;
-    LD_A_hli;
-    LD_D_A;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
+        while(1) {
+        // loop:
+            // PUSH_HL;
+            uint8_t* hl2 = hl;
+            // LD_A_de;
+            // LD_C_A;
+            // INC_DE;
+            int8_t c = *(de++);
 
-loop:
-    PUSH_HL;
-    LD_A_de;
-    LD_C_A;
-    INC_DE;
+            do {
+            // loop1:
+                // LD_hl(BATTLETRANSITION_BLACK);
+                *hl = BATTLETRANSITION_BLACK;
+                // LD_A_addr(wBattleTransitionSineWaveOffset);
+                // BIT_A(RIGHT_QUADRANT_F);
+                // IF_Z goto leftside;
+                if(bit_test(wram->wBattleTransitionSpinQuadrant, RIGHT_QUADRANT_F))
+                    hl++;
+                else
+                    hl--;
+                // INC_HL;
+                // goto okay1;
 
-loop1:
-    LD_hl(BATTLETRANSITION_BLACK);
-    LD_A_addr(wBattleTransitionSineWaveOffset);
-    BIT_A(RIGHT_QUADRANT_F);
-    IF_Z goto leftside;
-    INC_HL;
-    goto okay1;
+            // leftside:
+                // DEC_HL;
 
-leftside:
-    DEC_HL;
+            // okay1:
+                // DEC_C;
+                // IF_NZ goto loop1;
+            } while(--c != 0);
+            // POP_HL;
+            hl = hl2 + (bit_test(wram->wBattleTransitionSpinQuadrant, LOWER_QUADRANT_F)? -SCREEN_WIDTH: SCREEN_WIDTH);
+            // LD_A_addr(wBattleTransitionSineWaveOffset);
+            // BIT_A(LOWER_QUADRANT_F);
+            // LD_BC(SCREEN_WIDTH);
+            // IF_Z goto upper;
+            // LD_BC(-SCREEN_WIDTH);
 
-okay1:
-    DEC_C;
-    IF_NZ goto loop1;
-    POP_HL;
-    LD_A_addr(wBattleTransitionSineWaveOffset);
-    BIT_A(LOWER_QUADRANT_F);
-    LD_BC(SCREEN_WIDTH);
-    IF_Z goto upper;
-    LD_BC(-SCREEN_WIDTH);
+        // upper:
+            // ADD_HL_BC;
+            // LD_A_de;
+            // INC_DE;
+            // CP_A(-1);
+            // RET_Z ;
+            int8_t a = *(de++);
+            if(a == -1) break;
+            // AND_A_A;
+            // IF_Z goto loop;
+            if(a == 0) continue;
+            // LD_C_A;
 
-upper:
-    ADD_HL_BC;
-    LD_A_de;
-    INC_DE;
-    CP_A(-1);
-    RET_Z ;
-    AND_A_A;
-    IF_Z goto loop;
-    LD_C_A;
+            do {
+            // loop2:
+                // LD_A_addr(wBattleTransitionSineWaveOffset);
+                // BIT_A(RIGHT_QUADRANT_F);
+                // IF_Z goto leftside2;
+                if(bit_test(wram->wBattleTransitionSpinQuadrant, RIGHT_QUADRANT_F))
+                    hl--;
+                else
+                    hl++;
+                // DEC_HL;
+                // goto okay2;
 
-loop2:
-    LD_A_addr(wBattleTransitionSineWaveOffset);
-    BIT_A(RIGHT_QUADRANT_F);
-    IF_Z goto leftside2;
-    DEC_HL;
-    goto okay2;
+            // leftside2:
+                // INC_HL;
 
-leftside2:
-    INC_HL;
-
-okay2:
-    DEC_C;
-    IF_NZ goto loop2;
-    goto loop;
-
-
-wedge1:
-// db 2, 3, 5, 4, 9, -1
-
-wedge2:
-// db 1, 1, 2, 2, 4, 2, 4, 2, 3, -1
-
-wedge3:
-// db 2, 1, 3, 1, 4, 1, 4, 1, 4, 1, 3, 1, 2, 1, 1, 1, 1, -1
-
-wedge4:
-// db 4, 1, 4, 0, 3, 1, 3, 0, 2, 1, 2, 0, 1, -1
-
-wedge5:
-// db 4, 0, 3, 0, 3, 0, 2, 0, 2, 0, 1, 0, 1, 0, 1, -1
-
-    return StartTrainerBattle_SetUpForRandomScatterOutro();
+            // okay2:
+                // DEC_C;
+                // IF_NZ goto loop2;
+            } while(--a != 0);
+            // goto loop;
+        }
+        // LD_A(1);
+        // LDH_addr_A(hBGMapMode);
+        hram->hBGMapMode = 1;
+        // CALL(aDelayFrame);
+        // CALL(aDelayFrame);
+        DelayFrame();
+        DelayFrame();
+        // LD_HL(wBattleTransitionCounter);
+        // INC_hl;
+        wram->wBattleTransitionCounter++;
+        // RET;
+        return;
+    }
+// end:
+    // LD_A(1);
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 1;
+    // CALL(aDelayFrame);
+    // CALL(aDelayFrame);
+    // CALL(aDelayFrame);
+    DelayFrame();
+    DelayFrame();
+    DelayFrame();
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    // LD_A(BATTLETRANSITION_FINISH);
+    // LD_addr_A(wJumptableIndex);
+    wram->wJumptableIndex = BATTLETRANSITION_FINISH;
+    // RET;
 }
 
 void StartTrainerBattle_SetUpForRandomScatterOutro(void){
@@ -723,182 +832,245 @@ row_loop:
 
 }
 
-void StartTrainerBattle_LoadPokeBallGraphics(void){
-    LD_A_addr(wOtherTrainerClass);
-    AND_A_A;
-    JP_Z (mStartTrainerBattle_LoadPokeBallGraphics_nextscene);  // don't need to be here if wild
+#define bigdw(_x) HIGH(_x), LOW(_x)
 
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-
-    hlcoord(0, 0, wAttrmap);
-    LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
-    INC_B;
-    INC_C;
-    goto enter_loop_midway;
-
-
-pal_loop:
-//  set all pals to 7
-    LD_A_hl;
-    OR_A(PAL_BG_TEXT);
-    LD_hli_A;
-
-enter_loop_midway:
-    DEC_C;
-    IF_NZ goto pal_loop;
-    DEC_B;
-    IF_NZ goto pal_loop;
-
-    CALL(aStartTrainerBattle_LoadPokeBallGraphics_loadpokeballgfx);
-    hlcoord(2, 1, wTilemap);
-
-    LD_B(SCREEN_WIDTH - 4);
-
-tile_loop:
-    PUSH_HL;
-    LD_C(2);
-
-row_loop:
-    PUSH_HL;
-    LD_A_de;
-    INC_DE;
-
-col_loop:
-//  Loading is done bit by bit
-    AND_A_A;
-    IF_Z goto done;
-    SLA_A;
-    IF_NC goto no_load;
-    LD_hl(BATTLETRANSITION_SQUARE);
-
-no_load:
-    INC_HL;
-    goto col_loop;
-
-
-done:
-    POP_HL;
-    PUSH_BC;
-    LD_BC((SCREEN_WIDTH - 4) / 2);
-    ADD_HL_BC;
-    POP_BC;
-    DEC_C;
-    IF_NZ goto row_loop;
-
-    POP_HL;
-    PUSH_BC;
-    LD_BC(SCREEN_WIDTH);
-    ADD_HL_BC;
-    POP_BC;
-    DEC_B;
-    IF_NZ goto tile_loop;
-
-    LDH_A_addr(hCGB);
-    AND_A_A;
-    IF_NZ goto cgb;
-    LD_A(1);
-    LDH_addr_A(hBGMapMode);
-    CALL(aDelayFrame);
-    CALL(aDelayFrame);
-    goto nextscene;
-
-
-cgb:
-    LD_HL(mStartTrainerBattle_LoadPokeBallGraphics_pals);
-    LD_A_addr(wTimeOfDayPal);
-    maskbits(NUM_DAYTIMES, 0);
-    CP_A(DARKNESS_F);
-    IF_NZ goto not_dark;
-    LD_HL(mStartTrainerBattle_LoadPokeBallGraphics_darkpals);
-
-not_dark:
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(MBANK(awBGPals1));
-    LDH_addr_A(rSVBK);
-    CALL(aStartTrainerBattle_LoadPokeBallGraphics_copypals);
-    PUSH_HL;
-    LD_DE(wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT);
-    LD_BC(1 * PALETTE_SIZE);
-    CALL(aCopyBytes);
-    POP_HL;
-    LD_DE(wBGPals2 + PALETTE_SIZE * PAL_BG_TEXT);
-    LD_BC(1 * PALETTE_SIZE);
-    CALL(aCopyBytes);
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    LD_A(TRUE);
-    LDH_addr_A(hCGBPalUpdate);
-    CALL(aDelayFrame);
-    CALL(aBattleStart_CopyTilemapAtOnce);
-
-
-nextscene:
-    CALL(aStartTrainerBattle_NextScene);
-    RET;
-
-
-copypals:
-    LD_DE(wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT);
-    CALL(aStartTrainerBattle_LoadPokeBallGraphics_copy);
-    LD_DE(wBGPals2 + PALETTE_SIZE * PAL_BG_TEXT);
-    CALL(aStartTrainerBattle_LoadPokeBallGraphics_copy);
-    LD_DE(wOBPals1 + PALETTE_SIZE * PAL_OW_TREE);
-    CALL(aStartTrainerBattle_LoadPokeBallGraphics_copy);
-    LD_DE(wOBPals2 + PALETTE_SIZE * PAL_OW_TREE);
-    CALL(aStartTrainerBattle_LoadPokeBallGraphics_copy);
-    LD_DE(wOBPals1 + PALETTE_SIZE * PAL_OW_ROCK);
-    CALL(aStartTrainerBattle_LoadPokeBallGraphics_copy);
-    LD_DE(wOBPals2 + PALETTE_SIZE * PAL_OW_ROCK);
-
-
-copy:
-    PUSH_HL;
-    LD_BC(1 * PALETTE_SIZE);
-    CALL(aCopyBytes);
-    POP_HL;
-    RET;
-
-
-pals:
-// INCLUDE "gfx/overworld/trainer_battle.pal"
-
-
-darkpals:
-// INCLUDE "gfx/overworld/trainer_battle_dark.pal"
-
-
-loadpokeballgfx:
-    LD_A_addr(wOtherTrainerClass);
-    LD_DE(mPokeBallTransition);
-    RET;
-
-}
-
-void PokeBallTransition(void){
+static const uint8_t PokeBallTransition[] = {
 //  16x16 overlay of a Poke Ball
 //pusho
 //opt b.X   //  . = 0, X = 1
-    //bigdw ['0b......XXXX......']
-    //bigdw ['0b....XXXXXXXX....']
-    //bigdw ['0b..XXXX....XXXX..']
-    //bigdw ['0b..XX........XX..']
-    //bigdw ['0b.XX..........XX.']
-    //bigdw ['0b.XX...XXXX...XX.']
-    //bigdw ['0bXX...XX..XX...XX']
-    //bigdw ['0bXXXXXX....XXXXXX']
-    //bigdw ['0bXXXXXX....XXXXXX']
-    //bigdw ['0bXX...XX..XX...XX']
-    //bigdw ['0b.XX...XXXX...XX.']
-    //bigdw ['0b.XX..........XX.']
-    //bigdw ['0b..XX........XX..']
-    //bigdw ['0b..XXXX....XXXX..']
-    //bigdw ['0b....XXXXXXXX....']
-    //bigdw ['0b......XXXX......']
+    bigdw(0b0000001111000000),
+    bigdw(0b0000111111110000),
+    bigdw(0b0011110000111100),
+    bigdw(0b0011000000001100),
+    bigdw(0b0110000000000110),
+    bigdw(0b0110001111000110),
+    bigdw(0b1100011001100011),
+    bigdw(0b1111110000111111),
+    bigdw(0b1111110000111111),
+    bigdw(0b1100011001100011),
+    bigdw(0b0110001111000110),
+    bigdw(0b0110000000000110),
+    bigdw(0b0011000000001100),
+    bigdw(0b0011110000111100),
+    bigdw(0b0000111111110000),
+    bigdw(0b0000001111000000),
 //popo
+};
 
-    return WipeLYOverrides();
+static void StartTrainerBattle_LoadPokeballGraphics_copypals(const uint16_t* hl) {
+    // LD_DE(wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT);
+    // CALL(aStartTrainerBattle_LoadPokeBallGraphics_copy);
+    CopyBytes_Conv2(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT, hl, 1 * PALETTE_SIZE);
+    // LD_DE(wBGPals2 + PALETTE_SIZE * PAL_BG_TEXT);
+    // CALL(aStartTrainerBattle_LoadPokeBallGraphics_copy);
+    CopyBytes_Conv2(wram->wBGPals2 + PALETTE_SIZE * PAL_BG_TEXT, hl, 1 * PALETTE_SIZE);
+    // LD_DE(wOBPals1 + PALETTE_SIZE * PAL_OW_TREE);
+    // CALL(aStartTrainerBattle_LoadPokeBallGraphics_copy);
+    CopyBytes_Conv2(wram->wOBPals1 + PALETTE_SIZE * PAL_OW_TREE, hl, 1 * PALETTE_SIZE);
+    // LD_DE(wOBPals2 + PALETTE_SIZE * PAL_OW_TREE);
+    // CALL(aStartTrainerBattle_LoadPokeBallGraphics_copy);
+    CopyBytes_Conv2(wram->wOBPals2 + PALETTE_SIZE * PAL_OW_TREE, hl, 1 * PALETTE_SIZE);
+    // LD_DE(wOBPals1 + PALETTE_SIZE * PAL_OW_ROCK);
+    // CALL(aStartTrainerBattle_LoadPokeBallGraphics_copy);
+    CopyBytes_Conv2(wram->wOBPals1 + PALETTE_SIZE * PAL_OW_ROCK, hl, 1 * PALETTE_SIZE);
+    // LD_DE(wOBPals2 + PALETTE_SIZE * PAL_OW_ROCK);
+    CopyBytes_Conv2(wram->wOBPals2 + PALETTE_SIZE * PAL_OW_ROCK, hl, 1 * PALETTE_SIZE);
+
+// copy:
+    // PUSH_HL;
+    // LD_BC(1 * PALETTE_SIZE);
+    // CALL(aCopyBytes);
+    // POP_HL;
+    // RET;
+}
+
+void StartTrainerBattle_LoadPokeBallGraphics(void){
+    // INCLUDE "gfx/overworld/trainer_battle.pal"
+    static const uint16_t pals[] = {
+        rgb(31, 18, 29),
+        rgb(31, 11, 15),
+        rgb(31, 05, 05),
+        rgb(07, 07, 07),
+    };
+    // INCLUDE "gfx/overworld/trainer_battle_dark.pal"
+    static const uint16_t darkpals[] = {
+        rgb(31, 18, 29),
+        rgb(31, 05, 05),
+        rgb(31, 05, 05),
+        rgb(31, 05, 05),
+    };
+    // LD_A_addr(wOtherTrainerClass);
+    // AND_A_A;
+    // JP_Z (mStartTrainerBattle_LoadPokeBallGraphics_nextscene);  // don't need to be here if wild
+    if(wram->wOtherTrainerClass == 0) {
+    // nextscene:
+        // CALL(aStartTrainerBattle_NextScene);
+        StartTrainerBattle_NextScene();
+        // RET;
+        return;
+    }
+
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+
+    // hlcoord(0, 0, wAttrmap);
+    uint8_t* hl = wram->wAttrmap;
+    // LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
+    // INC_B;
+    // INC_C;
+    // goto enter_loop_midway;
+
+    for(uint16_t bc = 0; bc < SCREEN_HEIGHT * SCREEN_WIDTH; bc++) {
+    // pal_loop:
+    //  set all pals to 7
+        // LD_A_hl;
+        // OR_A(PAL_BG_TEXT);
+        // LD_hli_A;
+        hl[bc] |= PAL_BG_TEXT;
+
+    // enter_loop_midway:
+        // DEC_C;
+        // IF_NZ goto pal_loop;
+        // DEC_B;
+        // IF_NZ goto pal_loop;
+    }
+
+    // CALL(aStartTrainerBattle_LoadPokeBallGraphics_loadpokeballgfx);
+// loadpokeballgfx:
+    // LD_A_addr(wOtherTrainerClass);
+    // LD_DE(mPokeBallTransition);
+    const uint8_t* de = PokeBallTransition;
+    // RET;
+
+    // hlcoord(2, 1, wTilemap);
+    hl = coord(2, 1, wram->wTilemap);
+
+    // LD_B(SCREEN_WIDTH - 4);
+    uint8_t b = SCREEN_WIDTH - 4;
+
+    do {
+    // tile_loop:
+        // PUSH_HL;
+        uint8_t* hl2 = hl;
+        // LD_C(2);
+        uint8_t c = 2;
+
+        do {
+        // row_loop:
+            // PUSH_HL;
+            uint8_t* hl3 = hl;
+            // LD_A_de;
+            // INC_DE;
+            uint8_t a = *(de++);
+
+            while(a != 0) {
+            // col_loop:
+            //  Loading is done bit by bit
+                // AND_A_A;
+                // IF_Z goto done;
+                // SLA_A;
+                // IF_NC goto no_load;
+                if(a & 0x80) {
+                    // LD_hl(BATTLETRANSITION_SQUARE);
+                    *hl = BATTLETRANSITION_SQUARE;
+                }
+            // no_load:
+                // INC_HL;
+                hl++;
+                a <<= 1;
+                // goto col_loop;
+            }
+
+        // done:
+            // POP_HL;
+            // PUSH_BC;
+            // LD_BC((SCREEN_WIDTH - 4) / 2);
+            // ADD_HL_BC;
+            hl = hl3 + ((SCREEN_WIDTH - 4) / 2);
+            // POP_BC;
+            // DEC_C;
+            // IF_NZ goto row_loop;
+        } while(--c != 0);
+
+        // POP_HL;
+        // PUSH_BC;
+        // LD_BC(SCREEN_WIDTH);
+        // ADD_HL_BC;
+        // POP_BC;
+        hl = hl2 + SCREEN_WIDTH;
+        // DEC_B;
+        // IF_NZ goto tile_loop;
+    } while(--b != 0);
+
+    // LDH_A_addr(hCGB);
+    // AND_A_A;
+    // IF_NZ goto cgb;
+    if(hram->hCGB == 0) {
+        // LD_A(1);
+        // LDH_addr_A(hBGMapMode);
+        hram->hBGMapMode = 1;
+        // CALL(aDelayFrame);
+        // CALL(aDelayFrame);
+        DelayFrame();
+        DelayFrame();
+        // goto nextscene;
+    }
+    else {
+    // cgb:
+        // LD_HL(mStartTrainerBattle_LoadPokeBallGraphics_pals);
+        // LD_A_addr(wTimeOfDayPal);
+        // maskbits(NUM_DAYTIMES, 0);
+        // CP_A(DARKNESS_F);
+        // IF_NZ goto not_dark;
+        if((wram->wTimeOfDayPal & (NUM_DAYTIMES - 1)) == DARKNESS_F) {
+            // LD_HL(mStartTrainerBattle_LoadPokeBallGraphics_darkpals);
+            StartTrainerBattle_LoadPokeballGraphics_copypals(darkpals);
+            CopyBytes_Conv2(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT, darkpals, 1 * PALETTE_SIZE);
+            CopyBytes_Conv2(wram->wBGPals2 + PALETTE_SIZE * PAL_BG_TEXT, darkpals, 1 * PALETTE_SIZE);
+        }
+    // not_dark:
+        else {
+            StartTrainerBattle_LoadPokeballGraphics_copypals(pals);
+            CopyBytes_Conv2(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT, pals, 1 * PALETTE_SIZE);
+            CopyBytes_Conv2(wram->wBGPals2 + PALETTE_SIZE * PAL_BG_TEXT, pals, 1 * PALETTE_SIZE);
+        }
+        // LDH_A_addr(rSVBK);
+        // PUSH_AF;
+        // LD_A(MBANK(awBGPals1));
+        // LDH_addr_A(rSVBK);
+        // CALL(aStartTrainerBattle_LoadPokeBallGraphics_copypals);
+        // PUSH_HL;
+        // LD_DE(wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT);
+        // LD_BC(1 * PALETTE_SIZE);
+        // CALL(aCopyBytes);
+        // POP_HL;
+        // LD_DE(wBGPals2 + PALETTE_SIZE * PAL_BG_TEXT);
+        // LD_BC(1 * PALETTE_SIZE);
+        // CALL(aCopyBytes);
+        // POP_AF;
+        // LDH_addr_A(rSVBK);
+        // LD_A(TRUE);
+        // LDH_addr_A(hCGBPalUpdate);
+        hram->hCGBPalUpdate = TRUE;
+        // CALL(aDelayFrame);
+        DelayFrame();
+        // CALL(aBattleStart_CopyTilemapAtOnce);
+        CopyTilemapAtOnce_Conv();
+    }
+
+
+// nextscene:
+    // CALL(aStartTrainerBattle_NextScene);
+    // RET;
+    StartTrainerBattle_NextScene();
+    // RET;
+
+
+// loadpokeballgfx:
+    // LD_A_addr(wOtherTrainerClass);
+    // LD_DE(mPokeBallTransition);
+    // RET;
 }
 
 void WipeLYOverrides(void){
@@ -929,10 +1101,48 @@ loop:
 
 }
 
+void WipeLYOverrides_Conv(void){
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(MBANK(awLYOverrides));
+    // LDH_addr_A(rSVBK);
+
+    // LD_HL(wLYOverrides);
+    // CALL(aWipeLYOverrides_wipe);
+    // LD_HL(wLYOverridesBackup);
+    // CALL(aWipeLYOverrides_wipe);
+
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // RET;
+
+
+    for(uint8_t c = 0; c < SCREEN_HEIGHT_PX; c++) {
+    // wipe:
+        // XOR_A_A;
+        // LD_C(SCREEN_HEIGHT_PX);
+
+    // loop:
+        // LD_hli_A;
+        wram->wLYOverrides[c] = 0;
+        wram->wLYOverridesBackup[c] = 0;
+        // DEC_C;
+        // IF_NZ goto loop;
+        // RET;
+    }
+}
+
 void StartTrainerBattle_DrawSineWave(void){
     //calc_sine_wave ['?']
 
-    return StartTrainerBattle_ZoomToBlack();
+    // return StartTrainerBattle_ZoomToBlack();
+    REG_A = StartTrainerBattle_DrawSineWave_Conv(REG_A, REG_D);
+    RET;
+}
+
+uint8_t StartTrainerBattle_DrawSineWave_Conv(uint8_t a, uint8_t d){
+    //calc_sine_wave ['?']
+    return v_Sine_Conv(a, d);
 }
 
 void StartTrainerBattle_ZoomToBlack(void){

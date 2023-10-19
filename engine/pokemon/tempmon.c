@@ -234,7 +234,7 @@ otpartymon:
 
 
 boxmon:
-    LD_A(BANK(sBoxSpecies));
+    LD_A(MBANK(asBoxSpecies));
     CALL(aOpenSRAM);
     LD_HL(sBoxSpecies);
     CALL(aGetMonSpecies_done);

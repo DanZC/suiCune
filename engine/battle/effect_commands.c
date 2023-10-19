@@ -3773,7 +3773,7 @@ ignore_substitute:
     LD_addr_A(wEnemyMonHP);
 #if defined(_DEBUG) && !defined(_MSC_VER)
     PUSH_AF;
-    LD_A(BANK(sSkipBattle));
+    LD_A(MBANK(asSkipBattle));
     CALL(aOpenSRAM);
     LD_A_addr(sSkipBattle);
     CALL(aCloseSRAM);

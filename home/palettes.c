@@ -121,7 +121,7 @@ bool ForceUpdateCGBPals_Conv(void){
     gb_write(rSVBK, MBANK(awBGPals2));
 
     // LD_HL(wBGPals2);
-    uint16_t hl = wBGPals2;
+    uint8_t* hl = wram->wBGPals2;
 
 //  copy 8 pals to bgpd
     // LD_A(1 << rBGPI_AUTO_INCREMENT);
@@ -136,7 +136,7 @@ bool ForceUpdateCGBPals_Conv(void){
         for(int rept = 0; rept < (1 * PALETTE_SIZE) * 2; rept++){
             // LD_A_hli;
             // LDH_c_A;
-            gb_write(rBGPD, gb_read(hl++));
+            gb_write(rBGPD, *(hl++));
         }
 
         // DEC_B;
@@ -144,7 +144,7 @@ bool ForceUpdateCGBPals_Conv(void){
     } while(--b != 0);
 
 //  hl is now wOBPals2
-    hl = wOBPals2;
+    hl = wram->wOBPals2;
 
 //  copy 8 pals to obpd
     // LD_A(1 << rOBPI_AUTO_INCREMENT);
@@ -158,7 +158,7 @@ bool ForceUpdateCGBPals_Conv(void){
         for(int rept = 0; rept < (1 * PALETTE_SIZE) * 2; rept++){
             // LD_A_hli;
             // LDH_c_A;
-            gb_write(rOBPD, gb_read(hl++));
+            gb_write(rOBPD, *(hl++));
         }
 
     // DEC_B;
@@ -260,7 +260,7 @@ void DmgToCgbBGPals_Conv(uint8_t a){
 //  request pal update
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    gb_write(hCGBPalUpdate, TRUE);
+    hram->hCGBPalUpdate = TRUE;
 
     // POP_AF;
     // LDH_addr_A(rSVBK);

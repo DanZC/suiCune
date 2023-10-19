@@ -194,7 +194,7 @@ void v_GetFrontpic(void){
     LD_B_A;
     PUSH_BC;
     CALL(aGetFrontpicPointer);
-    LD_A(BANK(wDecompressEnemyFrontpic));
+    LD_A(MBANK(awDecompressEnemyFrontpic));
     LDH_addr_A(rSVBK);
     LD_A_B;
     LD_DE(wDecompressEnemyFrontpic);
@@ -337,7 +337,7 @@ void GetAnimatedEnemyFrontpic(void){
     LD_DE(7 * 7 * LEN_2BPP_TILE);
     ADD_HL_DE;
     PUSH_HL;
-    LD_A(BANK(wBasePicSize));
+    LD_A(MBANK(awBasePicSize));
     LD_HL(wBasePicSize);
     CALL(aGetFarWRAMByte);
     POP_HL;
@@ -500,7 +500,7 @@ void GetMonBackpic(void){
     LD_C_A;
     LDH_A_addr(rSVBK);
     PUSH_AF;
-    LD_A(BANK(wDecompressScratch));
+    LD_A(MBANK(awDecompressScratch));
     LDH_addr_A(rSVBK);
     PUSH_DE;
 
@@ -629,7 +629,7 @@ void GetTrainerPic(void){
     CALL(aAddNTimes);
     LDH_A_addr(rSVBK);
     PUSH_AF;
-    LD_A(BANK(wDecompressScratch));
+    LD_A(MBANK(awDecompressScratch));
     LDH_addr_A(rSVBK);
     PUSH_DE;
     LD_A(BANK(aTrainerPicPointers));
@@ -662,7 +662,7 @@ void DecompressGet2bpp(void){
 
     LDH_A_addr(rSVBK);
     PUSH_AF;
-    LD_A(BANK(wDecompressScratch));
+    LD_A(MBANK(awDecompressScratch));
     LDH_addr_A(rSVBK);
 
     PUSH_DE;

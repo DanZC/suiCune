@@ -1,5 +1,6 @@
 #include "../constants.h"
 #include "video.h"
+#include "delay.h"
 
 //  Functions dealing with VRAM.
 
@@ -251,6 +252,35 @@ done:
     XOR_A_A;
     LDH_addr_A(hBGMapMode);
     RET;
+}
+
+void WaitTop_Conv(void) {
+    //  Wait until the top third of the BG Map is being updated.
+
+    while(1)
+    {
+        // LDH_A_addr(hBGMapMode);
+        // AND_A_A;
+        // RET_Z;
+        if(hram->hBGMapMode == 0)
+            return;
+
+        // LDH_A_addr(hBGMapThird);
+        // AND_A_A;
+        // IF_Z goto done;
+        if(hram->hBGMapThird == 0)
+            break;
+
+        // CALL(aDelayFrame);
+        DelayFrame();
+        // JR(mWaitTop);
+    }
+
+// done:
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    // RET;
 }
 
 void UpdateBGMap(void) {

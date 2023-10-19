@@ -6,6 +6,7 @@
 #include "../../home/map.h"
 #include "player_object.h"
 #include "movement.h"
+#include "../../data/sprites/facings.h"
 
 uint8_t (*gMovementPointer)(void);
 
@@ -3776,6 +3777,31 @@ skip_opponent:
     RET;
 }
 
+//  called at battle start
+void RespawnPlayerAndOpponent_Conv(void) {
+    // CALL(aHideAllObjects);
+    HideAllObjects();
+    // LD_A(PLAYER);
+    // CALL(aRespawnObject);
+    RespawnObject_Conv(PLAYER);
+    // LD_A_addr(wBattleScriptFlags);
+    // BIT_A(7);
+    // IF_Z goto skip_opponent;
+    // LDH_A_addr(hLastTalked);
+    // AND_A_A;
+    // IF_Z goto skip_opponent;
+    if(bit_test(wram->wBattleScriptFlags, 7) && hram->hLastTalked != 0) {
+        // CALL(aRespawnObject);
+        RespawnObject_Conv(hram->hLastTalked);
+    }
+
+// skip_opponent:
+
+    // CALL(av_UpdateSprites);
+    v_UpdateSprites_Conv();
+    // RET;
+}
+
 void RespawnPlayer(void) {
     SET_PC(aRespawnPlayer);
     CALL(aHideAllObjects);
@@ -3804,24 +3830,60 @@ void RespawnObject(void) {
     RET;
 }
 
+void RespawnObject_Conv(uint8_t a) {
+    // SET_PC(aRespawnObject);
+    // CP_A(NUM_OBJECTS);
+    // RET_NC;
+    if(a >= NUM_OBJECTS)
+        return;
+    // CALL(aGetMapObject);
+    struct MapObject* bc = GetMapObject_Conv(a);
+    // LD_HL(MAPOBJECT_OBJECT_STRUCT_ID);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // CP_A(-1);
+    // RET_Z;
+    if(bc->structId == 0xff)
+        return;
+    // CP_A(NUM_OBJECT_STRUCTS);
+    // RET_NC;
+    if(bc->structId >= NUM_OBJECT_STRUCTS)
+        return;
+    // CALL(aGetObjectStruct);
+    struct Object* obj = GetObjectStruct_Conv(bc->structId);
+    // CALL(aDoesObjectHaveASprite);
+    // RET_Z;
+    if(!DoesObjectHaveASprite_Conv(obj))
+        return;
+    // CALL(aUpdateRespawnedObjectFrozen);
+    UpdateRespawnedObjectFrozen_Conv(obj);
+    // RET;
+}
+
 void HideAllObjects(void) {
-    SET_PC(aHideAllObjects);
-    XOR_A_A;
-    LD_BC(wObjectStructs);
+    // SET_PC(aHideAllObjects);
+    // XOR_A_A;
+    // LD_BC(wObjectStructs);
+    struct Object* bc = &wram->wPlayerStruct;
+    hram->hMapObjectIndex = 0;
 
-loop:
+    do {
+    // loop:
 
-    LDH_addr_A(hMapObjectIndex);
-    CALL(aSetFacing_Standing);
-    LD_HL(OBJECT_LENGTH);
-    ADD_HL_BC;
-    LD_B_H;
-    LD_C_L;
-    LDH_A_addr(hMapObjectIndex);
-    INC_A;
-    CP_A(NUM_OBJECT_STRUCTS);
-    IF_NZ goto loop;
-    RET;
+        // LDH_addr_A(hMapObjectIndex);
+        // CALL(aSetFacing_Standing);
+        SetFacing_Standing_Conv(bc);
+        // LD_HL(OBJECT_LENGTH);
+        // ADD_HL_BC;
+        // LD_B_H;
+        // LD_C_L;
+        bc++;
+        // LDH_A_addr(hMapObjectIndex);
+        // INC_A;
+        // CP_A(NUM_OBJECT_STRUCTS);
+        // IF_NZ goto loop;
+    } while(++hram->hMapObjectIndex != NUM_OBJECT_STRUCTS);
+    // RET;
 }
 
 void UpdateObjectFrozen(void) {
@@ -3870,6 +3932,18 @@ void UpdateRespawnedObjectFrozen(void) {
     RET;
 }
 
+void UpdateRespawnedObjectFrozen_Conv(struct Object* bc) {
+    // SET_PC(aUpdateRespawnedObjectFrozen);
+    // CALL(aCheckObjectOnScreen);
+    // JR_C(mSetFacing_Standing);
+    if(CheckObjectOnScreen_Conv(bc)) {
+    // FARCALL(aHandleFrozenObjectAction);  // no need to farcall
+        HandleFrozenObjectAction_Conv(bc);
+    }
+    // XOR_A_A;
+    // RET;
+}
+
 void SetFacing_Standing(void) {
     SET_PC(aSetFacing_Standing);
     LD_HL(OBJECT_FACING_STEP);
@@ -3916,16 +3990,14 @@ void UpdateObjectNextTile_Conv(struct Object* bc) {
     // LD_HL(OBJECT_NEXT_MAP_Y);
     // ADD_HL_BC;
     // LD_E_hl;
-    REG_DE = (bc->nextMapX << 8) | gb_read(bc->nextMapY);
-    // GetCoordTile
-    CALL(aGetCoordTile);
+    // CALL(aGetCoordTile);
     // POP_BC;
     // LD_HL(OBJECT_NEXT_TILE);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->nextTile = REG_A;
+    bc->nextTile = GetCoordTile_Conv(bc->nextMapX, bc->nextMapY);
     // FARCALL(aUpdateTallGrassFlags);  // no need to farcall
-    CALL(aUpdateTallGrassFlags);
+    UpdateTallGrassFlags_Conv(bc);
     // RET;
 }
 
@@ -4809,18 +4881,18 @@ void v_UpdateSprites_Conv(void) {
     // LD_A_addr(wVramState);
     // BIT_A(0);
     // RET_Z;
-    if(!((gb_read(wVramState) >> (0)) & 0x1))
+    if(!bit_test(wram->wVramState, 0))
         return;
     
     // XOR_A_A;
     // LDH_addr_A(hUsedSpriteIndex);
-    gb_write(hUsedSpriteIndex, 0);
+    hram->hUsedSpriteIndex = 0;
     // LDH_A_addr(hOAMUpdate);
-    uint8_t temp = gb_read(hOAMUpdate);
+    uint8_t temp = hram->hOAMUpdate;
     // PUSH_AF;
     // LD_A(1);
     // LDH_addr_A(hOAMUpdate);
-    gb_write(hOAMUpdate, 1);
+    hram->hOAMUpdate = 1;
     // CALL(aInitSprites);
     InitSprites();
     // CALL(av_UpdateSprites_fill);
@@ -4832,36 +4904,36 @@ void v_UpdateSprites_Conv(void) {
     // LD_B(NUM_SPRITE_OAM_STRUCTS * SPRITEOAMSTRUCT_LENGTH);
     // IF_Z goto ok;
     // LD_B((NUM_SPRITE_OAM_STRUCTS - 12) * SPRITEOAMSTRUCT_LENGTH);
-    uint8_t b = (!((gb_read(wVramState) >> (1)) & 0x1))? ((NUM_SPRITE_OAM_STRUCTS - 12) * SPRITEOAMSTRUCT_LENGTH) : NUM_SPRITE_OAM_STRUCTS * SPRITEOAMSTRUCT_LENGTH;
+    uint8_t b = (bit_test(wram->wVramState, 1))? (NUM_SPRITE_OAM_STRUCTS - 12) : NUM_SPRITE_OAM_STRUCTS;
 
 // ok:
 
     // LDH_A_addr(hUsedSpriteIndex);
     // CP_A_B;
     // RET_NC;
-    uint8_t sprite_idx = gb_read(hUsedSpriteIndex);
+    uint8_t sprite_idx = hram->hUsedSpriteIndex >> 2;
     if(sprite_idx >= b)
         return;
     
     // LD_L_A;
     // LD_H(HIGH(wVirtualOAM));
-    uint16_t hl = (wVirtualOAM & 0xff00) | sprite_idx;
     // LD_DE(SPRITEOAMSTRUCT_LENGTH);
     // LD_A_B;
     // LD_C(SCREEN_HEIGHT_PX + 2 * TILE_WIDTH);
 
+    uint8_t i = sprite_idx;
     do {
         // LD_hl_C;  // y
-        gb_write(hl, SCREEN_HEIGHT_PX + 2 * TILE_WIDTH);
+        wram->wVirtualOAMSprite[i].yCoord = SCREEN_HEIGHT_PX + 2 * TILE_WIDTH;
         // ADD_HL_DE;
-        hl += SPRITEOAMSTRUCT_LENGTH;
+        i++;
         // CP_A_L;
         // IF_NZ goto loop;
-    } while(b != (uint8_t)LOW(hl));
+    } while(i < b);
     // RET;
     // POP_AF;
     // LDH_addr_A(hOAMUpdate);
-    gb_write(hOAMUpdate, temp);
+    hram->hOAMUpdate = temp;
 }
 
 void ApplyBGMapAnchorToObjects(void) {
@@ -4977,10 +5049,10 @@ static void InitSprites_DeterminePriorities(void) {
     // LD_HL(wObjectPriorities);
     // LD_BC(NUM_OBJECT_STRUCTS);
     // CALL(aByteFill);
-    ByteFill_Conv(wObjectPriorities, NUM_OBJECT_STRUCTS, 0);
+    ByteFill_Conv2(wram->wObjectPriorities, NUM_OBJECT_STRUCTS, 0);
     uint8_t d = 0;
     struct Object* bc = &wram->wPlayerStruct;
-    uint16_t hl = wObjectPriorities;
+    uint8_t* hl = wram->wObjectPriorities;
     uint8_t e;
     // LD_D(0);
     // LD_BC(wObjectStructs);
@@ -5034,7 +5106,7 @@ static void InitSprites_DeterminePriorities(void) {
             // LD_A_D;
             // OR_A_E;
             // LD_hli_A;
-            gb_write(hl++, d | e);
+            *(hl++) = d | e;
         }
         // INC_D;
         // LD_A_D;
@@ -5044,34 +5116,33 @@ static void InitSprites_DeterminePriorities(void) {
     // RET;
 }
 
-static uint16_t InitSprites_GetObjectStructPointer(uint8_t a) {
+static struct Object* InitSprites_GetObjectStructPointer(uint8_t a) {
     // LD_C_A;
     // LD_B(0);
     // LD_HL(mInitSprites_Addresses);
     // ADD_HL_BC;
     // ADD_HL_BC;
-    uint16_t hl = mInitSprites_Addresses + (a * 2);
     // LD_C_hl;
     // INC_HL;
     // LD_B_hl;
     // RET;
-    return gb_read16(hl);
+    return &wram->wPlayerStruct + a;
 }
 
-static bool InitSprites_InitSprite(uint16_t bc) {
+static bool InitSprites_InitSprite(struct Object* bc) {
     // LD_HL(OBJECT_SPRITE_TILE);
     // ADD_HL_BC;
     // LD_A_hl;
-    uint8_t tile = gb_read(bc + OBJECT_SPRITE_TILE);
+    uint8_t tile = bc->spriteTile;
     // AND_A(~(1 << 7));
     // LDH_addr_A(hCurSpriteTile);
-    gb_write(hCurSpriteTile, tile & ~(1 << 7));
+    hram->hCurSpriteTile = tile & ~(1 << 7);
     // XOR_A_A;
     // BIT_hl(7);
     // IF_NZ goto not_vram1;
     // OR_A(VRAM_BANK_1);
     uint8_t a = 0;
-    a |= (!((tile >> (7)) & 0x1))? VRAM_BANK_1: 0;
+    a |= (!bit_test(bc->spriteTile, 7))? VRAM_BANK_1: 0;
 
     // LD_HL(OBJECT_FLAGS2);
     // ADD_HL_BC;
@@ -5079,15 +5150,15 @@ static bool InitSprites_InitSprite(uint16_t bc) {
     // BIT_E(OBJ_FLAGS2_7);
     // IF_Z goto not_priority;
     // OR_A(PRIORITY);
-    uint8_t flags2 = gb_read(bc + OBJECT_FLAGS2);
-    a |= (!!((flags2 >> (OBJ_FLAGS2_7)) & 0x1))? PRIORITY: 0;
+    uint8_t flags2 = bc->flags2;
+    a |= (bit_test(flags2, OBJ_FLAGS2_7))? PRIORITY: 0;
 
 // not_priority:
 
     // BIT_E(USE_OBP1_F);
     // IF_Z goto not_obp_num;
     // OR_A(OBP_NUM);
-    a |= (!!((flags2 >> (USE_OBP1_F)) & 0x1))? OBP_NUM: 0;
+    a |= (bit_test(flags2, USE_OBP1_F))? OBP_NUM: 0;
 
 // not_obp_num:
 
@@ -5098,32 +5169,28 @@ static bool InitSprites_InitSprite(uint16_t bc) {
     // AND_A(PALETTE_MASK);
     // OR_A_D;
     // LD_D_A;
-    uint8_t pal = (gb_read(bc + OBJECT_PALETTE) & PALETTE_MASK) | a;
+    uint8_t pal = (bc->palette & PALETTE_MASK) | a;
     // XOR_A_A;
     // BIT_E(OVERHEAD_F);
     // IF_Z goto not_overhead;
     // OR_A(PRIORITY);
-    a = (!!((flags2 >> (OVERHEAD_F)) & 0x1))? PRIORITY: 0;
 
 // not_overhead:
 
     // LDH_addr_A(hCurSpriteOAMFlags);
-    gb_write(hCurSpriteOAMFlags, a);
+    hram->hCurSpriteOAMFlags = (bit_test(flags2, OVERHEAD_F))? PRIORITY: 0;
     // LD_HL(OBJECT_SPRITE_X);
     // ADD_HL_BC;
     // LD_A_hl;
-    uint8_t x = gb_read(bc + OBJECT_SPRITE_X);
     // LD_HL(OBJECT_SPRITE_X_OFFSET);
     // ADD_HL_BC;
     // ADD_A_hl;
     // ADD_A(8);
     // LD_E_A;
-    x += gb_read(bc + OBJECT_SPRITE_X_OFFSET) + 8;
     // LD_A_addr(wPlayerBGMapOffsetX);
     // ADD_A_E;
-    x += gb_read(wPlayerBGMapOffsetX);
     // LDH_addr_A(hCurSpriteXPixel);
-    gb_write(hCurSpriteXPixel, x);
+    hram->hCurSpriteXPixel = bc->spriteX + bc->spriteXOffset + 8 + wram->wPlayerBGMapOffsetX;
 
     // LD_HL(OBJECT_SPRITE_Y);
     // ADD_HL_BC;
@@ -5136,11 +5203,11 @@ static bool InitSprites_InitSprite(uint16_t bc) {
     // LD_A_addr(wPlayerBGMapOffsetY);
     // ADD_A_E;
     // LDH_addr_A(hCurSpriteYPixel);
-    gb_write(hCurSpriteYPixel, gb_read(bc + OBJECT_SPRITE_Y) + gb_read(bc + OBJECT_SPRITE_Y_OFFSET) + 12 + gb_read(wPlayerBGMapOffsetY));
+    hram->hCurSpriteYPixel = bc->spriteY + bc->spriteYOffset + 12 + wram->wPlayerBGMapOffsetY;
     // LD_HL(OBJECT_FACING_STEP);
     // ADD_HL_BC;
     // LD_A_hl;
-    uint8_t step = gb_read(bc + OBJECT_FACING_STEP);
+    uint8_t step = bc->facingStep;
     // CP_A(STANDING);
     // JP_Z(mInitSprites_done);
     // CP_A(NUM_FACINGS);
@@ -5151,23 +5218,21 @@ static bool InitSprites_InitSprite(uint16_t bc) {
         // ADD_HL_HL;
         // LD_BC(mFacings);
         // ADD_HL_BC;
-        uint16_t hl = mFacings + 2*step;
+        const struct Facing* hl = Facings[step];
         // LD_A_hli;
         // LD_H_hl;
         // LD_L_A;
         // LDH_A_addr(hUsedSpriteIndex);
-        uint8_t l = gb_read(hl++);
-        hl = gb_read(hl)<<8 | l;
         // LD_C_A;
         // LD_B(HIGH(wVirtualOAM));
-        bc = ((wVirtualOAM & 0xff00)<<8) | gb_read(hUsedSpriteIndex);
+        struct SpriteOAM* bc = wram->wVirtualOAMSprite + (hram->hUsedSpriteIndex >> 2);
         // LD_A_hli;
+        a = hl->count;
         // LDH_addr_A(hUsedSpriteTile);
-        a = gb_read(hl++);
-        gb_write(hUsedSpriteTile, a);
+        hram->hUsedSpriteTile = a;
 
         // ADD_A_C;
-        a += LOW(bc);
+        a += hram->hUsedSpriteIndex;
         // CP_A(LOW(wVirtualOAMEnd));
         if(a >= LOW(wVirtualOAMEnd)) {
 
@@ -5180,27 +5245,28 @@ static bool InitSprites_InitSprite(uint16_t bc) {
         // IF_NC goto full;
 
     // addsprite:
+        uint8_t idx = 0;
         do {
             // LDH_A_addr(hCurSpriteYPixel);
             // ADD_A_hl;
             // INC_HL;
             // LD_bc_A;  // y
             // INC_C;
-            gb_write(bc++, gb_read(hCurSpriteYPixel) + gb_read(hl++));
+            bc[idx].yCoord = hram->hCurSpriteYPixel + hl->data[idx].y;
             // LDH_A_addr(hCurSpriteXPixel);
             // ADD_A_hl;
             // INC_HL;
             // LD_bc_A;  // x
             // INC_C;
-            gb_write(bc++, gb_read(hCurSpriteYPixel) + gb_read(hl++));
+            bc[idx].xCoord = hram->hCurSpriteXPixel + hl->data[idx].x;
             // LD_E_hl;
             // INC_HL;
-            uint8_t id = gb_read(hl++);
+            uint8_t attr = hl->data[idx].attr;
             // LDH_A_addr(hCurSpriteTile);
             // BIT_E(ABSOLUTE_TILE_ID_F);
             // IF_Z goto nope1;
             // XOR_A_A;
-            a = (!((id >> (ABSOLUTE_TILE_ID_F)) & 0x1))? gb_read(hCurSpriteTile): 0;
+            a = (!bit_test(attr, ABSOLUTE_TILE_ID_F))? hram->hCurSpriteTile: 0;
 
         // nope1:
 
@@ -5208,13 +5274,13 @@ static bool InitSprites_InitSprite(uint16_t bc) {
             // INC_HL;
             // LD_bc_A;  // tile id
             // INC_C;
-            gb_write(bc++, a + gb_read(hl++));
+            bc[idx].tileID = a + hl->data[idx].tile_idx;
             // LD_A_E;
             // BIT_A(RELATIVE_ATTRIBUTES_F);
             // IF_Z goto nope2;
             // LDH_A_addr(hCurSpriteOAMFlags);
             // OR_A_E;
-            a = (!((id >> (RELATIVE_ATTRIBUTES_F)) & 0x1))? gb_read(hCurSpriteOAMFlags) | id: id;
+            a = (bit_test(attr, ABSOLUTE_TILE_ID_F))? hram->hCurSpriteOAMFlags | attr: attr;
 
         // nope2:
 
@@ -5222,18 +5288,19 @@ static bool InitSprites_InitSprite(uint16_t bc) {
             // OR_A_D;
             // LD_bc_A;  // attributes
             // INC_C;
-            gb_write(bc++, pal | (a & (OBP_NUM | X_FLIP | Y_FLIP | PRIORITY)));
+            bc[idx].attributes = pal | (a & (OBP_NUM | X_FLIP | Y_FLIP | PRIORITY));
             // LDH_A_addr(hUsedSpriteTile);
             // DEC_A;
             // LDH_addr_A(hUsedSpriteTile);
-            a = gb_read(hUsedSpriteTile) - 1;
-            gb_write(hUsedSpriteTile, a);
+            a = --hram->hUsedSpriteTile;
             // IF_NZ goto addsprite;
+            idx++;
             if(a != 0) continue;
             // LD_A_C;
             // LDH_addr_A(hUsedSpriteIndex);
-            gb_write(hUsedSpriteIndex, LOW(bc));
-        } while(0);
+            hram->hUsedSpriteIndex += sizeof(struct SpriteOAM) * idx;
+            break;
+        } while(1);
     }
 
     // XOR_A_A;
@@ -5242,19 +5309,19 @@ static bool InitSprites_InitSprite(uint16_t bc) {
 }
 
 static void InitSprites_InitSpritesByPriority(uint8_t c) {
-    uint16_t hl = (wObjectPriorities);
+    uint8_t* hl = wram->wObjectPriorities;
 
     while(1) {
         // LD_A_hli;
         // LD_D_A;
         // AND_A(0xf0);
         // RET_Z;
-        uint8_t d = gb_read(hl++);
+        uint8_t d = *(hl++);
         if((d & 0xf0) == 0)
             return;
         // CP_A_C;
         // IF_NZ goto next_sprite;
-        if((d & 0xf0) == c)
+        if((d & 0xf0) != c)
             continue;
         
         // PUSH_BC;
@@ -5262,7 +5329,7 @@ static void InitSprites_InitSpritesByPriority(uint8_t c) {
         // LD_A_D;
         // AND_A(0xf);
         // CALL(aInitSprites_GetObjectStructPointer);
-        uint16_t ptr = InitSprites_GetObjectStructPointer(d & 0xf);
+        struct Object* ptr = InitSprites_GetObjectStructPointer(d & 0xf);
         // CALL(aInitSprites_InitSprite);
         InitSprites_InitSprite(ptr);
         // POP_HL;

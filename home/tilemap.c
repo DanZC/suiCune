@@ -7,8 +7,10 @@
 
 void ClearBGPalettes(void) {
     SET_PC(aClearBGPalettes);
-    CALL(aClearPalettes);
-    return WaitBGMap();
+    // CALL(aClearPalettes);
+    // return WaitBGMap();
+    ClearBGPalettes_Conv();
+    RET;
 }
 
 void ClearBGPalettes_Conv(void) {
@@ -179,11 +181,11 @@ wait2:
 }
 
 void v_CopyTilemapAtOnce_Conv(void) {
-    uint8_t bg_map_mode = gb_read(hBGMapMode);
-    gb_write(hBGMapMode, 0);
+    uint8_t bg_map_mode = hram->hBGMapMode;
+    hram->hBGMapMode = 0;
 
-    uint8_t map_anims = gb_read(hMapAnims);
-    gb_write(map_anims, 0);
+    uint8_t map_anims = hram->hMapAnims;
+    hram->hMapAnims = 0;
 
     // In C we don't wait.
     // wait:
@@ -192,10 +194,10 @@ void v_CopyTilemapAtOnce_Conv(void) {
     // IF_C goto wait;
 
     gb_write(rVBK, MBANK(avBGMap2));
-    v_CopyTilemapAtOnce_CopyBGMapViaStack_Conv(coord(0, 0, wAttrmap));
+    v_CopyTilemapAtOnce_CopyBGMapViaStack_Conv2(coord(0, 0, wram->wAttrmap));
 
     gb_write(rVBK, MBANK(avBGMap0));
-    v_CopyTilemapAtOnce_CopyBGMapViaStack_Conv(coord(0, 0, wTilemap));
+    v_CopyTilemapAtOnce_CopyBGMapViaStack_Conv2(coord(0, 0, wram->wTilemap));
 
     // In C we don't wait.
     // wait2:
@@ -203,8 +205,8 @@ void v_CopyTilemapAtOnce_Conv(void) {
     // CP_A(0x80 - 1);
     // IF_C goto wait2;
 
-    gb_write(hMapAnims, map_anims);
-    gb_write(hBGMapMode, bg_map_mode);
+    hram->hMapAnims = map_anims;
+    hram->hBGMapMode = bg_map_mode;
 }
 
 void v_CopyTilemapAtOnce_CopyBGMapViaStack(void) {
@@ -252,8 +254,8 @@ loop:
 void v_CopyTilemapAtOnce_CopyBGMapViaStack_Conv(uint16_t hl) {
     //  Copy all tiles to vBGMap
     uint16_t sp = hl;
-    hl = gb_read(hBGMapAddress + 1);
-    gb_write(hTilesPerCycle, SCREEN_HEIGHT);
+    hl = hram->hBGMapAddress & 0x1fff;
+    hram->hTilesPerCycle = SCREEN_HEIGHT;
     // uint8_t b = 1 << 1;
     // uint8_t c = LOW(rSTAT);
     uint8_t a = SCREEN_HEIGHT;
@@ -273,6 +275,31 @@ void v_CopyTilemapAtOnce_CopyBGMapViaStack_Conv(uint16_t hl) {
         hl += (BG_MAP_WIDTH - SCREEN_WIDTH);
     } while(--a != 0);
     gb_write(hTilesPerCycle, 0);
+}
+
+void v_CopyTilemapAtOnce_CopyBGMapViaStack_Conv2(const uint8_t* sp) {
+    //  Copy all tiles to vBGMap
+    uint8_t* hl = GBToRAMAddr(hram->hBGMapAddress & 0xff00);
+    hram->hTilesPerCycle = SCREEN_HEIGHT;
+    // uint8_t b = 1 << 1;
+    // uint8_t c = LOW(rSTAT);
+    uint8_t a = SCREEN_HEIGHT;
+    do {
+        for (int rept = 0; rept < SCREEN_WIDTH / 2; rept++) {
+            uint8_t e = *(sp++);
+            uint8_t d = *(sp++);
+            //  if in v/hblank, wait until not in v/hblank
+            // LDH_A_c;
+            // AND_A_B;
+            // IF_NZ goto loop\@;
+            //  load vBGMap
+
+            *(hl++) = e;
+            *(hl++) = d;
+        }
+        hl += (BG_MAP_WIDTH - SCREEN_WIDTH);
+    } while(--a != 0);
+    hram->hTilesPerCycle = 0;
 }
 
 void SetPalettes(void) {
@@ -306,7 +333,7 @@ void SetPalettes_Conv(void) {
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // IF_NZ goto SetPalettesForGameBoyColor;
-    if(gb_read(hCGB) != 0)
+    if(hram->hCGB != 0)
     {
         // PUSH_DE;
         // LD_A(0b11100100);
@@ -377,31 +404,31 @@ void ClearPalettes_Conv(void) {
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // IF_NZ goto cgb;
-    if(gb_read(hCGB) != 0)
+    if(hram->hCGB != 0)
     {
         // LDH_A_addr(rSVBK);
         // PUSH_AF;
-        uint8_t vbk_temp = gb_read(rSVBK);
+        // uint8_t vbk_temp = gb_read(rSVBK);
 
         // LD_A(MBANK(awBGPals2));
         // LDH_addr_A(rSVBK);
-        gb_write(rSVBK, MBANK(awBGPals2));
+        // gb_write(rSVBK, MBANK(awBGPals2));
 
         //  Fill wBGPals2 and wOBPals2 with $ffff (white)
         // LD_HL(wBGPals2);
         // LD_BC(16 * PALETTE_SIZE);
         // LD_A(0xff);
         // CALL(aByteFill);
-        ByteFill_Conv(wBGPals2, (16 * PALETTE_SIZE), 0xff);
+        ByteFill_Conv2(wram->wBGPals2, (16 * PALETTE_SIZE), 0xff);
 
         // POP_AF;
         // LDH_addr_A(rSVBK);
-        gb_write(rSVBK, vbk_temp);
+        // gb_write(rSVBK, vbk_temp);
 
         //  Request palette update
         // LD_A(TRUE);
         // LDH_addr_A(hCGBPalUpdate);
-        gb_write(hCGBPalUpdate, TRUE);
+        hram->hCGBPalUpdate = TRUE;
 
         // RET;
         return;

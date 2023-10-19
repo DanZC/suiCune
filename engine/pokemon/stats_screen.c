@@ -1622,7 +1622,7 @@ BoxMon:
     CALL(aAddNTimes);
     LD_B_H;
     LD_C_L;
-    LD_A(BANK(sBoxMons));
+    LD_A(MBANK(asBoxMons));
     CALL(aOpenSRAM);
     CALL(aStatsScreen_GetAnimationParam_CheckEggFaintedFrzSlp);
     PUSH_AF;

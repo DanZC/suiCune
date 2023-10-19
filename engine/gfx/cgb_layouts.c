@@ -200,7 +200,7 @@ void v_CGB_FinishBattleScreenLayout(void){
     LD_HL(mBattleObjectPals);
     LD_DE(wOBPals1 + PALETTE_SIZE * PAL_BATTLE_OB_GRAY);
     LD_BC(6 * PALETTE_SIZE);
-    LD_A(BANK(wOBPals1));
+    LD_A(MBANK(awOBPals1));
     CALL(aFarCopyWRAM);
     CALL(aApplyAttrmap);
     RET;
@@ -220,7 +220,7 @@ void Mobile_InitPartyMenuBGPal7(void){
 not_mobile:
     LD_DE(wBGPals1 + PALETTE_SIZE * 7);
     LD_BC(1 * PALETTE_SIZE);
-    LD_A(BANK(wBGPals1));
+    LD_A(MBANK(awBGPals1));
     CALL(aFarCopyWRAM);
     RET;
 
@@ -235,7 +235,7 @@ void InitPartyMenuBGPal0(void){
 not_mobile:
     LD_DE(wBGPals1 + PALETTE_SIZE * 0);
     LD_BC(1 * PALETTE_SIZE);
-    LD_A(BANK(wBGPals1));
+    LD_A(MBANK(awBGPals1));
     CALL(aFarCopyWRAM);
     RET;
 
@@ -388,7 +388,7 @@ got_palette:
     LD_HL(mPokedexCursorPalette);
     LD_DE(wOBPals1 + PALETTE_SIZE * 7);  // green cursor palette
     LD_BC(1 * PALETTE_SIZE);
-    LD_A(BANK(wOBPals1));
+    LD_A(MBANK(awOBPals1));
     CALL(aFarCopyWRAM);
     CALL(aApplyAttrmap);
     CALL(aApplyPals);
@@ -507,7 +507,7 @@ void v_CGB_SlotMachine(void){
     LD_HL(mSlotMachinePals);
     LD_DE(wBGPals1);
     LD_BC(16 * PALETTE_SIZE);
-    LD_A(BANK(wBGPals1));
+    LD_A(MBANK(awBGPals1));
     CALL(aFarCopyWRAM);
     CALL(aWipeAttrmap);
     hlcoord(0, 2, wAttrmap);
@@ -602,7 +602,7 @@ ShellderLaprasScene:
     LD_HL(mv_CGB_GSIntro_ShellderLaprasOBPals);
     LD_DE(wOBPals1);
     LD_BC(2 * PALETTE_SIZE);
-    LD_A(BANK(wOBPals1));
+    LD_A(MBANK(awOBPals1));
     CALL(aFarCopyWRAM);
     CALL(aWipeAttrmap);
     RET;
@@ -646,7 +646,7 @@ void v_CGB_BetaPoker(void){
     LD_HL(mBetaPokerPals);
     LD_DE(wBGPals1);
     LD_BC(5 * PALETTE_SIZE);
-    LD_A(BANK(wBGPals1));
+    LD_A(MBANK(awBGPals1));
     CALL(aFarCopyWRAM);
     CALL(aApplyPals);
     CALL(aWipeAttrmap);
@@ -659,7 +659,7 @@ void v_CGB_Diploma(void){
     LD_HL(mDiplomaPalettes);
     LD_DE(wBGPals1);
     LD_BC(16 * PALETTE_SIZE);
-    LD_A(BANK(wBGPals1));
+    LD_A(MBANK(awBGPals1));
     CALL(aFarCopyWRAM);
 
     LD_HL(mPalPacket_Diploma + 1);
@@ -713,7 +713,7 @@ pokemon:
     LD_HL(mBattleObjectPals);
     LD_DE(wOBPals1 + PALETTE_SIZE * PAL_BATTLE_OB_GRAY);
     LD_BC(6 * PALETTE_SIZE);
-    LD_A(BANK(wOBPals1));
+    LD_A(MBANK(awOBPals1));
     CALL(aFarCopyWRAM);
 
 
@@ -731,12 +731,12 @@ void v_CGB_GSTitleScreen(void){
     LD_HL(mUnusedGSTitleBGPals);
     LD_DE(wBGPals1);
     LD_BC(5 * PALETTE_SIZE);
-    LD_A(BANK(wBGPals1));
+    LD_A(MBANK(awBGPals1));
     CALL(aFarCopyWRAM);
     LD_HL(mUnusedGSTitleOBPals);
     LD_DE(wOBPals1);
     LD_BC(2 * PALETTE_SIZE);
-    LD_A(BANK(wOBPals1));
+    LD_A(MBANK(awOBPals1));
     CALL(aFarCopyWRAM);
     LD_A(SCGB_DIPLOMA);
     LD_addr_A(wDefaultSGBLayout);
@@ -765,7 +765,7 @@ void v_CGB_UnownPuzzle(void){
     CALL(aLoadHLPaletteIntoDE);
     LDH_A_addr(rSVBK);
     PUSH_AF;
-    LD_A(BANK(wOBPals1));
+    LD_A(MBANK(awOBPals1));
     LDH_addr_A(rSVBK);
     LD_HL(wOBPals1);
     LD_A(LOW((1 << 0) * 31 + (1 << 5) * 0 + (1 << 10) * 0));  // (1 << 0) * 31 + (1 << 5) * 0 + (1 << 10) * 0
@@ -964,7 +964,7 @@ tutorial_male:
 got_gender:
     LD_DE(wBGPals1);
     LD_BC(8 * PALETTE_SIZE);  // 6 palettes?
-    LD_A(BANK(wBGPals1));
+    LD_A(MBANK(awBGPals1));
     CALL(aFarCopyWRAM);
     CALL(aWipeAttrmap);
     hlcoord(0, 0, wAttrmap);
@@ -1116,7 +1116,7 @@ void v_CGB_TradeTube(void){
     LD_HL(mPartyMenuOBPals);
     LD_DE(wOBPals1);
     LD_BC(1 * PALETTE_SIZE);
-    LD_A(BANK(wOBPals1));
+    LD_A(MBANK(awOBPals1));
     CALL(aFarCopyWRAM);
     LD_DE(wOBPals1 + PALETTE_SIZE * 7);
     LD_A(PREDEFPAL_TRADE_TUBE);
@@ -1144,7 +1144,7 @@ void v_CGB_MysteryGift(void){
     LD_HL(mv_CGB_MysteryGift_MysteryGiftPalettes);
     LD_DE(wBGPals1);
     LD_BC(2 * PALETTE_SIZE);
-    LD_A(BANK(wBGPals1));
+    LD_A(MBANK(awBGPals1));
     CALL(aFarCopyWRAM);
     CALL(aApplyPals);
     CALL(aWipeAttrmap);
@@ -1183,7 +1183,7 @@ void GS_CGB_MysteryGift(void){
     LD_HL(mGS_CGB_MysteryGift_MysteryGiftPalette);
     LD_DE(wBGPals1);
     LD_BC(1 * PALETTE_SIZE);
-    LD_A(BANK(wBGPals1));
+    LD_A(MBANK(awBGPals1));
     CALL(aFarCopyWRAM);
     CALL(aApplyPals);
     CALL(aWipeAttrmap);

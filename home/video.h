@@ -3,6 +3,7 @@ bool DMATransfer_Conv(void);
 void UpdateBGMapBuffer(void);
 bool UpdateBGMapBuffer_Conv(void);
 void WaitTop(void);
+void WaitTop_Conv(void);
 void UpdateBGMap(void);
 void UpdateBGMap_Conv(void);
 void Serve1bppRequest(void);

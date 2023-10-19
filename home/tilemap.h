@@ -15,6 +15,7 @@ void v_CopyTilemapAtOnce(void);
 void v_CopyTilemapAtOnce_Conv(void);
 void v_CopyTilemapAtOnce_CopyBGMapViaStack(void);
 void v_CopyTilemapAtOnce_CopyBGMapViaStack_Conv(uint16_t hl);
+void v_CopyTilemapAtOnce_CopyBGMapViaStack_Conv2(const uint8_t* sp);
 void SetPalettes(void);
 void SetPalettes_Conv(void);
 void ClearPalettes(void);
