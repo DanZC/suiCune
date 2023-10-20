@@ -946,7 +946,7 @@ void PlayerMovement(void){
 
 }
 
-struct FlagA PlayerMovement_Conv(void){
+u8_flag_s PlayerMovement_Conv(void){
     // FARCALL(aDoPlayerMovement);
     // LD_A_C;
     uint8_t a = DoPlayerMovement_Conv();
@@ -972,7 +972,7 @@ struct FlagA PlayerMovement_Conv(void){
         // XOR_A_A;
         // LD_C_A;
         // RET;
-        return (struct FlagA){.a = 0, .flag = false};
+        return u8_flag(0, false);
 
     case PLAYERMOVEMENT_JUMP:
     // jump:
@@ -980,7 +980,7 @@ struct FlagA PlayerMovement_Conv(void){
         // XOR_A_A;
         // LD_C_A;
         // RET;
-        return (struct FlagA){.a = 0, .flag = false};
+        return u8_flag(0, false);
 
     case PLAYERMOVEMENT_WARP:
     // warp:
@@ -988,7 +988,7 @@ struct FlagA PlayerMovement_Conv(void){
         // LD_C_A;
         // SCF;
         // RET;
-        return (struct FlagA){.a = PLAYEREVENT_WARP, .flag = true};
+        return u8_flag(PLAYEREVENT_WARP, true);
 
     case PLAYERMOVEMENT_TURN:
     // turn:
@@ -996,7 +996,7 @@ struct FlagA PlayerMovement_Conv(void){
         // LD_C_A;
         // SCF;
         // RET;
-        return (struct FlagA){.a = PLAYEREVENT_JOYCHANGEFACING, .flag = true};
+        return u8_flag(PLAYEREVENT_JOYCHANGEFACING, true);
 
     case PLAYERMOVEMENT_FORCE_TURN:
     // force_turn:
@@ -1007,7 +1007,7 @@ struct FlagA PlayerMovement_Conv(void){
         // LD_C_A;
         // SCF;
         // RET;
-        return (struct FlagA){.a = CallScript_Conv(BANK(aScript_ForcedMovement), mScript_ForcedMovement), .flag = true};
+        return u8_flag(CallScript_Conv(BANK(aScript_ForcedMovement), mScript_ForcedMovement), true);
 
     case PLAYERMOVEMENT_CONTINUE:
     // continue_:
@@ -1017,11 +1017,11 @@ struct FlagA PlayerMovement_Conv(void){
         // LD_C_A;
         // AND_A_A;
         // RET;
-        return (struct FlagA){.a = 0xff, .flag = false};
+        return u8_flag(0xff, false);
     }
     // LD_A_C;
     // RET;
-    return (struct FlagA){.a = 0, .flag = false};
+    return u8_flag(0, false);
 }
 
 void PlayerMovementPointers(void){
@@ -1523,15 +1523,15 @@ done:
 }
 
 //  Random encounter
-struct FlagA RandomEncounter_Conv(void){
+u8_flag_s RandomEncounter_Conv(void){
     // CALL(aCheckWildEncounterCooldown);
     // IF_C goto nope;
     if(CheckWildEncounterCooldown_Conv())
-        return flag_a(1, false);
+        return u8_flag(1, false);
     // CALL(aCanUseSweetScent);
     // IF_NC goto nope;
     if(!CanUseSweetScent_Conv())
-        return flag_a(1, false);
+        return u8_flag(1, false);
     // LD_HL(wStatusFlags2);
     // BIT_hl(STATUSFLAGS2_BUG_CONTEST_TIMER_F);
     // IF_NZ goto bug_contest;
@@ -1548,7 +1548,7 @@ struct FlagA RandomEncounter_Conv(void){
     // FARCALL(aTryWildEncounter);
     // IF_NZ goto nope;
     if(!TryWildEncounter_Conv())
-        return flag_a(1, false);
+        return u8_flag(1, false);
     // goto ok;
 
 
@@ -1567,7 +1567,7 @@ struct FlagA RandomEncounter_Conv(void){
     // CALL(aCallScript);
     // SCF;
     // RET;
-    return flag_a(CallScript_Conv2(WildBattleScript), true);
+    return u8_flag(CallScript_Conv2(WildBattleScript), true);
 }
 
 bool WildBattleScript(script_s* s){

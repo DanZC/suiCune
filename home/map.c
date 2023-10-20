@@ -525,7 +525,7 @@ void CheckWarpTile(void){
 bool CheckWarpTile_Conv(void){
     // CALL(aGetDestinationWarpNumber);
     // RET_NC ;
-    struct FlagA res = GetDestinationWarpNumber_Conv();
+    u8_flag_s res = GetDestinationWarpNumber_Conv();
     if(!res.flag)
         return false;
 
@@ -554,7 +554,7 @@ void WarpCheck(void){
 bool WarpCheck_Conv(void){
     // CALL(aGetDestinationWarpNumber);
     // RET_NC ;
-    struct FlagA res = GetDestinationWarpNumber_Conv();
+    u8_flag_s res = GetDestinationWarpNumber_Conv();
     if(!res.flag)
         return false;
     // CALL(aCopyWarpData);
@@ -646,7 +646,7 @@ IncreaseHLTwice:
 
 static_assert(sizeof(struct WarpEventData) == WARP_EVENT_SIZE);
 
-static struct FlagA GetDestinationWarpNumber_Function(void) {
+static u8_flag_s GetDestinationWarpNumber_Function(void) {
     // LD_A_addr(wPlayerStandingMapY);
     // SUB_A(4);
     // LD_E_A;
@@ -659,7 +659,7 @@ static struct FlagA GetDestinationWarpNumber_Function(void) {
     // AND_A_A;
     // RET_Z ;
     if(wram->wCurMapWarpCount == 0)
-        return flag_a(0xff, false);
+        return u8_flag(0xff, false);
 
     // LD_C_A;
     uint8_t c = wram->wCurMapWarpCount;
@@ -692,7 +692,7 @@ static struct FlagA GetDestinationWarpNumber_Function(void) {
             uint8_t a = (wram->wCurMapWarpCount + 1) - c;
             // SCF;
             // RET;
-            return flag_a(a, true);
+            return u8_flag(a, true);
 
 
         // IncreaseHLTwice:
@@ -718,14 +718,14 @@ static struct FlagA GetDestinationWarpNumber_Function(void) {
     } while(hl++, --c != 0);
     // XOR_A_A;
     // RET;
-    return flag_a(0xff, false);
+    return u8_flag(0xff, false);
 }
 
-struct FlagA GetDestinationWarpNumber_Conv(void){
+u8_flag_s GetDestinationWarpNumber_Conv(void){
     // FARCALL(aCheckWarpCollision);
     // RET_NC ;
     if(!CheckWarpCollision_Conv())
-        return flag_a(0xff, false);
+        return u8_flag(0xff, false);
 
     // LDH_A_addr(hROMBank);
     // PUSH_AF;
@@ -734,7 +734,7 @@ struct FlagA GetDestinationWarpNumber_Conv(void){
     // CALL(aSwitchToMapScriptsBank);
     SwitchToMapScriptsBank_Conv();
     // CALL(aGetDestinationWarpNumber_GetDestinationWarpNumber);
-    struct FlagA res = GetDestinationWarpNumber_Function();
+    u8_flag_s res = GetDestinationWarpNumber_Function();
 
     // POP_DE;
     // LD_A_D;

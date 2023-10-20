@@ -15,7 +15,7 @@ bool CheckWarpTile_Conv(void);
 void WarpCheck(void);
 bool WarpCheck_Conv(void);
 void GetDestinationWarpNumber(void);
-struct FlagA GetDestinationWarpNumber_Conv(void);
+u8_flag_s GetDestinationWarpNumber_Conv(void);
 void CopyWarpData(void);
 void CopyWarpData_Conv(uint8_t c);
 void CheckOutdoorMap(void);

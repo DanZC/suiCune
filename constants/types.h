@@ -10,13 +10,9 @@ union Register
     };
 };
 
-struct FlagA 
-{
-    bool flag;
-    uint8_t a;
-};
+typedef struct { uint8_t a; bool flag; } u8_flag_s;
 
-#define flag_a(_a, _flag) (struct FlagA){.a = _a, .flag = _flag}
+#define u8_flag(_u8, _flag) (u8_flag_s){.a = _u8, .flag = _flag}
 
 struct ByteWord 
 {

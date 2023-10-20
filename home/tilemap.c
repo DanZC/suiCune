@@ -474,7 +474,7 @@ void GetSGBLayout_Conv(uint8_t b) {
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // IF_NZ goto sgb;
-    if(gb_read(hCGB) != 0) {
+    if(hram->hCGB != 0) {
         // PREDEF_JUMP(pLoadSGBLayout);
         LoadSGBLayoutCGB_Conv(b);
     }

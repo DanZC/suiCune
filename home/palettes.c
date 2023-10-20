@@ -51,7 +51,7 @@ bool UpdateCGBPals_Conv(void){
     // LDH_A_addr(hCGBPalUpdate);
     // AND_A_A;
     // RET_Z ;
-    if(gb_read(hCGBPalUpdate) == 0)
+    if(hram->hCGBPalUpdate == 0)
         return false;
 // fallthrough
 

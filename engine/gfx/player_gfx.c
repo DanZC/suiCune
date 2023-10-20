@@ -5,6 +5,7 @@
 #include "../../home/tilemap.h"
 #include "../../home/text.h"
 #include "../../gfx/sprites.h"
+#include "../../gfx/misc.h"
 
 // void ChrisPic(void){
 // INCBIN "gfx/player/chris.2bpp"
@@ -285,7 +286,7 @@ void GetChrisBackpic(void){
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x31);
     // LD_C(7 * 7);
     // PREDEF(pDecompressGet2bpp);
-    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x31, "gfx/player/chris_back.png", 0, 7 * 7);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x31, ChrisBackpic, 0, 7 * 7);
     // RET;
 
 }

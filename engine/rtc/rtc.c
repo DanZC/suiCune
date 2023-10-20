@@ -48,7 +48,7 @@ void StartRTC_Conv(void){
     // LD_A_addr(MBC3RTC);
     // RES_A(6);  // halt
     // LD_addr_A(MBC3RTC);
-    gb_write(MBC3RTC, gb_read(MBC3RTC) & ((0xFE << 6) | (0xFF - (8 - 6))));
+    gb_write(MBC3RTC, gb_read(MBC3RTC) & ((0xFE << 6) | (0xFF >> (8 - 6))));
 
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();

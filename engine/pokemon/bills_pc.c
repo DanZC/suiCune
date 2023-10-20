@@ -919,7 +919,7 @@ empty:
 
 }
 
-struct FlagA v_StatsScreenDPad_Conv(uint8_t* hl){
+u8_flag_s v_StatsScreenDPad_Conv(uint8_t* hl){
     // LD_A_addr(wBillsPC_NumMonsOnScreen);
     // LD_D_A;
     union Register de;
@@ -1048,7 +1048,7 @@ top:
 
 }
 
-struct FlagA BillsPC_PressUp_Conv(void){
+u8_flag_s BillsPC_PressUp_Conv(void){
     // LD_HL(wBillsPC_CursorPosition);
     // LD_A_hl;
     // AND_A_A;
@@ -1097,7 +1097,7 @@ not_bottom:
 
 }
 
-struct FlagA BillsPC_PressDown_Conv(uint16_t de){
+u8_flag_s BillsPC_PressDown_Conv(uint16_t de){
     // LD_A_addr(wBillsPC_CursorPosition);
     // LD_HL(wBillsPC_ScrollPosition);
     // ADD_A_hl;
@@ -1164,11 +1164,11 @@ void BillsPC_JoypadDidNothing(void){
 
 }
 
-struct FlagA BillsPC_JoypadDidNothing_Conv(void){
+u8_flag_s BillsPC_JoypadDidNothing_Conv(void){
     // XOR_A_A;
     // AND_A_A;
     // RET;
-    return (struct FlagA){.a = 0, .flag = false};
+    return u8_flag(0, false);
 }
 
 void BillsPC_UpDownDidSomething(void){
@@ -1178,11 +1178,11 @@ void BillsPC_UpDownDidSomething(void){
 
 }
 
-struct FlagA BillsPC_UpDownDidSomething_Conv(void){
+u8_flag_s BillsPC_UpDownDidSomething_Conv(void){
     // LD_A(TRUE);
     // AND_A_A;
     // RET;
-    return (struct FlagA){.a = TRUE, .flag = false};
+    return u8_flag(TRUE, false);
 }
 
 void BillsPC_LeftRightDidSomething(void){
@@ -1191,10 +1191,10 @@ void BillsPC_LeftRightDidSomething(void){
 
 }
 
-struct FlagA BillsPC_LeftRightDidSomething_Conv(void){
+u8_flag_s BillsPC_LeftRightDidSomething_Conv(void){
     // SCF;
     // RET;
-    return (struct FlagA){.a = 0, .flag = true};
+    return u8_flag(0, true);
 }
 
 void BillsPC_PlaceString(void){

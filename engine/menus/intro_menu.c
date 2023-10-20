@@ -7,6 +7,12 @@
 #include "../../home/string.h"
 #include "../../home/copy.h"
 #include "../../home/copy_name.h"
+#include "../../home/gfx.h"
+#include "../../home/text.h"
+#include "../../home/pokemon.h"
+#include "../../gfx/misc.h"
+#include "../../data/text/common.h"
+#include "../../charmap.h"
 
 void Intro_MainMenu() {
     PlayMusic_Conv(MUSIC_NONE);
@@ -822,58 +828,53 @@ void OakSpeech(void) {
 
 }
 
-// void OakText1(void) {
-    //text_far ['_OakText1']
-    //text_end ['?']
+const struct TextCmd OakText1[] = {
+    text_far(v_OakText1)
+    text_end
+};
 
-    // return OakText2();
-// }
+void OakText2_ASM(struct TextCmdState* state);
 
-void OakText2(void) {
-    //text_far ['_OakText2']
-    //text_asm ['?']
-    LD_A(WOOPER);
-    CALL(aPlayMonCry);
-    CALL(aWaitSFX);
-    LD_HL(mOakText3);
-    RET;
+const struct TextCmd OakText2[] = {
+    text_far(v_OakText2)
+    text_asm(OakText2_ASM)
+};
 
+void OakText2_ASM(struct TextCmdState* state) {
+    // LD_A(WOOPER);
+    // CALL(aPlayMonCry);
+    PlayMonCry_Conv(WOOPER);
+    // CALL(aWaitSFX);
+    WaitSFX_Conv();
+    // LD_HL(mOakText3);
+    // RET;
+    state->hl = OakText3;
 }
 
-void OakText3(void) {
-    //text_far ['_OakText3']
-    //text_end ['?']
+const struct TextCmd OakText3[] = {
+    text_far(v_OakText3)
+    text_end
+};
 
-    return OakText4();
-}
+const struct TextCmd OakText4[] = {
+    text_far(v_OakText4)
+    text_end
+};
 
-void OakText4(void) {
-    //text_far ['_OakText4']
-    //text_end ['?']
+const struct TextCmd OakText5[] = {
+    text_far(v_OakText5)
+    text_end
+};
 
-    return OakText5();
-}
+const struct TextCmd OakText6[] = {
+    text_far(v_OakText6)
+    text_end
+};
 
-void OakText5(void) {
-    //text_far ['_OakText5']
-    //text_end ['?']
-
-    return OakText6();
-}
-
-void OakText6(void) {
-    //text_far ['_OakText6']
-    //text_end ['?']
-
-    return OakText7();
-}
-
-void OakText7(void) {
-    //text_far ['_OakText7']
-    //text_end ['?']
-
-    return NamePlayer();
-}
+const struct TextCmd OakText7[] = {
+    text_far(v_OakText7)
+    text_end
+};
 
 void NamePlayer(void) {
 // Chris:
@@ -920,14 +921,14 @@ NewName:
     // BIT_A(PLAYERGENDER_FEMALE_F);
     // IF_Z goto Male;
     if(bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F)) {
-        InitName_Conv2(wram->wPlayerName, Utf8ToCrystal(Kris));
+        InitName_Conv2(wram->wPlayerName, U82C(Kris));
     }
     // LD_DE(mNamePlayer_Kris);
 
 // Male:
     // CALL(aInitName);
     else {
-        InitName_Conv2(wram->wPlayerName, Utf8ToCrystal(Chris));
+        InitName_Conv2(wram->wPlayerName, U82C(Chris));
     }
     RET;
 
@@ -1560,40 +1561,41 @@ TitleTrailCoords:
         //trail_coords ['11', '17', '11', '15']
         //trail_coords ['0', '0', '11', '15']
         //trail_coords ['0', '0', '11', '11']
-
-    return Copyright();
 }
 
 void Copyright(void) {
-    CALL(aClearTilemap);
-    CALL(aLoadFontsExtra);
-    LD_DE(mCopyrightGFX);
-    LD_HL(vTiles2 + LEN_2BPP_TILE * 0x60);
-    LD_BC((BANK(aCopyrightGFX) << 8) | 29);
-    CALL(aRequest2bpp);
-    hlcoord(2, 7, wTilemap);
-    LD_DE(mCopyrightString);
-    JP(mPlaceString);
-
+    // CALL(aClearTilemap);
+    ClearTilemap_Conv2();
+    // CALL(aLoadFontsExtra);
+    LoadFontsExtra_Conv();
+    // LD_DE(mCopyrightGFX);
+    // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x60);
+    // LD_BC((BANK(aCopyrightGFX) << 8) | 29);
+    // CALL(aRequest2bpp);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x60, CopyrightGFX, 0, 29);
+    // hlcoord(2, 7, wTilemap);
+    // LD_DE(mCopyrightString);
+    // JP(mPlaceString);
+    PlaceStringSimple(CopyrightString, coord(2, 7, wram->wTilemap));
 }
 
-void CopyrightString(void) {
+// Crystal encoded string.
+uint8_t CopyrightString[] = {
     // �1995-2001 Nintendo
-        //db ['0x60', '0x61', '0x62', '0x63', '0x64', '0x65', '0x66'];
-        //db ['0x67', '0x68', '0x69', '0x6a', '0x6b', '0x6c'];
+        0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66,
+        0x67, 0x68, 0x69, 0x6a, 0x6b, 0x6c,
 
     // �1995-2001 Creatures inc.
-        //next ['0x60', '0x61', '0x62', '0x63', '0x64', '0x65', '0x66']
-        //db ['0x6d', '0x6e', '0x6f', '0x70', '0x71', '0x72', '0x7a', '0x7b', '0x7c'];
+        CHAR_NEXT, 0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66,
+        0x6d, 0x6e, 0x6f, 0x70, 0x71, 0x72, 0x7a, 0x7b, 0x7c,
 
     // �1995-2001 GAME FREAK inc.
-        //next ['0x60', '0x61', '0x62', '0x63', '0x64', '0x65', '0x66']
-        //db ['0x73', '0x74', '0x75', '0x76', '0x77', '0x78', '0x79', '0x7a', '0x7b', '0x7c'];
+        CHAR_NEXT, 0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66,
+        0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7a, 0x7b, 0x7c,
 
         //db ['"@"'];
-
-    return GameInit();
-}
+        CHAR_TERM,
+};
 
 void GameInit(void) {
     FARCALL(aTryLoadSaveData);

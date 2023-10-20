@@ -127,7 +127,7 @@ extern const struct TextCmd DefrostedOpponentText[];
 extern const struct TextCmd WasFrozenText[];
 extern const struct TextCmd WontRiseAnymoreText[];
 extern const struct TextCmd WontDropAnymoreText[];
-extern const struct TextCmd FledFromBattleText:[];
+extern const struct TextCmd FledFromBattleText[];
 extern const struct TextCmd FledInFearText[];
 extern const struct TextCmd BlownAwayText[];
 extern const struct TextCmd PlayerHitTimesText[];

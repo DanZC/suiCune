@@ -1064,26 +1064,29 @@ void v_CGB_MagnetTrain(void){
 }
 
 void v_CGB_GamefreakLogo(void){
-    LD_DE(wBGPals1);
-    LD_A(PREDEFPAL_GAMEFREAK_LOGO_BG);
-    CALL(aGetPredefPal);
-    CALL(aLoadHLPaletteIntoDE);
-    LD_HL(mv_CGB_GamefreakLogo_GamefreakDittoPalette);
-    LD_DE(wOBPals1);
-    CALL(aLoadHLPaletteIntoDE);
-    LD_HL(mv_CGB_GamefreakLogo_GamefreakDittoPalette);
-    LD_DE(wOBPals1 + PALETTE_SIZE * 1);
-    CALL(aLoadHLPaletteIntoDE);
-    CALL(aWipeAttrmap);
-    CALL(aApplyAttrmap);
-    CALL(aApplyPals);
-    RET;
-
-
-GamefreakDittoPalette:
-// INCLUDE "gfx/splash/ditto.pal"
-
-    return v_CGB_PlayerOrMonFrontpicPals();
+    static const char GamefreakDittoPalette[] = "gfx/splash/ditto.pal";
+    uint16_t palBuf[NUM_PAL_COLORS];
+    // LD_DE(wBGPals1);
+    // LD_A(PREDEFPAL_GAMEFREAK_LOGO_BG);
+    // CALL(aGetPredefPal);
+    // CALL(aLoadHLPaletteIntoDE);
+    LoadHLPaletteIntoDE_Conv(wram->wBGPals1, GetPredefPal_Conv(PREDEFPAL_GAMEFREAK_LOGO_BG));
+    // LD_HL(mv_CGB_GamefreakLogo_GamefreakDittoPalette);
+    // LD_DE(wOBPals1);
+    // CALL(aLoadHLPaletteIntoDE);
+    LoadPaletteAssetToArray(palBuf, GamefreakDittoPalette, 1);
+    LoadHLPaletteIntoDE_Conv(wram->wOBPals1, palBuf);
+    // LD_HL(mv_CGB_GamefreakLogo_GamefreakDittoPalette);
+    // LD_DE(wOBPals1 + PALETTE_SIZE * 1);
+    // CALL(aLoadHLPaletteIntoDE);
+    LoadHLPaletteIntoDE_Conv(wram->wOBPals1 + PALETTE_SIZE * 1, palBuf);
+    // CALL(aWipeAttrmap);
+    WipeAttrmap();
+    // CALL(aApplyAttrmap);
+    ApplyAttrmap_Conv();
+    // CALL(aApplyPals);
+    ApplyPals_Conv();
+    // RET;
 }
 
 void v_CGB_PlayerOrMonFrontpicPals(void){
@@ -1100,14 +1103,18 @@ void v_CGB_PlayerOrMonFrontpicPals(void){
 }
 
 void v_CGB_Unused1E(void){
-    LD_DE(wBGPals1);
-    LD_A_addr(wCurPartySpecies);
-    CALL(aGetMonPalettePointer);
-    CALL(aLoadPalette_White_Col1_Col2_Black);
-    CALL(aWipeAttrmap);
-    CALL(aApplyAttrmap);
-    RET;
-
+    static const uint16_t grayscalePal[] = { rgb(31,31,31), rgb(25,25,25), rgb(11,11,11), rgb( 0, 0, 0)};
+    // LD_DE(wBGPals1);
+    // LD_A_addr(wCurPartySpecies);
+    // CALL(aGetMonPalettePointer);
+    // CALL(aLoadPalette_White_Col1_Col2_Black);
+    LoadHLPaletteIntoDE_Conv(wram->wBGPals1, grayscalePal);
+    // CALL(aWipeAttrmap);
+    WipeAttrmap();
+    // CALL(aApplyAttrmap);
+    ApplyAttrmap_Conv();
+    // RET;
+    ApplyPals_Conv();
 }
 
 void v_CGB_TradeTube(void){

@@ -876,7 +876,7 @@ static void StatsScreen_PlaceHPBar(void) {
 static void StatsScreen_PlaceGenderChar(uint8_t* hl) {
     // PUSH_HL;
     // FARCALL(aGetGender);
-    struct FlagA res = GetGender_Conv();
+    u8_flag_s res = GetGender_Conv();
     // POP_HL;
     // RET_C ;
     if(res.flag)
@@ -1488,7 +1488,7 @@ void StatsScreen_PlaceFrontpic(void){
     // PREDEF(pGetUnownLetter);
     GetUnownLetter_Conv(wram->wTempMon.mon.DVs);
     // CALL(aStatsScreen_GetAnimationParam);
-    struct FlagA res = StatsScreen_GetAnimationParam_Conv();
+    u8_flag_s res = StatsScreen_GetAnimationParam_Conv();
     // IF_C goto egg;
     if(res.flag) {
     // egg:
@@ -1661,7 +1661,7 @@ FaintedFrzSlp:
 
 }
 
-struct FlagA StatsScreen_GetAnimationParam_Conv(void){
+u8_flag_s StatsScreen_GetAnimationParam_Conv(void){
     // LD_A_addr(wMonType);
     // LD_HL(mStatsScreen_GetAnimationParam_Jumptable);
     // RST(aJumpTable);
@@ -1697,17 +1697,17 @@ struct FlagA StatsScreen_GetAnimationParam_Conv(void){
                 // XOR_A_A;
                 // SCF;
                 // RET;
-                return (struct FlagA){.flag = true, .a = 0};
+                return (u8_flag_s){.flag = true, .a = 0};
             }
         // FaintedFrzSlp:
             // XOR_A_A;
             // RET;
-            return (struct FlagA){.flag = false, .a = 0};
+            return (u8_flag_s){.flag = false, .a = 0};
         case OTPARTYMON: 
         // OTPartyMon:
             // XOR_A_A;
             // RET;
-            return (struct FlagA){.flag=false, .a = 0};
+            return (u8_flag_s){.flag=false, .a = 0};
         case BOXMON: {
         // BoxMon:
             // LD_HL(sBoxMons);
@@ -1721,16 +1721,16 @@ struct FlagA StatsScreen_GetAnimationParam_Conv(void){
             OpenSRAM_Conv(MBANK(sBoxMons));
             struct PartyMon* bc = GBToRAMAddr(sBoxMons + (wram->wCurPartyMon * PARTYMON_STRUCT_LENGTH));
             // CALL(aStatsScreen_GetAnimationParam_CheckEggFaintedFrzSlp);
-            struct FlagA res;
+            u8_flag_s res;
             if(wram->wCurPartySpecies == EGG || !CheckFaintedFrzSlp_Conv(bc)) {
             // egg:
                 // XOR_A_A;
                 // SCF;
                 // RET;
-                res = (struct FlagA){.flag = true, .a = 0};
+                res = (u8_flag_s){.flag = true, .a = 0};
             }
             else {
-                res = (struct FlagA){.flag = false, .a = 0};
+                res = (u8_flag_s){.flag = false, .a = 0};
             }
             // PUSH_AF;
             // CALL(aCloseSRAM);
@@ -1754,20 +1754,20 @@ struct FlagA StatsScreen_GetAnimationParam_Conv(void){
                 // XOR_A_A;
                 // SCF;
                 // RET;
-                return (struct FlagA){.flag = true, .a = 0};
+                return (u8_flag_s){.flag = true, .a = 0};
             }
         // FaintedFrzSlp:
             // XOR_A_A;
             // RET;
-            return (struct FlagA){.flag = false, .a = 0};
+            return (u8_flag_s){.flag = false, .a = 0};
         case WILDMON: 
         // Wildmon:
             // LD_A(0x1);
             // AND_A_A;
             // RET;
-            return (struct FlagA){.flag=false, .a = 1};
+            return (u8_flag_s){.flag=false, .a = 1};
     }
-    return (struct FlagA){.flag = false, .a = 0};
+    return (u8_flag_s){.flag = false, .a = 0};
 }
 
 void StatsScreen_LoadTextboxSpaceGFX(void){

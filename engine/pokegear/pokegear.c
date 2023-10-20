@@ -20,6 +20,7 @@
 #include "../rtc/print_hours_mins.h"
 #include "../../gfx/font.h"
 #include "../../data/text/common.h"
+#include "../../gfx/misc.h"
 
 //  Pokégear cards
 enum {
@@ -55,7 +56,6 @@ enum {
     POKEGEARSTATE_RADIOJOYPAD //const ['POKEGEARSTATE_RADIOJOYPAD']  // c
 };
 
-static const char PokegearGFX[] = "gfx/pokegear/pokegear.png";
 static const char PokegearSpritesGFX[] = "gfx/pokegear/pokegear_sprites.png";
 static const char FastShipGFX[] = "gfx/pokegear/fast_ship.png";
 

@@ -1,11 +1,14 @@
 #include "../../constants.h"
 #include "core.h"
+#include "../../home/battle.h"
 #include "../../home/array.h"
 #include "../../home/delay.h"
+#include "../../home/copy_tilemap.h"
 #include "../../data/trainers/leaders.h"
 #include "../pokemon/experience.h"
 #include "../gfx/pic_animation.h"
 #include "../gfx/color.h"
+#include "../../data/text/battle.h"
 
 //  Core components of the battle engine.
 
@@ -73,46 +76,63 @@ alive:
     }
 
 
-player_2:
-    CALL(aLoadTilemapToTempTilemap);
-    CALL(aCheckPlayerPartyForFitMon);
-    LD_A_D;
-    AND_A_A;
-    JP_Z (mLostBattle);
-    CALL(aSafeLoadTempTilemapToTilemap);
-    LD_A_addr(wBattleType);
-    CP_A(BATTLETYPE_DEBUG);
-    JP_Z (mDoBattle_tutorial_debug);
-    CP_A(BATTLETYPE_TUTORIAL);
-    JP_Z (mDoBattle_tutorial_debug);
-    XOR_A_A;
-    LD_addr_A(wCurPartyMon);
+// player_2:
+    // CALL(aLoadTilemapToTempTilemap);
+    LoadTilemapToTempTilemap_Conv();
+    // CALL(aCheckPlayerPartyForFitMon);
+    // LD_A_D;
+    // AND_A_A;
+    // JP_Z (mLostBattle);
+    if(!CheckPlayerPartyForFitMon_Conv()) {
+        return LostBattle();
+    }
+    // CALL(aSafeLoadTempTilemapToTilemap);
+    SafeLoadTempTilemapToTilemap_Conv();
+    // LD_A_addr(wBattleType);
+    // CP_A(BATTLETYPE_DEBUG);
+    // JP_Z (mDoBattle_tutorial_debug);
+    // CP_A(BATTLETYPE_TUTORIAL);
+    // JP_Z (mDoBattle_tutorial_debug);
+    if(wram->wBattleType == BATTLETYPE_DEBUG || wram->wBattleType == BATTLETYPE_TUTORIAL)
+        return BattleMenu();
+    // XOR_A_A;
+    // LD_addr_A(wCurPartyMon);
+    wram->wCurPartyMon = 0;
 
-loop2:
-    CALL(aCheckIfCurPartyMonIsFitToFight);
-    IF_NZ goto alive2;
-    LD_HL(wCurPartyMon);
-    INC_hl;
-    goto loop2;
+    while(!CheckIfCurPartyMonIsFitToFight_Conv()) {
+    // loop2:
+        // CALL(aCheckIfCurPartyMonIsFitToFight);
+        // IF_NZ goto alive2;
+        // LD_HL(wCurPartyMon);
+        // INC_hl;
+        wram->wCurPartyMon++;
+        // goto loop2;
+    }
 
 
-alive2:
-    LD_A_addr(wCurBattleMon);
-    LD_addr_A(wLastPlayerMon);
-    LD_A_addr(wCurPartyMon);
-    LD_addr_A(wCurBattleMon);
-    INC_A;
-    LD_HL(wPartySpecies - 1);
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_addr_A(wCurPartySpecies);
-    LD_addr_A(wTempBattleMonSpecies);
-    hlcoord(1, 5, wTilemap);
-    LD_A(9);
-    CALL(aSlideBattlePicOut);
-    CALL(aLoadTilemapToTempTilemap);
+// alive2:
+    // LD_A_addr(wCurBattleMon);
+    // LD_addr_A(wLastPlayerMon);
+    wram->wLastPlayerMon = wram->wCurBattleMon;
+    // LD_A_addr(wCurPartyMon);
+    // LD_addr_A(wCurBattleMon);
+    wram->wCurBattleMon = wram->wCurPartyMon;
+    // INC_A;
+    // LD_HL(wPartySpecies - 1);
+    // LD_C_A;
+    // LD_B(0);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // LD_addr_A(wCurPartySpecies);
+    wram->wCurPartySpecies = wram->wPartySpecies[wram->wCurPartyMon];
+    // LD_addr_A(wTempBattleMonSpecies);
+    wram->wTempBattleMonSpecies = wram->wPartySpecies[wram->wCurPartyMon];
+    // hlcoord(1, 5, wTilemap);
+    // LD_A(9);
+    // CALL(aSlideBattlePicOut);
+    SlideBattlePicOut_Conv(coord(1, 5, wram->wTilemap), 9);
+    // CALL(aLoadTilemapToTempTilemap);
+    LoadTilemapToTempTilemap_Conv();
     CALL(aResetBattleParticipants);
     CALL(aInitBattleMon);
     CALL(aResetPlayerStatLevels);
@@ -121,7 +141,8 @@ alive2:
     CALL(aBreakAttraction);
     CALL(aSendOutPlayerMon);
     CALL(aEmptyBattleTextbox);
-    CALL(aLoadTilemapToTempTilemap);
+    // CALL(aLoadTilemapToTempTilemap);
+    LoadTilemapToTempTilemap_Conv();
     CALL(aSetPlayerTurn);
     CALL(aSpikesDamage);
     LD_A_addr(wLinkMode);
@@ -3361,8 +3382,9 @@ pick:
 }
 
 void LostBattle(void){
-    LD_A(1);
-    LD_addr_A(wBattleEnded);
+    // LD_A(1);
+    // LD_addr_A(wBattleEnded);
+    wram->wBattleEnded = 1;
 
     LD_A_addr(wInBattleTowerBattle);
     BIT_A(0);
@@ -3588,6 +3610,82 @@ back:
     IF_NZ goto back;
     RET;
 
+}
+
+static void SlideBattlePicOut_DoFrame(uint8_t* hl) {
+    // LDH_A_addr(hMapObjectIndex);
+    // LD_C_A;
+    uint8_t c = hram->hMapObjectIndex;
+    // CP_A(0x8);
+    // IF_NZ goto back;
+    if(c == 0x8) {
+        do {
+        // forward:
+            // LD_A_hli;
+            uint8_t a = *(hl++);
+            // LD_hld_A;
+            *(hl--) = a;
+            // DEC_HL;
+            hl--;
+            // DEC_C;
+            // IF_NZ goto forward;
+        } while(--c != 0);
+        // RET;
+        return;
+    }
+    else {
+        do {
+        // back:
+            // LD_A_hld;
+            uint8_t a = *(hl--);
+            // LD_hli_A;
+            *(hl++) = a;
+            // INC_HL;
+            hl++;
+            // DEC_C;
+            // IF_NZ goto back;
+        } while(--c != 0);
+        // RET;
+        return;
+    }
+}
+
+void SlideBattlePicOut_Conv(uint8_t* hl, uint8_t a){
+    // LDH_addr_A(hMapObjectIndex);
+    hram->hMapObjectIndex = a;
+    // LD_C_A;
+    uint8_t c = a;
+
+    do {
+    // loop:
+        // PUSH_BC;
+        // PUSH_HL;
+        uint8_t* hl2 = hl;
+        // LD_B(0x7);
+        uint8_t b = 0x7;
+
+        do {
+        // loop2:
+            // PUSH_HL;
+            // CALL(aSlideBattlePicOut_DoFrame);
+            SlideBattlePicOut_DoFrame(hl);
+            // POP_HL;
+            // LD_DE(SCREEN_WIDTH);
+            // ADD_HL_DE;
+            hl += SCREEN_WIDTH;
+            // DEC_B;
+            // IF_NZ goto loop2;
+        } while(--b != 0);
+        // LD_C(2);
+        // CALL(aDelayFrames);
+        DelayFrames_Conv(2);
+        // POP_HL;
+        hl = hl2;
+        // POP_BC;
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(--c != 0);
+    // RET;
 }
 
 void ForceEnemySwitch(void){
@@ -4253,6 +4351,33 @@ loop:
 
 }
 
+//  Has the player any mon in his Party that can fight?
+bool CheckPlayerPartyForFitMon_Conv(void){
+    // LD_A_addr(wPartyCount);
+    // LD_E_A;
+    uint8_t e = wram->wPartyCount;
+    // XOR_A_A;
+    // LD_HL(wPartyMon1HP);
+    struct PartyMon* hl = wram->wPartyMon;
+    // LD_BC(PARTYMON_STRUCT_LENGTH - 1);
+    uint16_t a = 0;
+
+    do {
+    // loop:
+        // OR_A_hl;
+        // INC_HL;  // + 1
+        // OR_A_hl;
+        a |= hl->HP;
+        // ADD_HL_BC;
+        hl++;
+        // DEC_E;
+        // IF_NZ goto loop;
+    } while(--e != 0);
+    // LD_D_A;
+    // RET;
+    return a != 0;
+}
+
 void CheckIfCurPartyMonIsFitToFight(void){
     LD_A_addr(wCurPartyMon);
     LD_HL(wPartyMon1HP);
@@ -4285,6 +4410,49 @@ finish_fail:
     XOR_A_A;
     RET;
 
+}
+
+bool CheckIfCurPartyMonIsFitToFight_Conv(void){
+    // LD_A_addr(wCurPartyMon);
+    // LD_HL(wPartyMon1HP);
+    // CALL(aGetPartyLocation);
+    // LD_A_hli;
+    // OR_A_hl;
+    // RET_NZ ;
+    if(wram->wPartyMon[wram->wCurPartyMon].HP != 0)
+        return true;
+
+    // LD_A_addr(wBattleHasJustStarted);
+    // AND_A_A;
+    // IF_NZ goto finish_fail;
+    if(wram->wBattleHasJustStarted != 0)
+        return false;
+
+    // LD_HL(wPartySpecies);
+    // LD_A_addr(wCurPartyMon);
+    // LD_C_A;
+    // LD_B(0);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // CP_A(EGG);
+    // LD_HL(mBattleText_AnEGGCantBattle);
+    // IF_Z goto print_textbox;
+    if(wram->wPartySpecies[wram->wCurPartyMon] == EGG) {
+        StdBattleTextbox_Conv2(BattleText_AnEGGCantBattle);
+    }
+    else {
+        // LD_HL(mBattleText_TheresNoWillToBattle);
+        StdBattleTextbox_Conv2(BattleText_TheresNoWillToBattle);
+    }
+
+// print_textbox:
+    // CALL(aStdBattleTextbox);
+
+
+// finish_fail:
+    // XOR_A_A;
+    // RET;
+    return false;
 }
 
 void TryToRunAwayFromBattle(void){

@@ -8,17 +8,17 @@
 
 static void DoPlayerMovement_GetDPad(void);
 static uint8_t DoPlayerMovement_TranslateIntoMovement(void);
-static struct FlagA DoPlayerMovement_CheckTile(void);
-static struct FlagA DoPlayerMovement_CheckTurning(void);
-static struct FlagA DoPlayerMovement_TryStep(void);
-static struct FlagA DoPlayerMovement_TrySurf(void);
-static struct FlagA DoPlayerMovement_ExitWater(void);
+static u8_flag_s DoPlayerMovement_CheckTile(void);
+static u8_flag_s DoPlayerMovement_CheckTurning(void);
+static u8_flag_s DoPlayerMovement_TryStep(void);
+static u8_flag_s DoPlayerMovement_TrySurf(void);
+static u8_flag_s DoPlayerMovement_ExitWater(void);
 static uint8_t DoPlayerMovement_CheckNPC(void);
 static uint8_t DoPlayerMovement_CheckSurfPerms(void);
 static uint8_t DoPlayerMovement_CheckSurfable(uint8_t a);
 static bool DoPlayerMovement_BikeCheck(void);
-static struct FlagA DoPlayerMovement_TryJump(void);
-static struct FlagA DoPlayerMovement_CheckWarp(void);
+static u8_flag_s DoPlayerMovement_TryJump(void);
+static u8_flag_s DoPlayerMovement_CheckWarp(void);
 static uint8_t DoPlayerMovement_DoStep(uint8_t a);
 static uint8_t DoPlayerMovement_StandInPlace(void);
 static uint8_t DoPlayerMovement_WalkInPlace(void);
@@ -60,7 +60,7 @@ static uint8_t DoPlayerMovement_TranslateIntoMovement(void) {
     // LD_A_addr(wPlayerState);
     // CP_A(PLAYER_NORMAL);
     // IF_Z goto Normal;
-    struct FlagA res;
+    u8_flag_s res;
     switch(wram->wPlayerState) {
     // CP_A(PLAYER_SURF);
     // IF_Z goto Surf;
@@ -193,7 +193,7 @@ static uint8_t DoPlayerMovement_TranslateIntoMovement(void) {
 
 //  Tiles such as waterfalls and warps move the player
 //  in a given direction, overriding input.
-static struct FlagA DoPlayerMovement_CheckTile(void) {
+static u8_flag_s DoPlayerMovement_CheckTile(void) {
     static const uint8_t water_table[] = {
         RIGHT,  // COLL_WATERFALL_RIGHT
         LEFT,  // COLL_WATERFALL_LEFT
@@ -227,7 +227,7 @@ static struct FlagA DoPlayerMovement_CheckTile(void) {
     // CALL(aCheckWhirlpoolTile);
     // IF_C goto not_whirlpool;
     if(CheckWhirlpoolTile_Conv(wram->wPlayerStruct.nextTile))
-        return flag_a(PLAYERMOVEMENT_FORCE_TURN, true);
+        return u8_flag(PLAYERMOVEMENT_FORCE_TURN, true);
     // LD_A(PLAYERMOVEMENT_FORCE_TURN);
     // SCF;
     // RET;
@@ -265,7 +265,7 @@ static struct FlagA DoPlayerMovement_CheckTile(void) {
             // CP_A(STANDING);
             // IF_Z goto no_walk;
             if(land1_table[c & 7] == STANDING)
-                return flag_a(0, false);
+                return u8_flag(0, false);
             // LD_addr_A(wWalkingDirection);
             wram->wWalkingDirection = land1_table[c & 7];
             // goto continue_walk;
@@ -284,7 +284,7 @@ static struct FlagA DoPlayerMovement_CheckTile(void) {
             // CP_A(STANDING);
             // IF_Z goto no_walk;
             if(land2_table[c & 7] == STANDING)
-                return flag_a(0, false);
+                return u8_flag(0, false);
             // LD_addr_A(wWalkingDirection);
             wram->wWalkingDirection = land2_table[c & 7];
             // goto continue_walk;
@@ -311,16 +311,16 @@ static struct FlagA DoPlayerMovement_CheckTile(void) {
                 break;
             }
             // goto no_walk;
-            return flag_a(0, false);
+            return u8_flag(0, false);
         default:
-            return flag_a(0, false);
+            return u8_flag(0, false);
     }
 
 
 // no_walk:
     // XOR_A_A;
     // RET;
-    // return (struct FlagA){.a = 0, .flag = false};
+    // return (u8_flag_s){.a = 0, .flag = false};
 
 
 // continue_walk:
@@ -330,22 +330,22 @@ static struct FlagA DoPlayerMovement_CheckTile(void) {
     // LD_A(PLAYERMOVEMENT_CONTINUE);
     // SCF;
     // RET;
-    return flag_a(PLAYERMOVEMENT_CONTINUE, true);
+    return u8_flag(PLAYERMOVEMENT_CONTINUE, true);
 }
 
 //  If the player is turning, change direction first. This also lets
 //  the player change facing without moving by tapping a direction.
-static struct FlagA DoPlayerMovement_CheckTurning(void) {
+static u8_flag_s DoPlayerMovement_CheckTurning(void) {
     // LD_A_addr(wPlayerTurningDirection);
     // CP_A(0);
     // IF_NZ goto not_turning;
     if(wram->wPlayerTurningDirection != 0)
-        return flag_a(0, false);
+        return u8_flag(0, false);
     // LD_A_addr(wWalkingDirection);
     // CP_A(STANDING);
     // IF_Z goto not_turning;
     if(wram->wWalkingDirection == STANDING)
-        return flag_a(0, false);
+        return u8_flag(0, false);
 
     // LD_E_A;
     int8_t e = wram->wWalkingDirection;
@@ -356,7 +356,7 @@ static struct FlagA DoPlayerMovement_CheckTurning(void) {
     // CP_A_E;
     // IF_Z goto not_turning;
     if(((wram->wPlayerStruct.facing >> 2) & 3) == e)
-        return flag_a(0, false);
+        return u8_flag(0, false);
 
     // LD_A(STEP_TURN);
     // CALL(aDoPlayerMovement_DoStep);
@@ -364,7 +364,7 @@ static struct FlagA DoPlayerMovement_CheckTurning(void) {
     // LD_A(PLAYERMOVEMENT_TURN);
     // SCF;
     // RET;
-    return flag_a(PLAYERMOVEMENT_TURN, true);
+    return u8_flag(PLAYERMOVEMENT_TURN, true);
 
 
 // not_turning:
@@ -372,7 +372,7 @@ static struct FlagA DoPlayerMovement_CheckTurning(void) {
     // RET;
 }
 
-static struct FlagA DoPlayerMovement_TryStep(void) {
+static u8_flag_s DoPlayerMovement_TryStep(void) {
 //  Surfing actually calls .TrySurf directly instead of passing through here.
     // LD_A_addr(wPlayerState);
     // CP_A(PLAYER_SURF);
@@ -386,17 +386,17 @@ static struct FlagA DoPlayerMovement_TryStep(void) {
     if(hram->hJoyDown & B_BUTTON) {
         uint8_t npc = DoPlayerMovement_CheckNPC();
         if(npc == 0 || npc == 2)
-            return (struct FlagA) {.a = 0, .flag = false};
-        struct FlagA res = DoPlayerMovement_CheckWarp();
+            return (u8_flag_s) {.a = 0, .flag = false};
+        u8_flag_s res = DoPlayerMovement_CheckWarp();
         if(res.flag)
             return res;
-        return (struct FlagA) {.a = DoPlayerMovement_DoStep(STEP_BIKE), .flag = true};
+        return (u8_flag_s) {.a = DoPlayerMovement_DoStep(STEP_BIKE), .flag = true};
     }
 
     // CALL(aDoPlayerMovement_CheckLandPerms);
     // IF_C goto bump;
     if(!DoPlayerMovement_CheckLandPerms())
-        return (struct FlagA) {.a = 0, .flag = false};
+        return (u8_flag_s) {.a = 0, .flag = false};
     
     // CALL(aDoPlayerMovement_CheckNPC);
     // AND_A_A;
@@ -405,37 +405,37 @@ static struct FlagA DoPlayerMovement_TryStep(void) {
     // IF_Z goto bump;
     uint8_t npc = DoPlayerMovement_CheckNPC();
     if(npc == 0 || npc == 2)
-        return (struct FlagA) {.a = 0, .flag = false};
+        return (u8_flag_s) {.a = 0, .flag = false};
 
     // LD_A_addr(wPlayerStandingTile);
     // CALL(aCheckIceTile);
     // IF_NC goto ice;
     if(CheckIceTile_Conv(wram->wPlayerStruct.nextTile))
-        return (struct FlagA) {.a = DoPlayerMovement_DoStep(STEP_ICE), .flag = true};
+        return (u8_flag_s) {.a = DoPlayerMovement_DoStep(STEP_ICE), .flag = true};
 
 //  Downhill riding is slower when not moving down.
     // CALL(aDoPlayerMovement_BikeCheck);
     // IF_NZ goto walk;
     if(!DoPlayerMovement_BikeCheck())
-        return (struct FlagA) {.a = DoPlayerMovement_DoStep(STEP_WALK), .flag = true};
+        return (u8_flag_s) {.a = DoPlayerMovement_DoStep(STEP_WALK), .flag = true};
 
     // LD_HL(wBikeFlags);
     // BIT_hl(BIKEFLAGS_DOWNHILL_F);
     // IF_Z goto fast;
     if(!bit_test(wram->wBikeFlags, BIKEFLAGS_DOWNHILL_F))
-        return (struct FlagA) {.a = DoPlayerMovement_DoStep(STEP_BIKE), .flag = true};
+        return (u8_flag_s) {.a = DoPlayerMovement_DoStep(STEP_BIKE), .flag = true};
 
     // LD_A_addr(wWalkingDirection);
     // CP_A(DOWN);
     // IF_Z goto fast;
     if(wram->wWalkingDirection == DOWN)
-        return (struct FlagA) {.a = DoPlayerMovement_DoStep(STEP_BIKE), .flag = true};
+        return (u8_flag_s) {.a = DoPlayerMovement_DoStep(STEP_BIKE), .flag = true};
 
     // LD_A(STEP_WALK);
     // CALL(aDoPlayerMovement_DoStep);
     // SCF;
     // RET;
-    return (struct FlagA) {.a = DoPlayerMovement_DoStep(STEP_WALK), .flag = true};
+    return (u8_flag_s) {.a = DoPlayerMovement_DoStep(STEP_WALK), .flag = true};
 
 
 // fast:
@@ -469,14 +469,14 @@ static struct FlagA DoPlayerMovement_TryStep(void) {
     // RET;
 }
 
-static struct FlagA DoPlayerMovement_TrySurf(void) {
+static u8_flag_s DoPlayerMovement_TrySurf(void) {
     // CALL(aDoPlayerMovement_CheckSurfPerms);
     // LD_addr_A(wWalkingIntoLand);
     wram->wWalkingIntoLand = DoPlayerMovement_CheckSurfPerms();
     // IF_C goto surf_bump;
     if(wram->wWalkingIntoLand == 0xff) {
         wram->wWalkingIntoLand = wram->wTilePermissions & wram->wFacingDirection;
-        return (struct FlagA) {.a=0, .flag=false};
+        return (u8_flag_s) {.a=0, .flag=false};
     }
 
     // CALL(aDoPlayerMovement_CheckNPC);
@@ -487,7 +487,7 @@ static struct FlagA DoPlayerMovement_TrySurf(void) {
     // CP_A(2);
     // IF_Z goto surf_bump;
     if(wram->wWalkingIntoNPC == 0 || wram->wWalkingIntoNPC == 2)
-        return (struct FlagA) {.a=0, .flag=false};
+        return (u8_flag_s) {.a=0, .flag=false};
 
     // LD_A_addr(wWalkingIntoLand);
     // AND_A_A;
@@ -499,14 +499,14 @@ static struct FlagA DoPlayerMovement_TrySurf(void) {
     // CALL(aDoPlayerMovement_DoStep);
     // SCF;
     // RET;
-    return flag_a(DoPlayerMovement_DoStep(STEP_WALK), true);
+    return u8_flag(DoPlayerMovement_DoStep(STEP_WALK), true);
 
 // surf_bump:
     // XOR_A_A;
     // RET;
 }
 
-static struct FlagA DoPlayerMovement_ExitWater(void) {
+static u8_flag_s DoPlayerMovement_ExitWater(void) {
     // CALL(aDoPlayerMovement_GetOutOfWater);
     DoPlayerMovement_GetOutOfWater();
     // CALL(aPlayMapMusic);
@@ -517,7 +517,7 @@ static struct FlagA DoPlayerMovement_ExitWater(void) {
     // LD_A(PLAYERMOVEMENT_EXIT_WATER);
     // SCF;
     // RET;
-    return flag_a(PLAYERMOVEMENT_EXIT_WATER, true);
+    return u8_flag(PLAYERMOVEMENT_EXIT_WATER, true);
 }
 
 //  Returns 0 if there is an NPC in front that you can't move
@@ -630,7 +630,7 @@ static bool DoPlayerMovement_BikeCheck(void) {
     return (wram->wPlayerState == PLAYER_BIKE || wram->wPlayerState == PLAYER_SKATE);
 }
 
-static struct FlagA DoPlayerMovement_TryJump(void) {
+static u8_flag_s DoPlayerMovement_TryJump(void) {
     static const uint8_t ledge_table[] = {
         //db ['FACE_RIGHT'];  // COLL_HOP_RIGHT
         FACE_RIGHT,
@@ -657,7 +657,7 @@ static struct FlagA DoPlayerMovement_TryJump(void) {
     // CP_A(HI_NYBBLE_LEDGES);
     // IF_NZ goto DontJump;
     if((e & 0xf0) != HI_NYBBLE_LEDGES)
-        return (struct FlagA){.a = 0, .flag = false};
+        return (u8_flag_s){.a = 0, .flag = false};
 
     // LD_A_E;
     // AND_A(7);
@@ -669,7 +669,7 @@ static struct FlagA DoPlayerMovement_TryJump(void) {
     // AND_A_hl;
     // IF_Z goto DontJump;
     if((wram->wFacingDirection & ledge_table[e & 7]) == 0)
-        return (struct FlagA){.a = 0, .flag = false};
+        return (u8_flag_s){.a = 0, .flag = false};
 
     // LD_DE(SFX_JUMP_OVER_LEDGE);
     // CALL(aPlaySFX);
@@ -680,7 +680,7 @@ static struct FlagA DoPlayerMovement_TryJump(void) {
     // LD_A(PLAYERMOVEMENT_JUMP);
     // SCF;
     // RET;
-    return (struct FlagA){.a = PLAYERMOVEMENT_JUMP, .flag = true};
+    return (u8_flag_s){.a = PLAYERMOVEMENT_JUMP, .flag = true};
 
 
 // DontJump:
@@ -699,7 +699,7 @@ static struct FlagA DoPlayerMovement_TryJump(void) {
     //db ['FACE_UP | FACE_LEFT'];  // COLL_HOP_UP_LEFT
 }
 
-static struct FlagA DoPlayerMovement_CheckWarp(void) {
+static u8_flag_s DoPlayerMovement_CheckWarp(void) {
     static const uint8_t EdgeWarps[] = {
         COLL_WARP_CARPET_DOWN,
         COLL_WARP_CARPET_UP,
@@ -717,7 +717,7 @@ static struct FlagA DoPlayerMovement_CheckWarp(void) {
 // cp STANDING
 // jr z, .not_warp
     if(a == STANDING)
-        return flag_a(PLAYERMOVEMENT_NORMAL, false);
+        return u8_flag(PLAYERMOVEMENT_NORMAL, false);
     // LD_E_A;
     // LD_D(0);
     // LD_HL(mDoPlayerMovement_EdgeWarps);
@@ -726,7 +726,7 @@ static struct FlagA DoPlayerMovement_CheckWarp(void) {
     // CP_A_hl;
     // IF_NZ goto not_warp;
     if(wram->wPlayerStruct.nextTile != EdgeWarps[a])
-        return flag_a(PLAYERMOVEMENT_NORMAL, false);
+        return u8_flag(PLAYERMOVEMENT_NORMAL, false);
 
     // LD_A(TRUE);
     // LD_addr_A(wWalkingIntoEdgeWarp);
@@ -744,19 +744,19 @@ static struct FlagA DoPlayerMovement_CheckWarp(void) {
     // CP_A_E;
     // IF_NZ goto not_warp;
     if(((wram->wPlayerStruct.facing >> 2) & 3) != wram->wWalkingDirection)
-        return flag_a(PLAYERMOVEMENT_NORMAL, false);
+        return u8_flag(PLAYERMOVEMENT_NORMAL, false);
 
     // CALL(aWarpCheck);
     // IF_NC goto not_warp;
     if(!WarpCheck_Conv())
-        return flag_a(PLAYERMOVEMENT_NORMAL, false);
+        return u8_flag(PLAYERMOVEMENT_NORMAL, false);
 
     // CALL(aDoPlayerMovement_StandInPlace);
     DoPlayerMovement_StandInPlace();
     // SCF;
     // LD_A(PLAYERMOVEMENT_WARP);
     // RET;
-    return flag_a(PLAYERMOVEMENT_WARP, true);
+    return u8_flag(PLAYERMOVEMENT_WARP, true);
 
 
 // not_warp:

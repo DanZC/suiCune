@@ -2,6 +2,7 @@
 #include "sprite_anims.h"
 #include "sprites.h"
 #include "../../home/audio.h"
+#include "../movie/splash.h"
 
 static void AnimSeq_Null_Conv(struct SpriteAnim* bc);
 static void AnimSeq_PartyMon_Conv(struct SpriteAnim* bc);
@@ -594,8 +595,9 @@ void AnimSeq_GameFreakLogo(void){
 }
 
 static void AnimSeq_GameFreakLogo_Conv(struct SpriteAnim* bc){
-    REG_BC = (bc - wram->wSpriteAnim) * SPRITEANIMSTRUCT_LENGTH + wSpriteAnimationStructs;
-    CALLFAR(aGameFreakLogoSpriteAnim);
+    // REG_BC = (bc - wram->wSpriteAnim) * SPRITEANIMSTRUCT_LENGTH + wSpriteAnimationStructs;
+    // CALLFAR(aGameFreakLogoSpriteAnim);
+    return GameFreakLogoSpriteAnim_Conv(bc);
 }
 
 void AnimSeq_GSGameFreakLogoStar(void){

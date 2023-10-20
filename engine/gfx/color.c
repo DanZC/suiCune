@@ -638,6 +638,18 @@ void GetPredefPal(void){
 
 }
 
+const uint16_t* GetPredefPal_Conv(uint8_t a){
+    // LD_L_A;
+    // LD_H(0);
+    // ADD_HL_HL;
+    // ADD_HL_HL;
+    // ADD_HL_HL;
+    // LD_BC(mPredefPals);
+    // ADD_HL_BC;
+    // RET;
+    return PredefPals[a];
+}
+
 void LoadHLPaletteIntoDE(void){
     LDH_A_addr(rSVBK);
     PUSH_AF;
@@ -655,6 +667,29 @@ loop:
     LDH_addr_A(rSVBK);
     RET;
 
+}
+
+void LoadHLPaletteIntoDE_Conv(void* de, const uint16_t* hl){
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(BANK(wOBPals1));
+    // LDH_addr_A(rSVBK);
+    // LD_C(1 * PALETTE_SIZE);
+    uint8_t c = NUM_PAL_COLORS;
+    uint16_t* de_ = de;
+
+    do {
+    // loop:
+        // LD_A_hli;
+        // LD_de_A;
+        // INC_DE;
+        *(de_++) = *(hl++);
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(--c != 0);
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // RET;
 }
 
 void LoadPalette_White_Col1_Col2_Black(void){
@@ -1772,6 +1807,88 @@ wait:
 
 //     return SGBBorderMapAndPalettes();
 // }
+
+const uint16_t PredefPals[][NUM_PAL_COLORS] = {
+	{rgb(31,31,31), rgb(22,25,19), rgb(16,21,30), rgb(00,00,00)}, // PREDEFPAL_ROUTES
+	{rgb(31,31,31), rgb(27,28,31), rgb(15,20,31), rgb(00,00,00)}, // PREDEFPAL_PALLET
+	{rgb(31,31,31), rgb(24,28,19), rgb(15,20,31), rgb(00,00,00)}, // PREDEFPAL_VIRIDIAN
+	{rgb(31,31,31), rgb(24,24,24), rgb(15,20,31), rgb(00,00,00)}, // PREDEFPAL_PEWTER
+	{rgb(31,31,31), rgb(21,23,31), rgb(15,20,31), rgb(00,00,00)}, // PREDEFPAL_CERULEAN
+	{rgb(31,31,31), rgb(24,21,27), rgb(15,20,31), rgb(00,00,00)}, // PREDEFPAL_LAVENDER
+	{rgb(31,31,31), rgb(31,24,16), rgb(15,20,31), rgb(00,00,00)}, // PREDEFPAL_VERMILION
+	{rgb(31,31,31), rgb(25,30,26), rgb(15,20,31), rgb(00,00,00)}, // PREDEFPAL_CELADON
+	{rgb(31,31,31), rgb(31,25,31), rgb(15,20,31), rgb(00,00,00)}, // PREDEFPAL_FUCHSIA
+	{rgb(31,31,31), rgb(31,20,19), rgb(15,20,31), rgb(00,00,00)}, // PREDEFPAL_CINNABAR
+	{rgb(31,31,31), rgb(31,26,19), rgb(15,20,31), rgb(00,00,00)}, // PREDEFPAL_SAFFRON
+	{rgb(31,31,31), rgb(27,28,27), rgb(15,20,31), rgb(00,00,00)}, // PREDEFPAL_INDIGO
+	{rgb(31,31,31), rgb(24,30,23), rgb(15,20,31), rgb(00,00,00)}, // PREDEFPAL_NEW_BARK
+	{rgb(31,31,31), rgb(29,24,29), rgb(15,20,31), rgb(00,00,00)}, // PREDEFPAL_CHERRYGROVE
+	{rgb(31,31,31), rgb(26,23,29), rgb(15,20,31), rgb(00,00,00)}, // PREDEFPAL_VIOLET
+	{rgb(31,31,31), rgb(25,23,20), rgb(15,20,31), rgb(00,00,00)}, // PREDEFPAL_AZALEA
+	{rgb(31,31,31), rgb(29,26,18), rgb(15,20,31), rgb(00,00,00)}, // PREDEFPAL_GOLDENROD
+	{rgb(31,31,31), rgb(31,21,18), rgb(15,20,31), rgb(00,00,00)}, // PREDEFPAL_ECRUTEAK
+	{rgb(31,31,31), rgb(26,25,31), rgb(15,20,31), rgb(00,00,00)}, // PREDEFPAL_OLIVINE
+	{rgb(31,31,31), rgb(22,21,31), rgb(15,20,31), rgb(00,00,00)}, // PREDEFPAL_CIANWOOD
+	{rgb(31,31,31), rgb(22,25,21), rgb(15,20,31), rgb(00,00,00)}, // PREDEFPAL_MAHOGANY
+	{rgb(31,31,31), rgb(21,21,22), rgb(15,20,31), rgb(00,00,00)}, // PREDEFPAL_BLACKTHORN
+	{rgb(31,31,31), rgb(31,20,20), rgb(15,20,31), rgb(00,00,00)}, // PREDEFPAL_LAKE_OF_RAGE
+	{rgb(31,31,31), rgb(26,26,26), rgb(15,20,31), rgb(00,00,00)}, // PREDEFPAL_SILVER_CAVE
+	{rgb(31,31,31), rgb(21,14, 9), rgb(15,20,20), rgb(00,00,00)}, // PREDEFPAL_DUNGEONS
+	{rgb(31,31,31), rgb(12,28,22), rgb(15,20,20), rgb(00,00,00)}, // PREDEFPAL_NITE
+	{rgb(31,31,31), rgb(07,07,07), rgb(02,03,03), rgb(00,00,00)}, // PREDEFPAL_BLACKOUT
+	{rgb(31,31,31), rgb(30,22,17), rgb(16,14,19), rgb(00,00,00)}, // PREDEFPAL_DIPLOMA
+	{rgb(31,31,31), rgb(18,20,27), rgb(11,15,23), rgb(00,00,00)}, // PREDEFPAL_TRADE_TUBE
+	{rgb(31,31,31), rgb(31,20,10), rgb(26,10,06), rgb(00,00,00)}, // PREDEFPAL_POKEDEX
+	{rgb(31,31,31), rgb(21,25,29), rgb(14,19,25), rgb(00,00,00)}, // PREDEFPAL_RB_CYANMON
+	{rgb(31,31,31), rgb(27,22,24), rgb(21,15,23), rgb(00,00,00)}, // PREDEFPAL_RB_PURPLEMON
+	{rgb(31,31,31), rgb(28,20,15), rgb(21,14, 9), rgb(00,00,00)}, // PREDEFPAL_RB_BROWNMON
+	{rgb(31,31,31), rgb(20,26,16), rgb( 9,20,11), rgb(00,00,00)}, // PREDEFPAL_RB_GREENMON
+	{rgb(31,31,31), rgb(30,22,24), rgb(28,15,21), rgb(00,00,00)}, // PREDEFPAL_RB_PINKMON
+	{rgb(31,31,31), rgb(31,28,14), rgb(26,20,00), rgb(00,00,00)}, // PREDEFPAL_RB_YELLOWMON
+	{rgb(31,31,31), rgb(26,21,22), rgb(15,15,18), rgb(00,00,00)}, // PREDEFPAL_CGB_BADGE
+	{rgb(31,31,31), rgb(23,19,13), rgb(14,12,17), rgb(00,00,00)}, // PREDEFPAL_SHINY_MEWMON
+	{rgb(31,31,31), rgb(16,18,21), rgb(10,12,18), rgb(00,00,00)}, // PREDEFPAL_SHINY_BLUEMON
+	{rgb(31,31,31), rgb(22,15,16), rgb(17,02,05), rgb(00,00,00)}, // PREDEFPAL_SHINY_REDMON
+	{rgb(31,31,31), rgb(15,20,20), rgb(05,16,16), rgb(00,00,00)}, // PREDEFPAL_SHINY_CYANMON
+	{rgb(31,31,31), rgb(23,15,19), rgb(14,04,12), rgb(00,00,00)}, // PREDEFPAL_SHINY_PURPLEMON
+	{rgb(31,31,31), rgb(20,17,18), rgb(18,13,11), rgb(00,00,00)}, // PREDEFPAL_SHINY_BROWNMON
+	{rgb(31,31,31), rgb(23,21,16), rgb(12,12,10), rgb(00,00,00)}, // PREDEFPAL_SHINY_GREENMON
+	{rgb(31,31,31), rgb(21,25,29), rgb(30,22,24), rgb(00,00,00)}, // PREDEFPAL_SHINY_PINKMON
+	{rgb(31,31,31), rgb(26,23,16), rgb(29,14, 9), rgb(00,00,00)}, // PREDEFPAL_SHINY_YELLOWMON
+	{rgb(31,31,31), rgb(18,18,18), rgb(10,10,10), rgb(00,00,00)}, // PREDEFPAL_PARTY_ICON
+	{rgb(31,31,31), rgb(30,26,15), rgb(00,23,00), rgb(00,00,00)}, // PREDEFPAL_HP_GREEN
+	{rgb(31,31,31), rgb(30,26,15), rgb(31,23,00), rgb(00,00,00)}, // PREDEFPAL_HP_YELLOW
+	{rgb(31,31,31), rgb(30,26,15), rgb(31,00,00), rgb(00,00,00)}, // PREDEFPAL_HP_RED
+	{rgb(31,31,31), rgb(29,26,19), rgb(27,20,14), rgb(00,00,00)}, // PREDEFPAL_POKEGEAR
+	{rgb(31,31,31), rgb(24,20,10), rgb(21,00,04), rgb(00,00,00)}, // PREDEFPAL_BETA_LOGO_1
+	{rgb(31,31,31), rgb(31,20,10), rgb(21,00,04), rgb(00,00,00)}, // PREDEFPAL_BETA_LOGO_2
+	{rgb(31,31,31), rgb(30,26,16), rgb(16,12, 9), rgb(00,00,00)}, // PREDEFPAL_GS_INTRO_GAMEFREAK_LOGO
+	{rgb(31,31,31), rgb(15,28,26), rgb(12,22,26), rgb(03,16,14)}, // PREDEFPAL_GS_INTRO_SHELLDER_LAPRAS
+	{rgb(31,31,31), rgb(15,28,26), rgb(23,24,24), rgb(00,00,00)}, // PREDEFPAL_BETA_INTRO_LAPRAS
+	{rgb(31,31,24), rgb(07,27,19), rgb(26,20,10), rgb(19,12, 8)}, // PREDEFPAL_GS_INTRO_JIGGLYPUFF_PIKACHU_BG
+	{rgb(31,31,31), rgb(31,28,14), rgb(31,13,31), rgb(00,00,00)}, // PREDEFPAL_GS_INTRO_JIGGLYPUFF_PIKACHU_OB
+	{rgb(31,31,31), rgb(16,18,21), rgb(10,12,18), rgb(00,00,00)}, // PREDEFPAL_GS_INTRO_STARTERS_TRANSITION
+	{rgb(31,31,31), rgb(23,21,16), rgb(12,12,10), rgb(00,00,00)}, // PREDEFPAL_BETA_INTRO_VENUSAUR
+	{rgb(31,31,31), rgb(31,14,00), rgb(07,11,15), rgb(00,00,00)}, // PREDEFPAL_PACK
+	{rgb(31,31,31), rgb(26,21,22), rgb(26,10,06), rgb(00,00,00)}, // PREDEFPAL_SLOT_MACHINE_0
+	{rgb(31,31,31), rgb(30,27,04), rgb(24,20,11), rgb(00,00,00)}, // PREDEFPAL_SLOT_MACHINE_1
+	{rgb(31,31,31), rgb(31,13,25), rgb(24,20,11), rgb(00,00,00)}, // PREDEFPAL_SLOT_MACHINE_2
+	{rgb(31,31,31), rgb(16,19,29), rgb(24,20,11), rgb(00,00,00)}, // PREDEFPAL_SLOT_MACHINE_3
+	{rgb(31,31,31), rgb(30,22,24), rgb(18,18,18), rgb(16,10,07)}, // PREDEFPAL_BETA_POKER_0
+	{rgb(31,31,31), rgb(21,25,29), rgb(18,18,18), rgb(16,10,07)}, // PREDEFPAL_BETA_POKER_1
+	{rgb(31,31,31), rgb(20,26,16), rgb(18,18,18), rgb(16,10,07)}, // PREDEFPAL_BETA_POKER_2
+	{rgb(31,31,31), rgb(31,28,14), rgb(18,18,18), rgb(16,10,07)}, // PREDEFPAL_BETA_POKER_3
+	{rgb(31,31,31), rgb(18,18,18), rgb(26,10,06), rgb(00,00,00)}, // PREDEFPAL_BETA_RADIO
+	{rgb(31,31,31), rgb(30,22,24), rgb(28,15,21), rgb(00,00,00)}, // PREDEFPAL_BETA_POKEGEAR
+	{rgb(31,31,31), rgb(26,20,00), rgb(16,19,29), rgb(00,00,00)}, // PREDEFPAL_47
+	{rgb(31,31,31), rgb(16,02,30), rgb(15,20,31), rgb(00,00,00)}, // PREDEFPAL_GS_TITLE_SCREEN_0
+	{rgb(31,31,31), rgb(16,13,04), rgb(15,20,31), rgb(00,00,00)}, // PREDEFPAL_GS_TITLE_SCREEN_1
+	{rgb(31,31,31), rgb(28,04,02), rgb(15,20,31), rgb(00,00,00)}, // PREDEFPAL_GS_TITLE_SCREEN_2
+	{rgb(31,31,31), rgb(18,23,31), rgb(15,20,31), rgb(00,00,00)}, // PREDEFPAL_GS_TITLE_SCREEN_3
+	{rgb(31,31,31), rgb(24,20,11), rgb(18,13,11), rgb(00,00,00)}, // PREDEFPAL_UNOWN_PUZZLE
+	{rgb(31,31,31), rgb(31,31,31), rgb(25,30, 0), rgb(25,30, 0)}, // PREDEFPAL_GAMEFREAK_LOGO_OB
+	{rgb( 0, 0, 0), rgb( 8,11,11), rgb(21,21,21), rgb(31,31,31)}, // PREDEFPAL_GAMEFREAK_LOGO_BG
+};
 
 // void SGBBorderMapAndPalettes(void){
 // //  interleaved tile ids and palette ids, without the center 20x18 screen area

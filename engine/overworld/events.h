@@ -46,7 +46,7 @@ void TryBGEvent(void);
 void BGEventJumptable(void);
 void CheckBGEventFlag(void);
 void PlayerMovement(void);
-struct FlagA PlayerMovement_Conv(void);
+u8_flag_s PlayerMovement_Conv(void);
 // void PlayerMovementPointers(void);
 void CheckMenuOW(void);
 void StartMenuScript(void);

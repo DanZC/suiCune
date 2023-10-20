@@ -466,6 +466,27 @@ void BattleTextbox_Conv(uint16_t hl){
     // RET;
 }
 
+//  Open a textbox and print text at hl.
+void BattleTextbox_Conv2(const struct TextCmd* hl){
+    // PUSH_HL;
+    // CALL(aSpeechTextbox);
+    SpeechTextbox_Conv();
+
+    // CALL(aMobileTextBorder);
+    MobileTextBorder_Conv();
+
+    // CALL(aUpdateSprites);
+    UpdateSprites_Conv();
+
+    // CALL(aApplyTilemap);
+    ApplyTilemap_Conv();
+
+    // POP_HL;
+    // CALL(aPrintTextboxText);
+    PrintTextboxText_Conv2(hl);
+    // RET;
+}
+
 void StdBattleTextbox(void){
     //  Open a textbox and print battle text at 20:hl.
 
@@ -499,6 +520,22 @@ void StdBattleTextbox_Conv(uint16_t hl){
     // RST(aBankswitch);
     // RET;
     bank_pop;
+}
+
+//  Open a textbox and print battle text at 20:hl.
+void StdBattleTextbox_Conv2(const struct TextCmd* hl){
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+
+    // LD_A(BANK(aBattleText));
+    // RST(aBankswitch);
+
+    // CALL(aBattleTextbox);
+    BattleTextbox_Conv2(hl);
+
+    // POP_AF;
+    // RST(aBankswitch);
+    // RET;
 }
 
 void GetBattleAnimPointer(void){

@@ -3972,4 +3972,31 @@ void init_function_pointers(void) {
     // REDIRECTED(DudeAutoInput_DownA);
     // REDIRECTED(DudeAutoInput_RightA);
     // REDIRECTED(DudeAutoInput_A);
+
+    // engine/movie/splash.c
+    // REDIRECTED(GameFreakLogo_Done);
+    // REDIRECTED(GameFreakLogo_Ditto);
+    CONVERTED(SplashScreen);
+    // REDIRECTED(GameFreakPresentsInit);
+    // REDIRECTED(GameFreakLogoSpriteAnim);
+    // REDIRECTED(GameFreakLogo_Init);
+    // REDIRECTED(GameFreakPresents_PlacePresents);
+    // REDIRECTED(GameFreakPresentsEnd);
+    // REDIRECTED(GameFreakPresents_NextScene);
+    // REDIRECTED(GameFreakPresents_PlaceGameFreak);
+    // REDIRECTED(GameFreakPresents_WaitForTimer);
+    // REDIRECTED(GameFreakLogo_Transform);
+    // REDIRECTED(GameFreakPresentsScene);
+    // REDIRECTED(GameFreakLogo_Bounce);
+    // REDIRECTED(GameFreakLogoGFX);
+    // REDIRECTED(GameFreakDittoPaletteFade);
+    // REDIRECTED(GameFreakPresents_WaitSpriteAnim);
+
+    // engine/movie/gbc_only.c
+    // REDIRECTED(GBCOnlyGFX);
+    // REDIRECTED(DrawGBCOnlyGraphic);
+    // REDIRECTED(DrawGBCOnlyBorder);
+    // REDIRECTED(GBCOnlyString);
+    CONVERTED(GBCOnlyScreen);
+    // REDIRECTED(DrawGBCOnlyScreen);
 }

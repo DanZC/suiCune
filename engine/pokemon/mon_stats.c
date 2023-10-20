@@ -443,7 +443,7 @@ Genderless:
 //         f = c:  genderless
 //  This is determined by comparing the Attack and Speed DVs
 //  with the species' gender ratio.
-struct FlagA GetGender_Conv(void){
+u8_flag_s GetGender_Conv(void){
 //  Figure out what type of monster struct we're looking at.
 
     uint16_t DVs = 0;
@@ -547,7 +547,7 @@ struct FlagA GetGender_Conv(void){
     // Genderless:
         // SCF;
         // RET;
-        return (struct FlagA){.a = 0, .flag = true};
+        return (u8_flag_s){.a = 0, .flag = true};
 
     // AND_A_A;  // GENDER_F0?
     // IF_Z goto Male;
@@ -556,7 +556,7 @@ struct FlagA GetGender_Conv(void){
         // LD_A(1);
         // AND_A_A;
         // RET;
-        return (struct FlagA){.a = 1, .flag = false};
+        return (u8_flag_s){.a = 1, .flag = false};
 
 
     // CP_A(GENDER_F100);
@@ -568,13 +568,13 @@ struct FlagA GetGender_Conv(void){
     // Female:
         // XOR_A_A;
         // RET;
-        return (struct FlagA){.a = 0, .flag = false};
+        return (u8_flag_s){.a = 0, .flag = false};
     }
 // Male:
     // LD_A(1);
     // AND_A_A;
     // RET;
-    return (struct FlagA){.a = 1, .flag = false};
+    return (u8_flag_s){.a = 1, .flag = false};
 }
 
 void ListMovePP(void){

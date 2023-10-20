@@ -34,7 +34,7 @@ void LoadBluePage(void);
 // void OTString(void);
 void StatsScreen_PlaceFrontpic(void);
 void StatsScreen_GetAnimationParam(void);
-struct FlagA StatsScreen_GetAnimationParam_Conv(void);
+u8_flag_s StatsScreen_GetAnimationParam_Conv(void);
 void StatsScreen_LoadTextboxSpaceGFX(void);
 void StatsScreenSpaceGFX(void);
 void EggStatsScreen(void);

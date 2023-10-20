@@ -210,7 +210,7 @@
 #include "engine/battle/sliding_intro.h"
 //#include "mobile/print_opp_message.h"
 #include "engine/battle/check_battle_scene.h"
-//#include "engine/movie/gbc_only.h"
+#include "engine/movie/gbc_only.h"
 //#include "engine/events/poke_seer.h"
 
 // SECTION "bank14", ROMX
@@ -433,7 +433,7 @@
 // SECTION "bank39", ROMX
 
 //#include "engine/menus/options_menu.h"
-//#include "engine/movie/splash.h"
+#include "engine/movie/splash.h"
 #include "engine/movie/intro.h"
 
 // SECTION "Audio", ROMX
