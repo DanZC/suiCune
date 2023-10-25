@@ -763,7 +763,7 @@ done:
 }
 
 //  Return the number of a TM/HM by item id c.
-uint8_t GetTMHMNumber_Conv(uint8_t c){
+uint8_t GetTMHMNumber_Conv(item_t c){
     // LD_A_C;
 //  Skip any dummy items.
     // CP_A(ITEM_C3);  // TM04-05

@@ -54,31 +54,4 @@ no_scene:
     return;
 }
 
-#include "../data/text/std_text.h"
-
-enum {
-    ReceiveItemScript_lbl1 = 1
-};
-
-bool ReceiveItemScript(script_s* s) {
-    SCRIPT_BEGIN
-far_label(ReceiveItemScript_lbl1)
-    waitsfx;
-    // farwritetext ReceivedItemText
-    writetext(ReceivedItemText);
-    playsound(SFX_ITEM);
-    waitsfx;
-    SCRIPT_END
-}
-
-
-bool OtherScript(script_s* s) {
-    SCRIPT_BEGIN
-    playsound(SFX_ITEM);
-    scall_far(ReceiveItemScript, ReceiveItemScript_lbl1);
-    checkflag(ENGINE_62);
-    waitsfx;
-    SCRIPT_END
-}
-
 script_s gCurScript;

@@ -1096,6 +1096,21 @@ struct BGEvent
     Script_fn_t script;
 };
 
+struct ItemBall {
+    item_t item;
+    uint8_t quantity;
+};
+
+struct TrainerObj {
+    uint8_t tclass;
+    uint8_t tid;
+    uint16_t event_flag;
+    const struct TextCmd* const seenText;
+    const struct TextCmd* const winText;
+    const struct TextCmd* const lossText;
+    Script_fn_t script;
+};
+
 struct ObjEvent
 {
     uint8_t sprite;
@@ -1109,7 +1124,11 @@ struct ObjEvent
     uint8_t function;
     uint8_t sightRange;
     int16_t eventFlag;
-    Script_fn_t script;
+    union {
+        Script_fn_t const script;
+        struct ItemBall* const item_ball;
+        struct TrainerObj* const trainer;
+    };
 };
 
 struct MapEvents
@@ -1147,6 +1166,32 @@ struct MapHeader
     uint8_t phoneService;
     uint8_t timeOfDay;
     uint8_t fishingGroup;
+};
+
+struct MenuCoords {
+    uint8_t y1;
+    uint8_t x1;
+    uint8_t y2;
+    uint8_t x2;
+};
+
+#define menu_coords(_x1, _y1, _x2, _y2) (struct MenuCoords){.y1 = _y1, .x1 = _x1, .y2 = _y2, .x2 = _x2}
+
+struct MenuHeader {
+    uint8_t flags;
+    struct MenuCoords coord;
+    const void* const data;
+    uint8_t defaultOption;
+};
+
+struct MenuData {
+    uint8_t flags;
+    union {
+        struct {
+            uint8_t count;
+            const char **const options;
+        } staticMenu;
+    };
 };
 
 typedef struct Script script_s;

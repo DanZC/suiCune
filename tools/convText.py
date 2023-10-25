@@ -25,9 +25,12 @@ def convert_line(line: str):
     if line == '' or line == ' ':
         return ''
     if not line.startswith('\t'):
-        if line.find(":") == -1:
+        if line.find("::") == -1 and line.find(":"):
             return ""
-        name = line[:line.rfind(":")]
+        if line.find("::") != -1:
+            name = line[:line.rfind(":")]
+        elif line.find(":") != -1:
+            name = line[:line.rfind("::")]
         if name.startswith('_'):
             name = name[1:]
         labels.append(name)

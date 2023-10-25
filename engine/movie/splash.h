@@ -1,4 +1,4 @@
-void SplashScreen(void);
+bool SplashScreen(void);
 void GameFreakPresentsInit(void);
 void GameFreakPresentsEnd(void);
 void GameFreakPresentsScene(void);

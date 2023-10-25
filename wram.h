@@ -2936,8 +2936,8 @@ struct PACKED wram_s
                 uint8_t skip_123[2];
                 uint16_t wLuckyNumberDayTimer;
                 uint8_t skip_124[2];
-                uint8_t wSpecialPhoneCallID;
-                uint8_t skip_125[3];
+                uint16_t wSpecialPhoneCallID;
+                uint8_t skip_125[2];
                 uint8_t wBugContestStartTime[4];
                 // day, hour, min, sec
                 uint8_t wUnusedTwoDayTimerOn;

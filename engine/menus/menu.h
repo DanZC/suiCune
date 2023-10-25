@@ -17,6 +17,7 @@ void v_ScrollingMenuJoypad_Conv(void);
 void MobileMenuJoypad(void);
 void Function241d5(void);
 void MenuJoypadLoop(void);
+void MenuJoypadLoop_Conv(void);
 void Do2DMenuRTCJoypad(void);
 bool Do2DMenuRTCJoypad_Conv(void);
 void Menu_WasButtonPressed(void);

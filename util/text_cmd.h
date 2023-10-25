@@ -54,6 +54,7 @@ struct TextCmd {
 #define sound_slot_machine_start    {TX_SOUND_SLOT_MACHINE_START, .end=0},
 
 #define wram_ptr(_p)        (gb.wram + (WRAM_BANK_SIZE * (MBANK(a##_p))) + (_p - WRAM_0_ADDR))
+#define hram_ptr(_p)        (gb.hram + (_p - HRAM_ADDR))
 
 #define t_line      "<LINE>"
 #define t_next      "<NEXT>"

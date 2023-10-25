@@ -6,6 +6,7 @@
 #include "../data/moves/names.h"
 #include "../data/items/names.h"
 #include "../data/trainers/class_names.h"
+#include "../engine/items/items.h"
 
 const char (*const NamesPointers[])[20] = {
     //  entries correspond to GetName constants (see constants/text_constants.asm)
@@ -447,7 +448,7 @@ void GetPokemonName_Conv(void){
 }
 
 //  Get Pokemon name for wNamedObjectIndex.
-uint8_t* GetPokemonName_Conv2(uint8_t index){
+uint8_t* GetPokemonName_Conv2(species_t index){
 
     // LDH_A_addr(hROMBank);
     // PUSH_AF;
@@ -558,21 +559,19 @@ uint16_t GetItemName_Conv(void){
     return wStringBuffer1;
 }
 
-uint8_t* GetItemName_Conv2(void){
-    //  Get item name for wNamedObjectIndex.
-
+//  Get item name for a.
+uint8_t* GetItemName_Conv2(item_t a){
     // PUSH_HL;
     // PUSH_BC;
     // LD_A_addr(wNamedObjectIndex);
-    uint8_t a = wram->wNamedObjectIndex;
 
     // CP_A(TM01);
     // IF_NC goto TM;
     if(a >= TM01)
     {
-    TM:
+    // TM:
         // CALL(aGetTMHMName);
-        GetTMHMName_Conv();
+        return GetTMHMName_Conv2(a);
     }
     else 
     {
@@ -584,7 +583,7 @@ uint8_t* GetItemName_Conv2(void){
         wram->wNamedObjectType = ITEM_NAME;
 
         // CALL(aGetName);
-        GetName_Conv();
+        GetName_Conv2(ITEM_NAME, a);
     }
     // LD_DE(wStringBuffer1);
     // POP_BC;
@@ -790,6 +789,110 @@ HMTextEnd:
 // INCLUDE "home/hm_moves.asm"
 
     return GetMoveName();
+}
+
+//  Get TM/HM name for item a.
+uint8_t* GetTMHMName_Conv2(item_t a){
+
+    // PUSH_HL;
+    // PUSH_DE;
+    // PUSH_BC;
+    // LD_A_addr(wNamedObjectIndex);
+    // PUSH_AF;
+
+//  TM/HM prefix
+    // CP_A(HM01);
+    // PUSH_AF;
+    // IF_C goto TM;
+    if(a < HM01)
+    {
+        // LD_HL(mGetTMHMName_TMText);
+        // LD_BC(mGetTMHMName_TMTextEnd - mGetTMHMName_TMText);
+        // LD_DE(wStringBuffer1);
+        // CALL(aCopyBytes);
+        U82CA(wram->wStringBuffer1, "TM");
+    }
+    else 
+    {
+        // LD_HL(mGetTMHMName_HMText);
+        // LD_BC(mGetTMHMName_HMTextEnd - mGetTMHMName_HMText);
+        // LD_DE(wStringBuffer1);
+        // CALL(aCopyBytes);
+        U82CA(wram->wStringBuffer1, "HM");
+    }
+
+// copy:
+//  TM/HM number
+    // PUSH_DE;
+    // LD_A_addr(wNamedObjectIndex);
+    // LD_C_A;
+    // CALLFAR(aGetTMHMNumber);
+    uint8_t c = GetTMHMNumber_Conv(a);
+    // POP_DE;
+
+//  HM numbers start from 51, not 1
+    // POP_AF;
+    // LD_A_C;
+    // IF_C goto not_hm;
+    if(c >= CUT_TMNUM)
+        c -= NUM_TMS;
+    // SUB_A(NUM_TMS);
+
+// not_hm:
+    
+//  Divide and mod by 10 to get the top and bottom digits respectively
+    // LD_B(0xf6);
+
+// mod10:
+    // SUB_A(10);
+    // IF_C goto done_mod;
+    // INC_B;
+    // goto mod10;
+
+
+// done_mod:
+    // ADD_A(10);
+    // PUSH_AF;
+    // LD_A_B;
+    // LD_de_A;
+    // INC_DE;
+    wram->wStringBuffer1[2] = CHAR_0 + (a / 10);
+    // POP_AF;
+
+    // LD_B(0xf6);
+    // ADD_A_B;
+    // LD_de_A;
+    wram->wStringBuffer1[3] = CHAR_0 + (a % 10);
+
+//  End the string
+    // INC_DE;
+    // LD_A(0x50);
+    // LD_de_A;
+    wram->wStringBuffer1[4] = CHAR_TERM;
+
+    // POP_AF;
+    // LD_addr_A(wNamedObjectIndex);
+    // POP_BC;
+    // POP_DE;
+    // POP_HL;
+    // RET;
+    return wram->wStringBuffer1;
+
+
+// TMText:
+        //db ['"TM"'];
+
+// TMTextEnd:
+        //db ['"@"'];
+
+
+// HMText:
+        //db ['"HM"'];
+
+// HMTextEnd:
+        //db ['"@"'];
+
+// INCLUDE "home/hm_moves.asm"
 }
 
 void GetMoveName(void){

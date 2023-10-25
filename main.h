@@ -27,7 +27,7 @@
 
 // SECTION "bank3", ROMX
 
-//#include "engine/events/checktime.h"
+#include "engine/events/checktime.h"
 //#include "engine/events/specials.h"
 #include "engine/math/print_num.h"
 #include "engine/pokemon/health.h"
@@ -256,7 +256,7 @@
 
 #include "engine/overworld/player_movement.h"
 #include "engine/events/engine_flags.h"
-//#include "engine/overworld/variables.h"
+#include "engine/overworld/variables.h"
 //#include "data/text/battle.h"
 //#include "engine/debug/color_picker.h"
 

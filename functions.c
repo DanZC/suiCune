@@ -3976,7 +3976,7 @@ void init_function_pointers(void) {
     // engine/movie/splash.c
     // REDIRECTED(GameFreakLogo_Done);
     // REDIRECTED(GameFreakLogo_Ditto);
-    CONVERTED(SplashScreen);
+    // CONVERTED(SplashScreen);
     // REDIRECTED(GameFreakPresentsInit);
     // REDIRECTED(GameFreakLogoSpriteAnim);
     // REDIRECTED(GameFreakLogo_Init);
@@ -3999,4 +3999,10 @@ void init_function_pointers(void) {
     // REDIRECTED(GBCOnlyString);
     CONVERTED(GBCOnlyScreen);
     // REDIRECTED(DrawGBCOnlyScreen);
+
+    // engine/events/checktime.c
+    CONVERTED(CheckTime);
+
+    // engine/overworld/variables.c
+    // REDIRECTED(v_GetVarAction);
 }

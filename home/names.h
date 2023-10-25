@@ -8,10 +8,11 @@ uint16_t GetNthString_Conv(uint16_t hl, uint8_t a);
 void GetBasePokemonName(void);
 void GetPokemonName(void);
 void GetPokemonName_Conv(void);
-uint8_t* GetPokemonName_Conv2(uint8_t index);
+uint8_t* GetPokemonName_Conv2(species_t index);
 void GetItemName(void);
-uint8_t* GetItemName_Conv2(void);
+uint8_t* GetItemName_Conv2(item_t a);
 void GetTMHMName(void);
 void GetTMHMName_Conv(void);
+uint8_t* GetTMHMName_Conv2(item_t a);
 void GetMoveName(void);
 #include "hm_moves.h"

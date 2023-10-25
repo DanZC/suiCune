@@ -7,6 +7,7 @@
 #include "../../home/joypad.h"
 #include "../../home/tilemap.h"
 #include "../../home/text.h"
+#include "../gfx/sprites.h"
 
 void v_2DMenu_(void){
     LD_HL(mCopyMenuData);
@@ -339,6 +340,7 @@ void v_ScrollingMenuJoypad_Conv(void){
     // PUSH_AF;
     uint8_t temp = hram->hBGMapMode;
     // CALL(aMenuJoypadLoop);
+    MenuJoypadLoop_Conv();
     // POP_AF;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = temp;
@@ -543,27 +545,16 @@ skip_to_joypad:
 
 }
 
-static void Menu_WasButtonPressed_Conv_PlaySpriteAnimationsAndDelayFrame(void) {
-    PUSH_AF;
-    PUSH_BC;
-    PUSH_DE;
-    PUSH_HL;
-    CALLFAR(aPlaySpriteAnimationsAndDelayFrame);
-    POP_HL;
-    POP_DE;
-    POP_BC;
-    POP_AF;
-}
-
 bool Menu_WasButtonPressed_Conv(void){
     // LD_A_addr(w2DMenuFlags1);
     // BIT_A(6);
     // IF_Z goto skip_to_joypad;
     if(bit_test(wram->w2DMenuFlags1, 6)) {
+        bank_push(BANK(aPlaySpriteAnimationsAndDelayFrame));
         // CALLFAR(aPlaySpriteAnimationsAndDelayFrame);
-        Menu_WasButtonPressed_Conv_PlaySpriteAnimationsAndDelayFrame();
+        PlaySpriteAnimationsAndDelayFrame_Conv();
+        bank_pop;
     }
-
 
 // skip_to_joypad:
     // CALL(aJoyTextDelay);

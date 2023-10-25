@@ -348,6 +348,13 @@ void MaxVolume(void) {
     RET;                 // ret
 }
 
+void MaxVolume_Conv(void) {
+    // LD_A(MAX_VOLUME);    // ld a, MAX_VOLUME
+    // LD_addr_A(wVolume);  // ld [wVolume], a
+    // RET;                 // ret
+    wram->wVolume = MAX_VOLUME;
+}
+
 void LowVolume(void) {
     LD_A(0x33);          // ld a, $33 ; 50%
     LD_addr_A(wVolume);  // ld [wVolume], a

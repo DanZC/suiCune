@@ -13,6 +13,8 @@
 #include "../../gfx/misc.h"
 #include "../../data/text/common.h"
 #include "../../charmap.h"
+#include "../movie/splash.h"
+#include "../movie/intro.h"
 
 void Intro_MainMenu() {
     PlayMusic_Conv(MUSIC_NONE);
@@ -1149,11 +1151,14 @@ typedef enum {
 } TitlescreenOption;
 
 void IntroSequence(void){
-// Comment the two lines below to remove the copyright splash screen.
-    CALLFAR(aSplashScreen);
-    JR_C (mStartTitleScreen);
+// Comment the four lines below to remove the copyright splash screen.
+    // CALLFAR(aSplashScreen);
+    bool skip = SplashScreen();
+    // JR_C (mStartTitleScreen);
+    if(!skip)
 // Comment the line below to remove the intro movie.
-    FARCALL(aCrystalIntro);
+        // CrystalIntro();
+        FARCALL(aCrystalIntro);
 
 // fallthrough
 

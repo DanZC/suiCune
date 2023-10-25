@@ -1,6 +1,7 @@
 #include "../../constants.h"
 #include "sprites.h"
 #include "../math/sine.h"
+#include "../../home/delay.h"
 
 void ClearSpriteAnims(void){
     LD_HL(wSpriteAnimData);
@@ -39,6 +40,14 @@ void PlaySpriteAnimationsAndDelayFrame(void){
     CALL(aDelayFrame);
     RET;
 
+}
+
+void PlaySpriteAnimationsAndDelayFrame_Conv(void){
+    // CALL(aPlaySpriteAnimations);
+    PlaySpriteAnimations_Conv();
+    // CALL(aDelayFrame);
+    DelayFrame();
+    // RET;
 }
 
 void PlaySpriteAnimations(void){

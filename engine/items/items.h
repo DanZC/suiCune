@@ -20,7 +20,7 @@ void TossTMHM(void);
 void CheckTMHM(void);
 bool CheckTMHM_Conv(uint8_t c);
 void GetTMHMNumber(void);
-uint8_t GetTMHMNumber_Conv(uint8_t c);
+uint8_t GetTMHMNumber_Conv(item_t c);
 void GetNumberedTMHM(void);
 void v_CheckTossableItem(void);
 bool v_CheckTossableItem_Conv(item_t item);

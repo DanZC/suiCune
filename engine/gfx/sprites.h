@@ -1,6 +1,7 @@
 void ClearSpriteAnims(void);
 void ClearSpriteAnims_Conv(void);
 void PlaySpriteAnimationsAndDelayFrame(void);
+void PlaySpriteAnimationsAndDelayFrame_Conv(void);
 void PlaySpriteAnimations(void);
 void PlaySpriteAnimations_Conv(void);
 void DoNextFrameForAllSprites(void);

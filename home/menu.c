@@ -1,5 +1,6 @@
 #include "../constants.h"
 #include "menu.h"
+#include "delay.h"
 #include "copy.h"
 #include "text.h"
 #include "map_objects.h"
@@ -973,20 +974,51 @@ no:
     RET;
 }
 
-void YesNoMenuHeader(void) {
-    // db ['MENU_BACKUP_TILES'];  // flags
-    // menu_coords ['10', '5', '15', '9'];
-    // dw ['.MenuData'];
-    // db ['1'];  // default option
-
-MenuData:
-    // db ['STATICMENU_CURSOR | STATICMENU_NO_TOP_SPACING'];  // flags
-    // db ['2'];
-    // db ['"YES@"'];
-    // db ['"NO@"'];
-
-    return OffsetMenuHeader();
+bool InterpretTwoOptionMenu_Conv(void) {
+    // CALL(aVerticalMenu);
+    bool cancel = !VerticalMenu_Conv();
+    // PUSH_AF;
+    // LD_C(0xf);
+    // CALL(aDelayFrames);
+    DelayFrames_Conv(0xf);
+    // CALL(aCloseWindow);
+    CloseWindow_Conv();
+    // POP_AF;
+    // IF_C goto no;
+    // LD_A_addr(wMenuCursorY);
+    // CP_A(2);  // no
+    // IF_Z goto no;
+    if(cancel || wram->wMenuCursorY == 2) {
+    // no:
+        // LD_A(2);
+        // LD_addr_A(wMenuCursorY);
+        wram->wMenuCursorY = 2;
+        // SCF;
+        // RET;
+        return false;
+    }
+    // AND_A_A;
+    // RET;
+    return true;
 }
+
+// const struct MenuHeader YesNoMenuHeader = {
+//     .flags = MENU_BACKUP_TILES,  // flags
+//     .coord = menu_coords(10, 5, 15, 9),
+//     // dw ['.MenuData'];
+//     .data = &(struct MenuData) {
+//         .flags = STATICMENU_CURSOR | STATICMENU_NO_TOP_SPACING,  // flags
+//         // db ['2'];
+//         .staticMenu = {
+//             .count = 2,
+//             .options = (const char* []){
+//                 "YES@",
+//                 "NO@",
+//             },
+//         },
+//     },
+//     .defaultOption = 1  // default option
+// };
 
 void OffsetMenuHeader(void) {
     CALL(av_OffsetMenuHeader);

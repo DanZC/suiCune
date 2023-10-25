@@ -6,15 +6,22 @@
 #include "../../home/copy.h"
 #include "../../home/print_text.h"
 #include "../../home/copy_name.h"
+#include "../../home/flag.h"
+#include "../../home/math.h"
 #include "../../home/map.h"
+#include "../../home/names.h"
 #include "../../home/item.h"
 #include "../../home/map_objects.h"
+#include "../../home/pokemon.h"
+#include "../../home/random.h"
 #include "../../home/joypad.h"
 #include "../../home/tilemap.h"
 #include "../../home/window.h"
 #include "../battle/core.h"
 #include "../battle/read_trainer_party.h"
 #include "../events/engine_flags.h"
+#include "../events/checktime.h"
+#include "variables.h"
 #include "landmarks.h"
 #include "overworld.h"
 #include "map_objects.h"
@@ -22,6 +29,7 @@
 #include "../items/items.h"
 #include "../../data/text/common.h"
 #include "../../data/items/pocket_names.h"
+#include "../events/std_scripts.h"
 
 static const struct TextCmd* lScriptText = NULL;
 //  Event scripting commands.
@@ -878,6 +886,22 @@ void Script_verbosegiveitem(void){
 
 }
 
+void Script_verbosegiveitem_Conv(script_s* s, item_t item, uint8_t quantity){
+    (void)s;
+    // CALL(aScript_giveitem);
+    Script_giveitem_Conv(s, item, quantity);
+    // CALL(aCurItemName);
+    CurItemName_Conv(item);
+    // LD_DE(wStringBuffer1);
+    // LD_A(STRING_BUFFER_4);
+    // CALL(aCopyConvertedText);
+    CopyConvertedText_Conv(STRING_BUFFER_4, wram->wStringBuffer1);
+    // LD_B(BANK(aGiveItemScript));
+    // LD_DE(mGiveItemScript);
+    // JP(mScriptCall);
+    Script_CallScript(s, GiveItemScript);
+}
+
 void GiveItemScript_DummyFunction(void){
     // RET;
 
@@ -1072,6 +1096,14 @@ void CurItemName(void){
     CALL(aGetItemName);
     RET;
 
+}
+
+uint8_t* CurItemName_Conv(item_t item){
+    // LD_A_addr(wCurItem);
+    // LD_addr_A(wNamedObjectIndex);
+    // CALL(aGetItemName);
+    // RET;
+    return GetItemName_Conv2(item);
 }
 
 const struct TextCmd PutItemInPocketText[] = {
@@ -1309,6 +1341,25 @@ void Script_playmusic(void){
     CALL(aPlayMusic);
     RET;
 
+}
+
+void Script_playmusic_Conv(script_s* s, uint16_t music){
+    (void)s;
+    // LD_DE(MUSIC_NONE);
+    // CALL(aPlayMusic);
+    PlayMusic_Conv(MUSIC_NONE);
+    // XOR_A_A;
+    // LD_addr_A(wMusicFade);
+    wram->wMusicFade = 0;
+    // CALL(aMaxVolume);
+    MaxVolume_Conv();
+    // CALL(aGetScriptByte);
+    // LD_E_A;
+    // CALL(aGetScriptByte);
+    // LD_D_A;
+    // CALL(aPlayMusic);
+    PlayMusic_Conv(music);
+    // RET;
 }
 
 void Script_musicfadeout(void){
@@ -1670,7 +1721,8 @@ loop:
 
 static void ApplyObjectFacing_DisableTextTiles(void) {
 // DisableTextTiles:
-    CALL(aLoadMapPart);
+    // CALL(aLoadMapPart);
+    LoadMapPart_Conv();
     // hlcoord(0, 0, wTilemap);
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     uint8_t* hl = wram->wTilemap + coordidx(0, 0);
@@ -2259,12 +2311,26 @@ void Script_jumpstd(void){
 
 }
 
+void Script_jumpstd_Conv(script_s* s, uint16_t std){
+    // CALL(aStdScript);
+    // JR(mScriptJump);
+    return Script_Goto(s, StdScript_Conv(std));
+}
+
 void Script_callstd(void){
     CALL(aStdScript);
     LD_D_H;
     LD_E_L;
     JP(mScriptCall);
 
+}
+
+void Script_callstd_Conv(script_s* s, uint16_t std){
+    // CALL(aStdScript);
+    // LD_D_H;
+    // LD_E_L;
+    // JP(mScriptCall);
+    return Script_CallScript(s, StdScript_Conv(std));
 }
 
 void StdScript(void){
@@ -2284,6 +2350,25 @@ void StdScript(void){
     CALL(aGetFarWord);
     RET;
 
+}
+
+Script_fn_t StdScript_Conv(uint16_t std){
+    // CALL(aGetScriptByte);
+    // LD_E_A;
+    // CALL(aGetScriptByte);
+    // LD_D_A;
+    // LD_HL(mStdScripts);
+    // ADD_HL_DE;
+    // ADD_HL_DE;
+    // ADD_HL_DE;
+    // LD_A(BANK(aStdScripts));
+    // CALL(aGetFarByte);
+    // LD_B_A;
+    // INC_HL;
+    // LD_A(BANK(aStdScripts));
+    // CALL(aGetFarWord);
+    // RET;
+    return StdScripts[std];
 }
 
 void SkipTwoScriptBytes(void){
@@ -2352,6 +2437,34 @@ no_scene:
 
 }
 
+void Script_checkmapscene_Conv(script_s* s, uint8_t group, uint8_t map){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // LD_B_A;
+    // CALL(aGetScriptByte);
+    // LD_C_A;
+    // CALL(aGetMapSceneID);
+    uint8_t* de = GetMapSceneID_Conv2(group, map);
+    // LD_A_D;
+    // OR_A_E;
+    // IF_Z goto no_scene;
+    if(de != NULL) {
+        // LD_A_de;
+        // LD_addr_A(wScriptVar);
+        wram->wScriptVar = *de;
+        // RET;
+        return;
+    }
+    else {
+    // no_scene:
+        // LD_A(0xff);
+        // LD_addr_A(wScriptVar);
+        wram->wScriptVar = 0xff;
+        // RET;
+        return;
+    }
+}
+
 void Script_setscene(void){
     LD_A_addr(wMapGroup);
     LD_B_A;
@@ -2361,12 +2474,32 @@ void Script_setscene(void){
 
 }
 
+void Script_setscene_Conv(script_s* s, uint8_t scene){
+    (void)s;
+    // LD_A_addr(wMapGroup);
+    // LD_B_A;
+    // LD_A_addr(wMapNumber);
+    // LD_C_A;
+    // JR(mDoScene);
+    return DoScene_Conv(wram->wMapGroup, wram->wMapNumber, scene);
+}
+
 void Script_setmapscene(void){
     CALL(aGetScriptByte);
     LD_B_A;
     CALL(aGetScriptByte);
     LD_C_A;
     return DoScene();
+}
+
+void Script_setmapscene_Conv(script_s* s, uint8_t group, uint8_t map, uint8_t scene){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // LD_B_A;
+    // CALL(aGetScriptByte);
+    // LD_C_A;
+    // return DoScene();
+    return DoScene_Conv(group, map, scene);
 }
 
 void DoScene(void){
@@ -2382,6 +2515,22 @@ no_scene:
 
 }
 
+void DoScene_Conv(uint8_t group, uint8_t map, uint8_t scene){
+    // CALL(aGetMapSceneID);
+    // LD_A_D;
+    // OR_A_E;
+    uint8_t* de = GetMapSceneID_Conv2(group, map);
+    // IF_Z goto no_scene;
+    if(de != NULL) {
+        // CALL(aGetScriptByte);
+        // LD_de_A;
+        *de = scene;
+    }
+
+// no_scene:
+    // RET;
+}
+
 void Script_readmem(void){
     CALL(aGetScriptByte);
     LD_L_A;
@@ -2394,6 +2543,7 @@ void Script_readmem(void){
 }
 
 void Script_readmem_Conv(script_s* s, uint8_t* hl){
+    (void)s;
     // CALL(aGetScriptByte);
     // LD_L_A;
     // CALL(aGetScriptByte);
@@ -2401,7 +2551,7 @@ void Script_readmem_Conv(script_s* s, uint8_t* hl){
     // LD_A_hl;
     // LD_addr_A(wScriptVar);
     // RET;
-    s->var = *hl;
+    wram->wScriptVar = *hl;
 }
 
 void Script_writemem(void){
@@ -2416,6 +2566,7 @@ void Script_writemem(void){
 }
 
 void Script_writemem_Conv(script_s* s, uint8_t* hl){
+    (void)s;
     // CALL(aGetScriptByte);
     // LD_L_A;
     // CALL(aGetScriptByte);
@@ -2423,7 +2574,7 @@ void Script_writemem_Conv(script_s* s, uint8_t* hl){
     // LD_A_addr(wScriptVar);
     // LD_hl_A;
     // RET;
-    *hl = s->var;
+    *hl = wram->wScriptVar;
 }
 
 void Script_loadmem(void){
@@ -2457,10 +2608,11 @@ void Script_setval(void){
 }
 
 void Script_setval_Conv(script_s* s, uint8_t val){
+    (void)s;
     // CALL(aGetScriptByte);
     // LD_addr_A(wScriptVar);
     // RET;
-    s->var = val;
+    wram->wScriptVar = val;
 }
 
 void Script_addval(void){
@@ -2473,12 +2625,13 @@ void Script_addval(void){
 }
 
 void Script_addval_Conv(script_s* s, uint8_t val){
+    (void)s;
     // CALL(aGetScriptByte);
     // LD_HL(wScriptVar);
     // ADD_A_hl;
     // LD_hl_A;
     // RET;
-    s->var += val;
+    wram->wScriptVar += val;
 }
 
 void Script_random(void){
@@ -2538,6 +2691,62 @@ mod_loop:
 
 }
 
+void Script_random_Conv(script_s* s, uint8_t a){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = a;
+    // AND_A_A;
+    // RET_Z ;
+    if(a == 0)
+        return;
+
+    // LD_C_A;
+    // CALL(aScript_random_Divide256byC);
+    a = (uint8_t)(256 % a);
+    // AND_A_A;
+    // IF_Z goto no_restriction;  // 256 % b == 0
+    if(a == 0) {
+    // no_restriction:
+        // PUSH_BC;
+        // CALL(aRandom);
+        // POP_BC;
+        Random_Conv();
+        // LDH_A_addr(hRandomAdd);
+        a = hram->hRandomAdd;
+    }
+    else {
+        // LD_B_A;
+        // XOR_A_A;
+        // SUB_A_B;
+        // LD_B_A;
+        uint8_t b = 0 - a;
+
+        do {
+        // loop:
+            // PUSH_BC;
+            // CALL(aRandom);
+            Random_Conv();
+            // POP_BC;
+            // LDH_A_addr(hRandomAdd);
+            a = hram->hRandomAdd;
+            // CP_A_B;
+            // IF_NC goto loop;
+        } while(a >= b);
+        // goto finish;
+    }
+
+// finish:
+    // PUSH_AF;
+    // LD_A_addr(wScriptVar);
+    // LD_C_A;
+    // POP_AF;
+    // CALL(aSimpleDivide);
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = SimpleDivide_Conv(a, wram->wScriptVar).rem;
+    // RET;
+}
+
 void Script_readvar(void){
     CALL(aGetScriptByte);
     CALL(aGetVarAction);
@@ -2545,6 +2754,16 @@ void Script_readvar(void){
     LD_addr_A(wScriptVar);
     RET;
 
+}
+
+void Script_readvar_Conv(script_s* s, uint8_t var){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // CALL(aGetVarAction);
+    // LD_A_de;
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = *GetVarAction_Conv(var);
+    // RET;
 }
 
 void Script_writevar(void){
@@ -2556,6 +2775,16 @@ void Script_writevar(void){
 
 }
 
+void Script_writevar_Conv(script_s* s, uint8_t var){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // CALL(aGetVarAction);
+    // LD_A_addr(wScriptVar);
+    // LD_de_A;
+    *GetVarAction_Conv(var) = wram->wScriptVar;
+    // RET;
+}
+
 void Script_loadvar(void){
     CALL(aGetScriptByte);
     CALL(aGetVarAction);
@@ -2565,11 +2794,28 @@ void Script_loadvar(void){
 
 }
 
+void Script_loadvar_Conv(script_s* s, uint8_t var, uint8_t value){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // CALL(aGetVarAction);
+    // CALL(aGetScriptByte);
+    // LD_de_A;
+    *GetVarAction_Conv(var) = value;
+    // RET;
+}
+
 void GetVarAction(void){
     LD_C_A;
     FARCALL(av_GetVarAction);
     RET;
 
+}
+
+uint8_t* GetVarAction_Conv(uint8_t a){
+    // LD_C_A;
+    // FARCALL(av_GetVarAction);
+    // RET;
+    return v_GetVarAction_Conv(a);
 }
 
 void Script_checkver(void){
@@ -2596,6 +2842,24 @@ gotit:
     LD_DE(wStringBuffer1);
 
     return GetStringBuffer();
+}
+
+void Script_getmonname_Conv(script_s* s, species_t species, uint8_t buf){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // AND_A_A;
+    // IF_NZ goto gotit;
+    if(species == 0) {
+        // LD_A_addr(wScriptVar);
+        species = wram->wScriptVar;
+    }
+// gotit:
+    // LD_addr_A(wNamedObjectIndex);
+    // CALL(aGetPokemonName);
+    GetPokemonName_Conv2(species);
+    // LD_DE(wStringBuffer1);
+
+    return GetStringBuffer_Conv(buf, wram->wStringBuffer1);
 }
 
 void GetStringBuffer(void){
@@ -2652,6 +2916,25 @@ ok:
     LD_DE(wStringBuffer1);
     JR(mGetStringBuffer);
 
+}
+
+void Script_getitemname_Conv(script_s* s, item_t item, uint8_t buf){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // AND_A_A;  // USE_SCRIPT_VAR
+    // IF_NZ goto ok;
+    if(item == NO_ITEM) {
+        // LD_A_addr(wScriptVar);
+        item = (item_t)wram->wScriptVar;
+    }
+
+// ok:
+    // LD_addr_A(wNamedObjectIndex);
+    // CALL(aGetItemName);
+    GetItemName_Conv2(item);
+    // LD_DE(wStringBuffer1);
+    // JR(mGetStringBuffer);
+    return GetStringBuffer_Conv(buf, wram->wStringBuffer1);
 }
 
 void Script_getcurlandmarkname(void){
@@ -2841,6 +3124,21 @@ void Script_getstring(void){
 
 }
 
+void Script_getstring_Conv(script_s* s, const char* hl, uint8_t a){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // LD_E_A;
+    // CALL(aGetScriptByte);
+    // LD_D_A;
+    // LD_A_addr(wScriptBank);
+    // LD_HL(mCopyName1);
+    // RST(aFarCall);
+    CopyName1_Conv2(U82C(hl));
+    // LD_DE(wStringBuffer2);
+    // JP(mGetStringBuffer);
+    return GetStringBuffer_Conv(a, wram->wStringBuffer2);
+}
+
 void Script_givepokemail(void){
     CALL(aGetScriptByte);
     LD_L_A;
@@ -2897,6 +3195,35 @@ full:
 
 }
 
+void Script_giveitem_Conv(script_s* s, item_t item, uint8_t quantity){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // CP_A(ITEM_FROM_MEM);
+    // IF_NZ goto ok;
+    // LD_A_addr(wScriptVar);
+    if(item == ITEM_FROM_MEM)
+        item = wram->wScriptVar;
+
+// ok:
+    // LD_addr_A(wCurItem);
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wItemQuantityChange);
+    wram->wItemQuantityChange = quantity;
+    // LD_HL(wNumItems);
+    // CALL(aReceiveItem);
+    // IF_NC goto full;
+    // LD_A(TRUE);
+    // LD_addr_A(wScriptVar);
+    // RET;
+    wram->wScriptVar = ReceiveItem_Conv(item, wram->wItems, quantity);
+
+// full:
+    // XOR_A_A;
+    // LD_addr_A(wScriptVar);
+    // RET;
+    return;
+}
+
 void Script_takeitem(void){
     XOR_A_A;
     LD_addr_A(wScriptVar);
@@ -2930,9 +3257,10 @@ void Script_checkitem(void){
 }
 
 void Script_checkitem_Conv(script_s* s, item_t item){
+    (void)s;
     // XOR_A_A;
     // LD_addr_A(wScriptVar);
-    s->var = 0;
+    wram->wScriptVar = FALSE;
     // CALL(aGetScriptByte);
     // LD_addr_A(wCurItem);
     wram->wCurItem = item;
@@ -2945,7 +3273,7 @@ void Script_checkitem_Conv(script_s* s, item_t item){
     // LD_A(TRUE);
     // LD_addr_A(wScriptVar);
     // RET;
-    s->var = TRUE;
+    wram->wScriptVar = TRUE;
 }
 
 void Script_givemoney(void){
@@ -3089,6 +3417,24 @@ void Script_checktime(void){
 
 }
 
+void Script_checktime_Conv(script_s* s, uint8_t time){
+    (void)s;
+    // XOR_A_A;
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = 0;
+    // FARCALL(aCheckTime);
+    u8_flag_s res = CheckTime_Conv();
+    // CALL(aGetScriptByte);
+    // AND_A_C;
+    // RET_Z ;
+    if(res.a & time) {
+        // LD_A(TRUE);
+        // LD_addr_A(wScriptVar);
+        wram->wScriptVar = TRUE;
+    }
+    // RET;
+}
+
 void Script_checkpoke(void){
     XOR_A_A;
     LD_addr_A(wScriptVar);
@@ -3153,6 +3499,16 @@ void Script_specialphonecall(void){
 
 }
 
+void Script_specialphonecall_Conv(script_s* s, uint16_t id){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wSpecialPhoneCallID);
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wSpecialPhoneCallID + 1);
+    wram->wSpecialPhoneCallID = id;
+    // RET;
+}
+
 void Script_checkphonecall(void){
 //  returns false if no special phone call is stored
 
@@ -3165,6 +3521,20 @@ ok:
     LD_addr_A(wScriptVar);
     RET;
 
+}
+
+//  returns false if no special phone call is stored
+void Script_checkphonecall_Conv(script_s* s){
+    (void)s;
+    // LD_A_addr(wSpecialPhoneCallID);
+    // AND_A_A;
+    // IF_Z goto ok;
+    // LD_A(TRUE);
+
+// ok:
+    // LD_addr_A(wScriptVar);
+    // RET;
+    wram->wScriptVar = (wram->wSpecialPhoneCallID != 0)? TRUE: FALSE;
 }
 
 void Script_givepoke(void){
@@ -3224,6 +3594,18 @@ void Script_setevent(void){
 
 }
 
+void Script_setevent_Conv(script_s* s, uint16_t flag){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // LD_E_A;
+    // CALL(aGetScriptByte);
+    // LD_D_A;
+    // LD_B(SET_FLAG);
+    // CALL(aEventFlagAction);
+    EventFlagAction_Conv2(flag, SET_FLAG);
+    // RET;
+}
+
 void Script_clearevent(void){
     CALL(aGetScriptByte);
     LD_E_A;
@@ -3233,6 +3615,18 @@ void Script_clearevent(void){
     CALL(aEventFlagAction);
     RET;
 
+}
+
+void Script_clearevent_Conv(script_s* s, uint16_t flag){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // LD_E_A;
+    // CALL(aGetScriptByte);
+    // LD_D_A;
+    // LD_B(RESET_FLAG);
+    // CALL(aEventFlagAction);
+    EventFlagAction_Conv2(flag, RESET_FLAG);
+    // RET;
 }
 
 void Script_checkevent(void){
@@ -3251,6 +3645,30 @@ false_:
     LD_addr_A(wScriptVar);
     RET;
 
+}
+
+void Script_checkevent_Conv(script_s* s, uint16_t flag){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // LD_E_A;
+    // CALL(aGetScriptByte);
+    // LD_D_A;
+    // LD_B(CHECK_FLAG);
+    // CALL(aEventFlagAction);
+    if(EventFlagAction_Conv2(flag, CHECK_FLAG) == 0) {
+        wram->wScriptVar = FALSE;
+    }
+    else {
+        wram->wScriptVar = TRUE;
+    }
+    // LD_A_C;
+    // AND_A_A;
+    // IF_Z goto false_;
+    // LD_A(TRUE);
+
+// false_:
+    // LD_addr_A(wScriptVar);
+    // RET;
 }
 
 void Script_setflag(void){
@@ -3613,6 +4031,21 @@ void Script_autoinput(void){
 
 }
 
+void Script_autoinput_Conv(script_s* s, const uint8_t* autoinput){
+    (void)s;
+    // Useless bank
+    // CALL(aGetScriptByte);
+    // PUSH_AF;
+    // CALL(aGetScriptByte);
+    // LD_L_A;
+    // CALL(aGetScriptByte);
+    // LD_H_A;
+    // POP_AF;
+    // CALL(aStartAutoInput);
+    StartAutoInput_Conv2(autoinput);
+    // RET;
+}
+
 void Script_pause(void){
     CALL(aGetScriptByte);
     AND_A_A;
@@ -3629,7 +4062,7 @@ loop:
 
 }
 
-void Script_pause_Conv(struct Script* s, uint8_t a) {
+void Script_pause_Conv(script_s* s, uint8_t a) {
     (void)s;
     if(a != 0) {
         wram->wScriptDelay = a;
@@ -3659,6 +4092,13 @@ void Script_stopandsjump(void){
 
 }
 
+void Script_stopandsjump_Conv(script_s* s, Script_fn_t script){
+    // CALL(aStopScript);
+    StopScript_Conv();
+    // JP(mScript_sjump);
+    Script_GotoPos(s, script, 0);
+}
+
 void Script_end(void){
     CALL(aExitScriptSubroutine);
     IF_C goto resume;
@@ -3677,6 +4117,28 @@ resume:
 
 }
 
+void Script_end_Conv(script_s* s){
+    // CALL(aExitScriptSubroutine);
+    // IF_C goto resume;
+    // RET;
+    if(!ExitScriptSubroutine_Conv(s)) {
+    // resume:
+        // XOR_A_A;
+        // LD_addr_A(wScriptRunning);
+        wram->wScriptRunning = 0;
+        // LD_A(SCRIPT_OFF);
+        // LD_addr_A(wScriptMode);
+        wram->wScriptMode = SCRIPT_OFF;
+        // LD_HL(wScriptFlags);
+        // RES_hl(0);
+        bit_reset(wram->wScriptFlags, 0);
+        // CALL(aStopScript);
+        StopScript_Conv();
+        // RET;
+    }
+
+}
+
 void Script_endcallback(void){
     CALL(aExitScriptSubroutine);
     IF_C goto dummy;
@@ -3687,6 +4149,19 @@ dummy:
     CALL(aStopScript);
     RET;
 
+}
+
+void Script_endcallback_Conv(script_s* s){
+    // CALL(aExitScriptSubroutine);
+    // IF_C goto dummy;
+    ExitScriptSubroutine_Conv(s);
+    // dummy:
+    // LD_HL(wScriptFlags);
+    // RES_hl(0);
+    bit_reset(wram->wScriptFlags, 0);
+    // CALL(aStopScript);
+    StopScript_Conv();
+    // RET;
 }
 
 void ExitScriptSubroutine(void){
@@ -3719,6 +4194,42 @@ void ExitScriptSubroutine(void){
 done:
     SCF;
     RET;
+
+}
+
+bool ExitScriptSubroutine_Conv(script_s* s){
+//  Return carry if there's no parent to return to.
+    // LD_HL(wScriptStackSize);
+    // LD_A_hl;
+    // AND_A_A;
+    // IF_Z goto done;
+    if(s->stack_ptr == 0)
+        return false;
+    // DEC_hl;
+    // LD_E_hl;
+    // LD_D(0x0);
+    // LD_HL(wScriptStack);
+    // ADD_HL_DE;
+    // ADD_HL_DE;
+    // ADD_HL_DE;
+    // LD_A_hli;
+    // LD_B_A;
+    // AND_A(0x7f);
+    // LD_addr_A(wScriptBank);
+    // LD_A_hli;
+    // LD_E_A;
+    // LD_addr_A(wScriptPos);
+    // LD_A_hl;
+    // LD_D_A;
+    // LD_addr_A(wScriptPos + 1);
+    // AND_A_A;
+    // RET;
+    Script_Pop(s);
+    return true;
+
+// done:
+    // SCF;
+    // RET;
 
 }
 
@@ -3775,6 +4286,25 @@ loop:
     POP_BC;
     RET;
 
+}
+
+void Script_wait_Conv(script_s* s, uint8_t a){
+    (void)s;
+    // PUSH_BC;
+    // CALL(aGetScriptByte);
+
+    do {
+    // loop:
+        // PUSH_AF;
+        // LD_C(6);
+        // CALL(aDelayFrames);
+        DelayFrames_Conv(6);
+        // POP_AF;
+        // DEC_A;
+        // IF_NZ goto loop;
+    } while(--a != 0);
+    // POP_BC;
+    // RET;
 }
 
 void Script_checksave(void){

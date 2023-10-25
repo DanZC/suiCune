@@ -54,7 +54,7 @@ void PlaceYesNoBox(void);
 void PlaceGenericTwoOptionBox(void);
 void v_YesNoBox(void);
 void InterpretTwoOptionMenu(void);
-void YesNoMenuHeader(void);
+// void YesNoMenuHeader(void);
 void OffsetMenuHeader(void);
 void v_OffsetMenuHeader(void);
 void DoNthMenu(void);

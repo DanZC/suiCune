@@ -45,7 +45,7 @@ const char GameFreakLogoGFX[] = "gfx/splash/gamefreak_logo.png";
 
 //  Play the copyright screen and GameFreak Presents sequence.
 //  Return carry if user cancels animation by pressing a button.
-void SplashScreen(void){
+bool SplashScreen(void){
 //  Reinitialize everything
     // LD_DE(MUSIC_NONE);
     // CALL(aPlayMusic);
@@ -109,8 +109,9 @@ void SplashScreen(void){
         // pressed_button:
             // CALL(aGameFreakPresentsEnd);
             GameFreakPresentsEnd();
-            SCF;
-            RET;
+            // SCF;
+            // RET;
+            return true;
         }
         // LD_A_addr(wJumptableIndex);
         // BIT_A(7);
@@ -133,8 +134,9 @@ void SplashScreen(void){
 // finish:
     // CALL(aGameFreakPresentsEnd);
     GameFreakPresentsEnd();
-    AND_A_A;
-    RET;
+    // AND_A_A;
+    // RET;
+    return false;
 }
 
 void GameFreakPresentsInit(void){
@@ -508,7 +510,7 @@ void GameFreakLogo_Transform(struct SpriteAnim* bc){
         return;
     }
     // INC_hl;
-    bc->var2++;
+    uint8_t a = bc->var2++;
 
 //  Fade ditto's palettes while it's transforming
     // SRL_A;
@@ -516,7 +518,7 @@ void GameFreakLogo_Transform(struct SpriteAnim* bc){
     // LD_E_A;
     // LD_D(0);
     // LD_HL(mGameFreakDittoPaletteFade);
-    uint16_t color = GameFreakDittoPaletteFade[(bc->var2 >> 2) & 0xf];
+    uint16_t color = GameFreakDittoPaletteFade[(a >> 2) & 0xf];
     // ADD_HL_DE;
     // ADD_HL_DE;
     // LDH_A_addr(rSVBK);
