@@ -4005,4 +4005,66 @@ void init_function_pointers(void) {
 
     // engine/overworld/variables.c
     // REDIRECTED(v_GetVarAction);
+
+    // engine/battle/read_trainer_attributes.c
+    REDIRECTED(GetTrainerClassName);
+    REDIRECTED(GetOTName);
+    REDIRECTED(GetTrainerAttributes);
+
+    // engine/overworld/time.c
+    // REDIRECTED(RestartDailyResetTimer);
+    // REDIRECTED(CheckBugContestTimer);
+    // REDIRECTED(DoMysteryGiftIfDayHasPassed);
+    // REDIRECTED(CopyDayHourToHL);
+    // REDIRECTED(CheckDayDependentEventHL);
+    // REDIRECTED(CopyDayToHL);
+    // REDIRECTED(UpdateTimeRemaining);
+    // REDIRECTED(CheckDailyResetTimer);
+    // REDIRECTED(CalcSecsMinsHoursDaysSince);
+    // REDIRECTED(v_CalcHoursDaysSince);
+    // REDIRECTED(InitCallReceiveDelay);
+    // REDIRECTED(InitOneDayCountdown);
+    // REDIRECTED(RestartReceiveCallDelay);
+    // REDIRECTED(GetDaysSince);
+    // REDIRECTED(v_CalcDaysSince);
+    // REDIRECTED(SetUnusedTwoDayTimer);
+    // REDIRECTED(UnusedCheckSwarmFlag);
+    // REDIRECTED(CalcDaysSince);
+    // REDIRECTED(CheckReceiveCallDelay);
+    // REDIRECTED(GetMinutesSinceIfLessThan60);
+    // REDIRECTED(CopyDayHourMinToHL);
+    // REDIRECTED(v_InitializeStartDay);
+    // REDIRECTED(CalcHoursDaysSince);
+    // REDIRECTED(GetHoursSinceIfLessThan24);
+    CONVERTED(ClearDailyTimers);
+    // REDIRECTED(GetSecondsSinceIfLessThan60);
+    // REDIRECTED(SampleKenjiBreakCountdown);
+    // REDIRECTED(UnusedSetSwarmFlag);
+    // REDIRECTED(GetTimeElapsed_ExceedsUnitLimit);
+    // REDIRECTED(v_CalcMinsHoursDaysSince);
+    // REDIRECTED(InitializeStartDay);
+    // REDIRECTED(CheckPokerusTick);
+    // REDIRECTED(RestartLuckyNumberCountdown);
+    // REDIRECTED(v_CheckLuckyNumberShowFlag);
+    // REDIRECTED(CalcMinsHoursDaysSince);
+    // REDIRECTED(NextCallReceiveDelay);
+    // REDIRECTED(CopyDayHourMinSecToHL);
+    // REDIRECTED(StartBugContestTimer);
+    // REDIRECTED(CheckReceiveCallTimer);
+    // REDIRECTED(InitNDaysCountdown);
+    // REDIRECTED(CheckUnusedTwoDayTimer);
+
+    // engine/events/money.c
+    // REDIRECTED(SubtractMoney);
+    // REDIRECTED(GiveCoins);
+    // REDIRECTED(MaxMoney);
+    // REDIRECTED(CompareFunds);
+    // REDIRECTED(GiveMoney);
+    // REDIRECTED(TakeCoins);
+    // REDIRECTED(AddFunds);
+    // REDIRECTED(TakeMoney);
+    // REDIRECTED(AddMoney);
+    // REDIRECTED(CompareMoney);
+    // REDIRECTED(SubtractFunds);
+    // REDIRECTED(CheckCoins);
 }

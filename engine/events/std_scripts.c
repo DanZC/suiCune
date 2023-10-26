@@ -337,41 +337,27 @@ bool DayToTextScript(script_s* s) {
     ifequal(THURSDAY, Thursday)
     ifequal(FRIDAY, Friday)
     ifequal(SATURDAY, Saturday)
-    // getstring
+    getstring(STRING_BUFFER_3, "SUNDAY@")
     s_end
 Monday:
-    // getstring
+    getstring(STRING_BUFFER_3, "MONDAY@")
     s_end
 Tuesday:
-    // getstring
+    getstring(STRING_BUFFER_3, "TUESDAY@")
     s_end
 Wednesday:
-    // getstring
+    getstring(STRING_BUFFER_3, "WEDNESDAY@")
     s_end
 Thursday:
-    // getstring
+    getstring(STRING_BUFFER_3, "THURSDAY@")
     s_end
 Friday:
-    // getstring
+    getstring(STRING_BUFFER_3, "FRIDAY@")
     s_end
 Saturday:
-    // getstring
+    getstring(STRING_BUFFER_3, "SATURDAY@")
     s_end
-SundayText:
-    // db
-MondayText:
-    // db
-TuesdayText:
-    // db
-WednesdayText:
-    // db
-ThursdayText:
-    // db
-FridayText:
-    // db
-SaturdayText:
-    // db
-    SCRIPT_FALLTHROUGH(GoldenrodRocketsScript)
+    SCRIPT_END
 }
 bool GoldenrodRocketsScript(script_s* s) {
     SCRIPT_BEGIN
@@ -732,15 +718,15 @@ bool InitializeEventsScript(script_s* s) {
     setevent(EVENT_BATTLE_TOWER_OUTSIDE_SAILOR)
     setflag(ENGINE_ROCKET_SIGNAL_ON_CH20)
     setflag(ENGINE_ROCKETS_IN_MAHOGANY)
-    // variablesprite
-    // variablesprite
-    // variablesprite
-    // variablesprite
-    // variablesprite
-    // variablesprite
-    // variablesprite
-    // variablesprite
-    // variablesprite
+    variablesprite(SPRITE_WEIRD_TREE, SPRITE_SUDOWOODO)
+    variablesprite(SPRITE_OLIVINE_RIVAL, SPRITE_SILVER)
+    variablesprite(SPRITE_AZALEA_ROCKET, SPRITE_ROCKET)
+    variablesprite(SPRITE_FUCHSIA_GYM_1, SPRITE_JANINE)
+    variablesprite(SPRITE_FUCHSIA_GYM_2, SPRITE_JANINE)
+    variablesprite(SPRITE_FUCHSIA_GYM_3, SPRITE_JANINE)
+    variablesprite(SPRITE_FUCHSIA_GYM_4, SPRITE_JANINE)
+    variablesprite(SPRITE_COPYCAT, SPRITE_LASS)
+    variablesprite(SPRITE_JANINE_IMPERSONATOR, SPRITE_LASS)
     setevent(EVENT_FOUND_MACHINE_PART_IN_CERULEAN_GYM)
     setevent(EVENT_CERULEAN_GYM_ROCKET)
     setevent(EVENT_ROUTE_24_ROCKET)
@@ -1918,7 +1904,7 @@ Erin:
 }
 bool GymStatue1Script(script_s* s) {
     SCRIPT_BEGIN
-    // getcurlandmarkname
+    getcurlandmarkname(STRING_BUFFER_3)
     opentext
     writetext(GymStatue_CityGymText)
     waitbutton
@@ -1928,7 +1914,7 @@ bool GymStatue1Script(script_s* s) {
 }
 bool GymStatue2Script(script_s* s) {
     SCRIPT_BEGIN
-    // getcurlandmarkname
+    getcurlandmarkname(STRING_BUFFER_3)
     opentext
     writetext(GymStatue_CityGymText)
     promptbutton
@@ -1984,7 +1970,7 @@ loop:
 Buy50:
     // checkcoins
     ifequal(HAVE_MORE, CoinCaseFull)
-    // checkmoney
+    checkmoney(YOUR_MONEY, 1000)
     ifequal(HAVE_LESS, NotEnoughMoney)
     // givecoins
     // takemoney

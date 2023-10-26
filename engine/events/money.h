@@ -1,0 +1,14 @@
+void GiveMoney(void);
+void MaxMoney(void);
+void TakeMoney(void);
+void CompareMoney(void);
+u8_flag_s CompareMoney_Conv(const uint8_t* bc, const uint8_t* de);
+void CompareFunds(void);
+u8_flag_s CompareFunds_Conv(const uint8_t* bc, const uint8_t* de, uint8_t a);
+void SubtractMoney(void);
+void SubtractFunds(void);
+void AddMoney(void);
+void AddFunds(void);
+void GiveCoins(void);
+void TakeCoins(void);
+void CheckCoins(void);

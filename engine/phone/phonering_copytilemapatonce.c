@@ -64,7 +64,7 @@ void PhoneRing_CopyTilemapAtOnce(void){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // JP_Z (mWaitBGMap);
-    if(gb_read(hCGB) == 0)
+    if(hram->hCGB == 0)
         return WaitBGMap_Conv();
     
     // LD_A_addr(wSpriteUpdatesEnabled);
@@ -77,15 +77,15 @@ void PhoneRing_CopyTilemapAtOnce(void){
     // PUSH_AF;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    uint8_t mode_temp = gb_read(hBGMapMode);
-    gb_write(hBGMapMode, 0);
+    uint8_t mode_temp = hram->hBGMapMode;
+    hram->hBGMapMode = 0;
 
     // LDH_A_addr(hMapAnims);
     // PUSH_AF;
     // XOR_A_A;
     // LDH_addr_A(hMapAnims);
-    uint8_t anims_temp = gb_read(hMapAnims);
-    gb_write(hMapAnims, 0);
+    uint8_t anims_temp = hram->hMapAnims;
+    hram->hMapAnims = 0;
 
 
 // wait:

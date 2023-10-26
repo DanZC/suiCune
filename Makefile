@@ -28,6 +28,7 @@ SRCS   := tools/emu/peanut_sdl.c tools/emu/minigb_apu/minigb_apu.c \
 	$(wildcard data/maps/*.c) \
 	$(wildcard data/moves/*.c) \
 	$(wildcard data/phone/*.c) \
+	$(wildcard data/phone/text/*.c) \
 	$(wildcard data/pokemon/*.c) \
 	$(wildcard data/sprites/*.c) \
 	$(wildcard data/text/*.c) \
@@ -45,6 +46,7 @@ SRCS   := tools/emu/peanut_sdl.c tools/emu/minigb_apu/minigb_apu.c \
 	$(wildcard engine/movie/*.c) \
 	$(wildcard engine/overworld/*.c) \
 	$(wildcard engine/phone/*.c) \
+	$(wildcard engine/phone/scripts/*.c) \
 	$(wildcard engine/pokegear/*.c) \
 	$(wildcard engine/pokemon/*.c) \
 	$(wildcard engine/rtc/*.c) \
@@ -96,6 +98,7 @@ clean:
 	$(wildcard data/maps/*.o) \
 	$(wildcard data/moves/*.o) \
 	$(wildcard data/phone/*.o) \
+	$(wildcard data/phone/text/*.o) \
 	$(wildcard data/pokemon/*.o) \
 	$(wildcard data/sprites/*.o) \
 	$(wildcard data/text/*.o) \
@@ -113,6 +116,7 @@ clean:
 	$(wildcard engine/movie/*.o) \
 	$(wildcard engine/overworld/*.o) \
 	$(wildcard engine/phone/*.o) \
+	$(wildcard engine/phone/scripts/*.o) \
 	$(wildcard engine/pokegear/*.o) \
 	$(wildcard engine/pokemon/*.o) \
 	$(wildcard engine/rtc/*.o) \

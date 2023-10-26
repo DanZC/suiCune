@@ -57,6 +57,12 @@ commands = {
     'specialphonecall': Cmd('specialphonecall', ['id']),
     'checkphonecall': Cmd('checkphonecall', []),
     'endcallback': Cmd('s_endcallback', []),
+    'getcurlandmarkname': Cmd('getcurlandmarkname', []),
+    'getlandmarkname': Cmd('getlandmarkname', ['buffer', 'landmark_id']),
+    'gettrainername': Cmd('gettrainername', ['buffer', 'trainer_class', 'trainer_id']),
+    'getmonname': Cmd('getmonname', ['buffer', 'mon_id']),
+    'getstring': Cmd('getstring', ['buffer', 'str']),
+    'random': Cmd('srandom', ['val']),
 }
 
 text_commands = {
@@ -191,7 +197,12 @@ def format_command(cmd: str, parts: List[str]):
         else:
             return f'{mvmt_commands[cmd].name},'
     else:
-        return f"// {cmd}"
+        if len(parts) == 0:
+            return f"// {cmd}"
+        s = f"// {cmd}("
+        for part in parts:
+            s += f"{part}, "
+        return s[:-2] + ")"
         
     
 def begin_script(name: str):
@@ -376,7 +387,7 @@ for line in lines:
 # };
 # '''
 # #include "../../util/scripting_macros.h"
-out = '#include "../../../constants.h"\n\n'
+out = '#include "../../../constants.h"\n#include "../../../util/scripting_macros.h"\n\n'
 out_h = '#pragma once\n'
 cur_text = ''
 cur_movement = ''

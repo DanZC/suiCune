@@ -194,6 +194,7 @@ void FreezeAllObjects_Conv(void);
 void v_UnfreezeFollowerObject(void);
 void v_UnfreezeFollowerObject_Conv(uint8_t c);
 void UnfreezeAllObjects(void);
+void UnfreezeAllObjects_Conv(void);
 void UnfreezeObject(void);
 void ResetObject(void);
 void v_UpdateSprites(void);

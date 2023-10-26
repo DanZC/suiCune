@@ -1,0 +1,19 @@
+#pragma once
+extern const struct TextCmd LizMonAlwaysWantsToNuzzleText[];
+extern const struct TextCmd LizDefeatedMonText[];
+extern const struct TextCmd LizLostAMonText[];
+extern const struct TextCmd LizBattleRematchText[];
+extern const struct TextCmd LizWrongNumberText[];
+extern const struct TextCmd LizHangUpText[];
+extern const struct TextCmd LizRuinsOfAlphGossipText[];
+extern const struct TextCmd LizFalknerGossipText[];
+extern const struct TextCmd LizEarlGossipText[];
+extern const struct TextCmd LizSurfPikachuGossipText[];
+extern const struct TextCmd LizMooMooMilkGossipText[];
+extern const struct TextCmd LizSalonGossipText[];
+extern const struct TextCmd LizWhitneyGossipText[];
+extern const struct TextCmd LizBugCatchingContestGossipText[];
+extern const struct TextCmd LizBeautifulTrainerGossipText[];
+extern const struct TextCmd LizForgotGossipText[];
+extern const struct TextCmd LizFawningOverMonText[];
+extern const struct TextCmd LizReminderText[];

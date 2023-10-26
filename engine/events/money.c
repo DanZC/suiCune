@@ -1,0 +1,327 @@
+#include "../../constants.h"
+#include "money.h"
+
+void GiveMoney(void){
+    LD_A(3);
+    CALL(aAddMoney);
+    LD_BC(mMaxMoney);
+    LD_A(3);
+    CALL(aCompareMoney);
+    IF_Z goto not_maxed_out;
+    IF_C goto not_maxed_out;
+    LD_HL(mMaxMoney);
+    LD_A_hli;
+    LD_de_A;
+    INC_DE;
+    LD_A_hli;
+    LD_de_A;
+    INC_DE;
+    LD_A_hli;
+    LD_de_A;
+    SCF;
+    RET;
+
+
+not_maxed_out:
+    AND_A_A;
+    RET;
+
+}
+
+void MaxMoney(void){
+    //dt ['MAX_MONEY']
+
+    return TakeMoney();
+}
+
+void TakeMoney(void){
+    LD_A(3);
+    CALL(aSubtractMoney);
+    IF_NC goto okay;
+// leave with 0 money
+    XOR_A_A;
+    LD_de_A;
+    INC_DE;
+    LD_de_A;
+    INC_DE;
+    LD_de_A;
+    SCF;
+    RET;
+
+
+okay:
+    AND_A_A;
+    RET;
+
+}
+
+void CompareMoney(void){
+    LD_A(3);
+    return CompareFunds();
+}
+
+u8_flag_s CompareMoney_Conv(const uint8_t* bc, const uint8_t* de){
+    // LD_A(3);
+    return CompareFunds_Conv(bc, de, 3);
+}
+
+//  a: number of bytes
+//  bc: start addr of amount (big-endian)
+//  de: start addr of account (big-endian)
+void CompareFunds(void){
+    PUSH_HL;
+    PUSH_DE;
+    PUSH_BC;
+    LD_H_B;
+    LD_L_C;
+    LD_C(0);
+    LD_B_A;
+
+loop1:
+    DEC_A;
+    IF_Z goto done;
+    INC_DE;
+    INC_HL;
+    goto loop1;
+
+
+done:
+    AND_A_A;
+
+loop2:
+    LD_A_de;
+    SBC_A_hl;
+    IF_Z goto okay;
+    INC_C;
+
+
+okay:
+    DEC_DE;
+    DEC_HL;
+    DEC_B;
+    IF_NZ goto loop2;
+    IF_C goto set_carry;
+    LD_A_C;
+    AND_A_A;
+    goto skip_carry;
+
+
+set_carry:
+    LD_A(1);
+    AND_A_A;
+    SCF;
+
+skip_carry:
+    POP_BC;
+    POP_DE;
+    POP_HL;
+    RET;
+
+}
+
+//  a: number of bytes
+//  bc: start addr of amount (big-endian)
+//  de: start addr of account (big-endian)
+u8_flag_s CompareFunds_Conv(const uint8_t* bc, const uint8_t* de, uint8_t a){
+    // PUSH_HL;
+    // PUSH_DE;
+    // PUSH_BC;
+    // LD_H_B;
+    // LD_L_C;
+    // LD_C(0);
+    // LD_B_A;
+    uint8_t c = 0;
+    uint8_t carry = 0;
+
+// loop1:
+    // DEC_A;
+    // IF_Z goto done;
+    // INC_DE;
+    // INC_HL;
+    // goto loop1;
+
+
+// done:
+    // AND_A_A;
+
+    do {
+    // loop2:
+        // LD_A_de;
+        // SBC_A_hl;
+        // IF_Z goto okay;
+        uint16_t temp = de[a-1] - bc[a-1] - carry;
+        carry = (temp & 0xff00)? 1: 0;
+        if((temp & 0xff) != 0)
+            c++;
+        // INC_C;
+
+
+    // okay:
+        // DEC_DE;
+        // DEC_HL;
+        // DEC_B;
+        // IF_NZ goto loop2;
+    } while(--a != 0);
+    // IF_C goto set_carry;
+    if(carry)
+        return u8_flag(1, true);
+    // LD_A_C;
+    // AND_A_A;
+    // goto skip_carry;
+
+
+// set_carry:
+    // LD_A(1);
+    // AND_A_A;
+    // SCF;
+
+// skip_carry:
+    // POP_BC;
+    // POP_DE;
+    // POP_HL;
+    // RET;
+    return u8_flag(c, false);
+}
+
+void SubtractMoney(void){
+    LD_A(3);
+    return SubtractFunds();
+}
+
+void SubtractFunds(void){
+//  a: number of bytes
+//  bc: start addr of amount (big-endian)
+//  de: start addr of account (big-endian)
+    PUSH_HL;
+    PUSH_DE;
+    PUSH_BC;
+    LD_H_B;
+    LD_L_C;
+    LD_B_A;
+    LD_C(0);
+
+loop:
+    DEC_A;
+    IF_Z goto done;
+    INC_DE;
+    INC_HL;
+    goto loop;
+
+
+done:
+    AND_A_A;
+
+loop2:
+    LD_A_de;
+    SBC_A_hl;
+    LD_de_A;
+    DEC_DE;
+    DEC_HL;
+    DEC_B;
+    IF_NZ goto loop2;
+    POP_BC;
+    POP_DE;
+    POP_HL;
+    RET;
+
+}
+
+void AddMoney(void){
+    LD_A(3);
+    return AddFunds();
+}
+
+void AddFunds(void){
+//  a: number of bytes
+//  bc: start addr of amount (big-endian)
+//  de: start addr of account (big-endian)
+    PUSH_HL;
+    PUSH_DE;
+    PUSH_BC;
+
+    LD_H_B;
+    LD_L_C;
+    LD_B_A;
+
+loop1:
+    DEC_A;
+    IF_Z goto done;
+    INC_DE;
+    INC_HL;
+    goto loop1;
+
+
+done:
+    AND_A_A;
+
+loop2:
+    LD_A_de;
+    ADC_A_hl;
+    LD_de_A;
+    DEC_DE;
+    DEC_HL;
+    DEC_B;
+    IF_NZ goto loop2;
+
+    POP_BC;
+    POP_DE;
+    POP_HL;
+    RET;
+
+}
+
+void GiveCoins(void){
+    LD_A(2);
+    LD_DE(wCoins);
+    CALL(aAddFunds);
+    LD_A(2);
+    LD_BC(mGiveCoins_maxcoins);
+    CALL(aCompareFunds);
+    IF_C goto not_maxed;
+    LD_HL(mGiveCoins_maxcoins);
+    LD_A_hli;
+    LD_de_A;
+    INC_DE;
+    LD_A_hli;
+    LD_de_A;
+    SCF;
+    RET;
+
+
+not_maxed:
+    AND_A_A;
+    RET;
+
+
+maxcoins:
+    //bigdw ['MAX_COINS']
+
+    return TakeCoins();
+}
+
+void TakeCoins(void){
+    LD_A(2);
+    LD_DE(wCoins);
+    CALL(aSubtractFunds);
+    IF_NC goto okay;
+// leave with 0 coins
+    XOR_A_A;
+    LD_de_A;
+    INC_DE;
+    LD_de_A;
+    SCF;
+    RET;
+
+
+okay:
+    AND_A_A;
+    RET;
+
+}
+
+void CheckCoins(void){
+    LD_A(2);
+    LD_DE(wCoins);
+    JP(mCompareFunds);
+
+}

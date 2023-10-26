@@ -4771,6 +4771,41 @@ next:
     RET;
 }
 
+void UnfreezeAllObjects_Conv(void) {
+    // SET_PC(aUnfreezeAllObjects);
+    // PUSH_BC;
+    // LD_BC(wObjectStructs);
+    struct Object* bc = &wram->wPlayerStruct;
+    // XOR_A_A;
+
+    for(uint8_t a = 0; a < NUM_OBJECT_STRUCTS; ++a) {
+    // loop:
+
+        // PUSH_AF;
+        // CALL(aDoesObjectHaveASprite);
+        // IF_Z goto next;
+        if(bc->sprite == 0)
+            continue;
+        // LD_HL(OBJECT_FLAGS2);
+        // ADD_HL_BC;
+        // RES_hl(FROZEN_F);
+        bit_reset(bc[a].flags2, FROZEN_F);
+
+    // next:
+
+        // LD_HL(OBJECT_LENGTH);
+        // ADD_HL_BC;
+        // LD_B_H;
+        // LD_C_L;
+        // POP_AF;
+        // INC_A;
+        // CP_A(NUM_OBJECT_STRUCTS);
+        // IF_NZ goto loop;
+    }
+    // POP_BC;
+    // RET;
+}
+
 void UnfreezeObject(void) {
     SET_PC(aUnfreezeObject);
     //  //  unreferenced

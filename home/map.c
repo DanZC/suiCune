@@ -12,8 +12,6 @@
 #include "../engine/overworld/load_map_part.h"
 #include "../data/maps/maps.h"
 #include "../data/maps/scenes.h"
-#include "../engine/overworld/scripting.h"
-#include "../util/scripting_macros.h"
 #include "../util/scripting.h"
 #include "../data/text/common.h"
 
@@ -3573,7 +3571,7 @@ void GetPhoneServiceTimeOfDayByte(void){
 }
 
 uint8_t GetPhoneServiceTimeOfDayByte_Conv(void){
-    return (uint8_t)(GetMapField_Conv(MAP_PALETTE) & 0xFF);
+    return (uint8_t)(GetMapPointer_Conv2()->phoneService & 0xFF);
 }
 
 void GetFishingGroup(void){

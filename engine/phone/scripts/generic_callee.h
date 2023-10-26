@@ -1,0 +1,27 @@
+#pragma once
+bool PhoneScript_Random2(script_s* s);
+bool PhoneScript_Random3(script_s* s);
+bool PhoneScript_Random4(script_s* s);
+bool PhoneScript_Random5(script_s* s);
+bool PhoneScript_Random11(script_s* s);
+bool PhoneScript_AnswerPhone_Male(script_s* s);
+bool PhoneScript_AnswerPhone_Male_Day(script_s* s);
+bool PhoneScript_AnswerPhone_Male_Nite(script_s* s);
+bool PhoneScript_AnswerPhone_Female(script_s* s);
+bool PhoneScript_AnswerPhone_Female_Day(script_s* s);
+bool PhoneScript_AnswerPhone_Female_Nite(script_s* s);
+bool PhoneScript_GreetPhone_Male(script_s* s);
+bool PhoneScript_GreetPhone_Male_Day(script_s* s);
+bool PhoneScript_GreetPhone_Male_Nite(script_s* s);
+bool PhoneScript_GreetPhone_Female(script_s* s);
+bool PhoneScript_GreetPhone_Female_Day(script_s* s);
+bool PhoneScript_GreetPhone_Female_Nite(script_s* s);
+bool PhoneScript_Generic_Male(script_s* s);
+bool PhoneScript_Generic_Female(script_s* s);
+bool PhoneScript_MonFlavorText(script_s* s);
+extern const char GrandmaString[];
+extern const char GrandpaString[];
+extern const char MomString[];
+extern const char DadString[];
+extern const char SisterString[];
+extern const char BrotherString[];

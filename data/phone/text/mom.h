@@ -1,0 +1,19 @@
+#pragma once
+extern const struct TextCmd MomPhoneGreetingText[];
+extern const struct TextCmd MomPhoneLandmarkText[];
+extern const struct TextCmd MomPhoneGenericAreaText[];
+extern const struct TextCmd MomPhoneNewBarkText[];
+extern const struct TextCmd MomPhoneCherrygroveText[];
+extern const struct TextCmd MomOtherAreaText[];
+extern const struct TextCmd MomDeterminedText[];
+extern const struct TextCmd MomCheckBalanceText[];
+extern const struct TextCmd MomImportantToSaveText[];
+extern const struct TextCmd MomYoureNotSavingText[];
+extern const struct TextCmd MomYouveSavedText[];
+extern const struct TextCmd MomOKIllSaveText[];
+extern const struct TextCmd MomPhoneWontSaveMoneyText[];
+extern const struct TextCmd MomPhoneHangUpText[];
+extern const struct TextCmd MomPhoneNoPokemonText[];
+extern const struct TextCmd MomPhoneNoPokedexText[];
+extern const struct TextCmd MomPhoneNoGymQuestText[];
+extern const struct TextCmd MomPhoneLectureText[];

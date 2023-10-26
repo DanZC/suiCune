@@ -1301,7 +1301,7 @@ void PlayerEventScriptPointers(void){
 
 bool InvalidEventScript(script_s* s){
     SCRIPT_BEGIN
-    //end ['?']
+    s_end
     SCRIPT_END
 }
 
@@ -1572,9 +1572,7 @@ u8_flag_s RandomEncounter_Conv(void){
 
 bool WildBattleScript(script_s* s){
     SCRIPT_BEGIN
-    //randomwildmon ['?']
     randomwildmon
-    //startbattle ['?']
     startbattle
     //reloadmapafterbattle ['?']
     //end ['?']

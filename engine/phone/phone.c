@@ -1,15 +1,26 @@
 #include "../../constants.h"
 #include "phone.h"
 #include "../../home/map.h"
+#include "../../home/copy.h"
+#include "../../home/audio.h"
 #include "../../home/array.h"
 #include "../../home/gfx.h"
 #include "../../home/delay.h"
 #include "../../home/text.h"
+#include "../../home/random.h"
+#include "../../home/math.h"
 #include "../../home/map_objects.h"
 #include "../overworld/scripting.h"
-#include "../../util/scripting_macros.h"
+#include "../overworld/time.h"
+#include "../events/checktime.h"
+#include "../battle/read_trainer_attributes.h"
+#include "../battle/read_trainer_party.h"
 #include "../../util/scripting.h"
 #include "../../data/text/common.h"
+#include "../../data/phone/non_trainer_names.h"
+#include "../../data/phone/phone_contacts.h"
+
+struct PhoneContact gCallerContact;
 
 void AddPhoneNumber(void){
     CALL(av_CheckCellNum);
@@ -323,6 +334,64 @@ timecheck:
 
 }
 
+static bool CheckPhoneCall_timecheck(void) {
+    // FARCALL(aCheckReceiveCallTimer);
+    // RET;
+    return CheckReceiveCallTimer_Conv();
+}
+
+//  Check if the phone is ringing in the overworld.
+bool CheckPhoneCall_Conv(void){
+    // CALL(aCheckStandingOnEntrance);
+    // IF_Z goto no_call;
+    if(CheckStandingOnEntrance_Conv())
+        return false;
+
+    // CALL(aCheckPhoneCall_timecheck);
+    // NOP;
+    // IF_NC goto no_call;
+    if(!CheckPhoneCall_timecheck())
+        return false;
+
+// 50% chance for a call
+    // CALL(aRandom);
+    // LD_B_A;
+    // AND_A(0b01111111);
+    // CP_A_B;
+    // IF_NZ goto no_call;
+    if(Random_Conv() & 0b10000000)
+        return false;
+
+    // CALL(aGetMapPhoneService);
+    // AND_A_A;
+    // IF_NZ goto no_call;
+    if(GetMapPhoneService_Conv() != 0)
+        return false;
+
+    // CALL(aGetAvailableCallers);
+    GetAvailableCallers_Conv();
+    // CALL(aChooseRandomCaller);
+    // IF_NC goto no_call;
+    u8_flag_s res = ChooseRandomCaller_Conv();
+    if(!res.flag)
+        return false;
+
+    // LD_E_A;
+    // CALL(aLoadCallerScript);
+    LoadCallerScript_Conv(res.a);
+    // LD_A(BANK(aScript_ReceivePhoneCall));
+    // LD_HL(mScript_ReceivePhoneCall);
+    // CALL(aCallScript);
+    CallScript_Conv2(Script_ReceivePhoneCall);
+    // SCF;
+    // RET;
+    return true;
+
+// no_call:
+    // XOR_A_A;
+    // RET;
+}
+
 void CheckPhoneContactTimeOfDay(void){
     PUSH_HL;
     PUSH_BC;
@@ -370,6 +439,42 @@ NothingToSample:
     XOR_A_A;
     RET;
 
+}
+
+u8_flag_s ChooseRandomCaller_Conv(void){
+//  If no one is available to call, don't return anything.
+    // LD_A_addr(wNumAvailableCallers);
+    // AND_A_A;
+    // IF_Z goto NothingToSample;
+    if(wram->wNumAvailableCallers == 0)
+        return u8_flag(0, false);
+
+//  Store the number of available callers in c.
+    // LD_C_A;
+    uint8_t c = wram->wNumAvailableCallers;
+//  Sample a random number between 0 and 31.
+    // CALL(aRandom);
+    Random_Conv();
+    // LDH_A_addr(hRandomAdd);
+    // SWAP_A;
+    // AND_A(0x1f);
+    uint8_t a = ((hram->hRandomAdd >> 4) | (hram->hRandomAdd << 4)) & 0x1f;
+//  Compute that number modulo the number of available callers.
+    // CALL(aSimpleDivide);
+    uint8_t rem = SimpleDivide_Conv(a, c).rem;
+//  Return the caller ID you just sampled.
+    // LD_C_A;
+    // LD_B(0);
+    // LD_HL(wAvailableCallers);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // SCF;
+    // RET;
+    return u8_flag(wram->wAvailableCallers[rem], true);
+
+// NothingToSample:
+    // XOR_A_A;
+    // RET;
 }
 
 void GetAvailableCallers(void){
@@ -423,6 +528,72 @@ not_good_for_call:
     IF_NZ goto loop;
     RET;
 
+}
+
+void GetAvailableCallers_Conv(void){
+    // FARCALL(aCheckTime);
+    u8_flag_s time = CheckTime_Conv();
+    // LD_A_C;
+    // LD_addr_A(wCheckedTime);
+    wram->wCheckedTime = time.a;
+    // LD_HL(wNumAvailableCallers);
+    // LD_BC(CONTACT_LIST_SIZE + 1);
+    // XOR_A_A;
+    // CALL(aByteFill);
+    ByteFill_Conv2(&wram->wNumAvailableCallers, CONTACT_LIST_SIZE + 1, 0);
+    // LD_DE(wPhoneList);
+    uint8_t* de = wram->wPhoneList;
+    // LD_A(CONTACT_LIST_SIZE);
+    for(uint8_t a = 0; a < CONTACT_LIST_SIZE; ++a) {
+    // loop:
+        // LD_addr_A(wPhoneListIndex);
+        // LD_A_de;
+        uint8_t i = de[a];
+        // AND_A_A;
+        // IF_Z goto not_good_for_call;
+        if(i == 0)
+            continue;
+        // LD_HL(mPhoneContacts + PHONE_CONTACT_SCRIPT2_TIME);
+        const struct PhoneContact* const hl = &PhoneContacts[i];
+        // LD_BC(PHONE_CONTACT_SIZE);
+        // CALL(aAddNTimes);
+        // LD_A_addr(wCheckedTime);
+        // AND_A_hl;
+        // IF_Z goto not_good_for_call;
+        if(!(hl->callerTime & time.a))
+            continue;
+        // LD_BC(PHONE_CONTACT_MAP_GROUP - PHONE_CONTACT_SCRIPT2_TIME);
+        // ADD_HL_BC;
+        // LD_A_addr(wMapGroup);
+        // CP_A_hl;
+        // IF_NZ goto different_map;
+        // INC_HL;
+        // LD_A_addr(wMapNumber);
+        // CP_A_hl;
+        // IF_Z goto not_good_for_call;
+        if(hl->mapGroup == wram->wMapGroup || hl->mapNumber == wram->wMapNumber)
+            continue;
+
+    // different_map:
+        // LD_A_addr(wNumAvailableCallers);
+        // LD_C_A;
+        // LD_B(0);
+        // INC_A;
+        // LD_addr_A(wNumAvailableCallers);
+        uint8_t j = wram->wNumAvailableCallers++;
+        // LD_HL(wAvailableCallers);
+        // ADD_HL_BC;
+        // LD_A_de;
+        // LD_hl_A;
+        wram->wAvailableCallers[j] = i;
+
+    // not_good_for_call:
+        // INC_DE;
+        // LD_A_addr(wPhoneListIndex);
+        // DEC_A;
+        // IF_NZ goto loop;
+    }
+    // RET;
 }
 
 void CheckSpecialPhoneCall(void){
@@ -505,7 +676,7 @@ outside:
 
 bool SpecialCallOnlyWhenOutside_Conv(void){
     // LD_A_addr(wEnvironment);
-    uint8_t a = gb_read(wEnvironment);
+    uint8_t a = wram->wEnvironment;
     // CP_A(TOWN);
     // IF_Z goto outside;
     // CP_A(ROUTE);
@@ -739,14 +910,14 @@ void LoadCallerScript_Conv(uint8_t caller){
     // NOP;
     // LD_A_E;
     // LD_addr_A(wCurCaller);
-    gb_write(wCurCaller, caller);
+    wram->wCurCaller = caller;
     // AND_A_A;
     // IF_NZ goto actualcaller;
     if(caller == 0) {
         // LD_A(BANK(aWrongNumber));
         // LD_HL(mWrongNumber);
         // goto proceed;
-        FarCopyBytes_Conv(wCallerContact, BANK(aWrongNumber), mWrongNumber, PHONE_CONTACT_SIZE);
+        CopyBytes_Conv2(&gCallerContact, &WrongNumber, sizeof(gCallerContact));
     }
     else {
 
@@ -757,12 +928,30 @@ void LoadCallerScript_Conv(uint8_t caller){
     //     LD_A_E;
     //     CALL(aAddNTimes);
     //     LD_A(BANK(aPhoneContacts));
-        uint16_t phone_struct = AddNTimes_Conv(PHONE_CONTACT_SIZE, mPhoneContacts, caller);
-        FarCopyBytes_Conv(wCallerContact, BANK(aPhoneContacts), phone_struct, PHONE_CONTACT_SIZE);
+        // uint16_t phone_struct = AddNTimes_Conv(PHONE_CONTACT_SIZE, mPhoneContacts, caller);
+        // FarCopyBytes_Conv(wCallerContact, BANK(aPhoneContacts), phone_struct, PHONE_CONTACT_SIZE);
+        CopyBytes_Conv2(&gCallerContact, &PhoneContacts[caller], sizeof(gCallerContact));
     }
 }
 
-void WrongNumber(void){
+const struct TextCmd PhoneWrongNumberText[] = {
+    text_far(v_PhoneWrongNumberText)
+    text_end
+};
+
+bool WrongNumber_script(script_s* s) {
+    SCRIPT_BEGIN
+    writetext(PhoneWrongNumberText)
+    s_end
+    SCRIPT_END
+}
+
+const struct PhoneContact WrongNumber = {
+    .trainerClass = TRAINER_NONE,
+    .trainerId = PHONE_00,
+
+    .callerScript = WrongNumber_script,
+    .calleeScript = WrongNumber_script,
     //db ['TRAINER_NONE', 'PHONE_00'];
     //dba ['.script']
 
@@ -773,9 +962,7 @@ void WrongNumber(void){
 // PhoneWrongNumberText:
     //text_far ['_PhoneWrongNumberText']
     //text_end ['?']
-
-    // return Script_ReceivePhoneCall();
-}
+};
 
 // void Script_ReceivePhoneCall(void){
 //     //refreshscreen ['?']
@@ -794,7 +981,7 @@ bool Script_ReceivePhoneCall(script_s* s) {
     SCRIPT_BEGIN
     refreshscreen
     RingTwice_StartCall();
-    // scall(wCallerContact + PHONE_CONTACT_SCRIPT2_BANK);
+    scall(gCallerContact.calleeScript);
     waitbutton
     HangUp();
     closetext
@@ -990,15 +1177,17 @@ void Phone_StartRinging(void){
 }
 
 void Phone_StartRinging_Conv(void){
-    CALL(aWaitSFX);
-    LD_DE(SFX_CALL);
-    CALL(aPlaySFX);
+    // CALL(aWaitSFX);
+    WaitSFX_Conv();
+    // LD_DE(SFX_CALL);
+    // CALL(aPlaySFX);
+    PlaySFX_Conv(SFX_CALL);
     // CALL(aPhone_CallerTextbox);
     Phone_CallerTextbox_Conv();
     // CALL(aUpdateSprites);
     UpdateSprites_Conv();
     FARCALL(aPhoneRing_CopyTilemapAtOnce);
-    RET;
+    // RET;
 
 }
 
@@ -1038,6 +1227,25 @@ void Phone_TextboxWithName(void){
 
 }
 
+void Phone_TextboxWithName_Conv(uint8_t caller){
+    // PUSH_BC;
+    // CALL(aPhone_CallerTextbox);
+    Phone_CallerTextbox_Conv();
+    // hlcoord(1, 1, wTilemap);
+    // LD_hl(0x62);
+    *coord(1, 1, wram->wTilemap) = 0x62;
+    // INC_HL;
+    // INC_HL;
+    // LD_D_H;
+    // LD_E_L;
+    uint8_t* de = coord(1, 1, wram->wTilemap) + 2;
+    // POP_BC;
+    // CALL(aGetCallerClassAndName);
+    GetCallerClassAndName_Conv(de, caller);
+    // RET;
+
+}
+
 void Phone_CallerTextbox(void){
     hlcoord(0, 0, wTilemap);
     LD_B(2);
@@ -1053,7 +1261,7 @@ void Phone_CallerTextbox_Conv(void){
     // LD_C(SCREEN_WIDTH - 2);
     // CALL(aTextbox);
     // RET;
-    return Textbox_Conv(coord(0, 0, wTilemap), 2, SCREEN_WIDTH - 2);
+    return Textbox_Conv2(coord(0, 0, wram->wTilemap), 2, SCREEN_WIDTH - 2);
 }
 
 void GetCallerClassAndName(void){
@@ -1064,6 +1272,17 @@ void GetCallerClassAndName(void){
     CALL(aGetCallerName);
     RET;
 
+}
+
+void GetCallerClassAndName_Conv(uint8_t* de, uint8_t b){
+    // LD_H_D;
+    // LD_L_E;
+    // LD_A_B;
+    // CALL(aGetCallerTrainerClass);
+    struct TrainerId tid = GetCallerTrainerClass_Conv(b);
+    // CALL(aGetCallerName);
+    // RET;
+    return GetCallerName_Conv(de, tid);
 }
 
 void CheckCanDeletePhoneNumber(void){
@@ -1093,6 +1312,19 @@ void GetCallerTrainerClass(void){
     POP_HL;
     RET;
 
+}
+
+struct TrainerId GetCallerTrainerClass_Conv(uint8_t caller){
+    // PUSH_HL;
+    // LD_HL(mPhoneContacts + PHONE_CONTACT_TRAINER_CLASS);
+    // LD_BC(PHONE_CONTACT_SIZE);
+    // CALL(aAddNTimes);
+    // LD_A_hli;
+    // LD_B_hl;
+    // LD_C_A;
+    // POP_HL;
+    // RET;
+    return (struct TrainerId){.trainerClass=PhoneContacts[caller].trainerClass, .trainerId=PhoneContacts[caller].trainerId};
 }
 
 void GetCallerName(void){
@@ -1132,6 +1364,48 @@ NotTrainer:
 // INCLUDE "data/phone/non_trainer_names.asm"
 
     return Phone_GetTrainerName();
+}
+
+void GetCallerName_Conv(uint8_t* hl, struct TrainerId c){
+    // LD_A_C;
+    // AND_A_A;
+    // IF_Z goto NotTrainer;
+    if(c.trainerClass == TRAINER_NONE) {
+    // NotTrainer:
+        // PUSH_HL;
+        // LD_C_B;
+        // LD_B(0);
+        // LD_HL(mNonTrainerCallerNames);
+        // ADD_HL_BC;
+        // ADD_HL_BC;
+        // LD_A_hli;
+        // LD_E_A;
+        // LD_D_hl;
+        // POP_HL;
+        // CALL(aPlaceString);
+        PlaceStringSimple(U82C(NonTrainerCallerNames[c.trainerId]), hl);
+        // RET;
+    }
+
+    // CALL(aPhone_GetTrainerName);
+    uint8_t* name = GetTrainerName_Conv(c.trainerId, c.trainerClass);
+    // PUSH_HL;
+    // PUSH_BC;
+    // CALL(aPlaceString);
+    struct TextPrintState state = {.de = name, .hl = hl};
+    PlaceString_Conv(&state, hl);
+    // LD_A(0x9c);
+    // LD_bc_A;
+    *state.bc = 0x9c;
+    // POP_BC;
+    // POP_HL;
+    // LD_DE(SCREEN_WIDTH + 3);
+    // ADD_HL_DE;
+    hl += SCREEN_WIDTH + 3;
+    // CALL(aPhone_GetTrainerClassName);
+    // CALL(aPlaceString);
+    PlaceStringSimple(GetTrainerClassName_Conv(c.trainerClass), hl);
+    // RET;
 }
 
 void Phone_GetTrainerName(void){

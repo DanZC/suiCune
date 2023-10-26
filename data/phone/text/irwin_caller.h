@@ -1,0 +1,19 @@
+#pragma once
+extern const struct TextCmd IrwinHangUpText[];
+extern const struct TextCmd IrwinRocketTakeoverRumorText[];
+extern const struct TextCmd IrwinPlainBadgeGossipText[];
+extern const struct TextCmd IrwinJasmineReturnedGossipText[];
+extern const struct TextCmd IrwinRocketHideoutGossipText[];
+extern const struct TextCmd IrwinRadioTowerGossipText[];
+extern const struct TextCmd IrwinRisingBadgeGossipText[];
+extern const struct TextCmd IrwinEliteFourGossipText[];
+extern const struct TextCmd IrwinVermilionCityGossipText[];
+extern const struct TextCmd IrwinTrainPassGossipText[];
+extern const struct TextCmd IrwinSnorlaxGossipText[];
+extern const struct TextCmd IrwinMtSilverGossipText[];
+extern const struct TextCmd IrwinCalledRightAwayText[];
+extern const struct TextCmd IrwinFogBadgeGossipText[];
+extern const struct TextCmd IrwinMarshBadgeGossipText[];
+extern const struct TextCmd IrwinYourEscapadesRockText[];
+extern const struct TextCmd IrwinGoodMatchText[];
+extern const struct TextCmd IrwinSoMuchToChatAboutText[];

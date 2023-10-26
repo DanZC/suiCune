@@ -1,0 +1,27 @@
+#pragma once
+extern const struct TextCmd BuenaPhoneMorningAnswerText[];
+extern const struct TextCmd BuenaPhoneDayAnswerText[];
+extern const struct TextCmd BuenaPhoneMidnightAnswerText[];
+extern const struct TextCmd BuenaPhoneNiteAnswerText[];
+extern const struct TextCmd BuenaPhoneMorningText[];
+extern const struct TextCmd BuenaPhoneDayText[];
+extern const struct TextCmd BuenaPhoneMidnightText[];
+extern const struct TextCmd BuenaPhoneNiteText[];
+extern const struct TextCmd BuenaPhoneRocketText[];
+extern const struct TextCmd BuenaPhoneWentOutWithBenText[];
+extern const struct TextCmd BuenaPhoneReceptionistText[];
+extern const struct TextCmd BuenaPhoneLuckyNumberShowText[];
+extern const struct TextCmd BuenaPhoneStressedFromWorkText[];
+extern const struct TextCmd BuenaPhoneProfessorOakText[];
+extern const struct TextCmd BuenaPhoneGotAColdText[];
+extern const struct TextCmd BuenaPhoneRadioCardQuestionsText[];
+extern const struct TextCmd BuenaPhonePikachuFanClubText[];
+extern const struct TextCmd BuenaPhoneRadioTowerDirectorText[];
+extern const struct TextCmd BuenaPhoneWhenDoYouRelaxText[];
+extern const struct TextCmd BuenaPhoneStarterPokemonText[];
+extern const struct TextCmd BuenaPhoneCompanyVacationText[];
+extern const struct TextCmd BuenaPhoneBenAndFernText[];
+extern const struct TextCmd BuenaPhoneGoingShoppingText[];
+extern const struct TextCmd BuenaPhoneFavoriteSlotMachineAnswerText[];
+extern const struct TextCmd BuenaPhonePokegearAnswerText[];
+extern const struct TextCmd BuenaPhoneCoopedUpInRadioTowerAnswerText[];

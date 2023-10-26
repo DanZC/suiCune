@@ -1,6 +1,5 @@
 #include "../../constants.h"
 #include "../../util/scripting.h"
-#include "scripting.h"
 #include "../../home/audio.h"
 #include "../../home/delay.h"
 #include "../../home/copy.h"
@@ -21,6 +20,7 @@
 #include "../battle/read_trainer_party.h"
 #include "../events/engine_flags.h"
 #include "../events/checktime.h"
+#include "../events/money.h"
 #include "variables.h"
 #include "landmarks.h"
 #include "overworld.h"
@@ -70,6 +70,33 @@ void ScriptEvents(void){
     RET;
 }
 
+void ScriptEvents_Conv(void){
+    // CALL(aStartScript);
+    StartScript_Conv();
+
+    do {
+    // loop:
+        // LD_A_addr(wScriptMode);
+        // LD_HL(mScriptEvents_modes);
+        // RST(aJumpTable);
+        // modes:
+            //dw ['EndScript'];
+            //dw ['RunScriptCommand'];
+            //dw ['WaitScriptMovement'];
+            //dw ['WaitScript'];
+        switch(wram->wScriptMode)
+        {
+            case SCRIPT_OFF: StopScript_Conv(); break;
+            case SCRIPT_READ: gCurScript.fn(&gCurScript); break;
+            case SCRIPT_WAIT_MOVEMENT: WaitScriptMovement_Conv(); break;
+            case SCRIPT_WAIT: WaitScript_Conv(); break;
+        }
+        // CALL(aCheckScript);
+        // IF_NZ goto loop;
+    } while(CheckScript_Conv());
+    // RET;
+}
+
 void EndScript(void){
     CALL(aStopScript);
     RET;
@@ -93,7 +120,29 @@ void WaitScript(void){
     wram->wScriptMode = SCRIPT_READ;
     CALL(aStartScript);
     RET;
+}
 
+void WaitScript_Conv(void){
+    // CALL(aStopScript);
+    StopScript_Conv();
+
+    // LD_HL(wScriptDelay);
+    // DEC_hl;
+    // RET_NZ ;
+    if(--wram->wScriptDelay != 0) {
+        // RET;
+        return;
+    }
+
+    // FARCALL(aUnfreezeAllObjects);
+    UnfreezeAllObjects_Conv();
+
+    // LD_A(SCRIPT_READ);
+    // LD_addr_A(wScriptMode);
+    wram->wScriptMode = SCRIPT_READ;
+    // CALL(aStartScript);
+    StartScript_Conv();
+    // RET;
 }
 
 void WaitScriptMovement(void){
@@ -113,6 +162,27 @@ void WaitScriptMovement(void){
     CALL(aStartScript);
     RET;
 
+}
+
+void WaitScriptMovement_Conv(void){
+    // CALL(aStopScript);
+    StopScript_Conv();
+
+    // LD_HL(wVramState);
+    // BIT_hl(7);
+    // RET_NZ ;
+    if(bit_test(wram->wVramState, 7))
+        return;
+
+    // FARCALL(aUnfreezeAllObjects);
+    UnfreezeAllObjects_Conv();
+
+    // LD_A(SCRIPT_READ);
+    // LD_addr_A(wScriptMode);
+    wram->wScriptMode = SCRIPT_READ;
+    // CALL(aStartScript);
+    StartScript_Conv();
+    // RET;
 }
 
 #include "../../macros/scripts/events.h"
@@ -622,7 +692,7 @@ void Script_jumptext_Conv(script_s* s, const struct TextCmd* text){
     Script_Goto(s, JumpTextScript);
 }
 
-#include "../../util/scripting_macros.h"
+#include "../../util/scripting.h"
 
 bool JumpTextFacePlayerScript(script_s* s){
     SCRIPT_BEGIN
@@ -1801,6 +1871,19 @@ void Script_variablesprite(void){
 
 }
 
+void Script_variablesprite_Conv(script_s* s, uint8_t slot, uint8_t val){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // LD_E_A;
+    // LD_D(0);
+    // LD_HL(wVariableSprites);
+    // ADD_HL_DE;
+    // CALL(aGetScriptByte);
+    // LD_hl_A;
+    wram->wVariableSprites[slot] = val;
+    // RET;
+}
+
 void Script_appear(void){
     CALL(aGetScriptByte);
     CALL(aGetScriptObject);
@@ -1988,6 +2071,35 @@ const uint8_t EarthquakeMovement[] = {
     step_sleep(16),  // the 16 gets overwritten with the lower 6 bits of the script byte
     movement_step_end
 };
+
+bool Script_earthquake_script(script_s* s) {
+    SCRIPT_BEGIN
+    applymovement(PLAYER, wram_ptr(wEarthquakeMovementDataBuffer))
+    s_end
+    SCRIPT_END
+}
+
+void Script_earthquake_Conv(script_s* s, uint8_t amt){
+    // LD_HL(mEarthquakeMovement);
+    // LD_DE(wEarthquakeMovementDataBuffer);
+    // LD_BC(mEarthquakeMovement_End - mEarthquakeMovement);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wEarthquakeMovementDataBuffer, EarthquakeMovement, sizeof(EarthquakeMovement));
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wEarthquakeMovementDataBuffer + 1);
+    wram->wEarthquakeMovementDataBuffer[1] = amt;
+    // AND_A(0b00111111);
+    // LD_addr_A(wEarthquakeMovementDataBuffer + 3);
+    wram->wEarthquakeMovementDataBuffer[3] = amt & 0b00111111;
+    // LD_B(BANK(aScript_earthquake_script));
+    // LD_DE(mScript_earthquake_script);
+    // JP(mScriptCall);
+    Script_CallScript(s, Script_earthquake_script);
+
+// script:
+    //applymovement ['PLAYER', 'wEarthquakeMovementDataBuffer']
+    //end ['?']
+}
 
 void Script_loadpikachudata(void){
     LD_A(PIKACHU);
@@ -2999,7 +3111,7 @@ void Script_gettrainername(void){
 
 }
 
-void Script_gettrainername_Conv(script_s* s, uint8_t b, uint8_t c, uint8_t a){
+void Script_gettrainername_Conv(script_s* s, uint8_t a, uint8_t b, uint8_t c){
     // CALL(aGetScriptByte);
     // LD_C_A;
     // CALL(aGetScriptByte);
@@ -3031,6 +3143,14 @@ void Script_gettrainerclassname(void){
     LD_addr_A(wNamedObjectType);
     JR(mContinueToGetName);
 
+}
+
+void Script_gettrainerclassname_Conv(script_s* s, uint8_t buffer, uint8_t tclass){
+    (void)s;
+    // LD_A(TRAINER_NAME);
+    // LD_addr_A(wNamedObjectType);
+    // JR(mContinueToGetName);
+    return GetStringBuffer_Conv(buffer, GetName_Conv2(TRAINER_NAME, tclass));
 }
 
 void Script_getmoney(void){
@@ -3124,7 +3244,7 @@ void Script_getstring(void){
 
 }
 
-void Script_getstring_Conv(script_s* s, const char* hl, uint8_t a){
+void Script_getstring_Conv(script_s* s, uint8_t a, const char* hl){
     (void)s;
     // CALL(aGetScriptByte);
     // LD_E_A;
@@ -3300,6 +3420,17 @@ void Script_checkmoney(void){
     return CompareMoneyAction();
 }
 
+void Script_checkmoney_Conv(script_s* s, uint8_t account, uint32_t amt){
+    // CALL(aGetMoneyAccount);
+    uint8_t* acct = GetMoneyAccount_Conv(account);
+    // CALL(aLoadMoneyAmountToMem);
+    uint8_t* bc = LoadMoneyAmountToMem_Conv(amt);
+    // FARCALL(aCompareMoney);
+    u8_flag_s cmp = CompareMoney_Conv(bc, acct);
+
+    return CompareMoneyAction_Conv(s, cmp);
+}
+
 void CompareMoneyAction(void){
     IF_C goto less;
     IF_Z goto exact;
@@ -3317,6 +3448,30 @@ done:
     LD_addr_A(wScriptVar);
     RET;
 
+}
+
+void CompareMoneyAction_Conv(script_s* s, u8_flag_s res){
+    (void)s;
+    // IF_C goto less;
+    if(res.flag)
+        wram->wScriptVar = HAVE_LESS;
+    // IF_Z goto exact;
+    if(res.a == 0)
+        wram->wScriptVar = HAVE_AMOUNT;
+    // LD_A(HAVE_MORE);
+    // goto done;
+    wram->wScriptVar = HAVE_MORE;
+
+// exact:
+    // LD_A(HAVE_AMOUNT);
+    // goto done;
+
+// less:
+    // LD_A(HAVE_LESS);
+
+// done:
+    // LD_addr_A(wScriptVar);
+    // RET;
 }
 
 void GetMoneyAccount(void){
@@ -3355,7 +3510,7 @@ void LoadMoneyAmountToMem(void){
 
 }
 
-void LoadMoneyAmountToMem_Conv(uint32_t amount){
+uint8_t* LoadMoneyAmountToMem_Conv(uint32_t amount){
     // LD_BC(hMoneyTemp);
     // PUSH_BC;
     // CALL(aGetScriptByte);
@@ -3371,6 +3526,7 @@ void LoadMoneyAmountToMem_Conv(uint32_t amount){
     hram->hMoneyTemp[2] = (uint8_t)((amount >> 16) & 0xff);
     // POP_BC;
     // RET;
+    return hram->hMoneyTemp;
 }
 
 void Script_givecoins(void){
@@ -4244,6 +4400,28 @@ void Script_endall(void){
     CALL(aStopScript);
     RET;
 
+}
+
+void Script_endall_Conv(script_s* s){
+    (void)s;
+    // XOR_A_A;
+    // LD_addr_A(wScriptStackSize);
+    s->fn = NULL;
+    s->position = 0;
+    s->stack_ptr = 0;
+    s->stack[0].fn = NULL;
+    s->stack[0].position = 0;
+    // LD_addr_A(wScriptRunning);
+    wram->wScriptRunning = 0;
+    // LD_A(SCRIPT_OFF);
+    // LD_addr_A(wScriptMode);
+    wram->wScriptMode = SCRIPT_OFF;
+    // LD_HL(wScriptFlags);
+    // RES_hl(0);
+    bit_reset(wram->wScriptFlags, 0);
+    // CALL(aStopScript);
+    StopScript_Conv();
+    // RET;
 }
 
 void Script_halloffame(void){

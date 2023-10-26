@@ -1,3 +1,4 @@
+
 // Utility types
 
 union Register
@@ -33,8 +34,13 @@ struct BankAddr
 };
 
 struct MapId {
-    uint8_t mapNumber;
     uint8_t mapGroup;
+    uint8_t mapNumber;
+};
+
+struct TrainerId {
+    uint8_t trainerClass;
+    uint8_t trainerId;
 };
 
 // Configurable types
@@ -43,6 +49,9 @@ typedef uint8_t species_t; // Mon species type
 typedef uint8_t dex_t;     // Dex number type
 typedef uint8_t item_t;    // Item id type
 typedef uint8_t move_t;    // Move id type
+
+typedef uint8_t tile_t;
+typedef uint16_t sfx_t;
 
 // ROM structs
 
@@ -197,25 +206,6 @@ NPCTrade
     uint16_t otId;
     uint8_t otName[NAME_LENGTH];
     uint16_t gender;
-};
-
-#if defined(__cplusplus) || defined(_MSC_VER)
-struct 
-#else
-struct __attribute__((packed))
-#endif
-PhoneContact
-{
-    uint8_t trainerClass; // 0x0
-    uint8_t trainerNumber; // 0x1
-    uint8_t mapGroup; // 0x2
-    uint8_t mapNumber; // 0x3
-    struct
-    {
-        uint8_t time; // 0x0
-        uint8_t bank; // 0x1
-        uint16_t addr; // 0x2-0x3
-    } script[2]; // 0x04-0x0B
 };
 
 #if defined(__cplusplus) || defined(_MSC_VER)
@@ -1192,6 +1182,17 @@ struct MenuData {
             const char **const options;
         } staticMenu;
     };
+};
+
+struct PhoneContact {
+    uint8_t trainerClass;
+    uint8_t trainerId;
+    uint8_t mapGroup;
+    uint8_t mapNumber;
+    uint8_t calleeTime;
+    const Script_fn_t calleeScript;
+    uint8_t callerTime;
+    const Script_fn_t callerScript;
 };
 
 typedef struct Script script_s;

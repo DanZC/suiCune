@@ -48,7 +48,7 @@ workspace "suiCune"
 
 	project "suiCune"
 		targetname "suiCune"
-		language "c++"
+		language "c"
 		kind "windowedapp"
 		warnings "off"
 

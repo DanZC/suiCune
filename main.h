@@ -46,7 +46,7 @@
 // SECTION "bank4", ROMX
 
 //#include "engine/items/pack.h"
-//#include "engine/overworld/time.h"
+#include "engine/overworld/time.h"
 //#include "engine/items/tmhm2.h"
 //#include "engine/menus/naming_screen.h"
 //#include "engine/events/misc_scripts.h"
@@ -78,7 +78,7 @@
 //#include "engine/overworld/map_setup.h"
 //#include "engine/events/pokecenter_pc.h"
 //#include "engine/items/mart.h"
-//#include "engine/events/money.h"
+#include "engine/events/money.h"
 //#include "data/items/marts.h"
 //#include "engine/events/mom.h"
 //#include "engine/events/daycare.h"
@@ -144,7 +144,7 @@
 
 //#include "engine/battle/ai/items.h"
 #include "engine/battle/ai/scoring.h"
-//#include "engine/battle/read_trainer_attributes.h"
+#include "engine/battle/read_trainer_attributes.h"
 #include "engine/battle/read_trainer_party.h"
 
 // SECTION "Battle Core", ROMX

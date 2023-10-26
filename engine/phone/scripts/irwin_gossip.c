@@ -1,0 +1,85 @@
+#include "../../../constants.h"
+#include "../../../util/scripting.h"
+#include "generic_caller.h"
+#include "hangups.h"
+#include "../../../data/phone/text/irwin_caller.h"
+
+bool IrwinRumorScript(script_s* s) {
+    SCRIPT_BEGIN
+    checkevent(EVENT_OPENED_MT_SILVER)
+    iftrue(MtSilver)
+    checkevent(EVENT_FOUGHT_SNORLAX)
+    iftrue(Snorlax)
+    checkevent(EVENT_GOT_PASS_FROM_COPYCAT)
+    iftrue(TrainPass)
+    checkflag(ENGINE_MARSHBADGE)
+    iftrue(MarshBadge)
+    checkflag(ENGINE_FLYPOINT_VERMILION)
+    iftrue(VermilionCity)
+    checkevent(EVENT_BEAT_ELITE_FOUR)
+    iftrue(EliteFour)
+    checkflag(ENGINE_RISINGBADGE)
+    iftrue(RisingBadge)
+    checkevent(EVENT_CLEARED_RADIO_TOWER)
+    iftrue(RadioTower)
+    checkevent(EVENT_CLEARED_ROCKET_HIDEOUT)
+    iftrue(RocketHideout)
+    checkevent(EVENT_JASMINE_RETURNED_TO_GYM)
+    iftrue(JasmineReturned)
+    checkflag(ENGINE_FOGBADGE)
+    iftrue(FogBadge)
+    checkflag(ENGINE_PLAINBADGE)
+    iftrue(PlainBadge)
+    writetext(IrwinCalledRightAwayText)
+    promptbutton
+    sjump(PhoneScript_HangUpText_Male)
+PlainBadge:
+    writetext(IrwinPlainBadgeGossipText)
+    promptbutton
+    sjump(PhoneScript_HangUpText_Male)
+JasmineReturned:
+    writetext(IrwinJasmineReturnedGossipText)
+    promptbutton
+    sjump(PhoneScript_HangUpText_Male)
+RocketHideout:
+    writetext(IrwinRocketHideoutGossipText)
+    promptbutton
+    sjump(PhoneScript_HangUpText_Male)
+RadioTower:
+    writetext(IrwinRadioTowerGossipText)
+    promptbutton
+    sjump(PhoneScript_HangUpText_Male)
+RisingBadge:
+    writetext(IrwinRisingBadgeGossipText)
+    promptbutton
+    sjump(PhoneScript_HangUpText_Male)
+EliteFour:
+    writetext(IrwinEliteFourGossipText)
+    promptbutton
+    sjump(PhoneScript_HangUpText_Male)
+VermilionCity:
+    writetext(IrwinVermilionCityGossipText)
+    promptbutton
+    sjump(PhoneScript_HangUpText_Male)
+TrainPass:
+    writetext(IrwinTrainPassGossipText)
+    promptbutton
+    sjump(PhoneScript_HangUpText_Male)
+Snorlax:
+    writetext(IrwinSnorlaxGossipText)
+    promptbutton
+    sjump(PhoneScript_HangUpText_Male)
+MtSilver:
+    writetext(IrwinMtSilverGossipText)
+    promptbutton
+    sjump(PhoneScript_HangUpText_Male)
+FogBadge:
+    writetext(IrwinFogBadgeGossipText)
+    promptbutton
+    sjump(PhoneScript_HangUpText_Male)
+MarshBadge:
+    writetext(IrwinMarshBadgeGossipText)
+    promptbutton
+    sjump(PhoneScript_HangUpText_Male)
+    SCRIPT_END
+}
