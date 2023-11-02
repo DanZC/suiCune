@@ -50,6 +50,60 @@ TMHM:
 
 }
 
+bool v_ReceiveItem_Conv(item_t* hl, item_t a, uint8_t count){
+    // CALL(aDoesHLEqualNumItems);
+    // JP_NZ (mPutItemInPocket);
+    if(hl == wram->wItems)
+        return PutItemInPocket_Conv(hl, (hl-1), a, count);
+    // PUSH_HL;
+    // CALL(aCheckItemPocket);
+    uint8_t pocket = CheckItemPocket_Conv(a);
+    // POP_DE;
+    // LD_A_addr(wItemAttributeValue);
+    // DEC_A;
+    // LD_HL(mv_ReceiveItem_Pockets);
+    // RST(aJumpTable);
+    // RET;
+    switch(pocket - 1) {
+    // Pockets:
+    //  entries correspond to item types
+        //dw ['.Item'];
+        //dw ['.KeyItem'];
+        //dw ['.Ball'];
+        //dw ['.TMHM'];
+    case 0:
+    // Item:
+        // LD_H_D;
+        // LD_L_E;
+        // JP(mPutItemInPocket);
+        return PutItemInPocket_Conv(hl, (hl-1), a, count);
+
+    case 1:
+    // KeyItem:
+        // LD_H_D;
+        // LD_L_E;
+        // JP(mReceiveKeyItem);
+        return ReceiveKeyItem_Conv(a);
+
+    case 2:
+    // Ball:
+        // LD_HL(wNumBalls);
+        // JP(mPutItemInPocket);
+        return PutItemInPocket_Conv(wram->wBalls, &wram->wNumBalls, a, count);
+
+    case 3:
+    // TMHM:
+        // LD_H_D;
+        // LD_L_E;
+        // LD_A_addr(wCurItem);
+        // LD_C_A;
+        // CALL(aGetTMHMNumber);
+        // JP(mReceiveTMHM);
+        return ReceiveTMHM_Conv(GetTMHMNumber_Conv(a), count);
+    }
+    return false;
+}
+
 void v_TossItem(void){
     CALL(aDoesHLEqualNumItems);
     IF_NZ goto remove;
@@ -379,6 +433,122 @@ done:
 
 }
 
+bool PutItemInPocket_Conv(item_t* pocket, uint8_t* pocketQuantity, item_t item, uint8_t count){
+    // LD_D_H;
+    // LD_E_L;
+    // INC_HL;
+    // LD_A_addr(wCurItem);
+    // LD_C_A;
+    // LD_B(0);
+
+    uint8_t c = 0;
+    for(uint8_t b = 0; ; c++) {
+    // loop:
+        // LD_A_hli;
+        // CP_A(-1);
+        // IF_Z goto terminator;
+        if(pocket[c] == 0xff) {
+        // terminator:
+            // CALL(aGetPocketCapacity);
+            uint8_t capacity = GetPocketCapacity_Conv(pocket);
+            // LD_A_de;
+            // CP_A_C;
+            // IF_C goto ok;
+            if(*pocketQuantity < capacity)
+                break;
+            // AND_A_A;
+            // RET;
+            return false;
+        }
+        // CP_A_C;
+        // IF_NZ goto next;
+        if(pocket[c] != item)
+            continue;
+        // LD_A(MAX_ITEM_STACK);
+        // SUB_A_hl;
+        // ADD_A_B;
+        // LD_B_A;
+        b += (MAX_ITEM_STACK - pocket[c]);
+        // LD_A_addr(wItemQuantityChange);
+        // CP_A_B;
+        // IF_Z goto ok;
+        // IF_C goto ok;
+        if(count <= b)
+            break;
+
+    // next:
+        // INC_HL;
+        // goto loop;
+    }
+
+
+// ok:
+    // LD_H_D;
+    // LD_L_E;
+    item_t* hl = pocket + c;
+    // LD_A_addr(wCurItem);
+    // LD_C_A;
+    // LD_A_addr(wItemQuantityChange);
+    // LD_addr_A(wItemQuantity);
+    wram->wItemQuantity = count;
+
+    while(1) {
+    // loop2:
+        // INC_HL;
+        hl++;
+        // LD_A_hli;
+        item_t a = *(hl++);
+        // CP_A(-1);
+        // IF_Z goto terminator2;
+        if(a != 0xff) {
+        // terminator2:
+            // DEC_HL;
+            // LD_A_addr(wCurItem);
+            // LD_hli_A;
+            hl[-1] = item;
+            // LD_A_addr(wItemQuantity);
+            // LD_hli_A;
+            hl[0] = wram->wItemQuantity;
+            // LD_hl(-1);
+            hl[1] = 0xff;
+            // LD_H_D;
+            // LD_L_E;
+            // INC_hl;
+            (*pocketQuantity)++;
+            // break;
+            return true;
+        }
+        // CP_A_C;
+        // IF_NZ goto loop2;
+        if(a != item)
+            continue;
+        // LD_A_addr(wItemQuantity);
+        // ADD_A_hl;
+        a = wram->wItemQuantity + *hl;
+        // CP_A(MAX_ITEM_STACK + 1);
+        // IF_NC goto newstack;
+        if(a >= MAX_ITEM_STACK) {
+        // newstack:
+            // LD_hl(MAX_ITEM_STACK);
+            *hl = MAX_ITEM_STACK;
+            // SUB_A(MAX_ITEM_STACK);
+            // LD_addr_A(wItemQuantity);
+            wram->wItemQuantity = a - MAX_ITEM_STACK;
+            // goto loop2;
+            continue;
+        }
+        // LD_hl_A;
+        // goto done;
+        *hl = a;
+        return true;
+    }
+
+// done:
+    // SCF;
+    // RET;
+
+}
+
 void RemoveItemFromPocket(void){
     LD_D_H;
     LD_E_L;
@@ -678,6 +848,30 @@ toomany:
     AND_A_A;
     RET;
 
+}
+
+bool ReceiveTMHM_Conv(uint8_t id, uint8_t count){
+    // DEC_C;
+    // LD_B(0);
+    // LD_HL(wTMsHMs);
+    // ADD_HL_BC;
+
+    // LD_A_addr(wItemQuantityChange);
+    // ADD_A_hl;
+    uint8_t a = count + wram->wTMsHMs[id - 1];
+    // CP_A(MAX_ITEM_STACK + 1);
+    // IF_NC goto toomany;
+    if(a >= MAX_ITEM_STACK + 1)
+        return false;
+    // LD_hl_A;
+    wram->wTMsHMs[id - 1] = a;
+    // SCF;
+    // RET;
+    return true;
+
+// toomany:
+    // AND_A_A;
+    // RET;
 }
 
 void TossTMHM(void){

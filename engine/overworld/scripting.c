@@ -32,6 +32,7 @@
 #include "../events/std_scripts.h"
 
 static const struct TextCmd* lScriptText = NULL;
+Script_fn_t gDeferredScriptAddr = NULL;
 //  Event scripting commands.
 
 void EnableScriptMode(void){
@@ -42,6 +43,15 @@ void EnableScriptMode(void){
     wram->wScriptMode = SCRIPT_READ;
     RET;
 
+}
+
+void EnableScriptMode_Conv(void){
+    // PUSH_AF;
+    // LD_A(SCRIPT_READ);
+    // LD_addr_A(wScriptMode);
+    // POP_AF;
+    wram->wScriptMode = SCRIPT_READ;
+    // RET;
 }
 
 void ScriptEvents(void){
@@ -2007,6 +2017,22 @@ not_var_emote:
 
 }
 
+void Script_loademote_Conv(script_s* s, uint8_t emote){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // CP_A(EMOTE_FROM_MEM);
+    // IF_NZ goto not_var_emote;
+    // LD_A_addr(wScriptVar);
+    if(emote == (uint8_t)EMOTE_FROM_MEM)
+        emote = wram->wScriptVar;
+
+// not_var_emote:
+    // LD_C_A;
+    // FARCALL(aLoadEmote);
+    LoadEmote_Conv(emote);
+    // RET;
+}
+
 void Script_showemote(void){
     CALL(aGetScriptByte);
     LD_addr_A(wScriptVar);
@@ -2025,26 +2051,50 @@ ok:
 
 }
 
-void ShowEmoteScript(void){
-    //loademote ['EMOTE_FROM_MEM']
-    //applymovementlasttalked ['.Show']
-    //pause ['0']
-    //applymovementlasttalked ['.Hide']
-    //end ['?']
+void Script_showemote_Conv(script_s* s, uint8_t emote, uint8_t obj, uint8_t frames){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = emote;
+    // CALL(aGetScriptByte);
+    // CALL(aGetScriptObject);
+    uint8_t a = GetScriptObject_Conv(obj);
+    // CP_A(LAST_TALKED);
+    // IF_Z goto ok;
+    // LDH_addr_A(hLastTalked);
+    if(a != (uint8_t)LAST_TALKED)
+        hram->hLastTalked = a;
 
+// ok:
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wScriptDelay);
+    wram->wScriptDelay = frames;
+    // LD_B(BANK(aShowEmoteScript));
+    // LD_DE(mShowEmoteScript);
+    // JP(mScriptCall);
+    Script_CallScript(s, ShowEmoteScript);
+}
 
-Show:
-    //show_emote ['?']
-    //step_sleep ['1']
-    //step_end ['?']
+bool ShowEmoteScript(script_s* s){
+    static const uint8_t Show[] = {
+        movement_show_emote,
+        step_sleep(1),
+        movement_step_end,
+    };
 
+    static const uint8_t Hide[] = {
+        movement_hide_emote,
+        step_sleep(1),
+        movement_step_end,
+    };
 
-Hide:
-    //hide_emote ['?']
-    //step_sleep ['1']
-    //step_end ['?']
-
-    return Script_earthquake();
+    SCRIPT_BEGIN
+    loademote(EMOTE_FROM_MEM)
+    applymovementlasttalked(Show)
+    pause(0)
+    applymovementlasttalked(Hide)
+    s_end
+    SCRIPT_END
 }
 
 void Script_earthquake(void){
@@ -2147,6 +2197,20 @@ void Script_loadwildmon(void){
 
 }
 
+void Script_loadwildmon_Conv(script_s* s, species_t sp, uint8_t level){
+    (void)s;
+    // LD_A((1 << 7));
+    // LD_addr_A(wBattleScriptFlags);
+    wram->wBattleScriptFlags = (1 << 7);
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wTempWildMonSpecies);
+    wram->wTempWildMonSpecies = sp;
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wCurPartyLevel);
+    wram->wCurPartyLevel = level;
+    // RET;
+}
+
 void Script_loadtrainer(void){
     LD_A((1 << 7) | 1);
     LD_addr_A(wBattleScriptFlags);
@@ -2156,6 +2220,20 @@ void Script_loadtrainer(void){
     LD_addr_A(wOtherTrainerID);
     RET;
 
+}
+
+void Script_loadtrainer_Conv(script_s* s, uint8_t tclass, uint8_t tid){
+    (void)s;
+    // LD_A((1 << 7) | 1);
+    // LD_addr_A(wBattleScriptFlags);
+    wram->wBattleScriptFlags = (1 << 7) | 1;
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wOtherTrainerClass);
+    wram->wOtherTrainerClass = tclass;
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wOtherTrainerID);
+    wram->wOtherTrainerID = tid;
+    // RET;
 }
 
 void Script_startbattle(void){
@@ -2514,6 +2592,21 @@ void Script_sdefer(void){
 
 }
 
+void Script_sdefer_Conv(script_s* s, Script_fn_t script){
+    (void)s;
+    // LD_A_addr(wScriptBank);
+    // LD_addr_A(wDeferredScriptBank);
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wDeferredScriptAddr);
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wDeferredScriptAddr + 1);
+    gDeferredScriptAddr = script;
+    // LD_HL(wScriptFlags);
+    // SET_hl(3);
+    bit_set(wram->wScriptFlags, 3);
+    // RET;
+}
+
 void Script_checkscene(void){
     CALL(aCheckScenes);
     IF_Z goto no_scene;
@@ -2526,6 +2619,11 @@ no_scene:
     LD_addr_A(wScriptVar);
     RET;
 
+}
+
+void Script_checkscene_Conv(script_s* s) {
+    (void)s;
+    wram->wScriptVar = CheckScenes_Conv();
 }
 
 void Script_checkmapscene(void){
@@ -3404,6 +3502,17 @@ void Script_givemoney(void){
 
 }
 
+void Script_givemoney_Conv(script_s* s, uint8_t account, uint32_t amount){
+    (void)s;
+    // CALL(aGetMoneyAccount);
+    uint8_t* act = GetMoneyAccount_Conv(account);
+    // CALL(aLoadMoneyAmountToMem);
+    uint8_t* amt = LoadMoneyAmountToMem_Conv(amount);
+    // FARCALL(aGiveMoney);
+    GiveMoney_Conv(act, amt);
+    // RET;
+}
+
 void Script_takemoney(void){
     CALL(aGetMoneyAccount);
     CALL(aLoadMoneyAmountToMem);
@@ -3536,6 +3645,15 @@ void Script_givecoins(void){
 
 }
 
+void Script_givecoins_Conv(script_s* s, uint16_t amount){
+    (void)s;
+    // CALL(aLoadCoinAmountToMem);
+    uint8_t* amt = LoadCoinAmountToMem_Conv(amount);
+    // FARCALL(aGiveCoins);
+    GiveCoins_Conv(amt);
+    // RET;
+}
+
 void Script_takecoins(void){
     CALL(aLoadCoinAmountToMem);
     FARCALL(aTakeCoins);
@@ -3550,6 +3668,14 @@ void Script_checkcoins(void){
 
 }
 
+void Script_checkcoins_Conv(script_s* s, uint16_t amount){
+    // CALL(aLoadCoinAmountToMem);
+    uint8_t* amt = LoadCoinAmountToMem_Conv(amount);
+    // FARCALL(aCheckCoins);
+    // JR(mCompareMoneyAction);
+    return CompareMoneyAction_Conv(s, CheckCoins_Conv(amt));
+}
+
 void LoadCoinAmountToMem(void){
     CALL(aGetScriptByte);
     LDH_addr_A(hMoneyTemp + 1);
@@ -3558,6 +3684,18 @@ void LoadCoinAmountToMem(void){
     LD_BC(hMoneyTemp);
     RET;
 
+}
+
+uint8_t* LoadCoinAmountToMem_Conv(uint16_t amount){
+    // CALL(aGetScriptByte);
+    // LDH_addr_A(hMoneyTemp + 1);
+    hram->hMoneyTemp[1] = LOW(amount);
+    // CALL(aGetScriptByte);
+    // LDH_addr_A(hMoneyTemp);
+    hram->hMoneyTemp[0] = HIGH(amount);
+    // LD_BC(hMoneyTemp);
+    // RET;
+    return hram->hMoneyTemp;
 }
 
 void Script_checktime(void){
@@ -3892,6 +4030,7 @@ false_:
 }
 
 void Script_checkflag_Conv(script_s* s, uint16_t flag){
+    (void)s;
     // CALL(aGetScriptByte);
     // LD_E_A;
     // CALL(aGetScriptByte);
@@ -3906,7 +4045,7 @@ void Script_checkflag_Conv(script_s* s, uint16_t flag){
 // false_:
     // LD_addr_A(wScriptVar);
     // RET;
-    s->var = (v_EngineFlagAction_Conv(flag, CHECK_FLAG))? TRUE: FALSE;
+    wram->wScriptVar = (v_EngineFlagAction_Conv(flag, CHECK_FLAG))? TRUE: FALSE;
 }
 
 void v_EngineFlagAction(void){

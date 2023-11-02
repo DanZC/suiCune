@@ -63,6 +63,7 @@ commands = {
     'getmonname': Cmd('getmonname', ['buffer', 'mon_id']),
     'getstring': Cmd('getstring', ['buffer', 'str']),
     'random': Cmd('srandom', ['val']),
+    'applymovement': Cmd('applymovement', ['id', 'movement']),
 }
 
 text_commands = {
@@ -74,6 +75,7 @@ text_commands = {
 }
 
 mvmt_commands = {
+    'slow_step': Cmd('slow_step', ['dir']),
     'step': Cmd('step', ['dir']),
     'big_step': Cmd('big_step', ['dir']),
     'turn_head': Cmd('turn_head', ['dir']),
@@ -317,15 +319,14 @@ def find_next_command(script: List[Union[Comment, Label, StrLabel, Command]], i:
         return None
     return None
 
-with open(sys.argv[1], 'r', encoding='utf8') as f:
-    lines = f.read().splitlines()
+def parse_script(lines: List[str]) -> List[Union[Comment, Label, StrLabel, Command]]:
+    script: List[Union[Comment, Label, StrLabel, Command]] = []
 
-script: List[Union[Comment, Label, StrLabel, Command]] = []
-
-for line in lines:
-    ln = parse_line(line)
-    if ln is not None:
-        script.append(ln)
+    for line in lines:
+        ln = parse_line(line)
+        if ln is not None:
+            script.append(ln)
+    return script
 
 # out = '''#include "../../constants.h"
 # #include "../../util/scripting_macros.h"
@@ -387,103 +388,204 @@ for line in lines:
 # };
 # '''
 # #include "../../util/scripting_macros.h"
-out = '#include "../../../constants.h"\n#include "../../../util/scripting_macros.h"\n\n'
-out_h = '#pragma once\n'
-cur_text = ''
-cur_movement = ''
-cur_script = ''
-in_sub_text = False
-last_cmd = ''
+def convert_script(path: str):
+    with open(path, 'r', encoding='utf8') as f:
+        lines = f.read().splitlines()
+    
+    convert_script_from_lines(path, lines)
 
-for i, ln in enumerate(script):
-    if isinstance(ln, Label):
-        nxt = find_next_command(script, i+1)
-        if nxt is not None:
-            if nxt.name == 'text':
+def convert_script_from_lines(path: str, lines: List[str]):
+    script = parse_script(lines)
+
+    out = '#include "../../../constants.h"\n#include "../../../util/scripting_macros.h"\n\n'
+    out_h = '#pragma once\n'
+    cur_text = ''
+    cur_movement = ''
+    cur_script = ''
+    in_sub_text = False
+    last_cmd = ''
+    last_label_name = ''
+
+    enum = enumerate(script)
+    for i, ln in enum:
+        if isinstance(ln, Label):
+            nxt = find_next_command(script, i+1)
+            if nxt is not None:
+                if nxt.name == 'text':
+                    if cur_text != '':
+                        out += end_text()
+                    if cur_script != '':
+                        out += end_script()
+                    if cur_movement != '':
+                        out += end_movement()
+                    cur_script = ''
+                    cur_movement = ''
+                    cur_text = ln.name
+                    out += begin_text(ln.name)
+                    out_h += f"extern const struct TextCmd {ln.name}[];\n"
+                    continue
+                if nxt.name == 'itemball':
+                    if cur_text != '':
+                        out += end_text()
+                    if cur_script != '':
+                        out += end_script()
+                    if cur_movement != '':
+                        out += end_movement()
+                    cur_script = ''
+                    cur_movement = ''
+                    cur_text = ''
+                    out += f"const struct ItemBall {ln.name} = "
+                    out_h += f"extern const struct ItemBall {ln.name};\n"
+                    i, ln = next(enum)
+                    out += "{"
+                    for arg in ln.args:
+                        out += f"{arg}, "
+                    if len(ln.args) == 1:
+                        out += '1};\n'
+                    else:
+                        out = out[:-2] + '};\n'
+                    continue
+                if nxt.name == 'hiddenitem':
+                    if cur_text != '':
+                        out += end_text()
+                    if cur_script != '':
+                        out += end_script()
+                    if cur_movement != '':
+                        out += end_movement()
+                    cur_script = ''
+                    cur_movement = ''
+                    cur_text = ''
+                    out += f"const struct HiddenItem {ln.name} = "
+                    out_h += f"extern const struct HiddenItem {ln.name};\n"
+                    i, ln = next(enum)
+                    out += "{"
+                    for arg in ln.args:
+                        out += f"{arg}, "
+                    out = out[:-2] + '};\n'
+                    continue
+                if nxt.name == 'trainer':
+                    if cur_text != '':
+                        out += end_text()
+                    if cur_script != '':
+                        out += end_script()
+                    if cur_movement != '':
+                        out += end_movement()
+                    cur_script = ''
+                    cur_movement = ''
+                    cur_text = ''
+                    out += f"const struct Trainer {ln.name} = "
+                    out_h += f"extern const struct Trainer {ln.name};\n"
+                    label_name = ln.name
+                    i, ln = next(enum)
+                    out += "{"
+                    if ln.args[-1] == '.Script':
+                        ln.args[-1] = f'{label_name}_Script'
+                    for arg in ln.args:
+                        out += f"{arg}, "
+                    out = out[:-2] + '};\n'
+                    i, ln = next(enum)
+                    cur_movement = ''
+                    cur_text = ''
+                    cur_script = f'{label_name}_Script'
+                    out += begin_script(cur_script)
+                    out_h += f"bool {cur_script}(script_s* s);\n"
+                    continue
+                if nxt.name in mvmt_commands.keys():
+                    if cur_text != '':
+                        out += end_text()
+                    if cur_script != '':
+                        out += end_script()
+                    if cur_movement != '':
+                        out += end_movement()
+                    cur_script = ''
+                    cur_text = ''
+                    cur_movement = ln.name
+                    out += begin_movement(ln.name)
+                    out_h += f"extern const uint8_t {ln.name}[];\n"
+                    continue
+            if not ln.local:
                 if cur_text != '':
                     out += end_text()
-                if cur_script != '':
-                    out += end_script()
                 if cur_movement != '':
                     out += end_movement()
-                cur_script = ''
-                cur_text = ln.name
-                out += begin_text(ln.name)
-                out_h += f"extern const struct TextCmd {ln.name}[];\n"
-                continue
-            if nxt.name in mvmt_commands.keys():
-                if cur_text != '':
-                    out += end_text()
                 if cur_script != '':
-                    out += end_script()
-                if cur_movement != '':
-                    out += end_movement()
-                cur_script = ''
+                    if last_cmd in term:
+                        out += end_script()
+                    else:
+                        out += fallthrough_script(ln.name)
+                cur_movement = ''
                 cur_text = ''
-                cur_movement = ln.name
-                out += begin_movement(ln.name)
-                out_h += f"extern const uint8_t {ln.name}[];\n"
+                cur_script = ln.name
+                last_label_name = ''
+                out += begin_script(ln.name)
+                out_h += f"bool {ln.name}(script_s* s);\n"
                 continue
-        if not ln.local:
+            elif last_label_name != '':
+                if cur_text != '':
+                    out += end_text()
+                if cur_movement != '':
+                    out += end_movement()
+                if cur_script != '':
+                    if last_cmd in term:
+                        out += end_script()
+                    else:
+                        out += fallthrough_script(ln.name)
+                cur_movement = ''
+                cur_text = ''
+                cur_script = last_label_name + ln.name[1:]
+                out += begin_script(cur_script)
+                out_h += f"bool {cur_script}(script_s* s);\n"
+                continue
+            else:
+                out += local_label(ln.name[1:])
+                continue
+        if isinstance(ln, StrLabel):
             if cur_text != '':
                 out += end_text()
+            if cur_script != '':
+                out += end_script()
             if cur_movement != '':
                 out += end_movement()
-            if cur_script != '':
-                if last_cmd in term:
-                    out += end_script()
-                else:
-                    out += fallthrough_script(ln.name)
             cur_movement = ''
             cur_text = ''
-            cur_script = ln.name
-            out += begin_script(ln.name)
-            out_h += f"bool {ln.name}(script_s* s);\n"
-            continue
-        else:
-            out += local_label(ln.name[1:])
-            continue
-    if isinstance(ln, StrLabel):
-        if cur_text != '':
-            out += end_text()
-        if cur_script != '':
-            out += end_script()
-        if cur_movement != '':
-            out += end_movement()
-        cur_movement = ''
-        cur_text = ''
-        cur_script = ''
-        out += string_label(ln.name, ln.value)
-    if isinstance(ln, Command):
-        if ln.name in ('text', 'text_start'):
-            in_sub_text = True
-            out += do_text(ln.args)
-        elif ln.name in text_sub_commands.keys():
-            in_sub_text = True
-            out += do_text_sub_command(ln.name, ln.args)
-            if text_sub_commands[ln.name].term:
-                in_sub_text = False
-        else:
-            if in_sub_text:
-                out = out[:-1] + ')\n'
-                in_sub_text = False
-            out += do_command(ln.name, ln.args, ln.comment)
-            last_cmd = ln.name
-    if isinstance(ln, Comment):
-        if ln.local:
-            out += local_comment(ln.value)
-        else:
-            out += global_comment(ln.value)
+            cur_script = ''
+            out += string_label(ln.name, ln.value)
+        if isinstance(ln, Command):
+            if ln.name in ('text', 'text_start'):
+                in_sub_text = True
+                out += do_text(ln.args)
+            elif ln.name in text_sub_commands.keys():
+                in_sub_text = True
+                out += do_text_sub_command(ln.name, ln.args)
+                if text_sub_commands[ln.name].term:
+                    in_sub_text = False
+            else:
+                if in_sub_text:
+                    out = out[:-1] + ')\n'
+                    in_sub_text = False
+                out += do_command(ln.name, ln.args, ln.comment)
+                last_cmd = ln.name
+        if isinstance(ln, Comment):
+            if ln.local:
+                out += local_comment(ln.value)
+            else:
+                out += global_comment(ln.value)
 
-if cur_movement != '':
-    out += end_movement()
-if cur_text != '':
-    out += end_text()
-if cur_script != '':
-    out += end_script()
+    if cur_movement != '':
+        out += end_movement()
+    if cur_text != '':
+        out += end_text()
+    if cur_script != '':
+        out += end_script()
 
-with open(sys.argv[1].replace('.asm', '.c'), 'w', encoding='utf8') as f:
-    f.write(out)
+    return out, out_h
 
-with open(sys.argv[1].replace('.asm', '.h'), 'w', encoding='utf8') as f:
-    f.write(out_h)
+
+if __name__ == "__main__":
+    out, out_h = convert_script(sys.argv[1])
+    
+    with open(sys.argv[1].replace('.asm', '.c'), 'w', encoding='utf8') as f:
+        f.write(out)
+
+    with open(sys.argv[1].replace('.asm', '.h'), 'w', encoding='utf8') as f:
+        f.write(out_h)

@@ -28,10 +28,40 @@ not_maxed_out:
 
 }
 
-void MaxMoney(void){
-    //dt ['MAX_MONEY']
 
-    return TakeMoney();
+static const uint8_t MaxMoney[] = { (MAX_MONEY >> 16) & 0xff, (MAX_MONEY >> 8) & 0xff, (MAX_MONEY) & 0xff };
+
+bool GiveMoney_Conv(uint8_t* de, const uint8_t* bc){
+    // LD_A(3);
+    // CALL(aAddMoney);
+    AddMoney_Conv(de, bc);
+    // LD_BC(mMaxMoney);
+    // LD_A(3);
+    // CALL(aCompareMoney);
+    u8_flag_s res = CompareMoney_Conv(bc, de);
+    // IF_Z goto not_maxed_out;
+    // IF_C goto not_maxed_out;
+    if(res.a == 0 || res.flag)
+        return false;
+    // LD_HL(mMaxMoney);
+    // LD_A_hli;
+    // LD_de_A;
+    de[0] = MaxMoney[0];
+    // INC_DE;
+    // LD_A_hli;
+    // LD_de_A;
+    de[1] = MaxMoney[1];
+    // INC_DE;
+    // LD_A_hli;
+    // LD_de_A;
+    de[2] = MaxMoney[2];
+    // SCF;
+    // RET;
+    return true;
+
+// not_maxed_out:
+    // AND_A_A;
+    // RET;
 }
 
 void TakeMoney(void){
@@ -270,6 +300,55 @@ loop2:
 
 }
 
+void AddMoney_Conv(uint8_t* de, const uint8_t* bc){
+    // LD_A(3);
+    // return AddFunds();
+    return AddFunds_Conv(de, bc, 3);
+}
+
+//  a: number of bytes
+//  bc: start addr of amount (big-endian)
+//  de: start addr of account (big-endian)
+void AddFunds_Conv(uint8_t* de, const uint8_t* bc, uint8_t a){
+    // PUSH_HL;
+    // PUSH_DE;
+    // PUSH_BC;
+
+    // LD_H_B;
+    // LD_L_C;
+    // LD_B_A;
+
+    // loop1:
+        // DEC_A;
+        // IF_Z goto done;
+        // INC_DE;
+        // INC_HL;
+        // goto loop1;
+
+// done:
+    // AND_A_A;
+    uint8_t carry = 0;
+
+    for(uint8_t b = a; b != 0; --b) {
+    // loop2:
+        // LD_A_de;
+        // ADC_A_hl;
+        uint16_t temp = de[b - 1] + bc[b - 1] + carry;
+        carry = (temp & 0xff00)? 1: 0;
+        // LD_de_A;
+        de[b - 1] = (temp & 0xff);
+        // DEC_DE;
+        // DEC_HL;
+        // DEC_B;
+        // IF_NZ goto loop2;
+    }
+
+    // POP_BC;
+    // POP_DE;
+    // POP_HL;
+    // RET;
+}
+
 void GiveCoins(void){
     LD_A(2);
     LD_DE(wCoins);
@@ -299,6 +378,37 @@ maxcoins:
     return TakeCoins();
 }
 
+bool GiveCoins_Conv(const uint8_t* bc){
+    static const uint8_t maxcoins[] = { HIGH(MAX_COINS), LOW(MAX_COINS) };
+    // LD_A(2);
+    // LD_DE(wCoins);
+    uint8_t* de = (uint8_t*)&wram->wCoins;
+    // CALL(aAddFunds);
+    AddFunds_Conv(de, bc, 2);
+    // LD_A(2);
+    // LD_BC(mGiveCoins_maxcoins);
+    // CALL(aCompareFunds);
+    u8_flag_s res = CompareFunds_Conv(maxcoins, de, 2);
+    // IF_C goto not_maxed;
+    if(res.flag)
+        return false;
+    // LD_HL(mGiveCoins_maxcoins);
+    // LD_A_hli;
+    // LD_de_A;
+    de[0] = maxcoins[0];
+    // INC_DE;
+    // LD_A_hli;
+    // LD_de_A;
+    de[1] = maxcoins[1];
+    // SCF;
+    // RET;
+    return true;
+
+// not_maxed:
+    // AND_A_A;
+    // RET;
+}
+
 void TakeCoins(void){
     LD_A(2);
     LD_DE(wCoins);
@@ -324,4 +434,12 @@ void CheckCoins(void){
     LD_DE(wCoins);
     JP(mCompareFunds);
 
+}
+
+u8_flag_s CheckCoins_Conv(const uint8_t* bc){
+    // LD_A(2);
+    // LD_DE(wCoins);
+    uint8_t* de = (uint8_t*)&wram->wCoins;
+    // JP(mCompareFunds);
+    return CompareFunds_Conv(bc, de, 2);
 }

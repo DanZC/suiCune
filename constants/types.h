@@ -1056,6 +1056,11 @@ struct Script
     struct ScriptPosition stack[32];
 };
 
+struct MapCallback {
+    uint8_t type;
+    const Script_fn_t script;
+};
+
 #if defined(__cplusplus) || defined(_MSC_VER)
 struct 
 #else
@@ -1078,12 +1083,28 @@ struct CoordEvent
     Script_fn_t script;
 };
 
+struct HiddenItem 
+{
+    item_t item;
+    uint16_t eventFlag;
+};
+
+struct ConditionalEvent 
+{
+    uint16_t eventFlag;
+    Script_fn_t script;
+};
+
 struct BGEvent
 {
     uint8_t y;
     uint8_t x;
     uint8_t function;
-    Script_fn_t script;
+    union {
+        Script_fn_t script;
+        struct HiddenItem* const hiddenItem;
+        struct ConditionalEvent* const condEvent;
+    };
 };
 
 struct ItemBall {
@@ -1121,6 +1142,15 @@ struct ObjEvent
     };
 };
 
+struct MapScripts
+{
+    uint8_t callback_count;
+    const struct MapCallback* const callbacks;
+
+    uint8_t scene_script_count;
+    const Script_fn_t* const scene_scripts;
+};
+
 struct MapEvents
 {
     const uint8_t warp_event_count;
@@ -1142,7 +1172,7 @@ struct MapAttr
     uint8_t width;
     uint8_t height;
     const char* const blocksPath;
-    const Script_fn_t scripts;
+    const struct MapScripts* const scripts;
     const struct MapEvents* const events;
 };
 
@@ -1193,6 +1223,23 @@ struct PhoneContact {
     const Script_fn_t calleeScript;
     uint8_t callerTime;
     const Script_fn_t callerScript;
+};
+
+typedef struct ItemPocketEntry {
+    item_t item;
+    uint8_t quantity;
+} item_pocket_en_s;
+
+typedef struct ItemPocket {
+    uint8_t count;
+    item_pocket_en_s* pocket;
+} item_pocket_s;
+
+struct CoordsTileId
+{
+    int8_t x;
+    int8_t y;
+    uint8_t tileId;
 };
 
 typedef struct Script script_s;

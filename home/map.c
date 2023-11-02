@@ -10,13 +10,33 @@
 #include "map_objects.h"
 #include "../engine/overworld/tile_events.h"
 #include "../engine/overworld/load_map_part.h"
+#include "../engine/tilesets/mapgroup_roofs.h"
 #include "../data/maps/maps.h"
 #include "../data/maps/scenes.h"
 #include "../util/scripting.h"
 #include "../data/text/common.h"
+#include "../data/tilesets.h"
 
 const struct MapAttr* gMapAttrPointer;
 const uint8_t* gCurMapSceneScriptPointer;
+
+uint8_t gCurMapCoordEventCount;
+const struct CoordEvent* gCurMapCoordEventsPointer;
+uint8_t gCurMapWarpCount;
+const struct WarpEventData* gCurMapWarpsPointer;
+uint8_t gCurMapBGEventCount;
+const struct BGEvent* gCurMapBGEventsPointer;
+
+uint8_t gCurMapCallbackCount;
+const struct MapCallback* gCurMapCallbacksPointer;
+uint8_t gCurMapSceneScriptCount;
+const Script_fn_t* gCurMapSceneScriptsPointer;
+
+const struct MapEvents* gMapEventsPointer;
+
+const struct Tileset* gTilesetPointer;
+
+struct BGEvent gCurBGEvent;
 
 //  Functions dealing with rendering and interacting with maps.
 
@@ -50,6 +70,22 @@ scene_exists:
     POP_HL;
     RET;
 
+}
+
+//  Checks wCurMapSceneScriptPointer.  If it's empty, returns -1 in a.  Otherwise, returns the active scene ID in a.
+uint8_t CheckScenes_Conv(void) {
+    // PUSH_HL;
+    // LD_HL(wCurMapSceneScriptPointer);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // OR_A_H;
+    // LD_A_hl;
+    // IF_NZ goto scene_exists;
+    if(gCurMapSceneScriptPointer != NULL) {
+        return *gCurMapSceneScriptPointer;
+    }
+    return 0xff;
 }
 
 void GetCurrentMapSceneID(void){
@@ -1068,6 +1104,25 @@ void ReadMapSceneScripts(void){
 
 }
 
+void ReadMapSceneScripts_Conv(const struct MapScripts* hl){
+    // LD_A_hli;  // scene_script count
+    // LD_C_A;
+    // LD_addr_A(wCurMapSceneScriptCount);
+    gCurMapSceneScriptCount = hl->scene_script_count;
+    // LD_A_L;
+    // LD_addr_A(wCurMapSceneScriptsPointer);
+    // LD_A_H;
+    // LD_addr_A(wCurMapSceneScriptsPointer + 1);
+    gCurMapSceneScriptsPointer = hl->scene_scripts;
+    // LD_A_C;
+    // AND_A_A;
+    // RET_Z ;
+
+    // LD_BC(SCENE_SCRIPT_SIZE);
+    // CALL(aAddNTimes);
+    // RET;
+}
+
 void ReadMapCallbacks(void){
     LD_A_hli;
     LD_C_A;
@@ -1086,6 +1141,26 @@ void ReadMapCallbacks(void){
 
 }
 
+void ReadMapCallbacks_Conv(const struct MapScripts* hl){
+    // LD_A_hli;
+    // LD_C_A;
+    // LD_addr_A(wCurMapCallbackCount);
+    gCurMapCallbackCount = hl->callback_count;
+    // LD_A_L;
+    // LD_addr_A(wCurMapCallbacksPointer);
+    // LD_A_H;
+    // LD_addr_A(wCurMapCallbacksPointer + 1);
+    gCurMapCallbacksPointer = hl->callbacks;
+    // LD_A_C;
+    // AND_A_A;
+    // RET_Z ;
+
+    // LD_BC(CALLBACK_SIZE);
+    // CALL(aAddNTimes);
+    // RET;
+
+}
+
 void ReadWarps(void){
     LD_A_hli;
     LD_C_A;
@@ -1101,6 +1176,24 @@ void ReadWarps(void){
     CALL(aAddNTimes);
     RET;
 
+}
+
+void ReadWarps_Conv(const struct MapEvents* hl){
+    // LD_A_hli;
+    // LD_C_A;
+    // LD_addr_A(wCurMapWarpCount);
+    gCurMapWarpCount = hl->warp_event_count;
+    // LD_A_L;
+    // LD_addr_A(wCurMapWarpsPointer);
+    // LD_A_H;
+    // LD_addr_A(wCurMapWarpsPointer + 1);
+    gCurMapWarpsPointer = hl->warp_events;
+    // LD_A_C;
+    // AND_A_A;
+    // RET_Z ;
+    // LD_BC(WARP_EVENT_SIZE);
+    // CALL(aAddNTimes);
+    // RET;
 }
 
 void ReadCoordEvents(void){
@@ -1122,6 +1215,27 @@ void ReadCoordEvents(void){
 
 }
 
+void ReadCoordEvents_Conv(const struct MapEvents* hl){
+    // LD_A_hli;
+    // LD_C_A;
+    // LD_addr_A(wCurMapCoordEventCount);
+    gCurMapCoordEventCount = hl->coord_event_count;
+    // LD_A_L;
+    // LD_addr_A(wCurMapCoordEventsPointer);
+    // LD_A_H;
+    // LD_addr_A(wCurMapCoordEventsPointer + 1);
+    gCurMapCoordEventsPointer = hl->coord_events;
+
+    // LD_A_C;
+    // AND_A_A;
+    // RET_Z ;
+
+    // LD_BC(COORD_EVENT_SIZE);
+    // CALL(aAddNTimes);
+    // RET;
+
+}
+
 void ReadBGEvents(void){
     LD_A_hli;
     LD_C_A;
@@ -1139,6 +1253,26 @@ void ReadBGEvents(void){
     CALL(aAddNTimes);
     RET;
 
+}
+
+void ReadBGEvents_Conv(const struct MapEvents* hl){
+    // LD_A_hli;
+    // LD_C_A;
+    // LD_addr_A(wCurMapBGEventCount);
+    gCurMapBGEventCount = hl->bg_event_count;
+    // LD_A_L;
+    // LD_addr_A(wCurMapBGEventsPointer);
+    // LD_A_H;
+    // LD_addr_A(wCurMapBGEventsPointer + 1);
+    gCurMapBGEventsPointer = hl->bg_events;
+
+    // LD_A_C;
+    // AND_A_A;
+    // RET_Z ;
+
+    // LD_BC(BG_EVENT_SIZE);
+    // CALL(aAddNTimes);
+    // RET;
 }
 
 void ReadObjectEvents(void){
@@ -1240,6 +1374,27 @@ loop:
 
 }
 
+void ClearObjectStructs_Conv(void){
+    // LD_HL(wObject1Struct);
+    // LD_BC(OBJECT_LENGTH * (NUM_OBJECT_STRUCTS - 1));
+    // XOR_A_A;
+    // CALL(aByteFill);
+    ByteFill_Conv2(wram->wObjectStruct, lengthof(wram->wObjectStruct), 0);
+
+//  Just to make sure (this is rather pointless)
+    // LD_HL(wObject1Struct);
+    // LD_DE(OBJECT_LENGTH);
+    // LD_C(NUM_OBJECT_STRUCTS - 1);
+    // XOR_A_A;
+
+// loop:
+    // LD_hl_A;
+    // ADD_HL_DE;
+    // DEC_C;
+    // IF_NZ goto loop;
+    // RET;
+}
+
 void GetWarpDestCoords(void){
     CALL(aGetMapScriptsBank);
     RST(aBankswitch);
@@ -1282,6 +1437,55 @@ backup:
     LD_addr_A(wBackupMapNumber);
     RET;
 
+}
+
+void GetWarpDestCoords_Conv(void){
+    // CALL(aGetMapScriptsBank);
+    // RST(aBankswitch);
+
+    // LD_HL(wMapEventsPointer);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // for(int rept = 0; rept < 3; rept++){  //  get to the warp coords
+    // INC_HL;
+    // }
+    // LD_A_addr(wWarpNumber);
+    // DEC_A;
+    // LD_C_A;
+    // LD_B(0);
+    // LD_A(WARP_EVENT_SIZE);
+    // CALL(aAddNTimes);
+    
+    const struct WarpEventData* const warp = gMapEventsPointer->warp_events + (wram->wWarpNumber - 1);
+    // LD_A_hli;
+    // LD_addr_A(wYCoord);
+    wram->wYCoord = warp->y;
+    // LD_A_hli;
+    // LD_addr_A(wXCoord);
+    wram->wXCoord = warp->x;
+// destination warp number
+    // LD_A_hli;
+    // CP_A(-1);
+    // IF_NZ goto skip;
+    if(warp->warpNumber == (uint8_t)-1) {
+        // CALL(aGetWarpDestCoords_backup);
+    // backup:
+        // LD_A_addr(wPrevWarp);
+        // LD_addr_A(wBackupWarpNumber);
+        wram->wBackupWarpNumber = wram->wPrevWarp;
+        // LD_A_addr(wPrevMapGroup);
+        // LD_addr_A(wBackupMapGroup);
+        wram->wBackupMapGroup = wram->wPrevMapGroup;
+        // LD_A_addr(wPrevMapNumber);
+        // LD_addr_A(wBackupMapNumber);
+        wram->wBackupMapNumber = wram->wPrevMapNumber;
+        // RET;
+    }
+
+// skip:
+    // FARCALL(aGetMapScreenCoords);
+    // RET;
 }
 
 void LoadBlockData(void){
@@ -1545,6 +1749,12 @@ void LoadMapStatus(void){
 
 }
 
+void LoadMapStatus_Conv(uint8_t a){
+    // LD_addr_A(wMapStatus);
+    // RET;
+    wram->wMapStatus = a;
+}
+
 void CallScript(void){
 //  Call a script at a:hl.
 
@@ -1582,9 +1792,8 @@ uint8_t CallScript_Conv(uint8_t a, uint16_t hl){
     return PLAYEREVENT_MAPSCRIPT;
 }
 
+//  Call a script at hl.
 uint8_t CallScript_Conv2(Script_fn_t hl){
-//  Call a script at a:hl.
-
     // LD_addr_A(wScriptBank);
     // LD_A_L;
     // LD_addr_A(wScriptPos);
@@ -1625,6 +1834,19 @@ uint8_t CallMapScript_Conv(uint16_t hl){
     // CALL(aGetMapScriptsBank);
     // JR(mCallScript);
     return CallScript_Conv(GetMapScriptsBank_Conv(), hl);
+}
+
+//  Call a script at hl if there isn't already a script running
+uint8_t CallMapScript_Conv2(Script_fn_t hl){
+    // LD_A_addr(wScriptRunning);
+    // AND_A_A;
+    // RET_NZ ;
+    if(wram->wScriptRunning != 0)
+        return 0;
+    
+    // CALL(aGetMapScriptsBank);
+    // JR(mCallScript);
+    return CallScript_Conv2(hl);
 }
 
 void RunMapCallback(void){
@@ -1890,6 +2112,17 @@ void CheckObjectMask(void){
     LD_A_hl;
     RET;
 
+}
+
+uint8_t CheckObjectMask_Conv(uint8_t a){
+    // LDH_A_addr(hMapObjectIndex);
+    // LD_E_A;
+    // LD_D(0);
+    // LD_HL(wObjectMasks);
+    // ADD_HL_DE;
+    // LD_A_hl;
+    // RET;
+    return wram->wObjectMasks[a];
 }
 
 void MaskObject(void){
@@ -2193,6 +2426,76 @@ skip_roof:
     LDH_addr_A(hTileAnimFrame);
     RET;
 
+}
+
+void LoadTilesetGFX_Conv(void){
+    // LD_HL(wTilesetAddress);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // LD_A_addr(wTilesetBank);
+    // LD_E_A;
+
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(MBANK(awDecompressScratch));
+    // LDH_addr_A(rSVBK);
+
+    // LD_A_E;
+    // LD_DE(wDecompressScratch);
+    // CALL(aFarDecompress);
+    LoadPNG2bppAssetSectionToVRAM(wram->wDecompressScratch, gTilesetPointer->gfxPath, 0, 0x60 + 0x60);
+
+    // LD_HL(wDecompressScratch);
+    // LD_DE(vTiles2);
+    // LD_BC(0x60 * LEN_2BPP_TILE);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(vram->vTiles2, wram->wDecompressScratch, 0x60 * LEN_2BPP_TILE);
+
+    // LDH_A_addr(rVBK);
+    // PUSH_AF;
+    // LD_A(MBANK(avTiles5));
+    // LDH_addr_A(rVBK);
+
+    // LD_HL(wDecompressScratch + 0x60 * LEN_2BPP_TILE);
+    // LD_DE(vTiles5);
+    // LD_BC(0x60 * LEN_2BPP_TILE);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(vram->vTiles5, wram->wDecompressScratch + 0x60 * LEN_2BPP_TILE, 0x60 * LEN_2BPP_TILE);
+
+    // POP_AF;
+    // LDH_addr_A(rVBK);
+
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+
+//  These tilesets support dynamic per-mapgroup roof tiles.
+    // LD_A_addr(wMapTileset);
+    // CP_A(TILESET_JOHTO);
+    // IF_Z goto load_roof;
+    // CP_A(TILESET_JOHTO_MODERN);
+    // IF_Z goto load_roof;
+    // CP_A(TILESET_BATTLE_TOWER_OUTSIDE);
+    // IF_Z goto load_roof;
+    // goto skip_roof;
+
+    switch(wram->wMapTileset) {
+        case TILESET_JOHTO:
+        case TILESET_JOHTO_MODERN:
+        case TILESET_BATTLE_TOWER_OUTSIDE:
+            LoadMapGroupRoof_Conv(); 
+            break;
+        default:
+            break;
+    }
+// load_roof:
+    // FARCALL(aLoadMapGroupRoof);
+
+// skip_roof:
+    // XOR_A_A;
+    // LDH_addr_A(hTileAnimFrame);
+    // RET;
+    hram->hTileAnimFrame = 0;
 }
 
 void BufferScreen(void){
@@ -2588,6 +2891,57 @@ Directions:
     return GetCoordTile();
 }
 
+//  Return map coordinates in (d, e) and tile id in a
+//  of the tile the player is facing.
+struct CoordsTileId GetFacingTileCoord_Conv(void){
+    const struct {
+        int8_t x;
+        int8_t y;
+        uint8_t* const ptr;
+    } Directions[] = {
+    //   x,  y
+        {0, 1, wram_ptr(wTileDown)},
+        {0, -1, wram_ptr(wTileUp)},
+        {-1, 0, wram_ptr(wTileLeft)},
+        {1, 0, wram_ptr(wTileRight)},
+    };
+    // LD_A_addr(wPlayerDirection);
+    // AND_A(0b1100);
+    // SRL_A;
+    // SRL_A;
+    // LD_L_A;
+    // LD_H(0);
+    // ADD_HL_HL;
+    // ADD_HL_HL;
+    // LD_DE(mGetFacingTileCoord_Directions);
+    // ADD_HL_DE;
+    uint8_t idx = ((wram->wPlayerStruct.facing >> 2) & 3) << 2;
+
+    struct CoordsTileId res;
+
+    // LD_D_hl;
+    // INC_HL;
+    // LD_E_hl;
+    // INC_HL;
+    res.x = Directions[idx].x + wram->wPlayerStruct.mapX;
+    res.y = Directions[idx].y + wram->wPlayerStruct.mapY;
+
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+
+    // LD_A_addr(wPlayerStandingMapX);
+    // ADD_A_D;
+    // LD_D_A;
+    // LD_A_addr(wPlayerStandingMapY);
+    // ADD_A_E;
+    // LD_E_A;
+    // LD_A_hl;
+    res.tileId = *Directions[idx].ptr;
+    // RET;
+    return res;
+}
+
 void GetCoordTile(void){
 //  Get the collision byte for tile d, e
     CALL(aGetBlockLocation);
@@ -2784,6 +3138,39 @@ void CheckFacingBGEvent(void){
 
 }
 
+bool CheckFacingBGEvent_Conv(void){
+    // CALL(aGetFacingTileCoord);
+    struct CoordsTileId facingTileCoord = GetFacingTileCoord_Conv();
+//  Load facing into b.
+    // LD_B_A;
+//  Convert the coordinates at de to within-boundaries coordinates.
+    // LD_A_D;
+    // SUB_A(4);
+    // LD_D_A;
+    uint8_t d = facingTileCoord.x - 4;
+    // LD_A_E;
+    // SUB_A(4);
+    // LD_E_A;
+    uint8_t e = facingTileCoord.y - 4;
+//  If there are no BG events, we don't need to be here.
+    // LD_A_addr(wCurMapBGEventCount);
+    // AND_A_A;
+    // RET_Z ;
+    if(gCurMapBGEventCount == 0)
+        return false;
+
+    // LD_C_A;
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+    // CALL(aSwitchToMapScriptsBank);
+    // CALL(aCheckIfFacingTileCoordIsBGEvent);
+    return CheckIfFacingTileCoordIsBGEvent_Conv(gCurMapBGEventCount, d, e);
+    // POP_HL;
+    // LD_A_H;
+    // RST(aBankswitch);
+    // RET;
+}
+
 void CheckIfFacingTileCoordIsBGEvent(void){
 //  Checks to see if you are facing a BG event.  If so, copies it into wCurBGEvent and sets carry.
     LD_HL(wCurMapBGEventsPointer);
@@ -2826,6 +3213,56 @@ copysign:
     SCF;
     RET;
 
+}
+
+//  Checks to see if you are facing a BG event.  If so, copies it into wCurBGEvent and sets carry.
+bool CheckIfFacingTileCoordIsBGEvent_Conv(uint8_t c, uint8_t d, uint8_t e){
+    // LD_HL(wCurMapBGEventsPointer);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    const struct BGEvent* hl = gCurMapBGEventsPointer;
+
+    do {
+    // loop:
+        // PUSH_HL;
+        // LD_A_hli;
+        // CP_A_E;
+        // IF_NZ goto next;
+        // LD_A_hli;
+        // CP_A_D;
+        // IF_NZ goto next;
+        if(hl->y != e || hl->x != d)
+            continue;
+        // goto copysign;
+        else {
+        // copysign:
+            // POP_HL;
+            // LD_DE(wCurBGEvent);
+            // LD_BC(BG_EVENT_SIZE);
+            // CALL(aCopyBytes);
+            CopyBytes_Conv2(&gCurBGEvent, hl, sizeof(*hl));
+            // SCF;
+            // RET;
+            return true;
+        }
+
+
+    // next:
+        // POP_HL;
+        // LD_A(BG_EVENT_SIZE);
+        // ADD_A_L;
+        // LD_L_A;
+        // IF_NC goto nocarry;
+        // INC_H;
+
+    // nocarry:
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(hl++, --c != 0);
+    // XOR_A_A;
+    // RET;
+    return false;
 }
 
 void CheckCurrentMapCoordEvents(void){
@@ -3622,6 +4059,10 @@ void LoadMapTileset(void){
 void LoadMapTileset_Conv(void){
     uint16_t hl = AddNTimes_Conv(mTilesets, TILESET_LENGTH, gb_read(wMapTileset));
     FarCopyBytes_Conv(wTilesetBank, BANK(aTilesets), hl, TILESET_LENGTH);
+}
+
+void LoadMapTileset_Conv2(void){
+    gTilesetPointer = &Tilesets[wram->wMapTileset];
 }
 
 void DummyEndPredef(void){

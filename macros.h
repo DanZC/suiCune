@@ -23,3 +23,11 @@
 #if !(defined(__cplusplus) || defined(_MSC_VER))
 #define static_assert _Static_assert
 #endif
+
+#if !(defined(__cplusplus) || defined(_MSC_VER))
+#define fallthrough __attribute__((fallthrough))
+#elif defined(__cplusplus)
+#define fallthrough [[fallthrough]]
+#else 
+#define fallthrough 
+#endif

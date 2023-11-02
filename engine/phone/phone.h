@@ -11,7 +11,7 @@ void GetRemainingSpaceInPhoneList(void);
 uint8_t GetRemainingSpaceInPhoneList_Conv(uint8_t c);
 void BrokenPlaceFarString(void);
 void CheckPhoneCall(void);
-bool CheckPhoneCall_Conv(void);
+u8_flag_s CheckPhoneCall_Conv(void);
 void CheckPhoneContactTimeOfDay(void);
 void ChooseRandomCaller(void);
 u8_flag_s ChooseRandomCaller_Conv(void);

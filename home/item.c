@@ -86,8 +86,7 @@ bool ReceiveItem_Conv(item_t item, item_t* hl, uint8_t quantity){
 
     // CALL(av_ReceiveItem);
     // return v_ReceiveItem_Conv(item, quantity);
-    (void)item, (void)hl, (void)quantity;
-    return true;
+    return v_ReceiveItem_Conv(hl, item, quantity);
 
     // POP_DE;
     // POP_HL;

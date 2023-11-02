@@ -42,16 +42,4 @@ void Script_Ret(script_s* s) {
     Script_Pop(s);
 }
 
-#include "text_cmd.h"
-#include "scripting_macros.h"
-#include "../engine/overworld/scripting.h"
-
-void Script_checkscene_Conv(struct Script* s) {
-    return;
-
-no_scene:
-	s->var = 0xff;
-    return;
-}
-
 script_s gCurScript;

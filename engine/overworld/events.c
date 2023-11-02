@@ -7,8 +7,16 @@
 #include "player_movement.h"
 #include "tile_events.h"
 #include "wildmons.h"
+#include "time.h"
+#include "../../home/trainers.h"
+#include "../../home/copy.h"
+#include "../../home/audio.h"
+#include "../phone/phone.h"
+#include "../../home/flag.h"
 
 // INCLUDE "constants.asm"
+
+Script_fn_t gMapReentryScriptAddress;
 
 
 // SECTION "Events", ROMX
@@ -323,6 +331,41 @@ noevents:
 
 }
 
+uint8_t CheckPlayerState_Conv(void){
+    // LD_A_addr(wPlayerStepFlags);
+    // BIT_A(PLAYERSTEP_CONTINUE_F);
+    // IF_Z goto events;
+    if(!bit_test(wram->wPlayerStepFlags, PLAYERSTEP_CONTINUE_F)) {
+    // events:
+        // LD_A(MAPEVENTS_ON);
+        // LD_addr_A(wMapEventStatus);
+        wram->wMapEventStatus = MAPEVENTS_ON;
+        // RET;
+        return wram->wMapEventStatus;
+    }
+    // BIT_A(PLAYERSTEP_STOP_F);
+    // IF_Z goto noevents;
+    // BIT_A(PLAYERSTEP_MIDAIR_F);
+    // IF_NZ goto noevents;
+    if(!bit_test(wram->wPlayerStepFlags, PLAYERSTEP_STOP_F)
+    ||  bit_test(wram->wPlayerStepFlags, PLAYERSTEP_MIDAIR_F)) {
+    // noevents:
+        // LD_A(MAPEVENTS_OFF);
+        // LD_addr_A(wMapEventStatus);
+        wram->wMapEventStatus = MAPEVENTS_OFF;
+        // RET;
+        return wram->wMapEventStatus;
+    }
+    // CALL(aEnableEvents);
+    EnableEvents();
+// events:
+    // LD_A(MAPEVENTS_ON);
+    // LD_addr_A(wMapEventStatus);
+    wram->wMapEventStatus = MAPEVENTS_ON;
+    // RET;
+    return wram->wMapEventStatus;
+}
+
 void v_CheckObjectEnteringVisibleRange(void){
     LD_HL(wPlayerStepFlags);
     BIT_hl(PLAYERSTEP_STOP_F);
@@ -386,6 +429,80 @@ ok2:
 
 }
 
+bool PlayerEvents_Conv(void){
+    // XOR_A_A;
+//  If there's already a player event, don't interrupt it.
+    // LD_A_addr(wScriptRunning);
+    // AND_A_A;
+    // RET_NZ ;
+    if(wram->wScriptRunning != 0)
+        return false;
+
+    // CALL(aDummy_CheckScriptFlags2Bit5);  // This is a waste of time
+    u8_flag_s res;
+    do {
+        // CALL(aCheckTrainerBattle_GetPlayerEvent);
+        res = CheckTrainerBattle_GetPlayerEvent_Conv();
+        // IF_C goto ok;
+        if(res.flag) break;
+
+        // CALL(aCheckTileEvent);
+        // IF_C goto ok;
+
+        // CALL(aRunMemScript);
+        // IF_C goto ok;
+        res = RunMemScript_Conv();
+        if(res.flag) break;
+
+        // CALL(aRunSceneScript);
+        // IF_C goto ok;
+        res = RunSceneScript_Conv();
+        if(res.flag) break;
+
+        // CALL(aCheckTimeEvents);
+        // IF_C goto ok;
+        res = CheckTimeEvents_Conv();
+        if(res.flag) break;
+
+        // CALL(aOWPlayerInput);
+        // IF_C goto ok;
+        res = OWPlayerInput_Conv();
+        if(res.flag) break;
+
+        // XOR_A_A;
+        // RET;
+        return false;
+    } while(0);
+
+
+// ok:
+    // PUSH_AF;
+    // FARCALL(aEnableScriptMode);
+    EnableScriptMode_Conv();
+    // POP_AF;
+
+    // LD_addr_A(wScriptRunning);
+    wram->wScriptRunning = res.a;
+    // CALL(aDoPlayerEvent);
+    DoPlayerEvent();
+    // LD_A_addr(wScriptRunning);
+    // CP_A(PLAYEREVENT_CONNECTION);
+    // IF_Z goto ok2;
+    // CP_A(PLAYEREVENT_JOYCHANGEFACING);
+    // IF_Z goto ok2;
+
+    if(!(wram->wScriptRunning == PLAYEREVENT_CONNECTION || wram->wScriptRunning == PLAYEREVENT_JOYCHANGEFACING)) {
+        // XOR_A_A;
+        // LD_addr_A(wLandmarkSignTimer);
+        wram->wLandmarkSignTimer = 0;
+    }
+
+// ok2:
+    // SCF;
+    // RET;
+    return true;
+}
+
 void CheckTrainerBattle_GetPlayerEvent(void){
     NOP;
     NOP;
@@ -401,6 +518,24 @@ nope:
     XOR_A_A;
     RET;
 
+}
+
+u8_flag_s CheckTrainerBattle_GetPlayerEvent_Conv(void){
+    // NOP;
+    // NOP;
+    // CALL(aCheckTrainerBattle);
+    // IF_NC goto nope;
+    if(!CheckTrainerBattle_Conv())
+        return u8_flag(0, false);
+
+    // LD_A(PLAYEREVENT_SEENBYTRAINER);
+    // SCF;
+    // RET;
+    return u8_flag(PLAYEREVENT_SEENBYTRAINER, true);
+
+// nope:
+    // XOR_A_A;
+    // RET;
 }
 
 void CheckTileEvent(void){
@@ -584,6 +719,69 @@ nope:
 
 }
 
+u8_flag_s RunSceneScript_Conv(void){
+    // LD_A_addr(wCurMapSceneScriptCount);
+    // AND_A_A;
+    // IF_Z goto nope;
+    if(gCurMapSceneScriptCount == 0)
+        return u8_flag(0, false);
+
+    // LD_C_A;
+    // CALL(aCheckScenes);
+    // CP_A_C;
+    // IF_NC goto nope;
+    uint8_t c = CheckScenes_Conv();
+    if(c == 0xff)
+        return u8_flag(0, false);
+
+    // LD_E_A;
+    // LD_D(0);
+    // LD_HL(wCurMapSceneScriptsPointer);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // for(int rept = 0; rept < SCENE_SCRIPT_SIZE; rept++){
+    // ADD_HL_DE;
+    // }
+    Script_fn_t script = gCurMapSceneScriptsPointer[c];
+
+    // CALL(aGetMapScriptsBank);
+    // CALL(aGetFarWord);
+    // CALL(aGetMapScriptsBank);
+    // CALL(aCallScript);
+    CallScript_Conv2(script);
+
+    // LD_HL(wScriptFlags);
+    // RES_hl(3);
+    bit_reset(wram->wScriptFlags, 3);
+
+    // FARCALL(aEnableScriptMode);
+    EnableScriptMode_Conv();
+    // FARCALL(aScriptEvents);
+    ScriptEvents_Conv();
+
+    // LD_HL(wScriptFlags);
+    // BIT_hl(3);
+    // IF_Z goto nope;
+    if(bit_test(wram->wScriptFlags, 3))
+        return u8_flag(0, false);
+
+    // LD_HL(wDeferredScriptAddr);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // LD_A_addr(wDeferredScriptBank);
+    // CALL(aCallScript);
+    uint8_t a = CallScript_Conv2(gDeferredScriptAddr);
+    // SCF;
+    // RET;
+    return u8_flag(a, true);
+
+// nope:
+    // XOR_A_A;
+    // RET;
+}
+
 void CheckTimeEvents(void){
     LD_A_addr(wLinkMode);
     AND_A_A;
@@ -627,6 +825,51 @@ unused:
 
 }
 
+u8_flag_s CheckTimeEvents_Conv(void){
+    // LD_A_addr(wLinkMode);
+    // AND_A_A;
+    // IF_NZ goto nothing;
+    if(wram->wLinkMode)
+        return u8_flag(0, false);
+
+    // LD_HL(wStatusFlags2);
+    // BIT_hl(STATUSFLAGS2_BUG_CONTEST_TIMER_F);
+    // IF_Z goto do_daily;
+    if(!bit_test(wram->wStatusFlags2, STATUSFLAGS2_BUG_CONTEST_TIMER_F)) {
+    // do_daily:
+        // FARCALL(aCheckDailyResetTimer);
+        CheckDailyResetTimer_Conv();
+        // FARCALL(aCheckPokerusTick);
+        // FARCALL(aCheckPhoneCall);
+        // RET_C ;
+        u8_flag_s res = CheckPhoneCall_Conv();
+        if(res.flag)
+            return res;
+        return u8_flag(0, false);
+    }
+
+    // FARCALL(aCheckBugContestTimer);
+    // IF_C goto end_bug_contest;
+    if(CheckBugContestTimer_Conv()) {
+    // end_bug_contest:
+        // LD_A(BANK(aBugCatchingContestOverScript));
+        // LD_HL(mBugCatchingContestOverScript);
+        // CALL(aCallScript);
+        // SCF;
+        // RET;
+        return u8_flag(CallScript_Conv2(NULL), true);
+    }
+    // XOR_A_A;
+    // RET;
+    return u8_flag(0, false);
+
+// unused:
+//   //  unreferenced
+    // LD_A(0x8);  // ???
+    // SCF;
+    // RET;
+}
+
 void OWPlayerInput(void){
     CALL(aPlayerMovement);
     RET_C ;
@@ -658,6 +901,49 @@ Action:
 
 }
 
+u8_flag_s OWPlayerInput_Conv(void){
+    // CALL(aPlayerMovement);
+    // RET_C ;
+    u8_flag_s res = PlayerMovement_Conv();
+    if(res.flag)
+        return res;
+    // AND_A_A;
+    // IF_NZ goto NoAction;
+    if(res.a != 0)
+        return u8_flag(0, false);
+
+//  Can't perform button actions while sliding on ice.
+    // FARCALL(aCheckStandingOnIce);
+    // IF_C goto NoAction;
+    if(CheckStandingOnIce_Conv())
+        return u8_flag(0, false);
+
+    do {
+        // CALL(aCheckAPressOW);
+        // IF_C goto Action;
+        res = CheckAPressOW_Conv();
+        if(res.flag) break;
+
+        // CALL(aCheckMenuOW);
+        // IF_C goto Action;
+        res = CheckMenuOW_Conv();
+        if(res.flag) break;
+
+    // NoAction:
+        // XOR_A_A;
+        // RET;
+        return u8_flag(0, false);
+    } while(0);
+
+// Action:
+    // PUSH_AF;
+    // FARCALL(aStopPlayerForEvent);
+    // POP_AF;
+    // SCF;
+    // RET;
+    return res;
+}
+
 void CheckAPressOW(void){
     LDH_A_addr(hJoyPressed);
     AND_A(A_BUTTON);
@@ -673,6 +959,27 @@ void CheckAPressOW(void){
 
 }
 
+u8_flag_s CheckAPressOW_Conv(void){
+    // LDH_A_addr(hJoyPressed);
+    // AND_A(A_BUTTON);
+    // RET_Z ;
+    if(!(hram->hJoyPressed & (A_BUTTON)))
+        return u8_flag(0, false);
+    
+    u8_flag_s res;
+    // CALL(aTryObjectEvent);
+    // RET_C ;
+    // CALL(aTryBGEvent);
+    // RET_C ;
+    res = TryBGEvent_Conv();
+    if(res.flag) return res;
+    // CALL(aTryTileCollisionEvent);
+    // RET_C ;
+    // XOR_A_A;
+    // RET;
+    return u8_flag(0, false);
+}
+
 void PlayTalkObject(void){
     PUSH_DE;
     LD_DE(SFX_READ_TEXT_2);
@@ -680,6 +987,15 @@ void PlayTalkObject(void){
     POP_DE;
     RET;
 
+}
+
+void PlayTalkObject_Conv(void){
+    // PUSH_DE;
+    // LD_DE(SFX_READ_TEXT_2);
+    // CALL(aPlaySFX);
+    // POP_DE;
+    // RET;
+    PlaySFX_Conv(SFX_READ_TEXT_2);
 }
 
 void TryObjectEvent(void){
@@ -810,6 +1126,22 @@ is_bg_event:
 
 }
 
+u8_flag_s TryBGEvent_Conv(void){
+    // CALL(aCheckFacingBGEvent);
+    // IF_C goto is_bg_event;
+    if(CheckFacingBGEvent_Conv()) {
+    // is_bg_event:
+        // LD_A_addr(wCurBGEventType);
+        // LD_HL(mBGEventJumptable);
+        // RST(aJumpTable);
+        // RET;
+        return BGEventJumptable_Conv(gCurBGEvent.function);
+    }
+    // XOR_A_A;
+    // RET;
+    return u8_flag(0, false);
+}
+
 void BGEventJumptable(void){
     //table_width ['2', 'BGEventJumptable']
     //dw ['.read'];
@@ -917,6 +1249,130 @@ dontread:
 
 }
 
+u8_flag_s BGEventJumptable_Conv(uint8_t a){
+    //table_width ['2', 'BGEventJumptable']
+    //dw ['.read'];
+    //dw ['.up'];
+    //dw ['.down'];
+    //dw ['.right'];
+    //dw ['.left'];
+    //dw ['.ifset'];
+    //dw ['.ifnotset'];
+    //dw ['.itemifset'];
+    //dw ['.copy'];
+    //assert_table_length ['NUM_BGEVENTS']
+    uint8_t b;
+    switch(a) {
+        case BGEVENT_UP: 
+        // up:
+            // LD_B(OW_UP);
+            b = OW_UP;
+            goto checkdir;
+        case BGEVENT_DOWN:
+        // down:
+            // LD_B(OW_DOWN);
+            b = OW_DOWN;
+            goto checkdir;
+        case BGEVENT_RIGHT:
+        // right:
+            // LD_B(OW_RIGHT);
+            b = OW_RIGHT;
+            goto checkdir;
+        case BGEVENT_LEFT:
+        // left:
+            // LD_B(OW_LEFT);
+            b = OW_LEFT;
+            // goto checkdir;
+        checkdir:
+            // LD_A_addr(wPlayerDirection);
+            // AND_A(0b1100);
+            // CP_A_B;
+            // JP_NZ (mBGEventJumptable_dontread);
+            if((wram->wPlayerStruct.facing & 0b1100) == b)
+                return u8_flag(0, false);
+            fallthrough;
+        case BGEVENT_READ:
+        // read:
+            // CALL(aPlayTalkObject);
+            PlayTalkObject_Conv();
+            // LD_HL(wCurBGEventScriptAddr);
+            // LD_A_hli;
+            // LD_H_hl;
+            // LD_L_A;
+            // CALL(aGetMapScriptsBank);
+            // CALL(aCallScript);
+            b = CallScript_Conv2(gCurBGEvent.script);
+            // SCF;
+            // RET;
+            return u8_flag(b, true);
+        case BGEVENT_ITEM:
+        // itemifset:
+            // CALL(aCheckBGEventFlag);
+            // JP_NZ (mBGEventJumptable_dontread);
+            if(CheckBGEventFlag_Conv())
+                return u8_flag(0, false);
+            // CALL(aPlayTalkObject);
+            PlayTalkObject_Conv();
+            // CALL(aGetMapScriptsBank);
+            // LD_DE(wHiddenItemData);
+            // LD_BC(wHiddenItemDataEnd - wHiddenItemData);
+            // CALL(aFarCopyBytes);
+            wram->wHiddenItemID = gCurBGEvent.hiddenItem->item;
+            wram->wHiddenItemEvent = gCurBGEvent.hiddenItem->eventFlag;
+            // LD_A(BANK(aHiddenItemScript));
+            // LD_HL(mHiddenItemScript);
+            // CALL(aCallScript);
+            b = CallScript_Conv2(NULL);
+            // SCF;
+            // RET;
+            return u8_flag(b, true);
+        case BGEVENT_COPY:
+        // copy:
+            // CALL(aCheckBGEventFlag);
+            // IF_NZ goto dontread;
+            if(CheckBGEventFlag_Conv())
+                return u8_flag(0, false);
+            // CALL(aGetMapScriptsBank);
+            // LD_DE(wHiddenItemData);
+            // LD_BC(wHiddenItemDataEnd - wHiddenItemData);
+            // CALL(aFarCopyBytes);
+            wram->wHiddenItemID = gCurBGEvent.hiddenItem->item;
+            wram->wHiddenItemEvent = gCurBGEvent.hiddenItem->eventFlag;
+            // goto dontread;
+            return u8_flag(0, false);
+        case BGEVENT_IFSET:
+        // ifset:
+            // CALL(aCheckBGEventFlag);
+            // IF_Z goto dontread;
+            if(!CheckBGEventFlag_Conv())
+                return u8_flag(0, false);
+            goto thenread;
+        case BGEVENT_IFNOTSET:
+        // ifnotset:
+            // CALL(aCheckBGEventFlag);
+            // IF_NZ goto dontread;
+            if(!CheckBGEventFlag_Conv())
+                return u8_flag(0, false);
+        thenread:
+            // PUSH_HL;
+            // CALL(aPlayTalkObject);
+            PlayTalkObject_Conv();
+            // POP_HL;
+            // INC_HL;
+            // INC_HL;
+            // CALL(aGetMapScriptsBank);
+            // CALL(aGetFarWord);
+            // CALL(aGetMapScriptsBank);
+            // CALL(aCallScript);
+            b = CallScript_Conv2(gCurBGEvent.condEvent->script);
+            // SCF;
+            // RET;
+            return u8_flag(b, true);
+        default:
+            return u8_flag(0, false);
+    }
+}
+
 void CheckBGEventFlag(void){
     LD_HL(wCurBGEventScriptAddr);
     LD_A_hli;
@@ -934,6 +1390,27 @@ void CheckBGEventFlag(void){
     POP_HL;
     RET;
 
+}
+
+bool CheckBGEventFlag_Conv(void){
+    // LD_HL(wCurBGEventScriptAddr);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // PUSH_HL;
+    // CALL(aGetMapScriptsBank);
+    // CALL(aGetFarWord);
+
+    // LD_E_L;
+    // LD_D_H;
+    // LD_B(CHECK_FLAG);
+    // CALL(aEventFlagAction);
+    uint8_t a = EventFlagAction_Conv2(gCurBGEvent.condEvent->eventFlag, CHECK_FLAG);
+    // LD_A_C;
+    // AND_A_A;
+    // POP_HL;
+    // RET;
+    return a;
 }
 
 void PlayerMovement(void){
@@ -1121,18 +1598,58 @@ Select:
 
 }
 
-void StartMenuScript(void){
-    //callasm ['StartMenu']
-    //sjump ['StartMenuCallback']
+u8_flag_s CheckMenuOW_Conv(void){
+    // XOR_A_A;
+    // LDH_addr_A(hMenuReturn);
+    hram->hMenuReturn = 0;
+    // LDH_addr_A(hUnusedByte);
+    hram->hUnusedByte = 0;
+    LDH_A_addr(hJoyPressed);
+    uint8_t a = hram->hJoyPressed;
 
-    return SelectMenuScript();
+    // BIT_A(SELECT_F);
+    // IF_NZ goto Select;
+    if(bit_test(a, SELECT_F)) {
+    // Select:
+        // CALL(aPlayTalkObject);
+        PlayTalkObject_Conv();
+        // LD_A(BANK(aSelectMenuScript));
+        // LD_HL(mSelectMenuScript);
+        // CALL(aCallScript);
+        // SCF;
+        // RET;
+        return u8_flag(CallScript_Conv2(SelectMenuScript), true);
+    }
+
+    // BIT_A(START_F);
+    // IF_Z goto NoMenu;
+    if(bit_test(a, START_F)) {
+        // LD_A(BANK(aStartMenuScript));
+        // LD_HL(mStartMenuScript);
+        // CALL(aCallScript);
+        // SCF;
+        // RET;
+        return u8_flag(CallScript_Conv2(StartMenuScript), true);
+    }
+
+// NoMenu:
+    // XOR_A_A;
+    // RET;
+    return u8_flag(0, false);
 }
 
-void SelectMenuScript(void){
+bool StartMenuScript(script_s* s){
+    SCRIPT_BEGIN
+    //callasm ['StartMenu']
+    //sjump ['StartMenuCallback']
+    SCRIPT_END
+}
+
+bool SelectMenuScript(script_s* s){
+    SCRIPT_BEGIN
     //callasm ['SelectMenu']
     //sjump ['SelectMenuCallback']
-
-    return StartMenuCallback();
+    SCRIPT_END
 }
 
 void StartMenuCallback(void){
@@ -1397,6 +1914,35 @@ void RunMemScript(void){
     POP_AF;
     RET;
 
+}
+
+u8_flag_s RunMemScript_Conv(void){
+//  If there is no script here, we don't need to be here.
+    // LD_A_addr(wMapReentryScriptQueueFlag);
+    // AND_A_A;
+    // RET_Z ;
+    if(wram->wMapReentryScriptQueueFlag == 0)
+        return u8_flag(0, false);
+//  Execute the script at (wMapReentryScriptBank):(wMapReentryScriptAddress).
+    // LD_HL(wMapReentryScriptAddress);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // LD_A_addr(wMapReentryScriptBank);
+    // CALL(aCallScript);
+    uint8_t a = CallScript_Conv2(gMapReentryScriptAddress);
+    // SCF;
+//  Clear the buffer for the next script.
+    // PUSH_AF;
+    // XOR_A_A;
+    // LD_HL(wMapReentryScriptQueueFlag);
+    // LD_BC(8);
+    // CALL(aByteFill);
+    wram->wMapReentryScriptQueueFlag = 0;
+    gMapReentryScriptAddress = NULL;
+    // POP_AF;
+    // RET;
+    return u8_flag(a, true);
 }
 
 void LoadScriptBDE(void){

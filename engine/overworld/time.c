@@ -1,5 +1,7 @@
 #include "../../constants.h"
 #include "time.h"
+#include "../../home/random.h"
+#include "../../home/time.h"
 
 void v_InitializeStartDay(void){
     CALL(aInitializeStartDay);
@@ -110,6 +112,11 @@ void InitOneDayCountdown(void){
     return InitNDaysCountdown();
 }
 
+void InitOneDayCountdown_Conv(uint8_t* hl){
+    // LD_A(1);
+    return InitNDaysCountdown_Conv(hl, 1);
+}
+
 void InitNDaysCountdown(void){
     LD_hl_A;
     PUSH_HL;
@@ -119,6 +126,19 @@ void InitNDaysCountdown(void){
     CALL(aCopyDayToHL);
     RET;
 
+}
+
+void InitNDaysCountdown_Conv(uint8_t* hl, uint8_t n){
+    // LD_hl_A;
+    hl[0] = n;
+    // PUSH_HL;
+    // CALL(aUpdateTime);
+    UpdateTime_Conv();
+    // POP_HL;
+    // INC_HL;
+    // CALL(aCopyDayToHL);
+    hl[1] = wram->wCurDay;
+    // RET;
 }
 
 void CheckDayDependentEventHL(void){
@@ -131,6 +151,20 @@ void CheckDayDependentEventHL(void){
     CALL(aUpdateTimeRemaining);
     RET;
 
+}
+
+bool CheckDayDependentEventHL_Conv(uint8_t* hl){
+    // INC_HL;
+    // PUSH_HL;
+    // CALL(aCalcDaysSince);
+    CalcDaysSince_Conv(hl + 1);
+    // CALL(aGetDaysSince);
+    uint8_t days = GetDaysSince_Conv();
+    // POP_HL;
+    // DEC_HL;
+    // CALL(aUpdateTimeRemaining);
+    return UpdateTimeRemaining_Conv(hl, days);
+    // RET;
 }
 
 void RestartReceiveCallDelay(void){
@@ -171,6 +205,12 @@ void RestartDailyResetTimer(void){
 
 }
 
+void RestartDailyResetTimer_Conv(void){
+    // LD_HL(wDailyResetTimer);
+    // JP(mInitOneDayCountdown);
+    return InitOneDayCountdown_Conv((uint8_t*)&wram->wDailyResetTimer);
+}
+
 void CheckDailyResetTimer(void){
     LD_HL(wDailyResetTimer);
     CALL(aCheckDayDependentEventHL);
@@ -208,6 +248,61 @@ DontRestartKenjiBreakCountdown:
 
 }
 
+void CheckDailyResetTimer_Conv(void){
+    // LD_HL(wDailyResetTimer);
+    // CALL(aCheckDayDependentEventHL);
+    // RET_NC ;
+    if(!CheckDayDependentEventHL_Conv((uint8_t*)&wram->wDailyResetTimer))
+        return;
+    
+    // XOR_A_A;
+    // LD_HL(wDailyFlags1);
+    // LD_hli_A;  // wDailyFlags1
+    wram->wDailyFlags1 = 0;
+    // LD_hli_A;  // wDailyFlags2
+    wram->wDailyFlags2 = 0;
+    // LD_hli_A;  // wSwarmFlags
+    wram->wSwarmFlags = 0;
+    // LD_hl_A;  // wSwarmFlags + 1
+    wram->skip_121[0] = 0;
+    // LD_HL(wDailyRematchFlags);
+    // for(int rept = 0; rept < 4; rept++){
+    // LD_hli_A;
+    // }
+    for(uint32_t i = 0; i < lengthof(wram->wDailyRematchFlags); ++i)
+        wram->wDailyRematchFlags[i] = 0;
+    // LD_HL(wDailyPhoneItemFlags);
+    // for(int rept = 0; rept < 4; rept++){
+    // LD_hli_A;
+    // }
+    for(uint32_t i = 0; i < lengthof(wram->wDailyPhoneItemFlags); ++i)
+        wram->wDailyPhoneItemFlags[i] = 0;
+    // LD_HL(wDailyPhoneTimeOfDayFlags);
+    // for(int rept = 0; rept < 4; rept++){
+    // LD_hli_A;
+    // }
+    for(uint32_t i = 0; i < lengthof(wram->wDailyPhoneTimeOfDayFlags); ++i)
+        wram->wDailyPhoneTimeOfDayFlags[i] = 0;
+    // LD_HL(wKenjiBreakTimer);
+    // LD_A_hl;
+    // AND_A_A;
+    // IF_Z goto RestartKenjiBreakCountdown;
+    if(wram->wKenjiBreakTimer[0] == 0) {
+        SampleKenjiBreakCountdown_Conv();
+    }
+    // DEC_hl;
+    // IF_NZ goto DontRestartKenjiBreakCountdown;
+    else if(--wram->wKenjiBreakTimer[0] == 0) {
+        SampleKenjiBreakCountdown_Conv();
+    }
+// RestartKenjiBreakCountdown:
+    // CALL(aSampleKenjiBreakCountdown);
+
+// DontRestartKenjiBreakCountdown:
+    // JR(mRestartDailyResetTimer);
+    return RestartDailyResetTimer_Conv();
+}
+
 void SampleKenjiBreakCountdown(void){
 //  Generate a random number between 3 and 6
     CALL(aRandom);
@@ -216,6 +311,16 @@ void SampleKenjiBreakCountdown(void){
     LD_addr_A(wKenjiBreakTimer);
     RET;
 
+}
+
+//  Generate a random number between 3 and 6
+void SampleKenjiBreakCountdown_Conv(void){
+    // CALL(aRandom);
+    // AND_A(0b11);
+    // ADD_A(3);
+    // LD_addr_A(wKenjiBreakTimer);
+    // RET;
+    wram->wKenjiBreakTimer[0] = (Random_Conv() & 0b11) + 3;
 }
 
 void StartBugContestTimer(void){
@@ -228,6 +333,21 @@ void StartBugContestTimer(void){
     CALL(aCopyDayHourMinSecToHL);
     RET;
 
+}
+
+void StartBugContestTimer_Conv(void){
+    // LD_A(BUG_CONTEST_MINUTES);
+    // LD_addr_A(wBugContestMinsRemaining);
+    wram->wBugContestMinsRemaining = BUG_CONTEST_MINUTES;
+    // LD_A(BUG_CONTEST_SECONDS);
+    // LD_addr_A(wBugContestSecsRemaining);
+    wram->wBugContestSecsRemaining = BUG_CONTEST_SECONDS;
+    // CALL(aUpdateTime);
+    UpdateTime_Conv();
+    // LD_HL(wBugContestStartTime);
+    // CALL(aCopyDayHourMinSecToHL);
+    CopyDayHourMinSecToHL_Conv(wram->wBugContestStartTime);
+    // RET;
 }
 
 void CheckBugContestTimer(void){
@@ -266,6 +386,59 @@ timed_out:
     SCF;
     RET;
 
+}
+
+bool CheckBugContestTimer_Conv(void){
+    // LD_HL(wBugContestStartTime);
+    // CALL(aCalcSecsMinsHoursDaysSince);
+    CalcSecsMinsHoursDaysSince_Conv(wram->wBugContestStartTime);
+    // LD_A_addr(wDaysSince);
+    // AND_A_A;
+    // IF_NZ goto timed_out;
+    // LD_A_addr(wHoursSince);
+    // AND_A_A;
+    // IF_NZ goto timed_out;
+    if(wram->wDaysSince == 0 && wram->wHoursSince == 0) {
+        // LD_A_addr(wSecondsSince);
+        // LD_B_A;
+        // LD_A_addr(wBugContestSecsRemaining);
+        // SUB_A_B;
+        uint16_t temp = wram->wBugContestSecsRemaining - wram->wSecondsSince;
+        uint8_t a = (temp & 0xff);
+        uint8_t carry = (temp & 0xff00)? 1: 0;
+        // IF_NC goto okay;
+        // ADD_A(60);
+        if(carry)
+            a += 60;
+
+    // okay:
+        // LD_addr_A(wBugContestSecsRemaining);
+        wram->wBugContestSecsRemaining = a;
+        // LD_A_addr(wMinutesSince);
+        // LD_B_A;
+        // LD_A_addr(wBugContestMinsRemaining);
+        // SBC_A_B;
+        temp = wram->wBugContestSecsRemaining - wram->wSecondsSince - carry;
+        // LD_addr_A(wBugContestMinsRemaining);
+        wram->wBugContestMinsRemaining = (temp & 0xff);
+        carry = (temp & 0xff00)? 1: 0;
+        // IF_C goto timed_out;
+        if(!carry) {
+            // AND_A_A;
+            // RET;
+            return false;
+        }
+    }
+
+// timed_out:
+    // XOR_A_A;
+    // LD_addr_A(wBugContestMinsRemaining);
+    wram->wBugContestMinsRemaining = 0;
+    // LD_addr_A(wBugContestSecsRemaining);
+    wram->wBugContestSecsRemaining = 0;
+    // SCF;
+    // RET;
+    return true;
 }
 
 void InitializeStartDay(void){
@@ -519,6 +692,12 @@ void GetDaysSince(void){
 
 }
 
+uint8_t GetDaysSince_Conv(void){
+    // LD_A_addr(wDaysSince);
+    // RET;
+    return wram->wDaysSince;
+}
+
 void GetTimeElapsed_ExceedsUnitLimit(void){
     LD_A(-1);
     RET;
@@ -731,6 +910,22 @@ void CopyDayHourMinSecToHL(void){
     LD_hli_A;
     RET;
 
+}
+
+void CopyDayHourMinSecToHL_Conv(uint8_t* hl){
+    // LD_A_addr(wCurDay);
+    // LD_hli_A;
+    hl[0] = wram->wCurDay;
+    // LDH_A_addr(hHours);
+    // LD_hli_A;
+    hl[1] = hram->hHours;
+    // LDH_A_addr(hMinutes);
+    // LD_hli_A;
+    hl[2] = hram->hMinutes;
+    // LDH_A_addr(hSeconds);
+    // LD_hli_A;
+    hl[3] = hram->hSeconds;
+    // RET;
 }
 
 void CopyDayToHL(void){

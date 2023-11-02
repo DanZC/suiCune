@@ -31,8 +31,8 @@ ok:
 //  and Team Rocket is occupying the radio tower
 //  and we're in Johto.
 void PlayRadioShow_Conv(void){
-    if((gb_read(wCurRadioLine) < POKE_FLUTE_RADIO)
-    && ((gb_read(wStatusFlags2) & (1 << STATUSFLAGS2_ROCKETS_IN_RADIO_TOWER_F)) != 0)
+    if((wram->wCurRadioLine < POKE_FLUTE_RADIO)
+    && (bit_test(wram->wStatusFlags2, STATUSFLAGS2_ROCKETS_IN_RADIO_TOWER_F))
     && (IsInJohto_Conv() == JOHTO_REGION))
     {
         //  Team Rocket broadcasts on all stations.
@@ -145,7 +145,7 @@ void (*const Radio_Stations[])(void) = {
 
 void RadioJumptable(void){
 //  entries correspond to constants/radio_constants.asm
-    return Radio_Stations[gb_read(wCurRadioLine)]();
+    return Radio_Stations[wram->wCurRadioLine]();
     //table_width ['2', 'RadioJumptable']
     //dw ['OaksPKMNTalk1'];  // $00
     //dw ['PokedexShow1'];  // $01
@@ -278,7 +278,7 @@ skip:
 }
 
 void PrintRadioLine_Conv(uint8_t a){
-    gb_write(wNextRadioLine, a);
+    wram->wNextRadioLine = a;
     REG_HL = wRadioText;
     uint8_t lines_printed = gb_read(wNumRadioLinesPrinted);
     if(lines_printed >= 2)
@@ -301,8 +301,8 @@ void PrintRadioLine_Conv(uint8_t a){
             CALL(aPlaceHLTextAtBC);
         }
     }
-    gb_write(wCurRadioLine, RADIO_SCROLL);
-    gb_write(wRadioTextDelay, 100);
+    wram->wCurRadioLine = RADIO_SCROLL;
+    wram->wRadioTextDelay = 100;
 }
 
 void ReplacePeriodsWithSpaces(void){
@@ -344,17 +344,17 @@ proceed:
 }
 
 void RadioScroll_Conv(void){
-    if(gb_read(wRadioTextDelay) == 0)
+    if(wram->wRadioTextDelay == 0)
     {
-        gb_write(wCurRadioLine, gb_read(wNextRadioLine));
+        wram->wCurRadioLine = wram->wNextRadioLine;
 
-        if(gb_read(wNumRadioLinesPrinted) != 1)
+        if(wram->wNumRadioLinesPrinted != 1)
         {
             CALL(aCopyBottomLineToTopLine);
         }
         JP(mClearBottomLine);
     }
-    gb_write(wRadioTextDelay, gb_read(wRadioTextDelay) - 1);
+    wram->wRadioTextDelay--;
 }
 
 void OaksPKMNTalk1(void){

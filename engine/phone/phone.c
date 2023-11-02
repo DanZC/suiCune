@@ -341,17 +341,17 @@ static bool CheckPhoneCall_timecheck(void) {
 }
 
 //  Check if the phone is ringing in the overworld.
-bool CheckPhoneCall_Conv(void){
+u8_flag_s CheckPhoneCall_Conv(void){
     // CALL(aCheckStandingOnEntrance);
     // IF_Z goto no_call;
     if(CheckStandingOnEntrance_Conv())
-        return false;
+        return u8_flag(0, false);
 
     // CALL(aCheckPhoneCall_timecheck);
     // NOP;
     // IF_NC goto no_call;
     if(!CheckPhoneCall_timecheck())
-        return false;
+        return u8_flag(0, false);
 
 // 50% chance for a call
     // CALL(aRandom);
@@ -360,13 +360,13 @@ bool CheckPhoneCall_Conv(void){
     // CP_A_B;
     // IF_NZ goto no_call;
     if(Random_Conv() & 0b10000000)
-        return false;
+        return u8_flag(0, false);
 
     // CALL(aGetMapPhoneService);
     // AND_A_A;
     // IF_NZ goto no_call;
     if(GetMapPhoneService_Conv() != 0)
-        return false;
+        return u8_flag(0, false);
 
     // CALL(aGetAvailableCallers);
     GetAvailableCallers_Conv();
@@ -374,7 +374,7 @@ bool CheckPhoneCall_Conv(void){
     // IF_NC goto no_call;
     u8_flag_s res = ChooseRandomCaller_Conv();
     if(!res.flag)
-        return false;
+        return u8_flag(0, false);
 
     // LD_E_A;
     // CALL(aLoadCallerScript);
@@ -382,10 +382,10 @@ bool CheckPhoneCall_Conv(void){
     // LD_A(BANK(aScript_ReceivePhoneCall));
     // LD_HL(mScript_ReceivePhoneCall);
     // CALL(aCallScript);
-    CallScript_Conv2(Script_ReceivePhoneCall);
+    uint8_t a = CallScript_Conv2(Script_ReceivePhoneCall);
     // SCF;
     // RET;
-    return true;
+    return u8_flag(a, true);
 
 // no_call:
     // XOR_A_A;
