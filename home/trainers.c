@@ -5,6 +5,12 @@
 #include "map.h"
 #include "copy.h"
 #include "gfx.h"
+#include "text.h"
+#include "tilemap.h"
+#include "joypad.h"
+
+const struct TextCmd* gWinTextPointer = NULL;
+const struct TextCmd* gLossTextPointer = NULL;
 
 void CheckTrainerBattle(void){
         LDH_A_addr(hROMBank);
@@ -565,4 +571,38 @@ ok:
     CALL(aWaitPressAorB_BlinkCursor);
     RET;
 
+}
+
+void PrintWinLossText_Conv(void){
+    // LD_A_addr(wBattleType);
+    // CP_A(BATTLETYPE_CANLOSE);
+// code was probably dummied out here
+    // goto canlose;
+
+//  unused
+    // LD_HL(wWinTextPointer);
+    // goto ok;
+
+
+// canlose:
+    // LD_A_addr(wBattleResult);
+    // LD_HL(wWinTextPointer);
+    // AND_A(0xf);  // WIN?
+    // IF_Z goto ok;
+    // LD_HL(wLossTextPointer);
+    const struct TextCmd* textPtr = ((wram->wBattleResult & 0xf) == 0)? gWinTextPointer: gLossTextPointer;
+
+
+// ok:
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // CALL(aGetMapScriptsBank);
+    // CALL(aFarPrintText);
+    PrintText_Conv2(textPtr);
+    // CALL(aWaitBGMap);
+    WaitBGMap_Conv();
+    // CALL(aWaitPressAorB_BlinkCursor);
+    WaitPressAorB_BlinkCursor_Conv();
+    // RET;
 }

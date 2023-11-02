@@ -2136,6 +2136,17 @@ void MaskObject(void){
 
 }
 
+void MaskObject_Conv(uint8_t a){
+    // LDH_A_addr(hMapObjectIndex);
+    // LD_E_A;
+    // LD_D(0);
+    // LD_HL(wObjectMasks);
+    // ADD_HL_DE;
+    // LD_hl(-1);  // masked
+    // RET;
+    wram->wObjectMasks[a] = 0xff;
+}
+
 void UnmaskObject(void){
     LDH_A_addr(hMapObjectIndex);
     LD_E_A;
@@ -2145,6 +2156,17 @@ void UnmaskObject(void){
     LD_hl(0);  // unmasked
     RET;
 
+}
+
+void UnmaskObject_Conv(uint8_t a){
+    // LDH_A_addr(hMapObjectIndex);
+    // LD_E_A;
+    // LD_D(0);
+    // LD_HL(wObjectMasks);
+    // ADD_HL_DE;
+    // LD_hl(0);  // unmasked
+    // RET;
+    wram->wObjectMasks[a] = 0;
 }
 //  if DEF(_DEBUG)
 void ComputeROMXChecksum(void) {

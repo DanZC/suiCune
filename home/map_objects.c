@@ -1,9 +1,12 @@
 #include "../constants.h"
 #include "map_objects.h"
 #include "../engine/overworld/map_objects.h"
+#include "../engine/overworld/overworld.h"
+#include "../engine/overworld/player_object.h"
 #include "array.h"
 #include "../data/collision/collision_permissions.h"
 #include "../data/sprites/map_objects.h"
+#include "map.h"
 
 const uint8_t* gMovementDataAddr;
 
@@ -23,6 +26,22 @@ void GetSpritePalette(void){
     POP_HL;
     RET;
 
+}
+
+uint8_t GetSpritePalette_Conv(uint8_t a){
+    // PUSH_HL;
+    // PUSH_DE;
+    // PUSH_BC;
+    // LD_C_A;
+
+    // FARCALL(av_GetSpritePalette);
+    return v_GetSpritePalette_Conv(a);
+
+    // LD_A_C;
+    // POP_BC;
+    // POP_DE;
+    // POP_HL;
+    // RET;
 }
 
 void GetSpriteVTile(void){
@@ -64,6 +83,61 @@ done:
     POP_HL;
     RET;
 
+}
+
+uint8_t GetSpriteVTile_Conv(uint8_t a, uint8_t mapObjIdx){
+    // PUSH_HL;
+    // PUSH_BC;
+    // LD_HL(wUsedSprites + 2);
+    // LD_C(SPRITE_GFX_LIST_CAPACITY - 1);
+    // LD_B_A;
+    // LDH_A_addr(hMapObjectIndex);
+    // CP_A(0);
+    // IF_Z goto nope;
+    if(mapObjIdx == 0)
+        return wram->wUsedSprites[1];
+
+    uint8_t* hl = wram->wUsedSprites + 2;
+    uint8_t c = SPRITE_GFX_LIST_CAPACITY - 1;
+    // LD_A_B;
+
+    do {
+    // loop:
+        // CP_A_hl;
+        // IF_Z goto found;
+        if(*hl == a) {
+        // found:
+            // INC_HL;
+            hl++;
+            // XOR_A_A;
+            // LD_A_hl;
+            return *hl;
+        }
+        // INC_HL;
+        // INC_HL;
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(hl += 2, --c != 0);
+    // LD_A_addr(wUsedSprites + 1);
+    // SCF;
+    return wram->wUsedSprites[1];
+    // goto done;
+
+
+// nope:
+    // LD_A_addr(wUsedSprites + 1);
+    // goto done;
+
+
+// found:
+    // INC_HL;
+    // XOR_A_A;
+    // LD_A_hl;
+
+// done:
+    // POP_BC;
+    // POP_HL;
+    // RET;
 }
 
 void DoesSpriteHaveFacings(void){
@@ -447,8 +521,8 @@ not_visible:
 
 }
 
-//  Sets carry if the object is not visible on the screen.
-bool CheckObjectVisibility_Conv(uint8_t a){
+//  Returns null if the object is not visible on the screen.
+struct Object* CheckObjectVisibility_Conv(uint8_t a){
     // LDH_addr_A(hMapObjectIndex);
     // CALL(aGetMapObject);
     hram->hMapObjectIndex = a;
@@ -459,14 +533,13 @@ bool CheckObjectVisibility_Conv(uint8_t a){
     // CP_A(-1);
     // IF_Z goto not_visible;
     if(mobj->structId == 0xff) 
-        return false;
+        return NULL;
     // LDH_addr_A(hObjectStructIndex);
     hram->hObjectStructIndex = mobj->structId;
     // CALL(aGetObjectStruct);
-    GetObjectStruct_Conv(mobj->structId);
     // AND_A_A;
     // RET;
-    return true;
+    return GetObjectStruct_Conv(mobj->structId);
 }
 
 void CheckObjectTime(void){
@@ -571,6 +644,18 @@ void UnmaskCopyMapObjectStruct(void){
 
 }
 
+void UnmaskCopyMapObjectStruct_Conv(uint8_t a){
+    // LDH_addr_A(hMapObjectIndex);
+    // CALL(aUnmaskObject);
+    UnmaskObject_Conv(a);
+    // LDH_A_addr(hMapObjectIndex);
+    // CALL(aGetMapObject);
+    struct MapObject* bc = GetMapObject_Conv(a);
+    // FARCALL(aCopyObjectStruct);
+    CopyObjectStruct_Conv(bc, a);
+    // RET;
+}
+
 void ApplyDeletionToMapObject(void){
         LDH_addr_A(hMapObjectIndex);
     CALL(aGetMapObject);
@@ -605,11 +690,65 @@ ok:
 
 }
 
+static void ApplyDeletionToMapObject_CheckStopFollow(uint8_t a) {
+    // LD_HL(wObjectFollow_Leader);
+    // CP_A_hl;
+    // IF_Z goto ok;
+    // LD_HL(wObjectFollow_Follower);
+    // CP_A_hl;
+    // RET_NZ ;
+    if(a != wram->wObjectFollow_Leader && a != wram->wObjectFollow_Follower)
+        return;
+
+// ok:
+    // FARCALL(aStopFollow);
+    StopFollow_Conv();
+    // LD_A(-1);
+    // LD_addr_A(wObjectFollow_Leader);
+    wram->wObjectFollow_Leader = 0xff;
+    // LD_addr_A(wObjectFollow_Follower);
+    wram->wObjectFollow_Follower = 0xff;
+    // RET;
+}
+
+void ApplyDeletionToMapObject_Conv(uint8_t mapObjIdx){
+    // LDH_addr_A(hMapObjectIndex);
+    hram->hMapObjectIndex = mapObjIdx;
+    // CALL(aGetMapObject);
+    struct MapObject* bc = GetMapObject_Conv(mapObjIdx);
+    // LD_HL(MAPOBJECT_OBJECT_STRUCT_ID);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // CP_A(-1);
+    // RET_Z ;  // already hidden
+    if(bc->structId == 0xff)
+        return;
+    // LD_hl(-1);
+    uint8_t id = bc->structId;
+    bc->structId = 0xff;
+    // PUSH_AF;
+    // CALL(aApplyDeletionToMapObject_CheckStopFollow);
+    ApplyDeletionToMapObject_CheckStopFollow(id);
+    // POP_AF;
+    // CALL(aGetObjectStruct);
+    // FARCALL(aDeleteMapObject);
+    DeleteMapObject_Conv(GetObjectStruct_Conv(id));
+    // RET;
+}
+
 void DeleteObjectStruct(void){
         CALL(aApplyDeletionToMapObject);
     CALL(aMaskObject);
     RET;
 
+}
+
+void DeleteObjectStruct_Conv(uint8_t a){
+    // CALL(aApplyDeletionToMapObject);
+    ApplyDeletionToMapObject_Conv(a);
+    // CALL(aMaskObject);
+    MaskObject_Conv(a);
+    // RET;
 }
 
 void CopyPlayerObjectTemplate(void){
@@ -738,10 +877,10 @@ bool LoadMovementDataPointer_Conv2(uint8_t a, const uint8_t* hl){
     // LD_A_addr(wMovementObject);
     // CALL(aCheckObjectVisibility);
     // RET_C ;
-    if(!CheckObjectVisibility_Conv(a))
+    struct Object* bc = CheckObjectVisibility_Conv(a);
+    if(!bc)
         return false;
 
-    struct Object* bc = (&wram->wPlayerStruct + a);
     // LD_HL(OBJECT_MOVEMENTTYPE);
     // ADD_HL_BC;
     // LD_hl(SPRITEMOVEDATA_SCRIPTED);

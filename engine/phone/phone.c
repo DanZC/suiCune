@@ -19,8 +19,10 @@
 #include "../../data/text/common.h"
 #include "../../data/phone/non_trainer_names.h"
 #include "../../data/phone/phone_contacts.h"
+#include "../../data/phone/special_calls.h"
 
 struct PhoneContact gCallerContact;
+Script_fn_t gPhoneCaller;
 
 void AddPhoneNumber(void){
     CALL(av_CheckCellNum);
@@ -658,6 +660,79 @@ DoSpecialPhoneCall:
 
 }
 
+static bool CheckSpecialPhoneCall_script(script_s* s) {
+// script:
+    SCRIPT_BEGIN
+    pause(30)
+    sjump(Script_ReceivePhoneCall)
+    SCRIPT_END
+}
+
+bool CheckSpecialPhoneCall_Conv(void){
+    // LD_A_addr(wSpecialPhoneCallID);
+    // AND_A_A;
+    // IF_Z goto NoPhoneCall;
+    if(wram->wSpecialPhoneCallID == 0)
+        return false;
+
+    // DEC_A;
+    // LD_C_A;
+    // LD_B(0);
+    // LD_HL(mSpecialPhoneCallList);
+    // LD_A(SPECIALCALL_SIZE);
+    // CALL(aAddNTimes);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    const struct SpecialCall* spec = SpecialPhoneCallList + (wram->wSpecialPhoneCallID - 1);
+    // CALL(av_hl_);
+    // IF_NC goto NoPhoneCall;
+    if(!spec->condition())
+        return false;
+
+    // CALL(aCheckSpecialPhoneCall_DoSpecialPhoneCall);
+    // INC_HL;
+    // INC_HL;
+    // LD_A_hli;
+    // LD_E_A;
+    // PUSH_HL;
+    // CALL(aLoadCallerScript);
+    LoadCallerScript_Conv(spec->contact);
+    // POP_HL;
+    // LD_DE(wCallerContact + PHONE_CONTACT_SCRIPT2_BANK);
+    // LD_A_hli;
+    // LD_de_A;
+    // INC_DE;
+    // LD_A_hli;
+    // LD_de_A;
+    // INC_DE;
+    // LD_A_hli;
+    // LD_de_A;
+    gCallerContact.callerScript = spec->script;
+    // LD_A(BANK(aCheckSpecialPhoneCall_script));
+    // LD_HL(mCheckSpecialPhoneCall_script);
+    // CALL(aCallScript);
+    CallScript_Conv2(CheckSpecialPhoneCall_script);
+    // SCF;
+    // RET;
+    return true;
+
+// NoPhoneCall:
+    // XOR_A_A;
+    // RET;
+
+
+// DoSpecialPhoneCall:
+    // LD_A_addr(wSpecialPhoneCallID);
+    // DEC_A;
+    // LD_C_A;
+    // LD_B(0);
+    // LD_HL(mSpecialPhoneCallList);
+    // LD_A(SPECIALCALL_SIZE);
+    // CALL(aAddNTimes);
+    // RET;
+}
+
 void SpecialCallOnlyWhenOutside(void){
     LD_A_addr(wEnvironment);
     CP_A(TOWN);
@@ -864,18 +939,18 @@ DoPhoneCall:
 
 }
 
-void LoadPhoneScriptBank(void){
-    //memcall ['wPhoneScriptBank']
-    //endcallback ['?']
-
-    return LoadOutOfAreaScript();
+bool LoadPhoneScriptBank(script_s* s){
+    SCRIPT_BEGIN
+    scall(gPhoneCaller)
+    s_endcallback
+    SCRIPT_END
 }
 
-void LoadOutOfAreaScript(void){
-    //scall ['PhoneOutOfAreaScript']
-    //endcallback ['?']
-
-    return LoadCallerScript();
+bool LoadOutOfAreaScript(script_s* s){
+    SCRIPT_BEGIN
+    scall(PhoneOutOfAreaScript)
+    s_endcallback
+    SCRIPT_END
 }
 
 void LoadCallerScript(void){
@@ -985,7 +1060,7 @@ bool Script_ReceivePhoneCall(script_s* s) {
     waitbutton
     HangUp();
     closetext
-    // InitCallReceiveDelay();
+    InitCallReceiveDelay();
     SCRIPT_END
 }
 

@@ -16,6 +16,7 @@
 #include "../../home/joypad.h"
 #include "../../home/tilemap.h"
 #include "../../home/window.h"
+#include "../../home/trainers.h"
 #include "../battle/core.h"
 #include "../battle/read_trainer_party.h"
 #include "../events/engine_flags.h"
@@ -25,6 +26,7 @@
 #include "landmarks.h"
 #include "overworld.h"
 #include "map_objects.h"
+#include "player_object.h"
 #include "../events/specials.h"
 #include "../items/items.h"
 #include "../../data/text/common.h"
@@ -995,7 +997,7 @@ bool GiveItemScript(script_s* s){
     SCRIPT_BEGIN
     GiveItemScript_DummyFunction();
     writetext(ReceivedItemText)
-    if(wram->wScriptVar == FALSE) goto Full;
+    iffalse(Full);
     waitsfx
     specialsound
     waitbutton
@@ -1053,6 +1055,7 @@ void Script_itemnotify_Conv(script_s* s){
     // CALL(aGetPocketName);
     GetPocketName_Conv();
     // CALL(aCurItemName);
+    CurItemName_Conv(wram->wCurItem);
     // LD_B(BANK(aPutItemInPocketText));
     // LD_HL(mPutItemInPocketText);
     // CALL(aMapTextbox);
@@ -1374,12 +1377,39 @@ void Script_winlosstext(void){
 
 }
 
+void Script_winlosstext_Conv(script_s* s, const struct TextCmd* wintext, const struct TextCmd* losstext){
+    (void)s;
+    // LD_HL(wWinTextPointer);
+    // CALL(aGetScriptByte);
+    // LD_hli_A;
+    // CALL(aGetScriptByte);
+    // LD_hli_A;
+    gWinTextPointer = wintext;
+    // LD_HL(wLossTextPointer);
+    // CALL(aGetScriptByte);
+    // LD_hli_A;
+    // CALL(aGetScriptByte);
+    // LD_hli_A;
+    gLossTextPointer = losstext;
+    // RET;
+}
+
 void Script_endifjustbattled(void){
     LD_A_addr(wRunningTrainerBattleScript);
     AND_A_A;
     RET_Z ;
     JP(mScript_end);
 
+}
+
+void Script_endifjustbattled_Conv(script_s* s){
+    // LD_A_addr(wRunningTrainerBattleScript);
+    // AND_A_A;
+    // RET_Z ;
+    if(wram->wRunningTrainerBattleScript == 0)
+        return;
+    // JP(mScript_end);
+    return Script_end_Conv(s);
 }
 
 void Script_checkjustbattled(void){
@@ -1392,6 +1422,19 @@ void Script_checkjustbattled(void){
     LD_addr_A(wScriptVar);
     RET;
 
+}
+
+void Script_checkjustbattled_Conv(script_s* s){
+    (void)s;
+    // LD_A(TRUE);
+    // LD_addr_A(wScriptVar);
+    // LD_A_addr(wRunningTrainerBattleScript);
+    // AND_A_A;
+    // RET_NZ ;
+    // XOR_A_A;
+    // LD_addr_A(wScriptVar);
+    // RET;
+    wram->wScriptVar = wram->wRunningTrainerBattleScript != 0;
 }
 
 void Script_encountermusic(void){
@@ -1677,12 +1720,8 @@ void Script_faceplayer_Conv(script_s* s){
     // LD_D(0x0);
     // LDH_A_addr(hLastTalked);
     // LD_E_A;
-    PUSH_AF;
-    PUSH_BC;
-    PUSH_DE;
-    PUSH_HL;
-    REG_DE = hram->hLastTalked;
-    FARCALL(aGetRelativeFacing);
+    // FARCALL(aGetRelativeFacing);
+    uint8_t d = GetRelativeFacing_Conv(hram->hLastTalked, 0);
     // LD_A_D;
     // ADD_A_A;
     // ADD_A_A;
@@ -1690,11 +1729,7 @@ void Script_faceplayer_Conv(script_s* s){
     // LDH_A_addr(hLastTalked);
     // LD_D_A;
     // CALL(aApplyObjectFacing);
-    ApplyObjectFacing_Conv(hram->hLastTalked, REG_D << 2);
-    POP_HL;
-    POP_DE;
-    POP_BC;
-    POP_AF;
+    ApplyObjectFacing_Conv(hram->hLastTalked, d << 2);
     // RET;
 
 }
@@ -1730,6 +1765,47 @@ ok2:
 
 }
 
+void Script_faceobject_Conv(script_s* s, uint8_t e, uint8_t d){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // CALL(aGetScriptObject);
+    uint8_t obje = GetScriptObject_Conv(e);
+    // CP_A(LAST_TALKED);
+    // IF_C goto ok;
+    // LDH_A_addr(hLastTalked);
+    if(obje == (uint8_t)LAST_TALKED)
+        obje = hram->hLastTalked;
+
+// ok:
+    // LD_E_A;
+    // CALL(aGetScriptByte);
+    // CALL(aGetScriptObject);
+    uint8_t objd = GetScriptObject_Conv(d);
+    // CP_A(LAST_TALKED);
+    // IF_NZ goto ok2;
+    // LDH_A_addr(hLastTalked);
+    if(objd == (uint8_t)LAST_TALKED)
+        objd = hram->hLastTalked;
+
+// ok2:
+    // LD_D_A;
+    // PUSH_DE;
+    // FARCALL(aGetRelativeFacing);
+    d = GetRelativeFacing_Conv(obje, objd);
+    // POP_BC;
+    // RET_C ;
+    if(d == 0xff)
+        return;
+    // LD_A_D;
+    // ADD_A_A;
+    // ADD_A_A;
+    // LD_E_A;
+    // LD_D_C;
+    // CALL(aApplyObjectFacing);
+    ApplyObjectFacing_Conv(obje, d << 2);
+    // RET;
+}
+
 void Script_turnobject(void){
     CALL(aGetScriptByte);
     CALL(aGetScriptObject);
@@ -1746,6 +1822,29 @@ ok:
     CALL(aApplyObjectFacing);
     RET;
 
+}
+
+void Script_turnobject_Conv(script_s* s, uint8_t obj, uint8_t dir){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // CALL(aGetScriptObject);
+    uint8_t a = GetScriptObject_Conv(obj);
+    // CP_A(LAST_TALKED);
+    // IF_NZ goto ok;
+    // LDH_A_addr(hLastTalked);
+    if(a == (uint8_t)LAST_TALKED)
+        a = hram->hLastTalked;
+
+// ok:
+    // LD_D_A;
+    // CALL(aGetScriptByte);
+    // ADD_A_A;
+    // ADD_A_A;
+    // LD_E_A;
+    uint8_t e = dir << 2;
+    // CALL(aApplyObjectFacing);
+    ApplyObjectFacing_Conv(a, e);
+    // RET;
 }
 
 void ApplyObjectFacing(void){
@@ -1826,9 +1925,9 @@ bool ApplyObjectFacing_Conv(uint8_t d, uint8_t e){
     // PUSH_DE;
     // CALL(aCheckObjectVisibility);
     // IF_C goto not_visible;
-    if(!CheckObjectVisibility_Conv(d))
+    struct Object* bc = CheckObjectVisibility_Conv(d);
+    if(bc == NULL)
         return false;
-    struct Object* bc = GetObjectStruct_Conv(hram->hObjectStructIndex);
     // LD_HL(OBJECT_SPRITE);
     // ADD_HL_BC;
     // LD_A_hl;
@@ -1905,6 +2004,20 @@ void Script_appear(void){
 
 }
 
+void Script_appear_Conv(script_s* s, uint8_t a){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // CALL(aGetScriptObject);
+    uint8_t obj = GetScriptObject_Conv(a);
+    // CALL(aUnmaskCopyMapObjectStruct);
+    UnmaskCopyMapObjectStruct_Conv(obj);
+    // LDH_A_addr(hMapObjectIndex);
+    // LD_B(0);  // clear
+    // CALL(aApplyEventActionAppearDisappear);
+    ApplyEventActionAppearDisappear_Conv(hram->hMapObjectIndex, 0);
+    // RET;
+}
+
 void Script_disappear(void){
     CALL(aGetScriptByte);
     CALL(aGetScriptObject);
@@ -1920,6 +2033,29 @@ ok:
     FARCALL(av_UpdateSprites);
     RET;
 
+}
+
+void Script_disappear_Conv(script_s* s, uint8_t a){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // CALL(aGetScriptObject);
+    uint8_t obj = GetScriptObject_Conv(a);
+    // CP_A(LAST_TALKED);
+    // IF_NZ goto ok;
+    // LDH_A_addr(hLastTalked);
+    if(obj == (uint8_t)LAST_TALKED)
+        obj = hram->hLastTalked;
+
+// ok:
+    // CALL(aDeleteObjectStruct);
+    DeleteObjectStruct_Conv(obj);
+    // LDH_A_addr(hMapObjectIndex);
+    // LD_B(1);  // set
+    // CALL(aApplyEventActionAppearDisappear);
+    ApplyEventActionAppearDisappear_Conv(hram->hMapObjectIndex, 1);
+    // FARCALL(av_UpdateSprites);
+    v_UpdateSprites_Conv();
+    // RET;
 }
 
 void ApplyEventActionAppearDisappear(void){
@@ -1945,6 +2081,34 @@ okay:
 
 }
 
+bool ApplyEventActionAppearDisappear_Conv(uint8_t mapObjIdx, uint8_t b){
+    // PUSH_BC;
+    // CALL(aGetMapObject);
+    struct MapObject* bc = GetMapObject_Conv(mapObjIdx);
+    // LD_HL(MAPOBJECT_EVENT_FLAG);
+    // ADD_HL_BC;
+    // POP_BC;
+    // LD_E_hl;
+    // INC_HL;
+    // LD_D_hl;
+    uint16_t de = bc->objectEventFlag;
+    // LD_A(-1);
+    // CP_A_E;
+    // IF_NZ goto okay;
+    // CP_A_D;
+    // IF_NZ goto okay;
+    if(de == 0xffff) {
+        // XOR_A_A;
+        // RET;
+        return false;
+    }
+
+// okay:
+    // CALL(aEventFlagAction);
+    // RET;
+    return EventFlagAction_Conv2(de, b) != 0;
+}
+
 void Script_follow(void){
     CALL(aGetScriptByte);
     CALL(aGetScriptObject);
@@ -1957,10 +2121,30 @@ void Script_follow(void){
 
 }
 
+void Script_follow_Conv(script_s* s, uint8_t leader, uint8_t follower){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // CALL(aGetScriptObject);
+    // LD_B_A;
+    // CALL(aGetScriptByte);
+    // CALL(aGetScriptObject);
+    // LD_C_A;
+    // FARCALL(aStartFollow);
+    StartFollow_Conv(GetScriptObject_Conv(leader), GetScriptObject_Conv(follower));
+    // RET;
+}
+
 void Script_stopfollow(void){
     FARCALL(aStopFollow);
     RET;
 
+}
+
+void Script_stopfollow_Conv(script_s* s){
+    (void)s;
+    // FARCALL(aStopFollow);
+    // RET;
+    StopFollow_Conv();
 }
 
 void Script_moveobject(void){
@@ -1990,6 +2174,24 @@ ok:
     FARCALL(aWriteObjectXY);
     RET;
 
+}
+
+void Script_writeobjectxy_Conv(script_s* s, uint8_t obj){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // CALL(aGetScriptObject);
+    uint8_t a = GetScriptObject_Conv(obj);
+    // CP_A(LAST_TALKED);
+    // IF_NZ goto ok;
+    // LDH_A_addr(hLastTalked);
+    if(a == (uint8_t)LAST_TALKED)
+        a = hram->hLastTalked;
+
+// ok:
+    // LD_B_A;
+    // FARCALL(aWriteObjectXY);
+    // RET;
+    WriteObjectXY_Conv(a);
 }
 
 void Script_follownotexact(void){

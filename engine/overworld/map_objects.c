@@ -4528,6 +4528,23 @@ void StartFollow(void) {
     RET;
 }
 
+void StartFollow_Conv(uint8_t b, uint8_t c) {
+    // SET_PC(aStartFollow);
+    // PUSH_BC;
+    // LD_A_B;
+    // CALL(aSetLeaderIfVisible);
+    // POP_BC;
+    // RET_C;
+    if(!SetLeaderIfVisible_Conv(b))
+        return;
+    // LD_A_C;
+    // CALL(aSetFollowerIfVisible);
+    SetFollowerIfVisible_Conv(c);
+    // FARCALL(aQueueFollowerFirstStep);
+    QueueFollowerFirstStep_Conv();
+    // RET;
+}
+
 void SetLeaderIfVisible(void) {
     SET_PC(aSetLeaderIfVisible);
     CALL(aCheckObjectVisibility);
@@ -4537,6 +4554,20 @@ void SetLeaderIfVisible(void) {
     RET;
 }
 
+bool SetLeaderIfVisible_Conv(uint8_t a) {
+    // SET_PC(aSetLeaderIfVisible);
+    // CALL(aCheckObjectVisibility);
+    struct Object* bc = CheckObjectVisibility_Conv(a);
+    // RET_C;
+    if(bc == NULL)
+        return false;
+    // LDH_A_addr(hObjectStructIndex);
+    // LD_addr_A(wObjectFollow_Leader);
+    wram->wObjectFollow_Leader = hram->hObjectStructIndex;
+    // RET;
+    return true;
+}
+
 void StopFollow(void) {
     SET_PC(aStopFollow);
     CALL(aResetLeader);
@@ -4544,11 +4575,28 @@ void StopFollow(void) {
     RET;
 }
 
+void StopFollow_Conv(void) {
+    // SET_PC(aStopFollow);
+    // CALL(aResetLeader);
+    ResetLeader_Conv();
+    // CALL(aResetFollower);
+    ResetFollower_Conv();
+    // RET;
+}
+
 void ResetLeader(void) {
     SET_PC(aResetLeader);
     LD_A(-1);
     LD_addr_A(wObjectFollow_Leader);
     RET;
+}
+
+void ResetLeader_Conv(void) {
+    // SET_PC(aResetLeader);
+    // LD_A(-1);
+    // LD_addr_A(wObjectFollow_Leader);
+    // RET;
+    wram->wObjectFollow_Leader = 0xff;
 }
 
 void SetFollowerIfVisible(void) {
@@ -4569,6 +4617,32 @@ void SetFollowerIfVisible(void) {
     RET;
 }
 
+bool SetFollowerIfVisible_Conv(uint8_t a) {
+    // SET_PC(aSetFollowerIfVisible);
+    // PUSH_AF;
+    // CALL(aResetFollower);
+    ResetFollower_Conv();
+    // POP_AF;
+    // CALL(aCheckObjectVisibility);
+    // RET_C;
+    struct Object* bc = CheckObjectVisibility_Conv(a);
+    if(bc == NULL)
+        return false;
+    // LD_HL(OBJECT_MOVEMENTTYPE);
+    // ADD_HL_BC;
+    // LD_hl(SPRITEMOVEDATA_FOLLOWING);
+    bc->movementType = SPRITEMOVEDATA_FOLLOWING;
+    // LD_HL(OBJECT_STEP_TYPE);
+    // ADD_HL_BC;
+    // LD_hl(STEP_TYPE_RESET);
+    bc->stepType = STEP_TYPE_RESET;
+    // LDH_A_addr(hObjectStructIndex);
+    // LD_addr_A(wObjectFollow_Follower);
+    wram->wObjectFollow_Follower = hram->hObjectStructIndex;
+    // RET;
+    return true;
+}
+
 void ResetFollower(void) {
     SET_PC(aResetFollower);
     LD_A_addr(wObjectFollow_Follower);
@@ -4579,6 +4653,23 @@ void ResetFollower(void) {
     LD_A(-1);
     LD_addr_A(wObjectFollow_Follower);
     RET;
+}
+
+void ResetFollower_Conv(void) {
+    // SET_PC(aResetFollower);
+    // LD_A_addr(wObjectFollow_Follower);
+    // CP_A(-1);
+    // RET_Z;
+    if(wram->wObjectFollow_Follower == 0xff)
+        return;
+    // CALL(aGetObjectStruct);
+    struct Object* bc = GetObjectStruct_Conv(wram->wObjectFollow_Follower);
+    // FARCALL(aResetObject);  // no need to farcall
+    ResetObject_Conv(bc);
+    // LD_A(-1);
+    // LD_addr_A(wObjectFollow_Follower);
+    wram->wObjectFollow_Follower = 0xff;
+    // RET;
 }
 
 void FreezeAllOtherObjects(void) {
@@ -4601,7 +4692,8 @@ bool FreezeAllOtherObjects_Conv(uint8_t c) {
     // LD_A_C;
     // CALL(aCheckObjectVisibility);
     // RET_C;
-    if(!CheckObjectVisibility_Conv(c))
+    struct Object* bc = CheckObjectVisibility_Conv(c);
+    if(bc == NULL)
         return false;
     // PUSH_BC;
     // CALL(aFreezeAllObjects);
@@ -4610,7 +4702,7 @@ bool FreezeAllOtherObjects_Conv(uint8_t c) {
     // LD_HL(OBJECT_FLAGS2);
     // ADD_HL_BC;
     // RES_hl(FROZEN_F);
-    bit_reset((&wram->wPlayerStruct + c)->flags2, FROZEN_F);
+    bit_reset(bc->flags2, FROZEN_F);
     // XOR_A_A;
     // RET;
     return true;
@@ -4864,6 +4956,61 @@ standing_movefns:
     // db ['SPRITEMOVEDATA_STANDING_RIGHT'];
 
     return v_UpdateSprites();
+}
+
+static void ResetObject_set_standing_Conv(struct Object* bc) {
+    static const uint8_t standing_movefns[] = {
+        SPRITEMOVEDATA_STANDING_DOWN,
+        SPRITEMOVEDATA_STANDING_UP,
+        SPRITEMOVEDATA_STANDING_LEFT,
+        SPRITEMOVEDATA_STANDING_RIGHT,
+    };
+
+    // CALL(aGetSpriteDirection);
+    uint8_t dir = GetSpriteDirection_Conv(bc);
+    // RRCA;
+    // RRCA;
+    // LD_E_A;
+    // LD_D(0);
+    // LD_HL(mResetObject_standing_movefns);
+    // ADD_HL_DE;
+    // LD_A_hl;
+    // LD_HL(OBJECT_MOVEMENTTYPE);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    bc->movementType = standing_movefns[dir >> 2];
+    // LD_HL(OBJECT_STEP_TYPE);
+    // ADD_HL_BC;
+    // LD_hl(STEP_TYPE_RESET);
+    bc->stepType = STEP_TYPE_RESET;
+    // RET;
+}
+
+void ResetObject_Conv(struct Object* bc) {
+    // SET_PC(aResetObject);
+    // LD_HL(OBJECT_MAP_OBJECT_INDEX);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // CP_A(-1);
+    // JP_Z(mResetObject_set_standing);  // a jr would have been appropriate here
+    if(bc->mapObjectIndex == 0xff)
+        return ResetObject_set_standing_Conv(bc);
+    // PUSH_BC;
+    // CALL(aGetMapObject);
+    struct MapObject* obj = GetMapObject_Conv(bc->mapObjectIndex);
+    // LD_HL(MAPOBJECT_MOVEMENT);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // POP_BC;
+    // LD_HL(OBJECT_MOVEMENTTYPE);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    bc->movementType = obj->objectMovement;
+    // LD_HL(OBJECT_STEP_TYPE);
+    // ADD_HL_BC;
+    // LD_hl(STEP_TYPE_RESET);
+    bc->stepType = STEP_TYPE_RESET;
+    // RET;
 }
 
 void v_UpdateSprites(void) {

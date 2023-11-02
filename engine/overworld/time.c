@@ -61,9 +61,8 @@ void NextCallReceiveDelay(void){
 debug_ok:
     LD_A_H;
 #endif
-    JP(mRestartReceiveCallDelay);
-
-    return CheckReceiveCallTimer();
+    // JP(mRestartReceiveCallDelay);
+    RestartReceiveCallDelay_Conv(a);
 }
 
 void CheckReceiveCallTimer(void){
@@ -175,6 +174,18 @@ void RestartReceiveCallDelay(void){
     CALL(aCopyDayHourMinToHL);
     RET;
 
+}
+
+void RestartReceiveCallDelay_Conv(uint8_t a){
+    // LD_HL(wReceiveCallDelay_MinsRemaining);
+    // LD_hl_A;
+    wram->wReceiveCallDelay_MinsRemaining = a;
+    // CALL(aUpdateTime);
+    UpdateTime_Conv();
+    // LD_HL(wReceiveCallDelay_StartTime);
+    // CALL(aCopyDayHourMinToHL);
+    CopyDayHourMinToHL_Conv(wram->wReceiveCallDelay_StartTime);
+    // RET;
 }
 
 void CheckReceiveCallDelay(void){
@@ -954,4 +965,17 @@ void CopyDayHourMinToHL(void){
     LD_hli_A;
     RET;
 
+}
+
+void CopyDayHourMinToHL_Conv(uint8_t* hl){
+    // LD_A_addr(wCurDay);
+    // LD_hli_A;
+    hl[0] = wram->wCurDay;
+    // LDH_A_addr(hHours);
+    // LD_hli_A;
+    hl[1] = hram->hHours;
+    // LDH_A_addr(hMinutes);
+    // LD_hli_A;
+    hl[2] = hram->hMinutes;
+    // RET;
 }

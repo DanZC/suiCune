@@ -14,56 +14,101 @@ class SubCmd:
 
 commands = {
     'special': Cmd('special', ['id']),
-    'promptbutton': Cmd('promptbutton', []),
+    'jumptextfaceplayer': Cmd('jumptextfaceplayer', ['text']),
+    'farjumptext': Cmd('jumptext', ['text']),
+    'jumptext': Cmd('jumptext', ['text']),
+    'farwritetext': Cmd('writetext', ['text']),
+    'writetext': Cmd('writetext', ['text']),
+    'reoeattext': Cmd('repeattext', ['hl']),
     'waitbutton': Cmd('waitbutton', []),
+    'promptbutton': Cmd('promptbutton', []),
+    'verbosegiveitem': Cmd('verbosegiveitem', ['item', 'count']),
+    'itemnotify': Cmd('itemnotify', []),
+    'pocketisfull': Cmd('pocketisfull', []),
+    'specialsound': Cmd('specialsound', []),
+    'endifjustbattled': Cmd('endifjustbattled', []),
+    'checkjustbattled': Cmd('checkjustbattled', []),
+    'playmusic': Cmd('playmusic', ['music']),
     'playsound': Cmd('playsound', ['sfx']),
     'waitsfx': Cmd('waitsfx', []),
-    'playmusic': Cmd('playmusic', ['music']),
-    'setevent': Cmd('setevent', ['event']),
-    'checkevent': Cmd('checkevent', ['event']),
-    'clearevent': Cmd('clearevent', ['event']),
-    'setscene': Cmd('setscene', ['scene']),
-    'setmapscene': Cmd('setmapscene', ['map', 'scene']),
-    'setval': Cmd('setval', ['value']),
-    'addval': Cmd('addval', ['value']),
-    'readvar': Cmd('readvar', ['var']),
-    'end': Cmd("s_end", []),
-    'checkflag': Cmd('checkflag', ['flag']),
-    'setflag': Cmd('setflag', ['flag']),
-    'clearflag': Cmd('clearflag', ['flag']),
-    'sjump': Cmd('sjump', ['dest']),
-    'farsjump': Cmd('sjump', ['dest']),
+    'setlasttalked': Cmd('setlasttalked', ['obj']),
+    'applymovement': Cmd('applymovement', ['id', 'movement']),
+    'applymovementlasttalked': Cmd('applymovementlasttalked', ['movement']),
+    'faceplayer': Cmd('faceplayer', []),
+    'faceobject': Cmd('faceobject', ['obj', 'facing']),
+    'turnobject': Cmd('turnobject', ['obj', 'dir']),
+    'variablesprite': Cmd('variablesprite', ['slot', 'val']),
+    'appear': Cmd('appear', ['obj']),
+    'disappear': Cmd('disappear', ['obj']),
+    'follow': Cmd('follow', ['leader', 'follower']),
+    'stopfollow': Cmd('stopfollow', []),
+    'writeobjectxy': Cmd('writeobjectxy', ['obj']),
+    'loademote': Cmd('loademote', ['emote']),
+    'showemote': Cmd('showemote', ['emote', 'obj', 'frames']),
+    'earthquake': Cmd('earthquake', ['amt']),
+    'randomwildmon': Cmd('randomwildmon', []),
+    'loadwildmon': Cmd('loadwildmon', ['species', 'level']),
+    'loadtrainer': Cmd('loadtrainer', ['class', 'id']),
+    'startbattle': Cmd('startbattle', []),
     'scall': Cmd('scall', ['dest']),
     'farscall': Cmd('scall', ['dest']),
+    'sjump': Cmd('sjump', ['dest']),
+    'farsjump': Cmd('sjump', ['dest']),
     'ifless': Cmd('ifless_jump', ['dest']),
     'iftrue': Cmd('iftrue_jump', ['dest']),
     'iffalse': Cmd('iffalse_jump', ['dest']),
     'ifequal': Cmd('ifequal_jump', ['value', 'dest']),
     'ifnotequal': Cmd('ifnotequal_jump', ['value', 'dest']),
-    'readvar': Cmd('readvar', ['value']),
-    'farwritetext': Cmd('writetext', ['text']),
-    'writetext': Cmd('writetext', ['text']),
-    'jumptext': Cmd('jumptext', ['text']),
-    'farjumptext': Cmd('jumptext', ['text']),
-    'opentext': Cmd('opentext', []),
-    'closetext': Cmd('closetext', []),
-    'faceplayer': Cmd('faceplayer', []),
-    'trainer': Cmd('trainer', ['unk']),
     'jumpstd': Cmd('jumpstd', ['std']),
     'callstd': Cmd('callstd', ['std']),
-    'pause': Cmd('pause', ['n']),
-    'wait': Cmd('wait', []),
+    'sdefer': Cmd('sdefer', ['script']),
+    'checkscene': Cmd('checkscene', []),
+    'setscene': Cmd('setscene', ['scene']),
+    'setmapscene': Cmd('setmapscene', ['map', 'scene']),
+    'readmem': Cmd('readmem', ['mem']),
+    'writemem': Cmd('writemem', ['mem']),
+    'loadmem': Cmd('loadmem', ['mem', 'value']),
+    'setval': Cmd('setval', ['value']),
+    'addval': Cmd('addval', ['value']),
+    'random': Cmd('srandom', ['val']),
+    'readvar': Cmd('readvar', ['var']),
+    'writevar': Cmd('writevar', ['var']),
+    'loadvar': Cmd('loadvar', ['var']),
+    'getmonname': Cmd('getmonname', ['mon_id', 'buffer']),
+    'getitemname': Cmd('getitemname', ['item_id', 'buffer']),
+    'getcurlandmarkname': Cmd('getcurlandmarkname', ['buffer']),
+    'getlandmarkname': Cmd('getlandmarkname', ['landmark_id', 'buffer']),
+    'gettrainername': Cmd('gettrainername', ['buffer', 'trainer_class', 'trainer_id']),
+    'gettrainerclassname': Cmd('gettrainerclassname', ['buffer', 'trainer_class']),
+    'getnum': Cmd('getnum', ['num']),
+    'getstring': Cmd('getstring', ['buffer', 'str']),
+    'setevent': Cmd('setevent', ['event']),
+    'checkevent': Cmd('checkevent', ['event']),
+    'clearevent': Cmd('clearevent', ['event']),
+    'giveitem': Cmd('giveitem', ['item', 'count']),
+    'checkitem': Cmd('checkitem', ['item', 'count']),
+    'givemoney': Cmd('givemoney', ['account', 'amount']),
+    'checkmoney': Cmd('checkmoney', ['account', 'amount']),
+    'givecoins': Cmd('givecoins', ['amount']),
+    'checkcoins': Cmd('checkcoins', ['amount']),
     'checktime': Cmd('checktime', ['tod']),
     'specialphonecall': Cmd('specialphonecall', ['id']),
     'checkphonecall': Cmd('checkphonecall', []),
-    'endcallback': Cmd('s_endcallback', []),
-    'getcurlandmarkname': Cmd('getcurlandmarkname', []),
-    'getlandmarkname': Cmd('getlandmarkname', ['buffer', 'landmark_id']),
-    'gettrainername': Cmd('gettrainername', ['buffer', 'trainer_class', 'trainer_id']),
-    'getmonname': Cmd('getmonname', ['buffer', 'mon_id']),
-    'getstring': Cmd('getstring', ['buffer', 'str']),
-    'random': Cmd('srandom', ['val']),
-    'applymovement': Cmd('applymovement', ['id', 'movement']),
+    'setevent': Cmd('setflag', ['flag']),
+    'clearevent': Cmd('clearflag', ['flag']),
+    'checkevent': Cmd('checkflag', ['flag']),
+    'setflag': Cmd('setflag', ['flag']),
+    'clearflag': Cmd('clearflag', ['flag']),
+    'checkflag': Cmd('checkflag', ['flag']),
+    'opentext': Cmd('opentext', []),
+    'refreshscreen': Cmd('refreshscreen', []),
+    'closetext': Cmd('closetext', []),
+    'autoinput': Cmd('autoinput', ['input']),
+    'pause': Cmd('pause', ['n']),
+    'end': Cmd("s_end", []),
+    'endcallback': Cmd("s_endcallback", []),
+    'endall': Cmd("s_endall", []),
+    'wait': Cmd('wait', []),
 }
 
 text_commands = {
@@ -78,7 +123,13 @@ mvmt_commands = {
     'slow_step': Cmd('slow_step', ['dir']),
     'step': Cmd('step', ['dir']),
     'big_step': Cmd('big_step', ['dir']),
+    'jump_step': Cmd('jump_step', ['dir']),
     'turn_head': Cmd('turn_head', ['dir']),
+    'step_sleep': Cmd('step_sleep', ['n']),
+    'remove_fixed_facing': Cmd('movement_remove_fixed_facing', []),
+    'fix_facing': Cmd('movement_fix_facing', []),
+    'show_object': Cmd('movement_show_object', []),
+    'hide_object': Cmd('movement_hide_object', []),
     'step_end': Cmd('movement_step_end', []),
 }
 
@@ -90,7 +141,7 @@ text_sub_commands = {
     'prompt': SubCmd('t_prompt', True),
 }
 
-term = ['sjump', 'farsjump', 'end', 'jumpstd', 'jumptext', 'farjumptext', 'endcallback']
+term = ['sjump', 'farsjump', 'end', 'jumpstd', 'jumptext', 'farjumptext', 'jumptextfaceplayer', 'endcallback', 'endall']
 
 @dataclass
 class Comment:
@@ -150,7 +201,7 @@ def split_args(line: str):
 
 
 def format_command(cmd: str, parts: List[str]):
-    print(cmd, parts)
+    # print(cmd, parts)
     if cmd in commands.keys():
         if cmd in ['iftrue', 'iffalse']:
             if parts[0].startswith('.'):
@@ -164,6 +215,8 @@ def format_command(cmd: str, parts: List[str]):
                 return f"{cmd}_jump({format_arg(parts[0])}, {parts[1]})"
         if cmd == 'sjump' and parts[0].startswith('.'):
             return f"goto {parts[0][1:]};"
+        if cmd == 'scall' and parts[0].startswith('.'):
+            return f"scall_local({parts[0][1:]});"
         if len(commands[cmd].args) == 0:
             return f"{commands[cmd].name}"
         else:
@@ -200,8 +253,8 @@ def format_command(cmd: str, parts: List[str]):
             return f'{mvmt_commands[cmd].name},'
     else:
         if len(parts) == 0:
-            return f"// {cmd}"
-        s = f"// {cmd}("
+            return f"//{cmd}"
+        s = f"//{cmd}("
         for part in parts:
             s += f"{part}, "
         return s[:-2] + ")"
@@ -266,7 +319,7 @@ def parse_inline_label(name: str, after: str, comment: str):
 def parse_line(line: str):
     if line == '':
         return None
-    print(line)
+    # print(line)
     if line.startswith(';'):
         return Comment(line[1:], False)
     if line.startswith('INCLUDE'):
@@ -392,7 +445,7 @@ def convert_script(path: str):
     with open(path, 'r', encoding='utf8') as f:
         lines = f.read().splitlines()
     
-    convert_script_from_lines(path, lines)
+    return convert_script_from_lines(path, lines)
 
 def convert_script_from_lines(path: str, lines: List[str]):
     script = parse_script(lines)
@@ -411,6 +464,7 @@ def convert_script_from_lines(path: str, lines: List[str]):
         if isinstance(ln, Label):
             nxt = find_next_command(script, i+1)
             if nxt is not None:
+                # print(nxt.name)
                 if nxt.name == 'text':
                     if cur_text != '':
                         out += end_text()
@@ -489,6 +543,19 @@ def convert_script_from_lines(path: str, lines: List[str]):
                     cur_script = f'{label_name}_Script'
                     out += begin_script(cur_script)
                     out_h += f"bool {cur_script}(script_s* s);\n"
+                    continue
+                if nxt.name == 'db' and nxt.args[0].startswith('"'):
+                    if cur_text != '':
+                        out += end_text()
+                    if cur_script != '':
+                        out += end_script()
+                    if cur_movement != '':
+                        out += end_movement()
+                    cur_script = ''
+                    cur_movement = ''
+                    cur_text = ''
+                    out += f"const char {ln.name}[] = "
+                    out_h += f"extern const char {ln.name}[];\n"
                     continue
                 if nxt.name in mvmt_commands.keys():
                     if cur_text != '':

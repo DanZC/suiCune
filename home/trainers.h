@@ -17,3 +17,7 @@ void FacingPlayerDistance(void);
 struct FacingDist FacingPlayerDistance_Conv(struct Object* bc);
 void CheckTrainerFlag(void);
 void PrintWinLossText(void);
+void PrintWinLossText_Conv(void);
+
+extern const struct TextCmd* gWinTextPointer;
+extern const struct TextCmd* gLossTextPointer;

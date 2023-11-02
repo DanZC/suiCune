@@ -1220,9 +1220,9 @@ struct PhoneContact {
     uint8_t mapGroup;
     uint8_t mapNumber;
     uint8_t calleeTime;
-    const Script_fn_t calleeScript;
+    Script_fn_t calleeScript;
     uint8_t callerTime;
-    const Script_fn_t callerScript;
+    Script_fn_t callerScript;
 };
 
 typedef struct ItemPocketEntry {

@@ -25,6 +25,7 @@ out = {
 }
 
 script_lines = []
+in_map_scripts = False
 
 i = 0
 while i < len(lines):
@@ -34,6 +35,19 @@ while i < len(lines):
         i += 1
         continue
     if not line[0].isspace():
+        if line.startswith(f'{map_name}_MapScripts:'):
+            in_map_scripts = True
+            i += 1
+            continue
+        elif line.startswith(f'{map_name}_MapEvents:'):
+            in_map_scripts = True
+            i += 1
+            continue
+        elif in_map_scripts and line[0] == '.':
+            script_lines.append(f'{map_name}_MapScripts_{line[1:]}:')
+            i += 1
+            continue
+        in_map_scripts = False
         script_lines.append(line)
         i += 1
         continue
@@ -49,7 +63,13 @@ while i < len(lines):
     if line == 'def_scene_scripts':
         i += 1
         while i < len(lines) and lines[i].strip().startswith('scene_script'):
-            script = lines[i].strip().split(' ', maxsplit=1)[1]
+            restline = script = lines[i].strip().split(' ', maxsplit=1)[1]
+            if restline.find(';') != -1:
+                script = restline.replace(';', ', // ')
+            else:
+                script = restline + ','
+            if script.startswith('.'):
+                script = f'{map_name}_MapScripts_{script[1:]}'
             out["scene_scripts"].append(script)
             i += 1
         continue
@@ -152,7 +172,7 @@ def map_json_to_c(dict: Dict[str, any]):
     out += f'const struct MapCallback {dict["map_name"]}_MapCallbacks[] = {{\n'
     for script in dict["callbacks"]:
         if script["script"].startswith('.'):
-            s = f'{dict["map_name"]}_MapCallbacks_{script["script"][1:]}'
+            s = f'{dict["map_name"]}_MapScripts_{script["script"][1:]}'
         else:
             s = script["script"]
         out += f'    map_callback({script["type"]}, {s}),\n'
@@ -201,7 +221,10 @@ if do_print:
     out_, out_h_ = map_json_to_c(out)
     out2_, out2_h_ = convert_script_from_lines(sys.argv[1], script_lines)
     out2_h_ = out2_h_.replace('#pragma once\n', '\n')
-    print(out2_)
+    out2_ = out2_.replace('#include "../../../constants.h"\n#include "../../../util/scripting_macros.h"', '')
+    out3_h = out_h_ + out2_h_
+    out3 = out_ + out2_
+    print(out3)
 else:
     out_filepath = sys.argv[2]
     if out_filepath.endswith('.json'):
