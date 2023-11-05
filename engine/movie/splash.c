@@ -206,7 +206,7 @@ void GameFreakPresentsInit(void){
     hram->hBGMapMode = 1;
     // LD_A(144);
     // LDH_addr_A(hWY);
-    hram->hWY = 144;
+    hram->hWY = SCREEN_HEIGHT_PX;
     // LD_DE((0b11100100 << 8) | 0b11100100);
     // CALL(aDmgToCgbObjPals);
     DmgToCgbObjPals_Conv(0b11100100, 0b11100100);

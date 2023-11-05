@@ -36,4 +36,6 @@ void CheckSFX(void);
 bool CheckSFX_Conv(void);
 void TerminateExpBarSound(void);
 void ChannelsOff(void);
+void ChannelsOff_Conv(void);
 void SFXChannelsOff(void);
+void SFXChannelsOff_Conv(void);

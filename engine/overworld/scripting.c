@@ -103,6 +103,7 @@ void ScriptEvents_Conv(void){
             case SCRIPT_WAIT_MOVEMENT: WaitScriptMovement_Conv(); break;
             case SCRIPT_WAIT: WaitScript_Conv(); break;
         }
+        DelayFrame();
         // CALL(aCheckScript);
         // IF_NZ goto loop;
     } while(CheckScript_Conv());
@@ -569,7 +570,7 @@ void StartScript_Conv(void){
     // LD_HL(wScriptFlags);
     // SET_hl(SCRIPT_RUNNING);
     // RET;
-    wram->wScriptFlags |= (1 << SCRIPT_RUNNING);
+    bit_set(wram->wScriptFlags, SCRIPT_RUNNING);
 }
 
 void CheckScript(void){
@@ -597,7 +598,7 @@ void StopScript_Conv(void){
     // LD_HL(wScriptFlags);
     // RES_hl(SCRIPT_RUNNING);
     // RET;
-    wram->wScriptFlags &= (1 << SCRIPT_RUNNING) ^ 0xff;
+    bit_reset(wram->wScriptFlags, SCRIPT_RUNNING);
 }
 
 void Script_callasm(void){
@@ -718,6 +719,7 @@ bool JumpTextScript(script_s* s){
     repeattext(0xffff);
     waitbutton;
     closetext;
+    s_end
     SCRIPT_END
 }
 
@@ -1007,6 +1009,7 @@ bool GiveItemScript(script_s* s){
 Full:
     promptbutton
     pocketisfull
+    s_end
     SCRIPT_END
 }
 

@@ -168,3 +168,7 @@ void SafeCallGB(uint32_t address, struct cpu_registers_s* regs) {
     }
     RESTORE_REGS;
 }
+
+void SafeCallGBAuto(uint32_t address) {
+    return SafeCallGB(address, &gb.cpu_reg);
+}

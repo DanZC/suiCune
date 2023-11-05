@@ -829,6 +829,16 @@ void ChannelsOff(void) {
     RET;
 };
 
+// Quickly turn off music channels
+void ChannelsOff_Conv(void) {
+    chan[CHAN1]->channelOn = 0;
+    chan[CHAN2]->channelOn = 0;
+    chan[CHAN3]->channelOn = 0;
+    chan[CHAN4]->channelOn = 0;
+    wram->wPitchSweep = 0;
+    // RET;
+};
+
 void SFXChannelsOff(void) {
     // Quickly turn off sound effect channels
     chan[CHAN5]->channelOn = 0;
@@ -837,4 +847,14 @@ void SFXChannelsOff(void) {
     chan[CHAN8]->channelOn = 0;
     gb_write(wPitchSweep, 0);
     RET;
+}
+
+// Quickly turn off sound effect channels
+void SFXChannelsOff_Conv(void) {
+    chan[CHAN5]->channelOn = 0;
+    chan[CHAN6]->channelOn = 0;
+    chan[CHAN7]->channelOn = 0;
+    chan[CHAN8]->channelOn = 0;
+    wram->wPitchSweep = 0;
+    // RET;
 }

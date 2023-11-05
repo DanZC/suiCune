@@ -480,7 +480,7 @@
 // SECTION "Title", ROMX
 
 //#include "engine/movie/unused_title.h"
-//#include "engine/movie/title.h"
+#include "engine/movie/title.h"
 
 // SECTION "mobile45", ROMX
 

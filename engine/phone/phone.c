@@ -20,6 +20,7 @@
 #include "../../data/phone/non_trainer_names.h"
 #include "../../data/phone/phone_contacts.h"
 #include "../../data/phone/special_calls.h"
+#include "../../data/phone/permanent_numbers.h"
 
 struct PhoneContact gCallerContact;
 Script_fn_t gPhoneCaller;
@@ -66,6 +67,30 @@ bool AddPhoneNumber_Conv(uint8_t c){
     return true;
 }
 
+bool AddPhoneNumber_Conv2(uint8_t c){
+    // CALL(av_CheckCellNum);
+    uint8_t* hl = v_CheckCellNum_Conv2(c);
+
+    // IF_C goto cant_add;
+    if(hl != NULL) {
+        return false;
+    }
+
+    // CALL(aPhone_FindOpenSlot);
+    // IF_NC goto cant_add;
+    hl = Phone_FindOpenSlot_Conv2(c);
+    if(hl == NULL) {
+        return false;
+    }
+
+    // LD_hl_C;
+    *hl = c;
+    
+    // XOR_A_A;
+    // RET;
+    return true;
+}
+
 void DelCellNum(void){
     CALL(av_CheckCellNum);
     IF_NC goto not_in_list;
@@ -92,6 +117,22 @@ bool DelCellNum_Conv(uint8_t c){
     // XOR_A_A;
     // LD_hl_A;
     gb_write(hl, 0);
+
+    // RET;
+    return true;
+}
+
+bool DelCellNum_Conv2(uint8_t c){
+    // CALL(av_CheckCellNum);
+    // IF_NC goto not_in_list;
+    uint8_t* hl = v_CheckCellNum_Conv2(c);
+    if(hl == NULL) {
+        return false;
+    }
+
+    // XOR_A_A;
+    // LD_hl_A;
+    *hl = 0;
 
     // RET;
     return true;
@@ -145,6 +186,29 @@ uint16_t v_CheckCellNum_Conv(uint8_t c){
     return 0;
 }
 
+uint8_t* v_CheckCellNum_Conv2(uint8_t c){
+    // LD_HL(wPhoneList);
+    uint8_t* hl = wram->wPhoneList;
+    // LD_B(CONTACT_LIST_SIZE);
+    for(uint8_t b = 0; b < CONTACT_LIST_SIZE; ++b) {
+    // loop:
+        // LD_A_hli;
+        // CP_A_C;
+        // IF_Z goto got_it;
+    // got_it:
+        // DEC_HL;
+        // SCF;
+        // RET;
+        if(hl[b] == c)
+            return hl + b;
+        // DEC_B;
+        // IF_NZ goto loop;
+    }
+    // XOR_A_A;
+    // RET;
+    return NULL;
+}
+
 void Phone_FindOpenSlot(void){
     CALL(aGetRemainingSpaceInPhoneList);
     LD_B_A;
@@ -191,6 +255,28 @@ uint16_t Phone_FindOpenSlot_Conv(uint8_t c){
     return 0;
 }
 
+uint8_t* Phone_FindOpenSlot_Conv2(uint8_t c){
+    // CALL(aGetRemainingSpaceInPhoneList);
+    // LD_B_A;
+    uint8_t b = GetRemainingSpaceInPhoneList_Conv(c);
+    
+    // LD_HL(wPhoneList);
+    uint8_t* hl = wram->wPhoneList;
+
+    for(uint8_t i = 0; i < b; ++i) {
+        // LD_A_hli;
+        uint8_t a = hl[i];
+        // AND_A_A;
+        // IF_Z goto FoundOpenSpace;
+        if(a == 0) {
+            return hl + i;
+        }
+        // DEC_B;
+        // IF_NZ goto loop;
+    }
+    return NULL;
+}
+
 void GetRemainingSpaceInPhoneList(void){
     XOR_A_A;
     LD_addr_A(wRegisteredPhoneNumbers);
@@ -234,7 +320,7 @@ done:
 uint8_t GetRemainingSpaceInPhoneList_Conv(uint8_t c){
     // XOR_A_A;
     // LD_addr_A(wRegisteredPhoneNumbers);
-    gb_write(wRegisteredPhoneNumbers, 0);
+    wram->wRegisteredPhoneNumbers = 0;
 
     // LD_HL(mPermanentNumbers);
     uint16_t hl = mPermanentNumbers;
@@ -273,6 +359,49 @@ uint8_t GetRemainingSpaceInPhoneList_Conv(uint8_t c){
 
     // SUB_A_hl;
     uint8_t ret = (CONTACT_LIST_SIZE - t);
+    return ret;
+}
+
+uint8_t GetRemainingSpaceInPhoneList_Conv2(uint8_t c){
+    // XOR_A_A;
+    // LD_addr_A(wRegisteredPhoneNumbers);
+    wram->wRegisteredPhoneNumbers = 0;
+
+    // LD_HL(mPermanentNumbers);
+    const uint8_t* hl = PermanentNumbers;
+
+    for(uint8_t i = 0; ; i++)
+    {
+        // LD_A_hli;
+        uint8_t a = hl[i];
+
+        // CP_A(-1);
+        // IF_Z goto done;
+        if(a == 0xff) 
+            break;
+
+        // CP_A_C;
+        // IF_Z goto continue_;
+        if(a == c)
+            continue;
+
+        // PUSH_BC;
+        // PUSH_HL;
+        // LD_C_A;
+        // CALL(av_CheckCellNum);
+        // IF_C goto permanent;
+        if(v_CheckCellNum_Conv2(c) != NULL) {
+            // LD_HL(wRegisteredPhoneNumbers);
+            // INC_hl;
+            wram->wRegisteredPhoneNumbers++;
+        }
+    }
+
+    // LD_A(CONTACT_LIST_SIZE);
+    // LD_HL(wRegisteredPhoneNumbers);
+
+    // SUB_A_hl;
+    uint8_t ret = (CONTACT_LIST_SIZE - wram->wRegisteredPhoneNumbers);
     return ret;
 }
 
@@ -1214,6 +1343,16 @@ void HangUp_Beep(void){
 
 }
 
+void HangUp_Beep_Conv(void){
+    // LD_HL(mPhoneClickText);
+    // CALL(aPrintText);
+    PrintText_Conv2(PhoneClickText);
+    // LD_DE(SFX_HANG_UP);
+    // CALL(aPlaySFX);
+    // RET;
+    return PlaySFX_Conv(SFX_HANG_UP);
+}
+
 const struct TextCmd PhoneClickText[] = {
     text_far(v_PhoneClickText)
     text_end
@@ -1227,17 +1366,28 @@ void HangUp_BoopOn(void){
 
 }
 
-// void PhoneEllipseText(void){
-    //text_far ['_PhoneEllipseText']
-    //text_end ['?']
+void HangUp_BoopOn_Conv(void){
+    // LD_HL(mPhoneEllipseText);
+    // CALL(aPrintText);
+    // RET;
+    return PrintText_Conv2(PhoneEllipseText);
+}
 
-    // return HangUp_BoopOff();
-// }
+const struct TextCmd PhoneEllipseText[] = {
+    text_far(v_PhoneEllipseText)
+    text_end
+};
 
 void HangUp_BoopOff(void){
     CALL(aSpeechTextbox);
     RET;
 
+}
+
+void HangUp_BoopOff_Conv(void){
+    // CALL(aSpeechTextbox);
+    // RET;
+    return SpeechTextbox_Conv2();
 }
 
 void Phone_StartRinging(void){

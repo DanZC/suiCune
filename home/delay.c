@@ -21,6 +21,8 @@ halt:
 void DelayFrame(void){
     //  Wait for one frame
     VBlank_Conv();
+    gb.display.WY = gb.gb_reg.WY;
+    gb.display.window_clear = 0;
     gb_finish_frame();
     // do {
     //     gb_finish_frame();

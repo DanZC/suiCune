@@ -1708,7 +1708,7 @@ static void IntroScene19(void){
     // CALL(aIntro_DecompressRequest2bpp_64Tiles);
     // Intro_DecompressRequest2bpp_64Tiles_Conv(mIntroSuicuneBackTilemap, bgcoord(0, 0, vBGMap0));
     // CALL(aIntro_LoadTilemap);
-    Intro_LoadTilemap_Conv(Load2bppBinaryAssetToBuffer(coord(0, 0, vram->vBGMap0), sizeof(vram->vBGMap0), IntroSuicuneBackTilemap, 0, 64));
+    Intro_LoadTilemap_Conv(Load2bppBinaryAssetToBuffer(bgcoord(0, 0, vram->vBGMap0), sizeof(vram->vBGMap0), IntroSuicuneBackTilemap, 0, 64));
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(MBANK(awBGPals1));
@@ -2082,7 +2082,7 @@ static void IntroScene26(void){
     // debgcoord(0, 0, vBGMap0);
     // CALL(aIntro_DecompressRequest2bpp_64Tiles);
     // Intro_DecompressRequest2bpp_64Tiles_Conv(mIntroCrystalUnownsAttrmap, bgcoord(0, 0, vBGMap0));
-    Load2bppBinaryAssetToBuffer(coord(0, 0, vram->vBGMap2), sizeof(vram->vBGMap2), IntroCrystalUnownsAttrmap, 0, 64);
+    Load2bppBinaryAssetToBuffer(bgcoord(0, 0, vram->vBGMap2), sizeof(vram->vBGMap2), IntroCrystalUnownsAttrmap, 0, 64);
     // LD_A(0x0);
     // LDH_addr_A(rVBK);
     // gb_write(rVBK, 0x0);
@@ -2095,7 +2095,7 @@ static void IntroScene26(void){
     // debgcoord(0, 0, vBGMap0);
     // CALL(aIntro_DecompressRequest2bpp_64Tiles);
     // Intro_DecompressRequest2bpp_64Tiles_Conv(mIntroCrystalUnownsTilemap, bgcoord(0, 0, vBGMap0));
-    Load2bppBinaryAssetToBuffer(coord(0, 0, vram->vBGMap0), sizeof(vram->vBGMap0), IntroCrystalUnownsTilemap, 0, 64);
+    Load2bppBinaryAssetToBuffer(bgcoord(0, 0, vram->vBGMap0), sizeof(vram->vBGMap0), IntroCrystalUnownsTilemap, 0, 64);
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(MBANK(awBGPals1));

@@ -737,8 +737,8 @@ void init_function_pointers(void) {
     //REDIRECTED(OakSpeech);
     //REDIRECTED(IntroFadePalettes);
     //REDIRECTED(Intro_RotatePalettesLeftFrontpic);
-    //REDIRECTED(TitleScreenScene);
-    //REDIRECTED(RunTitleScreen);
+    CONVERTED(TitleScreenScene);
+    REDIRECTED(RunTitleScreen);
     //REDIRECTED(Intro_PlacePlayerSprite);
     //REDIRECTED(UnusedTitlePerspectiveScroll);
     //REDIRECTED(TitleScreenNextScene);
@@ -4067,4 +4067,16 @@ void init_function_pointers(void) {
     // REDIRECTED(CompareMoney);
     // REDIRECTED(SubtractFunds);
     // REDIRECTED(CheckCoins);
+
+    // engine/movie/title.c
+    // REDIRECTED(TitleSuicuneGFX);
+    // REDIRECTED(TitleCrystalGFX);
+    REDIRECTED(DrawTitleGraphic);
+    REDIRECTED(SuicuneFrameIterator);
+    // REDIRECTED(TitleLogoGFX);
+    CONVERTED(v_TitleScreen);
+    // REDIRECTED(TitleScreenPalettes);
+    REDIRECTED(InitializeBackground);
+    REDIRECTED(AnimateTitleCrystal);
+    REDIRECTED(LoadSuicuneFrame);
 }

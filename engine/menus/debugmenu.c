@@ -18,6 +18,8 @@
 #include "../gfx/pic_animation.h"
 #include "../gfx/dma_transfer.h"
 #include "../pokemon/stats_screen.h"
+#include "../phone/phone.h"
+#include "../../util/scripting.h"
 
 typedef struct {
     const char* name;
@@ -35,6 +37,7 @@ void Handler_Pokedex(void);
 void Handler_Trainergear(void);
 void Handler_Stats(void);
 void Handler_Pics(void);
+void Handler_Script(void);
 
 static DebugMenuOption debugMenuOptions[] = {
     {"FIGHT@", Handler_Fight},
@@ -48,6 +51,7 @@ static DebugMenuOption debugMenuOptions[] = {
     {"POKEGEAR@", Handler_Trainergear},
     {"STATS@", Handler_Stats},
     {"PICS@", Handler_Pics},
+    {"SCRIPT@", Handler_Script},
 };
 
 #define MAX_OPTIONS_PER_PAGE 7
@@ -191,6 +195,11 @@ void Handler_Stats(void) {
 void Handler_Pics(void) {
     // TODO: Implement this function
     DebugMenu_Pics();
+    PlayMusic_Conv(DEBUG_MENU_MUSIC);
+}
+
+void Handler_Script(void) {
+    DebugMenu_Scripting();
     PlayMusic_Conv(DEBUG_MENU_MUSIC);
 }
 
@@ -638,6 +647,65 @@ void DebugMenu_Pics(void) {
         }
         DelayFrame();
     }
+
+    ClearTilemap_Conv2();
+    ByteFill_Conv2(vram->vTiles0, 2048, 0);
+    ByteFill_Conv2(vram->vTiles1, 2048, 0);
+    ByteFill_Conv2(vram->vTiles2, 2048, 0);
+    v_LoadFontsExtra1_Conv();
+    v_LoadFontsExtra2_Conv();
+    v_LoadStandardFont_Conv();
+    TextboxPalette_Conv2(wram->wTilemap, SCREEN_WIDTH, SCREEN_HEIGHT);
+    WaitBGMap_Conv();
+    DelayFrame();
+}
+
+bool DebugMenu_TestScript(script_s* s) {
+    static const struct TextCmd DebugMenu_TestText[] = {
+        text_start("This text was"
+            t_line "written in C."
+            t_para "Isn't that"
+            t_line "pretty cool?"
+            t_done )
+        text_end
+    };
+    static const struct TextCmd DebugMenu_TestText2[] = {
+        text_start("The item name"
+            t_line "is @" )
+        text_ram(wram_ptr(wStringBuffer3))
+        text_start("!"
+            t_done )
+        text_end
+    };
+    SCRIPT_BEGIN
+    pause(10)
+    scall_local(text)
+    scall_local(text2)
+    s_end
+text:
+    jumptext(DebugMenu_TestText)
+text2:
+    getitemname(POTION, STRING_BUFFER_3)
+    jumptext(DebugMenu_TestText2)
+    SCRIPT_END
+}
+
+void DebugMenu_Scripting(void) {
+    ClearScreen_Conv2();
+    v_LoadFontsExtra1_Conv();
+    v_LoadFontsExtra2_Conv();
+    v_LoadStandardFont_Conv();
+    WaitBGMap_Conv();
+
+    gCurScript.fn = DebugMenu_TestScript;
+    gCurScript.position = 0;
+    gCurScript.stack_ptr = 0;
+
+    wram->wScriptMode = SCRIPT_READ;
+    
+    ScriptEvents_Conv();
+    
+    wram->wScriptMode = SCRIPT_OFF;
 
     ClearTilemap_Conv2();
     ByteFill_Conv2(vram->vTiles0, 2048, 0);

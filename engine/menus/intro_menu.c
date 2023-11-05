@@ -10,11 +10,13 @@
 #include "../../home/gfx.h"
 #include "../../home/text.h"
 #include "../../home/pokemon.h"
+#include "../../home/joypad.h"
 #include "../../gfx/misc.h"
 #include "../../data/text/common.h"
 #include "../../charmap.h"
 #include "../movie/splash.h"
 #include "../movie/intro.h"
+#include "../movie/title.h"
 
 void Intro_MainMenu() {
     PlayMusic_Conv(MUSIC_NONE);
@@ -1157,7 +1159,6 @@ void IntroSequence(void){
     // JR_C (mStartTitleScreen);
     if(!skip)
 // Comment the line below to remove the intro movie.
-        // CrystalIntro();
         FARCALL(aCrystalIntro);
 
 // fallthrough
@@ -1255,6 +1256,28 @@ done_title:
 
 }
 
+bool RunTitleScreen_Conv(void){
+    // LD_A_addr(wJumptableIndex);
+    // BIT_A(7);
+    // IF_NZ goto done_title;
+    if(bit_test(wram->wJumptableIndex, 7)) {
+    // done_title:
+        // SCF;
+        // RET;
+        return true;
+    }
+
+    // CALL(aTitleScreenScene);
+    TitleScreenScene_Conv(wram->wJumptableIndex);
+    // FARCALL(aSuicuneFrameIterator);
+    SuicuneFrameIterator_Conv();
+    // CALL(aDelayFrame);
+    DelayFrame();
+    // AND_A_A;
+    // RET;
+    return false;
+}
+
 void UnusedTitlePerspectiveScroll(void){
 //  //  unreferenced
 //  Similar behavior to Intro_PerspectiveScrollBG.
@@ -1271,24 +1294,54 @@ void UnusedTitlePerspectiveScroll(void){
 }
 
 void TitleScreenScene(void){
-    LD_E_A;
-    LD_D(0);
-    LD_HL(mTitleScreenScene_scenes);
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    JP_hl;
-
-
-scenes:
+    // LD_E_A;
+    // LD_D(0);
+    // LD_HL(mTitleScreenScene_scenes);
+    // ADD_HL_DE;
+    // ADD_HL_DE;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // JP_hl;
+// scenes:
     //dw ['TitleScreenEntrance'];
     //dw ['TitleScreenTimer'];
     //dw ['TitleScreenMain'];
     //dw ['TitleScreenEnd'];
 
-    return TitleScreenNextScene();
+    switch(REG_A) {
+        default:
+        case 0: TitleScreenEntrance_Conv(); break;
+        case 1: TitleScreenTimer_Conv(); break;
+        case 2: TitleScreenMain_Conv(); break;
+        case 3: TitleScreenEnd_Conv(); break;
+    }
+    // RET;
+}
+
+void TitleScreenScene_Conv(uint8_t a){
+    // LD_E_A;
+    // LD_D(0);
+    // LD_HL(mTitleScreenScene_scenes);
+    // ADD_HL_DE;
+    // ADD_HL_DE;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // JP_hl;
+// scenes:
+    //dw ['TitleScreenEntrance'];
+    //dw ['TitleScreenTimer'];
+    //dw ['TitleScreenMain'];
+    //dw ['TitleScreenEnd'];
+
+    switch(a) {
+        default:
+        case 0: TitleScreenEntrance_Conv(); break;
+        case 1: TitleScreenTimer_Conv(); break;
+        case 2: TitleScreenMain_Conv(); break;
+        case 3: TitleScreenEnd_Conv(); break;
+    }
 }
 
 void TitleScreenNextScene(void){
@@ -1350,6 +1403,70 @@ done:
 
 }
 
+//  Animate the logo:
+//  Move each line by 4 pixels until our count hits 0.
+void TitleScreenEntrance_Conv(void){
+    // LDH_A_addr(hSCX);
+    // AND_A_A;
+    // IF_Z goto done;
+    if(hram->hSCX != 0) {
+        // SUB_A(4);
+        // LDH_addr_A(hSCX);
+        hram->hSCX -= 4;
+
+    //  Lay out a base (all lines scrolling together).
+        // LD_E_A;
+        // LD_HL(wLYOverrides);
+        // LD_BC(8 * 10);  // logo height
+        // CALL(aByteFill);
+        ByteFill_Conv2(wram->wLYOverrides, 8 * 10, hram->hSCX);
+
+    //  Reversed signage for every other line's position.
+    //  This is responsible for the interlaced effect.
+        // LD_A_E;
+        // XOR_A(0xff);
+        // INC_A;
+        uint8_t a = -hram->hSCX;
+
+        // LD_B(8 * 10 / 2);  // logo height / 2
+        // LD_HL(wLYOverrides + 1);
+        uint8_t* hl = wram->wLYOverrides + 1;
+
+        for(uint8_t b = 0; b < 8 * 10; b += 2) {
+        // loop:
+            // LD_hli_A;
+            hl[b] = a;
+            // INC_HL;
+            // DEC_B;
+            // IF_NZ goto loop;
+        }
+
+        // FARCALL(aAnimateTitleCrystal);
+        AnimateTitleCrystal_Conv();
+        // RET;
+        return;
+    }
+
+// done:
+//  Next scene
+    // LD_HL(wJumptableIndex);
+    // INC_hl;
+    wram->wJumptableIndex++;
+    // XOR_A_A;
+    // LDH_addr_A(hLCDCPointer);
+    hram->hLCDCPointer = 0;
+
+//  Play the title screen music.
+    // LD_DE(MUSIC_TITLE);
+    // CALL(aPlayMusic);
+    PlayMusic_Conv(MUSIC_TITLE);
+
+    // LD_A(0x88);
+    // LDH_addr_A(hWY);
+    hram->hWY = 0x88;
+    // RET;
+}
+
 void TitleScreenTimer(void){
 //  Next scene
     LD_HL(wJumptableIndex);
@@ -1363,6 +1480,22 @@ void TitleScreenTimer(void){
     LD_hl_D;
     RET;
 
+}
+
+void TitleScreenTimer_Conv(void){
+//  Next scene
+    // LD_HL(wJumptableIndex);
+    // INC_hl;
+    wram->wJumptableIndex++;
+
+//  Start a timer
+    // LD_HL(wTitleScreenTimer);
+    // LD_DE(73 * 60 + 36);
+    // LD_hl_E;
+    // INC_HL;
+    // LD_hl_D;
+    // RET;
+    wram->wTitleScreenTimer = 73 * 60 + 36;
 }
 
 void TitleScreenMain(void) {
@@ -1474,6 +1607,134 @@ reset_clock:
 
 }
 
+void TitleScreenMain_Conv(void) {
+    //  Run the timer down.
+    // LD_HL(wTitleScreenTimer);
+    // LD_E_hl;
+    // INC_HL;
+    // LD_D_hl;
+    // LD_A_E;
+    // OR_A_D;
+    // IF_Z goto end;
+    if(wram->wTitleScreenTimer != 0) {
+        // DEC_DE;
+        // LD_hl_D;
+        // DEC_HL;
+        // LD_hl_E;
+        wram->wTitleScreenTimer--;
+
+        //  Save data can be deleted by pressing Up + B + Select.
+        // CALL(aGetJoypad);
+        GetJoypad_Conv();
+        // LD_HL(hJoyDown);
+        // LD_A_hl;
+        // AND_A(D_UP + B_BUTTON + SELECT);
+        // CP_A(D_UP + B_BUTTON + SELECT);
+        // IF_Z goto delete_save_data;
+        if((hram->hJoyDown & (D_UP + B_BUTTON + SELECT)) == (D_UP + B_BUTTON + SELECT)) {
+        // delete_save_data:
+            // LD_A(TITLESCREENOPTION_DELETE_SAVE_DATA);
+            wram->wTitleScreenSelectedOption = TITLESCREENOPTION_DELETE_SAVE_DATA;
+        }
+        else {
+            //  To bring up the clock reset dialog:
+
+            //  Hold Down + B + Select to initiate the sequence.
+            // LDH_A_addr(hClockResetTrigger);
+            // CP_A(0x34);
+            // IF_Z goto check_clock_reset;
+            if(hram->hClockResetTrigger == 0x34) {
+            //  Keep Select pressed, and hold Left + Up.
+            //  Then let go of Select.
+            // check_clock_reset:
+                // BIT_hl(SELECT_F);
+                // IF_NZ goto check_start;
+                if(!bit_test(hram->hJoyDown, SELECT_F)) {
+                    // XOR_A_A;
+                    // LDH_addr_A(hClockResetTrigger);
+                    hram->hClockResetTrigger = 0;
+
+                    // LD_A_hl;
+                    // AND_A(D_LEFT + D_UP);
+                    // CP_A(D_LEFT + D_UP);
+                    // IF_Z goto reset_clock;
+                    if((hram->hJoyDown & (D_LEFT + D_UP)) == (D_LEFT + D_UP)) {
+                    // reset_clock:
+                        // LD_A(TITLESCREENOPTION_RESET_CLOCK);
+                        // LD_addr_A(wTitleScreenSelectedOption);
+                        wram->wTitleScreenSelectedOption = TITLESCREENOPTION_RESET_CLOCK;
+
+                        //  Return to the intro sequence.
+                        // LD_HL(wJumptableIndex);
+                        // SET_hl(7);
+                        // RET;
+                        bit_set(wram->wJumptableIndex, 7);
+                        return;
+                    }
+                }
+            }
+
+            // LD_A_hl;
+            // AND_A(D_DOWN + B_BUTTON + SELECT);
+            // CP_A(D_DOWN + B_BUTTON + SELECT);
+            // IF_NZ goto check_start;
+            else if((hram->hJoyDown & (D_DOWN + B_BUTTON + SELECT)) == (D_DOWN + B_BUTTON + SELECT)) {
+                // LD_A(0x34);
+                // LDH_addr_A(hClockResetTrigger);
+                hram->hClockResetTrigger = 0x34;
+                // goto check_start;
+            }
+
+            //  Press Start or A to start the game.
+
+        // check_start:
+            // LD_A_hl;
+            // AND_A(START | A_BUTTON);
+            // IF_NZ goto incave;
+            if(hram->hJoyDown & (START | A_BUTTON)) {
+            // incave:
+                // LD_A(TITLESCREENOPTION_MAIN_MENU);
+                // goto done;
+                wram->wTitleScreenSelectedOption = TITLESCREENOPTION_MAIN_MENU;
+            }
+            else {
+                // RET;
+                return;
+            }
+        }
+
+    // done:
+        // LD_addr_A(wTitleScreenSelectedOption);
+
+        //  Return to the intro sequence.
+        // LD_HL(wJumptableIndex);
+        // SET_hl(7);
+        // RET;
+        bit_set(wram->wJumptableIndex, 7);
+        return;
+    }
+
+// end:
+    //  Next scene
+    // LD_HL(wJumptableIndex);
+    // INC_hl;
+    wram->wJumptableIndex++;
+
+    //  Fade out the title screen music
+    // XOR_A_A;  // MUSIC_NONE
+    // LD_addr_A(wMusicFadeID);
+    // LD_addr_A(wMusicFadeID + 1);
+    wram->wMusicFadeID = MUSIC_NONE;
+    // LD_HL(wMusicFade);
+    // LD_hl(8);  // 1 second
+    wram->wMusicFade = 8;
+
+    // LD_HL(wTitleScreenTimer);
+    // INC_hl;
+    // RET;
+    wram->wTitleScreenTimer++;
+}
+
 void TitleScreenEnd(void) {
     //  Wait until the music is done fading.
 
@@ -1492,6 +1753,30 @@ void TitleScreenEnd(void) {
     SET_hl(7);
     RET;
 
+}
+
+void TitleScreenEnd_Conv(void) {
+    //  Wait until the music is done fading.
+
+    // LD_HL(wTitleScreenTimer);
+    // INC_hl;
+    wram->wTitleScreenTimer++;
+
+    // LD_A_addr(wMusicFade);
+    // AND_A_A;
+    // RET_NZ;
+    if(wram->wMusicFade != 0)
+        return;
+
+    //LD_A(TITLESCREENOPTION_RESTART);
+    // LD_addr_A(wTitleScreenSelectedOption);
+    wram->wTitleScreenSelectedOption = TITLESCREENOPTION_RESTART;
+
+    //  Back to the intro.
+    // LD_HL(wJumptableIndex);
+    // SET_hl(7);
+    bit_set(wram->wJumptableIndex, 7);
+    // RET;
 }
 
 void DeleteSaveData(void) {

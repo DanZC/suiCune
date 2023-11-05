@@ -8,6 +8,7 @@ void ClearTilemap(void);
 void ClearTilemap_Conv(void);
 void ClearTilemap_Conv2(void);
 void ClearScreen(void);
+void ClearScreen_Conv2(void);
 void Textbox(void);
 void Textbox_Conv(uint16_t hl, uint8_t b, uint8_t c);
 void Textbox_Conv2(uint8_t* hl, uint8_t b, uint8_t c);

@@ -302,6 +302,45 @@ void LoadPNG2bppAssetToVRAM(void* dest, const char* filename) {
     stbi_image_free(pix);
 }
 
+// Loads a 2bpp PNG asset from an archive, converts it to GB pixel format,
+// and writes the result to dest, assumedly a vram destination.
+// Tiles are loaded by column instead of by row.
+void LoadPNG2bppAssetToVRAMByColumn(void* dest, const char* filename) {
+    uint8_t* d = dest;
+    asset_s a = LoadAsset(filename);
+    // printf("Loaded asset %s (%lld bytes)\n", filename, a.size);
+    if(!a.ptr) {
+        exit(-1);
+    }
+    int x, y, n;
+    uint8_t* pix = stbi_load_from_memory(a.ptr, (int)a.size, &x, &y, &n, 0);
+    if(!pix) {
+        fprintf(stderr, "%s: Load error on image %s. Reason: %s\n", __func__, filename, stbi_failure_reason());
+        exit(-1);
+    }
+    printf("2bpp %d-channel %dx%d image (%s)\n", n, x, y, filename);
+    FreeAsset(a);
+    int numTiles = (y / 8) * (x / 8);
+    int tilesPerColumn = (y / 8);
+    printf("%d tiles to write.\n", numTiles);
+    if(n == 1) {
+        for(int i = 0; i < numTiles; ++i) {
+            CopyPNG2bppGrayTileToGB(&d[i * LEN_2BPP_TILE], &pix[((i/tilesPerColumn)*8) + (((i%tilesPerColumn)*8)*x)], x);
+        }
+    }
+    else {
+        // Hack to make palette conversion work.
+        const uint32_t* palette = (uint32_t*)&stbi_g_png_palette[0];
+        // for(int i = 0; i < 4; ++i) {
+        //     printf("Color %d: r=%d, g=%d, b=%d\n", i, palette[i] & 0xff, (palette[i] & 0xff00) >> 8, (palette[i] & 0xff0000) >> 16);
+        // }
+        for(int i = 0; i < numTiles; ++i) {
+            CopyPNG2bppColorTileToGB(&d[i * LEN_2BPP_TILE], &pix[((((i/tilesPerColumn)*8)*y) + ((i%tilesPerColumn)*8))*n], x, n, palette);
+        }
+    }
+    stbi_image_free(pix);
+}
+
 // Loads a 1bpp PNG asset section from an archive, converts it to GB pixel format,
 // and writes the result to dest, assumedly a vram destination.
 void LoadPNG1bppAssetSectionToVRAM(void* dest, const char* filename, int start_tile, int tile_count) {
