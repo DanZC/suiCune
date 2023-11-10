@@ -1567,7 +1567,7 @@ void init_function_pointers(void) {
     // REDIRECTED(BattleMonNicknameText);
     // REDIRECTED(HasPlayerFainted);
     // REDIRECTED(DrawPlayerHUD);
-    // REDIRECTED(GetTrainerBackpic);
+    CONVERTED(GetTrainerBackpic);
     // REDIRECTED(GetRoamMonDVs);
     // REDIRECTED(HandleScreens);
     // REDIRECTED(HandleDefrost);
@@ -4115,4 +4115,9 @@ void init_function_pointers(void) {
     // REDIRECTED(PrintTwoDigitNumberLeftAlign);
     // REDIRECTED(OakTimeHowManyMinutesText);
     // REDIRECTED(GetTimeOfDayString);
+
+    // engine/events/pokepic.c
+    CONVERTED(Pokepic);
+    CONVERTED(ClosePokepic);
+    // REDIRECTED(PokepicMenuHeader);
 }

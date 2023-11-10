@@ -99,7 +99,7 @@
 //#include "data/text_buffers.h"
 #include "engine/menus/menu.h"
 //#include "engine/items/update_item_description.h"
-//#include "engine/events/pokepic.h"
+#include "engine/events/pokepic.h"
 //#include "engine/overworld/map_objects_2.h"
 //#include "engine/menus/scrolling_menu.h"
 //#include "engine/items/switch_items.h"

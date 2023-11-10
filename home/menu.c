@@ -711,14 +711,18 @@ void GetMenuTextStartCoord_Conv2(const struct MenuData* data, uint8_t* b, uint8_
 }
 
 void ClearMenuBoxInterior(void) {
-    CALL(aMenuBoxCoord2Tile);
-    LD_BC(SCREEN_WIDTH + 1);
-    ADD_HL_BC;
-    CALL(aGetMenuBoxDims);
-    DEC_B;
-    DEC_C;
-    CALL(aClearBox);
-    RET;
+    // CALL(aMenuBoxCoord2Tile);
+    // LD_BC(SCREEN_WIDTH + 1);
+    // ADD_HL_BC;
+    uint8_t* hl = MenuBoxCoord2Tile_Conv() + SCREEN_WIDTH + 1;
+    // CALL(aGetMenuBoxDims);
+    uint8_t c, b;
+    GetMenuBoxDims_Conv(&c, &b);
+    // DEC_B;
+    // DEC_C;
+    // CALL(aClearBox);
+    ClearBox_Conv2(hl, c, b);
+    // RET;
 }
 
 void ClearWholeMenuBox(void) {

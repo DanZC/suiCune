@@ -15,6 +15,8 @@
 #include "../gfx/pic_animation.h"
 #include "../gfx/load_pics.h"
 #include "../gfx/color.h"
+#include "../gfx/player_gfx.h"
+#include "../../gfx/misc.h"
 #include "../smallflag.h"
 #include "../pokemon/bills_pc_top.h"
 #include "../pokemon/stats_screen.h"
@@ -11102,36 +11104,44 @@ void GetTrainerBackpic(void){
 //  Load the player character's backpic (6x6) into VRAM starting from vTiles2 tile $31.
 
 //  Special exception for Dude.
-    LD_B(BANK(aDudeBackpic));
-    LD_HL(mDudeBackpic);
-    LD_A_addr(wBattleType);
-    CP_A(BATTLETYPE_TUTORIAL);
-    IF_Z goto Decompress;
+    // LD_B(BANK(aDudeBackpic));
+    // LD_HL(mDudeBackpic);
+    // LD_A_addr(wBattleType);
+    // CP_A(BATTLETYPE_TUTORIAL);
+    // IF_Z goto Decompress;
+    if(wram->wBattleType == BATTLETYPE_TUTORIAL) {
+        // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x31);
+        // LD_C(7 * 7);
+        // PREDEF(pDecompressGet2bpp);
+        // RET;
+        return LoadPNG2bppAssetToVRAMByColumn(vram->vTiles2 + LEN_2BPP_TILE * 0x31, DudeBackpic);
+    }
 
 //  What gender are we?
-    LD_A_addr(wPlayerSpriteSetupFlags);
-    BIT_A(PLAYERSPRITESETUP_FEMALE_TO_MALE_F);
-    IF_NZ goto Chris;
-    LD_A_addr(wPlayerGender);
-    BIT_A(PLAYERGENDER_FEMALE_F);
-    IF_Z goto Chris;
+    // LD_A_addr(wPlayerSpriteSetupFlags);
+    // BIT_A(PLAYERSPRITESETUP_FEMALE_TO_MALE_F);
+    // IF_NZ goto Chris;
+    // LD_A_addr(wPlayerGender);
+    // BIT_A(PLAYERGENDER_FEMALE_F);
+    // IF_Z goto Chris;
+    if(!bit_test(wram->wPlayerSpriteSetupFlags, PLAYERSPRITESETUP_FEMALE_TO_MALE_F) && bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F)) {
+    //  It's a girl.
+        // FARCALL(aGetKrisBackpic);
+        // RET;
+        return GetKrisBackpic();
+    }
 
-//  It's a girl.
-    FARCALL(aGetKrisBackpic);
-    RET;
-
-
-Chris:
+// Chris:
 //  It's a boy.
-    LD_B(BANK(aChrisBackpic));
-    LD_HL(mChrisBackpic);
+    // LD_B(BANK(aChrisBackpic));
+    // LD_HL(mChrisBackpic);
 
-
-Decompress:
-    LD_DE(vTiles2 + LEN_2BPP_TILE * 0x31);
-    LD_C(7 * 7);
-    PREDEF(pDecompressGet2bpp);
-    RET;
+// Decompress:
+    // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x31);
+    // LD_C(7 * 7);
+    // PREDEF(pDecompressGet2bpp);
+    // RET;
+    return LoadPNG2bppAssetToVRAMByColumn(vram->vTiles2 + LEN_2BPP_TILE * 0x31, ChrisBackpic);
 
 }
 

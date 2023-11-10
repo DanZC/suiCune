@@ -22,6 +22,7 @@
 #include "../events/engine_flags.h"
 #include "../events/checktime.h"
 #include "../events/money.h"
+#include "../events/pokepic.h"
 #include "variables.h"
 #include "landmarks.h"
 #include "overworld.h"
@@ -956,10 +957,35 @@ ok:
 
 }
 
+void Script_pokepic_Conv(script_s* s, species_t species){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // AND_A_A;
+    // IF_NZ goto ok;
+    // LD_A_addr(wScriptVar);
+    if(species == 0) {
+        species = wram->wScriptVar;
+    }
+
+// ok:
+    // LD_addr_A(wCurPartySpecies);
+    wram->wCurSpecies = species;
+    // FARCALL(aPokepic);
+    Pokepic();
+    // RET;
+}
+
 void Script_closepokepic(void){
     FARCALL(aClosePokepic);
     RET;
 
+}
+
+void Script_closepokepic_Conv(script_s* s){
+    (void)s;
+    // FARCALL(aClosePokepic);
+    ClosePokepic();
+    // RET;
 }
 
 void Script_verticalmenu(void){

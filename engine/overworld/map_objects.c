@@ -3738,7 +3738,7 @@ void UpdateAllObjectsFrozen_Conv(void) {
         hram->hMapObjectIndex = a;
         // CALL(aDoesObjectHaveASprite);
         // IF_Z goto ok;
-        if(!DoesObjectHaveASprite_Conv(bc)) {
+        if(DoesObjectHaveASprite_Conv(bc)) {
             // CALL(aUpdateObjectFrozen);
             UpdateObjectFrozen_Conv(bc);
         }
@@ -4330,8 +4330,8 @@ bool CheckObjectCoveredByTextbox_Conv(struct Object* bc) {
                 // LD_A_E;
                 // ADD_A(2);
                 // LD_E_A;
-                d &= 2;
-                e &= 2;
+                d += 2;
+                e += 2;
             }
 
 
@@ -5462,7 +5462,7 @@ static bool InitSprites_InitSprite(struct Object* bc) {
             // IF_Z goto nope2;
             // LDH_A_addr(hCurSpriteOAMFlags);
             // OR_A_E;
-            a = (bit_test(attr, ABSOLUTE_TILE_ID_F))? hram->hCurSpriteOAMFlags | attr: attr;
+            a = (bit_test(attr, RELATIVE_ATTRIBUTES_F))? hram->hCurSpriteOAMFlags | attr: attr;
 
         // nope2:
 

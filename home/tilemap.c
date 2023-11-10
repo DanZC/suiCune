@@ -469,6 +469,12 @@ sgb:
     return SetHPPal();
 }
 
+void GetMemSGBLayout_Conv(void) {
+    // LD_B(SCGB_DEFAULT);
+    // return GetSGBLayout();
+    return GetSGBLayout_Conv(SCGB_DEFAULT);
+}
+
 //  load sgb packets unless dmg
 void GetSGBLayout_Conv(uint8_t b) {
     // LDH_A_addr(hCGB);

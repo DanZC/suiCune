@@ -17,6 +17,7 @@
 #include "../gfx/load_pics.h"
 #include "../gfx/pic_animation.h"
 #include "../gfx/dma_transfer.h"
+#include "../gfx/color.h"
 #include "../pokemon/stats_screen.h"
 #include "../phone/phone.h"
 #include "../../util/scripting.h"
@@ -105,6 +106,8 @@ static void DebugMenu_MenuBox(void) {
 }
 
 void DebugMenu(void) {
+    uint8_t inMenu = hram->hInMenu;
+    hram->hInMenu = 1;
     PlayMusic_Conv(MUSIC_NONE);
     DelayFrame();
     PlayMusic_Conv(DEBUG_MENU_MUSIC);
@@ -142,6 +145,7 @@ void DebugMenu(void) {
     }
     PlayMusic_Conv(MUSIC_NONE);
     DelayFrame();
+    hram->hInMenu = inMenu;
 }
 
 void Handler_Fight(void) {
@@ -210,15 +214,27 @@ static const char* DebugMenu_MusicNames[] = {
     [MUSIC_ROUTE_3] = "ROUTE 3@",
     [MUSIC_ROUTE_12] = "ROUTE 12@",
     [MUSIC_MAGNET_TRAIN] = "MAGNET TRAIN@",
-    [MUSIC_KANTO_GYM_LEADER_BATTLE] = "BATTLE KANTO G@",
+    [MUSIC_KANTO_GYM_LEADER_BATTLE] = "VS KANTO GYM@",
+    [MUSIC_KANTO_TRAINER_BATTLE] = "VS KANTO TRNR@",
+    [MUSIC_KANTO_WILD_BATTLE] = "VS KANTO WILD@",
+    [MUSIC_POKEMON_CENTER] = "POKEMON CENTER@",
     [MUSIC_BICYCLE] = "BICYCLE@",
     [MUSIC_DARK_CAVE] = "DARK CAVE@",
     [MUSIC_DRAGONS_DEN] = "DRGNS DEN@",
+    [MUSIC_CRYSTAL_OPENING] = "CRYSTAL OPENING@",
+    [MUSIC_BATTLE_TOWER_THEME] = "BATTLE T OUTSIDE@",
+    [MUSIC_SUICUNE_BATTLE] = "SUICUNE BATTLE@",
+    [MUSIC_BATTLE_TOWER_LOBBY] = "BATTLE T LOBBY@",
+    [MUSIC_MOBILE_CENTER] = "POKECOM CENTER@",
 };
 
 static const char* DebugMenu_SoundNames[] = {
     [SFX_DEX_FANFARE_50_79] = "DEX FAN 50 79@",
     [SFX_ITEM] = "ITEM@",
+    [SFX_CAUGHT_MON] = "CAUGHT MON@",
+    [SFX_POTION] = "POTION@",
+    [SFX_WARP_TO] = "WARP TO",
+    [SFX_WARP_FROM] = "WARP FROM",
     [SFX_CALL] = "CALL@",
     [SFX_HANG_UP] = "HANG UP@",
     [SFX_NO_SIGNAL] = "NO SIGNAL@",
@@ -594,6 +610,7 @@ void DebugMenu_Pics_PlaceStrings(species_t* sp) {
 }
 
 static void DebugMenu_Pics_DoAnim(species_t sp) {
+    uint16_t palbuf[3 * NUM_PAL_COLORS];
     ClearBox_Conv2(coord(2, 4, wram->wTilemap), 7, 7);
 
     DelayFrame();
@@ -602,6 +619,8 @@ static void DebugMenu_Pics_DoAnim(species_t sp) {
     wram->wCurPartySpecies = sp;
     GetAnimatedFrontpic_Conv(vram->vTiles2 + LEN_2BPP_TILE * 0x00, 0);
     LoadMonAnimation_Conv(coord(2, 4, wram->wTilemap), 0x0, ANIM_MON_MENU);
+    GetPlayerOrMonPalettePointer_Conv(palbuf, wram->wCurSpecies, wram->wTempMon.mon.DVs);
+    LoadPalette_White_Col1_Col2_Black_Conv((uint16_t*)wram->wBGPals1 + 4, palbuf);
     SetPalettes_Conv();
 
     while(!SetUpPokeAnim_Conv()) {
@@ -609,9 +628,17 @@ static void DebugMenu_Pics_DoAnim(species_t sp) {
     }
 }
 
+static void DebugMenu_Pics_SetLayout(void) {
+    FillBoxCGB_Conv(coord(2, 4, wram->wAttrmap), 8, SCREEN_WIDTH, 0x1);
+}
+
 void DebugMenu_Pics(void) {
-    ClearTilemap_Conv2();
+    ClearScreen_Conv2();
+    v_LoadFontsExtra1_Conv();
+    v_LoadFontsExtra2_Conv();
     v_LoadStandardFont_Conv();
+
+    DebugMenu_Pics_SetLayout();
     
     DelayFrame();
 
@@ -649,6 +676,7 @@ void DebugMenu_Pics(void) {
     }
 
     ClearTilemap_Conv2();
+    ByteFill_Conv2(wram->wAttrmap, (SCREEN_WIDTH * SCREEN_HEIGHT), PAL_BG_TEXT);
     ByteFill_Conv2(vram->vTiles0, 2048, 0);
     ByteFill_Conv2(vram->vTiles1, 2048, 0);
     ByteFill_Conv2(vram->vTiles2, 2048, 0);
@@ -660,35 +688,26 @@ void DebugMenu_Pics(void) {
     DelayFrame();
 }
 
-bool DebugMenu_TestScript(script_s* s) {
-    static const struct TextCmd DebugMenu_TestText[] = {
-        text_start("This text was"
-            t_line "written in C."
-            t_para "Isn't that"
-            t_line "pretty cool?"
-            t_done )
-        text_end
-    };
-    static const struct TextCmd DebugMenu_TestText2[] = {
-        text_start("The item name"
-            t_line "is @" )
-        text_ram(wram_ptr(wStringBuffer3))
-        text_start("!"
-            t_done )
-        text_end
-    };
-    SCRIPT_BEGIN
-    pause(10)
-    scall_local(text)
-    scall_local(text2)
-    s_end
-text:
-    jumptext(DebugMenu_TestText)
-text2:
-    getitemname(POTION, STRING_BUFFER_3)
-    jumptext(DebugMenu_TestText2)
-    SCRIPT_END
-}
+static const struct TextCmd DebugMenu_TestText[] = {
+    text_start("This text was"
+        t_line "written in C."
+        t_para "Isn't that"
+        t_line "pretty cool?"
+        t_done )
+    text_end
+};
+
+static const struct TextCmd DebugMenu_TestText_Yes[] = {
+    text_start("Yeah!"
+        t_prompt )
+    text_end
+};
+
+static const struct TextCmd DebugMenu_TestText_No[] = {
+    text_start("Oh<……>"
+        t_prompt )
+    text_end
+};
 
 void DebugMenu_Scripting(void) {
     ClearScreen_Conv2();
@@ -697,15 +716,14 @@ void DebugMenu_Scripting(void) {
     v_LoadStandardFont_Conv();
     WaitBGMap_Conv();
 
-    gCurScript.fn = DebugMenu_TestScript;
-    gCurScript.position = 0;
-    gCurScript.stack_ptr = 0;
-
-    wram->wScriptMode = SCRIPT_READ;
-    
-    ScriptEvents_Conv();
-    
-    wram->wScriptMode = SCRIPT_OFF;
+    PrintText_Conv2(DebugMenu_TestText);
+    bool res = YesNoBox_Conv();
+    if(res) {
+        PrintText_Conv2(DebugMenu_TestText_Yes);
+    }
+    else {
+        PrintText_Conv2(DebugMenu_TestText_No);
+    }
 
     ClearTilemap_Conv2();
     ByteFill_Conv2(vram->vTiles0, 2048, 0);

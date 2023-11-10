@@ -410,7 +410,7 @@ void GetKrisBackpic(void){
     // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x31);
     // LD_BC((BANK(aKrisBackpic) << 8) | 7 * 7);  // dimensions
     // CALL(aGet2bpp);
-    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x31, KrisBackpic, 0, 7 * 7);
+    LoadPNG2bppAssetToVRAMByColumn(vram->vTiles2 + LEN_2BPP_TILE * 0x31, KrisBackpic);
     // RET;
 }
 

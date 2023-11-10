@@ -1259,7 +1259,6 @@ bool DoesObjectHaveASprite_Conv(struct Object* bc){
     // AND_A_A;
     // RET;
     return bc->sprite != 0;
-    // return gb_read(OBJECT_SPRITE + bc) != 0;
 }
 
 void SetSpriteDirection(void){

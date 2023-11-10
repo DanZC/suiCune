@@ -709,11 +709,12 @@ void v_CGB_Diploma(void){
 }
 
 void v_CGB_MapPals(void){
-    CALL(aLoadMapPals);
-    LD_A(SCGB_MAPPALS);
-    LD_addr_A(wDefaultSGBLayout);
-    RET;
-
+    // CALL(aLoadMapPals);
+    SafeCallGBAuto(aLoadMapPals);
+    // LD_A(SCGB_MAPPALS);
+    // LD_addr_A(wDefaultSGBLayout);
+    wram->wDefaultSGBLayout = SCGB_MAPPALS;
+    // RET;
 }
 
 void v_CGB_PartyMenu(void){
@@ -1043,41 +1044,40 @@ KrisPackPals:
 }
 
 void v_CGB_Pokepic(void){
-    CALL(av_CGB_MapPals);
-    LD_DE(SCREEN_WIDTH);
-    hlcoord(0, 0, wAttrmap);
-    LD_A_addr(wMenuBorderTopCoord);
-
-loop:
-    AND_A_A;
-    IF_Z goto found_top;
-    DEC_A;
-    ADD_HL_DE;
-    goto loop;
+    // CALL(av_CGB_MapPals);
+    v_CGB_MapPals();
+    // LD_DE(SCREEN_WIDTH);
+    // hlcoord(0, 0, wAttrmap);
+    // LD_A_addr(wMenuBorderTopCoord);
+    uint8_t* hl = coord(0, wram->wMenuBorderTopCoord, wram->wAttrmap);
 
 
-found_top:
-    LD_A_addr(wMenuBorderLeftCoord);
-    LD_E_A;
-    LD_D(0);
-    ADD_HL_DE;
-    LD_A_addr(wMenuBorderTopCoord);
-    LD_B_A;
-    LD_A_addr(wMenuBorderBottomCoord);
-    INC_A;
-    SUB_A_B;
-    LD_B_A;
-    LD_A_addr(wMenuBorderLeftCoord);
-    LD_C_A;
-    LD_A_addr(wMenuBorderRightCoord);
-    SUB_A_C;
-    INC_A;
-    LD_C_A;
-    LD_A(PAL_BG_GRAY);
-    CALL(aFillBoxCGB);
-    CALL(aApplyAttrmap);
-    RET;
-
+// found_top:
+    // LD_A_addr(wMenuBorderLeftCoord);
+    // LD_E_A;
+    // LD_D(0);
+    // ADD_HL_DE;
+    hl += wram->wMenuBorderLeftCoord;
+    // LD_A_addr(wMenuBorderTopCoord);
+    // LD_B_A;
+    // LD_A_addr(wMenuBorderBottomCoord);
+    // INC_A;
+    // SUB_A_B;
+    // LD_B_A;
+    uint8_t b = (wram->wMenuBorderBottomCoord + 1) - wram->wMenuBorderTopCoord;
+    // LD_A_addr(wMenuBorderLeftCoord);
+    // LD_C_A;
+    // LD_A_addr(wMenuBorderRightCoord);
+    // SUB_A_C;
+    // INC_A;
+    // LD_C_A;
+    uint8_t c = (wram->wMenuBorderRightCoord + 1) - wram->wMenuBorderLeftCoord;
+    // LD_A(PAL_BG_GRAY);
+    // CALL(aFillBoxCGB);
+    FillBoxCGB_Conv(hl, b, c, PAL_BG_GRAY);
+    // CALL(aApplyAttrmap);
+    ApplyAttrmap_Conv();
+    // RET;
 }
 
 void v_CGB_MagnetTrain(void){

@@ -176,7 +176,7 @@ void InitClock(void){
         // hlcoord(15, 10, wTilemap);
         // LD_hl(0x2);
         *coord(15, 10, wram->wTilemap) = TILE_TIMESET_DOWN;
-        hlcoord(12, 9, wTilemap);
+        // hlcoord(12, 9, wTilemap);
         // CALL(aDisplayMinutesWithMinString);
         DisplayMinutesWithMinString_Conv(coord(12, 9, wram->wTilemap));
         // LD_C(10);
