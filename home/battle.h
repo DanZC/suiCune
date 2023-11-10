@@ -14,6 +14,7 @@ uint16_t OTPartyAttr_Conv(uint8_t a);
 void ResetDamage(void);
 void ResetDamage_Conv(void);
 void SetPlayerTurn(void);
+void SetPlayerTurn_Conv(void);
 void SetEnemyTurn(void);
 void UpdateOpponentInParty(void);
 void UpdateUserInParty(void);

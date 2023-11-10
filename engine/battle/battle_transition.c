@@ -489,67 +489,85 @@ void StartTrainerBattle_Flash(void){
 }
 
 void StartTrainerBattle_SetUpForWavyOutro(void){
-    FARCALL(aRespawnPlayerAndOpponent);
-    LD_A(MBANK(awLYOverrides));
-    LDH_addr_A(rSVBK);
-    CALL(aStartTrainerBattle_NextScene);
+    PEEK("");
+    // FARCALL(aRespawnPlayerAndOpponent);
+    RespawnPlayerAndOpponent_Conv();
+    // LD_A(MBANK(awLYOverrides));
+    // LDH_addr_A(rSVBK);
+    // CALL(aStartTrainerBattle_NextScene);
+    StartTrainerBattle_NextScene();
 
-    LD_A(LOW(rSCX));
-    LDH_addr_A(hLCDCPointer);
-    XOR_A_A;
-    LDH_addr_A(hLYOverrideStart);
-    LD_A(0x90);
-    LDH_addr_A(hLYOverrideEnd);
-    XOR_A_A;
-    LD_addr_A(wBattleTransitionCounter);
-    LD_addr_A(wBattleTransitionSineWaveOffset);
-    RET;
+    // LD_A(LOW(rSCX));
+    // LDH_addr_A(hLCDCPointer);
+    hram->hLCDCPointer = LOW(rSCX);
+    // XOR_A_A;
+    // LDH_addr_A(hLYOverrideStart);
+    hram->hLYOverrideStart = 0;
+    // LD_A(0x90);
+    // LDH_addr_A(hLYOverrideEnd);
+    hram->hLYOverrideEnd = 0x90;
+    // XOR_A_A;
+    // LD_addr_A(wBattleTransitionCounter);
+    wram->wBattleTransitionCounter = 0;
+    // LD_addr_A(wBattleTransitionSineWaveOffset);
+    wram->wBattleTransitionSineWaveOffset = 0;
+    // RET;
+}
 
+static void StartTrainerBattle_DoSineWave(void) {
+    // LD_HL(wBattleTransitionSineWaveOffset);
+    // LD_A_hl;
+    // INC_hl;
+    uint8_t a = wram->wBattleTransitionSineWaveOffset++;
+    // LD_HL(wBattleTransitionCounter);
+    // LD_D_hl;
+    uint8_t d = wram->wBattleTransitionCounter;
+    // ADD_A_hl;
+    a += wram->wBattleTransitionCounter;
+    // LD_hl_A;
+    wram->wBattleTransitionCounter = a;
+    // LD_A(wLYOverridesEnd - wLYOverrides);
+    // LD_BC(wLYOverrides);
+    // LD_E(0);
+    uint8_t e = 0;
+
+    for(uint8_t a = 0; a < lengthof(wram->wLYOverrides); ++a) {
+    // loop:
+        // PUSH_AF;
+        // PUSH_DE;
+        // LD_A_E;
+        // CALL(aStartTrainerBattle_DrawSineWave);
+        // LD_bc_A;
+        // INC_BC;
+        wram->wLYOverrides[a] = StartTrainerBattle_DrawSineWave_Conv(e, d);
+        // POP_DE;
+        // LD_A_E;
+        // ADD_A(2);
+        // LD_E_A;
+        e += 2;
+        // POP_AF;
+        // DEC_A;
+        // IF_NZ goto loop;
+    }
+    // RET;
 }
 
 void StartTrainerBattle_SineWave(void){
-    LD_A_addr(wBattleTransitionCounter);
-    CP_A(0x60);
-    IF_NC goto end;
-    CALL(aStartTrainerBattle_SineWave_DoSineWave);
-    RET;
-
-
-end:
-    LD_A(BATTLETRANSITION_FINISH);
-    LD_addr_A(wJumptableIndex);
-    RET;
-
-
-DoSineWave:
-    LD_HL(wBattleTransitionSineWaveOffset);
-    LD_A_hl;
-    INC_hl;
-    LD_HL(wBattleTransitionCounter);
-    LD_D_hl;
-    ADD_A_hl;
-    LD_hl_A;
-    LD_A(wLYOverridesEnd - wLYOverrides);
-    LD_BC(wLYOverrides);
-    LD_E(0);
-
-
-loop:
-    PUSH_AF;
-    PUSH_DE;
-    LD_A_E;
-    CALL(aStartTrainerBattle_DrawSineWave);
-    LD_bc_A;
-    INC_BC;
-    POP_DE;
-    LD_A_E;
-    ADD_A(2);
-    LD_E_A;
-    POP_AF;
-    DEC_A;
-    IF_NZ goto loop;
-    RET;
-
+    PEEK("");
+    // LD_A_addr(wBattleTransitionCounter);
+    // CP_A(0x60);
+    // IF_NC goto end;
+    if(wram->wBattleTransitionCounter >= 0x60) {
+    // end:
+        // LD_A(BATTLETRANSITION_FINISH);
+        // LD_addr_A(wJumptableIndex);
+        wram->wJumptableIndex = BATTLETRANSITION_FINISH;
+        // RET;
+        return;
+    }
+    // CALL(aStartTrainerBattle_SineWave_DoSineWave);
+    StartTrainerBattle_DoSineWave();
+    // RET;
 }
 
 void StartTrainerBattle_SetUpForSpinOutro(void){
@@ -754,16 +772,19 @@ static const int8_t wedge5[] = {4, 0, 3, 0, 3, 0, 2, 0, 2, 0, 1, 0, 1, 0, 1, -1}
 }
 
 void StartTrainerBattle_SetUpForRandomScatterOutro(void){
-    FARCALL(aRespawnPlayerAndOpponent);
-    LD_A(MBANK(awLYOverrides));
-    LDH_addr_A(rSVBK);
-    CALL(aStartTrainerBattle_NextScene);
-    LD_A(0x10);
-    LD_addr_A(wBattleTransitionCounter);
-    LD_A(1);
-    LDH_addr_A(hBGMapMode);
-    RET;
-
+    // FARCALL(aRespawnPlayerAndOpponent);
+    RespawnPlayerAndOpponent_Conv();
+    // LD_A(MBANK(awLYOverrides));
+    // LDH_addr_A(rSVBK);
+    // CALL(aStartTrainerBattle_NextScene);
+    StartTrainerBattle_NextScene();
+    // LD_A(0x10);
+    // LD_addr_A(wBattleTransitionCounter);
+    wram->wBattleTransitionCounter = 0x10;
+    // LD_A(1);
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 1;
+    // RET;
 }
 
 void StartTrainerBattle_SpeckleToBlack(void){

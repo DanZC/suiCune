@@ -87,8 +87,9 @@ void Option(void) {
 }
 
 void NewGame(void) {
-    XOR_A_A;
-    LD_addr_A(wDebugFlags);
+    // XOR_A_A;
+    // LD_addr_A(wDebugFlags);
+    wram->wDebugFlags = 0;
     CALL(aResetWRAM);
     CALL(aNewGame_ClearTilemapEtc);
     CALL(aAreYouABoyOrAreYouAGirl);
@@ -127,11 +128,11 @@ void DebugRoom(void) {
 }
 
 void ResetWRAM(void) {
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
     CALL(av_ResetWRAM);
-    RET;
-
+    // RET;
 }
 
 void v_ResetWRAM(void) {

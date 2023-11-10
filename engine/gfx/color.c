@@ -4,6 +4,8 @@
 #include "../../data/pokemon/pic_pointers.h"
 #include "../../data/pokemon/unown_pic_pointers.h"
 #include "../../data/pokemon/palettes.h"
+#include "../../data/trainers/palettes.h"
+#include "../battle/core.h"
 
 // INCLUDE "engine/gfx/sgb_layouts.asm"
 
@@ -609,6 +611,13 @@ void CopyFourPalettes(void){
     return CopyPalettes();
 }
 
+void CopyFourPalettes_Conv(const uint8_t* pal){
+    // LD_DE(wBGPals1);
+    // LD_C(4);
+
+    return CopyPalettes_Conv((uint16_t*)&((struct wram_s*)gb.wram)->wBGPals1, pal, 4);
+}
+
 void CopyPalettes(void){
 
 loop:
@@ -624,6 +633,28 @@ loop:
     IF_NZ goto loop;
     RET;
 
+}
+
+void CopyPalettes_Conv(uint16_t* de, const uint8_t* hl, uint8_t c){
+    do {
+    // loop:
+        // PUSH_BC;
+        // LD_A_hli;
+        uint8_t a = *(hl++);
+        // PUSH_HL;
+        // CALL(aGetPredefPal);
+        const uint16_t* pal = GetPredefPal_Conv(a);
+        // CALL(aLoadHLPaletteIntoDE);
+        LoadHLPaletteIntoDE_Conv(de, pal);
+        de += NUM_PAL_COLORS;
+        // POP_HL;
+        // INC_HL;
+        hl++;
+        // POP_BC;
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(--c != 0);
+    // RET;
 }
 
 void GetPredefPal(void){
@@ -1117,6 +1148,18 @@ void GetBattlemonBackpicPalettePointer(void){
 
 }
 
+uint16_t* GetBattlemonBackpicPalettePointer_Conv(uint16_t* dest){
+    // PUSH_DE;
+    // FARCALL(aGetPartyMonDVs);
+    // LD_C_L;
+    // LD_B_H;
+    // LD_A_addr(wTempBattleMonSpecies);
+    // CALL(aGetPlayerOrMonPalettePointer);
+    // POP_DE;
+    // RET;
+    return GetPlayerOrMonPalettePointer_Conv(dest, wram->wTempBattleMonSpecies, GetPartyMonDVs_Conv());
+}
+
 void GetEnemyFrontpicPalettePointer(void){
     PUSH_DE;
     FARCALL(aGetEnemyMonDVs);
@@ -1127,6 +1170,18 @@ void GetEnemyFrontpicPalettePointer(void){
     POP_DE;
     RET;
 
+}
+
+uint16_t* GetEnemyFrontpicPalettePointer_Conv(uint16_t* dest){
+    // PUSH_DE;
+    // FARCALL(aGetEnemyMonDVs);
+    // LD_C_L;
+    // LD_B_H;
+    // LD_A_addr(wTempEnemyMonSpecies);
+    // CALL(aGetFrontpicPalettePointer);
+    // POP_DE;
+    // RET;
+    return GetFrontpicPalettePointer_Conv(dest, wram->wTempEnemyMonSpecies, GetEnemyMonDVs_Conv());
 }
 
 void GetPlayerOrMonPalettePointer(void){
@@ -1185,6 +1240,16 @@ void GetFrontpicPalettePointer(void){
     return GetTrainerPalettePointer();
 }
 
+uint16_t* GetFrontpicPalettePointer_Conv(uint16_t* dest, uint8_t a, uint16_t bc){
+    // AND_A_A;
+    // JP_NZ (mGetMonNormalOrShinyPalettePointer);
+    if(a != 0)
+        return GetMonNormalOrShinyPalettePointer_Conv(dest, a, bc);
+    // LD_A_addr(wTrainerClass);
+
+    return GetTrainerPalettePointer_Conv(dest, wram->wTrainerClass);
+}
+
 void GetTrainerPalettePointer(void){
     LD_L_A;
     LD_H(0);
@@ -1194,6 +1259,18 @@ void GetTrainerPalettePointer(void){
     ADD_HL_BC;
     RET;
 
+}
+
+uint16_t* GetTrainerPalettePointer_Conv(uint16_t* dest, uint8_t a){
+    // LD_L_A;
+    // LD_H(0);
+    // ADD_HL_HL;
+    // ADD_HL_HL;
+    // LD_BC(mTrainerPalettes);
+    ExtractPaletteFromPNGAssetToBuffer(dest, TrainerPalettes[a]);
+    // ADD_HL_BC;
+    // RET;
+    return dest;
 }
 
 void GetMonPalettePointer(void){
@@ -1227,11 +1304,39 @@ loop:
 
 }
 
-void BattleObjectPals(void){
+const uint16_t BattleObjectPals[] = {
 // INCLUDE "gfx/battle_anims/battle_anims.pal"
-
-    return CGBCopyTwoPredefObjectPals();
-}
+// gray
+    rgb(31, 31, 31),
+    rgb(25, 25, 25),
+    rgb(13, 13, 13),
+    rgb(00, 00, 00),
+// yellow
+    rgb(31, 31, 31),
+    rgb(31, 31, 07),
+    rgb(31, 16, 01),
+    rgb(00, 00, 00),
+// red
+    rgb(31, 31, 31),
+    rgb(31, 19, 24),
+    rgb(30, 10, 06),
+    rgb(00, 00, 00),
+// green
+    rgb(31, 31, 31),
+    rgb(12, 25,  1),
+    rgb( 5, 14,  0),
+    rgb( 0,  0,  0),
+// blue
+    rgb(31, 31, 31),
+    rgb( 8, 12, 31),
+    rgb( 1,  4, 31),
+    rgb( 0,  0,  0),
+// brown
+    rgb(31, 31, 31),
+    rgb(24, 18, 07),
+    rgb(20, 15, 03),
+    rgb(00, 00, 00),
+};
 
 void CGBCopyTwoPredefObjectPals(void){
 //  //  unreferenced

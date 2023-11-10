@@ -276,6 +276,19 @@ void PlayStereoCry(void){
 
 }
 
+void PlayStereoCry_Conv(species_t species){
+    // PUSH_AF;
+    // LD_A(1);
+    // LD_addr_A(wStereoPanningMask);
+    wram->wStereoPanningMask = 1;
+    // POP_AF;
+    // CALL(av_PlayMonCry);
+    v_PlayMonCry_Conv(species);
+    // CALL(aWaitSFX);
+    WaitSFX_Conv();
+    // RET;
+}
+
 void PlayStereoCry2(void){
     //  Don't wait for the cry to end.
 //  Used during pic animations.

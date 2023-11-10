@@ -885,6 +885,7 @@ void WaitPressAorB_BlinkCursor_Conv(void) {
     hram->hObjectStructIndex = 6;
 
     do {
+        DelayFrame();
         // PUSH_HL;
         // hlcoord(18, 17, wTilemap);
         // CALL(aBlinkCursor);

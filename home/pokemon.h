@@ -7,6 +7,7 @@ void PrepMonFrontpic_Conv(uint8_t* hl);
 void v_PrepMonFrontpic(void);
 void v_PrepMonFrontpic_Conv(uint8_t* hl);
 void PlayStereoCry(void);
+void PlayStereoCry_Conv(species_t species);
 void PlayStereoCry2(void);
 void PlayStereoCry2_Conv(species_t species);
 void PlayMonCry(void);

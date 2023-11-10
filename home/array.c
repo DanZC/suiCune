@@ -108,6 +108,11 @@ uint16_t SkipNames_Conv(uint16_t hl, uint8_t a)
     return hl;
 }
 
+//  Skip a names.
+const uint8_t* SkipNames_Conv2(const uint8_t* hl, uint8_t a) {
+    return hl + (NAME_LENGTH * a);
+}
+
 void AddNTimes(void){
     //  Add bc * a to hl.
     AND_A_A;

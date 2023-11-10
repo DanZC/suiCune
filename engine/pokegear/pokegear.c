@@ -2878,7 +2878,7 @@ void NoRadioName_Conv(void){
     // hlcoord(0, 12, wTilemap);
     // LD_BC((4 << 8) | 18);
     // CALL(aTextbox);
-    Textbox_Conv(coord(0, 12, wTilemap), 4, 18);
+    Textbox_Conv2(coord(0, 12, wram->wTilemap), 4, 18);
     // RET;
 }
 

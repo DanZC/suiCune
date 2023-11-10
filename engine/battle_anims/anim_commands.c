@@ -5,17 +5,19 @@
 //  Battle animation command interpreter.
 
 void PlayBattleAnim(void){
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
 
-    LD_A(MBANK(awActiveAnimObjects));
-    LDH_addr_A(rSVBK);
+    // LD_A(MBANK(awActiveAnimObjects));
+    // LDH_addr_A(rSVBK);
+    wbank_push(MBANK(awActiveAnimObjects));
 
     CALL(av_PlayBattleAnim);
 
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    RET;
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // RET;
+    wbank_pop;
 
 }
 

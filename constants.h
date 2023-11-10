@@ -71,6 +71,7 @@ extern void (*convertedFunc[])(void);
 #include "util/gb_ptr.h"
 #include "util/text_cmd.h"
 #include "util/assets.h"
+#include "util/misc.h"
 
 extern struct gb_s gb;
 extern struct hram_s *hram;

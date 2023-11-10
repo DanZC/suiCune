@@ -2,6 +2,7 @@
 #include "effect_commands.h"
 #include "../../data/battle/effect_command_pointers.h"
 #include "check_battle_scene.h"
+#include "../../data/items/attributes.h"
 
 void DoPlayerTurn(void){
     CALL(aSetPlayerTurn);
@@ -115,14 +116,14 @@ ReadMoveEffectCommand:
     LD_A(BANK(aBattleCommandPointers));
     CALL(aGetFarWord);
 
-    CALL(aDoMove_DoMoveEffectCommand);
+    CALL_hl;
     
     goto ReadMoveEffectCommand;
 
 
-DoMoveEffectCommand:
+// DoMoveEffectCommand:
 
-    JP_hl;
+    // JP_hl;
     // BattleCommandPointers[REG_BC]();
 }
 
@@ -7543,6 +7544,31 @@ void GetItemHeldEffect(void){
     POP_HL;
     RET;
 
+}
+
+uint16_t GetItemHeldEffect_Conv(item_t b){
+//  Return the effect of item b in bc.
+    // LD_A_B;
+    // AND_A_A;
+    // RET_Z ;
+    if(b == NO_ITEM)
+        return 0;
+
+    // PUSH_HL;
+    // LD_HL(mItemAttributes + ITEMATTR_EFFECT);
+    // DEC_A;
+    // LD_C_A;
+    // LD_B(0);
+    // LD_A(ITEMATTR_STRUCT_LENGTH);
+    // CALL(aAddNTimes);
+    // LD_A(BANK(aItemAttributes));
+    // CALL(aGetFarWord);
+    // LD_B_L;
+    // LD_C_H;
+    uint16_t bc = (ItemAttributes[b - 1].effect << 8) | ItemAttributes[b - 1].param;
+    // POP_HL;
+    // RET;
+    return bc;
 }
 
 void AnimateCurrentMoveEitherSide(void){

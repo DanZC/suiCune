@@ -242,6 +242,48 @@ notfainted:
 
 }
 
+bool CheckCurPartyMonFainted_Conv(void){
+    if(wram->wCurPartyMon >= wram->wPartyCount)
+        return true;
+    // LD_HL(wPartyMon1HP);
+    struct PartyMon* hl = wram->wPartyMon;
+    // LD_DE(PARTYMON_STRUCT_LENGTH);
+    // LD_B(0x0);
+    uint8_t b = 0x0;
+
+    do {
+    // loop:
+        // LD_A_addr(wCurPartyMon);
+        // CP_A_B;
+        // IF_Z goto skip;
+        if(wram->wCurPartyMon != b) {
+            // LD_A_hli;
+            // OR_A_hl;
+            // IF_NZ goto notfainted;
+            if(hl[b].HP != 0) {
+            // notfainted:
+                // AND_A_A;
+                // RET;
+                return false;
+            }
+            // DEC_HL;
+        }
+
+    // skip:
+        // INC_B;
+        // LD_A_addr(wPartyCount);
+        // CP_A_B;
+        // IF_Z goto done;
+        // ADD_HL_DE;
+        // goto loop;
+    } while(++b != wram->wPartyCount);
+
+// done:
+    // SCF;
+    // RET;
+    return true;
+}
+
 void BillsPC_WithdrawMenu(void){
     CALL(aLoadStandardMenuHeader);
     FARCALL(av_WithdrawPKMN);

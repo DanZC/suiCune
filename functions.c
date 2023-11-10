@@ -1472,7 +1472,7 @@ void init_function_pointers(void) {
     // REDIRECTED(ExitBattle);
     // REDIRECTED(GetPartyMonDVs);
     // REDIRECTED(PrintPlayerHUD);
-    // REDIRECTED(EndUserDestinyBond);
+    CONVERTED(EndUserDestinyBond);
     // REDIRECTED(CheckContestBattleOver);
     // REDIRECTED(HandleBetweenTurnEffects);
     // REDIRECTED(UpdateBattleHUDs);
@@ -1483,7 +1483,7 @@ void init_function_pointers(void) {
     // REDIRECTED(CheckIfCurPartyMonIsFitToFight);
     // REDIRECTED(FillEnemyMovesFromMoveIndicesBuffer);
     // REDIRECTED(PlayerMonFaintedAnimation);
-    // REDIRECTED(SendOutPlayerMon);
+    // CONVERTED(SendOutPlayerMon);
     // REDIRECTED(BattleMenu_PKMN);
     // REDIRECTED(EndOpponentProtectEndureDestinyBond);
     // REDIRECTED(GetRoamMonMapGroup);
@@ -1494,7 +1494,7 @@ void init_function_pointers(void) {
     // REDIRECTED(ScoreMonTypeMatchups);
     // REDIRECTED(OfferSwitch);
     // REDIRECTED(ApplyBrnEffectOnAttack);
-    REDIRECTED(DoBattle);
+    CONVERTED(DoBattle);
     // REDIRECTED(PlayerPartyMonEntrance);
     // REDIRECTED(PursuitSwitch);
     // REDIRECTED(CompareMovePriority);
@@ -1503,7 +1503,7 @@ void init_function_pointers(void) {
     // REDIRECTED(AddBattleMoneyToAccount);
     REDIRECTED(StartBattle);
     // REDIRECTED(Battle_EnemyFirst);
-    // REDIRECTED(InitBattleMon);
+    CONVERTED(InitBattleMon);
     // REDIRECTED(IsMobileBattle);
     // REDIRECTED(v_LoadHPBar);
     // REDIRECTED(SwitchMonAlreadyOut);
@@ -1531,8 +1531,8 @@ void init_function_pointers(void) {
     // REDIRECTED(GetSixteenthMaxHP);
     // REDIRECTED(GetMaxHP);
     // REDIRECTED(PickSwitchMonInBattle);
-    // REDIRECTED(FinishBattleAnim);
-    // REDIRECTED(BattleMenu);
+    CONVERTED(FinishBattleAnim);
+    // CONVERTED(BattleMenu);
     // REDIRECTED(UpdateHPBar);
     // REDIRECTED(CheckSleepingTreeMon);
     // REDIRECTED(CheckUserHasEnoughHP);
@@ -1551,7 +1551,7 @@ void init_function_pointers(void) {
     // REDIRECTED(CheckEnemyTrainerDefeated);
     // REDIRECTED(SubtractHPFromTarget);
     // REDIRECTED(HasUserFainted);
-    // REDIRECTED(ResetPlayerStatLevels);
+    CONVERTED(ResetPlayerStatLevels);
     // REDIRECTED(ReadAndPrintLinkBattleRecord);
     // CONVERTED(BreakAttraction);
     // REDIRECTED(FillInExpBar);
@@ -1578,13 +1578,13 @@ void init_function_pointers(void) {
     // REDIRECTED(UpdateBattleStateAndExperienceAfterEnemyFaint);
     // REDIRECTED(GetRoamMonMapNumber);
     // REDIRECTED(RecallPlayerMon);
-    // REDIRECTED(NewBattleMonStatus);
-    // REDIRECTED(AddBattleParticipant);
+    CONVERTED(NewBattleMonStatus);
+    CONVERTED(AddBattleParticipant);
     // REDIRECTED(LoadEnemyMonToSwitchTo);
     REDIRECTED(InitEnemyTrainer);
     // REDIRECTED(UpdateHPBarBattleHuds);
     // REDIRECTED(LoadEnemyMon);
-    // REDIRECTED(LoadBattleMenu2);
+    REDIRECTED(LoadBattleMenu2);
     // REDIRECTED(SendOutMonText);
     // REDIRECTED(TextJump_ComeBack);
     // REDIRECTED(CheckMobileBattleError);
@@ -1657,7 +1657,7 @@ void init_function_pointers(void) {
     // REDIRECTED(PlaceExpBar);
     // REDIRECTED(BattleCheckPlayerShininess);
     // REDIRECTED(GetEnemyMonDVs);
-    // REDIRECTED(EmptyBattleTextbox);
+    CONVERTED(EmptyBattleTextbox);
     REDIRECTED(BattleIntro);
     // REDIRECTED(HasEnemyFainted);
     // REDIRECTED(EnemyPartyMonEntrance);
@@ -1706,7 +1706,7 @@ void init_function_pointers(void) {
     // REDIRECTED(SlideBattlePicOut);
     // REDIRECTED(BattleMenu_Pack);
     // REDIRECTED(ForceEnemySwitch);
-    // REDIRECTED(ResetBattleParticipants);
+    CONVERTED(ResetBattleParticipants);
     // REDIRECTED(IsMobileBattle2);
     // REDIRECTED(GetBattleMonBackpic);
     // REDIRECTED(HandleSafariAngerEatingStatus);
@@ -2011,15 +2011,15 @@ void init_function_pointers(void) {
     CONVERTED(StartTrainerBattle_Finish);
     CONVERTED(StartTrainerBattle_SpinToBlack);
     // REDIRECTED(TrainerBattlePokeballTiles);
-    REDIRECTED(StartTrainerBattle_SineWave);
+    CONVERTED(StartTrainerBattle_SineWave);
     REDIRECTED(UnusedWaitBGMapOnce);
     REDIRECTED(ConvertTrainerBattlePokeballTilesTo2bpp);
     CONVERTED(StartTrainerBattle_DetermineWhichAnimation);
-    REDIRECTED(StartTrainerBattle_SetUpForWavyOutro);
+    CONVERTED(StartTrainerBattle_SetUpForWavyOutro);
     REDIRECTED(StartTrainerBattle_SpeckleToBlack);
     REDIRECTED(WipeLYOverrides);
     REDIRECTED(StartTrainerBattle_DrawSineWave);
-    REDIRECTED(StartTrainerBattle_SetUpForRandomScatterOutro);
+    CONVERTED(StartTrainerBattle_SetUpForRandomScatterOutro);
     REDIRECTED(StartTrainerBattle_LoadPokeBallGraphics);
     REDIRECTED(LoadTrainerBattlePokeballTiles);
 
@@ -4079,4 +4079,40 @@ void init_function_pointers(void) {
     REDIRECTED(InitializeBackground);
     REDIRECTED(AnimateTitleCrystal);
     REDIRECTED(LoadSuicuneFrame);
+
+    // engine/battle/menu.c
+    REDIRECTED(SafariBattleMenu);
+    // REDIRECTED(BattleMenuHeader);
+    REDIRECTED(LoadBattleMenu);
+    // REDIRECTED(SafariBattleMenuHeader);
+    REDIRECTED(ContestBattleMenu);
+    REDIRECTED(CommonBattleMenu);
+    // REDIRECTED(ContestBattleMenuHeader);
+
+    // engine/rtc/timeset.c
+    // REDIRECTED(SetMinutes);
+    // REDIRECTED(OakTimeWokeUpText);
+    // REDIRECTED(DisplayHourOClock);
+    // REDIRECTED(MrChrono);
+    // REDIRECTED(TimeSetBackgroundGFX);
+    // REDIRECTED(InitialClearDSTFlag);
+    CONVERTED(InitClock);
+    CONVERTED(SetDayOfWeek);
+    // REDIRECTED(SetHour);
+    // REDIRECTED(OakText_ResponseToSetTime);
+    // REDIRECTED(String_min);
+    // REDIRECTED(DisplayMinutesWithMinString);
+    // REDIRECTED(PrintHour);
+    // REDIRECTED(AdjustHourForAMorPM);
+    // REDIRECTED(OakTimeWhoaMinutesText);
+    // REDIRECTED(OakTimeWhatTimeIsItText);
+    // REDIRECTED(OakTimeWhatHoursText);
+    // REDIRECTED(TimeSetUpArrowGFX);
+    // REDIRECTED(String_oclock);
+    // REDIRECTED(InitialSetDSTFlag);
+    // REDIRECTED(TimeSetDownArrowGFX);
+    // REDIRECTED(DisplayHoursMinutesWithMinString);
+    // REDIRECTED(PrintTwoDigitNumberLeftAlign);
+    // REDIRECTED(OakTimeHowManyMinutesText);
+    // REDIRECTED(GetTimeOfDayString);
 }

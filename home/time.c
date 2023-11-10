@@ -204,67 +204,93 @@ quit:
 
 //  fix day count
 uint8_t FixDays_Conv(void){
+//  fix day count
 //  mod by 140
-
+    uint8_t result;
 //  check if day count > 255 (bit 8 set)
-    uint8_t lo;
-    uint8_t hi = gb_read(hRTCDayHi);  // DH
-    uint8_t status = 0;
-    if((hi & (1 << 0)) == 0)
-    {
-        //  quit if fewer than 140 days have passed
-        lo = gb_read(hRTCDayLo);
-        if(lo < 140) return status;
-
-    //  mod 140
-
-        do {
-            uint16_t temp = lo - 140;
-            REG_F_C = (temp & 0xFF00)? 1: 0;
-            lo -= 140;
-        } while(REG_F_C == 0);
-        lo += 140;
-
-    //  update dl
-        gb_write(hRTCDayLo, lo);
-
-    //  flag for sRTCStatusFlags
-        status = 0b00100000;
-    }
-    else 
-    {
+    // LDH_A_addr(hRTCDayHi);  // DH
+    // BIT_A(0);
+    // IF_Z goto daylo;
+    if(bit_test(hram->hRTCDayHi, 0)) {
     //  reset dh (bit 8)
-        RES_(hi, 0);
-        gb_write(hRTCDayHi, hi);
+        // RES_A(0);
+        // LDH_addr_A(hRTCDayHi);
+        bit_reset(hram->hRTCDayHi, 0);
 
     //  mod 140
     //  mod twice since bit 8 (DH) was set
-        lo = gb_read(hRTCDayLo);
+        // LDH_A_addr(hRTCDayLo);
+        uint8_t a = hram->hRTCDayLo;
+
+        uint8_t carry;
         do {
-            uint16_t temp = lo - 140;
-            REG_F_C = (temp & 0xFF00)? 1: 0;
-            lo -= 140;
-        } while(REG_F_C == 0);
+        // modh:
+            // SUB_A(140);
+            a = SubCarry8(a, 140, 0, &carry);
+            // IF_NC goto modh;
+        } while(!carry);
         do {
-            uint16_t temp = lo - 140;
-            REG_F_C = (temp & 0xFF00)? 1: 0;
-            lo -= 140;
-        } while(REG_F_C == 0);
-        lo += 140;
+        // modl:
+            // SUB_A(140);
+            // IF_NC goto modl;
+            a = SubCarry8(a, 140, 0, &carry);
+            // ADD_A(140);
+        } while(!carry);
+        a += 140;
 
     //  update dl
-        gb_write(hRTCDayLo, lo);
+        // LDH_addr_A(hRTCDayLo);
+        hram->hRTCDayLo = a;
 
     //  flag for sRTCStatusFlags
-        status = 0b00100000;
+        // LD_A(0b01000000);
+        // goto set;
+        result = 0b01000000;
+    }
+    else {
+    // daylo:
+        //  quit if fewer than 140 days have passed
+        // LDH_A_addr(hRTCDayLo);
+        // CP_A(140);
+        // IF_C goto quit;
+        if(hram->hRTCDayLo < 140) {
+            return 0;
+        }
+
+    //  mod 140
+        uint8_t a = hram->hRTCDayLo;
+        uint8_t carry;
+        do {
+        // mod:
+            // SUB_A(140);
+            a = SubCarry8(a, 140, 0, &carry);
+            // IF_NC goto mod;
+        } while(!carry);
+        // ADD_A(140);
+        a += 140;
+
+    //  update dl
+        // LDH_addr_A(hRTCDayLo);
+        hram->hRTCDayLo = a;
+
+    //  flag for sRTCStatusFlags
+        // LD_A(0b00100000);
+        result = 0b00100000;
     }
 
+// set:
     //  update clock with modded day value
     // PUSH_AF;
     // CALL(aSetClock);
-    // POP_AF;
     SetClock_Conv();
-    return status;
+    // POP_AF;
+    // SCF;
+    // RET;
+    return result;
+
+// quit:
+    // XOR_A_A;
+    // RET;
 }
 
 void FixTime(void){
@@ -375,11 +401,11 @@ void InitTimeOfDay(void){
 void InitTimeOfDay_Conv(void){
     // XOR_A_A;
     // LD_addr_A(wStringBuffer2);
-    gb_write(wStringBuffer2, 0);
+    wram->wStringBuffer2[0] = 0;
 
     // LD_A(0);  // useless
     // LD_addr_A(wStringBuffer2 + 3);
-    gb_write(wStringBuffer2 + 3, 0);
+    wram->wStringBuffer2[3] = 0;
 
     // JR(mInitTime);
     InitTime_Conv();

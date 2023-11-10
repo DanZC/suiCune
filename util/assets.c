@@ -335,7 +335,7 @@ void LoadPNG2bppAssetToVRAMByColumn(void* dest, const char* filename) {
         //     printf("Color %d: r=%d, g=%d, b=%d\n", i, palette[i] & 0xff, (palette[i] & 0xff00) >> 8, (palette[i] & 0xff0000) >> 16);
         // }
         for(int i = 0; i < numTiles; ++i) {
-            CopyPNG2bppColorTileToGB(&d[i * LEN_2BPP_TILE], &pix[((((i/tilesPerColumn)*8)*y) + ((i%tilesPerColumn)*8))*n], x, n, palette);
+            CopyPNG2bppColorTileToGB(&d[i * LEN_2BPP_TILE], &pix[((((i/tilesPerColumn)*8)) + ((i%tilesPerColumn)*8)*x)*n], x, n, palette);
         }
     }
     stbi_image_free(pix);

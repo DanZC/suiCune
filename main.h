@@ -105,7 +105,7 @@
 //#include "engine/items/switch_items.h"
 //#include "engine/menus/menu_2.h"
 //#include "engine/pokemon/mon_submenu.h"
-//#include "engine/battle/menu.h"
+#include "engine/battle/menu.h"
 //#include "engine/items/buy_sell_toss.h"
 //#include "engine/menus/trainer_card.h"
 //#include "engine/events/prof_oaks_pc.h"
@@ -291,7 +291,7 @@
 // SECTION "bank24", ROMX
 
 #include "engine/phone/phone.h"
-//#include "engine/rtc/timeset.h"
+#include "engine/rtc/timeset.h"
 #include "engine/pokegear/pokegear.h"
 //#include "engine/events/fish.h"
 //#include "engine/games/slot_machine.h"

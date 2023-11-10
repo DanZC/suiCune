@@ -1,20 +1,20 @@
 #include "../constants.h"
 #include "battle_vars.h"
 
-static const uint16_t BattleVarLocations[] = {
-    [PLAYER_SUBSTATUS_1]    = wPlayerSubStatus1,           [ENEMY_SUBSTATUS_1]    = wEnemySubStatus1,
-    [PLAYER_SUBSTATUS_2]    = wPlayerSubStatus2,           [ENEMY_SUBSTATUS_2]    = wEnemySubStatus2,
-    [PLAYER_SUBSTATUS_3]    = wPlayerSubStatus3,           [ENEMY_SUBSTATUS_3]    = wEnemySubStatus3,
-    [PLAYER_SUBSTATUS_4]    = wPlayerSubStatus4,           [ENEMY_SUBSTATUS_4]    = wEnemySubStatus4,
-    [PLAYER_SUBSTATUS_5]    = wPlayerSubStatus5,           [ENEMY_SUBSTATUS_5]    = wEnemySubStatus5,
-    [PLAYER_STATUS]         = wBattleMonStatus,            [ENEMY_STATUS]         = wEnemyMonStatus,
-    [PLAYER_MOVE_ANIMATION] = wPlayerMoveStructAnimation,  [ENEMY_MOVE_ANIMATION] = wEnemyMoveStructAnimation,
-    [PLAYER_MOVE_EFFECT]    = wPlayerMoveStructEffect,     [ENEMY_MOVE_EFFECT]    = wEnemyMoveStructEffect,
-    [PLAYER_MOVE_POWER]     = wPlayerMoveStructPower,      [ENEMY_MOVE_POWER]     = wEnemyMoveStructPower,
-    [PLAYER_MOVE_TYPE]      = wPlayerMoveStructType,       [ENEMY_MOVE_TYPE]      = wEnemyMoveStructType,
-    [PLAYER_CUR_MOVE]       = wCurPlayerMove,              [ENEMY_CUR_MOVE]       = wCurEnemyMove,
-    [PLAYER_COUNTER_MOVE]   = wLastPlayerCounterMove,      [ENEMY_COUNTER_MOVE]   = wLastEnemyCounterMove,
-    [PLAYER_LAST_MOVE]      = wLastPlayerMove,             [ENEMY_LAST_MOVE]      = wLastEnemyMove
+static uint8_t* BattleVarLocations[] = {
+    [PLAYER_SUBSTATUS_1]    = wram_ptr(wPlayerSubStatus1),           [ENEMY_SUBSTATUS_1]    = wram_ptr(wEnemySubStatus1),
+    [PLAYER_SUBSTATUS_2]    = wram_ptr(wPlayerSubStatus2),           [ENEMY_SUBSTATUS_2]    = wram_ptr(wEnemySubStatus2),
+    [PLAYER_SUBSTATUS_3]    = wram_ptr(wPlayerSubStatus3),           [ENEMY_SUBSTATUS_3]    = wram_ptr(wEnemySubStatus3),
+    [PLAYER_SUBSTATUS_4]    = wram_ptr(wPlayerSubStatus4),           [ENEMY_SUBSTATUS_4]    = wram_ptr(wEnemySubStatus4),
+    [PLAYER_SUBSTATUS_5]    = wram_ptr(wPlayerSubStatus5),           [ENEMY_SUBSTATUS_5]    = wram_ptr(wEnemySubStatus5),
+    [PLAYER_STATUS]         = wram_ptr(wBattleMonStatus),            [ENEMY_STATUS]         = wram_ptr(wEnemyMonStatus),
+    [PLAYER_MOVE_ANIMATION] = wram_ptr(wPlayerMoveStructAnimation),  [ENEMY_MOVE_ANIMATION] = wram_ptr(wEnemyMoveStructAnimation),
+    [PLAYER_MOVE_EFFECT]    = wram_ptr(wPlayerMoveStructEffect),     [ENEMY_MOVE_EFFECT]    = wram_ptr(wEnemyMoveStructEffect),
+    [PLAYER_MOVE_POWER]     = wram_ptr(wPlayerMoveStructPower),      [ENEMY_MOVE_POWER]     = wram_ptr(wEnemyMoveStructPower),
+    [PLAYER_MOVE_TYPE]      = wram_ptr(wPlayerMoveStructType),       [ENEMY_MOVE_TYPE]      = wram_ptr(wEnemyMoveStructType),
+    [PLAYER_CUR_MOVE]       = wram_ptr(wCurPlayerMove),              [ENEMY_CUR_MOVE]       = wram_ptr(wCurEnemyMove),
+    [PLAYER_COUNTER_MOVE]   = wram_ptr(wLastPlayerCounterMove),      [ENEMY_COUNTER_MOVE]   = wram_ptr(wLastEnemyCounterMove),
+    [PLAYER_LAST_MOVE]      = wram_ptr(wLastPlayerMove),             [ENEMY_LAST_MOVE]      = wram_ptr(wLastEnemyMove),
 };
 
 static const uint8_t BattleVarPairs[][2] = {
@@ -44,7 +44,7 @@ uint8_t GetBattleVar_Conv(uint8_t a){
     // CALL(aGetBattleVarAddr);
     // POP_HL;
     // RET;
-    return GetBattleVarAddr_Conv(a);
+    return *GetBattleVarAddr_Conv(a);
 }
 
 void GetBattleVarAddr(void){
@@ -91,9 +91,9 @@ getvar:
 
 }
 
-uint8_t GetBattleVarAddr_Conv(uint8_t a){
-    //  Get variable from pair a, depending on whose turn it is.
-    //  There are 21 variable pairs.
+//  Get variable from pair a, depending on whose turn it is.
+//  There are 21 variable pairs.
+uint8_t* GetBattleVarAddr_Conv(uint8_t a){
     // PUSH_BC;
 
     // LD_HL(mBattleVarPairs);
@@ -114,7 +114,7 @@ uint8_t GetBattleVarAddr_Conv(uint8_t a){
     // INC_HL;
 
 
-getvar:
+// getvar:
     //  var id
     // LD_A_hl;
     // LD_C_A;
@@ -128,14 +128,13 @@ getvar:
     // LD_A_hli;
     // LD_H_hl;
     // LD_L_A;
-    uint16_t loc = BattleVarLocations[id];
+    uint8_t* loc = BattleVarLocations[id];
 
     // LD_A_hl;
-    a = gb_read(loc);
 
     // POP_BC;
     // RET;
-    return a;
+    return loc;
 }
 
 // void BattleVarPairs(void){

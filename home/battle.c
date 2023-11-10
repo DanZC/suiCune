@@ -470,7 +470,7 @@ void BattleTextbox_Conv(uint16_t hl){
 void BattleTextbox_Conv2(const struct TextCmd* hl){
     // PUSH_HL;
     // CALL(aSpeechTextbox);
-    SpeechTextbox_Conv();
+    SpeechTextbox_Conv2();
 
     // CALL(aMobileTextBorder);
     MobileTextBorder_Conv();

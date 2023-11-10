@@ -187,6 +187,7 @@ void CheckHiddenOpponent(void);
 void GetUserItem(void);
 void GetOpponentItem(void);
 void GetItemHeldEffect(void);
+uint16_t GetItemHeldEffect_Conv(item_t b);
 void AnimateCurrentMoveEitherSide(void);
 void AnimateCurrentMove(void);
 void PlayDamageAnim(void);

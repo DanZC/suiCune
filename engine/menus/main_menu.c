@@ -1,10 +1,14 @@
 #include "../../constants.h"
 #include "main_menu.h"
+#include "../rtc/timeset.h"
 #include "../../home/text.h"
 #include "../../home/gfx.h"
 #include "../../home/menu.h"
 #include "../../home/time.h"
+#include "../../home/tilemap.h"
 #include "../../home/pokedex_flags.h"
+#include "../../home/sram.h"
+#include "../../home/print_text.h"
 #include "../../charmap.h"
 
 void DebugMenu(void);
@@ -33,128 +37,166 @@ enum {
     MAINMENUITEM_DEBUG_ROOM,  // 6
 };
 
-void MobileMenuGFX(void){
-// INCBIN "gfx/mobile/mobile_menu.2bpp"
-
-    return MainMenu();
-}
+const char MobileMenuGFX[] = "gfx/mobile/mobile_menu.png";
 
 void MainMenu(void){
+    static void (*const Jumptable[])(void) = {
+    //  entries correspond to MAINMENUITEM_* constants
+        [MAINMENUITEM_CONTINUE]       = MainMenu_Continue,
+        [MAINMENUITEM_NEW_GAME]       = MainMenu_NewGame,
+        [MAINMENUITEM_OPTION]         = MainMenu_Option,
+        [MAINMENUITEM_MYSTERY_GIFT]   = MainMenu_MysteryGift,
+        // [MAINMENUITEM_MOBILE]         = MainMenu_Mobile,
+        // [MAINMENUITEM_MOBILE_STUDIUM] = MainMenu_MobileStudium,
+    #if _DEBUG
+        [MAINMENUITEM_DEBUG_ROOM]     = MainMenu_DebugRoom,
+    #endif
+    };
 
-loop:
-    // XOR_A_A;
-    // LD_addr_A(wDisableTextAcceleration);
-    wram->wDisableTextAcceleration = 0;
-    CALL(aClearTilemapEtc);
-    LD_B(SCGB_DIPLOMA);
-    CALL(aGetSGBLayout);
-    CALL(aSetPalettes);
-    // LD_HL(wGameTimerPaused);
-    // RES_hl(GAME_TIMER_PAUSED_F);
-    bit_reset(wram->wGameTimerPaused, GAME_TIMER_PAUSED_F);
-    CALL(aMainMenu_GetWhichMenu);
-    LD_addr_A(wWhichIndexSet);
-    CALL(aMainMenu_PrintCurrentTimeAndDay);
-    LD_HL(mMainMenu_MenuHeader);
-    CALL(aLoadMenuHeader);
-    CALL(aMainMenuJoypadLoop);
-    CALL(aCloseWindow);
-    IF_C goto quit;
-    CALL(aClearTilemap);
-    LD_A_addr(wMenuSelection);
-    LD_HL(mMainMenu_Jumptable);
-    RST(aJumpTable);
-    goto loop;
+    static const char* Strings[] = {
+    //  entries correspond to MAINMENUITEM_* constants
+        [MAINMENUITEM_CONTINUE]         = "CONTINUE@",
+        [MAINMENUITEM_NEW_GAME]         = "NEW GAME@",
+        [MAINMENUITEM_OPTION]           = "OPTION@",
+        [MAINMENUITEM_MYSTERY_GIFT]     = "MYSTERY GIFT@",
+        [MAINMENUITEM_MOBILE]           = "MOBILE@",
+        [MAINMENUITEM_MOBILE_STUDIUM]   = "MOBILE STUDIUM@",
+    #if _DEBUG
+        [MAINMENUITEM_DEBUG_ROOM]       = "DEBUG ROOM@",
+    #endif
+    };
+
+    static const struct MenuData MainMenu_MenuData = {
+        .flags = STATICMENU_CURSOR,  // flags
+        .setupMenu = {
+            .count = 0,  // items
+            //dw ['MainMenuItems'];
+            .itemList = MainMenuItems,
+            //dw ['PlaceMenuStrings'];
+            .displayFunction = PlaceMenuStrings_Conv,
+            //dw ['.Strings'];
+            .stringsList = Strings,
+        },
+        .function = NULL,
+    };
+
+    static const struct MenuHeader MainMenu_MenuHeader = {
+        .flags = MENU_BACKUP_TILES,  // flags
+        .coord = menu_coords(0, 0, 16, 7),
+        //dw ['.MenuData'];
+        .data = &MainMenu_MenuData,
+        //db ['1'];  // default option
+        .defaultOption = 1,
+    };
+
+    while(1) {
+    // loop:
+        // XOR_A_A;
+        // LD_addr_A(wDisableTextAcceleration);
+        wram->wDisableTextAcceleration = 0;
+        CALL(aClearTilemapEtc);
+        // LD_B(SCGB_DIPLOMA);
+        // CALL(aGetSGBLayout);
+        GetSGBLayout_Conv(SCGB_DIPLOMA);
+        // CALL(aSetPalettes);
+        SetPalettes_Conv();
+        // LD_HL(wGameTimerPaused);
+        // RES_hl(GAME_TIMER_PAUSED_F);
+        bit_reset(wram->wGameTimerPaused, GAME_TIMER_PAUSED_F);
+        // CALL(aMainMenu_GetWhichMenu);
+        // LD_addr_A(wWhichIndexSet);
+        wram->wWhichIndexSet = MainMenu_GetWhichMenu_Conv();
+        // CALL(aMainMenu_PrintCurrentTimeAndDay);
+        MainMenu_PrintCurrentTimeAndDay_Conv();
+        // LD_HL(mMainMenu_MenuHeader);
+        // CALL(aLoadMenuHeader);
+        LoadMenuHeader_Conv2(&MainMenu_MenuHeader);
+        // CALL(aMainMenuJoypadLoop);
+        bool q = MainMenuJoypadLoop_Conv();
+        // CALL(aCloseWindow);
+        CloseWindow_Conv2();
+        // IF_C goto quit;
+        if(q)
+            return;
+        // CALL(aClearTilemap);
+        ClearTilemap_Conv2();
+        // LD_A_addr(wMenuSelection);
+        // LD_HL(mMainMenu_Jumptable);
+        // RST(aJumpTable);
+        Jumptable[wram->wMenuSelection]();
+        // goto loop;
+    }
 
 
-quit:
-    RET;
-
-
-MenuHeader:
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['0', '0', '16', '7'];
-    //dw ['.MenuData'];
-    //db ['1'];  // default option
-
-
-MenuData:
-    //db ['STATICMENU_CURSOR'];  // flags
-    //db ['0'];  // items
-    //dw ['MainMenuItems'];
-    //dw ['PlaceMenuStrings'];
-    //dw ['.Strings'];
-
-
-Strings:
-//  entries correspond to MAINMENUITEM_* constants
-    //db ['"CONTINUE@"'];
-    //db ['"NEW GAME@"'];
-    //db ['"OPTION@"'];
-    //db ['"MYSTERY GIFT@"'];
-    //db ['"MOBILE@"'];
-    //db ['"MOBILE STUDIUM@"'];
-#if _DEBUG
-    //db ['"DEBUG ROOM@"'];
-#endif
-
-
-Jumptable:
-//  entries correspond to MAINMENUITEM_* constants
-    //dw ['MainMenu_Continue'];
-    //dw ['MainMenu_NewGame'];
-    //dw ['MainMenu_Option'];
-    //dw ['MainMenu_MysteryGift'];
-    //dw ['MainMenu_Mobile'];
-    //dw ['MainMenu_MobileStudium'];
-#if _DEBUG
-    //dw ['MainMenu_DebugRoom'];
-#endif
-
-    return MainMenuItems();
+// quit:
+    // RET;
 }
 
-void MainMenuItems(void){
+const uint8_t* MainMenuItems[] = {
 //  entries correspond to MAINMENU_* constants
 
 // MAINMENU_NEW_GAME
-    //db ['2'];
-    //db ['MAINMENUITEM_NEW_GAME'];
-    //db ['MAINMENUITEM_OPTION'];
-    //db ['-1'];
+    [MAINMENU_NEW_GAME] = (const uint8_t[]){
+        //db ['2'];
+        2,
+        MAINMENUITEM_NEW_GAME,
+        MAINMENUITEM_OPTION,
+        0xff,
+    },
 
 // MAINMENU_CONTINUE
+    [MAINMENU_CONTINUE] = (const uint8_t[]){
     //db ['3 + DEF(_DEBUG)'];
-    //db ['MAINMENUITEM_CONTINUE'];
-    //db ['MAINMENUITEM_NEW_GAME'];
-    //db ['MAINMENUITEM_OPTION'];
 #if _DEBUG
-    //db ['MAINMENUITEM_DEBUG_ROOM'];
+        4,
+#else
+        3,
 #endif
-    //db ['-1'];
+        MAINMENUITEM_CONTINUE,
+        MAINMENUITEM_NEW_GAME,
+        MAINMENUITEM_OPTION,
+#if _DEBUG
+        MAINMENUITEM_DEBUG_ROOM,
+#endif
+        0xff,
+    },
 
 // MAINMENU_MOBILE_MYSTERY
+    [MAINMENU_MOBILE_MYSTERY] = (const uint8_t[]){
     //db ['5 + DEF(_DEBUG)'];
-    //db ['MAINMENUITEM_CONTINUE'];
-    //db ['MAINMENUITEM_NEW_GAME'];
-    //db ['MAINMENUITEM_OPTION'];
-    //db ['MAINMENUITEM_MYSTERY_GIFT'];
-    //db ['MAINMENUITEM_MOBILE'];
 #if _DEBUG
-    //db ['MAINMENUITEM_DEBUG_ROOM'];
+        6,
+#else
+        5,
 #endif
-    //db ['-1'];
+        MAINMENUITEM_CONTINUE,
+        MAINMENUITEM_NEW_GAME,
+        MAINMENUITEM_OPTION,
+        MAINMENUITEM_MYSTERY_GIFT,
+        MAINMENUITEM_MOBILE,
+#if _DEBUG
+        MAINMENUITEM_DEBUG_ROOM,
+#endif
+        0xff,
+    },
 
 // MAINMENU_MOBILE
+    [MAINMENU_MOBILE] = (const uint8_t[]){
     //db ['4 + DEF(_DEBUG)'];
-    //db ['MAINMENUITEM_CONTINUE'];
-    //db ['MAINMENUITEM_NEW_GAME'];
-    //db ['MAINMENUITEM_OPTION'];
-    //db ['MAINMENUITEM_MOBILE'];
 #if _DEBUG
-    //db ['MAINMENUITEM_DEBUG_ROOM'];
+        5,
+#else
+        4,
 #endif
-    //db ['-1'];
+        MAINMENUITEM_CONTINUE,
+        MAINMENUITEM_NEW_GAME,
+        MAINMENUITEM_OPTION,
+        MAINMENUITEM_MOBILE,
+#if _DEBUG
+        MAINMENUITEM_DEBUG_ROOM,
+#endif
+        0xff,
+    },
 
 // MAINMENU_MOBILE_STUDIUM
     //db ['5 + DEF(_DEBUG)'];
@@ -214,9 +256,7 @@ void MainMenuItems(void){
     //db ['MAINMENUITEM_DEBUG_ROOM'];
 #endif
     //db ['-1'];
-
-    return MainMenu_GetWhichMenu();
-}
+};
 
 void MainMenu_GetWhichMenu(void){
     NOP;
@@ -275,6 +315,79 @@ ok4:
 
 }
 
+uint8_t MainMenu_GetWhichMenu_Conv(void){
+    // NOP;
+    // NOP;
+    // NOP;
+    // LD_A_addr(wSaveFileExists);
+    // AND_A_A;
+    // IF_NZ goto next;
+    if(!wram->wSaveFileExists) {
+        // LD_A(MAINMENU_NEW_GAME);
+        // RET;
+        return MAINMENU_NEW_GAME;
+    }
+
+// next:
+    // LDH_A_addr(hCGB);
+    // CP_A(TRUE);
+    // LD_A(MAINMENU_CONTINUE);
+    // RET_NZ ;
+    if(hram->hCGB != TRUE)
+        return MAINMENU_CONTINUE;
+    // LD_A(MBANK(asNumDailyMysteryGiftPartnerIDs));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asNumDailyMysteryGiftPartnerIDs));
+    // LD_A_addr(sNumDailyMysteryGiftPartnerIDs);
+    uint8_t a = gb_read(sNumDailyMysteryGiftPartnerIDs);
+    // CP_A(-1);  // locked?
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // IF_NZ goto mystery_gift;
+    if(a != 0xff) {
+    // mystery_gift:
+    // This check makes no difference.
+        // LD_A_addr(wStatusFlags);
+        // BIT_A(STATUSFLAGS_MAIN_MENU_MOBILE_CHOICES_F);
+        // IF_Z goto ok3;
+        // goto ok3;
+        if(bit_test(wram->wStatusFlags, STATUSFLAGS_MAIN_MENU_MOBILE_CHOICES_F)) {
+            return MAINMENU_MOBILE_MYSTERY;
+        }
+
+
+    // ok3:
+        // goto ok4;
+
+
+    // ok4:
+        // LD_A(MAINMENU_MYSTERY);
+        // RET;
+        return MAINMENU_MYSTERY;
+    }
+    else {
+    // This check makes no difference.
+        // LD_A_addr(wStatusFlags);
+        // BIT_A(STATUSFLAGS_MAIN_MENU_MOBILE_CHOICES_F);
+        // LD_A(MAINMENU_MYSTERY); // MAINMENU_CONTINUE
+        // IF_Z goto ok;
+        // goto ok;
+        if(bit_test(wram->wStatusFlags, STATUSFLAGS_MAIN_MENU_MOBILE_CHOICES_F)) {
+            return MAINMENU_MOBILE_MYSTERY;
+        }
+
+
+    // ok:
+        // goto ok2;
+
+
+    // ok2:
+        // LD_A(MAINMENU_MYSTERY); // MAINMENU_CONTINUE
+        // RET;
+        return MAINMENU_MYSTERY;
+    }
+}
+
 void MainMenuJoypadLoop(void){
     CALL(aSetUpMenu);
 
@@ -306,7 +419,7 @@ b_button:
 
 bool MainMenuJoypadLoop_Conv(void){
     // CALL(aSetUpMenu);
-    SetUpMenu();
+    SetUpMenu_Conv();
 
 // loop:
     while(1)
@@ -550,15 +663,18 @@ static void MainMenu_PrintCurrentTimeAndDay_PlaceTime(void) {
     // decoord(1, 15, wTilemap);
     // CALL(aMainMenu_PrintCurrentTimeAndDay_PrintDayOfWeek);
     MainMenu_PrintCurrentTimeAndDay_PrintDayOfWeek(GetWeekday_Conv(), coord(1, 15, wram->wTilemap));
-    decoord(4, 16, wTilemap);
-    LDH_A_addr(hHours);
-    LD_C_A;
-    FARCALL(aPrintHour);
-    LD_hl(0x9c);
-    INC_HL;
-    LD_DE(hMinutes);
-    LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
-    CALL(aPrintNum);
+    // decoord(4, 16, wTilemap);
+    // LDH_A_addr(hHours);
+    // LD_C_A;
+    // FARCALL(aPrintHour);
+    uint8_t* hl = PrintHour_Conv(coord(4, 16, wram->wTilemap), hram->hHours);
+    // LD_hl(0x9c);
+    *(hl++) = CHAR_COLON2;
+    // INC_HL;
+    // LD_DE(hMinutes);
+    // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
+    // CALL(aPrintNum);
+    PrintNum_Conv2(hl, &hram->hMinutes, PRINTNUM_LEADINGZEROS | 1, 2);
     // RET;
 
 

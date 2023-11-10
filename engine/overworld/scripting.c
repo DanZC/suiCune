@@ -32,6 +32,7 @@
 #include "../../data/text/common.h"
 #include "../../data/items/pocket_names.h"
 #include "../events/std_scripts.h"
+#include "../../home/menu.h"
 
 static const struct TextCmd* lScriptText = NULL;
 Script_fn_t gDeferredScriptAddr = NULL;
@@ -882,6 +883,22 @@ no:
 
 }
 
+void Script_yesorno_Conv(void){
+    // CALL(aYesNoBox);
+    // LD_A(FALSE);
+    // IF_C goto no;
+    if(YesNoBox_Conv()) {
+        // LD_A(TRUE);
+        wram->wScriptVar = TRUE;
+    }
+    else {
+    // no:
+        wram->wScriptVar = FALSE;
+        // LD_addr_A(wScriptVar);
+        // RET;
+    }
+}
+
 void Script_loadmenu(void){
     CALL(aGetScriptByte);
     LD_L_A;
@@ -895,11 +912,35 @@ void Script_loadmenu(void){
 
 }
 
+void Script_loadmenu_Conv(script_s* s, const struct MenuHeader* header){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // LD_L_A;
+    // CALL(aGetScriptByte);
+    // LD_H_A;
+    // LD_DE(mLoadMenuHeader);
+    // LD_A_addr(wScriptBank);
+    // CALL(aCall_a_de);
+    LoadMenuHeader_Conv2(header);
+    // CALL(aUpdateSprites);
+    UpdateSprites_Conv();
+    // RET;
+}
+
 void Script_closewindow(void){
     CALL(aCloseWindow);
     CALL(aUpdateSprites);
     RET;
 
+}
+
+void Script_closewindow_Conv(script_s* s){
+    (void)s;
+    // CALL(aCloseWindow);
+    CloseWindow_Conv2();
+    // CALL(aUpdateSprites);
+    UpdateSprites_Conv();
+    // RET;
 }
 
 void Script_pokepic(void){
@@ -933,6 +974,22 @@ ok:
     LD_addr_A(wScriptVar);
     RET;
 
+}
+
+void Script_verticalmenu_Conv(script_s* s){
+    (void)s;
+    // LD_A_addr(wScriptBank);
+    // LD_HL(mVerticalMenu);
+    // RST(aFarCall);
+    bool cancel = !VerticalMenu_Conv();
+    // LD_A_addr(wMenuCursorY);
+    // IF_NC goto ok;
+    // XOR_A_A;
+
+// ok:
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = (cancel)? 0 : wram->wMenuCursorY;
+    // RET;
 }
 
 void Script__2dmenu(void){

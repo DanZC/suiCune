@@ -10,6 +10,18 @@ enum {
     MENU_BACKUP_TILES_2 = 128,
 };
 
+// MenuHeader bit flags
+enum {
+    MENU_RESTORE_TILES_F,  // Will be set if MENU_BACKUP_TILES(_2) is set.
+    MENU_UNUSED_1_F,
+    MENU_UNUSED_2_F,
+    MENU_NO_CLICK_SFX_F,
+    MENU_SPRITE_ANIMS_F,
+    MENU_UNUSED_3_F,
+    MENU_BACKUP_TILES_F,
+    MENU_BACKUP_TILES_2_F,
+};
+
 // VerticalMenu/DoNthMenu/SetUpMenu/_2DMenu MenuData flags
 // Per flag the comment specifies which menus actually implement it
 enum {
@@ -21,6 +33,19 @@ enum {
     STATICMENU_WRAP = 32,              // All
     STATICMENU_NO_TOP_SPACING = 64,    // VerticalMenu/_2DMenu
     STATICMENU_CURSOR = 128,           // VerticalMenu/_2DMenu
+};
+
+// VerticalMenu/DoNthMenu/SetUpMenu/_2DMenu MenuData bit flags
+// Per flag the comment specifies which menus actually implement it
+enum {
+    STATICMENU_DISABLE_B_F,          // VerticalMenu/_2DMenu
+    STATICMENU_ENABLE_SELECT_F,      // VerticalMenu/_2DMenu
+    STATICMENU_ENABLE_LEFT_RIGHT_F,  // DoNthMenu/SetUpMenu
+    STATICMENU_ENABLE_START_F,       // DoNthMenu/SetUpMenu
+    STATICMENU_PLACE_TITLE_F,        // VerticalMenu
+    STATICMENU_WRAP_F,               // All
+    STATICMENU_NO_TOP_SPACING_F,     // VerticalMenu/_2DMenu
+    STATICMENU_CURSOR_F,             // VerticalMenu/_2DMenu
 };
 
 // ScrollingMenu MenuData flags
@@ -117,4 +142,11 @@ enum {
     NAME_6,  // duplicate of NAME_MON
     NAME_7,  // duplicate of NAME_MON
     NUM_NAME_TYPES,
+};
+
+// 2D Menu Flags 1
+enum {
+    MENU2D_HORIZONTAL_WRAP_F = 4,
+    MENU2D_VERTICAL_WRAP_F = 5,
+    MENU2D_DISABLE_MENU_FILTER_F = 7,
 };

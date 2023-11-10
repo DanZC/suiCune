@@ -7,7 +7,13 @@
 #include "../../home/joypad.h"
 #include "../../home/tilemap.h"
 #include "../../home/text.h"
+#include "../../home/map_objects.h"
 #include "../gfx/sprites.h"
+#include "../../data/text/common.h"
+
+struct MenuHeader gWindowStack[32];
+uint8_t gTileBackupStack[32][SCREEN_WIDTH * SCREEN_HEIGHT * 2];
+uint32_t gWindowStackPointer;
 
 void v_2DMenu_(void){
     LD_HL(mCopyMenuData);
@@ -34,6 +40,24 @@ void v_InterpretBattleMenu(void){
     CALL(aGet2DMenuSelection);
     RET;
 
+}
+
+void v_InterpretBattleMenu_Conv(void){
+    // LD_HL(mCopyMenuData);
+    // LD_A_addr(wMenuData_2DMenuItemStringsBank);
+    // RST(aFarCall);
+    const struct MenuData* data = GetMenuData();
+
+    // CALL(aDraw2DMenu);
+    Draw2DMenu_Conv(data);
+    // FARCALL(aMobileTextBorder);
+    // CALL(aUpdateSprites);
+    UpdateSprites_Conv();
+    // CALL(aApplyTilemap);
+    ApplyTilemap_Conv();
+    // CALL(aGet2DMenuSelection);
+    Get2DMenuSelection_Conv(data);
+    // RET;
 }
 
 void v_InterpretMobileMenu(void){
@@ -83,11 +107,32 @@ void Draw2DMenu(void){
 
 }
 
+void Draw2DMenu_Conv(const struct MenuData* data){
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    // CALL(aMenuBox);
+    MenuBox_Conv();
+    // CALL(aPlace2DMenuItemStrings);
+    Place2DMenuItemStrings_Conv(data);
+    // RET;
+}
+
 void Get2DMenuSelection(void){
     CALL(aInit2DMenuCursorPosition);
     CALL(aStaticMenuJoypad);
     CALL(aMenuClickSound);
     return Mobile_GetMenuSelection();
+}
+
+bool Get2DMenuSelection_Conv(const struct MenuData* data){
+    // CALL(aInit2DMenuCursorPosition);
+    Init2DMenuCursorPosition_Conv(data);
+    // CALL(aStaticMenuJoypad);
+    uint8_t a = StaticMenuJoypad_Conv();
+    // CALL(aMenuClickSound);
+    MenuClickSound_Conv(a);
+    return Mobile_GetMenuSelection_Conv(data);
 }
 
 void Mobile_GetMenuSelection(void){
@@ -133,6 +178,55 @@ quit2:
 
 }
 
+bool Mobile_GetMenuSelection_Conv(const struct MenuData* data){
+    // LD_A_addr(wMenuDataFlags);
+    // BIT_A(1);
+    // IF_Z goto skip;
+    if(bit_test(data->flags, STATICMENU_ENABLE_SELECT_F)) {
+        // CALL(aGetMenuJoypad);
+        // BIT_A(SELECT_F);
+        if(bit_test(GetMenuJoypad_Conv(), SELECT_F))
+            return true;
+        // IF_NZ goto quit1;
+    }
+
+// skip:
+    // LD_A_addr(wMenuDataFlags);
+    // BIT_A(0);
+    // IF_NZ goto skip2;
+    if(!bit_test(data->flags, STATICMENU_DISABLE_B_F)) {
+        // CALL(aGetMenuJoypad);
+        // BIT_A(B_BUTTON_F);
+        // IF_NZ goto quit2;
+        if(bit_test(GetMenuJoypad_Conv(), B_BUTTON_F))
+            return true;
+    }
+
+// skip2:
+    // LD_A_addr(w2DMenuNumCols);
+    // LD_C_A;
+    // LD_A_addr(wMenuCursorY);
+    // DEC_A;
+    // CALL(aSimpleMultiply);
+    // LD_C_A;
+    uint8_t c = data->_2dMenu.cols * (wram->wMenuCursorY - 1);
+    // LD_A_addr(wMenuCursorX);
+    // ADD_A_C;
+    // LD_addr_A(wMenuCursorPosition);
+    wram->wMenuCursorPosition = wram->wMenuCursorX + c;
+    // AND_A_A;
+    // RET;
+    return false;
+
+// quit1:
+    // SCF;
+    // RET;
+
+// quit2:
+    // SCF;
+    // RET;
+}
+
 void Get2DMenuNumberOfColumns(void){
     LD_A_addr(wMenuData_2DMenuDimensions);
     AND_A(0xf);
@@ -145,6 +239,13 @@ uint8_t Get2DMenuNumberOfColumns_Conv(void){
     // AND_A(0xf);
     // RET;
     return wram->wMenuData_2DMenuDimensions & 0xf;
+}
+
+uint8_t Get2DMenuNumberOfColumns_Conv2(const struct MenuData* data){
+    // LD_A_addr(wMenuData_2DMenuDimensions);
+    // AND_A(0xf);
+    // RET;
+    return data->_2dMenu.cols;
 }
 
 void Get2DMenuNumberOfRows(void){
@@ -161,6 +262,14 @@ uint8_t Get2DMenuNumberOfRows_Conv(void){
     // AND_A(0xf);
     // RET;
     return (wram->wMenuData_2DMenuDimensions >> 4) & 0xf;
+}
+
+uint8_t Get2DMenuNumberOfRows_Conv2(const struct MenuData* data){
+    // LD_A_addr(wMenuData_2DMenuDimensions);
+    // SWAP_A;
+    // AND_A(0xf);
+    // RET;
+    return data->_2dMenu.rows;
 }
 
 void Place2DMenuItemStrings(void){
@@ -207,6 +316,69 @@ col:
     RST(aFarCall);
     RET;
 
+}
+
+void Place2DMenuItemStrings_Conv(const struct MenuData* data){
+    // LD_HL(wMenuData_2DMenuItemStringsAddr);
+    // LD_E_hl;
+    // INC_HL;
+    // LD_D_hl;
+    const char **de = data->_2dMenu.options;
+    // CALL(aGetMenuTextStartCoord);
+    uint8_t b, c;
+    GetMenuTextStartCoord_Conv(&b, &c);
+    // CALL(aCoord2Tile);
+    uint8_t* hl = Coord2Tile_Conv(c, b);
+    // CALL(aGet2DMenuNumberOfRows);
+    // LD_B_A;
+    b = Get2DMenuNumberOfRows_Conv();
+
+    do {
+    // row:
+        // PUSH_BC;
+        // PUSH_HL;
+        uint8_t* hl2 = hl;
+        // CALL(aGet2DMenuNumberOfColumns);
+        // LD_C_A;
+        c = Get2DMenuNumberOfColumns_Conv();
+
+        do {
+        // col:
+            // PUSH_BC;
+            // LD_A_addr(wMenuData_2DMenuItemStringsBank);
+            // CALL(aPlace2DMenuItemName);
+            Place2DMenuItemName_Conv(hl, *de);
+            // INC_DE;
+            de++;
+            // LD_A_addr(wMenuData_2DMenuSpacing);
+            // LD_C_A;
+            // LD_B(0);
+            // ADD_HL_BC;
+            hl += data->_2dMenu.spacing;
+            // POP_BC;
+            // DEC_C;
+            // IF_NZ goto col;
+        } while(--c != 0);
+        // POP_HL;
+        // LD_BC(2 * SCREEN_WIDTH);
+        hl = hl2 + (2 * SCREEN_WIDTH);
+        // ADD_HL_BC;
+        // POP_BC;
+        // DEC_B;
+        // IF_NZ goto row;
+    } while(--b != 0);
+    // LD_HL(wMenuData_2DMenuFunctionAddr);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // OR_A_H;
+    // RET_Z ;
+    if(data->function == NULL)
+        return;
+    // LD_A_addr(wMenuData_2DMenuFunctionBank);
+    // RST(aFarCall);
+    data->function();
+    // RET;
 }
 
 void Init2DMenuCursorPosition(void){
@@ -307,6 +479,145 @@ skip2:
     LD_addr_A(wMenuJoypadFilter);
     RET;
 
+}
+
+static void Init2DMenuCursorPosition_InitFlags_a(const struct MenuData* data) {
+    // XOR_A_A;
+    // LD_HL(w2DMenuFlags1);
+    // LD_hli_A;
+    // LD_hld_A;
+    wram->w2DMenuFlags1 = 0;
+    wram->w2DMenuFlags2 = 0;
+    // LD_A_addr(wMenuDataFlags);
+    // BIT_A(5);
+    // RET_Z ;
+    if(!bit_test(data->flags, STATICMENU_WRAP_F))
+        return;
+    // SET_hl(5);
+    bit_set(wram->w2DMenuFlags1, MENU2D_VERTICAL_WRAP_F);
+    // SET_hl(4);
+    bit_set(wram->w2DMenuFlags1, MENU2D_HORIZONTAL_WRAP_F);
+    // RET;
+}
+
+static void Init2DMenuCursorPosition_InitFlags_b(const struct MenuData* data) {
+    // LD_A_addr(wMenuData_2DMenuSpacing);
+    // OR_A(0x20);
+    // LD_addr_A(w2DMenuCursorOffsets);
+    wram->w2DMenuCursorOffsets = data->_2dMenu.spacing | 0x20;
+    // RET;
+}
+
+static void Init2DMenuCursorPosition_InitFlags_c(const struct MenuData* data) {
+    // LD_HL(wMenuDataFlags);
+    // LD_A(A_BUTTON);
+    uint8_t a = A_BUTTON;
+    // BIT_hl(0);
+    // IF_NZ goto skip;
+    if(!bit_test(data->flags, STATICMENU_DISABLE_B_F)) {
+        // OR_A(B_BUTTON);
+        a |= B_BUTTON;
+    }
+
+// skip:
+    // BIT_hl(1);
+    // IF_Z goto skip2;
+    if(!bit_test(data->flags, STATICMENU_ENABLE_SELECT_F)) {
+        // OR_A(SELECT);
+        a |= SELECT;
+    }
+
+// skip2:
+    // LD_addr_A(wMenuJoypadFilter);
+    wram->wMenuJoypadFilter = a;
+    // RET;
+}
+
+void Init2DMenuCursorPosition_Conv(const struct MenuData* data){
+    // CALL(aGetMenuTextStartCoord);
+    uint8_t b, c;
+    GetMenuTextStartCoord_Conv2(data, &b, &c);
+    // LD_A_B;
+    // LD_addr_A(w2DMenuCursorInitY);
+    wram->w2DMenuCursorInitY = b;
+    // DEC_C;
+    // LD_A_C;
+    // LD_addr_A(w2DMenuCursorInitX);
+    wram->w2DMenuCursorInitX = c - 1;
+    // CALL(aGet2DMenuNumberOfRows);
+    // LD_addr_A(w2DMenuNumRows);
+    wram->w2DMenuNumRows = Get2DMenuNumberOfRows_Conv2(data);
+    // CALL(aGet2DMenuNumberOfColumns);
+    // LD_addr_A(w2DMenuNumCols);
+    wram->w2DMenuNumCols = Get2DMenuNumberOfColumns_Conv2(data);
+    // CALL(aInit2DMenuCursorPosition_InitFlags_a);
+    Init2DMenuCursorPosition_InitFlags_a(data);
+    // CALL(aInit2DMenuCursorPosition_InitFlags_b);
+    Init2DMenuCursorPosition_InitFlags_b(data);
+    // CALL(aInit2DMenuCursorPosition_InitFlags_c);
+    Init2DMenuCursorPosition_InitFlags_c(data);
+
+    // LD_A_addr(w2DMenuNumCols);
+    // LD_E_A;
+    // LD_A_addr(wMenuCursorPosition);
+    // LD_B_A;
+    b = wram->wMenuCursorPosition;
+    // XOR_A_A;
+    uint8_t a = 0;
+    // LD_D(0);
+    uint8_t d = 0;
+
+    do {
+    // loop:
+        // INC_D;
+        d++;
+        // ADD_A_E;
+        a += wram->w2DMenuNumCols;
+        // CP_A_B;
+        // IF_C goto loop;
+    } while(a < b);
+    // SUB_A_E;
+    // LD_C_A;
+    c = a - wram->w2DMenuNumCols;
+    // LD_A_B;
+    // SUB_A_C;
+    a = b - c;
+    // AND_A_A;
+    // IF_Z goto reset1;
+    // CP_A_E;
+    // IF_Z goto okay1;
+    // IF_C goto okay1;
+    if(a == 0 || a > wram->w2DMenuNumCols) {
+    // reset1:
+        // LD_A(1);
+        a = 1;
+    }
+// okay1:
+    // LD_addr_A(wMenuCursorX);
+    wram->wMenuCursorX = a;
+    // LD_A_addr(w2DMenuNumRows);
+    // LD_E_A;
+    // LD_A_D;
+    // AND_A_A;
+    // IF_Z goto reset2;
+    // CP_A_E;
+    // IF_Z goto okay2;
+    // IF_C goto okay2;
+    if(d == 0 || d > wram->w2DMenuNumRows) {
+    // reset2:
+        // LD_A(1);
+        d = 1;
+    }
+// okay2:
+    // LD_addr_A(wMenuCursorY);
+    wram->wMenuCursorY = d;
+    // XOR_A_A;
+    // LD_addr_A(wCursorOffCharacter);
+    wram->wCursorOffCharacter = 0;
+    // LD_addr_A(wCursorCurrentTile);
+    // LD_addr_A(wCursorCurrentTile + 1);
+    wram->wCursorCurrentTile = 0;
+    // RET;
 }
 
 void v_StaticMenuJoypad(void){
@@ -546,6 +857,7 @@ skip_to_joypad:
 }
 
 bool Menu_WasButtonPressed_Conv(void){
+    DelayFrame();
     // LD_A_addr(w2DMenuFlags1);
     // BIT_A(6);
     // IF_Z goto skip_to_joypad;
@@ -1186,6 +1498,137 @@ ret:
 
 }
 
+static uint8_t* v_PushWindow_copy(uint8_t* de, const uint8_t* hl) {
+    // CALL(aGetMenuBoxDims);
+    uint8_t b, c;
+    GetMenuBoxDims_Conv(&c, &b);
+    // INC_B;
+    // INC_C;
+    b++, c++;
+    // CALL(av_PushWindow_ret);  // empty function
+
+    do {
+    // row:
+        // PUSH_BC;
+        uint8_t c2 = c;
+        // PUSH_HL;
+        const uint8_t* hl2 = hl;
+
+        do {
+        // col:
+            // LD_A_hli;
+            // LD_de_A;
+            *(de++) = *(hl++);
+            // DEC_DE;
+            // DEC_C;
+            // IF_NZ goto col;
+        } while(--c != 0);
+
+        // POP_HL;
+        // LD_BC(SCREEN_WIDTH);
+        // ADD_HL_BC;
+        hl = hl2 + SCREEN_WIDTH;
+        // POP_BC;
+        c = c2;
+        // DEC_B;
+        // IF_NZ goto row;
+    } while(--b != 0);
+
+    // RET;
+
+// ret:
+    // RET;
+    return de;
+}
+
+void v_PushWindow_Conv(void){
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(MBANK(awWindowStack));
+    // LDH_addr_A(rSVBK);
+
+    // LD_HL(wWindowStackPointer);
+    // LD_E_hl;
+    // INC_HL;
+    // LD_D_hl;
+    // PUSH_DE;
+    struct MenuHeader* de = &gWindowStack[gWindowStackPointer++];
+
+    // LD_B(wMenuHeaderEnd - wMenuHeader);
+    // LD_HL(wMenuHeader);
+
+// loop:
+    // LD_A_hli;
+    // LD_de_A;
+    // DEC_DE;
+    // DEC_B;
+    // IF_NZ goto loop;
+    de->flags = wram->wMenuFlags;
+    de->coord.x1 = wram->wMenuBorderLeftCoord;
+    de->coord.x2 = wram->wMenuBorderRightCoord;
+    de->coord.y1 = wram->wMenuBorderTopCoord;
+    de->coord.y2 = wram->wMenuBorderBottomCoord;
+    de->defaultOption = wram->wMenuCursorPosition;
+    de->data = gMenuDataPointer;
+
+//  If bit 6 or 7 of the menu flags is set, set bit 0 of the address
+//  at 7:[wWindowStackPointer], and draw the menu using the coordinates from the header.
+//  Otherwise, reset bit 0 of 7:[wWindowStackPointer].
+    // LD_A_addr(wMenuFlags);
+    // BIT_A(6);
+    // IF_NZ goto bit_6;
+    // BIT_A(7);
+    // IF_Z goto not_bit_7;
+    if(bit_test(wram->wMenuFlags, MENU_BACKUP_TILES_F) || bit_test(wram->wMenuFlags, MENU_BACKUP_TILES_2_F)) {
+    // bit_6:
+        // LD_HL(wWindowStackPointer);
+        // LD_A_hli;
+        // LD_H_hl;
+        // LD_L_A;
+        // SET_hl(0);
+        bit_set(de->flags, MENU_RESTORE_TILES_F);
+        // CALL(aMenuBoxCoord2Tile);
+        // CALL(av_PushWindow_copy);
+        uint8_t* de = gTileBackupStack[gWindowStackPointer - 1];
+        de = v_PushWindow_copy(de, MenuBoxCoord2Tile_Conv());
+        // CALL(aMenuBoxCoord2Attr);
+        // CALL(av_PushWindow_copy);
+        v_PushWindow_copy(de, MenuBoxCoord2Attr_Conv());
+        // goto done;
+    }
+    else {
+    // not_bit_7:
+        // POP_HL;  // last-pushed register was de
+        // PUSH_HL;
+        // LD_A_hld;
+        // LD_L_hl;
+        // LD_H_A;
+        // RES_hl(0);
+        bit_reset(de->flags, MENU_RESTORE_TILES_F);
+    }
+
+// done:
+    // POP_HL;
+    // CALL(av_PushWindow_ret);  // empty function
+    // LD_A_H;
+    // LD_de_A;
+    // DEC_DE;
+    // LD_A_L;
+    // LD_de_A;
+    // DEC_DE;
+    // LD_HL(wWindowStackPointer);
+    // LD_hl_E;
+    // INC_HL;
+    // LD_hl_D;
+
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // LD_HL(wWindowStackSize);
+    // INC_hl;
+    wram->wWindowStackSize++;
+    // RET;
+}
+
 void v_ExitMenu(void){
     XOR_A_A;
     LDH_addr_A(hBGMapMode);
@@ -1288,6 +1731,61 @@ void v_ExitMenu_Conv(void){
     // RET;
 }
 
+void v_ExitMenu_Conv2(void){
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(MBANK(awWindowStack));
+    // LDH_addr_A(rSVBK);
+
+    // CALL(aGetWindowStackTop);
+    // LD_A_L;
+    // OR_A_H;
+    // JP_Z (mError_Cant_ExitMenu);
+    if(gWindowStackPointer == 0) {
+        return Error_Cant_ExitMenu_Conv();
+    }
+    // LD_A_L;
+    // LD_addr_A(wWindowStackPointer);
+    // LD_A_H;
+    // LD_addr_A(wWindowStackPointer + 1);
+    // CALL(aPopWindow);
+    PopWindow_Conv2(&gWindowStack[--gWindowStackPointer]);
+    // LD_A_addr(wMenuFlags);
+    // BIT_A(0);
+    // IF_Z goto loop;
+    if(bit_test(wram->wMenuFlags, MENU_RESTORE_TILES_F)) {
+        // LD_D_H;
+        // LD_E_L;
+        // CALL(aRestoreTileBackup);
+        RestoreTileBackup_Conv2(gTileBackupStack[gWindowStackPointer]);
+    }
+
+
+// loop:
+    // CALL(aGetWindowStackTop);
+    // LD_A_H;
+    // OR_A_L;
+    // IF_Z goto done;
+    if(gWindowStackPointer != 0) {
+        // CALL(aPopWindow);
+        PopWindow_Conv2(&gWindowStack[--gWindowStackPointer]);
+    }
+
+
+// done:
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // wbank_pop;
+    // LD_HL(wWindowStackSize);
+    // DEC_hl;
+    wram->wWindowStackSize--;
+    // RET;
+}
+
 void RestoreOverworldMapTiles(void){
 //  //  unreferenced
     LD_A_addr(wVramState);
@@ -1343,12 +1841,13 @@ WindowPoppingErrorText:
 }
 
 void Error_Cant_ExitMenu_Conv(void){
-    // static const struct TextCmd WindowPoppingErrorText[] = {
-    //     text_far(v_WindowPoppingErrorText),
-    //     text_end
-    // };
-    LD_HL(mError_Cant_ExitMenu_WindowPoppingErrorText);
-    CALL(aPrintText);
+    static const struct TextCmd WindowPoppingErrorText[] = {
+        text_far(v_WindowPoppingErrorText)
+        text_end
+    };
+    // LD_HL(mError_Cant_ExitMenu_WindowPoppingErrorText);
+    // CALL(aPrintText);
+    PrintText_Conv2(WindowPoppingErrorText);
     // PrintText_Conv(WindowPoppingErrorText);
     // CALL(aWaitBGMap);
     WaitBGMap_Conv();
@@ -1442,17 +1941,17 @@ load_position:
 
 }
 
-void v_InitVerticalMenuCursor_Conv(void){
+void v_InitVerticalMenuCursor_Conv(const struct MenuData* data){
     // LD_A_addr(wMenuDataFlags);
     // LD_B_A;
-    uint8_t b = wram->wMenuDataFlags;
+    uint8_t b = data->flags;
     // LD_HL(w2DMenuCursorInitY);
     // LD_A_addr(wMenuBorderTopCoord);
     // INC_A;
     uint8_t a = wram->wMenuBorderTopCoord + 1;
     // BIT_B(6);
     // IF_NZ goto skip_offset;
-    if(bit_test(b, 6)) {
+    if(!bit_test(b, 6)) {
         // INC_A;
         ++a;
     }
@@ -1468,7 +1967,7 @@ void v_InitVerticalMenuCursor_Conv(void){
 //  w2DMenuNumRows
     // LD_A_addr(wMenuDataItems);
     // LD_hli_A;
-    wram->w2DMenuNumRows = wram->wMenuDataItems;
+    wram->w2DMenuNumRows = data->verticalMenu.count;
 //  w2DMenuNumCols
     // LD_A(1);
     // LD_hli_A;
@@ -1510,7 +2009,7 @@ void v_InitVerticalMenuCursor_Conv(void){
     // LD_A_addr(wMenuCursorPosition);
     // AND_A_A;
     // IF_Z goto load_at_the_top;
-    if(wram->wMenuCursorPosition == 0 || wram->wMenuDataItems < wram->wMenuCursorPosition) {
+    if(wram->wMenuCursorPosition == 0 || data->verticalMenu.count < wram->wMenuCursorPosition) {
         // LD_C_A;
         // LD_A_addr(wMenuDataItems);
         // CP_A_C;

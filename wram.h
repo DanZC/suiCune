@@ -392,14 +392,19 @@ struct PACKED wram_s
                         uint16_t wEnemySpDef;
                         uint8_t skip_15[1];
                         //union wPlayerStatLevels
-                        uint8_t wPlayerAtkLevel;
-                        uint8_t wPlayerDefLevel;
-                        uint8_t wPlayerSpdLevel;
-                        uint8_t wPlayerSAtkLevel;
-                        uint8_t wPlayerSDefLevel;
-                        uint8_t wPlayerAccLevel;
-                        uint8_t wPlayerEvaLevel;
-                        uint8_t skip_16[1];
+                        union {
+                            uint8_t wPlayerStatLevels[NUM_LEVEL_STATS];
+                            struct {
+                                uint8_t wPlayerAtkLevel;
+                                uint8_t wPlayerDefLevel;
+                                uint8_t wPlayerSpdLevel;
+                                uint8_t wPlayerSAtkLevel;
+                                uint8_t wPlayerSDefLevel;
+                                uint8_t wPlayerAccLevel;
+                                uint8_t wPlayerEvaLevel;
+                                uint8_t skip_16[1];
+                            };
+                        };
                         union {
                         //union wEnemyStatLevels
                             uint8_t wEnemyStatLevels[NUM_LEVEL_STATS];
@@ -1460,8 +1465,10 @@ struct PACKED wram_s
                     struct PACKED {
                         // battle transitions
                         uint8_t wBattleTransitionCounter;
-                        //union wBattleTransitionSineWaveOffset
-                        uint8_t wBattleTransitionSpinQuadrant;
+                        union {
+                            uint8_t wBattleTransitionSineWaveOffset;
+                            uint8_t wBattleTransitionSpinQuadrant;
+                        };
                     };
                     struct PACKED {
                         // bill's pc

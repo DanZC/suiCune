@@ -4,6 +4,7 @@ void BillsPC_MovePKMNMenu(void);
 void BillsPC_DepositMenu(void);
 void BillsPC_Deposit_CheckPartySize(void);
 void CheckCurPartyMonFainted(void);
+bool CheckCurPartyMonFainted_Conv(void);
 void BillsPC_WithdrawMenu(void);
 void BillsPC_Withdraw_CheckPartySize(void);
 void PCCantTakeText(void);

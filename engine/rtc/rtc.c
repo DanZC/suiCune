@@ -3,6 +3,7 @@
 #include "../../home/time.h"
 #include "../../home/sram.h"
 #include "../../home/math.h"
+#include "../overworld/time.h"
 
 void StopRTC(void){
 //  //  unreferenced
@@ -238,7 +239,7 @@ void StartClock_Conv(void){
     a |= FixDays_Conv(); 
 
     // IF_NC goto skip_set;
-    if(a & 0x80) {
+    if(a & 0xC0) {
     // bit 5: Day count exceeds 139
     // bit 6: Day count exceeds 255
         // CALL(aRecordRTCStatus);  // set flag on sRTCStatusFlags
@@ -270,7 +271,7 @@ set_bit_7:
 
 uint8_t v_FixDays_Conv(void){
     // LD_HL(hRTCDayHi);
-    uint8_t hi = gb_read(hRTCDayHi);
+    uint8_t hi = hram->hRTCDayHi;
 
     // BIT_hl(7);
     // IF_NZ goto set_bit_7;
@@ -356,7 +357,7 @@ void ClockContinue_Conv(void){
         // LD_A_addr(wCurDay);
         // CP_A_B;
         // IF_C goto dont_update;
-        if(gb_read(wCurDay) < gb_read(wRTC + 0))
+        if(wram->wCurDay < wram->wRTC[0])
         {
             // XOR_A_A;
             // RET;
@@ -365,8 +366,10 @@ void ClockContinue_Conv(void){
     }
 
     // Day count exceeded 255 or 16383
-    FARCALL(aClearDailyTimers);
-    FARCALL(aFunction170923);
+    // FARCALL(aClearDailyTimers);
+    ClearDailyTimers();
+    // FARCALL(aFunction170923);
+    SafeCallGBAuto(aFunction170923);
 
     // LD_A(BANK(s5_aa8c));  // aka BANK(s5_b2fa)
     // CALL(aOpenSRAM);
@@ -447,19 +450,18 @@ void v_InitTime_Conv(void){
 
     // LD_HL(hRTCSeconds);
     // LD_DE(wStartSecond);
-    uint16_t hl = hRTCSeconds;
-    uint16_t de = wStartSecond;
+    uint8_t carry = 0;
 
     // LD_A_addr(wStringBuffer2 + 3);
-    uint8_t a = gb_read(wStringBuffer2 + 3);
+    uint8_t a = wram->wStringBuffer2[3];
 
     // SUB_A_hl;
     // DEC_HL;
-    uint8_t t = gb_read(hl--);
-    uint8_t towrite = a - t;
+    uint8_t t = hram->hRTCSeconds;
+    uint8_t towrite = SubCarry8(a, t, carry, &carry);
 
     // IF_NC goto okay_secs;
-    if(a < t)
+    if(carry)
     {
         // ADD_A(60);
         towrite += 60;
@@ -467,18 +469,18 @@ void v_InitTime_Conv(void){
 
     // LD_de_A;
     // DEC_DE;
-    gb_write(de--, towrite);
+    wram->wStartSecond = towrite;
 
     // LD_A_addr(wStringBuffer2 + 2);
-    a = gb_read(wStringBuffer2 + 2);
+    a = wram->wStringBuffer2[2];
 
     // SBC_A_hl;
     // DEC_HL;
-    t = gb_read(hl--);
-    towrite = a - t;
+    t = hram->hRTCMinutes;
+    towrite = SubCarry8(a, t, carry, &carry);
 
     // IF_NC goto okay_mins;
-    if(a < t)
+    if(carry)
     {
         // ADD_A(60);
         towrite += 60;
@@ -486,18 +488,18 @@ void v_InitTime_Conv(void){
 
     // LD_de_A;
     // DEC_DE;
-    gb_write(de--, towrite);
+    wram->wStartMinute = towrite;
 
     // LD_A_addr(wStringBuffer2 + 1);
-    a = gb_read(wStringBuffer2 + 1);
+    a = wram->wStringBuffer2[1];
 
     // SBC_A_hl;
     // DEC_HL;
-    t = gb_read(hl--);
-    towrite = a - t;
+    t = hram->hRTCHours;
+    towrite = SubCarry8(a, t, carry, &carry);
 
     // IF_NC goto okay_hrs;
-    if(a < t)
+    if(carry)
     {
         // ADD_A(24);
         towrite += 24;
@@ -505,18 +507,18 @@ void v_InitTime_Conv(void){
 
     // LD_de_A;
     // DEC_DE;
-    gb_write(de--, towrite);
+    wram->wStartHour = towrite;
 
     // LD_A_addr(wStringBuffer2);
-    a = gb_read(wStringBuffer2);
+    a = wram->wStringBuffer2[0];
 
     // SBC_A_hl;
     // DEC_HL;
-    t = gb_read(hl--);
-    towrite = a - t;
+    t = hram->hRTCDayLo;
+    towrite = SubCarry8(a, t, carry, &carry);
 
     // IF_NC goto okay_days;
-    if(a < t)
+    if(carry)
     {
         // ADD_A(140);
         towrite += 140;
@@ -528,5 +530,5 @@ void v_InitTime_Conv(void){
     }
 
     // LD_de_A;
-    gb_write(de, towrite);
+    wram->wStartDay = towrite;
 }

@@ -180,6 +180,12 @@ uint8_t* Utf8ToCrystalBuffer(uint8_t* dest, size_t dest_size, const char* src)
             src++; 
             goto nextchar; 
         }
+        // Check lowercase letter
+        if(*src >= 'a' && *src <= 'z') {
+            dest[i++] = CHAR_a + (*src - 'a'); 
+            src++; 
+            goto nextchar; 
+        }
         // Check number
         if(*src >= '0' && *src <= '9') {
             dest[i++] = CHAR_0 + (*src - '0'); 

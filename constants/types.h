@@ -43,12 +43,18 @@ struct TrainerId {
     uint8_t trainerId;
 };
 
+struct ItemEffect {
+    uint8_t param;
+    uint8_t effect;
+};
+
 // Configurable types
 
-typedef uint8_t species_t; // Mon species type
-typedef uint8_t dex_t;     // Dex number type
-typedef uint8_t item_t;    // Item id type
-typedef uint8_t move_t;    // Move id type
+typedef uint8_t species_t;      // Mon species type
+typedef uint8_t unown_letter_t; // Unown letter type
+typedef uint8_t dex_t;          // Dex number type
+typedef uint8_t item_t;         // Item id type
+typedef uint8_t move_t;         // Move id type
 
 typedef uint8_t tile_t;
 typedef uint16_t sfx_t;
@@ -1200,18 +1206,32 @@ struct MenuCoords {
 struct MenuHeader {
     uint8_t flags;
     struct MenuCoords coord;
-    const void* const data;
+    const void* data;
     uint8_t defaultOption;
 };
 
 struct MenuData {
     uint8_t flags;
+    uint8_t type;
     union {
         struct {
             uint8_t count;
             const char **const options;
-        } staticMenu;
+        } verticalMenu;
+        struct {
+            uint8_t cols;
+            uint8_t rows;
+            uint8_t spacing;
+            const char** const options;
+        } _2dMenu;
+        struct {
+            uint8_t count;
+            const uint8_t** itemList;
+            void (*displayFunction)(const char**, uint8_t*, uint8_t);
+            const char ** stringsList;
+        } setupMenu;
     };
+    void (*const function)(void);
 };
 
 struct PhoneContact {

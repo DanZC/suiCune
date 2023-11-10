@@ -278,7 +278,7 @@ void TextboxBorder_Conv2(uint8_t* hl, uint8_t b, uint8_t c) {
     // Top
     *(hl++) = id++;
     TEXTBOXBORDER_PLACECHARS(c);
-    *(hl) = ++id;
+    *(hl) = CHAR_FRAME_TOP_RIGHT;
 
     hl = temphl + SCREEN_WIDTH;
 
@@ -374,7 +374,7 @@ void SpeechTextbox_Conv(void) {
 
 //  Standard textbox.
 void SpeechTextbox_Conv2(void) {
-    return Textbox_Conv2(wram->wTilemap + coordidx(TEXTBOX_X, TEXTBOX_Y), TEXTBOX_INNERH, TEXTBOX_INNERW);
+    return Textbox_Conv2(coord(TEXTBOX_X, TEXTBOX_Y, wram->wTilemap), TEXTBOX_INNERH, TEXTBOX_INNERW);
 }
 
 void GameFreakText(void) {
@@ -477,7 +477,7 @@ void PrintTextboxText_Conv2(const struct TextCmd* hl) {
     // bccoord(TEXTBOX_INNERX, TEXTBOX_INNERY, wTilemap);
     // CALL(aPlaceHLTextAtBC);
     // RET;
-    PlaceHLTextAtBC_Conv2(wram->wTilemap + coordidx(TEXTBOX_INNERX, TEXTBOX_INNERY), hl);
+    PlaceHLTextAtBC_Conv2(coord(TEXTBOX_INNERX, TEXTBOX_INNERY, wram->wTilemap), hl);
 }
 
 void SetUpTextbox(void) {
@@ -490,7 +490,7 @@ void SetUpTextbox(void) {
 }
 
 void SetUpTextbox_Conv(void) {
-    SpeechTextbox_Conv();
+    SpeechTextbox_Conv2();
     // CALL(aUpdateSprites);
     UpdateSprites_Conv();
     ApplyTilemap_Conv();
@@ -2353,18 +2353,21 @@ void TextCommand_START_Conv(struct TextPrintState* state) {
 //  write text until "@"
 void TextCommand_START_Conv2(struct TextCmdState* state, const struct TextCmd* cmd) {
     static const struct TextCmd cmd_end = {TX_END, .end=0};
+    uint8_t tempbuf[256];
     // PEEK("");
     // LD_D_H;
     // LD_E_L;
     // LD_H_B;
     // LD_L_C;
     // CALL(aPlaceString);
-    struct TextPrintState temp = {.hl = state->bc, .de = U82C(cmd->text)};
+    printf("Text start: %s\n", cmd->text);
+    struct TextPrintState temp = {.hl = state->bc, .de = U82CA(tempbuf, cmd->text)};
     if(!PlaceString_Conv(&temp, state->bc)) {
         state->hl = &cmd_end;
     }
     // struct TextPrintState tempstate = {.hl = state->bc, .de = state->hl};
 
+    state->bc = temp.bc;
     // LD_H_D;
     // LD_L_E;
     // INC_HL;

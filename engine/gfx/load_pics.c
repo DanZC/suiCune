@@ -544,6 +544,71 @@ ok:
 
 }
 
+void GetMonBackpic_Conv(uint8_t* de, species_t species){
+    (void)de;
+    // LD_A_addr(wCurPartySpecies);
+    // CALL(aIsAPokemon);
+    // RET_C ;
+    if(!IsAPokemon_Conv(species))
+        return;
+
+    // LD_A_addr(wCurPartySpecies);
+    // LD_B_A;
+    species_t b = wram->wCurPartySpecies;
+    // LD_A_addr(wUnownLetter);
+    // LD_C_A;
+    unown_letter_t c = wram->wUnownLetter;
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(MBANK(awDecompressScratch));
+    // LDH_addr_A(rSVBK);
+    // PUSH_DE;
+
+// These are assumed to be at the same address in their respective banks.
+    //assert ['PokemonPicPointers == UnownPicPointers'];
+    // LD_HL(mPokemonPicPointers);
+    // LD_A_B;
+    // LD_D(BANK(aPokemonPicPointers));
+    // CP_A(UNOWN);
+    // IF_NZ goto ok;
+    // LD_A_C;
+    // LD_D(BANK(aUnownPicPointers));
+    const char* (*const hl)[2] = ((b == UNOWN)? UnownPicPointers: PokemonPicPointers);
+    uint16_t a = (b == UNOWN)? c: b;
+
+// ok:
+    // DEC_A;
+    const char *path = hl[a - 1][1];
+    // LD_BC(6);
+    // CALL(aAddNTimes);
+    // LD_BC(3);
+    // ADD_HL_BC;
+    // LD_A_D;
+    // CALL(aGetFarByte);
+    // CALL(aFixPicBank);
+    // PUSH_AF;
+    // INC_HL;
+    // LD_A_D;
+    // CALL(aGetFarWord);
+    // LD_DE(wDecompressScratch);
+    // POP_AF;
+    // CALL(aFarDecompress);
+    LoadPNG2bppAssetToVRAMByColumn(wram->wDecompressScratch, path);
+    // LD_HL(wDecompressScratch);
+    // LD_C(6 * 6);
+    // CALL(aFixBackpicAlignment);
+    FixBackpicAlignment_Conv(wram->wDecompressScratch, 6 * 6);
+    // POP_HL;
+    // LD_DE(wDecompressScratch);
+    // LDH_A_addr(hROMBank);
+    // LD_B_A;
+    // CALL(aGet2bpp);
+    CopyBytes_Conv2(de, wram->wDecompressScratch, 6 * 6 * LEN_2BPP_TILE);
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // RET;
+}
+
 void FixPicBank(void){
 //  This is a thing for some reason.
 
@@ -722,6 +787,71 @@ keep_dims:
     POP_DE;
     RET;
 
+}
+
+void FixBackpicAlignment_Conv(uint8_t* hl, uint8_t c){
+    // PUSH_DE;
+    // PUSH_BC;
+    // LD_A_addr(wBoxAlignment);
+    // AND_A_A;
+    // IF_Z goto keep_dims;
+    if(wram->wBoxAlignment == 0)
+        return;
+    
+    uint16_t de;
+    // LD_A_C;
+    // CP_A(7 * 7);
+    // LD_DE(7 * 7 * LEN_2BPP_TILE);
+    // IF_Z goto got_dims;
+    if(c == 7 * 7) {
+        de = 7 * 7 * LEN_2BPP_TILE;
+    }
+    // CP_A(6 * 6);
+    // LD_DE(6 * 6 * LEN_2BPP_TILE);
+    // IF_Z goto got_dims;
+    else if(c == 6 * 6) {
+        de = 6 * 6 * LEN_2BPP_TILE;
+    }
+    // LD_DE(5 * 5 * LEN_2BPP_TILE);
+    else {
+        de = 5 * 5 * LEN_2BPP_TILE;
+    }
+
+    do {
+    // got_dims:
+        // LD_A_hl;
+        uint8_t a = *hl;
+        // LD_B(0);
+        uint8_t b = 0;
+        // LD_C(8);
+        uint8_t c = 8;
+
+        uint8_t carry = 0;
+    
+        do {
+        // loop:
+            // RRA;
+            carry = a & 1;
+            a = (a >> 1);
+            b = (b << 1) | carry;
+            // RL_B;
+            // DEC_C;
+            // IF_NZ goto loop;
+        } while(--c != 0);
+        // LD_A_B;
+        // LD_hli_A;
+        *hl = b;
+        hl++;
+        // DEC_DE;
+        // LD_A_E;
+        // OR_A_D;
+        // IF_NZ goto got_dims;
+    } while(--de != 0);
+
+// keep_dims:
+    // POP_BC;
+    // POP_DE;
+    // RET;
 }
 
 void PadFrontpic(void){
