@@ -1,4 +1,5 @@
 #include "../../constants.h"
+#include "../../home/map_objects.h"
 #include "../../engine/overworld/events.h"
 #include "../../engine/rtc/timeset.h"
 
@@ -6,5 +7,6 @@
 
 void (*const SpecialsPointers[])(void) = {
     add_special(WarpToSpawnPoint),
-    add_special(SetDayOfWeek)
+    add_special(SetDayOfWeek),
+    add_special(UpdateSprites),
 };

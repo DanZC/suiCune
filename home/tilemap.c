@@ -63,6 +63,29 @@ bg0:
     RET;
 }
 
+void WaitBGMap2_Conv(void) {
+    // SET_PC(aWaitBGMap2);
+    // LDH_A_addr(hCGB);
+    // AND_A_A;
+    // IF_Z goto bg0;
+    if(hram->hCGB != 0) {
+        // LD_A(2);
+        // LDH_addr_A(hBGMapMode);
+        hram->hBGMapMode = 2;
+        // LD_C(4);
+        // CALL(aDelayFrames);
+        DelayFrames_Conv(4);
+    }
+// bg0:
+    // LD_A(1);
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 1;
+    // LD_C(4);
+    // CALL(aDelayFrames);
+    DelayFrames_Conv(4);
+    // RET;
+}
+
 void IsCGB(void) {
     SET_PC(aIsCGB);
     LDH_A_addr(hCGB);

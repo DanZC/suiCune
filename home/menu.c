@@ -1716,6 +1716,14 @@ bool GetScrollingMenuJoypad_Conv(void) {
     return ContinueGettingMenuJoypad_Conv(ScrollingMenuJoypad_Conv() & wram->wMenuJoypadFilter);
 }
 
+bool GetScrollingMenuJoypad_Conv2(void) {
+    // CALL(aScrollingMenuJoypad);
+    // LD_HL(wMenuJoypadFilter);
+    // AND_A_hl;
+    // JR(mContinueGettingMenuJoypad);
+    return ContinueGettingMenuJoypad_Conv2(ScrollingMenuJoypad_Conv() & wram->wMenuJoypadFilter);
+}
+
 void GetStaticMenuJoypad(void) {
     XOR_A_A;
     LD_addr_A(wMenuJoypad);
@@ -1843,6 +1851,74 @@ bool ContinueGettingMenuJoypad_Conv(uint8_t a) {
     // LD_A_hl;
     // LD_addr_A(wMenuSelection);
     wram->wMenuSelection = GetMenuIndexSet_Conv()[wram->wMenuCursorY];
+    // LD_A_addr(wMenuCursorY);
+    // LD_addr_A(wMenuCursorPosition);
+    wram->wMenuCursorPosition = wram->wMenuCursorY;
+    // AND_A_A;
+    // RET;
+    return false;
+}
+
+bool ContinueGettingMenuJoypad_Conv2(uint8_t a) {
+    // BIT_A(A_BUTTON_F);
+    // IF_NZ goto a_button;
+    if(bit_test(a, A_BUTTON_F)) {
+    // a_button:
+        // LD_A(A_BUTTON);
+        // LD_addr_A(wMenuJoypad);
+        wram->wMenuJoypad = A_BUTTON;
+    }
+    // BIT_A(B_BUTTON_F);
+    // IF_NZ goto b_start;
+    // BIT_A(START_F);
+    // IF_NZ goto b_start;
+    else if(bit_test(a, B_BUTTON_F) || bit_test(a, START_F)) {
+    // b_start:
+        // LD_A(B_BUTTON);
+        // LD_addr_A(wMenuJoypad);
+        wram->wMenuJoypad = B_BUTTON;
+        // LD_A(-1);
+        // LD_addr_A(wMenuSelection);
+        wram->wMenuSelection = 0xff;
+        // SCF;
+        // RET;
+        return true;
+    }
+    // BIT_A(D_RIGHT_F);
+    // IF_NZ goto d_right;
+    else if(bit_test(a, D_RIGHT_F)) {
+    // d_right:
+        // LD_A(D_RIGHT);
+        // LD_addr_A(wMenuJoypad);
+        // goto done;
+        wram->wMenuJoypad = D_RIGHT;
+    }
+    // BIT_A(D_LEFT_F);
+    // IF_NZ goto d_left;
+    else if(bit_test(a, D_LEFT_F)) {
+    // d_left:
+        // LD_A(D_LEFT);
+        // LD_addr_A(wMenuJoypad);
+        // goto done;
+        wram->wMenuJoypad = D_LEFT;
+    }
+    // XOR_A_A;
+    // LD_addr_A(wMenuJoypad);
+    // goto done;
+    else {
+        wram->wMenuJoypad = 0;
+    }
+
+// done:
+    const struct MenuData* data = GetMenuData();
+    // CALL(aGetMenuIndexSet);
+    // LD_A_addr(wMenuCursorY);
+    // LD_L_A;
+    // LD_H(0);
+    // ADD_HL_DE;
+    // LD_A_hl;
+    // LD_addr_A(wMenuSelection);
+    wram->wMenuSelection = GetMenuIndexSet_Conv2(data)[wram->wMenuCursorY];
     // LD_A_addr(wMenuCursorY);
     // LD_addr_A(wMenuCursorPosition);
     wram->wMenuCursorPosition = wram->wMenuCursorY;

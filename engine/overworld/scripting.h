@@ -157,6 +157,7 @@ void Script_memcall(void);
 void Script_memcall_Conv(script_s* s, Script_fn_t mem);
 void ScriptCall(void);
 void CallCallback(void);
+void CallCallback_Conv(Script_fn_t callback);
 void Script_sjump(void);
 void Script_farsjump(void);
 void Script_memjump(void);

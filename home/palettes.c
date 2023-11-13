@@ -649,8 +649,7 @@ void ClearVBank1_Conv(void){
 
 void GSReloadPalettes(void){
     //  //  dummied out
-    RET;
-
+    // RET;
 }
 
 void ReloadSpritesNoPalettes(void){

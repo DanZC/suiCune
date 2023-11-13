@@ -1194,6 +1194,12 @@ struct MapHeader
     uint8_t fishingGroup;
 };
 
+struct StartMenuItem {
+    uint8_t (*function)(void);
+    const char* label;
+    const char* desc;
+};
+
 struct MenuCoords {
     uint8_t y1;
     uint8_t x1;
@@ -1225,10 +1231,19 @@ struct MenuData {
             const char** const options;
         } _2dMenu;
         struct {
-            uint8_t count;
+            union {
+                uint8_t count;
+                struct {
+                    uint8_t cols;
+                    uint8_t rows;
+                };
+            };
             const uint8_t** itemList;
             void (*displayFunction)(const char**, uint8_t*, uint8_t);
-            const char ** stringsList;
+            union {
+                const char ** stringsList;
+                const struct StartMenuItem* startMenuList;
+            };
         } setupMenu;
     };
     void (*const function)(void);

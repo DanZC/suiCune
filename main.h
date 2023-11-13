@@ -54,7 +54,7 @@
 //#include "engine/events/whiteout.h"
 //#include "engine/events/forced_movement.h"
 //#include "engine/events/itemfinder.h"
-//#include "engine/menus/start_menu.h"
+#include "engine/menus/start_menu.h"
 //#include "engine/pokemon/mon_menu.h"
 //#include "engine/overworld/select_menu.h"
 //#include "engine/events/elevator.h"

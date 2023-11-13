@@ -263,7 +263,7 @@ void init_function_pointers(void) {
     // REDIRECTED(CheckPitTile);
     // REDIRECTED(GetTileCollision);
     // REDIRECTED(v_GetMovementByte);
-    // REDIRECTED(UpdateSprites);
+    CONVERTED(UpdateSprites);
     // REDIRECTED(UnmaskCopyMapObjectStruct);
     // REDIRECTED(GetInitialFacing);
     // REDIRECTED(FindFirstEmptyObjectStruct);
@@ -391,7 +391,7 @@ void init_function_pointers(void) {
     REDIRECTED(ForceUpdateCGBPals);
     // REDIRECTED(DmgToCgbObjPal1);
     // REDIRECTED(ReloadSpritesNoPalettes);
-    // REDIRECTED(GSReloadPalettes);
+    CONVERTED(GSReloadPalettes);
 
     // home/pokedex_flags.c
     // REDIRECTED(CheckCaughtMon);
@@ -657,7 +657,7 @@ void init_function_pointers(void) {
     // home/window.c
     REDIRECTED(CloseText);
     REDIRECTED(SafeUpdateSprites);
-    REDIRECTED(RefreshScreen);
+    CONVERTED(RefreshScreen);
     REDIRECTED(OpenText);
     // REDIRECTED(SetCarryFlag);
     REDIRECTED(v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
@@ -906,7 +906,7 @@ void init_function_pointers(void) {
     // REDIRECTED(MovementFunction_ObeyDPad);
     // REDIRECTED(UnfreezeObject);
     // REDIRECTED(HandleFrozenObjectAction);
-    // REDIRECTED(v_UpdateSprites);
+    CONVERTED(v_UpdateSprites);
     // REDIRECTED(HandleObjectStep);
     // REDIRECTED(MovementFunction_0e);
     // REDIRECTED(SetTallGrassFlags);
@@ -4120,4 +4120,16 @@ void init_function_pointers(void) {
     CONVERTED(Pokepic);
     CONVERTED(ClosePokepic);
     // REDIRECTED(PokepicMenuHeader);
+
+    // engine/menus/start_menu.c
+    // REDIRECTED(StartMenu_Pokedex);
+    // REDIRECTED(StartMenu_Pack);
+    // REDIRECTED(StartMenu_Status);
+    // REDIRECTED(StartMenu_Save);
+    // REDIRECTED(StartMenu_Option);
+    // REDIRECTED(StartMenu_Exit);
+    // REDIRECTED(StartMenu_Pokegear);
+    // REDIRECTED(StartMenu_Quit);
+    // REDIRECTED(StartMenu);
+    // REDIRECTED(StartMenu_Pokemon);
 }

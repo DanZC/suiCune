@@ -24,10 +24,10 @@ const struct Facing FacingStepDown1 = { // walking down 1
 
 const struct Facing FacingStepDown3 = { // walking down 2
     .count = 4, .data = (struct FacingData[]){
-        {0,  0, X_FLIP, 0x80},
-        {0,  8, X_FLIP, 0x81},
-        {8,  0, RELATIVE_ATTRIBUTES | X_FLIP, 0x82},
-        {8,  8, RELATIVE_ATTRIBUTES | X_FLIP, 0x83},
+        {0,  8, X_FLIP, 0x80},
+        {0,  0, X_FLIP, 0x81},
+        {8,  8, RELATIVE_ATTRIBUTES | X_FLIP, 0x82},
+        {8,  0, RELATIVE_ATTRIBUTES | X_FLIP, 0x83},
     },
 };
 
@@ -52,10 +52,10 @@ const struct Facing FacingStepUp1 = {
 
 const struct Facing FacingStepUp3 = {
     .count = 4, .data = (struct FacingData[]){
-        {0,  0, X_FLIP, 0x84},
-        {0,  8, X_FLIP, 0x85},
-        {8,  0, RELATIVE_ATTRIBUTES | X_FLIP, 0x86},
-        {8,  8, RELATIVE_ATTRIBUTES | X_FLIP, 0x87},
+        {0,  8, X_FLIP, 0x84},
+        {0,  0, X_FLIP, 0x85},
+        {8,  8, RELATIVE_ATTRIBUTES | X_FLIP, 0x86},
+        {8,  0, RELATIVE_ATTRIBUTES | X_FLIP, 0x87},
     }
 };
 

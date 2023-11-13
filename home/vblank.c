@@ -4,6 +4,7 @@
 #include "joypad.h"
 #include "palettes.h"
 #include "video.h"
+#include "copy.h"
 
 //  VBlank is the interrupt responsible for updating VRAM.
 
@@ -15,13 +16,14 @@
 
 void TransferVirtualOAM(void) {
     // initiate DMA
-    LD_A(HIGH(wVirtualOAM));
-    LDH_addr_A(rDMA);
+    // LD_A(HIGH(wVirtualOAM));
+    // LDH_addr_A(rDMA);
     // wait for DMA to finish
-    LD_A(NUM_SPRITE_OAM_STRUCTS);
-wait:
-    DEC_A;
-    IF_NZ goto wait;
+    // LD_A(NUM_SPRITE_OAM_STRUCTS);
+// wait:
+    // DEC_A;
+    // IF_NZ goto wait;
+    CopyBytes_Conv2(gb.oam, wram->wVirtualOAMSprite, sizeof(gb.oam));
     return;
 }
 

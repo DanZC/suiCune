@@ -995,7 +995,7 @@ load_cursor_state:
 }
 
 void PromptButton_wait_input_Conv(void) {
-    PEEK("");
+    // PEEK("");
     // LDH_A_addr(hOAMUpdate);
     // PUSH_AF;
     uint8_t temp = hram->hOAMUpdate;
@@ -1007,67 +1007,67 @@ void PromptButton_wait_input_Conv(void) {
     // LD_A_addr(wInputType);
     // OR_A_A;
     // IF_Z goto input_wait_loop;
-    if(wram->wInputType == 0)
+    if(wram->wInputType != 0)
     {
+        // FARCALL(av_DudeAutoInput_A);
+        v_DudeAutoInput_A();
+    }
     // input_wait_loop:
+    do {
+        // CALL(aPromptButton_blink_cursor);
+
         do {
-            // CALL(aPromptButton_blink_cursor);
-
-            do {
-            // blink_cursor:
-                // LDH_A_addr(hVBlankCounter);
-                // AND_A(0b00010000);  // bit 4, a
-                // IF_Z goto cursor_off;
-                if((hram->hVBlankCounter & 0b00010000) == 0)
-                {
-                // cursor_off:
-                    // lda_coord(17, 17, wTilemap);
-                    // ldcoord_a(18, 17, wTilemap);
-                    *coord(18, 17, wram->wTilemap) = *coord(17, 17, wram->wTilemap);
-                }
-                else 
-                {
-                    // LD_A(0xee);
-                    // ldcoord_a(18, 17, wTilemap);
-                    *coord(18, 17, wram->wTilemap) = CHAR_DOWN_CURSOR;
-                }
-
-                // RET;
-            } while(0);
-
-            // CALL(aJoyTextDelay);
-            JoyTextDelay_Conv();
-
-            // LDH_A_addr(hJoyPressed);
-            // AND_A(A_BUTTON | B_BUTTON);
-            // IF_NZ goto received_input;
-            if((hram->hJoyPressed & (A_BUTTON | B_BUTTON)) != 0)
+        // blink_cursor:
+            // LDH_A_addr(hVBlankCounter);
+            // AND_A(0b00010000);  // bit 4, a
+            // IF_Z goto cursor_off;
+            if((hram->hVBlankCounter & 0b00010000) == 0)
             {
-                PEEK("received_input");
-            // received_input:
-                // POP_AF;
-                // LDH_addr_A(hOAMUpdate);
-                hram->hOAMUpdate = temp;
-
-                // RET;
-                return;
+            // cursor_off:
+                // lda_coord(17, 17, wTilemap);
+                // ldcoord_a(18, 17, wTilemap);
+                *coord(18, 17, wram->wTilemap) = *coord(17, 17, wram->wTilemap);
+            }
+            else 
+            {
+                // LD_A(0xee);
+                // ldcoord_a(18, 17, wTilemap);
+                *coord(18, 17, wram->wTilemap) = CHAR_DOWN_CURSOR;
             }
 
-            // CALL(aUpdateTimeAndPals);
-            UpdateTimeAndPals_Conv();
+            // RET;
+        } while(0);
 
-            // LD_A(0x1);
-            // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = 0x1;
+        // CALL(aJoyTextDelay);
+        JoyTextDelay_Conv();
 
-            // CALL(aDelayFrame);
-            DelayFrame();
+        // LDH_A_addr(hJoyPressed);
+        // AND_A(A_BUTTON | B_BUTTON);
+        // IF_NZ goto received_input;
+        if((hram->hJoyPressed & (A_BUTTON | B_BUTTON)) != 0)
+        {
+            // PEEK("received_input");
+        // received_input:
+            // POP_AF;
+            // LDH_addr_A(hOAMUpdate);
+            hram->hOAMUpdate = temp;
 
-            // goto input_wait_loop;
-        } while(1);
-    }
-    // FARCALL(av_DudeAutoInput_A);
-    v_DudeAutoInput_A();
+            // RET;
+            return;
+        }
+
+        // CALL(aUpdateTimeAndPals);
+        UpdateTimeAndPals_Conv();
+
+        // LD_A(0x1);
+        // LDH_addr_A(hBGMapMode);
+        hram->hBGMapMode = 0x1;
+
+        // CALL(aDelayFrame);
+        DelayFrame();
+
+        // goto input_wait_loop;
+    } while(1);
 }
 
 //  Show a blinking cursor in the lower right-hand
@@ -1087,7 +1087,7 @@ void PromptButton_Conv(void) {
     // CALL(aPromptButton_wait_input);
     PromptButton_wait_input_Conv();
 
-    PEEK("after");
+    // PEEK("after");
     // PUSH_DE;
     // LD_DE(SFX_READ_TEXT_2);
     // CALL(aPlaySFX);

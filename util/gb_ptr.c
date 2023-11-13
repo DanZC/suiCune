@@ -151,22 +151,30 @@ uint32_t BankAddrToAbsRAMAddr(uint8_t bank, uint16_t addr) {
 }
 
 void SafeCallGB(uint32_t address, struct cpu_registers_s* regs) {
-    SAVE_REGS;
     if(regs != &gb.cpu_reg)
     {
-        for(unsigned i = 0; i < sizeof(struct cpu_registers_s); i++) {
-            ((uint8_t*)&gb.cpu_reg)[i] = ((uint8_t*)regs)[i];
-        }
-        FARCALL(address);
-        for(unsigned i = 0; i < sizeof(struct cpu_registers_s); i++) {
-            ((uint8_t*)regs)[i] = ((uint8_t*)&gb.cpu_reg)[i];
-        }
+        struct cpu_registers_s copy = gb.cpu_reg;
+        gb.cpu_reg = *regs;
+        uint8_t bank = hram->hROMBank;
+        gb_write(MBC3RomBank, BANK(address));
+        hram->hROMBank = BANK(address);
+        CALL(address);
+        gb_write(MBC3RomBank, bank);
+        hram->hROMBank = bank;
+        *regs = gb.cpu_reg;
+        gb.cpu_reg = copy;
     }
     else 
     {
-        FARCALL(address);
+        SAVE_REGS;
+        uint8_t bank = hram->hROMBank;
+        gb_write(MBC3RomBank, BANK(address));
+        hram->hROMBank = BANK(address);
+        CALL(address);
+        gb_write(MBC3RomBank, bank);
+        hram->hROMBank = bank;
+        RESTORE_REGS;
     }
-    RESTORE_REGS;
 }
 
 void SafeCallGBAuto(uint32_t address) {

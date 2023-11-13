@@ -3,6 +3,7 @@ void ClearBGPalettes_Conv(void);
 void WaitBGMap(void);
 void WaitBGMap_Conv(void);
 void WaitBGMap2(void);
+void WaitBGMap2_Conv(void);
 void IsCGB(void);
 bool IsCGB_Conv(void);
 void ApplyTilemap(void);

@@ -699,10 +699,7 @@ void CallObjectAction_Conv(struct Object* bc, int column) {
     // LD_A_hli;
     // LD_H_hl;
     // LD_L_A;
-    // uint16_t ptr = gb_read(de + (action * 4));
     // CALL(av_hl_);
-    // REG_BC = bc;
-    // CALL(ptr);
     // RET;
     return ObjectActionPairPointers[action][column](bc);
 }
@@ -3728,32 +3725,28 @@ void UpdateAllObjectsFrozen_Conv(void) {
     
     // LD_BC(wObjectStructs);
     // XOR_A_A;
-    uint8_t a = 0;
     struct Object* bc = &wram->wPlayerStruct;
 
 // loop:
-
-    do {
+    for(uint8_t a = 0; a < NUM_OBJECT_STRUCTS; ++a) {
         // LDH_addr_A(hMapObjectIndex);
         hram->hMapObjectIndex = a;
         // CALL(aDoesObjectHaveASprite);
         // IF_Z goto ok;
-        if(DoesObjectHaveASprite_Conv(bc)) {
+        if(DoesObjectHaveASprite_Conv(&bc[a])) {
             // CALL(aUpdateObjectFrozen);
-            UpdateObjectFrozen_Conv(bc);
+            UpdateObjectFrozen_Conv(&bc[a]);
         }
     // ok:
         // LD_HL(OBJECT_LENGTH);
         // ADD_HL_BC;
         // LD_B_H;
         // LD_C_L;
-        bc++;
         // LDH_A_addr(hMapObjectIndex);
-        a = hram->hMapObjectIndex;
         // INC_A;
         // CP_A(NUM_OBJECT_STRUCTS);
         // IF_NZ goto loop;
-    } while(++a != NUM_OBJECT_STRUCTS);
+    }
     // RET;
 }
 
@@ -5014,6 +5007,7 @@ void ResetObject_Conv(struct Object* bc) {
 }
 
 void v_UpdateSprites(void) {
+    return v_UpdateSprites_Conv();
     SET_PC(av_UpdateSprites);
     LD_A_addr(wVramState);
     BIT_A(0);
@@ -5094,8 +5088,10 @@ void v_UpdateSprites_Conv(void) {
     // CP_A_B;
     // RET_NC;
     uint8_t sprite_idx = hram->hUsedSpriteIndex >> 2;
-    if(sprite_idx >= b)
+    if(sprite_idx >= b) {
+        hram->hOAMUpdate = temp;
         return;
+    }
     
     // LD_L_A;
     // LD_H(HIGH(wVirtualOAM));
@@ -5267,12 +5263,12 @@ static void InitSprites_DeterminePriorities(void) {
             // ADD_HL_BC;
             // BIT_hl(LOW_PRIORITY_F);
             // IF_NZ goto add;
-            if(((bc->flags2 >> (LOW_PRIORITY_F)) & 0x1)) {
+            if(bit_test(bc->flags2, LOW_PRIORITY_F)) {
                 e = PRIORITY_LOW;
             }
             // BIT_hl(HIGH_PRIORITY_F);
             // IF_Z goto add;
-            else if(!((bc->flags2 >> (HIGH_PRIORITY_F)) & 0x1)) {
+            else if(!bit_test(bc->flags2, HIGH_PRIORITY_F)) {
                 e = PRIORITY_NORM;
             }
             else {

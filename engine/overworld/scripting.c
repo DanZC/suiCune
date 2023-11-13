@@ -2693,6 +2693,15 @@ void CallCallback(void){
 
 }
 
+void CallCallback_Conv(Script_fn_t callback){
+    // LD_A_addr(wScriptBank);
+    // OR_A(0x80);
+    // LD_addr_A(wScriptBank);
+    wram->wScriptBank |= 0x80;
+    // JP(mScriptCall);
+    Script_CallScript(&gCurScript, callback);
+}
+
 void Script_sjump(void){
     CALL(aGetScriptByte);
     LD_L_A;

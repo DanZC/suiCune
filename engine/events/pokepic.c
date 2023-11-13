@@ -24,8 +24,8 @@ void Pokepic(void){
     // CALL(aMenuBox);
     MenuBox_Conv();
     // CALL(aUpdateSprites);
-    SafeCallGBAuto(aUpdateSprites);
-    // UpdateSprites_Conv();
+    // SafeCallGBAuto(aUpdateSprites);
+    UpdateSprites_Conv();
     // CALL(aApplyTilemap);
     ApplyTilemap_Conv();
     // LD_B(SCGB_POKEPIC);

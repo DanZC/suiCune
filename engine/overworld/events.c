@@ -8,11 +8,13 @@
 #include "tile_events.h"
 #include "wildmons.h"
 #include "time.h"
+#include "../../home/queue_script.h"
 #include "../../home/trainers.h"
 #include "../../home/copy.h"
 #include "../../home/audio.h"
 #include "../phone/phone.h"
 #include "../../home/flag.h"
+#include "../menus/start_menu.h"
 
 // INCLUDE "constants.asm"
 
@@ -1641,7 +1643,9 @@ u8_flag_s CheckMenuOW_Conv(void){
 bool StartMenuScript(script_s* s){
     SCRIPT_BEGIN
     //callasm ['StartMenu']
+    StartMenu();
     //sjump ['StartMenuCallback']
+    sjump(StartMenuCallback)
     SCRIPT_END
 }
 
@@ -1652,26 +1656,26 @@ bool SelectMenuScript(script_s* s){
     SCRIPT_END
 }
 
-void StartMenuCallback(void){
-    return SelectMenuCallback();
+bool StartMenuCallback(script_s* s){
+    SCRIPT_BEGIN
+    SCRIPT_FALLTHROUGH(SelectMenuCallback)
 }
 
-void SelectMenuCallback(void){
-    //readmem ['hMenuReturn']
-    //ifequal ['HMENURETURN_SCRIPT', '.Script']
-    //ifequal ['HMENURETURN_ASM', '.Asm']
-    //end ['?']
-
+bool SelectMenuCallback(script_s* s){
+    SCRIPT_BEGIN
+    readmem(hram_ptr(hMenuReturn))
+    ifequal(HMENURETURN_SCRIPT, Script)
+    ifequal(HMENURETURN_ASM, Asm)
+    s_end
 
 Script:
-    //memjump ['wQueuedScriptBank']
-
+    sjump(gQueuedScriptAddr)
 
 Asm:
     //memcallasm ['wQueuedScriptBank']
-    //end ['?']
-
-    return CountStep();
+    gQueuedFuncAddr();
+    s_end
+    SCRIPT_END
 }
 
 void CountStep(void){

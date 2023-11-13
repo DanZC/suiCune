@@ -1196,6 +1196,7 @@ void ResetVramState_Bit0(void){
 }
 
 void UpdateSprites(void){
+    return UpdateSprites_Conv();
         LD_A_addr(wVramState);
     BIT_A(0);
     RET_Z ;
@@ -1215,7 +1216,8 @@ void UpdateSprites_Conv(void){
 
     // FARCALL(aUpdateAllObjectsFrozen);
     // FARCALL(av_UpdateSprites);
-    UpdateAllObjectsFrozen_Conv();
+    // UpdateAllObjectsFrozen_Conv();
+    SafeCallGBAuto(aUpdateAllObjectsFrozen);
 
     v_UpdateSprites_Conv();
     // RET;

@@ -8,9 +8,16 @@
 #include "window.h"
 #include "tilemap.h"
 #include "map_objects.h"
+#include "audio.h"
+#include "clear_sprites.h"
+#include "sprite_updates.h"
+#include "menu.h"
+#include "lcd.h"
+#include "../engine/overworld/overworld.h"
 #include "../engine/overworld/tile_events.h"
 #include "../engine/overworld/load_map_part.h"
 #include "../engine/tilesets/mapgroup_roofs.h"
+#include "../engine/gfx/crystal_layouts.h"
 #include "../data/maps/maps.h"
 #include "../data/maps/scenes.h"
 #include "../util/scripting.h"
@@ -1905,6 +1912,75 @@ found:
 
 }
 
+static Script_fn_t RunMapCallback_FindCallback(uint8_t b) {
+    // LD_A_addr(wCurMapCallbackCount);
+    // LD_C_A;
+    const uint8_t c = gCurMapCallbackCount;
+    // AND_A_A;
+    // RET_Z ;
+    if(c == 0)
+        return NULL;
+    // LD_HL(wCurMapCallbacksPointer);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // OR_A_H;
+    // RET_Z ;
+    if(gCurMapCallbacksPointer == NULL)
+        return NULL;
+    // LD_DE(CALLBACK_SIZE);
+
+    for(uint8_t i = 0; i < c; ++i) {
+    // loop:
+        // LD_A_hl;
+        // CP_A_B;
+        // IF_Z goto found;
+        if(gCurMapCallbacksPointer[i].type == b) {
+        // found:
+            // INC_HL;
+            // LD_A_hli;
+            // LD_H_hl;
+            // LD_L_A;
+            // SCF;
+            // RET;
+            return gCurMapCallbacksPointer[i].script;
+        }
+        // ADD_HL_DE;
+        // DEC_C;
+        // IF_NZ goto loop;
+    }
+    // XOR_A_A;
+    // RET;
+    return NULL;
+}
+
+void RunMapCallback_Conv(uint8_t a){
+//  Will run the first callback found with execution index equal to a.
+    // LD_B_A;
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+    uint8_t bank = hram->hROMBank;
+    // CALL(aSwitchToMapScriptsBank);
+    SwitchToMapScriptsBank_Conv();
+    // CALL(aRunMapCallback_FindCallback);
+    Script_fn_t callback = RunMapCallback_FindCallback(a);
+    // IF_NC goto done;
+    if(callback != NULL) {
+        // CALL(aGetMapScriptsBank);
+        // LD_B_A;
+        // LD_D_H;
+        // LD_E_L;
+        // CALL(aExecuteCallbackScript);
+        ExecuteCallbackScript_Conv(callback);
+    }
+
+// done:
+    // POP_AF;
+    // RST(aBankswitch);
+    Bankswitch_Conv(bank);
+    // RET;
+}
+
 void ExecuteCallbackScript(void){
 //  Do map callback de and return to script bank b.
     FARCALL(aCallCallback);
@@ -1922,6 +1998,32 @@ void ExecuteCallbackScript(void){
     LD_addr_A(wScriptMode);
     RET;
 
+}
+
+//  Do map callback de and return to script bank b.
+void ExecuteCallbackScript_Conv(Script_fn_t de){
+    // FARCALL(aCallCallback);
+    CallCallback_Conv(de);
+    // LD_A_addr(wScriptMode);
+    // PUSH_AF;
+    uint8_t mode = wram->wScriptMode;
+    // LD_HL(wScriptFlags);
+    // LD_A_hl;
+    // PUSH_AF;
+    uint8_t scriptFlags = wram->wScriptFlags;
+    // SET_hl(1);
+    bit_set(wram->wScriptFlags, 1);
+    // FARCALL(aEnableScriptMode);
+    EnableScriptMode_Conv();
+    // FARCALL(aScriptEvents);
+    ScriptEvents_Conv();
+    // POP_AF;
+    // LD_addr_A(wScriptFlags);
+    wram->wScriptFlags = scriptFlags;
+    // POP_AF;
+    // LD_addr_A(wScriptMode);
+    wram->wScriptMode = mode;
+    // RET;
 }
 
 void MapTextbox(void){
@@ -3378,6 +3480,21 @@ void FadeToMenu(void){
 
 }
 
+void FadeToMenu_Conv(void){
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    // CALL(aLoadStandardMenuHeader);
+    LoadStandardMenuHeader_Conv();
+    // FARCALL(aFadeOutPalettes);
+    SafeCallGBAuto(aFadeOutPalettes);
+    // CALL(aClearSprites);
+    ClearSprites_Conv();
+    // CALL(aDisableSpriteUpdates);
+    DisableSpriteUpdates_Conv();
+    // RET;
+}
+
 void CloseSubmenu(void){
     CALL(aClearBGPalettes);
     CALL(aReloadTilesetAndPalettes);
@@ -3386,6 +3503,21 @@ void CloseSubmenu(void){
     CALL(aGSReloadPalettes);
     JR(mFinishExitMenu);
 
+}
+
+void CloseSubmenu_Conv(void){
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
+    // CALL(aReloadTilesetAndPalettes);
+    ReloadTilesetAndPalettes_Conv();
+    // CALL(aUpdateSprites);
+    UpdateSprites_Conv();
+    // CALL(aCall_ExitMenu);
+    ExitMenu_Conv2();
+    // CALL(aGSReloadPalettes);
+    GSReloadPalettes();
+    // JR(mFinishExitMenu);
+    return FinishExitMenu_Conv();
 }
 
 void ExitAllMenus(void){
@@ -3397,6 +3529,20 @@ void ExitAllMenus(void){
     return FinishExitMenu();
 }
 
+void ExitAllMenus_Conv(void){
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
+    // CALL(aCall_ExitMenu);
+    ExitMenu_Conv2();
+    // CALL(aReloadTilesetAndPalettes);
+    ReloadTilesetAndPalettes_Conv();
+    // CALL(aUpdateSprites);
+    UpdateSprites_Conv();
+    // CALL(aGSReloadPalettes);
+    GSReloadPalettes();
+    return FinishExitMenu_Conv();
+}
+
 void FinishExitMenu(void){
     LD_B(SCGB_MAPPALS);
     CALL(aGetSGBLayout);
@@ -3406,6 +3552,21 @@ void FinishExitMenu(void){
     CALL(aEnableSpriteUpdates);
     RET;
 
+}
+
+void FinishExitMenu_Conv(void){
+    // LD_B(SCGB_MAPPALS);
+    // CALL(aGetSGBLayout);
+    GetSGBLayout_Conv(SCGB_MAPPALS);
+    // FARCALL(aLoadOW_BGPal7);
+    LoadOW_BGPal7();
+    // CALL(aWaitBGMap2);
+    WaitBGMap2_Conv();
+    // FARCALL(aFadeInPalettes);
+    SafeCallGBAuto(aFadeInPalettes);
+    // CALL(aEnableSpriteUpdates);
+    EnableSpriteUpdates_Conv();
+    // RET;
 }
 
 void ReturnToMapWithSpeechTextbox(void){
@@ -3458,6 +3619,40 @@ void ReloadTilesetAndPalettes(void){
     CALL(aEnableLCD);
     RET;
 
+}
+
+void ReloadTilesetAndPalettes_Conv(void){
+    // CALL(aDisableLCD);
+    DisableLCD_Conv();
+    // CALL(aClearSprites);
+    ClearSprites_Conv();
+    // FARCALL(aRefreshSprites);
+    RefreshSprites_Conv();
+    // CALL(aLoadStandardFont);
+    LoadStandardFont_Conv();
+    // CALL(aLoadFontsExtra);
+    LoadFontsExtra_Conv();
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+    // LD_A_addr(wMapGroup);
+    // LD_B_A;
+    // LD_A_addr(wMapNumber);
+    // LD_C_A;
+    // CALL(aSwitchToAnyMapAttributesBank);
+    FARCALL(aUpdateTimeOfDayPal);
+    // CALL(aOverworldTextModeSwitch);
+    OverworldTextModeSwitch_Conv();
+    // CALL(aLoadTilesetGFX);
+    LoadTilesetGFX_Conv();
+    // LD_A(9);
+    // CALL(aSkipMusic);
+    SkipMusic_Conv(9);
+    // POP_AF;
+    // RST(aBankswitch);
+
+    // CALL(aEnableLCD);
+    EnableLCD_Conv();
+    // RET;
 }
 
 void GetMapPointer(void){

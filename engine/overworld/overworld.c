@@ -1,11 +1,13 @@
 #include "../../constants.h"
 #include "overworld.h"
+#include "../../home/copy.h"
 #include "../../home/map.h"
 #include "../gfx/mon_icons.h"
 #include "../../data/sprites/player_sprites.h"
 #include "../../data/sprites/emotes.h"
 #include "../../data/sprites/sprite_mons.h"
 #include "../../data/sprites/sprites.h"
+#include "../../data/maps/outdoor_sprites.h"
 
 void GetEmote2bpp(void){
     LD_A(0x1);
@@ -86,6 +88,30 @@ Refresh:
     CALL(aLoadAndSortSprites);
     RET;
 
+}
+
+static void RefreshSprites_Refresh(void) {
+// Refresh:
+    // XOR_A_A;
+    // LD_BC(wUsedSpritesEnd - wUsedSprites);
+    // LD_HL(wUsedSprites);
+    // CALL(aByteFill);
+    ByteFill_Conv2(wram->wUsedSprites, sizeof(wram->wUsedSprites), 0);
+    // CALL(aGetPlayerSprite);
+    GetPlayerSprite_Conv();
+    // CALL(aAddMapSprites);
+    AddMapSprites_Conv();
+    // CALL(aLoadAndSortSprites);
+    SafeCallGBAuto(aLoadAndSortSprites);
+    // RET;
+}
+
+void RefreshSprites_Conv(void){
+    // CALL(aRefreshSprites_Refresh);
+    RefreshSprites_Refresh();
+    // CALL(aLoadUsedSpritesGFX);
+    LoadUsedSpritesGFX_Conv();
+    // RET;
 }
 
 void GetPlayerSprite(void){
@@ -215,6 +241,22 @@ outdoor:
 
 }
 
+void AddMapSprites_Conv(void){
+    // CALL(aGetMapEnvironment);
+    // CALL(aCheckOutdoorMap);
+    // IF_Z goto outdoor;
+    if(!CheckOutdoorMap_Conv(GetMapEnvironment_Conv2())) {
+        // CALL(aAddIndoorSprites);
+        AddIndoorSprites_Conv();
+        // RET;
+        return;
+    }
+// outdoor:
+    // CALL(aAddOutdoorSprites);
+    AddOutdoorSprites_Conv();
+    // RET;
+}
+
 void AddIndoorSprites(void){
     LD_HL(wMap1ObjectSprite);
     LD_A(1);
@@ -231,6 +273,26 @@ loop:
     IF_NZ goto loop;
     RET;
 
+}
+
+void AddIndoorSprites_Conv(void){
+    // LD_HL(wMap1ObjectSprite);
+    // LD_A(1);
+
+    for(uint8_t a = 0; a < NUM_OBJECTS - 1; ++a) {
+    // loop:
+        // PUSH_AF;
+        // LD_A_hl;
+        // CALL(aAddSpriteGFX);
+        AddSpriteGFX_Conv(wram->wMapObject[a].sprite);
+        // LD_DE(MAPOBJECT_LENGTH);
+        // ADD_HL_DE;
+        // POP_AF;
+        // INC_A;
+        // CP_A(NUM_OBJECTS);
+        // IF_NZ goto loop;
+    }
+    // RET;
 }
 
 void AddOutdoorSprites(void){
@@ -257,6 +319,33 @@ loop:
 
 }
 
+void AddOutdoorSprites_Conv(void){
+    // LD_A_addr(wMapGroup);
+    // DEC_A;
+    // LD_C_A;
+    // LD_B(0);
+    // LD_HL(mOutdoorSprites);
+    // ADD_HL_BC;
+    // ADD_HL_BC;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    const uint8_t* hl = OutdoorSprites[wram->wMapGroup - 1];
+    // LD_C(MAX_OUTDOOR_SPRITES);
+
+    for(uint8_t c = 0; c < MAX_OUTDOOR_SPRITES; c++) {
+    // loop:
+        // PUSH_BC;
+        // LD_A_hli;
+        // CALL(aAddSpriteGFX);
+        AddSpriteGFX_Conv(hl[c]);
+        // POP_BC;
+        // DEC_C;
+        // IF_NZ goto loop;
+    }
+    // RET;
+}
+
 void LoadUsedSpritesGFX(void){
     LD_A(MAPCALLBACK_SPRITES);
     CALL(aRunMapCallback);
@@ -264,6 +353,18 @@ void LoadUsedSpritesGFX(void){
     CALL(aLoadMiscTiles);
     RET;
 
+}
+
+void LoadUsedSpritesGFX_Conv(void){
+    // LD_A(MAPCALLBACK_SPRITES);
+    struct cpu_registers_s regs = {.a = MAPCALLBACK_SPRITES};
+    // CALL(aRunMapCallback);
+    SafeCallGB(aRunMapCallback, &regs);
+    // CALL(aGetUsedSprites);
+    GetUsedSprite_Conv();
+    // CALL(aLoadMiscTiles);
+    LoadMiscTiles_Conv();
+    // RET;
 }
 
 void LoadMiscTiles(void){
@@ -653,6 +754,15 @@ void LoadAndSortSprites(void){
 
 }
 
+void LoadAndSortSprites_Conv(void){
+    // CALL(aLoadSpriteGFX);
+    LoadSpriteGFX_Conv();
+    CALL(aSortUsedSprites);
+    CALL(aArrangeUsedSprites);
+    RET;
+
+}
+
 void AddSpriteGFX(void){
 //  Add any new sprite ids to a list of graphics to be loaded.
 //  Return carry if the list is full.
@@ -696,6 +806,56 @@ new:
 
 }
 
+//  Add any new sprite ids to a list of graphics to be loaded.
+//  Return true if the list is full.
+bool AddSpriteGFX_Conv(uint8_t a){
+    // PUSH_HL;
+    // PUSH_BC;
+    // LD_B_A;
+    // LD_HL(wUsedSprites + 2);
+    uint8_t* hl = wram->wUsedSprites + 2;
+    // LD_C(SPRITE_GFX_LIST_CAPACITY - 1);
+    uint8_t c = SPRITE_GFX_LIST_CAPACITY - 1;
+
+    do {
+    // loop:
+        // LD_A_hl;
+        // CP_A_B;
+        // IF_Z goto exists;
+        if(*hl == a) {
+        // exists:
+            // POP_BC;
+            // POP_HL;
+            // AND_A_A;
+            // RET;
+            return false;
+        }
+        // AND_A_A;
+        // IF_Z goto new;
+        if(*hl == 0) {
+        // new:
+            // LD_hl_B;
+            *hl = a;
+            // POP_BC;
+            // POP_HL;
+            // AND_A_A;
+            // RET;
+            return false;
+        }
+        // INC_HL;
+        // INC_HL;
+        hl += 2;
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(--c != 0);
+
+    // POP_BC;
+    // POP_HL;
+    // SCF;
+    // RET;
+    return true;
+}
+
 void LoadSpriteGFX(void){
 //  Bug: b is not preserved, so it's useless as a next count.
 //  Uncomment the lines below to fix.
@@ -726,6 +886,45 @@ LoadSprite:
     LD_A_L;
     RET;
 
+}
+
+static uint8_t LoadSpriteGFX_LoadSprite(uint8_t a) {
+// push bc
+    // CALL(aGetSprite);
+    struct SpriteLoadData data = GetSprite_Conv(a);
+// pop bc
+    // LD_A_L;
+    return data.type;
+    // RET;
+}
+
+void LoadSpriteGFX_Conv(void){
+//  Bug: b is not preserved, so it's useless as a next count.
+//  Uncomment the lines below to fix.
+
+    // LD_HL(wUsedSprites);
+    uint8_t* hl = wram->wUsedSprites;
+    // LD_B(SPRITE_GFX_LIST_CAPACITY);
+
+    for(uint8_t b = 0; b < SPRITE_GFX_LIST_CAPACITY; b++) {
+    // loop:
+        // LD_A_hli;
+        // AND_A_A;
+        // IF_Z goto done;
+        if(hl[2*b] == 0)
+            return;
+        // PUSH_HL;
+        // CALL(aLoadSpriteGFX_LoadSprite);
+        // POP_HL;
+        // LD_hli_A;
+        hl[2*b + 1] = LoadSpriteGFX_LoadSprite(hl[2*b]);
+        // DEC_B;
+        // IF_NZ goto loop;
+    }
+
+
+// done:
+    // RET;
 }
 
 void SortUsedSprites(void){
@@ -894,6 +1093,33 @@ OneDirection:
     LD_A(4);
     RET;
 
+}
+
+//  Return the length of sprite type a in tiles.
+uint8_t GetSpriteLength_Conv(uint8_t a){
+    switch(a) {
+        // CP_A(WALKING_SPRITE);
+        // IF_Z goto AnyDirection;
+        // CP_A(STANDING_SPRITE);
+        // IF_Z goto AnyDirection;
+        case WALKING_SPRITE:
+        case STANDING_SPRITE:
+        // AnyDirection:
+            // LD_A(12);
+            // RET;
+            return 12;
+        // CP_A(STILL_SPRITE);
+        // IF_Z goto OneDirection;
+        case STILL_SPRITE:
+        // OneDirection:
+            // LD_A(4);
+            // RET;
+            return 4;
+        default: 
+            // LD_A(12);
+            // RET;
+            return 12;
+    }
 }
 
 void GetUsedSprites(void){

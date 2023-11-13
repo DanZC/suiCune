@@ -12,8 +12,8 @@
 #include "map.h"
 
 void RefreshScreen(void){
-    RefreshScreen_Conv();
-    RET;
+    return RefreshScreen_Conv();
+    // RET;
         CALL(aClearWindowData);
     LDH_A_addr(hROMBank);
     PUSH_AF;
