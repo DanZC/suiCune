@@ -884,7 +884,8 @@ no:
 
 }
 
-void Script_yesorno_Conv(void){
+void Script_yesorno_Conv(script_s* s){
+    (void)s;
     // CALL(aYesNoBox);
     // LD_A(FALSE);
     // IF_C goto no;

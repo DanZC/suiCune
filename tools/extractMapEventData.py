@@ -179,17 +179,17 @@ def map_json_to_c(dict: Dict[str, any]):
     out += '};\n\n'
     out_h += f'extern const struct MapCallback {dict["map_name"]}_MapCallbacks[];\n\n'
 
-    out += f'const struct CoordEvent {dict["map_name"]}_CoordEvents[] = {{\n'
+    out += f'static const struct CoordEvent {dict["map_name"]}_CoordEvents[] = {{\n'
     for event in dict["coord_events"]:
         out += f'    coord_event({event["x"]}, {event["y"]}, {event["scene_id"]}, {event["script"]}),\n'
     out += '};\n\n'
 
-    out += f'const struct BGEvent {dict["map_name"]}_BGEvents[] = {{\n'
+    out += f'static const struct BGEvent {dict["map_name"]}_BGEvents[] = {{\n'
     for event in dict["bg_events"]:
         out += f'    bg_event({event["x"]}, {event["y"]}, {event["function"]}, {event["script"]}),\n'
     out += '};\n\n'
 
-    out += f'static const struct WarpEvent {dict["map_name"]}_WarpEvents[] = {{\n'
+    out += f'static const struct WarpEventData {dict["map_name"]}_WarpEvents[] = {{\n'
     for event in dict["warp_events"]:
         out += f'    warp_event({event["x"]}, {event["y"]}, {event["map"]}, {event["warpNumber"]}),\n'
     out += '};\n\n'
@@ -207,7 +207,7 @@ def map_json_to_c(dict: Dict[str, any]):
     out += f'    .coord_event_count = lengthof({dict["map_name"]}_CoordEvents),\n'
     out += f'    .coord_events = {dict["map_name"]}_CoordEvents,\n\n'
     out += f'    .bg_event_count = lengthof({dict["map_name"]}_BGEvents),\n'
-    out += f'    .bg_event = {dict["map_name"]}_BGEvents,\n\n'
+    out += f'    .bg_events = {dict["map_name"]}_BGEvents,\n\n'
     out += f'    .obj_event_count = lengthof({dict["map_name"]}_ObjectEvents),\n'
     out += f'    .obj_events = {dict["map_name"]}_ObjectEvents,\n'
     out += '};\n\n'
@@ -224,13 +224,24 @@ if do_print:
     out2_ = out2_.replace('#include "../../../constants.h"\n#include "../../../util/scripting_macros.h"', '')
     out3_h = out_h_ + out2_h_
     out3 = out_ + out2_
-    print(out3)
+    print(out3_h)
 else:
     out_filepath = sys.argv[2]
     if out_filepath.endswith('.json'):
         with open(sys.argv[2], "w", encoding='utf8') as f:
             json.dump(out, f, indent=4)
-    else:
+    elif out_filepath.endswith('.c'):
         out_, out_h_ = map_json_to_c(out)
         out2_, out2_h_ = convert_script_from_lines(sys.argv[1], script_lines)
-        print(out2_)
+        out2_h_ = out2_h_.replace('#pragma once\n', '\n')
+        mapname_part = sys.argv[2][sys.argv[2].rfind('/')+1:sys.argv[2].rfind('.')]
+        out2_ = out2_.replace('#include "../../../constants.h"\n#include "../../../util/scripting_macros.h"', 
+                              f'#include "../constants.h"\n#include "../util/scripting.h"\n#include "{mapname_part}.h"')
+        out_ = f'#include "../constants.h"\n#include "../util/scripting.h"\n#include "{mapname_part}.h"\n' + out_
+        out3_h = out_h_ + out2_h_
+        out3 = out_ + out2_
+        with open(sys.argv[2].replace('.c', '.h'), "w", encoding='utf8') as f:
+            f.write(out3_h)
+        with open(sys.argv[2], "w", encoding='utf8') as f:
+            f.write(out3)
+

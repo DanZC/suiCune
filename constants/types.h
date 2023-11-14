@@ -1067,6 +1067,8 @@ struct MapCallback {
     const Script_fn_t script;
 };
 
+#define map_callback(type, script) (struct MapCallback) {type, script}
+
 #if defined(__cplusplus) || defined(_MSC_VER)
 struct 
 #else
@@ -1081,6 +1083,8 @@ WarpEventData
     uint8_t mapNumber;
 };
 
+#define warp_event(_x, _y, _map, _warp) (struct WarpEventData) {.y=_y, .x=_x, .warpNumber=_warp, .mapGroup=GROUP_##_map, .mapNumber=MAP_##_map}
+
 struct CoordEvent
 {
     uint8_t sceneId;
@@ -1089,11 +1093,15 @@ struct CoordEvent
     Script_fn_t script;
 };
 
+#define coord_event(_x, _y, _sceneId, _script) (struct CoordEvent) {.sceneId=_sceneId, .y=_y, .x=_x, .script=_script}
+
 struct HiddenItem 
 {
     item_t item;
     uint16_t eventFlag;
 };
+
+#define hidden_item(_item, _evflag) (struct HiddenItem) {.item=_item, .eventFlag=_evflag}
 
 struct ConditionalEvent 
 {
@@ -1112,6 +1120,8 @@ struct BGEvent
         struct ConditionalEvent* const condEvent;
     };
 };
+
+#define bg_event(_x, _y, _function, _script) (struct BGEvent) {.y=_y, .x=_x, .function=_function, .script=_script}
 
 struct ItemBall {
     item_t item;
@@ -1134,7 +1144,8 @@ struct ObjEvent
     uint8_t y;
     uint8_t x;
     uint8_t movement;
-    uint8_t radius;
+    uint8_t radiusX;
+    uint8_t radiusY;
     int8_t h1;
     int8_t h2;
     uint8_t color;
@@ -1142,11 +1153,16 @@ struct ObjEvent
     uint8_t sightRange;
     int16_t eventFlag;
     union {
-        Script_fn_t const script;
-        struct ItemBall* const item_ball;
-        struct TrainerObj* const trainer;
+        const void* data;
+        Script_fn_t script;
+        const struct ItemBall* item_ball;
+        const struct TrainerObj* trainer;
     };
 };
+
+#define object_event(_x, _y, _sprite, _mvmt, _radiusX, _radiusY, _h1, _h2, _color, _func, _sight, _data, _evflag) (struct ObjEvent) {\
+    .x=_x, .y=_y, .sprite=_sprite, .movement=_mvmt, .radiusX=_radiusX, .radiusY=_radiusY, .h1=_h1, .h2=_h2, .color=_color, .function=_func,\
+    .sightRange=_sight, .eventFlag=_evflag, .data=_data}
 
 struct MapScripts
 {
@@ -1160,16 +1176,29 @@ struct MapScripts
 struct MapEvents
 {
     const uint8_t warp_event_count;
-    const struct WarpEventData* const warp_events;
+    const struct WarpEventData* warp_events;
 
     const uint8_t coord_event_count;
-    const struct CoordEvent* const coord_events;
+    const struct CoordEvent* coord_events;
 
     const uint8_t bg_event_count;
-    const struct BGEvent* const bg_events;
+    const struct BGEvent* bg_events;
 
     const uint8_t obj_event_count;
-    const struct ObjEvent* const obj_events;
+    const struct ObjEvent* obj_events;
+};
+
+struct MapConnectionData
+{
+    uint8_t connectedMapGroup;
+    uint8_t connectedMapNumber;
+    uint16_t connectionStripOffset;
+    const uint8_t* connectionStripLocation;
+    uint8_t connectionStripLength;
+    uint8_t connectedMapLength;
+    uint8_t connectionStripYOffset;
+    uint8_t connectionStripXOffset;
+    const uint8_t* connectionWindow;
 };
 
 struct MapAttr
@@ -1180,6 +1209,7 @@ struct MapAttr
     const char* const blocksPath;
     const struct MapScripts* const scripts;
     const struct MapEvents* const events;
+    const struct MapConnectionData* connections[4];
 };
 
 struct MapHeader

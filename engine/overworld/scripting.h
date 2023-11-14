@@ -36,7 +36,7 @@ void Script_waitbutton_Conv(script_s* s);
 void Script_promptbutton(void);
 void Script_promptbutton_Conv(script_s* s);
 void Script_yesorno(void);
-void Script_yesorno_Conv(void);
+void Script_yesorno_Conv(script_s* s);
 void Script_loadmenu(void);
 void Script_loadmenu_Conv(script_s* s, const struct MenuHeader* header);
 void Script_closewindow(void);
