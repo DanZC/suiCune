@@ -467,7 +467,7 @@
 
 #include "engine/gfx/dma_transfer.h"
 //#include "gfx/emotes.h"
-//#include "engine/overworld/warp_connection.h"
+#include "engine/overworld/warp_connection.h"
 //#include "engine/link/mystery_gift.h"
 //#include "engine/battle/used_move_text.h"
 //#include "mobile/mobile_41.h"

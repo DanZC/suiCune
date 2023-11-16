@@ -5,6 +5,7 @@
 #include "../../home/map.h"
 #include "../../home/map_objects.h"
 #include "player_movement.h"
+#include "npc_movement.h"
 #include "tile_events.h"
 #include "wildmons.h"
 #include "time.h"
@@ -971,6 +972,8 @@ u8_flag_s CheckAPressOW_Conv(void){
     u8_flag_s res;
     // CALL(aTryObjectEvent);
     // RET_C ;
+    res = TryObjectEvent_Conv();
+    if(res.flag) return res;
     // CALL(aTryBGEvent);
     // RET_C ;
     res = TryBGEvent_Conv();
@@ -999,6 +1002,93 @@ void PlayTalkObject_Conv(void){
     // RET;
     PlaySFX_Conv(SFX_READ_TEXT_2);
 }
+
+static u8_flag_s ObjectEventTypeArray_script(struct MapObject* bc) {
+    // LD_HL(MAPOBJECT_SCRIPT_POINTER);
+    // ADD_HL_BC;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // CALL(aGetMapScriptsBank);
+    if(bc->objectScript <= NUM_OBJECTS) {
+        Script_fn_t hl = gCurMapObjectEventsPointer[bc->objectScript].script;
+        // CALL(aCallScript);
+        // RET;
+        return u8_flag(CallScript_Conv2(hl), true);
+    }
+    else {
+        return u8_flag(CallScript_Conv(GetMapScriptsBank_Conv(), bc->objectScript), true);
+    }
+}
+
+static u8_flag_s ObjectEventTypeArray_itemball(struct MapObject* bc) {
+    (void)bc;
+    // LD_HL(MAPOBJECT_SCRIPT_POINTER);
+    // ADD_HL_BC;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // CALL(aGetMapScriptsBank);
+    // LD_DE(wItemBallData);
+    // LD_BC(wItemBallDataEnd - wItemBallData);
+    // CALL(aFarCopyBytes);
+    // LD_A(PLAYEREVENT_ITEMBALL);
+    // SCF;
+    // RET;
+    return u8_flag(PLAYEREVENT_ITEMBALL, true);
+}
+
+static u8_flag_s ObjectEventTypeArray_trainer(struct MapObject* bc) {
+    (void)bc;
+    // CALL(aTalkToTrainer);
+    TalkToTrainer_Conv();
+    // LD_A(PLAYEREVENT_TALKTOTRAINER);
+    // SCF;
+    // RET;
+    return u8_flag(PLAYEREVENT_TALKTOTRAINER, true);
+}
+
+static u8_flag_s ObjectEventTypeArray_dummy(struct MapObject* bc) {
+    (void)bc;
+    // XOR_A_A;
+    // RET;
+    return u8_flag(0, false);
+
+
+// four:
+    // XOR_A_A;
+    // RET;
+
+
+// five:
+    // XOR_A_A;
+    // RET;
+
+
+// six:
+    // XOR_A_A;
+    // RET;
+}
+
+struct ObjectEventTypeFunc {
+    uint8_t type;
+    u8_flag_s (*function)(struct MapObject*);
+};
+
+const struct ObjectEventTypeFunc ObjectEventTypeArray[] = {
+    //table_width ['3', 'ObjectEventTypeArray']
+    {OBJECTTYPE_SCRIPT, ObjectEventTypeArray_script},
+    {OBJECTTYPE_ITEMBALL, ObjectEventTypeArray_itemball},
+    {OBJECTTYPE_TRAINER, ObjectEventTypeArray_trainer},
+// the remaining four are dummy events
+    {OBJECTTYPE_3, ObjectEventTypeArray_dummy},
+    {OBJECTTYPE_4, ObjectEventTypeArray_dummy},
+    {OBJECTTYPE_5, ObjectEventTypeArray_dummy},
+    {OBJECTTYPE_6, ObjectEventTypeArray_dummy},
+    //db ['-1'];  // end
+};
+
+static_assert(lengthof(ObjectEventTypeArray) == NUM_OBJECT_TYPES);
 
 void TryObjectEvent(void){
     FARCALL(aCheckFacingObject);
@@ -1045,72 +1135,67 @@ nope:
 
 }
 
-void ObjectEventTypeArray(void){
-    //table_width ['3', 'ObjectEventTypeArray']
-    //dbw ['OBJECTTYPE_SCRIPT', '.script']
-    //dbw ['OBJECTTYPE_ITEMBALL', '.itemball']
-    //dbw ['OBJECTTYPE_TRAINER', '.trainer']
-// the remaining four are dummy events
-    //dbw ['OBJECTTYPE_3', '.three']
-    //dbw ['OBJECTTYPE_4', '.four']
-    //dbw ['OBJECTTYPE_5', '.five']
-    //dbw ['OBJECTTYPE_6', '.six']
-    //assert_table_length ['NUM_OBJECT_TYPES']
-    //db ['-1'];  // end
+u8_flag_s TryObjectEvent_Conv(void){
+    // FARCALL(aCheckFacingObject);
+    struct Object* bc = CheckFacingObject_Conv();
+    // IF_C goto IsObject;
+    if(bc == NULL)
+        // XOR_A_A;
+        // RET;
+        return u8_flag(0, false);
 
+// IsObject:
+    // CALL(aPlayTalkObject);
+    PlayTalkObject_Conv();
+    // LDH_A_addr(hObjectStructIndex);
+    // CALL(aGetObjectStruct);
+    // LD_HL(OBJECT_MAP_OBJECT_INDEX);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // LDH_addr_A(hLastTalked);
+    hram->hLastTalked = bc->mapObjectIndex;
 
-script:
-    LD_HL(MAPOBJECT_SCRIPT_POINTER);
-    ADD_HL_BC;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    CALL(aGetMapScriptsBank);
-    CALL(aCallScript);
-    RET;
+    // LDH_A_addr(hLastTalked);
+    // CALL(aGetMapObject);
+    struct MapObject* mobj = GetMapObject_Conv(hram->hLastTalked);
+    // LD_HL(MAPOBJECT_COLOR);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // AND_A(0b00001111);
+    uint8_t type = (mobj->objectColor & 0b00001111);
 
+//  Bug: If IsInArray returns nc, data at bc will be executed as code.
+    // PUSH_BC;
+    // LD_DE(3);
+    // LD_HL(mObjectEventTypeArray);
+    // CALL(aIsInArray);
+    uint8_t i = 0;
+    for(; i < lengthof(ObjectEventTypeArray); ++i) {
+        if(ObjectEventTypeArray[i].type == type) {
+            // POP_BC;
 
-itemball:
-    LD_HL(MAPOBJECT_SCRIPT_POINTER);
-    ADD_HL_BC;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    CALL(aGetMapScriptsBank);
-    LD_DE(wItemBallData);
-    LD_BC(wItemBallDataEnd - wItemBallData);
-    CALL(aFarCopyBytes);
-    LD_A(PLAYEREVENT_ITEMBALL);
-    SCF;
-    RET;
+            // INC_HL;
+            // LD_A_hli;
+            // LD_H_hl;
+            // LD_L_A;
+            // JP_hl;
+            return ObjectEventTypeArray[i].function(mobj);
+        }
+    }
+    // IF_NC goto nope;
+    // POP_BC;
 
+    // INC_HL;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // JP_hl;
 
-trainer:
-    CALL(aTalkToTrainer);
-    LD_A(PLAYEREVENT_TALKTOTRAINER);
-    SCF;
-    RET;
-
-
-three:
-    XOR_A_A;
-    RET;
-
-
-four:
-    XOR_A_A;
-    RET;
-
-
-five:
-    XOR_A_A;
-    RET;
-
-
-six:
-    XOR_A_A;
-    RET;
-
+nope:
+// pop bc
+    // XOR_A_A;
+    // RET;
+    return u8_flag(0, false);
 }
 
 void TryBGEvent(void){
@@ -1836,16 +1921,14 @@ void UnusedPlayerEventScript(void){
 void HatchEggScript(void){
     //callasm ['OverworldHatchEgg']
     //end ['?']
-
-    return WarpToNewMapScript();
 }
 
-void WarpToNewMapScript(void){
-    //warpsound ['?']
-    //newloadmap ['MAPSETUP_DOOR']
-    //end ['?']
-
-    return FallIntoMapScript();
+bool WarpToNewMapScript(script_s* s){
+    SCRIPT_BEGIN
+    warpsound
+    newloadmap(MAPSETUP_DOOR)
+    s_end
+    SCRIPT_END
 }
 
 void FallIntoMapScript(void){

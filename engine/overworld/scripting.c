@@ -28,6 +28,7 @@
 #include "overworld.h"
 #include "map_objects.h"
 #include "player_object.h"
+#include "tile_events.h"
 #include "../events/specials.h"
 #include "../items/items.h"
 #include "../../data/text/common.h"
@@ -1623,6 +1624,14 @@ void Script_warpsound(void){
     CALL(aPlaySFX);
     RET;
 
+}
+
+void Script_warpsound_Conv(script_s* s){
+    (void)s;
+    // FARCALL(aGetWarpSFX);
+    // CALL(aPlaySFX);
+    // RET;
+    return PlaySFX_Conv(GetWarpSFX_Conv());
 }
 
 void Script_cry(void){
@@ -4547,10 +4556,30 @@ void Script_newloadmap(void){
 
 }
 
+void Script_newloadmap_Conv(script_s* s, uint8_t method){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // LDH_addr_A(hMapEntryMethod);
+    hram->hMapEntryMethod = method;
+    // LD_A(MAPSTATUS_ENTER);
+    // CALL(aLoadMapStatus);
+    LoadMapStatus_Conv(MAPSTATUS_ENTER);
+    // CALL(aStopScript);
+    StopScript_Conv();
+    // RET;
+}
+
 void Script_reloadend(void){
     CALL(aScript_newloadmap);
     JP(mScript_end);
 
+}
+
+void Script_reloadend_Conv(script_s* s, uint8_t method){
+    // CALL(aScript_newloadmap);
+    Script_newloadmap_Conv(s, method);
+    // JP(mScript_end);
+    Script_end_Conv(s);
 }
 
 void Script_opentext(void){

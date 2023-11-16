@@ -4,7 +4,7 @@
 
 #define map_attributes(name, id, block, _connections) const struct MapAttr name##_MapAttributes = {\
     .width = id##_WIDTH, .height = id##_HEIGHT, .borderBlock = block, .blocksPath = name##_Blocks, \
-    .events = &name##_MapEvents, .connections={ _connections }}
+    .events = &name##_MapEvents, .scripts = &name##_MapScripts, .connections={ _connections }}
 
 #define calc_tile_src(_x) ((((_x) + 3) < 0)? -(((_x) + 3) < 0): 0)
 #define calc_tile_tgt(_x) ((((_x) + 3) < 0)? 0: ((_x) + 3))

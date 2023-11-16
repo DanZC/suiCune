@@ -6,6 +6,7 @@ void CanObjectLeaveTile(void);
 void GetSideWallDirectionMask(void);
 void WillObjectRemainOnWater(void);
 void CheckFacingObject(void);
+struct Object* CheckFacingObject_Conv(void);
 void WillObjectBumpIntoSomeoneElse(void);
 void IsObjectFacingSomeoneElse(void);
 void IsNPCAtCoord(void);

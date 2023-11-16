@@ -8,7 +8,7 @@
 #include "../../home/tilemap.h"
 #include "../../engine/overworld/player_object.h"
 #include "../../engine/overworld/wildmons.h"
-// #include "../../engine/overworld/warp_connection.h"
+#include "../../engine/overworld/warp_connection.h"
 
 #define add_mapsetup(_x) [mapsetup_const(_x)] = _x
 
@@ -27,17 +27,17 @@ void (*const MapSetupCommands[])(void) = {
     add_mapsetup(LoadConnectionBlockData), // 0b
     add_mapsetup(SaveScreen), // 0c
     add_mapsetup(BufferScreen), // 0d
-    // add_mapsetup(LoadMapGraphics), // 0e
+    add_mapsetup(LoadMapGraphics), // 0e
     add_mapsetup(LoadMapTileset), // 0f
-    // add_mapsetup(LoadMapTimeOfDay), // 10
-    // add_mapsetup(LoadMapPalettes), // 11
+    add_mapsetup(LoadMapTimeOfDay), // 10
+    add_mapsetup(LoadMapPalettes), // 11
     add_mapsetup(LoadWildMonData), // 12
-    // add_mapsetup(RefreshMapSprites), // 13
-    // add_mapsetup(HandleNewMap), // 14
-    // add_mapsetup(HandleContinueMap), // 15
+    add_mapsetup(RefreshMapSprites), // 13
+    add_mapsetup(HandleNewMap), // 14
+    add_mapsetup(HandleContinueMap), // 15
     // add_mapsetup(LoadMapObjects), // 16
     // add_mapsetup(EnterMapSpawnPoint), // 17
-    // add_mapsetup(EnterMapConnection), // 18
+    add_mapsetup(EnterMapConnection), // 18
     // add_mapsetup(EnterMapWarp), // 19
     add_mapsetup(LoadMapAttributes), // 1a
     add_mapsetup(LoadMapAttributes_SkipObjects), // 1b

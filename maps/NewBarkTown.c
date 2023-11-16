@@ -17,6 +17,14 @@ const struct MapCallback NewBarkTown_MapCallbacks[] = {
     map_callback(MAPCALLBACK_NEWMAP, NewBarkTown_MapScripts_FlyPoint),
 };
 
+const struct MapScripts NewBarkTown_MapScripts = {
+    .scene_script_count = lengthof(NewBarkTown_SceneScripts),
+    .scene_scripts = NewBarkTown_SceneScripts,
+
+    .callback_count = lengthof(NewBarkTown_MapCallbacks),
+    .callbacks = NewBarkTown_MapCallbacks,
+};
+
 static const struct CoordEvent NewBarkTown_CoordEvents[] = {
     coord_event(1, 8, SCENE_DEFAULT, NewBarkTown_TeacherStopsYouScene1),
     coord_event(1, 9, SCENE_DEFAULT, NewBarkTown_TeacherStopsYouScene2),

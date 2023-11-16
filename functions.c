@@ -4132,4 +4132,16 @@ void init_function_pointers(void) {
     // REDIRECTED(StartMenu_Quit);
     // REDIRECTED(StartMenu);
     // REDIRECTED(StartMenu_Pokemon);
+
+    // engine/overworld/warp_connection.c
+    // REDIRECTED(HandleNewMap);
+    // REDIRECTED(HandleContinueMap);
+    // REDIRECTED(LoadMapGraphics);
+    // REDIRECTED(CheckMovingOffEdgeOfMap);
+    // REDIRECTED(GetMapScreenCoords);
+    // REDIRECTED(LoadMapPalettes);
+    // REDIRECTED(EnterMapWarp);
+    // REDIRECTED(LoadMapTimeOfDay);
+    // REDIRECTED(RefreshMapSprites);
+    // REDIRECTED(EnterMapConnection);
 }

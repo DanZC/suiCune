@@ -33,13 +33,18 @@ uint8_t gCurMapWarpCount;
 const struct WarpEventData* gCurMapWarpsPointer;
 uint8_t gCurMapBGEventCount;
 const struct BGEvent* gCurMapBGEventsPointer;
+uint8_t gCurMapObjectEventCount;
+const struct ObjEvent* gCurMapObjectEventsPointer;
 
 uint8_t gCurMapCallbackCount;
 const struct MapCallback* gCurMapCallbacksPointer;
 uint8_t gCurMapSceneScriptCount;
 const Script_fn_t* gCurMapSceneScriptsPointer;
 
+const struct MapScripts* gMapScriptsPointer;
 const struct MapEvents* gMapEventsPointer;
+
+struct MapConnectionData gMapConnections[4];
 
 const struct Tileset* gTilesetPointer;
 
@@ -971,6 +976,18 @@ void LoadMapAttributes(void){
 
 }
 
+void LoadMapAttributes_Conv(void){
+    // CALL(aCopyMapPartialAndAttributes);
+    CopyMapPartialAndAttributes_Conv();
+    // CALL(aSwitchToMapScriptsBank);
+    // CALL(aReadMapScripts);
+    ReadMapScripts_Conv();
+    // XOR_A_A;  // do not skip object events
+    // CALL(aReadMapEvents);
+    ReadMapEvents_Conv(false);
+    // RET;
+}
+
 void LoadMapAttributes_SkipObjects(void){
     CALL(aCopyMapPartialAndAttributes);
     CALL(aSwitchToMapScriptsBank);
@@ -981,6 +998,18 @@ void LoadMapAttributes_SkipObjects(void){
 
 }
 
+void LoadMapAttributes_SkipObjects_Conv(void){
+    // CALL(aCopyMapPartialAndAttributes);
+    CopyMapPartialAndAttributes_Conv();
+    // CALL(aSwitchToMapScriptsBank);
+    // CALL(aReadMapScripts);
+    ReadMapScripts_Conv();
+    // LD_A(TRUE);  // skip object events
+    // CALL(aReadMapEvents);
+    ReadMapEvents_Conv(true);
+    // RET;
+}
+
 void CopyMapPartialAndAttributes(void){
     CALL(aCopyMapPartial);
     CALL(aSwitchToMapAttributesBank);
@@ -989,6 +1018,19 @@ void CopyMapPartialAndAttributes(void){
     CALL(aGetMapConnections);
     RET;
 
+}
+
+void CopyMapPartialAndAttributes_Conv(void){
+    // CALL(aCopyMapPartial);
+    CopyMapPartial_Conv2();
+    // CALL(aSwitchToMapAttributesBank);
+    // CALL(aGetMapAttributesPointer);
+    const struct MapAttr* attr = GetMapAttributesPointer_Conv2();
+    // CALL(aCopyMapAttributes);
+    CopyMapAttributes_Conv(attr);
+    // CALL(aGetMapConnections);
+    GetMapConnections_Conv(attr);
+    // RET;
 }
 
 void ReadMapEvents(void){
@@ -1012,6 +1054,32 @@ void ReadMapEvents(void){
 
 }
 
+void ReadMapEvents_Conv(bool skipObjectEvents){
+    // PUSH_AF;
+    // LD_HL(wMapEventsPointer);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // INC_HL;
+    // INC_HL;
+    const struct MapEvents* events = gMapEventsPointer;
+    // CALL(aReadWarps);
+    ReadWarps_Conv(events);
+    // CALL(aReadCoordEvents);
+    ReadCoordEvents_Conv(events);
+    // CALL(aReadBGEvents);
+    ReadBGEvents_Conv(events);
+
+    // POP_AF;
+    // AND_A_A;  // skip object events?
+    // RET_NZ ;
+    if(!skipObjectEvents) {
+        // CALL(aReadObjectEvents);
+        ReadObjectEvents_Conv(events);
+    }
+    // RET;
+}
+
 void ReadMapScripts(void){
     LD_HL(wMapScriptsPointer);
     LD_A_hli;
@@ -1021,6 +1089,18 @@ void ReadMapScripts(void){
     CALL(aReadMapCallbacks);
     RET;
 
+}
+
+void ReadMapScripts_Conv(void){
+    // LD_HL(wMapScriptsPointer);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // CALL(aReadMapSceneScripts);
+    ReadMapSceneScripts_Conv(gMapScriptsPointer);
+    // CALL(aReadMapCallbacks);
+    ReadMapCallbacks_Conv(gMapScriptsPointer);
+    // RET;
 }
 
 void CopyMapAttributes(void){
@@ -1034,6 +1114,42 @@ loop:
     DEC_C;
     IF_NZ goto loop;
     RET;
+
+}
+
+void CopyMapAttributes_Conv(const struct MapAttr* attr){
+    // LD_DE(wMapAttributes);
+    // LD_C(wMapAttributesEnd - wMapAttributes);
+    wram->wMapBorderBlock = attr->borderBlock;
+    // wMapBorderBlock:: db
+    // ; width/height are in blocks (2x2 walkable tiles, 4x4 graphics tiles)
+    wram->wMapHeight = attr->height;
+    // wMapHeight:: db
+    wram->wMapWidth = attr->width;
+    // wMapWidth:: db
+    // wMapBlocksBank:: db
+    // wMapBlocksPointer:: dw
+    // wMapScriptsBank:: db
+    // wMapScriptsPointer:: dw
+    gMapScriptsPointer = attr->scripts;
+    // wMapEventsPointer:: dw
+    gMapEventsPointer = attr->events;
+    // ; bit set
+    // wMapConnections:: db
+    uint8_t connections = 0;
+    if(attr->connections[NORTH_F]) connections |= NORTH;
+    if(attr->connections[SOUTH_F]) connections |= SOUTH;
+    if(attr->connections[WEST_F])  connections |= WEST;
+    if(attr->connections[EAST_F])  connections |= EAST;
+    wram->wMapConnections = connections;
+
+// loop:
+    // LD_A_hli;
+    // LD_de_A;
+    // INC_DE;
+    // DEC_C;
+    // IF_NZ goto loop;
+    // RET;
 
 }
 
@@ -1079,6 +1195,58 @@ no_east:
 
 }
 
+void GetMapConnections_Conv(const struct MapAttr* attr){
+    // LD_A(0xff);
+    // LD_addr_A(wNorthConnectedMapGroup);
+    // LD_addr_A(wSouthConnectedMapGroup);
+    // LD_addr_A(wWestConnectedMapGroup);
+    // LD_addr_A(wEastConnectedMapGroup);
+
+    // LD_A_addr(wMapConnections);
+    // LD_B_A;
+
+    // BIT_B(NORTH_F);
+    // IF_Z goto no_north;
+    if(bit_test(wram->wMapConnections, NORTH_F)) {
+        // LD_DE(wNorthMapConnection);
+        // CALL(aGetMapConnection);
+        GetMapConnection_Conv(gMapConnections + NORTH_F, attr->connections[NORTH_F]);
+    }
+
+// no_north:
+
+    // BIT_B(SOUTH_F);
+    // IF_Z goto no_south;
+    if(bit_test(wram->wMapConnections, SOUTH_F)) {
+        // LD_DE(wSouthMapConnection);
+        // CALL(aGetMapConnection);
+        GetMapConnection_Conv(gMapConnections + SOUTH_F, attr->connections[SOUTH_F]);
+    }
+
+// no_south:
+
+    // BIT_B(WEST_F);
+    // IF_Z goto no_west;
+    if(bit_test(wram->wMapConnections, WEST_F)) {
+        // LD_DE(wWestMapConnection);
+        // CALL(aGetMapConnection);
+        GetMapConnection_Conv(gMapConnections + WEST_F, attr->connections[WEST_F]);
+    }
+
+// no_west:
+
+    // BIT_B(EAST_F);
+    // IF_Z goto no_east;
+    if(bit_test(wram->wMapConnections, EAST_F)) {
+        // LD_DE(wEastMapConnection);
+        // CALL(aGetMapConnection);
+        GetMapConnection_Conv(gMapConnections + EAST_F, attr->connections[EAST_F]);
+    }
+
+// no_east:
+    // RET;
+}
+
 void GetMapConnection(void){
 //  Load map connection struct at hl into de.
     LD_C(wSouthMapConnection - wNorthMapConnection);
@@ -1091,6 +1259,19 @@ loop:
     IF_NZ goto loop;
     RET;
 
+}
+
+void GetMapConnection_Conv(struct MapConnectionData* de, const struct MapConnectionData* hl){
+//  Load map connection struct at hl into de.
+    // LD_C(wSouthMapConnection - wNorthMapConnection);
+// loop:
+    // LD_A_hli;
+    // LD_de_A;
+    // INC_DE;
+    // DEC_C;
+    // IF_NZ goto loop;
+    // RET;
+    CopyBytes_Conv2(de, hl, sizeof(*de));
 }
 
 void ReadMapSceneScripts(void){
@@ -1330,6 +1511,62 @@ skip:
 
 }
 
+void ReadObjectEvents_Conv(const struct MapEvents* hl){
+    // PUSH_HL;
+    // CALL(aClearObjectStructs);
+    ClearObjectStructs_Conv();
+    // POP_DE;
+    // LD_HL(wMap1Object);
+    // LD_A_de;
+    // INC_DE;
+    // LD_addr_A(wCurMapObjectEventCount);
+    gCurMapObjectEventCount = hl->obj_event_count;
+    // LD_A_E;
+    // LD_addr_A(wCurMapObjectEventsPointer);
+    // LD_A_D;
+    // LD_addr_A(wCurMapObjectEventsPointer + 1);
+    gCurMapObjectEventsPointer = hl->obj_events;
+
+    // LD_A_addr(wCurMapObjectEventCount);
+    // CALL(aCopyMapObjectEvents);
+    uint8_t rest = CopyMapObjectEvents_Conv(&wram->wPlayerObject + 1, gCurMapObjectEventsPointer, gCurMapObjectEventCount);
+
+//  get NUM_OBJECTS - [wCurMapObjectEventCount]
+    // LD_A_addr(wCurMapObjectEventCount);
+    // LD_C_A;
+    // LD_A(NUM_OBJECTS);  // - 1
+    // SUB_A_C;
+    // IF_Z goto skip;
+    if(rest != 0) {
+    // jr c, .skip
+
+    // could have done "inc hl" instead
+        // LD_BC(1);
+        // ADD_HL_BC;
+    //  Fill the remaining sprite IDs and y coords with 0 and -1, respectively.
+    //  Bleeds into wObjectMasks due to a bug.  Uncomment the above code to fix.
+        // LD_BC(MAPOBJECT_LENGTH);
+        for(uint8_t i = NUM_OBJECTS - rest; i < NUM_OBJECTS; ++i) {
+        // loop:
+            // LD_hl(0);
+            // INC_HL;
+            wram->wMapObject[i].sprite = 0;
+            // LD_hl(-1);
+            // DEC_HL;
+            wram->wMapObject[i].objectYCoord = 0xff;
+            // ADD_HL_BC;
+            // DEC_A;
+            // IF_NZ goto loop;
+        }
+    }
+
+
+// skip:
+    // LD_H_D;
+    // LD_L_E;
+    // RET;
+}
+
 void CopyMapObjectEvents(void){
     AND_A_A;
     RET_Z ;
@@ -1358,6 +1595,52 @@ loop2:
     IF_NZ goto loop;
     RET;
 
+}
+
+uint8_t CopyMapObjectEvents_Conv(struct MapObject* hl, const struct ObjEvent* de, uint8_t count){
+    // AND_A_A;
+    // RET_Z ;
+    if(count == 0)
+        return NUM_OBJECTS;
+
+    // LD_C_A;
+
+    for(uint8_t i = 0; i < count; ++i) {
+    // loop:
+        // PUSH_BC;
+        // PUSH_HL;
+        // LD_A(0xff);
+        // LD_hli_A;
+        hl[i].structId = 0xff;
+        // LD_B(OBJECT_EVENT_SIZE);
+
+        hl[i].sprite = de[i].sprite;
+        hl[i].objectYCoord = de[i].y;
+        hl[i].objectXCoord = de[i].x;
+        hl[i].objectMovement = de[i].movement;
+        hl[i].objectRadius = (de[i].radiusX << 4) | de[i].radiusY;
+        hl[i].objectHour = de[i].h1;
+        hl[i].objectTimeOfDay = de[i].h2;
+        hl[i].objectColor = de[i].color;
+        hl[i].objectRange = de[i].sightRange;
+        hl[i].objectScript = i;
+        hl[i].objectEventFlag = de[i].eventFlag;
+    // loop2:
+        // LD_A_de;
+        // INC_DE;
+        // LD_hli_A;
+        // DEC_B;
+        // IF_NZ goto loop2;
+
+        // POP_HL;
+        // LD_BC(MAPOBJECT_LENGTH);
+        // ADD_HL_BC;
+        // POP_BC;
+        // DEC_C;
+        // IF_NZ goto loop;
+    }
+    // RET;
+    return NUM_OBJECTS - count;
 }
 
 void ClearObjectStructs(void){

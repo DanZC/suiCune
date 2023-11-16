@@ -1,3 +1,4 @@
+#include "../../constants.h"
 #include "../../engine/battle/effect_commands.h"
 // battle commands are defined in engine/battle/effect_commands.asm
 

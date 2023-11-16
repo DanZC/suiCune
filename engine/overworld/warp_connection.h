@@ -1,0 +1,12 @@
+void HandleNewMap(void);
+void HandleContinueMap(void);
+void EnterMapConnection(void);
+void EnterMapWarp(void);
+void LoadMapTimeOfDay(void);
+void LoadMapGraphics(void);
+void LoadMapPalettes(void);
+void RefreshMapSprites(void);
+void CheckMovingOffEdgeOfMap(void);
+bool CheckMovingOffEdgeOfMap_Conv(void);
+bool CheckFacingOffEdgeOfMap_Conv(void);
+void GetMapScreenCoords(void);

@@ -22,6 +22,14 @@ const struct MapCallback Route29_MapCallbacks[] = {
     map_callback(MAPCALLBACK_OBJECTS, Route29_MapScripts_Tuscany),
 };
 
+const struct MapScripts Route29_MapScripts = {
+    .scene_script_count = lengthof(Route29_SceneScripts),
+    .scene_scripts = Route29_SceneScripts,
+
+    .callback_count = lengthof(Route29_MapCallbacks),
+    .callbacks = Route29_MapCallbacks,
+};
+
 static const struct CoordEvent Route29_CoordEvents[] = {
     coord_event(53, 8, SCENE_ROUTE29_CATCH_TUTORIAL, Route29Tutorial1),
     coord_event(53, 9, SCENE_ROUTE29_CATCH_TUTORIAL, Route29Tutorial2),

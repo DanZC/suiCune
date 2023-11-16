@@ -1,8 +1,6 @@
 #pragma once
 //// EVENTS
-extern const Script_fn_t Route29_SceneScripts[];
-extern const struct MapCallback Route29_MapCallbacks[];
-
+extern const struct MapScripts Route29_MapScripts;
 extern const struct MapEvents Route29_MapEvents;
 
 //// CODE

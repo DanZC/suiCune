@@ -167,7 +167,6 @@ def map_json_to_c(dict: Dict[str, any]):
     for script in dict["scene_scripts"]:
         out += f'    {script},\n'
     out += '};\n\n'
-    out_h += f'extern const Script_fn_t {dict["map_name"]}_SceneScripts[];\n'
 
     out += f'const struct MapCallback {dict["map_name"]}_MapCallbacks[] = {{\n'
     for script in dict["callbacks"]:
@@ -177,7 +176,14 @@ def map_json_to_c(dict: Dict[str, any]):
             s = script["script"]
         out += f'    map_callback({script["type"]}, {s}),\n'
     out += '};\n\n'
-    out_h += f'extern const struct MapCallback {dict["map_name"]}_MapCallbacks[];\n\n'
+
+    out += f'const struct MapScripts {dict["map_name"]}_MapScripts = {{\n'
+    out += f'    .scene_script_count = lengthof({dict["map_name"]}_SceneScripts),\n'
+    out += f'    .scene_scripts = {dict["map_name"]}_SceneScripts,\n\n'
+    out += f'    .callback_count = lengthof({dict["map_name"]}_MapCallbacks),\n'
+    out += f'    .callbacks = {dict["map_name"]}_MapCallbacks,\n'
+    out += '};\n\n'
+    out_h += f'extern const struct MapScripts {dict["map_name"]}_MapScripts;\n'
 
     out += f'static const struct CoordEvent {dict["map_name"]}_CoordEvents[] = {{\n'
     for event in dict["coord_events"]:

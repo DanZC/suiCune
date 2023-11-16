@@ -1,8 +1,6 @@
 #pragma once
 //// EVENTS
-extern const Script_fn_t NewBarkTown_SceneScripts[];
-extern const struct MapCallback NewBarkTown_MapCallbacks[];
-
+extern const struct MapScripts NewBarkTown_MapScripts;
 extern const struct MapEvents NewBarkTown_MapEvents;
 
 //// CODE

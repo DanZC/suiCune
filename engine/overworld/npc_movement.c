@@ -1,5 +1,6 @@
 #include "../../constants.h"
 #include "npc_movement.h"
+#include "../../home/map.h"
 #include "../../home/map_objects.h"
 
 void CanObjectMoveInDirection(void){
@@ -303,6 +304,57 @@ standing:
     SCF;
     RET;
 
+}
+
+struct Object* CheckFacingObject_Conv(void){
+    // CALL(aGetFacingTileCoord);
+    struct CoordsTileId res = GetFacingTileCoord_Conv();
+
+//  Double the distance for counter tiles.
+    // CALL(aCheckCounterTile);
+    // IF_NZ goto not_counter;
+    if(CheckCounterTile_Conv(res.tileId)) {
+
+        // LD_A_addr(wPlayerStandingMapX);
+        // SUB_A_D;
+        // CPL;
+        // INC_A;
+        // ADD_A_D;
+        // LD_D_A;
+        res.x = -(wram->wPlayerStruct.nextMapX - res.x) + res.x;
+
+        // LD_A_addr(wPlayerStandingMapY);
+        // SUB_A_E;
+        // CPL;
+        // INC_A;
+        // ADD_A_E;
+        // LD_E_A;
+        res.y = -(wram->wPlayerStruct.nextMapY - res.y) + res.y;
+    }
+
+// not_counter:
+    // LD_BC(wObjectStructs);  // redundant
+    // LD_A(0);
+    // LDH_addr_A(hMapObjectIndex);
+    // CALL(aIsNPCAtCoord);
+    struct Object* bc = IsNPCAtCoord_Conv(res.x, res.y);
+    // RET_NC ;
+    if(bc == NULL)
+        return NULL;
+    // LD_HL(OBJECT_DIRECTION_WALKING);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // CP_A(STANDING);
+    // IF_Z goto standing;
+    if(bc->dirWalking == (uint8_t)STANDING)
+        return bc;
+    // XOR_A_A;
+    // RET;
+    return NULL;
+
+// standing:
+    // SCF;
+    // RET;
 }
 
 void WillObjectBumpIntoSomeoneElse(void){

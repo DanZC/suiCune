@@ -5,6 +5,7 @@
 #include "../../home/gfx.h"
 #include "../../home/map.h"
 #include "npc_movement.h"
+#include "warp_connection.h"
 
 static void DoPlayerMovement_GetDPad(void);
 static uint8_t DoPlayerMovement_TranslateIntoMovement(void);
@@ -372,6 +373,10 @@ static u8_flag_s DoPlayerMovement_CheckTurning(void) {
     // RET;
 }
 
+static bool DoPlayerMovement_CheckFacingOffEdgeOfMap(void) {
+    return CheckFacingOffEdgeOfMap_Conv();
+}
+
 static u8_flag_s DoPlayerMovement_TryStep(void) {
 //  Surfing actually calls .TrySurf directly instead of passing through here.
     // LD_A_addr(wPlayerState);
@@ -390,6 +395,9 @@ static u8_flag_s DoPlayerMovement_TryStep(void) {
         u8_flag_s res = DoPlayerMovement_CheckWarp();
         if(res.flag)
             return res;
+        // Stop the player from walking off the edge of the map where there isn't a map connection.
+        if(DoPlayerMovement_CheckFacingOffEdgeOfMap())
+            return u8_flag(0, false);
         return (u8_flag_s) {.a = DoPlayerMovement_DoStep(STEP_BIKE), .flag = true};
     }
 
