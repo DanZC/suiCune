@@ -71,12 +71,12 @@ void MG_Mobile_Layout_LoadPals(void){
     LD_DE(wBGPals1);
     LD_HL(mPalette_MysteryGiftMobile);
     LD_BC(5 * PALETTE_SIZE);
-    LD_A(BANK(wBGPals1));
+    LD_A(MBANK(awBGPals1));
     CALL(aFarCopyWRAM);
     LD_DE(wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT);
     LD_HL(mPalette_TextBG7);
     LD_BC(1 * PALETTE_SIZE);
-    LD_A(BANK(wBGPals1));
+    LD_A(MBANK(awBGPals1));
     CALL(aFarCopyWRAM);
     RET;
 

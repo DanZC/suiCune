@@ -1040,6 +1040,23 @@ end:
 
 }
 
+bool CheckUserIsCharging_Conv(void){
+    // LDH_A_addr(hBattleTurn);
+    // AND_A_A;
+    // LD_A_addr(wPlayerCharging);  // player
+    // IF_Z goto end;
+    if(hram->hBattleTurn == 0) {
+        return wram->wPlayerCharging != 0;
+    }
+    // LD_A_addr(wEnemyCharging);  // enemy
+    else {
+        return wram->wEnemyCharging != 0;
+    }
+// end:
+    // AND_A_A;
+    // RET;
+}
+
 void BattleCommand_DoTurn(void){
     CALL(aCheckUserIsCharging);
     RET_NZ ;

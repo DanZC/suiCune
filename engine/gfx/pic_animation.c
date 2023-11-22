@@ -321,7 +321,7 @@ void LoadMonAnimation_Conv(uint8_t* hl, uint8_t d, uint8_t e){
 void SetUpPokeAnim(void){
     LDH_A_addr(rSVBK);
     PUSH_AF;
-    LD_A(BANK(wPokeAnimStruct));
+    LD_A(MBANK(awPokeAnimStruct));
     LDH_addr_A(rSVBK);
     LD_A_addr(wPokeAnimSceneIndex);
     LD_C_A;
@@ -589,7 +589,7 @@ bool AnimateMon_CheckIfPokemon_Conv(void){
 void PokeAnim_InitPicAttributes(void){
     LDH_A_addr(rSVBK);
     PUSH_AF;
-    LD_A(BANK(wPokeAnimStruct));
+    LD_A(MBANK(awPokeAnimStruct));
     LDH_addr_A(rSVBK);
 
     PUSH_BC;
@@ -617,12 +617,12 @@ void PokeAnim_InitPicAttributes(void){
     LD_A_D;
     LD_addr_A(wPokeAnimGraphicStartTile);
 
-    LD_A(BANK(wCurPartySpecies));
+    LD_A(MBANK(awCurPartySpecies));
     LD_HL(wCurPartySpecies);
     CALL(aGetFarWRAMByte);
     LD_addr_A(wPokeAnimSpecies);
 
-    LD_A(BANK(wUnownLetter));
+    LD_A(MBANK(awUnownLetter));
     LD_HL(wUnownLetter);
     CALL(aGetFarWRAMByte);
     LD_addr_A(wPokeAnimUnownLetter);
@@ -704,7 +704,7 @@ void PokeAnim_InitPicAttributes_Conv(uint8_t* bc, uint8_t* hl, uint8_t d){
 void PokeAnim_InitAnim(void){
     LDH_A_addr(rSVBK);
     PUSH_AF;
-    LD_A(BANK(wPokeAnimIdleFlag));
+    LD_A(MBANK(awPokeAnimIdleFlag));
     LDH_addr_A(rSVBK);
     PUSH_BC;
     LD_HL(wPokeAnimIdleFlag);

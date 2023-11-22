@@ -226,7 +226,7 @@ enum {
     HAPPINESS_GAINLEVELATHOME,
 };
 
-#define NUM_HAPPINESS_CHANGES const_value - 1
+#define NUM_HAPPINESS_CHANGES HAPPINESS_GAINLEVELATHOME
 
 // significant happiness values
 #define BASE_HAPPINESS 70

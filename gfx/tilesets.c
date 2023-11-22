@@ -1,4 +1,5 @@
 #include "../constants.h"
+#include "tilesets.h"
 
 // tilecoll: MACRO
 // ; used in data/tilesets/*_collision.asm
@@ -34,7 +35,7 @@ const uint8_t TilesetIcePathColl[] = {
 const char TilesetPlayersRoomGFX[] = "gfx/tilesets/players_room.png";
 const char TilesetPlayersRoomMeta[] = "data/tilesets/players_room_metatiles.bin";
 const uint8_t TilesetPlayersRoomColl[] = {
-// #include "../data/tilesets/players_room_collision.h"
+#include "../data/tilesets/players_room_collision.h"
 };
 
 

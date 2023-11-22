@@ -17,6 +17,7 @@ void GetMonBackpic_Conv(uint8_t* de, species_t species);
 void FixPicBank(void);
 void GSIntro_GetMonFrontpic(void);
 void GetTrainerPic(void);
+void GetTrainerPic_Conv(uint8_t* de, uint8_t tclass);
 void DecompressGet2bpp(void);
 void FixBackpicAlignment(void);
 void FixBackpicAlignment_Conv(uint8_t* hl, uint8_t c);

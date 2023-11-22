@@ -460,7 +460,7 @@ okay:
     LD_BC(mHPBarPals);
     ADD_HL_BC;
     LD_BC(4);
-    LD_A(BANK(wBGPals2));
+    LD_A(MBANK(awBGPals2));
     CALL(aFarCopyWRAM);
     LD_A(TRUE);
     LDH_addr_A(hCGBPalUpdate);
@@ -500,7 +500,7 @@ void LoadStatsScreenPals(void){
     ADD_HL_BC;
     LDH_A_addr(rSVBK);
     PUSH_AF;
-    LD_A(BANK(wBGPals1));
+    LD_A(MBANK(awBGPals1));
     LDH_addr_A(rSVBK);
     LD_A_hli;
     LD_addr_A(wBGPals1 + PALETTE_SIZE * 0);
@@ -1547,13 +1547,13 @@ void InitCGBPals(void){
     RET_Z ;
 
 //  CGB only
-    LD_A(BANK(vTiles3));
+    LD_A(MBANK(avTiles3));
     LDH_addr_A(rVBK);
     LD_HL(vTiles3);
     LD_BC(0x200 * LEN_2BPP_TILE);
     XOR_A_A;
     CALL(aByteFill);
-    LD_A(BANK(vTiles0));
+    LD_A(MBANK(avTiles0));
     LDH_addr_A(rVBK);
     LD_A(1 << rBGPI_AUTO_INCREMENT);
     LDH_addr_A(rBGPI);

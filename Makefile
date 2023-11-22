@@ -76,19 +76,21 @@ CFLAGS += $(EXTRA_CFLAGS)
 OBJS := $(SRCS:.c=.$(OBJEXT))
 
 all: $(TARGET)
-$(TARGET): $(OBJS)
+$(TARGET): $(OBJS) icon.o
 	$(CC) $(CFLAGS) $(EXEOUT)$@ $^ $(LDFLAGS) $(LDLIBS) 
 
 %.obj: %.c
 	$(CC) $(CFLAGS) $^
 
-%.res: %.rc
-	rc /nologo /DCOMPANY="$(COMPANY)" /DDESCRIPTION="$(DESCRIPTION)" \
-		/DLICENSE="$(LICENSE)" /DGIT_VER="$(GIT_VER)" \
-		/DNAME="$(NAME)" /DICON_FILE="$(ICON_FILE)" $^
+# %.res: %.rc
+# 	rc /nologo /DCOMPANY="$(COMPANY)" /DDESCRIPTION="$(DESCRIPTION)" \
+# 		/DLICENSE="$(LICENSE)" /DGIT_VER="$(GIT_VER)" \
+# 		/DNAME="$(NAME)" /DICON_FILE="$(ICON_FILE)" $^
+%.o: %.rc
+	windres -i $^ -o $@
 
 clean:
-	$(RM) $(SRCS:.c=.$(OBJEXT)) $(TARGET) \
+	$(RM) $(SRCS:.c=.$(OBJEXT)) $(TARGET) icon.o \
 	$(wildcard home/*.o) \
 	$(wildcard audio/*.o) \
 	$(wildcard data/*.o) \

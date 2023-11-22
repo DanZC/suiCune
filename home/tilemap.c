@@ -300,17 +300,17 @@ void v_CopyTilemapAtOnce_CopyBGMapViaStack_Conv(uint16_t hl) {
     gb_write(hTilesPerCycle, 0);
 }
 
-void v_CopyTilemapAtOnce_CopyBGMapViaStack_Conv2(const uint8_t* sp) {
+void v_CopyTilemapAtOnce_CopyBGMapViaStack_Conv2(const tile_t* sp) {
     //  Copy all tiles to vBGMap
-    uint8_t* hl = GBToRAMAddr(hram->hBGMapAddress & 0xff00);
+    tile_t* hl = GBToRAMAddr(hram->hBGMapAddress & 0xff00);
     hram->hTilesPerCycle = SCREEN_HEIGHT;
     // uint8_t b = 1 << 1;
     // uint8_t c = LOW(rSTAT);
     uint8_t a = SCREEN_HEIGHT;
     do {
         for (int rept = 0; rept < SCREEN_WIDTH / 2; rept++) {
-            uint8_t e = *(sp++);
-            uint8_t d = *(sp++);
+            tile_t e = *(sp++);
+            tile_t d = *(sp++);
             //  if in v/hblank, wait until not in v/hblank
             // LDH_A_c;
             // AND_A_B;

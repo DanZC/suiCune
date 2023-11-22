@@ -370,7 +370,7 @@ void init_function_pointers(void) {
 
     // home/names.c
     // REDIRECTED(GetItemName);
-    // REDIRECTED(GetMoveName);
+    REDIRECTED(GetMoveName);
     // REDIRECTED(GetBasePokemonName);
     // REDIRECTED(GetPokemonName);
     // REDIRECTED(GetName);
@@ -1471,7 +1471,7 @@ void init_function_pointers(void) {
     // REDIRECTED(GetHalfHP);
     // REDIRECTED(ExitBattle);
     // REDIRECTED(GetPartyMonDVs);
-    // REDIRECTED(PrintPlayerHUD);
+    CONVERTED(PrintPlayerHUD);
     CONVERTED(EndUserDestinyBond);
     // REDIRECTED(CheckContestBattleOver);
     // REDIRECTED(HandleBetweenTurnEffects);
@@ -1479,7 +1479,7 @@ void init_function_pointers(void) {
     // REDIRECTED(LoadHPExpBarGFX);
     // REDIRECTED(CheckWhetherSwitchmonIsPredetermined);
     // REDIRECTED(CleanUpBattleRAM);
-    // REDIRECTED(Battle_DummyFunction);
+    CONVERTED(Battle_DummyFunction);
     // REDIRECTED(CheckIfCurPartyMonIsFitToFight);
     // REDIRECTED(FillEnemyMovesFromMoveIndicesBuffer);
     // REDIRECTED(PlayerMonFaintedAnimation);
@@ -1524,7 +1524,7 @@ void init_function_pointers(void) {
     // REDIRECTED(HandlePlayerMonFaint);
     // REDIRECTED(GoMonText);
     // REDIRECTED(ResidualDamage);
-    // REDIRECTED(BattleStartMessage);
+    CONVERTED(BattleStartMessage);
     // REDIRECTED(EnemySwitch);
     // REDIRECTED(BattleTurn);
     // REDIRECTED(EnemyTurn_EndOpponentProtectEndureDestinyBond);
@@ -1542,7 +1542,7 @@ void init_function_pointers(void) {
     // REDIRECTED(AskUseNextPokemon);
     // REDIRECTED(HandlePerishSong);
     // REDIRECTED(ResetEnemyStatLevels);
-    // REDIRECTED(ShowSetEnemyMonAndSendOutAnimation);
+    CONVERTED(ShowSetEnemyMonAndSendOutAnimation);
     // REDIRECTED(ExpPointsText);
     // REDIRECTED(PlayerTurn_EndOpponentProtectEndureDestinyBond);
     // REDIRECTED(UseConfusionHealingItem);
@@ -1594,7 +1594,7 @@ void init_function_pointers(void) {
     // REDIRECTED(JumpToPartyMenuAndPrintText);
     // REDIRECTED(CheckPayDay);
     // REDIRECTED(FindMonInOTPartyToSwitchIntoBattle);
-    // REDIRECTED(GetEnemyMonFrontpic);
+    CONVERTED(GetEnemyMonFrontpic);
     // REDIRECTED(BoostExp);
     // REDIRECTED(ApplyPrzEffectOnSpeed);
     // REDIRECTED(Battle_PlayerFirst);
@@ -1616,12 +1616,12 @@ void init_function_pointers(void) {
     // REDIRECTED(ForcePlayerMonChoice);
     // REDIRECTED(NewEnemyMonStatus);
     // REDIRECTED(AddLastLinkBattleToLinkRecord);
-    REDIRECTED(BackUpBGMap2);
+    CONVERTED(BackUpBGMap2);
     // REDIRECTED(BattleMenuPKMN_Loop);
     // REDIRECTED(Call_PlayBattleAnim_OnlyIfVisible);
     // REDIRECTED(GetMoveEffect);
     // REDIRECTED(EnemyMonFaintedAnimation);
-    // REDIRECTED(ShowBattleTextEnemySentOut);
+    CONVERTED(ShowBattleTextEnemySentOut);
     // REDIRECTED(SpikesDamage);
     // REDIRECTED(BattleMonEntrance);
     // REDIRECTED(WithdrawMonText);
@@ -1635,7 +1635,7 @@ void init_function_pointers(void) {
     // REDIRECTED(Text_MonGainedExpPoint);
     // REDIRECTED(IsGymLeader);
     // REDIRECTED(LinkBattleSendReceiveAction);
-    REDIRECTED(InitEnemy);
+    CONVERTED(InitEnemy);
     // REDIRECTED(BattleCheckShininess);
     // REDIRECTED(v_BattleRandom);
     // REDIRECTED(ForcePickSwitchMonInBattle);
@@ -1673,7 +1673,7 @@ void init_function_pointers(void) {
     // REDIRECTED(DoubleSwitch);
     // REDIRECTED(Battle_StatsScreen);
     // REDIRECTED(WildFled_EnemyFled_LinkBattleCanceled);
-    // REDIRECTED(EnemySwitch_SetMode);
+    CONVERTED(EnemySwitch_SetMode);
     // REDIRECTED(ClearEnemyMonBox);
     // REDIRECTED(Stubbed_Increments5_a89a);
     // REDIRECTED(BattleCheckEnemyShininess);
@@ -4130,7 +4130,7 @@ void init_function_pointers(void) {
     // REDIRECTED(StartMenu_Exit);
     // REDIRECTED(StartMenu_Pokegear);
     // REDIRECTED(StartMenu_Quit);
-    // REDIRECTED(StartMenu);
+    // CONVERTED(StartMenu);
     // REDIRECTED(StartMenu_Pokemon);
 
     // engine/overworld/warp_connection.c
@@ -4144,4 +4144,26 @@ void init_function_pointers(void) {
     // REDIRECTED(LoadMapTimeOfDay);
     // REDIRECTED(RefreshMapSprites);
     // REDIRECTED(EnterMapConnection);
+
+    // engine/events/happiness_egg.c
+    // REDIRECTED(GetFirstPokemonHappiness);
+    // REDIRECTED(CheckFirstMonIsEgg);
+    // REDIRECTED(DayCareStep);
+    // REDIRECTED(ChangeHappiness);
+    // REDIRECTED(StepHappiness);
+
+    // engine/battle/used_move_text.c
+    CONVERTED(DisplayUsedMoveText);
+    // REDIRECTED(MoveNameText);
+    // REDIRECTED(EndUsedMove2Text);
+    // REDIRECTED(UpdateUsedMoves);
+    // REDIRECTED(EndUsedMove3Text);
+    // REDIRECTED(EndUsedMove5Text);
+    // REDIRECTED(GetMoveGrammar);
+    // REDIRECTED(UsedMoveText);
+    // REDIRECTED(UsedMove1Text);
+    // REDIRECTED(EndUsedMove4Text);
+    // REDIRECTED(UsedMove2Text);
+    // REDIRECTED(UsedMoveText_CheckObedience);
+    // REDIRECTED(EndUsedMove1Text);
 }

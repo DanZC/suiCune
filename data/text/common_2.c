@@ -1048,7 +1048,7 @@ const struct TextCmd v_MoveNameText[] = {
     text_ram(wram_ptr(wStringBuffer2))
     text_end
 
-    text_end
+    // text_end
 
 };
 

@@ -53,7 +53,7 @@ struct TextCmd {
 #define sound_fanfare               {TX_SOUND_FANFARE, .end=0},
 #define sound_slot_machine_start    {TX_SOUND_SLOT_MACHINE_START, .end=0},
 
-#define wram_ptr(_p)        (gb.wram + (WRAM_BANK_SIZE * (MBANK(a##_p))) + (_p - WRAM_0_ADDR))
+#define wram_ptr(_p)        (gb.wram + (WRAM_BANK_SIZE * (MBANK(a##_p))) + (_p - ((MBANK(a##_p) == 0)? WRAM_0_ADDR: WRAM_1_ADDR)))
 #define hram_ptr(_p)        (gb.hram + (_p - 0xFF00))
 
 #define t_line      "<LINE>"

@@ -16,6 +16,7 @@ void ResetDamage_Conv(void);
 void SetPlayerTurn(void);
 void SetPlayerTurn_Conv(void);
 void SetEnemyTurn(void);
+void SetEnemyTurn_Conv(void);
 void UpdateOpponentInParty(void);
 void UpdateUserInParty(void);
 void UpdateBattleMonInParty(void);

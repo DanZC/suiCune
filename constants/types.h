@@ -1323,7 +1323,7 @@ struct TextPrintState
 
 struct TextCmdState
 {
-    uint8_t* bc; // Tilemap cursor
+    tile_t* bc; // Tilemap cursor
     uint8_t* temp;
     const struct TextCmd* hl; // Current text command
 };

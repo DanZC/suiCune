@@ -113,7 +113,7 @@ void GetOTName_Conv(uint8_t c){
     // LD_DE(wOTClassName);
     // PUSH_DE;
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(hl, wram->wOTClassName, TRAINER_CLASS_NAME_LENGTH);
+    CopyBytes_Conv2(wram->wOTClassName, hl, TRAINER_CLASS_NAME_LENGTH);
     // POP_DE;
     // RET;
 

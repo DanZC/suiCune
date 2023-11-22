@@ -2,8 +2,10 @@
 #include "load_pics.h"
 #include "../../home/pokemon.h"
 #include "../../home/copy.h"
+#include "../../home/tilemap.h"
 #include "../../data/pokemon/pic_pointers.h"
 #include "../../data/pokemon/unown_pic_pointers.h"
+#include "../../data/trainers/pic_pointers.h"
 
 void GetUnownLetter(void){
 //  Return Unown letter in wUnownLetter based on DVs at hl
@@ -325,7 +327,7 @@ const char* GetFrontpicPointer_Conv(void){
 }
 
 void GetAnimatedEnemyFrontpic(void){
-    LD_A(BANK(vTiles3));
+    LD_A(MBANK(avTiles3));
     LDH_addr_A(rVBK);
     PUSH_HL;
     LD_DE(wDecompressScratch);
@@ -720,6 +722,57 @@ void GetTrainerPic(void){
     LDH_addr_A(hBGMapMode);
     RET;
 
+}
+
+void GetTrainerPic_Conv(uint8_t* de, uint8_t tclass){
+    // LD_A_addr(wTrainerClass);
+    // AND_A_A;
+    // RET_Z ;
+    // CP_A(NUM_TRAINER_CLASSES + 1);
+    // RET_NC ;
+    if(tclass == 0 || tclass >= NUM_TRAINER_CLASSES + 1)
+        return;
+    // CALL(aWaitBGMap);
+    WaitBGMap_Conv();
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    // LD_HL(mTrainerPicPointers);
+    // LD_A_addr(wTrainerClass);
+    // DEC_A;
+    // LD_BC(3);
+    // CALL(aAddNTimes);
+    const char* hl = TrainerPicPointers[tclass - 1];
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(MBANK(awDecompressScratch));
+    // LDH_addr_A(rSVBK);
+    // PUSH_DE;
+    // LD_A(BANK(aTrainerPicPointers));
+    // CALL(aGetFarByte);
+    // CALL(aFixPicBank);
+    // PUSH_AF;
+    // INC_HL;
+    // LD_A(BANK(aTrainerPicPointers));
+    // CALL(aGetFarWord);
+    // POP_AF;
+    // LD_DE(wDecompressScratch);
+    // CALL(aFarDecompress);
+    // POP_HL;
+    // LD_DE(wDecompressScratch);
+    // LD_C(7 * 7);
+    // LDH_A_addr(hROMBank);
+    // LD_B_A;
+    // CALL(aGet2bpp);
+    LoadPNG2bppAssetSectionToVRAM(de, hl, 0, 7 * 7);
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // CALL(aWaitBGMap);
+    WaitBGMap_Conv();
+    // LD_A(1);
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 1;
+    // RET;
 }
 
 void DecompressGet2bpp(void){

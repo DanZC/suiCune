@@ -14,6 +14,7 @@ void BrokenPlacePPUnits(void);
 void Unused_PlaceEnemyHPLevel(void);
 void PlaceStatusString(void);
 bool PlaceStatusString_Conv(uint8_t* hl, struct PartyMon* de);
+bool PlaceNonFaintStatus2_Conv(uint8_t* hl, uint8_t status);
 // void FntString(void);
 extern const char FntString[];
 void CopyStatusString(void);

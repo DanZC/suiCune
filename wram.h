@@ -281,7 +281,7 @@ struct PACKED wram_s
             struct PACKED {
                 // WRAM0
                 // 20x18 grid of 8x8 tiles
-                uint8_t wTilemap[SCREEN_WIDTH * SCREEN_HEIGHT];
+                tile_t wTilemap[SCREEN_WIDTH * SCREEN_HEIGHT];
                 // This union spans 480 bytes.
                 //void wTilemapEnd
             };
@@ -293,7 +293,7 @@ struct PACKED wram_s
                         // surrounding tiles
                         // This buffer determines the size for the rest of the union;
                         // it uses exactly 480 bytes.
-                        uint8_t wSurroundingTiles[SURROUNDING_WIDTH * SURROUNDING_HEIGHT];
+                        tile_t wSurroundingTiles[SURROUNDING_WIDTH * SURROUNDING_HEIGHT];
                     };
                     struct PACKED {
                         // WRAM0

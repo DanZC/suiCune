@@ -50,7 +50,7 @@ void ClearBox_Conv(uint16_t hl, uint16_t bc) {
 }
 
 //  Fill a w*h box at hl with blank tiles.
-void ClearBox_Conv2(uint8_t* hl, uint8_t w, uint8_t h) {
+void ClearBox_Conv2(tile_t* hl, uint8_t w, uint8_t h) {
     return FillBoxWithByte_Conv2(hl, w, h, CHAR_SPACE);
 }
 
@@ -73,7 +73,7 @@ void FillBoxWithByte_Conv(uint16_t hl, uint16_t bc, uint8_t byte) {
     } while(((bc & 0xFF00) >> 8) != 0);
 }
 
-void FillBoxWithByte_Conv2(uint8_t* hl, uint8_t w, uint8_t h, uint8_t byte) {
+void FillBoxWithByte_Conv2(tile_t* hl, uint8_t w, uint8_t h, uint8_t byte) {
     do {
         int i = 0;
         uint8_t w2 = w;
@@ -168,7 +168,7 @@ void Textbox_Conv(uint16_t hl, uint8_t b, uint8_t c) {
 //  Draw a text box at hl with room for b lines of c characters each.
 //  Places a border around the textbox, then switches the palette to the
 //  text black-and-white scheme.
-void Textbox_Conv2(uint8_t* hl, uint8_t b, uint8_t c) {
+void Textbox_Conv2(tile_t* hl, uint8_t b, uint8_t c) {
     TextboxBorder_Conv2(hl, b, c);
     return TextboxPalette_Conv2(hl, c, b);
 }
@@ -261,8 +261,8 @@ void TextboxBorder_Conv(uint16_t hl, uint8_t b, uint8_t c) {
 }
 #undef TEXTBOXBORDER_PLACECHARS
 
-void TextboxBorder_Conv2(uint8_t* hl, uint8_t b, uint8_t c) {
-    uint8_t* temphl = hl;
+void TextboxBorder_Conv2(tile_t* hl, uint8_t b, uint8_t c) {
+    tile_t* temphl = hl;
     uint8_t id = CHAR_FRAME_TOP_LEFT;
 
 //  Place char id x times.

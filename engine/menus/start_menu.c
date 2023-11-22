@@ -267,7 +267,7 @@ static bool StartMenu_GetInput(void) {
         // CALL(aStartMenu_PrintMenuAccount);
         StartMenu_PrintMenuAccount();
         // CALL(aGetScrollingMenuJoypad);
-        GetScrollingMenuJoypad_Conv();
+        GetScrollingMenuJoypad_Conv2();
         // LD_A_addr(wMenuJoypad);
         // CP_A(B_BUTTON);
         // IF_Z goto b;
@@ -603,10 +603,12 @@ void StartMenu_Exit(void){
     RET;
 }
 
+//  Exit the menu.
 uint8_t StartMenu_Exit_Conv(void) {
-    struct cpu_registers_s regs = {};
-    SafeCallGB(aStartMenu_Exit, &regs);
-    return regs.a;
+    // struct cpu_registers_s regs = {};
+    // SafeCallGB(aStartMenu_Exit, &regs);
+    // return regs.a;
+    return STARTMENURET_EXIT;
 }
 
 //  Retire from the bug catching contest.

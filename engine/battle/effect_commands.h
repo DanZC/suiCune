@@ -14,6 +14,7 @@ void BattleCommand_CheckObedience(void);
 void IgnoreSleepOnly(void);
 void BattleCommand_UsedMoveText(void);
 void CheckUserIsCharging(void);
+bool CheckUserIsCharging_Conv(void);
 void BattleCommand_DoTurn(void);
 void CheckMimicUsed(void);
 void BattleCommand_Critical(void);

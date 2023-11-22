@@ -1718,7 +1718,7 @@ u8_flag_s StatsScreen_GetAnimationParam_Conv(void){
             // LD_C_L;
             // LD_A(BANK(sBoxMons));
             // CALL(aOpenSRAM);
-            OpenSRAM_Conv(MBANK(sBoxMons));
+            OpenSRAM_Conv(MBANK(asBoxMons));
             struct PartyMon* bc = GBToRAMAddr(sBoxMons + (wram->wCurPartyMon * PARTYMON_STRUCT_LENGTH));
             // CALL(aStatsScreen_GetAnimationParam_CheckEggFaintedFrzSlp);
             u8_flag_s res;
@@ -2093,7 +2093,7 @@ okay:
     LD_A_addr(wMonType);
     CP_A(BOXMON);
     IF_NZ goto partymon;
-    LD_A(BANK(sBoxMonNicknames));
+    LD_A(MBANK(asBoxMonNicknames));
     CALL(aOpenSRAM);
     PUSH_DE;
     CALL(aCopyBytes);

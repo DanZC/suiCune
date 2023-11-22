@@ -1,9 +1,14 @@
 #include "../../constants.h"
 #include "core.h"
 #include "effect_commands.h"
+#include "check_battle_scene.h"
+#include "read_trainer_party.h"
+#include "read_trainer_attributes.h"
 #include "../../home/battle.h"
+#include "../../home/audio.h"
 #include "../../home/array.h"
 #include "../../home/copy.h"
+#include "../../home/clear_sprites.h"
 #include "../../home/delay.h"
 #include "../../home/pokemon.h"
 #include "../../home/text.h"
@@ -16,14 +21,20 @@
 #include "../gfx/load_pics.h"
 #include "../gfx/color.h"
 #include "../gfx/player_gfx.h"
+#include "../gfx/place_graphic.h"
 #include "../../gfx/misc.h"
 #include "../smallflag.h"
 #include "../pokemon/bills_pc_top.h"
 #include "../pokemon/stats_screen.h"
+#include "../pokemon/tempmon.h"
+#include "../pokemon/mon_stats.h"
 #include "../../data/text/battle.h"
 #include "../../data/text/common.h"
+#include "../../data/wild/treemons_asleep.h"
 #include "../battle_anims/anim_commands.h"
 #include "../events/catch_tutorial_input.h"
+#include "../events/happiness_egg.h"
+#include "../../charmap.h"
 
 //  Core components of the battle engine.
 
@@ -88,7 +99,8 @@ void DoBattle(void){
             ResetEnemyStatLevels_Conv();
             // CALL(aBreakAttraction);
             BreakAttraction();
-            CALL(aEnemySwitch);
+            // CALL(aEnemySwitch);
+            SafeCallGBAuto(aEnemySwitch);
         }
 
 
@@ -116,8 +128,12 @@ void DoBattle(void){
     // JP_Z (mDoBattle_tutorial_debug);
     // CP_A(BATTLETYPE_TUTORIAL);
     // JP_Z (mDoBattle_tutorial_debug);
-    if(wram->wBattleType == BATTLETYPE_DEBUG || wram->wBattleType == BATTLETYPE_TUTORIAL)
-        JP(aBattleMenu);
+    if(wram->wBattleType == BATTLETYPE_DEBUG || wram->wBattleType == BATTLETYPE_TUTORIAL) {
+        // JP(aBattleMenu);
+        // CALL(aBattleMenu);
+        SafeCallGBAuto(aBattleMenu);
+        return;
+    }
     // XOR_A_A;
     // LD_addr_A(wCurPartyMon);
     wram->wCurPartyMon = 0;
@@ -168,14 +184,16 @@ void DoBattle(void){
     NewBattleMonStatus();
     // CALL(aBreakAttraction);
     BreakAttraction();
-    CALL(aSendOutPlayerMon);
+    // CALL(aSendOutPlayerMon);
+    SendOutPlayerMon();
     // CALL(aEmptyBattleTextbox);
     EmptyBattleTextbox();
     // CALL(aLoadTilemapToTempTilemap);
     LoadTilemapToTempTilemap_Conv();
     // CALL(aSetPlayerTurn);
     SetPlayerTurn_Conv();
-    CALL(aSpikesDamage);
+    // CALL(aSpikesDamage);
+    SafeCallGBAuto(aSpikesDamage);
     // LD_A_addr(wLinkMode);
     // AND_A_A;
     // IF_Z goto not_linked_2;
@@ -188,15 +206,17 @@ void DoBattle(void){
         wram->wEnemySwitchMonIndex = 0;
         CALL(aNewEnemyMonStatus);
         CALL(aResetEnemyStatLevels);
-        CALL(aBreakAttraction);
+        // CALL(aBreakAttraction);
+        BreakAttraction();
         CALL(aEnemySwitch);
         CALL(aSetEnemyTurn);
         CALL(aSpikesDamage);
     }
 
 // not_linked_2:
-    JP(mBattleTurn);
-    // BattleTurn();
+    // CALL(aBattleTurn);
+    SafeCallGBAuto(aBattleTurn);
+    // RET;
 
 
 // tutorial_debug:
@@ -250,84 +270,83 @@ skip_sfx:
 }
 
 void BattleTurn(void){
+    do {
+    // loop:
+        // CALL(aStubbed_Increments5_a89a);
+        CALL(aCheckContestBattleOver);
+        JP_C (mBattleTurn_quit);
 
-loop:
-    // CALL(aStubbed_Increments5_a89a);
-    CALL(aCheckContestBattleOver);
-    JP_C (mBattleTurn_quit);
+        XOR_A_A;
+        LD_addr_A(wPlayerIsSwitching);
+        LD_addr_A(wEnemyIsSwitching);
+        LD_addr_A(wBattleHasJustStarted);
+        LD_addr_A(wPlayerJustGotFrozen);
+        LD_addr_A(wEnemyJustGotFrozen);
+        LD_addr_A(wCurDamage);
+        LD_addr_A(wCurDamage + 1);
 
-    XOR_A_A;
-    LD_addr_A(wPlayerIsSwitching);
-    LD_addr_A(wEnemyIsSwitching);
-    LD_addr_A(wBattleHasJustStarted);
-    LD_addr_A(wPlayerJustGotFrozen);
-    LD_addr_A(wEnemyJustGotFrozen);
-    LD_addr_A(wCurDamage);
-    LD_addr_A(wCurDamage + 1);
+        CALL(aHandleBerserkGene);
+        CALL(aUpdateBattleMonInParty);
+        FARCALL(aAIChooseMove);
 
-    CALL(aHandleBerserkGene);
-    CALL(aUpdateBattleMonInParty);
-    FARCALL(aAIChooseMove);
+        CALL(aIsMobileBattle);
+        IF_NZ goto not_disconnected;
+        FARCALL(aFunction100da5);
+        FARCALL(aStartMobileInactivityTimer);
+        FARCALL(aFunction100dd8);
+        JP_C (mBattleTurn_quit);
 
-    CALL(aIsMobileBattle);
-    IF_NZ goto not_disconnected;
-    FARCALL(aFunction100da5);
-    FARCALL(aStartMobileInactivityTimer);
-    FARCALL(aFunction100dd8);
-    JP_C (mBattleTurn_quit);
+    not_disconnected:
 
-not_disconnected:
+        CALL(aCheckPlayerLockedIn);
+        IF_C goto skip_iteration;
 
-    CALL(aCheckPlayerLockedIn);
-    IF_C goto skip_iteration;
+    loop1:
+        CALL(aBattleMenu);
+        IF_C goto quit;
+        LD_A_addr(wBattleEnded);
+        AND_A_A;
+        IF_NZ goto quit;
+        LD_A_addr(wForcedSwitch);  // roared/whirlwinded/teleported
+        AND_A_A;
+        IF_NZ goto quit;
 
-loop1:
-    CALL(aBattleMenu);
-    IF_C goto quit;
-    LD_A_addr(wBattleEnded);
-    AND_A_A;
-    IF_NZ goto quit;
-    LD_A_addr(wForcedSwitch);  // roared/whirlwinded/teleported
-    AND_A_A;
-    IF_NZ goto quit;
+    skip_iteration:
+        CALL(aParsePlayerAction);
+        IF_NZ goto loop1;
 
-skip_iteration:
-    CALL(aParsePlayerAction);
-    IF_NZ goto loop1;
+        CALL(aEnemyTriesToFlee);
+        IF_C goto quit;
 
-    CALL(aEnemyTriesToFlee);
-    IF_C goto quit;
+        CALL(aDetermineMoveOrder);
+        IF_C goto _false;
+        CALL(aBattle_EnemyFirst);
+        goto proceed;
 
-    CALL(aDetermineMoveOrder);
-    IF_C goto _false;
-    CALL(aBattle_EnemyFirst);
-    goto proceed;
+    _false:
+        CALL(aBattle_PlayerFirst);
 
-_false:
-    CALL(aBattle_PlayerFirst);
+    proceed:
+        CALL(aCheckMobileBattleError);
+        IF_C goto quit;
 
-proceed:
-    CALL(aCheckMobileBattleError);
-    IF_C goto quit;
+        LD_A_addr(wForcedSwitch);
+        AND_A_A;
+        IF_NZ goto quit;
 
-    LD_A_addr(wForcedSwitch);
-    AND_A_A;
-    IF_NZ goto quit;
+        LD_A_addr(wBattleEnded);
+        AND_A_A;
+        IF_NZ goto quit;
 
-    LD_A_addr(wBattleEnded);
-    AND_A_A;
-    IF_NZ goto quit;
-
-    CALL(aHandleBetweenTurnEffects);
-    LD_A_addr(wBattleEnded);
-    AND_A_A;
-    IF_NZ goto quit;
-    JP(mBattleTurn_loop);
-
+        CALL(aHandleBetweenTurnEffects);
+        // LD_A_addr(wBattleEnded);
+        // AND_A_A;
+        // IF_NZ goto quit;
+        // JP(mBattleTurn_loop);
+    } while(wram->wBattleEnded != 0);
 
 quit:
     RET;
-
 }
 
 void Stubbed_Increments5_a89a(void){
@@ -718,6 +737,31 @@ contest_not_over:
     AND_A_A;
     RET;
 
+}
+
+bool CheckContestBattleOver_Conv(void){
+    // LD_A_addr(wBattleType);
+    // CP_A(BATTLETYPE_CONTEST);
+    // IF_NZ goto contest_not_over;
+    if(wram->wBattleType != BATTLETYPE_CONTEST)
+        return false;
+    // LD_A_addr(wParkBallsRemaining);
+    // AND_A_A;
+    // IF_NZ goto contest_not_over;
+    if(wram->wParkBallsRemaining != 0)
+        return false;
+    // LD_A_addr(wBattleResult);
+    // AND_A(BATTLERESULT_BITMASK);
+    // ADD_A(DRAW);
+    // LD_addr_A(wBattleResult);
+    wram->wBattleResult = (wram->wBattleResult & BATTLERESULT_BITMASK) + DRAW;
+    // SCF;
+    // RET;
+    return true;
+
+// contest_not_over:
+    // AND_A_A;
+    // RET;
 }
 
 void CheckPlayerLockedIn(void){
@@ -3776,20 +3820,34 @@ skip:
 }
 
 void EnemySwitch_SetMode(void){
-    CALL(aResetEnemyBattleVars);
-    CALL(aCheckWhetherSwitchmonIsPredetermined);
-    IF_C goto skip;
-    CALL(aFindMonInOTPartyToSwitchIntoBattle);
+    // CALL(aResetEnemyBattleVars);
+    ResetEnemyBattleVars();
+    // CALL(aCheckWhetherSwitchmonIsPredetermined);
+    // IF_C goto skip;
+    u8_flag_s res = CheckWhetherSwitchmonIsPredetermined_Conv();
+    if(!res.flag) {
+        struct cpu_registers_s regs = gb.cpu_reg;
+        // SAVE_REGS;
+        // CALL(aFindMonInOTPartyToSwitchIntoBattle);
+        SafeCallGB(aFindMonInOTPartyToSwitchIntoBattle, &regs);
+        // res.a = REG_B;
+        res.a = regs.b;
+        // RESTORE_REGS;
+    }
 
-skip:
+// skip:
 // 'b' contains the PartyNr of the mon the AI will switch to
-    CALL(aLoadEnemyMonToSwitchTo);
-    LD_A(1);
-    LD_addr_A(wEnemyIsSwitching);
-    CALL(aClearEnemyMonBox);
-    CALL(aShowBattleTextEnemySentOut);
-    JP(mShowSetEnemyMonAndSendOutAnimation);
-
+    // CALL(aLoadEnemyMonToSwitchTo);
+    LoadEnemyMonToSwitchTo_Conv(res.a);
+    // LD_A(1);
+    // LD_addr_A(wEnemyIsSwitching);
+    wram->wEnemyIsSwitching = 1;
+    // CALL(aClearEnemyMonBox);
+    ClearEnemyMonBox_Conv();
+    // CALL(aShowBattleTextEnemySentOut);
+    ShowBattleTextEnemySentOut();
+    // JP(mShowSetEnemyMonAndSendOutAnimation);
+    return ShowSetEnemyMonAndSendOutAnimation();
 }
 
 void CheckWhetherSwitchmonIsPredetermined(void){
@@ -3862,7 +3920,7 @@ u8_flag_s CheckWhetherSwitchmonIsPredetermined_Conv(void){
     // AND_A_A;
     // LD_B(0);
     // IF_NZ goto return_carry;
-    if(wram->wBattleHasJustStarted == 0) {
+    if(wram->wBattleHasJustStarted != 0) {
         return u8_flag(0, true);
     }
 
@@ -4177,6 +4235,55 @@ skip_unown:
 
 }
 
+void LoadEnemyMonToSwitchTo_Conv(uint8_t b){
+// 'b' contains the PartyNr of the mon the AI will switch to
+    // LD_A_B;
+    // LD_addr_A(wCurPartyMon);
+    wram->wCurPartyMon = b;
+    // LD_HL(wOTPartyMon1Level);
+    // CALL(aGetPartyLocation);
+    struct PartyMon* hl = wram->wOTPartyMon + b;
+    // LD_A_hl;
+    // LD_addr_A(wCurPartyLevel);
+    wram->wCurPartyLevel = hl->mon.level;
+    // LD_A_addr(wCurPartyMon);
+    // INC_A;
+    // LD_HL(wOTPartyCount);
+    // LD_C_A;
+    // LD_B(0);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // LD_addr_A(wTempEnemyMonSpecies);
+    wram->wTempEnemyMonSpecies = wram->wOTPartySpecies[b];
+    // LD_addr_A(wCurPartySpecies);
+    wram->wCurPartySpecies = wram->wOTPartySpecies[b];
+    // CALL(aLoadEnemyMon);
+    SafeCallGBAuto(aLoadEnemyMon);
+
+    // LD_A_addr(wCurPartySpecies);
+    // CP_A(UNOWN);
+    // IF_NZ goto skip_unown;
+    // LD_A_addr(wFirstUnownSeen);
+    // AND_A_A;
+    // IF_NZ goto skip_unown;
+    if(wram->wCurPartySpecies == UNOWN && wram->wFirstUnownSeen == 0) {
+        // LD_HL(wEnemyMonDVs);
+        // PREDEF(pGetUnownLetter);
+        // LD_A_addr(wUnownLetter);
+        // LD_addr_A(wFirstUnownSeen);
+        wram->wFirstUnownSeen = GetUnownLetter_Conv(wram->wEnemyMon.dvs);
+    }
+
+// skip_unown:
+    // LD_HL(wEnemyMonHP);
+    // LD_A_hli;
+    // LD_addr_A(wEnemyHPAtTimeOfPlayerSwitch);
+    // LD_A_hl;
+    // LD_addr_A(wEnemyHPAtTimeOfPlayerSwitch + 1);
+    wram->wEnemyHPAtTimeOfPlayerSwitch = wram->wEnemyMon.hp;
+    // RET;
+}
+
 void CheckWhetherToAskSwitch(void){
     LD_A_addr(wBattleHasJustStarted);
     DEC_A;
@@ -4311,71 +4418,109 @@ void ClearEnemyMonBox(void){
 
 }
 
+void ClearEnemyMonBox_Conv(void){
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    // CALL(aExitMenu);
+    ExitMenu_Conv2();
+    // CALL(aClearSprites);
+    ClearSprites_Conv();
+    // hlcoord(1, 0, wTilemap);
+    // LD_BC((4 << 8) | 10);
+    // CALL(aClearBox);
+    ClearBox_Conv2(coord(1, 0, wram->wTilemap), 10, 4);
+    // CALL(aWaitBGMap);
+    WaitBGMap_Conv();
+    // JP(mFinishBattleAnim);
+    return FinishBattleAnim();
+}
+
 void ShowBattleTextEnemySentOut(void){
     PEEK("");
-    CALLFAR(aBattle_GetTrainerName);
-    LD_HL(mBattleText_EnemySentOut);
-    CALL(aStdBattleTextbox);
-    JP(mWaitBGMap);
+    // CALLFAR(aBattle_GetTrainerName);
+    Battle_GetTrainerName_Conv();
+    // LD_HL(mBattleText_EnemySentOut);
+    // CALL(aStdBattleTextbox);
+    StdBattleTextbox_Conv2(BattleText_EnemySentOut);
+    // JP(mWaitBGMap);
+    return WaitBGMap_Conv();
 
 }
 
 void ShowSetEnemyMonAndSendOutAnimation(void){
     PEEK("");
-    LD_A_addr(wTempEnemyMonSpecies);
-    LD_addr_A(wCurPartySpecies);
-    LD_addr_A(wCurSpecies);
-    CALL(aGetBaseData);
-    LD_A(OTPARTYMON);
-    LD_addr_A(wMonType);
-    PREDEF(pCopyMonToTempMon);
-    CALL(aGetEnemyMonFrontpic);
+    // LD_A_addr(wTempEnemyMonSpecies);
+    // LD_addr_A(wCurPartySpecies);
+    wram->wCurPartySpecies = wram->wTempEnemyMonSpecies;
+    // LD_addr_A(wCurSpecies);
+    wram->wCurSpecies = wram->wTempEnemyMonSpecies;
+    // CALL(aGetBaseData);
+    GetBaseData_Conv();
+    // LD_A(OTPARTYMON);
+    // LD_addr_A(wMonType);
+    wram->wMonType = OTPARTYMON;
+    // PREDEF(pCopyMonToTempMon);
+    CopyMonToTempMon_Conv();
+    // CALL(aGetEnemyMonFrontpic);
+    GetEnemyMonFrontpic();
 
-    XOR_A_A;
-    LD_addr_A(wNumHits);
-    LD_addr_A(wBattleAnimParam);
-    CALL(aSetEnemyTurn);
-    LD_DE(ANIM_SEND_OUT_MON);
-    CALL(aCall_PlayBattleAnim);
+    // XOR_A_A;
+    // LD_addr_A(wNumHits);
+    wram->wNumHits = 0;
+    // LD_addr_A(wBattleAnimParam);
+    wram->wBattleAnimParam = 0;
+    // CALL(aSetEnemyTurn);
+    SetEnemyTurn_Conv();
+    // LD_DE(ANIM_SEND_OUT_MON);
+    // CALL(aCall_PlayBattleAnim);
+    Call_PlayBattleAnim_Conv(ANIM_SEND_OUT_MON);
 
-    CALL(aBattleCheckEnemyShininess);
-    IF_NC goto not_shiny;
+    // CALL(aBattleCheckEnemyShininess);
+    // IF_NC goto not_shiny;
+    if(BattleCheckEnemyShininess_Conv()) {
+        // LD_A(1);  // shiny anim
+        // LD_addr_A(wBattleAnimParam);
+        wram->wBattleAnimParam = 1;
+        // LD_DE(ANIM_SEND_OUT_MON);
+        // CALL(aCall_PlayBattleAnim);
+        Call_PlayBattleAnim_Conv(ANIM_SEND_OUT_MON);
+    }
 
-    LD_A(1);  // shiny anim
-    LD_addr_A(wBattleAnimParam);
-    LD_DE(ANIM_SEND_OUT_MON);
-    CALL(aCall_PlayBattleAnim);
+// not_shiny:
+    // LD_BC(wTempMonSpecies);
+    // FARCALL(aCheckFaintedFrzSlp);
+    // IF_C goto skip_cry;
+    if(!CheckFaintedFrzSlp_Conv(&wram->wTempMon)) {
+        // FARCALL(aCheckBattleScene);
+        // IF_C goto cry_no_anim;
+        if(CheckBattleScene_Conv()) {
 
+            // hlcoord(12, 0, wTilemap);
+            // LD_D(0x0);
+            // LD_E(ANIM_MON_SLOW);
+            // PREDEF(pAnimateFrontpic);
+            AnimateFrontpic_Conv(coord(12, 0, wram->wTilemap), 0x0, ANIM_MON_SLOW);
+            // goto skip_cry;
+        }
+        else {
+        // cry_no_anim:
+            // LD_A(0xf);
+            // LD_addr_A(wCryTracks);
+            wram->wCryTracks = 0xf;
+            // LD_A_addr(wTempEnemyMonSpecies);
+            // CALL(aPlayStereoCry);
+            PlayStereoCry_Conv(wram->wTempEnemyMonSpecies);
+        }
+    }
 
-not_shiny:
-    LD_BC(wTempMonSpecies);
-    FARCALL(aCheckFaintedFrzSlp);
-    IF_C goto skip_cry;
-
-    FARCALL(aCheckBattleScene);
-    IF_C goto cry_no_anim;
-
-    // hlcoord(12, 0, wTilemap);
-    // LD_D(0x0);
-    // LD_E(ANIM_MON_SLOW);
-    // PREDEF(pAnimateFrontpic);
-    AnimateFrontpic_Conv(coord(12, 0, wram->wTilemap), 0x0, ANIM_MON_SLOW);
-    goto skip_cry;
-
-
-cry_no_anim:
-    LD_A(0xf);
-    LD_addr_A(wCryTracks);
-    LD_A_addr(wTempEnemyMonSpecies);
-    CALL(aPlayStereoCry);
-
-
-skip_cry:
-    CALL(aUpdateEnemyHUD);
-    LD_A(0x1);
-    LDH_addr_A(hBGMapMode);
-    RET;
-
+// skip_cry:
+    // CALL(aUpdateEnemyHUD);
+    SafeCallGBAuto(aUpdateEnemyHUD);
+    // LD_A(0x1);
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0x1;
+    // RET;
 }
 
 void NewEnemyMonStatus(void){
@@ -5126,7 +5271,8 @@ void SendOutPlayerMon(void){
 
 
 // statused:
-    CALL(aUpdatePlayerHUD);
+    // CALL(aUpdatePlayerHUD);
+    SafeCallGBAuto(aUpdatePlayerHUD);
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = 0x1;
@@ -5738,7 +5884,8 @@ void DrawPlayerHUD(void){
     // hlcoord(18, 9, wTilemap);
     // LD_hl(0x73);  // vertical bar
     *coord(18, 9, wram->wTilemap) = 0x73;
-    CALL(aPrintPlayerHUD);
+    // CALL(aPrintPlayerHUD);
+    PrintPlayerHUD();
 
 // HP bar
     hlcoord(10, 9, wTilemap);
@@ -5800,69 +5947,96 @@ done:
 }
 
 void PrintPlayerHUD(void){
-    LD_DE(wBattleMonNickname);
-    hlcoord(10, 7, wTilemap);
-    CALL(aBattle_DummyFunction);
-    CALL(aPlaceString);
+    // LD_DE(wBattleMonNickname);
+    // hlcoord(10, 7, wTilemap);
+    // CALL(aBattle_DummyFunction);
+    Battle_DummyFunction();
+    // CALL(aPlaceString);
+    struct TextPrintState st = {.hl = coord(10, 7, wram->wTilemap), .de = wram->wBattleMonNickname};
+    PlaceString_Conv(&st, st.hl);
 
-    PUSH_BC;
+    // PUSH_BC;
 
-    LD_A_addr(wCurBattleMon);
-    LD_HL(wPartyMon1DVs);
-    CALL(aGetPartyLocation);
-    LD_DE(wTempMonDVs);
-    LD_A_hli;
-    LD_de_A;
-    INC_DE;
-    LD_A_hl;
-    LD_de_A;
-    LD_HL(wBattleMonLevel);
-    LD_DE(wTempMonLevel);
-    LD_BC(wTempMonStructEnd - wTempMonLevel);
-    CALL(aCopyBytes);  // battle_struct and party_struct end with the same data
-    LD_A_addr(wCurBattleMon);
-    LD_HL(wPartyMon1Species);
-    CALL(aGetPartyLocation);
-    LD_A_hl;
-    LD_addr_A(wCurPartySpecies);
-    LD_addr_A(wCurSpecies);
-    CALL(aGetBaseData);
+    // LD_A_addr(wCurBattleMon);
+    // LD_HL(wPartyMon1DVs);
+    // CALL(aGetPartyLocation);
+    struct PartyMon* hl = wram->wPartyMon + wram->wCurBattleMon;
+    // LD_DE(wTempMonDVs);
+    // LD_A_hli;
+    // LD_de_A;
+    // INC_DE;
+    // LD_A_hl;
+    // LD_de_A;
+    wram->wTempMon.mon.DVs = hl->mon.DVs;
+    // LD_HL(wBattleMonLevel);
+    // LD_DE(wTempMonLevel);
+    // LD_BC(wTempMonStructEnd - wTempMonLevel);
+    // CALL(aCopyBytes);  // battle_struct and party_struct end with the same data
+    CopyBytes_Conv2(&wram->wTempMon.mon.level, &wram->wBattleMon.level, (wTempMonStructEnd - wTempMonLevel));
+    // LD_A_addr(wCurBattleMon);
+    // LD_HL(wPartyMon1Species);
+    // CALL(aGetPartyLocation);
+    // LD_A_hl;
+    species_t a = hl->mon.species;
+    // LD_addr_A(wCurPartySpecies);
+    wram->wCurPartySpecies = a;
+    // LD_addr_A(wCurSpecies);
+    wram->wCurSpecies = a;
+    // CALL(aGetBaseData);
+    GetBaseData_Conv();
 
-    POP_HL;
-    DEC_HL;
+    // POP_HL;
+    // DEC_HL;
 
-    LD_A(TEMPMON);
-    LD_addr_A(wMonType);
-    CALLFAR(aGetGender);
-    LD_A(0x7f);
-    IF_C goto got_gender_char;
-    LD_A(0xef);
-    IF_NZ goto got_gender_char;
-    LD_A(0xf5);
+    // LD_A(TEMPMON);
+    // LD_addr_A(wMonType);
+    wram->wMonType = TEMPMON;
+    // CALLFAR(aGetGender);
+    u8_flag_s temp = GetGender_Conv();
+    // LD_A(0x7f);
+    // IF_C goto got_gender_char;
+    if(temp.flag) {
+        *coord(17, 8, wram->wTilemap) = CHAR_SPACE;
+    }
+    else if(temp.a != 0) {
+        // LD_A(0xef);
+        // IF_NZ goto got_gender_char;
+        *coord(17, 8, wram->wTilemap) = CHAR_MALE_ICON;
+        // LD_A(0xf5);
+    }
+    else {
+        *coord(17, 8, wram->wTilemap) = CHAR_FEMALE_ICON;
+    }
+
+// got_gender_char:
+    // hlcoord(17, 8, wTilemap);
+    // LD_hl_A;
+    // hlcoord(14, 8, wTilemap);
+    // PUSH_AF;  // back up gender
+    // PUSH_HL;
+    uint8_t* hl2 = coord(14, 8, wram->wTilemap);
+    // LD_DE(wBattleMonStatus);
+    // PREDEF(pPlaceNonFaintStatus);
+    bool c_ = PlaceNonFaintStatus2_Conv(hl2, wram->wBattleMon.status[0]);
+    // POP_HL;
+    // POP_BC;
+    // RET_NZ ;
+    if(c_)
+        return;
+    // LD_A_B;
+    // CP_A(0x7f);
+    // IF_NZ goto copy_level;  // male or female
+    // DEC_HL;  // genderless
+    if(temp.flag)
+        hl2 -= 1;
 
 
-got_gender_char:
-    hlcoord(17, 8, wTilemap);
-    LD_hl_A;
-    hlcoord(14, 8, wTilemap);
-    PUSH_AF;  // back up gender
-    PUSH_HL;
-    LD_DE(wBattleMonStatus);
-    PREDEF(pPlaceNonFaintStatus);
-    POP_HL;
-    POP_BC;
-    RET_NZ ;
-    LD_A_B;
-    CP_A(0x7f);
-    IF_NZ goto copy_level;  // male or female
-    DEC_HL;  // genderless
-
-
-copy_level:
-    LD_A_addr(wBattleMonLevel);
-    LD_addr_A(wTempMonLevel);
-    JP(mPrintLevel);
-
+// copy_level:
+    // LD_A_addr(wBattleMonLevel);
+    // LD_addr_A(wTempMonLevel);
+    wram->wTempMon.mon.level = wram->wBattleMon.level;
+    // JP(mPrintLevel);
+    PrintLevel_Conv(hl2);
 }
 
 void UpdateEnemyHUD(void){
@@ -6036,10 +6210,9 @@ void UpdateHPPal(void){
 
 }
 
-void Battle_DummyFunction(void){
 //  called before placing either battler's nickname in the HUD
-    RET;
-
+void Battle_DummyFunction(void){
+    // RET;
 }
 
 void BattleMenu(void){
@@ -7776,10 +7949,9 @@ loop:
 
 }
 
-void CheckSleepingTreeMon(void){
 //  Return carry if species is in the list
 //  for the current time of day
-
+void CheckSleepingTreeMon(void){
 //  Don't do anything if this isn't a tree encounter
     LD_A_addr(wBattleType);
     CP_A(BATTLETYPE_TREE);
@@ -7810,6 +7982,56 @@ NotSleeping:
 // INCLUDE "data/wild/treemons_asleep.asm"
 
     return CheckUnownLetter();
+}
+
+//  Return carry if species is in the list
+//  for the current time of day
+bool CheckSleepingTreeMon_Conv(species_t species){
+//  Don't do anything if this isn't a tree encounter
+    // LD_A_addr(wBattleType);
+    // CP_A(BATTLETYPE_TREE);
+    // IF_NZ goto NotSleeping;
+    if(wram->wBattleType != BATTLETYPE_TREE)
+        return false;
+
+//  Get list for the time of day
+    // LD_HL(mAsleepTreeMonsMorn);
+    // LD_A_addr(wTimeOfDay);
+    // CP_A(DAY_F);
+    // IF_C goto Check;
+    const species_t* hl;
+    if(wram->wTimeOfDay < DAY_F) {
+        hl = AsleepTreeMonsMorn;
+    }
+    // LD_HL(mAsleepTreeMonsDay);
+    // IF_Z goto Check;
+    else if(wram->wTimeOfDay == DAY_F) {
+        hl = AsleepTreeMonsDay;
+    }
+    // LD_HL(mAsleepTreeMonsNite);
+    else {
+        hl = AsleepTreeMonsNite;
+    }
+
+// Check:
+    // LD_A_addr(wTempEnemyMonSpecies);
+    // LD_DE(1);  // length of species id
+    // CALL(aIsInArray);
+//  If it's a match, the opponent is asleep
+    // RET_C ;
+    for(size_t i = 0; hl[i] != (species_t)-1; ++i) {
+        if(hl[i] == species) {
+            return true;
+        }
+    }
+
+
+// NotSleeping:
+    // AND_A_A;
+    // RET;
+    return false;
+
+// INCLUDE "data/wild/treemons_asleep.asm"
 }
 
 void CheckUnownLetter(void){
@@ -9960,34 +10182,45 @@ void GetBattleMonBackpic_DoAnim_Conv(void (*hl)(void)){
 }
 
 void GetEnemyMonFrontpic(void){
-    LD_A_addr(wEnemySubStatus4);
-    BIT_A(SUBSTATUS_SUBSTITUTE);
-    LD_HL(mBattleAnimCmd_RaiseSub);
-    JR_NZ (mGetEnemyMonFrontpic_DoAnim);
+    // LD_A_addr(wEnemySubStatus4);
+    // BIT_A(SUBSTATUS_SUBSTITUTE);
+    // LD_HL(mBattleAnimCmd_RaiseSub);
+    // JR_NZ (mGetEnemyMonFrontpic_DoAnim);
+    if(bit_test(wram->wEnemySubStatus4, SUBSTATUS_SUBSTITUTE)) {
+        return GetEnemyMonFrontpic_DoAnim_Conv(BattleAnimCmd_RaiseSub);
+    }
 
     return DropEnemySub();
 }
 
 void DropEnemySub(void){
-    LD_A_addr(wEnemyMinimized);
-    AND_A_A;
-    LD_HL(mBattleAnimCmd_MinimizeOpp);
-    JR_NZ (mGetEnemyMonFrontpic_DoAnim);
+    // LD_A_addr(wEnemyMinimized);
+    // AND_A_A;
+    // LD_HL(mBattleAnimCmd_MinimizeOpp);
+    // JR_NZ (mGetEnemyMonFrontpic_DoAnim);
+    if(wram->wEnemyMinimized != 0)
+        return GetEnemyMonFrontpic_DoAnim_Conv(BattleAnimCmd_MinimizeOpp);
 
-    LD_A_addr(wCurPartySpecies);
-    PUSH_AF;
-    LD_A_addr(wEnemyMonSpecies);
-    LD_addr_A(wCurSpecies);
-    LD_addr_A(wCurPartySpecies);
-    CALL(aGetBaseData);
-    LD_HL(wEnemyMonDVs);
-    PREDEF(pGetUnownLetter);
-    LD_DE(vTiles2);
-    PREDEF(pGetAnimatedFrontpic);
-    POP_AF;
-    LD_addr_A(wCurPartySpecies);
-    RET;
-
+    // LD_A_addr(wCurPartySpecies);
+    // PUSH_AF;
+    species_t species = wram->wCurPartySpecies;
+    // LD_A_addr(wEnemyMonSpecies);
+    // LD_addr_A(wCurSpecies);
+    wram->wCurSpecies = wram->wEnemyMon.species;
+    // LD_addr_A(wCurPartySpecies);
+    wram->wCurPartySpecies = wram->wEnemyMon.species;
+    // CALL(aGetBaseData);
+    GetBaseData_Conv();
+    // LD_HL(wEnemyMonDVs);
+    // PREDEF(pGetUnownLetter);
+    GetUnownLetter_Conv(wram->wEnemyMon.dvs);
+    // LD_DE(vTiles2);
+    // PREDEF(pGetAnimatedFrontpic);
+    GetAnimatedFrontpic_Conv(vram->vTiles2, 0);
+    // POP_AF;
+    // LD_addr_A(wCurPartySpecies);
+    wram->wCurPartySpecies = species;
+    // RET;
 }
 
 void GetEnemyMonFrontpic_DoAnim(void){
@@ -10002,6 +10235,21 @@ void GetEnemyMonFrontpic_DoAnim(void){
 
 }
 
+void GetEnemyMonFrontpic_DoAnim_Conv(void (*hl)(void)){
+    // LDH_A_addr(hBattleTurn);
+    // PUSH_AF;
+    uint8_t turn = hram->hBattleTurn;
+    // CALL(aSetEnemyTurn);
+    SetEnemyTurn_Conv();
+    // LD_A(BANK(aBattleAnimCommands));
+    // RST(aFarCall);
+    hl();
+    // POP_AF;
+    // LDH_addr_A(hBattleTurn);
+    hram->hBattleTurn = turn;
+    // RET;
+}
+
 void StartBattle(void){
 //  This check prevents you from entering a battle without any Pokemon.
 //  Those using walk-through-walls to bypass getting a Pokemon experience
@@ -10014,8 +10262,16 @@ void StartBattle(void){
     LD_A_addr(wTimeOfDayPal);
     PUSH_AF;
     CALL(aBattleIntro);
-    CALL(aDoBattle);
-    CALL(aExitBattle);
+    {
+        bank_push(BANK(aDoBattle));
+        CALL(aDoBattle);
+        bank_pop;
+    }
+    {
+        bank_push(BANK(aExitBattle));
+        CALL(aExitBattle);
+        bank_pop;
+    }
     POP_AF;
     LD_addr_A(wTimeOfDayPal);
     SCF;
@@ -10027,6 +10283,7 @@ bool StartBattle_Conv(void){
 //  This check prevents you from entering a battle without any Pokemon.
 //  Those using walk-through-walls to bypass getting a Pokemon experience
 //  the effects of this check.
+    PEEK("");
     // LD_A_addr(wPartyCount);
     // AND_A_A;
     // RET_Z ;
@@ -10114,40 +10371,48 @@ Trainer:
 }
 
 void InitEnemy(void){
-    LD_A_addr(wOtherTrainerClass);
-    AND_A_A;
+    // LD_A_addr(wOtherTrainerClass);
+    // AND_A_A;
     // JP_NZ (mInitEnemyTrainer);  // trainer
     // JP(mInitEnemyWildmon);  // wild
-    IF_NZ
-        return InitEnemyTrainer();
+    if(wram->wOtherTrainerClass != 0) {
+        // REG_A = wram->wOtherTrainerClass;
+        // CALL(aInitEnemyTrainer);
+        return InitEnemyTrainer_Conv(wram->wOtherTrainerClass);
+        // RET;
+        return;
+    }
     return InitEnemyWildmon();
 
 }
 
 void BackUpBGMap2(void){
     PEEK("");
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(MBANK(awDecompressScratch));
-    LDH_addr_A(rSVBK);
-    LD_HL(wDecompressScratch);
-    LD_BC(0x40 * LEN_2BPP_TILE);  // vBGMap3 - vBGMap2
-    LD_A(0x2);
-    CALL(aByteFill);
-    LDH_A_addr(rVBK);
-    PUSH_AF;
-    LD_A(0x1);
-    LDH_addr_A(rVBK);
-    LD_DE(wDecompressScratch);
-    hlbgcoord(0, 0, vBGMap0);  // vBGMap2
-    LD_BC((BANK(aBackUpBGMap2) << 8) | 0x40);
-    CALL(aRequest2bpp);
-    POP_AF;
-    LDH_addr_A(rVBK);
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    RET;
-
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(MBANK(awDecompressScratch));
+    // LDH_addr_A(rSVBK);
+    wbank_push(MBANK(awDecompressScratch));
+    // LD_HL(wDecompressScratch);
+    // LD_BC(0x40 * LEN_2BPP_TILE);  // vBGMap3 - vBGMap2
+    // LD_A(0x2);
+    // CALL(aByteFill);
+    ByteFill_Conv2(wram->wDecompressScratch, 0x40 * LEN_2BPP_TILE, 0x2);
+    // LDH_A_addr(rVBK);
+    // PUSH_AF;
+    // LD_A(0x1);
+    // LDH_addr_A(rVBK);
+    // LD_DE(wDecompressScratch);
+    // hlbgcoord(0, 0, vBGMap0);  // vBGMap2
+    // LD_BC((BANK(aBackUpBGMap2) << 8) | 0x40);
+    // CALL(aRequest2bpp);
+    // POP_AF;
+    CopyBytes_Conv2(bgcoord(0, 0, vram->vBGMap2), wram->wDecompressScratch, 0x40 * LEN_2BPP_TILE);
+    // LDH_addr_A(rVBK);
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // RET;
+    wbank_pop;
 }
 
 void InitEnemyTrainer(void){
@@ -10212,41 +10477,137 @@ done:
 
 }
 
+void InitEnemyTrainer_Conv(uint8_t tclass){
+    PEEK("");
+    // LD_addr_A(wTrainerClass);
+    wram->wTrainerClass = tclass;
+    // FARCALL(aStubbedTrainerRankings_TrainerBattles);
+    // XOR_A_A;
+    // LD_addr_A(wTempEnemyMonSpecies);
+    wram->wTempEnemyMonSpecies = 0;
+    // CALLFAR(aGetTrainerAttributes);
+    GetTrainerAttributes_Conv(tclass);
+    // CALLFAR(aReadTrainerParty);
+    ReadTrainerParty();
+
+// RIVAL1's first mon has no held item
+    // LD_A_addr(wTrainerClass);
+    // CP_A(RIVAL1);
+    // IF_NZ goto ok;
+    if(tclass == RIVAL1) {
+        // XOR_A_A;
+        // LD_addr_A(wOTPartyMon1Item);
+        wram->wOTPartyMon[0].mon.item = NO_ITEM;
+    }
+
+
+// ok:
+    // LD_DE(vTiles2);
+    // CALLFAR(aGetTrainerPic);
+    GetTrainerPic_Conv(vram->vTiles2, tclass);
+    // XOR_A_A;
+    // LDH_addr_A(hGraphicStartTile);
+    hram->hGraphicStartTile = 0;
+    // DEC_A;
+    // LD_addr_A(wEnemyItemState);
+    wram->wEnemyItemState = 0xff;
+    // hlcoord(12, 0, wTilemap);
+    // LD_BC((7 << 8) | 7);
+    // PREDEF(pPlaceGraphic);
+    PlaceGraphicYStagger_Conv(coord(12, 0, wram->wTilemap), 7, 7);
+    // LD_A(-1);
+    // LD_addr_A(wCurOTMon);
+    wram->wCurOTMon = 0xff;
+    // LD_A(TRAINER_BATTLE);
+    // LD_addr_A(wBattleMode);
+    wram->wBattleMode = TRAINER_BATTLE;
+
+    // CALL(aIsGymLeader);
+    // IF_NC goto done;
+    if(IsGymLeader_Conv(tclass)) {
+        // XOR_A_A;
+        // LD_addr_A(wCurPartyMon);
+        wram->wCurPartyMon = 0;
+        // LD_A_addr(wPartyCount);
+        // LD_B_A;
+        uint8_t b = wram->wPartyCount;
+
+        while(1) {
+        // partyloop:
+            // PUSH_BC;
+            // LD_A(MON_HP);
+            // CALL(aGetPartyParamLocation);
+            // LD_A_hli;
+            // OR_A_hl;
+            // IF_Z goto skipfaintedmon;
+            if(wram->wPartyMon[wram->wCurPartyMon].HP != 0) {
+                // LD_C(HAPPINESS_GYMBATTLE);
+                // CALLFAR(aChangeHappiness);
+                ChangeHappiness_Conv(HAPPINESS_GYMBATTLE);
+            }
+
+        // skipfaintedmon:
+            // POP_BC;
+            // DEC_B;
+            // IF_Z goto done;
+            if(--b == 0)
+                break;
+            // LD_HL(wCurPartyMon);
+            // INC_hl;
+            ++wram->wCurPartyMon;
+            // goto partyloop;
+        }
+    }
+
+// done:
+    // RET;
+}
+
 void InitEnemyWildmon(void){
-    LD_A(WILD_BATTLE);
-    LD_addr_A(wBattleMode);
-    FARCALL(aStubbedTrainerRankings_WildBattles);
+    // LD_A(WILD_BATTLE);
+    // LD_addr_A(wBattleMode);
+    wram->wBattleMode = WILD_BATTLE;
+    // FARCALL(aStubbedTrainerRankings_WildBattles);
     CALL(aLoadEnemyMon);
-    LD_HL(wEnemyMonMoves);
-    LD_DE(wWildMonMoves);
-    LD_BC(NUM_MOVES);
-    CALL(aCopyBytes);
-    LD_HL(wEnemyMonPP);
-    LD_DE(wWildMonPP);
-    LD_BC(NUM_MOVES);
-    CALL(aCopyBytes);
-    LD_HL(wEnemyMonDVs);
-    PREDEF(pGetUnownLetter);
-    LD_A_addr(wCurPartySpecies);
-    CP_A(UNOWN);
-    IF_NZ goto skip_unown;
-    LD_A_addr(wFirstUnownSeen);
-    AND_A_A;
-    IF_NZ goto skip_unown;
-    LD_A_addr(wUnownLetter);
-    LD_addr_A(wFirstUnownSeen);
+    // LD_HL(wEnemyMonMoves);
+    // LD_DE(wWildMonMoves);
+    // LD_BC(NUM_MOVES);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wWildMonMoves, wram->wEnemyMon.moves, NUM_MOVES * sizeof(move_t));
+    // LD_HL(wEnemyMonPP);
+    // LD_DE(wWildMonPP);
+    // LD_BC(NUM_MOVES);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wWildMonPP, wram->wEnemyMon.pp, NUM_MOVES);
+    // LD_HL(wEnemyMonDVs);
+    // PREDEF(pGetUnownLetter);
+    uint8_t letter = GetUnownLetter_Conv(wram->wEnemyMon.dvs);
+    // LD_A_addr(wCurPartySpecies);
+    // CP_A(UNOWN);
+    // IF_NZ goto skip_unown;
+    // LD_A_addr(wFirstUnownSeen);
+    // AND_A_A;
+    // IF_NZ goto skip_unown;
+    if(wram->wCurPartySpecies == UNOWN && wram->wFirstUnownSeen == 0) {
+        // LD_A_addr(wUnownLetter);
+        // LD_addr_A(wFirstUnownSeen);
+        wram->wFirstUnownSeen = letter;
+    }
 
-skip_unown:
-    LD_DE(vTiles2);
-    PREDEF(pGetAnimatedFrontpic);
-    XOR_A_A;
-    LD_addr_A(wTrainerClass);
-    LDH_addr_A(hGraphicStartTile);
-    hlcoord(12, 0, wTilemap);
-    LD_BC((7 << 8) | 7);
-    PREDEF(pPlaceGraphic);
-    RET;
-
+// skip_unown:
+    // LD_DE(vTiles2);
+    // PREDEF(pGetAnimatedFrontpic);
+    GetAnimatedFrontpic_Conv(vram->vTiles2, 0);
+    // XOR_A_A;
+    // LD_addr_A(wTrainerClass);
+    wram->wTrainerClass = 0;
+    // LDH_addr_A(hGraphicStartTile);
+    hram->hGraphicStartTile = 0;
+    // hlcoord(12, 0, wTilemap);
+    // LD_BC((7 << 8) | 7);
+    // PREDEF(pPlaceGraphic);
+    PlaceGraphicYStagger_Conv(coord(12, 0, wram->wTilemap), 7, 7);
+    // RET;
 }
 
 void FillEnemyMovesFromMoveIndicesBuffer(void){
@@ -10520,6 +10881,13 @@ void IsMobileBattle2(void){
     CP_A(LINK_MOBILE);
     RET;
 
+}
+
+bool IsMobileBattle2_Conv(void){
+    // LD_A_addr(wLinkMode);
+    // CP_A(LINK_MOBILE);
+    // RET;
+    return wram->wLinkMode == LINK_MOBILE;
 }
 
 void v_DisplayLinkRecord(void){
@@ -11207,92 +11575,117 @@ inner_loop:
 }
 
 void BattleStartMessage(void){
-    LD_A_addr(wBattleMode);
-    DEC_A;
-    IF_Z goto wild;
+    // LD_A_addr(wBattleMode);
+    // DEC_A;
+    // IF_Z goto wild;
+    const struct TextCmd* hl;
+    if(wram->wBattleMode != WILD_BATTLE) {
+        // LD_DE(SFX_SHINE);
+        // CALL(aPlaySFX);
+        PlaySFX_Conv(SFX_SHINE);
+        // CALL(aWaitSFX);
+        WaitSFX_Conv();
 
-    LD_DE(SFX_SHINE);
-    CALL(aPlaySFX);
-    CALL(aWaitSFX);
+        // LD_C(20);
+        // CALL(aDelayFrames);
+        DelayFrames_Conv(20);
 
-    LD_C(20);
-    CALL(aDelayFrames);
+        // FARCALL(aBattle_GetTrainerName);
+        Battle_GetTrainerName_Conv();
 
-    FARCALL(aBattle_GetTrainerName);
+        // LD_HL(mWantsToBattleText);
+        // goto PlaceBattleStartText;
+        hl = WantsToBattleText;
+    }
+    else {
+    // wild:
+        // CALL(aBattleCheckEnemyShininess);
+        // IF_NC goto not_shiny;
+        if(BattleCheckEnemyShininess_Conv()) {
+            // XOR_A_A;
+            // LD_addr_A(wNumHits);
+            wram->wNumHits = 0;
+            // LD_A(1);
+            // LDH_addr_A(hBattleTurn);
+            hram->hBattleTurn = 1;
+            // LD_A(1);
+            // LD_addr_A(wBattleAnimParam);
+            wram->wBattleAnimParam = 1;
+            // LD_DE(ANIM_SEND_OUT_MON);
+            // CALL(aCall_PlayBattleAnim);
+            Call_PlayBattleAnim_Conv(ANIM_SEND_OUT_MON);
+        }
 
-    LD_HL(mWantsToBattleText);
-    goto PlaceBattleStartText;
-
-
-wild:
-    CALL(aBattleCheckEnemyShininess);
-    IF_NC goto not_shiny;
-
-    XOR_A_A;
-    LD_addr_A(wNumHits);
-    LD_A(1);
-    LDH_addr_A(hBattleTurn);
-    LD_A(1);
-    LD_addr_A(wBattleAnimParam);
-    LD_DE(ANIM_SEND_OUT_MON);
-    CALL(aCall_PlayBattleAnim);
-
-
-not_shiny:
-    FARCALL(aCheckSleepingTreeMon);
-    IF_C goto skip_cry;
-
-    FARCALL(aCheckBattleScene);
-    IF_C goto cry_no_anim;
-
-    // hlcoord(12, 0, wTilemap);
-    // LD_D(0x0);
-    // LD_E(ANIM_MON_NORMAL);
-    // PREDEF(pAnimateFrontpic);
-    AnimateFrontpic_Conv(coord(12, 0, wram->wTilemap), 0x0, ANIM_MON_NORMAL);
-    goto skip_cry;  // cry is played during the animation
-
-
-cry_no_anim:
-    LD_A(0xf);
-    LD_addr_A(wCryTracks);
-    LD_A_addr(wTempEnemyMonSpecies);
-    CALL(aPlayStereoCry);
-
-
-skip_cry:
-    LD_A_addr(wBattleType);
-    CP_A(BATTLETYPE_FISH);
-    IF_NZ goto NotFishing;
-
-    FARCALL(aStubbedTrainerRankings_HookedEncounters);
-
-    LD_HL(mHookedPokemonAttackedText);
-    goto PlaceBattleStartText;
-
-
-NotFishing:
-    LD_HL(mPokemonFellFromTreeText);
-    CP_A(BATTLETYPE_TREE);
-    IF_Z goto PlaceBattleStartText;
-    LD_HL(mWildCelebiAppearedText);
-    CP_A(BATTLETYPE_CELEBI);
-    IF_Z goto PlaceBattleStartText;
-    LD_HL(mWildPokemonAppearedText);
-
+    // not_shiny:
+        // FARCALL(aCheckSleepingTreeMon);
+        // IF_C goto skip_cry;
+        if(!CheckSleepingTreeMon_Conv(wram->wTempWildMonSpecies)) {
+            // FARCALL(aCheckBattleScene);
+            // IF_C goto cry_no_anim;
+            if(CheckBattleScene_Conv()) {
+                // hlcoord(12, 0, wTilemap);
+                // LD_D(0x0);
+                // LD_E(ANIM_MON_NORMAL);
+                // PREDEF(pAnimateFrontpic);
+                AnimateFrontpic_Conv(coord(12, 0, wram->wTilemap), 0x0, ANIM_MON_NORMAL);
+                // goto skip_cry;  // cry is played during the animation
+            }
+            else {
+            // cry_no_anim:
+                // LD_A(0xf);
+                // LD_addr_A(wCryTracks);
+                wram->wCryTracks = 0xf;
+                // LD_A_addr(wTempEnemyMonSpecies);
+                // CALL(aPlayStereoCry);
+                PlayStereoCry_Conv(wram->wTempEnemyMonSpecies);
+            }
+        }
+    // skip_cry:
+        // LD_A_addr(wBattleType);
+        // CP_A(BATTLETYPE_FISH);
+        // IF_NZ goto NotFishing;
+        if(wram->wBattleType == BATTLETYPE_FISH) {
+            // FARCALL(aStubbedTrainerRankings_HookedEncounters);
+            // LD_HL(mHookedPokemonAttackedText);
+            hl = HookedPokemonAttackedText;
+            // goto PlaceBattleStartText;
+        }
+        else {
+        // NotFishing:
+            // LD_HL(mPokemonFellFromTreeText);
+            // CP_A(BATTLETYPE_TREE);
+            // IF_Z goto PlaceBattleStartText;
+            if(wram->wBattleType == BATTLETYPE_TREE) {
+                hl = PokemonFellFromTreeText;
+            }
+            // LD_HL(mWildCelebiAppearedText);
+            // CP_A(BATTLETYPE_CELEBI);
+            // IF_Z goto PlaceBattleStartText;
+            else if(wram->wBattleType == BATTLETYPE_CELEBI) {
+                hl = WildCelebiAppearedText;
+            }
+            // LD_HL(mWildPokemonAppearedText);
+            else {
+                hl = WildPokemonAppearedText;
+            }
+        }
+    }
 
 PlaceBattleStartText:
-    PUSH_HL;
-    FARCALL(aBattleStart_TrainerHuds);
-    POP_HL;
-    CALL(aStdBattleTextbox);
+    // PUSH_HL;
+    // FARCALL(aBattleStart_TrainerHuds);
+    SafeCallGBAuto(aBattleStart_TrainerHuds);
+    // POP_HL;
+    // CALL(aStdBattleTextbox);
+    StdBattleTextbox_Conv2(hl);
 
-    CALL(aIsMobileBattle2);
-    RET_NZ ;
+    // CALL(aIsMobileBattle2);
+    // RET_NZ ;
+    if(!IsMobileBattle2_Conv())
+        return;
 
-    LD_C(0x2);  // start
-    FARCALL(aMobile_PrintOpponentBattleMessage);
+    // LD_C(0x2);  // start
+    // FARCALL(aMobile_PrintOpponentBattleMessage);
 
-    RET;
-
+    // RET;
 }

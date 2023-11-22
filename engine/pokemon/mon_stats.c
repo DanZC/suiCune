@@ -369,7 +369,7 @@ DVs:
 //  sBoxMon data is read directly from SRAM.
     LD_A_addr(wMonType);
     CP_A(BOXMON);
-    LD_A(BANK(sBox));
+    LD_A(MBANK(asBox));
     CALL_Z (aOpenSRAM);
 
 //  Attack DV
@@ -956,9 +956,13 @@ no_status:
 }
 
 bool PlaceNonFaintStatus_Conv(uint8_t* hl, struct PartyMon* de){
+    return PlaceNonFaintStatus2_Conv(hl, de->status);
+}
+
+bool PlaceNonFaintStatus2_Conv(uint8_t* hl, uint8_t status){
     // PUSH_DE;
     // LD_A_de;
-    uint8_t a = de->status;
+    uint8_t a = status;
     // LD_DE(mPsnString);
     // BIT_A(PSN);
     // IF_NZ goto place;

@@ -896,15 +896,16 @@ uint8_t* GetTMHMName_Conv2(item_t a){
 }
 
 void GetMoveName(void){
-        PUSH_HL;
+    PUSH_HL;
 
-    LD_A(MOVE_NAME);
-    LD_addr_A(wNamedObjectType);
+    // LD_A(MOVE_NAME);
+    // LD_addr_A(wNamedObjectType);
 
-    LD_A_addr(wNamedObjectIndex);  // move id
-    LD_addr_A(wCurSpecies);
+    // LD_A_addr(wNamedObjectIndex);  // move id
+    // LD_addr_A(wCurSpecies);
 
-    CALL(aGetName);
+    // CALL(aGetName);
+    GetName_Conv2(MOVE_NAME, wram->wNamedObjectIndex);
     LD_DE(wStringBuffer1);
 
     POP_HL;

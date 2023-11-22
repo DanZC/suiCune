@@ -514,7 +514,7 @@ void PrintLevel_Conv(uint8_t* hl){
     // LD_hl(0x6e);
     // INC_HL;
     uint8_t a = wram->wTempMon.mon.level;
-    *(hl++) = 0x6e;
+    *(hl++) = CHAR_LV;
 
 //  How many digits?
     if(a < 100) {
