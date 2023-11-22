@@ -1022,6 +1022,7 @@ CheckSleep:
 
 void BattleCommand_UsedMoveText(void){
 //  usedmovetext
+    PEEK("");
     FARCALL(aDisplayUsedMoveText);
     RET;
 

@@ -595,7 +595,7 @@ void GetMonBackpic_Conv(uint8_t* de, species_t species){
     // LD_DE(wDecompressScratch);
     // POP_AF;
     // CALL(aFarDecompress);
-    LoadPNG2bppAssetToVRAMByColumn(wram->wDecompressScratch, path);
+    LoadPNG2bppAssetToVRAM(wram->wDecompressScratch, path);
     // LD_HL(wDecompressScratch);
     // LD_C(6 * 6);
     // CALL(aFixBackpicAlignment);

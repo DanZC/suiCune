@@ -142,7 +142,7 @@
 
 // SECTION "Enemy Trainers", ROMX
 
-//#include "engine/battle/ai/items.h"
+#include "engine/battle/ai/items.h"
 #include "engine/battle/ai/scoring.h"
 #include "engine/battle/read_trainer_attributes.h"
 #include "engine/battle/read_trainer_party.h"

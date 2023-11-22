@@ -506,24 +506,24 @@ void SetClock_Conv(void){
 
 //  seconds
     gb_write(hl, RTC_S);
-    gb_write(de, gb_read(hRTCSeconds));
+    gb_write(de, hram->hRTCSeconds);
 //  minutes
     gb_write(hl, RTC_M);
-    gb_write(de, gb_read(hRTCMinutes));
+    gb_write(de, hram->hRTCMinutes);
 //  hours
     gb_write(hl, RTC_H);
-    gb_write(de, gb_read(hRTCHours));
+    gb_write(de, hram->hRTCHours);
 //  day lo
     gb_write(hl, RTC_DL);
-    gb_write(de, gb_read(hRTCDayLo));
+    gb_write(de, hram->hRTCDayLo);
 //  day hi
     gb_write(hl, RTC_DH);
-    uint8_t dayhi = gb_read(hRTCDayHi);
-    RES_(dayhi, 6);  // make sure timer is active
+    uint8_t dayhi = hram->hRTCDayHi;
+    bit_reset(dayhi, 6);  // make sure timer is active
     gb_write(de, dayhi);
 
 //  cleanup
-    CloseSRAM();  // unlatch clock, disable clock r/w
+    CloseSRAM_Conv();  // unlatch clock, disable clock r/w
 }
 
 void SetClock(void){

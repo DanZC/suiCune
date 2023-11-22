@@ -24,7 +24,7 @@ struct BGSquare
 {
     uint8_t w: 4;
     uint8_t h: 4;
-    uint16_t ptr;
+    const uint8_t* const ptr;
 };
 
 //  BG effects for use in battle animations.
@@ -1065,14 +1065,54 @@ void BattleBGEffect_RunPicResizeScript(void) {
     // bgsquare ['7', '7', '.SevenBySeven']
     // bgsquare ['5', '5', '.FiveByFive']
     // bgsquare ['3', '3', '.ThreeByThree']
+    static const uint8_t SixBySix[] = {
+        0x00, 0x06, 0x0c, 0x12, 0x18, 0x1e,
+        0x01, 0x07, 0x0d, 0x13, 0x19, 0x1f,
+        0x02, 0x08, 0x0e, 0x14, 0x1a, 0x20,
+        0x03, 0x09, 0x0f, 0x15, 0x1b, 0x21,
+        0x04, 0x0a, 0x10, 0x16, 0x1c, 0x22,
+        0x05, 0x0b, 0x11, 0x17, 0x1d, 0x23,
+    };
+    static const uint8_t FourByFour[] = {
+        0x00, 0x0c, 0x12, 0x1e,
+        0x02, 0x0e, 0x14, 0x20,
+        0x03, 0x0f, 0x15, 0x21,
+        0x05, 0x11, 0x17, 0x23,
+    };
+    static const uint8_t TwoByTwo[] = {
+        0x00, 0x1e,
+        0x05, 0x23,
+    };
+    static const uint8_t SevenBySeven[] = {
+        0x00, 0x07, 0x0e, 0x15, 0x1c, 0x23, 0x2a,
+        0x01, 0x08, 0x0f, 0x16, 0x1d, 0x24, 0x2b,
+        0x02, 0x09, 0x10, 0x17, 0x1e, 0x25, 0x2c,
+        0x03, 0x0a, 0x11, 0x18, 0x1f, 0x26, 0x2d,
+        0x04, 0x0b, 0x12, 0x19, 0x20, 0x27, 0x2e,
+        0x05, 0x0c, 0x13, 0x1a, 0x21, 0x28, 0x2f,
+        0x06, 0x0d, 0x14, 0x1b, 0x22, 0x29, 0x30,
+    };
+    static const uint8_t FiveByFive[] = {
+        0x00, 0x07, 0x15, 0x23, 0x2a,
+        0x01, 0x08, 0x16, 0x24, 0x2b,
+        0x03, 0x0a, 0x18, 0x26, 0x2d,
+        0x05, 0x0c, 0x1a, 0x28, 0x2f,
+        0x06, 0x0d, 0x1b, 0x29, 0x30,
+    };
+    
+    static const uint8_t ThreeByThree[] = {
+        0x00, 0x15, 0x2a,
+        0x03, 0x18, 0x2d,
+        0x06, 0x1b, 0x30,
+    };
 
     static const struct BGSquare BGSquares[] = {
-        [BGSQUARE_SIX]   = {.w = 6, .h = 6, .ptr=mBattleBGEffect_RunPicResizeScript_SixBySix},
-        [BGSQUARE_FOUR]  = {.w = 4, .h = 4, .ptr=mBattleBGEffect_RunPicResizeScript_FourByFour},
-        [BGSQUARE_TWO]   = {.w = 2, .h = 2, .ptr=mBattleBGEffect_RunPicResizeScript_TwoByTwo},
-        [BGSQUARE_SEVEN] = {.w = 7, .h = 7, .ptr=mBattleBGEffect_RunPicResizeScript_SevenBySeven},
-        [BGSQUARE_FIVE]  = {.w = 5, .h = 5, .ptr=mBattleBGEffect_RunPicResizeScript_FiveByFive},
-        [BGSQUARE_THREE] = {.w = 3, .h = 3, .ptr=mBattleBGEffect_RunPicResizeScript_ThreeByThree},
+        [BGSQUARE_SIX]   = {.w = 6, .h = 6, .ptr=SixBySix},
+        [BGSQUARE_FOUR]  = {.w = 4, .h = 4, .ptr=FourByFour},
+        [BGSQUARE_TWO]   = {.w = 2, .h = 2, .ptr=TwoByTwo},
+        [BGSQUARE_SEVEN] = {.w = 7, .h = 7, .ptr=SevenBySeven},
+        [BGSQUARE_FIVE]  = {.w = 5, .h = 5, .ptr=FiveByFive},
+        [BGSQUARE_THREE] = {.w = 3, .h = 3, .ptr=ThreeByThree},
     };
 
 // Coords:
@@ -1125,7 +1165,82 @@ zero:
     IF_Z goto clear;
     CP_A(0xfd);
     IF_Z goto skip;
-    CALL(aBattleBGEffect_RunPicResizeScript_PlaceGraphic);
+    // CALL(aBattleBGEffect_RunPicResizeScript_PlaceGraphic);
+    {
+    // PlaceGraphic:
+
+        //  get dims
+        PUSH_BC;
+        PUSH_HL;
+        LD_E_hl;
+        LD_D(0);
+        // LD_HL(mBattleBGEffect_RunPicResizeScript_BGSquares);
+        // ADD_HL_DE;
+        // ADD_HL_DE;
+        // ADD_HL_DE;
+        // LD_A_hli;
+        // LD_B_A;
+        // AND_A(0xf);
+        // LD_C_A;
+        uint8_t w = BGSquares[REG_DE].w;
+        REG_C = w;
+        // LD_A_B;
+        // SWAP_A;
+        // AND_A(0xf);
+        // LD_B_A;
+        uint8_t h = BGSquares[REG_DE].h;
+        REG_B = h;
+        //  store pointer
+        // LD_E_hl;
+        // INC_HL;
+        // LD_D_hl;
+        const uint8_t* de = BGSquares[REG_DE].ptr;
+        const uint8_t* de2;
+        //  get byte
+        POP_HL;
+        INC_HL;
+        LD_A_hli;
+        LD_addr_A(wBattlePicResizeTempBaseTileID);
+        //  get coord
+        PUSH_DE;
+        LD_E_hl;
+        LD_D(0);
+        // LD_HL(mBattleBGEffect_RunPicResizeScript_Coords);
+        // ADD_HL_DE;
+        // ADD_HL_DE;
+        // LD_A_hli;
+        // LD_H_hl;
+        // LD_L_A;
+        REG_HL = Coords[REG_DE];
+        POP_DE;
+        //  fill box
+
+    row:
+        de2 = de;
+        PUSH_BC;
+        PUSH_HL;
+        LD_A_addr(wBattlePicResizeTempBaseTileID);
+        LD_B_A;
+
+    col:
+        // LD_A_de;
+        REG_A = *de;
+        ADD_A_B;
+        LD_hli_A;
+        // INC_DE;
+        de += w;
+        DEC_C;
+        IF_NZ goto col;
+        POP_HL;
+        LD_BC(SCREEN_WIDTH);
+        ADD_HL_BC;
+        POP_BC;
+        de = de2 + 1;
+        DEC_B;
+        IF_NZ goto row;
+        POP_BC;
+        // RET;
+    }
 
 skip:
 
@@ -1181,120 +1296,6 @@ ClearBox:
     CALL(aClearBox);
     POP_BC;
     RET;
-
-PlaceGraphic:
-
-    //  get dims
-    PUSH_BC;
-    PUSH_HL;
-    LD_E_hl;
-    LD_D(0);
-    // LD_HL(mBattleBGEffect_RunPicResizeScript_BGSquares);
-    // ADD_HL_DE;
-    // ADD_HL_DE;
-    // ADD_HL_DE;
-    // LD_A_hli;
-    // LD_B_A;
-    // AND_A(0xf);
-    // LD_C_A;
-    REG_C = BGSquares[REG_DE].h;
-    // LD_A_B;
-    // SWAP_A;
-    // AND_A(0xf);
-    // LD_B_A;
-    REG_B = BGSquares[REG_DE].w;
-    //  store pointer
-    // LD_E_hl;
-    // INC_HL;
-    // LD_D_hl;
-    REG_DE = BGSquares[REG_DE].ptr;
-    //  get byte
-    POP_HL;
-    INC_HL;
-    LD_A_hli;
-    LD_addr_A(wBattlePicResizeTempBaseTileID);
-    //  get coord
-    PUSH_DE;
-    LD_E_hl;
-    LD_D(0);
-    // LD_HL(mBattleBGEffect_RunPicResizeScript_Coords);
-    // ADD_HL_DE;
-    // ADD_HL_DE;
-    // LD_A_hli;
-    // LD_H_hl;
-    // LD_L_A;
-    REG_HL = Coords[REG_DE];
-    POP_DE;
-    //  fill box
-
-row:
-
-    PUSH_BC;
-    PUSH_HL;
-    LD_A_addr(wBattlePicResizeTempBaseTileID);
-    LD_B_A;
-
-col:
-
-    LD_A_de;
-    ADD_A_B;
-    LD_hli_A;
-    INC_DE;
-    DEC_C;
-    IF_NZ goto col;
-    POP_HL;
-    LD_BC(SCREEN_WIDTH);
-    ADD_HL_BC;
-    POP_BC;
-    DEC_B;
-    IF_NZ goto row;
-    POP_BC;
-    RET;
-
-SixBySix:
-
-    // db ['0x00', '0x06', '0x0c', '0x12', '0x18', '0x1e'];
-    // db ['0x01', '0x07', '0x0d', '0x13', '0x19', '0x1f'];
-    // db ['0x02', '0x08', '0x0e', '0x14', '0x1a', '0x20'];
-    // db ['0x03', '0x09', '0x0f', '0x15', '0x1b', '0x21'];
-    // db ['0x04', '0x0a', '0x10', '0x16', '0x1c', '0x22'];
-    // db ['0x05', '0x0b', '0x11', '0x17', '0x1d', '0x23'];
-
-FourByFour:
-
-    // db ['0x00', '0x0c', '0x12', '0x1e'];
-    // db ['0x02', '0x0e', '0x14', '0x20'];
-    // db ['0x03', '0x0f', '0x15', '0x21'];
-    // db ['0x05', '0x11', '0x17', '0x23'];
-
-TwoByTwo:
-
-    // db ['0x00', '0x1e'];
-    // db ['0x05', '0x23'];
-
-SevenBySeven:
-
-    // db ['0x00', '0x07', '0x0e', '0x15', '0x1c', '0x23', '0x2a'];
-    // db ['0x01', '0x08', '0x0f', '0x16', '0x1d', '0x24', '0x2b'];
-    // db ['0x02', '0x09', '0x10', '0x17', '0x1e', '0x25', '0x2c'];
-    // db ['0x03', '0x0a', '0x11', '0x18', '0x1f', '0x26', '0x2d'];
-    // db ['0x04', '0x0b', '0x12', '0x19', '0x20', '0x27', '0x2e'];
-    // db ['0x05', '0x0c', '0x13', '0x1a', '0x21', '0x28', '0x2f'];
-    // db ['0x06', '0x0d', '0x14', '0x1b', '0x22', '0x29', '0x30'];
-
-FiveByFive:
-
-    // db ['0x00', '0x07', '0x15', '0x23', '0x2a'];
-    // db ['0x01', '0x08', '0x16', '0x24', '0x2b'];
-    // db ['0x03', '0x0a', '0x18', '0x26', '0x2d'];
-    // db ['0x05', '0x0c', '0x1a', '0x28', '0x2f'];
-    // db ['0x06', '0x0d', '0x1b', '0x29', '0x30'];
-
-ThreeByThree:
-
-    // db ['0x00', '0x15', '0x2a'];
-    // db ['0x03', '0x18', '0x2d'];
-    // db ['0x06', '0x1b', '0x30'];
 
     return BattleBGEffect_Surf();
 }

@@ -84,7 +84,7 @@ enum {
 
 // object_struct OBJECT_PALETTE bit flags
 enum {
-    SWIMMING_F,          // 5
+    SWIMMING_F = 5,      // 5
     STRENGTH_BOULDER_F,  // 6
     BIG_OBJECT_F,        // 7
 };

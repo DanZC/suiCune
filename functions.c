@@ -1502,7 +1502,7 @@ void init_function_pointers(void) {
     // REDIRECTED(IsGymLeaderCommon);
     // REDIRECTED(AddBattleMoneyToAccount);
     REDIRECTED(StartBattle);
-    // REDIRECTED(Battle_EnemyFirst);
+    REDIRECTED(Battle_EnemyFirst);
     CONVERTED(InitBattleMon);
     // REDIRECTED(IsMobileBattle);
     // REDIRECTED(v_LoadHPBar);
@@ -1526,7 +1526,7 @@ void init_function_pointers(void) {
     // REDIRECTED(ResidualDamage);
     CONVERTED(BattleStartMessage);
     // REDIRECTED(EnemySwitch);
-    // REDIRECTED(BattleTurn);
+    REDIRECTED(BattleTurn);
     // REDIRECTED(EnemyTurn_EndOpponentProtectEndureDestinyBond);
     // REDIRECTED(GetSixteenthMaxHP);
     // REDIRECTED(GetMaxHP);
@@ -1597,7 +1597,7 @@ void init_function_pointers(void) {
     CONVERTED(GetEnemyMonFrontpic);
     // REDIRECTED(BoostExp);
     // REDIRECTED(ApplyPrzEffectOnSpeed);
-    // REDIRECTED(Battle_PlayerFirst);
+    REDIRECTED(Battle_PlayerFirst);
     // REDIRECTED(FaintEnemyPokemon);
     // REDIRECTED(ApplyStatusEffectOnEnemyStats);
     // REDIRECTED(HandleMysteryberry);
@@ -1649,7 +1649,7 @@ void init_function_pointers(void) {
     // REDIRECTED(BattleMenu_Fight);
     // REDIRECTED(GoodComeBackText);
     // REDIRECTED(IsAnyMonHoldingExpShare);
-    // REDIRECTED(HandleEnemySwitch);
+    REDIRECTED(HandleEnemySwitch);
     // REDIRECTED(HandleStatBoostingHeldItems);
     // REDIRECTED(CheckFaint_PlayerThenEnemy);
     // REDIRECTED(ForcePickPartyMonInBattle);
@@ -1660,7 +1660,7 @@ void init_function_pointers(void) {
     CONVERTED(EmptyBattleTextbox);
     REDIRECTED(BattleIntro);
     // REDIRECTED(HasEnemyFainted);
-    // REDIRECTED(EnemyPartyMonEntrance);
+    REDIRECTED(EnemyPartyMonEntrance);
     // REDIRECTED(GetBattleMonBackpic_DoAnim);
     // REDIRECTED(StopDangerSound);
     // REDIRECTED(UpdateFaintedPlayerMon);
@@ -1693,7 +1693,7 @@ void init_function_pointers(void) {
     // REDIRECTED(FaintYourPokemon);
     // REDIRECTED(LookUpTheEffectivenessOfEveryMove);
     // REDIRECTED(UpdatePlayerHUD);
-    // REDIRECTED(HandleEnemyMonFaint);
+    REDIRECTED(HandleEnemyMonFaint);
     // REDIRECTED(UpdateEnemyHUD);
     // REDIRECTED(GetMovePriority);
     // REDIRECTED(CalcExpBar);
@@ -4166,4 +4166,42 @@ void init_function_pointers(void) {
     // REDIRECTED(UsedMove2Text);
     // REDIRECTED(UsedMoveText_CheckObedience);
     // REDIRECTED(EndUsedMove1Text);
+
+    // engine/battle/ai/items.c
+    REDIRECTED(EnemyUsedXSpecial);
+    REDIRECTED(EnemyPotionFinish);
+    REDIRECTED(EnemyUsedFullHeal);
+    // REDIRECTED(EnemyUsedOnText);
+    REDIRECTED(AI_TryItem);
+    REDIRECTED(EnemyUsedXItem);
+    REDIRECTED(AI_Switch);
+    REDIRECTED(EnemyUsedXAccuracy);
+    REDIRECTED(EnemyUsedXAttack);
+    // REDIRECTED(EnemyWithdrewText);
+    REDIRECTED(SwitchSometimes);
+    REDIRECTED(FullRestoreContinue);
+    REDIRECTED(AICheckEnemyFractionMaxHP);
+    REDIRECTED(EnemyUsedXSpeed);
+    REDIRECTED(EnemyUsedDireHit);
+    REDIRECTED(AI_Items);
+    REDIRECTED(EnemyUsedPotion);
+    REDIRECTED(EnemyUsedXDefend);
+    REDIRECTED(SwitchOften);
+    REDIRECTED(DontSwitch);
+    REDIRECTED(EnemyUsedSuperPotion);
+    REDIRECTED(AIUpdateHUD);
+    REDIRECTED(AI_SwitchOrTryItem);
+    REDIRECTED(EnemyUsedHyperPotion);
+    REDIRECTED(AI_HealStatus);
+    REDIRECTED(AI_TrySwitch);
+    REDIRECTED(CheckSubstatusCantRun);
+    REDIRECTED(EnemyUsedFullHealRed);
+    REDIRECTED(EnemyPotionContinue);
+    REDIRECTED(PrintText_UsedItemOn);
+    REDIRECTED(EnemyUsedGuardSpec);
+    REDIRECTED(PrintText_UsedItemOn_AND_AIUpdateHUD);
+    REDIRECTED(EnemyUsedMaxPotion);
+    REDIRECTED(SwitchRarely);
+    REDIRECTED(AIUsedItemSound);
+    REDIRECTED(EnemyUsedFullRestore);
 }

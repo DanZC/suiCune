@@ -272,9 +272,12 @@ skip_sfx:
 void BattleTurn(void){
     do {
     // loop:
+        SET_PC(aBattleTurn_loop);
         // CALL(aStubbed_Increments5_a89a);
-        CALL(aCheckContestBattleOver);
-        JP_C (mBattleTurn_quit);
+        // CALL(aCheckContestBattleOver);
+        // JP_C (mBattleTurn_quit);
+        if(CheckContestBattleOver_Conv())
+            goto quit;
 
         XOR_A_A;
         LD_addr_A(wPlayerIsSwitching);
@@ -289,12 +292,14 @@ void BattleTurn(void){
         CALL(aUpdateBattleMonInParty);
         FARCALL(aAIChooseMove);
 
-        CALL(aIsMobileBattle);
-        IF_NZ goto not_disconnected;
-        FARCALL(aFunction100da5);
-        FARCALL(aStartMobileInactivityTimer);
-        FARCALL(aFunction100dd8);
-        JP_C (mBattleTurn_quit);
+        // CALL(aIsMobileBattle);
+        // IF_NZ goto not_disconnected;
+        if(IsMobileBattle_Conv()) {
+            FARCALL(aFunction100da5);
+            FARCALL(aStartMobileInactivityTimer);
+            FARCALL(aFunction100dd8);
+            JP_C (mBattleTurn_quit);
+        }
 
     not_disconnected:
 
@@ -343,7 +348,7 @@ void BattleTurn(void){
         // AND_A_A;
         // IF_NZ goto quit;
         // JP(mBattleTurn_loop);
-    } while(wram->wBattleEnded != 0);
+    } while(wram->wBattleEnded == 0);
 
 quit:
     RET;
@@ -2729,6 +2734,7 @@ loop:
 }
 
 void HandleEnemySwitch(void){
+    PEEK("");
     LD_HL(wEnemyHPPal);
     LD_E(HP_BAR_LENGTH_PX);
     CALL(aUpdateHPPal);
@@ -3790,7 +3796,11 @@ void ForceEnemySwitch(void){
 
 void EnemySwitch(void){
     CALL(aCheckWhetherToAskSwitch);
-    JR_NC (mEnemySwitch_SetMode);
+    // JR_NC (mEnemySwitch_SetMode);
+    IF_NC {
+        EnemySwitch_SetMode();
+        RET;
+    }
 // Shift Mode
     CALL(aResetEnemyBattleVars);
     CALL(aCheckWhetherSwitchmonIsPredetermined);
