@@ -13,3 +13,4 @@ struct BankAddr AbsROMAddrToBankAddr(uint32_t addr);
 uint32_t BankAddrToAbsRAMAddr(uint8_t bank, uint16_t addr);
 void SafeCallGB(uint32_t address, struct cpu_registers_s* regs);
 void SafeCallGBAuto(uint32_t address);
+struct cpu_registers_s SafeCallGBAutoRet(uint32_t address);

@@ -288,6 +288,14 @@ void WaitPlaySFX(void) {
     RET;             // ret
 }
 
+void WaitPlaySFX_Conv(uint16_t de) {
+    // WaitSFX();
+    // CALL(aPlaySFX);  // call PlaySFX
+    // RET;             // ret
+    WaitSFX_Conv();
+    PlaySFX_Conv(de);
+}
+
 void WaitSFX(void) {  // infinite loop until sfx is done playing
     PUSH_AF;
     PUSH_BC;

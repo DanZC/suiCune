@@ -1,9 +1,9 @@
 void DrawPlayerHP(void);
-void DrawPlayerHP_Conv(uint8_t* hl, uint8_t b);
+uint8_t DrawPlayerHP_Conv(uint8_t* hl, uint8_t b);
 void DrawEnemyHP(void);
-void DrawEnemyHP_Conv(uint8_t* hl, uint8_t b);
+uint8_t DrawEnemyHP_Conv(uint8_t* hl, uint8_t b);
 void DrawHP(void);
-void DrawHP_Conv(uint8_t* hl, uint8_t b, uint8_t which);
+uint8_t DrawHP_Conv(uint8_t* hl, uint8_t b, uint8_t which);
 void PrintTempMonStats(void);
 void PrintTempMonStats_Conv(uint8_t* hl, uint16_t bc);
 void GetGender(void);

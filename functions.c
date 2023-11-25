@@ -1512,7 +1512,7 @@ void init_function_pointers(void) {
     // REDIRECTED(ComeBackText);
     // REDIRECTED(MoveInfoBox);
     // REDIRECTED(SwitchPlayerMon);
-    // REDIRECTED(CheckDanger);
+    CONVERTED(CheckDanger);
     // REDIRECTED(PassedBattleMonEntrance);
     // REDIRECTED(HandleHealingItems);
     // REDIRECTED(CheckEnemyLockedIn);
@@ -1525,7 +1525,7 @@ void init_function_pointers(void) {
     // REDIRECTED(GoMonText);
     // REDIRECTED(ResidualDamage);
     CONVERTED(BattleStartMessage);
-    // REDIRECTED(EnemySwitch);
+    // CONVERTED(EnemySwitch);
     REDIRECTED(BattleTurn);
     // REDIRECTED(EnemyTurn_EndOpponentProtectEndureDestinyBond);
     // REDIRECTED(GetSixteenthMaxHP);
@@ -1584,7 +1584,7 @@ void init_function_pointers(void) {
     REDIRECTED(InitEnemyTrainer);
     // REDIRECTED(UpdateHPBarBattleHuds);
     // REDIRECTED(LoadEnemyMon);
-    REDIRECTED(LoadBattleMenu2);
+    // REDIRECTED(LoadBattleMenu2);
     // REDIRECTED(SendOutMonText);
     // REDIRECTED(TextJump_ComeBack);
     // REDIRECTED(CheckMobileBattleError);
@@ -1598,7 +1598,7 @@ void init_function_pointers(void) {
     // REDIRECTED(BoostExp);
     // REDIRECTED(ApplyPrzEffectOnSpeed);
     REDIRECTED(Battle_PlayerFirst);
-    // REDIRECTED(FaintEnemyPokemon);
+    CONVERTED(FaintEnemyPokemon);
     // REDIRECTED(ApplyStatusEffectOnEnemyStats);
     // REDIRECTED(HandleMysteryberry);
     // REDIRECTED(RestoreHP);
@@ -1649,7 +1649,7 @@ void init_function_pointers(void) {
     // REDIRECTED(BattleMenu_Fight);
     // REDIRECTED(GoodComeBackText);
     // REDIRECTED(IsAnyMonHoldingExpShare);
-    REDIRECTED(HandleEnemySwitch);
+    // REDIRECTED(HandleEnemySwitch);
     // REDIRECTED(HandleStatBoostingHeldItems);
     // REDIRECTED(CheckFaint_PlayerThenEnemy);
     // REDIRECTED(ForcePickPartyMonInBattle);
@@ -1660,7 +1660,7 @@ void init_function_pointers(void) {
     CONVERTED(EmptyBattleTextbox);
     REDIRECTED(BattleIntro);
     // REDIRECTED(HasEnemyFainted);
-    REDIRECTED(EnemyPartyMonEntrance);
+    // REDIRECTED(EnemyPartyMonEntrance);
     // REDIRECTED(GetBattleMonBackpic_DoAnim);
     // REDIRECTED(StopDangerSound);
     // REDIRECTED(UpdateFaintedPlayerMon);
@@ -1673,7 +1673,7 @@ void init_function_pointers(void) {
     // REDIRECTED(DoubleSwitch);
     // REDIRECTED(Battle_StatsScreen);
     // REDIRECTED(WildFled_EnemyFled_LinkBattleCanceled);
-    CONVERTED(EnemySwitch_SetMode);
+    // CONVERTED(EnemySwitch_SetMode);
     // REDIRECTED(ClearEnemyMonBox);
     // REDIRECTED(Stubbed_Increments5_a89a);
     // REDIRECTED(BattleCheckEnemyShininess);
@@ -1692,7 +1692,7 @@ void init_function_pointers(void) {
     // REDIRECTED(OKComeBackText);
     // REDIRECTED(FaintYourPokemon);
     // REDIRECTED(LookUpTheEffectivenessOfEveryMove);
-    // REDIRECTED(UpdatePlayerHUD);
+    CONVERTED(UpdatePlayerHUD);
     REDIRECTED(HandleEnemyMonFaint);
     // REDIRECTED(UpdateEnemyHUD);
     // REDIRECTED(GetMovePriority);

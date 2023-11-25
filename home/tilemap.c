@@ -506,6 +506,7 @@ void GetSGBLayout_Conv(uint8_t b) {
     if(hram->hCGB != 0) {
         // PREDEF_JUMP(pLoadSGBLayout);
         LoadSGBLayoutCGB_Conv(b);
+        return;
     }
 
     // LDH_A_addr(hSGB);

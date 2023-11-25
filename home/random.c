@@ -1,6 +1,7 @@
 #include "../constants.h"
 #include "random.h"
 #include "math.h"
+#include "../engine/battle/core.h"
 
 void Random(void){
     //  A simple hardware-based random number generator (RNG).
@@ -42,6 +43,8 @@ void Random(void){
 //  Additionally, an equivalent function is executed in VBlank.
 //  This leaves a with the value in hRandomSub.
 uint8_t Random_Conv(void) {
+    uint8_t f = REG_F;
+
     uint16_t temp;
     temp = (gb_read(rDIV) + gb_read(hRandomAdd) + REG_F_C);
     REG_F_C = (temp & 0xFF00)? 1 : 0;
@@ -50,6 +53,9 @@ uint8_t Random_Conv(void) {
     temp = (gb_read(rDIV) - gb_read(hRandomSub) - REG_F_C);
     REG_F_C = (temp & 0xFF00)? 1 : 0;
     gb_write(hRandomSub, (uint8_t)temp);
+
+    REG_F = f;
+
     return (uint8_t)(temp & 0xff);
 }
 
@@ -72,6 +78,25 @@ void BattleRandom(void){
     LD_A_addr(wPredefHL + 1);
     RET;
 
+}
+
+//  _BattleRandom lives in another bank.
+//  It handles all RNG calls in the battle engine, allowing
+//  link battles to remain in sync using a shared PRNG.
+uint8_t BattleRandom_Conv(void){
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+    // LD_A(BANK(av_BattleRandom));
+    // RST(aBankswitch);
+
+    // CALL(av_BattleRandom);
+
+    // LD_addr_A(wPredefHL + 1);
+    // POP_AF;
+    // RST(aBankswitch);
+    // LD_A_addr(wPredefHL + 1);
+    // RET;
+    return v_BattleRandom_Conv();
 }
 
 void RandomRange(void){

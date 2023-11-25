@@ -15,7 +15,7 @@ void DrawPlayerHP(void){
 
 }
 
-void DrawPlayerHP_Conv(uint8_t* hl, uint8_t b){
+uint8_t DrawPlayerHP_Conv(uint8_t* hl, uint8_t b){
     // LD_A(0x1);
     // JR(mDrawHP);
     return DrawHP_Conv(hl, b, 0x1);
@@ -27,7 +27,7 @@ void DrawEnemyHP(void){
     return DrawHP();
 }
 
-void DrawEnemyHP_Conv(uint8_t* hl, uint8_t b){
+uint8_t DrawEnemyHP_Conv(uint8_t* hl, uint8_t b){
     // LD_A(0x2);
     // JR(mDrawHP);
     return DrawHP_Conv(hl, b, 0x2);
@@ -117,7 +117,7 @@ not_boxmon_2:
 
 }
 
-void DrawHP_Conv(uint8_t* hl, uint8_t b, uint8_t which){
+uint8_t DrawHP_Conv(uint8_t* hl, uint8_t b, uint8_t which){
     // LD_addr_A(wWhichHPBar);
     wram->wWhichHPBar = which;
     // PUSH_HL;
@@ -216,6 +216,7 @@ void DrawHP_Conv(uint8_t* hl, uint8_t b, uint8_t which){
     // POP_HL;
     // POP_DE;
     // RET;
+    return de.lo;
 }
 
 void PrintTempMonStats(void){

@@ -305,12 +305,18 @@ void UpdateBattleMon_Conv(uint8_t a){
     // CALL(aGetPartyLocation);
     // LD_D_H;
     // LD_E_L;
-    uint16_t de = GetPartyLocation_Conv(wPartyMon1Level, a);
+    // uint16_t de = GetPartyLocation_Conv(wPartyMon1Level, a);
+    struct PartyMon* de = wram->wPartyMon + a;
 
     // LD_HL(wBattleMonLevel);
     // LD_BC(wBattleMonMaxHP - wBattleMonLevel);
     // JP(mCopyBytes);
-    CopyBytes_Conv(de, wBattleMonLevel, (wBattleMonMaxHP - wBattleMonLevel));
+    // CopyBytes_Conv(de, wBattleMonLevel, (wBattleMonMaxHP - wBattleMonLevel));
+    de->mon.level = wram->wBattleMon.level;
+    de->status = wram->wBattleMon.status[0];
+    de->unused = wram->wBattleMon.status[1];
+    de->HP = wram->wBattleMon.hp;
+    de->maxHP = wram->wBattleMon.maxHP;
 }
 
 void UpdateEnemyMonInParty(void){

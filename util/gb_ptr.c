@@ -150,33 +150,40 @@ uint32_t BankAddrToAbsRAMAddr(uint8_t bank, uint16_t addr) {
     return (uint32_t)(addr | (bank << 16));
 }
 
+static void SafeCallGBInternal(uint32_t address) {
+    uint8_t bank = hram->hROMBank;
+    gb_write(MBC3RomBank, BANK(address));
+    hram->hROMBank = BANK(address);
+    CALL(address);
+    gb_write(MBC3RomBank, bank);
+    hram->hROMBank = bank;
+}
+
 void SafeCallGB(uint32_t address, struct cpu_registers_s* regs) {
     if(regs != &gb.cpu_reg)
     {
         struct cpu_registers_s copy = gb.cpu_reg;
         gb.cpu_reg = *regs;
-        uint8_t bank = hram->hROMBank;
-        gb_write(MBC3RomBank, BANK(address));
-        hram->hROMBank = BANK(address);
-        CALL(address);
-        gb_write(MBC3RomBank, bank);
-        hram->hROMBank = bank;
+        SafeCallGBInternal(address);
         *regs = gb.cpu_reg;
         gb.cpu_reg = copy;
     }
     else 
     {
         SAVE_REGS;
-        uint8_t bank = hram->hROMBank;
-        gb_write(MBC3RomBank, BANK(address));
-        hram->hROMBank = BANK(address);
-        CALL(address);
-        gb_write(MBC3RomBank, bank);
-        hram->hROMBank = bank;
+        SafeCallGBInternal(address);
         RESTORE_REGS;
     }
 }
 
 void SafeCallGBAuto(uint32_t address) {
     return SafeCallGB(address, &gb.cpu_reg);
+}
+
+struct cpu_registers_s SafeCallGBAutoRet(uint32_t address) {
+    struct cpu_registers_s copy = gb.cpu_reg;
+    SafeCallGBInternal(address);
+    struct cpu_registers_s ret = gb.cpu_reg;
+    gb.cpu_reg = copy;
+    return ret;
 }

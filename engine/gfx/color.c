@@ -1217,7 +1217,7 @@ uint16_t* GetPlayerOrMonPalettePointer_Conv(uint16_t* dest, uint8_t a, uint16_t 
     // IF_NZ goto male;
     if(bit_test(wram->wPlayerSpriteSetupFlags, PLAYERSPRITESETUP_FEMALE_TO_MALE_F) || wram->wPlayerGender == MALE) {
         ExtractPaletteFromPNGAssetToBuffer(dest, PlayerPalette);
-        return dest;
+        return dest + 1;
     }
     // LD_A_addr(wPlayerGender);
     // AND_A_A;
@@ -1225,7 +1225,7 @@ uint16_t* GetPlayerOrMonPalettePointer_Conv(uint16_t* dest, uint8_t a, uint16_t 
     // LD_HL(mKrisPalette);
     // RET;
     ExtractPaletteFromPNGAssetToBuffer(dest, KrisPalette);
-    return dest;
+    return dest + 1;
 
 // male:
     // LD_HL(mPlayerPalette);
