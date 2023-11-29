@@ -395,8 +395,11 @@ stop:
     return PrintText();
 }
 
-uint16_t RadioTerminator_Conv(void) {
-    return mRadioTerminator_stop;
+const struct TextCmd* RadioTerminator_Conv(void) {
+    static const struct TextCmd stop[] = {
+        text_end
+    };
+    return stop;
 }
 
 void PrintText(void) {

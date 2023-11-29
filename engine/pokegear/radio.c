@@ -2,6 +2,12 @@
 #include "radio.h"
 #include "pokegear.h"
 #include "../../home/region.h"
+#include "../../home/text.h"
+#include "../../data/text/common.h"
+
+const struct TextCmd gRadioText[] = {
+    text_ram(wram_ptr(wRadioText))
+};
 
 void PlayRadioShow(void){
 //  If we're already in the radio program proper, we don't need to be here.
@@ -36,7 +42,7 @@ void PlayRadioShow_Conv(void){
     && (IsInJohto_Conv() == JOHTO_REGION))
     {
         //  Team Rocket broadcasts on all stations.
-        gb_write(wCurRadioLine, ROCKET_RADIO);
+        wram->wCurRadioLine = ROCKET_RADIO;
     }
     //  Jump to the currently loaded station.  The index to which we need to jump is in wCurRadioLine.
     CALL(aRadioJumptable);
@@ -279,26 +285,29 @@ skip:
 
 void PrintRadioLine_Conv(uint8_t a){
     wram->wNextRadioLine = a;
-    REG_HL = wRadioText;
+    // REG_HL = wRadioText;
     uint8_t lines_printed = gb_read(wNumRadioLinesPrinted);
     if(lines_printed >= 2)
     {
-        REG_A = lines_printed;
-        CALL(aPrintTextboxText);
+        // REG_A = lines_printed;
+        // CALL(aPrintTextboxText);
+        PrintTextboxText_Conv2(gRadioText);
     }
     else 
     {
-        gb_write(++REG_HL, TX_START);
-        gb_write(wNumRadioLinesPrinted, ++lines_printed);
+        // gb_write(++REG_HL, TX_START);
+        wram->wNumRadioLinesPrinted = ++lines_printed;
         if(lines_printed != 2)
         {
-            REG_A = lines_printed;
-            CALL(aPrintTextboxText);
+            // REG_A = lines_printed;
+            // CALL(aPrintTextboxText);
+            PrintTextboxText_Conv2(gRadioText);
         }
         else 
         {
-            bccoord(1, 16, wTilemap);
-            CALL(aPlaceHLTextAtBC);
+            // bccoord(1, 16, wTilemap);
+            // CALL(aPlaceHLTextAtBC);
+            PlaceHLTextAtBC_Conv2(coord(1, 16, wram->wTilemap), gRadioText);
         }
     }
     wram->wCurRadioLine = RADIO_SCROLL;
@@ -498,12 +507,10 @@ void OaksPKMNTalk6(void){
 
 }
 
-void OPT_IntroText1(void){
-    //text_far ['_OPT_IntroText1']
-    //text_end ['?']
-
-    return OPT_IntroText2();
-}
+const struct TextCmd OPT_IntroText1[] = {
+    text_far(v_OPT_IntroText1)
+    text_end
+};
 
 void OPT_IntroText2(void){
     //text_far ['_OPT_IntroText2']
@@ -515,16 +522,12 @@ void OPT_IntroText2(void){
 void OPT_IntroText3(void){
     //text_far ['_OPT_IntroText3']
     //text_end ['?']
-
-    return OPT_OakText1();
 }
 
-void OPT_OakText1(void){
-    //text_far ['_OPT_OakText1']
-    //text_end ['?']
-
-    return OPT_OakText2();
-}
+const struct TextCmd OPT_OakText1[] = {
+    text_far(v_OPT_OakText1)
+    text_end
+};
 
 void OPT_OakText2(void){
     //text_far ['_OPT_OakText2']
@@ -2546,11 +2549,12 @@ void NextRadioLine(void){
 }
 
 void StartRadioStation_Conv(void){
-    if(gb_read(wNumRadioLinesPrinted) != 0)
+    if(wram->wNumRadioLinesPrinted != 0)
         return;
 
-    CALL(aRadioTerminator);
-    CALL(aPrintText);
+    // CALL(aRadioTerminator);
+    // CALL(aPrintText);
+    PrintText_Conv2(RadioTerminator_Conv());
 
     uint16_t hl = mRadioChannelSongs + (gb_read(wCurRadioLine) * 2);
     RadioMusicRestartDE_Conv(gb_read16(hl));

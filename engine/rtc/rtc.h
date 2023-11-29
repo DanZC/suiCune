@@ -15,4 +15,4 @@ uint8_t v_FixDays_Conv(void);
 void ClockContinue(void);
 void ClockContinue_Conv(void);
 void v_InitTime(void);
-void v_InitTime_Conv(void);
+void v_InitTime_Conv(uint8_t days, uint8_t hours, uint8_t mins, uint8_t secs);

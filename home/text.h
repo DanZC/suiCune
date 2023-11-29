@@ -23,7 +23,7 @@ void SpeechTextbox_Conv(void);
 void SpeechTextbox_Conv2(void);
 void GameFreakText(void);
 void RadioTerminator(void);
-uint16_t RadioTerminator_Conv(void);
+const struct TextCmd* RadioTerminator_Conv(void);
 void PrintText(void);
 void PrintText_Conv(uint8_t* hl);
 void PrintText_Conv2(const struct TextCmd* hl);

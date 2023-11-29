@@ -100,7 +100,7 @@ void GetClock_Conv(void){
     gb_write(MBC3SRamEnable, SRAM_ENABLE);
 
 //  clock data is 'backwards' in hram
-
+    UpdateRTC();
     LatchClock_Conv();
     //LD_HL(MBC3SRamBank);
     //LD_DE(MBC3RTC);
@@ -350,12 +350,14 @@ updatehr:
 //  store time in wCurDay, hHours, hMinutes, hSeconds
 void FixTime_Conv(void){
 //  second
+    uint8_t carry = 0;
     uint8_t curr_sec = hram->hRTCSeconds;
     uint8_t start_sec = wram->wStartSecond;
     uint8_t sec = curr_sec + start_sec;
     if(sec >= 60)
     {
         sec -= 60;
+        carry = 1;
     }
     hram->hSeconds = sec;
 
@@ -363,10 +365,12 @@ void FixTime_Conv(void){
     // REG_F_C = 0;  // carry is set, so turn it off
     uint8_t curr_min = hram->hRTCMinutes;
     uint8_t start_min = wram->wStartMinute;
-    uint8_t min = curr_min + start_min;
+    uint8_t min = curr_min + start_min + carry;
+    carry = 0;
     if(min >= 60)
     {
         min -= 60;
+        carry = 1;
     }
     hram->hMinutes = min;
 
@@ -374,10 +378,12 @@ void FixTime_Conv(void){
     // REG_F_C = 0;  // carry is set, so turn it off
     uint8_t curr_hr = hram->hRTCHours;
     uint8_t start_hr = wram->wStartHour;
-    uint8_t hr = curr_hr + start_hr;
+    uint8_t hr = curr_hr + start_hr + carry;
+    carry = 0;
     if(hr >= 24)
     {
         hr -= 24;
+        carry = 1;
     }
     hram->hHours = hr;
 
@@ -385,7 +391,7 @@ void FixTime_Conv(void){
     // REG_F_C = 0;  // carry is set, so turn it off
     uint8_t curr_day = hram->hRTCDayLo;
     uint8_t start_day = wram->wStartDay;
-    uint8_t day = curr_day + start_day;
+    uint8_t day = curr_day + start_day + carry;
     wram->wCurDay = day;
 }
 
@@ -398,17 +404,15 @@ void InitTimeOfDay(void){
 
 }
 
-void InitTimeOfDay_Conv(void){
+void InitTimeOfDay_Conv(uint8_t hour, uint8_t min){
     // XOR_A_A;
     // LD_addr_A(wStringBuffer2);
-    wram->wStringBuffer2[0] = 0;
 
     // LD_A(0);  // useless
     // LD_addr_A(wStringBuffer2 + 3);
-    wram->wStringBuffer2[3] = 0;
 
     // JR(mInitTime);
-    InitTime_Conv();
+    InitTime_Conv(0, hour, min, 0);
 }
 
 void InitDayOfWeek(void){
@@ -423,24 +427,21 @@ void InitDayOfWeek(void){
 
 }
 
-void InitDayOfWeek_Conv(void){
+void InitDayOfWeek_Conv(uint8_t day){
     // CALL(aUpdateTime);
     UpdateTime_Conv();
 
     // LDH_A_addr(hHours);
     // LD_addr_A(wStringBuffer2 + 1);
-    gb_write(wStringBuffer2 + 1, gb_read(hHours));
 
     // LDH_A_addr(hMinutes);
     // LD_addr_A(wStringBuffer2 + 2);
-    gb_write(wStringBuffer2 + 2, gb_read(hMinutes));
 
     // LDH_A_addr(hSeconds);
     // LD_addr_A(wStringBuffer2 + 3);
-    gb_write(wStringBuffer2 + 3, gb_read(hSeconds));
 
     // JR(mInitTime);  // useless
-    return InitTime_Conv();
+    return InitTime_Conv(day, hram->hHours, hram->hMinutes, hram->hSeconds);
 }
 
 void InitTime(void){
@@ -449,10 +450,10 @@ void InitTime(void){
 
 }
 
-void InitTime_Conv(void){
-    bank_push(BANK(av_InitTime));
-    v_InitTime_Conv();
-    bank_pop;
+void InitTime_Conv(uint8_t days, uint8_t hours, uint8_t mins, uint8_t secs){
+    // bank_push(BANK(av_InitTime));
+    v_InitTime_Conv(days, hours, mins, secs);
+    // bank_pop;
 }
 
 static void ClearClock_ClearhRTC_Conv() {

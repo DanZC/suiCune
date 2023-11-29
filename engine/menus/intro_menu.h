@@ -1,6 +1,7 @@
 void Intro_MainMenu();
 void IntroMenu_DummyFunction(void);
 void PrintDayOfWeek(void);
+void PrintDayOfWeek_Conv(tile_t* de, uint8_t b);
 void NewGame_ClearTilemapEtc(void);
 void MysteryGift(void);
 void Option(void);

@@ -3443,7 +3443,8 @@ void sdl_loop(void) {
 
     if (rtc_timer >= 1000) {
         rtc_timer -= 1000;
-        gb_tick_rtc();
+        if(!CheckRTCSupport())
+            gb_tick_rtc();
     }
 
     // If we're recording, copy the framebuffer to video buffer and keep going.
@@ -3644,7 +3645,10 @@ int main(int argc, char* argv[]) {
     /* Load Save File. */
     read_cart_ram_file(save_file_name, &priv.cart_ram, gb_get_save_size());
 
+    // memset(&gb.cart_rtc, 0xFF, sizeof(gb.cart_rtc));
+
     /* Set the RTC of the game cartridge. Only used by games that support it. */
+    if(!CheckRTCSupport())
     {
         time_t rawtime;
         time(&rawtime);
@@ -3676,6 +3680,11 @@ int main(int argc, char* argv[]) {
 #else
         gb_set_rtc(timeinfo);
 #endif
+    }
+    else 
+    {
+        LoadRTCStartTime();
+        RTCSyncWithSystemTime();
     }
 
     SDL_AudioDeviceID dev;

@@ -1,5 +1,7 @@
 #include "../constants.h"
 #include "scrolling_menu.h"
+#include "delay.h"
+#include "joypad.h"
 
 void ScrollingMenu(void){
         CALL(aCopyMenuData);
@@ -68,4 +70,31 @@ void JoyTextDelay_ForcehJoyDown(void){
     LD_C_A;
     RET;
 
+}
+
+uint8_t JoyTextDelay_ForcehJoyDown_Conv(void){
+    // CALL(aDelayFrame);
+    DelayFrame();
+
+    // LDH_A_addr(hInMenu);
+    // PUSH_AF;
+    uint8_t inMenu = hram->hInMenu;
+    // LD_A(0x1);
+    // LDH_addr_A(hInMenu);
+    hram->hInMenu = TRUE;
+    // CALL(aJoyTextDelay);
+    JoyTextDelay_Conv();
+    // POP_AF;
+    // LDH_addr_A(hInMenu);
+    hram->hInMenu = inMenu;
+
+    // LDH_A_addr(hJoyLast);
+    // AND_A(D_RIGHT + D_LEFT + D_UP + D_DOWN);
+    // LD_C_A;
+    // LDH_A_addr(hJoyPressed);
+    // AND_A(A_BUTTON + B_BUTTON + SELECT + START);
+    // OR_A_C;
+    // LD_C_A;
+    // RET;
+    return (hram->hJoyLast & (D_RIGHT + D_LEFT + D_UP + D_DOWN)) | (hram->hJoyPressed & (A_BUTTON + B_BUTTON + SELECT + START));
 }

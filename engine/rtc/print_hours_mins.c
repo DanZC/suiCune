@@ -77,7 +77,7 @@ place_am_pm:
 
 //  Prints hours and minutes to tilemap destination de.
 //  Hours in b, minutes in c
-void PrintHoursMins_Conv(uint8_t* de, uint8_t b, uint8_t c){
+uint8_t* PrintHoursMins_Conv(uint8_t* de, uint8_t b, uint8_t c){
     static const char String_AM[] = "AM@";
     static const char String_PM[] = "PM@";
 
@@ -157,7 +157,9 @@ void PrintHoursMins_Conv(uint8_t* de, uint8_t b, uint8_t c){
     // LD_DE(mString_PM);
     // INC_HL;
     // CALL(aPlaceString);
-    PlaceStringSimple(U82C(am_pm_str), hl + 1);
+    struct TextPrintState st = {.de = U82C(am_pm_str), .hl = hl + 1};
+    PlaceString_Conv(&st, hl + 1);
     // PlaceString_Conv(&(struct TextPrintState){.de = Utf8ToCrystal(am_pm_str), .hl = hl + 1, .bc = (b << 8) | c}, hl + 1);
     // RET;
+    return st.hl;
 }

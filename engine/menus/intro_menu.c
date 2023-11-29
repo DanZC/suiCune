@@ -30,16 +30,6 @@ void Intro_MainMenu() {
     JP(mStartTitleScreen);
 }
 
-const char* days[] = {
-    "SUN",
-    "MON",
-    "TUES",
-    "WEDNES",
-    "THURS",
-    "FRI",
-    "SATUR"
-};
-
 void PrintDayOfWeek(void) {
     PUSH_DE;
     LD_HL(mPrintDayOfWeek_Days);
@@ -59,6 +49,37 @@ Day:
     //db ['"DAY@"'];
 
     return NewGame_ClearTilemapEtc();
+}
+
+void PrintDayOfWeek_Conv(tile_t* de, uint8_t b) {
+    static const char* days[] = {
+        "SUN",
+        "MON",
+        "TUES",
+        "WEDNES",
+        "THURS",
+        "FRI",
+        "SATUR"
+    };
+    // PUSH_DE;
+    // LD_HL(mPrintDayOfWeek_Days);
+    // LD_A_B;
+    // CALL(aGetNthString);
+    // LD_D_H;
+    // LD_E_L;
+    // POP_HL;
+    // CALL(aPlaceString);
+    struct TextPrintState st = {.de = U82C(days[b]), .hl = de};
+    PlaceString_Conv(&st, st.hl);
+    static const char Day[] = "DAY@";
+    // LD_H_B;
+    // LD_L_C;
+    st.hl = st.bc;
+    // LD_DE(mPrintDayOfWeek_Day);
+    st.de = U82C(Day);
+    // CALL(aPlaceString);
+    PlaceString_Conv(&st, st.hl);
+    // RET;
 }
 
 void NewGame_ClearTilemapEtc(void) {

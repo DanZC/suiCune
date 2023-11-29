@@ -92,7 +92,7 @@
 
 // SECTION "Clock Reset", ROMX
 
-//#include "engine/rtc/restart_clock.h"
+#include "engine/rtc/restart_clock.h"
 
 // SECTION "bank9", ROMX
 

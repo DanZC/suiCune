@@ -4095,7 +4095,7 @@ void init_function_pointers(void) {
     // REDIRECTED(DisplayHourOClock);
     // REDIRECTED(MrChrono);
     // REDIRECTED(TimeSetBackgroundGFX);
-    // REDIRECTED(InitialClearDSTFlag);
+    CONVERTED(InitialClearDSTFlag);
     CONVERTED(InitClock);
     CONVERTED(SetDayOfWeek);
     // REDIRECTED(SetHour);
@@ -4109,7 +4109,7 @@ void init_function_pointers(void) {
     // REDIRECTED(OakTimeWhatHoursText);
     // REDIRECTED(TimeSetUpArrowGFX);
     // REDIRECTED(String_oclock);
-    // REDIRECTED(InitialSetDSTFlag);
+    CONVERTED(InitialSetDSTFlag);
     // REDIRECTED(TimeSetDownArrowGFX);
     // REDIRECTED(DisplayHoursMinutesWithMinString);
     // REDIRECTED(PrintTwoDigitNumberLeftAlign);
@@ -4204,4 +4204,10 @@ void init_function_pointers(void) {
     REDIRECTED(SwitchRarely);
     REDIRECTED(AIUsedItemSound);
     REDIRECTED(EnemyUsedFullRestore);
+
+    // engine/rtc/restart_clock.c
+    // REDIRECTED(JPMinuteString);
+    CONVERTED(RestartClock);
+    // REDIRECTED(RestartClock_GetWraparoundTime);
+    // REDIRECTED(JPHourString);
 }

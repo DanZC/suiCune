@@ -1244,8 +1244,8 @@ bool v_YesNoBox_Conv(uint8_t b, uint8_t c) {
     // ADD_A(4);
     // LD_addr_A(wMenuBorderBottomCoord);
     wram->wMenuBorderBottomCoord = c + 4;
-    // CALL(aPushWindow);
     PushWindow_Conv();
+    // CALL(aPushWindow);
 
     return InterpretTwoOptionMenu_Conv();
 }

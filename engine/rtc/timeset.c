@@ -1,5 +1,6 @@
 #include "../../constants.h"
 #include "timeset.h"
+#include "print_hours_mins.h"
 #include "../../home/delay.h"
 #include "../../home/fade.h"
 #include "../../home/text.h"
@@ -111,7 +112,7 @@ void InitClock(void){
     ByteFill_Conv2(wram->wTimeSetBuffer, sizeof(wram->wTimeSetBuffer), 0);
     // LD_A(10);  // default hour = 10 AM
     // LD_addr_A(wInitHourBuffer);
-    wram->wInitHourBuffer = 10;
+    wram->wInitHourBuffer = hram->hRTCHours;
 
     while(1) {
     // loop:
@@ -146,7 +147,6 @@ void InitClock(void){
 
         // LD_A_addr(wInitHourBuffer);
         // LD_addr_A(wStringBuffer2 + 1);
-        wram->wStringBuffer2[1] = wram->wInitHourBuffer;
         // CALL(aInitClock_ClearScreen);
         InitClock_ClearScreen();
         // LD_HL(mOakTimeWhatHoursText);
@@ -160,6 +160,8 @@ void InitClock(void){
         InitClock_ClearScreen();
         // goto loop;
     }
+
+    wram->wInitMinuteBuffer = hram->hRTCMinutes;
 
     while(1) {
     // HourIsSet:
@@ -193,7 +195,6 @@ void InitClock(void){
 
         // LD_A_addr(wInitMinuteBuffer);
         // LD_addr_A(wStringBuffer2 + 2);
-        wram->wStringBuffer2[2] = wram->wInitMinuteBuffer;
         // CALL(aInitClock_ClearScreen);
         InitClock_ClearScreen();
         // LD_HL(mOakTimeWhoaMinutesText);
@@ -211,7 +212,7 @@ void InitClock(void){
 
 // MinutesAreSet:
     // CALL(aInitTimeOfDay);
-    InitTimeOfDay_Conv();
+    InitTimeOfDay_Conv(wram->wInitHourBuffer, wram->wInitMinuteBuffer);
     // LD_HL(mOakText_ResponseToSetTime);
     // CALL(aPrintText);
     PrintText_Conv2(OakText_ResponseToSetTime);
@@ -883,7 +884,7 @@ void SetDayOfWeek(void){
     LoadPNG1bppAssetSectionToVRAM(vram->vTiles0 + LEN_2BPP_TILE * TIMESET_DOWN_ARROW, TimeSetDownArrowGFX, 0, 1);
     // XOR_A_A;
     // LD_addr_A(wTempDayOfWeek);
-    wram->wTempDayOfWeek = 0;
+    wram->wTempDayOfWeek = RTCGetCurrentWeekday();
 
     do {
     // loop:
@@ -935,9 +936,8 @@ void SetDayOfWeek(void){
     } while(!YesNoBox_Conv());
     // LD_A_addr(wTempDayOfWeek);
     // LD_addr_A(wStringBuffer2);
-    wram->wStringBuffer2[0] = wram->wTempDayOfWeek;
     // CALL(aInitDayOfWeek);
-    InitDayOfWeek_Conv();
+    InitDayOfWeek_Conv(wram->wTempDayOfWeek);
     // CALL(aLoadStandardFont);
     LoadStandardFont_Conv();
     // POP_AF;
@@ -946,155 +946,196 @@ void SetDayOfWeek(void){
     // RET;
 }
 
-void InitialSetDSTFlag(void){
-    LD_A_addr(wDST);
-    SET_A(7);
-    LD_addr_A(wDST);
-    hlcoord(1, 14, wTilemap);
-    LD_BC((3 << 8) | 18);
-    CALL(aClearBox);
-    LD_HL(mInitialSetDSTFlag_Text);
-    CALL(aPlaceHLTextAtBC);
-    RET;
+static void InitialSetDSTFlag_Text(struct TextCmdState* state) {
+    static const struct TextCmd DSTIsThatOKText[] = {
+        text_far(v_DSTIsThatOKText)
+        text_end
+    };
+    // CALL(aUpdateTime);
+    UpdateTime_Conv();
+    // LDH_A_addr(hHours);
+    // LD_B_A;
+    // LDH_A_addr(hMinutes);
+    // LD_C_A;
+    // decoord(1, 14, wTilemap);
+    // FARCALL(aPrintHoursMins);
+    PrintHoursMins_Conv(coord(1, 14, wram->wTilemap), hram->hHours, hram->hMinutes);
+    // LD_HL(mInitialSetDSTFlag_DSTIsThatOKText);
+    state->hl = DSTIsThatOKText;
+    // RET;
+}
 
+void InitialSetDSTFlag(void){
+    // LD_A_addr(wDST);
+    // SET_A(7);
+    // LD_addr_A(wDST);
+    bit_set(wram->wDST, 7);
+    // hlcoord(1, 14, wTilemap);
+    // LD_BC((3 << 8) | 18);
+    // CALL(aClearBox);
+    ClearBox_Conv2(coord(1, 14, wram->wTilemap), 18, 3);
+    // LD_HL(mInitialSetDSTFlag_Text);
+    // CALL(aPlaceHLTextAtBC);
+    PlaceHLTextAtBC_Conv2(coord(1, 14, wram->wTilemap), (struct TextCmd[]){ text_asm(InitialSetDSTFlag_Text) });
+    // RET;
 
 Text:
     //text_asm ['?']
-    CALL(aUpdateTime);
-    LDH_A_addr(hHours);
-    LD_B_A;
-    LDH_A_addr(hMinutes);
-    LD_C_A;
-    decoord(1, 14, wTilemap);
-    FARCALL(aPrintHoursMins);
-    LD_HL(mInitialSetDSTFlag_DSTIsThatOKText);
-    RET;
+}
 
+static void InitialClearDSTFlag_Text(struct TextCmdState* state) {
+    static const struct TextCmd TimeAskOkayText[] = {
+        text_far(v_TimeAskOkayText)
+        text_end
+    };
 
-DSTIsThatOKText:
-    //text_far ['_DSTIsThatOKText']
-    //text_end ['?']
-
-    return InitialClearDSTFlag();
+    // CALL(aUpdateTime);
+    UpdateTime_Conv();
+    // LDH_A_addr(hHours);
+    // LD_B_A;
+    // LDH_A_addr(hMinutes);
+    // LD_C_A;
+    // decoord(1, 14, wTilemap);
+    // FARCALL(aPrintHoursMins);
+    state->bc = PrintHoursMins_Conv(coord(1, 14, wram->wTilemap), hram->hHours, hram->hMinutes);
+    // LD_HL(mInitialClearDSTFlag_TimeAskOkayText);
+    state->hl = TimeAskOkayText;
+    // RET;
 }
 
 void InitialClearDSTFlag(void){
-    LD_A_addr(wDST);
-    RES_A(7);
-    LD_addr_A(wDST);
-    hlcoord(1, 14, wTilemap);
-    LD_BC((3 << 8) | 18);
-    CALL(aClearBox);
-    LD_HL(mInitialClearDSTFlag_Text);
-    CALL(aPlaceHLTextAtBC);
-    RET;
+    // LD_A_addr(wDST);
+    // RES_A(7);
+    // LD_addr_A(wDST);
+    bit_reset(wram->wDST, 7);
+    // hlcoord(1, 14, wTilemap);
+    // LD_BC((3 << 8) | 18);
+    // CALL(aClearBox);
+    ClearBox_Conv2(coord(1, 14, wram->wTilemap), 18, 3);
+    // LD_HL(mInitialClearDSTFlag_Text);
+    // CALL(aPlaceHLTextAtBC);
+    PlaceHLTextAtBC_Conv2(coord(1, 14, wram->wTilemap), (struct TextCmd[]){ text_asm(InitialClearDSTFlag_Text) });
+    // RET;
 
 
 Text:
     //text_asm ['?']
-    CALL(aUpdateTime);
-    LDH_A_addr(hHours);
-    LD_B_A;
-    LDH_A_addr(hMinutes);
-    LD_C_A;
-    decoord(1, 14, wTilemap);
-    FARCALL(aPrintHoursMins);
-    LD_HL(mInitialClearDSTFlag_TimeAskOkayText);
-    RET;
+}
 
+static tile_t* MrChrono_PrintTime(tile_t* hl, uint8_t* de) {
+    // LD_BC((1 << 8) | 3);
+    // CALL(aPrintNum);
+    hl = PrintNum_Conv2(hl, de, 1, 3);
+    // LD_hl(0xe8);
+    *hl = CHAR_PERIOD;
+    // INC_HL;
+    hl++;
+    // INC_DE;
+    de++;
+    // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
+    // CALL(aPrintNum);
+    hl = PrintNum_Conv2(hl, de, PRINTNUM_LEADINGZEROS | 1, 2);
+    // LD_hl(0x9c);
+    *hl = CHAR_COLON2;
+    // INC_HL;
+    hl++;
+    // INC_DE;
+    de++;
+    // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
+    // CALL(aPrintNum);
+    hl = PrintNum_Conv2(hl, de, PRINTNUM_LEADINGZEROS | 1, 2);
+    // RET;
+    return hl;
+}
 
-TimeAskOkayText:
-    //text_far ['_TimeAskOkayText']
-    //text_end ['?']
+static void MrChrono_Text(struct TextCmdState* state) {
+// Text:
+    //text_asm ['?']
+    // CALL(aUpdateTime);
+    UpdateTime_Conv();
 
-    return MrChrono();
+    // hlcoord(1, 14, wTilemap);
+    // LD_hl(0x91);
+    *coord(1, 14, wram->wTilemap) = 0x91;
+    // INC_HL;
+    // LD_hl(0x93);
+    *coord(2, 14, wram->wTilemap) = 0x93;
+    // INC_HL;
+    // LD_hl(0x7f);
+    *coord(3, 14, wram->wTilemap) = CHAR_SPACE;
+    // INC_HL;
+
+    // LD_DE(hRTCDayLo);
+    // CALL(aMrChrono_PrintTime);
+    MrChrono_PrintTime(coord(4, 14, wram->wTilemap), &hram->hRTCDayLo);
+
+    // hlcoord(1, 16, wTilemap);
+    // LD_hl(0x83);
+    *coord(1, 16, wram->wTilemap) = CHAR_A + ('D' - 'A');
+    // INC_HL;
+    // LD_hl(0x85);
+    *coord(2, 16, wram->wTilemap) = CHAR_A + ('F' - 'A');
+    // INC_HL;
+    // LD_hl(0x7f);
+    *coord(3, 16, wram->wTilemap) = CHAR_SPACE;
+    // INC_HL;
+
+    // LD_DE(wStartDay);
+    // CALL(aMrChrono_PrintTime);
+    tile_t* hl = MrChrono_PrintTime(coord(4, 16, wram->wTilemap), &wram->wStartDay);
+
+    // LD_hl(0x7f);
+    // INC_HL;
+    *(hl++) = CHAR_SPACE;
+
+    // LD_A_addr(wDST);
+    // BIT_A(7);
+    // IF_Z goto off;
+    if(bit_test(wram->wDST, 7)) {
+
+        // LD_hl(0x8e);
+        // INC_HL;
+        *(hl++) = CHAR_A + ('O' - 'A');
+        // LD_hl(0x8d);
+        // INC_HL;
+        *(hl++) = CHAR_A + ('N' - 'A');
+        // goto done;
+    }
+    else {
+    // off:
+        // LD_hl(0x8e);
+        // INC_HL;
+        *(hl++) = CHAR_A + ('O' - 'A');
+        // LD_hl(0x85);
+        // INC_HL;
+        *(hl++) = CHAR_A + ('F' - 'A');
+        // LD_hl(0x85);
+        // INC_HL;
+        *(hl++) = CHAR_A + ('F' - 'A');
+    }
+
+    static const struct TextCmd NowOnDebug[] = {
+        text_start(
+            t_para "Now on DEBUG…"
+            t_prompt )
+    };
+
+// done:
+    // LD_HL(mMrChrono_NowOnDebug);
+    state->hl = NowOnDebug;
+    // RET;
 }
 
 void MrChrono(void){
 //  //  unreferenced
-    hlcoord(1, 14, wTilemap);
-    LD_BC((3 << 8) | (SCREEN_WIDTH - 2));
-    CALL(aClearBox);
-    LD_HL(mMrChrono_Text);
-    CALL(aPlaceHLTextAtBC);
-    RET;
-
-
-Text:
-    //text_asm ['?']
-    CALL(aUpdateTime);
-
-    hlcoord(1, 14, wTilemap);
-    LD_hl(0x91);
-    INC_HL;
-    LD_hl(0x93);
-    INC_HL;
-    LD_hl(0x7f);
-    INC_HL;
-
-    LD_DE(hRTCDayLo);
-    CALL(aMrChrono_PrintTime);
-
-    hlcoord(1, 16, wTilemap);
-    LD_hl(0x83);
-    INC_HL;
-    LD_hl(0x85);
-    INC_HL;
-    LD_hl(0x7f);
-    INC_HL;
-
-    LD_DE(wStartDay);
-    CALL(aMrChrono_PrintTime);
-
-    LD_hl(0x7f);
-    INC_HL;
-
-    LD_A_addr(wDST);
-    BIT_A(7);
-    IF_Z goto off;
-
-    LD_hl(0x8e);
-    INC_HL;
-    LD_hl(0x8d);
-    INC_HL;
-    goto done;
-
-
-off:
-    LD_hl(0x8e);
-    INC_HL;
-    LD_hl(0x85);
-    INC_HL;
-    LD_hl(0x85);
-    INC_HL;
-
-
-done:
-    LD_HL(mMrChrono_NowOnDebug);
-    RET;
-
-
-NowOnDebug:
-    //text_start ['?']
-    //para ['"Now on DEBUG…"']
-    //prompt ['?']
-
-
-PrintTime:
-    LD_BC((1 << 8) | 3);
-    CALL(aPrintNum);
-    LD_hl(0xe8);
-    INC_HL;
-    INC_DE;
-    LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
-    CALL(aPrintNum);
-    LD_hl(0x9c);
-    INC_HL;
-    INC_DE;
-    LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
-    CALL(aPrintNum);
-    RET;
-
+    // hlcoord(1, 14, wTilemap);
+    // LD_BC((3 << 8) | (SCREEN_WIDTH - 2));
+    // CALL(aClearBox);
+    ClearBox_Conv2(coord(1, 14, wram->wTilemap), (SCREEN_WIDTH - 2), 3);
+    // LD_HL(mMrChrono_Text);
+    // CALL(aPlaceHLTextAtBC);
+    PlaceHLTextAtBC_Conv2(coord(1, 14, wram->wTilemap), (struct TextCmd[]){ text_asm(MrChrono_Text) });
+    // RET;
 }
 
 void PrintHour(void){

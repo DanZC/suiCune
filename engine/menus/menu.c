@@ -1542,6 +1542,8 @@ static uint8_t* v_PushWindow_copy(uint8_t* de, const uint8_t* hl) {
 }
 
 void v_PushWindow_Conv(void){
+    PEEK("");
+    printf("gWindowStackPointer = %d\n", gWindowStackPointer);
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(MBANK(awWindowStack));
@@ -1732,6 +1734,8 @@ void v_ExitMenu_Conv(void){
 }
 
 void v_ExitMenu_Conv2(void){
+    PEEK("");
+    printf("gWindowStackPointer = %d\n", gWindowStackPointer);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = 0;
@@ -1770,10 +1774,10 @@ void v_ExitMenu_Conv2(void){
     // LD_A_H;
     // OR_A_L;
     // IF_Z goto done;
-    if(gWindowStackPointer != 0) {
+    // if(gWindowStackPointer != 0) {
         // CALL(aPopWindow);
-        PopWindow_Conv2(&gWindowStack[--gWindowStackPointer]);
-    }
+        // PopWindow_Conv2(&gWindowStack[--gWindowStackPointer]);
+    // }
 
 
 // done:

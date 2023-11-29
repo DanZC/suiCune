@@ -40,6 +40,7 @@ void StartRTC_Conv(void){
     gb_write(MBC3SRamEnable, SRAM_ENABLE);
 
     // CALL(aLatchClock);
+    UpdateRTC();
     LatchClock_Conv();
 
     // LD_A(RTC_DH);
@@ -441,7 +442,7 @@ okay_days:
 
 }
 
-void v_InitTime_Conv(void){
+void v_InitTime_Conv(uint8_t days, uint8_t hours, uint8_t mins, uint8_t secs){
     // CALL(aGetClock);
     GetClock_Conv();
 
@@ -453,82 +454,68 @@ void v_InitTime_Conv(void){
     uint8_t carry = 0;
 
     // LD_A_addr(wStringBuffer2 + 3);
-    uint8_t a = wram->wStringBuffer2[3];
-
     // SUB_A_hl;
     // DEC_HL;
-    uint8_t t = hram->hRTCSeconds;
-    uint8_t towrite = SubCarry8(a, t, carry, &carry);
+    wram->wStartSecond = SubCarry8(secs, hram->hRTCSeconds, carry, &carry);
 
     // IF_NC goto okay_secs;
     if(carry)
     {
         // ADD_A(60);
-        towrite += 60;
+        wram->wStartSecond += 60;
     }
 
     // LD_de_A;
     // DEC_DE;
-    wram->wStartSecond = towrite;
 
     // LD_A_addr(wStringBuffer2 + 2);
-    a = wram->wStringBuffer2[2];
-
     // SBC_A_hl;
     // DEC_HL;
-    t = hram->hRTCMinutes;
-    towrite = SubCarry8(a, t, carry, &carry);
+    wram->wStartMinute = SubCarry8(mins, hram->hRTCMinutes, carry, &carry);
 
     // IF_NC goto okay_mins;
     if(carry)
     {
         // ADD_A(60);
-        towrite += 60;
+        wram->wStartMinute += 60;
     }
 
     // LD_de_A;
     // DEC_DE;
-    wram->wStartMinute = towrite;
 
     // LD_A_addr(wStringBuffer2 + 1);
-    a = wram->wStringBuffer2[1];
 
     // SBC_A_hl;
     // DEC_HL;
-    t = hram->hRTCHours;
-    towrite = SubCarry8(a, t, carry, &carry);
+    wram->wStartHour = SubCarry8(hours, hram->hRTCHours, carry, &carry);
 
     // IF_NC goto okay_hrs;
     if(carry)
     {
         // ADD_A(24);
-        towrite += 24;
+        wram->wStartHour += 24;
     }
 
     // LD_de_A;
     // DEC_DE;
-    wram->wStartHour = towrite;
 
     // LD_A_addr(wStringBuffer2);
-    a = wram->wStringBuffer2[0];
 
     // SBC_A_hl;
     // DEC_HL;
-    t = hram->hRTCDayLo;
-    towrite = SubCarry8(a, t, carry, &carry);
+    wram->wStartDay = SubCarry8(days, hram->hRTCDayLo, carry, &carry);
 
     // IF_NC goto okay_days;
     if(carry)
     {
         // ADD_A(140);
-        towrite += 140;
+        wram->wStartDay += 140;
 
         // LD_C(7);
         // CALL(aSimpleDivide);
         // towrite = SimpleDivide_Conv(towrite, 7).quot;
-        towrite /= 7; // Only quotient is used. 
+        wram->wStartDay /= 7; // Only quotient is used. 
     }
 
     // LD_de_A;
-    wram->wStartDay = towrite;
 }
