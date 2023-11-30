@@ -3736,7 +3736,7 @@ const char* (*const PlayRadioStationPointers[])(void) = {
     //assert_table_length ['NUM_MAP_RADIO_STATIONS']
 };
 
-static_assert(lengthof(PlayRadioStationPointers) == NUM_MAP_RADIO_STATIONS);
+static_assert(lengthof(PlayRadioStationPointers) == NUM_MAP_RADIO_STATIONS, "");
 
 void LoadStation_PokemonChannel(void){
     CALL(aIsInJohto);

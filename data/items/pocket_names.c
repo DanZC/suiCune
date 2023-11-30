@@ -7,4 +7,4 @@ const char *ItemPocketNames[] = {
     [BALL_POCKET] = "BALL POCKET@",
     [TM_HM_POCKET] = "TM POCKET@",
 };
-static_assert(lengthof(ItemPocketNames) == NUM_ITEM_TYPES);
+static_assert(lengthof(ItemPocketNames) == NUM_ITEM_TYPES, "");

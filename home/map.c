@@ -17,6 +17,7 @@
 #include "../engine/overworld/tile_events.h"
 #include "../engine/overworld/load_map_part.h"
 #include "../engine/tilesets/mapgroup_roofs.h"
+#include "../engine/tilesets/timeofday_pals.h"
 #include "../engine/gfx/crystal_layouts.h"
 #include "../data/maps/maps.h"
 #include "../data/maps/scenes.h"
@@ -690,7 +691,7 @@ IncreaseHLTwice:
 
 }
 
-static_assert(sizeof(struct WarpEventData) == WARP_EVENT_SIZE);
+static_assert(sizeof(struct WarpEventData) == WARP_EVENT_SIZE, "");
 
 static u8_flag_s GetDestinationWarpNumber_Function(void) {
     // LD_A_addr(wPlayerStandingMapY);
@@ -3922,7 +3923,8 @@ void ReloadTilesetAndPalettes_Conv(void){
     // LD_A_addr(wMapNumber);
     // LD_C_A;
     // CALL(aSwitchToAnyMapAttributesBank);
-    FARCALL(aUpdateTimeOfDayPal);
+    // FARCALL(aUpdateTimeOfDayPal);
+    UpdateTimeOfDayPal();
     // CALL(aOverworldTextModeSwitch);
     OverworldTextModeSwitch_Conv();
     // CALL(aLoadTilesetGFX);

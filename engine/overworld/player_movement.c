@@ -834,7 +834,7 @@ static uint8_t DoPlayerMovement_DoStep(uint8_t a) {
         },
         //assert_table_length ['NUM_STEPS']
     };
-    static_assert(lengthof(Steps) == NUM_STEPS);
+    static_assert(lengthof(Steps) == NUM_STEPS, "");
 
     // LD_E_A;
     // LD_D(0);

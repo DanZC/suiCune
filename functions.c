@@ -725,7 +725,7 @@ void init_function_pointers(void) {
     CONVERTED(StorePlayerName);
     //REDIRECTED(OakText4);
     //REDIRECTED(GSShowPlayerNamingChoices);
-    //REDIRECTED(ShrinkPlayer);
+    CONVERTED(ShrinkPlayer);
     //REDIRECTED(OakText3);
     //REDIRECTED(Continue_DisplayPokedexNumCaught);
     //REDIRECTED(Intro_PrepTrainerPic);
@@ -2016,7 +2016,7 @@ void init_function_pointers(void) {
     REDIRECTED(ConvertTrainerBattlePokeballTilesTo2bpp);
     CONVERTED(StartTrainerBattle_DetermineWhichAnimation);
     CONVERTED(StartTrainerBattle_SetUpForWavyOutro);
-    REDIRECTED(StartTrainerBattle_SpeckleToBlack);
+    CONVERTED(StartTrainerBattle_SpeckleToBlack);
     REDIRECTED(WipeLYOverrides);
     REDIRECTED(StartTrainerBattle_DrawSineWave);
     CONVERTED(StartTrainerBattle_SetUpForRandomScatterOutro);
@@ -4210,4 +4210,38 @@ void init_function_pointers(void) {
     CONVERTED(RestartClock);
     // REDIRECTED(RestartClock_GetWraparoundTime);
     // REDIRECTED(JPHourString);
+
+    // engine/tilesets/timeofday_pals.c
+    // REDIRECTED(DummyPredef35);
+    // REDIRECTED(FadeInQuickly);
+    // REDIRECTED(UpdateTimeOfDayPal);
+    // REDIRECTED(v_TimeOfDayPals);
+    // REDIRECTED(FillWhiteBGColor);
+    // REDIRECTED(DummyPredef36);
+    // REDIRECTED(GetTimePalette);
+    // REDIRECTED(ConvertTimePalsDecHL);
+    // REDIRECTED(GetTimePalFade);
+    // REDIRECTED(FadeInPalettes);
+    // REDIRECTED(FadeOutPalettes);
+    // REDIRECTED(FadeBlackQuickly);
+    // REDIRECTED(ConvertTimePalsIncHL);
+    // REDIRECTED(DmgToCgbTimePals);
+    // REDIRECTED(v_UpdateTimePals);
+    // REDIRECTED(ReplaceTimeOfDayPals);
+    // REDIRECTED(BattleTowerFade);
+
+    // engine/battle/trainer_huds.c
+    // REDIRECTED(StageBallTilesData);
+    // REDIRECTED(DrawPlayerHUDBorder);
+    // REDIRECTED(LoadTrainerHudOAM);
+    // REDIRECTED(PlaceHUDBorderTiles);
+    // REDIRECTED(DrawEnemyHUDBorder);
+    // REDIRECTED(EnemySwitch_TrainerHud);
+    // REDIRECTED(ShowOTTrainerMonsRemaining);
+    // REDIRECTED(BattleStart_TrainerHuds);
+    // REDIRECTED(DrawPlayerPartyIconHUDBorder);
+    // REDIRECTED(ShowPlayerMonsRemaining);
+    // REDIRECTED(LinkBattle_TrainerHuds);
+    // REDIRECTED(LoadBallIconGFX);
+    // REDIRECTED(v_ShowLinkBattleParticipants);
 }

@@ -1,6 +1,7 @@
 #include "../constants.h"
 #include "time_palettes.h"
 #include "time.h"
+#include "../engine/tilesets/timeofday_pals.h"
 
 void UpdateTimeAndPals(void){
     //  update time and time-sensitive palettes
@@ -26,27 +27,40 @@ void TimeOfDayPals(void){
 
 }
 
+bool TimeOfDayPals_Conv(void){
+    // CALLFAR(av_TimeOfDayPals);
+    // RET;
+    return v_TimeOfDayPals_Conv();
+}
+
 void UpdateTimePals(void){
         CALLFAR(av_UpdateTimePals);
     RET;
 
 }
 
-void UpdateTimeAndPals_Conv(void){
+void UpdateTimePals_Conv(void){
+    // CALLFAR(av_UpdateTimePals);
+    // RET;
+    v_UpdateTimePals();
+}
+
+bool UpdateTimeAndPals_Conv(void){
     //  update time and time-sensitive palettes
 
 //  rtc enabled?
     if(wram->wSpriteUpdatesEnabled == FALSE)
-        return;
+        return false;
 
     UpdateTime_Conv();
 
 //  obj update on?
     uint8_t vram_state = wram->wVramState;
     if(!bit_test(vram_state, 0))  // obj update
-        return;
+        return false;
 
-    SAVE_REGS;
-    CALLFAR(av_TimeOfDayPals);
-    RESTORE_REGS;
+    // SAVE_REGS;
+    // CALLFAR(av_TimeOfDayPals);
+    // RESTORE_REGS;
+    return v_TimeOfDayPals_Conv();
 }

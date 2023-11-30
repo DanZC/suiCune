@@ -32,7 +32,7 @@ const uint8_t MapGroupRoofs[] = {
 	[MAPGROUP_SAFFRON]      = -1,             // 25
 	[MAPGROUP_CHERRYGROVE]  = ROOF_NEW_BARK,  // 26 (Cherrygrove)
 };
-static_assert(lengthof(MapGroupRoofs) == NUM_MAP_GROUPS + 1);
+static_assert(lengthof(MapGroupRoofs) == NUM_MAP_GROUPS + 1, "");
 
 const char *Roofs[] = {
 // entries correspond to ROOF_* constants
@@ -42,4 +42,4 @@ const char *Roofs[] = {
     [ROOF_OLIVINE]      = "gfx/tilesets/roofs/olivine.png",
     [ROOF_GOLDENROD]    = "gfx/tilesets/roofs/goldenrod.png",
 };
-static_assert(lengthof(Roofs) == NUM_ROOFS);
+static_assert(lengthof(Roofs) == NUM_ROOFS, "");

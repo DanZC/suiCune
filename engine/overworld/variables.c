@@ -56,7 +56,7 @@ static const struct VarAction VarActionTable[] = {
     [VAR_KENJI_BREAK]       = {.var=wram_ptr(wKenjiBreakTimer), RETVAR_STRBUF2},
 };
 
-static_assert(lengthof(VarActionTable) == NUM_VARS);
+static_assert(lengthof(VarActionTable) == NUM_VARS, "");
 
 void v_GetVarAction(void){
     LD_A_C;

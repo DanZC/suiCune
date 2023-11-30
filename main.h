@@ -125,7 +125,7 @@
 
 // SECTION "bankB", ROMX
 
-//#include "engine/battle/trainer_huds.h"
+#include "engine/battle/trainer_huds.h"
 //#include "data/trainers/class_names.h"
 //#include "engine/battle/ai/redundant.h"
 //#include "engine/events/move_deleter.h"
@@ -280,7 +280,7 @@
 
 // SECTION "bank23", ROMX
 
-//#include "engine/tilesets/timeofday_pals.h"
+#include "engine/tilesets/timeofday_pals.h"
 #include "engine/battle/battle_transition.h"
 //#include "engine/events/field_moves.h"
 //#include "engine/events/magnet_train.h"

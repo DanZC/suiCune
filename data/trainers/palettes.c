@@ -78,4 +78,4 @@ const char *TrainerPalettes[] = {
     [MYSTICALMAN] = "gfx/trainers/mysticalman.png",
 };
 
-static_assert(lengthof(TrainerPalettes) == NUM_TRAINER_CLASSES + 1);
+static_assert(lengthof(TrainerPalettes) == NUM_TRAINER_CLASSES + 1, "");

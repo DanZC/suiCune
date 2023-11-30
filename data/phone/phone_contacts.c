@@ -78,4 +78,4 @@ const struct PhoneContact PhoneContacts[] = {
     [PHONE_BUENA]               = phone(TRAINER_NONE, PHONECONTACT_BUENA,    GOLDENROD_DEPT_STORE_ROOF, ANYTIME, BuenaPhoneCalleeScript,   ANYTIME, BuenaPhoneCallerScript),
 };
 
-static_assert(lengthof(PhoneContacts) == NUM_PHONE_CONTACTS + 1);
+static_assert(lengthof(PhoneContacts) == NUM_PHONE_CONTACTS + 1, "");

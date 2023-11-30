@@ -8,6 +8,13 @@
 #include <assert.h>
 #include <string.h>
 
+int64_t fsize(FILE* file) {
+    fseek(file, 0, SEEK_END);
+    int64_t size = ftello(file);
+    fseek(file, 0, SEEK_SET);
+    return size;
+}
+
 // Loads asset file from archive to a heap-allocated buffer.
 asset_s LoadAsset(const char* filename) {
     #if !defined(NO_PHYSFS)
@@ -35,9 +42,12 @@ asset_s LoadAsset(const char* filename) {
         fprintf(stderr, "LoadAsset Error");
         return (asset_s){NULL, 0};
     }
-    fseek(file, 0, SEEK_END);
-    int64_t size = ftello(file);
-    fseek(file, 0, SEEK_SET);
+    int64_t size = fsize(file);
+    if(size == -1) {
+        fprintf(stderr, "%s Error", __func__);
+        fclose(file);
+        return (asset_s){NULL, 0};
+    }
     uint8_t* buf = malloc((size_t)size);
     if(buf == NULL) {
         fprintf(stderr, "LoadAsset Error: Bad malloc.");
@@ -74,16 +84,19 @@ asset_s LoadAssetToBuffer(void* buffer, size_t buf_size, const char* filename) {
         fprintf(stderr, "%s Error\nfilename=%s", __func__, filename);
         return (asset_s){NULL, 0};
     }
-    fseek(file, 0, SEEK_END);
-    int64_t size = ftello(file);
-    fseek(file, 0, SEEK_SET);
+    int64_t size = fsize(file);
+    if(size == -1) {
+        fprintf(stderr, "%s Error. Bad size.\n", __func__);
+        fclose(file);
+        return (asset_s){NULL, 0};
+    }
     // uint8_t* buf = malloc((size_t)size);
     // if(buf == NULL) {
     //     fprintf(stderr, "LoadAsset Error: Bad malloc.");
     //     return (asset_s){NULL, 0};
     // }
     size_t rsize = ((size_t)size > buf_size)? buf_size: (size_t)size;
-    fread(buf, (size_t)rsize, 1, file);
+    fread(buf, rsize, 1, file);
     fclose(file);
 #endif
     return (asset_s){buffer, rsize};
@@ -117,9 +130,7 @@ asset_s LoadTextAsset(const char* filename) {
         fprintf(stderr, "LoadAsset Error");
         return (asset_s){NULL, 0};
     }
-    fseek(file, 0, SEEK_END);
-    int64_t size = ftello(file);
-    fseek(file, 0, SEEK_SET);
+    int64_t size = fsize(file);
     uint8_t* buf = malloc((size_t)size + 1);
     if(buf == NULL) {
         fprintf(stderr, "LoadAsset Error: Bad malloc.");
@@ -241,7 +252,7 @@ void LoadPNG1bppAssetToVRAM(void* dest, const char* filename) {
         fprintf(stderr, "%s: Load error on image %s. Reason: %s\n", __func__, filename, stbi_failure_reason());
         exit(-1);
     }
-    printf("%d-channel %dx%d image\n", n, x, y);
+    // printf("%d-channel %dx%d image\n", n, x, y);
     FreeAsset(a);
     int numTiles = (y / 8) * (x / 8);
     int tilesPerRow = (x / 8);
@@ -279,11 +290,11 @@ void LoadPNG2bppAssetToVRAM(void* dest, const char* filename) {
         fprintf(stderr, "%s: Load error on image %s. Reason: %s\n", __func__, filename, stbi_failure_reason());
         exit(-1);
     }
-    printf("2bpp %d-channel %dx%d image (%s)\n", n, x, y, filename);
+    // printf("2bpp %d-channel %dx%d image (%s)\n", n, x, y, filename);
     FreeAsset(a);
     int numTiles = (y / 8) * (x / 8);
     int tilesPerRow = (x / 8);
-    printf("%d tiles to write.\n", numTiles);
+    // printf("%d tiles to write.\n", numTiles);
     if(n == 1) {
         for(int i = 0; i < numTiles; ++i) {
             CopyPNG2bppGrayTileToGB(&d[i * LEN_2BPP_TILE], &pix[(((i/tilesPerRow)*8)*x) + ((i%tilesPerRow)*8)], x);
@@ -318,11 +329,11 @@ void LoadPNG2bppAssetToVRAMByColumn(void* dest, const char* filename) {
         fprintf(stderr, "%s: Load error on image %s. Reason: %s\n", __func__, filename, stbi_failure_reason());
         exit(-1);
     }
-    printf("2bpp %d-channel %dx%d image (%s)\n", n, x, y, filename);
+    // printf("2bpp %d-channel %dx%d image (%s)\n", n, x, y, filename);
     FreeAsset(a);
     int numTiles = (y / 8) * (x / 8);
     int tilesPerColumn = (y / 8);
-    printf("%d tiles to write.\n", numTiles);
+    // printf("%d tiles to write.\n", numTiles);
     if(n == 1) {
         for(int i = 0; i < numTiles; ++i) {
             CopyPNG2bppGrayTileToGB(&d[i * LEN_2BPP_TILE], &pix[((i/tilesPerColumn)*8) + (((i%tilesPerColumn)*8)*x)], x);
@@ -356,7 +367,7 @@ void LoadPNG1bppAssetSectionToVRAM(void* dest, const char* filename, int start_t
         fprintf(stderr, "%s: Load error on image %s. Reason: %s\n", __func__, filename, stbi_failure_reason());
         exit(-1);
     }
-    printf("1bpp %d-channel %dx%d image (%s)\n", n, x, y, filename);
+    // printf("1bpp %d-channel %dx%d image (%s)\n", n, x, y, filename);
     FreeAsset(a);
     int numTiles = (((y / 8) * (x / 8)) - start_tile > tile_count)? tile_count: ((y / 8) * (x / 8)) - start_tile;
     int tilesPerRow = (x / 8);
@@ -394,7 +405,7 @@ void LoadPNG2bppAssetSectionToVRAM(void* dest, const char* filename, int start_t
         fprintf(stderr, "%s: Load error on image %s. Reason: %s\n", __func__, filename, stbi_failure_reason());
         exit(-1);
     }
-    printf("2bpp %d-channel %dx%d image (%s)\n", n, x, y, filename);
+    // printf("2bpp %d-channel %dx%d image (%s)\n", n, x, y, filename);
     FreeAsset(a);
     int numTiles = (((y / 8) * (x / 8)) - start_tile > tile_count)? tile_count: ((y / 8) * (x / 8)) - start_tile;
     int tilesPerRow = (x / 8);
@@ -480,7 +491,7 @@ void LoadPaletteAssetColorsToBuffer(void* dest, size_t dest_size, const char* fi
 
     const char* text = a.ptr;
 
-    printf("Loading %lld colors from palette file (%s)\n", color_count, filename);
+    // printf("Loading %lld colors from palette file (%s)\n", color_count, filename);
     ParsePalFromText(d, dest_size, text, color_idx, color_count);
 
     FreeAsset(a);
@@ -501,7 +512,7 @@ void ExtractPaletteFromPNGAssetToBuffer(void* dest, const char* filename) {
         fprintf(stderr, "%s: Load error on image %s. Reason: %s\n", __func__, filename, stbi_failure_reason());
         exit(-1);
     }
-    printf("Extracting colors from %d-channel %dx%d image (%s)\n", n, x, y, filename);
+    // printf("Extracting colors from %d-channel %dx%d image (%s)\n", n, x, y, filename);
     FreeAsset(a);
 
     // Hack to make palette conversion work.
@@ -524,6 +535,7 @@ asset_s LoadAssetSegmentsToBuffer(void* buffer, size_t buf_size, const char* fil
         fprintf(stderr, "%s Error: Segment size is 0.", __func__);
         return (asset_s){NULL, 0};
     }
+#if !defined(NO_PHYSFS)
     PHYSFS_File* file = PHYSFS_openRead(filename);
     if(!file) {
         fprintf(stderr, "LoadAsset Error: %s", PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
@@ -545,6 +557,30 @@ asset_s LoadAssetSegmentsToBuffer(void* buffer, size_t buf_size, const char* fil
     if(scount != 0)
         PHYSFS_readBytes(file, buffer, segment_size * scount);
     PHYSFS_close(file);
+#else
+    FILE* file = fopen(filename, "rb");
+    if(!file) {
+        fprintf(stderr, "%s Error: %s", __func__, filename);
+        return (asset_s){NULL, 0};
+    }
+    int64_t size = fsize(file);
+    if(size == -1) {
+        fprintf(stderr, "%s Error: %s", __func__, filename);
+        fclose(file);
+        return (asset_s){NULL, 0};
+    }
+    if(segment_size * start > (size_t)size) {
+        return (asset_s){NULL, 0};
+    }
+    fseek(file, segment_size * start, SEEK_SET);
+    size_t asize = (size_t)size - (segment_size * start);
+    size_t scount = (count > asize / segment_size)? asize / segment_size: count;
+    scount = (scount > buf_size / segment_size)? buf_size / segment_size: scount;
+    if(scount != 0) {
+        fread(buffer, segment_size * scount, 1, file);
+    }
+    fclose(file);
+#endif
     return (asset_s){buffer, scount * segment_size};
 }
 

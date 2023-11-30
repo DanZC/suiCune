@@ -7,6 +7,7 @@
 #include "../../home/copy.h"
 #include "../../home/palettes.h"
 #include "../../home/clear_sprites.h"
+#include "../../home/random.h"
 #include "../overworld/map_objects.h"
 #include "../math/sine.h"
 
@@ -787,69 +788,94 @@ void StartTrainerBattle_SetUpForRandomScatterOutro(void){
     // RET;
 }
 
+static void StartTrainerBattle_SpeckleToBlack_BlackOutRandomTile(void) {
+    while(1) {
+        uint8_t b;
+        do {
+        // y_loop:
+            // CALL(aRandom);
+            b = Random_Conv();
+            // CP_A(SCREEN_HEIGHT);
+            // IF_NC goto y_loop;
+        } while(b >= SCREEN_HEIGHT);
+        // LD_B_A;
+
+        uint8_t c;
+        do {
+        // x_loop:
+            // CALL(aRandom);
+            c = Random_Conv();
+            // CP_A(SCREEN_WIDTH);
+            // IF_NC goto x_loop;
+        } while(c >= SCREEN_WIDTH);
+        // LD_C_A;
+
+        // hlcoord(0, -1, wTilemap);
+        // LD_DE(SCREEN_WIDTH);
+        // INC_B;
+
+
+    // row_loop:
+        // ADD_HL_DE;
+        // DEC_B;
+        // IF_NZ goto row_loop;
+        // ADD_HL_BC;
+        tile_t* hl = coord(c, b, wram->wTilemap);
+
+    //  If the tile has already been blacked out,
+    //  sample a new tile
+        // LD_A_hl;
+        // CP_A(BATTLETRANSITION_BLACK);
+        // IF_Z goto y_loop;
+        if(*hl == BATTLETRANSITION_BLACK)
+            continue;
+        // LD_hl(BATTLETRANSITION_BLACK);
+        *hl = BATTLETRANSITION_BLACK;
+        // RET;
+        return;
+    }
+}
+
 void StartTrainerBattle_SpeckleToBlack(void){
-    LD_HL(wBattleTransitionCounter);
-    LD_A_hl;
-    AND_A_A;
-    IF_Z goto done;
-    DEC_hl;
-    LD_C(0xc);
+    // LD_HL(wBattleTransitionCounter);
+    // LD_A_hl;
+    // AND_A_A;
+    // IF_Z goto done;
+    if(wram->wBattleTransitionCounter == 0) {
+    // done:
+        // LD_A(0x1);
+        // LDH_addr_A(hBGMapMode);
+        hram->hBGMapMode = 0x1;
+        // CALL(aDelayFrame);
+        DelayFrame();
+        // CALL(aDelayFrame);
+        DelayFrame();
+        // CALL(aDelayFrame);
+        DelayFrame();
+        // XOR_A_A;
+        // LDH_addr_A(hBGMapMode);
+        hram->hBGMapMode = 0;
+        // LD_A(BATTLETRANSITION_FINISH);
+        // LD_addr_A(wJumptableIndex);
+        wram->wJumptableIndex = BATTLETRANSITION_FINISH;
+        // RET;
+        return;
+    }
+    // DEC_hl;
+    wram->wBattleTransitionCounter--;
+    // LD_C(0xc);
+    uint8_t c = 0xc;
 
-loop:
-    PUSH_BC;
-    CALL(aStartTrainerBattle_SpeckleToBlack_BlackOutRandomTile);
-    POP_BC;
-    DEC_C;
-    IF_NZ goto loop;
-    RET;
-
-
-done:
-    LD_A(0x1);
-    LDH_addr_A(hBGMapMode);
-    CALL(aDelayFrame);
-    CALL(aDelayFrame);
-    CALL(aDelayFrame);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    LD_A(BATTLETRANSITION_FINISH);
-    LD_addr_A(wJumptableIndex);
-    RET;
-
-
-BlackOutRandomTile:
-
-y_loop:
-    CALL(aRandom);
-    CP_A(SCREEN_HEIGHT);
-    IF_NC goto y_loop;
-    LD_B_A;
-
-
-x_loop:
-    CALL(aRandom);
-    CP_A(SCREEN_WIDTH);
-    IF_NC goto x_loop;
-    LD_C_A;
-
-    hlcoord(0, -1, wTilemap);
-    LD_DE(SCREEN_WIDTH);
-    INC_B;
-
-
-row_loop:
-    ADD_HL_DE;
-    DEC_B;
-    IF_NZ goto row_loop;
-    ADD_HL_BC;
-
-//  If the tile has already been blacked out,
-//  sample a new tile
-    LD_A_hl;
-    CP_A(BATTLETRANSITION_BLACK);
-    IF_Z goto y_loop;
-    LD_hl(BATTLETRANSITION_BLACK);
-    RET;
+    do {
+    // loop:
+        // PUSH_BC;
+        // CALL(aStartTrainerBattle_SpeckleToBlack_BlackOutRandomTile);
+        StartTrainerBattle_SpeckleToBlack_BlackOutRandomTile();
+        // POP_BC;
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(--c != 0);
+    // RET;
 
 }
 

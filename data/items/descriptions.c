@@ -1000,4 +1000,4 @@ const char *ItemDescriptions[] = {
     [0xff] = TeruSama28Desc,
 };
 
-static_assert(lengthof(ItemDescriptions) == 0x100);
+static_assert(lengthof(ItemDescriptions) == 0x100, "");

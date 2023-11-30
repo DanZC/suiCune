@@ -9,6 +9,7 @@
 #include "../../home/text.h"
 #include "../../home/tilemap.h"
 #include "../../home/copy.h"
+#include "../../home/gfx.h"
 #include "../../charmap.h"
 #include "../../data/trainers/class_names.h"
 #include "../../data/trainers/parties.h"
@@ -388,18 +389,15 @@ static void DebugMenu_BattleTest_StartBattle(uint8_t tclass, uint8_t tid) {
         wbank_pop;
     }
     wbank_push(MBANK(awInBattleTowerBattle));
-    SAFECALL(aBufferScreen);
-    SAFECALL(aBattleIntro);
-    SAFECALL(aDoBattle);
-    SAFECALL(aExitBattle);
+    SafeCallGBAuto(aStartBattle);
 
     bit_reset(wram->wDebugFlags, DEBUG_BATTLE_F);
 
     wbank_pop;
-    SAFECALL(aClearTilemap);
+    ClearTilemap_Conv2();
     WaitBGMap_Conv();
-    SAFECALL(aLoadFontsExtra);
-    SAFECALL(aLoadStandardFont);
+    LoadFontsExtra_Conv();
+    LoadStandardFont_Conv();
     PlayMusic_Conv(MUSIC_NONE);
     DelayFrame();
 }

@@ -62,6 +62,10 @@ int UpdateRTC(void) {
     gb.cart_rtc[1] = lastTime.tm_min;
     gb.cart_rtc[0] = lastTime.tm_sec;
 
+    if(sStartTimestamp == 0) {
+        SetStartTimeToSystemTime();
+    }
+
     struct tm startTime = *localtime(&sStartTimestamp);
     uint16_t dayCount = CountDays(&startTime, &lastTime);
     gb.cart_rtc[4] &= 0xFE;
@@ -86,13 +90,20 @@ void SetStartTimeToSystemTime(void) {
     buffer[5] = ((value >> 40ll) & 0xff);
     buffer[6] = ((value >> 48ll) & 0xff);
     buffer[7] = ((value >> 56ll) & 0xff);
-    gb_write(sPlayerData + (wRTC - wPlayerData) + 4, buffer[0]);
-    gb_write(sPlayerData + (wRTC - wPlayerData) + 5, buffer[1]);
-    gb_write(sPlayerData + (wRTC - wPlayerData) + 6, buffer[2]);
-    gb_write(sPlayerData + (wRTC - wPlayerData) + 7, buffer[3]);
-    memcpy(wram->skip_109, buffer + 4, 4);
+    wbank_push(MBANK(awRTC));
+    gb_write(wRTC + 4, buffer[0]);
+    gb_write(wRTC + 5, buffer[1]);
+    gb_write(wRTC + 6, buffer[2]);
+    gb_write(wRTC + 7, buffer[3]);
+    gb_write(wTimeOfDayPal + 1, buffer[4]);
+    gb_write(wTimeOfDayPal + 2, buffer[5]);
+    gb_write(wTimeOfDayPal + 3, buffer[6]);
+    gb_write(wTimeOfDayPal + 4, buffer[7]);
+    wbank_pop;
     printf("start = %lld\n", *(time_t*)buffer);
 }
+
+static char tempTimeBuffer[32];
 
 void LoadRTCStartTime(void) {
     sStartTimestamp = 0;
@@ -117,13 +128,18 @@ void LoadRTCStartTime(void) {
                     | ((uint64_t)(uint8_t)buffer[6] << 48ull)
                     | ((uint64_t)(uint8_t)buffer[7] << 56ull);
     if(!(time_t)value) {
-        SetStartTimeToSystemTime();
-        printf("No RTC data found. Loading day at 0.\n");
+        printf("No RTC data found. Start timestamp is %lld. Loading day at 0.\n", (time_t)value);
         CloseSRAM_Conv();
         return;
     }
     sStartTimestamp = (time_t)value;
-    printf("%lld\n", sStartTimestamp);
+    strftime(tempTimeBuffer, sizeof(tempTimeBuffer), "%a %Y-%m-%d %H:%M:%S", localtime(&sStartTimestamp));
+    printf("Start timestamp is %lld (%s).\n", sStartTimestamp, tempTimeBuffer);
+    sLastTimestamp = time(NULL);
+    if(sLastTimestamp != (time_t)-1) {
+        strftime(tempTimeBuffer, sizeof(tempTimeBuffer), "%a %Y-%m-%d %H:%M:%S", localtime(&sLastTimestamp));
+        printf("Current timestamp is %lld (%s).\n", sLastTimestamp, tempTimeBuffer);
+    }
     CloseSRAM_Conv();
 }
 

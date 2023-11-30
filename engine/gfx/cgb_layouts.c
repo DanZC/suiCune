@@ -78,7 +78,7 @@ void (*const CGBLayoutJumptable[])(void) = {
     //assert_table_length ['NUM_SCGB_LAYOUTS']
 };
 
-static_assert(lengthof(CGBLayoutJumptable) == NUM_SCGB_LAYOUTS);
+static_assert(lengthof(CGBLayoutJumptable) == NUM_SCGB_LAYOUTS, "");
 
 void LoadSGBLayoutCGB_Conv(uint8_t b){
     // LD_A_B;

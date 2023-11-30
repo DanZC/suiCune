@@ -301,4 +301,4 @@ const struct SpriteMoveData SpriteMovementData[] = {
     }
 };
 
-static_assert(lengthof(SpriteMovementData) == NUM_SPRITEMOVEDATA);
+static_assert(lengthof(SpriteMovementData) == NUM_SPRITEMOVEDATA, "");

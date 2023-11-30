@@ -511,4 +511,5 @@ void get_input(void);
 void gb_run_frame(void);
 void gb_finish_frame(void);
 void sdl_loop(void);
+void advance_div(uint8_t cycles);
 #endif

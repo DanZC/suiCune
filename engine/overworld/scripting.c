@@ -2409,7 +2409,7 @@ void Script_earthquake(void){
     JP(mScriptCall);
 
 
-script:
+// script:
     //applymovement ['PLAYER', 'wEarthquakeMovementDataBuffer']
     //end ['?']
 }

@@ -54,4 +54,4 @@ const char* TypeNames[] = {
 	[DRAGON] = Dragon,
 	[DARK] = Dark,
 };
-static_assert(lengthof(TypeNames) == TYPES_END);
+static_assert(lengthof(TypeNames) == TYPES_END, "");

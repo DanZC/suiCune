@@ -13,4 +13,4 @@ const char* const StatNames[] = {
     [ABILITY] = "ABILITY", // used for BattleCommand_Curse
 };
 
-static_assert(lengthof(StatNames) == NUM_LEVEL_STATS);
+static_assert(lengthof(StatNames) == NUM_LEVEL_STATS, "");

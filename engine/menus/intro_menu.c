@@ -7,6 +7,7 @@
 #include "../../home/string.h"
 #include "../../home/copy.h"
 #include "../../home/copy_name.h"
+#include "../../home/fade.h"
 #include "../../home/gfx.h"
 #include "../../home/text.h"
 #include "../../home/pokemon.h"
@@ -14,6 +15,8 @@
 #include "../../gfx/misc.h"
 #include "../../data/text/common.h"
 #include "../../charmap.h"
+#include "../gfx/place_graphic.h"
+#include "../gfx/player_gfx.h"
 #include "../movie/splash.h"
 #include "../movie/intro.h"
 #include "../movie/title.h"
@@ -987,57 +990,72 @@ void StorePlayerName(void) {
 }
 
 void ShrinkPlayer(void) {
-    LDH_A_addr(hROMBank);
-    PUSH_AF;
+    PEEK("");
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
 
-    LD_A(32);  // fade time
-    LD_addr_A(wMusicFade);
-    LD_DE(MUSIC_NONE);
-    LD_A_E;
-    LD_addr_A(wMusicFadeID);
-    LD_A_D;
-    LD_addr_A(wMusicFadeID + 1);
+    // LD_A(32);  // fade time
+    // LD_addr_A(wMusicFade);
+    wram->wMusicFade = 32;
+    // LD_DE(MUSIC_NONE);
+    // LD_A_E;
+    // LD_addr_A(wMusicFadeID);
+    // LD_A_D;
+    // LD_addr_A(wMusicFadeID + 1);
+    wram->wMusicFadeID = MUSIC_NONE;
 
-    LD_DE(SFX_ESCAPE_ROPE);
-    CALL(aPlaySFX);
-    POP_AF;
-    RST(aBankswitch);
+    // LD_DE(SFX_ESCAPE_ROPE);
+    // CALL(aPlaySFX);
+    PlaySFX_Conv(SFX_ESCAPE_ROPE);
+    // POP_AF;
+    // RST(aBankswitch);
 
-    LD_C(8);
-    CALL(aDelayFrames);
+    // LD_C(8);
+    // CALL(aDelayFrames);
+    DelayFrames_Conv(8);
 
-    LD_HL(mShrink1Pic);
-    LD_B(BANK(aShrink1Pic));
-    CALL(aShrinkFrame);
+    // LD_HL(mShrink1Pic);
+    // LD_B(BANK(aShrink1Pic));
+    // CALL(aShrinkFrame);
+    ShrinkFrame_Conv(Shrink1Pic);
 
-    LD_C(8);
-    CALL(aDelayFrames);
+    // LD_C(8);
+    // CALL(aDelayFrames);
+    DelayFrames_Conv(16);
 
-    LD_HL(mShrink2Pic);
-    LD_B(BANK(aShrink2Pic));
-    CALL(aShrinkFrame);
+    // LD_HL(mShrink2Pic);
+    // LD_B(BANK(aShrink2Pic));
+    // CALL(aShrinkFrame);
+    ShrinkFrame_Conv(Shrink2Pic);
 
-    LD_C(8);
-    CALL(aDelayFrames);
+    // LD_C(8);
+    // CALL(aDelayFrames);
+    DelayFrames_Conv(16);
 
-    hlcoord(6, 5, wTilemap);
-    LD_B(7);
-    LD_C(7);
-    CALL(aClearBox);
+    // hlcoord(6, 5, wTilemap);
+    // LD_B(7);
+    // LD_C(7);
+    // CALL(aClearBox);
+    ClearBox_Conv2(coord(6, 5, wram->wTilemap), 7, 7);
 
-    LD_C(3);
-    CALL(aDelayFrames);
+    // LD_C(3);
+    // CALL(aDelayFrames);
+    DelayFrames_Conv(3);
 
-    CALL(aIntro_PlacePlayerSprite);
-    CALL(aLoadFontsExtra);
+    // CALL(aIntro_PlacePlayerSprite);
+    Intro_PlacePlayerSprite_Conv();
+    // CALL(aLoadFontsExtra);
+    LoadFontsExtra_Conv();
 
-    LD_C(50);
-    CALL(aDelayFrames);
+    // LD_C(50);
+    // CALL(aDelayFrames);
+    DelayFrames_Conv(50);
 
-    CALL(aRotateThreePalettesRight);
-    CALL(aClearTilemap);
+    // CALL(aRotateThreePalettesRight);
+    RotateThreePalettesRight_Conv();
+    // CALL(aClearTilemap);
+    ClearTilemap_Conv();
     RET;
-
 }
 
 void Intro_RotatePalettesLeftFrontpic(void) {
@@ -1112,6 +1130,21 @@ void ShrinkFrame(void) {
 
 }
 
+void ShrinkFrame_Conv(const char* path) {
+    // LD_DE(vTiles2);
+    // LD_C(7 * 7);
+    // PREDEF(pDecompressGet2bpp);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2, path, 0, 7 * 7);
+    // XOR_A_A;
+    // LDH_addr_A(hGraphicStartTile);
+    hram->hGraphicStartTile = 0;
+    // hlcoord(6, 4, wTilemap);
+    // LD_BC((7 << 8) | 7);
+    // PREDEF(pPlaceGraphic);
+    PlaceGraphicYStagger_Conv(coord(6, 4, wram->wTilemap), 7, 7);
+    // RET;
+}
+
 void Intro_PlacePlayerSprite(void){
     FARCALL(aGetPlayerIcon);
     LD_C(12);
@@ -1163,6 +1196,64 @@ sprites:
 
 
     return IntroSequence();
+}
+
+void Intro_PlacePlayerSprite_Conv(void){
+    static const struct {
+        int8_t y;
+        int8_t x;
+        tile_t tile;
+    } sprites[] = {
+        //db ['4'];
+    // y pxl, x pxl, tile offset
+        {9 * 8 + 4, 9 * 8, 0},
+        {9 * 8 + 4, 10 * 8, 1},
+        {10 * 8 + 4, 9 * 8, 2},
+        {10 * 8 + 4, 10 * 8, 3},
+    };
+
+    // FARCALL(aGetPlayerIcon);
+    // LD_C(12);
+    // LD_HL(vTiles0);
+    // CALL(aRequest2bpp);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles0, GetPlayerIcon_Conv2(), 0, 12);
+
+    // LD_HL(wVirtualOAMSprite00);
+    // LD_DE(mIntro_PlacePlayerSprite_sprites);
+    // LD_A_de;
+    // INC_DE;
+
+    // LD_C_A;
+    for(uint8_t i = 0; i < lengthof(sprites); ++i) {
+    // loop:
+        // LD_A_de;
+        // INC_DE;
+        // LD_hli_A;  // y
+        wram->wVirtualOAMSprite[i].yCoord = sprites[i].y;
+        // LD_A_de;
+        // INC_DE;
+        // LD_hli_A;  // x
+        wram->wVirtualOAMSprite[i].xCoord = sprites[i].x;
+        // LD_A_de;
+        // INC_DE;
+        // LD_hli_A;  // tile id
+        wram->wVirtualOAMSprite[i].tileID = sprites[i].tile;
+
+        // LD_B(PAL_OW_RED);
+        // LD_A_addr(wPlayerGender);
+        // BIT_A(PLAYERGENDER_FEMALE_F);
+        // IF_Z goto male;
+        // LD_B(PAL_OW_BLUE);
+
+    // male:
+        // LD_A_B;
+
+        // LD_hli_A;  // attributes
+        wram->wVirtualOAMSprite[i].attributes = (bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))? PAL_OW_BLUE: PAL_OW_RED;
+        // DEC_C;
+        // IF_NZ goto loop;
+    }
+    // RET;
 }
 
 typedef enum {
@@ -1855,7 +1946,7 @@ void UpdateTitleTrailSprite(void) {
     RET;
 
 
-TitleTrailCoords:
+// TitleTrailCoords:
     // trail_coords: MACRO
     // rept _NARG / 2
     // _dx = 4

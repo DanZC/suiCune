@@ -44,4 +44,4 @@ const char *IconPointers[] = {
 	[ICON_BIGMON] = BigmonIcon,
 };
 
-static_assert(lengthof(IconPointers) == NUM_ICONS + 1);
+static_assert(lengthof(IconPointers) == NUM_ICONS + 1, "");

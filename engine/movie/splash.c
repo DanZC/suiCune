@@ -347,7 +347,7 @@ void GameFreakLogoSpriteAnim(void){
     JP_hl;
 
 
-scenes:
+//scenes:
     //dw ['GameFreakLogo_Init'];
     //dw ['GameFreakLogo_Bounce'];
     //dw ['GameFreakLogo_Ditto'];

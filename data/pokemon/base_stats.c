@@ -4600,4 +4600,4 @@ const struct BaseData BasePokemonData[] = {
     },
 };
 
-static_assert(lengthof(BasePokemonData) == NUM_POKEMON);
+static_assert(lengthof(BasePokemonData) == NUM_POKEMON, "");

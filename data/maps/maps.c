@@ -21,7 +21,7 @@ const struct MapHeader MapGroup_Olivine[] = {
     map_header_(Route39, TILESET_JOHTO, ROUTE, LANDMARK_ROUTE_39, MUSIC_ROUTE_37, FALSE, PALETTE_AUTO, FISHGROUP_SHORE),
     map_header_(OlivineCity, TILESET_JOHTO, TOWN, LANDMARK_OLIVINE_CITY, MUSIC_VIOLET_CITY, FALSE, PALETTE_AUTO, FISHGROUP_SHORE),
 };
-static_assert(lengthof(MapGroup_Olivine) == MAP_OLIVINE_CITY);
+static_assert(lengthof(MapGroup_Olivine) == MAP_OLIVINE_CITY, "");
 
 const struct MapHeader MapGroup_Mahogany[] = {
     map_header_(MahoganyRedGyaradosSpeechHouse, TILESET_HOUSE, INDOOR, LANDMARK_MAHOGANY_TOWN, MUSIC_CHERRYGROVE_CITY, FALSE, PALETTE_DAY, FISHGROUP_SHORE),
@@ -32,7 +32,7 @@ const struct MapHeader MapGroup_Mahogany[] = {
     map_header_(Route44, TILESET_JOHTO, ROUTE, LANDMARK_ROUTE_44, MUSIC_LAKE_OF_RAGE, FALSE, PALETTE_AUTO, FISHGROUP_POND),
     map_header_(MahoganyTown, TILESET_JOHTO, TOWN, LANDMARK_MAHOGANY_TOWN, MUSIC_CHERRYGROVE_CITY, FALSE, PALETTE_AUTO, FISHGROUP_SHORE),
 };
-static_assert(lengthof(MapGroup_Mahogany) == MAP_MAHOGANY_TOWN);
+static_assert(lengthof(MapGroup_Mahogany) == MAP_MAHOGANY_TOWN, "");
 
 const struct MapHeader MapGroup_Dungeons[] = {
     map_header_(SproutTower1F, TILESET_TOWER, DUNGEON, LANDMARK_SPROUT_TOWER, MUSIC_SPROUT_TOWER, FALSE, PALETTE_DAY, FISHGROUP_SHORE),
@@ -127,7 +127,7 @@ const struct MapHeader MapGroup_Dungeons[] = {
     map_header_(SafariZoneBeta, TILESET_PARK, CAVE, LANDMARK_FUCHSIA_CITY, MUSIC_EVOLUTION, FALSE, PALETTE_AUTO, FISHGROUP_SHORE),
     map_header_(VictoryRoad, TILESET_CAVE, CAVE, LANDMARK_VICTORY_ROAD, MUSIC_VICTORY_ROAD, TRUE, PALETTE_NITE, FISHGROUP_SHORE),
 };
-static_assert(lengthof(MapGroup_Dungeons) == MAP_VICTORY_ROAD);
+static_assert(lengthof(MapGroup_Dungeons) == MAP_VICTORY_ROAD, "");
 
 const struct MapHeader MapGroup_Ecruteak[] = {
     map_header_(EcruteakTinTowerEntrance, TILESET_TOWER, INDOOR, LANDMARK_ECRUTEAK_CITY, MUSIC_ECRUTEAK_CITY, FALSE, PALETTE_DAY, FISHGROUP_SHORE),
@@ -140,7 +140,7 @@ const struct MapHeader MapGroup_Ecruteak[] = {
     map_header_(EcruteakItemfinderHouse, TILESET_TRADITIONAL_HOUSE, INDOOR, LANDMARK_ECRUTEAK_CITY, MUSIC_ECRUTEAK_CITY, FALSE, PALETTE_DAY, FISHGROUP_SHORE),
     map_header_(EcruteakCity, TILESET_JOHTO, TOWN, LANDMARK_ECRUTEAK_CITY, MUSIC_ECRUTEAK_CITY, FALSE, PALETTE_AUTO, FISHGROUP_POND),
 };
-static_assert(lengthof(MapGroup_Ecruteak) == MAP_ECRUTEAK_CITY);
+static_assert(lengthof(MapGroup_Ecruteak) == MAP_ECRUTEAK_CITY, "");
 
 const struct MapHeader MapGroup_Blackthorn[] = {
     map_header_(BlackthornGym1F, TILESET_ELITE_FOUR_ROOM, INDOOR, LANDMARK_BLACKTHORN_CITY, MUSIC_GYM, TRUE, PALETTE_DAY, FISHGROUP_SHORE),
@@ -154,7 +154,7 @@ const struct MapHeader MapGroup_Blackthorn[] = {
     map_header_(Route46, TILESET_JOHTO, ROUTE, LANDMARK_ROUTE_46, MUSIC_ROUTE_36, FALSE, PALETTE_AUTO, FISHGROUP_SHORE),
     map_header_(BlackthornCity, TILESET_JOHTO, TOWN, LANDMARK_BLACKTHORN_CITY, MUSIC_AZALEA_TOWN, FALSE, PALETTE_AUTO, FISHGROUP_POND),
 };
-static_assert(lengthof(MapGroup_Blackthorn) == MAP_BLACKTHORN_CITY);
+static_assert(lengthof(MapGroup_Blackthorn) == MAP_BLACKTHORN_CITY, "");
 
 const struct MapHeader MapGroup_Cinnabar[] = {
     map_header_(CinnabarPokecenter1F, TILESET_POKECENTER, INDOOR, LANDMARK_CINNABAR_ISLAND, MUSIC_POKEMON_CENTER, FALSE, PALETTE_DAY, FISHGROUP_SHORE),
@@ -166,7 +166,7 @@ const struct MapHeader MapGroup_Cinnabar[] = {
     map_header_(Route21, TILESET_KANTO, ROUTE, LANDMARK_ROUTE_21, MUSIC_ROUTE_3, FALSE, PALETTE_AUTO, FISHGROUP_OCEAN),
     map_header_(CinnabarIsland, TILESET_KANTO, TOWN, LANDMARK_CINNABAR_ISLAND, MUSIC_VIRIDIAN_CITY, FALSE, PALETTE_AUTO, FISHGROUP_OCEAN),
 };
-static_assert(lengthof(MapGroup_Cinnabar) == MAP_CINNABAR_ISLAND);
+static_assert(lengthof(MapGroup_Cinnabar) == MAP_CINNABAR_ISLAND, "");
 
 const struct MapHeader MapGroup_Cerulean[] = {
     map_header_(CeruleanGymBadgeSpeechHouse, TILESET_HOUSE, INDOOR, LANDMARK_CERULEAN_CITY, MUSIC_VIRIDIAN_CITY, FALSE, PALETTE_DAY, FISHGROUP_SHORE),
@@ -187,7 +187,7 @@ const struct MapHeader MapGroup_Cerulean[] = {
     map_header_(Route25, TILESET_KANTO, ROUTE, LANDMARK_ROUTE_25, MUSIC_ROUTE_3, FALSE, PALETTE_AUTO, FISHGROUP_LAKE),
     map_header_(CeruleanCity, TILESET_KANTO, TOWN, LANDMARK_CERULEAN_CITY, MUSIC_VIRIDIAN_CITY, FALSE, PALETTE_AUTO, FISHGROUP_NONE),
 };
-static_assert(lengthof(MapGroup_Cerulean) == MAP_CERULEAN_CITY);
+static_assert(lengthof(MapGroup_Cerulean) == MAP_CERULEAN_CITY, "");
 
 const struct MapHeader MapGroup_Azalea[] = {
     map_header_(AzaleaPokecenter1F, TILESET_POKECENTER, INDOOR, LANDMARK_AZALEA_TOWN, MUSIC_POKEMON_CENTER, FALSE, PALETTE_DAY, FISHGROUP_SHORE),
@@ -198,7 +198,7 @@ const struct MapHeader MapGroup_Azalea[] = {
     map_header_(Route33, TILESET_JOHTO_MODERN, ROUTE, LANDMARK_ROUTE_33, MUSIC_ROUTE_30, FALSE, PALETTE_AUTO, FISHGROUP_SHORE),
     map_header_(AzaleaTown, TILESET_JOHTO_MODERN, TOWN, LANDMARK_AZALEA_TOWN, MUSIC_AZALEA_TOWN, FALSE, PALETTE_AUTO, FISHGROUP_SHORE),
 };
-static_assert(lengthof(MapGroup_Azalea) == MAP_AZALEA_TOWN);
+static_assert(lengthof(MapGroup_Azalea) == MAP_AZALEA_TOWN, "");
 
 const struct MapHeader MapGroup_LakeOfRage[] = {
     map_header_(LakeOfRageHiddenPowerHouse, TILESET_HOUSE, INDOOR, LANDMARK_LAKE_OF_RAGE, MUSIC_LAKE_OF_RAGE, FALSE, PALETTE_DAY, FISHGROUP_SHORE),
@@ -208,7 +208,7 @@ const struct MapHeader MapGroup_LakeOfRage[] = {
     map_header_(Route43, TILESET_JOHTO, ROUTE, LANDMARK_ROUTE_43, MUSIC_LAKE_OF_RAGE, FALSE, PALETTE_AUTO, FISHGROUP_POND),
     map_header_(LakeOfRage, TILESET_JOHTO, TOWN, LANDMARK_LAKE_OF_RAGE, MUSIC_LAKE_OF_RAGE, FALSE, PALETTE_AUTO, FISHGROUP_GYARADOS),
 };
-static_assert(lengthof(MapGroup_LakeOfRage) == MAP_LAKE_OF_RAGE);
+static_assert(lengthof(MapGroup_LakeOfRage) == MAP_LAKE_OF_RAGE, "");
 
 const struct MapHeader MapGroup_Violet[] = {
     map_header_(Route32, TILESET_JOHTO, ROUTE, LANDMARK_ROUTE_32, MUSIC_ROUTE_30, FALSE, PALETTE_AUTO, FISHGROUP_QWILFISH),
@@ -229,7 +229,7 @@ const struct MapHeader MapGroup_Violet[] = {
     map_header_(Route36RuinsOfAlphGate, TILESET_GATE, GATE, LANDMARK_ROUTE_36, MUSIC_ROUTE_36, FALSE, PALETTE_DAY, FISHGROUP_SHORE),
     map_header_(Route36NationalParkGate, TILESET_GATE, INDOOR, LANDMARK_ROUTE_36, MUSIC_GOLDENROD_CITY, FALSE, PALETTE_DAY, FISHGROUP_SHORE),
 };
-static_assert(lengthof(MapGroup_Violet) == MAP_ROUTE_36_NATIONAL_PARK_GATE);
+static_assert(lengthof(MapGroup_Violet) == MAP_ROUTE_36_NATIONAL_PARK_GATE, "");
 
 const struct MapHeader MapGroup_Goldenrod[] = {
     map_header_(Route34, TILESET_JOHTO_MODERN, ROUTE, LANDMARK_ROUTE_34, MUSIC_ROUTE_36, FALSE, PALETTE_AUTO, FISHGROUP_SHORE),
@@ -257,7 +257,7 @@ const struct MapHeader MapGroup_Goldenrod[] = {
     map_header_(Route34IlexForestGate, TILESET_GATE, GATE, LANDMARK_ROUTE_34, MUSIC_ROUTE_36, FALSE, PALETTE_DAY, FISHGROUP_SHORE),
     map_header_(DayCare, TILESET_HOUSE, INDOOR, LANDMARK_ROUTE_34, MUSIC_AZALEA_TOWN, FALSE, PALETTE_DAY, FISHGROUP_SHORE),
 };
-static_assert(lengthof(MapGroup_Goldenrod) == MAP_DAY_CARE);
+static_assert(lengthof(MapGroup_Goldenrod) == MAP_DAY_CARE, "");
 
 const struct MapHeader MapGroup_Vermilion[] = {
     map_header_(Route6, TILESET_KANTO, ROUTE, LANDMARK_ROUTE_6, MUSIC_ROUTE_3, FALSE, PALETTE_AUTO, FISHGROUP_POND),
@@ -274,7 +274,7 @@ const struct MapHeader MapGroup_Vermilion[] = {
     map_header_(Route6SaffronGate, TILESET_GATE, GATE, LANDMARK_ROUTE_6, MUSIC_ROUTE_3, FALSE, PALETTE_DAY, FISHGROUP_SHORE),
     map_header_(Route6UndergroundPathEntrance, TILESET_GATE, GATE, LANDMARK_ROUTE_6, MUSIC_ROUTE_3, FALSE, PALETTE_DAY, FISHGROUP_SHORE),
 };
-static_assert(lengthof(MapGroup_Vermilion) == MAP_ROUTE_6_UNDERGROUND_PATH_ENTRANCE);
+static_assert(lengthof(MapGroup_Vermilion) == MAP_ROUTE_6_UNDERGROUND_PATH_ENTRANCE, "");
 
 const struct MapHeader MapGroup_Pallet[] = {
     map_header_(Route1, TILESET_KANTO, ROUTE, LANDMARK_ROUTE_1, MUSIC_ROUTE_1, FALSE, PALETTE_AUTO, FISHGROUP_SHORE),
@@ -284,7 +284,7 @@ const struct MapHeader MapGroup_Pallet[] = {
     map_header_(BluesHouse, TILESET_HOUSE, INDOOR, LANDMARK_PALLET_TOWN, MUSIC_PALLET_TOWN, FALSE, PALETTE_DAY, FISHGROUP_SHORE),
     map_header_(OaksLab, TILESET_LAB, INDOOR, LANDMARK_PALLET_TOWN, MUSIC_POKEMON_TALK, FALSE, PALETTE_DAY, FISHGROUP_SHORE),
 };
-static_assert(lengthof(MapGroup_Pallet) == MAP_OAKS_LAB);
+static_assert(lengthof(MapGroup_Pallet) == MAP_OAKS_LAB, "");
 
 const struct MapHeader MapGroup_Pewter[] = {
     map_header_(Route3, TILESET_KANTO, ROUTE, LANDMARK_ROUTE_3, MUSIC_ROUTE_3, FALSE, PALETTE_AUTO, FISHGROUP_SHORE),
@@ -296,7 +296,7 @@ const struct MapHeader MapGroup_Pewter[] = {
     map_header_(PewterPokecenter2FBeta, TILESET_POKECENTER, INDOOR, LANDMARK_PEWTER_CITY, MUSIC_VIRIDIAN_CITY, FALSE, PALETTE_DAY, FISHGROUP_SHORE),
     map_header_(PewterSnoozeSpeechHouse, TILESET_HOUSE, INDOOR, LANDMARK_PEWTER_CITY, MUSIC_VIRIDIAN_CITY, FALSE, PALETTE_DAY, FISHGROUP_SHORE),
 };
-static_assert(lengthof(MapGroup_Pewter) == MAP_PEWTER_SNOOZE_SPEECH_HOUSE);
+static_assert(lengthof(MapGroup_Pewter) == MAP_PEWTER_SNOOZE_SPEECH_HOUSE, "");
 
 const struct MapHeader MapGroup_FastShip[] = {
     map_header_(OlivinePort, TILESET_PORT, ROUTE, LANDMARK_OLIVINE_CITY, MUSIC_VIOLET_CITY, FALSE, PALETTE_AUTO, FISHGROUP_OCEAN),
@@ -312,7 +312,7 @@ const struct MapHeader MapGroup_FastShip[] = {
     map_header_(MountMoonGiftShop, TILESET_TRADITIONAL_HOUSE, INDOOR, LANDMARK_MT_MOON, MUSIC_VIRIDIAN_CITY, FALSE, PALETTE_DAY, FISHGROUP_SHORE),
     map_header_(TinTowerRoof, TILESET_TOWER, ROUTE, LANDMARK_TIN_TOWER, MUSIC_TIN_TOWER, FALSE, PALETTE_AUTO, FISHGROUP_SHORE),
 };
-static_assert(lengthof(MapGroup_FastShip) == MAP_TIN_TOWER_ROOF);
+static_assert(lengthof(MapGroup_FastShip) == MAP_TIN_TOWER_ROOF, "");
 
 const struct MapHeader MapGroup_Indigo[] = {
     map_header_(Route23, TILESET_KANTO, TOWN, LANDMARK_ROUTE_23, MUSIC_INDIGO_PLATEAU, FALSE, PALETTE_AUTO, FISHGROUP_SHORE),
@@ -324,7 +324,7 @@ const struct MapHeader MapGroup_Indigo[] = {
     map_header_(LancesRoom, TILESET_CHAMPIONS_ROOM, INDOOR, LANDMARK_INDIGO_PLATEAU, MUSIC_INDIGO_PLATEAU, TRUE, PALETTE_DAY, FISHGROUP_SHORE),
     map_header_(HallOfFame, TILESET_ICE_PATH, INDOOR, LANDMARK_INDIGO_PLATEAU, MUSIC_NEW_BARK_TOWN, TRUE, PALETTE_DAY, FISHGROUP_SHORE),
 };
-static_assert(lengthof(MapGroup_Indigo) == MAP_HALL_OF_FAME);
+static_assert(lengthof(MapGroup_Indigo) == MAP_HALL_OF_FAME, "");
 
 const struct MapHeader MapGroup_Fuchsia[] = {
     map_header_(Route13, TILESET_KANTO, ROUTE, LANDMARK_ROUTE_13, MUSIC_ROUTE_12, FALSE, PALETTE_AUTO, FISHGROUP_QWILFISH_NO_SWARM),
@@ -341,7 +341,7 @@ const struct MapHeader MapGroup_Fuchsia[] = {
     map_header_(SafariZoneWardensHome, TILESET_HOUSE, INDOOR, LANDMARK_FUCHSIA_CITY, MUSIC_CELADON_CITY, FALSE, PALETTE_DAY, FISHGROUP_SHORE),
     map_header_(Route15FuchsiaGate, TILESET_GATE, GATE, LANDMARK_ROUTE_15, MUSIC_ROUTE_12, FALSE, PALETTE_DAY, FISHGROUP_SHORE),
 };
-static_assert(lengthof(MapGroup_Fuchsia) == MAP_ROUTE_15_FUCHSIA_GATE);
+static_assert(lengthof(MapGroup_Fuchsia) == MAP_ROUTE_15_FUCHSIA_GATE, "");
 
 const struct MapHeader MapGroup_Lavender[] = {
     map_header_(Route8, TILESET_KANTO, ROUTE, LANDMARK_ROUTE_8, MUSIC_ROUTE_3, FALSE, PALETTE_AUTO, FISHGROUP_SHORE),
@@ -359,7 +359,7 @@ const struct MapHeader MapGroup_Lavender[] = {
     map_header_(Route8SaffronGate, TILESET_GATE, GATE, LANDMARK_ROUTE_8, MUSIC_ROUTE_3, FALSE, PALETTE_DAY, FISHGROUP_SHORE),
     map_header_(Route12SuperRodHouse, TILESET_HOUSE, INDOOR, LANDMARK_ROUTE_12, MUSIC_VIRIDIAN_CITY, FALSE, PALETTE_DAY, FISHGROUP_SHORE),
 };
-static_assert(lengthof(MapGroup_Lavender) == MAP_ROUTE_12_SUPER_ROD_HOUSE);
+static_assert(lengthof(MapGroup_Lavender) == MAP_ROUTE_12_SUPER_ROD_HOUSE, "");
 
 const struct MapHeader MapGroup_Silver[] = {
     map_header_(Route28, TILESET_KANTO, ROUTE, LANDMARK_ROUTE_28, MUSIC_INDIGO_PLATEAU, FALSE, PALETTE_AUTO, FISHGROUP_POND),
@@ -367,7 +367,7 @@ const struct MapHeader MapGroup_Silver[] = {
     map_header_(SilverCavePokecenter1F, TILESET_POKECENTER, INDOOR, LANDMARK_SILVER_CAVE, MUSIC_POKEMON_CENTER, FALSE, PALETTE_DAY, FISHGROUP_SHORE),
     map_header_(Route28SteelWingHouse, TILESET_HOUSE, INDOOR, LANDMARK_ROUTE_28, MUSIC_AZALEA_TOWN, FALSE, PALETTE_DAY, FISHGROUP_SHORE),
 };
-static_assert(lengthof(MapGroup_Silver) == MAP_ROUTE_28_STEEL_WING_HOUSE);
+static_assert(lengthof(MapGroup_Silver) == MAP_ROUTE_28_STEEL_WING_HOUSE, "");
 
 const struct MapHeader MapGroup_CableClub[] = {
     map_header_(Pokecenter2F, TILESET_POKECENTER, INDOOR, LANDMARK_SPECIAL, MUSIC_POKEMON_CENTER, TRUE, PALETTE_DAY, FISHGROUP_SHORE),
@@ -377,7 +377,7 @@ const struct MapHeader MapGroup_CableClub[] = {
     map_header_(MobileTradeRoom, TILESET_MANSION, INDOOR, LANDMARK_SPECIAL, MUSIC_CHERRYGROVE_CITY, TRUE, PALETTE_DAY, FISHGROUP_SHORE),
     map_header_(MobileBattleRoom, TILESET_MANSION, INDOOR, LANDMARK_SPECIAL, MUSIC_CHERRYGROVE_CITY, TRUE, PALETTE_DAY, FISHGROUP_SHORE),
 };
-static_assert(lengthof(MapGroup_CableClub) == MAP_MOBILE_BATTLE_ROOM);
+static_assert(lengthof(MapGroup_CableClub) == MAP_MOBILE_BATTLE_ROOM, "");
 
 const struct MapHeader MapGroup_Celadon[] = {
     map_header_(Route7, TILESET_KANTO, ROUTE, LANDMARK_ROUTE_7, MUSIC_ROUTE_3, FALSE, PALETTE_AUTO, FISHGROUP_SHORE),
@@ -407,7 +407,7 @@ const struct MapHeader MapGroup_Celadon[] = {
     map_header_(Route7SaffronGate, TILESET_GATE, GATE, LANDMARK_ROUTE_7, MUSIC_ROUTE_3, FALSE, PALETTE_DAY, FISHGROUP_SHORE),
     map_header_(Route17Route18Gate, TILESET_GATE, GATE, LANDMARK_ROUTE_17, MUSIC_ROUTE_3, FALSE, PALETTE_DAY, FISHGROUP_SHORE),
 };
-static_assert(lengthof(MapGroup_Celadon) == MAP_ROUTE_17_ROUTE_18_GATE);
+static_assert(lengthof(MapGroup_Celadon) == MAP_ROUTE_17_ROUTE_18_GATE, "");
 
 const struct MapHeader MapGroup_Cianwood[] = {
     map_header_(Route40, TILESET_JOHTO, ROUTE, LANDMARK_ROUTE_40, MUSIC_ROUTE_36, FALSE, PALETTE_AUTO, FISHGROUP_SHORE),
@@ -427,7 +427,7 @@ const struct MapHeader MapGroup_Cianwood[] = {
     map_header_(Route40BattleTowerGate, TILESET_GATE, GATE, LANDMARK_BATTLE_TOWER, MUSIC_ROUTE_36, FALSE, PALETTE_DAY, FISHGROUP_SHORE),
     map_header_(BattleTowerOutside, TILESET_BATTLE_TOWER_OUTSIDE, ROUTE, LANDMARK_BATTLE_TOWER, MUSIC_BATTLE_TOWER_THEME, FALSE, PALETTE_AUTO, FISHGROUP_SHORE),
 };
-static_assert(lengthof(MapGroup_Cianwood) == MAP_BATTLE_TOWER_OUTSIDE);
+static_assert(lengthof(MapGroup_Cianwood) == MAP_BATTLE_TOWER_OUTSIDE, "");
 
 const struct MapHeader MapGroup_Viridian[] = {
     map_header_(Route2, TILESET_KANTO, ROUTE, LANDMARK_ROUTE_2, MUSIC_ROUTE_2, FALSE, PALETTE_AUTO, FISHGROUP_SHORE),
@@ -444,7 +444,7 @@ const struct MapHeader MapGroup_Viridian[] = {
     map_header_(Route2Gate, TILESET_GATE, GATE, LANDMARK_ROUTE_2, MUSIC_ROUTE_2, FALSE, PALETTE_DAY, FISHGROUP_SHORE),
     map_header_(VictoryRoadGate, TILESET_GATE, GATE, LANDMARK_ROUTE_26, MUSIC_INDIGO_PLATEAU, FALSE, PALETTE_DAY, FISHGROUP_SHORE),
 };
-static_assert(lengthof(MapGroup_Viridian) == MAP_VICTORY_ROAD_GATE);
+static_assert(lengthof(MapGroup_Viridian) == MAP_VICTORY_ROAD_GATE, "");
 
 const struct MapHeader MapGroup_NewBark[] = {
     map_header_(Route26, TILESET_JOHTO, ROUTE, LANDMARK_ROUTE_26, MUSIC_ROUTE_26, FALSE, PALETTE_AUTO, FISHGROUP_OCEAN),
@@ -461,7 +461,7 @@ const struct MapHeader MapGroup_NewBark[] = {
     map_header_(Route27SandstormHouse, TILESET_HOUSE, INDOOR, LANDMARK_ROUTE_27, MUSIC_AZALEA_TOWN, FALSE, PALETTE_DAY, FISHGROUP_SHORE),
     map_header_(Route29Route46Gate, TILESET_GATE, GATE, LANDMARK_ROUTE_29, MUSIC_ROUTE_29, FALSE, PALETTE_DAY, FISHGROUP_SHORE),
 };
-static_assert(lengthof(MapGroup_NewBark) == MAP_ROUTE_29_ROUTE_46_GATE);
+static_assert(lengthof(MapGroup_NewBark) == MAP_ROUTE_29_ROUTE_46_GATE, "");
 
 const struct MapHeader MapGroup_Saffron[] = {
     map_header_(Route5, TILESET_KANTO, ROUTE, LANDMARK_ROUTE_5, MUSIC_ROUTE_3, FALSE, PALETTE_AUTO, FISHGROUP_SHORE),
@@ -480,7 +480,7 @@ const struct MapHeader MapGroup_Saffron[] = {
     map_header_(Route5SaffronGate, TILESET_GATE, GATE, LANDMARK_ROUTE_5, MUSIC_VIRIDIAN_CITY, FALSE, PALETTE_DAY, FISHGROUP_SHORE),
     map_header_(Route5CleanseTagHouse, TILESET_HOUSE, INDOOR, LANDMARK_ROUTE_5, MUSIC_VIRIDIAN_CITY, FALSE, PALETTE_DAY, FISHGROUP_SHORE),
 };
-static_assert(lengthof(MapGroup_Saffron) == MAP_ROUTE_5_CLEANSE_TAG_HOUSE);
+static_assert(lengthof(MapGroup_Saffron) == MAP_ROUTE_5_CLEANSE_TAG_HOUSE, "");
 
 const struct MapHeader MapGroup_Cherrygrove[] = {
     map_header_(Route30, TILESET_JOHTO, ROUTE, LANDMARK_ROUTE_30, MUSIC_ROUTE_30, FALSE, PALETTE_AUTO, FISHGROUP_POND),
@@ -495,7 +495,7 @@ const struct MapHeader MapGroup_Cherrygrove[] = {
     map_header_(MrPokemonsHouse, TILESET_FACILITY, INDOOR, LANDMARK_ROUTE_30, MUSIC_CHERRYGROVE_CITY, FALSE, PALETTE_DAY, FISHGROUP_SHORE),
     map_header_(Route31VioletGate, TILESET_GATE, GATE, LANDMARK_ROUTE_31, MUSIC_ROUTE_30, FALSE, PALETTE_DAY, FISHGROUP_SHORE),
 };
-static_assert(lengthof(MapGroup_Cherrygrove) == MAP_ROUTE_31_VIOLET_GATE);
+static_assert(lengthof(MapGroup_Cherrygrove) == MAP_ROUTE_31_VIOLET_GATE, "");
 
 const struct MapHeader* MapGroupPointers[] = {
 //  pointers to the first map of each map group

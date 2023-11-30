@@ -25,4 +25,4 @@ const int8_t HappinessChanges[][3] = {
     [HAPPINESS_GROOMING-1]          = { +3,  +3,  +1}, // Grooming
     [HAPPINESS_GAINLEVELATHOME-1]   = {+10,  +6,  +4}, // Gained a level in the place where it was caught
 };
-static_assert(lengthof(HappinessChanges) == NUM_HAPPINESS_CHANGES);
+static_assert(lengthof(HappinessChanges) == NUM_HAPPINESS_CHANGES, "");

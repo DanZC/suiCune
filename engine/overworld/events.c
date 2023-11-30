@@ -1088,7 +1088,7 @@ const struct ObjectEventTypeFunc ObjectEventTypeArray[] = {
     //db ['-1'];  // end
 };
 
-static_assert(lengthof(ObjectEventTypeArray) == NUM_OBJECT_TYPES);
+static_assert(lengthof(ObjectEventTypeArray) == NUM_OBJECT_TYPES, "");
 
 void TryObjectEvent(void){
     FARCALL(aCheckFacingObject);

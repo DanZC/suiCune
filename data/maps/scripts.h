@@ -380,21 +380,21 @@
 
 // SECTION "Map Scripts 19", ROMX
 
-// #include "../../maps/AzaleaTown.asm"
-// #include "../../maps/GoldenrodCity.asm"
-// #include "../../maps/SaffronCity.asm"
-// #include "../../maps/MahoganyRedGyaradosSpeechHouse.asm"
-// #include "../../maps/MahoganyGym.asm"
-// #include "../../maps/MahoganyPokecenter1F.asm"
-// #include "../../maps/Route42EcruteakGate.asm"
-// #include "../../maps/LakeOfRageHiddenPowerHouse.asm"
-// #include "../../maps/LakeOfRageMagikarpHouse.asm"
-// #include "../../maps/Route43MahoganyGate.asm"
-// #include "../../maps/Route43Gate.asm"
-// #include "../../maps/RedsHouse1F.asm"
-// #include "../../maps/RedsHouse2F.asm"
-// #include "../../maps/BluesHouse.asm"
-// #include "../../maps/OaksLab.asm"
+// #include "../../maps/AzaleaTown.h"
+// #include "../../maps/GoldenrodCity.h"
+// #include "../../maps/SaffronCity.h"
+// #include "../../maps/MahoganyRedGyaradosSpeechHouse.h"
+// #include "../../maps/MahoganyGym.h"
+// #include "../../maps/MahoganyPokecenter1F.h"
+// #include "../../maps/Route42EcruteakGate.h"
+// #include "../../maps/LakeOfRageHiddenPowerHouse.h"
+// #include "../../maps/LakeOfRageMagikarpHouse.h"
+// #include "../../maps/Route43MahoganyGate.h"
+// #include "../../maps/Route43Gate.h"
+// #include "../../maps/RedsHouse1F.h"
+// #include "../../maps/RedsHouse2F.h"
+// #include "../../maps/BluesHouse.h"
+// #include "../../maps/OaksLab.h"
 
 
 // SECTION "Map Scripts 20", ROMX

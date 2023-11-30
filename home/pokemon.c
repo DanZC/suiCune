@@ -649,7 +649,7 @@ void GetBaseData_Conv(void){
 
     //  Get BaseData
         //DEC_A;
-        static_assert(BASE_DATA_SIZE == sizeof(struct BaseData));
+        static_assert(BASE_DATA_SIZE == sizeof(struct BaseData), "");
         const struct BaseData* hl = AbsGBROMToRAMAddr(aBaseData);
         
         CopyBytes_Conv2(&wram->wBaseDexNo, hl + (species - 1), sizeof(struct BaseData));

@@ -979,7 +979,7 @@ void InitialSetDSTFlag(void){
     PlaceHLTextAtBC_Conv2(coord(1, 14, wram->wTilemap), (struct TextCmd[]){ text_asm(InitialSetDSTFlag_Text) });
     // RET;
 
-Text:
+//Text:
     //text_asm ['?']
 }
 
@@ -1018,7 +1018,7 @@ void InitialClearDSTFlag(void){
     // RET;
 
 
-Text:
+//Text:
     //text_asm ['?']
 }
 

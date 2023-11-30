@@ -646,6 +646,15 @@ void gb_write(const uint_fast16_t addr, const uint8_t val) {
     (gb.gb_error)(GB_INVALID_WRITE, addr);
 }
 
+void advance_div(uint8_t cycles) {
+    gb.counter.div_count += cycles;
+
+    if (gb.counter.div_count >= DIV_CYCLES) {
+        gb.gb_reg.DIV++;
+        gb.counter.div_count -= DIV_CYCLES;
+    }
+}
+
 void finish_gb_cycle(void) {
     uint8_t inst_cycles;
     inst_cycles = 4;  // make this static to remove a dependancy on it
@@ -3790,6 +3799,13 @@ int main(int argc, char* argv[]) {
     }
 #endif
 
+        printf("Renderer could not clear: %s\n", SDL_GetError());
+        ret = EXIT_FAILURE;
+        goto out;
+    }
+
+    SDL_RenderPresent(dbg_renderer);
+#endif
     while (SDL_QuitRequested() == SDL_FALSE) {
         /* Execute CPU cycles until the screen has to be redrawn. */
         gb_run_frame();
@@ -3799,6 +3815,10 @@ quit:
 #if defined(NETWORKING_SUPPORT)
     if(socket != NULL)
         SDLNet_TCP_Close(socket);
+#endif
+#if defined(DEBUG_WINDOW)
+    SDL_DestroyRenderer(dbg_renderer);
+    SDL_DestroyWindow(dbg_window);
 #endif
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);

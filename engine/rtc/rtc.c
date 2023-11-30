@@ -443,6 +443,7 @@ okay_days:
 }
 
 void v_InitTime_Conv(uint8_t days, uint8_t hours, uint8_t mins, uint8_t secs){
+    SetStartTimeToSystemTime();
     // CALL(aGetClock);
     GetClock_Conv();
 

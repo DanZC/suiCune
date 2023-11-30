@@ -73,4 +73,4 @@ const char *TrainerPicPointers[] = {
 	[MYSTICALMAN-1] = MysticalmanPic,
 };
 
-static_assert(lengthof(TrainerPicPointers) == NUM_TRAINER_CLASSES);
+static_assert(lengthof(TrainerPicPointers) == NUM_TRAINER_CLASSES, "");

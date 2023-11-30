@@ -697,4 +697,4 @@ const uint8_t* OutdoorSprites[] = {
     SaffronGroupSprites,
     CherrygroveGroupSprites,
 };
-static_assert(lengthof(OutdoorSprites) == NUM_MAP_GROUPS);
+static_assert(lengthof(OutdoorSprites) == NUM_MAP_GROUPS, "");

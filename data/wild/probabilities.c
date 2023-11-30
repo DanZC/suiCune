@@ -14,7 +14,7 @@ const uint8_t GrassMonProbTable[] = {
     [5] = 99,  //  4% chance
     [6] = 100, //  1% chance
 };
-static_assert(lengthof(GrassMonProbTable) == NUM_GRASSMON);
+static_assert(lengthof(GrassMonProbTable) == NUM_GRASSMON, "");
 
 const uint8_t WaterMonProbTable[] = {
     // table_width 2, WaterMonProbTable
@@ -22,4 +22,4 @@ const uint8_t WaterMonProbTable[] = {
     [1] = 90,   // 30% chance
     [2] = 100,  // 10% chance
 };
-static_assert(lengthof(WaterMonProbTable) == NUM_WATERMON);
+static_assert(lengthof(WaterMonProbTable) == NUM_WATERMON, "");

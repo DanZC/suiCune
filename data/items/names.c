@@ -263,4 +263,4 @@ const char ItemNames[][20] = {
 	"TERU-SAMA@",
 	"?@",
 };
-static_assert(lengthof(ItemNames) == 0x100);
+static_assert(lengthof(ItemNames) == 0x100, "");

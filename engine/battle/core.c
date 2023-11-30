@@ -4,6 +4,7 @@
 #include "check_battle_scene.h"
 #include "read_trainer_party.h"
 #include "read_trainer_attributes.h"
+#include "trainer_huds.h"
 #include "../../home/battle.h"
 #include "../../home/audio.h"
 #include "../../home/array.h"
@@ -3202,7 +3203,7 @@ uint8_t HandleEnemySwitch_Conv(void){
     // CALL(aWaitBGMap);
     WaitBGMap_Conv();
     // FARCALL(aEnemySwitch_TrainerHud);
-    SafeCallGBAuto(aEnemySwitch_TrainerHud);
+    EnemySwitch_TrainerHud();
     // LD_A_addr(wLinkMode);
     // AND_A_A;
     // IF_Z goto not_linked;
@@ -5288,7 +5289,6 @@ void ShowSetEnemyMonAndSendOutAnimation(void){
 
 // skip_cry:
     // CALL(aUpdateEnemyHUD);
-    // SafeCallGBAuto(aUpdateEnemyHUD);
     UpdateEnemyHUD();
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
@@ -6989,7 +6989,7 @@ uint8_t DrawPlayerHUD_Conv(void){
     ClearBox_Conv2(coord(9, 7, wram->wTilemap), 11, 5);
 
     // FARCALL(aDrawPlayerHUDBorder);
-    SafeCallGBAuto(aDrawPlayerHUDBorder);
+    DrawPlayerHUDBorder();
 
     // hlcoord(18, 9, wTilemap);
     // LD_hl(0x73);  // vertical bar
@@ -7344,7 +7344,7 @@ uint8_t DrawEnemyHUD_Conv(void){
     ClearBox_Conv2(coord(1, 0, wram->wTilemap), 11, 4);
 
     // FARCALL(aDrawEnemyHUDBorder);
-    SafeCallGBAuto(aDrawEnemyHUDBorder);
+    DrawEnemyHUDBorder();
 
     // LD_A_addr(wTempEnemyMonSpecies);
     // LD_addr_A(wCurSpecies);
@@ -7385,21 +7385,22 @@ uint8_t DrawEnemyHUD_Conv(void){
     wram->wMonType = TEMPMON;
     // CALLFAR(aGetGender);
     u8_flag_s gender = GetGender_Conv();
-    uint8_t a;
     // LD_A(0x7f);
     // IF_C goto got_gender;
-    if(gender.flag) a = CHAR_SPACE;
+    if(gender.flag) 
+        *coord(9, 1, wram->wTilemap) = CHAR_SPACE;
     // LD_A(0xef);
     // IF_NZ goto got_gender;
-    else if(gender.a != 0) a = CHAR_MALE_ICON;
+    else if(gender.a != 0) 
+        *coord(9, 1, wram->wTilemap) = CHAR_MALE_ICON;
     // LD_A(0xf5);
-    else a = CHAR_FEMALE_ICON;
+    else 
+        *coord(9, 1, wram->wTilemap) = CHAR_FEMALE_ICON;
 
 
 // got_gender:
     // hlcoord(9, 1, wTilemap);
     // LD_hl_A;
-    *coord(9, 1, wram->wTilemap) = a;
 
     // hlcoord(6, 1, wTilemap);
     // PUSH_AF;
@@ -7420,7 +7421,7 @@ uint8_t DrawEnemyHUD_Conv(void){
         // LD_A_addr(wEnemyMonLevel);
         // LD_addr_A(wTempMonLevel);
         // CALL(aPrintLevel);
-        PrintLevel_Conv(coord(6, 1, wram->wTilemap) - ((a == CHAR_SPACE)? 1: 0));
+        PrintLevel_Conv(coord(6, 1, wram->wTilemap) - ((gender.flag)? 1: 0));
     }
 
 // skip_level:
@@ -11803,7 +11804,6 @@ void InitEnemy(void){
         // CALL(aInitEnemyTrainer);
         return InitEnemyTrainer_Conv(wram->wOtherTrainerClass);
         // RET;
-        return;
     }
     return InitEnemyWildmon();
 
@@ -13097,7 +13097,7 @@ void BattleStartMessage(void){
 PlaceBattleStartText:
     // PUSH_HL;
     // FARCALL(aBattleStart_TrainerHuds);
-    SafeCallGBAuto(aBattleStart_TrainerHuds);
+    BattleStart_TrainerHuds();
     // POP_HL;
     // CALL(aStdBattleTextbox);
     StdBattleTextbox_Conv2(hl);
