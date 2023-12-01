@@ -21,6 +21,12 @@ struct ByteWord
     uint16_t word;
 };
 
+struct WordByte
+{
+    uint16_t word;
+    uint8_t byte;
+};
+
 struct Coords
 {
     int8_t x;
@@ -305,10 +311,10 @@ struct BaseData
     uint8_t catchRate;
     uint8_t exp;
     union {
-        uint8_t items[2];
+        item_t items[2];
         struct {
-            uint8_t item1;
-            uint8_t item2;
+            item_t item1;
+            item_t item2;
         };
     };
     uint8_t gender;
@@ -1305,6 +1311,39 @@ struct CoordsTileId
     int8_t x;
     int8_t y;
     uint8_t tileId;
+};
+
+struct EvoData {
+    uint8_t type;
+    union {
+        struct {
+            uint8_t level;
+        } lvl;
+        struct {
+            item_t useItem;
+        } item;
+        struct {
+            item_t heldItem;
+        } trade;
+        struct {
+            uint8_t timeOfDay;
+        } happiness;
+        struct {
+            uint8_t level;
+            uint8_t atkDefCmp;
+        } stat;
+    };
+    species_t species;
+};
+
+struct LevelMove {
+    uint8_t level;
+    move_t move;
+};
+
+struct EvoMoves {
+    const struct EvoData* evolutions;
+    const struct LevelMove* learnset;
 };
 
 typedef struct Script script_s;

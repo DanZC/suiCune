@@ -1,0 +1,588 @@
+#include "../../constants.h"
+#include "../../charmap.h"
+#include "magikarp.h"
+#include "../../home/print_text.h"
+#include "../../home/text.h"
+#include "../../data/events/magikarp_lengths.h"
+#include "../../data/text/common.h"
+
+void CheckMagikarpLength(void){
+// Returns 3 if you select a Magikarp that beats the previous record.
+// Returns 2 if you select a Magikarp, but the current record is longer.
+// Returns 1 if you press B in the Pokemon selection menu.
+// Returns 0 if the Pokemon you select is not a Magikarp.
+
+// Let's start by selecting a Magikarp.
+    FARCALL(aSelectMonFromParty);
+    IF_C goto declined;
+    LD_A_addr(wCurPartySpecies);
+    CP_A(MAGIKARP);
+    IF_NZ goto not_magikarp;
+
+// Now let's compute its length based on its DVs and ID.
+    LD_A_addr(wCurPartyMon);
+    LD_HL(wPartyMon1Species);
+    LD_BC(PARTYMON_STRUCT_LENGTH);
+    CALL(aAddNTimes);
+    PUSH_HL;
+    LD_BC(MON_DVS);
+    ADD_HL_BC;
+    LD_D_H;
+    LD_E_L;
+    POP_HL;
+    LD_BC(MON_ID);
+    ADD_HL_BC;
+    LD_B_H;
+    LD_C_L;
+    CALL(aCalcMagikarpLength);
+    CALL(aPrintMagikarpLength);
+    FARCALL(aStubbedTrainerRankings_MagikarpLength);
+    LD_HL(mCheckMagikarpLength_MagikarpGuruMeasureText);
+    CALL(aPrintText);
+
+// Did we beat the record?
+    LD_HL(wMagikarpLength);
+    LD_DE(wBestMagikarpLengthFeet);
+    LD_C(2);
+    CALL(aCompareBytes);
+    IF_NC goto not_long_enough;
+
+// NEW RECORD!!! Let's save that.
+    LD_HL(wMagikarpLength);
+    LD_DE(wBestMagikarpLengthFeet);
+    LD_A_hli;
+    LD_de_A;
+    INC_DE;
+    LD_A_hl;
+    LD_de_A;
+    INC_DE;
+    LD_A_addr(wCurPartyMon);
+    LD_HL(wPartyMonOTs);
+    CALL(aSkipNames);
+    CALL(aCopyBytes);
+    LD_A(MAGIKARPLENGTH_BEAT_RECORD);
+    LD_addr_A(wScriptVar);
+    RET;
+
+
+not_long_enough:
+    LD_A(MAGIKARPLENGTH_TOO_SHORT);
+    LD_addr_A(wScriptVar);
+    RET;
+
+
+declined:
+    LD_A(MAGIKARPLENGTH_REFUSED);
+    LD_addr_A(wScriptVar);
+    RET;
+
+
+not_magikarp:
+    XOR_A_A;  // MAGIKARPLENGTH_NOT_MAGIKARP
+    LD_addr_A(wScriptVar);
+    RET;
+
+
+MagikarpGuruMeasureText:
+    //text_far ['_MagikarpGuruMeasureText']
+    //text_end ['?']
+}
+
+void Magikarp_LoadFeetInchesChars(void){
+    static const char feetinchchars[] = "gfx/font/feet_inches.png";
+    // LD_HL(vTiles2 + LEN_2BPP_TILE * "′");  // $6e
+    // LD_HL(vTiles2 + LEN_2BPP_TILE * CHAR_FEET);
+    // LD_DE(mMagikarp_LoadFeetInchesChars_feetinchchars);
+    // LD_BC((BANK(aMagikarp_LoadFeetInchesChars_feetinchchars) << 8) | 2);
+    // CALL(aRequest2bpp);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * CHAR_FEET, feetinchchars, 0, 2);
+    // RET;
+}
+
+void PrintMagikarpLength(void){
+    // CALL(aMagikarp_LoadFeetInchesChars);
+    Magikarp_LoadFeetInchesChars();
+    union Register de = {.reg = wram->wMagikarpLength};
+    // LD_HL(wStringBuffer1);
+    // LD_DE(wMagikarpLength);
+    // LD_BC((PRINTNUM_LEFTALIGN | 1 << 8) | 2);
+    // CALL(aPrintNum);
+    uint8_t* hl = PrintNum_Conv2(wram->wStringBuffer1, &de.lo, PRINTNUM_LEFTALIGN | 1, 2);
+    // LD_hl(0x6e);
+    // INC_HL;
+    *(hl++) = CHAR_FEET;
+    // LD_DE(wMagikarpLength + 1);
+    // LD_BC((PRINTNUM_LEFTALIGN | 1 << 8) | 2);
+    // CALL(aPrintNum);
+    hl = PrintNum_Conv2(hl, &de.hi, PRINTNUM_LEFTALIGN | 1, 2);
+    // LD_hl(0x6f);
+    // INC_HL;
+    *(hl++) = CHAR_INCHES;
+    // LD_hl(0x50);
+    *hl = CHAR_TERM;
+    // RET;
+}
+
+void CalcMagikarpLength(void){
+//  Return Magikarp's length (in feet and inches) at wMagikarpLength (big endian).
+//
+//  input:
+//    de: wEnemyMonDVs
+//    bc: wPlayerID
+
+//  This function is poorly commented.
+
+//  In short, it generates a value between 190 and 1786 using
+//  a Magikarp's DVs and its trainer ID. This value is further
+//  filtered in LoadEnemyMon to make longer Magikarp even rarer.
+
+//  The value is generated from a lookup table.
+//  The index is determined by the dv xored with the player's trainer id.
+
+//  bc = rrc(dv[0]) ++ rrc(dv[1]) ^ rrc(id)
+
+//  if bc < 10:    [wMagikarpLength] = c + 190
+//  if bc ≥ $ff00: [wMagikarpLength] = c + 1370
+//  else:          [wMagikarpLength] = z * 100 + (bc - x) / y
+
+//  X, Y, and Z depend on the value of b as follows:
+
+//  if b = 0:        x =   310,  y =   2,  z =  3
+//  if b = 1:        x =   710,  y =   4,  z =  4
+//  if b = 2-9:      x =  2710,  y =  20,  z =  5
+//  if b = 10-29:    x =  7710,  y =  50,  z =  6
+//  if b = 30-68:    x = 17710,  y = 100,  z =  7
+//  if b = 69-126:   x = 32710,  y = 150,  z =  8
+//  if b = 127-185:  x = 47710,  y = 150,  z =  9
+//  if b = 186-224:  x = 57710,  y = 100,  z = 10
+//  if b = 225-243:  x = 62710,  y =  50,  z = 11
+//  if b = 244-251:  x = 64710,  y =  20,  z = 12
+//  if b = 252-253:  x = 65210,  y =   5,  z = 13
+//  if b = 254:      x = 65410,  y =   2,  z = 14
+
+// bc = rrc(dv[0]) ++ rrc(dv[1]) ^ rrc(id)
+
+// id
+    LD_H_B;
+    LD_L_C;
+    LD_A_hli;
+    LD_B_A;
+    LD_C_hl;
+    RRC_B;
+    RRC_C;
+
+// dv
+    LD_A_de;
+    INC_DE;
+    RRCA;
+    RRCA;
+    XOR_A_B;
+    LD_B_A;
+
+    LD_A_de;
+    RRCA;
+    RRCA;
+    XOR_A_C;
+    LD_C_A;
+
+// if bc < 10:
+//     de = bc + 190
+//     break
+
+    LD_A_B;
+    AND_A_A;
+    IF_NZ goto no;
+    LD_A_C;
+    CP_A(10);
+    IF_NC goto no;
+
+    LD_HL(190);
+    ADD_HL_BC;
+    LD_D_H;
+    LD_E_L;
+    goto done;
+
+
+no:
+
+    LD_HL(mMagikarpLengths);
+    LD_A(2);
+    LD_addr_A(wTempByteValue);
+
+
+read:
+    LD_A_hli;
+    LD_E_A;
+    LD_A_hli;
+    LD_D_A;
+    CALL(aCalcMagikarpLength_BCLessThanDE);
+    IF_NC goto next;
+
+// c = (bc - de) / [hl]
+    CALL(aCalcMagikarpLength_BCMinusDE);
+    LD_A_B;
+    LDH_addr_A(hDividend + 0);
+    LD_A_C;
+    LDH_addr_A(hDividend + 1);
+    LD_A_hl;
+    LDH_addr_A(hDivisor);
+    LD_B(2);
+    CALL(aDivide);
+    LDH_A_addr(hQuotient + 3);
+    LD_C_A;
+
+// de = c + 100 × (2 + i)
+    XOR_A_A;
+    LDH_addr_A(hMultiplicand + 0);
+    LDH_addr_A(hMultiplicand + 1);
+    LD_A(100);
+    LDH_addr_A(hMultiplicand + 2);
+    LD_A_addr(wTempByteValue);
+    LDH_addr_A(hMultiplier);
+    CALL(aMultiply);
+    LD_B(0);
+    LDH_A_addr(hProduct + 3);
+    ADD_A_C;
+    LD_E_A;
+    LDH_A_addr(hProduct + 2);
+    ADC_A_B;
+    LD_D_A;
+    goto done;
+
+
+next:
+    INC_HL;  // align to next triplet
+    LD_A_addr(wTempByteValue);
+    INC_A;
+    LD_addr_A(wTempByteValue);
+    CP_A(16);
+    IF_C goto read;
+
+    CALL(aCalcMagikarpLength_BCMinusDE);
+    LD_HL(1600);
+    ADD_HL_BC;
+    LD_D_H;
+    LD_E_L;
+
+
+done:
+// convert from mm to feet and inches
+// in = mm / 25.4
+// ft = in / 12
+
+// hl = de × 10
+    LD_H_D;
+    LD_L_E;
+    ADD_HL_HL;
+    ADD_HL_HL;
+    ADD_HL_DE;
+    ADD_HL_HL;
+
+// hl = hl / 254
+    LD_DE(-254);
+    LD_A(-1);
+
+div_254:
+    INC_A;
+    ADD_HL_DE;
+    IF_C goto div_254;
+
+// d, e = hl / 12, hl % 12
+    LD_D(0);
+
+mod_12:
+    CP_A(12);
+    IF_C goto ok;
+    SUB_A(12);
+    INC_D;
+    goto mod_12;
+
+ok:
+    LD_E_A;
+
+    LD_HL(wMagikarpLength);
+    LD_hl_D;  // ft
+    INC_HL;
+    LD_hl_E;  // in
+    RET;
+
+
+BCLessThanDE:
+//  Intention: Return bc < de.
+//  Reality: Return b < d.
+    LD_A_B;
+    CP_A_D;
+    RET_C ;
+    RET_NC ;  // whoops
+    LD_A_C;
+    CP_A_E;
+    RET;
+
+
+BCMinusDE:
+//  bc -= de
+    LD_A_C;
+    SUB_A_E;
+    LD_C_A;
+    LD_A_B;
+    SBC_A_D;
+    LD_B_A;
+    RET;
+
+// INCLUDE "data/events/magikarp_lengths.asm"
+
+    return MagikarpHouseSign();
+}
+
+//  Intention: Return bc < de.
+//  Reality: Return b < d.
+static bool CalcMagikarpLength_BCLessThanDE(uint16_t bc, uint16_t de) {
+    // LD_A_B;
+    // CP_A_D;
+    // RET_C ;
+    // RET_NC ;  // whoops
+    return HIGH(bc) < HIGH(de);
+    // LD_A_C;
+    // CP_A_E;
+    // RET;
+}
+
+//  bc -= de
+static uint16_t CalcMagikarpLength_BCMinusDE(uint16_t bc, uint16_t de) {
+    // LD_A_C;
+    // SUB_A_E;
+    // LD_C_A;
+    // LD_A_B;
+    // SBC_A_D;
+    // LD_B_A;
+    // RET;
+    return bc - de;
+}
+
+void CalcMagikarpLength_Conv(uint16_t de, uint16_t bc){
+//  Return Magikarp's length (in feet and inches) at wMagikarpLength (big endian).
+//
+//  input:
+//    de: wEnemyMonDVs
+//    bc: wPlayerID
+
+//  This function is poorly commented.
+
+//  In short, it generates a value between 190 and 1786 using
+//  a Magikarp's DVs and its trainer ID. This value is further
+//  filtered in LoadEnemyMon to make longer Magikarp even rarer.
+
+//  The value is generated from a lookup table.
+//  The index is determined by the dv xored with the player's trainer id.
+
+//  bc = rrc(dv[0]) ++ rrc(dv[1]) ^ rrc(id)
+
+//  if bc < 10:    [wMagikarpLength] = c + 190
+//  if bc ≥ $ff00: [wMagikarpLength] = c + 1370
+//  else:          [wMagikarpLength] = z * 100 + (bc - x) / y
+
+//  X, Y, and Z depend on the value of b as follows:
+
+//  if b = 0:        x =   310,  y =   2,  z =  3
+//  if b = 1:        x =   710,  y =   4,  z =  4
+//  if b = 2-9:      x =  2710,  y =  20,  z =  5
+//  if b = 10-29:    x =  7710,  y =  50,  z =  6
+//  if b = 30-68:    x = 17710,  y = 100,  z =  7
+//  if b = 69-126:   x = 32710,  y = 150,  z =  8
+//  if b = 127-185:  x = 47710,  y = 150,  z =  9
+//  if b = 186-224:  x = 57710,  y = 100,  z = 10
+//  if b = 225-243:  x = 62710,  y =  50,  z = 11
+//  if b = 244-251:  x = 64710,  y =  20,  z = 12
+//  if b = 252-253:  x = 65210,  y =   5,  z = 13
+//  if b = 254:      x = 65410,  y =   2,  z = 14
+
+// bc = rrc(dv[0]) ++ rrc(dv[1]) ^ rrc(id)
+
+// id
+    // LD_H_B;
+    // LD_L_C;
+    // LD_A_hli;
+    // LD_B_A;
+    // LD_C_hl;
+    union Register id = {.reg = NativeToBigEndian16(bc)};
+    // RRC_B;
+    // RRC_C;
+    uint8_t carry;
+    id.hi = RotateRightCarry8(id.hi, &carry);
+    id.lo = RotateRightCarry8(id.lo, &carry);
+
+// dv
+    // LD_A_de;
+    union Register dv = {.reg = NativeToBigEndian16(de)};
+    // INC_DE;
+    // RRCA;
+    // RRCA;
+    dv.hi = RotateRightC8(dv.hi);
+    dv.hi = RotateRightC8(dv.hi);
+    // XOR_A_B;
+    // LD_B_A;
+    id.hi = (dv.hi ^ id.hi);
+
+    // LD_A_de;
+    // RRCA;
+    // RRCA;
+    dv.lo = RotateRightC8(dv.lo);
+    dv.lo = RotateRightC8(dv.lo);
+    // XOR_A_C;
+    // LD_C_A;
+    id.lo = (dv.lo ^ id.lo);
+
+// if bc < 10:
+//     de = bc + 190
+//     break
+
+    // LD_A_B;
+    // AND_A_A;
+    // IF_NZ goto no;
+    // LD_A_C;
+    // CP_A(10);
+    // IF_NC goto no;
+    if(id.reg < 10) {
+
+        // LD_HL(190);
+        // ADD_HL_BC;
+        // LD_D_H;
+        // LD_E_L;
+        dv.reg = id.reg + 190;
+        // goto done;
+    }
+
+// no:
+    // LD_HL(mMagikarpLengths);
+    const struct WordByte* hl = MagikarpLengths;
+    // LD_A(2);
+    // LD_addr_A(wTempByteValue);
+    uint8_t temp = 2;
+    uint16_t de2;
+
+    do {
+    // read:
+        // LD_A_hli;
+        // LD_E_A;
+        // LD_A_hli;
+        // LD_D_A;
+        // CALL(aCalcMagikarpLength_BCLessThanDE);
+        // IF_NC goto next;
+        if(!CalcMagikarpLength_BCLessThanDE(id.reg, hl->word))
+            continue;
+
+    // c = (bc - de) / [hl]
+        // CALL(aCalcMagikarpLength_BCMinusDE);
+        // LD_A_B;
+        // LDH_addr_A(hDividend + 0);
+        // LD_A_C;
+        // LDH_addr_A(hDividend + 1);
+        // LD_A_hl;
+        // LDH_addr_A(hDivisor);
+        // LD_B(2);
+        // CALL(aDivide);
+        // LDH_A_addr(hQuotient + 3);
+        // LD_C_A;
+        uint8_t c = (uint8_t)(CalcMagikarpLength_BCMinusDE(id.reg, hl->word) / hl->byte);
+
+    // de = c + 100 × (2 + i)
+        // XOR_A_A;
+        // LDH_addr_A(hMultiplicand + 0);
+        // LDH_addr_A(hMultiplicand + 1);
+        // LD_A(100);
+        // LDH_addr_A(hMultiplicand + 2);
+        // LD_A_addr(wTempByteValue);
+        // LDH_addr_A(hMultiplier);
+        // CALL(aMultiply);
+        // LD_B(0);
+        // LDH_A_addr(hProduct + 3);
+        // ADD_A_C;
+        // LD_E_A;
+        // LDH_A_addr(hProduct + 2);
+        // ADC_A_B;
+        // LD_D_A;
+        // goto done;
+        de2 = c + (100 * temp);
+        goto done;
+
+
+    // next:
+        // INC_HL;  // align to next triplet
+        // LD_A_addr(wTempByteValue);
+        // INC_A;
+        // LD_addr_A(wTempByteValue);
+        // CP_A(16);
+        // IF_C goto read;
+    } while(hl++, ++temp < 16);
+
+    // CALL(aCalcMagikarpLength_BCMinusDE);
+    // LD_HL(1600);
+    // ADD_HL_BC;
+    // LD_D_H;
+    // LD_E_L;
+    de2 = CalcMagikarpLength_BCMinusDE(id.reg, hl->word) + 1600;
+
+done:
+// convert from mm to feet and inches
+// in = mm / 25.4
+// ft = in / 12
+
+// hl = de × 10
+    // LD_H_D;
+    // LD_L_E;
+    // ADD_HL_HL;
+    // ADD_HL_HL;
+    // ADD_HL_DE;
+    // ADD_HL_HL;
+    uint16_t hl2 = de2 * 10;
+
+// hl = hl / 254
+    // LD_DE(-254);
+    // LD_A(-1);
+
+// div_254:
+    // INC_A;
+    // ADD_HL_DE;
+    // IF_C goto div_254;
+    hl2 /= 254;
+
+// d, e = hl / 12, hl % 12
+    // LD_D(0);
+
+// mod_12:
+    // CP_A(12);
+    // IF_C goto ok;
+    // SUB_A(12);
+    // INC_D;
+    // goto mod_12;
+
+// ok:
+    // LD_E_A;
+
+    // LD_HL(wMagikarpLength);
+    // LD_hl_D;  // ft
+    // INC_HL;
+    // LD_hl_E;  // in
+    wram->wMagikarpLength = ((hl2 / 12) & 0xff) | (((hl2 % 12) & 0xff) << 8);
+    // RET;
+
+// INCLUDE "data/events/magikarp_lengths.asm"
+}
+
+void MagikarpHouseSign(void){
+    // LD_A_addr(wBestMagikarpLengthFeet);
+    // LD_addr_A(wMagikarpLength);
+    // LD_A_addr(wBestMagikarpLengthInches);
+    // LD_addr_A(wMagikarpLength + 1);
+    wram->wMagikarpLength = (wram->wBestMagikarpLengthFeet) | (wram->wBestMagikarpLengthInches << 8);
+    // CALL(aPrintMagikarpLength);
+    PrintMagikarpLength();
+    // LD_HL(mMagikarpHouseSign_KarpGuruRecordText);
+    // CALL(aPrintText);
+    PrintText_Conv2((struct TextCmd[]) {
+    // KarpGuruRecordText:
+        text_far(v_KarpGuruRecordText)
+        text_end
+    });
+    // RET;
+}

@@ -457,6 +457,8 @@ bool MainMenuJoypadLoop_Conv(void){
 }
 
 void MainMenu_PrintCurrentTimeAndDay(void){
+    MainMenu_PrintCurrentTimeAndDay_Conv();
+    RET;
     LD_A_addr(wSaveFileExists);
     AND_A_A;
     RET_Z ;
@@ -676,19 +678,18 @@ static void MainMenu_PrintCurrentTimeAndDay_PlaceTime(void) {
     // CALL(aPrintNum);
     PrintNum_Conv2(hl, &hram->hMinutes, PRINTNUM_LEADINGZEROS | 1, 2);
     // RET;
+    return;
 
 
-minString:
+// minString:
 //   //  unreferenced
     //db ['"min.@"'];
 
 
-MainMenuTimeUnknownText:
+// MainMenuTimeUnknownText:
 //   //  unreferenced
     //text_far ['_MainMenuTimeUnknownText']
     //text_end ['?']
-
-    return ClearTilemapEtc();
 }
 
 void MainMenu_PrintCurrentTimeAndDay_Conv(void){

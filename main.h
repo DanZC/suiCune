@@ -35,7 +35,7 @@
 #include "engine/items/items.h"
 //#include "engine/overworld/player_step.h"
 //#include "engine/battle/anim_hp_bar.h"
-//#include "engine/pokemon/move_mon.h"
+#include "engine/pokemon/move_mon.h"
 #include "engine/pokemon/bills_pc_top.h"
 //#include "engine/pokemon/breedmon_level_growth.h"
 //#include "engine/events/bug_contest/caught_mon.h"
@@ -66,7 +66,7 @@
 //#include "engine/events/pokerus/apply_pokerus_tick.h"
 //#include "engine/events/bug_contest/contest_2.h"
 //#include "engine/pokemon/correct_party_errors.h"
-//#include "engine/math/get_square_root.h"
+#include "engine/math/get_square_root.h"
 
 // SECTION "bank5", ROMX
 
@@ -111,7 +111,7 @@
 //#include "engine/events/prof_oaks_pc.h"
 //#include "engine/overworld/decorations.h"
 //#include "engine/pokemon/level_up_happiness.h"
-//#include "engine/battle/read_trainer_dvs.h"
+#include "engine/battle/read_trainer_dvs.h"
 //#include "engine/battle/returntobattle_useball.h"
 //#include "engine/battle/consume_held_item.h"
 //#include "data/moves/effects.h"
@@ -156,7 +156,7 @@
 
 //#include "engine/pokedex/pokedex.h"
 //#include "data/moves/moves.h"
-//#include "engine/pokemon/evolve.h"
+#include "engine/pokemon/evolve.h"
 
 // SECTION "bank11", ROMX
 
@@ -449,7 +449,7 @@
 //#include "engine/pokedex/new_pokedex_entry.h"
 //#include "engine/link/time_capsule_2.h"
 //#include "engine/pokedex/unown_dex.h"
-//#include "engine/events/magikarp.h"
+#include "engine/events/magikarp.h"
 #include "engine/battle/hidden_power.h"
 //#include "engine/battle/misc.h"
 

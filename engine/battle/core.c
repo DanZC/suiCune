@@ -4,6 +4,7 @@
 #include "check_battle_scene.h"
 #include "read_trainer_party.h"
 #include "read_trainer_attributes.h"
+#include "read_trainer_dvs.h"
 #include "trainer_huds.h"
 #include "../../home/battle.h"
 #include "../../home/audio.h"
@@ -31,12 +32,16 @@
 #include "../pokemon/stats_screen.h"
 #include "../pokemon/tempmon.h"
 #include "../pokemon/mon_stats.h"
+#include "../pokemon/move_mon.h"
+#include "../pokemon/evolve.h"
 #include "../../data/text/battle.h"
 #include "../../data/text/common.h"
 #include "../../data/wild/treemons_asleep.h"
+#include "../../data/wild/unlocked_unowns.h"
 #include "../battle_anims/anim_commands.h"
 #include "../events/catch_tutorial_input.h"
 #include "../events/happiness_egg.h"
+#include "../events/magikarp.h"
 #include "../../charmap.h"
 
 //  Core components of the battle engine.
@@ -6160,60 +6165,75 @@ void ResetPlayerStatLevels(void){
 }
 
 void InitEnemyMon(void){
-    LD_A_addr(wCurPartyMon);
-    LD_HL(wOTPartyMon1Species);
-    CALL(aGetPartyLocation);
-    LD_DE(wEnemyMonSpecies);
-    LD_BC(MON_ID);
-    CALL(aCopyBytes);
-    LD_BC(MON_DVS - MON_ID);
-    ADD_HL_BC;
-    LD_DE(wEnemyMonDVs);
-    LD_BC(MON_POKERUS - MON_DVS);
-    CALL(aCopyBytes);
-    INC_HL;
-    INC_HL;
-    INC_HL;
-    LD_DE(wEnemyMonLevel);
-    LD_BC(PARTYMON_STRUCT_LENGTH - MON_LEVEL);
-    CALL(aCopyBytes);
-    LD_A_addr(wEnemyMonSpecies);
-    LD_addr_A(wCurSpecies);
-    CALL(aGetBaseData);
-    LD_HL(wOTPartyMonNicknames);
-    LD_A_addr(wCurPartyMon);
-    CALL(aSkipNames);
-    LD_DE(wEnemyMonNickname);
-    LD_BC(MON_NAME_LENGTH);
-    CALL(aCopyBytes);
-    LD_HL(wEnemyMonAttack);
-    LD_DE(wEnemyStats);
-    LD_BC(PARTYMON_STRUCT_LENGTH - MON_ATK);
-    CALL(aCopyBytes);
-    CALL(aApplyStatusEffectOnEnemyStats);
-    LD_HL(wBaseType1);
-    LD_DE(wEnemyMonType1);
-    LD_A_hli;
-    LD_de_A;
-    INC_DE;
-    LD_A_hl;
-    LD_de_A;
+    // LD_A_addr(wCurPartyMon);
+    // LD_HL(wOTPartyMon1Species);
+    // CALL(aGetPartyLocation);
+    // LD_DE(wEnemyMonSpecies);
+    // LD_BC(MON_ID);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(&wram->wEnemyMon.species, &wram->wOTPartyMon[wram->wCurPartyMon].mon.species, MON_ID);
+    // LD_BC(MON_DVS - MON_ID);
+    // ADD_HL_BC;
+    // LD_DE(wEnemyMonDVs);
+    // LD_BC(MON_POKERUS - MON_DVS);
+    // CALL(aCopyBytes);
+    wram->wEnemyMon.dvs = wram->wOTPartyMon[wram->wCurPartyMon].mon.DVs;
+    CopyBytes_Conv2(wram->wEnemyMon.pp, wram->wOTPartyMon[wram->wCurPartyMon].mon.PP, NUM_MOVES * sizeof(move_t));
+    wram->wEnemyMon.happiness = wram->wOTPartyMon[wram->wCurPartyMon].mon.happiness;
+    // INC_HL;
+    // INC_HL;
+    // INC_HL;
+    // LD_DE(wEnemyMonLevel);
+    // LD_BC(PARTYMON_STRUCT_LENGTH - MON_LEVEL);
+    // CALL(aCopyBytes);
+    wram->wEnemyMon.level = wram->wOTPartyMon[wram->wCurPartyMon].mon.level;
+    CopyBytes_Conv2(wram->wEnemyMon.status, &wram->wOTPartyMon[wram->wCurPartyMon].status, PARTYMON_STRUCT_LENGTH - MON_STATUS);
+    // LD_A_addr(wEnemyMonSpecies);
+    // LD_addr_A(wCurSpecies);
+    wram->wCurSpecies = wram->wEnemyMon.species;
+    // CALL(aGetBaseData);
+    GetBaseData_Conv();
+    // LD_HL(wOTPartyMonNicknames);
+    // LD_A_addr(wCurPartyMon);
+    // CALL(aSkipNames);
+    // LD_DE(wEnemyMonNickname);
+    // LD_BC(MON_NAME_LENGTH);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wEnemyMonNickname, wram->wOTPartyMonNickname[wram->wCurPartyMon], MON_NAME_LENGTH);
+    // LD_HL(wEnemyMonAttack);
+    // LD_DE(wEnemyStats);
+    // LD_BC(PARTYMON_STRUCT_LENGTH - MON_ATK);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wEnemyStats, wram->wEnemyMon.stats, sizeof(wram->wEnemyStats));
+    // CALL(aApplyStatusEffectOnEnemyStats);
+    ApplyStatusEffectOnEnemyStats();
+    // LD_HL(wBaseType1);
+    // LD_DE(wEnemyMonType1);
+    // LD_A_hli;
+    // LD_de_A;
+    wram->wEnemyMon.type1 = wram->wBaseType1;
+    // INC_DE;
+    // LD_A_hl;
+    // LD_de_A;
+    wram->wEnemyMon.type2 = wram->wBaseType2;
 // The enemy mon's base Sp. Def isn't needed since its base
 // Sp. Atk is also used to calculate Sp. Def stat experience.
-    LD_HL(wBaseStats);
-    LD_DE(wEnemyMonBaseStats);
-    LD_B(NUM_STATS - 1);
-
-loop:
-    LD_A_hli;
-    LD_de_A;
-    INC_DE;
-    DEC_B;
-    IF_NZ goto loop;
-    LD_A_addr(wCurPartyMon);
-    LD_addr_A(wCurOTMon);
-    RET;
-
+    // LD_HL(wBaseStats);
+    // LD_DE(wEnemyMonBaseStats);
+    // LD_B(NUM_STATS - 1);
+    for(uint8_t b = 0; b < NUM_STATS - 1; ++b) {
+    // loop:
+        // LD_A_hli;
+        // LD_de_A;
+        // INC_DE;
+        wram->wEnemyMonBaseStats[b] = wram->wBaseStats[b];
+        // DEC_B;
+        // IF_NZ goto loop;
+    }
+    // LD_A_addr(wCurPartyMon);
+    // LD_addr_A(wCurOTMon);
+    wram->wCurOTMon = wram->wCurPartyMon;
+    // RET;
 }
 
 void SwitchPlayerMon(void){
@@ -8797,483 +8817,583 @@ void LoadEnemyMon(void){
 //    BattleRandom is used to ensure sync between Game Boys
 
 //  Clear the whole enemy mon struct (wEnemyMon)
-    XOR_A_A;
-    LD_HL(wEnemyMonSpecies);
-    LD_BC(wEnemyMonEnd - wEnemyMon);
-    CALL(aByteFill);
+    // XOR_A_A;
+    // LD_HL(wEnemyMonSpecies);
+    // LD_BC(wEnemyMonEnd - wEnemyMon);
+    // CALL(aByteFill);
+    ByteFill_Conv2(&wram->wEnemyMon, sizeof(wram->wEnemyMon), 0);
 
 //  We don't need to be here if we're in a link battle
-    LD_A_addr(wLinkMode);
-    AND_A_A;
-    JP_NZ (mInitEnemyMon);
+    // LD_A_addr(wLinkMode);
+    // AND_A_A;
+    // JP_NZ (mInitEnemyMon);
+    if(wram->wLinkMode != 0) {
+        InitEnemyMon();
+        RET;
+    }
 
 //  and also not in a BattleTower-Battle
-    LD_A_addr(wInBattleTowerBattle);
-    BIT_A(0);
-    JP_NZ (mInitEnemyMon);
+    // LD_A_addr(wInBattleTowerBattle);
+    // BIT_A(0);
+    // JP_NZ (mInitEnemyMon);
+    if(bit_test(wram->wInBattleTowerBattle, 0)) {
+        InitEnemyMon();
+        RET;
+    }
 
 //  Make sure everything knows what species we're working with
-    LD_A_addr(wTempEnemyMonSpecies);
-    LD_addr_A(wEnemyMonSpecies);
-    LD_addr_A(wCurSpecies);
-    LD_addr_A(wCurPartySpecies);
+    // LD_A_addr(wTempEnemyMonSpecies);
+    // LD_addr_A(wEnemyMonSpecies);
+    wram->wEnemyMon.species = wram->wTempEnemyMonSpecies;
+    // LD_addr_A(wCurSpecies);
+    wram->wCurSpecies = wram->wTempEnemyMonSpecies;
+    // LD_addr_A(wCurPartySpecies);
+    wram->wCurPartySpecies = wram->wTempEnemyMonSpecies;
 
 //  Grab the BaseData for this species
-    CALL(aGetBaseData);
+    // CALL(aGetBaseData);
+    GetBaseData_Conv();
 
 //  Let's get the item:
 
 //  Is the item predetermined?
-    LD_A_addr(wBattleMode);
-    DEC_A;
-    IF_Z goto WildItem;
+    item_t a;
+    // LD_A_addr(wBattleMode);
+    // DEC_A;
+    // IF_Z goto WildItem;
+    if(wram->wBattleMode == WILD_BATTLE) {
+    // WildItem:
+    //  In a wild battle, we pull from the item slots in BaseData
 
-//  If we're in a trainer battle, the item is in the party struct
-    LD_A_addr(wCurPartyMon);
-    LD_HL(wOTPartyMon1Item);
-    CALL(aGetPartyLocation);  // bc = PartyMon[wCurPartyMon] - wPartyMons
-    LD_A_hl;
-    goto UpdateItem;
+    //  Force Item1
+    //  Used for Ho-Oh, Lugia and Snorlax encounters
+        // LD_A_addr(wBattleType);
+        // CP_A(BATTLETYPE_FORCEITEM);
+        // LD_A_addr(wBaseItem1);
+        // IF_Z goto UpdateItem;
+        if(wram->wBattleType == BATTLETYPE_FORCEITEM) {
+            a = wram->wBaseItem1;
+        }
 
+    //  Failing that, it's all up to chance
+    //   Effective chances:
+    //     75% None
+    //     23% Item1
+    //      2% Item2
 
-WildItem:
-//  In a wild battle, we pull from the item slots in BaseData
+    //  25% chance of getting an item
+        // CALL(aBattleRandom);
+        // CP_A(75 percent + 1);
+        // LD_A(NO_ITEM);
+        // IF_C goto UpdateItem;
+        else if(BattleRandom_Conv() < (75 percent + 1)) {
+            a = NO_ITEM;
+        }
 
-//  Force Item1
-//  Used for Ho-Oh, Lugia and Snorlax encounters
-    LD_A_addr(wBattleType);
-    CP_A(BATTLETYPE_FORCEITEM);
-    LD_A_addr(wBaseItem1);
-    IF_Z goto UpdateItem;
+    //  From there, an 8% chance for Item2
+        // CALL(aBattleRandom);
+        // CP_A(8 percent);  // 8% of 25% = 2% Item2
+        // LD_A_addr(wBaseItem1);
+        // IF_NC goto UpdateItem;
+        // LD_A_addr(wBaseItem2);
+        else if(BattleRandom_Conv() < (8 percent)) {   // 8% of 25% = 2% Item2
+            a = wram->wBaseItem2;
+        }
+        else {
+            a = wram->wBaseItem1;
+        }
+    }
+    else {
+    //  If we're in a trainer battle, the item is in the party struct
+        // LD_A_addr(wCurPartyMon);
+        // LD_HL(wOTPartyMon1Item);
+        // CALL(aGetPartyLocation);  // bc = PartyMon[wCurPartyMon] - wPartyMons
+        // LD_A_hl;
+        a = wram->wOTPartyMon[wram->wCurPartyMon].mon.item;
+        // goto UpdateItem;
+    }
 
-//  Failing that, it's all up to chance
-//   Effective chances:
-//     75% None
-//     23% Item1
-//      2% Item2
-
-//  25% chance of getting an item
-    CALL(aBattleRandom);
-    CP_A(75 percent + 1);
-    LD_A(NO_ITEM);
-    IF_C goto UpdateItem;
-
-//  From there, an 8% chance for Item2
-    CALL(aBattleRandom);
-    CP_A(8 percent);  // 8% of 25% = 2% Item2
-    LD_A_addr(wBaseItem1);
-    IF_NC goto UpdateItem;
-    LD_A_addr(wBaseItem2);
-
-
-UpdateItem:
-    LD_addr_A(wEnemyMonItem);
+// UpdateItem:
+    // LD_addr_A(wEnemyMonItem);
+    wram->wEnemyMon.item = a;
 
 //  Initialize DVs
 
 //  If we're in a trainer battle, DVs are predetermined
-    LD_A_addr(wBattleMode);
-    AND_A_A;
-    IF_Z goto InitDVs;
+    // LD_A_addr(wBattleMode);
+    // AND_A_A;
+    // IF_Z goto InitDVs;
+    if(wram->wBattleMode != 0) {
+        // LD_A_addr(wEnemySubStatus5);
+        // BIT_A(SUBSTATUS_TRANSFORMED);
+        // IF_Z goto InitDVs;
 
-    LD_A_addr(wEnemySubStatus5);
-    BIT_A(SUBSTATUS_TRANSFORMED);
-    IF_Z goto InitDVs;
-
-//  Unknown
-    LD_HL(wEnemyBackupDVs);
-    LD_DE(wEnemyMonDVs);
-    LD_A_hli;
-    LD_de_A;
-    INC_DE;
-    LD_A_hl;
-    LD_de_A;
-    JP(mLoadEnemyMon_Happiness);
-
+        if(bit_test(wram->wEnemySubStatus5, SUBSTATUS_TRANSFORMED)) {
+        //  Unknown
+            // LD_HL(wEnemyBackupDVs);
+            // LD_DE(wEnemyMonDVs);
+            // LD_A_hli;
+            // LD_de_A;
+            // INC_DE;
+            // LD_A_hl;
+            // LD_de_A;
+            wram->wEnemyMon.dvs = wram->wEnemyBackupDVs;
+            // JP(mLoadEnemyMon_Happiness);
+            goto Happiness;
+        }
+    }
 
 InitDVs:
 //  Trainer DVs
 
 //  All trainers have preset DVs, determined by class
 //  See GetTrainerDVs for more on that
-    FARCALL(aGetTrainerDVs);
+    // FARCALL(aGetTrainerDVs);
+    uint16_t bc = GetTrainerDVs_Conv(wram->wOtherTrainerClass);
 //  These are the DVs we'll use if we're actually in a trainer battle
-    LD_A_addr(wBattleMode);
-    DEC_A;
-    IF_NZ goto UpdateDVs;
+    // LD_A_addr(wBattleMode);
+    // DEC_A;
+    // IF_NZ goto UpdateDVs;
+    if(wram->wBattleMode == WILD_BATTLE) {
+    //  Wild DVs
+    //  Here's where the fun starts
 
-//  Wild DVs
-//  Here's where the fun starts
+    //  Roaming monsters (Entei, Raikou) work differently
+    //  They have their own structs, which are shorter than normal
+        // LD_A_addr(wBattleType);
+        // CP_A(BATTLETYPE_ROAMING);
+        // IF_NZ goto NotRoaming;
+        if(wram->wBattleType == BATTLETYPE_ROAMING) {
 
-//  Roaming monsters (Entei, Raikou) work differently
-//  They have their own structs, which are shorter than normal
-    LD_A_addr(wBattleType);
-    CP_A(BATTLETYPE_ROAMING);
-    IF_NZ goto NotRoaming;
+        //  Grab HP
+            // CALL(aGetRoamMonHP);
+            // LD_A_hl;
+        //  Check if the HP has been initialized
+            // AND_A_A;
+        //  We'll do something with the result in a minute
+            // PUSH_AF;
+            uint8_t hp = *GetRoamMonHP_Conv(wram->wTempEnemyMonSpecies);
 
-//  Grab HP
-    CALL(aGetRoamMonHP);
-    LD_A_hl;
-//  Check if the HP has been initialized
-    AND_A_A;
-//  We'll do something with the result in a minute
-    PUSH_AF;
+        //  Grab DVs
+            // CALL(aGetRoamMonDVs);
+            // INC_HL;
+            // LD_A_hld;
+            // LD_C_A;
+            // LD_B_hl;
+            bc = *GetRoamMonDVs_Conv(wram->wTempEnemyMonSpecies);
 
-//  Grab DVs
-    CALL(aGetRoamMonDVs);
-    INC_HL;
-    LD_A_hld;
-    LD_C_A;
-    LD_B_hl;
+        //  Get back the result of our check
+            // POP_AF;
+        //  If the RoamMon struct has already been initialized, we're done
+            // IF_NZ goto UpdateDVs;
+            if(hp == 0) {
 
-//  Get back the result of our check
-    POP_AF;
-//  If the RoamMon struct has already been initialized, we're done
-    IF_NZ goto UpdateDVs;
+            //  If it hasn't, we need to initialize the DVs
+            //  (HP is initialized at the end of the battle)
+                // CALL(aGetRoamMonDVs);
+                uint16_t* dvs = GetRoamMonDVs_Conv(wram->wTempEnemyMonSpecies);
+                // INC_HL;
+                // CALL(aBattleRandom);
+                uint8_t lo = BattleRandom_Conv();
+                uint8_t hi = BattleRandom_Conv();
+                // LD_hld_A;
+                // LD_C_A;
+                // CALL(aBattleRandom);
+                // LD_hl_A;
+                // LD_B_A;
+                *dvs = lo | (hi << 8);
+                bc = *dvs;
+            //  We're done with DVs
+                // goto UpdateDVs;
+            }
+        }
+        else {
+        // NotRoaming:
+        //  Register a contains wBattleType
 
-//  If it hasn't, we need to initialize the DVs
-//  (HP is initialized at the end of the battle)
-    CALL(aGetRoamMonDVs);
-    INC_HL;
-    CALL(aBattleRandom);
-    LD_hld_A;
-    LD_C_A;
-    CALL(aBattleRandom);
-    LD_hl_A;
-    LD_B_A;
-//  We're done with DVs
-    goto UpdateDVs;
+        //  Forced shiny battle type
+        //  Used by Red Gyarados at Lake of Rage
+            // CP_A(BATTLETYPE_SHINY);
+            // IF_NZ goto GenerateDVs;
+            if(wram->wBattleType == BATTLETYPE_SHINY) {
 
+                // LD_B(ATKDEFDV_SHINY);  // $ea
+                // LD_C(SPDSPCDV_SHINY);  // $aa
+                // goto UpdateDVs;
+                bc = (ATKDEFDV_SHINY << 8) | SPDSPCDV_SHINY;
+            }
+            else {
+            GenerateDVs:
+            //  Generate new random DVs
+                // CALL(aBattleRandom);
+                uint8_t lo = BattleRandom_Conv();
+                // LD_B_A;
+                // CALL(aBattleRandom);
+                uint8_t hi = BattleRandom_Conv();
+                // LD_C_A;
+                bc = (hi << 8) | lo;
+            }
+        }
+    }
 
-NotRoaming:
-//  Register a contains wBattleType
-
-//  Forced shiny battle type
-//  Used by Red Gyarados at Lake of Rage
-    CP_A(BATTLETYPE_SHINY);
-    IF_NZ goto GenerateDVs;
-
-    LD_B(ATKDEFDV_SHINY);  // $ea
-    LD_C(SPDSPCDV_SHINY);  // $aa
-    goto UpdateDVs;
-
-
-GenerateDVs:
-//  Generate new random DVs
-    CALL(aBattleRandom);
-    LD_B_A;
-    CALL(aBattleRandom);
-    LD_C_A;
-
-
-UpdateDVs:
+// UpdateDVs:
 //  Input DVs in register bc
-    LD_HL(wEnemyMonDVs);
-    LD_A_B;
-    LD_hli_A;
-    LD_hl_C;
+    // LD_HL(wEnemyMonDVs);
+    // LD_A_B;
+    // LD_hli_A;
+    // LD_hl_C;
+    wram->wEnemyMon.dvs = bc;
 
 //  We've still got more to do if we're dealing with a wild monster
-    LD_A_addr(wBattleMode);
-    DEC_A;
-    IF_NZ goto Happiness;
+    // LD_A_addr(wBattleMode);
+    // DEC_A;
+    // IF_NZ goto Happiness;
+    if(wram->wBattleMode == WILD_BATTLE) {
+    //  Species-specfic:
 
-//  Species-specfic:
+    //  Unown
+        // LD_A_addr(wTempEnemyMonSpecies);
+        // CP_A(UNOWN);
+        // IF_NZ goto Magikarp;
+        if(wram->wTempEnemyMonSpecies == UNOWN) {
+        //  Get letter based on DVs
+            // LD_HL(wEnemyMonDVs);
+            // PREDEF(pGetUnownLetter);
+            unown_letter_t letter = GetUnownLetter_Conv(wram->wEnemyMon.dvs);
+        //  Can't use any letters that haven't been unlocked
+        //  If combined with forced shiny battletype, causes an infinite loop
+            // CALL(aCheckUnownLetter);
+            // IF_C goto GenerateDVs;  // try again
+            if(CheckUnownLetter_Conv(letter))
+                goto GenerateDVs; // No cleaner way to this without duplicating code.
+        }
 
-//  Unown
-    LD_A_addr(wTempEnemyMonSpecies);
-    CP_A(UNOWN);
-    IF_NZ goto Magikarp;
+    // Magikarp:
+    //  These filters are untranslated.
+    //  They expect at wMagikarpLength a 2-byte value in mm,
+    //  but the value is in feet and inches (one byte each).
 
-//  Get letter based on DVs
-    LD_HL(wEnemyMonDVs);
-    PREDEF(pGetUnownLetter);
-//  Can't use any letters that haven't been unlocked
-//  If combined with forced shiny battletype, causes an infinite loop
-    CALL(aCheckUnownLetter);
-    IF_C goto GenerateDVs;  // try again
+    //  The first filter is supposed to make very large Magikarp even rarer,
+    //  by targeting those 1600 mm (= 5'3") or larger.
+    //  After the conversion to feet, it is unable to target any,
+    //  since the largest possible Magikarp is 5'3", and $0503 = 1283 mm.
+        // LD_A_addr(wTempEnemyMonSpecies);
+        // CP_A(MAGIKARP);
+        // IF_NZ goto Happiness;
+        if(wram->wTempEnemyMonSpecies == MAGIKARP) {
 
+        //  Get Magikarp's length
+            // LD_DE(wEnemyMonDVs);
+            // LD_BC(wPlayerID);
+            // CALLFAR(aCalcMagikarpLength);
+            CalcMagikarpLength_Conv(wram->wEnemyMon.dvs, wram->wPlayerID);
 
-Magikarp:
-//  These filters are untranslated.
-//  They expect at wMagikarpLength a 2-byte value in mm,
-//  but the value is in feet and inches (one byte each).
+        //  No reason to keep going if length > 1536 mm (i.e. if HIGH(length) > 6 feet)
+            // LD_A_addr(wMagikarpLength);
+            // CP_A(HIGH(1536));  // should be "cp 5", since 1536 mm = 5'0", but HIGH(1536) = 6
+            // IF_NZ goto CheckMagikarpArea;
 
-//  The first filter is supposed to make very large Magikarp even rarer,
-//  by targeting those 1600 mm (= 5'3") or larger.
-//  After the conversion to feet, it is unable to target any,
-//  since the largest possible Magikarp is 5'3", and $0503 = 1283 mm.
-    LD_A_addr(wTempEnemyMonSpecies);
-    CP_A(MAGIKARP);
-    IF_NZ goto Happiness;
+        //  5% chance of skipping both size checks
+            // CALL(aRandom);
+            // CP_A(5 percent);
+            // IF_C goto CheckMagikarpArea;
+            if(LOW(wram->wMagikarpLength) == HIGH(1536) && Random_Conv() >= 5 percent) {
+            //  Try again if length >= 1616 mm (i.e. if LOW(length) >= 4 inches)
+                // LD_A_addr(wMagikarpLength + 1);
+                // CP_A(LOW(1616));  // should be "cp 4", since 1616 mm = 5'4", but LOW(1616) = 80
+                // IF_NC goto GenerateDVs;
 
-//  Get Magikarp's length
-    LD_DE(wEnemyMonDVs);
-    LD_BC(wPlayerID);
-    CALLFAR(aCalcMagikarpLength);
+            //  20% chance of skipping this check
+                // CALL(aRandom);
+                // CP_A(20 percent - 1);
+                // IF_C goto CheckMagikarpArea;
+            //  Try again if length >= 1600 mm (i.e. if LOW(length) >= 3 inches)
+                // LD_A_addr(wMagikarpLength + 1);
+                // CP_A(LOW(1600));  // should be "cp 3", since 1600 mm = 5'3", but LOW(1600) = 64
+                // IF_NC goto GenerateDVs;
+                if(HIGH(wram->wMagikarpLength) >= LOW(1616) || ((Random_Conv() >= 20 percent - 1) && HIGH(wram->wMagikarpLength) >= LOW(1600)))
+                    goto GenerateDVs;
+            }
 
-//  No reason to keep going if length > 1536 mm (i.e. if HIGH(length) > 6 feet)
-    LD_A_addr(wMagikarpLength);
-    CP_A(HIGH(1536));  // should be "cp 5", since 1536 mm = 5'0", but HIGH(1536) = 6
-    IF_NZ goto CheckMagikarpArea;
+        // CheckMagikarpArea:
+        //  The "jr z" checks are supposed to be "jr nz".
 
-//  5% chance of skipping both size checks
-    CALL(aRandom);
-    CP_A(5 percent);
-    IF_C goto CheckMagikarpArea;
-//  Try again if length >= 1616 mm (i.e. if LOW(length) >= 4 inches)
-    LD_A_addr(wMagikarpLength + 1);
-    CP_A(LOW(1616));  // should be "cp 4", since 1616 mm = 5'4", but LOW(1616) = 80
-    IF_NC goto GenerateDVs;
+        //  Instead, all maps in GROUP_LAKE_OF_RAGE (Mahogany area)
+        //  and Routes 20 and 44 are treated as Lake of Rage.
 
-//  20% chance of skipping this check
-    CALL(aRandom);
-    CP_A(20 percent - 1);
-    IF_C goto CheckMagikarpArea;
-//  Try again if length >= 1600 mm (i.e. if LOW(length) >= 3 inches)
-    LD_A_addr(wMagikarpLength + 1);
-    CP_A(LOW(1600));  // should be "cp 3", since 1600 mm = 5'3", but LOW(1600) = 64
-    IF_NC goto GenerateDVs;
+        //  This also means Lake of Rage Magikarp can be smaller than ones
+        //  caught elsewhere rather than the other way around.
 
+        //  Intended behavior enforces a minimum size at Lake of Rage.
+        //  The real behavior prevents a minimum size in the Lake of Rage area.
 
-CheckMagikarpArea:
-//  The "jr z" checks are supposed to be "jr nz".
+        //  Moreover, due to the check not being translated to feet+inches, all Magikarp
+        //  smaller than 4'0" may be caught by the filter, a lot more than intended.
+            // LD_A_addr(wMapGroup);
+            // CP_A(GROUP_LAKE_OF_RAGE);
+            // IF_Z goto Happiness;
+            // LD_A_addr(wMapNumber);
+            // CP_A(MAP_LAKE_OF_RAGE);
+            // IF_Z goto Happiness;
+        //  40% chance of not flooring
+            // CALL(aRandom);
+            // CP_A(39 percent + 1);
+            // IF_C goto Happiness;
+            if(wram->wMapGroup != GROUP_LAKE_OF_RAGE 
+            && wram->wMapGroup != MAP_LAKE_OF_RAGE
+            && Random_Conv() >= 39 percent + 1) {
+            //  Try again if length < 1024 mm (i.e. if HIGH(length) < 3 feet)
+                // LD_A_addr(wMagikarpLength);
+                // CP_A(HIGH(1024));  // should be "cp 3", since 1024 mm = 3'4", but HIGH(1024) = 4
+                // IF_C goto GenerateDVs;  // try again
+                if(wram->wMagikarpLength == HIGH(1024))
+                    goto GenerateDVs; // No cleaner way to this without duplicating code.
+            }
+        }
 
-//  Instead, all maps in GROUP_LAKE_OF_RAGE (Mahogany area)
-//  and Routes 20 and 44 are treated as Lake of Rage.
-
-//  This also means Lake of Rage Magikarp can be smaller than ones
-//  caught elsewhere rather than the other way around.
-
-//  Intended behavior enforces a minimum size at Lake of Rage.
-//  The real behavior prevents a minimum size in the Lake of Rage area.
-
-//  Moreover, due to the check not being translated to feet+inches, all Magikarp
-//  smaller than 4'0" may be caught by the filter, a lot more than intended.
-    LD_A_addr(wMapGroup);
-    CP_A(GROUP_LAKE_OF_RAGE);
-    IF_Z goto Happiness;
-    LD_A_addr(wMapNumber);
-    CP_A(MAP_LAKE_OF_RAGE);
-    IF_Z goto Happiness;
-//  40% chance of not flooring
-    CALL(aRandom);
-    CP_A(39 percent + 1);
-    IF_C goto Happiness;
-//  Try again if length < 1024 mm (i.e. if HIGH(length) < 3 feet)
-    LD_A_addr(wMagikarpLength);
-    CP_A(HIGH(1024));  // should be "cp 3", since 1024 mm = 3'4", but HIGH(1024) = 4
-    IF_C goto GenerateDVs;  // try again
-
-//  Finally done with DVs
-
+    //  Finally done with DVs
+    }
 
 Happiness:
 //  Set happiness
-    LD_A(BASE_HAPPINESS);
-    LD_addr_A(wEnemyMonHappiness);
+    // LD_A(BASE_HAPPINESS);
+    // LD_addr_A(wEnemyMonHappiness);
+    wram->wEnemyMon.happiness = BASE_HAPPINESS;
 //  Set level
-    LD_A_addr(wCurPartyLevel);
-    LD_addr_A(wEnemyMonLevel);
+    // LD_A_addr(wCurPartyLevel);
+    // LD_addr_A(wEnemyMonLevel);
+    wram->wEnemyMon.level = wram->wCurPartyLevel;
 //  Fill stats
-    LD_DE(wEnemyMonMaxHP);
-    LD_B(FALSE);
-    LD_HL(wEnemyMonDVs - (MON_DVS - MON_STAT_EXP + 1));
-    PREDEF(pCalcMonStats);
+    // LD_DE(wEnemyMonMaxHP);
+    uint16_t* monStats = (uint16_t*)((uint8_t*)&wram->wEnemyMon + offsetof(struct BattleMon, maxHP));
+    // LD_B(FALSE);
+    // LD_HL(wEnemyMonDVs - (MON_DVS - MON_STAT_EXP + 1));
+    // PREDEF(pCalcMonStats);
+    CalcMonStats_Conv(monStats, NULL, wram->wEnemyMon.dvs, FALSE);
 
 //  If we're in a trainer battle,
 //  get the rest of the parameters from the party struct
-    LD_A_addr(wBattleMode);
-    CP_A(TRAINER_BATTLE);
-    IF_Z goto OpponentParty;
+    // LD_A_addr(wBattleMode);
+    // CP_A(TRAINER_BATTLE);
+    // IF_Z goto OpponentParty;
+    if(wram->wBattleMode == TRAINER_BATTLE) {
+    // OpponentParty:
+    //  Get HP from the party struct
+        // LD_HL((wOTPartyMon1HP + 1));
+        // LD_A_addr(wCurPartyMon);
+        // CALL(aGetPartyLocation);
+        // LD_A_hld;
+        // LD_addr_A(wEnemyMonHP + 1);
+        // LD_A_hld;
+        // LD_addr_A(wEnemyMonHP);
+        wram->wEnemyMon.hp = wram->wOTPartyMon[wram->wCurPartyMon].HP;
 
-//  If we're in a wild battle, check wild-specific stuff
-    AND_A_A;
-    IF_Z goto TreeMon;
+    //  Make sure everything knows which monster the opponent is using
+        // LD_A_addr(wCurPartyMon);
+        // LD_addr_A(wCurOTMon);
+        wram->wCurOTMon = wram->wCurPartyMon;
 
-    LD_A_addr(wEnemySubStatus5);
-    BIT_A(SUBSTATUS_TRANSFORMED);
-    JP_NZ (mLoadEnemyMon_Moves);
+    //  Get status from the party struct
+        // DEC_HL;
+        // LD_A_hl;  // OTPartyMonStatus
+        // LD_addr_A(wEnemyMonStatus);
+        wram->wEnemyMon.status[0] = wram->wOTPartyMon[wram->wCurPartyMon].status;
+    }
+    else {
+    //  If we're in a wild battle, check wild-specific stuff
+        // AND_A_A;
+        // IF_Z goto TreeMon;
+        // LD_A_addr(wEnemySubStatus5);
+        // BIT_A(SUBSTATUS_TRANSFORMED);
+        // JP_NZ (mLoadEnemyMon_Moves);
+        if(wram->wBattleMode == 0 || !bit_test(wram->wEnemySubStatus5, SUBSTATUS_TRANSFORMED)) {
+        // TreeMon:
+        //  If we're headbutting trees, some monsters enter battle asleep
+            // CALL(aCheckSleepingTreeMon);
+            // LD_A(TREEMON_SLEEP_TURNS);
+            // IF_C goto UpdateStatus;
+        //  Otherwise, no status
+            // XOR_A_A;
 
+        // UpdateStatus:
+            // LD_HL(wEnemyMonStatus);
+            // LD_hli_A;
+            wram->wEnemyMon.status[0] = (CheckSleepingTreeMon_Conv(wram->wTempWildMonSpecies))? TREEMON_SLEEP_TURNS: 0;
 
-TreeMon:
-//  If we're headbutting trees, some monsters enter battle asleep
-    CALL(aCheckSleepingTreeMon);
-    LD_A(TREEMON_SLEEP_TURNS);
-    IF_C goto UpdateStatus;
-//  Otherwise, no status
-    XOR_A_A;
+        //  Unused byte
+            // XOR_A_A;
+            // LD_hli_A;
+            wram->wEnemyMon.status[1] = 0;
 
+        //  Full HP..
+            // LD_A_addr(wEnemyMonMaxHP);
+            // LD_hli_A;
+            // LD_A_addr(wEnemyMonMaxHP + 1);
+            // LD_hl_A;
+            wram->wEnemyMon.hp = wram->wEnemyMon.maxHP;
 
-UpdateStatus:
-    LD_HL(wEnemyMonStatus);
-    LD_hli_A;
+        //  ..unless it's a RoamMon
+            // LD_A_addr(wBattleType);
+            // CP_A(BATTLETYPE_ROAMING);
+            // IF_NZ goto Moves;
+            if(wram->wBattleType == BATTLETYPE_ROAMING) {
+            //  Grab HP
+                // CALL(aGetRoamMonHP);
+                uint8_t* roamHP = GetRoamMonHP_Conv(wram->wTempEnemyMonSpecies);
+                // LD_A_hl;
+            //  Check if it's been initialized again
+                // AND_A_A;
+                // IF_Z goto InitRoamHP;
+                if(*roamHP == 0) {
+                // InitRoamHP:
+                //  HP only uses the lo byte in the RoamMon struct since
+                //  Raikou and Entei will have < 256 hp at level 40
+                    // LD_A_addr(wEnemyMonHP + 1);
+                    // LD_hl_A;
+                    *roamHP = LOW(wram->wEnemyMon.hp);
+                    // goto Moves;
+                }
+                else {
+                //  Update from the struct if it has
+                    // LD_A_hl;
+                    // LD_addr_A(wEnemyMonHP + 1);
+                    wram->wEnemyMon.hp = (*roamHP << 8);
+                    // goto Moves;
+                }
+            }
+        }
+    }
 
-//  Unused byte
-    XOR_A_A;
-    LD_hli_A;
-
-//  Full HP..
-    LD_A_addr(wEnemyMonMaxHP);
-    LD_hli_A;
-    LD_A_addr(wEnemyMonMaxHP + 1);
-    LD_hl_A;
-
-//  ..unless it's a RoamMon
-    LD_A_addr(wBattleType);
-    CP_A(BATTLETYPE_ROAMING);
-    IF_NZ goto Moves;
-
-//  Grab HP
-    CALL(aGetRoamMonHP);
-    LD_A_hl;
-//  Check if it's been initialized again
-    AND_A_A;
-    IF_Z goto InitRoamHP;
-//  Update from the struct if it has
-    LD_A_hl;
-    LD_addr_A(wEnemyMonHP + 1);
-    goto Moves;
-
-
-InitRoamHP:
-//  HP only uses the lo byte in the RoamMon struct since
-//  Raikou and Entei will have < 256 hp at level 40
-    LD_A_addr(wEnemyMonHP + 1);
-    LD_hl_A;
-    goto Moves;
-
-
-OpponentParty:
-//  Get HP from the party struct
-    LD_HL((wOTPartyMon1HP + 1));
-    LD_A_addr(wCurPartyMon);
-    CALL(aGetPartyLocation);
-    LD_A_hld;
-    LD_addr_A(wEnemyMonHP + 1);
-    LD_A_hld;
-    LD_addr_A(wEnemyMonHP);
-
-//  Make sure everything knows which monster the opponent is using
-    LD_A_addr(wCurPartyMon);
-    LD_addr_A(wCurOTMon);
-
-//  Get status from the party struct
-    DEC_HL;
-    LD_A_hl;  // OTPartyMonStatus
-    LD_addr_A(wEnemyMonStatus);
-
-
-Moves:
-    LD_HL(wBaseType1);
-    LD_DE(wEnemyMonType1);
-    LD_A_hli;
-    LD_de_A;
-    INC_DE;
-    LD_A_hl;
-    LD_de_A;
+// Moves:
+    // LD_HL(wBaseType1);
+    // LD_DE(wEnemyMonType1);
+    // LD_A_hli;
+    // LD_de_A;
+    // INC_DE;
+    wram->wEnemyMon.type1 = wram->wBaseType1;
+    // LD_A_hl;
+    // LD_de_A;
+    wram->wEnemyMon.type2 = wram->wBaseType2;
 
 //  Get moves
-    LD_DE(wEnemyMonMoves);
+    // LD_DE(wEnemyMonMoves);
+    move_t* moves = wram->wEnemyMon.moves;
 //  Are we in a trainer battle?
-    LD_A_addr(wBattleMode);
-    CP_A(TRAINER_BATTLE);
-    IF_NZ goto WildMoves;
-//  Then copy moves from the party struct
-    LD_HL(wOTPartyMon1Moves);
-    LD_A_addr(wCurPartyMon);
-    CALL(aGetPartyLocation);
-    LD_BC(NUM_MOVES);
-    CALL(aCopyBytes);
-    goto PP;
+    // LD_A_addr(wBattleMode);
+    // CP_A(TRAINER_BATTLE);
+    // IF_NZ goto WildMoves;
+    if(wram->wBattleMode == TRAINER_BATTLE) {
+    //  Then copy moves from the party struct
+        // LD_HL(wOTPartyMon1Moves);
+        // LD_A_addr(wCurPartyMon);
+        // CALL(aGetPartyLocation);
+        // LD_BC(NUM_MOVES);
+        // CALL(aCopyBytes);
+        CopyBytes_Conv2(moves, &wram->wOTPartyMon[wram->wCurPartyMon].mon.moves, NUM_MOVES * sizeof(move_t));
+        // goto PP;
+    }
+    else {
+    // WildMoves:
+    //  Clear wEnemyMonMoves
+        // XOR_A_A;
+        // LD_H_D;
+        // LD_L_E;
+        // LD_hli_A;
+        // LD_hli_A;
+        // LD_hli_A;
+        // LD_hl_A;
+        ByteFill_Conv2(moves, 0, 4 * sizeof(move_t));
+        // LD_addr_A(wSkipMovesBeforeLevelUp);
+        wram->wSkipMovesBeforeLevelUp = FALSE;
+    //  Fill moves based on level
+        // PREDEF(pFillMoves);
+        FillMoves_Conv(moves, wram->wEnemyMon.pp, wram->wEnemyMon.species, wram->wEnemyMon.level);
+    }
 
-
-WildMoves:
-//  Clear wEnemyMonMoves
-    XOR_A_A;
-    LD_H_D;
-    LD_L_E;
-    LD_hli_A;
-    LD_hli_A;
-    LD_hli_A;
-    LD_hl_A;
-    LD_addr_A(wSkipMovesBeforeLevelUp);
-//  Fill moves based on level
-    PREDEF(pFillMoves);
-
-
-PP:
+// PP:
 //  Trainer battle?
-    LD_A_addr(wBattleMode);
-    CP_A(TRAINER_BATTLE);
-    IF_Z goto TrainerPP;
+    // LD_A_addr(wBattleMode);
+    // CP_A(TRAINER_BATTLE);
+    // IF_Z goto TrainerPP;
+    if(wram->wBattleMode == TRAINER_BATTLE) {
+    // TrainerPP:
+    //  Copy PP from the party struct
+        // LD_HL(wOTPartyMon1PP);
+        // LD_A_addr(wCurPartyMon);
+        // CALL(aGetPartyLocation);
+        // LD_DE(wEnemyMonPP);
+        // LD_BC(NUM_MOVES);
+        // CALL(aCopyBytes);
+        CopyBytes_Conv2(wram->wEnemyMon.pp, wram->wOTPartyMon[wram->wCurPartyMon].mon.PP, NUM_MOVES);
+    }
+    else {
+    //  Fill wild PP
+        // LD_HL(wEnemyMonMoves);
+        // LD_DE(wEnemyMonPP);
+        // PREDEF(pFillPP);
+        FillPP_Conv(wram->wEnemyMon.pp, wram->wEnemyMon.moves);
+        // goto Finish;
+    }
 
-//  Fill wild PP
-    LD_HL(wEnemyMonMoves);
-    LD_DE(wEnemyMonPP);
-    PREDEF(pFillPP);
-    goto Finish;
-
-
-TrainerPP:
-//  Copy PP from the party struct
-    LD_HL(wOTPartyMon1PP);
-    LD_A_addr(wCurPartyMon);
-    CALL(aGetPartyLocation);
-    LD_DE(wEnemyMonPP);
-    LD_BC(NUM_MOVES);
-    CALL(aCopyBytes);
-
-
-Finish:
+// Finish:
 //  Copy the first five base stats (the enemy mon's base Sp. Atk
 //  is also used to calculate Sp. Def stat experience)
-    LD_HL(wBaseStats);
-    LD_DE(wEnemyMonBaseStats);
-    LD_B(NUM_STATS - 1);
+    // LD_HL(wBaseStats);
+    // LD_DE(wEnemyMonBaseStats);
+    // LD_B(NUM_STATS - 1);
+    for(uint8_t i = 0; i < NUM_STATS - 1; ++i) {
+    // loop:
+        // LD_A_hli;
+        // LD_de_A;
+        // INC_DE;
+        wram->wEnemyMonBaseStats[i] = wram->wBaseStats[i];
+        // DEC_B;
+        // IF_NZ goto loop;
+    }
 
-loop:
-    LD_A_hli;
-    LD_de_A;
-    INC_DE;
-    DEC_B;
-    IF_NZ goto loop;
+    // LD_A_addr(wBaseCatchRate);
+    // LD_de_A;
+    // INC_DE;
+    wram->wEnemyMonCatchRate = wram->wBaseCatchRate;
 
-    LD_A_addr(wBaseCatchRate);
-    LD_de_A;
-    INC_DE;
+    // LD_A_addr(wBaseExp);
+    // LD_de_A;
+    wram->wEnemyMonBaseExp = wram->wBaseExp;
 
-    LD_A_addr(wBaseExp);
-    LD_de_A;
+    // LD_A_addr(wTempEnemyMonSpecies);
+    // LD_addr_A(wNamedObjectIndex);
 
-    LD_A_addr(wTempEnemyMonSpecies);
-    LD_addr_A(wNamedObjectIndex);
-
-    CALL(aGetPokemonName);
+    // CALL(aGetPokemonName);
+    GetPokemonName_Conv2(wram->wTempEnemyMonSpecies);
 
 //  Did we catch it?
-    LD_A_addr(wBattleMode);
-    AND_A_A;
-    RET_Z ;
+    // LD_A_addr(wBattleMode);
+    // AND_A_A;
+    // RET_Z ;
+    if(wram->wBattleMode == 0)
+        RET;
 
 //  Update enemy nickname
-    LD_HL(wStringBuffer1);
-    LD_DE(wEnemyMonNickname);
-    LD_BC(MON_NAME_LENGTH);
-    CALL(aCopyBytes);
+    // LD_HL(wStringBuffer1);
+    // LD_DE(wEnemyMonNickname);
+    // LD_BC(MON_NAME_LENGTH);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wEnemyMonNickname, wram->wStringBuffer1, MON_NAME_LENGTH);
 
 //  Saw this mon
-    LD_A_addr(wTempEnemyMonSpecies);
-    DEC_A;
-    LD_C_A;
-    LD_B(SET_FLAG);
-    LD_HL(wPokedexSeen);
-    PREDEF(pSmallFarFlagAction);
+    // LD_A_addr(wTempEnemyMonSpecies);
+    // DEC_A;
+    // LD_C_A;
+    // LD_B(SET_FLAG);
+    // LD_HL(wPokedexSeen);
+    // PREDEF(pSmallFarFlagAction);
+    SmallFarFlagAction_Conv(wram->wPokedexSeen, wram->wTempEnemyMonSpecies - 1, SET_FLAG);
 
-    LD_HL(wEnemyMonStats);
-    LD_DE(wEnemyStats);
-    LD_BC(NUM_EXP_STATS * 2);
-    CALL(aCopyBytes);
+    // LD_HL(wEnemyMonStats);
+    // LD_DE(wEnemyStats);
+    // LD_BC(NUM_EXP_STATS * 2);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(&wram->wEnemyAttack, wram->wEnemyMon.attack, NUM_EXP_STATS * sizeof(uint16_t));
 
     RET;
 
@@ -9419,6 +9539,66 @@ match:
     return SwapBattlerLevels();
 }
 
+//  Return carry if the Unown letter hasn't been unlocked yet
+bool CheckUnownLetter_Conv(unown_letter_t a){
+
+    // LD_A_addr(wUnlockedUnowns);
+    // LD_C_A;
+    // LD_DE(0);
+    uint8_t c = wram->wUnlockedUnowns;
+
+    for(uint8_t i = 0; i < UnlockedUnownLetterSetsCount; ++i) {
+    // loop:
+    //  Don't check this set unless it's been unlocked
+        // SRL_C;
+        // IF_NC goto next;
+        if(c & (1 << i)) {
+
+        //  Is our letter in the set?
+            // LD_HL(mUnlockedUnownLetterSets);
+            // ADD_HL_DE;
+            // LD_A_hli;
+            // LD_H_hl;
+            // LD_L_A;
+            const unown_letter_t* hl = UnlockedUnownLetterSets[i];
+
+            // PUSH_DE;
+            // LD_A_addr(wUnownLetter);
+            // LD_DE(1);
+            // PUSH_BC;
+            // CALL(aIsInArray);
+            // POP_BC;
+            // POP_DE;
+            for(uint8_t j = 0; hl[j] != (unown_letter_t)-1; ++j) {
+                if(hl[j] == a)
+                    return true;
+            }
+
+            // IF_C goto match;
+        }
+
+    // next:
+    //  Make sure we haven't gone past the end of the table
+        // INC_E;
+        // INC_E;
+        // LD_A_E;
+        // CP_A(aUnlockedUnownLetterSets_End - aUnlockedUnownLetterSets);
+        // IF_C goto loop;
+    }
+
+//  Hasn't been unlocked, or the letter is invalid
+    // SCF;
+    // RET;
+    return false;
+
+// match:
+//  Valid letter
+    // AND_A_A;
+    // RET;
+
+// INCLUDE "data/wild/unlocked_unowns.asm"
+}
+
 void SwapBattlerLevels(void){
 //  //  unreferenced
     PUSH_BC;
@@ -9506,9 +9686,9 @@ void ApplyStatusEffectOnPlayerStats(void){
 }
 
 void ApplyStatusEffectOnEnemyStats(void){
-    XOR_A_A;
+    // XOR_A_A;
 
-    return ApplyStatusEffectOnStats();
+    return ApplyStatusEffectOnStats_Conv(0);
 }
 
 void ApplyStatusEffectOnStats(void){
@@ -11991,7 +12171,8 @@ void InitEnemyWildmon(void){
     // LD_addr_A(wBattleMode);
     wram->wBattleMode = WILD_BATTLE;
     // FARCALL(aStubbedTrainerRankings_WildBattles);
-    CALL(aLoadEnemyMon);
+    // CALL(aLoadEnemyMon);
+    SafeCallGBAuto(aLoadEnemyMon);
     // LD_HL(wEnemyMonMoves);
     // LD_DE(wWildMonMoves);
     // LD_BC(NUM_MOVES);
@@ -12566,6 +12747,27 @@ void GetRoamMonHP(void){
 
 }
 
+uint8_t* GetRoamMonHP_Conv(species_t a){
+//  output: hl = wRoamMonHP
+    // LD_A_addr(wTempEnemyMonSpecies);
+    // LD_B_A;
+    // LD_A_addr(wRoamMon1Species);
+    // CP_A_B;
+    // LD_HL(wRoamMon1HP);
+    // RET_Z ;
+    if(a == wram->wRoamMon1.species)
+        return &wram->wRoamMon1.HP;
+    // LD_A_addr(wRoamMon2Species);
+    // CP_A_B;
+    // LD_HL(wRoamMon2HP);
+    // RET_Z ;
+    else if(a == wram->wRoamMon2.species)
+        return &wram->wRoamMon2.HP;
+    // LD_HL(wRoamMon3HP);
+    // RET;
+    return &wram->wRoamMon3.HP;
+}
+
 void GetRoamMonDVs(void){
 //  output: hl = wRoamMonDVs
     LD_A_addr(wTempEnemyMonSpecies);
@@ -12581,6 +12783,30 @@ void GetRoamMonDVs(void){
     LD_HL(wRoamMon3DVs);
     RET;
 
+}
+
+//  output: hl = wRoamMonDVs
+uint16_t* GetRoamMonDVs_Conv(species_t a){
+    // LD_A_addr(wTempEnemyMonSpecies);
+    // LD_B_A;
+    // LD_A_addr(wRoamMon1Species);
+    // CP_A_B;
+    // LD_HL(wRoamMon1DVs);
+    // RET_Z ;
+    if(a == wram->wRoamMon1.species)
+        // return &wram->wRoamMon1.DVs;
+        return (uint16_t*)(((uint8_t*)&wram->wRoamMon1) + offsetof(struct Roamer, DVs));
+    // LD_A_addr(wRoamMon2Species);
+    // CP_A_B;
+    // LD_HL(wRoamMon2DVs);
+    // RET_Z ;
+    else if(a == wram->wRoamMon2.species)
+        // return &wram->wRoamMon2.DVs;
+        return (uint16_t*)(((uint8_t*)&wram->wRoamMon2) + offsetof(struct Roamer, DVs));
+    // LD_HL(wRoamMon3DVs);
+    // RET;
+    // return &wram->wRoamMon3.DVs;
+    return (uint16_t*)(((uint8_t*)&wram->wRoamMon3) + offsetof(struct Roamer, DVs));
 }
 
 void GetRoamMonSpecies(void){

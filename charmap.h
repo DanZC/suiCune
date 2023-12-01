@@ -288,6 +288,10 @@
 #define CHAR_UP_ARROW           ('\x61') // "▲", gfx/font/up_arrow.png
 #define CHAR_PHONE_ICON         ('\x62') // "☎", gfx/font/phone_icon.2bpp
 
+// needed for MagikarpHouseSign (see engine/events/magikarp.asm)
+#define CHAR_FEET               ('\x6e') // "′", gfx/font/feet_inches.png
+#define CHAR_INCHES             ('\x6f') // "″", gfx/font/feet_inches.png
+
 // needed for StatsScreen_PlaceShinyIcon and PrintPartyMonPage1
 #define CHAR_SHINY_ICON         ('\x3f') // "⁂", gfx/stats/stats_tiles.png, tile 14
 

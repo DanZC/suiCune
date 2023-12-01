@@ -1583,7 +1583,7 @@ void init_function_pointers(void) {
     // REDIRECTED(LoadEnemyMonToSwitchTo);
     REDIRECTED(InitEnemyTrainer);
     // REDIRECTED(UpdateHPBarBattleHuds);
-    // REDIRECTED(LoadEnemyMon);
+    CONVERTED(LoadEnemyMon);
     // REDIRECTED(LoadBattleMenu2);
     // REDIRECTED(SendOutMonText);
     // REDIRECTED(TextJump_ComeBack);
@@ -2030,7 +2030,7 @@ void init_function_pointers(void) {
     // REDIRECTED(MainMenu_Option);
     REDIRECTED(MainMenu_MysteryGift);
     // REDIRECTED(MainMenuJoypadLoop);
-    // REDIRECTED(MainMenu_PrintCurrentTimeAndDay);
+    CONVERTED(MainMenu_PrintCurrentTimeAndDay);
     // REDIRECTED(MobileMenuGFX);
     REDIRECTED(MainMenu_GetWhichMenu);
     // REDIRECTED(MainMenu);
@@ -4244,4 +4244,61 @@ void init_function_pointers(void) {
     // REDIRECTED(LinkBattle_TrainerHuds);
     // REDIRECTED(LoadBallIconGFX);
     // REDIRECTED(v_ShowLinkBattleParticipants);
+
+    // engine/battle/read_trainer_dvs.c
+    // REDIRECTED(GetTrainerDVs);
+
+    // engine/pokemon/move_mon.c
+    // REDIRECTED(RetrieveMonFromDayCareMan);
+    // REDIRECTED(GeneratePartyMonStats);
+    // REDIRECTED(ComputeNPCTrademonStats);
+    // REDIRECTED(RemoveMonFromPartyOrBox);
+    // REDIRECTED(TryAddMonToParty);
+    // REDIRECTED(SendGetMonIntoFromBox);
+    // REDIRECTED(SendMonIntoBox);
+    // REDIRECTED(RetrieveMonFromDayCareLady);
+    // REDIRECTED(DepositMonWithDayCareLady);
+    // REDIRECTED(RestorePPOfDepositedPokemon);
+    // REDIRECTED(WasSentToBillsPCText);
+    // REDIRECTED(GivePoke);
+    // REDIRECTED(String_Egg);
+    // REDIRECTED(CloseSRAM_And_SetCarryFlag);
+    // REDIRECTED(GiveEgg);
+    // REDIRECTED(CalcMonStatC);
+    // REDIRECTED(DepositMonWithDayCareMan);
+    // REDIRECTED(AddTempmonToParty);
+    // REDIRECTED(InitNickname);
+    // REDIRECTED(ShiftBoxMon);
+    // REDIRECTED(CalcMonStats);
+    // REDIRECTED(GetLastPartyMon);
+    // REDIRECTED(DepositBreedmon);
+    // REDIRECTED(RetrieveBreedmon);
+    // REDIRECTED(FillPP);
+
+    // engine/math/get_square_root.c
+    // REDIRECTED(GetSquareRoot);
+
+    // engine/pokemon/evolve.c
+    // REDIRECTED(GetPreEvolution);
+    // REDIRECTED(CongratulationsYourPokemonText);
+    // REDIRECTED(IsMonHoldingEverstone);
+    // REDIRECTED(EvolveAfterBattle_MasterLoop);
+    // REDIRECTED(FillMoves);
+    // REDIRECTED(LearnLevelMoves);
+    // REDIRECTED(ShiftMoves);
+    // REDIRECTED(StoppedEvolvingText);
+    // REDIRECTED(UpdateSpeciesNameIfNotNicknamed);
+    // REDIRECTED(EvolvedIntoText);
+    // REDIRECTED(EvolvingText);
+    // REDIRECTED(EvolvePokemon);
+    // REDIRECTED(CancelEvolution);
+    // REDIRECTED(EvoFlagAction);
+    // REDIRECTED(EvolveAfterBattle);
+
+    // engine/events/magikarp.c
+    // REDIRECTED(PrintMagikarpLength);
+    // REDIRECTED(CalcMagikarpLength);
+    // REDIRECTED(CheckMagikarpLength);
+    // REDIRECTED(Magikarp_LoadFeetInchesChars);
+    // REDIRECTED(MagikarpHouseSign);
 }

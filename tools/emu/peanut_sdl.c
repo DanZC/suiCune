@@ -51,6 +51,10 @@ struct priv_t priv =
 SDL_Renderer *renderer;
 SDL_Texture *texture;
 SDL_Window *window;
+#if defined(DEBUG_WINDOW)
+SDL_Window *dbg_window;
+SDL_Renderer *dbg_renderer;
+#endif
 SDL_GameController *controller = NULL;
 
 char *rom_file_name = "baserom.gbc";
@@ -3586,6 +3590,20 @@ int main(int argc, char* argv[]) {
         goto out;
     }
 
+#if defined(DEBUG_WINDOW)
+    dbg_window = SDL_CreateWindow("Debug",
+                              SDL_WINDOWPOS_UNDEFINED,
+                              SDL_WINDOWPOS_UNDEFINED,
+                              LCD_WIDTH * 3, LCD_HEIGHT * 3,
+                              SDL_WINDOW_RESIZABLE);
+
+    if (dbg_window == NULL) {
+        printf("Could not create window: %s\n", SDL_GetError());
+        ret = EXIT_FAILURE;
+        goto out;
+    }
+#endif
+
     /* Copy input ROM file to allocated memory. */
     if ((priv.rom = read_rom_to_ram(rom_file_name)) == NULL) {
         printf("%d: %s\n", __LINE__, strerror(errno));
@@ -3693,7 +3711,6 @@ int main(int argc, char* argv[]) {
     else 
     {
         LoadRTCStartTime();
-        RTCSyncWithSystemTime();
     }
 
     SDL_AudioDeviceID dev;
@@ -3799,6 +3816,22 @@ int main(int argc, char* argv[]) {
     }
 #endif
 
+#if defined(DEBUG_WINDOW)
+    dbg_renderer = SDL_CreateRenderer(dbg_window, -1, SDL_RENDERER_ACCELERATED);
+
+    if (dbg_renderer == NULL) {
+        printf("Could not create renderer: %s\n", SDL_GetError());
+        ret = EXIT_FAILURE;
+        goto out;
+    }
+
+    if (SDL_SetRenderDrawColor(dbg_renderer, 0, 0, 0, 255) < 0) {
+        printf("Renderer could not draw color: %s\n", SDL_GetError());
+        ret = EXIT_FAILURE;
+        goto out;
+    }
+
+    if (SDL_RenderClear(dbg_renderer) < 0) {
         printf("Renderer could not clear: %s\n", SDL_GetError());
         ret = EXIT_FAILURE;
         goto out;
@@ -3806,6 +3839,7 @@ int main(int argc, char* argv[]) {
 
     SDL_RenderPresent(dbg_renderer);
 #endif
+
     while (SDL_QuitRequested() == SDL_FALSE) {
         /* Execute CPU cycles until the screen has to be redrawn. */
         gb_run_frame();

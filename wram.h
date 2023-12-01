@@ -384,12 +384,16 @@ struct PACKED wram_s
                         uint16_t wPlayerSpAtk;
                         uint16_t wPlayerSpDef;
                         uint8_t skip_14[1];
-                        //union wEnemyStats
-                        uint16_t wEnemyAttack;
-                        uint16_t wEnemyDefense;
-                        uint16_t wEnemySpeed;
-                        uint16_t wEnemySpAtk;
-                        uint16_t wEnemySpDef;
+                        union {
+                            uint16_t wEnemyStats[5];
+                            struct {
+                                uint16_t wEnemyAttack;
+                                uint16_t wEnemyDefense;
+                                uint16_t wEnemySpeed;
+                                uint16_t wEnemySpAtk;
+                                uint16_t wEnemySpDef;
+                            };
+                        };
                         uint8_t skip_15[1];
                         //union wPlayerStatLevels
                         union {
@@ -2467,13 +2471,17 @@ struct PACKED wram_s
                 // corresponds to the data/pokemon/base_stats/*.asm contents
                 //union wCurBaseData
                 uint8_t wBaseDexNo;
-                //union wBaseStats
-                uint8_t wBaseHP;
-                uint8_t wBaseAttack;
-                uint8_t wBaseDefense;
-                uint8_t wBaseSpeed;
-                uint8_t wBaseSpecialAttack;
-                uint8_t wBaseSpecialDefense;
+                union {
+                    uint8_t wBaseStats[6];
+                    struct {
+                        uint8_t wBaseHP;
+                        uint8_t wBaseAttack;
+                        uint8_t wBaseDefense;
+                        uint8_t wBaseSpeed;
+                        uint8_t wBaseSpecialAttack;
+                        uint8_t wBaseSpecialDefense;
+                    };
+                };
                 //union wBaseType
                 uint8_t wBaseType1;
                 uint8_t wBaseType2;

@@ -1,22 +1,15 @@
 #include "wram.h"
+#include <stddef.h>
 
 struct wram_s* wram;
 
-#if defined(__cplusplus) || defined(_MSC_VER)
 #include <stddef.h>
 
-#define check_wram0_field(_fld) static_assert(offsetof(struct wram_s, _fld) == (_fld - WRAM_0_ADDR), "")
-#define check_wramx_field(_fld, _bank) static_assert(offsetof(struct wram_s, _fld) - (0x1000 * (_bank)) == (_fld - WRAM_1_ADDR), "")
+#define check_wram0_field(_fld)                         static_assert(offsetof(struct wram_s, _fld) == (_fld - WRAM_0_ADDR), "")
+#define check_wramx_field(_fld, _bank)                  static_assert(offsetof(struct wram_s, _fld) - (0x1000 * (_bank)) == (_fld - WRAM_1_ADDR), "")
 
-#define check_wram0_field_mapped(_fld, _wvar) static_assert(offsetof(struct wram_s, _fld) == (_wvar - WRAM_0_ADDR), "")
-#define check_wramx_field_mapped(_fld, _bank, _wvar) static_assert(offsetof(struct wram_s, _fld) - (0x1000 * (_bank)) == (_wvar - WRAM_1_ADDR), "")
-#else
-#define check_wram0_field(_fld) _Static_assert(offsetof(struct wram_s, _fld) == (_fld - WRAM_0_ADDR), "")
-#define check_wramx_field(_fld, _bank) _Static_assert(offsetof(struct wram_s, _fld) - (0x1000 * (_bank)) == (_fld - WRAM_1_ADDR), "")
-
-#define check_wram0_field_mapped(_fld, _wvar) _Static_assert(offsetof(struct wram_s, _fld) == (_wvar - WRAM_0_ADDR), "")
-#define check_wramx_field_mapped(_fld, _bank, _wvar) _Static_assert(offsetof(struct wram_s, _fld) - (0x1000 * (_bank)) == (_wvar - WRAM_1_ADDR), "")
-#endif
+#define check_wram0_field_mapped(_fld, _wvar)           static_assert(offsetof(struct wram_s, _fld) == (_wvar - WRAM_0_ADDR), "")
+#define check_wramx_field_mapped(_fld, _bank, _wvar)    static_assert(offsetof(struct wram_s, _fld) - (0x1000 * (_bank)) == (_wvar - WRAM_1_ADDR), "")
 
 // bank 0
 // section Stack
