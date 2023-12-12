@@ -1523,7 +1523,7 @@ void init_function_pointers(void) {
     // REDIRECTED(SelectBattleMon);
     // REDIRECTED(HandlePlayerMonFaint);
     // REDIRECTED(GoMonText);
-    // REDIRECTED(ResidualDamage);
+    REDIRECTED(ResidualDamage);
     CONVERTED(BattleStartMessage);
     // CONVERTED(EnemySwitch);
     REDIRECTED(BattleTurn);
@@ -1578,7 +1578,7 @@ void init_function_pointers(void) {
     // REDIRECTED(UpdateBattleStateAndExperienceAfterEnemyFaint);
     // REDIRECTED(GetRoamMonMapNumber);
     // REDIRECTED(RecallPlayerMon);
-    CONVERTED(NewBattleMonStatus);
+    // CONVERTED(NewBattleMonStatus);
     CONVERTED(AddBattleParticipant);
     // REDIRECTED(LoadEnemyMonToSwitchTo);
     REDIRECTED(InitEnemyTrainer);
@@ -2825,7 +2825,7 @@ void init_function_pointers(void) {
     // REDIRECTED(v_TryWildEncounter_BugContest);
     // REDIRECTED(WarpToNewMapScript);
     // REDIRECTED(CheckMenuOW);
-    // REDIRECTED(EnableWildEncounters);
+    CONVERTED(EnableWildEncounters);
     // REDIRECTED(CheckWildEncounterCooldown);
     // REDIRECTED(RandomEncounter);
     // REDIRECTED(DisableWildEncounters);
@@ -3011,7 +3011,7 @@ void init_function_pointers(void) {
     REDIRECTED(AI_Smart_FutureSight);
     REDIRECTED(AI_Smart_DefrostOpponent);
     REDIRECTED(AICheckLastPlayerMon);
-    REDIRECTED(AIDamageCalc);
+    CONVERTED(AIDamageCalc);
     REDIRECTED(AI_Smart_MirrorCoat);
     REDIRECTED(AI_Smart_LeechSeed);
     REDIRECTED(AICompareSpeed);
@@ -4301,4 +4301,39 @@ void init_function_pointers(void) {
     // REDIRECTED(CheckMagikarpLength);
     // REDIRECTED(Magikarp_LoadFeetInchesChars);
     // REDIRECTED(MagikarpHouseSign);
+
+    // engine/events/fruit_trees.c
+    // REDIRECTED(PickedFruitTree);
+    // REDIRECTED(TryResetFruitTrees);
+    // REDIRECTED(ObtainedFruitText);
+    // REDIRECTED(FruitBearingTreeText);
+    // REDIRECTED(ResetFruitTrees);
+    // REDIRECTED(CheckFruitTree);
+    // REDIRECTED(FruitTreeScript);
+    // REDIRECTED(GetCurTreeFruit);
+    // REDIRECTED(HeyItsFruitText);
+    // REDIRECTED(FruitPackIsFullText);
+    // REDIRECTED(GetFruitTreeFlag);
+    // REDIRECTED(GetFruitTreeItem);
+    // REDIRECTED(NothingHereText);
+
+    // engine/events/forced_movement.c
+    // REDIRECTED(Script_ForcedMovement);
+
+    // engine/battle/ai/redundant.c
+    // REDIRECTED(AI_Redundant);
+
+    // engine/battle/move_effects/attract.c
+    // REDIRECTED(CheckOppositeGender);
+    // REDIRECTED(BattleCommand_Attract);
+
+    // engine/battle/ai/switch.c
+    // REDIRECTED(FindEnemyMonsImmuneToLastCounterMove);
+    // REDIRECTED(FindAliveEnemyMons);
+    // REDIRECTED(CheckPlayerMoveTypeMatchups);
+    // REDIRECTED(FindAliveEnemyMonsWithASuperEffectiveMove);
+    // REDIRECTED(FindEnemyMonsWithASuperEffectiveMove);
+    // REDIRECTED(CheckAbleToSwitch);
+    // REDIRECTED(FindEnemyMonsThatResistPlayer);
+    // REDIRECTED(FindEnemyMonsWithAtLeastQuarterMaxHP);
 }

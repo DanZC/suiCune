@@ -158,12 +158,12 @@ ok:
     // only do this once
     clearevent(EVENT_WELCOMED_TO_POKECOM_CENTER)
     writetext(NurseAskHealText)
-    // yesorno
+    yesorno
     iffalse(done)
     writetext(NurseTakePokemonText)
     pause(20)
     special(StubbedTrainerRankings_Healings)
-    // turnobject
+    turnobject(LAST_TALKED, LEFT)
     pause(10)
     special(HealParty)
     playmusic(MUSIC_NONE)
@@ -171,7 +171,7 @@ ok:
     special(HealMachineAnim)
     pause(30)
     special(RestartMapMusic)
-    // turnobject
+    turnobject(LAST_TALKED, DOWN)
     pause(10)
     checkphonecall // elm already called about pokerus
     iftrue(no)
@@ -184,9 +184,9 @@ no:
     pause(20)
 done:
     writetext(NurseGoodbyeText)
-    // turnobject
+    turnobject(LAST_TALKED, UP)
     pause(10)
-    // turnobject
+    turnobject(LAST_TALKED, DOWN)
     pause(10)
     waitbutton
     closetext
@@ -426,8 +426,7 @@ bool BugContestResultsScript(script_s* s) {
     writetext(ContestResults_ConsolationPrizeText)
     promptbutton
     waitsfx
-    // verbosegiveitem
-    // verbosegiveitem(BERRY, 1)
+    verbosegiveitem(BERRY, 1)
     iffalse_jump(BugContestResults_NoRoomForBerry)
     SCRIPT_FALLTHROUGH(BugContestResults_DidNotWin)
 }
@@ -496,30 +495,30 @@ bool BugContestResults_CleanUp(script_s* s) {
 bool BugContestResults_FirstPlace(script_s* s) {
     SCRIPT_BEGIN
     setevent(EVENT_TEMPORARY_UNTIL_MAP_RELOAD_1)
-    // getitemname
+    getitemname(STRING_BUFFER_4, SUN_STONE)
     writetext(ContestResults_PlayerWonAPrizeText)
     waitbutton
-    // verbosegiveitem
+    verbosegiveitem(SUN_STONE, 1)
     iffalse_jump(BugContestResults_NoRoomForSunStone)
     sjump(BugContestResults_ReturnAfterWinnersPrize)
     SCRIPT_END
 }
 bool BugContestResults_SecondPlace(script_s* s) {
     SCRIPT_BEGIN
-    // getitemname
+    getitemname(STRING_BUFFER_4, EVERSTONE)
     writetext(ContestResults_PlayerWonAPrizeText)
     waitbutton
-    // verbosegiveitem
+    verbosegiveitem(EVERSTONE, 1)
     iffalse_jump(BugContestResults_NoRoomForEverstone)
     sjump(BugContestResults_ReturnAfterWinnersPrize)
     SCRIPT_END
 }
 bool BugContestResults_ThirdPlace(script_s* s) {
     SCRIPT_BEGIN
-    // getitemname
+    getitemname(STRING_BUFFER_4, GOLD_BERRY)
     writetext(ContestResults_PlayerWonAPrizeText)
     waitbutton
-    // verbosegiveitem
+    verbosegiveitem(GOLD_BERRY, 1)
     iffalse_jump(BugContestResults_NoRoomForGoldBerry)
     sjump(BugContestResults_ReturnAfterWinnersPrize)
     SCRIPT_END
@@ -1948,7 +1947,7 @@ bool GameCornerCoinVendorScript(script_s* s) {
     opentext
     writetext(CoinVendor_WelcomeText)
     promptbutton
-    // checkitem
+    checkitem(COIN_CASE)
     iftrue_jump(CoinVendor_IntroScript)
     writetext(CoinVendor_NoCoinCaseText)
     waitbutton
@@ -1956,36 +1955,56 @@ bool GameCornerCoinVendorScript(script_s* s) {
     s_end
     SCRIPT_END
 }
+
+static const struct MenuData CoinVendor_MenuData = {
+    .flags = STATICMENU_CURSOR, // flags
+    .verticalMenu = {
+        .count = 3, // items
+        .options = (const char*[]){
+            " 50 :  ¥1000@",
+            "500 : ¥10000@",
+            "CANCEL@",
+        },
+    }
+};
+
+static const struct MenuHeader CoinVendor_MenuHeader = {
+    .flags = MENU_BACKUP_TILES, // flags
+    .coord = menu_coords(0, 4, 15, TEXTBOX_Y - 1),
+    .data = &CoinVendor_MenuData,
+    .defaultOption = 1, // default option
+};
+
 bool CoinVendor_IntroScript(script_s* s) {
     SCRIPT_BEGIN
     writetext(CoinVendor_IntroText)
 loop:
     special(DisplayMoneyAndCoinBalance)
-    // loadmenu
-    // verticalmenu
-    // closewindow
+    loadmenu(&CoinVendor_MenuHeader)
+    verticalmenu
+    closewindow
     ifequal(1, Buy50)
     ifequal(2, Buy500)
     goto Cancel;
 Buy50:
-    // checkcoins
+    checkcoins(MAX_COINS - 50)
     ifequal(HAVE_MORE, CoinCaseFull)
     checkmoney(YOUR_MONEY, 1000)
     ifequal(HAVE_LESS, NotEnoughMoney)
-    // givecoins
-    // takemoney
+    givecoins(50)
+    takemoney(YOUR_MONEY, 1000)
     waitsfx
     playsound(SFX_TRANSACTION)
     writetext(CoinVendor_Buy50CoinsText)
     waitbutton
     goto loop;
 Buy500:
-    // checkcoins
+    checkcoins(MAX_COINS - 500)
     ifequal(HAVE_MORE, CoinCaseFull)
-    // checkmoney
+    checkmoney(YOUR_MONEY, 10000)
     ifequal(HAVE_LESS, NotEnoughMoney)
-    // givecoins
-    // takemoney
+    givecoins(500)
+    takemoney(YOUR_MONEY, 10000)
     waitsfx
     playsound(SFX_TRANSACTION)
     writetext(CoinVendor_Buy500CoinsText)
@@ -2006,17 +2025,6 @@ Cancel:
     waitbutton
     closetext
     s_end
-MenuHeader:
-    // db // flags
-    // menu_coords
-    // dw
-    // db // default option
-MenuData:
-    // db // flags
-    // db // items
-    // db
-    // db
-    // db
     SCRIPT_FALLTHROUGH(HappinessCheckScript)
 }
 bool HappinessCheckScript(script_s* s) {

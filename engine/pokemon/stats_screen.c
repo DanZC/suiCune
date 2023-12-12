@@ -876,7 +876,7 @@ static void StatsScreen_PlaceHPBar(void) {
 static void StatsScreen_PlaceGenderChar(uint8_t* hl) {
     // PUSH_HL;
     // FARCALL(aGetGender);
-    u8_flag_s res = GetGender_Conv();
+    u8_flag_s res = GetGender_Conv(wram->wMonType);
     // POP_HL;
     // RET_C ;
     if(res.flag)

@@ -22,6 +22,7 @@ SRCS   := tools/emu/peanut_sdl.c tools/emu/minigb_apu/minigb_apu.c \
 	$(wildcard audio/*.c) \
 	$(wildcard data/*.c) \
 	$(wildcard data/battle/*.c) \
+	$(wildcard data/battle/ai/*.c) \
 	$(wildcard data/collision/*.c) \
 	$(wildcard data/events/*.c) \
 	$(wildcard data/items/*.c) \
@@ -37,6 +38,7 @@ SRCS   := tools/emu/peanut_sdl.c tools/emu/minigb_apu/minigb_apu.c \
 	$(wildcard data/wild/*.c) \
 	$(wildcard engine/battle/*.c) \
 	$(wildcard engine/battle/ai/*.c) \
+	$(wildcard engine/battle/move_effects/*.c) \
 	$(wildcard engine/battle_anims/*.c) \
 	$(wildcard engine/events/*.c) \
 	$(wildcard engine/gfx/*.c) \
@@ -95,6 +97,7 @@ clean:
 	$(wildcard audio/*.o) \
 	$(wildcard data/*.o) \
 	$(wildcard data/battle/*.o) \
+	$(wildcard data/battle/ai/*.o) \
 	$(wildcard data/collision/*.o) \
 	$(wildcard data/events/*.o) \
 	$(wildcard data/items/*.o) \
@@ -110,6 +113,7 @@ clean:
 	$(wildcard data/wild/*.o) \
 	$(wildcard engine/battle/*.o) \
 	$(wildcard engine/battle/ai/*.o) \
+	$(wildcard engine/battle/move_effects/*.o) \
 	$(wildcard engine/battle_anims/*.o) \
 	$(wildcard engine/events/*.o) \
 	$(wildcard engine/gfx/*.o) \

@@ -85,6 +85,33 @@ okay:
 
 }
 
+bool TakeMoney_Conv(uint8_t* de, const uint8_t* bc){
+    // LD_A(3);
+    // CALL(aSubtractMoney);
+    bool carry = SubtractMoney_Conv(de, bc);
+    // IF_NC goto okay;
+    if(carry) {
+    // leave with 0 money
+        // XOR_A_A;
+        // LD_de_A;
+        de[0] = 0;
+        // INC_DE;
+        // LD_de_A;
+        de[1] = 0;
+        // INC_DE;
+        // LD_de_A;
+        de[2] = 0;
+        // SCF;
+        // RET;
+        return true;
+    }
+
+// okay:
+    // AND_A_A;
+    // RET;
+    return false;
+}
+
 void CompareMoney(void){
     LD_A(3);
     return CompareFunds();
@@ -254,6 +281,53 @@ loop2:
     POP_HL;
     RET;
 
+}
+
+bool SubtractMoney_Conv(uint8_t* de, const uint8_t* bc){
+    // LD_A(3);
+    return SubtractFunds_Conv(de, bc, 3);
+}
+
+//  a: number of bytes
+//  bc: start addr of amount (big-endian)
+//  de: start addr of account (big-endian)
+bool SubtractFunds_Conv(uint8_t* de, const uint8_t* bc, uint8_t a){
+    // PUSH_HL;
+    // PUSH_DE;
+    // PUSH_BC;
+    // LD_H_B;
+    // LD_L_C;
+    // LD_B_A;
+    // LD_C(0);
+
+// loop:
+    // DEC_A;
+    // IF_Z goto done;
+    // INC_DE;
+    // INC_HL;
+    // goto loop;
+
+
+// done:
+    // AND_A_A;
+    uint8_t carry = 0;
+
+    for(uint8_t b = a; b != 0; --b) {
+    // loop2:
+        // LD_A_de;
+        // SBC_A_hl;
+        // LD_de_A;
+        de[b - 1] = SubCarry8(de[b - 1], bc[b - 1], carry, &carry);
+        // DEC_DE;
+        // DEC_HL;
+        // DEC_B;
+        // IF_NZ goto loop2;
+    }
+    // POP_BC;
+    // POP_DE;
+    // POP_HL;
+    // RET;
+    return carry != 0;
 }
 
 void AddMoney(void){

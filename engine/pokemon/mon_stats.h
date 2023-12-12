@@ -7,7 +7,7 @@ uint8_t DrawHP_Conv(uint8_t* hl, uint8_t b, uint8_t which);
 void PrintTempMonStats(void);
 void PrintTempMonStats_Conv(uint8_t* hl, uint16_t bc);
 void GetGender(void);
-u8_flag_s GetGender_Conv(void);
+u8_flag_s GetGender_Conv(uint8_t monType);
 void ListMovePP(void);
 void ListMovePP_Conv(uint8_t* hl);
 void BrokenPlacePPUnits(void);

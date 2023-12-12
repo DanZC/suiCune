@@ -20,7 +20,9 @@ void CheckMimicUsed(void);
 void BattleCommand_Critical(void);
 void BattleCommand_Stab(void);
 void BattleCheckTypeMatchup(void);
+uint8_t BattleCheckTypeMatchup_Conv(void);
 void CheckTypeMatchup(void);
+uint8_t CheckTypeMatchup_Conv(uint8_t type, const uint8_t* types);
 void BattleCommand_ResetTypeMatchup(void);
 void BattleCommand_DamageVariation(void);
 void BattleCommand_CheckHit(void);
@@ -211,7 +213,7 @@ void v_CheckBattleScene(void);
 //#include "data/moves/critical_hit_moves.h"
 //#include "data/battle/critical_hit_chances.h"
 //#include "engine/battle/move_effects/triple_kick.h"
-//#include "engine/battle/ai/switch.h"
+#include "./ai/switch.h"
 //#include "data/types/type_matchups.h"
 //#include "data/battle/accuracy_multipliers.h"
 //#include "engine/battle/move_effects/beat_up.h"
@@ -258,7 +260,7 @@ void v_CheckBattleScene(void);
 //#include "engine/battle/move_effects/sandstorm.h"
 //#include "engine/battle/move_effects/rollout.h"
 //#include "engine/battle/move_effects/fury_cutter.h"
-//#include "engine/battle/move_effects/attract.h"
+#include "./move_effects/attract.h"
 //#include "engine/battle/move_effects/return.h"
 //#include "engine/battle/move_effects/present.h"
 //#include "engine/battle/move_effects/frustration.h"

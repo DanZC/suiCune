@@ -7,6 +7,7 @@
 #include "../items/item_effects.h"
 #include "../../home/print_text.h"
 #include "../../home/pokemon.h"
+#include "../../data/pokemon/base_stats.h"
 #include "health.h"
 
 void DrawPlayerHP(void){
@@ -444,11 +445,11 @@ Genderless:
 //         f = c:  genderless
 //  This is determined by comparing the Attack and Speed DVs
 //  with the species' gender ratio.
-u8_flag_s GetGender_Conv(void){
+u8_flag_s GetGender_Conv(uint8_t monType){
 //  Figure out what type of monster struct we're looking at.
 
     uint16_t DVs = 0;
-    switch(wram->wMonType) {
+    switch(monType) {
 //  0: PartyMon
     // LD_HL(wPartyMon1DVs);
     // LD_BC(PARTYMON_STRUCT_LENGTH);
@@ -538,7 +539,8 @@ u8_flag_s GetGender_Conv(void){
 
     // LD_A(BANK(aBaseData));
     // CALL(aGetFarByte);
-    uint8_t a = GetFarByte_Conv(BANK(aBaseData), mBaseData + BASE_GENDER + (BASE_DATA_SIZE * wram->wCurPartySpecies));
+    // uint8_t a = GetFarByte_Conv(BANK(aBaseData), mBaseData + BASE_GENDER + (BASE_DATA_SIZE * wram->wCurPartySpecies));
+    uint8_t a = BasePokemonData[wram->wCurPartySpecies - 1].gender;
 
 //  The higher the ratio, the more likely the monster is to be female.
 

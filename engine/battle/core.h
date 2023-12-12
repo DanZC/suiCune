@@ -203,6 +203,7 @@ void CheckPlayerHasUsableMoves(void);
 void ParseEnemyAction(void);
 void ResetVarsForSubstatusRage(void);
 void CheckEnemyLockedIn(void);
+bool CheckEnemyLockedIn_Conv(void);
 void LinkBattleSendReceiveAction(void);
 void LoadEnemyMon(void);
 void CheckSleepingTreeMon(void);

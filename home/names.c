@@ -912,3 +912,21 @@ void GetMoveName(void){
     RET;
 
 }
+
+uint8_t* GetMoveName_Conv2(move_t move){
+    // PUSH_HL;
+
+    // LD_A(MOVE_NAME);
+    // LD_addr_A(wNamedObjectType);
+
+    // LD_A_addr(wNamedObjectIndex);  // move id
+    // LD_addr_A(wCurSpecies);
+
+    // CALL(aGetName);
+    ByteFill_Conv2(wram->wStringBuffer1, sizeof(wram->wStringBuffer1), CHAR_TERM);
+    return U82CA(wram->wStringBuffer1, MoveNames[move - 1]);
+    // LD_DE(wStringBuffer1);
+
+    // POP_HL;
+    // RET;
+}

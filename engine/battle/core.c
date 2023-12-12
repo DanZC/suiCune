@@ -7140,7 +7140,7 @@ void PrintPlayerHUD(void){
     // LD_addr_A(wMonType);
     wram->wMonType = TEMPMON;
     // CALLFAR(aGetGender);
-    u8_flag_s temp = GetGender_Conv();
+    u8_flag_s temp = GetGender_Conv(TEMPMON);
     // LD_A(0x7f);
     // IF_C goto got_gender_char;
     if(temp.flag) {
@@ -7390,7 +7390,7 @@ uint8_t DrawEnemyHUD_Conv(void){
     // BIT_A(SUBSTATUS_TRANSFORMED);
     // IF_Z goto ok;
     // LD_HL(wEnemyBackupDVs);
-    uint16_t dvs = (bit_test(wram->wEnemySubStatus5, SUBSTATUS_TRANSFORMED))? wram->wEnemyMon.dvs: wram->wEnemyBackupDVs;
+    uint16_t dvs = (bit_test(wram->wEnemySubStatus5, SUBSTATUS_TRANSFORMED))? wram->wEnemyBackupDVs: wram->wEnemyMon.dvs;
 
 // ok:
     // LD_A_hli;
@@ -7404,7 +7404,7 @@ uint8_t DrawEnemyHUD_Conv(void){
     // LD_addr_A(wMonType);
     wram->wMonType = TEMPMON;
     // CALLFAR(aGetGender);
-    u8_flag_s gender = GetGender_Conv();
+    u8_flag_s gender = GetGender_Conv(TEMPMON);
     // LD_A(0x7f);
     // IF_C goto got_gender;
     if(gender.flag) 
@@ -8802,6 +8802,26 @@ void CheckEnemyLockedIn(void){
     BIT_hl(SUBSTATUS_ROLLOUT);
     RET;
 
+}
+
+bool CheckEnemyLockedIn_Conv(void){
+    // LD_A_addr(wEnemySubStatus4);
+    // AND_A(1 << SUBSTATUS_RECHARGE);
+    // RET_NZ ;
+    if(wram->wEnemySubStatus4 & (1 << SUBSTATUS_RECHARGE))
+        return true;
+
+    // LD_HL(wEnemySubStatus3);
+    // LD_A_hl;
+    // AND_A(1 << SUBSTATUS_CHARGED | 1 << SUBSTATUS_RAMPAGE | 1 << SUBSTATUS_BIDE);
+    // RET_NZ ;
+    if(wram->wEnemySubStatus3 & ((1 << SUBSTATUS_CHARGED) | (1 << SUBSTATUS_RAMPAGE) | (1 << SUBSTATUS_BIDE)))
+        return true;
+
+    // LD_HL(wEnemySubStatus1);
+    // BIT_hl(SUBSTATUS_ROLLOUT);
+    // RET;
+    return bit_test(wram->wEnemySubStatus1, SUBSTATUS_ROLLOUT) != 0;
 }
 
 void LinkBattleSendReceiveAction(void){

@@ -23,6 +23,7 @@
 #include "../events/checktime.h"
 #include "../events/money.h"
 #include "../events/pokepic.h"
+#include "../events/fruit_trees.h"
 #include "variables.h"
 #include "landmarks.h"
 #include "overworld.h"
@@ -1391,6 +1392,17 @@ void Script_fruittree(void){
 
 }
 
+void Script_fruittree_Conv(script_s* s, uint8_t tree){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wCurFruitTree);
+    wram->wCurFruitTree = tree;
+    // LD_B(BANK(aFruitTreeScript));
+    // LD_HL(mFruitTreeScript);
+    // JP(mScriptJump);
+    Script_Goto(s, FruitTreeScript);
+}
+
 void Script_swarm(void){
     CALL(aGetScriptByte);
     LD_C_A;
@@ -1448,6 +1460,31 @@ void Script_trainerflagaction(void){
     LD_addr_A(wScriptVar);
     RET;
 
+}
+
+void Script_trainerflagaction_Conv(script_s* s, uint8_t action){
+    (void)s;
+    // XOR_A_A;
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = FALSE;
+    // LD_HL(wTempTrainerEventFlag);
+    // LD_E_hl;
+    // INC_HL;
+    // LD_D_hl;
+    uint16_t de = wram->wTempTrainerEventFlag;
+    // CALL(aGetScriptByte);
+    // LD_B_A;
+    // CALL(aEventFlagAction);
+    uint8_t c = EventFlagAction_Conv2(de, action);
+    // LD_A_C;
+    // AND_A_A;
+    // RET_Z ;
+    if(c == 0)
+        return;
+    // LD_A(TRUE);
+    // LD_addr_A(wScriptVar);
+    // RET;
+    wram->wScriptVar = TRUE;
 }
 
 void Script_winlosstext(void){
@@ -3826,6 +3863,17 @@ void Script_takemoney(void){
     FARCALL(aTakeMoney);
     RET;
 
+}
+
+void Script_takemoney_Conv(script_s* s, uint8_t account, uint32_t amount){
+    (void)s;
+    // CALL(aGetMoneyAccount);
+    uint8_t* act = GetMoneyAccount_Conv(account);
+    // CALL(aLoadMoneyAmountToMem);
+    uint8_t* amt = LoadMoneyAmountToMem_Conv(amount);
+    // FARCALL(aTakeMoney);
+    TakeMoney_Conv(act, amt);
+    // RET;
 }
 
 void Script_checkmoney(void){

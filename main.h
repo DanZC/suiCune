@@ -52,7 +52,7 @@
 //#include "engine/events/misc_scripts.h"
 //#include "engine/events/heal_machine_anim.h"
 //#include "engine/events/whiteout.h"
-//#include "engine/events/forced_movement.h"
+#include "engine/events/forced_movement.h"
 //#include "engine/events/itemfinder.h"
 #include "engine/menus/start_menu.h"
 //#include "engine/pokemon/mon_menu.h"
@@ -127,7 +127,7 @@
 
 #include "engine/battle/trainer_huds.h"
 //#include "data/trainers/class_names.h"
-//#include "engine/battle/ai/redundant.h"
+#include "engine/battle/ai/redundant.h"
 //#include "engine/events/move_deleter.h"
 //#include "engine/link/mystery_gift_2.h"
 //#include "engine/items/tmhm.h"
@@ -160,7 +160,7 @@
 
 // SECTION "bank11", ROMX
 
-//#include "engine/events/fruit_trees.h"
+#include "engine/events/fruit_trees.h"
 #include "engine/battle/ai/move.h"
 //#include "engine/pokedex/pokedex_2.h"
 //#include "engine/pokemon/mail.h"

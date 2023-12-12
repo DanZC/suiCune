@@ -1,6 +1,6 @@
 #include "../../constants.h"
 
-const uint8_t FruitTreeItems[] = {
+const item_t FruitTreeItems[] = {
 // entries correspond to FRUITTREE_* constants
     [FRUITTREE_ROUTE_29]        = BERRY,
     [FRUITTREE_ROUTE_30_1]      = BERRY,

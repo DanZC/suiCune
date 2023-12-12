@@ -1550,6 +1550,18 @@ void BattleCheckTypeMatchup(void){
     return CheckTypeMatchup();
 }
 
+uint8_t BattleCheckTypeMatchup_Conv(void){
+    // LD_HL(wEnemyMonType1);
+    // LDH_A_addr(hBattleTurn);
+    // AND_A_A;
+    // JR_Z (mCheckTypeMatchup);
+    if(hram->hBattleTurn == 0)
+        return CheckTypeMatchup_Conv(GetBattleVar_Conv(BATTLE_VARS_MOVE_TYPE), wram->wEnemyMon.types);
+    // LD_HL(wBattleMonType1);
+    // return CheckTypeMatchup();
+    return CheckTypeMatchup_Conv(GetBattleVar_Conv(BATTLE_VARS_MOVE_TYPE), wram->wBattleMon.types);
+}
+
 void CheckTypeMatchup(void){
 //  There is an incorrect assumption about this function made in the AI related code: when
 //  the AI calls CheckTypeMatchup (not BattleCheckTypeMatchup), it assumes that placing the
@@ -1629,6 +1641,108 @@ End:
     POP_HL;
     RET;
 
+}
+
+//  There is an incorrect assumption about this function made in the AI related code: when
+//  the AI calls CheckTypeMatchup (not BattleCheckTypeMatchup), it assumes that placing the
+//  offensive type in a will make this function do the right thing. Since a is overwritten,
+//  this assumption is incorrect. A simple fix would be to load the move type for the
+//  current move into a in BattleCheckTypeMatchup, before falling through, which is
+//  consistent with how the rest of the code assumes this code works like.
+uint8_t CheckTypeMatchup_Conv(uint8_t d, const uint8_t* hl){
+    // PUSH_HL;
+    // PUSH_DE;
+    // PUSH_BC;
+    // LD_A(BATTLE_VARS_MOVE_TYPE);
+    // CALL(aGetBattleVar);
+    // LD_D_A;
+    // LD_B_hl;
+    uint8_t b = hl[0];
+    // INC_HL;
+    // LD_C_hl;
+    uint8_t c = hl[1];
+    // LD_A(EFFECTIVE);
+    // LD_addr_A(wTypeMatchup);
+    wram->wTypeMatchup = EFFECTIVE;
+    // LD_HL(mTypeMatchups);
+    hl = TypeMatchups;
+
+    while(1) {
+    // TypesLoop:
+        // LD_A_hli;
+        uint8_t a = *(hl++);
+        // CP_A(-1);
+        // IF_Z goto End;
+        if(a == 0xff)
+            break;
+        // CP_A(-2);
+        // IF_NZ goto Next;
+        if(a == 0xfe) {
+            // LD_A(BATTLE_VARS_SUBSTATUS1_OPP);
+            // CALL(aGetBattleVar);
+            // BIT_A(SUBSTATUS_IDENTIFIED);
+            // IF_NZ goto End;
+            if(bit_test(GetBattleVar_Conv(BATTLE_VARS_SUBSTATUS1_OPP), SUBSTATUS_IDENTIFIED))
+                break;
+            // goto TypesLoop;
+            continue;
+        }
+
+    // Next:
+        // CP_A_D;
+        // IF_NZ goto Nope;
+        if(a == d) {
+            // LD_A_hli;
+            a = *(hl++);
+            // CP_A_B;
+            // IF_Z goto Yup;
+            // CP_A_C;
+            // IF_Z goto Yup;
+            if(a == b || a == c) {
+            // Yup:
+                // XOR_A_A;
+                // LDH_addr_A(hDividend + 0);
+                // LDH_addr_A(hMultiplicand + 0);
+                // LDH_addr_A(hMultiplicand + 1);
+                // LD_A_hli;
+                a = *(hl++);
+                // LDH_addr_A(hMultiplicand + 2);
+                // LD_A_addr(wTypeMatchup);
+                // LDH_addr_A(hMultiplier);
+                // CALL(aMultiply);
+                // LD_A(10);
+                // LDH_addr_A(hDivisor);
+                // PUSH_BC;
+                // LD_B(4);
+                // CALL(aDivide);
+                uint32_t m = (wram->wTypeMatchup * a) / 10;
+                // POP_BC;
+                // LDH_A_addr(hQuotient + 3);
+                // LD_addr_A(wTypeMatchup);
+                wram->wTypeMatchup = (uint8_t)(m & 0xff);
+                // goto TypesLoop;
+                continue;
+            }
+            // goto Nope2;
+        }
+        else {
+        // Nope:
+            // INC_HL;
+            hl++;
+        }
+
+    // Nope2:
+        // INC_HL;
+        // goto TypesLoop;
+        hl++;
+    }
+
+// End:
+    // POP_BC;
+    // POP_DE;
+    // POP_HL;
+    // RET;
+    return wram->wTypeMatchup;
 }
 
 void BattleCommand_ResetTypeMatchup(void){

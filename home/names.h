@@ -15,4 +15,5 @@ void GetTMHMName(void);
 void GetTMHMName_Conv(void);
 uint8_t* GetTMHMName_Conv2(item_t a);
 void GetMoveName(void);
+uint8_t* GetMoveName_Conv2(move_t move);
 #include "hm_moves.h"

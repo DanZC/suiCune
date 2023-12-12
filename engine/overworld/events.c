@@ -16,6 +16,7 @@
 #include "../phone/phone.h"
 #include "../../home/flag.h"
 #include "../menus/start_menu.h"
+#include "../events/forced_movement.h"
 
 // INCLUDE "constants.asm"
 
@@ -53,15 +54,15 @@ Jumptable:
 void DisableEvents(void){
     // XOR_A_A;
     // LD_addr_A(wScriptFlags2);
-    // RET;
     wram->wScriptFlags2 = 0;
+    // RET;
 }
 
 void EnableEvents(void){
     // LD_A(0xff);
     // LD_addr_A(wScriptFlags2);
-    // RET;
     wram->wScriptFlags2 = 0xff;
+    // RET;
 }
 
 void CheckBit5_ScriptFlags2(void){
@@ -128,8 +129,9 @@ void EnableStepCount(void){
 }
 
 void EnableWildEncounters(void){
-    LD_HL(wScriptFlags2);
-    SET_hl(4);
+    // LD_HL(wScriptFlags2);
+    // SET_hl(4);
+    bit_set(wram->wScriptFlags2, 4);
     RET;
 
 }
@@ -1571,7 +1573,7 @@ u8_flag_s PlayerMovement_Conv(void){
         // LD_C_A;
         // SCF;
         // RET;
-        return u8_flag(CallScript_Conv(BANK(aScript_ForcedMovement), mScript_ForcedMovement), true);
+        return u8_flag(CallScript_Conv2(Script_ForcedMovement), true);
 
     case PLAYERMOVEMENT_CONTINUE:
     // continue_:
@@ -1931,27 +1933,26 @@ bool WarpToNewMapScript(script_s* s){
     SCRIPT_END
 }
 
-void FallIntoMapScript(void){
-    //newloadmap ['MAPSETUP_FALL']
-    //playsound ['SFX_KINESIS']
-    //applymovement ['PLAYER', '.SkyfallMovement']
-    //playsound ['SFX_STRENGTH']
-    //scall ['LandAfterPitfallScript']
-    //end ['?']
-
-
-SkyfallMovement:
-    //skyfall ['?']
-    //step_end ['?']
-
-    return LandAfterPitfallScript();
+bool FallIntoMapScript(script_s* s){
+    static const uint8_t SkyfallMovement[] = {
+        movement_skyfall,
+        movement_step_end
+    };
+    SCRIPT_BEGIN
+    newloadmap(MAPSETUP_FALL)
+    playsound(SFX_KINESIS)
+    applymovement(PLAYER, SkyfallMovement)
+    playsound(SFX_STRENGTH)
+    scall(LandAfterPitfallScript)
+    s_end
+    SCRIPT_END
 }
 
-void LandAfterPitfallScript(void){
-    //earthquake ['16']
-    //end ['?']
-
-    return EdgeWarpScript();
+bool LandAfterPitfallScript(script_s* s){
+    SCRIPT_BEGIN
+    earthquake(16)
+    s_end
+    SCRIPT_END
 }
 
 void EdgeWarpScript(void){
@@ -2208,7 +2209,7 @@ bool WildBattleScript(script_s* s){
     randomwildmon
     startbattle
     //reloadmapafterbattle ['?']
-    //end ['?']
+    s_end
     SCRIPT_END
 }
 
