@@ -232,12 +232,12 @@ void AIChooseMove(void){
     // move_loop:
         // INC_hl;
         // DEC_HL;
-        wram->wEnemyAIMoveScores[c - 1]++;
+        wram->wEnemyAIMoveScores[c]++;
 
         // INC_A;
         // CP_A(NUM_MOVES + 1);
         // IF_NZ goto move_loop;
-    } while(--c != 0);
+    } while(c-- != 0);
 
     // LD_HL(wEnemyAIMoveScores);
     // LD_DE(wEnemyMonMoves);

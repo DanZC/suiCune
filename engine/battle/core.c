@@ -1045,7 +1045,9 @@ not_encored:
     SafeCallGB(aMoveSelectionScreen, &regs);
     // PUSH_AF;
     // CALL(aSafeLoadTempTilemapToTilemap);
+    SafeLoadTempTilemapToTilemap_Conv();
     // CALL(aUpdateBattleHuds);
+    UpdateBattleHuds();
     // LD_A_addr(wCurPlayerMove);
     // CP_A(STRUGGLE);
     // IF_Z goto struggle;
@@ -7489,6 +7491,7 @@ uint8_t DrawEnemyHUD_Conv(void){
     // print_level:
         // LD_A_addr(wEnemyMonLevel);
         // LD_addr_A(wTempMonLevel);
+        wram->wTempMon.mon.level = wram->wEnemyMon.level;
         // CALL(aPrintLevel);
         PrintLevel_Conv(coord(6, 1, wram->wTilemap) - ((gender.flag)? 1: 0));
     }
@@ -7511,8 +7514,8 @@ uint8_t DrawEnemyHUD_Conv(void){
     }
 
 // not_fainted:
-    uint16_t HP = (LOW(wram->wEnemyMon.hp) << 8) | HIGH(wram->wEnemyMon.hp);
-    uint16_t maxHP = (LOW(wram->wEnemyMon.maxHP) << 8) | HIGH(wram->wEnemyMon.maxHP);
+    uint16_t HP = ReverseEndian16(wram->wEnemyMon.hp);
+    uint16_t maxHP = ReverseEndian16(wram->wEnemyMon.maxHP);
     // XOR_A_A;
     // LDH_addr_A(hMultiplicand + 0);
     // LD_A(HP_BAR_LENGTH_PX);

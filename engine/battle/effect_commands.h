@@ -87,6 +87,7 @@ void BattleCommand_SleepTarget(void);
 void BattleCommand_PoisonTarget(void);
 void BattleCommand_Poison(void);
 void CheckIfTargetIsPoisonType(void);
+bool CheckIfTargetIsPoisonType_Conv(void);
 void PoisonOpponent(void);
 void BattleCommand_DrainTarget(void);
 void BattleCommand_EatDream(void);
@@ -270,7 +271,7 @@ void v_CheckBattleScene(void);
 //#include "engine/battle/move_effects/rage.h"
 //#include "engine/battle/move_effects/mimic.h"
 //#include "engine/battle/move_effects/leech_seed.h"
-//#include "engine/battle/move_effects/splash.h"
+#include "./move_effects/splash.h"
 //#include "engine/battle/move_effects/disable.h"
 //#include "engine/battle/move_effects/pay_day.h"
 //#include "engine/battle/move_effects/conversion.h"

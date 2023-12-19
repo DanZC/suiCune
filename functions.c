@@ -4354,4 +4354,7 @@ void init_function_pointers(void) {
 
     // engine/battle/move_effects/false_swipe.c
     // REDIRECTED(BattleCommand_FalseSwipe);
+
+    // engine/battle/move_effects/splash.c
+    REDIRECTED(BattleCommand_Splash);
 }

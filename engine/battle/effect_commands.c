@@ -2097,7 +2097,7 @@ void BattleCommand_Stab(void){
     // LD_addr_A(wTypeModifier);
     wram->wTypeModifier = (wram->wTypeModifier & 0b10000000) | matchup;
     // RET;
-
+    printf("Calculated stab damage: %d.\n", ReverseEndian16(wram->wCurDamage));
 }
 
 void BattleCheckTypeMatchup(void){
@@ -2403,6 +2403,7 @@ void BattleCommand_DamageVariation(void){
     // LD_hl_A;
     wram->wCurDamage = ReverseEndian16((uint16_t)n);
     // RET;
+    printf("Damage variation: %d.\n", ReverseEndian16(wram->wCurDamage));
 }
 
 static bool BattleCommand_CheckHit_DreamEater(void) {
@@ -3295,6 +3296,7 @@ static void BattleCommand_ApplyDamage_update_damage_taken(void) {
         *taken = ReverseEndian16((uint16_t)dmg2);
     }
     // RET;
+    printf("Damage taken: %d.\n", ReverseEndian16(*taken));
     return;
 }
 
@@ -4295,7 +4297,7 @@ bool CheckDamageStatsCritical_Conv(void){
         // LD_A_addr(wEnemyMoveStructType);
         // CP_A(SPECIAL);
     //  special
-        if(wram->wPlayerMoveStruct.type >= SPECIAL) {
+        if(wram->wEnemyMoveStruct.type >= SPECIAL) {
             // LD_A_addr(wEnemySAtkLevel);
             // LD_B_A;
             // LD_A_addr(wPlayerSDefLevel);
@@ -4554,7 +4556,7 @@ void EnemyAttackDamage(struct BattleCmdState* state){
 
     // specialcrit:
         // LD_HL(wEnemyMonSpclAtk);
-        atk = (wram->wBattleMon.spclAtk[0] << 8) | (wram->wBattleMon.spclAtk[1]);
+        atk = (wram->wEnemyMon.spclAtk[0] << 8) | (wram->wEnemyMon.spclAtk[1]);
         // CALL(aCheckDamageStatsCritical);
         // IF_C goto lightball;
         if(!CheckDamageStatsCritical_Conv()) {
@@ -4582,7 +4584,7 @@ void EnemyAttackDamage(struct BattleCmdState* state){
 
     // LD_A_addr(wEnemyMonLevel);
     // LD_E_A;
-    state->e = wram->wBattleMon.level;
+    state->e = wram->wEnemyMon.level;
     // CALL(aDittoMetalPowder);
     DittoMetalPowder_Conv(&state->b, &state->c);
 
@@ -4712,6 +4714,7 @@ void BattleCommand_DamageCalc(void){
     uint8_t atk = gBattleCmdState.b;
 
     gBattleCmdState.a = DamageCalc(pwr, lvl, def, atk);
+    printf("Calculated %d damage.\n", ReverseEndian16(wram->wCurDamage));
 }
 
 static void DamageCalc_CriticalMultiplier(uint32_t* n) {
@@ -5607,7 +5610,7 @@ did_no_damage:
 
 void DoPlayerDamage_Conv(bool ignoreSub){
     // LD_HL(wCurDamage);
-    uint16_t dmg = wram->wCurDamage;
+    uint16_t dmg = ReverseEndian16(wram->wCurDamage);
     // LD_A_hli;
     // LD_B_A;
     // LD_A_hl;
@@ -5794,264 +5797,389 @@ void UpdateMoveData(void){
     CopyName1_Conv2(hl);
 }
 
+static bool BattleCommand_SleepTarget_CheckAIRandomFail(void) {
+// Enemy turn
+    // LDH_A_addr(hBattleTurn);
+    // AND_A_A;
+    // IF_Z goto dont_fail;
+
+// Not in link battle
+    // LD_A_addr(wLinkMode);
+    // AND_A_A;
+    // IF_NZ goto dont_fail;
+
+    // LD_A_addr(wInBattleTowerBattle);
+    // AND_A_A;
+    // IF_NZ goto dont_fail;
+
+// Not locked-on by the enemy
+    // LD_A_addr(wPlayerSubStatus5);
+    // BIT_A(SUBSTATUS_LOCK_ON);
+    // IF_NZ goto dont_fail;
+
+    // CALL(aBattleRandom);
+    // CP_A(25 percent + 1);  // 25% chance AI fails
+    // RET_C ;
+    if(hram->hBattleTurn != 0
+    && wram->wLinkMode == 0
+    && wram->wInBattleTowerBattle == 0
+    && !bit_test(wram->wPlayerSubStatus5, SUBSTATUS_LOCK_ON)
+    && v_BattleRandom_Conv() < 25 percent + 1) {
+        return true;
+    }
+
+// dont_fail:
+    // XOR_A_A;
+    // RET;
+    return false;
+}
+
 void BattleCommand_SleepTarget(void){
 //  sleeptarget
     PEEK("");
-    CALL(aGetOpponentItem);
-    LD_A_B;
-    CP_A(HELD_PREVENT_SLEEP);
-    IF_NZ goto not_protected_by_item;
+    item_t item;
+    // CALL(aGetOpponentItem);
+    uint16_t effect = GetOpponentItem_Conv(&item);
+    // LD_A_B;
+    // CP_A(HELD_PREVENT_SLEEP);
+    // IF_NZ goto not_protected_by_item;
 
-    LD_A_hl;
-    LD_addr_A(wNamedObjectIndex);
-    CALL(aGetItemName);
-    LD_HL(mProtectedByText);
-    goto fail;
-
-
-not_protected_by_item:
-    LD_A(BATTLE_VARS_STATUS_OPP);
-    CALL(aGetBattleVarAddr);
-    LD_D_H;
-    LD_E_L;
-    LD_A_de;
-    AND_A(SLP);
-    LD_HL(mAlreadyAsleepText);
-    IF_NZ goto fail;
-
-    LD_A_addr(wAttackMissed);
-    AND_A_A;
-    JP_NZ (mPrintDidntAffect2);
-
-    LD_HL(mDidntAffect1Text);
-    CALL(aBattleCommand_SleepTarget_CheckAIRandomFail);
-    IF_C goto fail;
-
-    LD_A_de;
-    AND_A_A;
-    IF_NZ goto fail;
-
-    CALL(aCheckSubstituteOpp);
-    IF_NZ goto fail;
-
-    CALL(aAnimateCurrentMove);
-    LD_B(SLP);
-    LD_A_addr(wInBattleTowerBattle);
-    AND_A_A;
-    IF_Z goto random_loop;
-    LD_B(0b011);
+    if(HIGH(effect) == HELD_PREVENT_SLEEP) {
+        // LD_A_hl;
+        // LD_addr_A(wNamedObjectIndex);
+        // CALL(aGetItemName);
+        GetItemName_Conv2(item);
+        // LD_HL(mProtectedByText);
+        // goto fail;
+        AnimateFailedMove();
+        return StdBattleTextbox_Conv2(ProtectedByText);
+    }
 
 
-random_loop:
-    CALL(aBattleRandom);
-    AND_A_B;
-    IF_Z goto random_loop;
-    CP_A(SLP);
-    IF_Z goto random_loop;
-    INC_A;
-    LD_de_A;
-    CALL(aUpdateOpponentInParty);
-    CALL(aRefreshBattleHuds);
+// not_protected_by_item:
+    // LD_A(BATTLE_VARS_STATUS_OPP);
+    // CALL(aGetBattleVarAddr);
+    // LD_D_H;
+    // LD_E_L;
+    uint8_t* de = GetBattleVarAddr_Conv(BATTLE_VARS_STATUS_OPP);
+    // LD_A_de;
+    // AND_A(SLP);
+    // LD_HL(mAlreadyAsleepText);
+    // IF_NZ goto fail;
+    if(*de & SLP) {
+        AnimateFailedMove();
+        return StdBattleTextbox_Conv2(AlreadyAsleepText);
+    }
 
-    LD_HL(mFellAsleepText);
-    CALL(aStdBattleTextbox);
+    // LD_A_addr(wAttackMissed);
+    // AND_A_A;
+    // JP_NZ (mPrintDidntAffect2);
+    if(wram->wAttackMissed)
+        return PrintDidntAffect2();
 
-    FARCALL(aUseHeldStatusHealingItem);
+    // LD_HL(mDidntAffect1Text);
+    // CALL(aBattleCommand_SleepTarget_CheckAIRandomFail);
+    // IF_C goto fail;
 
-    JP_Z (mOpponentCantMove);
-    RET;
+    // LD_A_de;
+    // AND_A_A;
+    // IF_NZ goto fail;
 
+    // CALL(aCheckSubstituteOpp);
+    // IF_NZ goto fail;
+    if(BattleCommand_SleepTarget_CheckAIRandomFail() 
+    || *de != 0
+    || CheckSubstituteOpp_Conv()) {
+        AnimateFailedMove();
+        return StdBattleTextbox_Conv2(DidntAffect1Text);
+    }
 
-fail:
-    PUSH_HL;
-    CALL(aAnimateFailedMove);
-    POP_HL;
-    JP(mStdBattleTextbox);
+    // CALL(aAnimateCurrentMove);
+    AnimateCurrentMove();
+    // LD_B(SLP);
+    // LD_A_addr(wInBattleTowerBattle);
+    // AND_A_A;
+    // IF_Z goto random_loop;
+    // LD_B(0b011);
+    uint8_t b = (wram->wInBattleTowerBattle == 0)? SLP: 0b011; 
 
+    uint8_t a;
+    do {
+    // random_loop:
+        // CALL(aBattleRandom);
+        a = v_BattleRandom_Conv() & b;
+        // AND_A_B;
+        // IF_Z goto random_loop;
+        // CP_A(SLP);
+        // IF_Z goto random_loop;
+    } while(a == 0 || a == SLP);
+    // INC_A;
+    // LD_de_A;
+    *de = a + 1;
+    // CALL(aUpdateOpponentInParty);
+    UpdateOpponentInParty();
+    // CALL(aRefreshBattleHuds);
+    RefreshBattleHuds_Conv();
 
-CheckAIRandomFail:
-// Enemy turn
-    LDH_A_addr(hBattleTurn);
-    AND_A_A;
-    IF_Z goto dont_fail;
+    // LD_HL(mFellAsleepText);
+    // CALL(aStdBattleTextbox);
+    StdBattleTextbox_Conv2(FellAsleepText);
 
-// Not in link battle
-    LD_A_addr(wLinkMode);
-    AND_A_A;
-    IF_NZ goto dont_fail;
+    // FARCALL(aUseHeldStatusHealingItem);
+    struct cpu_registers_s regs = SafeCallGBAutoRet(aUseHeldStatusHealingItem);
 
-    LD_A_addr(wInBattleTowerBattle);
-    AND_A_A;
-    IF_NZ goto dont_fail;
+    // JP_Z (mOpponentCantMove);
+    if(regs.f_bits.z)
+        return OpponentCantMove();
+    // RET;
+    return;
 
-// Not locked-on by the enemy
-    LD_A_addr(wPlayerSubStatus5);
-    BIT_A(SUBSTATUS_LOCK_ON);
-    IF_NZ goto dont_fail;
-
-    CALL(aBattleRandom);
-    CP_A(25 percent + 1);  // 25% chance AI fails
-    RET_C ;
-
-
-dont_fail:
-    XOR_A_A;
-    RET;
-
+// fail:
+    // PUSH_HL;
+    // CALL(aAnimateFailedMove);
+    // POP_HL;
+    // JP(mStdBattleTextbox);
 }
 
 void BattleCommand_PoisonTarget(void){
 //  poisontarget
     PEEK("");
-    CALL(aCheckSubstituteOpp);
-    RET_NZ ;
-    LD_A(BATTLE_VARS_STATUS_OPP);
-    CALL(aGetBattleVarAddr);
-    AND_A_A;
-    RET_NZ ;
-    LD_A_addr(wTypeModifier);
-    AND_A(0x7f);
-    RET_Z ;
-    CALL(aCheckIfTargetIsPoisonType);
-    RET_Z ;
-    CALL(aGetOpponentItem);
-    LD_A_B;
-    CP_A(HELD_PREVENT_POISON);
-    RET_Z ;
-    LD_A_addr(wEffectFailed);
-    AND_A_A;
-    RET_NZ ;
-    CALL(aSafeCheckSafeguard);
-    RET_NZ ;
+    // CALL(aCheckSubstituteOpp);
+    // RET_NZ ;
+    if(CheckSubstituteOpp_Conv())
+        return;
+    // LD_A(BATTLE_VARS_STATUS_OPP);
+    // CALL(aGetBattleVarAddr);
+    // AND_A_A;
+    // RET_NZ ;
+    if(*GetBattleVarAddr_Conv(BATTLE_VARS_STATUS_OPP))
+        return;
+    // LD_A_addr(wTypeModifier);
+    // AND_A(0x7f);
+    // RET_Z ;
+    if((wram->wTypeModifier & 0x7f) == 0)
+        return;
+    // CALL(aCheckIfTargetIsPoisonType);
+    // RET_Z ;
+    if(CheckIfTargetIsPoisonType_Conv())
+        return;
+    // CALL(aGetOpponentItem);
+    // LD_A_B;
+    // CP_A(HELD_PREVENT_POISON);
+    // RET_Z ;
+    if(HIGH(GetOpponentItem_Conv(NULL)) == HELD_PREVENT_POISON)
+        return;
+    // LD_A_addr(wEffectFailed);
+    // AND_A_A;
+    // RET_NZ ;
+    // CALL(aSafeCheckSafeguard);
+    // RET_NZ ;
+    if(wram->wEffectFailed || SafeCheckSafeguard_Conv())
+        return;
 
-    CALL(aPoisonOpponent);
-    LD_DE(ANIM_PSN);
-    CALL(aPlayOpponentBattleAnim);
-    CALL(aRefreshBattleHuds);
+    // CALL(aPoisonOpponent);
+    PoisonOpponent();
+    // LD_DE(ANIM_PSN);
+    // CALL(aPlayOpponentBattleAnim);
+    PlayOpponentBattleAnim_Conv(ANIM_PSN);
+    // CALL(aRefreshBattleHuds);
+    RefreshBattleHuds_Conv();
 
-    LD_HL(mWasPoisonedText);
-    CALL(aStdBattleTextbox);
+    // LD_HL(mWasPoisonedText);
+    // CALL(aStdBattleTextbox);
+    StdBattleTextbox_Conv2(WasPoisonedText);
 
-    FARCALL(aUseHeldStatusHealingItem);
-    RET;
+    // FARCALL(aUseHeldStatusHealingItem);
+    SafeCallGBAuto(aUseHeldStatusHealingItem);
+    // RET;
+}
 
+static bool BattleCommand_Poison_check_toxic(uint8_t** hl, uint8_t** de) {
+    // LD_A(BATTLE_VARS_SUBSTATUS5_OPP);
+    // CALL(aGetBattleVarAddr);
+    *hl = GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS5_OPP);
+    // LDH_A_addr(hBattleTurn);
+    // AND_A_A;
+    // LD_DE(wEnemyToxicCount);
+    // IF_Z goto ok;
+    // LD_DE(wPlayerToxicCount);
+    *de = (hram->hBattleTurn == 0)? &wram->wEnemyToxicCount: &wram->wPlayerToxicCount;
+
+// ok:
+    // LD_A(BATTLE_VARS_MOVE_EFFECT);
+    // CALL(aGetBattleVar);
+    // CP_A(EFFECT_TOXIC);
+    // RET;
+    return GetBattleVar_Conv(BATTLE_VARS_MOVE_EFFECT) == EFFECT_TOXIC;
+}
+
+static void BattleCommand_Poison_apply_poison(void) {
+    // CALL(aAnimateCurrentMove);
+    AnimateCurrentMove();
+    // CALL(aPoisonOpponent);
+    PoisonOpponent();
+    // JP(mRefreshBattleHuds);
+    return RefreshBattleHuds_Conv();
 }
 
 void BattleCommand_Poison(void){
 //  poison
     PEEK("");
-    LD_HL(mDoesntAffectText);
-    LD_A_addr(wTypeModifier);
-    AND_A(0x7f);
-    JP_Z (mBattleCommand_Poison_failed);
+    // LD_HL(mDoesntAffectText);
+    // LD_A_addr(wTypeModifier);
+    // AND_A(0x7f);
+    // JP_Z (mBattleCommand_Poison_failed);
 
-    CALL(aCheckIfTargetIsPoisonType);
-    JP_Z (mBattleCommand_Poison_failed);
+    // CALL(aCheckIfTargetIsPoisonType);
+    // JP_Z (mBattleCommand_Poison_failed);
+    if((wram->wTypeModifier & 0x7f) == 0 || CheckIfTargetIsPoisonType_Conv()) {
+    // failed:
+        // PUSH_HL;
+        // CALL(aAnimateFailedMove);
+        AnimateFailedMove();
+        // POP_HL;
+        // JP(mStdBattleTextbox);
+        return StdBattleTextbox_Conv2(DoesntAffectText);
+    }
 
-    LD_A(BATTLE_VARS_STATUS_OPP);
-    CALL(aGetBattleVar);
-    LD_B_A;
-    LD_HL(mAlreadyPoisonedText);
-    AND_A(1 << PSN);
-    JP_NZ (mBattleCommand_Poison_failed);
+    // LD_A(BATTLE_VARS_STATUS_OPP);
+    // CALL(aGetBattleVar);
+    // LD_B_A;
+    // LD_HL(mAlreadyPoisonedText);
+    // AND_A(1 << PSN);
+    // JP_NZ (mBattleCommand_Poison_failed);
+    if(GetBattleVar_Conv(BATTLE_VARS_STATUS_OPP) & (1 << PSN)) {
+    // failed:
+        // PUSH_HL;
+        // CALL(aAnimateFailedMove);
+        AnimateFailedMove();
+        // POP_HL;
+        // JP(mStdBattleTextbox);
+        return StdBattleTextbox_Conv2(AlreadyPoisonedText);
+    }
 
-    CALL(aGetOpponentItem);
-    LD_A_B;
-    CP_A(HELD_PREVENT_POISON);
-    IF_NZ goto do_poison;
-    LD_A_hl;
-    LD_addr_A(wNamedObjectIndex);
-    CALL(aGetItemName);
-    LD_HL(mProtectedByText);
-    goto failed;
+    item_t item;
+    // CALL(aGetOpponentItem);
+    // LD_A_B;
+    // CP_A(HELD_PREVENT_POISON);
+    // IF_NZ goto do_poison;
+    if(HIGH(GetOpponentItem_Conv(&item)) == HELD_PREVENT_POISON) {
+        // LD_A_hl;
+        // LD_addr_A(wNamedObjectIndex);
+        // CALL(aGetItemName);
+        GetItemName_Conv2(item);
+        // LD_HL(mProtectedByText);
+        // goto failed;
+    // failed:
+        // PUSH_HL;
+        // CALL(aAnimateFailedMove);
+        AnimateFailedMove();
+        // POP_HL;
+        // JP(mStdBattleTextbox);
+        return StdBattleTextbox_Conv2(ProtectedByText);
+    }
 
+// do_poison:
+    // LD_HL(mDidntAffect1Text);
+    // LD_A(BATTLE_VARS_STATUS_OPP);
+    // CALL(aGetBattleVar);
+    // AND_A_A;
+    // IF_NZ goto failed;
+    if(GetBattleVar_Conv(BATTLE_VARS_STATUS_OPP)) {
+    // failed:
+        // PUSH_HL;
+        // CALL(aAnimateFailedMove);
+        AnimateFailedMove();
+        // POP_HL;
+        // JP(mStdBattleTextbox);
+        return StdBattleTextbox_Conv2(DidntAffect1Text);
+    }
 
-do_poison:
-    LD_HL(mDidntAffect1Text);
-    LD_A(BATTLE_VARS_STATUS_OPP);
-    CALL(aGetBattleVar);
-    AND_A_A;
-    IF_NZ goto failed;
+    // LDH_A_addr(hBattleTurn);
+    // AND_A_A;
+    // IF_Z goto dont_sample_failure;
 
-    LDH_A_addr(hBattleTurn);
-    AND_A_A;
-    IF_Z goto dont_sample_failure;
+    // LD_A_addr(wLinkMode);
+    // AND_A_A;
+    // IF_NZ goto dont_sample_failure;
 
-    LD_A_addr(wLinkMode);
-    AND_A_A;
-    IF_NZ goto dont_sample_failure;
+    // LD_A_addr(wInBattleTowerBattle);
+    // AND_A_A;
+    // IF_NZ goto dont_sample_failure;
 
-    LD_A_addr(wInBattleTowerBattle);
-    AND_A_A;
-    IF_NZ goto dont_sample_failure;
+    // LD_A_addr(wPlayerSubStatus5);
+    // BIT_A(SUBSTATUS_LOCK_ON);
+    // IF_NZ goto dont_sample_failure;
 
-    LD_A_addr(wPlayerSubStatus5);
-    BIT_A(SUBSTATUS_LOCK_ON);
-    IF_NZ goto dont_sample_failure;
+    // CALL(aBattleRandom);
+    // CP_A(25 percent + 1);  // 25% chance AI fails
+    // IF_C goto failed;
 
-    CALL(aBattleRandom);
-    CP_A(25 percent + 1);  // 25% chance AI fails
-    IF_C goto failed;
+    if(hram->hBattleTurn != 0
+    && wram->wLinkMode == 0
+    && wram->wInBattleTowerBattle == 0
+    && !bit_test(wram->wPlayerSubStatus5, SUBSTATUS_LOCK_ON)
+    && v_BattleRandom_Conv() < 25 percent + 1) {
+    // failed:
+        // PUSH_HL;
+        // CALL(aAnimateFailedMove);
+        AnimateFailedMove();
+        // POP_HL;
+        // JP(mStdBattleTextbox);
+        return StdBattleTextbox_Conv2(DidntAffect1Text);
+    }
 
+// dont_sample_failure:
+    // CALL(aCheckSubstituteOpp);
+    // IF_NZ goto failed;
+    // LD_A_addr(wAttackMissed);
+    // AND_A_A;
+    // IF_NZ goto failed;
+    if(CheckSubstituteOpp_Conv() || wram->wAttackMissed) {
+    // failed:
+        // PUSH_HL;
+        // CALL(aAnimateFailedMove);
+        AnimateFailedMove();
+        // POP_HL;
+        // JP(mStdBattleTextbox);
+        return StdBattleTextbox_Conv2(DidntAffect1Text);
+    }
+    uint8_t* hl, *de;
+    // CALL(aBattleCommand_Poison_check_toxic);
+    // IF_Z goto toxic;
+    if(BattleCommand_Poison_check_toxic(&hl, &de)) {
+    // toxic:
+        // SET_hl(SUBSTATUS_TOXIC);
+        bit_set(*hl, SUBSTATUS_TOXIC);
+        // XOR_A_A;
+        // LD_de_A;
+        *de = 0;
+        // CALL(aBattleCommand_Poison_apply_poison);
+        BattleCommand_Poison_apply_poison();
+        // LD_HL(mBadlyPoisonedText);
+        // CALL(aStdBattleTextbox);
+        StdBattleTextbox_Conv2(BadlyPoisonedText);
+    }
+    else {
+        // CALL(aBattleCommand_Poison_apply_poison);
+        BattleCommand_Poison_apply_poison();
+        // LD_HL(mWasPoisonedText);
+        // CALL(aStdBattleTextbox);
+        StdBattleTextbox_Conv2(WasPoisonedText);
+        // goto finished;
+    }
 
-dont_sample_failure:
-    CALL(aCheckSubstituteOpp);
-    IF_NZ goto failed;
-    LD_A_addr(wAttackMissed);
-    AND_A_A;
-    IF_NZ goto failed;
-    CALL(aBattleCommand_Poison_check_toxic);
-    IF_Z goto toxic;
+// finished:
+    // FARCALL(aUseHeldStatusHealingItem);
+    SafeCallGBAuto(aUseHeldStatusHealingItem);
+    // RET;
+    return;
 
-    CALL(aBattleCommand_Poison_apply_poison);
-    LD_HL(mWasPoisonedText);
-    CALL(aStdBattleTextbox);
-    goto finished;
-
-
-toxic:
-    SET_hl(SUBSTATUS_TOXIC);
-    XOR_A_A;
-    LD_de_A;
-    CALL(aBattleCommand_Poison_apply_poison);
-
-    LD_HL(mBadlyPoisonedText);
-    CALL(aStdBattleTextbox);
-
-
-finished:
-    FARCALL(aUseHeldStatusHealingItem);
-    RET;
-
-
-failed:
-    PUSH_HL;
-    CALL(aAnimateFailedMove);
-    POP_HL;
-    JP(mStdBattleTextbox);
-
-
-apply_poison:
-    CALL(aAnimateCurrentMove);
-    CALL(aPoisonOpponent);
-    JP(mRefreshBattleHuds);
-
-
-check_toxic:
-    LD_A(BATTLE_VARS_SUBSTATUS5_OPP);
-    CALL(aGetBattleVarAddr);
-    LDH_A_addr(hBattleTurn);
-    AND_A_A;
-    LD_DE(wEnemyToxicCount);
-    IF_Z goto ok;
-    LD_DE(wPlayerToxicCount);
-
-ok:
-    LD_A(BATTLE_VARS_MOVE_EFFECT);
-    CALL(aGetBattleVar);
-    CP_A(EFFECT_TOXIC);
-    RET;
-
+// failed:
+    // PUSH_HL;
+    // CALL(aAnimateFailedMove);
+    // POP_HL;
+    // JP(mStdBattleTextbox);
 }
 
 void CheckIfTargetIsPoisonType(void){
@@ -6072,12 +6200,53 @@ ok:
 
 }
 
-void PoisonOpponent(void){
-    LD_A(BATTLE_VARS_STATUS_OPP);
-    CALL(aGetBattleVarAddr);
-    SET_hl(PSN);
-    JP(mUpdateOpponentInParty);
+bool CheckIfTargetIsPoisonType_Conv(void){
+    if(hram->hBattleTurn != 0) {
+    // ok:
+        // LD_A_de;
+        // INC_DE;
+        // CP_A(POISON);
+        // RET_Z ;
+        // LD_A_de;
+        // CP_A(POISON);
+        // RET;
+        return wram->wBattleMon.type1 == POISON || wram->wBattleMon.type2 == POISON;
+    }
+    else {
+    // ok:
+        // LD_A_de;
+        // INC_DE;
+        // CP_A(POISON);
+        // RET_Z ;
+        // LD_A_de;
+        // CP_A(POISON);
+        // RET;
+        return wram->wEnemyMon.type1 == POISON || wram->wEnemyMon.type2 == POISON;
+    }
+    // LD_DE(wEnemyMonType1);
+    // LDH_A_addr(hBattleTurn);
+    // AND_A_A;
+    // IF_Z goto ok;
+    // LD_DE(wBattleMonType1);
 
+// ok:
+    // LD_A_de;
+    // INC_DE;
+    // CP_A(POISON);
+    // RET_Z ;
+    // LD_A_de;
+    // CP_A(POISON);
+    // RET;
+
+}
+
+void PoisonOpponent(void){
+    // LD_A(BATTLE_VARS_STATUS_OPP);
+    // CALL(aGetBattleVarAddr);
+    // SET_hl(PSN);
+    bit_set(*GetBattleVarAddr_Conv(BATTLE_VARS_STATUS_OPP), PSN);
+    // JP(mUpdateOpponentInParty);
+    return UpdateOpponentInParty();
 }
 
 void BattleCommand_DrainTarget(void){
@@ -8178,13 +8347,13 @@ void BattleCommand_EndLoop(void){
 //  Loop back to 'critical'.
 
 // TODO: fix the gotos here.
-    uint16_t* bc;
+    uint8_t* bc;
     uint8_t* de;
     if(hram->hBattleTurn == 0) { 
         // LD_DE(wPlayerRolloutCount);
         de = &wram->wPlayerRolloutCount;
         // LD_BC(wPlayerDamageTaken);
-        bc = (uint16_t*)wram_ptr(wPlayerDamageTaken);
+        bc = wram_ptr(wPlayerDamageTaken);
         // LDH_A_addr(hBattleTurn);
         // AND_A_A;
         // IF_Z goto got_addrs;
@@ -8193,7 +8362,7 @@ void BattleCommand_EndLoop(void){
         // LD_DE(wEnemyRolloutCount);
         de = &wram->wEnemyRolloutCount;
         // LD_BC(wEnemyDamageTaken);
-        bc = (uint16_t*)wram_ptr(wEnemyDamageTaken);
+        bc = wram_ptr(wEnemyDamageTaken);
     }
 
 // got_addrs:
@@ -8911,68 +9080,97 @@ void BattleCommand_TrapTarget(void){
 void BattleCommand_Recoil(void){
 //  recoil
     PEEK("");
-    LD_HL(wBattleMonMaxHP);
-    LDH_A_addr(hBattleTurn);
-    AND_A_A;
-    IF_Z goto got_hp;
-    LD_HL(wEnemyMonMaxHP);
+    // LD_HL(wBattleMonMaxHP);
+    // LDH_A_addr(hBattleTurn);
+    // AND_A_A;
+    // IF_Z goto got_hp;
+    // LD_HL(wEnemyMonMaxHP);
+    uint16_t* hp = (hram->hBattleTurn == 0)? (uint16_t*)wram_ptr(wBattleMonHP): (uint16_t*)wram_ptr(wEnemyMonHP);
+    uint16_t* maxHP = (hram->hBattleTurn == 0)? (uint16_t*)wram_ptr(wBattleMonMaxHP): (uint16_t*)wram_ptr(wEnemyMonMaxHP);
 
-got_hp:
-    LD_A(BATTLE_VARS_MOVE_ANIM);
-    CALL(aGetBattleVar);
-    LD_D_A;
+// got_hp:
+    // LD_A(BATTLE_VARS_MOVE_ANIM);
+    // CALL(aGetBattleVar);
+    // LD_D_A;
+    gBattleCmdState.d = GetBattleVar_Conv(BATTLE_VARS_MOVE_ANIM);
 //  get 1/4 damage or 1 HP, whichever is higher
-    LD_A_addr(wCurDamage);
-    LD_B_A;
-    LD_A_addr(wCurDamage + 1);
-    LD_C_A;
-    SRL_B;
-    RR_C;
-    SRL_B;
-    RR_C;
-    LD_A_B;
-    OR_A_C;
-    IF_NZ goto min_damage;
-    INC_C;
+    // LD_A_addr(wCurDamage);
+    // LD_B_A;
+    // LD_A_addr(wCurDamage + 1);
+    // LD_C_A;
+    uint16_t bc = ReverseEndian16(wram->wCurDamage);
+    // SRL_B;
+    // RR_C;
+    // SRL_B;
+    // RR_C;
+    bc >>= 2;
+    // LD_A_B;
+    // OR_A_C;
+    // IF_NZ goto min_damage;
+    if(bc == 0) {
+        // INC_C;
+        bc = 1;
+    }
 
-min_damage:
-    LD_A_hli;
-    LD_addr_A(wHPBuffer1 + 1);
-    LD_A_hl;
-    LD_addr_A(wHPBuffer1);
-    DEC_HL;
-    DEC_HL;
-    LD_A_hl;
-    LD_addr_A(wHPBuffer2);
-    SUB_A_C;
-    LD_hld_A;
-    LD_addr_A(wHPBuffer3);
-    LD_A_hl;
-    LD_addr_A(wHPBuffer2 + 1);
-    SBC_A_B;
-    LD_hl_A;
-    LD_addr_A(wHPBuffer3 + 1);
-    IF_NC goto dont_ko;
-    XOR_A_A;
-    LD_hli_A;
-    LD_hl_A;
-    LD_HL(wHPBuffer3);
-    LD_hli_A;
-    LD_hl_A;
+// min_damage:
+    // LD_A_hli;
+    // LD_addr_A(wHPBuffer1 + 1);
+    // LD_A_hl;
+    // LD_addr_A(wHPBuffer1);
+    wram->wHPBuffer1 = ReverseEndian16(*maxHP);
+    // DEC_HL;
+    // DEC_HL;
+    // LD_A_hl;
+    // LD_addr_A(wHPBuffer2);
+    // SUB_A_C;
+    // LD_hld_A;
+    // LD_addr_A(wHPBuffer3);
+    // LD_A_hl;
+    // LD_addr_A(wHPBuffer2 + 1);
+    // SBC_A_B;
+    // LD_hl_A;
+    // LD_addr_A(wHPBuffer3 + 1);
+    wram->wHPBuffer2 = ReverseEndian16(*hp);
+    // IF_NC goto dont_ko;
+    if(wram->wHPBuffer2 < bc) {
+        // XOR_A_A;
+        // LD_hli_A;
+        // LD_hl_A;
+        *hp = ReverseEndian16(0);
+        // LD_HL(wHPBuffer3);
+        // LD_hli_A;
+        // LD_hl_A;
+        wram->wHPBuffer3 = 0;
+    }
+    else {
+        *hp = ReverseEndian16(wram->wHPBuffer2 - bc);
+        wram->wHPBuffer3 = wram->wHPBuffer2 - bc;
+    }
 
-dont_ko:
-    hlcoord(10, 9, wTilemap);
-    LDH_A_addr(hBattleTurn);
-    AND_A_A;
-    LD_A(1);
-    IF_Z goto animate_hp_bar;
-    hlcoord(2, 2, wTilemap);
-    XOR_A_A;
-
-animate_hp_bar:
-    LD_addr_A(wWhichHPBar);
-    PREDEF(pAnimateHPBar);
-    CALL(aRefreshBattleHuds);
+// dont_ko:
+    tile_t* hl;
+    uint8_t which;
+    if(hram->hBattleTurn == 0) {
+        // hlcoord(10, 9, wTilemap);
+        hl = coord(10, 9, wram->wTilemap);
+        // LDH_A_addr(hBattleTurn);
+        // AND_A_A;
+        // LD_A(1);
+        which = 1;
+        // IF_Z goto animate_hp_bar;
+    }
+    else {
+        // hlcoord(2, 2, wTilemap);
+        hl = coord(2, 2, wram->wTilemap);
+        // XOR_A_A;
+        which = 0;
+    }
+// animate_hp_bar:
+    // LD_addr_A(wWhichHPBar);
+    // PREDEF(pAnimateHPBar);
+    AnimateHPBar_Conv(hl, which);
+    // CALL(aRefreshBattleHuds);
+    RefreshBattleHuds();
     // LD_HL(mRecoilText);
     // JP(mStdBattleTextbox);
     return StdBattleTextbox_Conv2(RecoilText);
@@ -9539,51 +9737,76 @@ void ResetActorDisable(void){
 void BattleCommand_Screen(void){
 //  screen
     PEEK("");
-    LD_HL(wPlayerScreens);
-    LD_BC(wPlayerLightScreenCount);
-    LDH_A_addr(hBattleTurn);
-    AND_A_A;
-    IF_Z goto got_screens_pointer;
-    LD_HL(wEnemyScreens);
-    LD_BC(wEnemyLightScreenCount);
+    // LD_HL(wPlayerScreens);
+    // LD_BC(wPlayerLightScreenCount);
+    // LDH_A_addr(hBattleTurn);
+    // AND_A_A;
+    // IF_Z goto got_screens_pointer;
+    // LD_HL(wEnemyScreens);
+    uint8_t* hl = (hram->hBattleTurn == 0)? &wram->wPlayerScreens: &wram->wEnemyScreens;
+    // LD_BC(wEnemyLightScreenCount);
+    uint8_t* ls_cnt = (hram->hBattleTurn == 0)? &wram->wPlayerLightScreenCount: &wram->wEnemyLightScreenCount;
+    uint8_t* rf_cnt = (hram->hBattleTurn == 0)? &wram->wPlayerReflectCount: &wram->wEnemyReflectCount;
 
 
-got_screens_pointer:
-    LD_A(BATTLE_VARS_MOVE_EFFECT);
-    CALL(aGetBattleVar);
-    CP_A(EFFECT_LIGHT_SCREEN);
-    IF_NZ goto Reflect;
+// got_screens_pointer:
+    // LD_A(BATTLE_VARS_MOVE_EFFECT);
+    // CALL(aGetBattleVar);
+    // CP_A(EFFECT_LIGHT_SCREEN);
+    // IF_NZ goto Reflect;
+    if(GetBattleVar_Conv(EFFECT_LIGHT_SCREEN) == EFFECT_LIGHT_SCREEN) {
+        // BIT_hl(SCREENS_LIGHT_SCREEN);
+        // IF_NZ goto failed;
+        if(bit_test(*hl, SCREENS_LIGHT_SCREEN)) {
+        // failed:
+            // CALL(aAnimateFailedMove);
+            AnimateFailedMove();
+            // JP(mPrintButItFailed);
+            return PrintButItFailed();
+        }
+        // SET_hl(SCREENS_LIGHT_SCREEN);
+        bit_set(*hl, SCREENS_LIGHT_SCREEN);
+        // LD_A(5);
+        // LD_bc_A;
+        *ls_cnt = 5;
+        // LD_HL(mLightScreenEffectText);
+        // goto good;
+        AnimateCurrentMove();
+        return StdBattleTextbox_Conv2(LightScreenEffectText);
+    }
+    else {
+    // Reflect:
+        // BIT_hl(SCREENS_REFLECT);
+        // IF_NZ goto failed;
+        if(bit_test(*hl, SCREENS_REFLECT)) {
+        // failed:
+            // CALL(aAnimateFailedMove);
+            AnimateFailedMove();
+            // JP(mPrintButItFailed);
+            return PrintButItFailed();
+        }
+        // SET_hl(SCREENS_REFLECT);
+        bit_set(*hl, SCREENS_REFLECT);
 
-    BIT_hl(SCREENS_LIGHT_SCREEN);
-    IF_NZ goto failed;
-    SET_hl(SCREENS_LIGHT_SCREEN);
-    LD_A(5);
-    LD_bc_A;
-    LD_HL(mLightScreenEffectText);
-    goto good;
+    // LightScreenCount -> ReflectCount
+        // INC_BC;
+
+        // LD_A(5);
+        // LD_bc_A;
+        *rf_cnt = 5;
+        // LD_HL(mReflectEffectText);
+        AnimateCurrentMove();
+        return StdBattleTextbox_Conv2(ReflectEffectText);
+    }
+
+// good:
+    // CALL(aAnimateCurrentMove);
+    // JP(mStdBattleTextbox);
 
 
-Reflect:
-    BIT_hl(SCREENS_REFLECT);
-    IF_NZ goto failed;
-    SET_hl(SCREENS_REFLECT);
-
-// LightScreenCount -> ReflectCount
-    INC_BC;
-
-    LD_A(5);
-    LD_bc_A;
-    LD_HL(mReflectEffectText);
-
-
-good:
-    CALL(aAnimateCurrentMove);
-    JP(mStdBattleTextbox);
-
-
-failed:
-    CALL(aAnimateFailedMove);
-    JP(mPrintButItFailed);
+// failed:
+    // CALL(aAnimateFailedMove);
+    // JP(mPrintButItFailed);
 
 }
 

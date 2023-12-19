@@ -60,7 +60,7 @@ void (*const BattleCommandPointers[])(void) = {
 	BattleCommand_FailureText, // BattleCommand_Mimic,
 	BattleCommand_FailureText, // BattleCommand_Metronome,
 	BattleCommand_FailureText, // BattleCommand_LeechSeed,
-	BattleCommand_FailureText, // BattleCommand_Splash,
+	BattleCommand_Splash,
 	BattleCommand_FailureText, // BattleCommand_Disable,
 	BattleCommand_ClearText,
 	BattleCommand_Charge,
