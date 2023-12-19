@@ -5,3 +5,4 @@ void HealPartyMon_Conv(struct PartyMon* pmon);
 void ComputeHPBarPixels(void);
 uint8_t ComputeHPBarPixels_Conv(uint16_t bc, uint16_t de);
 void AnimateHPBar(void);
+void AnimateHPBar_Conv(tile_t* hl, uint8_t which);

@@ -377,12 +377,16 @@ struct PACKED wram_s
                         uint16_t wBattleScriptBufferAddress;
                         uint8_t wTurnEnded;
                         uint8_t skip_13[1];
-                        //union wPlayerStats
-                        uint16_t wPlayerAttack;
-                        uint16_t wPlayerDefense;
-                        uint16_t wPlayerSpeed;
-                        uint16_t wPlayerSpAtk;
-                        uint16_t wPlayerSpDef;
+                        union {
+                            uint16_t wPlayerStats[5];
+                            struct {
+                                uint16_t wPlayerAttack;
+                                uint16_t wPlayerDefense;
+                                uint16_t wPlayerSpeed;
+                                uint16_t wPlayerSpAtk;
+                                uint16_t wPlayerSpDef;
+                            };
+                        };
                         uint8_t skip_14[1];
                         union {
                             uint16_t wEnemyStats[5];

@@ -1,1 +1,1 @@
-void HiddenPowerDamage(void);
+uint8_t HiddenPowerDamage(void);

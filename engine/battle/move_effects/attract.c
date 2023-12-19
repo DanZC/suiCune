@@ -1,31 +1,44 @@
 #include "../../../constants.h"
 #include "attract.h"
 #include "../../pokemon/mon_stats.h"
+#include "../effect_commands.h"
+#include "../../../home/battle.h"
+#include "../../../home/battle_vars.h"
+#include "../../../data/text/battle.h"
 
 void BattleCommand_Attract(void){
 //  attract
-    LD_A_addr(wAttackMissed);
-    AND_A_A;
-    IF_NZ goto failed;
-    CALL(aCheckOppositeGender);
-    IF_C goto failed;
-    CALL(aCheckHiddenOpponent);
-    IF_NZ goto failed;
-    LD_A(BATTLE_VARS_SUBSTATUS1_OPP);
-    CALL(aGetBattleVarAddr);
-    BIT_hl(SUBSTATUS_IN_LOVE);
-    IF_NZ goto failed;
+    // LD_A_addr(wAttackMissed);
+    // AND_A_A;
+    // IF_NZ goto failed;
+    // CALL(aCheckOppositeGender);
+    // IF_C goto failed;
+    // CALL(aCheckHiddenOpponent);
+    // IF_NZ goto failed;
+    if(!wram->wAttackMissed
+    && CheckOppositeGender_Conv(wram->wCurBattleMon)
+    && !CheckHiddenOpponent_Conv()) {
+        // LD_A(BATTLE_VARS_SUBSTATUS1_OPP);
+        // CALL(aGetBattleVarAddr);
+        uint8_t* hl = GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS1_OPP);
+        // BIT_hl(SUBSTATUS_IN_LOVE);
+        // IF_NZ goto failed;
+        if(!bit_test(*hl, SUBSTATUS_IN_LOVE)) {
+            // SET_hl(SUBSTATUS_IN_LOVE);
+            bit_set(*hl, SUBSTATUS_IN_LOVE);
+            // CALL(aAnimateCurrentMove);
+            AnimateCurrentMove();
 
-    SET_hl(SUBSTATUS_IN_LOVE);
-    CALL(aAnimateCurrentMove);
+        //  'fell in love!'
+            // LD_HL(mFellInLoveText);
+            // JP(mStdBattleTextbox);
+            return StdBattleTextbox_Conv2(FellInLoveText);
+        }
+    }
 
-//  'fell in love!'
-    LD_HL(mFellInLoveText);
-    JP(mStdBattleTextbox);
-
-
-failed:
-    JP(mFailMove);
+// failed:
+    // JP(mFailMove);
+    return FailMove();
 
 }
 

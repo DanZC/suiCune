@@ -39,7 +39,7 @@ void init_function_pointers(void) {
     REDIRECTED(SFXChannelsOff);
 
     // home/battle.c
-    REDIRECTED(UpdateBattleHuds);
+    // REDIRECTED(UpdateBattleHuds);
     REDIRECTED(OpponentPartyAttr);
     REDIRECTED(UpdateOpponentInParty);
     REDIRECTED(GetPartyLocation);
@@ -1485,7 +1485,7 @@ void init_function_pointers(void) {
     // REDIRECTED(PlayerMonFaintedAnimation);
     // CONVERTED(SendOutPlayerMon);
     // REDIRECTED(BattleMenu_PKMN);
-    // REDIRECTED(EndOpponentProtectEndureDestinyBond);
+    CONVERTED(EndOpponentProtectEndureDestinyBond);
     // REDIRECTED(GetRoamMonMapGroup);
     // REDIRECTED(BoostStat);
     // REDIRECTED(SwapBattlerLevels);
@@ -2380,7 +2380,7 @@ void init_function_pointers(void) {
     REDIRECTED(BattleCommand_HealDay);
     REDIRECTED(BattleCommand_HeldFlinch);
     REDIRECTED(BattleCommand_Curl);
-    REDIRECTED(BattleCommand_StatUpDownAnim);
+    // REDIRECTED(BattleCommand_StatUpDownAnim);
     REDIRECTED(LoadAnim);
     REDIRECTED(IgnoreSleepOnly);
     REDIRECTED(HitConfusion);
@@ -2420,8 +2420,8 @@ void init_function_pointers(void) {
     REDIRECTED(BattleCommand_Critical);
     REDIRECTED(BattleCommand_DefenseDown2);
     REDIRECTED(BattleCommand_LowerSubNoAnim);
-    REDIRECTED(SkipToBattleCommand);
-    REDIRECTED(EnemyAttackDamage);
+    // REDIRECTED(SkipToBattleCommand);
+    // REDIRECTED(EnemyAttackDamage);
     REDIRECTED(BattleCommand_DefrostOpponent);
     REDIRECTED(FailMove);
     REDIRECTED(BattleCommand_Rampage);
@@ -2532,7 +2532,7 @@ void init_function_pointers(void) {
     REDIRECTED(BattleCommand_AccuracyUp);
     REDIRECTED(BattleCommand_Heal);
     REDIRECTED(BattleCommand_SpecialDefenseDown2);
-    REDIRECTED(PlayerAttackDamage);
+    // REDIRECTED(PlayerAttackDamage);
     REDIRECTED(BattleCommand_SkipSunCharge);
     REDIRECTED(BattleCommand_DoTurn);
     REDIRECTED(BattleCommand_SpecialAttackUp2);
@@ -4336,4 +4336,22 @@ void init_function_pointers(void) {
     // REDIRECTED(CheckAbleToSwitch);
     // REDIRECTED(FindEnemyMonsThatResistPlayer);
     // REDIRECTED(FindEnemyMonsWithAtLeastQuarterMaxHP);
+
+    // engine/battle/move_effects/fury_cutter.c
+    // REDIRECTED(ResetFuryCutterCount);
+    // REDIRECTED(BattleCommand_FuryCutter);
+
+    // engine/battle/misc.c
+    REDIRECTED(GetEnemyFrontpicCoords);
+    REDIRECTED(GetPlayerBackpicCoords);
+    REDIRECTED(v_AppearUserRaiseSub);
+    REDIRECTED(FinishAppearDisappearUser);
+    REDIRECTED(DoWeatherModifiers);
+    REDIRECTED(AppearUser);
+    REDIRECTED(v_AppearUserLowerSub);
+    REDIRECTED(DoBadgeTypeBoosts);
+    REDIRECTED(v_DisappearUser);
+
+    // engine/battle/move_effects/false_swipe.c
+    // REDIRECTED(BattleCommand_FalseSwipe);
 }

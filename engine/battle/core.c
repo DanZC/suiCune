@@ -38,6 +38,7 @@
 #include "../../data/text/common.h"
 #include "../../data/wild/treemons_asleep.h"
 #include "../../data/wild/unlocked_unowns.h"
+#include "../../data/battle/held_heal_status.h"
 #include "../battle_anims/anim_commands.h"
 #include "../events/catch_tutorial_input.h"
 #include "../events/happiness_egg.h"
@@ -1452,27 +1453,34 @@ switched_or_used_item:
 void PlayerTurn_EndOpponentProtectEndureDestinyBond(void){
     CALL(aSetPlayerTurn);
     CALL(aEndUserDestinyBond);
-    CALLFAR(aDoPlayerTurn);
-    JP(mEndOpponentProtectEndureDestinyBond);
-
+    // CALLFAR(aDoPlayerTurn);
+    DoPlayerTurn();
+    // JP(mEndOpponentProtectEndureDestinyBond);
+    return EndOpponentProtectEndureDestinyBond();
 }
 
 void EnemyTurn_EndOpponentProtectEndureDestinyBond(void){
     CALL(aSetEnemyTurn);
     CALL(aEndUserDestinyBond);
-    CALLFAR(aDoEnemyTurn);
-    JP(mEndOpponentProtectEndureDestinyBond);
+    // CALLFAR(aDoEnemyTurn);
+    DoEnemyTurn();
+    // JP(mEndOpponentProtectEndureDestinyBond);
+    return EndOpponentProtectEndureDestinyBond();
 
 }
 
 void EndOpponentProtectEndureDestinyBond(void){
-    LD_A(BATTLE_VARS_SUBSTATUS1_OPP);
-    CALL(aGetBattleVarAddr);
-    RES_hl(SUBSTATUS_PROTECT);
-    RES_hl(SUBSTATUS_ENDURE);
-    LD_A(BATTLE_VARS_SUBSTATUS5_OPP);
-    CALL(aGetBattleVarAddr);
-    RES_hl(SUBSTATUS_DESTINY_BOND);
+    // LD_A(BATTLE_VARS_SUBSTATUS1_OPP);
+    // CALL(aGetBattleVarAddr);
+    uint8_t* hl = GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS1_OPP);
+    // RES_hl(SUBSTATUS_PROTECT);
+    bit_reset(*hl, SUBSTATUS_PROTECT);
+    // RES_hl(SUBSTATUS_ENDURE);
+    bit_reset(*hl, SUBSTATUS_ENDURE);
+    // LD_A(BATTLE_VARS_SUBSTATUS5_OPP);
+    // CALL(aGetBattleVarAddr);
+    // RES_hl(SUBSTATUS_DESTINY_BOND);
+    bit_reset(*GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS5_OPP), SUBSTATUS_DESTINY_BOND);
     RET;
 
 }
@@ -1624,10 +1632,12 @@ not_seeded:
     CALL(aHasUserFainted);
     IF_Z goto fainted;
 
-    LD_A(BATTLE_VARS_SUBSTATUS1);
-    CALL(aGetBattleVarAddr);
-    BIT_hl(SUBSTATUS_NIGHTMARE);
-    IF_Z goto not_nightmare;
+    // LD_A(BATTLE_VARS_SUBSTATUS1);
+    // CALL(aGetBattleVarAddr);
+    // BIT_hl(SUBSTATUS_NIGHTMARE);
+    // IF_Z goto not_nightmare;
+    if(!bit_test(*GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS1), SUBSTATUS_NIGHTMARE))
+        goto not_nightmare;
     XOR_A_A;
     LD_addr_A(wNumHits);
     LD_DE(ANIM_IN_NIGHTMARE);
@@ -1642,11 +1652,14 @@ not_nightmare:
     CALL(aHasUserFainted);
     IF_Z goto fainted;
 
-    LD_A(BATTLE_VARS_SUBSTATUS1);
-    CALL(aGetBattleVarAddr);
-    BIT_hl(SUBSTATUS_CURSE);
-    IF_Z goto not_cursed;
+    // LD_A(BATTLE_VARS_SUBSTATUS1);
+    // CALL(aGetBattleVarAddr);
+    // BIT_hl(SUBSTATUS_CURSE);
+    // IF_Z goto not_cursed;
+    if(!bit_test(*GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS1), SUBSTATUS_CURSE))
+        goto not_cursed;
 
+    PEEK("cursed");
     XOR_A_A;
     LD_addr_A(wNumHits);
     LD_DE(ANIM_IN_NIGHTMARE);
@@ -1827,11 +1840,11 @@ print_text:
 }
 
 void SwitchTurnCore(void){
-    LDH_A_addr(hBattleTurn);
-    XOR_A(1);
-    LDH_addr_A(hBattleTurn);
-    RET;
-
+    // LDH_A_addr(hBattleTurn);
+    // XOR_A(1);
+    // LDH_addr_A(hBattleTurn);
+    hram->hBattleTurn ^= 1;
+    // RET;
 }
 
 void HandleLeftovers(void){
@@ -6697,85 +6710,121 @@ void UseOpponentItem(void){
 }
 
 void ItemRecoveryAnim(void){
-    PUSH_HL;
-    PUSH_DE;
-    PUSH_BC;
-    CALL(aEmptyBattleTextbox);
-    LD_A(RECOVER);
-    LD_addr_A(wFXAnimID);
-    CALL(aSwitchTurnCore);
-    XOR_A_A;
-    LD_addr_A(wNumHits);
-    LD_addr_A(wFXAnimID + 1);
-    PREDEF(pPlayBattleAnim);
-    CALL(aSwitchTurnCore);
-    POP_BC;
-    POP_DE;
-    POP_HL;
-    RET;
-
+    // PUSH_HL;
+    // PUSH_DE;
+    // PUSH_BC;
+    // CALL(aEmptyBattleTextbox);
+    EmptyBattleTextbox();
+    // LD_A(RECOVER);
+    // LD_addr_A(wFXAnimID);
+    wram->wFXAnimID = RECOVER;
+    // CALL(aSwitchTurnCore);
+    SwitchTurnCore();
+    // XOR_A_A;
+    // LD_addr_A(wNumHits);
+    wram->wNumHits = 0;
+    // LD_addr_A(wFXAnimID + 1);
+    wram->wFXAnimID &= 0xff;
+    // PREDEF(pPlayBattleAnim);
+    PlayBattleAnim();
+    // CALL(aSwitchTurnCore);
+    SwitchTurnCore();
+    // POP_BC;
+    // POP_DE;
+    // POP_HL;
+    // RET;
 }
 
 void UseHeldStatusHealingItem(void){
-    CALLFAR(aGetOpponentItem);
-    LD_HL(mHeldStatusHealingEffects);
+    // CALLFAR(aGetOpponentItem);
+    uint16_t item_effect = GetOpponentItem_Conv(NULL);
+    // LD_HL(mHeldStatusHealingEffects);
+    const uint8_t* hl = HeldStatusHealingEffects;
 
-loop:
-    LD_A_hli;
-    CP_A(0xff);
-    RET_Z ;
-    INC_HL;
-    CP_A_B;
-    IF_NZ goto loop;
-    DEC_HL;
-    LD_B_hl;
-    LD_A(BATTLE_VARS_STATUS_OPP);
-    CALL(aGetBattleVarAddr);
-    AND_A_B;
-    RET_Z ;
-    XOR_A_A;
-    LD_hl_A;
-    PUSH_BC;
-    CALL(aUpdateOpponentInParty);
-    POP_BC;
-    LD_A(BATTLE_VARS_SUBSTATUS5_OPP);
-    CALL(aGetBattleVarAddr);
-    AND_A_hl;
-    RES_hl(SUBSTATUS_TOXIC);
-    LD_A(BATTLE_VARS_SUBSTATUS1_OPP);
-    CALL(aGetBattleVarAddr);
-    AND_A_hl;
-    RES_hl(SUBSTATUS_NIGHTMARE);
-    LD_A_B;
-    CP_A(ALL_STATUS);
-    IF_NZ goto skip_confuse;
-    LD_A(BATTLE_VARS_SUBSTATUS3_OPP);
-    CALL(aGetBattleVarAddr);
-    RES_hl(SUBSTATUS_CONFUSED);
+    uint8_t a;
+    do {
+    // loop:
+        // LD_A_hli;
+        a = *(hl++);
+        // CP_A(0xff);
+        // RET_Z ;
+        if(a == 0xff)
+            return;
+        // INC_HL;
+        hl++;
+        // CP_A_B;
+        // IF_NZ goto loop;
+    } while(a != HIGH(item_effect));
+    // DEC_HL;
+    hl--;
+    // LD_B_hl;
+    uint8_t b = *hl;
+    // LD_A(BATTLE_VARS_STATUS_OPP);
+    // CALL(aGetBattleVarAddr);
+    uint8_t* stat = GetBattleVarAddr_Conv(BATTLE_VARS_STATUS_OPP);
+    // AND_A_B;
+    // RET_Z ;
+    if((*stat & b) == 0)
+        return;
+    // XOR_A_A;
+    // LD_hl_A;
+    *stat = 0;
+    // PUSH_BC;
+    // CALL(aUpdateOpponentInParty);
+    UpdateOpponentInParty();
+    // POP_BC;
+    // LD_A(BATTLE_VARS_SUBSTATUS5_OPP);
+    // CALL(aGetBattleVarAddr);
+    // AND_A_hl;
+    // RES_hl(SUBSTATUS_TOXIC);
+    bit_reset(*GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS5_OPP), SUBSTATUS_TOXIC);
+    // LD_A(BATTLE_VARS_SUBSTATUS1_OPP);
+    // CALL(aGetBattleVarAddr);
+    // AND_A_hl;
+    // RES_hl(SUBSTATUS_NIGHTMARE);
+    bit_reset(*GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS1_OPP), SUBSTATUS_NIGHTMARE);
+    // LD_A_B;
+    // CP_A(ALL_STATUS);
+    // IF_NZ goto skip_confuse;
+    if(b == ALL_STATUS) {
+        // LD_A(BATTLE_VARS_SUBSTATUS3_OPP);
+        // CALL(aGetBattleVarAddr);
+        // RES_hl(SUBSTATUS_CONFUSED);
+        bit_reset(*GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS3_OPP), SUBSTATUS_CONFUSED);
+    }
 
+// skip_confuse:
+    // LD_HL(mCalcEnemyStats);
+    // LDH_A_addr(hBattleTurn);
+    // AND_A_A;
+    // IF_Z goto got_pointer;
+    // LD_HL(mCalcPlayerStats);
 
-skip_confuse:
-    LD_HL(mCalcEnemyStats);
-    LDH_A_addr(hBattleTurn);
-    AND_A_A;
-    IF_Z goto got_pointer;
-    LD_HL(mCalcPlayerStats);
-
-
-got_pointer:
-    CALL(aSwitchTurnCore);
-    LD_A(BANK(aCalcPlayerStats));  // aka BANK(CalcEnemyStats)
-    RST(aFarCall);
-    CALL(aSwitchTurnCore);
-    CALL(aItemRecoveryAnim);
-    CALL(aUseOpponentItem);
-    LD_A(0x1);
-    AND_A_A;
-    RET;
+// got_pointer:
+    // CALL(aSwitchTurnCore);
+    // LD_A(BANK(aCalcPlayerStats));  // aka BANK(CalcEnemyStats)
+    // RST(aFarCall);
+    if(hram->hBattleTurn == 0) {
+        SwitchTurnCore();
+        CalcEnemyStats();
+        SwitchTurnCore();
+    }
+    else {
+        SwitchTurnCore();
+        CalcPlayerStats();
+        SwitchTurnCore();
+    }
+    // CALL(aSwitchTurnCore);
+    // CALL(aItemRecoveryAnim);
+    ItemRecoveryAnim();
+    // CALL(aUseOpponentItem);
+    SafeCallGBAuto(aUseOpponentItem);
+    // LD_A(0x1);
+    // AND_A_A;
+    // RET;
 
 // INCLUDE "data/battle/held_heal_status.asm"
 
-    return UseConfusionHealingItem();
 }
 
 void UseConfusionHealingItem(void){
@@ -7582,7 +7631,8 @@ void BattleMenu(void){
     if(wram->wBattleType != BATTLETYPE_DEBUG && wram->wBattleType != BATTLETYPE_TUTORIAL) {
         // CALL(aEmptyBattleTextbox);
         EmptyBattleTextbox();
-        CALL(aUpdateBattleHuds);
+        // CALL(aUpdateBattleHuds);
+        UpdateBattleHuds();
         // CALL(aEmptyBattleTextbox);
         EmptyBattleTextbox();
         CALL(aLoadTilemapToTempTilemap);

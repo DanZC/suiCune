@@ -2,6 +2,7 @@
 #include "scoring.h"
 #include "redundant.h"
 #include "../effect_commands.h"
+#include "../hidden_power.h"
 #include "../../../home/random.h"
 #include "../../../home/copy.h"
 #include "../../../data/moves/moves.h"
@@ -518,7 +519,7 @@ void AI_Smart(void){
             case EFFECT_MORNING_SUN:
             case EFFECT_SYNTHESIS:
             case EFFECT_MOONLIGHT: AI_Smart_Moonlight_Conv(hl); break;
-            //dbw ['EFFECT_HIDDEN_POWER', 'AI_Smart_HiddenPower']
+            case EFFECT_HIDDEN_POWER: AI_Smart_HiddenPower_Conv(hl); break;
             case EFFECT_RAIN_DANCE: AI_Smart_RainDance_Conv(hl); break;
             case EFFECT_SUNNY_DAY: AI_Smart_SunnyDay_Conv(hl); break;
             case EFFECT_BELLY_DRUM: AI_Smart_BellyDrum_Conv(hl); break;
@@ -5559,6 +5560,54 @@ bad:
 
 }
 
+void AI_Smart_HiddenPower_Conv(uint8_t* hl){
+    // PUSH_HL;
+    // LD_A(1);
+    // LDH_addr_A(hBattleTurn);
+    hram->hBattleTurn = 1;
+
+//  Calculate Hidden Power's type and base power based on enemy's DVs.
+    // CALLFAR(aHiddenPowerDamage);
+    uint8_t dmg = HiddenPowerDamage();
+    // CALLFAR(aBattleCheckTypeMatchup);
+    // POP_HL;
+
+//  Discourage Hidden Power if not very effective.
+    // LD_A_addr(wTypeMatchup);
+    uint8_t matchup = BattleCheckTypeMatchup_Conv();
+    // CP_A(EFFECTIVE);
+    // IF_C goto bad;
+
+//  Discourage Hidden Power if its base power    is lower than 50.
+    // LD_A_D;
+    // CP_A(50);
+    // IF_C goto bad;
+    if(matchup < EFFECTIVE || dmg < 50) {
+    // bad:
+        // INC_hl;
+        (*hl)++;
+        // RET;
+        return;
+    }
+
+//  Encourage Hidden Power if super-effective.
+    // LD_A_addr(wTypeMatchup);
+    // CP_A(EFFECTIVE + 1);
+    // IF_NC goto good;
+
+//  Encourage Hidden Power if its base power is 70.
+    // LD_A_D;
+    // CP_A(70);
+    // RET_C ;
+    if(matchup > EFFECTIVE || dmg >= 70) {
+    // good:
+        // DEC_hl;
+        (*hl)--;
+        // RET;
+        return;
+    }
+}
+
 void AI_Smart_RainDance(void){
 //  Greatly discourage this move if it would favour the player type-wise.
 //  Particularly, if the player is a Water-type.
@@ -7072,7 +7121,7 @@ void AIDamageCalc(void){
     // IF_NC goto notconstant;
     if(IsInU8Array(ConstantDamageEffects, wram->wEnemyMoveStruct.effect)) {
         // CALLFAR(aBattleCommand_ConstantDamage);
-        SafeCallGBAuto(aBattleCommand_ConstantDamage);
+        BattleCommand_ConstantDamage();
         RET;
     }
     else {

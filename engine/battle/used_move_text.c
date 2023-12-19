@@ -7,7 +7,6 @@
 #include "effect_commands.h"
 
 void DisplayUsedMoveText(void){
-    PEEK("");
     // LD_HL(mUsedMoveText);
     // CALL(aBattleTextbox);
     BattleTextbox_Conv2(UsedMoveText);

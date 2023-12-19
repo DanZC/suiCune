@@ -100,7 +100,7 @@ void (*const BattleCommandPointers[])(void) = {
 	BattleCommand_FailureText, // BattleCommand_CheckCurl,
 	BattleCommand_FailureText, // BattleCommand_RolloutPower,
 	BattleCommand_Unused5D,
-	BattleCommand_FailureText, // BattleCommand_FuryCutter,
+	BattleCommand_FuryCutter,
 	BattleCommand_Attract,
 	BattleCommand_FailureText, // BattleCommand_HappinessPower,
 	BattleCommand_FailureText, // BattleCommand_Present,

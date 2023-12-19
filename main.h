@@ -451,7 +451,7 @@
 //#include "engine/pokedex/unown_dex.h"
 #include "engine/events/magikarp.h"
 #include "engine/battle/hidden_power.h"
-//#include "engine/battle/misc.h"
+#include "engine/battle/misc.h"
 
 // SECTION "bank3F", ROMX
 

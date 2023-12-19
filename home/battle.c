@@ -5,6 +5,8 @@
 #include "text.h"
 #include "tilemap.h"
 #include "map_objects.h"
+#include "delay.h"
+#include "../engine/battle/core.h"
 
 void GetPartyParamLocation(void){
     //  Get the location of parameter a from wCurPartyMon in hl
@@ -104,6 +106,20 @@ uint16_t UserPartyAttr_Conv(uint8_t a){
 
     // JR(mBattlePartyAttr);
     return BattlePartyAttr_Conv(a);
+}
+
+struct PartyMon* UserPartyMon_Conv(void){
+    // LDH_A_addr(hBattleTurn);
+    // AND_A_A;
+    // IF_Z goto ot;
+    if(hram->hBattleTurn != 0)
+    {
+        // JR(mOTPartyAttr);
+        return wram->wOTPartyMon + wram->wCurOTMon;
+    }
+
+    // JR(mBattlePartyAttr);
+    return wram->wPartyMon + wram->wCurPartyMon;
 }
 
 void OpponentPartyAttr(void){
@@ -369,14 +385,25 @@ void RefreshBattleHuds(void){
 
 }
 
+void RefreshBattleHuds_Conv(void){
+    // CALL(aUpdateBattleHuds);
+    UpdateBattleHuds();
+    // LD_C(3);
+    // CALL(aDelayFrames);
+    DelayFrames_Conv(3);
+    // JP(mWaitBGMap);
+    WaitBGMap_Conv();
+}
+
 void UpdateBattleHuds(void){
-        FARCALL(aUpdatePlayerHUD);
-    FARCALL(aUpdateEnemyHUD);
-    RET;
+    // FARCALL(aUpdatePlayerHUD);
+    UpdatePlayerHUD();
+    // FARCALL(aUpdateEnemyHUD);
+    UpdateEnemyHUD();
+    // RET;
 
 // INCLUDE "home/battle_vars.asm"
 
-    return FarCopyRadioText();
 }
 
 void FarCopyRadioText(void){

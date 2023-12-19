@@ -130,6 +130,7 @@ void AI_Smart_Pursuit_Conv(uint8_t* hl);
 void AI_Smart_RapidSpin(void);
 void AI_Smart_RapidSpin_Conv(uint8_t* hl);
 void AI_Smart_HiddenPower(void);
+void AI_Smart_HiddenPower_Conv(uint8_t* hl);
 void AI_Smart_RainDance(void);
 void AI_Smart_RainDance_Conv(uint8_t* hl);
 void AI_Smart_SunnyDay(void);
