@@ -47,13 +47,13 @@ uint8_t Random_Conv(void) {
 
     uint16_t temp;
     temp = (gb_read(rDIV) + hram->hRandomAdd + REG_F_C);
-    advance_div(8);
+    advance_div(128);
     REG_F_C = (temp & 0xFF00)? 1 : 0;
     hram->hRandomAdd = (uint8_t)temp;
 
     temp = (gb_read(rDIV) - hram->hRandomSub - REG_F_C);
     REG_F_C = (temp & 0xFF00)? 1 : 0;
-    advance_div(8);
+    advance_div(128);
     hram->hRandomSub = (uint8_t)temp;
 
     REG_F = f;

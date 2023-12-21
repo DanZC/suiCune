@@ -2536,7 +2536,7 @@ void init_function_pointers(void) {
     REDIRECTED(BattleCommand_SkipSunCharge);
     REDIRECTED(BattleCommand_DoTurn);
     REDIRECTED(BattleCommand_SpecialAttackUp2);
-    REDIRECTED(BattleCommand_TimeBasedHealContinue);
+    // REDIRECTED(BattleCommand_TimeBasedHealContinue);
     REDIRECTED(ThickClubBoost);
     REDIRECTED(BattleCommand_SuperEffectiveLoopText);
     REDIRECTED(CantMove);

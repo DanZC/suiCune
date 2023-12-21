@@ -21,6 +21,7 @@
 #include "../../home/names.h"
 #include "../../data/trainers/leaders.h"
 #include "../pokemon/experience.h"
+#include "../pokemon/health.h"
 #include "../gfx/pic_animation.h"
 #include "../gfx/load_pics.h"
 #include "../gfx/color.h"
@@ -2478,6 +2479,26 @@ ok:
 
 }
 
+uint16_t GetSixteenthMaxHP_Conv(void){
+    // CALL(aGetQuarterMaxHP);
+    uint16_t hp = GetQuarterMaxHP_Conv();
+//  quarter result
+    // SRL_C;
+    // SRL_C;
+    hp >>= 2;
+//  at least 1
+    // LD_A_C;
+    // AND_A_A;
+    // IF_NZ goto ok;
+    // INC_C;
+    if(hp == 0)
+        hp = 1;
+
+// ok:
+    // RET;
+    return hp;
+}
+
 void GetEighthMaxHP(void){
 //  output: bc
     CALL(aGetQuarterMaxHP);
@@ -2493,6 +2514,27 @@ void GetEighthMaxHP(void){
 end:
     RET;
 
+}
+
+uint16_t GetEighthMaxHP_Conv(void){
+//  output: bc
+    // CALL(aGetQuarterMaxHP);
+    uint16_t hp = GetQuarterMaxHP_Conv();
+//  assumes nothing can have 1024 or more hp
+//  halve result
+    // SRL_C;
+    hp >>= 1;
+//  at least 1
+    // LD_A_C;
+    // AND_A_A;
+    // IF_NZ goto end;
+    // INC_C;
+    if(hp == 0)
+        hp = 1;
+
+// end:
+    // RET;
+    return hp;
 }
 
 void GetQuarterMaxHP(void){
@@ -2517,6 +2559,32 @@ end:
 
 }
 
+uint16_t GetQuarterMaxHP_Conv(void){
+//  output: bc
+    // CALL(aGetMaxHP);
+    uint16_t hp = GetMaxHP_Conv();
+
+//  quarter result
+    // SRL_B;
+    // RR_C;
+    // SRL_B;
+    // RR_C;
+    hp >>= 2;
+
+//  assumes nothing can have 1024 or more hp
+//  at least 1
+    // LD_A_C;
+    // AND_A_A;
+    // IF_NZ goto end;
+    // INC_C;
+    if(hp == 0)
+        hp = 1;
+
+// end:
+    // RET;
+    return hp;
+}
+
 void GetHalfMaxHP(void){
 //  output: bc
     CALL(aGetMaxHP);
@@ -2534,6 +2602,29 @@ void GetHalfMaxHP(void){
 end:
     RET;
 
+}
+
+uint16_t GetHalfMaxHP_Conv(void){
+//  output: bc
+    // CALL(aGetMaxHP);
+    uint16_t hp = GetMaxHP_Conv();
+
+//  halve result
+    // SRL_B;
+    // RR_C;
+    hp >>= 1;
+
+//  at least 1
+    // LD_A_C;
+    // OR_A_B;
+    // IF_NZ goto end;
+    // INC_C;
+    if(hp == 0)
+        hp = 1;
+
+// end:
+    // RET;
+    return hp;
 }
 
 void GetMaxHP(void){
@@ -2555,6 +2646,29 @@ ok:
     LD_C_A;
     RET;
 
+}
+
+uint16_t GetMaxHP_Conv(void){
+//  output: bc, wHPBuffer1
+
+    // LD_HL(wBattleMonMaxHP);
+    // LDH_A_addr(hBattleTurn);
+    // AND_A_A;
+    // IF_Z goto ok;
+    // LD_HL(wEnemyMonMaxHP);
+    uint16_t hp = ReverseEndian16((hram->hBattleTurn == 0)? wram->wBattleMon.hp: wram->wEnemyMon.hp);
+
+// ok:
+    // LD_A_hli;
+    // LD_addr_A(wHPBuffer1 + 1);
+    // LD_B_A;
+
+    // LD_A_hl;
+    // LD_addr_A(wHPBuffer1);
+    // LD_C_A;
+    wram->wHPBuffer1 = hp;
+    // RET;
+    return hp;
 }
 
 void GetHalfHP(void){
@@ -2645,28 +2759,96 @@ overflow:
 
 }
 
+void RestoreHP_Conv(uint16_t bc){
+    // LD_HL(wEnemyMonMaxHP);
+    // LDH_A_addr(hBattleTurn);
+    // AND_A_A;
+    // IF_Z goto ok;
+    // LD_HL(wBattleMonMaxHP);
+    uint16_t* maxhp = (uint16_t*)((hram->hBattleTurn == 0)? wram_ptr(wEnemyMonMaxHP): wram_ptr(wBattleMonMaxHP));
+    uint16_t*    hp = (uint16_t*)((hram->hBattleTurn == 0)? wram_ptr(wEnemyMonHP): wram_ptr(wBattleMonHP));
+
+ok:
+    // LD_A_hli;
+    // LD_addr_A(wHPBuffer1 + 1);
+    // LD_A_hld;
+    // LD_addr_A(wHPBuffer1);
+    // DEC_HL;
+    wram->wHPBuffer1 = ReverseEndian16(*maxhp);
+    // LD_A_hl;
+    // LD_addr_A(wHPBuffer2);
+    // ADD_A_C;
+    // LD_hld_A;
+    // LD_addr_A(wHPBuffer3);
+    // LD_A_hl;
+    // LD_addr_A(wHPBuffer2 + 1);
+    // ADC_A_B;
+    // LD_hli_A;
+    // LD_addr_A(wHPBuffer3 + 1);
+    wram->wHPBuffer2 = ReverseEndian16(*hp);
+
+    // LD_A_addr(wHPBuffer1);
+    // LD_C_A;
+    // LD_A_hld;
+    // SUB_A_C;
+    // LD_A_addr(wHPBuffer1 + 1);
+    // LD_B_A;
+    // LD_A_hl;
+    // SBC_A_B;
+    // IF_C goto overflow;
+    if(wram->wHPBuffer2 + bc > wram->wHPBuffer1) {
+        wram->wHPBuffer3 = wram->wHPBuffer1;
+        *hp = ReverseEndian16(wram->wHPBuffer1);
+    }
+    else {
+        // LD_A_B;
+        // LD_hli_A;
+        // LD_addr_A(wHPBuffer3 + 1);
+        // LD_A_C;
+        // LD_hl_A;
+        // LD_addr_A(wHPBuffer3);
+        wram->wHPBuffer3 = wram->wHPBuffer2 + bc;
+        *hp = ReverseEndian16(wram->wHPBuffer2 + bc);
+    }
+
+// overflow:
+
+    // CALL(aSwitchTurnCore);
+    SwitchTurnCore();
+    // CALL(aUpdateHPBarBattleHuds);
+    UpdateHPBarBattleHuds();
+    // JP(mSwitchTurnCore);
+    SwitchTurnCore();
+}
+
 void UpdateHPBarBattleHuds(void){
-    CALL(aUpdateHPBar);
-    JP(mUpdateBattleHuds);
+    // CALL(aUpdateHPBar);
+    UpdateHPBar();
+    // JP(mUpdateBattleHuds);
+    return UpdateBattleHuds();
 
 }
 
 void UpdateHPBar(void){
-    hlcoord(10, 9, wTilemap);
-    LDH_A_addr(hBattleTurn);
-    AND_A_A;
-    LD_A(1);
-    IF_Z goto ok;
-    hlcoord(2, 2, wTilemap);
-    XOR_A_A;
-
-ok:
-    PUSH_BC;
-    LD_addr_A(wWhichHPBar);
-    PREDEF(pAnimateHPBar);
-    POP_BC;
-    RET;
-
+    if(hram->hBattleTurn == 0) {
+        // hlcoord(10, 9, wTilemap);
+        // LDH_A_addr(hBattleTurn);
+        // AND_A_A;
+        // LD_A(1);
+        AnimateHPBar_Conv(coord(10, 9, wram->wTilemap), 1);
+        // IF_Z goto ok;
+    }
+    else {
+        // hlcoord(2, 2, wTilemap);
+        // XOR_A_A;
+        AnimateHPBar_Conv(coord(2, 2, wram->wTilemap), 0);
+    }
+// ok:
+    // PUSH_BC;
+    // LD_addr_A(wWhichHPBar);
+    // PREDEF(pAnimateHPBar);
+    // POP_BC;
+    // RET;
 }
 
 void HandleEnemyMonFaint(void){
@@ -6830,48 +7012,70 @@ void UseHeldStatusHealingItem(void){
 }
 
 void UseConfusionHealingItem(void){
-    LD_A(BATTLE_VARS_SUBSTATUS3_OPP);
-    CALL(aGetBattleVar);
-    BIT_A(SUBSTATUS_CONFUSED);
-    RET_Z ;
-    CALLFAR(aGetOpponentItem);
-    LD_A_B;
-    CP_A(HELD_HEAL_CONFUSION);
-    IF_Z goto heal_status;
-    CP_A(HELD_HEAL_STATUS);
-    RET_NZ ;
+    // LD_A(BATTLE_VARS_SUBSTATUS3_OPP);
+    // CALL(aGetBattleVar);
+    // BIT_A(SUBSTATUS_CONFUSED);
+    // RET_Z ;
+    if(!bit_test(GetBattleVar_Conv(BATTLE_VARS_SUBSTATUS3_OPP), SUBSTATUS_CONFUSED))
+        return;
+    // CALLFAR(aGetOpponentItem);
+    item_t item;
+    uint16_t effect = GetOpponentItem_Conv(&item);
+    // LD_A_B;
+    // CP_A(HELD_HEAL_CONFUSION);
+    // IF_Z goto heal_status;
+    // CP_A(HELD_HEAL_STATUS);
+    // RET_NZ ;
+    if(HIGH(effect) != HELD_HEAL_CONFUSION && HIGH(effect) != HELD_HEAL_STATUS)
+        return;
 
-
-heal_status:
-    LD_A_hl;
-    LD_addr_A(wNamedObjectIndex);
-    LD_A(BATTLE_VARS_SUBSTATUS3_OPP);
-    CALL(aGetBattleVarAddr);
-    RES_hl(SUBSTATUS_CONFUSED);
-    CALL(aGetItemName);
-    CALL(aItemRecoveryAnim);
-    LD_HL(mBattleText_ItemHealedConfusion);
-    CALL(aStdBattleTextbox);
-    LDH_A_addr(hBattleTurn);
-    AND_A_A;
-    IF_NZ goto do_partymon;
-    CALL(aGetOTPartymonItem);
-    XOR_A_A;
-    LD_bc_A;
-    LD_A_addr(wBattleMode);
-    DEC_A;
-    RET_Z ;
-    LD_hl(0x0);
-    RET;
-
-
-do_partymon:
-    CALL(aGetPartymonItem);
-    XOR_A_A;
-    LD_bc_A;
-    LD_hl_A;
-    RET;
-
+// heal_status:
+    // LD_A_hl;
+    // LD_addr_A(wNamedObjectIndex);
+    // LD_A(BATTLE_VARS_SUBSTATUS3_OPP);
+    // CALL(aGetBattleVarAddr);
+    // RES_hl(SUBSTATUS_CONFUSED);
+    bit_reset(*GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS3_OPP), SUBSTATUS_CONFUSED);
+    // CALL(aGetItemName);
+    GetItemName_Conv2(item);
+    // CALL(aItemRecoveryAnim);
+    ItemRecoveryAnim();
+    // LD_HL(mBattleText_ItemHealedConfusion);
+    // CALL(aStdBattleTextbox);
+    StdBattleTextbox_Conv2(BattleText_ItemHealedConfusion);
+    // LDH_A_addr(hBattleTurn);
+    // AND_A_A;
+    // IF_NZ goto do_partymon;
+    if(hram->hBattleTurn == 0) {
+        item_t *hl, *bc;
+        // CALL(aGetOTPartymonItem);
+        GetOTPartymonItem_Conv(&hl, &bc);
+        // XOR_A_A;
+        // LD_bc_A;
+        *bc = NO_ITEM;
+        // LD_A_addr(wBattleMode);
+        // DEC_A;
+        // RET_Z ;
+        if(wram->wBattleMode != WILD_BATTLE) {
+            // LD_hl(0x0);
+            *hl = NO_ITEM;
+        }
+        // RET;
+        return;
+    }
+    else {
+    // do_partymon:
+        item_t *hl, *bc;
+        // CALL(aGetPartymonItem);
+        GetPartymonItem_Conv(&hl, &bc);
+        // XOR_A_A;
+        // LD_bc_A;
+        *bc = NO_ITEM;
+        // LD_hl_A;
+        *hl = NO_ITEM;
+        // RET;
+        return;
+    }
 }
 
 void HandleStatBoostingHeldItems(void){
@@ -6962,6 +7166,16 @@ void GetPartymonItem(void){
 
 }
 
+void GetPartymonItem_Conv(item_t** hl, item_t** bc){
+    // LD_HL(wPartyMon1Item);
+    // LD_A_addr(wCurBattleMon);
+    // CALL(aGetPartyLocation);
+    *hl = &wram->wPartyMon[wram->wCurBattleMon].mon.item;
+    // LD_BC(wBattleMonItem);
+    *bc = &wram->wBattleMon.item;
+    // RET;
+}
+
 void GetOTPartymonItem(void){
     LD_HL(wOTPartyMon1Item);
     LD_A_addr(wCurOTMon);
@@ -6969,6 +7183,16 @@ void GetOTPartymonItem(void){
     LD_BC(wEnemyMonItem);
     RET;
 
+}
+
+void GetOTPartymonItem_Conv(item_t** hl, item_t** bc){
+    // LD_HL(wOTPartyMon1Item);
+    // LD_A_addr(wCurOTMon);
+    // CALL(aGetPartyLocation);
+    *hl = &wram->wOTPartyMon[wram->wCurOTMon].mon.item;
+    // LD_BC(wEnemyMonItem);
+    *bc = &wram->wEnemyMon.item;
+    // RET;
 }
 
 void UpdateBattleHUDs(void){
