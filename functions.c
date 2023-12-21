@@ -4357,4 +4357,22 @@ void init_function_pointers(void) {
 
     // engine/battle/move_effects/splash.c
     REDIRECTED(BattleCommand_Splash);
+
+    // engine/battle/move_effects/hidden_power.c
+    REDIRECTED(BattleCommand_HiddenPower);
+
+    // engine/battle/move_effects/rain_dance.c
+    REDIRECTED(BattleCommand_StartRain);
+
+    // engine/battle/move_effects/sunny_day.c
+    REDIRECTED(BattleCommand_StartSun);
+
+    // engine/battle/move_effects/safeguard.c
+    REDIRECTED(BattleCommand_Safeguard);
+
+    // engine/battle/move_effects/focus_energy.c
+    REDIRECTED(BattleCommand_FocusEnergy);
+
+    // engine/battle/move_effects/lock_on.c
+    REDIRECTED(BattleCommand_LockOn);
 }

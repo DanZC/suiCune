@@ -156,6 +156,7 @@ void BattleCommand_Rampage(void);
 void SetBattleDraw(void);
 void BattleCommand_ForceSwitch(void);
 void CheckPlayerHasMonToSwitchTo(void);
+bool CheckPlayerHasMonToSwitchTo_Conv(void);
 void BattleCommand_EndLoop(void);
 void BattleCommand_FakeOut(void);
 void BattleCommand_FlinchTarget(void);
@@ -244,6 +245,7 @@ void DisappearUser(void);
 void AppearUserLowerSub(void);
 void AppearUserRaiseSub(void);
 void v_CheckBattleScene(void);
+extern struct BattleCmdState gBattleCmdState;
 //#include "data/moves/critical_hit_moves.h"
 //#include "data/battle/critical_hit_chances.h"
 //#include "engine/battle/move_effects/triple_kick.h"
@@ -258,7 +260,7 @@ void v_CheckBattleScene(void);
 //#include "engine/battle/move_effects/pain_split.h"
 //#include "engine/battle/move_effects/snore.h"
 //#include "engine/battle/move_effects/conversion2.h"
-//#include "engine/battle/move_effects/lock_on.h"
+#include "./move_effects/lock_on.h"
 //#include "engine/battle/move_effects/sketch.h"
 //#include "engine/battle/move_effects/sleep_talk.h"
 //#include "engine/battle/move_effects/destiny_bond.h"
@@ -270,7 +272,7 @@ void v_CheckBattleScene(void);
 //#include "engine/battle/move_effects/bide.h"
 //#include "engine/battle/move_effects/teleport.h"
 //#include "engine/battle/move_effects/mist.h"
-//#include "engine/battle/move_effects/focus_energy.h"
+#include "./move_effects/focus_energy.h"
 //#include "engine/battle/move_effects/substitute.h"
 //#include "engine/battle/move_effects/rage.h"
 //#include "engine/battle/move_effects/mimic.h"
@@ -298,14 +300,14 @@ void v_CheckBattleScene(void);
 //#include "engine/battle/move_effects/return.h"
 //#include "engine/battle/move_effects/present.h"
 //#include "engine/battle/move_effects/frustration.h"
-//#include "engine/battle/move_effects/safeguard.h"
+#include "./move_effects/safeguard.h"
 //#include "engine/battle/move_effects/magnitude.h"
 //#include "engine/battle/move_effects/baton_pass.h"
 //#include "engine/battle/move_effects/pursuit.h"
 //#include "engine/battle/move_effects/rapid_spin.h"
-//#include "engine/battle/move_effects/hidden_power.h"
-//#include "engine/battle/move_effects/rain_dance.h"
-//#include "engine/battle/move_effects/sunny_day.h"
+#include "./move_effects/hidden_power.h"
+#include "./move_effects/rain_dance.h"
+#include "./move_effects/sunny_day.h"
 //#include "engine/battle/move_effects/belly_drum.h"
 //#include "engine/battle/move_effects/psych_up.h"
 //#include "engine/battle/move_effects/mirror_coat.h"

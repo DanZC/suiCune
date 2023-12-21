@@ -15,6 +15,7 @@
 #include "../../home/copy.h"
 #include "../../home/copy_name.h"
 #include "../../home/tilemap.h"
+#include "../../home/text.h"
 #include "../../data/text/battle.h"
 #include "../../data/text/common.h"
 #include "../../home/names.h"
@@ -286,7 +287,7 @@ void BattleCommand_CheckTurn(void){
             // CALL(aCantMove);
             CantMove();
             // CALL(aUpdateBattleMonInParty);
-            UpdateBattleMonInParty();
+            UpdateBattleMonInParty_Conv();
             // LD_HL(mUpdatePlayerHUD);
             // CALL(aCallBattleCore);
             UpdatePlayerHUD();
@@ -6547,95 +6548,143 @@ void Defrost_Conv(uint8_t* status){
 void BattleCommand_FreezeTarget(void){
 //  freezetarget
     PEEK("");
-    XOR_A_A;
-    LD_addr_A(wNumHits);
-    CALL(aCheckSubstituteOpp);
-    RET_NZ ;
-    LD_A(BATTLE_VARS_STATUS_OPP);
-    CALL(aGetBattleVarAddr);
-    AND_A_A;
-    RET_NZ ;
-    LD_A_addr(wTypeModifier);
-    AND_A(0x7f);
-    RET_Z ;
-    LD_A_addr(wBattleWeather);
-    CP_A(WEATHER_SUN);
-    RET_Z ;
-    CALL(aCheckMoveTypeMatchesTarget);  // Don't freeze an Ice-type
-    RET_Z ;
-    CALL(aGetOpponentItem);
-    LD_A_B;
-    CP_A(HELD_PREVENT_FREEZE);
-    RET_Z ;
-    LD_A_addr(wEffectFailed);
-    AND_A_A;
-    RET_NZ ;
-    CALL(aSafeCheckSafeguard);
-    RET_NZ ;
-    LD_A(BATTLE_VARS_STATUS_OPP);
-    CALL(aGetBattleVarAddr);
-    SET_hl(FRZ);
-    CALL(aUpdateOpponentInParty);
-    LD_DE(ANIM_FRZ);
-    CALL(aPlayOpponentBattleAnim);
-    CALL(aRefreshBattleHuds);
+    // XOR_A_A;
+    // LD_addr_A(wNumHits);
+    wram->wNumHits = 0;
+    // CALL(aCheckSubstituteOpp);
+    // RET_NZ ;
+    if(CheckSubstituteOpp_Conv())
+        return;
+    // LD_A(BATTLE_VARS_STATUS_OPP);
+    // CALL(aGetBattleVarAddr);
+    // AND_A_A;
+    // RET_NZ ;
+    if(*GetBattleVarAddr_Conv(BATTLE_VARS_STATUS_OPP) != 0)
+        return;
+    // LD_A_addr(wTypeModifier);
+    // AND_A(0x7f);
+    // RET_Z ;
+    if((wram->wTypeModifier & 0x7f) == 0)
+        return;
+    // LD_A_addr(wBattleWeather);
+    // CP_A(WEATHER_SUN);
+    // RET_Z ;
+    if(wram->wBattleWeather == WEATHER_SUN)
+        return;
+    // CALL(aCheckMoveTypeMatchesTarget);  // Don't freeze an Ice-type
+    // RET_Z ;
+    if(CheckMoveTypeMatchesTarget_Conv())
+        return;
+    // CALL(aGetOpponentItem);
+    // LD_A_B;
+    // CP_A(HELD_PREVENT_FREEZE);
+    // RET_Z ;
+    if(HIGH(GetOpponentItem_Conv(NULL)) == HELD_PREVENT_FREEZE)
+        return;
+    // LD_A_addr(wEffectFailed);
+    // AND_A_A;
+    // RET_NZ ;
+    // CALL(aSafeCheckSafeguard);
+    // RET_NZ ;
+    if(wram->wEffectFailed || SafeCheckSafeguard_Conv())
+        return;
+    // LD_A(BATTLE_VARS_STATUS_OPP);
+    // CALL(aGetBattleVarAddr);
+    uint8_t* hl = GetBattleVarAddr_Conv(BATTLE_VARS_STATUS_OPP);
+    // SET_hl(FRZ);
+    bit_set(*hl, FRZ);
+    // CALL(aUpdateOpponentInParty);
+    UpdateOpponentInParty();
+    // LD_DE(ANIM_FRZ);
+    // CALL(aPlayOpponentBattleAnim);
+    PlayOpponentBattleAnim_Conv(ANIM_FRZ);
+    // CALL(aRefreshBattleHuds);
+    RefreshBattleHuds_Conv();
 
-    LD_HL(mWasFrozenText);
-    CALL(aStdBattleTextbox);
+    // LD_HL(mWasFrozenText);
+    // CALL(aStdBattleTextbox);
+    StdBattleTextbox_Conv2(WasFrozenText);
 
-    FARCALL(aUseHeldStatusHealingItem);
-    RET_NZ ;
+    // FARCALL(aUseHeldStatusHealingItem);
+    // RET_NZ ;
+    struct cpu_registers_s regs = SafeCallGBAutoRet(aUseHeldStatusHealingItem);
+    if(!regs.f_bits.z)
+        return;
 
-    CALL(aOpponentCantMove);
-    CALL(aEndRechargeOpp);
-    LD_HL(wEnemyJustGotFrozen);
-    LDH_A_addr(hBattleTurn);
-    AND_A_A;
-    IF_Z goto finish;
-    LD_HL(wPlayerJustGotFrozen);
+    // CALL(aOpponentCantMove);
+    OpponentCantMove();
+    // CALL(aEndRechargeOpp);
+    EndRechargeOpp();
+    // LD_HL(wEnemyJustGotFrozen);
+    // LDH_A_addr(hBattleTurn);
+    // AND_A_A;
+    // IF_Z goto finish;
+    if(hram->hBattleTurn == 0) {
+        wram->wEnemyJustGotFrozen = 0x1;
+    }
+    else {
+        // LD_HL(wPlayerJustGotFrozen);
 
-finish:
-    LD_hl(0x1);
-    RET;
-
+    // finish:
+        // LD_hl(0x1);
+        wram->wPlayerJustGotFrozen = 0x1;
+    }
+    // RET;
 }
 
 void BattleCommand_ParalyzeTarget(void){
 //  paralyzetarget
     PEEK("");
-    XOR_A_A;
-    LD_addr_A(wNumHits);
-    CALL(aCheckSubstituteOpp);
-    RET_NZ ;
-    LD_A(BATTLE_VARS_STATUS_OPP);
-    CALL(aGetBattleVarAddr);
-    AND_A_A;
-    RET_NZ ;
-    LD_A_addr(wTypeModifier);
-    AND_A(0x7f);
-    RET_Z ;
-    CALL(aGetOpponentItem);
-    LD_A_B;
-    CP_A(HELD_PREVENT_PARALYZE);
-    RET_Z ;
-    LD_A_addr(wEffectFailed);
-    AND_A_A;
-    RET_NZ ;
-    CALL(aSafeCheckSafeguard);
-    RET_NZ ;
-    LD_A(BATTLE_VARS_STATUS_OPP);
-    CALL(aGetBattleVarAddr);
-    SET_hl(PAR);
-    CALL(aUpdateOpponentInParty);
-    LD_HL(mApplyPrzEffectOnSpeed);
-    CALL(aCallBattleCore);
-    LD_DE(ANIM_PAR);
-    CALL(aPlayOpponentBattleAnim);
-    CALL(aRefreshBattleHuds);
-    CALL(aPrintParalyze);
-    LD_HL(mUseHeldStatusHealingItem);
-    JP(mCallBattleCore);
-
+    // XOR_A_A;
+    // LD_addr_A(wNumHits);
+    wram->wNumHits = 0;
+    // CALL(aCheckSubstituteOpp);
+    // RET_NZ ;
+    if(CheckSubstituteOpp_Conv())
+        return;
+    // LD_A(BATTLE_VARS_STATUS_OPP);
+    // CALL(aGetBattleVarAddr);
+    // AND_A_A;
+    // RET_NZ ;
+    if(GetBattleVar_Conv(BATTLE_VARS_STATUS_OPP))
+        return;
+    // LD_A_addr(wTypeModifier);
+    // AND_A(0x7f);
+    // RET_Z ;
+    if((wram->wTypeModifier & 0x7f) == 0)
+        return;
+    // CALL(aGetOpponentItem);
+    // LD_A_B;
+    // CP_A(HELD_PREVENT_PARALYZE);
+    // RET_Z ;
+    if(HIGH(GetOpponentItem_Conv(NULL)) == HELD_PREVENT_PARALYZE)
+        return;
+    // LD_A_addr(wEffectFailed);
+    // AND_A_A;
+    // RET_NZ ;
+    // CALL(aSafeCheckSafeguard);
+    // RET_NZ ;
+    if(wram->wEffectFailed || SafeCheckSafeguard_Conv())
+        return;
+    // LD_A(BATTLE_VARS_STATUS_OPP);
+    // CALL(aGetBattleVarAddr);
+    // SET_hl(PAR);
+    bit_set(*GetBattleVarAddr_Conv(BATTLE_VARS_STATUS_OPP), PAR);
+    // CALL(aUpdateOpponentInParty);
+    UpdateOpponentInParty();
+    // LD_HL(mApplyPrzEffectOnSpeed);
+    // CALL(aCallBattleCore);
+    ApplyPrzEffectOnSpeed();
+    // LD_DE(ANIM_PAR);
+    // CALL(aPlayOpponentBattleAnim);
+    PlayOpponentBattleAnim_Conv(ANIM_PAR);
+    // CALL(aRefreshBattleHuds);
+    RefreshBattleHuds_Conv();
+    // CALL(aPrintParalyze);
+    PrintParalyze();
+    // LD_HL(mUseHeldStatusHealingItem);
+    // JP(mCallBattleCore);
+    SafeCallGBAuto(aUseHeldStatusHealingItem);
 }
 
 void BattleCommand_AttackUp(void){
@@ -7891,31 +7940,37 @@ cant_lower_anymore:
 void BattleCommand_TriStatusChance(void){
 //  tristatuschance
 
-    CALL(aBattleCommand_EffectChance);
+    // CALL(aBattleCommand_EffectChance);
+    BattleCommand_EffectChance();
 
-loop:
-// 1/3 chance of each status
-    CALL(aBattleRandom);
-    SWAP_A;
-    AND_A(0b11);
-    IF_Z goto loop;
-    DEC_A;
+    uint8_t a;
+    do {
+    // loop:
+    // 1/3 chance of each status
+        // CALL(aBattleRandom);
+        a = v_BattleRandom_Conv();
+        // SWAP_A;
+        a = (a >> 4) | (a << 4);
+        // AND_A(0b11);
+        // IF_Z goto loop;
+    } while((a & 0b11) == 0);
+    // DEC_A;
+    --a;
     // LD_HL(mBattleCommand_TriStatusChance_StatusCommands);
     // RST(aJumpTable);
-    switch(REG_A) {
-        case 0: CALL(aBattleCommand_ParalyzeTarget); break;
-        case 1: CALL(aBattleCommand_FreezeTarget); break;
-        case 2: CALL(aBattleCommand_BurnTarget); break;
+    switch(a) {
+        case 0: BattleCommand_ParalyzeTarget(); break;
+        case 1: BattleCommand_FreezeTarget(); break;
+        case 2: BattleCommand_BurnTarget(); break;
     }
-    RET;
+    // RET;
+    return;
 
 
-StatusCommands:
+// StatusCommands:
     //dw ['BattleCommand_ParalyzeTarget'];  // paralyze
     //dw ['BattleCommand_FreezeTarget'];  // freeze
     //dw ['BattleCommand_BurnTarget'];  // burn
-
-    return BattleCommand_Curl();
 }
 
 void BattleCommand_Curl(void){
@@ -8296,237 +8351,328 @@ void SetBattleDraw(void){
 void BattleCommand_ForceSwitch(void){
 //  forceswitch
 
-    LD_A_addr(wBattleType);
-    CP_A(BATTLETYPE_SHINY);
-    JP_Z (mBattleCommand_ForceSwitch_fail);
-    CP_A(BATTLETYPE_TRAP);
-    JP_Z (mBattleCommand_ForceSwitch_fail);
-    CP_A(BATTLETYPE_CELEBI);
-    JP_Z (mBattleCommand_ForceSwitch_fail);
-    CP_A(BATTLETYPE_SUICUNE);
-    JP_Z (mBattleCommand_ForceSwitch_fail);
-    LDH_A_addr(hBattleTurn);
-    AND_A_A;
-    JP_NZ (mBattleCommand_ForceSwitch_force_player_switch);
-    LD_A_addr(wAttackMissed);
-    AND_A_A;
-    IF_NZ goto missed;
-    LD_A_addr(wBattleMode);
-    DEC_A;
-    IF_NZ goto trainer;
-    LD_A_addr(wCurPartyLevel);
-    LD_B_A;
-    LD_A_addr(wBattleMonLevel);
-    CP_A_B;
-    IF_NC goto wild_force_flee;
-    ADD_A_B;
-    LD_C_A;
-    INC_C;
+    // LD_A_addr(wBattleType);
+    // CP_A(BATTLETYPE_SHINY);
+    // JP_Z (mBattleCommand_ForceSwitch_fail);
+    // CP_A(BATTLETYPE_TRAP);
+    // JP_Z (mBattleCommand_ForceSwitch_fail);
+    // CP_A(BATTLETYPE_CELEBI);
+    // JP_Z (mBattleCommand_ForceSwitch_fail);
+    // CP_A(BATTLETYPE_SUICUNE);
+    // JP_Z (mBattleCommand_ForceSwitch_fail);
+    switch(wram->wBattleType) {
+        case BATTLETYPE_SHINY:
+        case BATTLETYPE_TRAP:
+        case BATTLETYPE_CELEBI:
+        case BATTLETYPE_SUICUNE:
+        fail:
+            // CALL(aBattleCommand_LowerSub);
+            BattleCommand_LowerSub();
+            // CALL(aBattleCommand_MoveDelay);
+            BattleCommand_MoveDelay();
+            // CALL(aBattleCommand_RaiseSub);
+            BattleCommand_RaiseSub();
+            // JP(mPrintButItFailed);
+            return PrintButItFailed();
+        default:
+            break;
+    }
+    // LDH_A_addr(hBattleTurn);
+    // AND_A_A;
+    // JP_NZ (mBattleCommand_ForceSwitch_force_player_switch);
+    uint8_t anim;
+    if(hram->hBattleTurn != 0) {
+    // force_player_switch:
+        // LD_A_addr(wAttackMissed);
+        // AND_A_A;
+        // IF_NZ goto player_miss;
+        if(wram->wAttackMissed)
+            goto player_miss;
 
-random_loop_wild:
-    CALL(aBattleRandom);
-    CP_A_C;
-    IF_NC goto random_loop_wild;
-    SRL_B;
-    SRL_B;
-    CP_A_B;
-    IF_NC goto wild_force_flee;
+        // LD_A_addr(wBattleMode);
+        // DEC_A;
+        // IF_NZ goto vs_trainer;
+        if(wram->wBattleMode == TRAINER_BATTLE) {
+            // LD_A_addr(wBattleMonLevel);
+            // LD_B_A;
+            uint8_t b = wram->wBattleMon.level;
+            // LD_A_addr(wCurPartyLevel);
+            // CP_A_B;
+            // IF_NC goto wild_succeed_playeristarget;
+            if(wram->wCurPartyLevel < b) {
+                // ADD_A_B;
+                // LD_C_A;
+                // INC_C;
+                uint8_t c = b + wram->wCurPartyLevel + 1;
 
-missed:
-    JP(mBattleCommand_ForceSwitch_fail);
+                uint8_t a;
+                do {
+                // wild_random_loop_playeristarget:
+                    // CALL(aBattleRandom);
+                    a = v_BattleRandom_Conv();
+                    // CP_A_C;
+                    // IF_NC goto wild_random_loop_playeristarget;
+                } while(a >= c);
 
+                // SRL_B;
+                // SRL_B;
+                // CP_A_B;
+                // IF_NC goto wild_succeed_playeristarget;
+                if(a < b >> 2) {
+                player_miss:
+                    goto fail;
+                }
+            }
 
-wild_force_flee:
-    CALL(aUpdateBattleMonInParty);
-    XOR_A_A;
-    LD_addr_A(wNumHits);
-    INC_A;  // TRUE
-    LD_addr_A(wForcedSwitch);
-    CALL(aSetBattleDraw);
-    LD_A_addr(wPlayerMoveStructAnimation);
-    JP(mBattleCommand_ForceSwitch_succeed);
+        // wild_succeed_playeristarget:
+            // CALL(aUpdateBattleMonInParty);
+            UpdateBattleMonInParty_Conv();
+            // XOR_A_A;
+            // LD_addr_A(wNumHits);
+            wram->wNumHits = 0;
+            // INC_A;  // TRUE
+            // LD_addr_A(wForcedSwitch);
+            wram->wForcedSwitch = TRUE;
+            // CALL(aSetBattleDraw);
+            SetBattleDraw();
+            // LD_A_addr(wEnemyMoveStructAnimation);
+            anim = wram->wEnemyMoveStruct.animation;
+            // goto succeed;
+        }
+        else {
+        vs_trainer:
+            // CALL(aCheckPlayerHasMonToSwitchTo);
+            // IF_C goto fail;
+            if(!CheckPlayerHasMonToSwitchTo_Conv())
+                goto fail;
 
+            // LD_A_addr(wEnemyGoesFirst);
+            // CP_A(0x1);
+            // IF_Z goto switch_fail;
+            if(wram->wEnemyGoesFirst == 0x1)
+                goto switch_fail;
 
-trainer:
-    CALL(aFindAliveEnemyMons);
-    IF_C goto switch_fail;
-    LD_A_addr(wEnemyGoesFirst);
-    AND_A_A;
-    IF_Z goto switch_fail;
-    CALL(aUpdateEnemyMonInParty);
-    LD_A(0x1);
-    LD_addr_A(wBattleAnimParam);
-    CALL(aAnimateCurrentMove);
-    LD_C(0x14);
-    CALL(aDelayFrames);
-    hlcoord(1, 0, wTilemap);
-    LD_BC((4 << 8) | 10);
-    CALL(aClearBox);
-    LD_C(20);
-    CALL(aDelayFrames);
-    LD_A_addr(wOTPartyCount);
-    LD_B_A;
-    LD_A_addr(wCurOTMon);
-    LD_C_A;
-//  select a random enemy mon to switch to
+            // CALL(aUpdateBattleMonInParty);
+            UpdateBattleMonInParty_Conv();
+            // LD_A(0x1);
+            // LD_addr_A(wBattleAnimParam);
+            wram->wBattleAnimParam = 0x1;
+            // CALL(aAnimateCurrentMove);
+            AnimateCurrentMove();
+            // LD_C(20);
+            // CALL(aDelayFrames);
+            DelayFrames_Conv(20);
+            // hlcoord(9, 7, wTilemap);
+            // LD_BC((5 << 8) | 11);
+            // CALL(aClearBox);
+            ClearBox_Conv2(coord(9, 7, wram->wTilemap), 11, 5);
+            // LD_C(20);
+            // CALL(aDelayFrames);
+            DelayFrames_Conv(20);
+            // LD_A_addr(wPartyCount);
+            // LD_B_A;
+            uint8_t b = wram->wPartyCount;
+            // LD_A_addr(wCurBattleMon);
+            // LD_C_A;
+            uint8_t c = wram->wCurBattleMon;
 
-random_loop_trainer:
-    CALL(aBattleRandom);
-    AND_A(0x7);
-    CP_A_B;
-    IF_NC goto random_loop_trainer;
-    CP_A_C;
-    IF_Z goto random_loop_trainer;
-    PUSH_AF;
-    PUSH_BC;
-    LD_HL(wOTPartyMon1HP);
-    CALL(aGetPartyLocation);
-    LD_A_hli;
-    OR_A_hl;
-    POP_BC;
-    POP_DE;
-    IF_Z goto random_loop_trainer;
-    LD_A_D;
-    INC_A;
-    LD_addr_A(wEnemySwitchMonIndex);
-    CALLFAR(aForceEnemySwitch);
+            uint8_t a;
+            do {
+            // random_loop_trainer_playeristarget:
+                // CALL(aBattleRandom);
+                // AND_A(0x7);
+                a = v_BattleRandom_Conv() & 0x7;
+                // CP_A_B;
+                // IF_NC goto random_loop_trainer_playeristarget;
 
-    LD_HL(mDraggedOutText);
-    CALL(aStdBattleTextbox);
+                // CP_A_C;
+                // IF_Z goto random_loop_trainer_playeristarget;
+            } while(a >= b || a == c || ReverseEndian16(wram->wPartyMon[a].HP) == 0);
 
-    LD_HL(mSpikesDamage);
-    JP(mCallBattleCore);
+            // PUSH_AF;
+            // PUSH_BC;
+            // LD_HL(wPartyMon1HP);
+            // CALL(aGetPartyLocation);
+            // LD_A_hli;
+            // OR_A_hl;
+            // POP_BC;
+            // POP_DE;
+            // IF_Z goto random_loop_trainer_playeristarget;
 
+            // LD_A_D;
+            // LD_addr_A(wCurPartyMon);
+            wram->wCurPartyMon = a;
+            // LD_HL(mSwitchPlayerMon);
+            // CALL(aCallBattleCore);
+            SafeCallGBAuto(aSwitchPlayerMon);
 
-switch_fail:
-    JP(mBattleCommand_ForceSwitch_fail);
+            // LD_HL(mDraggedOutText);
+            // CALL(aStdBattleTextbox);
+            StdBattleTextbox_Conv2(DraggedOutText);
 
+            // LD_HL(mSpikesDamage);
+            // JP(mCallBattleCore);
+            return SpikesDamage();
+        }
+    }
+    else {
+        // LD_A_addr(wAttackMissed);
+        // AND_A_A;
+        // IF_NZ goto missed;
+        if(wram->wAttackMissed)
+            goto missed;
+        // LD_A_addr(wBattleMode);
+        // DEC_A;
+        // IF_NZ goto trainer;
+        if(wram->wBattleMode != WILD_BATTLE) {
+        // trainer:
+            // CALL(aFindAliveEnemyMons);
+            // IF_C goto switch_fail;
+            // LD_A_addr(wEnemyGoesFirst);
+            // AND_A_A;
+            // IF_Z goto switch_fail;
+            if(!FindAliveEnemyMons_Conv() || !wram->wEnemyGoesFirst) {
+            switch_fail:
+                // JP(mBattleCommand_ForceSwitch_fail);
+                goto fail;
+            }
+            // CALL(aUpdateEnemyMonInParty);
+            UpdateEnemyMonInParty();
+            // LD_A(0x1);
+            // LD_addr_A(wBattleAnimParam);
+            wram->wBattleAnimParam = 0x1;
+            // CALL(aAnimateCurrentMove);
+            AnimateCurrentMove();
+            // LD_C(0x14);
+            // CALL(aDelayFrames);
+            DelayFrames_Conv(0x14);
+            // hlcoord(1, 0, wTilemap);
+            // LD_BC((4 << 8) | 10);
+            // CALL(aClearBox);
+            ClearBox_Conv2(coord(1, 0, wram->wTilemap), 10, 4);
+            // LD_C(20);
+            // CALL(aDelayFrames);
+            DelayFrames_Conv(20);
+            // LD_A_addr(wOTPartyCount);
+            // LD_B_A;
+            uint8_t b = wram->wOTPartyCount;
+            // LD_A_addr(wCurOTMon);
+            // LD_C_A;
+            uint8_t c = wram->wCurOTMon;
+        //  select a random enemy mon to switch to
 
-force_player_switch:
-    LD_A_addr(wAttackMissed);
-    AND_A_A;
-    IF_NZ goto player_miss;
+            uint8_t a;
+            do {
+            // random_loop_trainer:
+                // CALL(aBattleRandom);
+                // AND_A(0x7);
+                a = v_BattleRandom_Conv() & 0x7;
+                // CP_A_B;
+                // IF_NC goto random_loop_trainer;
+                // CP_A_C;
+                // IF_Z goto random_loop_trainer;
+                // PUSH_AF;
+                // PUSH_BC;
+                // LD_HL(wOTPartyMon1HP);
+                // CALL(aGetPartyLocation);
+                // LD_A_hli;
+                // OR_A_hl;
+                // POP_BC;
+                // POP_DE;
+                // IF_Z goto random_loop_trainer;
+            } while(a >= b || a == c || ReverseEndian16(wram->wOTPartyMon[a].HP) == 0);
+            // LD_A_D;
+            // INC_A;
+            // LD_addr_A(wEnemySwitchMonIndex);
+            wram->wEnemySwitchMonIndex = a;
+            // CALLFAR(aForceEnemySwitch);
+            SafeCallGBAuto(aForceEnemySwitch);
 
-    LD_A_addr(wBattleMode);
-    DEC_A;
-    IF_NZ goto vs_trainer;
+            // LD_HL(mDraggedOutText);
+            // CALL(aStdBattleTextbox);
+            StdBattleTextbox_Conv2(DraggedOutText);
 
-    LD_A_addr(wBattleMonLevel);
-    LD_B_A;
-    LD_A_addr(wCurPartyLevel);
-    CP_A_B;
-    IF_NC goto wild_succeed_playeristarget;
+            // LD_HL(mSpikesDamage);
+            // JP(mCallBattleCore);
+            return SpikesDamage();
+        }
+        else {
+            // LD_A_addr(wCurPartyLevel);
+            // LD_B_A;
+            uint8_t b = wram->wCurPartyLevel;
+            // LD_A_addr(wBattleMonLevel);
+            // CP_A_B;
+            // IF_NC goto wild_force_flee;
+            if(wram->wBattleMon.level < b) {
+                // ADD_A_B;
+                // LD_C_A;
+                // INC_C;
+                uint8_t c = b + wram->wBattleMon.level + 1;
 
-    ADD_A_B;
-    LD_C_A;
-    INC_C;
+                uint8_t a;
+                do {
+                // random_loop_wild:
+                    // CALL(aBattleRandom);
+                    a = v_BattleRandom_Conv();
+                    // CP_A_C;
+                    // IF_NC goto random_loop_wild;
+                } while(a >= c);
+                // SRL_B;
+                // SRL_B;
+                // CP_A_B;
+                // IF_NC goto wild_force_flee;
+                if(a < (b >> 2)) {
+                missed:
+                    // JP(mBattleCommand_ForceSwitch_fail);
+                    goto fail;
+                }
+            }
 
-wild_random_loop_playeristarget:
-    CALL(aBattleRandom);
-    CP_A_C;
-    IF_NC goto wild_random_loop_playeristarget;
+        // wild_force_flee:
+            // CALL(aUpdateBattleMonInParty);
+            UpdateBattleMonInParty_Conv();
+            // XOR_A_A;
+            // LD_addr_A(wNumHits);
+            wram->wNumHits = 0;
+            // INC_A;  // TRUE
+            // LD_addr_A(wForcedSwitch);
+            wram->wForcedSwitch = TRUE;
+            // CALL(aSetBattleDraw);
+            SetBattleDraw();
+            // LD_A_addr(wPlayerMoveStructAnimation);
+            anim = wram->wPlayerMoveStruct.animation;
+            // JP(mBattleCommand_ForceSwitch_succeed);
+        }
+    }
 
-    SRL_B;
-    SRL_B;
-    CP_A_B;
-    IF_NC goto wild_succeed_playeristarget;
+// succeed:
+    // PUSH_AF;
+    // CALL(aSetBattleDraw);
+    SetBattleDraw();
+    // LD_A(0x1);
+    // LD_addr_A(wBattleAnimParam);
+    wram->wBattleAnimParam = 0x1;
+    // CALL(aAnimateCurrentMove);
+    AnimateCurrentMove();
+    // LD_C(20);
+    // CALL(aDelayFrames);
+    DelayFrames_Conv(20);
+    // POP_AF;
 
-
-player_miss:
-    goto fail;
-
-
-wild_succeed_playeristarget:
-    CALL(aUpdateBattleMonInParty);
-    XOR_A_A;
-    LD_addr_A(wNumHits);
-    INC_A;  // TRUE
-    LD_addr_A(wForcedSwitch);
-    CALL(aSetBattleDraw);
-    LD_A_addr(wEnemyMoveStructAnimation);
-    goto succeed;
-
-
-vs_trainer:
-    CALL(aCheckPlayerHasMonToSwitchTo);
-    IF_C goto fail;
-
-    LD_A_addr(wEnemyGoesFirst);
-    CP_A(0x1);
-    IF_Z goto switch_fail;
-
-    CALL(aUpdateBattleMonInParty);
-    LD_A(0x1);
-    LD_addr_A(wBattleAnimParam);
-    CALL(aAnimateCurrentMove);
-    LD_C(20);
-    CALL(aDelayFrames);
-    hlcoord(9, 7, wTilemap);
-    LD_BC((5 << 8) | 11);
-    CALL(aClearBox);
-    LD_C(20);
-    CALL(aDelayFrames);
-    LD_A_addr(wPartyCount);
-    LD_B_A;
-    LD_A_addr(wCurBattleMon);
-    LD_C_A;
-
-random_loop_trainer_playeristarget:
-    CALL(aBattleRandom);
-    AND_A(0x7);
-    CP_A_B;
-    IF_NC goto random_loop_trainer_playeristarget;
-
-    CP_A_C;
-    IF_Z goto random_loop_trainer_playeristarget;
-
-    PUSH_AF;
-    PUSH_BC;
-    LD_HL(wPartyMon1HP);
-    CALL(aGetPartyLocation);
-    LD_A_hli;
-    OR_A_hl;
-    POP_BC;
-    POP_DE;
-    IF_Z goto random_loop_trainer_playeristarget;
-
-    LD_A_D;
-    LD_addr_A(wCurPartyMon);
-    LD_HL(mSwitchPlayerMon);
-    CALL(aCallBattleCore);
-
-    LD_HL(mDraggedOutText);
-    CALL(aStdBattleTextbox);
-
-    LD_HL(mSpikesDamage);
-    JP(mCallBattleCore);
-
-
-fail:
-    CALL(aBattleCommand_LowerSub);
-    CALL(aBattleCommand_MoveDelay);
-    CALL(aBattleCommand_RaiseSub);
-    JP(mPrintButItFailed);
-
-
-succeed:
-    PUSH_AF;
-    CALL(aSetBattleDraw);
-    LD_A(0x1);
-    LD_addr_A(wBattleAnimParam);
-    CALL(aAnimateCurrentMove);
-    LD_C(20);
-    CALL(aDelayFrames);
-    POP_AF;
-
-    LD_HL(mFledInFearText);
-    CP_A(ROAR);
-    IF_Z goto do_text;
-    LD_HL(mBlownAwayText);
-
-do_text:
-    JP(mStdBattleTextbox);
-
+    if(anim == ROAR) {
+        // LD_HL(mFledInFearText);
+        // CP_A(ROAR);
+        // IF_Z goto do_text;
+    // do_text:
+        // JP(mStdBattleTextbox);
+        return StdBattleTextbox_Conv2(FledInFearText);
+    }
+    else {
+        // LD_HL(mBlownAwayText);
+    // do_text:
+        // JP(mStdBattleTextbox);
+        return StdBattleTextbox_Conv2(BlownAwayText);
+    }
 }
 
 void CheckPlayerHasMonToSwitchTo(void){
@@ -8561,6 +8707,47 @@ not_fainted:
     AND_A_A;
     RET;
 
+}
+
+//  Returns nc (true), if player has another mon to switch to.
+bool CheckPlayerHasMonToSwitchTo_Conv(void){
+    // LD_A_addr(wPartyCount);
+    // LD_D_A;
+    uint8_t d = wram->wPartyCount;
+    // LD_E(0);
+    uint8_t e = 0;
+    // LD_BC(PARTYMON_STRUCT_LENGTH);
+
+    do {
+    // loop:
+        // LD_A_addr(wCurBattleMon);
+        // CP_A_E;
+        // IF_Z goto next;
+        if(wram->wCurBattleMon == e)
+            continue;
+
+        // LD_A_E;
+        // LD_HL(wPartyMon1HP);
+        // CALL(aAddNTimes);
+        // LD_A_hli;
+        // OR_A_hl;
+        // IF_NZ goto not_fainted;
+        if(ReverseEndian16(wram->wPartyMon[e].HP) != 0)
+            return true;
+
+    // next:
+        // INC_E;
+        // DEC_D;
+        // IF_NZ goto loop;
+    } while(++e, --d != 0);
+
+    // SCF;
+    // RET;
+    return false;
+
+// not_fainted:
+    // AND_A_A;
+    // RET;
 }
 
 void BattleCommand_EndLoop(void){
@@ -9938,94 +10125,124 @@ void BattleCommand_ResetStats(void){
 void BattleCommand_Heal(void){
 //  heal
     PEEK("");
-    LD_DE(wBattleMonHP);
-    LD_HL(wBattleMonMaxHP);
-    LDH_A_addr(hBattleTurn);
-    AND_A_A;
-    IF_Z goto got_hp;
-    LD_DE(wEnemyMonHP);
-    LD_HL(wEnemyMonMaxHP);
+    // LD_DE(wBattleMonHP);
+    // LD_HL(wBattleMonMaxHP);
+    // LDH_A_addr(hBattleTurn);
+    // AND_A_A;
+    // IF_Z goto got_hp;
+    // LD_DE(wEnemyMonHP);
+    // LD_HL(wEnemyMonMaxHP);
+    uint16_t hp = ReverseEndian16((hram->hBattleTurn == 0)? wram->wBattleMon.hp: wram->wEnemyMon.hp);
+    uint16_t maxhp = ReverseEndian16((hram->hBattleTurn == 0)? wram->wBattleMon.maxHP: wram->wEnemyMon.maxHP);
 
-got_hp:
-    LD_A(BATTLE_VARS_MOVE_ANIM);
-    CALL(aGetBattleVar);
-    LD_B_A;
-    PUSH_HL;
-    PUSH_DE;
-    PUSH_BC;
-    LD_C(2);
-    CALL(aCompareBytes);
-    POP_BC;
-    POP_DE;
-    POP_HL;
-    JP_Z (mBattleCommand_Heal_hp_full);
-    LD_A_B;
-    CP_A(REST);
-    IF_NZ goto not_rest;
+// got_hp:
+    // LD_A(BATTLE_VARS_MOVE_ANIM);
+    // CALL(aGetBattleVar);
+    // LD_B_A;
+    uint8_t b = GetBattleVar_Conv(BATTLE_VARS_MOVE_ANIM);
+    // PUSH_HL;
+    // PUSH_DE;
+    // PUSH_BC;
+    // LD_C(2);
+    // CALL(aCompareBytes);
+    // POP_BC;
+    // POP_DE;
+    // POP_HL;
+    // JP_Z (mBattleCommand_Heal_hp_full);
+    if(hp == maxhp) {
+    // hp_full:
+        // CALL(aAnimateFailedMove);
+        AnimateFailedMove();
+        // LD_HL(mHPIsFullText);
+        // JP(mStdBattleTextbox);
+        return StdBattleTextbox_Conv2(HPIsFullText);
+    }
+    // LD_A_B;
+    // CP_A(REST);
+    // IF_NZ goto not_rest;
+    uint16_t bc;
+    if(b == REST) {
+        // PUSH_HL;
+        // PUSH_DE;
+        // PUSH_AF;
+        // CALL(aBattleCommand_MoveDelay);
+        BattleCommand_MoveDelay();
+        // LD_A(BATTLE_VARS_SUBSTATUS5);
+        // CALL(aGetBattleVarAddr);
+        uint8_t* hl = GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS5);
+        // RES_hl(SUBSTATUS_TOXIC);
+        bit_set(*hl, SUBSTATUS_TOXIC);
+        // LD_A(BATTLE_VARS_STATUS);
+        // CALL(aGetBattleVarAddr);
+        hl = GetBattleVarAddr_Conv(BATTLE_VARS_STATUS);
+        // LD_A_hl;
+        // AND_A_A;
+        uint8_t slp = *hl;
+        // LD_hl(REST_SLEEP_TURNS + 1);
+        *hl = REST_SLEEP_TURNS + 1;
 
-    PUSH_HL;
-    PUSH_DE;
-    PUSH_AF;
-    CALL(aBattleCommand_MoveDelay);
-    LD_A(BATTLE_VARS_SUBSTATUS5);
-    CALL(aGetBattleVarAddr);
-    RES_hl(SUBSTATUS_TOXIC);
-    LD_A(BATTLE_VARS_STATUS);
-    CALL(aGetBattleVarAddr);
-    LD_A_hl;
-    AND_A_A;
-    LD_hl(REST_SLEEP_TURNS + 1);
-    LD_HL(mWentToSleepText);
-    IF_Z goto no_status_to_heal;
-    LD_HL(mRestedText);
+        if(slp == 0) {
+            // LD_HL(mWentToSleepText);
+            // IF_Z goto no_status_to_heal;
+            StdBattleTextbox_Conv2(WentToSleepText);
+        }
+        else {
+            // LD_HL(mRestedText);
+            StdBattleTextbox_Conv2(RestedText);
+        }
 
-no_status_to_heal:
-    CALL(aStdBattleTextbox);
-    LDH_A_addr(hBattleTurn);
-    AND_A_A;
-    IF_NZ goto calc_enemy_stats;
-    CALL(aCalcPlayerStats);
-    goto got_stats;
+    // no_status_to_heal:
+        // CALL(aStdBattleTextbox);
+        // LDH_A_addr(hBattleTurn);
+        // AND_A_A;
+        // IF_NZ goto calc_enemy_stats;
+        if(hram->hBattleTurn == 0) {
+            // CALL(aCalcPlayerStats);
+            CalcPlayerStats();
+            // goto got_stats;
+        }
+        else {
+        // calc_enemy_stats:
+            // CALL(aCalcEnemyStats);
+            CalcEnemyStats();
+        }
 
+    // got_stats:
+        // POP_AF;
+        // POP_DE;
+        // POP_HL;
 
-calc_enemy_stats:
-    CALL(aCalcEnemyStats);
+    // restore_full_hp:
+        // LD_HL(mGetMaxHP);
+        // CALL(aCallBattleCore);
+        bc = GetMaxHP_Conv();
+    }
+    else {
+    // not_rest:
+        // IF_Z goto restore_full_hp;
+        // LD_HL(mGetHalfMaxHP);
+        // CALL(aCallBattleCore);
+        bc = GetHalfMaxHP_Conv();
+        // goto finish;
+    }
 
-got_stats:
-    POP_AF;
-    POP_DE;
-    POP_HL;
-
-
-not_rest:
-    IF_Z goto restore_full_hp;
-    LD_HL(mGetHalfMaxHP);
-    CALL(aCallBattleCore);
-    goto finish;
-
-
-restore_full_hp:
-    LD_HL(mGetMaxHP);
-    CALL(aCallBattleCore);
-
-finish:
-    CALL(aAnimateCurrentMove);
-    CALL(aBattleCommand_SwitchTurn);
-    LD_HL(mRestoreHP);
-    CALL(aCallBattleCore);
-    CALL(aBattleCommand_SwitchTurn);
-    CALL(aUpdateUserInParty);
-    CALL(aRefreshBattleHuds);
-    LD_HL(mRegainedHealthText);
-    JP(mStdBattleTextbox);
-
-
-hp_full:
-    // CALL(aAnimateFailedMove);
-    AnimateFailedMove();
-    // LD_HL(mHPIsFullText);
+// finish:
+    // CALL(aAnimateCurrentMove);
+    AnimateCurrentMove();
+    // CALL(aBattleCommand_SwitchTurn);
+    BattleCommand_SwitchTurn();
+    // LD_HL(mRestoreHP);
+    // CALL(aCallBattleCore);
+    RestoreHP_Conv(bc);
+    // CALL(aBattleCommand_SwitchTurn);
+    BattleCommand_SwitchTurn();
+    // CALL(aUpdateUserInParty);
+    UpdateUserInParty();
+    // CALL(aRefreshBattleHuds);
+    RefreshBattleHuds_Conv();
+    // LD_HL(mRegainedHealthText);
     // JP(mStdBattleTextbox);
-    return StdBattleTextbox_Conv2(HPIsFullText);
+    return StdBattleTextbox_Conv2(RegainedHealthText);
 
 // INCLUDE "engine/battle/move_effects/transform.asm"
 }

@@ -2304,116 +2304,141 @@ ReflectTick:
 
 }
 
+static void HandleWeather_SandstormDamage(void) {
+    // LD_A(BATTLE_VARS_SUBSTATUS3);
+    // CALL(aGetBattleVar);
+    // BIT_A(SUBSTATUS_UNDERGROUND);
+    // RET_NZ ;
+    if(bit_test(GetBattleVar_Conv(BATTLE_VARS_SUBSTATUS3), SUBSTATUS_UNDERGROUND))
+        return;
+
+    // LD_HL(wBattleMonType1);
+    // LDH_A_addr(hBattleTurn);
+    // AND_A_A;
+    // IF_Z goto ok;
+    // LD_HL(wEnemyMonType1);
+    uint8_t* types = (hram->hBattleTurn == 0)? wram->wBattleMon.types: wram->wEnemyMon.types;
+
+// ok:
+    // LD_A_hli;
+    // CP_A(ROCK);
+    // RET_Z ;
+    // CP_A(GROUND);
+    // RET_Z ;
+    // CP_A(STEEL);
+    // RET_Z ;
+    if(types[0] == ROCK || types[0] == GROUND || types[0] == STEEL)
+        return;
+
+    // LD_A_hl;
+    // CP_A(ROCK);
+    // RET_Z ;
+    // CP_A(GROUND);
+    // RET_Z ;
+    // CP_A(STEEL);
+    // RET_Z ;
+    if(types[1] == ROCK || types[1] == GROUND || types[1] == STEEL)
+        return;
+
+    // CALL(aSwitchTurnCore);
+    SwitchTurnCore();
+    // XOR_A_A;
+    // LD_addr_A(wNumHits);
+    wram->wNumHits = 0;
+    // LD_DE(ANIM_IN_SANDSTORM);
+    // CALL(aCall_PlayBattleAnim);
+    Call_PlayBattleAnim_Conv(ANIM_IN_SANDSTORM);
+    // CALL(aSwitchTurnCore);
+    SwitchTurnCore();
+    // CALL(aGetEighthMaxHP);
+    // CALL(aSubtractHPFromUser);
+    SubtractHPFromUser_Conv(GetEighthMaxHP_Conv());
+
+    // LD_HL(mSandstormHitsText);
+    // JP(mStdBattleTextbox);
+    return StdBattleTextbox_Conv2(SandstormHitsText);
+}
+
 void HandleWeather(void){
-    LD_A_addr(wBattleWeather);
-    CP_A(WEATHER_NONE);
-    RET_Z ;
+    static const struct TextCmd* WeatherMessages[] = {
+    //  entries correspond to WEATHER_* constants
+        [WEATHER_RAIN-1]        = BattleText_RainContinuesToFall,
+        [WEATHER_SUN-1]         = BattleText_TheSunlightIsStrong,
+        [WEATHER_SANDSTORM-1]   = BattleText_TheSandstormRages,
+    };
 
-    LD_HL(wWeatherCount);
-    DEC_hl;
-    IF_Z goto ended;
+    static const struct TextCmd* WeatherEndedMessages[] = {
+    //  entries correspond to WEATHER_* constants
+        [WEATHER_RAIN-1]        = BattleText_TheRainStopped,
+        [WEATHER_SUN-1]         = BattleText_TheSunlightFaded,
+        [WEATHER_SANDSTORM-1]   = BattleText_TheSandstormSubsided,
+    };
 
-    LD_HL(mHandleWeather_WeatherMessages);
-    CALL(aHandleWeather_PrintWeatherMessage);
+    // LD_A_addr(wBattleWeather);
+    // CP_A(WEATHER_NONE);
+    // RET_Z ;
+    if(wram->wBattleWeather == WEATHER_NONE)
+        return;
 
-    LD_A_addr(wBattleWeather);
-    CP_A(WEATHER_SANDSTORM);
-    RET_NZ ;
+    // LD_HL(wWeatherCount);
+    // DEC_hl;
+    // IF_Z goto ended;
+    if(--wram->wWeatherCount == 0) {
+    // ended:
+        // LD_HL(mHandleWeather_WeatherEndedMessages);
+        // CALL(aHandleWeather_PrintWeatherMessage);
+    // PrintWeatherMessage:
+        // LD_A_addr(wBattleWeather);
+        // DEC_A;
+        // LD_C_A;
+        // LD_B(0);
+        // ADD_HL_BC;
+        // ADD_HL_BC;
+        // LD_A_hli;
+        // LD_H_hl;
+        // LD_L_A;
+        // JP(mStdBattleTextbox);
+        StdBattleTextbox_Conv2(WeatherEndedMessages[wram->wBattleWeather - 1]);
+        // XOR_A_A;
+        // LD_addr_A(wBattleWeather);
+        wram->wBattleWeather = 0;
+        // RET;
+        return;
+    }
 
-    LDH_A_addr(hSerialConnectionStatus);
-    CP_A(USING_EXTERNAL_CLOCK);
-    IF_Z goto enemy_first;
+    // LD_HL(mHandleWeather_WeatherMessages);
+    // CALL(aHandleWeather_PrintWeatherMessage);
+    StdBattleTextbox_Conv2(WeatherMessages[wram->wBattleWeather - 1]);
 
-//  player first
-    CALL(aSetPlayerTurn);
-    CALL(aHandleWeather_SandstormDamage);
-    CALL(aSetEnemyTurn);
-    goto SandstormDamage;
-
-
-enemy_first:
-    CALL(aSetEnemyTurn);
-    CALL(aHandleWeather_SandstormDamage);
-    CALL(aSetPlayerTurn);
-
-
-SandstormDamage:
-    LD_A(BATTLE_VARS_SUBSTATUS3);
-    CALL(aGetBattleVar);
-    BIT_A(SUBSTATUS_UNDERGROUND);
-    RET_NZ ;
-
-    LD_HL(wBattleMonType1);
-    LDH_A_addr(hBattleTurn);
-    AND_A_A;
-    IF_Z goto ok;
-    LD_HL(wEnemyMonType1);
-
-ok:
-    LD_A_hli;
-    CP_A(ROCK);
-    RET_Z ;
-    CP_A(GROUND);
-    RET_Z ;
-    CP_A(STEEL);
-    RET_Z ;
-
-    LD_A_hl;
-    CP_A(ROCK);
-    RET_Z ;
-    CP_A(GROUND);
-    RET_Z ;
-    CP_A(STEEL);
-    RET_Z ;
-
-    CALL(aSwitchTurnCore);
-    XOR_A_A;
-    LD_addr_A(wNumHits);
-    LD_DE(ANIM_IN_SANDSTORM);
-    CALL(aCall_PlayBattleAnim);
-    CALL(aSwitchTurnCore);
-    CALL(aGetEighthMaxHP);
-    CALL(aSubtractHPFromUser);
-
-    LD_HL(mSandstormHitsText);
-    JP(mStdBattleTextbox);
-
-
-ended:
-    LD_HL(mHandleWeather_WeatherEndedMessages);
-    CALL(aHandleWeather_PrintWeatherMessage);
-    XOR_A_A;
-    LD_addr_A(wBattleWeather);
-    RET;
-
-
-PrintWeatherMessage:
-    LD_A_addr(wBattleWeather);
-    DEC_A;
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    ADD_HL_BC;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    JP(mStdBattleTextbox);
-
-
-WeatherMessages:
-//  entries correspond to WEATHER_* constants
-    //dw ['BattleText_RainContinuesToFall'];
-    //dw ['BattleText_TheSunlightIsStrong'];
-    //dw ['BattleText_TheSandstormRages'];
-
-
-WeatherEndedMessages:
-//  entries correspond to WEATHER_* constants
-    //dw ['BattleText_TheRainStopped'];
-    //dw ['BattleText_TheSunlightFaded'];
-    //dw ['BattleText_TheSandstormSubsided'];
-
-    return SubtractHPFromTarget();
+    // LD_A_addr(wBattleWeather);
+    // CP_A(WEATHER_SANDSTORM);
+    // RET_NZ ;
+    if(wram->wBattleWeather == WEATHER_SANDSTORM) { // Do sandstorm damage.
+        // LDH_A_addr(hSerialConnectionStatus);
+        // CP_A(USING_EXTERNAL_CLOCK);
+        // IF_Z goto enemy_first;
+        if(hram->hSerialConnectionStatus != USING_EXTERNAL_CLOCK) {
+        //  player first
+            // CALL(aSetPlayerTurn);
+            SetPlayerTurn_Conv();
+            // CALL(aHandleWeather_SandstormDamage);
+            HandleWeather_SandstormDamage();
+            // CALL(aSetEnemyTurn);
+            SetEnemyTurn_Conv();
+            // goto SandstormDamage;
+            return HandleWeather_SandstormDamage();
+        }
+        else {
+        // enemy_first:
+            // CALL(aSetEnemyTurn);
+            SetEnemyTurn_Conv();
+            // CALL(aHandleWeather_SandstormDamage);
+            HandleWeather_SandstormDamage();
+            // CALL(aSetPlayerTurn);
+            SetPlayerTurn_Conv();
+            return HandleWeather_SandstormDamage();
+        }
+    }
 }
 
 void SubtractHPFromTarget(void){
@@ -2427,6 +2452,14 @@ void SubtractHPFromUser(void){
     CALL(aSubtractHP);
     JP(mUpdateHPBarBattleHuds);
 
+}
+
+void SubtractHPFromUser_Conv(uint16_t hp){
+//  Subtract HP from mon
+    // CALL(aSubtractHP);
+    SubtractHP_Conv(hp);
+    // JP(mUpdateHPBarBattleHuds);
+    return UpdateHPBarBattleHuds();
 }
 
 void SubtractHP(void){
@@ -2461,6 +2494,47 @@ ok:
     LD_addr_A(wHPBuffer3 + 1);
     RET;
 
+}
+
+void SubtractHP_Conv(uint16_t bc){
+    // LD_HL(wBattleMonHP);
+    // LDH_A_addr(hBattleTurn);
+    // AND_A_A;
+    // IF_Z goto ok;
+    // LD_HL(wEnemyMonHP);
+    uint16_t* hp = (uint16_t*)((hram->hBattleTurn == 0)? wram_ptr(wBattleMonHP): wram_ptr(wEnemyMonHP));
+
+// ok:
+    // INC_HL;
+    // LD_A_hl;
+    // LD_addr_A(wHPBuffer2);
+    wram->wHPBuffer2 = ReverseEndian16(*hp);
+    uint32_t temp = wram->wHPBuffer2 - bc;
+    // SUB_A_C;
+    // LD_hld_A;
+    // LD_addr_A(wHPBuffer3);
+    // LD_A_hl;
+    // LD_addr_A(wHPBuffer2 + 1);
+    // SBC_A_B;
+    // LD_hl_A;
+    // LD_addr_A(wHPBuffer3 + 1);
+    wram->wHPBuffer3 = (uint16_t)temp;
+    *hp = ReverseEndian16((uint16_t)temp);
+    // RET_NC ;
+    if(temp & 0xffff0000) {
+        // LD_A_addr(wHPBuffer2);
+        // LD_C_A;
+        // LD_A_addr(wHPBuffer2 + 1);
+        // LD_B_A;
+        // XOR_A_A;
+        // LD_hli_A;
+        // LD_hl_A;
+        *hp = ReverseEndian16(0);
+        // LD_addr_A(wHPBuffer3);
+        // LD_addr_A(wHPBuffer3 + 1);
+        wram->wHPBuffer3 = ReverseEndian16(0);
+    }
+    // RET;
 }
 
 void GetSixteenthMaxHP(void){
