@@ -119,7 +119,7 @@
 
 // SECTION "bankA", ROMX
 
-//#include "engine/link/link.h"
+#include "engine/link/link.h"
 #include "engine/overworld/wildmons.h"
 //#include "engine/battle/link_result.h"
 

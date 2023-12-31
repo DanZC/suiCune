@@ -4375,4 +4375,113 @@ void init_function_pointers(void) {
 
     // engine/battle/move_effects/lock_on.c
     REDIRECTED(BattleCommand_LockOn);
+
+    // engine/battle/move_effects/destiny_bond.c
+    REDIRECTED(BattleCommand_DestinyBond);
+
+    // engine/battle/move_effects/pursuit.c
+    REDIRECTED(BattleCommand_Pursuit);
+
+    // engine/battle/move_effects/spikes.c
+    REDIRECTED(BattleCommand_Spikes);
+
+    // engine/battle/move_effects/thunder.c
+    REDIRECTED(BattleCommand_ThunderAccuracy);
+
+    // engine/link/link.c
+    // REDIRECTED(Colosseum);
+    // REDIRECTED(LinkTrade);
+    // REDIRECTED(LinkTradeOTPartymonMenuCheckCancel);
+    // REDIRECTED(GSLinkCommsBorderGFX);
+    // REDIRECTED(LinkCommunications);
+    // REDIRECTED(GSPlaceTradeScreenFooter);
+    // REDIRECTED(LinkTrade_TradeStatsMenu);
+    // REDIRECTED(CableClubCheckWhichChris);
+    // REDIRECTED(PlaceTradeScreenTextbox);
+    // REDIRECTED(TradeCenter);
+    // REDIRECTED(FixDataForLinkTransfer);
+    // REDIRECTED(FailedLinkToPast);
+    // REDIRECTED(Link_CopyRandomNumbers);
+    // REDIRECTED(LinkTradePartymonMenuLoop);
+    // REDIRECTED(Link_CopyOTData);
+    // REDIRECTED(String_PleaseWait);
+    // REDIRECTED(WaitForLinkedFriend);
+    // REDIRECTED(ExchangeBytes);
+    // REDIRECTED(LinkTimeout);
+    // REDIRECTED(CheckBothSelectedSameRoom);
+    // REDIRECTED(CheckTimeCapsuleCompatibility);
+    // REDIRECTED(TryQuickSave);
+    // REDIRECTED(Link_PrepPartyData_Gen1);
+    // REDIRECTED(LinkTradePartymonMenuCheckCancel);
+    // REDIRECTED(String_TradeCompleted);
+    // REDIRECTED(InitTradeMenuDisplay_Delay);
+    // REDIRECTED(CheckLinkTimeout_Gen2);
+    // REDIRECTED(Link_ConvertPartyStruct1to2);
+    // REDIRECTED(LinkTradePartiesMenuMasterLoop);
+    // REDIRECTED(LinkEngine_FillBox);
+    // REDIRECTED(LinkAskTradeForText);
+    // REDIRECTED(WaitForOtherPlayerToExit);
+    // REDIRECTED(CloseLink);
+    // REDIRECTED(GetIncompatibleMonName);
+    // REDIRECTED(String_TradeCancel);
+    // REDIRECTED(SetBitsForBattleRequest);
+    // REDIRECTED(Link_ResetSerialRegistersAfterLinkClosure);
+    // REDIRECTED(ClearLinkData);
+    // REDIRECTED(EnterTimeCapsule);
+    // REDIRECTED(LoadTradeScreenBorderGFX);
+    // REDIRECTED(Link_PrepPartyData_Gen2);
+    // REDIRECTED(LinkTextboxAtHL);
+    // REDIRECTED(CheckSRAM0Flag);
+    // REDIRECTED(InitTradeMenuDisplay);
+    // REDIRECTED(Gen2ToGen2LinkComms);
+    // REDIRECTED(Link_FindFirstNonControlCharacter_AllowZero);
+    // REDIRECTED(Link_EnsureSync);
+    // REDIRECTED(LinkTradeOTPartymonMenuLoop);
+    // REDIRECTED(SetTradeRoomBGPals);
+    // REDIRECTED(Gen2ToGen1LinkComms);
+    // REDIRECTED(Link_CopyMailPreamble);
+    // REDIRECTED(TimeCapsule);
+    // REDIRECTED(LinkTrade_PlayerPartyMenu);
+    // REDIRECTED(Link_FindFirstNonControlCharacter_SkipZero);
+    // REDIRECTED(TimeCapsule_ReplaceTeruSama);
+    // REDIRECTED(String_TooBadTheTradeWasCanceled);
+    // REDIRECTED(LinkTrade_OTPartyMenu);
+    // REDIRECTED(CheckLinkTimeout_Receptionist);
+    // REDIRECTED(ExitLinkCommunications);
+    // REDIRECTED(LinkTradePlaceArrow);
+    // REDIRECTED(SetBitsForTimeCapsuleRequest);
+    // REDIRECTED(Link_CheckCommunicationError);
+    // REDIRECTED(SetBitsForLinkTradeRequest);
+
+    // engine/battle/move_effects/pay_day.c
+    REDIRECTED(BattleCommand_PayDay);
+
+    // engine/battle/move_effects/mist.c
+    REDIRECTED(BattleCommand_Mist);
+
+    // engine/battle/move_effects/triple_kick.c
+    REDIRECTED(BattleCommand_KickCounter);
+    REDIRECTED(BattleCommand_TripleKick);
+
+    // engine/battle/move_effects/leech_seed.c
+    REDIRECTED(BattleCommand_LeechSeed);
+
+    // engine/battle/move_effects/magnitude.c
+    REDIRECTED(BattleCommand_GetMagnitude);
+
+    // engine/battle/move_effects/selfdestruct.c
+    REDIRECTED(BattleCommand_Selfdestruct);
+
+    // engine/battle/move_effects/snore.c
+    REDIRECTED(BattleCommand_Snore);
+
+    // engine/battle/move_effects/rollout.c
+    REDIRECTED(BattleCommand_RolloutPower);
+    REDIRECTED(BattleCommand_CheckCurl);
+
+    // engine/battle/move_effects/belly_drum.c
+    REDIRECTED(BattleCommand_BellyDrum);
+
+    // engine/battle/move_effects/counter.c
+    REDIRECTED(BattleCommand_Counter);
 }

@@ -40,6 +40,7 @@
 #include "../../data/wild/treemons_asleep.h"
 #include "../../data/wild/unlocked_unowns.h"
 #include "../../data/battle/held_heal_status.h"
+#include "../../data/moves/moves.h"
 #include "../battle_anims/anim_commands.h"
 #include "../events/catch_tutorial_input.h"
 #include "../events/happiness_egg.h"
@@ -1341,6 +1342,21 @@ void GetMoveEffect(void){
     LD_B_A;
     RET;
 
+}
+
+uint8_t GetMoveEffect_Conv(move_t b){
+    if(b == 0)
+        return EFFECT_SPLASH;
+    // LD_A_B;
+    // DEC_A;
+    // LD_HL(mMoves + MOVE_EFFECT);
+    // LD_BC(MOVE_LENGTH);
+    // CALL(aAddNTimes);
+    // LD_A(BANK(aMoves));
+    // CALL(aGetFarByte);
+    // LD_B_A;
+    // RET;
+    return Moves[b-1].effect;
 }
 
 void Battle_EnemyFirst(void){
@@ -2783,6 +2799,24 @@ ok:
     SBC_A_hl;
     RET;
 
+}
+
+// Returns true (c) if the user has enough HP.
+bool CheckUserHasEnoughHP_Conv(uint16_t bc){
+    // LD_HL(wBattleMonHP + 1);
+    // LDH_A_addr(hBattleTurn);
+    // AND_A_A;
+    // IF_Z goto ok;
+    // LD_HL(wEnemyMonHP + 1);
+    uint16_t hp = ReverseEndian16((hram->hBattleTurn == 0)? wram->wBattleMon.hp: wram->wEnemyMon.hp);
+// ok:
+    // LD_A_C;
+    // SUB_A_hl;
+    // DEC_HL;
+    // LD_A_B;
+    // SBC_A_hl;
+    // RET;
+    return hp >= bc;
 }
 
 void RestoreHP(void){

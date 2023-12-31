@@ -146,6 +146,66 @@ load:
 
 }
 
+void Serial_ExchangeBytes_Conv(uint8_t* de, const uint8_t* hl, uint16_t bc){
+    //  send bc bytes from hl, receive bc bytes to de
+    // LD_A(TRUE);
+    // LDH_addr_A(hSerialIgnoringInitialData);
+    hram->hSerialIgnoringInitialData = TRUE;
+
+    while(1) {
+    // loop:
+        // LD_A_hl;
+        // LDH_addr_A(hSerialSend);
+        hram->hSerialSend = *hl;
+        // CALL(aSerial_ExchangeByte);
+        uint8_t byte = Serial_ExchangeByte_Conv(hl);
+        // PUSH_BC;
+        // LD_B_A;
+        // INC_HL;
+        hl++;
+
+        // LD_A(48);
+        uint8_t a = 48;
+
+        do {
+        // wait:
+            // DEC_A;
+            // IF_NZ goto wait;
+        } while(--a != 0);
+
+        // LDH_A_addr(hSerialIgnoringInitialData);
+        // AND_A_A;
+        // LD_A_B;
+        // POP_BC;
+        // IF_Z goto load;
+        if(!hram->hSerialIgnoringInitialData) {
+        // load:
+            // LD_de_A;
+            // INC_DE;
+            *(de++) = byte;
+            // DEC_BC;
+            --bc;
+            // LD_A_B;
+            // OR_A_C;
+            // IF_NZ goto loop;
+            if(bc != 0)
+                continue;
+            // RET;
+            return;
+        }
+        // DEC_HL;
+        hl--;
+        // CP_A(SERIAL_PREAMBLE_BYTE);
+        // IF_NZ goto loop;
+        if(byte != SERIAL_PREAMBLE_BYTE)
+            continue;
+        // XOR_A_A;
+        // LDH_addr_A(hSerialIgnoringInitialData);
+        hram->hSerialIgnoringInitialData = 0;
+        // goto loop;
+    }
+}
+
 void Serial_ExchangeByte(void){
     
 timeout_loop:
@@ -273,7 +333,7 @@ static void Serial_ExchangeByte_ShortDelay(void) {
     DelayFrame();
 }
 
-uint8_t Serial_ExchangeByte_Conv(uint8_t* hl){ 
+uint8_t Serial_ExchangeByte_Conv(const uint8_t* hl){ 
 timeout_loop:
     // XOR_A_A;
     // LDH_addr_A(hSerialReceivedNewData);
@@ -577,7 +637,7 @@ acknowledge:
 }
 
 void LinkTransfer(void){
-        PUSH_BC;
+    PUSH_BC;
     LD_B(SERIAL_TIMECAPSULE);
     LD_A_addr(wLinkMode);
     CP_A(LINK_TIMECAPSULE);
@@ -627,17 +687,21 @@ Receive:
 
 void LinkDataReceived(void){
     //  Let the other system know that the data has been received.
-    XOR_A_A;
-    LDH_addr_A(hSerialSend);
-    LDH_A_addr(hSerialConnectionStatus);
-    CP_A(USING_INTERNAL_CLOCK);
-    RET_NZ ;
-    LD_A((0 << rSC_ON) | (1 << rSC_CLOCK));
-    LDH_addr_A(rSC);
-    LD_A((1 << rSC_ON) | (1 << rSC_CLOCK));
-    LDH_addr_A(rSC);
-    RET;
-
+    // XOR_A_A;
+    // LDH_addr_A(hSerialSend);
+    hram->hSerialSend = 0;
+    // LDH_A_addr(hSerialConnectionStatus);
+    // CP_A(USING_INTERNAL_CLOCK);
+    // RET_NZ ;
+    if(hram->hSerialConnectionStatus == USING_INTERNAL_CLOCK) {
+        // LD_A((0 << rSC_ON) | (1 << rSC_CLOCK));
+        // LDH_addr_A(rSC);
+        gb_write(rSC, (0 << rSC_ON) | (1 << rSC_CLOCK));
+        // LD_A((1 << rSC_ON) | (1 << rSC_CLOCK));
+        // LDH_addr_A(rSC);
+        gb_write(rSC, (1 << rSC_ON) | (1 << rSC_CLOCK));
+    }
+    // RET;
 }
 
 void SetBitsForTimeCapsuleRequestIfNotLinked(void){

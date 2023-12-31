@@ -43,6 +43,7 @@ SRCS   := tools/emu/peanut_sdl.c tools/emu/minigb_apu/minigb_apu.c \
 	$(wildcard engine/events/*.c) \
 	$(wildcard engine/gfx/*.c) \
 	$(wildcard engine/items/*.c) \
+	$(wildcard engine/link/*.c) \
 	$(wildcard engine/math/*.c) \
 	$(wildcard engine/menus/*.c) \
 	$(wildcard engine/movie/*.c) \
@@ -64,7 +65,7 @@ CFLAGS += $(shell sdl2-config --cflags)
 
 ifeq ($(STATIC),yes)
 	CFLAGS += -static
-	LDLIBS += -lmingw32 -lSDL2main -lSDL2 -ldinput8 -lshell32 -lsetupapi -ladvapi32 -luuid -lversion -loleaut32 -lole32 -limm32 -lwinmm -lgdi32 -luser32 -lm -lphysfs -Wl,--no-undefined 
+	LDLIBS += -lSDL2_net -lmingw32 -lSDL2main -lSDL2 -lws2_32 -liphlpapi -ldinput8 -lshell32 -lsetupapi -ladvapi32 -luuid -lversion -loleaut32 -lole32 -limm32 -lwinmm -lgdi32 -luser32 -lm -lphysfs -Wl,--no-undefined 
 #	LDLIBS += $(shell sdl2-config --static-libs)
 else
 	LDLIBS += -lSDL2main -lmingw32 -lSDL2 -mconsole -ldinput8 -lshell32 -lsetupapi -ladvapi32 -luuid -lversion -loleaut32 -lole32 -limm32 -lwinmm -lgdi32 -luser32 -lm -lphysfs -Wl,--no-undefined 
@@ -118,6 +119,7 @@ clean:
 	$(wildcard engine/events/*.o) \
 	$(wildcard engine/gfx/*.o) \
 	$(wildcard engine/items/*.o) \
+	$(wildcard engine/link/*.o) \
 	$(wildcard engine/math/*.o) \
 	$(wildcard engine/menus/*.o) \
 	$(wildcard engine/movie/*.o) \

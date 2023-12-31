@@ -1,5 +1,6 @@
 #include "../../constants.h"
 #include "../../home/map_objects.h"
+#include "../../engine/link/link.h"
 #include "../../engine/overworld/events.h"
 #include "../../engine/rtc/timeset.h"
 #include "../../engine/events/magikarp.h"
@@ -8,6 +9,10 @@
 
 void (*const SpecialsPointers[])(void) = {
     add_special(WarpToSpawnPoint),
+    
+    add_special(SetBitsForLinkTradeRequest),
+    add_special(WaitForLinkedFriend),
+
     add_special(SetDayOfWeek),
     add_special(UpdateSprites),
 

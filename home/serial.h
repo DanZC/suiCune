@@ -1,7 +1,8 @@
 void Serial(void);
 void Serial_ExchangeBytes(void);
+void Serial_ExchangeBytes_Conv(uint8_t* de, const uint8_t* hl, uint16_t bc);
 void Serial_ExchangeByte(void);
-uint8_t Serial_ExchangeByte_Conv(uint8_t* hl);
+uint8_t Serial_ExchangeByte_Conv(const uint8_t* hl);
 void CheckLinkTimeoutFramesNonzero(void);
 bool CheckLinkTimeoutFramesNonzero_Conv(void);
 void SerialDisconnected(void);

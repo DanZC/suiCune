@@ -7497,7 +7497,7 @@ void BattleCommand_StatUpMessage(void){
     // LD_B_A;
     // INC_B;
     // CALL(aGetStatName);
-    GetStatName_Conv((wram->wLoweredStat & 0xf) + 1);
+    GetStatName_Conv(wram->wLoweredStat & 0xf);
     // LD_HL(mBattleCommand_StatUpMessage_stat);
     // JP(mBattleTextbox);
     return BattleTextbox_Conv2(stat);
@@ -7546,7 +7546,7 @@ void BattleCommand_StatDownMessage(void){
     // LD_B_A;
     // INC_B;
     // CALL(aGetStatName);
-    GetStatName_Conv((wram->wLoweredStat & 0xf) + 1);
+    GetStatName_Conv(wram->wLoweredStat & 0xf);
     // LD_HL(mBattleCommand_StatDownMessage_stat);
     // JP(mBattleTextbox);
     return BattleTextbox_Conv2(stat);

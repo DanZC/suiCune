@@ -16,15 +16,17 @@
 #if !defined(NO_PHYSFS)
 #include <physfs.h>
 #endif
-#if defined(NETWORKING_SUPPORT)
-#include <SDL2/SDL_net.h>
-#endif
 
 #include "minigb_apu/minigb_apu.h"
 #include "peanut_gb.h"
 #include "../../home/lcd.h"
 #include "rom_patches.h"
 #include "../../util/record.h"
+#include "../../util/network.h"
+
+#if defined(NETWORKING_SUPPORT)
+#include <SDL2/SDL_net.h>
+#endif
 
 struct gb_s gb;
 #define ROM_SIZE 0x200000
@@ -3421,21 +3423,6 @@ void get_input(void) {
     }
 }
 
-#if defined(NETWORKING_SUPPORT)
-TCPsocket socket = NULL;
-void gb_serial_tx(const uint8_t x) {
-    SDLNet_TCP_Send(socket, &x, sizeof(x));
-}
-
-enum gb_serial_rx_ret_e gb_serial_rx(struct gb_s *gb, uint8_t* x) {
-    (void)gb;
-    if(SDLNet_TCP_Recv(socket, x, sizeof(*x)) < (int)sizeof(*x)) {
-        return GB_SERIAL_RX_NO_CONNECTION;
-    }
-    return GB_SERIAL_RX_SUCCESS;
-}
-#endif
-
 void sdl_loop(void) {
     int delay;
     static unsigned int rtc_timer = 0;
@@ -3803,18 +3790,7 @@ int main(int argc, char* argv[]) {
         goto out;
     }
 
-#if defined(NETWORKING_SUPPORT)
-    if(SDLNet_Init() == 0) {
-        socket = SDLNet_TCP_Open(&(IPaddress){.host=INADDR_ANY, .port=2210});
-        if(socket != NULL)
-            gb_init_serial(gb_serial_tx, gb_serial_rx);
-        else
-            printf("SDLNet could not create server: %s\n", SDLNet_GetError());
-    }
-    else {
-        printf("SDLNet could not be initialized: %s\n", SDLNet_GetError());
-    }
-#endif
+    NetworkInit();
 
 #if defined(DEBUG_WINDOW)
     dbg_renderer = SDL_CreateRenderer(dbg_window, -1, SDL_RENDERER_ACCELERATED);
@@ -3846,10 +3822,7 @@ int main(int argc, char* argv[]) {
     }
 
 quit:
-#if defined(NETWORKING_SUPPORT)
-    if(socket != NULL)
-        SDLNet_TCP_Close(socket);
-#endif
+    NetworkDeinit();
 #if defined(DEBUG_WINDOW)
     SDL_DestroyRenderer(dbg_renderer);
     SDL_DestroyWindow(dbg_window);
