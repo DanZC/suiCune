@@ -74,6 +74,16 @@ enum {
     CMD_DISCONNECT_MOBILE,
 };
 
+typedef enum {
+    NETSTATE_NOTHING,
+    NETSTATE_HOSTING,
+    NETSTATE_JOINING,
+    NETSTATE_LAN_HOST,
+    NETSTATE_LAN_CLIENT,
+} netstate_e;
+
+netstate_e gNetworkState;
+
 typedef struct CmdPacket {
     uint8_t type;
     union {
@@ -112,6 +122,7 @@ bool NetworkInit(void) {
         host = SDLNet_UDP_Open(UDP_PORT);
         packet = SDLNet_AllocPacket(UDP_PACKET_SIZE);
         gNetworkingInit = true;
+        gNetworkState = NETSTATE_NOTHING;
         gb.gb_serial_rx = gb_serial_rx_test;
         gb.gb_serial_tx = gb_serial_tx_test;
         return true;
@@ -131,7 +142,7 @@ enum gb_serial_rx_ret_e gb_serial_rx(uint8_t* x) {
     return GB_SERIAL_RX_SUCCESS;
 }
 
-void NetworkBroadcastLAN(const uint8_t* name, uint16_t id, uint8_t gender) {
+bool NetworkBroadcastLAN(const uint8_t* name, uint16_t id, uint8_t gender) {
     memset(packet->data, 0, UDP_PACKET_SIZE);
     CmdPacket_s* cmd = (CmdPacket_s*)packet->data;
     cmd->type = CMD_HOST_LAN;
@@ -141,38 +152,98 @@ void NetworkBroadcastLAN(const uint8_t* name, uint16_t id, uint8_t gender) {
     packet->address.host = INADDR_BROADCAST;
     if(SDLNet_UDP_Send(host, -1, packet) == 0) {
         printf("Could not send UDP packet on port 22606.\n");
-        return;
+        return false;
     }
-    return;
+    return true;
+}
+
+bool NetworkTryJoinLAN(uint8_t which, const uint8_t* name, uint16_t id, uint8_t gender) {
+    if(which < gLANClientCandidateCount) {
+        memset(packet->data, 0, UDP_PACKET_SIZE);
+        CmdPacket_s* cmd = (CmdPacket_s*)packet->data;
+        cmd->type = CMD_JOIN_LAN;
+        memcpy(cmd->host_lan.name, name, 10);
+        cmd->host_lan.trainerId = id;
+        cmd->host_lan.gender = gender;
+        packet->address.host = gLANClientCandidates[which].address;
+        if(SDLNet_UDP_Send(host, -1, packet) == 0) {
+            printf("Could not send UDP packet on port 22606.\n");
+            return false;
+        }
+        return true;
+    }
+    return false;
 }
 
 LANClient gLANClientCandidates[16];
 uint32_t gLANClientCandidateCount;
 
-bool NetworkCheckLAN(void) {
+bool NetworkTryRecvUDP(void) {
     int error = SDLNet_UDP_Recv(host, packet);
     if(error == -1) {
         printf("SDLNet: %s", SDLNet_GetError());
         return false;
     }
-    if(error == 1 && gLANClientCandidateCount < 16) {
+    return error == 1;
+}
+
+static void NetworkAddLANCandidate(void) {
+    LANClient* lan = gLANClientCandidates + gLANClientCandidateCount;
+    lan->address = packet->address.host;
+    printf("Received packet from %d.%d.%d.%d\n", 
+        lan->address & 0xff, 
+        (lan->address >> 8) & 0xff,
+        (lan->address >> 16) & 0xff,
+        (lan->address >> 24) & 0xff);
+    memset(lan->name, 0x50, sizeof(lan->name));
+    memcpy(lan->name, packet->data, 10);
+    lan->trainerId = packet->data[10] | (packet->data[11] << 8);
+    lan->gender = packet->data[12];
+    gLANClientCandidateCount++;
+}
+
+static void NetworkStageLANCandidate(void) {
+    LANClient* lan = gLANClientCandidates + 0;
+    lan->address = packet->address.host;
+    printf("Received packet from %d.%d.%d.%d\n", 
+        lan->address & 0xff, 
+        (lan->address >> 8) & 0xff,
+        (lan->address >> 16) & 0xff,
+        (lan->address >> 24) & 0xff);
+    memset(lan->name, 0x50, sizeof(lan->name));
+    memcpy(lan->name, packet->data, 10);
+    lan->trainerId = packet->data[10] | (packet->data[11] << 8);
+    lan->gender = packet->data[12];
+}
+
+bool NetworkCheckLAN(void) {
+    if(NetworkTryRecvUDP() && gLANClientCandidateCount < 16) {
         if(packet->len < 13 || packet->len > 16) {
             printf("Packet length was not in expected range (13-16): %d\n", packet->len);
             return false;
         }
-        LANClient* lan = gLANClientCandidates + gLANClientCandidateCount;
-        lan->address = packet->address.host;
-        printf("Received packet from %d.%d.%d.%d\n", 
-            lan->address & 0xff, 
-            (lan->address >> 8) & 0xff,
-            (lan->address >> 16) & 0xff,
-            (lan->address >> 24) & 0xff);
-        memset(lan->name, 0x50, sizeof(lan->name));
-        memcpy(lan->name, packet->data, 10);
-        lan->trainerId = packet->data[10] | (packet->data[11] << 8);
-        lan->gender = packet->data[12];
-        gLANClientCandidateCount++;
-        return true;
+
+        CmdPacket_s* cmd = (CmdPacket_s*)packet->data;
+        switch(cmd->type) {
+            case CMD_HOST_LAN:
+                if(gNetworkState == NETSTATE_JOINING) {
+                    NetworkAddLANCandidate();
+                    return true;
+                }
+                return false;
+            case CMD_JOIN_LAN:
+                if(gNetworkState == NETSTATE_HOSTING) {
+                    NetworkStageLANCandidate();
+                    return true;
+                }
+                return false;
+            case CMD_ACCEPT_JOIN_LAN:
+                if(gNetworkState == NETSTATE_JOINING) {
+                    NetworkAcceptLANConnection();
+                    return true;
+                }
+                return false;
+        }
     }
     return false;
 }
@@ -182,19 +253,24 @@ void NetworkClearLANCache(void) {
     memset(gLANClientCandidates, 0, sizeof(gLANClientCandidates));
 }
 
-void NetworkLANDirectConnect(uint32_t which) {
-    if(which < gLANClientCandidateCount) {
-        serial = SDLNet_TCP_Open(&(IPaddress){.host = INADDR_ANY, .port = TCP_PORT});
-        packet->address.host = gLANClientCandidates[which].address;
-        CmdPacket_s* cmd = (CmdPacket_s*)packet->data;
-        cmd->type = 1;
-        SDLNet_UDP_Send(host, -1, packet);
-        while(!(cserial = SDLNet_TCP_Accept(serial))) {
-            DelayFrame();
+bool NetworkLANDirectConnect(uint32_t which) {
+    serial = SDLNet_TCP_Open(&(IPaddress){.host = INADDR_ANY, .port = TCP_PORT});
+    packet->address.host = gLANClientCandidates[which].address;
+    CmdPacket_s* cmd = (CmdPacket_s*)packet->data;
+    cmd->type = 1;
+    SDLNet_UDP_Send(host, -1, packet);
+    uint32_t timeout = 60 * 8;
+    while(!(cserial = SDLNet_TCP_Accept(serial))) {
+        DelayFrame();
+        if(--timeout == 0) {
+            SDLNet_TCP_Close(serial);
+            serial = NULL;
+            return false;
         }
-        gb.gb_serial_rx = gb_serial_rx;
-        gb.gb_serial_tx = gb_serial_tx;
     }
+    gb.gb_serial_rx = gb_serial_rx;
+    gb.gb_serial_tx = gb_serial_tx;
+    return true;
 }
 
 void NetworkAcceptLANConnection(void) {

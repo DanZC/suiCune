@@ -864,7 +864,7 @@ static void StatsScreen_PlaceHPBar(void) {
     // FARCALL(aComputeHPBarPixels);
     // LD_HL(wCurHPPal);
     // CALL(aSetHPPal);
-    SetHPPal_Conv(&wram->wCurHPPal, ComputeHPBarPixels_Conv(wram->wTempMon.HP, wram->wTempMon.maxHP));
+    SetHPPal_Conv(&wram->wCurHPPal, ComputeHPBarPixels_Conv(ReverseEndian16(wram->wTempMon.HP), ReverseEndian16(wram->wTempMon.maxHP)));
     // LD_B(SCGB_STATS_SCREEN_HP_PALS);
     // CALL(aGetSGBLayout);
     GetSGBLayout_Conv(SCGB_STATS_SCREEN_HP_PALS);

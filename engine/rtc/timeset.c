@@ -959,7 +959,7 @@ static void InitialSetDSTFlag_Text(struct TextCmdState* state) {
     // LD_C_A;
     // decoord(1, 14, wTilemap);
     // FARCALL(aPrintHoursMins);
-    PrintHoursMins_Conv(coord(1, 14, wram->wTilemap), hram->hHours, hram->hMinutes);
+    state->bc = PrintHoursMins_Conv(coord(1, 14, wram->wTilemap), hram->hHours, hram->hMinutes);
     // LD_HL(mInitialSetDSTFlag_DSTIsThatOKText);
     state->hl = DSTIsThatOKText;
     // RET;

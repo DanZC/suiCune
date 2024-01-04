@@ -4484,4 +4484,37 @@ void init_function_pointers(void) {
 
     // engine/battle/move_effects/counter.c
     REDIRECTED(BattleCommand_Counter);
+
+    // engine/battle/move_effects/metronome.c
+    REDIRECTED(BattleCommand_Metronome);
+
+    // engine/battle/move_effects/return.c
+    REDIRECTED(BattleCommand_HappinessPower);
+
+    // engine/battle/move_effects/curse.c
+    REDIRECTED(BattleCommand_Curse);
+
+    // engine/battle/move_effects/sandstorm.c
+    REDIRECTED(BattleCommand_StartSandstorm);
+
+    // engine/battle/move_effects/teleport.c
+    REDIRECTED(BattleCommand_Teleport);
+
+    // engine/battle/move_effects/protect.c
+    REDIRECTED(ProtectChance);
+    REDIRECTED(BattleCommand_Protect);
+
+    // engine/battle/move_effects/future_sight.c
+    REDIRECTED(BattleCommand_CheckFutureSight);
+    REDIRECTED(BattleCommand_FutureSight);
+
+    // engine/battle/move_effects/frustration.c
+    REDIRECTED(BattleCommand_FrustrationPower);
+
+    // engine/battle/move_effects/rage.c
+    REDIRECTED(BattleCommand_Rage);
+
+    // engine/battle/move_effects/bide.c
+    REDIRECTED(BattleCommand_StoreEnergy);
+    REDIRECTED(BattleCommand_UnleashEnergy);
 }

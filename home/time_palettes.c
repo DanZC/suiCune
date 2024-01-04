@@ -34,12 +34,6 @@ bool TimeOfDayPals_Conv(void){
 }
 
 void UpdateTimePals(void){
-        CALLFAR(av_UpdateTimePals);
-    RET;
-
-}
-
-void UpdateTimePals_Conv(void){
     // CALLFAR(av_UpdateTimePals);
     // RET;
     v_UpdateTimePals();

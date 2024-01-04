@@ -3,8 +3,11 @@
 #define NETWORKING_SUPPORT
 
 bool NetworkInit(void);
-void NetworkBroadcastLAN(const uint8_t* name, uint16_t id, uint8_t gender);
+bool NetworkBroadcastLAN(const uint8_t* name, uint16_t id, uint8_t gender);
+bool NetworkTryJoinLAN(uint8_t which, const uint8_t* name, uint16_t id, uint8_t gender);
 bool NetworkCheckLAN(void);
+bool NetworkLANDirectConnect(uint32_t which);
+void NetworkAcceptLANConnection(void);
 void NetworkDeinit(void);
 
 typedef struct {

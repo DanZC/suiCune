@@ -7937,6 +7937,104 @@ cant_lower_anymore:
 
 }
 
+void LowerStat_Conv(uint8_t a){
+    // LD_addr_A(wLoweredStat);
+    wram->wLoweredStat = a;
+
+    // LD_HL(wPlayerStatLevels);
+    // LDH_A_addr(hBattleTurn);
+    // AND_A_A;
+    // IF_Z goto got_target;
+    // LD_HL(wEnemyStatLevels);
+    uint8_t* hl = (hram->hBattleTurn == 0)? wram->wPlayerStatLevels: wram->wEnemyStatLevels;
+
+// got_target:
+    // LD_A_addr(wLoweredStat);
+    // AND_A(0xf);
+    // LD_C_A;
+    uint8_t c = wram->wLoweredStat & 0xf;
+    // LD_B(0);
+    // ADD_HL_BC;
+    // LD_B_hl;
+    uint8_t b = hl[c];
+    // DEC_B;
+    // IF_Z goto cant_lower_anymore;
+    if(--b == 0) {
+    // cant_lower_anymore:
+        // LD_A(2);
+        // LD_addr_A(wFailedMessage);
+        wram->wFailedMessage = 2;
+        // RET;
+        return;
+    }
+
+    // LD_A_addr(wLoweredStat);
+    // AND_A(0xf0);
+    // IF_Z goto got_num_stages;
+    if(wram->wLoweredStat & 0xf0) {
+        // DEC_B;
+        // IF_NZ goto got_num_stages;
+        // INC_B;
+        if(--b == 0) ++b;
+    }
+
+// got_num_stages:
+    // LD_hl_B;
+    hl[c] = b;
+    // LD_A_C;
+    // CP_A(5);
+    // IF_NC goto accuracy_evasion;
+    if(c < 5) {
+        // PUSH_HL;
+        // LD_HL(wBattleMonStats + 1);
+        // LD_DE(wPlayerStats);
+        // LDH_A_addr(hBattleTurn);
+        // AND_A_A;
+        // IF_Z goto got_target_2;
+        // LD_HL(wEnemyMonStats + 1);
+        // LD_DE(wEnemyStats);
+        uint16_t *hl2 = (uint16_t*)((hram->hBattleTurn == 0)? wram_ptr(wEnemyMonAttack): wram_ptr(wBattleMonAttack));
+        // uint16_t *de = (uint16_t*)((hram->hBattleTurn == 0)? wram_ptr(wEnemyStats): wram_ptr(wPlayerStats));
+
+    // got_target_2:
+        // CALL(aTryLowerStat);
+        bool success = TryLowerStat_Conv(c, hl2);
+        // POP_HL;
+        // IF_Z goto failed;
+        if(!success) {
+        // failed:
+            // INC_hl;
+            hl[c]++;
+
+        // cant_lower_anymore:
+            // LD_A(2);
+            // LD_addr_A(wFailedMessage);
+            wram->wFailedMessage = 2;
+            // RET;
+            return;
+        }
+    }
+
+// accuracy_evasion:
+    // LDH_A_addr(hBattleTurn);
+    // AND_A_A;
+    // IF_Z goto player;
+    if(hram->hBattleTurn != 0) {
+        // CALL(aCalcEnemyStats);
+        CalcEnemyStats();
+        // goto finish;
+    } else {
+    // player:
+        // CALL(aCalcPlayerStats);
+        CalcPlayerStats();
+    }
+// finish:
+    // XOR_A_A;
+    // LD_addr_A(wFailedMessage);
+    wram->wFailedMessage = 0;
+    // RET;
+}
+
 void BattleCommand_TriStatusChance(void){
 //  tristatuschance
 
@@ -10494,6 +10592,39 @@ loop:
     AND_A_A;
     RET;
 
+}
+
+//  Return z (true) if the user has move a.
+bool CheckUserMove_Conv(move_t a){
+    // LD_B_A;
+    // LD_DE(wBattleMonMoves);
+    // LDH_A_addr(hBattleTurn);
+    // AND_A_A;
+    // IF_Z goto ok;
+    // LD_DE(wEnemyMonMoves);
+    const move_t* de = (hram->hBattleTurn == 0)? wram->wBattleMon.moves: wram->wEnemyMon.moves;
+
+// ok:
+
+    // LD_C(NUM_MOVES);
+
+    for(int i = 0; i < NUM_MOVES; ++i) {
+    // loop:
+        // LD_A_de;
+        // INC_DE;
+        // CP_A_B;
+        // RET_Z ;
+        if(de[i] == a)
+            return true;
+
+        // DEC_C;
+        // IF_NZ goto loop;
+    }
+
+    // LD_A(1);
+    // AND_A_A;
+    // RET;
+    return false;
 }
 
 void ResetTurn(void){

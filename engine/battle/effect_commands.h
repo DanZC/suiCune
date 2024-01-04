@@ -143,6 +143,7 @@ uint8_t* GetStatName_Conv(uint8_t b);
 void BattleCommand_AllStatsUp(void);
 void ResetMiss(void);
 void LowerStat(void);
+void LowerStat_Conv(uint8_t a);
 void BattleCommand_TriStatusChance(void);
 void BattleCommand_Curl(void);
 void BattleCommand_RaiseSubNoAnim(void);
@@ -201,6 +202,7 @@ void PrintParalyze(void);
 void CheckSubstituteOpp(void);
 bool CheckSubstituteOpp_Conv(void);
 void CheckUserMove(void);
+bool CheckUserMove_Conv(move_t a);
 void ResetTurn(void);
 void BattleCommand_ArenaTrap(void);
 void BattleCommand_Defrost(void);
@@ -269,12 +271,12 @@ extern struct BattleCmdState gBattleCmdState;
 //#include "engine/battle/move_effects/heal_bell.h"
 //#include "data/battle/stat_names.h"
 //#include "data/battle/stat_multipliers.h"
-//#include "engine/battle/move_effects/bide.h"
-//#include "engine/battle/move_effects/teleport.h"
+#include "./move_effects/bide.h"
+#include "./move_effects/teleport.h"
 #include "./move_effects/mist.h"
 #include "./move_effects/focus_energy.h"
 //#include "engine/battle/move_effects/substitute.h"
-//#include "engine/battle/move_effects/rage.h"
+#include "./move_effects/rage.h"
 //#include "engine/battle/move_effects/mimic.h"
 #include "./move_effects/leech_seed.h"
 #include "./move_effects/splash.h"
@@ -284,22 +286,22 @@ extern struct BattleCmdState gBattleCmdState;
 //#include "engine/battle/move_effects/transform.h"
 #include "./move_effects/selfdestruct.h"
 //#include "engine/battle/move_effects/mirror_move.h"
-//#include "engine/battle/move_effects/metronome.h"
+#include "./move_effects/metronome.h"
 //#include "engine/battle/move_effects/thief.h"
 //#include "engine/battle/move_effects/nightmare.h"
-//#include "engine/battle/move_effects/curse.h"
-//#include "engine/battle/move_effects/protect.h"
+#include "./move_effects/curse.h"
+#include "./move_effects/protect.h"
 //#include "engine/battle/move_effects/endure.h"
 #include "./move_effects/spikes.h"
 //#include "engine/battle/move_effects/foresight.h"
 //#include "engine/battle/move_effects/perish_song.h"
-//#include "engine/battle/move_effects/sandstorm.h"
+#include "./move_effects/sandstorm.h"
 #include "./move_effects/rollout.h"
 #include "./move_effects/fury_cutter.h"
 #include "./move_effects/attract.h"
-//#include "engine/battle/move_effects/return.h"
+#include "./move_effects/return.h"
 //#include "engine/battle/move_effects/present.h"
-//#include "engine/battle/move_effects/frustration.h"
+#include "./move_effects/frustration.h"
 #include "./move_effects/safeguard.h"
 #include "./move_effects/magnitude.h"
 //#include "engine/battle/move_effects/baton_pass.h"
@@ -311,5 +313,5 @@ extern struct BattleCmdState gBattleCmdState;
 #include "./move_effects/belly_drum.h"
 //#include "engine/battle/move_effects/psych_up.h"
 //#include "engine/battle/move_effects/mirror_coat.h"
-//#include "engine/battle/move_effects/future_sight.h"
+#include "./move_effects/future_sight.h"
 #include "./move_effects/thunder.h"
