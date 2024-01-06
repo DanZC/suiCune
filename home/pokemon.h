@@ -32,3 +32,4 @@ void GetCurNickname(void);
 void GetCurNickname_Conv(void);
 void GetNickname(void);
 void GetNickname_Conv(uint16_t hl, uint8_t a);
+void GetNickname_Conv2(const uint8_t* hl, uint8_t a);

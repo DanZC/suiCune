@@ -6,6 +6,7 @@
 #include "copy.h"
 #include "../engine/gfx/place_graphic.h"
 #include "../engine/gfx/load_pics.h"
+#include "../engine/pokemon/correct_nick_errors.h"
 #include "../charmap.h"
 #include "../data/pokemon/base_stats.h"
 
@@ -750,6 +751,31 @@ void GetNickname_Conv(uint16_t hl, uint8_t a){
     // POP_HL;
     // RET;
 
+}
+
+//  Get nickname a from list hl.
+void GetNickname_Conv2(const uint8_t* hl, uint8_t a){
+    // PUSH_HL;
+    // PUSH_BC;
+
+    // CALL(aSkipNames);
+    hl = SkipNames_Conv2(hl, a);
+
+    // LD_DE(wStringBuffer1);
+
+    CopyBytes_Conv2(wram->wStringBuffer1, hl, MON_NAME_LENGTH);
+
+    //PUSH_DE;
+    //LD_BC(MON_NAME_LENGTH);
+    //CALL(aCopyBytes);
+    //POP_DE;
+
+    // CALLFAR(aCorrectNickErrors);
+    CorrectNickErrors_Conv(wram->wStringBuffer1);
+
+    // POP_BC;
+    // POP_HL;
+    // RET;
 }
 
 void GetCurNickname_Conv(void){

@@ -46,6 +46,7 @@
 #include "../events/happiness_egg.h"
 #include "../events/magikarp.h"
 #include "../../charmap.h"
+#include <stddef.h>
 
 //  Core components of the battle engine.
 

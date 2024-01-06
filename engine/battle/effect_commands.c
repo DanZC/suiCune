@@ -16,6 +16,7 @@
 #include "../../home/copy_name.h"
 #include "../../home/tilemap.h"
 #include "../../home/text.h"
+#include "../../home/sram.h"
 #include "../../data/text/battle.h"
 #include "../../data/text/common.h"
 #include "../../home/names.h"
@@ -27,6 +28,7 @@
 #include "../../data/battle/stat_names.h"
 #include "../../data/battle/critical_hit_chances.h"
 #include "../pokemon/health.h"
+#include <stddef.h>
 
 struct BattleCmdState gBattleCmdState;
 

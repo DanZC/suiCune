@@ -4517,4 +4517,27 @@ void init_function_pointers(void) {
     // engine/battle/move_effects/bide.c
     REDIRECTED(BattleCommand_StoreEnergy);
     REDIRECTED(BattleCommand_UnleashEnergy);
+
+    // engine/battle/move_effects/endure.c
+    REDIRECTED(BattleCommand_Endure);
+
+    // engine/battle/move_effects/heal_bell.c
+    REDIRECTED(BattleCommand_HealBell);
+
+    // engine/battle/move_effects/nightmare.c
+    REDIRECTED(BattleCommand_Nightmare);
+
+    // engine/battle/move_effects/perish_song.c
+    REDIRECTED(BattleCommand_PerishSong);
+
+    // engine/battle/move_effects/foresight.c
+    REDIRECTED(BattleCommand_Foresight);
+
+    // engine/battle/move_effects/beat_up.c
+    REDIRECTED(BattleCommand_BeatUp);
+    REDIRECTED(BattleCommand_BeatUpFailText);
+    // REDIRECTED(GetBeatupMonLocation);
+
+    // engine/pokemon/correct_nick_errors.c
+    // REDIRECTED(CorrectNickErrors);
 }

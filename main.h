@@ -10,7 +10,7 @@
 #include "engine/menus/intro_menu.h"
 #include "engine/overworld/init_map.h"
 //#include "engine/pokemon/learn.h"
-//#include "engine/pokemon/correct_nick_errors.h"
+#include "engine/pokemon/correct_nick_errors.h"
 #include "engine/math/math.h"
 #include "data/items/attributes.h"
 #include "engine/overworld/npc_movement.h"

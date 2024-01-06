@@ -35,24 +35,6 @@
 	charmap "<DEXEND>",  $5f
 
 	charmap " ",         $7f
-
-; Japanese control characters (see home/text.asm)
-
-	charmap "<JP_18>",   $18 ; "ノ゛" (ungrammatical)
-	charmap "<NI>",      $1d ; "に　"
-	charmap "<TTE>",     $1e ; "って"
-	charmap "<WO>",      $1f ; "を　"
-	charmap "<TA!>",     $22 ; "た！"
-	charmap "<KOUGEKI>", $23 ; "こうげき"
-	charmap "<WA>",      $24 ; "は　"
-	charmap "<NO>",      $25 ; "の　"
-	charmap "<ROUTE>",   $35 ; "ばん　どうろ"
-	charmap "<WATASHI>", $36 ; "わたし"
-	charmap "<KOKO_WA>", $37 ; "ここは"
-	charmap "<GA>",      $4a ; "が　"
-
-	charmap "ﾟ", $e4
-	charmap "ﾞ", $e5
 */
 
 #define CHAR_NULL    ('\x00')
@@ -90,6 +72,34 @@
 #define CHAR_DEXEND  ('\x5f') 
 
 #define CHAR_SPACE   ('\x7f') // " "
+
+/*
+; Japanese control characters (see home/text.asm)
+
+	charmap "<JP_18>",   $18 ; "ノ゛" (ungrammatical)
+	charmap "<NI>",      $1d ; "に　"
+	charmap "<TTE>",     $1e ; "って"
+	charmap "<WO>",      $1f ; "を　"
+	charmap "<TA!>",     $22 ; "た！"
+	charmap "<KOUGEKI>", $23 ; "こうげき"
+	charmap "<WA>",      $24 ; "は　"
+	charmap "<NO>",      $25 ; "の　"
+	charmap "<ROUTE>",   $35 ; "ばん　どうろ"
+	charmap "<WATASHI>", $36 ; "わたし"
+	charmap "<KOKO_WA>", $37 ; "ここは"
+	charmap "<GA>",      $4a ; "が　"
+
+	charmap "ﾟ", $e4
+	charmap "ﾞ", $e5
+
+; Japanese kana, for those bits of text that were not translated to English
+
+	charmap "ガ", $05
+*/
+#define CHAR_JP_18   ('\x18') // "ノ゛" (ungrammatical)
+#define CHAR_JP_NI   ('\x1d') // "に　"
+#define CHAR_JP_NO   ('\x25') // "の　"
+#define CHAR_JP_05   ('\x05') // "ガ"
 
 /*
 	charmap "<BOLD_D>",  $63 ; unused
