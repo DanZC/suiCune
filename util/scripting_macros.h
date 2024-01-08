@@ -121,6 +121,7 @@
 #define setflag(_flag)              SCRIPT_EVCMD(Script_setflag_Conv, _flag)
 #define clearflag(_flag)            SCRIPT_EVCMD(Script_clearflag_Conv, _flag)
 #define checkflag(_flag)            SCRIPT_EVCMD(Script_checkflag_Conv, _flag)
+#define warpcheck                   SCRIPT_EVCMD(Script_warpcheck_Conv)
 #define newloadmap(_m)              SCRIPT_EVCMD(Script_newloadmap_Conv, _m)
 #define reloadend(_m)               SCRIPT_EVCMD(Script_reloadend_Conv, _m)
 #define opentext                    SCRIPT_EVCMD(Script_opentext_Conv)

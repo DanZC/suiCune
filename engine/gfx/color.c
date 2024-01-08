@@ -2016,7 +2016,18 @@ const uint16_t PredefPals[][NUM_PAL_COLORS] = {
 //     return ExpBarPalette();
 // }
 
-const char HPBarPals[] = "gfx/battle/hp_bar.pal";
+const uint16_t HPBarPals[] = {
+// green
+    rgb(30, 26, 15),
+    rgb(00, 23, 00),
+// yellow
+    rgb(30, 26, 15),
+    rgb(31, 21, 00),
+// red
+    rgb(30, 26, 15),
+    rgb(31, 00, 00),
+};
+// const char HPBarPals[] = "gfx/battle/hp_bar.pal";
 const char ExpBarPalette[] = "gfx/battle/exp_bar.pal";
 
 // void ExpBarPalette(void){

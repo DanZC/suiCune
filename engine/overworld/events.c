@@ -9,7 +9,9 @@
 #include "tile_events.h"
 #include "wildmons.h"
 #include "time.h"
+#include "../../home/joypad.h"
 #include "../../home/queue_script.h"
+#include "../../home/delay.h"
 #include "../../home/trainers.h"
 #include "../../home/copy.h"
 #include "../../home/audio.h"
@@ -165,15 +167,20 @@ void CheckWildEncountersScriptFlag(void){
 }
 
 void StartMap(void){
-    XOR_A_A;
-    LD_addr_A(wScriptVar);
-    XOR_A_A;
-    LD_addr_A(wScriptRunning);
-    LD_HL(wMapStatus);
-    LD_BC(wMapStatusEnd - wMapStatus);
-    CALL(aByteFill);
-    FARCALL(aInitCallReceiveDelay);
-    CALL(aClearJoypad);
+    // XOR_A_A;
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = 0;
+    // XOR_A_A;
+    // LD_addr_A(wScriptRunning);
+    wram->wScriptRunning = FALSE;
+    // LD_HL(wMapStatus);
+    // LD_BC(wMapStatusEnd - wMapStatus);
+    // CALL(aByteFill);
+    ByteFill_Conv2(&wram->wMapStatus, 0, wMapStatusEnd - wMapStatus);
+    // FARCALL(aInitCallReceiveDelay);
+    InitCallReceiveDelay();
+    // CALL(aClearJoypad);
+    ClearJoypad_Conv();
     return EnterMap();
 }
 
@@ -276,13 +283,15 @@ void ResetOverworldDelay(void){
 }
 
 void NextOverworldFrame(void){
-    LD_A_addr(wOverworldDelay);
-    AND_A_A;
-    RET_Z ;
-    LD_C_A;
-    CALL(aDelayFrames);
-    RET;
-
+    // LD_A_addr(wOverworldDelay);
+    // AND_A_A;
+    // RET_Z ;
+    if(wram->wOverworldDelay == 0)
+        return;
+    // LD_C_A;
+    // CALL(aDelayFrames);
+    DelayFrames_Conv(wram->wOverworldDelay);
+    // RET;
 }
 
 void HandleMapTimeAndJoypad(void){

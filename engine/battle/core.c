@@ -40,6 +40,7 @@
 #include "../../data/wild/treemons_asleep.h"
 #include "../../data/wild/unlocked_unowns.h"
 #include "../../data/battle/held_heal_status.h"
+#include "../../data/moves/effects_priorities.h"
 #include "../../data/moves/moves.h"
 #include "../battle_anims/anim_commands.h"
 #include "../events/catch_tutorial_input.h"
@@ -339,13 +340,15 @@ void BattleTurn(void){
 
     not_disconnected:
 
-        {
-            // CALL(aCheckPlayerLockedIn);
-            struct cpu_registers_s regs = SafeCallGBAutoRet(aCheckPlayerLockedIn);
-            // IF_C goto skip_iteration;
-            if(regs.f_bits.c)
-                goto quit;
-        }
+        // {
+        //     // CALL(aCheckPlayerLockedIn);
+        //     struct cpu_registers_s regs = SafeCallGBAutoRet(aCheckPlayerLockedIn);
+        //     // IF_C goto skip_iteration;
+        //     if(regs.f_bits.c)
+        //         goto quit;
+        // }
+        if(CheckPlayerLockedIn_Conv())
+            goto quit;
 
         struct cpu_registers_s loop_ret = gb.cpu_reg;
         do {
@@ -1298,6 +1301,28 @@ void CompareMovePriority(void){
 
 }
 
+//  Compare the priority of the player and enemy's moves.
+//  Return carry (1) if the player goes first, or z (0) if they match.
+int CompareMovePriority_Conv(void){
+    // LD_A_addr(wCurPlayerMove);
+    // CALL(aGetMovePriority);
+    // LD_B_A;
+    // PUSH_BC;
+    // LD_A_addr(wCurEnemyMove);
+    // CALL(aGetMovePriority);
+    // POP_BC;
+    // CP_A_B;
+    // RET;
+    uint8_t a = GetMovePriority_Conv(wram->wCurPlayerMove);
+    uint8_t b = GetMovePriority_Conv(wram->wCurEnemyMove);
+
+    if(a == b)
+        return 0;
+    if(a > b)
+        return 1;
+    return -1;
+}
+
 void GetMovePriority(void){
 //  Return the priority (0-3) of move a.
 
@@ -1330,6 +1355,46 @@ done:
 // INCLUDE "data/moves/effects_priorities.asm"
 
     return GetMoveEffect();
+}
+
+uint8_t GetMovePriority_Conv(move_t a){
+//  Return the priority (0-3) of move a.
+
+    // LD_B_A;
+
+// Vital Throw goes last.
+    // CP_A(VITAL_THROW);
+    // LD_A(0);
+    // RET_Z ;
+    if(a == VITAL_THROW)
+        return 0;
+
+    // CALL(aGetMoveEffect);
+    // LD_HL(mMoveEffectPriorities);
+    uint8_t effect = GetMoveEffect_Conv(a);
+
+    for(int i = 0; MoveEffectPriorities[i] != 0xff; i += 2) {
+    // loop:
+        // LD_A_hli;
+        // CP_A_B;
+        // IF_Z goto done;
+        if(MoveEffectPriorities[i] == effect) {
+            return MoveEffectPriorities[i+1];
+        }
+        // INC_HL;
+        // CP_A(-1);
+        // IF_NZ goto loop;
+    }
+
+    // LD_A(BASE_PRIORITY);
+    // RET;
+    return BASE_PRIORITY;
+
+// done:
+    // LD_A_hl;
+    // RET;
+
+// INCLUDE "data/moves/effects_priorities.asm"
 }
 
 void GetMoveEffect(void){
@@ -1565,8 +1630,12 @@ void ResidualDamage(void){
 //  or as a result of residual damage.
 //  For Sandstorm damage, see HandleWeather.
 
-    CALL(aHasUserFainted);
-    RET_Z ;
+    // CALL(aHasUserFainted);
+    // RET_Z ;
+    if(HasUserFainted_Conv()) {
+        REG_F_Z = 1;
+        RET;
+    }
 
     LD_A(BATTLE_VARS_STATUS);
     CALL(aGetBattleVar);
@@ -7920,6 +7989,7 @@ void UpdateEnemyHPPal_Conv(uint8_t e){
     // LD_HL(wEnemyHPPal);
     // CALL(aUpdateHPPal);
     // RET;
+    printf("SET ENEMY HP PAL(e=%d)\n", e);
     return UpdateHPPal_Conv(&wram->wEnemyHPPal, e);
 }
 

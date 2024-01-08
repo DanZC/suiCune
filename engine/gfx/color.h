@@ -80,7 +80,7 @@ extern const uint16_t PredefPals[][NUM_PAL_COLORS];
 // void SGBBorderGFX(void);
 // void HPBarPals(void);
 // void ExpBarPalette(void);
-extern const char HPBarPals[];
+extern const uint16_t HPBarPals[];
 extern const char ExpBarPalette[];
 void LoadMapPals(void);
 extern const char PartyMenuBGMobilePalette[];

@@ -152,9 +152,9 @@ void v_CGB_BattleColors(void){
     // ADD_HL_HL;
     // LD_BC(mHPBarPals);
     // ADD_HL_BC;
-    LoadPaletteAssetColorsToArray(palbuf, HPBarPals, wram->wEnemyHPPal * 2, 2);
+    // LoadPaletteAssetColorsToArray(palbuf, HPBarPals, wram->wEnemyHPPal * 2, 2);
     // CALL(aLoadPalette_White_Col1_Col2_Black);  // PAL_BATTLE_BG_ENEMY_HP
-    de = LoadPalette_White_Col1_Col2_Black_Conv(de, palbuf);
+    de = LoadPalette_White_Col1_Col2_Black_Conv(de, &HPBarPals[wram->wEnemyHPPal * 2]);
     // LD_A_addr(wPlayerHPPal);
     // LD_L_A;
     // LD_H(0);
@@ -162,9 +162,9 @@ void v_CGB_BattleColors(void){
     // ADD_HL_HL;
     // LD_BC(mHPBarPals);
     // ADD_HL_BC;
-    LoadPaletteAssetColorsToArray(palbuf, HPBarPals, wram->wPlayerHPPal * 2, 2);
+    // LoadPaletteAssetColorsToArray(palbuf, HPBarPals, wram->wPlayerHPPal * 2, 2);
     // CALL(aLoadPalette_White_Col1_Col2_Black);  // PAL_BATTLE_BG_PLAYER_HP
-    de = LoadPalette_White_Col1_Col2_Black_Conv(de, palbuf);
+    de = LoadPalette_White_Col1_Col2_Black_Conv(de, &HPBarPals[wram->wPlayerHPPal * 2]);
     // LD_HL(mExpBarPalette);
     LoadPaletteAssetColorsToArray(palbuf, ExpBarPalette, 0, 2);
     // CALL(aLoadPalette_White_Col1_Col2_Black);  // PAL_BATTLE_BG_EXP
@@ -316,10 +316,10 @@ void v_CGB_StatsScreenHPPals(void){
     // ADD_HL_HL;
     // ADD_HL_HL;
     // LD_BC(mHPBarPals);
-    LoadPaletteAssetColorsToArray(palbuf, HPBarPals, wram->wCurHPPal << 1, 2);
+    // LoadPaletteAssetColorsToArray(palbuf, HPBarPals, wram->wCurHPPal << 1, 2);
     // ADD_HL_BC;
     // CALL(aLoadPalette_White_Col1_Col2_Black);  // hp palette
-    de = LoadPalette_White_Col1_Col2_Black_Conv(de, palbuf);
+    de = LoadPalette_White_Col1_Col2_Black_Conv(de, &HPBarPals[wram->wCurHPPal << 1]);
     // LD_A_addr(wCurPartySpecies);
     // LD_BC(wTempMonDVs);
     // CALL(aGetPlayerOrMonPalettePointer);

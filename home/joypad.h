@@ -1,5 +1,6 @@
 void Joypad(void);
 void ClearJoypad(void);
+void ClearJoypad_Conv(void);
 void UpdateJoypad(void);
 void UpdateJoypad_Conv(void);
 void GetJoypad(void);

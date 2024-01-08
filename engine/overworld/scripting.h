@@ -304,6 +304,7 @@ void Script_changemapblocks(void);
 void Script_changeblock(void);
 void Script_reloadmappart(void);
 void Script_warpcheck(void);
+void Script_warpcheck_Conv(script_s* s);
 void Script_enableevents(void);
 void Script_newloadmap(void);
 void Script_newloadmap_Conv(script_s* s, uint8_t method);

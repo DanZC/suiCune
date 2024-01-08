@@ -526,7 +526,7 @@
 
 // SECTION "UpdateBattleHUDs", ROMX
 
-//#include "engine/battle/update_battle_huds.h"
+#include "engine/battle/update_battle_huds.h"
 
 // SECTION "mobile5E", ROMX
 

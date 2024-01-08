@@ -74,3 +74,5 @@ map_attributes(Route29, ROUTE_29, 0x05,
     connection(north, Route46, ROUTE_46, 10)
     connection(west, CherrygroveCity, CHERRYGROVE_CITY, 0)
     connection(east, NewBarkTown, NEW_BARK_TOWN, 0));
+
+map_attributes(Pokecenter2F, POKECENTER_2F, 0x00, 0);

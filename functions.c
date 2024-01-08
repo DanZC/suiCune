@@ -4540,4 +4540,25 @@ void init_function_pointers(void) {
 
     // engine/pokemon/correct_nick_errors.c
     // REDIRECTED(CorrectNickErrors);
+
+    // engine/battle/move_effects/mirror_coat.c
+    REDIRECTED(BattleCommand_MirrorCoat);
+
+    // engine/battle/move_effects/psych_up.c
+    REDIRECTED(BattleCommand_PsychUp);
+
+    // engine/battle/move_effects/rapid_spin.c
+    REDIRECTED(BattleCommand_ClearHazards);
+
+    // engine/battle/move_effects/disable.c
+    REDIRECTED(BattleCommand_Disable);
+
+    // engine/battle/update_battle_huds.c
+    // CONVERTED(v_UpdateBattleHUDs);
+
+    // engine/battle/move_effects/pain_split.c
+    REDIRECTED(BattleCommand_PainSplit);
+
+    // engine/battle/move_effects/substitute.c
+    REDIRECTED(BattleCommand_Substitute);
 }

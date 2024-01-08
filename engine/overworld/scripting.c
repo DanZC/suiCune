@@ -24,6 +24,7 @@
 #include "../events/money.h"
 #include "../events/pokepic.h"
 #include "../events/fruit_trees.h"
+#include "events.h"
 #include "variables.h"
 #include "landmarks.h"
 #include "overworld.h"
@@ -4585,6 +4586,17 @@ void Script_warpcheck(void){
     FARCALL(aEnableEvents);
     RET;
 
+}
+
+void Script_warpcheck_Conv(script_s* s){
+    (void)s;
+    // CALL(aWarpCheck);
+    // RET_NC ;
+    if(!WarpCheck_Conv())
+        return;
+    // FARCALL(aEnableEvents);
+    EnableEvents();
+    // RET;
 }
 
 void Script_enableevents(void){

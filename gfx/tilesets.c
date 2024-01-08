@@ -44,7 +44,7 @@ const uint8_t TilesetPlayersRoomColl[] = {
 const char TilesetPokecenterGFX[] = "gfx/tilesets/pokecenter.png";
 const char TilesetPokecenterMeta[] = "data/tilesets/pokecenter_metatiles.bin.png";
 const uint8_t TilesetPokecenterColl[] = {
-// #include "../data/tilesets/pokecenter_collision.h"
+#include "../data/tilesets/pokecenter_collision.h"
 };
 
 const char TilesetPortGFX[] = "gfx/tilesets/port.png";
@@ -147,7 +147,7 @@ const char TilesetDarkCaveGFX[] = "gfx/tilesets/dark_cave.png";
 const char TilesetPokeComCenterGFX[] = "gfx/tilesets/pokecom_center.png";
 const char TilesetPokeComCenterMeta[] = "data/tilesets/pokecom_center_metatiles.bin.png";
 const uint8_t TilesetPokeComCenterColl[] = {
-// #include "data/tilesets/pokecom_center_collision.h"
+#include "../data/tilesets/pokecom_center_collision.h"
 };
 
 const char TilesetBattleTowerInsideGFX[] = "gfx/tilesets/battle_tower_inside.png";
