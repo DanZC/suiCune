@@ -157,6 +157,8 @@ void Handler_Fight(void) {
 
 void Handler_Link(void) {
     // TODO: Implement this function
+    DebugMenu_Link();
+    PlayMusic_Conv(DEBUG_MENU_MUSIC);
 }
 
 void Handler_Field(void) {
@@ -734,3 +736,17 @@ void DebugMenu_Scripting(void) {
     WaitBGMap_Conv();
     DelayFrame();
 }
+
+#include "../link/lan.h"
+
+void DebugMenu_Link(void) {
+    ClearScreen_Conv2();
+    v_LoadFontsExtra1_Conv();
+    v_LoadFontsExtra2_Conv();
+    v_LoadStandardFont_Conv();
+    WaitBGMap_Conv();
+
+    LANConnection();
+    
+}
+

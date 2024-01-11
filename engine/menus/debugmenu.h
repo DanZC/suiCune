@@ -16,6 +16,7 @@ void DebugMenu_GFXTest(void);
 void DebugMenu_Stats(void);
 void DebugMenu_Pics(void);
 void DebugMenu_Scripting(void);
+void DebugMenu_Link(void);
 // void debugMenuOptionField();
 // void debugMenuOptionFight();
 // void debugMenuOptionSubGames();

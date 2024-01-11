@@ -49,8 +49,8 @@ static TCPsocket cserial;
 // they will send their IP address and try to establish a TCP connection with the joiner. 
 // Once established, the emulation layer will send all serial communication through the TCP port.
 //
-// This setup allows devices to communicate with each other without needed to physical connect together like
-// what was required with the original gameboy. A similar system is used for Pokemon games using wireless
+// This setup allows devices to communicate with each other without the need to physically connect together 
+// like what was required with the original gameboy. A similar system is used for Pokemon games using wireless
 // communication, with the Wireless Adapater for Pokemon FireRed and LeafGreen and the DS/3DS wireless 
 // communications for Pokemon Generation IV and onwards being prime examples. This also forgos needing
 // to know the IP address of devices you wish connect, as device discovery is accomplished as part of

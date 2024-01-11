@@ -10,9 +10,9 @@
 #include "../../util/network.h"
 
 static const struct TextCmd Text_AskHostOrJoin[] = {
-    text_start("Would you like to host"
-        t_line "or join a game?"
-        t_prompt)
+    text_start("Would you like to"
+        t_line "host or join?"
+        t_done)
 };
 
 static const struct TextCmd Text_WillYouConnect[] = {
@@ -29,40 +29,54 @@ static const struct TextCmd Text_WillYouAccept[] = {
     text_start("'s connection?@")
 };
 
+static const struct TextCmd Text_Cancelled[] = {
+    text_start("Cancelled."
+        t_prompt)
+};
+
+static const struct TextCmd Text_CouldntFindAny[] = {
+    text_start("Couldn't find"
+        t_line "any players."
+        t_prompt)
+};
+
 static const struct MenuHeader Menu_HostOrJoin = {
     .flags = MENU_BACKUP_TILES, // flags
-    .coord = menu_coords(0, 2, 15, TEXTBOX_Y - 1), 
+    .coord = menu_coords(0, 4, 15, TEXTBOX_Y - 1), 
     .data = &(struct MenuData){
     // .MenuData:
         .flags=STATICMENU_CURSOR, // flags
         .verticalMenu = {
-            .count=2, // items
+            .count=3, // items
             .options = (const char* []) {
-                "HOST",
-                "JOIN",
+                "HOST GAME",
+                "JOIN GAME",
                 "CANCEL"
             }
         },
     },
-	.defaultOption=2 // default option
+	.defaultOption=1 // default option
 };
 
 void LANConnection_Host(void);
 void LANConnection_Join(void);
 
 void LANConnection(void) {
+    NetworkClearLANCache();
+    LoadStandardMenuHeader_Conv();
     MapTextbox_Conv(Text_AskHostOrJoin);
     LoadMenuHeader_Conv2(&Menu_HostOrJoin);
     bool noCancel = VerticalMenu_Conv();
-    ExitMenu_Conv2();
+    CloseWindow_Conv2();
     if(noCancel) {
-        switch(wram->wMenuSelection) {
-            case 0: return LANConnection_Host();
-            case 1: return LANConnection_Join();
-            case 2: break;
+        switch(wram->wMenuCursorY) {
+            case 1: return LANConnection_Host();
+            case 2: return LANConnection_Join();
+            case 3: break;
         }
     }
     wram->wScriptVar = FALSE;
+    CloseWindow_Conv2();
 }
 
 static void PlaceLANConnectionItems(void) {
@@ -79,17 +93,29 @@ static void PlaceLANConnectionItems(void) {
 }
 
 void LANConnection_Host(void) {
+    SpeechTextbox_Conv2();
     LoadStandardMenuHeader_Conv();
-    PlaceStringSimple(U82C("Hosting. Please wait…"), coord(4, 11, wram->wTilemap));
+    PlaceStringSimple(U82C("Hosting…<LINE>Please wait…"), coord(TEXTBOX_INNERX, TEXTBOX_INNERY, wram->wTilemap));
 
     if(!NetworkBroadcastLAN(wram->wPlayerName, wram->wPlayerID, wram->wPlayerGender)) {
-        ExitMenu_Conv2();
+        CloseWindow_Conv2();
+        MapTextbox_Conv(Text_Cancelled);
+        CloseWindow_Conv2();
         wram->wScriptVar = FALSE;
         return;
     }
 
-    for(int i = 0; i < 60 * 8; ++i) {
+    for(;;) {
         DelayFrame();
+
+        uint8_t pad = GetMenuJoypad_Conv();
+        if(pad & B_BUTTON) {
+            CloseWindow_Conv2();
+            MapTextbox_Conv(Text_Cancelled);
+            CloseWindow_Conv2();
+            wram->wScriptVar = FALSE;
+            return;
+        }
 
         if(NetworkCheckLAN()) {
             CopyBytes_Conv2(wram->wStringBuffer1, gLANClientCandidates[0].name, sizeof(gLANClientCandidates[0].name) - 1);
@@ -113,6 +139,9 @@ void LANConnection_Host(void) {
             }
         }
     }
+    MapTextbox_Conv(Text_CouldntFindAny);
+    CloseWindow_Conv2();
+    CloseWindow_Conv2();
     wram->wScriptVar = FALSE;
     return;
 }
@@ -129,12 +158,13 @@ static bool LANConnection_TryJoin(uint8_t which) {
 }
 
 void LANConnection_Join(void) {
+    SpeechTextbox_Conv2();
     LoadStandardMenuHeader_Conv();
-    PlaceStringSimple(U82C("Searching for players…"), coord(4, 11, wram->wTilemap));
+    PlaceStringSimple(U82C("Searching for<LINE>players…"), coord(TEXTBOX_INNERX, TEXTBOX_INNERY, wram->wTilemap));
 
     uint32_t selection = 0;
 
-    Textbox_Conv2(coord(8, 0, wram->wTilemap), TEXTBOX_Y - 1, SCREEN_WIDTH - 8 - 2);
+    Textbox_Conv2(coord(8, 0, wram->wTilemap), TEXTBOX_Y - 2, SCREEN_WIDTH - 8 - 2);
     DelayFrame();
 
     for(int i = 0; i < 60 * 8; ++i) {
@@ -149,15 +179,18 @@ void LANConnection_Join(void) {
 
         uint8_t pad = GetMenuJoypad_Conv();
         if(pad & B_BUTTON) {
-            ExitMenu_Conv2();
+            PlayClickSFX_Conv();
+            CloseWindow_Conv2();
+            CloseWindow_Conv2();
             wram->wScriptVar = FALSE;
             return;
         }
         else if(pad & A_BUTTON) {
             PlayClickSFX_Conv();
-            ExitMenu_Conv2();
-            if(selection == gLANClientCandidateCount - 1) {
+            CloseWindow_Conv2();
+            if(selection >= gLANClientCandidateCount - 1) {
                 wram->wScriptVar = FALSE;
+                CloseWindow_Conv2();
                 return;
             }
 
@@ -189,8 +222,10 @@ void LANConnection_Join(void) {
     }
 
     if(gLANClientCandidateCount == 0) {
-        ExitMenu_Conv2();
+        MapTextbox_Conv(Text_CouldntFindAny);
+        CloseWindow_Conv2();
         wram->wScriptVar = FALSE;
+        CloseWindow_Conv2();
         return;
     }
 }
