@@ -1699,7 +1699,7 @@ void init_function_pointers(void) {
     // REDIRECTED(CalcExpBar);
     // REDIRECTED(GetRoamMonSpecies);
     // REDIRECTED(ApplyStatusEffectOnPlayerStats);
-    // REDIRECTED(v_LoadBattleFontsHPBar);
+    CONVERTED(v_LoadBattleFontsHPBar);
     // REDIRECTED(InitBattleDisplay);
     // REDIRECTED(DetermineMoveOrder);
     // REDIRECTED(ApplyStatLevelMultiplierOnAllStats);
@@ -4561,4 +4561,23 @@ void init_function_pointers(void) {
 
     // engine/battle/move_effects/substitute.c
     REDIRECTED(BattleCommand_Substitute);
+
+    // engine/battle/move_effects/baton_pass.c
+    REDIRECTED(CheckAnyOtherAlivePartyMons);
+    REDIRECTED(BatonPass_LinkPlayerSwitch);
+    REDIRECTED(CheckAnyOtherAliveMons);
+    REDIRECTED(BatonPass_LinkEnemySwitch);
+    REDIRECTED(BattleCommand_BatonPass);
+    REDIRECTED(CheckAnyOtherAliveEnemyMons);
+    REDIRECTED(FailedBatonPass);
+    REDIRECTED(ResetBatonPassStatus);
+
+    // engine/battle/move_effects/encore.c
+    REDIRECTED(BattleCommand_Encore);
+
+    // engine/battle/move_effects/mirror_move.c
+    REDIRECTED(BattleCommand_MirrorMove);
+
+    // engine/battle/move_effects/mimic.c
+    REDIRECTED(BattleCommand_Mimic);
 }

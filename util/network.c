@@ -13,16 +13,18 @@ extern struct gb_s gb;
 #define static_assert _Static_assert
 #endif
 
-#define UDP_PORT 22606
-#define TCP_PORT 22607
+#define UDP_PORT 22600
+#define TCP_PORT 22601
 
-#define UDP_PACKET_SIZE 16
+#define UDP_PACKET_SIZE 32
 
 bool gNetworkingInit = false;
 static UDPsocket host;
 static UDPpacket* packet;
 static TCPsocket serial;
 static TCPsocket cserial;
+static IPaddress* localhost;
+static IPaddress broadcastip;
 
 // A networking interface for suiCune. Supports both LAN (local) connections, emulating
 // the standard link cable connection, and internet (remote) connections, emulating
@@ -85,6 +87,7 @@ typedef enum {
 netstate_e gNetworkState;
 
 typedef struct CmdPacket {
+    uint32_t src;
     uint8_t type;
     union {
         struct {
@@ -120,7 +123,13 @@ bool NetworkInit(void) {
     else {
         printf("Initialized SDLNet library.\n");
         host = SDLNet_UDP_Open(UDP_PORT);
+        localhost = SDLNet_UDP_GetPeerAddress(host, -1);
+        SDLNet_ResolveHost(&broadcastip, "255.255.255.255", UDP_PORT);
         packet = SDLNet_AllocPacket(UDP_PACKET_SIZE);
+        // if(SDLNet_UDP_Send(host, -1, packet) == 0) {
+        //     printf("Could not send UDP packet on port %d.\n", UDP_PORT);
+        //     fprintf(stderr, "SDL_Net Error: %s\n", SDLNet_GetError());
+        // }
         gNetworkingInit = true;
         gNetworkState = NETSTATE_NOTHING;
         gb.gb_serial_rx = gb_serial_rx_test;
@@ -146,15 +155,24 @@ bool NetworkBroadcastLAN(const uint8_t* name, uint16_t id, uint8_t gender) {
     memset(packet->data, 0, UDP_PACKET_SIZE);
     CmdPacket_s* cmd = (CmdPacket_s*)packet->data;
     cmd->type = CMD_HOST_LAN;
+    cmd->src = localhost->host;
     memcpy(cmd->host_lan.name, name, 10);
     cmd->host_lan.trainerId = id;
     cmd->host_lan.gender = gender;
-    packet->address.host = INADDR_BROADCAST;
+    packet->address.host = broadcastip.host;
+    packet->address.port = UDP_PORT;
     if(SDLNet_UDP_Send(host, -1, packet) == 0) {
-        printf("Could not send UDP packet on port 22606.\n");
+        printf("Could not send UDP packet on port %d. Is the port blocked?\n", UDP_PORT);
         return false;
     }
+    gNetworkState = NETSTATE_HOSTING;
     return true;
+}
+
+void NetworkStartJoining(void) {
+    // Toss any packets waiting.
+    while(SDLNet_UDP_Recv(host, packet) == 1) {}
+    gNetworkState = NETSTATE_JOINING;
 }
 
 bool NetworkTryJoinLAN(uint8_t which, const uint8_t* name, uint16_t id, uint8_t gender) {
@@ -167,7 +185,7 @@ bool NetworkTryJoinLAN(uint8_t which, const uint8_t* name, uint16_t id, uint8_t 
         cmd->host_lan.gender = gender;
         packet->address.host = gLANClientCandidates[which].address;
         if(SDLNet_UDP_Send(host, -1, packet) == 0) {
-            printf("Could not send UDP packet on port 22606.\n");
+            printf("Could not send UDP packet on port %d. Is the port blocked?\n", TCP_PORT);
             return false;
         }
         return true;
@@ -290,8 +308,9 @@ void NetworkCloseConnection(void) {
         SDLNet_TCP_Close(serial);
         serial = NULL;
     }
-    gb.gb_serial_rx = NULL;
-    gb.gb_serial_tx = NULL;
+    gb.gb_serial_rx = gb_serial_rx_test;
+    gb.gb_serial_tx = gb_serial_tx_test;
+    gNetworkState = NETSTATE_NOTHING;
 }
 
 void NetworkDeinit(void) {

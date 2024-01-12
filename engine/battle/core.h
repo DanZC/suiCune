@@ -236,6 +236,7 @@ void ApplyBrnEffectOnAttack(void);
 void ApplyBrnEffectOnAttack_Conv(uint8_t turn);
 void ApplyStatLevelMultiplierOnAllStats(void);
 void ApplyStatLevelMultiplier(void);
+void ApplyStatLevelMultiplier_Conv(uint8_t c);
 void BadgeStatBoosts(void);
 void BoostStat(void);
 uint8_t BoostStat_Conv(uint8_t* hl);

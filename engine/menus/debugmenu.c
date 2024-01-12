@@ -746,6 +746,8 @@ void DebugMenu_Link(void) {
     v_LoadStandardFont_Conv();
     WaitBGMap_Conv();
 
+    U82CA(wram->wPlayerName, "PLAYER@");
+
     LANConnection();
     
 }

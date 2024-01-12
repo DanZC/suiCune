@@ -105,14 +105,17 @@ void LANConnection_Host(void) {
         return;
     }
 
-    for(;;) {
+    uint32_t frameCount = 0;
+    for(;; frameCount++) {
         DelayFrame();
 
-        uint8_t pad = GetMenuJoypad_Conv();
+        GetJoypad_Conv();
+        uint8_t pad = hram->hJoyPressed;
         if(pad & B_BUTTON) {
             CloseWindow_Conv2();
             MapTextbox_Conv(Text_Cancelled);
             CloseWindow_Conv2();
+            NetworkCloseConnection();
             wram->wScriptVar = FALSE;
             return;
         }
@@ -122,20 +125,33 @@ void LANConnection_Host(void) {
             wram->wStringBuffer1[11] = CHAR_TERM;
             MapTextbox_Conv(Text_WillYouAccept);
             bool yes = YesNoBox_Conv();
-            ExitMenu_Conv2();
+            CloseWindow_Conv2();
             if(yes) {
                 LoadStandardMenuHeader_Conv();
                 PlaceStringSimple(U82C("Waiting for a<LINE>response…"), coord(4, 11, wram->wTilemap));
                 bool success = NetworkLANDirectConnect(0);
-                ExitMenu_Conv2();
+                CloseWindow_Conv2();
                 if(success) {
                     wram->wScriptVar = TRUE;
                     return;
                 }
                 else {
+                    NetworkCloseConnection();
                     wram->wScriptVar = FALSE;
                     return;
                 }
+            }
+        }
+
+        // Rebroadcast about every 2 seconds.
+        if((frameCount & 0x7f) == 0x7f) {
+            if(!NetworkBroadcastLAN(wram->wPlayerName, wram->wPlayerID, wram->wPlayerGender)) {
+                CloseWindow_Conv2();
+                MapTextbox_Conv(Text_Cancelled);
+                CloseWindow_Conv2();
+                NetworkCloseConnection();
+                wram->wScriptVar = FALSE;
+                return;
             }
         }
     }
@@ -149,7 +165,7 @@ void LANConnection_Host(void) {
 static bool LANConnection_TryJoin(uint8_t which) {
     if(!NetworkTryJoinLAN(which, wram->wPlayerName, wram->wPlayerID, wram->wPlayerGender))
         return false;
-    for(int i = 0; i < 60 * 8; ++i) {
+    for(int i = 0; i < 60 * 16; ++i) {
         DelayFrame();
         if(NetworkCheckLAN())
             return true;
@@ -182,14 +198,16 @@ void LANConnection_Join(void) {
             PlayClickSFX_Conv();
             CloseWindow_Conv2();
             CloseWindow_Conv2();
+            NetworkCloseConnection();
             wram->wScriptVar = FALSE;
             return;
         }
         else if(pad & A_BUTTON) {
             PlayClickSFX_Conv();
             CloseWindow_Conv2();
-            if(selection >= gLANClientCandidateCount - 1) {
+            if(selection >= gLANClientCandidateCount - 1 || gLANClientCandidateCount == 0) {
                 wram->wScriptVar = FALSE;
+                NetworkCloseConnection();
                 CloseWindow_Conv2();
                 return;
             }
@@ -198,22 +216,24 @@ void LANConnection_Join(void) {
             wram->wStringBuffer1[11] = CHAR_TERM;
             MapTextbox_Conv(Text_WillYouConnect);
             bool yes = YesNoBox_Conv();
-            ExitMenu_Conv2();
+            CloseWindow_Conv2();
             if(yes) {
                 LoadStandardMenuHeader_Conv();
                 PlaceStringSimple(U82C("Waiting for a<LINE>response…"), coord(4, 11, wram->wTilemap));
                 bool success = LANConnection_TryJoin(selection);
-                ExitMenu_Conv2();
+                CloseWindow_Conv2();
                 if(success) {
                     wram->wScriptVar = TRUE;
                     return;
                 }
                 else {
+                    NetworkCloseConnection();
                     wram->wScriptVar = FALSE;
                     return;
                 }
             }
             else {
+                NetworkCloseConnection();
                 wram->wScriptVar = FALSE;
                 return;
             }

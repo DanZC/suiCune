@@ -9,6 +9,7 @@ bool NetworkCheckLAN(void);
 void NetworkClearLANCache(void);
 bool NetworkLANDirectConnect(uint32_t which);
 void NetworkAcceptLANConnection(void);
+void NetworkCloseConnection(void);
 void NetworkDeinit(void);
 
 typedef struct {

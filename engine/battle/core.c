@@ -23,6 +23,7 @@
 #include "../pokemon/experience.h"
 #include "../pokemon/health.h"
 #include "../gfx/pic_animation.h"
+#include "../gfx/load_font.h"
 #include "../gfx/load_pics.h"
 #include "../gfx/color.h"
 #include "../gfx/player_gfx.h"
@@ -42,6 +43,7 @@
 #include "../../data/battle/held_heal_status.h"
 #include "../../data/moves/effects_priorities.h"
 #include "../../data/moves/moves.h"
+#include "../../data/battle/stat_multipliers_2.h"
 #include "../battle_anims/anim_commands.h"
 #include "../events/catch_tutorial_input.h"
 #include "../events/happiness_egg.h"
@@ -10411,16 +10413,19 @@ void ApplyBrnEffectOnAttack_Conv(uint8_t turn){
 
 void ApplyStatLevelMultiplierOnAllStats(void){
 //  Apply StatLevelMultipliers on all 5 Stats
-    LD_C(0);
+    // LD_C(0);
+    uint8_t c = 0;
 
-stat_loop:
-    CALL(aApplyStatLevelMultiplier);
-    INC_C;
-    LD_A_C;
-    CP_A(NUM_BATTLE_STATS);
-    IF_NZ goto stat_loop;
-    RET;
-
+    do {
+    // stat_loop:
+        // CALL(aApplyStatLevelMultiplier);
+        ApplyStatLevelMultiplier_Conv(c);
+        // INC_C;
+        // LD_A_C;
+        // CP_A(NUM_BATTLE_STATS);
+        // IF_NZ goto stat_loop;
+    } while(++c != NUM_BATTLE_STATS);
+    // RET;
 }
 
 void ApplyStatLevelMultiplier(void){
@@ -10514,6 +10519,113 @@ okay4:
 // INCLUDE "data/battle/stat_multipliers_2.asm"
 
     return BadgeStatBoosts();
+}
+
+void ApplyStatLevelMultiplier_Conv(uint8_t c){
+    // PUSH_BC;
+    // PUSH_BC;
+    // LD_A_addr(wApplyStatLevelMultipliersToEnemy);
+    // AND_A_A;
+    // LD_A_C;
+    // LD_HL(wBattleMonAttack);
+    uint8_t (*hl)[2] = (!wram->wApplyStatLevelMultipliersToEnemy)? wram->wBattleMon.stats: wram->wEnemyMon.stats;
+    // LD_DE(wPlayerStats);
+    uint16_t* de = (uint16_t*)((!wram->wApplyStatLevelMultipliersToEnemy)? wram_ptr(wPlayerStats): wram_ptr(wEnemyStats));
+    // LD_BC(wPlayerAtkLevel);
+    uint8_t* bc = (!wram->wApplyStatLevelMultipliersToEnemy)? &wram->wPlayerAtkLevel: &wram->wEnemyAtkLevel;
+    // IF_Z goto got_pointers;
+    // LD_HL(wEnemyMonAttack);
+    // LD_DE(wEnemyStats);
+    // LD_BC(wEnemyAtkLevel);
+
+
+// got_pointers:
+    // ADD_A_C;
+    // LD_C_A;
+    // IF_NC goto okay;
+    // INC_B;
+
+// okay:
+    // LD_A_bc;
+    // POP_BC;
+    // LD_B_A;
+    uint8_t b = bc[c];
+    // PUSH_BC;
+    // SLA_C;
+    // LD_B(0);
+    // ADD_HL_BC;
+    uint8_t* hl2 = hl[c];
+    // LD_A_C;
+    // ADD_A_E;
+    // LD_E_A;
+    // IF_NC goto okay2;
+    // INC_D;
+    de += c;
+
+// okay2:
+    // POP_BC;
+    // PUSH_HL;
+    // LD_HL(mStatLevelMultipliers_Applied);
+    // DEC_B;
+    // SLA_B;
+    // LD_C_B;
+    // LD_B(0);
+    // ADD_HL_BC;
+    const uint8_t* mul = StatLevelMultipliers_Applied[(b - 1) << 1];
+    // XOR_A_A;
+    // LDH_addr_A(hMultiplicand + 0);
+    // LD_A_de;
+    // LDH_addr_A(hMultiplicand + 1);
+    // INC_DE;
+    // LD_A_de;
+    // LDH_addr_A(hMultiplicand + 2);
+    uint32_t n = ReverseEndian16(*de);
+    // LD_A_hli;
+    // LDH_addr_A(hMultiplier);
+    // CALL(aMultiply);
+    n *= mul[0];
+    // LD_A_hl;
+    // LDH_addr_A(hDivisor);
+    // LD_B(4);
+    // CALL(aDivide);
+    n /= mul[1];
+    // POP_HL;
+
+//  Cap at 999.
+    // LDH_A_addr(hQuotient + 3);
+    // SUB_A(LOW(MAX_STAT_VALUE));
+    // LDH_A_addr(hQuotient + 2);
+    // SBC_A(HIGH(MAX_STAT_VALUE));
+    // JP_C (mApplyStatLevelMultiplier_okay3);
+    if(n > MAX_STAT_VALUE) {
+        // LD_A(HIGH(MAX_STAT_VALUE));
+        // LDH_addr_A(hQuotient + 2);
+        // LD_A(LOW(MAX_STAT_VALUE));
+        // LDH_addr_A(hQuotient + 3);
+        n = MAX_STAT_VALUE;
+    }
+
+// okay3:
+    // LDH_A_addr(hQuotient + 2);
+    // LD_hli_A;
+    // LD_B_A;
+    // LDH_A_addr(hQuotient + 3);
+    // LD_hl_A;
+    // OR_A_B;
+    // IF_NZ goto okay4;
+    hl2[0] = HIGH(n);
+    hl2[1] = LOW(n);
+    if((n & 0xffff) != 0) {
+        // INC_hl;
+        hl2[1]++;
+    }
+
+
+// okay4:
+    // POP_BC;
+    // RET;
+
+// INCLUDE "data/battle/stat_multipliers_2.asm"
 }
 
 //  Raise the stats of the battle mon in wBattleMon
@@ -10670,7 +10782,8 @@ uint8_t BoostStat_Conv(uint8_t* hl){
 }
 
 void v_LoadBattleFontsHPBar(void){
-    CALLFAR(aLoadBattleFontsHPBar);
+    // CALLFAR(aLoadBattleFontsHPBar);
+    LoadBattleFontsHPBar_Conv();
     RET;
 
 }
