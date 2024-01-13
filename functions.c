@@ -4580,4 +4580,22 @@ void init_function_pointers(void) {
 
     // engine/battle/move_effects/mimic.c
     REDIRECTED(BattleCommand_Mimic);
+
+    // engine/battle/move_effects/present.c
+    REDIRECTED(BattleCommand_Present);
+
+    // engine/battle/move_effects/spite.c
+    REDIRECTED(BattleCommand_Spite);
+
+    // engine/battle/move_effects/thief.c
+    REDIRECTED(BattleCommand_Thief);
+
+    // engine/battle/move_effects/conversion.c
+    REDIRECTED(BattleCommand_Conversion);
+
+    // engine/battle/move_effects/sleep_talk.c
+    REDIRECTED(BattleCommand_SleepTalk);
+
+    // engine/battle/move_effects/conversion2.c
+    REDIRECTED(BattleCommand_Conversion2);
 }

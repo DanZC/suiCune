@@ -8,6 +8,7 @@ uint16_t UserPartyAttr_Conv(uint8_t a);
 struct PartyMon* UserPartyMon_Conv(void);
 void OpponentPartyAttr(void);
 uint16_t OpponentPartyAttr_Conv(uint8_t a);
+struct PartyMon* OpponentPartyMon_Conv(void);
 void BattlePartyAttr(void);
 uint16_t BattlePartyAttr_Conv(uint8_t a);
 void OTPartyAttr(void);

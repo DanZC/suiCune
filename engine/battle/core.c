@@ -1508,7 +1508,8 @@ void Battle_PlayerFirst(void){
     POP_BC;
     JP_Z (mHandlePlayerMonFaint);
     PUSH_BC;
-    CALL(aRefreshBattleHuds);
+    // CALL(aRefreshBattleHuds);
+    RefreshBattleHuds_Conv();
     POP_AF;
     IF_C goto switched_or_used_item;
     CALL(aLoadTilemapToTempTilemap);
@@ -8013,7 +8014,7 @@ void UpdateHPPal_Conv(uint8_t* hl, uint8_t e){
     // LD_A_hl;
     // CP_A_B;
     // RET_Z ;
-    if(*hl != b)
+    if(*hl == b)
         return;
     // JP(mFinishBattleAnim);
     return FinishBattleAnim();

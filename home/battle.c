@@ -150,6 +150,20 @@ uint16_t OpponentPartyAttr_Conv(uint8_t a){
     return BattlePartyAttr_Conv(a);
 }
 
+struct PartyMon* OpponentPartyMon_Conv(void){
+    // LDH_A_addr(hBattleTurn);
+    // AND_A_A;
+    // IF_Z goto ot;
+    if(hram->hBattleTurn == 0)
+    {
+        // JR(mOTPartyAttr);
+        return wram->wOTPartyMon + wram->wCurOTMon;
+    }
+
+    // JR(mBattlePartyAttr);
+    return wram->wPartyMon + wram->wCurPartyMon;
+}
+
 void BattlePartyAttr(void){
     //  Get attribute a from the party struct of the active battle mon.
     PUSH_BC;
