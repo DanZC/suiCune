@@ -24,6 +24,7 @@
 #include "../events/money.h"
 #include "../events/pokepic.h"
 #include "../events/fruit_trees.h"
+#include "../events/whiteout.h"
 #include "events.h"
 #include "variables.h"
 #include "landmarks.h"
@@ -37,6 +38,7 @@
 #include "../../data/items/pocket_names.h"
 #include "../events/std_scripts.h"
 #include "../../home/menu.h"
+#include "../phone/phone.h"
 
 static const struct TextCmd* lScriptText = NULL;
 Script_fn_t gDeferredScriptAddr = NULL;
@@ -2637,6 +2639,50 @@ done:
 
 }
 
+void Script_reloadmapafterbattle_Conv(script_s* s){
+    (void)s;
+    // LD_HL(wBattleScriptFlags);
+    // LD_D_hl;
+    uint8_t d = wram->wBattleScriptFlags;
+    // LD_hl(0);
+    wram->wBattleScriptFlags = 0;
+    // LD_A_addr(wBattleResult);
+    // AND_A(~BATTLERESULT_BITMASK);
+    // CP_A(LOSE);
+    // IF_NZ goto notblackedout;
+    if((wram->wBattleResult & ~BATTLERESULT_BITMASK) == LOSE) {
+        // LD_B(BANK(aScript_BattleWhiteout));
+        // LD_HL(mScript_BattleWhiteout);
+        // JP(mScriptJump);
+        Script_Goto(s, Script_BattleWhiteout);
+    }
+
+// notblackedout:
+    // BIT_D(0);
+    // IF_Z goto was_wild;
+    if(bit_test(d, 0)) {
+        // TODO: Convert MomTriesToBuySomething
+        // FARCALL(aMomTriesToBuySomething);
+        // goto done;
+    }
+    else {
+    // was_wild:
+        // LD_A_addr(wBattleResult);
+        // BIT_A(BATTLERESULT_BOX_FULL);
+        // IF_Z goto done;
+        if(bit_test(wram->wBattleResult, BATTLERESULT_BOX_FULL)) {
+            // LD_B(BANK(aScript_SpecialBillCall));
+            // LD_DE(mScript_SpecialBillCall);
+            // FARCALL(aLoadScriptBDE);
+            LoadScriptBDE_Conv(Script_SpecialBillCall);
+        }
+    }
+// done:
+    // JP(mScript_reloadmap);
+    return Script_reloadmap_Conv(s);
+
+}
+
 void Script_reloadmap(void){
     XOR_A_A;
     LD_addr_A(wBattleScriptFlags);
@@ -2657,9 +2703,11 @@ void Script_reloadmap_Conv(script_s* s){
     // LD_A(MAPSETUP_RELOADMAP);
     // LDH_addr_A(hMapEntryMethod);
     hram->hMapEntryMethod = MAPSETUP_RELOADMAP;
-    LD_A(MAPSTATUS_ENTER);
-    CALL(aLoadMapStatus);
-    CALL(aStopScript);
+    // LD_A(MAPSTATUS_ENTER);
+    // CALL(aLoadMapStatus);
+    LoadMapStatus_Conv(MAPSTATUS_ENTER);
+    // CALL(aStopScript);
+    StopScript_Conv();
     // RET;
 }
 

@@ -2866,7 +2866,7 @@ void init_function_pointers(void) {
     // REDIRECTED(StartMap);
     // REDIRECTED(HandleMap);
     // REDIRECTED(NextOverworldFrame);
-    // REDIRECTED(SetUpFiveStepWildEncounterCooldown);
+    // CONVERTED(SetUpFiveStepWildEncounterCooldown);
     // REDIRECTED(DoBikeStep);
     // REDIRECTED(CheckTimeEvents);
     // REDIRECTED(CheckWildEncountersScriptFlag);
@@ -4598,4 +4598,21 @@ void init_function_pointers(void) {
 
     // engine/battle/move_effects/conversion2.c
     REDIRECTED(BattleCommand_Conversion2);
+
+    // engine/events/whiteout.c
+    REDIRECTED(GetWhiteoutSpawn);
+    REDIRECTED(OverworldBGMap);
+    // REDIRECTED(Script_BattleWhiteout);
+    // REDIRECTED(Script_Whiteout);
+    REDIRECTED(HalveMoney);
+    REDIRECTED(BattleBGMap);
+    // REDIRECTED(OverworldWhiteoutScript);
+
+    // engine/overworld/spawn_points.c
+    REDIRECTED(IsSpawnPoint);
+    // CONVERTED(EnterMapSpawnPoint);
+
+    // engine/events/misc_scripts.c
+    // REDIRECTED(Script_AbortBugContest);
+    // REDIRECTED(FindItemInBallScript);
 }

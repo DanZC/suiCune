@@ -138,11 +138,11 @@ void EnableWildEncounters(void){
 
 }
 
-void CheckWarpConnxnScriptFlag(void){
-    LD_HL(wScriptFlags2);
-    BIT_hl(2);
-    RET;
-
+bool CheckWarpConnxnScriptFlag(void){
+    // LD_HL(wScriptFlags2);
+    // BIT_hl(2);
+    // RET;
+    return bit_test(wram->wScriptFlags2, 2);
 }
 
 void CheckCoordEventScriptFlag(void){
@@ -185,32 +185,43 @@ void StartMap(void){
 }
 
 void EnterMap(void){
-    XOR_A_A;
-    LD_addr_A(wXYComparePointer);
-    LD_addr_A(wXYComparePointer + 1);
-    CALL(aSetUpFiveStepWildEncounterCooldown);
+    // XOR_A_A;
+    // LD_addr_A(wXYComparePointer);
+    // LD_addr_A(wXYComparePointer + 1);
+    wram->wXYComparePointer = 0;
+    // CALL(aSetUpFiveStepWildEncounterCooldown);
+    SetUpFiveStepWildEncounterCooldown();
     FARCALL(aRunMapSetupScript);
-    CALL(aDisableEvents);
+    // CALL(aDisableEvents);
+    DisableEvents();
 
-    LDH_A_addr(hMapEntryMethod);
-    CP_A(MAPSETUP_CONNECTION);
-    IF_NZ goto dont_enable;
-    CALL(aEnableEvents);
+    // LDH_A_addr(hMapEntryMethod);
+    // CP_A(MAPSETUP_CONNECTION);
+    // IF_NZ goto dont_enable;
+    if(hram->hMapEntryMethod == MAPSETUP_CONNECTION) {
+        // CALL(aEnableEvents);
+        EnableEvents();
+    }
 
-dont_enable:
+// dont_enable:
 
-    LDH_A_addr(hMapEntryMethod);
-    CP_A(MAPSETUP_RELOADMAP);
-    IF_NZ goto dontresetpoison;
-    XOR_A_A;
-    LD_addr_A(wPoisonStepCount);
+    // LDH_A_addr(hMapEntryMethod);
+    // CP_A(MAPSETUP_RELOADMAP);
+    // IF_NZ goto dontresetpoison;
+    if(hram->hMapEntryMethod == MAPSETUP_RELOADMAP) {
+        // XOR_A_A;
+        // LD_addr_A(wPoisonStepCount);
+        wram->wPoisonStepCount = 0;
+    }
 
-dontresetpoison:
+// dontresetpoison:
 
-    XOR_A_A;  // end map entry
-    LDH_addr_A(hMapEntryMethod);
-    LD_A(MAPSTATUS_HANDLE);
-    LD_addr_A(wMapStatus);
+    // XOR_A_A;  // end map entry
+    // LDH_addr_A(hMapEntryMethod);
+    hram->hMapEntryMethod = 0;
+    // LD_A(MAPSTATUS_HANDLE);
+    // LD_addr_A(wMapStatus);
+    wram->wMapStatus = MAPSTATUS_HANDLE;
     RET;
 
 }
@@ -656,10 +667,10 @@ bool CheckWildEncounterCooldown_Conv(void){
 }
 
 void SetUpFiveStepWildEncounterCooldown(void){
-    LD_A(5);
-    LD_addr_A(wWildEncounterCooldown);
-    RET;
-
+    // LD_A(5);
+    // LD_addr_A(wWildEncounterCooldown);
+    wram->wWildEncounterCooldown = 5;
+    // RET;
 }
 
 void SetMinTwoStepWildEncounterCooldown(void){
@@ -1702,7 +1713,7 @@ u8_flag_s CheckMenuOW_Conv(void){
     hram->hMenuReturn = 0;
     // LDH_addr_A(hUnusedByte);
     hram->hUnusedByte = 0;
-    LDH_A_addr(hJoyPressed);
+    // LDH_A_addr(hJoyPressed);
     uint8_t a = hram->hJoyPressed;
 
     // BIT_A(SELECT_F);
@@ -2060,6 +2071,30 @@ void LoadScriptBDE(void){
     SCF;
     RET;
 
+}
+
+bool LoadScriptBDE_Conv(Script_fn_t de){
+//  If there's already a script here, don't overwrite.
+    // LD_HL(wMapReentryScriptQueueFlag);
+    // LD_A_hl;
+    // AND_A_A;
+    // RET_NZ ;
+    if(wram->wMapReentryScriptQueueFlag != 0)
+        return false;
+//  Set the flag
+    // LD_hl(1);
+    // INC_HL;
+    wram->wMapReentryScriptQueueFlag = 1;
+//  Load the script pointer b:de into (wMapReentryScriptBank):(wMapReentryScriptAddress)
+    // LD_hl_B;
+    // INC_HL;
+    // LD_hl_E;
+    // INC_HL;
+    // LD_hl_D;
+    gMapReentryScriptAddress = de;
+    // SCF;
+    // RET;
+    return true;
 }
 
 void TryTileCollisionEvent(void){

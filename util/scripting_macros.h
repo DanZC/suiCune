@@ -64,6 +64,8 @@
 #define loadwildmon(_sp, _lvl)      SCRIPT_EVCMD(Script_loadwildmon_Conv, _sp, _lvl)
 #define loadtrainer(_cl, _id)       SCRIPT_EVCMD(Script_loadtrainer_Conv, _cl, _id)
 #define startbattle                 SCRIPT_EVCMD(Script_startbattle_Conv)
+#define reloadmapafterbattle        SCRIPT_EVCMD(Script_reloadmapafterbattle_Conv)
+#define reloadmap                   SCRIPT_EVCMD(Script_reloadmap_Conv)
 #define scall(_f)                   SCRIPT_CALL(_f)
 #define scall_far(_f, _p)           SCRIPT_CALLGOTO(_f, _p)
 #define scall_local(_s)             SCRIPT_CALLLOCAL(_s)
@@ -82,7 +84,7 @@
 #define ifnotequal(_v, _s)          if(wram->wScriptVar != (_v)) goto _s;
 #define ifless(_v, _s)              if(wram->wScriptVar < (_v)) goto _s;
 #define ifgreater(_v, _s)           if(wram->wScriptVar > (_v)) goto _s;
-#define jumpstd(_std)               SCRIPT_EVCMD(Script_jumpstd_Conv, _std)
+#define jumpstd(_std)               SCRIPT_EVCMD(Script_jumpstd_Conv, stdscript_const(_std))
 #define callstd(_std)               SCRIPT_EVCMD(Script_callstd_Conv, _std)
 #define sdefer(_f)                  SCRIPT_EVCMD(Script_sdefer_Conv, _f)
 #define checkscene                  SCRIPT_EVCMD(Script_checkscene_Conv)

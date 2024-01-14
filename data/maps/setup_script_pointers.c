@@ -9,6 +9,7 @@
 #include "../../engine/overworld/player_object.h"
 #include "../../engine/overworld/wildmons.h"
 #include "../../engine/overworld/warp_connection.h"
+#include "../../engine/overworld/spawn_points.h"
 
 #define add_mapsetup(_x) [mapsetup_const(_x)] = _x
 
@@ -36,7 +37,7 @@ void (*const MapSetupCommands[])(void) = {
     add_mapsetup(HandleNewMap), // 14
     add_mapsetup(HandleContinueMap), // 15
     // add_mapsetup(LoadMapObjects), // 16
-    // add_mapsetup(EnterMapSpawnPoint), // 17
+    add_mapsetup(EnterMapSpawnPoint), // 17
     add_mapsetup(EnterMapConnection), // 18
     // add_mapsetup(EnterMapWarp), // 19
     add_mapsetup(LoadMapAttributes), // 1a
