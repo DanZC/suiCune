@@ -25,6 +25,7 @@
 #include "../events/pokepic.h"
 #include "../events/fruit_trees.h"
 #include "../events/whiteout.h"
+#include "../events/mom_phone.h"
 #include "events.h"
 #include "variables.h"
 #include "landmarks.h"
@@ -1352,6 +1353,13 @@ void Script_hangup(void){
 
 }
 
+void Script_hangup_Conv(script_s* s){
+    (void)s;
+    // FARCALL(aHangUp);
+    HangUp();
+    // RET;
+}
+
 void Script_askforphonenumber(void){
     CALL(aYesNoBox);
     IF_C goto refused;
@@ -1374,6 +1382,41 @@ done:
     LD_addr_A(wScriptVar);
     RET;
 
+}
+
+void Script_askforphonenumber_Conv(script_s* s, uint8_t contact){
+    (void)s;
+    // CALL(aYesNoBox);
+    // IF_C goto refused;
+    uint8_t var;
+    if(YesNoBox_Conv()) {
+        // CALL(aGetScriptByte);
+        // LD_C_A;
+        // FARCALL(aAddPhoneNumber);
+        // IF_C goto phonefull;
+        if(AddPhoneNumber_Conv2(contact)) {
+            // XOR_A_A;  // PHONE_CONTACT_GOT
+            // goto done;
+            var = PHONE_CONTACT_GOT;
+        }
+        else {
+        // phonefull:
+            // LD_A(PHONE_CONTACTS_FULL);
+            // goto done;
+            var = PHONE_CONTACTS_FULL;
+        }
+    }
+    else {
+    // refused:
+        // CALL(aGetScriptByte);
+        // LD_A(PHONE_CONTACT_REFUSED);
+        var = PHONE_CONTACT_REFUSED;
+    }
+
+// done:
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = var;
+    // RET;
 }
 
 void Script_describedecoration(void){
@@ -2661,8 +2704,8 @@ void Script_reloadmapafterbattle_Conv(script_s* s){
     // BIT_D(0);
     // IF_Z goto was_wild;
     if(bit_test(d, 0)) {
-        // TODO: Convert MomTriesToBuySomething
         // FARCALL(aMomTriesToBuySomething);
+        MomTriesToBuySomething();
         // goto done;
     }
     else {
@@ -3610,7 +3653,7 @@ void Script_gettrainername_Conv(script_s* s, uint8_t a, uint8_t b, uint8_t c){
     // FARCALL(aGetTrainerName);
     // JR(mGetStringBuffer);
     (void)s;
-    return GetStringBuffer_Conv(a, GetTrainerName_Conv(b, c));
+    return GetStringBuffer_Conv(a, GetTrainerName_Conv(c, b));
 }
 
 void Script_getname(void){
@@ -3653,6 +3696,21 @@ void Script_getmoney(void){
     LD_DE(wStringBuffer1);
     JP(mGetStringBuffer);
 
+}
+
+void Script_getmoney_Conv(script_s* s, uint8_t buffer, uint8_t which){
+    (void)s;
+    // CALL(aResetStringBuffer1);
+    ResetStringBuffer1_Conv();
+    // CALL(aGetMoneyAccount);
+    uint8_t* de = GetMoneyAccount_Conv(which);
+    // LD_HL(wStringBuffer1);
+    // LD_BC((PRINTNUM_LEFTALIGN | 3 << 8) | 6);
+    // CALL(aPrintNum);
+    PrintNum_Conv2(wram->wStringBuffer1, de, PRINTNUM_LEFTALIGN | 3, 6);
+    // LD_DE(wStringBuffer1);
+    // JP(mGetStringBuffer);
+    return GetStringBuffer_Conv(buffer, wram->wStringBuffer1);
 }
 
 void Script_getcoins(void){
@@ -4160,6 +4218,23 @@ void Script_addcellnum(void){
 
 }
 
+void Script_addcellnum_Conv(script_s* s, uint8_t contact){
+    (void)s;
+    // XOR_A_A;
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = 0;
+    // CALL(aGetScriptByte);
+    // LD_C_A;
+    // FARCALL(aAddPhoneNumber);
+    // RET_NC ;
+    if(AddPhoneNumber_Conv2(contact))
+        return;
+    // LD_A(TRUE);
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = TRUE;
+    // RET;
+}
+
 void Script_delcellnum(void){
     XOR_A_A;
     LD_addr_A(wScriptVar);
@@ -4171,6 +4246,23 @@ void Script_delcellnum(void){
     LD_addr_A(wScriptVar);
     RET;
 
+}
+
+void Script_delcellnum_Conv(script_s* s, uint8_t c){
+    (void)s;
+    // XOR_A_A;
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = FALSE;
+    // CALL(aGetScriptByte);
+    // LD_C_A;
+    // FARCALL(aDelCellNum);
+    // RET_NC ;
+    if(DelCellNum_Conv2(c))
+        return;
+    // LD_A(TRUE);
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = TRUE;
+    // RET;
 }
 
 void Script_checkcellnum(void){
@@ -4186,6 +4278,24 @@ void Script_checkcellnum(void){
     LD_addr_A(wScriptVar);
     RET;
 
+}
+
+//  returns false if the cell number is not in your phone
+void Script_checkcellnum_Conv(script_s* s, uint8_t c){
+    (void)s;
+    // XOR_A_A;
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = FALSE;
+    // CALL(aGetScriptByte);
+    // LD_C_A;
+    // FARCALL(aCheckCellNum);
+    // RET_NC ;
+    if(v_CheckCellNum_Conv2(c) == NULL)
+        return;
+    // LD_A(TRUE);
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = TRUE;
+    // RET;
 }
 
 void Script_specialphonecall(void){
@@ -4814,6 +4924,24 @@ no_time:
     CALL(aStopScript);
     RET;
 
+}
+
+void Script_deactivatefacing_Conv(script_s* s, uint8_t delay){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // AND_A_A;
+    // IF_Z goto no_time;
+    if(delay != 0) {
+        // LD_addr_A(wScriptDelay);
+        wram->wScriptDelay = delay;
+    }
+// no_time:
+    // LD_A(SCRIPT_WAIT);
+    // LD_addr_A(wScriptMode);
+    wram->wScriptMode = SCRIPT_WAIT;
+    // CALL(aStopScript);
+    StopScript_Conv();
+    // RET;
 }
 
 void Script_stopandsjump(void){

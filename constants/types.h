@@ -1296,6 +1296,13 @@ struct PhoneContact {
     Script_fn_t callerScript;
 };
 
+struct CallerLocation {
+    uint8_t tclass;
+    uint8_t tid;
+    uint8_t mgroup;
+    uint8_t mnum;
+};
+
 typedef struct ItemPocketEntry {
     item_t item;
     uint8_t quantity;

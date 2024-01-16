@@ -5514,7 +5514,7 @@ bool OfferSwitch_Conv(void){
     // PUSH_AF;
     uint8_t cur = wram->wCurPartyMon;
     // CALLFAR(aBattle_GetTrainerName);
-    Battle_GetTrainerName();
+    Battle_GetTrainerName_Conv();
     // LD_HL(mBattleText_EnemyIsAboutToUseWillPlayerChangeMon);
     // CALL(aStdBattleTextbox);
     StdBattleTextbox_Conv2(BattleText_EnemyIsAboutToUseWillPlayerChangeMon);

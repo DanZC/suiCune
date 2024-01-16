@@ -152,7 +152,7 @@ void GetTrainerAttributes_Conv(uint8_t tclass){
     // LD_HL(mTrainerClassAttributes + TRNATTR_ITEM1);
     // LD_BC(NUM_TRAINER_ATTRIBUTES);
     // CALL(aAddNTimes);
-    const struct TrainerClassAttr* const hl = &TrainerClassAttributes[tclass - 1];
+    const struct TrainerClassAttr* const hl = &TrainerClassAttributes[tclass];
     // LD_DE(wEnemyTrainerItem1);
     // LD_A_hli;
     // LD_de_A;

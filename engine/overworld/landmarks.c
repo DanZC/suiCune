@@ -92,7 +92,7 @@ uint8_t* GetLandmarkName_Conv(uint8_t e){
 
     // LD_DE(wStringBuffer1);
     // LD_C(18);
-    CopyUTF8NStringToGB(wStringBuffer1, 18, name);
+    U82CA(wram->wStringBuffer1, name);
 
 
 // copy:

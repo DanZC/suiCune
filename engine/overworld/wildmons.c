@@ -1,11 +1,15 @@
 #include "../../constants.h"
 #include "wildmons.h"
+#include "../phone/phone.h"
 #include "../../home/map_objects.h"
 #include "../../home/random.h"
 #include "../../home/region.h"
+#include "../../home/copy.h"
+#include "../../home/names.h"
 #include "../../data/wild/johto_grass.h"
 #include "../../data/wild/kanto_grass.h"
 #include "../../data/wild/probabilities.h"
+#include "../../data/trainers/parties.h"
 
 void LoadWildMonData(void){
     CALL(av_GrassWildmonLookup);
@@ -1397,97 +1401,110 @@ done:
 
 }
 
-void RandomPhoneMon(void){
 //  Get a random monster owned by the trainer who's calling.
-    FARCALL(aGetCallerLocation);
-    LD_HL(mTrainerGroups);
-    LD_A_D;
-    DEC_A;
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    ADD_HL_BC;
-    LD_A(BANK(aTrainerGroups));
-    CALL(aGetFarWord);
+void RandomPhoneMon(void){
+    // FARCALL(aGetCallerLocation);
+    struct CallerLocation loc = GetCallerLocation_Conv();
+    // LD_HL(mTrainerGroups);
+    // LD_A_D;
+    // DEC_A;
+    // LD_C_A;
+    // LD_B(0);
+    // ADD_HL_BC;
+    // ADD_HL_BC;
+    // LD_A(BANK(aTrainerGroups));
+    // CALL(aGetFarWord);
+    const struct TrainerParty* party = TrainerGroups[loc.tclass - 1].parties + loc.tid;
 
 
-skip_trainer:
-    DEC_E;
-    IF_Z goto skipped;
+// skip_trainer:
+    // DEC_E;
+    // IF_Z goto skipped;
 
-skip:
-    LD_A(BANK(aTrainers));
-    CALL(aGetFarByte);
-    INC_HL;
-    CP_A(-1);
-    IF_NZ goto skip;
-    goto skip_trainer;
+// skip:
+    // LD_A(BANK(aTrainers));
+    // CALL(aGetFarByte);
+    // INC_HL;
+    // CP_A(-1);
+    // IF_NZ goto skip;
+    // goto skip_trainer;
 
-skipped:
+// skipped:
 
 
-skip_name:
-    LD_A(BANK(aTrainers));
-    CALL(aGetFarByte);
-    INC_HL;
-    CP_A(0x50);
-    IF_NZ goto skip_name;
+// skip_name:
+    // LD_A(BANK(aTrainers));
+    // CALL(aGetFarByte);
+    // INC_HL;
+    // CP_A(0x50);
+    // IF_NZ goto skip_name;
 
-    LD_A(BANK(aTrainers));
-    CALL(aGetFarByte);
-    INC_HL;
-    LD_BC(2);  // level, species
-    CP_A(TRAINERTYPE_NORMAL);
-    IF_Z goto got_mon_length;
-    LD_BC(2 + NUM_MOVES);  // level, species, moves
-    CP_A(TRAINERTYPE_MOVES);
-    IF_Z goto got_mon_length;
-    LD_BC(2 + 1);  // level, species, item
-    CP_A(TRAINERTYPE_ITEM);
-    IF_Z goto got_mon_length;
+    // LD_A(BANK(aTrainers));
+    // CALL(aGetFarByte);
+    // INC_HL;
+    // LD_BC(2);  // level, species
+    // CP_A(TRAINERTYPE_NORMAL);
+    // IF_Z goto got_mon_length;
+    // LD_BC(2 + NUM_MOVES);  // level, species, moves
+    // CP_A(TRAINERTYPE_MOVES);
+    // IF_Z goto got_mon_length;
+    // LD_BC(2 + 1);  // level, species, item
+    // CP_A(TRAINERTYPE_ITEM);
+    // IF_Z goto got_mon_length;
 // TRAINERTYPE_ITEM_MOVES
-    LD_BC(2 + 1 + NUM_MOVES);  // level, species, item, moves
+    // LD_BC(2 + 1 + NUM_MOVES);  // level, species, item, moves
 
-got_mon_length:
+// got_mon_length:
 
-    LD_E(0);
-    PUSH_HL;
+    // LD_E(0);
+    // PUSH_HL;
 
-count_mon:
-    INC_E;
-    ADD_HL_BC;
-    LD_A(BANK(aTrainers));
-    CALL(aGetFarByte);
-    CP_A(-1);
-    IF_NZ goto count_mon;
-    POP_HL;
+// count_mon:
+    // INC_E;
+    // ADD_HL_BC;
+    // LD_A(BANK(aTrainers));
+    // CALL(aGetFarByte);
+    // CP_A(-1);
+    // IF_NZ goto count_mon;
+    // POP_HL;
 
+    uint8_t a;
+    do {
+    // rand:
+        // CALL(aRandom);
+        // maskbits(PARTY_LENGTH, 0);
+        a = Random_Conv() & 7;
+        // CP_A_E;
+        // IF_NC goto rand;
+    } while(a >= party->size);
 
-rand:
-    CALL(aRandom);
-    maskbits(PARTY_LENGTH, 0);
-    CP_A_E;
-    IF_NC goto rand;
+    // INC_A;
 
-    INC_A;
+// get_mon:
+    // DEC_A;
+    // IF_Z goto got_mon;
+    // ADD_HL_BC;
+    // goto get_mon;
 
-get_mon:
-    DEC_A;
-    IF_Z goto got_mon;
-    ADD_HL_BC;
-    goto get_mon;
-
-got_mon:
-
-    INC_HL;  // species
-    LD_A(BANK(aTrainers));
-    CALL(aGetFarByte);
-    LD_addr_A(wNamedObjectIndex);
-    CALL(aGetPokemonName);
-    LD_HL(wStringBuffer1);
-    LD_DE(wStringBuffer4);
-    LD_BC(MON_NAME_LENGTH);
-    JP(mCopyBytes);
+// got_mon:
+    // INC_HL;  // species
+    // LD_A(BANK(aTrainers));
+    // CALL(aGetFarByte);
+    species_t s;
+    switch(party->trainer_type) {
+        case TRAINERTYPE_ITEM:      s = party->pitem[a].species; break;
+        case TRAINERTYPE_ITEM_MOVES:s = party->pitemmoves[a].species; break;
+        case TRAINERTYPE_MOVES:     s = party->pmoves[a].species; break;
+        default:
+        case TRAINERTYPE_NORMAL:    s = party->pnormal[a].species; break;
+    }
+    // LD_addr_A(wNamedObjectIndex);
+    // CALL(aGetPokemonName);
+    // LD_HL(wStringBuffer1);
+    // LD_DE(wStringBuffer4);
+    // LD_BC(MON_NAME_LENGTH);
+    // JP(mCopyBytes);
+    CopyBytes_Conv2(wram->wStringBuffer4, GetPokemonName_Conv2(s), MON_NAME_LENGTH);
 
 // INCLUDE "data/wild/johto_grass.asm"
 // INCLUDE "data/wild/johto_water.asm"

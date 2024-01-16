@@ -709,7 +709,7 @@ uint8_t* Battle_GetTrainerName_Conv(void){
     // LD_C_A;
     uint8_t c = wram->wOtherTrainerClass;
 
-    return GetTrainerName_Conv(b, c);
+    return GetTrainerName_Conv(b - 1, c);
 }
 
 void GetTrainerName(void){
@@ -760,6 +760,7 @@ skip:
 
 uint8_t* GetTrainerName_Conv(uint8_t tid, uint8_t tclass){
     PEEK("");
+    printf("GetTrainerName: class:%d, id:%d\n", tclass, tid);
     // LD_A_C;
     // CP_A(CAL);
     // IF_NZ goto not_cal2;
@@ -820,7 +821,7 @@ uint8_t* GetTrainerName_Conv(uint8_t tid, uint8_t tclass){
     // }
 
     // CopyTrainerName_Conv(GBToRAMAddr(REG_HL));
-    CopyTrainerName_Conv(Utf8ToCrystal(TrainerGroups[tclass - 1].parties[tid - 1].name));
+    CopyTrainerName_Conv(U82C(TrainerGroups[tclass - 1].parties[tid].name));
 
     // POP_HL;
     // POP_DE;

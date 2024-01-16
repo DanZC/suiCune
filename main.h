@@ -457,7 +457,7 @@
 
 //#include "engine/tilesets/tileset_anims.h"
 //#include "engine/events/npc_trade.h"
-//#include "engine/events/mom_phone.h"
+#include "engine/events/mom_phone.h"
 
 // SECTION "mobile40", ROMX
 

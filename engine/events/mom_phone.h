@@ -1,0 +1,20 @@
+void MomTriesToBuySomething(void);
+void CheckBalance_MomItem2(void);
+bool CheckBalance_MomItem2_Conv(void);
+void MomBuysItem_DeductFunds(void);
+void Mom_GiveItemOrDoll(void);
+bool Mom_GiveItemOrDoll_Conv(void);
+void Mom_GetScriptPointer(void);
+Script_fn_t Mom_GetScriptPointer_Conv(void);
+void GetItemFromMom(void);
+const struct MomPhoneItem* GetItemFromMom_Conv(void);
+// void MomHiHowAreYouText(void);
+// void MomFoundAnItemText(void);
+// void MomBoughtWithYourMoneyText(void);
+// void MomItsInPCText(void);
+// void MomFoundADollText(void);
+// void MomItsInYourRoomText(void);
+void DummyPredef3A_DummyData(void);
+void DummyPredef3A(void);
+void DummyPredef3A_DummyFunction(void);
+//#include "data/items/mom_phone.h"

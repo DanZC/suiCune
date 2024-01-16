@@ -69,15 +69,15 @@ bool SelectMenuCallback(script_s* s);
 void CountStep(void);
 void DoRepelStep(void);
 void DoPlayerEvent(void);
-void PlayerEventScriptPointers(void);
+extern const Script_fn_t PlayerEventScriptPointers[];
 bool InvalidEventScript(script_s* s);
 void UnusedPlayerEventScript(void);
-void HatchEggScript(void);
+bool HatchEggScript(script_s* s);
 bool WarpToNewMapScript(script_s* s);
 bool FallIntoMapScript(script_s* s);
 bool LandAfterPitfallScript(script_s* s);
-void EdgeWarpScript(void);
-void ChangeDirectionScript(void);
+bool EdgeWarpScript(script_s* s);
+bool ChangeDirectionScript(script_s* s);
 void WarpToSpawnPoint(void);
 void RunMemScript(void);
 u8_flag_s RunMemScript_Conv(void);
@@ -92,6 +92,7 @@ void v_TryWildEncounter_BugContest(void);
 void ChooseWildEncounter_BugContest(void);
 void TryWildEncounter_BugContest(void);
 void DoBikeStep(void);
+bool DoBikeStep_Conv(void);
 //#include "constants.h"
 #include "scripting.h"
 //#include "data/wild/bug_contest_mons.h"

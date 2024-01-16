@@ -138,7 +138,7 @@ void AIChooseMove(void){
     // PUSH_BC;
     // PUSH_HL;
 
-    while(1) {
+    while(c != 16) {
     // CheckLayer:
         // POP_HL;
         // POP_BC;
@@ -146,8 +146,6 @@ void AIChooseMove(void){
         // LD_A_C;
         // CP_A(16);  // up to 16 scoring layers
         // IF_Z goto DecrementScores;
-        if(c == 16)
-            break;
 
         // PUSH_BC;
         // LD_D(BANK(aTrainerClassAttributes));

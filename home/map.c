@@ -4491,6 +4491,8 @@ void GetMapPhoneService(void){
 
 }
 
+// Returns whether the phone service is available
+// 0: Phone service available
 uint8_t GetMapPhoneService_Conv(void){
     return (GetPhoneServiceTimeOfDayByte_Conv() & 0xF0) >> 4;
 }

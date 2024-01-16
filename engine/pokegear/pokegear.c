@@ -16,6 +16,7 @@
 #include "../../home/region.h"
 #include "../../home/lcd.h"
 #include "../../home/sprite_anims.h"
+#include "../../home/menu.h"
 #include "../gfx/player_gfx.h"
 #include "../gfx/sprites.h"
 #include "../../audio/engine.h"
@@ -23,6 +24,8 @@
 #include "../../gfx/font.h"
 #include "../../data/text/common.h"
 #include "../../gfx/misc.h"
+#include "../phone/phone.h"
+#include "../../charmap.h"
 
 void (*gPokegearRadioChannelAddr)(void);
 
@@ -784,7 +787,8 @@ void InitPokegearTilemap_Conv(void){
             Pokegear_LoadTilemapRLE_Conv2(PhoneTilemapRLE);
             Textbox_Conv2(coord(0, 12, wram->wTilemap), 4, 18);
             InitPokegearTilemap_PlacePhoneBars_Conv();
-            CALL(aPokegearPhone_UpdateDisplayList);
+            // CALL(aPokegearPhone_UpdateDisplayList);
+            PokegearPhone_UpdateDisplayList();
             //RET;
         }
         break;
@@ -1036,23 +1040,23 @@ void PokegearJumptable(void) {
     // return;
 
 
-Jumptable:
+// Jumptable:
 //  entries correspond to POKEGEARSTATE_* constants
-    switch(gb_read(wJumptableIndex))
+    switch(wram->wJumptableIndex)
     {
-        case POKEGEARSTATE_CLOCKINIT:      return PokegearClock_Init_Conv();
-        case POKEGEARSTATE_CLOCKJOYPAD:    return PokegearClock_Joypad_Conv();
-        case POKEGEARSTATE_MAPCHECKREGION: return PokegearMap_CheckRegion();
-        case POKEGEARSTATE_JOHTOMAPINIT:   return PokegearMap_Init();
-        case POKEGEARSTATE_JOHTOMAPJOYPAD: return PokegearMap_JohtoMap();
-        case POKEGEARSTATE_KANTOMAPINIT:   return PokegearMap_Init();
-        case POKEGEARSTATE_KANTOMAPJOYPAD: return PokegearMap_KantoMap();
-        case POKEGEARSTATE_PHONEINIT:      return PokegearPhone_Init();
-        case POKEGEARSTATE_PHONEJOYPAD:    return PokegearPhone_Joypad();
-        case POKEGEARSTATE_MAKEPHONECALL:  return PokegearPhone_MakePhoneCall();
-        case POKEGEARSTATE_FINISHPHONECALL:return PokegearPhone_FinishPhoneCall();
-        case POKEGEARSTATE_RADIOINIT:      return PokegearRadio_Init();
-        case POKEGEARSTATE_RADIOJOYPAD:    return PokegearRadio_Joypad();
+        case POKEGEARSTATE_CLOCKINIT:       PokegearClock_Init_Conv(); RET;
+        case POKEGEARSTATE_CLOCKJOYPAD:     PokegearClock_Joypad(); RET;
+        case POKEGEARSTATE_MAPCHECKREGION:  return PokegearMap_CheckRegion();
+        case POKEGEARSTATE_JOHTOMAPINIT:    return PokegearMap_Init();
+        case POKEGEARSTATE_JOHTOMAPJOYPAD:  return PokegearMap_JohtoMap();
+        case POKEGEARSTATE_KANTOMAPINIT:    return PokegearMap_Init();
+        case POKEGEARSTATE_KANTOMAPJOYPAD:  return PokegearMap_KantoMap();
+        case POKEGEARSTATE_PHONEINIT:       PokegearPhone_Init_Conv(); RET;
+        case POKEGEARSTATE_PHONEJOYPAD:     PokegearPhone_Joypad(); RET;
+        case POKEGEARSTATE_MAKEPHONECALL:   PokegearPhone_MakePhoneCall(); RET;
+        case POKEGEARSTATE_FINISHPHONECALL: PokegearPhone_FinishPhoneCall(); RET;
+        case POKEGEARSTATE_RADIOINIT:       return PokegearRadio_Init();
+        case POKEGEARSTATE_RADIOJOYPAD:     return PokegearRadio_Joypad();
         default: RET;
     }
     //dw ['PokegearClock_Init'];
@@ -1095,75 +1099,11 @@ void PokegearClock_Init_Conv(void) {
 
     // CALL(aExitPokegearRadio_HandleMusic);
     ExitPokegearRadio_HandleMusic();
-    RET;
+    // RET;
 
 }
 
-void PokegearClock_Joypad(void){
-    SET_PC(aPokegearClock_Joypad);
-    CALL(aPokegearClock_Joypad_UpdateClock);
-    // LD_HL(hJoyLast);
-    // LD_A_hl;
-    // AND_A(A_BUTTON | B_BUTTON | START | SELECT);
-    // IF_NZ goto quit;
-    if(hram->hJoyLast & (A_BUTTON | B_BUTTON | START | SELECT)) {
-    // quit:
-        // LD_HL(wJumptableIndex);
-        // SET_hl(7);
-        bit_set(wram->wJumptableIndex, 7);
-        // return;
-        RET;
-    }
-    // LD_A_hl;
-    // AND_A(D_RIGHT);
-    // IF_Z return;
-    // RET_Z ;
-    if(!(hram->hJoyLast & D_RIGHT))
-        RET;
-    LD_A_addr(wPokegearFlags);
-    BIT_A(POKEGEAR_MAP_CARD_F);
-    IF_Z goto no_map_card;
-    LD_C(POKEGEARSTATE_MAPCHECKREGION);
-    LD_B(POKEGEARCARD_MAP);
-    goto done;
-
-
-no_map_card:
-    LD_A_addr(wPokegearFlags);
-    BIT_A(POKEGEAR_PHONE_CARD_F);
-    IF_Z goto no_phone_card;
-    LD_C(POKEGEARSTATE_PHONEINIT);
-    LD_B(POKEGEARCARD_PHONE);
-    goto done;
-
-
-no_phone_card:
-    LD_A_addr(wPokegearFlags);
-    BIT_A(POKEGEAR_RADIO_CARD_F);
-    RET_Z ;
-    LD_C(POKEGEARSTATE_RADIOINIT);
-    LD_B(POKEGEARCARD_RADIO);
-
-done:
-    CALL(aPokegear_SwitchPage);
-    // return;
-    RET;
-
-
-UpdateClock:
-    // PEEK("UpdateClock");
-    SET_PC(aPokegearClock_Joypad_UpdateClock);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    // CALL(aPokegear_UpdateClock);
-    Pokegear_UpdateClock_Conv();
-    LD_A(0x1);
-    LDH_addr_A(hBGMapMode);
-    RET;
-
-}
-
-void PokegearClock_Joypad_UpdateClock(void) {
+static void PokegearClock_Joypad_UpdateClock(void) {
     // SET_PC(aPokegearClock_Joypad_UpdateClock);
     // PEEK("UpdateClock");
     // XOR_A_A;
@@ -1178,7 +1118,7 @@ void PokegearClock_Joypad_UpdateClock(void) {
     // RET;
 }
 
-void PokegearClock_Joypad_Conv(void){
+void PokegearClock_Joypad(void) {
     // SET_PC(aPokegearClock_Joypad);
     // CALL(aPokegearClock_Joypad_UpdateClock);
     PokegearClock_Joypad_UpdateClock();
@@ -1191,14 +1131,14 @@ void PokegearClock_Joypad_Conv(void){
         // LD_HL(wJumptableIndex);
         // SET_hl(7);
         bit_set(wram->wJumptableIndex, 7);
-        // return;
-        RET;
+        // RET;
+        return;
     }
     // LD_A_hl;
     // AND_A(D_RIGHT);
     // RET_Z ;
     if(!(hram->hJoyLast & D_RIGHT))
-        RET;
+        return;
     // LD_A_addr(wPokegearFlags);
     // BIT_A(POKEGEAR_MAP_CARD_F);
     // IF_Z goto no_map_card;
@@ -1207,8 +1147,7 @@ void PokegearClock_Joypad_Conv(void){
         // LD_B(POKEGEARCARD_MAP);
         // goto done;
         Pokegear_SwitchPage_Conv(POKEGEARSTATE_MAPCHECKREGION, POKEGEARCARD_MAP);
-        RET;
-        // return;
+        return;
     }
 
 
@@ -1221,8 +1160,7 @@ void PokegearClock_Joypad_Conv(void){
         // LD_B(POKEGEARCARD_PHONE);
         // goto done;
         Pokegear_SwitchPage_Conv(POKEGEARSTATE_PHONEINIT, POKEGEARCARD_PHONE);
-        RET;
-        // return;
+        return;
     }
 
 
@@ -1238,13 +1176,11 @@ void PokegearClock_Joypad_Conv(void){
         // return;
         // RET;
         Pokegear_SwitchPage_Conv(POKEGEARSTATE_RADIOINIT, POKEGEARCARD_RADIO);
-        RET;
-        // return;
+        return;
     }
 
     else {
-        RET;
-        // return;
+        return;
     }
 
 
@@ -1689,336 +1625,419 @@ void PokegearPhone_Init(void){
 void PokegearPhone_Init_Conv(void){
     // LD_HL(wJumptableIndex);
     // INC_hl;
-    gb_write(wJumptableIndex, gb_read(wJumptableIndex) + 1);
+    wram->wJumptableIndex++;
     // XOR_A_A;
     // LD_addr_A(wPokegearPhoneScrollPosition);
     // LD_addr_A(wPokegearPhoneCursorPosition);
     // LD_addr_A(wPokegearPhoneSelectedPerson);
-    gb_write(wPokegearPhoneScrollPosition, 0);
-    gb_write(wPokegearPhoneCursorPosition, 0);
-    gb_write(wPokegearPhoneSelectedPerson, 0);
-    CALL(aInitPokegearTilemap);
-    CALL(aExitPokegearRadio_HandleMusic);
-    LD_HL(mPokegearAskWhoCallText);
-    CALL(aPrintText);
+    wram->wPokegearPhoneScrollPosition = 0;
+    wram->wPokegearPhoneCursorPosition = 0;
+    wram->wPokegearPhoneSelectedPerson = 0;
+    // CALL(aInitPokegearTilemap);
+    InitPokegearTilemap_Conv();
+    // CALL(aExitPokegearRadio_HandleMusic);
+    ExitPokegearRadio_HandleMusic();
+    // LD_HL(mPokegearAskWhoCallText);
+    // CALL(aPrintText);
+    PrintText_Conv2(PokegearAskWhoCallText);
     // RET;
 
 }
 
 void PokegearPhone_Joypad(void){
-    LD_HL(hJoyPressed);
-    LD_A_hl;
-    AND_A(B_BUTTON);
-    IF_NZ goto b;
-    LD_A_hl;
-    AND_A(A_BUTTON);
-    IF_NZ goto a;
-    LD_HL(hJoyLast);
-    LD_A_hl;
-    AND_A(D_LEFT);
-    IF_NZ goto left;
-    LD_A_hl;
-    AND_A(D_RIGHT);
-    IF_NZ goto right;
-    CALL(aPokegearPhone_GetDPad);
+    // LD_HL(hJoyPressed);
+    // LD_A_hl;
+    uint8_t pressed = hram->hJoyPressed;
+    // AND_A(B_BUTTON);
+    // IF_NZ goto b;
+    if(pressed & B_BUTTON) {
+    // b:
+        // LD_HL(wJumptableIndex);
+        // SET_hl(7);
+        bit_set(wram->wJumptableIndex, 7);
+        // RET;
+        return;
+    }
+    // LD_A_hl;
+    // AND_A(A_BUTTON);
+    // IF_NZ goto a;
+    else if(pressed & A_BUTTON) {
+    // a:
+        // LD_HL(wPhoneList);
+        // LD_A_addr(wPokegearPhoneScrollPosition);
+        // LD_E_A;
+        // LD_D(0);
+        // ADD_HL_DE;
+        // LD_A_addr(wPokegearPhoneCursorPosition);
+        // LD_E_A;
+        // LD_D(0);
+        // ADD_HL_DE;
+        // LD_A_hl;
+        uint8_t contact = wram->wPhoneList[wram->wPokegearPhoneScrollPosition + wram->wPokegearPhoneCursorPosition];
+        // AND_A_A;
+        // RET_Z ;
+        if(contact == 0)
+            return;
+        // LD_addr_A(wPokegearPhoneSelectedPerson);
+        wram->wPokegearPhoneSelectedPerson = contact;
+        // hlcoord(1, 4, wTilemap);
+        // LD_A_addr(wPokegearPhoneCursorPosition);
+        // LD_BC(SCREEN_WIDTH * 2);
+        // CALL(aAddNTimes);
+        // LD_hl(0xec);
+        *coord(1, 4 + wram->wPokegearPhoneCursorPosition * 2, wram->wTilemap) = CHAR_RIGHT_CURSOR_SEL;
+        // CALL(aPokegearPhoneContactSubmenu);
+        // IF_C goto quit_submenu;
+        if(PokegearPhoneContactSubmenu_Conv()) {
+        // quit_submenu:
+            // LD_A(POKEGEARSTATE_PHONEJOYPAD);
+            // LD_addr_A(wJumptableIndex);
+            wram->wJumptableIndex = POKEGEARSTATE_PHONEJOYPAD;
+            // RET;
+            return;
+        }
+        // LD_HL(wJumptableIndex);
+        // INC_hl;
+        wram->wJumptableIndex++;
+        // RET;
+        return;
+    }
+    // LD_HL(hJoyLast);
+    // LD_A_hl;
+    uint8_t last = hram->hJoyLast;
+    // AND_A(D_LEFT);
+    // IF_NZ goto left;
+    if(last & D_LEFT) {
+    // left:
+        // LD_A_addr(wPokegearFlags);
+        // BIT_A(POKEGEAR_MAP_CARD_F);
+        // IF_Z goto no_map;
+        if(bit_test(wram->wPokegearFlags, POKEGEAR_MAP_CARD_F)) {
+            // LD_C(POKEGEARSTATE_MAPCHECKREGION);
+            // LD_B(POKEGEARCARD_MAP);
+            // goto switch_page;
+            Pokegear_SwitchPage_Conv(POKEGEARSTATE_MAPCHECKREGION, POKEGEARCARD_MAP);
+            return;
+        }
+        else {
+        // no_map:
+            // LD_C(POKEGEARSTATE_CLOCKINIT);
+            // LD_B(POKEGEARCARD_CLOCK);
+            // goto switch_page;
+            Pokegear_SwitchPage_Conv(POKEGEARSTATE_CLOCKINIT, POKEGEARCARD_CLOCK);
+            return;
+        }
+    }
+    // LD_A_hl;
+    // AND_A(D_RIGHT);
+    // IF_NZ goto right;
+    else if(last & D_RIGHT) {
+    // right:
+        // LD_A_addr(wPokegearFlags);
+        // BIT_A(POKEGEAR_RADIO_CARD_F);
+        // RET_Z ;
+        if(!bit_test(wram->wPokegearFlags, POKEGEAR_RADIO_CARD_F))
+            return;
+        // LD_C(POKEGEARSTATE_RADIOINIT);
+        // LD_B(POKEGEARCARD_RADIO);
+        Pokegear_SwitchPage_Conv(POKEGEARSTATE_RADIOINIT, POKEGEARCARD_RADIO);
+        return;
+    }
+    // CALL(aPokegearPhone_GetDPad);
+    PokegearPhone_GetDPad();
+    // RET;
+    return;
+
+// switch_page:
+    // CALL(aPokegear_SwitchPage);
     // return;
-    RET;
-
-
-left:
-    LD_A_addr(wPokegearFlags);
-    BIT_A(POKEGEAR_MAP_CARD_F);
-    IF_Z goto no_map;
-    LD_C(POKEGEARSTATE_MAPCHECKREGION);
-    LD_B(POKEGEARCARD_MAP);
-    goto switch_page;
-
-
-no_map:
-    LD_C(POKEGEARSTATE_CLOCKINIT);
-    LD_B(POKEGEARCARD_CLOCK);
-    goto switch_page;
-
-
-right:
-    LD_A_addr(wPokegearFlags);
-    BIT_A(POKEGEAR_RADIO_CARD_F);
-    RET_Z ;
-    LD_C(POKEGEARSTATE_RADIOINIT);
-    LD_B(POKEGEARCARD_RADIO);
-
-switch_page:
-    CALL(aPokegear_SwitchPage);
-    // return;
-    RET;
-
-
-b:
-    LD_HL(wJumptableIndex);
-    SET_hl(7);
-    // return;
-    RET;
-
-
-a:
-    LD_HL(wPhoneList);
-    LD_A_addr(wPokegearPhoneScrollPosition);
-    LD_E_A;
-    LD_D(0);
-    ADD_HL_DE;
-    LD_A_addr(wPokegearPhoneCursorPosition);
-    LD_E_A;
-    LD_D(0);
-    ADD_HL_DE;
-    LD_A_hl;
-    AND_A_A;
-    RET_Z ;
-    LD_addr_A(wPokegearPhoneSelectedPerson);
-    hlcoord(1, 4, wTilemap);
-    LD_A_addr(wPokegearPhoneCursorPosition);
-    LD_BC(SCREEN_WIDTH * 2);
-    CALL(aAddNTimes);
-    LD_hl(0xec);
-    CALL(aPokegearPhoneContactSubmenu);
-    IF_C goto quit_submenu;
-    LD_HL(wJumptableIndex);
-    INC_hl;
-    // return;
-    RET;
-
-
-quit_submenu:
-    LD_A(POKEGEARSTATE_PHONEJOYPAD);
-    LD_addr_A(wJumptableIndex);
-    // return;
-    RET;
+    // RET;
 
 }
 
 void PokegearPhone_MakePhoneCall(void){
-    CALL(aGetMapPhoneService);
-    AND_A_A;
-    IF_NZ goto no_service;
-    LD_HL(wOptions);
-    RES_hl(NO_TEXT_SCROLL);
-    XOR_A_A;
-    LDH_addr_A(hInMenu);
-    LD_DE(SFX_CALL);
-    CALL(aPlaySFX);
-    LD_HL(mPokegearPhone_MakePhoneCall_GearEllipseText);
-    CALL(aPrintText);
-    CALL(aWaitSFX);
-    LD_DE(SFX_CALL);
-    CALL(aPlaySFX);
-    LD_HL(mPokegearPhone_MakePhoneCall_GearEllipseText);
-    CALL(aPrintText);
-    CALL(aWaitSFX);
-    LD_A_addr(wPokegearPhoneSelectedPerson);
-    LD_B_A;
-    CALL(aMakePhoneCallFromPokegear);
-    LD_C(10);
-    CALL(aDelayFrames);
-    LD_HL(wOptions);
-    SET_hl(NO_TEXT_SCROLL);
-    LD_A(0x1);
-    LDH_addr_A(hInMenu);
-    CALL(aPokegearPhone_UpdateCursor);
-    LD_HL(wJumptableIndex);
-    INC_hl;
-    return;
-    //RET;
-
-
-no_service:
-    FARCALL(aPhone_NoSignal);
-    LD_HL(mPokegearPhone_MakePhoneCall_GearOutOfServiceText);
-    CALL(aPrintText);
-    LD_A(POKEGEARSTATE_PHONEJOYPAD);
-    LD_addr_A(wJumptableIndex);
-    LD_HL(mPokegearAskWhoCallText);
-    CALL(aPrintText);
-    return;
-    //RET;
-
-
-GearEllipseText:
-    //text_far ['_GearEllipseText']
-    //text_end ['?']
-
-
-GearOutOfServiceText:
-    //text_far ['_GearOutOfServiceText']
-    //text_end ['?']
-
-    return PokegearPhone_FinishPhoneCall();
+    static const struct TextCmd GearEllipseText[] = {
+        text_far(v_GearEllipseText)
+        text_end
+    };
+    static const struct TextCmd GearOutOfServiceText[] = {
+        text_far(v_GearOutOfServiceText)
+        text_end
+    };
+    // CALL(aGetMapPhoneService);
+    // AND_A_A;
+    // IF_NZ goto no_service;
+    if(!GetMapPhoneService_Conv()) {
+        // LD_HL(wOptions);
+        // RES_hl(NO_TEXT_SCROLL);
+        bit_reset(wram->wOptions, NO_TEXT_SCROLL);
+        // XOR_A_A;
+        // LDH_addr_A(hInMenu);
+        hram->hInMenu = FALSE;
+        // LD_DE(SFX_CALL);
+        // CALL(aPlaySFX);
+        PlaySFX_Conv(SFX_CALL);
+        // LD_HL(mPokegearPhone_MakePhoneCall_GearEllipseText);
+        // CALL(aPrintText);
+        PrintText_Conv2(GearEllipseText);
+        // CALL(aWaitSFX);
+        WaitSFX_Conv();
+        // LD_DE(SFX_CALL);
+        // CALL(aPlaySFX);
+        PlaySFX_Conv(SFX_CALL);
+        // LD_HL(mPokegearPhone_MakePhoneCall_GearEllipseText);
+        // CALL(aPrintText);
+        PrintText_Conv2(GearEllipseText);
+        // CALL(aWaitSFX);
+        WaitSFX_Conv();
+        // LD_A_addr(wPokegearPhoneSelectedPerson);
+        // LD_B_A;
+        // CALL(aMakePhoneCallFromPokegear);
+        MakePhoneCallFromPokegear_Conv(wram->wPokegearPhoneSelectedPerson);
+        // LD_C(10);
+        // CALL(aDelayFrames);
+        DelayFrames_Conv(10);
+        // LD_HL(wOptions);
+        // SET_hl(NO_TEXT_SCROLL);
+        bit_set(wram->wOptions, NO_TEXT_SCROLL);
+        // LD_A(0x1);
+        // LDH_addr_A(hInMenu);
+        hram->hInMenu = TRUE;
+        // CALL(aPokegearPhone_UpdateCursor);
+        PokegearPhone_UpdateCursor();
+        // LD_HL(wJumptableIndex);
+        // INC_hl;
+        wram->wJumptableIndex++;
+        //RET;
+    }
+    else {
+    // no_service:
+        // FARCALL(aPhone_NoSignal);
+        Phone_NoSignal();
+        // LD_HL(mPokegearPhone_MakePhoneCall_GearOutOfServiceText);
+        // CALL(aPrintText);
+        PrintText_Conv2(GearOutOfServiceText);
+        // LD_A(POKEGEARSTATE_PHONEJOYPAD);
+        // LD_addr_A(wJumptableIndex);
+        wram->wJumptableIndex = POKEGEARSTATE_PHONEJOYPAD;
+        // LD_HL(mPokegearAskWhoCallText);
+        // CALL(aPrintText);
+        PrintText_Conv2(PokegearAskWhoCallText);
+        //RET;
+    }
 }
 
 void PokegearPhone_FinishPhoneCall(void){
-    LDH_A_addr(hJoyPressed);
-    AND_A(A_BUTTON | B_BUTTON);
-    RET_Z ;
-    FARCALL(aHangUp);
-    LD_A(POKEGEARSTATE_PHONEJOYPAD);
-    LD_addr_A(wJumptableIndex);
-    LD_HL(mPokegearAskWhoCallText);
-    CALL(aPrintText);
+    // LDH_A_addr(hJoyPressed);
+    // AND_A(A_BUTTON | B_BUTTON);
+    // RET_Z ;
+    if((hram->hJoyPressed & (A_BUTTON | B_BUTTON)) == 0)
+        return;
+    // FARCALL(aHangUp);
+    HangUp();
+    // LD_A(POKEGEARSTATE_PHONEJOYPAD);
+    // LD_addr_A(wJumptableIndex);
+    wram->wJumptableIndex = POKEGEARSTATE_PHONEJOYPAD;
+    // LD_HL(mPokegearAskWhoCallText);
+    // CALL(aPrintText);
+    PrintText_Conv2(PokegearAskWhoCallText);
     //RET;
 
 }
 
 void PokegearPhone_GetDPad(void){
-    LD_HL(hJoyLast);
-    LD_A_hl;
-    AND_A(D_UP);
-    IF_NZ goto up;
-    LD_A_hl;
-    AND_A(D_DOWN);
-    IF_NZ goto down;
-    RET;
-
-
-up:
-    LD_HL(wPokegearPhoneCursorPosition);
-    LD_A_hl;
-    AND_A_A;
-    IF_Z goto scroll_page_up;
-    DEC_hl;
-    goto done_joypad_same_page;
-
-
-scroll_page_up:
-    LD_HL(wPokegearPhoneScrollPosition);
-    LD_A_hl;
-    AND_A_A;
-    RET_Z ;
-    DEC_hl;
-    goto done_joypad_update_page;
-
-
-down:
-    LD_HL(wPokegearPhoneCursorPosition);
-    LD_A_hl;
-    CP_A(PHONE_DISPLAY_HEIGHT - 1);
-    IF_NC goto scroll_page_down;
-    INC_hl;
-    goto done_joypad_same_page;
-
-
-scroll_page_down:
-    LD_HL(wPokegearPhoneScrollPosition);
-    LD_A_hl;
-    CP_A(CONTACT_LIST_SIZE - PHONE_DISPLAY_HEIGHT);
-    RET_NC ;
-    INC_hl;
-    goto done_joypad_update_page;
+    // LD_HL(hJoyLast);
+    // LD_A_hl;
+    // AND_A(D_UP);
+    // IF_NZ goto up;
+    if(hram->hJoyLast & D_UP) {
+    // up:
+        // LD_HL(wPokegearPhoneCursorPosition);
+        // LD_A_hl;
+        // AND_A_A;
+        // IF_Z goto scroll_page_up;
+        if(wram->wPokegearPhoneCursorPosition == 0) {
+        // scroll_page_up:
+            // LD_HL(wPokegearPhoneScrollPosition);
+            // LD_A_hl;
+            // AND_A_A;
+            // RET_Z ;
+            if(wram->wPokegearPhoneScrollPosition == 0)
+                return;
+            // DEC_hl;
+            --wram->wPokegearPhoneScrollPosition;
+            goto done_joypad_update_page;
+        }
+        // DEC_hl;
+        --wram->wPokegearPhoneCursorPosition;
+        goto done_joypad_same_page;
+    }
+    // LD_A_hl;
+    // AND_A(D_DOWN);
+    // IF_NZ goto down;
+    else if(hram->hJoyLast & D_DOWN) {
+    // down:
+        // LD_HL(wPokegearPhoneCursorPosition);
+        // LD_A_hl;
+        // CP_A(PHONE_DISPLAY_HEIGHT - 1);
+        // IF_NC goto scroll_page_down;
+        if(wram->wPokegearPhoneCursorPosition >= PHONE_DISPLAY_HEIGHT - 1) {
+        // scroll_page_down:
+            // LD_HL(wPokegearPhoneScrollPosition);
+            // LD_A_hl;
+            // CP_A(CONTACT_LIST_SIZE - PHONE_DISPLAY_HEIGHT);
+            // RET_NC ;
+            if(wram->wPokegearPhoneScrollPosition >= CONTACT_LIST_SIZE - PHONE_DISPLAY_HEIGHT)
+                return;
+            // INC_hl;
+            ++wram->wPokegearPhoneScrollPosition;
+            goto done_joypad_update_page;
+        }
+        // INC_hl;
+        ++wram->wPokegearPhoneCursorPosition;
+        goto done_joypad_same_page;
+    }
+    // RET;
+    return;
 
 
 done_joypad_same_page:
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    CALL(aPokegearPhone_UpdateCursor);
-    CALL(aWaitBGMap);
-    RET;
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    // CALL(aPokegearPhone_UpdateCursor);
+    PokegearPhone_UpdateCursor();
+    // CALL(aWaitBGMap);
+    WaitBGMap_Conv();
+    // RET;
+    return;
 
 
 done_joypad_update_page:
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    CALL(aPokegearPhone_UpdateDisplayList);
-    CALL(aWaitBGMap);
-    RET;
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    // CALL(aPokegearPhone_UpdateDisplayList);
+    PokegearPhone_UpdateDisplayList();
+    // CALL(aWaitBGMap);
+    WaitBGMap_Conv();
+    // RET;
+    return;
 
 }
 
 void PokegearPhone_UpdateCursor(void){
-    LD_A(0x7f);
+    // LD_A(0x7f);
+    uint8_t a = CHAR_SPACE;
     for(int y = 0; y < PHONE_DISPLAY_HEIGHT; y++){
-    hlcoord(1, 4 + y * 2, wTilemap);
-    LD_hl_A;
+        // hlcoord(1, 4 + y * 2, wTilemap);
+        // LD_hl_A;
+        *coord(1, 4 + y * 2, wram->wTilemap) = a;
     }
-    hlcoord(1, 4, wTilemap);
-    LD_A_addr(wPokegearPhoneCursorPosition);
-    LD_BC(2 * SCREEN_WIDTH);
-    CALL(aAddNTimes);
-    LD_hl(0xed);
-    RET;
+    // hlcoord(1, 4, wTilemap);
+    // LD_A_addr(wPokegearPhoneCursorPosition);
+    // LD_BC(2 * SCREEN_WIDTH);
+    // CALL(aAddNTimes);
+    // LD_hl(0xed);
+    *coord(1, 4 + wram->wPokegearPhoneCursorPosition * 2, wram->wTilemap) = CHAR_RIGHT_CURSOR;
+    // RET;
 
 }
 
 void PokegearPhone_UpdateDisplayList(void){
-    hlcoord(1, 3, wTilemap);
-    LD_B(PHONE_DISPLAY_HEIGHT * 2 + 1);
-    LD_A(0x7f);
+    // hlcoord(1, 3, wTilemap);
+    tile_t* hl = coord(1, 3, wram->wTilemap);
+    // LD_B(PHONE_DISPLAY_HEIGHT * 2 + 1);
+    // LD_A(0x7f);
 
-row:
-    LD_C(SCREEN_WIDTH - 2);
+    for(uint32_t b = 0; b < PHONE_DISPLAY_HEIGHT * 2 + 1; ++b) {
+    // row:
+        // LD_C(SCREEN_WIDTH - 2);
+        for(uint32_t c = 0; c < SCREEN_WIDTH - 2; ++c) {
+        // col:
+            // LD_hli_A;
+            // DEC_C;
+            // IF_NZ goto col;
+            hl[c + (SCREEN_WIDTH * b)] = CHAR_SPACE;
+        }
+        // INC_HL;
+        // INC_HL;
+        // DEC_B;
+        // IF_NZ goto row;
+    }
+    // LD_A_addr(wPokegearPhoneScrollPosition);
+    // LD_E_A;
+    // LD_D(0);
+    // LD_HL(wPhoneList);
+    // ADD_HL_DE;
+    uint8_t* de = wram->wPhoneList + wram->wPokegearPhoneScrollPosition;
+    // XOR_A_A;
+    // LD_addr_A(wPokegearPhoneDisplayPosition);
+    wram->wPokegearPhoneDisplayPosition = 0;
 
-col:
-    LD_hli_A;
-    DEC_C;
-    IF_NZ goto col;
-    INC_HL;
-    INC_HL;
-    DEC_B;
-    IF_NZ goto row;
-    LD_A_addr(wPokegearPhoneScrollPosition);
-    LD_E_A;
-    LD_D(0);
-    LD_HL(wPhoneList);
-    ADD_HL_DE;
-    XOR_A_A;
-    LD_addr_A(wPokegearPhoneDisplayPosition);
-
-loop:
-    LD_A_hli;
-    PUSH_HL;
-    PUSH_AF;
-    hlcoord(2, 4, wTilemap);
-    LD_A_addr(wPokegearPhoneDisplayPosition);
-    LD_BC(2 * SCREEN_WIDTH);
-    CALL(aAddNTimes);
-    LD_D_H;
-    LD_E_L;
-    POP_AF;
-    LD_B_A;
-    CALL(aGetCallerClassAndName);
-    POP_HL;
-    LD_A_addr(wPokegearPhoneDisplayPosition);
-    INC_A;
-    LD_addr_A(wPokegearPhoneDisplayPosition);
-    CP_A(PHONE_DISPLAY_HEIGHT);
-    IF_C goto loop;
-    CALL(aPokegearPhone_UpdateCursor);
-    RET;
+    do {
+    // loop:
+        // LD_A_hli;
+        uint8_t contact = de[wram->wPokegearPhoneDisplayPosition];
+        // PUSH_HL;
+        // PUSH_AF;
+        // hlcoord(2, 4, wTilemap);
+        // LD_A_addr(wPokegearPhoneDisplayPosition);
+        // LD_BC(2 * SCREEN_WIDTH);
+        // CALL(aAddNTimes);
+        // LD_D_H;
+        // LD_E_L;
+        // POP_AF;
+        // LD_B_A;
+        // CALL(aGetCallerClassAndName);
+        GetCallerClassAndName_Conv(coord(2, 4 + (2 * wram->wPokegearPhoneDisplayPosition), wram->wTilemap), contact);
+        // POP_HL;
+        // LD_A_addr(wPokegearPhoneDisplayPosition);
+        // INC_A;
+        // LD_addr_A(wPokegearPhoneDisplayPosition);
+        // CP_A(PHONE_DISPLAY_HEIGHT);
+        // IF_C goto loop;
+    } while(++wram->wPokegearPhoneDisplayPosition < PHONE_DISPLAY_HEIGHT);
+    // CALL(aPokegearPhone_UpdateCursor);
+    PokegearPhone_UpdateCursor();
+    // RET;
 
 }
 
 void PokegearPhone_DeletePhoneNumber(void){
-    LD_HL(wPhoneList);
-    LD_A_addr(wPokegearPhoneScrollPosition);
-    LD_E_A;
-    LD_D(0);
-    ADD_HL_DE;
-    LD_A_addr(wPokegearPhoneCursorPosition);
-    LD_E_A;
-    LD_D(0);
-    ADD_HL_DE;
-    LD_hl(0);
-    LD_HL(wPhoneList);
-    LD_C(CONTACT_LIST_SIZE);
+    // LD_HL(wPhoneList);
+    // LD_A_addr(wPokegearPhoneScrollPosition);
+    // LD_E_A;
+    // LD_D(0);
+    // ADD_HL_DE;
+    // LD_A_addr(wPokegearPhoneCursorPosition);
+    // LD_E_A;
+    // LD_D(0);
+    // ADD_HL_DE;
+    uint8_t* hl = wram->wPhoneList + wram->wPokegearPhoneScrollPosition + wram->wPokegearPhoneCursorPosition;
+    // LD_hl(0);
+    *hl = 0;
+    // LD_HL(wPhoneList);
+    // LD_C(CONTACT_LIST_SIZE);
 
-loop:
-    LD_A_hli;
-    AND_A_A;
-    IF_NZ goto skip;
-    LD_A_hld;
-    LD_hli_A;
-    LD_hl(0);
+    for(uint32_t i = 0; i < CONTACT_LIST_SIZE; ++i) {
+    // loop:
+        // LD_A_hli;
+        // AND_A_A;
+        // IF_NZ goto skip;
+        if(wram->wPhoneList[i] == 0) {
+            // LD_A_hld;
+            // LD_hli_A;
+            // LD_hl(0);
+            wram->wPhoneList[i] = wram->wPhoneList[i+1];
+            wram->wPhoneList[i+1] = 0;
+        }
 
-skip:
-    DEC_C;
-    IF_NZ goto loop;
-    RET;
+    // skip:
+        // DEC_C;
+        // IF_NZ goto loop;
+    }
+    // RET;
 
 }
 
@@ -2227,6 +2246,270 @@ CallCancelJumptable:
     return GetAMPMHours();
 }
 
+struct PokegearPhoneSubmenu {
+    tile_t* coord;
+    uint8_t count;
+    const char* strings;
+};
+
+static void PokegearPhoneContactSubmenu_UpdateCursor(const struct PokegearPhoneSubmenu* de) {
+    // PUSH_DE;
+    // LD_A_de;
+    // INC_DE;
+    // LD_L_A;
+    // LD_A_de;
+    // INC_DE;
+    // LD_H_A;
+    tile_t* hl = de->coord;
+    // LD_A_de;
+    // LD_C_A;
+    // PUSH_HL;
+    // LD_A(0x7f);
+    // LD_DE(SCREEN_WIDTH * 2);
+
+    for(uint32_t i = 0; i < de->count; ++i) {
+    // clear_column:
+        // LD_hl_A;
+        // ADD_HL_DE;
+        hl[SCREEN_WIDTH * 2 * i] = CHAR_SPACE;
+        // DEC_C;
+        // IF_NZ goto clear_column;
+    }
+    // POP_HL;
+    // LD_A_addr(wPokegearPhoneSubmenuCursor);
+    // LD_BC(SCREEN_WIDTH * 2);
+    // CALL(aAddNTimes);
+    // LD_hl(0xed);
+    hl[SCREEN_WIDTH * 2 * wram->wPokegearPhoneSubmenuCursor] = CHAR_RIGHT_CURSOR;
+    // POP_DE;
+    // RET;
+}
+
+bool PokegearPhoneContactSubmenu_Conv(void){
+    static const struct PokegearPhoneSubmenu Submenus[] = {
+        {
+            //dwcoord ['10', '6'];
+            .coord = coord(10, 6, wram_ptr(wTilemap)),
+            //db ['2'];
+            .count = 3,
+            .strings =
+                //db ['"CALL"'];
+                "CALL" t_next
+                //next ['"DELETE"']
+                "DELETE" t_next
+                //next ['"CANCEL"']
+                "CANCEL@",
+                //db ['"@"'];
+        },
+        {
+            //dwcoord ['10', '8'];
+            .coord = coord(10, 8, wram_ptr(wTilemap)),
+            //db ['2'];
+            .count = 2,
+            .strings =
+                //db ['"CALL"'];
+                "CALL" t_next
+                //next ['"CANCEL"']
+                "CANCEL@",
+                //db ['"@"'];
+        }
+    };
+    // LD_HL(wPhoneList);
+    // LD_A_addr(wPokegearPhoneScrollPosition);
+    // LD_E_A;
+    // LD_D(0);
+    // ADD_HL_DE;
+    // LD_A_addr(wPokegearPhoneCursorPosition);
+    // LD_E_A;
+    // LD_D(0);
+    // ADD_HL_DE;
+    // LD_C_hl;
+    uint8_t contact = wram->wPhoneList[wram->wPokegearPhoneScrollPosition + wram->wPokegearPhoneCursorPosition];
+    // FARCALL(aCheckCanDeletePhoneNumber);
+    // LD_A_C;
+    // AND_A_A;
+    // IF_Z goto cant_delete;
+    uint8_t which;
+    if(CheckCanDeletePhoneNumber_Conv(contact)) {
+        // LD_HL(mPokegearPhoneContactSubmenu_CallDeleteCancelJumptable);
+        // LD_DE(mPokegearPhoneContactSubmenu_CallDeleteCancelStrings);
+        which = 0;
+        // goto got_menu_data;
+    }
+    else {
+    // cant_delete:
+        // LD_HL(mPokegearPhoneContactSubmenu_CallCancelJumptable);
+        // LD_DE(mPokegearPhoneContactSubmenu_CallCancelStrings);
+        which = 1;
+    }
+
+// got_menu_data:
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    // PUSH_HL;
+    // PUSH_DE;
+    // LD_A_de;
+    // LD_L_A;
+    // INC_DE;
+    // LD_A_de;
+    // LD_H_A;
+    // INC_DE;
+    // PUSH_HL;
+    tile_t* hl = Submenus[which].coord;
+    // bccoord(-1, -2, 0);
+    // ADD_HL_BC;
+    // LD_A_de;
+    // INC_DE;
+    // SLA_A;
+    // LD_B_A;
+    // LD_C(8);
+    // PUSH_DE;
+    // CALL(aTextbox);
+    Textbox_Conv2(hl + coord(-1, -2, 0), Submenus[which].count * 2, 8);
+    // POP_DE;
+    // POP_HL;
+    // INC_HL;
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(Submenus[which].strings), hl + 1);
+    // POP_DE;
+    // XOR_A_A;
+    // LD_addr_A(wPokegearPhoneSubmenuCursor);
+    wram->wPokegearPhoneSubmenuCursor = 0;
+    // CALL(aPokegearPhoneContactSubmenu_UpdateCursor);
+    PokegearPhoneContactSubmenu_UpdateCursor(Submenus + which);
+    // CALL(aWaitBGMap);
+    WaitBGMap_Conv();
+
+    while(1) {
+    // loop:
+        // PUSH_DE;
+        // CALL(aJoyTextDelay);
+        JoyTextDelay_Conv();
+        // POP_DE;
+        // LD_HL(hJoyPressed);
+        // LD_A_hl;
+        uint8_t pressed = hram->hJoyPressed;
+        // AND_A(D_UP);
+        // IF_NZ goto d_up;
+        if(pressed & D_UP) {
+        // d_up:
+            // LD_HL(wPokegearPhoneSubmenuCursor);
+            // LD_A_hl;
+            // AND_A_A;
+            // IF_Z goto loop;
+            if(wram->wPokegearPhoneSubmenuCursor == 0)
+                continue;
+            // DEC_hl;
+            wram->wPokegearPhoneSubmenuCursor--;
+            // CALL(aPokegearPhoneContactSubmenu_UpdateCursor);
+            PokegearPhoneContactSubmenu_UpdateCursor(Submenus + which);
+            // goto loop;
+            continue;
+        }
+        // LD_A_hl;
+        // AND_A(D_DOWN);
+        // IF_NZ goto d_down;
+        else if(pressed & D_DOWN) {
+        // d_down:
+            // LD_HL(2);
+            // ADD_HL_DE;
+            uint8_t count = Submenus[which].count;
+            // LD_A_addr(wPokegearPhoneSubmenuCursor);
+            // INC_A;
+            // CP_A_hl;
+            // IF_NC goto loop;
+            if(wram->wPokegearPhoneSubmenuCursor + 1 >= count)
+                continue;
+            // LD_addr_A(wPokegearPhoneSubmenuCursor);
+            wram->wPokegearPhoneSubmenuCursor++;
+            // CALL(aPokegearPhoneContactSubmenu_UpdateCursor);
+            PokegearPhoneContactSubmenu_UpdateCursor(Submenus + which);
+            // goto loop;
+            continue;
+        }
+        // LD_A_hl;
+        // AND_A(A_BUTTON | B_BUTTON);
+        // IF_NZ goto a_b;
+        else if(pressed & (A_BUTTON | B_BUTTON)) {
+        // a_b:
+            // XOR_A_A;
+            // LDH_addr_A(hBGMapMode);
+            hram->hBGMapMode = 0;
+            // CALL(aPokegearPhone_UpdateDisplayList);
+            PokegearPhone_UpdateDisplayList();
+            // LD_A(0x1);
+            // LDH_addr_A(hBGMapMode);
+            hram->hBGMapMode = 0x1;
+            // POP_HL;
+            // LDH_A_addr(hJoyPressed);
+            // AND_A(B_BUTTON);
+            // IF_NZ goto Cancel;
+            if(hram->hJoyPressed & B_BUTTON)
+                goto Cancel;
+            // LD_A_addr(wPokegearPhoneSubmenuCursor);
+            // LD_E_A;
+            // LD_D(0);
+            // ADD_HL_DE;
+            // ADD_HL_DE;
+            // LD_A_hli;
+            // LD_H_hl;
+            // LD_L_A;
+            // JP_hl;
+            switch(wram->wPokegearPhoneSubmenuCursor) {
+            case 0:
+            // Call:
+                // AND_A_A;
+                // RET;
+                return false;
+            case 1:
+                if(which == 0) {
+                // Delete:
+                    // LD_HL(mPokegearAskDeleteText);
+                    // CALL(aMenuTextbox);
+                    MenuTextbox_Conv(PokegearAskDeleteText);
+                    // CALL(aYesNoBox);
+                    bool cancel = !YesNoBox_Conv();
+                    // CALL(aExitMenu);
+                    ExitMenu_Conv2();
+                    // IF_C goto CancelDelete;
+                    if(!cancel) {
+                        // CALL(aPokegearPhone_DeletePhoneNumber);
+                        PokegearPhone_DeletePhoneNumber();
+                        // XOR_A_A;
+                        // LDH_addr_A(hBGMapMode);
+                        hram->hBGMapMode = 0;
+                        // CALL(aPokegearPhone_UpdateDisplayList);
+                        PokegearPhone_UpdateDisplayList();
+                        // LD_HL(mPokegearAskWhoCallText);
+                        // CALL(aPrintText);
+                        PrintText_Conv2(PokegearAskWhoCallText);
+                        // CALL(aWaitBGMap);
+                        WaitBGMap_Conv();
+                    }
+
+                // CancelDelete:
+                    // SCF;
+                    // RET;
+                    return true;
+                }
+                fallthrough;
+            case 2:
+            Cancel:
+                // LD_HL(mPokegearAskWhoCallText);
+                // CALL(aPrintText);
+                PrintText_Conv2(PokegearAskWhoCallText);
+                // SCF;
+                // RET;
+                return true;
+            }
+        }
+        // CALL(aDelayFrame);
+        DelayFrame();
+        // goto loop;
+    }
+}
+
 void GetAMPMHours(void){
 //  //  unreferenced
     LDH_A_addr(hHours);
@@ -2383,10 +2666,10 @@ const struct TextCmd PokegearPressButtonText[] = {
     text_end
 };
 
-void PokegearAskDeleteText(void){
-    //text_far ['_PokegearAskDeleteText']
-    //text_end ['?']
-}
+const struct TextCmd PokegearAskDeleteText[] = {
+    text_far(v_PokegearAskDeleteText)
+    text_end
+};
 
 void v_UpdateRadioStation(void){
     JR(mUpdateRadioStation);

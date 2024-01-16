@@ -2,30 +2,27 @@
 #include "phonering_copytilemapatonce.h"
 #include "../../home/tilemap.h"
 
-static void PhoneRing_CopyTilemapAtOnce_CopyBGMapViaStack(uint16_t sp) {
+static void PhoneRing_CopyTilemapAtOnce_CopyBGMapViaStack(tile_t* hl, const tile_t* sp) {
 //  Copy all tiles to vBGMap
     // LD_addr_SP(hSPBuffer);
     // LD_SP_HL;
     // LDH_A_addr(hBGMapAddress + 1);
     // LD_H_A;
     // LD_L(0);
-    uint16_t hl = gb_read(hBGMapAddress + 1) << 8;
     // LD_A(SCREEN_HEIGHT);
     // LDH_addr_A(hTilesPerCycle);
-    uint8_t a = SCREEN_HEIGHT;
-    gb_write(hTilesPerCycle, a);
+    hram->hTilesPerCycle = SCREEN_HEIGHT;
     // LD_B(1 << 1);  // not in v/hblank
     // LD_C(LOW(rSTAT));
 
-    uint16_t de;
+    // uint16_t de;
 
 
     do {
         for(int rept = 0; rept < SCREEN_WIDTH / 2; rept++){
             // POP_DE;
         //  if in v/hblank, wait until not in v/hblank
-            de = gb_read16(sp);
-            sp += 2;
+            *(hl++) = *(sp++);
             // loop2:
             //     LDH_A_c;
             //     AND_A_B;
@@ -36,8 +33,7 @@ static void PhoneRing_CopyTilemapAtOnce_CopyBGMapViaStack(uint16_t sp) {
             // INC_L;
             // LD_hl_D;
             // INC_L;
-            gb_write16(hl, de);
-            hl += 2;
+            *(hl++) = *(sp++);
         }
 
         // LD_DE(BG_MAP_WIDTH - SCREEN_WIDTH);
@@ -46,10 +42,8 @@ static void PhoneRing_CopyTilemapAtOnce_CopyBGMapViaStack(uint16_t sp) {
         // LDH_A_addr(hTilesPerCycle);
         // DEC_A;
         // LDH_addr_A(hTilesPerCycle);
-        a = gb_read(hTilesPerCycle) - 1;
-        gb_write(hTilesPerCycle, a);
         // IF_NZ goto loop;
-    } while(a != 0);
+    } while(--hram->hTilesPerCycle != 0);
 
     // LDH_A_addr(hSPBuffer);
     // LD_L_A;
@@ -59,8 +53,7 @@ static void PhoneRing_CopyTilemapAtOnce_CopyBGMapViaStack(uint16_t sp) {
     // RET;
 }
 
-void PhoneRing_CopyTilemapAtOnce(void){
-    PEEK("");
+void PhoneRing_CopyTilemapAtOnce_Conv(void){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // JP_Z (mWaitBGMap);
@@ -101,13 +94,14 @@ void PhoneRing_CopyTilemapAtOnce(void){
 
     // hlcoord(0, 0, wAttrmap);
     // CALL(aPhoneRing_CopyTilemapAtOnce_CopyBGMapViaStack);
-    PhoneRing_CopyTilemapAtOnce_CopyBGMapViaStack(coord(0, 0, wAttrmap));
+    //  Uncommenting the line below causes weird color issues.
+    //  PhoneRing_CopyTilemapAtOnce_CopyBGMapViaStack(GBToRAMAddr(hram->hBGMapAddress & 0xff00), coord(0, 0, wram->wAttrmap));
     // LD_A(MBANK(avBGMap0));
     // LDH_addr_A(rVBK);
     gb_write(rVBK, MBANK(avBGMap0));
     // hlcoord(0, 0, wTilemap);
     // CALL(aPhoneRing_CopyTilemapAtOnce_CopyBGMapViaStack);
-    PhoneRing_CopyTilemapAtOnce_CopyBGMapViaStack(coord(0, 0, wTilemap));
+    PhoneRing_CopyTilemapAtOnce_CopyBGMapViaStack(GBToRAMAddr(hram->hBGMapAddress & 0xff00), coord(0, 0, wram->wTilemap));
 
 
 // wait2:
@@ -119,11 +113,11 @@ void PhoneRing_CopyTilemapAtOnce(void){
 
     // POP_AF;
     // LDH_addr_A(hMapAnims);
-    gb_write(hMapAnims, anims_temp);
+    hram->hMapAnims = anims_temp;
     // POP_AF;
     // LDH_addr_A(hBGMapMode);
-    gb_write(hBGMapMode, mode_temp);
-    RET;
+    hram->hBGMapMode = mode_temp;
+    // RET;
 
 
 // CopyBGMapViaStack:
@@ -170,4 +164,10 @@ void PhoneRing_CopyTilemapAtOnce(void){
 //     LD_SP_HL;
 //     RET;
 
+}
+
+void PhoneRing_CopyTilemapAtOnce(void) {
+    PEEK("");
+    PhoneRing_CopyTilemapAtOnce_Conv();
+    RET;
 }

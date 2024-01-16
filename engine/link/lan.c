@@ -178,6 +178,8 @@ void LANConnection_Join(void) {
     LoadStandardMenuHeader_Conv();
     PlaceStringSimple(U82C("Searching for<LINE>players…"), coord(TEXTBOX_INNERX, TEXTBOX_INNERY, wram->wTilemap));
 
+    NetworkStartJoining();
+
     uint32_t selection = 0;
 
     Textbox_Conv2(coord(8, 0, wram->wTilemap), TEXTBOX_Y - 2, SCREEN_WIDTH - 8 - 2);
@@ -246,6 +248,7 @@ void LANConnection_Join(void) {
         CloseWindow_Conv2();
         wram->wScriptVar = FALSE;
         CloseWindow_Conv2();
+        NetworkCloseConnection();
         return;
     }
 }

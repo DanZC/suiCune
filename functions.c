@@ -1412,8 +1412,8 @@ void init_function_pointers(void) {
     REDIRECTED(PokegearJumptable);
     // REDIRECTED(LoadStation_PokeFluteRadio);
     // REDIRECTED(LoadPokegearRadioChannelPointer);
-    REDIRECTED(PokegearClock_Joypad);
-    REDIRECTED(PokegearClock_Joypad_UpdateClock);
+    // REDIRECTED(PokegearClock_Joypad);
+    // REDIRECTED(PokegearClock_Joypad_UpdateClock);
     // REDIRECTED(PokegearMap_CheckRegion);
     //REDIRECTED(PokemonMusicName);
     // REDIRECTED(LoadStation_PokedexShow);
@@ -4615,4 +4615,21 @@ void init_function_pointers(void) {
     // engine/events/misc_scripts.c
     // REDIRECTED(Script_AbortBugContest);
     // REDIRECTED(FindItemInBallScript);
+
+    // engine/events/mom_phone.c
+    // CONVERTED(MomBuysItem_DeductFunds);
+    // REDIRECTED(MomBoughtWithYourMoneyText);
+    // REDIRECTED(MomFoundADollText);
+    // CONVERTED(CheckBalance_MomItem2);
+    // CONVERTED(DummyPredef3A_DummyData);
+    // CONVERTED(GetItemFromMom);
+    // REDIRECTED(MomItsInPCText);
+    // REDIRECTED(MomItsInYourRoomText);
+    // CONVERTED(Mom_GiveItemOrDoll);
+    // CONVERTED(Mom_GetScriptPointer);
+    // CONVERTED(DummyPredef3A);
+    // CONVERTED(MomTriesToBuySomething);
+    // REDIRECTED(MomHiHowAreYouText);
+    // CONVERTED(DummyPredef3A_DummyFunction);
+    // REDIRECTED(MomFoundAnItemText);
 }

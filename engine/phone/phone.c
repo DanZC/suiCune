@@ -1,5 +1,6 @@
 #include "../../constants.h"
 #include "phone.h"
+#include "phonering_copytilemapatonce.h"
 #include "../../home/map.h"
 #include "../../home/copy.h"
 #include "../../home/audio.h"
@@ -12,6 +13,7 @@
 #include "../../home/map_objects.h"
 #include "../overworld/scripting.h"
 #include "../overworld/time.h"
+#include "../overworld/landmarks.h"
 #include "../events/checktime.h"
 #include "../battle/read_trainer_attributes.h"
 #include "../battle/read_trainer_party.h"
@@ -122,6 +124,7 @@ bool DelCellNum_Conv(uint8_t c){
     return true;
 }
 
+// Returns true (nc) if the number was successfully deleted.
 bool DelCellNum_Conv2(uint8_t c){
     // CALL(av_CheckCellNum);
     // IF_NC goto not_in_list;
@@ -541,6 +544,25 @@ void CheckPhoneContactTimeOfDay(void){
 
 }
 
+bool CheckPhoneContactTimeOfDay_Conv(uint8_t a){
+    // PUSH_HL;
+    // PUSH_BC;
+    // PUSH_DE;
+    // PUSH_AF;
+
+    // FARCALL(aCheckTime);
+    uint8_t curTime = CheckTime_Conv().a;
+    // POP_AF;
+    // AND_A(ANYTIME);
+    // AND_A_C;
+
+    // POP_DE;
+    // POP_BC;
+    // POP_HL;
+    // RET;
+    return ((a & (ANYTIME)) & curTime) != 0;
+}
+
 void ChooseRandomCaller(void){
 //  If no one is available to call, don't return anything.
     LD_A_addr(wNumAvailableCallers);
@@ -886,9 +908,9 @@ bool SpecialCallOnlyWhenOutside_Conv(void){
     // CP_A(ROUTE);
     // IF_Z goto outside;
     if(a == TOWN || a == ROUTE) {
-// outside:
-//     SCF;
-//     RET;
+    // outside:
+        // SCF;
+        // RET;
         return true;
     }
     // XOR_A_A;
@@ -983,15 +1005,13 @@ void MakePhoneCallFromPokegear_Conv(uint8_t caller){
     // LD_A_addr(wLinkMode);
     // AND_A_A;
     // IF_NZ goto OutOfArea;
-    if(gb_read(wLinkMode) != 0 || GetMapPhoneService_Conv() != 0) {
+    if(wram->wLinkMode != 0 || GetMapPhoneService_Conv() != 0) {
     OutOfArea:
-    // LD_B(BANK(aLoadOutOfAreaScript));
-    // LD_DE(mLoadOutOfAreaScript);
-    // CALL(aExecuteCallbackScript);
-    // RET;
-        REG_B = BANK(aLoadOutOfAreaScript);
-        REG_DE = mLoadOutOfAreaScript;
-        CALL(aExecuteCallbackScript);
+        // LD_B(BANK(aLoadOutOfAreaScript));
+        // LD_DE(mLoadOutOfAreaScript);
+        // CALL(aExecuteCallbackScript);
+        ExecuteCallbackScript_Conv(LoadOutOfAreaScript);
+        // RET;
         return;
     }
 
@@ -999,11 +1019,10 @@ void MakePhoneCallFromPokegear_Conv(uint8_t caller){
     // CALL(aGetMapPhoneService);
     // AND_A_A;
     // IF_NZ goto OutOfArea;
-    // if(GetMapPhoneService_Conv() != 0) goto OutOfArea;
 // If the person can't take a call at that time, don't do the call
     // LD_A_B;
     // LD_addr_A(wCurCaller);
-    gb_write(wCurCaller, caller);
+    wram->wCurCaller = caller;
     // LD_HL(mPhoneContacts);
     // LD_BC(PHONE_CONTACT_SIZE);
     // CALL(aAddNTimes);
@@ -1012,10 +1031,11 @@ void MakePhoneCallFromPokegear_Conv(uint8_t caller){
     // LD_HL(PHONE_CONTACT_SCRIPT1_TIME);
     // ADD_HL_DE;
     // LD_A_hl;
-    uint16_t contact_struct = AddNTimes_Conv(PHONE_CONTACT_SIZE, mPhoneContacts, caller);
-    REG_A = gb_read(contact_struct + PHONE_CONTACT_SCRIPT1_TIME);
-    CALL(aCheckPhoneContactTimeOfDay);
-    IF_Z goto OutOfArea;
+    const struct PhoneContact* contact_struct = PhoneContacts + caller;
+    // CALL(aCheckPhoneContactTimeOfDay);
+    // IF_Z goto OutOfArea;
+    if(!CheckPhoneContactTimeOfDay_Conv(contact_struct->calleeTime))
+        goto OutOfArea;
 // If we're in the same map as the person we're calling,
 // use the "Just talk to that person" script.
     // LD_HL(PHONE_CONTACT_MAP_GROUP);
@@ -1028,42 +1048,39 @@ void MakePhoneCallFromPokegear_Conv(uint8_t caller){
     // LD_A_addr(wMapNumber);
     // CP_A_hl;
     // IF_NZ goto GetPhoneScript;
-    if(gb_read(contact_struct + PHONE_CONTACT_MAP_GROUP) == gb_read(wMapGroup) && gb_read(contact_struct + PHONE_CONTACT_MAP_NUMBER) == gb_read(wMapNumber)) {
+    Script_fn_t script;
+    if(contact_struct->mapGroup == wram->wMapGroup && contact_struct->mapNumber == wram->wMapNumber) {
         // LD_B(BANK(aPhoneScript_JustTalkToThem));
         // LD_HL(mPhoneScript_JustTalkToThem);
+        script = PhoneScript_JustTalkToThem;
         // goto DoPhoneCall;
-        REG_B = BANK(aPhoneScript_JustTalkToThem);
-        REG_HL = mPhoneScript_JustTalkToThem;
     }
     else {
     // GetPhoneScript:
-    //     LD_HL(PHONE_CONTACT_SCRIPT1_BANK);
-    //     ADD_HL_DE;
-    //     LD_B_hl;
-    //     LD_HL(PHONE_CONTACT_SCRIPT1_ADDR);
-    //     ADD_HL_DE;
-    //     LD_A_hli;
-    //     LD_H_hl;
-    //     LD_L_A;
-    //     goto DoPhoneCall;
-        REG_B = gb_read(contact_struct + PHONE_CONTACT_SCRIPT1_BANK);
-        REG_HL = gb_read16(contact_struct + PHONE_CONTACT_SCRIPT1_ADDR);
+        // LD_HL(PHONE_CONTACT_SCRIPT1_BANK);
+        // ADD_HL_DE;
+        // LD_B_hl;
+        // LD_HL(PHONE_CONTACT_SCRIPT1_ADDR);
+        // ADD_HL_DE;
+        // LD_A_hli;
+        // LD_H_hl;
+        // LD_L_A;
+        // goto DoPhoneCall;
+        script = contact_struct->calleeScript;
     }
 
-DoPhoneCall:
+// DoPhoneCall:
     // LD_A_B;
     // LD_addr_A(wPhoneScriptBank);
-    gb_write(wPhoneScriptBank, REG_B);
     // LD_A_L;
     // LD_addr_A(wPhoneCaller);
     // LD_A_H;
     // LD_addr_A(wPhoneCaller + 1);
-    gb_write16(wPhoneCaller, REG_HL);
+    gPhoneCaller = script;
     // LD_B(BANK(aLoadPhoneScriptBank));
     // LD_DE(mLoadPhoneScriptBank);
-    REG_B = BANK(aLoadPhoneScriptBank);
-    REG_DE = mLoadPhoneScriptBank;
-    CALL(aExecuteCallbackScript);
+    // CALL(aExecuteCallbackScript);
+    ExecuteCallbackScript_Conv(LoadPhoneScriptBank);
     // RET;
 
 }
@@ -1229,30 +1246,39 @@ void Script_SpecialElmCall_LoadElmScript(void) {
     return LoadCallerScript_Conv(PHONE_ELM);
 }
 
+static void RingTwice_StartCall_CallerTextboxWithName(void) {
+    // LD_A_addr(wCurCaller);
+    // LD_B_A;
+    // CALL(aPhone_TextboxWithName);
+    // RET;
+    return Phone_TextboxWithName_Conv(wram->wCurCaller);
+}
+
+static void RingTwice_StartCall_Ring(void) {
+    // CALL(aPhone_StartRinging);
+    Phone_StartRinging();
+    // CALL(aPhone_Wait20Frames);
+    Phone_Wait20Frames();
+    // CALL(aRingTwice_StartCall_CallerTextboxWithName);
+    RingTwice_StartCall_CallerTextboxWithName();
+    // CALL(aPhone_Wait20Frames);
+    Phone_Wait20Frames();
+    // CALL(aPhone_CallerTextbox);
+    Phone_CallerTextbox_Conv();
+    // CALL(aPhone_Wait20Frames);
+    Phone_Wait20Frames();
+    // CALL(aRingTwice_StartCall_CallerTextboxWithName);
+    RingTwice_StartCall_CallerTextboxWithName();
+    // RET;
+}
+
 void RingTwice_StartCall(void){
-    CALL(aRingTwice_StartCall_Ring);
-    CALL(aRingTwice_StartCall_Ring);
-    FARCALL(aStubbedTrainerRankings_PhoneCalls);
-    RET;
-
-
-Ring:
-    CALL(aPhone_StartRinging);
-    CALL(aPhone_Wait20Frames);
-    CALL(aRingTwice_StartCall_CallerTextboxWithName);
-    CALL(aPhone_Wait20Frames);
-    CALL(aPhone_CallerTextbox);
-    CALL(aPhone_Wait20Frames);
-    CALL(aRingTwice_StartCall_CallerTextboxWithName);
-    RET;
-
-
-CallerTextboxWithName:
-    LD_A_addr(wCurCaller);
-    LD_B_A;
-    CALL(aPhone_TextboxWithName);
-    RET;
-
+    // CALL(aRingTwice_StartCall_Ring);
+    RingTwice_StartCall_Ring();
+    // CALL(aRingTwice_StartCall_Ring);
+    RingTwice_StartCall_Ring();
+    // FARCALL(aStubbedTrainerRankings_PhoneCalls);
+    // RET;
 }
 
 void PhoneCall(void){
@@ -1296,34 +1322,104 @@ CallerTextboxWithName:
 
 }
 
+static void PhoneCall_CallerTextboxWithName(void) {
+    // CALL(aPhone_CallerTextbox);
+    Phone_CallerTextbox_Conv();
+    // hlcoord(1, 2, wTilemap);
+    // LD_hl(0x62);
+    *coord(1, 2, wram->wTilemap) = 0x62;
+    // INC_HL;
+    // INC_HL;
+    // LD_A_addr(wPhoneScriptBank);
+    // LD_B_A;
+    // LD_A_addr(wPhoneCaller);
+    // LD_E_A;
+    // LD_A_addr(wPhoneCaller + 1);
+    // LD_D_A;
+    // CALL(aBrokenPlaceFarString);
+    // Replaced Broken function with this.
+    PlaceStringSimple(U82C("?@"), coord(3, 2, wram->wTilemap));
+    // RET;
+}
+
+static void PhoneCall_Ring(void) {
+    // CALL(aPhone_StartRinging);
+    Phone_StartRinging();
+    // CALL(aPhone_Wait20Frames);
+    Phone_Wait20Frames();
+    // CALL(aPhoneCall_CallerTextboxWithName);
+    PhoneCall_CallerTextboxWithName();
+    // CALL(aPhone_Wait20Frames);
+    Phone_Wait20Frames();
+    // CALL(aPhone_CallerTextbox);
+    Phone_CallerTextbox_Conv();
+    // CALL(aPhone_Wait20Frames);
+    Phone_Wait20Frames();
+    // CALL(aPhoneCall_CallerTextboxWithName);
+    PhoneCall_CallerTextboxWithName();
+    // RET;
+}
+
+// This function is unused and broken in the original game.
+void PhoneCall_Conv(Script_fn_t de){
+    // LD_A_B;
+    // LD_addr_A(wPhoneScriptBank);
+    // LD_A_E;
+    // LD_addr_A(wPhoneCaller);
+    // LD_A_D;
+    // LD_addr_A(wPhoneCaller + 1);
+    gPhoneCaller = de;
+    // CALL(aPhoneCall_Ring);
+    PhoneCall_Ring();
+    // CALL(aPhoneCall_Ring);
+    PhoneCall_Ring();
+    // FARCALL(aStubbedTrainerRankings_PhoneCalls);
+    // RET;
+}
+
 void Phone_NoSignal(void){
-    LD_DE(SFX_NO_SIGNAL);
-    CALL(aPlaySFX);
-    JR(mPhone_CallEnd);
+    // LD_DE(SFX_NO_SIGNAL);
+    // CALL(aPlaySFX);
+    PlaySFX_Conv(SFX_NO_SIGNAL);
+    // JR(mPhone_CallEnd);
+    return Phone_CallEnd();
 
 }
 
 void HangUp(void){
-    CALL(aHangUp_Beep);
-    CALL(aHangUp_Wait20Frames);
+    // CALL(aHangUp_Beep);
+    HangUp_Beep();
+    // CALL(aHangUp_Wait20Frames);
+    HangUp_Wait20Frames();
     return Phone_CallEnd();
 }
 
 void Phone_CallEnd(void){
-    CALL(aHangUp_BoopOn);
-    CALL(aHangUp_Wait20Frames);
-    CALL(aHangUp_BoopOff);
-    CALL(aHangUp_Wait20Frames);
-    CALL(aHangUp_BoopOn);
-    CALL(aHangUp_Wait20Frames);
-    CALL(aHangUp_BoopOff);
-    CALL(aHangUp_Wait20Frames);
-    CALL(aHangUp_BoopOn);
-    CALL(aHangUp_Wait20Frames);
-    CALL(aHangUp_BoopOff);
-    CALL(aHangUp_Wait20Frames);
-    RET;
-
+    // CALL(aHangUp_BoopOn);
+    HangUp_BoopOn();
+    // CALL(aHangUp_Wait20Frames);
+    HangUp_Wait20Frames();
+    // CALL(aHangUp_BoopOff);
+    HangUp_BoopOff();
+    // CALL(aHangUp_Wait20Frames);
+    HangUp_Wait20Frames();
+    // CALL(aHangUp_BoopOn);
+    HangUp_BoopOn();
+    // CALL(aHangUp_Wait20Frames);
+    HangUp_Wait20Frames();
+    // CALL(aHangUp_BoopOff);
+    HangUp_BoopOff();
+    // CALL(aHangUp_Wait20Frames);
+    HangUp_Wait20Frames();
+    // CALL(aHangUp_BoopOn);
+    HangUp_BoopOn();
+    // CALL(aHangUp_Wait20Frames);
+    HangUp_Wait20Frames();
+    // CALL(aHangUp_BoopOff);
+    HangUp_BoopOff();
+    // CALL(aHangUp_Wait20Frames);
+    HangUp_Wait20Frames();
+    // RET;
 }
 
 void HangUp_ShutDown(void){
@@ -1335,15 +1431,6 @@ void HangUp_ShutDown(void){
 }
 
 void HangUp_Beep(void){
-    LD_HL(mPhoneClickText);
-    CALL(aPrintText);
-    LD_DE(SFX_HANG_UP);
-    CALL(aPlaySFX);
-    RET;
-
-}
-
-void HangUp_Beep_Conv(void){
     // LD_HL(mPhoneClickText);
     // CALL(aPrintText);
     PrintText_Conv2(PhoneClickText);
@@ -1356,17 +1443,9 @@ void HangUp_Beep_Conv(void){
 const struct TextCmd PhoneClickText[] = {
     text_far(v_PhoneClickText)
     text_end
-    // return HangUp_BoopOn();
 };
 
 void HangUp_BoopOn(void){
-    LD_HL(mPhoneEllipseText);
-    CALL(aPrintText);
-    RET;
-
-}
-
-void HangUp_BoopOn_Conv(void){
     // LD_HL(mPhoneEllipseText);
     // CALL(aPrintText);
     // RET;
@@ -1379,29 +1458,12 @@ const struct TextCmd PhoneEllipseText[] = {
 };
 
 void HangUp_BoopOff(void){
-    CALL(aSpeechTextbox);
-    RET;
-
-}
-
-void HangUp_BoopOff_Conv(void){
     // CALL(aSpeechTextbox);
     // RET;
     return SpeechTextbox_Conv2();
 }
 
 void Phone_StartRinging(void){
-    CALL(aWaitSFX);
-    LD_DE(SFX_CALL);
-    CALL(aPlaySFX);
-    CALL(aPhone_CallerTextbox);
-    CALL(aUpdateSprites);
-    FARCALL(aPhoneRing_CopyTilemapAtOnce);
-    RET;
-
-}
-
-void Phone_StartRinging_Conv(void){
     // CALL(aWaitSFX);
     WaitSFX_Conv();
     // LD_DE(SFX_CALL);
@@ -1411,29 +1473,22 @@ void Phone_StartRinging_Conv(void){
     Phone_CallerTextbox_Conv();
     // CALL(aUpdateSprites);
     UpdateSprites_Conv();
-    FARCALL(aPhoneRing_CopyTilemapAtOnce);
+    // FARCALL(aPhoneRing_CopyTilemapAtOnce);
+    PhoneRing_CopyTilemapAtOnce_Conv();
     // RET;
-
 }
 
 void HangUp_Wait20Frames(void){
-    JR(mPhone_Wait20Frames);
-
+    // JR(mPhone_Wait20Frames);
+    return Phone_Wait20Frames();
 }
 
 void Phone_Wait20Frames(void){
-    LD_C(20);
-    CALL(aDelayFrames);
-    FARCALL(aPhoneRing_CopyTilemapAtOnce);
-    RET;
-
-}
-
-void Phone_Wait20Frames_Conv(void){
     // LD_C(20);
     // CALL(aDelayFrames);
     DelayFrames_Conv(20);
-    FARCALL(aPhoneRing_CopyTilemapAtOnce);
+    // FARCALL(aPhoneRing_CopyTilemapAtOnce);
+    PhoneRing_CopyTilemapAtOnce_Conv();
     // RET;
 }
 
@@ -1526,6 +1581,27 @@ void CheckCanDeletePhoneNumber(void){
 
 }
 
+bool CheckCanDeletePhoneNumber_Conv(uint8_t c){
+    // LD_A_C;
+    // CALL(aGetCallerTrainerClass);
+    struct TrainerId tid = GetCallerTrainerClass_Conv(c);
+    // LD_A_C;
+// and a
+    // RET_NZ ;
+    if(tid.trainerClass != 0)
+        return true;
+    // LD_A_B;
+    // CP_A(PHONECONTACT_MOM);
+    // RET_Z ;
+    // CP_A(PHONECONTACT_ELM);
+    // RET_Z ;
+    if(tid.trainerId == PHONECONTACT_MOM || tid.trainerId == PHONECONTACT_ELM)
+        return false;
+    // LD_C(0x1);
+    // RET;
+    return true;
+}
+
 void GetCallerTrainerClass(void){
     PUSH_HL;
     LD_HL(mPhoneContacts + PHONE_CONTACT_TRAINER_CLASS);
@@ -1610,6 +1686,7 @@ void GetCallerName_Conv(uint8_t* hl, struct TrainerId c){
         // CALL(aPlaceString);
         PlaceStringSimple(U82C(NonTrainerCallerNames[c.trainerId]), hl);
         // RET;
+        return;
     }
 
     // CALL(aPhone_GetTrainerName);
@@ -1680,9 +1757,43 @@ void GetCallerLocation(void){
 
 }
 
+struct CallerLocation GetCallerLocation_Conv(void){
+    // LD_A_addr(wCurCaller);
+    // CALL(aGetCallerTrainerClass);
+    struct TrainerId tr = GetCallerTrainerClass_Conv(wram->wCurCaller);
+    // LD_D_C;
+    // LD_E_B;
+    // PUSH_DE;
+    // LD_A_addr(wCurCaller);
+    // LD_HL(mPhoneContacts + PHONE_CONTACT_MAP_GROUP);
+    // LD_BC(PHONE_CONTACT_SIZE);
+    // CALL(aAddNTimes);
+    // LD_B_hl;
+    uint8_t mgroup = PhoneContacts[wram->wCurCaller].mapGroup;
+    // INC_HL;
+    // LD_C_hl;
+    uint8_t mnum = PhoneContacts[wram->wCurCaller].mapNumber;
+    // PUSH_BC;
+    // CALL(aGetWorldMapLocation);
+    uint8_t landmark = GetWorldMapLocation_Conv2(mgroup, mnum);
+    // LD_E_A;
+    // FARCALL(aGetLandmarkName);
+    GetLandmarkName_Conv(landmark);
+    // POP_BC;
+    // POP_DE;
+    // RET;
+    return (struct CallerLocation) {.tclass = tr.trainerClass, .tid = tr.trainerId, .mgroup = mgroup, .mnum = mnum};
+
+// INCLUDE "data/phone/phone_contacts.asm"
+
+// INCLUDE "data/phone/special_calls.asm"
+
+}
+
 bool PhoneOutOfAreaScript(script_s* s){
     SCRIPT_BEGIN
     writetext(PhoneOutOfAreaText);
+    s_end
     SCRIPT_END
 }
 
@@ -1694,6 +1805,7 @@ const struct TextCmd PhoneOutOfAreaText[] = {
 bool PhoneScript_JustTalkToThem(script_s* s){
     SCRIPT_BEGIN
     writetext(PhoneJustTalkToThemText);
+    s_end
     SCRIPT_END
 }
 

@@ -4,6 +4,7 @@
 #include "../../engine/overworld/events.h"
 #include "../../engine/rtc/timeset.h"
 #include "../../engine/events/magikarp.h"
+#include "../../engine/overworld/wildmons.h"
 #include "../../home/time_palettes.h"
 
 #define add_special(_n) [SP_##_n] = _n
@@ -104,7 +105,7 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(CheckFirstMonIsEgg),
     // add_special(RandomUnseenWildMon),
     // add_special(RandomPhoneWildMon),
-    // add_special(RandomPhoneMon),
+    add_special(RandomPhoneMon),
     // add_special(LoadUsedSpritesGFX),
     // add_special(PlaySlowCry),
     // add_special(SnorlaxAwake),

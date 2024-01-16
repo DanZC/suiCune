@@ -7427,7 +7427,7 @@ const struct Move* AIGetEnemyMove_Conv(move_t a){
     // LD_DE(wEnemyMoveStruct);
     // LD_A(BANK(aMoves));
     // CALL(aFarCopyBytes);
-    CopyBytes_Conv2(&wram->wEnemyMoveStruct, Moves + (a - 1), sizeof(wram->wEnemyMoveStruct));
+    CopyBytes_Conv2(&wram->wEnemyMoveStruct, Moves + a, sizeof(wram->wEnemyMoveStruct));
 
     // POP_BC;
     // POP_DE;

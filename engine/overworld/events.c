@@ -19,6 +19,8 @@
 #include "../../home/flag.h"
 #include "../menus/start_menu.h"
 #include "../events/forced_movement.h"
+#include "../events/whiteout.h"
+#include "../events/misc_scripts.h"
 
 // INCLUDE "constants.asm"
 
@@ -1884,48 +1886,54 @@ void DoRepelStep(void){
 }
 
 void DoPlayerEvent(void){
-    LD_A_addr(wScriptRunning);
-    AND_A_A;
-    RET_Z ;
+    // LD_A_addr(wScriptRunning);
+    // AND_A_A;
+    // RET_Z ;
+    if(!wram->wScriptRunning)
+        return;
 
-    CP_A(PLAYEREVENT_MAPSCRIPT);  // run script
-    RET_Z ;
+    // CP_A(PLAYEREVENT_MAPSCRIPT);  // run script
+    // RET_Z ;
+    if(wram->wScriptRunning == (uint8_t)PLAYEREVENT_MAPSCRIPT)
+        return;
 
-    CP_A(NUM_PLAYER_EVENTS);
-    RET_NC ;
+    // CP_A(NUM_PLAYER_EVENTS);
+    // RET_NC ;
+    if(wram->wScriptRunning >= NUM_PLAYER_EVENTS)
+        return;
 
-    LD_C_A;
-    LD_B(0);
-    LD_HL(mPlayerEventScriptPointers);
-    ADD_HL_BC;
-    ADD_HL_BC;
-    ADD_HL_BC;
-    LD_A_hli;
-    LD_addr_A(wScriptBank);
-    LD_A_hli;
-    LD_addr_A(wScriptPos);
-    LD_A_hl;
-    LD_addr_A(wScriptPos + 1);
-    RET;
-
+    // LD_C_A;
+    // LD_B(0);
+    // LD_HL(mPlayerEventScriptPointers);
+    // ADD_HL_BC;
+    // ADD_HL_BC;
+    // ADD_HL_BC;
+    // LD_A_hli;
+    // LD_addr_A(wScriptBank);
+    // LD_A_hli;
+    // LD_addr_A(wScriptPos);
+    // LD_A_hl;
+    // LD_addr_A(wScriptPos + 1);
+    Script_Goto(&gCurScript, PlayerEventScriptPointers[wram->wScriptRunning]);
+    // RET;
 }
 
-void PlayerEventScriptPointers(void){
+const Script_fn_t PlayerEventScriptPointers[] = {
 //  entries correspond to PLAYEREVENT_* constants
     //table_width ['3', 'PlayerEventScriptPointers']
-    //dba ['InvalidEventScript']  // PLAYEREVENT_NONE
-    //dba ['SeenByTrainerScript']  // PLAYEREVENT_SEENBYTRAINER
-    //dba ['TalkToTrainerScript']  // PLAYEREVENT_TALKTOTRAINER
-    //dba ['FindItemInBallScript']  // PLAYEREVENT_ITEMBALL
-    //dba ['EdgeWarpScript']  // PLAYEREVENT_CONNECTION
-    //dba ['WarpToNewMapScript']  // PLAYEREVENT_WARP
-    //dba ['FallIntoMapScript']  // PLAYEREVENT_FALL
-    //dba ['OverworldWhiteoutScript']  // PLAYEREVENT_WHITEOUT
-    //dba ['HatchEggScript']  // PLAYEREVENT_HATCH
-    //dba ['ChangeDirectionScript']  // PLAYEREVENT_JOYCHANGEFACING
-    //dba ['InvalidEventScript']  // (NUM_PLAYER_EVENTS)
-    //assert_table_length ['NUM_PLAYER_EVENTS + 1']
-}
+    [PLAYEREVENT_NONE] = InvalidEventScript,  // PLAYEREVENT_NONE
+    // [PLAYEREVENT_SEENBYTRAINER] = SeenByTrainerScript,  // PLAYEREVENT_SEENBYTRAINER
+    // [PLAYEREVENT_TALKTOTRAINER] = TalkToTrainerScript,  // PLAYEREVENT_TALKTOTRAINER
+    [PLAYEREVENT_ITEMBALL] = FindItemInBallScript,  // PLAYEREVENT_ITEMBALL
+    [PLAYEREVENT_CONNECTION] = EdgeWarpScript,  // PLAYEREVENT_CONNECTION
+    [PLAYEREVENT_WARP] = WarpToNewMapScript, // PLAYEREVENT_WARP
+    [PLAYEREVENT_FALL] = FallIntoMapScript,  // PLAYEREVENT_FALL
+    [PLAYEREVENT_WHITEOUT] = OverworldWhiteoutScript,  // PLAYEREVENT_WHITEOUT
+    [PLAYEREVENT_HATCH] = HatchEggScript,  // PLAYEREVENT_HATCH
+    [PLAYEREVENT_JOYCHANGEFACING] = ChangeDirectionScript,  // PLAYEREVENT_JOYCHANGEFACING
+    [NUM_PLAYER_EVENTS] = InvalidEventScript,  // (NUM_PLAYER_EVENTS)
+};
+static_assert(lengthof(PlayerEventScriptPointers) == NUM_PLAYER_EVENTS + 1, "");
 
 bool InvalidEventScript(script_s* s){
     SCRIPT_BEGIN
@@ -1936,13 +1944,14 @@ bool InvalidEventScript(script_s* s){
 void UnusedPlayerEventScript(void){
 //  //  unreferenced
     //end ['?']
-
-    return HatchEggScript();
 }
 
-void HatchEggScript(void){
+// TODO: Convert OverworldHatchEgg and finish this script.
+bool HatchEggScript(script_s* s){
+    SCRIPT_BEGIN
     //callasm ['OverworldHatchEgg']
-    //end ['?']
+    s_end
+    SCRIPT_END
 }
 
 bool WarpToNewMapScript(script_s* s){
@@ -1975,20 +1984,21 @@ bool LandAfterPitfallScript(script_s* s){
     SCRIPT_END
 }
 
-void EdgeWarpScript(void){
-    //reloadend ['MAPSETUP_CONNECTION']
-
-    return ChangeDirectionScript();
+bool EdgeWarpScript(script_s* s){
+    SCRIPT_BEGIN
+    reloadend(MAPSETUP_CONNECTION)
+    sjump(ChangeDirectionScript)
+    SCRIPT_END
 }
 
-void ChangeDirectionScript(void){
-    //deactivatefacing ['3']
-    //callasm ['EnableWildEncounters']
-    //end ['?']
+bool ChangeDirectionScript(script_s* s){
+    SCRIPT_BEGIN
+    deactivatefacing(3)
+    EnableWildEncounters();
+    s_end
+    SCRIPT_END
 
 // INCLUDE "engine/overworld/scripting.asm"
-
-    return WarpToSpawnPoint();
 }
 
 void WarpToSpawnPoint(void){
@@ -2252,7 +2262,7 @@ bool WildBattleScript(script_s* s){
     SCRIPT_BEGIN
     randomwildmon
     startbattle
-    //reloadmapafterbattle ['?']
+    reloadmapafterbattle
     s_end
     SCRIPT_END
 }
@@ -2478,6 +2488,91 @@ NoCall:
     XOR_A_A;
     RET;
 
+// INCLUDE "engine/overworld/cmd_queue.asm"
+
+}
+
+bool DoBikeStep_Conv(void){
+    // NOP;
+    // NOP;
+// If the bike shop owner doesn't have our number, or
+// if we've already gotten the call, we don't have to
+// be here.
+    // LD_HL(wStatusFlags2);
+    // BIT_hl(STATUSFLAGS2_BIKE_SHOP_CALL_F);
+    // IF_Z goto NoCall;
+    if(!bit_test(wram->wStatusFlags2, STATUSFLAGS2_BIKE_SHOP_CALL_F))
+        return false;
+
+// If we're not on the bike, we don't have to be here.
+    // LD_A_addr(wPlayerState);
+    // CP_A(PLAYER_BIKE);
+    // IF_NZ goto NoCall;
+    if(wram->wPlayerState != PLAYER_BIKE)
+        return false;
+
+// If we're not in an area of phone service, we don't
+// have to be here.
+    // CALL(aGetMapPhoneService);
+    // AND_A_A;
+    // IF_NZ goto NoCall;
+    if(GetMapPhoneService_Conv())
+        return false;
+
+// Check the bike step count and check whether we've
+// taken 65536 of them yet.
+    // LD_HL(wBikeStep);
+    // LD_A_hli;
+    // LD_D_A;
+    // LD_E_hl;
+    // CP_A(255);
+    // IF_NZ goto increment;
+    // LD_A_E;
+    // CP_A(255);
+    // IF_Z goto dont_increment;
+
+    if(wram->wBikeStep != 0xffff) {
+    // increment:
+        // INC_DE;
+        // LD_hl_E;
+        // DEC_HL;
+        // LD_hl_D;
+        wram->wBikeStep++;
+    }
+
+// dont_increment:
+// If we've taken at least 1024 steps, have the bike
+//  shop owner try to call us.
+    // LD_A_D;
+    // CP_A(HIGH(1024));
+    // IF_C goto NoCall;
+    if(wram->wBikeStep >= 1024) {
+    // If a call has already been queued, don't overwrite
+    // that call.
+        // LD_A_addr(wSpecialPhoneCallID);
+        // AND_A_A;
+        // IF_NZ goto NoCall;
+        if(wram->wSpecialPhoneCallID == 0) {
+
+        // Queue the call.
+            // LD_A(SPECIALCALL_BIKESHOP);
+            // LD_addr_A(wSpecialPhoneCallID);
+            // XOR_A_A;
+            // LD_addr_A(wSpecialPhoneCallID + 1);
+            wram->wSpecialPhoneCallID = SPECIALCALL_BIKESHOP;
+            // LD_HL(wStatusFlags2);
+            // RES_hl(STATUSFLAGS2_BIKE_SHOP_CALL_F);
+            bit_reset(wram->wStatusFlags2, STATUSFLAGS2_BIKE_SHOP_CALL_F);
+            // SCF;
+            // RET;
+            return true;
+        }
+    }
+
+// NoCall:
+    // XOR_A_A;
+    // RET;
+    return false;
 // INCLUDE "engine/overworld/cmd_queue.asm"
 
 }

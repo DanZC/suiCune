@@ -38,6 +38,10 @@ void Special_Conv(uint16_t de){
     // RET;
 
 // INCLUDE "data/events/special_pointers.asm"
+    if(SpecialsPointers[de] == NULL) {
+        printf("special %d is undefined.\n", de);
+        return;
+    }
 
     return SpecialsPointers[de]();
 }

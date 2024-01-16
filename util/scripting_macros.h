@@ -36,6 +36,8 @@
 #define itemnotify                  SCRIPT_EVCMD(Script_itemnotify_Conv)
 #define pocketisfull                SCRIPT_EVCMD(Script_pocketisfull_Conv)
 #define specialsound                SCRIPT_EVCMD(Script_specialsound_Conv)
+#define hangup                      SCRIPT_EVCMD(Script_hangup_Conv)
+#define askforphonenumber(_c)       SCRIPT_EVCMD(Script_askforphonenumber_Conv, _c)
 #define fruittree(_tree)            SCRIPT_EVCMD(Script_fruittree_Conv, _tree)
 #define trainerflagaction(_a)       SCRIPT_EVCMD(Script_trainerflagaction_Conv, _a)
 #define winlosstext(_w, _l)         SCRIPT_EVCMD(Script_winlosstext_Conv, _w, _l)
@@ -85,7 +87,7 @@
 #define ifless(_v, _s)              if(wram->wScriptVar < (_v)) goto _s;
 #define ifgreater(_v, _s)           if(wram->wScriptVar > (_v)) goto _s;
 #define jumpstd(_std)               SCRIPT_EVCMD(Script_jumpstd_Conv, stdscript_const(_std))
-#define callstd(_std)               SCRIPT_EVCMD(Script_callstd_Conv, _std)
+#define callstd(_std)               SCRIPT_EVCMD(Script_callstd_Conv, stdscript_const(_std))
 #define sdefer(_f)                  SCRIPT_EVCMD(Script_sdefer_Conv, _f)
 #define checkscene                  SCRIPT_EVCMD(Script_checkscene_Conv)
 #define setscene(_sc)               SCRIPT_EVCMD(Script_setscene_Conv, _sc)
@@ -105,6 +107,7 @@
 #define getlandmarkname(_a, _b)     SCRIPT_EVCMD(Script_getlandmarkname_Conv, _a, _b)
 #define gettrainername(b,c,a)       SCRIPT_EVCMD(Script_gettrainername_Conv, b, c, a)
 #define gettrainerclassname(b,c)    SCRIPT_EVCMD(Script_gettrainerclassname_Conv, b, c)
+#define getmoney(_b, _act)          SCRIPT_EVCMD(Script_getmoney_Conv, _b, _act)
 #define getnum(_num)                SCRIPT_EVCMD(Script_getnum_Conv, _num)
 #define getstring(_b, _str)         SCRIPT_EVCMD(Script_getstring_Conv, _b, _str)
 #define giveitem(_i, _q)            SCRIPT_EVCMD(Script_giveitem_Conv, _i, _q)
@@ -115,6 +118,9 @@
 #define givecoins(_amt)             SCRIPT_EVCMD(Script_givecoins_Conv, _amt)
 #define checkcoins(_amt)            SCRIPT_EVCMD(Script_checkcoins_Conv, _amt)
 #define checktime(_time)            SCRIPT_EVCMD(Script_checktime_Conv, _time)
+#define addcellnum(_c)              SCRIPT_EVCMD(Script_addcellnum_Conv, _c)
+#define delcellnum(_c)              SCRIPT_EVCMD(Script_delcellnum_Conv, _c)
+#define checkcellnum(_c)            SCRIPT_EVCMD(Script_checkcellnum_Conv, _c)
 #define specialphonecall(_id)       SCRIPT_EVCMD(Script_specialphonecall_Conv, _id)
 #define checkphonecall              SCRIPT_EVCMD(Script_checkphonecall_Conv)
 #define setevent(_flag)             SCRIPT_EVCMD(Script_setevent_Conv, _flag)
@@ -131,6 +137,7 @@
 #define closetext                   SCRIPT_EVCMD(Script_closetext_Conv)
 #define autoinput(_hl)              SCRIPT_EVCMD(Script_autoinput_Conv, _hl)
 #define pause(_a)                   SCRIPT_EVCMD(Script_pause_Conv, _a)
+#define deactivatefacing(_d)        SCRIPT_EVCMD(Script_deactivatefacing_Conv, _d)
 #define s_end                       SCRIPT_END2
 #define s_endcallback               SCRIPT_ENDCALLBACK
 #define s_endall                    SCRIPT_EVCMD(Script_endall_Conv)

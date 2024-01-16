@@ -89,25 +89,25 @@ NotSaving:
     ifequal(HAVE_MORE, HasMoney)
     goto NoMoney;
 SavingHasMoney:
-    // getmoney
+    getmoney(STRING_BUFFER_3, MOMS_MONEY)
     writetext(MomCheckBalanceText)
-    // yesorno
+    yesorno
     iftrue_jump(MomPhoneSaveMoneyScript)
     sjump(MomPhoneWontSaveMoneyScript)
 SavingNoMoney:
     writetext(MomImportantToSaveText)
-    // yesorno
+    yesorno
     iftrue_jump(MomPhoneSaveMoneyScript)
     sjump(MomPhoneWontSaveMoneyScript)
 NoMoney:
     writetext(MomYoureNotSavingText)
-    // yesorno
+    yesorno
     iftrue_jump(MomPhoneSaveMoneyScript)
     sjump(MomPhoneWontSaveMoneyScript)
 HasMoney:
-    // getmoney
+    getmoney(STRING_BUFFER_3, MOMS_MONEY)
     writetext(MomYouveSavedText)
-    // yesorno
+    yesorno
     iftrue_jump(MomPhoneSaveMoneyScript)
     sjump(MomPhoneWontSaveMoneyScript)
     SCRIPT_END
@@ -158,7 +158,7 @@ bool MomPhoneLectureScript(script_s* s) {
     setflag(ENGINE_MOM_ACTIVE)
     specialphonecall(SPECIALCALL_NONE)
     writetext(MomPhoneLectureText)
-    // yesorno
+    yesorno
     iftrue_jump(MomPhoneSaveMoneyScript)
     sjump(MomPhoneWontSaveMoneyScript)
     SCRIPT_END

@@ -165,6 +165,7 @@ bool NetworkBroadcastLAN(const uint8_t* name, uint16_t id, uint8_t gender) {
         printf("Could not send UDP packet on port %d. Is the port blocked?\n", UDP_PORT);
         return false;
     }
+    printf("Sent UDP packet on port %d.\n", UDP_PORT);
     gNetworkState = NETSTATE_HOSTING;
     return true;
 }
@@ -236,7 +237,7 @@ static void NetworkStageLANCandidate(void) {
 
 bool NetworkCheckLAN(void) {
     if(NetworkTryRecvUDP() && gLANClientCandidateCount < 16) {
-        if(packet->len < 13 || packet->len > 16) {
+        if(packet->len < UDP_PACKET_SIZE - 8 || packet->len > UDP_PACKET_SIZE + 8) {
             printf("Packet length was not in expected range (13-16): %d\n", packet->len);
             return false;
         }
