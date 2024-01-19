@@ -3941,20 +3941,20 @@ void init_function_pointers(void) {
     // engine/overworld/player_object.c
     REDIRECTED(BlankScreen);
     REDIRECTED(QueueFollowerFirstStep);
-    REDIRECTED(InitializeVisibleSprites);
+    // REDIRECTED(InitializeVisibleSprites);
     REDIRECTED(CopyMapObjectToObjectStruct);
-    REDIRECTED(SpawnPlayer);
+    // REDIRECTED(SpawnPlayer);
     REDIRECTED(CopyDECoordsToMapObject);
     REDIRECTED(SurfStartStep);
     REDIRECTED(WriteObjectXY);
-    REDIRECTED(RefreshPlayerCoords);
+    // REDIRECTED(RefreshPlayerCoords);
     REDIRECTED(TrainerWalkToPlayer);
     REDIRECTED(FollowNotExact);
     REDIRECTED(CopyTempObjectToObjectStruct);
     REDIRECTED(CopyObjectStruct);
     REDIRECTED(GetRelativeFacing);
     REDIRECTED(PlayerSpawn_ConvertCoords);
-    REDIRECTED(PlayerObjectTemplate);
+    // REDIRECTED(PlayerObjectTemplate);
     REDIRECTED(CheckObjectEnteringVisibleRange);
 
     // engine/tilesets/mapgroup_roofs.c
@@ -4632,4 +4632,42 @@ void init_function_pointers(void) {
     // REDIRECTED(MomHiHowAreYouText);
     // CONVERTED(DummyPredef3A_DummyFunction);
     // REDIRECTED(MomFoundAnItemText);
+
+    // engine/overworld/map_setup.c
+    // REDIRECTED(ReadMapSetupScript);
+    // REDIRECTED(RunMapSetupScript);
+    // REDIRECTED(SkipUpdateMapSprites);
+    // REDIRECTED(FadeOutMapMusic);
+    // REDIRECTED(ApplyMapPalettes);
+    // REDIRECTED(SuspendMapAnims);
+    // REDIRECTED(EnableTextAcceleration);
+    // REDIRECTED(ActivateMapAnims);
+    // REDIRECTED(LoadMapObjects);
+    // REDIRECTED(FadeMapMusicAndPalettes);
+    // REDIRECTED(CheckUpdatePlayerSprite);
+    // REDIRECTED(ForceMapMusic);
+    // REDIRECTED(ResetPlayerObjectAction);
+    // REDIRECTED(MapSetup_DummyFunction);
+
+    // engine/overworld/map_objects_2.c
+    // REDIRECTED(CheckObjectFlag);
+    // REDIRECTED(GetObjectTimeMask);
+    // REDIRECTED(LoadObjectMasks);
+
+    // engine/overworld/cmd_queue.c
+    // REDIRECTED(CmdQueue_StoneTable);
+    // REDIRECTED(GetNthCmdQueueEntry);
+    // REDIRECTED(DelCmdQueue);
+    // REDIRECTED(HandleCmdQueue);
+    // REDIRECTED(WriteCmdQueue);
+    // REDIRECTED(v_DelCmdQueue);
+    // REDIRECTED(CmdQueues_DecAnonJumptableIndex);
+    // REDIRECTED(CmdQueue_Type1);
+    // REDIRECTED(CmdQueue_Type4);
+    // REDIRECTED(ClearCmdQueue);
+    // REDIRECTED(CmdQueue_Type3);
+    // REDIRECTED(HandleQueuedCommand);
+    // REDIRECTED(CmdQueues_IncAnonJumptableIndex);
+    // REDIRECTED(CmdQueue_Null);
+    // REDIRECTED(CmdQueues_AnonJumptable);
 }

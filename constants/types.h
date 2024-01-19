@@ -1199,7 +1199,7 @@ struct MapConnectionData
     uint8_t connectedMapGroup;
     uint8_t connectedMapNumber;
     uint16_t connectionStripOffset;
-    const uint8_t* connectionStripLocation;
+    uint8_t* const connectionStripLocation;
     uint8_t connectionStripLength;
     uint8_t connectedMapLength;
     uint8_t connectionStripYOffset;

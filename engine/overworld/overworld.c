@@ -73,6 +73,7 @@ void v_ClearSprites(void){
 }
 
 void RefreshSprites(void){
+    return RefreshSprites_Conv();
     CALL(aRefreshSprites_Refresh);
     CALL(aLoadUsedSpritesGFX);
     RET;

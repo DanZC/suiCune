@@ -1,0 +1,15 @@
+void ClearCmdQueue(void);
+void HandleCmdQueue(void);
+void GetNthCmdQueueEntry(void);
+void WriteCmdQueue(void);
+void DelCmdQueue(void);
+void v_DelCmdQueue(void);
+void HandleQueuedCommand(void);
+void CmdQueues_AnonJumptable(void);
+void CmdQueues_IncAnonJumptableIndex(void);
+void CmdQueues_DecAnonJumptableIndex(void);
+void CmdQueue_Null(void);
+void CmdQueue_Type1(void);
+void CmdQueue_Type4(void);
+void CmdQueue_Type3(void);
+void CmdQueue_StoneTable(void);

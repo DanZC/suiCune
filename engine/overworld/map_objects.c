@@ -6,6 +6,7 @@
 #include "../../home/map.h"
 #include "player_object.h"
 #include "movement.h"
+#include "tile_events.h"
 #include "../../data/sprites/facings.h"
 
 uint8_t (*gMovementPointer)(void);
@@ -4430,50 +4431,65 @@ next:
 }
 
 void RefreshPlayerSprite(void) {
-    SET_PC(aRefreshPlayerSprite);
-    LD_A(movement_step_sleep);
-    LD_addr_A(wPlayerNextMovement);
-    LD_addr_A(wPlayerMovement);
-    XOR_A_A;
-    LD_addr_A(wPlayerTurningDirection);
-    LD_addr_A(wPlayerObjectStepFrame);
-    CALL(aTryResetPlayerAction);
-    FARCALL(aCheckWarpFacingDown);
-    CALL_C(aSpawnInFacingDown);
-    CALL(aSpawnInCustomFacing);
-    RET;
+    // SET_PC(aRefreshPlayerSprite);
+    // LD_A(movement_step_sleep);
+    // LD_addr_A(wPlayerNextMovement);
+    wram->wPlayerNextMovement = movement_step_sleep;
+    // LD_addr_A(wPlayerMovement);
+    wram->wPlayerMovement = movement_step_sleep;
+    // XOR_A_A;
+    // LD_addr_A(wPlayerTurningDirection);
+    wram->wPlayerTurningDirection = 0;
+    // LD_addr_A(wPlayerObjectStepFrame);
+    wram->wPlayerStruct.stepFrame = 0;
+    // CALL(aTryResetPlayerAction);
+    TryResetPlayerAction();
+    // FARCALL(aCheckWarpFacingDown);
+    if(CheckWarpFacingDown_Conv()) {
+        // CALL_C(aSpawnInFacingDown);
+        SpawnInFacingDown();
+    }
+    // CALL(aSpawnInCustomFacing);
+    SpawnInCustomFacing();
+    // RET;
 }
 
 void TryResetPlayerAction(void) {
-    SET_PC(aTryResetPlayerAction);
-    LD_HL(wPlayerSpriteSetupFlags);
-    BIT_hl(PLAYERSPRITESETUP_RESET_ACTION_F);
-    IF_NZ goto ok;
-    RET;
-
-ok:
-
-    LD_A(OBJECT_ACTION_00);
-    LD_addr_A(wPlayerAction);
-    RET;
+    // SET_PC(aTryResetPlayerAction);
+    // LD_HL(wPlayerSpriteSetupFlags);
+    // BIT_hl(PLAYERSPRITESETUP_RESET_ACTION_F);
+    // IF_NZ goto ok;
+    if(bit_test(wram->wPlayerSpriteSetupFlags, PLAYERSPRITESETUP_RESET_ACTION_F)) {
+    // ok:
+        // LD_A(OBJECT_ACTION_00);
+        // LD_addr_A(wPlayerAction);
+        wram->wPlayerStruct.action = OBJECT_ACTION_00;
+        // RET;
+        return;
+    }
+    // RET;
+    return;
 }
 
 void SpawnInCustomFacing(void) {
-    SET_PC(aSpawnInCustomFacing);
-    LD_HL(wPlayerSpriteSetupFlags);
-    BIT_hl(PLAYERSPRITESETUP_CUSTOM_FACING_F);
-    RET_Z;
-    LD_A_addr(wPlayerSpriteSetupFlags);
-    AND_A(PLAYERSPRITESETUP_FACING_MASK);
-    ADD_A_A;
-    ADD_A_A;
-    JR(mv_ContinueSpawnFacing);
+    // SET_PC(aSpawnInCustomFacing);
+    // LD_HL(wPlayerSpriteSetupFlags);
+    // BIT_hl(PLAYERSPRITESETUP_CUSTOM_FACING_F);
+    // RET_Z;
+    if(!bit_test(wram->wPlayerSpriteSetupFlags, PLAYERSPRITESETUP_CUSTOM_FACING_F))
+        return;
+    // LD_A_addr(wPlayerSpriteSetupFlags);
+    // AND_A(PLAYERSPRITESETUP_FACING_MASK);
+    // ADD_A_A;
+    // ADD_A_A;
+    // JR(mv_ContinueSpawnFacing);
+    return v_ContinueSpawnFacing_Conv((wram->wPlayerSpriteSetupFlags & (PLAYERSPRITESETUP_FACING_MASK)) << 2);
 }
 
 void SpawnInFacingDown(void) {
-    SET_PC(aSpawnInFacingDown);
-    LD_A(DOWN);
-    return v_ContinueSpawnFacing();
+    // SET_PC(aSpawnInFacingDown);
+    // LD_A(DOWN);
+    return v_ContinueSpawnFacing_Conv(DOWN);
 }
 
 void v_ContinueSpawnFacing(void) {
@@ -4481,6 +4497,14 @@ void v_ContinueSpawnFacing(void) {
     LD_BC(wPlayerStruct);
     CALL(aSetSpriteDirection);
     RET;
+}
+
+void v_ContinueSpawnFacing_Conv(uint8_t a) {
+    // SET_PC(av_ContinueSpawnFacing);
+    // LD_BC(wPlayerStruct);
+    // CALL(aSetSpriteDirection);
+    SetSpriteDirection_Conv(&wram->wPlayerStruct, a);
+    // RET;
 }
 
 void v_SetPlayerPalette(void) {
@@ -4506,6 +4530,36 @@ void v_SetPlayerPalette(void) {
     OR_A_D;
     LD_hl_A;
     RET;
+}
+
+void v_SetPlayerPalette_Conv(uint8_t d) {
+    // SET_PC(av_SetPlayerPalette);
+    // LD_A_D;
+    // AND_A(1 << 7);
+    // RET_Z;
+    if((d & (1 << 7)) == 0)
+        return;
+    // LD_BC(0);  // debug?
+    // LD_HL(OBJECT_FACING);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // OR_A_D;
+    // LD_hl_A;
+    // LD_A_D;
+    // SWAP_A;
+    // AND_A(PALETTE_MASK);
+    // LD_D_A;
+    d = ((d << 4) | (d >> 4)) & PALETTE_MASK;
+    // LD_BC(wPlayerStruct);
+    // LD_HL(OBJECT_PALETTE);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // AND_A(~PALETTE_MASK);
+    wram->wPlayerStruct.palette &= ~PALETTE_MASK;
+    // OR_A_D;
+    // LD_hl_A;
+    wram->wPlayerStruct.palette |= d;
+    // RET;
 }
 
 void StartFollow(void) {

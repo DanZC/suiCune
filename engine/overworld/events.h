@@ -96,4 +96,4 @@ bool DoBikeStep_Conv(void);
 //#include "constants.h"
 #include "scripting.h"
 //#include "data/wild/bug_contest_mons.h"
-//#include "engine/overworld/cmd_queue.h"
+#include "cmd_queue.h"

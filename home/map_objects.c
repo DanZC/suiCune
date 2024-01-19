@@ -3,6 +3,7 @@
 #include "../engine/overworld/map_objects.h"
 #include "../engine/overworld/overworld.h"
 #include "../engine/overworld/player_object.h"
+#include "copy.h"
 #include "array.h"
 #include "../data/collision/collision_permissions.h"
 #include "../data/sprites/map_objects.h"
@@ -625,6 +626,114 @@ no:
 
 }
 
+bool CheckObjectTime_Conv(struct MapObject* bc){
+    static const uint8_t TimesOfDay[] = {
+        //  entries correspond to TimeOfDay values
+        MORN,
+        DAY,
+        NITE,
+    };
+    // LD_HL(MAPOBJECT_HOUR);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // CP_A(-1);
+    // IF_NZ goto check_hour;
+    if(bc->objectHour == 0xff) {
+        // LD_HL(MAPOBJECT_TIMEOFDAY);
+        // ADD_HL_BC;
+        // LD_A_hl;
+        // CP_A(-1);
+        // IF_Z goto timeofday_always;
+        if(bc->objectTimeOfDay == 0xff) {
+        // timeofday_always:
+            // AND_A_A;
+            // RET;
+            return false;
+        }
+        else {
+            // LD_HL(mCheckObjectTime_TimesOfDay);
+            // LD_A_addr(wTimeOfDay);
+            // ADD_A_L;
+            // LD_L_A;
+            // IF_NC goto ok;
+            // INC_H;
+
+
+        // ok:
+            // LD_A_hl;
+            // LD_HL(MAPOBJECT_TIMEOFDAY);
+            // ADD_HL_BC;
+            // AND_A_hl;
+            // IF_NZ goto timeofday_always;
+            if(TimesOfDay[wram->wTimeOfDay] & bc->objectTimeOfDay)
+                return true;
+            // SCF;
+            // RET;
+            return false;
+        }
+    }
+    else {
+    // check_hour:
+        // LD_HL(MAPOBJECT_HOUR);
+        // ADD_HL_BC;
+        // LD_D_hl;
+        uint8_t d = bc->objectHour;
+        // LD_HL(MAPOBJECT_TIMEOFDAY);
+        // ADD_HL_BC;
+        // LD_E_hl;
+        uint8_t e = bc->objectTimeOfDay;
+        // LD_HL(hHours);
+        // LD_A_D;
+        // CP_A_E;
+        // IF_Z goto yes;
+        if(d == e) {
+            return true;
+        }
+        // IF_C goto check_timeofday;
+        else if(d < e) {
+        // check_timeofday:
+            // LD_A_E;
+            // CP_A_hl;
+            // IF_C goto no;
+            if(e < hram->hHours)
+                return false;
+            // LD_A_hl;
+            // CP_A_D;
+            // IF_NC goto yes;
+            if(hram->hHours >= d)
+                return true;
+            // goto no;
+            return false;
+        }
+        else {
+            // LD_A_hl;
+            // CP_A_D;
+            // IF_NC goto yes;
+            if(hram->hHours >= d)
+                return true;
+            // CP_A_E;
+            // IF_C goto yes;
+            // IF_Z goto yes;
+            if(hram->hHours <= e)
+                return true;
+            // goto no;
+            return false;
+        }
+
+
+    yes:
+        // AND_A_A;
+        // RET;
+        return true;
+
+
+    no:
+        // SCF;
+        // RET;
+        return false;
+    }
+}
+
 void CopyMapObjectStruct(void){
     //  //  unreferenced
     LDH_addr_A(hMapObjectIndex);
@@ -752,7 +861,7 @@ void DeleteObjectStruct_Conv(uint8_t a){
 }
 
 void CopyPlayerObjectTemplate(void){
-        PUSH_HL;
+    PUSH_HL;
     CALL(aGetMapObject);
     LD_D_B;
     LD_E_C;
@@ -764,6 +873,23 @@ void CopyPlayerObjectTemplate(void){
     CALL(aCopyBytes);
     RET;
 
+}
+
+void CopyPlayerObjectTemplate_Conv(const struct ObjEvent* hl, uint8_t a){
+    // PUSH_HL;
+    // CALL(aGetMapObject);
+    // LD_D_B;
+    // LD_E_C;
+    struct MapObject* de = GetMapObject_Conv(a);
+    // LD_A(-1);
+    // LD_de_A;
+    de->structId = 0xff;
+    // INC_DE;
+    // POP_HL;
+    // LD_BC(MAPOBJECT_LENGTH - 1);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(&de->sprite, hl, MAPOBJECT_LENGTH - 1);
+    // RET;
 }
 
 void DeleteFollowerMapObject(void){

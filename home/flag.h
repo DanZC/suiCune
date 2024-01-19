@@ -1,6 +1,9 @@
 void ResetMapBufferEventFlags(void);
+void ResetMapBufferEventFlags_Conv(void);
 void ResetBikeFlags(void);
+void ResetBikeFlags_Conv(void);
 void ResetFlashIfOutOfCave(void);
+void ResetFlashIfOutOfCave_Conv(void);
 void EventFlagAction(void);
 void EventFlagAction_Conv(uint16_t bit, uint8_t func);
 uint8_t EventFlagAction_Conv2(uint16_t bit, uint8_t func);

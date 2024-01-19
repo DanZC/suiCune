@@ -1,14 +1,16 @@
 void BlankScreen(void);
 void SpawnPlayer(void);
-void PlayerObjectTemplate(void);
+// void PlayerObjectTemplate(void);
+extern const struct ObjEvent PlayerObjectTemplate;
 void CopyDECoordsToMapObject(void);
 void CopyDECoordsToMapObject_Conv(uint8_t d, uint8_t e, uint8_t b);
 void PlayerSpawn_ConvertCoords(void);
+void PlayerSpawn_ConvertCoords_Conv(uint8_t b);
 void WriteObjectXY(void);
 void WriteObjectXY_Conv(uint8_t b);
 void RefreshPlayerCoords(void);
 void CopyObjectStruct(void);
-bool CopyObjectStruct_Conv(struct MapObject* bc, uint8_t a);
+uint8_t CopyObjectStruct_Conv(struct MapObject* bc, uint8_t a);
 void CopyMapObjectToObjectStruct(void);
 void CopyMapObjectToObjectStruct_Conv(struct Object* de, struct MapObject* bc, uint8_t mapObjIdx, uint8_t objIdx);
 void InitializeVisibleSprites(void);

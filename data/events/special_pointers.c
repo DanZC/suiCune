@@ -1,10 +1,12 @@
 #include "../../constants.h"
+#include "../../engine/events/specials.h"
 #include "../../home/map_objects.h"
 #include "../../engine/link/link.h"
 #include "../../engine/overworld/events.h"
 #include "../../engine/rtc/timeset.h"
 #include "../../engine/events/magikarp.h"
 #include "../../engine/overworld/wildmons.h"
+#include "../../engine/overworld/overworld.h"
 #include "../../home/time_palettes.h"
 
 #define add_special(_n) [SP_##_n] = _n
@@ -166,13 +168,13 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(SampleKenjiBreakCountdown),
     // add_special(BeastsCheck),
     // add_special(MonCheck),
-    // add_special(SetPlayerPalette),
+    add_special(SetPlayerPalette),
     // add_special(UnusedBattleTowerDummySpecial2),
     // add_special(Mobile_SelectThreeMons),
     // add_special(Function1037eb),
     // add_special(Function10383c),
     // add_special(StubbedTrainerRankings_Healings),
-    // add_special(RefreshSprites),
+    add_special(RefreshSprites),
     // add_special(Function1037c2),
     // add_special(Mobile_DummyReturnFalse),
     // add_special(Function103780),

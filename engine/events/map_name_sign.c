@@ -9,6 +9,7 @@
 #define MAP_NAME_SIGN_START (0x60)
 
 void InitMapNameSign(void){
+    return InitMapNameFrame_Conv();
     XOR_A_A;
     LDH_addr_A(hBGMapMode);
     FARCALL(aInitMapNameSign_inefficient_farcall);  // this is a waste of 6 ROM bytes and 6 stack bytes

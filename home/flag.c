@@ -24,8 +24,8 @@ void ResetBikeFlags(void){
 }
 
 void ResetBikeFlags_Conv(void){
-    gb_write(wBikeFlags, 0);
-    gb_write(wBikeFlags + 1, 0);
+    wram->wBikeFlags = 0;
+    wram->skip_119[0] = 0;
 }
 
 void ResetFlashIfOutOfCave(void){
@@ -48,7 +48,7 @@ void ResetFlashIfOutOfCave_Conv(void){
     uint8_t env = wram->wEnvironment;
     if(env == ROUTE || env == TOWN)
     {
-        wram->wStatusFlags &= ((1 << STATUSFLAGS_FLASH_F) ^ 0xFF);
+        bit_reset(wram->wStatusFlags, STATUSFLAGS_FLASH_F);
     }
 }
 

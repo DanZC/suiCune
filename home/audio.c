@@ -375,6 +375,13 @@ void MinVolume(void) {
     RET;                 // ret
 }
 
+void MinVolume_Conv(void) {
+    // XOR_A_A;             // xor a
+    // LD_addr_A(wVolume);  // ld [wVolume], a
+    // RET;                 // ret
+    wram->wVolume = 0;
+}
+
 void FadeOutToMusic(void) {
     //  //  unreferenced
     LD_A(4);                // ld a, 4
@@ -601,6 +608,27 @@ void TryRestartMapMusic(void) {
     XOR_A_A;                               // xor a
     LD_addr_A(wDontPlayMapMusicOnReload);  // ld [wDontPlayMapMusicOnReload], a
     RET;                                   // ret
+}
+
+void TryRestartMapMusic_Conv(void) {
+    // SET_PC(0x3EEDU);
+    // LD_A_addr(wDontPlayMapMusicOnReload);  // ld a, [wDontPlayMapMusicOnReload]
+    // AND_A_A;                               // and a
+    // JR_Z(mRestartMapMusic);                // jr z, RestartMapMusic
+    if(!wram->wDontPlayMapMusicOnReload)
+        return RestartMapMusic_Conv();
+    // XOR_A_A;                               // xor a
+    // LD_addr_A(wMapMusic);                  // ld [wMapMusic], a
+    wram->wMapMusic = 0;
+    // LD_DE(MUSIC_NONE);                     // ld de, MUSIC_NONE
+    // CALL(aPlayMusic);                      // call PlayMusic
+    PlayMusic_Conv(MUSIC_NONE);
+    // CALL(aDelayFrame);                     // call DelayFrame
+    DelayFrame();
+    // XOR_A_A;                               // xor a
+    // LD_addr_A(wDontPlayMapMusicOnReload);  // ld [wDontPlayMapMusicOnReload], a
+    wram->wDontPlayMapMusicOnReload = FALSE;
+    // RET;                                   // ret
 }
 
 void RestartMapMusic(void) {

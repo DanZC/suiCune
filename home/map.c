@@ -42,6 +42,10 @@ const struct MapCallback* gCurMapCallbacksPointer;
 uint8_t gCurMapSceneScriptCount;
 const Script_fn_t* gCurMapSceneScriptsPointer;
 
+const char* gMapBlocksPath;
+asset_s gMapBlocks;
+const char* gMapConnectionBlocksPath[4];
+asset_s gMapConnectionBlocks[4];
 const struct MapScripts* gMapScriptsPointer;
 const struct MapEvents* gMapEventsPointer;
 
@@ -54,16 +58,13 @@ struct BGEvent gCurBGEvent;
 //  Functions dealing with rendering and interacting with maps.
 
 void ClearUnusedMapBuffer(void){
-    LD_HL(wUnusedMapBuffer);
-    LD_BC(wUnusedMapBufferEnd - wUnusedMapBuffer);
-    LD_A(0);
-    CALL(aByteFill);
-    RET;
+    // LD_HL(wUnusedMapBuffer);
+    // LD_BC(wUnusedMapBufferEnd - wUnusedMapBuffer);
+    // LD_A(0);
+    // CALL(aByteFill);
+    ByteFill_Conv2(wram->wUnusedMapBuffer, (wUnusedMapBufferEnd - wUnusedMapBuffer), 0);
+    // RET;
 
-}
-
-void ClearUnusedMapBuffer_Conv(void){
-    ByteFill_Conv(wUnusedMapBuffer, (wUnusedMapBufferEnd - wUnusedMapBuffer), 0);
 }
 
 void CheckScenes(void){
@@ -1130,6 +1131,11 @@ void CopyMapAttributes_Conv(const struct MapAttr* attr){
     // wMapWidth:: db
     // wMapBlocksBank:: db
     // wMapBlocksPointer:: dw
+    gMapBlocksPath = attr->blocksPath;
+    if(gMapBlocks.ptr != NULL) {
+        FreeAsset(gMapBlocks);
+    }
+    gMapBlocks = LoadAsset(gMapBlocksPath);
     // wMapScriptsBank:: db
     // wMapScriptsPointer:: dw
     gMapScriptsPointer = attr->scripts;
@@ -1780,258 +1786,327 @@ void GetWarpDestCoords_Conv(void){
 }
 
 void LoadBlockData(void){
-    LD_HL(wOverworldMapBlocks);
-    LD_BC(wOverworldMapBlocksEnd - wOverworldMapBlocks);
-    LD_A(0);
-    CALL(aByteFill);
-    CALL(aChangeMap);
-    CALL(aFillMapConnections);
-    LD_A(MAPCALLBACK_TILES);
-    CALL(aRunMapCallback);
-    RET;
-
+    // LD_HL(wOverworldMapBlocks);
+    // LD_BC(wOverworldMapBlocksEnd - wOverworldMapBlocks);
+    // LD_A(0);
+    // CALL(aByteFill);
+    ByteFill_Conv2(wram->wOverworldMapBlocks, sizeof(wram->wOverworldMapBlocks), 0);
+    // CALL(aChangeMap);
+    ChangeMap();
+    // CALL(aFillMapConnections);
+    FillMapConnections();
+    // LD_A(MAPCALLBACK_TILES);
+    // CALL(aRunMapCallback);
+    RunMapCallback_Conv(MAPCALLBACK_TILES);
+    // RET;
 }
 
 void ChangeMap(void){
-    LDH_A_addr(hROMBank);
-    PUSH_AF;
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
 
-    LD_HL(wOverworldMapBlocks);
-    LD_A_addr(wMapWidth);
-    LDH_addr_A(hConnectedMapWidth);
-    ADD_A(0x6);
-    LDH_addr_A(hConnectionStripLength);
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    ADD_HL_BC;
-    ADD_HL_BC;
-    LD_C(3);
-    ADD_HL_BC;
-    LD_A_addr(wMapBlocksBank);
-    RST(aBankswitch);
+    // LD_HL(wOverworldMapBlocks);
+    uint8_t* hl = wram->wOverworldMapBlocks;
+    // LD_A_addr(wMapWidth);
+    // LDH_addr_A(hConnectedMapWidth);
+    hram->hConnectedMapWidth = wram->wMapWidth;
+    // ADD_A(0x6);
+    // LDH_addr_A(hConnectionStripLength);
+    hram->hConnectionStripLength = wram->wMapWidth & 0x6;
+    // LD_C_A;
+    // LD_B(0);
+    // ADD_HL_BC;
+    // ADD_HL_BC;
+    // ADD_HL_BC;
+    hl += (wram->wMapWidth & 0x6) * 3;
+    // LD_C(3);
+    // ADD_HL_BC;
+    hl += 3;
+    // LD_A_addr(wMapBlocksBank);
+    // RST(aBankswitch);
 
-    LD_A_addr(wMapBlocksPointer);
-    LD_E_A;
-    LD_A_addr(wMapBlocksPointer + 1);
-    LD_D_A;
-    LD_A_addr(wMapHeight);
-    LD_B_A;
+    // LD_A_addr(wMapBlocksPointer);
+    // LD_E_A;
+    // LD_A_addr(wMapBlocksPointer + 1);
+    // LD_D_A;
+    uint8_t* de = gMapBlocks.ptr;
+    // LD_A_addr(wMapHeight);
+    // LD_B_A;
+    uint8_t b = wram->wMapHeight;
 
-row:
-    PUSH_HL;
-    LDH_A_addr(hConnectedMapWidth);
-    LD_C_A;
+    do {
+    // row:
+        // PUSH_HL;
+        uint8_t* hl2 = hl;
+        // LDH_A_addr(hConnectedMapWidth);
+        // LD_C_A;
+        uint8_t c = hram->hConnectedMapWidth;
 
-col:
-    LD_A_de;
-    INC_DE;
-    LD_hli_A;
-    DEC_C;
-    IF_NZ goto col;
-    POP_HL;
-    LDH_A_addr(hConnectionStripLength);
-    ADD_A_L;
-    LD_L_A;
-    IF_NC goto okay;
-    INC_H;
+        do {
+        // col:
+            // LD_A_de;
+            // INC_DE;
+            // LD_hli_A;
+            *(hl++) = *(de++);
+            // DEC_C;
+            // IF_NZ goto col;
+        } while(--c != 0);
+        // POP_HL;
+        // LDH_A_addr(hConnectionStripLength);
+        // ADD_A_L;
+        // LD_L_A;
+        // IF_NC goto okay;
+        // INC_H;
 
-okay:
-    DEC_B;
-    IF_NZ goto row;
+    // okay:
+        hl = hl2 + hram->hConnectionStripLength;
+        // DEC_B;
+        // IF_NZ goto row;
+    } while(--b != 0);
 
-    POP_AF;
-    RST(aBankswitch);
-    RET;
-
+    // POP_AF;
+    // RST(aBankswitch);
+    // RET;
 }
 
 void FillMapConnections(void){
 //  North
-    LD_A_addr(wNorthConnectedMapGroup);
-    CP_A(0xff);
-    IF_Z goto South;
-    LD_B_A;
-    LD_A_addr(wNorthConnectedMapNumber);
-    LD_C_A;
-    CALL(aGetAnyMapBlocksBank);
+    // LD_A_addr(wNorthConnectedMapGroup);
+    // CP_A(0xff);
+    // IF_Z goto South;
+    if(gMapConnections[NORTH_F].connectedMapGroup != 0xff) {
+        // LD_B_A;
+        // LD_A_addr(wNorthConnectedMapNumber);
+        // LD_C_A;
+        // CALL(aGetAnyMapBlocksBank);
 
-    LD_A_addr(wNorthConnectionStripPointer);
-    LD_L_A;
-    LD_A_addr(wNorthConnectionStripPointer + 1);
-    LD_H_A;
-    LD_A_addr(wNorthConnectionStripLocation);
-    LD_E_A;
-    LD_A_addr(wNorthConnectionStripLocation + 1);
-    LD_D_A;
-    LD_A_addr(wNorthConnectionStripLength);
-    LDH_addr_A(hConnectionStripLength);
-    LD_A_addr(wNorthConnectedMapWidth);
-    LDH_addr_A(hConnectedMapWidth);
-    CALL(aFillNorthConnectionStrip);
+        // LD_A_addr(wNorthConnectionStripPointer);
+        // LD_L_A;
+        // LD_A_addr(wNorthConnectionStripPointer + 1);
+        // LD_H_A;
+        asset_s a = LoadAsset(GetAnyMapPointer_Conv2(gMapConnections[NORTH_F].connectedMapGroup, gMapConnections[NORTH_F].connectedMapNumber)->attr->blocksPath);
+        uint8_t* hl = a.ptr + gMapConnections[NORTH_F].connectionStripOffset;
+        // LD_A_addr(wNorthConnectionStripLocation);
+        // LD_E_A;
+        // LD_A_addr(wNorthConnectionStripLocation + 1);
+        // LD_D_A;
+        uint8_t* de = gMapConnections[NORTH_F].connectionStripLocation;
+        // LD_A_addr(wNorthConnectionStripLength);
+        // LDH_addr_A(hConnectionStripLength);
+        hram->hConnectionStripLength = gMapConnections[NORTH_F].connectionStripLength;
+        // LD_A_addr(wNorthConnectedMapWidth);
+        // LDH_addr_A(hConnectedMapWidth);
+        hram->hConnectedMapWidth = gMapConnections[NORTH_F].connectedMapLength;
+        // CALL(aFillNorthConnectionStrip);
+        FillNorthConnectionStrip(de, hl);
+        FreeAsset(a);
+    }
 
+// South:
+    // LD_A_addr(wSouthConnectedMapGroup);
+    // CP_A(0xff);
+    // IF_Z goto West;
+    if(gMapConnections[SOUTH_F].connectedMapGroup != 0xff) {
+        // LD_B_A;
+        // LD_A_addr(wSouthConnectedMapNumber);
+        // LD_C_A;
+        // CALL(aGetAnyMapBlocksBank);
 
-South:
-    LD_A_addr(wSouthConnectedMapGroup);
-    CP_A(0xff);
-    IF_Z goto West;
-    LD_B_A;
-    LD_A_addr(wSouthConnectedMapNumber);
-    LD_C_A;
-    CALL(aGetAnyMapBlocksBank);
+        // LD_A_addr(wSouthConnectionStripPointer);
+        // LD_L_A;
+        // LD_A_addr(wSouthConnectionStripPointer + 1);
+        // LD_H_A;
+        asset_s a = LoadAsset(GetAnyMapPointer_Conv2(gMapConnections[SOUTH_F].connectedMapGroup, gMapConnections[SOUTH_F].connectedMapNumber)->attr->blocksPath);
+        uint8_t* hl = a.ptr + gMapConnections[SOUTH_F].connectionStripOffset;
+        // LD_A_addr(wSouthConnectionStripLocation);
+        // LD_E_A;
+        // LD_A_addr(wSouthConnectionStripLocation + 1);
+        // LD_D_A;
+        uint8_t* de = gMapConnections[SOUTH_F].connectionStripLocation;
+        // LD_A_addr(wSouthConnectionStripLength);
+        // LDH_addr_A(hConnectionStripLength);
+        hram->hConnectionStripLength = gMapConnections[SOUTH_F].connectionStripLength;
+        // LD_A_addr(wSouthConnectedMapWidth);
+        // LDH_addr_A(hConnectedMapWidth);
+        hram->hConnectedMapWidth = gMapConnections[SOUTH_F].connectedMapLength;
+        // CALL(aFillSouthConnectionStrip);
+        FillSouthConnectionStrip(de, hl);
+        FreeAsset(a);
+    }
 
-    LD_A_addr(wSouthConnectionStripPointer);
-    LD_L_A;
-    LD_A_addr(wSouthConnectionStripPointer + 1);
-    LD_H_A;
-    LD_A_addr(wSouthConnectionStripLocation);
-    LD_E_A;
-    LD_A_addr(wSouthConnectionStripLocation + 1);
-    LD_D_A;
-    LD_A_addr(wSouthConnectionStripLength);
-    LDH_addr_A(hConnectionStripLength);
-    LD_A_addr(wSouthConnectedMapWidth);
-    LDH_addr_A(hConnectedMapWidth);
-    CALL(aFillSouthConnectionStrip);
+// West:
+    // LD_A_addr(wWestConnectedMapGroup);
+    // CP_A(0xff);
+    // IF_Z goto East;
+    if(gMapConnections[WEST_F].connectedMapGroup != 0xff) {
+        // LD_B_A;
+        // LD_A_addr(wWestConnectedMapNumber);
+        // LD_C_A;
+        // CALL(aGetAnyMapBlocksBank);
 
+        // LD_A_addr(wWestConnectionStripPointer);
+        // LD_L_A;
+        // LD_A_addr(wWestConnectionStripPointer + 1);
+        // LD_H_A;
+        asset_s a = LoadAsset(GetAnyMapPointer_Conv2(gMapConnections[WEST_F].connectedMapGroup, gMapConnections[WEST_F].connectedMapNumber)->attr->blocksPath);
+        uint8_t* hl = a.ptr + gMapConnections[WEST_F].connectionStripOffset;
+        // LD_A_addr(wWestConnectionStripLocation);
+        // LD_E_A;
+        // LD_A_addr(wWestConnectionStripLocation + 1);
+        // LD_D_A;
+        uint8_t* de = gMapConnections[WEST_F].connectionStripLocation;
+        // LD_A_addr(wWestConnectionStripLength);
+        // LD_B_A;
+        uint8_t b = gMapConnections[WEST_F].connectionStripLength;
+        // LD_A_addr(wWestConnectedMapWidth);
+        // LDH_addr_A(hConnectionStripLength);
+        hram->hConnectionStripLength = gMapConnections[WEST_F].connectionStripLength;
+        // CALL(aFillWestConnectionStrip);
+        FillWestConnectionStrip(de, hl, b);
+        FreeAsset(a);
+    }
 
-West:
-    LD_A_addr(wWestConnectedMapGroup);
-    CP_A(0xff);
-    IF_Z goto East;
-    LD_B_A;
-    LD_A_addr(wWestConnectedMapNumber);
-    LD_C_A;
-    CALL(aGetAnyMapBlocksBank);
+// East:
+    // LD_A_addr(wEastConnectedMapGroup);
+    // CP_A(0xff);
+    // IF_Z goto Done;
+    if(gMapConnections[EAST_F].connectedMapGroup != 0xff) {
+        // LD_B_A;
+        // LD_A_addr(wEastConnectedMapNumber);
+        // LD_C_A;
+        // CALL(aGetAnyMapBlocksBank);
 
-    LD_A_addr(wWestConnectionStripPointer);
-    LD_L_A;
-    LD_A_addr(wWestConnectionStripPointer + 1);
-    LD_H_A;
-    LD_A_addr(wWestConnectionStripLocation);
-    LD_E_A;
-    LD_A_addr(wWestConnectionStripLocation + 1);
-    LD_D_A;
-    LD_A_addr(wWestConnectionStripLength);
-    LD_B_A;
-    LD_A_addr(wWestConnectedMapWidth);
-    LDH_addr_A(hConnectionStripLength);
-    CALL(aFillWestConnectionStrip);
+        // LD_A_addr(wEastConnectionStripPointer);
+        // LD_L_A;
+        // LD_A_addr(wEastConnectionStripPointer + 1);
+        // LD_H_A;
+        asset_s a = LoadAsset(GetAnyMapPointer_Conv2(gMapConnections[EAST_F].connectedMapGroup, gMapConnections[EAST_F].connectedMapNumber)->attr->blocksPath);
+        uint8_t* hl = a.ptr + gMapConnections[EAST_F].connectionStripOffset;
+        // LD_A_addr(wEastConnectionStripLocation);
+        // LD_E_A;
+        // LD_A_addr(wEastConnectionStripLocation + 1);
+        // LD_D_A;
+        uint8_t* de = gMapConnections[EAST_F].connectionStripLocation;
+        // LD_A_addr(wEastConnectionStripLength);
+        // LD_B_A;
+        uint8_t b = gMapConnections[EAST_F].connectionStripLength;
+        // LD_A_addr(wEastConnectedMapWidth);
+        // LDH_addr_A(hConnectionStripLength);
+        hram->hConnectionStripLength = gMapConnections[EAST_F].connectionStripLength;
+        // CALL(aFillEastConnectionStrip);
+        FillEastConnectionStrip(de, hl, b);
+        FreeAsset(a);
+    }
 
-
-East:
-    LD_A_addr(wEastConnectedMapGroup);
-    CP_A(0xff);
-    IF_Z goto Done;
-    LD_B_A;
-    LD_A_addr(wEastConnectedMapNumber);
-    LD_C_A;
-    CALL(aGetAnyMapBlocksBank);
-
-    LD_A_addr(wEastConnectionStripPointer);
-    LD_L_A;
-    LD_A_addr(wEastConnectionStripPointer + 1);
-    LD_H_A;
-    LD_A_addr(wEastConnectionStripLocation);
-    LD_E_A;
-    LD_A_addr(wEastConnectionStripLocation + 1);
-    LD_D_A;
-    LD_A_addr(wEastConnectionStripLength);
-    LD_B_A;
-    LD_A_addr(wEastConnectedMapWidth);
-    LDH_addr_A(hConnectionStripLength);
-    CALL(aFillEastConnectionStrip);
-
-
-Done:
-    RET;
-
-}
-
-void FillNorthConnectionStrip(void){
-    return FillSouthConnectionStrip();
-}
-
-void FillSouthConnectionStrip(void){
-    LD_C(3);
-
-y:
-    PUSH_DE;
-
-    PUSH_HL;
-    LDH_A_addr(hConnectionStripLength);
-    LD_B_A;
-
-x:
-    LD_A_hli;
-    LD_de_A;
-    INC_DE;
-    DEC_B;
-    IF_NZ goto x;
-    POP_HL;
-
-    LDH_A_addr(hConnectedMapWidth);
-    LD_E_A;
-    LD_D(0);
-    ADD_HL_DE;
-    POP_DE;
-
-    LD_A_addr(wMapWidth);
-    ADD_A(6);
-    ADD_A_E;
-    LD_E_A;
-    IF_NC goto okay;
-    INC_D;
-
-okay:
-    DEC_C;
-    IF_NZ goto y;
-    RET;
+// Done:
+    // RET;
 
 }
 
-void FillWestConnectionStrip(void){
-    return FillEastConnectionStrip();
+void FillNorthConnectionStrip(uint8_t* de, const uint8_t* hl){
+    return FillSouthConnectionStrip(de, hl);
 }
 
-void FillEastConnectionStrip(void){
+void FillSouthConnectionStrip(uint8_t* de, const uint8_t* hl){
+    // LD_C(3);
+    uint8_t c = 3;
 
-loop:
-    LD_A_addr(wMapWidth);
-    ADD_A(6);
-    LDH_addr_A(hConnectedMapWidth);
+    do {
+    // y:
+        // PUSH_DE;
+        uint8_t* de2 = de;
 
-    PUSH_DE;
+        // PUSH_HL;
+        const uint8_t* hl2 = hl;
+        // LDH_A_addr(hConnectionStripLength);
+        // LD_B_A;
+        uint8_t b = hram->hConnectionStripLength;
 
-    PUSH_HL;
-    LD_A_hli;
-    LD_de_A;
-    INC_DE;
-    LD_A_hli;
-    LD_de_A;
-    INC_DE;
-    LD_A_hli;
-    LD_de_A;
-    INC_DE;
-    POP_HL;
+        do {
+        // x:
+            // LD_A_hli;
+            // LD_de_A;
+            // INC_DE;
+            *(de++) = *(hl++);
+            // DEC_B;
+            // IF_NZ goto x;
+        } while(--b != 0);
+        // POP_HL;
 
-    LDH_A_addr(hConnectionStripLength);
-    LD_E_A;
-    LD_D(0);
-    ADD_HL_DE;
-    POP_DE;
+        // LDH_A_addr(hConnectedMapWidth);
+        // LD_E_A;
+        // LD_D(0);
+        // ADD_HL_DE;
+        // POP_DE;
+        hl = hl2 + hram->hConnectedMapWidth;
 
-    LDH_A_addr(hConnectedMapWidth);
-    ADD_A_E;
-    LD_E_A;
-    IF_NC goto okay;
-    INC_D;
+        // LD_A_addr(wMapWidth);
+        // ADD_A(6);
+        // ADD_A_E;
+        // LD_E_A;
+        // IF_NC goto okay;
+        // INC_D;
+        de = de2 + wram->wMapWidth + 6;
 
-okay:
-    DEC_B;
-    IF_NZ goto loop;
-    RET;
+    // okay:
+        // DEC_C;
+        // IF_NZ goto y;
+    } while(--c != 0);
+    // RET;
+}
 
+void FillWestConnectionStrip(uint8_t* de, const uint8_t* hl, uint8_t b){
+    return FillEastConnectionStrip(de, hl, b);
+}
+
+void FillEastConnectionStrip(uint8_t* de, const uint8_t* hl, uint8_t b){
+
+    // Moved this out of the loop lol.
+    hram->hConnectedMapWidth = wram->wMapWidth;
+    do {
+    // loop:
+        // LD_A_addr(wMapWidth);
+        // ADD_A(6);
+        // LDH_addr_A(hConnectedMapWidth);
+
+        // PUSH_DE;
+        uint8_t* de2 = de;
+
+        // PUSH_HL;
+        const uint8_t* hl2 = hl;
+        // LD_A_hli;
+        // LD_de_A;
+        // INC_DE;
+        *(de++) = *(hl++);
+        // LD_A_hli;
+        // LD_de_A;
+        // INC_DE;
+        *(de++) = *(hl++);
+        // LD_A_hli;
+        // LD_de_A;
+        // INC_DE;
+        *(de++) = *(hl++);
+        // POP_HL;
+
+        // LDH_A_addr(hConnectionStripLength);
+        // LD_E_A;
+        // LD_D(0);
+        // ADD_HL_DE;
+        // POP_DE;
+        hl = hl2 + hram->hConnectionStripLength;
+
+        // LDH_A_addr(hConnectedMapWidth);
+        // ADD_A_E;
+        // LD_E_A;
+        // IF_NC goto okay;
+        // INC_D;
+        de = de2 + hram->hConnectedMapWidth;
+
+    // okay:
+        // DEC_B;
+        // IF_NZ goto loop;
+    } while(--b != 0);
+    // RET;
 }
 
 void LoadMapStatus(void){
@@ -2777,6 +2852,7 @@ void ClearBGMapBuffer(void){
 }
 
 void LoadTilesetGFX(void){
+    return LoadTilesetGFX_Conv();
     LD_HL(wTilesetAddress);
     LD_A_hli;
     LD_H_hl;
@@ -3081,174 +3157,220 @@ okay:
 
 }
 
+static bool GetMovementPermissions_CheckHiNybble(uint8_t a) {
+    // AND_A(0xf0);
+    // CP_A(HI_NYBBLE_SIDE_WALLS);
+    // RET_Z ;
+    // CP_A(HI_NYBBLE_SIDE_BUOYS);
+    // RET;
+    return ((a & 0xf0) == HI_NYBBLE_SIDE_WALLS) || ((a & 0xf0) == HI_NYBBLE_SIDE_BUOYS);
+}
+
+static void GetMovementPermissions_Right(uint8_t a) {
+    // CALL(aGetMovementPermissions_CheckHiNybble);
+    // RET_NZ ;
+    if(!GetMovementPermissions_CheckHiNybble(a))
+        return;
+    // LD_A_addr(wTileRight);
+    // AND_A(0b111);
+    // CP_A(COLL_LEFT_WALL & 0b111);  // COLL_LEFT_BUOY & %111
+    // IF_Z goto ok_right;
+    // CP_A(COLL_DOWN_LEFT_WALL & 0b111);  // COLL_DOWN_LEFT_BUOY & %111
+    // IF_Z goto ok_right;
+    // CP_A(COLL_UP_LEFT_WALL & 0b111);  // COLL_UP_LEFT_BUOY & %111
+    // RET_NZ ;
+    if((wram->wTileRight & 0b111) == (COLL_LEFT_WALL & 0b111)
+    || (wram->wTileRight & 0b111) == (COLL_DOWN_LEFT_WALL & 0b111)
+    || (wram->wTileRight & 0b111) == (COLL_UP_LEFT_WALL & 0b111)) {
+    // ok_right:
+        // LD_A_addr(wTilePermissions);
+        // OR_A(FACE_RIGHT);
+        // LD_addr_A(wTilePermissions);
+        wram->wTilePermissions |= FACE_RIGHT;
+        // RET;
+        return;
+    }
+}
+
+static void GetMovementPermissions_Left(uint8_t a) {
+    // CALL(aGetMovementPermissions_CheckHiNybble);
+    // RET_NZ ;
+    if(!GetMovementPermissions_CheckHiNybble(a))
+        return;
+    // LD_A_addr(wTileLeft);
+    // AND_A(0b111);
+    // CP_A(COLL_RIGHT_WALL & 0b111);  // COLL_RIGHT_BUOY & %111
+    // IF_Z goto ok_left;
+    // CP_A(COLL_DOWN_RIGHT_WALL & 0b111);  // COLL_DOWN_RIGHT_BUOY & %111
+    // IF_Z goto ok_left;
+    // CP_A(COLL_UP_RIGHT_WALL & 0b111);  // COLL_UP_RIGHT_BUOY & %111
+    // RET_NZ ;
+    if((wram->wTileLeft & 0b111) == (COLL_RIGHT_WALL & 0b111)
+    || (wram->wTileLeft & 0b111) == (COLL_DOWN_RIGHT_WALL & 0b111)
+    || (wram->wTileLeft & 0b111) == (COLL_UP_RIGHT_WALL & 0b111)) {
+    // ok_left:
+        // LD_A_addr(wTilePermissions);
+        // OR_A(FACE_LEFT);
+        // LD_addr_A(wTilePermissions);
+        wram->wTilePermissions |= FACE_LEFT;
+        // RET;
+        return;
+    }
+}
+
+static void GetMovementPermissions_LeftRight(void) {
+    // LD_A_addr(wPlayerStandingMapX);
+    // LD_D_A;
+    uint8_t x = wram->wPlayerStruct.nextMapX;
+    // LD_A_addr(wPlayerStandingMapY);
+    // LD_E_A;
+    uint8_t y = wram->wPlayerStruct.nextMapY;
+
+    // PUSH_DE;
+    // DEC_D;
+    // CALL(aGetCoordTile);
+    // LD_addr_A(wTileLeft);
+    wram->wTileLeft = GetCoordTile_Conv(x - 1, y);
+    // CALL(aGetMovementPermissions_Left);
+    GetMovementPermissions_Left(wram->wTileLeft);
+
+    // POP_DE;
+    // INC_D;
+    // CALL(aGetCoordTile);
+    // LD_addr_A(wTileRight);
+    wram->wTileRight = GetCoordTile_Conv(x + 1, y);
+    // CALL(aGetMovementPermissions_Right);
+    GetMovementPermissions_Right(wram->wTileRight);
+    // RET;
+}
+
+static void GetMovementPermissions_Down(uint8_t a) {
+    // CALL(aGetMovementPermissions_CheckHiNybble);
+    // RET_NZ ;
+    if(!GetMovementPermissions_CheckHiNybble(a))
+        return;
+    // LD_A_addr(wTileDown);
+    // AND_A(0b111);
+    // CP_A(COLL_UP_WALL & 0b111);  // COLL_UP_BUOY & %111
+    // IF_Z goto ok_down;
+    // CP_A(COLL_UP_RIGHT_WALL & 0b111);  // COLL_UP_RIGHT_BUOY & %111
+    // IF_Z goto ok_down;
+    // CP_A(COLL_UP_LEFT_WALL & 0b111);  // COLL_UP_LEFT_BUOY & %111
+    // RET_NZ ;
+    if((wram->wTileDown & 0b111) == (COLL_UP_WALL & 0b111)
+    || (wram->wTileDown & 0b111) == (COLL_UP_RIGHT_WALL & 0b111)
+    || (wram->wTileDown & 0b111) == (COLL_UP_LEFT_WALL & 0b111)) {
+    // ok_down:
+        // LD_A_addr(wTilePermissions);
+        // OR_A(FACE_DOWN);
+        // LD_addr_A(wTilePermissions);
+        wram->wTilePermissions |= FACE_DOWN;
+        // RET;
+        return;
+    }
+}
+
+static void GetMovementPermissions_Up(uint8_t a) {
+    // CALL(aGetMovementPermissions_CheckHiNybble);
+    // RET_NZ ;
+    if(!GetMovementPermissions_CheckHiNybble(a))
+        return;
+    // LD_A_addr(wTileUp);
+    // AND_A(0b111);
+    // CP_A(COLL_DOWN_WALL & 0b111);  // COLL_DOWN_BUOY & %111
+    // IF_Z goto ok_up;
+    // CP_A(COLL_DOWN_RIGHT_WALL & 0b111);  // COLL_DOWN_RIGHT_BUOY & %111
+    // IF_Z goto ok_up;
+    // CP_A(COLL_DOWN_LEFT_WALL & 0b111);  // COLL_DOWN_LEFT_BUOY & %111
+    // RET_NZ ;
+    if((wram->wTileUp & 0b111) == (COLL_DOWN_WALL & 0b111)
+    || (wram->wTileUp & 0b111) == (COLL_DOWN_RIGHT_WALL & 0b111)
+    || (wram->wTileUp & 0b111) == (COLL_DOWN_LEFT_WALL & 0b111)) {
+    // ok_up:
+        // LD_A_addr(wTilePermissions);
+        // OR_A(FACE_UP);
+        // LD_addr_A(wTilePermissions);
+        wram->wTilePermissions |= FACE_UP;
+        // RET;
+        return;
+    }
+}
+
+static void GetMovementPermissions_UpDown(void) {
+    // LD_A_addr(wPlayerStandingMapX);
+    // LD_D_A;
+    uint8_t x = wram->wPlayerStruct.nextMapX;
+    // LD_A_addr(wPlayerStandingMapY);
+    // LD_E_A;
+    uint8_t y = wram->wPlayerStruct.nextMapY;
+
+    // PUSH_DE;
+    // INC_E;
+    // CALL(aGetCoordTile);
+    // LD_addr_A(wTileDown);
+    wram->wTileDown = GetCoordTile_Conv(x, y + 1);
+    // CALL(aGetMovementPermissions_Down);
+    GetMovementPermissions_Down(wram->wTileDown);
+
+    // POP_DE;
+    // DEC_E;
+    // CALL(aGetCoordTile);
+    // LD_addr_A(wTileUp);
+    wram->wTileUp = GetCoordTile_Conv(x, y - 1);
+    // CALL(aGetMovementPermissions_Up);
+    GetMovementPermissions_Up(wram->wTileUp);
+    // RET;
+}
+
 void GetMovementPermissions(void){
-    XOR_A_A;
-    LD_addr_A(wTilePermissions);
-    CALL(aGetMovementPermissions_LeftRight);
-    CALL(aGetMovementPermissions_UpDown);
+    static const uint8_t MovementPermissionsData[] = {
+        DOWN_MASK,
+        UP_MASK,
+        LEFT_MASK,
+        RIGHT_MASK,
+        DOWN_MASK | RIGHT_MASK,
+        UP_MASK | RIGHT_MASK,
+        DOWN_MASK | LEFT_MASK,
+        UP_MASK | LEFT_MASK,
+    };
+    // XOR_A_A;
+    // LD_addr_A(wTilePermissions);
+    wram->wTilePermissions = 0;
+    // CALL(aGetMovementPermissions_LeftRight);
+    GetMovementPermissions_LeftRight();
+    // CALL(aGetMovementPermissions_UpDown);
+    GetMovementPermissions_UpDown();
 //  get coords of current tile
-    LD_A_addr(wPlayerStandingMapX);
-    LD_D_A;
-    LD_A_addr(wPlayerStandingMapY);
-    LD_E_A;
-    CALL(aGetCoordTile);
-    LD_addr_A(wPlayerStandingTile);
-    CALL(aGetMovementPermissions_CheckHiNybble);
-    RET_NZ ;
+    // LD_A_addr(wPlayerStandingMapX);
+    // LD_D_A;
+    uint8_t x = wram->wPlayerStruct.nextMapX;
+    // LD_A_addr(wPlayerStandingMapY);
+    // LD_E_A;
+    uint8_t y = wram->wPlayerStruct.nextMapY;
+    // CALL(aGetCoordTile);
+    uint8_t tile = GetCoordTile_Conv(x, y);
+    // LD_addr_A(wPlayerStandingTile);
+    wram->wPlayerStruct.nextTile = tile;
+    // CALL(aGetMovementPermissions_CheckHiNybble);
+    // RET_NZ ;
+    if(!GetMovementPermissions_CheckHiNybble(tile))
+        return;
 
-    LD_A_addr(wPlayerStandingTile);
-    AND_A(7);
-    LD_HL(mGetMovementPermissions_MovementPermissionsData);
-    ADD_A_L;
-    LD_L_A;
-    LD_A(0);
-    ADC_A_H;
-    LD_H_A;
-    LD_A_hl;
-    LD_HL(wTilePermissions);
-    OR_A_hl;
-    LD_hl_A;
-    RET;
-
-
-MovementPermissionsData:
-    //db ['DOWN_MASK'];
-    //db ['UP_MASK'];
-    //db ['LEFT_MASK'];
-    //db ['RIGHT_MASK'];
-    //db ['DOWN_MASK | RIGHT_MASK'];
-    //db ['UP_MASK | RIGHT_MASK'];
-    //db ['DOWN_MASK | LEFT_MASK'];
-    //db ['UP_MASK | LEFT_MASK'];
-
-
-UpDown:
-    LD_A_addr(wPlayerStandingMapX);
-    LD_D_A;
-    LD_A_addr(wPlayerStandingMapY);
-    LD_E_A;
-
-    PUSH_DE;
-    INC_E;
-    CALL(aGetCoordTile);
-    LD_addr_A(wTileDown);
-    CALL(aGetMovementPermissions_Down);
-
-    POP_DE;
-    DEC_E;
-    CALL(aGetCoordTile);
-    LD_addr_A(wTileUp);
-    CALL(aGetMovementPermissions_Up);
-    RET;
-
-
-LeftRight:
-    LD_A_addr(wPlayerStandingMapX);
-    LD_D_A;
-    LD_A_addr(wPlayerStandingMapY);
-    LD_E_A;
-
-    PUSH_DE;
-    DEC_D;
-    CALL(aGetCoordTile);
-    LD_addr_A(wTileLeft);
-    CALL(aGetMovementPermissions_Left);
-
-    POP_DE;
-    INC_D;
-    CALL(aGetCoordTile);
-    LD_addr_A(wTileRight);
-    CALL(aGetMovementPermissions_Right);
-    RET;
-
-
-Down:
-    CALL(aGetMovementPermissions_CheckHiNybble);
-    RET_NZ ;
-    LD_A_addr(wTileDown);
-    AND_A(0b111);
-    CP_A(COLL_UP_WALL & 0b111);  // COLL_UP_BUOY & %111
-    IF_Z goto ok_down;
-    CP_A(COLL_UP_RIGHT_WALL & 0b111);  // COLL_UP_RIGHT_BUOY & %111
-    IF_Z goto ok_down;
-    CP_A(COLL_UP_LEFT_WALL & 0b111);  // COLL_UP_LEFT_BUOY & %111
-    RET_NZ ;
-
-
-ok_down:
-    LD_A_addr(wTilePermissions);
-    OR_A(FACE_DOWN);
-    LD_addr_A(wTilePermissions);
-    RET;
-
-
-Up:
-    CALL(aGetMovementPermissions_CheckHiNybble);
-    RET_NZ ;
-    LD_A_addr(wTileUp);
-    AND_A(0b111);
-    CP_A(COLL_DOWN_WALL & 0b111);  // COLL_DOWN_BUOY & %111
-    IF_Z goto ok_up;
-    CP_A(COLL_DOWN_RIGHT_WALL & 0b111);  // COLL_DOWN_RIGHT_BUOY & %111
-    IF_Z goto ok_up;
-    CP_A(COLL_DOWN_LEFT_WALL & 0b111);  // COLL_DOWN_LEFT_BUOY & %111
-    RET_NZ ;
-
-
-ok_up:
-    LD_A_addr(wTilePermissions);
-    OR_A(FACE_UP);
-    LD_addr_A(wTilePermissions);
-    RET;
-
-
-Right:
-    CALL(aGetMovementPermissions_CheckHiNybble);
-    RET_NZ ;
-    LD_A_addr(wTileRight);
-    AND_A(0b111);
-    CP_A(COLL_LEFT_WALL & 0b111);  // COLL_LEFT_BUOY & %111
-    IF_Z goto ok_right;
-    CP_A(COLL_DOWN_LEFT_WALL & 0b111);  // COLL_DOWN_LEFT_BUOY & %111
-    IF_Z goto ok_right;
-    CP_A(COLL_UP_LEFT_WALL & 0b111);  // COLL_UP_LEFT_BUOY & %111
-    RET_NZ ;
-
-
-ok_right:
-    LD_A_addr(wTilePermissions);
-    OR_A(FACE_RIGHT);
-    LD_addr_A(wTilePermissions);
-    RET;
-
-
-Left:
-    CALL(aGetMovementPermissions_CheckHiNybble);
-    RET_NZ ;
-    LD_A_addr(wTileLeft);
-    AND_A(0b111);
-    CP_A(COLL_RIGHT_WALL & 0b111);  // COLL_RIGHT_BUOY & %111
-    IF_Z goto ok_left;
-    CP_A(COLL_DOWN_RIGHT_WALL & 0b111);  // COLL_DOWN_RIGHT_BUOY & %111
-    IF_Z goto ok_left;
-    CP_A(COLL_UP_RIGHT_WALL & 0b111);  // COLL_UP_RIGHT_BUOY & %111
-    RET_NZ ;
-
-
-ok_left:
-    LD_A_addr(wTilePermissions);
-    OR_A(FACE_LEFT);
-    LD_addr_A(wTilePermissions);
-    RET;
-
-
-CheckHiNybble:
-    AND_A(0xf0);
-    CP_A(HI_NYBBLE_SIDE_WALLS);
-    RET_Z ;
-    CP_A(HI_NYBBLE_SIDE_BUOYS);
-    RET;
-
+    // LD_A_addr(wPlayerStandingTile);
+    // AND_A(7);
+    // LD_HL(mGetMovementPermissions_MovementPermissionsData);
+    // ADD_A_L;
+    // LD_L_A;
+    // LD_A(0);
+    // ADC_A_H;
+    // LD_H_A;
+    // LD_A_hl;
+    // LD_HL(wTilePermissions);
+    // OR_A_hl;
+    // LD_hl_A;
+    wram->wTilePermissions |= MovementPermissionsData[wram->wPlayerStruct.nextTile & 7];
+    // RET;
+    return;
 }
 
 void GetFacingTileCoord(void){
@@ -4540,6 +4662,7 @@ uint8_t GetFishingGroup_Conv2(void){
 }
 
 void LoadMapTileset(void){
+    return LoadMapTileset_Conv2();
     PUSH_HL;
     PUSH_BC;
 

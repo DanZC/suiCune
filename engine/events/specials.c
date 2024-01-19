@@ -1,6 +1,7 @@
 #include "../../constants.h"
 #include "specials.h"
 #include "../../data/events/special_pointers.h"
+#include "../overworld/map_objects.h"
 
 void Special(void){
 //  Run script special de.
@@ -52,10 +53,11 @@ void UnusedDummySpecial(void){
 }
 
 void SetPlayerPalette(void){
-    LD_A_addr(wScriptVar);
-    LD_D_A;
-    FARCALL(av_SetPlayerPalette);
-    RET;
+    // LD_A_addr(wScriptVar);
+    // LD_D_A;
+    // FARCALL(av_SetPlayerPalette);
+    v_SetPlayerPalette_Conv(wram->wScriptVar);
+    // RET;
 }
 
 void GameCornerPrizeMonCheckDex(void){

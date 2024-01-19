@@ -2,6 +2,7 @@
 #include "player_object.h"
 #include "../../home/map_objects.h"
 #include "../../home/map.h"
+#include "../../home/copy.h"
 
 void BlankScreen(void){
     CALL(aDisableSpriteUpdates);
@@ -24,51 +25,57 @@ void BlankScreen(void){
 }
 
 void SpawnPlayer(void){
-    LD_A(-1);
-    LD_addr_A(wObjectFollow_Leader);
-    LD_addr_A(wObjectFollow_Follower);
-    LD_A(PLAYER);
-    LD_HL(mPlayerObjectTemplate);
-    CALL(aCopyPlayerObjectTemplate);
-    LD_B(PLAYER);
-    CALL(aPlayerSpawn_ConvertCoords);
-    LD_A(PLAYER_OBJECT);
-    CALL(aGetMapObject);
-    LD_HL(MAPOBJECT_COLOR);
-    ADD_HL_BC;
-    LD_E((PAL_NPC_RED << 4) | OBJECTTYPE_SCRIPT);
-    LD_A_addr(wPlayerSpriteSetupFlags);
-    BIT_A(PLAYERSPRITESETUP_FEMALE_TO_MALE_F);
-    IF_NZ goto ok;
-    LD_A_addr(wPlayerGender);
-    BIT_A(PLAYERGENDER_FEMALE_F);
-    IF_Z goto ok;
-    LD_E((PAL_NPC_BLUE << 4) | OBJECTTYPE_SCRIPT);
+    // LD_A(-1);
+    // LD_addr_A(wObjectFollow_Leader);
+    wram->wObjectFollow_Leader = 0xff;
+    // LD_addr_A(wObjectFollow_Follower);
+    wram->wObjectFollow_Follower = 0xff;
+    // LD_A(PLAYER);
+    // LD_HL(mPlayerObjectTemplate);
+    // CALL(aCopyPlayerObjectTemplate);
+    CopyPlayerObjectTemplate_Conv(&PlayerObjectTemplate, PLAYER);
+    // LD_B(PLAYER);
+    // CALL(aPlayerSpawn_ConvertCoords);
+    PlayerSpawn_ConvertCoords_Conv(PLAYER);
+    // LD_A(PLAYER_OBJECT);
+    // CALL(aGetMapObject);
+    struct MapObject* bc = GetMapObject_Conv(PLAYER_OBJECT);
+    // LD_HL(MAPOBJECT_COLOR);
+    // ADD_HL_BC;
+    // LD_E((PAL_NPC_RED << 4) | OBJECTTYPE_SCRIPT);
+    // LD_A_addr(wPlayerSpriteSetupFlags);
+    // BIT_A(PLAYERSPRITESETUP_FEMALE_TO_MALE_F);
+    // IF_NZ goto ok;
+    // LD_A_addr(wPlayerGender);
+    // BIT_A(PLAYERGENDER_FEMALE_F);
+    // IF_Z goto ok;
+    // LD_E((PAL_NPC_BLUE << 4) | OBJECTTYPE_SCRIPT);
 
 
-ok:
-    LD_hl_E;
-    LD_A(PLAYER_OBJECT);
-    LDH_addr_A(hMapObjectIndex);
-    LD_BC(wMapObjects);
-    LD_A(PLAYER_OBJECT);
-    LDH_addr_A(hObjectStructIndex);
-    LD_DE(wObjectStructs);
-    CALL(aCopyMapObjectToObjectStruct);
-    LD_A(PLAYER);
-    LD_addr_A(wCenteredObject);
-    RET;
-
+// ok:
+    // LD_hl_E;
+    bc->objectColor = 
+        (bit_test(wram->wPlayerSpriteSetupFlags, PLAYERSPRITESETUP_FEMALE_TO_MALE_F) || !bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))
+            ? (PAL_NPC_RED << 4) | OBJECTTYPE_SCRIPT
+            : (PAL_NPC_BLUE << 4) | OBJECTTYPE_SCRIPT;
+    // LD_A(PLAYER_OBJECT);
+    // LDH_addr_A(hMapObjectIndex);
+    // LD_BC(wMapObjects);
+    // LD_A(PLAYER_OBJECT);
+    // LDH_addr_A(hObjectStructIndex);
+    // LD_DE(wObjectStructs);
+    // CALL(aCopyMapObjectToObjectStruct);
+    CopyMapObjectToObjectStruct_Conv(wram->wObjectStruct, (struct MapObject*)wram_ptr(wMapObjects), PLAYER_OBJECT, PLAYER_OBJECT);
+    // LD_A(PLAYER);
+    // LD_addr_A(wCenteredObject);
+    wram->wCenteredObject = PLAYER;
+    // RET;
 }
 
-void PlayerObjectTemplate(void){
 //  A dummy map object used to initialize the player object.
 //  Shorter than the actual amount copied by two bytes.
 //  Said bytes seem to be unused.
-    //object_event ['-4', '-4', 'SPRITE_CHRIS', 'SPRITEMOVEDATA_PLAYER', '15', '15', '-1', '-1', '0', 'OBJECTTYPE_SCRIPT', '0', '0', '-1']
-
-    return CopyDECoordsToMapObject();
-}
+const struct ObjEvent PlayerObjectTemplate = object_event(-4, -4, SPRITE_CHRIS, SPRITEMOVEDATA_PLAYER, 15, 15, -1, -1, 0, OBJECTTYPE_SCRIPT, 0, 0, -1);
 
 void CopyDECoordsToMapObject(void){
     PUSH_DE;
@@ -116,6 +123,20 @@ void PlayerSpawn_ConvertCoords(void){
 
 }
 
+void PlayerSpawn_ConvertCoords_Conv(uint8_t b){
+    // PUSH_BC;
+    // LD_A_addr(wXCoord);
+    // ADD_A(4);
+    // LD_D_A;
+    // LD_A_addr(wYCoord);
+    // ADD_A(4);
+    // LD_E_A;
+    // POP_BC;
+    // CALL(aCopyDECoordsToMapObject);
+    // RET;
+    return CopyDECoordsToMapObject_Conv(wram->wXCoord + 4, wram->wYCoord + 4, b);
+}
+
 void WriteObjectXY(void){
     LD_A_B;
     CALL(aCheckObjectVisibility);
@@ -158,34 +179,43 @@ void WriteObjectXY_Conv(uint8_t b){
 }
 
 void RefreshPlayerCoords(void){
-    LD_A_addr(wXCoord);
-    ADD_A(4);
-    LD_D_A;
-    LD_HL(wPlayerStandingMapX);
-    SUB_A_hl;
-    LD_hl_D;
-    LD_HL(wMapObjects + MAPOBJECT_X_COORD);
-    LD_hl_D;
-    LD_HL(wPlayerLastMapX);
-    LD_hl_D;
-    LD_D_A;
-    LD_A_addr(wYCoord);
-    ADD_A(4);
-    LD_E_A;
-    LD_HL(wPlayerStandingMapY);
-    SUB_A_hl;
-    LD_hl_E;
-    LD_HL(wMapObjects + MAPOBJECT_Y_COORD);
-    LD_hl_E;
-    LD_HL(wPlayerLastMapY);
-    LD_hl_E;
-    LD_E_A;
+    // LD_A_addr(wXCoord);
+    // ADD_A(4);
+    // LD_D_A;
+    uint8_t x = wram->wXCoord + 4;
+    // LD_HL(wPlayerStandingMapX);
+    // SUB_A_hl;
+    // uint8_t d = x - wram->wPlayerStruct.nextMapX;
+    // LD_hl_D;
+    wram->wPlayerStruct.nextMapX = x;
+    // LD_HL(wMapObjects + MAPOBJECT_X_COORD);
+    // LD_hl_D;
+    wram->wMapObject[0].objectXCoord = x;
+    // LD_HL(wPlayerLastMapX);
+    // LD_hl_D;
+    wram->wPlayerStruct.mapX = x;
+    // LD_D_A;
+    // LD_A_addr(wYCoord);
+    // ADD_A(4);
+    // LD_E_A;
+    uint8_t y = wram->wYCoord + 4;
+    // LD_HL(wPlayerStandingMapY);
+    // SUB_A_hl;
+    // uint8_t e = x - wram->wPlayerStruct.nextMapY;
+    // LD_hl_E;
+    wram->wPlayerStruct.nextMapY = y;
+    // LD_HL(wMapObjects + MAPOBJECT_Y_COORD);
+    // LD_hl_E;
+    wram->wMapObject[0].objectYCoord = y;
+    // LD_HL(wPlayerLastMapY);
+    // LD_hl_E;
+    wram->wPlayerStruct.mapY = x;
+    // LD_E_A;
 //  the next three lines are useless
-    LD_A_addr(wObjectFollow_Leader);
-    CP_A(PLAYER);
-    RET_NZ ;
-    RET;
-
+    // LD_A_addr(wObjectFollow_Leader);
+    // CP_A(PLAYER);
+    // RET_NZ ;
+    // RET;
 }
 
 void CopyObjectStruct(void){
@@ -226,12 +256,12 @@ done:
 
 }
 
-bool CopyObjectStruct_Conv(struct MapObject* bc, uint8_t a){
+uint8_t CopyObjectStruct_Conv(struct MapObject* bc, uint8_t a){
     // CALL(aCheckObjectMask);
     // AND_A_A;
     // RET_NZ ;  // masked
     if(CheckObjectMask_Conv(a) != 0)
-        return false;
+        return 1;
 
     // LD_HL(wObjectStructs + OBJECT_LENGTH * 1);
     // LD_A(1);
@@ -255,14 +285,14 @@ bool CopyObjectStruct_Conv(struct MapObject* bc, uint8_t a){
             // BIT_hl(7);
             // RET_Z ;
             if(!bit_test(wram->wVramState, 7))
-                return true;
+                return 0;
 
             // LD_HL(OBJECT_FLAGS2);
             // ADD_HL_DE;
             // SET_hl(5);
             bit_set(hl->flags2, 5);
             // RET;
-            return true;
+            return 0;
         }
         // ADD_HL_DE;
         // LDH_A_addr(hObjectStructIndex);
@@ -272,7 +302,7 @@ bool CopyObjectStruct_Conv(struct MapObject* bc, uint8_t a){
     } while(hl++, ++b < NUM_OBJECT_STRUCTS);
     // SCF;
     // RET;  // overflow
-    return false;
+    return 0xff;
 }
 
 void CopyMapObjectToObjectStruct(void){
@@ -422,69 +452,92 @@ void CopyMapObjectToObjectStruct_Conv(struct Object* de, struct MapObject* bc, u
 }
 
 void InitializeVisibleSprites(void){
-    LD_BC(wMap1Object);
-    LD_A(1);
+    // LD_BC(wMap1Object);
+    struct MapObject* bc = (struct MapObject*)wram_ptr(wMapObjects);
+    // LD_A(1);
+    uint8_t a = 1;
 
-loop:
-    LDH_addr_A(hMapObjectIndex);
-    LD_HL(MAPOBJECT_SPRITE);
-    ADD_HL_BC;
-    LD_A_hl;
-    AND_A_A;
-    IF_Z goto next;
+    do {
+    // loop:
+        // LDH_addr_A(hMapObjectIndex);
+        // LD_HL(MAPOBJECT_SPRITE);
+        // ADD_HL_BC;
+        // LD_A_hl;
+        // AND_A_A;
+        // IF_Z goto next;
+        if(bc[a - 1].sprite == 0)
+            continue;
 
-    LD_HL(MAPOBJECT_OBJECT_STRUCT_ID);
-    ADD_HL_BC;
-    LD_A_hl;
-    CP_A(-1);
-    IF_NZ goto next;
+        // LD_HL(MAPOBJECT_OBJECT_STRUCT_ID);
+        // ADD_HL_BC;
+        // LD_A_hl;
+        // CP_A(-1);
+        // IF_NZ goto next;
+        if(bc[a - 1].structId == 0xff)
+            continue;
 
-    LD_A_addr(wXCoord);
-    LD_D_A;
-    LD_A_addr(wYCoord);
-    LD_E_A;
+        // LD_A_addr(wXCoord);
+        // LD_D_A;
+        uint8_t d = wram->wXCoord;
+        // LD_A_addr(wYCoord);
+        // LD_E_A;
+        uint8_t e = wram->wYCoord;
 
-    LD_HL(MAPOBJECT_X_COORD);
-    ADD_HL_BC;
-    LD_A_hl;
-    ADD_A(1);
-    SUB_A_D;
-    IF_C goto next;
+        // LD_HL(MAPOBJECT_X_COORD);
+        // ADD_HL_BC;
+        // LD_A_hl;
+        // ADD_A(1);
+        uint8_t x = bc[a - 1].objectXCoord + 1;
+        // SUB_A_D;
+        // IF_C goto next;
+        if(x < d)
+            continue;
 
-    CP_A(MAPOBJECT_SCREEN_WIDTH);
-    IF_NC goto next;
+        // CP_A(MAPOBJECT_SCREEN_WIDTH);
+        // IF_NC goto next;
+        if(x >= MAPOBJECT_SCREEN_WIDTH)
+            continue;
 
-    LD_HL(MAPOBJECT_Y_COORD);
-    ADD_HL_BC;
-    LD_A_hl;
-    ADD_A(1);
-    SUB_A_E;
-    IF_C goto next;
+        // LD_HL(MAPOBJECT_Y_COORD);
+        // ADD_HL_BC;
+        // LD_A_hl;
+        // ADD_A(1);
+        uint8_t y = bc[a - 1].objectYCoord + 1;
+        // SUB_A_E;
+        // IF_C goto next;
+        if(y < e)
+            continue;
 
-    CP_A(MAPOBJECT_SCREEN_HEIGHT);
-    IF_NC goto next;
+        // CP_A(MAPOBJECT_SCREEN_HEIGHT);
+        // IF_NC goto next;
+        if(y >= MAPOBJECT_SCREEN_HEIGHT)
+            continue;
 
-    PUSH_BC;
-    CALL(aCopyObjectStruct);
-    POP_BC;
-    JP_C (mInitializeVisibleSprites_ret);
-
-
-next:
-    LD_HL(MAPOBJECT_LENGTH);
-    ADD_HL_BC;
-    LD_B_H;
-    LD_C_L;
-    LDH_A_addr(hMapObjectIndex);
-    INC_A;
-    CP_A(NUM_OBJECTS);
-    IF_NZ goto loop;
-    RET;
+        // PUSH_BC;
+        // CALL(aCopyObjectStruct);
+        uint8_t res = CopyObjectStruct_Conv(bc + (a - 1), a);
+        // POP_BC;
+        // JP_C (mInitializeVisibleSprites_ret);
+        if(res == 0xff)
+            return;
 
 
-ret:
-    RET;
 
+    // next:
+        // LD_HL(MAPOBJECT_LENGTH);
+        // ADD_HL_BC;
+        // LD_B_H;
+        // LD_C_L;
+        // LDH_A_addr(hMapObjectIndex);
+        // INC_A;
+        // CP_A(NUM_OBJECTS);
+        // IF_NZ goto loop;
+    } while(++a != NUM_OBJECTS);
+    // RET;
+
+
+// ret:
+    // RET;
 }
 
 void CheckObjectEnteringVisibleRange(void){
