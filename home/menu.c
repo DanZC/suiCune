@@ -136,8 +136,9 @@ void HideCursor(void) {
     RET;
 }
 
-void HideCursor_Conv(void){
-    gb_write(gb_read16(wCursorCurrentTile), CHAR_SPACE);
+uint8_t* HideCursor_Conv(void){
+    *(uint8_t*)GBToRAMAddr(wram->wCursorCurrentTile) = CHAR_SPACE;
+    return (uint8_t*)GBToRAMAddr(wram->wCursorCurrentTile);
 }
 
 void PushWindow(void) {

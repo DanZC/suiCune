@@ -1,6 +1,7 @@
 #include "../../constants.h"
 #include "crystal_layouts.h"
 #include "../../home/copy.h"
+#include "color.h"
 
 void GetCrystalCGBLayout(void){
     LD_A_B;
@@ -55,6 +56,27 @@ col:
     IF_NZ goto row;
     RET;
 
+}
+
+//  This is a copy of FillBoxCGB.
+void Crystal_FillBoxCGB_Conv(uint8_t* hl, uint8_t b, uint8_t c, uint8_t a){
+
+// row:
+    // PUSH_BC;
+    // PUSH_HL;
+
+// col:
+    // LD_hli_A;
+    // DEC_C;
+    // IF_NZ goto col;
+    // POP_HL;
+    // LD_BC(SCREEN_WIDTH);
+    // ADD_HL_BC;
+    // POP_BC;
+    // DEC_B;
+    // IF_NZ goto row;
+    // RET;
+    return FillBoxCGB_Conv(hl, b, c, a);
 }
 
 void Crystal_WipeAttrmap(void){
@@ -282,77 +304,91 @@ MobileBorderPalettes:
 }
 
 void v_InitMG_Mobile_LinkTradePalMap(void){
-    hlcoord(0, 0, wAttrmap);
-    LD_BC((16 << 8) | 2);
-    LD_A(0x4);
-    CALL(aCrystal_FillBoxCGB);
-    LD_A(0x3);
-    ldcoord_a(0, 1, wAttrmap);
-    ldcoord_a(0, 14, wAttrmap);
-    hlcoord(2, 0, wAttrmap);
-    LD_BC((8 << 8) | 18);
-    LD_A(0x5);
-    CALL(aCrystal_FillBoxCGB);
-    hlcoord(2, 8, wAttrmap);
-    LD_BC((8 << 8) | 18);
-    LD_A(0x6);
-    CALL(aCrystal_FillBoxCGB);
-    hlcoord(0, 16, wAttrmap);
-    LD_BC((2 << 8) | SCREEN_WIDTH);
-    LD_A(0x4);
-    CALL(aCrystal_FillBoxCGB);
-    LD_A(0x3);
-    LD_BC((6 << 8) | 1);
-    hlcoord(6, 1, wAttrmap);
-    CALL(aCrystal_FillBoxCGB);
-    LD_A(0x3);
-    LD_BC((6 << 8) | 1);
-    hlcoord(17, 1, wAttrmap);
-    CALL(aCrystal_FillBoxCGB);
-    LD_A(0x3);
-    LD_BC((6 << 8) | 1);
-    hlcoord(6, 9, wAttrmap);
-    CALL(aCrystal_FillBoxCGB);
-    LD_A(0x3);
-    LD_BC((6 << 8) | 1);
-    hlcoord(17, 9, wAttrmap);
-    CALL(aCrystal_FillBoxCGB);
-    LD_A(0x2);
-    hlcoord(2, 16, wAttrmap);
-    LD_hli_A;
-    LD_A(0x7);
-    LD_hli_A;
-    LD_hli_A;
-    LD_hli_A;
-    LD_A(0x2);
-    LD_hl_A;
-    hlcoord(2, 17, wAttrmap);
-    LD_A(0x3);
-    LD_BC(6);
-    CALL(aByteFill);
-    RET;
-
+    // hlcoord(0, 0, wAttrmap);
+    // LD_BC((16 << 8) | 2);
+    // LD_A(0x4);
+    // CALL(aCrystal_FillBoxCGB);
+    Crystal_FillBoxCGB_Conv(coord(0, 0, wram->wAttrmap), 16, 2, 0x4);
+    // LD_A(0x3);
+    // ldcoord_a(0, 1, wAttrmap);
+    *coord(0, 1, wram->wAttrmap) = 0x3;
+    // ldcoord_a(0, 14, wAttrmap);
+    *coord(0, 14, wram->wAttrmap) = 0x3;
+    // hlcoord(2, 0, wAttrmap);
+    // LD_BC((8 << 8) | 18);
+    // LD_A(0x5);
+    // CALL(aCrystal_FillBoxCGB);
+    Crystal_FillBoxCGB_Conv(coord(2, 0, wram->wAttrmap), 8, 18, 0x5);
+    // hlcoord(2, 8, wAttrmap);
+    // LD_BC((8 << 8) | 18);
+    // LD_A(0x6);
+    // CALL(aCrystal_FillBoxCGB);
+    Crystal_FillBoxCGB_Conv(coord(2, 8, wram->wAttrmap), 8, 18, 0x6);
+    // hlcoord(0, 16, wAttrmap);
+    // LD_BC((2 << 8) | SCREEN_WIDTH);
+    // LD_A(0x4);
+    // CALL(aCrystal_FillBoxCGB);
+    Crystal_FillBoxCGB_Conv(coord(0, 16, wram->wAttrmap), 2, SCREEN_WIDTH, 0x4);
+    // LD_A(0x3);
+    // LD_BC((6 << 8) | 1);
+    // hlcoord(6, 1, wAttrmap);
+    // CALL(aCrystal_FillBoxCGB);
+    Crystal_FillBoxCGB_Conv(coord(6, 1, wram->wAttrmap), 6, 1, 0x3);
+    // LD_A(0x3);
+    // LD_BC((6 << 8) | 1);
+    // hlcoord(17, 1, wAttrmap);
+    // CALL(aCrystal_FillBoxCGB);
+    Crystal_FillBoxCGB_Conv(coord(17, 1, wram->wAttrmap), 6, 1, 0x3);
+    // LD_A(0x3);
+    // LD_BC((6 << 8) | 1);
+    // hlcoord(6, 9, wAttrmap);
+    // CALL(aCrystal_FillBoxCGB);
+    Crystal_FillBoxCGB_Conv(coord(6, 9, wram->wAttrmap), 6, 1, 0x3);
+    // LD_A(0x3);
+    // LD_BC((6 << 8) | 1);
+    // hlcoord(17, 9, wAttrmap);
+    // CALL(aCrystal_FillBoxCGB);
+    Crystal_FillBoxCGB_Conv(coord(17, 9, wram->wAttrmap), 17, 9, 0x3);
+    // LD_A(0x2);
+    // hlcoord(2, 16, wAttrmap);
+    tile_t* hl = coord(2, 16, wram->wAttrmap);
+    // LD_hli_A;
+    *(hl++) = 0x2;
+    // LD_A(0x7);
+    // LD_hli_A;
+    *(hl++) = 0x7;
+    // LD_hli_A;
+    *(hl++) = 0x7;
+    // LD_hli_A;
+    *(hl++) = 0x7;
+    // LD_A(0x2);
+    // LD_hl_A;
+    *hl = 0x2;
+    // hlcoord(2, 17, wAttrmap);
+    // LD_A(0x3);
+    // LD_BC(6);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(2, 17, wram->wAttrmap), 6, 0x3);
+    // RET;
 }
 
 void v_LoadTradeRoomBGPals(void){
-    LD_HL(mTradeRoomPalette);
-    LD_DE(wBGPals1 + PALETTE_SIZE * PAL_BG_GREEN);
-    LD_BC(6 * PALETTE_SIZE);
-    LD_A(BANK(wBGPals1));
-    CALL(aFarCopyWRAM);
-    FARCALL(aApplyPals);
-    RET;
-
+    // LD_HL(mTradeRoomPalette);
+    // LD_DE(wBGPals1 + PALETTE_SIZE * PAL_BG_GREEN);
+    // LD_BC(6 * PALETTE_SIZE);
+    // LD_A(BANK(wBGPals1));
+    // CALL(aFarCopyWRAM);
+    LoadPaletteAssetColorsToBuffer(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_GREEN,
+        6 * NUM_PAL_COLORS, TradeRoomPalette, 0, 6 * NUM_PAL_COLORS);
+    // FARCALL(aApplyPals);
+    ApplyPals_Conv();
+    // RET;
 }
 
-void TradeRoomPalette(void){
-// INCLUDE "gfx/trade/border.pal"
-
-    return InitMG_Mobile_LinkTradePalMap();
-}
+const char TradeRoomPalette[] = "gfx/trade/border.pal";
 
 void InitMG_Mobile_LinkTradePalMap(void){
-    CALL(av_InitMG_Mobile_LinkTradePalMap);
-    RET;
-
+    // CALL(av_InitMG_Mobile_LinkTradePalMap);
+    v_InitMG_Mobile_LinkTradePalMap();
+    // RET;
 }

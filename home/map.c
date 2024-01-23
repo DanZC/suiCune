@@ -2062,7 +2062,7 @@ void FillWestConnectionStrip(uint8_t* de, const uint8_t* hl, uint8_t b){
 void FillEastConnectionStrip(uint8_t* de, const uint8_t* hl, uint8_t b){
 
     // Moved this out of the loop lol.
-    hram->hConnectedMapWidth = wram->wMapWidth;
+    hram->hConnectedMapWidth = wram->wMapWidth + 6;
     do {
     // loop:
         // LD_A_addr(wMapWidth);

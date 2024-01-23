@@ -2,6 +2,7 @@
 #include "specials.h"
 #include "../../data/events/special_pointers.h"
 #include "../overworld/map_objects.h"
+#include "../../home/sram.h"
 
 void Special(void){
 //  Run script special de.
@@ -192,19 +193,19 @@ void PlayersHousePC(void){
 }
 
 void CheckMysteryGift(void){
-    LD_A(BANK(sMysteryGiftItem));
-    CALL(aOpenSRAM);
-    LD_A_addr(sMysteryGiftItem);
-    AND_A_A;
-    IF_Z goto no;
-    INC_A;
-
-
-no:
-    LD_addr_A(wScriptVar);
-    CALL(aCloseSRAM);
-    RET;
-
+    // LD_A(BANK(sMysteryGiftItem));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asMysteryGiftItem));
+    // LD_A_addr(sMysteryGiftItem);
+    // AND_A_A;
+    // IF_Z goto no;
+    // INC_A;
+// no:
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = (gb_read(sMysteryGiftItem) == 0)? FALSE: TRUE;
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
 }
 
 void GetMysteryGiftItem(void){

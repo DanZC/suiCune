@@ -4670,4 +4670,67 @@ void init_function_pointers(void) {
     // REDIRECTED(CmdQueues_IncAnonJumptableIndex);
     // REDIRECTED(CmdQueue_Null);
     // REDIRECTED(CmdQueues_AnonJumptable);
+
+    // engine/link/link_trade.c
+    // REDIRECTED(LinkComms_LoadPleaseWaitTextboxBorderGFX);
+    // REDIRECTED(LinkCommsBorderGFX);
+    // REDIRECTED(v_LinkTextbox);
+    // REDIRECTED(LoadMobileTradeBorderTilemap);
+    // REDIRECTED(v__LoadTradeScreenBorderGFX);
+    // REDIRECTED(LinkTradeMenu);
+    // REDIRECTED(LinkTextbox);
+    // REDIRECTED(TestMobileTradeBorderTilemap);
+    // REDIRECTED(v_LoadTradeScreenBorderGFX);
+    // REDIRECTED(InitTradeSpeciesList);
+    // REDIRECTED(CableTradeBorderBottomTilemap);
+    // REDIRECTED(CableTradeBorderTopTilemap);
+    // REDIRECTED(PrintWaitingTextAndSyncAndExchangeNybble);
+    // REDIRECTED(LoadCableTradeBorderTilemap);
+    // REDIRECTED(MobileTradeBorderTilemap);
+    // REDIRECTED(LoadTradeRoomBGPals);
+
+    // engine/link/time_capsule.c
+    // REDIRECTED(CheckAnyOtherAliveMonsForTrade);
+    // REDIRECTED(ValidateOTTrademon);
+    // REDIRECTED(PlaceTradePartnerNamesAndParty);
+
+    // engine/link/link_2.c
+    // REDIRECTED(Link_WaitBGMap);
+    // REDIRECTED(LinkTextbox2);
+    // REDIRECTED(LinkMonStatsScreen);
+
+    // engine/events/poke_seer.c
+    // REDIRECTED(PrintSeerText);
+    // REDIRECTED(SeerMoreConfidentText);
+    // REDIRECTED(UnknownCaughtData);
+    // REDIRECTED(SeerAction4);
+    // REDIRECTED(SeerSeeAllText);
+    // REDIRECTED(SeerEggText);
+    // REDIRECTED(GetCaughtTime);
+    // REDIRECTED(SeerMightyText);
+    // REDIRECTED(GetCaughtName);
+    // REDIRECTED(SeerNoLocationText);
+    // REDIRECTED(GetCaughtOT);
+    // REDIRECTED(SeerAction1);
+    // REDIRECTED(GetCaughtLevel);
+    // REDIRECTED(SeerCantTellAThingText);
+    // REDIRECTED(SeerTimeLevelText);
+    // REDIRECTED(PokeSeer);
+    // REDIRECTED(GetCaughtLocation);
+    // REDIRECTED(SeerTradeText);
+    // REDIRECTED(GetCaughtGender);
+    // REDIRECTED(ReadCaughtData);
+    // REDIRECTED(SeerImpressedText);
+    // REDIRECTED(SeerTexts);
+    // REDIRECTED(SeerAction2);
+    // REDIRECTED(SeerNameLocationText);
+    // REDIRECTED(SeerMoreCareText);
+    // REDIRECTED(SeerActions);
+    // REDIRECTED(SeerAction);
+    // REDIRECTED(SeerAdviceTexts);
+    // REDIRECTED(SeerAdvice);
+    // REDIRECTED(SeerAction3);
+    // REDIRECTED(SeerAction0);
+    // REDIRECTED(SeerMuchStrengthText);
+    // REDIRECTED(SeerDoNothingText);
 }

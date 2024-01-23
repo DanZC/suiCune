@@ -60,3 +60,6 @@ ENDM
 #define delanim_command 0xfc
 #define setrepeat_command 0xfe
 #define dorepeat_command 0xfd
+
+#define frame2(_x, _0) (_x), (_0)
+#define frame3(_x, _0, _1) (_x), ((_0) | (1 << (_1) + 1))

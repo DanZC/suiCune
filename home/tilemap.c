@@ -137,12 +137,14 @@ void ApplyTilemap_Conv(void) {
 }
 
 void CGBOnly_CopyTilemapAtOnce(void) {
-    SET_PC(aCGBOnly_CopyTilemapAtOnce);
-    LDH_A_addr(hCGB);
-    AND_A_A;
-    JR_Z(mWaitBGMap);
+    // SET_PC(aCGBOnly_CopyTilemapAtOnce);
+    // LDH_A_addr(hCGB);
+    // AND_A_A;
+    // JR_Z(mWaitBGMap);
+    if(hram->hCGB == 0)
+        return WaitBGMap_Conv();
 
-    return CopyTilemapAtOnce();
+    return CopyTilemapAtOnce_Conv();
 }
 
 void CopyTilemapAtOnce(void) {

@@ -13,7 +13,7 @@ void v_CrystalCGB_NameCard(void);
 void Function49742(void);
 void v_InitMG_Mobile_LinkTradePalMap(void);
 void v_LoadTradeRoomBGPals(void);
-void TradeRoomPalette(void);
+extern const char TradeRoomPalette[];
 void InitMG_Mobile_LinkTradePalMap(void);
 //#include "gfx/mystery_gift/mg_mobile.pal"
 //#include "gfx/font/bg_text.pal"

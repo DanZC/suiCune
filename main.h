@@ -192,7 +192,7 @@
 
 // SECTION "bank13_2", ROMX
 
-//#include "engine/link/link_2.h"
+#include "engine/link/link_2.h"
 //#include "engine/rtc/reset_password.h"
 //#include "engine/menus/delete_save.h"
 //#include "data/tilesets.h"
@@ -211,7 +211,7 @@
 //#include "mobile/print_opp_message.h"
 #include "engine/battle/check_battle_scene.h"
 #include "engine/movie/gbc_only.h"
-//#include "engine/events/poke_seer.h"
+#include "engine/events/poke_seer.h"
 
 // SECTION "bank14", ROMX
 
@@ -443,7 +443,7 @@
 // SECTION "bank3E", ROMX
 
 #include "engine/gfx/load_font.h"
-//#include "engine/link/time_capsule.h"
+#include "engine/link/time_capsule.h"
 //#include "engine/events/name_rater.h"
 //#include "engine/events/play_slow_cry.h"
 //#include "engine/pokedex/new_pokedex_entry.h"
@@ -500,7 +500,7 @@
 // SECTION "bank5B", ROMX
 
 //#include "mobile/mobile_5b.h"
-//#include "engine/link/link_trade.h"
+#include "engine/link/link_trade.h"
 
 // SECTION "mobile5C", ROMX
 

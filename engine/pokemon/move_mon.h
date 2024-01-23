@@ -18,6 +18,7 @@ void ShiftBoxMon(void);
 void GiveEgg(void);
 void String_Egg(void);
 void RemoveMonFromPartyOrBox(void);
+void RemoveMonFromPartyOrBox_Conv(uint8_t param);
 void ComputeNPCTrademonStats(void);
 void CalcMonStats(void);
 void CalcMonStats_Conv(uint16_t* stats, const uint16_t* statExp, uint16_t dvs, uint8_t b);

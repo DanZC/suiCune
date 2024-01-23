@@ -146,8 +146,10 @@ load:
 
 }
 
-void Serial_ExchangeBytes_Conv(uint8_t* de, const uint8_t* hl, uint16_t bc){
-    //  send bc bytes from hl, receive bc bytes to de
+//  send bc bytes from hl, receive bc bytes to de
+uint8_t* Serial_ExchangeBytes_Conv(void* de_, const void* hl_, uint16_t bc){
+    uint8_t* de = de_;
+    const uint8_t* hl = hl_;
     // LD_A(TRUE);
     // LDH_addr_A(hSerialIgnoringInitialData);
     hram->hSerialIgnoringInitialData = TRUE;
@@ -191,7 +193,7 @@ void Serial_ExchangeBytes_Conv(uint8_t* de, const uint8_t* hl, uint16_t bc){
             if(bc != 0)
                 continue;
             // RET;
-            return;
+            return de;
         }
         // DEC_HL;
         hl--;
@@ -584,109 +586,147 @@ void Serial_SyncAndExchangeNybble(void){
 }
 
 void WaitLinkTransfer(void){
-        LD_A(0xff);
-    LD_addr_A(wOtherPlayerLinkAction);
+    // LD_A(0xff);
+    // LD_addr_A(wOtherPlayerLinkAction);
+    wram->wOtherPlayerLinkAction = 0xff;
 
-loop:
-        CALL(aLinkTransfer);
-    CALL(aDelayFrame);
-    CALL(aCheckLinkTimeoutFramesNonzero);
-    IF_Z goto check;
-    PUSH_HL;
-    LD_HL(wLinkTimeoutFrames + 1);
-    DEC_hl;
-    IF_NZ goto skip;
-    DEC_HL;
-    DEC_hl;
-    IF_NZ goto skip;
-// We might be disconnected
-    POP_HL;
-    XOR_A_A;
-    JP(mSerialDisconnected);
+    do {
+    // loop:
+        // CALL(aLinkTransfer);
+        LinkTransfer();
+        // CALL(aDelayFrame);
+        DelayFrame();
+        // CALL(aCheckLinkTimeoutFramesNonzero);
+        // IF_Z goto check;
+        if(!CheckLinkTimeoutFramesNonzero_Conv())
+            continue;
+        // PUSH_HL;
+        // LD_HL(wLinkTimeoutFrames + 1);
+        // DEC_hl;
+        // IF_NZ goto skip;
+        // DEC_HL;
+        // DEC_hl;
+        // IF_NZ goto skip;
+    // We might be disconnected
+        if(--wram->wLinkTimeoutFrames == 0) {
+            // POP_HL;
+            // XOR_A_A;
+            // JP(mSerialDisconnected);
+            return SerialDisconnected_Conv(0), (void)0;
+        }
+
+    // skip:
+        // POP_HL;
 
 
-skip:
-        POP_HL;
+    // check:
+        // LD_A_addr(wOtherPlayerLinkAction);
+        // INC_A;
+        // IF_Z goto loop;
+    } while(wram->wOtherPlayerLinkAction + 1 == 0);
 
+    // LD_B(10);
+    uint8_t b = 10;
 
-check:
-        LD_A_addr(wOtherPlayerLinkAction);
-    INC_A;
-    IF_Z goto loop;
+    do {
+    // receive:
+        // CALL(aDelayFrame);
+        DelayFrame();
+        // CALL(aLinkTransfer);
+        LinkTransfer();
+        // DEC_B;
+        // IF_NZ goto receive;
+    } while(--b != 0);
 
-    LD_B(10);
+    // LD_B(10);
+    b = 10;
 
-receive:
-        CALL(aDelayFrame);
-    CALL(aLinkTransfer);
-    DEC_B;
-    IF_NZ goto receive;
+    do {
+    // acknowledge:
+        // CALL(aDelayFrame);
+        DelayFrame();
+        // CALL(aLinkDataReceived);
+        LinkDataReceived();
+        // DEC_B;
+        // IF_NZ goto acknowledge;
+    } while(--b != 0);
 
-    LD_B(10);
+    // LD_A_addr(wOtherPlayerLinkAction);
+    // LD_addr_A(wOtherPlayerLinkMode);
+    wram->wOtherPlayerLinkMode = wram->wOtherPlayerLinkAction;
+    // RET;
+}
 
-acknowledge:
-        CALL(aDelayFrame);
-    CALL(aLinkDataReceived);
-    DEC_B;
-    IF_NZ goto acknowledge;
-
-    LD_A_addr(wOtherPlayerLinkAction);
-    LD_addr_A(wOtherPlayerLinkMode);
-    RET;
-
+static void LinkTransfer_Receive(uint8_t b) {
+    // LDH_A_addr(hSerialReceive);
+    // LD_addr_A(wOtherPlayerLinkMode);
+    wram->wOtherPlayerLinkMode = hram->hSerialReceive;
+    // AND_A(0xf0);
+    // CP_A_B;
+    // RET_NZ ;
+    if((hram->hSerialReceive & 0xf0) != b)
+        return;
+    // XOR_A_A;
+    // LDH_addr_A(hSerialReceive);
+    hram->hSerialReceive = 0;
+    // LD_A_addr(wOtherPlayerLinkMode);
+    // AND_A(0xf);
+    // LD_addr_A(wOtherPlayerLinkAction);
+    wram->wOtherPlayerLinkAction = wram->wOtherPlayerLinkMode & 0xf;
+    // RET;
 }
 
 void LinkTransfer(void){
-    PUSH_BC;
-    LD_B(SERIAL_TIMECAPSULE);
-    LD_A_addr(wLinkMode);
-    CP_A(LINK_TIMECAPSULE);
-    IF_Z goto got_high_nybble;
-    LD_B(SERIAL_TIMECAPSULE);
-    IF_C goto got_high_nybble;
-    CP_A(LINK_TRADECENTER);
-    LD_B(SERIAL_TRADECENTER);
-    IF_Z goto got_high_nybble;
-    LD_B(SERIAL_BATTLE);
+    // PUSH_BC;
+    uint8_t b;
+    // LD_B(SERIAL_TIMECAPSULE);
+    // LD_A_addr(wLinkMode);
+    // CP_A(LINK_TIMECAPSULE);
+    // IF_Z goto got_high_nybble;
+    // LD_B(SERIAL_TIMECAPSULE);
+    // IF_C goto got_high_nybble;
+    if(wram->wLinkMode <= LINK_TIMECAPSULE) {
+        b = SERIAL_TIMECAPSULE;
+    }
+    // CP_A(LINK_TRADECENTER);
+    // LD_B(SERIAL_TRADECENTER);
+    // IF_Z goto got_high_nybble;
+    else if(wram->wLinkMode == LINK_TRADECENTER) {
+        b = SERIAL_TRADECENTER;
+    }
+    // LD_B(SERIAL_BATTLE);
+    else {
+        b = SERIAL_BATTLE;
+    }
 
+// got_high_nybble:
+    // CALL(aLinkTransfer_Receive);
+    LinkTransfer_Receive(b);
+    // LD_A_addr(wPlayerLinkAction);
+    // ADD_A_B;
+    // LDH_addr_A(hSerialSend);
+    hram->hSerialSend += wram->wPlayerLinkAction;
+    // LDH_A_addr(hSerialConnectionStatus);
+    // CP_A(USING_INTERNAL_CLOCK);
+    // IF_NZ goto player_1;
+    if(hram->hSerialConnectionStatus == USING_INTERNAL_CLOCK) {
+        // LD_A((0 << rSC_ON) | (1 << rSC_CLOCK));
+        // LDH_addr_A(rSC);
+        gb_write(rSC, (0 << rSC_ON) | (1 << rSC_CLOCK));
+        // LD_A((1 << rSC_ON) | (1 << rSC_CLOCK));
+        // LDH_addr_A(rSC);
+        gb_write(rSC, (1 << rSC_ON) | (1 << rSC_CLOCK));
+    }
 
-got_high_nybble:
-        CALL(aLinkTransfer_Receive);
-    LD_A_addr(wPlayerLinkAction);
-    ADD_A_B;
-    LDH_addr_A(hSerialSend);
-    LDH_A_addr(hSerialConnectionStatus);
-    CP_A(USING_INTERNAL_CLOCK);
-    IF_NZ goto player_1;
-    LD_A((0 << rSC_ON) | (1 << rSC_CLOCK));
-    LDH_addr_A(rSC);
-    LD_A((1 << rSC_ON) | (1 << rSC_CLOCK));
-    LDH_addr_A(rSC);
-
-
-player_1:
-        CALL(aLinkTransfer_Receive);
-    POP_BC;
-    RET;
-
-
-Receive:
-        LDH_A_addr(hSerialReceive);
-    LD_addr_A(wOtherPlayerLinkMode);
-    AND_A(0xf0);
-    CP_A_B;
-    RET_NZ ;
-    XOR_A_A;
-    LDH_addr_A(hSerialReceive);
-    LD_A_addr(wOtherPlayerLinkMode);
-    AND_A(0xf);
-    LD_addr_A(wOtherPlayerLinkAction);
-    RET;
-
+// player_1:
+    // CALL(aLinkTransfer_Receive);
+    LinkTransfer_Receive(b);
+    // POP_BC;
+    // RET;
 }
 
+//  Let the other system know that the data has been received.
 void LinkDataReceived(void){
-    //  Let the other system know that the data has been received.
     // XOR_A_A;
     // LDH_addr_A(hSerialSend);
     hram->hSerialSend = 0;
