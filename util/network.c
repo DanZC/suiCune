@@ -198,7 +198,7 @@ bool NetworkBroadcastLAN(const uint8_t* name, uint16_t id, uint8_t gender) {
     memset(packet->data, 0, UDP_PACKET_SIZE);
     CmdPacket_s* cmd = (CmdPacket_s*)packet->data;
     cmd->type = CMD_HOST_LAN;
-    cmd->src = localhost.host;
+    cmd->src = publicHost;
     memcpy(cmd->host_lan.name, name, 10);
     cmd->host_lan.trainerId = HostToNet16(id);
     cmd->host_lan.gender = gender;
@@ -226,10 +226,12 @@ bool NetworkTryJoinLAN(uint8_t which, const uint8_t* name, uint16_t id, uint8_t 
         memset(packet->data, 0, UDP_PACKET_SIZE);
         CmdPacket_s* cmd = (CmdPacket_s*)packet->data;
         cmd->type = CMD_JOIN_LAN;
+        cmd->src = publicHost;
         memcpy(cmd->host_lan.name, name, 10);
         cmd->host_lan.trainerId = HostToNet16(id);
         cmd->host_lan.gender = gender;
         packet->address.host = gLANClientCandidates[which].address;
+        packet->len = sizeof(CmdPacket_s);
         if(SDLNet_UDP_Send(host, -1, packet) == 0) {
             printf("Could not send UDP packet on port %d. Is the port blocked?\n", TCP_PORT);
             return false;
@@ -251,6 +253,15 @@ bool NetworkTryRecvUDP(void) {
     return error == 1;
 }
 
+// Is this a duplicate of a host we already added?
+static bool NetworkCheckDuplicateLANCandidate(uint32_t host) {
+    for(uint32_t i = 0; i < gLANClientCandidateCount; ++i) {
+        if(gLANClientCandidates[i].address == host)
+            return true;
+    }
+    return false;
+}
+
 static void NetworkAddLANCandidate(void) {
     LANClient* lan = gLANClientCandidates + gLANClientCandidateCount;
     lan->address = packet->address.host;
@@ -265,6 +276,13 @@ static void NetworkAddLANCandidate(void) {
     lan->trainerId = HostToNet16(cmd->host_lan.trainerId);
     lan->gender = cmd->host_lan.gender;
     gLANClientCandidateCount++;
+}
+
+static bool NetworkTryAddLANCandidate(void) {
+    if(NetworkCheckDuplicateLANCandidate(packet->address.host))
+        return false;
+    NetworkAddLANCandidate();
+    return true;
 }
 
 static void NetworkStageLANCandidate(void) {
@@ -299,13 +317,10 @@ bool NetworkCheckLAN(void) {
         if(packet->address.host == publicHost)
             return false;
 
-        printf("Received packet.\n");
-
         switch(cmd->type) {
             case CMD_HOST_LAN:
                 if(gNetworkState == NETSTATE_JOINING) {
-                    NetworkAddLANCandidate();
-                    return true;
+                    return NetworkTryAddLANCandidate();
                 }
                 return false;
             case CMD_JOIN_LAN:
@@ -331,10 +346,10 @@ void NetworkClearLANCache(void) {
 }
 
 bool NetworkLANDirectConnect(uint32_t which) {
-    serial = SDLNet_TCP_Open(&(IPaddress){.host = INADDR_ANY, .port = TCP_PORT});
+    serial = SDLNet_TCP_Open(&(IPaddress){.host = INADDR_ANY, .port = HostToNet16(TCP_PORT)});
     packet->address.host = gLANClientCandidates[which].address;
     CmdPacket_s* cmd = (CmdPacket_s*)packet->data;
-    cmd->type = 1;
+    cmd->type = CMD_ACCEPT_JOIN_LAN;
     SDLNet_UDP_Send(host, -1, packet);
     uint32_t timeout = 60 * 8;
     while(!(cserial = SDLNet_TCP_Accept(serial))) {
@@ -351,7 +366,7 @@ bool NetworkLANDirectConnect(uint32_t which) {
 }
 
 void NetworkAcceptLANConnection(void) {
-    serial = SDLNet_TCP_Open(&(IPaddress){.host = packet->address.host, .port = TCP_PORT});
+    serial = SDLNet_TCP_Open(&(IPaddress){.host = packet->address.host, .port = HostToNet16(TCP_PORT)});
     if(serial != NULL) {
         gb.gb_serial_rx = gb_serial_rx;
         gb.gb_serial_tx = gb_serial_tx;

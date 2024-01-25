@@ -10,6 +10,7 @@
 #include "../../home/tilemap.h"
 #include "../../home/copy.h"
 #include "../../home/gfx.h"
+#include "../../home/sram.h"
 #include "../../charmap.h"
 #include "../../data/trainers/class_names.h"
 #include "../../data/trainers/parties.h"
@@ -753,7 +754,15 @@ void DebugMenu_Link(void) {
     v_LoadStandardFont_Conv();
     WaitBGMap_Conv();
 
-    U82CA(wram->wPlayerName, "PLAYER@");
+    OpenSRAM_Conv(MBANK(asPlayerData));
+    CopyBytes_Conv(wCrystalData, sCrystalData, wCrystalDataEnd - wCrystalData);
+    CopyBytes_Conv(wPlayerID, sPlayerData + (wPlayerID - wPlayerData), 2);
+    CopyBytes_Conv(wPlayerName, sPlayerData + (wPlayerName - wPlayerData), NAME_LENGTH);
+    CloseSRAM_Conv();
+
+    printf("NAME: "); PrintCrystalStringFromRAM(wram->wPlayerName); printf("\n");
+    printf("GENDER: %s\n", (bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))? "FEMALE": "MALE");
+    printf("ID: %d\n", wram->wPlayerID);
 
     LANConnection();
     
