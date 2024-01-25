@@ -23,8 +23,8 @@ static UDPsocket host;
 static UDPpacket* packet;
 static TCPsocket serial;
 static TCPsocket cserial;
-static IPaddress* localhost;
-static IPaddress broadcastip;
+static IPaddress localhost;
+static uint32_t publicHost;
 
 // A networking interface for suiCune. Supports both LAN (local) connections, emulating
 // the standard link cable connection, and internet (remote) connections, emulating
@@ -42,7 +42,7 @@ static IPaddress broadcastip;
 // the same access point as the player they want to connect to.
 // Connection begins by opening a UDP port. The player can choose to host or join a room.
 // When hosting a room, a CMD_HOST_LAN packet is sent via a broadcast address to all devices
-// connect to the LAN. If the other player is looking to join a room, they will receive the
+// connected to the LAN. If the other player is looking to join a room, they will receive the
 // packet and the host's name, id no., and in-game gender will be displayed. This allows two players
 // with the same name to be differentiated.
 // The joining player will then select which LAN partner they wish to connect to, from a list of available
@@ -109,6 +109,33 @@ static void gb_serial_tx_test(const uint8_t x) {
     printf("serial send: %d\n", x);
 }
 
+static uint16_t HostToNet16(uint16_t x) {
+    union {
+        int a;
+        char b[sizeof(int)];
+    } test = {.a=1};
+    if(test.b[0] == 1) {
+        // little-endian
+        return (x >> 8) | (x << 8);
+    }
+    return x;
+}
+
+static uint32_t HostToNet32(uint32_t x) {
+    union {
+        int a;
+        char b[sizeof(int)];
+    } test = {.a=1};
+    if(test.b[0] == 1) {
+        // little-endian
+        return (x >> 24) 
+            | ((x >> 8)  & 0x0000ff00)
+            | ((x << 8)  & 0x00ff0000)
+            | ((x << 24) & 0xff000000);
+    }
+    return x;
+}
+
 static enum gb_serial_rx_ret_e gb_serial_rx_test(uint8_t* x) {
     // receive byte
     *x = 0xff;
@@ -123,13 +150,29 @@ bool NetworkInit(void) {
     else {
         printf("Initialized SDLNet library.\n");
         host = SDLNet_UDP_Open(UDP_PORT);
-        localhost = SDLNet_UDP_GetPeerAddress(host, -1);
-        SDLNet_ResolveHost(&broadcastip, "255.255.255.255", UDP_PORT);
+        // localhost = SDLNet_UDP_GetPeerAddress(host, -1);
+        SDLNet_ResolveHost(&localhost, "localhost", UDP_PORT);
         packet = SDLNet_AllocPacket(UDP_PACKET_SIZE);
-        // if(SDLNet_UDP_Send(host, -1, packet) == 0) {
-        //     printf("Could not send UDP packet on port %d.\n", UDP_PORT);
-        //     fprintf(stderr, "SDL_Net Error: %s\n", SDLNet_GetError());
-        // }
+
+        // Get public address using UDP broadcasting.
+        // This is used to filter out packets we sent.
+        uint32_t check = (uint32_t)time(NULL);
+        *(uint32_t*)packet->data = HostToNet32(check);
+        packet->len = sizeof(uint32_t);
+        packet->address.host = HostToNet32(INADDR_BROADCAST);
+        packet->address.port = HostToNet16(UDP_PORT);
+        if(SDLNet_UDP_Send(host, -1, packet) == 0) {
+            printf("Could not send UDP packet on port %d. Is the port blocked?\n", UDP_PORT);
+            return false;
+        }
+        do {
+            while(SDLNet_UDP_Recv(host, packet) == 0) {}
+        } while(HostToNet32(*(uint32_t*)packet->data) != check);
+        printf("Public host: %d.%d.%d.%d\n", packet->address.host & 0xff,
+            (packet->address.host >> 8) & 0xff,
+            (packet->address.host >> 16) & 0xff,
+            (packet->address.host >> 24) & 0xff);
+        publicHost = packet->address.host;
         gNetworkingInit = true;
         gNetworkState = NETSTATE_NOTHING;
         gb.gb_serial_rx = gb_serial_rx_test;
@@ -155,18 +198,20 @@ bool NetworkBroadcastLAN(const uint8_t* name, uint16_t id, uint8_t gender) {
     memset(packet->data, 0, UDP_PACKET_SIZE);
     CmdPacket_s* cmd = (CmdPacket_s*)packet->data;
     cmd->type = CMD_HOST_LAN;
-    cmd->src = localhost->host;
+    cmd->src = localhost.host;
     memcpy(cmd->host_lan.name, name, 10);
-    cmd->host_lan.trainerId = id;
+    cmd->host_lan.trainerId = HostToNet16(id);
     cmd->host_lan.gender = gender;
-    packet->address.host = broadcastip.host;
-    packet->address.port = UDP_PORT;
+    packet->address.host = INADDR_BROADCAST;
+    packet->len = sizeof(*cmd);
+    packet->channel = 1;
     if(SDLNet_UDP_Send(host, -1, packet) == 0) {
         printf("Could not send UDP packet on port %d. Is the port blocked?\n", UDP_PORT);
         return false;
     }
     printf("Sent UDP packet on port %d.\n", UDP_PORT);
-    gNetworkState = NETSTATE_HOSTING;
+    if(gNetworkState != NETSTATE_HOSTING)
+        gNetworkState = NETSTATE_HOSTING;
     return true;
 }
 
@@ -182,7 +227,7 @@ bool NetworkTryJoinLAN(uint8_t which, const uint8_t* name, uint16_t id, uint8_t 
         CmdPacket_s* cmd = (CmdPacket_s*)packet->data;
         cmd->type = CMD_JOIN_LAN;
         memcpy(cmd->host_lan.name, name, 10);
-        cmd->host_lan.trainerId = id;
+        cmd->host_lan.trainerId = HostToNet16(id);
         cmd->host_lan.gender = gender;
         packet->address.host = gLANClientCandidates[which].address;
         if(SDLNet_UDP_Send(host, -1, packet) == 0) {
@@ -215,9 +260,10 @@ static void NetworkAddLANCandidate(void) {
         (lan->address >> 16) & 0xff,
         (lan->address >> 24) & 0xff);
     memset(lan->name, 0x50, sizeof(lan->name));
-    memcpy(lan->name, packet->data, 10);
-    lan->trainerId = packet->data[10] | (packet->data[11] << 8);
-    lan->gender = packet->data[12];
+    CmdPacket_s* cmd = (CmdPacket_s*)packet->data;
+    memcpy(lan->name, cmd->host_lan.name, 10);
+    lan->trainerId = HostToNet16(cmd->host_lan.trainerId);
+    lan->gender = cmd->host_lan.gender;
     gLANClientCandidateCount++;
 }
 
@@ -230,19 +276,31 @@ static void NetworkStageLANCandidate(void) {
         (lan->address >> 16) & 0xff,
         (lan->address >> 24) & 0xff);
     memset(lan->name, 0x50, sizeof(lan->name));
-    memcpy(lan->name, packet->data, 10);
-    lan->trainerId = packet->data[10] | (packet->data[11] << 8);
-    lan->gender = packet->data[12];
+    CmdPacket_s* cmd = (CmdPacket_s*)packet->data;
+    memcpy(lan->name, cmd->host_lan.name, 10);
+    lan->trainerId = HostToNet16(cmd->host_lan.trainerId);
+    lan->gender = cmd->host_lan.gender;
 }
 
 bool NetworkCheckLAN(void) {
     if(NetworkTryRecvUDP() && gLANClientCandidateCount < 16) {
-        if(packet->len < UDP_PACKET_SIZE - 8 || packet->len > UDP_PACKET_SIZE + 8) {
-            printf("Packet length was not in expected range (13-16): %d\n", packet->len);
+        if(packet->len < UDP_PACKET_SIZE - 16 || packet->len > UDP_PACKET_SIZE + 16) {
+            printf("Packet length was not in expected range (%d-%d): %d\n", UDP_PACKET_SIZE - 16, UDP_PACKET_SIZE + 16, packet->len);
             return false;
         }
 
         CmdPacket_s* cmd = (CmdPacket_s*)packet->data;
+        printf("UDP Packet: %d.%d.%d.%d\n", packet->address.host & 0xff,
+            (packet->address.host >> 8) & 0xff,
+            (packet->address.host >> 16) & 0xff,
+            (packet->address.host >> 24) & 0xff);
+
+        // Did we send the packet? If so, ignore it.
+        if(packet->address.host == publicHost)
+            return false;
+
+        printf("Received packet.\n");
+
         switch(cmd->type) {
             case CMD_HOST_LAN:
                 if(gNetworkState == NETSTATE_JOINING) {
