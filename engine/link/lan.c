@@ -16,17 +16,19 @@ static const struct TextCmd Text_AskHostOrJoin[] = {
 };
 
 static const struct TextCmd Text_WillYouConnect[] = {
-    text_start("Will you connect to"
-        t_line "@")
+    text_start("Will you connect"
+        t_line "to @")
     text_ram(wram_ptr(wStringBuffer1))
-    text_start("?@")
+    text_start("?" 
+        t_done )
 };
 
 static const struct TextCmd Text_WillYouAccept[] = {
     text_start("Will you accept"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer1))
-    text_start("'s connection?@")
+    text_start("'s connection?"
+        t_done )
 };
 
 static const struct TextCmd Text_Cancelled[] = {
@@ -81,15 +83,24 @@ void LANConnection(void) {
 
 static void PlaceLANConnectionItems(void) {
     char buffer[16];
-    uint8_t x = 9, y = 0;
+    uint8_t x = 7, y = 2;
     for(uint32_t i = 0; i < gLANClientCandidateCount; ++i) {
-        PlaceStringSimple(gLANClientCandidates[i].name, coord(x, y, wram->wTilemap));
-        *coord(x + 10, y, wram->wTilemap) = (bit_test(gLANClientCandidates[i].gender, PLAYERGENDER_FEMALE_F))? CHAR_FEMALE_ICON: CHAR_MALE_ICON;
+        PlaceStringSimple(gLANClientCandidates[i].name, coord(x + 1, y, wram->wTilemap));
+        *coord(x + 9, y, wram->wTilemap) = (bit_test(gLANClientCandidates[i].gender, PLAYERGENDER_FEMALE_F))? CHAR_FEMALE_ICON: CHAR_MALE_ICON;
         sprintf(buffer, "%d", gLANClientCandidates[i].trainerId);
-        PlaceStringSimple(U82C(buffer), coord(x + 2, y + 1, wram->wTilemap));
+        PlaceStringSimple(U82C(buffer), coord(x + 3, y + 1, wram->wTilemap));
         y += 2;
     }
-    PlaceStringSimple(U82C("CANCEL"), coord(x, y, wram->wTilemap));
+    PlaceStringSimple(U82C("CANCEL"), coord(x + 1, y, wram->wTilemap));
+}
+
+static void PlaceLANConnectionMenuCursor(uint32_t selection) {
+    uint8_t x = 7, y = 2;
+    for(uint32_t i = 0; i < gLANClientCandidateCount; ++i) {
+        *coord(x, y, wram->wTilemap) = (i == selection)? CHAR_RIGHT_CURSOR: CHAR_SPACE;
+        y += 2;
+    }
+    *coord(x, y, wram->wTilemap) = (selection == gLANClientCandidateCount)? CHAR_RIGHT_CURSOR: CHAR_SPACE;
 }
 
 void LANConnection_Host(void) {
@@ -128,7 +139,8 @@ void LANConnection_Host(void) {
             CloseWindow_Conv2();
             if(yes) {
                 LoadStandardMenuHeader_Conv();
-                PlaceStringSimple(U82C("Waiting for a<LINE>response…"), coord(4, 11, wram->wTilemap));
+                SpeechTextbox_Conv2();
+                PlaceStringSimple(U82C("Waiting for a<LINE>response…"), coord(TEXTBOX_INNERX, TEXTBOX_INNERY, wram->wTilemap));
                 bool success = NetworkLANDirectConnect(0);
                 CloseWindow_Conv2();
                 if(success) {
@@ -182,15 +194,27 @@ void LANConnection_Join(void) {
 
     uint32_t selection = 0;
 
-    Textbox_Conv2(coord(8, 0, wram->wTilemap), TEXTBOX_Y - 2, SCREEN_WIDTH - 8 - 2);
+    Textbox_Conv2(coord(6, 0, wram->wTilemap), TEXTBOX_Y - 2, SCREEN_WIDTH - 6 - 2);
+    PlaceLANConnectionItems();
+    PlaceLANConnectionMenuCursor(selection);
     DelayFrame();
 
-    for(int i = 0; i < 60 * 8; ++i) {
+    int frameCount = 0;
+    for(;;++frameCount) {
+        if(frameCount >= 8 * 60 && gLANClientCandidateCount == 0) {
+            MapTextbox_Conv(Text_CouldntFindAny);
+            CloseWindow_Conv2();
+            wram->wScriptVar = FALSE;
+            CloseWindow_Conv2();
+            NetworkCloseConnection();
+            return;
+        }
         GetJoypad_Conv();
 
-        if(NetworkCheckLAN()) {
+        if(frameCount < 8 * 60 && NetworkCheckLAN()) {
             ClearBox_Conv2(coord(9, 1, wram->wTilemap), TEXTBOX_Y - 2, SCREEN_WIDTH - 8 - 3);
             PlaceLANConnectionItems();
+            PlaceLANConnectionMenuCursor(selection);
             DelayFrame();
             continue;
         }
@@ -207,8 +231,9 @@ void LANConnection_Join(void) {
         else if(pad & A_BUTTON) {
             PlayClickSFX_Conv();
             CloseWindow_Conv2();
-            if(selection >= gLANClientCandidateCount - 1 || gLANClientCandidateCount == 0) {
+            if(selection >= gLANClientCandidateCount) {
                 wram->wScriptVar = FALSE;
+                MapTextbox_Conv(Text_Cancelled);
                 NetworkCloseConnection();
                 CloseWindow_Conv2();
                 return;
@@ -240,15 +265,19 @@ void LANConnection_Join(void) {
                 return;
             }
         }
+        else if(hram->hJoyPressed & D_DOWN) {
+            selection++;
+            if(selection > gLANClientCandidateCount)
+                selection = 0;
+            PlaceLANConnectionMenuCursor(selection);
+        }
+        else if(hram->hJoyPressed & D_UP) {
+            if(selection == 0)
+                selection = gLANClientCandidateCount;
+            else
+                selection--;
+            PlaceLANConnectionMenuCursor(selection);
+        }
         DelayFrame();
-    }
-
-    if(gLANClientCandidateCount == 0) {
-        MapTextbox_Conv(Text_CouldntFindAny);
-        CloseWindow_Conv2();
-        wram->wScriptVar = FALSE;
-        CloseWindow_Conv2();
-        NetworkCloseConnection();
-        return;
     }
 }
