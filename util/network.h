@@ -8,7 +8,7 @@ bool NetworkTryJoinLAN(uint8_t which, const uint8_t* name, uint16_t id, uint8_t 
 bool NetworkCheckLAN(void);
 void NetworkClearLANCache(void);
 bool NetworkLANDirectConnect(uint32_t which);
-void NetworkAcceptLANConnection(void);
+bool NetworkAcceptLANConnection(void);
 void NetworkCloseConnection(void);
 void NetworkStartJoining(void);
 void NetworkDeinit(void);

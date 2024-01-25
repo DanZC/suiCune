@@ -233,9 +233,14 @@ bool NetworkTryJoinLAN(uint8_t which, const uint8_t* name, uint16_t id, uint8_t 
         packet->address.host = gLANClientCandidates[which].address;
         packet->len = sizeof(CmdPacket_s);
         if(SDLNet_UDP_Send(host, -1, packet) == 0) {
-            printf("Could not send UDP packet on port %d. Is the port blocked?\n", TCP_PORT);
+            printf("Could not send UDP packet on port %d. Is the port blocked?\n", UDP_PORT);
             return false;
         }
+        printf("Joining %d.%d.%d.%d...\n", 
+            packet->address.host & 0xff, 
+            (packet->address.host >> 8) & 0xff,
+            (packet->address.host >> 16) & 0xff,
+            (packet->address.host >> 24) & 0xff);
         return true;
     }
     return false;
@@ -331,8 +336,7 @@ bool NetworkCheckLAN(void) {
                 return false;
             case CMD_ACCEPT_JOIN_LAN:
                 if(gNetworkState == NETSTATE_JOINING) {
-                    NetworkAcceptLANConnection();
-                    return true;
+                    return NetworkAcceptLANConnection();
                 }
                 return false;
         }
@@ -355,22 +359,35 @@ bool NetworkLANDirectConnect(uint32_t which) {
     while(!(cserial = SDLNet_TCP_Accept(serial))) {
         DelayFrame();
         if(--timeout == 0) {
+            printf("Connection timed out...\n");
             SDLNet_TCP_Close(serial);
             serial = NULL;
             return false;
         }
     }
+    printf("Hosting %d.%d.%d.%d!\n", 
+        packet->address.host & 0xff, 
+        (packet->address.host >> 8) & 0xff,
+        (packet->address.host >> 16) & 0xff,
+        (packet->address.host >> 24) & 0xff);
     gb.gb_serial_rx = gb_serial_rx;
     gb.gb_serial_tx = gb_serial_tx;
     return true;
 }
 
-void NetworkAcceptLANConnection(void) {
+bool NetworkAcceptLANConnection(void) {
     serial = SDLNet_TCP_Open(&(IPaddress){.host = packet->address.host, .port = HostToNet16(TCP_PORT)});
     if(serial != NULL) {
         gb.gb_serial_rx = gb_serial_rx;
         gb.gb_serial_tx = gb_serial_tx;
+        return true;
     }
+    printf("SDLNet: Error trying to connect to %d.%d.%d.%d\n",
+        packet->address.host & 0xff, 
+        (packet->address.host >> 8) & 0xff,
+        (packet->address.host >> 16) & 0xff,
+        (packet->address.host >> 24) & 0xff);
+    return false;
 }
 
 void NetworkCloseConnection(void) {

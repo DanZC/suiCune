@@ -144,10 +144,12 @@ void LANConnection_Host(void) {
                 bool success = NetworkLANDirectConnect(0);
                 CloseWindow_Conv2();
                 if(success) {
+                    CloseWindow_Conv2();
                     wram->wScriptVar = TRUE;
                     return;
                 }
                 else {
+                    CloseWindow_Conv2();
                     NetworkCloseConnection();
                     wram->wScriptVar = FALSE;
                     return;
@@ -246,7 +248,8 @@ void LANConnection_Join(void) {
             CloseWindow_Conv2();
             if(yes) {
                 LoadStandardMenuHeader_Conv();
-                PlaceStringSimple(U82C("Waiting for a<LINE>response…"), coord(4, 11, wram->wTilemap));
+                SpeechTextbox_Conv2();
+                PlaceStringSimple(U82C("Waiting for a<LINE>response…"), coord(TEXTBOX_INNERX, TEXTBOX_INNERY, wram->wTilemap));
                 bool success = LANConnection_TryJoin(selection);
                 CloseWindow_Conv2();
                 if(success) {
@@ -260,6 +263,7 @@ void LANConnection_Join(void) {
                 }
             }
             else {
+                CloseWindow_Conv2();
                 NetworkCloseConnection();
                 wram->wScriptVar = FALSE;
                 return;

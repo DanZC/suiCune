@@ -746,6 +746,18 @@ void DebugMenu_Scripting(void) {
 }
 
 #include "../link/lan.h"
+#include "../../util/network.h"
+
+const struct TextCmd Text_LANTestSuccess[] = {
+    text_start("LAN test was"
+        t_line "successful!"
+        t_prompt )
+};
+
+const struct TextCmd Text_LANTestFail[] = {
+    text_start("LAN test failed!"
+        t_prompt )
+};
 
 void DebugMenu_Link(void) {
     ClearScreen_Conv2();
@@ -766,6 +778,16 @@ void DebugMenu_Link(void) {
 
     LANConnection();
     
+    LoadStandardMenuHeader_Conv();
+    if(wram->wScriptVar == FALSE) {
+        PrintText_Conv2(Text_LANTestFail);
+    }
+    else {
+        PrintText_Conv2(Text_LANTestSuccess);
+    }
+    CloseWindow_Conv2();
+
+    NetworkCloseConnection();
 }
 
 void DebugMenu_TradeAnim(void) {
