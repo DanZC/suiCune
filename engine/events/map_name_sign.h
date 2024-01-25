@@ -1,6 +1,7 @@
 void InitMapNameSign(void);
 void InitMapNameSign_Conv(void);
 void PlaceMapNameSign(void);
+void PlaceMapNameSign_Conv(void);
 void LoadMapNameSignGFX(void);
 void LoadMapNameSignGFX_Conv(void);
 void InitMapNameFrame(void);

@@ -1856,7 +1856,7 @@ void init_function_pointers(void) {
     // REDIRECTED(PnP_SortOfOKText);
     REDIRECTED(RocketRadio6);
     REDIRECTED(PokedexShow_GetDexEntryBank);
-    REDIRECTED(ClearBottomLine);
+    // CONVERTED(ClearBottomLine);
     // REDIRECTED(OPT_IntroText2);
     REDIRECTED(CopyDexEntry);
     // REDIRECTED(BuenaRadioText6);
@@ -1922,7 +1922,7 @@ void init_function_pointers(void) {
     // REDIRECTED(BuenaRadioMidnightText5);
     REDIRECTED(OaksPKMNTalk1);
     REDIRECTED(PokedexShow8);
-    // REDIRECTED(PokedexShowText);
+    // CONVERTED(PokedexShowText);
     REDIRECTED(BenFernMusic4);
     REDIRECTED(StartRadioStation);
     REDIRECTED(PokeFluteRadio);
@@ -1972,7 +1972,7 @@ void init_function_pointers(void) {
     REDIRECTED(LuckyNumberShow3);
     // REDIRECTED(OPT_MaryText1);
     REDIRECTED(BuenasPassword2);
-    REDIRECTED(CopyBottomLineToTopLine);
+    // CONVERTED(CopyBottomLineToTopLine);
     REDIRECTED(BenFernMusic6);
     // REDIRECTED(CopyRadioTextToRAM);
     // REDIRECTED(PnP_BoldText);
@@ -2850,7 +2850,7 @@ void init_function_pointers(void) {
     // REDIRECTED(BGEventJumptable);
     // REDIRECTED(DisableStepCount);
     // REDIRECTED(SelectMenuCallback);
-    CONVERTED(DisableEvents);
+    // CONVERTED(DisableEvents);
     // REDIRECTED(EnterMap);
     // REDIRECTED(TryWildEncounter_BugContest);
     // REDIRECTED(CheckAPressOW);
@@ -3186,8 +3186,8 @@ void init_function_pointers(void) {
     CONVERTED(v_LoadMapPart);
 
     // engine/tilesets/map_palettes.c
-    REDIRECTED(v_ScrollBGMapPalettes);
-    REDIRECTED(v_SwapTextboxPalettes);
+    // REDIRECTED(v_ScrollBGMapPalettes);
+    // REDIRECTED(v_SwapTextboxPalettes);
 
     // engine/gfx/color.c
     REDIRECTED(ApplyPals);
@@ -4733,4 +4733,14 @@ void init_function_pointers(void) {
     // REDIRECTED(SeerAction0);
     // REDIRECTED(SeerMuchStrengthText);
     // REDIRECTED(SeerDoNothingText);
+
+    // engine/events/repel.c
+    // REDIRECTED(RepelWoreOffScript);
+
+    // engine/overworld/player_step.c
+    // REDIRECTED(v_HandlePlayerStep);
+    // REDIRECTED(UpdatePlayerCoords);
+    // REDIRECTED(HandlePlayerStep);
+    // REDIRECTED(UpdateOverworldMap);
+    // REDIRECTED(ScrollScreen);
 }

@@ -4,12 +4,17 @@
 #include "../../home/map_objects.h"
 #include "../../home/menu.h"
 #include "../../home/map.h"
+#include "../../home/random.h"
+#include "../../home/sine.h"
+#include "../../home/audio.h"
 #include "player_object.h"
 #include "movement.h"
 #include "tile_events.h"
+#include "npc_movement.h"
 #include "../../data/sprites/facings.h"
 
-uint8_t (*gMovementPointer)(void);
+uint8_t (*gMovementPointer)(struct Object*);
+uint8_t* gIndexedMovement2Pointer;
 
 // INCLUDE "data/sprites/facings.asm"
 
@@ -459,7 +464,7 @@ void DeleteMapObject_Conv(struct Object* obj) {
     // LD_BC(OBJECT_LENGTH);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv((obj - wram->wObjectStruct) + wObjectStructs, OBJECT_LENGTH, 0);
+    ByteFill_Conv2(obj, OBJECT_LENGTH, 0);
     // POP_AF;
     // CP_A(-1);
     // IF_Z goto ok;
@@ -490,6 +495,19 @@ void HandleObjectStep(void) {
     CALL(aHandleStepType);
     CALL(aHandleObjectAction);
     RET;
+}
+
+void HandleObjectStep_Conv(struct Object* bc) {
+    // SET_PC(aHandleObjectStep);
+    // CALL(aCheckObjectStillVisible);
+    // RET_C;
+    if(!CheckObjectStillVisible_Conv(bc))
+        return;
+    // CALL(aHandleStepType);
+    HandleStepType_Conv(bc);
+    // CALL(aHandleObjectAction);
+    HandleObjectAction_Conv(bc);
+    // RET;
 }
 
 void CheckObjectStillVisible(void) {
@@ -569,6 +587,106 @@ yes2:
     RET;
 }
 
+bool CheckObjectStillVisible_Conv(struct Object* bc) {
+    // SET_PC(aCheckObjectStillVisible);
+    uint8_t x, y;
+    // LD_HL(OBJECT_FLAGS2);
+    // ADD_HL_BC;
+    // RES_hl(OBJ_FLAGS2_6);
+    bit_reset(bc->flags2, OBJ_FLAGS2_6);
+    // LD_A_addr(wXCoord);
+    // LD_E_A;
+    uint8_t e = wram->wXCoord;
+    // LD_HL(OBJECT_NEXT_MAP_X);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // ADD_A(1);
+    x = bc->nextMapX + 1;
+    // SUB_A_E;
+    // IF_C goto ok;
+    // CP_A(MAPOBJECT_SCREEN_WIDTH);
+    // IF_NC goto ok;
+    if(x >= e && (x - e) < MAPOBJECT_SCREEN_WIDTH) {
+        // LD_A_addr(wYCoord);
+        // LD_E_A;
+        e = wram->wYCoord;
+        // LD_HL(OBJECT_NEXT_MAP_Y);
+        // ADD_HL_BC;
+        // LD_A_hl;
+        // ADD_A(1);
+        y = bc->nextMapY + 1;
+        // SUB_A_E;
+        // IF_C goto ok;
+        // CP_A(MAPOBJECT_SCREEN_HEIGHT);
+        // IF_NC goto ok;
+        // goto yes;
+        if(y >= e && (y - e) < MAPOBJECT_SCREEN_HEIGHT)
+            return true;
+    }
+// ok:
+
+    // LD_HL(OBJECT_FLAGS2);
+    // ADD_HL_BC;
+    // SET_hl(OBJ_FLAGS2_6);
+    bit_set(bc->flags2, OBJ_FLAGS2_6);
+    // LD_A_addr(wXCoord);
+    // LD_E_A;
+    e = wram->wXCoord;
+    // LD_HL(OBJECT_INIT_X);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // ADD_A(1);
+    x = bc->initX + 1;
+    // SUB_A_E;
+    // IF_C goto ok2;
+    // CP_A(MAPOBJECT_SCREEN_WIDTH);
+    // IF_NC goto ok2;
+    if(x >= e && (x - e) < MAPOBJECT_SCREEN_WIDTH) {
+        // LD_A_addr(wYCoord);
+        // LD_E_A;
+        e = wram->wYCoord;
+        // LD_HL(OBJECT_INIT_Y);
+        // ADD_HL_BC;
+        // LD_A_hl;
+        // ADD_A(1);
+        y = bc->initY + 1;
+        // SUB_A_E;
+        // IF_C goto ok2;
+        // CP_A(MAPOBJECT_SCREEN_HEIGHT);
+        // IF_NC goto ok2;
+        if(y >= e && (y - e) < MAPOBJECT_SCREEN_HEIGHT) {
+        // yes:
+            // AND_A_A;
+            // RET;
+            return true;
+        }
+    }
+
+// ok2:
+
+    // LD_HL(OBJECT_FLAGS1);
+    // ADD_HL_BC;
+    // BIT_hl(WONT_DELETE_F);
+    // IF_NZ goto yes2;
+    if(!bit_test(bc->flags1, WONT_DELETE_F)) {
+        // CALL(aDeleteMapObject);
+        DeleteMapObject_Conv(bc);
+        // SCF;
+        // RET;
+        return false;
+    }
+
+// yes2:
+
+    // LD_HL(OBJECT_FLAGS2);
+    // ADD_HL_BC;
+    // SET_hl(OBJ_FLAGS2_6);
+    bit_set(bc->flags2, OBJ_FLAGS2_6);
+    // AND_A_A;
+    // RET;
+    return true;
+}
+
 void HandleStepType(void) {
     SET_PC(aHandleStepType);
     LD_HL(OBJECT_STEP_TYPE);
@@ -614,6 +732,64 @@ frozen:
     RET;
 }
 
+void HandleStepType_Conv(struct Object* bc) {
+    // SET_PC(aHandleStepType);
+    // LD_HL(OBJECT_STEP_TYPE);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // AND_A_A;
+    // IF_Z goto zero;
+    if(bc->stepType == 0)
+        goto zero;
+    // LD_HL(OBJECT_FLAGS2);
+    // ADD_HL_BC;
+    // BIT_hl(FROZEN_F);
+    // IF_NZ goto frozen;
+    if(bit_test(bc->flags2, FROZEN_F))
+        return;
+    // CP_A(STEP_TYPE_FROM_MOVEMENT);
+    // IF_Z goto one;
+    if(bc->stepType == STEP_TYPE_FROM_MOVEMENT)
+        goto one;
+    goto ok3;
+
+zero:
+
+    // CALL(aStepFunction_Reset);
+    StepFunction_Reset_Conv(bc);
+    // LD_HL(OBJECT_FLAGS2);
+    // ADD_HL_BC;
+    // BIT_hl(FROZEN_F);
+    // IF_NZ goto frozen;
+    if(bit_test(bc->flags2, FROZEN_F))
+        return;
+
+one:
+
+    // CALL(aStepFunction_FromMovement);
+    StepFunction_FromMovement_Conv(bc);
+    // LD_HL(OBJECT_STEP_TYPE);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // AND_A_A;
+    // RET_Z;
+    // CP_A(STEP_TYPE_FROM_MOVEMENT);
+    // RET_Z;
+    if(bc->stepType == 0 || bc->stepType == STEP_TYPE_FROM_MOVEMENT)
+        return;
+
+ok3:
+
+    // LD_HL(mStepTypesJumptable);
+    // RST(aJumpTable);
+    // RET;
+    StepTypesJumptable[bc->stepType](bc);
+    return;
+
+// frozen:
+    // RET;
+}
+
 void HandleObjectAction(void) {
     SET_PC(aHandleObjectAction);
     LD_HL(OBJECT_FLAGS1);
@@ -629,6 +805,30 @@ void HandleObjectAction(void) {
     //  use first column (normal)
     LD_DE(mObjectActionPairPointers);
     JR(mCallObjectAction);
+}
+
+void HandleObjectAction_Conv(struct Object* bc) {
+    // SET_PC(aHandleObjectAction);
+    // LD_HL(OBJECT_FLAGS1);
+    // ADD_HL_BC;
+    // BIT_hl(INVISIBLE_F);
+    // JR_NZ(mSetFacingStanding);
+    if(bit_test(bc->flags1, INVISIBLE_F))
+        return SetFacing_Standing_Conv(bc), (void)0;
+    // LD_HL(OBJECT_FLAGS2);
+    // ADD_HL_BC;
+    // BIT_hl(OBJ_FLAGS2_6);
+    // JR_NZ(mSetFacingStanding);
+    if(bit_test(bc->flags2, OBJ_FLAGS2_6))
+        return SetFacing_Standing_Conv(bc), (void)0;
+    // BIT_hl(FROZEN_F);
+    // JR_NZ(mv_CallFrozenObjectAction);
+    if(bit_test(bc->flags2, FROZEN_F))
+        return v_CallFrozenObjectAction_Conv(bc);
+    //  use first column (normal)
+    // LD_DE(mObjectActionPairPointers);
+    // JR(mCallObjectAction);
+    return CallObjectAction_Conv(bc, 0);
 }
 
 void HandleFrozenObjectAction(void) {
@@ -764,6 +964,25 @@ uint8_t CopyNextCoordsTileToStandingCoordsTile_Conv(struct Object* bc) {
     // CALL(aUselessAndA);
     // RET;
     return bc->nextTile;
+}
+
+void CopyStandingCoordsTileToNextCoordsTile_Conv(struct Object* bc) {
+    // SET_PC(aCopyStandingCoordsTileToNextCoordsTile);
+    // LD_HL(OBJECT_MAP_X);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // LD_HL(OBJECT_NEXT_MAP_X);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    bc->nextMapX = bc->mapX;
+    // LD_HL(OBJECT_MAP_Y);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // LD_HL(OBJECT_NEXT_MAP_Y);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    bc->nextMapY = bc->mapY;
+    // RET;
 }
 
 void CopyStandingCoordsTileToNextCoordsTile(void) {
@@ -1305,20 +1524,22 @@ void ObjectMovementByte_ZeroAnonJumptableIndex(void) {
     RET;
 }
 
-void ObjectMovementByte_IncAnonJumptableIndex(void) {
-    SET_PC(aObjectMovementByte_IncAnonJumptableIndex);
-    LD_HL(OBJECT_MOVEMENT_BYTE_INDEX);
-    ADD_HL_BC;
-    INC_hl;
-    RET;
+void ObjectMovementByte_IncAnonJumptableIndex(struct Object* bc) {
+    // SET_PC(aObjectMovementByte_IncAnonJumptableIndex);
+    // LD_HL(OBJECT_MOVEMENT_BYTE_INDEX);
+    // ADD_HL_BC;
+    // INC_hl;
+    ++bc->movementByteIndex;
+    // RET;
 }
 
-void ObjectMovementByte_DecAnonJumptableIndex(void) {
-    SET_PC(aObjectMovementByte_DecAnonJumptableIndex);
-    LD_HL(OBJECT_MOVEMENT_BYTE_INDEX);
-    ADD_HL_BC;
-    DEC_hl;
-    RET;
+void ObjectMovementByte_DecAnonJumptableIndex(struct Object* bc) {
+    // SET_PC(aObjectMovementByte_DecAnonJumptableIndex);
+    // LD_HL(OBJECT_MOVEMENT_BYTE_INDEX);
+    // ADD_HL_BC;
+    // DEC_hl;
+    --bc->movementByteIndex;
+    // RET;
 }
 
 void ObjectMovementByte_AnonJumptable(void) {
@@ -1331,20 +1552,22 @@ void ObjectMovementByte_AnonJumptable(void) {
     RET;
 }
 
-void Field1c_ZeroAnonJumptableIndex(void) {
-    SET_PC(aField1c_ZeroAnonJumptableIndex);
-    LD_HL(OBJECT_1C);
-    ADD_HL_BC;
-    LD_hl(0);
-    RET;
+void Field1c_ZeroAnonJumptableIndex(struct Object* bc) {
+    // SET_PC(aField1c_ZeroAnonJumptableIndex);
+    // LD_HL(OBJECT_1C);
+    // ADD_HL_BC;
+    // LD_hl(0);
+    bc->field_1C = 0;
+    // RET;
 }
 
-void Field1c_IncAnonJumptableIndex(void) {
-    SET_PC(aField1c_IncAnonJumptableIndex);
-    LD_HL(OBJECT_1C);
-    ADD_HL_BC;
-    INC_hl;
-    RET;
+void Field1c_IncAnonJumptableIndex(struct Object* bc) {
+    // SET_PC(aField1c_IncAnonJumptableIndex);
+    // LD_HL(OBJECT_1C);
+    // ADD_HL_BC;
+    // INC_hl;
+    bc->field_1C++;
+    // RET;
 }
 
 void Field1c_AnonJumptable(void) {
@@ -1397,6 +1620,35 @@ void StepFunction_Reset(void) {
     RET;
 }
 
+void StepFunction_Reset_Conv(struct Object* bc) {
+    // SET_PC(aStepFunction_Reset);
+    // LD_HL(OBJECT_NEXT_MAP_X);
+    // ADD_HL_BC;
+    // LD_D_hl;
+    uint8_t d = bc->nextMapX;
+    // LD_HL(OBJECT_NEXT_MAP_Y);
+    // ADD_HL_BC;
+    // LD_E_hl;
+    uint8_t e = bc->nextMapY;
+    // PUSH_BC;
+    // CALL(aGetCoordTile);
+    uint8_t tile = GetCoordTile_Conv(d, e);
+    // POP_BC;
+    // LD_HL(OBJECT_NEXT_TILE);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    bc->nextTile = tile;
+    // CALL(aCopyNextCoordsTileToStandingCoordsTile);
+    CopyNextCoordsTileToStandingCoordsTile_Conv(bc);
+    // CALL(aEndSpriteMovement);
+    EndSpriteMovement_Conv(bc);
+    // LD_HL(OBJECT_STEP_TYPE);
+    // ADD_HL_BC;
+    // LD_hl(STEP_TYPE_FROM_MOVEMENT);
+    bc->stepType = STEP_TYPE_FROM_MOVEMENT;
+    // RET;
+}
+
 void StepFunction_FromMovement(void) {
     SET_PC(aStepFunction_FromMovement);
     CALL(aField1c_ZeroAnonJumptableIndex);
@@ -1439,385 +1691,506 @@ Pointers:
     // dw ['MovementFunction_BoulderDust'];  // 1a
     // dw ['MovementFunction_ShakingGrass'];  // 1b
     // assert_table_length ['NUM_SPRITEMOVEFN']
-
-    return MovementFunction_Null();
 }
 
-void MovementFunction_Null(void) {
-    SET_PC(aMovementFunction_Null);
-    RET;
+void StepFunction_FromMovement_Conv(struct Object* bc) {
+    static void (*const Pointers[])(struct Object*) = {
+    //  entries correspond to SPRITEMOVEFN_* constants (see constants/map_object_constants.asm)
+    // table_width ['2', 'StepFunction_FromMovement.Pointers']
+        MovementFunction_Null,  // 00
+        MovementFunction_RandomWalkY,  // 01
+        MovementFunction_RandomWalkX,  // 02
+        MovementFunction_RandomWalkXY,  // 03
+        MovementFunction_RandomSpinSlow,  // 04
+        MovementFunction_RandomSpinFast,  // 05
+        MovementFunction_Standing,  // 06
+        MovementFunction_ObeyDPad,  // 07
+        MovementFunction_Indexed1,  // 08
+        MovementFunction_Indexed2,  // 09
+        MovementFunction_0a,  // 0a
+        MovementFunction_0b,  // 0b
+        MovementFunction_0c,  // 0c
+        MovementFunction_0d,  // 0d
+        MovementFunction_0e,  // 0e
+        MovementFunction_Follow,  // 0f
+        MovementFunction_Script,  // 10
+        MovementFunction_Strength,  // 11
+        MovementFunction_FollowNotExact,  // 12
+        MovementFunction_Shadow,  // 13
+        MovementFunction_Emote,  // 14
+        MovementFunction_BigStanding,  // 15
+        MovementFunction_Bouncing,  // 16
+        MovementFunction_ScreenShake,  // 17
+        MovementFunction_SpinClockwise,  // 18
+        MovementFunction_SpinCounterclockwise,  // 19
+        MovementFunction_BoulderDust,  // 1a
+        MovementFunction_ShakingGrass,  // 1b
+    };
+    // assert_table_length ['NUM_SPRITEMOVEFN']
+    static_assert(lengthof(Pointers) == NUM_SPRITEMOVEFN, "");
+    // SET_PC(aStepFunction_FromMovement);
+    // CALL(aField1c_ZeroAnonJumptableIndex);
+    Field1c_ZeroAnonJumptableIndex(bc);
+    // CALL(aGetSpriteMovementFunction);
+    // LD_A_hl;
+    uint8_t func = GetSpriteMovementFunction_Conv(bc);
+    // LD_HL(mStepFunction_FromMovement_Pointers);
+    // RST(aJumpTable);
+    Pointers[func](bc);
+    // RET;
 }
 
-void MovementFunction_RandomWalkY(void) {
-    SET_PC(aMovementFunction_RandomWalkY);
-    CALL(aRandom);
-    LDH_A_addr(hRandomAdd);
-    AND_A(0b00000001);
-    JP(mv_RandomWalkContinue);
+void MovementFunction_Null(struct Object* bc) {
+    (void)bc;
+    // SET_PC(aMovementFunction_Null);
+    // RET;
 }
 
-void MovementFunction_RandomWalkX(void) {
-    SET_PC(aMovementFunction_RandomWalkX);
-    CALL(aRandom);
-    LDH_A_addr(hRandomAdd);
-    AND_A(0b00000001);
-    OR_A(0b00000010);
-    JP(mv_RandomWalkContinue);
+void MovementFunction_RandomWalkY(struct Object* bc) {
+    // SET_PC(aMovementFunction_RandomWalkY);
+    // CALL(aRandom);
+    Random_Conv();
+    // LDH_A_addr(hRandomAdd);
+    // AND_A(0b00000001);
+    // JP(mv_RandomWalkContinue);
+    v_RandomWalkContinue(bc, hram->hRandomAdd & 0b00000001);
 }
 
-void MovementFunction_RandomWalkXY(void) {
-    SET_PC(aMovementFunction_RandomWalkXY);
-    CALL(aRandom);
-    LDH_A_addr(hRandomAdd);
-    AND_A(0b00000011);
-    JP(mv_RandomWalkContinue);
+void MovementFunction_RandomWalkX(struct Object* bc) {
+    // SET_PC(aMovementFunction_RandomWalkX);
+    // CALL(aRandom);
+    Random_Conv();
+    // LDH_A_addr(hRandomAdd);
+    // AND_A(0b00000001);
+    // OR_A(0b00000010);
+    // JP(mv_RandomWalkContinue);
+    v_RandomWalkContinue(bc, (hram->hRandomAdd & 0b00000001) | 0b00000010);
 }
 
-void MovementFunction_RandomSpinSlow(void) {
-    SET_PC(aMovementFunction_RandomSpinSlow);
-    CALL(aRandom);
-    LDH_A_addr(hRandomAdd);
-    AND_A(0b00001100);
-    LD_HL(OBJECT_FACING);
-    ADD_HL_BC;
-    LD_hl_A;
-    JP(mRandomStepDuration_Slow);
+void MovementFunction_RandomWalkXY(struct Object* bc) {
+    // SET_PC(aMovementFunction_RandomWalkXY);
+    // CALL(aRandom);
+    Random_Conv();
+    // LDH_A_addr(hRandomAdd);
+    // AND_A(0b00000011);
+    // JP(mv_RandomWalkContinue);
+    v_RandomWalkContinue(bc, hram->hRandomAdd & 0b00000011);
 }
 
-void MovementFunction_RandomSpinFast(void) {
-    SET_PC(aMovementFunction_RandomSpinFast);
-    LD_HL(OBJECT_FACING);
-    ADD_HL_BC;
-    LD_A_hl;
-    AND_A(0b00001100);
-    LD_D_A;
-    CALL(aRandom);
-    LDH_A_addr(hRandomAdd);
-    AND_A(0b00001100);
-    CP_A_D;
-    IF_NZ goto keep;
-    XOR_A(0b00001100);
-
-keep:
-
-    LD_hl_A;
-    JP(mRandomStepDuration_Fast);
+void MovementFunction_RandomSpinSlow(struct Object* bc) {
+    // SET_PC(aMovementFunction_RandomSpinSlow);
+    // CALL(aRandom);
+    Random_Conv();
+    // LDH_A_addr(hRandomAdd);
+    // AND_A(0b00001100);
+    // LD_HL(OBJECT_FACING);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    bc->facing = hram->hRandomAdd & 0b00001100;
+    // JP(mRandomStepDuration_Slow);
+    return RandomStepDuration_Slow(bc);
 }
 
-void MovementFunction_Standing(void) {
-    SET_PC(aMovementFunction_Standing);
-    CALL(aCopyStandingCoordsTileToNextCoordsTile);
-    CALL(aEndSpriteMovement);
-    LD_HL(OBJECT_ACTION);
-    ADD_HL_BC;
-    LD_hl(OBJECT_ACTION_STAND);
-    LD_HL(OBJECT_STEP_TYPE);
-    ADD_HL_BC;
-    LD_hl(STEP_TYPE_RESTORE);
-    RET;
+void MovementFunction_RandomSpinFast(struct Object* bc) {
+    // SET_PC(aMovementFunction_RandomSpinFast);
+    // LD_HL(OBJECT_FACING);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // AND_A(0b00001100);
+    // LD_D_A;
+    // CALL(aRandom);
+    Random_Conv();
+    // LDH_A_addr(hRandomAdd);
+    // AND_A(0b00001100);
+    uint8_t a = hram->hRandomAdd & 0b00001100;
+    // CP_A_D;
+    // IF_NZ goto keep;
+    if(a == (bc->facing & 0b00001100)) {
+        // XOR_A(0b00001100);
+        a ^= 0b00001100;
+    }
+// keep:
+    // LD_hl_A;
+    bc->facing = a;
+    // JP(mRandomStepDuration_Fast);
+    return RandomStepDuration_Fast(bc);
 }
 
-void MovementFunction_ObeyDPad(void) {
-    SET_PC(aMovementFunction_ObeyDPad);
-    LD_HL(mGetPlayerNextMovementByte);
-    JP(mHandleMovementData);
+void MovementFunction_Standing(struct Object* bc) {
+    // SET_PC(aMovementFunction_Standing);
+    // CALL(aCopyStandingCoordsTileToNextCoordsTile);
+    CopyStandingCoordsTileToNextCoordsTile_Conv(bc);
+    // CALL(aEndSpriteMovement);
+    EndSpriteMovement_Conv(bc);
+    // LD_HL(OBJECT_ACTION);
+    // ADD_HL_BC;
+    // LD_hl(OBJECT_ACTION_STAND);
+    bc->action = OBJECT_ACTION_STAND;
+    // LD_HL(OBJECT_STEP_TYPE);
+    // ADD_HL_BC;
+    // LD_hl(STEP_TYPE_RESTORE);
+    bc->stepType = STEP_TYPE_RESTORE;
+    // RET;
 }
 
-void MovementFunction_Indexed1(void) {
-    SET_PC(aMovementFunction_Indexed1);
-    LD_HL(mGetIndexedMovementByte1);
-    JP(mHandleMovementData);
+void MovementFunction_ObeyDPad(struct Object* bc) {
+    // SET_PC(aMovementFunction_ObeyDPad);
+    // LD_HL(mGetPlayerNextMovementByte);
+    // JP(mHandleMovementData);
+    HandleMovementData_Conv(bc, GetPlayerNextMovementByte_Conv);
 }
 
-void MovementFunction_Indexed2(void) {
-    SET_PC(aMovementFunction_Indexed2);
-    LD_HL(mGetIndexedMovementByte2);
-    JP(mHandleMovementData);
+void MovementFunction_Indexed1(struct Object* bc) {
+    // SET_PC(aMovementFunction_Indexed1);
+    // LD_HL(mGetIndexedMovementByte1);
+    // JP(mHandleMovementData);
+    HandleMovementData_Conv(bc, GetIndexedMovementByte1_Conv);
 }
 
-void MovementFunction_0a(void) {
-    SET_PC(aMovementFunction_0a);
-    JP(mv_GetMovementObject);
+void MovementFunction_Indexed2(struct Object* bc) {
+    // SET_PC(aMovementFunction_Indexed2);
+    // LD_HL(mGetIndexedMovementByte2);
+    // JP(mHandleMovementData);
+    HandleMovementData_Conv(bc, GetIndexedMovementByte2_Conv);
 }
 
-void MovementFunction_0b(void) {
-    SET_PC(aMovementFunction_0b);
-    JP(mv_GetMovementObject);
+void MovementFunction_0a(struct Object* bc) {
+    // SET_PC(aMovementFunction_0a);
+    // JP(mv_GetMovementObject);
+    v_GetMovementObject_Conv(bc);
 }
 
-void MovementFunction_0c(void) {
-    SET_PC(aMovementFunction_0c);
-    JP(mv_GetMovementObject);
+void MovementFunction_0b(struct Object* bc) {
+    // SET_PC(aMovementFunction_0b);
+    // JP(mv_GetMovementObject);
+    v_GetMovementObject_Conv(bc);
 }
 
-void MovementFunction_0d(void) {
-    SET_PC(aMovementFunction_0d);
-    LD_HL(mGetPlayerNextMovementByte);
-    JP(mHandleMovementData);
+void MovementFunction_0c(struct Object* bc) {
+    // SET_PC(aMovementFunction_0c);
+    // JP(mv_GetMovementObject);
+    v_GetMovementObject_Conv(bc);
 }
 
-void MovementFunction_0e(void) {
-    SET_PC(aMovementFunction_0e);
-    JP(mv_GetMovementObject);
+void MovementFunction_0d(struct Object* bc) {
+    // SET_PC(aMovementFunction_0d);
+    // LD_HL(mGetPlayerNextMovementByte);
+    // JP(mHandleMovementData);
+    HandleMovementData_Conv(bc, GetPlayerNextMovementByte_Conv);
 }
 
-void MovementFunction_Follow(void) {
-    SET_PC(aMovementFunction_Follow);
-    LD_HL(mGetFollowerNextMovementByte);
-    JP(mHandleMovementData);
+void MovementFunction_0e(struct Object* bc) {
+    // SET_PC(aMovementFunction_0e);
+    // JP(mv_GetMovementObject);
+    v_GetMovementObject_Conv(bc);
 }
 
-void MovementFunction_Script(void) {
-    SET_PC(aMovementFunction_Script);
-    LD_HL(mGetMovementByte);
-    JP(mHandleMovementData);
+void MovementFunction_Follow(struct Object* bc) {
+    // SET_PC(aMovementFunction_Follow);
+    // LD_HL(mGetFollowerNextMovementByte);
+    // JP(mHandleMovementData);
+    HandleMovementData_Conv(bc, GetFollowerNextMovementByte_Conv);
 }
 
-void MovementFunction_Strength(void) {
-    SET_PC(aMovementFunction_Strength);
-    CALL(aObjectMovementByte_AnonJumptable);
-
-anon_dw:
-
-    if (REG_A == 0) goto start;
-    if (REG_A == 1) goto stop;
-
-start:
-
-    LD_HL(OBJECT_NEXT_TILE);
-    ADD_HL_BC;
-    LD_A_hl;
-    CALL(aCheckPitTile);
-    IF_Z goto on_pit;
-    LD_HL(OBJECT_FLAGS2);
-    ADD_HL_BC;
-    BIT_hl(OBJ_FLAGS2_2);
-    RES_hl(OBJ_FLAGS2_2);
-    IF_Z goto ok;
-    LD_HL(OBJECT_RANGE);
-    ADD_HL_BC;
-    LD_A_hl;
-    AND_A(0b00000011);
-    OR_A(0);
-    CALL(aInitStep);
-    CALL(aCanObjectMoveInDirection);
-    IF_C goto ok2;
-    LD_DE(SFX_STRENGTH);
-    CALL(aPlaySFX);
-    CALL(aSpawnStrengthBoulderDust);
-    CALL(aUpdateTallGrassFlags);
-    LD_HL(OBJECT_STEP_TYPE);
-    ADD_HL_BC;
-    LD_hl(STEP_TYPE_STRENGTH_BOULDER);
-    RET;
-
-ok2:
-
-    CALL(aCopyStandingCoordsTileToNextCoordsTile);
-
-ok:
-
-    LD_HL(OBJECT_DIRECTION_WALKING);
-    ADD_HL_BC;
-    LD_hl(STANDING);
-    RET;
-
-on_pit:
-
-    CALL(aObjectMovementByte_IncAnonJumptableIndex);
-
-stop:
-
-    LD_HL(OBJECT_DIRECTION_WALKING);
-    ADD_HL_BC;
-    LD_hl(STANDING);
-    RET;
+void MovementFunction_Script(struct Object* bc) {
+    // SET_PC(aMovementFunction_Script);
+    // LD_HL(mGetMovementByte);
+    // JP(mHandleMovementData);
+    HandleMovementData_Conv(bc, GetMovementByte_Conv);
 }
 
-void MovementFunction_FollowNotExact(void) {
-    SET_PC(aMovementFunction_FollowNotExact);
-    LD_HL(OBJECT_NEXT_MAP_X);
-    ADD_HL_BC;
-    LD_D_hl;
-    LD_HL(OBJECT_NEXT_MAP_Y);
-    ADD_HL_BC;
-    LD_E_hl;
-    LD_HL(OBJECT_RANGE);
-    ADD_HL_BC;
-    LD_A_hl;
-    PUSH_BC;
-    CALL(aGetObjectStruct);
-    LD_HL(OBJECT_DIRECTION_WALKING);
-    ADD_HL_BC;
-    LD_A_hl;
-    CP_A(STANDING);
-    IF_Z goto standing;
-    LD_HL(OBJECT_MAP_X);
-    ADD_HL_BC;
-    LD_A_hl;
-    CP_A_D;
-    IF_Z goto equal;
-    IF_C goto less;
-    LD_A(3);
-    goto done;
+void MovementFunction_Strength(struct Object* bc) {
+    // SET_PC(aMovementFunction_Strength);
+    // CALL(aObjectMovementByte_AnonJumptable);
 
-less:
+// anon_dw:
 
-    LD_A(2);
-    goto done;
+    switch(bc->movementByteIndex) {
+        case 0:
+        // start:
+            // LD_HL(OBJECT_NEXT_TILE);
+            // ADD_HL_BC;
+            // LD_A_hl;
+            // CALL(aCheckPitTile);
+            // IF_Z goto on_pit;
+            if(CheckPitTile_Conv(bc->nextTile)) {
+            // on_pit:
+                // CALL(aObjectMovementByte_IncAnonJumptableIndex);
+                ObjectMovementByte_IncAnonJumptableIndex(bc);
+            }
+            else {
+                // LD_HL(OBJECT_FLAGS2);
+                // ADD_HL_BC;
+                // BIT_hl(OBJ_FLAGS2_2);
+                bool test = bit_test(bc->flags2, OBJ_FLAGS2_2);
+                // RES_hl(OBJ_FLAGS2_2);
+                bit_reset(bc->flags2, OBJ_FLAGS2_2);
+                // IF_Z goto ok;
+                if(!test) {
+                    // LD_HL(OBJECT_RANGE);
+                    // ADD_HL_BC;
+                    // LD_A_hl;
+                    // AND_A(0b00000011);
+                    // OR_A(0);
+                    // CALL(aInitStep);
+                    InitStep_Conv(bc, bc->range & 0b00000011);
+                    // CALL(aCanObjectMoveInDirection);
+                    // IF_C goto ok2;
+                    if(!CanObjectMoveInDirection_Conv(bc)) {
+                        // LD_DE(SFX_STRENGTH);
+                        // CALL(aPlaySFX);
+                        PlaySFX_Conv(SFX_STRENGTH);
+                        // CALL(aSpawnStrengthBoulderDust);
+                        SpawnStrengthBoulderDust_Conv(bc);
+                        // CALL(aUpdateTallGrassFlags);
+                        UpdateTallGrassFlags_Conv(bc);
+                        // LD_HL(OBJECT_STEP_TYPE);
+                        // ADD_HL_BC;
+                        // LD_hl(STEP_TYPE_STRENGTH_BOULDER);
+                        bc->stepType = STEP_TYPE_STRENGTH_BOULDER;
+                        // RET;
+                        return;
+                    }
+                // ok2:
+                    // CALL(aCopyStandingCoordsTileToNextCoordsTile);
+                    CopyStandingCoordsTileToNextCoordsTile_Conv(bc);
+                }
+            // ok:
+                // LD_HL(OBJECT_DIRECTION_WALKING);
+                // ADD_HL_BC;
+                // LD_hl(STANDING);
+                bc->dirWalking = STANDING;
+                // RET;
+                return;
+            }
+            fallthrough;
+        case 1:
+        // stop:
+            // LD_HL(OBJECT_DIRECTION_WALKING);
+            // ADD_HL_BC;
+            // LD_hl(STANDING);
+            bc->dirWalking = STANDING;
+            // RET;
+            return;
+    }
+}
 
-equal:
+void MovementFunction_FollowNotExact(struct Object* bc) {
+    // SET_PC(aMovementFunction_FollowNotExact);
+    // LD_HL(OBJECT_NEXT_MAP_X);
+    // ADD_HL_BC;
+    // LD_D_hl;
+    uint8_t d = bc->nextMapX;
+    // LD_HL(OBJECT_NEXT_MAP_Y);
+    // ADD_HL_BC;
+    // LD_E_hl;
+    uint8_t e = bc->nextMapY;
+    // LD_HL(OBJECT_RANGE);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // PUSH_BC;
+    // CALL(aGetObjectStruct);
+    struct Object* de = GetObjectStruct_Conv(bc->range);
+    // LD_HL(OBJECT_DIRECTION_WALKING);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // CP_A(STANDING);
+    // IF_Z goto standing;
+    if(de->dirWalking == (uint8_t)STANDING)
+        goto standing;
+    uint8_t a;
+    // LD_HL(OBJECT_MAP_X);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // CP_A_D;
+    // IF_Z goto equal;
+    if(de->mapX == d) {
+    // equal:
+        // LD_HL(OBJECT_MAP_Y);
+        // ADD_HL_BC;
+        // LD_A_hl;
+        // CP_A_E;
+        // IF_Z goto standing;
+        if(de->mapY == e)
+            goto standing;
+        // IF_C goto less2;
+        else if(de->mapY < e) {
+        // less2:
+            // LD_A(1);
+            a = 1;
+        }
+        else {
+            // LD_A(0);
+            a = 0;
+            // goto done;
+        }
+    }
+    // IF_C goto less;
+    else if(de->mapX < d) {
+    // less:
+        // LD_A(2);
+        // goto done;
+        a = 2;
+    }
+    else {
+        // LD_A(3);
+        // goto done;
+        a = 3;
+    }
 
-    LD_HL(OBJECT_MAP_Y);
-    ADD_HL_BC;
-    LD_A_hl;
-    CP_A_E;
-    IF_Z goto standing;
-    IF_C goto less2;
-    LD_A(0);
-    goto done;
+// done:
 
-less2:
-
-    LD_A(1);
-
-done:
-
-    LD_D_A;
-    LD_HL(OBJECT_DIRECTION_WALKING);
-    ADD_HL_BC;
-    LD_A_hl;
-    AND_A(0b00001100);
-    OR_A_D;
-    POP_BC;
-    JP(mNormalStep);
+    // LD_D_A;
+    // LD_HL(OBJECT_DIRECTION_WALKING);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // AND_A(0b00001100);
+    // OR_A_D;
+    a |= (de->dirWalking & 0b00001100);
+    // POP_BC;
+    // JP(mNormalStep);
+    return NormalStep(bc, a);
 
 standing:
 
-    POP_BC;
-    LD_HL(OBJECT_DIRECTION_WALKING);
-    ADD_HL_BC;
-    LD_hl(STANDING);
-    LD_HL(OBJECT_ACTION);
-    ADD_HL_BC;
-    LD_hl(OBJECT_ACTION_STAND);
-    RET;
+    // POP_BC;
+    // LD_HL(OBJECT_DIRECTION_WALKING);
+    // ADD_HL_BC;
+    // LD_hl(STANDING);
+    bc->dirWalking = STANDING;
+    // LD_HL(OBJECT_ACTION);
+    // ADD_HL_BC;
+    // LD_hl(OBJECT_ACTION_STAND);
+    bc->action = OBJECT_ACTION_STAND;
+    // RET;
 }
 
-void MovementFunction_BigStanding(void) {
-    SET_PC(aMovementFunction_BigStanding);
-    CALL(aEndSpriteMovement);
-    LD_HL(OBJECT_DIRECTION_WALKING);
-    ADD_HL_BC;
-    LD_hl(STANDING);
-    LD_HL(OBJECT_ACTION);
-    ADD_HL_BC;
-    LD_hl(OBJECT_ACTION_BIG_DOLL_SYM);
-    LD_HL(OBJECT_STEP_TYPE);
-    ADD_HL_BC;
-    LD_hl(STEP_TYPE_STANDING);
-    RET;
+void MovementFunction_BigStanding(struct Object* bc) {
+    // SET_PC(aMovementFunction_BigStanding);
+    // CALL(aEndSpriteMovement);
+    EndSpriteMovement_Conv(bc);
+    // LD_HL(OBJECT_DIRECTION_WALKING);
+    // ADD_HL_BC;
+    // LD_hl(STANDING);
+    bc->dirWalking = STANDING;
+    // LD_HL(OBJECT_ACTION);
+    // ADD_HL_BC;
+    // LD_hl(OBJECT_ACTION_BIG_DOLL_SYM);
+    bc->action = OBJECT_ACTION_BIG_DOLL_SYM;
+    // LD_HL(OBJECT_STEP_TYPE);
+    // ADD_HL_BC;
+    // LD_hl(STEP_TYPE_STANDING);
+    bc->stepType = STEP_TYPE_STANDING;
+    // RET;
 }
 
-void MovementFunction_Bouncing(void) {
-    SET_PC(aMovementFunction_Bouncing);
-    CALL(aEndSpriteMovement);
-    LD_HL(OBJECT_DIRECTION_WALKING);
-    ADD_HL_BC;
-    LD_hl(STANDING);
-    LD_HL(OBJECT_ACTION);
-    ADD_HL_BC;
-    LD_hl(OBJECT_ACTION_BOUNCE);
-    LD_HL(OBJECT_STEP_TYPE);
-    ADD_HL_BC;
-    LD_hl(STEP_TYPE_STANDING);
-    RET;
+void MovementFunction_Bouncing(struct Object* bc) {
+    // SET_PC(aMovementFunction_Bouncing);
+    // CALL(aEndSpriteMovement);
+    EndSpriteMovement_Conv(bc);
+    // LD_HL(OBJECT_DIRECTION_WALKING);
+    // ADD_HL_BC;
+    // LD_hl(STANDING);
+    bc->dirWalking = STANDING;
+    // LD_HL(OBJECT_ACTION);
+    // ADD_HL_BC;
+    // LD_hl(OBJECT_ACTION_BOUNCE);
+    bc->action = OBJECT_ACTION_BOUNCE;
+    // LD_HL(OBJECT_STEP_TYPE);
+    // ADD_HL_BC;
+    // LD_hl(STEP_TYPE_STANDING);
+    bc->stepType = STEP_TYPE_STANDING;
+    // RET;
 }
 
-void MovementFunction_SpinCounterclockwise(void) {
-    SET_PC(aMovementFunction_SpinCounterclockwise);
-    CALL(aObjectMovementByte_AnonJumptable);
+void MovementFunction_SpinCounterclockwise(struct Object* bc) {
+    // SET_PC(aMovementFunction_SpinCounterclockwise);
+    // CALL(aObjectMovementByte_AnonJumptable);
 
-anon_dw:
+// anon_dw:
 
-    // dw ['_MovementSpinInit'];
-    // dw ['_MovementSpinRepeat'];
-    // dw ['_MovementSpinTurnLeft'];
-
-    return MovementFunction_SpinClockwise();
+    switch(bc->movementByteIndex) {
+        case 0: return v_MovementSpinInit(bc);
+        case 1: return v_MovementSpinRepeat(bc);
+        case 2: return v_MovementSpinTurnLeft(bc);
+    }
 }
 
-void MovementFunction_SpinClockwise(void) {
-    SET_PC(aMovementFunction_SpinClockwise);
-    CALL(aObjectMovementByte_AnonJumptable);
+void MovementFunction_SpinClockwise(struct Object* bc) {
+    // SET_PC(aMovementFunction_SpinClockwise);
+    // CALL(aObjectMovementByte_AnonJumptable);
 
-anon_dw:
+// anon_dw:
 
-    // dw ['_MovementSpinInit'];
-    // dw ['_MovementSpinRepeat'];
-    // dw ['_MovementSpinTurnRight'];
-
-    return v_MovementSpinInit();
+    switch(bc->movementByteIndex) {
+        case 0: return v_MovementSpinInit(bc);
+        case 1: return v_MovementSpinRepeat(bc);
+        case 2: return v_MovementSpinTurnRight(bc);
+    }
 }
 
-void v_MovementSpinInit(void) {
-    SET_PC(av_MovementSpinInit);
-    CALL(aEndSpriteMovement);
-    CALL(aObjectMovementByte_IncAnonJumptableIndex);
+void v_MovementSpinInit(struct Object* bc) {
+    // SET_PC(av_MovementSpinInit);
+    // CALL(aEndSpriteMovement);
+    EndSpriteMovement_Conv(bc);
+    // CALL(aObjectMovementByte_IncAnonJumptableIndex);
+    ObjectMovementByte_IncAnonJumptableIndex(bc);
     // fallthrough
 
-    return v_MovementSpinRepeat();
+    return v_MovementSpinRepeat(bc);
 }
 
-void v_MovementSpinRepeat(void) {
-    SET_PC(av_MovementSpinRepeat);
-    LD_HL(OBJECT_ACTION);
-    ADD_HL_BC;
-    LD_hl(OBJECT_ACTION_STAND);
-    LD_HL(OBJECT_RANGE);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_A(0x10);
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    LD_hl_A;
-    LD_HL(OBJECT_STEP_TYPE);
-    ADD_HL_BC;
-    LD_hl(STEP_TYPE_SLEEP);
-    CALL(aObjectMovementByte_IncAnonJumptableIndex);
-    RET;
+void v_MovementSpinRepeat(struct Object* bc) {
+    // SET_PC(av_MovementSpinRepeat);
+    // LD_HL(OBJECT_ACTION);
+    // ADD_HL_BC;
+    // LD_hl(OBJECT_ACTION_STAND);
+    bc->action = OBJECT_ACTION_STAND;
+    // LD_HL(OBJECT_RANGE);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // LD_A(0x10);
+    // LD_HL(OBJECT_STEP_DURATION);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    bc->stepDuration = 0x10;
+    // LD_HL(OBJECT_STEP_TYPE);
+    // ADD_HL_BC;
+    // LD_hl(STEP_TYPE_SLEEP);
+    bc->stepType = STEP_TYPE_SLEEP;
+    // CALL(aObjectMovementByte_IncAnonJumptableIndex);
+    ObjectMovementByte_IncAnonJumptableIndex(bc);
+    // RET;
 }
 
-void v_MovementSpinTurnLeft(void) {
-    SET_PC(av_MovementSpinTurnLeft);
-    LD_DE(mv_MovementSpinTurnLeft_facings_counterclockwise);
-    CALL(av_MovementSpinNextFacing);
-    JR(mMovementFunction_SpinCounterclockwise);
-
-facings_counterclockwise:
-
-    // db ['OW_RIGHT'];
-    // db ['OW_LEFT'];
-    // db ['OW_DOWN'];
-    // db ['OW_UP'];
-
-    return v_MovementSpinTurnRight();
+void v_MovementSpinTurnLeft(struct Object* bc) {
+    static const uint8_t facings_counterclockwise[] = {
+        OW_RIGHT,
+        OW_LEFT,
+        OW_DOWN,
+        OW_UP,
+    };
+    // SET_PC(av_MovementSpinTurnLeft);
+    // LD_DE(mv_MovementSpinTurnLeft_facings_counterclockwise);
+    // CALL(av_MovementSpinNextFacing);
+    v_MovementSpinNextFacing_Conv(bc, facings_counterclockwise);
+    // JR(mMovementFunction_SpinCounterclockwise);
+    return MovementFunction_SpinCounterclockwise(bc);
 }
 
-void v_MovementSpinTurnRight(void) {
-    SET_PC(av_MovementSpinTurnRight);
-    LD_DE(mv_MovementSpinTurnRight_facings_clockwise);
-    CALL(av_MovementSpinNextFacing);
-    JR(mMovementFunction_SpinClockwise);
-
-facings_clockwise:
-
-    // db ['OW_LEFT'];
-    // db ['OW_RIGHT'];
-    // db ['OW_UP'];
-    // db ['OW_DOWN'];
-
-    return v_MovementSpinNextFacing();
+void v_MovementSpinTurnRight(struct Object* bc) {
+    static const uint8_t facings_clockwise[] = {
+        OW_LEFT,
+        OW_RIGHT,
+        OW_UP,
+        OW_DOWN,
+    };
+    // SET_PC(av_MovementSpinTurnRight);
+    // LD_DE(mv_MovementSpinTurnRight_facings_clockwise);
+    // CALL(av_MovementSpinNextFacing);
+    v_MovementSpinNextFacing_Conv(bc, facings_clockwise);
+    // JR(mMovementFunction_SpinClockwise);
+    return MovementFunction_SpinClockwise(bc);
 }
 
 void v_MovementSpinNextFacing(void) {
@@ -1839,311 +2212,398 @@ void v_MovementSpinNextFacing(void) {
     RET;
 }
 
-void MovementFunction_Shadow(void) {
-    SET_PC(aMovementFunction_Shadow);
-    CALL(aInitMovementField1dField1e);
-    LD_HL(OBJECT_ACTION);
-    ADD_HL_BC;
-    LD_hl(OBJECT_ACTION_SHADOW);
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_DE;
-    LD_A_hl;
-    INC_A;
-    ADD_A_A;
-    ADD_A(0);
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    LD_hl_A;
-    LD_HL(OBJECT_DIRECTION_WALKING);
-    ADD_HL_DE;
-    LD_A_hl;
-    maskbits(NUM_DIRECTIONS, 0);
-    LD_D(1 * 8 + 6);
-    CP_A(DOWN);
-    IF_Z goto ok;
-    CP_A(UP);
-    IF_Z goto ok;
-    LD_D(1 * 8 + 4);
-
-ok:
-
-    LD_HL(OBJECT_SPRITE_Y_OFFSET);
-    ADD_HL_BC;
-    LD_hl_D;
-    LD_HL(OBJECT_SPRITE_X_OFFSET);
-    ADD_HL_BC;
-    LD_hl(0);
-    LD_HL(OBJECT_STEP_TYPE);
-    ADD_HL_BC;
-    LD_hl(STEP_TYPE_TRACKING_OBJECT);
-    RET;
+void v_MovementSpinNextFacing_Conv(struct Object* bc, const uint8_t* de) {
+    // SET_PC(av_MovementSpinNextFacing);
+    // LD_HL(OBJECT_FACING);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // AND_A(0b00001100);
+    // RRCA;
+    // RRCA;
+    // PUSH_HL;
+    // LD_L_A;
+    // LD_H(0);
+    // ADD_HL_DE;
+    // LD_A_hl;
+    // POP_HL;
+    // LD_hl_A;
+    bc->facing = de[bc->facing >> 2];
+    // CALL(aObjectMovementByte_DecAnonJumptableIndex);
+    ObjectMovementByte_DecAnonJumptableIndex(bc);
+    // RET;
 }
 
-void MovementFunction_Emote(void) {
-    SET_PC(aMovementFunction_Emote);
-    CALL(aEndSpriteMovement);
-    CALL(aInitMovementField1dField1e);
-    LD_HL(OBJECT_ACTION);
-    ADD_HL_BC;
-    LD_hl(OBJECT_ACTION_EMOTE);
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    LD_hl(0);
-    LD_HL(OBJECT_SPRITE_Y_OFFSET);
-    ADD_HL_BC;
-    LD_hl(-2 * 8);
-    LD_HL(OBJECT_SPRITE_X_OFFSET);
-    ADD_HL_BC;
-    LD_hl(0);
-    LD_HL(OBJECT_STEP_TYPE);
-    ADD_HL_BC;
-    LD_hl(STEP_TYPE_TRACKING_OBJECT);
-    RET;
+void MovementFunction_Shadow(struct Object* bc) {
+    // SET_PC(aMovementFunction_Shadow);
+    // CALL(aInitMovementField1dField1e);
+    struct Object* de = InitMovementField1dField1e(bc);
+    // LD_HL(OBJECT_ACTION);
+    // ADD_HL_BC;
+    // LD_hl(OBJECT_ACTION_SHADOW);
+    bc->action = OBJECT_ACTION_SHADOW;
+    // LD_HL(OBJECT_STEP_DURATION);
+    // ADD_HL_DE;
+    // LD_A_hl;
+    // INC_A;
+    // ADD_A_A;
+    // ADD_A(0);
+    // LD_HL(OBJECT_STEP_DURATION);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    bc->stepDuration = (de->stepDuration + 1) * 2;
+    // LD_HL(OBJECT_DIRECTION_WALKING);
+    // ADD_HL_DE;
+    // LD_A_hl;
+    // maskbits(NUM_DIRECTIONS, 0);
+    uint8_t d;
+    uint8_t dir = de->dirWalking & 3;
+    // LD_D(1 * 8 + 6);
+    // CP_A(DOWN);
+    // IF_Z goto ok;
+    // CP_A(UP);
+    // IF_Z goto ok;
+    if(dir == DOWN || dir == UP) {
+        d = 1 * 8 + 6;
+    }
+    else {
+        // LD_D(1 * 8 + 4);
+        d = 1 * 8 + 4;
+    }
+// ok:
+    // LD_HL(OBJECT_SPRITE_Y_OFFSET);
+    // ADD_HL_BC;
+    // LD_hl_D;
+    bc->spriteYOffset = d;
+    // LD_HL(OBJECT_SPRITE_X_OFFSET);
+    // ADD_HL_BC;
+    // LD_hl(0);
+    bc->spriteXOffset = 0;
+    // LD_HL(OBJECT_STEP_TYPE);
+    // ADD_HL_BC;
+    // LD_hl(STEP_TYPE_TRACKING_OBJECT);
+    bc->stepType = STEP_TYPE_TRACKING_OBJECT;
+    // RET;
 }
 
-void MovementFunction_BoulderDust(void) {
-    SET_PC(aMovementFunction_BoulderDust);
-    CALL(aEndSpriteMovement);
-    CALL(aInitMovementField1dField1e);
-    LD_HL(OBJECT_ACTION);
-    ADD_HL_BC;
-    LD_hl(OBJECT_ACTION_BOULDER_DUST);
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_DE;
-    LD_A_hl;
-    INC_A;
-    ADD_A_A;
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    LD_hl_A;
-    LD_HL(OBJECT_DIRECTION_WALKING);
-    ADD_HL_DE;
-    LD_A_hl;
-    AND_A(0b00000011);
-    LD_E_A;
-    LD_D(0);
-    LD_HL(mMovementFunction_BoulderDust_dust_coords);
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_D_hl;
-    INC_HL;
-    LD_E_hl;
-    LD_HL(OBJECT_SPRITE_X_OFFSET);
-    ADD_HL_BC;
-    LD_hl_D;
-    LD_HL(OBJECT_SPRITE_Y_OFFSET);
-    ADD_HL_BC;
-    LD_hl_E;
-    LD_HL(OBJECT_STEP_TYPE);
-    ADD_HL_BC;
-    LD_hl(STEP_TYPE_TRACKING_OBJECT);
-    RET;
-
-dust_coords:
-
-    //   x,  y
-    // db ['0', '-4'];
-    // db ['0', '8'];
-    // db ['6', '2'];
-    // db ['-6', '2'];
-
-    return MovementFunction_ShakingGrass();
+void MovementFunction_Emote(struct Object* bc) {
+    // SET_PC(aMovementFunction_Emote);
+    // CALL(aEndSpriteMovement);
+    EndSpriteMovement_Conv(bc);
+    // CALL(aInitMovementField1dField1e);
+    InitMovementField1dField1e(bc);
+    // LD_HL(OBJECT_ACTION);
+    // ADD_HL_BC;
+    // LD_hl(OBJECT_ACTION_EMOTE);
+    bc->action = OBJECT_ACTION_EMOTE;
+    // LD_HL(OBJECT_STEP_DURATION);
+    // ADD_HL_BC;
+    // LD_hl(0);
+    bc->stepDuration = 0;
+    // LD_HL(OBJECT_SPRITE_Y_OFFSET);
+    // ADD_HL_BC;
+    // LD_hl(-2 * 8);
+    bc->spriteYOffset = -2 * 8;
+    // LD_HL(OBJECT_SPRITE_X_OFFSET);
+    // ADD_HL_BC;
+    // LD_hl(0);
+    bc->spriteXOffset = 0;
+    // LD_HL(OBJECT_STEP_TYPE);
+    // ADD_HL_BC;
+    // LD_hl(STEP_TYPE_TRACKING_OBJECT);
+    bc->stepType = STEP_TYPE_TRACKING_OBJECT;
+    // RET;
 }
 
-void MovementFunction_ShakingGrass(void) {
-    SET_PC(aMovementFunction_ShakingGrass);
-    CALL(aEndSpriteMovement);
-    CALL(aInitMovementField1dField1e);
-    LD_HL(OBJECT_ACTION);
-    ADD_HL_BC;
-    LD_hl(OBJECT_ACTION_GRASS_SHAKE);
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_DE;
-    LD_A_hl;
-    ADD_A(-1);
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    LD_hl_A;
-    LD_HL(OBJECT_STEP_TYPE);
-    ADD_HL_BC;
-    LD_hl(STEP_TYPE_TRACKING_OBJECT);
-    RET;
+void MovementFunction_BoulderDust(struct Object* bc) {
+    static const struct Coords dust_coords[] = {
+        //   x,  y
+        {    0, -4},
+        {    0,  8},
+        {    6,  2},
+        {   -6,  2},
+    };
+    // SET_PC(aMovementFunction_BoulderDust);
+    // CALL(aEndSpriteMovement);
+    EndSpriteMovement_Conv(bc);
+    // CALL(aInitMovementField1dField1e);
+    struct Object* de = InitMovementField1dField1e(bc);
+    // LD_HL(OBJECT_ACTION);
+    // ADD_HL_BC;
+    // LD_hl(OBJECT_ACTION_BOULDER_DUST);
+    bc->action = OBJECT_ACTION_BOULDER_DUST;
+    // LD_HL(OBJECT_STEP_DURATION);
+    // ADD_HL_DE;
+    // LD_A_hl;
+    // INC_A;
+    // ADD_A_A;
+    // LD_HL(OBJECT_STEP_DURATION);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    bc->stepDuration = (de->stepDuration + 1) * 2;
+    // LD_HL(OBJECT_DIRECTION_WALKING);
+    // ADD_HL_DE;
+    // LD_A_hl;
+    // AND_A(0b00000011);
+    // LD_E_A;
+    // LD_D(0);
+    // LD_HL(mMovementFunction_BoulderDust_dust_coords);
+    // ADD_HL_DE;
+    // ADD_HL_DE;
+    // LD_D_hl;
+    // INC_HL;
+    // LD_E_hl;
+    struct Coords coord = dust_coords[de->dirWalking & 0b00000011];
+    // LD_HL(OBJECT_SPRITE_X_OFFSET);
+    // ADD_HL_BC;
+    // LD_hl_D;
+    bc->spriteXOffset = coord.x;
+    // LD_HL(OBJECT_SPRITE_Y_OFFSET);
+    // ADD_HL_BC;
+    // LD_hl_E;
+    bc->spriteYOffset = coord.y;
+    // LD_HL(OBJECT_STEP_TYPE);
+    // ADD_HL_BC;
+    // LD_hl(STEP_TYPE_TRACKING_OBJECT);
+    bc->stepType = STEP_TYPE_TRACKING_OBJECT;
+    // RET;
 }
 
-void InitMovementField1dField1e(void) {
-    SET_PC(aInitMovementField1dField1e);
-    LD_HL(OBJECT_RANGE);
-    ADD_HL_BC;
-    LD_A_hl;
-    PUSH_BC;
-    CALL(aGetObjectStruct);
-    LD_D_B;
-    LD_E_C;
-    POP_BC;
-    LD_HL(OBJECT_1D);
-    ADD_HL_BC;
-    LD_hl_E;
-    INC_HL;
-    LD_hl_D;
-    RET;
+void MovementFunction_ShakingGrass(struct Object* bc) {
+    // SET_PC(aMovementFunction_ShakingGrass);
+    // CALL(aEndSpriteMovement);
+    EndSpriteMovement_Conv(bc);
+    // CALL(aInitMovementField1dField1e);
+    struct Object* de = InitMovementField1dField1e(bc);
+    // LD_HL(OBJECT_ACTION);
+    // ADD_HL_BC;
+    // LD_hl(OBJECT_ACTION_GRASS_SHAKE);
+    bc->action = OBJECT_ACTION_GRASS_SHAKE;
+    // LD_HL(OBJECT_STEP_DURATION);
+    // ADD_HL_DE;
+    // LD_A_hl;
+    // ADD_A(-1);
+    // LD_HL(OBJECT_STEP_DURATION);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    bc->stepDuration = de->stepDuration - 1;
+    // LD_HL(OBJECT_STEP_TYPE);
+    // ADD_HL_BC;
+    // LD_hl(STEP_TYPE_TRACKING_OBJECT);
+    bc->stepType = STEP_TYPE_TRACKING_OBJECT;
+    // RET;
 }
 
-void MovementFunction_ScreenShake(void) {
-    SET_PC(aMovementFunction_ScreenShake);
-    CALL(aEndSpriteMovement);
-    LD_HL(OBJECT_ACTION);
-    ADD_HL_BC;
-    LD_hl(OBJECT_ACTION_00);
-    LD_HL(OBJECT_RANGE);
-    ADD_HL_BC;
-    LD_A_hl;
-    CALL(aMovementFunction_ScreenShake_GetDurationAndField1e);
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    LD_hl_E;
-    LD_HL(OBJECT_1E);
-    ADD_HL_BC;
-    LD_hl_A;
-    LD_HL(OBJECT_STEP_TYPE);
-    ADD_HL_BC;
-    LD_hl(STEP_TYPE_SCREENSHAKE);
-    RET;
-
-GetDurationAndField1e:
-
-    LD_D_A;
-    AND_A(0b00111111);
-    LD_E_A;
-    LD_A_D;
-    RLCA;
-    RLCA;
-    AND_A(0b00000011);
-    LD_D_A;
-    INC_D;
-    LD_A(1);
-
-loop:
-
-    DEC_D;
-    RET_Z;
-    ADD_A_A;
-    goto loop;
-
-    return v_RandomWalkContinue();
+struct Object* InitMovementField1dField1e(struct Object* bc) {
+    // SET_PC(aInitMovementField1dField1e);
+    // LD_HL(OBJECT_RANGE);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    uint8_t range = bc->range;
+    // PUSH_BC;
+    // CALL(aGetObjectStruct);
+    // LD_D_B;
+    // LD_E_C;
+    // POP_BC;
+    struct Object* de = GetObjectStruct_Conv(range);
+    // LD_HL(OBJECT_1D);
+    uint16_t vptr = RAMAddrToGB(de);
+    // ADD_HL_BC;
+    // LD_hl_E;
+    bc->field_1D = LOW(vptr);
+    // INC_HL;
+    // LD_hl_D;
+    bc->field_1E = HIGH(vptr);
+    // RET;
+    return de;
 }
 
-void v_RandomWalkContinue(void) {
-    SET_PC(av_RandomWalkContinue);
-    CALL(aInitStep);
-    CALL(aCanObjectMoveInDirection);
-    IF_C goto new_duration;
-    CALL(aUpdateTallGrassFlags);
-    LD_HL(OBJECT_ACTION);
-    ADD_HL_BC;
-    LD_hl(OBJECT_ACTION_STEP);
-    LD_HL(wCenteredObject);
-    LDH_A_addr(hMapObjectIndex);
-    CP_A_hl;
-    IF_Z goto centered;
-    LD_HL(OBJECT_STEP_TYPE);
-    ADD_HL_BC;
-    LD_hl(STEP_TYPE_CONTINUE_WALK);
-    RET;
+// Returns LOW(x) = Field1e (a) and HIGH(x) = Duration (e)
+static uint16_t MovementFunction_ScreenShake_GetDurationAndField1e(uint8_t a) {
+    // LD_D_A;
+    // AND_A(0b00111111);
+    // LD_E_A;
+    uint8_t e = a & 0b00111111;
+    // LD_A_D;
+    // RLCA;
+    // RLCA;
+    // AND_A(0b00000011);
+    // LD_D_A;
+    uint8_t d = (a >> 6) & 0b00000011;
+    // INC_D;
+    // LD_A(1);
 
-centered:
-
-    LD_HL(OBJECT_STEP_TYPE);
-    ADD_HL_BC;
-    LD_hl(STEP_TYPE_PLAYER_WALK);
-    RET;
-
-new_duration:
-
-    CALL(aEndSpriteMovement);
-    CALL(aCopyStandingCoordsTileToNextCoordsTile);
-    // fallthrough
-
-    return RandomStepDuration_Slow();
+    // This loop folds to n = 1 << d.
+    uint8_t n = 1 << d;
+    // loop:
+        // DEC_D;
+        // RET_Z;
+        // ADD_A_A;
+        // goto loop;
+    return n | (e << 8);
 }
 
-void RandomStepDuration_Slow(void) {
-    SET_PC(aRandomStepDuration_Slow);
-    CALL(aRandom);
-    LDH_A_addr(hRandomAdd);
-    AND_A(0b01111111);
-    JR(mv_SetRandomStepDuration);
+void MovementFunction_ScreenShake(struct Object* bc) {
+    // SET_PC(aMovementFunction_ScreenShake);
+    // CALL(aEndSpriteMovement);
+    EndSpriteMovement_Conv(bc);
+    // LD_HL(OBJECT_ACTION);
+    // ADD_HL_BC;
+    // LD_hl(OBJECT_ACTION_00);
+    bc->action = OBJECT_ACTION_00;
+    // LD_HL(OBJECT_RANGE);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // CALL(aMovementFunction_ScreenShake_GetDurationAndField1e);
+    uint16_t res = MovementFunction_ScreenShake_GetDurationAndField1e(bc->range);
+    // LD_HL(OBJECT_STEP_DURATION);
+    // ADD_HL_BC;
+    // LD_hl_E;
+    bc->stepDuration = HIGH(res);
+    // LD_HL(OBJECT_1E);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    bc->field_1E = LOW(res);
+    // LD_HL(OBJECT_STEP_TYPE);
+    // ADD_HL_BC;
+    // LD_hl(STEP_TYPE_SCREENSHAKE);
+    bc->stepType = STEP_TYPE_SCREENSHAKE;
+    // RET;
 }
 
-void RandomStepDuration_Fast(void) {
-    SET_PC(aRandomStepDuration_Fast);
-    CALL(aRandom);
-    LDH_A_addr(hRandomAdd);
-    AND_A(0b00011111);
-    return v_SetRandomStepDuration();
+void v_RandomWalkContinue(struct Object* bc, uint8_t a) {
+    // SET_PC(av_RandomWalkContinue);
+    // CALL(aInitStep);
+    InitStep_Conv(bc, a);
+    // CALL(aCanObjectMoveInDirection);
+    // IF_C goto new_duration;
+    if(CanObjectMoveInDirection_Conv(bc)) {
+    // new_duration:
+        // CALL(aEndSpriteMovement);
+        EndSpriteMovement_Conv(bc);
+        // CALL(aCopyStandingCoordsTileToNextCoordsTile);
+        CopyStandingCoordsTileToNextCoordsTile_Conv(bc);
+        // fallthrough
+
+        return RandomStepDuration_Slow(bc);
+    }
+
+    // CALL(aUpdateTallGrassFlags);
+    UpdateTallGrassFlags_Conv(bc);
+    // LD_HL(OBJECT_ACTION);
+    // ADD_HL_BC;
+    // LD_hl(OBJECT_ACTION_STEP);
+    bc->action = OBJECT_ACTION_STEP;
+    // LD_HL(wCenteredObject);
+    // LDH_A_addr(hMapObjectIndex);
+    // CP_A_hl;
+    // IF_Z goto centered;
+    if(wram->wCenteredObject == hram->hMapObjectIndex) {
+    // centered:
+        // LD_HL(OBJECT_STEP_TYPE);
+        // ADD_HL_BC;
+        // LD_hl(STEP_TYPE_PLAYER_WALK);
+        bc->stepType = STEP_TYPE_PLAYER_WALK;
+        // RET;
+        return;
+    }
+    else {
+        // LD_HL(OBJECT_STEP_TYPE);
+        // ADD_HL_BC;
+        // LD_hl(STEP_TYPE_CONTINUE_WALK);
+        bc->stepType = STEP_TYPE_CONTINUE_WALK;
+        // RET;
+        return;
+    }
 }
 
-void v_SetRandomStepDuration(void) {
-    SET_PC(av_SetRandomStepDuration);
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    LD_hl_A;
-    LD_HL(OBJECT_DIRECTION_WALKING);
-    ADD_HL_BC;
-    LD_hl(STANDING);
-    LD_HL(OBJECT_ACTION);
-    ADD_HL_BC;
-    LD_hl(OBJECT_ACTION_STAND);
-    LD_HL(OBJECT_STEP_TYPE);
-    ADD_HL_BC;
-    LD_hl(STEP_TYPE_SLEEP);
-    RET;
+void RandomStepDuration_Slow(struct Object* bc) {
+    // SET_PC(aRandomStepDuration_Slow);
+    // CALL(aRandom);
+    Random_Conv();
+    // LDH_A_addr(hRandomAdd);
+    // AND_A(0b01111111);
+    // JR(mv_SetRandomStepDuration);
+    return v_SetRandomStepDuration(bc, hram->hRandomAdd & 0b01111111);
 }
 
-void StepTypesJumptable(void) {
-    SET_PC(aStepTypesJumptable);
+void RandomStepDuration_Fast(struct Object* bc) {
+    // SET_PC(aRandomStepDuration_Fast);
+    // CALL(aRandom);
+    Random_Conv();
+    // LDH_A_addr(hRandomAdd);
+    // AND_A(0b00011111);
+    return v_SetRandomStepDuration(bc, hram->hRandomAdd & 0b00011111);
+}
+
+void v_SetRandomStepDuration(struct Object* bc, uint8_t a) {
+    // SET_PC(av_SetRandomStepDuration);
+    // LD_HL(OBJECT_STEP_DURATION);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    bc->stepDuration = a;
+    // LD_HL(OBJECT_DIRECTION_WALKING);
+    // ADD_HL_BC;
+    // LD_hl(STANDING);
+    bc->dirWalking = STANDING;
+    // LD_HL(OBJECT_ACTION);
+    // ADD_HL_BC;
+    // LD_hl(OBJECT_ACTION_STAND);
+    bc->action = OBJECT_ACTION_STAND;
+    // LD_HL(OBJECT_STEP_TYPE);
+    // ADD_HL_BC;
+    // LD_hl(STEP_TYPE_SLEEP);
+    bc->stepType = STEP_TYPE_SLEEP;
+    // RET;
+}
+
+void (*const StepTypesJumptable[])(struct Object* bc) = {
+    // SET_PC(aStepTypesJumptable);
     //  entries correspond to STEP_TYPE_* constants (see constants/map_object_constants.asm)
     // table_width ['2', 'StepTypesJumptable']
-    // dw ['StepFunction_Reset'];  // 00
-    // dw ['StepFunction_FromMovement'];  // 01
-    // dw ['StepFunction_NPCWalk'];  // 02
-    // dw ['StepFunction_Sleep'];  // 03
-    // dw ['StepFunction_Standing'];  // 04
-    // dw ['StepFunction_Restore'];  // 05
-    // dw ['StepFunction_PlayerWalk'];  // 06
-    // dw ['StepFunction_ContinueWalk'];  // 07
-    // dw ['StepFunction_NPCJump'];  // 08
-    // dw ['StepFunction_PlayerJump'];  // 09
-    // dw ['StepFunction_Turn'];  // 0a
-    // dw ['StepFunction_Bump'];  // 0b
-    // dw ['StepFunction_TeleportFrom'];  // 0c
-    // dw ['StepFunction_TeleportTo'];  // 0d
-    // dw ['StepFunction_Skyfall'];  // 0e
-    // dw ['StepFunction_StrengthBoulder'];  // 0f
-    // dw ['StepFunction_GotBite'];  // 10
-    // dw ['StepFunction_RockSmash'];  // 11
-    // dw ['StepFunction_DigTo'];  // 12
-    // dw ['StepFunction_TrackingObject'];  // 13
-    // dw ['StepFunction_14'];  // 14
-    // dw ['StepFunction_ScreenShake'];  // 15
+    [STEP_TYPE_RESET]           = StepFunction_Reset_Conv,  // 00
+    [STEP_TYPE_FROM_MOVEMENT]   = StepFunction_FromMovement_Conv,  // 01
+    [STEP_TYPE_NPC_WALK]        = StepFunction_NPCWalk_Conv,  // 02
+    [STEP_TYPE_SLEEP]           = StepFunction_Sleep_Conv,  // 03
+    [STEP_TYPE_STANDING]        = StepFunction_Standing_Conv,  // 04
+    [STEP_TYPE_RESTORE]         = StepFunction_Restore_Conv,  // 05
+    [STEP_TYPE_PLAYER_WALK]     = StepFunction_PlayerWalk_Conv,  // 06
+    [STEP_TYPE_CONTINUE_WALK]   = StepFunction_ContinueWalk_Conv,  // 07
+    [STEP_TYPE_NPC_JUMP]        = StepFunction_NPCJump_Conv,  // 08
+    [STEP_TYPE_PLAYER_JUMP]     = StepFunction_PlayerJump_Conv,  // 09
+    [STEP_TYPE_TURN]            = StepFunction_Turn_Conv,  // 0a
+    [STEP_TYPE_BUMP]            = StepFunction_Bump_Conv,  // 0b
+    [STEP_TYPE_TELEPORT_FROM]   = StepFunction_TeleportFrom_Conv,  // 0c
+    [STEP_TYPE_TELEPORT_TO]     = StepFunction_TeleportTo_Conv,  // 0d
+    [STEP_TYPE_SKYFALL]         = StepFunction_Skyfall_Conv,  // 0e
+    [STEP_TYPE_STRENGTH_BOULDER]= StepFunction_StrengthBoulder_Conv,  // 0f
+    [STEP_TYPE_GOT_BITE]        = StepFunction_GotBite_Conv,  // 10
+    [STEP_TYPE_ROCK_SMASH]      = StepFunction_RockSmash_Conv,  // 11
+    [STEP_TYPE_RETURN_DIG]      = StepFunction_DigTo_Conv,  // 12
+    [STEP_TYPE_TRACKING_OBJECT] = StepFunction_TrackingObject_Conv,  // 13
+    [STEP_TYPE_14]              = StepFunction_14_Conv,  // 14
+    [STEP_TYPE_SCREENSHAKE]     = StepFunction_ScreenShake_Conv,  // 15
+    //  16 and 17 are unfinished so I omitted them.
     // dw ['StepFunction_16'];  // 16
     // dw ['StepFunction_17'];  // 17
-    // dw ['StepFunction_Delete'];  // 18
-    // dw ['StepFunction_SkyfallTop'];  // 19
-    // assert_table_length ['NUM_STEP_TYPES']
+    [STEP_TYPE_DELETE]          = StepFunction_Delete_Conv,  // 18
+    [STEP_TYPE_SKYFALL_TOP]     = StepFunction_SkyfallTop_Conv,  // 19
+};
+// assert_table_length ['NUM_STEP_TYPES']
+static_assert(lengthof(StepTypesJumptable) == NUM_STEP_TYPES, "");
 
-    return WaitStep_InPlace();
-}
-
-void WaitStep_InPlace(void) {
-    SET_PC(aWaitStep_InPlace);
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    DEC_hl;
-    RET_NZ;
-    LD_HL(OBJECT_STEP_TYPE);
-    ADD_HL_BC;
-    LD_hl(STEP_TYPE_FROM_MOVEMENT);
-    RET;
+void WaitStep_InPlace(struct Object* bc) {
+    // SET_PC(aWaitStep_InPlace);
+    // LD_HL(OBJECT_STEP_DURATION);
+    // ADD_HL_BC;
+    // DEC_hl;
+    // RET_NZ;
+    if(--bc->stepDuration)
+        return;
+    // LD_HL(OBJECT_STEP_TYPE);
+    // ADD_HL_BC;
+    // LD_hl(STEP_TYPE_FROM_MOVEMENT);
+    bc->stepType = STEP_TYPE_FROM_MOVEMENT;
+    // RET;
 }
 
 void StepFunction_NPCJump(void) {
@@ -2183,6 +2643,62 @@ Land:
     ADD_HL_BC;
     LD_hl(STEP_TYPE_FROM_MOVEMENT);
     RET;
+}
+
+void StepFunction_NPCJump_Conv(struct Object* bc) {
+    // SET_PC(aStepFunction_NPCJump);
+    // LD_HL(OBJECT_1C);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // if (REG_A == 0) goto Jump;
+    // if (REG_A == 1) goto Land;
+    switch(bc->field_1C) {
+    case 0:
+    // Jump:
+        // CALL(aAddStepVector);
+        AddStepVector_Conv(bc);
+        // CALL(aUpdateJumpPosition);
+        UpdateJumpPosition();
+        // LD_HL(OBJECT_STEP_DURATION);
+        // ADD_HL_BC;
+        // DEC_hl;
+        // RET_NZ;
+        if(--bc->stepDuration != 0)
+            return;
+        // CALL(aCopyNextCoordsTileToStandingCoordsTile);
+        CopyNextCoordsTileToStandingCoordsTile_Conv(bc);
+        // CALL(aGetNextTile);
+        GetNextTile_Conv(bc);
+        // LD_HL(OBJECT_FLAGS2);
+        // ADD_HL_BC;
+        // RES_hl(OVERHEAD_F);
+        bit_reset(bc->flags2, OVERHEAD_F);
+        // CALL(aField1c_IncAnonJumptableIndex);
+        Field1c_IncAnonJumptableIndex(bc);
+        // RET;
+        return;
+
+    case 1:
+    // Land:
+        // CALL(aAddStepVector);
+        AddStepVector_Conv(bc);
+        // CALL(aUpdateJumpPosition);
+        UpdateJumpPosition();
+        // LD_HL(OBJECT_STEP_DURATION);
+        // ADD_HL_BC;
+        // DEC_hl;
+        // RET_NZ;
+        if(--bc->stepDuration != 0)
+            return;
+        // CALL(aCopyNextCoordsTileToStandingCoordsTile);
+        CopyNextCoordsTileToStandingCoordsTile_Conv(bc);
+        // LD_HL(OBJECT_STEP_TYPE);
+        // ADD_HL_BC;
+        // LD_hl(STEP_TYPE_FROM_MOVEMENT);
+        bc->stepType = STEP_TYPE_FROM_MOVEMENT;
+        // RET;
+        return;
+    }
 }
 
 void StepFunction_PlayerJump(void) {
@@ -2241,6 +2757,85 @@ stepland:
     ADD_HL_BC;
     LD_hl(STEP_TYPE_FROM_MOVEMENT);
     RET;
+}
+
+void StepFunction_PlayerJump_Conv(struct Object* bc) {
+    // SET_PC(aStepFunction_PlayerJump);
+    // LD_HL(OBJECT_1C);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    switch(bc->field_1C) {
+    case 0:
+    // initjump:
+        // LD_HL(wPlayerStepFlags);
+        // SET_hl(PLAYERSTEP_START_F);
+        bit_set(wram->wPlayerStepFlags, PLAYERSTEP_START_F);
+        // CALL(aField1c_IncAnonJumptableIndex);
+        Field1c_IncAnonJumptableIndex(bc);
+        // fallthrough
+    case 1:
+    // stepjump:
+        // CALL(aUpdateJumpPosition);
+        UpdateJumpPosition_Conv(bc);
+        // CALL(aUpdatePlayerStep);
+        UpdatePlayerStep_Conv(bc);
+        // LD_HL(OBJECT_STEP_DURATION);
+        // ADD_HL_BC;
+        // DEC_hl;
+        // RET_NZ;
+        if(--bc->stepDuration)
+            return;
+        // CALL(aCopyNextCoordsTileToStandingCoordsTile);
+        CopyNextCoordsTileToStandingCoordsTile_Conv(bc);
+        // LD_HL(OBJECT_FLAGS2);
+        // ADD_HL_BC;
+        // RES_hl(OVERHEAD_F);
+        bit_reset(bc->flags2, OVERHEAD_F);
+        // LD_HL(wPlayerStepFlags);
+        // SET_hl(PLAYERSTEP_STOP_F);
+        bit_set(wram->wPlayerStepFlags, PLAYERSTEP_STOP_F);
+        // SET_hl(PLAYERSTEP_MIDAIR_F);
+        bit_set(wram->wPlayerStepFlags, PLAYERSTEP_MIDAIR_F);
+        // CALL(aField1c_IncAnonJumptableIndex);
+        Field1c_IncAnonJumptableIndex(bc);
+        // RET;
+        return;
+    // if (REG_A == 2) goto initland;
+    case 2:
+    // initland:
+        // CALL(aGetNextTile);
+        GetNextTile_Conv(bc);
+        // LD_HL(wPlayerStepFlags);
+        // SET_hl(PLAYERSTEP_START_F);
+        bit_set(wram->wPlayerStepFlags, PLAYERSTEP_START_F);
+        // CALL(aField1c_IncAnonJumptableIndex);
+        Field1c_IncAnonJumptableIndex(bc);
+        // fallthrough
+    // if (REG_A == 3) goto stepland;
+    case 3:
+    // stepland:
+        // CALL(aUpdateJumpPosition);
+        UpdateJumpPosition_Conv(bc);
+        // CALL(aUpdatePlayerStep);
+        UpdatePlayerStep_Conv(bc);
+        // LD_HL(OBJECT_STEP_DURATION);
+        // ADD_HL_BC;
+        // DEC_hl;
+        // RET_NZ;
+        if(--bc->stepDuration)
+            return;
+        // LD_HL(wPlayerStepFlags);
+        // SET_hl(PLAYERSTEP_STOP_F);
+        bit_set(wram->wPlayerStepFlags, PLAYERSTEP_STOP_F);
+        // CALL(aCopyNextCoordsTileToStandingCoordsTile);
+        CopyNextCoordsTileToStandingCoordsTile_Conv(bc);
+        // LD_HL(OBJECT_STEP_TYPE);
+        // ADD_HL_BC;
+        // LD_hl(STEP_TYPE_FROM_MOVEMENT);
+        bc->stepType = STEP_TYPE_FROM_MOVEMENT;
+        // RET;
+        return;
+    }
 }
 
 void StepFunction_TeleportFrom(void) {
@@ -2318,6 +2913,99 @@ DoSpinRise:
     ADD_HL_BC;
     LD_hl(STEP_TYPE_FROM_MOVEMENT);
     RET;
+}
+
+void StepFunction_TeleportFrom_Conv(struct Object* bc) {
+    // SET_PC(aStepFunction_TeleportFrom);
+    // LD_HL(OBJECT_1C);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    switch(bc->field_1C) {
+    case 0:
+    // InitSpin:
+        // LD_HL(OBJECT_STEP_FRAME);
+        // ADD_HL_BC;
+        // LD_hl(0);
+        bc->stepFrame = 0;
+        // LD_HL(OBJECT_STEP_DURATION);
+        // ADD_HL_BC;
+        // LD_hl(16);
+        bc->stepDuration = 16;
+        // CALL(aField1c_IncAnonJumptableIndex);
+        Field1c_IncAnonJumptableIndex(bc);
+        // fallthrough
+    case 1:
+    // DoSpin:
+        // LD_HL(OBJECT_ACTION);
+        // ADD_HL_BC;
+        // LD_hl(OBJECT_ACTION_SPIN);
+        bc->action = OBJECT_ACTION_SPIN;
+        // LD_HL(OBJECT_STEP_DURATION);
+        // ADD_HL_BC;
+        // DEC_hl;
+        // RET_NZ;
+        if(--bc->stepDuration)
+            return;
+        // CALL(aField1c_IncAnonJumptableIndex);
+        Field1c_IncAnonJumptableIndex(bc);
+        // RET;
+        return;
+    case 2:
+    // InitSpinRise:
+        // LD_HL(OBJECT_STEP_FRAME);
+        // ADD_HL_BC;
+        // LD_hl(0);
+        bc->stepFrame = 0;
+        // LD_HL(OBJECT_1F);
+        // ADD_HL_BC;
+        // LD_hl(0x10);
+        bc->field_1F = 0x10;
+        // LD_HL(OBJECT_STEP_DURATION);
+        // ADD_HL_BC;
+        // LD_hl(16);
+        bc->stepDuration = 16;
+        // LD_HL(OBJECT_FLAGS2);
+        // ADD_HL_BC;
+        // RES_hl(OVERHEAD_F);
+        bit_reset(bc->flags2, OVERHEAD_F);
+        // CALL(aField1c_IncAnonJumptableIndex);
+        Field1c_IncAnonJumptableIndex(bc);
+        // fallthrough
+    case 3:
+    // DoSpinRise:
+        // LD_HL(OBJECT_ACTION);
+        // ADD_HL_BC;
+        // LD_hl(OBJECT_ACTION_SPIN);
+        bc->action = OBJECT_ACTION_SPIN;
+        // LD_HL(OBJECT_1F);
+        // ADD_HL_BC;
+        // INC_hl;
+        // LD_A_hl;
+        // LD_D(0x60);
+        // CALL(aSine);
+        // LD_A_H;
+        // SUB_A(0x60);
+        // LD_HL(OBJECT_SPRITE_Y_OFFSET);
+        // ADD_HL_BC;
+        // LD_hl_A;
+        bc->spriteYOffset = Sine_Conv(++bc->field_1F, 0x60) - 0x60;
+        // LD_HL(OBJECT_STEP_DURATION);
+        // ADD_HL_BC;
+        // DEC_hl;
+        // RET_NZ;
+        if(--bc->stepDuration)
+            return;
+        // LD_HL(OBJECT_STEP_FRAME);
+        // ADD_HL_BC;
+        // LD_hl(0);
+        bc->stepFrame = 0;
+        // LD_HL(OBJECT_STEP_TYPE);
+        // ADD_HL_BC;
+        // LD_hl(STEP_TYPE_FROM_MOVEMENT);
+        bc->stepType = STEP_TYPE_FROM_MOVEMENT;
+        // RET;
+        return;
+    }
 }
 
 void StepFunction_TeleportTo(void) {
@@ -2420,6 +3108,124 @@ FinishStep:
     RET;
 }
 
+void StepFunction_TeleportTo_Conv(struct Object* bc) {
+    // SET_PC(aStepFunction_TeleportTo);
+    // LD_HL(OBJECT_1C);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    switch(bc->field_1C) {
+    case 0:
+    // InitWait:
+        // LD_HL(OBJECT_ACTION);
+        // ADD_HL_BC;
+        // LD_hl(OBJECT_ACTION_00);
+        bc->action = OBJECT_ACTION_00;
+        // LD_HL(OBJECT_STEP_DURATION);
+        // ADD_HL_BC;
+        // LD_hl(16);
+        bc->stepDuration = 16;
+        // CALL(aField1c_IncAnonJumptableIndex);
+        Field1c_IncAnonJumptableIndex(bc);
+        // RET;
+        return;
+    case 1:
+    // DoWait:
+        // LD_HL(OBJECT_STEP_DURATION);
+        // ADD_HL_BC;
+        // DEC_hl;
+        // RET_NZ;
+        if(--bc->stepDuration)
+            return;
+        // CALL(aField1c_IncAnonJumptableIndex);
+        Field1c_IncAnonJumptableIndex(bc);
+        // fallthrough
+    case 2:
+    // InitDescent:
+        // LD_HL(OBJECT_STEP_FRAME);
+        // ADD_HL_BC;
+        // LD_hl(0);
+        bc->stepFrame = 0;
+        // LD_HL(OBJECT_1F);
+        // ADD_HL_BC;
+        // LD_hl(0);
+        bc->field_1F = 0;
+        // LD_HL(OBJECT_STEP_DURATION);
+        // ADD_HL_BC;
+        // LD_hl(16);
+        bc->stepDuration = 16;
+        // CALL(aField1c_IncAnonJumptableIndex);
+        Field1c_IncAnonJumptableIndex(bc);
+        // RET;
+        return;
+    case 3:
+    // DoDescent:
+        // LD_HL(OBJECT_ACTION);
+        // ADD_HL_BC;
+        // LD_hl(OBJECT_ACTION_SPIN);
+        bc->action = OBJECT_ACTION_SPIN;
+        // LD_HL(OBJECT_1F);
+        // ADD_HL_BC;
+        // INC_hl;
+        // LD_A_hl;
+        // LD_D(0x60);
+        // CALL(aSine);
+        // LD_A_H;
+        // SUB_A(0x60);
+        // LD_HL(OBJECT_SPRITE_Y_OFFSET);
+        // ADD_HL_BC;
+        // LD_hl_A;
+        bc->spriteYOffset = Sine_Conv(bc->field_1F, 0x60) - 0x60;
+        // LD_HL(OBJECT_STEP_DURATION);
+        // ADD_HL_BC;
+        // DEC_hl;
+        // RET_NZ;
+        if(--bc->stepDuration)
+            return;
+        // CALL(aField1c_IncAnonJumptableIndex);
+        Field1c_IncAnonJumptableIndex(bc);
+        // fallthrough
+    case 4:
+    // InitFinalSpin:
+        // LD_HL(OBJECT_STEP_DURATION);
+        // ADD_HL_BC;
+        // LD_hl(16);
+        bc->stepDuration = 16;
+        // CALL(aField1c_IncAnonJumptableIndex);
+        Field1c_IncAnonJumptableIndex(bc);
+        // RET;
+        return;
+    case 5:
+    // DoFinalSpin:
+        // LD_HL(OBJECT_ACTION);
+        // ADD_HL_BC;
+        // LD_hl(OBJECT_ACTION_SPIN);
+        bc->action = OBJECT_ACTION_SPIN;
+        // LD_HL(OBJECT_STEP_DURATION);
+        // ADD_HL_BC;
+        // DEC_hl;
+        // RET_NZ;
+        if(--bc->stepDuration)
+            return;
+        // fallthrough
+    case 6:
+    // FinishStep:
+        // LD_HL(OBJECT_STEP_FRAME);
+        // ADD_HL_BC;
+        // LD_hl(0);
+        bc->stepFrame = 0;
+        // LD_HL(OBJECT_SPRITE_Y_OFFSET);
+        // ADD_HL_BC;
+        // LD_hl(0);
+        bc->spriteYOffset = 0;
+        // LD_HL(OBJECT_STEP_TYPE);
+        // ADD_HL_BC;
+        // LD_hl(STEP_TYPE_FROM_MOVEMENT);
+        bc->stepType = STEP_TYPE_FROM_MOVEMENT;
+        // RET;
+        return;
+    }
+}
+
 void StepFunction_Skyfall(void) {
     SET_PC(aStepFunction_Skyfall);
     LD_HL(OBJECT_1C);
@@ -2493,6 +3299,94 @@ Finish:
     RET;
 }
 
+void StepFunction_Skyfall_Conv(struct Object* bc) {
+    // SET_PC(aStepFunction_Skyfall);
+    // LD_HL(OBJECT_1C);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    switch(bc->field_1C) {
+    case 0:
+    // Init:
+        // LD_HL(OBJECT_ACTION);
+        // ADD_HL_BC;
+        // LD_hl(OBJECT_ACTION_00);
+        bc->action = OBJECT_ACTION_00;
+        // LD_HL(OBJECT_STEP_DURATION);
+        // ADD_HL_BC;
+        // LD_hl(16);
+        bc->stepDuration = 16;
+        // CALL(aField1c_IncAnonJumptableIndex);
+        Field1c_IncAnonJumptableIndex(bc);
+        // fallthrough
+    case 1:
+    // Step:
+        // LD_HL(OBJECT_STEP_DURATION);
+        // ADD_HL_BC;
+        // DEC_hl;
+        // RET_NZ;
+        if(--bc->stepDuration)
+            return;
+        // LD_HL(OBJECT_ACTION);
+        // ADD_HL_BC;
+        // LD_hl(OBJECT_ACTION_STEP);
+        bc->action = OBJECT_ACTION_STEP;
+        // LD_HL(OBJECT_STEP_FRAME);
+        // ADD_HL_BC;
+        // LD_hl(0);
+        bc->stepFrame = 0;
+        // LD_HL(OBJECT_1F);
+        // ADD_HL_BC;
+        // LD_hl(0);
+        bc->field_1F = 0;
+        // LD_HL(OBJECT_STEP_DURATION);
+        // ADD_HL_BC;
+        // LD_hl(16);
+        bc->stepDuration = 16;
+        // CALL(aField1c_IncAnonJumptableIndex);
+        Field1c_IncAnonJumptableIndex(bc);
+        // fallthrough
+    case 2:
+    // Fall:
+        // LD_HL(OBJECT_1F);
+        // ADD_HL_BC;
+        // INC_hl;
+        // LD_A_hl;
+        // LD_D(0x60);
+        // CALL(aSine);
+        // LD_A_H;
+        // SUB_A(0x60);
+        // LD_HL(OBJECT_SPRITE_Y_OFFSET);
+        // ADD_HL_BC;
+        // LD_hl_A;
+        bc->spriteYOffset = Sine_Conv(++bc->field_1F, 0x60) - 0x60;
+        // LD_HL(OBJECT_STEP_DURATION);
+        // ADD_HL_BC;
+        // DEC_hl;
+        // RET_NZ;
+        if(--bc->stepDuration)
+            return;
+        // CALL(aField1c_IncAnonJumptableIndex);
+        Field1c_IncAnonJumptableIndex(bc);
+        // fallthrough
+    case 3:
+    // Finish:
+        // LD_HL(OBJECT_STEP_FRAME);
+        // ADD_HL_BC;
+        // LD_hl(0);
+        bc->stepFrame = 0;
+        // LD_HL(OBJECT_SPRITE_Y_OFFSET);
+        // ADD_HL_BC;
+        // LD_hl(0);
+        bc->spriteYOffset = 0;
+        // LD_HL(OBJECT_STEP_TYPE);
+        // ADD_HL_BC;
+        // LD_hl(STEP_TYPE_FROM_MOVEMENT);
+        bc->stepType = STEP_TYPE_FROM_MOVEMENT;
+        // RET;
+        return;
+    }
+}
+
 void StepFunction_GotBite(void) {
     SET_PC(aStepFunction_GotBite);
     LD_HL(OBJECT_1C);
@@ -2531,6 +3425,52 @@ Run:
     RET;
 }
 
+void StepFunction_GotBite_Conv(struct Object* bc) {
+    // SET_PC(aStepFunction_GotBite);
+    // LD_HL(OBJECT_1C);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    switch(bc->field_1C) {
+    case 0:
+    // Init:
+        // LD_HL(OBJECT_STEP_DURATION);
+        // ADD_HL_BC;
+        // LD_hl(8);
+        bc->stepDuration = 8;
+        // LD_HL(OBJECT_SPRITE_Y_OFFSET);
+        // ADD_HL_BC;
+        // LD_hl(0);
+        bc->spriteYOffset = 0;
+        // CALL(aField1c_IncAnonJumptableIndex);
+        Field1c_IncAnonJumptableIndex(bc);
+        // fallthrough
+    case 1:
+    // Run:
+        // LD_HL(OBJECT_SPRITE_Y_OFFSET);
+        // ADD_HL_BC;
+        // LD_A_hl;
+        // XOR_A(1);
+        // LD_hl_A;
+        bc->spriteYOffset ^= 1;
+        // LD_HL(OBJECT_STEP_DURATION);
+        // ADD_HL_BC;
+        // DEC_hl;
+        // RET_NZ;
+        if(--bc->stepDuration)
+            return;
+        // LD_HL(OBJECT_SPRITE_Y_OFFSET);
+        // ADD_HL_BC;
+        // LD_hl(0);
+        bc->spriteYOffset = 0;
+        // LD_HL(OBJECT_STEP_TYPE);
+        // ADD_HL_BC;
+        // LD_hl(STEP_TYPE_FROM_MOVEMENT);
+        bc->stepType = STEP_TYPE_FROM_MOVEMENT;
+        // RET;
+        return;
+    }
+}
+
 void StepFunction_RockSmash(void) {
     SET_PC(aStepFunction_RockSmash);
     CALL(aStepFunction_RockSmash_Step);
@@ -2554,6 +3494,31 @@ yes:
     RET;
 }
 
+void StepFunction_RockSmash_Conv(struct Object* bc) {
+    // SET_PC(aStepFunction_RockSmash);
+    // CALL(aStepFunction_RockSmash_Step);
+    // JP(mWaitStep_InPlace);
+
+// Step:
+
+    // LD_HL(OBJECT_STEP_DURATION);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // AND_A(0b00000001);
+    // LD_A(OBJECT_ACTION_STAND);
+    // IF_Z goto yes;
+    // LD_A(OBJECT_ACTION_00);
+
+// yes:
+
+    // LD_HL(OBJECT_ACTION);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    bc->action = (bc->stepDuration & 0b00000001)? OBJECT_ACTION_00: OBJECT_ACTION_STAND;
+    // RET;
+    return WaitStep_InPlace(bc);
+}
+
 void StepFunction_DigTo(void) {
     SET_PC(aStepFunction_DigTo);
     LD_HL(OBJECT_STEP_DURATION);
@@ -2572,6 +3537,26 @@ yes:
     JP(mWaitStep_InPlace);
 }
 
+void StepFunction_DigTo_Conv(struct Object* bc) {
+    // SET_PC(aStepFunction_DigTo);
+    // LD_HL(OBJECT_STEP_DURATION);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // AND_A(0b00000001);
+    // LD_A(OBJECT_ACTION_SPIN);
+    // IF_Z goto yes;
+    // LD_A(OBJECT_ACTION_SPIN_FLICKER);
+
+// yes:
+
+    // LD_HL(OBJECT_ACTION);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    bc->action = ((bc->stepDuration & 0b00000001) == 0)? OBJECT_ACTION_SPIN: OBJECT_ACTION_SPIN_FLICKER;
+    // JP(mWaitStep_InPlace);
+    return WaitStep_InPlace(bc);
+}
+
 void StepFunction_Sleep(void) {
     SET_PC(aStepFunction_Sleep);
     LD_HL(OBJECT_DIRECTION_WALKING);
@@ -2587,6 +3572,25 @@ void StepFunction_Sleep(void) {
     RET;
 }
 
+void StepFunction_Sleep_Conv(struct Object* bc) {
+    // SET_PC(aStepFunction_Sleep);
+    // LD_HL(OBJECT_DIRECTION_WALKING);
+    // ADD_HL_BC;
+    // LD_hl(STANDING);
+    bc->dirWalking = STANDING;
+    // LD_HL(OBJECT_STEP_DURATION);
+    // ADD_HL_BC;
+    // DEC_hl;
+    // RET_NZ;
+    if(--bc->stepDuration)
+        return;
+    // LD_HL(OBJECT_STEP_TYPE);
+    // ADD_HL_BC;
+    // LD_hl(STEP_TYPE_FROM_MOVEMENT);
+    bc->stepType = STEP_TYPE_FROM_MOVEMENT;
+    // RET;
+}
+
 void StepFunction_Delete(void) {
     SET_PC(aStepFunction_Delete);
     LD_HL(OBJECT_DIRECTION_WALKING);
@@ -2599,6 +3603,22 @@ void StepFunction_Delete(void) {
     JP(mDeleteMapObject);
 }
 
+void StepFunction_Delete_Conv(struct Object* bc) {
+    // SET_PC(aStepFunction_Delete);
+    // LD_HL(OBJECT_DIRECTION_WALKING);
+    // ADD_HL_BC;
+    // LD_hl(STANDING);
+    bc->dirWalking = STANDING;
+    // LD_HL(OBJECT_STEP_DURATION);
+    // ADD_HL_BC;
+    // DEC_hl;
+    // RET_NZ;
+    if(--bc->stepDuration)
+        return;
+    // JP(mDeleteMapObject);
+    DeleteMapObject_Conv(bc);
+}
+
 void StepFunction_Bump(void) {
     SET_PC(aStepFunction_Bump);
     LD_HL(OBJECT_STEP_DURATION);
@@ -2609,6 +3629,21 @@ void StepFunction_Bump(void) {
     ADD_HL_BC;
     LD_hl(STEP_TYPE_FROM_MOVEMENT);
     RET;
+}
+
+void StepFunction_Bump_Conv(struct Object* bc) {
+    // SET_PC(aStepFunction_Bump);
+    // LD_HL(OBJECT_STEP_DURATION);
+    // ADD_HL_BC;
+    // DEC_hl;
+    // RET_NZ;
+    if(--bc->stepDuration)
+        return;
+    // LD_HL(OBJECT_STEP_TYPE);
+    // ADD_HL_BC;
+    // LD_hl(STEP_TYPE_FROM_MOVEMENT);
+    bc->stepType = STEP_TYPE_FROM_MOVEMENT;
+    // RET;
 }
 
 void StepFunction_Restore(void) {
@@ -2632,6 +3667,29 @@ StepFunction_Standing:
     return StepFunction_Standing();
 }
 
+void StepFunction_Restore_Conv(struct Object* bc) {
+    // SET_PC(aStepFunction_Restore);
+    // LD_HL(OBJECT_1C);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    switch(bc->field_1C) {
+    case 0:
+    // Reset:
+        // CALL(aRestoreDefaultMovement);
+        // CALL(aGetInitialFacing);
+        // LD_HL(OBJECT_FACING);
+        // ADD_HL_BC;
+        // LD_hl_A;
+        bc->facing = GetInitialFacing_Conv(RestoreDefaultMovement_Conv(bc));
+        // CALL(aField1c_IncAnonJumptableIndex);
+        Field1c_IncAnonJumptableIndex(bc);
+        // fallthrough
+    case 1:
+    // StepFunction_Standing:
+        return StepFunction_Standing_Conv(bc);
+    }
+}
+
 void StepFunction_Standing(void) {
     SET_PC(aStepFunction_Standing);
     CALL(aStubbed_UpdateYOffset);
@@ -2639,6 +3697,16 @@ void StepFunction_Standing(void) {
     ADD_HL_BC;
     LD_hl(STANDING);
     RET;
+}
+
+void StepFunction_Standing_Conv(struct Object* bc) {
+    // SET_PC(aStepFunction_Standing);
+    // CALL(aStubbed_UpdateYOffset);
+    // LD_HL(OBJECT_DIRECTION_WALKING);
+    // ADD_HL_BC;
+    // LD_hl(STANDING);
+    bc->dirWalking = STANDING;
+    // RET;
 }
 
 void StepFunction_NPCWalk(void) {
@@ -2659,6 +3727,31 @@ void StepFunction_NPCWalk(void) {
     RET;
 }
 
+void StepFunction_NPCWalk_Conv(struct Object* bc) {
+    // SET_PC(aStepFunction_NPCWalk);
+    // CALL(aStubbed_UpdateYOffset);
+    //  Stubbed so no point to call Stubbed_UpdateYOffset
+    // CALL(aAddStepVector);
+    AddStepVector_Conv(bc);
+    // LD_HL(OBJECT_STEP_DURATION);
+    // ADD_HL_BC;
+    // DEC_hl;
+    // RET_NZ;
+    if(--bc->stepDuration != 0)
+        return;
+    // CALL(aCopyNextCoordsTileToStandingCoordsTile);
+    CopyNextCoordsTileToStandingCoordsTile_Conv(bc);
+    // LD_HL(OBJECT_DIRECTION_WALKING);
+    // ADD_HL_BC;
+    // LD_hl(STANDING);
+    bc->dirWalking = STANDING;
+    // LD_HL(OBJECT_STEP_TYPE);
+    // ADD_HL_BC;
+    // LD_hl(STEP_TYPE_FROM_MOVEMENT);
+    bc->stepType = STEP_TYPE_FROM_MOVEMENT;
+    // RET;
+}
+
 void StepFunction_ContinueWalk(void) {
     SET_PC(aStepFunction_ContinueWalk);
     CALL(aAddStepVector);
@@ -2668,6 +3761,22 @@ void StepFunction_ContinueWalk(void) {
     RET_NZ;
     CALL(aCopyNextCoordsTileToStandingCoordsTile);
     JP(mRandomStepDuration_Slow);
+}
+
+void StepFunction_ContinueWalk_Conv(struct Object* bc) {
+    // SET_PC(aStepFunction_ContinueWalk);
+    // CALL(aAddStepVector);
+    AddStepVector_Conv(bc);
+    // LD_HL(OBJECT_STEP_DURATION);
+    // ADD_HL_BC;
+    // DEC_hl;
+    // RET_NZ;
+    if(--bc->stepDuration != 0)
+        return;
+    // CALL(aCopyNextCoordsTileToStandingCoordsTile);
+    CopyNextCoordsTileToStandingCoordsTile_Conv(bc);
+    // JP(mRandomStepDuration_Slow);
+    return RandomStepDuration_Slow(bc);
 }
 
 void StepFunction_PlayerWalk(void) {
@@ -2701,6 +3810,49 @@ step:
     ADD_HL_BC;
     LD_hl(STEP_TYPE_FROM_MOVEMENT);
     RET;
+}
+
+void StepFunction_PlayerWalk_Conv(struct Object* bc) {
+    // SET_PC(aStepFunction_PlayerWalk);
+    // LD_HL(OBJECT_1C);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    switch(bc->field_1C) {
+    case 0:
+    // init:
+        // LD_HL(wPlayerStepFlags);
+        // SET_hl(PLAYERSTEP_START_F);
+        bit_set(wram->wPlayerStepFlags, PLAYERSTEP_START_F);
+        // CALL(aField1c_IncAnonJumptableIndex);
+        Field1c_IncAnonJumptableIndex(bc);
+        // fallthrough
+    // if (REG_A == 1) goto step;
+    case 1:
+    // step:
+        // CALL(aUpdatePlayerStep);
+        UpdatePlayerStep_Conv(bc);
+        // LD_HL(OBJECT_STEP_DURATION);
+        // ADD_HL_BC;
+        // DEC_hl;
+        // RET_NZ;
+        if(--bc->stepDuration)
+            return;
+        // LD_HL(wPlayerStepFlags);
+        // SET_hl(PLAYERSTEP_STOP_F);
+        bit_set(wram->wPlayerStepFlags, PLAYERSTEP_STOP_F);
+        // CALL(aCopyNextCoordsTileToStandingCoordsTile);
+        CopyNextCoordsTileToStandingCoordsTile_Conv(bc);
+        // LD_HL(OBJECT_DIRECTION_WALKING);
+        // ADD_HL_BC;
+        // LD_hl(STANDING);
+        bc->dirWalking = STANDING;
+        // LD_HL(OBJECT_STEP_TYPE);
+        // ADD_HL_BC;
+        // LD_hl(STEP_TYPE_FROM_MOVEMENT);
+        bc->stepType = STEP_TYPE_FROM_MOVEMENT;
+        // RET;
+        return;
+    }
 }
 
 void StepFunction_Turn(void) {
@@ -2760,6 +3912,74 @@ step2:
     RET;
 }
 
+void StepFunction_Turn_Conv(struct Object* bc) {
+    // SET_PC(aStepFunction_Turn);
+    // LD_HL(OBJECT_1C);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    switch(bc->field_1C) {
+    case 0:
+    // init1:
+        // LD_HL(OBJECT_DIRECTION_WALKING);
+        // ADD_HL_BC;
+        // LD_hl(STANDING);
+        bc->dirWalking = STANDING;
+        // LD_HL(OBJECT_STEP_FRAME);
+        // ADD_HL_BC;
+        // LD_A_hl;
+        // LD_hl(2);
+        bc->stepFrame = 2;
+        // LD_HL(OBJECT_STEP_DURATION);
+        // ADD_HL_BC;
+        // LD_hl(2);
+        bc->stepDuration = 2;
+        // CALL(aField1c_IncAnonJumptableIndex);
+        Field1c_IncAnonJumptableIndex(bc);
+        // fallthrough
+    case 1:
+    // step1:
+        // LD_HL(OBJECT_STEP_DURATION);
+        // ADD_HL_BC;
+        // DEC_hl;
+        // RET_NZ;
+        if(--bc->stepDuration)
+            return;
+        // CALL(aField1c_IncAnonJumptableIndex);
+        Field1c_IncAnonJumptableIndex(bc);
+        // fallthrough
+    case 2:
+    // init2:
+        // LD_HL(OBJECT_1D);  // new facing
+        // ADD_HL_BC;
+        // LD_A_hl;
+        // LD_HL(OBJECT_FACING);
+        // ADD_HL_BC;
+        // LD_hl_A;
+        bc->facing = bc->field_1D;
+        // LD_HL(OBJECT_STEP_DURATION);
+        // ADD_HL_BC;
+        // LD_hl(2);
+        bc->stepDuration = 2;
+        // CALL(aField1c_IncAnonJumptableIndex);
+        Field1c_IncAnonJumptableIndex(bc);
+        // fallthrough
+    case 3:
+    // step2:
+        // LD_HL(OBJECT_STEP_DURATION);
+        // ADD_HL_BC;
+        // DEC_hl;
+        // RET_NZ;
+        if(--bc->stepDuration)
+            return;
+        // LD_HL(OBJECT_STEP_TYPE);
+        // ADD_HL_BC;
+        // LD_hl(STEP_TYPE_FROM_MOVEMENT);
+        bc->stepType = STEP_TYPE_FROM_MOVEMENT;
+        // RET;
+        return;
+    }
+}
+
 void StepFunction_StrengthBoulder(void) {
     SET_PC(aStepFunction_StrengthBoulder);
     CALL(aAddStepVector);
@@ -2791,6 +4011,47 @@ void StepFunction_StrengthBoulder(void) {
     ADD_HL_BC;
     LD_hl(STEP_TYPE_FROM_MOVEMENT);
     RET;
+}
+
+void StepFunction_StrengthBoulder_Conv(struct Object* bc) {
+    // SET_PC(aStepFunction_StrengthBoulder);
+    // CALL(aAddStepVector);
+    AddStepVector_Conv(bc);
+    // LD_HL(OBJECT_STEP_DURATION);
+    // ADD_HL_BC;
+    // DEC_hl;
+    // RET_NZ;
+    if(--bc->stepDuration)
+        return;
+    // PUSH_BC;
+    // LD_HL(OBJECT_NEXT_MAP_X);
+    // ADD_HL_BC;
+    // LD_D_hl;
+    // LD_HL(OBJECT_NEXT_MAP_Y);
+    // ADD_HL_BC;
+    // LD_E_hl;
+    // LD_HL(OBJECT_MAP_OBJECT_INDEX);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // LD_B_A;
+    // FARCALL(aCopyDECoordsToMapObject);
+    CopyDECoordsToMapObject_Conv(bc->nextMapX, bc->nextMapY, bc->mapObjectIndex);
+    // POP_BC;
+    // LD_HL(OBJECT_FLAGS2);
+    // ADD_HL_BC;
+    // RES_hl(OBJ_FLAGS2_2);
+    bit_reset(bc->flags2, OBJ_FLAGS2_2);
+    // CALL(aCopyNextCoordsTileToStandingCoordsTile);
+    CopyNextCoordsTileToStandingCoordsTile_Conv(bc);
+    // LD_HL(OBJECT_DIRECTION_WALKING);
+    // ADD_HL_BC;
+    // LD_hl(STANDING);
+    bc->dirWalking = STANDING;
+    // LD_HL(OBJECT_STEP_TYPE);
+    // ADD_HL_BC;
+    // LD_hl(STEP_TYPE_FROM_MOVEMENT);
+    bc->stepType = STEP_TYPE_FROM_MOVEMENT;
+    // RET;
 }
 
 void StepFunction_TrackingObject(void) {
@@ -2830,9 +4091,60 @@ nope:
     JP(mDeleteMapObject);
 }
 
+void StepFunction_TrackingObject_Conv(struct Object* bc) {
+    // SET_PC(aStepFunction_TrackingObject);
+    // LD_HL(OBJECT_1D);
+    // ADD_HL_BC;
+    // LD_E_hl;
+    // INC_HL;
+    // LD_D_hl;
+    struct Object* de = AbsGBBankAddrToRAMAddr(MBANK(awPlayerStruct), bc->field_1D | (bc->field_1E << 8));
+    // LD_HL(OBJECT_SPRITE);
+    // ADD_HL_DE;
+    // LD_A_hl;
+    // AND_A_A;
+    // IF_Z goto nope;
+    if(de->sprite != 0) {
+        // LD_HL(OBJECT_SPRITE_X);
+        // ADD_HL_DE;
+        // LD_A_hl;
+        // LD_HL(OBJECT_SPRITE_X);
+        // ADD_HL_BC;
+        // LD_hl_A;
+        bc->spriteX = de->spriteX;
+        // LD_HL(OBJECT_SPRITE_Y);
+        // ADD_HL_DE;
+        // LD_A_hl;
+        // LD_HL(OBJECT_SPRITE_Y);
+        // ADD_HL_BC;
+        // LD_hl_A;
+        bc->spriteY = de->spriteY;
+        // LD_HL(OBJECT_STEP_DURATION);
+        // ADD_HL_BC;
+        // LD_A_hl;
+        // AND_A_A;
+        // RET_Z;
+        if(bc->stepDuration == 0)
+            return;
+        // DEC_hl;
+        // RET_NZ;
+        if(--bc->stepDuration != 0)
+            return;
+    }
+// nope:
+    // JP(mDeleteMapObject);
+    return DeleteMapObject_Conv(bc);
+}
+
 void StepFunction_14(void) {
     SET_PC(aStepFunction_14);
     return StepFunction_ScreenShake();
+}
+
+// Duplicate of StepFunction_ScreenShake
+void StepFunction_14_Conv(struct Object* bc) {
+    // SET_PC(aStepFunction_14);
+    return StepFunction_ScreenShake_Conv(bc);
 }
 
 void StepFunction_ScreenShake(void) {
@@ -2889,6 +4201,73 @@ GetSign:
     CPL;
     INC_A;
     RET;
+}
+
+static uint8_t StepFunction_ScreenShake_GetSign(const struct Object* bc, uint8_t a) {
+    // LD_HL(OBJECT_1E);
+    // ADD_HL_BC;
+    // AND_A(1);
+    // LD_A_hl;
+    // RET_Z;
+    if((a & 1) == 0)
+        return bc->field_1E;
+    // CPL;
+    // INC_A;
+    // RET;
+    return (bc->field_1E ^ 0xff) + 1;
+}
+
+void StepFunction_ScreenShake_Conv(struct Object* bc) {
+    // SET_PC(aStepFunction_ScreenShake);
+    // LD_HL(OBJECT_1C);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    switch(bc->field_1C) {
+    case 0:
+    // Init:
+        // XOR_A_A;
+        // LD_HL(OBJECT_1D);
+        // ADD_HL_BC;
+        // LD_hl_A;
+        bc->field_1D = 0;
+        // CALL(aField1c_IncAnonJumptableIndex);
+        Field1c_IncAnonJumptableIndex(bc);
+        // fallthrough
+    case 1:
+    // Run:
+        // LD_HL(OBJECT_1D);
+        // ADD_HL_BC;
+        // LD_D_hl;
+        // LD_A_addr(wPlayerStepVectorY);
+        // SUB_A_D;
+        // LD_addr_A(wPlayerStepVectorY);
+        wram->wPlayerStepVectorY -= bc->field_1D;
+        // LD_HL(OBJECT_STEP_DURATION);
+        // ADD_HL_BC;
+        // DEC_hl;
+        // IF_Z goto ok;
+        if(--bc->stepDuration) {
+            // LD_A_hl;
+            // CALL(aStepFunction_ScreenShake_GetSign);
+            uint8_t a = StepFunction_ScreenShake_GetSign(bc, bc->stepDuration);
+            // LD_HL(OBJECT_1D);
+            // ADD_HL_BC;
+            // LD_hl_A;
+            bc->field_1D = a;
+            // LD_D_A;
+            // LD_A_addr(wPlayerStepVectorY);
+            // ADD_A_D;
+            // LD_addr_A(wPlayerStepVectorY);
+            wram->wPlayerStepVectorY += a;
+            // RET;
+            return;
+        }
+    // ok:
+        // CALL(aDeleteMapObject);
+        DeleteMapObject_Conv(bc);
+        // RET;
+        return;
+    }
 }
 
 void StepFunction_16(void) {
@@ -2949,6 +4328,50 @@ Run:
     RET;
 }
 
+void StepFunction_SkyfallTop_Conv(struct Object* bc) {
+    // SET_PC(aStepFunction_SkyfallTop);
+    // LD_HL(OBJECT_1C);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    switch(bc->field_1C) {
+    case 0:
+    // Init:
+        // LD_HL(OBJECT_ACTION);
+        // ADD_HL_BC;
+        // LD_hl(OBJECT_ACTION_SKYFALL);
+        bc->action = OBJECT_ACTION_SKYFALL;
+        // LD_HL(OBJECT_STEP_DURATION);
+        // ADD_HL_BC;
+        // LD_hl(16);
+        bc->stepDuration = 16;
+        // CALL(aField1c_IncAnonJumptableIndex);
+        Field1c_IncAnonJumptableIndex(bc);
+        // fallthrough
+    case 1:
+    // Run:
+        // LD_HL(OBJECT_STEP_DURATION);
+        // ADD_HL_BC;
+        // DEC_hl;
+        // RET_NZ;
+        if(--bc->stepDuration)
+            return;
+        // LD_HL(OBJECT_SPRITE_Y_OFFSET);
+        // ADD_HL_BC;
+        // LD_hl(0x60);
+        bc->spriteYOffset = 0x60;
+        // LD_HL(OBJECT_STEP_FRAME);
+        // ADD_HL_BC;
+        // LD_hl(0);
+        bc->stepFrame = 0;
+        // LD_HL(OBJECT_STEP_TYPE);
+        // ADD_HL_BC;
+        // LD_hl(STEP_TYPE_FROM_MOVEMENT);
+        bc->stepType = STEP_TYPE_FROM_MOVEMENT;
+        // RET;
+        return;
+    }
+}
+
 void Stubbed_UpdateYOffset(void) {
     SET_PC(aStubbed_UpdateYOffset);
     //  dummied out
@@ -2973,8 +4396,6 @@ void Stubbed_UpdateYOffset(void) {
 y_offsets:
 
     // db ['0', '-1', '-2', '-3', '-4', '-3', '-2', '-1'];
-
-    return UpdateJumpPosition();
 }
 
 void UpdateJumpPosition(void) {
@@ -3001,8 +4422,34 @@ y_offsets:
 
     // db ['-4', '-6', '-8', '-10', '-11', '-12', '-12', '-12'];
     // db ['-11', '-10', '-9', '-8', '-6', '-4', '0', '0'];
+}
 
-    return GetPlayerNextMovementByte();
+void UpdateJumpPosition_Conv(struct Object* bc) {
+    static const int8_t y_offsets[] = {
+        -4, -6, -8, -10, -11, -12, -12, -12,
+        -11, -10, -9, -8, -6, -4, 0, 0,
+    };
+    // SET_PC(aUpdateJumpPosition);
+    // CALL(aGetStepVector);
+    struct StepVector vec = GetStepVector_Conv(bc);
+    // LD_A_H;
+    // LD_HL(OBJECT_1F);
+    // ADD_HL_BC;
+    // LD_E_hl;
+    // ADD_A_E;
+    // LD_hl_A;
+    bc->field_1F += vec.y;
+    // NOP;
+    // SRL_E;
+    // LD_D(0);
+    // LD_HL(mUpdateJumpPosition_y_offsets);
+    // ADD_HL_DE;
+    // LD_A_hl;
+    // LD_HL(OBJECT_SPRITE_Y_OFFSET);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    bc->spriteYOffset = y_offsets[vec.y >> 1];
+    // RET;
 }
 
 void GetPlayerNextMovementByte(void) {
@@ -3019,11 +4466,37 @@ void GetPlayerNextMovementByte(void) {
     RET;
 }
 
+uint8_t GetPlayerNextMovementByte_Conv(struct Object* bc) {
+    (void)bc;
+    // SET_PC(aGetPlayerNextMovementByte);
+    //  copy [wPlayerNextMovement] to [wPlayerMovement]
+    // LD_A_addr(wPlayerNextMovement);
+    // LD_HL(wPlayerMovement);
+    // LD_hl_A;
+    wram->wPlayerMovement = wram->wPlayerNextMovement;
+    //  load [wPlayerNextMovement] with movement_step_sleep
+    // LD_A(movement_step_sleep);
+    // LD_addr_A(wPlayerNextMovement);
+    wram->wPlayerNextMovement = movement_step_sleep;
+    //  recover the previous value of [wPlayerNextMovement]
+    // LD_A_hl;
+    // RET;
+    return wram->wPlayerMovement;
+}
+
 void GetMovementByte(void) {
     SET_PC(aGetMovementByte);
     LD_HL(wMovementDataBank);
     CALL(av_GetMovementByte);
     RET;
+}
+
+uint8_t GetMovementByte_Conv(struct Object* bc) {
+    // SET_PC(aGetMovementByte);
+    // LD_HL(wMovementDataBank);
+    // CALL(av_GetMovementByte);
+    // RET;
+    return v_GetMovementByte_Conv(gMovementDataAddr, bc);
 }
 
 void GetIndexedMovementByte1(void) {
@@ -3042,6 +4515,24 @@ void GetIndexedMovementByte1(void) {
     RET;
 }
 
+uint8_t GetIndexedMovementByte1_Conv(struct Object* bc) {
+    // SET_PC(aGetIndexedMovementByte1);
+    // LD_HL(OBJECT_MOVEMENT_BYTE_INDEX);
+    // ADD_HL_BC;
+    // LD_E_hl;
+    // INC_hl;
+    uint8_t e = bc->movementByteIndex++;
+    // LD_D(0);
+    // LD_HL(wMovementObject);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // ADD_HL_DE;
+    // LD_A_hl;
+    // RET;
+    return gMovementDataAddr[e];
+}
+
 void GetIndexedMovementByte2(void) {
     SET_PC(aGetIndexedMovementByte2);
     LD_HL(OBJECT_MOVEMENT_BYTE_INDEX);
@@ -3058,6 +4549,23 @@ void GetIndexedMovementByte2(void) {
     RET;
 }
 
+uint8_t GetIndexedMovementByte2_Conv(struct Object* bc) {
+    // SET_PC(aGetIndexedMovementByte2);
+    // LD_HL(OBJECT_MOVEMENT_BYTE_INDEX);
+    // ADD_HL_BC;
+    // LD_E_hl;
+    // INC_hl;
+    // LD_D(0);
+    // LD_HL(wIndexedMovement2Pointer);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // ADD_HL_DE;
+    // LD_A_hl;
+    // RET;
+    return gIndexedMovement2Pointer[bc->movementByteIndex++];
+}
+
 void v_GetMovementObject(void) {
     SET_PC(av_GetMovementObject);
     LD_HL(mGetMovementObject);
@@ -3071,7 +4579,8 @@ void v_GetMovementObject_Conv(struct Object* bc) {
     HandleMovementData_Conv(bc, GetMovementObject);
 }
 
-uint8_t GetMovementObject(void) {
+uint8_t GetMovementObject(struct Object* bc) {
+    (void)bc;
     // SET_PC(aGetMovementObject);
     // LD_A_addr(wMovementObject);
     // RET;
@@ -3102,7 +4611,7 @@ StorePointer:
     RET;
 }
 
-void HandleMovementData_Conv(struct Object* bc, uint8_t (*hl)(void)) {
+void HandleMovementData_Conv(struct Object* bc, uint8_t (*hl)(struct Object*)) {
     // SET_PC(aHandleMovementData);
     // CALL(aHandleMovementData_StorePointer);
     // StorePointer:
@@ -3119,7 +4628,7 @@ void HandleMovementData_Conv(struct Object* bc, uint8_t (*hl)(void)) {
         // LD_addr_A(wMovementByteWasControlSwitch);
         wram->wMovementByteWasControlSwitch = 0;
         // CALL(aJumpMovementPointer);
-        uint8_t a = JumpMovementPointer_Conv();
+        uint8_t a = JumpMovementPointer_Conv(bc);
         // CALL(aDoMovementFunction);
         DoMovementFunction_Conv(bc, a);
         // LD_A_addr(wMovementByteWasControlSwitch);
@@ -3136,12 +4645,11 @@ void JumpMovementPointer(void) {
     // LD_H_hl;
     // LD_L_A;
     // JP_hl;
-    REG_A = JumpMovementPointer_Conv();
     RET;
 }
 
-uint8_t JumpMovementPointer_Conv(void) {
-    return gMovementPointer();
+uint8_t JumpMovementPointer_Conv(struct Object* bc) {
+    return gMovementPointer(bc);
 }
 
 void ContinueReadingMovement(void) {
@@ -3311,6 +4819,84 @@ nope:
     RET;
 }
 
+static u8_flag_s GetFollowerNextMovementByte_CancelFollowIfLeaderMissing(void) {
+    // LD_A_addr(wObjectFollow_Leader);
+    // CP_A(-1);
+    // IF_Z goto nope;
+    if(wram->wObjectFollow_Leader != 0xff) {
+        // PUSH_BC;
+        // CALL(aGetObjectStruct);
+        struct Object* bc = GetObjectStruct_Conv(wram->wObjectFollow_Leader);
+        // LD_HL(OBJECT_SPRITE);
+        // ADD_HL_BC;
+        // LD_A_hl;
+        // POP_BC;
+        // AND_A_A;
+        // IF_Z goto nope;
+        if(bc->sprite != 0xff) {
+            // AND_A_A;
+            // RET;
+            return u8_flag(bc->sprite, false);
+        }
+    }
+
+// nope:
+    // LD_A(-1);
+    // LD_addr_A(wObjectFollow_Follower);
+    wram->wObjectFollow_Follower = 0xff;
+    // LD_A(movement_step_end);
+    // SCF;
+    // RET;
+    return u8_flag(movement_step_end, true);
+}
+
+uint8_t GetFollowerNextMovementByte_Conv(struct Object* bc) {
+    (void)bc;
+    // SET_PC(aGetFollowerNextMovementByte);
+    // LD_HL(wFollowerMovementQueueLength);
+    // LD_A_hl;
+    // AND_A_A;
+    // IF_Z goto done;
+    // CP_A(-1);
+    // IF_Z goto done;
+    if(wram->wFollowerMovementQueueLength == 0
+    || wram->wFollowerMovementQueueLength == 0xff) {
+    // done:
+        // CALL(aGetFollowerNextMovementByte_CancelFollowIfLeaderMissing);
+        u8_flag_s res = GetFollowerNextMovementByte_CancelFollowIfLeaderMissing();
+        // RET_C;
+        if(res.flag)
+            return res.a;
+        // LD_A(movement_step_sleep);
+        // RET;
+        return movement_step_sleep;
+    }
+    // DEC_hl;
+    // LD_E_A;
+    uint8_t e = --wram->wFollowerMovementQueueLength;
+    // LD_D(0);
+    // LD_HL(wFollowMovementQueue);
+    // ADD_HL_DE;
+    uint8_t* hl = wram->wFollowMovementQueue + e;
+    // INC_E;
+    e++;
+    // LD_A(-1);
+
+    uint8_t d;
+    do {
+    // loop:
+        // LD_D_hl;
+        d = *hl;
+        // LD_hld_A;
+        *(hl--) = 0xff;
+        // LD_A_D;
+        // DEC_E;
+        // IF_NZ goto loop;
+    } while(--e != 0);
+    // RET;
+    return d;
+}
+
 void SpawnShadow(void) {
     SET_PC(aSpawnShadow);
     PUSH_BC;
@@ -3324,8 +4910,6 @@ ShadowObject:
 
     // vtile, palette, movement
     // db ['0x00', 'PAL_OW_SILVER', 'SPRITEMOVEDATA_SHADOW'];
-
-    return SpawnStrengthBoulderDust();
 }
 
 void SpawnShadow_Conv(struct Object* bc) {
@@ -3364,6 +4948,22 @@ BoulderDustObject:
     // db ['0x00', 'PAL_OW_SILVER', 'SPRITEMOVEDATA_BOULDERDUST'];
 
     return SpawnEmote();
+}
+
+void SpawnStrengthBoulderDust_Conv(struct Object* bc) {
+    static const uint8_t BoulderDustObject[] = {
+    // vtile, palette, movement
+        0x00, PAL_OW_SILVER, SPRITEMOVEDATA_BOULDERDUST
+    };
+    // SET_PC(aSpawnStrengthBoulderDust);
+    // PUSH_BC;
+    // LD_DE(mSpawnStrengthBoulderDust_BoulderDustObject);
+    // CALL(aCopyTempObjectData);
+    CopyTempObjectData_Conv(bc, BoulderDustObject);
+    // CALL(aInitTempObject);
+    InitTempObject_Conv();
+    // POP_BC;
+    // RET;
 }
 
 void SpawnEmote(void) {
@@ -4388,46 +5988,58 @@ bool CheckObjectCoveredByTextbox_Conv(struct Object* bc) {
 }
 
 void HandleNPCStep(void) {
-    SET_PC(aHandleNPCStep);
-    CALL(aResetStepVector);
-    CALL(aDoStepsForAllObjects);
-    RET;
+    // SET_PC(aHandleNPCStep);
+    // CALL(aResetStepVector);
+    ResetStepVector();
+    // CALL(aDoStepsForAllObjects);
+    DoStepsForAllObjects();
+    // RET;
 }
 
 void ResetStepVector(void) {
-    SET_PC(aResetStepVector);
-    XOR_A_A;
-    LD_addr_A(wPlayerStepVectorX);
-    LD_addr_A(wPlayerStepVectorY);
-    LD_addr_A(wPlayerStepFlags);
-    LD_A(STANDING);
-    LD_addr_A(wPlayerStepDirection);
-    RET;
+    // SET_PC(aResetStepVector);
+    // XOR_A_A;
+    // LD_addr_A(wPlayerStepVectorX);
+    wram->wPlayerStepVectorX = 0;
+    // LD_addr_A(wPlayerStepVectorY);
+    wram->wPlayerStepVectorY = 0;
+    // LD_addr_A(wPlayerStepFlags);
+    wram->wPlayerStepFlags = 0;
+    // LD_A(STANDING);
+    // LD_addr_A(wPlayerStepDirection);
+    wram->wPlayerStepDirection = STANDING;
+    // RET;
 }
 
 void DoStepsForAllObjects(void) {
-    SET_PC(aDoStepsForAllObjects);
-    LD_BC(wObjectStructs);
-    XOR_A_A;
+    // SET_PC(aDoStepsForAllObjects);
+    // LD_BC(wObjectStructs);
+    struct Object* bc = &wram->wPlayerStruct;
+    // XOR_A_A;
+    uint8_t a = 0;
 
-loop:
+    do {
+    // loop:
 
-    LDH_addr_A(hMapObjectIndex);
-    CALL(aDoesObjectHaveASprite);
-    IF_Z goto next;
-    CALL(aHandleObjectStep);
+        // LDH_addr_A(hMapObjectIndex);
+        // CALL(aDoesObjectHaveASprite);
+        // IF_Z goto next;
+        if(DoesObjectHaveASprite_Conv(bc + a)) {
+            // CALL(aHandleObjectStep);
+            HandleObjectStep_Conv(bc + a);
+        }
+    // next:
 
-next:
-
-    LD_HL(OBJECT_LENGTH);
-    ADD_HL_BC;
-    LD_B_H;
-    LD_C_L;
-    LDH_A_addr(hMapObjectIndex);
-    INC_A;
-    CP_A(NUM_OBJECT_STRUCTS);
-    IF_NZ goto loop;
-    RET;
+        // LD_HL(OBJECT_LENGTH);
+        // ADD_HL_BC;
+        // LD_B_H;
+        // LD_C_L;
+        // LDH_A_addr(hMapObjectIndex);
+        // INC_A;
+        // CP_A(NUM_OBJECT_STRUCTS);
+        // IF_NZ goto loop;
+    } while(++a != NUM_OBJECT_STRUCTS);
+    // RET;
 }
 
 void RefreshPlayerSprite(void) {

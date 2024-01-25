@@ -731,9 +731,15 @@ void StartMenu_Pokegear(void){
 
 //  Pokegear
 uint8_t StartMenu_Pokegear_Conv(void) {
-    struct cpu_registers_s regs = {};
-    SafeCallGB(aStartMenu_Pokegear, &regs);
-    return regs.a;
+    // CALL(aFadeToMenu);
+    FadeToMenu_Conv();
+    // FARCALL(aPokeGear);
+    SafeCallGBAuto(aPokeGear);
+    // CALL(aCloseSubmenu);
+    CloseSubmenu_Conv();
+    // LD_A(STARTMENURET_REOPEN);
+    // RET;
+    return STARTMENURET_REOPEN;
 }
 
 void StartMenu_Pack(void){

@@ -1,9 +1,11 @@
 #include "../../constants.h"
 #include "radio.h"
 #include "pokegear.h"
+#include "../../home/copy.h"
 #include "../../home/region.h"
 #include "../../home/text.h"
 #include "../../data/text/common.h"
+#include "../../data/radio/channel_music.h"
 
 const struct TextCmd gRadioText[] = {
     text_ram(wram_ptr(wRadioText))
@@ -359,9 +361,11 @@ void RadioScroll_Conv(void){
 
         if(wram->wNumRadioLinesPrinted != 1)
         {
-            CALL(aCopyBottomLineToTopLine);
+            // CALL(aCopyBottomLineToTopLine);
+            CopyBottomLineToTopLine();
         }
-        JP(mClearBottomLine);
+        // JP(mClearBottomLine);
+        return ClearBottomLine();
     }
     wram->wRadioTextDelay--;
 }
@@ -921,23 +925,24 @@ void PlaceRadioString(void){
 }
 
 void CopyBottomLineToTopLine(void){
-    hlcoord(0, 15, wTilemap);
-    decoord(0, 13, wTilemap);
-    LD_BC(SCREEN_WIDTH * 2);
-    JP(mCopyBytes);
-
+    // hlcoord(0, 15, wTilemap);
+    // decoord(0, 13, wTilemap);
+    // LD_BC(SCREEN_WIDTH * 2);
+    // JP(mCopyBytes);
+    CopyBytes_Conv2(coord(0, 13, wram->wTilemap), coord(0, 15, wram->wTilemap), SCREEN_WIDTH * 2);
 }
 
 void ClearBottomLine(void){
-    hlcoord(1, 15, wTilemap);
-    LD_BC(SCREEN_WIDTH - 2);
-    LD_A(0x7f);
-    CALL(aByteFill);
-    hlcoord(1, 16, wTilemap);
-    LD_BC(SCREEN_WIDTH - 2);
-    LD_A(0x7f);
-    JP(mByteFill);
-
+    // hlcoord(1, 15, wTilemap);
+    // LD_BC(SCREEN_WIDTH - 2);
+    // LD_A(0x7f);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(1, 15, wram->wTilemap), SCREEN_WIDTH - 2, 0x7f);
+    // hlcoord(1, 16, wTilemap);
+    // LD_BC(SCREEN_WIDTH - 2);
+    // LD_A(0x7f);
+    // JP(mByteFill);
+    ByteFill_Conv2(coord(1, 16, wram->wTilemap), SCREEN_WIDTH - 2, 0x7f);
 }
 
 void PokedexShow_GetDexEntryBank(void){
@@ -1134,12 +1139,10 @@ okay:
 
 }
 
-void PokedexShowText(void){
-    //text_far ['_PokedexShowText']
-    //text_end ['?']
-
-    return BenMonMusic1();
-}
+const struct TextCmd PokedexShowText[] = {
+    text_far(v_PokedexShowText)
+    text_end
+};
 
 void BenMonMusic1(void){
     CALL(aStartPokemonMusicChannel);
@@ -2556,12 +2559,10 @@ void StartRadioStation_Conv(void){
     // CALL(aPrintText);
     PrintText_Conv2(RadioTerminator_Conv());
 
-    uint16_t hl = mRadioChannelSongs + (gb_read(wCurRadioLine) * 2);
-    RadioMusicRestartDE_Conv(gb_read16(hl));
+    uint16_t hl = RadioChannelSongs[wram->wCurRadioLine];
+    RadioMusicRestartDE_Conv(hl);
 
 // INCLUDE "data/radio/channel_music.asm"
-
-    return NextRadioLine_Conv();
 }
 
 void NextRadioLine_Conv(void){

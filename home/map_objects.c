@@ -1091,7 +1091,7 @@ struct Object* FindFirstEmptyObjectStruct_Conv(void) {
 }
 
 void GetSpriteMovementFunction(void){
-        LD_HL(OBJECT_MOVEMENTTYPE);
+    LD_HL(OBJECT_MOVEMENTTYPE);
     ADD_HL_BC;
     LD_A_hl;
     CP_A(NUM_SPRITEMOVEDATA);
@@ -1100,7 +1100,7 @@ void GetSpriteMovementFunction(void){
 
 
 ok:
-        LD_HL(mSpriteMovementData + SPRITEMOVEATTR_MOVEMENT);
+    LD_HL(mSpriteMovementData + SPRITEMOVEATTR_MOVEMENT);
     LD_E_A;
     LD_D(0);
     for(int rept = 0; rept < NUM_SPRITEMOVEDATA_FIELDS; rept++){
@@ -1109,6 +1109,29 @@ ok:
     LD_A_hl;
     RET;
 
+}
+
+uint8_t GetSpriteMovementFunction_Conv(struct Object* bc){
+    // LD_HL(OBJECT_MOVEMENTTYPE);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    uint8_t mvmt = bc->movementType;
+    // CP_A(NUM_SPRITEMOVEDATA);
+    // IF_C goto ok;
+    // XOR_A_A;
+    if(mvmt >= NUM_SPRITEMOVEDATA)
+        mvmt = 0;
+
+// ok:
+    // LD_HL(mSpriteMovementData + SPRITEMOVEATTR_MOVEMENT);
+    // LD_E_A;
+    // LD_D(0);
+    // for(int rept = 0; rept < NUM_SPRITEMOVEDATA_FIELDS; rept++){
+    // ADD_HL_DE;
+    // }
+    // LD_A_hl;
+    // RET;
+    return SpriteMovementData[mvmt].function;
 }
 
 void GetInitialFacing(void){
@@ -1129,6 +1152,26 @@ void GetInitialFacing(void){
     POP_BC;
     RET;
 
+}
+
+uint8_t GetInitialFacing_Conv(uint8_t a){
+    // PUSH_BC;
+    // PUSH_DE;
+    // LD_E_A;
+    // LD_D(0);
+    // LD_HL(mSpriteMovementData + SPRITEMOVEATTR_FACING);
+    // for(int rept = 0; rept < NUM_SPRITEMOVEDATA_FIELDS; rept++){
+    // ADD_HL_DE;
+    // }
+    // LD_A(BANK(aSpriteMovementData));
+    // CALL(aGetFarByte);
+    // ADD_A_A;
+    // ADD_A_A;
+    // maskbits(NUM_DIRECTIONS, 2);
+    // POP_DE;
+    // POP_BC;
+    // RET;
+    return (((uint8_t)SpriteMovementData[a].facing << 2) >> 2) & 3;
 }
 
 void CopySpriteMovementData(void){
@@ -1303,6 +1346,34 @@ void v_GetMovementByte(void){
     LD_A_H;
     RET;
 
+}
+
+uint8_t v_GetMovementByte_Conv(const uint8_t* hl, struct Object* bc){
+    //  Switch to the movement data bank
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+    // LD_A_hli;
+    // RST(aBankswitch);
+//  Load the current script byte as given by OBJECT_MOVEMENT_BYTE_INDEX, and increment OBJECT_MOVEMENT_BYTE_INDEX
+    // LD_A_hli;
+    // LD_D_hl;
+    // LD_HL(OBJECT_MOVEMENT_BYTE_INDEX);
+    // ADD_HL_BC;
+    // ADD_A_hl;
+    // LD_E_A;
+    // LD_A_D;
+    // ADC_A(0);
+    // LD_D_A;
+    // INC_hl;
+    const uint8_t* de = hl + (bc->movementByteIndex++);
+    // LD_A_de;
+    // LD_H_A;
+    // POP_AF;
+    // RST(aBankswitch);
+
+    // LD_A_H;
+    // RET;
+    return *de;
 }
 
 void SetVramState_Bit0(void){

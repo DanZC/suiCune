@@ -64,8 +64,7 @@ uint8_t IsInJohto_Conv(void){
         return JOHTO_REGION;
 }
 
+//  dummied out
 void SetXYCompareFlags(void){
-    //  //  dummied out
-    RET;
-
+    // RET;
 }

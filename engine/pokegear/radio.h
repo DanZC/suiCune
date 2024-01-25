@@ -44,7 +44,7 @@ void PokedexShow8(void);
 void CopyDexEntry(void);
 void CopyDexEntryPart1(void);
 void CopyDexEntryPart2(void);
-void PokedexShowText(void);
+extern const struct TextCmd PokedexShowText[];
 void BenMonMusic1(void);
 void BenMonMusic2(void);
 void BenMonMusic3(void);

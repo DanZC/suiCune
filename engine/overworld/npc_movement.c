@@ -69,6 +69,91 @@ move_anywhere:
 
 }
 
+bool CanObjectMoveInDirection_Conv(struct Object* bc){
+    // LD_HL(OBJECT_PALETTE);
+    // ADD_HL_BC;
+    // BIT_hl(SWIMMING_F);
+    // IF_Z goto not_swimming;
+    if(bit_test(bc->palette, SWIMMING_F)) {
+        // LD_HL(OBJECT_FLAGS1);
+        // ADD_HL_BC;
+        // BIT_hl(NOCLIP_TILES_F);  // lost, uncomment next line to fix
+#if BUGFIX_NOCLIP_SWIM
+        if(!bit_test(bc->flags1, NOCLIP_TILES_F)) {
+    // jr nz, .noclip_tiles
+#endif
+            // PUSH_HL;
+            // PUSH_BC;
+            // CALL(aWillObjectBumpIntoLand);
+            // POP_BC;
+            // POP_HL;
+            // RET_C ;
+            if(WillObjectBumpIntoLand_Conv(bc))
+                return true;
+            // goto continue_;
+#if BUGFIX_NOCLIP_SWIM
+        }
+#endif
+    }
+    else {
+    // not_swimming:
+        // LD_HL(OBJECT_FLAGS1);
+        // ADD_HL_BC;
+        // BIT_hl(NOCLIP_TILES_F);
+        // IF_NZ goto noclip_tiles;
+        if(!bit_test(bc->flags1, NOCLIP_TILES_F)) {
+            // PUSH_HL;
+            // PUSH_BC;
+            // CALL(aWillObjectBumpIntoWater);
+            // POP_BC;
+            // POP_HL;
+            // RET_C ;
+            if(WillObjectBumpIntoWater_Conv(bc))
+                return true;
+        }
+    }
+
+
+// noclip_tiles:
+// continue_:
+    // BIT_hl(NOCLIP_OBJS_F);
+    // IF_NZ goto noclip_objs;
+    if(!bit_test(bc->flags1, NOCLIP_OBJS_F)) {
+        // PUSH_HL;
+        // PUSH_BC;
+        // CALL(aWillObjectBumpIntoSomeoneElse);
+        // POP_BC;
+        // POP_HL;
+        // RET_C ;
+        if(WillObjectBumpIntoSomeoneElse_Conv(bc))
+            return true;
+    }
+
+// noclip_objs:
+    // BIT_hl(MOVE_ANYWHERE_F);
+    // IF_NZ goto move_anywhere;
+    if(!bit_test(bc->flags1, MOVE_ANYWHERE_F)) {
+        // PUSH_HL;
+        // CALL(aHasObjectReachedMovementLimit);
+        // POP_HL;
+        // RET_C ;
+        if(HasObjectReachedMovementLimit_Conv(bc))
+            return true;
+
+        // PUSH_HL;
+        // CALL(aIsObjectMovingOffEdgeOfScreen);
+        // POP_HL;
+        // RET_C ;
+        if(IsObjectMovingOffEdgeOfScreen_Conv(bc))
+            return true;
+    }
+
+// move_anywhere:
+    // AND_A_A;
+    // RET;
+    return false;
+}
+
 void WillObjectBumpIntoWater(void){
     CALL(aCanObjectLeaveTile);
     RET_C ;
@@ -94,6 +179,39 @@ void WillObjectBumpIntoWater(void){
 
 }
 
+bool WillObjectBumpIntoWater_Conv(struct Object* bc){
+    // CALL(aCanObjectLeaveTile);
+    // RET_C ;
+    if(CanObjectLeaveTile_Conv(bc))
+        return true;
+    // LD_HL(OBJECT_NEXT_MAP_X);
+    // ADD_HL_BC;
+    // LD_D_hl;
+    uint8_t d = bc->nextMapX;
+    // LD_HL(OBJECT_NEXT_MAP_Y);
+    // ADD_HL_BC;
+    // LD_E_hl;
+    uint8_t e = bc->nextMapY;
+    // LD_HL(OBJECT_PALETTE);
+    // ADD_HL_BC;
+    // BIT_hl(OAM_PRIORITY);
+    // JP_NZ (mWillObjectRemainOnWater);
+    if(bit_test(bc->palette, OAM_PRIORITY))
+        return WillObjectRemainOnWater_Conv(bc, d, e);
+    // LD_HL(OBJECT_NEXT_TILE);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // LD_D_A;
+    // CALL(aGetTileCollision);
+    // AND_A_A;  // LAND_TILE
+    // JR_Z (mWillObjectBumpIntoTile);
+    if(GetTileCollision_Conv(bc->nextTile) == LAND_TILE)
+        return WillObjectBumpIntoTile_Conv(bc);
+    // SCF;
+    // RET;
+    return true;
+}
+
 void WillObjectBumpIntoLand(void){
     CALL(aCanObjectLeaveTile);
     RET_C ;
@@ -106,6 +224,24 @@ void WillObjectBumpIntoLand(void){
     SCF;
     RET;
 
+}
+
+bool WillObjectBumpIntoLand_Conv(struct Object* bc){
+    // CALL(aCanObjectLeaveTile);
+    // RET_C ;
+    if(CanObjectLeaveTile_Conv(bc))
+        return true;
+    // LD_HL(OBJECT_NEXT_TILE);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // CALL(aGetTileCollision);
+    // CP_A(WATER_TILE);
+    // JR_Z (mWillObjectBumpIntoTile);
+    if(GetTileCollision_Conv(bc->nextTile) == WATER_TILE)
+        return WillObjectBumpIntoTile_Conv(bc);
+    // SCF;
+    // RET;
+    return true;
 }
 
 void WillObjectBumpIntoTile(void){
@@ -139,6 +275,41 @@ dir_masks:
     return CanObjectLeaveTile();
 }
 
+bool WillObjectBumpIntoTile_Conv(struct Object* bc){
+    static const uint8_t dir_masks[] = {
+        DOWN_MASK,  // DOWN
+        UP_MASK,  // UP
+        RIGHT_MASK,  // LEFT
+        LEFT_MASK,  // RIGHT
+    };
+    // LD_HL(OBJECT_NEXT_TILE);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // CALL(aGetSideWallDirectionMask);
+    u8_flag_s res = GetSideWallDirectionMask_Conv(bc->nextTile);
+    // RET_NC ;
+    if(!res.flag)
+        return false;
+    // PUSH_AF;
+    // LD_HL(OBJECT_DIRECTION_WALKING);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // maskbits(NUM_DIRECTIONS, 0);
+    // LD_E_A;
+    // LD_D(0);
+    // LD_HL(mWillObjectBumpIntoTile_dir_masks);
+    // ADD_HL_DE;
+    // POP_AF;
+    // AND_A_hl;
+    uint8_t mask = res.a & dir_masks[bc->dirWalking & 3];
+    // RET_Z ;
+    if(mask == 0)
+        return false;
+    // SCF;
+    // RET;
+    return true;
+}
+
 void CanObjectLeaveTile(void){
     LD_HL(OBJECT_STANDING_TILE);
     ADD_HL_BC;
@@ -167,6 +338,40 @@ dir_masks:
     //db ['RIGHT_MASK'];  // RIGHT
 
     return GetSideWallDirectionMask();
+}
+
+bool CanObjectLeaveTile_Conv(struct Object* bc){
+    static const uint8_t dir_masks[] = {
+        UP_MASK,  // DOWN
+        DOWN_MASK,  // UP
+        LEFT_MASK,  // LEFT
+        RIGHT_MASK,  // RIGHT
+    };
+    // LD_HL(OBJECT_STANDING_TILE);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // CALL(aGetSideWallDirectionMask);
+    u8_flag_s res = GetSideWallDirectionMask_Conv(bc->standingTile);
+    // RET_NC ;
+    if(!res.flag)
+        return false;
+    // PUSH_AF;
+    // LD_HL(OBJECT_DIRECTION_WALKING);
+    // ADD_HL_BC;
+    // maskbits(NUM_DIRECTIONS, 0);
+    // LD_E_A;
+    // LD_D(0);
+    // LD_HL(mCanObjectLeaveTile_dir_masks);
+    // ADD_HL_DE;
+    // POP_AF;
+    // AND_A_hl;
+    uint8_t mask = res.a & dir_masks[bc->dirWalking & 3];
+    // RET_Z ;
+    if(mask == 0)
+        return false;
+    // SCF;
+    // RET;
+    return true;
 }
 
 void GetSideWallDirectionMask(void){
@@ -203,6 +408,43 @@ side_wall_masks:
     //db ['DOWN_MASK | LEFT_MASK'];  // COLL_UP_LEFT_WALL/BUOY
 
     return WillObjectRemainOnWater();
+}
+
+u8_flag_s GetSideWallDirectionMask_Conv(uint8_t a){
+    static const uint8_t side_wall_masks[] = {
+        RIGHT_MASK,  // COLL_RIGHT_WALL/BUOY
+        LEFT_MASK,  // COLL_LEFT_WALL/BUOY
+        DOWN_MASK,  // COLL_UP_WALL/BUOY
+        UP_MASK,  // COLL_DOWN_WALL/BUOY
+        UP_MASK | RIGHT_MASK,  // COLL_DOWN_RIGHT_WALL/BUOY
+        UP_MASK | LEFT_MASK,  // COLL_DOWN_LEFT_WALL/BUOY
+        DOWN_MASK | RIGHT_MASK,  // COLL_UP_RIGHT_WALL/BUOY
+        DOWN_MASK | LEFT_MASK,  // COLL_UP_LEFT_WALL/BUOY
+    };
+    // LD_D_A;
+    uint8_t d = a;
+    // AND_A(0xf0);
+    // CP_A(HI_NYBBLE_SIDE_WALLS);
+    // IF_Z goto continue_;
+    // CP_A(HI_NYBBLE_SIDE_BUOYS);
+    // IF_Z goto continue_;
+    if((a & 0xf0) == HI_NYBBLE_SIDE_WALLS
+    || (a & 0xf0) == HI_NYBBLE_SIDE_BUOYS) {
+    // continue_:
+        // LD_A_D;
+        // AND_A(0x7);
+        // LD_E_A;
+        // LD_D(0);
+        // LD_HL(mGetSideWallDirectionMask_side_wall_masks);
+        // ADD_HL_DE;
+        // LD_A_hl;
+        // SCF;
+        // RET;
+        return u8_flag(side_wall_masks[d & 0x7], true);
+    }
+    // XOR_A_A;
+    // RET;
+    return u8_flag(0, false);
 }
 
 void WillObjectRemainOnWater(void){
@@ -261,6 +503,76 @@ not_land:
     SCF;
     RET;
 
+}
+
+bool WillObjectRemainOnWater_Conv(struct Object* bc, uint8_t d, uint8_t e){
+    uint8_t d2, e2;
+    // LD_HL(OBJECT_DIRECTION_WALKING);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // maskbits(NUM_DIRECTIONS, 0);
+    switch(bc->dirWalking & 3) {
+        // IF_Z goto down;
+        case DOWN:
+        // down:
+            // INC_E;
+            e++;
+            // PUSH_DE;
+            e2 = e;
+            // INC_D;
+            d2 = d + 1;
+            break;
+        // DEC_A;
+        // IF_Z goto up;
+        case UP:
+        // up:
+            // PUSH_DE;
+            e2 = e;
+            // INC_D;
+            d2 = d + 1;
+            break;
+        // DEC_A;
+        // IF_Z goto left;
+        case LEFT:
+        // left:
+            // PUSH_DE;
+            d2 = d;
+            // INC_E;
+            e2 = e + 1;
+            break;
+        // goto right;
+        default:
+        // right:
+            // INC_D;
+            d++;
+            // PUSH_DE;
+            d2 = d;
+            // INC_E;
+            e2 = e + 1;
+            break;
+    }
+
+// continue_:
+    // CALL(aGetCoordTile);
+    // CALL(aGetTileCollision);
+    // POP_DE;
+    // AND_A_A;  // LAND_TILE
+    // IF_NZ goto not_land;
+    if(GetTileCollision_Conv(GetCoordTile_Conv(d2, e2)) != LAND_TILE)
+        return true;
+    // CALL(aGetCoordTile);
+    // CALL(aGetTileCollision);
+    // AND_A_A;  // LAND_TILE
+    // IF_NZ goto not_land;
+    if(GetTileCollision_Conv(GetCoordTile_Conv(d, e)) != LAND_TILE)
+        return true;
+    // XOR_A_A;
+    // RET;
+    return false;
+
+// not_land:
+    // SCF;
+    // RET;
 }
 
 void CheckFacingObject(void){
@@ -366,6 +678,17 @@ void WillObjectBumpIntoSomeoneElse(void){
     LD_E_hl;
     JR(mIsNPCAtCoord);
 
+}
+
+bool WillObjectBumpIntoSomeoneElse_Conv(struct Object* bc){
+    // LD_HL(OBJECT_NEXT_MAP_X);
+    // ADD_HL_BC;
+    // LD_D_hl;
+    // LD_HL(OBJECT_NEXT_MAP_Y);
+    // ADD_HL_BC;
+    // LD_E_hl;
+    // JR(mIsNPCAtCoord);
+    return IsNPCAtCoord_Conv(bc->nextMapX, bc->nextMapY) != NULL;
 }
 
 void IsObjectFacingSomeoneElse(void){
@@ -667,6 +990,81 @@ yes:
 
 }
 
+bool HasObjectReachedMovementLimit_Conv(struct Object* bc){
+    // LD_HL(OBJECT_RADIUS);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // AND_A_A;
+    // IF_Z goto nope;
+    if(bc->radius == 0)
+        return false;
+    // AND_A(0xf);
+    // IF_Z goto check_y;
+    if((bc->radius & 0xf) != 0) {
+        // LD_E_A;
+        // LD_D_A;
+        // LD_HL(OBJECT_INIT_X);
+        // ADD_HL_BC;
+        // LD_A_hl;
+        // SUB_A_D;
+        // LD_D_A;
+        uint8_t d = bc->initX - (bc->radius & 0xf);
+        // LD_A_hl;
+        // ADD_A_E;
+        // LD_E_A;
+        uint8_t e = bc->initX + (bc->radius & 0xf);
+        // LD_HL(OBJECT_NEXT_MAP_X);
+        // ADD_HL_BC;
+        // LD_A_hl;
+        // CP_A_D;
+        // IF_Z goto yes;
+        // CP_A_E;
+        // IF_Z goto yes;
+        if(bc->nextMapX == d || bc->nextMapX == e)
+            return true;
+    }
+
+// check_y:
+    // LD_HL(OBJECT_RADIUS);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // SWAP_A;
+    // AND_A(0xf);
+    // IF_Z goto nope;
+    if(((bc->radius >> 4) & 0xf) != 0) {
+        // LD_E_A;
+        // LD_D_A;
+        // LD_HL(OBJECT_INIT_Y);
+        // ADD_HL_BC;
+        // LD_A_hl;
+        // SUB_A_D;
+        // LD_D_A;
+        uint8_t d = bc->initY - ((bc->radius >> 4) & 0xf);
+        // LD_A_hl;
+        // ADD_A_E;
+        // LD_E_A;
+        uint8_t e = bc->initY + ((bc->radius >> 4) & 0xf);
+        // LD_HL(OBJECT_NEXT_MAP_Y);
+        // ADD_HL_BC;
+        // LD_A_hl;
+        // CP_A_D;
+        // IF_Z goto yes;
+        // CP_A_E;
+        // IF_Z goto yes;
+        if(bc->nextMapY == d || bc->nextMapY == e)
+            return true;
+    }
+
+// nope:
+    // XOR_A_A;
+    // RET;
+    return false;
+
+// yes:
+    // SCF;
+    // RET;
+}
+
 void IsObjectMovingOffEdgeOfScreen(void){
     LD_HL(OBJECT_NEXT_MAP_X);
     ADD_HL_BC;
@@ -700,6 +1098,53 @@ yes:
     SCF;
     RET;
 
+}
+
+// TODO: Replace gotos in this function.
+bool IsObjectMovingOffEdgeOfScreen_Conv(struct Object* bc){
+    // LD_HL(OBJECT_NEXT_MAP_X);
+    // ADD_HL_BC;
+    // LD_A_addr(wXCoord);
+    // CP_A_hl;
+    // IF_Z goto check_y;
+    if(wram->wXCoord == bc->nextMapX)
+        goto check_y;
+    // IF_NC goto yes;
+    if(wram->wXCoord > bc->nextMapX)
+        goto yes;
+    // ADD_A(0x9);
+    // CP_A_hl;
+    // IF_C goto yes;
+    if(wram->wXCoord + 0x9 < bc->nextMapX)
+        goto yes;
+
+
+check_y:
+    // LD_HL(OBJECT_NEXT_MAP_Y);
+    // ADD_HL_BC;
+    // LD_A_addr(wYCoord);
+    // CP_A_hl;
+    // IF_Z goto nope;
+    if(wram->wYCoord == bc->nextMapY)
+        goto nope;
+    // IF_NC goto yes;
+    if(wram->wYCoord > bc->nextMapY)
+        goto yes;
+    // ADD_A(0x8);
+    // CP_A_hl;
+    // IF_C goto yes;
+    if(wram->wYCoord + 0x8 < bc->nextMapY)
+        goto yes;
+
+nope:
+    // AND_A_A;
+    // RET;
+    return false;
+
+yes:
+    // SCF;
+    // RET;
+    return true;
 }
 
 void IsNPCAtPlayerCoord(void){

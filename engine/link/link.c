@@ -6,6 +6,7 @@
 #include "../gfx/crystal_layouts.h"
 #include "../events/poke_seer.h"
 #include "../pokemon/move_mon.h"
+#include "../../home/map.h"
 #include "../../home/audio.h"
 #include "../../home/copy.h"
 #include "../../home/delay.h"
@@ -588,7 +589,7 @@ skip_mail:
         // CALL(aCopyBytes);
         CopyBytes_Conv2(wram->wOTClassName, wram->wOTPlayerName, NAME_LENGTH);
         // CALL(aReturnToMapFromSubmenu);
-        SafeCallGBAuto(aReturnToMapFromSubmenu);
+        ReturnToMapFromSubmenu();
         // LD_A_addr(wDisableTextAcceleration);
         // PUSH_AF;
         uint8_t disableTextAcc = wram->wDisableTextAcceleration;
@@ -3618,26 +3619,35 @@ void WaitForLinkedFriend(void){
 }
 
 void CheckLinkTimeout_Receptionist(void){
-    LD_A(0x1);
-    LD_addr_A(wPlayerLinkAction);
-    LD_HL(wLinkTimeoutFrames);
-    LD_A(3);
-    LD_hli_A;
-    XOR_A_A;
-    LD_hl_A;
-    CALL(aWaitBGMap);
-    LD_A(0x2);
-    LDH_addr_A(hVBlank);
-    CALL(aDelayFrame);
-    CALL(aDelayFrame);
-    CALL(aLink_CheckCommunicationError);
-    XOR_A_A;
-    LDH_addr_A(hVBlank);
-    LD_A_addr(wScriptVar);
-    AND_A_A;
-    RET_NZ ;
-    JP(mLink_ResetSerialRegistersAfterLinkClosure);
-
+    // LD_A(0x1);
+    // LD_addr_A(wPlayerLinkAction);
+    wram->wPlayerLinkAction = 0x1;
+    // LD_HL(wLinkTimeoutFrames);
+    // LD_A(3);
+    // LD_hli_A;
+    // XOR_A_A;
+    // LD_hl_A;
+    wram->wLinkTimeoutFrames = 0x300;
+    // CALL(aWaitBGMap);
+    WaitBGMap_Conv();
+    // LD_A(0x2);
+    // LDH_addr_A(hVBlank);
+    hram->hVBlank = 0x2;
+    // CALL(aDelayFrame);
+    DelayFrame();
+    // CALL(aDelayFrame);
+    DelayFrame();
+    // CALL(aLink_CheckCommunicationError);
+    Link_CheckCommunicationError();
+    // XOR_A_A;
+    // LDH_addr_A(hVBlank);
+    hram->hVBlank = 0;
+    // LD_A_addr(wScriptVar);
+    // AND_A_A;
+    // RET_NZ ;
+    if(wram->wScriptVar == FALSE)
+        // JP(mLink_ResetSerialRegistersAfterLinkClosure);
+        return Link_ResetSerialRegistersAfterLinkClosure();
 }
 
 //  if wScriptVar = 0 on exit, link connection is closed

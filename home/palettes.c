@@ -685,7 +685,13 @@ void SwapTextboxPalettes_Conv(void){
 }
 
 void ScrollBGMapPalettes(void){
-        HOMECALL(av_ScrollBGMapPalettes);
+    HOMECALL(av_ScrollBGMapPalettes);
     RET;
 
+}
+
+void ScrollBGMapPalettes_Conv(uint8_t c){
+    // HOMECALL(av_ScrollBGMapPalettes);
+    // RET;
+    return v_ScrollBGMapPalettes_Conv(c);
 }

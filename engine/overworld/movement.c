@@ -245,7 +245,7 @@ void Movement_step_dig(struct Object* bc){
     // LD_HL(OBJECT_STEP_DURATION);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->stepDuration = JumpMovementPointer_Conv();
+    bc->stepDuration = JumpMovementPointer_Conv(bc);
     // LD_HL(OBJECT_STEP_TYPE);
     // ADD_HL_BC;
     // LD_hl(STEP_TYPE_SLEEP);
@@ -272,7 +272,7 @@ void Movement_return_dig(struct Object* bc){
     // LD_HL(OBJECT_STEP_DURATION);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->stepDuration = JumpMovementPointer_Conv();
+    bc->stepDuration = JumpMovementPointer_Conv(bc);
     // LD_HL(OBJECT_DIRECTION_WALKING);
     // ADD_HL_BC;
     // LD_hl(STANDING);
@@ -301,7 +301,7 @@ void Movement_rock_smash(struct Object* bc){
     // LD_HL(OBJECT_STEP_DURATION);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->stepDuration = JumpMovementPointer_Conv();
+    bc->stepDuration = JumpMovementPointer_Conv(bc);
     // LD_HL(OBJECT_ACTION);
     // ADD_HL_BC;
     // LD_hl(OBJECT_ACTION_STAND);
@@ -373,7 +373,7 @@ void Movement_48(struct Object* bc){
     // LD_HL(OBJECT_STEP_DURATION);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->stepDuration = JumpMovementPointer_Conv();
+    bc->stepDuration = JumpMovementPointer_Conv(bc);
 
     // LD_HL(OBJECT_STEP_TYPE);
     // ADD_HL_BC;
@@ -622,7 +622,7 @@ void Movement_step_shake(struct Object* bc){
 //     displacement (DecimalParam)
     // CALL(aJumpMovementPointer);
     // CALL(aShakeScreen);
-    ShakeScreen_Conv(bc, JumpMovementPointer_Conv());
+    ShakeScreen_Conv(bc, JumpMovementPointer_Conv(bc));
     // JP(mContinueReadingMovement);
     return ContinueReadingMovement();
 }

@@ -16,6 +16,7 @@
 #include "../engine/overworld/overworld.h"
 #include "../engine/overworld/tile_events.h"
 #include "../engine/overworld/load_map_part.h"
+#include "../engine/overworld/map_setup.h"
 #include "../engine/tilesets/mapgroup_roofs.h"
 #include "../engine/tilesets/timeofday_pals.h"
 #include "../engine/gfx/crystal_layouts.h"
@@ -546,13 +547,15 @@ void LoadMetatiles_Conv(void){
 }
 
 void ReturnToMapFromSubmenu(void){
-    LD_A(MAPSETUP_SUBMENU);
-    LDH_addr_A(hMapEntryMethod);
-    FARCALL(aRunMapSetupScript);
-    XOR_A_A;
-    LDH_addr_A(hMapEntryMethod);
-    RET;
-
+    // LD_A(MAPSETUP_SUBMENU);
+    // LDH_addr_A(hMapEntryMethod);
+    hram->hMapEntryMethod = MAPSETUP_SUBMENU;
+    // FARCALL(aRunMapSetupScript);
+    RunMapSetupScript();
+    // XOR_A_A;
+    // LDH_addr_A(hMapEntryMethod);
+    hram->hMapEntryMethod = 0;
+    // RET;
 }
 
 void CheckWarpTile(void){
@@ -2657,86 +2660,104 @@ loop:
 }
 
 void ScrollMapUp(void){
-    hlcoord(0, 0, wTilemap);
-    LD_DE(wBGMapBuffer);
-    CALL(aBackupBGMapRow);
-    LD_C(2 * SCREEN_WIDTH);
-    CALL(aScrollBGMapPalettes);
-    LD_A_addr(wBGMapAnchor);
-    LD_E_A;
-    LD_A_addr(wBGMapAnchor + 1);
-    LD_D_A;
-    CALL(aUpdateBGMapRow);
-    LD_A(0x1);
-    LDH_addr_A(hBGMapUpdate);
-    RET;
-
+    // hlcoord(0, 0, wTilemap);
+    tile_t* hl = coord(0, 0, wram->wTilemap);
+    // LD_DE(wBGMapBuffer);
+    // CALL(aBackupBGMapRow);
+    BackupBGMapRow_Conv(wram->wBGMapBuffer, hl);
+    // LD_C(2 * SCREEN_WIDTH);
+    // CALL(aScrollBGMapPalettes);
+    ScrollBGMapPalettes_Conv(2 * SCREEN_WIDTH);
+    // LD_A_addr(wBGMapAnchor);
+    // LD_E_A;
+    // LD_A_addr(wBGMapAnchor + 1);
+    // LD_D_A;
+    // CALL(aUpdateBGMapRow);
+    UpdateBGMapRow_Conv(wram->wBGMapAnchor);
+    // LD_A(0x1);
+    // LDH_addr_A(hBGMapUpdate);
+    hram->hBGMapUpdate = 0x1;
+    // RET;
 }
 
 void ScrollMapDown(void){
-    hlcoord(0, SCREEN_HEIGHT - 2, wTilemap);
-    LD_DE(wBGMapBuffer);
-    CALL(aBackupBGMapRow);
-    LD_C(2 * SCREEN_WIDTH);
-    CALL(aScrollBGMapPalettes);
-    LD_A_addr(wBGMapAnchor);
-    LD_L_A;
-    LD_A_addr(wBGMapAnchor + 1);
-    LD_H_A;
-    LD_BC(BG_MAP_WIDTH * LEN_2BPP_TILE);
-    ADD_HL_BC;
+    // hlcoord(0, SCREEN_HEIGHT - 2, wTilemap);
+    tile_t* hl = coord(0, SCREEN_HEIGHT - 2, wram->wTilemap);
+    // LD_DE(wBGMapBuffer);
+    // CALL(aBackupBGMapRow);
+    BackupBGMapRow_Conv(wram->wBGMapBuffer, hl);
+    // LD_C(2 * SCREEN_WIDTH);
+    // CALL(aScrollBGMapPalettes);
+    ScrollBGMapPalettes_Conv(2 * SCREEN_WIDTH);
+    // LD_A_addr(wBGMapAnchor);
+    // LD_L_A;
+    // LD_A_addr(wBGMapAnchor + 1);
+    // LD_H_A;
+    // LD_BC(BG_MAP_WIDTH * LEN_2BPP_TILE);
+    // ADD_HL_BC;
+    wram->wBGMapAnchor += BG_MAP_WIDTH * LEN_2BPP_TILE;
 //  cap d at HIGH(vBGMap0)
-    LD_A_H;
-    AND_A(0b00000011);
-    OR_A(HIGH(vBGMap0));
-    LD_E_L;
-    LD_D_A;
-    CALL(aUpdateBGMapRow);
-    LD_A(0x1);
-    LDH_addr_A(hBGMapUpdate);
-    RET;
-
+    // LD_A_H;
+    // AND_A(0b00000011);
+    // OR_A(HIGH(vBGMap0));
+    // LD_E_L;
+    // LD_D_A;
+    uint16_t de = LOW(wram->wBGMapAnchor) | (((HIGH(wram->wBGMapAnchor) & 0b00000011) | HIGH(vBGMap0)) << 8);
+    // CALL(aUpdateBGMapRow);
+    UpdateBGMapRow_Conv(de);
+    // LD_A(0x1);
+    // LDH_addr_A(hBGMapUpdate);
+    hram->hBGMapUpdate = 0x1;
+    // RET;
 }
 
 void ScrollMapLeft(void){
-    hlcoord(0, 0, wTilemap);
-    LD_DE(wBGMapBuffer);
-    CALL(aBackupBGMapColumn);
-    LD_C(2 * SCREEN_HEIGHT);
-    CALL(aScrollBGMapPalettes);
-    LD_A_addr(wBGMapAnchor);
-    LD_E_A;
-    LD_A_addr(wBGMapAnchor + 1);
-    LD_D_A;
-    CALL(aUpdateBGMapColumn);
-    LD_A(0x1);
-    LDH_addr_A(hBGMapUpdate);
-    RET;
-
+    // hlcoord(0, 0, wTilemap);
+    // LD_DE(wBGMapBuffer);
+    // CALL(aBackupBGMapColumn);
+    BackupBGMapColumn_Conv(wram->wBGMapBuffer, coord(0, 0, wram->wTilemap));
+    // LD_C(2 * SCREEN_HEIGHT);
+    // CALL(aScrollBGMapPalettes);
+    ScrollBGMapPalettes_Conv(2 * SCREEN_HEIGHT);
+    // LD_A_addr(wBGMapAnchor);
+    // LD_E_A;
+    // LD_A_addr(wBGMapAnchor + 1);
+    // LD_D_A;
+    // CALL(aUpdateBGMapColumn);
+    UpdateBGMapColumn_Conv(wram->wBGMapAnchor);
+    // LD_A(0x1);
+    // LDH_addr_A(hBGMapUpdate);
+    hram->hBGMapUpdate = 0x1;
+    // RET;
 }
 
 void ScrollMapRight(void){
-    hlcoord(SCREEN_WIDTH - 2, 0, wTilemap);
-    LD_DE(wBGMapBuffer);
-    CALL(aBackupBGMapColumn);
-    LD_C(2 * SCREEN_HEIGHT);
-    CALL(aScrollBGMapPalettes);
-    LD_A_addr(wBGMapAnchor);
-    LD_E_A;
-    AND_A(0b11100000);
-    LD_B_A;
-    LD_A_E;
-    ADD_A(SCREEN_HEIGHT);
-    AND_A(0b00011111);
-    OR_A_B;
-    LD_E_A;
-    LD_A_addr(wBGMapAnchor + 1);
-    LD_D_A;
-    CALL(aUpdateBGMapColumn);
-    LD_A(0x1);
-    LDH_addr_A(hBGMapUpdate);
-    RET;
-
+    // hlcoord(SCREEN_WIDTH - 2, 0, wTilemap);
+    // LD_DE(wBGMapBuffer);
+    // CALL(aBackupBGMapColumn);
+    BackupBGMapColumn_Conv(wram->wBGMapBuffer, coord(SCREEN_WIDTH - 2, 0, wram->wTilemap));
+    // LD_C(2 * SCREEN_HEIGHT);
+    // CALL(aScrollBGMapPalettes);
+    ScrollBGMapPalettes_Conv(2 * SCREEN_HEIGHT);
+    // LD_A_addr(wBGMapAnchor);
+    // LD_E_A;
+    uint8_t e = LOW(wram->wBGMapAnchor);
+    // AND_A(0b11100000);
+    // LD_B_A;
+    // LD_A_E;
+    // ADD_A(SCREEN_HEIGHT);
+    // AND_A(0b00011111);
+    // OR_A_B;
+    // LD_E_A;
+    // LD_A_addr(wBGMapAnchor + 1);
+    // LD_D_A;
+    uint16_t de = (wram->wBGMapAnchor & 0xff00) | (((e + SCREEN_HEIGHT) & 0b00011111) | (e & 0b11100000));
+    // CALL(aUpdateBGMapColumn);
+    UpdateBGMapColumn_Conv(de);
+    // LD_A(0x1);
+    // LDH_addr_A(hBGMapUpdate);
+    hram->hBGMapUpdate = 0x1;
+    // RET;
 }
 
 void BackupBGMapRow(void){
@@ -2750,6 +2771,22 @@ loop:
     IF_NZ goto loop;
     RET;
 
+}
+
+void BackupBGMapRow_Conv(tile_t* de, const tile_t* hl){
+    // LD_C(2 * SCREEN_WIDTH);
+    uint8_t c = 2 * SCREEN_WIDTH;
+
+    do {
+    // loop:
+        // LD_A_hli;
+        // LD_de_A;
+        // INC_DE;
+        *(de++) = *(hl++);
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(--c != 0);
+    // RET;
 }
 
 void BackupBGMapColumn(void){
@@ -2774,6 +2811,34 @@ skip:
     IF_NZ goto loop;
     RET;
 
+}
+
+void BackupBGMapColumn_Conv(tile_t* de, const tile_t* hl){
+    // LD_C(SCREEN_HEIGHT);
+    uint8_t c = SCREEN_HEIGHT;
+
+    do {
+    // loop:
+        // LD_A_hli;
+        // LD_de_A;
+        // INC_DE;
+        *(de++) = *(hl++);
+        // LD_A_hl;
+        // LD_de_A;
+        // INC_DE;
+        *(de++) = *hl;
+        // LD_A(SCREEN_WIDTH - 1);
+        // ADD_A_L;
+        // LD_L_A;
+        // IF_NC goto skip;
+        // INC_H;
+
+    // skip:
+        hl += SCREEN_WIDTH - 1;
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(--c != 0);
+    // RET;
 }
 
 void UpdateBGMapRow(void){
@@ -2811,6 +2876,53 @@ loop:
 
 }
 
+static uint8_t* UpdateBGMapRow_iteration(uint8_t* hl, uint16_t de) {
+    // LD_C(10);
+    uint8_t c = 10;
+
+    do {
+    // loop:
+        // LD_A_E;
+        // LD_hli_A;
+        *(hl++) = LOW(de);
+        // LD_A_D;
+        // LD_hli_A;
+        *(hl++) = HIGH(de);
+        // LD_A_E;
+        // INC_A;
+        // INC_A;
+        // AND_A(0x1f);
+        // LD_B_A;
+        uint8_t b = (LOW(de) + 2) & 0x1f;
+        // LD_A_E;
+        // AND_A(0xe0);
+        // OR_A_B;
+        // LD_E_A;
+        de = (de & 0xff00) | ((LOW(de) & 0xe0) | b);
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(--c != 0);
+    // LD_A(SCREEN_WIDTH);
+    // LDH_addr_A(hBGMapTileCount);
+    hram->hBGMapTileCount = SCREEN_WIDTH;
+    // RET;
+    return hl;
+}
+
+void UpdateBGMapRow_Conv(uint16_t de){
+    // LD_HL(wBGMapBufferPointers);
+    uint8_t* hl = wram->wBGMapBufferPointers;
+    // PUSH_DE;
+    // CALL(aUpdateBGMapRow_iteration);
+    hl = UpdateBGMapRow_iteration(hl, de);
+    // POP_DE;
+    // LD_A(BG_MAP_WIDTH);
+    // ADD_A_E;
+    // LD_E_A;
+    de += BG_MAP_WIDTH;
+    UpdateBGMapRow_iteration(hl, de);
+}
+
 void UpdateBGMapColumn(void){
     LD_HL(wBGMapBufferPointers);
     LD_C(SCREEN_HEIGHT);
@@ -2839,6 +2951,43 @@ skip:
     LDH_addr_A(hBGMapTileCount);
     RET;
 
+}
+
+void UpdateBGMapColumn_Conv(uint16_t de){
+    // LD_HL(wBGMapBufferPointers);
+    uint8_t* hl = wram->wBGMapBufferPointers;
+    // LD_C(SCREEN_HEIGHT);
+    uint8_t c = SCREEN_HEIGHT;
+
+    do {
+    // loop:
+        // LD_A_E;
+        // LD_hli_A;
+        *(hl++) = LOW(de);
+        // LD_A_D;
+        // LD_hli_A;
+        *(hl++) = HIGH(de);
+        // LD_A(BG_MAP_WIDTH);
+        // ADD_A_E;
+        // LD_E_A;
+        // IF_NC goto skip;
+        // INC_D;
+        de += BG_MAP_WIDTH;
+    //  cap d at HIGH(vBGMap0)
+        // LD_A_D;
+        // AND_A(0b11);
+        // OR_A(HIGH(vBGMap0));
+        // LD_D_A;
+        de = LOW(de) | (((HIGH(de) & 0b11) | HIGH(vBGMap0)) << 8);
+
+    // skip:
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(--c != 0);
+    // LD_A(SCREEN_HEIGHT);
+    // LDH_addr_A(hBGMapTileCount);
+    hram->hBGMapTileCount = SCREEN_HEIGHT;
+    // RET;
 }
 
 void ClearBGMapBuffer(void){
@@ -2983,6 +3132,8 @@ void LoadTilesetGFX_Conv(void){
 }
 
 void BufferScreen(void){
+    BufferScreen_Conv();
+    return;
     LD_HL(wOverworldMapAnchor);
     LD_A_hli;
     LD_H_hl;
@@ -3873,6 +4024,98 @@ copy_coord_event:
     SCF;
     RET;
 
+}
+
+//  Checks to see if you are standing on a coord event.  If yes, copies the event to wCurCoordEvent and sets carry.
+const struct CoordEvent* CheckCurrentMapCoordEvents_CoordEventCheck(void) {
+    // LD_HL(wCurMapCoordEventsPointer);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+//  Load the active scene ID into b
+    // CALL(aCheckScenes);
+    // LD_B_A;
+    uint8_t b = CheckScenes_Conv();
+//  Load your current coordinates into de.  This will be used to check if your position is in the coord event table for the current map.
+    // LD_A_addr(wPlayerStandingMapX);
+    // SUB_A(4);
+    // LD_D_A;
+    uint8_t x = wram->wPlayerStruct.nextMapX - 4;
+    // LD_A_addr(wPlayerStandingMapY);
+    // SUB_A(4);
+    // LD_E_A;
+    uint8_t y = wram->wPlayerStruct.nextMapY - 4;
+
+    for(uint32_t i = 0; i < gCurMapCoordEventCount; ++i) {
+    // loop:
+        // PUSH_HL;
+        // LD_A_hli;
+        // CP_A_B;
+        // IF_Z goto got_id;
+        // CP_A(-1);
+        // IF_NZ goto next;
+        if(gCurMapCoordEventsPointer[i].sceneId != b
+        && gCurMapCoordEventsPointer[i].sceneId != 0xff)
+            continue;
+
+
+    // got_id:
+        // LD_A_hli;
+        // CP_A_E;
+        // IF_NZ goto next;
+        // LD_A_hli;
+        // CP_A_D;
+        // IF_NZ goto next;
+        // goto copy_coord_event;
+        if(gCurMapCoordEventsPointer[i].x == x
+        && gCurMapCoordEventsPointer[i].y == y) {
+        // copy_coord_event:
+            // POP_HL;
+            // LD_DE(wCurCoordEvent);
+            // LD_BC(COORD_EVENT_SIZE);
+            // CALL(aCopyBytes);
+            // SCF;
+            // RET;
+            return gCurMapCoordEventsPointer + i;
+        }
+
+
+    // next:
+        // POP_HL;
+        // LD_A(COORD_EVENT_SIZE);
+        // ADD_A_L;
+        // LD_L_A;
+        // IF_NC goto nocarry;
+        // INC_H;
+
+
+    // nocarry:
+        // DEC_C;
+        // IF_NZ goto loop;
+    }
+    // XOR_A_A;
+    // RET;
+    return NULL;
+}
+
+const struct CoordEvent* CheckCurrentMapCoordEvents_Conv(void){
+//  If there are no coord events, we don't need to be here.
+    // LD_A_addr(wCurMapCoordEventCount);
+    // AND_A_A;
+    // RET_Z ;
+    if(gCurMapCoordEventCount == 0)
+        return NULL;
+//  Copy the coord event count into c.
+    // LD_C_A;
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+    // CALL(aSwitchToMapScriptsBank);
+    // CALL(aCheckCurrentMapCoordEvents_CoordEventCheck);
+    // POP_HL;
+    // LD_A_H;
+    // RST(aBankswitch);
+    // RET;
+    return CheckCurrentMapCoordEvents_CoordEventCheck();
 }
 
 void FadeToMenu(void){

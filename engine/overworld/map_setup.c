@@ -9,25 +9,26 @@
 #include "../../engine/tilesets/timeofday_pals.h"
 #include "../../engine/overworld/map_objects_2.h"
 #include "../../engine/overworld/player_object.h"
+#include "../../data/maps/setup_scripts.h"
 
 void RunMapSetupScript(void){
-    LDH_A_addr(hMapEntryMethod);
-    AND_A(0xf);
-    DEC_A;
-    LD_C_A;
-    LD_B(0);
-    LD_HL(mMapSetupScripts);
-    ADD_HL_BC;
-    ADD_HL_BC;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    CALL(aReadMapSetupScript);
-    RET;
+    // LDH_A_addr(hMapEntryMethod);
+    // AND_A(0xf);
+    // DEC_A;
+    // LD_C_A;
+    // LD_B(0);
+    // LD_HL(mMapSetupScripts);
+    // ADD_HL_BC;
+    // ADD_HL_BC;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // CALL(aReadMapSetupScript);
+    // RET;
 
 // INCLUDE "data/maps/setup_scripts.asm"
 
-    return ReadMapSetupScript();
+    return ReadMapSetupScript_Conv(MapSetupScripts[hram->hMapEntryMethod & 0xf]);
 }
 
 void ReadMapSetupScript(void){
@@ -78,6 +79,60 @@ go:
 // INCLUDE "data/maps/setup_script_pointers.asm"
 
     return EnableTextAcceleration();
+}
+
+void ReadMapSetupScript_Conv(const uint8_t* script){
+
+    while(1) {
+    // loop:
+        // LD_A_hli;
+        uint8_t c = *(script++);
+        // CP_A(-1);  // end?
+        // RET_Z ;
+        if(c == 0xff)
+            return;
+
+        // PUSH_HL;
+
+        // LD_C_A;
+        // LD_B(0);
+        // LD_HL(mMapSetupCommands);
+        // ADD_HL_BC;
+        // ADD_HL_BC;
+        // ADD_HL_BC;
+
+    // bank
+        // LD_B_hl;
+        // INC_HL;
+
+    // address
+        // LD_A_hli;
+        // LD_H_hl;
+        // LD_L_A;
+
+    // Bit 7 of the bank indicates a parameter.
+    // This is left unused.
+        // BIT_B(7);
+        // IF_Z goto go;
+
+        // POP_DE;
+        // LD_A_de;
+        // LD_C_A;
+        // INC_DE;
+        // PUSH_DE;
+
+
+    // go:
+        // LD_A_B;
+        // AND_A(0x7f);
+        // RST(aFarCall);
+        MapSetupCommands[c]();
+
+        // POP_HL;
+        // goto loop;
+    }
+
+// INCLUDE "data/maps/setup_script_pointers.asm"
 }
 
 void EnableTextAcceleration(void){

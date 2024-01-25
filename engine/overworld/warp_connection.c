@@ -1,6 +1,7 @@
 #include "../../constants.h"
 #include "warp_connection.h"
 #include "../../home/map.h"
+#include "../../home/tilemap.h"
 #include "../../home/gfx.h"
 #include "../../home/flag.h"
 #include "../../home/window.h"
@@ -9,6 +10,7 @@
 #include "../events/map_name_sign.h"
 #include "map_setup.h"
 #include "cmd_queue.h"
+#include "overworld.h"
 #include "../gfx/load_overworld_font.h"
 
 void HandleNewMap(void){
@@ -379,7 +381,8 @@ void LoadMapGraphics(void){
     // XOR_A_A;
     // LDH_addr_A(hTileAnimFrame);
     hram->hTileAnimFrame = 0;
-    FARCALL(aRefreshSprites);
+    // FARCALL(aRefreshSprites);
+    RefreshSprites_Conv();
     // CALL(aLoadFontsExtra);
     LoadFontsExtra_Conv();
     // FARCALL(aLoadOverworldFont);
@@ -388,9 +391,9 @@ void LoadMapGraphics(void){
 }
 
 void LoadMapPalettes(void){
-    LD_B(SCGB_MAPPALS);
-    JP(mGetSGBLayout);
-
+    // LD_B(SCGB_MAPPALS);
+    // JP(mGetSGBLayout);
+    return GetSGBLayout_Conv(SCGB_MAPPALS);
 }
 
 void RefreshMapSprites(void){

@@ -1358,47 +1358,55 @@ JustSawSomeRareMonText:
 }
 
 void RandomPhoneWildMon(void){
-    FARCALL(aGetCallerLocation);
-    LD_D_B;
-    LD_E_C;
-    LD_HL(mJohtoGrassWildMons);
-    LD_BC(GRASS_WILDDATA_LENGTH);
-    CALL(aLookUpWildmonsForMapDE);
-    IF_C goto ok;
-    LD_HL(mKantoGrassWildMons);
-    CALL(aLookUpWildmonsForMapDE);
+    // FARCALL(aGetCallerLocation);
+    // LD_D_B;
+    // LD_E_C;
+    struct CallerLocation loc = GetCallerLocation_Conv();
+    // LD_HL(mJohtoGrassWildMons);
+    // LD_BC(GRASS_WILDDATA_LENGTH);
+    // CALL(aLookUpWildmonsForMapDE);
+    // IF_C goto ok;
+    // LD_HL(mKantoGrassWildMons);
+    // CALL(aLookUpWildmonsForMapDE);
+    const struct WildGrassMons* mons = LookUpWildmonsForMapDE_Conv(
+        JohtoGrassWildMons, (struct MapId){loc.mgroup, loc.mnum});
+
+    if(mons == NULL)
+        mons = LookUpWildmonsForMapDE_Conv(
+            KantoGrassWildMons, (struct MapId){loc.mgroup, loc.mnum});
+
+// ok:
+    // LD_BC(5 + 0 * 2);
+    // ADD_HL_BC;
+    // LD_A_addr(wTimeOfDay);
+    // INC_A;
+    // LD_BC(NUM_GRASSMON * 2);
+
+// loop:
+    // DEC_A;
+    // IF_Z goto done;
+    // ADD_HL_BC;
+    // goto loop;
 
 
-ok:
-    LD_BC(5 + 0 * 2);
-    ADD_HL_BC;
-    LD_A_addr(wTimeOfDay);
-    INC_A;
-    LD_BC(NUM_GRASSMON * 2);
-
-loop:
-    DEC_A;
-    IF_Z goto done;
-    ADD_HL_BC;
-    goto loop;
-
-
-done:
-    CALL(aRandom);
-    AND_A(0b11);
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    ADD_HL_BC;
-    INC_HL;
-    LD_A_hl;
-    LD_addr_A(wNamedObjectIndex);
-    CALL(aGetPokemonName);
-    LD_HL(wStringBuffer1);
-    LD_DE(wStringBuffer4);
-    LD_BC(MON_NAME_LENGTH);
-    JP(mCopyBytes);
-
+// done:
+    // CALL(aRandom);
+    // AND_A(0b11);
+    // LD_C_A;
+    // LD_B(0);
+    // ADD_HL_BC;
+    // ADD_HL_BC;
+    // INC_HL;
+    // LD_A_hl;
+    species_t s = mons->mons[wram->wTimeOfDay][Random_Conv() & 0b11].species;
+    // LD_addr_A(wNamedObjectIndex);
+    // CALL(aGetPokemonName);
+    // LD_HL(wStringBuffer1);
+    // LD_DE(wStringBuffer4);
+    // LD_BC(MON_NAME_LENGTH);
+    // JP(mCopyBytes);
+    return CopyBytes_Conv2(wram->wStringBuffer4,
+        GetPokemonName_Conv2(s), MON_NAME_LENGTH);
 }
 
 //  Get a random monster owned by the trainer who's calling.

@@ -59,7 +59,7 @@
 //#include "engine/overworld/select_menu.h"
 //#include "engine/events/elevator.h"
 //#include "engine/events/bug_contest/contest.h"
-//#include "engine/events/repel.h"
+#include "engine/events/repel.h"
 //#include "engine/events/hidden_item.h"
 //#include "engine/events/std_collision.h"
 //#include "engine/events/bug_contest/judging.h"

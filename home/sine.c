@@ -18,3 +18,11 @@ void Sine(void){
     REG_A = v_Sine_Conv(REG_A, REG_D);
 
 }
+
+uint8_t Sine_Conv(uint8_t a, uint8_t d){
+    //  a = d * sin(a * pi/32)
+    // LD_E_A;
+    // HOMECALL(av_Sine);
+    // RET;
+    return v_Sine_Conv(a, d);
+}

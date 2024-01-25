@@ -3534,12 +3534,10 @@ void RadioMusicRestartDE(void){
 }
 
 void RadioMusicRestartDE_Conv(uint16_t de){
-    uint16_t temp = de;
-    gb_write(wPokegearRadioMusicPlaying, (uint8_t)(de & 0xFF));
-    v_PlayMusic(MUSIC_NONE);
-    de = temp;
-    gb_write(wMapMusic, (uint8_t)(de & 0xFF));
-    v_PlayMusic(de);
+    wram->wPokegearRadioMusicPlaying = (uint8_t)(de & 0xFF);
+    PlayMusic_Conv(MUSIC_NONE);
+    wram->wMapMusic = (uint8_t)(de & 0xFF);
+    PlayMusic_Conv(de);
 }
 
 void RadioMusicRestartPokemonChannel(void){

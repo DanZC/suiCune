@@ -40,6 +40,7 @@ void Handler_Trainergear(void);
 void Handler_Stats(void);
 void Handler_Pics(void);
 void Handler_Script(void);
+void Handler_TradeAnim(void);
 
 static DebugMenuOption debugMenuOptions[] = {
     {"FIGHT@", Handler_Fight},
@@ -54,6 +55,7 @@ static DebugMenuOption debugMenuOptions[] = {
     {"STATS@", Handler_Stats},
     {"PICS@", Handler_Pics},
     {"SCRIPT@", Handler_Script},
+    {"TRADE@", Handler_TradeAnim},
 };
 
 #define MAX_OPTIONS_PER_PAGE 7
@@ -207,6 +209,11 @@ void Handler_Pics(void) {
 
 void Handler_Script(void) {
     DebugMenu_Scripting();
+    PlayMusic_Conv(DEBUG_MENU_MUSIC);
+}
+
+void Handler_TradeAnim(void) {
+    DebugMenu_TradeAnim();
     PlayMusic_Conv(DEBUG_MENU_MUSIC);
 }
 
@@ -752,3 +759,15 @@ void DebugMenu_Link(void) {
     
 }
 
+void DebugMenu_TradeAnim(void) {
+    ClearScreen_Conv2();
+    wram->wPlayerTrademon.species = BULBASAUR;
+    wram->wOTTrademon.species = CHARMANDER;
+    U82CA(wram->wPlayerTrademon.otName, "PLAYER@");
+    U82CA(wram->wOTTrademon.otName, "PLAYER@");
+    U82CA(wram->wPlayerTrademon.speciesName, "A@");
+    U82CA(wram->wOTTrademon.speciesName, "A@");
+    U82CA(wram->wPlayerTrademon.nickname, "A@");
+    U82CA(wram->wOTTrademon.nickname, "A@");
+    SafeCallGBAuto(aTradeAnimationPlayer2);
+}

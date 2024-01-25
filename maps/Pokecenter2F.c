@@ -181,7 +181,7 @@ NoMobile:
     waitbutton
     closetext
     scall(Pokecenter2F_CheckGender)
-    //warpcheck
+    warpcheck
     s_end
 FriendNotReady:
     special(WaitForOtherPlayerToExit)
@@ -213,7 +213,7 @@ Mobile:
     scall_local(Mobile_TrySave);
     iftrue(Mobile_Abort)
     scall(BattleTradeMobile_WalkIn)
-    //warpcheck
+    warpcheck
     s_end
 Mobile_Abort:
     s_end

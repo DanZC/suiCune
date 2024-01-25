@@ -527,14 +527,15 @@ done:
 }
 
 void FadeOutMusic(void){
-    LD_A(LOW(MUSIC_NONE));
-    LD_addr_A(wMusicFadeID);
-    LD_A(HIGH(MUSIC_NONE));
-    LD_addr_A(wMusicFadeID + 1);
-    LD_A(0x2);
-    LD_addr_A(wMusicFade);
-    RET;
-
+    // LD_A(LOW(MUSIC_NONE));
+    // LD_addr_A(wMusicFadeID);
+    // LD_A(HIGH(MUSIC_NONE));
+    // LD_addr_A(wMusicFadeID + 1);
+    wram->wMusicFadeID = MUSIC_NONE;
+    // LD_A(0x2);
+    // LD_addr_A(wMusicFade);
+    wram->wMusicFade = 0x2;
+    // RET;
 }
 
 void Diploma(void){

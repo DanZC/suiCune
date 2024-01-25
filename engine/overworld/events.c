@@ -9,18 +9,26 @@
 #include "tile_events.h"
 #include "wildmons.h"
 #include "time.h"
+#include "map_setup.h"
+#include "warp_connection.h"
+#include "player_step.h"
+#include "map_objects.h"
 #include "../../home/joypad.h"
 #include "../../home/queue_script.h"
 #include "../../home/delay.h"
 #include "../../home/trainers.h"
 #include "../../home/copy.h"
 #include "../../home/audio.h"
-#include "../phone/phone.h"
+#include "../../home/time.h"
+#include "../../home/time_palettes.h"
 #include "../../home/flag.h"
+#include "../phone/phone.h"
 #include "../menus/start_menu.h"
 #include "../events/forced_movement.h"
 #include "../events/whiteout.h"
 #include "../events/misc_scripts.h"
+#include "../events/repel.h"
+#include "../events/map_name_sign.h"
 
 // INCLUDE "constants.asm"
 
@@ -30,29 +38,37 @@ Script_fn_t gMapReentryScriptAddress;
 // SECTION "Events", ROMX
 
 void OverworldLoop(void){
-    XOR_A_A;  // MAPSTATUS_START
-    LD_addr_A(wMapStatus);
+    // XOR_A_A;  // MAPSTATUS_START
+    // LD_addr_A(wMapStatus);
+    wram->wMapStatus = MAPSTATUS_START;
 
-loop:
-    LD_A_addr(wMapStatus);
-    LD_HL(mOverworldLoop_Jumptable);
-    RST(aJumpTable);
-    LD_A_addr(wMapStatus);
-    CP_A(MAPSTATUS_DONE);
-    IF_NZ goto loop;
+    do {
+    // loop:
+        // LD_A_addr(wMapStatus);
+        // LD_HL(mOverworldLoop_Jumptable);
+        // RST(aJumpTable);
+        switch(wram->wMapStatus) {
+            case MAPSTATUS_START:   StartMap();  break;
+            case MAPSTATUS_ENTER:   EnterMap();  break;
+            case MAPSTATUS_HANDLE:  HandleMap(); break;
+        }
+        // LD_A_addr(wMapStatus);
+        // CP_A(MAPSTATUS_DONE);
+        // IF_NZ goto loop;
+    } while(wram->wMapStatus != MAPSTATUS_DONE);
 
-done:
-    RET;
+// done:
+    // RET;
+    return;
 
-
-Jumptable:
+// Jumptable:
 //  entries correspond to MAPSTATUS_* constants
     //dw ['StartMap'];
     //dw ['EnterMap'];
     //dw ['HandleMap'];
     //dw ['.done'];
 
-    return DisableEvents();
+    // return DisableEvents();
 }
 
 void DisableEvents(void){
@@ -147,25 +163,25 @@ bool CheckWarpConnxnScriptFlag(void){
     return bit_test(wram->wScriptFlags2, 2);
 }
 
-void CheckCoordEventScriptFlag(void){
-    LD_HL(wScriptFlags2);
-    BIT_hl(1);
-    RET;
-
+bool CheckCoordEventScriptFlag(void){
+    // LD_HL(wScriptFlags2);
+    // BIT_hl(1);
+    // RET;
+    return bit_test(wram->wScriptFlags2, 1);
 }
 
-void CheckStepCountScriptFlag(void){
-    LD_HL(wScriptFlags2);
-    BIT_hl(0);
-    RET;
-
+bool CheckStepCountScriptFlag(void){
+    // LD_HL(wScriptFlags2);
+    // BIT_hl(0);
+    // RET;
+    return bit_test(wram->wScriptFlags2, 0);
 }
 
-void CheckWildEncountersScriptFlag(void){
-    LD_HL(wScriptFlags2);
-    BIT_hl(4);
-    RET;
-
+bool CheckWildEncountersScriptFlag(void){
+    // LD_HL(wScriptFlags2);
+    // BIT_hl(4);
+    // RET;
+    return bit_test(wram->wScriptFlags2, 4);
 }
 
 void StartMap(void){
@@ -193,7 +209,8 @@ void EnterMap(void){
     wram->wXYComparePointer = 0;
     // CALL(aSetUpFiveStepWildEncounterCooldown);
     SetUpFiveStepWildEncounterCooldown();
-    FARCALL(aRunMapSetupScript);
+    // FARCALL(aRunMapSetupScript);
+    RunMapSetupScript();
     // CALL(aDisableEvents);
     DisableEvents();
 
@@ -224,8 +241,7 @@ void EnterMap(void){
     // LD_A(MAPSTATUS_HANDLE);
     // LD_addr_A(wMapStatus);
     wram->wMapStatus = MAPSTATUS_HANDLE;
-    RET;
-
+    // RET;
 }
 
 void UnusedWait30Frames(void){
@@ -237,47 +253,57 @@ void UnusedWait30Frames(void){
 }
 
 void HandleMap(void){
-    CALL(aResetOverworldDelay);
-    CALL(aHandleMapTimeAndJoypad);
-    FARCALL(aHandleCmdQueue);  // no need to farcall
-    CALL(aMapEvents);
+    // CALL(aResetOverworldDelay);
+    ResetOverworldDelay();
+    // CALL(aHandleMapTimeAndJoypad);
+    HandleMapTimeAndJoypad();
+    // FARCALL(aHandleCmdQueue);  // no need to farcall
+    HandleCmdQueue();
+    // CALL(aMapEvents);
+    MapEvents();
 
 //  Not immediately entering a connected map will cause problems.
-    LD_A_addr(wMapStatus);
-    CP_A(MAPSTATUS_HANDLE);
-    RET_NZ ;
+    // LD_A_addr(wMapStatus);
+    // CP_A(MAPSTATUS_HANDLE);
+    // RET_NZ ;
+    if(wram->wMapStatus != MAPSTATUS_HANDLE)
+        return;
 
-    CALL(aHandleMapObjects);
-    CALL(aNextOverworldFrame);
-    CALL(aHandleMapBackground);
-    CALL(aCheckPlayerState);
-    RET;
-
+    // CALL(aHandleMapObjects);
+    HandleMapObjects();
+    // CALL(aNextOverworldFrame);
+    NextOverworldFrame();
+    // CALL(aHandleMapBackground);
+    HandleMapBackground();
+    // CALL(aCheckPlayerState);
+    CheckPlayerState_Conv();
+    // RET;
 }
 
 void MapEvents(void){
-    LD_A_addr(wMapEventStatus);
-    LD_HL(mMapEvents_Jumptable);
-    RST(aJumpTable);
-    RET;
+    // LD_A_addr(wMapEventStatus);
+    // LD_HL(mMapEvents_Jumptable);
+    // RST(aJumpTable);
+    // RET;
 
-
-Jumptable:
+// Jumptable:
 //  entries correspond to MAPEVENTS_* constants
-    //dw ['.events'];
-    //dw ['.no_events'];
-
-
-events:
-    CALL(aPlayerEvents);
-    CALL(aDisableEvents);
-    FARCALL(aScriptEvents);
-    RET;
-
-
-no_events:
-    RET;
-
+    switch(wram->wMapEventStatus) {
+    case MAPEVENTS_ON:
+    // events:
+        // CALL(aPlayerEvents);
+        PlayerEvents_Conv();
+        // CALL(aDisableEvents);
+        DisableEvents();
+        // FARCALL(aScriptEvents);
+        ScriptEvents_Conv();
+        // RET;
+        return;
+    case MAPEVENTS_OFF:
+    // no_events:
+        // RET;
+        return;
+    }
 }
 
 void MaxOverworldDelay(void){
@@ -308,31 +334,38 @@ void NextOverworldFrame(void){
 }
 
 void HandleMapTimeAndJoypad(void){
-    LD_A_addr(wMapEventStatus);
-    CP_A(MAPEVENTS_OFF);
-    RET_Z ;
+    // LD_A_addr(wMapEventStatus);
+    // CP_A(MAPEVENTS_OFF);
+    // RET_Z ;
+    if(wram->wMapEventStatus == MAPEVENTS_OFF)
+        return;
 
-    CALL(aUpdateTime);
-    CALL(aGetJoypad);
-    CALL(aTimeOfDayPals);
-    RET;
-
+    // CALL(aUpdateTime);
+    UpdateTime_Conv();
+    // CALL(aGetJoypad);
+    GetJoypad_Conv();
+    // CALL(aTimeOfDayPals);
+    TimeOfDayPals_Conv();
+    // RET;
 }
 
 void HandleMapObjects(void){
-    FARCALL(aHandleNPCStep);
-    FARCALL(av_HandlePlayerStep);
+    // FARCALL(aHandleNPCStep);
+    HandleNPCStep();
+    // FARCALL(av_HandlePlayerStep);
+    v_HandlePlayerStep();
     CALL(av_CheckObjectEnteringVisibleRange);
-    RET;
-
+    // RET;
 }
 
 void HandleMapBackground(void){
-    FARCALL(av_UpdateSprites);
-    FARCALL(aScrollScreen);
-    FARCALL(aPlaceMapNameSign);
-    RET;
-
+    // FARCALL(av_UpdateSprites);
+    v_UpdateSprites_Conv();
+    // FARCALL(aScrollScreen);
+    ScrollScreen();
+    // FARCALL(aPlaceMapNameSign);
+    PlaceMapNameSign_Conv();
+    // RET;
 }
 
 void CheckPlayerState(void){
@@ -358,7 +391,7 @@ noevents:
 
 }
 
-uint8_t CheckPlayerState_Conv(void){
+void CheckPlayerState_Conv(void){
     // LD_A_addr(wPlayerStepFlags);
     // BIT_A(PLAYERSTEP_CONTINUE_F);
     // IF_Z goto events;
@@ -368,7 +401,7 @@ uint8_t CheckPlayerState_Conv(void){
         // LD_addr_A(wMapEventStatus);
         wram->wMapEventStatus = MAPEVENTS_ON;
         // RET;
-        return wram->wMapEventStatus;
+        return;
     }
     // BIT_A(PLAYERSTEP_STOP_F);
     // IF_Z goto noevents;
@@ -381,7 +414,7 @@ uint8_t CheckPlayerState_Conv(void){
         // LD_addr_A(wMapEventStatus);
         wram->wMapEventStatus = MAPEVENTS_OFF;
         // RET;
-        return wram->wMapEventStatus;
+        return;
     }
     // CALL(aEnableEvents);
     EnableEvents();
@@ -390,7 +423,7 @@ uint8_t CheckPlayerState_Conv(void){
     // LD_addr_A(wMapEventStatus);
     wram->wMapEventStatus = MAPEVENTS_ON;
     // RET;
-    return wram->wMapEventStatus;
+    return;
 }
 
 void v_CheckObjectEnteringVisibleRange(void){
@@ -475,6 +508,8 @@ bool PlayerEvents_Conv(void){
 
         // CALL(aCheckTileEvent);
         // IF_C goto ok;
+        res = CheckTileEvent_Conv();
+        if(res.flag) break;
 
         // CALL(aRunMemScript);
         // IF_C goto ok;
@@ -638,6 +673,94 @@ coord_event:
     CALL(aCallScript);
     RET;
 
+}
+
+//  Check for warps, coord events, or wild battles.
+u8_flag_s CheckTileEvent_Conv(void){
+    // CALL(aCheckWarpConnxnScriptFlag);
+    // IF_Z goto connections_disabled;
+    if(!CheckWarpConnxnScriptFlag()) {
+
+        // FARCALL(aCheckMovingOffEdgeOfMap);
+        // IF_C goto map_connection;
+        if(CheckMovingOffEdgeOfMap_Conv()) {
+        // map_connection:
+            // LD_A(PLAYEREVENT_CONNECTION);
+            // SCF;
+            // RET;
+            return u8_flag(PLAYEREVENT_CONNECTION, true);
+        }
+
+        // CALL(aCheckWarpTile);
+        // IF_C goto warp_tile;
+        if(CheckWarpTile_Conv()) {
+        // warp_tile:
+            // LD_A_addr(wPlayerStandingTile);
+            // CALL(aCheckPitTile);
+            // IF_NZ goto not_pit;
+            if(CheckPitTile_Conv(wram->wPlayerStruct.nextTile)) {
+                // LD_A(PLAYEREVENT_FALL);
+                // SCF;
+                // RET;
+                return u8_flag(PLAYEREVENT_FALL, true);
+            }
+            else {
+            // not_pit:
+                // LD_A(PLAYEREVENT_WARP);
+                // SCF;
+                // RET;
+                return u8_flag(PLAYEREVENT_WARP, true);
+            }
+        }
+    }
+
+// connections_disabled:
+    // CALL(aCheckCoordEventScriptFlag);
+    // IF_Z goto coord_events_disabled;
+    if(CheckCoordEventScriptFlag()) {
+        // CALL(aCheckCurrentMapCoordEvents);
+        // IF_C goto coord_event;
+        const struct CoordEvent* ev = CheckCurrentMapCoordEvents_Conv();
+        if(ev != NULL) {
+        // coord_event:
+            // LD_HL(wCurCoordEventScriptAddr);
+            // LD_A_hli;
+            // LD_H_hl;
+            // LD_L_A;
+            // CALL(aGetMapScriptsBank);
+            // CALL(aCallScript);
+            // RET;
+            return u8_flag(CallScript_Conv2(ev->script), true);
+        }
+    }
+
+// coord_events_disabled:
+    // CALL(aCheckStepCountScriptFlag);
+    // IF_Z goto step_count_disabled;
+    if(CheckStepCountScriptFlag()) {
+        // CALL(aCountStep);
+        // RET_C ;
+        u8_flag_s res = CountStep_Conv();
+        if(res.flag)
+            return res;
+    }
+
+// step_count_disabled:
+    // CALL(aCheckWildEncountersScriptFlag);
+    // IF_Z goto ok;
+    if(CheckWildEncountersScriptFlag()) {
+        // CALL(aRandomEncounter);
+        // RET_C ;
+        u8_flag_s res = RandomEncounter_Conv();
+        if(res.flag)
+            return res;
+        // goto ok;  // pointless
+    }
+
+// ok:
+    // XOR_A_A;
+    // RET;
+    return u8_flag(0, false);
 }
 
 void CheckWildEncounterCooldown(void){
@@ -1868,6 +1991,111 @@ whiteout:
 
 }
 
+u8_flag_s CountStep_Conv(void){
+// Don't count steps in link communication rooms.
+    // LD_A_addr(wLinkMode);
+    // AND_A_A;
+    // IF_NZ goto done;
+    if(wram->wLinkMode != 0)
+        goto done;
+
+// If there is a special phone call, don't count the step.
+    // FARCALL(aCheckSpecialPhoneCall);
+    // IF_C goto doscript;
+    if(CheckSpecialPhoneCall_Conv())
+        goto doscript;
+
+// If Repel wore off, don't count the step.
+    // CALL(aDoRepelStep);
+    // IF_C goto doscript;
+    if(DoRepelStep_Conv())
+        goto doscript;
+
+// Count the step for poison and total steps
+    // LD_HL(wPoisonStepCount);
+    // INC_hl;
+    wram->wPoisonStepCount++;
+    // LD_HL(wStepCount);
+    // INC_hl;
+    uint8_t step = ++wram->wStepCount;
+// Every 256 steps, increase the happiness of all your Pokemon.
+    // IF_NZ goto skip_happiness;
+
+    if(step == 0) {
+        // FARCALL(aStepHappiness);
+        SafeCallGBAuto(aStepHappiness);
+    }
+
+
+// skip_happiness:
+// Every 256 steps, offset from the happiness incrementor by 128 steps,
+// decrease the hatch counter of all your eggs until you reach the first
+// one that is ready to hatch.
+    // LD_A_addr(wStepCount);
+    // CP_A(0x80);
+    // IF_NZ goto skip_egg;
+    if(wram->wStepCount == 0x80) {
+        // FARCALL(aDoEggStep);
+        // IF_NZ goto hatch;
+        struct cpu_registers_s regs = SafeCallGBAutoRet(aDoEggStep);
+        if(!regs.f_bits.z)
+            goto hatch;
+    }
+
+// skip_egg:
+// Increase the EXP of (both) DayCare Pokemon by 1.
+    // FARCALL(aDayCareStep);
+    SafeCallGBAuto(aDayCareStep);
+
+// Every 4 steps, deal damage to all poisoned Pokemon.
+    // LD_HL(wPoisonStepCount);
+    // LD_A_hl;
+    // CP_A(4);
+    // IF_C goto skip_poison;
+    if(wram->wPoisonStepCount >= 4) {
+        // LD_hl(0);
+        wram->wPoisonStepCount = 0;
+
+        // FARCALL(aDoPoisonStep);
+        // IF_C goto doscript;
+        struct cpu_registers_s regs = SafeCallGBAutoRet(aDoPoisonStep);
+        if(regs.f_bits.c)
+            goto hatch;
+    }
+
+// skip_poison:
+    // FARCALL(aDoBikeStep);
+    DoBikeStep_Conv();
+
+
+done:
+    // XOR_A_A;
+    // RET;
+    return u8_flag(0, false);
+
+
+doscript:
+    // LD_A(-1);
+    // SCF;
+    // RET;
+    return u8_flag(0xff, true);
+
+
+hatch:
+    // LD_A(PLAYEREVENT_HATCH);
+    // SCF;
+    // RET;
+    return u8_flag(PLAYEREVENT_HATCH, true);
+
+
+whiteout:
+//   //  unreferenced
+    // LD_A(PLAYEREVENT_WHITEOUT);
+    // SCF;
+    // RET;
+    return u8_flag(PLAYEREVENT_WHITEOUT, true);
+}
+
 void DoRepelStep(void){
     LD_A_addr(wRepelEffect);
     AND_A_A;
@@ -1883,6 +2111,28 @@ void DoRepelStep(void){
     SCF;
     RET;
 
+}
+
+bool DoRepelStep_Conv(void){
+    // LD_A_addr(wRepelEffect);
+    // AND_A_A;
+    // RET_Z ;
+    if(wram->wRepelEffect == 0)
+        return false;
+
+    // DEC_A;
+    // LD_addr_A(wRepelEffect);
+    // RET_NZ ;
+    if(--wram->wRepelEffect != 0)
+        return false;
+
+    // LD_A(BANK(aRepelWoreOffScript));
+    // LD_HL(mRepelWoreOffScript);
+    // CALL(aCallScript);
+    CallScript_Conv2(RepelWoreOffScript);
+    // SCF;
+    // RET;
+    return true;
 }
 
 void DoPlayerEvent(void){

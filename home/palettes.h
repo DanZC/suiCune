@@ -20,3 +20,4 @@ void ReloadSpritesNoPalettes(void);
 void SwapTextboxPalettes(void);
 void SwapTextboxPalettes_Conv(void);
 void ScrollBGMapPalettes(void);
+void ScrollBGMapPalettes_Conv(uint8_t c);
