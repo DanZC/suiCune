@@ -123,7 +123,7 @@ done:
 void UpdatePlayerSprite(void) {
     // FARCALL(av_UpdatePlayerSprite);
     v_UpdatePlayerSprite_Conv();
-    // RET;
+    RET;
 }
 
 void UpdatePlayerSprite_Conv(void) {

@@ -40,6 +40,7 @@
 #include "../events/std_scripts.h"
 #include "../../home/menu.h"
 #include "../phone/phone.h"
+#include "../gfx/dma_transfer.h"
 
 static const struct TextCmd* lScriptText = NULL;
 Script_fn_t gDeferredScriptAddr = NULL;
@@ -1478,6 +1479,29 @@ void Script_trainertext(void){
 
 }
 
+void Script_trainertext_Conv(script_s* s, uint8_t a){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // LD_C_A;
+    // LD_B(0);
+    // LD_HL(wSeenTextPointer);
+    // ADD_HL_BC;
+    // ADD_HL_BC;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // LD_A_addr(wSeenTrainerBank);
+    // LD_B_A;
+    switch(a) {
+    default:
+    case TRAINERTEXT_SEEN: return MapTextbox_Conv(gSeenTextPointer);
+    case TRAINERTEXT_WIN:  return MapTextbox_Conv(gWinTextPointer);
+    case TRAINERTEXT_LOSS: return MapTextbox_Conv(gLossTextPointer);
+    }
+    // CALL(aMapTextbox);
+    // RET;
+}
+
 void Script_scripttalkafter(void){
     LD_HL(wScriptAfterPointer);
     LD_A_hli;
@@ -1487,6 +1511,17 @@ void Script_scripttalkafter(void){
     LD_B_A;
     JP(mScriptJump);
 
+}
+
+void Script_scripttalkafter_Conv(script_s* s){
+    // LD_HL(wScriptAfterPointer);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // LD_A_addr(wSeenTrainerBank);
+    // LD_B_A;
+    // JP(mScriptJump);
+    Script_Goto(s, gScriptAfterPointer);
 }
 
 void Script_trainerflagaction(void){
@@ -1666,6 +1701,20 @@ void Script_musicfadeout(void){
     LD_addr_A(wMusicFade);
     RET;
 
+}
+
+void Script_musicfadeout_Conv(script_s* s, uint16_t id, uint8_t fade){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wMusicFadeID);
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wMusicFadeID + 1);
+    wram->wMusicFadeID = id;
+    // CALL(aGetScriptByte);
+    // AND_A(~(1 << MUSIC_FADE_IN_F));
+    // LD_addr_A(wMusicFade);
+    wram->wMusicFade = fade;
+    // RET;
 }
 
 void Script_playsound(void){
@@ -4610,6 +4659,22 @@ void Script_warpfacing(void){
     return Script_warp();
 }
 
+void Script_warpfacing_Conv(script_s* s, uint8_t dir, uint8_t group, uint8_t num, uint8_t x, uint8_t y){
+    // CALL(aGetScriptByte);
+    // maskbits(NUM_DIRECTIONS, 0);
+    // LD_C_A;
+    dir &= 3;
+    // LD_A_addr(wPlayerSpriteSetupFlags);
+    // SET_A(PLAYERSPRITESETUP_CUSTOM_FACING_F);
+    bit_set(wram->wPlayerSpriteSetupFlags, PLAYERSPRITESETUP_CUSTOM_FACING_F);
+    // OR_A_C;
+    // LD_addr_A(wPlayerSpriteSetupFlags);
+    wram->wPlayerSpriteSetupFlags |= dir;
+//  fallthrough
+
+    return Script_warp_Conv(s, group, num, x, y);
+}
+
 void Script_warp(void){
 //  This seems to be some sort of error handling case.
     CALL(aGetScriptByte);
@@ -4647,6 +4712,56 @@ not_ok:
 
 }
 
+void Script_warp_Conv(script_s* s, uint8_t group, uint8_t num, uint8_t x, uint8_t y){
+    (void)s;
+//  This seems to be some sort of error handling case.
+    // CALL(aGetScriptByte);
+    // AND_A_A;
+    // IF_Z goto not_ok;
+    if(group == 0) {
+    // not_ok:
+        // CALL(aGetScriptByte);
+        // CALL(aGetScriptByte);
+        // CALL(aGetScriptByte);
+        // LD_A(SPAWN_N_A);
+        // LD_addr_A(wDefaultSpawnpoint);
+        wram->wDefaultSpawnpoint = SPAWN_N_A;
+        // LD_A(MAPSETUP_BADWARP);
+        // LDH_addr_A(hMapEntryMethod);
+        hram->hMapEntryMethod = MAPSETUP_BADWARP;
+        // LD_A(MAPSTATUS_ENTER);
+        // CALL(aLoadMapStatus);
+        LoadMapStatus_Conv(MAPSTATUS_ENTER);
+        // CALL(aStopScript);
+        StopScript_Conv();
+        // RET;
+        return;
+    }
+    // LD_addr_A(wMapGroup);
+    wram->wMapGroup = group;
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wMapNumber);
+    wram->wMapNumber = num;
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wXCoord);
+    wram->wXCoord = x;
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wYCoord);
+    wram->wYCoord = y;
+    // LD_A(SPAWN_N_A);
+    // LD_addr_A(wDefaultSpawnpoint);
+    wram->wDefaultSpawnpoint = SPAWN_N_A;
+    // LD_A(MAPSETUP_WARP);
+    // LDH_addr_A(hMapEntryMethod);
+    hram->hMapEntryMethod = MAPSETUP_WARP;
+    // LD_A(MAPSTATUS_ENTER);
+    // CALL(aLoadMapStatus);
+    LoadMapStatus_Conv(MAPSTATUS_ENTER);
+    // CALL(aStopScript);
+    StopScript_Conv();
+    // RET;
+}
+
 void Script_warpmod(void){
     CALL(aGetScriptByte);
     LD_addr_A(wBackupWarpNumber);
@@ -4658,6 +4773,20 @@ void Script_warpmod(void){
 
 }
 
+void Script_warpmod_Conv(script_s* s, uint8_t warp, uint8_t group, uint8_t num){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wBackupWarpNumber);
+    wram->wBackupWarpNumber = warp;
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wBackupMapGroup);
+    wram->wBackupMapGroup = group;
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wBackupMapNumber);
+    wram->wBackupMapNumber = num;
+    // RET;
+}
+
 void Script_blackoutmod(void){
     CALL(aGetScriptByte);
     LD_addr_A(wLastSpawnMapGroup);
@@ -4667,11 +4796,30 @@ void Script_blackoutmod(void){
 
 }
 
+void Script_blackoutmod_Conv(script_s* s, uint8_t group, uint8_t num){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wLastSpawnMapGroup);
+    wram->wLastSpawnMapGroup = group;
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wLastSpawnMapNumber);
+    wram->wLastSpawnMapNumber = num;
+    // RET;
+}
+
 void Script_dontrestartmapmusic(void){
     LD_A(TRUE);
     LD_addr_A(wDontPlayMapMusicOnReload);
     RET;
 
+}
+
+void Script_dontrestartmapmusic_Conv(script_s* s){
+    (void)s;
+    // LD_A(TRUE);
+    // LD_addr_A(wDontPlayMapMusicOnReload);
+    wram->wDontPlayMapMusicOnReload = TRUE;
+    // RET;
 }
 
 void Script_writecmdqueue(void){
@@ -4686,6 +4834,19 @@ void Script_writecmdqueue(void){
 
 }
 
+void Script_writecmdqueue_Conv(script_s* s, const uint8_t* cmd){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // LD_E_A;
+    // CALL(aGetScriptByte);
+    // LD_D_A;
+    // LD_A_addr(wScriptBank);
+    // LD_B_A;
+    // FARCALL(aWriteCmdQueue);  // no need to farcall
+    WriteCmdQueue_Conv(cmd);
+    // RET;
+}
+
 void Script_delcmdqueue(void){
     XOR_A_A;
     LD_addr_A(wScriptVar);
@@ -4697,6 +4858,23 @@ void Script_delcmdqueue(void){
     LD_addr_A(wScriptVar);
     RET;
 
+}
+
+void Script_delcmdqueue_Conv(script_s* s, uint8_t b){
+    (void)s;
+    // XOR_A_A;
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = FALSE;
+    // CALL(aGetScriptByte);
+    // LD_B_A;
+    // FARCALL(aDelCmdQueue);  // no need to farcall
+    // RET_C ;
+    if(DelCmdQueue_Conv(b))
+        return;
+    // LD_A(TRUE);
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = TRUE;
+    // RET;
 }
 
 void Script_changemapblocks(void){
@@ -4727,6 +4905,23 @@ void Script_changeblock(void){
 
 }
 
+void Script_changeblock_Conv(script_s* s, uint8_t x, uint8_t y, uint8_t b){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // ADD_A(4);
+    // LD_D_A;
+    // CALL(aGetScriptByte);
+    // ADD_A(4);
+    // LD_E_A;
+    // CALL(aGetBlockLocation);
+    // CALL(aGetScriptByte);
+    // LD_hl_A;
+    *GetBlockLocation_Conv(x + 4, y + 4) = b;
+    // CALL(aBufferScreen);
+    BufferScreen();
+    // RET;
+}
+
 void Script_reloadmappart(void){
     XOR_A_A;
     LDH_addr_A(hBGMapMode);
@@ -4736,6 +4931,22 @@ void Script_reloadmappart(void){
     CALL(aUpdateSprites);
     RET;
 
+}
+
+void Script_reloadmappart_Conv(script_s* s){
+    (void)s;
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    // CALL(aOverworldTextModeSwitch);
+    OverworldTextModeSwitch_Conv();
+    // CALL(aGetMovementPermissions);
+    GetMovementPermissions();
+    // FARCALL(aReloadMapPart);
+    ReloadMapPart_Conv();
+    // CALL(aUpdateSprites);
+    UpdateSprites_Conv();
+    // RET;
 }
 
 void Script_warpcheck(void){

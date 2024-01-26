@@ -2,6 +2,7 @@
 #include "cmd_queue.h"
 #include "../../home/region.h"
 #include "../../home/map_objects.h"
+#include "../../home/copy.h"
 
 void ClearCmdQueue(void){
     // LD_HL(wCmdQueue);
@@ -103,6 +104,59 @@ done:
 
 }
 
+static uint8_t* WriteCmdQueue_GetNextEmptyEntry(void) {
+    // LD_HL(wCmdQueue);
+    uint8_t* hl = wram->wCmdQueue;
+    // LD_DE(CMDQUEUE_ENTRY_SIZE);
+    // LD_C(CMDQUEUE_CAPACITY);
+    uint8_t c = CMDQUEUE_CAPACITY;
+
+    do {
+    // loop:
+        // LD_A_hl;
+        // AND_A_A;
+        // IF_Z goto done;
+        if(*hl == 0) {
+        // done:
+            // LD_A(CMDQUEUE_CAPACITY);
+            // SUB_A_C;
+            // AND_A_A;
+            // RET;
+            return hl;
+        }
+        // ADD_HL_DE;
+        hl += CMDQUEUE_ENTRY_SIZE;
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(--c != 0);
+    // SCF;
+    // RET;
+    return NULL;
+}
+
+bool WriteCmdQueue_Conv(const uint8_t* hl){
+    // PUSH_BC;
+    // PUSH_DE;
+    // CALL(aWriteCmdQueue_GetNextEmptyEntry);
+    // LD_D_H;
+    // LD_E_L;
+    uint8_t* de = WriteCmdQueue_GetNextEmptyEntry();
+    // POP_HL;
+    // POP_BC;
+    // RET_C ;
+    if(de == NULL)
+        return false;
+    // LD_A_B;
+    // LD_BC(CMDQUEUE_ENTRY_SIZE - 1);
+    // CALL(aFarCopyBytes);
+    CopyBytes_Conv2(de, hl, CMDQUEUE_ENTRY_SIZE - 1);
+    // XOR_A_A;
+    // LD_hl_A;
+    de[CMDQUEUE_ENTRY_SIZE] = 0;
+    // RET;
+    return true;
+}
+
 void DelCmdQueue(void){
     LD_HL(wCmdQueue);
     LD_DE(CMDQUEUE_ENTRY_SIZE);
@@ -125,6 +179,37 @@ done:
     SCF;
     RET;
 
+}
+
+bool DelCmdQueue_Conv(uint8_t b){
+    // LD_HL(wCmdQueue);
+    uint8_t* hl = wram->wCmdQueue;
+    // LD_DE(CMDQUEUE_ENTRY_SIZE);
+    // LD_C(CMDQUEUE_CAPACITY);
+    uint8_t c = CMDQUEUE_CAPACITY;
+
+    do {
+    // loop:
+        // LD_A_hl;
+        // CP_A_B;
+        // IF_Z goto done;
+        if(*hl == b) {
+        // done:
+            // XOR_A_A;
+            // LD_hl_A;
+            *hl = 0;
+            // SCF;
+            // RET;
+            return true;
+        }
+        // ADD_HL_DE;
+        hl += CMDQUEUE_ENTRY_SIZE;
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(--c != 0);
+    // AND_A_A;
+    // RET;
+    return false;
 }
 
 void v_DelCmdQueue(void){

@@ -97,7 +97,51 @@ Function:
     RET;
 }
 
+static void ReloadMapPart_Function(void) {
+    // decoord(0, 0, wAttrmap);
+    // LD_HL(wScratchAttrmap);
+    // CALL(mPadAttrmapForHDMATransfer);
+    PadAttrmapForHDMATransfer_Conv2(wram->wScratchAttrmap, coord(0, 0, wram->wAttrmap));
+    // decoord(0, 0, wTilemap);
+    // LD_HL(wScratchTilemap);
+    // CALL(mPadTilemapForHDMATransfer);
+    PadAttrmapForHDMATransfer_Conv2(wram->wScratchTilemap, coord(0, 0, wram->wTilemap));
+    // CALL(mDelayFrame);
+    DelayFrame();
+
+    // NOP;
+    // LDH_A_addr(rVBK);
+    // PUSH_AF;
+    uint8_t vbk = gb_read(rVBK);
+    // LD_A(0x1);
+    // LDH_addr_A(rVBK);
+    gb_write(rVBK, 0x1);
+    // LD_HL(wScratchAttrmap);
+    // CALL(mHDMATransfer_Wait127Scanlines_toBGMap);
+    CopyBytes_Conv2(gb.vram + VRAM_BANK_SIZE + (hram->hBGMapAddress & 0x1ff0), wram->wScratchAttrmap, 2 * SCREEN_WIDTH);
+    // LD_A(0x0);
+    // LDH_addr_A(rVBK);
+    // LD_HL(wScratchTilemap);
+    // CALL(mHDMATransfer_Wait127Scanlines_toBGMap);
+    CopyBytes_Conv2(gb.vram + (hram->hBGMapAddress & 0x1ff0), wram->wScratchAttrmap, 2 * SCREEN_WIDTH);
+    // POP_AF;
+    // LDH_addr_A(rVBK);
+    gb_write(rVBK, vbk);
+    // NOP;
+
+    // RET;
+}
+
+void ReloadMapPart_Conv(void) {
+    // LD_HL(mReloadMapPart_Function);
+    // JP(mCallInSafeGFXMode);
+    return CallInSafeGFXMode_Conv(ReloadMapPart_Function);
+}
+
 void ReloadMapPart(void) {
+    PEEK("");
+    ReloadMapPart_Conv();
+    RET;
     LD_HL(mReloadMapPart_Function);
     JP(mCallInSafeGFXMode);
 

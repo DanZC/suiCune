@@ -1317,7 +1317,7 @@ void GetUsedSprite_Conv(void){
     // LD_D_H;
     // LD_E_L;
     // POP_HL;
-    uint16_t de = (sd.length << 4);
+    uint16_t de = sd.length;
 
     // LD_A_addr(wSpriteFlags);
     // BIT_A(5);
@@ -1328,8 +1328,8 @@ void GetUsedSprite_Conv(void){
     // LDH_A_addr(hUsedSpriteIndex);
     // CALL(av_DoesSpriteHaveFacings);
     // IF_C goto done;
-    if(!((wram->wSpriteFlags & ((1 << 6) | (1 << 5)))
-     || v_DoesSpriteHaveFacings_Conv(hram->hUsedSpriteIndex))) {
+    if(!(wram->wSpriteFlags & ((1 << 6) | (1 << 5)))
+    && v_DoesSpriteHaveFacings_Conv(hram->hUsedSpriteIndex)) {
         // LD_A_H;
         // ADD_A(HIGH(vTiles1 - vTiles0));
         // LD_H_A;
@@ -1337,7 +1337,7 @@ void GetUsedSprite_Conv(void){
         GetUsedSprite_CopyToVram(&sd, hl + sizeof(vram->vTiles0), de);
     }
 
-// done:
+done:;
     // RET;
 }
 

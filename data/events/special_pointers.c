@@ -1,6 +1,7 @@
 #include "../../constants.h"
 #include "../../engine/events/specials.h"
 #include "../../home/map_objects.h"
+#include "../../home/gfx.h"
 #include "../../engine/link/link.h"
 #include "../../engine/overworld/events.h"
 #include "../../engine/rtc/timeset.h"
@@ -70,7 +71,7 @@ void (*const SpecialsPointers[])(void) = {
     add_special(UpdateTimePals), // bank 0
     // add_special(ClearTilemap), // bank 0// unused as special
     add_special(UpdateSprites), // bank 0
-    // add_special(UpdatePlayerSprite), // bank 0
+    add_special(UpdatePlayerSprite), // bank 0
     // add_special(GameCornerPrizeMonCheckDex),
     // add_special(UnusedSetSeenMon), // unused
     // add_special(WaitSFX), // bank 0

@@ -1136,7 +1136,7 @@ void init_function_pointers(void) {
     // REDIRECTED(Mobile_ReloadMapPart);
     // REDIRECTED(PadMapForHDMATransfer);
     // REDIRECTED(HDMATransferTilemapToWRAMBank3);
-    // REDIRECTED(ReloadMapPart);
+    CONVERTED(ReloadMapPart);
     REDIRECTED(OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
     // REDIRECTED(CallInSafeGFXMode);
     // REDIRECTED(v_LoadHDMAParameters);

@@ -19,5 +19,7 @@ void CheckTrainerFlag(void);
 void PrintWinLossText(void);
 void PrintWinLossText_Conv(void);
 
+extern const struct TextCmd* gSeenTextPointer;
 extern const struct TextCmd* gWinTextPointer;
 extern const struct TextCmd* gLossTextPointer;
+extern Script_fn_t gScriptAfterPointer;
