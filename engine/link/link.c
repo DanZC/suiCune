@@ -3104,7 +3104,7 @@ void LinkTrade(void){
         // CALL(aDelayFrames);
         DelayFrames_Conv(100);
         // CALL(aClearTilemap);
-        ClearTilemap_Conv();
+        ClearTilemap_Conv2();
         // CALL(aLoadFontsBattleExtra);
         LoadFontsBattleExtra_Conv();
         // LD_B(SCGB_DIPLOMA);

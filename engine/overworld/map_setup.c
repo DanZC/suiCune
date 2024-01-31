@@ -28,7 +28,7 @@ void RunMapSetupScript(void){
 
 // INCLUDE "data/maps/setup_scripts.asm"
 
-    return ReadMapSetupScript_Conv(MapSetupScripts[hram->hMapEntryMethod & 0xf]);
+    return ReadMapSetupScript_Conv(MapSetupScripts[(hram->hMapEntryMethod & 0xf) - 1]);
 }
 
 void ReadMapSetupScript(void){

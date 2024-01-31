@@ -8,7 +8,10 @@
 #include "../../engine/events/magikarp.h"
 #include "../../engine/overworld/wildmons.h"
 #include "../../engine/overworld/overworld.h"
+#include "../../engine/overworld/warp_connection.h"
+#include "../../engine/tilesets/timeofday_pals.h"
 #include "../../home/time_palettes.h"
+#include "../../home/audio.h"
 
 #define add_special(_n) [SP_##_n] = _n
 
@@ -61,11 +64,11 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(CardFlip),
     // add_special(UnusedMemoryGame), // unused
     // add_special(ClearBGPalettesBufferScreen), // unused
-    // add_special(FadeOutPalettes),
-    // add_special(BattleTowerFade),
-    // add_special(FadeBlackQuickly),
-    // add_special(FadeInPalettes),
-    // add_special(FadeInQuickly),
+    add_special(FadeOutPalettes),
+    add_special(BattleTowerFade),
+    add_special(FadeBlackQuickly),
+    add_special(FadeInPalettes),
+    add_special(FadeInQuickly),
     // add_special(ReloadSpritesNoPalettes), // bank 0
     // add_special(ClearBGPalettes), // bank 0
     add_special(UpdateTimePals), // bank 0
@@ -74,9 +77,9 @@ void (*const SpecialsPointers[])(void) = {
     add_special(UpdatePlayerSprite), // bank 0
     // add_special(GameCornerPrizeMonCheckDex),
     // add_special(UnusedSetSeenMon), // unused
-    // add_special(WaitSFX), // bank 0
-    // add_special(PlayMapMusic), // bank 0
-    // add_special(RestartMapMusic), // bank 0
+    add_special(WaitSFX), // bank 0
+    add_special(PlayMapMusic), // bank 0
+    add_special(RestartMapMusic), // bank 0
     // add_special(HealMachineAnim),
     // add_special(SurfStartStep),
     // add_special(FindPartyMonAboveLevel), // unused
@@ -181,7 +184,7 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(Function103780),
     // add_special(Function10387b),
     // add_special(AskRememberPassword),
-    // add_special(LoadMapPalettes),
+    add_special(LoadMapPalettes),
     // add_special(UnusedFindItemInPCOrBag),
     add_special(InitialSetDSTFlag),
     add_special(InitialClearDSTFlag),

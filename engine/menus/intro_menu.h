@@ -20,6 +20,7 @@ void SpawnAfterRed(void);
 void PostCreditsSpawn(void);
 void Continue_MobileAdapterMenu(void);
 void ConfirmContinue(void);
+bool ConfirmContinue_Conv(void);
 void Continue_CheckRTC_RestartClock(void);
 void FinishContinueFunction(void);
 void DisplaySaveInfoOnContinue(void);

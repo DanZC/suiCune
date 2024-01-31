@@ -287,6 +287,7 @@ void OverworldTextModeSwitch_Conv(void){
 }
 
 void LoadMapPart(void){
+    return LoadMapPart_Conv();
     LDH_A_addr(hROMBank);
     PUSH_AF;
 
@@ -323,7 +324,7 @@ void LoadMapPart_Conv(void){
     // hlcoord(0, 0, wTilemap);
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH * SCREEN_HEIGHT, 0x60);
+    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x60);
 
     // LD_A(BANK(av_LoadMapPart));
     // RST(aBankswitch);
@@ -436,7 +437,7 @@ void LoadMetatiles_Conv(void){
     // LD_E_A;
     // LD_A_addr(wOverworldMapAnchor + 1);
     // LD_D_A;
-    uint8_t* de = GBToRAMAddr(wram->wOverworldMapAnchor);
+    uint8_t* de = AbsGBBankAddrToRAMAddr(MBANK(awOverworldMapBlocks), wram->wOverworldMapAnchor);
     // LD_HL(wSurroundingTiles);
     uint8_t* hl = wram->wSurroundingTiles;
     // LD_B(SCREEN_META_HEIGHT);
@@ -972,6 +973,7 @@ void CheckUnknownMap(void){
 }
 
 void LoadMapAttributes(void){
+    return LoadMapAttributes_Conv();
     CALL(aCopyMapPartialAndAttributes);
     CALL(aSwitchToMapScriptsBank);
     CALL(aReadMapScripts);
@@ -994,6 +996,7 @@ void LoadMapAttributes_Conv(void){
 }
 
 void LoadMapAttributes_SkipObjects(void){
+    return LoadMapAttributes_SkipObjects_Conv();
     CALL(aCopyMapPartialAndAttributes);
     CALL(aSwitchToMapScriptsBank);
     CALL(aReadMapScripts);
@@ -1222,6 +1225,10 @@ void GetMapConnections_Conv(const struct MapAttr* attr){
         // CALL(aGetMapConnection);
         GetMapConnection_Conv(gMapConnections + NORTH_F, attr->connections[NORTH_F]);
     }
+    else {
+        gMapConnections[NORTH_F].connectedMapGroup = 0xff;
+        gMapConnections[NORTH_F].connectedMapNumber = 0xff;
+    }
 
 // no_north:
 
@@ -1231,6 +1238,10 @@ void GetMapConnections_Conv(const struct MapAttr* attr){
         // LD_DE(wSouthMapConnection);
         // CALL(aGetMapConnection);
         GetMapConnection_Conv(gMapConnections + SOUTH_F, attr->connections[SOUTH_F]);
+    }
+    else {
+        gMapConnections[SOUTH_F].connectedMapGroup = 0xff;
+        gMapConnections[SOUTH_F].connectedMapNumber = 0xff;
     }
 
 // no_south:
@@ -1242,6 +1253,10 @@ void GetMapConnections_Conv(const struct MapAttr* attr){
         // CALL(aGetMapConnection);
         GetMapConnection_Conv(gMapConnections + WEST_F, attr->connections[WEST_F]);
     }
+    else {
+        gMapConnections[WEST_F].connectedMapGroup = 0xff;
+        gMapConnections[WEST_F].connectedMapNumber = 0xff;
+    }
 
 // no_west:
 
@@ -1251,6 +1266,10 @@ void GetMapConnections_Conv(const struct MapAttr* attr){
         // LD_DE(wEastMapConnection);
         // CALL(aGetMapConnection);
         GetMapConnection_Conv(gMapConnections + EAST_F, attr->connections[EAST_F]);
+    }
+    else {
+        gMapConnections[EAST_F].connectedMapGroup = 0xff;
+        gMapConnections[EAST_F].connectedMapNumber = 0xff;
     }
 
 // no_east:
@@ -1679,7 +1698,7 @@ void ClearObjectStructs_Conv(void){
     // LD_BC(OBJECT_LENGTH * (NUM_OBJECT_STRUCTS - 1));
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wObjectStruct, lengthof(wram->wObjectStruct), 0);
+    ByteFill_Conv2(wram->wObjectStruct, lengthof(wram->wObjectStruct) * (NUM_OBJECT_STRUCTS - 1), 0);
 
 //  Just to make sure (this is rather pointless)
     // LD_HL(wObject1Struct);
@@ -1789,6 +1808,7 @@ void GetWarpDestCoords_Conv(void){
 }
 
 void LoadBlockData(void){
+    PEEK("");
     // LD_HL(wOverworldMapBlocks);
     // LD_BC(wOverworldMapBlocksEnd - wOverworldMapBlocks);
     // LD_A(0);
@@ -1815,13 +1835,13 @@ void ChangeMap(void){
     hram->hConnectedMapWidth = wram->wMapWidth;
     // ADD_A(0x6);
     // LDH_addr_A(hConnectionStripLength);
-    hram->hConnectionStripLength = wram->wMapWidth & 0x6;
+    hram->hConnectionStripLength = wram->wMapWidth + 0x6;
     // LD_C_A;
     // LD_B(0);
     // ADD_HL_BC;
     // ADD_HL_BC;
     // ADD_HL_BC;
-    hl += (wram->wMapWidth & 0x6) * 3;
+    hl += hram->hConnectionStripLength * 3;
     // LD_C(3);
     // ADD_HL_BC;
     hl += 3;
@@ -1832,7 +1852,7 @@ void ChangeMap(void){
     // LD_E_A;
     // LD_A_addr(wMapBlocksPointer + 1);
     // LD_D_A;
-    uint8_t* de = gMapBlocks.ptr;
+    const uint8_t* de = gMapBlocks.ptr;
     // LD_A_addr(wMapHeight);
     // LD_B_A;
     uint8_t b = wram->wMapHeight;
@@ -2695,14 +2715,14 @@ void ScrollMapDown(void){
     // LD_H_A;
     // LD_BC(BG_MAP_WIDTH * LEN_2BPP_TILE);
     // ADD_HL_BC;
-    wram->wBGMapAnchor += BG_MAP_WIDTH * LEN_2BPP_TILE;
+    uint16_t de = wram->wBGMapAnchor + (BG_MAP_WIDTH * LEN_2BPP_TILE);
 //  cap d at HIGH(vBGMap0)
     // LD_A_H;
     // AND_A(0b00000011);
     // OR_A(HIGH(vBGMap0));
     // LD_E_L;
     // LD_D_A;
-    uint16_t de = LOW(wram->wBGMapAnchor) | (((HIGH(wram->wBGMapAnchor) & 0b00000011) | HIGH(vBGMap0)) << 8);
+    de = LOW(de) | (((HIGH(de) & 0b00000011) | HIGH(vBGMap0)) << 8);
     // CALL(aUpdateBGMapRow);
     UpdateBGMapRow_Conv(de);
     // LD_A(0x1);
@@ -3166,11 +3186,12 @@ col:
 }
 
 void BufferScreen_Conv(void){
+    PEEK("");
     // LD_HL(wOverworldMapAnchor);
     // LD_A_hli;
     // LD_H_hl;
     // LD_L_A;
-    const uint8_t* hl = AbsGBToRAMAddr(awOverworldMapAnchor);
+    const uint8_t* hl = AbsGBBankAddrToRAMAddr(MBANK(awOverworldMapBlocks), wram->wOverworldMapAnchor);
     // LD_DE(wScreenSave);
     uint8_t* de = wram->wScreenSave;
     // LD_C(SCREEN_META_HEIGHT);
@@ -3261,18 +3282,20 @@ horizontal:
 }
 
 void LoadConnectionBlockData(void){
-    LD_HL(wOverworldMapAnchor);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    LD_A_addr(wMapWidth);
-    ADD_A(6);
-    LDH_addr_A(hConnectionStripLength);
-    LD_DE(wScreenSave);
-    LD_B(SCREEN_META_WIDTH);
-    LD_C(SCREEN_META_HEIGHT);
+    // LD_HL(wOverworldMapAnchor);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    uint8_t* hl = AbsGBBankAddrToRAMAddr(MBANK(awOverworldMapBlocks), wram->wOverworldMapAnchor);
+    // LD_A_addr(wMapWidth);
+    // ADD_A(6);
+    // LDH_addr_A(hConnectionStripLength);
+    hram->hConnectionStripLength = wram->wMapWidth + 6;
+    // LD_DE(wScreenSave);
+    // LD_B(SCREEN_META_WIDTH);
+    // LD_C(SCREEN_META_HEIGHT);
 
-    return SaveScreen_LoadConnection();
+    return SaveScreen_LoadConnection_Conv(hl, wram->wScreenSave, SCREEN_META_WIDTH, SCREEN_META_HEIGHT);
 }
 
 void SaveScreen_LoadConnection(void){
@@ -3306,6 +3329,47 @@ okay:
     IF_NZ goto row;
     RET;
 
+}
+
+void SaveScreen_LoadConnection_Conv(uint8_t* hl, const uint8_t* de, uint8_t b, uint8_t c){
+    do {
+    // row:
+        // PUSH_BC;
+        uint8_t b2 = b;
+        // PUSH_HL;
+        uint8_t* hl2 = hl;
+        // PUSH_DE;
+        const uint8_t* de2 = de;
+
+        do {
+        // col:
+            // LD_A_de;
+            // INC_DE;
+            // LD_hli_A;
+            *(hl++) = *(de++);
+            // DEC_B;
+            // IF_NZ goto col;
+        } while(--b2 != 0);
+        // POP_DE;
+        // LD_A_E;
+        // ADD_A(6);
+        // LD_E_A;
+        // IF_NC goto okay;
+        // INC_D;
+
+    // okay:
+        de = de2 + 6;
+        // POP_HL;
+        // LDH_A_addr(hConnectionStripLength);
+        // LD_C_A;
+        // LD_B(0);
+        // ADD_HL_BC;
+        hl = hl2 + hram->hConnectionStripLength;
+        // POP_BC;
+        // DEC_C;
+        // IF_NZ goto row;
+    } while(--c != 0);
+    // RET;
 }
 
 static bool GetMovementPermissions_CheckHiNybble(uint8_t a) {
@@ -3681,7 +3745,7 @@ uint8_t GetCoordTile_Conv(uint8_t d, uint8_t e){
     // LD_A_addr(wTilesetCollisionAddress + 1);
     // LD_B_A;
     // ADD_HL_BC;
-    hl = AbsGBToRAMAddr((wram->wTilesetCollisionBank << 14) | (wram->wTilesetCollisionAddress + (a << 2)));
+    hl = AbsGBBankAddrToRAMAddr(wram->wTilesetCollisionBank, wram->wTilesetCollisionAddress + (a << 2));
     // RR_D;
     // IF_NC goto nocarry;
     // INC_HL;
@@ -3759,7 +3823,6 @@ uint8_t* GetBlockLocation_Conv(uint8_t d, uint8_t e){
     // IF_Z goto nope;
     // AND_A_A;
     uint8_t a = e >> 1;
-    uint8_t c = 0;
     while(a != 0) {
     // loop:
         // SRL_A;
@@ -3772,10 +3835,8 @@ uint8_t* GetBlockLocation_Conv(uint8_t d, uint8_t e){
 
     // ok:
         // SLA_C;
-        c = bc.lo >> 7;
-        bc.lo = (uint8_t)((int8_t)bc.lo << 1);
         // RL_B;
-        bc.hi = (bc.hi << 1) + c;
+        bc.reg <<= 1;
         // AND_A_A;
         // IF_NZ goto loop;
     }
@@ -4927,11 +4988,12 @@ void LoadMapTileset(void){
 }
 
 void LoadMapTileset_Conv(void){
-    uint16_t hl = AddNTimes_Conv(mTilesets, TILESET_LENGTH, gb_read(wMapTileset));
-    FarCopyBytes_Conv(wTilesetBank, BANK(aTilesets), hl, TILESET_LENGTH);
+    // uint16_t hl = AddNTimes_Conv(mTilesets, TILESET_LENGTH, wram->wMapTileset);
+    FarCopyBytes_Conv(wTilesetBank, BANK(aTilesets), mTilesets + (wram->wMapTileset * TILESET_LENGTH), TILESET_LENGTH);
 }
 
 void LoadMapTileset_Conv2(void){
+    LoadMapTileset_Conv();
     gTilesetPointer = &Tilesets[wram->wMapTileset];
 }
 

@@ -710,7 +710,7 @@ void v_CGB_Diploma(void){
 
 void v_CGB_MapPals(void){
     // CALL(aLoadMapPals);
-    SafeCallGBAuto(aLoadMapPals);
+    LoadMapPals();
     // LD_A(SCGB_MAPPALS);
     // LD_addr_A(wDefaultSGBLayout);
     wram->wDefaultSGBLayout = SCGB_MAPPALS;

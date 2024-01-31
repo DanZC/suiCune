@@ -39,7 +39,7 @@ void ShowLinkBattleParticipants_Conv(void){
     // CALL(aDelayFrames);
     DelayFrames_Conv(150);
     // CALL(aClearTilemap);
-    ClearTilemap_Conv();
+    ClearTilemap_Conv2();
     // CALL(aClearSprites);
     ClearSprites_Conv();
     // RET;

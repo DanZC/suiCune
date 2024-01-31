@@ -44,6 +44,7 @@ void ArrangeUsedSprites(void);
 void GetSpriteLength(void);
 uint8_t GetSpriteLength_Conv(uint8_t a);
 void GetUsedSprites(void);
+void GetUsedSprites_Conv(void);
 void GetUsedSprite(void);
 void GetUsedSprite_Conv(void);
 void LoadEmote(void);

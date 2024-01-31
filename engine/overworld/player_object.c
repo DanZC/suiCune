@@ -541,14 +541,21 @@ void InitializeVisibleSprites(void){
 }
 
 void CheckObjectEnteringVisibleRange(void){
-    NOP;
-    LD_A_addr(wPlayerStepDirection);
-    CP_A(STANDING);
-    RET_Z ;
-    LD_HL(mCheckObjectEnteringVisibleRange_dw);
-    RST(aJumpTable);
+    // NOP;
+    // LD_A_addr(wPlayerStepDirection);
+    // CP_A(STANDING);
+    // RET_Z ;
+    if(wram->wPlayerStepDirection == (uint8_t)STANDING)
+        return;
+    // LD_HL(mCheckObjectEnteringVisibleRange_dw);
+    // RST(aJumpTable);
+    switch(wram->wPlayerStepDirection) {
+        case DOWN: goto Down;
+        case UP: goto Up;
+        case LEFT: goto Left;
+        case RIGHT: goto Right;
+    }
     RET;
-
 
 dw:
     //dw ['.Down'];

@@ -187,12 +187,12 @@ def map_json_to_c(dict: Dict[str, any]):
 
     out += f'static const struct CoordEvent {dict["map_name"]}_CoordEvents[] = {{\n'
     for event in dict["coord_events"]:
-        out += f'    coord_event({event["x"]}, {event["y"]}, {event["scene_id"]}, {event["script"]}),\n'
+        out += f'    coord_event({event["x"]}, {event["y"]}, {event["scene_id"]}, &{event["script"]}),\n'
     out += '};\n\n'
 
     out += f'static const struct BGEvent {dict["map_name"]}_BGEvents[] = {{\n'
     for event in dict["bg_events"]:
-        out += f'    bg_event({event["x"]}, {event["y"]}, {event["function"]}, {event["script"]}),\n'
+        out += f'    bg_event({event["x"]}, {event["y"]}, {event["function"]}, &{event["script"]}),\n'
     out += '};\n\n'
 
     out += f'static const struct WarpEventData {dict["map_name"]}_WarpEvents[] = {{\n'
@@ -204,7 +204,7 @@ def map_json_to_c(dict: Dict[str, any]):
     for event in dict["object_events"]:
         out += f'    object_event({event["x"]}, {event["y"]}, {event["sprite"]}, {event["movement"]}, '
         out += f'{event["radiusX"]}, {event["radiusY"]}, {event["h1"]}, {event["h2"]}, {event["color"]}, '
-        out += f'{event["function"]}, {event["sightRange"]}, {event["script"]}, {event["eventFlag"]}),\n'
+        out += f'{event["function"]}, {event["sightRange"]}, &{event["script"]}, {event["eventFlag"]}),\n'
     out += '};\n\n'
 
     out += f'const struct MapEvents {dict["map_name"]}_MapEvents = {{\n'

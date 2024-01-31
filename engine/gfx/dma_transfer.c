@@ -847,10 +847,10 @@ void PadMapForHDMATransfer_Conv2(uint8_t* hl, const uint8_t* de, uint8_t c) {
     //  back up the padding value in c to hMapObjectIndex
     // LDH_A_addr(hMapObjectIndex);
     // PUSH_AF;
-    // uint8_t mapobjidx = gb_read(hMapObjectIndex);
+    uint8_t mapobjidx = hram->hMapObjectIndex;
     // LD_A_C;
     // LDH_addr_A(hMapObjectIndex);
-    // gb_write(hMapObjectIndex, c);
+    hram->hMapObjectIndex = c;
 
     //  for each row on the screen
     // LD_C(SCREEN_HEIGHT);
@@ -887,6 +887,7 @@ void PadMapForHDMATransfer_Conv2(uint8_t* hl, const uint8_t* de, uint8_t c) {
     //  restore the original value of hMapObjectIndex
     // POP_AF;
     // LDH_addr_A(hMapObjectIndex);
+    hram->hMapObjectIndex = mapobjidx;
     // RET;
 }
 

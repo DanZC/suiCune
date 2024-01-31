@@ -12,35 +12,43 @@
 #include "../../data/trainers/parties.h"
 
 void LoadWildMonData(void){
-    CALL(av_GrassWildmonLookup);
-    IF_C goto copy;
-    LD_HL(wMornEncounterRate);
-    XOR_A_A;
-    LD_hli_A;
-    LD_hli_A;
-    LD_hl_A;
-    goto done_copy;
+    // CALL(av_GrassWildmonLookup);
+    const struct WildGrassMons* grass = v_GrassWildmonLookup_Conv();
+    // IF_C goto copy;
+    if(grass == NULL) {
+        // LD_HL(wMornEncounterRate);
+        // XOR_A_A;
+        // LD_hli_A;
+        wram->wMornEncounterRate = 0;
+        // LD_hli_A;
+        wram->wDayEncounterRate = 0;
+        // LD_hl_A;
+        wram->wNiteEncounterRate = 0;
+        // goto done_copy;
+    }
+    else {
+    // copy:
+        // INC_HL;
+        // INC_HL;
+        // LD_DE(wMornEncounterRate);
+        wram->wMornEncounterRate = grass->encounterRates[MORN_F];
+        wram->wDayEncounterRate = grass->encounterRates[DAY_F];
+        wram->wNiteEncounterRate = grass->encounterRates[NITE_F];
+        // LD_BC(3);
+        // CALL(aCopyBytes);
+    }
 
+// done_copy:
+    // CALL(av_WaterWildmonLookup);
+    // LD_A(0);
+    // IF_NC goto no_copy;
+    // INC_HL;
+    // INC_HL;
+    // LD_A_hl;
 
-copy:
-    INC_HL;
-    INC_HL;
-    LD_DE(wMornEncounterRate);
-    LD_BC(3);
-    CALL(aCopyBytes);
-
-done_copy:
-    CALL(av_WaterWildmonLookup);
-    LD_A(0);
-    IF_NC goto no_copy;
-    INC_HL;
-    INC_HL;
-    LD_A_hl;
-
-no_copy:
-    LD_addr_A(wWaterEncounterRate);
-    RET;
-
+// no_copy:
+    // LD_addr_A(wWaterEncounterRate);
+    // RET;
 }
 
 void FindNest(void){

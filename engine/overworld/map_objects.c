@@ -6022,6 +6022,7 @@ void DoStepsForAllObjects(void) {
     // loop:
 
         // LDH_addr_A(hMapObjectIndex);
+        hram->hMapObjectIndex = a;
         // CALL(aDoesObjectHaveASprite);
         // IF_Z goto next;
         if(DoesObjectHaveASprite_Conv(bc + a)) {

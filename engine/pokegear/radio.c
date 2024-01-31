@@ -7,9 +7,7 @@
 #include "../../data/text/common.h"
 #include "../../data/radio/channel_music.h"
 
-const struct TextCmd gRadioText[] = {
-    text_ram(wram_ptr(wRadioText))
-};
+const struct TextCmd** gRadioText = NULL;
 
 void PlayRadioShow(void){
 //  If we're already in the radio program proper, we don't need to be here.
@@ -288,12 +286,12 @@ skip:
 void PrintRadioLine_Conv(uint8_t a){
     wram->wNextRadioLine = a;
     // REG_HL = wRadioText;
-    uint8_t lines_printed = gb_read(wNumRadioLinesPrinted);
+    uint8_t lines_printed = wram->wNumRadioLinesPrinted;
     if(lines_printed >= 2)
     {
         // REG_A = lines_printed;
         // CALL(aPrintTextboxText);
-        PrintTextboxText_Conv2(gRadioText);
+        PrintTextboxText_Conv2(*gRadioText);
     }
     else 
     {
@@ -303,13 +301,13 @@ void PrintRadioLine_Conv(uint8_t a){
         {
             // REG_A = lines_printed;
             // CALL(aPrintTextboxText);
-            PrintTextboxText_Conv2(gRadioText);
+            PrintTextboxText_Conv2(*gRadioText);
         }
         else 
         {
             // bccoord(1, 16, wTilemap);
             // CALL(aPlaceHLTextAtBC);
-            PlaceHLTextAtBC_Conv2(coord(1, 16, wram->wTilemap), gRadioText);
+            PlaceHLTextAtBC_Conv2(coord(1, 16, wram->wTilemap), *gRadioText);
         }
     }
     wram->wCurRadioLine = RADIO_SCROLL;
@@ -2378,11 +2376,7 @@ void BuenasPasswordCheckTime(void){
 
 }
 
-void BuenasPasswordChannelName(void){
-    //db ['"BUENA\'S PASSWORD@"'];
-
-    return BuenaRadioText1();
-}
+const char BuenasPasswordChannelName[] = "BUENA\'S PASSWORD@";
 
 void BuenaRadioText1(void){
     //text_far ['_BuenaRadioText1']
@@ -2520,6 +2514,16 @@ void CopyRadioTextToRAM(void){
 
 }
 
+void CopyRadioTextToRAM_Conv(const struct TextCmd* hl){
+    // LD_A_hl;
+    // CP_A(TX_FAR);
+    // JP_Z (mFarCopyRadioText);
+    // LD_DE(wRadioText);
+    // LD_BC(2 * SCREEN_WIDTH);
+    // JP(mCopyBytes);
+    *gRadioText = hl;
+}
+
 void StartRadioStation(void){
     LD_A_addr(wNumRadioLinesPrinted);
     AND_A_A;
@@ -2565,9 +2569,10 @@ void StartRadioStation_Conv(void){
 // INCLUDE "data/radio/channel_music.asm"
 }
 
-void NextRadioLine_Conv(void){
-    PUSH_AF;
-    CALL(aCopyRadioTextToRAM);
-    POP_AF;
-    PrintRadioLine_Conv(gb_read(wCurRadioLine));
+void NextRadioLine_Conv(const struct TextCmd* hl){
+    // PUSH_AF;
+    // CALL(aCopyRadioTextToRAM);
+    CopyRadioTextToRAM_Conv(hl);
+    // POP_AF;
+    PrintRadioLine_Conv(wram->wCurRadioLine);
 }

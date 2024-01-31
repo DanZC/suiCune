@@ -1121,13 +1121,14 @@ struct BGEvent
     uint8_t x;
     uint8_t function;
     union {
+        const void* const data;
         Script_fn_t script;
-        struct HiddenItem* const hiddenItem;
-        struct ConditionalEvent* const condEvent;
+        const struct HiddenItem* const hiddenItem;
+        const struct ConditionalEvent* const condEvent;
     };
 };
 
-#define bg_event(_x, _y, _function, _script) (struct BGEvent) {.y=_y, .x=_x, .function=_function, .script=_script}
+#define bg_event(_x, _y, _function, _script) (struct BGEvent) {.y=_y, .x=_x, .function=_function, .data=_script}
 
 struct ItemBall {
     item_t item;

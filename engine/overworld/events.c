@@ -354,7 +354,8 @@ void HandleMapObjects(void){
     HandleNPCStep();
     // FARCALL(av_HandlePlayerStep);
     v_HandlePlayerStep();
-    CALL(av_CheckObjectEnteringVisibleRange);
+    // CALL(av_CheckObjectEnteringVisibleRange);
+    v_CheckObjectEnteringVisibleRange();
     // RET;
 }
 
@@ -427,12 +428,14 @@ void CheckPlayerState_Conv(void){
 }
 
 void v_CheckObjectEnteringVisibleRange(void){
-    LD_HL(wPlayerStepFlags);
-    BIT_hl(PLAYERSTEP_STOP_F);
-    RET_Z ;
-    FARCALL(aCheckObjectEnteringVisibleRange);
-    RET;
-
+    // LD_HL(wPlayerStepFlags);
+    // BIT_hl(PLAYERSTEP_STOP_F);
+    // RET_Z ;
+    if(!bit_test(wram->wPlayerStepFlags, PLAYERSTEP_STOP_F))
+        return;
+    // FARCALL(aCheckObjectEnteringVisibleRange);
+    SafeCallGBAuto(aCheckObjectEnteringVisibleRange);
+    // RET;
 }
 
 void PlayerEvents(void){

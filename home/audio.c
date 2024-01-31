@@ -3,6 +3,7 @@
 #include "../audio/engine.h"
 #include "delay.h"
 #include "map.h"
+#include "vblank.h"
 
 extern struct Channel *chan[8];
 
@@ -10,7 +11,7 @@ extern struct Channel *chan[8];
 
 void InitSound(void) {
     v_InitSound();  // call _InitSound
-    RET;            // ret
+    // RET;            // ret
 }
 
 void UpdateSound(void) {
@@ -297,6 +298,8 @@ void WaitPlaySFX_Conv(uint16_t de) {
 }
 
 void WaitSFX(void) {  // infinite loop until sfx is done playing
+    PEEK("");
+    return WaitSFX_Conv();
     PUSH_AF;
     PUSH_BC;
     PUSH_DE;
@@ -322,7 +325,10 @@ void WaitSFX_Conv(void) {
             (!chan[CHAN6]->channelOn) &&
             (!chan[CHAN7]->channelOn) &&
             (!chan[CHAN8]->channelOn)) break;
-        DelayFrame();
+        gb.display.WY = gb.gb_reg.WY;
+        gb.display.window_clear = 0;
+        gb_finish_frame();
+        VBlank_Conv();
     }
 }
 
@@ -449,6 +455,7 @@ done:
 }
 
 void PlayMapMusic(void) {
+    return PlayMapMusic_Conv();
     SET_PC(0x3E9DU);
     PUSH_HL;  // push hl
     PUSH_DE;  // push de
@@ -516,6 +523,7 @@ void PlayMapMusic_Conv(void) {
 }
 
 void PlayMapMusicBike(void) {
+    return PlayMapMusic_Conv();
     SET_PC(0x3EC1U);
     //  If the player's on a bike, play the bike music instead of the map music
     PUSH_HL;  // push hl
@@ -632,6 +640,7 @@ void TryRestartMapMusic_Conv(void) {
 }
 
 void RestartMapMusic(void) {
+    return RestartMapMusic_Conv();
     SET_PC(0x3F05U);
     PUSH_HL;               // push hl
     PUSH_DE;               // push de

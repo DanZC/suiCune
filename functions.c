@@ -13,7 +13,7 @@ void init_function_pointers(void) {
     REDIRECTED(MaxVolume);
     REDIRECTED(PlayMusic2);
     REDIRECTED(MinVolume);
-    REDIRECTED(RestartMapMusic);
+    // CONVERTED(RestartMapMusic);
     REDIRECTED(IsSFXPlaying);
     REDIRECTED(UpdateSound);
     REDIRECTED(FadeOutToMusic);
@@ -24,12 +24,12 @@ void init_function_pointers(void) {
     REDIRECTED(LowVolume);
     REDIRECTED(PlaySFX);
     REDIRECTED(TerminateExpBarSound);
-    REDIRECTED(InitSound);
+    CONVERTED(InitSound);
     REDIRECTED(TryRestartMapMusic);
     REDIRECTED(FadeInToMusic);
-    REDIRECTED(PlayMapMusicBike);
-    REDIRECTED(WaitSFX);
-    REDIRECTED(PlayMapMusic);
+    CONVERTED(PlayMapMusicBike);
+    CONVERTED(WaitSFX);
+    // CONVERTED(PlayMapMusic);
     REDIRECTED(PlayMusic);
     REDIRECTED(FadeToMapMusic);
     REDIRECTED(PlayCry);
@@ -225,8 +225,8 @@ void init_function_pointers(void) {
 
     // home/lcd.c
     // REDIRECTED(Function547);
-    REDIRECTED(DisableLCD);
-    REDIRECTED(EnableLCD);
+    CONVERTED(DisableLCD);
+    CONVERTED(EnableLCD);
     CONVERTED(LCD);
 
     // home/map_objects.c
@@ -595,7 +595,7 @@ void init_function_pointers(void) {
     // REDIRECTED(SetUpTextbox);
     // REDIRECTED(KunSuffixText);
     REDIRECTED(TextCommand_BOX);
-    // REDIRECTED(ClearTilemap);
+    // CONVERTED(ClearTilemap);
     // REDIRECTED(PlacePOKE);
     // REDIRECTED(PlacePKMN);
     // REDIRECTED(PrintMomsName);
@@ -697,7 +697,7 @@ void init_function_pointers(void) {
     //REDIRECTED(InitializeWorld);
     //REDIRECTED(LoadOrRegenerateLuckyIDNumber);
     //REDIRECTED(Continue);
-    //REDIRECTED(SpawnAfterRed);
+    CONVERTED(SpawnAfterRed);
     //REDIRECTED(PostCreditsSpawn);
     //REDIRECTED(Continue_MobileAdapterMenu);
     //REDIRECTED(ConfirmContinue);
@@ -901,7 +901,7 @@ void init_function_pointers(void) {
     // REDIRECTED(Field1c_GetAnonJumptableIndex);
     // REDIRECTED(CheckObjectOnScreen);
     // REDIRECTED(EndSpriteMovement);
-    // REDIRECTED(HandleNPCStep);
+    // CONVERTED(HandleNPCStep);
     // REDIRECTED(CopyNextCoordsTileToStandingCoordsTile);
     // REDIRECTED(MovementFunction_ObeyDPad);
     // REDIRECTED(UnfreezeObject);
@@ -1238,13 +1238,13 @@ void init_function_pointers(void) {
     REDIRECTED(GetMapMusic);
     // REDIRECTED(UpdateBGMapRow);
     // REDIRECTED(CheckFacingBGEvent);
-    // REDIRECTED(LoadMapTileset);
+    CONVERTED(LoadMapTileset);
     // REDIRECTED(CoordinatesEventText);
-    // REDIRECTED(LoadMapAttributes_SkipObjects);
+    // CONVERTED(LoadMapAttributes_SkipObjects);
     // REDIRECTED(FillWestConnectionStrip);
-    // REDIRECTED(ScrollMapRight);
+    CONVERTED(ScrollMapRight);
     // REDIRECTED(GetAnyMapTileset);
-    // REDIRECTED(ScrollMapLeft);
+    CONVERTED(ScrollMapLeft);
     // REDIRECTED(SaveScreen_LoadConnection);
     // REDIRECTED(GetDestinationWarpNumber);
     // REDIRECTED(GetMapSceneID);
@@ -1278,7 +1278,7 @@ void init_function_pointers(void) {
     // REDIRECTED(GetMapField);
     // REDIRECTED(CheckObjectMask);
     // REDIRECTED(GetCoordTile);
-    // REDIRECTED(GetMovementPermissions);
+    // CONVERTED(GetMovementPermissions);
     // REDIRECTED(GetMapConnections);
     // REDIRECTED(GetMapAttributesBank);
     // REDIRECTED(SwitchToAnyMapAttributesBank);
@@ -1306,11 +1306,11 @@ void init_function_pointers(void) {
     // REDIRECTED(CheckUnknownMap);
     // REDIRECTED(CallMapScript);
     // REDIRECTED(UnmaskObject);
-    // REDIRECTED(ScrollMapUp);
-    // REDIRECTED(LoadMapPart);
+    CONVERTED(ScrollMapUp);
+    CONVERTED(LoadMapPart);
     // REDIRECTED(GetMapPhoneService);
     // REDIRECTED(FillSouthConnectionStrip);
-    // REDIRECTED(ScrollMapDown);
+    CONVERTED(ScrollMapDown);
     // REDIRECTED(GetMapConnection);
     // REDIRECTED(GetAnyMapBlocksBank);
     // REDIRECTED(ReadMapCallbacks);
@@ -1869,7 +1869,7 @@ void init_function_pointers(void) {
     REDIRECTED(BuenasPassword15);
     REDIRECTED(BuenasPassword9);
     // REDIRECTED(OPT_IntroText1);
-    REDIRECTED(BuenasPasswordChannelName);
+    // REDIRECTED(BuenasPasswordChannelName);
     REDIRECTED(BuenasPassword18);
     REDIRECTED(OaksPKMNTalk4);
     REDIRECTED(PeoplePlaces2);
@@ -2806,7 +2806,7 @@ void init_function_pointers(void) {
     // engine/overworld/events.c
     // REDIRECTED(PlayerEventScriptPointers);
     // REDIRECTED(FallIntoMapScript);
-    // REDIRECTED(OverworldLoop);
+    // CONVERTED(OverworldLoop);
     // REDIRECTED(OWPlayerInput);
     // REDIRECTED(DisableCoordEvents);
     // REDIRECTED(UnusedPlayerEventScript);
@@ -4738,9 +4738,25 @@ void init_function_pointers(void) {
     // REDIRECTED(RepelWoreOffScript);
 
     // engine/overworld/player_step.c
-    // REDIRECTED(v_HandlePlayerStep);
-    // REDIRECTED(UpdatePlayerCoords);
+    CONVERTED(v_HandlePlayerStep);
+    CONVERTED(UpdatePlayerCoords);
     // REDIRECTED(HandlePlayerStep);
-    // REDIRECTED(UpdateOverworldMap);
-    // REDIRECTED(ScrollScreen);
+    CONVERTED(UpdateOverworldMap);
+    CONVERTED(ScrollScreen);
+
+    // engine/tilesets/tileset_palettes.c
+    // REDIRECTED(LoadBattleTowerInsidePalette);
+    // REDIRECTED(MansionPalette2);
+    // REDIRECTED(IcePathPalette);
+    // REDIRECTED(PokeComPalette);
+    // REDIRECTED(LoadPokeComPalette);
+    // REDIRECTED(LoadIcePathPalette);
+    // REDIRECTED(LoadRadioTowerPalette);
+    // REDIRECTED(HousePalette);
+    // REDIRECTED(LoadMansionPalette);
+    // REDIRECTED(LoadSpecialMapPalette);
+    // REDIRECTED(BattleTowerInsidePalette);
+    // REDIRECTED(LoadHousePalette);
+    // REDIRECTED(MansionPalette1);
+    // REDIRECTED(RadioTowerPalette);
 }

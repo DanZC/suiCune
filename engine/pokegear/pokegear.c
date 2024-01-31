@@ -243,7 +243,7 @@ void PokeGear_InitTilemap_Conv(void) {
     ClearBGPalettes_Conv();
 
     // CALL(aClearTilemap);
-    ClearTilemap_Conv();
+    ClearTilemap_Conv2();
 
     // CALL(aClearSprites);
     ClearSprites_Conv();

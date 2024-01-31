@@ -5,6 +5,8 @@
 #include "../../data/pokemon/unown_pic_pointers.h"
 #include "../../data/pokemon/palettes.h"
 #include "../../data/trainers/palettes.h"
+#include "../../data/maps/environment_colors.h"
+#include "../tilesets/tileset_palettes.h"
 #include "../battle/core.h"
 
 // INCLUDE "engine/gfx/sgb_layouts.asm"
@@ -2041,109 +2043,123 @@ const char ExpBarPalette[] = "gfx/battle/exp_bar.pal";
 // }
 
 void LoadMapPals(void){
-    FARCALL(aLoadSpecialMapPalette);
-    IF_C goto got_pals;
+    // FARCALL(aLoadSpecialMapPalette);
+    // IF_C goto got_pals;
+    if(!LoadSpecialMapPalette_Conv()) {
+    // Which palette group is based on whether we're outside or inside
+        // LD_A_addr(wEnvironment);
+        // AND_A(7);
+        // LD_E_A;
+        // LD_D(0);
+        // LD_HL(mEnvironmentColorsPointers);
+        // ADD_HL_DE;
+        // ADD_HL_DE;
+        // LD_A_hli;
+        // LD_H_hl;
+        // LD_L_A;
+        const uint8_t* envColors = EnvironmentColorsPointers[wram->wEnvironment & 7];
+    // Futher refine by time of day
+        // LD_A_addr(wTimeOfDayPal);
+        // maskbits(NUM_DAYTIMES, 0);
+        // ADD_A_A;
+        // ADD_A_A;
+        // ADD_A_A;
+        // LD_E_A;
+        // LD_D(0);
+        // ADD_HL_DE;
+        // LD_E_L;
+        // LD_D_H;
+        const uint8_t* de = envColors + ((wram->wTimeOfDayPal & 3) << 3);
+        // LDH_A_addr(rSVBK);
+        // PUSH_AF;
+        // LD_A(BANK(wBGPals1));
+        // LDH_addr_A(rSVBK);
+        // LD_HL(wBGPals1);
+        uint8_t* hl = wram->wBGPals1;
+        // LD_B(8);
+        uint8_t b = 8;
 
-// Which palette group is based on whether we're outside or inside
-    LD_A_addr(wEnvironment);
-    AND_A(7);
-    LD_E_A;
-    LD_D(0);
-    LD_HL(mEnvironmentColorsPointers);
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-// Futher refine by time of day
-    LD_A_addr(wTimeOfDayPal);
-    maskbits(NUM_DAYTIMES, 0);
-    ADD_A_A;
-    ADD_A_A;
-    ADD_A_A;
-    LD_E_A;
-    LD_D(0);
-    ADD_HL_DE;
-    LD_E_L;
-    LD_D_H;
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(BANK(wBGPals1));
-    LDH_addr_A(rSVBK);
-    LD_HL(wBGPals1);
-    LD_B(8);
+        do {
+        // outer_loop:
+            // LD_A_de;  // lookup index for TilesetBGPalette
+            // PUSH_DE;
+            // PUSH_HL;
+            // LD_L_A;
+            // LD_H(0);
+            // ADD_HL_HL;
+            // ADD_HL_HL;
+            // ADD_HL_HL;
+            // LD_DE(mTilesetBGPalette);
+            // ADD_HL_DE;
+            // LD_E_L;
+            // LD_D_H;
+            const uint16_t* colors = &TilesetBGPalette[*de * 4];
+            // POP_HL;
+            // LD_C(1 * PALETTE_SIZE);
 
-outer_loop:
-    LD_A_de;  // lookup index for TilesetBGPalette
-    PUSH_DE;
-    PUSH_HL;
-    LD_L_A;
-    LD_H(0);
-    ADD_HL_HL;
-    ADD_HL_HL;
-    ADD_HL_HL;
-    LD_DE(mTilesetBGPalette);
-    ADD_HL_DE;
-    LD_E_L;
-    LD_D_H;
-    POP_HL;
-    LD_C(1 * PALETTE_SIZE);
-
-inner_loop:
-    LD_A_de;
-    INC_DE;
-    LD_hli_A;
-    DEC_C;
-    IF_NZ goto inner_loop;
-    POP_DE;
-    INC_DE;
-    DEC_B;
-    IF_NZ goto outer_loop;
-    POP_AF;
-    LDH_addr_A(rSVBK);
-
-
-got_pals:
-    LD_A_addr(wTimeOfDayPal);
-    maskbits(NUM_DAYTIMES, 0);
-    LD_BC(8 * PALETTE_SIZE);
-    LD_HL(mMapObjectPals);
-    CALL(aAddNTimes);
-    LD_DE(wOBPals1);
-    LD_BC(8 * PALETTE_SIZE);
-    LD_A(BANK(wOBPals1));
-    CALL(aFarCopyWRAM);
-
-    LD_A_addr(wEnvironment);
-    CP_A(TOWN);
-    IF_Z goto outside;
-    CP_A(ROUTE);
-    RET_NZ ;
-
-outside:
-    LD_A_addr(wMapGroup);
-    LD_L_A;
-    LD_H(0);
-    ADD_HL_HL;
-    ADD_HL_HL;
-    ADD_HL_HL;
-    LD_DE(mRoofPals);
-    ADD_HL_DE;
-    LD_A_addr(wTimeOfDayPal);
-    maskbits(NUM_DAYTIMES, 0);
-    CP_A(NITE_F);
-    IF_C goto morn_day;
-    for(int rept = 0; rept < 4; rept++){
-    INC_HL;
+            // inner_loop:
+            // LD_A_de;
+            // INC_DE;
+            // LD_hli_A;
+            // DEC_C;
+            // IF_NZ goto inner_loop;
+            CopyBytes_Conv2(hl, colors, 1 * PALETTE_SIZE);
+            hl += 1 * PALETTE_SIZE;
+            // POP_DE;
+            // INC_DE;
+            de++;
+            // DEC_B;
+            // IF_NZ goto outer_loop;
+        } while(--b != 0);
+        // POP_AF;
+        // LDH_addr_A(rSVBK);
     }
 
-morn_day:
-    LD_DE(wBGPals1 + PALETTE_SIZE * PAL_BG_ROOF + PAL_COLOR_SIZE * 1);
-    LD_BC(4);
-    LD_A(BANK(wBGPals1));
-    CALL(aFarCopyWRAM);
-    RET;
+// got_pals:
+    // LD_A_addr(wTimeOfDayPal);
+    // maskbits(NUM_DAYTIMES, 0);
+    // LD_BC(8 * PALETTE_SIZE);
+    // LD_HL(mMapObjectPals);
+    // CALL(aAddNTimes);
+    const uint16_t* mapObjectPals = MapObjectPals + (wram->wTimeOfDayPal * (8 * NUM_PAL_COLORS));
+    // LD_DE(wOBPals1);
+    // LD_BC(8 * PALETTE_SIZE);
+    // LD_A(BANK(wOBPals1));
+    // CALL(aFarCopyWRAM);
+    CopyBytes_Conv2(wram->wOBPals1, mapObjectPals, 8 * PALETTE_SIZE);
 
+    // LD_A_addr(wEnvironment);
+    // CP_A(TOWN);
+    // IF_Z goto outside;
+    // CP_A(ROUTE);
+    // RET_NZ ;
+    if(wram->wEnvironment == TOWN || wram->wEnvironment == ROUTE) {
+    // outside:
+        // LD_A_addr(wMapGroup);
+        // LD_L_A;
+        // LD_H(0);
+        // ADD_HL_HL;
+        // ADD_HL_HL;
+        // ADD_HL_HL;
+        // LD_DE(mRoofPals);
+        // ADD_HL_DE;
+        // LD_A_addr(wTimeOfDayPal);
+        // maskbits(NUM_DAYTIMES, 0);
+        // CP_A(NITE_F);
+        // IF_C goto morn_day;
+        // for(int rept = 0; rept < 4; rept++){
+        // INC_HL;
+        // }
+        const uint16_t* roof = RoofPals[wram->wMapGroup] + (((wram->wTimeOfDayPal & 3) >= NITE_F)? 2: 0);
+
+    // morn_day:
+        // LD_DE(wBGPals1 + PALETTE_SIZE * PAL_BG_ROOF + PAL_COLOR_SIZE * 1);
+        // LD_BC(4);
+        // LD_A(BANK(wBGPals1));
+        // CALL(aFarCopyWRAM);
+        CopyBytes_Conv2(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_ROOF + PAL_COLOR_SIZE * 1, roof, 4);
+        // RET;
+    }
 // INCLUDE "data/maps/environment_colors.asm"
 
     // return PartyMenuBGMobilePalette();
@@ -2151,8 +2167,104 @@ morn_day:
 
 const char PartyMenuBGMobilePalette[] = "gfx/stats/party_menu_bg_mobile.pal";
 const char PartyMenuBGPalette[] = "gfx/stats/party_menu_bg.pal";
-const char TilesetBGPalette[] = "gfx/tilesets/bg_tiles.pal";
-const char MapObjectPals[] = "gfx/overworld/npc_sprites.pal";
+// const char TilesetBGPalette[] = "gfx/tilesets/bg_tiles.pal";
+const uint16_t TilesetBGPalette[] = {
+// morn
+    rgb(28,31,16), rgb(21,21,21), rgb(13,13,13), rgb( 7, 7, 7), // gray
+    rgb(28,31,16), rgb(31,19,24), rgb(30,10, 6), rgb( 7, 7, 7), // red
+    rgb(22,31,10), rgb(12,25, 1), rgb( 5,14, 0), rgb( 7, 7, 7), // green
+    rgb(31,31,31), rgb( 8,12,31), rgb( 1, 4,31), rgb( 7, 7, 7), // water
+    rgb(28,31,16), rgb(31,31, 7), rgb(31,16, 1), rgb( 7, 7, 7), // yellow
+    rgb(28,31,16), rgb(24,18, 7), rgb(20,15, 3), rgb( 7, 7, 7), // brown
+    rgb(28,31,16), rgb(15,31,31), rgb( 5,17,31), rgb( 7, 7, 7), // roof
+    rgb(31,31,16), rgb(31,31,16), rgb(14, 9, 0), rgb( 0, 0, 0), // text
+
+// day
+	rgb(27,31,27), rgb(21,21,21), rgb(13,13,13), rgb( 7, 7, 7), // gray
+	rgb(27,31,27), rgb(31,19,24), rgb(30,10,06), rgb( 7, 7, 7), // red
+	rgb(22,31,10), rgb(12,25,01), rgb( 5,14, 0), rgb( 7, 7, 7), // green
+	rgb(31,31,31), rgb( 8,12,31), rgb( 1,04,31), rgb( 7, 7, 7), // water
+	rgb(27,31,27), rgb(31,31,07), rgb(31,16, 1), rgb( 7, 7, 7), // yellow
+	rgb(27,31,27), rgb(24,18,07), rgb(20,15,03), rgb( 7, 7, 7), // brown
+	rgb(27,31,27), rgb(15,31,31), rgb( 5,17,31), rgb( 7, 7, 7), // roof
+	rgb(31,31,16), rgb(31,31,16), rgb(14, 9, 0), rgb( 0, 0, 0), // text
+
+// nite
+	rgb(15,14,24), rgb(11,11,19), rgb( 7, 7,12), rgb( 0, 0, 0), // gray
+	rgb(15,14,24), rgb(14, 7,17), rgb(13, 0, 8), rgb( 0, 0, 0), // red
+	rgb(15,14,24), rgb( 8,13,19), rgb( 0,11,13), rgb( 0, 0, 0), // green
+	rgb(15,14,24), rgb( 5, 5,17), rgb( 3, 3,10), rgb( 0, 0, 0), // water
+	rgb(30,30,11), rgb(16,14,18), rgb(16,14,10), rgb( 0, 0, 0), // yellow
+	rgb(15,14,24), rgb(12, 9,15), rgb( 8, 4, 5), rgb( 0, 0, 0), // brown
+	rgb(15,14,24), rgb(13,12,23), rgb(11, 9,20), rgb( 0, 0, 0), // roof
+	rgb(31,31,16), rgb(31,31,16), rgb(14, 9,00), rgb( 0, 0, 0), // text
+
+// dark
+	rgb(01,01,02), rgb(00,00,00), rgb( 0, 0, 0), rgb( 0, 0, 0), // gray
+	rgb(01,01,02), rgb(00,00,00), rgb( 0, 0, 0), rgb( 0, 0, 0), // red
+	rgb(01,01,02), rgb(00,00,00), rgb( 0, 0, 0), rgb( 0, 0, 0), // green
+	rgb(01,01,02), rgb(00,00,00), rgb( 0, 0, 0), rgb( 0, 0, 0), // water
+	rgb(30,30,11), rgb(00,00,00), rgb( 0, 0, 0), rgb( 0, 0, 0), // yellow
+	rgb(01,01,02), rgb(00,00,00), rgb( 0, 0, 0), rgb( 0, 0, 0), // brown
+	rgb(01,01,02), rgb(00,00,00), rgb( 0, 0, 0), rgb( 0, 0, 0), // roof
+	rgb(31,31,16), rgb(31,31,16), rgb(14, 9, 0), rgb( 0, 0, 0), // text
+
+// indoor
+    rgb(30,28,26), rgb(19,19,19), rgb(13,13,13), rgb( 7, 7, 7), // gray
+    rgb(30,28,26), rgb(31,19,24), rgb(30,10,06), rgb( 7, 7, 7), // red
+    rgb(18,24, 9), rgb(15,20,01), rgb( 9,13,00), rgb( 7, 7, 7), // green
+    rgb(30,28,26), rgb(15,16,31), rgb( 9, 9,31), rgb( 7, 7, 7), // water
+    rgb(30,28,26), rgb(31,31,07), rgb(31,16,01), rgb( 7, 7, 7), // yellow
+    rgb(26,24,17), rgb(21,17,07), rgb(16,13,03), rgb( 7, 7, 7), // brown
+    rgb(30,28,26), rgb(17,19,31), rgb(14,16,31), rgb( 7, 7, 7), // roof
+    rgb(31,31,16), rgb(31,31,16), rgb(14, 9,00), rgb( 0, 0, 0), // text
+
+// overworld water
+    rgb(23,23,31), rgb(18,19,31), rgb(13,12,31), rgb(07,07,07), // morn/day
+    rgb(15,13,27), rgb(10, 9,20), rgb(04,03,18), rgb(00,00,00), // nite
+};
+// const char MapObjectPals[] = "gfx/overworld/npc_sprites.pal";
+const uint16_t MapObjectPals[] = {
+// morn
+    rgb(28,31,16), rgb(31,19,10), rgb(31,07,01), rgb(00,00,00), // red
+    rgb(28,31,16), rgb(31,19,10), rgb(10, 9,31), rgb(00,00,00), // blue
+    rgb(28,31,16), rgb(31,19,10), rgb(07,23,03), rgb(00,00,00), // green
+    rgb(28,31,16), rgb(31,19,10), rgb(15,10,03), rgb(00,00,00), // brown
+    rgb(28,31,16), rgb(31,19,10), rgb(30,10,06), rgb(00,00,00), // pink
+    rgb(31,31,31), rgb(31,31,31), rgb(13,13,13), rgb(00,00,00), // silver
+    rgb(22,31,10), rgb(12,25,01), rgb(05,14,00), rgb(07,07,07), // tree
+    rgb(28,31,16), rgb(24,18,07), rgb(20,15,03), rgb(07,07,07), // rock
+
+// day
+    rgb(27,31,27), rgb(31,19,10), rgb(31,07,01), rgb(00,00,00), // red
+    rgb(27,31,27), rgb(31,19,10), rgb(10, 9,31), rgb(00,00,00), // blue
+    rgb(27,31,27), rgb(31,19,10), rgb(07,23,03), rgb(00,00,00), // green
+    rgb(27,31,27), rgb(31,19,10), rgb(15,10,03), rgb(00,00,00), // brown
+    rgb(27,31,27), rgb(31,19,10), rgb(30,10,06), rgb(00,00,00), // pink
+    rgb(31,31,31), rgb(31,31,31), rgb(13,13,13), rgb(00,00,00), // silver
+    rgb(22,31,10), rgb(12,25,01), rgb(05,14,00), rgb(07,07,07), // tree
+    rgb(27,31,27), rgb(24,18,07), rgb(20,15,03), rgb(07,07,07), // rock
+
+// nite
+    rgb(15,14,24), rgb(31,19,10), rgb(31,07,01), rgb(00,00,00), // red
+    rgb(15,14,24), rgb(31,19,10), rgb(10, 9,31), rgb(00,00,00), // blue
+    rgb(15,14,24), rgb(31,19,10), rgb(07,23,03), rgb(00,00,00), // green
+    rgb(15,14,24), rgb(31,19,10), rgb(15,10,03), rgb(00,00,00), // brown
+    rgb(15,14,24), rgb(31,19,10), rgb(30,10,06), rgb(00,00,00), // pink
+    rgb(31,31,31), rgb(31,31,31), rgb(13,13,13), rgb(00,00,00), // silver
+    rgb(15,14,24), rgb( 8,13,19), rgb(00,11,13), rgb(00,00,00), // tree
+    rgb(15,14,24), rgb(12, 9,15), rgb( 8,04,05), rgb(00,00,00), // rock
+
+// dark
+    rgb(01,01,02), rgb(31,19,10), rgb(31,07,01), rgb(00,00,00), // red
+    rgb(01,01,02), rgb(31,19,10), rgb(10, 9,31), rgb(00,00,00), // blue
+    rgb(01,01,02), rgb(31,19,10), rgb(07,23,03), rgb(00,00,00), // green
+    rgb(01,01,02), rgb(31,19,10), rgb(15,10,03), rgb(00,00,00), // brown
+    rgb(01,01,02), rgb(31,19,10), rgb(30,10,06), rgb(00,00,00), // pink
+    rgb(31,31,31), rgb(31,31,31), rgb(13,13,13), rgb(00,00,00), // silver
+    rgb(01,01,02), rgb(00,00,00), rgb(00,00,00), rgb(00,00,00), // tree
+    rgb(01,01,02), rgb(00,00,00), rgb(00,00,00), rgb(00,00,00), // rock
+};
 
 // void RoofPals(void){
 //     //table_width ['PAL_COLOR_SIZE * 2 * 2', 'RoofPals']

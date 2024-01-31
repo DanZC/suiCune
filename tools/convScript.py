@@ -561,8 +561,8 @@ def convert_script_from_lines(path: str, lines: List[str]):
                     cur_script = ''
                     cur_movement = ''
                     cur_text = ''
-                    out += f"const struct Trainer {ln.name} = "
-                    out_h += f"extern const struct Trainer {ln.name};\n"
+                    out += f"const struct TrainerObj {ln.name} = "
+                    out_h += f"extern const struct TrainerObj {ln.name};\n"
                     label_name = ln.name
                     i, ln = next(enum)
                     out += "{"

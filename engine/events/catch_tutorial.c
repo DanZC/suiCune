@@ -95,9 +95,8 @@ void CatchTutorial(void){
             // LD_A(BANK(aCatchTutorial_AutoInput));
             // CALL(aStartAutoInput);
             StartAutoInput_Conv2(AutoInput);
-            SAVE_REGS;
-            CALLFAR(aStartBattle);
-            RESTORE_REGS;
+            // CALLFAR(aStartBattle);
+            SafeCallGBAuto(aStartBattle);
             // CALL(aStopAutoInput);
             StopAutoInput_Conv2();
             // POP_AF;

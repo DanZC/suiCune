@@ -70,7 +70,7 @@ void v_LoadMapPart_Conv(void){
 
 // left_column:
     // decoord(0, 0, wTilemap);
-    uint8_t* de = wram->wTilemap;
+    uint8_t* de = coord(0, 0, wram->wTilemap);
     // LD_B(SCREEN_HEIGHT);
     uint8_t b = SCREEN_HEIGHT;
 

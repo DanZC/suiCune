@@ -365,7 +365,7 @@ void DebugMenu_SoundTest(void) {
 }
 
 static void DebugMenu_BattleTest_StartBattle(uint8_t tclass, uint8_t tid) {
-    SAFECALL(aClearTilemap);
+    ClearTilemap_Conv2();
     WaitBGMap_Conv();
     DelayFrames_Conv(10);
 

@@ -117,6 +117,7 @@ void BufferScreen_Conv(void);
 void SaveScreen(void);
 void LoadConnectionBlockData(void);
 void SaveScreen_LoadConnection(void);
+void SaveScreen_LoadConnection_Conv(uint8_t* hl, const uint8_t* de, uint8_t b, uint8_t c);
 void GetMovementPermissions(void);
 void GetFacingTileCoord(void);
 struct CoordsTileId GetFacingTileCoord_Conv(void);

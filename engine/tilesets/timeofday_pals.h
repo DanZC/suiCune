@@ -11,6 +11,7 @@ void FadeInQuickly(void);
 void FadeBlackQuickly(void);
 void FillWhiteBGColor(void);
 void ReplaceTimeOfDayPals(void);
+void ReplaceTimeOfDayPals_Conv(void);
 void GetTimePalette(void);
 uint8_t GetTimePalette_Conv(void);
 void DmgToCgbTimePals(void);

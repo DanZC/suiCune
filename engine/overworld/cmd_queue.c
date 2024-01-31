@@ -28,6 +28,7 @@ void HandleCmdQueue(void){
     for(uint32_t c = 0; c < CMDQUEUE_CAPACITY; ++c) {
     // loop:
         // LDH_addr_A(hMapObjectIndex);
+        hram->hMapObjectIndex = c;
         // LD_A_hl;
         // AND_A_A;
         // IF_Z goto skip;

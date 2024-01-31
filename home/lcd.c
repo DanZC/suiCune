@@ -21,6 +21,7 @@ void LCD(void) {  // called from the rendering function, once per line
 }
 
 void DisableLCD(void) {
+    return DisableLCD_Conv();
         //  Turn the LCD off
 
     //  Don't need to do anything if the LCD is already off
@@ -75,7 +76,7 @@ void DisableLCD_Conv(void) {
     //  Disable VBlank
     // RES_A(VBLANK);
     // LDH_addr_A(rIE);
-    RES_(enable, VBLANK);
+    bit_reset(enable, VBLANK);
     gb_write(rIE, enable);
 
 wait:
@@ -99,10 +100,11 @@ wait:
 }
 
 void EnableLCD(void) {
-        LDH_A_addr(rLCDC);
-    SET_A(rLCDC_ENABLE);
-    LDH_addr_A(rLCDC);
-    RET;
+    return EnableLCD_Conv();
+    // LDH_A_addr(rLCDC);
+    // SET_A(rLCDC_ENABLE);
+    // LDH_addr_A(rLCDC);
+    // RET;
 }
 
 void EnableLCD_Conv(void) {

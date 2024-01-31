@@ -84,6 +84,8 @@ void HandlePlayerStep(void){
     // Jumptable:
     case 0:
     //dw ['GetMovementPermissions'];
+        GetMovementPermissions();
+        return;
     case 1:
     //dw ['BufferScreen'];
         BufferScreen_Conv();
@@ -170,6 +172,7 @@ static void UpdateOverworldMap_ScrollMapDataDown(void) {
     // INC_hl;
     // RET;
     wram->wOverworldMapAnchor += wram->wMapWidth + 3 * 2;
+    printf("anchor=%d\n", wram->wOverworldMapAnchor - wOverworldMapBlocks);
 }
 
 static void UpdateOverworldMap_ScrollOverworldMapDown(void) {
@@ -215,6 +218,7 @@ static void UpdateOverworldMap_ScrollMapDataUp(void) {
     // DEC_hl;
     // RET;
     wram->wOverworldMapAnchor -= wram->wMapWidth + 3 * 2;
+    printf("anchor=%d\n", wram->wOverworldMapAnchor - wOverworldMapBlocks);
 }
 
 static void UpdateOverworldMap_ScrollOverworldMapUp(void) {
@@ -256,6 +260,7 @@ static void UpdateOverworldMap_ScrollMapDataLeft(void) {
     // DEC_hl;
     // RET;
     wram->wOverworldMapAnchor--;
+    printf("anchor=%d\n", wram->wOverworldMapAnchor - wOverworldMapBlocks);
 }
 
 static void UpdateOverworldMap_ScrollOverworldMapLeft(void) {
@@ -295,6 +300,7 @@ static void UpdateOverworldMap_ScrollMapDataRight(void) {
     // INC_hl;
     // RET;
     wram->wOverworldMapAnchor++;
+    printf("anchor=%d\n", wram->wOverworldMapAnchor - wOverworldMapBlocks);
 }
 
 static void UpdateOverworldMap_ScrollOverworldMapRight(void) {

@@ -307,7 +307,7 @@ void CrystalIntro(void){
     // CALL(aClearTilemap);
     ClearBGPalettes_Conv();
     ClearSprites_Conv();
-    ClearTilemap_Conv();
+    ClearTilemap_Conv2();
     // XOR_A_A;
     // LDH_addr_A(hSCX);
     // LDH_addr_A(hSCY);
@@ -460,7 +460,7 @@ static void IntroScene1(void){
     // CALL(aClearSprites);
     // CALL(aClearTilemap);
     ClearSprites_Conv();
-    ClearTilemap_Conv();
+    ClearTilemap_Conv2();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = 0;
@@ -579,7 +579,7 @@ static void IntroScene3(void){
     // CALL(aClearSprites);
     ClearSprites_Conv();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv();
+    ClearTilemap_Conv2();
     DelayFrames_Conv(TRANSITION_WAIT_FRAMES);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
@@ -680,7 +680,7 @@ static void IntroScene5(void){
     // CALL(aClearSprites);
     ClearSprites_Conv();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv();
+    ClearTilemap_Conv2();
     DelayFrames_Conv(TRANSITION_WAIT_FRAMES);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
@@ -828,7 +828,7 @@ static void IntroScene7(void){
     // CALL(aClearSprites);
     ClearSprites_Conv();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv();
+    ClearTilemap_Conv2();
     DelayFrames_Conv(TRANSITION_WAIT_FRAMES);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
@@ -1084,7 +1084,7 @@ static void IntroScene11(void){
     // CALL(aClearSprites);
     ClearSprites_Conv();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv();
+    ClearTilemap_Conv2();
     DelayFrames_Conv(TRANSITION_WAIT_FRAMES);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
@@ -1278,7 +1278,7 @@ static void IntroScene13(void){
     // CALL(aClearSprites);
     ClearSprites_Conv();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv();
+    ClearTilemap_Conv2();
     DelayFrames_Conv(TRANSITION_WAIT_FRAMES);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
@@ -1433,7 +1433,7 @@ static void IntroScene15(void){
     // CALL(aClearSprites);
     ClearSprites_Conv();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv();
+    ClearTilemap_Conv2();
     DelayFrames_Conv(TRANSITION_WAIT_FRAMES);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
@@ -1565,7 +1565,7 @@ static void IntroScene17(void){
     // CALL(aClearSprites);
     ClearSprites_Conv();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv();
+    ClearTilemap_Conv2();
     DelayFrames_Conv(TRANSITION_WAIT_FRAMES);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
@@ -1670,7 +1670,7 @@ static void IntroScene19(void){
     // CALL(aClearSprites);
     ClearSprites_Conv();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv();
+    ClearTilemap_Conv2();
     DelayFrames_Conv(TRANSITION_WAIT_FRAMES);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
@@ -2070,7 +2070,7 @@ static void IntroScene26(void){
     // CALL(aClearSprites);
     ClearSprites_Conv();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv();
+    ClearTilemap_Conv2();
     DelayFrames_Conv(TRANSITION_WAIT_FRAMES);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);

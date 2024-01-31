@@ -18,7 +18,7 @@ void InitMG_Mobile_LinkTradePalMap(void);
 //#include "gfx/mystery_gift/mg_mobile.pal"
 //#include "gfx/font/bg_text.pal"
 //#include "gfx/mystery_gift/mobile_text.pal"
-//#include "engine/tilesets/tileset_palettes.h"
+#include "../tilesets/tileset_palettes.h"
 //#include "gfx/mystery_gift/name_card_bg.pal"
 //#include "gfx/mystery_gift/name_card_ob.pal"
 //#include "gfx/trade/mobile_border.pal"

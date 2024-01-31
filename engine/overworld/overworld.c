@@ -358,11 +358,10 @@ void LoadUsedSpritesGFX(void){
 
 void LoadUsedSpritesGFX_Conv(void){
     // LD_A(MAPCALLBACK_SPRITES);
-    struct cpu_registers_s regs = {.a = MAPCALLBACK_SPRITES};
     // CALL(aRunMapCallback);
-    SafeCallGB(aRunMapCallback, &regs);
+    RunMapCallback_Conv(MAPCALLBACK_SPRITES);
     // CALL(aGetUsedSprites);
-    GetUsedSprite_Conv();
+    GetUsedSprites_Conv();
     // CALL(aLoadMiscTiles);
     LoadMiscTiles_Conv();
     // RET;
@@ -1162,6 +1161,57 @@ dont_set:
 done:
     RET;
 
+}
+
+void GetUsedSprites_Conv(void){
+    // LD_HL(wUsedSprites);
+    uint8_t* hl = wram->wUsedSprites;
+    // LD_C(SPRITE_GFX_LIST_CAPACITY);
+    uint8_t c = SPRITE_GFX_LIST_CAPACITY;
+
+    do {
+    // loop:
+        // LD_A_addr(wSpriteFlags);
+        // RES_A(5);
+        // LD_addr_A(wSpriteFlags);
+        bit_reset(wram->wSpriteFlags, 5);
+
+        // LD_A_hli;
+        uint8_t a = *(hl++);
+        // AND_A_A;
+        // IF_Z goto done;
+        if(a == 0)
+            break;
+        // LDH_addr_A(hUsedSpriteIndex);
+        hram->hUsedSpriteIndex = a;
+
+        // LD_A_hli;
+        a = *(hl++);
+        // LDH_addr_A(hUsedSpriteTile);
+        hram->hUsedSpriteTile = a;
+
+        // BIT_A(7);
+        // IF_Z goto dont_set;
+        if(bit_test(a, 7)) {
+            // LD_A_addr(wSpriteFlags);
+            // SET_A(5);  // load VBank0
+            // LD_addr_A(wSpriteFlags);
+            bit_set(wram->wSpriteFlags, 5);
+        }
+
+    // dont_set:
+        // PUSH_BC;
+        // PUSH_HL;
+        // CALL(aGetUsedSprite);
+        GetUsedSprite_Conv();
+        // POP_HL;
+        // POP_BC;
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(--c != 0);
+
+// done:
+    // RET;
 }
 
 void GetUsedSprite(void){

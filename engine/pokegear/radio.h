@@ -168,7 +168,7 @@ void BuenasPassword19(void);
 void BuenasPassword20(void);
 void BuenasPassword21(void);
 void BuenasPasswordCheckTime(void);
-void BuenasPasswordChannelName(void);
+extern const char BuenasPasswordChannelName[];
 void BuenaRadioText1(void);
 void BuenaRadioText2(void);
 void BuenaRadioText3(void);
@@ -188,10 +188,11 @@ void BuenaRadioMidnightText9(void);
 void BuenaRadioMidnightText10(void);
 void BuenaOffTheAirText(void);
 void CopyRadioTextToRAM(void);
+void CopyRadioTextToRAM_Conv(const struct TextCmd* hl);
 void StartRadioStation(void);
 void StartRadioStation_Conv(void);
 void NextRadioLine(void);
-void NextRadioLine_Conv(void);
+void NextRadioLine_Conv(const struct TextCmd* hl);
 //#include "data/radio/oaks_pkmn_talk_routes.h"
 //#include "data/radio/pnp_hidden_people.h"
 //#include "data/radio/pnp_places.h"

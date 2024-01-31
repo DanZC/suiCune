@@ -1,5 +1,6 @@
 #include "../../constants.h"
 #include "warp_connection.h"
+#include "../../home/copy.h"
 #include "../../home/map.h"
 #include "../../home/tilemap.h"
 #include "../../home/gfx.h"
@@ -11,6 +12,7 @@
 #include "map_setup.h"
 #include "cmd_queue.h"
 #include "overworld.h"
+#include "../tilesets/timeofday_pals.h"
 #include "../gfx/load_overworld_font.h"
 
 void HandleNewMap(void){
@@ -292,82 +294,109 @@ void EnterMapWarp(void){
     // RET;
 }
 
+static void LoadMapTimeOfDay_ClearBGMap(void) {
+    // LD_A(HIGH(vBGMap0));
+    // LD_addr_A(wBGMapAnchor + 1);
+    // XOR_A_A;  // LOW(vBGMap0)
+    // LD_addr_A(wBGMapAnchor);
+    wram->wBGMapAnchor = vBGMap0;
+    // LDH_addr_A(hSCY);
+    hram->hSCY = 0;
+    // LDH_addr_A(hSCX);
+    hram->hSCX = 0;
+    // FARCALL(aApplyBGMapAnchorToObjects);
+    ApplyBGMapAnchorToObjects_Conv();
+
+    // LDH_A_addr(rVBK);
+    // PUSH_AF;
+    // uint8_t vbk = gb_read(rVBK);
+    // LD_A(0x1);
+    // LDH_addr_A(rVBK);
+    // gb_write(rVBK, 0x1);
+
+    // XOR_A_A;
+    // LD_BC(vBGMap1 - vBGMap0);
+    // hlbgcoord(0, 0, vBGMap0);
+    // CALL(aByteFill);
+    ByteFill_Conv2(bgcoord(0, 0, vram->vBGMap2), vBGMap1 - vBGMap0, 0);
+
+    // POP_AF;
+    // LDH_addr_A(rVBK);
+    // gb_write(rVBK, vbk);
+
+    // LD_A(0x60);
+    // LD_BC(vBGMap1 - vBGMap0);
+    // hlbgcoord(0, 0, vBGMap0);
+    // CALL(aByteFill);
+    ByteFill_Conv2(bgcoord(0, 0, vram->vBGMap0), vBGMap1 - vBGMap0, 0);
+    // RET;
+}
+
+static void LoadMapTimeOfDay_copy(tile_t* hl, const tile_t* de) {
+    // hlbgcoord(0, 0, vBGMap0);
+    // LD_C(SCREEN_WIDTH);
+    // LD_B(SCREEN_HEIGHT);
+    uint8_t b = SCREEN_HEIGHT;
+
+    do {
+    // row:
+        // PUSH_BC;
+        uint8_t c = SCREEN_WIDTH;
+        do {
+        // column:
+            // LD_A_de;
+            // INC_DE;
+            // LD_hli_A;
+            *(hl++) = *(de++);
+            // DEC_C;
+            // IF_NZ goto column;
+        } while(--c != 0);
+        // LD_BC(BG_MAP_WIDTH - SCREEN_WIDTH);
+        // ADD_HL_BC;
+        // POP_BC;
+        hl += BG_MAP_WIDTH - SCREEN_WIDTH;
+        // DEC_B;
+        // IF_NZ goto row;
+    } while(--b != 0);
+    // LD_A(0x0);
+    // LDH_addr_A(rVBK);
+    // RET;
+}
+
+static void LoadMapTimeOfDay_PushAttrmap(void) {
+    // decoord(0, 0, wTilemap);
+    // CALL(aLoadMapTimeOfDay_copy);
+    LoadMapTimeOfDay_copy(vram->vBGMap0, coord(0, 0, wram->wTilemap));
+    // LDH_A_addr(hCGB);
+    // AND_A_A;
+    // RET_Z ;
+    if(hram->hCGB == 0)
+        return;
+
+    // decoord(0, 0, wAttrmap);
+    // LD_A(0x1);
+    // LDH_addr_A(rVBK);
+    LoadMapTimeOfDay_copy(vram->vBGMap2, coord(0, 0, wram->wAttrmap));
+}
+
 void LoadMapTimeOfDay(void){
-    LD_HL(wVramState);
-    RES_hl(6);
-    LD_A(0x1);
-    LD_addr_A(wSpriteUpdatesEnabled);
-    FARCALL(aReplaceTimeOfDayPals);
-    FARCALL(aUpdateTimeOfDayPal);
-    CALL(aOverworldTextModeSwitch);
-    CALL(aLoadMapTimeOfDay_ClearBGMap);
-    CALL(aLoadMapTimeOfDay_PushAttrmap);
-    RET;
-
-
-ClearBGMap:
-    LD_A(HIGH(vBGMap0));
-    LD_addr_A(wBGMapAnchor + 1);
-    XOR_A_A;  // LOW(vBGMap0)
-    LD_addr_A(wBGMapAnchor);
-    LDH_addr_A(hSCY);
-    LDH_addr_A(hSCX);
-    FARCALL(aApplyBGMapAnchorToObjects);
-
-    LDH_A_addr(rVBK);
-    PUSH_AF;
-    LD_A(0x1);
-    LDH_addr_A(rVBK);
-
-    XOR_A_A;
-    LD_BC(vBGMap1 - vBGMap0);
-    hlbgcoord(0, 0, vBGMap0);
-    CALL(aByteFill);
-
-    POP_AF;
-    LDH_addr_A(rVBK);
-
-    LD_A(0x60);
-    LD_BC(vBGMap1 - vBGMap0);
-    hlbgcoord(0, 0, vBGMap0);
-    CALL(aByteFill);
-    RET;
-
-
-PushAttrmap:
-    decoord(0, 0, wTilemap);
-    CALL(aLoadMapTimeOfDay_copy);
-    LDH_A_addr(hCGB);
-    AND_A_A;
-    RET_Z ;
-
-    decoord(0, 0, wAttrmap);
-    LD_A(0x1);
-    LDH_addr_A(rVBK);
-
-copy:
-    hlbgcoord(0, 0, vBGMap0);
-    LD_C(SCREEN_WIDTH);
-    LD_B(SCREEN_HEIGHT);
-
-row:
-    PUSH_BC;
-
-column:
-    LD_A_de;
-    INC_DE;
-    LD_hli_A;
-    DEC_C;
-    IF_NZ goto column;
-    LD_BC(BG_MAP_WIDTH - SCREEN_WIDTH);
-    ADD_HL_BC;
-    POP_BC;
-    DEC_B;
-    IF_NZ goto row;
-    LD_A(0x0);
-    LDH_addr_A(rVBK);
-    RET;
-
+    // LD_HL(wVramState);
+    // RES_hl(6);
+    bit_reset(wram->wVramState, 6);
+    // LD_A(0x1);
+    // LD_addr_A(wSpriteUpdatesEnabled);
+    wram->wSpriteUpdatesEnabled = 0x1;
+    // FARCALL(aReplaceTimeOfDayPals);
+    ReplaceTimeOfDayPals_Conv();
+    // FARCALL(aUpdateTimeOfDayPal);
+    UpdateTimeOfDayPal();
+    // CALL(aOverworldTextModeSwitch);
+    OverworldTextModeSwitch_Conv();
+    // CALL(aLoadMapTimeOfDay_ClearBGMap);
+    LoadMapTimeOfDay_ClearBGMap();
+    // CALL(aLoadMapTimeOfDay_PushAttrmap);
+    LoadMapTimeOfDay_PushAttrmap();
+    // RET;
 }
 
 void LoadMapGraphics(void){
@@ -653,14 +682,14 @@ void GetMapScreenCoords(void){
     // odd_x:
         // ADD_A(1);
         // SRL_A;
-        x = (x + 1) << 1;
+        x = (x + 1) >> 1;
     }
     else {
     //  even x
         // SRL_A;
         // ADD_A(1);
         // goto got_block_x;
-        x = (x << 1) + 1;
+        x = (x >> 1) + 1;
     }
 
 // got_block_x:
@@ -680,14 +709,14 @@ void GetMapScreenCoords(void){
     // odd_y:
         // ADD_A(1);
         // SRL_A;
-        y = (y + 1) << 1;
+        y = (y + 1) >> 1;
     }
     else {
     //  even y
         // SRL_A;
         // ADD_A(1);
         // goto got_block_y;
-        y = (y << 1) + 1;
+        y = (y >> 1) + 1;
     }
 
 // got_block_y:
@@ -698,6 +727,7 @@ void GetMapScreenCoords(void){
     // LD_A_H;
     // LD_addr_A(wOverworldMapAnchor + 1);
     wram->wOverworldMapAnchor = hl;
+    printf("anchor=%d\n", wram->wOverworldMapAnchor - wOverworldMapBlocks);
     // LD_A_addr(wYCoord);
     // AND_A(1);
     // LD_addr_A(wMetatileStandingY);

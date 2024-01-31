@@ -12,6 +12,7 @@
 #include "../../home/text.h"
 #include "../../home/pokemon.h"
 #include "../../home/joypad.h"
+#include "../../home/menu.h"
 #include "../../gfx/misc.h"
 #include "../../data/text/common.h"
 #include "../../charmap.h"
@@ -428,14 +429,19 @@ void Continue(void) {
     FARCALL(aTryLoadSaveFile);
     IF_C goto FailToLoad;
     FARCALL(av_LoadData);
-    CALL(aLoadStandardMenuHeader);
+    // CALL(aLoadStandardMenuHeader);
+    LoadStandardMenuHeader_Conv();
     CALL(aDisplaySaveInfoOnContinue);
-    LD_A(0x1);
-    LDH_addr_A(hBGMapMode);
-    LD_C(20);
-    CALL(aDelayFrames);
-    CALL(aConfirmContinue);
-    IF_NC goto Check1Pass;
+    // LD_A(0x1);
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0x1;
+    // LD_C(20);
+    // CALL(aDelayFrames);
+    DelayFrames_Conv(20);
+    // CALL(aConfirmContinue);
+    // IF_NC goto Check1Pass;
+    if(ConfirmContinue_Conv())
+        goto Check1Pass;
     CALL(aCloseWindow);
     goto FailToLoad;
 
@@ -484,19 +490,21 @@ SpawnAfterE4:
 }
 
 void SpawnAfterRed(void) {
-    LD_A(SPAWN_MT_SILVER);
-    LD_addr_A(wDefaultSpawnpoint);
+    // LD_A(SPAWN_MT_SILVER);
+    // LD_addr_A(wDefaultSpawnpoint);
+    wram->wDefaultSpawnpoint = SPAWN_MT_SILVER;
 
     return PostCreditsSpawn();
 }
 
 void PostCreditsSpawn(void) {
-    XOR_A_A;
-    LD_addr_A(wSpawnAfterChampion);
-    LD_A(MAPSETUP_WARP);
-    LDH_addr_A(hMapEntryMethod);
+    // XOR_A_A;
+    // LD_addr_A(wSpawnAfterChampion);
+    wram->wSpawnAfterChampion = 0;
+    // LD_A(MAPSETUP_WARP);
+    // LDH_addr_A(hMapEntryMethod);
+    hram->hMapEntryMethod = MAPSETUP_WARP;
     RET;
-
 }
 
 void Continue_MobileAdapterMenu(void) {
@@ -550,6 +558,32 @@ PressA:
 
 }
 
+// Returns true if the player confirmed the continue.
+// Returns false if cancelled.
+bool ConfirmContinue_Conv(void) {
+
+    do {
+    // loop:
+        // CALL(aDelayFrame);
+        DelayFrame();
+        // CALL(aGetJoypad);
+        GetJoypad_Conv();
+        // LD_HL(hJoyPressed);
+        // BIT_hl(A_BUTTON_F);
+        // IF_NZ goto PressA;
+        if(bit_test(hram->hJoyPressed, A_BUTTON_F))
+            return true;
+        // BIT_hl(B_BUTTON_F);
+        // IF_Z goto loop;
+    } while(!bit_test(hram->hJoyPressed, B_BUTTON_F));
+    // SCF;
+    // RET;
+    return false;
+
+// PressA:
+    // RET;
+}
+
 void Continue_CheckRTC_RestartClock(void) {
     CALL(aCheckRTCStatus);
     AND_A(0b10000000);  // Day count exceeded 16383
@@ -589,8 +623,6 @@ loop:
 AfterRed:
     CALL(aSpawnAfterRed);
     goto loop;
-
-    return DisplaySaveInfoOnContinue();
 }
 
 void DisplaySaveInfoOnContinue(void) {
@@ -1054,7 +1086,7 @@ void ShrinkPlayer(void) {
     // CALL(aRotateThreePalettesRight);
     RotateThreePalettesRight_Conv();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv();
+    ClearTilemap_Conv2();
     RET;
 }
 

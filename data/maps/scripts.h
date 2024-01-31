@@ -399,7 +399,7 @@
 
 // SECTION "Map Scripts 20", ROMX
 
-// #include "../../maps/CherrygroveCity.h"
+#include "../../maps/CherrygroveCity.h"
 // #include "../../maps/Route35.h"
 // #include "../../maps/Route43.h"
 // #include "../../maps/Route44.h"
@@ -413,7 +413,7 @@
 // #include "../../maps/CianwoodCity.h"
 // #include "../../maps/Route27.h"
 #include "../../maps/Route29.h"
-// #include "../../maps/Route30.h"
+#include "../../maps/Route30.h"
 // #include "../../maps/Route38.h"
 // #include "../../maps/Route13.h"
 // #include "../../maps/PewterNidoranSpeechHouse.h"

@@ -5,6 +5,8 @@
 #include "../../home/time.h"
 #include "../../home/palettes.h"
 
+#define dc(_0, _1, _2, _3) (((_0) << 6) | ((_1) << 4) | ((_2) << 2) | (_3))
+
 void DummyPredef35(void){
     return DummyPredef36();
 }
@@ -283,31 +285,39 @@ void FadeOutPalettes(void){
 }
 
 void BattleTowerFade(void){
-    CALL(aFillWhiteBGColor);
-    LD_C(0x9);
-    CALL(aGetTimePalFade);
-    LD_B(0x4);
+    // CALL(aFillWhiteBGColor);
+    FillWhiteBGColor();
+    // LD_C(0x9);
+    // CALL(aGetTimePalFade);
+    const uint8_t* hl = GetTimePalFade_Conv(0x9);
+    // LD_B(0x4);
+    uint8_t b = 0x4;
 
-loop:
-    CALL(aDmgToCgbTimePals);
-    INC_HL;
-    INC_HL;
-    INC_HL;
-    LD_C(0x7);
-    CALL(aDelayFrames);
-    DEC_B;
-    IF_NZ goto loop;
-    RET;
-
+    do {
+    // loop:
+        // CALL(aDmgToCgbTimePals);
+        DmgToCgbTimePals_Conv(hl);
+        // INC_HL;
+        // INC_HL;
+        // INC_HL;
+        hl += 3;
+        // LD_C(0x7);
+        // CALL(aDelayFrames);
+        DelayFrames_Conv(0x7);
+        // DEC_B;
+        // IF_NZ goto loop;
+    } while(--b != 0);
+    // RET;
 }
 
 void FadeInQuickly(void){
-    LD_C(0x0);
-    CALL(aGetTimePalFade);
-    LD_B(0x4);
-    CALL(aConvertTimePalsIncHL);
-    RET;
-
+    // LD_C(0x0);
+    // CALL(aGetTimePalFade);
+    const uint8_t* hl = GetTimePalFade_Conv(0x0);
+    // LD_B(0x4);
+    // CALL(aConvertTimePalsIncHL);
+    ConvertTimePalsIncHL_Conv(hl, 0x4);
+    // RET;
 }
 
 void FadeBlackQuickly(void){
@@ -401,6 +411,57 @@ BrightnessLevels:
     //dc ['DARKNESS_F', 'NITE_F', 'DAY_F', 'MORN_F']
 
     return GetTimePalette();
+}
+
+void ReplaceTimeOfDayPals_Conv(void){
+    static const uint8_t BrightnessLevels[] = {
+    //  actual palettes used when time is
+    //  DARKNESS_F, NITE_F, DAY_F, MORN_F
+        dc(DARKNESS_F, NITE_F, DAY_F, MORN_F),  // PALETTE_AUTO
+        dc(DAY_F, DAY_F, DAY_F, DAY_F),  // PALETTE_DAY
+        dc(NITE_F, NITE_F, NITE_F, NITE_F),  // PALETTE_NITE
+        dc(MORN_F, MORN_F, MORN_F, MORN_F),  // PALETTE_MORN
+        dc(DARKNESS_F, DARKNESS_F, DARKNESS_F, DARKNESS_F),  // PALETTE_DARK
+        dc(DARKNESS_F, NITE_F, DAY_F, MORN_F),
+        dc(DARKNESS_F, NITE_F, DAY_F, MORN_F),
+        dc(DARKNESS_F, NITE_F, DAY_F, MORN_F),
+    };
+    // LD_HL(mReplaceTimeOfDayPals_BrightnessLevels);
+    // LD_A_addr(wMapTimeOfDay);
+    // CP_A(PALETTE_DARK);
+    // IF_Z goto NeedsFlash;
+    if(wram->wMapTimeOfDay == PALETTE_DARK) {
+    // NeedsFlash:
+        // LD_A_addr(wStatusFlags);
+        // BIT_A(STATUSFLAGS_FLASH_F);
+        // IF_NZ goto UsedFlash;
+        if(bit_test(wram->wStatusFlags, STATUSFLAGS_FLASH_F)) {
+        // UsedFlash:
+            // LD_A((NITE_F << 6) | (NITE_F << 4) | (NITE_F << 2) | NITE_F);
+            // LD_addr_A(wTimeOfDayPalset);
+            wram->wTimeOfDayPalset = (NITE_F << 6) | (NITE_F << 4) | (NITE_F << 2) | NITE_F;
+            // RET;
+            return;
+        }
+        else {
+            // LD_A(DARKNESS_PALSET);
+            // LD_addr_A(wTimeOfDayPalset);
+            wram->wTimeOfDayPalset = DARKNESS_PALSET;
+            // RET;
+            return;
+        }
+    }
+    // maskbits(NUM_MAP_PALETTES, 0);
+    // ADD_A_L;
+    // LD_L_A;
+    // LD_A(0);
+    // ADC_A_H;
+    // LD_H_A;
+    // LD_A_hl;
+    // LD_addr_A(wTimeOfDayPalset);
+    wram->wTimeOfDayPalset = BrightnessLevels[wram->wMapTimeOfDay & 7];
+    // RET;
+    return;
 }
 
 void GetTimePalette(void){
@@ -680,8 +741,6 @@ cgbfade:
     //dc ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0']
 
 }
-
-#define dc(_0, _1, _2, _3) (((_0) << 6) | ((_1) << 4) | ((_2) << 2) | (_3))
 
 const uint8_t* GetTimePalFade_Conv(uint8_t c){
     static const uint8_t cgbfade[] = {
