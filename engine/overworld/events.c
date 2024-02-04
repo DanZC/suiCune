@@ -22,6 +22,7 @@
 #include "../../home/time.h"
 #include "../../home/time_palettes.h"
 #include "../../home/flag.h"
+#include "../../home/gfx.h"
 #include "../phone/phone.h"
 #include "../menus/start_menu.h"
 #include "../events/forced_movement.h"
@@ -682,8 +683,7 @@ coord_event:
 u8_flag_s CheckTileEvent_Conv(void){
     // CALL(aCheckWarpConnxnScriptFlag);
     // IF_Z goto connections_disabled;
-    if(!CheckWarpConnxnScriptFlag()) {
-
+    if(CheckWarpConnxnScriptFlag()) {
         // FARCALL(aCheckMovingOffEdgeOfMap);
         // IF_C goto map_connection;
         if(CheckMovingOffEdgeOfMap_Conv()) {
@@ -1091,6 +1091,7 @@ u8_flag_s OWPlayerInput_Conv(void){
 // Action:
     // PUSH_AF;
     // FARCALL(aStopPlayerForEvent);
+    StopPlayerForEvent_Conv();
     // POP_AF;
     // SCF;
     // RET;
@@ -1154,6 +1155,8 @@ void PlayTalkObject_Conv(void){
 }
 
 static u8_flag_s ObjectEventTypeArray_script(struct MapObject* bc) {
+    PEEK("");
+    printf("script=%d\n", bc->objectScript);
     // LD_HL(MAPOBJECT_SCRIPT_POINTER);
     // ADD_HL_BC;
     // LD_A_hli;
@@ -1182,6 +1185,14 @@ static u8_flag_s ObjectEventTypeArray_itemball(struct MapObject* bc) {
     // LD_DE(wItemBallData);
     // LD_BC(wItemBallDataEnd - wItemBallData);
     // CALL(aFarCopyBytes);
+    if(bc->objectScript <= NUM_OBJECTS) {
+        const struct ItemBall* ball = gCurMapObjectEventsPointer[bc->objectScript].item_ball;
+        wram->wItemBallItemID = ball->item;
+        wram->wItemBallQuantity = ball->quantity;
+    }
+    else {
+        FarCopyBytes_Conv(wItemBallData, GetMapScriptsBank_Conv(), bc->objectScript, wItemBallDataEnd - wItemBallData);
+    }
     // LD_A(PLAYEREVENT_ITEMBALL);
     // SCF;
     // RET;

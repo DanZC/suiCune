@@ -1168,7 +1168,7 @@ struct ObjEvent
 };
 
 #define object_event(_x, _y, _sprite, _mvmt, _radiusX, _radiusY, _h1, _h2, _color, _func, _sight, _data, _evflag) (struct ObjEvent) {\
-    .x=_x, .y=_y, .sprite=_sprite, .movement=_mvmt, .radiusX=_radiusX, .radiusY=_radiusY, .h1=_h1, .h2=_h2, .color=_color, .function=_func,\
+    .x=_x + 4, .y=_y + 4, .sprite=_sprite, .movement=_mvmt, .radiusX=_radiusX, .radiusY=_radiusY, .h1=_h1, .h2=_h2, .color=_color, .function=_func,\
     .sightRange=_sight, .eventFlag=_evflag, .data=_data}
 
 struct MapScripts
@@ -1352,6 +1352,12 @@ struct LevelMove {
 struct EvoMoves {
     const struct EvoData* evolutions;
     const struct LevelMove* learnset;
+};
+
+struct RoamMap {
+    struct MapId src;
+    uint8_t count;
+    struct MapId* const maps;
 };
 
 typedef struct Script script_s;

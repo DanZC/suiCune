@@ -26,7 +26,7 @@ void init_function_pointers(void) {
     REDIRECTED(TerminateExpBarSound);
     CONVERTED(InitSound);
     REDIRECTED(TryRestartMapMusic);
-    REDIRECTED(FadeInToMusic);
+    CONVERTED(FadeInToMusic);
     CONVERTED(PlayMapMusicBike);
     CONVERTED(WaitSFX);
     // CONVERTED(PlayMapMusic);
@@ -1252,7 +1252,7 @@ void init_function_pointers(void) {
     // REDIRECTED(GetFacingTileCoord);
     // REDIRECTED(ReadObjectEvents);
     // REDIRECTED(GetAnyMapPointer);
-    // REDIRECTED(LoadMapAttributes);
+    // CONVERTED(LoadMapAttributes);
     // REDIRECTED(FinishExitMenu);
     // REDIRECTED(ExecuteCallbackScript);
     // REDIRECTED(FillMapConnections);
@@ -1268,7 +1268,7 @@ void init_function_pointers(void) {
     // REDIRECTED(Map_DummyFunction);
     // REDIRECTED(CopyMapAttributes);
     // REDIRECTED(SwitchToMapAttributesBank);
-    // REDIRECTED(ChangeMap);
+    // CONVERTED(ChangeMap);
     // REDIRECTED(LoadMetatiles);
     // REDIRECTED(CheckIndoorMap);
     // REDIRECTED(GetScriptByte);
@@ -2712,7 +2712,7 @@ void init_function_pointers(void) {
     // REDIRECTED(Script_loadtemptrainer);
     // REDIRECTED(Script_getname);
     // REDIRECTED(Script_end);
-    REDIRECTED(Script_newloadmap);
+    // REDIRECTED(Script_newloadmap);
     // REDIRECTED(Script_checkver);
     // REDIRECTED(Script_writemem);
     // REDIRECTED(Script_stopandsjump);
@@ -2821,7 +2821,7 @@ void init_function_pointers(void) {
     // REDIRECTED(StartMenuCallback);
     // REDIRECTED(v_CheckObjectEnteringVisibleRange);
     // REDIRECTED(MaxOverworldDelay);
-    // REDIRECTED(MapEvents);
+    // CONVERTED(MapEvents);
     // REDIRECTED(v_TryWildEncounter_BugContest);
     // REDIRECTED(WarpToNewMapScript);
     // REDIRECTED(CheckMenuOW);
@@ -2830,7 +2830,7 @@ void init_function_pointers(void) {
     // REDIRECTED(RandomEncounter);
     // REDIRECTED(DisableWildEncounters);
     // REDIRECTED(TryTileCollisionEvent);
-    // REDIRECTED(HandleMapBackground);
+    CONVERTED(HandleMapBackground);
     // REDIRECTED(ObjectEventTypeArray);
     // REDIRECTED(DoRepelStep);
     // REDIRECTED(PlayTalkObject);
@@ -2851,7 +2851,7 @@ void init_function_pointers(void) {
     // REDIRECTED(DisableStepCount);
     // REDIRECTED(SelectMenuCallback);
     // CONVERTED(DisableEvents);
-    // REDIRECTED(EnterMap);
+    // CONVERTED(EnterMap);
     // REDIRECTED(TryWildEncounter_BugContest);
     // REDIRECTED(CheckAPressOW);
     // REDIRECTED(CheckCoordEventScriptFlag);
@@ -4738,9 +4738,9 @@ void init_function_pointers(void) {
     // REDIRECTED(RepelWoreOffScript);
 
     // engine/overworld/player_step.c
-    CONVERTED(v_HandlePlayerStep);
+    // CONVERTED(v_HandlePlayerStep);
     CONVERTED(UpdatePlayerCoords);
-    // REDIRECTED(HandlePlayerStep);
+    CONVERTED(HandlePlayerStep);
     CONVERTED(UpdateOverworldMap);
     CONVERTED(ScrollScreen);
 

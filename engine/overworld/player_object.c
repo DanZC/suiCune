@@ -185,12 +185,11 @@ void RefreshPlayerCoords(void){
     uint8_t x = wram->wXCoord + 4;
     // LD_HL(wPlayerStandingMapX);
     // SUB_A_hl;
-    // uint8_t d = x - wram->wPlayerStruct.nextMapX;
     // LD_hl_D;
     wram->wPlayerStruct.nextMapX = x;
     // LD_HL(wMapObjects + MAPOBJECT_X_COORD);
     // LD_hl_D;
-    wram->wMapObject[0].objectXCoord = x;
+    wram->wPlayerObject.objectXCoord = x;
     // LD_HL(wPlayerLastMapX);
     // LD_hl_D;
     wram->wPlayerStruct.mapX = x;
@@ -201,7 +200,6 @@ void RefreshPlayerCoords(void){
     uint8_t y = wram->wYCoord + 4;
     // LD_HL(wPlayerStandingMapY);
     // SUB_A_hl;
-    // uint8_t e = x - wram->wPlayerStruct.nextMapY;
     // LD_hl_E;
     wram->wPlayerStruct.nextMapY = y;
     // LD_HL(wMapObjects + MAPOBJECT_Y_COORD);
@@ -209,7 +207,7 @@ void RefreshPlayerCoords(void){
     wram->wMapObject[0].objectYCoord = y;
     // LD_HL(wPlayerLastMapY);
     // LD_hl_E;
-    wram->wPlayerStruct.mapY = x;
+    wram->wPlayerStruct.mapY = y;
     // LD_E_A;
 //  the next three lines are useless
     // LD_A_addr(wObjectFollow_Leader);
@@ -460,12 +458,13 @@ void InitializeVisibleSprites(void){
     do {
     // loop:
         // LDH_addr_A(hMapObjectIndex);
+        hram->hMapObjectIndex = a;
         // LD_HL(MAPOBJECT_SPRITE);
         // ADD_HL_BC;
         // LD_A_hl;
         // AND_A_A;
         // IF_Z goto next;
-        if(bc[a - 1].sprite == 0)
+        if(bc[a].sprite == 0)
             continue;
 
         // LD_HL(MAPOBJECT_OBJECT_STRUCT_ID);
@@ -473,7 +472,7 @@ void InitializeVisibleSprites(void){
         // LD_A_hl;
         // CP_A(-1);
         // IF_NZ goto next;
-        if(bc[a - 1].structId == 0xff)
+        if(bc[a].structId == 0xff)
             continue;
 
         // LD_A_addr(wXCoord);
@@ -487,7 +486,7 @@ void InitializeVisibleSprites(void){
         // ADD_HL_BC;
         // LD_A_hl;
         // ADD_A(1);
-        uint8_t x = bc[a - 1].objectXCoord + 1;
+        uint8_t x = bc[a].objectXCoord + 1;
         // SUB_A_D;
         // IF_C goto next;
         if(x < d)
@@ -502,7 +501,7 @@ void InitializeVisibleSprites(void){
         // ADD_HL_BC;
         // LD_A_hl;
         // ADD_A(1);
-        uint8_t y = bc[a - 1].objectYCoord + 1;
+        uint8_t y = bc[a].objectYCoord + 1;
         // SUB_A_E;
         // IF_C goto next;
         if(y < e)
@@ -515,7 +514,7 @@ void InitializeVisibleSprites(void){
 
         // PUSH_BC;
         // CALL(aCopyObjectStruct);
-        uint8_t res = CopyObjectStruct_Conv(bc + (a - 1), a);
+        uint8_t res = CopyObjectStruct_Conv(bc + a, a);
         // POP_BC;
         // JP_C (mInitializeVisibleSprites_ret);
         if(res == 0xff)

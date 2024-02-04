@@ -396,9 +396,10 @@ void FadeOutToMusic(void) {
 }
 
 void FadeInToMusic(void) {
-    LD_A(4 | (1 << MUSIC_FADE_IN_F));  // ld a, 4 | (1 << MUSIC_FADE_IN_F)
-    LD_addr_A(wMusicFade);             // ld [wMusicFade], a
-    RET;                               // ret
+    // LD_A(4 | (1 << MUSIC_FADE_IN_F));  // ld a, 4 | (1 << MUSIC_FADE_IN_F)
+    // LD_addr_A(wMusicFade);             // ld [wMusicFade], a
+    // RET;                               // ret
+    wram->wMusicFade = 4 | (1 << MUSIC_FADE_IN_F);
 }
 
 void SkipMusic(void) {

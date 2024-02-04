@@ -5857,7 +5857,7 @@ bool CheckObjectCoveredByTextbox_Conv(struct Object* bc) {
         // SRL_A;
         // CP_A(SCREEN_WIDTH);
         // IF_C goto ok3;
-        x = bc->spriteX << 3;
+        x = bc->spriteX >> 3;
         if(x >= SCREEN_WIDTH)
             x -= BG_MAP_WIDTH;
         // SUB_A(BG_MAP_WIDTH);
@@ -5903,7 +5903,7 @@ bool CheckObjectCoveredByTextbox_Conv(struct Object* bc) {
             // CP_A(SCREEN_HEIGHT);
             // IF_C goto ok6;
             // SUB_A(BG_MAP_HEIGHT);
-            y = bc->spriteY << 3;
+            y = bc->spriteY >> 3;
             if(y >= SCREEN_HEIGHT)
                 y -= BG_MAP_HEIGHT;
 

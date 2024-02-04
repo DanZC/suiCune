@@ -369,7 +369,7 @@
 // #include "../../maps/SafariZoneWardensHome.h"
 // #include "../../maps/Route15FuchsiaGate.h"
 // #include "../../maps/CherrygroveMart.h"
-// #include "../../maps/CherrygrovePokecenter1F.h"
+#include "../../maps/CherrygrovePokecenter1F.h"
 // #include "../../maps/CherrygroveGymSpeechHouse.h"
 // #include "../../maps/GuideGentsHouse.h"
 // #include "../../maps/CherrygroveEvolutionSpeechHouse.h"

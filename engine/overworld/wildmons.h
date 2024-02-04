@@ -30,6 +30,7 @@ void CheckEncounterRoamMon(void);
 void UpdateRoamMons(void);
 void JumpRoamMons(void);
 void JumpRoamMon(void);
+struct MapId JumpRoamMon_Conv(void);
 void v_BackUpMapIndices(void);
 void ValidateTempWildMonSpecies(void);
 bool ValidateTempWildMonSpecies_Conv(species_t a);

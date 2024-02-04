@@ -1,3 +1,4 @@
+#define NO_PHYSFS
 #ifndef NO_PHYSFS
 #include <physfs.h>
 #endif
@@ -96,7 +97,7 @@ asset_s LoadAssetToBuffer(void* buffer, size_t buf_size, const char* filename) {
     //     return (asset_s){NULL, 0};
     // }
     size_t rsize = ((size_t)size > buf_size)? buf_size: (size_t)size;
-    fread(buf, rsize, 1, file);
+    fread(buffer, rsize, 1, file);
     fclose(file);
 #endif
     return (asset_s){buffer, rsize};

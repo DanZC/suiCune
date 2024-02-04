@@ -1412,9 +1412,9 @@ void UpdateSprites_Conv(void){
         return;
 
     // FARCALL(aUpdateAllObjectsFrozen);
+    UpdateAllObjectsFrozen_Conv();
     // FARCALL(av_UpdateSprites);
-    // UpdateAllObjectsFrozen_Conv();
-    SafeCallGBAuto(aUpdateAllObjectsFrozen);
+    // SafeCallGBAuto(aUpdateAllObjectsFrozen);
 
     v_UpdateSprites_Conv();
     // RET;

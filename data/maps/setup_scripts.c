@@ -180,7 +180,7 @@ static const uint8_t MapSetupScript_Submenu[] = {
     (uint8_t)-1, // end
 };
 
-const uint8_t* MapSetupScripts[] = {
+const uint8_t* const MapSetupScripts[] = {
 // entries correspond to MAPSETUP_* constants (see constants/map_setup_constants.asm)
     // table_width 2, MapSetupScripts
     MapSetupScript_Warp,

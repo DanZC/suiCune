@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define NO_PHYSFS
 #include <SDL2/SDL.h>
 #if !defined(NO_PHYSFS)
 #include <physfs.h>

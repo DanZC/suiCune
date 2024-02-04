@@ -10,6 +10,7 @@
 #include "../../data/wild/kanto_grass.h"
 #include "../../data/wild/probabilities.h"
 #include "../../data/trainers/parties.h"
+#include "../../data/wild/roammon_maps.h"
 
 void LoadWildMonData(void){
     // CALL(av_GrassWildmonLookup);
@@ -1037,152 +1038,194 @@ DontEncounterRoamMon:
 
 }
 
+static struct MapId UpdateRoamMons_Update(uint8_t mapGroup, uint8_t mapNumber) {
+// Update:
+    // LD_HL(mRoamMaps);
+
+    for(uint32_t i = 0; i < NUM_ROAMMON_MAPS; ++i) {
+    loop:
+    //  Are we at the end of the table?
+        // LD_A_hl;
+        // CP_A(-1);
+        // RET_Z ;
+    //  Is this the correct entry?
+        // LD_A_B;
+        // CP_A_hl;
+        // IF_NZ goto next;
+        // INC_HL;
+        // LD_A_C;
+        // CP_A_hl;
+        // IF_Z goto yes;
+        if(RoamMaps[i].src.mapGroup == mapGroup 
+        && RoamMaps[i].src.mapNumber == mapNumber) {
+        //  We have the correct entry now, so let's choose a random map from it.
+        // yes:
+            // INC_HL;
+            // LD_D_H;
+            // LD_E_L;
+            const struct MapId* de = RoamMaps[i].maps;
+
+            uint8_t a;
+            do {
+                do {
+                // update_loop:
+                    // LD_H_D;
+                    // LD_L_E;
+                //  Choose which map to warp to.
+                    // CALL(aRandom);
+                    // AND_A(0b00011111);  // 1/8n chance it moves to a completely random map, where n is the number of roaming connections from the current map.
+                    a = Random_Conv() & 0b00011111;
+                    // JR_Z (mJumpRoamMon);
+                    if(a == 0)
+                        return JumpRoamMon_Conv();
+                    // AND_A(0b11);
+                    // CP_A_hl;
+                    // IF_NC goto update_loop;  // invalid index, try again
+                } while((a & 0b11) >= RoamMaps[i].count);
+                // INC_HL;
+                // LD_C_A;
+                // LD_B(0);
+                // ADD_HL_BC;
+                // ADD_HL_BC;
+                // LD_A_addr(wRoamMons_LastMapGroup);
+                // CP_A_hl;
+                // IF_NZ goto done;
+                // INC_HL;
+                // LD_A_addr(wRoamMons_LastMapNumber);
+                // CP_A_hl;
+                // IF_Z goto update_loop;
+            } while(de[a - 1].mapGroup == wram->wRoamMons_LastMapGroup
+                 && de[a - 1].mapNumber == wram->wRoamMons_LastMapNumber);
+            // DEC_HL;
+
+
+        // done:
+            // LD_A_hli;
+            // LD_B_A;
+            // LD_C_hl;
+            // RET;
+            return de[a - 1];
+        }
+    //  We don't have the correct entry yet, so let's continue.  A 0 terminates each entry.
+
+    // next:
+        // LD_A_hli;
+        // AND_A_A;
+        // IF_NZ goto next;
+        // goto loop;
+    }
+    return (struct MapId){GROUP_N_A, MAP_N_A};
+}
+
 void UpdateRoamMons(void){
-    LD_A_addr(wRoamMon1MapGroup);
-    CP_A(GROUP_N_A);
-    IF_Z goto SkipRaikou;
-    LD_B_A;
-    LD_A_addr(wRoamMon1MapNumber);
-    LD_C_A;
-    CALL(aUpdateRoamMons_Update);
-    LD_A_B;
-    LD_addr_A(wRoamMon1MapGroup);
-    LD_A_C;
-    LD_addr_A(wRoamMon1MapNumber);
+    // LD_A_addr(wRoamMon1MapGroup);
+    // CP_A(GROUP_N_A);
+    // IF_Z goto SkipRaikou;
+    if(wram->wRoamMon1.mapGroup != (uint8_t)GROUP_N_A) {
+        // LD_B_A;
+        // LD_A_addr(wRoamMon1MapNumber);
+        // LD_C_A;
+        // CALL(aUpdateRoamMons_Update);
+        struct MapId new_map = UpdateRoamMons_Update(wram->wRoamMon1.mapGroup, wram->wRoamMon1.mapNumber);
+        // LD_A_B;
+        // LD_addr_A(wRoamMon1MapGroup);
+        wram->wRoamMon1.mapGroup = new_map.mapGroup;
+        // LD_A_C;
+        // LD_addr_A(wRoamMon1MapNumber);
+        wram->wRoamMon1.mapNumber = new_map.mapNumber;
+    }
 
+// SkipRaikou:
+    // LD_A_addr(wRoamMon2MapGroup);
+    // CP_A(GROUP_N_A);
+    // IF_Z goto SkipEntei;
+    if(wram->wRoamMon2.mapGroup != (uint8_t)GROUP_N_A) {
+        // LD_B_A;
+        // LD_A_addr(wRoamMon2MapNumber);
+        // LD_C_A;
+        // CALL(aUpdateRoamMons_Update);
+        struct MapId new_map = UpdateRoamMons_Update(wram->wRoamMon2.mapGroup, wram->wRoamMon2.mapNumber);
+        // LD_A_B;
+        // LD_addr_A(wRoamMon2MapGroup);
+        wram->wRoamMon2.mapGroup = new_map.mapGroup;
+        // LD_A_C;
+        // LD_addr_A(wRoamMon2MapNumber);
+        wram->wRoamMon2.mapNumber = new_map.mapNumber;
+    }
 
-SkipRaikou:
-    LD_A_addr(wRoamMon2MapGroup);
-    CP_A(GROUP_N_A);
-    IF_Z goto SkipEntei;
-    LD_B_A;
-    LD_A_addr(wRoamMon2MapNumber);
-    LD_C_A;
-    CALL(aUpdateRoamMons_Update);
-    LD_A_B;
-    LD_addr_A(wRoamMon2MapGroup);
-    LD_A_C;
-    LD_addr_A(wRoamMon2MapNumber);
+// SkipEntei:
+    // LD_A_addr(wRoamMon3MapGroup);
+    // CP_A(GROUP_N_A);
+    // IF_Z goto Finished;
+    if(wram->wRoamMon3.mapGroup != (uint8_t)GROUP_N_A) {
+        // LD_B_A;
+        // LD_A_addr(wRoamMon3MapNumber);
+        // LD_C_A;
+        // CALL(aUpdateRoamMons_Update);
+        struct MapId new_map = UpdateRoamMons_Update(wram->wRoamMon3.mapGroup, wram->wRoamMon3.mapNumber);
+        // LD_A_B;
+        // LD_addr_A(wRoamMon3MapGroup);
+        wram->wRoamMon3.mapGroup = new_map.mapGroup;
+        // LD_A_C;
+        // LD_addr_A(wRoamMon3MapNumber);
+        wram->wRoamMon3.mapNumber = new_map.mapNumber;
+    }
 
-
-SkipEntei:
-    LD_A_addr(wRoamMon3MapGroup);
-    CP_A(GROUP_N_A);
-    IF_Z goto Finished;
-    LD_B_A;
-    LD_A_addr(wRoamMon3MapNumber);
-    LD_C_A;
-    CALL(aUpdateRoamMons_Update);
-    LD_A_B;
-    LD_addr_A(wRoamMon3MapGroup);
-    LD_A_C;
-    LD_addr_A(wRoamMon3MapNumber);
-
-
-Finished:
-    JP(mv_BackUpMapIndices);
-
-
-Update:
-    LD_HL(mRoamMaps);
-
-loop:
-//  Are we at the end of the table?
-    LD_A_hl;
-    CP_A(-1);
-    RET_Z ;
-//  Is this the correct entry?
-    LD_A_B;
-    CP_A_hl;
-    IF_NZ goto next;
-    INC_HL;
-    LD_A_C;
-    CP_A_hl;
-    IF_Z goto yes;
-//  We don't have the correct entry yet, so let's continue.  A 0 terminates each entry.
-
-next:
-    LD_A_hli;
-    AND_A_A;
-    IF_NZ goto next;
-    goto loop;
-
-//  We have the correct entry now, so let's choose a random map from it.
-
-yes:
-    INC_HL;
-    LD_D_H;
-    LD_E_L;
-
-update_loop:
-    LD_H_D;
-    LD_L_E;
-//  Choose which map to warp to.
-    CALL(aRandom);
-    AND_A(0b00011111);  // 1/8n chance it moves to a completely random map, where n is the number of roaming connections from the current map.
-    JR_Z (mJumpRoamMon);
-    AND_A(0b11);
-    CP_A_hl;
-    IF_NC goto update_loop;  // invalid index, try again
-    INC_HL;
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    ADD_HL_BC;
-    LD_A_addr(wRoamMons_LastMapGroup);
-    CP_A_hl;
-    IF_NZ goto done;
-    INC_HL;
-    LD_A_addr(wRoamMons_LastMapNumber);
-    CP_A_hl;
-    IF_Z goto update_loop;
-    DEC_HL;
-
-
-done:
-    LD_A_hli;
-    LD_B_A;
-    LD_C_hl;
-    RET;
-
+// Finished:
+    // JP(mv_BackUpMapIndices);
+    return v_BackUpMapIndices();
 }
 
 void JumpRoamMons(void){
-    LD_A_addr(wRoamMon1MapGroup);
-    CP_A(GROUP_N_A);
-    IF_Z goto SkipRaikou;
-    CALL(aJumpRoamMon);
-    LD_A_B;
-    LD_addr_A(wRoamMon1MapGroup);
-    LD_A_C;
-    LD_addr_A(wRoamMon1MapNumber);
+    // LD_A_addr(wRoamMon1MapGroup);
+    // CP_A(GROUP_N_A);
+    // IF_Z goto SkipRaikou;
+    if(wram->wRoamMon1.mapGroup != (uint8_t)GROUP_N_A) {
+        // CALL(aJumpRoamMon);
+        struct MapId new_map = JumpRoamMon_Conv();
+        // LD_A_B;
+        // LD_addr_A(wRoamMon1MapGroup);
+        wram->wRoamMon1.mapGroup = new_map.mapGroup;
+        // LD_A_C;
+        // LD_addr_A(wRoamMon1MapNumber);
+        wram->wRoamMon1.mapNumber = new_map.mapNumber;
+    }
 
 
-SkipRaikou:
-    LD_A_addr(wRoamMon2MapGroup);
-    CP_A(GROUP_N_A);
-    IF_Z goto SkipEntei;
-    CALL(aJumpRoamMon);
-    LD_A_B;
-    LD_addr_A(wRoamMon2MapGroup);
-    LD_A_C;
-    LD_addr_A(wRoamMon2MapNumber);
+// SkipRaikou:
+    // LD_A_addr(wRoamMon2MapGroup);
+    // CP_A(GROUP_N_A);
+    // IF_Z goto SkipEntei;
+    if(wram->wRoamMon2.mapGroup != (uint8_t)GROUP_N_A) {
+        // CALL(aJumpRoamMon);
+        struct MapId new_map = JumpRoamMon_Conv();
+        // LD_A_B;
+        // LD_addr_A(wRoamMon2MapGroup);
+        wram->wRoamMon2.mapGroup = new_map.mapGroup;
+        // LD_A_C;
+        // LD_addr_A(wRoamMon2MapNumber);
+        wram->wRoamMon2.mapNumber = new_map.mapNumber;
+    }
 
 
-SkipEntei:
-    LD_A_addr(wRoamMon3MapGroup);
-    CP_A(GROUP_N_A);
-    IF_Z goto Finished;
-    CALL(aJumpRoamMon);
-    LD_A_B;
-    LD_addr_A(wRoamMon3MapGroup);
-    LD_A_C;
-    LD_addr_A(wRoamMon3MapNumber);
+// SkipEntei:
+    // LD_A_addr(wRoamMon3MapGroup);
+    // CP_A(GROUP_N_A);
+    // IF_Z goto Finished;
+    if(wram->wRoamMon3.mapGroup != (uint8_t)GROUP_N_A) {
+        // CALL(aJumpRoamMon);
+        struct MapId new_map = JumpRoamMon_Conv();
+        // LD_A_B;
+        // LD_addr_A(wRoamMon3MapGroup);
+        wram->wRoamMon3.mapGroup = new_map.mapGroup;
+        // LD_A_C;
+        // LD_addr_A(wRoamMon3MapNumber);
+        wram->wRoamMon3.mapNumber = new_map.mapNumber;
+    }
 
-
-Finished:
-    JP(mv_BackUpMapIndices);
-
+// Finished:
+    // JP(mv_BackUpMapIndices);
+    return v_BackUpMapIndices();
 }
 
 void JumpRoamMon(void){
@@ -1233,20 +1276,75 @@ done:
 
 }
 
+struct MapId JumpRoamMon_Conv(void){
+
+    uint8_t a;
+    do {
+    // loop:
+        // LD_HL(mRoamMaps);
+
+    // innerloop1:
+    // 0-15 are all valid indexes into RoamMaps,
+    // so this retry loop is unnecessary
+    // since NUM_ROAMMON_MAPS happens to be 16
+        // CALL(aRandom);
+        // maskbits(NUM_ROAMMON_MAPS, 0);
+        // CP_A(NUM_ROAMMON_MAPS);
+        // IF_NC goto innerloop1;
+        a = Random_Conv() & 0xf;
+        // INC_A;
+        // LD_B_A;
+
+    // innerloop2:
+    //   //  Loop to get hl to the address of the chosen roam map.
+        // DEC_B;
+        // IF_Z goto ok;
+
+    // innerloop3:
+    //   //  Loop to skip the current roam map, which is terminated by a 0.
+        // LD_A_hli;
+        // AND_A_A;
+        // IF_NZ goto innerloop3;
+        // goto innerloop2;
+    //  Check to see if the selected map is the one the player is currently in.  If so, try again.
+
+    // ok:
+        // LD_A_addr(wMapGroup);
+        // CP_A_hl;
+        // IF_NZ goto done;
+        // INC_HL;
+        // LD_A_addr(wMapNumber);
+        // CP_A_hl;
+        // IF_Z goto loop;
+    } while(RoamMaps[a].src.mapGroup == wram->wMapGroup
+         && RoamMaps[a].src.mapNumber == wram->wMapNumber);
+    // DEC_HL;
+//  Return the map group and number in bc.
+
+// done:
+    // LD_A_hli;
+    // LD_B_A;
+    // LD_C_hl;
+    // RET;
+    return RoamMaps[a].src;
+}
+
 void v_BackUpMapIndices(void){
-    LD_A_addr(wRoamMons_CurMapNumber);
-    LD_addr_A(wRoamMons_LastMapNumber);
-    LD_A_addr(wRoamMons_CurMapGroup);
-    LD_addr_A(wRoamMons_LastMapGroup);
-    LD_A_addr(wMapNumber);
-    LD_addr_A(wRoamMons_CurMapNumber);
-    LD_A_addr(wMapGroup);
-    LD_addr_A(wRoamMons_CurMapGroup);
-    RET;
+    // LD_A_addr(wRoamMons_CurMapNumber);
+    // LD_addr_A(wRoamMons_LastMapNumber);
+    wram->wRoamMons_LastMapNumber = wram->wRoamMons_CurMapNumber;
+    // LD_A_addr(wRoamMons_CurMapGroup);
+    // LD_addr_A(wRoamMons_LastMapGroup);
+    wram->wRoamMons_LastMapGroup = wram->wRoamMons_CurMapGroup;
+    // LD_A_addr(wMapNumber);
+    // LD_addr_A(wRoamMons_CurMapNumber);
+    wram->wRoamMons_CurMapNumber = wram->wMapNumber;
+    // LD_A_addr(wMapGroup);
+    // LD_addr_A(wRoamMons_CurMapGroup);
+    wram->wRoamMons_CurMapGroup = wram->wMapGroup;
+    // RET;
 
 // INCLUDE "data/wild/roammon_maps.asm"
-
-    return ValidateTempWildMonSpecies();
 }
 
 void ValidateTempWildMonSpecies(void){
