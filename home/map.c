@@ -1700,7 +1700,7 @@ uint8_t CopyMapObjectEvents_Conv(struct MapObject* hl, const struct ObjEvent* de
         hl[i].objectRadius = (de[i].radiusX << 4) | de[i].radiusY;
         hl[i].objectHour = de[i].h1;
         hl[i].objectTimeOfDay = de[i].h2;
-        hl[i].objectColor = de[i].color;
+        hl[i].objectColor = (de[i].color << 4) | (de[i].function & 0xf);
         hl[i].objectRange = de[i].sightRange;
         hl[i].objectScript = i;
         hl[i].objectEventFlag = de[i].eventFlag;

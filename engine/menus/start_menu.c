@@ -1,6 +1,7 @@
 #include "../../constants.h"
 #include "start_menu.h"
 #include "menu.h"
+#include "menu_2.h"
 #include "../../home/audio.h"
 #include "../../home/copy.h"
 #include "../../home/menu.h"
@@ -11,6 +12,7 @@
 #include "../../home/window.h"
 #include "../../home/palettes.h"
 #include "../../home/map_objects.h"
+#include "../../home/time_palettes.h"
 #include "../overworld/init_map.h"
 #include "../../data/text/common.h"
 #include "../../home/queue_script.h"
@@ -180,7 +182,8 @@ static void StartMenu__DrawBugContestStatusBox(void) {
     // RET_Z ;
     if(!bit_test(wram->wStatusFlags2, STATUSFLAGS2_BUG_CONTEST_TIMER_F))
         return;
-    FARCALL(aStartMenu_DrawBugContestStatusBox);
+    // FARCALL(aStartMenu_DrawBugContestStatusBox);
+    StartMenu_DrawBugContestStatusBox();
     // RET;
 }
 
@@ -191,7 +194,8 @@ static void StartMenu_DrawBugContestStatus(void) {
     // RET;
     if(bit_test(wram->wStatusFlags2, STATUSFLAGS2_BUG_CONTEST_TIMER_F)) {
     // contest:
-        FARCALL(aStartMenu_PrintBugContestStatus);
+        // FARCALL(aStartMenu_PrintBugContestStatus);
+        StartMenu_PrintBugContestStatus();
     }
     // RET;
 }
@@ -468,7 +472,7 @@ static const struct MenuHeader menuHeader = {
     // CALL(aStartMenu_DrawBugContestStatus);
     StartMenu_DrawBugContestStatus();
     // CALL(aUpdateTimePals);
-    SafeCallGBAuto(aUpdateTimePals);
+    UpdateTimePals();
     // goto Select;
 
     while(1) {
@@ -529,7 +533,7 @@ static const struct MenuHeader menuHeader = {
                 // CALL(aCloseText);
                 CloseText_Conv();
                 // CALL(aUpdateTimePals);
-                SafeCallGBAuto(aUpdateTimePals);
+                UpdateTimePals();
                 // RET;
                 return;
             case STARTMENURET_EXIT_MENU_CALL_FUNC_CLOSE_TEXT:
@@ -573,7 +577,7 @@ static const struct MenuHeader menuHeader = {
         // CALL(aUpdateSprites);
         UpdateSprites_Conv();
         // CALL(aUpdateTimePals);
-        SafeCallGBAuto(aUpdateTimePals);
+        UpdateTimePals();
         // CALL(aStartMenu_SetUpMenuItems);
         StartMenu_SetUpMenuItems();
         // LD_A_addr(wBattleMenuCursorPosition);
@@ -592,8 +596,8 @@ static const struct MenuHeader menuHeader = {
     //dw ['.ReturnRedraw'];
 
 
-DrawMenuAccount:
-    JP(mStartMenu__DrawMenuAccount);
+// DrawMenuAccount:
+    // JP(mStartMenu__DrawMenuAccount);
 
 }
 

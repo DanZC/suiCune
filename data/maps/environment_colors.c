@@ -29,7 +29,7 @@ static const uint8_t Env5Colors[] = {
     0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f, // dark
 };
 
-const uint8_t* EnvironmentColorsPointers[] = {
+const uint8_t* const EnvironmentColorsPointers[] = {
 // entries correspond to environment constants (see constants/map_data_constants.asm)
 // table_width 2, EnvironmentColorsPointers
     OutdoorColors, // unused

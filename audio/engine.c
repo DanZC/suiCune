@@ -4,6 +4,9 @@
 #include "drumkits.h"
 #include "notes.h"
 #include "wave_samples.h"
+#include "../home/audio.h"
+#include "../home/delay.h"
+#include "../data/trainers/encounter_music.h"
 
 //  The entire sound engine. Uses section "audio" in WRAM.
 
@@ -1328,4 +1331,31 @@ void PlayTrainerEncounterMusic(void) {
     LD_E_hl;                        // ld e, [hl]
     CALL(aPlayMusic);               // call PlayMusic
     RET;                            // ret
+}
+
+void PlayTrainerEncounterMusic_Conv(uint8_t e) {
+    // SET_PC(0xE900AU);
+    //  input: e = trainer type
+    // turn fade off
+    // XOR_A_A;                        // xor a
+    // LD_addr_A(wMusicFade);          // ld [wMusicFade], a
+    wram->wMusicFade = 0;
+                                    // play nothing for one frame
+    // PUSH_DE;                        // push de
+    // LD_DE(MUSIC_NONE);              // ld de, MUSIC_NONE
+    // CALL(aPlayMusic);               // call PlayMusic
+    PlayMusic_Conv(MUSIC_NONE);
+    // CALL(mDelayFrame);              // call DelayFrame
+    DelayFrame();
+                                    // play new song
+    // CALL(aMaxVolume);               // call MaxVolume
+    MaxVolume_Conv();
+    // POP_DE;                         // pop de
+    // LD_D(0x00);                     // ld d, $00
+    // LD_HL(mTrainerEncounterMusic);  // ld hl, TrainerEncounterMusic
+    // ADD_HL_DE;                      // add hl, de
+    // LD_E_hl;                        // ld e, [hl]
+    // CALL(aPlayMusic);               // call PlayMusic
+    PlayMusic_Conv(TrainerEncounterMusic[e]);
+    // RET;                            // ret
 }

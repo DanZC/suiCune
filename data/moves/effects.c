@@ -2222,7 +2222,7 @@ static const uint8_t DefenseCurl[] = {
     endmove_command,
 };
 
-const uint8_t* MoveEffectsPointers[] = {
+const uint8_t* const MoveEffectsPointers[] = {
 // entries correspond to EFFECT_* constants
 	// table_width 2, MoveEffectsPointers
 	[EFFECT_NORMAL_HIT] = NormalHit,

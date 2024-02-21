@@ -1055,8 +1055,8 @@ void PokegearJumptable(void) {
         case POKEGEARSTATE_PHONEJOYPAD:     PokegearPhone_Joypad(); RET;
         case POKEGEARSTATE_MAKEPHONECALL:   PokegearPhone_MakePhoneCall(); RET;
         case POKEGEARSTATE_FINISHPHONECALL: PokegearPhone_FinishPhoneCall(); RET;
-        case POKEGEARSTATE_RADIOINIT:       return PokegearRadio_Init();
-        case POKEGEARSTATE_RADIOJOYPAD:     return PokegearRadio_Joypad();
+        case POKEGEARSTATE_RADIOINIT:       PokegearRadio_Init(); RET;
+        case POKEGEARSTATE_RADIOJOYPAD:     PokegearRadio_Joypad(); RET;
         default: RET;
     }
     //dw ['PokegearClock_Init'];
@@ -1537,72 +1537,88 @@ not_hof:
 }
 
 void PokegearRadio_Init(void){
-    CALL(aInitPokegearTilemap);
+    // CALL(aInitPokegearTilemap);
+    InitPokegearTilemap_Conv();
     //depixel ['4', '10', '4', '4']
-    depixel4(4, 10, 4, 4);
-    LD_A(SPRITE_ANIM_INDEX_RADIO_TUNING_KNOB);
-    CALL(aInitSpriteAnimStruct);
-    LD_HL(SPRITEANIMSTRUCT_TILE_ID);
-    ADD_HL_BC;
-    LD_hl(0x08);
-    CALL(av_UpdateRadioStation);
-    LD_HL(wJumptableIndex);
-    INC_hl;
+    // depixel4(4, 10, 4, 4);
+    // LD_A(SPRITE_ANIM_INDEX_RADIO_TUNING_KNOB);
+    // CALL(aInitSpriteAnimStruct);
+    struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_RADIO_TUNING_KNOB, pixel4(4, 10, 4, 4));
+    // LD_HL(SPRITEANIMSTRUCT_TILE_ID);
+    // ADD_HL_BC;
+    // LD_hl(0x08);
+    bc->tileID = 0x08;
+    // CALL(av_UpdateRadioStation);
+    v_UpdateRadioStation_Conv();
+    // LD_HL(wJumptableIndex);
+    // INC_hl;
+    wram->wJumptableIndex++;
     //RET;
 
 }
 
 void PokegearRadio_Joypad(void){
-    LD_HL(hJoyLast);
-    LD_A_hl;
-    AND_A(B_BUTTON);
-    IF_NZ goto cancel;
-    LD_A_hl;
-    AND_A(D_LEFT);
-    IF_NZ goto left;
-    LD_A_addr(wPokegearRadioChannelAddr);
-    LD_L_A;
-    LD_A_addr(wPokegearRadioChannelAddr + 1);
-    LD_H_A;
-    LD_A_addr(wPokegearRadioChannelBank);
-    AND_A_A;
-    RET_Z ;
-    RST(aFarCall);
-    return;
-    //RET;
+    // LD_HL(hJoyLast);
+    // LD_A_hl;
+    // AND_A(B_BUTTON);
+    // IF_NZ goto cancel;
+    if(hram->hJoyLast & B_BUTTON) {
+    // cancel:
+        // LD_HL(wJumptableIndex);
+        // SET_hl(7);
+        bit_set(wram->wJumptableIndex, 7);
+        //RET;
+        return;
+    }
+    // LD_A_hl;
+    // AND_A(D_LEFT);
+    // IF_NZ goto left;
+    if(hram->hJoyLast & D_LEFT) {
+    // left:
+        // LD_A_addr(wPokegearFlags);
+        // BIT_A(POKEGEAR_PHONE_CARD_F);
+        // IF_Z goto no_phone;
+        if(bit_set(wram->wPokegearFlags, POKEGEAR_PHONE_CARD_F)) {
+            // LD_C(POKEGEARSTATE_PHONEINIT);
+            // LD_B(POKEGEARCARD_PHONE);
+            // goto switch_page;
+            Pokegear_SwitchPage_Conv(POKEGEARSTATE_PHONEINIT, POKEGEARCARD_PHONE);
+        }
 
+    // no_phone:
+        // LD_A_addr(wPokegearFlags);
+        // BIT_A(POKEGEAR_MAP_CARD_F);
+        // IF_Z goto no_map;
+        else if(bit_set(wram->wPokegearFlags, POKEGEAR_MAP_CARD_F)) {
+            // LD_C(POKEGEARSTATE_MAPCHECKREGION);
+            // LD_B(POKEGEARCARD_MAP);
+            // goto switch_page;
+            Pokegear_SwitchPage_Conv(POKEGEARSTATE_MAPCHECKREGION, POKEGEARCARD_MAP);
+        }
 
-left:
-    LD_A_addr(wPokegearFlags);
-    BIT_A(POKEGEAR_PHONE_CARD_F);
-    IF_Z goto no_phone;
-    LD_C(POKEGEARSTATE_PHONEINIT);
-    LD_B(POKEGEARCARD_PHONE);
-    goto switch_page;
+    // no_map:
+        else {
+            // LD_C(POKEGEARSTATE_CLOCKINIT);
+            // LD_B(POKEGEARCARD_CLOCK);
+            Pokegear_SwitchPage_Conv(POKEGEARSTATE_CLOCKINIT, POKEGEARCARD_CLOCK);
+        }
 
-
-no_phone:
-    LD_A_addr(wPokegearFlags);
-    BIT_A(POKEGEAR_MAP_CARD_F);
-    IF_Z goto no_map;
-    LD_C(POKEGEARSTATE_MAPCHECKREGION);
-    LD_B(POKEGEARCARD_MAP);
-    goto switch_page;
-
-
-no_map:
-    LD_C(POKEGEARSTATE_CLOCKINIT);
-    LD_B(POKEGEARCARD_CLOCK);
-
-switch_page:
-    CALL(aPokegear_SwitchPage);
-    return;
-    //RET;
-
-
-cancel:
-    LD_HL(wJumptableIndex);
-    SET_hl(7);
+    // switch_page:
+        // CALL(aPokegear_SwitchPage);
+        return;
+        //RET;
+    }
+    // LD_A_addr(wPokegearRadioChannelAddr);
+    // LD_L_A;
+    // LD_A_addr(wPokegearRadioChannelAddr + 1);
+    // LD_H_A;
+    // LD_A_addr(wPokegearRadioChannelBank);
+    // AND_A_A;
+    // RET_Z ;
+    if(gPokegearRadioChannelAddr == NULL)
+        return;
+    // RST(aFarCall);
+    return gPokegearRadioChannelAddr();
     //RET;
 
 }
@@ -3555,8 +3571,8 @@ void RadioMusicRestartPokemonChannel(void){
 
 void RadioMusicRestartPokemonChannel_Conv(void){
     gb_write(wPokegearRadioMusicPlaying, RESTART_MAP_MUSIC);
-    v_PlayMusic(MUSIC_NONE);
-    v_PlayMusic(MUSIC_POKEMON_CHANNEL);
+    PlayMusic_Conv(MUSIC_NONE);
+    PlayMusic_Conv(MUSIC_POKEMON_CHANNEL);
 }
 
 void Radio_BackUpFarCallParams(void){
@@ -3598,7 +3614,8 @@ void NoRadioStation_Conv(void){
     NoRadioName_Conv();
 //  no radio channel
     gb_write(wPokegearRadioChannelBank, 0);
-    gb_write16(wPokegearRadioChannelAddr, 0);
+    // gb_write16(wPokegearRadioChannelAddr, 0);
+    gPokegearRadioChannelAddr = NULL;
     hram->hBGMapMode = 0x1;
 }
 
@@ -3612,7 +3629,7 @@ void NoRadioMusic(void){
 }
 
 void NoRadioMusic_Conv(void){
-    v_PlayMusic(MUSIC_NONE);
+    PlayMusic_Conv(MUSIC_NONE);
     wram->wPokegearRadioMusicPlaying = ENTER_MAP_MUSIC;
 }
 
@@ -5065,7 +5082,7 @@ void LoadTownMapGFX(void){
     // LD_BC((BANK(aTownMapGFX) << 8) | 48);
     // CALL(aDecompressRequest2bpp);
     LoadPNG2bppAssetSectionToVRAM(vram->vTiles2, TownMapGFX, 0, 48);
-    RET;
+    // RET;
 
 }
 

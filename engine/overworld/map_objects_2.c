@@ -102,15 +102,7 @@ uint8_t CheckObjectFlag_Conv(struct MapObject* bc){
     // LD_D_A;
     // CP_A(-1);
     // IF_NZ goto check;
-    // LD_A_E;
-    // CP_A(-1);
-    // IF_Z goto unmasked;
-    if(bc->objectEventFlag == 0xffff)
-        return 0;
-    else if(bc->objectEventFlag == 0x00ff)
-        return 0xff;
-    // goto masked;
-    else {
+    if(HIGH(bc->objectEventFlag) != 0xff) {
     // check:
         // LD_B(CHECK_FLAG);
         // CALL(aEventFlagAction);
@@ -119,7 +111,16 @@ uint8_t CheckObjectFlag_Conv(struct MapObject* bc){
         // IF_NZ goto masked;
         if(EventFlagAction_Conv2(bc->objectEventFlag, CHECK_FLAG))
             return 0xff;
+        return 0;
     }
+    // LD_A_E;
+    // CP_A(-1);
+    // IF_Z goto unmasked;
+    else if(LOW(bc->objectEventFlag) == 0xff)
+        return 0;
+    // goto masked;
+    else
+        return 0xff;
 
 // unmasked:
     // XOR_A_A;
@@ -146,7 +147,7 @@ uint8_t GetObjectTimeMask_Conv(struct MapObject* bc){
     // CALL(aCheckObjectTime);
     // LD_A(-1);
     // RET_C ;
-    if(!CheckObjectTime_Conv(bc))
+    if(CheckObjectTime_Conv(bc))
         return 0xff;
     // XOR_A_A;
     // RET;

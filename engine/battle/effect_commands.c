@@ -10,6 +10,7 @@
 #include "../../data/types/type_boost_items.h"
 #include "../../data/moves/flail_reversal_power.h"
 #include "../../data/moves/critical_hit_moves.h"
+#include "../../home/array.h"
 #include "../../home/battle_vars.h"
 #include "../../home/battle.h"
 #include "../../home/copy.h"
@@ -1434,22 +1435,6 @@ bool CheckUserIsCharging_Conv(void){
 // end:
     // AND_A_A;
     // RET;
-}
-
-static inline bool IsInU8Array(const uint8_t* hl, uint8_t a) {
-    for(uint32_t i = 0; hl[i] != 0xff; ++i) {
-        if(hl[i] == a)
-            return true;
-    }
-    return false;
-}
-
-static inline bool IsInMoveArray(const move_t* hl, move_t a) {
-    for(uint32_t i = 0; hl[i] != 0xff; ++i) {
-        if(hl[i] == a)
-            return true;
-    }
-    return false;
 }
 
 static uint8_t BattleCommand_DoTurn_consume_pp(uint8_t* hl) {

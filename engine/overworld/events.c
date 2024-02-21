@@ -12,6 +12,7 @@
 #include "map_setup.h"
 #include "warp_connection.h"
 #include "player_step.h"
+#include "player_object.h"
 #include "map_objects.h"
 #include "../../home/joypad.h"
 #include "../../home/queue_script.h"
@@ -30,6 +31,7 @@
 #include "../events/misc_scripts.h"
 #include "../events/repel.h"
 #include "../events/map_name_sign.h"
+#include "../events/trainer_scripts.h"
 
 // INCLUDE "constants.asm"
 
@@ -212,6 +214,7 @@ void EnterMap(void){
     SetUpFiveStepWildEncounterCooldown();
     // FARCALL(aRunMapSetupScript);
     RunMapSetupScript();
+    hram->hBGMapMode = 0;
     // CALL(aDisableEvents);
     DisableEvents();
 
@@ -435,7 +438,7 @@ void v_CheckObjectEnteringVisibleRange(void){
     if(!bit_test(wram->wPlayerStepFlags, PLAYERSTEP_STOP_F))
         return;
     // FARCALL(aCheckObjectEnteringVisibleRange);
-    SafeCallGBAuto(aCheckObjectEnteringVisibleRange);
+    CheckObjectEnteringVisibleRange();
     // RET;
 }
 
@@ -916,7 +919,7 @@ u8_flag_s RunSceneScript_Conv(void){
     // LD_HL(wScriptFlags);
     // BIT_hl(3);
     // IF_Z goto nope;
-    if(bit_test(wram->wScriptFlags, 3))
+    if(!bit_test(wram->wScriptFlags, 3))
         return u8_flag(0, false);
 
     // LD_HL(wDeferredScriptAddr);
@@ -1010,7 +1013,7 @@ u8_flag_s CheckTimeEvents_Conv(void){
         // CALL(aCallScript);
         // SCF;
         // RET;
-        return u8_flag(CallScript_Conv2(NULL), true);
+        return u8_flag(0, false);
     }
     // XOR_A_A;
     // RET;
@@ -2186,8 +2189,8 @@ const Script_fn_t PlayerEventScriptPointers[] = {
 //  entries correspond to PLAYEREVENT_* constants
     //table_width ['3', 'PlayerEventScriptPointers']
     [PLAYEREVENT_NONE] = InvalidEventScript,  // PLAYEREVENT_NONE
-    // [PLAYEREVENT_SEENBYTRAINER] = SeenByTrainerScript,  // PLAYEREVENT_SEENBYTRAINER
-    // [PLAYEREVENT_TALKTOTRAINER] = TalkToTrainerScript,  // PLAYEREVENT_TALKTOTRAINER
+    [PLAYEREVENT_SEENBYTRAINER] = SeenByTrainerScript,  // PLAYEREVENT_SEENBYTRAINER
+    [PLAYEREVENT_TALKTOTRAINER] = TalkToTrainerScript,  // PLAYEREVENT_TALKTOTRAINER
     [PLAYEREVENT_ITEMBALL] = FindItemInBallScript,  // PLAYEREVENT_ITEMBALL
     [PLAYEREVENT_CONNECTION] = EdgeWarpScript,  // PLAYEREVENT_CONNECTION
     [PLAYEREVENT_WARP] = WarpToNewMapScript, // PLAYEREVENT_WARP

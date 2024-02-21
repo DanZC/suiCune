@@ -1422,7 +1422,7 @@ void init_function_pointers(void) {
     // REDIRECTED(LoadStation_UnownRadio);
     // REDIRECTED(TownMapPals);
     // REDIRECTED(LoadStation_PokemonChannel);
-    // REDIRECTED(LoadTownMapGFX);
+    CONVERTED(LoadTownMapGFX);
     //REDIRECTED(KantoMap);
     // REDIRECTED(AnimatePokegearModeIndicatorArrow);
     // REDIRECTED(ExitPokegearRadio_HandleMusic);
@@ -1880,7 +1880,7 @@ void init_function_pointers(void) {
     // REDIRECTED(PnP_CuteText);
     // REDIRECTED(OPT_OakText2);
     // REDIRECTED(BenFernText2A);
-    REDIRECTED(RocketRadioText8);
+    // REDIRECTED(RocketRadioText8);
     REDIRECTED(RocketRadio4);
     REDIRECTED(OaksPKMNTalk2);
     REDIRECTED(BuenasPasswordAfterMidnight);
@@ -3948,14 +3948,14 @@ void init_function_pointers(void) {
     REDIRECTED(SurfStartStep);
     REDIRECTED(WriteObjectXY);
     // REDIRECTED(RefreshPlayerCoords);
-    REDIRECTED(TrainerWalkToPlayer);
+    CONVERTED(TrainerWalkToPlayer);
     REDIRECTED(FollowNotExact);
     REDIRECTED(CopyTempObjectToObjectStruct);
     REDIRECTED(CopyObjectStruct);
     REDIRECTED(GetRelativeFacing);
     REDIRECTED(PlayerSpawn_ConvertCoords);
     // REDIRECTED(PlayerObjectTemplate);
-    REDIRECTED(CheckObjectEnteringVisibleRange);
+    // REDIRECTED(CheckObjectEnteringVisibleRange);
 
     // engine/tilesets/mapgroup_roofs.c
     CONVERTED(LoadMapGroupRoof);
@@ -4759,4 +4759,29 @@ void init_function_pointers(void) {
     // REDIRECTED(LoadHousePalette);
     // REDIRECTED(MansionPalette1);
     // REDIRECTED(RadioTowerPalette);
+
+    // engine/events/trainer_scripts.c
+    // REDIRECTED(AlreadyBeatenTrainerScript);
+    // REDIRECTED(TalkToTrainerScript);
+    // REDIRECTED(SeenByTrainerScript);
+    // REDIRECTED(StartBattleWithMapTrainerScript);
+
+    // engine/menus/menu_2.c
+    // REDIRECTED(PlaceMenuItemName);
+    // REDIRECTED(PlaceMoneyTopRight);
+    // REDIRECTED(DisplayMoneyAndCoinBalance);
+    // REDIRECTED(MoneyTopRightMenuHeader);
+    // REDIRECTED(MoneyBottomLeftMenuHeader);
+    // REDIRECTED(CoinString);
+    // REDIRECTED(PlaceMoneyBottomLeft);
+    // REDIRECTED(PlaceMoneyAtTopLeftOfTextbox);
+    // REDIRECTED(FindApricornsInBag);
+    // REDIRECTED(MoneyString);
+    // CONVERTED(StartMenu_DrawBugContestStatusBox);
+    CONVERTED(StartMenu_PrintBugContestStatus);
+    // REDIRECTED(PlaceMoneyTextbox);
+    // REDIRECTED(PlaceMenuItemQuantity);
+    // REDIRECTED(StartMenu_PrintSafariGameStatus);
+    // REDIRECTED(ShowMoney_TerminatorString);
+    // REDIRECTED(DisplayCoinCaseBalance);
 }

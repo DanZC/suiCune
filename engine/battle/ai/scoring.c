@@ -3,6 +3,7 @@
 #include "redundant.h"
 #include "../effect_commands.h"
 #include "../hidden_power.h"
+#include "../../../home/array.h"
 #include "../../../home/random.h"
 #include "../../../home/copy.h"
 #include "../../../data/moves/moves.h"
@@ -22,22 +23,6 @@ void AIScoring(void){
 
 
     return AI_Basic();
-}
-
-static inline bool IsInU8Array(const uint8_t* hl, uint8_t a) {
-    for(uint32_t i = 0; hl[i] != 0xff; ++i) {
-        if(hl[i] != a)
-            return true;
-    }
-    return false;
-}
-
-static inline bool IsInMoveArray(const move_t* hl, move_t a) {
-    for(uint32_t i = 0; hl[i] != (move_t)-1; ++i) {
-        if(hl[i] != a)
-            return true;
-    }
-    return false;
 }
 
 //  Don't do anything redundant:

@@ -349,8 +349,8 @@ void TextboxPalette_Conv(uint16_t hl, uint8_t c, uint8_t b) {
 //  Fill text box width c height b at hl with pal 7
 void TextboxPalette_Conv2(uint8_t* hl, uint8_t c, uint8_t b) {
     hl += (wAttrmap - wTilemap);
-    b += 1;
-    c += 1;
+    b += 2;
+    c += 2;
 
     for(uint8_t y = 0; y < b; ++y) {
         for(uint8_t x = 0; x < c; ++x) {
@@ -1049,7 +1049,8 @@ void PlacePOKe(void) {
 
 void PlacePOKe_Conv(struct TextPrintState* state) {
     //  print_name PlacePOKeText
-    PlaceCommandCharacter_Conv(state, Utf8ToCrystal("POKé@")); // mPlacePOKeText
+    uint8_t buffer[16];
+    PlaceCommandCharacter_Conv(state, U82CA(buffer, "POKé@")); // mPlacePOKeText
 }
 
 void PlaceKougeki(void) {
@@ -1081,7 +1082,8 @@ void PlacePKMN(void) {
 
 void PlacePKMN_Conv(struct TextPrintState* state) {
     // print_name PlacePKMNText
-    PlaceCommandCharacter_Conv(state, Utf8ToCrystal("<PK><MN>@")); // mPlacePKMNText
+    uint8_t buffer[16];
+    PlaceCommandCharacter_Conv(state, U82CA(buffer, "<PK><MN>@")); // mPlacePKMNText
 }
 
 void PlacePOKE(void) {

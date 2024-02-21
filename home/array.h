@@ -1,6 +1,8 @@
 void IsInArray(void);
 uint16_t IsInArray_Conv(uint16_t hl, uint16_t de, uint8_t a);
 uint16_t IsInArray_Conv_Item(const item_t* hl, item_t a);
+bool IsInU8Array(const uint8_t* hl, uint8_t a);
+bool IsInMoveArray(const move_t* hl, uint8_t a);
 void SkipNames(void);
 uint16_t SkipNames_Conv(uint16_t hl, uint8_t a);
 const uint8_t* SkipNames_Conv2(const uint8_t* hl, uint8_t a);

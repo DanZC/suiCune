@@ -727,7 +727,7 @@ void GetMapScreenCoords(void){
     // LD_A_H;
     // LD_addr_A(wOverworldMapAnchor + 1);
     wram->wOverworldMapAnchor = hl;
-    printf("anchor=%d\n", wram->wOverworldMapAnchor - wOverworldMapBlocks);
+    printf("load anchor=%d\n", wram->wOverworldMapAnchor - wOverworldMapBlocks);
     // LD_A_addr(wYCoord);
     // AND_A(1);
     // LD_addr_A(wMetatileStandingY);

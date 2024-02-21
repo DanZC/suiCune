@@ -32,6 +32,7 @@ void UnusedSetSwarmFlag(void);
 void UnusedCheckSwarmFlag(void);
 void RestartLuckyNumberCountdown(void);
 void v_CheckLuckyNumberShowFlag(void);
+bool v_CheckLuckyNumberShowFlag_Conv(void);
 void DoMysteryGiftIfDayHasPassed(void);
 void UpdateTimeRemaining(void);
 bool UpdateTimeRemaining_Conv(uint8_t* hl, uint8_t a);

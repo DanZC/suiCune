@@ -480,7 +480,7 @@ void DeleteMapObject_Conv(struct Object* obj) {
     // LD_HL(OBJECT_SPRITE);
     // ADD_HL_BC;
     // LD_hl(-1);
-    GetMapObject_Conv(a)->sprite = 0xff;
+    GetMapObject_Conv(a)->structId = 0xff;
 
 // ok:
 

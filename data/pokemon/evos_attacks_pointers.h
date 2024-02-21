@@ -1,3 +1,3 @@
 #pragma once
 
-extern const struct EvoMoves* EvosAttacksPointers[];
+extern const struct EvoMoves* const EvosAttacksPointers[];

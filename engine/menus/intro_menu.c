@@ -13,6 +13,8 @@
 #include "../../home/pokemon.h"
 #include "../../home/joypad.h"
 #include "../../home/menu.h"
+#include "../../home/sram.h"
+#include "../../home/random.h"
 #include "../../gfx/misc.h"
 #include "../../data/text/common.h"
 #include "../../charmap.h"
@@ -397,32 +399,44 @@ void InitializeWorld(void) {
 }
 
 void LoadOrRegenerateLuckyIDNumber(void) {
-    LD_A(MBANK(asLuckyIDNumber));
-    CALL(aOpenSRAM);
-    LD_A_addr(wCurDay);
-    INC_A;
-    LD_B_A;
-    LD_A_addr(sLuckyNumberDay);
-    CP_A_B;
-    LD_A_addr(sLuckyIDNumber + 1);
-    LD_C_A;
-    LD_A_addr(sLuckyIDNumber);
-    IF_Z goto skip;
-    LD_A_B;
-    LD_addr_A(sLuckyNumberDay);
-    CALL(aRandom);
-    LD_C_A;
-    CALL(aRandom);
+    // LD_A(MBANK(asLuckyIDNumber));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asLuckyIDNumber));
+    // LD_A_addr(wCurDay);
+    // INC_A;
+    // LD_B_A;
+    uint8_t b = wram->wCurDay + 1;
+    // LD_A_addr(sLuckyNumberDay);
+    // CP_A_B;
+    uint16_t id;
+    if(gb_read(sLuckyNumberDay) == b) {
+        // LD_A_addr(sLuckyIDNumber + 1);
+        // LD_C_A;
+        // LD_A_addr(sLuckyIDNumber);
+        // IF_Z goto skip;
+        id = gb_read16(sLuckyNumberDay);
+    }
+    else {
+        // LD_A_B;
+        // LD_addr_A(sLuckyNumberDay);
+        gb_write(sLuckyNumberDay, b);
+        // CALL(aRandom);
+        // LD_C_A;
+        // CALL(aRandom);
+        id = Random_Conv() << 8;
+        id |= Random_Conv();
+    }
 
-
-skip:
-    LD_addr_A(wLuckyIDNumber);
-    LD_addr_A(sLuckyIDNumber);
-    LD_A_C;
-    LD_addr_A(wLuckyIDNumber + 1);
-    LD_addr_A(sLuckyIDNumber + 1);
-    JP(mCloseSRAM);
-
+// skip:
+    // LD_addr_A(wLuckyIDNumber);
+    wram->wLuckyIDNumber = id;
+    // LD_addr_A(sLuckyIDNumber);
+    // LD_A_C;
+    gb_write16(sLuckyIDNumber, id);
+    // LD_addr_A(wLuckyIDNumber + 1);
+    // LD_addr_A(sLuckyIDNumber + 1);
+    // JP(mCloseSRAM);
+    return CloseSRAM_Conv();
 }
 
 void Continue(void) {

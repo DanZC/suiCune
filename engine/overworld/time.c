@@ -2,6 +2,7 @@
 #include "time.h"
 #include "../../home/random.h"
 #include "../../home/time.h"
+#include "../../home/pokedex_flags.h"
 
 void v_InitializeStartDay(void){
     CALL(aInitializeStartDay);
@@ -516,34 +517,44 @@ void UnusedCheckSwarmFlag(void){
 
 }
 
+static uint8_t RestartLuckyNumberCountdown_GetDaysUntilNextFriday(void) {
+    // CALL(aGetWeekday);
+    // LD_C_A;
+    uint8_t c = GetWeekday_Conv();
+    // LD_A(FRIDAY);
+    // SUB_A_C;
+    // IF_Z goto friday_saturday;
+    if(c >= FRIDAY) {
+    // friday_saturday:
+        // ADD_A(7);
+        return 7;
+    }
+    // IF_NC goto earlier;  // could have done "ret nc"
+    else {
+    // earlier:
+        // RET;
+        return FRIDAY - c;
+    }
+}
+
 void RestartLuckyNumberCountdown(void){
-    CALL(aRestartLuckyNumberCountdown_GetDaysUntilNextFriday);
-    LD_HL(wLuckyNumberDayTimer);
-    JP(mInitNDaysCountdown);
-
-
-GetDaysUntilNextFriday:
-    CALL(aGetWeekday);
-    LD_C_A;
-    LD_A(FRIDAY);
-    SUB_A_C;
-    IF_Z goto friday_saturday;
-    IF_NC goto earlier;  // could have done "ret nc"
-
-
-friday_saturday:
-    ADD_A(7);
-
-
-earlier:
-    RET;
-
+    // CALL(aRestartLuckyNumberCountdown_GetDaysUntilNextFriday);
+    uint8_t n = RestartLuckyNumberCountdown_GetDaysUntilNextFriday();
+    // LD_HL(wLuckyNumberDayTimer);
+    // JP(mInitNDaysCountdown);
+    return InitNDaysCountdown_Conv((uint8_t*)&wram->wLuckyNumberDayTimer, n);
 }
 
 void v_CheckLuckyNumberShowFlag(void){
     LD_HL(wLuckyNumberDayTimer);
     JP(mCheckDayDependentEventHL);
 
+}
+
+bool v_CheckLuckyNumberShowFlag_Conv(void){
+    // LD_HL(wLuckyNumberDayTimer);
+    // JP(mCheckDayDependentEventHL);
+    return CheckDayDependentEventHL_Conv((uint8_t*)&wram->wLuckyNumberDayTimer);
 }
 
 void DoMysteryGiftIfDayHasPassed(void){

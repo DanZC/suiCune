@@ -1,3 +1,3 @@
 #pragma once
 
-extern const uint8_t* MoveEffectsPointers[];
+extern const uint8_t* const MoveEffectsPointers[];

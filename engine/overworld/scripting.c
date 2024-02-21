@@ -1,5 +1,6 @@
 #include "../../constants.h"
 #include "../../util/scripting.h"
+#include "../../audio/engine.h"
 #include "../../home/audio.h"
 #include "../../home/delay.h"
 #include "../../home/copy.h"
@@ -1651,6 +1652,15 @@ void Script_encountermusic(void){
 
 }
 
+void Script_encountermusic_Conv(script_s* s){
+    (void)s;
+    // LD_A_addr(wOtherTrainerClass);
+    // LD_E_A;
+    // FARCALL(aPlayTrainerEncounterMusic);
+    PlayTrainerEncounterMusic_Conv(wram->wOtherTrainerClass);
+    // RET;
+}
+
 void Script_playmapmusic(void){
     CALL(aPlayMapMusic);
     RET;
@@ -1892,7 +1902,7 @@ void ApplyMovement_Conv(uint8_t c, const uint8_t* hl){
     wram->wScriptMode = SCRIPT_WAIT_MOVEMENT;
     // CALL(aStopScript);
     // RET;
-    StopScript();
+    StopScript_Conv();
 }
 
 void UnfreezeFollowerObject(void){
@@ -2614,6 +2624,20 @@ void Script_loadtemptrainer(void){
     LD_addr_A(wOtherTrainerID);
     RET;
 
+}
+
+void Script_loadtemptrainer_Conv(script_s* s){
+    (void)s;
+    // LD_A((1 << 7) | 1);
+    // LD_addr_A(wBattleScriptFlags);
+    wram->wBattleScriptFlags = (1 << 7) | 1;
+    // LD_A_addr(wTempTrainerClass);
+    // LD_addr_A(wOtherTrainerClass);
+    wram->wOtherTrainerClass = wram->wTempTrainerClass;
+    // LD_A_addr(wTempTrainerID);
+    // LD_addr_A(wOtherTrainerID);
+    wram->wOtherTrainerID = wram->wTempTrainerID;
+    // RET;
 }
 
 void Script_loadwildmon(void){

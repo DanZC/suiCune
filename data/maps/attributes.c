@@ -8,8 +8,8 @@
 
 #define calc_tile_src(_x) ((((_x) + 3) < 0)? -((_x) + 3): 0)
 #define calc_tile_tgt(_x) ((((_x) + 3) < 0)? 0: ((_x) + 3))
-#define calc_map_blk_n(_name, _x) (calc_tile_src(_x))
-#define calc_map_blk_s(_name, _x) ((_name##_WIDTH * (_name##_HEIGHT - 3)) + calc_tile_src(_x))
+#define calc_map_blk_n(_name, _x) ((_name##_WIDTH * (_name##_HEIGHT - 3)) + calc_tile_src(_x))
+#define calc_map_blk_s(_name, _x) (calc_tile_src(_x))
 #define calc_map_blk_w(_name, _x) ((_name##_WIDTH * calc_tile_src(_x)) + _name##_WIDTH - 3)
 #define calc_map_blk_e(_name, _x) (_name##_WIDTH * calc_tile_src(_x))
 #define calc_map_map_n(_name, _x) (calc_tile_tgt(_x))

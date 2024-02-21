@@ -3,6 +3,7 @@
 #include "../../home/map_objects.h"
 #include "../../home/map.h"
 #include "../../home/copy.h"
+#include "../../home/movement.h"
 
 void BlankScreen(void){
     CALL(aDisableSpriteUpdates);
@@ -204,7 +205,7 @@ void RefreshPlayerCoords(void){
     wram->wPlayerStruct.nextMapY = y;
     // LD_HL(wMapObjects + MAPOBJECT_Y_COORD);
     // LD_hl_E;
-    wram->wMapObject[0].objectYCoord = y;
+    wram->wPlayerObject.objectYCoord = y;
     // LD_HL(wPlayerLastMapY);
     // LD_hl_E;
     wram->wPlayerStruct.mapY = y;
@@ -472,7 +473,7 @@ void InitializeVisibleSprites(void){
         // LD_A_hl;
         // CP_A(-1);
         // IF_NZ goto next;
-        if(bc[a].structId == 0xff)
+        if(bc[a].structId != 0xff)
             continue;
 
         // LD_A_addr(wXCoord);
@@ -494,7 +495,7 @@ void InitializeVisibleSprites(void){
 
         // CP_A(MAPOBJECT_SCREEN_WIDTH);
         // IF_NC goto next;
-        if(x >= MAPOBJECT_SCREEN_WIDTH)
+        if(x - d >= MAPOBJECT_SCREEN_WIDTH)
             continue;
 
         // LD_HL(MAPOBJECT_Y_COORD);
@@ -509,7 +510,7 @@ void InitializeVisibleSprites(void){
 
         // CP_A(MAPOBJECT_SCREEN_HEIGHT);
         // IF_NC goto next;
-        if(y >= MAPOBJECT_SCREEN_HEIGHT)
+        if(y - e >= MAPOBJECT_SCREEN_HEIGHT)
             continue;
 
         // PUSH_BC;
@@ -548,142 +549,168 @@ void CheckObjectEnteringVisibleRange(void){
         return;
     // LD_HL(mCheckObjectEnteringVisibleRange_dw);
     // RST(aJumpTable);
+    uint8_t d, e, a = 1;
+    struct MapObject* bc = (struct MapObject*)wram_ptr(wMapObjects);
     switch(wram->wPlayerStepDirection) {
-        case DOWN: goto Down;
-        case UP: goto Up;
-        case LEFT: goto Left;
-        case RIGHT: goto Right;
-    }
-    RET;
+    case DOWN:
+    // Down:
+        // LD_A_addr(wYCoord);
+        // ADD_A(9);
+        d = wram->wYCoord + 9;
+        goto Vertical;
+    case UP:
+    // Up:
+        // LD_A_addr(wYCoord);
+        // SUB_A(1);
+        d = wram->wYCoord - 1;
+    Vertical:
+        // LD_D_A;
+        // LD_A_addr(wXCoord);
+        // LD_E_A;
+        e = wram->wXCoord;
+        // LD_BC(wMap1Object);
+        // LD_A(1);
 
-dw:
+        do {
+        // loop_v:
+            // LDH_addr_A(hMapObjectIndex);
+            hram->hMapObjectIndex = a;
+            // LD_HL(MAPOBJECT_SPRITE);
+            // ADD_HL_BC;
+            // LD_A_hl;
+            // AND_A_A;
+            // IF_Z goto next_v;
+            if(bc[a].sprite == 0)
+                continue;
+            // LD_HL(MAPOBJECT_Y_COORD);
+            // ADD_HL_BC;
+            // LD_A_D;
+            // CP_A_hl;
+            // IF_NZ goto next_v;
+            if(bc[a].objectYCoord != d)
+                continue;
+            // LD_HL(MAPOBJECT_OBJECT_STRUCT_ID);
+            // ADD_HL_BC;
+            // LD_A_hl;
+            // CP_A(-1);
+            // IF_NZ goto next_v;
+            if(bc[a].structId != 0xff)
+                continue;
+            // LD_HL(MAPOBJECT_X_COORD);
+            // ADD_HL_BC;
+            // LD_A_hl;
+            // ADD_A(1);
+            // SUB_A_E;
+            // IF_C goto next_v;
+            // CP_A(MAPOBJECT_SCREEN_WIDTH);
+            // IF_NC goto next_v;
+            if(bc[a].objectXCoord + 1 < e
+            || bc[a].objectXCoord + 1 - e >= MAPOBJECT_SCREEN_WIDTH)
+                continue;
+            // PUSH_DE;
+            // PUSH_BC;
+            // CALL(aCopyObjectStruct);
+            CopyObjectStruct_Conv(bc + a, a);
+            // POP_BC;
+            // POP_DE;
+
+
+        // next_v:
+            // LD_HL(MAPOBJECT_LENGTH);
+            // ADD_HL_BC;
+            // LD_B_H;
+            // LD_C_L;
+            // LDH_A_addr(hMapObjectIndex);
+            // INC_A;
+            // CP_A(NUM_OBJECTS);
+            // IF_NZ goto loop_v;
+        } while(++a != NUM_OBJECTS);
+        // RET;
+        return;
+    case LEFT:
+    // Left:
+        // LD_A_addr(wXCoord);
+        // SUB_A(1);
+        e = wram->wXCoord - 1;
+        goto Horizontal;
+    case RIGHT:
+    // Right:
+        // LD_A_addr(wXCoord);
+        // ADD_A(10);
+        e = wram->wXCoord + 10;
+
+    Horizontal:
+        // LD_E_A;
+        // LD_A_addr(wYCoord);
+        // LD_D_A;
+        d = wram->wYCoord;
+        // LD_BC(wMap1Object);
+        // LD_A(1);
+
+        do {
+        // loop_h:
+            // LDH_addr_A(hMapObjectIndex);
+            hram->hMapObjectIndex = a;
+            // LD_HL(MAPOBJECT_SPRITE);
+            // ADD_HL_BC;
+            // LD_A_hl;
+            // AND_A_A;
+            // IF_Z goto next_h;
+            if(bc[a].sprite == 0)
+                continue;
+            // LD_HL(MAPOBJECT_X_COORD);
+            // ADD_HL_BC;
+            // LD_A_E;
+            // CP_A_hl;
+            // IF_NZ goto next_h;
+            if(bc[a].objectXCoord != e)
+                continue;
+            // LD_HL(MAPOBJECT_OBJECT_STRUCT_ID);
+            // ADD_HL_BC;
+            // LD_A_hl;
+            // CP_A(-1);
+            // IF_NZ goto next_h;
+            if(bc[a].structId != 0xff)
+                continue;
+            // LD_HL(MAPOBJECT_Y_COORD);
+            // ADD_HL_BC;
+            // LD_A_hl;
+            // ADD_A(1);
+            // SUB_A_D;
+            // IF_C goto next_h;
+            // CP_A(MAPOBJECT_SCREEN_HEIGHT);
+            // IF_NC goto next_h;
+            if(bc[a].objectYCoord + 1 < d
+            || bc[a].objectYCoord + 1 - d >= MAPOBJECT_SCREEN_HEIGHT)
+                continue;
+            // PUSH_DE;
+            // PUSH_BC;
+            // CALL(aCopyObjectStruct);
+            CopyObjectStruct_Conv(bc + a, a);
+            // POP_BC;
+            // POP_DE;
+
+        // next_h:
+            // LD_HL(MAPOBJECT_LENGTH);
+            // ADD_HL_BC;
+            // LD_B_H;
+            // LD_C_L;
+            // LDH_A_addr(hMapObjectIndex);
+            // INC_A;
+            // CP_A(NUM_OBJECTS);
+            // IF_NZ goto loop_h;
+        } while(++a != NUM_OBJECTS);
+        // RET;
+        return;
+    }
+    // RET;
+    return;
+
+// dw:
     //dw ['.Down'];
     //dw ['.Up'];
     //dw ['.Left'];
     //dw ['.Right'];
-
-
-Up:
-    LD_A_addr(wYCoord);
-    SUB_A(1);
-    goto Vertical;
-
-
-Down:
-    LD_A_addr(wYCoord);
-    ADD_A(9);
-
-Vertical:
-    LD_D_A;
-    LD_A_addr(wXCoord);
-    LD_E_A;
-    LD_BC(wMap1Object);
-    LD_A(1);
-
-loop_v:
-    LDH_addr_A(hMapObjectIndex);
-    LD_HL(MAPOBJECT_SPRITE);
-    ADD_HL_BC;
-    LD_A_hl;
-    AND_A_A;
-    IF_Z goto next_v;
-    LD_HL(MAPOBJECT_Y_COORD);
-    ADD_HL_BC;
-    LD_A_D;
-    CP_A_hl;
-    IF_NZ goto next_v;
-    LD_HL(MAPOBJECT_OBJECT_STRUCT_ID);
-    ADD_HL_BC;
-    LD_A_hl;
-    CP_A(-1);
-    IF_NZ goto next_v;
-    LD_HL(MAPOBJECT_X_COORD);
-    ADD_HL_BC;
-    LD_A_hl;
-    ADD_A(1);
-    SUB_A_E;
-    IF_C goto next_v;
-    CP_A(MAPOBJECT_SCREEN_WIDTH);
-    IF_NC goto next_v;
-    PUSH_DE;
-    PUSH_BC;
-    CALL(aCopyObjectStruct);
-    POP_BC;
-    POP_DE;
-
-
-next_v:
-    LD_HL(MAPOBJECT_LENGTH);
-    ADD_HL_BC;
-    LD_B_H;
-    LD_C_L;
-    LDH_A_addr(hMapObjectIndex);
-    INC_A;
-    CP_A(NUM_OBJECTS);
-    IF_NZ goto loop_v;
-    RET;
-
-
-Left:
-    LD_A_addr(wXCoord);
-    SUB_A(1);
-    goto Horizontal;
-
-
-Right:
-    LD_A_addr(wXCoord);
-    ADD_A(10);
-
-Horizontal:
-    LD_E_A;
-    LD_A_addr(wYCoord);
-    LD_D_A;
-    LD_BC(wMap1Object);
-    LD_A(1);
-
-loop_h:
-    LDH_addr_A(hMapObjectIndex);
-    LD_HL(MAPOBJECT_SPRITE);
-    ADD_HL_BC;
-    LD_A_hl;
-    AND_A_A;
-    IF_Z goto next_h;
-    LD_HL(MAPOBJECT_X_COORD);
-    ADD_HL_BC;
-    LD_A_E;
-    CP_A_hl;
-    IF_NZ goto next_h;
-    LD_HL(MAPOBJECT_OBJECT_STRUCT_ID);
-    ADD_HL_BC;
-    LD_A_hl;
-    CP_A(-1);
-    IF_NZ goto next_h;
-    LD_HL(MAPOBJECT_Y_COORD);
-    ADD_HL_BC;
-    LD_A_hl;
-    ADD_A(1);
-    SUB_A_D;
-    IF_C goto next_h;
-    CP_A(MAPOBJECT_SCREEN_HEIGHT);
-    IF_NC goto next_h;
-    PUSH_DE;
-    PUSH_BC;
-    CALL(aCopyObjectStruct);
-    POP_BC;
-    POP_DE;
-
-
-next_h:
-    LD_HL(MAPOBJECT_LENGTH);
-    ADD_HL_BC;
-    LD_B_H;
-    LD_C_L;
-    LDH_A_addr(hMapObjectIndex);
-    INC_A;
-    CP_A(NUM_OBJECTS);
-    IF_NZ goto loop_h;
-    RET;
-
 }
 
 void CopyTempObjectToObjectStruct(void){
@@ -920,72 +947,85 @@ void CopyTempObjectToObjectStruct_Conv(struct Object* de){
     // RET;
 }
 
-void TrainerWalkToPlayer(void){
-    LDH_A_addr(hLastTalked);
-    CALL(aInitMovementBuffer);
-    LD_A(movement_step_sleep);
-    CALL(aAppendToMovementBuffer);
-    LD_A_addr(wWalkingIntoNPC);
-    DEC_A;
-    IF_Z goto TerminateStep;
-    LDH_A_addr(hLastTalked);
-    LD_B_A;
-    LD_C(PLAYER);
-    LD_D(1);
-    CALL(aTrainerWalkToPlayer_GetPathToPlayer);
-    CALL(aDecrementMovementBufferCount);
-
-
-TerminateStep:
-    LD_A(movement_step_end);
-    CALL(aAppendToMovementBuffer);
-    RET;
-
-
-GetPathToPlayer:
-    PUSH_DE;
-    PUSH_BC;
+static void TrainerWalkToPlayer_GetPathToPlayer(uint8_t b, uint8_t c, uint8_t d) {
+    // PUSH_DE;
+    // PUSH_BC;
 //  get player object struct, load to de
-    LD_A_C;
-    CALL(aGetMapObject);
-    LD_HL(MAPOBJECT_OBJECT_STRUCT_ID);
-    ADD_HL_BC;
-    LD_A_hl;
-    CALL(aGetObjectStruct);
-    LD_D_B;
-    LD_E_C;
+    // LD_A_C;
+    // CALL(aGetMapObject);
+    struct MapObject* bc = GetMapObject_Conv(c);
+    // LD_HL(MAPOBJECT_OBJECT_STRUCT_ID);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // CALL(aGetObjectStruct);
+    struct Object* de = GetObjectStruct_Conv(bc->structId);
+    // LD_D_B;
+    // LD_E_C;
 
 //  get last talked object struct, load to bc
-    POP_BC;
-    LD_A_B;
-    CALL(aGetMapObject);
-    LD_HL(MAPOBJECT_OBJECT_STRUCT_ID);
-    ADD_HL_BC;
-    LD_A_hl;
-    CALL(aGetObjectStruct);
+    // POP_BC;
+    // LD_A_B;
+    // CALL(aGetMapObject);
+    struct MapObject* bc2 = GetMapObject_Conv(b);
+    // LD_HL(MAPOBJECT_OBJECT_STRUCT_ID);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // CALL(aGetObjectStruct);
+    struct Object* de2 = GetObjectStruct_Conv(bc2->structId);
 
 //  get last talked coords, load to bc
-    LD_HL(OBJECT_NEXT_MAP_X);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_HL(OBJECT_NEXT_MAP_Y);
-    ADD_HL_BC;
-    LD_C_hl;
-    LD_B_A;
+    // LD_HL(OBJECT_NEXT_MAP_X);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    uint8_t x2 = de2->nextMapX;
+    // LD_HL(OBJECT_NEXT_MAP_Y);
+    // ADD_HL_BC;
+    // LD_C_hl;
+    // LD_B_A;
+    uint8_t y2 = de2->nextMapY;
 
 //  get player coords, load to de
-    LD_HL(OBJECT_NEXT_MAP_X);
-    ADD_HL_DE;
-    LD_A_hl;
-    LD_HL(OBJECT_NEXT_MAP_Y);
-    ADD_HL_DE;
-    LD_E_hl;
-    LD_D_A;
+    // LD_HL(OBJECT_NEXT_MAP_X);
+    // ADD_HL_DE;
+    // LD_A_hl;
+    uint8_t x1 = de->nextMapX;
+    // LD_HL(OBJECT_NEXT_MAP_Y);
+    // ADD_HL_DE;
+    // LD_E_hl;
+    // LD_D_A;
+    uint8_t y1 = de->nextMapY;
+    // POP_AF;
+    // CALL(aComputePathToWalkToPlayer);
+    ComputePathToWalkToPlayer_Conv(x2, y2, x1, y1, d);
+    // RET;
+}
 
-    POP_AF;
-    CALL(aComputePathToWalkToPlayer);
-    RET;
+void TrainerWalkToPlayer(void){
+    // LDH_A_addr(hLastTalked);
+    // CALL(aInitMovementBuffer);
+    InitMovementBuffer_Conv(hram->hLastTalked);
+    // LD_A(movement_step_sleep);
+    // CALL(aAppendToMovementBuffer);
+    AppendToMovementBuffer_Conv(movement_step_sleep);
+    // LD_A_addr(wWalkingIntoNPC);
+    // DEC_A;
+    // IF_Z goto TerminateStep;
+    if(wram->wWalkingIntoNPC != 1) {
+        // LDH_A_addr(hLastTalked);
+        // LD_B_A;
+        // LD_C(PLAYER);
+        // LD_D(1);
+        // CALL(aTrainerWalkToPlayer_GetPathToPlayer);
+        TrainerWalkToPlayer_GetPathToPlayer(hram->hLastTalked, PLAYER, 1);
+        // CALL(aDecrementMovementBufferCount);
+        DecrementMovementBufferCount_Conv();
+    }
 
+// TerminateStep:
+    // LD_A(movement_step_end);
+    // CALL(aAppendToMovementBuffer);
+    AppendToMovementBuffer_Conv(movement_step_end);
+    // RET;
 }
 
 void SurfStartStep(void){

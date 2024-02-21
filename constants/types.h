@@ -976,7 +976,7 @@ struct WildGrassMons
     uint8_t mapGroup;
     uint8_t mapNumber;
     uint8_t encounterRates[3];
-    struct { species_t species; uint8_t level; } mons[3][7];
+    struct { uint8_t level; species_t species; } mons[3][7];
 };
 
 struct WildWaterMons
@@ -984,7 +984,7 @@ struct WildWaterMons
     uint8_t mapGroup;
     uint8_t mapNumber;
     uint8_t encounterRate;
-    struct { species_t species; uint8_t level; } mons[3];
+    struct { uint8_t level; species_t species; } mons[3];
 };
 
 union WildMons

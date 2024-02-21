@@ -7,6 +7,7 @@
 #include "../../home/map.h"
 #include "../../home/menu.h"
 #include "../../home/joypad.h"
+#include "../../home/map_objects.h"
 #include "../../util/network.h"
 
 static const struct TextCmd Text_AskHostOrJoin[] = {
@@ -199,6 +200,7 @@ void LANConnection_Join(void) {
     Textbox_Conv2(coord(6, 0, wram->wTilemap), TEXTBOX_Y - 2, SCREEN_WIDTH - 6 - 2);
     PlaceLANConnectionItems();
     PlaceLANConnectionMenuCursor(selection);
+    UpdateSprites_Conv();
     DelayFrame();
 
     int frameCount = 0;

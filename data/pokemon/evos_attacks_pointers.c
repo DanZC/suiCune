@@ -4460,7 +4460,7 @@ static const struct EvoMoves CelebiEvosAttacks = {
 };
 
 
-const struct EvoMoves* EvosAttacksPointers[] = {
+const struct EvoMoves* const EvosAttacksPointers[] = {
     &BulbasaurEvosAttacks,
     &IvysaurEvosAttacks,
     &VenusaurEvosAttacks,

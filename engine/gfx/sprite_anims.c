@@ -3,6 +3,7 @@
 #include "sprites.h"
 #include "../../home/audio.h"
 #include "../movie/splash.h"
+#include "../pokegear/pokegear.h"
 
 static void AnimSeq_Null_Conv(struct SpriteAnim* bc);
 static void AnimSeq_PartyMon_Conv(struct SpriteAnim* bc);
@@ -1490,8 +1491,9 @@ void AnimSeq_RadioTuningKnob(void){
 }
 
 static void AnimSeq_RadioTuningKnob_Conv(struct SpriteAnim* bc){
-    REG_BC = (bc - wram->wSpriteAnim) * SPRITEANIMSTRUCT_LENGTH + wSpriteAnimationStructs;
-    CALLFAR(aAnimateTuningKnob);
+    // REG_BC = (bc - wram->wSpriteAnim) * SPRITEANIMSTRUCT_LENGTH + wSpriteAnimationStructs;
+    // CALLFAR(aAnimateTuningKnob);
+    AnimateTuningKnob_Conv(bc);
 }
 
 void AnimSeq_CutLeaves(void){

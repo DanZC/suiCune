@@ -2,6 +2,8 @@
 #include "specials.h"
 #include "../../data/events/special_pointers.h"
 #include "../overworld/map_objects.h"
+#include "../overworld/time.h"
+#include "../menus/intro_menu.h"
 #include "../../home/sram.h"
 
 void Special(void){
@@ -378,6 +380,19 @@ carry:
 
 }
 
+void ScriptReturnCarry_Conv(bool carry){
+    // IF_C goto carry;
+    // XOR_A_A;
+    // LD_addr_A(wScriptVar);
+    // RET;
+
+// carry:
+    // LD_A(1);
+    // LD_addr_A(wScriptVar);
+    // RET;
+    wram->wScriptVar = (carry)? 1: 0;
+}
+
 void UnusedCheckUnusedTwoDayTimer(void){
     FARCALL(aCheckUnusedTwoDayTimer);
     LD_A_addr(wUnusedTwoDayTimer);
@@ -422,18 +437,21 @@ void CheckPokerus(void){
 }
 
 void ResetLuckyNumberShowFlag(void){
-    FARCALL(aRestartLuckyNumberCountdown);
-    LD_HL(wLuckyNumberShowFlag);
-    RES_hl(LUCKYNUMBERSHOW_GAME_OVER_F);
-    FARCALL(aLoadOrRegenerateLuckyIDNumber);
-    RET;
-
+    // FARCALL(aRestartLuckyNumberCountdown);
+    RestartLuckyNumberCountdown();
+    // LD_HL(wLuckyNumberShowFlag);
+    // RES_hl(LUCKYNUMBERSHOW_GAME_OVER_F);
+    bit_reset(wram->wLuckyNumberShowFlag, LUCKYNUMBERSHOW_GAME_OVER_F);
+    // FARCALL(aLoadOrRegenerateLuckyIDNumber);
+    LoadOrRegenerateLuckyIDNumber();
+    // RET;
 }
 
 void CheckLuckyNumberShowFlag(void){
-    FARCALL(av_CheckLuckyNumberShowFlag);
-    JP(mScriptReturnCarry);
-
+    // FARCALL(av_CheckLuckyNumberShowFlag);
+    bool flag = v_CheckLuckyNumberShowFlag_Conv();
+    // JP(mScriptReturnCarry);
+    return ScriptReturnCarry_Conv(flag);
 }
 
 void SnorlaxAwake(void){

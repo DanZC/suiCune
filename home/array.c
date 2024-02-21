@@ -84,6 +84,22 @@ uint16_t IsInArray_Conv_Item(const item_t* hl, item_t a) {
     }
 }
 
+bool IsInU8Array(const uint8_t* hl, uint8_t a) {
+    for(uint32_t i = 0; hl[i] != 0xff; ++i) {
+        if(hl[i] == a)
+            return true;
+    }
+    return false;
+}
+
+bool IsInMoveArray(const move_t* hl, uint8_t a) {
+    for(uint32_t i = 0; hl[i] != (move_t)-1; ++i) {
+        if(hl[i] == a)
+            return true;
+    }
+    return false;
+}
+
 void SkipNames(void){
     //  Skip a names.
     LD_BC(NAME_LENGTH);

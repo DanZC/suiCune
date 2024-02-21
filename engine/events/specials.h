@@ -28,6 +28,7 @@ void StartGameCornerGame(void);
 void CheckCoinsAndCoinCase(void);
 void ClearBGPalettesBufferScreen(void);
 void ScriptReturnCarry(void);
+void ScriptReturnCarry_Conv(bool carry);
 void UnusedCheckUnusedTwoDayTimer(void);
 void ActivateFishingSwarm(void);
 void StoreSwarmMapIndices(void);

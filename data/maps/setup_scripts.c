@@ -183,17 +183,17 @@ static const uint8_t MapSetupScript_Submenu[] = {
 const uint8_t* const MapSetupScripts[] = {
 // entries correspond to MAPSETUP_* constants (see constants/map_setup_constants.asm)
     // table_width 2, MapSetupScripts
-    MapSetupScript_Warp,
-    MapSetupScript_Continue,
-    MapSetupScript_ReloadMap,
-    MapSetupScript_Teleport,
-    MapSetupScript_Door,
-    MapSetupScript_Fall,
-    MapSetupScript_Connection,
-    MapSetupScript_LinkReturn,
-    MapSetupScript_Train,
-    MapSetupScript_Submenu,
-    MapSetupScript_BadWarp,
-    MapSetupScript_Fly,
+    [MAPSETUP_WARP       - MAPSETUP_WARP] = MapSetupScript_Warp,
+    [MAPSETUP_CONTINUE   - MAPSETUP_WARP] = MapSetupScript_Continue,
+    [MAPSETUP_RELOADMAP  - MAPSETUP_WARP] = MapSetupScript_ReloadMap,
+    [MAPSETUP_TELEPORT   - MAPSETUP_WARP] = MapSetupScript_Teleport,
+    [MAPSETUP_DOOR       - MAPSETUP_WARP] = MapSetupScript_Door,
+    [MAPSETUP_FALL       - MAPSETUP_WARP] = MapSetupScript_Fall,
+    [MAPSETUP_CONNECTION - MAPSETUP_WARP] = MapSetupScript_Connection,
+    [MAPSETUP_LINKRETURN - MAPSETUP_WARP] = MapSetupScript_LinkReturn,
+    [MAPSETUP_TRAIN      - MAPSETUP_WARP] = MapSetupScript_Train,
+    [MAPSETUP_SUBMENU    - MAPSETUP_WARP] = MapSetupScript_Submenu,
+    [MAPSETUP_BADWARP    - MAPSETUP_WARP] = MapSetupScript_BadWarp,
+    [MAPSETUP_FLY        - MAPSETUP_WARP] = MapSetupScript_Fly,
 };
 static_assert(lengthof(MapSetupScripts) == NUM_MAPSETUP_SCRIPTS, "");
