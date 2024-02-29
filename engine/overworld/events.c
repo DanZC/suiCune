@@ -197,7 +197,8 @@ void StartMap(void){
     // LD_HL(wMapStatus);
     // LD_BC(wMapStatusEnd - wMapStatus);
     // CALL(aByteFill);
-    ByteFill_Conv2(&wram->wMapStatus, 0, wMapStatusEnd - wMapStatus);
+    ByteFill_Conv2(&wram->wMapStatus, wMapStatusEnd - wMapStatus, 0);
+    hram->hBGMapMode = 0;
     // FARCALL(aInitCallReceiveDelay);
     InitCallReceiveDelay();
     // CALL(aClearJoypad);
@@ -214,7 +215,6 @@ void EnterMap(void){
     SetUpFiveStepWildEncounterCooldown();
     // FARCALL(aRunMapSetupScript);
     RunMapSetupScript();
-    hram->hBGMapMode = 0;
     // CALL(aDisableEvents);
     DisableEvents();
 
@@ -1173,7 +1173,10 @@ static u8_flag_s ObjectEventTypeArray_script(struct MapObject* bc) {
         return u8_flag(CallScript_Conv2(hl), true);
     }
     else {
-        return u8_flag(CallScript_Conv(GetMapScriptsBank_Conv(), bc->objectScript), true);
+        if(!redirectFunc[(GetMapScriptsBank_Conv() << 14) | bc->objectScript])
+            return u8_flag(CallScript_Conv2(ObjectEvent), true);
+        Script_fn_t script = (Script_fn_t)redirectFunc[(GetMapScriptsBank_Conv() << 14) | bc->objectScript];
+        return u8_flag(CallScript_Conv2(script), true);
     }
 }
 

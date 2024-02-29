@@ -199,3 +199,4 @@ extern uint8_t gCurMapObjectEventCount;
 extern const struct ObjEvent* gCurMapObjectEventsPointer;
 
 extern struct BGEvent gCurBGEvent;
+extern struct MapConnectionData gMapConnections[4];

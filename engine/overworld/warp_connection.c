@@ -45,6 +45,8 @@ void HandleContinueMap(void){
 }
 
 void EnterMapConnection(void){
+    EnterMapConnection_Conv();
+    return;
 //  Return carry if a connection has been entered.
     LD_A_addr(wPlayerStepDirection);
     AND_A_A;  // DOWN
@@ -188,6 +190,174 @@ done:
     SCF;
     RET;
 
+}
+
+bool EnterMapConnection_Conv(void){
+//  Return carry if a connection has been entered.
+    // LD_A_addr(wPlayerStepDirection);
+    switch(wram->wPlayerStepDirection) {
+    // AND_A_A;  // DOWN
+    // JP_Z (mEnterMapConnection_south);
+    case DOWN:
+    // south:
+        // LD_A_addr(wSouthConnectedMapGroup);
+        // LD_addr_A(wMapGroup);
+        wram->wMapGroup = gMapConnections[SOUTH_F].connectedMapGroup;
+        // LD_A_addr(wSouthConnectedMapNumber);
+        // LD_addr_A(wMapNumber);
+        wram->wMapNumber = gMapConnections[SOUTH_F].connectedMapNumber;
+        // LD_A_addr(wSouthConnectionStripYOffset);
+        // LD_addr_A(wYCoord);
+        wram->wYCoord = gMapConnections[SOUTH_F].connectionStripYOffset;
+        // LD_A_addr(wSouthConnectionStripXOffset);
+        // LD_HL(wXCoord);
+        wram->wXCoord += gMapConnections[SOUTH_F].connectionStripXOffset;
+        // ADD_A_hl;
+        // LD_hl_A;
+        // LD_C_A;
+        // LD_HL(wSouthConnectionWindow);
+        // LD_A_hli;
+        // LD_H_hl;
+        // LD_L_A;
+        // LD_B(0);
+        // SRL_C;
+        // ADD_HL_BC;
+        // LD_A_L;
+        // LD_addr_A(wOverworldMapAnchor);
+        // LD_A_H;
+        // LD_addr_A(wOverworldMapAnchor + 1);
+        wram->wOverworldMapAnchor = wOverworldMapBlocks + (uint16_t)(gMapConnections[SOUTH_F].connectionWindow + (wram->wXCoord >> 1) - wram->wOverworldMapBlocks);
+        return true;
+    // CP_A(UP);
+    // JP_Z (mEnterMapConnection_north);
+    case UP:
+    // north:
+        // LD_A_addr(wNorthConnectedMapGroup);
+        // LD_addr_A(wMapGroup);
+        wram->wMapGroup = gMapConnections[NORTH_F].connectedMapGroup;
+        // LD_A_addr(wNorthConnectedMapNumber);
+        // LD_addr_A(wMapNumber);
+        wram->wMapNumber = gMapConnections[NORTH_F].connectedMapNumber;
+        // LD_A_addr(wNorthConnectionStripYOffset);
+        // LD_addr_A(wYCoord);
+        wram->wYCoord = gMapConnections[NORTH_F].connectionStripYOffset;
+        // LD_A_addr(wNorthConnectionStripXOffset);
+        // LD_HL(wXCoord);
+        // ADD_A_hl;
+        // LD_hl_A;
+        wram->wXCoord += gMapConnections[NORTH_F].connectionStripXOffset;
+        // LD_C_A;
+        // LD_HL(wNorthConnectionWindow);
+        // LD_A_hli;
+        // LD_H_hl;
+        // LD_L_A;
+        // LD_B(0);
+        // SRL_C;
+        // ADD_HL_BC;
+        // LD_A_L;
+        // LD_addr_A(wOverworldMapAnchor);
+        // LD_A_H;
+        // LD_addr_A(wOverworldMapAnchor + 1);
+        wram->wOverworldMapAnchor = wOverworldMapBlocks + (uint16_t)(gMapConnections[NORTH_F].connectionWindow + (wram->wXCoord >> 1) - wram->wOverworldMapBlocks);
+        // JP(mEnterMapConnection_done);
+        return true;
+    // CP_A(LEFT);
+    // JP_Z (mEnterMapConnection_west);
+    case LEFT:
+    // west:
+        // LD_A_addr(wWestConnectedMapGroup);
+        // LD_addr_A(wMapGroup);
+        wram->wMapGroup = gMapConnections[WEST_F].connectedMapGroup;
+        // LD_A_addr(wWestConnectedMapNumber);
+        // LD_addr_A(wMapNumber);
+        wram->wMapNumber = gMapConnections[WEST_F].connectedMapNumber;
+        // LD_A_addr(wWestConnectionStripXOffset);
+        // LD_addr_A(wXCoord);
+        wram->wXCoord = gMapConnections[WEST_F].connectionStripXOffset;
+        // LD_A_addr(wWestConnectionStripYOffset);
+        // LD_HL(wYCoord);
+        // ADD_A_hl;
+        // LD_hl_A;
+        wram->wYCoord += gMapConnections[WEST_F].connectionStripYOffset;
+        // LD_C_A;
+        // LD_HL(wWestConnectionWindow);
+        // LD_A_hli;
+        // LD_H_hl;
+        // LD_L_A;
+        // SRL_C;
+        // IF_Z goto skip_to_load;
+        // LD_A_addr(wWestConnectedMapWidth);
+        // ADD_A(6);
+        // LD_E_A;
+        // LD_D(0);
+
+
+    // loop:
+        // ADD_HL_DE;
+        // DEC_C;
+        // IF_NZ goto loop;
+        wram->wOverworldMapAnchor = wOverworldMapBlocks + (uint16_t)((gMapConnections[WEST_F].connectionWindow + ((gMapConnections[WEST_F].connectedMapWidth + 6) * (wram->wYCoord >> 1))) - wram->wOverworldMapBlocks);
+
+    // skip_to_load:
+        // LD_A_L;
+        // LD_addr_A(wOverworldMapAnchor);
+        // LD_A_H;
+        // LD_addr_A(wOverworldMapAnchor + 1);
+        // JP(mEnterMapConnection_done);
+        return true;
+    // CP_A(RIGHT);
+    case RIGHT:
+    // east:
+        // LD_A_addr(wEastConnectedMapGroup);
+        // LD_addr_A(wMapGroup);
+        wram->wMapGroup = gMapConnections[EAST_F].connectedMapGroup;
+        // LD_A_addr(wEastConnectedMapNumber);
+        // LD_addr_A(wMapNumber);
+        wram->wMapNumber = gMapConnections[EAST_F].connectedMapNumber;
+        // LD_A_addr(wEastConnectionStripXOffset);
+        // LD_addr_A(wXCoord);
+        wram->wXCoord = gMapConnections[EAST_F].connectionStripXOffset;
+        // LD_A_addr(wEastConnectionStripYOffset);
+        // LD_HL(wYCoord);
+        // ADD_A_hl;
+        // LD_hl_A;
+        wram->wYCoord += gMapConnections[EAST_F].connectionStripYOffset;
+        // LD_C_A;
+        // LD_HL(wEastConnectionWindow);
+        // LD_A_hli;
+        // LD_H_hl;
+        // LD_L_A;
+        // SRL_C;
+        // IF_Z goto skip_to_load2;
+        // LD_A_addr(wEastConnectedMapWidth);
+        // ADD_A(6);
+        // LD_E_A;
+        // LD_D(0);
+
+
+    // loop2:
+        // ADD_HL_DE;
+        // DEC_C;
+        // IF_NZ goto loop2;
+
+
+    // skip_to_load2:
+        // LD_A_L;
+        // LD_addr_A(wOverworldMapAnchor);
+        // LD_A_H;
+        // LD_addr_A(wOverworldMapAnchor + 1);
+        wram->wOverworldMapAnchor = wOverworldMapBlocks + (uint16_t)((gMapConnections[EAST_F].connectionWindow + ((gMapConnections[EAST_F].connectedMapWidth + 6) * (wram->wYCoord >> 1))) - wram->wOverworldMapBlocks);
+        // JP(mEnterMapConnection_done);
+        return true;
+    // JP_Z (mEnterMapConnection_east);
+    default:
+        return false;
+    }
+    // RET;
+
+// done:
+    // SCF;
+    // RET;
 }
 
 static void EnterMapWarp_SaveDigWarp(void) {
@@ -550,7 +720,7 @@ bool CheckMovingOffEdgeOfMap_Conv(void){
             // SUB_A(4);
             // CP_A(-1);
             // IF_Z goto ok;
-            if(wram->wPlayerStruct.nextMapY - 4 == 0xff)
+            if((int8_t)(wram->wPlayerStruct.nextMapY - 4) == -1)
                 return true;
             // AND_A_A;
             // RET;
@@ -563,7 +733,7 @@ bool CheckMovingOffEdgeOfMap_Conv(void){
             // SUB_A(4);
             // CP_A(-1);
             // IF_Z goto ok;
-            if(wram->wPlayerStruct.nextMapX - 4 == 0xff)
+            if((int8_t)(wram->wPlayerStruct.nextMapX - 4) == -1)
                 return true;
             // AND_A_A;
             // RET;

@@ -2,6 +2,8 @@
 #include "sprites.h"
 #include "../math/sine.h"
 #include "../../home/delay.h"
+#include "../../data/sprite_anims/framesets.h"
+#include "../../data/sprite_anims/oam.h"
 
 void ClearSpriteAnims(void){
     LD_HL(wSpriteAnimData);
@@ -633,18 +635,18 @@ bool UpdateAnimFrame_Conv(struct SpriteAnim* bc){
         return false;
     }
     // CALL(aGetFrameOAMPointer);
-    uint16_t hl = GetFrameOAMPointer_Conv(a);
+    const struct OAMData* oam = GetFrameOAMPointer_Conv2(a);
 // add byte to [wCurAnimVTile]
     // LD_A_addr(wCurAnimVTile);
     // ADD_A_hl;
     // LD_addr_A(wCurAnimVTile);
     // INC_HL;
-    wram->wCurAnimVTile += gb_read(hl++);
+    wram->wCurAnimVTile += oam->vtile_offset;
 // load pointer into hl
     // LD_A_hli;
     // LD_H_hl;
     // LD_L_A;
-    hl = gb_read16(hl);
+    const uint8_t* hl = oam->ptr;
     // PUSH_BC;
     // LD_A_addr(wCurSpriteOAMAddr);
     // LD_E_A;
@@ -652,7 +654,7 @@ bool UpdateAnimFrame_Conv(struct SpriteAnim* bc){
     uint16_t de = (wVirtualOAM & 0xff00) | wram->wCurSpriteOAMAddr;
     // LD_A_hli;
     // LD_C_A;  // number of objects
-    uint8_t c = gb_read(hl++);
+    uint8_t c = *(hl++);
 
     do {
     // loop:
@@ -669,7 +671,7 @@ bool UpdateAnimFrame_Conv(struct SpriteAnim* bc){
         // CALL(aAddOrSubtractY);
         // ADD_A_B;
         // LD_de_A;
-        gb_write(de++, wram->wCurAnimYCoord + wram->wCurAnimYOffset + wram->wGlobalAnimYOffset + AddOrSubtractY_Conv(hl++));
+        gb_write(de++, wram->wCurAnimYCoord + wram->wCurAnimYOffset + wram->wGlobalAnimYOffset + AddOrSubtractY_Conv2(hl++));
         // INC_HL;
         // INC_DE;
     // second byte: x (px)
@@ -685,7 +687,7 @@ bool UpdateAnimFrame_Conv(struct SpriteAnim* bc){
         // CALL(aAddOrSubtractX);
         // ADD_A_B;
         // LD_de_A;
-        gb_write(de++, wram->wCurAnimXCoord + wram->wCurAnimXOffset + wram->wGlobalAnimXOffset + AddOrSubtractX_Conv(hl++));
+        gb_write(de++, wram->wCurAnimXCoord + wram->wCurAnimXOffset + wram->wGlobalAnimXOffset + AddOrSubtractX_Conv2(hl++));
         // INC_HL;
         // INC_DE;
     // third byte: vtile
@@ -693,14 +695,14 @@ bool UpdateAnimFrame_Conv(struct SpriteAnim* bc){
         // LD_A_addr(wCurAnimVTile);
         // ADD_A_hl;
         // LD_de_A;
-        gb_write(de++, wram->wCurAnimVTile + gb_read(hl++));
+        gb_write(de++, wram->wCurAnimVTile + *(hl++));
         // INC_HL;
         // INC_DE;
     // fourth byte: attributes
     // [de] = GetSpriteOAMAttr([hl])
         // CALL(aGetSpriteOAMAttr);
         // LD_de_A;
-        gb_write(de++, GetSpriteOAMAttr_Conv(hl++));
+        gb_write(de++, GetSpriteOAMAttr_Conv2(hl++));
         // INC_HL;
         // INC_DE;
         // LD_A_E;
@@ -762,6 +764,27 @@ uint8_t AddOrSubtractY_Conv(uint16_t hl){
     return a;
 }
 
+uint8_t AddOrSubtractY_Conv2(const uint8_t* hl){
+    // PUSH_HL;
+    // LD_A_hl;
+    uint8_t a = *hl;
+    // LD_HL(wCurSpriteOAMFlags);
+    // BIT_hl(OAM_Y_FLIP);
+    // IF_Z goto ok;
+    if(!bit_test(wram->wCurSpriteOAMFlags, OAM_Y_FLIP))
+        return a;
+// -8 - a
+    // ADD_A(8);
+    // XOR_A(0xff);
+    // INC_A;
+    a = ((a + 8) ^ 0xff) + 1;
+
+// ok:
+    // POP_HL;
+    // RET;
+    return a;
+}
+
 void AddOrSubtractX(void){
     PUSH_HL;
     LD_A_hl;
@@ -784,6 +807,27 @@ uint8_t AddOrSubtractX_Conv(uint16_t hl){
     // PUSH_HL;
     // LD_A_hl;
     uint8_t a = gb_read(hl);
+    // LD_HL(wCurSpriteOAMFlags);
+    // BIT_hl(OAM_X_FLIP);
+    // IF_Z goto ok;
+    if(!bit_test(wram->wCurSpriteOAMFlags, OAM_X_FLIP))
+        return a;
+// -8 - a
+    // ADD_A(8);
+    // XOR_A(0xff);
+    // INC_A;
+    a = ((a + 8) ^ 0xff) + 1;
+
+// ok:
+    // POP_HL;
+    // RET;
+    return a;
+}
+
+uint8_t AddOrSubtractX_Conv2(const uint8_t* hl){
+    // PUSH_HL;
+    // LD_A_hl;
+    uint8_t a = *hl;
     // LD_HL(wCurSpriteOAMFlags);
     // BIT_hl(OAM_X_FLIP);
     // IF_Z goto ok;
@@ -827,6 +871,20 @@ uint8_t GetSpriteOAMAttr_Conv(uint16_t hl){
     // OR_A_B;
     // RET;
     return ((wram->wCurSpriteOAMFlags ^ gb_read(hl)) & (PRIORITY | Y_FLIP | X_FLIP)) | (gb_read(hl) & ~(PRIORITY | Y_FLIP | X_FLIP));
+}
+
+uint8_t GetSpriteOAMAttr_Conv2(const uint8_t* hl){
+    // LD_A_addr(wCurSpriteOAMFlags);
+    // LD_B_A;
+    // LD_A_hl;
+    // XOR_A_B;
+    // AND_A(PRIORITY | Y_FLIP | X_FLIP);
+    // LD_B_A;
+    // LD_A_hl;
+    // AND_A(~(PRIORITY | Y_FLIP | X_FLIP));
+    // OR_A_B;
+    // RET;
+    return ((wram->wCurSpriteOAMFlags ^ (*hl)) & (PRIORITY | Y_FLIP | X_FLIP)) | ((*hl) & ~(PRIORITY | Y_FLIP | X_FLIP));
 }
 
 void InitSpriteAnimBuffer(void){
@@ -1058,7 +1116,7 @@ GetPointer:
 
 }
 
-static uint16_t GetSpriteAnimFrame_GetPointer_Conv(struct SpriteAnim* bc) {
+static const uint8_t* GetSpriteAnimFrame_GetPointer_Conv(struct SpriteAnim* bc) {
     // LD_HL(SPRITEANIMSTRUCT_FRAMESET_ID);
     // ADD_HL_BC;
     // LD_E_hl;
@@ -1069,7 +1127,13 @@ static uint16_t GetSpriteAnimFrame_GetPointer_Conv(struct SpriteAnim* bc) {
     // LD_E_hl;
     // INC_HL;
     // LD_D_hl;
-    uint16_t de = gb_read16(mSpriteAnimFrameData + 2*bc->framesetID);
+    // uint16_t de = gb_read16(mSpriteAnimFrameData + 2*bc->framesetID);
+    const uint8_t* de = SpriteAnimFrameData[bc->framesetID];
+    // printf("SpriteAnimFrame: %02X:%02X vs %02X:%02X\n", 
+    //     gb_read(de + 2*bc->frameIndex), 
+    //     gb_read(de + 2*bc->frameIndex + 1), 
+    //     SpriteAnimFrameData[bc->framesetID][2*bc->frameIndex],
+    //     SpriteAnimFrameData[bc->framesetID][2*bc->frameIndex + 1]);
     // LD_HL(SPRITEANIMSTRUCT_FRAME);
     // ADD_HL_BC;
     // LD_L_hl;
@@ -1081,7 +1145,7 @@ static uint16_t GetSpriteAnimFrame_GetPointer_Conv(struct SpriteAnim* bc) {
 }
 
 uint8_t GetSpriteAnimFrame_Conv(struct SpriteAnim* bc){
-    uint16_t hl;
+    const uint8_t* hl;
     uint8_t a;
 // loop:
     while(1)
@@ -1100,7 +1164,7 @@ uint8_t GetSpriteAnimFrame_Conv(struct SpriteAnim* bc){
             // CALL(aGetSpriteAnimFrame_GetPointer);
             hl = GetSpriteAnimFrame_GetPointer_Conv(bc);
             // LD_A_hli;
-            a = gb_read(hl++);
+            a = *(hl++);
             // CP_A(dorestart_command);
             // IF_Z goto restart;
             if(a == dorestart_command) {
@@ -1140,7 +1204,7 @@ uint8_t GetSpriteAnimFrame_Conv(struct SpriteAnim* bc){
 
             // PUSH_AF;
             // LD_A_hl;
-            uint8_t a2 = gb_read(hl);
+            uint8_t a2 = *(hl);
             // PUSH_HL;
             // AND_A(~(Y_FLIP << 1 | X_FLIP << 1));
             // LD_HL(SPRITEANIMSTRUCT_DURATIONOFFSET);
@@ -1158,7 +1222,7 @@ uint8_t GetSpriteAnimFrame_Conv(struct SpriteAnim* bc){
             // CALL(aGetSpriteAnimFrame_GetPointer);
             // LD_A_hli;
             hl = GetSpriteAnimFrame_GetPointer_Conv(bc);
-            a = gb_read(hl++);
+            a = *(hl++);
             // PUSH_AF;
             // goto okay;
         }
@@ -1168,7 +1232,7 @@ uint8_t GetSpriteAnimFrame_Conv(struct SpriteAnim* bc){
         // AND_A(Y_FLIP << 1 | X_FLIP << 1);  // The << 1 is compensated in the "frame" macro
         // SRL_A;
         // LD_addr_A(wCurSpriteOAMFlags);
-        wram->wCurSpriteOAMFlags = (gb_read(hl) & (Y_FLIP << 1 | X_FLIP << 1)) >> 1;
+        wram->wCurSpriteOAMFlags = (*(hl) & (Y_FLIP << 1 | X_FLIP << 1)) >> 1;
         // POP_AF;
         // RET;
         return a;
@@ -1195,6 +1259,17 @@ uint16_t GetFrameOAMPointer_Conv(uint8_t a){
     // ADD_HL_DE;
     // RET;
     return mSpriteAnimOAMData + (3*a);
+}
+
+const struct OAMData* GetFrameOAMPointer_Conv2(uint8_t a){
+    // LD_E_A;
+    // LD_D(0);
+    // LD_HL(mSpriteAnimOAMData);
+    // ADD_HL_DE;
+    // ADD_HL_DE;
+    // ADD_HL_DE;
+    // RET;
+    return SpriteAnimOAMData + a;
 }
 
 void UnusedLoadSpriteAnimGFX(void){

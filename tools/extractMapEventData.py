@@ -159,8 +159,13 @@ def map_json_to_c(dict: Dict[str, any]):
     out = '//// EVENTS\n'
     if len(dict["object_const_def"]) > 0:
         out += 'enum {\n'
+        n = 0
         for const in dict["object_const_def"]:
-            out += f'    {const},\n'
+            if n == 0:
+                out += f'    {const} = 2,\n'
+                n += 1
+            else:
+                out += f'    {const},\n'
         out += '};\n\n'
     
     out += f'const Script_fn_t {dict["map_name"]}_SceneScripts[] = {{\n'

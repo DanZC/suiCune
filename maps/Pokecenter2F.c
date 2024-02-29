@@ -4,7 +4,7 @@
 #include "../engine/link/lan.h"
 //// EVENTS
 enum {
-    POKECENTER2F_TRADE_RECEPTIONIST,
+    POKECENTER2F_TRADE_RECEPTIONIST = 2,
     POKECENTER2F_BATTLE_RECEPTIONIST,
     POKECENTER2F_TIME_CAPSULE_RECEPTIONIST,
     POKECENTER2F_OFFICER,
@@ -146,18 +146,18 @@ bool Script_BattleRoomClosed(script_s* s) {
 }
 bool LinkReceptionistScript_Trade(script_s* s) {
     SCRIPT_BEGIN
-    checkflag(EVENT_GAVE_MYSTERY_EGG_TO_ELM)
-    iffalse_jump(Script_TradeCenterClosed)
+    // checkflag(EVENT_GAVE_MYSTERY_EGG_TO_ELM)
+    // iffalse_jump(Script_TradeCenterClosed)
     opentext
     writetext(Text_TradeReceptionistIntro)
     yesorno
-    iffalse(Cancel)
-    special(Mobile_DummyReturnFalse) // always returns false
-    iffalse(NoMobile)
-    writetext(Text_TradeReceptionistMobile)
-    special(AskMobileOrCable)
-    iffalse(Cancel)
-    ifequal(0x1, Mobile)
+    // iffalse(Cancel)
+    // special(Mobile_DummyReturnFalse) // always returns false
+    // iffalse(NoMobile)
+    // writetext(Text_TradeReceptionistMobile)
+    // special(AskMobileOrCable)
+    // iffalse(Cancel)
+    // ifequal(0x1, Mobile)
 NoMobile:
     LANConnection();
     iffalse(DidNotSave)

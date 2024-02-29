@@ -2406,7 +2406,7 @@ struct Object* InitMovementField1dField1e(struct Object* bc) {
     // POP_BC;
     struct Object* de = GetObjectStruct_Conv(range);
     // LD_HL(OBJECT_1D);
-    uint16_t vptr = RAMAddrToGB(de);
+    uint16_t vptr = de - &wram->wPlayerStruct;
     // ADD_HL_BC;
     // LD_hl_E;
     bc->field_1D = LOW(vptr);
@@ -4098,7 +4098,7 @@ void StepFunction_TrackingObject_Conv(struct Object* bc) {
     // LD_E_hl;
     // INC_HL;
     // LD_D_hl;
-    struct Object* de = AbsGBBankAddrToRAMAddr(MBANK(awPlayerStruct), bc->field_1D | (bc->field_1E << 8));
+    struct Object* de = &wram->wPlayerStruct + (bc->field_1D | (bc->field_1E << 8));
     // LD_HL(OBJECT_SPRITE);
     // ADD_HL_DE;
     // LD_A_hl;
@@ -4436,9 +4436,10 @@ void UpdateJumpPosition_Conv(struct Object* bc) {
     // LD_HL(OBJECT_1F);
     // ADD_HL_BC;
     // LD_E_hl;
+    uint8_t e = bc->field_1F;
     // ADD_A_E;
     // LD_hl_A;
-    bc->field_1F += vec.y;
+    bc->field_1F += vec.speed;
     // NOP;
     // SRL_E;
     // LD_D(0);
@@ -4448,7 +4449,7 @@ void UpdateJumpPosition_Conv(struct Object* bc) {
     // LD_HL(OBJECT_SPRITE_Y_OFFSET);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->spriteYOffset = y_offsets[vec.y >> 1];
+    bc->spriteYOffset = y_offsets[e >> 1];
     // RET;
 }
 
@@ -4873,23 +4874,24 @@ uint8_t GetFollowerNextMovementByte_Conv(struct Object* bc) {
     }
     // DEC_hl;
     // LD_E_A;
-    uint8_t e = --wram->wFollowerMovementQueueLength;
+    uint8_t e = wram->wFollowerMovementQueueLength--;
     // LD_D(0);
     // LD_HL(wFollowMovementQueue);
     // ADD_HL_DE;
-    uint8_t* hl = wram->wFollowMovementQueue + e;
     // INC_E;
     e++;
     // LD_A(-1);
 
     uint8_t d;
+    uint8_t a = 0xff;
     do {
     // loop:
         // LD_D_hl;
-        d = *hl;
+        d = wram->wFollowMovementQueue[e-1];
         // LD_hld_A;
-        *(hl--) = 0xff;
+        wram->wFollowMovementQueue[e-1] = a;
         // LD_A_D;
+        a = d;
         // DEC_E;
         // IF_NZ goto loop;
     } while(--e != 0);
@@ -5258,14 +5260,14 @@ void CopyTempObjectData_Conv(struct Object* bc, const uint8_t* de) {
     // LD_A_de;
     // INC_DE;
     // LD_hli_A;
-    wram->wTempObjectCopySpriteVTile = *(de++);
+    wram->wTempObjectCopySpriteVTile = de[0];
     // LD_A_de;
     // INC_DE;
     // LD_hli_A;
-    wram->wTempObjectCopyPalette = *(de++);
+    wram->wTempObjectCopyPalette = de[1];
     // LD_A_de;
     // LD_hli_A;
-    wram->wTempObjectCopyMovement = *(de++);
+    wram->wTempObjectCopyMovement = de[2];
     // LDH_A_addr(hMapObjectIndex);
     // LD_hli_A;
     wram->wTempObjectCopyRange = hram->hMapObjectIndex;

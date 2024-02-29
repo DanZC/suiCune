@@ -909,10 +909,10 @@ void LoadMenuHeader_Conv(uint16_t hl) {
 }
 
 void LoadMenuHeader_Conv2(const struct MenuHeader* hl) {
+    PushWindow_Conv();
     // CALL(aCopyMenuHeader);
     CopyMenuHeader_Conv2(hl);
     // CALL(aPushWindow);
-    PushWindow_Conv();
     // RET;
 }
 

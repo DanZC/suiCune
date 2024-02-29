@@ -1970,7 +1970,7 @@ void FillMapConnections(void){
         hram->hConnectionStripLength = gMapConnections[NORTH_F].connectionStripLength;
         // LD_A_addr(wNorthConnectedMapWidth);
         // LDH_addr_A(hConnectedMapWidth);
-        hram->hConnectedMapWidth = gMapConnections[NORTH_F].connectedMapLength;
+        hram->hConnectedMapWidth = gMapConnections[NORTH_F].connectedMapWidth;
         // CALL(aFillNorthConnectionStrip);
         FillNorthConnectionStrip(de, hl);
         FreeAsset(a);
@@ -2002,7 +2002,7 @@ void FillMapConnections(void){
         hram->hConnectionStripLength = gMapConnections[SOUTH_F].connectionStripLength;
         // LD_A_addr(wSouthConnectedMapWidth);
         // LDH_addr_A(hConnectedMapWidth);
-        hram->hConnectedMapWidth = gMapConnections[SOUTH_F].connectedMapLength;
+        hram->hConnectedMapWidth = gMapConnections[SOUTH_F].connectedMapWidth;
         // CALL(aFillSouthConnectionStrip);
         FillSouthConnectionStrip(de, hl);
         FreeAsset(a);
@@ -2034,7 +2034,7 @@ void FillMapConnections(void){
         uint8_t b = gMapConnections[WEST_F].connectionStripLength;
         // LD_A_addr(wWestConnectedMapWidth);
         // LDH_addr_A(hConnectionStripLength);
-        hram->hConnectionStripLength = gMapConnections[WEST_F].connectionStripLength;
+        hram->hConnectionStripLength = gMapConnections[WEST_F].connectedMapWidth;
         // CALL(aFillWestConnectionStrip);
         FillWestConnectionStrip(de, hl, b);
         FreeAsset(a);
@@ -2066,7 +2066,7 @@ void FillMapConnections(void){
         uint8_t b = gMapConnections[EAST_F].connectionStripLength;
         // LD_A_addr(wEastConnectedMapWidth);
         // LDH_addr_A(hConnectionStripLength);
-        hram->hConnectionStripLength = gMapConnections[EAST_F].connectionStripLength;
+        hram->hConnectionStripLength = gMapConnections[EAST_F].connectedMapWidth;
         // CALL(aFillEastConnectionStrip);
         FillEastConnectionStrip(de, hl, b);
         FreeAsset(a);
@@ -4247,7 +4247,7 @@ void FadeToMenu_Conv(void){
     // CALL(aLoadStandardMenuHeader);
     LoadStandardMenuHeader_Conv();
     // FARCALL(aFadeOutPalettes);
-    SafeCallGBAuto(aFadeOutPalettes);
+    FadeOutPalettes();
     // CALL(aClearSprites);
     ClearSprites_Conv();
     // CALL(aDisableSpriteUpdates);
@@ -4323,7 +4323,7 @@ void FinishExitMenu_Conv(void){
     // CALL(aWaitBGMap2);
     WaitBGMap2_Conv();
     // FARCALL(aFadeInPalettes);
-    SafeCallGBAuto(aFadeInPalettes);
+    FadeInPalettes();
     // CALL(aEnableSpriteUpdates);
     EnableSpriteUpdates_Conv();
     // RET;

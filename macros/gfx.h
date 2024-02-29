@@ -59,4 +59,4 @@ dbsprite: MACRO
     db (\2 * TILE_WIDTH) % 0x100 + \4, (\1 * TILE_WIDTH) 0b 0x100 + \3, \5, \6
 ENDM
 */
-#define dbsprite(_x, _y, _px, _py, _o, _a) (_y * TILE_WIDTH) & 0xff + _py, (_x * TILE_WIDTH) & 0xff + _px, _o, _a
+#define dbsprite(_x, _y, _px, _py, _o, _a) (((_y) * TILE_WIDTH) & 0xff) + (_py), (((_x) * TILE_WIDTH) & 0xff) + (_px), _o, _a

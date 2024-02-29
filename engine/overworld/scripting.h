@@ -136,6 +136,7 @@ void Script_follow_Conv(script_s* s, uint8_t leader, uint8_t follower);
 void Script_stopfollow(void);
 void Script_stopfollow_Conv(script_s* s);
 void Script_moveobject(void);
+void Script_moveobject_Conv(script_s* s, uint8_t obj, uint8_t x, uint8_t y);
 void Script_writeobjectxy(void);
 void Script_writeobjectxy_Conv(script_s* s, uint8_t obj);
 void Script_follownotexact(void);

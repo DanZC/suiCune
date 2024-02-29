@@ -1806,7 +1806,7 @@ uint8_t GetScriptObject_Conv(uint8_t a){
     // RET_Z ;
     // CP_A(LAST_TALKED);
     // RET_Z ;
-    if(a == 0 || a == (uint8_t)LAST_TALKED)
+    if(a == PLAYER || a == (uint8_t)LAST_TALKED)
         return a;
     // DEC_A;
     // RET;
@@ -2398,6 +2398,22 @@ void Script_moveobject(void){
     FARCALL(aCopyDECoordsToMapObject);
     RET;
 
+}
+
+void Script_moveobject_Conv(script_s* s, uint8_t obj, uint8_t x, uint8_t y){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // CALL(aGetScriptObject);
+    // LD_B_A;
+    // CALL(aGetScriptByte);
+    // ADD_A(4);
+    // LD_D_A;
+    // CALL(aGetScriptByte);
+    // ADD_A(4);
+    // LD_E_A;
+    // FARCALL(aCopyDECoordsToMapObject);
+    CopyDECoordsToMapObject_Conv(x + 4, y + 4, GetScriptObject_Conv(obj));
+    // RET;
 }
 
 void Script_writeobjectxy(void){

@@ -444,7 +444,7 @@
 // #include "../../maps/OlivineCity.h"
 // #include "../../maps/Route37.h"
 // #include "../../maps/Route42.h"
-// #include "../../maps/Route46.h"
+#include "../../maps/Route46.h"
 // #include "../../maps/ViridianCity.h"
 // #include "../../maps/CeladonCity.h"
 // #include "../../maps/Route15.h"

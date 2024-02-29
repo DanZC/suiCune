@@ -5,7 +5,7 @@
 #include "CherrygroveCity.h"
 //// EVENTS
 enum {
-    CHERRYGROVECITY_GRAMPS,
+    CHERRYGROVECITY_GRAMPS = 2,
     CHERRYGROVECITY_SILVER,
     CHERRYGROVECITY_TEACHER,
     CHERRYGROVECITY_YOUNGSTER,
@@ -167,7 +167,7 @@ No:
 }
 bool CherrygroveSilverSceneSouth(script_s* s) {
     SCRIPT_BEGIN
-    //moveobject(CHERRYGROVECITY_SILVER, 39, 7)
+    moveobject(CHERRYGROVECITY_SILVER, 39, 7)
     SCRIPT_FALLTHROUGH(CherrygroveSilverSceneNorth)
 }
 bool CherrygroveSilverSceneNorth(script_s* s) {

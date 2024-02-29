@@ -1,6 +1,7 @@
 #include "../../constants.h"
 #include "pokegear.h"
 #include "radio.h"
+#include "townmap_convertlinebreakcharacters.h"
 #include "../../home/audio.h"
 #include "../../home/gfx.h"
 #include "../../home/map.h"
@@ -17,6 +18,7 @@
 #include "../../home/lcd.h"
 #include "../../home/sprite_anims.h"
 #include "../../home/menu.h"
+#include "../overworld/landmarks.h"
 #include "../gfx/player_gfx.h"
 #include "../gfx/sprites.h"
 #include "../../audio/engine.h"
@@ -28,6 +30,7 @@
 #include "../../charmap.h"
 
 void (*gPokegearRadioChannelAddr)(void);
+struct SpriteAnim* gPokegearMapCursorObjectPointer = NULL;
 
 //  Pokégear cards
 enum {
@@ -75,6 +78,7 @@ void PokeGear(void){
     // LD_HL(wOptions);
     // LD_A_hl;
     // PUSH_AF;
+    bit_set(wram->wPokegearFlags, POKEGEAR_RADIO_CARD_F);
     uint8_t options = wram->wOptions;
     // SET_hl(NO_TEXT_SCROLL);
     bit_set(wram->wOptions, NO_TEXT_SCROLL);
@@ -107,7 +111,8 @@ void PokeGear(void){
         // IF_NZ goto done;
         if(bit_test(wram->wJumptableIndex, 7))
             break;
-        CALL(aPokegearJumptable);
+        // CALL(aPokegearJumptable);
+        PokegearJumptable();
 
         // SAVE_REGS;
         {
@@ -1044,20 +1049,20 @@ void PokegearJumptable(void) {
 //  entries correspond to POKEGEARSTATE_* constants
     switch(wram->wJumptableIndex)
     {
-        case POKEGEARSTATE_CLOCKINIT:       PokegearClock_Init_Conv(); RET;
-        case POKEGEARSTATE_CLOCKJOYPAD:     PokegearClock_Joypad(); RET;
+        case POKEGEARSTATE_CLOCKINIT:       return PokegearClock_Init_Conv();
+        case POKEGEARSTATE_CLOCKJOYPAD:     return PokegearClock_Joypad();
         case POKEGEARSTATE_MAPCHECKREGION:  return PokegearMap_CheckRegion();
         case POKEGEARSTATE_JOHTOMAPINIT:    return PokegearMap_Init();
         case POKEGEARSTATE_JOHTOMAPJOYPAD:  return PokegearMap_JohtoMap();
         case POKEGEARSTATE_KANTOMAPINIT:    return PokegearMap_Init();
         case POKEGEARSTATE_KANTOMAPJOYPAD:  return PokegearMap_KantoMap();
-        case POKEGEARSTATE_PHONEINIT:       PokegearPhone_Init_Conv(); RET;
-        case POKEGEARSTATE_PHONEJOYPAD:     PokegearPhone_Joypad(); RET;
-        case POKEGEARSTATE_MAKEPHONECALL:   PokegearPhone_MakePhoneCall(); RET;
-        case POKEGEARSTATE_FINISHPHONECALL: PokegearPhone_FinishPhoneCall(); RET;
-        case POKEGEARSTATE_RADIOINIT:       PokegearRadio_Init(); RET;
-        case POKEGEARSTATE_RADIOJOYPAD:     PokegearRadio_Joypad(); RET;
-        default: RET;
+        case POKEGEARSTATE_PHONEINIT:       return PokegearPhone_Init_Conv();
+        case POKEGEARSTATE_PHONEJOYPAD:     return PokegearPhone_Joypad();
+        case POKEGEARSTATE_MAKEPHONECALL:   return PokegearPhone_MakePhoneCall();
+        case POKEGEARSTATE_FINISHPHONECALL: return PokegearPhone_FinishPhoneCall();
+        case POKEGEARSTATE_RADIOINIT:       return PokegearRadio_Init();
+        case POKEGEARSTATE_RADIOJOYPAD:     return PokegearRadio_Joypad();
+        default: return;
     }
     //dw ['PokegearClock_Init'];
     //dw ['PokegearClock_Joypad'];
@@ -1263,57 +1268,64 @@ void Pokegear_UpdateClock_Conv(void){
 }
 
 void PokegearMap_CheckRegion(void){
-    LD_A_addr(wPokegearMapPlayerIconLandmark);
-    CP_A(LANDMARK_FAST_SHIP);
-    IF_Z goto johto;
-    CP_A(KANTO_LANDMARK);
-    IF_NC goto kanto;
+    // LD_A_addr(wPokegearMapPlayerIconLandmark);
+    // CP_A(LANDMARK_FAST_SHIP);
+    // IF_Z goto johto;
+    // CP_A(KANTO_LANDMARK);
+    // IF_NC goto kanto;
+    if(wram->wPokegearMapPlayerIconLandmark != LANDMARK_FAST_SHIP
+    && wram->wPokegearMapPlayerIconLandmark >= KANTO_LANDMARK) {
+    // kanto:
+        // LD_A(POKEGEARSTATE_KANTOMAPINIT);
+        wram->wJumptableIndex = POKEGEARSTATE_KANTOMAPINIT;
+    }
+    else {
+    // johto:
+        // LD_A(POKEGEARSTATE_JOHTOMAPINIT);
+        wram->wJumptableIndex = POKEGEARSTATE_JOHTOMAPINIT;
+        // goto done;
+        // return;
+        // RET;
+    }
 
-johto:
-    LD_A(POKEGEARSTATE_JOHTOMAPINIT);
-    goto done;
+// done:
+    // LD_addr_A(wJumptableIndex);
+    // CALL(aExitPokegearRadio_HandleMusic);
+    ExitPokegearRadio_HandleMusic();
     // return;
-    RET;
-
-
-kanto:
-    LD_A(POKEGEARSTATE_KANTOMAPINIT);
-
-done:
-    LD_addr_A(wJumptableIndex);
-    CALL(aExitPokegearRadio_HandleMusic);
-    // return;
-    RET;
-
+    // RET;
 }
 
 void PokegearMap_Init(void){
-    CALL(aInitPokegearTilemap);
-    LD_A_addr(wPokegearMapPlayerIconLandmark);
-    CALL(aPokegearMap_InitPlayerIcon);
-    LD_A_addr(wPokegearMapCursorLandmark);
-    CALL(aPokegearMap_InitCursor);
-    LD_A_C;
-    LD_addr_A(wPokegearMapCursorObjectPointer);
-    LD_A_B;
-    LD_addr_A(wPokegearMapCursorObjectPointer + 1);
-    LD_HL(wJumptableIndex);
-    INC_hl;
+    // CALL(aInitPokegearTilemap);
+    InitPokegearTilemap_Conv();
+    // LD_A_addr(wPokegearMapPlayerIconLandmark);
+    // CALL(aPokegearMap_InitPlayerIcon);
+    PokegearMap_InitPlayerIcon_Conv(wram->wPokegearMapPlayerIconLandmark);
+    // LD_A_addr(wPokegearMapCursorLandmark);
+    // CALL(aPokegearMap_InitCursor);
+    // LD_A_C;
+    // LD_addr_A(wPokegearMapCursorObjectPointer);
+    // LD_A_B;
+    // LD_addr_A(wPokegearMapCursorObjectPointer + 1);
+    gPokegearMapCursorObjectPointer = PokegearMap_InitCursor_Conv(wram->wPokegearMapPlayerIconLandmark);
+    // LD_HL(wJumptableIndex);
+    // INC_hl;
+    wram->wJumptableIndex++;
     // return;
-    RET;
-
+    // RET;
 }
 
 void PokegearMap_KantoMap(void){
-    CALL(aTownMap_GetKantoLandmarkLimits);
-    JR(mPokegearMap_ContinueMap);
-
+    // CALL(aTownMap_GetKantoLandmarkLimits);
+    // JR(mPokegearMap_ContinueMap);
+    return PokegearMap_ContinueMap_Conv(TownMap_GetKantoLandmarkLimits_Conv());
 }
 
 void PokegearMap_JohtoMap(void){
-    LD_D(LANDMARK_SILVER_CAVE);
-    LD_E(LANDMARK_NEW_BARK_TOWN);
-    return PokegearMap_ContinueMap();
+    // LD_D(LANDMARK_SILVER_CAVE);
+    // LD_E(LANDMARK_NEW_BARK_TOWN);
+    return PokegearMap_ContinueMap_Conv(u8_pair(LANDMARK_SILVER_CAVE, LANDMARK_NEW_BARK_TOWN));
 }
 
 void PokegearMap_ContinueMap(void){
@@ -1419,6 +1431,127 @@ done_dpad:
 
 }
 
+static void PokegearMap_ContinueMap_DPad(u8_pair_s de) {
+    // LD_HL(hJoyLast);
+    // LD_A_hl;
+    // AND_A(D_UP);
+    // IF_NZ goto up;
+    if(hram->hJoyLast & D_UP) {
+    // up:
+        // LD_HL(wPokegearMapCursorLandmark);
+        // LD_A_hl;
+        // CP_A_D;
+        // IF_C goto wrap_around_up;
+        if(wram->wPokegearMapCursorLandmark >= de.a) {
+            // LD_A_E;
+            // DEC_A;
+            // LD_hl_A;
+            wram->wPokegearMapCursorLandmark = de.b - 1;
+        }
+
+    // wrap_around_up:
+        // INC_hl;
+        wram->wPokegearMapCursorLandmark++;
+        // goto done_dpad;
+    }
+    // LD_A_hl;
+    // AND_A(D_DOWN);
+    // IF_NZ goto down;
+    else if(hram->hJoyLast & D_DOWN) {
+    // down:
+        // LD_HL(wPokegearMapCursorLandmark);
+        // LD_A_hl;
+        // CP_A_E;
+        // IF_NZ goto wrap_around_down;
+        if(wram->wPokegearMapCursorLandmark != de.b) {
+            // LD_A_D;
+            // INC_A;
+            // LD_hl_A;
+            wram->wPokegearMapCursorLandmark = de.a + 1;
+        }
+
+    // wrap_around_down:
+        // DEC_hl;
+        wram->wPokegearMapCursorLandmark--;
+    }
+    else {
+        return;
+        // RET;
+    }
+
+// done_dpad:
+    // LD_A_addr(wPokegearMapCursorLandmark);
+    // CALL(aPokegearMap_UpdateLandmarkName);
+    PokegearMap_UpdateLandmarkName_Conv(wram->wPokegearMapCursorLandmark);
+    // LD_A_addr(wPokegearMapCursorObjectPointer);
+    // LD_C_A;
+    // LD_A_addr(wPokegearMapCursorObjectPointer + 1);
+    // LD_B_A;
+    // LD_A_addr(wPokegearMapCursorLandmark);
+    // CALL(aPokegearMap_UpdateCursorPosition);
+    PokegearMap_UpdateCursorPosition_Conv(gPokegearMapCursorObjectPointer, wram->wPokegearMapCursorLandmark);
+    // RET;
+    // return;
+}
+
+void PokegearMap_ContinueMap_Conv(u8_pair_s de){
+    // LD_HL(hJoyLast);
+    // LD_A_hl;
+    // AND_A(B_BUTTON);
+    // IF_NZ goto cancel;
+    if(hram->hJoyLast & B_BUTTON) {
+    // cancel:
+        // LD_HL(wJumptableIndex);
+        // SET_hl(7);
+        bit_set(wram->wJumptableIndex, 7);
+        return;
+        // RET;
+    }
+    // LD_A_hl;
+    // AND_A(D_RIGHT);
+    // IF_NZ goto right;
+    if(hram->hJoyLast & D_RIGHT) {
+    // right:
+        // LD_A_addr(wPokegearFlags);
+        // BIT_A(POKEGEAR_PHONE_CARD_F);
+        // IF_Z goto no_phone;
+        if(bit_test(wram->wPokegearFlags, POKEGEAR_PHONE_CARD_F)) {
+            // LD_C(POKEGEARSTATE_PHONEINIT);
+            // LD_B(POKEGEARCARD_PHONE);
+            Pokegear_SwitchPage_Conv(POKEGEARSTATE_PHONEINIT, POKEGEARCARD_PHONE);
+            // goto done;
+        }
+    // no_phone:
+        // LD_A_addr(wPokegearFlags);
+        // BIT_A(POKEGEAR_RADIO_CARD_F);
+        // RET_Z ;
+        // LD_C(POKEGEARSTATE_RADIOINIT);
+        // LD_B(POKEGEARCARD_RADIO);
+        // goto done;
+        else if(bit_test(wram->wPokegearFlags, POKEGEAR_RADIO_CARD_F)) {
+            Pokegear_SwitchPage_Conv(POKEGEARSTATE_RADIOINIT, POKEGEARCARD_RADIO);
+        }
+        
+        return;
+    }
+    // LD_A_hl;
+    // AND_A(D_LEFT);
+    // IF_NZ goto left;
+    if(hram->hJoyLast & D_LEFT) {
+    // left:
+        // LD_C(POKEGEARSTATE_CLOCKINIT);
+        // LD_B(POKEGEARCARD_CLOCK);
+
+    // done:
+        // CALL(aPokegear_SwitchPage);
+        // RET;
+        return Pokegear_SwitchPage_Conv(POKEGEARSTATE_CLOCKINIT, POKEGEARCARD_CLOCK);
+    }
+    // CALL(aPokegearMap_ContinueMap_DPad);
+    PokegearMap_ContinueMap_DPad(de);
+    //RET;
+}
+
 void PokegearMap_InitPlayerIcon(void){
     PUSH_AF;
     //depixel ['0', '0']
@@ -1450,6 +1583,42 @@ got_gender:
 
 }
 
+void PokegearMap_InitPlayerIcon_Conv(uint8_t landmark){
+    // PUSH_AF;
+    //depixel ['0', '0']
+    // depixel2(0, 0);
+    // LD_B(SPRITE_ANIM_INDEX_RED_WALK);
+    // LD_A_addr(wPlayerGender);
+    // BIT_A(PLAYERGENDER_FEMALE_F);
+    // IF_Z goto got_gender;
+    // LD_B(SPRITE_ANIM_INDEX_BLUE_WALK);
+    uint8_t b = (bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))? SPRITE_ANIM_INDEX_BLUE_WALK: SPRITE_ANIM_INDEX_RED_WALK;
+
+// got_gender:
+    // LD_A_B;
+    // CALL(aInitSpriteAnimStruct);
+    struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(b, pixel2(0, 0));
+    // LD_HL(SPRITEANIMSTRUCT_TILE_ID);
+    // ADD_HL_BC;
+    // LD_hl(0x10);
+    bc->tileID = 0x10;
+    // POP_AF;
+    // LD_E_A;
+    // PUSH_BC;
+    // FARCALL(aGetLandmarkCoords);
+    struct Coords coord = GetLandmarkCoords_Conv(landmark);
+    // POP_BC;
+    // LD_HL(SPRITEANIMSTRUCT_XCOORD);
+    // ADD_HL_BC;
+    // LD_hl_E;
+    bc->xCoord = coord.x;
+    // LD_HL(SPRITEANIMSTRUCT_YCOORD);
+    // ADD_HL_BC;
+    // LD_hl_D;
+    bc->yCoord = coord.y;
+    // RET;
+}
+
 void PokegearMap_InitCursor(void){
     PUSH_AF;
     //depixel ['0', '0']
@@ -1468,6 +1637,29 @@ void PokegearMap_InitCursor(void){
     POP_BC;
     RET;
 
+}
+
+struct SpriteAnim* PokegearMap_InitCursor_Conv(uint8_t landmark) {
+    // PUSH_AF;
+    // depixel2(0, 0);
+    // LD_A(SPRITE_ANIM_INDEX_POKEGEAR_ARROW);
+    // CALL(aInitSpriteAnimStruct);
+    struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_POKEGEAR_ARROW, pixel2(0, 0));
+    // LD_HL(SPRITEANIMSTRUCT_TILE_ID);
+    // ADD_HL_BC;
+    // LD_hl(0x04);
+    bc->tileID = 0x04;
+    // LD_HL(SPRITEANIMSTRUCT_ANIM_SEQ_ID);
+    // ADD_HL_BC;
+    // LD_hl(SPRITE_ANIM_SEQ_NULL);
+    bc->animSeqID = SPRITE_ANIM_SEQ_NULL;
+    // POP_AF;
+    // PUSH_BC;
+    // CALL(aPokegearMap_UpdateCursorPosition);
+    PokegearMap_UpdateCursorPosition_Conv(bc, landmark);
+    // POP_BC;
+    // RET;
+    return bc;
 }
 
 void PokegearMap_UpdateLandmarkName(void){
@@ -1491,18 +1683,20 @@ void PokegearMap_UpdateLandmarkName_Conv(uint8_t landmark){
     // hlcoord(8, 0, wTilemap);
     // LD_BC((2 << 8) | 12);
     // CALL(aClearBox);
-    ClearBox_Conv(coord(8, 0, wTilemap), (2 << 8) | 12);
+    ClearBox_Conv2(coord(8, 0, wram->wTilemap), 12, 2);
 
     // LD_E_A;
-    REG_DE = landmark;
-    PUSH_DE;
-    FARCALL(aGetLandmarkName);
-    POP_DE;
-    FARCALL(aTownMap_ConvertLineBreakCharacters);
+    // REG_DE = landmark;
+    // PUSH_DE;
+    // FARCALL(aGetLandmarkName);
+    GetLandmarkName_Conv(landmark);
+    // POP_DE;
+    // FARCALL(aTownMap_ConvertLineBreakCharacters);
+    TownMap_ConvertLineBreakCharacters();
 
     // hlcoord(8, 0, wTilemap);
     // LD_hl(0x34);
-    gb_write(coord(8, 0, wTilemap), 0x34);
+    *coord(8, 0, wram->wTilemap) = 0x34;
 }
 
 void PokegearMap_UpdateCursorPosition(void){
@@ -1520,6 +1714,23 @@ void PokegearMap_UpdateCursorPosition(void){
 
 }
 
+void PokegearMap_UpdateCursorPosition_Conv(struct SpriteAnim* bc, uint8_t landmark){
+    // PUSH_BC;
+    // LD_E_A;
+    // FARCALL(aGetLandmarkCoords);
+    struct Coords coord = GetLandmarkCoords_Conv(landmark);
+    // POP_BC;
+    // LD_HL(SPRITEANIMSTRUCT_XCOORD);
+    // ADD_HL_BC;
+    // LD_hl_E;
+    bc->xCoord = coord.x;
+    // LD_HL(SPRITEANIMSTRUCT_YCOORD);
+    // ADD_HL_BC;
+    // LD_hl_D;
+    bc->yCoord = coord.y;
+    // RET;
+}
+
 void TownMap_GetKantoLandmarkLimits(void){
     LD_A_addr(wStatusFlags);
     BIT_A(STATUSFLAGS_HALL_OF_FAME_F);
@@ -1534,6 +1745,25 @@ not_hof:
     LD_E(LANDMARK_VICTORY_ROAD);
     RET;
 
+}
+
+u8_pair_s TownMap_GetKantoLandmarkLimits_Conv(void){
+    // LD_A_addr(wStatusFlags);
+    // BIT_A(STATUSFLAGS_HALL_OF_FAME_F);
+    // IF_Z goto not_hof;
+    if(bit_test(wram->wStatusFlags, STATUSFLAGS_HALL_OF_FAME_F)) {
+        // LD_D(LANDMARK_ROUTE_28);
+        // LD_E(LANDMARK_PALLET_TOWN);
+        return u8_pair(LANDMARK_ROUTE_28, LANDMARK_PALLET_TOWN);
+    }
+    else {
+    // not_hof:
+        // LD_D(LANDMARK_ROUTE_28);
+        // LD_E(LANDMARK_VICTORY_ROAD);
+        // RET;
+        return u8_pair(LANDMARK_ROUTE_28, LANDMARK_VICTORY_ROAD);
+    }
+    // RET;
 }
 
 void PokegearRadio_Init(void){
@@ -2602,7 +2832,7 @@ void DeleteSpriteAnimStruct2ToEnd(void){
     // LD_BC(wSpriteAnimationStructsEnd - wSpriteAnim2);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(hl, 0, wSpriteAnimationStructsEnd - wSpriteAnim2);
+    ByteFill_Conv2(hl, wSpriteAnimationStructsEnd - wSpriteAnim2, 0);
     // LD_A(2);
     // LD_addr_A(wSpriteAnimCount);
     wram->wSpriteAnimCount = 2;

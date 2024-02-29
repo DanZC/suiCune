@@ -2,6 +2,7 @@
 #include "start_menu.h"
 #include "menu.h"
 #include "menu_2.h"
+#include "../pokegear/pokegear.h"
 #include "../../home/audio.h"
 #include "../../home/copy.h"
 #include "../../home/menu.h"
@@ -738,7 +739,7 @@ uint8_t StartMenu_Pokegear_Conv(void) {
     // CALL(aFadeToMenu);
     FadeToMenu_Conv();
     // FARCALL(aPokeGear);
-    SafeCallGBAuto(aPokeGear);
+    PokeGear();
     // CALL(aCloseSubmenu);
     CloseSubmenu_Conv();
     // LD_A(STARTMENURET_REOPEN);

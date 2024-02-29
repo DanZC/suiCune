@@ -49,7 +49,7 @@ void LoadBattleMenu_Conv(void){
     // LD_addr_A(wBattleMenuCursorPosition);
     wram->wBattleMenuCursorPosition = wram->wMenuCursorPosition;
     // CALL(aExitMenu);
-    ExitMenu_Conv();
+    ExitMenu_Conv2();
     // RET;
 }
 

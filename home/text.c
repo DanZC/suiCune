@@ -1094,7 +1094,8 @@ void PlacePOKE(void) {
 
 void PlacePOKE_Conv(struct TextPrintState* state) {
     // print_name PlacePOKEText
-    PlaceCommandCharacter_Conv(state, Utf8ToCrystal("<PO><KE>@")); // mPlacePOKEText
+    uint8_t buffer[16];
+    PlaceCommandCharacter_Conv(state, U82CA(buffer, "<PO><KE>@")); // mPlacePOKEText
 }
 
 void PlaceJPRoute(void) {

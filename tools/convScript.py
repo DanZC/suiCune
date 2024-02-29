@@ -57,6 +57,7 @@ commands = {
     'disappear': Cmd('disappear', ['obj']),
     'follow': Cmd('follow', ['leader', 'follower']),
     'stopfollow': Cmd('stopfollow', []),
+    'moveobject': Cmd('moveobject', ['obj', 'x', 'y']),
     'writeobjectxy': Cmd('writeobjectxy', ['obj']),
     'loademote': Cmd('loademote', ['emote']),
     'showemote': Cmd('showemote', ['emote', 'obj', 'frames']),

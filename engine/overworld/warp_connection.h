@@ -1,6 +1,7 @@
 void HandleNewMap(void);
 void HandleContinueMap(void);
 void EnterMapConnection(void);
+bool EnterMapConnection_Conv(void);
 void EnterMapWarp(void);
 void LoadMapTimeOfDay(void);
 void LoadMapGraphics(void);

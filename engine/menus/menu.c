@@ -1554,7 +1554,7 @@ void v_PushWindow_Conv(void){
     // INC_HL;
     // LD_D_hl;
     // PUSH_DE;
-    struct MenuHeader* de = &gWindowStack[gWindowStackPointer++];
+    struct MenuHeader* de = &gWindowStack[gWindowStackPointer];
 
     // LD_B(wMenuHeaderEnd - wMenuHeader);
     // LD_HL(wMenuHeader);
@@ -1591,7 +1591,7 @@ void v_PushWindow_Conv(void){
         bit_set(de->flags, MENU_RESTORE_TILES_F);
         // CALL(aMenuBoxCoord2Tile);
         // CALL(av_PushWindow_copy);
-        uint8_t* de = gTileBackupStack[gWindowStackPointer - 1];
+        uint8_t* de = gTileBackupStack[gWindowStackPointer];
         de = v_PushWindow_copy(de, MenuBoxCoord2Tile_Conv());
         // CALL(aMenuBoxCoord2Attr);
         // CALL(av_PushWindow_copy);
@@ -1622,6 +1622,7 @@ void v_PushWindow_Conv(void){
     // LD_hl_E;
     // INC_HL;
     // LD_hl_D;
+    gWindowStackPointer++;
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
@@ -1735,7 +1736,7 @@ void v_ExitMenu_Conv(void){
 
 void v_ExitMenu_Conv2(void){
     PEEK("");
-    printf("gWindowStackPointer = %d\n", gWindowStackPointer);
+    printf("gWindowStackPointer = %d\n", gWindowStackPointer - 1);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = 0;
@@ -1757,7 +1758,8 @@ void v_ExitMenu_Conv2(void){
     // LD_A_H;
     // LD_addr_A(wWindowStackPointer + 1);
     // CALL(aPopWindow);
-    PopWindow_Conv2(&gWindowStack[--gWindowStackPointer]);
+    --gWindowStackPointer;
+    PopWindow_Conv2(&gWindowStack[gWindowStackPointer]);
     // LD_A_addr(wMenuFlags);
     // BIT_A(0);
     // IF_Z goto loop;
@@ -2013,7 +2015,7 @@ void v_InitVerticalMenuCursor_Conv(const struct MenuData* data){
     // LD_A_addr(wMenuCursorPosition);
     // AND_A_A;
     // IF_Z goto load_at_the_top;
-    if(wram->wMenuCursorPosition == 0 || data->verticalMenu.count < wram->wMenuCursorPosition) {
+    if(wram->wMenuCursorPosition == 0) {
         // LD_C_A;
         // LD_A_addr(wMenuDataItems);
         // CP_A_C;

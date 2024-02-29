@@ -604,7 +604,7 @@
 //#include "engine/events/diploma.h"
 //#include "engine/pokedex/pokedex_3.h"
 #include "engine/events/catch_tutorial_input.h"
-//#include "engine/pokegear/townmap_convertlinebreakcharacters.h"
+#include "engine/pokegear/townmap_convertlinebreakcharacters.h"
 
 // SECTION "European Mail", ROMX
 

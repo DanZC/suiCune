@@ -476,8 +476,8 @@ void VBlank1_Conv(void) {
     // IF_C goto done;
     if(!UpdatePals_Conv()) {
 
-        CALL(aUpdateBGMap);
-        // UpdateBGMap_Conv();
+        // CALL(aUpdateBGMap);
+        UpdateBGMap_Conv();
         CALL(aServe2bppRequest_VBlank);
 
         TransferVirtualOAM();

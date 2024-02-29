@@ -62,6 +62,7 @@
 #define disappear(_o)               SCRIPT_EVCMD(Script_disappear_Conv, _o)
 #define follow(_l, _f)              SCRIPT_EVCMD(Script_follow_Conv, _l, _f)
 #define stopfollow                  SCRIPT_EVCMD(Script_stopfollow_Conv)
+#define moveobject(_o, _x, _y)      SCRIPT_EVCMD(Script_moveobject_Conv, _o, _x, _y)
 #define writeobjectxy(_o)           SCRIPT_EVCMD(Script_writeobjectxy_Conv, _o)
 #define loademote(_e)               SCRIPT_EVCMD(Script_loademote_Conv, _e)
 #define showemote(_e, _o, _f)       SCRIPT_EVCMD(Script_showemote_Conv, _e, _o, _f)

@@ -375,7 +375,7 @@ void RadioScroll_Conv(void){
     {
         wram->wCurRadioLine = wram->wNextRadioLine;
 
-        if(wram->wNumRadioLinesPrinted != 1)
+        if(wram->wNumRadioLinesPrinted != 0)
         {
             // CALL(aCopyBottomLineToTopLine);
             CopyBottomLineToTopLine();

@@ -15,6 +15,10 @@ typedef struct { uint8_t a; bool flag; } u8_flag_s;
 
 #define u8_flag(_u8, _flag) (u8_flag_s){.a = _u8, .flag = _flag}
 
+typedef struct { uint8_t a; uint8_t b; } u8_pair_s;
+
+#define u8_pair(_a, _b) (u8_pair_s){.a = _a, .b = _b}
+
 struct ByteWord 
 {
     uint8_t byte;
@@ -553,7 +557,7 @@ struct MapConnection
     uint16_t connectionStripPointer;
     uint16_t connectionStripLocation;
     uint8_t connectionStripLength;
-    uint8_t connectedMapLength;
+    uint8_t connectedMapWidth;
     uint8_t connectionStripYOffset;
     uint8_t connectionStripXOffset;
     uint16_t connectionWindow;
@@ -1202,7 +1206,7 @@ struct MapConnectionData
     uint16_t connectionStripOffset;
     uint8_t* const connectionStripLocation;
     uint8_t connectionStripLength;
-    uint8_t connectedMapLength;
+    uint8_t connectedMapWidth;
     uint8_t connectionStripYOffset;
     uint8_t connectionStripXOffset;
     const uint8_t* connectionWindow;
@@ -1365,6 +1369,12 @@ typedef struct Script script_s;
 #if defined(__cplusplus) || defined(_MSC_VER)
 #pragma pack(pop)
 #endif
+
+struct OAMData 
+{
+    uint8_t vtile_offset;
+    const uint8_t* ptr;
+};
 
 struct TextPrintState
 {

@@ -1,4 +1,5 @@
 #include "functions.h"
+#include "data/maps/scripts.h"
 
 #define ROM_SIZE 0x200000
 void init_function_pointers(void) {
@@ -4784,4 +4785,7 @@ void init_function_pointers(void) {
     // REDIRECTED(StartMenu_PrintSafariGameStatus);
     // REDIRECTED(ShowMoney_TerminatorString);
     // REDIRECTED(DisplayCoinCaseBalance);
+
+    // engine/pokegear/townmap_convertlinebreakcharacters.c
+    CONVERTED(TownMap_ConvertLineBreakCharacters);
 }

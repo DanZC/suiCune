@@ -1060,7 +1060,7 @@ done:
 }
 
 //  Returns the index of the first empty object struct.
-//  If all object structs are occupied, returns 0xffff
+//  If all object structs are occupied, returns NULL
 struct Object* FindFirstEmptyObjectStruct_Conv(void) {
     // PUSH_BC;
     // PUSH_DE;
@@ -1171,7 +1171,7 @@ uint8_t GetInitialFacing_Conv(uint8_t a){
     // POP_DE;
     // POP_BC;
     // RET;
-    return (((uint8_t)SpriteMovementData[a].facing << 2) >> 2) & 3;
+    return ((uint8_t)SpriteMovementData[a].facing << 2) & 0b1100;
 }
 
 void CopySpriteMovementData(void){
