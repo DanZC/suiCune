@@ -224,12 +224,14 @@ ENDM*/
         db movement_rock_smash
         db \1 // length
 ENDM*/
+#define rock_smash(_l) movement_rock_smash, _l
 
 #define movement_return_dig 0x58
 /*return_dig: MACRO
         db movement_return_dig
         db \1 // length
 ENDM*/
+#define return_dig(_l) movement_return_dig, _l
 
 #define movement_skyfall_top 0x59
 /*skyfall_top: MACRO

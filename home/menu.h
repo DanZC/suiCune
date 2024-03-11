@@ -60,6 +60,7 @@ void Menu_DummyFunction(void);
 void LoadMenuTextbox(void);
 void LoadMenuTextbox_Conv(void);
 void MenuTextboxBackup(void);
+void MenuTextboxBackup_Conv(const struct TextCmd* hl);
 void LoadStandardMenuHeader(void);
 void LoadStandardMenuHeader_Conv(void);
 void Call_ExitMenu(void);

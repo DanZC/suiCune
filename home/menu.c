@@ -1021,6 +1021,14 @@ void MenuTextboxBackup(void) {
     RET;
 }
 
+void MenuTextboxBackup_Conv(const struct TextCmd* hl) {
+    // CALL(aMenuTextbox);
+    MenuTextbox_Conv(hl);
+    // CALL(aCloseWindow);
+    CloseWindow_Conv2();
+    // RET;
+}
+
 void LoadStandardMenuHeader(void) {
     LD_HL(mLoadStandardMenuHeader_MenuHeader);
     CALL(aLoadMenuHeader);

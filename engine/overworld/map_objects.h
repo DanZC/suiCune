@@ -193,6 +193,7 @@ void UpdateAllObjectsFrozen_Conv(void);
 void RespawnPlayerAndOpponent(void);
 void RespawnPlayerAndOpponent_Conv(void);
 void RespawnPlayer(void);
+void RespawnPlayer_Conv(void);
 void RespawnObject(void);
 void RespawnObject_Conv(uint8_t a);
 void HideAllObjects(void);

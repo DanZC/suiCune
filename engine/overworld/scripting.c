@@ -1791,6 +1791,25 @@ ok:
 
 }
 
+void Script_cry_Conv(script_s* s, species_t id){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // PUSH_AF;
+    // CALL(aGetScriptByte);
+    // POP_AF;
+    // AND_A_A;
+    // IF_NZ goto ok;
+    if(id == 0) {
+        // LD_A_addr(wScriptVar);
+        id = (species_t)wram->wScriptVar;
+    }
+
+// ok:
+    // CALL(aPlayMonCry);
+    PlayMonCry_Conv(id);
+    // RET;
+}
+
 void GetScriptObject(void){
     AND_A_A;  // PLAYER?
     RET_Z ;

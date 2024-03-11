@@ -5407,6 +5407,18 @@ void RespawnPlayer(void) {
     RET;
 }
 
+void RespawnPlayer_Conv(void) {
+    // SET_PC(aRespawnPlayer);
+    // CALL(aHideAllObjects);
+    HideAllObjects();
+    // LD_A(PLAYER);
+    // CALL(aRespawnObject);
+    RespawnObject_Conv(PLAYER);
+    // CALL(av_UpdateSprites);
+    v_UpdateSprites_Conv();
+    // RET;
+}
+
 void RespawnObject(void) {
     SET_PC(aRespawnObject);
     CP_A(NUM_OBJECTS);

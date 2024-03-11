@@ -26,6 +26,7 @@ bool CheckIceTile_Conv(uint8_t a);
 void CheckWhirlpoolTile(void);
 bool CheckWhirlpoolTile_Conv(uint8_t a);
 void CheckWaterfallTile(void);
+bool CheckWaterfallTile_Conv(uint8_t a);
 void CheckStandingOnEntrance(void);
 bool CheckStandingOnEntrance_Conv(void);
 void GetMapObject(void);

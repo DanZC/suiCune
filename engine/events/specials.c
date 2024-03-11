@@ -4,6 +4,7 @@
 #include "../overworld/map_objects.h"
 #include "../overworld/time.h"
 #include "../menus/intro_menu.h"
+#include "../pokegear/pokegear.h"
 #include "../../home/sram.h"
 
 void Special(void){
@@ -256,11 +257,11 @@ void BugContestJudging(void){
 }
 
 void MapRadio(void){
-    LD_A_addr(wScriptVar);
-    LD_E_A;
-    FARCALL(aPlayRadio);
-    RET;
-
+    // LD_A_addr(wScriptVar);
+    // LD_E_A;
+    // FARCALL(aPlayRadio);
+    PlayRadio_Conv(wram->wScriptVar);
+    // RET;
 }
 
 void UnownPuzzle(void){

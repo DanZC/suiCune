@@ -125,6 +125,7 @@ extern const char LetsAllSingName[];
 extern const char PokeFluteStationName[];
 void v_TownMap(void);
 void PlayRadio(void);
+void PlayRadio_Conv(uint8_t e);
 extern const char* (*const PlayRadioStationPointers[])(void);
 void LoadStation_PokemonChannel(void);
 const char* LoadStation_PokemonChannel_Conv(void);

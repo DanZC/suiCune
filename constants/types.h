@@ -997,6 +997,29 @@ union WildMons
     const struct WildWaterMons* waterMons;
 };
 
+struct TimeFishGroup 
+{
+    species_t day_mon;
+    uint8_t day_lvl;
+    species_t nite_mon;
+    uint8_t nite_lvl;
+};
+
+struct FishEncounter 
+{
+    uint8_t chance;
+    species_t species;
+    uint8_t lvl;
+};
+
+struct FishGroup 
+{
+    uint8_t chance;
+    const struct FishEncounter* const old_rod;
+    const struct FishEncounter* const good_rod;
+    const struct FishEncounter* const super_rod;
+};
+
 struct TrainerPartyNormal 
 {
     uint8_t level;
@@ -1050,6 +1073,18 @@ struct DVSet
     uint8_t def: 4;
     uint8_t spd: 4;
     uint8_t spc: 4;
+};
+
+struct BlockPointer 
+{
+    uint8_t tileset;
+    const uint8_t* const list;
+};
+
+struct StdCollisionScript 
+{
+    uint8_t coll;
+    uint16_t script;
 };
 
 struct Script;

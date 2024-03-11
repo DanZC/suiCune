@@ -7,6 +7,6 @@ bool CheckWarpFacingDown_Conv(void);
 void CheckGrassCollision(void);
 bool CheckGrassCollision_Conv(void);
 void CheckCutCollision(void);
-bool CheckCutCollision_Conv(void);
+bool CheckCutCollision_Conv(uint8_t tile);
 void GetWarpSFX(void);
 uint16_t GetWarpSFX_Conv(void);

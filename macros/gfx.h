@@ -32,6 +32,12 @@ else
 endc
 ENDM
 
+*/
+#define dbpixel2(_x, _y) _x * TILE_WIDTH, _y * TILE_WIDTH
+#define dbpixel4(_x, _y, _px, _py) ((_x) * TILE_WIDTH) + (_px), ((_y) * TILE_WIDTH) + (_py)
+
+/*
+
 ldpixel: MACRO
 if _NARG >= 5
 // register, x tile, y tile, x pixel, y pixel

@@ -51,6 +51,7 @@
 #define playsound(_sfx)             SCRIPT_EVCMD(Script_playsound_Conv, _sfx)
 #define waitsfx                     SCRIPT_EVCMD(Script_waitsfx_Conv)
 #define warpsound                   SCRIPT_EVCMD(Script_warpsound_Conv)
+#define playcry(_cry)               SCRIPT_EVCMD(Script_cry_Conv, _cry)
 #define setlasttalked(_o)           SCRIPT_EVCMD(Script_setlasttalked_Conv, _o)
 #define applymovement(_o, _mv)      SCRIPT_EVCMD(Script_applymovement_Conv, _o, _mv)
 #define applymovementlasttalked(_m) SCRIPT_EVCMD(Script_applymovementlasttalked_Conv, _m)
@@ -158,5 +159,7 @@
 #define s_endall                    SCRIPT_EVCMD(Script_endall_Conv)
 #define wait(_n)                    SCRIPT_EVCMD(Script_wait_Conv, _n)
 #define s_ret                       SCRIPT_RET
+
+#define jumpstd2(_std)              SCRIPT_EVCMD(Script_jumpstd_Conv, _std)
 
 #define far_label(_name)            case _name:

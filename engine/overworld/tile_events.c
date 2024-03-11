@@ -209,7 +209,7 @@ blocks:
     return GetWarpSFX();
 }
 
-bool CheckCutCollision_Conv(void){
+bool CheckCutCollision_Conv(uint8_t tile){
     static const uint8_t blocks[] = {
         COLL_CUT_TREE,
         COLL_CUT_TREE_1A,
@@ -223,7 +223,6 @@ bool CheckCutCollision_Conv(void){
     // LD_DE(1);
     // CALL(aIsInArray);
     // RET;
-    const uint8_t tile = wram->wPlayerStruct.nextTile;
     for(size_t i = 0; i < sizeof(blocks); ++i) {
         if(tile == blocks[i])
             return true;

@@ -24,6 +24,7 @@
 #include "../../home/time_palettes.h"
 #include "../../home/flag.h"
 #include "../../home/gfx.h"
+#include "../../home/menu.h"
 #include "../phone/phone.h"
 #include "../menus/start_menu.h"
 #include "../events/forced_movement.h"
@@ -32,6 +33,8 @@
 #include "../events/repel.h"
 #include "../events/map_name_sign.h"
 #include "../events/trainer_scripts.h"
+#include "../events/std_collision.h"
+#include "../events/overworld.h"
 
 // INCLUDE "constants.asm"
 
@@ -2432,6 +2435,81 @@ done:
     SCF;
     RET;
 
+}
+
+u8_flag_s TryTileCollisionEvent_Conv(void){
+    // CALL(aGetFacingTileCoord);
+    struct CoordsTileId cid = GetFacingTileCoord_Conv();
+    // LD_addr_A(wFacingTileID);
+    wram->wFacingTileID = cid.tileId;
+    // LD_C_A;
+    // FARCALL(aCheckFacingTileForStdScript);
+    // IF_C goto done;
+    if(!CheckFacingTileForStdScript_Conv(cid.tileId)) {
+        // CALL(aCheckCutTreeTile);
+        // IF_NZ goto whirlpool;
+        if(CheckCutTreeTile_Conv(cid.tileId)) {
+            // FARCALL(aTryCutOW);
+            // goto done;
+            TryCutOW_Conv();
+        }
+
+
+    // whirlpool:
+        // LD_A_addr(wFacingTileID);
+        // CALL(aCheckWhirlpoolTile);
+        // IF_NZ goto waterfall;
+        else if(CheckWhirlpoolTile_Conv(cid.tileId)) {
+            // FARCALL(aTryWhirlpoolOW);
+            TryWhirlpoolOW_Conv();
+            // goto done;
+        }
+
+    // waterfall:
+        // LD_A_addr(wFacingTileID);
+        // CALL(aCheckWaterfallTile);
+        // IF_NZ goto headbutt;
+        else if(CheckWaterfallTile_Conv(cid.tileId)) {
+            // FARCALL(aTryWaterfallOW);
+            TryWaterfallOW_Conv();
+            // goto done;
+        }
+
+    // headbutt:
+        // LD_A_addr(wFacingTileID);
+        // CALL(aCheckHeadbuttTreeTile);
+        // IF_NZ goto surf;
+        else if(CheckHeadbuttTreeTile_Conv(cid.tileId)) {
+            // FARCALL(aTryHeadbuttOW);
+            // IF_C goto done;
+            // goto noevent;
+            if(!TryHeadbuttOW_Conv())
+                return u8_flag(0, false);
+        }
+
+    // surf:
+        // FARCALL(aTrySurfOW);
+        // IF_NC goto noevent;
+        // goto done;
+        else if(TrySurfOW_Conv()) {
+
+        }
+
+        else {
+        // noevent:
+            // XOR_A_A;
+            // RET;
+            return u8_flag(0, false);
+        }
+    }
+
+// done:
+    // CALL(aPlayClickSFX);
+    PlayClickSFX_Conv();
+    // LD_A(0xff);
+    // SCF;
+    // RET;
+    return u8_flag(0xff, true);
 }
 
 void RandomEncounter(void){

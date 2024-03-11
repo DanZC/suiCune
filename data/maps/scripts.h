@@ -27,7 +27,7 @@
 // #include "../../maps/RuinsOfAlphHoOhChamber.asm"
 // #include "../../maps/RuinsOfAlphKabutoChamber.asm"
 // #include "../../maps/RuinsOfAlphOmanyteChamber.asm"
-// #include "../../maps/RuinsOfAlphAerodactylChamber.asm"
+#include "../../maps/RuinsOfAlphAerodactylChamber.h"
 // #include "../../maps/RuinsOfAlphInnerChamber.asm"
 // #include "../../maps/RuinsOfAlphResearchCenter.asm"
 // #include "../../maps/RuinsOfAlphHoOhItemRoom.asm"

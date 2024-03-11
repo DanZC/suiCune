@@ -92,6 +92,14 @@ bool IsInU8Array(const uint8_t* hl, uint8_t a) {
     return false;
 }
 
+const struct BlockPointer* ArrayFindStructBlockPointer(const struct BlockPointer* hl, uint8_t a) {
+    for(uint32_t i = 0; hl[i].tileset != 0xff; ++i) {
+        if(hl[i].tileset == a)
+            return hl + i;
+    }
+    return NULL;
+}
+
 bool IsInMoveArray(const move_t* hl, uint8_t a) {
     for(uint32_t i = 0; hl[i] != (move_t)-1; ++i) {
         if(hl[i] == a)

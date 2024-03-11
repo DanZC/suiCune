@@ -104,6 +104,7 @@ void Script_waitsfx_Conv(script_s* s);
 void Script_warpsound(void);
 void Script_warpsound_Conv(script_s* s);
 void Script_cry(void);
+void Script_cry_Conv(script_s* s, species_t id);
 void GetScriptObject(void);
 uint8_t GetScriptObject_Conv(uint8_t a);
 void Script_setlasttalked(void);

@@ -46,6 +46,7 @@ commands = {
     'playsound': Cmd('playsound', ['sfx']),
     'waitsfx': Cmd('waitsfx', []),
     'warpsound': Cmd('warpsound', []),
+    'cry': Cmd('playcry', ['id']),
     'setlasttalked': Cmd('setlasttalked', ['obj']),
     'applymovement': Cmd('applymovement', ['id', 'movement']),
     'applymovementlasttalked': Cmd('applymovementlasttalked', ['movement']),
@@ -83,9 +84,9 @@ commands = {
     'checkscene': Cmd('checkscene', []),
     'setscene': Cmd('setscene', ['scene']),
     'setmapscene': Cmd('setmapscene', ['map', 'scene']),
-    'readmem': Cmd('readmem', ['mem']),
-    'writemem': Cmd('writemem', ['mem']),
-    'loadmem': Cmd('loadmem', ['mem', 'value']),
+    'readmem': Cmd('readmem', ['$mem']),
+    'writemem': Cmd('writemem', ['$mem']),
+    'loadmem': Cmd('loadmem', ['$mem', 'value']),
     'setval': Cmd('setval', ['value']),
     'addval': Cmd('addval', ['value']),
     'random': Cmd('srandom', ['val']),
@@ -165,6 +166,7 @@ mvmt_commands = {
     'fix_facing': Cmd('movement_fix_facing', []),
     'show_object': Cmd('movement_show_object', []),
     'hide_object': Cmd('movement_hide_object', []),
+    'skyfall_top': Cmd('movement_skyfall_top', []),
     'step_end': Cmd('movement_step_end', []),
 }
 
@@ -252,6 +254,8 @@ def format_command(cmd: str, parts: List[str]):
             return f"goto {parts[0][1:]};"
         if cmd == 'scall' and parts[0].startswith('.'):
             return f"scall_local({parts[0][1:]});"
+        if cmd == 'sdefer' and parts[0].startswith('.'):
+            return f"sdefer_local({parts[0][1:]});"
         if len(commands[cmd].args) == 0:
             return f"{commands[cmd].name}"
         else:
