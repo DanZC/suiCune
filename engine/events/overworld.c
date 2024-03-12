@@ -1284,49 +1284,53 @@ bool CheckMapCanWaterfall_Conv(void){
     return ((wram->wPlayerStruct.facing & 0xc) == FACE_UP && CheckWaterfallTile_Conv(wram->wTileUp))? true: false;
 }
 
-void Script_WaterfallFromMenu(void){
-    //reloadmappart ['?']
-    //special ['UpdateTimePals']
+bool Script_WaterfallFromMenu(script_s* s){
+    SCRIPT_BEGIN
+    reloadmappart
+    special(UpdateTimePals)
 
-    return Script_UsedWaterfall();
+    SCRIPT_FALLTHROUGH(Script_UsedWaterfall);
 }
 
-void Script_UsedWaterfall(void){
-    //callasm ['GetPartyNickname']
-    //writetext ['.UseWaterfallText']
-    //waitbutton ['?']
-    //closetext ['?']
-    //playsound ['SFX_BUBBLEBEAM']
+static void CheckContinueWaterfall(void) {
+    // XOR_A_A;
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = FALSE;
+    // LD_A_addr(wPlayerStandingTile);
+    // CALL(aCheckWaterfallTile);
+    // RET_Z ;
+    if(CheckWaterfallTile_Conv(wram->wPlayerStruct.nextTile))
+        return;
+    // FARCALL(aStubbedTrainerRankings_Waterfall);
+    // LD_A(0x1);
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = TRUE;
+    // RET;
+}
+
+bool Script_UsedWaterfall(script_s* s){
+    static const uint8_t WaterfallStep[] = {
+        turn_waterfall(UP),
+        movement_step_end
+    };
+
+    static const struct TextCmd UseWaterfallText[] = {
+        text_far(v_UseWaterfallText)
+        text_end
+    };
+    SCRIPT_BEGIN
+    GetPartyNickname();
+    writetext(UseWaterfallText)
+    waitbutton
+    closetext
+    playsound(SFX_BUBBLEBEAM)
 
 loop:
-    //applymovement ['PLAYER', '.WaterfallStep']
-    //callasm ['.CheckContinueWaterfall']
-    //iffalse ['.loop']
-    //end ['?']
-
-
-CheckContinueWaterfall:
-    XOR_A_A;
-    LD_addr_A(wScriptVar);
-    LD_A_addr(wPlayerStandingTile);
-    CALL(aCheckWaterfallTile);
-    RET_Z ;
-    FARCALL(aStubbedTrainerRankings_Waterfall);
-    LD_A(0x1);
-    LD_addr_A(wScriptVar);
-    RET;
-
-
-WaterfallStep:
-    //turn_waterfall ['UP']
-    //step_end ['?']
-
-
-UseWaterfallText:
-    //text_far ['_UseWaterfallText']
-    //text_end ['?']
-
-    return TryWaterfallOW();
+    applymovement(PLAYER, WaterfallStep)
+    CheckContinueWaterfall();
+    iffalse(loop)
+    s_end
+    SCRIPT_END
 }
 
 void TryWaterfallOW(void){
@@ -1395,20 +1399,19 @@ bool Script_CantDoWaterfall(script_s* s){
     SCRIPT_END
 }
 
-void Script_AskWaterfall(void){
-    //opentext ['?']
-    //writetext ['.AskWaterfallText']
-    //yesorno ['?']
-    //iftrue ['Script_UsedWaterfall']
-    //closetext ['?']
-    //end ['?']
-
-
-AskWaterfallText:
-    //text_far ['_AskWaterfallText']
-    //text_end ['?']
-
-    return EscapeRopeFunction();
+bool Script_AskWaterfall(script_s* s){
+    const struct TextCmd AskWaterfallText[] = {
+        text_far(v_AskWaterfallText)
+        text_end
+    };
+    SCRIPT_BEGIN
+    opentext
+    writetext(AskWaterfallText)
+    yesorno
+    iftrue_jump(Script_UsedWaterfall)
+    closetext
+    s_end
+    SCRIPT_END
 }
 
 void EscapeRopeFunction(void){
