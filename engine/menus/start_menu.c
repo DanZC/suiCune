@@ -618,7 +618,7 @@ uint8_t StartMenu_Exit_Conv(void) {
 
 //  Retire from the bug catching contest.
 void StartMenu_Quit(void){
-    // static const struct TextCmd StartMenuContestEndText[] = {
+    // static const txt_cmd_s StartMenuContestEndText[] = {
     //     text_far(v_StartMenuContestEndText)
     //     text_end
     // };

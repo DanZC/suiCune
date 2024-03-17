@@ -44,11 +44,11 @@ static void FindItemInBallScript_TryReceiveItem(void) {
 }
 
 bool FindItemInBallScript(script_s* s){
-    static const struct TextCmd FoundItemText[] = {
+    static const txt_cmd_s FoundItemText[] = {
         text_far(v_FoundItemText)
         text_end
     };
-    static const struct TextCmd CantCarryItemText[] = {
+    static const txt_cmd_s CantCarryItemText[] = {
         text_far(v_CantCarryItemText)
         text_end
     };

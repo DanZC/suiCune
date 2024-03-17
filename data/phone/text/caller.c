@@ -3,7 +3,7 @@
 
 //// alan_caller.c
 
-const struct TextCmd AlanGettingStrongerText[] = {
+const txt_cmd_s AlanGettingStrongerText[] = {
     text_start("My @")
     text_ram(wram_ptr(wStringBuffer4))
     text_start("'s"
@@ -12,7 +12,7 @@ const struct TextCmd AlanGettingStrongerText[] = {
         t_line "calculated!"
         t_done )
 };
-const struct TextCmd AlanDefeatedMonText[] = {
+const txt_cmd_s AlanDefeatedMonText[] = {
     text_start("By the way, we"
         t_line "knocked out a wild"
         t_para "@")
@@ -23,7 +23,7 @@ const struct TextCmd AlanDefeatedMonText[] = {
         t_line "advance worked!"
         t_done )
 };
-const struct TextCmd AlanLostAMonText[] = {
+const txt_cmd_s AlanLostAMonText[] = {
     text_start("By the way, a wild"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer4))
@@ -33,7 +33,7 @@ const struct TextCmd AlanLostAMonText[] = {
         t_line "error on my part…"
         t_done )
 };
-const struct TextCmd AlanBattleRematchText[] = {
+const txt_cmd_s AlanBattleRematchText[] = {
     text_start("I've studied quite"
         t_line "a bit since then,"
         t_para "and I've gotten a"
@@ -46,11 +46,11 @@ const struct TextCmd AlanBattleRematchText[] = {
         t_line "for a battle?"
         t_done )
 };
-const struct TextCmd AlanHangUpText[] = {
+const txt_cmd_s AlanHangUpText[] = {
     text_start("See you later!"
         t_done )
 };
-const struct TextCmd AlanFoundItemText[] = {
+const txt_cmd_s AlanFoundItemText[] = {
     text_start("Hehehe, I picked"
         t_line "up something nice!"
         t_para "You can have it!"
@@ -61,14 +61,14 @@ const struct TextCmd AlanFoundItemText[] = {
         t_line "and pick it up?"
         t_done )
 };
-const struct TextCmd AlanHaventPickedUpAnythingText[] = {
+const txt_cmd_s AlanHaventPickedUpAnythingText[] = {
     text_start("I haven't picked"
         t_line "up anything yet."
         t_para "I'll call you if I"
         t_line "find something."
         t_done )
 };
-const struct TextCmd AlanReminderText[] = {
+const txt_cmd_s AlanReminderText[] = {
     text_start("If we don't battle"
         t_line "soon, I'll forget"
         t_cont "my strategy!"
@@ -78,7 +78,7 @@ const struct TextCmd AlanReminderText[] = {
     text_start("!"
         t_done )
 };
-const struct TextCmd AlanComePickUpGiftText[] = {
+const txt_cmd_s AlanComePickUpGiftText[] = {
     text_start("I have to do my"
         t_line "homework, so can"
         t_para "you come get your"
@@ -92,7 +92,7 @@ const struct TextCmd AlanComePickUpGiftText[] = {
 
 //// anthony_caller.c
 
-const struct TextCmd AnthonyMonAteSomeBerriesText[] = {
+const txt_cmd_s AnthonyMonAteSomeBerriesText[] = {
     text_start("The other day, I"
         t_line "was watching my"
         t_para "@")
@@ -109,7 +109,7 @@ const struct TextCmd AnthonyMonAteSomeBerriesText[] = {
         t_line "was delicious!"
         t_done )
 };
-const struct TextCmd AnthonyDefeatedMonText[] = {
+const txt_cmd_s AnthonyDefeatedMonText[] = {
     text_start("Lately, I've been"
         t_line "running across"
         t_para "wild @")
@@ -120,7 +120,7 @@ const struct TextCmd AnthonyDefeatedMonText[] = {
         t_line "taken care of."
         t_done )
 };
-const struct TextCmd AnthonyLostAMonText[] = {
+const txt_cmd_s AnthonyLostAMonText[] = {
     text_start("Oh yeah, I was"
         t_line "battling this"
         t_para "@")
@@ -136,7 +136,7 @@ const struct TextCmd AnthonyLostAMonText[] = {
         t_line "the job at hand!"
         t_done )
 };
-const struct TextCmd AnthonyBattleRematchText[] = {
+const txt_cmd_s AnthonyBattleRematchText[] = {
     text_start("Come on--let's"
         t_line "battle right now!"
         t_para "@")
@@ -147,12 +147,12 @@ const struct TextCmd AnthonyBattleRematchText[] = {
         t_line "you feel up to it!"
         t_done )
 };
-const struct TextCmd AnthonyHangUpText[] = {
+const txt_cmd_s AnthonyHangUpText[] = {
     text_start("All right then!"
         t_line "Be good!"
         t_done )
 };
-const struct TextCmd AnthonySwarmText[] = {
+const txt_cmd_s AnthonySwarmText[] = {
     text_start("<PLAYER>! It's"
         t_line "mind-blowing!"
         t_para "I took a hike in"
@@ -176,7 +176,7 @@ const struct TextCmd AnthonySwarmText[] = {
         t_line "strong #MON."
         t_done )
 };
-const struct TextCmd AnthonyWasntPayingAttentionText[] = {
+const txt_cmd_s AnthonyWasntPayingAttentionText[] = {
     text_start("Rare #MON?"
         t_para "Hey, sorry! I was"
         t_line "too focused on my"
@@ -184,7 +184,7 @@ const struct TextCmd AnthonyWasntPayingAttentionText[] = {
         t_line "paying attention."
         t_done )
 };
-const struct TextCmd AnthonyReminderText[] = {
+const txt_cmd_s AnthonyReminderText[] = {
     text_start("Hello! You haven't"
         t_line "forgotten about"
         t_para "our battle, have"
@@ -195,7 +195,7 @@ const struct TextCmd AnthonyReminderText[] = {
         t_line "I'm waiting!"
         t_done )
 };
-const struct TextCmd AnthonyHurryText[] = {
+const txt_cmd_s AnthonyHurryText[] = {
     text_start("Hello? What? Where"
         t_line "is DUNSPARCE?"
         t_para "DARK CAVE! Hurry!"
@@ -210,7 +210,7 @@ const struct TextCmd AnthonyHurryText[] = {
 
 //// arnie_caller.c
 
-const struct TextCmd ArnieMonIsSoCuteText[] = {
+const txt_cmd_s ArnieMonIsSoCuteText[] = {
     text_start("I'm always with my"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer4))
@@ -219,7 +219,7 @@ const struct TextCmd ArnieMonIsSoCuteText[] = {
         t_line "I just love it!"
         t_done )
 };
-const struct TextCmd ArnieDefeatedMonText[] = {
+const txt_cmd_s ArnieDefeatedMonText[] = {
     text_start("Changing the topic"
         t_line "here, I saw this"
         t_para "@")
@@ -230,7 +230,7 @@ const struct TextCmd ArnieDefeatedMonText[] = {
         t_line "beat, actually."
         t_done )
 };
-const struct TextCmd ArnieLostAMonText[] = {
+const txt_cmd_s ArnieLostAMonText[] = {
     text_start("I was wondering,"
         t_line "do you happen to"
         t_cont "have @")
@@ -242,7 +242,7 @@ const struct TextCmd ArnieLostAMonText[] = {
         t_line "wonder."
         t_done )
 };
-const struct TextCmd ArnieBattleRematchText[] = {
+const txt_cmd_s ArnieBattleRematchText[] = {
     text_start("Hey, let's battle"
         t_line "our #MON!"
         t_para "I won't lose to"
@@ -255,12 +255,12 @@ const struct TextCmd ArnieBattleRematchText[] = {
     text_start("!"
         t_done )
 };
-const struct TextCmd ArnieHangUpText[] = {
+const txt_cmd_s ArnieHangUpText[] = {
     text_start("Let's talk again,"
         t_line "huh?"
         t_done )
 };
-const struct TextCmd ArnieSwarmText[] = {
+const txt_cmd_s ArnieSwarmText[] = {
     text_start("Boy, am I glad I"
         t_line "caught you!"
         t_para "A whole bunch of"
@@ -275,7 +275,7 @@ const struct TextCmd ArnieSwarmText[] = {
         t_line "this!"
         t_done )
 };
-const struct TextCmd ArnieHaventSeenRareMonText[] = {
+const txt_cmd_s ArnieHaventSeenRareMonText[] = {
     text_start("I haven't had any"
         t_line "luck seeing rare"
         t_cont "#MON lately…"
@@ -283,7 +283,7 @@ const struct TextCmd ArnieHaventSeenRareMonText[] = {
         t_line "out there!"
         t_done )
 };
-const struct TextCmd ArnieReminderText[] = {
+const txt_cmd_s ArnieReminderText[] = {
     text_start("Hey, where are you"
         t_line "now?"
         t_para "Let's battle. I'll"
@@ -293,7 +293,7 @@ const struct TextCmd ArnieReminderText[] = {
     text_start("!"
         t_done )
 };
-const struct TextCmd ArnieHurryText[] = {
+const txt_cmd_s ArnieHurryText[] = {
     text_start("Hello? Are you"
         t_line "coming or what?"
         t_para "You're missing out"
@@ -305,7 +305,7 @@ const struct TextCmd ArnieHurryText[] = {
 
 //// beth_caller.c
 
-const struct TextCmd BethExhilaratingRideText[] = {
+const txt_cmd_s BethExhilaratingRideText[] = {
     text_start("Do you remember my"
         t_line "sweet @")
     text_ram(wram_ptr(wStringBuffer4))
@@ -320,7 +320,7 @@ const struct TextCmd BethExhilaratingRideText[] = {
         t_line "really gets going."
         t_done )
 };
-const struct TextCmd BethDefeatedMonText[] = {
+const txt_cmd_s BethDefeatedMonText[] = {
     text_start("Oh, have you ever"
         t_line "seen a @")
     text_ram(wram_ptr(wStringBuffer4))
@@ -336,7 +336,7 @@ const struct TextCmd BethDefeatedMonText[] = {
         t_line "course."
         t_done )
 };
-const struct TextCmd BethLostAMonText[] = {
+const txt_cmd_s BethLostAMonText[] = {
     text_start("Oh, I just saw a"
         t_line "wild @")
     text_ram(wram_ptr(wStringBuffer4))
@@ -354,7 +354,7 @@ const struct TextCmd BethLostAMonText[] = {
         t_line "from my mistake."
         t_done )
 };
-const struct TextCmd BethBattleRematchText[] = {
+const txt_cmd_s BethBattleRematchText[] = {
     text_start("Do you want to"
         t_line "battle? I'm going"
         t_cont "to win this time!"
@@ -366,16 +366,16 @@ const struct TextCmd BethBattleRematchText[] = {
         t_line "Look for me, OK?"
         t_done )
 };
-const struct TextCmd BethHangUpText[] = {
+const txt_cmd_s BethHangUpText[] = {
     text_start("OK, bye-bye!"
         t_done )
 };
-const struct TextCmd BethLetsBattleAgainSometimeText[] = {
+const txt_cmd_s BethLetsBattleAgainSometimeText[] = {
     text_start("Let's battle again"
         t_line "sometime!"
         t_done )
 };
-const struct TextCmd BethReminderText[] = {
+const txt_cmd_s BethReminderText[] = {
     text_start("Um… <PLAY_G>?"
         t_line "What's wrong?"
         t_para "Did you forget our"
@@ -390,7 +390,7 @@ const struct TextCmd BethReminderText[] = {
 
 //// beverly_caller.c
 
-const struct TextCmd BeverlyMadeMonEvenCuterText[] = {
+const txt_cmd_s BeverlyMadeMonEvenCuterText[] = {
     text_start("I fancied up my"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer4))
@@ -399,7 +399,7 @@ const struct TextCmd BeverlyMadeMonEvenCuterText[] = {
         t_line "than before!"
         t_done )
 };
-const struct TextCmd BeverlyDefeatedMonText[] = {
+const txt_cmd_s BeverlyDefeatedMonText[] = {
     text_start("I happened to come"
         t_line "across a wild"
         t_cont "SNUBBULL recently."
@@ -409,7 +409,7 @@ const struct TextCmd BeverlyDefeatedMonText[] = {
         t_line "wild one."
         t_done )
 };
-const struct TextCmd BeverlyLostAMonText[] = {
+const txt_cmd_s BeverlyLostAMonText[] = {
     text_start("I happened to see"
         t_line "a wild MARILL the"
         t_para "other day."
@@ -422,12 +422,12 @@ const struct TextCmd BeverlyLostAMonText[] = {
         t_line "quite miffed."
         t_done )
 };
-const struct TextCmd BeverlyHangUpText[] = {
+const txt_cmd_s BeverlyHangUpText[] = {
     text_start("You can expect a"
         t_line "call from me."
         t_done )
 };
-const struct TextCmd BeverlyFoundItemText[] = {
+const txt_cmd_s BeverlyFoundItemText[] = {
     text_start("My husband got"
         t_line "some NUGGETS."
         t_para "If you'd like, you"
@@ -442,14 +442,14 @@ const struct TextCmd BeverlyFoundItemText[] = {
         t_line "when you can."
         t_done )
 };
-const struct TextCmd BeverlyLetsChatAboutMonAgainText[] = {
+const txt_cmd_s BeverlyLetsChatAboutMonAgainText[] = {
     text_start("Are your #MON"
         t_line "in prime form?"
         t_para "Let's chat about"
         t_line "#MON again."
         t_done )
 };
-const struct TextCmd BeverlyComePickUpText[] = {
+const txt_cmd_s BeverlyComePickUpText[] = {
     text_start("Pardon?"
         t_line "Oh, the NUGGET?"
         t_para "There's no need to"
@@ -463,7 +463,7 @@ const struct TextCmd BeverlyComePickUpText[] = {
 
 //// brent_caller.c
 
-const struct TextCmd BrentRareTradeText[] = {
+const txt_cmd_s BrentRareTradeText[] = {
     text_start("Oh yeah, I got an"
         t_line "extremely rare"
         t_para "#MON in a trade"
@@ -474,7 +474,7 @@ const struct TextCmd BrentRareTradeText[] = {
         t_line "it a secret!"
         t_done )
 };
-const struct TextCmd BrentDefeatedMonText[] = {
+const txt_cmd_s BrentDefeatedMonText[] = {
     text_start("Oh yeah, I took"
         t_line "down this wild"
         t_para "@")
@@ -485,7 +485,7 @@ const struct TextCmd BrentDefeatedMonText[] = {
         t_line "catching."
         t_done )
 };
-const struct TextCmd BrentLostAMonText[] = {
+const txt_cmd_s BrentLostAMonText[] = {
     text_start("Oh yeah, I saw a"
         t_line "rare #MON about"
         t_cont "an hour ago."
@@ -497,7 +497,7 @@ const struct TextCmd BrentLostAMonText[] = {
         t_line "at my mistakes?"
         t_done )
 };
-const struct TextCmd BrentBattleRematchText[] = {
+const txt_cmd_s BrentBattleRematchText[] = {
     text_start("You've got time"
         t_line "like usual, right?"
         t_para "Feel like having a"
@@ -512,80 +512,80 @@ const struct TextCmd BrentBattleRematchText[] = {
     text_start("."
         t_done )
 };
-const struct TextCmd BrentHangUpText[] = {
+const txt_cmd_s BrentHangUpText[] = {
     text_start("So that's it then."
         t_done )
 };
-const struct TextCmd BrentFatherGossipText[] = {
+const txt_cmd_s BrentFatherGossipText[] = {
     text_start("Did you know…?"
         t_line "BILL's father is"
         t_para "supposed to be a"
         t_line "great #MANIAC."
         t_done )
 };
-const struct TextCmd BrentGrandpaGossipText[] = {
+const txt_cmd_s BrentGrandpaGossipText[] = {
     text_start("Did you know…?"
         t_line "Apparently BILL's"
         t_para "grandpa isn't a"
         t_line "#MANIAC."
         t_done )
 };
-const struct TextCmd BrentGoldenrodGossipText[] = {
+const txt_cmd_s BrentGoldenrodGossipText[] = {
     text_start("Did you know…?"
         t_line "BILL's originally"
         t_cont "from GOLDENROD."
         t_done )
 };
-const struct TextCmd BrentRoute25GossipText[] = {
+const txt_cmd_s BrentRoute25GossipText[] = {
     text_start("Did you know…?"
         t_line "BILL evidently"
         t_para "lives on ROUTE 25"
         t_line "in KANTO."
         t_done )
 };
-const struct TextCmd BrentAbraGossipText[] = {
+const txt_cmd_s BrentAbraGossipText[] = {
     text_start("Did you know…?"
         t_line "ABRA was the first"
         t_para "#MON that BILL"
         t_line "ostensibly caught."
         t_done )
 };
-const struct TextCmd BrentSisterGossipText[] = {
+const txt_cmd_s BrentSisterGossipText[] = {
     text_start("Did you know…?"
         t_line "BILL's younger"
         t_para "sister apparently"
         t_line "can't wink."
         t_done )
 };
-const struct TextCmd BrentMilkGossipText[] = {
+const txt_cmd_s BrentMilkGossipText[] = {
     text_start("Did you know…?"
         t_line "BILL supposedly"
         t_para "hates milk and"
         t_line "can't drink it."
         t_done )
 };
-const struct TextCmd BrentBattlingGossipText[] = {
+const txt_cmd_s BrentBattlingGossipText[] = {
     text_start("Did you know…?"
         t_line "Evidently, BILL"
         t_para "isn't very good at"
         t_line "battling."
         t_done )
 };
-const struct TextCmd BrentFlowerShopGossipText[] = {
+const txt_cmd_s BrentFlowerShopGossipText[] = {
     text_start("Did you know…?"
         t_line "BILL appears to"
         t_para "like the lady at"
         t_line "the FLOWER SHOP."
         t_done )
 };
-const struct TextCmd BrentKimonoGirlGossipText[] = {
+const txt_cmd_s BrentKimonoGirlGossipText[] = {
     text_start("Did you know…?"
         t_line "BILL's mother is"
         t_para "said to have been"
         t_line "a KIMONO GIRL."
         t_done )
 };
-const struct TextCmd BrentSorryImTooBusyText[] = {
+const txt_cmd_s BrentSorryImTooBusyText[] = {
     text_start("You wanted to hear"
         t_line "about BILL?"
         t_para "Sorry, but I'm too"
@@ -594,7 +594,7 @@ const struct TextCmd BrentSorryImTooBusyText[] = {
         t_line "have time."
         t_done )
 };
-const struct TextCmd BrentReminderText[] = {
+const txt_cmd_s BrentReminderText[] = {
     text_start("You want to see my"
         t_line "rare #MON."
         t_para "Hurry over to"
@@ -606,7 +606,7 @@ const struct TextCmd BrentReminderText[] = {
 
 //// chad_caller.c
 
-const struct TextCmd ChadObservingWildText[] = {
+const txt_cmd_s ChadObservingWildText[] = {
     text_start("I recently began"
         t_line "observing wild"
         t_cont "@")
@@ -622,7 +622,7 @@ const struct TextCmd ChadObservingWildText[] = {
         t_line "PROF.OAK soon."
         t_done )
 };
-const struct TextCmd ChadDefeatedMonText[] = {
+const txt_cmd_s ChadDefeatedMonText[] = {
     text_start("Oh yes, I managed"
         t_line "to knock out a"
         t_para "wild @")
@@ -635,7 +635,7 @@ const struct TextCmd ChadDefeatedMonText[] = {
         t_line "was inevitable."
         t_done )
 };
-const struct TextCmd ChadLostAMonText[] = {
+const txt_cmd_s ChadLostAMonText[] = {
     text_start("Oh yes, I came"
         t_line "close to catching"
         t_para "a wild @")
@@ -650,7 +650,7 @@ const struct TextCmd ChadLostAMonText[] = {
     text_start(". Rats…"
         t_done )
 };
-const struct TextCmd ChadBattleRematchText[] = {
+const txt_cmd_s ChadBattleRematchText[] = {
     text_start("Want to battle?"
         t_line "I have to battle"
         t_para "every so often to"
@@ -661,11 +661,11 @@ const struct TextCmd ChadBattleRematchText[] = {
     text_start("!"
         t_done )
 };
-const struct TextCmd ChadHangUpText[] = {
+const txt_cmd_s ChadHangUpText[] = {
     text_start("See you later!"
         t_done )
 };
-const struct TextCmd ChadBlueGossipText[] = {
+const txt_cmd_s ChadBlueGossipText[] = {
     text_start("Do you know BLUE?"
         t_para "He's PROF.OAK's"
         t_line "grandson and a"
@@ -675,7 +675,7 @@ const struct TextCmd ChadBlueGossipText[] = {
         t_line "#MON trainer!"
         t_done )
 };
-const struct TextCmd ChadDaisyGossipText[] = {
+const txt_cmd_s ChadDaisyGossipText[] = {
     text_start("PROF.OAK has a"
         t_line "granddaughter"
         t_cont "named DAISY."
@@ -685,7 +685,7 @@ const struct TextCmd ChadDaisyGossipText[] = {
         t_line "calm right down."
         t_done )
 };
-const struct TextCmd ChadProfElmGossipText[] = {
+const txt_cmd_s ChadProfElmGossipText[] = {
     text_start("Everyone's talking"
         t_line "about PROF.ELM."
         t_para "He used to be an"
@@ -695,7 +695,7 @@ const struct TextCmd ChadProfElmGossipText[] = {
         t_line "I envy him!"
         t_done )
 };
-const struct TextCmd ChadProfOaksDreamGossipText[] = {
+const txt_cmd_s ChadProfOaksDreamGossipText[] = {
     text_start("PROF.OAK's dream"
         t_line "is to compile a"
         t_para "comprehensive"
@@ -705,7 +705,7 @@ const struct TextCmd ChadProfOaksDreamGossipText[] = {
         t_cont "that project…"
         t_done )
 };
-const struct TextCmd ChadKurtGossipText[] = {
+const txt_cmd_s ChadKurtGossipText[] = {
     text_start("Do you know KURT,"
         t_line "the BALL creator?"
         t_para "He and PROF.OAK go"
@@ -715,7 +715,7 @@ const struct TextCmd ChadKurtGossipText[] = {
         t_cont "another!"
         t_done )
 };
-const struct TextCmd ChadLeagueGossipText[] = {
+const txt_cmd_s ChadLeagueGossipText[] = {
     text_start("#MON LEAGUE is"
         t_line "the great gather-"
         t_cont "ing place for all"
@@ -729,7 +729,7 @@ const struct TextCmd ChadLeagueGossipText[] = {
         t_line "great man."
         t_done )
 };
-const struct TextCmd ChadPokemonTalkGossipText[] = {
+const txt_cmd_s ChadPokemonTalkGossipText[] = {
     text_start("PROF.OAK'S #MON"
         t_line "TALK is a popular"
         t_cont "radio show, right?"
@@ -744,7 +744,7 @@ const struct TextCmd ChadPokemonTalkGossipText[] = {
         t_line "thank for it!"
         t_done )
 };
-const struct TextCmd ChadProfOakTrainerGossipText[] = {
+const txt_cmd_s ChadProfOakTrainerGossipText[] = {
     text_start("PROF.OAK used to"
         t_line "be a trainer a"
         t_cont "long time ago."
@@ -758,7 +758,7 @@ const struct TextCmd ChadProfOakTrainerGossipText[] = {
         t_line "a researcher."
         t_done )
 };
-const struct TextCmd ChadDaisyTeaGossipText[] = {
+const txt_cmd_s ChadDaisyTeaGossipText[] = {
     text_start("PROF.OAK has a"
         t_line "granddaughter"
         t_cont "named DAISY."
@@ -772,7 +772,7 @@ const struct TextCmd ChadDaisyTeaGossipText[] = {
         t_line "PROF.OAK."
         t_done )
 };
-const struct TextCmd ChadProfOakTravelingGossipText[] = {
+const txt_cmd_s ChadProfOakTravelingGossipText[] = {
     text_start("Did you know?"
         t_line "PROF.OAK traveled"
         t_para "all over the world"
@@ -787,14 +787,14 @@ const struct TextCmd ChadProfOakTravelingGossipText[] = {
         t_line "things too…"
         t_done )
 };
-const struct TextCmd ChadGoingToStudyHardText[] = {
+const txt_cmd_s ChadGoingToStudyHardText[] = {
     text_start("I'm going to study"
         t_line "hard so PROF.OAK"
         t_para "will make me his"
         t_line "assistant!"
         t_done )
 };
-const struct TextCmd ChadReminderText[] = {
+const txt_cmd_s ChadReminderText[] = {
     text_start("Do you remember"
         t_line "about our battle?"
         t_para "The place is"
@@ -808,7 +808,7 @@ const struct TextCmd ChadReminderText[] = {
 
 //// dana_caller.c
 
-const struct TextCmd DanaTakingPhotosText[] = {
+const txt_cmd_s DanaTakingPhotosText[] = {
     text_start("My @")
     text_ram(wram_ptr(wStringBuffer4))
     text_start(" is"
@@ -817,7 +817,7 @@ const struct TextCmd DanaTakingPhotosText[] = {
         t_line "photos galore!"
         t_done )
 };
-const struct TextCmd DanaDefeatedMonText[] = {
+const txt_cmd_s DanaDefeatedMonText[] = {
     text_start("It took only an"
         t_line "instant to KO a"
         t_cont "wild @")
@@ -829,7 +829,7 @@ const struct TextCmd DanaDefeatedMonText[] = {
         t_line "time."
         t_done )
 };
-const struct TextCmd DanaLostAMonText[] = {
+const txt_cmd_s DanaLostAMonText[] = {
     text_start("You know what?"
         t_line "A wild @")
     text_ram(wram_ptr(wStringBuffer4))
@@ -842,7 +842,7 @@ const struct TextCmd DanaLostAMonText[] = {
         t_line "and I would've…"
         t_done )
 };
-const struct TextCmd DanaBattleRematchText[] = {
+const txt_cmd_s DanaBattleRematchText[] = {
     text_start("Right now, I'm on"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer5))
@@ -853,11 +853,11 @@ const struct TextCmd DanaBattleRematchText[] = {
         t_line "for you!"
         t_done )
 };
-const struct TextCmd DanaHangUpText[] = {
+const txt_cmd_s DanaHangUpText[] = {
     text_start("See you!"
         t_done )
 };
-const struct TextCmd DanaFoundItemText[] = {
+const txt_cmd_s DanaFoundItemText[] = {
     text_start("You know what?"
         t_line "I got a good gift!"
         t_para "As I promised,"
@@ -870,7 +870,7 @@ const struct TextCmd DanaFoundItemText[] = {
     text_start("!"
         t_done )
 };
-const struct TextCmd DanaCanYouWaitABitLongerText[] = {
+const txt_cmd_s DanaCanYouWaitABitLongerText[] = {
     text_start("Oh! You wanted a"
         t_line "gift, right?"
         t_para "I got one, but I"
@@ -879,7 +879,7 @@ const struct TextCmd DanaCanYouWaitABitLongerText[] = {
         t_line "longer?"
         t_done )
 };
-const struct TextCmd DanaReminderText[] = {
+const txt_cmd_s DanaReminderText[] = {
     text_start("Hi! You haven't"
         t_line "forgotten about"
         t_para "your promise to"
@@ -890,7 +890,7 @@ const struct TextCmd DanaReminderText[] = {
     text_start("!"
         t_done )
 };
-const struct TextCmd DanaComePickUpText[] = {
+const txt_cmd_s DanaComePickUpText[] = {
     text_start("Hello?"
         t_para "If you don't come"
         t_line "get your present"
@@ -905,7 +905,7 @@ const struct TextCmd DanaComePickUpText[] = {
 
 //// derek_caller.c
 
-const struct TextCmd DerekCheekPinchingText[] = {
+const txt_cmd_s DerekCheekPinchingText[] = {
     text_start("Listen to this."
         t_line "My @")
     text_ram(wram_ptr(wStringBuffer4))
@@ -917,7 +917,7 @@ const struct TextCmd DerekCheekPinchingText[] = {
         t_para "I must be special."
         t_done )
 };
-const struct TextCmd DerekDefeatedMonText[] = {
+const txt_cmd_s DerekDefeatedMonText[] = {
     text_start("Oh, and recently,"
         t_line "my PIKACHU beat a"
         t_cont "wild @")
@@ -935,7 +935,7 @@ const struct TextCmd DerekDefeatedMonText[] = {
         t_line "greatest!"
         t_done )
 };
-const struct TextCmd DerekLostAMonText[] = {
+const txt_cmd_s DerekLostAMonText[] = {
     text_start("Oh, and I saw a"
         t_line "wild @")
     text_ram(wram_ptr(wStringBuffer4))
@@ -949,12 +949,12 @@ const struct TextCmd DerekLostAMonText[] = {
         t_line "good otherwise."
         t_done )
 };
-const struct TextCmd DerekHangUpText[] = {
+const txt_cmd_s DerekHangUpText[] = {
     text_start("Well, let's talk"
         t_line "again!"
         t_done )
 };
-const struct TextCmd DerekBugCatchingContestText[] = {
+const txt_cmd_s DerekBugCatchingContestText[] = {
     text_start("Did you remember?"
         t_line "The Bug-Catching"
         t_cont "Contest is today."
@@ -966,7 +966,7 @@ const struct TextCmd DerekBugCatchingContestText[] = {
         t_line "off its cuteness."
         t_done )
 };
-const struct TextCmd DerekFoundItemText[] = {
+const txt_cmd_s DerekFoundItemText[] = {
     text_start("I'd like you to"
         t_line "have a NUGGET."
         t_para "My PIKACHU just"
@@ -976,7 +976,7 @@ const struct TextCmd DerekFoundItemText[] = {
         t_cont "it too!"
         t_done )
 };
-const struct TextCmd DerekLetsGetTogetherText[] = {
+const txt_cmd_s DerekLetsGetTogetherText[] = {
     text_start("How is your"
         t_line "PIKACHU doing?"
         t_para "Let's get together"
@@ -984,7 +984,7 @@ const struct TextCmd DerekLetsGetTogetherText[] = {
         t_cont "PIKACHU!"
         t_done )
 };
-const struct TextCmd DerekComePickUpText[] = {
+const txt_cmd_s DerekComePickUpText[] = {
     text_start("What's wrong?"
         t_para "I'm waiting on"
         t_line "@")
@@ -997,7 +997,7 @@ const struct TextCmd DerekComePickUpText[] = {
 
 //// erin_caller.c
 
-const struct TextCmd ErinMonIsMuchStrongerText[] = {
+const txt_cmd_s ErinMonIsMuchStrongerText[] = {
     text_ram(wram_ptr(wStringBuffer3))
     text_start("'s @")
     text_ram(wram_ptr(wStringBuffer4))
@@ -1006,7 +1006,7 @@ const struct TextCmd ErinMonIsMuchStrongerText[] = {
         t_cont "than before!"
         t_done )
 };
-const struct TextCmd ErinDefeatedMonText[] = {
+const txt_cmd_s ErinDefeatedMonText[] = {
     text_start("And, and…"
         t_line "I just battled and"
         t_cont "beat @")
@@ -1016,7 +1016,7 @@ const struct TextCmd ErinDefeatedMonText[] = {
         t_line "#MON properly!"
         t_done )
 };
-const struct TextCmd ErinLostAMonText[] = {
+const txt_cmd_s ErinLostAMonText[] = {
     text_start("But, but…"
         t_para "A wild @")
     text_ram(wram_ptr(wStringBuffer4))
@@ -1026,7 +1026,7 @@ const struct TextCmd ErinLostAMonText[] = {
         t_line "not fair!"
         t_done )
 };
-const struct TextCmd ErinBattleRematchText[] = {
+const txt_cmd_s ErinBattleRematchText[] = {
     text_start("I'm ERIN. Want to"
         t_line "battle me again?"
         t_para "I won't lose this"
@@ -1037,11 +1037,11 @@ const struct TextCmd ErinBattleRematchText[] = {
     text_start("!"
         t_done )
 };
-const struct TextCmd ErinHangUpText[] = {
+const txt_cmd_s ErinHangUpText[] = {
     text_start("See you. Bye-bye!"
         t_done )
 };
-const struct TextCmd ErinWorkingHardText[] = {
+const txt_cmd_s ErinWorkingHardText[] = {
     text_start("I'm working hard"
         t_line "to raise my"
         t_cont "#MON!"
@@ -1049,7 +1049,7 @@ const struct TextCmd ErinWorkingHardText[] = {
         t_line "another battle!"
         t_done )
 };
-const struct TextCmd ErinComeBattleText[] = {
+const txt_cmd_s ErinComeBattleText[] = {
     text_start("Oh, <PLAY_G>!"
         t_line "Come battle ERIN!"
         t_para "I'll be waiting on"
@@ -1061,7 +1061,7 @@ const struct TextCmd ErinComeBattleText[] = {
 
 //// gaven_caller.c
 
-const struct TextCmd GavenMonGreaterThanImaginedText[] = {
+const txt_cmd_s GavenMonGreaterThanImaginedText[] = {
     text_start("My @")
     text_ram(wram_ptr(wStringBuffer4))
     text_start(
@@ -1074,7 +1074,7 @@ const struct TextCmd GavenMonGreaterThanImaginedText[] = {
         t_cont "better than mine."
         t_done )
 };
-const struct TextCmd GavenDefeatedMonText[] = {
+const txt_cmd_s GavenDefeatedMonText[] = {
     text_start("Oh, and I managed"
         t_line "to barely defeat"
         t_para "@")
@@ -1093,7 +1093,7 @@ const struct TextCmd GavenDefeatedMonText[] = {
         t_cont "used to seeing."
         t_done )
 };
-const struct TextCmd GavenLostAMonText[] = {
+const txt_cmd_s GavenLostAMonText[] = {
     text_start("And a while back,"
         t_line "I tried to catch a"
         t_cont "wild @")
@@ -1107,7 +1107,7 @@ const struct TextCmd GavenLostAMonText[] = {
         t_line "to be careful too."
         t_done )
 };
-const struct TextCmd GavenBattleRematchText[] = {
+const txt_cmd_s GavenBattleRematchText[] = {
     text_start("Let's battle!"
         t_para "I'll be waiting on"
         t_line "@")
@@ -1117,17 +1117,17 @@ const struct TextCmd GavenBattleRematchText[] = {
         t_line "when you're close."
         t_done )
 };
-const struct TextCmd GavenHangUpText[] = {
+const txt_cmd_s GavenHangUpText[] = {
     text_start("OK, I'll talk to"
         t_line "you soon!"
         t_done )
 };
-const struct TextCmd GavenHangUpNotThursdayText[] = {
+const txt_cmd_s GavenHangUpNotThursdayText[] = {
     text_start("I obsess over how"
         t_line "to beat you."
         t_done )
 };
-const struct TextCmd GavenReminderText[] = {
+const txt_cmd_s GavenReminderText[] = {
     text_start("<PLAY_G>, why"
         t_line "aren't you here?"
         t_para "I'll take you down"
@@ -1139,7 +1139,7 @@ const struct TextCmd GavenReminderText[] = {
 
 //// gina_caller.c
 
-const struct TextCmd GinaGettingInSyncWithMonText[] = {
+const txt_cmd_s GinaGettingInSyncWithMonText[] = {
     text_start("My @")
     text_ram(wram_ptr(wStringBuffer4))
     text_start(" and"
@@ -1148,7 +1148,7 @@ const struct TextCmd GinaGettingInSyncWithMonText[] = {
         t_line "other."
         t_done )
 };
-const struct TextCmd GinaDefeatedMonText[] = {
+const txt_cmd_s GinaDefeatedMonText[] = {
     text_start("We battled a wild"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer4))
@@ -1159,7 +1159,7 @@ const struct TextCmd GinaDefeatedMonText[] = {
         t_line "the groove!"
         t_done )
 };
-const struct TextCmd GinaLostAMonText[] = {
+const txt_cmd_s GinaLostAMonText[] = {
     text_start("But, you know?"
         t_para "I still haven't"
         t_line "caught @")
@@ -1169,7 +1169,7 @@ const struct TextCmd GinaLostAMonText[] = {
         t_line "frustrating…"
         t_done )
 };
-const struct TextCmd GinaBattleRematchText[] = {
+const txt_cmd_s GinaBattleRematchText[] = {
     text_start("Would you be my"
         t_line "practice partner"
         t_cont "again sometime?"
@@ -1182,12 +1182,12 @@ const struct TextCmd GinaBattleRematchText[] = {
         t_cont "me next time?"
         t_done )
 };
-const struct TextCmd GinaHangUpText[] = {
+const txt_cmd_s GinaHangUpText[] = {
     text_start("Bye! Let's chat"
         t_line "again!"
         t_done )
 };
-const struct TextCmd GinaRocketTakeoverRumorText[] = {
+const txt_cmd_s GinaRocketTakeoverRumorText[] = {
     text_start("Have you heard"
         t_line "about TEAM ROCKET?"
         t_para "They've taken over"
@@ -1197,7 +1197,7 @@ const struct TextCmd GinaRocketTakeoverRumorText[] = {
         t_line "inside safe?"
         t_done )
 };
-const struct TextCmd GinaFoundItemText[] = {
+const txt_cmd_s GinaFoundItemText[] = {
     text_start("I picked up some-"
         t_line "thing nice today."
         t_para "I want you to have"
@@ -1210,7 +1210,7 @@ const struct TextCmd GinaFoundItemText[] = {
         t_line "where I am."
         t_done )
 };
-const struct TextCmd GinaHaventFoundAnythingYetText[] = {
+const txt_cmd_s GinaHaventFoundAnythingYetText[] = {
     text_start("Sorry, I haven't"
         t_line "found anything"
         t_para "useful yet…"
@@ -1219,7 +1219,7 @@ const struct TextCmd GinaHaventFoundAnythingYetText[] = {
         t_line "can have it!"
         t_done )
 };
-const struct TextCmd GinaReminderText[] = {
+const txt_cmd_s GinaReminderText[] = {
     text_start("Oh, <PLAY_G>!"
         t_line "How soon can I"
         t_para "expect to see you"
@@ -1230,7 +1230,7 @@ const struct TextCmd GinaReminderText[] = {
     text_start("!"
         t_done )
 };
-const struct TextCmd GinaComePickUpText[] = {
+const txt_cmd_s GinaComePickUpText[] = {
     text_start("I'm getting really"
         t_line "impatient, waiting"
         t_para "to give you my"
@@ -1244,7 +1244,7 @@ const struct TextCmd GinaComePickUpText[] = {
 
 //// huey_caller.c
 
-const struct TextCmd HueyBattleRematchText[] = {
+const txt_cmd_s HueyBattleRematchText[] = {
     text_start("Hey, I challenge"
         t_line "you to a battle!"
         t_para "It won't be like"
@@ -1257,11 +1257,11 @@ const struct TextCmd HueyBattleRematchText[] = {
         t_line "over here pronto!"
         t_done )
 };
-const struct TextCmd HueyHangUpText[] = {
+const txt_cmd_s HueyHangUpText[] = {
     text_start("See ya!"
         t_done )
 };
-const struct TextCmd HueyWeHaveToBattleAgainSometimeText[] = {
+const txt_cmd_s HueyWeHaveToBattleAgainSometimeText[] = {
     text_start("We have to battle"
         t_line "again sometime."
         t_para "You can bet I'm"
@@ -1270,7 +1270,7 @@ const struct TextCmd HueyWeHaveToBattleAgainSometimeText[] = {
         t_line "till I win."
         t_done )
 };
-const struct TextCmd HueyReminderText[] = {
+const txt_cmd_s HueyReminderText[] = {
     text_start("Hey, you'd better"
         t_line "not have forgotten"
         t_cont "about our battle!"
@@ -1284,13 +1284,13 @@ const struct TextCmd HueyReminderText[] = {
 
 //// irwin_caller.c
 
-const struct TextCmd IrwinHangUpText[] = {
+const txt_cmd_s IrwinHangUpText[] = {
     text_start("I hate having to"
         t_line "hang up on you!"
         t_para "Call you later!"
         t_done )
 };
-const struct TextCmd IrwinRocketTakeoverRumorText[] = {
+const txt_cmd_s IrwinRocketTakeoverRumorText[] = {
     text_start("<PLAY_G>, have you"
         t_line "heard?"
         t_para "GOLDENROD's RADIO"
@@ -1301,7 +1301,7 @@ const struct TextCmd IrwinRocketTakeoverRumorText[] = {
         t_line "ROCKET?"
         t_done )
 };
-const struct TextCmd IrwinPlainBadgeGossipText[] = {
+const txt_cmd_s IrwinPlainBadgeGossipText[] = {
     text_start("<PLAY_G>, I heard!"
         t_para "You defeated that"
         t_line "WHITNEY?"
@@ -1309,7 +1309,7 @@ const struct TextCmd IrwinPlainBadgeGossipText[] = {
         t_line "to be your friend!"
         t_done )
 };
-const struct TextCmd IrwinJasmineReturnedGossipText[] = {
+const txt_cmd_s IrwinJasmineReturnedGossipText[] = {
     text_start("Hey, I heard about"
         t_line "you!"
         t_para "You saved that"
@@ -1322,7 +1322,7 @@ const struct TextCmd IrwinJasmineReturnedGossipText[] = {
         t_line "bed with a cold!"
         t_done )
 };
-const struct TextCmd IrwinRocketHideoutGossipText[] = {
+const txt_cmd_s IrwinRocketHideoutGossipText[] = {
     text_start("I heard, I heard,"
         t_line "I heard!"
         t_para "You smashed TEAM"
@@ -1333,7 +1333,7 @@ const struct TextCmd IrwinRocketHideoutGossipText[] = {
         t_line "TEAM ROCKET?"
         t_done )
 };
-const struct TextCmd IrwinRadioTowerGossipText[] = {
+const txt_cmd_s IrwinRadioTowerGossipText[] = {
     text_start("I heard, I heard,"
         t_line "I heard!"
         t_para "About your heroic"
@@ -1342,7 +1342,7 @@ const struct TextCmd IrwinRadioTowerGossipText[] = {
         t_line "rock so hard!"
         t_done )
 };
-const struct TextCmd IrwinRisingBadgeGossipText[] = {
+const txt_cmd_s IrwinRisingBadgeGossipText[] = {
     text_start("I saw, I saw!"
         t_para "I saw you go into"
         t_line "the DRAGON'S DEN!"
@@ -1352,7 +1352,7 @@ const struct TextCmd IrwinRisingBadgeGossipText[] = {
         t_line "You can't fail!"
         t_done )
 };
-const struct TextCmd IrwinEliteFourGossipText[] = {
+const txt_cmd_s IrwinEliteFourGossipText[] = {
     text_start("Yesterday, I went"
         t_line "out to NEW BARK"
         t_para "TOWN.  There was a"
@@ -1373,7 +1373,7 @@ const struct TextCmd IrwinEliteFourGossipText[] = {
         t_line "mom, believe me!"
         t_done )
 };
-const struct TextCmd IrwinVermilionCityGossipText[] = {
+const txt_cmd_s IrwinVermilionCityGossipText[] = {
     text_start("I saw, I saw,"
         t_line "I saw!"
         t_para "You striding onto"
@@ -1384,7 +1384,7 @@ const struct TextCmd IrwinVermilionCityGossipText[] = {
         t_line "your backdrop!"
         t_done )
 };
-const struct TextCmd IrwinTrainPassGossipText[] = {
+const txt_cmd_s IrwinTrainPassGossipText[] = {
     text_start("I heard, I heard!"
         t_para "You got a MAGNET"
         t_line "TRAIN PASS!"
@@ -1404,7 +1404,7 @@ const struct TextCmd IrwinTrainPassGossipText[] = {
         t_line "by FLY?"
         t_done )
 };
-const struct TextCmd IrwinSnorlaxGossipText[] = {
+const txt_cmd_s IrwinSnorlaxGossipText[] = {
     text_start("I saw, I saw!"
         t_para "You waking up"
         t_line "SNORLAX!"
@@ -1418,7 +1418,7 @@ const struct TextCmd IrwinSnorlaxGossipText[] = {
         t_line "magic!"
         t_done )
 };
-const struct TextCmd IrwinMtSilverGossipText[] = {
+const txt_cmd_s IrwinMtSilverGossipText[] = {
     text_start("I hear rumors"
         t_line "about you all over"
         t_cont "the place."
@@ -1432,14 +1432,14 @@ const struct TextCmd IrwinMtSilverGossipText[] = {
         t_line "cheering you on!"
         t_done )
 };
-const struct TextCmd IrwinCalledRightAwayText[] = {
+const txt_cmd_s IrwinCalledRightAwayText[] = {
     text_start("Hehe, I called"
         t_line "right away!"
         t_para "I think we can be"
         t_line "good friends!"
         t_done )
 };
-const struct TextCmd IrwinFogBadgeGossipText[] = {
+const txt_cmd_s IrwinFogBadgeGossipText[] = {
     text_start("I saw, I heard!"
         t_para "You beat MORTY of"
         t_line "ECRUTEAK GYM!"
@@ -1457,7 +1457,7 @@ const struct TextCmd IrwinFogBadgeGossipText[] = {
         t_line "took off for home…"
         t_done )
 };
-const struct TextCmd IrwinMarshBadgeGossipText[] = {
+const txt_cmd_s IrwinMarshBadgeGossipText[] = {
     text_start("<PLAY_G>, I heard!"
         t_para "You're kicking up"
         t_line "a mighty ruckus"
@@ -1468,14 +1468,14 @@ const struct TextCmd IrwinMarshBadgeGossipText[] = {
         t_para "You so rock!"
         t_done )
 };
-const struct TextCmd IrwinYourEscapadesRockText[] = {
+const txt_cmd_s IrwinYourEscapadesRockText[] = {
     text_start("Hearing about your"
         t_line "escapades rocks my"
         t_para "soul!"
         t_line "It sure does!"
         t_done )
 };
-const struct TextCmd IrwinGoodMatchText[] = {
+const txt_cmd_s IrwinGoodMatchText[] = {
     text_start("I'm so glad you"
         t_line "called!"
         t_para "I was just about"
@@ -1484,7 +1484,7 @@ const struct TextCmd IrwinGoodMatchText[] = {
         t_line "a good match!"
         t_done )
 };
-const struct TextCmd IrwinSoMuchToChatAboutText[] = {
+const txt_cmd_s IrwinSoMuchToChatAboutText[] = {
     text_start("How are you?"
         t_para "What are you"
         t_line "doing?"
@@ -1507,7 +1507,7 @@ const struct TextCmd IrwinSoMuchToChatAboutText[] = {
 
 //// jack_caller.c
 
-const struct TextCmd JackIntelligenceKeepsRisingText[] = {
+const txt_cmd_s JackIntelligenceKeepsRisingText[] = {
     text_start("My @")
     text_ram(wram_ptr(wStringBuffer4))
     text_start("'s"
@@ -1517,7 +1517,7 @@ const struct TextCmd JackIntelligenceKeepsRisingText[] = {
         t_cont "yours!"
         t_done )
 };
-const struct TextCmd JackDefeatedMonText[] = {
+const txt_cmd_s JackDefeatedMonText[] = {
     text_start("The other day, I"
         t_line "easily defeated a"
         t_cont "@")
@@ -1528,7 +1528,7 @@ const struct TextCmd JackDefeatedMonText[] = {
         t_cont "starting to help."
         t_done )
 };
-const struct TextCmd JackLostAMonText[] = {
+const txt_cmd_s JackLostAMonText[] = {
     text_start("Oh, and listen."
         t_line "I missed catching"
         t_para "a @")
@@ -1541,7 +1541,7 @@ const struct TextCmd JackLostAMonText[] = {
         t_line "caught it…"
         t_done )
 };
-const struct TextCmd JackBattleRematchText[] = {
+const txt_cmd_s JackBattleRematchText[] = {
     text_start("Do you want to"
         t_line "battle? I'll show"
         t_para "you how to battle"
@@ -1554,18 +1554,18 @@ const struct TextCmd JackBattleRematchText[] = {
         t_line "you're nearby."
         t_done )
 };
-const struct TextCmd JackHangUpText[] = {
+const txt_cmd_s JackHangUpText[] = {
     text_start("See you later!"
         t_done )
 };
-const struct TextCmd JackThunderTriviaText[] = {
+const txt_cmd_s JackThunderTriviaText[] = {
     text_start("Did you know?"
         t_para "When it's raining,"
         t_line "THUNDER is sure to"
         t_cont "strike."
         t_done )
 };
-const struct TextCmd JackRolloutTriviaText[] = {
+const txt_cmd_s JackRolloutTriviaText[] = {
     text_start("Did you know…?"
         t_para "If you use DEFENSE"
         t_line "CURL, ROLLOUT's"
@@ -1573,7 +1573,7 @@ const struct TextCmd JackRolloutTriviaText[] = {
         t_line "past normal."
         t_done )
 };
-const struct TextCmd JackSolarbeamTriviaText[] = {
+const txt_cmd_s JackSolarbeamTriviaText[] = {
     text_start("Did you know…?"
         t_para "If the sunlight is"
         t_line "harsh, SOLARBEAM"
@@ -1581,7 +1581,7 @@ const struct TextCmd JackSolarbeamTriviaText[] = {
         t_line "charged up."
         t_done )
 };
-const struct TextCmd JackStompTriviaText[] = {
+const txt_cmd_s JackStompTriviaText[] = {
     text_start("Did you know…?"
         t_para "If the opponent"
         t_line "uses MINIMIZE,"
@@ -1589,7 +1589,7 @@ const struct TextCmd JackStompTriviaText[] = {
         t_line "more powerful."
         t_done )
 };
-const struct TextCmd JackGustTriviaText[] = {
+const txt_cmd_s JackGustTriviaText[] = {
     text_start("Did you know…?"
         t_para "If your opponent"
         t_line "is FLYing, your"
@@ -1597,7 +1597,7 @@ const struct TextCmd JackGustTriviaText[] = {
         t_line "more powerful."
         t_done )
 };
-const struct TextCmd JackTwisterTriviaText[] = {
+const txt_cmd_s JackTwisterTriviaText[] = {
     text_start("Did you know…?"
         t_para "If your opponent"
         t_line "is FLYing, your"
@@ -1605,7 +1605,7 @@ const struct TextCmd JackTwisterTriviaText[] = {
         t_line "more powerful."
         t_done )
 };
-const struct TextCmd JackEarthquakeTriviaText[] = {
+const txt_cmd_s JackEarthquakeTriviaText[] = {
     text_start("Did you know…?"
         t_para "If your opponent"
         t_line "uses DIG, your"
@@ -1613,7 +1613,7 @@ const struct TextCmd JackEarthquakeTriviaText[] = {
         t_line "more powerful."
         t_done )
 };
-const struct TextCmd JackMagnitudeTriviaText[] = {
+const txt_cmd_s JackMagnitudeTriviaText[] = {
     text_start("Did you know…?"
         t_para "If your opponent"
         t_line "uses DIG, your"
@@ -1621,7 +1621,7 @@ const struct TextCmd JackMagnitudeTriviaText[] = {
         t_line "more powerful."
         t_done )
 };
-const struct TextCmd JackSandstormTriviaText[] = {
+const txt_cmd_s JackSandstormTriviaText[] = {
     text_start("Did you know…?"
         t_para "The rock, ground"
         t_line "and steel types"
@@ -1629,7 +1629,7 @@ const struct TextCmd JackSandstormTriviaText[] = {
         t_line "SANDSTORM."
         t_done )
 };
-const struct TextCmd JackSunnyDayTriviaText[] = {
+const txt_cmd_s JackSunnyDayTriviaText[] = {
     text_start("Did you know…?"
         t_para "If the sunlight is"
         t_line "harsh, water-type"
@@ -1637,7 +1637,7 @@ const struct TextCmd JackSunnyDayTriviaText[] = {
         t_line "weaker."
         t_done )
 };
-const struct TextCmd JackRainDanceTriviaText[] = {
+const txt_cmd_s JackRainDanceTriviaText[] = {
     text_start("Did you know…?"
         t_para "When it's raining,"
         t_line "fire-type moves"
@@ -1645,7 +1645,7 @@ const struct TextCmd JackRainDanceTriviaText[] = {
         t_line "than usual."
         t_done )
 };
-const struct TextCmd JackHeardSomeGreatTipsText[] = {
+const txt_cmd_s JackHeardSomeGreatTipsText[] = {
     text_start("My friend heard"
         t_line "some great tips."
         t_para "He's going to let"
@@ -1655,7 +1655,7 @@ const struct TextCmd JackHeardSomeGreatTipsText[] = {
         t_cont "away and tell you."
         t_done )
 };
-const struct TextCmd JackReminderText[] = {
+const txt_cmd_s JackReminderText[] = {
     text_start("Hey, <PLAY_G>!"
         t_para "Do you remember"
         t_line "your promise?"
@@ -1670,7 +1670,7 @@ const struct TextCmd JackReminderText[] = {
 
 //// joey_caller.c
 
-const struct TextCmd JoeyMonLookingSharperText[] = {
+const txt_cmd_s JoeyMonLookingSharperText[] = {
     text_start("My @")
     text_ram(wram_ptr(wStringBuffer4))
     text_start("'s"
@@ -1682,7 +1682,7 @@ const struct TextCmd JoeyMonLookingSharperText[] = {
         t_line "party!"
         t_done )
 };
-const struct TextCmd JoeyDefeatedMonText[] = {
+const txt_cmd_s JoeyDefeatedMonText[] = {
     text_start("Oh yeah, I took"
         t_line "down a @")
     text_ram(wram_ptr(wStringBuffer4))
@@ -1695,7 +1695,7 @@ const struct TextCmd JoeyDefeatedMonText[] = {
         t_line "us being so tough."
         t_done )
 };
-const struct TextCmd JoeyLostAMonText[] = {
+const txt_cmd_s JoeyLostAMonText[] = {
     text_start("Oh yeah, I saw a"
         t_line "wild @")
     text_ram(wram_ptr(wStringBuffer4))
@@ -1708,7 +1708,7 @@ const struct TextCmd JoeyLostAMonText[] = {
         t_line "extreme end."
         t_done )
 };
-const struct TextCmd JoeyBattleRematchText[] = {
+const txt_cmd_s JoeyBattleRematchText[] = {
     text_start("Let's get together"
         t_line "and battle!"
         t_para "I promise things"
@@ -1721,11 +1721,11 @@ const struct TextCmd JoeyBattleRematchText[] = {
         t_line "when you come."
         t_done )
 };
-const struct TextCmd JoeyHangUpText[] = {
+const txt_cmd_s JoeyHangUpText[] = {
     text_start("All right. Later!"
         t_done )
 };
-const struct TextCmd JoeyDevisingStrategiesText[] = {
+const txt_cmd_s JoeyDevisingStrategiesText[] = {
     text_start("I'm checking out"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer4))
@@ -1737,7 +1737,7 @@ const struct TextCmd JoeyDevisingStrategiesText[] = {
         t_cont "let's battle!"
         t_done )
 };
-const struct TextCmd JoeyReminderText[] = {
+const txt_cmd_s JoeyReminderText[] = {
     text_start("What's keeping"
         t_line "you, <PLAYER>!"
         t_para "Let's get down and"
@@ -1751,7 +1751,7 @@ const struct TextCmd JoeyReminderText[] = {
 
 //// jose_caller.c
 
-const struct TextCmd JoseMonsStickHasADeliciousAromaText[] = {
+const txt_cmd_s JoseMonsStickHasADeliciousAromaText[] = {
     text_start("Hey listen, my"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer4))
@@ -1762,7 +1762,7 @@ const struct TextCmd JoseMonsStickHasADeliciousAromaText[] = {
         t_line "appetite going!"
         t_done )
 };
-const struct TextCmd JoseDefeatedMonText[] = {
+const txt_cmd_s JoseDefeatedMonText[] = {
     text_start("A while ago, my"
         t_line "FARFETCH'D KO'd"
         t_cont "this @")
@@ -1774,7 +1774,7 @@ const struct TextCmd JoseDefeatedMonText[] = {
         t_line "Amazing stuff!"
         t_done )
 };
-const struct TextCmd JoseLostAMonText[] = {
+const txt_cmd_s JoseLostAMonText[] = {
     text_start("I ran into a wild"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer4))
@@ -1787,7 +1787,7 @@ const struct TextCmd JoseLostAMonText[] = {
         t_line "bit disappointing."
         t_done )
 };
-const struct TextCmd JoseBattleRematchText[] = {
+const txt_cmd_s JoseBattleRematchText[] = {
     text_start("Want to battle"
         t_line "again?"
         t_para "For some reason,"
@@ -1802,11 +1802,11 @@ const struct TextCmd JoseBattleRematchText[] = {
         t_line "for me, OK?"
         t_done )
 };
-const struct TextCmd JoseHangUpText[] = {
+const txt_cmd_s JoseHangUpText[] = {
     text_start("Be seeing you!"
         t_done )
 };
-const struct TextCmd JoseFoundItemText[] = {
+const txt_cmd_s JoseFoundItemText[] = {
     text_start("My FARFETCH'D had"
         t_line "something pretty"
         t_cont "in its beak."
@@ -1820,7 +1820,7 @@ const struct TextCmd JoseFoundItemText[] = {
         t_line "have it."
         t_done )
 };
-const struct TextCmd JoseHaventGottenItemYetText[] = {
+const txt_cmd_s JoseHaventGottenItemYetText[] = {
     text_start("I haven't gotten"
         t_line "what I promised"
         t_cont "you yet."
@@ -1830,7 +1830,7 @@ const struct TextCmd JoseHaventGottenItemYetText[] = {
         t_line "a little longer?"
         t_done )
 };
-const struct TextCmd JoseReminderText[] = {
+const txt_cmd_s JoseReminderText[] = {
     text_start("<PLAY_G>, could you"
         t_line "hurry over?"
         t_para "FARFETCH'D is"
@@ -1846,7 +1846,7 @@ const struct TextCmd JoseReminderText[] = {
         t_line "soon as you can!"
         t_done )
 };
-const struct TextCmd JoseComePickUpText[] = {
+const txt_cmd_s JoseComePickUpText[] = {
     text_start("What's wrong?"
         t_para "Don't you want"
         t_line "this gift?"
@@ -1861,12 +1861,12 @@ const struct TextCmd JoseComePickUpText[] = {
 
 //// kenji_caller.c
 
-const struct TextCmd KenjiHangUpText[] = {
+const txt_cmd_s KenjiHangUpText[] = {
     text_start("Anyway, we'll chat"
         t_line "again!"
         t_done )
 };
-const struct TextCmd KenjiRemainDedicatedText[] = {
+const txt_cmd_s KenjiRemainDedicatedText[] = {
     text_start("Are you still on"
         t_line "your journey?"
         t_para "I remain dedicated"
@@ -1874,7 +1874,7 @@ const struct TextCmd KenjiRemainDedicatedText[] = {
         t_para "Oooooaaarrrgh!"
         t_done )
 };
-const struct TextCmd KenjiCallMeBackAnotherTimeText[] = {
+const txt_cmd_s KenjiCallMeBackAnotherTimeText[] = {
     text_start("I'm in training"
         t_line "now. I apologize,"
         t_para "but call me back"
@@ -1882,7 +1882,7 @@ const struct TextCmd KenjiCallMeBackAnotherTimeText[] = {
         t_para "Oooooaaarrrgh!"
         t_done )
 };
-const struct TextCmd KenjiIllHaveTimeToChatTomorrowText[] = {
+const txt_cmd_s KenjiIllHaveTimeToChatTomorrowText[] = {
     text_start("I apologize, but I"
         t_line "don't have time to"
         t_para "chat while I am in"
@@ -1892,21 +1892,21 @@ const struct TextCmd KenjiIllHaveTimeToChatTomorrowText[] = {
         t_para "Yiiihah!"
         t_done )
 };
-const struct TextCmd KenjiHangUpMorningText[] = {
+const txt_cmd_s KenjiHangUpMorningText[] = {
     text_start("I plan to take a"
         t_line "lunch break, so"
         t_para "come see me then!"
         t_line "Ayiiiyah!"
         t_done )
 };
-const struct TextCmd KenjiTakingABreakText[] = {
+const txt_cmd_s KenjiTakingABreakText[] = {
     text_start("I'm taking a break"
         t_line "on ROUTE 45!"
         t_para "Why not drop by if"
         t_line "you are free?"
         t_done )
 };
-const struct TextCmd KenjiHangUpNightText[] = {
+const txt_cmd_s KenjiHangUpNightText[] = {
     text_start("I rested up over"
         t_line "my lunch break."
         t_para "Now it's time to"
@@ -1917,7 +1917,7 @@ const struct TextCmd KenjiHangUpNightText[] = {
 
 //// liz_caller.c
 
-const struct TextCmd LizMonAlwaysWantsToNuzzleText[] = {
+const txt_cmd_s LizMonAlwaysWantsToNuzzleText[] = {
     text_start("Oh, you have to"
         t_line "hear this."
         t_para "My @")
@@ -1928,7 +1928,7 @@ const struct TextCmd LizMonAlwaysWantsToNuzzleText[] = {
         t_line "nuzzle me!"
         t_done )
 };
-const struct TextCmd LizDefeatedMonText[] = {
+const txt_cmd_s LizDefeatedMonText[] = {
     text_start("And, and! Um…"
         t_para "We beat a wild"
         t_line "@")
@@ -1940,7 +1940,7 @@ const struct TextCmd LizDefeatedMonText[] = {
         t_line "it, though."
         t_done )
 };
-const struct TextCmd LizLostAMonText[] = {
+const txt_cmd_s LizLostAMonText[] = {
     text_start("And, and! Uh…"
         t_para "We just saw a"
         t_line "really gorgeous"
@@ -1953,7 +1953,7 @@ const struct TextCmd LizLostAMonText[] = {
         t_line "really angry!"
         t_done )
 };
-const struct TextCmd LizBattleRematchText[] = {
+const txt_cmd_s LizBattleRematchText[] = {
     text_start("Hi! Do you have"
         t_line "some free time?"
         t_para "I've got all sorts"
@@ -1968,7 +1968,7 @@ const struct TextCmd LizBattleRematchText[] = {
         t_line "you get here!"
         t_done )
 };
-const struct TextCmd LizWrongNumberText[] = {
+const txt_cmd_s LizWrongNumberText[] = {
     text_start("Hi, TANIA. How are"
         t_line "you? This is LIZ."
         t_para "I'm fine, but I'm"
@@ -1977,12 +1977,12 @@ const struct TextCmd LizWrongNumberText[] = {
         t_line "Oops! Sorry!"
         t_done )
 };
-const struct TextCmd LizHangUpText[] = {
+const txt_cmd_s LizHangUpText[] = {
     text_start("OK, I'll call you"
         t_line "later!"
         t_done )
 };
-const struct TextCmd LizRuinsOfAlphGossipText[] = {
+const txt_cmd_s LizRuinsOfAlphGossipText[] = {
     text_start("Listen, listen!"
         t_para "I was listening to"
         t_line "the radio in the"
@@ -1994,7 +1994,7 @@ const struct TextCmd LizRuinsOfAlphGossipText[] = {
         t_line "was. So strange!"
         t_done )
 };
-const struct TextCmd LizFalknerGossipText[] = {
+const txt_cmd_s LizFalknerGossipText[] = {
     text_start("Listen, listen!"
         t_para "Don't you think"
         t_line "FALKNER of VIOLET"
@@ -2010,7 +2010,7 @@ const struct TextCmd LizFalknerGossipText[] = {
         t_line "meet him!"
         t_done )
 };
-const struct TextCmd LizEarlGossipText[] = {
+const txt_cmd_s LizEarlGossipText[] = {
     text_start("Listen, listen!"
         t_para "Do you know EARL,"
         t_line "the teacher who"
@@ -2022,7 +2022,7 @@ const struct TextCmd LizEarlGossipText[] = {
         t_line "was wildly funny!"
         t_done )
 };
-const struct TextCmd LizSurfPikachuGossipText[] = {
+const txt_cmd_s LizSurfPikachuGossipText[] = {
     text_start("Listen, listen!"
         t_para "I collect #MON"
         t_line "plush dolls."
@@ -2037,7 +2037,7 @@ const struct TextCmd LizSurfPikachuGossipText[] = {
         t_cont "you had one."
         t_done )
 };
-const struct TextCmd LizMooMooMilkGossipText[] = {
+const txt_cmd_s LizMooMooMilkGossipText[] = {
     text_start("Listen, listen!"
         t_para "Do you know about"
         t_line "MOOMOO MILK?"
@@ -2051,7 +2051,7 @@ const struct TextCmd LizMooMooMilkGossipText[] = {
         t_line "it's delicious!"
         t_done )
 };
-const struct TextCmd LizSalonGossipText[] = {
+const txt_cmd_s LizSalonGossipText[] = {
     text_start("Listen, listen!"
         t_para "There's a #MON"
         t_line "SALON in GOLDENROD"
@@ -2071,7 +2071,7 @@ const struct TextCmd LizSalonGossipText[] = {
         t_line "whom I should use…"
         t_done )
 };
-const struct TextCmd LizWhitneyGossipText[] = {
+const txt_cmd_s LizWhitneyGossipText[] = {
     text_start("Listen, listen!"
         t_para "GOLDENROD GYM's"
         t_line "WHITNEY began"
@@ -2084,7 +2084,7 @@ const struct TextCmd LizWhitneyGossipText[] = {
         t_line "totally talented."
         t_done )
 };
-const struct TextCmd LizBugCatchingContestGossipText[] = {
+const txt_cmd_s LizBugCatchingContestGossipText[] = {
     text_start("Listen, listen!"
         t_para "Have you ever"
         t_line "taken part in a"
@@ -2100,7 +2100,7 @@ const struct TextCmd LizBugCatchingContestGossipText[] = {
         t_cont "that great?"
         t_done )
 };
-const struct TextCmd LizBeautifulTrainerGossipText[] = {
+const txt_cmd_s LizBeautifulTrainerGossipText[] = {
     text_start("Listen, listen!"
         t_para "I saw a beautiful"
         t_line "@")
@@ -2113,14 +2113,14 @@ const struct TextCmd LizBeautifulTrainerGossipText[] = {
     text_start(" too."
         t_done )
 };
-const struct TextCmd LizForgotGossipText[] = {
+const txt_cmd_s LizForgotGossipText[] = {
     text_start("Listen, listen!"
         t_para "Uh… Um… Whoops!"
         t_para "I forgot what I"
         t_line "was going to say!"
         t_done )
 };
-const struct TextCmd LizFawningOverMonText[] = {
+const txt_cmd_s LizFawningOverMonText[] = {
     text_start("Listen, listen!"
         t_para "My @")
     text_ram(wram_ptr(wStringBuffer4))
@@ -2145,7 +2145,7 @@ const struct TextCmd LizFawningOverMonText[] = {
         t_line "I love chatting!"
         t_done )
 };
-const struct TextCmd LizReminderText[] = {
+const txt_cmd_s LizReminderText[] = {
     text_start("I've got too much"
         t_line "time on my hands!"
         t_para "Let's battle right"
@@ -2159,14 +2159,14 @@ const struct TextCmd LizReminderText[] = {
 
 //// parry_caller.c
 
-const struct TextCmd ParryNothingCanMatchText[] = {
+const txt_cmd_s ParryNothingCanMatchText[] = {
     text_start("Nothing can match"
         t_line "my @")
     text_ram(wram_ptr(wStringBuffer4))
     text_start(" now."
         t_done )
 };
-const struct TextCmd ParryDefeatedMonText[] = {
+const txt_cmd_s ParryDefeatedMonText[] = {
     text_start("Yeah, we KO'd a"
         t_line "wild @")
     text_ram(wram_ptr(wStringBuffer4))
@@ -2175,7 +2175,7 @@ const struct TextCmd ParryDefeatedMonText[] = {
         t_line "wanted to get it…"
         t_done )
 };
-const struct TextCmd ParryLostAMonText[] = {
+const txt_cmd_s ParryLostAMonText[] = {
     text_start("And yesterday, we"
         t_line "spotted a wild"
         t_para "@")
@@ -2190,7 +2190,7 @@ const struct TextCmd ParryLostAMonText[] = {
         t_line "How about that!"
         t_done )
 };
-const struct TextCmd ParryBattleRematchText[] = {
+const txt_cmd_s ParryBattleRematchText[] = {
     text_start("You're thinking"
         t_line "you'd like to"
         t_para "battle me. Am I"
@@ -2201,17 +2201,17 @@ const struct TextCmd ParryBattleRematchText[] = {
     text_start("!"
         t_done )
 };
-const struct TextCmd ParryHangUpText[] = {
+const txt_cmd_s ParryHangUpText[] = {
     text_start("OK, give me a call"
         t_line "again!"
         t_done )
 };
-const struct TextCmd ParryBattleWithMeText[] = {
+const txt_cmd_s ParryBattleWithMeText[] = {
     text_start("You'll battle with"
         t_line "me again, right?"
         t_done )
 };
-const struct TextCmd ParryHaventYouGottenToText[] = {
+const txt_cmd_s ParryHaventYouGottenToText[] = {
     text_start("Haven't you gotten"
         t_line "to @")
     text_ram(wram_ptr(wStringBuffer5))
@@ -2224,7 +2224,7 @@ const struct TextCmd ParryHaventYouGottenToText[] = {
 
 //// ralph_caller.c
 
-const struct TextCmd RalphNeglectingKidsText[] = {
+const txt_cmd_s RalphNeglectingKidsText[] = {
     text_start("I've been spending"
         t_line "more time with my"
         t_para "@")
@@ -2235,7 +2235,7 @@ const struct TextCmd RalphNeglectingKidsText[] = {
         t_line "actually."
         t_done )
 };
-const struct TextCmd RalphDefeatedMonText[] = {
+const txt_cmd_s RalphDefeatedMonText[] = {
     text_start("I just beat a wild"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer4))
@@ -2248,7 +2248,7 @@ const struct TextCmd RalphDefeatedMonText[] = {
         t_line "cocky…"
         t_done )
 };
-const struct TextCmd RalphLostAMonText[] = {
+const txt_cmd_s RalphLostAMonText[] = {
     text_start("Yesterday a wild"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer4))
@@ -2263,7 +2263,7 @@ const struct TextCmd RalphLostAMonText[] = {
         t_line "made my day!"
         t_done )
 };
-const struct TextCmd RalphBattleRematchText[] = {
+const txt_cmd_s RalphBattleRematchText[] = {
     text_start("What do you say to"
         t_line "a battle with me?"
         t_para "Good, you're going"
@@ -2276,12 +2276,12 @@ const struct TextCmd RalphBattleRematchText[] = {
         t_line "the spot!"
         t_done )
 };
-const struct TextCmd RalphHangUpText[] = {
+const txt_cmd_s RalphHangUpText[] = {
     text_start("You call your mom"
         t_line "sometimes too!"
         t_done )
 };
-const struct TextCmd RalphItemText[] = {
+const txt_cmd_s RalphItemText[] = {
     text_start("Listen, I… Yowch!"
         t_para "Uh, sorry! See,"
         t_line "@")
@@ -2303,7 +2303,7 @@ const struct TextCmd RalphItemText[] = {
         t_line "to fish!"
         t_done )
 };
-const struct TextCmd RalphNoItemText[] = {
+const txt_cmd_s RalphNoItemText[] = {
     text_start("Yeah, I know."
         t_para "You're looking for"
         t_line "rare #MON."
@@ -2312,7 +2312,7 @@ const struct TextCmd RalphNoItemText[] = {
         t_cont "MAGIKARP, though…"
         t_done )
 };
-const struct TextCmd RalphReminderText[] = {
+const txt_cmd_s RalphReminderText[] = {
     text_start("So where are you?"
         t_line "I'm waiting for"
         t_para "you to show up on"
@@ -2323,7 +2323,7 @@ const struct TextCmd RalphReminderText[] = {
         t_line "your elders wait!"
         t_done )
 };
-const struct TextCmd RalphHurryText[] = {
+const txt_cmd_s RalphHurryText[] = {
     text_start("Hey, what's the"
         t_line "matter with you?"
         t_para "Aren't you coming"
@@ -2336,7 +2336,7 @@ const struct TextCmd RalphHurryText[] = {
 
 //// reena_caller.c
 
-const struct TextCmd ReenaMonsIsAPerfectMatchText[] = {
+const txt_cmd_s ReenaMonsIsAPerfectMatchText[] = {
     text_start("Listen, dear…"
         t_para "Do you recall my"
         t_line "@")
@@ -2351,7 +2351,7 @@ const struct TextCmd ReenaMonsIsAPerfectMatchText[] = {
         t_cont "match for me?"
         t_done )
 };
-const struct TextCmd ReenaDefeatedMonText[] = {
+const txt_cmd_s ReenaDefeatedMonText[] = {
     text_start("Have I ever faced"
         t_line "a wild @")
     text_ram(wram_ptr(wStringBuffer4))
@@ -2364,7 +2364,7 @@ const struct TextCmd ReenaDefeatedMonText[] = {
         t_cont "occasions!"
         t_done )
 };
-const struct TextCmd ReenaLostAMonText[] = {
+const txt_cmd_s ReenaLostAMonText[] = {
     text_start("Have I ever failed"
         t_line "to catch a wild"
         t_cont "#MON?"
@@ -2377,7 +2377,7 @@ const struct TextCmd ReenaLostAMonText[] = {
         t_line "Oh! Never mind!"
         t_done )
 };
-const struct TextCmd ReenaBattleRematchText[] = {
+const txt_cmd_s ReenaBattleRematchText[] = {
     text_start("We are going to"
         t_line "battle!"
         t_para "The place shall be"
@@ -2388,11 +2388,11 @@ const struct TextCmd ReenaBattleRematchText[] = {
         t_line "wait! Got it?"
         t_done )
 };
-const struct TextCmd ReenaHangUpText[] = {
+const txt_cmd_s ReenaHangUpText[] = {
     text_start("Fine, you may go."
         t_done )
 };
-const struct TextCmd ReenaForwardText[] = {
+const txt_cmd_s ReenaForwardText[] = {
     text_start("Don't be too proud"
         t_line "just because you"
         t_para "happened to beat"
@@ -2400,7 +2400,7 @@ const struct TextCmd ReenaForwardText[] = {
         t_para "It was a fluke!"
         t_done )
 };
-const struct TextCmd ReenaHurryText[] = {
+const txt_cmd_s ReenaHurryText[] = {
     text_start("What are you"
         t_line "doing?"
         t_para "I told you that"
@@ -2414,7 +2414,7 @@ const struct TextCmd ReenaHurryText[] = {
 
 //// tiffany_caller.c
 
-const struct TextCmd TiffanyMonIsAdorableText[] = {
+const txt_cmd_s TiffanyMonIsAdorableText[] = {
     text_start("My @")
     text_ram(wram_ptr(wStringBuffer4))
     text_start("'s"
@@ -2425,7 +2425,7 @@ const struct TextCmd TiffanyMonIsAdorableText[] = {
         t_line "fluffy and warm!"
         t_done )
 };
-const struct TextCmd TiffanyDefeatedMonText[] = {
+const txt_cmd_s TiffanyDefeatedMonText[] = {
     text_start("Oh, and we had to"
         t_line "battle a wild"
         t_para "@")
@@ -2441,7 +2441,7 @@ const struct TextCmd TiffanyDefeatedMonText[] = {
     text_start("!"
         t_done )
 };
-const struct TextCmd TiffanyLostAMonText[] = {
+const txt_cmd_s TiffanyLostAMonText[] = {
     text_start("Oh, and we had to"
         t_line "battle a wild"
         t_para "@")
@@ -2457,7 +2457,7 @@ const struct TextCmd TiffanyLostAMonText[] = {
         t_cont "of my CLEFAIRY."
         t_done )
 };
-const struct TextCmd TiffanyBattleRematchText[] = {
+const txt_cmd_s TiffanyBattleRematchText[] = {
     text_start("I know this might"
         t_line "surprise you, but"
         t_para "would you like to"
@@ -2469,7 +2469,7 @@ const struct TextCmd TiffanyBattleRematchText[] = {
     text_start("."
         t_done )
 };
-const struct TextCmd TiffanyItsAwfulText[] = {
+const txt_cmd_s TiffanyItsAwfulText[] = {
     text_ram(wram_ptr(wStringBuffer4))
     text_start("!"
         t_para "It's awful."
@@ -2481,11 +2481,11 @@ const struct TextCmd TiffanyItsAwfulText[] = {
         t_line "Bye-bye!"
         t_done )
 };
-const struct TextCmd TiffanyHangUpText[] = {
+const txt_cmd_s TiffanyHangUpText[] = {
     text_start("Bye-bye!"
         t_done )
 };
-const struct TextCmd TiffanyFoundItemText[] = {
+const txt_cmd_s TiffanyFoundItemText[] = {
     text_start("I bought some PINK"
         t_line "BOWS at GOLDENROD"
         t_para "DEPT.STORE for my"
@@ -2498,12 +2498,12 @@ const struct TextCmd TiffanyFoundItemText[] = {
     text_start("."
         t_done )
 };
-const struct TextCmd TiffanyNoItemText[] = {
+const txt_cmd_s TiffanyNoItemText[] = {
     text_start("I love dressing up"
         t_line "my CLEFAIRY!"
         t_done )
 };
-const struct TextCmd TiffanyAsleepText[] = {
+const txt_cmd_s TiffanyAsleepText[] = {
     text_start("What's wrong?"
         t_line "Can't you visit?"
         t_para "CLEFAIRY got tired"
@@ -2516,7 +2516,7 @@ const struct TextCmd TiffanyAsleepText[] = {
     text_start("!"
         t_done )
 };
-const struct TextCmd TiffanyHurryText[] = {
+const txt_cmd_s TiffanyHurryText[] = {
     text_start("What's wrong?"
         t_line "Can't you visit?"
         t_para "I'm sure this will"
@@ -2531,7 +2531,7 @@ const struct TextCmd TiffanyHurryText[] = {
 
 //// todd_caller.c
 
-const struct TextCmd ToddLooksCuteLikeMeText[] = {
+const txt_cmd_s ToddLooksCuteLikeMeText[] = {
     text_start("My @")
     text_ram(wram_ptr(wStringBuffer4))
     text_start(" is"
@@ -2540,7 +2540,7 @@ const struct TextCmd ToddLooksCuteLikeMeText[] = {
         t_line "getting cuter!"
         t_done )
 };
-const struct TextCmd ToddDefeatedMonText[] = {
+const txt_cmd_s ToddDefeatedMonText[] = {
     text_start("And, you know?"
         t_para "Now we can KO"
         t_line "@")
@@ -2550,7 +2550,7 @@ const struct TextCmd ToddDefeatedMonText[] = {
         t_line "the GOLDENROD GYM."
         t_done )
 };
-const struct TextCmd ToddLostAMonText[] = {
+const txt_cmd_s ToddLostAMonText[] = {
     text_start("And, you know?"
         t_line "We just failed to"
         t_para "beat @")
@@ -2563,7 +2563,7 @@ const struct TextCmd ToddLostAMonText[] = {
         t_line "yet…"
         t_done )
 };
-const struct TextCmd ToddBattleRematchText[] = {
+const txt_cmd_s ToddBattleRematchText[] = {
     text_start("You must be a lot"
         t_line "better now, huh?"
         t_para "How about showing"
@@ -2576,11 +2576,11 @@ const struct TextCmd ToddBattleRematchText[] = {
     text_start("."
         t_done )
 };
-const struct TextCmd ToddHangUpText[] = {
+const txt_cmd_s ToddHangUpText[] = {
     text_start("See you later!"
         t_done )
 };
-const struct TextCmd ToddDepartmentStoreBargainSaleText[] = {
+const txt_cmd_s ToddDepartmentStoreBargainSaleText[] = {
     text_start("This is it--the"
         t_line "one we've all been"
         t_cont "waiting for!"
@@ -2600,14 +2600,14 @@ const struct TextCmd ToddDepartmentStoreBargainSaleText[] = {
         t_cont "soon as you can!"
         t_done )
 };
-const struct TextCmd ToddSavingUpForBargainSaleText[] = {
+const txt_cmd_s ToddSavingUpForBargainSaleText[] = {
     text_start("I'm saving up for"
         t_line "the next bargain"
         t_para "sale. When's the"
         t_line "next one?"
         t_done )
 };
-const struct TextCmd ToddLookingForwardToBattleText[] = {
+const txt_cmd_s ToddLookingForwardToBattleText[] = {
     text_start("Where are you?"
         t_para "Let's have our"
         t_line "battle soon!"
@@ -2617,7 +2617,7 @@ const struct TextCmd ToddLookingForwardToBattleText[] = {
     text_start("."
         t_done )
 };
-const struct TextCmd ToddHaveYouGoneToDepartmentStoreText[] = {
+const txt_cmd_s ToddHaveYouGoneToDepartmentStoreText[] = {
     text_start("Haven't you gone"
         t_line "to GOLDENROD DEPT."
         t_para "STORE? I've scoped"
@@ -2631,7 +2631,7 @@ const struct TextCmd ToddHaveYouGoneToDepartmentStoreText[] = {
 
 //// tully_caller.c
 
-const struct TextCmd TullyMonHasGrownText[] = {
+const txt_cmd_s TullyMonHasGrownText[] = {
     text_start("My @")
     text_ram(wram_ptr(wStringBuffer4))
     text_start(" has"
@@ -2642,7 +2642,7 @@ const struct TextCmd TullyMonHasGrownText[] = {
         t_line "it's way bigger."
         t_done )
 };
-const struct TextCmd TullyDefeatedMonText[] = {
+const txt_cmd_s TullyDefeatedMonText[] = {
     text_start("Oh yeah, I KO'd a"
         t_line "wild @")
     text_ram(wram_ptr(wStringBuffer4))
@@ -2654,7 +2654,7 @@ const struct TextCmd TullyDefeatedMonText[] = {
         t_cont "the phone…"
         t_done )
 };
-const struct TextCmd TullyLostAMonText[] = {
+const txt_cmd_s TullyLostAMonText[] = {
     text_start("Oh yeah, I lost a"
         t_line "wild @")
     text_ram(wram_ptr(wStringBuffer4))
@@ -2666,7 +2666,7 @@ const struct TextCmd TullyLostAMonText[] = {
         t_cont "the phone…"
         t_done )
 };
-const struct TextCmd TullyBattleRematchText[] = {
+const txt_cmd_s TullyBattleRematchText[] = {
     text_start("We should get a"
         t_line "battle going!"
         t_para "I'll be fishing on"
@@ -2677,12 +2677,12 @@ const struct TextCmd TullyBattleRematchText[] = {
         t_line "have the time."
         t_done )
 };
-const struct TextCmd TullyHangUpText[] = {
+const txt_cmd_s TullyHangUpText[] = {
     text_start("Well, I'll be"
         t_line "seeing you."
         t_done )
 };
-const struct TextCmd TullyFoundItemText[] = {
+const txt_cmd_s TullyFoundItemText[] = {
     text_start("I picked up a good"
         t_line "little thing at"
         t_cont "the water's edge."
@@ -2694,7 +2694,7 @@ const struct TextCmd TullyFoundItemText[] = {
     text_start("."
         t_done )
 };
-const struct TextCmd TullyNoItemText[] = {
+const txt_cmd_s TullyNoItemText[] = {
     text_start("Have I found"
         t_line "anything good?"
         t_para "Nope, not yet."
@@ -2702,7 +2702,7 @@ const struct TextCmd TullyNoItemText[] = {
         t_line "you need patience."
         t_done )
 };
-const struct TextCmd TullyForwardText[] = {
+const txt_cmd_s TullyForwardText[] = {
     text_start("Yup, TULLY here…"
         t_para "<PLAY_G>? What?"
         t_line "You're lost?"
@@ -2712,7 +2712,7 @@ const struct TextCmd TullyForwardText[] = {
     text_start("."
         t_done )
 };
-const struct TextCmd TullyHurryText[] = {
+const txt_cmd_s TullyHurryText[] = {
     text_start("I've got something"
         t_line "good for you."
         t_para "Hustle over to"
@@ -2724,7 +2724,7 @@ const struct TextCmd TullyHurryText[] = {
 
 //// vance_caller.c
 
-const struct TextCmd VanceMonHasBecomeTougherText[] = {
+const txt_cmd_s VanceMonHasBecomeTougherText[] = {
     text_start("My @")
     text_ram(wram_ptr(wStringBuffer4))
     text_start("'s"
@@ -2733,7 +2733,7 @@ const struct TextCmd VanceMonHasBecomeTougherText[] = {
         t_line "liftoff!"
         t_done )
 };
-const struct TextCmd VanceDefeatedMonText[] = {
+const txt_cmd_s VanceDefeatedMonText[] = {
     text_start("We can easily beat"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer4))
@@ -2742,7 +2742,7 @@ const struct TextCmd VanceDefeatedMonText[] = {
         t_line "Isn't that great?"
         t_done )
 };
-const struct TextCmd VanceLostAMonText[] = {
+const txt_cmd_s VanceLostAMonText[] = {
     text_start("But get this, a"
         t_line "wild @")
     text_ram(wram_ptr(wStringBuffer4))
@@ -2753,7 +2753,7 @@ const struct TextCmd VanceLostAMonText[] = {
         t_line "after it…"
         t_done )
 };
-const struct TextCmd VanceBattleRematchText[] = {
+const txt_cmd_s VanceBattleRematchText[] = {
     text_start("Right now, I'm on"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer5))
@@ -2764,17 +2764,17 @@ const struct TextCmd VanceBattleRematchText[] = {
         t_line "I'll wait here."
         t_done )
 };
-const struct TextCmd VanceHangUpText[] = {
+const txt_cmd_s VanceHangUpText[] = {
     text_start("OK, bye for now!"
         t_done )
 };
-const struct TextCmd VanceLookingForwardText[] = {
+const txt_cmd_s VanceLookingForwardText[] = {
     text_start("I'll be looking"
         t_line "forward to our"
         t_cont "next battle!"
         t_done )
 };
-const struct TextCmd VanceHurryHurryText[] = {
+const txt_cmd_s VanceHurryHurryText[] = {
     text_start("Oh, <PLAY_G>!"
         t_line "Hurry, hurry!"
         t_para "@")
@@ -2786,7 +2786,7 @@ const struct TextCmd VanceHurryHurryText[] = {
 
 //// wade_caller.c
 
-const struct TextCmd WadeAreYourMonGrowingText[] = {
+const txt_cmd_s WadeAreYourMonGrowingText[] = {
     text_start("Are your #MON"
         t_line "growing?"
         t_para "My #MON are"
@@ -2801,7 +2801,7 @@ const struct TextCmd WadeAreYourMonGrowingText[] = {
         t_line "it'll get tough."
         t_done )
 };
-const struct TextCmd WadeDefeatedMonText[] = {
+const txt_cmd_s WadeDefeatedMonText[] = {
     text_start("Oh yeah, we KO'd a"
         t_line "wild @")
     text_ram(wram_ptr(wStringBuffer4))
@@ -2814,7 +2814,7 @@ const struct TextCmd WadeDefeatedMonText[] = {
         t_line "the poor thing."
         t_done )
 };
-const struct TextCmd WadeLostAMonText[] = {
+const txt_cmd_s WadeLostAMonText[] = {
     text_start("Oh yeah, a wild"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer4))
@@ -2829,7 +2829,7 @@ const struct TextCmd WadeLostAMonText[] = {
         t_line "had it."
         t_done )
 };
-const struct TextCmd WadeBattleRematchText[] = {
+const txt_cmd_s WadeBattleRematchText[] = {
     text_start("Do you feel like a"
         t_line "#MON battle?"
         t_para "It won't be like"
@@ -2842,11 +2842,11 @@ const struct TextCmd WadeBattleRematchText[] = {
         t_line "you get there."
         t_done )
 };
-const struct TextCmd WadeHangUpText[] = {
+const txt_cmd_s WadeHangUpText[] = {
     text_start("See you later!"
         t_done )
 };
-const struct TextCmd WadeBugCatchingContestText[] = {
+const txt_cmd_s WadeBugCatchingContestText[] = {
     text_start("The Bug-Catching"
         t_line "Contest is at the"
         t_para "NATIONAL PARK"
@@ -2857,7 +2857,7 @@ const struct TextCmd WadeBugCatchingContestText[] = {
         t_line "up my mind."
         t_done )
 };
-const struct TextCmd WadeFoundItemText[] = {
+const txt_cmd_s WadeFoundItemText[] = {
     text_start("I found all kinds"
         t_line "of BERRIES. If you"
         t_para "want, I'll share"
@@ -2868,7 +2868,7 @@ const struct TextCmd WadeFoundItemText[] = {
     text_start("."
         t_done )
 };
-const struct TextCmd WadeNoBerriesText[] = {
+const txt_cmd_s WadeNoBerriesText[] = {
     text_start("Huh? BERRIES?"
         t_para "Sorry, I haven't"
         t_line "found any yet."
@@ -2877,7 +2877,7 @@ const struct TextCmd WadeNoBerriesText[] = {
         t_cont "please wait?"
         t_done )
 };
-const struct TextCmd WadeQuickBattleText[] = {
+const txt_cmd_s WadeQuickBattleText[] = {
     text_start("Let's battle"
         t_line "already!"
         t_para "@")
@@ -2888,7 +2888,7 @@ const struct TextCmd WadeQuickBattleText[] = {
         t_line "soon as you can!"
         t_done )
 };
-const struct TextCmd WadeComeQuickText[] = {
+const txt_cmd_s WadeComeQuickText[] = {
     text_start("How come you're"
         t_line "not here yet?"
         t_para "@")
@@ -2902,7 +2902,7 @@ const struct TextCmd WadeComeQuickText[] = {
 
 //// wilton_caller.c
 
-const struct TextCmd WiltonMonHasGrownText[] = {
+const txt_cmd_s WiltonMonHasGrownText[] = {
     text_start("My @")
     text_ram(wram_ptr(wStringBuffer4))
     text_start("'s"
@@ -2911,7 +2911,7 @@ const struct TextCmd WiltonMonHasGrownText[] = {
         t_line "have improved too!"
         t_done )
 };
-const struct TextCmd WiltonDefeatedMonText[] = {
+const txt_cmd_s WiltonDefeatedMonText[] = {
     text_start("We beat a wild"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer4))
@@ -2922,7 +2922,7 @@ const struct TextCmd WiltonDefeatedMonText[] = {
         t_line "#MON."
         t_done )
 };
-const struct TextCmd WiltonLostAMonText[] = {
+const txt_cmd_s WiltonLostAMonText[] = {
     text_start("But a while back,"
         t_line "we came this close"
         t_para "to landing a wild"
@@ -2933,7 +2933,7 @@ const struct TextCmd WiltonLostAMonText[] = {
         t_line "huge. Believe me."
         t_done )
 };
-const struct TextCmd WiltonBattleRematchText[] = {
+const txt_cmd_s WiltonBattleRematchText[] = {
     text_start("I'm fishing on"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer5))
@@ -2945,11 +2945,11 @@ const struct TextCmd WiltonBattleRematchText[] = {
         t_cont "over for a battle."
         t_done )
 };
-const struct TextCmd WiltonHangUpText[] = {
+const txt_cmd_s WiltonHangUpText[] = {
     text_start("All right, later."
         t_done )
 };
-const struct TextCmd WiltonFoundItemText[] = {
+const txt_cmd_s WiltonFoundItemText[] = {
     text_start("I snagged an item"
         t_line "while fishing."
         t_para "Come pick it up on"
@@ -2958,7 +2958,7 @@ const struct TextCmd WiltonFoundItemText[] = {
     text_start("."
         t_done )
 };
-const struct TextCmd WiltonHaventFoundAnythingText[] = {
+const txt_cmd_s WiltonHaventFoundAnythingText[] = {
     text_start("Nah, I haven't"
         t_line "found anything"
         t_para "that's worth your"
@@ -2967,7 +2967,7 @@ const struct TextCmd WiltonHaventFoundAnythingText[] = {
         t_line "patience."
         t_done )
 };
-const struct TextCmd WiltonNotBitingText[] = {
+const txt_cmd_s WiltonNotBitingText[] = {
     text_start("Sigh…"
         t_line "They're not biting"
         t_para "like before on"
@@ -2978,7 +2978,7 @@ const struct TextCmd WiltonNotBitingText[] = {
         t_line "for a battle!"
         t_done )
 };
-const struct TextCmd WiltonWantThisText[] = {
+const txt_cmd_s WiltonWantThisText[] = {
     text_start("Don't you want"
         t_line "this item?"
         t_para "Hah? You don't"

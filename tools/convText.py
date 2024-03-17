@@ -35,9 +35,9 @@ def convert_line(line: str):
             name = name[1:]
         labels.append(name)
         if curLabel is not None:
-            return f"}};\n\nconst struct TextCmd {name}[] = {{"
+            return f"}};\n\nconst txt_cmd_s {name}[] = {{"
         curLabel = name
-        return f"const struct TextCmd {name}[] = {{"
+        return f"const txt_cmd_s {name}[] = {{"
     line = line.lstrip()
     if line.startswith('sound_'):
         if inText:
@@ -140,7 +140,7 @@ out += '};\n'
 outh = '#pragma once\n'
 
 for label in labels:
-    outh += f'extern const struct TextCmd {label}[];\n'
+    outh += f'extern const txt_cmd_s {label}[];\n'
 
 with open(outHFile, 'w', encoding='utf8') as f:
     f.write(outh)

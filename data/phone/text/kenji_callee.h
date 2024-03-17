@@ -1,7 +1,7 @@
 #pragma once
-extern const struct TextCmd KenjiAnswerPhoneText[];
-extern const struct TextCmd KenjiAnswerPhoneDayText[];
-extern const struct TextCmd KenjiAnswerPhoneNiteText[];
-extern const struct TextCmd KenjiGreetText[];
-extern const struct TextCmd KenjiGreetDayText[];
-extern const struct TextCmd KenjiGreetNiteText[];
+extern const txt_cmd_s KenjiAnswerPhoneText[];
+extern const txt_cmd_s KenjiAnswerPhoneDayText[];
+extern const txt_cmd_s KenjiAnswerPhoneNiteText[];
+extern const txt_cmd_s KenjiGreetText[];
+extern const txt_cmd_s KenjiGreetDayText[];
+extern const txt_cmd_s KenjiGreetNiteText[];

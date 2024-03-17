@@ -1,10 +1,10 @@
 #pragma once
-extern const struct TextCmd DanaTakingPhotosText[];
-extern const struct TextCmd DanaDefeatedMonText[];
-extern const struct TextCmd DanaLostAMonText[];
-extern const struct TextCmd DanaBattleRematchText[];
-extern const struct TextCmd DanaHangUpText[];
-extern const struct TextCmd DanaFoundItemText[];
-extern const struct TextCmd DanaCanYouWaitABitLongerText[];
-extern const struct TextCmd DanaReminderText[];
-extern const struct TextCmd DanaComePickUpText[];
+extern const txt_cmd_s DanaTakingPhotosText[];
+extern const txt_cmd_s DanaDefeatedMonText[];
+extern const txt_cmd_s DanaLostAMonText[];
+extern const txt_cmd_s DanaBattleRematchText[];
+extern const txt_cmd_s DanaHangUpText[];
+extern const txt_cmd_s DanaFoundItemText[];
+extern const txt_cmd_s DanaCanYouWaitABitLongerText[];
+extern const txt_cmd_s DanaReminderText[];
+extern const txt_cmd_s DanaComePickUpText[];

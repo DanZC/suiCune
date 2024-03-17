@@ -606,24 +606,24 @@ uint8_t* PrintTwoDigitNumberLeftAlign_Conv(uint8_t* hl, uint8_t* de){
     return PrintNum_Conv2(hl, de, PRINTNUM_LEFTALIGN | 1, 2);
 }
 
-const struct TextCmd OakTimeWokeUpText[] = {
+const txt_cmd_s OakTimeWokeUpText[] = {
     text_far(v_OakTimeWokeUpText)
     text_end
 };
 
-const struct TextCmd OakTimeWhatTimeIsItText[] = {
+const txt_cmd_s OakTimeWhatTimeIsItText[] = {
     text_far(v_OakTimeWhatTimeIsItText)
     text_end
 };
 
 static void OakTimeWhatHoursText_Function(struct TextCmdState* state);
 // What?@ @
-const struct TextCmd OakTimeWhatHoursText[] = {
+const txt_cmd_s OakTimeWhatHoursText[] = {
     text_far(v_OakTimeWhatHoursText)
     text_asm(OakTimeWhatHoursText_Function)
 };
 
-static const struct TextCmd OakTimeWhatHoursText_OakTimeHoursQuestionMarkText[] = {
+static const txt_cmd_s OakTimeWhatHoursText_OakTimeHoursQuestionMarkText[] = {
     text_far(v_OakTimeHoursQuestionMarkText)
     text_end
 };
@@ -637,15 +637,15 @@ static void OakTimeWhatHoursText_Function(struct TextCmdState* state){
     // RET;
 }
 
-const struct TextCmd OakTimeHowManyMinutesText[] = {
+const txt_cmd_s OakTimeHowManyMinutesText[] = {
     text_far(v_OakTimeHowManyMinutesText)
     text_end
 };
 
 static void OakTimeWhoaMinutesText_Function(struct TextCmdState* state);
-static const struct TextCmd OakTimeWhoaMinutesText_OakTimeMinutesQuestionMarkText[];
+static const txt_cmd_s OakTimeWhoaMinutesText_OakTimeMinutesQuestionMarkText[];
 // Whoa!@ @
-const struct TextCmd OakTimeWhoaMinutesText[] = {
+const txt_cmd_s OakTimeWhoaMinutesText[] = {
     text_far(v_OakTimeWhoaMinutesText)
     text_asm(OakTimeWhoaMinutesText_Function)
 };
@@ -657,27 +657,27 @@ static void OakTimeWhoaMinutesText_Function(struct TextCmdState* state){
     state->hl = OakTimeWhoaMinutesText_OakTimeMinutesQuestionMarkText;
     // RET;
 }
-static const struct TextCmd OakTimeWhoaMinutesText_OakTimeMinutesQuestionMarkText[] = {
+static const txt_cmd_s OakTimeWhoaMinutesText_OakTimeMinutesQuestionMarkText[] = {
     text_far(v_OakTimeMinutesQuestionMarkText)
     text_end
 };
 
 static void OakText_ResponseToSetTime_Function(struct TextCmdState* state);
-const struct TextCmd OakText_ResponseToSetTime[] = {
+const txt_cmd_s OakText_ResponseToSetTime[] = {
     text_asm(OakText_ResponseToSetTime_Function)
 };
 static void OakText_ResponseToSetTime_Function(struct TextCmdState* state){
-    static const struct TextCmd OakTimeOversleptText[] = {
+    static const txt_cmd_s OakTimeOversleptText[] = {
         text_far(v_OakTimeOversleptText)
         text_end
     };
 
-    static const struct TextCmd OakTimeYikesText[] = {
+    static const txt_cmd_s OakTimeYikesText[] = {
         text_far(v_OakTimeYikesText)
         text_end
     };
 
-    static const struct TextCmd OakTimeSoDarkText[] = {
+    static const txt_cmd_s OakTimeSoDarkText[] = {
         text_far(v_OakTimeSoDarkText)
         text_end
     };
@@ -763,17 +763,17 @@ static uint8_t* SetDayOfWeek_PlaceWeekdayString(uint8_t* hl) {
     return st.bc;
 }
 
-static const struct TextCmd OakTimeWhatDayIsItText[] = {
+static const txt_cmd_s OakTimeWhatDayIsItText[] = {
     text_far(v_OakTimeWhatDayIsItText)
     text_end
 };
 
 static void ConfirmWeekdayText_Function(struct TextCmdState* state);
-static const struct TextCmd ConfirmWeekdayText[] = {
+static const txt_cmd_s ConfirmWeekdayText[] = {
     text_asm(ConfirmWeekdayText_Function)
 };
 static void ConfirmWeekdayText_Function(struct TextCmdState* state) {
-    static const struct TextCmd OakTimeIsItText[] = {
+    static const txt_cmd_s OakTimeIsItText[] = {
         text_far(v_OakTimeIsItText)
         text_end
     };
@@ -947,7 +947,7 @@ void SetDayOfWeek(void){
 }
 
 static void InitialSetDSTFlag_Text(struct TextCmdState* state) {
-    static const struct TextCmd DSTIsThatOKText[] = {
+    static const txt_cmd_s DSTIsThatOKText[] = {
         text_far(v_DSTIsThatOKText)
         text_end
     };
@@ -984,7 +984,7 @@ void InitialSetDSTFlag(void){
 }
 
 static void InitialClearDSTFlag_Text(struct TextCmdState* state) {
-    static const struct TextCmd TimeAskOkayText[] = {
+    static const txt_cmd_s TimeAskOkayText[] = {
         text_far(v_TimeAskOkayText)
         text_end
     };
@@ -1114,7 +1114,7 @@ static void MrChrono_Text(struct TextCmdState* state) {
         *(hl++) = CHAR_A + ('F' - 'A');
     }
 
-    static const struct TextCmd NowOnDebug[] = {
+    static const txt_cmd_s NowOnDebug[] = {
         text_start(
             t_para "Now on DEBUG…"
             t_prompt )

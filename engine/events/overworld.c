@@ -385,12 +385,12 @@ void CutFunction(void){
     return;
 }
 
-const struct TextCmd UseCutText[] = {
+const txt_cmd_s UseCutText[] = {
     text_far(v_UseCutText)
     text_end
 };
 
-const struct TextCmd CutNothingText[] = {
+const txt_cmd_s CutNothingText[] = {
     text_far(v_CutNothingText)
     text_end
 };
@@ -682,7 +682,7 @@ bool Script_UseFlash(script_s* s){
 
 void UseFlashTextScript(struct TextCmdState* state){
     (void)state;
-    static const struct TextCmd BlankText[] = {
+    static const txt_cmd_s BlankText[] = {
         text_end
     };
     //text_far ['_BlindingFlashText']
@@ -835,17 +835,17 @@ bool UsedSurfScript(script_s* s){
 
 }
 
-const struct TextCmd UsedSurfText[] = {
+const txt_cmd_s UsedSurfText[] = {
     text_far(v_UsedSurfText)
     text_end
 };
 
-const struct TextCmd CantSurfText[] = {
+const txt_cmd_s CantSurfText[] = {
     text_far(v_CantSurfText)
     text_end
 };
 
-const struct TextCmd AlreadySurfingText[] = {
+const txt_cmd_s AlreadySurfingText[] = {
     text_far(v_AlreadySurfingText)
     text_end
 };
@@ -1087,7 +1087,7 @@ bool AskSurfScript(script_s* s){
     SCRIPT_END
 }
 
-const struct TextCmd AskSurfText[] = {
+const txt_cmd_s AskSurfText[] = {
     text_far(v_AskSurfText)
     text_end
 };
@@ -1314,7 +1314,7 @@ bool Script_UsedWaterfall(script_s* s){
         movement_step_end
     };
 
-    static const struct TextCmd UseWaterfallText[] = {
+    static const txt_cmd_s UseWaterfallText[] = {
         text_far(v_UseWaterfallText)
         text_end
     };
@@ -1390,7 +1390,7 @@ bool TryWaterfallOW_Conv(void){
 }
 
 bool Script_CantDoWaterfall(script_s* s){
-    static const struct TextCmd HugeWaterfallText[] = {
+    static const txt_cmd_s HugeWaterfallText[] = {
         text_far(v_HugeWaterfallText)
         text_end
     };
@@ -1400,7 +1400,7 @@ bool Script_CantDoWaterfall(script_s* s){
 }
 
 bool Script_AskWaterfall(script_s* s){
-    const struct TextCmd AskWaterfallText[] = {
+    const txt_cmd_s AskWaterfallText[] = {
         text_far(v_AskWaterfallText)
         text_end
     };
@@ -1891,7 +1891,7 @@ FailWhirlpool:
 
 }
 
-const struct TextCmd UseWhirlpoolText[] = {
+const txt_cmd_s UseWhirlpoolText[] = {
     text_far(v_UseWhirlpoolText)
     text_end
 };
@@ -2071,7 +2071,7 @@ bool TryWhirlpoolOW_Conv(void){
 }
 
 bool Script_MightyWhirlpool(script_s* s){
-    static const struct TextCmd MayPassWhirlpoolText[] = {
+    static const txt_cmd_s MayPassWhirlpoolText[] = {
         text_far(v_MayPassWhirlpoolText)
         text_end
     };
@@ -2091,7 +2091,7 @@ bool Script_AskWhirlpoolOW(script_s* s){
     SCRIPT_END
 }
 
-const struct TextCmd AskWhirlpoolText[] = {
+const txt_cmd_s AskWhirlpoolText[] = {
     text_far(v_AskWhirlpoolText)
     text_end
 };
@@ -2144,12 +2144,12 @@ uint8_t TryHeadbuttFromMenu_Conv(void){
     return 0x81;
 }
 
-const struct TextCmd UseHeadbuttText[] = {
+const txt_cmd_s UseHeadbuttText[] = {
     text_far(v_UseHeadbuttText)
     text_end
 };
 
-const struct TextCmd HeadbuttNothingText[] = {
+const txt_cmd_s HeadbuttNothingText[] = {
     text_far(v_HeadbuttNothingText)
     text_end
 };
@@ -2238,7 +2238,7 @@ bool AskHeadbuttScript(script_s* s){
     SCRIPT_END
 }
 
-const struct TextCmd AskHeadbuttText[] = {
+const txt_cmd_s AskHeadbuttText[] = {
     text_far(v_AskHeadbuttText)
     text_end
 };
@@ -2386,7 +2386,7 @@ const uint8_t MovementData_RockSmash[] = {
     movement_step_end
 };
 
-const struct TextCmd UseRockSmashText[] = {
+const txt_cmd_s UseRockSmashText[] = {
     text_far(v_UseRockSmashText)
     text_end
 };
@@ -2408,12 +2408,12 @@ no:
     SCRIPT_END
 }
 
-const struct TextCmd MaySmashText[] = {
+const txt_cmd_s MaySmashText[] = {
     text_far(v_MaySmashText)
     text_end
 };
 
-const struct TextCmd AskRockSmashText[] = {
+const txt_cmd_s AskRockSmashText[] = {
     text_far(v_AskRockSmashText)
     text_end
 };
@@ -2838,7 +2838,7 @@ bool Script_GetOffBike_Register(script_s* s){
 }
 
 bool Script_CantGetOffBike(script_s* s){
-    const struct TextCmd CantGetOffBikeText[] = {
+    const txt_cmd_s CantGetOffBikeText[] = {
         text_far(v_CantGetOffBikeText)
         text_end
     };
@@ -2850,12 +2850,12 @@ bool Script_CantGetOffBike(script_s* s){
     SCRIPT_END
 }
 
-const struct TextCmd GotOnBikeText[] = {
+const txt_cmd_s GotOnBikeText[] = {
     text_far(v_GotOnBikeText)
     text_end
 };
 
-const struct TextCmd GotOffBikeText[] = {
+const txt_cmd_s GotOffBikeText[] = {
     text_far(v_GotOffBikeText)
     text_end
 };
@@ -2938,7 +2938,7 @@ declined:
     SCRIPT_END
 }
 
-const struct TextCmd AskCutText[] = {
+const txt_cmd_s AskCutText[] = {
     text_far(v_AskCutText)
     text_end
 };
@@ -2949,7 +2949,7 @@ bool CantCutScript(script_s* s){
     SCRIPT_END
 }
 
-const struct TextCmd CanCutText[] = {
+const txt_cmd_s CanCutText[] = {
     text_far(v_CanCutText)
     text_end
 };

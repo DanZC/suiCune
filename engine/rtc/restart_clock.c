@@ -263,7 +263,7 @@ static bool RestartClock_SetClock(void) {
     // CALL(aRestartClock_PrintTime);
     RestartClock_PrintTime();
 
-    static const struct TextCmd ClockIsThisOKText[] = {
+    static const txt_cmd_s ClockIsThisOKText[] = {
         text_far(v_ClockIsThisOKText)
         text_end
     };
@@ -291,7 +291,7 @@ static bool RestartClock_SetClock(void) {
     // CALL(aRestartClock_PrintTime);
     RestartClock_PrintTime();
 
-    static const struct TextCmd ClockHasResetText[] = {
+    static const txt_cmd_s ClockHasResetText[] = {
         text_far(v_ClockHasResetText)
         text_end
     };
@@ -306,7 +306,7 @@ static bool RestartClock_SetClock(void) {
 }
 
 void RestartClock(void){
-    static const struct TextCmd ClockTimeMayBeWrongText[] = {
+    static const txt_cmd_s ClockTimeMayBeWrongText[] = {
         text_far(v_ClockTimeMayBeWrongText)
         text_end
     };
@@ -326,7 +326,7 @@ void RestartClock(void){
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
 
-    static const struct TextCmd ClockSetWithControlPadText[] = {
+    static const txt_cmd_s ClockSetWithControlPadText[] = {
         text_far(v_ClockSetWithControlPadText)
         text_end
     };

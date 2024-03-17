@@ -1,9 +1,9 @@
 #pragma once
-extern const struct TextCmd ParryAskNumber1Text[];
-extern const struct TextCmd ParryAskNumber2Text[];
-extern const struct TextCmd ParryNumberAcceptedText[];
-extern const struct TextCmd ParryNumberDeclinedText[];
-extern const struct TextCmd ParryPhoneFullText[];
-extern const struct TextCmd ParryRematchText[];
-extern const struct TextCmd ParryPackFullText[];
-extern const struct TextCmd ParryRematchGiftText[];
+extern const txt_cmd_s ParryAskNumber1Text[];
+extern const txt_cmd_s ParryAskNumber2Text[];
+extern const txt_cmd_s ParryNumberAcceptedText[];
+extern const txt_cmd_s ParryNumberDeclinedText[];
+extern const txt_cmd_s ParryPhoneFullText[];
+extern const txt_cmd_s ParryRematchText[];
+extern const txt_cmd_s ParryPackFullText[];
+extern const txt_cmd_s ParryRematchGiftText[];

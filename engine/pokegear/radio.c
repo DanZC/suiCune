@@ -557,32 +557,32 @@ void OaksPKMNTalk6(void){
     return NextRadioLine_Conv(OPT_OakText3, OAKS_POKEMON_TALK_7);
 }
 
-const struct TextCmd OPT_IntroText1[] = {
+const txt_cmd_s OPT_IntroText1[] = {
     text_far(v_OPT_IntroText1)
     text_end
 };
 
-const struct TextCmd OPT_IntroText2[] = {
+const txt_cmd_s OPT_IntroText2[] = {
     text_far(v_OPT_IntroText2)
     text_end
 };
 
-const struct TextCmd OPT_IntroText3[] = {
+const txt_cmd_s OPT_IntroText3[] = {
     text_far(v_OPT_IntroText3)
     text_end
 };
 
-const struct TextCmd OPT_OakText1[] = {
+const txt_cmd_s OPT_OakText1[] = {
     text_far(v_OPT_OakText1)
     text_end
 };
 
-const struct TextCmd OPT_OakText2[] = {
+const txt_cmd_s OPT_OakText2[] = {
     text_far(v_OPT_OakText2)
     text_end
 };
 
-const struct TextCmd OPT_OakText3[] = {
+const txt_cmd_s OPT_OakText3[] = {
     text_far(v_OPT_OakText3)
     text_end
 };
@@ -598,73 +598,73 @@ void OaksPKMNTalk7(void){
     return NextRadioLine_Conv(OPT_MaryText1, OAKS_POKEMON_TALK_8);
 }
 
-const struct TextCmd OPT_MaryText1[] = {
+const txt_cmd_s OPT_MaryText1[] = {
     text_far(v_OPT_MaryText1)
     text_end
 };
 
 void OaksPKMNTalk8(void){
-    static const struct TextCmd OPT_SweetAdorablyText[] = {
+    static const txt_cmd_s OPT_SweetAdorablyText[] = {
         text_far(v_OPT_SweetAdorablyText)
         text_end
     };
-    static const struct TextCmd OPT_WigglySlicklyText[] = {
+    static const txt_cmd_s OPT_WigglySlicklyText[] = {
         text_far(v_OPT_WigglySlicklyText)
         text_end
     };
-    static const struct TextCmd OPT_AptlyNamedText[] = {
+    static const txt_cmd_s OPT_AptlyNamedText[] = {
         text_far(v_OPT_AptlyNamedText)
         text_end
     };
-    static const struct TextCmd OPT_UndeniablyKindOfText[] = {
+    static const txt_cmd_s OPT_UndeniablyKindOfText[] = {
         text_far(v_OPT_UndeniablyKindOfText)
         text_end
     };
-    static const struct TextCmd OPT_UnbearablyText[] = {
+    static const txt_cmd_s OPT_UnbearablyText[] = {
         text_far(v_OPT_UnbearablyText)
         text_end
     };
-    static const struct TextCmd OPT_WowImpressivelyText[] = {
+    static const txt_cmd_s OPT_WowImpressivelyText[] = {
         text_far(v_OPT_WowImpressivelyText)
         text_end
     };
-    static const struct TextCmd OPT_AlmostPoisonouslyText[] = {
+    static const txt_cmd_s OPT_AlmostPoisonouslyText[] = {
         text_far(v_OPT_AlmostPoisonouslyText)
         text_end
     };
-    static const struct TextCmd OPT_SensuallyText[] = {
+    static const txt_cmd_s OPT_SensuallyText[] = {
         text_far(v_OPT_SensuallyText)
         text_end
     };
-    static const struct TextCmd OPT_MischievouslyText[] = {
+    static const txt_cmd_s OPT_MischievouslyText[] = {
         text_far(v_OPT_MischievouslyText)
         text_end
     };
-    static const struct TextCmd OPT_TopicallyText[] = {
+    static const txt_cmd_s OPT_TopicallyText[] = {
         text_far(v_OPT_TopicallyText)
         text_end
     };
-    static const struct TextCmd OPT_AddictivelyText[] = {
+    static const txt_cmd_s OPT_AddictivelyText[] = {
         text_far(v_OPT_AddictivelyText)
         text_end
     };
-    static const struct TextCmd OPT_LooksInWaterText[] = {
+    static const txt_cmd_s OPT_LooksInWaterText[] = {
         text_far(v_OPT_LooksInWaterText)
         text_end
     };
-    static const struct TextCmd OPT_EvolutionMustBeText[] = {
+    static const txt_cmd_s OPT_EvolutionMustBeText[] = {
         text_far(v_OPT_EvolutionMustBeText)
         text_end
     };
-    static const struct TextCmd OPT_ProvocativelyText[] = {
+    static const txt_cmd_s OPT_ProvocativelyText[] = {
         text_far(v_OPT_ProvocativelyText)
         text_end
     };
-    static const struct TextCmd OPT_FlippedOutText[] = {
+    static const txt_cmd_s OPT_FlippedOutText[] = {
         text_far(v_OPT_FlippedOutText)
         text_end
     };
-    static const struct TextCmd OPT_HeartMeltinglyText[] = {
+    static const txt_cmd_s OPT_HeartMeltinglyText[] = {
         text_far(v_OPT_HeartMeltinglyText)
         text_end
     };
@@ -709,67 +709,67 @@ void OaksPKMNTalk8(void){
 }
 
 void OaksPKMNTalk9(void){
-    static const struct TextCmd OPT_CuteText[] = {
+    static const txt_cmd_s OPT_CuteText[] = {
         text_far(v_OPT_CuteText)
         text_end
     };
-    static const struct TextCmd OPT_WeirdText[] = {
+    static const txt_cmd_s OPT_WeirdText[] = {
         text_far(v_OPT_WeirdText)
         text_end
     };
-    static const struct TextCmd OPT_PleasantText[] = {
+    static const txt_cmd_s OPT_PleasantText[] = {
         text_far(v_OPT_PleasantText)
         text_end
     };
-    static const struct TextCmd OPT_BoldSortOfText[] = {
+    static const txt_cmd_s OPT_BoldSortOfText[] = {
         text_far(v_OPT_BoldSortOfText)
         text_end
     };
-    static const struct TextCmd OPT_FrighteningText[] = {
+    static const txt_cmd_s OPT_FrighteningText[] = {
         text_far(v_OPT_FrighteningText)
         text_end
     };
-    static const struct TextCmd OPT_SuaveDebonairText[] = {
+    static const txt_cmd_s OPT_SuaveDebonairText[] = {
         text_far(v_OPT_SuaveDebonairText)
         text_end
     };
-    static const struct TextCmd OPT_PowerfulText[] = {
+    static const txt_cmd_s OPT_PowerfulText[] = {
         text_far(v_OPT_PowerfulText)
         text_end
     };
-    static const struct TextCmd OPT_ExcitingText[] = {
+    static const txt_cmd_s OPT_ExcitingText[] = {
         text_far(v_OPT_ExcitingText)
         text_end
     };
-    static const struct TextCmd OPT_GroovyText[] = {
+    static const txt_cmd_s OPT_GroovyText[] = {
         text_far(v_OPT_GroovyText)
         text_end
     };
-    static const struct TextCmd OPT_InspiringText[] = {
+    static const txt_cmd_s OPT_InspiringText[] = {
         text_far(v_OPT_InspiringText)
         text_end
     };
-    static const struct TextCmd OPT_FriendlyText[] = {
+    static const txt_cmd_s OPT_FriendlyText[] = {
         text_far(v_OPT_FriendlyText)
         text_end
     };
-    static const struct TextCmd OPT_HotHotHotText[] = {
+    static const txt_cmd_s OPT_HotHotHotText[] = {
         text_far(v_OPT_HotHotHotText)
         text_end
     };
-    static const struct TextCmd OPT_StimulatingText[] = {
+    static const txt_cmd_s OPT_StimulatingText[] = {
         text_far(v_OPT_StimulatingText)
         text_end
     };
-    static const struct TextCmd OPT_GuardedText[] = {
+    static const txt_cmd_s OPT_GuardedText[] = {
         text_far(v_OPT_GuardedText)
         text_end
     };
-    static const struct TextCmd OPT_LovelyText[] = {
+    static const txt_cmd_s OPT_LovelyText[] = {
         text_far(v_OPT_LovelyText)
         text_end
     };
-    static const struct TextCmd OPT_SpeedyText[] = {
+    static const txt_cmd_s OPT_SpeedyText[] = {
         text_far(v_OPT_SpeedyText)
         text_end
     };
@@ -846,12 +846,12 @@ void OaksPKMNTalk10(void){
     // RET;
 }
 
-const struct TextCmd OPT_PokemonChannelText[] = {
+const txt_cmd_s OPT_PokemonChannelText[] = {
     text_far(v_OPT_PokemonChannelText)
     text_end
 };
 
-const struct TextCmd OPT_RestartText[] = {
+const txt_cmd_s OPT_RestartText[] = {
     text_end
 };
 
@@ -1159,7 +1159,7 @@ okay:
 
 }
 
-const struct TextCmd PokedexShowText[] = {
+const txt_cmd_s PokedexShowText[] = {
     text_far(v_PokedexShowText)
     text_end
 };
@@ -1269,52 +1269,52 @@ void StartPokemonMusicChannel(void){
     // RET;
 }
 
-const struct TextCmd BenIntroText1[] = {
+const txt_cmd_s BenIntroText1[] = {
     text_far(v_BenIntroText1)
     text_end
 };
 
-const struct TextCmd BenIntroText2[] = {
+const txt_cmd_s BenIntroText2[] = {
     text_far(v_BenIntroText2)
     text_end
 };
 
-const struct TextCmd BenIntroText3[] = {
+const txt_cmd_s BenIntroText3[] = {
     text_far(v_BenIntroText3)
     text_end
 };
 
-const struct TextCmd FernIntroText1[] = {
+const txt_cmd_s FernIntroText1[] = {
     text_far(v_FernIntroText1)
     text_end
 };
 
-const struct TextCmd FernIntroText2[] = {
+const txt_cmd_s FernIntroText2[] = {
     text_far(v_FernIntroText2)
     text_end
 };
 
-const struct TextCmd BenFernText1[] = {
+const txt_cmd_s BenFernText1[] = {
     text_far(v_BenFernText1)
     text_end
 };
 
-const struct TextCmd BenFernText2A[] = {
+const txt_cmd_s BenFernText2A[] = {
     text_far(v_BenFernText2A)
     text_end
 };
 
-const struct TextCmd BenFernText2B[] = {
+const txt_cmd_s BenFernText2B[] = {
     text_far(v_BenFernText2B)
     text_end
 };
 
-const struct TextCmd BenFernText3A[] = {
+const txt_cmd_s BenFernText3A[] = {
     text_far(v_BenFernText3A)
     text_end
 };
 
-const struct TextCmd BenFernText3B[] = {
+const txt_cmd_s BenFernText3B[] = {
     text_far(v_BenFernText3B)
     text_end
 };
@@ -1452,67 +1452,67 @@ void LuckyNumberShow15(void){
     return NextRadioLine_Conv(LC_DragText2, LUCKY_CHANNEL);
 }
 
-const struct TextCmd LC_Text1[] = {
+const txt_cmd_s LC_Text1[] = {
     text_far(v_LC_Text1)
     text_end
 };
 
-const struct TextCmd LC_Text2[] = {
+const txt_cmd_s LC_Text2[] = {
     text_far(v_LC_Text2)
     text_end
 };
 
-const struct TextCmd LC_Text3[] = {
+const txt_cmd_s LC_Text3[] = {
     text_far(v_LC_Text3)
     text_end
 };
 
-const struct TextCmd LC_Text4[] = {
+const txt_cmd_s LC_Text4[] = {
     text_far(v_LC_Text4)
     text_end
 };
 
-const struct TextCmd LC_Text5[] = {
+const txt_cmd_s LC_Text5[] = {
     text_far(v_LC_Text5)
     text_end
 };
 
-const struct TextCmd LC_Text6[] = {
+const txt_cmd_s LC_Text6[] = {
     text_far(v_LC_Text6)
     text_end
 };
 
-const struct TextCmd LC_Text7[] = {
+const txt_cmd_s LC_Text7[] = {
     text_far(v_LC_Text7)
     text_end
 };
 
-const struct TextCmd LC_Text8[] = {
+const txt_cmd_s LC_Text8[] = {
     text_far(v_LC_Text8)
     text_end
 };
 
-const struct TextCmd LC_Text9[] = {
+const txt_cmd_s LC_Text9[] = {
     text_far(v_LC_Text9)
     text_end
 };
 
-const struct TextCmd LC_Text10[] = {
+const txt_cmd_s LC_Text10[] = {
     text_far(v_LC_Text10)
     text_end
 };
 
-const struct TextCmd LC_Text11[] = {
+const txt_cmd_s LC_Text11[] = {
     text_far(v_LC_Text11)
     text_end
 };
 
-const struct TextCmd LC_DragText1[] = {
+const txt_cmd_s LC_DragText1[] = {
     text_far(v_LC_DragText1)
     text_end
 };
 
-const struct TextCmd LC_DragText2[] = {
+const txt_cmd_s LC_DragText2[] = {
     text_far(v_LC_DragText2)
     text_end
 };
@@ -1550,17 +1550,17 @@ void PeoplePlaces3(void){
     }
 }
 
-const struct TextCmd PnP_Text1[] = {
+const txt_cmd_s PnP_Text1[] = {
     text_far(v_PnP_Text1)
     text_end
 };
 
-const struct TextCmd PnP_Text2[] = {
+const txt_cmd_s PnP_Text2[] = {
     text_far(v_PnP_Text2)
     text_end
 };
 
-const struct TextCmd PnP_Text3[] = {
+const txt_cmd_s PnP_Text3[] = {
     text_far(v_PnP_Text3)
     text_end
 };
@@ -1624,7 +1624,7 @@ void PeoplePlaces4(void){
 // INCLUDE "data/radio/pnp_hidden_people.asm"
 }
 
-const struct TextCmd PnP_Text4[] = {
+const txt_cmd_s PnP_Text4[] = {
     text_far(v_PnP_Text4)
     text_end
 };
@@ -1687,82 +1687,82 @@ void PeoplePlaces5(void){
     // JP(mNextRadioLine);
 }
 
-const struct TextCmd PnP_CuteText[] = {
+const txt_cmd_s PnP_CuteText[] = {
     text_far(v_PnP_CuteText)
     text_end
 };
 
-const struct TextCmd PnP_LazyText[] = {
+const txt_cmd_s PnP_LazyText[] = {
     text_far(v_PnP_LazyText)
     text_end
 };
 
-const struct TextCmd PnP_HappyText[] = {
+const txt_cmd_s PnP_HappyText[] = {
     text_far(v_PnP_HappyText)
     text_end
 };
 
-const struct TextCmd PnP_NoisyText[] = {
+const txt_cmd_s PnP_NoisyText[] = {
     text_far(v_PnP_NoisyText)
     text_end
 };
 
-const struct TextCmd PnP_PrecociousText[] = {
+const txt_cmd_s PnP_PrecociousText[] = {
     text_far(v_PnP_PrecociousText)
     text_end
 };
 
-const struct TextCmd PnP_BoldText[] = {
+const txt_cmd_s PnP_BoldText[] = {
     text_far(v_PnP_BoldText)
     text_end
 };
 
-const struct TextCmd PnP_PickyText[] = {
+const txt_cmd_s PnP_PickyText[] = {
     text_far(v_PnP_PickyText)
     text_end
 };
 
-const struct TextCmd PnP_SortOfOKText[] = {
+const txt_cmd_s PnP_SortOfOKText[] = {
     text_far(v_PnP_SortOfOKText)
     text_end
 };
 
-const struct TextCmd PnP_SoSoText[] = {
+const txt_cmd_s PnP_SoSoText[] = {
     text_far(v_PnP_SoSoText)
     text_end
 };
 
-const struct TextCmd PnP_GreatText[] = {
+const txt_cmd_s PnP_GreatText[] = {
     text_far(v_PnP_GreatText)
     text_end
 };
 
-const struct TextCmd PnP_MyTypeText[] = {
+const txt_cmd_s PnP_MyTypeText[] = {
     text_far(v_PnP_MyTypeText)
     text_end
 };
 
-const struct TextCmd PnP_CoolText[] = {
+const txt_cmd_s PnP_CoolText[] = {
     text_far(v_PnP_CoolText)
     text_end
 };
 
-const struct TextCmd PnP_InspiringText[] = {
+const txt_cmd_s PnP_InspiringText[] = {
     text_far(v_PnP_InspiringText)
     text_end
 };
 
-const struct TextCmd PnP_WeirdText[] = {
+const txt_cmd_s PnP_WeirdText[] = {
     text_far(v_PnP_WeirdText)
     text_end
 };
 
-const struct TextCmd PnP_RightForMeText[] = {
+const txt_cmd_s PnP_RightForMeText[] = {
     text_far(v_PnP_RightForMeText)
     text_end
 };
 
-const struct TextCmd PnP_OddText[] = {
+const txt_cmd_s PnP_OddText[] = {
     text_far(v_PnP_OddText)
     text_end
 };
@@ -1796,7 +1796,7 @@ void PeoplePlaces6(void){
 // INCLUDE "data/radio/pnp_places.asm"
 }
 
-const struct TextCmd PnP_Text5[] = {
+const txt_cmd_s PnP_Text5[] = {
     text_far(v_PnP_Text5)
     text_end
 };
@@ -1931,52 +1931,52 @@ void RocketRadio10(void){
     return NextRadioLine_Conv(RocketRadioText10, ROCKET_RADIO);
 }
 
-const struct TextCmd RocketRadioText1[] = {
+const txt_cmd_s RocketRadioText1[] = {
     text_far(v_RocketRadioText1)
     text_end
 };
 
-const struct TextCmd RocketRadioText2[] = {
+const txt_cmd_s RocketRadioText2[] = {
     text_far(v_RocketRadioText2)
     text_end
 };
 
-const struct TextCmd RocketRadioText3[] = {
+const txt_cmd_s RocketRadioText3[] = {
     text_far(v_RocketRadioText3)
     text_end
 };
 
-const struct TextCmd RocketRadioText4[] = {
+const txt_cmd_s RocketRadioText4[] = {
     text_far(v_RocketRadioText4)
     text_end
 };
 
-const struct TextCmd RocketRadioText5[] = {
+const txt_cmd_s RocketRadioText5[] = {
     text_far(v_RocketRadioText5)
     text_end
 };
 
-const struct TextCmd RocketRadioText6[] = {
+const txt_cmd_s RocketRadioText6[] = {
     text_far(v_RocketRadioText6)
     text_end
 };
 
-const struct TextCmd RocketRadioText7[] = {
+const txt_cmd_s RocketRadioText7[] = {
     text_far(v_RocketRadioText7)
     text_end
 };
 
-const struct TextCmd RocketRadioText8[] = {
+const txt_cmd_s RocketRadioText8[] = {
     text_far(v_RocketRadioText8)
     text_end
 };
 
-const struct TextCmd RocketRadioText9[] = {
+const txt_cmd_s RocketRadioText9[] = {
     text_far(v_RocketRadioText9)
     text_end
 };
 
-const struct TextCmd RocketRadioText10[] = {
+const txt_cmd_s RocketRadioText10[] = {
     text_far(v_RocketRadioText10)
     text_end
 };
@@ -2360,92 +2360,92 @@ void BuenasPasswordCheckTime(void){
 
 const char BuenasPasswordChannelName[] = "BUENA\'S PASSWORD@";
 
-const struct TextCmd BuenaRadioText1[] = {
+const txt_cmd_s BuenaRadioText1[] = {
     text_far(v_BuenaRadioText1)
     text_end
 };
 
-const struct TextCmd BuenaRadioText2[] = {
+const txt_cmd_s BuenaRadioText2[] = {
     text_far(v_BuenaRadioText2)
     text_end
 };
 
-const struct TextCmd BuenaRadioText3[] = {
+const txt_cmd_s BuenaRadioText3[] = {
     text_far(v_BuenaRadioText3)
     text_end
 };
 
-const struct TextCmd BuenaRadioText4[] = {
+const txt_cmd_s BuenaRadioText4[] = {
     text_far(v_BuenaRadioText4)
     text_end
 };
 
-const struct TextCmd BuenaRadioText5[] = {
+const txt_cmd_s BuenaRadioText5[] = {
     text_far(v_BuenaRadioText5)
     text_end
 };
 
-const struct TextCmd BuenaRadioText6[] = {
+const txt_cmd_s BuenaRadioText6[] = {
     text_far(v_BuenaRadioText6)
     text_end
 };
 
-const struct TextCmd BuenaRadioText7[] = {
+const txt_cmd_s BuenaRadioText7[] = {
     text_far(v_BuenaRadioText7)
     text_end
 };
 
-const struct TextCmd BuenaRadioMidnightText1[] = {
+const txt_cmd_s BuenaRadioMidnightText1[] = {
     text_far(v_BuenaRadioMidnightText1)
     text_end
 };
 
-const struct TextCmd BuenaRadioMidnightText2[] = {
+const txt_cmd_s BuenaRadioMidnightText2[] = {
     text_far(v_BuenaRadioMidnightText2)
     text_end
 };
 
-const struct TextCmd BuenaRadioMidnightText3[] = {
+const txt_cmd_s BuenaRadioMidnightText3[] = {
     text_far(v_BuenaRadioMidnightText3)
     text_end
 };
 
-const struct TextCmd BuenaRadioMidnightText4[] = {
+const txt_cmd_s BuenaRadioMidnightText4[] = {
     text_far(v_BuenaRadioMidnightText4)
     text_end
 };
 
-const struct TextCmd BuenaRadioMidnightText5[] = {
+const txt_cmd_s BuenaRadioMidnightText5[] = {
     text_far(v_BuenaRadioMidnightText5)
     text_end
 };
 
-const struct TextCmd BuenaRadioMidnightText6[] = {
+const txt_cmd_s BuenaRadioMidnightText6[] = {
     text_far(v_BuenaRadioMidnightText6)
     text_end
 };
 
-const struct TextCmd BuenaRadioMidnightText7[] = {
+const txt_cmd_s BuenaRadioMidnightText7[] = {
     text_far(v_BuenaRadioMidnightText7)
     text_end
 };
 
-const struct TextCmd BuenaRadioMidnightText8[] = {
+const txt_cmd_s BuenaRadioMidnightText8[] = {
     text_far(v_BuenaRadioMidnightText8)
     text_end
 };
 
-const struct TextCmd BuenaRadioMidnightText9[] = {
+const txt_cmd_s BuenaRadioMidnightText9[] = {
     text_far(v_BuenaRadioMidnightText9)
     text_end
 };
 
-const struct TextCmd BuenaRadioMidnightText10[] = {
+const txt_cmd_s BuenaRadioMidnightText10[] = {
     text_far(v_BuenaRadioMidnightText10)
     text_end
 };
 
-const struct TextCmd BuenaOffTheAirText[] = {
+const txt_cmd_s BuenaOffTheAirText[] = {
     text_far(v_BuenaOffTheAirText)
     text_end
 };

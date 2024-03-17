@@ -79,6 +79,7 @@ void PokeGear(void){
     // LD_A_hl;
     // PUSH_AF;
     bit_set(wram->wPokegearFlags, POKEGEAR_RADIO_CARD_F);
+    bit_set(wram->wPokegearFlags, POKEGEAR_MAP_CARD_F);
     uint8_t options = wram->wOptions;
     // SET_hl(NO_TEXT_SCROLL);
     bit_set(wram->wOptions, NO_TEXT_SCROLL);
@@ -486,10 +487,10 @@ void TownMap_GetCurrentLandmark(void){
 }
 
 uint8_t TownMap_GetCurrentLandmark_Conv(void){
-    uint8_t landmark = GetWorldMapLocation_Conv(gb_read(wMapGroup), gb_read(wMapNumber));
+    uint8_t landmark = GetWorldMapLocation_Conv2(wram->wMapGroup, wram->wMapNumber);
     if(landmark == LANDMARK_SPECIAL)
     {
-        landmark = GetWorldMapLocation_Conv(gb_read(wBackupMapGroup), gb_read(wBackupMapNumber));
+        landmark = GetWorldMapLocation_Conv2(wram->wBackupMapGroup, wram->wBackupMapNumber);
     }
     return landmark;
 }
@@ -767,24 +768,20 @@ void InitPokegearTilemap_Conv(void){
         break;
         case POKEGEARCARD_MAP:
         {
-            uint8_t landmark = gb_read(wPokegearMapPlayerIconLandmark);
-            REG_A = landmark;
-            if(landmark != LANDMARK_FAST_SHIP && landmark >= KANTO_LANDMARK)
-            {
-                REG_E = 1;
+            uint8_t landmark = wram->wPokegearMapPlayerIconLandmark;
+            if(landmark != LANDMARK_FAST_SHIP && landmark >= KANTO_LANDMARK) {
+                PokegearMap_Conv(1);
             }
-            else
-            {
-                REG_E = 0;
+            else {
+                PokegearMap_Conv(0);
             }
             // FARCALL(aPokegearMap);
-            PokegearMap_Conv(REG_E);
-            ByteFill_Conv(coord(1, 2, wTilemap), (SCREEN_WIDTH - 2), 0x07);
-            gb_write(coord(0, 2, wTilemap), 0x06);
-            gb_write(coord(19, 2, wTilemap), 0x17);
+            ByteFill_Conv2(coord(1, 2, wram->wTilemap), (SCREEN_WIDTH - 2), 0x07);
+            *coord(0, 2, wram->wTilemap) = 0x06;
+            *coord(19, 2, wram->wTilemap) = 0x17;
             // REG_A = gb_read(wPokegearMapCursorLandmark);
             // CALL(aPokegearMap_UpdateLandmarkName);
-            PokegearMap_UpdateLandmarkName_Conv(gb_read(wPokegearMapCursorLandmark));
+            PokegearMap_UpdateLandmarkName_Conv(wram->wPokegearMapCursorLandmark);
         }
         break;
         case POKEGEARCARD_PHONE:
@@ -838,6 +835,7 @@ void InitPokegearTilemap_UpdateBGMap_Conv(void) {
     // LD_C(3);
     // CALL(aDelayFrames);
     DelayFrames_Conv(3);
+    hram->hBGMapMode = 0x1;
 }
 
 void InitPokegearTilemap_PlacePhoneBars_Conv() {
@@ -1239,7 +1237,7 @@ GearTodayText:
 
 void Pokegear_UpdateClock_Conv(void){
     // PEEK("UpdateClock");
-    static const struct TextCmd GearTodayText[] = {
+    static const txt_cmd_s GearTodayText[] = {
         text_far(v_GearTodayText)
         text_end
     };
@@ -1463,7 +1461,7 @@ static void PokegearMap_ContinueMap_DPad(u8_pair_s de) {
         // LD_A_hl;
         // CP_A_E;
         // IF_NZ goto wrap_around_down;
-        if(wram->wPokegearMapCursorLandmark != de.b) {
+        if(wram->wPokegearMapCursorLandmark == de.b) {
             // LD_A_D;
             // INC_A;
             // LD_hl_A;
@@ -2002,11 +2000,11 @@ void PokegearPhone_Joypad(void){
 }
 
 void PokegearPhone_MakePhoneCall(void){
-    static const struct TextCmd GearEllipseText[] = {
+    static const txt_cmd_s GearEllipseText[] = {
         text_far(v_GearEllipseText)
         text_end
     };
-    static const struct TextCmd GearOutOfServiceText[] = {
+    static const txt_cmd_s GearOutOfServiceText[] = {
         text_far(v_GearOutOfServiceText)
         text_end
     };
@@ -2902,17 +2900,17 @@ void Pokegear_LoadTilemapRLE_Conv2(const char* path){
     FreeAsset(a);
 }
 
-const struct TextCmd PokegearAskWhoCallText[] = {
+const txt_cmd_s PokegearAskWhoCallText[] = {
     text_far(v_PokegearAskWhoCallText)
     text_end
 };
 
-const struct TextCmd PokegearPressButtonText[] = {
+const txt_cmd_s PokegearPressButtonText[] = {
     text_far(v_PokegearPressButtonText)
     text_end
 };
 
-const struct TextCmd PokegearAskDeleteText[] = {
+const txt_cmd_s PokegearAskDeleteText[] = {
     text_far(v_PokegearAskDeleteText)
     text_end
 };
@@ -3843,7 +3841,7 @@ void NoRadioStation_Conv(void){
     NoRadioMusic_Conv();
     NoRadioName_Conv();
 //  no radio channel
-    gb_write(wPokegearRadioChannelBank, 0);
+    wram->wPokegearRadioChannelBank = 0;
     // gb_write16(wPokegearRadioChannelAddr, 0);
     gPokegearRadioChannelAddr = NULL;
     hram->hBGMapMode = 0x1;
@@ -5164,7 +5162,7 @@ void TownMapPals_Conv(void){
     };
 //  Assign palettes based on tile ids
     // hlcoord(0, 0, wTilemap);
-    uint8_t* hl = coord(0, 0, wram->wTilemap);
+    const uint8_t* hl = coord(0, 0, wram->wTilemap);
     // decoord(0, 0, wAttrmap);
     uint8_t* de = coord(0, 0, wram->wAttrmap);
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);

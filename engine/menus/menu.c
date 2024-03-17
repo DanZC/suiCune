@@ -1847,7 +1847,7 @@ WindowPoppingErrorText:
 }
 
 void Error_Cant_ExitMenu_Conv(void){
-    static const struct TextCmd WindowPoppingErrorText[] = {
+    static const txt_cmd_s WindowPoppingErrorText[] = {
         text_far(v_WindowPoppingErrorText)
         text_end
     };

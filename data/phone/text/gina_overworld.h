@@ -1,9 +1,9 @@
 #pragma once
-extern const struct TextCmd GinaAskNumber1Text[];
-extern const struct TextCmd GinaAskNumber2Text[];
-extern const struct TextCmd GinaNumberAcceptedText[];
-extern const struct TextCmd GinaNumberDeclinedText[];
-extern const struct TextCmd GinaPhoneFullText[];
-extern const struct TextCmd GinaRematchText[];
-extern const struct TextCmd GinaGiftText[];
-extern const struct TextCmd GinaPackFullText[];
+extern const txt_cmd_s GinaAskNumber1Text[];
+extern const txt_cmd_s GinaAskNumber2Text[];
+extern const txt_cmd_s GinaNumberAcceptedText[];
+extern const txt_cmd_s GinaNumberDeclinedText[];
+extern const txt_cmd_s GinaPhoneFullText[];
+extern const txt_cmd_s GinaRematchText[];
+extern const txt_cmd_s GinaGiftText[];
+extern const txt_cmd_s GinaPackFullText[];

@@ -1,11 +1,11 @@
 #pragma once
-extern const struct TextCmd WadeAreYourMonGrowingText[];
-extern const struct TextCmd WadeDefeatedMonText[];
-extern const struct TextCmd WadeLostAMonText[];
-extern const struct TextCmd WadeBattleRematchText[];
-extern const struct TextCmd WadeHangUpText[];
-extern const struct TextCmd WadeBugCatchingContestText[];
-extern const struct TextCmd WadeFoundItemText[];
-extern const struct TextCmd WadeNoBerriesText[];
-extern const struct TextCmd WadeQuickBattleText[];
-extern const struct TextCmd WadeComeQuickText[];
+extern const txt_cmd_s WadeAreYourMonGrowingText[];
+extern const txt_cmd_s WadeDefeatedMonText[];
+extern const txt_cmd_s WadeLostAMonText[];
+extern const txt_cmd_s WadeBattleRematchText[];
+extern const txt_cmd_s WadeHangUpText[];
+extern const txt_cmd_s WadeBugCatchingContestText[];
+extern const txt_cmd_s WadeFoundItemText[];
+extern const txt_cmd_s WadeNoBerriesText[];
+extern const txt_cmd_s WadeQuickBattleText[];
+extern const txt_cmd_s WadeComeQuickText[];

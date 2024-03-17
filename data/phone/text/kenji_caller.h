@@ -1,8 +1,8 @@
 #pragma once
-extern const struct TextCmd KenjiHangUpText[];
-extern const struct TextCmd KenjiRemainDedicatedText[];
-extern const struct TextCmd KenjiCallMeBackAnotherTimeText[];
-extern const struct TextCmd KenjiIllHaveTimeToChatTomorrowText[];
-extern const struct TextCmd KenjiHangUpMorningText[];
-extern const struct TextCmd KenjiTakingABreakText[];
-extern const struct TextCmd KenjiHangUpNightText[];
+extern const txt_cmd_s KenjiHangUpText[];
+extern const txt_cmd_s KenjiRemainDedicatedText[];
+extern const txt_cmd_s KenjiCallMeBackAnotherTimeText[];
+extern const txt_cmd_s KenjiIllHaveTimeToChatTomorrowText[];
+extern const txt_cmd_s KenjiHangUpMorningText[];
+extern const txt_cmd_s KenjiTakingABreakText[];
+extern const txt_cmd_s KenjiHangUpNightText[];

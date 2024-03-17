@@ -875,26 +875,26 @@ const uint8_t Pokecenter2FMovementData_ReceptionistStepsRightLooksLeft_2[] = {
     turn_head(LEFT),
     movement_step_end,
 };
-const struct TextCmd Text_BattleReceptionistMobile[] = {
+const txt_cmd_s Text_BattleReceptionistMobile[] = {
     text_start("Would you like to"
         t_line "battle over a GAME"
         t_para "LINK cable or by"
         t_line "mobile phone?"
         t_done )
 };
-const struct TextCmd Text_TradeReceptionistMobile[] = {
+const txt_cmd_s Text_TradeReceptionistMobile[] = {
     text_start("Would you like to"
         t_line "trade over a GAME"
         t_para "LINK cable or by"
         t_line "mobile phone?"
         t_done )
 };
-const struct TextCmd Text_ThisWayToMobileRoom[] = {
+const txt_cmd_s Text_ThisWayToMobileRoom[] = {
     text_start("This way to the"
         t_line "MOBILE ROOM."
         t_done )
 };
-const struct TextCmd Text_BattleReceptionistIntro[] = {
+const txt_cmd_s Text_BattleReceptionistIntro[] = {
     text_start("Welcome to CABLE"
         t_line "CLUB COLOSSEUM."
         t_para "You may battle a"
@@ -903,7 +903,7 @@ const struct TextCmd Text_BattleReceptionistIntro[] = {
         t_line "battle?"
         t_done )
 };
-const struct TextCmd Text_TradeReceptionistIntro[] = {
+const txt_cmd_s Text_TradeReceptionistIntro[] = {
     text_start("Welcome to CABLE"
         t_line "TRADE CENTER."
         t_para "You may trade your"
@@ -913,7 +913,7 @@ const struct TextCmd Text_TradeReceptionistIntro[] = {
         t_line "trade?"
         t_done )
 };
-const struct TextCmd Text_TimeCapsuleReceptionistIntro[] = {
+const txt_cmd_s Text_TimeCapsuleReceptionistIntro[] = {
     text_start("Welcome to CABLE"
         t_line "CLUB TIME CAPSULE."
         t_para "You can travel to"
@@ -923,22 +923,22 @@ const struct TextCmd Text_TimeCapsuleReceptionistIntro[] = {
         t_line "trade across time?"
         t_done )
 };
-const struct TextCmd YourFriendIsNotReadyText[] = {
+const txt_cmd_s YourFriendIsNotReadyText[] = {
     text_start("Your friend is not"
         t_line "ready."
         t_prompt )
 };
-const struct TextCmd Text_MustSaveGame[] = {
+const txt_cmd_s Text_MustSaveGame[] = {
     text_start("Before opening the"
         t_line "link, you must"
         t_cont "save your game."
         t_done )
 };
-const struct TextCmd Text_PleaseWait[] = {
+const txt_cmd_s Text_PleaseWait[] = {
     text_start("Please wait."
         t_done )
 };
-const struct TextCmd Text_LinkTimedOut[] = {
+const txt_cmd_s Text_LinkTimedOut[] = {
     text_start("The link has been"
         t_line "closed because of"
         t_cont "inactivity."
@@ -947,46 +947,46 @@ const struct TextCmd Text_LinkTimedOut[] = {
         t_cont "come again."
         t_prompt )
 };
-const struct TextCmd Text_PleaseComeAgain[] = {
+const txt_cmd_s Text_PleaseComeAgain[] = {
     text_start("Please come again."
         t_prompt )
 };
-const struct TextCmd Text_PleaseComeInDuplicate[] = {
+const txt_cmd_s Text_PleaseComeInDuplicate[] = {
     text_start("Please come in."
         t_prompt )
 };
-const struct TextCmd Text_TemporaryStagingInLinkRoom[] = {
+const txt_cmd_s Text_TemporaryStagingInLinkRoom[] = {
     text_start("We'll put you in"
         t_line "the link room for"
         t_cont "the time being."
         t_done )
 };
-const struct TextCmd Text_CantLinkToThePast[] = {
+const txt_cmd_s Text_CantLinkToThePast[] = {
     text_start("You can't link to"
         t_line "the past here."
         t_prompt )
 };
-const struct TextCmd Text_IncompatibleRooms[] = {
+const txt_cmd_s Text_IncompatibleRooms[] = {
     text_start("Incompatible rooms"
         t_line "were chosen."
         t_prompt )
 };
-const struct TextCmd Text_PleaseComeIn[] = {
+const txt_cmd_s Text_PleaseComeIn[] = {
     text_start("Please come in."
         t_done )
 };
-const struct TextCmd Text_PleaseEnter[] = {
+const txt_cmd_s Text_PleaseEnter[] = {
     text_start("Please enter."
         t_prompt )
 };
-const struct TextCmd Text_RejectNewMon[] = {
+const txt_cmd_s Text_RejectNewMon[] = {
     text_start("Sorry--@")
     text_ram(wram_ptr(wStringBuffer1))
     text_start(
         t_line "can't be taken."
         t_prompt )
 };
-const struct TextCmd Text_RejectMonWithNewMove[] = {
+const txt_cmd_s Text_RejectMonWithNewMove[] = {
     text_start("You can't take the"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer1))
@@ -996,7 +996,7 @@ const struct TextCmd Text_RejectMonWithNewMove[] = {
     text_start("."
         t_prompt )
 };
-const struct TextCmd Text_RejectMonWithMail[] = {
+const txt_cmd_s Text_RejectMonWithMail[] = {
     text_start("You can't take the"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer1))
@@ -1004,41 +1004,41 @@ const struct TextCmd Text_RejectMonWithMail[] = {
         t_cont "has MAIL with you."
         t_prompt )
 };
-const struct TextCmd Text_TimeCapsuleClosed[] = {
+const txt_cmd_s Text_TimeCapsuleClosed[] = {
     text_start("I'm sorry--the"
         t_line "TIME CAPSULE is"
         t_cont "being adjusted."
         t_done )
 };
-const struct TextCmd Text_TradeRoomClosed[] = {
+const txt_cmd_s Text_TradeRoomClosed[] = {
     text_start("I'm sorry--the"
         t_line "TRADE MACHINE is"
         t_cont "being adjusted."
         t_done )
 };
-const struct TextCmd Text_BattleRoomClosed[] = {
+const txt_cmd_s Text_BattleRoomClosed[] = {
     text_start("I'm sorry--the"
         t_line "BATTLE MACHINE is"
         t_cont "being adjusted."
         t_done )
 };
-const struct TextCmd Text_MysteryGiftDeliveryGuy_Intro[] = {
+const txt_cmd_s Text_MysteryGiftDeliveryGuy_Intro[] = {
     text_start("Hello! You're"
         t_line "<PLAYER>, right?"
         t_para "I have some-"
         t_line "thing for you."
         t_done )
 };
-const struct TextCmd Text_MysteryGiftDeliveryGuy_HereYouGo[] = {
+const txt_cmd_s Text_MysteryGiftDeliveryGuy_HereYouGo[] = {
     text_start("Here you go!"
         t_done )
 };
-const struct TextCmd Text_MysteryGiftDeliveryGuy_Outro[] = {
+const txt_cmd_s Text_MysteryGiftDeliveryGuy_Outro[] = {
     text_start("We hope to serve"
         t_line "you again."
         t_done )
 };
-const struct TextCmd Text_MysteryGiftDeliveryGuy_NoRoom[] = {
+const txt_cmd_s Text_MysteryGiftDeliveryGuy_NoRoom[] = {
     text_start("Oh, you have no"
         t_line "space for this."
         t_para "Stop in at any"
@@ -1047,26 +1047,26 @@ const struct TextCmd Text_MysteryGiftDeliveryGuy_NoRoom[] = {
         t_line "to pick it up."
         t_done )
 };
-const struct TextCmd Text_MysteryGiftDeliveryGuy_SaidNo[] = {
+const txt_cmd_s Text_MysteryGiftDeliveryGuy_SaidNo[] = {
     text_start("No? That's very"
         t_line "strange…"
         t_done )
 };
-const struct TextCmd Text_OhPleaseWait[] = {
+const txt_cmd_s Text_OhPleaseWait[] = {
     text_start("Oh, please wait."
         t_done )
 };
-const struct TextCmd Text_ChangeTheLook[] = {
+const txt_cmd_s Text_ChangeTheLook[] = {
     text_start("We need to change"
         t_line "the look here…"
         t_done )
 };
-const struct TextCmd Text_LikeTheLook[] = {
+const txt_cmd_s Text_LikeTheLook[] = {
     text_start("How does this"
         t_line "style look to you?"
         t_done )
 };
-const struct TextCmd Text_BrokeStadiumRules[] = {
+const txt_cmd_s Text_BrokeStadiumRules[] = {
     text_start("Excuse me!"
         t_para "For STADIUM rules,"
         t_line "please bring six"

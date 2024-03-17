@@ -1,8 +1,8 @@
 #pragma once
-extern const struct TextCmd WiltonAnswerPhoneText[];
-extern const struct TextCmd WiltonAnswerPhoneDayText[];
-extern const struct TextCmd WiltonAnswerPhoneNiteText[];
-extern const struct TextCmd WiltonGreetText[];
-extern const struct TextCmd WiltonGreetDayText[];
-extern const struct TextCmd WiltonGreetNiteText[];
-extern const struct TextCmd WiltonGenericText[];
+extern const txt_cmd_s WiltonAnswerPhoneText[];
+extern const txt_cmd_s WiltonAnswerPhoneDayText[];
+extern const txt_cmd_s WiltonAnswerPhoneNiteText[];
+extern const txt_cmd_s WiltonGreetText[];
+extern const txt_cmd_s WiltonGreetDayText[];
+extern const txt_cmd_s WiltonGreetNiteText[];
+extern const txt_cmd_s WiltonGenericText[];

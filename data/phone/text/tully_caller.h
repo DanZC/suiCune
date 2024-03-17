@@ -1,10 +1,10 @@
 #pragma once
-extern const struct TextCmd TullyMonHasGrownText[];
-extern const struct TextCmd TullyDefeatedMonText[];
-extern const struct TextCmd TullyLostAMonText[];
-extern const struct TextCmd TullyBattleRematchText[];
-extern const struct TextCmd TullyHangUpText[];
-extern const struct TextCmd TullyFoundItemText[];
-extern const struct TextCmd TullyNoItemText[];
-extern const struct TextCmd TullyForwardText[];
-extern const struct TextCmd TullyHurryText[];
+extern const txt_cmd_s TullyMonHasGrownText[];
+extern const txt_cmd_s TullyDefeatedMonText[];
+extern const txt_cmd_s TullyLostAMonText[];
+extern const txt_cmd_s TullyBattleRematchText[];
+extern const txt_cmd_s TullyHangUpText[];
+extern const txt_cmd_s TullyFoundItemText[];
+extern const txt_cmd_s TullyNoItemText[];
+extern const txt_cmd_s TullyForwardText[];
+extern const txt_cmd_s TullyHurryText[];

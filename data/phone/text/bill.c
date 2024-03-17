@@ -1,6 +1,6 @@
 #include "../../../constants.h"
 
-const struct TextCmd BillPhoneMornGreetingText[] = {
+const txt_cmd_s BillPhoneMornGreetingText[] = {
     text_start("Good morning!"
         t_para "This is the #-"
         t_line "MON STORAGE SYSTEM"
@@ -8,7 +8,7 @@ const struct TextCmd BillPhoneMornGreetingText[] = {
         t_line "SERVICE."
         t_done )
 };
-const struct TextCmd BillPhoneDayGreetingText[] = {
+const txt_cmd_s BillPhoneDayGreetingText[] = {
     text_start("Good day!"
         t_para "This is the #-"
         t_line "MON STORAGE SYSTEM"
@@ -16,7 +16,7 @@ const struct TextCmd BillPhoneDayGreetingText[] = {
         t_line "SERVICE."
         t_done )
 };
-const struct TextCmd BillPhoneNiteGreetingText[] = {
+const txt_cmd_s BillPhoneNiteGreetingText[] = {
     text_start("Good evening!"
         t_para "This is the #-"
         t_line "MON STORAGE SYSTEM"
@@ -24,7 +24,7 @@ const struct TextCmd BillPhoneNiteGreetingText[] = {
         t_line "SERVICE."
         t_done )
 };
-const struct TextCmd BillPhoneGenericText[] = {
+const txt_cmd_s BillPhoneGenericText[] = {
     text_start("Who's calling?"
         t_para "<PLAY_G>, is it?"
         t_line "Hang on a sec…"
@@ -32,7 +32,7 @@ const struct TextCmd BillPhoneGenericText[] = {
         t_line "<……>"
         t_done )
 };
-const struct TextCmd BillPhoneNotFullText[] = {
+const txt_cmd_s BillPhoneNotFullText[] = {
     text_start("Thanks for"
         t_line "waiting!"
         t_para "<PLAY_G>, your BOX"
@@ -44,7 +44,7 @@ const struct TextCmd BillPhoneNotFullText[] = {
         t_line "fill it up!"
         t_done )
 };
-const struct TextCmd BillPhoneNearlyFullText[] = {
+const txt_cmd_s BillPhoneNearlyFullText[] = {
     text_start("Thanks for"
         t_line "waiting!"
         t_para "<PLAY_G>, your BOX"
@@ -56,7 +56,7 @@ const struct TextCmd BillPhoneNearlyFullText[] = {
         t_line "switch your BOX."
         t_done )
 };
-const struct TextCmd BillPhoneFullText[] = {
+const txt_cmd_s BillPhoneFullText[] = {
     text_start("Thanks for"
         t_line "waiting!"
         t_para "<PLAY_G>, your BOX"
@@ -67,7 +67,7 @@ const struct TextCmd BillPhoneFullText[] = {
         t_line "more #MON."
         t_done )
 };
-const struct TextCmd BillPhoneNewlyFullText[] = {
+const txt_cmd_s BillPhoneNewlyFullText[] = {
     text_start("Hi, <PLAY_G>?"
         t_line "It's me, BILL!"
         t_para "Thanks for using"

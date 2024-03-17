@@ -1,8 +1,8 @@
 #pragma once
-extern const struct TextCmd ToddAskNumber1Text[];
-extern const struct TextCmd ToddAskNumber2Text[];
-extern const struct TextCmd ToddNumberAcceptedText[];
-extern const struct TextCmd ToddNumberDeclinedText[];
-extern const struct TextCmd ToddPhoneFullText[];
-extern const struct TextCmd ToddRematchText[];
-extern const struct TextCmd ToddSaleText[];
+extern const txt_cmd_s ToddAskNumber1Text[];
+extern const txt_cmd_s ToddAskNumber2Text[];
+extern const txt_cmd_s ToddNumberAcceptedText[];
+extern const txt_cmd_s ToddNumberDeclinedText[];
+extern const txt_cmd_s ToddPhoneFullText[];
+extern const txt_cmd_s ToddRematchText[];
+extern const txt_cmd_s ToddSaleText[];

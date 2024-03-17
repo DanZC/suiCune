@@ -1,8 +1,8 @@
 #pragma once
-extern const struct TextCmd JoeyMonLookingSharperText[];
-extern const struct TextCmd JoeyDefeatedMonText[];
-extern const struct TextCmd JoeyLostAMonText[];
-extern const struct TextCmd JoeyBattleRematchText[];
-extern const struct TextCmd JoeyHangUpText[];
-extern const struct TextCmd JoeyDevisingStrategiesText[];
-extern const struct TextCmd JoeyReminderText[];
+extern const txt_cmd_s JoeyMonLookingSharperText[];
+extern const txt_cmd_s JoeyDefeatedMonText[];
+extern const txt_cmd_s JoeyLostAMonText[];
+extern const txt_cmd_s JoeyBattleRematchText[];
+extern const txt_cmd_s JoeyHangUpText[];
+extern const txt_cmd_s JoeyDevisingStrategiesText[];
+extern const txt_cmd_s JoeyReminderText[];

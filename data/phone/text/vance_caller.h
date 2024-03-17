@@ -1,8 +1,8 @@
 #pragma once
-extern const struct TextCmd VanceMonHasBecomeTougherText[];
-extern const struct TextCmd VanceDefeatedMonText[];
-extern const struct TextCmd VanceLostAMonText[];
-extern const struct TextCmd VanceBattleRematchText[];
-extern const struct TextCmd VanceHangUpText[];
-extern const struct TextCmd VanceLookingForwardText[];
-extern const struct TextCmd VanceHurryHurryText[];
+extern const txt_cmd_s VanceMonHasBecomeTougherText[];
+extern const txt_cmd_s VanceDefeatedMonText[];
+extern const txt_cmd_s VanceLostAMonText[];
+extern const txt_cmd_s VanceBattleRematchText[];
+extern const txt_cmd_s VanceHangUpText[];
+extern const txt_cmd_s VanceLookingForwardText[];
+extern const txt_cmd_s VanceHurryHurryText[];

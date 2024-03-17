@@ -432,7 +432,7 @@
 
 // SECTION "bank39", ROMX
 
-//#include "engine/menus/options_menu.h"
+#include "engine/menus/options_menu.h"
 #include "engine/movie/splash.h"
 #include "engine/movie/intro.h"
 

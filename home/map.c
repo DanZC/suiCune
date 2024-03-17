@@ -2607,7 +2607,7 @@ bool ObjectEvent(script_s* s){
     // return ObjectEventText();
 }
 
-const struct TextCmd ObjectEventText[] = {
+const txt_cmd_s ObjectEventText[] = {
     text_far(v_ObjectEventText)
     text_end
 };
@@ -2620,7 +2620,7 @@ bool BGEvent(script_s* s) {
     // return BGEventText();
 }
 
-const struct TextCmd BGEventText[] = {
+const txt_cmd_s BGEventText[] = {
     text_far(v_BGEventText)
     text_end
 };
@@ -2633,7 +2633,7 @@ bool CoordinatesEvent(script_s* s){
     // return CoordinatesEventText();
 }
 
-const struct TextCmd CoordinatesEventText[] = {
+const txt_cmd_s CoordinatesEventText[] = {
     text_far(v_CoordinatesEventText)
     text_end
 };

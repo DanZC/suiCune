@@ -34,7 +34,7 @@ struct Coords GetLandmarkCoords_Conv(uint8_t e){
     // LD_D_hl;
     // POP_HL;
     // RET;
-    return (struct Coords){.x = Landmarks[e].x, .y = Landmarks[e].y};
+    return (struct Coords){.x = Landmarks[e].x + 8, .y = Landmarks[e].y + 16};
 }
 
 void GetLandmarkName(void){

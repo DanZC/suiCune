@@ -36,7 +36,7 @@ void LinkTrade(void);
 void InitTradeMenuDisplay_Delay(void);
 extern const char String_TradeCancel[];
 // void LinkAskTradeForText(void);
-extern const struct TextCmd LinkAskTradeForText[];
+extern const txt_cmd_s LinkAskTradeForText[];
 extern const char String_TradeCompleted[];
 extern const char String_TooBadTheTradeWasCanceled[];
 void LinkTextboxAtHL(void);

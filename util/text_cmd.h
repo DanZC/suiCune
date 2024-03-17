@@ -28,6 +28,8 @@ struct TextCmd {
     };
 };
 
+typedef struct TextCmd txt_cmd_s;
+
 #define text_start(_s)              {TX_START, .text=_s},
 #define text_ram(_r)                {TX_RAM, .ram=_r},
 #define text_bcd(_p, _f)            {TX_BCD, .bcd_addr=_p, .bcd_flags=_f},

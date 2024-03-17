@@ -652,7 +652,7 @@ skip_mail:
 }
 
 void LinkTimeout(void){
-    static const struct TextCmd LinkTimeoutText[] = {
+    static const txt_cmd_s LinkTimeoutText[] = {
         text_far(v_LinkTimeoutText)
         text_end
     };
@@ -1545,12 +1545,12 @@ const void* Link_FindFirstNonControlCharacter_AllowZero(const void* hl_){
 void InitTradeMenuDisplay(void){
     static const char String_Stats_Trade[] = "STATS\t TRADE@";
 
-    static const struct TextCmd LinkTradeCantBattleText[] = {
+    static const txt_cmd_s LinkTradeCantBattleText[] = {
         text_far(v_LinkTradeCantBattleText)
         text_end
     };
 
-    static const struct TextCmd LinkAbnormalMonText[] = {
+    static const txt_cmd_s LinkAbnormalMonText[] = {
         text_far(v_LinkAbnormalMonText)
         text_end
     };
@@ -2328,12 +2328,12 @@ void LinkTradePartiesMenuMasterLoop(void){
 void LinkTrade_TradeStatsMenu(void){
     static const char String_Stats_Trade[] = "STATS\t TRADE@";
 
-    static const struct TextCmd LinkTradeCantBattleText[] = {
+    static const txt_cmd_s LinkTradeCantBattleText[] = {
         text_far(v_LinkTradeCantBattleText)
         text_end
     };
 
-    static const struct TextCmd LinkAbnormalMonText[] = {
+    static const txt_cmd_s LinkAbnormalMonText[] = {
         text_far(v_LinkAbnormalMonText)
         text_end
     };
@@ -3249,7 +3249,7 @@ void InitTradeMenuDisplay_Delay(void){
 const char String_TradeCancel[] = "TRADE"
     t_next "CANCEL@";
 
-const struct TextCmd LinkAskTradeForText[] = {
+const txt_cmd_s LinkAskTradeForText[] = {
     text_far(v_LinkAskTradeForText)
     text_end
 };

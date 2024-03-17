@@ -1,9 +1,9 @@
 #pragma once
-extern const struct TextCmd TullyAskNumber1Text[];
-extern const struct TextCmd TullyAskNumber2Text[];
-extern const struct TextCmd TullyNumberAcceptedText[];
-extern const struct TextCmd TullyNumberDeclinedText[];
-extern const struct TextCmd TullyPhoneFullText[];
-extern const struct TextCmd TullyRematchText[];
-extern const struct TextCmd TullyGiftText[];
-extern const struct TextCmd TullyPackFullText[];
+extern const txt_cmd_s TullyAskNumber1Text[];
+extern const txt_cmd_s TullyAskNumber2Text[];
+extern const txt_cmd_s TullyNumberAcceptedText[];
+extern const txt_cmd_s TullyNumberDeclinedText[];
+extern const txt_cmd_s TullyPhoneFullText[];
+extern const txt_cmd_s TullyRematchText[];
+extern const txt_cmd_s TullyGiftText[];
+extern const txt_cmd_s TullyPackFullText[];

@@ -903,14 +903,14 @@ void OakSpeech(void) {
 
 }
 
-const struct TextCmd OakText1[] = {
+const txt_cmd_s OakText1[] = {
     text_far(v_OakText1)
     text_end
 };
 
 void OakText2_ASM(struct TextCmdState* state);
 
-const struct TextCmd OakText2[] = {
+const txt_cmd_s OakText2[] = {
     text_far(v_OakText2)
     text_asm(OakText2_ASM)
 };
@@ -926,27 +926,27 @@ void OakText2_ASM(struct TextCmdState* state) {
     state->hl = OakText3;
 }
 
-const struct TextCmd OakText3[] = {
+const txt_cmd_s OakText3[] = {
     text_far(v_OakText3)
     text_end
 };
 
-const struct TextCmd OakText4[] = {
+const txt_cmd_s OakText4[] = {
     text_far(v_OakText4)
     text_end
 };
 
-const struct TextCmd OakText5[] = {
+const txt_cmd_s OakText5[] = {
     text_far(v_OakText5)
     text_end
 };
 
-const struct TextCmd OakText6[] = {
+const txt_cmd_s OakText6[] = {
     text_far(v_OakText6)
     text_end
 };
 
-const struct TextCmd OakText7[] = {
+const txt_cmd_s OakText7[] = {
     text_far(v_OakText7)
     text_end
 };

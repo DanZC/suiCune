@@ -396,7 +396,7 @@ stop:
 }
 
 const struct TextCmd* RadioTerminator_Conv(void) {
-    static const struct TextCmd stop[] = {
+    static const txt_cmd_s stop[] = {
         text_end
     };
     return stop;
@@ -2358,7 +2358,7 @@ void TextCommand_START_Conv(struct TextPrintState* state) {
 
 //  write text until "@"
 void TextCommand_START_Conv2(struct TextCmdState* state, const struct TextCmd* cmd) {
-    static const struct TextCmd cmd_end = {TX_END, .end=0};
+    static const txt_cmd_s cmd_end = {TX_END, .end=0};
     uint8_t tempbuf[256];
     // PEEK("");
     // LD_D_H;

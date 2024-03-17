@@ -1,5 +1,5 @@
 #pragma once
-extern const struct TextCmd HueyBattleRematchText[];
-extern const struct TextCmd HueyHangUpText[];
-extern const struct TextCmd HueyWeHaveToBattleAgainSometimeText[];
-extern const struct TextCmd HueyReminderText[];
+extern const txt_cmd_s HueyBattleRematchText[];
+extern const txt_cmd_s HueyHangUpText[];
+extern const txt_cmd_s HueyWeHaveToBattleAgainSometimeText[];
+extern const txt_cmd_s HueyReminderText[];

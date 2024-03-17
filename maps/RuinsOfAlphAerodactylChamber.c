@@ -185,32 +185,32 @@ const uint8_t RuinsOfAlphAerodactylChamberSkyfallTopMovement[] = {
     movement_skyfall_top,
     movement_step_end
 };
-const struct TextCmd RuinsOfAlphAerodactylChamberWallPatternLeftText[] = {
+const txt_cmd_s RuinsOfAlphAerodactylChamberWallPatternLeftText[] = {
     text_start("Patterns appeared"
         t_line "on the walls…"
         t_done )
 };
-const struct TextCmd RuinsOfAlphAerodactylChamberUnownText[] = {
+const txt_cmd_s RuinsOfAlphAerodactylChamberUnownText[] = {
     text_start("It's UNOWN text!"
         t_done )
 };
-const struct TextCmd RuinsOfAlphAerodactylChamberWallPatternRightText[] = {
+const txt_cmd_s RuinsOfAlphAerodactylChamberWallPatternRightText[] = {
     text_start("Patterns appeared"
         t_line "on the walls…"
         t_done )
 };
-const struct TextCmd RuinsOfAlphAerodactylChamberWallHoleText[] = {
+const txt_cmd_s RuinsOfAlphAerodactylChamberWallHoleText[] = {
     text_start("There's a big hole"
         t_line "in the wall!"
         t_done )
 };
-const struct TextCmd RuinsOfAlphAerodactylChamberAncientReplicaText[] = {
+const txt_cmd_s RuinsOfAlphAerodactylChamberAncientReplicaText[] = {
     text_start("It's a replica of"
         t_line "an ancient #-"
         t_cont "MON."
         t_done )
 };
-const struct TextCmd RuinsOfAlphAerodactylChamberDescriptionText[] = {
+const txt_cmd_s RuinsOfAlphAerodactylChamberDescriptionText[] = {
     text_start("This flying #-"
         t_line "MON attacked its"
         t_para "prey with saw-like"

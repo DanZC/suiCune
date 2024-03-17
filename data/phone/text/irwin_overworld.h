@@ -1,6 +1,6 @@
 #pragma once
-extern const struct TextCmd IrwinAskNumber1Text[];
-extern const struct TextCmd IrwinAskNumber2Text[];
-extern const struct TextCmd IrwinNumberAcceptedText[];
-extern const struct TextCmd IrwinNumberDeclinedText[];
-extern const struct TextCmd IrwinPhoneFullText[];
+extern const txt_cmd_s IrwinAskNumber1Text[];
+extern const txt_cmd_s IrwinAskNumber2Text[];
+extern const txt_cmd_s IrwinNumberAcceptedText[];
+extern const txt_cmd_s IrwinNumberDeclinedText[];
+extern const txt_cmd_s IrwinPhoneFullText[];

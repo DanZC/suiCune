@@ -1,11 +1,11 @@
 #pragma once
-extern const struct TextCmd TiffanyMonIsAdorableText[];
-extern const struct TextCmd TiffanyDefeatedMonText[];
-extern const struct TextCmd TiffanyLostAMonText[];
-extern const struct TextCmd TiffanyBattleRematchText[];
-extern const struct TextCmd TiffanyItsAwfulText[];
-extern const struct TextCmd TiffanyHangUpText[];
-extern const struct TextCmd TiffanyFoundItemText[];
-extern const struct TextCmd TiffanyNoItemText[];
-extern const struct TextCmd TiffanyAsleepText[];
-extern const struct TextCmd TiffanyHurryText[];
+extern const txt_cmd_s TiffanyMonIsAdorableText[];
+extern const txt_cmd_s TiffanyDefeatedMonText[];
+extern const txt_cmd_s TiffanyLostAMonText[];
+extern const txt_cmd_s TiffanyBattleRematchText[];
+extern const txt_cmd_s TiffanyItsAwfulText[];
+extern const txt_cmd_s TiffanyHangUpText[];
+extern const txt_cmd_s TiffanyFoundItemText[];
+extern const txt_cmd_s TiffanyNoItemText[];
+extern const txt_cmd_s TiffanyAsleepText[];
+extern const txt_cmd_s TiffanyHurryText[];

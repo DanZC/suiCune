@@ -1,9 +1,9 @@
 #pragma once
-extern const struct TextCmd WiltonAskNumber1Text[];
-extern const struct TextCmd WiltonAskNumber2Text[];
-extern const struct TextCmd WiltonNumberAcceptedText[];
-extern const struct TextCmd WiltonNumberDeclinedText[];
-extern const struct TextCmd WiltonPhoneFullText[];
-extern const struct TextCmd WiltonRematchText[];
-extern const struct TextCmd WiltonGiftText[];
-extern const struct TextCmd WiltonPackFullText[];
+extern const txt_cmd_s WiltonAskNumber1Text[];
+extern const txt_cmd_s WiltonAskNumber2Text[];
+extern const txt_cmd_s WiltonNumberAcceptedText[];
+extern const txt_cmd_s WiltonNumberDeclinedText[];
+extern const txt_cmd_s WiltonPhoneFullText[];
+extern const txt_cmd_s WiltonRematchText[];
+extern const txt_cmd_s WiltonGiftText[];
+extern const txt_cmd_s WiltonPackFullText[];

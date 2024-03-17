@@ -26,7 +26,7 @@ bool OverworldWhiteoutScript(script_s* s){
 }
 
 bool Script_Whiteout(script_s* s){
-    static const struct TextCmd WhitedOutText[] = {
+    static const txt_cmd_s WhitedOutText[] = {
         text_far(v_WhitedOutText)
         text_end
     };

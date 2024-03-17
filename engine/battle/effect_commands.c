@@ -7469,7 +7469,7 @@ bool CheckMist_Conv(void){
 static void BattleCommand_StatUpMessage_Function(struct TextCmdState* state);
 
 void BattleCommand_StatUpMessage(void){
-    static const struct TextCmd stat[] = {
+    static const txt_cmd_s stat[] = {
         text_far(v_Text_BattleEffectActivate)
         text_asm(BattleCommand_StatUpMessage_Function)
     };
@@ -7491,13 +7491,13 @@ void BattleCommand_StatUpMessage(void){
 }
 
 static void BattleCommand_StatUpMessage_Function(struct TextCmdState* state) {
-    static const struct TextCmd BattleStatWentWayUpText[] = {
+    static const txt_cmd_s BattleStatWentWayUpText[] = {
         text_far(v_BattleStatWentWayUpText)
         text_end
     };
 
 
-    static const struct TextCmd BattleStatWentUpText[] = {
+    static const txt_cmd_s BattleStatWentUpText[] = {
         text_far(v_BattleStatWentUpText)
         text_end
     };
@@ -7518,7 +7518,7 @@ static void BattleCommand_StatUpMessage_Function(struct TextCmdState* state) {
 static void BattleCommand_StatDownMessage_Function(struct TextCmdState* state);
 
 void BattleCommand_StatDownMessage(void){
-    static const struct TextCmd stat[] = {
+    static const txt_cmd_s stat[] = {
         text_far(v_Text_BattleFoeEffectActivate)
         text_asm(BattleCommand_StatDownMessage_Function)
     };
@@ -7540,12 +7540,12 @@ void BattleCommand_StatDownMessage(void){
 }
 
 static void BattleCommand_StatDownMessage_Function(struct TextCmdState* state) {
-    static const struct TextCmd BattleStatSharplyFellText[] = {
+    static const txt_cmd_s BattleStatSharplyFellText[] = {
         text_far(v_BattleStatSharplyFellText)
         text_end
     };
 
-    static const struct TextCmd BattleStatFellText[] = {
+    static const txt_cmd_s BattleStatFellText[] = {
         text_far(v_BattleStatFellText)
         text_end
     };
@@ -9280,38 +9280,38 @@ void BattleCommand_CheckCharge(void){
 }
 
 static void BattleCommand_Charge_UsedText_Function(struct TextCmdState* state);
-static const struct TextCmd BattleCommand_Charge_UsedText[] = {
+static const txt_cmd_s BattleCommand_Charge_UsedText[] = {
     text_far(v_Text_BattleUser)  // "<USER>"
     text_asm(BattleCommand_Charge_UsedText_Function)
 };
 
 static void BattleCommand_Charge_UsedText_Function(struct TextCmdState* state) {
-    static const struct TextCmd BattleMadeWhirlwindText[] = {
+    static const txt_cmd_s BattleMadeWhirlwindText[] = {
         text_far(v_BattleMadeWhirlwindText)
         text_end
     };
 
-    static const struct TextCmd BattleTookSunlightText[] = {
+    static const txt_cmd_s BattleTookSunlightText[] = {
         text_far(v_BattleTookSunlightText)
         text_end
     };
 
-    static const struct TextCmd BattleLoweredHeadText[] = {
+    static const txt_cmd_s BattleLoweredHeadText[] = {
         text_far(v_BattleLoweredHeadText)
         text_end
     };
 
-    static const struct TextCmd BattleGlowingText[] = {
+    static const txt_cmd_s BattleGlowingText[] = {
         text_far(v_BattleGlowingText)
         text_end
     };
 
-    static const struct TextCmd BattleFlewText[] = {
+    static const txt_cmd_s BattleFlewText[] = {
         text_far(v_BattleFlewText)
         text_end
     };
 
-    static const struct TextCmd BattleDugText[] = {
+    static const txt_cmd_s BattleDugText[] = {
         text_far(v_BattleDugText)
         text_end
     };

@@ -1,7 +1,7 @@
 #pragma once
-extern const struct TextCmd BethAskNumber1Text[];
-extern const struct TextCmd BethAskNumber2Text[];
-extern const struct TextCmd BethNumberAcceptedText[];
-extern const struct TextCmd BethNumberDeclinedText[];
-extern const struct TextCmd BethPhoneFullText[];
-extern const struct TextCmd BethRematchText[];
+extern const txt_cmd_s BethAskNumber1Text[];
+extern const txt_cmd_s BethAskNumber2Text[];
+extern const txt_cmd_s BethNumberAcceptedText[];
+extern const txt_cmd_s BethNumberDeclinedText[];
+extern const txt_cmd_s BethPhoneFullText[];
+extern const txt_cmd_s BethRematchText[];

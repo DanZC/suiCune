@@ -342,14 +342,14 @@ const uint8_t DudeMovementData2b[] = {
     step(DOWN),
     movement_step_end,
 };
-const struct TextCmd CatchingTutorialBoxFullText[] = {
+const txt_cmd_s CatchingTutorialBoxFullText[] = {
     text_start("#MON hide in"
         t_line "the grass. Who"
         t_para "knows when they'll"
         t_line "pop out…"
         t_done )
 };
-const struct TextCmd CatchingTutorialIntroText[] = {
+const txt_cmd_s CatchingTutorialIntroText[] = {
     text_start("I've seen you a"
         t_line "couple times. How"
         t_para "many #MON have"
@@ -359,7 +359,7 @@ const struct TextCmd CatchingTutorialIntroText[] = {
         t_cont "catch #MON?"
         t_done )
 };
-const struct TextCmd CatchingTutorialDebriefText[] = {
+const txt_cmd_s CatchingTutorialDebriefText[] = {
     text_start("That's how you do"
         t_line "it."
         t_para "If you weaken them"
@@ -367,7 +367,7 @@ const struct TextCmd CatchingTutorialDebriefText[] = {
         t_cont "easier to catch."
         t_done )
 };
-const struct TextCmd CatchingTutorialDeclinedText[] = {
+const txt_cmd_s CatchingTutorialDeclinedText[] = {
     text_start("Oh. Fine, then."
         t_para "Anyway, if you"
         t_line "want to catch"
@@ -375,13 +375,13 @@ const struct TextCmd CatchingTutorialDeclinedText[] = {
         t_line "to walk a lot."
         t_done )
 };
-const struct TextCmd CatchingTutorialRepeatText[] = {
+const txt_cmd_s CatchingTutorialRepeatText[] = {
     text_start("Huh? You want me"
         t_line "to show you how to"
         t_cont "catch #MON?"
         t_done )
 };
-const struct TextCmd Route29YoungsterText[] = {
+const txt_cmd_s Route29YoungsterText[] = {
     text_start("Yo. How are your"
         t_line "#MON?"
         t_para "If they're weak"
@@ -390,7 +390,7 @@ const struct TextCmd Route29YoungsterText[] = {
         t_line "of the grass."
         t_done )
 };
-const struct TextCmd Route29TeacherText[] = {
+const txt_cmd_s Route29TeacherText[] = {
     text_start("See those ledges?"
         t_line "It's scary to jump"
         t_cont "off them."
@@ -400,35 +400,35 @@ const struct TextCmd Route29TeacherText[] = {
         t_line "the grass."
         t_done )
 };
-const struct TextCmd Route29FisherText[] = {
+const txt_cmd_s Route29FisherText[] = {
     text_start("I wanted to take a"
         t_line "break, so I saved"
         t_para "to record my"
         t_line "progress."
         t_done )
 };
-const struct TextCmd Route29CooltrainerMText_WaitingForDay[] = {
+const txt_cmd_s Route29CooltrainerMText_WaitingForDay[] = {
     text_start("I'm waiting for"
         t_line "#MON that"
         t_para "appear only in the"
         t_line "daytime."
         t_done )
 };
-const struct TextCmd Route29CooltrainerMText_WaitingForNight[] = {
+const txt_cmd_s Route29CooltrainerMText_WaitingForNight[] = {
     text_start("I'm waiting for"
         t_line "#MON that"
         t_para "appear only at"
         t_line "night."
         t_done )
 };
-const struct TextCmd Route29CooltrainerMText_WaitingForMorning[] = {
+const txt_cmd_s Route29CooltrainerMText_WaitingForMorning[] = {
     text_start("I'm waiting for"
         t_line "#MON that"
         t_para "appear only in the"
         t_line "morning."
         t_done )
 };
-const struct TextCmd MeetTuscanyText[] = {
+const txt_cmd_s MeetTuscanyText[] = {
     text_start("TUSCANY: I do be-"
         t_line "lieve that this is"
         t_para "the first time"
@@ -439,14 +439,14 @@ const struct TextCmd MeetTuscanyText[] = {
         t_line "Tuesday."
         t_done )
 };
-const struct TextCmd TuscanyGivesGiftText[] = {
+const txt_cmd_s TuscanyGivesGiftText[] = {
     text_start("By way of intro-"
         t_line "duction, please"
         t_para "accept this gift,"
         t_line "a PINK BOW."
         t_done )
 };
-const struct TextCmd TuscanyGaveGiftText[] = {
+const txt_cmd_s TuscanyGaveGiftText[] = {
     text_start("TUSCANY: Wouldn't"
         t_line "you agree that it"
         t_cont "is most adorable?"
@@ -456,7 +456,7 @@ const struct TextCmd TuscanyGaveGiftText[] = {
         t_line "will be of use."
         t_done )
 };
-const struct TextCmd TuscanyTuesdayText[] = {
+const txt_cmd_s TuscanyTuesdayText[] = {
     text_start("TUSCANY: Have you"
         t_line "met MONICA, my"
         t_cont "older sister?"
@@ -466,19 +466,19 @@ const struct TextCmd TuscanyTuesdayText[] = {
         t_line "seven children."
         t_done )
 };
-const struct TextCmd TuscanyNotTuesdayText[] = {
+const txt_cmd_s TuscanyNotTuesdayText[] = {
     text_start("TUSCANY: Today is"
         t_line "not Tuesday. That"
         t_cont "is unfortunate…"
         t_done )
 };
-const struct TextCmd Route29Sign1Text[] = {
+const txt_cmd_s Route29Sign1Text[] = {
     text_start("ROUTE 29"
         t_para "CHERRYGROVE CITY -"
         t_line "NEW BARK TOWN"
         t_done )
 };
-const struct TextCmd Route29Sign2Text[] = {
+const txt_cmd_s Route29Sign2Text[] = {
     text_start("ROUTE 29"
         t_para "CHERRYGROVE CITY -"
         t_line "NEW BARK TOWN"

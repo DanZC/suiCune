@@ -1,6 +1,6 @@
 #include "../../../constants.h"
 
-const struct TextCmd BikeShopPhoneCallerText[] = {
+const txt_cmd_s BikeShopPhoneCallerText[] = {
     text_start("Hi, <PLAY_G>!"
         t_line "Our BICYCLE sales"
         t_para "have gone through"

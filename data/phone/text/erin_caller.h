@@ -1,8 +1,8 @@
 #pragma once
-extern const struct TextCmd ErinMonIsMuchStrongerText[];
-extern const struct TextCmd ErinDefeatedMonText[];
-extern const struct TextCmd ErinLostAMonText[];
-extern const struct TextCmd ErinBattleRematchText[];
-extern const struct TextCmd ErinHangUpText[];
-extern const struct TextCmd ErinWorkingHardText[];
-extern const struct TextCmd ErinComeBattleText[];
+extern const txt_cmd_s ErinMonIsMuchStrongerText[];
+extern const txt_cmd_s ErinDefeatedMonText[];
+extern const txt_cmd_s ErinLostAMonText[];
+extern const txt_cmd_s ErinBattleRematchText[];
+extern const txt_cmd_s ErinHangUpText[];
+extern const txt_cmd_s ErinWorkingHardText[];
+extern const txt_cmd_s ErinComeBattleText[];

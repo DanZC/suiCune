@@ -383,32 +383,32 @@ void Mom_GetScriptPointer(void){
     //end ['?']
 }
 
-static const struct TextCmd MomHiHowAreYouText[] = {
+static const txt_cmd_s MomHiHowAreYouText[] = {
     text_far(v_MomHiHowAreYouText)
     text_end
 };
 
-static const struct TextCmd MomFoundAnItemText[] = {
+static const txt_cmd_s MomFoundAnItemText[] = {
     text_far(v_MomFoundAnItemText)
     text_end
 };
 
-static const struct TextCmd MomBoughtWithYourMoneyText[] = {
+static const txt_cmd_s MomBoughtWithYourMoneyText[] = {
     text_far(v_MomBoughtWithYourMoneyText)
     text_end
 };
 
-static const struct TextCmd MomItsInPCText[] = {
+static const txt_cmd_s MomItsInPCText[] = {
     text_far(v_MomItsInPCText)
     text_end
 };
 
-static const struct TextCmd MomFoundADollText[] = {
+static const txt_cmd_s MomFoundADollText[] = {
     text_far(v_MomFoundADollText)
     text_end
 };
 
-static const struct TextCmd MomItsInYourRoomText[] = {
+static const txt_cmd_s MomItsInYourRoomText[] = {
     text_far(v_MomItsInYourRoomText)
     text_end
 };

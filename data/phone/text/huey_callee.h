@@ -1,7 +1,7 @@
 #pragma once
-extern const struct TextCmd HueyAnswerPhoneText[];
-extern const struct TextCmd HueyAnswerPhoneDayText[];
-extern const struct TextCmd HueyAnswerPhoneNiteText[];
-extern const struct TextCmd HueyGreetText[];
-extern const struct TextCmd HueyGreetDayText[];
-extern const struct TextCmd HueyGreetNiteText[];
+extern const txt_cmd_s HueyAnswerPhoneText[];
+extern const txt_cmd_s HueyAnswerPhoneDayText[];
+extern const txt_cmd_s HueyAnswerPhoneNiteText[];
+extern const txt_cmd_s HueyGreetText[];
+extern const txt_cmd_s HueyGreetDayText[];
+extern const txt_cmd_s HueyGreetNiteText[];

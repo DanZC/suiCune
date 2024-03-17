@@ -696,7 +696,7 @@ void DebugMenu_Pics(void) {
     DelayFrame();
 }
 
-static const struct TextCmd DebugMenu_TestText[] = {
+static const txt_cmd_s DebugMenu_TestText[] = {
     text_start("This text was"
         t_line "written in C."
         t_para "Isn't that"
@@ -705,13 +705,13 @@ static const struct TextCmd DebugMenu_TestText[] = {
     text_end
 };
 
-static const struct TextCmd DebugMenu_TestText_Yes[] = {
+static const txt_cmd_s DebugMenu_TestText_Yes[] = {
     text_start("Yeah!"
         t_prompt )
     text_end
 };
 
-static const struct TextCmd DebugMenu_TestText_No[] = {
+static const txt_cmd_s DebugMenu_TestText_No[] = {
     text_start("Oh<……>"
         t_prompt )
     text_end
@@ -748,13 +748,13 @@ void DebugMenu_Scripting(void) {
 #include "../link/lan.h"
 #include "../../util/network.h"
 
-const struct TextCmd Text_LANTestSuccess[] = {
+const txt_cmd_s Text_LANTestSuccess[] = {
     text_start("LAN test was"
         t_line "successful!"
         t_prompt )
 };
 
-const struct TextCmd Text_LANTestFail[] = {
+const txt_cmd_s Text_LANTestFail[] = {
     text_start("LAN test failed!"
         t_prompt )
 };

@@ -1,8 +1,8 @@
 #pragma once
-extern const struct TextCmd ReenaMonsIsAPerfectMatchText[];
-extern const struct TextCmd ReenaDefeatedMonText[];
-extern const struct TextCmd ReenaLostAMonText[];
-extern const struct TextCmd ReenaBattleRematchText[];
-extern const struct TextCmd ReenaHangUpText[];
-extern const struct TextCmd ReenaForwardText[];
-extern const struct TextCmd ReenaHurryText[];
+extern const txt_cmd_s ReenaMonsIsAPerfectMatchText[];
+extern const txt_cmd_s ReenaDefeatedMonText[];
+extern const txt_cmd_s ReenaLostAMonText[];
+extern const txt_cmd_s ReenaBattleRematchText[];
+extern const txt_cmd_s ReenaHangUpText[];
+extern const txt_cmd_s ReenaForwardText[];
+extern const txt_cmd_s ReenaHurryText[];

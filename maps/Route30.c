@@ -319,18 +319,18 @@ const uint8_t Route30_MikeysRattataAttacksMovement[] = {
     big_step(UP),
     movement_step_end,
 };
-const struct TextCmd Text_UseTackle[] = {
+const txt_cmd_s Text_UseTackle[] = {
     text_start("Go, RATTATA!"
         t_para "TACKLE!"
         t_done )
 };
-const struct TextCmd Text_ThisIsABigBattle[] = {
+const txt_cmd_s Text_ThisIsABigBattle[] = {
     text_start("What? This is a"
         t_line "big battle!"
         t_cont "Leave me alone!"
         t_done )
 };
-const struct TextCmd YoungsterJoey1SeenText[] = {
+const txt_cmd_s YoungsterJoey1SeenText[] = {
     text_start("I just lost, so"
         t_line "I'm trying to find"
         t_cont "more #MON."
@@ -339,12 +339,12 @@ const struct TextCmd YoungsterJoey1SeenText[] = {
         t_cont "let's battle!"
         t_done )
 };
-const struct TextCmd YoungsterJoey1BeatenText[] = {
+const txt_cmd_s YoungsterJoey1BeatenText[] = {
     text_start("Ack! I lost again!"
         t_line "Doggone it!"
         t_done )
 };
-const struct TextCmd YoungsterJoey1AfterText[] = {
+const txt_cmd_s YoungsterJoey1AfterText[] = {
     text_start("Do I have to have"
         t_line "more #MON in"
         t_para "order to battle"
@@ -354,19 +354,19 @@ const struct TextCmd YoungsterJoey1AfterText[] = {
         t_cont "matter what!"
         t_done )
 };
-const struct TextCmd YoungsterMikeySeenText[] = {
+const txt_cmd_s YoungsterMikeySeenText[] = {
     text_start("You're a #MON"
         t_line "trainer, right?"
         t_para "Then you have to"
         t_line "battle!"
         t_done )
 };
-const struct TextCmd YoungsterMikeyBeatenText[] = {
+const txt_cmd_s YoungsterMikeyBeatenText[] = {
     text_start("That's strange."
         t_line "I won before."
         t_done )
 };
-const struct TextCmd YoungsterMikeyAfterText[] = {
+const txt_cmd_s YoungsterMikeyAfterText[] = {
     text_start("Becoming a good"
         t_line "trainer is really"
         t_cont "tough."
@@ -375,18 +375,18 @@ const struct TextCmd YoungsterMikeyAfterText[] = {
         t_cont "to get better."
         t_done )
 };
-const struct TextCmd BugCatcherDonSeenText[] = {
+const txt_cmd_s BugCatcherDonSeenText[] = {
     text_start("Instead of a bug"
         t_line "#MON, I found"
         t_cont "a trainer!"
         t_done )
 };
-const struct TextCmd BugCatcherDonBeatenText[] = {
+const txt_cmd_s BugCatcherDonBeatenText[] = {
     text_start("Argh! You're too"
         t_line "strong!"
         t_done )
 };
-const struct TextCmd BugCatcherDonAfterText[] = {
+const txt_cmd_s BugCatcherDonAfterText[] = {
     text_start("I ran out of #"
         t_line "BALLS while I was"
         t_cont "catching #MON."
@@ -394,41 +394,41 @@ const struct TextCmd BugCatcherDonAfterText[] = {
         t_line "some more…"
         t_done )
 };
-const struct TextCmd Route30YoungsterText_DirectionsToMrPokemonsHouse[] = {
+const txt_cmd_s Route30YoungsterText_DirectionsToMrPokemonsHouse[] = {
     text_start("MR.#MON's"
         t_line "house? It's a bit"
         t_cont "farther ahead."
         t_done )
 };
-const struct TextCmd Route30YoungsterText_EveryoneIsBattling[] = {
+const txt_cmd_s Route30YoungsterText_EveryoneIsBattling[] = {
     text_start("Everyone's having"
         t_line "fun battling!"
         t_cont "You should too!"
         t_done )
 };
-const struct TextCmd Route30CooltrainerFText[] = {
+const txt_cmd_s Route30CooltrainerFText[] = {
     text_start("I'm not a trainer."
         t_para "But if you look"
         t_line "one in the eyes,"
         t_cont "prepare to battle."
         t_done )
 };
-const struct TextCmd Route30SignText[] = {
+const txt_cmd_s Route30SignText[] = {
     text_start("ROUTE 30"
         t_para "VIOLET CITY -"
         t_line "CHERRYGROVE CITY"
         t_done )
 };
-const struct TextCmd MrPokemonsHouseDirectionsSignText[] = {
+const txt_cmd_s MrPokemonsHouseDirectionsSignText[] = {
     text_start("MR.#MON'S HOUSE"
         t_line "STRAIGHT AHEAD!"
         t_done )
 };
-const struct TextCmd MrPokemonsHouseSignText[] = {
+const txt_cmd_s MrPokemonsHouseSignText[] = {
     text_start("MR.#MON'S HOUSE"
         t_done )
 };
-const struct TextCmd Route30TrainerTipsText[] = {
+const txt_cmd_s Route30TrainerTipsText[] = {
     text_start("TRAINER TIPS"
         t_para "No stealing other"
         t_line "people's #MON!"
@@ -437,7 +437,7 @@ const struct TextCmd Route30TrainerTipsText[] = {
         t_cont "wild #MON!"
         t_done )
 };
-const struct TextCmd YoungsterJoeyText_GiveHPUpAfterBattle[] = {
+const txt_cmd_s YoungsterJoeyText_GiveHPUpAfterBattle[] = {
     text_start("I lost again…"
         t_line "Gee, you're tough!"
         t_para "Oh yeah, I almost"

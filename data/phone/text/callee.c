@@ -3,7 +3,7 @@
 
 //// alan_callee.c
 
-const struct TextCmd AlanAnswerPhoneText[] = {
+const txt_cmd_s AlanAnswerPhoneText[] = {
     text_start("Yup, it's @")
     text_ram(wram_ptr(wStringBuffer3))
     text_start("!"
@@ -11,14 +11,14 @@ const struct TextCmd AlanAnswerPhoneText[] = {
         t_line "Good morning!"
         t_done )
 };
-const struct TextCmd AlanAnswerPhoneDayText[] = {
+const txt_cmd_s AlanAnswerPhoneDayText[] = {
     text_start("Yup, it's @")
     text_ram(wram_ptr(wStringBuffer3))
     text_start("!"
         t_para "Is that <PLAY_G>?"
         t_done )
 };
-const struct TextCmd AlanAnswerPhoneNiteText[] = {
+const txt_cmd_s AlanAnswerPhoneNiteText[] = {
     text_start("Yup, it's @")
     text_ram(wram_ptr(wStringBuffer3))
     text_start("!"
@@ -26,28 +26,28 @@ const struct TextCmd AlanAnswerPhoneNiteText[] = {
         t_line "Good evening!"
         t_done )
 };
-const struct TextCmd AlanGreetText[] = {
+const txt_cmd_s AlanGreetText[] = {
     text_start("Hello! It's me,"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
     text_start("!"
         t_done )
 };
-const struct TextCmd AlanGreetDayText[] = {
+const txt_cmd_s AlanGreetDayText[] = {
     text_start("Hello! It's me,"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
     text_start("!"
         t_done )
 };
-const struct TextCmd AlanGreetNiteText[] = {
+const txt_cmd_s AlanGreetNiteText[] = {
     text_start("Hello! It's me,"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
     text_start("!"
         t_done )
 };
-const struct TextCmd AlanGenericText[] = {
+const txt_cmd_s AlanGenericText[] = {
     text_start("<PLAY_G>, are you"
         t_line "raising your"
         t_cont "#MON properly?"
@@ -61,7 +61,7 @@ const struct TextCmd AlanGenericText[] = {
 
 //// anthony_callee.c
 
-const struct TextCmd AnthonyAnswerPhoneText[] = {
+const txt_cmd_s AnthonyAnswerPhoneText[] = {
     text_start("Yeah, @")
     text_ram(wram_ptr(wStringBuffer3))
     text_start(" the"
@@ -69,7 +69,7 @@ const struct TextCmd AnthonyAnswerPhoneText[] = {
         t_para "Ah, <PLAYER>!"
         t_done )
 };
-const struct TextCmd AnthonyAnswerPhoneDayText[] = {
+const txt_cmd_s AnthonyAnswerPhoneDayText[] = {
     text_start("Yeah, @")
     text_ram(wram_ptr(wStringBuffer3))
     text_start(" the"
@@ -78,7 +78,7 @@ const struct TextCmd AnthonyAnswerPhoneDayText[] = {
         t_line "right?"
         t_done )
 };
-const struct TextCmd AnthonyAnswerPhoneNiteText[] = {
+const txt_cmd_s AnthonyAnswerPhoneNiteText[] = {
     text_start("Yeah, @")
     text_ram(wram_ptr(wStringBuffer3))
     text_start(" the"
@@ -87,7 +87,7 @@ const struct TextCmd AnthonyAnswerPhoneNiteText[] = {
         t_line "it?"
         t_done )
 };
-const struct TextCmd AnthonyGreetText[] = {
+const txt_cmd_s AnthonyGreetText[] = {
     text_start("Yo, <PLAYER>?"
         t_para "This is @")
     text_ram(wram_ptr(wStringBuffer3))
@@ -95,7 +95,7 @@ const struct TextCmd AnthonyGreetText[] = {
         t_line "the HIKER!"
         t_done )
 };
-const struct TextCmd AnthonyGreetDayText[] = {
+const txt_cmd_s AnthonyGreetDayText[] = {
     text_start("Hey, is this"
         t_line "<PLAYER>?"
         t_para "This is @")
@@ -104,7 +104,7 @@ const struct TextCmd AnthonyGreetDayText[] = {
         t_line "the HIKER!"
         t_done )
 };
-const struct TextCmd AnthonyGreetNiteText[] = {
+const txt_cmd_s AnthonyGreetNiteText[] = {
     text_start("<PLAYER>, you still"
         t_line "awake?"
         t_para "This is @")
@@ -113,7 +113,7 @@ const struct TextCmd AnthonyGreetNiteText[] = {
         t_line "the HIKER!"
         t_done )
 };
-const struct TextCmd AnthonyGenericText[] = {
+const txt_cmd_s AnthonyGenericText[] = {
     text_start("Are your #MON"
         t_line "as feisty as ever?"
         t_para "My @")
@@ -129,7 +129,7 @@ const struct TextCmd AnthonyGenericText[] = {
 
 //// arnie_callee.c
 
-const struct TextCmd ArnieAnswerPhoneText[] = {
+const txt_cmd_s ArnieAnswerPhoneText[] = {
     text_start("Yeah, hello."
         t_line "This is @")
     text_ram(wram_ptr(wStringBuffer3))
@@ -137,7 +137,7 @@ const struct TextCmd ArnieAnswerPhoneText[] = {
         t_para "…Huh, <PLAY_G>? Yo!"
         t_done )
 };
-const struct TextCmd ArnieAnswerPhoneDayText[] = {
+const txt_cmd_s ArnieAnswerPhoneDayText[] = {
     text_start("Yeah, hello, you"
         t_line "got @")
     text_ram(wram_ptr(wStringBuffer3))
@@ -145,7 +145,7 @@ const struct TextCmd ArnieAnswerPhoneDayText[] = {
         t_para "…Huh, <PLAY_G>? Yo!"
         t_done )
 };
-const struct TextCmd ArnieAnswerPhoneNiteText[] = {
+const txt_cmd_s ArnieAnswerPhoneNiteText[] = {
     text_start("Yeah, hello, you"
         t_line "got @")
     text_ram(wram_ptr(wStringBuffer3))
@@ -153,7 +153,7 @@ const struct TextCmd ArnieAnswerPhoneNiteText[] = {
         t_para "…Huh, <PLAY_G>? Yo!"
         t_done )
 };
-const struct TextCmd ArnieGreetText[] = {
+const txt_cmd_s ArnieGreetText[] = {
     text_start("Yeah, hello?"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -162,7 +162,7 @@ const struct TextCmd ArnieGreetText[] = {
         t_line "to, <PLAY_G>?"
         t_done )
 };
-const struct TextCmd ArnieGreetDayText[] = {
+const txt_cmd_s ArnieGreetDayText[] = {
     text_start("Yeah, hello?"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -171,7 +171,7 @@ const struct TextCmd ArnieGreetDayText[] = {
         t_line "<PLAY_G>?"
         t_done )
 };
-const struct TextCmd ArnieGreetNiteText[] = {
+const txt_cmd_s ArnieGreetNiteText[] = {
     text_start("Yeah, hello?"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -180,7 +180,7 @@ const struct TextCmd ArnieGreetNiteText[] = {
         t_line "<PLAY_G>?"
         t_done )
 };
-const struct TextCmd ArnieGenericText[] = {
+const txt_cmd_s ArnieGenericText[] = {
     text_start("I bet your #MON"
         t_line "are a lot stronger"
         t_cont "than before."
@@ -189,7 +189,7 @@ const struct TextCmd ArnieGenericText[] = {
 
 //// beth_callee.c
 
-const struct TextCmd BethAnswerPhoneText[] = {
+const txt_cmd_s BethAnswerPhoneText[] = {
     text_start("Hello, this is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -199,7 +199,7 @@ const struct TextCmd BethAnswerPhoneText[] = {
         t_para ""
         t_done )
 };
-const struct TextCmd BethAnswerPhoneDayText[] = {
+const txt_cmd_s BethAnswerPhoneDayText[] = {
     text_start("Hello, this is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -207,7 +207,7 @@ const struct TextCmd BethAnswerPhoneDayText[] = {
         t_para "Oh. Hi, <PLAY_G>."
         t_done )
 };
-const struct TextCmd BethAnswerPhoneNiteText[] = {
+const txt_cmd_s BethAnswerPhoneNiteText[] = {
     text_start("Hello, this is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -216,7 +216,7 @@ const struct TextCmd BethAnswerPhoneNiteText[] = {
         t_line "Good evening."
         t_done )
 };
-const struct TextCmd BethGreetText[] = {
+const txt_cmd_s BethGreetText[] = {
     text_start("Good morning,"
         t_line "<PLAY_G>!"
         t_para "This is @")
@@ -225,7 +225,7 @@ const struct TextCmd BethGreetText[] = {
         t_line "Were you sleeping?"
         t_done )
 };
-const struct TextCmd BethGreetDayText[] = {
+const txt_cmd_s BethGreetDayText[] = {
     text_start("<PLAY_G>, hi!"
         t_line "This is @")
     text_ram(wram_ptr(wStringBuffer3))
@@ -234,7 +234,7 @@ const struct TextCmd BethGreetDayText[] = {
         t_line "time?"
         t_done )
 };
-const struct TextCmd BethGreetNiteText[] = {
+const txt_cmd_s BethGreetNiteText[] = {
     text_start("Hi, <PLAY_G>."
         t_line "Good evening."
         t_para "This is @")
@@ -244,7 +244,7 @@ const struct TextCmd BethGreetNiteText[] = {
         t_line "awake."
         t_done )
 };
-const struct TextCmd BethGenericText[] = {
+const txt_cmd_s BethGenericText[] = {
     text_start("Are you the kind"
         t_line "of person who goes"
         t_para "to #MON CENTERS"
@@ -260,7 +260,7 @@ const struct TextCmd BethGenericText[] = {
 
 //// beverly_callee.c
 
-const struct TextCmd BeverlyAnswerPhoneText[] = {
+const txt_cmd_s BeverlyAnswerPhoneText[] = {
     text_start("Hello, this is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -269,7 +269,7 @@ const struct TextCmd BeverlyAnswerPhoneText[] = {
         t_line "<PLAYER>."
         t_done )
 };
-const struct TextCmd BeverlyAnswerPhoneDayText[] = {
+const txt_cmd_s BeverlyAnswerPhoneDayText[] = {
     text_start("Hello, this is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -278,7 +278,7 @@ const struct TextCmd BeverlyAnswerPhoneDayText[] = {
         t_line "<PLAYER>."
         t_done )
 };
-const struct TextCmd BeverlyAnswerPhoneNiteText[] = {
+const txt_cmd_s BeverlyAnswerPhoneNiteText[] = {
     text_start("Hello, this is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -287,7 +287,7 @@ const struct TextCmd BeverlyAnswerPhoneNiteText[] = {
         t_line "<PLAYER>."
         t_done )
 };
-const struct TextCmd BeverlyGreetText[] = {
+const txt_cmd_s BeverlyGreetText[] = {
     text_start("Hello, <PLAYER>."
         t_line "Good morning."
         t_para "This is @")
@@ -296,7 +296,7 @@ const struct TextCmd BeverlyGreetText[] = {
         t_line "Were you asleep?"
         t_done )
 };
-const struct TextCmd BeverlyGreetDayText[] = {
+const txt_cmd_s BeverlyGreetDayText[] = {
     text_start("Hi, <PLAYER>."
         t_line "This is @")
     text_ram(wram_ptr(wStringBuffer3))
@@ -304,7 +304,7 @@ const struct TextCmd BeverlyGreetDayText[] = {
         t_para "How are you doing?"
         t_done )
 };
-const struct TextCmd BeverlyGreetNiteText[] = {
+const txt_cmd_s BeverlyGreetNiteText[] = {
     text_start("Hi, <PLAYER>."
         t_line "This is @")
     text_ram(wram_ptr(wStringBuffer3))
@@ -312,7 +312,7 @@ const struct TextCmd BeverlyGreetNiteText[] = {
         t_para "Were you awake?"
         t_done )
 };
-const struct TextCmd BeverlyGenericText[] = {
+const txt_cmd_s BeverlyGenericText[] = {
     text_start("Keeping your"
         t_line "#MON happy?"
         t_para "My @")
@@ -325,7 +325,7 @@ const struct TextCmd BeverlyGenericText[] = {
 
 //// brent_callee.c
 
-const struct TextCmd BrentAnswerPhoneText[] = {
+const txt_cmd_s BrentAnswerPhoneText[] = {
     text_start("Yes? @")
     text_ram(wram_ptr(wStringBuffer3))
     text_start(" here…"
@@ -333,7 +333,7 @@ const struct TextCmd BrentAnswerPhoneText[] = {
         t_line "can I do for you?"
         t_done )
 };
-const struct TextCmd BrentAnswerPhoneDayText[] = {
+const txt_cmd_s BrentAnswerPhoneDayText[] = {
     text_start("Yes? @")
     text_ram(wram_ptr(wStringBuffer3))
     text_start(" here…"
@@ -341,7 +341,7 @@ const struct TextCmd BrentAnswerPhoneDayText[] = {
         t_line "can I do for you?"
         t_done )
 };
-const struct TextCmd BrentAnswerPhoneNiteText[] = {
+const txt_cmd_s BrentAnswerPhoneNiteText[] = {
     text_start("Yes? @")
     text_ram(wram_ptr(wStringBuffer3))
     text_start(" here…"
@@ -349,7 +349,7 @@ const struct TextCmd BrentAnswerPhoneNiteText[] = {
         t_line "can I do for you?"
         t_done )
 };
-const struct TextCmd BrentGreetText[] = {
+const txt_cmd_s BrentGreetText[] = {
     text_start("Hiya, <PLAYER>. How"
         t_line "are you doing?"
         t_para "Hey! It's me,"
@@ -358,7 +358,7 @@ const struct TextCmd BrentGreetText[] = {
     text_start("."
         t_done )
 };
-const struct TextCmd BrentGreetDayText[] = {
+const txt_cmd_s BrentGreetDayText[] = {
     text_start("Hiya, <PLAYER>, how"
         t_line "are you doing?"
         t_para "Hey, it's me,"
@@ -367,7 +367,7 @@ const struct TextCmd BrentGreetDayText[] = {
     text_start("."
         t_done )
 };
-const struct TextCmd BrentGreetNiteText[] = {
+const txt_cmd_s BrentGreetNiteText[] = {
     text_start("Hiya, <PLAYER>, how"
         t_line "are you doing?"
         t_para "Hey, it's me,"
@@ -376,7 +376,7 @@ const struct TextCmd BrentGreetNiteText[] = {
     text_start("."
         t_done )
 };
-const struct TextCmd BrentGenericText[] = {
+const txt_cmd_s BrentGenericText[] = {
     text_start("Oh yeah, I saw you"
         t_line "coming out of a"
         t_para "#MON CENTER the"
@@ -397,7 +397,7 @@ const struct TextCmd BrentGenericText[] = {
 
 //// chad_callee.c
 
-const struct TextCmd ChadAnswerPhoneText[] = {
+const txt_cmd_s ChadAnswerPhoneText[] = {
     text_start("Hello, this is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -406,7 +406,7 @@ const struct TextCmd ChadAnswerPhoneText[] = {
         t_line "Good morning!"
         t_done )
 };
-const struct TextCmd ChadAnswerPhoneDayText[] = {
+const txt_cmd_s ChadAnswerPhoneDayText[] = {
     text_start("Hello, this is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -415,7 +415,7 @@ const struct TextCmd ChadAnswerPhoneDayText[] = {
         t_line "day!"
         t_done )
 };
-const struct TextCmd ChadAnswerPhoneNiteText[] = {
+const txt_cmd_s ChadAnswerPhoneNiteText[] = {
     text_start("Hello, this is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -424,7 +424,7 @@ const struct TextCmd ChadAnswerPhoneNiteText[] = {
         t_line "evening!"
         t_done )
 };
-const struct TextCmd ChadGreetText[] = {
+const txt_cmd_s ChadGreetText[] = {
     text_start("Hi, <PLAY_G>, good"
         t_line "morning!"
         t_para "It's @")
@@ -433,7 +433,7 @@ const struct TextCmd ChadGreetText[] = {
         t_line "How are you?"
         t_done )
 };
-const struct TextCmd ChadGreetDayText[] = {
+const txt_cmd_s ChadGreetDayText[] = {
     text_start("Hi, <PLAY_G>, good"
         t_line "day!"
         t_para "It's @")
@@ -442,7 +442,7 @@ const struct TextCmd ChadGreetDayText[] = {
         t_line "How are you?"
         t_done )
 };
-const struct TextCmd ChadGreetNiteText[] = {
+const txt_cmd_s ChadGreetNiteText[] = {
     text_start("Hi, <PLAY_G>, good"
         t_line "evening!"
         t_para "It's @")
@@ -451,7 +451,7 @@ const struct TextCmd ChadGreetNiteText[] = {
         t_line "How are you?"
         t_done )
 };
-const struct TextCmd ChadGenericText[] = {
+const txt_cmd_s ChadGenericText[] = {
     text_start("How are your"
         t_line "#MON doing?"
         t_para "You know PROF.OAK,"
@@ -469,7 +469,7 @@ const struct TextCmd ChadGenericText[] = {
 
 //// dana_callee.c
 
-const struct TextCmd DanaAnswerPhoneText[] = {
+const txt_cmd_s DanaAnswerPhoneText[] = {
     text_start("Hi, @")
     text_ram(wram_ptr(wStringBuffer3))
     text_start(" on the"
@@ -477,7 +477,7 @@ const struct TextCmd DanaAnswerPhoneText[] = {
         t_para "Hey! It's <PLAY_G>!"
         t_done )
 };
-const struct TextCmd DanaAnswerPhoneDayText[] = {
+const txt_cmd_s DanaAnswerPhoneDayText[] = {
     text_start("Hi, @")
     text_ram(wram_ptr(wStringBuffer3))
     text_start(" on the"
@@ -486,7 +486,7 @@ const struct TextCmd DanaAnswerPhoneDayText[] = {
         t_line "It's <PLAY_G>!"
         t_done )
 };
-const struct TextCmd DanaAnswerPhoneNiteText[] = {
+const txt_cmd_s DanaAnswerPhoneNiteText[] = {
     text_start("Hi, @")
     text_ram(wram_ptr(wStringBuffer3))
     text_start(" on the"
@@ -495,7 +495,7 @@ const struct TextCmd DanaAnswerPhoneNiteText[] = {
         t_line "What's up?"
         t_done )
 };
-const struct TextCmd DanaGreetText[] = {
+const txt_cmd_s DanaGreetText[] = {
     text_start("Uh, <PLAY_G>?"
         t_para "It's me!"
         t_line "It's me, @")
@@ -503,7 +503,7 @@ const struct TextCmd DanaGreetText[] = {
     text_start("!"
         t_done )
 };
-const struct TextCmd DanaGreetDayText[] = {
+const txt_cmd_s DanaGreetDayText[] = {
     text_start("Uh, <PLAY_G>?"
         t_para "It's me!"
         t_line "It's me, @")
@@ -511,7 +511,7 @@ const struct TextCmd DanaGreetDayText[] = {
     text_start("!"
         t_done )
 };
-const struct TextCmd DanaGreetNiteText[] = {
+const txt_cmd_s DanaGreetNiteText[] = {
     text_start("Uh, <PLAY_G>?"
         t_para "It's me!"
         t_line "It's me, @")
@@ -519,7 +519,7 @@ const struct TextCmd DanaGreetNiteText[] = {
     text_start("!"
         t_done )
 };
-const struct TextCmd DanaGenericText[] = {
+const txt_cmd_s DanaGenericText[] = {
     text_start("My @")
     text_ram(wram_ptr(wStringBuffer4))
     text_start(" is"
@@ -533,25 +533,25 @@ const struct TextCmd DanaGenericText[] = {
 
 //// derek_callee.c
 
-const struct TextCmd DerekAnswerPhoneText[] = {
+const txt_cmd_s DerekAnswerPhoneText[] = {
     text_start("Hi, <PLAY_G>?"
         t_para "Good morning pika."
         t_line "What's up pika?"
         t_done )
 };
-const struct TextCmd DerekAnswerPhoneDayText[] = {
+const txt_cmd_s DerekAnswerPhoneDayText[] = {
     text_start("Hi, <PLAY_G>?"
         t_para "Good day pika,"
         t_line "what's up pika?"
         t_done )
 };
-const struct TextCmd DerekAnswerPhoneNiteText[] = {
+const txt_cmd_s DerekAnswerPhoneNiteText[] = {
     text_start("Hi, <PLAY_G>?"
         t_para "Good evening pika,"
         t_line "what's up pika?"
         t_done )
 };
-const struct TextCmd DerekGreetText[] = {
+const txt_cmd_s DerekGreetText[] = {
     text_start("<PLAY_G> pika, good"
         t_line "morning!"
         t_para "It's @")
@@ -560,7 +560,7 @@ const struct TextCmd DerekGreetText[] = {
         t_line "pika are you?"
         t_done )
 };
-const struct TextCmd DerekGreetDayText[] = {
+const txt_cmd_s DerekGreetDayText[] = {
     text_start("<PLAY_G> pika, good"
         t_line "pika day!"
         t_para "It's @")
@@ -569,7 +569,7 @@ const struct TextCmd DerekGreetDayText[] = {
         t_line "pika are you?"
         t_done )
 };
-const struct TextCmd DerekGreetNiteText[] = {
+const txt_cmd_s DerekGreetNiteText[] = {
     text_start("<PLAY_G> pika, good"
         t_line "evening!"
         t_para "It's @")
@@ -578,7 +578,7 @@ const struct TextCmd DerekGreetNiteText[] = {
         t_line "you pika awake?"
         t_done )
 };
-const struct TextCmd DerekGenericText[] = {
+const txt_cmd_s DerekGenericText[] = {
     text_start("You have to hear"
         t_line "this! My lovable"
         t_para "@")
@@ -593,7 +593,7 @@ const struct TextCmd DerekGenericText[] = {
 
 //// erin_callee.c
 
-const struct TextCmd ErinAnswerPhoneText[] = {
+const txt_cmd_s ErinAnswerPhoneText[] = {
     text_start("Yes, this is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -602,7 +602,7 @@ const struct TextCmd ErinAnswerPhoneText[] = {
         t_line "Good morning!"
         t_done )
 };
-const struct TextCmd ErinAnswerPhoneDayText[] = {
+const txt_cmd_s ErinAnswerPhoneDayText[] = {
     text_start("Yes, this is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -611,7 +611,7 @@ const struct TextCmd ErinAnswerPhoneDayText[] = {
         t_line "Yahoo!"
         t_done )
 };
-const struct TextCmd ErinAnswerPhoneNiteText[] = {
+const txt_cmd_s ErinAnswerPhoneNiteText[] = {
     text_start("Yes, this is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -619,7 +619,7 @@ const struct TextCmd ErinAnswerPhoneNiteText[] = {
         t_para "Oh, hi, <PLAY_G>!"
         t_done )
 };
-const struct TextCmd ErinGreetText[] = {
+const txt_cmd_s ErinGreetText[] = {
     text_start("<PLAY_G>!"
         t_para "It's @")
     text_ram(wram_ptr(wStringBuffer3))
@@ -627,7 +627,7 @@ const struct TextCmd ErinGreetText[] = {
         t_line "Good morning!"
         t_done )
 };
-const struct TextCmd ErinGreetDayText[] = {
+const txt_cmd_s ErinGreetDayText[] = {
     text_start("<PLAY_G>!"
         t_para "It's @")
     text_ram(wram_ptr(wStringBuffer3))
@@ -635,7 +635,7 @@ const struct TextCmd ErinGreetDayText[] = {
         t_line "Working hard?"
         t_done )
 };
-const struct TextCmd ErinGreetNiteText[] = {
+const txt_cmd_s ErinGreetNiteText[] = {
     text_start("<PLAY_G>!"
         t_para "It's @")
     text_ram(wram_ptr(wStringBuffer3))
@@ -643,7 +643,7 @@ const struct TextCmd ErinGreetNiteText[] = {
         t_line "Were you up?"
         t_done )
 };
-const struct TextCmd ErinGenericText[] = {
+const txt_cmd_s ErinGenericText[] = {
     text_start("Are you raising"
         t_line "your #MON?"
         t_para "Hey, @")
@@ -658,7 +658,7 @@ const struct TextCmd ErinGenericText[] = {
 
 //// gaven_callee.c
 
-const struct TextCmd GavenAnswerPhoneText[] = {
+const txt_cmd_s GavenAnswerPhoneText[] = {
     text_start("Hello, this is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -667,7 +667,7 @@ const struct TextCmd GavenAnswerPhoneText[] = {
         t_line "Good morning!"
         t_done )
 };
-const struct TextCmd GavenAnswerPhoneDayText[] = {
+const txt_cmd_s GavenAnswerPhoneDayText[] = {
     text_start("Hello, this is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -675,7 +675,7 @@ const struct TextCmd GavenAnswerPhoneDayText[] = {
         t_para "Hi, <PLAY_G>!"
         t_done )
 };
-const struct TextCmd GavenAnswerPhoneNiteText[] = {
+const txt_cmd_s GavenAnswerPhoneNiteText[] = {
     text_start("Hello, this is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -684,7 +684,7 @@ const struct TextCmd GavenAnswerPhoneNiteText[] = {
         t_line "Good evening!"
         t_done )
 };
-const struct TextCmd GavenGreetText[] = {
+const txt_cmd_s GavenGreetText[] = {
     text_start("<PLAY_G>, good"
         t_line "morning!"
         t_para "It's me, @")
@@ -693,7 +693,7 @@ const struct TextCmd GavenGreetText[] = {
         t_line "How are you doing?"
         t_done )
 };
-const struct TextCmd GavenGreetDayText[] = {
+const txt_cmd_s GavenGreetDayText[] = {
     text_start("Hi, <PLAY_G>!"
         t_para "It's me, @")
     text_ram(wram_ptr(wStringBuffer3))
@@ -701,7 +701,7 @@ const struct TextCmd GavenGreetDayText[] = {
         t_line "How are you doing?"
         t_done )
 };
-const struct TextCmd GavenGreetNiteText[] = {
+const txt_cmd_s GavenGreetNiteText[] = {
     text_start("<PLAY_G>, good"
         t_line "evening!"
         t_para "It's me, @")
@@ -710,7 +710,7 @@ const struct TextCmd GavenGreetNiteText[] = {
         t_line "How are you doing?"
         t_done )
 };
-const struct TextCmd GavenGenericText[] = {
+const txt_cmd_s GavenGenericText[] = {
     text_start("How are your"
         t_line "#MON doing?"
         t_para "My @")
@@ -726,7 +726,7 @@ const struct TextCmd GavenGenericText[] = {
 
 //// gina_callee.c
 
-const struct TextCmd GinaAnswerPhoneText[] = {
+const txt_cmd_s GinaAnswerPhoneText[] = {
     text_start("Hello? This is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -735,7 +735,7 @@ const struct TextCmd GinaAnswerPhoneText[] = {
         t_line "Good morning!"
         t_done )
 };
-const struct TextCmd GinaAnswerPhoneDayText[] = {
+const txt_cmd_s GinaAnswerPhoneDayText[] = {
     text_start("Hello? This is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -744,7 +744,7 @@ const struct TextCmd GinaAnswerPhoneDayText[] = {
         t_line "Hi, how are you?"
         t_done )
 };
-const struct TextCmd GinaAnswerPhoneNiteText[] = {
+const txt_cmd_s GinaAnswerPhoneNiteText[] = {
     text_start("Hello? This is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -753,7 +753,7 @@ const struct TextCmd GinaAnswerPhoneNiteText[] = {
         t_line "Good evening!"
         t_done )
 };
-const struct TextCmd GinaGreetText[] = {
+const txt_cmd_s GinaGreetText[] = {
     text_start("<PLAY_G>?"
         t_para "It's @")
     text_ram(wram_ptr(wStringBuffer3))
@@ -761,7 +761,7 @@ const struct TextCmd GinaGreetText[] = {
         t_line "Good morning!"
         t_done )
 };
-const struct TextCmd GinaGreetDayText[] = {
+const txt_cmd_s GinaGreetDayText[] = {
     text_start("<PLAY_G>?"
         t_para "It's @")
     text_ram(wram_ptr(wStringBuffer3))
@@ -769,7 +769,7 @@ const struct TextCmd GinaGreetDayText[] = {
         t_line "this a bad time?"
         t_done )
 };
-const struct TextCmd GinaGreetNiteText[] = {
+const txt_cmd_s GinaGreetNiteText[] = {
     text_start("<PLAY_G>?"
         t_para "It's @")
     text_ram(wram_ptr(wStringBuffer3))
@@ -777,7 +777,7 @@ const struct TextCmd GinaGreetNiteText[] = {
         t_line "Got time to chat?"
         t_done )
 };
-const struct TextCmd GinaGenericText[] = {
+const txt_cmd_s GinaGenericText[] = {
     text_start("Are your #MON"
         t_line "still tough?"
         t_para "I train every day"
@@ -789,7 +789,7 @@ const struct TextCmd GinaGenericText[] = {
 
 //// huey_callee.c
 
-const struct TextCmd HueyAnswerPhoneText[] = {
+const txt_cmd_s HueyAnswerPhoneText[] = {
     text_start("Yeah, this is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -798,7 +798,7 @@ const struct TextCmd HueyAnswerPhoneText[] = {
         t_line "<PLAYER>?"
         t_done )
 };
-const struct TextCmd HueyAnswerPhoneDayText[] = {
+const txt_cmd_s HueyAnswerPhoneDayText[] = {
     text_start("Yeah, this is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -807,7 +807,7 @@ const struct TextCmd HueyAnswerPhoneDayText[] = {
         t_line "<PLAYER>?"
         t_done )
 };
-const struct TextCmd HueyAnswerPhoneNiteText[] = {
+const txt_cmd_s HueyAnswerPhoneNiteText[] = {
     text_start("Yeah, this is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -816,7 +816,7 @@ const struct TextCmd HueyAnswerPhoneNiteText[] = {
         t_line "<PLAYER>?"
         t_done )
 };
-const struct TextCmd HueyGreetText[] = {
+const txt_cmd_s HueyGreetText[] = {
     text_start("Yo, <PLAYER>!"
         t_line "You awake?"
         t_para "It's me, @")
@@ -825,7 +825,7 @@ const struct TextCmd HueyGreetText[] = {
         t_line "How's it going?"
         t_done )
 };
-const struct TextCmd HueyGreetDayText[] = {
+const txt_cmd_s HueyGreetDayText[] = {
     text_start("Yo, <PLAYER>! You"
         t_line "free right now?"
         t_para "It's me, @")
@@ -834,7 +834,7 @@ const struct TextCmd HueyGreetDayText[] = {
         t_line "How's it going?"
         t_done )
 };
-const struct TextCmd HueyGreetNiteText[] = {
+const txt_cmd_s HueyGreetNiteText[] = {
     text_start("Yo, <PLAYER>!"
         t_line "Were you asleep?"
         t_para "It's me, @")
@@ -846,7 +846,7 @@ const struct TextCmd HueyGreetNiteText[] = {
 
 //// irwin_callee.c
 
-const struct TextCmd IrwinAnswerPhoneText[] = {
+const txt_cmd_s IrwinAnswerPhoneText[] = {
     text_start("Hello? @")
     text_ram(wram_ptr(wStringBuffer3))
     text_start(
@@ -854,7 +854,7 @@ const struct TextCmd IrwinAnswerPhoneText[] = {
         t_para "Hey, <PLAY_G>!"
         t_done )
 };
-const struct TextCmd IrwinAnswerPhoneDayText[] = {
+const txt_cmd_s IrwinAnswerPhoneDayText[] = {
     text_start("Hello? @")
     text_ram(wram_ptr(wStringBuffer3))
     text_start(
@@ -862,7 +862,7 @@ const struct TextCmd IrwinAnswerPhoneDayText[] = {
         t_para "Wow, <PLAY_G>!"
         t_done )
 };
-const struct TextCmd IrwinAnswerPhoneNiteText[] = {
+const txt_cmd_s IrwinAnswerPhoneNiteText[] = {
     text_start("Hello? @")
     text_ram(wram_ptr(wStringBuffer3))
     text_start(
@@ -870,7 +870,7 @@ const struct TextCmd IrwinAnswerPhoneNiteText[] = {
         t_para "Yippee, <PLAY_G>!"
         t_done )
 };
-const struct TextCmd IrwinGreetText[] = {
+const txt_cmd_s IrwinGreetText[] = {
     text_start("Uh, hello."
         t_line "<PLAY_G>?"
         t_para "It's your pal,"
@@ -879,7 +879,7 @@ const struct TextCmd IrwinGreetText[] = {
     text_start("!"
         t_done )
 };
-const struct TextCmd IrwinGreetDayText[] = {
+const txt_cmd_s IrwinGreetDayText[] = {
     text_start("Uh, hello,"
         t_line "<PLAY_G>?"
         t_para "It's your buddy"
@@ -888,7 +888,7 @@ const struct TextCmd IrwinGreetDayText[] = {
     text_start("!"
         t_done )
 };
-const struct TextCmd IrwinGreetNiteText[] = {
+const txt_cmd_s IrwinGreetNiteText[] = {
     text_start("Uh, hello,"
         t_line "<PLAY_G>?"
         t_para "It's your sidekick"
@@ -900,7 +900,7 @@ const struct TextCmd IrwinGreetNiteText[] = {
 
 //// jack_callee.c
 
-const struct TextCmd JackAnswerPhoneText[] = {
+const txt_cmd_s JackAnswerPhoneText[] = {
     text_start("Hello. This is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -909,7 +909,7 @@ const struct TextCmd JackAnswerPhoneText[] = {
         t_line "<PLAY_G>!"
         t_done )
 };
-const struct TextCmd JackAnswerPhoneDayText[] = {
+const txt_cmd_s JackAnswerPhoneDayText[] = {
     text_start("Hello. This is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -918,7 +918,7 @@ const struct TextCmd JackAnswerPhoneDayText[] = {
         t_line "<PLAY_G>?"
         t_done )
 };
-const struct TextCmd JackAnswerPhoneNiteText[] = {
+const txt_cmd_s JackAnswerPhoneNiteText[] = {
     text_start("Hello. This is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -927,7 +927,7 @@ const struct TextCmd JackAnswerPhoneNiteText[] = {
         t_line "<PLAY_G>!"
         t_done )
 };
-const struct TextCmd JackGreetText[] = {
+const txt_cmd_s JackGreetText[] = {
     text_start("<PLAY_G>, good"
         t_line "morning!"
         t_para "It's me, @")
@@ -936,7 +936,7 @@ const struct TextCmd JackGreetText[] = {
         t_line "How are you doing?"
         t_done )
 };
-const struct TextCmd JackGreetDayText[] = {
+const txt_cmd_s JackGreetDayText[] = {
     text_start("<PLAY_G>, howdy!"
         t_para "It's me, @")
     text_ram(wram_ptr(wStringBuffer3))
@@ -944,7 +944,7 @@ const struct TextCmd JackGreetDayText[] = {
         t_line "Isn't it nice out?"
         t_done )
 };
-const struct TextCmd JackGreetNiteText[] = {
+const txt_cmd_s JackGreetNiteText[] = {
     text_start("<PLAY_G>, good"
         t_line "evening!"
         t_para "It's me, @")
@@ -953,7 +953,7 @@ const struct TextCmd JackGreetNiteText[] = {
         t_line "Got a minute?"
         t_done )
 };
-const struct TextCmd JackGenericText[] = {
+const txt_cmd_s JackGenericText[] = {
     text_start("How are your"
         t_line "#MON doing?"
         t_para "My @")
@@ -967,7 +967,7 @@ const struct TextCmd JackGenericText[] = {
 
 //// joey_callee.c
 
-const struct TextCmd JoeyAnswerPhoneText[] = {
+const txt_cmd_s JoeyAnswerPhoneText[] = {
     text_start("Hi, @")
     text_ram(wram_ptr(wStringBuffer3))
     text_start(" here!"
@@ -975,7 +975,7 @@ const struct TextCmd JoeyAnswerPhoneText[] = {
         t_line "doing well?"
         t_done )
 };
-const struct TextCmd JoeyAnswerPhoneDayText[] = {
+const txt_cmd_s JoeyAnswerPhoneDayText[] = {
     text_start("Hi, @")
     text_ram(wram_ptr(wStringBuffer3))
     text_start(" here!"
@@ -983,7 +983,7 @@ const struct TextCmd JoeyAnswerPhoneDayText[] = {
         t_line "doing well?"
         t_done )
 };
-const struct TextCmd JoeyAnswerPhoneNiteText[] = {
+const txt_cmd_s JoeyAnswerPhoneNiteText[] = {
     text_start("Hi, @")
     text_ram(wram_ptr(wStringBuffer3))
     text_start(" here!"
@@ -991,7 +991,7 @@ const struct TextCmd JoeyAnswerPhoneNiteText[] = {
         t_line "doing well?"
         t_done )
 };
-const struct TextCmd JoeyGreetText[] = {
+const txt_cmd_s JoeyGreetText[] = {
     text_start("Yo, <PLAYER>!"
         t_line "How're you doing?"
         t_para "This is @")
@@ -1000,7 +1000,7 @@ const struct TextCmd JoeyGreetText[] = {
         t_line "got a minute?"
         t_done )
 };
-const struct TextCmd JoeyGreetDayText[] = {
+const txt_cmd_s JoeyGreetDayText[] = {
     text_start("Yo, <PLAYER>! How's"
         t_line "it going?"
         t_para "This is @")
@@ -1009,7 +1009,7 @@ const struct TextCmd JoeyGreetDayText[] = {
         t_line "Got a minute?"
         t_done )
 };
-const struct TextCmd JoeyGreetNiteText[] = {
+const txt_cmd_s JoeyGreetNiteText[] = {
     text_start("Yo, <PLAYER>!"
         t_line "How're you doing?"
         t_para "This is @")
@@ -1018,7 +1018,7 @@ const struct TextCmd JoeyGreetNiteText[] = {
         t_line "got a minute?"
         t_done )
 };
-const struct TextCmd JoeyGenericText[] = {
+const txt_cmd_s JoeyGenericText[] = {
     text_start("How are your"
         t_line "#MON doing?"
         t_para "My @")
@@ -1035,7 +1035,7 @@ const struct TextCmd JoeyGenericText[] = {
 
 //// jose_callee.c
 
-const struct TextCmd JoseAnswerPhoneText[] = {
+const txt_cmd_s JoseAnswerPhoneText[] = {
     text_start("Hello, this is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1044,7 +1044,7 @@ const struct TextCmd JoseAnswerPhoneText[] = {
         t_line "Good morning!"
         t_done )
 };
-const struct TextCmd JoseAnswerPhoneDayText[] = {
+const txt_cmd_s JoseAnswerPhoneDayText[] = {
     text_start("Hello, this is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1052,7 +1052,7 @@ const struct TextCmd JoseAnswerPhoneDayText[] = {
         t_para "Oh, <PLAY_G>? Hi!"
         t_done )
 };
-const struct TextCmd JoseAnswerPhoneNiteText[] = {
+const txt_cmd_s JoseAnswerPhoneNiteText[] = {
     text_start("Hello, this is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1061,7 +1061,7 @@ const struct TextCmd JoseAnswerPhoneNiteText[] = {
         t_line "Good evening!"
         t_done )
 };
-const struct TextCmd JoseGreetText[] = {
+const txt_cmd_s JoseGreetText[] = {
     text_start("Oh, <PLAY_G>?"
         t_para "Tweet! Yeah, it's"
         t_line "me, @")
@@ -1069,7 +1069,7 @@ const struct TextCmd JoseGreetText[] = {
     text_start("."
         t_done )
 };
-const struct TextCmd JoseGreetDayText[] = {
+const txt_cmd_s JoseGreetDayText[] = {
     text_start("Oh, <PLAY_G>?"
         t_para "Tweet! Yeah, it's"
         t_line "me, @")
@@ -1077,7 +1077,7 @@ const struct TextCmd JoseGreetDayText[] = {
     text_start("."
         t_done )
 };
-const struct TextCmd JoseGreetNiteText[] = {
+const txt_cmd_s JoseGreetNiteText[] = {
     text_start("Oh, <PLAY_G>?"
         t_para "Tweet! Yeah, it's"
         t_line "me, @")
@@ -1085,7 +1085,7 @@ const struct TextCmd JoseGreetNiteText[] = {
     text_start("."
         t_done )
 };
-const struct TextCmd JoseGenericText[] = {
+const txt_cmd_s JoseGenericText[] = {
     text_start("Are your #MON"
         t_line "still cooking?"
         t_para "My @")
@@ -1100,42 +1100,42 @@ const struct TextCmd JoseGenericText[] = {
 
 //// kenji_callee.c
 
-const struct TextCmd KenjiAnswerPhoneText[] = {
+const txt_cmd_s KenjiAnswerPhoneText[] = {
     text_ram(wram_ptr(wStringBuffer3))
     text_start(" here…"
         t_para "<PLAYER>! Beautiful"
         t_line "morning, hey?"
         t_done )
 };
-const struct TextCmd KenjiAnswerPhoneDayText[] = {
+const txt_cmd_s KenjiAnswerPhoneDayText[] = {
     text_ram(wram_ptr(wStringBuffer3))
     text_start(" here…"
         t_para "<PLAYER>! Beautiful"
         t_line "weather, hey?"
         t_done )
 };
-const struct TextCmd KenjiAnswerPhoneNiteText[] = {
+const txt_cmd_s KenjiAnswerPhoneNiteText[] = {
     text_ram(wram_ptr(wStringBuffer3))
     text_start(" here…"
         t_para "<PLAYER>! Beautiful"
         t_line "moonlight, hey?"
         t_done )
 };
-const struct TextCmd KenjiGreetText[] = {
+const txt_cmd_s KenjiGreetText[] = {
     text_start("Hey, <PLAYER>!"
         t_line "This is @")
     text_ram(wram_ptr(wStringBuffer3))
     text_start("!"
         t_done )
 };
-const struct TextCmd KenjiGreetDayText[] = {
+const txt_cmd_s KenjiGreetDayText[] = {
     text_start("Hey, <PLAYER>!"
         t_line "This is @")
     text_ram(wram_ptr(wStringBuffer3))
     text_start("!"
         t_done )
 };
-const struct TextCmd KenjiGreetNiteText[] = {
+const txt_cmd_s KenjiGreetNiteText[] = {
     text_start("Hey, <PLAYER>!"
         t_line "This is @")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1145,7 +1145,7 @@ const struct TextCmd KenjiGreetNiteText[] = {
 
 //// liz_callee.c
 
-const struct TextCmd LizAnswerPhoneText[] = {
+const txt_cmd_s LizAnswerPhoneText[] = {
     text_start("Hello, @")
     text_ram(wram_ptr(wStringBuffer3))
     text_start(
@@ -1154,7 +1154,7 @@ const struct TextCmd LizAnswerPhoneText[] = {
         t_line "Good morning."
         t_done )
 };
-const struct TextCmd LizAnswerPhoneDayText[] = {
+const txt_cmd_s LizAnswerPhoneDayText[] = {
     text_start("Hello, @")
     text_ram(wram_ptr(wStringBuffer3))
     text_start(
@@ -1163,7 +1163,7 @@ const struct TextCmd LizAnswerPhoneDayText[] = {
         t_line "How are you?"
         t_done )
 };
-const struct TextCmd LizAnswerPhoneNiteText[] = {
+const txt_cmd_s LizAnswerPhoneNiteText[] = {
     text_start("Hello, @")
     text_ram(wram_ptr(wStringBuffer3))
     text_start(
@@ -1172,7 +1172,7 @@ const struct TextCmd LizAnswerPhoneNiteText[] = {
         t_line "Good evening."
         t_done )
 };
-const struct TextCmd LizGreetText[] = {
+const txt_cmd_s LizGreetText[] = {
     text_start("Good morning,"
         t_line "<PLAY_G>."
         t_para "This is @")
@@ -1181,7 +1181,7 @@ const struct TextCmd LizGreetText[] = {
         t_line "Were you sleeping?"
         t_done )
 };
-const struct TextCmd LizGreetDayText[] = {
+const txt_cmd_s LizGreetDayText[] = {
     text_start("Hi, <PLAY_G>."
         t_line "This is @")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1190,7 +1190,7 @@ const struct TextCmd LizGreetDayText[] = {
         t_line "going for you?"
         t_done )
 };
-const struct TextCmd LizGreetNiteText[] = {
+const txt_cmd_s LizGreetNiteText[] = {
     text_start("Good evening,"
         t_line "<PLAY_G>."
         t_para "This is @")
@@ -1199,7 +1199,7 @@ const struct TextCmd LizGreetNiteText[] = {
         t_line "Are you awake?"
         t_done )
 };
-const struct TextCmd LizGenericText[] = {
+const txt_cmd_s LizGenericText[] = {
     text_start("I had some time,"
         t_line "so I called you."
         t_para "So anyway, how are"
@@ -1219,7 +1219,7 @@ const struct TextCmd LizGenericText[] = {
 
 //// parry_callee.c
 
-const struct TextCmd ParryAnswerPhoneText[] = {
+const txt_cmd_s ParryAnswerPhoneText[] = {
     text_start("Yup, yup!"
         t_line "It's @")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1228,7 +1228,7 @@ const struct TextCmd ParryAnswerPhoneText[] = {
         t_line "<PLAY_G>!"
         t_done )
 };
-const struct TextCmd ParryAnswerPhoneDayText[] = {
+const txt_cmd_s ParryAnswerPhoneDayText[] = {
     text_start("Yup, yup!"
         t_line "It's @")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1237,7 +1237,7 @@ const struct TextCmd ParryAnswerPhoneDayText[] = {
         t_line "<PLAY_G>!"
         t_done )
 };
-const struct TextCmd ParryAnswerPhoneNiteText[] = {
+const txt_cmd_s ParryAnswerPhoneNiteText[] = {
     text_start("Yup, yup!"
         t_line "It's @")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1246,7 +1246,7 @@ const struct TextCmd ParryAnswerPhoneNiteText[] = {
         t_line "<PLAY_G>!"
         t_done )
 };
-const struct TextCmd ParryGreetText[] = {
+const txt_cmd_s ParryGreetText[] = {
     text_start("<PLAY_G>, it's"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1255,7 +1255,7 @@ const struct TextCmd ParryGreetText[] = {
         t_line "proper breakfast?"
         t_done )
 };
-const struct TextCmd ParryGreetDayText[] = {
+const txt_cmd_s ParryGreetDayText[] = {
     text_start("<PLAY_G>, it's"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1264,7 +1264,7 @@ const struct TextCmd ParryGreetDayText[] = {
         t_line "proper lunch?"
         t_done )
 };
-const struct TextCmd ParryGreetNiteText[] = {
+const txt_cmd_s ParryGreetNiteText[] = {
     text_start("<PLAY_G>, it's"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1273,7 +1273,7 @@ const struct TextCmd ParryGreetNiteText[] = {
         t_line "proper dinner?"
         t_done )
 };
-const struct TextCmd ParryGenericText[] = {
+const txt_cmd_s ParryGenericText[] = {
     text_start("Are your #MON"
         t_line "looking good?"
         t_para "My @")
@@ -1287,7 +1287,7 @@ const struct TextCmd ParryGenericText[] = {
 
 //// ralph_callee.c
 
-const struct TextCmd RalphAnswerPhoneText[] = {
+const txt_cmd_s RalphAnswerPhoneText[] = {
     text_start("Yes? Ah, <PLAY_G>."
         t_para "You're courteous"
         t_line "enough to state"
@@ -1295,7 +1295,7 @@ const struct TextCmd RalphAnswerPhoneText[] = {
         t_line "call on the phone."
         t_done )
 };
-const struct TextCmd RalphAnswerPhoneDayText[] = {
+const txt_cmd_s RalphAnswerPhoneDayText[] = {
     text_start("Yes? Ah, <PLAY_G>."
         t_para "You're courteous"
         t_line "enough to state"
@@ -1303,7 +1303,7 @@ const struct TextCmd RalphAnswerPhoneDayText[] = {
         t_line "call on the phone."
         t_done )
 };
-const struct TextCmd RalphAnswerPhoneNiteText[] = {
+const txt_cmd_s RalphAnswerPhoneNiteText[] = {
     text_start("Yes? Ah, <PLAY_G>."
         t_para "You're courteous"
         t_line "enough to state"
@@ -1311,28 +1311,28 @@ const struct TextCmd RalphAnswerPhoneNiteText[] = {
         t_line "call on the phone."
         t_done )
 };
-const struct TextCmd RalphGreetText[] = {
+const txt_cmd_s RalphGreetText[] = {
     text_start("Hiya, it's Uncle"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
     text_start("."
         t_done )
 };
-const struct TextCmd RalphGreetDayText[] = {
+const txt_cmd_s RalphGreetDayText[] = {
     text_start("Hiya, it's Uncle"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
     text_start("."
         t_done )
 };
-const struct TextCmd RalphGreetNiteText[] = {
+const txt_cmd_s RalphGreetNiteText[] = {
     text_start("Hiya, it's Uncle"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
     text_start("."
         t_done )
 };
-const struct TextCmd RalphGenericText[] = {
+const txt_cmd_s RalphGenericText[] = {
     text_start("Are you taking"
         t_line "good care of your"
         t_para "#MON? You have"
@@ -1343,7 +1343,7 @@ const struct TextCmd RalphGenericText[] = {
 
 //// reena_callee.c
 
-const struct TextCmd ReenaAnswerPhoneText[] = {
+const txt_cmd_s ReenaAnswerPhoneText[] = {
     text_start("Hello, this is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1352,7 +1352,7 @@ const struct TextCmd ReenaAnswerPhoneText[] = {
         t_line "What's up?"
         t_done )
 };
-const struct TextCmd ReenaAnswerPhoneDayText[] = {
+const txt_cmd_s ReenaAnswerPhoneDayText[] = {
     text_start("Hello, this is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1361,7 +1361,7 @@ const struct TextCmd ReenaAnswerPhoneDayText[] = {
         t_line "what's up?"
         t_done )
 };
-const struct TextCmd ReenaAnswerPhoneNiteText[] = {
+const txt_cmd_s ReenaAnswerPhoneNiteText[] = {
     text_start("Hello, this is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1370,7 +1370,7 @@ const struct TextCmd ReenaAnswerPhoneNiteText[] = {
         t_line "what's up?"
         t_done )
 };
-const struct TextCmd ReenaGreetText[] = {
+const txt_cmd_s ReenaGreetText[] = {
     text_start("You're slow! Hurry"
         t_line "up and answer!"
         t_para "It's me, @")
@@ -1378,7 +1378,7 @@ const struct TextCmd ReenaGreetText[] = {
     text_start("!"
         t_done )
 };
-const struct TextCmd ReenaGreetDayText[] = {
+const txt_cmd_s ReenaGreetDayText[] = {
     text_start("You're slow! Hurry"
         t_line "up and answer!"
         t_para "It's me, @")
@@ -1386,7 +1386,7 @@ const struct TextCmd ReenaGreetDayText[] = {
     text_start("!"
         t_done )
 };
-const struct TextCmd ReenaGreetNiteText[] = {
+const txt_cmd_s ReenaGreetNiteText[] = {
     text_start("You're slow! Hurry"
         t_line "up and answer!"
         t_para "It's me, @")
@@ -1394,7 +1394,7 @@ const struct TextCmd ReenaGreetNiteText[] = {
     text_start("!"
         t_done )
 };
-const struct TextCmd ReenaGenericText[] = {
+const txt_cmd_s ReenaGenericText[] = {
     text_start("Hey, how are your"
         t_line "#MON doing?"
         t_para "What? Great?"
@@ -1409,7 +1409,7 @@ const struct TextCmd ReenaGenericText[] = {
 
 //// tiffany_callee.c
 
-const struct TextCmd TiffanyAnswerPhoneText[] = {
+const txt_cmd_s TiffanyAnswerPhoneText[] = {
     text_start("Yes? This is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1418,7 +1418,7 @@ const struct TextCmd TiffanyAnswerPhoneText[] = {
         t_line "Good morning."
         t_done )
 };
-const struct TextCmd TiffanyAnswerPhoneDayText[] = {
+const txt_cmd_s TiffanyAnswerPhoneDayText[] = {
     text_start("Yes? This is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1427,7 +1427,7 @@ const struct TextCmd TiffanyAnswerPhoneDayText[] = {
         t_line "Hello."
         t_done )
 };
-const struct TextCmd TiffanyAnswerPhoneNiteText[] = {
+const txt_cmd_s TiffanyAnswerPhoneNiteText[] = {
     text_start("Yes? This is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1436,7 +1436,7 @@ const struct TextCmd TiffanyAnswerPhoneNiteText[] = {
         t_line "evening."
         t_done )
 };
-const struct TextCmd TiffanyGreetText[] = {
+const txt_cmd_s TiffanyGreetText[] = {
     text_start("Is this <PLAY_G>?"
         t_para "Good morning. This"
         t_line "is @")
@@ -1444,14 +1444,14 @@ const struct TextCmd TiffanyGreetText[] = {
     text_start("."
         t_done )
 };
-const struct TextCmd TiffanyGreetDayText[] = {
+const txt_cmd_s TiffanyGreetDayText[] = {
     text_start("Is this <PLAY_G>?"
         t_para "Hi, it's @")
     text_ram(wram_ptr(wStringBuffer3))
     text_start("."
         t_done )
 };
-const struct TextCmd TiffanyGreetNiteText[] = {
+const txt_cmd_s TiffanyGreetNiteText[] = {
     text_start("Is this <PLAY_G>?"
         t_para "Good evening. This"
         t_line "is @")
@@ -1459,7 +1459,7 @@ const struct TextCmd TiffanyGreetNiteText[] = {
     text_start("."
         t_done )
 };
-const struct TextCmd TiffanyGenericText[] = {
+const txt_cmd_s TiffanyGenericText[] = {
     text_start("Are your #MON"
         t_line "doing well?"
         t_para "I hope you take"
@@ -1480,7 +1480,7 @@ const struct TextCmd TiffanyGenericText[] = {
 
 //// todd_callee.c
 
-const struct TextCmd ToddAnswerPhoneText[] = {
+const txt_cmd_s ToddAnswerPhoneText[] = {
     text_start("Yes? This is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1488,7 +1488,7 @@ const struct TextCmd ToddAnswerPhoneText[] = {
         t_para "Hey, <PLAY_G>!"
         t_done )
 };
-const struct TextCmd ToddAnswerPhoneDayText[] = {
+const txt_cmd_s ToddAnswerPhoneDayText[] = {
     text_start("Yes? This is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1497,7 +1497,7 @@ const struct TextCmd ToddAnswerPhoneDayText[] = {
         t_line "<PLAY_G>."
         t_done )
 };
-const struct TextCmd ToddAnswerPhoneNiteText[] = {
+const txt_cmd_s ToddAnswerPhoneNiteText[] = {
     text_start("Yes? This is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1505,7 +1505,7 @@ const struct TextCmd ToddAnswerPhoneNiteText[] = {
         t_para "Ah, <PLAY_G>!"
         t_done )
 };
-const struct TextCmd ToddGreetText[] = {
+const txt_cmd_s ToddGreetText[] = {
     text_start("Hello, this is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1513,7 +1513,7 @@ const struct TextCmd ToddGreetText[] = {
         t_para "<PLAY_G>, right?"
         t_done )
 };
-const struct TextCmd ToddGreetDayText[] = {
+const txt_cmd_s ToddGreetDayText[] = {
     text_start("Hello, this is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1522,7 +1522,7 @@ const struct TextCmd ToddGreetDayText[] = {
         t_line "you doing?"
         t_done )
 };
-const struct TextCmd ToddGreetNiteText[] = {
+const txt_cmd_s ToddGreetNiteText[] = {
     text_start("Hello, this is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1531,7 +1531,7 @@ const struct TextCmd ToddGreetNiteText[] = {
         t_line "call you so late."
         t_done )
 };
-const struct TextCmd ToddGenericText[] = {
+const txt_cmd_s ToddGenericText[] = {
     text_start("How do you raise"
         t_line "your #MON?"
         t_para "I do all sorts"
@@ -1545,7 +1545,7 @@ const struct TextCmd ToddGenericText[] = {
 
 //// tully_callee.c
 
-const struct TextCmd TullyAnswerPhoneText[] = {
+const txt_cmd_s TullyAnswerPhoneText[] = {
     text_start("Hello, this is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1554,7 +1554,7 @@ const struct TextCmd TullyAnswerPhoneText[] = {
         t_line "<PLAY_G>."
         t_done )
 };
-const struct TextCmd TullyAnswerPhoneDayText[] = {
+const txt_cmd_s TullyAnswerPhoneDayText[] = {
     text_start("Hello, this is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1563,7 +1563,7 @@ const struct TextCmd TullyAnswerPhoneDayText[] = {
         t_line "<PLAY_G>, right?"
         t_done )
 };
-const struct TextCmd TullyAnswerPhoneNiteText[] = {
+const txt_cmd_s TullyAnswerPhoneNiteText[] = {
     text_start("Hello, this is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1572,7 +1572,7 @@ const struct TextCmd TullyAnswerPhoneNiteText[] = {
         t_line "<PLAY_G>!"
         t_done )
 };
-const struct TextCmd TullyGreetText[] = {
+const txt_cmd_s TullyGreetText[] = {
     text_start("Hello!"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1581,7 +1581,7 @@ const struct TextCmd TullyGreetText[] = {
         t_line "weather's great!"
         t_done )
 };
-const struct TextCmd TullyGreetDayText[] = {
+const txt_cmd_s TullyGreetDayText[] = {
     text_start("Hello!"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1590,7 +1590,7 @@ const struct TextCmd TullyGreetDayText[] = {
         t_line "for fishing!"
         t_done )
 };
-const struct TextCmd TullyGreetNiteText[] = {
+const txt_cmd_s TullyGreetNiteText[] = {
     text_start("Hello!"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1599,7 +1599,7 @@ const struct TextCmd TullyGreetNiteText[] = {
         t_line "for fishing!"
         t_done )
 };
-const struct TextCmd TullyGenericText[] = {
+const txt_cmd_s TullyGenericText[] = {
     text_start("How's your trip"
         t_line "coming along?"
         t_para "I can't complain"
@@ -1609,7 +1609,7 @@ const struct TextCmd TullyGenericText[] = {
 
 //// unknown_callee.c
 
-const struct TextCmd UnknownGenericText[] = {
+const txt_cmd_s UnknownGenericText[] = {
     text_start("How are your"
         t_line "#MON doing?"
         t_para "My #MON are a"
@@ -1625,7 +1625,7 @@ const struct TextCmd UnknownGenericText[] = {
         t_line "bit much for me!"
         t_done )
 };
-const struct TextCmd UnknownTougherThanEverText[] = {
+const txt_cmd_s UnknownTougherThanEverText[] = {
     text_start("My @")
     text_ram(wram_ptr(wStringBuffer4))
     text_start("'s"
@@ -1638,7 +1638,7 @@ const struct TextCmd UnknownTougherThanEverText[] = {
 
 //// vance_callee.c
 
-const struct TextCmd VanceAnswerPhoneText[] = {
+const txt_cmd_s VanceAnswerPhoneText[] = {
     text_start("Yes, hello?"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1648,7 +1648,7 @@ const struct TextCmd VanceAnswerPhoneText[] = {
         t_line "#MON?"
         t_done )
 };
-const struct TextCmd VanceAnswerPhoneDayText[] = {
+const txt_cmd_s VanceAnswerPhoneDayText[] = {
     text_start("Yes, hello?"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1658,7 +1658,7 @@ const struct TextCmd VanceAnswerPhoneDayText[] = {
         t_line "#MON flying?"
         t_done )
 };
-const struct TextCmd VanceAnswerPhoneNiteText[] = {
+const txt_cmd_s VanceAnswerPhoneNiteText[] = {
     text_start("Yes, hello?"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1669,7 +1669,7 @@ const struct TextCmd VanceAnswerPhoneNiteText[] = {
         t_line "see some action?"
         t_done )
 };
-const struct TextCmd VanceGreetText[] = {
+const txt_cmd_s VanceGreetText[] = {
     text_start("Good morning,"
         t_line "<PLAY_G>!"
         t_para "It's @")
@@ -1678,7 +1678,7 @@ const struct TextCmd VanceGreetText[] = {
         t_line "Good morning!"
         t_done )
 };
-const struct TextCmd VanceGreetDayText[] = {
+const txt_cmd_s VanceGreetDayText[] = {
     text_start("Hi, <PLAY_G>!"
         t_para "It's @")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1686,7 +1686,7 @@ const struct TextCmd VanceGreetDayText[] = {
         t_line "Remember me?"
         t_done )
 };
-const struct TextCmd VanceGreetNiteText[] = {
+const txt_cmd_s VanceGreetNiteText[] = {
     text_start("Good evening,"
         t_line "<PLAY_G>!"
         t_para "It's @")
@@ -1695,7 +1695,7 @@ const struct TextCmd VanceGreetNiteText[] = {
         t_line "Are you free now?"
         t_done )
 };
-const struct TextCmd VanceGenericText[] = {
+const txt_cmd_s VanceGenericText[] = {
     text_start("Are you and your"
         t_line "#MON fine?"
         t_para "My @")
@@ -1711,7 +1711,7 @@ const struct TextCmd VanceGenericText[] = {
 
 //// wade_callee.c
 
-const struct TextCmd WadeAnswerPhoneText[] = {
+const txt_cmd_s WadeAnswerPhoneText[] = {
     text_start("Hello? This is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1720,7 +1720,7 @@ const struct TextCmd WadeAnswerPhoneText[] = {
         t_line "Good morning!"
         t_done )
 };
-const struct TextCmd WadeAnswerPhoneDayText[] = {
+const txt_cmd_s WadeAnswerPhoneDayText[] = {
     text_start("Hello? This is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1728,7 +1728,7 @@ const struct TextCmd WadeAnswerPhoneDayText[] = {
         t_para "Oh, hi, <PLAY_G>!"
         t_done )
 };
-const struct TextCmd WadeAnswerPhoneNiteText[] = {
+const txt_cmd_s WadeAnswerPhoneNiteText[] = {
     text_start("Hello? This is"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1737,7 +1737,7 @@ const struct TextCmd WadeAnswerPhoneNiteText[] = {
         t_line "Good evening!"
         t_done )
 };
-const struct TextCmd WadeGreetText[] = {
+const txt_cmd_s WadeGreetText[] = {
     text_start("<PLAY_G>, good"
         t_line "morning!"
         t_para "It's me, @")
@@ -1746,7 +1746,7 @@ const struct TextCmd WadeGreetText[] = {
         t_line "Isn't it nice out?"
         t_done )
 };
-const struct TextCmd WadeGreetDayText[] = {
+const txt_cmd_s WadeGreetDayText[] = {
     text_start("<PLAY_G>, howdy!"
         t_para "It's me, @")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1754,7 +1754,7 @@ const struct TextCmd WadeGreetDayText[] = {
         t_line "Isn't it nice out?"
         t_done )
 };
-const struct TextCmd WadeGreetNiteText[] = {
+const txt_cmd_s WadeGreetNiteText[] = {
     text_start("Good evening,"
         t_line "<PLAY_G>!"
         t_para "It's me, @")
@@ -1763,7 +1763,7 @@ const struct TextCmd WadeGreetNiteText[] = {
         t_line "Were you awake?"
         t_done )
 };
-const struct TextCmd WadeGenericText[] = {
+const txt_cmd_s WadeGenericText[] = {
     text_start("How are your"
         t_line "#MON doing?"
         t_para "My #MON have"
@@ -1782,7 +1782,7 @@ const struct TextCmd WadeGenericText[] = {
 
 //// wilton_callee.c
 
-const struct TextCmd WiltonAnswerPhoneText[] = {
+const txt_cmd_s WiltonAnswerPhoneText[] = {
     text_start("Hello, you have"
         t_line "reached @")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1790,7 +1790,7 @@ const struct TextCmd WiltonAnswerPhoneText[] = {
         t_para "Ah, <PLAY_G>."
         t_done )
 };
-const struct TextCmd WiltonAnswerPhoneDayText[] = {
+const txt_cmd_s WiltonAnswerPhoneDayText[] = {
     text_start("Hello, you have"
         t_line "reached @")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1799,7 +1799,7 @@ const struct TextCmd WiltonAnswerPhoneDayText[] = {
         t_line "it?"
         t_done )
 };
-const struct TextCmd WiltonAnswerPhoneNiteText[] = {
+const txt_cmd_s WiltonAnswerPhoneNiteText[] = {
     text_start("Hello, you have"
         t_line "reached @")
     text_ram(wram_ptr(wStringBuffer3))
@@ -1808,7 +1808,7 @@ const struct TextCmd WiltonAnswerPhoneNiteText[] = {
         t_line "<PLAY_G>."
         t_done )
 };
-const struct TextCmd WiltonGreetText[] = {
+const txt_cmd_s WiltonGreetText[] = {
     text_start("Ah, it's @")
     text_ram(wram_ptr(wStringBuffer3))
     text_start("…"
@@ -1816,14 +1816,14 @@ const struct TextCmd WiltonGreetText[] = {
         t_line "moment?"
         t_done )
 };
-const struct TextCmd WiltonGreetDayText[] = {
+const txt_cmd_s WiltonGreetDayText[] = {
     text_start("Ah, it's @")
     text_ram(wram_ptr(wStringBuffer3))
     text_start("…"
         t_para "Can you talk now?"
         t_done )
 };
-const struct TextCmd WiltonGreetNiteText[] = {
+const txt_cmd_s WiltonGreetNiteText[] = {
     text_start("Ah, it's @")
     text_ram(wram_ptr(wStringBuffer3))
     text_start("…"
@@ -1831,7 +1831,7 @@ const struct TextCmd WiltonGreetNiteText[] = {
         t_line "so late."
         t_done )
 };
-const struct TextCmd WiltonGenericText[] = {
+const txt_cmd_s WiltonGenericText[] = {
     text_start("Have your #MON"
         t_line "grown any?"
         t_para "My @")

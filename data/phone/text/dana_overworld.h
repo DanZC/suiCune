@@ -1,9 +1,9 @@
 #pragma once
-extern const struct TextCmd DanaAskNumber1Text[];
-extern const struct TextCmd DanaAskNumber2Text[];
-extern const struct TextCmd DanaNumberAcceptedText[];
-extern const struct TextCmd DanaNumberDeclinedText[];
-extern const struct TextCmd DanaPhoneFullText[];
-extern const struct TextCmd DanaRematchText[];
-extern const struct TextCmd DanaGiftText[];
-extern const struct TextCmd DanaPackFullText[];
+extern const txt_cmd_s DanaAskNumber1Text[];
+extern const txt_cmd_s DanaAskNumber2Text[];
+extern const txt_cmd_s DanaNumberAcceptedText[];
+extern const txt_cmd_s DanaNumberDeclinedText[];
+extern const txt_cmd_s DanaPhoneFullText[];
+extern const txt_cmd_s DanaRematchText[];
+extern const txt_cmd_s DanaGiftText[];
+extern const txt_cmd_s DanaPackFullText[];

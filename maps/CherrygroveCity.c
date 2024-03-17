@@ -413,7 +413,7 @@ const uint8_t CherrygroveCity_RivalExitsStageLeft[] = {
     big_step(LEFT),
     movement_step_end,
 };
-const struct TextCmd GuideGentIntroText[] = {
+const txt_cmd_s GuideGentIntroText[] = {
     text_start("You're a rookie"
         t_line "trainer, aren't"
         t_cont "you? I can tell!"
@@ -425,12 +425,12 @@ const struct TextCmd GuideGentIntroText[] = {
         t_cont "few things."
         t_done )
 };
-const struct TextCmd GuideGentTourText1[] = {
+const txt_cmd_s GuideGentTourText1[] = {
     text_start("OK, then!"
         t_line "Follow me!"
         t_done )
 };
-const struct TextCmd GuideGentPokecenterText[] = {
+const txt_cmd_s GuideGentPokecenterText[] = {
     text_start("This is a #MON"
         t_line "CENTER. They heal"
         t_para "your #MON in no"
@@ -441,7 +441,7 @@ const struct TextCmd GuideGentPokecenterText[] = {
         t_line "about them."
         t_done )
 };
-const struct TextCmd GuideGentMartText[] = {
+const txt_cmd_s GuideGentMartText[] = {
     text_start("This is a #MON"
         t_line "MART."
         t_para "They sell BALLS"
@@ -450,7 +450,7 @@ const struct TextCmd GuideGentMartText[] = {
         t_line "useful items."
         t_done )
 };
-const struct TextCmd GuideGentRoute30Text[] = {
+const txt_cmd_s GuideGentRoute30Text[] = {
     text_start("ROUTE 30 is out"
         t_line "this way."
         t_para "Trainers will be"
@@ -459,7 +459,7 @@ const struct TextCmd GuideGentRoute30Text[] = {
         t_line "there."
         t_done )
 };
-const struct TextCmd GuideGentSeaText[] = {
+const txt_cmd_s GuideGentSeaText[] = {
     text_start("This is the sea,"
         t_line "as you can see."
         t_para "Some #MON are"
@@ -467,7 +467,7 @@ const struct TextCmd GuideGentSeaText[] = {
         t_cont "water."
         t_done )
 };
-const struct TextCmd GuideGentGiftText[] = {
+const txt_cmd_s GuideGentGiftText[] = {
     text_start("Here…"
         t_para "It's my house!"
         t_line "Thanks for your"
@@ -476,12 +476,12 @@ const struct TextCmd GuideGentGiftText[] = {
         t_line "small gift."
         t_done )
 };
-const struct TextCmd GotMapCardText[] = {
+const txt_cmd_s GotMapCardText[] = {
     text_start("<PLAYER>'s #GEAR"
         t_line "now has a MAP!"
         t_done )
 };
-const struct TextCmd GuideGentPokegearText[] = {
+const txt_cmd_s GuideGentPokegearText[] = {
     text_start("#GEAR becomes"
         t_line "more useful as you"
         t_cont "add CARDS."
@@ -489,14 +489,14 @@ const struct TextCmd GuideGentPokegearText[] = {
         t_line "your journey!"
         t_done )
 };
-const struct TextCmd GuideGentNoText[] = {
+const txt_cmd_s GuideGentNoText[] = {
     text_start("Oh… It's something"
         t_line "I enjoy doing…"
         t_para "Fine. Come see me"
         t_line "when you like."
         t_done )
 };
-const struct TextCmd CherrygroveRivalText_Seen[] = {
+const txt_cmd_s CherrygroveRivalText_Seen[] = {
     text_start("<……> <……> <……>"
         t_para "You got a #MON"
         t_line "at the LAB."
@@ -511,12 +511,12 @@ const struct TextCmd CherrygroveRivalText_Seen[] = {
         t_line "what I mean!"
         t_done )
 };
-const struct TextCmd SilverCherrygroveWinText[] = {
+const txt_cmd_s SilverCherrygroveWinText[] = {
     text_start("Humph. Are you"
         t_line "happy you won?"
         t_done )
 };
-const struct TextCmd CherrygroveRivalText_YouLost[] = {
+const txt_cmd_s CherrygroveRivalText_YouLost[] = {
     text_start("<……> <……> <……>"
         t_para "My name's ???."
         t_para "I'm going to be"
@@ -525,12 +525,12 @@ const struct TextCmd CherrygroveRivalText_YouLost[] = {
         t_cont "trainer."
         t_done )
 };
-const struct TextCmd SilverCherrygroveLossText[] = {
+const txt_cmd_s SilverCherrygroveLossText[] = {
     text_start("Humph. That was a"
         t_line "waste of time."
         t_done )
 };
-const struct TextCmd CherrygroveRivalText_YouWon[] = {
+const txt_cmd_s CherrygroveRivalText_YouWon[] = {
     text_start("<……> <……> <……>"
         t_para "My name's ???."
         t_para "I'm going to be"
@@ -539,7 +539,7 @@ const struct TextCmd CherrygroveRivalText_YouWon[] = {
         t_cont "trainer."
         t_done )
 };
-const struct TextCmd CherrygroveTeacherText_NoMapCard[] = {
+const txt_cmd_s CherrygroveTeacherText_NoMapCard[] = {
     text_start("Did you talk to"
         t_line "the old man by the"
         t_cont "#MON CENTER?"
@@ -548,19 +548,19 @@ const struct TextCmd CherrygroveTeacherText_NoMapCard[] = {
         t_cont "#GEAR."
         t_done )
 };
-const struct TextCmd CherrygroveTeacherText_HaveMapCard[] = {
+const txt_cmd_s CherrygroveTeacherText_HaveMapCard[] = {
     text_start("When you're with"
         t_line "#MON, going"
         t_cont "anywhere is fun."
         t_done )
 };
-const struct TextCmd CherrygroveYoungsterText_NoPokedex[] = {
+const txt_cmd_s CherrygroveYoungsterText_NoPokedex[] = {
     text_start("MR.#MON's house"
         t_line "is still farther"
         t_cont "up ahead."
         t_done )
 };
-const struct TextCmd CherrygroveYoungsterText_HavePokedex[] = {
+const txt_cmd_s CherrygroveYoungsterText_HavePokedex[] = {
     text_start("I battled the"
         t_line "trainers on the"
         t_cont "road."
@@ -570,7 +570,7 @@ const struct TextCmd CherrygroveYoungsterText_HavePokedex[] = {
         t_line "a #MON CENTER."
         t_done )
 };
-const struct TextCmd MysticWaterGuyTextBefore[] = {
+const txt_cmd_s MysticWaterGuyTextBefore[] = {
     text_start("A #MON I caught"
         t_line "had an item."
         t_para "I think it's"
@@ -579,18 +579,18 @@ const struct TextCmd MysticWaterGuyTextBefore[] = {
         t_line "so do you want it?"
         t_done )
 };
-const struct TextCmd MysticWaterGuyTextAfter[] = {
+const txt_cmd_s MysticWaterGuyTextAfter[] = {
     text_start("Back to fishing"
         t_line "for me, then."
         t_done )
 };
-const struct TextCmd CherrygroveCitySignText[] = {
+const txt_cmd_s CherrygroveCitySignText[] = {
     text_start("CHERRYGROVE CITY"
         t_para "The City of Cute,"
         t_line "Fragrant Flowers"
         t_done )
 };
-const struct TextCmd GuideGentsHouseSignText[] = {
+const txt_cmd_s GuideGentsHouseSignText[] = {
     text_start("GUIDE GENT'S HOUSE"
         t_done )
     //db(0, 0) // filler

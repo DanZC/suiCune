@@ -1,9 +1,9 @@
 #pragma once
-extern const struct TextCmd HueyAskNumber1Text[];
-extern const struct TextCmd HueyAskNumber2Text[];
-extern const struct TextCmd HueyNumberAcceptedText[];
-extern const struct TextCmd HueyNumberDeclinedText[];
-extern const struct TextCmd HueyPhoneFullText[];
-extern const struct TextCmd HueyRematchText[];
-extern const struct TextCmd HueyPackFullText[];
-extern const struct TextCmd HueyRematchGiftText[];
+extern const txt_cmd_s HueyAskNumber1Text[];
+extern const txt_cmd_s HueyAskNumber2Text[];
+extern const txt_cmd_s HueyNumberAcceptedText[];
+extern const txt_cmd_s HueyNumberDeclinedText[];
+extern const txt_cmd_s HueyPhoneFullText[];
+extern const txt_cmd_s HueyRematchText[];
+extern const txt_cmd_s HueyPackFullText[];
+extern const txt_cmd_s HueyRematchGiftText[];

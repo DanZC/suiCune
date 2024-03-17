@@ -1,7 +1,7 @@
 #include "../../../constants.h"
 #include "../../../util/scripting_macros.h"
 
-const struct TextCmd BuenaPhoneMorningAnswerText[] = {
+const txt_cmd_s BuenaPhoneMorningAnswerText[] = {
     text_start("Hi, this is BUENA…"
         t_para "Oh! Good morning,"
         t_line "<PLAY_G>!"
@@ -9,14 +9,14 @@ const struct TextCmd BuenaPhoneMorningAnswerText[] = {
         t_line "in the morning…"
         t_done )
 };
-const struct TextCmd BuenaPhoneDayAnswerText[] = {
+const txt_cmd_s BuenaPhoneDayAnswerText[] = {
     text_start("Hi, this is BUENA…"
         t_line "Oh! Hi, <PLAY_G>!"
         t_para "Do you tune into"
         t_line "BUENA's show?"
         t_done )
 };
-const struct TextCmd BuenaPhoneMidnightAnswerText[] = {
+const txt_cmd_s BuenaPhoneMidnightAnswerText[] = {
     text_start("This is BUENA."
         t_line "I can't come to"
         t_para "the phone right"
@@ -29,7 +29,7 @@ const struct TextCmd BuenaPhoneMidnightAnswerText[] = {
         t_line "after midnight!"
         t_done )
 };
-const struct TextCmd BuenaPhoneNiteAnswerText[] = {
+const txt_cmd_s BuenaPhoneNiteAnswerText[] = {
     text_start("Hi, this is BUENA…"
         t_line "Oh! Hi, <PLAY_G>!"
         t_para "I just got off"
@@ -38,35 +38,35 @@ const struct TextCmd BuenaPhoneNiteAnswerText[] = {
         t_line "I'm exhausted!"
         t_done )
 };
-const struct TextCmd BuenaPhoneMorningText[] = {
+const txt_cmd_s BuenaPhoneMorningText[] = {
     text_start("<PLAY_G>!"
         t_line "Hi, it's BUENA!"
         t_para "I got up early, so"
         t_line "I decided to call!"
         t_done )
 };
-const struct TextCmd BuenaPhoneDayText[] = {
+const txt_cmd_s BuenaPhoneDayText[] = {
     text_start("<PLAY_G>!"
         t_line "Hi, it's BUENA!"
         t_para "I needed someone"
         t_line "to chat with!"
         t_done )
 };
-const struct TextCmd BuenaPhoneMidnightText[] = {
+const txt_cmd_s BuenaPhoneMidnightText[] = {
     text_start("<PLAY_G>!"
         t_line "Hi, it's BUENA!"
         t_para "I'm just on my"
         t_line "break."
         t_done )
 };
-const struct TextCmd BuenaPhoneNiteText[] = {
+const txt_cmd_s BuenaPhoneNiteText[] = {
     text_start("<PLAY_G>!"
         t_line "Hi, it's BUENA!"
         t_para "I couldn't sleep,"
         t_line "so I called you."
         t_done )
 };
-const struct TextCmd BuenaPhoneRocketText[] = {
+const txt_cmd_s BuenaPhoneRocketText[] = {
     text_start("Oh. Hi, <PLAY_G>!"
         t_para "You are how?"
         t_para "Aiyee! This isn't"
@@ -79,7 +79,7 @@ const struct TextCmd BuenaPhoneRocketText[] = {
         t_line "better be careful!"
         t_done )
 };
-const struct TextCmd BuenaPhoneWentOutWithBenText[] = {
+const txt_cmd_s BuenaPhoneWentOutWithBenText[] = {
     text_start("The other day, I"
         t_line "went out to eat"
         t_para "with DJ BEN!"
@@ -96,7 +96,7 @@ const struct TextCmd BuenaPhoneWentOutWithBenText[] = {
         t_line "you later!"
         t_done )
 };
-const struct TextCmd BuenaPhoneReceptionistText[] = {
+const txt_cmd_s BuenaPhoneReceptionistText[] = {
     text_start("You know the"
         t_line "receptionist at"
         t_cont "the RADIO TOWER?"
@@ -113,7 +113,7 @@ const struct TextCmd BuenaPhoneReceptionistText[] = {
         t_para "Catch you later!"
         t_done )
 };
-const struct TextCmd BuenaPhoneLuckyNumberShowText[] = {
+const txt_cmd_s BuenaPhoneLuckyNumberShowText[] = {
     text_start("Tell me, <PLAY_G>."
         t_line "Have you ever won"
         t_para "a prize on the"
@@ -126,7 +126,7 @@ const struct TextCmd BuenaPhoneLuckyNumberShowText[] = {
         t_para "Let's chat again!"
         t_done )
 };
-const struct TextCmd BuenaPhoneStressedFromWorkText[] = {
+const txt_cmd_s BuenaPhoneStressedFromWorkText[] = {
     text_start("You know, last"
         t_line "night…"
         t_para "I was so stressed"
@@ -147,7 +147,7 @@ const struct TextCmd BuenaPhoneStressedFromWorkText[] = {
         t_line "wrong number!"
         t_done )
 };
-const struct TextCmd BuenaPhoneProfessorOakText[] = {
+const txt_cmd_s BuenaPhoneProfessorOakText[] = {
     text_start("Yesterday, PROF."
         t_line "OAK was in the"
         t_para "studio to tape his"
@@ -163,7 +163,7 @@ const struct TextCmd BuenaPhoneProfessorOakText[] = {
         t_para "Catch you later!"
         t_done )
 };
-const struct TextCmd BuenaPhoneGotAColdText[] = {
+const txt_cmd_s BuenaPhoneGotAColdText[] = {
     text_start("…Cough, cough!"
         t_para "Uhm sorry uh got"
         t_line "uh code dite now."
@@ -178,7 +178,7 @@ const struct TextCmd BuenaPhoneGotAColdText[] = {
         t_cont "been BUENA!"
         t_done )
 };
-const struct TextCmd BuenaPhoneRadioCardQuestionsText[] = {
+const txt_cmd_s BuenaPhoneRadioCardQuestionsText[] = {
     text_start("Hey, <PLAY_G>."
         t_line "You won that RADIO"
         t_para "CARD by beating"
@@ -193,7 +193,7 @@ const struct TextCmd BuenaPhoneRadioCardQuestionsText[] = {
         t_line "again!"
         t_done )
 };
-const struct TextCmd BuenaPhonePikachuFanClubText[] = {
+const txt_cmd_s BuenaPhonePikachuFanClubText[] = {
     text_start("I'm elated that"
         t_line "more people are"
         t_para "taking part in my"
@@ -217,7 +217,7 @@ const struct TextCmd BuenaPhonePikachuFanClubText[] = {
         t_para "Let's chat again!"
         t_done )
 };
-const struct TextCmd BuenaPhoneRadioTowerDirectorText[] = {
+const txt_cmd_s BuenaPhoneRadioTowerDirectorText[] = {
     text_start("Guess what?"
         t_line "The RADIO TOWER's"
         t_para "DIRECTOR is a big"
@@ -240,7 +240,7 @@ const struct TextCmd BuenaPhoneRadioTowerDirectorText[] = {
         t_line "my show!"
         t_done )
 };
-const struct TextCmd BuenaPhoneWhenDoYouRelaxText[] = {
+const txt_cmd_s BuenaPhoneWhenDoYouRelaxText[] = {
     text_start("<PLAY_G>, tell me."
         t_para "When do you relax"
         t_line "the most?"
@@ -262,7 +262,7 @@ const struct TextCmd BuenaPhoneWhenDoYouRelaxText[] = {
         t_line "happened! Later!"
         t_done )
 };
-const struct TextCmd BuenaPhoneStarterPokemonText[] = {
+const txt_cmd_s BuenaPhoneStarterPokemonText[] = {
     text_start("<PLAY_G>, what was"
         t_line "the first #MON"
         t_cont "you ever caught?"
@@ -290,7 +290,7 @@ const struct TextCmd BuenaPhoneStarterPokemonText[] = {
         t_para "Bye-bye!"
         t_done )
 };
-const struct TextCmd BuenaPhoneCompanyVacationText[] = {
+const txt_cmd_s BuenaPhoneCompanyVacationText[] = {
     text_start("Guess what? All of"
         t_line "us from the RADIO"
         t_para "TOWER are going on"
@@ -310,7 +310,7 @@ const struct TextCmd BuenaPhoneCompanyVacationText[] = {
         t_para "Bye-bye!"
         t_done )
 };
-const struct TextCmd BuenaPhoneBenAndFernText[] = {
+const txt_cmd_s BuenaPhoneBenAndFernText[] = {
     text_start("Did you know…?"
         t_para "BEN and FERN talk"
         t_line "on the phone for"
@@ -332,7 +332,7 @@ const struct TextCmd BuenaPhoneBenAndFernText[] = {
         t_para "Let's chat again!"
         t_done )
 };
-const struct TextCmd BuenaPhoneGoingShoppingText[] = {
+const txt_cmd_s BuenaPhoneGoingShoppingText[] = {
     text_start("I'm going shopping"
         t_line "with MARY and LILY"
         t_cont "soon."
@@ -345,7 +345,7 @@ const struct TextCmd BuenaPhoneGoingShoppingText[] = {
         t_para "Catch you later!"
         t_done )
 };
-const struct TextCmd BuenaPhoneFavoriteSlotMachineAnswerText[] = {
+const txt_cmd_s BuenaPhoneFavoriteSlotMachineAnswerText[] = {
     text_start("I'm thinking of"
         t_line "going to the GAME"
         t_para "CORNER tomorrow."
@@ -366,7 +366,7 @@ const struct TextCmd BuenaPhoneFavoriteSlotMachineAnswerText[] = {
         t_para "Catch you later!"
         t_done )
 };
-const struct TextCmd BuenaPhonePokegearAnswerText[] = {
+const txt_cmd_s BuenaPhonePokegearAnswerText[] = {
     text_start("Hey, <PLAY_G>. You"
         t_line "use your #GEAR"
         t_para "to listen to the"
@@ -383,7 +383,7 @@ const struct TextCmd BuenaPhonePokegearAnswerText[] = {
         t_line "calling! Later!"
         t_done )
 };
-const struct TextCmd BuenaPhoneCoopedUpInRadioTowerAnswerText[] = {
+const txt_cmd_s BuenaPhoneCoopedUpInRadioTowerAnswerText[] = {
     text_start("Is it sunny"
         t_line "outside today?"
         t_para "When you're cooped"

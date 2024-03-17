@@ -1,3 +1,3 @@
 #pragma once
-extern const struct TextCmd UnknownGenericText[];
-extern const struct TextCmd UnknownTougherThanEverText[];
+extern const txt_cmd_s UnknownGenericText[];
+extern const txt_cmd_s UnknownTougherThanEverText[];

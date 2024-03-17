@@ -1155,7 +1155,7 @@ void LoadCallerScript_Conv(uint8_t caller){
     }
 }
 
-const struct TextCmd PhoneWrongNumberText[] = {
+const txt_cmd_s PhoneWrongNumberText[] = {
     text_far(v_PhoneWrongNumberText)
     text_end
 };
@@ -1440,7 +1440,7 @@ void HangUp_Beep(void){
     return PlaySFX_Conv(SFX_HANG_UP);
 }
 
-const struct TextCmd PhoneClickText[] = {
+const txt_cmd_s PhoneClickText[] = {
     text_far(v_PhoneClickText)
     text_end
 };
@@ -1452,7 +1452,7 @@ void HangUp_BoopOn(void){
     return PrintText_Conv2(PhoneEllipseText);
 }
 
-const struct TextCmd PhoneEllipseText[] = {
+const txt_cmd_s PhoneEllipseText[] = {
     text_far(v_PhoneEllipseText)
     text_end
 };
@@ -1797,7 +1797,7 @@ bool PhoneOutOfAreaScript(script_s* s){
     SCRIPT_END
 }
 
-const struct TextCmd PhoneOutOfAreaText[] = {
+const txt_cmd_s PhoneOutOfAreaText[] = {
     text_far(v_PhoneOutOfAreaText)
     text_end
 };
@@ -1809,7 +1809,7 @@ bool PhoneScript_JustTalkToThem(script_s* s){
     SCRIPT_END
 }
 
-const struct TextCmd PhoneJustTalkToThemText[] = {
+const txt_cmd_s PhoneJustTalkToThemText[] = {
     text_far(v_PhoneJustTalkToThemText)
     text_end
 };
@@ -1821,7 +1821,7 @@ bool PhoneThankYouTextScript(script_s* s){
     SCRIPT_END
 }
 
-const struct TextCmd PhoneThankYouText[] = {
+const txt_cmd_s PhoneThankYouText[] = {
     text_far(v_PhoneThankYouText)
     text_end
 };

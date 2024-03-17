@@ -3,7 +3,7 @@
 #include "../../util/scripting.h"
 #include "../../data/text/common.h"
 
-static const struct TextCmd RepelWoreOffText[] = {
+static const txt_cmd_s RepelWoreOffText[] = {
     text_far(v_RepelWoreOffText)
     text_end
 };

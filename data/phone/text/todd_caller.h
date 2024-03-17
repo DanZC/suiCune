@@ -1,10 +1,10 @@
 #pragma once
-extern const struct TextCmd ToddLooksCuteLikeMeText[];
-extern const struct TextCmd ToddDefeatedMonText[];
-extern const struct TextCmd ToddLostAMonText[];
-extern const struct TextCmd ToddBattleRematchText[];
-extern const struct TextCmd ToddHangUpText[];
-extern const struct TextCmd ToddDepartmentStoreBargainSaleText[];
-extern const struct TextCmd ToddSavingUpForBargainSaleText[];
-extern const struct TextCmd ToddLookingForwardToBattleText[];
-extern const struct TextCmd ToddHaveYouGoneToDepartmentStoreText[];
+extern const txt_cmd_s ToddLooksCuteLikeMeText[];
+extern const txt_cmd_s ToddDefeatedMonText[];
+extern const txt_cmd_s ToddLostAMonText[];
+extern const txt_cmd_s ToddBattleRematchText[];
+extern const txt_cmd_s ToddHangUpText[];
+extern const txt_cmd_s ToddDepartmentStoreBargainSaleText[];
+extern const txt_cmd_s ToddSavingUpForBargainSaleText[];
+extern const txt_cmd_s ToddLookingForwardToBattleText[];
+extern const txt_cmd_s ToddHaveYouGoneToDepartmentStoreText[];

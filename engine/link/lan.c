@@ -10,13 +10,13 @@
 #include "../../home/map_objects.h"
 #include "../../util/network.h"
 
-static const struct TextCmd Text_AskHostOrJoin[] = {
+static const txt_cmd_s Text_AskHostOrJoin[] = {
     text_start("Would you like to"
         t_line "host or join?"
         t_done)
 };
 
-static const struct TextCmd Text_WillYouConnect[] = {
+static const txt_cmd_s Text_WillYouConnect[] = {
     text_start("Will you connect"
         t_line "to @")
     text_ram(wram_ptr(wStringBuffer1))
@@ -24,7 +24,7 @@ static const struct TextCmd Text_WillYouConnect[] = {
         t_done )
 };
 
-static const struct TextCmd Text_WillYouAccept[] = {
+static const txt_cmd_s Text_WillYouAccept[] = {
     text_start("Will you accept"
         t_line "@")
     text_ram(wram_ptr(wStringBuffer1))
@@ -32,12 +32,12 @@ static const struct TextCmd Text_WillYouAccept[] = {
         t_done )
 };
 
-static const struct TextCmd Text_Cancelled[] = {
+static const txt_cmd_s Text_Cancelled[] = {
     text_start("Cancelled."
         t_prompt)
 };
 
-static const struct TextCmd Text_CouldntFindAny[] = {
+static const txt_cmd_s Text_CouldntFindAny[] = {
     text_start("Couldn't find"
         t_line "any players."
         t_prompt)

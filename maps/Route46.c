@@ -239,53 +239,53 @@ bool Route46FruitTree2(script_s* s) {
     fruittree(FRUITTREE_ROUTE_46_2)
     SCRIPT_END
 }
-const struct TextCmd HikerBaileySeenText[] = {
+const txt_cmd_s HikerBaileySeenText[] = {
     text_start("Awright! I'll show"
         t_line "you the power of"
         t_cont "mountain #MON!"
         t_done )
 };
-const struct TextCmd HikerBaileyBeatenText[] = {
+const txt_cmd_s HikerBaileyBeatenText[] = {
     text_start("Mercy! You showed"
         t_line "me your power!"
         t_done )
 };
-const struct TextCmd HikerBaileyAfterBattleText[] = {
+const txt_cmd_s HikerBaileyAfterBattleText[] = {
     text_start("It's over. I don't"
         t_line "mind. We HIKERS"
         t_cont "are like that."
         t_done )
 };
-const struct TextCmd CamperTedSeenText[] = {
+const txt_cmd_s CamperTedSeenText[] = {
     text_start("I'm raising #-"
         t_line "MON too!"
         t_para "Will you battle"
         t_line "with me?"
         t_done )
 };
-const struct TextCmd CamperTedBeatenText[] = {
+const txt_cmd_s CamperTedBeatenText[] = {
     text_start("Wha…?"
         t_done )
 };
-const struct TextCmd CamperTedAfterBattleText[] = {
+const txt_cmd_s CamperTedAfterBattleText[] = {
     text_start("I did my best but"
         t_line "came up short."
         t_para "No excuses--I"
         t_line "admit I lost."
         t_done )
 };
-const struct TextCmd PicnickerErin1SeenText[] = {
+const txt_cmd_s PicnickerErin1SeenText[] = {
     text_start("I raise #MON"
         t_line "too!"
         t_para "Will you battle"
         t_line "with me?"
         t_done )
 };
-const struct TextCmd PicnickerErin1BeatenText[] = {
+const txt_cmd_s PicnickerErin1BeatenText[] = {
     text_start("Oh, rats!"
         t_done )
 };
-const struct TextCmd PicnickerErinAfterBattleText[] = {
+const txt_cmd_s PicnickerErinAfterBattleText[] = {
     text_start("I've been to many"
         t_line "GYMS, but the GYM"
         t_para "in GOLDENROD is my"
@@ -294,7 +294,7 @@ const struct TextCmd PicnickerErinAfterBattleText[] = {
         t_line "pretty flowers!"
         t_done )
 };
-const struct TextCmd PicnickerErin2BeatenText[] = {
+const txt_cmd_s PicnickerErin2BeatenText[] = {
     text_start("Aww… I keep losing"
         t_line "all the time!"
         t_para "I'll just have to"
@@ -306,7 +306,7 @@ const struct TextCmd PicnickerErin2BeatenText[] = {
         t_cont "the other time."
         t_done )
 };
-const struct TextCmd Route46SignText[] = {
+const txt_cmd_s Route46SignText[] = {
     text_start("ROUTE 46"
         t_line "MOUNTAIN RD. AHEAD"
         t_done )

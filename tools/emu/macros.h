@@ -2858,6 +2858,8 @@
 
 #define bit_set(_x, _n) _x |= (1 << (_n))
 
+#define bit_toggle(_x, _n) _x ^= (1 << (_n))
+
 #define calc_sin_wave \
     do {\
         AND_A(0b111111); \

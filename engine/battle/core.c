@@ -10813,7 +10813,7 @@ void LoadHPExpBarGFX(void){
 }
 
 void EmptyBattleTextbox(void){
-    static const struct TextCmd empty[] = {
+    static const txt_cmd_s empty[] = {
         text_end
     };
     //text_end ['?']
@@ -11813,25 +11813,25 @@ void SendOutMonText(void){
 
 }
 
-const struct TextCmd GoMonText[] = {
+const txt_cmd_s GoMonText[] = {
     text_far(v_GoMonText)
     text_asm(PrepareBattleMonNicknameText_Conv)
     // JR(mPrepareBattleMonNicknameText);
 };
 
-const struct TextCmd DoItMonText[] = {
+const txt_cmd_s DoItMonText[] = {
     text_far(v_DoItMonText)
     text_asm(PrepareBattleMonNicknameText_Conv)
     // JR(mPrepareBattleMonNicknameText);
 };
 
-const struct TextCmd GoForItMonText[] = {
+const txt_cmd_s GoForItMonText[] = {
     text_far(v_GoForItMonText)
     text_asm(PrepareBattleMonNicknameText_Conv)
     // JR(mPrepareBattleMonNicknameText);
 };
 
-const struct TextCmd YourFoesWeakGetmMonText[] = {
+const txt_cmd_s YourFoesWeakGetmMonText[] = {
     text_far(v_YourFoesWeakGetmMonText)
     text_asm(PrepareBattleMonNicknameText_Conv)
     // JR(mPrepareBattleMonNicknameText);
@@ -11849,7 +11849,7 @@ void PrepareBattleMonNicknameText_Conv(struct TextCmdState* state){
     state->hl = BattleMonNicknameText;
 }
 
-const struct TextCmd BattleMonNicknameText[] = {
+const txt_cmd_s BattleMonNicknameText[] = {
     text_far(v_BattleMonNicknameText)
     text_end
 };

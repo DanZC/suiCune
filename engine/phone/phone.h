@@ -49,9 +49,9 @@ void HangUp(void);
 void Phone_CallEnd(void);
 void HangUp_ShutDown(void);
 void HangUp_Beep(void);
-extern const struct TextCmd PhoneClickText[];
+extern const txt_cmd_s PhoneClickText[];
 void HangUp_BoopOn(void);
-extern const struct TextCmd PhoneEllipseText[];
+extern const txt_cmd_s PhoneEllipseText[];
 void HangUp_BoopOff(void);
 void Phone_StartRinging(void);
 void HangUp_Wait20Frames(void);
@@ -73,11 +73,11 @@ void Phone_GetTrainerClassName(void);
 void GetCallerLocation(void);
 struct CallerLocation GetCallerLocation_Conv(void);
 bool PhoneOutOfAreaScript(script_s* s);
-extern const struct TextCmd PhoneOutOfAreaText[];
+extern const txt_cmd_s PhoneOutOfAreaText[];
 bool PhoneScript_JustTalkToThem(script_s* s);
-extern const struct TextCmd PhoneJustTalkToThemText[];
+extern const txt_cmd_s PhoneJustTalkToThemText[];
 bool PhoneThankYouTextScript(script_s* s);
-extern const struct TextCmd PhoneThankYouText[];
+extern const txt_cmd_s PhoneThankYouText[];
 //#include "data/phone/permanent_numbers.h"
 //#include "data/phone/non_trainer_names.h"
 //#include "data/phone/phone_contacts.h"

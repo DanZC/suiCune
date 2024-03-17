@@ -819,7 +819,7 @@ skiptext:
 
 }
 
-const struct TextCmd EnemyWithdrewText[] = {
+const txt_cmd_s EnemyWithdrewText[] = {
     text_far(v_EnemyWithdrewText)
     text_end
 };
@@ -981,7 +981,7 @@ void PrintText_UsedItemOn(void){
 
 }
 
-const struct TextCmd EnemyUsedOnText[] = {
+const txt_cmd_s EnemyUsedOnText[] = {
     text_far(v_EnemyUsedOnText)
     text_end
 };

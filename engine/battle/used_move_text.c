@@ -14,7 +14,7 @@ void DisplayUsedMoveText(void){
     return WaitBGMap_Conv();
 }
 
-const struct TextCmd UsedMoveText[] = {
+const txt_cmd_s UsedMoveText[] = {
     text_far(v_ActorNameText)
     text_asm(UsedMoveText_Function)
 };
@@ -94,17 +94,17 @@ void UsedMoveText_Function(struct TextCmdState* state) {
 
 }
 
-const struct TextCmd UsedMove1Text[] = {
+const txt_cmd_s UsedMove1Text[] = {
     text_far(v_UsedMove1Text)
     text_asm(UsedMoveText_CheckObedience)
 };
 
-const struct TextCmd UsedMove2Text[] = {
+const txt_cmd_s UsedMove2Text[] = {
     text_far(v_UsedMove2Text)
     text_asm(UsedMoveText_CheckObedience)
 };
 
-static const struct TextCmd UsedInsteadText[];
+static const txt_cmd_s UsedInsteadText[];
 static void UsedMoveText_CheckObedience_GetMoveNameText(struct TextCmdState* state);
 void UsedMoveText_CheckObedience(struct TextCmdState* state){
 //  check obedience
@@ -118,7 +118,7 @@ void UsedMoveText_CheckObedience(struct TextCmdState* state){
     // RET;
     state->hl = UsedInsteadText;
 }
-static const struct TextCmd UsedInsteadText[] = {
+static const txt_cmd_s UsedInsteadText[] = {
     text_far(v_UsedInsteadText)
     text_asm(UsedMoveText_CheckObedience_GetMoveNameText)
 };
@@ -128,7 +128,7 @@ static void UsedMoveText_CheckObedience_GetMoveNameText(struct TextCmdState* sta
     state->hl = MoveNameText;
 }
 
-const struct TextCmd MoveNameText[] = {
+const txt_cmd_s MoveNameText[] = {
     text_far(v_MoveNameText)
     text_asm(MoveNameText_Function)
 };
@@ -167,27 +167,27 @@ void MoveNameText_Function(struct TextCmdState* state){
     state->hl = endusedmovetexts[wram->wMoveGrammar];
 }
 
-const struct TextCmd EndUsedMove1Text[] = {
+const txt_cmd_s EndUsedMove1Text[] = {
     text_far(v_EndUsedMove1Text)
     text_end
 };
 
-const struct TextCmd EndUsedMove2Text[] = {
+const txt_cmd_s EndUsedMove2Text[] = {
     text_far(v_EndUsedMove2Text)
     text_end
 };
 
-const struct TextCmd EndUsedMove3Text[] = {
+const txt_cmd_s EndUsedMove3Text[] = {
     text_far(v_EndUsedMove3Text)
     text_end
 };
 
-const struct TextCmd EndUsedMove4Text[] = {
+const txt_cmd_s EndUsedMove4Text[] = {
     text_far(v_EndUsedMove4Text)
     text_end
 };
 
-const struct TextCmd EndUsedMove5Text[] = {
+const txt_cmd_s EndUsedMove5Text[] = {
     text_far(v_EndUsedMove5Text)
     text_end
 };

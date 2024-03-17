@@ -156,27 +156,27 @@ item_t GetFruitTreeItem_Conv(uint8_t a){
     return FruitTreeItems[a];
 }
 
-const struct TextCmd FruitBearingTreeText[] = {
+const txt_cmd_s FruitBearingTreeText[] = {
     text_far(v_FruitBearingTreeText)
     text_end
 };
 
-const struct TextCmd HeyItsFruitText[] = {
+const txt_cmd_s HeyItsFruitText[] = {
     text_far(v_HeyItsFruitText)
     text_end
 };
 
-const struct TextCmd ObtainedFruitText[] = {
+const txt_cmd_s ObtainedFruitText[] = {
     text_far(v_ObtainedFruitText)
     text_end
 };
 
-const struct TextCmd FruitPackIsFullText[] = {
+const txt_cmd_s FruitPackIsFullText[] = {
     text_far(v_FruitPackIsFullText)
     text_end
 };
 
-const struct TextCmd NothingHereText[] = {
+const txt_cmd_s NothingHereText[] = {
     text_far(v_NothingHereText)
     text_end
 };

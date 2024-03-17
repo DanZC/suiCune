@@ -1,6 +1,6 @@
 #include "../../../constants.h"
 
-const struct TextCmd ElmPhoneHealYourMonText[] = {
+const txt_cmd_s ElmPhoneHealYourMonText[] = {
     text_start("Hello, <PLAY_G>?"
         t_para "Try not to overdo"
         t_line "it."
@@ -9,14 +9,14 @@ const struct TextCmd ElmPhoneHealYourMonText[] = {
         t_cont "they are hurt."
         t_done )
 };
-const struct TextCmd ElmPhoneSawMrPokemonText[] = {
+const txt_cmd_s ElmPhoneSawMrPokemonText[] = {
     text_start("Hello, <PLAY_G>?"
         t_para "Did you meet MR."
         t_line "#MON? Great!"
         t_cont "Come back safely!"
         t_done )
 };
-const struct TextCmd ElmPhonePokemonStolenText[] = {
+const txt_cmd_s ElmPhonePokemonStolenText[] = {
     text_start("<PLAY_G>? I'm very"
         t_line "upset now."
         t_para "We had a #MON"
@@ -25,7 +25,7 @@ const struct TextCmd ElmPhonePokemonStolenText[] = {
         t_line "do that?"
         t_done )
 };
-const struct TextCmd ElmPhoneCheckingTheEggText[] = {
+const txt_cmd_s ElmPhoneCheckingTheEggText[] = {
     text_start("Hello, <PLAY_G>?"
         t_para "We're checking the"
         t_line "EGG now. It does"
@@ -33,7 +33,7 @@ const struct TextCmd ElmPhoneCheckingTheEggText[] = {
         t_line "#MON EGG."
         t_done )
 };
-const struct TextCmd ElmPhoneAssistantText[] = {
+const txt_cmd_s ElmPhoneAssistantText[] = {
     text_start("Hello, <PLAY_G>?"
         t_para "Did you see my"
         t_line "assistant? He's at"
@@ -41,7 +41,7 @@ const struct TextCmd ElmPhoneAssistantText[] = {
         t_line "in VIOLET CITY."
         t_done )
 };
-const struct TextCmd ElmPhoneHowIsTheEggText[] = {
+const txt_cmd_s ElmPhoneHowIsTheEggText[] = {
     text_start("Hello, <PLAY_G>?"
         t_para "How's the EGG? Has"
         t_line "anything changed?"
@@ -49,7 +49,7 @@ const struct TextCmd ElmPhoneHowIsTheEggText[] = {
         t_line "pens, please call."
         t_done )
 };
-const struct TextCmd ElmPhoneEggHatchedText[] = {
+const txt_cmd_s ElmPhoneEggHatchedText[] = {
     text_start("Hello, <PLAY_G>?"
         t_line "How is the EGG?"
         t_para "What? It hatched?"
@@ -59,7 +59,7 @@ const struct TextCmd ElmPhoneEggHatchedText[] = {
         t_line "me now!"
         t_done )
 };
-const struct TextCmd ElmPhoneDiscoveredHatchTimeText[] = {
+const txt_cmd_s ElmPhoneDiscoveredHatchTimeText[] = {
     text_start("Hello, <PLAY_G>?"
         t_para "I just made a new"
         t_line "discovery."
@@ -69,7 +69,7 @@ const struct TextCmd ElmPhoneDiscoveredHatchTimeText[] = {
         t_line "the #MON."
         t_done )
 };
-const struct TextCmd ElmPhoneInvestigatingEggMovesText[] = {
+const txt_cmd_s ElmPhoneInvestigatingEggMovesText[] = {
     text_start("Hello, <PLAY_G>?"
         t_para "It's still a"
         t_line "mystery what kinds"
@@ -79,7 +79,7 @@ const struct TextCmd ElmPhoneInvestigatingEggMovesText[] = {
         t_line "ing that now."
         t_done )
 };
-const struct TextCmd ElmPhoneDiscoveredPokerusText[] = {
+const txt_cmd_s ElmPhoneDiscoveredPokerusText[] = {
     text_start("Hello, <PLAY_G>?"
         t_para "I discovered an"
         t_line "odd thing."
@@ -103,7 +103,7 @@ const struct TextCmd ElmPhoneDiscoveredPokerusText[] = {
         t_cont "about. Bye!"
         t_done )
 };
-const struct TextCmd ElmPhoneDisasterText[] = {
+const txt_cmd_s ElmPhoneDisasterText[] = {
     text_start("H-hello? <PLAY_G>?"
         t_line "It's a disaster!"
         t_para "Uh, um, it's just"
@@ -114,7 +114,7 @@ const struct TextCmd ElmPhoneDisasterText[] = {
         t_line "here now!"
         t_done )
 };
-const struct TextCmd ElmPhoneEggAssistantText[] = {
+const txt_cmd_s ElmPhoneEggAssistantText[] = {
     text_start("Hello, <PLAY_G>? We"
         t_line "discovered some-"
         t_para "thing about the"
@@ -126,7 +126,7 @@ const struct TextCmd ElmPhoneEggAssistantText[] = {
         t_cont "him?"
         t_done )
 };
-const struct TextCmd ElmPhoneRadioTowerRocketTakeoverText[] = {
+const txt_cmd_s ElmPhoneRadioTowerRocketTakeoverText[] = {
     text_start("<PLAY_G>, how are"
         t_line "things going?"
         t_para "I called because"
@@ -146,7 +146,7 @@ const struct TextCmd ElmPhoneRadioTowerRocketTakeoverText[] = {
         t_line "Take care!"
         t_done )
 };
-const struct TextCmd ElmPhoneGiftText[] = {
+const txt_cmd_s ElmPhoneGiftText[] = {
     text_start("Hello, <PLAY_G>?"
         t_para "I have something"
         t_line "here for you."
@@ -155,7 +155,7 @@ const struct TextCmd ElmPhoneGiftText[] = {
         t_para "See you later!"
         t_done )
 };
-const struct TextCmd ElmPhoneGotAholdOfSomethingNeatText[] = {
+const txt_cmd_s ElmPhoneGotAholdOfSomethingNeatText[] = {
     text_start("Hello, <PLAY_G>?"
         t_line "How's it going?"
         t_para "I got ahold of"

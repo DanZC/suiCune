@@ -1,7 +1,7 @@
 #pragma once
-extern const struct TextCmd JackAskNumber1Text[];
-extern const struct TextCmd JackAskNumber2Text[];
-extern const struct TextCmd JackNumberAcceptedText[];
-extern const struct TextCmd JackNumberDeclinedText[];
-extern const struct TextCmd JackPhoneFullText[];
-extern const struct TextCmd JackRematchText[];
+extern const txt_cmd_s JackAskNumber1Text[];
+extern const txt_cmd_s JackAskNumber2Text[];
+extern const txt_cmd_s JackNumberAcceptedText[];
+extern const txt_cmd_s JackNumberDeclinedText[];
+extern const txt_cmd_s JackPhoneFullText[];
+extern const txt_cmd_s JackRematchText[];

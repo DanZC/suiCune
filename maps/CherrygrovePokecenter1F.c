@@ -97,20 +97,20 @@ CommCenterOpen:
     s_end
     SCRIPT_END
 }
-const struct TextCmd CherrygrovePokecenter1FFisherText[] = {
+const txt_cmd_s CherrygrovePokecenter1FFisherText[] = {
     text_start("It's great. I can"
         t_line "store any number"
         t_para "of #MON, and"
         t_line "it's all free."
         t_done )
 };
-const struct TextCmd CherrygrovePokecenter1FGentlemanText[] = {
+const txt_cmd_s CherrygrovePokecenter1FGentlemanText[] = {
     text_start("That PC is free"
         t_line "for any trainer"
         t_cont "to use."
         t_done )
 };
-const struct TextCmd CherrygrovePokecenter1FTeacherText[] = {
+const txt_cmd_s CherrygrovePokecenter1FTeacherText[] = {
     text_start("The COMMUNICATION"
         t_line "CENTER upstairs"
         t_cont "was just built."
@@ -118,7 +118,7 @@ const struct TextCmd CherrygrovePokecenter1FTeacherText[] = {
         t_line "finishing it up."
         t_done )
 };
-const struct TextCmd CherrygrovePokecenter1FTeacherText_CommCenterOpen[] = {
+const txt_cmd_s CherrygrovePokecenter1FTeacherText_CommCenterOpen[] = {
     text_start("The COMMUNICATION"
         t_line "CENTER upstairs"
         t_cont "was just built."

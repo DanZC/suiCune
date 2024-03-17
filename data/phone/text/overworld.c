@@ -2,7 +2,7 @@
 #include "overworld.h"
 
 //// alan_overworld.c
-const struct TextCmd AlanAskNumber1Text[] = {
+const txt_cmd_s AlanAskNumber1Text[] = {
     text_start("Reading textbooks"
         t_line "is worthwhile"
         t_cont "every so often."
@@ -18,45 +18,45 @@ const struct TextCmd AlanAskNumber1Text[] = {
         t_line "phone number?"
         t_done )
 };
-const struct TextCmd AlanAskNumber2Text[] = {
+const txt_cmd_s AlanAskNumber2Text[] = {
     text_start("If I find some-"
         t_line "thing, it's yours."
         t_para "So may I have your"
         t_line "phone number?"
         t_done )
 };
-const struct TextCmd AlanNumberAcceptedText[] = {
+const txt_cmd_s AlanNumberAcceptedText[] = {
     text_start("I'll call you as"
         t_line "soon as I find"
         t_para "something. You can"
         t_line "count on it!"
         t_done )
 };
-const struct TextCmd AlanNumberDeclinedText[] = {
+const txt_cmd_s AlanNumberDeclinedText[] = {
     text_start("Oh… I thought it"
         t_line "would be a good"
         t_para "break to call you"
         t_line "when I'm studying…"
         t_done )
 };
-const struct TextCmd AlanPhoneFullText[] = {
+const txt_cmd_s AlanPhoneFullText[] = {
     text_start("There's no room"
         t_line "for my number."
         t_done )
 };
-const struct TextCmd AlanRematchText[] = {
+const txt_cmd_s AlanRematchText[] = {
     text_start("I waited around"
         t_line "for you!"
         t_para "I'm thoroughly"
         t_line "prepared today!"
         t_done )
 };
-const struct TextCmd AlanGiftText[] = {
+const txt_cmd_s AlanGiftText[] = {
     text_start("This, this! This"
         t_line "is yours! Ta-da!"
         t_done )
 };
-const struct TextCmd AlanPackFullText[] = {
+const txt_cmd_s AlanPackFullText[] = {
     text_start("Whoops!"
         t_para "You can't carry"
         t_line "any more items!"
@@ -66,7 +66,7 @@ const struct TextCmd AlanPackFullText[] = {
 };
 
 //// anthony_overworld.c
-const struct TextCmd AnthonyAskNumber1Text[] = {
+const txt_cmd_s AnthonyAskNumber1Text[] = {
     text_start("By the way, I'm a"
         t_line "HIKER, so I often"
         t_para "go to mountains"
@@ -80,7 +80,7 @@ const struct TextCmd AnthonyAskNumber1Text[] = {
         t_line "phone numbers?"
         t_done )
 };
-const struct TextCmd AnthonyAskNumber2Text[] = {
+const txt_cmd_s AnthonyAskNumber2Text[] = {
     text_start("I could call you"
         t_line "when I see some"
         t_cont "rare #MON."
@@ -88,25 +88,25 @@ const struct TextCmd AnthonyAskNumber2Text[] = {
         t_line "phone numbers?"
         t_done )
 };
-const struct TextCmd AnthonyNumberAcceptedText[] = {
+const txt_cmd_s AnthonyNumberAcceptedText[] = {
     text_start("Be patient. I'll"
         t_line "find some rare"
         t_cont "#MON for you!"
         t_done )
 };
-const struct TextCmd AnthonyNumberDeclinedText[] = {
+const txt_cmd_s AnthonyNumberDeclinedText[] = {
     text_start("You're cold. I may"
         t_line "as well head to"
         t_cont "the mountains…"
         t_done )
 };
-const struct TextCmd AnthonyPhoneFullText[] = {
+const txt_cmd_s AnthonyPhoneFullText[] = {
     text_start("Your phone's full."
         t_para "It can't register"
         t_line "my phone number."
         t_done )
 };
-const struct TextCmd AnthonyRematchText[] = {
+const txt_cmd_s AnthonyRematchText[] = {
     text_start("All righty, then!"
         t_para "My #MON and I"
         t_line "are raring to go!"
@@ -114,7 +114,7 @@ const struct TextCmd AnthonyRematchText[] = {
 };
 
 //// arnie_overworld.c
-const struct TextCmd ArnieAskNumber1Text[] = {
+const txt_cmd_s ArnieAskNumber1Text[] = {
     text_start("Do you get the"
         t_line "feeling that there"
         t_para "are more rare"
@@ -130,7 +130,7 @@ const struct TextCmd ArnieAskNumber1Text[] = {
         t_line "your phone number."
         t_done )
 };
-const struct TextCmd ArnieAskNumber2Text[] = {
+const txt_cmd_s ArnieAskNumber2Text[] = {
     text_start("I want to let"
         t_line "people know if I"
         t_cont "see rare #MON."
@@ -138,27 +138,27 @@ const struct TextCmd ArnieAskNumber2Text[] = {
         t_line "your phone number!"
         t_done )
 };
-const struct TextCmd ArnieNumberAcceptedText[] = {
+const txt_cmd_s ArnieNumberAcceptedText[] = {
     text_start("If I spot any"
         t_line "awesome #MON,"
         t_para "I'll be sure to"
         t_line "give you a call!"
         t_done )
 };
-const struct TextCmd ArnieNumberDeclinedText[] = {
+const txt_cmd_s ArnieNumberDeclinedText[] = {
     text_start("Aww! I want to"
         t_line "tell someone about"
         t_cont "my discoveries!"
         t_done )
 };
-const struct TextCmd ArniePhoneFullText[] = {
+const txt_cmd_s ArniePhoneFullText[] = {
     text_start("There's no space"
         t_line "for my number."
         t_para "If you make room,"
         t_line "register me!"
         t_done )
 };
-const struct TextCmd ArnieRematchText[] = {
+const txt_cmd_s ArnieRematchText[] = {
     text_start("It's my turn to"
         t_line "win now!"
         t_para "I've turned over a"
@@ -167,7 +167,7 @@ const struct TextCmd ArnieRematchText[] = {
 };
 
 //// beth_overworld.c
-const struct TextCmd BethAskNumber1Text[] = {
+const txt_cmd_s BethAskNumber1Text[] = {
     text_start("It's been a while"
         t_line "since I lost…"
         t_para "You're very good"
@@ -183,7 +183,7 @@ const struct TextCmd BethAskNumber1Text[] = {
         t_line "your phone number?"
         t_done )
 };
-const struct TextCmd BethAskNumber2Text[] = {
+const txt_cmd_s BethAskNumber2Text[] = {
     text_start("By challenging a"
         t_line "tough trainer like"
         t_para "you, I think I can"
@@ -193,30 +193,30 @@ const struct TextCmd BethAskNumber2Text[] = {
         t_line "your phone number?"
         t_done )
 };
-const struct TextCmd BethNumberAcceptedText[] = {
+const txt_cmd_s BethNumberAcceptedText[] = {
     text_start("Let's battle again"
         t_line "sometime!"
         t_done )
 };
-const struct TextCmd BethNumberDeclinedText[] = {
+const txt_cmd_s BethNumberDeclinedText[] = {
     text_start("That's too bad…"
         t_para "Let me know if you"
         t_line "change your mind."
         t_done )
 };
-const struct TextCmd BethPhoneFullText[] = {
+const txt_cmd_s BethPhoneFullText[] = {
     text_start("Oh no. Your phone"
         t_line "is out of memory."
         t_done )
 };
-const struct TextCmd BethRematchText[] = {
+const txt_cmd_s BethRematchText[] = {
     text_start("You sure kept me"
         t_line "waiting! Let's go!"
         t_done )
 };
 
 //// beverly_overworld.c
-const struct TextCmd BeverlyAskNumber1Text[] = {
+const txt_cmd_s BeverlyAskNumber1Text[] = {
     text_start("Your MARILL is so"
         t_line "cute and adorable!"
         t_para "You love #MON"
@@ -227,7 +227,7 @@ const struct TextCmd BeverlyAskNumber1Text[] = {
         t_line "be so much fun!"
         t_done )
 };
-const struct TextCmd BeverlyAskNumber2Text[] = {
+const txt_cmd_s BeverlyAskNumber2Text[] = {
     text_start("Your MARILL is so"
         t_line "cute and adorable!"
         t_para "We should chat, it"
@@ -236,32 +236,32 @@ const struct TextCmd BeverlyAskNumber2Text[] = {
         t_line "phone number?"
         t_done )
 };
-const struct TextCmd BeverlyNumberAcceptedText[] = {
+const txt_cmd_s BeverlyNumberAcceptedText[] = {
     text_start("To be honest, I"
         t_line "want a MARILL."
         t_para "But I make do with"
         t_line "my cute SNUBBULL."
         t_done )
 };
-const struct TextCmd BeverlyNumberDeclinedText[] = {
+const txt_cmd_s BeverlyNumberDeclinedText[] = {
     text_start("Oh… That's"
         t_line "disappointing…"
         t_para "Goodbye, MARILL…"
         t_done )
 };
-const struct TextCmd BeverlyPhoneFullText[] = {
+const txt_cmd_s BeverlyPhoneFullText[] = {
     text_start("Oh? Your phone's"
         t_line "memory is full."
         t_done )
 };
-const struct TextCmd BeverlyGiftText[] = {
+const txt_cmd_s BeverlyGiftText[] = {
     text_start("Oh? <PLAYER>? "
         t_line "I waited here for"
         t_para "you. I brought you"
         t_line "a little gift."
         t_done )
 };
-const struct TextCmd BeverlyPackFullText[] = {
+const txt_cmd_s BeverlyPackFullText[] = {
     text_start("Oh?"
         t_line "You have no room."
         t_para "Please come back"
@@ -270,7 +270,7 @@ const struct TextCmd BeverlyPackFullText[] = {
 };
 
 //// brent_overworld.c
-const struct TextCmd BrentAskNumber1Text[] = {
+const txt_cmd_s BrentAskNumber1Text[] = {
     text_start("By the way, you're"
         t_line "a #MANIAC…"
         t_para "I can tell."
@@ -287,14 +287,14 @@ const struct TextCmd BrentAskNumber1Text[] = {
         t_line "phone number."
         t_done )
 };
-const struct TextCmd BrentAskNumber2Text[] = {
+const txt_cmd_s BrentAskNumber2Text[] = {
     text_start("I'll teach you all"
         t_line "I know about BILL,"
         t_para "so leave me your"
         t_line "phone number."
         t_done )
 };
-const struct TextCmd BrentNumberAcceptedText[] = {
+const txt_cmd_s BrentNumberAcceptedText[] = {
     text_start("BILL--he's more"
         t_line "than amazing!"
         t_para "To be a #MANIAC"
@@ -302,20 +302,20 @@ const struct TextCmd BrentNumberAcceptedText[] = {
         t_para "That's my dream."
         t_done )
 };
-const struct TextCmd BrentNumberDeclinedText[] = {
+const txt_cmd_s BrentNumberDeclinedText[] = {
     text_start("You're going to"
         t_line "regret it…"
         t_para "And I won't care…"
         t_done )
 };
-const struct TextCmd BrentPhoneFullText[] = {
+const txt_cmd_s BrentPhoneFullText[] = {
     text_start("Huh? Your phone"
         t_line "list's full."
         t_para "A #MANIAC has"
         t_line "to be more tidy!"
         t_done )
 };
-const struct TextCmd BrentRematchText[] = {
+const txt_cmd_s BrentRematchText[] = {
     text_start("I've been waiting."
         t_para "Look, check out my"
         t_line "#MON!"
@@ -323,7 +323,7 @@ const struct TextCmd BrentRematchText[] = {
 };
 
 //// chad_overworld.c
-const struct TextCmd ChadAskNumber1Text[] = {
+const txt_cmd_s ChadAskNumber1Text[] = {
     text_start("Huh? Is that thing"
         t_line "a #DEX? Have"
         t_cont "you met PROF.OAK?"
@@ -341,7 +341,7 @@ const struct TextCmd ChadAskNumber1Text[] = {
         t_line "be loads of fun!"
         t_done )
 };
-const struct TextCmd ChadAskNumber2Text[] = {
+const txt_cmd_s ChadAskNumber2Text[] = {
     text_start("May I please have"
         t_line "your phone number?"
         t_para "We should chat"
@@ -350,31 +350,31 @@ const struct TextCmd ChadAskNumber2Text[] = {
         t_line "be loads of fun!"
         t_done )
 };
-const struct TextCmd ChadNumberAcceptedText[] = {
+const txt_cmd_s ChadNumberAcceptedText[] = {
     text_start("You must listen to"
         t_line "PROF.OAK'S #MON"
         t_cont "TALK, right?"
         t_done )
 };
-const struct TextCmd ChadNumberDeclinedText[] = {
+const txt_cmd_s ChadNumberDeclinedText[] = {
     text_start("Oh… I wish I had a"
         t_line "chance to meet"
         t_cont "PROF.OAK…"
         t_done )
 };
-const struct TextCmd ChadPhoneFullText[] = {
+const txt_cmd_s ChadPhoneFullText[] = {
     text_start("Your phone list is"
         t_line "completely full!"
         t_done )
 };
-const struct TextCmd ChadRematchText[] = {
+const txt_cmd_s ChadRematchText[] = {
     text_start("I've been waiting!"
         t_line "Let's battle now!"
         t_done )
 };
 
 //// dana_overworld.c
-const struct TextCmd DanaAskNumber1Text[] = {
+const txt_cmd_s DanaAskNumber1Text[] = {
     text_start("You're really good"
         t_line "at #MON!"
         t_para "Boys give me items"
@@ -387,14 +387,14 @@ const struct TextCmd DanaAskNumber1Text[] = {
         t_line "your phone number."
         t_done )
 };
-const struct TextCmd DanaAskNumber2Text[] = {
+const txt_cmd_s DanaAskNumber2Text[] = {
     text_start("I'll share my"
         t_line "gifts with you."
         t_para "Let me get your"
         t_line "phone number."
         t_done )
 };
-const struct TextCmd DanaNumberAcceptedText[] = {
+const txt_cmd_s DanaNumberAcceptedText[] = {
     text_start("Next time a boy"
         t_line "gives me something"
         t_para "after a battle,"
@@ -403,33 +403,33 @@ const struct TextCmd DanaNumberAcceptedText[] = {
         t_line "bad?"
         t_done )
 };
-const struct TextCmd DanaNumberDeclinedText[] = {
+const txt_cmd_s DanaNumberDeclinedText[] = {
     text_start("Aww, you don't"
         t_line "want anything?"
         t_para "But it's all for"
         t_line "free…"
         t_done )
 };
-const struct TextCmd DanaPhoneFullText[] = {
+const txt_cmd_s DanaPhoneFullText[] = {
     text_start("But your phone's"
         t_line "out of memory!"
         t_done )
 };
-const struct TextCmd DanaRematchText[] = {
+const txt_cmd_s DanaRematchText[] = {
     text_start("You're really"
         t_line "late!"
         t_para "I'm eager to get"
         t_line "going!"
         t_done )
 };
-const struct TextCmd DanaGiftText[] = {
+const txt_cmd_s DanaGiftText[] = {
     text_start("Hi! Are you here"
         t_line "for your gift?"
         t_para "This should really"
         t_line "make your day!"
         t_done )
 };
-const struct TextCmd DanaPackFullText[] = {
+const txt_cmd_s DanaPackFullText[] = {
     text_start("Where are you"
         t_line "going to put this?"
         t_para "I'll keep it, so"
@@ -438,7 +438,7 @@ const struct TextCmd DanaPackFullText[] = {
 };
 
 //// derek_overworld.c
-const struct TextCmd DerekAskNumber1Text[] = {
+const txt_cmd_s DerekAskNumber1Text[] = {
     text_start("Oh, wow! PIKACHU!"
         t_line "It's so soft and"
         t_cont "furry! How cute!"
@@ -451,32 +451,32 @@ const struct TextCmd DerekAskNumber1Text[] = {
         t_line "phone number?"
         t_done )
 };
-const struct TextCmd DerekAskNumber2Text[] = {
+const txt_cmd_s DerekAskNumber2Text[] = {
     text_start("Let's chat about"
         t_line "PIKACHU!"
         t_para "Can I get your"
         t_line "phone number?"
         t_done )
 };
-const struct TextCmd DerekNumberAcceptedText[] = {
+const txt_cmd_s DerekNumberAcceptedText[] = {
     text_start("PIKACHU is the"
         t_line "one! If anything"
         t_para "comes up, I'll"
         t_line "give you a jingle."
         t_done )
 };
-const struct TextCmd DerekNumberDeclinedText[] = {
+const txt_cmd_s DerekNumberDeclinedText[] = {
     text_start("You…"
         t_para "I bet you don't"
         t_line "even like PIKACHU…"
         t_done )
 };
-const struct TextCmd DerekPhoneFullText[] = {
+const txt_cmd_s DerekPhoneFullText[] = {
     text_start("Wait a sec! Your"
         t_line "phone list's full!"
         t_done )
 };
-const struct TextCmd DerekGiftText[] = {
+const txt_cmd_s DerekGiftText[] = {
     text_start("I've been looking"
         t_line "for you! Here, see"
         t_cont "this? This is it!"
@@ -485,7 +485,7 @@ const struct TextCmd DerekGiftText[] = {
         t_cont "my gift too!"
         t_done )
 };
-const struct TextCmd DerekPackFullText[] = {
+const txt_cmd_s DerekPackFullText[] = {
     text_start("Uh-oh, too bad."
         t_line "You don't have any"
         t_para "room. Be sure to"
@@ -494,7 +494,7 @@ const struct TextCmd DerekPackFullText[] = {
 };
 
 //// erin_overworld.c
-const struct TextCmd ErinAskNumber1Text[] = {
+const txt_cmd_s ErinAskNumber1Text[] = {
     text_start("It really made me"
         t_line "angry to lose."
         t_para "I'll have to train"
@@ -505,44 +505,44 @@ const struct TextCmd ErinAskNumber1Text[] = {
         t_line "battle me again?"
         t_done )
 };
-const struct TextCmd ErinAskNumber2Text[] = {
+const txt_cmd_s ErinAskNumber2Text[] = {
     text_start("I want to battle"
         t_line "with you again."
         t_para "Do you want to"
         t_line "exchange numbers?"
         t_done )
 };
-const struct TextCmd ErinNumberAcceptedText[] = {
+const txt_cmd_s ErinNumberAcceptedText[] = {
     text_start("I'll remember to"
         t_line "call when I want"
         t_cont "to battle again!"
         t_done )
 };
-const struct TextCmd ErinNumberDeclinedText[] = {
+const txt_cmd_s ErinNumberDeclinedText[] = {
     text_start("Oh… I'm sad…"
         t_line "If you do want to"
         t_para "battle, come see"
         t_line "ERIN--that's me!"
         t_done )
 };
-const struct TextCmd ErinPhoneFullText[] = {
+const txt_cmd_s ErinPhoneFullText[] = {
     text_start("Oh no. Your phone"
         t_line "is all filled up."
         t_done )
 };
-const struct TextCmd ErinRematchText[] = {
+const txt_cmd_s ErinRematchText[] = {
     text_start("Yay! I waited!"
         t_line "Let's start now!"
         t_done )
 };
-const struct TextCmd ErinPackFullText[] = {
+const txt_cmd_s ErinPackFullText[] = {
     text_start("That's too bad!"
         t_line "You have no room…"
         t_para "I'll give it to"
         t_line "you another time."
         t_done )
 };
-const struct TextCmd ErinRematchGiftText[] = {
+const txt_cmd_s ErinRematchGiftText[] = {
     text_start("Aww… I lost again!"
         t_para "I wonder how many"
         t_line "times that is…"
@@ -552,7 +552,7 @@ const struct TextCmd ErinRematchGiftText[] = {
 };
 
 //// gaven_overworld.c
-const struct TextCmd GavenAskNumber1Text[] = {
+const txt_cmd_s GavenAskNumber1Text[] = {
     text_start("Wow, you're tough."
         t_line "I haven't battled"
         t_para "that seriously in"
@@ -567,7 +567,7 @@ const struct TextCmd GavenAskNumber1Text[] = {
         t_line "rest of my team."
         t_done )
 };
-const struct TextCmd GavenAskNumber2Text[] = {
+const txt_cmd_s GavenAskNumber2Text[] = {
     text_start("Could I get your"
         t_line "phone number?"
         t_para "I'd like to battle"
@@ -578,28 +578,28 @@ const struct TextCmd GavenAskNumber2Text[] = {
         t_line "rest of my team."
         t_done )
 };
-const struct TextCmd GavenNumberAcceptedText[] = {
+const txt_cmd_s GavenNumberAcceptedText[] = {
     text_start("How should I beat"
         t_line "you? I'm tormented"
         t_para "by those thoughts"
         t_line "all the time…"
         t_done )
 };
-const struct TextCmd GavenNumberDeclinedText[] = {
+const txt_cmd_s GavenNumberDeclinedText[] = {
     text_start("OK… I understand…"
         t_line "But if you change"
         t_para "your mind, give me"
         t_line "a shout anytime."
         t_done )
 };
-const struct TextCmd GavenPhoneFullText[] = {
+const txt_cmd_s GavenPhoneFullText[] = {
     text_start("Your phone's"
         t_line "memory is full."
         t_para "You can't register"
         t_line "my number."
         t_done )
 };
-const struct TextCmd GavenRematchText[] = {
+const txt_cmd_s GavenRematchText[] = {
     text_start("Hi! I've been"
         t_line "waiting for you!"
         t_para "This time, I'm"
@@ -608,7 +608,7 @@ const struct TextCmd GavenRematchText[] = {
 };
 
 //// gina_overworld.c
-const struct TextCmd GinaAskNumber1Text[] = {
+const txt_cmd_s GinaAskNumber1Text[] = {
     text_start("Whenever I see a"
         t_line "strong trainer, I"
         t_para "want to be their"
@@ -624,43 +624,43 @@ const struct TextCmd GinaAskNumber1Text[] = {
         t_line "as I get anything."
         t_done )
 };
-const struct TextCmd GinaAskNumber2Text[] = {
+const txt_cmd_s GinaAskNumber2Text[] = {
     text_start("If I find an item,"
         t_line "you can have it!"
         t_para "Want to give me"
         t_line "your number?"
         t_done )
 };
-const struct TextCmd GinaNumberAcceptedText[] = {
+const txt_cmd_s GinaNumberAcceptedText[] = {
     text_start("I'll call as soon"
         t_line "as I get anything!"
         t_done )
 };
-const struct TextCmd GinaNumberDeclinedText[] = {
+const txt_cmd_s GinaNumberDeclinedText[] = {
     text_start("Is that so? Well,"
         t_line "I'll still be"
         t_cont "rooting for you!"
         t_done )
 };
-const struct TextCmd GinaPhoneFullText[] = {
+const txt_cmd_s GinaPhoneFullText[] = {
     text_start("But your phone is"
         t_line "all filled up!"
         t_done )
 };
-const struct TextCmd GinaRematchText[] = {
+const txt_cmd_s GinaRematchText[] = {
     text_start("I've been waiting!"
         t_para "I've gotten a bit"
         t_line "better at this!"
         t_done )
 };
-const struct TextCmd GinaGiftText[] = {
+const txt_cmd_s GinaGiftText[] = {
     text_start("So you're finally"
         t_line "here!"
         t_para "I think this will"
         t_line "make you happy."
         t_done )
 };
-const struct TextCmd GinaPackFullText[] = {
+const txt_cmd_s GinaPackFullText[] = {
     text_start("Your PACK looks"
         t_line "completely full."
         t_para "I'll have to hold"
@@ -669,7 +669,7 @@ const struct TextCmd GinaPackFullText[] = {
 };
 
 //// huey_overworld.c
-const struct TextCmd HueyAskNumber1Text[] = {
+const txt_cmd_s HueyAskNumber1Text[] = {
     text_start("Cool! That's the"
         t_line "first time I've"
         t_cont "lost in a while!"
@@ -681,7 +681,7 @@ const struct TextCmd HueyAskNumber1Text[] = {
         t_line "get stronger!"
         t_done )
 };
-const struct TextCmd HueyAskNumber2Text[] = {
+const txt_cmd_s HueyAskNumber2Text[] = {
     text_start("Hey, give me your"
         t_line "phone number."
         t_para "You'd be fun to"
@@ -690,33 +690,33 @@ const struct TextCmd HueyAskNumber2Text[] = {
         t_line "get stronger!"
         t_done )
 };
-const struct TextCmd HueyNumberAcceptedText[] = {
+const txt_cmd_s HueyNumberAcceptedText[] = {
     text_start("Hey, let's battle"
         t_line "again!"
         t_done )
 };
-const struct TextCmd HueyNumberDeclinedText[] = {
+const txt_cmd_s HueyNumberDeclinedText[] = {
     text_start("Looks like you're"
         t_line "a wimp…"
         t_done )
 };
-const struct TextCmd HueyPhoneFullText[] = {
+const txt_cmd_s HueyPhoneFullText[] = {
     text_start("Hey! Your phone's"
         t_line "already full!"
         t_done )
 };
-const struct TextCmd HueyRematchText[] = {
+const txt_cmd_s HueyRematchText[] = {
     text_start("Hey! I'm tired of"
         t_line "waiting for you!"
         t_done )
 };
-const struct TextCmd HueyPackFullText[] = {
+const txt_cmd_s HueyPackFullText[] = {
     text_start("Oh… Your PACK's"
         t_line "full. I'll give it"
         t_cont "to you later."
         t_done )
 };
-const struct TextCmd HueyRematchGiftText[] = {
+const txt_cmd_s HueyRematchGiftText[] = {
     text_start("Man! You're as"
         t_line "tough as ever!"
         t_para "I've battled you"
@@ -739,7 +739,7 @@ const struct TextCmd HueyRematchGiftText[] = {
 };
 
 //// irwin_overworld.c
-const struct TextCmd IrwinAskNumber1Text[] = {
+const txt_cmd_s IrwinAskNumber1Text[] = {
     text_start("You're the best"
         t_line "I've ever battled!"
         t_para "Huh? You're the"
@@ -754,12 +754,12 @@ const struct TextCmd IrwinAskNumber1Text[] = {
         t_cont "do from now on!"
         t_done )
 };
-const struct TextCmd IrwinAskNumber2Text[] = {
+const txt_cmd_s IrwinAskNumber2Text[] = {
     text_start("You will tell me"
         t_line "your phone number?"
         t_done )
 };
-const struct TextCmd IrwinNumberAcceptedText[] = {
+const txt_cmd_s IrwinNumberAcceptedText[] = {
     text_start("Wow! Gee, thanks!"
         t_line "Now I can call you"
         t_para "anytime, whether"
@@ -768,7 +768,7 @@ const struct TextCmd IrwinNumberAcceptedText[] = {
         t_line "just to chat!"
         t_done )
 };
-const struct TextCmd IrwinNumberDeclinedText[] = {
+const txt_cmd_s IrwinNumberDeclinedText[] = {
     text_start("Oh, but…"
         t_line "I'm not dangerous!"
         t_para "I just want to"
@@ -777,7 +777,7 @@ const struct TextCmd IrwinNumberDeclinedText[] = {
         t_line "and nothing!"
         t_done )
 };
-const struct TextCmd IrwinPhoneFullText[] = {
+const txt_cmd_s IrwinPhoneFullText[] = {
     text_start("Your phone list is"
         t_line "already full…"
         t_para "You must be really"
@@ -786,7 +786,7 @@ const struct TextCmd IrwinPhoneFullText[] = {
 };
 
 //// jack_overworld.c
-const struct TextCmd JackAskNumber1Text[] = {
+const txt_cmd_s JackAskNumber1Text[] = {
     text_start("Your knowledge is"
         t_line "impressive!"
         t_para "I like that!"
@@ -798,7 +798,7 @@ const struct TextCmd JackAskNumber1Text[] = {
         t_line "your number?"
         t_done )
 };
-const struct TextCmd JackAskNumber2Text[] = {
+const txt_cmd_s JackAskNumber2Text[] = {
     text_start("Want to trade"
         t_line "battle tips?"
         t_para "I'll phone if I"
@@ -807,26 +807,26 @@ const struct TextCmd JackAskNumber2Text[] = {
         t_line "your number?"
         t_done )
 };
-const struct TextCmd JackNumberAcceptedText[] = {
+const txt_cmd_s JackNumberAcceptedText[] = {
     text_start("I'll call you if I"
         t_line "hear anything!"
         t_done )
 };
-const struct TextCmd JackNumberDeclinedText[] = {
+const txt_cmd_s JackNumberDeclinedText[] = {
     text_start("Oh, OK. Too bad…"
         t_para "Well, if you ever"
         t_line "want my number,"
         t_cont "come see me, OK?"
         t_done )
 };
-const struct TextCmd JackPhoneFullText[] = {
+const txt_cmd_s JackPhoneFullText[] = {
     text_start("Oh?"
         t_line "Your phone's full."
         t_para "It can't register"
         t_line "my number."
         t_done )
 };
-const struct TextCmd JackRematchText[] = {
+const txt_cmd_s JackRematchText[] = {
     text_start("Hi, I was waiting"
         t_line "for you to show!"
         t_para "Let's get started"
@@ -835,7 +835,7 @@ const struct TextCmd JackRematchText[] = {
 };
 
 //// joey_overworld.c
-const struct TextCmd JoeyAskNumber1Text[] = {
+const txt_cmd_s JoeyAskNumber1Text[] = {
     text_start("Listen, can I get"
         t_line "your phone number?"
         t_para "I'll ring you for"
@@ -845,7 +845,7 @@ const struct TextCmd JoeyAskNumber1Text[] = {
         t_cont "a good motivator."
         t_done )
 };
-const struct TextCmd JoeyAskNumber2Text[] = {
+const txt_cmd_s JoeyAskNumber2Text[] = {
     text_start("Can I get your"
         t_line "phone number?"
         t_para "I don't want to"
@@ -854,36 +854,36 @@ const struct TextCmd JoeyAskNumber2Text[] = {
         t_line "again, OK?"
         t_done )
 };
-const struct TextCmd JoeyNumberAcceptedText[] = {
+const txt_cmd_s JoeyNumberAcceptedText[] = {
     text_start("I'll ring you"
         t_line "whenever I get the"
         t_cont "urge to battle!"
         t_done )
 };
-const struct TextCmd JoeyNumberDeclinedText[] = {
+const txt_cmd_s JoeyNumberDeclinedText[] = {
     text_start("Oh, all right…"
         t_para "But I won't lose"
         t_line "to you again!"
         t_done )
 };
-const struct TextCmd JoeyPhoneFullText[] = {
+const txt_cmd_s JoeyPhoneFullText[] = {
     text_start("Huh, what? Your"
         t_line "phone's full."
         t_done )
 };
-const struct TextCmd JoeyRematchText[] = {
+const txt_cmd_s JoeyRematchText[] = {
     text_start("I've been waiting!"
         t_line "Let's battle now!"
         t_done )
 };
-const struct TextCmd JoeyPackFullText[] = {
+const txt_cmd_s JoeyPackFullText[] = {
     text_start("Hey, wait! Your"
         t_line "PACK is stuffed!"
         t_para "Well, we'll leave"
         t_line "it till next time."
         t_done )
 };
-const struct TextCmd JoeyRematchGiftText[] = {
+const txt_cmd_s JoeyRematchGiftText[] = {
     text_start("And yet another"
         t_line "loss…"
         t_para "No doubt about"
@@ -899,7 +899,7 @@ const struct TextCmd JoeyRematchGiftText[] = {
 };
 
 //// jose_overworld.c
-const struct TextCmd JoseAskNumber1Text[] = {
+const txt_cmd_s JoseAskNumber1Text[] = {
     text_start("If my @")
     text_ram(wram_ptr(wStringBuffer4))
     text_start(
@@ -916,7 +916,7 @@ const struct TextCmd JoseAskNumber1Text[] = {
         t_line "whole lot, OK?"
         t_done )
 };
-const struct TextCmd JoseAskNumber2Text[] = {
+const txt_cmd_s JoseAskNumber2Text[] = {
     text_start("Do you like pretty"
         t_line "things?"
         t_para "I could share if"
@@ -926,37 +926,37 @@ const struct TextCmd JoseAskNumber2Text[] = {
         t_line "number? I'll call."
         t_done )
 };
-const struct TextCmd JoseNumberAcceptedText[] = {
+const txt_cmd_s JoseNumberAcceptedText[] = {
     text_start("I'll call you as"
         t_line "soon as I get"
         t_cont "something pretty."
         t_done )
 };
-const struct TextCmd JoseNumberDeclinedText[] = {
+const txt_cmd_s JoseNumberDeclinedText[] = {
     text_start("You sure? Well,"
         t_line "tell me if you"
         t_cont "change your mind."
         t_done )
 };
-const struct TextCmd JosePhoneFullText[] = {
+const txt_cmd_s JosePhoneFullText[] = {
     text_start("Huh? Your phone"
         t_line "list is full."
         t_done )
 };
-const struct TextCmd JoseRematchText[] = {
+const txt_cmd_s JoseRematchText[] = {
     text_start("Tweet! Tweeeet!"
         t_para "Kept me waiting!"
         t_line "Go, FARFETCH'D!"
         t_done )
 };
-const struct TextCmd JoseGiftText[] = {
+const txt_cmd_s JoseGiftText[] = {
     text_start("Kept me waiting!"
         t_line "Look, this is it!"
         t_para "See? Isn't it some"
         t_line "kind of pretty?"
         t_done )
 };
-const struct TextCmd JosePackFullText[] = {
+const txt_cmd_s JosePackFullText[] = {
     text_start("Huh? You don't"
         t_line "have anywhere to"
         t_para "put this. Better"
@@ -965,7 +965,7 @@ const struct TextCmd JosePackFullText[] = {
 };
 
 //// kenji_overworld.c
-const struct TextCmd KenjiAskNumber1Text[] = {
+const txt_cmd_s KenjiAskNumber1Text[] = {
     text_start("Our battle was"
         t_line "remarkable!"
         t_para "I wish for some-"
@@ -978,32 +978,32 @@ const struct TextCmd KenjiAskNumber1Text[] = {
         t_cont "chat much, but…"
         t_done )
 };
-const struct TextCmd KenjiAskNumber2Text[] = {
+const txt_cmd_s KenjiAskNumber2Text[] = {
     text_start("My training makes"
         t_line "chatting tough,"
         t_para "but will you take"
         t_line "down my number?"
         t_done )
 };
-const struct TextCmd KenjiNumberAcceptedText[] = {
+const txt_cmd_s KenjiNumberAcceptedText[] = {
     text_start("I must train"
         t_line "harder to become"
         t_cont "the mightiest!"
         t_done )
 };
-const struct TextCmd KenjiNumberDeclinedText[] = {
+const txt_cmd_s KenjiNumberDeclinedText[] = {
     text_start("If you decide you"
         t_line "want my number,"
         t_cont "come see me."
         t_done )
 };
-const struct TextCmd KenjiPhoneFullText[] = {
+const txt_cmd_s KenjiPhoneFullText[] = {
     text_start("Your phone appears"
         t_line "to be full."
         t_para "Come back later!"
         t_done )
 };
-const struct TextCmd KenjiGiftText[] = {
+const txt_cmd_s KenjiGiftText[] = {
     text_start("I wish to thank"
         t_line "you, <PLAYER>!"
         t_para "I've been training"
@@ -1014,7 +1014,7 @@ const struct TextCmd KenjiGiftText[] = {
         t_line "this!"
         t_done )
 };
-const struct TextCmd KenjiPackFullText[] = {
+const txt_cmd_s KenjiPackFullText[] = {
     text_start("Your strength will"
         t_line "not let you carry"
         t_para "another thing!"
@@ -1025,7 +1025,7 @@ const struct TextCmd KenjiPackFullText[] = {
 };
 
 //// liz_overworld.c
-const struct TextCmd LizAskNumber1Text[] = {
+const txt_cmd_s LizAskNumber1Text[] = {
     text_start("Oh? You're on a"
         t_line "big journey to see"
         t_cont "the sights? Neat!"
@@ -1037,7 +1037,7 @@ const struct TextCmd LizAskNumber1Text[] = {
         t_cont "you've seen!"
         t_done )
 };
-const struct TextCmd LizAskNumber2Text[] = {
+const txt_cmd_s LizAskNumber2Text[] = {
     text_start("Let's be friends!"
         t_line "Can I have your"
         t_cont "phone number?"
@@ -1046,30 +1046,30 @@ const struct TextCmd LizAskNumber2Text[] = {
         t_cont "you've seen!"
         t_done )
 };
-const struct TextCmd LizNumberAcceptedText[] = {
+const txt_cmd_s LizNumberAcceptedText[] = {
     text_start("I'll telephone you"
         t_line "if I hear anything"
         t_cont "interesting."
         t_done )
 };
-const struct TextCmd LizNumberDeclinedText[] = {
+const txt_cmd_s LizNumberDeclinedText[] = {
     text_start("Aww… You won't be"
         t_line "my friend?"
         t_done )
 };
-const struct TextCmd LizPhoneFullText[] = {
+const txt_cmd_s LizPhoneFullText[] = {
     text_start("Wait! Your phone"
         t_line "list is filled up!"
         t_done )
 };
-const struct TextCmd LizRematchText[] = {
+const txt_cmd_s LizRematchText[] = {
     text_start("You're late! Let's"
         t_line "get started now!"
         t_done )
 };
 
 //// parry_overworld.c
-const struct TextCmd ParryAskNumber1Text[] = {
+const txt_cmd_s ParryAskNumber1Text[] = {
     text_start("Sheesh, the way"
         t_line "you attacked! That"
         t_para "was something! We"
@@ -1078,20 +1078,20 @@ const struct TextCmd ParryAskNumber1Text[] = {
         t_line "me your number?"
         t_done )
 };
-const struct TextCmd ParryAskNumber2Text[] = {
+const txt_cmd_s ParryAskNumber2Text[] = {
     text_start("So you want to"
         t_line "register my phone"
         t_para "number for a re-"
         t_line "match, huh?"
         t_done )
 };
-const struct TextCmd ParryNumberAcceptedText[] = {
+const txt_cmd_s ParryNumberAcceptedText[] = {
     text_start("I'll call you"
         t_line "whenever I feel"
         t_cont "like battling!"
         t_done )
 };
-const struct TextCmd ParryNumberDeclinedText[] = {
+const txt_cmd_s ParryNumberDeclinedText[] = {
     text_start("No? That's fine."
         t_para "A definite no is"
         t_line "easy to take!"
@@ -1100,13 +1100,13 @@ const struct TextCmd ParryNumberDeclinedText[] = {
         t_cont "for a rematch."
         t_done )
 };
-const struct TextCmd ParryPhoneFullText[] = {
+const txt_cmd_s ParryPhoneFullText[] = {
     text_start("Oh? There's no"
         t_line "room to register"
         t_cont "my phone number."
         t_done )
 };
-const struct TextCmd ParryRematchText[] = {
+const txt_cmd_s ParryRematchText[] = {
     text_start("Hey, here comes"
         t_line "the kid! Let's go!"
         t_para "Ready for my usual"
@@ -1114,14 +1114,14 @@ const struct TextCmd ParryRematchText[] = {
         t_cont "out offense?"
         t_done )
 };
-const struct TextCmd ParryPackFullText[] = {
+const txt_cmd_s ParryPackFullText[] = {
     text_start("Your PACK looks"
         t_line "stuffed full!"
         t_para "You can't have"
         t_line "this now."
         t_done )
 };
-const struct TextCmd ParryRematchGiftText[] = {
+const txt_cmd_s ParryRematchGiftText[] = {
     text_start("Well, you're"
         t_line "special all right."
         t_para "If only I'd begun"
@@ -1135,7 +1135,7 @@ const struct TextCmd ParryRematchGiftText[] = {
 };
 
 //// ralph_overworld.c
-const struct TextCmd RalphAskNumber1Text[] = {
+const txt_cmd_s RalphAskNumber1Text[] = {
     text_start("Don't young people"
         t_line "fish anymore?"
         t_para "I've seen rare"
@@ -1149,20 +1149,20 @@ const struct TextCmd RalphAskNumber1Text[] = {
         t_line "if I see anything."
         t_done )
 };
-const struct TextCmd RalphAskNumber2Text[] = {
+const txt_cmd_s RalphAskNumber2Text[] = {
     text_start("Hm? So you do want"
         t_line "me to phone if I"
         t_cont "see rare #MON?"
         t_done )
 };
-const struct TextCmd RalphNumberAcceptedText[] = {
+const txt_cmd_s RalphNumberAcceptedText[] = {
     text_start("Yep, phone if I"
         t_line "see rare #MON."
         t_para "Don't worry, I"
         t_line "won't forget!"
         t_done )
 };
-const struct TextCmd RalphNumberDeclinedText[] = {
+const txt_cmd_s RalphNumberDeclinedText[] = {
     text_start("Oh…"
         t_line "My own kids won't"
         t_para "even give me their"
@@ -1171,7 +1171,7 @@ const struct TextCmd RalphNumberDeclinedText[] = {
         t_line "people are today?"
         t_done )
 };
-const struct TextCmd RalphPhoneFullText[] = {
+const txt_cmd_s RalphPhoneFullText[] = {
     text_start("Your phone's"
         t_line "memory is full."
         t_para "It seems that"
@@ -1179,7 +1179,7 @@ const struct TextCmd RalphPhoneFullText[] = {
         t_cont "have #GEAR."
         t_done )
 };
-const struct TextCmd RalphRematchText[] = {
+const txt_cmd_s RalphRematchText[] = {
     text_start("Hey, kid!"
         t_para "No losing for me"
         t_line "this day!"
@@ -1187,7 +1187,7 @@ const struct TextCmd RalphRematchText[] = {
 };
 
 //// reena_overworld.c
-const struct TextCmd ReenaAskNumber1Text[] = {
+const txt_cmd_s ReenaAskNumber1Text[] = {
     text_start("Not bad…"
         t_line "It's something to"
         t_para "beat me, even by"
@@ -1198,7 +1198,7 @@ const struct TextCmd ReenaAskNumber1Text[] = {
         t_line "practice partner!"
         t_done )
 };
-const struct TextCmd ReenaAskNumber2Text[] = {
+const txt_cmd_s ReenaAskNumber2Text[] = {
     text_start("Give me your phone"
         t_line "number!"
         t_para "You are going to"
@@ -1206,31 +1206,31 @@ const struct TextCmd ReenaAskNumber2Text[] = {
         t_cont "partner!"
         t_done )
 };
-const struct TextCmd ReenaNumberAcceptedText[] = {
+const txt_cmd_s ReenaNumberAcceptedText[] = {
     text_start("Don't be too proud"
         t_line "about beating me!"
         t_para "It was a fluke!"
         t_done )
 };
-const struct TextCmd ReenaNumberDeclinedText[] = {
+const txt_cmd_s ReenaNumberDeclinedText[] = {
     text_start("I don't believe"
         t_line "it! You're going"
         t_cont "to regret this!"
         t_done )
 };
-const struct TextCmd ReenaPhoneFullText[] = {
+const txt_cmd_s ReenaPhoneFullText[] = {
     text_start("What? Your phone"
         t_line "list has no room!"
         t_done )
 };
-const struct TextCmd ReenaRematchText[] = {
+const txt_cmd_s ReenaRematchText[] = {
     text_start("What took you?"
         t_line "Start right away!"
         t_done )
 };
 
 //// tiffany_overworld.c
-const struct TextCmd TiffanyAskNumber1Text[] = {
+const txt_cmd_s TiffanyAskNumber1Text[] = {
     text_start("Hi! You like"
         t_line "CLEFAIRY too?"
         t_para "They're so very"
@@ -1243,51 +1243,51 @@ const struct TextCmd TiffanyAskNumber1Text[] = {
         t_line "CLEFAIRY!"
         t_done )
 };
-const struct TextCmd TiffanyAskNumber2Text[] = {
+const txt_cmd_s TiffanyAskNumber2Text[] = {
     text_start("I want to know"
         t_line "your phone number!"
         t_para "Let's talk about"
         t_line "CLEFAIRY!"
         t_done )
 };
-const struct TextCmd TiffanyNumberAcceptedText[] = {
+const txt_cmd_s TiffanyNumberAcceptedText[] = {
     text_start("Isn't my CLEFAIRY"
         t_line "super-adorable?"
         t_done )
 };
-const struct TextCmd TiffanyNumberDeclinedText[] = {
+const txt_cmd_s TiffanyNumberDeclinedText[] = {
     text_start("Aww… Oh well."
         t_line "Look for me if you"
         t_para "want to talk about"
         t_line "CLEFAIRY."
         t_done )
 };
-const struct TextCmd TiffanyPhoneFullText[] = {
+const txt_cmd_s TiffanyPhoneFullText[] = {
     text_start("Oh? Your phone"
         t_line "registry is full."
         t_done )
 };
-const struct TextCmd TiffanyRematchText[] = {
+const txt_cmd_s TiffanyRematchText[] = {
     text_start("There you are!"
         t_para "CLEFAIRY, I want"
         t_line "you to try hard!"
         t_done )
 };
-const struct TextCmd TiffanyGiftText[] = {
+const txt_cmd_s TiffanyGiftText[] = {
     text_start("You took a long"
         t_line "time. See this?"
         t_para "Isn't it cute?"
         t_line "It's a PINK BOW."
         t_done )
 };
-const struct TextCmd TiffanyPackFullText[] = {
+const txt_cmd_s TiffanyPackFullText[] = {
     text_start("Uh-oh. Your PACK"
         t_line "is crammed full."
         t_done )
 };
 
 //// todd_overworld.c
-const struct TextCmd ToddAskNumber1Text[] = {
+const txt_cmd_s ToddAskNumber1Text[] = {
     text_start("From here, I can"
         t_line "see GOLDENROD's"
         t_para "DEPT.STORE. They"
@@ -1300,14 +1300,14 @@ const struct TextCmd ToddAskNumber1Text[] = {
         t_line "they have a sale."
         t_done )
 };
-const struct TextCmd ToddAskNumber2Text[] = {
+const txt_cmd_s ToddAskNumber2Text[] = {
     text_start("If you give me"
         t_line "your number, I'll"
         t_para "call you when they"
         t_line "have a sale."
         t_done )
 };
-const struct TextCmd ToddNumberAcceptedText[] = {
+const txt_cmd_s ToddNumberAcceptedText[] = {
     text_start("I check GOLDENROD"
         t_line "DEPT.STORE every"
         t_para "day, so I know"
@@ -1315,7 +1315,7 @@ const struct TextCmd ToddNumberAcceptedText[] = {
         t_cont "sale."
         t_done )
 };
-const struct TextCmd ToddNumberDeclinedText[] = {
+const txt_cmd_s ToddNumberDeclinedText[] = {
     text_start("Anyway…"
         t_para "If you're short on"
         t_line "money, take down"
@@ -1324,13 +1324,13 @@ const struct TextCmd ToddNumberDeclinedText[] = {
         t_line "there's a sale."
         t_done )
 };
-const struct TextCmd ToddPhoneFullText[] = {
+const txt_cmd_s ToddPhoneFullText[] = {
     text_start("Your phone doesn't"
         t_line "have enough memory"
         t_cont "for more numbers."
         t_done )
 };
-const struct TextCmd ToddRematchText[] = {
+const txt_cmd_s ToddRematchText[] = {
     text_start("I waited for you!"
         t_line "I even cut back my"
         t_para "shopping to raise"
@@ -1338,7 +1338,7 @@ const struct TextCmd ToddRematchText[] = {
         t_done )
 };
 // This is a duplicate of CamperToddSaleText in maps/Route34.asm.
-const struct TextCmd ToddSaleText[] = {
+const txt_cmd_s ToddSaleText[] = {
     text_start("Shopping under the"
         t_line "sky!"
         t_para "It feels so nice"
@@ -1347,7 +1347,7 @@ const struct TextCmd ToddSaleText[] = {
 };
 
 //// tully_overworld.c
-const struct TextCmd TullyAskNumber1Text[] = {
+const txt_cmd_s TullyAskNumber1Text[] = {
     text_start("Hey, you're trying"
         t_line "to be the ultimate"
         t_para "trainer too? Then"
@@ -1360,7 +1360,7 @@ const struct TextCmd TullyAskNumber1Text[] = {
         t_line "phone number."
         t_done )
 };
-const struct TextCmd TullyAskNumber2Text[] = {
+const txt_cmd_s TullyAskNumber2Text[] = {
     text_start("If I find any more"
         t_line "items by the"
         t_para "water, I'll give"
@@ -1369,26 +1369,26 @@ const struct TextCmd TullyAskNumber2Text[] = {
         t_line "phone number."
         t_done )
 };
-const struct TextCmd TullyNumberAcceptedText[] = {
+const txt_cmd_s TullyNumberAcceptedText[] = {
     text_start("You'll be hearing"
         t_line "from me if I find"
         t_cont "something good."
         t_done )
 };
-const struct TextCmd TullyNumberDeclinedText[] = {
+const txt_cmd_s TullyNumberDeclinedText[] = {
     text_start("Is that so? Then"
         t_line "I'll just have to"
         t_cont "use them myself."
         t_done )
 };
-const struct TextCmd TullyPhoneFullText[] = {
+const txt_cmd_s TullyPhoneFullText[] = {
     text_start("Your phone list is"
         t_line "all filled up."
         t_para "Come back if you"
         t_line "make room for me."
         t_done )
 };
-const struct TextCmd TullyRematchText[] = {
+const txt_cmd_s TullyRematchText[] = {
     text_start("I've been doing"
         t_line "more than just"
         t_para "fishing since we"
@@ -1397,14 +1397,14 @@ const struct TextCmd TullyRematchText[] = {
         t_line "big surprise!"
         t_done )
 };
-const struct TextCmd TullyGiftText[] = {
+const txt_cmd_s TullyGiftText[] = {
     text_start("Hey, there you"
         t_line "are!"
         t_para "Here's a gift, as"
         t_line "promised!"
         t_done )
 };
-const struct TextCmd TullyPackFullText[] = {
+const txt_cmd_s TullyPackFullText[] = {
     text_start("Your PACK's full?"
         t_para "Come back later--"
         t_line "that'll do it."
@@ -1412,7 +1412,7 @@ const struct TextCmd TullyPackFullText[] = {
 };
 
 //// vance_overworld.c
-const struct TextCmd VanceAskNumber1Text[] = {
+const txt_cmd_s VanceAskNumber1Text[] = {
     text_start("You know, you are"
         t_line "really strong."
         t_para "But I don't want"
@@ -1423,7 +1423,7 @@ const struct TextCmd VanceAskNumber1Text[] = {
         t_line "more battles!"
         t_done )
 };
-const struct TextCmd VanceAskNumber2Text[] = {
+const txt_cmd_s VanceAskNumber2Text[] = {
     text_start("I want to battle"
         t_line "tough trainers as"
         t_cont "often as I can!"
@@ -1433,13 +1433,13 @@ const struct TextCmd VanceAskNumber2Text[] = {
         t_line "more battles!"
         t_done )
 };
-const struct TextCmd VanceNumberAcceptedText[] = {
+const txt_cmd_s VanceNumberAcceptedText[] = {
     text_start("Don't forget to"
         t_line "come see me when I"
         t_cont "challenge you!"
         t_done )
 };
-const struct TextCmd VanceNumberDeclinedText[] = {
+const txt_cmd_s VanceNumberDeclinedText[] = {
     text_start("A bird-user friend"
         t_line "isn't a bad thing"
         t_cont "to have, I think…"
@@ -1447,25 +1447,25 @@ const struct TextCmd VanceNumberDeclinedText[] = {
         t_line "reconsider?"
         t_done )
 };
-const struct TextCmd VancePhoneFullText[] = {
+const txt_cmd_s VancePhoneFullText[] = {
     text_start("Your phone's out"
         t_line "of memory. Delete"
         t_cont "a number for me!"
         t_done )
 };
-const struct TextCmd VanceRematchText[] = {
+const txt_cmd_s VanceRematchText[] = {
     text_start("Am I happy to see"
         t_line "you! I won't lose!"
         t_done )
 };
-const struct TextCmd VancePackFullText[] = {
+const txt_cmd_s VancePackFullText[] = {
     text_start("Oh, too bad. You"
         t_line "don't have room."
         t_para "I'll give it to"
         t_line "you next time!"
         t_done )
 };
-const struct TextCmd VanceRematchGiftText[] = {
+const txt_cmd_s VanceRematchGiftText[] = {
     text_start("You are really,"
         t_line "really strong!"
         t_para "Thanks for taking"
@@ -1478,7 +1478,7 @@ const struct TextCmd VanceRematchGiftText[] = {
 };
 
 //// wade_overworld.c
-const struct TextCmd WadeAskNumber1Text[] = {
+const txt_cmd_s WadeAskNumber1Text[] = {
     text_start("You're awesome!"
         t_line "I like you!"
         t_para "I look for #MON"
@@ -1492,7 +1492,7 @@ const struct TextCmd WadeAskNumber1Text[] = {
         t_line "phone number?"
         t_done )
 };
-const struct TextCmd WadeAskNumber2Text[] = {
+const txt_cmd_s WadeAskNumber2Text[] = {
     text_start("When I'm in the"
         t_line "grass, I find all"
         t_cont "kinds of BERRIES."
@@ -1502,38 +1502,38 @@ const struct TextCmd WadeAskNumber2Text[] = {
         t_line "phone number?"
         t_done )
 };
-const struct TextCmd WadeNumberAcceptedText[] = {
+const txt_cmd_s WadeNumberAcceptedText[] = {
     text_start("You'll hear from"
         t_line "me as soon as I"
         t_para "find anything that"
         t_line "you might like."
         t_done )
 };
-const struct TextCmd WadeNumberDeclinedText[] = {
+const txt_cmd_s WadeNumberDeclinedText[] = {
     text_start("Oh well. Don't be"
         t_line "shy if you want to"
         t_cont "get my number."
         t_done )
 };
-const struct TextCmd WadePhoneFullText[] = {
+const txt_cmd_s WadePhoneFullText[] = {
     text_start("Your phone list"
         t_line "has no room for my"
         t_cont "number."
         t_done )
 };
-const struct TextCmd WadeRematchText[] = {
+const txt_cmd_s WadeRematchText[] = {
     text_start("I was waiting for"
         t_line "you. Let's battle!"
         t_done )
 };
-const struct TextCmd WadeGiftText[] = {
+const txt_cmd_s WadeGiftText[] = {
     text_start("Good to see you!"
         t_line "See? This is what"
         t_para "I found."
         t_line "It's for you!"
         t_done )
 };
-const struct TextCmd WadePackFullText[] = {
+const txt_cmd_s WadePackFullText[] = {
     text_start("Oops, your PACK's"
         t_line "full. Too bad."
         t_para "You should come"
@@ -1542,7 +1542,7 @@ const struct TextCmd WadePackFullText[] = {
 };
 
 //// wilton_overworld.c
-const struct TextCmd WiltonAskNumber1Text[] = {
+const txt_cmd_s WiltonAskNumber1Text[] = {
     text_start("Eh, our battle was"
         t_line "fun, I'd say…"
         t_para "When I'm fishing,"
@@ -1553,37 +1553,37 @@ const struct TextCmd WiltonAskNumber1Text[] = {
         t_line "What's the number?"
         t_done )
 };
-const struct TextCmd WiltonAskNumber2Text[] = {
+const txt_cmd_s WiltonAskNumber2Text[] = {
     text_start("If I snag an item"
         t_line "while I'm fishing,"
         t_para "it's yours. What's"
         t_line "your number?"
         t_done )
 };
-const struct TextCmd WiltonNumberAcceptedText[] = {
+const txt_cmd_s WiltonNumberAcceptedText[] = {
     text_start("If I snag anything"
         t_line "good, I'll be sure"
         t_cont "to let you know."
         t_done )
 };
-const struct TextCmd WiltonNumberDeclinedText[] = {
+const txt_cmd_s WiltonNumberDeclinedText[] = {
     text_start("All right… Come"
         t_line "back if you have a"
         t_cont "change of heart."
         t_done )
 };
-const struct TextCmd WiltonPhoneFullText[] = {
+const txt_cmd_s WiltonPhoneFullText[] = {
     text_start("You can't register"
         t_line "another number."
         t_done )
 };
-const struct TextCmd WiltonRematchText[] = {
+const txt_cmd_s WiltonRematchText[] = {
     text_start("Argh! You startled"
         t_line "POLIWAG into"
         t_cont "fleeing again!"
         t_done )
 };
-const struct TextCmd WiltonGiftText[] = {
+const txt_cmd_s WiltonGiftText[] = {
     text_start("So here you are."
         t_para "See this?"
         t_line "I snagged it just"
@@ -1591,7 +1591,7 @@ const struct TextCmd WiltonGiftText[] = {
         t_line "ago. It's yours."
         t_done )
 };
-const struct TextCmd WiltonPackFullText[] = {
+const txt_cmd_s WiltonPackFullText[] = {
     text_start("Your PACK's full?"
         t_para "I'll give it to"
         t_line "you later."

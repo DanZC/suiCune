@@ -4940,4 +4940,22 @@ void init_function_pointers(void) {
     // engine/events/std_collision.c
     // REDIRECTED(Script_JumpStdFromRAM);
     // REDIRECTED(CheckFacingTileForStdScript);
+
+    // engine/menus/options_menu.c
+    // REDIRECTED(GetTextSpeed);
+    // REDIRECTED(GetOptionPointer);
+    // REDIRECTED(Options_MenuAccount);
+    // REDIRECTED(Options_Cancel);
+    // REDIRECTED(StringOptions);
+    CONVERTED(v_Option);
+    // REDIRECTED(Options_Sound);
+    // REDIRECTED(GetPrinterSetting);
+    // REDIRECTED(Options_BattleStyle);
+    // REDIRECTED(Options_Print);
+    // REDIRECTED(Options_TextSpeed);
+    // REDIRECTED(Options_Frame);
+    // REDIRECTED(Options_BattleScene);
+    // REDIRECTED(UpdateFrame);
+    // REDIRECTED(OptionsControl);
+    // REDIRECTED(Options_UpdateCursorPosition);
 }

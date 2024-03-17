@@ -263,23 +263,23 @@ const uint8_t NewBarkTown_SilverReturnsToTheShadowsMovement[] = {
     step(RIGHT),
     movement_step_end,
 };
-const struct TextCmd Text_GearIsImpressive[] = {
+const txt_cmd_s Text_GearIsImpressive[] = {
     text_start("Wow, your #GEAR"
         t_line "is impressive!"
         t_para "Did your mom get"
         t_line "it for you?"
         t_done )
 };
-const struct TextCmd Text_WaitPlayer[] = {
+const txt_cmd_s Text_WaitPlayer[] = {
     text_start("Wait, <PLAY_G>!"
         t_done )
 };
-const struct TextCmd Text_WhatDoYouThinkYoureDoing[] = {
+const txt_cmd_s Text_WhatDoYouThinkYoureDoing[] = {
     text_start("What do you think"
         t_line "you're doing?"
         t_done )
 };
-const struct TextCmd Text_ItsDangerousToGoAlone[] = {
+const txt_cmd_s Text_ItsDangerousToGoAlone[] = {
     text_start("It's dangerous to"
         t_line "go out without a"
         t_cont "#MON!"
@@ -289,13 +289,13 @@ const struct TextCmd Text_ItsDangerousToGoAlone[] = {
         t_line "to the next town."
         t_done )
 };
-const struct TextCmd Text_YourMonIsAdorable[] = {
+const txt_cmd_s Text_YourMonIsAdorable[] = {
     text_start("Oh! Your #MON"
         t_line "is adorable!"
         t_cont "I wish I had one!"
         t_done )
 };
-const struct TextCmd Text_TellMomIfLeaving[] = {
+const txt_cmd_s Text_TellMomIfLeaving[] = {
     text_start("Hi, <PLAY_G>!"
         t_line "Leaving again?"
         t_para "You should tell"
@@ -303,48 +303,48 @@ const struct TextCmd Text_TellMomIfLeaving[] = {
         t_cont "are leaving."
         t_done )
 };
-const struct TextCmd Text_CallMomOnGear[] = {
+const txt_cmd_s Text_CallMomOnGear[] = {
     text_start("Call your mom on"
         t_line "your #GEAR to"
         t_para "let her know how"
         t_line "you're doing."
         t_done )
 };
-const struct TextCmd Text_ElmDiscoveredNewMon[] = {
+const txt_cmd_s Text_ElmDiscoveredNewMon[] = {
     text_start("Yo, <PLAYER>!"
         t_para "I hear PROF.ELM"
         t_line "discovered some"
         t_cont "new #MON."
         t_done )
 };
-const struct TextCmd NewBarkTownRivalText1[] = {
+const txt_cmd_s NewBarkTownRivalText1[] = {
     text_start("<……>"
         t_para "So this is the"
         t_line "famous ELM #MON"
         t_cont "LAB…"
         t_done )
 };
-const struct TextCmd NewBarkTownRivalText2[] = {
+const txt_cmd_s NewBarkTownRivalText2[] = {
     text_start("…What are you"
         t_line "staring at?"
         t_done )
 };
-const struct TextCmd NewBarkTownSignText[] = {
+const txt_cmd_s NewBarkTownSignText[] = {
     text_start("NEW BARK TOWN"
         t_para "The Town Where the"
         t_line "Winds of a New"
         t_cont "Beginning Blow"
         t_done )
 };
-const struct TextCmd NewBarkTownPlayersHouseSignText[] = {
+const txt_cmd_s NewBarkTownPlayersHouseSignText[] = {
     text_start("<PLAYER>'s House"
         t_done )
 };
-const struct TextCmd NewBarkTownElmsLabSignText[] = {
+const txt_cmd_s NewBarkTownElmsLabSignText[] = {
     text_start("ELM #MON LAB"
         t_done )
 };
-const struct TextCmd NewBarkTownElmsHouseSignText[] = {
+const txt_cmd_s NewBarkTownElmsHouseSignText[] = {
     text_start("ELM'S HOUSE"
         t_done )
     //db(0, 0) // filler

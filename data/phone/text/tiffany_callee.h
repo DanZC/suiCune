@@ -1,8 +1,8 @@
 #pragma once
-extern const struct TextCmd TiffanyAnswerPhoneText[];
-extern const struct TextCmd TiffanyAnswerPhoneDayText[];
-extern const struct TextCmd TiffanyAnswerPhoneNiteText[];
-extern const struct TextCmd TiffanyGreetText[];
-extern const struct TextCmd TiffanyGreetDayText[];
-extern const struct TextCmd TiffanyGreetNiteText[];
-extern const struct TextCmd TiffanyGenericText[];
+extern const txt_cmd_s TiffanyAnswerPhoneText[];
+extern const txt_cmd_s TiffanyAnswerPhoneDayText[];
+extern const txt_cmd_s TiffanyAnswerPhoneNiteText[];
+extern const txt_cmd_s TiffanyGreetText[];
+extern const txt_cmd_s TiffanyGreetDayText[];
+extern const txt_cmd_s TiffanyGreetNiteText[];
+extern const txt_cmd_s TiffanyGenericText[];

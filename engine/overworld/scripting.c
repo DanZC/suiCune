@@ -1084,7 +1084,7 @@ void GiveItemScript_DummyFunction(void){
 }
 
 bool GiveItemScript(script_s* s){
-    static const struct TextCmd ReceivedItemText[] = {
+    static const txt_cmd_s ReceivedItemText[] = {
         text_far(v_ReceivedItemText)
         text_end
     };
@@ -1284,14 +1284,14 @@ uint8_t* CurItemName_Conv(item_t item){
     return GetItemName_Conv2(item);
 }
 
-const struct TextCmd PutItemInPocketText[] = {
+const txt_cmd_s PutItemInPocketText[] = {
     text_far(v_PutItemInPocketText)
     text_end
 
     // return PocketIsFullText();
 };
 
-const struct TextCmd PocketIsFullText[] = {
+const txt_cmd_s PocketIsFullText[] = {
     text_far(v_PocketIsFullText)
     text_end
 

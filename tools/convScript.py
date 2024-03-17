@@ -309,7 +309,7 @@ def string_label(name: str, value: str):
     return f"const char {name}[] = \"{value}\";\n"
 
 def begin_text(name: str):
-    return f"const struct TextCmd {name}[] = {{\n"
+    return f"const txt_cmd_s {name}[] = {{\n"
 
 def end_text():
     return "};\n"
@@ -515,7 +515,7 @@ def convert_script_from_lines(path: str, lines: List[str]):
                     cur_movement = ''
                     cur_text = ln.name
                     out += begin_text(ln.name)
-                    out_h += f"extern const struct TextCmd {ln.name}[];\n"
+                    out_h += f"extern const txt_cmd_s {ln.name}[];\n"
                     continue
                 if nxt.name == 'itemball':
                     if cur_text != '':

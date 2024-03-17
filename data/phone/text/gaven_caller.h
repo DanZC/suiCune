@@ -1,8 +1,8 @@
 #pragma once
-extern const struct TextCmd GavenMonGreaterThanImaginedText[];
-extern const struct TextCmd GavenDefeatedMonText[];
-extern const struct TextCmd GavenLostAMonText[];
-extern const struct TextCmd GavenBattleRematchText[];
-extern const struct TextCmd GavenHangUpText[];
-extern const struct TextCmd GavenHangUpNotThursdayText[];
-extern const struct TextCmd GavenReminderText[];
+extern const txt_cmd_s GavenMonGreaterThanImaginedText[];
+extern const txt_cmd_s GavenDefeatedMonText[];
+extern const txt_cmd_s GavenLostAMonText[];
+extern const txt_cmd_s GavenBattleRematchText[];
+extern const txt_cmd_s GavenHangUpText[];
+extern const txt_cmd_s GavenHangUpNotThursdayText[];
+extern const txt_cmd_s GavenReminderText[];

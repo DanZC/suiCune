@@ -1,10 +1,10 @@
 #pragma once
-extern const struct TextCmd ArnieMonIsSoCuteText[];
-extern const struct TextCmd ArnieDefeatedMonText[];
-extern const struct TextCmd ArnieLostAMonText[];
-extern const struct TextCmd ArnieBattleRematchText[];
-extern const struct TextCmd ArnieHangUpText[];
-extern const struct TextCmd ArnieSwarmText[];
-extern const struct TextCmd ArnieHaventSeenRareMonText[];
-extern const struct TextCmd ArnieReminderText[];
-extern const struct TextCmd ArnieHurryText[];
+extern const txt_cmd_s ArnieMonIsSoCuteText[];
+extern const txt_cmd_s ArnieDefeatedMonText[];
+extern const txt_cmd_s ArnieLostAMonText[];
+extern const txt_cmd_s ArnieBattleRematchText[];
+extern const txt_cmd_s ArnieHangUpText[];
+extern const txt_cmd_s ArnieSwarmText[];
+extern const txt_cmd_s ArnieHaventSeenRareMonText[];
+extern const txt_cmd_s ArnieReminderText[];
+extern const txt_cmd_s ArnieHurryText[];

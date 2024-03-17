@@ -1,2 +1,2 @@
 #pragma once
-extern const struct TextCmd BikeShopPhoneCallerText[];
+extern const txt_cmd_s BikeShopPhoneCallerText[];

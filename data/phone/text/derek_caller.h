@@ -1,9 +1,9 @@
 #pragma once
-extern const struct TextCmd DerekCheekPinchingText[];
-extern const struct TextCmd DerekDefeatedMonText[];
-extern const struct TextCmd DerekLostAMonText[];
-extern const struct TextCmd DerekHangUpText[];
-extern const struct TextCmd DerekBugCatchingContestText[];
-extern const struct TextCmd DerekFoundItemText[];
-extern const struct TextCmd DerekLetsGetTogetherText[];
-extern const struct TextCmd DerekComePickUpText[];
+extern const txt_cmd_s DerekCheekPinchingText[];
+extern const txt_cmd_s DerekDefeatedMonText[];
+extern const txt_cmd_s DerekLostAMonText[];
+extern const txt_cmd_s DerekHangUpText[];
+extern const txt_cmd_s DerekBugCatchingContestText[];
+extern const txt_cmd_s DerekFoundItemText[];
+extern const txt_cmd_s DerekLetsGetTogetherText[];
+extern const txt_cmd_s DerekComePickUpText[];
