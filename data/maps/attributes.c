@@ -79,6 +79,10 @@ map_attributes(CherrygroveCity, CHERRYGROVE_CITY, 0x35,
     connection(CHERRYGROVE_CITY, north, Route30, ROUTE_30, 5)
     connection(CHERRYGROVE_CITY, east, Route29, ROUTE_29, 0));
 
+map_attributes(Route27, ROUTE_27, 0x35,
+    connection(ROUTE_27, west, NewBarkTown, NEW_BARK_TOWN, 0)
+    connection(ROUTE_27, east, Route26, ROUTE_26, -45));
+
 map_attributes(Route29, ROUTE_29, 0x05, 
     connection(ROUTE_29, north, Route46, ROUTE_46, 10)
     connection(ROUTE_29, west, CherrygroveCity, CHERRYGROVE_CITY, 0)

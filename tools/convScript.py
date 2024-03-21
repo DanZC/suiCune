@@ -34,6 +34,7 @@ commands = {
     'specialsound': Cmd('specialsound', []),
     'hangup': Cmd('hangup', []),
     'askforphonenumber': Cmd('askforphonenumber', ['contact']),
+    'describedecoration': Cmd('describedecoration', ['deco']),
     'fruittree': Cmd('fruittree', ['tree']),
     'trainertext': Cmd('trainertext', ['text']),
     'scripttalkafter': Cmd('scripttalkafter', []),
@@ -145,6 +146,7 @@ commands = {
     'endcallback': Cmd("s_endcallback", []),
     'endall': Cmd("s_endall", []),
     'wait': Cmd('wait', []),
+    'checksave': Cmd('checksave', []),
 }
 
 text_commands = {

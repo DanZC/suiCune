@@ -28,7 +28,7 @@ void CopyName1_Conv(uint16_t de) {
 }
 
 //  Copies the name from de to wStringBuffer2
-void CopyName1_Conv2(const uint8_t* de) {
+uint8_t* CopyName1_Conv2(const uint8_t* de) {
     return CopyName2_Conv2(wram->wStringBuffer2, de);
 }
 
@@ -42,10 +42,11 @@ void CopyName2_Conv(uint16_t hl, uint16_t de){
 }
 
 //  Copies the name from de to hl
-void CopyName2_Conv2(uint8_t* hl, const uint8_t* de){
+uint8_t* CopyName2_Conv2(uint8_t* hl, const uint8_t* de){
     uint8_t a;
     do {
         a = *(de++);
         *(hl++) = a;
     } while(a != CHAR_TERM);
+    return hl;
 }

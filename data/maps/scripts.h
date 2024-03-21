@@ -411,7 +411,7 @@
 // SECTION "Map Scripts 21", ROMX
 
 // #include "../../maps/CianwoodCity.h"
-// #include "../../maps/Route27.h"
+#include "../../maps/Route27.h"
 #include "../../maps/Route29.h"
 #include "../../maps/Route30.h"
 // #include "../../maps/Route38.h"

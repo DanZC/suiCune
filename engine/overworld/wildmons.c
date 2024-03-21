@@ -276,7 +276,7 @@ static bool TryWildEncounter_EncounterRate(void) {
     // CALL(aRandom);
     uint8_t a = Random_Conv();
     // CP_A_B;
-    return a >= b;
+    return a < b;
     // RET;
 }
 
@@ -953,39 +953,46 @@ const struct WildGrassMons* LookUpWildmonsForMapDE_Conv(const struct WildGrassMo
     // RET;
 }
 
-void InitRoamMons(void){
 //  initialize wRoamMon structs
+void InitRoamMons(void){
 
 //  species
-    LD_A(RAIKOU);
-    LD_addr_A(wRoamMon1Species);
-    LD_A(ENTEI);
-    LD_addr_A(wRoamMon2Species);
+    // LD_A(RAIKOU);
+    // LD_addr_A(wRoamMon1Species);
+    wram->wRoamMon1.species = RAIKOU;
+    // LD_A(ENTEI);
+    // LD_addr_A(wRoamMon2Species);
+    wram->wRoamMon2.species = ENTEI;
 
 //  level
-    LD_A(40);
-    LD_addr_A(wRoamMon1Level);
-    LD_addr_A(wRoamMon2Level);
+    // LD_A(40);
+    // LD_addr_A(wRoamMon1Level);
+    wram->wRoamMon1.level = 40;
+    // LD_addr_A(wRoamMon2Level);
+    wram->wRoamMon2.level = 40;
 
 //  raikou starting map
-    LD_A(GROUP_ROUTE_42);
-    LD_addr_A(wRoamMon1MapGroup);
-    LD_A(MAP_ROUTE_42);
-    LD_addr_A(wRoamMon1MapNumber);
+    // LD_A(GROUP_ROUTE_42);
+    // LD_addr_A(wRoamMon1MapGroup);
+    // LD_A(MAP_ROUTE_42);
+    // LD_addr_A(wRoamMon1MapNumber);
+    wram->wRoamMon1.mapId = MAP_ID_(ROUTE_42);
 
 //  entei starting map
-    LD_A(GROUP_ROUTE_37);
-    LD_addr_A(wRoamMon2MapGroup);
-    LD_A(MAP_ROUTE_37);
-    LD_addr_A(wRoamMon2MapNumber);
+    // LD_A(GROUP_ROUTE_37);
+    // LD_addr_A(wRoamMon2MapGroup);
+    // LD_A(MAP_ROUTE_37);
+    // LD_addr_A(wRoamMon2MapNumber);
+    wram->wRoamMon2.mapId = MAP_ID_(ROUTE_37);
 
 //  hp
-    XOR_A_A;  // generate new stats
-    LD_addr_A(wRoamMon1HP);
-    LD_addr_A(wRoamMon2HP);
+    // XOR_A_A;  // generate new stats
+    // LD_addr_A(wRoamMon1HP);
+    // LD_addr_A(wRoamMon2HP);
+    wram->wRoamMon1.HP = 0;
+    wram->wRoamMon2.HP = 0;
 
-    RET;
-
+    // RET;
 }
 
 void CheckEncounterRoamMon(void){
@@ -1121,54 +1128,51 @@ void UpdateRoamMons(void){
     // LD_A_addr(wRoamMon1MapGroup);
     // CP_A(GROUP_N_A);
     // IF_Z goto SkipRaikou;
-    if(wram->wRoamMon1.mapGroup != (uint8_t)GROUP_N_A) {
+    if(wram->wRoamMon1.mapId.mapGroup != (uint8_t)GROUP_N_A) {
         // LD_B_A;
         // LD_A_addr(wRoamMon1MapNumber);
         // LD_C_A;
         // CALL(aUpdateRoamMons_Update);
-        struct MapId new_map = UpdateRoamMons_Update(wram->wRoamMon1.mapGroup, wram->wRoamMon1.mapNumber);
+        struct MapId new_map = UpdateRoamMons_Update(wram->wRoamMon1.mapId.mapGroup, wram->wRoamMon1.mapId.mapNumber);
         // LD_A_B;
         // LD_addr_A(wRoamMon1MapGroup);
-        wram->wRoamMon1.mapGroup = new_map.mapGroup;
+        wram->wRoamMon1.mapId = new_map;
         // LD_A_C;
         // LD_addr_A(wRoamMon1MapNumber);
-        wram->wRoamMon1.mapNumber = new_map.mapNumber;
     }
 
 // SkipRaikou:
     // LD_A_addr(wRoamMon2MapGroup);
     // CP_A(GROUP_N_A);
     // IF_Z goto SkipEntei;
-    if(wram->wRoamMon2.mapGroup != (uint8_t)GROUP_N_A) {
+    if(wram->wRoamMon2.mapId.mapGroup != (uint8_t)GROUP_N_A) {
         // LD_B_A;
         // LD_A_addr(wRoamMon2MapNumber);
         // LD_C_A;
         // CALL(aUpdateRoamMons_Update);
-        struct MapId new_map = UpdateRoamMons_Update(wram->wRoamMon2.mapGroup, wram->wRoamMon2.mapNumber);
+        struct MapId new_map = UpdateRoamMons_Update(wram->wRoamMon2.mapId.mapGroup, wram->wRoamMon2.mapId.mapNumber);
         // LD_A_B;
         // LD_addr_A(wRoamMon2MapGroup);
-        wram->wRoamMon2.mapGroup = new_map.mapGroup;
+        wram->wRoamMon2.mapId = new_map;
         // LD_A_C;
         // LD_addr_A(wRoamMon2MapNumber);
-        wram->wRoamMon2.mapNumber = new_map.mapNumber;
     }
 
 // SkipEntei:
     // LD_A_addr(wRoamMon3MapGroup);
     // CP_A(GROUP_N_A);
     // IF_Z goto Finished;
-    if(wram->wRoamMon3.mapGroup != (uint8_t)GROUP_N_A) {
+    if(wram->wRoamMon3.mapId.mapGroup != (uint8_t)GROUP_N_A) {
         // LD_B_A;
         // LD_A_addr(wRoamMon3MapNumber);
         // LD_C_A;
         // CALL(aUpdateRoamMons_Update);
-        struct MapId new_map = UpdateRoamMons_Update(wram->wRoamMon3.mapGroup, wram->wRoamMon3.mapNumber);
+        struct MapId new_map = UpdateRoamMons_Update(wram->wRoamMon3.mapId.mapGroup, wram->wRoamMon3.mapId.mapNumber);
         // LD_A_B;
         // LD_addr_A(wRoamMon3MapGroup);
-        wram->wRoamMon3.mapGroup = new_map.mapGroup;
+        wram->wRoamMon3.mapId = new_map;
         // LD_A_C;
         // LD_addr_A(wRoamMon3MapNumber);
-        wram->wRoamMon3.mapNumber = new_map.mapNumber;
     }
 
 // Finished:
@@ -1180,15 +1184,14 @@ void JumpRoamMons(void){
     // LD_A_addr(wRoamMon1MapGroup);
     // CP_A(GROUP_N_A);
     // IF_Z goto SkipRaikou;
-    if(wram->wRoamMon1.mapGroup != (uint8_t)GROUP_N_A) {
+    if(wram->wRoamMon1.mapId.mapGroup != (uint8_t)GROUP_N_A) {
         // CALL(aJumpRoamMon);
         struct MapId new_map = JumpRoamMon_Conv();
         // LD_A_B;
         // LD_addr_A(wRoamMon1MapGroup);
-        wram->wRoamMon1.mapGroup = new_map.mapGroup;
+        wram->wRoamMon1.mapId = new_map;
         // LD_A_C;
         // LD_addr_A(wRoamMon1MapNumber);
-        wram->wRoamMon1.mapNumber = new_map.mapNumber;
     }
 
 
@@ -1196,15 +1199,14 @@ void JumpRoamMons(void){
     // LD_A_addr(wRoamMon2MapGroup);
     // CP_A(GROUP_N_A);
     // IF_Z goto SkipEntei;
-    if(wram->wRoamMon2.mapGroup != (uint8_t)GROUP_N_A) {
+    if(wram->wRoamMon2.mapId.mapGroup != (uint8_t)GROUP_N_A) {
         // CALL(aJumpRoamMon);
         struct MapId new_map = JumpRoamMon_Conv();
         // LD_A_B;
         // LD_addr_A(wRoamMon2MapGroup);
-        wram->wRoamMon2.mapGroup = new_map.mapGroup;
+        wram->wRoamMon2.mapId = new_map;
         // LD_A_C;
         // LD_addr_A(wRoamMon2MapNumber);
-        wram->wRoamMon2.mapNumber = new_map.mapNumber;
     }
 
 
@@ -1212,15 +1214,14 @@ void JumpRoamMons(void){
     // LD_A_addr(wRoamMon3MapGroup);
     // CP_A(GROUP_N_A);
     // IF_Z goto Finished;
-    if(wram->wRoamMon3.mapGroup != (uint8_t)GROUP_N_A) {
+    if(wram->wRoamMon3.mapId.mapGroup != (uint8_t)GROUP_N_A) {
         // CALL(aJumpRoamMon);
         struct MapId new_map = JumpRoamMon_Conv();
         // LD_A_B;
         // LD_addr_A(wRoamMon3MapGroup);
-        wram->wRoamMon3.mapGroup = new_map.mapGroup;
+        wram->wRoamMon3.mapId = new_map;
         // LD_A_C;
         // LD_addr_A(wRoamMon3MapNumber);
-        wram->wRoamMon3.mapNumber = new_map.mapNumber;
     }
 
 // Finished:

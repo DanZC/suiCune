@@ -706,8 +706,9 @@ Roamer
 {
     species_t species;
     uint8_t level;
-    uint8_t mapGroup;
-    uint8_t mapNumber;
+    // uint8_t mapGroup;
+    // uint8_t mapNumber;
+    struct MapId mapId;
     uint8_t HP;
     uint16_t DVs;
 };
@@ -1358,6 +1359,21 @@ struct CoordsTileId
     int8_t x;
     int8_t y;
     uint8_t tileId;
+};
+
+struct SpriteSeqData
+{
+    uint8_t frameset;
+    uint8_t sequence;
+    uint8_t tile;
+};
+
+struct Decoration {
+    uint8_t type_id;
+    uint8_t name_id;
+    uint8_t action;
+    uint16_t event_flag;
+    uint8_t tile;
 };
 
 struct EvoData {

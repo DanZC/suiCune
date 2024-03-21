@@ -137,10 +137,10 @@ static void BattleIntroSlidingPics_subfunction5(uint8_t d, uint8_t e);
 static void BattleIntroSlidingPics_subfunction1(void) {
     // CALL(aBattleIntroSlidingPics_subfunction4);
     // BattleIntroSlidingPics_subfunction4();
-    ByteFill_Conv(wLYOverrides, SCREEN_HEIGHT_PX, 0x90);
+    ByteFill_Conv2(wram->wLYOverrides, SCREEN_HEIGHT_PX, 0x90);
     // LD_A(0x90);
     // LDH_addr_A(hSCX);
-    gb_write(hSCX, 0x90);
+    hram->hSCX = 0x90;
     // LD_A(0b11100100);
     // CALL(aDmgToCgbBGPals);
     DmgToCgbBGPals_Conv(0b11100100);
@@ -154,16 +154,15 @@ static void BattleIntroSlidingPics_subfunction3(void) {
     // LD_HL(wVirtualOAMSprite00XCoord);
     // LD_C(0x12);  // 18
     // LD_DE(SPRITEOAMSTRUCT_LENGTH);
-    uint16_t hl = wVirtualOAMSprite00XCoord;
+    struct SpriteOAM* hl = wram->wVirtualOAMSprite;
     uint8_t i = 0x12;
 
     do {
         // DEC_hl;
         // DEC_hl;
-        gb_write(hl, gb_read(hl) - 1);
-        gb_write(hl, gb_read(hl) - 1);
+        hl->xCoord -= 2;
         // ADD_HL_DE;
-        hl += SPRITEOAMSTRUCT_LENGTH;
+        hl++;
         // DEC_C;
         // IF_NZ goto loop3;
     } while(--i != 0);
@@ -174,12 +173,12 @@ static void BattleIntroSlidingPics_subfunction5(uint8_t d, uint8_t e) {
     // LD_HL(wLYOverrides);
     // LD_A_D;
     // LD_C(0x3e);  // 62
-    uint16_t hl = wLYOverrides;
+    uint8_t* hl = wram->wLYOverrides;
     uint8_t c = 0x3e; // 62
 
     do {
         // LD_hli_A;
-        gb_write(hl++, d);
+        *(hl++) = d;
         // DEC_C;
         // IF_NZ goto loop4;
     } while(--c != 0);
@@ -189,7 +188,7 @@ static void BattleIntroSlidingPics_subfunction5(uint8_t d, uint8_t e) {
 
     do {
         // LD_hli_A;
-        gb_write(hl++, e);
+        *(hl++) = e;
         // DEC_C;
         // IF_NZ goto loop5;
     } while(--c != 0);
@@ -199,7 +198,7 @@ static void BattleIntroSlidingPics_subfunction5(uint8_t d, uint8_t e) {
 
     do {
         // LD_hli_A;
-        gb_write(hl++, 0);
+        *(hl++) = 0;
         // DEC_C;
         // IF_NZ goto loop6;
     } while(--c != 0);
@@ -223,7 +222,7 @@ static void BattleIntroSlidingPics_subfunction2(void) {
         // NOP;
         // LD_A_D;
         // LDH_addr_A(hSCX);
-        gb_write(hSCX, d);
+        hram->hSCX = d;
         // CALL(aBattleIntroSlidingPics_subfunction5);
         BattleIntroSlidingPics_subfunction5(d, e);
         // INC_E;
@@ -265,12 +264,12 @@ void BattleIntroSlidingPics(void){
     BattleIntroSlidingPics_subfunction1();
     // LD_A(LOW(rSCX));
     // LDH_addr_A(hLCDCPointer);
-    gb_write(hLCDCPointer, LOW(rSCX));
+    hram->hLCDCPointer = LOW(rSCX);
     // CALL(aBattleIntroSlidingPics_subfunction2);
     BattleIntroSlidingPics_subfunction2();
     // XOR_A_A;
     // LDH_addr_A(hLCDCPointer);
-    gb_write(hLCDCPointer, 0);
+    hram->hLCDCPointer = 0;
     // POP_AF;
     // LDH_addr_A(rSVBK);
     gb_write(rSVBK, tempVBK);

@@ -38,6 +38,7 @@
 #define specialsound                SCRIPT_EVCMD(Script_specialsound_Conv)
 #define hangup                      SCRIPT_EVCMD(Script_hangup_Conv)
 #define askforphonenumber(_c)       SCRIPT_EVCMD(Script_askforphonenumber_Conv, _c)
+#define describedecoration(_d)      SCRIPT_EVCMD(Script_describedecoration_Conv, _d)
 #define fruittree(_tree)            SCRIPT_EVCMD(Script_fruittree_Conv, _tree)
 #define trainertext(_text)          SCRIPT_EVCMD(Script_trainertext_Conv, _text)
 #define scripttalkafter             SCRIPT_EVCMD(Script_scripttalkafter_Conv)
@@ -158,6 +159,7 @@
 #define s_endcallback               SCRIPT_ENDCALLBACK
 #define s_endall                    SCRIPT_EVCMD(Script_endall_Conv)
 #define wait(_n)                    SCRIPT_EVCMD(Script_wait_Conv, _n)
+#define checksave                   SCRIPT_EVCMD(Script_checksave_Conv)
 #define s_ret                       SCRIPT_RET
 
 #define jumpstd2(_std)              SCRIPT_EVCMD(Script_jumpstd_Conv, _std)

@@ -2,6 +2,7 @@
 #include "start_menu.h"
 #include "menu.h"
 #include "menu_2.h"
+#include "intro_menu.h"
 #include "../pokegear/pokegear.h"
 #include "../../home/audio.h"
 #include "../../home/copy.h"
@@ -679,9 +680,13 @@ void StartMenu_Option(void){
 
 //  Game options.
 uint8_t StartMenu_Option_Conv(void) {
-    struct cpu_registers_s regs = {};
-    SafeCallGB(aStartMenu_Option, &regs);
-    return regs.a;
+    // CALL(aFadeToMenu);
+    FadeToMenu_Conv();
+    // FARCALL(aOption);
+    Option_Conv();
+    // LD_A(STARTMENURET_RETURN_REDRAW);
+    // RET;
+    return STARTMENURET_RETURN_REDRAW;
 }
 
 void StartMenu_Status(void){

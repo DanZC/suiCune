@@ -123,7 +123,7 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(GameboyCheck),
     // add_special(TrainerHouse),
     // add_special(PhotoStudio),
-    // add_special(InitRoamMons),
+    add_special(InitRoamMons),
     add_special(FadeOutMusic),
     // add_special(Diploma),
     // add_special(PrintDiploma),

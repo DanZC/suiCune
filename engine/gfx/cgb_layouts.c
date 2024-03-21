@@ -113,20 +113,29 @@ void LoadSGBLayoutCGB_Conv(uint8_t b){
 
 }
 
+static const uint16_t PalPacket_BattleGrayscale[] = {
+    PREDEFPAL_BLACKOUT, PREDEFPAL_BLACKOUT, PREDEFPAL_BLACKOUT, PREDEFPAL_BLACKOUT,
+};
+
 void v_CGB_BattleGrayscale(void){
-    LD_HL(mPalPacket_BattleGrayscale + 1);
-    LD_DE(wBGPals1);
-    LD_C(4);
-    CALL(aCopyPalettes);
-    LD_HL(mPalPacket_BattleGrayscale + 1);
-    LD_DE(wBGPals1 + PALETTE_SIZE * PAL_BATTLE_BG_EXP);
-    LD_C(4);
-    CALL(aCopyPalettes);
-    LD_HL(mPalPacket_BattleGrayscale + 1);
-    LD_DE(wOBPals1);
-    LD_C(2);
-    CALL(aCopyPalettes);
-    JR(mv_CGB_FinishBattleScreenLayout);
+    // LD_HL(mPalPacket_BattleGrayscale + 1);
+    // LD_DE(wBGPals1);
+    uint16_t* de = (uint16_t*)((uint8_t*)wram + offsetof(struct wram_s, wBGPals1)); // Won't let me take pointer of packed wBGPals1, so I'm doing this ugly shit instead.
+    // LD_C(4);
+    // CALL(aCopyPalettes);
+    CopyPalettes_Conv(de, (const uint8_t*)PalPacket_BattleGrayscale, 4);
+    // LD_HL(mPalPacket_BattleGrayscale + 1);
+    // LD_DE(wBGPals1 + PALETTE_SIZE * PAL_BATTLE_BG_EXP);
+    // LD_C(4);
+    // CALL(aCopyPalettes);
+    CopyPalettes_Conv(de + NUM_PAL_COLORS * PAL_BATTLE_BG_EXP, (const uint8_t*)PalPacket_BattleGrayscale, 4);
+    // LD_HL(mPalPacket_BattleGrayscale + 1);
+    // LD_DE(wOBPals1);
+    // LD_C(2);
+    // CALL(aCopyPalettes);
+    uint16_t* de2 = (uint16_t*)((uint8_t*)wram + offsetof(struct wram_s, wOBPals1)); // Won't let me take pointer of packed wOBPals1, so I'm doing this ugly shit instead.
+    CopyPalettes_Conv(de2, (const uint8_t*)PalPacket_BattleGrayscale, 4);
+    // JR(mv_CGB_FinishBattleScreenLayout);
 
 }
 

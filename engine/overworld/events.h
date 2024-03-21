@@ -87,6 +87,7 @@ u8_flag_s RunMemScript_Conv(void);
 void LoadScriptBDE(void);
 bool LoadScriptBDE_Conv(Script_fn_t de);
 void TryTileCollisionEvent(void);
+u8_flag_s TryTileCollisionEvent_Conv(void);
 void RandomEncounter(void);
 u8_flag_s RandomEncounter_Conv(void);
 bool WildBattleScript(script_s* s);

@@ -27,6 +27,7 @@
 #include "../events/fruit_trees.h"
 #include "../events/whiteout.h"
 #include "../events/mom_phone.h"
+#include "../events/checksave.h"
 #include "events.h"
 #include "variables.h"
 #include "landmarks.h"
@@ -34,6 +35,7 @@
 #include "map_objects.h"
 #include "player_object.h"
 #include "tile_events.h"
+#include "decorations.h"
 #include "../events/specials.h"
 #include "../items/items.h"
 #include "../../data/text/common.h"
@@ -1429,6 +1431,17 @@ void Script_describedecoration(void){
     LD_L_E;
     JP(mScriptJump);
 
+}
+
+void Script_describedecoration_Conv(script_s* s, uint8_t deco){
+    // CALL(aGetScriptByte);
+    // LD_B_A;
+    // FARCALL(aDescribeDecoration);
+    Script_fn_t script = DescribeDecoration_Conv(deco);
+    // LD_H_D;
+    // LD_L_E;
+    // JP(mScriptJump);
+    Script_Goto(s, script);
 }
 
 void Script_fruittree(void){
@@ -5463,6 +5476,15 @@ void Script_checksave(void){
     LD_addr_A(wScriptVar);
     RET;
 
+}
+
+void Script_checksave_Conv(script_s* s){
+    (void)s;
+    // FARCALL(aCheckSave);
+    // LD_A_C;
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = CheckSave_Conv();
+    // RET;
 }
 
 void Script_checkver_duplicate(void){

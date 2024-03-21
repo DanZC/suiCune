@@ -75,6 +75,7 @@ void Script_hangup_Conv(script_s* s);
 void Script_askforphonenumber(void);
 void Script_askforphonenumber_Conv(script_s* s, uint8_t contact);
 void Script_describedecoration(void);
+void Script_describedecoration_Conv(script_s* s, uint8_t deco);
 void Script_fruittree(void);
 void Script_fruittree_Conv(script_s* s, uint8_t tree);
 void Script_swarm(void);
@@ -363,6 +364,7 @@ void ReturnFromCredits(void);
 void Script_wait(void);
 void Script_wait_Conv(script_s* s, uint8_t a);
 void Script_checksave(void);
+void Script_checksave_Conv(script_s* s);
 void Script_checkver_duplicate(void);
 //#include "data/items/pocket_names.h"
 

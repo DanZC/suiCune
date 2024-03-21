@@ -1,0 +1,61 @@
+#include "../../constants.h"
+
+const uint8_t DecorationIDs[] = {
+// see constants/deco_constants.asm
+    // table_width 1, DecorationIDs
+    DECO_FEATHERY_BED, // 2
+    DECO_PINK_BED, // 3
+    DECO_POLKADOT_BED, // 4
+    DECO_PIKACHU_BED, // 5
+
+    DECO_RED_CARPET, // 7
+    DECO_BLUE_CARPET, // 8
+    DECO_YELLOW_CARPET, // 9
+    DECO_GREEN_CARPET, // a
+
+    DECO_MAGNAPLANT, // c
+    DECO_TROPICPLANT, // d
+    DECO_JUMBOPLANT, // e
+
+    DECO_TOWN_MAP, // 10
+    DECO_PIKACHU_POSTER, // 11
+    DECO_CLEFAIRY_POSTER, // 12
+    DECO_JIGGLYPUFF_POSTER, // 13
+
+    DECO_FAMICOM, // 15
+    DECO_SNES, // 16
+    DECO_N64, // 17
+    DECO_VIRTUAL_BOY, // 18
+
+    DECO_PIKACHU_DOLL, // 1e
+    DECO_SURF_PIKACHU_DOLL, // 1f
+    DECO_CLEFAIRY_DOLL, // 20
+    DECO_JIGGLYPUFF_DOLL, // 21
+    DECO_BULBASAUR_DOLL, // 22
+    DECO_CHARMANDER_DOLL, // 23
+    DECO_SQUIRTLE_DOLL, // 24
+    DECO_POLIWAG_DOLL, // 25
+    DECO_DIGLETT_DOLL, // 26
+    DECO_STARMIE_DOLL, // 27
+    DECO_MAGIKARP_DOLL, // 28
+    DECO_ODDISH_DOLL, // 29
+    DECO_GENGAR_DOLL, // 2a
+    DECO_SHELLDER_DOLL, // 2b
+    DECO_GRIMER_DOLL, // 2c
+    DECO_VOLTORB_DOLL, // 2d
+    DECO_WEEDLE_DOLL, // 2e
+    DECO_UNOWN_DOLL, // 2f
+    DECO_GEODUDE_DOLL, // 30
+    DECO_MACHOP_DOLL, // 31
+    DECO_TENTACOOL_DOLL, // 32
+
+    DECO_BIG_SNORLAX_DOLL, // 1a
+    DECO_BIG_ONIX_DOLL, // 1b
+    DECO_BIG_LAPRAS_DOLL, // 1c
+
+    DECO_GOLD_TROPHY_DOLL, // 33
+    DECO_SILVER_TROPHY_DOLL, // 34
+};
+
+static_assert(lengthof(DecorationIDs) == NUM_DECOS, "");
+	// db -1, // end

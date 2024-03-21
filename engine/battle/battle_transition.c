@@ -104,7 +104,8 @@ void DoBattleTransition(void){
         // IF_NZ goto done;
         if(bit_test(wram->wJumptableIndex, 7))
             break;
-        CALL(aBattleTransitionJumptable);
+        // CALL(aBattleTransitionJumptable);
+        BattleTransitionJumptable();
         // CALL(aDelayFrame);
         DelayFrame();
         // goto loop;
@@ -150,8 +151,8 @@ void DoBattleTransition(void){
     hram->hVBlank = vblank;
     // CALL(aDelayFrame);
     DelayFrame();
-    PEEK("end");
-    RET;
+    // PEEK("end");
+    // RET;
 }
 
 void LoadTrainerBattlePokeballTiles(void){
@@ -240,89 +241,87 @@ loop:
 void BattleTransitionJumptable(void){
     //jumptable ['.Jumptable', 'wJumptableIndex']
     // fast_jumptable(mBattleTransitionJumptable_Jumptable, wJumptableIndex);
-    SAVE_REGS;
     switch(wram->wJumptableIndex) {
 // Jumptable:
     //dw ['StartTrainerBattle_DetermineWhichAnimation'];  // 00
-        case 0x00: CALL(aStartTrainerBattle_DetermineWhichAnimation); break;
+        case 0x00: return StartTrainerBattle_DetermineWhichAnimation();
 
 // BATTLETRANSITION_CAVE
     //dw ['StartTrainerBattle_LoadPokeBallGraphics'];  // 01
-        case 0x01: CALL(aStartTrainerBattle_LoadPokeBallGraphics); break;
+        case 0x01: return StartTrainerBattle_LoadPokeBallGraphics();
     //dw ['StartTrainerBattle_SetUpBGMap'];  // 02
-        case 0x02: CALL(aStartTrainerBattle_SetUpBGMap); break;
+        case 0x02: return StartTrainerBattle_SetUpBGMap();
     //dw ['StartTrainerBattle_Flash'];  // 03
-        case 0x03: CALL(aStartTrainerBattle_Flash); break;
+        case 0x03: return StartTrainerBattle_Flash();
     //dw ['StartTrainerBattle_Flash'];  // 04
-        case 0x04: CALL(aStartTrainerBattle_Flash); break;
+        case 0x04: return StartTrainerBattle_Flash();
     //dw ['StartTrainerBattle_Flash'];  // 05
-        case 0x05: CALL(aStartTrainerBattle_Flash); break;
+        case 0x05: return StartTrainerBattle_Flash();
     //dw ['StartTrainerBattle_NextScene'];  // 06
-        case 0x06: CALL(aStartTrainerBattle_NextScene); break;
+        case 0x06: return StartTrainerBattle_NextScene();
     //dw ['StartTrainerBattle_SetUpForWavyOutro'];  // 07
-        case 0x07: CALL(aStartTrainerBattle_SetUpForWavyOutro); break;
+        case 0x07: return StartTrainerBattle_SetUpForWavyOutro();
     //dw ['StartTrainerBattle_SineWave'];  // 08
-        case 0x08: CALL(aStartTrainerBattle_SineWave); break;
+        case 0x08: return StartTrainerBattle_SineWave();
 
 // BATTLETRANSITION_CAVE_STRONGER
     //dw ['StartTrainerBattle_LoadPokeBallGraphics'];  // 09
-        case 0x09: CALL(aStartTrainerBattle_LoadPokeBallGraphics); break;
+        case 0x09: return StartTrainerBattle_LoadPokeBallGraphics();
     //dw ['StartTrainerBattle_SetUpBGMap'];  // 0a
-        case 0x0a: CALL(aStartTrainerBattle_SetUpBGMap); break;
+        case 0x0a: return StartTrainerBattle_SetUpBGMap();
     //dw ['StartTrainerBattle_Flash'];  // 0b
-        case 0x0b: CALL(aStartTrainerBattle_Flash); break;
+        case 0x0b: return StartTrainerBattle_Flash();
     //dw ['StartTrainerBattle_Flash'];  // 0c
-        case 0x0c: CALL(aStartTrainerBattle_Flash); break;
+        case 0x0c: return StartTrainerBattle_Flash();
     //dw ['StartTrainerBattle_Flash'];  // 0d
-        case 0x0d: CALL(aStartTrainerBattle_Flash); break;
+        case 0x0d: return StartTrainerBattle_Flash();
     //dw ['StartTrainerBattle_NextScene'];  // 0e
-        case 0x0e: CALL(aStartTrainerBattle_NextScene); break;
+        case 0x0e: return StartTrainerBattle_NextScene();
 // There is no setup for this one
     //dw ['StartTrainerBattle_ZoomToBlack'];  // 0f
-        case 0x0f: CALL(aStartTrainerBattle_ZoomToBlack); break;
+        case 0x0f: return StartTrainerBattle_ZoomToBlack();
 
 // BATTLETRANSITION_NO_CAVE
     //dw ['StartTrainerBattle_LoadPokeBallGraphics'];  // 10
-        case 0x10: CALL(aStartTrainerBattle_LoadPokeBallGraphics); break;
+        case 0x10: return StartTrainerBattle_LoadPokeBallGraphics();
     //dw ['StartTrainerBattle_SetUpBGMap'];  // 11
-        case 0x11: CALL(aStartTrainerBattle_SetUpBGMap); break;
+        case 0x11: return StartTrainerBattle_SetUpBGMap();
     //dw ['StartTrainerBattle_Flash'];  // 12
-        case 0x12: CALL(aStartTrainerBattle_Flash); break;
+        case 0x12: return StartTrainerBattle_Flash();
     //dw ['StartTrainerBattle_Flash'];  // 13
-        case 0x13: CALL(aStartTrainerBattle_Flash); break;
+        case 0x13: return StartTrainerBattle_Flash();
     //dw ['StartTrainerBattle_Flash'];  // 14
-        case 0x14: CALL(aStartTrainerBattle_Flash); break;
+        case 0x14: return StartTrainerBattle_Flash();
     //dw ['StartTrainerBattle_NextScene'];  // 15
-        case 0x15: CALL(aStartTrainerBattle_NextScene); break;
+        case 0x15: return StartTrainerBattle_NextScene();
     //dw ['StartTrainerBattle_SetUpForSpinOutro'];  // 16
-        case 0x16: CALL(aStartTrainerBattle_SetUpForSpinOutro); break;
+        case 0x16: return StartTrainerBattle_SetUpForSpinOutro();
     //dw ['StartTrainerBattle_SpinToBlack'];  // 17
-        case 0x17: CALL(aStartTrainerBattle_SpinToBlack); break;
+        case 0x17: return StartTrainerBattle_SpinToBlack();
 
 // BATTLETRANSITION_NO_CAVE_STRONGER
     //dw ['StartTrainerBattle_LoadPokeBallGraphics'];  // 18
-        case 0x18: CALL(aStartTrainerBattle_LoadPokeBallGraphics); break;
+        case 0x18: return StartTrainerBattle_LoadPokeBallGraphics();
     //dw ['StartTrainerBattle_SetUpBGMap'];  // 19
-        case 0x19: CALL(aStartTrainerBattle_SetUpBGMap); break;
+        case 0x19: return StartTrainerBattle_SetUpBGMap();
     //dw ['StartTrainerBattle_Flash'];  // 1a
-        case 0x1a: CALL(aStartTrainerBattle_Flash); break;
+        case 0x1a: return StartTrainerBattle_Flash();
     //dw ['StartTrainerBattle_Flash'];  // 1b
-        case 0x1b: CALL(aStartTrainerBattle_Flash); break;
+        case 0x1b: return StartTrainerBattle_Flash();
     //dw ['StartTrainerBattle_Flash'];  // 1c
-        case 0x1c: CALL(aStartTrainerBattle_Flash); break;
+        case 0x1c: return StartTrainerBattle_Flash();
     //dw ['StartTrainerBattle_NextScene'];  // 1d
-        case 0x1d: CALL(aStartTrainerBattle_NextScene); break;
+        case 0x1d: return StartTrainerBattle_NextScene();
     //dw ['StartTrainerBattle_SetUpForRandomScatterOutro'];  // 1e
-        case 0x1e: CALL(aStartTrainerBattle_SetUpForRandomScatterOutro); break;
+        case 0x1e: return StartTrainerBattle_SetUpForRandomScatterOutro();
     //dw ['StartTrainerBattle_SpeckleToBlack'];  // 1f
-        case 0x1f: CALL(aStartTrainerBattle_SpeckleToBlack); break;
+        case 0x1f: return StartTrainerBattle_SpeckleToBlack();
 
 // BATTLETRANSITION_FINISH
     //dw ['StartTrainerBattle_Finish'];  // 20
-        case 0x20: CALL(aStartTrainerBattle_Finish); break;
+        case 0x20: return StartTrainerBattle_Finish();
     }
-    RESTORE_REGS;
-    RET;
+    // RET;
 }
 
 //  transition animations
@@ -519,20 +518,20 @@ static void StartTrainerBattle_DoSineWave(void) {
     // LD_HL(wBattleTransitionSineWaveOffset);
     // LD_A_hl;
     // INC_hl;
-    uint8_t a = wram->wBattleTransitionSineWaveOffset++;
+    uint8_t a0 = wram->wBattleTransitionSineWaveOffset++;
     // LD_HL(wBattleTransitionCounter);
     // LD_D_hl;
     uint8_t d = wram->wBattleTransitionCounter;
     // ADD_A_hl;
-    a += wram->wBattleTransitionCounter;
+    a0 += wram->wBattleTransitionCounter;
     // LD_hl_A;
-    wram->wBattleTransitionCounter = a;
+    wram->wBattleTransitionCounter = a0;
     // LD_A(wLYOverridesEnd - wLYOverrides);
     // LD_BC(wLYOverrides);
     // LD_E(0);
     uint8_t e = 0;
 
-    for(uint8_t a = 0; a < lengthof(wram->wLYOverrides); ++a) {
+    for(uint32_t a = 0; a < lengthof(wram->wLYOverrides); ++a) {
     // loop:
         // PUSH_AF;
         // PUSH_DE;
@@ -1192,76 +1191,91 @@ uint8_t StartTrainerBattle_DrawSineWave_Conv(uint8_t a, uint8_t d){
     return v_Sine_Conv(a, d);
 }
 
+static void StartTrainerBattle_ZoomToBlack_Copy(uint8_t* hl, uint8_t c, uint8_t b) {
+    // LD_A(BATTLETRANSITION_BLACK);
+
+    do {
+    // row:
+        // PUSH_BC;
+        // PUSH_HL;
+
+        for(uint8_t c2 = 0; c2 < c; ++c2) {
+        // col:
+            // LD_hli_A;
+            // DEC_C;
+            // IF_NZ goto col;
+            hl[c2] = BATTLETRANSITION_BLACK;
+        }
+        // POP_HL;
+        // LD_BC(SCREEN_WIDTH);
+        // ADD_HL_BC;
+        hl += SCREEN_WIDTH;
+        // POP_BC;
+        // DEC_B;
+        // IF_NZ goto row;
+    } while(--b != 0);
+    // RET;
+}
+
 void StartTrainerBattle_ZoomToBlack(void){
-    FARCALL(aRespawnPlayerAndOpponent);
-    LD_DE(mStartTrainerBattle_ZoomToBlack_boxes);
-
-
-loop:
-    LD_A_de;
-    CP_A(-1);
-    IF_Z goto done;
-    INC_DE;
-    LD_C_A;
-    LD_A_de;
-    INC_DE;
-    LD_B_A;
-    LD_A_de;
-    INC_DE;
-    LD_L_A;
-    LD_A_de;
-    INC_DE;
-    LD_H_A;
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    CALL(aStartTrainerBattle_ZoomToBlack_Copy);
-    CALL(aWaitBGMap);
-    goto loop;
-
-
-done:
-    LD_A(BATTLETRANSITION_FINISH);
-    LD_addr_A(wJumptableIndex);
-    RET;
-
-
-boxes:
+    struct Zoombox {
+        uint8_t w;
+        uint8_t h;
+        uint8_t* start;
+    };
+    #define zoombox(w, h, sy, sx) {w, h, coord(sx, sy, wram_ptr(wTilemap))}
+    static const struct Zoombox boxes[] = {
 // zoombox: MACRO
 // ; width, height, start y, start x
 //     db \1, \2
 //     dwcoord \3, \4
 // ENDM
-    //zoombox ['4', '2', '8', '8']
-    //zoombox ['6', '4', '7', '7']
-    //zoombox ['8', '6', '6', '6']
-    //zoombox ['10', '8', '5', '5']
-    //zoombox ['12', '10', '4', '4']
-    //zoombox ['14', '12', '3', '3']
-    //zoombox ['16', '14', '2', '2']
-    //zoombox ['18', '16', '1', '1']
-    //zoombox ['20', '18', '0', '0']
+        zoombox(4, 2, 8, 8),
+        zoombox(6, 4, 7, 7),
+        zoombox(8, 6, 6, 6),
+        zoombox(10, 8, 5, 5),
+        zoombox(12, 10, 4, 4),
+        zoombox(14, 12, 3, 3),
+        zoombox(16, 14, 2, 2),
+        zoombox(18, 16, 1, 1),
+        zoombox(20, 18, 0, 0),
     //db ['-1'];
+    };
+    // FARCALL(aRespawnPlayerAndOpponent);
+    RespawnPlayerAndOpponent_Conv();
+    // LD_DE(mStartTrainerBattle_ZoomToBlack_boxes);
 
+    for(uint32_t i = 0; i < lengthof(boxes); ++i) {
+    // loop:
+        // LD_A_de;
+        // CP_A(-1);
+        // IF_Z goto done;
+        // INC_DE;
+        // LD_C_A;
+        // LD_A_de;
+        // INC_DE;
+        // LD_B_A;
+        // LD_A_de;
+        // INC_DE;
+        // LD_L_A;
+        // LD_A_de;
+        // INC_DE;
+        // LD_H_A;
+        // XOR_A_A;
+        // LDH_addr_A(hBGMapMode);
+        hram->hBGMapMode = 0;
+        // CALL(aStartTrainerBattle_ZoomToBlack_Copy);
+        StartTrainerBattle_ZoomToBlack_Copy(boxes[i].start, boxes[i].w, boxes[i].h);
+        // CALL(aWaitBGMap);
+        WaitBGMap_Conv();
+        // goto loop;
+    }
 
-Copy:
-    LD_A(BATTLETRANSITION_BLACK);
-
-row:
-    PUSH_BC;
-    PUSH_HL;
-
-col:
-    LD_hli_A;
-    DEC_C;
-    IF_NZ goto col;
-    POP_HL;
-    LD_BC(SCREEN_WIDTH);
-    ADD_HL_BC;
-    POP_BC;
-    DEC_B;
-    IF_NZ goto row;
-    RET;
-
+// done:
+    // LD_A(BATTLETRANSITION_FINISH);
+    // LD_addr_A(wJumptableIndex);
+    wram->wJumptableIndex = BATTLETRANSITION_FINISH;
+    // RET;
 }
 
 void UnusedWaitBGMapOnce(void){

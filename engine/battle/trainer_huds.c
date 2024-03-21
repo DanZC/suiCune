@@ -2,6 +2,9 @@
 #include "trainer_huds.h"
 #include "../../home/copy.h"
 #include "../../home/pokedex_flags.h"
+#include "../../home/gfx.h"
+#include "../../home/text.h"
+#include "../../home/tilemap.h"
 
 void BattleStart_TrainerHuds(void){
     // LD_A(0xe4);
@@ -342,29 +345,33 @@ void PlaceHUDBorderTiles_Conv(tile_t* hl, int16_t de){
 }
 
 void LinkBattle_TrainerHuds(void){
-    CALL(aLoadBallIconGFX);
-    LD_HL(wPartyMon1HP);
-    LD_DE(wPartyCount);
-    CALL(aStageBallTilesData);
-    LD_HL(wPlaceBallsX);
-    LD_A(10 * 8);
-    LD_hli_A;
-    LD_hl(8 * 8);
-    LD_A(8);
-    LD_addr_A(wPlaceBallsDirection);
-    LD_HL(wVirtualOAMSprite00);
-    CALL(aLoadTrainerHudOAM);
+    // CALL(aLoadBallIconGFX);
+    LoadBallIconGFX();
+    // LD_HL(wPartyMon1HP);
+    // LD_DE(wPartyCount);
+    // CALL(aStageBallTilesData);
+    StageBallTilesData_Conv(wram->wPartyCount, wram->wPartyMon);
+    // LD_HL(wPlaceBallsX);
+    // LD_A(10 * 8);
+    // LD_hli_A;
+    // LD_hl(8 * 8);
+    // LD_A(8);
+    // LD_addr_A(wPlaceBallsDirection);
+    // LD_HL(wVirtualOAMSprite00);
+    // CALL(aLoadTrainerHudOAM);
+    LoadTrainerHudOAM_Conv(wram->wVirtualOAMSprite, 8 * 8, 10 * 8, 8);
 
-    LD_HL(wOTPartyMon1HP);
-    LD_DE(wOTPartyCount);
-    CALL(aStageBallTilesData);
-    LD_HL(wPlaceBallsX);
-    LD_A(10 * 8);
-    LD_hli_A;
-    LD_hl(13 * 8);
-    LD_HL(wVirtualOAMSprite00 + PARTY_LENGTH * SPRITEOAMSTRUCT_LENGTH);
-    JP(mLoadTrainerHudOAM);
-
+    // LD_HL(wOTPartyMon1HP);
+    // LD_DE(wOTPartyCount);
+    // CALL(aStageBallTilesData);
+    StageBallTilesData_Conv(wram->wOTPartyCount, wram->wOTPartyMon);
+    // LD_HL(wPlaceBallsX);
+    // LD_A(10 * 8);
+    // LD_hli_A;
+    // LD_hl(13 * 8);
+    // LD_HL(wVirtualOAMSprite00 + PARTY_LENGTH * SPRITEOAMSTRUCT_LENGTH);
+    // JP(mLoadTrainerHudOAM);
+    LoadTrainerHudOAM_Conv(wram->wVirtualOAMSprite + PARTY_LENGTH, 13 * 8, 10 * 8, 8);
 }
 
 void LoadTrainerHudOAM(void){
@@ -435,28 +442,39 @@ void LoadBallIconGFX(void){
 }
 
 void v_ShowLinkBattleParticipants(void){
-    CALL(aClearBGPalettes);
-    CALL(aLoadFontsExtra);
-    hlcoord(2, 3, wTilemap);
-    LD_B(9);
-    LD_C(14);
-    CALL(aTextbox);
-    hlcoord(4, 5, wTilemap);
-    LD_DE(wPlayerName);
-    CALL(aPlaceString);
-    hlcoord(4, 10, wTilemap);
-    LD_DE(wOTPlayerName);
-    CALL(aPlaceString);
-    hlcoord(9, 8, wTilemap);
-    LD_A(0x69);
-    LD_hli_A;
-    LD_hl(0x6a);
-    FARCALL(aLinkBattle_TrainerHuds);  // no need to farcall
-    LD_B(SCGB_DIPLOMA);
-    CALL(aGetSGBLayout);
-    CALL(aSetPalettes);
-    LD_A(0xe4);
-    LDH_addr_A(rOBP0);
-    RET;
-
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
+    // CALL(aLoadFontsExtra);
+    LoadFontsExtra_Conv();
+    // hlcoord(2, 3, wTilemap);
+    // LD_B(9);
+    // LD_C(14);
+    // CALL(aTextbox);
+    Textbox_Conv2(coord(2, 3, wram->wTilemap), 9, 14);
+    // hlcoord(4, 5, wTilemap);
+    // LD_DE(wPlayerName);
+    // CALL(aPlaceString);
+    PlaceStringSimple(wram->wPlayerName, coord(4, 5, wram->wTilemap));
+    // hlcoord(4, 10, wTilemap);
+    // LD_DE(wOTPlayerName);
+    // CALL(aPlaceString);
+    PlaceStringSimple(wram->wOTPlayerName, coord(4, 10, wram->wTilemap));
+    // hlcoord(9, 8, wTilemap);
+    tile_t* hl = coord(9, 8, wram->wTilemap);
+    // LD_A(0x69);
+    // LD_hli_A;
+    hl[0] = 0x69;
+    // LD_hl(0x6a);
+    hl[1] = 0x6a;
+    // FARCALL(aLinkBattle_TrainerHuds);  // no need to farcall
+    LinkBattle_TrainerHuds();
+    // LD_B(SCGB_DIPLOMA);
+    // CALL(aGetSGBLayout);
+    GetSGBLayout_Conv(SCGB_DIPLOMA);
+    // CALL(aSetPalettes);
+    SetPalettes_Conv();
+    // LD_A(0xe4);
+    // LDH_addr_A(rOBP0);
+    gb_write(rOBP0, 0xe4);
+    // RET;
 }

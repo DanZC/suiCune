@@ -34,6 +34,7 @@ void RefreshBattleHuds_Conv(void);
 void UpdateBattleHuds(void);
 void FarCopyRadioText(void);
 void MobileTextBorder(void);
+void MobileTextBorder_Conv(void);
 void BattleTextbox(void);
 void BattleTextbox_Conv2(const struct TextCmd* hl);
 void StdBattleTextbox(void);

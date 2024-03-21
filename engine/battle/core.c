@@ -6,6 +6,8 @@
 #include "read_trainer_attributes.h"
 #include "read_trainer_dvs.h"
 #include "trainer_huds.h"
+#include "start_battle.h"
+#include "sliding_intro.h"
 #include "../../home/battle.h"
 #include "../../home/audio.h"
 #include "../../home/array.h"
@@ -19,6 +21,9 @@
 #include "../../home/menu.h"
 #include "../../home/random.h"
 #include "../../home/names.h"
+#include "../../home/gfx.h"
+#include "../../home/map_objects.h"
+#include "../../home/sprite_updates.h"
 #include "../../data/trainers/leaders.h"
 #include "../pokemon/experience.h"
 #include "../pokemon/health.h"
@@ -10785,8 +10790,7 @@ uint8_t BoostStat_Conv(uint8_t* hl){
 void v_LoadBattleFontsHPBar(void){
     // CALLFAR(aLoadBattleFontsHPBar);
     LoadBattleFontsHPBar_Conv();
-    RET;
-
+    // RET;
 }
 
 void v_LoadHPBar(void){
@@ -12455,7 +12459,8 @@ void StartBattle(void){
 
     LD_A_addr(wTimeOfDayPal);
     PUSH_AF;
-    CALL(aBattleIntro);
+    // CALL(aBattleIntro);
+    BattleIntro();
     {
         bank_push(BANK(aDoBattle));
         CALL(aDoBattle);
@@ -12490,9 +12495,9 @@ bool StartBattle_Conv(void){
     // CALL(aBattleIntro);
     BattleIntro();
     // CALL(aDoBattle);
-    DoBattle();
+    SafeCallGBAuto(aDoBattle);
     // CALL(aExitBattle);
-    ExitBattle();
+    SafeCallGBAuto(aExitBattle);
     // POP_AF;
     // LD_addr_A(wTimeOfDayPal);
     wram->wTimeOfDayPal = pal;
@@ -12509,59 +12514,86 @@ void CallDoBattle(void){
 }
 
 void BattleIntro(void){
-    FARCALL(aStubbedTrainerRankings_Battles);  // mobile
-    CALL(aLoadTrainerOrWildMonPic);
-    XOR_A_A;
-    LD_addr_A(wTempBattleMonSpecies);
-    LD_addr_A(wBattleMenuCursorPosition);
-    XOR_A_A;
-    LDH_addr_A(hMapAnims);
-    FARCALL(aPlayBattleMusic);
-    FARCALL(aShowLinkBattleParticipants);
-    FARCALL(aFindFirstAliveMonAndStartBattle);
-    CALL(aDisableSpriteUpdates);
-    FARCALL(aClearBattleRAM);
-    CALL(aInitEnemy);
-    CALL(aBackUpBGMap2);
-    LD_B(SCGB_BATTLE_GRAYSCALE);
-    CALL(aGetSGBLayout);
-    LD_HL(rLCDC);
-    RES_hl(rLCDC_WINDOW_TILEMAP);  // select vBGMap0/vBGMap2
-    CALL(aInitBattleDisplay);
-    CALL(aBattleStartMessage);
-    LD_HL(rLCDC);
-    SET_hl(rLCDC_WINDOW_TILEMAP);  // select vBGMap1/vBGMap3
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    CALL(aEmptyBattleTextbox);
-    hlcoord(9, 7, wTilemap);
-    LD_BC((5 << 8) | 11);
-    CALL(aClearBox);
-    hlcoord(1, 0, wTilemap);
-    LD_BC((4 << 8) | 10);
-    CALL(aClearBox);
-    CALL(aClearSprites);
-    LD_A_addr(wBattleMode);
-    CP_A(WILD_BATTLE);
-    CALL_Z (aUpdateEnemyHUD);
-    LD_A(0x1);
-    LDH_addr_A(hBGMapMode);
-    RET;
-
+    // FARCALL(aStubbedTrainerRankings_Battles);  // mobile
+    // CALL(aLoadTrainerOrWildMonPic);
+    LoadTrainerOrWildMonPic();
+    // XOR_A_A;
+    // LD_addr_A(wTempBattleMonSpecies);
+    wram->wTempBattleMonSpecies = 0;
+    // LD_addr_A(wBattleMenuCursorPosition);
+    wram->wBattleMenuCursorPosition = 0;
+    // XOR_A_A;
+    // LDH_addr_A(hMapAnims);
+    hram->hMapAnims = FALSE;
+    // FARCALL(aPlayBattleMusic);
+    PlayBattleMusic_Conv();
+    // FARCALL(aShowLinkBattleParticipants);
+    ShowLinkBattleParticipants();
+    // FARCALL(aFindFirstAliveMonAndStartBattle);
+    FindFirstAliveMonAndStartBattle();
+    // CALL(aDisableSpriteUpdates);
+    DisableSpriteUpdates_Conv();
+    // FARCALL(aClearBattleRAM);
+    ClearBattleRAM_Conv();
+    // CALL(aInitEnemy);
+    InitEnemy();
+    // CALL(aBackUpBGMap2);
+    BackUpBGMap2();
+    // LD_B(SCGB_BATTLE_GRAYSCALE);
+    // CALL(aGetSGBLayout);
+    GetSGBLayout_Conv(SCGB_BATTLE_GRAYSCALE);
+    // LD_HL(rLCDC);
+    // RES_hl(rLCDC_WINDOW_TILEMAP);  // select vBGMap0/vBGMap2
+    gb_write(rLCDC, gb_read(rLCDC) & ((1 << rLCDC_WINDOW_TILEMAP) ^ 0xff));
+    // CALL(aInitBattleDisplay);
+    InitBattleDisplay();
+    // CALL(aBattleStartMessage);
+    BattleStartMessage();
+    // LD_HL(rLCDC);
+    // SET_hl(rLCDC_WINDOW_TILEMAP);  // select vBGMap1/vBGMap3
+    gb_write(rLCDC, gb_read(rLCDC) | (1 << rLCDC_WINDOW_TILEMAP));
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    // CALL(aEmptyBattleTextbox);
+    EmptyBattleTextbox();
+    // hlcoord(9, 7, wTilemap);
+    // LD_BC((5 << 8) | 11);
+    // CALL(aClearBox);
+    ClearBox_Conv2(coord(9, 7, wram->wTilemap), 11, 5);
+    // hlcoord(1, 0, wTilemap);
+    // LD_BC((4 << 8) | 10);
+    // CALL(aClearBox);
+    ClearBox_Conv2(coord(1, 0, wram->wTilemap), 10, 4);
+    // CALL(aClearSprites);
+    ClearSprites_Conv();
+    // LD_A_addr(wBattleMode);
+    // CP_A(WILD_BATTLE);
+    // CALL_Z (aUpdateEnemyHUD);
+    if(wram->wBattleMode == WILD_BATTLE)
+        UpdateEnemyHUD();
+    // LD_A(0x1);
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0x1;
+    // RET;
 }
 
 void LoadTrainerOrWildMonPic(void){
-    LD_A_addr(wOtherTrainerClass);
-    AND_A_A;
-    IF_NZ goto Trainer;
-    LD_A_addr(wTempWildMonSpecies);
-    LD_addr_A(wCurPartySpecies);
-
-
-Trainer:
-    LD_addr_A(wTempEnemyMonSpecies);
-    RET;
-
+    // LD_A_addr(wOtherTrainerClass);
+    // AND_A_A;
+    // IF_NZ goto Trainer;
+    if(wram->wOtherTrainerClass == 0) {
+        // LD_A_addr(wTempWildMonSpecies);
+        // LD_addr_A(wCurPartySpecies);
+        wram->wCurPartySpecies = wram->wTempWildMonSpecies;
+        wram->wTempEnemyMonSpecies = wram->wTempWildMonSpecies;
+    }
+    else {
+    // Trainer:
+        // LD_addr_A(wTempEnemyMonSpecies);
+        wram->wTempEnemyMonSpecies = wram->wOtherTrainerClass;
+        // RET;
+    }
 }
 
 void InitEnemy(void){
@@ -13304,6 +13336,28 @@ void GetRoamMonMapGroup(void){
 
 }
 
+uint8_t* GetRoamMonMapGroup_Conv(species_t a){
+    // LD_A_addr(wTempEnemyMonSpecies);
+    // LD_B_A;
+    // LD_A_addr(wRoamMon1Species);
+    // CP_A_B;
+    // LD_HL(wRoamMon1MapGroup);
+    // RET_Z ;
+    if(a == wram->wRoamMon1.species) {
+        return &wram->wRoamMon1.mapId.mapGroup;
+    }
+    // LD_A_addr(wRoamMon2Species);
+    // CP_A_B;
+    // LD_HL(wRoamMon2MapGroup);
+    // RET_Z ;
+    else if(a == wram->wRoamMon2.species) {
+        return &wram->wRoamMon2.mapId.mapGroup;
+    }
+    // LD_HL(wRoamMon3MapGroup);
+    // RET;
+    return &wram->wRoamMon3.mapId.mapGroup;
+}
+
 void GetRoamMonMapNumber(void){
     LD_A_addr(wTempEnemyMonSpecies);
     LD_B_A;
@@ -13318,6 +13372,28 @@ void GetRoamMonMapNumber(void){
     LD_HL(wRoamMon3MapNumber);
     RET;
 
+}
+
+uint8_t* GetRoamMonMapNumber_Conv(species_t a){
+    // LD_A_addr(wTempEnemyMonSpecies);
+    // LD_B_A;
+    // LD_A_addr(wRoamMon1Species);
+    // CP_A_B;
+    // LD_HL(wRoamMon1MapNumber);
+    // RET_Z ;
+    if(a == wram->wRoamMon1.species) {
+        return &wram->wRoamMon1.mapId.mapNumber;
+    }
+    // LD_A_addr(wRoamMon2Species);
+    // CP_A_B;
+    // LD_HL(wRoamMon2MapNumber);
+    // RET_Z ;
+    if(a == wram->wRoamMon2.species) {
+        return &wram->wRoamMon2.mapId.mapNumber;
+    }
+    // LD_HL(wRoamMon3MapNumber);
+    // RET;
+    return &wram->wRoamMon3.mapId.mapNumber;
 }
 
 void GetRoamMonHP(void){
@@ -13633,77 +13709,107 @@ okay2:
 
 }
 
+static void InitBattleDisplay_InitBackPic(void) {
+    // CALL(aGetTrainerBackpic);
+    GetTrainerBackpic();
+    // CALL(aCopyBackpic);
+    CopyBackpic();
+    // RET;
+}
+
+static void InitBattleDisplay_BlankBGMap(void) {
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(MBANK(awDecompressScratch));
+    // LDH_addr_A(rSVBK);
+
+    // LD_HL(wDecompressScratch);
+    // LD_BC(BG_MAP_WIDTH * BG_MAP_HEIGHT);
+    // LD_A(0x7f);
+    // CALL(aByteFill);
+    ByteFill_Conv2(wram->wDecompressScratch, BG_MAP_WIDTH * BG_MAP_HEIGHT, CHAR_SPACE);
+
+    // LD_DE(wDecompressScratch);
+    // hlbgcoord(0, 0, vBGMap0);
+    // //LD_BC((BANK(@) << 8) | (BG_MAP_WIDTH * BG_MAP_HEIGHT) / LEN_2BPP_TILE);
+    // LD_BC((BANK(aInitBattleDisplay_BlankBGMap) << 8) | (BG_MAP_WIDTH * BG_MAP_HEIGHT) / LEN_2BPP_TILE);
+    // CALL(aRequest2bpp);
+    CopyBytes_Conv2(bgcoord(0, 0, vram->vBGMap0), wram->wDecompressScratch, BG_MAP_WIDTH * BG_MAP_HEIGHT);
+
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // RET;
+}
+
 void InitBattleDisplay(void){
-    CALL(aInitBattleDisplay_InitBackPic);
-    hlcoord(0, 12, wTilemap);
-    LD_B(4);
-    LD_C(18);
-    CALL(aTextbox);
-    FARCALL(aMobileTextBorder);
-    hlcoord(1, 5, wTilemap);
-    LD_BC((3 << 8) | 7);
-    CALL(aClearBox);
-    CALL(aLoadStandardFont);
-    CALL(av_LoadBattleFontsHPBar);
-    CALL(aInitBattleDisplay_BlankBGMap);
-    XOR_A_A;
-    LDH_addr_A(hMapAnims);
-    LDH_addr_A(hSCY);
-    LD_A(0x90);
-    LDH_addr_A(hWY);
-    LDH_addr_A(rWY);
-    CALL(aWaitBGMap);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    FARCALL(aBattleIntroSlidingPics);
-    LD_A(0x1);
-    LDH_addr_A(hBGMapMode);
-    LD_A(0x31);
-    LDH_addr_A(hGraphicStartTile);
-    hlcoord(2, 6, wTilemap);
-    LD_BC((6 << 8) | 6);
-    PREDEF(pPlaceGraphic);
-    XOR_A_A;
-    LDH_addr_A(hWY);
-    LDH_addr_A(rWY);
-    CALL(aWaitBGMap);
-    CALL(aHideSprites);
-    LD_B(SCGB_BATTLE_COLORS);
-    CALL(aGetSGBLayout);
-    CALL(aSetPalettes);
-    LD_A(0x90);
-    LDH_addr_A(hWY);
-    XOR_A_A;
-    LDH_addr_A(hSCX);
-    RET;
-
-
-BlankBGMap:
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(MBANK(awDecompressScratch));
-    LDH_addr_A(rSVBK);
-
-    LD_HL(wDecompressScratch);
-    LD_BC(BG_MAP_WIDTH * BG_MAP_HEIGHT);
-    LD_A(0x7f);
-    CALL(aByteFill);
-
-    LD_DE(wDecompressScratch);
-    hlbgcoord(0, 0, vBGMap0);
-    //LD_BC((BANK(@) << 8) | (BG_MAP_WIDTH * BG_MAP_HEIGHT) / LEN_2BPP_TILE);
-    LD_BC((BANK(aInitBattleDisplay_BlankBGMap) << 8) | (BG_MAP_WIDTH * BG_MAP_HEIGHT) / LEN_2BPP_TILE);
-    CALL(aRequest2bpp);
-
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    RET;
-
-
-InitBackPic:
-    CALL(aGetTrainerBackpic);
-    CALL(aCopyBackpic);
-    RET;
+    // CALL(aInitBattleDisplay_InitBackPic);
+    InitBattleDisplay_InitBackPic();
+    // hlcoord(0, 12, wTilemap);
+    // LD_B(4);
+    // LD_C(18);
+    // CALL(aTextbox);
+    Textbox_Conv2(coord(0, 12, wram->wTilemap), 4, 18);
+    // FARCALL(aMobileTextBorder);
+    MobileTextBorder_Conv();
+    // hlcoord(1, 5, wTilemap);
+    // LD_BC((3 << 8) | 7);
+    // CALL(aClearBox);
+    ClearBox_Conv2(coord(1, 5, wram->wTilemap), 7, 3);
+    // CALL(aLoadStandardFont);
+    LoadStandardFont_Conv();
+    // CALL(av_LoadBattleFontsHPBar);
+    v_LoadBattleFontsHPBar();
+    // CALL(aInitBattleDisplay_BlankBGMap);
+    InitBattleDisplay_BlankBGMap();
+    // XOR_A_A;
+    // LDH_addr_A(hMapAnims);
+    hram->hMapAnims = 0;
+    // LDH_addr_A(hSCY);
+    hram->hSCY = 0;
+    // LD_A(0x90);
+    // LDH_addr_A(hWY);
+    hram->hWY = 0x90;
+    // LDH_addr_A(rWY);
+    gb_write(rWY, 0x90);
+    // CALL(aWaitBGMap);
+    WaitBGMap_Conv();
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0x0;
+    // FARCALL(aBattleIntroSlidingPics);
+    BattleIntroSlidingPics();
+    // LD_A(0x1);
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0x1;
+    // LD_A(0x31);
+    // LDH_addr_A(hGraphicStartTile);
+    hram->hGraphicStartTile = 0x31;
+    // hlcoord(2, 6, wTilemap);
+    // LD_BC((6 << 8) | 6);
+    // PREDEF(pPlaceGraphic);
+    PlaceGraphic_Conv(coord(2, 6, wram->wTilemap), 6, 6);
+    // XOR_A_A;
+    // LDH_addr_A(hWY);
+    hram->hWY = 0;
+    // LDH_addr_A(rWY);
+    gb_write(rWY, 0x0);
+    // CALL(aWaitBGMap);
+    WaitBGMap_Conv();
+    // CALL(aHideSprites);
+    HideSprites_Conv();
+    // LD_B(SCGB_BATTLE_COLORS);
+    // CALL(aGetSGBLayout);
+    GetSGBLayout_Conv(SCGB_BATTLE_COLORS);
+    // CALL(aSetPalettes);
+    SetPalettes_Conv();
+    // LD_A(0x90);
+    // LDH_addr_A(hWY);
+    hram->hWY = 0x90;
+    // XOR_A_A;
+    // LDH_addr_A(hSCX);
+    hram->hSCX = 0x0;
+    // RET;
+    return;
 
 }
 
@@ -13752,65 +13858,85 @@ void GetTrainerBackpic(void){
 
 }
 
+static void CopyBackpic_LoadTrainerBackpicAsOAM(void) {
+    // LD_HL(wVirtualOAMSprite00);
+    struct SpriteOAM* hl = wram->wVirtualOAMSprite;
+    // XOR_A_A;
+    // LDH_addr_A(hMapObjectIndex);
+    uint8_t idx = 0;
+    // LD_B(6);
+    uint8_t b = 6;
+    // LD_E((SCREEN_WIDTH + 1) * TILE_WIDTH);
+    uint8_t e = (SCREEN_WIDTH + 1) * TILE_WIDTH;
+    do {
+    // outer_loop:
+        // LD_C(3);
+        uint8_t c = 3;
+        // LD_D(8 * TILE_WIDTH);
+        uint8_t d = 8 * TILE_WIDTH;
+
+        do {
+        // inner_loop:
+            // LD_hl_D;  // y
+            // INC_HL;
+            hl->yCoord = d;
+            // LD_hl_E;  // x
+            // INC_HL;
+            hl->xCoord = e;
+            // LDH_A_addr(hMapObjectIndex);
+            // LD_hli_A;  // tile id
+            // INC_A;
+            // LDH_addr_A(hMapObjectIndex);
+            hl->tileID = idx++;
+            // LD_A(PAL_BATTLE_OB_PLAYER);
+            // LD_hli_A;  // attributes
+            hl->attributes = PAL_BATTLE_OB_PLAYER;
+            // LD_A_D;
+            // ADD_A(1 * TILE_WIDTH);
+            // LD_D_A;
+            d += 1 * TILE_WIDTH;
+            // DEC_C;
+            // IF_NZ goto inner_loop;
+            hl++;
+        } while(--c != 0);
+        // LDH_A_addr(hMapObjectIndex);
+        // ADD_A(0x3);
+        // LDH_addr_A(hMapObjectIndex);
+        idx += 0x3;
+        // LD_A_E;
+        // ADD_A(1 * TILE_WIDTH);
+        // LD_E_A;
+        e += 1 * TILE_WIDTH;
+        // DEC_B;
+        // IF_NZ goto outer_loop;
+    } while(--b != 0);
+    // RET;
+}
+
 void CopyBackpic(void){
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(MBANK(awDecompressScratch));
-    LDH_addr_A(rSVBK);
-    LD_HL(vTiles0);
-    LD_DE(vTiles2 + LEN_2BPP_TILE * 0x31);
-    LDH_A_addr(hROMBank);
-    LD_B_A;
-    LD_C(7 * 7);
-    CALL(aGet2bpp);
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    CALL(aCopyBackpic_LoadTrainerBackpicAsOAM);
-    LD_A(0x31);
-    LDH_addr_A(hGraphicStartTile);
-    hlcoord(2, 6, wTilemap);
-    LD_BC((6 << 8) | 6);
-    PREDEF(pPlaceGraphic);
-    RET;
-
-
-LoadTrainerBackpicAsOAM:
-    LD_HL(wVirtualOAMSprite00);
-    XOR_A_A;
-    LDH_addr_A(hMapObjectIndex);
-    LD_B(6);
-    LD_E((SCREEN_WIDTH + 1) * TILE_WIDTH);
-
-outer_loop:
-    LD_C(3);
-    LD_D(8 * TILE_WIDTH);
-
-inner_loop:
-    LD_hl_D;  // y
-    INC_HL;
-    LD_hl_E;  // x
-    INC_HL;
-    LDH_A_addr(hMapObjectIndex);
-    LD_hli_A;  // tile id
-    INC_A;
-    LDH_addr_A(hMapObjectIndex);
-    LD_A(PAL_BATTLE_OB_PLAYER);
-    LD_hli_A;  // attributes
-    LD_A_D;
-    ADD_A(1 * TILE_WIDTH);
-    LD_D_A;
-    DEC_C;
-    IF_NZ goto inner_loop;
-    LDH_A_addr(hMapObjectIndex);
-    ADD_A(0x3);
-    LDH_addr_A(hMapObjectIndex);
-    LD_A_E;
-    ADD_A(1 * TILE_WIDTH);
-    LD_E_A;
-    DEC_B;
-    IF_NZ goto outer_loop;
-    RET;
-
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(MBANK(awDecompressScratch));
+    // LDH_addr_A(rSVBK);
+    // LD_HL(vTiles0);
+    // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x31);
+    // LDH_A_addr(hROMBank);
+    // LD_B_A;
+    // LD_C(7 * 7);
+    // CALL(aGet2bpp);
+    CopyBytes_Conv2(vram->vTiles0, vram->vTiles2 + LEN_2BPP_TILE * 0x31, 7 * 7 * LEN_2BPP_TILE);
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // CALL(aCopyBackpic_LoadTrainerBackpicAsOAM);
+    CopyBackpic_LoadTrainerBackpicAsOAM();
+    // LD_A(0x31);
+    // LDH_addr_A(hGraphicStartTile);
+    hram->hGraphicStartTile = 0x31;
+    // hlcoord(2, 6, wTilemap);
+    // LD_BC((6 << 8) | 6);
+    // PREDEF(pPlaceGraphic);
+    PlaceGraphic_Conv(coord(2, 6, wram->wTilemap), 6, 6);
+    // RET;
 }
 
 void BattleStartMessage(void){
@@ -13910,7 +14036,7 @@ void BattleStartMessage(void){
         }
     }
 
-PlaceBattleStartText:
+// PlaceBattleStartText:
     // PUSH_HL;
     // FARCALL(aBattleStart_TrainerHuds);
     BattleStart_TrainerHuds();

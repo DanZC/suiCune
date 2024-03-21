@@ -158,8 +158,7 @@ void EnableWildEncounters(void){
     // LD_HL(wScriptFlags2);
     // SET_hl(4);
     bit_set(wram->wScriptFlags2, 4);
-    RET;
-
+    // RET;
 }
 
 bool CheckWarpConnxnScriptFlag(void){
@@ -1137,6 +1136,8 @@ u8_flag_s CheckAPressOW_Conv(void){
     if(res.flag) return res;
     // CALL(aTryTileCollisionEvent);
     // RET_C ;
+    res = TryTileCollisionEvent_Conv();
+    if(res.flag) return res;
     // XOR_A_A;
     // RET;
     return u8_flag(0, false);

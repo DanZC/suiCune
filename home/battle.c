@@ -466,17 +466,17 @@ void MobileTextBorder_Conv(void){
     // LD_A_addr(wLinkMode);
     // CP_A(LINK_MOBILE);
     // RET_C ;
-    if(gb_read(wLinkMode) < LINK_MOBILE)
+    if(wram->wLinkMode < LINK_MOBILE)
         return;
 
 // Draw a cell phone icon at the
 // top right corner of the border.
     // hlcoord(19, 12, wTilemap);
     // LD_hl(0x5e);  // top
-    gb_write(coord(19, 12, wTilemap), 0x5e);  // top
+    *coord(19, 12, wram->wTilemap) = 0x5e;  // top
     // hlcoord(19, 13, wTilemap);
     // LD_hl(0x5f);  // bottom
-    gb_write(coord(19, 12, wTilemap), 0x5f);  // bottom
+    *coord(19, 12, wram->wTilemap) = 0x5f;  // bottom
 }
 
 void BattleTextbox(void){

@@ -1,5 +1,6 @@
 #include "../../constants.h"
 #include "intro_menu.h"
+#include "options_menu.h"
 #include <stdio.h>
 #include <string.h>
 #include "../../home/audio.h"
@@ -111,6 +112,12 @@ void Option(void) {
     FARCALL(av_Option);
     RET;
 
+}
+
+void Option_Conv(void) {
+    // FARCALL(av_Option);
+    // RET;
+    return v_Option();
 }
 
 void NewGame(void) {

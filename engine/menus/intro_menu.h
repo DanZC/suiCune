@@ -5,6 +5,7 @@ void PrintDayOfWeek_Conv(tile_t* de, uint8_t b);
 void NewGame_ClearTilemapEtc(void);
 void MysteryGift(void);
 void Option(void);
+void Option_Conv(void);
 void NewGame(void);
 void AreYouABoyOrAreYouAGirl(void);
 void DebugRoom(void);

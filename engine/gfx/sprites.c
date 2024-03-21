@@ -4,6 +4,7 @@
 #include "../../home/delay.h"
 #include "../../data/sprite_anims/framesets.h"
 #include "../../data/sprite_anims/oam.h"
+#include "../../data/sprite_anims/sequences.h"
 
 void ClearSpriteAnims(void){
     LD_HL(wSpriteAnimData);
@@ -381,7 +382,7 @@ struct SpriteAnim* v_InitSpriteAnimStruct_Conv(uint8_t a, uint16_t de){
             // ADD_HL_DE;
             // LD_E_L;
             // LD_D_H;
-            uint16_t de2 = mSpriteAnimSeqData + (a * 3);
+            const struct SpriteSeqData *de2 = SpriteAnimSeqData + a;
         //  Set hl to the first field (field 0) in the current structure.
             // LD_HL(SPRITEANIMSTRUCT_INDEX);
             // ADD_HL_BC;
@@ -393,17 +394,17 @@ struct SpriteAnim* v_InitSpriteAnimStruct_Conv(uint8_t a, uint16_t de){
             // LD_A_de;
             // LD_hli_A;  // SPRITEANIMSTRUCT_FRAMESET_ID
             // INC_DE;
-            bc->framesetID = gb_read(de2++);
+            bc->framesetID = de2->frameset;
             // LD_A_de;
             // LD_hli_A;  // SPRITEANIMSTRUCT_ANIM_SEQ_ID
             // INC_DE;
-            bc->animSeqID = gb_read(de2++);
+            bc->animSeqID = de2->sequence;
         //  Look up the third field in the wSpriteAnimDict mapping.
         //  Take the mapped value and load it in.
             // LD_A_de;
             // CALL(aGetSpriteAnimVTile);
             // LD_hli_A;  // SPRITEANIMSTRUCT_TILE_ID
-            bc->tileID = GetSpriteAnimVTile_Conv(gb_read(de2));
+            bc->tileID = GetSpriteAnimVTile_Conv(de2->tile);
             // POP_DE;
         //  Set hl to field 4 (X coordinate).  Kinda pointless, because we're presumably already here.
             // LD_HL(SPRITEANIMSTRUCT_XCOORD);

@@ -1,6 +1,8 @@
 #include "../../constants.h"
 #include "start_battle.h"
 #include "core.h"
+#include "trainer_huds.h"
+#include "battle_transition.h"
 #include "../../home/delay.h"
 #include "../../home/copy.h"
 #include "../../home/audio.h"
@@ -34,7 +36,8 @@ void ShowLinkBattleParticipants_Conv(void){
     if(wram->wLinkMode == 0)
         return;
 
-    FARCALL(av_ShowLinkBattleParticipants);
+    // FARCALL(av_ShowLinkBattleParticipants);
+    v_ShowLinkBattleParticipants();
     // LD_C(150);
     // CALL(aDelayFrames);
     DelayFrames_Conv(150);
@@ -46,41 +49,58 @@ void ShowLinkBattleParticipants_Conv(void){
 }
 
 void FindFirstAliveMonAndStartBattle(void){
-    XOR_A_A;
-    LDH_addr_A(hMapAnims);
-    CALL(aDelayFrame);
-    LD_B(PARTY_LENGTH);
-    LD_HL(wPartyMon1HP);
-    LD_DE(PARTYMON_STRUCT_LENGTH - 1);
+    // XOR_A_A;
+    // LDH_addr_A(hMapAnims);
+    hram->hMapAnims = 0;
+    // CALL(aDelayFrame);
+    DelayFrame();
+    // LD_B(PARTY_LENGTH);
+    // LD_HL(wPartyMon1HP);
+    // LD_DE(PARTYMON_STRUCT_LENGTH - 1);
 
+    struct PartyMon* hl = wram->wPartyMon;
+    uint8_t lvl = 1;
+    for(uint32_t i = 0; i < PARTY_LENGTH; ++i, ++hl) {
+    // loop:
+        // LD_A_hli;
+        // OR_A_hl;
+        // IF_NZ goto okay;
+        if(hl->HP != 0) {
+            lvl = hl->mon.level;
+            break;
+        }
+        // ADD_HL_DE;
+        // DEC_B;
+        // IF_NZ goto loop;
+    }
 
-loop:
-    LD_A_hli;
-    OR_A_hl;
-    IF_NZ goto okay;
-    ADD_HL_DE;
-    DEC_B;
-    IF_NZ goto loop;
-
-
-okay:
-    LD_DE(MON_LEVEL - MON_HP);
-    ADD_HL_DE;
-    LD_A_hl;
-    LD_addr_A(wBattleMonLevel);
-    PREDEF(pDoBattleTransition);
-    FARCALL(av_LoadBattleFontsHPBar);
-    LD_A(1);
-    LDH_addr_A(hBGMapMode);
-    CALL(aClearSprites);
-    CALL(aClearTilemap);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    LDH_addr_A(hWY);
-    LDH_addr_A(rWY);
-    LDH_addr_A(hMapAnims);
-    RET;
-
+// okay:
+    // LD_DE(MON_LEVEL - MON_HP);
+    // ADD_HL_DE;
+    // LD_A_hl;
+    // LD_addr_A(wBattleMonLevel);
+    wram->wBattleMon.level = lvl;
+    // PREDEF(pDoBattleTransition);
+    DoBattleTransition();
+    // FARCALL(av_LoadBattleFontsHPBar);
+    v_LoadBattleFontsHPBar();
+    // LD_A(1);
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 1;
+    // CALL(aClearSprites);
+    ClearSprites_Conv();
+    // CALL(aClearTilemap);
+    ClearTilemap_Conv2();
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0x0;
+    // LDH_addr_A(hWY);
+    hram->hWY = 0x0;
+    // LDH_addr_A(rWY);
+    gb_write(rWY, 0x0);
+    // LDH_addr_A(hMapAnims);
+    hram->hMapAnims = FALSE;
+    // RET;
 }
 
 void PlayBattleMusic(void){
@@ -206,7 +226,8 @@ void PlayBattleMusic_Conv(void){
     PlayMusic_Conv(MUSIC_NONE);
     // CALL(aDelayFrame);
     DelayFrame();
-    CALL(aMaxVolume);
+    // CALL(aMaxVolume);
+    MaxVolume_Conv();
 
     uint16_t de;
     // LD_A_addr(wBattleType);
