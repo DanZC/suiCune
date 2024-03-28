@@ -4,6 +4,7 @@
 #include "field_moves.h"
 #include "unown_walls.h"
 #include "misc_scripts.h"
+#include "treemons.h"
 #include "../overworld/map_setup.h"
 #include "../overworld/map_objects.h"
 #include "../overworld/npc_movement.h"
@@ -2171,7 +2172,7 @@ bool HeadbuttScript(script_s* s){
     ShakeHeadbuttTree();
 
     //callasm ['TreeMonEncounter']
-    // TODO: Add Treemon encounters
+    TreeMonEncounter();
     wram->wScriptVar = FALSE;
     iffalse(no_battle)
     closetext
@@ -2368,9 +2369,8 @@ bool RockSmashScript(script_s* s){
     disappear(-2)
 
     //callasm ['RockMonEncounter']
-    // TODO: Do rock smash encounters
-    wram->wScriptVar = FALSE;
-    // readmem(wram_ptr(wTempWildMonSpecies))
+    RockMonEncounter();
+    readmem(wram_ptr(wTempWildMonSpecies))
     iffalse(done)
     randomwildmon
     startbattle

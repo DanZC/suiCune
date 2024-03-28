@@ -21,7 +21,7 @@ void (*const SpecialsPointers[])(void) = {
     add_special(SetBitsForLinkTradeRequest),
     add_special(WaitForLinkedFriend),
     add_special(CheckLinkTimeout_Receptionist),
-    // add_special(TryQuickSave),
+    add_special(TryQuickSave),
     // add_special(CheckBothSelectedSameRoom),
     // add_special(FailedLinkToPast),
     add_special(CloseLink),

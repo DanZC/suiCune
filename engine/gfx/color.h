@@ -3,6 +3,7 @@ bool CheckShininess_Conv(uint16_t bc);
 void Unused_CheckShininess(void);
 void SGB_ApplyCreditsPals(void);
 void InitPartyMenuPalettes(void);
+void InitPartyMenuPalettes_Conv(void);
 void SGB_ApplyPartyMenuHPPals(void);
 void Intro_LoadMagikarpPalettes(void);
 void Intro_LoadAllPal0(void);

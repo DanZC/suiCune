@@ -1,11 +1,14 @@
 #include "../../constants.h"
 #include "savemenu_copytilemapatonce.h"
+#include "../../home/tilemap.h"
 
 void SaveMenu_CopyTilemapAtOnce(void) {
-    SET_PC(aSaveMenu_CopyTilemapAtOnce);
-    LDH_A_addr(hCGB);
-    AND_A_A;
-    JP_Z(mWaitBGMap);
+    // SET_PC(aSaveMenu_CopyTilemapAtOnce);
+    // LDH_A_addr(hCGB);
+    // AND_A_A;
+    // JP_Z(mWaitBGMap);
+    if(hram->hCGB == 0)
+        return WaitBGMap_Conv();
 
     //  The following is a modified version of _CopyTilemapAtOnce
     //  that waits for [rLY] to be $60 instead of $80 - 1.

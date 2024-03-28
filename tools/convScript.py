@@ -42,6 +42,7 @@ commands = {
     'winlosstext': Cmd('winlosstext', ['wintext', 'losstext']),
     'endifjustbattled': Cmd('endifjustbattled', []),
     'checkjustbattled': Cmd('checkjustbattled', []),
+    'playmapmusic': Cmd('playmapmusic', []),
     'playmusic': Cmd('playmusic', ['music']),
     'musicfadeout': Cmd('musicfadeout', ['id', 'fade']),
     'playsound': Cmd('playsound', ['sfx']),

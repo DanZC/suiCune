@@ -363,7 +363,7 @@ uint16_t PrintNum_Conv(uint16_t hl, uint16_t de, uint8_t b, uint8_t c) {
 //  Bit 5: money if set (unless left-aligned without leading zeros)
 //  Bit 6: left-aligned if set
 //  Bit 7: print leading zeros if set
-uint8_t* PrintNum_Conv2(uint8_t* hl, void* de, uint8_t b, uint8_t c) {
+uint8_t* PrintNum_Conv2(uint8_t* hl, const void* de, uint8_t b, uint8_t c) {
     // bank_push(BANK(av_PrintNum));
     hl = v_PrintNum_Conv2(hl, de, b, c);
     // bank_pop;

@@ -238,7 +238,7 @@ FinishRival:
     disappear(CHERRYGROVECITY_SILVER)
     setscene(SCENE_CHERRYGROVECITY_NOTHING)
     special(HealParty)
-    //playmapmusic
+    playmapmusic
     s_end
     SCRIPT_END
 }

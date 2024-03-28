@@ -59,6 +59,7 @@ SRCS   := tools/emu/peanut_sdl.c tools/emu/minigb_apu/minigb_apu.c \
 	$(wildcard engine/tilesets/*.c) \
 	$(wildcard engine/*.c) \
 	$(wildcard gfx/*.c) \
+	$(wildcard gfx/sgb/*.c) \
 	$(wildcard input_system/*.c) \
 	$(wildcard maps/*.c) \
 	$(wildcard util/*.c) \
@@ -138,6 +139,7 @@ clean:
 	$(wildcard engine/tilesets/*.o) \
 	$(wildcard engine/*.o) \
 	$(wildcard gfx/*.o) \
+	$(wildcard gfx/sgb/*.o) \
 	$(wildcard input_system/*.o) \
 	$(wildcard maps/*.o) \
 	$(wildcard util/*.o)

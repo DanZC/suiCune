@@ -1,8 +1,9 @@
 #include "../constants.h"
 #include "../gfx/tilesets.h"
+#include "../gfx/tileset_palette_maps.h"
 #include "tilesets.h"
 
-#define tileset(_x) (struct Tileset) {.gfxPath=_x##GFX, .metaPath=_x##Meta, .coll=_x##Coll, .anim=NULL, .palMap=NULL}
+#define tileset(_x) (struct Tileset) {.gfxPath=_x##GFX, .metaPath=_x##Meta, .coll=_x##Coll, .anim=NULL, .palMap=_x##PalMap}
 
 const struct Tileset Tilesets[] = {
     [0]                             = tileset(Tileset0),

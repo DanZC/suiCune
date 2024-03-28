@@ -94,6 +94,7 @@ void Script_checkjustbattled_Conv(script_s* s);
 void Script_encountermusic(void);
 void Script_encountermusic_Conv(script_s* s);
 void Script_playmapmusic(void);
+void Script_playmapmusic_Conv(script_s* s);
 void Script_playmusic(void);
 void Script_playmusic_Conv(script_s* s, uint16_t music);
 void Script_musicfadeout(void);

@@ -6,6 +6,7 @@
 #include "../gfx/crystal_layouts.h"
 #include "../events/poke_seer.h"
 #include "../pokemon/move_mon.h"
+#include "../menus/save.h"
 #include "../../home/map.h"
 #include "../../home/audio.h"
 #include "../../home/copy.h"
@@ -3206,7 +3207,7 @@ void LinkTrade(void){
 
     // save:
         // FARCALL(aSaveAfterLinkTrade);
-        SafeCallGBAuto(aSaveAfterLinkTrade);
+        SaveAfterLinkTrade();
         // FARCALL(aStubbedTrainerRankings_Trades);
         // FARCALL(aBackupMobileEventIndex);
         SafeCallGBAuto(aBackupMobileEventIndex);
@@ -3830,21 +3831,24 @@ void Link_CheckCommunicationError(void){
 }
 
 void TryQuickSave(void){
-    LD_A_addr(wChosenCableClubRoom);
-    PUSH_AF;
-    FARCALL(aLink_SaveGame);
-    LD_A(TRUE);
-    IF_NC goto return_result;
-    XOR_A_A;  // FALSE
+    // LD_A_addr(wChosenCableClubRoom);
+    // PUSH_AF;
+    uint8_t room = wram->wChosenCableClubRoom;
+    // FARCALL(aLink_SaveGame);
+    // LD_A(TRUE);
+    // IF_NC goto return_result;
+    // XOR_A_A;  // FALSE
 
-return_result:
-    LD_addr_A(wScriptVar);
-    LD_C(30);
-    CALL(aDelayFrames);
-    POP_AF;
-    LD_addr_A(wChosenCableClubRoom);
-    RET;
-
+// return_result:
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = (Link_SaveGame())? TRUE: FALSE;
+    // LD_C(30);
+    // CALL(aDelayFrames);
+    DelayFrames_Conv(30);
+    // POP_AF;
+    // LD_addr_A(wChosenCableClubRoom);
+    wram->wChosenCableClubRoom = room;
+    // RET;
 }
 
 void CheckBothSelectedSameRoom(void){

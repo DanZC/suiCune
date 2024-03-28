@@ -3,7 +3,9 @@
 #include "menu.h"
 #include "menu_2.h"
 #include "intro_menu.h"
+#include "save.h"
 #include "../pokegear/pokegear.h"
+#include "../pokemon/party_menu.h"
 #include "../../home/audio.h"
 #include "../../home/copy.h"
 #include "../../home/menu.h"
@@ -663,9 +665,23 @@ saved:
 
 //  Save the game.
 uint8_t StartMenu_Save_Conv(void) {
-    struct cpu_registers_s regs = {};
-    SafeCallGB(aStartMenu_Save, &regs);
-    return regs.a;
+    // struct cpu_registers_s regs = {};
+    // SafeCallGB(aStartMenu_Save, &regs);
+    // return regs.a;
+
+    // CALL(aBufferScreen);
+    BufferScreen_Conv();
+    // FARCALL(aSaveMenu);
+    // IF_NC goto saved;
+    if(SaveMenu()) {
+    // saved:
+        // LD_A(STARTMENURET_EXIT);
+        // RET;
+        return STARTMENURET_EXIT;
+    }
+    // LD_A(STARTMENURET_REOPEN);
+    // RET;
+    return STARTMENURET_REOPEN;
 }
 
 void StartMenu_Option(void){

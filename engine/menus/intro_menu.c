@@ -16,6 +16,9 @@
 #include "../../home/menu.h"
 #include "../../home/sram.h"
 #include "../../home/random.h"
+#include "../../home/pokedex_flags.h"
+#include "../../home/print_text.h"
+#include "../../home/map_objects.h"
 #include "../../gfx/misc.h"
 #include "../../data/text/common.h"
 #include "../../charmap.h"
@@ -668,6 +671,12 @@ void DisplaySaveInfoOnSave(void) {
 
 }
 
+void DisplaySaveInfoOnSave_Conv(void) {
+    // LD_DE((4 << 8) | 0);
+    // JR(mDisplayNormalContinueData);
+    return DisplayNormalContinueData_Conv(4, 0);
+}
+
 void DisplayNormalContinueData(void) {
     CALL(aContinue_LoadMenuHeader);
     CALL(aContinue_DisplayBadgesDexPlayerName);
@@ -676,6 +685,20 @@ void DisplayNormalContinueData(void) {
     CALL(aUpdateSprites);
     RET;
 
+}
+
+void DisplayNormalContinueData_Conv(uint8_t d, uint8_t e) {
+    // CALL(aContinue_LoadMenuHeader);
+    Continue_LoadMenuHeader_Conv(d, e);
+    // CALL(aContinue_DisplayBadgesDexPlayerName);
+    tile_t* hl = Continue_DisplayBadgesDexPlayerName_Conv();
+    // CALL(aContinue_PrintGameTime);
+    Continue_PrintGameTime_Conv(hl);
+    // CALL(aLoadFontsExtra);
+    LoadFontsExtra_Conv();
+    // CALL(aUpdateSprites);
+    UpdateSprites_Conv();
+    // RET;
 }
 
 void DisplayContinueDataWithRTCError(void) {
@@ -739,6 +762,82 @@ MenuData_NoDex:
     return Continue_DisplayBadgesDexPlayerName();
 }
 
+static const struct MenuHeader MenuHeader_Dex = {
+    .flags=MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(0, 0, 15, 9),
+    //dw ['.MenuData_Dex'];
+    .data = &(struct MenuData){
+        .flags = 0,
+        .verticalMenu = {
+            .count = 4,
+            .options = (const char* []) {
+                "PLAYER@",
+                "BADGES@",
+                "#DEX@",
+                "TIME@",
+            }
+        },
+    },
+    .defaultOption = 1,  // default option
+};
+
+static const struct MenuHeader MenuHeader_NoDex = {
+    .flags=MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(0, 0, 15, 9),
+    //dw ['.MenuData_Dex'];
+    .data = &(struct MenuData){
+        .flags = 0,
+        .verticalMenu = {
+            .count = 4,
+            .options = (const char* []) {
+                "PLAYER <PLAYER>@",
+                "BADGES@",
+                " @",
+                "TIME@",
+            }
+        },
+    },
+    .defaultOption = 1,  // default option
+};
+
+void Continue_LoadMenuHeader_Conv(uint8_t d, uint8_t e) {
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    // LD_HL(mContinue_LoadMenuHeader_MenuHeader_Dex);
+    // LD_A_addr(wStatusFlags);
+    // BIT_A(STATUSFLAGS_POKEDEX_F);
+    // IF_NZ goto show_menu;
+    // LD_HL(mContinue_LoadMenuHeader_MenuHeader_NoDex);
+
+
+// show_menu:
+    const struct MenuHeader* hl = (bit_test(wram->wStatusFlags, STATUSFLAGS_POKEDEX_F))? &MenuHeader_Dex: &MenuHeader_NoDex;
+    // CALL(av_OffsetMenuHeader);
+    v_OffsetMenuHeader_Conv(hl, d, e);
+    // CALL(aMenuBox);
+    MenuBox_Conv();
+    // CALL(aPlaceVerticalMenuItems);
+    PlaceVerticalMenuItems_Conv2();
+    // RET;
+
+
+// MenuHeader_NoDex:
+    //db ['MENU_BACKUP_TILES'];  // flags
+    //menu_coords ['0', '0', '15', '9'];
+    //dw ['.MenuData_NoDex'];
+    //db ['1'];  // default option
+
+
+// MenuData_NoDex:
+    //db ['0'];  // flags
+    //db ['4'];  // items
+    //db ['"PLAYER <PLAYER>@"'];
+    //db ['"BADGES@"'];
+    //db ['" @"'];
+    //db ['"TIME@"'];
+}
+
 void Continue_DisplayBadgesDexPlayerName(void) {
     CALL(aMenuBoxCoord2Tile);
     PUSH_HL;
@@ -766,12 +865,48 @@ Player:
     return Continue_PrintGameTime();
 }
 
+tile_t* Continue_DisplayBadgesDexPlayerName_Conv(void) {
+    static const char Player[] = "<PLAYER>@";
+    uint8_t buf[16];
+    // CALL(aMenuBoxCoord2Tile);
+    tile_t* hl = MenuBoxCoord2Tile_Conv();
+    // PUSH_HL;
+    // decoord(13, 4, 0);
+    // ADD_HL_DE;
+    // CALL(aContinue_DisplayBadgeCount);
+    Continue_DisplayBadgeCount_Conv(hl + coord(13, 4, 0));
+    // POP_HL;
+    // PUSH_HL;
+    // decoord(12, 6, 0);
+    // ADD_HL_DE;
+    // CALL(aContinue_DisplayPokedexNumCaught);
+    Continue_DisplayBadgeCount_Conv(hl + coord(12, 6, 0));
+    // POP_HL;
+    // PUSH_HL;
+    // decoord(8, 2, 0);
+    // ADD_HL_DE;
+    // LD_DE(mContinue_DisplayBadgesDexPlayerName_Player);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82CA(buf, Player), hl + coord(8, 2, 0));
+    // POP_HL;
+    // RET;
+    return hl;
+}
+
 void Continue_PrintGameTime(void) {
     decoord(9, 8, 0);
     ADD_HL_DE;
     CALL(aContinue_DisplayGameTime);
     RET;
 
+}
+
+void Continue_PrintGameTime_Conv(tile_t* hl) {
+    // decoord(9, 8, 0);
+    // ADD_HL_DE;
+    // CALL(aContinue_DisplayGameTime);
+    Continue_DisplayGameTime_Conv(hl + coord(9, 8, 0));
+    // RET;
 }
 
 void Continue_UnknownGameTime(void) {
@@ -800,6 +935,19 @@ void Continue_DisplayBadgeCount(void) {
 
 }
 
+tile_t* Continue_DisplayBadgeCount_Conv(tile_t* hl) {
+    // PUSH_HL;
+    // LD_HL(wJohtoBadges);
+    // LD_B(2);
+    // CALL(aCountSetBits);
+    uint8_t count = CountSetBits_Conv2(wram->wJohtoBadges, 2);
+    // POP_HL;
+    // LD_DE(wNumSetBits);
+    // LD_BC((1 << 8) | 2);
+    // JP(mPrintNum);
+    return PrintNum_Conv2(hl, &count, 1, 2);
+}
+
 void Continue_DisplayPokedexNumCaught(void) {
     LD_A_addr(wStatusFlags);
     BIT_A(STATUSFLAGS_POKEDEX_F);
@@ -818,6 +966,27 @@ void Continue_DisplayPokedexNumCaught(void) {
 
 }
 
+tile_t* Continue_DisplayPokedexNumCaught_Conv(tile_t* hl) {
+    // LD_A_addr(wStatusFlags);
+    // BIT_A(STATUSFLAGS_POKEDEX_F);
+    // RET_Z;
+    if(!bit_test(wram->wStatusFlags, STATUSFLAGS_POKEDEX_F))
+        return hl;
+    // PUSH_HL;
+    // LD_HL(wPokedexCaught);
+    // if (NUM_POKEMON % 8)
+    //     LD_B(NUM_POKEMON / 8 + 1);
+    // else
+    //     LD_B(NUM_POKEMON / 8);
+    // CALL(aCountSetBits);
+    uint8_t count = CountSetBits_Conv2(wram->wPokedexCaught, (NUM_POKEMON % 8)? NUM_POKEMON / 8 + 1: NUM_POKEMON / 8);
+    // POP_HL;
+    // LD_DE(wNumSetBits);
+    // LD_BC((1 << 8) | 3);
+    // JP(mPrintNum);
+    return PrintNum_Conv2(hl, &count, 1, 3);
+}
+
 void Continue_DisplayGameTime(void) {
     LD_DE(wGameTimeHours);
     LD_BC((2 << 8) | 3);
@@ -828,6 +997,20 @@ void Continue_DisplayGameTime(void) {
     LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
     JP(mPrintNum);
 
+}
+
+void Continue_DisplayGameTime_Conv(tile_t* hl) {
+    // LD_DE(wGameTimeHours);
+    // LD_BC((2 << 8) | 3);
+    // CALL(aPrintNum);
+    hl = PrintNum_Conv2(hl, &wram->wGameTimeHours, 2, 3);
+    // LD_hl(0x6d);
+    // INC_HL;
+    *(hl++) = 0x6d;
+    // LD_DE(wGameTimeMinutes);
+    // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
+    // JP(mPrintNum);
+    PrintNum_Conv2(hl, &wram->wGameTimeMinutes, PRINTNUM_LEADINGZEROS | 1, 2);
 }
 
 void OakSpeech(void) {

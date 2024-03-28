@@ -1357,6 +1357,38 @@ void v_OffsetMenuHeader(void) {
     RET;
 }
 
+void v_OffsetMenuHeader_Conv(const struct MenuHeader* hl, uint8_t d, uint8_t e) {
+    // PUSH_DE;
+    // CALL(aCopyMenuHeader);
+    CopyMenuHeader_Conv2(hl);
+    // POP_DE;
+    // LD_A_addr(wMenuBorderLeftCoord);
+    // LD_H_A;
+    // LD_A_addr(wMenuBorderRightCoord);
+    // SUB_A_H;
+    // LD_H_A;
+    uint8_t h = wram->wMenuBorderRightCoord - wram->wMenuBorderLeftCoord;
+    // LD_A_D;
+    // LD_addr_A(wMenuBorderLeftCoord);
+    wram->wMenuBorderLeftCoord = d;
+    // ADD_A_H;
+    // LD_addr_A(wMenuBorderRightCoord);
+    wram->wMenuBorderRightCoord = d + h;
+    // LD_A_addr(wMenuBorderTopCoord);
+    // LD_L_A;
+    // LD_A_addr(wMenuBorderBottomCoord);
+    // SUB_A_L;
+    uint8_t l = wram->wMenuBorderBottomCoord - wram->wMenuBorderTopCoord;
+    // LD_L_A;
+    // LD_A_E;
+    // LD_addr_A(wMenuBorderTopCoord);
+    wram->wMenuBorderTopCoord = e;
+    // ADD_A_L;
+    // LD_addr_A(wMenuBorderBottomCoord);
+    wram->wMenuBorderBottomCoord = e + l;
+    // RET;
+}
+
 void DoNthMenu(void) {
     CALL(aDrawVariableLengthMenuBox);
     CALL(aMenuWriteText);

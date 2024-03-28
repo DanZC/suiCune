@@ -1,6 +1,7 @@
 #include "../../constants.h"
 #include "color.h"
 #include "../../home/copy.h"
+#include "../../gfx/sgb/pal_packets.h"
 #include "../../data/pokemon/pic_pointers.h"
 #include "../../data/pokemon/unown_pic_pointers.h"
 #include "../../data/pokemon/palettes.h"
@@ -173,11 +174,20 @@ void InitPartyMenuPalettes(void){
     CALL(aInitPartyMenuOBPals);
     CALL(aWipeAttrmap);
     RET;
-
-//  SGB layout for SCGB_PARTY_MENU_HP_BARS
-    return SGB_ApplyPartyMenuHPPals();
 }
 
+void InitPartyMenuPalettes_Conv(void){
+    // LD_HL(mPalPacket_PartyMenu + 1);
+    // CALL(aCopyFourPalettes);
+    CopyFourPalettes_Conv((const uint8_t*)PalPacket_PartyMenu.colors);
+    // CALL(aInitPartyMenuOBPals);
+    InitPartyMenuOBPals();
+    // CALL(aWipeAttrmap);
+    WipeAttrmap();
+    // RET;
+}
+
+//  SGB layout for SCGB_PARTY_MENU_HP_BARS
 void SGB_ApplyPartyMenuHPPals(void){
     LD_HL(wHPPals);
     LD_A_addr(wSGBPals);
@@ -1129,13 +1139,15 @@ void CGB_ApplyPartyMenuHPPals_Conv(void){
 }
 
 void InitPartyMenuOBPals(void){
-    LD_HL(mPartyMenuOBPals);
-    LD_DE(wOBPals1);
-    LD_BC(2 * PALETTE_SIZE);
-    LD_A(BANK(wOBPals1));
-    CALL(aFarCopyWRAM);
-    RET;
-
+    uint16_t buf[32];
+    // LD_HL(mPartyMenuOBPals);
+    LoadPaletteAssetColorsToBuffer(buf, sizeof(buf), PartyMenuOBPals, 0, 2 * NUM_PAL_COLORS);
+    // LD_DE(wOBPals1);
+    // LD_BC(2 * PALETTE_SIZE);
+    // LD_A(BANK(wOBPals1));
+    // CALL(aFarCopyWRAM);
+    CopyBytes_Conv2(wram->wOBPals1, buf, 2 * PALETTE_SIZE);
+    // RET;
 }
 
 void GetBattlemonBackpicPalettePointer(void){
@@ -1271,6 +1283,9 @@ uint16_t* GetTrainerPalettePointer_Conv(uint16_t* dest, uint8_t a){
     // LD_BC(mTrainerPalettes);
     ExtractPaletteFromPNGAssetToBuffer(dest, TrainerPalettes[a]);
     // ADD_HL_BC;
+    // First palette color should be ignored 
+    dest[0] = dest[1];
+    dest[1] = dest[2];
     // RET;
     return dest;
 }

@@ -194,6 +194,7 @@ enum {
     TREEMON_SET_LAKE,
     TREEMON_SET_FOREST,
     TREEMON_SET_ROCK,
+    NUM_TREEMON_SETS,
 };
 
 // treemon scores

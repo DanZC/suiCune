@@ -8,6 +8,7 @@ void BetaTimesOfDay(void);
 void StageRTCTimeForSave(void);
 void StageRTCTimeForSave_Conv(void);
 void SaveRTC(void);
+void SaveRTC_Conv(void);
 void StartClock(void);
 void StartClock_Conv(void);
 void v_FixDays(void);

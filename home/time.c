@@ -457,11 +457,11 @@ void InitTime_Conv(uint8_t days, uint8_t hours, uint8_t mins, uint8_t secs){
 }
 
 static void ClearClock_ClearhRTC_Conv() {
-    gb_write(hRTCSeconds, 0);
-    gb_write(hRTCMinutes, 0);
-    gb_write(hRTCHours, 0);
-    gb_write(hRTCDayLo, 0);
-    gb_write(hRTCDayHi, 0);
+    hram->hRTCSeconds = 0;
+    hram->hRTCMinutes = 0;
+    hram->hRTCHours = 0;
+    hram->hRTCDayLo = 0;
+    hram->hRTCDayHi = 0;
 }
 
 void ClearClock_Conv(void){

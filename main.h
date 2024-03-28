@@ -73,7 +73,7 @@
 #include "engine/rtc/rtc.h"
 #include "engine/overworld/overworld.h"
 #include "engine/overworld/tile_events.h"
-//#include "engine/menus/save.h"
+#include "engine/menus/save.h"
 #include "engine/overworld/spawn_points.h"
 #include "engine/overworld/map_setup.h"
 //#include "engine/events/pokecenter_pc.h"
@@ -163,7 +163,7 @@
 #include "engine/events/fruit_trees.h"
 #include "engine/battle/ai/move.h"
 //#include "engine/pokedex/pokedex_2.h"
-//#include "engine/pokemon/mail.h"
+#include "engine/pokemon/mail.h"
 
 // SECTION "Crystal Features 1", ROMX
 
@@ -338,7 +338,7 @@
 
 #include "engine/events/map_name_sign.h"
 //#include "engine/events/checkforhiddenitems.h"
-//#include "engine/events/treemons.h"
+#include "engine/events/treemons.h"
 //#include "engine/events/fishing_gfx.h"
 #include "engine/pokegear/radio.h"
 #include "engine/pokemon/mail_2.h"
@@ -468,7 +468,7 @@
 #include "engine/gfx/dma_transfer.h"
 //#include "gfx/emotes.h"
 #include "engine/overworld/warp_connection.h"
-//#include "engine/link/mystery_gift.h"
+#include "engine/link/mystery_gift.h"
 #include "engine/battle/used_move_text.h"
 //#include "mobile/mobile_41.h"
 #include "engine/gfx/load_overworld_font.h"

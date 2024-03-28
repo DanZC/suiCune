@@ -1680,6 +1680,13 @@ void Script_playmapmusic(void){
 
 }
 
+void Script_playmapmusic_Conv(script_s* s){
+    (void)s;
+    // CALL(aPlayMapMusic);
+    // RET;
+    PlayMapMusic_Conv();
+}
+
 void Script_playmusic(void){
     LD_DE(MUSIC_NONE);
     CALL(aPlayMusic);

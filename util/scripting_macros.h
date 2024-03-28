@@ -47,6 +47,7 @@
 #define endifjustbattled            SCRIPT_EVCMD(Script_endifjustbattled_Conv)
 #define checkjustbattled            SCRIPT_EVCMD(Script_checkjustbattled_Conv)
 #define encountermusic              SCRIPT_EVCMD(Script_encountermusic_Conv)
+#define playmapmusic                SCRIPT_EVCMD(Script_playmapmusic_Conv)
 #define playmusic(_music)           SCRIPT_EVCMD(Script_playmusic_Conv, _music)
 #define musicfadeout(_id, _fade)    SCRIPT_EVCMD(Script_musicfadeout_Conv, _id, _fade)
 #define playsound(_sfx)             SCRIPT_EVCMD(Script_playsound_Conv, _sfx)

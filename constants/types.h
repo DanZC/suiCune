@@ -1368,6 +1368,18 @@ struct SpriteSeqData
     uint8_t tile;
 };
 
+struct PalSet 
+{
+    uint8_t set;
+    uint16_t colors[4];
+};
+
+struct TreeMonMap {
+    uint8_t mapGroup;
+    uint8_t mapNumber;
+    uint8_t set;
+};
+
 struct Decoration {
     uint8_t type_id;
     uint8_t name_id;

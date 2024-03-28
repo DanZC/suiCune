@@ -4,6 +4,7 @@
 #include "../../home/tilemap.h"
 
 void HealParty(void){
+    return HealParty_Conv();
     XOR_A_A;
     LD_addr_A(wCurPartyMon);
     LD_HL(wPartySpecies);

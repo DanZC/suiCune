@@ -1,5 +1,8 @@
 #include "../../constants.h"
 #include "party_menu.h"
+#include "../../home/gfx.h"
+#include "../gfx/color.h"
+#include "../gfx/sprites.h"
 
 void SelectMonFromParty(void){
     CALL(aDisableSpriteUpdates);
@@ -44,11 +47,13 @@ void InitPartyMenuLayout(void){
 }
 
 void LoadPartyMenuGFX(void){
-    CALL(aLoadFontsBattleExtra);
-    CALLFAR(aInitPartyMenuPalettes);
-    CALLFAR(aClearSpriteAnims2);
-    RET;
-
+    // CALL(aLoadFontsBattleExtra);
+    LoadFontsBattleExtra_Conv();
+    // CALLFAR(aInitPartyMenuPalettes);
+    InitPartyMenuPalettes_Conv();
+    // CALLFAR(aClearSpriteAnims2);
+    ClearSpriteAnims2_Conv();
+    // RET;
 }
 
 void WritePartyMenuTilemap(void){

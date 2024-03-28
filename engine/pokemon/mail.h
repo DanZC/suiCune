@@ -1,0 +1,16 @@
+void SendMailToPC(void);
+void DeleteMailFromPC(void);
+void ReadMailMessage(void);
+void MoveMailFromPCToParty(void);
+void GetMailboxCount(void);
+void CheckPokeMail(void);
+void GivePokeMail(void);
+void BackupPartyMonMail(void);
+void RestorePartyMonMail(void);
+void DeletePartyMonMail(void);
+void IsAnyMonHoldingMail(void);
+void v_PlayerMailBoxMenu(void);
+void InitMail(void);
+void MailboxPC_GetMailAuthor(void);
+void MailboxPC_PrintMailAuthor(void);
+void MailboxPC(void);
