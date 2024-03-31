@@ -80,7 +80,7 @@ bool NewBarkTown_MapScripts_DummyScene1(script_s* s) {
 bool NewBarkTown_MapScripts_FlyPoint(script_s* s) {
     SCRIPT_BEGIN
     setflag(ENGINE_FLYPOINT_NEW_BARK)
-    clearflag(EVENT_FIRST_TIME_BANKING_WITH_MOM)
+    clearevent(EVENT_FIRST_TIME_BANKING_WITH_MOM)
     s_endcallback
     SCRIPT_END
 }
@@ -139,11 +139,11 @@ bool NewBarkTownTeacherScript(script_s* s) {
     SCRIPT_BEGIN
     faceplayer
     opentext
-    checkflag(EVENT_TALKED_TO_MOM_AFTER_MYSTERY_EGG_QUEST)
+    checkevent(EVENT_TALKED_TO_MOM_AFTER_MYSTERY_EGG_QUEST)
     iftrue(CallMom)
-    checkflag(EVENT_GAVE_MYSTERY_EGG_TO_ELM)
+    checkevent(EVENT_GAVE_MYSTERY_EGG_TO_ELM)
     iftrue(TellMomYoureLeaving)
-    checkflag(EVENT_GOT_A_POKEMON_FROM_ELM)
+    checkevent(EVENT_GOT_A_POKEMON_FROM_ELM)
     iftrue(MonIsAdorable)
     writetext(Text_GearIsImpressive)
     waitbutton

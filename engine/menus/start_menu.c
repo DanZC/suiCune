@@ -7,6 +7,7 @@
 #include "../pokegear/pokegear.h"
 #include "../pokemon/party_menu.h"
 #include "../../home/audio.h"
+#include "../../home/delay.h"
 #include "../../home/copy.h"
 #include "../../home/menu.h"
 #include "../../home/text.h"
@@ -848,7 +849,83 @@ quit:
 }
 
 uint8_t StartMenu_Pokemon_Conv(void) {
-    struct cpu_registers_s regs = {};
-    SafeCallGB(aStartMenu_Pokemon, &regs);
+    // struct cpu_registers_s regs = {};
+    // SafeCallGB(aStartMenu_Pokemon, &regs);
+    // return regs.a;
+    u8_flag_s res;
+    struct cpu_registers_s regs;
+    // LD_A_addr(wPartyCount);
+    // AND_A_A;
+    // IF_Z goto l_return;
+    if(wram->wPartyCount == 0)
+        goto l_return;
+
+    // CALL(aFadeToMenu);
+    FadeToMenu_Conv();
+
+
+choosemenu:
+    // XOR_A_A;
+    // LD_addr_A(wPartyMenuActionText);  // Choose a POKéMON.
+    wram->wPartyMenuActionText = 0;
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
+
+menu:
+    // FARCALL(aLoadPartyMenuGFX);
+    LoadPartyMenuGFX();
+    // FARCALL(aInitPartyMenuWithCancel);
+    InitPartyMenuWithCancel();
+    // FARCALL(aInitPartyMenuGFX);
+    InitPartyMenuGFX();
+
+
+menunoreload:
+    // FARCALL(aWritePartyMenuTilemap);
+    WritePartyMenuTilemap();
+    // FARCALL(aPrintPartyMenuText);
+    PrintPartyMenuText();
+    // CALL(aWaitBGMap);
+    WaitBGMap_Conv();
+    // CALL(aSetPalettes);  // load regular palettes?
+    SetPalettes_Conv();
+    // CALL(aDelayFrame);
+    DelayFrame();
+    // FARCALL(aPartyMenuSelect);
+    res = PartyMenuSelect();
+    // IF_C goto l_return;  // if cancelled or pressed B
+    if(res.flag) goto l_return;
+
+    // CALL(aPokemonActionSubmenu);
+    regs = SafeCallGBAutoRet(aPokemonActionSubmenu);
+    // CP_A(3);
+    // IF_Z goto menu;
+    if(regs.a == 3) goto menu;
+    // CP_A(0);
+    // IF_Z goto choosemenu;
+    if(regs.a == 0) goto choosemenu;
+    // CP_A(1);
+    // IF_Z goto menunoreload;
+    if(regs.a == 1) goto menunoreload;
+    // CP_A(2);
+    // IF_Z goto quit;
+    if(regs.a == 2) goto quit;
+
+
+l_return:
+    // CALL(aCloseSubmenu);
+    CloseSubmenu_Conv();
+    // LD_A(STARTMENURET_REOPEN);
+    // RET;
+    return STARTMENURET_REOPEN;
+
+
+quit:
+    // LD_A_B;
+    // PUSH_AF;
+    // CALL(aExitAllMenus);
+    ExitAllMenus_Conv();
+    // POP_AF;
+    // RET;
     return regs.a;
 }

@@ -629,7 +629,7 @@ void init_function_pointers(void) {
     // REDIRECTED(TalkToTrainer);
     // REDIRECTED(LoadTrainer_continue);
     // REDIRECTED(FacingPlayerDistance);
-    // CONVERTED(PrintWinLossText);
+// CONVERTED(PrintWinLossText);
     // REDIRECTED(v_CheckTrainerBattle);
     // REDIRECTED(CheckTrainerBattle);
 
@@ -2807,7 +2807,7 @@ void init_function_pointers(void) {
     // engine/overworld/events.c
     // REDIRECTED(PlayerEventScriptPointers);
     // REDIRECTED(FallIntoMapScript);
-    // CONVERTED(OverworldLoop);
+// CONVERTED(OverworldLoop);
     // REDIRECTED(OWPlayerInput);
     // REDIRECTED(DisableCoordEvents);
     // REDIRECTED(UnusedPlayerEventScript);

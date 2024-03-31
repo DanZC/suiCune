@@ -6,7 +6,7 @@ void v_CGB_BattleGrayscale(void);
 void v_CGB_BattleColors(void);
 void v_CGB_FinishBattleScreenLayout(void);
 void InitPartyMenuBGPal7(void);
-void Mobile_InitPartyMenuBGPal7(void);
+void Mobile_InitPartyMenuBGPal7(bool isMobile);
 void InitPartyMenuBGPal0(void);
 void v_CGB_PokegearPals(void);
 void v_CGB_StatsScreenHPPals(void);

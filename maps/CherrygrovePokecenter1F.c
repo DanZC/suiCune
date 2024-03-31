@@ -84,7 +84,7 @@ bool CherrygrovePokecenter1FTeacherScript(script_s* s) {
     SCRIPT_BEGIN
     faceplayer
     opentext
-    checkflag(EVENT_GAVE_MYSTERY_EGG_TO_ELM)
+    checkevent(EVENT_GAVE_MYSTERY_EGG_TO_ELM)
     iftrue(CommCenterOpen)
     writetext(CherrygrovePokecenter1FTeacherText)
     waitbutton

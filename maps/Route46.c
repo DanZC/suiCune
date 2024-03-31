@@ -87,11 +87,11 @@ bool TrainerPicnickerErin1_Script(script_s* s) {
     iftrue(WantsBattle)
     checkcellnum(PHONE_PICNICKER_ERIN)
     iftrue_jump(Route46NumberAcceptedF)
-    checkflag(EVENT_ERIN_ASKED_FOR_PHONE_NUMBER)
+    checkevent(EVENT_ERIN_ASKED_FOR_PHONE_NUMBER)
     iftrue(AskedAlready)
     writetext(PicnickerErinAfterBattleText)
     promptbutton
-    setflag(EVENT_ERIN_ASKED_FOR_PHONE_NUMBER)
+    setevent(EVENT_ERIN_ASKED_FOR_PHONE_NUMBER)
     scall(Route46AskNumber1F)
     goto AskForNumber;
 AskedAlready:
@@ -111,10 +111,10 @@ WantsBattle:
     ifequal(1, Fight1)
     ifequal(0, LoadFight0)
 Fight2:
-    checkflag(EVENT_RESTORED_POWER_TO_KANTO)
+    checkevent(EVENT_RESTORED_POWER_TO_KANTO)
     iftrue(LoadFight2)
 Fight1:
-    checkflag(EVENT_BEAT_ELITE_FOUR)
+    checkevent(EVENT_BEAT_ELITE_FOUR)
     iftrue(LoadFight1)
 LoadFight0:
     loadtrainer(PICNICKER, ERIN1)
@@ -135,14 +135,14 @@ LoadFight2:
     startbattle
     reloadmapafterbattle
     clearflag(ENGINE_ERIN_READY_FOR_REMATCH)
-    checkflag(EVENT_ERIN_CALCIUM)
+    checkevent(EVENT_ERIN_CALCIUM)
     iftrue(HasCalcium)
-    checkflag(EVENT_GOT_CALCIUM_FROM_ERIN)
+    checkevent(EVENT_GOT_CALCIUM_FROM_ERIN)
     iftrue(GotCalciumAlready)
     scall(Route46RematchGiftF)
     verbosegiveitem(CALCIUM, 1)
     iffalse_jump(ErinNoRoomForCalcium)
-    setflag(EVENT_GOT_CALCIUM_FROM_ERIN)
+    setevent(EVENT_GOT_CALCIUM_FROM_ERIN)
     sjump(Route46NumberAcceptedF)
 GotCalciumAlready:
     s_end
@@ -152,8 +152,8 @@ HasCalcium:
     waitbutton
     verbosegiveitem(CALCIUM, 1)
     iffalse_jump(ErinNoRoomForCalcium)
-    clearflag(EVENT_ERIN_CALCIUM)
-    setflag(EVENT_GOT_CALCIUM_FROM_ERIN)
+    clearevent(EVENT_ERIN_CALCIUM)
+    setevent(EVENT_GOT_CALCIUM_FROM_ERIN)
     sjump(Route46NumberAcceptedF)
     SCRIPT_END
 }
@@ -201,7 +201,7 @@ bool Route46RematchF(script_s* s) {
 }
 bool ErinNoRoomForCalcium(script_s* s) {
     SCRIPT_BEGIN
-    setflag(EVENT_ERIN_CALCIUM)
+    setevent(EVENT_ERIN_CALCIUM)
     jumpstd(PackFullFScript)
     s_end
     SCRIPT_END

@@ -73,7 +73,7 @@
 #define randomwildmon               SCRIPT_EVCMD(Script_randomwildmon_Conv)
 #define loadtemptrainer             SCRIPT_EVCMD(Script_loadtemptrainer_Conv)
 #define loadwildmon(_sp, _lvl)      SCRIPT_EVCMD(Script_loadwildmon_Conv, _sp, _lvl)
-#define loadtrainer(_cl, _id)       SCRIPT_EVCMD(Script_loadtrainer_Conv, _cl, _id)
+#define loadtrainer(_cl, _id)       SCRIPT_EVCMD(Script_loadtrainer_Conv, _cl, _id+1)
 #define startbattle                 SCRIPT_EVCMD(Script_startbattle_Conv)
 #define reloadmapafterbattle        SCRIPT_EVCMD(Script_reloadmapafterbattle_Conv)
 #define reloadmap                   SCRIPT_EVCMD(Script_reloadmap_Conv)

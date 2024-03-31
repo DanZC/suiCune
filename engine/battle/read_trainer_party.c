@@ -40,6 +40,7 @@ void ReadTrainerParty(void){
     // LD_A_addr(wOtherTrainerID);
     // CP_A(CAL2);
     // LD_A_addr(wOtherTrainerClass);
+    printf("tclass %d, tid %d\n", wram->wOtherTrainerClass, wram->wOtherTrainerID);
     uint8_t tclass = wram->wOtherTrainerClass;
     if(tclass == CAL && wram->wOtherTrainerID == CAL2) {
         // IF_Z goto cal2;
@@ -173,6 +174,7 @@ void TrainerType1_Conv(const struct TrainerParty* de){
 //  normal (level, species)
     // LD_H_D;
     // LD_L_E;
+    printf("Trainer type 1 (%d)\n", de->size);
 
     for(uint8_t i = 0; i < de->size; ++i) {
     // loop:

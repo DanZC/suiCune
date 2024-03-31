@@ -38,24 +38,19 @@ loop:
     RET;
 }
 
-void Load2DMenuData_Conv(void) {
-    uint16_t hl = REG_HL;
-    uint16_t bc = REG_BC;
-    REG_HL = w2DMenuData;
-    REG_B = (w2DMenuDataEnd - w2DMenuData);
+void Load2DMenuData_Conv(const uint8_t* de) {
+    uint8_t* hl = GBToRAMAddr(w2DMenuData);
+    uint8_t b = (w2DMenuDataEnd - w2DMenuData);
 
     do {
-        gb_write(REG_HL++, gb_read(REG_DE++));
-    } while(--REG_B != 0);
+        *(hl++) = *(de++);
+    } while(--b != 0);
 
     // Reset menu state
-    gb_write(wMenuCursorY, 0x1);
-    gb_write(wMenuCursorX, 0x1);
-    gb_write(wCursorOffCharacter, 0);
-    gb_write(wCursorCurrentTile, 0);
-    gb_write(wCursorCurrentTile + 1, 0);
-    REG_BC = bc;
-    REG_HL = hl;
+    wram->wMenuCursorY = 0x1;
+    wram->wMenuCursorX = 0x1;
+    wram->wCursorOffCharacter = 0;
+    wram->wCursorCurrentTile = 0;
 }
 
 void StaticMenuJoypad(void) {

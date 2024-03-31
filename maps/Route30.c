@@ -111,11 +111,11 @@ bool TrainerYoungsterJoey_Script(script_s* s) {
     iftrue(Rematch)
     checkcellnum(PHONE_YOUNGSTER_JOEY)
     iftrue(NumberAccepted)
-    checkflag(EVENT_JOEY_ASKED_FOR_PHONE_NUMBER)
+    checkevent(EVENT_JOEY_ASKED_FOR_PHONE_NUMBER)
     iftrue(AskAgain)
     writetext(YoungsterJoey1AfterText)
     promptbutton
-    setflag(EVENT_JOEY_ASKED_FOR_PHONE_NUMBER)
+    setevent(EVENT_JOEY_ASKED_FOR_PHONE_NUMBER)
     scall_local(AskNumber1);
     goto RequestNumber;
 AskAgain:
@@ -137,10 +137,10 @@ Rematch:
     ifequal(1, Fight1)
     ifequal(0, LoadFight0)
 Fight4:
-    checkflag(EVENT_BEAT_ELITE_FOUR)
+    checkevent(EVENT_BEAT_ELITE_FOUR)
     iftrue(LoadFight4)
 Fight3:
-    checkflag(EVENT_CLEARED_RADIO_TOWER)
+    checkevent(EVENT_CLEARED_RADIO_TOWER)
     iftrue(LoadFight3)
 Fight2:
     checkflag(ENGINE_FLYPOINT_OLIVINE)
@@ -181,14 +181,14 @@ LoadFight4:
     startbattle
     reloadmapafterbattle
     clearflag(ENGINE_JOEY_READY_FOR_REMATCH)
-    checkflag(EVENT_JOEY_HP_UP)
+    checkevent(EVENT_JOEY_HP_UP)
     iftrue(GiveHPUp)
-    checkflag(EVENT_GOT_HP_UP_FROM_JOEY)
+    checkevent(EVENT_GOT_HP_UP_FROM_JOEY)
     iftrue(done)
     scall_local(RematchGift);
     verbosegiveitem(HP_UP, 1)
     iffalse(PackFull)
-    setflag(EVENT_GOT_HP_UP_FROM_JOEY)
+    setevent(EVENT_GOT_HP_UP_FROM_JOEY)
     goto NumberAccepted;
 done:
     s_end
@@ -198,8 +198,8 @@ GiveHPUp:
     waitbutton
     verbosegiveitem(HP_UP, 1)
     iffalse(PackFull)
-    clearflag(EVENT_JOEY_HP_UP)
-    setflag(EVENT_GOT_HP_UP_FROM_JOEY)
+    clearevent(EVENT_JOEY_HP_UP)
+    setevent(EVENT_GOT_HP_UP_FROM_JOEY)
     goto NumberAccepted;
 AskNumber1:
     jumpstd(AskNumber1MScript)
@@ -223,7 +223,7 @@ RematchStd:
     jumpstd(RematchMScript)
     s_end
 PackFull:
-    setflag(EVENT_JOEY_HP_UP)
+    setevent(EVENT_JOEY_HP_UP)
     jumpstd(PackFullMScript)
     s_end
 RematchGift:
@@ -257,7 +257,7 @@ bool Route30YoungsterScript(script_s* s) {
     SCRIPT_BEGIN
     faceplayer
     opentext
-    checkflag(EVENT_GAVE_MYSTERY_EGG_TO_ELM)
+    checkevent(EVENT_GAVE_MYSTERY_EGG_TO_ELM)
     iftrue(CompletedEggQuest)
     writetext(Route30YoungsterText_DirectionsToMrPokemonsHouse)
     waitbutton

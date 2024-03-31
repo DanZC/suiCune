@@ -6,6 +6,7 @@ struct IconData {
 void LoadOverworldMonIcon(void);
 struct IconData LoadOverworldMonIcon_Conv(species_t e);
 void LoadMenuMonIcon(void);
+void LoadMenuMonIcon_Conv(uint8_t e);
 void Unused_GetPartyMenuMonIcon(void);
 void Mobile_InitAnimatedMonIcon(void);
 struct SpriteAnim* Mobile_InitAnimatedMonIcon_Conv(void);

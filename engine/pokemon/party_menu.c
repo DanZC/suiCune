@@ -1,8 +1,18 @@
 #include "../../constants.h"
 #include "party_menu.h"
+#include "mon_stats.h"
+#include "../../home/audio.h"
 #include "../../home/gfx.h"
+#include "../../home/menu.h"
+#include "../../home/copy.h"
+#include "../../home/pokemon.h"
+#include "../../home/text.h"
+#include "../../home/tilemap.h"
+#include "../../home/print_text.h"
 #include "../gfx/color.h"
 #include "../gfx/sprites.h"
+#include "../gfx/mon_icons.h"
+#include "../../data/party_menu_qualities.h"
 
 void SelectMonFromParty(void){
     CALL(aDisableSpriteUpdates);
@@ -37,13 +47,17 @@ void SelectTradeOrDayCareMon(void){
 }
 
 void InitPartyMenuLayout(void){
-    CALL(aLoadPartyMenuGFX);
-    CALL(aInitPartyMenuWithCancel);
-    CALL(aInitPartyMenuGFX);
-    CALL(aWritePartyMenuTilemap);
-    CALL(aPrintPartyMenuText);
-    RET;
-
+    // CALL(aLoadPartyMenuGFX);
+    LoadPartyMenuGFX();
+    // CALL(aInitPartyMenuWithCancel);
+    InitPartyMenuWithCancel();
+    // CALL(aInitPartyMenuGFX);
+    InitPartyMenuGFX();
+    // CALL(aWritePartyMenuTilemap);
+    WritePartyMenuTilemap();
+    // CALL(aPrintPartyMenuText);
+    PrintPartyMenuText();
+    // RET;
 }
 
 void LoadPartyMenuGFX(void){
@@ -57,133 +71,161 @@ void LoadPartyMenuGFX(void){
 }
 
 void WritePartyMenuTilemap(void){
-    LD_HL(wOptions);
-    LD_A_hl;
-    PUSH_AF;
-    SET_hl(NO_TEXT_SCROLL);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    hlcoord(0, 0, wTilemap);
-    LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
-    LD_A(0x7f);
-    CALL(aByteFill);  // blank the tilemap
-    CALL(aGetPartyMenuQualityIndexes);
+    // LD_HL(wOptions);
+    // LD_A_hl;
+    // PUSH_AF;
+    uint8_t options = wram->wOptions;
+    // SET_hl(NO_TEXT_SCROLL);
+    bit_set(wram->wOptions, NO_TEXT_SCROLL);
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    // hlcoord(0, 0, wTilemap);
+    // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
+    // LD_A(0x7f);
+    // CALL(aByteFill);  // blank the tilemap
+    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
+    // CALL(aGetPartyMenuQualityIndexes);
+    const uint8_t* hl = GetPartyMenuQualityIndexes();
 
-loop:
-    LD_A_hli;
-    CP_A(-1);
-    IF_Z goto end;
-    PUSH_HL;
-    LD_HL(mWritePartyMenuTilemap_Jumptable);
-    RST(aJumpTable);
-    POP_HL;
-    goto loop;
+    uint8_t a;
+    while(a = *(hl++), a != 0xff) {
+    // loop:
+        // LD_A_hli;
+        // CP_A(-1);
+        // IF_Z goto end;
+        // PUSH_HL;
+        // LD_HL(mWritePartyMenuTilemap_Jumptable);
+        // RST(aJumpTable);
+        switch(a) {
+        //  entries correspond to PARTYMENUQUALITY_* constants
+            case PARTYMENUQUALITY_NICKNAMES:    PlacePartyNicknames();      break;
+            case PARTYMENUQUALITY_HP_BAR:       PlacePartyHPBar();          break;
+            case PARTYMENUQUALITY_HP_DIGITS:    PlacePartyMenuHPDigits();   break;
+            case PARTYMENUQUALITY_LEVEL:        PlacePartyMonLevel();       break;
+            case PARTYMENUQUALITY_STATUS:       PlacePartyMonStatus();      break;
+            //dw ['PlacePartyMonTMHMCompatibility'];
+            //dw ['PlacePartyMonEvoStoneCompatibility'];
+            case PARTYMENUQUALITY_GENDER:       PlacePartyMonGender();      break;
+            //dw ['PlacePartyMonMobileBattleSelection'];
+        }
+        // POP_HL;
+        // goto loop;
+    }
 
-end:
-    POP_AF;
-    LD_addr_A(wOptions);
-    RET;
-
-
-Jumptable:
-//  entries correspond to PARTYMENUQUALITY_* constants
-    //dw ['PlacePartyNicknames'];
-    //dw ['PlacePartyHPBar'];
-    //dw ['PlacePartyMenuHPDigits'];
-    //dw ['PlacePartyMonLevel'];
-    //dw ['PlacePartyMonStatus'];
-    //dw ['PlacePartyMonTMHMCompatibility'];
-    //dw ['PlacePartyMonEvoStoneCompatibility'];
-    //dw ['PlacePartyMonGender'];
-    //dw ['PlacePartyMonMobileBattleSelection'];
-
-    return PlacePartyNicknames();
+// end:
+    // POP_AF;
+    // LD_addr_A(wOptions);
+    wram->wOptions = options;
+    // RET;
+    return;
 }
 
 void PlacePartyNicknames(void){
-    hlcoord(3, 1, wTilemap);
-    LD_A_addr(wPartyCount);
-    AND_A_A;
-    IF_Z goto end;
-    LD_C_A;
-    LD_B(0);
+    // hlcoord(3, 1, wTilemap);
+    tile_t* hl = coord(3, 1, wram->wTilemap);
+    // LD_A_addr(wPartyCount);
+    // AND_A_A;
+    // IF_Z goto end;
+    if(wram->wPartyCount != 0) {
+        // LD_C_A;
+        uint8_t c = wram->wPartyCount;
+        // LD_B(0);
+        uint8_t b = 0;
 
-loop:
-    PUSH_BC;
-    PUSH_HL;
-    PUSH_HL;
-    LD_HL(wPartyMonNicknames);
-    LD_A_B;
-    CALL(aGetNickname);
-    POP_HL;
-    CALL(aPlaceString);
-    POP_HL;
-    LD_DE(2 * SCREEN_WIDTH);
-    ADD_HL_DE;
-    POP_BC;
-    INC_B;
-    DEC_C;
-    IF_NZ goto loop;
+        do {
+        // loop:
+            // PUSH_BC;
+            // PUSH_HL;
+            // PUSH_HL;
+            // LD_HL(wPartyMonNicknames);
+            // LD_A_B;
+            // CALL(aGetNickname);
+            uint8_t* de = wram->wPartyMonNickname[b];
+            // POP_HL;
+            // CALL(aPlaceString);
+            PlaceStringSimple(de, hl);
+            // POP_HL;
+            // LD_DE(2 * SCREEN_WIDTH);
+            // ADD_HL_DE;
+            hl += 2 * SCREEN_WIDTH;
+            // POP_BC;
+            // INC_B;
+            b++;
+            // DEC_C;
+            // IF_NZ goto loop;
+        } while(--c != 0);
+    }
 
-
-end:
-    DEC_HL;
-    DEC_HL;
-    LD_DE(mPlacePartyNicknames_CancelString);
-    CALL(aPlaceString);
-    RET;
-
-
-CancelString:
-    //db ['"CANCEL@"'];
-
-    return PlacePartyHPBar();
+// end:
+    // DEC_HL;
+    // DEC_HL;
+    // LD_DE(mPlacePartyNicknames_CancelString);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C("CANCEL@"), hl - 2);
+    // RET;
 }
 
 void PlacePartyHPBar(void){
-    XOR_A_A;
-    LD_addr_A(wSGBPals);
-    LD_A_addr(wPartyCount);
-    AND_A_A;
-    RET_Z ;
-    LD_C_A;
-    LD_B(0);
-    hlcoord(11, 2, wTilemap);
+    // XOR_A_A;
+    // LD_addr_A(wSGBPals);
+    wram->wSGBPals[0] = 0;
+    // LD_A_addr(wPartyCount);
+    // AND_A_A;
+    // RET_Z ;
+    if(wram->wPartyCount == 0)
+        return;
+    // LD_C_A;
+    uint8_t c = wram->wPartyCount;
+    // LD_B(0);
+    uint8_t b = 0;
+    // hlcoord(11, 2, wTilemap);
+    tile_t* hl = coord(11, 2, wram->wTilemap);
 
-loop:
-    PUSH_BC;
-    PUSH_HL;
-    CALL(aPartyMenuCheckEgg);
-    IF_Z goto skip;
-    PUSH_HL;
-    CALL(aPlacePartymonHPBar);
-    POP_HL;
-    LD_D(0x6);
-    LD_B(0x0);
-    CALL(aDrawBattleHPBar);
-    LD_HL(wHPPals);
-    LD_A_addr(wSGBPals);
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    CALL(aSetHPPal);
-    LD_B(SCGB_PARTY_MENU_HP_BARS);
-    CALL(aGetSGBLayout);
-
-skip:
-    LD_HL(wSGBPals);
-    INC_hl;
-    POP_HL;
-    LD_DE(2 * SCREEN_WIDTH);
-    ADD_HL_DE;
-    POP_BC;
-    INC_B;
-    DEC_C;
-    IF_NZ goto loop;
-    LD_B(SCGB_PARTY_MENU);
-    CALL(aGetSGBLayout);
-    RET;
-
+    do {
+    // loop:
+        // PUSH_BC;
+        // PUSH_HL;
+        // CALL(aPartyMenuCheckEgg);
+        // IF_Z goto skip;
+        if(!PartyMenuCheckEgg_Conv(b)) {
+            // PUSH_HL;
+            // CALL(aPlacePartymonHPBar);
+            uint8_t e = PlacePartymonHPBar_Conv(b);
+            // POP_HL;
+            // LD_D(0x6);
+            // LD_B(0x0);
+            // CALL(aDrawBattleHPBar);
+            DrawBattleHPBar_Conv(hl, 0x6, e, 0x0, c);
+            // LD_HL(wHPPals);
+            // LD_A_addr(wSGBPals);
+            // LD_C_A;
+            // LD_B(0);
+            // ADD_HL_BC;
+            // CALL(aSetHPPal);
+            SetHPPal_Conv(wram->wHPPals, e);
+            // LD_B(SCGB_PARTY_MENU_HP_BARS);
+            // CALL(aGetSGBLayout);
+            GetSGBLayout_Conv(SCGB_PARTY_MENU_HP_BARS);
+        }
+    // skip:
+        // LD_HL(wSGBPals);
+        // INC_hl;
+        wram->wSGBPals[0]++;
+        // POP_HL;
+        // LD_DE(2 * SCREEN_WIDTH);
+        // ADD_HL_DE;
+        hl += 2 * SCREEN_WIDTH;
+        // POP_BC;
+        // INC_B;
+        b++;
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(--c != 0);
+    // LD_B(SCGB_PARTY_MENU);
+    // CALL(aGetSGBLayout);
+    GetSGBLayout_Conv(SCGB_PARTY_MENU);
+    // RET;
 }
 
 void PlacePartymonHPBar(void){
@@ -250,131 +292,169 @@ uint8_t PlacePartymonHPBar_Conv(uint8_t b){
 }
 
 void PlacePartyMenuHPDigits(void){
-    LD_A_addr(wPartyCount);
-    AND_A_A;
-    RET_Z ;
-    LD_C_A;
-    LD_B(0);
-    hlcoord(13, 1, wTilemap);
+    // LD_A_addr(wPartyCount);
+    // AND_A_A;
+    // RET_Z ;
+    if(wram->wPartyCount == 0)
+        return;
+    // LD_C_A;
+    uint8_t c = wram->wPartyCount;
+    // LD_B(0);
+    uint8_t b = 0;
+    // hlcoord(13, 1, wTilemap);
+    tile_t* hl = coord(13, 1, wram->wTilemap);
 
-loop:
-    PUSH_BC;
-    PUSH_HL;
-    CALL(aPartyMenuCheckEgg);
-    IF_Z goto next;
-    PUSH_HL;
-    LD_A_B;
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    LD_HL(wPartyMon1HP);
-    CALL(aAddNTimes);
-    LD_E_L;
-    LD_D_H;
-    POP_HL;
-    PUSH_DE;
-    LD_BC((2 << 8) | 3);
-    CALL(aPrintNum);
-    POP_DE;
-    LD_A(0xf3);
-    LD_hli_A;
-    INC_DE;
-    INC_DE;
-    LD_BC((2 << 8) | 3);
-    CALL(aPrintNum);
+    do {
+    // loop:
+        // PUSH_BC;
+        // PUSH_HL;
+        // CALL(aPartyMenuCheckEgg);
+        // IF_Z goto next;
+        if(!PartyMenuCheckEgg_Conv(b)) {
+            // PUSH_HL;
+            // LD_A_B;
+            // LD_BC(PARTYMON_STRUCT_LENGTH);
+            // LD_HL(wPartyMon1HP);
+            // CALL(aAddNTimes);
+            // LD_E_L;
+            // LD_D_H;
+            uint16_t hp = wram->wPartyMon[b].HP;
+            // POP_HL;
+            // PUSH_DE;
+            // LD_BC((2 << 8) | 3);
+            // CALL(aPrintNum);
+            uint8_t* hl2 = PrintNum_Conv2(hl, &hp, 2, 3);
+            // POP_DE;
+            // LD_A(0xf3);
+            // LD_hli_A;
+            *(hl2++) = 0xf3;
+            // INC_DE;
+            // INC_DE;
+            uint16_t maxHP = wram->wPartyMon[b].maxHP;
+            // LD_BC((2 << 8) | 3);
+            // CALL(aPrintNum);
+            PrintNum_Conv2(hl2, &maxHP, 2, 3);
+        }
 
-
-next:
-    POP_HL;
-    LD_DE(2 * SCREEN_WIDTH);
-    ADD_HL_DE;
-    POP_BC;
-    INC_B;
-    DEC_C;
-    IF_NZ goto loop;
-    RET;
-
+    // next:
+        // POP_HL;
+        // LD_DE(2 * SCREEN_WIDTH);
+        // ADD_HL_DE;
+        hl += 2 * SCREEN_WIDTH;
+        // POP_BC;
+        // INC_B;
+        b++;
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(--c != 0);
+    // RET;
 }
 
 void PlacePartyMonLevel(void){
-    LD_A_addr(wPartyCount);
-    AND_A_A;
-    RET_Z ;
-    LD_C_A;
-    LD_B(0);
-    hlcoord(8, 2, wTilemap);
+    // LD_A_addr(wPartyCount);
+    // AND_A_A;
+    // RET_Z ;
+    if(wram->wPartyCount == 0)
+        return;
+    // LD_C_A;
+    uint8_t c = wram->wPartyCount;
+    // LD_B(0);
+    uint8_t b = 0;
+    // hlcoord(8, 2, wTilemap);
+    tile_t* hl = coord(8, 2, wram->wTilemap);
 
-loop:
-    PUSH_BC;
-    PUSH_HL;
-    CALL(aPartyMenuCheckEgg);
-    IF_Z goto next;
-    PUSH_HL;
-    LD_A_B;
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    LD_HL(wPartyMon1Level);
-    CALL(aAddNTimes);
-    LD_E_L;
-    LD_D_H;
-    POP_HL;
-    LD_A_de;
-    CP_A(100);  // This is distinct from MAX_LEVEL.
-    IF_NC goto ThreeDigits;
-    LD_A(0x6e);
-    LD_hli_A;
-    LD_BC((PRINTNUM_LEFTALIGN | 1 << 8) | 2);
-// jr .okay
+    do {
+    // loop:
+        // PUSH_BC;
+        // PUSH_HL;
+        // CALL(aPartyMenuCheckEgg);
+        // IF_Z goto next;
+        if(!PartyMenuCheckEgg_Conv(b)) {
+            // PUSH_HL;
+            tile_t* hl2 = hl;
+            // LD_A_B;
+            // LD_BC(PARTYMON_STRUCT_LENGTH);
+            // LD_HL(wPartyMon1Level);
+            // CALL(aAddNTimes);
+            // LD_E_L;
+            // LD_D_H;
+            // POP_HL;
+            // LD_A_de;
+            // CP_A(100);  // This is distinct from MAX_LEVEL.
+            // IF_NC goto ThreeDigits;
+            if(wram->wPartyMon[b].mon.level < 100) {
+                // LD_A(0x6e);
+                // LD_hli_A;
+                *(hl2++) = 0x6e;
+                // LD_BC((PRINTNUM_LEFTALIGN | 1 << 8) | 2);
+            // jr .okay
+            }
 
-ThreeDigits:
-    LD_BC((PRINTNUM_LEFTALIGN | 1 << 8) | 3);
-//  .okay
-    CALL(aPrintNum);
+        // ThreeDigits:
+            // LD_BC((PRINTNUM_LEFTALIGN | 1 << 8) | 3);
+        //  .okay
+            // CALL(aPrintNum);
+            PrintNum_Conv2(hl2, &wram->wPartyMon[b].mon.level, PRINTNUM_LEFTALIGN | 1, 3);
+        }
 
-
-next:
-    POP_HL;
-    LD_DE(SCREEN_WIDTH * 2);
-    ADD_HL_DE;
-    POP_BC;
-    INC_B;
-    DEC_C;
-    IF_NZ goto loop;
-    RET;
-
+    // next:
+        // POP_HL;
+        // LD_DE(SCREEN_WIDTH * 2);
+        // ADD_HL_DE;
+        hl += SCREEN_WIDTH * 2;
+        // POP_BC;
+        // INC_B;
+        b++;
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(--c != 0);
+    // RET;
 }
 
 void PlacePartyMonStatus(void){
-    LD_A_addr(wPartyCount);
-    AND_A_A;
-    RET_Z ;
-    LD_C_A;
-    LD_B(0);
-    hlcoord(5, 2, wTilemap);
+    // LD_A_addr(wPartyCount);
+    // AND_A_A;
+    // RET_Z ;
+    if(wram->wPartyCount == 0)
+        return;
+    // LD_C_A;
+    uint8_t c = wram->wPartyCount;
+    // LD_B(0);
+    uint8_t b = 0;
+    // hlcoord(5, 2, wTilemap);
+    tile_t* hl = coord(5, 2, wram->wTilemap);
 
-loop:
-    PUSH_BC;
-    PUSH_HL;
-    CALL(aPartyMenuCheckEgg);
-    IF_Z goto next;
-    PUSH_HL;
-    LD_A_B;
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    LD_HL(wPartyMon1Status);
-    CALL(aAddNTimes);
-    LD_E_L;
-    LD_D_H;
-    POP_HL;
-    CALL(aPlaceStatusString);
+    do {
+    // loop:
+        // PUSH_BC;
+        // PUSH_HL;
+        // CALL(aPartyMenuCheckEgg);
+        // IF_Z goto next;
+        if(!PartyMenuCheckEgg_Conv(b)) {
+            // PUSH_HL;
+            // LD_A_B;
+            // LD_BC(PARTYMON_STRUCT_LENGTH);
+            // LD_HL(wPartyMon1Status);
+            // CALL(aAddNTimes);
+            // LD_E_L;
+            // LD_D_H;
+            // POP_HL;
+            // CALL(aPlaceStatusString);
+            PlaceStatusString_Conv(hl, wram->wPartyMon + b);
+        }
 
-
-next:
-    POP_HL;
-    LD_DE(SCREEN_WIDTH * 2);
-    ADD_HL_DE;
-    POP_BC;
-    INC_B;
-    DEC_C;
-    IF_NZ goto loop;
-    RET;
-
+    // next:
+        // POP_HL;
+        // LD_DE(SCREEN_WIDTH * 2);
+        // ADD_HL_DE;
+        hl += SCREEN_WIDTH * 2;
+        // POP_BC;
+        // INC_B;
+        b++;
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(--c != 0);
+    // RET;
 }
 
 void PlacePartyMonTMHMCompatibility(void){
@@ -527,60 +607,66 @@ string_not_able:
 }
 
 void PlacePartyMonGender(void){
-    LD_A_addr(wPartyCount);
-    AND_A_A;
-    RET_Z ;
-    LD_C_A;
-    LD_B(0);
-    hlcoord(12, 2, wTilemap);
+    // LD_A_addr(wPartyCount);
+    // AND_A_A;
+    // RET_Z ;
+    // LD_C_A;
+    uint8_t c = wram->wPartyCount;
+    // LD_B(0);
+    uint8_t b = 0;
+    // hlcoord(12, 2, wTilemap);
+    tile_t* hl = coord(12, 2, wram->wTilemap);
 
-loop:
-    PUSH_BC;
-    PUSH_HL;
-    CALL(aPartyMenuCheckEgg);
-    IF_Z goto next;
-    LD_addr_A(wCurPartySpecies);
-    PUSH_HL;
-    LD_A_B;
-    LD_addr_A(wCurPartyMon);
-    XOR_A_A;
-    LD_addr_A(wMonType);
-    CALL(aGetGender);
-    LD_DE(mPlacePartyMonGender_unknown);
-    IF_C goto got_gender;
-    LD_DE(mPlacePartyMonGender_male);
-    IF_NZ goto got_gender;
-    LD_DE(mPlacePartyMonGender_female);
-
-
-got_gender:
-    POP_HL;
-    CALL(aPlaceString);
-
-
-next:
-    POP_HL;
-    LD_DE(2 * SCREEN_WIDTH);
-    ADD_HL_DE;
-    POP_BC;
-    INC_B;
-    DEC_C;
-    IF_NZ goto loop;
-    RET;
-
-
-male:
-    //db ['"♂…MALE@"'];
+    do {
+    // loop:
+        // PUSH_BC;
+        // PUSH_HL;
+        // CALL(aPartyMenuCheckEgg);
+        // IF_Z goto next;
+        if(!PartyMenuCheckEgg_Conv(b)) {
+            // LD_addr_A(wCurPartySpecies);
+            wram->wCurPartySpecies = wram->wPartySpecies[b];
+            // PUSH_HL;
+            // LD_A_B;
+            // LD_addr_A(wCurPartyMon);
+            wram->wCurPartyMon = b;
+            // XOR_A_A;
+            // LD_addr_A(wMonType);
+            // CALL(aGetGender);
+            u8_flag_s res = GetGender_Conv(0);
+            // LD_DE(mPlacePartyMonGender_unknown);
+            // IF_C goto got_gender;
+            if(res.flag) {
+                PlaceStringSimple(U82C("…UNKNOWN@"), hl);
+            }
+            // LD_DE(mPlacePartyMonGender_male);
+            // IF_NZ goto got_gender;
+            else if(res.a != 0) {
+                PlaceStringSimple(U82C("♂…MALE@"), hl);
+            }
+            else {
+                // LD_DE(mPlacePartyMonGender_female);
 
 
-female:
-    //db ['"♀…FEMALE@"'];
+            // got_gender:
+                // POP_HL;
+                // CALL(aPlaceString);
+                PlaceStringSimple(U82C("♀…FEMALE@"), hl);
+            }
+        }
 
-
-unknown:
-    //db ['"…UNKNOWN@"'];
-
-    return PlacePartyMonMobileBattleSelection();
+    // next:
+        // POP_HL;
+        // LD_DE(2 * SCREEN_WIDTH);
+        // ADD_HL_DE;
+        hl += 2 * SCREEN_WIDTH;
+        // POP_BC;
+        // INC_B;
+        b++;
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(--c != 0);
+    // RET;
 }
 
 void PlacePartyMonMobileBattleSelection(void){
@@ -684,89 +770,120 @@ void PartyMenuCheckEgg(void){
 
 }
 
-void GetPartyMenuQualityIndexes(void){
-    LD_A_addr(wPartyMenuActionText);
-    AND_A(0xf0);
-    IF_NZ goto skip;
-    LD_A_addr(wPartyMenuActionText);
-    AND_A(0xf);
-    LD_E_A;
-    LD_D(0);
-    LD_HL(mPartyMenuQualityPointers);
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    RET;
+bool PartyMenuCheckEgg_Conv(uint8_t b){
+    // LD_A(LOW(wPartySpecies));
+    // ADD_A_B;
+    // LD_E_A;
+    // LD_A(HIGH(wPartySpecies));
+    // ADC_A(0);
+    // LD_D_A;
+    // LD_A_de;
+    // CP_A(EGG);
+    // RET;
+    return wram->wPartySpecies[b] == EGG;
+}
 
+const uint8_t* GetPartyMenuQualityIndexes(void){
+    // LD_A_addr(wPartyMenuActionText);
+    // AND_A(0xf0);
+    // IF_NZ goto skip;
+    if((wram->wPartyMenuActionText & 0xf0) == 0) {
+        // LD_A_addr(wPartyMenuActionText);
+        // AND_A(0xf);
+        // LD_E_A;
+        // LD_D(0);
+        // LD_HL(mPartyMenuQualityPointers);
+        // ADD_HL_DE;
+        // ADD_HL_DE;
+        // LD_A_hli;
+        // LD_H_hl;
+        // LD_L_A;
+        // RET;
+        return PartyMenuQualityPointers[wram->wPartyMenuActionText & 0xf];
+    }
 
-skip:
-    LD_HL(mPartyMenuQualityPointers_Default);
-    RET;
-
+// skip:
+    // LD_HL(mPartyMenuQualityPointers_Default);
+    // RET;
+    return PartyMenuQualityPointers[PARTYMENUACTION_CHOOSE_POKEMON]; // points to PartyMenuQualityPointers_Default
 // INCLUDE "data/party_menu_qualities.asm"
-
-    return InitPartyMenuGFX();
 }
 
 void InitPartyMenuGFX(void){
-    LD_HL(wPartyCount);
-    LD_A_hli;
-    AND_A_A;
-    RET_Z ;
-    LD_C_A;
-    XOR_A_A;
-    LDH_addr_A(hObjectStructIndex);
+    // LD_HL(wPartyCount);
+    // LD_A_hli;
+    // AND_A_A;
+    // RET_Z ;
+    if(wram->wPartyCount == 0)
+        return;
+    // LD_C_A;
+    uint8_t c = wram->wPartyCount;
+    // XOR_A_A;
+    // LDH_addr_A(hObjectStructIndex);
+    hram->hObjectStructIndex = 0;
 
-loop:
-    PUSH_BC;
-    PUSH_HL;
-    LD_HL(mLoadMenuMonIcon);
-    LD_A(BANK(aLoadMenuMonIcon));
-    LD_E(MONICON_PARTYMENU);
-    RST(aFarCall);
-    LDH_A_addr(hObjectStructIndex);
-    INC_A;
-    LDH_addr_A(hObjectStructIndex);
-    POP_HL;
-    POP_BC;
-    DEC_C;
-    IF_NZ goto loop;
-    CALLFAR(aPlaySpriteAnimations);
-    RET;
-
+    do {
+    // loop:
+        // PUSH_BC;
+        // PUSH_HL;
+        // LD_HL(mLoadMenuMonIcon);
+        // LD_A(BANK(aLoadMenuMonIcon));
+        // LD_E(MONICON_PARTYMENU);
+        // RST(aFarCall);
+        LoadMenuMonIcon_Conv(MONICON_PARTYMENU);
+        // LDH_A_addr(hObjectStructIndex);
+        // INC_A;
+        // LDH_addr_A(hObjectStructIndex);
+        hram->hObjectStructIndex++;
+        // POP_HL;
+        // POP_BC;
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(--c != 0);
+    // CALLFAR(aPlaySpriteAnimations);
+    {
+        bank_push(BANK(aPlaySpriteAnimations));
+        PlaySpriteAnimations_Conv();
+        bank_pop;
+    }
+    // RET;
 }
 
 void InitPartyMenuWithCancel(void){
 //  with cancel
-    XOR_A_A;
-    LD_addr_A(wSwitchMon);
-    LD_DE(mPartyMenu2DMenuData);
-    CALL(aLoad2DMenuData);
-    LD_A_addr(wPartyCount);
-    INC_A;
-    LD_addr_A(w2DMenuNumRows);  // list length
-    DEC_A;
-    LD_B_A;
-    LD_A_addr(wPartyMenuCursor);
-    AND_A_A;
-    IF_Z goto skip;
-    INC_B;
-    CP_A_B;
-    IF_C goto done;
+    // XOR_A_A;
+    // LD_addr_A(wSwitchMon);
+    wram->wSwitchMon = 0;
+    // LD_DE(mPartyMenu2DMenuData);
+    // CALL(aLoad2DMenuData);
+    Load2DMenuData_Conv(PartyMenu2DMenuData);
+    // LD_A_addr(wPartyCount);
+    // INC_A;
+    // LD_addr_A(w2DMenuNumRows);  // list length
+    wram->w2DMenuNumRows = wram->wPartyCount + 1;
+    // DEC_A;
+    // LD_B_A;
+    // LD_A_addr(wPartyMenuCursor);
+    // AND_A_A;
+    // IF_Z goto skip;
+    // INC_B;
+    // CP_A_B;
+    // IF_C goto done;
+    if(wram->wPartyMenuCursor == 0 || wram->wPartyMenuCursor >= wram->wPartyCount + 1) {
+    // skip:
+        // LD_A(1);
+        wram->wMenuCursorY = 1;
+    }
+    else {
+        wram->wMenuCursorY = wram->wPartyMenuCursor;
+    }
 
-
-skip:
-    LD_A(1);
-
-
-done:
-    LD_addr_A(wMenuCursorY);
-    LD_A(A_BUTTON | B_BUTTON);
-    LD_addr_A(wMenuJoypadFilter);
-    RET;
-
+// done:
+    // LD_addr_A(wMenuCursorY);
+    // LD_A(A_BUTTON | B_BUTTON);
+    // LD_addr_A(wMenuJoypadFilter);
+    wram->wMenuJoypadFilter = A_BUTTON | B_BUTTON;
+    // RET;
 }
 
 void InitPartyMenuNoCancel(void){
@@ -794,160 +911,136 @@ done:
 
 }
 
-void PartyMenu2DMenuData(void){
-    //db ['1', '0'];  // cursor start y, x
-    //db ['0', '1'];  // rows, columns
-    //db ['0x60', '0x00'];  // flags
-    //dn ['2', '0'];  // cursor offset
-    //db ['0'];  // accepted buttons
+const uint8_t PartyMenu2DMenuData[] = {
+    1, 0,  // cursor start y, x
+    0, 1,  // rows, columns
+    0x60, 0x00,  // flags
+    2<<4 | 0,  // cursor offset
+    0,  // accepted buttons
+};
 
-    return PartyMenuSelect();
+//  returns true if exitted menu.
+u8_flag_s PartyMenuSelect(void){
+    // CALL(aStaticMenuJoypad);
+    StaticMenuJoypad_Conv();
+    // CALL(aPlaceHollowCursor);
+    PlaceHollowCursor_Conv();
+    // LD_A_addr(wPartyCount);
+    // INC_A;
+    // LD_B_A;
+    uint8_t b = wram->wPartyCount + 1;
+    // LD_A_addr(wMenuCursorY);  // menu selection?
+    // CP_A_B;
+    // IF_Z goto exitmenu;  // CANCEL
+    if(wram->wMenuCursorY != b) {
+        // LD_addr_A(wPartyMenuCursor);
+        wram->wPartyMenuCursor = wram->wMenuCursorY;
+        // LDH_A_addr(hJoyLast);
+        // LD_B_A;
+        // BIT_B(B_BUTTON_F);
+        // IF_NZ goto exitmenu;  // B button
+        if(!bit_test(hram->hJoyLast, B_BUTTON_F)) {
+            // LD_A_addr(wMenuCursorY);
+            // DEC_A;
+            // LD_addr_A(wCurPartyMon);
+            wram->wCurPartyMon = wram->wMenuCursorY - 1;
+            // LD_C_A;
+            // LD_B(0);
+            // LD_HL(wPartySpecies);
+            // ADD_HL_BC;
+            // LD_A_hl;
+            // LD_addr_A(wCurPartySpecies);
+            wram->wCurPartySpecies = wram->wPartySpecies[wram->wCurPartyMon];
+
+            // LD_DE(SFX_READ_TEXT_2);
+            // CALL(aPlaySFX);
+            PlaySFX_Conv(SFX_READ_TEXT_2);
+            // CALL(aWaitSFX);
+            WaitSFX_Conv();
+            // AND_A_A;
+            // RET;
+            return u8_flag(wram->wCurPartyMon, false);
+        }
+    }
+
+// exitmenu:
+    // LD_DE(SFX_READ_TEXT_2);
+    // CALL(aPlaySFX);
+    PlaySFX_Conv(SFX_READ_TEXT_2);
+    // CALL(aWaitSFX);
+    WaitSFX_Conv();
+    // SCF;
+    // RET;
+    return u8_flag(0, true);
 }
 
-void PartyMenuSelect(void){
-//  sets carry if exitted menu.
-    CALL(aStaticMenuJoypad);
-    CALL(aPlaceHollowCursor);
-    LD_A_addr(wPartyCount);
-    INC_A;
-    LD_B_A;
-    LD_A_addr(wMenuCursorY);  // menu selection?
-    CP_A_B;
-    IF_Z goto exitmenu;  // CANCEL
-    LD_addr_A(wPartyMenuCursor);
-    LDH_A_addr(hJoyLast);
-    LD_B_A;
-    BIT_B(B_BUTTON_F);
-    IF_NZ goto exitmenu;  // B button
-    LD_A_addr(wMenuCursorY);
-    DEC_A;
-    LD_addr_A(wCurPartyMon);
-    LD_C_A;
-    LD_B(0);
-    LD_HL(wPartySpecies);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_addr_A(wCurPartySpecies);
+static const char YouHaveNoPKMNString[] = "You have no <PK><MN>!@";
+static const char ChooseAMonString[] = "Choose a #MON.@";
+static const char UseOnWhichPKMNString[] = "Use on which <PK><MN>?@";
+static const char WhichPKMNString[] = "Which <PK><MN>?@";
+static const char TeachWhichPKMNString[] = "Teach which <PK><MN>?@";
+static const char MoveToWhereString[] = "Move to where?@";
+// static const char ChooseAFemalePKMNString[] = "Choose a ♀<PK><MN>.@"; //  //  unreferenced
+// static const char ChooseAMalePKMNString[] = "Choose a ♂<PK><MN>.@"; //  //  unreferenced
+static const char ToWhichPKMNString[] = "To which <PK><MN>?@";
 
-    LD_DE(SFX_READ_TEXT_2);
-    CALL(aPlaySFX);
-    CALL(aWaitSFX);
-    AND_A_A;
-    RET;
-
-
-exitmenu:
-    LD_DE(SFX_READ_TEXT_2);
-    CALL(aPlaySFX);
-    CALL(aWaitSFX);
-    SCF;
-    RET;
-
-}
+static const char* const PartyMenuStrings[] = {
+    ChooseAMonString,
+    UseOnWhichPKMNString,
+    WhichPKMNString,
+    TeachWhichPKMNString,
+    MoveToWhereString,
+    UseOnWhichPKMNString,
+    ChooseAMonString,  // Probably used to be ChooseAFemalePKMNString
+    ChooseAMonString,  // Probably used to be ChooseAMalePKMNString
+    ToWhichPKMNString,
+};
 
 void PrintPartyMenuText(void){
-    hlcoord(0, 14, wTilemap);
-    LD_BC((2 << 8) | 18);
-    CALL(aTextbox);
-    LD_A_addr(wPartyCount);
-    AND_A_A;
-    IF_NZ goto haspokemon;
-    LD_DE(mYouHaveNoPKMNString);
-    goto gotstring;
+    uint8_t buf[64];
+    // hlcoord(0, 14, wTilemap);
+    // LD_BC((2 << 8) | 18);
+    // CALL(aTextbox);
+    Textbox_Conv2(coord(0, 14, wram->wTilemap), 2, 18);
+    // LD_A_addr(wPartyCount);
+    // AND_A_A;
+    // IF_NZ goto haspokemon;
+    const char* de;
+    if(wram->wPartyCount == 0) {
+        // LD_DE(mYouHaveNoPKMNString);
+        de = YouHaveNoPKMNString;
+        // goto gotstring;
+    }
+    else {
+    // haspokemon:
+        // LD_A_addr(wPartyMenuActionText);
+        // AND_A(0xf);  // drop high nibble
+        // LD_HL(mPartyMenuStrings);
+        // LD_E_A;
+        // LD_D(0);
+        // ADD_HL_DE;
+        // ADD_HL_DE;
+        // LD_A_hli;
+        // LD_D_hl;
+        // LD_E_A;
+        de = PartyMenuStrings[wram->wPartyMenuActionText & 0xf];
+    }
 
-haspokemon:
-    LD_A_addr(wPartyMenuActionText);
-    AND_A(0xf);  // drop high nibble
-    LD_HL(mPartyMenuStrings);
-    LD_E_A;
-    LD_D(0);
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_D_hl;
-    LD_E_A;
-
-gotstring:
-    LD_A_addr(wOptions);
-    PUSH_AF;
-    SET_A(NO_TEXT_SCROLL);
-    LD_addr_A(wOptions);
-    hlcoord(1, 16, wTilemap);  // Coord
-    CALL(aPlaceString);
-    POP_AF;
-    LD_addr_A(wOptions);
-    RET;
-
-}
-
-void PartyMenuStrings(void){
-    //dw ['ChooseAMonString'];
-    //dw ['UseOnWhichPKMNString'];
-    //dw ['WhichPKMNString'];
-    //dw ['TeachWhichPKMNString'];
-    //dw ['MoveToWhereString'];
-    //dw ['UseOnWhichPKMNString'];
-    //dw ['ChooseAMonString'];  // Probably used to be ChooseAFemalePKMNString
-    //dw ['ChooseAMonString'];  // Probably used to be ChooseAMalePKMNString
-    //dw ['ToWhichPKMNString'];
-
-    return ChooseAMonString();
-}
-
-void ChooseAMonString(void){
-    //db ['"Choose a #MON.@"'];
-
-    return UseOnWhichPKMNString();
-}
-
-void UseOnWhichPKMNString(void){
-    //db ['"Use on which <PK><MN>?@"'];
-
-    return WhichPKMNString();
-}
-
-void WhichPKMNString(void){
-    //db ['"Which <PK><MN>?@"'];
-
-    return TeachWhichPKMNString();
-}
-
-void TeachWhichPKMNString(void){
-    //db ['"Teach which <PK><MN>?@"'];
-
-    return MoveToWhereString();
-}
-
-void MoveToWhereString(void){
-    //db ['"Move to where?@"'];
-
-    return ChooseAFemalePKMNString();
-}
-
-void ChooseAFemalePKMNString(void){
-//  //  unreferenced
-    //db ['"Choose a ♀<PK><MN>.@"'];
-
-    return ChooseAMalePKMNString();
-}
-
-void ChooseAMalePKMNString(void){
-//  //  unreferenced
-    //db ['"Choose a ♂<PK><MN>.@"'];
-
-    return ToWhichPKMNString();
-}
-
-void ToWhichPKMNString(void){
-    //db ['"To which <PK><MN>?@"'];
-
-    return YouHaveNoPKMNString();
-}
-
-void YouHaveNoPKMNString(void){
-    //db ['"You have no <PK><MN>!@"'];
-
-    return PrintPartyMenuActionText();
+// gotstring:
+    // LD_A_addr(wOptions);
+    // PUSH_AF;
+    uint8_t options = wram->wOptions;
+    // SET_A(NO_TEXT_SCROLL);
+    bit_set(options, NO_TEXT_SCROLL);
+    // LD_addr_A(wOptions);
+    wram->wOptions = options;
+    // hlcoord(1, 16, wTilemap);  // Coord
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82CA(buf, de), coord(1, 16, wram->wTilemap));
+    // POP_AF;
+    // LD_addr_A(wOptions);
+    wram->wOptions = options;
+    // RET;
 }
 
 void PrintPartyMenuActionText(void){

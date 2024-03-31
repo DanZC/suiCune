@@ -152,7 +152,7 @@ Yes:
     applymovement(CHERRYGROVECITY_GRAMPS, GuideGentMovement6)
     playsound(SFX_ENTER_DOOR)
     disappear(CHERRYGROVECITY_GRAMPS)
-    clearflag(EVENT_GUIDE_GENT_VISIBLE_IN_CHERRYGROVE)
+    clearevent(EVENT_GUIDE_GENT_VISIBLE_IN_CHERRYGROVE)
     waitsfx
     s_end
 JumpstdReceiveItem:
@@ -184,10 +184,11 @@ bool CherrygroveSilverSceneNorth(script_s* s) {
     writetext(CherrygroveRivalText_Seen)
     waitbutton
     closetext
-    checkflag(EVENT_GOT_TOTODILE_FROM_ELM)
+    checkevent(EVENT_GOT_TOTODILE_FROM_ELM)
     iftrue(Totodile)
-    checkflag(EVENT_GOT_CHIKORITA_FROM_ELM)
+    checkevent(EVENT_GOT_CHIKORITA_FROM_ELM)
     iftrue(Chikorita)
+    printf("Cyndaquil.");
     winlosstext(SilverCherrygroveWinText, SilverCherrygroveLossText)
     setlasttalked(CHERRYGROVECITY_SILVER)
     loadtrainer(RIVAL1, RIVAL1_1_TOTODILE)
@@ -198,6 +199,7 @@ bool CherrygroveSilverSceneNorth(script_s* s) {
     iftrue(AfterVictorious)
     goto AfterYourDefeat;
 Totodile:
+    printf("Totodile.");
     winlosstext(SilverCherrygroveWinText, SilverCherrygroveLossText)
     setlasttalked(CHERRYGROVECITY_SILVER)
     loadtrainer(RIVAL1, RIVAL1_1_CHIKORITA)
@@ -208,6 +210,7 @@ Totodile:
     iftrue(AfterVictorious)
     goto AfterYourDefeat;
 Chikorita:
+    printf("Chikorita.");
     winlosstext(SilverCherrygroveWinText, SilverCherrygroveLossText)
     setlasttalked(CHERRYGROVECITY_SILVER)
     loadtrainer(RIVAL1, RIVAL1_1_CYNDAQUIL)
@@ -280,13 +283,13 @@ bool MysticWaterGuy(script_s* s) {
     SCRIPT_BEGIN
     faceplayer
     opentext
-    checkflag(EVENT_GOT_MYSTIC_WATER_IN_CHERRYGROVE)
+    checkevent(EVENT_GOT_MYSTIC_WATER_IN_CHERRYGROVE)
     iftrue(After)
     writetext(MysticWaterGuyTextBefore)
     promptbutton
     verbosegiveitem(MYSTIC_WATER, 1)
     iffalse(Exit)
-    setflag(EVENT_GOT_MYSTIC_WATER_IN_CHERRYGROVE)
+    setevent(EVENT_GOT_MYSTIC_WATER_IN_CHERRYGROVE)
 After:
     writetext(MysticWaterGuyTextAfter)
     waitbutton

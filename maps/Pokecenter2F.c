@@ -76,8 +76,8 @@ bool Pokecenter2F_MapScripts_Scene0(script_s* s) {
     SCRIPT_BEGIN
     special(CheckMysteryGift)
     ifequal_jump(0x0, Pokecenter2F_MapScripts_Scene0Done)
-    clearflag(EVENT_MYSTERY_GIFT_DELIVERY_GUY)
-    checkflag(EVENT_TEMPORARY_UNTIL_MAP_RELOAD_2)
+    clearevent(EVENT_MYSTERY_GIFT_DELIVERY_GUY)
+    checkevent(EVENT_TEMPORARY_UNTIL_MAP_RELOAD_2)
     iftrue_jump(Pokecenter2F_MapScripts_Scene0Done)
     sdefer(Pokecenter2F_AppearMysteryGiftDeliveryGuy)
     SCRIPT_FALLTHROUGH(Pokecenter2F_MapScripts_Scene0Done)
@@ -120,7 +120,7 @@ bool Pokecenter2F_MapScripts_Scene5(script_s* s) {
 bool Pokecenter2F_AppearMysteryGiftDeliveryGuy(script_s* s) {
     SCRIPT_BEGIN
     appear(POKECENTER2F_OFFICER)
-    setflag(EVENT_TEMPORARY_UNTIL_MAP_RELOAD_2)
+    setevent(EVENT_TEMPORARY_UNTIL_MAP_RELOAD_2)
     s_end
     SCRIPT_END
 }
@@ -146,7 +146,7 @@ bool Script_BattleRoomClosed(script_s* s) {
 }
 bool LinkReceptionistScript_Trade(script_s* s) {
     SCRIPT_BEGIN
-    // checkflag(EVENT_GAVE_MYSTERY_EGG_TO_ELM)
+    // checkevent(EVENT_GAVE_MYSTERY_EGG_TO_ELM)
     // iffalse_jump(Script_TradeCenterClosed)
     opentext
     writetext(Text_TradeReceptionistIntro)
@@ -245,7 +245,7 @@ bool BattleTradeMobile_WalkIn(script_s* s) {
 }
 bool LinkReceptionistScript_Battle(script_s* s) {
     SCRIPT_BEGIN
-    checkflag(EVENT_GAVE_MYSTERY_EGG_TO_ELM)
+    checkevent(EVENT_GAVE_MYSTERY_EGG_TO_ELM)
     iffalse_jump(Script_BattleRoomClosed)
     opentext
     writetext(Text_BattleReceptionistIntro)
@@ -366,7 +366,7 @@ bool Script_TimeCapsuleClosed(script_s* s) {
 }
 bool LinkReceptionistScript_TimeCapsule(script_s* s) {
     SCRIPT_BEGIN
-    checkflag(EVENT_MET_BILL)
+    checkevent(EVENT_MET_BILL)
     iftrue_jump(Script_TimeCapsuleClosed)
     checkflag(ENGINE_TIME_CAPSULE)
     iftrue_jump(Script_TimeCapsuleClosed)
@@ -669,7 +669,7 @@ bool Pokecenter2FOfficerScript(script_s* s) {
     SCRIPT_BEGIN
     faceplayer
     opentext
-    checkflag(EVENT_MYSTERY_GIFT_DELIVERY_GUY)
+    checkevent(EVENT_MYSTERY_GIFT_DELIVERY_GUY)
     iftrue(AlreadyGotGift)
     writetext(Text_MysteryGiftDeliveryGuy_Intro)
     yesorno
@@ -680,7 +680,7 @@ bool Pokecenter2FOfficerScript(script_s* s) {
     special(GetMysteryGiftItem)
     iffalse(BagIsFull)
     itemnotify
-    setflag(EVENT_MYSTERY_GIFT_DELIVERY_GUY)
+    setevent(EVENT_MYSTERY_GIFT_DELIVERY_GUY)
 AlreadyGotGift:
     writetext(Text_MysteryGiftDeliveryGuy_Outro)
     waitbutton

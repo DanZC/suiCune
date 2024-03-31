@@ -699,7 +699,8 @@ void GetIconGFX_Conv(uint8_t a){
     // LD_DE(mHeldItemIcons);
     // LD_BC((BANK(aHeldItemIcons) << 8) | 2);
     // CALL(aGetGFXUnlessMobile);
-    GetGFXUnlessMobile_Conv(hl, HeldItemIcons[0], 2);
+    GetGFXUnlessMobile_Conv(hl,                 HeldItemIcons[0], 1);
+    GetGFXUnlessMobile_Conv(hl + LEN_2BPP_TILE, HeldItemIcons[1], 1);
     // LD_A_addr(wCurIconTile);
     // ADD_A(10);
     // LD_addr_A(wCurIconTile);
@@ -822,7 +823,7 @@ void GetGFXUnlessMobile_Conv(uint8_t* hl, const char* de, uint8_t c){
     // CP_A(LINK_MOBILE);
     // JP_NZ (mRequest2bpp);
     if(wram->wLinkMode != LINK_MOBILE) {
-        LoadPNG2bppAssetSectionToVRAM(hl, de, 0, c);
+        return LoadPNG2bppAssetSectionToVRAM(hl, de, 0, c);
     }
     // JP(mGet2bppViaHDMA);
     LoadPNG2bppAssetSectionToVRAM(hl, de, 0, c);

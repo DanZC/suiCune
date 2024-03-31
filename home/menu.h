@@ -1,4 +1,5 @@
 void Load2DMenuData(void);
+void Load2DMenuData_Conv(const uint8_t* de);
 void StaticMenuJoypad(void);
 uint8_t StaticMenuJoypad_Conv(void);
 void ScrollingMenuJoypad(void);

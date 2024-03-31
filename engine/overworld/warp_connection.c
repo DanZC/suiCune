@@ -33,6 +33,7 @@ void HandleNewMap(void){
 }
 
 void HandleContinueMap(void){
+    GetCurrentMapSceneID_Conv();
     // FARCALL(aClearCmdQueue);
     ClearCmdQueue();
     // LD_A(MAPCALLBACK_CMDQUEUE);

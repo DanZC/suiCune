@@ -561,7 +561,8 @@ void CheckTrainerFlag(void){
 }
 
 void PrintWinLossText(void){
-    // return PrintWinLossText_Conv();
+    if(convertedFunc[aOverworldLoop])
+        return PrintWinLossText_Conv();
     // RET;
         LD_A_addr(wBattleType);
     CP_A(BATTLETYPE_CANLOSE);

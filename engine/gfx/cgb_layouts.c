@@ -2,6 +2,7 @@
 #include "cgb_layouts.h"
 #include "color.h"
 #include "../../home/copy.h"
+#include "../../gfx/sgb/pal_packets.h"
 
 //  Replaces the functionality of sgb.asm to work with CGB hardware.
 
@@ -113,28 +114,24 @@ void LoadSGBLayoutCGB_Conv(uint8_t b){
 
 }
 
-static const uint16_t PalPacket_BattleGrayscale[] = {
-    PREDEFPAL_BLACKOUT, PREDEFPAL_BLACKOUT, PREDEFPAL_BLACKOUT, PREDEFPAL_BLACKOUT,
-};
-
 void v_CGB_BattleGrayscale(void){
     // LD_HL(mPalPacket_BattleGrayscale + 1);
     // LD_DE(wBGPals1);
     uint16_t* de = (uint16_t*)((uint8_t*)wram + offsetof(struct wram_s, wBGPals1)); // Won't let me take pointer of packed wBGPals1, so I'm doing this ugly shit instead.
     // LD_C(4);
     // CALL(aCopyPalettes);
-    CopyPalettes_Conv(de, (const uint8_t*)PalPacket_BattleGrayscale, 4);
+    CopyPalettes_Conv(de, (const uint8_t*)PalPacket_BattleGrayscale.colors, 4);
     // LD_HL(mPalPacket_BattleGrayscale + 1);
     // LD_DE(wBGPals1 + PALETTE_SIZE * PAL_BATTLE_BG_EXP);
     // LD_C(4);
     // CALL(aCopyPalettes);
-    CopyPalettes_Conv(de + NUM_PAL_COLORS * PAL_BATTLE_BG_EXP, (const uint8_t*)PalPacket_BattleGrayscale, 4);
+    CopyPalettes_Conv(de + NUM_PAL_COLORS * PAL_BATTLE_BG_EXP, (const uint8_t*)PalPacket_BattleGrayscale.colors, 4);
     // LD_HL(mPalPacket_BattleGrayscale + 1);
     // LD_DE(wOBPals1);
     // LD_C(2);
     // CALL(aCopyPalettes);
     uint16_t* de2 = (uint16_t*)((uint8_t*)wram + offsetof(struct wram_s, wOBPals1)); // Won't let me take pointer of packed wOBPals1, so I'm doing this ugly shit instead.
-    CopyPalettes_Conv(de2, (const uint8_t*)PalPacket_BattleGrayscale, 4);
+    CopyPalettes_Conv(de2, (const uint8_t*)PalPacket_BattleGrayscale.colors, 4);
     // JR(mv_CGB_FinishBattleScreenLayout);
 
 }
@@ -245,16 +242,17 @@ void v_CGB_FinishBattleScreenLayout(void){
 }
 
 void InitPartyMenuBGPal7(void){
-    FARCALL(aFunction100dc0);
-    return Mobile_InitPartyMenuBGPal7();
+    // FARCALL(aFunction100dc0);
+    struct cpu_registers_s res = SafeCallGBAutoRet(aFunction100dc0);
+    return Mobile_InitPartyMenuBGPal7(res.f_bits.c != 0);
 }
 
-void Mobile_InitPartyMenuBGPal7(void){
+void Mobile_InitPartyMenuBGPal7(bool isMobile){
     uint16_t palbuf[NUM_PAL_COLORS];
     // LD_HL(mPartyMenuBGPalette);
     // IF_NC goto not_mobile;
     // LD_HL(mPartyMenuBGMobilePalette);
-    if(REG_F_C) {
+    if(isMobile) {
         LoadPaletteAssetColorsToArray(palbuf, PartyMenuBGMobilePalette, 0, NUM_PAL_COLORS);
     }
     else {
@@ -271,18 +269,26 @@ void Mobile_InitPartyMenuBGPal7(void){
 }
 
 void InitPartyMenuBGPal0(void){
-    FARCALL(aFunction100dc0);
-    LD_HL(mPartyMenuBGPalette);
-    IF_NC goto not_mobile;
-    LD_HL(mPartyMenuBGMobilePalette);
+    uint16_t palbuf[NUM_PAL_COLORS];
+    // FARCALL(aFunction100dc0);
+    struct cpu_registers_s regs = SafeCallGBAutoRet(aFunction100dc0);
+    // LD_HL(mPartyMenuBGPalette);
+    // IF_NC goto not_mobile;
+    // LD_HL(mPartyMenuBGMobilePalette);
+    if(regs.f_bits.c) {
+        LoadPaletteAssetColorsToArray(palbuf, PartyMenuBGMobilePalette, 0, NUM_PAL_COLORS);
+    }
+    else {
+        LoadPaletteAssetColorsToArray(palbuf, PartyMenuBGPalette, 0, NUM_PAL_COLORS);
+    }
 
-not_mobile:
-    LD_DE(wBGPals1 + PALETTE_SIZE * 0);
-    LD_BC(1 * PALETTE_SIZE);
-    LD_A(MBANK(awBGPals1));
-    CALL(aFarCopyWRAM);
-    RET;
-
+// not_mobile:
+    // LD_DE(wBGPals1 + PALETTE_SIZE * 0);
+    // LD_BC(1 * PALETTE_SIZE);
+    // LD_A(MBANK(awBGPals1));
+    // CALL(aFarCopyWRAM);
+    CopyBytes_Conv2(wram->wBGPals1 + PALETTE_SIZE * 0, palbuf, 1 * PALETTE_SIZE);
+    // RET;
 }
 
 void v_CGB_PokegearPals(void){
@@ -727,14 +733,18 @@ void v_CGB_MapPals(void){
 }
 
 void v_CGB_PartyMenu(void){
-    LD_HL(mPalPacket_PartyMenu + 1);
-    CALL(aCopyFourPalettes);
-    CALL(aInitPartyMenuBGPal0);
-    CALL(aInitPartyMenuBGPal7);
-    CALL(aInitPartyMenuOBPals);
-    CALL(aApplyAttrmap);
-    RET;
-
+    // LD_HL(mPalPacket_PartyMenu + 1);
+    // CALL(aCopyFourPalettes);
+    CopyFourPalettes_Conv((const uint8_t*)PalPacket_PartyMenu.colors);
+    // CALL(aInitPartyMenuBGPal0);
+    InitPartyMenuBGPal0();
+    // CALL(aInitPartyMenuBGPal7);
+    InitPartyMenuBGPal7();
+    // CALL(aInitPartyMenuOBPals);
+    InitPartyMenuOBPals();
+    // CALL(aApplyAttrmap);
+    ApplyAttrmap_Conv();
+    // RET;
 }
 
 void v_CGB_Evolution(void){

@@ -142,11 +142,11 @@ bool TrainerBirdKeeperJose2_Script(script_s* s) {
     iftrue(HasStarPiece)
     checkcellnum(PHONE_BIRDKEEPER_JOSE)
     iftrue(NumberAccepted)
-    checkflag(EVENT_JOSE_ASKED_FOR_PHONE_NUMBER)
+    checkevent(EVENT_JOSE_ASKED_FOR_PHONE_NUMBER)
     iftrue(AskedAlready)
     writetext(BirdKeeperJose2AfterBattleText)
     promptbutton
-    setflag(EVENT_JOSE_ASKED_FOR_PHONE_NUMBER)
+    setevent(EVENT_JOSE_ASKED_FOR_PHONE_NUMBER)
     scall_local(AskNumber1);
     goto AskForNumber;
 AskedAlready:
@@ -166,17 +166,17 @@ WantsBattle:
     ifequal(1, Fight1)
     ifequal(0, LoadFight0)
 Fight2:
-    checkflag(EVENT_RESTORED_POWER_TO_KANTO)
+    checkevent(EVENT_RESTORED_POWER_TO_KANTO)
     iftrue(LoadFight2)
 Fight1:
-    checkflag(EVENT_BEAT_ELITE_FOUR)
+    checkevent(EVENT_BEAT_ELITE_FOUR)
     iftrue(LoadFight1)
 LoadFight0:
     loadtrainer(BIRD_KEEPER, JOSE2)
     startbattle
     reloadmapafterbattle
     loadmem(wram_ptr(wJoseFightCount), 1)
-    clearflag(ENGINE_JOSE_READY_FOR_REMATCH)
+    clearevent(ENGINE_JOSE_READY_FOR_REMATCH)
     s_end
 LoadFight1:
     loadtrainer(BIRD_KEEPER, JOSE1)
@@ -260,11 +260,11 @@ bool TrainerCooltrainerfReena_Script(script_s* s) {
     iftrue(WantsBattle)
     checkcellnum(PHONE_COOLTRAINERF_REENA)
     iftrue(NumberAccepted)
-    checkflag(EVENT_REENA_ASKED_FOR_PHONE_NUMBER)
+    checkevent(EVENT_REENA_ASKED_FOR_PHONE_NUMBER)
     iftrue(AskedAlready)
     writetext(CooltrainerfReenaAfterBattleText)
     promptbutton
-    setflag(EVENT_REENA_ASKED_FOR_PHONE_NUMBER)
+    setevent(EVENT_REENA_ASKED_FOR_PHONE_NUMBER)
     scall_local(AskNumber1);
     goto AskForNumber;
 AskedAlready:
@@ -284,10 +284,10 @@ WantsBattle:
     ifequal(1, Fight1)
     ifequal(0, LoadFight0)
 Fight2:
-    checkflag(EVENT_RESTORED_POWER_TO_KANTO)
+    checkevent(EVENT_RESTORED_POWER_TO_KANTO)
     iftrue(LoadFight2)
 Fight1:
-    checkflag(EVENT_BEAT_ELITE_FOUR)
+    checkevent(EVENT_BEAT_ELITE_FOUR)
     iftrue(LoadFight1)
 LoadFight0:
     loadtrainer(COOLTRAINERF, REENA1)

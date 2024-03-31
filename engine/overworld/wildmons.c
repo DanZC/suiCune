@@ -253,7 +253,7 @@ uint8_t GetMapEncounterRate_Conv(void){
     // LD_A(wWaterEncounterRate - wMornEncounterRate);
     uint8_t a = wWaterEncounterRate - wMornEncounterRate;
     // IF_Z goto ok;
-    if(CheckOnWater_Conv()) {
+    if(!CheckOnWater_Conv()) {
         // LD_A_addr(wTimeOfDay);
         a = wram->wTimeOfDay;
     }

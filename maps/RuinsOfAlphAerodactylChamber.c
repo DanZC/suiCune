@@ -63,7 +63,7 @@ const struct MapEvents RuinsOfAlphAerodactylChamber_MapEvents = {
 
 bool RuinsOfAlphAerodactylChamber_MapScripts_CheckWall(script_s* s) {
     SCRIPT_BEGIN
-    checkflag(EVENT_WALL_OPENED_IN_AERODACTYL_CHAMBER)
+    checkevent(EVENT_WALL_OPENED_IN_AERODACTYL_CHAMBER)
     iftrue_jump(RuinsOfAlphAerodactylChamber_MapScripts_OpenWall)
     s_end
     SCRIPT_END
@@ -81,14 +81,14 @@ bool RuinsOfAlphAerodactylChamber_MapScripts_DummyScene(script_s* s) {
 }
 bool RuinsOfAlphAerodactylChamber_MapScripts_HiddenDoors(script_s* s) {
     SCRIPT_BEGIN
-    checkflag(EVENT_WALL_OPENED_IN_AERODACTYL_CHAMBER)
+    checkevent(EVENT_WALL_OPENED_IN_AERODACTYL_CHAMBER)
     iftrue_jump(RuinsOfAlphAerodactylChamber_MapScripts_WallOpen)
     changeblock(4, 0, 0x2e) // closed wall
     SCRIPT_FALLTHROUGH(RuinsOfAlphAerodactylChamber_MapScripts_WallOpen)
 }
 bool RuinsOfAlphAerodactylChamber_MapScripts_WallOpen(script_s* s) {
     SCRIPT_BEGIN
-    checkflag(EVENT_SOLVED_AERODACTYL_PUZZLE)
+    checkevent(EVENT_SOLVED_AERODACTYL_PUZZLE)
     iffalse_jump(RuinsOfAlphAerodactylChamber_MapScripts_FloorClosed)
     s_endcallback
     SCRIPT_END
@@ -124,8 +124,8 @@ bool RuinsOfAlphAerodactylChamberPuzzle(script_s* s) {
     iftrue(PuzzleComplete)
     s_end
 PuzzleComplete:
-    setflag(EVENT_RUINS_OF_ALPH_INNER_CHAMBER_TOURISTS)
-    setflag(EVENT_SOLVED_AERODACTYL_PUZZLE)
+    setevent(EVENT_RUINS_OF_ALPH_INNER_CHAMBER_TOURISTS)
+    setevent(EVENT_SOLVED_AERODACTYL_PUZZLE)
     setflag(ENGINE_UNLOCKED_UNOWNS_S_TO_W)
     setmapscene(RUINS_OF_ALPH_INNER_CHAMBER, SCENE_RUINSOFALPHINNERCHAMBER_STRANGE_PRESENCE)
     earthquake(30)
@@ -165,7 +165,7 @@ bool RuinsOfAlphAerodactylChamberWallPatternLeft(script_s* s) {
 }
 bool RuinsOfAlphAerodactylChamberWallPatternRight(script_s* s) {
     SCRIPT_BEGIN
-    checkflag(EVENT_WALL_OPENED_IN_AERODACTYL_CHAMBER)
+    checkevent(EVENT_WALL_OPENED_IN_AERODACTYL_CHAMBER)
     iftrue(WallOpen)
     opentext
     writetext(RuinsOfAlphAerodactylChamberWallPatternRightText)

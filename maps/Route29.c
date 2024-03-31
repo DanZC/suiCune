@@ -110,7 +110,7 @@ bool Route29Tutorial1(script_s* s) {
     showemote(EMOTE_SHOCK, ROUTE29_COOLTRAINER_M1, 15)
     applymovement(ROUTE29_COOLTRAINER_M1, DudeMovementData1a)
     turnobject(PLAYER, LEFT)
-    setflag(EVENT_DUDE_TALKED_TO_YOU)
+    setevent(EVENT_DUDE_TALKED_TO_YOU)
     opentext
     writetext(CatchingTutorialIntroText)
     yesorno
@@ -127,7 +127,7 @@ bool Route29Tutorial1(script_s* s) {
     waitbutton
     closetext
     setscene(SCENE_ROUTE29_NOTHING)
-    setflag(EVENT_LEARNED_TO_CATCH_POKEMON)
+    setevent(EVENT_LEARNED_TO_CATCH_POKEMON)
     s_end
     SCRIPT_END
 }
@@ -137,7 +137,7 @@ bool Route29Tutorial2(script_s* s) {
     showemote(EMOTE_SHOCK, ROUTE29_COOLTRAINER_M1, 15)
     applymovement(ROUTE29_COOLTRAINER_M1, DudeMovementData2a)
     turnobject(PLAYER, LEFT)
-    setflag(EVENT_DUDE_TALKED_TO_YOU)
+    setevent(EVENT_DUDE_TALKED_TO_YOU)
     opentext
     writetext(CatchingTutorialIntroText)
     yesorno
@@ -154,7 +154,7 @@ bool Route29Tutorial2(script_s* s) {
     waitbutton
     closetext
     setscene(SCENE_ROUTE29_NOTHING)
-    setflag(EVENT_LEARNED_TO_CATCH_POKEMON)
+    setevent(EVENT_LEARNED_TO_CATCH_POKEMON)
     s_end
     SCRIPT_END
 }
@@ -184,9 +184,9 @@ bool CatchingTutorialDudeScript(script_s* s) {
     opentext
     readvar(VAR_BOXSPACE)
     ifequal(0, BoxFull)
-    checkflag(EVENT_LEARNED_TO_CATCH_POKEMON)
+    checkevent(EVENT_LEARNED_TO_CATCH_POKEMON)
     iftrue(BoxFull)
-    checkflag(EVENT_GAVE_MYSTERY_EGG_TO_ELM)
+    checkevent(EVENT_GAVE_MYSTERY_EGG_TO_ELM)
     iffalse(BoxFull)
     writetext(CatchingTutorialRepeatText)
     yesorno
@@ -198,7 +198,7 @@ bool CatchingTutorialDudeScript(script_s* s) {
     writetext(CatchingTutorialDebriefText)
     waitbutton
     closetext
-    setflag(EVENT_LEARNED_TO_CATCH_POKEMON)
+    setevent(EVENT_LEARNED_TO_CATCH_POKEMON)
     s_end
 BoxFull:
     writetext(CatchingTutorialBoxFullText)
@@ -251,21 +251,21 @@ bool TuscanyScript(script_s* s) {
     SCRIPT_BEGIN
     faceplayer
     opentext
-    checkflag(EVENT_GOT_PINK_BOW_FROM_TUSCANY)
+    checkevent(EVENT_GOT_PINK_BOW_FROM_TUSCANY)
     iftrue_jump(TuscanyTuesdayScript)
     readvar(VAR_WEEKDAY)
     ifnotequal_jump(TUESDAY, TuscanyNotTuesdayScript)
-    checkflag(EVENT_MET_TUSCANY_OF_TUESDAY)
+    checkevent(EVENT_MET_TUSCANY_OF_TUESDAY)
     iftrue(MetTuscany)
     writetext(MeetTuscanyText)
     promptbutton
-    setflag(EVENT_MET_TUSCANY_OF_TUESDAY)
+    setevent(EVENT_MET_TUSCANY_OF_TUESDAY)
 MetTuscany:
     writetext(TuscanyGivesGiftText)
     promptbutton
     verbosegiveitem(PINK_BOW, 1)
     iffalse_jump(TuscanyDoneScript)
-    setflag(EVENT_GOT_PINK_BOW_FROM_TUSCANY)
+    setevent(EVENT_GOT_PINK_BOW_FROM_TUSCANY)
     writetext(TuscanyGaveGiftText)
     waitbutton
     closetext
