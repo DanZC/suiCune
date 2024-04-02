@@ -67,6 +67,7 @@ uint8_t* CurItemName_Conv(item_t item);
 extern const txt_cmd_s PutItemInPocketText[];
 extern const txt_cmd_s PocketIsFullText[];
 void Script_pokemart(void);
+void Script_pokemart_Conv(script_s* s, uint8_t mart_type, uint16_t mart_id);
 void Script_elevator(void);
 void Script_trade(void);
 void Script_phonecall(void);

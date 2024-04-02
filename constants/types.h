@@ -1088,6 +1088,33 @@ struct StdCollisionScript
     uint16_t script;
 };
 
+struct BuenaMon {
+    species_t options[3];
+};
+
+struct BuenaMove {
+    move_t options[3];
+};
+
+struct BuenaItem {
+    item_t options[3];
+};
+
+struct BuenaString {
+    const char* options[3];
+};
+
+struct BuenaPassword {
+    uint8_t passwordType;
+    uint8_t points;
+    union {
+        struct BuenaMon mon;
+        struct BuenaMove move;
+        struct BuenaItem item;
+        struct BuenaString str;
+    };
+};
+
 struct Script;
 
 typedef bool (*Script_fn_t)(struct Script*);

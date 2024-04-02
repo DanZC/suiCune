@@ -1703,7 +1703,7 @@ uint8_t CopyMapObjectEvents_Conv(struct MapObject* hl, const struct ObjEvent* de
         hl[i].objectColor = (de[i].color << 4) | (de[i].function & 0xf);
         hl[i].objectRange = de[i].sightRange;
         hl[i].objectScript = i;
-        hl[i].objectEventFlag = de[i].eventFlag;
+        hl[i].objectEventFlag = (uint16_t)de[i].eventFlag;
     // loop2:
         // LD_A_de;
         // INC_DE;

@@ -5,6 +5,7 @@
 #include "../../home/copy.h"
 #include "../../home/region.h"
 #include "../../home/text.h"
+#include "../../home/time.h"
 #include "../../home/copy_name.h"
 #include "../../home/random.h"
 #include "../../home/names.h"
@@ -20,6 +21,7 @@
 #include "../../data/radio/oaks_pkmn_talk_routes.h"
 #include "../../data/radio/pnp_hidden_people.h"
 #include "../../data/radio/pnp_places.h"
+#include "../../data/radio/buenas_passwords.h"
 #include "../../data/wild/johto_grass.h"
 #include "../events/specials.h"
 #include "../../charmap.h"
@@ -2010,86 +2012,110 @@ void EvolutionRadio(void){
 
 void BuenasPassword1(void){
 //  Determine if we need to be here
-    CALL(aBuenasPasswordCheckTime);
-    JP_NC (mBuenasPassword1_PlayPassword);
-    LD_A_addr(wNumRadioLinesPrinted);
-    AND_A_A;
-    JP_Z (mBuenasPassword20);
-    JP(mBuenasPassword8);
-
-
-PlayPassword:
-    CALL(aStartRadioStation);
-    LDH_A_addr(hBGMapMode);
-    PUSH_AF;
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    LD_DE(mBuenasPasswordChannelName);
-    hlcoord(2, 9, wTilemap);
-    CALL(aPlaceString);
-    POP_AF;
-    LDH_addr_A(hBGMapMode);
-    LD_HL(mBuenaRadioText1);
-    LD_A(BUENAS_PASSWORD_2);
-    JP(mNextRadioLine);
-
+    // CALL(aBuenasPasswordCheckTime);
+    // JP_NC (mBuenasPassword1_PlayPassword);
+    if(!BuenasPasswordCheckTime()) {
+    // PlayPassword:
+        // CALL(aStartRadioStation);
+        StartRadioStation_Conv();
+        // LDH_A_addr(hBGMapMode);
+        // PUSH_AF;
+        uint8_t bgMapMode = hram->hBGMapMode;
+        // XOR_A_A;
+        // LDH_addr_A(hBGMapMode);
+        hram->hBGMapMode = 0;
+        // LD_DE(mBuenasPasswordChannelName);
+        // hlcoord(2, 9, wTilemap);
+        // CALL(aPlaceString);
+        PlaceStringSimple(U82C(BuenasPasswordChannelName), coord(2, 9, wram->wTilemap));
+        // POP_AF;
+        // LDH_addr_A(hBGMapMode);
+        hram->hBGMapMode = bgMapMode;
+        // LD_HL(mBuenaRadioText1);
+        // LD_A(BUENAS_PASSWORD_2);
+        // JP(mNextRadioLine);
+        return NextRadioLine_Conv(BuenaRadioText1, BUENAS_PASSWORD_2);
+    }
+    // LD_A_addr(wNumRadioLinesPrinted);
+    // AND_A_A;
+    // JP_Z (mBuenasPassword20);
+    if(wram->wNumRadioLinesPrinted == 0)
+        return BuenasPassword20();
+    // JP(mBuenasPassword8);
+    return BuenasPassword8();
 }
 
 void BuenasPassword2(void){
-    LD_HL(mBuenaRadioText2);
-    LD_A(BUENAS_PASSWORD_3);
-    JP(mNextRadioLine);
-
+    // LD_HL(mBuenaRadioText2);
+    // LD_A(BUENAS_PASSWORD_3);
+    // JP(mNextRadioLine);
+    return NextRadioLine_Conv(BuenaRadioText2, BUENAS_PASSWORD_3);
 }
 
 void BuenasPassword3(void){
-    CALL(aBuenasPasswordCheckTime);
-    LD_HL(mBuenaRadioText3);
-    JP_C (mBuenasPasswordAfterMidnight);
-    LD_A(BUENAS_PASSWORD_4);
-    JP(mNextRadioLine);
-
+    // CALL(aBuenasPasswordCheckTime);
+    // LD_HL(mBuenaRadioText3);
+    // JP_C (mBuenasPasswordAfterMidnight);
+    if(BuenasPasswordCheckTime())
+        return BuenasPasswordAfterMidnight(BuenaRadioText3);
+    // LD_A(BUENAS_PASSWORD_4);
+    // JP(mNextRadioLine);
+    return NextRadioLine_Conv(BuenaRadioText3, BUENAS_PASSWORD_4);
 }
 
 void BuenasPassword4(void){
-    CALL(aBuenasPasswordCheckTime);
-    JP_C (mBuenasPassword8);
-    LD_A_addr(wBuenasPassword);
+    // CALL(aBuenasPasswordCheckTime);
+    // JP_C (mBuenasPassword8);
+    if(BuenasPasswordCheckTime())
+        return BuenasPassword8();
+    // LD_A_addr(wBuenasPassword);
 //  If we already generated the password today, we don't need to generate a new one.
-    LD_HL(wDailyFlags2);
-    BIT_hl(DAILYFLAGS2_BUENAS_PASSWORD_F);
-    IF_NZ goto AlreadyGotIt;
-//  There are only 11 groups to choose from.
+    // LD_HL(wDailyFlags2);
+    // BIT_hl(DAILYFLAGS2_BUENAS_PASSWORD_F);
+    // IF_NZ goto AlreadyGotIt;
+    if(!bit_test(wram->wDailyFlags2, DAILYFLAGS2_BUENAS_PASSWORD_F)) {
+    //  There are only 11 groups to choose from.
+    // greater_than_11:
+        uint8_t group;
+        do {
+            // CALL(aRandom);
+            group = Random_Conv() & 0xf;
+            // maskbits(NUM_PASSWORD_CATEGORIES, 0);
+            // CP_A(NUM_PASSWORD_CATEGORIES);
+            // IF_NC goto greater_than_11;
+        } while(group >= NUM_PASSWORD_CATEGORIES);
+    //  Store it in the high nybble of e.
+        // SWAP_A;
+        // LD_E_A;
+    //  For each group, choose one of the three passwords.
 
-greater_than_11:
-    CALL(aRandom);
-    maskbits(NUM_PASSWORD_CATEGORIES, 0);
-    CP_A(NUM_PASSWORD_CATEGORIES);
-    IF_NC goto greater_than_11;
-//  Store it in the high nybble of e.
-    SWAP_A;
-    LD_E_A;
-//  For each group, choose one of the three passwords.
+        uint8_t subgroup;
+    // greater_than_three:
+        do {
+            // CALL(aRandom);
+            subgroup = Random_Conv() & 3;
+            // maskbits(NUM_PASSWORDS_PER_CATEGORY, 0);
+            // CP_A(NUM_PASSWORDS_PER_CATEGORY);
+            // IF_NC goto greater_than_three;
+        } while(subgroup >= NUM_PASSWORDS_PER_CATEGORY);
+    //  The high nybble of wBuenasPassword will now contain the password group index, and the low nybble contains the actual password.
+        // ADD_A_E;
+        // LD_addr_A(wBuenasPassword);
+        wram->wBuenasPassword = ((group << 4) & 0xf0) | (subgroup & 0xf);
+    //  Set the flag so that we don't generate a new password this week.
+        // LD_HL(wDailyFlags2);
+        // SET_hl(DAILYFLAGS2_BUENAS_PASSWORD_F);
+        bit_set(wram->wDailyFlags2, DAILYFLAGS2_BUENAS_PASSWORD_F);
+    }
 
-greater_than_three:
-    CALL(aRandom);
-    maskbits(NUM_PASSWORDS_PER_CATEGORY, 0);
-    CP_A(NUM_PASSWORDS_PER_CATEGORY);
-    IF_NC goto greater_than_three;
-//  The high nybble of wBuenasPassword will now contain the password group index, and the low nybble contains the actual password.
-    ADD_A_E;
-    LD_addr_A(wBuenasPassword);
-//  Set the flag so that we don't generate a new password this week.
-    LD_HL(wDailyFlags2);
-    SET_hl(DAILYFLAGS2_BUENAS_PASSWORD_F);
-
-AlreadyGotIt:
-    LD_C_A;
-    CALL(aGetBuenasPassword);
-    LD_HL(mBuenaRadioText4);
-    LD_A(BUENAS_PASSWORD_5);
-    JP(mNextRadioLine);
-
+// AlreadyGotIt:
+    // LD_C_A;
+    // CALL(aGetBuenasPassword);
+    GetBuenasPassword_Conv(wram->wBuenasPassword);
+    // LD_HL(mBuenaRadioText4);
+    // LD_A(BUENAS_PASSWORD_5);
+    // JP(mNextRadioLine);
+    return NextRadioLine_Conv(BuenaRadioText4, BUENAS_PASSWORD_5);
 }
 
 void GetBuenasPassword(void){
@@ -2195,167 +2221,289 @@ copy_loop:
     RET;
 
 // INCLUDE "data/radio/buenas_passwords.asm"
+}
 
-    return BuenasPassword5();
+//  The password indices are held in c.  High nybble contains the group index, low nybble contains the word index.
+//  Load the password group pointer in hl.
+uint8_t* GetBuenasPassword_Conv(uint8_t c){
+    // LD_A_C;
+    // SWAP_A;
+    // AND_A(0xf);
+    // LD_HL(mBuenasPasswordTable);
+    // LD_D(0);
+    // LD_E_A;
+    // ADD_HL_DE;
+    // ADD_HL_DE;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    const struct BuenaPassword* pass = BuenasPasswordTable + ((c >> 4) & 0xf);
+//  Get the password type and store it in b.
+    // LD_A_hli;
+    // LD_B_A;
+    uint8_t b = pass->passwordType;
+    // PUSH_HL;
+    // INC_HL;
+//  Get the password index.
+    // LD_A_C;
+    // AND_A(0xf);
+    // LD_C_A;
+    c &= 0xf;
+    // PUSH_HL;
+    // LD_HL(mGetBuenasPassword_StringFunctionJumptable);
+    // LD_E_B;
+    // ADD_HL_DE;
+    // ADD_HL_DE;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // POP_DE;  // de now contains the pointer to the value of this week's password, in Blue Card Points.
+    // CALL(av_hl_);
+    uint8_t* str;
+    switch(b) {
+    // StringFunctionJumptable:
+    //  entries correspond to BUENA_* constants
+        //table_width ['2', 'GetBuenasPassword.StringFunctionJumptable']
+        //dw ['.Mon'];  // BUENA_MON
+        case BUENA_MON:
+        // Mon:
+            // CALL(aGetBuenasPassword_GetTheIndex);
+            // CALL(aGetPokemonName);
+            str = GetPokemonName_Conv2(pass->mon.options[c]);
+            // RET;
+            break;
+
+        //dw ['.Item'];  // BUENA_ITEM
+        case BUENA_ITEM:
+        // Item:
+            // CALL(aGetBuenasPassword_GetTheIndex);
+            // CALL(aGetItemName);
+            str = GetItemName_Conv2(pass->item.options[c]);
+            // RET;
+            break;
+        //dw ['.Move'];  // BUENA_MOVE
+        case BUENA_MOVE:
+        // Move:
+            // CALL(aGetBuenasPassword_GetTheIndex);
+            // CALL(aGetMoveName);
+            str = GetMoveName_Conv2(pass->item.options[c]);
+            // RET;
+            break;
+        //dw ['.RawString'];  // BUENA_STRING
+        case BUENA_STRING:
+        // RawString:
+            str = U82CA(wram->wStringBuffer1, pass->str.options[c]);
+            break;
+        //  Get the string from the table...
+            // LD_A_C;
+            // AND_A_A;
+            // IF_Z goto skip;
+
+        // read_loop:
+            // LD_A_de;
+            // INC_DE;
+            // CP_A(0x50);
+            // IF_NZ goto read_loop;
+            // DEC_C;
+            // IF_NZ goto read_loop;
+        //  ... and copy it into wStringBuffer1.
+
+        // skip:
+            // LD_HL(wStringBuffer1);
+
+        // copy_loop:
+            // LD_A_de;
+            // INC_DE;
+            // LD_hli_A;
+            // CP_A(0x50);
+            // IF_NZ goto copy_loop;
+            // LD_DE(wStringBuffer1);
+            // RET;
+        //assert_table_length ['NUM_BUENA_FUNCTIONS']
+        default:
+            str = U82CA(wram->wStringBuffer1, "ERROR@");
+            break;
+    }
+    // POP_HL;
+    // LD_C_hl;
+    // RET;
+    return str;
+// INCLUDE "data/radio/buenas_passwords.asm"
 }
 
 void BuenasPassword5(void){
-    LD_HL(mBuenaRadioText5);
-    LD_A(BUENAS_PASSWORD_6);
-    JP(mNextRadioLine);
-
+    // LD_HL(mBuenaRadioText5);
+    // LD_A(BUENAS_PASSWORD_6);
+    // JP(mNextRadioLine);
+    return NextRadioLine_Conv(BuenaRadioText5, BUENAS_PASSWORD_6);
 }
 
 void BuenasPassword6(void){
-    LD_HL(mBuenaRadioText6);
-    LD_A(BUENAS_PASSWORD_7);
-    JP(mNextRadioLine);
-
+    // LD_HL(mBuenaRadioText6);
+    // LD_A(BUENAS_PASSWORD_7);
+    // JP(mNextRadioLine);
+    return NextRadioLine_Conv(BuenaRadioText6, BUENAS_PASSWORD_7);
 }
 
 void BuenasPassword7(void){
-    CALL(aBuenasPasswordCheckTime);
-    LD_HL(mBuenaRadioText7);
-    JR_C (mBuenasPasswordAfterMidnight);
-    LD_A(BUENAS_PASSWORD);
-    JP(mNextRadioLine);
-
+    // CALL(aBuenasPasswordCheckTime);
+    // LD_HL(mBuenaRadioText7);
+    // JR_C (mBuenasPasswordAfterMidnight);
+    if(BuenasPasswordCheckTime())
+        return BuenasPasswordAfterMidnight(BuenaRadioText7);
+    // LD_A(BUENAS_PASSWORD);
+    // JP(mNextRadioLine);
+    return NextRadioLine_Conv(BuenaRadioText7, BUENAS_PASSWORD);
 }
 
-void BuenasPasswordAfterMidnight(void){
-    PUSH_HL;
-    LD_HL(wDailyFlags2);
-    RES_hl(DAILYFLAGS2_BUENAS_PASSWORD_F);
-    POP_HL;
-    LD_A(BUENAS_PASSWORD_8);
-    JP(mNextRadioLine);
-
+void BuenasPasswordAfterMidnight(const txt_cmd_s* hl){
+    // PUSH_HL;
+    // LD_HL(wDailyFlags2);
+    // RES_hl(DAILYFLAGS2_BUENAS_PASSWORD_F);
+    bit_reset(wram->wDailyFlags2, DAILYFLAGS2_BUENAS_PASSWORD_F);
+    // POP_HL;
+    // LD_A(BUENAS_PASSWORD_8);
+    // JP(mNextRadioLine);
+    return NextRadioLine_Conv(hl, BUENAS_PASSWORD_8);
 }
 
 void BuenasPassword8(void){
-    LD_HL(wDailyFlags2);
-    RES_hl(DAILYFLAGS2_BUENAS_PASSWORD_F);
-    LD_HL(mBuenaRadioMidnightText10);
-    LD_A(BUENAS_PASSWORD_9);
-    JP(mNextRadioLine);
-
+    // LD_HL(wDailyFlags2);
+    // RES_hl(DAILYFLAGS2_BUENAS_PASSWORD_F);
+    bit_reset(wram->wDailyFlags2, DAILYFLAGS2_BUENAS_PASSWORD_F);
+    // LD_HL(mBuenaRadioMidnightText10);
+    // LD_A(BUENAS_PASSWORD_9);
+    // JP(mNextRadioLine);
+    return NextRadioLine_Conv(BuenaRadioMidnightText10, BUENAS_PASSWORD_9);
 }
 
 void BuenasPassword9(void){
-    LD_HL(mBuenaRadioMidnightText1);
-    LD_A(BUENAS_PASSWORD_10);
-    JP(mNextRadioLine);
-
+    // LD_HL(mBuenaRadioMidnightText1);
+    // LD_A(BUENAS_PASSWORD_10);
+    // JP(mNextRadioLine);
+    return NextRadioLine_Conv(BuenaRadioMidnightText1, BUENAS_PASSWORD_10);
 }
 
 void BuenasPassword10(void){
-    LD_HL(mBuenaRadioMidnightText2);
-    LD_A(BUENAS_PASSWORD_11);
-    JP(mNextRadioLine);
-
+    // LD_HL(mBuenaRadioMidnightText2);
+    // LD_A(BUENAS_PASSWORD_11);
+    // JP(mNextRadioLine);
+    return NextRadioLine_Conv(BuenaRadioMidnightText2, BUENAS_PASSWORD_11);
 }
 
 void BuenasPassword11(void){
-    LD_HL(mBuenaRadioMidnightText3);
-    LD_A(BUENAS_PASSWORD_12);
-    JP(mNextRadioLine);
-
+    // LD_HL(mBuenaRadioMidnightText3);
+    // LD_A(BUENAS_PASSWORD_12);
+    // JP(mNextRadioLine);
+    return NextRadioLine_Conv(BuenaRadioMidnightText3, BUENAS_PASSWORD_12);
 }
 
 void BuenasPassword12(void){
-    LD_HL(mBuenaRadioMidnightText4);
-    LD_A(BUENAS_PASSWORD_13);
-    JP(mNextRadioLine);
-
+    // LD_HL(mBuenaRadioMidnightText4);
+    // LD_A(BUENAS_PASSWORD_13);
+    // JP(mNextRadioLine);
+    return NextRadioLine_Conv(BuenaRadioMidnightText4, BUENAS_PASSWORD_13);
 }
 
 void BuenasPassword13(void){
-    LD_HL(mBuenaRadioMidnightText5);
-    LD_A(BUENAS_PASSWORD_14);
-    JP(mNextRadioLine);
-
+    // LD_HL(mBuenaRadioMidnightText5);
+    // LD_A(BUENAS_PASSWORD_14);
+    // JP(mNextRadioLine);
+    return NextRadioLine_Conv(BuenaRadioMidnightText5, BUENAS_PASSWORD_14);
 }
 
 void BuenasPassword14(void){
-    LD_HL(mBuenaRadioMidnightText6);
-    LD_A(BUENAS_PASSWORD_15);
-    JP(mNextRadioLine);
-
+    // LD_HL(mBuenaRadioMidnightText6);
+    // LD_A(BUENAS_PASSWORD_15);
+    // JP(mNextRadioLine);
+    return NextRadioLine_Conv(BuenaRadioMidnightText6, BUENAS_PASSWORD_15);
 }
 
 void BuenasPassword15(void){
-    LD_HL(mBuenaRadioMidnightText7);
-    LD_A(BUENAS_PASSWORD_16);
-    JP(mNextRadioLine);
-
+    // LD_HL(mBuenaRadioMidnightText7);
+    // LD_A(BUENAS_PASSWORD_16);
+    // JP(mNextRadioLine);
+    return NextRadioLine_Conv(BuenaRadioMidnightText7, BUENAS_PASSWORD_16);
 }
 
 void BuenasPassword16(void){
-    LD_HL(mBuenaRadioMidnightText8);
-    LD_A(BUENAS_PASSWORD_17);
-    JP(mNextRadioLine);
-
+    // LD_HL(mBuenaRadioMidnightText8);
+    // LD_A(BUENAS_PASSWORD_17);
+    // JP(mNextRadioLine);
+    return NextRadioLine_Conv(BuenaRadioMidnightText8, BUENAS_PASSWORD_17);
 }
 
 void BuenasPassword17(void){
-    LD_HL(mBuenaRadioMidnightText9);
-    LD_A(BUENAS_PASSWORD_18);
-    JP(mNextRadioLine);
-
+    // LD_HL(mBuenaRadioMidnightText9);
+    // LD_A(BUENAS_PASSWORD_18);
+    // JP(mNextRadioLine);
+    return NextRadioLine_Conv(BuenaRadioMidnightText9, BUENAS_PASSWORD_18);
 }
 
 void BuenasPassword18(void){
-    LD_HL(mBuenaRadioMidnightText10);
-    LD_A(BUENAS_PASSWORD_19);
-    JP(mNextRadioLine);
-
+    // LD_HL(mBuenaRadioMidnightText10);
+    // LD_A(BUENAS_PASSWORD_19);
+    // JP(mNextRadioLine);
+    return NextRadioLine_Conv(BuenaRadioMidnightText10, BUENAS_PASSWORD_19);
 }
 
 void BuenasPassword19(void){
-    LD_HL(mBuenaRadioMidnightText10);
-    LD_A(BUENAS_PASSWORD_20);
-    JP(mNextRadioLine);
-
+    // LD_HL(mBuenaRadioMidnightText10);
+    // LD_A(BUENAS_PASSWORD_20);
+    // JP(mNextRadioLine);
+    return NextRadioLine_Conv(BuenaRadioMidnightText10, BUENAS_PASSWORD_20);
 }
 
 void BuenasPassword20(void){
-    LDH_A_addr(hBGMapMode);
-    PUSH_AF;
-    FARCALL(aNoRadioMusic);
-    FARCALL(aNoRadioName);
-    POP_AF;
-    LDH_addr_A(hBGMapMode);
-    LD_HL(wDailyFlags2);
-    RES_hl(DAILYFLAGS2_BUENAS_PASSWORD_F);
-    LD_A(BUENAS_PASSWORD);
-    LD_addr_A(wCurRadioLine);
-    XOR_A_A;
-    LD_addr_A(wNumRadioLinesPrinted);
-    LD_HL(mBuenaOffTheAirText);
-    LD_A(BUENAS_PASSWORD_21);
-    JP(mNextRadioLine);
-
+    // LDH_A_addr(hBGMapMode);
+    // PUSH_AF;
+    uint8_t bgMapMode = hram->hBGMapMode;
+    // FARCALL(aNoRadioMusic);
+    NoRadioMusic_Conv();
+    // FARCALL(aNoRadioName);
+    NoRadioName_Conv();
+    // POP_AF;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = bgMapMode;
+    // LD_HL(wDailyFlags2);
+    // RES_hl(DAILYFLAGS2_BUENAS_PASSWORD_F);
+    bit_reset(wram->wDailyFlags2, DAILYFLAGS2_BUENAS_PASSWORD_F);
+    // LD_A(BUENAS_PASSWORD);
+    // LD_addr_A(wCurRadioLine);
+    wram->wCurRadioLine = BUENAS_PASSWORD;
+    // XOR_A_A;
+    // LD_addr_A(wNumRadioLinesPrinted);
+    wram->wNumRadioLinesPrinted = 0;
+    // LD_HL(mBuenaOffTheAirText);
+    // LD_A(BUENAS_PASSWORD_21);
+    // JP(mNextRadioLine);
+    return NextRadioLine_Conv(BuenaOffTheAirText, BUENAS_PASSWORD_21);
 }
 
 void BuenasPassword21(void){
-    LD_A(BUENAS_PASSWORD);
-    LD_addr_A(wCurRadioLine);
-    XOR_A_A;
-    LD_addr_A(wNumRadioLinesPrinted);
-    CALL(aBuenasPasswordCheckTime);
-    JP_NC (mBuenasPassword1);
-    LD_HL(mBuenaOffTheAirText);
-    LD_A(BUENAS_PASSWORD_21);
-    JP(mNextRadioLine);
-
+    // LD_A(BUENAS_PASSWORD);
+    // LD_addr_A(wCurRadioLine);
+    wram->wCurRadioLine = BUENAS_PASSWORD;
+    // XOR_A_A;
+    // LD_addr_A(wNumRadioLinesPrinted);
+    wram->wNumRadioLinesPrinted = 0;
+    // CALL(aBuenasPasswordCheckTime);
+    // JP_NC (mBuenasPassword1);
+    if(!BuenasPasswordCheckTime())
+        return BuenasPassword1();
+    // LD_HL(mBuenaOffTheAirText);
+    // LD_A(BUENAS_PASSWORD_21);
+    // JP(mNextRadioLine);
+    return NextRadioLine_Conv(BuenaOffTheAirText, BUENAS_PASSWORD_21);
 }
 
-void BuenasPasswordCheckTime(void){
-    CALL(aUpdateTime);
-    LDH_A_addr(hHours);
-    CP_A(NITE_HOUR);
-    RET;
-
+bool BuenasPasswordCheckTime(void){
+    // CALL(aUpdateTime);
+    UpdateTime_Conv();
+    // LDH_A_addr(hHours);
+    // CP_A(NITE_HOUR);
+    // RET;
+    return hram->hHours < NITE_HOUR;
 }
 
 const char BuenasPasswordChannelName[] = "BUENA\'S PASSWORD@";

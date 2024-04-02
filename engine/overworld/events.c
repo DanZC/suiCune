@@ -889,7 +889,7 @@ u8_flag_s RunSceneScript_Conv(void){
     // CP_A_C;
     // IF_NC goto nope;
     uint8_t c = CheckScenes_Conv();
-    if(c == 0xff)
+    if(c == 0xff || c >= gCurMapSceneScriptCount)
         return u8_flag(0, false);
 
     // LD_E_A;

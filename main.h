@@ -339,7 +339,7 @@
 #include "engine/events/map_name_sign.h"
 //#include "engine/events/checkforhiddenitems.h"
 #include "engine/events/treemons.h"
-//#include "engine/events/fishing_gfx.h"
+#include "engine/events/fishing_gfx.h"
 #include "engine/pokegear/radio.h"
 #include "engine/pokemon/mail_2.h"
 

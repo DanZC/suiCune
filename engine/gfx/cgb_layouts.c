@@ -1003,63 +1003,134 @@ void v_CGB_PokedexSearchOption(void){
 
 void v_CGB_PackPals(void){
 //  pack pals
-    LD_A_addr(wBattleType);
-    CP_A(BATTLETYPE_TUTORIAL);
-    IF_Z goto tutorial_male;
-
-    LD_A_addr(wPlayerGender);
-    BIT_A(PLAYERGENDER_FEMALE_F);
-    IF_Z goto tutorial_male;
-
-    LD_HL(mv_CGB_PackPals_KrisPackPals);
-    goto got_gender;
-
-
-tutorial_male:
-    LD_HL(mv_CGB_PackPals_ChrisPackPals);
-
-
-got_gender:
-    LD_DE(wBGPals1);
-    LD_BC(8 * PALETTE_SIZE);  // 6 palettes?
-    LD_A(MBANK(awBGPals1));
-    CALL(aFarCopyWRAM);
-    CALL(aWipeAttrmap);
-    hlcoord(0, 0, wAttrmap);
-    LD_BC((1 << 8) | 10);
-    LD_A(0x1);
-    CALL(aFillBoxCGB);
-    hlcoord(10, 0, wAttrmap);
-    LD_BC((1 << 8) | 10);
-    LD_A(0x2);
-    CALL(aFillBoxCGB);
-    hlcoord(7, 2, wAttrmap);
-    LD_BC((9 << 8) | 1);
-    LD_A(0x3);
-    CALL(aFillBoxCGB);
-    hlcoord(0, 7, wAttrmap);
-    LD_BC((3 << 8) | 5);
-    LD_A(0x4);
-    CALL(aFillBoxCGB);
-    hlcoord(0, 3, wAttrmap);
-    LD_BC((3 << 8) | 5);
-    LD_A(0x5);
-    CALL(aFillBoxCGB);
-    CALL(aApplyAttrmap);
-    CALL(aApplyPals);
-    LD_A(TRUE);
-    LDH_addr_A(hCGBPalUpdate);
-    RET;
-
-
-ChrisPackPals:
+static const uint16_t ChrisPackPals[] = {
 // INCLUDE "gfx/pack/pack.pal"
+    rgb(31, 31, 31),
+    rgb(15, 15, 31),
+    rgb( 0,  0, 31),
+    rgb( 0,  0,  0),
+
+    rgb(31, 31, 31),
+    rgb(15, 15, 31),
+    rgb( 0,  0, 31),
+    rgb( 0,  0,  0),
+
+    rgb(31, 11, 31),
+    rgb(15, 15, 31),
+    rgb( 0,  0, 31),
+    rgb( 0,  0,  0),
+
+    rgb(31, 31, 31),
+    rgb(15, 15, 31),
+    rgb( 0,  0, 31),
+    rgb(31,  0,  0),
+
+    rgb(31, 31, 31),
+    rgb(15, 15, 31),
+    rgb(31,  0,  0),
+    rgb( 0,  0,  0),
+
+    rgb(31, 31, 31),
+    rgb( 7, 19,  7),
+    rgb( 7, 19,  7),
+    rgb( 0,  0,  0),
+};
 
 
-KrisPackPals:
+static const uint16_t KrisPackPals[] = {
 // INCLUDE "gfx/pack/pack_f.pal"
+    rgb(31, 31, 31),
+    rgb(31, 14, 31),
+    rgb(31,  7, 31),
+    rgb( 0,  0,  0),
 
-    return v_CGB_Pokepic();
+    rgb(31, 31, 31),
+    rgb(31, 14, 31),
+    rgb(31,  7, 31),
+    rgb( 0,  0,  0),
+
+    rgb(15, 15, 31),
+    rgb(31, 14, 31),
+    rgb(31, 07, 31),
+    rgb(00, 00, 00),
+
+    rgb(31, 31, 31),
+    rgb(31, 14, 31),
+    rgb(31,  7, 31),
+    rgb(31,  0,  0),
+
+    rgb(31, 31, 31),
+    rgb(31, 14, 31),
+    rgb(31,  0,  0),
+    rgb( 0,  0,  0),
+
+    rgb(31, 31, 31),
+    rgb( 7, 19,  7),
+    rgb( 7, 19,  7),
+    rgb( 0,  0,  0),
+};
+    // LD_A_addr(wBattleType);
+    // CP_A(BATTLETYPE_TUTORIAL);
+    // IF_Z goto tutorial_male;
+
+    // LD_A_addr(wPlayerGender);
+    // BIT_A(PLAYERGENDER_FEMALE_F);
+    // IF_Z goto tutorial_male;
+    const uint16_t* pals;
+    if(wram->wBattleType == BATTLETYPE_TUTORIAL
+    || !bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F)) {
+    // tutorial_male:
+        // LD_HL(mv_CGB_PackPals_ChrisPackPals);
+        pals = ChrisPackPals;
+    }
+
+    else {
+        // LD_HL(mv_CGB_PackPals_KrisPackPals);
+        // goto got_gender;
+        pals = KrisPackPals;
+    }
+
+// got_gender:
+    // LD_DE(wBGPals1);
+    // LD_BC(8 * PALETTE_SIZE);  // 6 palettes?
+    // LD_A(MBANK(awBGPals1));
+    // CALL(aFarCopyWRAM);
+    CopyBytes_Conv2(wram->wBGPals1, pals, 8 * PALETTE_SIZE);
+    // CALL(aWipeAttrmap);
+    WipeAttrmap();
+    // hlcoord(0, 0, wAttrmap);
+    // LD_BC((1 << 8) | 10);
+    // LD_A(0x1);
+    // CALL(aFillBoxCGB);
+    FillBoxCGB_Conv(coord(0, 0, wram->wAttrmap), 1, 10, 0x1);
+    // hlcoord(10, 0, wAttrmap);
+    // LD_BC((1 << 8) | 10);
+    // LD_A(0x2);
+    // CALL(aFillBoxCGB);
+    FillBoxCGB_Conv(coord(10, 0, wram->wAttrmap), 1, 10, 0x2);
+    // hlcoord(7, 2, wAttrmap);
+    // LD_BC((9 << 8) | 1);
+    // LD_A(0x3);
+    // CALL(aFillBoxCGB);
+    FillBoxCGB_Conv(coord(7, 2, wram->wAttrmap), 9, 1, 0x3);
+    // hlcoord(0, 7, wAttrmap);
+    // LD_BC((3 << 8) | 5);
+    // LD_A(0x4);
+    // CALL(aFillBoxCGB);
+    FillBoxCGB_Conv(coord(0, 7, wram->wAttrmap), 3, 5, 0x4);
+    // hlcoord(0, 3, wAttrmap);
+    // LD_BC((3 << 8) | 5);
+    // LD_A(0x5);
+    // CALL(aFillBoxCGB);
+    FillBoxCGB_Conv(coord(0, 3, wram->wAttrmap), 3, 5, 0x5);
+    // CALL(aApplyAttrmap);
+    ApplyAttrmap_Conv();
+    // CALL(aApplyPals);
+    ApplyPals_Conv();
+    // LD_A(TRUE);
+    // LDH_addr_A(hCGBPalUpdate);
+    hram->hCGBPalUpdate = TRUE;
+    // RET;
 }
 
 void v_CGB_Pokepic(void){

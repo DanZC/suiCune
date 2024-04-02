@@ -2,6 +2,7 @@
 #include "overworld.h"
 #include "engine_flags.h"
 #include "field_moves.h"
+#include "fishing_gfx.h"
 #include "unown_walls.h"
 #include "misc_scripts.h"
 #include "treemons.h"
@@ -2539,246 +2540,265 @@ FishNoFish:
 
 }
 
-void Script_NotEvenANibble(void){
-    //scall ['Script_FishCastRod']
-    //writetext ['RodNothingText']
-    //sjump ['Script_NotEvenANibble_FallThrough']
-
-    return Script_NotEvenANibble2();
+bool Script_NotEvenANibble(script_s* s){
+    SCRIPT_BEGIN
+    scall(Script_FishCastRod)
+    writetext(RodNothingText)
+    sjump(Script_NotEvenANibble_FallThrough)
+    SCRIPT_END
 }
 
-void Script_NotEvenANibble2(void){
-    //scall ['Script_FishCastRod']
-    //writetext ['RodNothingText']
+bool Script_NotEvenANibble2(script_s* s){
+    SCRIPT_BEGIN
+    scall(Script_FishCastRod)
+    writetext(RodNothingText)
 
-    return Script_NotEvenANibble_FallThrough();
+    SCRIPT_FALLTHROUGH(Script_NotEvenANibble_FallThrough)
 }
 
-void Script_NotEvenANibble_FallThrough(void){
-    //loademote ['EMOTE_SHADOW']
-    //callasm ['PutTheRodAway']
-    //closetext ['?']
-    //end ['?']
-
-    return Script_GotABite();
+bool Script_NotEvenANibble_FallThrough(script_s* s){
+    SCRIPT_BEGIN
+    loademote(EMOTE_SHADOW)
+    PutTheRodAway();
+    closetext
+    s_end
+    SCRIPT_END
 }
 
-void Script_GotABite(void){
-    //scall ['Script_FishCastRod']
-    //callasm ['Fishing_CheckFacingUp']
-    //iffalse ['.NotFacingUp']
-    //applymovement ['PLAYER', '.Movement_FacingUp']
-    //sjump ['.FightTheHookedPokemon']
+bool Script_GotABite(script_s* s){
+static const uint8_t Movement_NotFacingUp[] = {
+    movement_fish_got_bite,
+    movement_fish_got_bite,
+    movement_fish_got_bite,
+    movement_fish_got_bite,
+    movement_show_emote,
+    movement_step_end
+};
 
+static const uint8_t Movement_FacingUp[] = {
+    movement_fish_got_bite,
+    movement_fish_got_bite,
+    movement_fish_got_bite,
+    movement_fish_got_bite,
+    step_sleep(1),
+    movement_show_emote,
+    movement_step_end,
+};
+
+static const uint8_t Movement_RestoreRod[] = {
+    movement_hide_emote,
+    movement_fish_cast_rod,
+    movement_step_end,
+};
+    SCRIPT_BEGIN
+    scall(Script_FishCastRod)
+    Fishing_CheckFacingUp();
+    iffalse(NotFacingUp)
+    applymovement(PLAYER, Movement_FacingUp)
+    goto FightTheHookedPokemon;
 
 NotFacingUp:
-    //applymovement ['PLAYER', '.Movement_NotFacingUp']
-
+    applymovement(PLAYER, Movement_NotFacingUp)
 
 FightTheHookedPokemon:
-    //pause ['40']
-    //applymovement ['PLAYER', '.Movement_RestoreRod']
-    //writetext ['RodBiteText']
-    //callasm ['PutTheRodAway']
-    //closetext ['?']
-    //randomwildmon ['?']
-    //startbattle ['?']
-    //reloadmapafterbattle ['?']
-    //end ['?']
-
-
-Movement_NotFacingUp:
-    //fish_got_bite ['?']
-    //fish_got_bite ['?']
-    //fish_got_bite ['?']
-    //fish_got_bite ['?']
-    //show_emote ['?']
-    //step_end ['?']
-
-
-Movement_FacingUp:
-    //fish_got_bite ['?']
-    //fish_got_bite ['?']
-    //fish_got_bite ['?']
-    //fish_got_bite ['?']
-    //step_sleep ['1']
-    //show_emote ['?']
-    //step_end ['?']
-
-
-Movement_RestoreRod:
-    //hide_emote ['?']
-    //fish_cast_rod ['?']
-    //step_end ['?']
-
-    return Fishing_CheckFacingUp();
+    pause(40)
+    applymovement(PLAYER, Movement_RestoreRod)
+    writetext(RodBiteText)
+    PutTheRodAway();
+    closetext
+    randomwildmon
+    startbattle
+    reloadmapafterbattle
+    s_end
+    SCRIPT_END
 }
 
 void Fishing_CheckFacingUp(void){
-    LD_A_addr(wPlayerDirection);
-    AND_A(0xc);
-    CP_A(OW_UP);
-    LD_A(0x1);
-    IF_Z goto up;
-    XOR_A_A;
+    // LD_A_addr(wPlayerDirection);
+    // AND_A(0xc);
+    // CP_A(OW_UP);
+    // LD_A(0x1);
+    // IF_Z goto up;
+    // XOR_A_A;
 
 
-up:
-    LD_addr_A(wScriptVar);
-    RET;
-
+// up:
+    // LD_addr_A(wScriptVar);
+    // RET;
+    wram->wScriptVar = ((wram->wPlayerStruct.facing & 0xc) == OW_UP)? TRUE: FALSE;
 }
 
-void Script_FishCastRod(void){
-    //reloadmappart ['?']
-    //loadmem ['hBGMapMode', '0x0']
-    //special ['UpdateTimePals']
-    //loademote ['EMOTE_ROD']
-    //callasm ['LoadFishingGFX']
-    //loademote ['EMOTE_SHOCK']
-    //applymovement ['PLAYER', 'MovementData_CastRod']
-    //pause ['40']
-    //end ['?']
-
-    return MovementData_CastRod();
+bool Script_FishCastRod(script_s* s){
+    SCRIPT_BEGIN
+    reloadmappart
+    loadmem(hram_ptr(hBGMapMode), 0x0)
+    special(UpdateTimePals)
+    loademote(EMOTE_ROD)
+    LoadFishingGFX();
+    loademote(EMOTE_SHOCK)
+    applymovement(PLAYER, MovementData_CastRod)
+    pause(40)
+    s_end
+    SCRIPT_END
 }
 
-void MovementData_CastRod(void){
-    //fish_cast_rod ['?']
-    //step_end ['?']
-
-    return PutTheRodAway();
-}
+const uint8_t MovementData_CastRod[] = {
+    movement_fish_cast_rod,
+    movement_step_end
+};
 
 void PutTheRodAway(void){
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    LD_A(0x1);
-    LD_addr_A(wPlayerAction);
-    CALL(aUpdateSprites);
-    CALL(aUpdatePlayerSprite);
-    RET;
-
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    // LD_A(0x1);
+    // LD_addr_A(wPlayerAction);
+    wram->wPlayerStruct.action = 0x1;
+    // CALL(aUpdateSprites);
+    UpdateSprites_Conv();
+    // CALL(aUpdatePlayerSprite);
+    UpdatePlayerSprite_Conv();
+    // RET;
 }
 
-void RodBiteText(void){
-    //text_far ['_RodBiteText']
-    //text_end ['?']
+const txt_cmd_s RodBiteText[] = {
+    text_far(v_RodBiteText)
+    text_end
+};
 
-    return RodNothingText();
-}
+const txt_cmd_s RodNothingText[] = {
+    text_far(v_RodNothingText)
+    text_end
+};
 
-void RodNothingText(void){
-    //text_far ['_RodNothingText']
-    //text_end ['?']
-
-    return UnusedNothingHereText();
-}
-
-void UnusedNothingHereText(void){
 //  //  unreferenced
-    //text_far ['_UnusedNothingHereText']
-    //text_end ['?']
+const txt_cmd_s UnusedNothingHereText[] ={
+    text_far(v_UnusedNothingHereText)
+    text_end
+};
 
-    return BikeFunction();
+static bool BikeFunction_CheckEnvironment(void) {
+    // CALL(aGetMapEnvironment);
+    uint8_t env = GetMapEnvironment_Conv2();
+    // CALL(aCheckOutdoorMap);
+    // IF_Z goto ok;
+    // CP_A(CAVE);
+    // IF_Z goto ok;
+    // CP_A(GATE);
+    // IF_Z goto ok;
+    // goto nope;
+    if(CheckOutdoorMap_Conv(env)
+    || env == CAVE
+    || env == GATE) {
+    // ok:
+        // CALL(aGetPlayerStandingTile);
+        // AND_A(0xf);  // lo nybble only
+        // IF_NZ goto nope;  // not FLOOR_TILE
+        if((GetPlayerStandingTile_Conv() & 0xf) == 0) {
+            // XOR_A_A;
+            // RET;
+            return true;
+        }
+
+    // nope:
+        // SCF;
+        // RET;
+    }
+    return false;
+}
+
+static Script_fn_t BikeFunction_CheckIfRegistered(Script_fn_t no_select, Script_fn_t select) {
+    // LD_A_addr(wUsingItemWithSelect);
+    // AND_A_A;
+    // RET_Z ;
+    if(wram->wUsingItemWithSelect == 0)
+        return no_select;
+    // LD_H_D;
+    // LD_L_E;
+    // RET;
+    return select;
+}
+
+static uint8_t BikeFunction_TryBike(void) {
+    // CALL(aBikeFunction_CheckEnvironment);
+    // IF_C goto CannotUseBike;
+    if(!BikeFunction_CheckEnvironment())
+        return 0x0;
+    // LD_A_addr(wPlayerState);
+    // CP_A(PLAYER_NORMAL);
+    // IF_Z goto GetOnBike;
+    if(wram->wPlayerState == PLAYER_NORMAL) {
+    // GetOnBike:
+        // LD_HL(mScript_GetOnBike);
+        // LD_DE(mScript_GetOnBike_Register);
+        // CALL(aBikeFunction_CheckIfRegistered);
+        // CALL(aQueueScript);
+        QueueScript_Conv2(BikeFunction_CheckIfRegistered(Script_GetOnBike, Script_GetOnBike_Register));
+        // XOR_A_A;
+        // LD_addr_A(wMusicFade);
+        wram->wMusicFade = 0x0;
+        // LD_DE(MUSIC_NONE);
+        // CALL(aPlayMusic);
+        PlayMusic_Conv(MUSIC_NONE);
+        // CALL(aDelayFrame);
+        DelayFrame();
+        // CALL(aMaxVolume);
+        MaxVolume_Conv();
+        // LD_DE(MUSIC_BICYCLE);
+        // LD_A_E;
+        // LD_addr_A(wMapMusic);
+        wram->wMapMusic = MUSIC_BICYCLE;
+        // CALL(aPlayMusic);
+        PlayMusic_Conv(MUSIC_BICYCLE);
+        // LD_A(0x1);
+        // RET;
+        return 0x1;
+    }
+    // CP_A(PLAYER_BIKE);
+    // IF_Z goto GetOffBike;
+    else if(wram->wPlayerState == PLAYER_BIKE) {
+    // GetOffBike:
+        // LD_HL(wBikeFlags);
+        // BIT_hl(BIKEFLAGS_ALWAYS_ON_BIKE_F);
+        // IF_NZ goto CantGetOffBike;
+        Script_fn_t script;
+        if(!bit_test(wram->wBikeFlags, BIKEFLAGS_ALWAYS_ON_BIKE_F)) {
+            // LD_HL(mScript_GetOffBike);
+            // LD_DE(mScript_GetOffBike_Register);
+            // CALL(aBikeFunction_CheckIfRegistered);
+            script = BikeFunction_CheckIfRegistered(Script_GetOffBike, Script_GetOffBike_Register);
+            // LD_A(BANK(aScript_GetOffBike));
+            // goto done;
+        }
+        else {
+        // CantGetOffBike:
+            // LD_HL(mScript_CantGetOffBike);
+            // goto done;
+            script = Script_CantGetOffBike;
+        }
+
+    // done:
+        // CALL(aQueueScript);
+        QueueScript_Conv2(script);
+        // LD_A(0x1);
+        // RET;
+        return 0x1;
+    }
+    // goto CannotUseBike;
+    else {
+    // CannotUseBike:
+        // LD_A(0x0);
+        // RET;
+        return 0x0;
+    }
 }
 
 void BikeFunction(void){
-    CALL(aBikeFunction_TryBike);
-    AND_A(0x7f);
-    LD_addr_A(wFieldMoveSucceeded);
-    RET;
-
-
-TryBike:
-    CALL(aBikeFunction_CheckEnvironment);
-    IF_C goto CannotUseBike;
-    LD_A_addr(wPlayerState);
-    CP_A(PLAYER_NORMAL);
-    IF_Z goto GetOnBike;
-    CP_A(PLAYER_BIKE);
-    IF_Z goto GetOffBike;
-    goto CannotUseBike;
-
-
-GetOnBike:
-    LD_HL(mScript_GetOnBike);
-    LD_DE(mScript_GetOnBike_Register);
-    CALL(aBikeFunction_CheckIfRegistered);
-    CALL(aQueueScript);
-    XOR_A_A;
-    LD_addr_A(wMusicFade);
-    LD_DE(MUSIC_NONE);
-    CALL(aPlayMusic);
-    CALL(aDelayFrame);
-    CALL(aMaxVolume);
-    LD_DE(MUSIC_BICYCLE);
-    LD_A_E;
-    LD_addr_A(wMapMusic);
-    CALL(aPlayMusic);
-    LD_A(0x1);
-    RET;
-
-
-GetOffBike:
-    LD_HL(wBikeFlags);
-    BIT_hl(BIKEFLAGS_ALWAYS_ON_BIKE_F);
-    IF_NZ goto CantGetOffBike;
-    LD_HL(mScript_GetOffBike);
-    LD_DE(mScript_GetOffBike_Register);
-    CALL(aBikeFunction_CheckIfRegistered);
-    LD_A(BANK(aScript_GetOffBike));
-    goto done;
-
-
-CantGetOffBike:
-    LD_HL(mScript_CantGetOffBike);
-    goto done;
-
-
-CannotUseBike:
-    LD_A(0x0);
-    RET;
-
-
-done:
-    CALL(aQueueScript);
-    LD_A(0x1);
-    RET;
-
-
-CheckIfRegistered:
-    LD_A_addr(wUsingItemWithSelect);
-    AND_A_A;
-    RET_Z ;
-    LD_H_D;
-    LD_L_E;
-    RET;
-
-
-CheckEnvironment:
-    CALL(aGetMapEnvironment);
-    CALL(aCheckOutdoorMap);
-    IF_Z goto ok;
-    CP_A(CAVE);
-    IF_Z goto ok;
-    CP_A(GATE);
-    IF_Z goto ok;
-    goto nope;
-
-
-ok:
-    CALL(aGetPlayerStandingTile);
-    AND_A(0xf);  // lo nybble only
-    IF_NZ goto nope;  // not FLOOR_TILE
-    XOR_A_A;
-    RET;
-
-
-nope:
-    SCF;
-    RET;
-
+    // CALL(aBikeFunction_TryBike);
+    // AND_A(0x7f);
+    // LD_addr_A(wFieldMoveSucceeded);
+    wram->wFieldMoveSucceeded = BikeFunction_TryBike() & 0x7f;
+    // RET;
 }
 
 bool Script_GetOnBike(script_s* s){

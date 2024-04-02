@@ -205,7 +205,7 @@ void CheckMysteryGift(void){
     // INC_A;
 // no:
     // LD_addr_A(wScriptVar);
-    wram->wScriptVar = (gb_read(sMysteryGiftItem) == 0)? FALSE: TRUE;
+    wram->wScriptVar = (gb_read(sMysteryGiftItem) == 0)? FALSE: gb_read(sMysteryGiftItem) + 1;
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // RET;

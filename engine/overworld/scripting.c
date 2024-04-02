@@ -98,6 +98,7 @@ void ScriptEvents_Conv(void){
     // CALL(aStartScript);
     StartScript_Conv();
 
+    bool wait = false;
     do {
     // loop:
         // LD_A_addr(wScriptMode);
@@ -110,12 +111,11 @@ void ScriptEvents_Conv(void){
             //dw ['WaitScript'];
         switch(wram->wScriptMode)
         {
-            case SCRIPT_OFF: StopScript_Conv(); break;
-            case SCRIPT_READ: gCurScript.fn(&gCurScript); break;
-            case SCRIPT_WAIT_MOVEMENT: WaitScriptMovement_Conv(); break;
-            case SCRIPT_WAIT: WaitScript_Conv(); break;
+            case SCRIPT_OFF: StopScript_Conv(); DelayFrame(); break;
+            case SCRIPT_READ: wait = gCurScript.fn(&gCurScript); if(wait) DelayFrame(); break;
+            case SCRIPT_WAIT_MOVEMENT: WaitScriptMovement_Conv(); DelayFrame(); break;
+            case SCRIPT_WAIT: WaitScript_Conv(); DelayFrame(); break;
         }
-        DelayFrame();
         // CALL(aCheckScript);
         // IF_NZ goto loop;
     } while(CheckScript_Conv());
@@ -1312,6 +1312,22 @@ void Script_pokemart(void){
     FARCALL(aOpenMartDialog);
     RET;
 
+}
+
+void Script_pokemart_Conv(script_s* s, uint8_t mart_type, uint16_t mart_id){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // LD_C_A;
+    // CALL(aGetScriptByte);
+    // LD_E_A;
+    // CALL(aGetScriptByte);
+    // LD_D_A;
+    // LD_A_addr(wScriptBank);
+    // LD_B_A;
+    struct cpu_registers_s regs = {.c = mart_type, .de = mart_id};
+    // FARCALL(aOpenMartDialog);
+    SafeCallGB(aOpenMartDialog, &regs);
+    // RET;
 }
 
 void Script_elevator(void){

@@ -32,6 +32,7 @@ commands = {
     'itemnotify': Cmd('itemnotify', []),
     'pocketisfull': Cmd('pocketisfull', []),
     'specialsound': Cmd('specialsound', []),
+    'pokemart': Cmd('pokemart', ['type', 'id']),
     'hangup': Cmd('hangup', []),
     'askforphonenumber': Cmd('askforphonenumber', ['contact']),
     'describedecoration': Cmd('describedecoration', ['deco']),

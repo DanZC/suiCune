@@ -36,6 +36,7 @@
 #define itemnotify                  SCRIPT_EVCMD(Script_itemnotify_Conv)
 #define pocketisfull                SCRIPT_EVCMD(Script_pocketisfull_Conv)
 #define specialsound                SCRIPT_EVCMD(Script_specialsound_Conv)
+#define pokemart(_mty, _mid)        SCRIPT_EVCMD(Script_pokemart_Conv, _mty, _mid)
 #define hangup                      SCRIPT_EVCMD(Script_hangup_Conv)
 #define askforphonenumber(_c)       SCRIPT_EVCMD(Script_askforphonenumber_Conv, _c)
 #define describedecoration(_d)      SCRIPT_EVCMD(Script_describedecoration_Conv, _d)

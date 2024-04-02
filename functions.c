@@ -1863,7 +1863,7 @@ void init_function_pointers(void) {
     // REDIRECTED(BuenaRadioText6);
     // REDIRECTED(PnP_MyTypeText);
     // REDIRECTED(LC_Text1);
-    REDIRECTED(RadioJumptable);
+    // REDIRECTED(RadioJumptable);
     // REDIRECTED(PnP_InspiringText);
     // REDIRECTED(PnP_RightForMeText);
     REDIRECTED(PrintRadioLine);
@@ -1884,7 +1884,7 @@ void init_function_pointers(void) {
     // REDIRECTED(RocketRadioText8);
     REDIRECTED(RocketRadio4);
     REDIRECTED(OaksPKMNTalk2);
-    REDIRECTED(BuenasPasswordAfterMidnight);
+    // REDIRECTED(BuenasPasswordAfterMidnight);
     // REDIRECTED(LC_Text3);
     // REDIRECTED(PnP_NoisyText);
     REDIRECTED(PokedexShow6);
@@ -1944,7 +1944,7 @@ void init_function_pointers(void) {
     REDIRECTED(BuenasPassword19);
     // REDIRECTED(OPT_PokemonChannelText);
     REDIRECTED(BuenasPassword12);
-    REDIRECTED(BuenasPasswordCheckTime);
+    // REDIRECTED(BuenasPasswordCheckTime);
     // REDIRECTED(BuenaRadioText5);
     REDIRECTED(BuenasPassword11);
     // REDIRECTED(PnP_Text4);
@@ -5209,4 +5209,9 @@ void init_function_pointers(void) {
     // REDIRECTED(ReadMailMessage);
     // REDIRECTED(MailboxPC);
     // REDIRECTED(DeletePartyMonMail);
+
+    // engine/events/fishing_gfx.c
+    CONVERTED(LoadFishingGFX);
+    // REDIRECTED(FishingGFX);
+    // REDIRECTED(KrisFishingGFX);
 }
