@@ -1,5 +1,7 @@
 void PlaceMenuItemName(void);
+void PlaceMenuItemName_Conv(const struct MenuData* data, uint8_t* de);
 void PlaceMenuItemQuantity(void);
+void PlaceMenuItemQuantity_Conv(const struct MenuData* data, tile_t* de);
 void PlaceMoneyTopRight(void);
 void PlaceMoneyBottomLeft(void);
 void PlaceMoneyAtTopLeftOfTextbox(void);

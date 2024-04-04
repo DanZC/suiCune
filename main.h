@@ -45,9 +45,9 @@
 
 // SECTION "bank4", ROMX
 
-//#include "engine/items/pack.h"
+#include "engine/items/pack.h"
 #include "engine/overworld/time.h"
-//#include "engine/items/tmhm2.h"
+#include "engine/items/tmhm2.h"
 //#include "engine/menus/naming_screen.h"
 #include "engine/events/misc_scripts.h"
 //#include "engine/events/heal_machine_anim.h"
@@ -98,10 +98,10 @@
 
 //#include "data/text_buffers.h"
 #include "engine/menus/menu.h"
-//#include "engine/items/update_item_description.h"
+#include "engine/items/update_item_description.h"
 #include "engine/events/pokepic.h"
 #include "engine/overworld/map_objects_2.h"
-//#include "engine/menus/scrolling_menu.h"
+#include "engine/menus/scrolling_menu.h"
 //#include "engine/items/switch_items.h"
 #include "engine/menus/menu_2.h"
 //#include "engine/pokemon/mon_submenu.h"
@@ -130,8 +130,8 @@
 #include "engine/battle/ai/redundant.h"
 //#include "engine/events/move_deleter.h"
 //#include "engine/link/mystery_gift_2.h"
-//#include "engine/items/tmhm.h"
-//#include "engine/pokemon/print_move_description.h"
+#include "engine/items/tmhm.h"
+#include "engine/pokemon/print_move_description.h"
 //#include "engine/events/pokerus/pokerus.h"
 #include "engine/battle/start_battle.h"
 #include "engine/gfx/place_graphic.h"
@@ -590,7 +590,7 @@
 // SECTION "Miscellaneous Text", ROMX
 
 //#include "data/items/names.h"
-//#include "engine/items/print_item_description.h"
+#include "engine/items/print_item_description.h"
 //#include "data/moves/names.h"
 #include "engine/overworld/landmarks.h"
 

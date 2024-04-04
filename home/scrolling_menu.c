@@ -2,6 +2,10 @@
 #include "scrolling_menu.h"
 #include "delay.h"
 #include "joypad.h"
+#include "menu.h"
+#include "tilemap.h"
+#include "time_palettes.h"
+#include "../engine/menus/scrolling_menu.h"
 
 void ScrollingMenu(void){
         CALL(aCopyMenuData);
@@ -30,8 +34,42 @@ UpdatePalettes:
 
 }
 
+static void ScrollingMenu_UpdatePalettes(void){
+    // LD_HL(wVramState);
+    // BIT_hl(0);
+    // JP_NZ (mUpdateTimePals);
+    if(bit_test(wram->wVramState, 0))
+        return UpdateTimePals();
+    // JP(mSetPalettes);
+    SetPalettes_Conv();
+}
+
+uint8_t ScrollingMenu_Conv(void){
+    // CALL(aCopyMenuData);
+    const struct MenuData* data = GetMenuData();
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+
+    // LD_A(BANK(av_ScrollingMenu));  // aka BANK(_InitScrollingMenu)
+    // RST(aBankswitch);
+
+    // CALL(av_InitScrollingMenu);
+    v_InitScrollingMenu_Conv(data);
+    // CALL(aScrollingMenu_UpdatePalettes);
+    ScrollingMenu_UpdatePalettes();
+    // CALL(av_ScrollingMenu);
+    v_ScrollingMenu_Conv(data);
+
+    // POP_AF;
+    // RST(aBankswitch);
+
+    // LD_A_addr(wMenuJoypad);
+    // RET;
+    return wram->wMenuJoypad;
+}
+
 void InitScrollingMenu(void){
-        LD_A_addr(wMenuBorderTopCoord);
+    LD_A_addr(wMenuBorderTopCoord);
     DEC_A;
     LD_B_A;
     LD_A_addr(wMenuBorderBottomCoord);

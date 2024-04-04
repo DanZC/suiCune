@@ -10,6 +10,7 @@
 #include "../../home/map_objects.h"
 #include "../gfx/sprites.h"
 #include "../../data/text/common.h"
+#include "../../charmap.h"
 
 struct MenuHeader gWindowStack[32];
 uint8_t gTileBackupStack[32][SCREEN_WIDTH * SCREEN_HEIGHT * 2];
@@ -1106,7 +1107,7 @@ bool v_2DMenuInterpretJoypad_Conv(void){
         // LD_A_addr(w2DMenuFlags1);
         // BIT_A(4);
         // IF_NZ goto wrap_around_left;
-        if(bit_test(wram->w2DMenuFlags1, 4)) {
+        if(!bit_test(wram->w2DMenuFlags1, 4)) {
             // BIT_A(1);
             // JP_NZ (mv_2DMenuInterpretJoypad_set_bit_7);
             if(bit_test(wram->w2DMenuFlags1, 1)) {
@@ -1251,7 +1252,7 @@ void Move2DMenuCursor_Conv(void){
     // LD_L_A;
     // LD_A_hl;
     // CP_A(0xed);
-    if(*hl == 0xed) {
+    if(*hl == CHAR_RIGHT_CURSOR) {
         // JR_NZ (mPlace2DMenuCursor);
         // LD_A_addr(wCursorOffCharacter);
         // LD_hl_A;
@@ -1371,11 +1372,11 @@ void Place2DMenuCursor_Conv(void){
     // LD_A_hl;
     // CP_A(0xed);
     // IF_Z goto cursor_on;
-    if(*hl != 0xed) {
+    if(*hl != CHAR_RIGHT_CURSOR) {
         // LD_addr_A(wCursorOffCharacter);
         wram->wCursorOffCharacter = *hl;
         // LD_hl(0xed);
-        *hl = 0xed;
+        *hl = CHAR_RIGHT_CURSOR;
     }
 
 

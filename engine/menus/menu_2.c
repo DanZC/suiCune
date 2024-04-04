@@ -4,6 +4,7 @@
 #include "../../home/print_text.h"
 #include "../../home/names.h"
 #include "../../home/pokemon.h"
+#include "../items/items.h"
 
 void PlaceMenuItemName(void){
     PUSH_DE;
@@ -14,6 +15,19 @@ void PlaceMenuItemName(void){
     CALL(aPlaceString);
     RET;
 
+}
+
+void PlaceMenuItemName_Conv(const struct MenuData* data, uint8_t* de){
+    (void)data;
+    // PUSH_DE;
+    // LD_A_addr(wMenuSelection);
+    // LD_addr_A(wNamedObjectIndex);
+    // CALL(aGetItemName);
+    uint8_t* str = GetItemName_Conv2(wram->wMenuSelection);
+    // POP_HL;
+    // CALL(aPlaceString);
+    PlaceStringSimple(str, de);
+    // RET;
 }
 
 void PlaceMenuItemQuantity(void){
@@ -36,6 +50,33 @@ void PlaceMenuItemQuantity(void){
 
 done:
     RET;
+
+}
+
+void PlaceMenuItemQuantity_Conv(const struct MenuData* data, tile_t* de){
+    (void)data;
+    // PUSH_DE;
+    // LD_A_addr(wMenuSelection);
+    // LD_addr_A(wCurItem);
+    // FARCALL(av_CheckTossableItem);
+    // LD_A_addr(wItemAttributeValue);
+    // POP_HL;
+    // AND_A_A;
+    // IF_NZ goto done;
+    if(v_CheckTossableItem_Conv(wram->wMenuSelection)){
+        // LD_DE(0x15);
+        // ADD_HL_DE;
+        // LD_hl(0xf1);
+        de[0x15] = 0xf1;
+        // INC_HL;
+        // LD_DE(wMenuSelectionQuantity);
+        // LD_BC((1 << 8) | 2);
+        // CALL(aPrintNum);
+        PrintNum_Conv2(de + 0x16, &wram->wMenuSelectionQuantity, 1, 2);
+    }
+
+// done:
+    // RET;
 
 }
 

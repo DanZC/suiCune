@@ -25,6 +25,7 @@ bool CheckTMHM_Conv(uint8_t c);
 void GetTMHMNumber(void);
 uint8_t GetTMHMNumber_Conv(item_t c);
 void GetNumberedTMHM(void);
+item_t GetNumberedTMHM_Conv(uint8_t tmhm);
 void v_CheckTossableItem(void);
 bool v_CheckTossableItem_Conv(item_t item);
 void CheckSelectableItem(void);

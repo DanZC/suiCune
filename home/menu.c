@@ -722,12 +722,16 @@ void ClearMenuBoxInterior(void) {
 }
 
 void ClearWholeMenuBox(void) {
-    CALL(aMenuBoxCoord2Tile);
-    CALL(aGetMenuBoxDims);
-    INC_C;
-    INC_B;
-    CALL(aClearBox);
-    RET;
+    // CALL(aMenuBoxCoord2Tile);
+    uint8_t* hl = MenuBoxCoord2Tile_Conv();
+    // CALL(aGetMenuBoxDims);
+    uint8_t c, b;
+    GetMenuBoxDims_Conv(&c, &b);
+    // INC_C;
+    // INC_B;
+    // CALL(aClearBox);
+    ClearBox_Conv2(hl, c + 1, b + 1);
+    // RET;
 }
 
 void MenuBoxCoord2Tile(void) {

@@ -5,6 +5,7 @@
 #include "intro_menu.h"
 #include "save.h"
 #include "../pokegear/pokegear.h"
+#include "../items/pack.h"
 #include "../pokemon/party_menu.h"
 #include "../../home/audio.h"
 #include "../../home/delay.h"
@@ -788,9 +789,30 @@ used_item:
 }
 
 uint8_t StartMenu_Pack_Conv(void) {
-    struct cpu_registers_s regs = {};
-    SafeCallGB(aStartMenu_Pack, &regs);
-    return regs.a;
+    // struct cpu_registers_s regs = {};
+    // SafeCallGB(aStartMenu_Pack, &regs);
+    // return regs.a;
+    // CALL(aFadeToMenu);
+    FadeToMenu_Conv();
+    // FARCALL(aPack);
+    Pack();
+    // LD_A_addr(wPackUsedItem);
+    // AND_A_A;
+    // IF_NZ goto used_item;
+    if(wram->wPackUsedItem == NO_ITEM){
+        // CALL(aCloseSubmenu);
+        CloseSubmenu_Conv();
+        // LD_A(STARTMENURET_REOPEN);
+        // RET;
+        return STARTMENURET_REOPEN;
+    }
+
+// used_item:
+    // CALL(aExitAllMenus);
+    ExitAllMenus_Conv();
+    // LD_A(STARTMENURET_EXIT_MENU_RUN_SCRIPT);
+    // RET;
+    return STARTMENURET_EXIT_MENU_RUN_SCRIPT;
 }
 
 void StartMenu_Pokemon(void){

@@ -1004,6 +1004,32 @@ done:
 
 }
 
+//  Return the item id of a TM/HM by number c.
+item_t GetNumberedTMHM_Conv(uint8_t tmhm){
+    // LD_A_C;
+//  Skip any gaps.
+    // CP_A(ITEM_C3 - (TM01 - 1));
+    // IF_C goto done;
+    if(tmhm >= ITEM_C3 - (TM01 - 1)) {
+        // CP_A(ITEM_DC - (TM01 - 1) - 1);
+        // IF_C goto skip_one;
+        if(tmhm >= ITEM_DC - (TM01 - 1) - 1) {
+        //  skip two
+            // INC_A;
+            tmhm++;
+        }
+    // skip_one:
+        // INC_A;
+        tmhm++;
+    }
+// done:
+    // ADD_A(TM01);
+    // DEC_A;
+    // LD_C_A;
+    // RET;
+    return (tmhm + TM01) - 1;
+}
+
 void v_CheckTossableItem(void){
 //  Return 1 in wItemAttributeValue and carry if wCurItem can't be removed from the bag.
     LD_A(ITEMATTR_PERMISSIONS);

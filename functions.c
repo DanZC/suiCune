@@ -4816,7 +4816,7 @@ void init_function_pointers(void) {
     // REDIRECTED(AskHeadbuttText);
     // REDIRECTED(StrengthFunction);
     // REDIRECTED(UseHeadbuttText);
-    // REDIRECTED(BikeFunction);
+    CONVERTED(BikeFunction);
     // REDIRECTED(AskCutScript);
     // REDIRECTED(DigFunction);
     // REDIRECTED(PutTheRodAway);
@@ -5214,4 +5214,135 @@ void init_function_pointers(void) {
     CONVERTED(LoadFishingGFX);
     // REDIRECTED(FishingGFX);
     // REDIRECTED(KrisFishingGFX);
+
+    // engine/items/pack.c
+    // REDIRECTED(GiveItem);
+    // REDIRECTED(Pack_InitGFX);
+    // REDIRECTED(Pack_PrintTextNoScroll);
+    // REDIRECTED(DepositSellInitPackBuffers);
+    // REDIRECTED(ItemSubmenu);
+    // REDIRECTED(DrawPackGFX);
+    // REDIRECTED(Jumptable_UseGiveTossRegisterQuit);
+    // REDIRECTED(PC_Mart_BallsPocketMenuHeader);
+    // REDIRECTED(WaitBGMap_DrawPackGFX);
+    // REDIRECTED(QuitItemSubmenu);
+    // REDIRECTED(DepositSellPack);
+    // REDIRECTED(CantRegisterText);
+    // REDIRECTED(YouCantUseItInABattleText);
+    // REDIRECTED(AskItemMoveText);
+    // REDIRECTED(MenuHeader_HoldableItem);
+    // REDIRECTED(RegisteredItemText);
+    // REDIRECTED(Pack_QuitRunScript);
+    // REDIRECTED(PackEmptyText);
+    // REDIRECTED(Pack_QuitNoScript);
+    // REDIRECTED(PackMenuGFX);
+    // REDIRECTED(Jumptable_GiveTossRegisterQuit);
+    // REDIRECTED(YouDontHaveAMonText);
+    // REDIRECTED(BattlePack);
+    // REDIRECTED(DepositSellTutorial_InterpretJoypad);
+    // REDIRECTED(PC_Mart_KeyItemsPocketMenuHeader);
+    // REDIRECTED(InitPackBuffers);
+    // REDIRECTED(OakThisIsntTheTimeText);
+    // REDIRECTED(TossMenu);
+    // REDIRECTED(Pack_ClearTilemap);
+    // REDIRECTED(KeyItemsPocketMenuHeader);
+    // REDIRECTED(AskQuantityThrowAwayText);
+    // REDIRECTED(Pack_JumptableNext);
+    // REDIRECTED(ItemsPocketMenuHeader);
+    // REDIRECTED(ResetPocketCursorPositions);
+    // REDIRECTED(Pack);
+    // REDIRECTED(Jumptable_UseRegisterQuit);
+    // REDIRECTED(PackGFXPointers);
+    // REDIRECTED(PlacePackGFX);
+    // REDIRECTED(PackGFX);
+    // REDIRECTED(PackNoItemText);
+    // REDIRECTED(Pack_InterpretJoypad);
+    // REDIRECTED(Pack_InitColors);
+    // REDIRECTED(Jumptable_UseGiveTossQuit);
+    // REDIRECTED(Pack_GetJumptablePointer);
+    // REDIRECTED(MenuHeader_UsableKeyItem);
+    // REDIRECTED(RegisterItem);
+    // REDIRECTED(Pack_GetItemName);
+    // REDIRECTED(MenuHeader_HoldableKeyItem);
+    // REDIRECTED(BallsPocketMenuHeader);
+    // REDIRECTED(Jumptable_GiveTossQuit);
+    // REDIRECTED(UseItem);
+    // REDIRECTED(Jumptable_UseQuit);
+    // REDIRECTED(MenuHeader_UnusableItem);
+    // REDIRECTED(TMHMSubmenu);
+    // REDIRECTED(DrawPocketName);
+    // REDIRECTED(ThrewAwayText);
+    // REDIRECTED(MenuHeader_UnusableKeyItem);
+    // REDIRECTED(MenuHeader_UsableItem);
+    // REDIRECTED(AskThrowAwayText);
+    // REDIRECTED(TutorialPack);
+    // REDIRECTED(InitPocket);
+    // REDIRECTED(PC_Mart_ItemsPocketMenuHeader);
+    // REDIRECTED(ClearPocketList);
+
+    // engine/items/pack_kris.c
+    // REDIRECTED(DrawKrisPackGFX);
+    // REDIRECTED(PackFGFXPointers);
+    // REDIRECTED(PackFGFX);
+
+    // engine/items/update_item_description.c
+    // REDIRECTED(UpdateItemDescription);
+
+    // engine/items/print_item_description.c
+    // REDIRECTED(PrintItemDescription);
+
+    // engine/pokemon/print_move_description.c
+    // REDIRECTED(PrintMoveDescription);
+
+    // engine/menus/scrolling_menu.c
+    // REDIRECTED(ScrollingMenu_InitDisplay);
+    // REDIRECTED(v_ScrollingMenu);
+    // REDIRECTED(ScrollingMenu_CheckCallFunction3);
+    // REDIRECTED(ScrollingMenu_PlaceCursor);
+    // REDIRECTED(ScrollingMenu_CallFunctions1and2);
+    // REDIRECTED(ScrollingMenuJoyAction);
+    // REDIRECTED(v_InitScrollingMenu);
+    // REDIRECTED(InitScrollingMenuCursor);
+    // REDIRECTED(ScrollingMenu_GetCursorPosition);
+    // REDIRECTED(ScrollingMenu_ValidateSwitchItem);
+    // REDIRECTED(ScrollingMenu_UpdateDisplay);
+    // REDIRECTED(ScrollingMenu_ClearLeftColumn);
+    // REDIRECTED(ScrollingMenu_GetListItemCoordAndFunctionArgs);
+    // REDIRECTED(ScrollingMenu_InitFlags);
+
+    // engine/items/tmhm.c
+    // REDIRECTED(Tutorial_TMHMPocket);
+    // REDIRECTED(TMHMPocket);
+    // REDIRECTED(TMHM_ExitPack);
+    // REDIRECTED(TMHM_ExitPocket);
+    // REDIRECTED(BootedHMText);
+    // REDIRECTED(TMHM_ShowTMMoveDescription);
+    // REDIRECTED(TMHM_JoypadLoop);
+    // REDIRECTED(TMHMPocket_GetCurrentLineCoord);
+    // REDIRECTED(v_TMHM_ExitPack);
+    // REDIRECTED(TMHMNotCompatibleText);
+    // REDIRECTED(TMHM_ScrollPocket);
+    // REDIRECTED(TMHM_GetCurrentPocketPosition);
+    // REDIRECTED(ChooseMonToLearnTMHM);
+    // REDIRECTED(TMHM_PlaySFX_ReadText2);
+    // REDIRECTED(ConsumeTM);
+    // REDIRECTED(TMHM_CheckHoveringOverCancel);
+    // REDIRECTED(AskTeachTMHM);
+    // REDIRECTED(PlaceMoveNameAfterTMHMName);
+    // REDIRECTED(TMHM_ChooseTMorHM);
+    // REDIRECTED(TMHM_DisplayPocketItems);
+    // REDIRECTED(ChooseMonToLearnTMHM_NoRefresh);
+    // REDIRECTED(TMHM_PocketLoop);
+    // REDIRECTED(VerboseReceiveTMHM);
+    // REDIRECTED(TeachTMHM);
+    // REDIRECTED(ContainedMoveText);
+    // REDIRECTED(ConvertCurItemIntoCurTMHM);
+    // REDIRECTED(CountTMsHMs);
+    // REDIRECTED(TMHM_CancelString);
+    // REDIRECTED(GetTMHMItemMove);
+    // REDIRECTED(BootedTMText);
+
+    // engine/items/tmhm2.c
+    // REDIRECTED(GetTMHMMove);
+    // REDIRECTED(CanLearnTMHMMove);
 }

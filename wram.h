@@ -2124,7 +2124,8 @@ struct PACKED wram_s
                     // mobile
                     uint8_t wd0e3;
                 };
-                uint8_t wMenuScrollPosition[4];
+                uint8_t wMenuScrollPosition;
+                uint8_t wMenuScrollPosition_skip[3];
                 uint8_t wQueuedScriptBank;
                 uint16_t wQueuedScriptAddr;
                 uint8_t wNumMoves;
@@ -2171,8 +2172,10 @@ struct PACKED wram_s
                 uint16_t wUnusedNamesPointer;
                 uint16_t wItemAttributesPointer;
                 uint8_t wCurItem;
-                //union wCurItemQuantity
-                uint8_t wMartItemID;
+                union {
+                    uint8_t wCurItemQuantity;
+                    uint8_t wMartItemID;
+                };
                 uint8_t wCurPartySpecies;
                 // contains which monster in a party
                 // is being dealt with at the moment
