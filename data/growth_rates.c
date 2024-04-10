@@ -11,6 +11,20 @@
 #include "../constants.h"
 #include "growth_rates.h"
 
+#ifdef _MSC_VER
+const struct GrowthRate GrowthRates[] = {
+    [GROWTH_MEDIUM_FAST] = {.a = 1, .b = 1,   .c = 0,    .d = 0,   .e = 0},   // Medium Fast
+    [GROWTH_SLIGHTLY_FAST] = {.a = 3, .b = 4,   .c = 10,   .d = 0,   .e = 30},  // Slightly Fast
+    [GROWTH_SLIGHTLY_SLOW] = {.a = 3, .b = 4,   .c = 20,   .d = 0,   .e = 70},  // Slightly Slow
+    [GROWTH_MEDIUM_SLOW] = {.a = 6, .b = 5,   .c = (unsigned char)(-15 | 0x80), .d = 100, .e = 140}, // Medium Slow, applying signed magnitude for negative value
+    [GROWTH_FAST] = {.a = 4, .b = 5,   .c = 0,    .d = 0,   .e = 0},   // Fast
+    [GROWTH_SLOW] = {.a = 5, .b = 4,   .c = 0,    .d = 0,   .e = 0},   // Slow
+};
+
+static_assert(lengthof(GrowthRates) == NUM_GROWTH_RATES, "");
+
+#else
+
 #define smgn(_x) ((_x < 0)? -(_x) | 0x80: _x)
 #define growth_rate(_a, _b, _c, _d, _e) (struct GrowthRate){.a=(_a & 0xf), .b=(_b & 0xf), .c=smgn(_c), .d=_d, .e=_e}
 
@@ -26,3 +40,5 @@ const struct GrowthRate GrowthRates[] = {
 };
 
 static_assert(lengthof(GrowthRates) == NUM_GROWTH_RATES, "");
+
+#endif
