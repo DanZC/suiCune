@@ -258,6 +258,7 @@ void Script_checkpokemail(void);
 void Script_giveitem(void);
 void Script_giveitem_Conv(script_s* s, item_t item, uint8_t quantity);
 void Script_takeitem(void);
+void Script_takeitem_Conv(script_s* s, item_t item, uint8_t quantity);
 void Script_checkitem(void);
 void Script_checkitem_Conv(script_s* s, item_t item);
 void Script_givemoney(void);

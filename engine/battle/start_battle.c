@@ -441,7 +441,7 @@ void ClearBattleRAM_Conv(void){
     wram->wBallsPocketCursor = 0;
 
     // LD_addr_A(wMenuScrollPosition);
-    wram->wMenuScrollPosition[0] = 0;
+    wram->wMenuScrollPosition = 0;
     // LD_addr_A(wCriticalHit);
     wram->wCriticalHit = 0;
     // LD_addr_A(wBattleMonSpecies);

@@ -13,6 +13,8 @@
 #include "sprite_updates.h"
 #include "menu.h"
 #include "lcd.h"
+#include "time_palettes.h"
+#include "delay.h"
 #include "../engine/overworld/overworld.h"
 #include "../engine/overworld/tile_events.h"
 #include "../engine/overworld/load_map_part.h"
@@ -4355,6 +4357,44 @@ void ReturnToMapWithSpeechTextbox(void){
 
 }
 
+void ReturnToMapWithSpeechTextbox_Conv(void){
+    // PUSH_AF;
+    // LD_A(0x1);
+    // LD_addr_A(wSpriteUpdatesEnabled);
+    wram->wSpriteUpdatesEnabled = 0x1;
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
+    // CALL(aClearSprites);
+    ClearSprites_Conv();
+    // CALL(aReloadTilesetAndPalettes);
+    ReloadTilesetAndPalettes_Conv();
+    // hlcoord(0, 12, wTilemap);
+    // LD_BC((4 << 8) | 18);
+    // CALL(aTextbox);
+    Textbox_Conv2(coord(0, 12, wram->wTilemap), 4, 18);
+    // LD_HL(wVramState);
+    // SET_hl(0);
+    bit_set(wram->wVramState, 0);
+    // CALL(aUpdateSprites);
+    UpdateSprites_Conv();
+    // CALL(aWaitBGMap2);
+    WaitBGMap2_Conv();
+    // LD_B(SCGB_MAPPALS);
+    // CALL(aGetSGBLayout);
+    GetSGBLayout_Conv(SCGB_MAPPALS);
+    // FARCALL(aLoadOW_BGPal7);
+    LoadOW_BGPal7();
+    // CALL(aUpdateTimePals);
+    UpdateTimePals();
+    // CALL(aDelayFrame);
+    DelayFrame();
+    // LD_A(0x1);
+    // LDH_addr_A(hMapAnims);
+    hram->hMapAnims = 0x1;
+    // POP_AF;
+    // RET;
+}
+
 void ReloadTilesetAndPalettes(void){
     CALL(aDisableLCD);
     CALL(aClearSprites);
@@ -4960,7 +5000,8 @@ void GetMapTimeOfDay(void){
 }
 
 uint8_t GetMapTimeOfDay_Conv(void){
-    return GetPhoneServiceTimeOfDayByte_Conv() & 0xF;
+    // return GetPhoneServiceTimeOfDayByte_Conv() & 0xF;
+    return GetMapPointer_Conv2()->timeOfDay;
 }
 
 void GetMapPhoneService(void){

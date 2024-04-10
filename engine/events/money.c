@@ -38,7 +38,7 @@ bool GiveMoney_Conv(uint8_t* de, const uint8_t* bc){
     // LD_BC(mMaxMoney);
     // LD_A(3);
     // CALL(aCompareMoney);
-    u8_flag_s res = CompareMoney_Conv(bc, de);
+    u8_flag_s res = CompareMoney_Conv(de, bc);
     // IF_Z goto not_maxed_out;
     // IF_C goto not_maxed_out;
     if(res.a == 0 || res.flag)

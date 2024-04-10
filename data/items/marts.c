@@ -5,7 +5,6 @@ const item_t MartCherrygrove[] = {
     ANTIDOTE,
     PARLYZ_HEAL,
     AWAKENING,
-    (item_t)-1
 };
 
 const item_t MartCherrygroveDex[] = {
@@ -14,7 +13,6 @@ const item_t MartCherrygroveDex[] = {
     ANTIDOTE,
     PARLYZ_HEAL,
     AWAKENING,
-    (item_t)-1
 };
 
 const item_t MartViolet[] = {
@@ -28,7 +26,6 @@ const item_t MartViolet[] = {
     X_ATTACK,
     X_SPEED,
     FLOWER_MAIL,
-    (item_t)-1
 };
 
 const item_t MartAzalea[] = {
@@ -41,7 +38,6 @@ const item_t MartAzalea[] = {
     ANTIDOTE,
     PARLYZ_HEAL,
     FLOWER_MAIL,
-    (item_t)-1
 };
 
 
@@ -51,7 +47,6 @@ const item_t MartCianwood[] = {
     HYPER_POTION,
     FULL_HEAL,
     REVIVE,
-    (item_t)-1
 };
 
 const item_t MartGoldenrod2F1[] = {
@@ -62,7 +57,6 @@ const item_t MartGoldenrod2F1[] = {
     AWAKENING,
     BURN_HEAL,
     ICE_HEAL,
-    (item_t)-1
 };
 
 const item_t MartGoldenrod2F2[] = {
@@ -74,11 +68,9 @@ const item_t MartGoldenrod2F2[] = {
     FULL_HEAL,
     POKE_DOLL,
     FLOWER_MAIL,
-    (item_t)-1
 };
 
 const item_t MartGoldenrod3F[] = {
-
     X_SPEED,
     X_SPECIAL,
     X_DEFEND,
@@ -86,57 +78,45 @@ const item_t MartGoldenrod3F[] = {
     DIRE_HIT,
     GUARD_SPEC,
     X_ACCURACY,
-    (item_t)-1
 };
 
 const item_t MartGoldenrod4F[] = {
-
     PROTEIN,
     IRON,
     CARBOS,
     CALCIUM,
     HP_UP,
-    (item_t)-1
 };
 
 const item_t MartGoldenrod5F1[] = {
-
     TM_THUNDERPUNCH,
     TM_FIRE_PUNCH,
     TM_ICE_PUNCH,
-    (item_t)-1
 };
 
 const item_t MartGoldenrod5F2[] = {
-
     TM_THUNDERPUNCH,
     TM_FIRE_PUNCH,
     TM_ICE_PUNCH,
     TM_HEADBUTT,
-    (item_t)-1
 };
 
 const item_t MartGoldenrod5F3[] = {
-
     TM_THUNDERPUNCH,
     TM_FIRE_PUNCH,
     TM_ICE_PUNCH,
     TM_ROCK_SMASH,
-    (item_t)-1
 };
 
 const item_t MartGoldenrod5F4[] = {
-
     TM_THUNDERPUNCH,
     TM_FIRE_PUNCH,
     TM_ICE_PUNCH,
     TM_HEADBUTT,
     TM_ROCK_SMASH,
-    (item_t)-1
 };
 
 const item_t MartOlivine[] = {
-
     GREAT_BALL,
     SUPER_POTION,
     HYPER_POTION,
@@ -146,11 +126,9 @@ const item_t MartOlivine[] = {
     ICE_HEAL,
     SUPER_REPEL,
     SURF_MAIL,
-    (item_t)-1
 };
 
 const item_t MartEcruteak[] = {
-
     POKE_BALL,
     GREAT_BALL,
     POTION,
@@ -161,20 +139,16 @@ const item_t MartEcruteak[] = {
     BURN_HEAL,
     ICE_HEAL,
     REVIVE,
-    (item_t)-1
 };
 
 const item_t MartMahogany1[] = {
-
     TINYMUSHROOM,
     SLOWPOKETAIL,
     POKE_BALL,
     POTION,
-    (item_t)-1
 };
 
 const item_t MartMahogany2[] = {
-
     RAGECANDYBAR,
     GREAT_BALL,
     SUPER_POTION,
@@ -184,11 +158,9 @@ const item_t MartMahogany2[] = {
     SUPER_REPEL,
     REVIVE,
     FLOWER_MAIL,
-    (item_t)-1
 };
 
 const item_t MartBlackthorn[] = {
-
     GREAT_BALL,
     ULTRA_BALL,
     HYPER_POTION,
@@ -198,11 +170,9 @@ const item_t MartBlackthorn[] = {
     MAX_REPEL,
     X_DEFEND,
     X_ATTACK,
-    (item_t)-1
 };
 
 const item_t MartViridian[] = {
-
     ULTRA_BALL,
     HYPER_POTION,
     FULL_HEAL,
@@ -212,11 +182,9 @@ const item_t MartViridian[] = {
     AWAKENING,
     BURN_HEAL,
     FLOWER_MAIL,
-    (item_t)-1
 };
 
 const item_t MartPewter[] = {
-
     GREAT_BALL,
     SUPER_POTION,
     SUPER_REPEL,
@@ -224,11 +192,9 @@ const item_t MartPewter[] = {
     PARLYZ_HEAL,
     AWAKENING,
     BURN_HEAL,
-    (item_t)-1
 };
 
 const item_t MartCerulean[] = {
-
     GREAT_BALL,
     ULTRA_BALL,
     SUPER_POTION,
@@ -238,11 +204,9 @@ const item_t MartCerulean[] = {
     X_ATTACK,
     DIRE_HIT,
     SURF_MAIL,
-    (item_t)-1
 };
 
 const item_t MartLavender[] = {
-
     GREAT_BALL,
     POTION,
     SUPER_POTION,
@@ -251,11 +215,9 @@ const item_t MartLavender[] = {
     PARLYZ_HEAL,
     AWAKENING,
     BURN_HEAL,
-    (item_t)-1
 };
 
 const item_t MartVermilion[] = {
-
     ULTRA_BALL,
     SUPER_POTION,
     HYPER_POTION,
@@ -264,11 +226,9 @@ const item_t MartVermilion[] = {
     AWAKENING,
     BURN_HEAL,
     LITEBLUEMAIL,
-    (item_t)-1
 };
 
 const item_t MartCeladon2F1[] = {
-
     POTION,
     SUPER_POTION,
     HYPER_POTION,
@@ -276,11 +236,9 @@ const item_t MartCeladon2F1[] = {
     REVIVE,
     SUPER_REPEL,
     MAX_REPEL,
-    (item_t)-1
 };
 
 const item_t MartCeladon2F2[] = {
-
     POKE_BALL,
     GREAT_BALL,
     ULTRA_BALL,
@@ -291,24 +249,20 @@ const item_t MartCeladon2F2[] = {
     ICE_HEAL,
     AWAKENING,
     PARLYZ_HEAL,
-    (item_t)-1
 };
 
 const item_t MartCeladon3F[] = {
-
     TM_HIDDEN_POWER,
     TM_SUNNY_DAY,
     TM_PROTECT,
     TM_RAIN_DANCE,
     TM_SANDSTORM,
-    (item_t)-1
 };
 
 const item_t MartCeladon4F[] = {
     POKE_DOLL,
     LOVELY_MAIL,
     SURF_MAIL,
-    (item_t)-1
 };
 
 const item_t MartCeladon5F1[] = {
@@ -317,7 +271,6 @@ const item_t MartCeladon5F1[] = {
     IRON,
     CARBOS,
     CALCIUM,
-    (item_t)-1
 };
 
 const item_t MartCeladon5F2[] = {
@@ -328,7 +281,6 @@ const item_t MartCeladon5F2[] = {
     X_DEFEND,
     X_SPEED,
     X_SPECIAL,
-    (item_t)-1
 };
 
 const item_t MartFuchsia[] = {
@@ -339,7 +291,6 @@ const item_t MartFuchsia[] = {
     FULL_HEAL,
     MAX_REPEL,
     FLOWER_MAIL,
-    (item_t)-1
 };
 
 const item_t MartSaffron[] = {
@@ -351,7 +302,6 @@ const item_t MartSaffron[] = {
     X_ATTACK,
     X_DEFEND,
     FLOWER_MAIL,
-    (item_t)-1
 };
 
 const item_t MartMtMoon[] = {
@@ -361,7 +311,6 @@ const item_t MartMtMoon[] = {
     LEMONADE,
     REPEL,
     PORTRAITMAIL,
-    (item_t)-1
 };
 
 const item_t MartIndigoPlateau[] = {
@@ -372,7 +321,6 @@ const item_t MartIndigoPlateau[] = {
     FULL_RESTORE,
     REVIVE,
     FULL_HEAL,
-    (item_t)-1
 };
 
 const item_t MartUnderground[] = {
@@ -380,13 +328,11 @@ const item_t MartUnderground[] = {
     ENERGY_ROOT,
     HEAL_POWDER,
     REVIVAL_HERB,
-    (item_t)-1
 };
 
 const item_t DefaultMart[] = {
     POKE_BALL,
     POTION,
-    (item_t)-1
 };
 
 const item_t* const Marts[] = {
@@ -427,3 +373,40 @@ const item_t* const Marts[] = {
 };
 
 static_assert(lengthof(Marts) == NUM_MARTS, "");
+
+const uint32_t MartsSizes[] = {
+    [MART_CHERRYGROVE]     = lengthof(MartCherrygrove),
+    [MART_CHERRYGROVE_DEX] = lengthof(MartCherrygroveDex),
+    [MART_VIOLET]          = lengthof(MartViolet),
+    [MART_AZALEA]          = lengthof(MartAzalea),
+    [MART_CIANWOOD]        = lengthof(MartCianwood),
+    [MART_GOLDENROD_2F_1]  = lengthof(MartGoldenrod2F1),
+    [MART_GOLDENROD_2F_2]  = lengthof(MartGoldenrod2F2),
+    [MART_GOLDENROD_3F]    = lengthof(MartGoldenrod3F),
+    [MART_GOLDENROD_4F]    = lengthof(MartGoldenrod4F),
+    [MART_GOLDENROD_5F_1]  = lengthof(MartGoldenrod5F1),
+    [MART_GOLDENROD_5F_2]  = lengthof(MartGoldenrod5F2),
+    [MART_GOLDENROD_5F_3]  = lengthof(MartGoldenrod5F3),
+    [MART_GOLDENROD_5F_4]  = lengthof(MartGoldenrod5F4),
+    [MART_OLIVINE]         = lengthof(MartOlivine),
+    [MART_ECRUTEAK]        = lengthof(MartEcruteak),
+    [MART_MAHOGANY_1]      = lengthof(MartMahogany1),
+    [MART_MAHOGANY_2]      = lengthof(MartMahogany2),
+    [MART_BLACKTHORN]      = lengthof(MartBlackthorn),
+    [MART_VIRIDIAN]        = lengthof(MartViridian),
+    [MART_PEWTER]          = lengthof(MartPewter),
+    [MART_CERULEAN]        = lengthof(MartCerulean),
+    [MART_LAVENDER]        = lengthof(MartLavender),
+    [MART_VERMILION]       = lengthof(MartVermilion),
+    [MART_CELADON_2F_1]    = lengthof(MartCeladon2F1),
+    [MART_CELADON_2F_2]    = lengthof(MartCeladon2F2),
+    [MART_CELADON_3F]      = lengthof(MartCeladon3F),
+    [MART_CELADON_4F]      = lengthof(MartCeladon4F),
+    [MART_CELADON_5F_1]    = lengthof(MartCeladon5F1),
+    [MART_CELADON_5F_2]    = lengthof(MartCeladon5F2),
+    [MART_FUCHSIA]         = lengthof(MartFuchsia),
+    [MART_SAFFRON]         = lengthof(MartSaffron),
+    [MART_MT_MOON]         = lengthof(MartMtMoon),
+    [MART_INDIGO_PLATEAU]  = lengthof(MartIndigoPlateau),
+    [MART_UNDERGROUND]     = lengthof(MartUnderground),
+};

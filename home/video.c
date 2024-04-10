@@ -735,7 +735,8 @@ void Serve2bppRequest(void) {
     // RET_C;
     // CP_A(LY_VBLANK + 2);
     // RET_NC;
-    JR(mv_Serve2bppRequest);
+    // JR(mv_Serve2bppRequest);
+    return v_Serve2bppRequest();
 }
 
 void Serve2bppRequest_VBlank(void) {
@@ -807,9 +808,11 @@ next:
 void AnimateTileset(void) {
     //  Only call during the first fifth of VBlank
 
-    LDH_A_addr(hMapAnims);
-    AND_A_A;
-    RET_Z;
+    // LDH_A_addr(hMapAnims);
+    // AND_A_A;
+    // RET_Z;
+    if(hram->hMapAnims == 0)
+        return;
 
     //  Back out if we're too far into VBlank
     //  lol nope we have C, bitches!
@@ -819,29 +822,35 @@ void AnimateTileset(void) {
     // CP_A(LY_VBLANK + 7);
     // RET_NC;
 
-    LDH_A_addr(hROMBank);
-    PUSH_AF;
-    LD_A(BANK(av_AnimateTileset));
-    RST(aBankswitch);
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+    // LD_A(BANK(av_AnimateTileset));
+    // RST(aBankswitch);
 
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(MBANK(awTilesetAnim));
-    LDH_addr_A(rSVBK);
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(MBANK(awTilesetAnim));
+    // LDH_addr_A(rSVBK);
+    wbank_push(MBANK(awTilesetAnim));
 
-    LDH_A_addr(rVBK);
-    PUSH_AF;
-    LD_A(0);
-    LDH_addr_A(rVBK);
+    // LDH_A_addr(rVBK);
+    // PUSH_AF;
+    uint8_t vbk = gb_read(rVBK);
+    // LD_A(0);
+    // LDH_addr_A(rVBK);
+    gb_write(rVBK, 0);
 
-    CALL(av_AnimateTileset);  //temporarily commented out to fix crashes
-                              //Might be okay now?
+    // CALL(av_AnimateTileset);  //temporarily commented out to fix crashes
+    //                           //Might be okay now?
+    SafeCallGBAuto(av_AnimateTileset);
 
-    POP_AF;
-    LDH_addr_A(rVBK);
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    POP_AF;
-    RST(aBankswitch);
-    RET;
+    // POP_AF;
+    // LDH_addr_A(rVBK);
+    gb_write(rVBK, vbk);
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    wbank_pop;
+    // POP_AF;
+    // RST(aBankswitch);
+    // RET;
 }

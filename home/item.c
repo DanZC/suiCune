@@ -34,7 +34,7 @@ bool CheckTossableItem_Conv(item_t item){
 }
 
 void TossItem(void){
-        PUSH_HL;
+    PUSH_HL;
     PUSH_DE;
     PUSH_BC;
     LDH_A_addr(hROMBank);
@@ -52,6 +52,27 @@ void TossItem(void){
     POP_HL;
     RET;
 
+}
+
+bool TossItem_Conv(item_pocket_s* pocket, item_t item){
+    // PUSH_HL;
+    // PUSH_DE;
+    // PUSH_BC;
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+    // LD_A(BANK(av_TossItem));
+    // RST(aBankswitch);
+
+    // CALL(av_TossItem);
+    return v_TossItem_Conv(pocket, item, wram->wItemQuantityChange);
+
+    // POP_BC;
+    // LD_A_B;
+    // RST(aBankswitch);
+    // POP_BC;
+    // POP_DE;
+    // POP_HL;
+    // RET;
 }
 
 void ReceiveItem(void){
@@ -75,7 +96,7 @@ void ReceiveItem(void){
 
 }
 
-bool ReceiveItem_Conv(item_t item, item_t* hl, uint8_t quantity){
+bool ReceiveItem_Conv(item_pocket_s* pocket, item_t item, uint8_t quantity){
     // PUSH_BC;
     // LDH_A_addr(hROMBank);
     // PUSH_AF;
@@ -86,7 +107,7 @@ bool ReceiveItem_Conv(item_t item, item_t* hl, uint8_t quantity){
 
     // CALL(av_ReceiveItem);
     // return v_ReceiveItem_Conv(item, quantity);
-    return v_ReceiveItem_Conv(hl, item, quantity);
+    return v_ReceiveItem_Conv(pocket, item, quantity);
 
     // POP_DE;
     // POP_HL;

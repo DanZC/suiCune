@@ -695,7 +695,7 @@ void JoyWaitAorB_Conv(void) {
         // LDH_A_addr(hJoyPressed);
         // AND_A(A_BUTTON | B_BUTTON);
         // RET_NZ;
-        if((gb_read(hJoyPressed) & (A_BUTTON | B_BUTTON)) != 0)
+        if((hram->hJoyPressed & (A_BUTTON | B_BUTTON)) != 0)
             break;
         
         // CALL(aUpdateTimeAndPals);

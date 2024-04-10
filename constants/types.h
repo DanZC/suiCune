@@ -970,11 +970,12 @@ struct BattleBGEffect
     uint8_t param;
 };
 
-struct CustomMartItem
+struct ItemPrice
 {
     item_t id;
     uint16_t price;
 };
+typedef struct ItemPrice item_price_s;
 
 struct WildGrassMons
 {
@@ -1388,7 +1389,7 @@ typedef struct ItemPocketEntry {
 
 typedef struct ItemPocket {
     uint8_t count;
-    item_pocket_en_s* pocket;
+    item_pocket_en_s pocket[];
 } item_pocket_s;
 
 struct CoordsTileId

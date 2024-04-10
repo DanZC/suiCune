@@ -1,0 +1,16 @@
+bool SelectQuantityToToss(void);
+bool SelectQuantityToBuy(void);
+bool RooftopSale_SelectQuantityToBuy(uint16_t price);
+bool SelectQuantityToSell(void);
+bool Toss_Sell_Loop(void);
+u8_flag_s BuySellToss_InterpretJoypad(void);
+void BuySellToss_UpdateQuantityDisplay(void);
+void NoPriceToDisplay(tile_t* hl);
+void DisplayPurchasePrice(tile_t* hl);
+void DisplaySellingPrice(tile_t* hl);
+uint32_t BuySell_MultiplyPrice(void);
+uint32_t Sell_HalvePrice(uint32_t price);
+void BuySell_DisplaySubtotal(tile_t* hl, uint32_t price);
+extern const struct MenuHeader TossItem_MenuHeader;
+extern const struct MenuHeader BuyItem_MenuHeader;
+extern const struct MenuHeader SellItem_MenuHeader;

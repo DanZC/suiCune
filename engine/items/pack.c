@@ -1153,171 +1153,219 @@ void InitPackBuffers(void){
 }
 
 void DepositSellInitPackBuffers(void){
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    LD_addr_A(wJumptableIndex);  // PACKSTATE_INITGFX
-    LD_addr_A(wPackJumptableIndex);  // PACKSTATE_INITGFX
-    LD_addr_A(wCurPocket);  // ITEM_POCKET
-    LD_addr_A(wPackUsedItem);
-    LD_addr_A(wSwitchItem);
-    CALL(aPack_InitGFX);
-    CALL(aPack_InitColors);
-    RET;
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    // LD_addr_A(wJumptableIndex);  // PACKSTATE_INITGFX
+    wram->wJumptableIndex = PACKSTATE_INITGFX;
+    // LD_addr_A(wPackJumptableIndex);  // PACKSTATE_INITGFX
+    wram->wPackJumptableIndex = PACKSTATE_INITGFX;
+    // LD_addr_A(wCurPocket);  // ITEM_POCKET
+    wram->wCurPocket = ITEM_POCKET;
+    // LD_addr_A(wPackUsedItem);
+    wram->wPackUsedItem = 0;
+    // LD_addr_A(wSwitchItem);
+    wram->wSwitchItem = 0;
+    // CALL(aPack_InitGFX);
+    Pack_InitGFX();
+    // CALL(aPack_InitColors);
+    Pack_InitColors();
+    // RET;
+}
 
+    // LD_A_addr(wJumptableIndex);
+static void DepositSellPack_RunJumptable(void){
+    // LD_HL(mDepositSellPack_Jumptable);
+    // CALL(aPack_GetJumptablePointer);
+    // JP_hl;
+    switch(wram->wJumptableIndex){
+    // Jumptable:
+    //  entries correspond to *_POCKET constants
+        //dw ['.ItemsPocket'];
+        case ITEM_POCKET:
+        // ItemsPocket:
+            // XOR_A_A;  // ITEM_POCKET
+            // CALL(aInitPocket);
+            InitPocket(ITEM_POCKET);
+            // LD_HL(mPC_Mart_ItemsPocketMenuHeader);
+            // CALL(aCopyMenuHeader);
+            CopyMenuHeader_Conv2(&PC_Mart_ItemsPocketMenuHeader);
+            // LD_A_addr(wItemsPocketCursor);
+            // LD_addr_A(wMenuCursorPosition);
+            wram->wMenuCursorPosition = wram->wItemsPocketCursor;
+            // LD_A_addr(wItemsPocketScrollPosition);
+            // LD_addr_A(wMenuScrollPosition);
+            wram->wMenuScrollPosition = wram->wItemsPocketScrollPosition;
+            // CALL(aScrollingMenu);
+            ScrollingMenu_Conv();
+            // LD_A_addr(wMenuScrollPosition);
+            // LD_addr_A(wItemsPocketScrollPosition);
+            wram->wItemsPocketScrollPosition = wram->wMenuScrollPosition;
+            // LD_A_addr(wMenuCursorY);
+            // LD_addr_A(wItemsPocketCursor);
+            wram->wItemsPocketCursor = wram->wMenuCursorY;
+            // RET;
+            return;
+        //dw ['.BallsPocket'];
+        case BALL_POCKET:
+        // BallsPocket:
+            // LD_A(BALL_POCKET);
+            // CALL(aInitPocket);
+            InitPocket(BALL_POCKET);
+            // LD_HL(mPC_Mart_BallsPocketMenuHeader);
+            // CALL(aCopyMenuHeader);
+            CopyMenuHeader_Conv2(&PC_Mart_BallsPocketMenuHeader);
+            // LD_A_addr(wBallsPocketCursor);
+            // LD_addr_A(wMenuCursorPosition);
+            wram->wMenuCursorPosition = wram->wBallsPocketCursor;
+            // LD_A_addr(wBallsPocketScrollPosition);
+            // LD_addr_A(wMenuScrollPosition);
+            wram->wMenuScrollPosition = wram->wBallsPocketScrollPosition;
+            // CALL(aScrollingMenu);
+            ScrollingMenu_Conv();
+            // LD_A_addr(wMenuScrollPosition);
+            // LD_addr_A(wBallsPocketScrollPosition);
+            wram->wBallsPocketScrollPosition = wram->wMenuScrollPosition;
+            // LD_A_addr(wMenuCursorY);
+            // LD_addr_A(wBallsPocketCursor);
+            wram->wBallsPocketCursor = wram->wMenuCursorY;
+            // RET;
+            return;
+        //dw ['.KeyItemsPocket'];
+        case KEY_ITEM_POCKET:
+        // KeyItemsPocket:
+            // LD_A(KEY_ITEM_POCKET);
+            // CALL(aInitPocket);
+            InitPocket(KEY_ITEM_POCKET);
+            // LD_HL(mPC_Mart_KeyItemsPocketMenuHeader);
+            // CALL(aCopyMenuHeader);
+            CopyMenuHeader_Conv2(&PC_Mart_KeyItemsPocketMenuHeader);
+            // LD_A_addr(wKeyItemsPocketCursor);
+            // LD_addr_A(wMenuCursorPosition);
+            wram->wMenuCursorPosition = wram->wKeyItemsPocketCursor;
+            // LD_A_addr(wKeyItemsPocketScrollPosition);
+            // LD_addr_A(wMenuScrollPosition);
+            wram->wMenuScrollPosition = wram->wKeyItemsPocketScrollPosition;
+            // CALL(aScrollingMenu);
+            ScrollingMenu_Conv();
+            // LD_A_addr(wMenuScrollPosition);
+            // LD_addr_A(wKeyItemsPocketScrollPosition);
+            wram->wKeyItemsPocketScrollPosition = wram->wMenuScrollPosition;
+            // LD_A_addr(wMenuCursorY);
+            // LD_addr_A(wKeyItemsPocketCursor);
+            wram->wKeyItemsPocketCursor = wram->wMenuCursorY;
+            // RET;
+            return;
+        //dw ['.TMHMPocket'];
+        case TM_HM_POCKET:
+        // TMHMPocket:
+            // LD_A(TM_HM_POCKET);
+            // CALL(aInitPocket);
+            InitPocket(TM_HM_POCKET);
+            // CALL(aWaitBGMap_DrawPackGFX);
+            WaitBGMap_DrawPackGFX();
+            // FARCALL(aTMHMPocket);
+            SafeCallGBAuto(aTMHMPocket);
+            // LD_A_addr(wCurItem);
+            // LD_addr_A(wCurItem);
+            // RET;
+            return;
+    }
 }
 
 void DepositSellPack(void){
-
-loop:
-    CALL(aDepositSellPack_RunJumptable);
-    CALL(aDepositSellTutorial_InterpretJoypad);
-    IF_C goto loop;
-    RET;
-
-
-RunJumptable:
-    LD_A_addr(wJumptableIndex);
-    LD_HL(mDepositSellPack_Jumptable);
-    CALL(aPack_GetJumptablePointer);
-    JP_hl;
-
-
-Jumptable:
-//  entries correspond to *_POCKET constants
-    //dw ['.ItemsPocket'];
-    //dw ['.BallsPocket'];
-    //dw ['.KeyItemsPocket'];
-    //dw ['.TMHMPocket'];
-
-
-ItemsPocket:
-    XOR_A_A;  // ITEM_POCKET
-    CALL(aInitPocket);
-    LD_HL(mPC_Mart_ItemsPocketMenuHeader);
-    CALL(aCopyMenuHeader);
-    LD_A_addr(wItemsPocketCursor);
-    LD_addr_A(wMenuCursorPosition);
-    LD_A_addr(wItemsPocketScrollPosition);
-    LD_addr_A(wMenuScrollPosition);
-    CALL(aScrollingMenu);
-    LD_A_addr(wMenuScrollPosition);
-    LD_addr_A(wItemsPocketScrollPosition);
-    LD_A_addr(wMenuCursorY);
-    LD_addr_A(wItemsPocketCursor);
-    RET;
-
-
-KeyItemsPocket:
-    LD_A(KEY_ITEM_POCKET);
-    CALL(aInitPocket);
-    LD_HL(mPC_Mart_KeyItemsPocketMenuHeader);
-    CALL(aCopyMenuHeader);
-    LD_A_addr(wKeyItemsPocketCursor);
-    LD_addr_A(wMenuCursorPosition);
-    LD_A_addr(wKeyItemsPocketScrollPosition);
-    LD_addr_A(wMenuScrollPosition);
-    CALL(aScrollingMenu);
-    LD_A_addr(wMenuScrollPosition);
-    LD_addr_A(wKeyItemsPocketScrollPosition);
-    LD_A_addr(wMenuCursorY);
-    LD_addr_A(wKeyItemsPocketCursor);
-    RET;
-
-
-TMHMPocket:
-    LD_A(TM_HM_POCKET);
-    CALL(aInitPocket);
-    CALL(aWaitBGMap_DrawPackGFX);
-    FARCALL(aTMHMPocket);
-    LD_A_addr(wCurItem);
-    LD_addr_A(wCurItem);
-    RET;
-
-
-BallsPocket:
-    LD_A(BALL_POCKET);
-    CALL(aInitPocket);
-    LD_HL(mPC_Mart_BallsPocketMenuHeader);
-    CALL(aCopyMenuHeader);
-    LD_A_addr(wBallsPocketCursor);
-    LD_addr_A(wMenuCursorPosition);
-    LD_A_addr(wBallsPocketScrollPosition);
-    LD_addr_A(wMenuScrollPosition);
-    CALL(aScrollingMenu);
-    LD_A_addr(wMenuScrollPosition);
-    LD_addr_A(wBallsPocketScrollPosition);
-    LD_A_addr(wMenuCursorY);
-    LD_addr_A(wBallsPocketCursor);
-    RET;
-
+    bool quit = false;
+    do {
+    // loop:
+        // CALL(aDepositSellPack_RunJumptable);
+        DepositSellPack_RunJumptable();
+        // CALL(aDepositSellTutorial_InterpretJoypad);
+        quit = DepositSellTutorial_InterpretJoypad();
+        // IF_C goto loop;
+    } while(!quit);
+    // RET;
 }
 
-void InitPocket(void){
-    LD_addr_A(wCurPocket);
-    CALL(aClearPocketList);
-    CALL(aDrawPocketName);
-    CALL(aWaitBGMap_DrawPackGFX);
-    RET;
-
+void InitPocket(uint8_t pocket){
+    // LD_addr_A(wCurPocket);
+    wram->wCurPocket = pocket;
+    // CALL(aClearPocketList);
+    ClearPocketList();
+    // CALL(aDrawPocketName);
+    DrawPocketName(pocket);
+    // CALL(aWaitBGMap_DrawPackGFX);
+    WaitBGMap_DrawPackGFX();
+    // RET;
 }
 
-void DepositSellTutorial_InterpretJoypad(void){
-    LD_HL(wMenuJoypad);
-    LD_A_hl;
-    AND_A(A_BUTTON);
-    IF_NZ goto a_button;
-    LD_A_hl;
-    AND_A(B_BUTTON);
-    IF_NZ goto b_button;
-    LD_A_hl;
-    AND_A(D_LEFT);
-    IF_NZ goto d_left;
-    LD_A_hl;
-    AND_A(D_RIGHT);
-    IF_NZ goto d_right;
-    SCF;
-    RET;
-
-
-a_button:
-    LD_A(TRUE);
-    LD_addr_A(wPackUsedItem);
-    AND_A_A;
-    RET;
-
-
-b_button:
-    XOR_A_A;  // FALSE
-    LD_addr_A(wPackUsedItem);
-    AND_A_A;
-    RET;
-
-
-d_left:
-    LD_A_addr(wJumptableIndex);
-    DEC_A;
-    maskbits(NUM_POCKETS, 0);
-    LD_addr_A(wJumptableIndex);
-    PUSH_DE;
-    LD_DE(SFX_SWITCH_POCKETS);
-    CALL(aPlaySFX);
-    POP_DE;
-    SCF;
-    RET;
-
-
-d_right:
-    LD_A_addr(wJumptableIndex);
-    INC_A;
-    maskbits(NUM_POCKETS, 0);
-    LD_addr_A(wJumptableIndex);
-    PUSH_DE;
-    LD_DE(SFX_SWITCH_POCKETS);
-    CALL(aPlaySFX);
-    POP_DE;
-    SCF;
-    RET;
-
+bool DepositSellTutorial_InterpretJoypad(void){
+    // LD_HL(wMenuJoypad);
+    // LD_A_hl;
+    uint8_t a = wram->wMenuJoypad;
+    // AND_A(A_BUTTON);
+    // IF_NZ goto a_button;
+    if(a & A_BUTTON){
+    // a_button:
+        // LD_A(TRUE);
+        // LD_addr_A(wPackUsedItem);
+        wram->wPackUsedItem = TRUE;
+        // AND_A_A;
+        // RET;
+        return true;
+    }
+    // LD_A_hl;
+    // AND_A(B_BUTTON);
+    // IF_NZ goto b_button;
+    if(a & B_BUTTON){
+    // b_button:
+        // XOR_A_A;  // FALSE
+        // LD_addr_A(wPackUsedItem);
+        wram->wPackUsedItem = FALSE;
+        // AND_A_A;
+        // RET;
+        return true;
+    }
+    // LD_A_hl;
+    // AND_A(D_LEFT);
+    // IF_NZ goto d_left;
+    if(a & D_LEFT){
+    // d_left:
+        // LD_A_addr(wJumptableIndex);
+        // DEC_A;
+        // maskbits(NUM_POCKETS, 0);
+        // LD_addr_A(wJumptableIndex);
+        wram->wJumptableIndex = (wram->wJumptableIndex - 1) & 3;
+        // PUSH_DE;
+        // LD_DE(SFX_SWITCH_POCKETS);
+        // CALL(aPlaySFX);
+        PlaySFX_Conv(SFX_SWITCH_POCKETS);
+        // POP_DE;
+        // SCF;
+        // RET;
+        return false;
+    }
+    // LD_A_hl;
+    // AND_A(D_RIGHT);
+    // IF_NZ goto d_right;
+    if(a & D_RIGHT){
+    // d_right:
+        // LD_A_addr(wJumptableIndex);
+        // INC_A;
+        // maskbits(NUM_POCKETS, 0);
+        // LD_addr_A(wJumptableIndex);
+        wram->wJumptableIndex = (wram->wJumptableIndex + 1) & 3;
+        // PUSH_DE;
+        // LD_DE(SFX_SWITCH_POCKETS);
+        // CALL(aPlaySFX);
+        PlaySFX_Conv(SFX_SWITCH_POCKETS);
+        // POP_DE;
+        // SCF;
+        // RET;
+        return false;
+    }
+    // SCF;
+    // RET;
+    return false;
 }
 
 void TutorialPack(void){
@@ -1957,22 +2005,28 @@ const struct MenuHeader ItemsPocketMenuHeader = {
     .defaultOption = 1,
 };
 
-void PC_Mart_ItemsPocketMenuHeader(void){
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['7', '1', 'SCREEN_WIDTH - 1', 'TEXTBOX_Y - 1'];
+const struct MenuHeader PC_Mart_ItemsPocketMenuHeader = {
+    .flags=MENU_BACKUP_TILES,  // flags
+    .coord=menu_coords(7, 1, SCREEN_WIDTH - 1, TEXTBOX_Y - 1),
     //dw ['.MenuData'];
-    //db ['1'];  // default option
-
-
-MenuData:
-    //db ['STATICMENU_ENABLE_SELECT | STATICMENU_ENABLE_LEFT_RIGHT | STATICMENU_ENABLE_START | STATICMENU_WRAP'];  // flags
-    //db ['5', '8'];  // rows, columns
-    //db ['SCROLLINGMENU_ITEMS_QUANTITY'];  // item format
-    //dbw ['0', 'wNumItems']
-    //dba ['PlaceMenuItemName']
-    //dba ['PlaceMenuItemQuantity']
-    //dba ['UpdateItemDescription']
-}
+    .data = &(struct MenuData){
+    // MenuData:
+        .flags=STATICMENU_ENABLE_SELECT | STATICMENU_ENABLE_LEFT_RIGHT | STATICMENU_ENABLE_START | STATICMENU_WRAP,  // flags
+        .scrollingMenu = {
+            .rows=5, .cols=8,  // rows, columns
+            .format=SCROLLINGMENU_ITEMS_QUANTITY,  // item format
+            //dbw ['0', 'wNumItems']
+            .list=wram_ptr(wNumItems),
+            //dba ['PlaceMenuItemName']
+            .func1=PlaceMenuItemName_Conv,
+            //dba ['PlaceMenuItemQuantity']
+            .func2=PlaceMenuItemQuantity_Conv,
+            //dba ['UpdateItemDescription']
+            .func3=UpdateItemDescription,
+        },
+    },
+    .defaultOption=1,  // default option
+};
 
 const struct MenuHeader KeyItemsPocketMenuHeader = {
     .flags = MENU_BACKUP_TILES,  // flags
@@ -1999,22 +2053,28 @@ const struct MenuHeader KeyItemsPocketMenuHeader = {
     .defaultOption = 1,
 };
 
-void PC_Mart_KeyItemsPocketMenuHeader(void){
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['7', '1', 'SCREEN_WIDTH - 1', 'TEXTBOX_Y - 1'];
+const struct MenuHeader PC_Mart_KeyItemsPocketMenuHeader = {
+    .flags=MENU_BACKUP_TILES,  // flags
+    .coord=menu_coords(7, 1, SCREEN_WIDTH - 1, TEXTBOX_Y - 1),
     //dw ['.MenuData'];
-    //db ['1'];  // default option
-
-
-MenuData:
-    //db ['STATICMENU_ENABLE_SELECT | STATICMENU_ENABLE_LEFT_RIGHT | STATICMENU_ENABLE_START | STATICMENU_WRAP'];  // flags
-    //db ['5', '8'];  // rows, columns
-    //db ['SCROLLINGMENU_ITEMS_NORMAL'];  // item format
-    //dbw ['0', 'wNumKeyItems']
-    //dba ['PlaceMenuItemName']
-    //dba ['PlaceMenuItemQuantity']
-    //dba ['UpdateItemDescription']
-}
+    .data = &(struct MenuData) {
+    // MenuData:
+        .flags=STATICMENU_ENABLE_SELECT | STATICMENU_ENABLE_LEFT_RIGHT | STATICMENU_ENABLE_START | STATICMENU_WRAP,  // flags
+        .scrollingMenu = {
+            .rows=5, .cols=8,  // rows, columns
+            .format=SCROLLINGMENU_ITEMS_NORMAL,  // item format
+            //dbw ['0', 'wNumKeyItems']
+            .list = wram_ptr(wNumKeyItems),
+            //dba ['PlaceMenuItemName']
+            .func1=PlaceMenuItemName_Conv,
+            //dba ['PlaceMenuItemQuantity']
+            .func2=PlaceMenuItemQuantity_Conv,
+            //dba ['UpdateItemDescription']
+            .func3=UpdateItemDescription,
+        },
+    },
+    .defaultOption=1,  // default option
+};
 
 const struct MenuHeader BallsPocketMenuHeader = {
     .flags=MENU_BACKUP_TILES,  // flags
@@ -2039,22 +2099,27 @@ const struct MenuHeader BallsPocketMenuHeader = {
     .defaultOption = 1,  // default option
 };
 
-void PC_Mart_BallsPocketMenuHeader(void){
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['7', '1', 'SCREEN_WIDTH - 1', 'TEXTBOX_Y - 1'];
+const struct MenuHeader PC_Mart_BallsPocketMenuHeader = {
+    .flags=MENU_BACKUP_TILES,  // flags
+    .coord=menu_coords(7, 1, SCREEN_WIDTH - 1, TEXTBOX_Y - 1),
     //dw ['.MenuData'];
-    //db ['1'];  // default option
-
-
-MenuData:
-    //db ['STATICMENU_ENABLE_SELECT | STATICMENU_ENABLE_LEFT_RIGHT | STATICMENU_ENABLE_START | STATICMENU_WRAP'];  // flags
-    //db ['5', '8'];  // rows, columns
-    //db ['SCROLLINGMENU_ITEMS_QUANTITY'];  // item format
-    //dbw ['0', 'wNumBalls']
-    //dba ['PlaceMenuItemName']
-    //dba ['PlaceMenuItemQuantity']
-    //dba ['UpdateItemDescription']
-}
+    .data = &(struct MenuData) {
+        .flags=STATICMENU_ENABLE_SELECT | STATICMENU_ENABLE_LEFT_RIGHT | STATICMENU_ENABLE_START | STATICMENU_WRAP,  // flags
+        .scrollingMenu = {
+            .rows=5, .cols=8,  // rows, columns
+            .format=SCROLLINGMENU_ITEMS_QUANTITY,  // item format
+            //dbw ['0', 'wNumBalls']
+            .list = wram_ptr(wNumBalls),
+            //dba ['PlaceMenuItemName']
+            .func1=PlaceMenuItemName_Conv,
+            //dba ['PlaceMenuItemQuantity']
+            .func2=PlaceMenuItemQuantity_Conv,
+            //dba ['UpdateItemDescription']
+            .func3=UpdateItemDescription,
+        },
+    },
+    .defaultOption=1,  // default option
+};
 
 //  //  unreferenced
 const txt_cmd_s PackNoItemText[] = {

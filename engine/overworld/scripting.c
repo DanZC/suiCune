@@ -38,6 +38,7 @@
 #include "decorations.h"
 #include "../events/specials.h"
 #include "../items/items.h"
+#include "../items/mart.h"
 #include "../../data/text/common.h"
 #include "../../data/items/pocket_names.h"
 #include "../events/std_scripts.h"
@@ -1324,9 +1325,8 @@ void Script_pokemart_Conv(script_s* s, uint8_t mart_type, uint16_t mart_id){
     // LD_D_A;
     // LD_A_addr(wScriptBank);
     // LD_B_A;
-    struct cpu_registers_s regs = {.c = mart_type, .de = mart_id};
     // FARCALL(aOpenMartDialog);
-    SafeCallGB(aOpenMartDialog, &regs);
+    OpenMartDialog_Conv(mart_type, mart_id);
     // RET;
 }
 
@@ -4028,7 +4028,7 @@ void Script_giveitem_Conv(script_s* s, item_t item, uint8_t quantity){
     // LD_A(TRUE);
     // LD_addr_A(wScriptVar);
     // RET;
-    wram->wScriptVar = ReceiveItem_Conv(item, wram->wItems, quantity);
+    wram->wScriptVar = ReceiveItem_Conv((item_pocket_s*)&wram->wNumItems, item, quantity);
 
 // full:
     // XOR_A_A;
@@ -4053,6 +4053,30 @@ void Script_takeitem(void){
     LD_addr_A(wScriptVar);
     RET;
 
+}
+
+void Script_takeitem_Conv(script_s* s, item_t item, uint8_t quantity){
+    (void)s;
+    // XOR_A_A;
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = 0;
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wCurItem);
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wItemQuantityChange);
+    wram->wItemQuantityChange = quantity;
+    // LD_A(-1);
+    // LD_addr_A(wCurItemQuantity);
+    wram->wCurItemQuantity = 0xff;
+    // LD_HL(wNumItems);
+    // CALL(aTossItem);
+    // RET_NC ;
+    if(!TossItem_Conv((item_pocket_s*)&wram->wNumItems, item))
+        return;
+    // LD_A(TRUE);
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = TRUE;
+    // RET;
 }
 
 void Script_checkitem(void){

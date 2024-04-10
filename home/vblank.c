@@ -246,8 +246,8 @@ void VBlank0_Conv(void) {
     // ADC_A_B;
     // LDH_addr_A(hRandomAdd);
     temp = gb_read(rDIV);
-    carry = ((uint16_t)temp + (uint16_t)gb_read(hRandomAdd) > 0xff)? 1: 0;
-    gb_write(hRandomAdd, (temp + gb_read(hRandomAdd) + REG_F_C) & 0xff);
+    carry = ((uint16_t)temp + (uint16_t)hram->hRandomAdd > 0xff)? 1: 0;
+    hram->hRandomAdd = (temp + hram->hRandomAdd + REG_F_C) & 0xff;
     REG_F_C = carry;
 
     // LDH_A_addr(rDIV);
@@ -263,23 +263,23 @@ void VBlank0_Conv(void) {
 
     // LDH_A_addr(hROMBank);
     // LDH_addr_A(hROMBankBackup);
-    gb_write(hROMBankBackup, gb_read(hROMBank));
+    hram->hROMBankBackup = hram->hROMBank;
 
     // LDH_A_addr(hSCX);
     // LDH_addr_A(rSCX);
-    gb_write(rSCX, gb_read(hSCX));
+    gb_write(rSCX, hram->hSCX);
 
     // LDH_A_addr(hSCY);
     // LDH_addr_A(rSCY);
-    gb_write(rSCY, gb_read(hSCY));
+    gb_write(rSCY, hram->hSCY);
 
     // LDH_A_addr(hWY);
     // LDH_addr_A(rWY);
-    gb_write(rWY, gb_read(hWY));
+    gb_write(rWY, hram->hWY);
 
     // LDH_A_addr(hWX);
     // LDH_addr_A(rWX);
-    gb_write(rWX, gb_read(hWX));
+    gb_write(rWX, hram->hWX);
 
     // There's only time to call one of these in one vblank.
     // Calls are in order of priority.
@@ -302,9 +302,12 @@ void VBlank0_Conv(void) {
 
         // These have their own timing checks.
 
-        CALL(aServe2bppRequest);
-        CALL(aServe1bppRequest);
-        CALL(aAnimateTileset);
+        // CALL(aServe2bppRequest);
+        SafeCallGBAuto(aServe2bppRequest);
+        // CALL(aServe1bppRequest);
+        SafeCallGBAuto(aServe1bppRequest);
+        // CALL(aAnimateTileset);
+        AnimateTileset();
     } while(0);
 done:
     
@@ -348,15 +351,16 @@ done:
 
     // LD_A(BANK(av_UpdateSound));
     // RST(mBankswitch);
-    Bankswitch_Conv(BANK(av_UpdateSound));
-    CALL(av_UpdateSound);
+    // Bankswitch_Conv(BANK(av_UpdateSound));
+    // CALL(av_UpdateSound);
+    SafeCallGBAuto(av_UpdateSound);
     // LDH_A_addr(hROMBankBackup);
     // RST(mBankswitch);
-    Bankswitch_Conv(gb_read(hROMBankBackup));
+    Bankswitch_Conv(hram->hROMBankBackup);
 
     // LDH_A_addr(hSeconds);
     // LDH_addr_A(hUnusedBackup);
-    gb_write(hUnusedBackup, gb_read(hSeconds));
+    hram->hUnusedBackup = hram->hSeconds;
 }
 
 void VBlank2(void) {

@@ -1,5 +1,6 @@
 #include "../../constants.h"
 #include "menu_2.h"
+#include "../../home/menu.h"
 #include "../../home/text.h"
 #include "../../home/print_text.h"
 #include "../../home/names.h"
@@ -81,56 +82,60 @@ void PlaceMenuItemQuantity_Conv(const struct MenuData* data, tile_t* de){
 }
 
 void PlaceMoneyTopRight(void){
-    LD_HL(mMoneyTopRightMenuHeader);
-    CALL(aCopyMenuHeader);
-    JR(mPlaceMoneyTextbox);
-
+    // LD_HL(mMoneyTopRightMenuHeader);
+    // CALL(aCopyMenuHeader);
+    CopyMenuHeader_Conv2(&MoneyTopRightMenuHeader);
+    // JR(mPlaceMoneyTextbox);
+    return PlaceMoneyTextbox();
 }
 
 void PlaceMoneyBottomLeft(void){
-    LD_HL(mMoneyBottomLeftMenuHeader);
-    CALL(aCopyMenuHeader);
-    JR(mPlaceMoneyTextbox);
-
+    // LD_HL(mMoneyBottomLeftMenuHeader);
+    // CALL(aCopyMenuHeader);
+    CopyMenuHeader_Conv2(&MoneyBottomLeftMenuHeader);
+    // JR(mPlaceMoneyTextbox);
+    return PlaceMoneyTextbox();
 }
 
 void PlaceMoneyAtTopLeftOfTextbox(void){
-    LD_HL(mMoneyTopRightMenuHeader);
-    LD_DE((0 << 8) | 11);
-    CALL(aOffsetMenuHeader);
+    // LD_HL(mMoneyTopRightMenuHeader);
+    // LD_DE((0 << 8) | 11);
+    // CALL(aOffsetMenuHeader);
+    OffsetMenuHeader_Conv2(&MoneyTopRightMenuHeader, 0, 11);
 
     return PlaceMoneyTextbox();
 }
 
 void PlaceMoneyTextbox(void){
-    CALL(aMenuBox);
-    CALL(aMenuBoxCoord2Tile);
-    LD_DE(SCREEN_WIDTH + 1);
-    ADD_HL_DE;
-    LD_DE(wMoney);
-    LD_BC((PRINTNUM_MONEY | 3 << 8) | 6);
-    CALL(aPrintNum);
-    RET;
-
+    // CALL(aMenuBox);
+    MenuBox_Conv();
+    // CALL(aMenuBoxCoord2Tile);
+    // LD_DE(SCREEN_WIDTH + 1);
+    // ADD_HL_DE;
+    // LD_DE(wMoney);
+    // LD_BC((PRINTNUM_MONEY | 3 << 8) | 6);
+    // CALL(aPrintNum);
+    PrintNum_Conv2(MenuBoxCoord2Tile_Conv() + SCREEN_WIDTH + 1, &wram->wMoney, PRINTNUM_MONEY | 3, 6);
+    // RET;
 }
 
-void MoneyTopRightMenuHeader(void){
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['11', '0', 'SCREEN_WIDTH - 1', '2'];
+const struct MenuHeader MoneyTopRightMenuHeader = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(11, 0, SCREEN_WIDTH - 1, 2),
     //dw ['NULL'];
+    .data = NULL,
     //db ['1'];  // default option
+    .defaultOption = 1,
+};
 
-    return MoneyBottomLeftMenuHeader();
-}
-
-void MoneyBottomLeftMenuHeader(void){
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['0', '11', '8', '13'];
+const struct MenuHeader MoneyBottomLeftMenuHeader = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(0, 11, 8, 13),
     //dw ['NULL'];
+    .data = NULL,
     //db ['1'];  // default option
-
-    return DisplayCoinCaseBalance();
-}
+    .defaultOption = 1,
+};
 
 void DisplayCoinCaseBalance(void){
 // Place a text box of size 1x7 at 11, 0.

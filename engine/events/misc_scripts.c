@@ -35,7 +35,7 @@ static void FindItemInBallScript_TryReceiveItem(void) {
     // LD_HL(wNumItems);
     // CALL(aReceiveItem);
     // RET_NC ;
-    if(!ReceiveItem_Conv(wram->wItemBallItemID, wram->wItems, wram->wItemBallQuantity))
+    if(!ReceiveItem_Conv((item_pocket_s*)&wram->wNumItems, wram->wItemBallItemID, wram->wItemBallQuantity))
         return;
     // LD_A(0x1);
     // LD_addr_A(wScriptVar);

@@ -1331,6 +1331,14 @@ void OffsetMenuHeader(void) {
     RET;
 }
 
+void OffsetMenuHeader_Conv2(const struct MenuHeader* hl, uint8_t d, uint8_t e) {
+    PushWindow_Conv();
+    // CALL(av_OffsetMenuHeader);
+    v_OffsetMenuHeader_Conv(hl, d, e);
+    // CALL(aPushWindow);
+    // RET;
+}
+
 void v_OffsetMenuHeader(void) {
     PUSH_DE;
     CALL(aCopyMenuHeader);

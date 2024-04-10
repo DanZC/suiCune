@@ -140,6 +140,7 @@ void ExitAllMenus_Conv(void);
 void FinishExitMenu(void);
 void FinishExitMenu_Conv(void);
 void ReturnToMapWithSpeechTextbox(void);
+void ReturnToMapWithSpeechTextbox_Conv(void);
 void ReloadTilesetAndPalettes(void);
 void ReloadTilesetAndPalettes_Conv(void);
 void GetMapPointer(void);

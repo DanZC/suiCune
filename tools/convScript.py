@@ -109,6 +109,7 @@ commands = {
     'checkevent': Cmd('checkevent', ['event']),
     'clearevent': Cmd('clearevent', ['event']),
     'giveitem': Cmd('giveitem', ['item', 'count']),
+    'takeitem': Cmd('takeitem', ['item', 'count']),
     'checkitem': Cmd('checkitem', ['item', 'count']),
     'givemoney': Cmd('givemoney', ['account', 'amount']),
     'checkmoney': Cmd('checkmoney', ['account', 'amount']),

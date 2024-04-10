@@ -81,6 +81,7 @@ bool InterpretTwoOptionMenu_Conv(void);
 // void YesNoMenuHeader(void);
 extern const struct MenuHeader YesNoMenuHeader;
 void OffsetMenuHeader(void);
+void OffsetMenuHeader_Conv2(const struct MenuHeader* hl, uint8_t d, uint8_t e);
 void v_OffsetMenuHeader(void);
 void v_OffsetMenuHeader_Conv(const struct MenuHeader* hl, uint8_t d, uint8_t e);
 void DoNthMenu(void);

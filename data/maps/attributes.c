@@ -408,7 +408,7 @@ map_attributes(Pokecenter2F, POKECENTER_2F, 0x00, 0);
 // map_attributes(Route5UndergroundPathEntrance, ROUTE_5_UNDERGROUND_PATH_ENTRANCE, 0x00, 0);
 // map_attributes(Route5SaffronGate, ROUTE_5_SAFFRON_GATE, 0x00, 0);
 // map_attributes(Route5CleanseTagHouse, ROUTE_5_CLEANSE_TAG_HOUSE, 0x00, 0);
-// map_attributes(CherrygroveMart, CHERRYGROVE_MART, 0x00, 0);
+map_attributes(CherrygroveMart, CHERRYGROVE_MART, 0x00, 0);
 map_attributes(CherrygrovePokecenter1F, CHERRYGROVE_POKECENTER_1F, 0x00, 0);
 // map_attributes(CherrygroveGymSpeechHouse, CHERRYGROVE_GYM_SPEECH_HOUSE, 0x00, 0);
 // map_attributes(GuideGentsHouse, GUIDE_GENTS_HOUSE, 0x00, 0);

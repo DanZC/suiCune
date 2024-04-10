@@ -4,25 +4,35 @@
 #include "../../home/map.h"
 #include "../../home/copy.h"
 #include "../../home/movement.h"
+#include "../../home/tilemap.h"
+#include "../../home/sprite_updates.h"
+#include "../../home/clear_sprites.h"
 
 void BlankScreen(void){
-    CALL(aDisableSpriteUpdates);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    CALL(aClearBGPalettes);
-    CALL(aClearSprites);
-    hlcoord(0, 0, wTilemap);
-    LD_BC(wTilemapEnd - wTilemap);
-    LD_A(0x7f);
-    CALL(aByteFill);
-    hlcoord(0, 0, wAttrmap);
-    LD_BC(wAttrmapEnd - wAttrmap);
-    LD_A(0x7);
-    CALL(aByteFill);
-    CALL(aWaitBGMap2);
-    CALL(aSetPalettes);
-    RET;
-
+    // CALL(aDisableSpriteUpdates);
+    DisableSpriteUpdates_Conv();
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
+    // CALL(aClearSprites);
+    ClearSprites_Conv();
+    // hlcoord(0, 0, wTilemap);
+    // LD_BC(wTilemapEnd - wTilemap);
+    // LD_A(0x7f);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(0, 0, wram->wTilemap), wTilemapEnd - wTilemap, 0x7f);
+    // hlcoord(0, 0, wAttrmap);
+    // LD_BC(wAttrmapEnd - wAttrmap);
+    // LD_A(0x7);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(0, 0, wram->wAttrmap), wAttrmapEnd - wAttrmap, 0x7);
+    // CALL(aWaitBGMap2);
+    WaitBGMap2_Conv();
+    // CALL(aSetPalettes);
+    SetPalettes_Conv();
+    // RET;
 }
 
 void SpawnPlayer(void){
