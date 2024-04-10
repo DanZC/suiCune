@@ -5,7 +5,11 @@
 #include "../home/delay.h"
 
 #if defined(NETWORKING_SUPPORT)
+#if defined(_MSC_VER)
+#include "SDL_net.h"
+#else
 #include <SDL2/SDL_net.h>
+#endif
 #include "../tools/emu/peanut_gb.h"
 extern struct gb_s gb;
 
