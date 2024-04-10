@@ -1,9 +1,11 @@
 workspace "suiCune"
-	location ".\\build\\"
+startproject "suiCune"
 
-	targetdir "%{wks.location}\\bin\\%{cfg.buildcfg}\\"
-	objdir "%{wks.location}\\obj\\%{cfg.buildcfg}\\%{prj.name}\\"
-	buildlog "%{wks.location}\\obj\\%{cfg.buildcfg}\\%{prj.name}.log"
+	outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}-%{cfg.startproject}"
+	
+    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+    objdir ("bin-obj/" .. outputdir .. "/%{prj.name}")
+    buildlog  ("bin-obj/" .. outputdir .. "%{prj.name}.log")
 
 	largeaddressaware "on"
 	editandcontinue "off"
@@ -61,4 +63,10 @@ workspace "suiCune"
 		files {
 			".\\**.c",
 			".\\**.h",
+		}
+		
+		flags
+		{
+			"NoRuntimeChecks",
+			"MultiProcessorCompile"
 		}

@@ -70,3 +70,8 @@ tools/blk_to_tmx.py
 # screenshots and recordings
 screenshot*.bmp
 recording*.mp4
+assets.zip
+suiCune.sln
+suiCune.vcxproj
+suiCune.vcxproj.filters
+assets.zip
