@@ -45,6 +45,7 @@
 #include "../../home/menu.h"
 #include "../phone/phone.h"
 #include "../gfx/dma_transfer.h"
+#include <assert.h>
 
 static const struct TextCmd* lScriptText = NULL;
 Script_fn_t gDeferredScriptAddr = NULL;
@@ -3982,6 +3983,19 @@ void Script_checkpokemail(void){
     FARCALL(aCheckPokeMail);
     RET;
 
+}
+
+void Script_checkpokemail_Conv(script_s* s, const char* text){
+    // CALL(aGetScriptByte);
+    // LD_E_A;
+    // CALL(aGetScriptByte);
+    // LD_D_A;
+    // LD_A_addr(wScriptBank);
+    // LD_B_A;
+    // FARCALL(aCheckPokeMail);
+    (void)s, (void)text;
+    // RET;
+    assert(0 && "TODO: Implement checkpokemail.");
 }
 
 void Script_giveitem(void){

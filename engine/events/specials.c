@@ -6,6 +6,7 @@
 #include "../menus/intro_menu.h"
 #include "../pokegear/pokegear.h"
 #include "../../home/sram.h"
+#include "../../home/map.h"
 
 void Special(void){
 //  Run script special de.
@@ -162,11 +163,13 @@ void NameRater(void){
 }
 
 void OverworldTownMap(void){
-    CALL(aFadeToMenu);
-    FARCALL(av_TownMap);
-    CALL(aExitAllMenus);
-    RET;
-
+    // CALL(aFadeToMenu);
+    FadeToMenu_Conv();
+    // FARCALL(av_TownMap);
+    v_TownMap();
+    // CALL(aExitAllMenus);
+    ExitAllMenus_Conv();
+    // RET;
 }
 
 void UnownPrinter(void){

@@ -57,6 +57,7 @@ typedef struct TextCmd txt_cmd_s;
 
 #define wram_ptr(_p)        (gb.wram + (WRAM_BANK_SIZE * (MBANK(a##_p))) + (_p - ((MBANK(a##_p) == 0)? WRAM_0_ADDR: WRAM_1_ADDR)))
 #define hram_ptr(_p)        (gb.hram + (_p - 0xFF00))
+#define vram_ptr(_p)        (gb.vram + (VRAM_BANK_SIZE * (MBANK(a##_p))) + (_p - VRAM_ADDR))
 
 #define t_line      "<LINE>"
 #define t_next      "<NEXT>"

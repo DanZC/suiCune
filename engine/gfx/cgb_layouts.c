@@ -839,114 +839,141 @@ void v_CGB_UnownPuzzle(void){
 }
 
 void v_CGB_TrainerCard(void){
-    LD_DE(wBGPals1);
-    XOR_A_A;  // CHRIS
-    CALL(aGetTrainerPalettePointer);
-    CALL(aLoadPalette_White_Col1_Col2_Black);
-    LD_A(FALKNER);  // KRIS
-    CALL(aGetTrainerPalettePointer);
-    CALL(aLoadPalette_White_Col1_Col2_Black);
-    LD_A(BUGSY);
-    CALL(aGetTrainerPalettePointer);
-    CALL(aLoadPalette_White_Col1_Col2_Black);
-    LD_A(WHITNEY);
-    CALL(aGetTrainerPalettePointer);
-    CALL(aLoadPalette_White_Col1_Col2_Black);
-    LD_A(MORTY);
-    CALL(aGetTrainerPalettePointer);
-    CALL(aLoadPalette_White_Col1_Col2_Black);
-    LD_A(CHUCK);
-    CALL(aGetTrainerPalettePointer);
-    CALL(aLoadPalette_White_Col1_Col2_Black);
-    LD_A(JASMINE);
-    CALL(aGetTrainerPalettePointer);
-    CALL(aLoadPalette_White_Col1_Col2_Black);
-    LD_A(PRYCE);
-    CALL(aGetTrainerPalettePointer);
-    CALL(aLoadPalette_White_Col1_Col2_Black);
-    LD_A(PREDEFPAL_CGB_BADGE);
-    CALL(aGetPredefPal);
-    CALL(aLoadHLPaletteIntoDE);
-
+    uint16_t palbuf[6 * NUM_PAL_COLORS];
+    // LD_DE(wBGPals1);
+    uint16_t* de = (uint16_t*)((uint8_t*)wram + offsetof(struct wram_s, wBGPals1)); // Won't let me take pointer of packed wBGPals1, so I'm doing this ugly shit instead.
+    // XOR_A_A;  // CHRIS
+    // CALL(aGetTrainerPalettePointer);
+    // CALL(aLoadPalette_White_Col1_Col2_Black);
+    de = LoadPalette_White_Col1_Col2_Black_Conv(de, GetTrainerPalettePointer_Conv(palbuf, 0));
+    // LD_A(FALKNER);  // KRIS
+    // CALL(aGetTrainerPalettePointer);
+    // CALL(aLoadPalette_White_Col1_Col2_Black);
+    de = LoadPalette_White_Col1_Col2_Black_Conv(de, GetTrainerPalettePointer_Conv(palbuf, FALKNER));
+    // LD_A(BUGSY);
+    // CALL(aGetTrainerPalettePointer);
+    // CALL(aLoadPalette_White_Col1_Col2_Black);
+    de = LoadPalette_White_Col1_Col2_Black_Conv(de, GetTrainerPalettePointer_Conv(palbuf, BUGSY));
+    // LD_A(WHITNEY);
+    // CALL(aGetTrainerPalettePointer);
+    // CALL(aLoadPalette_White_Col1_Col2_Black);
+    de = LoadPalette_White_Col1_Col2_Black_Conv(de, GetTrainerPalettePointer_Conv(palbuf, WHITNEY));
+    // LD_A(MORTY);
+    // CALL(aGetTrainerPalettePointer);
+    // CALL(aLoadPalette_White_Col1_Col2_Black);
+    de = LoadPalette_White_Col1_Col2_Black_Conv(de, GetTrainerPalettePointer_Conv(palbuf, MORTY));
+    // LD_A(CHUCK);
+    // CALL(aGetTrainerPalettePointer);
+    // CALL(aLoadPalette_White_Col1_Col2_Black);
+    de = LoadPalette_White_Col1_Col2_Black_Conv(de, GetTrainerPalettePointer_Conv(palbuf, CHUCK));
+    // LD_A(JASMINE);
+    // CALL(aGetTrainerPalettePointer);
+    // CALL(aLoadPalette_White_Col1_Col2_Black);
+    de = LoadPalette_White_Col1_Col2_Black_Conv(de, GetTrainerPalettePointer_Conv(palbuf, JASMINE));
+    // LD_A(PRYCE);
+    // CALL(aGetTrainerPalettePointer);
+    // CALL(aLoadPalette_White_Col1_Col2_Black);
+    de = LoadPalette_White_Col1_Col2_Black_Conv(de, GetTrainerPalettePointer_Conv(palbuf, PRYCE));
+    // LD_A(PREDEFPAL_CGB_BADGE);
+    // CALL(aGetPredefPal);
+    // CALL(aLoadHLPaletteIntoDE);
+    LoadHLPaletteIntoDE_Conv(de, GetPredefPal_Conv(PREDEFPAL_CGB_BADGE));
 // fill screen with opposite-gender palette for the card border
-    hlcoord(0, 0, wAttrmap);
-    LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
-    LD_A_addr(wPlayerGender);
-    AND_A_A;
-    LD_A(0x1);  // kris
-    IF_Z goto got_gender;
-    LD_A(0x0);  // chris
+    // hlcoord(0, 0, wAttrmap);
+    // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
+    // LD_A_addr(wPlayerGender);
+    // AND_A_A;
+    // LD_A(0x1);  // kris
+    // IF_Z goto got_gender;
+    // LD_A(0x0);  // chris
+    uint8_t gender = (wram->wPlayerGender != 0)? 0x0: 0x1;
 
-got_gender:
-    CALL(aByteFill);
+// got_gender:
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(0, 0, wram->wAttrmap), SCREEN_WIDTH * SCREEN_HEIGHT, gender);
 // fill trainer sprite area with same-gender palette
-    hlcoord(14, 1, wAttrmap);
-    LD_BC((7 << 8) | 5);
-    LD_A_addr(wPlayerGender);
-    AND_A_A;
-    LD_A(0x0);  // chris
-    IF_Z goto got_gender2;
-    LD_A(0x1);  // kris
+    // hlcoord(14, 1, wAttrmap);
+    // LD_BC((7 << 8) | 5);
+    // LD_A_addr(wPlayerGender);
+    // AND_A_A;
+    // LD_A(0x0);  // chris
+    // IF_Z goto got_gender2;
+    // LD_A(0x1);  // kris
+    uint8_t gender2 = (wram->wPlayerGender != 0)? 0x1: 0x0;
 
-got_gender2:
-    CALL(aFillBoxCGB);
+// got_gender2:
+    // CALL(aFillBoxCGB);
+    FillBoxCGB_Conv(coord(14, 1, wram->wAttrmap), 7, 5, gender2);
 // top-right corner still uses the border's palette
-    hlcoord(18, 1, wAttrmap);
-    LD_hl(0x1);
-    hlcoord(2, 11, wAttrmap);
-    LD_BC((2 << 8) | 4);
-    LD_A(0x1);  // falkner
-    CALL(aFillBoxCGB);
-    hlcoord(6, 11, wAttrmap);
-    LD_BC((2 << 8) | 4);
-    LD_A(0x2);  // bugsy
-    CALL(aFillBoxCGB);
-    hlcoord(10, 11, wAttrmap);
-    LD_BC((2 << 8) | 4);
-    LD_A(0x3);  // whitney
-    CALL(aFillBoxCGB);
-    hlcoord(14, 11, wAttrmap);
-    LD_BC((2 << 8) | 4);
-    LD_A(0x4);  // morty
-    CALL(aFillBoxCGB);
-    hlcoord(2, 14, wAttrmap);
-    LD_BC((2 << 8) | 4);
-    LD_A(0x5);  // chuck
-    CALL(aFillBoxCGB);
-    hlcoord(6, 14, wAttrmap);
-    LD_BC((2 << 8) | 4);
-    LD_A(0x6);  // jasmine
-    CALL(aFillBoxCGB);
-    hlcoord(10, 14, wAttrmap);
-    LD_BC((2 << 8) | 4);
-    LD_A(0x7);  // pryce
-    CALL(aFillBoxCGB);
+    // hlcoord(18, 1, wAttrmap);
+    // LD_hl(0x1);
+    *coord(18, 1, wram->wAttrmap) = 0x1;
+    // hlcoord(2, 11, wAttrmap);
+    // LD_BC((2 << 8) | 4);
+    // LD_A(0x1);  // falkner
+    // CALL(aFillBoxCGB);
+    FillBoxCGB_Conv(coord(2, 11, wram->wAttrmap), 2, 4, 0x1);
+    // hlcoord(6, 11, wAttrmap);
+    // LD_BC((2 << 8) | 4);
+    // LD_A(0x2);  // bugsy
+    // CALL(aFillBoxCGB);
+    FillBoxCGB_Conv(coord(6, 11, wram->wAttrmap), 2, 4, 0x2);
+    // hlcoord(10, 11, wAttrmap);
+    // LD_BC((2 << 8) | 4);
+    // LD_A(0x3);  // whitney
+    // CALL(aFillBoxCGB);
+    FillBoxCGB_Conv(coord(10, 11, wram->wAttrmap), 2, 4, 0x3);
+    // hlcoord(14, 11, wAttrmap);
+    // LD_BC((2 << 8) | 4);
+    // LD_A(0x4);  // morty
+    // CALL(aFillBoxCGB);
+    FillBoxCGB_Conv(coord(14, 11, wram->wAttrmap), 2, 4, 0x4);
+    // hlcoord(2, 14, wAttrmap);
+    // LD_BC((2 << 8) | 4);
+    // LD_A(0x5);  // chuck
+    // CALL(aFillBoxCGB);
+    FillBoxCGB_Conv(coord(2, 14, wram->wAttrmap), 2, 4, 0x5);
+    // hlcoord(6, 14, wAttrmap);
+    // LD_BC((2 << 8) | 4);
+    // LD_A(0x6);  // jasmine
+    // CALL(aFillBoxCGB);
+    FillBoxCGB_Conv(coord(6, 14, wram->wAttrmap), 2, 4, 0x6);
+    // hlcoord(10, 14, wAttrmap);
+    // LD_BC((2 << 8) | 4);
+    // LD_A(0x7);  // pryce
+    // CALL(aFillBoxCGB);
+    FillBoxCGB_Conv(coord(10, 14, wram->wAttrmap), 2, 4, 0x7);
 // clair uses kris's palette
-    LD_A_addr(wPlayerGender);
-    AND_A_A;
-    PUSH_AF;
-    IF_Z goto got_gender3;
-    hlcoord(14, 14, wAttrmap);
-    LD_BC((2 << 8) | 4);
-    LD_A(0x1);
-    CALL(aFillBoxCGB);
+    // LD_A_addr(wPlayerGender);
+    // AND_A_A;
+    // PUSH_AF;
+    // IF_Z goto got_gender3;
+    if(wram->wPlayerGender == 0) {
+        // hlcoord(14, 14, wAttrmap);
+        // LD_BC((2 << 8) | 4);
+        // LD_A(0x1);
+        // CALL(aFillBoxCGB);
+        FillBoxCGB_Conv(coord(14, 14, wram->wAttrmap), 2, 4, 0x1);
+    }
+// got_gender3:
+    // POP_AF;
+    // LD_C(0x0);
+    // IF_NZ goto got_gender4;
+    // INC_C;
 
-got_gender3:
-    POP_AF;
-    LD_C(0x0);
-    IF_NZ goto got_gender4;
-    INC_C;
-
-got_gender4:
-    LD_A_C;
-    hlcoord(18, 1, wAttrmap);
-    LD_hl_A;
-    CALL(aApplyAttrmap);
-    CALL(aApplyPals);
-    LD_A(TRUE);
-    LDH_addr_A(hCGBPalUpdate);
-    RET;
-
+// got_gender4:
+    // LD_A_C;
+    // hlcoord(18, 1, wAttrmap);
+    // LD_hl_A;
+    *coord(18, 1, wram->wAttrmap) = gender;
+    // CALL(aApplyAttrmap);
+    ApplyAttrmap_Conv();
+    // CALL(aApplyPals);
+    ApplyPals_Conv();
+    // LD_A(TRUE);
+    // LDH_addr_A(hCGBPalUpdate);
+    hram->hCGBPalUpdate = TRUE;
+    // RET;
 }
 
 void v_CGB_MoveList(void){

@@ -255,6 +255,7 @@ void Script_getstring(void);
 void Script_getstring_Conv(script_s* s, uint8_t a, const char* hl);
 void Script_givepokemail(void);
 void Script_checkpokemail(void);
+void Script_checkpokemail_Conv(script_s* s, const char* text);
 void Script_giveitem(void);
 void Script_giveitem_Conv(script_s* s, item_t item, uint8_t quantity);
 void Script_takeitem(void);

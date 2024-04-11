@@ -27,47 +27,47 @@ enum {
 
 #define FALKNER 0x01
 enum {
-    FALKNER1,
+    FALKNER1 = 1,
 };
 
 #define WHITNEY 0x02
 enum {
-    WHITNEY1,
+    WHITNEY1 = 1,
 };
 
 #define BUGSY 0x03
 enum {
-    BUGSY1,
+    BUGSY1 = 1,
 };
 
 #define MORTY 0x04
 enum {
-    MORTY1,
+    MORTY1 = 1,
 };
 
 #define PRYCE 0x05
 enum {
-    PRYCE1,
+    PRYCE1 = 1,
 };
 
 #define JASMINE 0x06
 enum {
-    JASMINE1,
+    JASMINE1 = 1,
 };
 
 #define CHUCK 0x07
 enum {
-    CHUCK1,
+    CHUCK1 = 1,
 };
 
 #define CLAIR 0x08
 enum {
-    CLAIR1,
+    CLAIR1 = 1,
 };
 
 #define RIVAL1 0x09
 enum {
-    RIVAL1_1_CHIKORITA,
+    RIVAL1_1_CHIKORITA = 1,
     RIVAL1_1_CYNDAQUIL,
     RIVAL1_1_TOTODILE,
     RIVAL1_2_CHIKORITA,
@@ -88,54 +88,54 @@ enum {
 
 #define WILL 0x0b
 enum {
-    WILL1,
+    WILL1 = 1,
 };
 
 #define CAL 0x0c
 enum {
-    CAL1,  // unused
+    CAL1 = 1,  // unused
     CAL2,
     CAL3,
 };
 
 #define BRUNO 0x0d
 enum {
-    BRUNO1,
+    BRUNO1 = 1,
 };
 
 #define KAREN 0x0e
 enum {
-    KAREN1,
+    KAREN1 = 1,
 };
 
 #define KOGA 0x0f
 enum {
-    KOGA1,
+    KOGA1 = 1,
 };
 
 #define CHAMPION 0x10
 enum {
-    LANCE,
+    LANCE = 1,
 };
 
 #define BROCK 0x11
 enum {
-    BROCK1,
+    BROCK1 = 1,
 };
 
 #define MISTY 0x12
 enum {
-    MISTY1,
+    MISTY1 = 1,
 };
 
 #define LT_SURGE 0x13
 enum {
-    LT_SURGE1,
+    LT_SURGE1 = 1,
 };
 
 #define SCIENTIST 0x14
 enum {
-    ROSS,
+    ROSS = 1,
     MITCH,
     JED,
     MARC,
@@ -144,12 +144,12 @@ enum {
 
 #define ERIKA 0x15
 enum {
-    ERIKA1,
+    ERIKA1 = 1,
 };
 
 #define YOUNGSTER 0x16
 enum {
-    JOEY1,
+    JOEY1 = 1,
     MIKEY,
     ALBERT,
     GORDON,
@@ -167,7 +167,7 @@ enum {
 
 #define SCHOOLBOY 0x17
 enum {
-    JACK1,
+    JACK1 = 1,
     KIPP,
     ALAN1,
     JOHNNY,
@@ -195,7 +195,7 @@ enum {
 
 #define BIRD_KEEPER 0x18
 enum {
-    ROD,
+    ROD = 1,
     ABE,
     BRYAN,
     THEO,
@@ -218,7 +218,7 @@ enum {
 
 #define LASS 0x19
 enum {
-    CARRIE,
+    CARRIE = 1,
     BRIDGET,
     ALICE,
     KRISE,
@@ -239,12 +239,12 @@ enum {
 
 #define JANINE 0x1a
 enum {
-    JANINE1,
+    JANINE1 = 1,
 };
 
 #define COOLTRAINERM 0x1b
 enum {
-    NICK,
+    NICK = 1,
     AARON,
     PAUL,
     CODY,
@@ -268,7 +268,7 @@ enum {
 
 #define COOLTRAINERF 0x1c
 enum {
-    GWEN,
+    GWEN = 1,
     LOIS,
     FRAN,
     LOLA,
@@ -293,7 +293,7 @@ enum {
 
 #define BEAUTY 0x1d
 enum {
-    VICTORIA,
+    VICTORIA = 1,
     SAMANTHA,
     JULIE,   // unused
     JACLYN,  // unused
@@ -314,7 +314,7 @@ enum {
 
 #define POKEMANIAC 0x1e
 enum {
-    LARRY,
+    LARRY = 1,
     ANDREW,
     CALVIN,
     SHANE,
@@ -333,7 +333,7 @@ enum {
 
 #define GRUNTM 0x1f
 enum {
-    GRUNTM_1,
+    GRUNTM_1 = 1,
     GRUNTM_2,
     GRUNTM_3,
     GRUNTM_4,
@@ -368,7 +368,7 @@ enum {
 
 #define GENTLEMAN 0x20
 enum {
-    PRESTON,
+    PRESTON = 1,
     EDWARD,
     GREGORY,
     VIRGIL,  // unused
@@ -377,25 +377,25 @@ enum {
 
 #define SKIER 0x21
 enum {
-    ROXANNE,
+    ROXANNE = 1,
     CLARISSA,
 };
 
 #define TEACHER 0x22
 enum {
-    COLETTE,
+    COLETTE = 1,
     HILLARY,
     SHIRLEY,
 };
 
 #define SABRINA 0x23
 enum {
-    SABRINA1,
+    SABRINA1 = 1,
 };
 
 #define BUG_CATCHER 0x24
 enum {
-    DON,
+    DON = 1,
     ROB,
     ED,
     WADE1,
@@ -418,7 +418,7 @@ enum {
 
 #define FISHER 0x25
 enum {
-    JUSTIN,
+    JUSTIN = 1,
     RALPH1,
     ARNOLD,
     KYLE,
@@ -447,7 +447,7 @@ enum {
 
 #define SWIMMERM 0x26
 enum {
-    HAROLD,
+    HAROLD = 1,
     SIMON,
     RANDALL,
     CHARLIE,
@@ -472,7 +472,7 @@ enum {
 
 #define SWIMMERF 0x27
 enum {
-    ELAINE,
+    ELAINE = 1,
     PAULA,
     KAYLEE,
     SUSIE,
@@ -495,7 +495,7 @@ enum {
 
 #define SAILOR 0x28
 enum {
-    EUGENE,
+    EUGENE = 1,
     HUEY1,
     TERRELL,
     KENT,
@@ -512,7 +512,7 @@ enum {
 
 #define SUPER_NERD 0x29
 enum {
-    STAN,
+    STAN = 1,
     ERIC,
     GREGG,  // unused
     JAY,    // unused
@@ -530,7 +530,7 @@ enum {
 
 #define RIVAL2 0x2a
 enum {
-    RIVAL2_1_CHIKORITA,
+    RIVAL2_1_CHIKORITA = 1,
     RIVAL2_1_CYNDAQUIL,
     RIVAL2_1_TOTODILE,
     RIVAL2_2_CHIKORITA,
@@ -540,13 +540,13 @@ enum {
 
 #define GUITARIST 0x2b
 enum {
-    CLYDE,
+    CLYDE = 1,
     VINCENT,
 };
 
 #define HIKER 0x2c
 enum {
-    ANTHONY1,
+    ANTHONY1 = 1,
     RUSSELL,
     PHILLIP,
     LEONARD,
@@ -572,8 +572,8 @@ enum {
 
 #define BIKER 0x2d
 enum {
-    BIKER_BENNY,  // unused
-    KAZU,         // unused
+    BIKER_BENNY = 1,  // unused
+    KAZU,             // unused
     DWAYNE,
     HARRIS,
     ZEKE,
@@ -585,19 +585,19 @@ enum {
 
 #define BLAINE 0x2e
 enum {
-    BLAINE1,
+    BLAINE1 = 1,
 };
 
 #define BURGLAR 0x2f
 enum {
-    DUNCAN,
+    DUNCAN = 1,
     EDDIE,
     COREY,
 };
 
 #define FIREBREATHER 0x30
 enum {
-    OTIS,
+    OTIS = 1,
     DICK,  // unused
     NED,   // unused
     BURT,
@@ -609,7 +609,7 @@ enum {
 
 #define JUGGLER 0x31
 enum {
-    IRWIN1,
+    IRWIN1 = 1,
     FRITZ,
     HORTON,
     IRWIN2,  // unused
@@ -619,7 +619,7 @@ enum {
 
 #define BLACKBELT_T 0x32
 enum {
-    KENJI1,  // unused
+    KENJI1 = 1,  // unused
     YOSHI,
     KENJI2,  // unused
     LAO,
@@ -632,7 +632,7 @@ enum {
 
 #define EXECUTIVEM 0x33
 enum {
-    EXECUTIVEM_1,
+    EXECUTIVEM_1 = 1,
     EXECUTIVEM_2,
     EXECUTIVEM_3,
     EXECUTIVEM_4,
@@ -640,7 +640,7 @@ enum {
 
 #define PSYCHIC_T 0x34
 enum {
-    NATHAN,
+    NATHAN = 1,
     FRANKLIN,
     HERMAN,
     FIDEL,
@@ -656,7 +656,7 @@ enum {
 
 #define PICNICKER 0x35
 enum {
-    LIZ1,
+    LIZ1 = 1,
     GINA1,
     BROOKE,
     KIM,
@@ -686,7 +686,7 @@ enum {
 
 #define CAMPER 0x36
 enum {
-    ROLAND,
+    ROLAND = 1,
     TODD1,
     IVAN,
     ELLIOT,
@@ -712,13 +712,13 @@ enum {
 
 #define EXECUTIVEF 0x37
 enum {
-    EXECUTIVEF_1,
+    EXECUTIVEF_1 = 1,
     EXECUTIVEF_2,
 };
 
 #define SAGE 0x38
 enum {
-    CHOW,
+    CHOW = 1,
     NICO,
     JIN,
     TROY,
@@ -734,7 +734,7 @@ enum {
 
 #define MEDIUM 0x39
 enum {
-    MARTHA,
+    MARTHA = 1,
     GRACE,
     BETHANY,  // unused
     MARGRET,  // unused
@@ -745,14 +745,14 @@ enum {
 
 #define BOARDER 0x3a
 enum {
-    RONALD,
+    RONALD = 1,
     BRAD,
     DOUGLAS,
 };
 
 #define POKEFANM 0x3b
 enum {
-    WILLIAM,
+    WILLIAM = 1,
     DEREK1,
     ROBERT,
     JOSHUA,
@@ -770,7 +770,7 @@ enum {
 
 #define KIMONO_GIRL 0x3c
 enum {
-    NAOKO_UNUSED,  // unused
+    NAOKO_UNUSED = 1,  // unused
     NAOKO,
     SAYO,
     ZUKI,
@@ -780,7 +780,7 @@ enum {
 
 #define TWINS 0x3d
 enum {
-    AMYANDMAY1,
+    AMYANDMAY1 = 1,
     ANNANDANNE1,
     ANNANDANNE2,
     AMYANDMAY2,
@@ -794,7 +794,7 @@ enum {
 
 #define POKEFANF 0x3e
 enum {
-    BEVERLY1,
+    BEVERLY1 = 1,
     RUTH,
     BEVERLY2,  // unused
     BEVERLY3,  // unused
@@ -804,23 +804,23 @@ enum {
 
 #define RED 0x3f
 enum {
-    RED1,
+    RED1 = 1,
 };
 
 #define BLUE 0x40
 enum {
-    BLUE1,
+    BLUE1 = 1,
 };
 
 #define OFFICER 0x41
 enum {
-    KEITH,
+    KEITH = 1,
     DIRK,
 };
 
 #define GRUNTF 0x42
 enum {
-    GRUNTF_1,
+    GRUNTF_1 = 1,
     GRUNTF_2,
     GRUNTF_3,
     GRUNTF_4,
@@ -829,7 +829,7 @@ enum {
 
 #define MYSTICALMAN 0x43
 enum {
-    EUSINE,
+    EUSINE = 1,
 };
 
 #define NUM_TRAINER_CLASSES MYSTICALMAN

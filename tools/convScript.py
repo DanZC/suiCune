@@ -105,6 +105,7 @@ commands = {
     'getmoney': Cmd('getmoney', ['buffer', 'account']),
     'getnum': Cmd('getnum', ['num']),
     'getstring': Cmd('getstring', ['buffer', 'str']),
+    'checkpokemail': Cmd('checkpokemail', ['str']),
     'setevent': Cmd('setevent', ['event']),
     'checkevent': Cmd('checkevent', ['event']),
     'clearevent': Cmd('clearevent', ['event']),

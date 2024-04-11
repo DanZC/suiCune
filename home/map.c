@@ -56,6 +56,7 @@ const struct MapEvents* gMapEventsPointer;
 struct MapConnectionData gMapConnections[4];
 
 const struct Tileset* gTilesetPointer;
+const struct TileAnimFrame* gTilesetAnim;
 asset_s gTilesetBlocks;
 
 struct BGEvent gCurBGEvent;
@@ -5093,6 +5094,7 @@ void LoadMapTileset_Conv2(void){
     if(gTilesetBlocks.ptr != NULL)
         FreeAsset(gTilesetBlocks);
     gTilesetBlocks = LoadAsset(gTilesetPointer->metaPath);
+    gTilesetAnim = gTilesetPointer->anim;
 }
 
 void DummyEndPredef(void){

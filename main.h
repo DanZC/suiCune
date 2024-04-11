@@ -107,7 +107,7 @@
 //#include "engine/pokemon/mon_submenu.h"
 #include "engine/battle/menu.h"
 #include "engine/items/buy_sell_toss.h"
-//#include "engine/menus/trainer_card.h"
+#include "engine/menus/trainer_card.h"
 //#include "engine/events/prof_oaks_pc.h"
 #include "engine/overworld/decorations.h"
 //#include "engine/pokemon/level_up_happiness.h"
@@ -455,7 +455,7 @@
 
 // SECTION "bank3F", ROMX
 
-//#include "engine/tilesets/tileset_anims.h"
+#include "engine/tilesets/tileset_anims.h"
 //#include "engine/events/npc_trade.h"
 #include "engine/events/mom_phone.h"
 

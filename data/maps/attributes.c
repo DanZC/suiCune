@@ -79,6 +79,11 @@ map_attributes(CherrygroveCity, CHERRYGROVE_CITY, 0x35,
     connection(CHERRYGROVE_CITY, north, Route30, ROUTE_30, 5)
     connection(CHERRYGROVE_CITY, east, Route29, ROUTE_29, 0));
 
+map_attributes(VioletCity, VIOLET_CITY, 0x05,
+    connection(VIOLET_CITY, south, Route32, ROUTE_32, 0)
+    connection(VIOLET_CITY, west, Route36, ROUTE_36, 0)
+    connection(VIOLET_CITY, east, Route31, ROUTE_31, 9));
+
 map_attributes(Route27, ROUTE_27, 0x35,
     connection(ROUTE_27, west, NewBarkTown, NEW_BARK_TOWN, 0)
     connection(ROUTE_27, east, Route26, ROUTE_26, -45));
@@ -91,6 +96,10 @@ map_attributes(Route29, ROUTE_29, 0x05,
 map_attributes(Route30, ROUTE_30, 0x05, 
     connection(ROUTE_30, north, Route31, ROUTE_31, -10)
     connection(ROUTE_30, south, CherrygroveCity, CHERRYGROVE_CITY, -5));
+
+map_attributes(Route31, ROUTE_31, 0x05,
+    connection(ROUTE_31, south, Route30, ROUTE_30, 10)
+    connection(ROUTE_31, west, VioletCity, VIOLET_CITY, -9));
 
 map_attributes(Route46, ROUTE_46, 0x05,
     connection(ROUTE_46, south, Route29, ROUTE_29, -10)
@@ -174,7 +183,7 @@ map_attributes(RuinsOfAlphAerodactylChamber, RUINS_OF_ALPH_AERODACTYL_CHAMBER, 0
 // map_attributes(SilverCaveRoom2, SILVER_CAVE_ROOM_2, 0x09, 0);
 // map_attributes(SilverCaveRoom3, SILVER_CAVE_ROOM_3, 0x09, 0);
 // map_attributes(SilverCaveItemRooms, SILVER_CAVE_ITEM_ROOMS, 0x09, 0);
-// map_attributes(DarkCaveVioletEntrance, DARK_CAVE_VIOLET_ENTRANCE, 0x09, 0);
+map_attributes(DarkCaveVioletEntrance, DARK_CAVE_VIOLET_ENTRANCE, 0x09, 0);
 // map_attributes(DarkCaveBlackthornEntrance, DARK_CAVE_BLACKTHORN_ENTRANCE, 0x09, 0);
 // map_attributes(DragonsDen1F, DRAGONS_DEN_1F, 0x09, 0);
 // map_attributes(DragonsDenB1F, DRAGONS_DEN_B1F, 0x71, 0);
@@ -394,7 +403,7 @@ map_attributes(Pokecenter2F, POKECENTER_2F, 0x00, 0);
 // map_attributes(Route26HealHouse, ROUTE_26_HEAL_HOUSE, 0x00, 0);
 // map_attributes(DayOfWeekSiblingsHouse, DAY_OF_WEEK_SIBLINGS_HOUSE, 0x00, 0);
 // map_attributes(Route27SandstormHouse, ROUTE_27_SANDSTORM_HOUSE, 0x00, 0);
-// map_attributes(Route29Route46Gate, ROUTE_29_ROUTE_46_GATE, 0x00, 0);
+map_attributes(Route29Route46Gate, ROUTE_29_ROUTE_46_GATE, 0x00, 0);
 // map_attributes(FightingDojo, FIGHTING_DOJO, 0x00, 0);
 // map_attributes(SaffronGym, SAFFRON_GYM, 0x00, 0);
 // map_attributes(SaffronMart, SAFFRON_MART, 0x00, 0);
@@ -410,9 +419,9 @@ map_attributes(Pokecenter2F, POKECENTER_2F, 0x00, 0);
 // map_attributes(Route5CleanseTagHouse, ROUTE_5_CLEANSE_TAG_HOUSE, 0x00, 0);
 map_attributes(CherrygroveMart, CHERRYGROVE_MART, 0x00, 0);
 map_attributes(CherrygrovePokecenter1F, CHERRYGROVE_POKECENTER_1F, 0x00, 0);
-// map_attributes(CherrygroveGymSpeechHouse, CHERRYGROVE_GYM_SPEECH_HOUSE, 0x00, 0);
-// map_attributes(GuideGentsHouse, GUIDE_GENTS_HOUSE, 0x00, 0);
-// map_attributes(CherrygroveEvolutionSpeechHouse, CHERRYGROVE_EVOLUTION_SPEECH_HOUSE, 0x00, 0);
-// map_attributes(Route30BerryHouse, ROUTE_30_BERRY_HOUSE, 0x00, 0);
-// map_attributes(MrPokemonsHouse, MR_POKEMONS_HOUSE, 0x00, 0);
-// map_attributes(Route31VioletGate, ROUTE_31_VIOLET_GATE, 0x00, 0);
+map_attributes(CherrygroveGymSpeechHouse, CHERRYGROVE_GYM_SPEECH_HOUSE, 0x00, 0);
+map_attributes(GuideGentsHouse, GUIDE_GENTS_HOUSE, 0x00, 0);
+map_attributes(CherrygroveEvolutionSpeechHouse, CHERRYGROVE_EVOLUTION_SPEECH_HOUSE, 0x00, 0);
+map_attributes(Route30BerryHouse, ROUTE_30_BERRY_HOUSE, 0x00, 0);
+map_attributes(MrPokemonsHouse, MR_POKEMONS_HOUSE, 0x00, 0);
+map_attributes(Route31VioletGate, ROUTE_31_VIOLET_GATE, 0x00, 0);
