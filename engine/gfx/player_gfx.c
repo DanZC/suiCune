@@ -232,43 +232,33 @@ const char* GetPlayerIcon_Conv2(void){
     return ChrisSpriteGFX;
 }
 
+static const char ChrisCardPic[] = "gfx/trainer_card/chris_card.png";
+static const char KrisCardPic[] = "gfx/trainer_card/kris_card.png";
+static const char TrainerCardGFX[] = "gfx/trainer_card/trainer_card.png";
+
 void GetCardPic(void){
-    LD_HL(mChrisCardPic);
-    LD_A_addr(wPlayerGender);
-    BIT_A(PLAYERGENDER_FEMALE_F);
-    IF_Z goto got_pic;
-    LD_HL(mKrisCardPic);
+    // LD_HL(mChrisCardPic);
+    // LD_A_addr(wPlayerGender);
+    // BIT_A(PLAYERGENDER_FEMALE_F);
+    // IF_Z goto got_pic;
+    // LD_HL(mKrisCardPic);
 
-got_pic:
-    LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
-    LD_BC(0x23 * LEN_2BPP_TILE);
-    LD_A(BANK(aChrisCardPic));  // aka BANK(KrisCardPic)
-    CALL(aFarCopyBytes);
-    LD_HL(mTrainerCardGFX);
-    LD_DE(vTiles2 + LEN_2BPP_TILE * 0x23);
-    LD_BC(6 * LEN_2BPP_TILE);
-    LD_A(BANK(aTrainerCardGFX));
-    CALL(aFarCopyBytes);
-    RET;
-
-}
-
-void ChrisCardPic(void){
-// INCBIN "gfx/trainer_card/chris_card.2bpp"
-
-    return KrisCardPic();
-}
-
-void KrisCardPic(void){
-// INCBIN "gfx/trainer_card/kris_card.2bpp"
-
-    return TrainerCardGFX();
-}
-
-void TrainerCardGFX(void){
-// INCBIN "gfx/trainer_card/trainer_card.2bpp"
-
-    return GetPlayerBackpic();
+// got_pic:
+    const char* path = (!bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))
+        ? ChrisCardPic
+        : KrisCardPic;
+    // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
+    // LD_BC(0x23 * LEN_2BPP_TILE);
+    // LD_A(BANK(aChrisCardPic));  // aka BANK(KrisCardPic)
+    // CALL(aFarCopyBytes);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x00, path, 0, 0x23);
+    // LD_HL(mTrainerCardGFX);
+    // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x23);
+    // LD_BC(6 * LEN_2BPP_TILE);
+    // LD_A(BANK(aTrainerCardGFX));
+    // CALL(aFarCopyBytes);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x23, TrainerCardGFX, 0, 6);
+    // RET;
 }
 
 void GetPlayerBackpic(void){

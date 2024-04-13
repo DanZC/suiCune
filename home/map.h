@@ -199,5 +199,7 @@ extern const Script_fn_t* gCurMapSceneScriptsPointer;
 extern uint8_t gCurMapObjectEventCount;
 extern const struct ObjEvent* gCurMapObjectEventsPointer;
 
+extern const struct TileAnimFrame* gTilesetAnim;
+
 extern struct BGEvent gCurBGEvent;
 extern struct MapConnectionData gMapConnections[4];

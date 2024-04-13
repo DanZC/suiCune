@@ -4,6 +4,7 @@
 #include "menu_2.h"
 #include "intro_menu.h"
 #include "save.h"
+#include "trainer_card.h"
 #include "../pokegear/pokegear.h"
 #include "../items/pack.h"
 #include "../pokemon/party_menu.h"
@@ -720,9 +721,18 @@ void StartMenu_Status(void){
 
 //  Player status.
 uint8_t StartMenu_Status_Conv(void) {
-    struct cpu_registers_s regs = { 0 };
-    SafeCallGB(aStartMenu_Status, &regs);
-    return regs.a;
+    // struct cpu_registers_s regs = {};
+    // SafeCallGB(aStartMenu_Status, &regs);
+    // return regs.a;
+    // CALL(aFadeToMenu);
+    FadeToMenu_Conv();
+    // FARCALL(aTrainerCard);
+    TrainerCard();
+    // CALL(aCloseSubmenu);
+    CloseSubmenu_Conv();
+    // LD_A(STARTMENURET_REOPEN);
+    // RET;
+    return STARTMENURET_REOPEN;
 }
 
 void StartMenu_Pokedex(void){

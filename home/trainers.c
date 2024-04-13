@@ -147,12 +147,11 @@ bool v_CheckTrainerBattle_Conv(void){
     // LD_A(1);
     // LD_DE(wMap1Object);
     uint8_t a = 1;
-    struct MapObject* de = AbsGBToRAMAddr(awMap1Object);
 
 
     // loop:
     do {
-        
+        struct MapObject* de = wram->wMapObject + (a - 1);
     //  Start a battle if the object:
         // PUSH_AF;
         // PUSH_DE;
@@ -216,12 +215,18 @@ bool v_CheckTrainerBattle_Conv(void){
         // LD_D_hl;
         // LD_B(CHECK_FLAG);
         // CALL(aEventFlagAction);
+        uint16_t eventFlag;
+        if(de->objectScript <= NUM_OBJECTS)
+            eventFlag = gCurMapObjectEventsPointer[de->objectScript].trainer->event_flag;
+        else {
+            eventFlag = gb_read16(gb_read16(de->objectScript));
+        }
         // LD_A_C;
         // POP_DE;
         // POP_BC;
         // AND_A_A;
         // IF_Z goto startbattle;
-        if(EventFlagAction_Conv2(gb_read16(de->objectScript), CHECK_FLAG)) {
+        if(!EventFlagAction_Conv2(eventFlag, CHECK_FLAG)) {
         // startbattle:
             // POP_DE;
             // POP_AF;
@@ -249,7 +254,7 @@ bool v_CheckTrainerBattle_Conv(void){
         // INC_A;
         // CP_A(NUM_OBJECTS);
         // IF_NZ goto loop;
-    } while(de++, ++a != NUM_OBJECTS);
+    } while(++a != NUM_OBJECTS);
     // XOR_A_A;
     // RET;
     return false;
@@ -375,21 +380,21 @@ struct FacingDist FacingPlayerDistance_Conv(struct Object* bc){
     // LD_A_addr(wPlayerStandingMapX);
     // CP_A_D;
     // IF_Z goto CheckY;
-    if(wram->wPlayerStruct.mapX == d) {
+    if(wram->wPlayerStruct.nextMapX == d) {
     // CheckY:
         // LD_A_addr(wPlayerStandingMapY);
         // SUB_A_E;
         // IF_Z goto NotFacing;
-        if(wram->wPlayerStruct.mapY == e)
+        if(wram->wPlayerStruct.nextMapY == e)
             return (struct FacingDist){.facing = false, .dist = d, .dir = e};
         // IF_NC goto Above;
-        else if(wram->wPlayerStruct.mapY < e) {
+        else if(wram->wPlayerStruct.nextMapY < e) {
         //  Below
             // CPL;
             // INC_A;
             // LD_D_A;
             // LD_E(OW_UP);
-            d = (wram->wPlayerStruct.mapY ^ 0xff) + 1;
+            d = ((wram->wPlayerStruct.nextMapY - e) ^ 0xff) + 1;
             e = OW_UP;
         }
         else {
@@ -397,7 +402,7 @@ struct FacingDist FacingPlayerDistance_Conv(struct Object* bc){
 
         // Above:
             // LD_D_A;
-            d = wram->wPlayerStruct.mapY;
+            d = wram->wPlayerStruct.nextMapY - e;
             // LD_E(OW_DOWN);
             e = OW_DOWN;
         }
@@ -406,21 +411,21 @@ struct FacingDist FacingPlayerDistance_Conv(struct Object* bc){
     // LD_A_addr(wPlayerStandingMapY);
     // CP_A_E;
     // IF_Z goto CheckX;
-    else if(wram->wPlayerStruct.mapY == e) {
+    else if(wram->wPlayerStruct.nextMapY == e) {
     // CheckX:
         // LD_A_addr(wPlayerStandingMapX);
         // SUB_A_D;
         // IF_Z goto NotFacing;
-        if(wram->wPlayerStruct.mapX == d) 
+        if(wram->wPlayerStruct.nextMapX == d) 
             return (struct FacingDist){.facing = false, .dist = d, .dir = e};
         // IF_NC goto Left;
-        if(wram->wPlayerStruct.mapX < d) { 
+        if(wram->wPlayerStruct.nextMapX < d) { 
             //  Right
             // CPL;
             // INC_A;
             // LD_D_A;
             // LD_E(OW_LEFT);
-            d = (wram->wPlayerStruct.mapX ^ 0xff) + 1;
+            d = ((wram->wPlayerStruct.nextMapX - d) ^ 0xff) + 1;
             e = OW_LEFT;
         }
         else {
@@ -428,7 +433,7 @@ struct FacingDist FacingPlayerDistance_Conv(struct Object* bc){
         // Left:
             // LD_D_A;
             // LD_E(OW_RIGHT);
-            d = wram->wPlayerStruct.mapX;
+            d = wram->wPlayerStruct.nextMapX - d;
             e = OW_RIGHT;
         }
     }

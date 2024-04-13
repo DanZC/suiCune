@@ -277,9 +277,9 @@ bool Radio1Script(script_s* s) {
     s_end
     SCRIPT_END
 }
+// Lucky Channel
 bool Radio2Script(script_s* s) {
     SCRIPT_BEGIN
-// Lucky Channel
     opentext
     setval(MAPRADIO_LUCKY_CHANNEL)
     special(MapRadio)

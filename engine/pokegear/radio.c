@@ -995,7 +995,11 @@ PokedexEntryBanks:
 }
 
 void PokedexShow1(void){
-    CALL(aStartRadioStation);
+    // CALL(aStartRadioStation);
+    StartRadioStation_Conv();
+    // TODO: Convert Pokedex Show
+    wram->wNumRadioLinesPrinted = 1;
+    return;
 
 loop:
     CALL(aRandom);

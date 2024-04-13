@@ -31,6 +31,7 @@
 
 void (*gPokegearRadioChannelAddr)(void);
 struct SpriteAnim* gPokegearMapCursorObjectPointer = NULL;
+struct SpriteAnim* gTownMapCursorObjectPointer = NULL;
 
 //  Pokégear cards
 enum {
@@ -3907,187 +3908,261 @@ const char LetsAllSingName[] = "Let's All Sing!@";
 
 const char PokeFluteStationName[] = "# FLUTE@";
 
-void v_TownMap(void){
-    LD_HL(wOptions);
-    LD_A_hl;
-    PUSH_AF;
-    SET_hl(NO_TEXT_SCROLL);
+static void v_TownMap_loop(uint8_t d, uint8_t e){
+    do {
+    // loop:
+        // CALL(aJoyTextDelay);
+        JoyTextDelay_Conv();
+        // LD_HL(hJoyPressed);
+        // LD_A_hl;
+        // AND_A(B_BUTTON);
+        // RET_NZ ;
+        if(hram->hJoyPressed & B_BUTTON)
+            return;
 
-    LDH_A_addr(hInMenu);
-    PUSH_AF;
-    LD_A(0x1);
-    LDH_addr_A(hInMenu);
-
-    LD_A_addr(wVramState);
-    PUSH_AF;
-    XOR_A_A;
-    LD_addr_A(wVramState);
-
-    CALL(aClearBGPalettes);
-    CALL(aClearTilemap);
-    CALL(aClearSprites);
-    CALL(aDisableLCD);
-    CALL(aPokegear_LoadGFX);
-    FARCALL(aClearSpriteAnims);
-    LD_A(8);
-    CALL(aSkipMusic);
-    LD_A(LCDC_DEFAULT);
-    LDH_addr_A(rLCDC);
-    CALL(aTownMap_GetCurrentLandmark);
-    LD_addr_A(wTownMapPlayerIconLandmark);
-    LD_addr_A(wTownMapCursorLandmark);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    CALL(av_TownMap_InitTilemap);
-    CALL(aWaitBGMap2);
-    LD_A_addr(wTownMapPlayerIconLandmark);
-    CALL(aPokegearMap_InitPlayerIcon);
-    LD_A_addr(wTownMapCursorLandmark);
-    CALL(aPokegearMap_InitCursor);
-    LD_A_C;
-    LD_addr_A(wTownMapCursorObjectPointer);
-    LD_A_B;
-    LD_addr_A(wTownMapCursorObjectPointer + 1);
-    LD_B(SCGB_POKEGEAR_PALS);
-    CALL(aGetSGBLayout);
-    CALL(aSetPalettes);
-    LDH_A_addr(hCGB);
-    AND_A_A;
-    IF_Z goto dmg;
-    LD_A(0b11100100);
-    CALL(aDmgToCgbObjPal0);
-    CALL(aDelayFrame);
+        // LD_HL(hJoyLast);
+        // LD_A_hl;
+        // AND_A(D_UP);
+        // IF_NZ goto pressed_up;
+        if(hram->hJoyLast & D_UP) {
+        // pressed_up:
+            // LD_HL(wTownMapCursorLandmark);
+            // LD_A_hl;
+            // CP_A_D;
+            // IF_C goto okay;
+            // LD_A_E;
+            // DEC_A;
+            // LD_hl_A;
 
 
-dmg:
-    LD_A_addr(wTownMapPlayerIconLandmark);
-    CP_A(KANTO_LANDMARK);
-    IF_NC goto kanto;
-    LD_D(KANTO_LANDMARK - 1);
-    LD_E(1);
-    CALL(av_TownMap_loop);
-    goto resume;
+        // okay:
+            // INC_hl;
+            wram->wTownMapCursorLandmark = (wram->wTownMapCursorLandmark < d)
+                ? wram->wTownMapCursorLandmark + 1
+                : e;
+            // goto next;
+            break;
+        }
+
+        // LD_A_hl;
+        // AND_A(D_DOWN);
+        // IF_NZ goto pressed_down;
+        else if(hram->hJoyLast & D_DOWN) {
+        // pressed_down:
+            // LD_HL(wTownMapCursorLandmark);
+            // LD_A_hl;
+            // CP_A_E;
+            // IF_NZ goto okay2;
+            // LD_A_D;
+            // INC_A;
+            // LD_hl_A;
 
 
-kanto:
-    CALL(aTownMap_GetKantoLandmarkLimits);
-    CALL(av_TownMap_loop);
+        // okay2:
+            wram->wTownMapCursorLandmark = (wram->wTownMapCursorLandmark != e)
+                ? wram->wTownMapCursorLandmark - 1
+                : d;
+            // DEC_hl;
+            break;
+        }
+        else {
+        loop2:
+            // PUSH_DE;
+            // FARCALL(aPlaySpriteAnimations);
+            {
+                bank_push(BANK(aPlaySpriteAnimations));
+                PlaySpriteAnimations_Conv();
+                bank_pop;
+            }
+            // POP_DE;
+            // CALL(aDelayFrame);
+            DelayFrame();
+            // goto loop;
+        }
+    } while(1);
 
 
-resume:
-    POP_AF;
-    LD_addr_A(wVramState);
-    POP_AF;
-    LDH_addr_A(hInMenu);
-    POP_AF;
-    LD_addr_A(wOptions);
-    CALL(aClearBGPalettes);
-    RET;
-
-
-loop:
-    CALL(aJoyTextDelay);
-    LD_HL(hJoyPressed);
-    LD_A_hl;
-    AND_A(B_BUTTON);
-    RET_NZ ;
-
-    LD_HL(hJoyLast);
-    LD_A_hl;
-    AND_A(D_UP);
-    IF_NZ goto pressed_up;
-
-    LD_A_hl;
-    AND_A(D_DOWN);
-    IF_NZ goto pressed_down;
-
-loop2:
-    PUSH_DE;
-    FARCALL(aPlaySpriteAnimations);
-    POP_DE;
-    CALL(aDelayFrame);
-    goto loop;
-
-
-pressed_up:
-    LD_HL(wTownMapCursorLandmark);
-    LD_A_hl;
-    CP_A_D;
-    IF_C goto okay;
-    LD_A_E;
-    DEC_A;
-    LD_hl_A;
-
-
-okay:
-    INC_hl;
-    goto next;
-
-
-pressed_down:
-    LD_HL(wTownMapCursorLandmark);
-    LD_A_hl;
-    CP_A_E;
-    IF_NZ goto okay2;
-    LD_A_D;
-    INC_A;
-    LD_hl_A;
-
-
-okay2:
-    DEC_hl;
-
-
-next:
-    PUSH_DE;
-    LD_A_addr(wTownMapCursorLandmark);
-    CALL(aPokegearMap_UpdateLandmarkName);
-    LD_A_addr(wTownMapCursorObjectPointer);
-    LD_C_A;
-    LD_A_addr(wTownMapCursorObjectPointer + 1);
-    LD_B_A;
-    LD_A_addr(wTownMapCursorLandmark);
-    CALL(aPokegearMap_UpdateCursorPosition);
-    POP_DE;
+// next:
+    // PUSH_DE;
+    // LD_A_addr(wTownMapCursorLandmark);
+    // CALL(aPokegearMap_UpdateLandmarkName);
+    PokegearMap_UpdateLandmarkName_Conv(wram->wTownMapCursorLandmark);
+    // LD_A_addr(wTownMapCursorObjectPointer);
+    // LD_C_A;
+    // LD_A_addr(wTownMapCursorObjectPointer + 1);
+    // LD_B_A;
+    struct SpriteAnim* bc = gTownMapCursorObjectPointer;
+    // LD_A_addr(wTownMapCursorLandmark);
+    // CALL(aPokegearMap_UpdateCursorPosition);
+    PokegearMap_UpdateCursorPosition_Conv(bc, wram->wTownMapCursorLandmark);
+    // POP_DE;
     goto loop2;
+}
+
+static void v_TownMap_InitTilemap(void) {
+// InitTilemap:
+    // LD_A_addr(wTownMapPlayerIconLandmark);
+    // CP_A(KANTO_LANDMARK);
+    // IF_NC goto kanto2;
+    // LD_E(JOHTO_REGION);
+    // goto okay_tilemap;
 
 
-InitTilemap:
-    LD_A_addr(wTownMapPlayerIconLandmark);
-    CP_A(KANTO_LANDMARK);
-    IF_NC goto kanto2;
-    LD_E(JOHTO_REGION);
-    goto okay_tilemap;
+// kanto2:
+    // LD_E(KANTO_REGION);
+    uint8_t region = (wram->wTownMapPlayerIconLandmark >= KANTO_LANDMARK)
+        ? KANTO_REGION
+        : JOHTO_REGION;
 
+// okay_tilemap:
+    // FARCALL(aPokegearMap);
+    PokegearMap_Conv(region);
+    // LD_A(0x07);
+    // LD_BC(6);
+    // hlcoord(1, 0, wTilemap);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(1, 0, wram->wTilemap), 6, 0x07);
+    // hlcoord(0, 0, wTilemap);
+    // LD_hl(0x06);
+    *coord(0, 0, wram->wTilemap) = 0x06;
+    // hlcoord(7, 0, wTilemap);
+    // LD_hl(0x17);
+    *coord(7, 0, wram->wTilemap) = 0x17;
+    // hlcoord(7, 1, wTilemap);
+    // LD_hl(0x16);
+    *coord(7, 1, wram->wTilemap) = 0x16;
+    // hlcoord(7, 2, wTilemap);
+    // LD_hl(0x26);
+    *coord(7, 2, wram->wTilemap) = 0x26;
+    // LD_A(0x07);
+    // LD_BC(NAME_LENGTH);
+    // hlcoord(8, 2, wTilemap);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(8, 2, wram->wTilemap), NAME_LENGTH, 0x07);
+    // hlcoord(19, 2, wTilemap);
+    // LD_hl(0x17);
+    *coord(19, 2, wram->wTilemap) = 0x17;
+    // LD_A_addr(wTownMapCursorLandmark);
+    // CALL(aPokegearMap_UpdateLandmarkName);
+    PokegearMap_UpdateLandmarkName_Conv(wram->wTownMapCursorLandmark);
+    // FARCALL(aTownMapPals);
+    TownMapPals_Conv();
+    // RET;
+}
 
-kanto2:
-    LD_E(KANTO_REGION);
+void v_TownMap(void){
+    // LD_HL(wOptions);
+    // LD_A_hl;
+    // PUSH_AF;
+    uint8_t options = wram->wOptions;
+    // SET_hl(NO_TEXT_SCROLL);
+    bit_set(wram->wOptions, NO_TEXT_SCROLL);
 
-okay_tilemap:
-    FARCALL(aPokegearMap);
-    LD_A(0x07);
-    LD_BC(6);
-    hlcoord(1, 0, wTilemap);
-    CALL(aByteFill);
-    hlcoord(0, 0, wTilemap);
-    LD_hl(0x06);
-    hlcoord(7, 0, wTilemap);
-    LD_hl(0x17);
-    hlcoord(7, 1, wTilemap);
-    LD_hl(0x16);
-    hlcoord(7, 2, wTilemap);
-    LD_hl(0x26);
-    LD_A(0x07);
-    LD_BC(NAME_LENGTH);
-    hlcoord(8, 2, wTilemap);
-    CALL(aByteFill);
-    hlcoord(19, 2, wTilemap);
-    LD_hl(0x17);
-    LD_A_addr(wTownMapCursorLandmark);
-    CALL(aPokegearMap_UpdateLandmarkName);
-    FARCALL(aTownMapPals);
-    RET;
+    // LDH_A_addr(hInMenu);
+    // PUSH_AF;
+    uint8_t inMenu = hram->hInMenu;
+    // LD_A(0x1);
+    // LDH_addr_A(hInMenu);
+    hram->hInMenu = 0x1;
 
+    // LD_A_addr(wVramState);
+    // PUSH_AF;
+    uint8_t vramState = wram->wVramState;
+    // XOR_A_A;
+    // LD_addr_A(wVramState);
+    wram->wVramState = 0;
+
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
+    // CALL(aClearTilemap);
+    ClearTilemap_Conv2();
+    // CALL(aClearSprites);
+    ClearSprites_Conv();
+    // CALL(aDisableLCD);
+    DisableLCD_Conv();
+    // CALL(aPokegear_LoadGFX);
+    Pokegear_LoadGFX_Conv();
+    // FARCALL(aClearSpriteAnims);
+    ClearSpriteAnims_Conv();
+    // LD_A(8);
+    // CALL(aSkipMusic);
+    SkipMusic_Conv(8);
+    // LD_A(LCDC_DEFAULT);
+    // LDH_addr_A(rLCDC);
+    gb_write(rLCDC, LCDC_DEFAULT);
+    // CALL(aTownMap_GetCurrentLandmark);
+    uint8_t landmark = TownMap_GetCurrentLandmark_Conv();
+    // LD_addr_A(wTownMapPlayerIconLandmark);
+    wram->wTownMapPlayerIconLandmark = landmark;
+    // LD_addr_A(wTownMapCursorLandmark);
+    wram->wTownMapCursorLandmark = landmark;
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    // CALL(av_TownMap_InitTilemap);
+    v_TownMap_InitTilemap();
+    // CALL(aWaitBGMap2);
+    WaitBGMap2_Conv();
+    // LD_A_addr(wTownMapPlayerIconLandmark);
+    // CALL(aPokegearMap_InitPlayerIcon);
+    PokegearMap_InitPlayerIcon_Conv(landmark);
+    // LD_A_addr(wTownMapCursorLandmark);
+    // CALL(aPokegearMap_InitCursor);
+    struct SpriteAnim* bc = PokegearMap_InitCursor_Conv(wram->wTownMapCursorLandmark);
+    // LD_A_C;
+    // LD_addr_A(wTownMapCursorObjectPointer);
+    // LD_A_B;
+    // LD_addr_A(wTownMapCursorObjectPointer + 1);
+    gTownMapCursorObjectPointer = bc;
+    // LD_B(SCGB_POKEGEAR_PALS);
+    // CALL(aGetSGBLayout);
+    GetSGBLayout_Conv(SCGB_POKEGEAR_PALS);
+    // CALL(aSetPalettes);
+    SetPalettes_Conv();
+    // LDH_A_addr(hCGB);
+    // AND_A_A;
+    // IF_Z goto dmg;
+    if(hram->hCGB == 0) {
+    // dmg:
+        // LD_A_addr(wTownMapPlayerIconLandmark);
+        // CP_A(KANTO_LANDMARK);
+        // IF_NC goto kanto;
+        if(wram->wTownMapPlayerIconLandmark >= KANTO_LANDMARK)
+            goto kanto;
+        // LD_D(KANTO_LANDMARK - 1);
+        // LD_E(1);
+        // CALL(av_TownMap_loop);
+        v_TownMap_loop(KANTO_LANDMARK - 1, 1);
+        // goto resume;
+    }
+    else {
+        // LD_A(0b11100100);
+        // CALL(aDmgToCgbObjPal0);
+        DmgToCgbObjPal0_Conv(0b11100100);
+        // CALL(aDelayFrame);
+        DelayFrame();
+
+        kanto: {
+            // CALL(aTownMap_GetKantoLandmarkLimits);
+            u8_pair_s de = TownMap_GetKantoLandmarkLimits_Conv();
+            // CALL(av_TownMap_loop);
+            v_TownMap_loop(de.a, de.b);
+        }
+    }
+
+// resume:
+    // POP_AF;
+    // LD_addr_A(wVramState);
+    wram->wVramState = vramState;
+    // POP_AF;
+    // LDH_addr_A(hInMenu);
+    hram->hInMenu = inMenu;
+    // POP_AF;
+    // LD_addr_A(wOptions);
+    wram->wOptions = options;
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
+    // RET;
 }
 
 void PlayRadio(void){

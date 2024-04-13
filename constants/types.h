@@ -1412,6 +1412,11 @@ struct PalSet
     uint16_t colors[4];
 };
 
+struct TileAnimFrame {
+    uint8_t* tile;
+    void (*func)(uint8_t*);
+};
+
 struct TreeMonMap {
     uint8_t mapGroup;
     uint8_t mapNumber;
