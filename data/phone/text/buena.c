@@ -350,15 +350,15 @@ const txt_cmd_s BuenaPhoneFavoriteSlotMachineAnswerText[] = {
         t_line "going to the GAME"
         t_para "CORNER tomorrow."
         t_line "It's been a while."
-    #if defined(_CRYSTAL_AU)
-        t_para "Some machines pays"
-        t_line "out a lot."
-    #else
+    //#if defined(_CRYSTAL_AU)
+        //t_para "Some machines pays"
+        //t_line "out a lot."
+    //#else
         t_para "You see, I have my"
         t_line "favorite machine…"
         t_para "It pays out a lot,"
         t_line "I kid you not!"
-    #endif
+    //#endif
         t_para "Huh? Nuh-uh, it's"
         t_line "my secret!"
         t_para "You have to find"

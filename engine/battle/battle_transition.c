@@ -608,7 +608,7 @@ static const int8_t wedge5[] = {4, 0, 3, 0, 3, 0, 2, 0, 2, 0, 1, 0, 1, 0, 1, -1}
 //  quadrant bits
 #define RIGHT_QUADRANT_F (0)  //  bit set in UPPER_RIGHT and LOWER_RIGHT
 #define LOWER_QUADRANT_F (1)  //  bit set in LOWER_LEFT and LOWER_RIGHT
-#define spin_quadrant(_0, _1, _2, _3) (spin_quadrant_s){_0, _1, .coord=coord(_2, _3, ((struct wram_s*)gb.wram)->wTilemap)}
+#define spin_quadrant(_0, _1, _2, _3) {_0, _1, .coord=coord(_2, _3, wram_ptr(wTilemap))}
 
     static const spin_quadrant_s spin_quadrants[] = {
 // spin_quadrant: MACRO

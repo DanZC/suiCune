@@ -26,7 +26,7 @@
 #define SRAM_DISABLE 0x00
 #define SRAM_ENABLE 0x0a
 
-#define NUM_SRAM_BANKS 4
+#define NUM_SRAM_BANKS 8
 
 #define RTC_S 0x08   // Seconds   0-59 (0-3Bh)
 #define RTC_M 0x09   // Minutes   0-59 (0-3Bh)

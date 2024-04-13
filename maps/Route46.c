@@ -12,9 +12,11 @@ enum {
 };
 
 const Script_fn_t Route46_SceneScripts[] = {
+    0
 };
 
 const struct MapCallback Route46_MapCallbacks[] = {
+    0
 };
 
 const struct MapScripts Route46_MapScripts = {
@@ -26,6 +28,7 @@ const struct MapScripts Route46_MapScripts = {
 };
 
 static const struct CoordEvent Route46_CoordEvents[] = {
+    0
 };
 
 static const struct BGEvent Route46_BGEvents[] = {

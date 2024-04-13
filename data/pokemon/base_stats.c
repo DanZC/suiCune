@@ -1,5 +1,6 @@
 #include "../../constants.h"
 #include "../../util/variadic_macros.h"
+#include <stddef.h>
 #define tmhm_id_byte(_x) (_x >> 3)
 #define tmhm_value_(_x, _y) ((_x == (_y##_TMNUM >> 3))? (1 << (_y##_TMNUM & 7)): 0) 
 #define tm_byte_(_x, ...) [_x] = CPPX_INVOKE( CPPX_CONCAT ( tmhm_value_, PP_NARG(__VA_ARGS__) ) , (_x, __VA_ARGS__) )
@@ -257,7 +258,7 @@ const struct BaseData BasePokemonData[] = {
         .unusedFrontpic = 0, .unusedBackpic = 0, // unused (beta front/back pics)
         .eggGroups = dn(EGG_BUG, EGG_BUG ), // egg groups
     // tm/hm learnset
-        .TMHM = {}, 
+        .TMHM = { NULL }, 
     // end
     },
     [METAPOD-1] = {
@@ -275,7 +276,7 @@ const struct BaseData BasePokemonData[] = {
         .unusedFrontpic = 0, .unusedBackpic = 0, // unused (beta front/back pics)
         .eggGroups = dn(EGG_BUG, EGG_BUG ), // egg groups
     // tm/hm learnset
-        .TMHM = {}, 
+        .TMHM = { NULL },
     // end
     },
     [BUTTERFREE-1] = {
@@ -311,7 +312,7 @@ const struct BaseData BasePokemonData[] = {
         .unusedFrontpic = 0, .unusedBackpic = 0, // unused (beta front/back pics)
         .eggGroups = dn(EGG_BUG, EGG_BUG ), // egg groups
     // tm/hm learnset
-        .TMHM = {}, 
+        .TMHM = { NULL },
     // end
     },
     [KAKUNA-1] = {
@@ -329,7 +330,7 @@ const struct BaseData BasePokemonData[] = {
         .unusedFrontpic = 0, .unusedBackpic = 0, // unused (beta front/back pics)
         .eggGroups = dn(EGG_BUG, EGG_BUG ), // egg groups
     // tm/hm learnset
-        .TMHM = {}, 
+        .TMHM = { NULL },
     // end
     },
     [BEEDRILL-1] = {
@@ -2399,7 +2400,7 @@ const struct BaseData BasePokemonData[] = {
         .unusedFrontpic = 0, .unusedBackpic = 0, // unused (beta front/back pics)
         .eggGroups = dn(EGG_WATER_2, EGG_DRAGON ), // egg groups
     // tm/hm learnset
-        .TMHM = {}, 
+        .TMHM = { NULL },
     // end
     },
     [GYARADOS-1] = {
@@ -2453,7 +2454,7 @@ const struct BaseData BasePokemonData[] = {
         .unusedFrontpic = 0, .unusedBackpic = 0, // unused (beta front/back pics)
         .eggGroups = dn(EGG_DITTO, EGG_DITTO ), // egg groups
     // tm/hm learnset
-        .TMHM = {}, 
+        .TMHM = { NULL },
     // end
     },
     [EEVEE-1] = {
@@ -3695,7 +3696,7 @@ const struct BaseData BasePokemonData[] = {
         .unusedFrontpic = 0, .unusedBackpic = 0, // unused (beta front/back pics)
         .eggGroups = dn(EGG_NONE, EGG_NONE ), // egg groups
     // tm/hm learnset
-        .TMHM = {}, 
+        .TMHM = { NULL },
     // end
     },
     [WOBBUFFET-1] = {
@@ -3713,7 +3714,7 @@ const struct BaseData BasePokemonData[] = {
         .unusedFrontpic = 0, .unusedBackpic = 0, // unused (beta front/back pics)
         .eggGroups = dn(EGG_INDETERMINATE, EGG_INDETERMINATE ), // egg groups
     // tm/hm learnset
-        .TMHM = {}, 
+        .TMHM = { NULL },
     // end
     },
     [GIRAFARIG-1] = {
@@ -4307,7 +4308,7 @@ const struct BaseData BasePokemonData[] = {
         .unusedFrontpic = 0, .unusedBackpic = 0, // unused (beta front/back pics)
         .eggGroups = dn(EGG_GROUND, EGG_GROUND ), // egg groups
     // tm/hm learnset
-        .TMHM = {}, 
+        .TMHM = { NULL },
     // end
     },
     [TYROGUE-1] = {

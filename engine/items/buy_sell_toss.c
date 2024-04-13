@@ -59,7 +59,7 @@ bool Toss_Sell_Loop(void){
     // LD_addr_A(wItemQuantityChange);
     wram->wItemQuantityChange = 1;
 
-    u8_flag_s res = {};
+    u8_flag_s res = { 0 };
     do {
     // loop:
         // CALL(aBuySellToss_UpdateQuantityDisplay);  // update display

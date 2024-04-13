@@ -10,9 +10,11 @@ enum {
 };
 
 const Script_fn_t CherrygrovePokecenter1F_SceneScripts[] = {
+    0
 };
 
 const struct MapCallback CherrygrovePokecenter1F_MapCallbacks[] = {
+    0
 };
 
 const struct MapScripts CherrygrovePokecenter1F_MapScripts = {
@@ -24,9 +26,11 @@ const struct MapScripts CherrygrovePokecenter1F_MapScripts = {
 };
 
 static const struct CoordEvent CherrygrovePokecenter1F_CoordEvents[] = {
+    0
 };
 
 static const struct BGEvent CherrygrovePokecenter1F_BGEvents[] = {
+    0
 };
 
 static const struct WarpEventData CherrygrovePokecenter1F_WarpEvents[] = {

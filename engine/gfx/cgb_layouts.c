@@ -3,6 +3,7 @@
 #include "color.h"
 #include "../../home/copy.h"
 #include "../../gfx/sgb/pal_packets.h"
+#include <stddef.h>
 
 //  Replaces the functionality of sgb.asm to work with CGB hardware.
 
@@ -114,6 +115,7 @@ void LoadSGBLayoutCGB_Conv(uint8_t b){
 
 }
 
+// We really need to transition from the use of hardcoded palettes.
 void v_CGB_BattleGrayscale(void){
     // LD_HL(mPalPacket_BattleGrayscale + 1);
     // LD_DE(wBGPals1);
@@ -1326,7 +1328,7 @@ void GS_CGB_MysteryGift(void){
     RET;
 
 
-MysteryGiftPalette:
+//MysteryGiftPalette:
 // INCLUDE "gfx/mystery_gift/gs_mystery_gift.pal"
 
 }

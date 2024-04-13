@@ -20,6 +20,7 @@ const Script_fn_t Route27_SceneScripts[] = {
 };
 
 const struct MapCallback Route27_MapCallbacks[] = {
+    0
 };
 
 const struct MapScripts Route27_MapScripts = {

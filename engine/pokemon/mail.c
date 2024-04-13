@@ -615,14 +615,14 @@ Cancel:
     RET;
 
 
-TopMenuHeader:
+//TopMenuHeader:
     //db ['MENU_BACKUP_TILES'];  // flags
     //menu_coords ['8', '1', 'SCREEN_WIDTH - 2', '10'];
     //dw ['.TopMenuData'];
     //db ['1'];  // default option
 
 
-TopMenuData:
+//TopMenuData:
     //db ['SCROLLINGMENU_DISPLAY_ARROWS'];  // flags
     //db ['4', '0'];  // rows, columns
     //db ['SCROLLINGMENU_ITEMS_NORMAL'];  // item format
@@ -632,14 +632,14 @@ TopMenuData:
     //dba ['NULL']
 
 
-SubMenuHeader:
+//SubMenuHeader:
     //db ['MENU_BACKUP_TILES'];  // flags
     //menu_coords ['0', '0', '13', '9'];
     //dw ['.SubMenuData'];
     //db ['1'];  // default option
 
 
-SubMenuData:
+//SubMenuData:
     //db ['STATICMENU_CURSOR'];  // flags
     //db ['4'];  // items
     //db ['"READ MAIL@"'];

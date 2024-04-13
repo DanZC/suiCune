@@ -1141,7 +1141,7 @@ struct MapCallback {
     const Script_fn_t script;
 };
 
-#define map_callback(type, script) (struct MapCallback) {type, script}
+#define map_callback(type, script) {type, script}
 
 #if defined(__cplusplus) || defined(_MSC_VER)
 struct 
@@ -1157,7 +1157,7 @@ WarpEventData
     uint8_t mapNumber;
 };
 
-#define warp_event(_x, _y, _map, _warp) (struct WarpEventData) {.y=_y, .x=_x, .warpNumber=_warp, .mapGroup=GROUP_##_map, .mapNumber=MAP_##_map}
+#define warp_event(_x, _y, _map, _warp) {.y=_y, .x=_x, .warpNumber=_warp, .mapGroup=GROUP_##_map, .mapNumber=MAP_##_map}
 
 struct CoordEvent
 {
@@ -1167,7 +1167,7 @@ struct CoordEvent
     Script_fn_t script;
 };
 
-#define coord_event(_x, _y, _sceneId, _script) (struct CoordEvent) {.sceneId=_sceneId, .y=_y, .x=_x, .script=_script}
+#define coord_event(_x, _y, _sceneId, _script) {.sceneId=_sceneId, .y=_y, .x=_x, .script=_script}
 
 struct HiddenItem 
 {
@@ -1175,7 +1175,7 @@ struct HiddenItem
     uint16_t eventFlag;
 };
 
-#define hidden_item(_item, _evflag) (struct HiddenItem) {.item=_item, .eventFlag=_evflag}
+#define hidden_item(_item, _evflag) {.item=_item, .eventFlag=_evflag}
 
 struct ConditionalEvent 
 {
@@ -1196,7 +1196,7 @@ struct BGEvent
     };
 };
 
-#define bg_event(_x, _y, _function, _script) (struct BGEvent) {.y=_y, .x=_x, .function=_function, .data=_script}
+#define bg_event(_x, _y, _function, _script) {.y=_y, .x=_x, .function=_function, .data=_script}
 
 struct ItemBall {
     item_t item;
@@ -1235,7 +1235,7 @@ struct ObjEvent
     };
 };
 
-#define object_event(_x, _y, _sprite, _mvmt, _radiusX, _radiusY, _h1, _h2, _color, _func, _sight, _data, _evflag) (struct ObjEvent) {\
+#define object_event(_x, _y, _sprite, _mvmt, _radiusX, _radiusY, _h1, _h2, _color, _func, _sight, _data, _evflag) {\
     .x=_x + 4, .y=_y + 4, .sprite=_sprite, .movement=_mvmt, .radiusX=_radiusX, .radiusY=_radiusY, .h1=_h1, .h2=_h2, .color=_color, .function=_func,\
     .sightRange=_sight, .eventFlag=_evflag, .data=_data}
 
@@ -1312,7 +1312,7 @@ struct MenuCoords {
     uint8_t x2;
 };
 
-#define menu_coords(_x1, _y1, _x2, _y2) (struct MenuCoords){.y1 = _y1, .x1 = _x1, .y2 = _y2, .x2 = _x2}
+#define menu_coords(_x1, _y1, _x2, _y2) {.y1 = _y1, .x1 = _x1, .y2 = _y2, .x2 = _x2}
 
 struct MenuHeader {
     uint8_t flags;

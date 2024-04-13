@@ -47,7 +47,7 @@ void NextCallReceiveDelay(void){
     // ADD_HL_DE;
     // LD_A_hl;
     a = ReceiveCallDelays[a];
-#if defined(_DEBUG)
+#if defined(_DEBUG) && !defined(_MSC_VER)
     LD_H_A;
     LD_A(BANK(sDebugTimeCyclesSinceLastCall));
     CALL(aOpenSRAM);

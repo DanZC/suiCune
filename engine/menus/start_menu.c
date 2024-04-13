@@ -644,7 +644,7 @@ DontEndContest:
 
 //  Retire from the bug catching contest.
 uint8_t StartMenu_Quit_Conv(void) {
-    struct cpu_registers_s regs = {};
+    struct cpu_registers_s regs = { 0 };
     SafeCallGB(aStartMenu_Quit, &regs);
     return regs.a;
 }
@@ -720,7 +720,7 @@ void StartMenu_Status(void){
 
 //  Player status.
 uint8_t StartMenu_Status_Conv(void) {
-    struct cpu_registers_s regs = {};
+    struct cpu_registers_s regs = { 0 };
     SafeCallGB(aStartMenu_Status, &regs);
     return regs.a;
 }
@@ -743,7 +743,7 @@ empty:
 
 //  Pokedex
 uint8_t StartMenu_Pokedex_Conv(void) {
-    struct cpu_registers_s regs = {};
+    struct cpu_registers_s regs = { 0 };
     SafeCallGB(aStartMenu_Pokedex, &regs);
     return regs.a;
 }

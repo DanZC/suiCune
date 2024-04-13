@@ -1907,7 +1907,7 @@ void DrawPocketName(uint8_t pocket){
     // ADD_HL_DE;
     // LD_D_H;
     // LD_E_L;
-    const uint8_t* de = a.ptr + (pocket * 15);
+    const uint8_t* de = (uint8_t*)a.ptr + (pocket * 15);
     // hlcoord(0, 7, wTilemap);
     uint8_t* hl = coord(0, 7, wram->wTilemap);
     // LD_C(3);

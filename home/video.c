@@ -588,7 +588,7 @@ void UpdateBGMap_Conv(void) {
     // DEC_A;  // 2
     // IF_Z goto Attr;
     if(hram->hBGMapMode == 2)
-        return UpdateBGMap_Attr(GBToRAMAddr(hram->hBGMapAddress) + VRAM_BANK_SIZE);
+        return UpdateBGMap_Attr((uint8_t*)GBToRAMAddr(hram->hBGMapAddress) + VRAM_BANK_SIZE);
 
     //  BG Map 1
     // DEC_A;  // useless

@@ -358,7 +358,7 @@ void EggStatsJoypad(void){
     // BIT_A(A_BUTTON_F);
     // IF_NZ goto quit;
     if(!bit_test(a, A_BUTTON_F)) {
-#if defined(_DEBUG)
+#if defined(_DEBUG) && 0
         // CP_A(START);
         // IF_Z goto hatch;
         if(a == START) 
@@ -376,7 +376,7 @@ void EggStatsJoypad(void){
     StatsScreen_SetJumptableIndex_Conv(JT_EXIT);
     return;
 
-#if defined(_DEBUG)
+#if defined(_DEBUG) && 0
 
 hatch:
     LD_A_addr(wMonType);

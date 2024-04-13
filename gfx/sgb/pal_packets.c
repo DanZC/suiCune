@@ -10,7 +10,7 @@
 // 	ds 7, 0
 // ENDM
 
-#define sgb_pal_set(_0, _1, _2, _3) (struct PalSet) {.set=(SGB_PAL_SET << 3) + 1, .colors={PREDEFPAL_##_0,PREDEFPAL_##_1,PREDEFPAL_##_2,PREDEFPAL_##_3}}
+#define sgb_pal_set(_0, _1, _2, _3) {.set=(SGB_PAL_SET << 3) + 1, .colors={PREDEFPAL_##_0,PREDEFPAL_##_1,PREDEFPAL_##_2,PREDEFPAL_##_3}}
 
 // sgb_pal01: MACRO
 // 	db (SGB_PAL01 << 3) + 1

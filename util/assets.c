@@ -8,10 +8,11 @@
 #include "stb_image.h"
 #include <assert.h>
 #include <string.h>
+#include <stdio.h>
 
 int64_t fsize(FILE* file) {
     fseek(file, 0, SEEK_END);
-    int64_t size = ftello(file);
+    int64_t size = ftell(file);
     fseek(file, 0, SEEK_SET);
     return size;
 }

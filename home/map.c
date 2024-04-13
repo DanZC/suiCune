@@ -1961,7 +1961,7 @@ void FillMapConnections(void){
         // LD_A_addr(wNorthConnectionStripPointer + 1);
         // LD_H_A;
         asset_s a = LoadAsset(GetAnyMapPointer_Conv2(gMapConnections[NORTH_F].connectedMapGroup, gMapConnections[NORTH_F].connectedMapNumber)->attr->blocksPath);
-        uint8_t* hl = a.ptr + gMapConnections[NORTH_F].connectionStripOffset;
+        uint8_t* hl = (uint8_t*)a.ptr + gMapConnections[NORTH_F].connectionStripOffset;
         // LD_A_addr(wNorthConnectionStripLocation);
         // LD_E_A;
         // LD_A_addr(wNorthConnectionStripLocation + 1);
@@ -1993,7 +1993,7 @@ void FillMapConnections(void){
         // LD_A_addr(wSouthConnectionStripPointer + 1);
         // LD_H_A;
         asset_s a = LoadAsset(GetAnyMapPointer_Conv2(gMapConnections[SOUTH_F].connectedMapGroup, gMapConnections[SOUTH_F].connectedMapNumber)->attr->blocksPath);
-        uint8_t* hl = a.ptr + gMapConnections[SOUTH_F].connectionStripOffset;
+        uint8_t* hl = (uint8_t*)a.ptr + gMapConnections[SOUTH_F].connectionStripOffset;
         // LD_A_addr(wSouthConnectionStripLocation);
         // LD_E_A;
         // LD_A_addr(wSouthConnectionStripLocation + 1);
@@ -2025,7 +2025,7 @@ void FillMapConnections(void){
         // LD_A_addr(wWestConnectionStripPointer + 1);
         // LD_H_A;
         asset_s a = LoadAsset(GetAnyMapPointer_Conv2(gMapConnections[WEST_F].connectedMapGroup, gMapConnections[WEST_F].connectedMapNumber)->attr->blocksPath);
-        uint8_t* hl = a.ptr + gMapConnections[WEST_F].connectionStripOffset;
+        uint8_t* hl = (uint8_t*)a.ptr + gMapConnections[WEST_F].connectionStripOffset;
         // LD_A_addr(wWestConnectionStripLocation);
         // LD_E_A;
         // LD_A_addr(wWestConnectionStripLocation + 1);
@@ -2057,7 +2057,7 @@ void FillMapConnections(void){
         // LD_A_addr(wEastConnectionStripPointer + 1);
         // LD_H_A;
         asset_s a = LoadAsset(GetAnyMapPointer_Conv2(gMapConnections[EAST_F].connectedMapGroup, gMapConnections[EAST_F].connectedMapNumber)->attr->blocksPath);
-        uint8_t* hl = a.ptr + gMapConnections[EAST_F].connectionStripOffset;
+        uint8_t* hl = (uint8_t*)a.ptr + gMapConnections[EAST_F].connectionStripOffset;
         // LD_A_addr(wEastConnectionStripLocation);
         // LD_E_A;
         // LD_A_addr(wEastConnectionStripLocation + 1);

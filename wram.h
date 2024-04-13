@@ -3,28 +3,27 @@
 
 #if defined(__cplusplus) || defined(_MSC_VER)
 #pragma pack(push, 1)
-#define PACKED 
 #else
-#define PACKED __attribute__((packed))
+#define __attribute__((packed))
 #endif
 
 #define UNUSED
 
 // A struct representing WRAM.
-struct PACKED wram_s
+struct wram_s
 {
     // bank 0
     union {
         uint8_t wram0[0x1000];
-        struct PACKED {
+        struct {
             // Stack
-            struct PACKED {
+            struct {
                 // WRAM0
                 uint8_t wStackBottom[0x100 - 1];
                 uint8_t wStackTop[1];
             };
             // Audio RAM
-            struct PACKED {
+            struct {
                 // WRAM0
                 // nonzero if playing
                 uint8_t wMusicPlaying;
@@ -102,7 +101,7 @@ struct PACKED wram_s
                 uint8_t wDontPlayMapMusicOnReload;
             };
             // WRAM
-            struct PACKED {
+            struct {
                 // WRAM0
                 uint16_t wLZAddress; // unused
                 uint8_t wLZBank; // unused
@@ -138,10 +137,10 @@ struct PACKED wram_s
                 uint8_t skip_7[2];
                 uint8_t wMovementByteWasControlSwitch;
                 union {
-                    struct PACKED {
+                    struct {
                         uint8_t wObjectPriorities[NUM_OBJECT_STRUCTS];
                     };
-                    struct PACKED {
+                    struct {
                         uint16_t wMovementPointer;
                         uint8_t skip_8[3];
                         uint8_t wTempObjectCopyMapObjectIndex;
@@ -170,10 +169,10 @@ struct PACKED wram_s
             };
             uint8_t section_pad_0[1]; // Padding for WRAM
             // wSpriteAnims
-            struct PACKED {
+            struct {
                 // WRAM0
                 union {
-                    struct PACKED {
+                    struct {
                         //union wSpriteAnimData
                         // wSpriteAnimDict pairs keys with values
                         // keys: SPRITE_ANIM_DICT_* indexes (taken from SpriteAnimSeqData)
@@ -188,7 +187,7 @@ struct PACKED wram_s
                         struct SpriteAnim wSpriteAnim[(NUM_SPRITE_ANIM_STRUCTS + 1) - 1];
                         //void wSpriteAnimationStructsEnd
                     };
-                    struct PACKED {
+                    struct {
                         // mobile data
                         //union wMobileWRAM
                         uint8_t wMobileErrorCodeBuffer[3];
@@ -226,13 +225,13 @@ struct PACKED wram_s
                 uint8_t wCurIcon;
                 uint8_t wCurIconTile;
                 union {
-                    struct PACKED {
+                    struct {
                         union {
                             uint8_t wSpriteAnimID;
                             uint8_t wCurSpriteOAMFlags;
                         };
                     };
-                    struct PACKED {
+                    struct {
                         uint16_t wSpriteAnimAddrBackup;
                     };
                 };
@@ -268,7 +267,7 @@ struct PACKED wram_s
                 //void wMobileWRAMEnd
             };
             // Sprites
-            struct PACKED {
+            struct {
                 // WRAM0
                 // wVirtualOAMSprite00 - wVirtualOAMSprite39
                 //union wVirtualOAM
@@ -278,7 +277,7 @@ struct PACKED wram_s
                 //void wVirtualOAMEnd
             };
             // Tilemap
-            struct PACKED {
+            struct {
                 // WRAM0
                 // 20x18 grid of 8x8 tiles
                 tile_t wTilemap[SCREEN_WIDTH * SCREEN_HEIGHT];
@@ -286,16 +285,16 @@ struct PACKED wram_s
                 //void wTilemapEnd
             };
             // Miscellaneous
-            struct PACKED {
+            struct {
                 union {
-                    struct PACKED {
+                    struct {
                         // WRAM0
                         // surrounding tiles
                         // This buffer determines the size for the rest of the union;
                         // it uses exactly 480 bytes.
                         tile_t wSurroundingTiles[SURROUNDING_WIDTH * SURROUNDING_HEIGHT];
                     };
-                    struct PACKED {
+                    struct {
                         // WRAM0
                         // box save buffer
                         // SaveBoxAddress uses this buffer in three steps because it
@@ -303,12 +302,12 @@ struct PACKED wram_s
                         uint8_t wBoxPartialData[480];
                         //void wBoxPartialDataEnd
                     };
-                    struct PACKED {
+                    struct {
                         // WRAM0
                         // battle tower temp struct
                         struct BattleTowerData wBT_OTTemp;
                     };
-                    struct PACKED {
+                    struct {
                         // WRAM0
                         // battle data
                         //union wBattle
@@ -532,22 +531,22 @@ struct PACKED wram_s
                         uint8_t wEnemyJustGotFrozen;
                         //void wBattleEnd
                     };
-                    struct PACKED {
+                    struct {
                         // WRAM0
                         // link patch lists
                         uint8_t wPlayerPatchLists[200];
                         uint8_t wOTPatchLists[200];
                     };
-                    struct PACKED {
+                    struct {
                         // WRAM0
                         // mobile
                         uint8_t wMobileTransferData[480];
                     };
-                    struct PACKED {
+                    struct {
                         // WRAM0
                         // This union spans 200 bytes.
                         union {
-                            struct PACKED {
+                            struct {
                                 // timeset temp storage
                                 uint8_t wTimeSetBuffer[20];
                                 uint8_t wInitHourBuffer;
@@ -556,17 +555,17 @@ struct PACKED wram_s
                                 uint8_t skip_26[19];
                                 //void wTimeSetBufferEnd
                             };
-                            struct PACKED {
+                            struct {
                                 // hall of fame temp struct
                                 struct HallOfFameData wHallOfFameTemp;
                             };
-                            struct PACKED {
+                            struct {
                                 // odd egg
                                 struct PartyMon wOddEgg;
                                 uint8_t wOddEggName[MON_NAME_LENGTH];
                                 uint8_t wOddEggOT[NAME_LENGTH];
                             };
-                            struct PACKED {
+                            struct {
                                 // debug mon color picker
                                 //union wDebugMiddleColors
                                 uint8_t wDebugLightColor[2];
@@ -576,7 +575,7 @@ struct PACKED wram_s
                                 uint8_t wDebugGreenChannel;
                                 uint8_t wDebugBlueChannel;
                             };
-                            struct PACKED {
+                            struct {
                                 // debug tileset color picker
                                 //union wDebugPalette
                                 uint8_t wDebugWhiteTileColor[2];
@@ -584,7 +583,7 @@ struct PACKED wram_s
                                 uint8_t wDebugDarkTileColor[2];
                                 uint8_t wDebugBlackTileColor[2];
                             };
-                            struct PACKED {
+                            struct {
                                 uint8_t wc608[16];
                                 uint8_t wc618[37];
                                 uint8_t wc63d[5];
@@ -600,7 +599,7 @@ struct PACKED wram_s
                         };
                         // This union spans 280 bytes.
                         union {
-                            struct PACKED {
+                            struct {
                                 // pokedex
                                 //union wPokedexDataStart
                                 uint8_t wPokedexOrder[0x100];
@@ -647,7 +646,7 @@ struct PACKED wram_s
                                 // endc
                                 uint8_t skip_28[2];
                             };
-                            struct PACKED {
+                            struct {
                                 // pokegear
                                 uint8_t wPokegearPhoneDisplayPosition;
                                 uint8_t wPokegearPhoneCursorPosition;
@@ -661,7 +660,7 @@ struct PACKED wram_s
                                 uint16_t wPokegearRadioChannelAddr;
                                 uint8_t wPokegearRadioMusicPlaying;
                             };
-                            struct PACKED {
+                            struct {
                                 // trade
                                 struct TradeMon wPlayerTrademon;
                                 struct TradeMon wOTTrademon;
@@ -671,7 +670,7 @@ struct PACKED wram_s
                                 uint8_t wLinkTradeSendmonSpecies;
                                 uint8_t wLinkTradeGetmonSpecies;
                             };
-                            struct PACKED {
+                            struct {
                                 // naming screen
                                 uint16_t wNamingScreenDestinationPointer;
                                 uint8_t wNamingScreenCurNameLength;
@@ -681,7 +680,7 @@ struct PACKED wram_s
                                 uint8_t wNamingScreenLastCharacter;
                                 uint16_t wNamingScreenStringEntryCoord;
                             };
-                            struct PACKED {
+                            struct {
                                 // slot machine
                                 //union wSlots
                                 struct SlotReel wReel1;
@@ -704,7 +703,7 @@ struct PACKED wram_s
                                 uint8_t wSlotsDataEnd[28];
                                 //void wSlotsEnd
                             };
-                            struct PACKED {
+                            struct {
                                 // card flip
                                 uint8_t wDeck[4 * 6];
                                 //union wDeckEnd
@@ -719,7 +718,7 @@ struct PACKED wram_s
                                 uint8_t wBetaPokerSGBCol;
                                 uint8_t wBetaPokerSGBRow;
                             };
-                            struct PACKED {
+                            struct {
                                 // unused memory game
                                 uint8_t wMemoryGameCards[9 * 5];
                                 //union wMemoryGameCardsEnd
@@ -733,11 +732,11 @@ struct PACKED wram_s
                                 uint8_t wMemoryGameCounter;
                                 uint8_t wMemoryGameNumCardsMatched;
                             };
-                            struct PACKED {
+                            struct {
                                 // unown puzzle
                                 uint8_t wPuzzlePieces[6 * 6];
                             };
-                            struct PACKED {
+                            struct {
                                 // mobile data
                                 uint8_t wc6d0[56];
                                 uint8_t wc708;
@@ -767,7 +766,7 @@ struct PACKED wram_s
                 };
             };
             // Unused Map Buffer
-            struct PACKED {
+            struct {
                 // WRAM0
                 // This was a buffer for map-related pointers in the 1997 G/S prototype.
                 // See wMapBuffer in pokegold-spaceworld's wram.asm.
@@ -775,15 +774,15 @@ struct PACKED wram_s
                 //void wUnusedMapBufferEnd
             };
             // Overworld Map
-            struct PACKED {
+            struct {
                 union {
-                    struct PACKED {
+                    struct {
                         // WRAM0
                         // overworld map blocks
                         uint8_t wOverworldMapBlocks[1300];
                         //void wOverworldMapBlocksEnd
                     };
-                    struct PACKED {
+                    struct {
                         // WRAM0
                         // GB Printer data
                         //union wGameboyPrinterRAM
@@ -814,7 +813,7 @@ struct PACKED wram_s
                         uint8_t skip_32[16];
                         //void wGameboyPrinterRAMEnd
                     };
-                    struct PACKED {
+                    struct {
                         // WRAM0
                         // bill's pc data
                         //union wBillsPCData
@@ -834,23 +833,23 @@ struct PACKED wram_s
                         uint8_t skip_34[5];
                         //void wBillsPCDataEnd
                     };
-                    struct PACKED {
+                    struct {
                         // WRAM0
                         // Hall of Fame data
                         struct HallOfFameData wHallOfFamePokemonList;
                     };
-                    struct PACKED {
+                    struct {
                         // WRAM0
                         // debug color picker
                         uint8_t wDebugOriginalColors[256 * 4];
                     };
-                    struct PACKED {
+                    struct {
                         // WRAM0
                         // raw link data
                         uint8_t wLinkData[1300];
                         //void wLinkDataEnd
                     };
-                    struct PACKED {
+                    struct {
                         // WRAM0
                         // link data members
                         uint8_t wLinkPlayerName[NAME_LENGTH];
@@ -859,7 +858,7 @@ struct PACKED wram_s
                         uint8_t wLinkPartyEnd;
                         // older code doesn't check PartyCount
                         union {
-                            struct PACKED {
+                            struct {
                                 // link player data
                                 // wLinkPlayerPartyMon1 - wLinkPlayerPartyMon6
                                 //union wLinkPlayerData
@@ -875,7 +874,7 @@ struct PACKED wram_s
                                 // for n, 1, PARTY_LENGTH + 1
                                 uint8_t wLinkPlayerPartyMonNickname[(PARTY_LENGTH + 1) - 1][MON_NAME_LENGTH];
                             };
-                            struct PACKED {
+                            struct {
                                 // time capsule party data
                                 // wTimeCapsulePartyMon1 - wTimeCapsulePartyMon6
                                 //union wTimeCapsulePlayerData
@@ -891,14 +890,14 @@ struct PACKED wram_s
                                 // for n, 1, PARTY_LENGTH + 1
                                 uint8_t wTimeCapsulePartyMonNickname[(PARTY_LENGTH + 1) - 1][MON_NAME_LENGTH];
                             };
-                            struct PACKED {
+                            struct {
                                 // link patch lists
                                 uint8_t wLinkPatchList1[SERIAL_PATCH_LIST_LENGTH];
                                 uint8_t wLinkPatchList2[SERIAL_PATCH_LIST_LENGTH];
                             };
                         };
                     };
-                    struct PACKED {
+                    struct {
                         // WRAM0
                         // link data prep
                         uint8_t skip_35[1000];
@@ -908,7 +907,7 @@ struct PACKED wram_s
                         // for n, 1, PARTY_LENGTH + 1
                         uint16_t wLinkOTPartyMonType[PARTY_LENGTH];
                     };
-                    struct PACKED {
+                    struct {
                         // WRAM0
                         // link mail data
                         uint8_t skip_36[500];
@@ -924,27 +923,27 @@ struct PACKED wram_s
                         uint8_t wOTPlayerMailPatchSet[103 + SERIAL_MAIL_PREAMBLE_LENGTH];
                         uint8_t wLinkOTMailEnd[10];
                     };
-                    struct PACKED {
+                    struct {
                         // WRAM0
                         // received link mail data
                         uint8_t skip_37[500];
                         uint8_t wLinkReceivedMail[MAIL_STRUCT_LENGTH * PARTY_LENGTH];
                         uint8_t wLinkReceivedMailEnd;
                     };
-                    struct PACKED {
+                    struct {
                         // WRAM0
                         // mystery gift data
                         uint8_t wMysteryGiftStaging[80];
                         union {
-                            struct PACKED {
+                            struct {
                                 uint8_t wMysteryGiftTrainer[1 + (1 + 1 + NUM_MOVES) * PARTY_LENGTH + 1];
                                 //void wMysteryGiftTrainerEnd
                             };
-                            struct PACKED {
+                            struct {
                                 uint8_t wNameCardData[NAME_LENGTH + 2 + 2 + 1 + 8 + 12];
                                 //void wNameCardDataEnd
                             };
-                            struct PACKED {
+                            struct {
                                 uint8_t wMysteryGiftCardHolderName[PLAYER_NAME_LENGTH];
                             };
                         };
@@ -971,7 +970,7 @@ struct PACKED wram_s
                         uint8_t skip_40[1];
                         //void wMysteryGiftPlayerDataEnd
                     };
-                    struct PACKED {
+                    struct {
                         // WRAM0
                         uint8_t skip_41[0x200];
                         // mystery gift data
@@ -979,14 +978,14 @@ struct PACKED wram_s
                         uint8_t wMysteryGiftMessageCount;
                         uint8_t wMysteryGiftStagedDataLength;
                     };
-                    struct PACKED {
+                    struct {
                         // WRAM0
                         uint8_t skip_42[0x200];
                         // blank credits tile buffer
                         uint8_t wCreditsBlankFrame2bpp[4 * 4 * LEN_2BPP_TILE];
                         //void wCreditsBlankFrame2bppEnd
                     };
-                    struct PACKED {
+                    struct {
                         // WRAM0
                         // mobile
                         uint8_t wc800;
@@ -1135,7 +1134,7 @@ struct PACKED wram_s
                         // _DEBUG
                         // )
                     };
-                    // struct PACKED {
+                    // struct {
                         // // WRAM0
                         // // debug room RTC values
                         // uint8_t wDebugRoomRTCSec;
@@ -1158,17 +1157,17 @@ struct PACKED wram_s
                         // uint16_t wDebugRoomROMChecksum;
                         // uint8_t wDebugRoomCurChecksumBank;
                         // union {
-                        //     struct PACKED {
+                        //     struct {
                         //         // debug room new item values
                         //         uint8_t wDebugRoomItemID;
                         //         uint8_t wDebugRoomItemQuantity;
                         //     };
-                        //     struct PACKED {
+                        //     struct {
                         //         // debug room new pokemon values
                         //         struct BoxMon wDebugRoomMon;
                         //         uint8_t wDebugRoomMonBox;
                         //     };
-                        //     struct PACKED {
+                        //     struct {
                         //         // debug room GB ID values
                         //         uint16_t wDebugRoomGBID;
                         //     };
@@ -1179,22 +1178,22 @@ struct PACKED wram_s
             };
             uint8_t section_pad_1[12]; // Padding for Overworld Map
             // Video
-            struct PACKED {
+            struct {
                 // WRAM0
                 union {
-                    struct PACKED {
+                    struct {
                         // bg map
                         uint8_t wBGMapBuffer[40];
                         uint8_t wBGMapPalBuffer[40];
                         uint8_t wBGMapBufferPointers[20 * 2];
                         //void wBGMapBufferEnd
                     };
-                    struct PACKED {
+                    struct {
                         // credits
                         uint16_t wCreditsPos;
                         uint8_t wCreditsTimer;
                     };
-                    struct PACKED {
+                    struct {
                         // mobile data
                         uint16_t wMobileMonSpeciesPointer;
                         uint16_t wMobileMonStructPointer;
@@ -1202,7 +1201,7 @@ struct PACKED wram_s
                         uint16_t wMobileMonNicknamePointer;
                         uint16_t wMobileMonMailPointer;
                     };
-                    struct PACKED {
+                    struct {
                         // more mobile data
                         uint8_t wcd20[1];
                         uint8_t wcd21[1];
@@ -1219,10 +1218,10 @@ struct PACKED wram_s
                             uint8_t wcd2a;
                         };
                         union {
-                            struct PACKED {
+                            struct {
                                 uint8_t wTempOddEggNickname[MON_NAME_LENGTH];
                             };
-                            struct PACKED {
+                            struct {
                                 uint8_t wcd2b[1];
                                 uint8_t wcd2c[1];
                                 uint8_t wcd2d[1];
@@ -1353,7 +1352,7 @@ struct PACKED wram_s
                 uint8_t wAttrmap[SCREEN_WIDTH * SCREEN_HEIGHT];
                 //void wAttrmapEnd
                 union {
-                    struct PACKED {
+                    struct {
                         // addresses dealing with serial comms
                         uint8_t skip_47[1];
                         uint8_t wcf42;
@@ -1361,13 +1360,13 @@ struct PACKED wram_s
                         uint8_t wcf44;
                         uint8_t wcf45;
                     };
-                    struct PACKED {
+                    struct {
                         uint8_t wTileAnimBuffer[1 * LEN_2BPP_TILE];
                     };
                 };
                 // link data
                 union {
-                    struct PACKED {
+                    struct {
                         uint8_t wOtherPlayerLinkMode;
                         uint8_t wOtherPlayerLinkAction;
                         uint8_t skip_49[3];
@@ -1375,7 +1374,7 @@ struct PACKED wram_s
                         uint8_t wUnusedLinkAction;
                         uint8_t skip_50[3];
                     };
-                    struct PACKED {
+                    struct {
                         uint8_t wLinkReceivedSyncBuffer[5];
                         uint8_t wLinkPlayerSyncBuffer[5];
                     };
@@ -1391,23 +1390,23 @@ struct PACKED wram_s
                     uint8_t wBattleTowerBattleEnded;
                 };
                 union {
-                    struct PACKED {
+                    struct {
                         // intro data
                         uint8_t wIntroSceneFrameCounter;
                         uint8_t wIntroSceneTimer;
                     };
-                    struct PACKED {
+                    struct {
                         // title data
                         uint8_t wTitleScreenSelectedOption;
                         uint16_t wTitleScreenTimer;
                     };
-                    struct PACKED {
+                    struct {
                         // credits data
                         uint8_t wCreditsBorderFrame;
                         uint8_t wCreditsBorderMon;
                         uint8_t wCreditsLYOverride;
                     };
-                    struct PACKED {
+                    struct {
                         // pokedex
                         uint8_t wPrevDexEntryJumptableIndex;
                         // if
@@ -1424,53 +1423,53 @@ struct PACKED wram_s
                         // endc
                         uint8_t wUnusedPokedexByte;
                     };
-                    struct PACKED {
+                    struct {
                         // pokegear
                         uint8_t wPokegearCard;
                         uint8_t wPokegearMapRegion;
                         uint8_t wUnusedPokegearByte;
                     };
-                    struct PACKED {
+                    struct {
                         // pack
                         uint8_t wPackJumptableIndex;
                         uint8_t wCurPocket;
                         uint8_t wPackUsedItem;
                     };
-                    struct PACKED {
+                    struct {
                         // trainer card badges
                         uint8_t wTrainerCardBadgeFrameCounter;
                         uint8_t wTrainerCardBadgeTileID;
                         uint8_t wTrainerCardBadgeAttributes;
                     };
-                    struct PACKED {
+                    struct {
                         // slot machine
                         uint8_t wSlotsDelay;
                         uint8_t skip_52[1];
                         uint8_t wUnusedSlotReelIconDelay;
                     };
-                    struct PACKED {
+                    struct {
                         // card flip
                         uint8_t wCardFlipCursorY;
                         uint8_t wCardFlipCursorX;
                         uint8_t wCardFlipWhichCard;
                     };
-                    struct PACKED {
+                    struct {
                         // unused memory game
                         uint8_t wMemoryGameCardChoice;
                     };
-                    struct PACKED {
+                    struct {
                         // magnet train
                         uint8_t wMagnetTrainOffset;
                         uint8_t wMagnetTrainPosition;
                         uint8_t wMagnetTrainWaitCounter;
                     };
-                    struct PACKED {
+                    struct {
                         // unown puzzle data
                         uint8_t wHoldingUnownPuzzlePiece;
                         uint8_t wUnownPuzzleCursorPosition;
                         uint8_t wUnownPuzzleHeldPiece;
                     };
-                    struct PACKED {
+                    struct {
                         // battle transitions
                         uint8_t wBattleTransitionCounter;
                         union {
@@ -1478,33 +1477,33 @@ struct PACKED wram_s
                             uint8_t wBattleTransitionSpinQuadrant;
                         };
                     };
-                    struct PACKED {
+                    struct {
                         // bill's pc
                         uint8_t wUnusedBillsPCData[3];
                     };
-                    struct PACKED {
+                    struct {
                         // debug mon color picker
                         uint8_t wDebugColorRGBJumptableIndex;
                         uint8_t wDebugColorCurColor;
                         uint8_t wDebugColorCurMon;
                     };
-                    struct PACKED {
+                    struct {
                         // debug tileset color picker
                         uint8_t wDebugTilesetCurPalette;
                         uint8_t wDebugTilesetRGBJumptableIndex;
                         uint8_t wDebugTilesetCurColor;
                     };
-                    struct PACKED {
+                    struct {
                         // stats screen
                         uint8_t wStatsScreenFlags;
                     };
-                    struct PACKED {
+                    struct {
                         // battle tower
                         uint8_t wNrOfBeatenBattleTowerTrainers;
                         uint8_t skip_53[1];
                         uint8_t wBattleTowerRoomMenuJumptableIndex;
                     };
-                    struct PACKED {
+                    struct {
                         // miscellaneous
                         union {
                             uint8_t wFrameCounter;
@@ -1520,7 +1519,7 @@ struct PACKED wram_s
                         };
                         uint8_t wUnusedTradeAnimPlayEvolutionMusic;
                     };
-                    struct PACKED {
+                    struct {
                         // mobile
                         uint8_t wcf64;
                         uint8_t wcf65;
@@ -1559,14 +1558,14 @@ struct PACKED wram_s
                 //union wMenuData
                 uint8_t wMenuDataFlags;
                 union {
-                    struct PACKED {
+                    struct {
                         // Vertical Menu/DoNthMenu/SetUpMenu
                         uint8_t wMenuDataItems;
                         uint16_t wMenuDataIndicesPointer;
                         uint16_t wMenuDataDisplayFunctionPointer;
                         uint16_t wMenuDataPointerTableAddr;
                     };
-                    struct PACKED {
+                    struct {
                         // 2D Menu
                         uint8_t wMenuData_2DMenuDimensions;
                         uint8_t wMenuData_2DMenuSpacing;
@@ -1575,7 +1574,7 @@ struct PACKED wram_s
                         uint8_t wMenuData_2DMenuFunctionBank;
                         uint16_t wMenuData_2DMenuFunctionAddr;
                     };
-                    struct PACKED {
+                    struct {
                         // Scrolling Menu
                         uint8_t wMenuData_ScrollingMenuHeight;
                         uint8_t wMenuData_ScrollingMenuWidth;
@@ -1682,9 +1681,9 @@ struct PACKED wram_s
     // bank 1
     union {
         uint8_t wram1[0x1000];
-        struct PACKED {
+        struct {
             // WRAM 1
-            struct PACKED {
+            struct {
                 // WRAMX
                 // a $540-byte buffer that continues past this SECTION
                 //union wGBCOnlyDecompressBuffer
@@ -1693,9 +1692,9 @@ struct PACKED wram_s
                 uint8_t wDefaultSpawnpoint;
             };
             // Miscellaneous WRAM 1
-            struct PACKED {
+            struct {
                 union {
-                    struct PACKED {
+                    struct {
                         // WRAMX
                         // mon buffer
                         uint8_t wBufferMonNickname[MON_NAME_LENGTH];
@@ -1705,7 +1704,7 @@ struct PACKED wram_s
                         uint8_t wMonOrItemNameBuffer[NAME_LENGTH];
                         uint8_t skip_64[NAME_LENGTH];
                     };
-                    struct PACKED {
+                    struct {
                         // WRAMX
                         // poke seer
                         uint8_t wSeerAction;
@@ -1719,7 +1718,7 @@ struct PACKED wram_s
                         uint8_t wSeerCaughtData;
                         uint8_t wSeerCaughtGender;
                     };
-                    struct PACKED {
+                    struct {
                         // WRAMX
                         // mail temp storage
                         //union wTempMail
@@ -1727,7 +1726,7 @@ struct PACKED wram_s
                         // mailmsg
                         // wTempMail
                     };
-                    struct PACKED {
+                    struct {
                         // WRAMX
                         // bug-catching contest
                         // struct BugContestWinner wBugContestResults;
@@ -1741,7 +1740,7 @@ struct PACKED wram_s
                         uint8_t skip_65[4];
                         uint8_t wBugContestWinnerName[NAME_LENGTH];
                     };
-                    struct PACKED {
+                    struct {
                         // WRAMX
                         // mart items
                         uint8_t wMartItem1BCD[3];
@@ -1755,29 +1754,29 @@ struct PACKED wram_s
                         uint8_t wMartItem9BCD[3];
                         uint8_t wMartItem10BCD[3];
                     };
-                    struct PACKED {
+                    struct {
                         // WRAMX
                         // town map data
                         uint8_t wTownMapPlayerIconLandmark;
                         union {
-                            struct PACKED {
+                            struct {
                                 uint8_t wTownMapCursorLandmark;
                                 uint16_t wTownMapCursorObjectPointer;
                             };
-                            struct PACKED {
+                            struct {
                                 uint16_t wTownMapCursorCoordinates;
                                 uint8_t wStartFlypoint;
                                 uint8_t wEndFlypoint;
                             };
                         };
                     };
-                    struct PACKED {
+                    struct {
                         // WRAMX
                         // phone call data
                         uint8_t wPhoneScriptBank;
                         uint16_t wPhoneCaller;
                     };
-                    struct PACKED {
+                    struct {
                         // WRAMX
                         // radio data
                         uint8_t wCurRadioLine;
@@ -1788,12 +1787,12 @@ struct PACKED wram_s
                         uint8_t skip_66[5];
                         uint8_t wRadioText[2 * SCREEN_WIDTH];
                     };
-                    struct PACKED {
+                    struct {
                         // WRAMX
                         // lucky number show
                         uint8_t wLuckyNumberDigitsBuffer[5];
                     };
-                    struct PACKED {
+                    struct {
                         // WRAMX
                         // movement buffer data
                         uint8_t wMovementBufferCount;
@@ -1802,7 +1801,7 @@ struct PACKED wram_s
                         uint16_t wUnusedMovementBufferPointer;
                         uint8_t wMovementBuffer[55];
                     };
-                    struct PACKED {
+                    struct {
                         // WRAMX
                         // box printing
                         uint8_t wWhichBoxMonToPrint;
@@ -1811,20 +1810,20 @@ struct PACKED wram_s
                         uint8_t wBankOfBoxToPrint;
                         uint8_t wWhichBoxToPrint;
                     };
-                    struct PACKED {
+                    struct {
                         // WRAMX
                         // Unown printing
                         uint8_t wPrintedUnownTileSource[1 * LEN_2BPP_TILE];
                         uint8_t wPrintedUnownTileDest[1 * LEN_2BPP_TILE];
                     };
-                    struct PACKED {
+                    struct {
                         // WRAMX
                         // trainer HUD data
                         uint8_t skip_67[1];
                         uint8_t wPlaceBallsDirection;
                         uint8_t wTrainerHUDTiles[4];
                     };
-                    struct PACKED {
+                    struct {
                         // WRAMX
                         // mobile participant nicknames
                         uint8_t skip_68[4];
@@ -1832,74 +1831,74 @@ struct PACKED wram_s
                         uint8_t wMobileParticipant2Nickname[NAME_LENGTH_JAPANESE];
                         uint8_t wMobileParticipant3Nickname[NAME_LENGTH_JAPANESE];
                     };
-                    struct PACKED {
+                    struct {
                         // WRAMX
                         // battle exp gain
                         uint8_t wExperienceGained[3];
                     };
-                    struct PACKED {
+                    struct {
                         // WRAMX
                         // earthquake data buffer
                         uint8_t wEarthquakeMovementDataBuffer[5];
                     };
-                    struct PACKED {
+                    struct {
                         // WRAMX
                         // switching items in pack
                         uint8_t wSwitchItemBuffer[2];
                         // may store 1 or 2 bytes
                     };
-                    struct PACKED {
+                    struct {
                         // WRAMX
                         // switching pokemon in party
                         // may store NAME_LENGTH, PARTYMON_STRUCT_LENGTH, or MAIL_STRUCT_LENGTH bytes
                         uint8_t wSwitchMonBuffer[48];
                     };
-                    struct PACKED {
+                    struct {
                         // WRAMX
                         // giving pokemon mail
                         uint8_t wMonMailMessageBuffer[MAIL_MSG_LENGTH + 1];
                     };
-                    struct PACKED {
+                    struct {
                         // WRAMX
                         // bill's pc
                         union {
-                            struct PACKED {
+                            struct {
                                 uint8_t wBoxNameBuffer[BOX_NAME_LENGTH];
                             };
-                            struct PACKED {
+                            struct {
                                 uint8_t skip_69[1];
                                 uint8_t wBillsPCTempListIndex;
                                 uint8_t wBillsPCTempBoxCount;
                             };
                         };
                     };
-                    struct PACKED {
+                    struct {
                         // WRAMX
                         // prof. oak's pc
                         uint8_t wTempPokedexSeenCount;
                         uint8_t wTempPokedexCaughtCount;
                     };
-                    struct PACKED {
+                    struct {
                         // WRAMX
                         // player's room pc
                         union {
-                            struct PACKED {
+                            struct {
                                 uint8_t wDecoNameBuffer[ITEM_NAME_LENGTH];
                             };
-                            struct PACKED {
+                            struct {
                                 uint8_t wNumOwnedDecoCategories;
                                 uint8_t wOwnedDecoCategories[16];
                             };
                         };
                     };
-                    struct PACKED {
+                    struct {
                         // WRAMX
                         // trade
                         uint8_t wCurTradePartyMon;
                         uint8_t wCurOTTradePartyMon;
                         uint8_t wBufferTrademonNickname[MON_NAME_LENGTH];
                     };
-                    struct PACKED {
+                    struct {
                         // WRAMX
                         // link battle record data
                         //union wLinkBattleRecordBuffer
@@ -1908,7 +1907,7 @@ struct PACKED wram_s
                         uint16_t wLinkBattleRecordLosses;
                         uint16_t wLinkBattleRecordDraws;
                     };
-                    struct PACKED {
+                    struct {
                         // WRAMX
                         // miscellaneous
                         union {
@@ -1923,14 +1922,14 @@ struct PACKED wram_s
                             uint8_t wSuicuneFrame;
                         };
                     };
-                    struct PACKED {
+                    struct {
                         // WRAMX
                         // debug color picker
                         uint8_t wDebugColorIsTrainer;
                         uint8_t wDebugColorIsShiny;
                         uint8_t wDebugColorCurTMHM;
                     };
-                    struct PACKED {
+                    struct {
                         // WRAMX
                         // mobile?
                         uint8_t wd002[1];
@@ -1959,13 +1958,13 @@ struct PACKED wram_s
                         uint8_t wd034[2];
                         uint8_t wd036[2];
                     };
-                    struct PACKED {
+                    struct {
                         // WRAMX
                         // Every previous SECTION UNION takes up 60 or fewer bytes,
                         // except the initial "mon buffer" one.
                         uint8_t skip_74[60];
                         union {
-                            struct PACKED {
+                            struct {
                                 // trainer data
                                 uint8_t wSeenTrainerBank;
                                 uint8_t wSeenTrainerDistance;
@@ -1981,31 +1980,31 @@ struct PACKED wram_s
                                 uint8_t wRunningTrainerBattleScript;
                                 //void wTempTrainerEnd
                             };
-                            struct PACKED {
+                            struct {
                                 // menu items list
                                 uint8_t wMenuItemsList[16];
                                 //void wMenuItemsListEnd
                             };
-                            struct PACKED {
+                            struct {
                                 // fruit tree data
                                 uint8_t wCurFruitTree;
                                 uint8_t wCurFruit;
                             };
-                            struct PACKED {
+                            struct {
                                 // item ball data
                                 //union wItemBallData
                                 uint8_t wItemBallItemID;
                                 uint8_t wItemBallQuantity;
                                 //void wItemBallDataEnd
                             };
-                            struct PACKED {
+                            struct {
                                 // hidden item data
                                 //union wHiddenItemData
                                 uint16_t wHiddenItemEvent;
                                 uint8_t wHiddenItemID;
                                 //void wHiddenItemDataEnd
                             };
-                            struct PACKED {
+                            struct {
                                 // elevator data
                                 //union wElevatorData
                                 uint8_t wElevatorPointerBank;
@@ -2013,7 +2012,7 @@ struct PACKED wram_s
                                 uint8_t wElevatorOriginFloor;
                                 //void wElevatorDataEnd
                             };
-                            struct PACKED {
+                            struct {
                                 // coord event data
                                 //union wCurCoordEvent
                                 uint8_t wCurCoordEventSceneID;
@@ -2022,7 +2021,7 @@ struct PACKED wram_s
                                 uint8_t skip_75[1];
                                 uint16_t wCurCoordEventScriptAddr;
                             };
-                            struct PACKED {
+                            struct {
                                 // BG event data
                                 //union wCurBGEvent
                                 uint8_t wCurBGEventYCoord;
@@ -2030,7 +2029,7 @@ struct PACKED wram_s
                                 uint8_t wCurBGEventType;
                                 uint16_t wCurBGEventScriptAddr;
                             };
-                            struct PACKED {
+                            struct {
                                 // mart data
                                 uint8_t wMartType;
                                 uint8_t wMartPointerBank;
@@ -2038,7 +2037,7 @@ struct PACKED wram_s
                                 uint8_t wMartJumptableIndex;
                                 uint8_t wBargainShopFlags;
                             };
-                            struct PACKED {
+                            struct {
                                 // player movement data
                                 union {
                                     uint8_t wCurInput;
@@ -2056,30 +2055,30 @@ struct PACKED wram_s
                                 uint8_t skip_76[6];
                                 uint8_t wPlayerTurningDirection;
                             };
-                            struct PACKED {
+                            struct {
                                 // std script buffer
                                 uint8_t skip_77[1];
                                 uint8_t wJumpStdScriptBuffer[3];
                             };
-                            struct PACKED {
+                            struct {
                                 // phone script data
                                 uint8_t wCheckedTime;
                                 uint8_t wPhoneListIndex;
                                 uint8_t wNumAvailableCallers;
                                 uint8_t wAvailableCallers[CONTACT_LIST_SIZE];
                             };
-                            struct PACKED {
+                            struct {
                                 // phone caller contact
                                 uint8_t skip_78[1];
                                 uint8_t wCallerContact[PHONE_CONTACT_SIZE];
                             };
-                            struct PACKED {
+                            struct {
                                 // backup menu data
                                 uint8_t skip_79[7];
                                 uint8_t wMenuCursorPositionBackup;
                                 uint8_t wMenuScrollPositionBackup;
                             };
-                            struct PACKED {
+                            struct {
                                 // poison step data
                                 //union wPoisonStepData
                                 uint8_t wPoisonStepFlagSum;
@@ -2092,7 +2091,7 @@ struct PACKED wram_s
                 };
             };
             // More WRAM 1
-            struct PACKED {
+            struct {
                 // WRAMX
                 uint8_t wTMHMMoveNameBackup[MOVE_NAME_LENGTH];
                 uint8_t wStringBuffer1[STRING_BUFFER_LENGTH];
@@ -2150,17 +2149,17 @@ struct PACKED wram_s
                 uint8_t wBattleResult;
                 uint8_t wUsingItemWithSelect;
                 union {
-                    struct PACKED {
+                    struct {
                         // mart data
                         uint8_t wCurMartCount;
                         uint8_t wCurMartItems[15];
                     };
-                    struct PACKED {
+                    struct {
                         // elevator data
                         uint8_t wCurElevatorCount;
                         uint8_t wCurElevatorFloors[15];
                     };
-                    struct PACKED {
+                    struct {
                         // mailbox data
                         uint8_t wCurMessageScrollPosition;
                         uint8_t wCurMessageIndex;
@@ -2219,11 +2218,11 @@ struct PACKED wram_s
                 uint8_t wPlayerStepDirection;
                 uint16_t wBGMapAnchor;
                 union {
-                    struct PACKED {
+                    struct {
                         uint8_t wUsedSprites[SPRITE_GFX_LIST_CAPACITY * 2];
                         //void wUsedSpritesEnd
                     };
-                    struct PACKED {
+                    struct {
                         uint8_t skip_85[31];
                         uint8_t wd173;
                         // related to command queue type 3
@@ -2280,13 +2279,13 @@ struct PACKED wram_s
                 uint8_t wEvolvableFlags[((PARTY_LENGTH) + 7) / 8];
                 uint8_t wForceEvolution;
                 union {
-                    struct PACKED {
+                    struct {
                         // general-purpose HP buffers
                         uint16_t wHPBuffer1;
                         uint16_t wHPBuffer2;
                         uint16_t wHPBuffer3;
                     };
-                    struct PACKED {
+                    struct {
                         // HP bar animations
                         uint16_t wCurHPAnimMaxHP;
                         uint16_t wCurHPAnimOldHP;
@@ -2298,49 +2297,49 @@ struct PACKED wram_s
                         uint8_t wCurHPAnimLowHP;
                         uint8_t wCurHPAnimHighHP;
                     };
-                    struct PACKED {
+                    struct {
                         // move AI
                         uint8_t wEnemyAIMoveScores[NUM_MOVES];
                     };
-                    struct PACKED {
+                    struct {
                         // switch AI
                         uint8_t wEnemyEffectivenessVsPlayerMons[((PARTY_LENGTH) + 7) / 8];
                         uint8_t wPlayerEffectivenessVsEnemyMons[((PARTY_LENGTH) + 7) / 8];
                     };
-                    struct PACKED {
+                    struct {
                         // battle HUD
                         uint8_t wBattleHUDTiles[PARTY_LENGTH];
                     };
-                    struct PACKED {
+                    struct {
                         // thrown ball data
                         uint8_t wFinalCatchRate;
                         uint8_t wThrownBallWobbleCount;
                     };
-                    struct PACKED {
+                    struct {
                         // evolution data
                         uint8_t wEvolutionOldSpecies;
                         uint8_t wEvolutionNewSpecies;
                         uint8_t wEvolutionPicOffset;
                         uint8_t wEvolutionCanceled;
                     };
-                    struct PACKED {
+                    struct {
                         // experience
                         uint8_t wExpToNextLevel[3];
                     };
-                    struct PACKED {
+                    struct {
                         // PP Up
                         uint8_t wPPUpPPBuffer[NUM_MOVES];
                     };
-                    struct PACKED {
+                    struct {
                         // lucky number show
                         uint8_t wMonIDDigitsBuffer[5];
                     };
-                    struct PACKED {
+                    struct {
                         // mon submenu
                         uint8_t wMonSubmenuCount;
                         uint8_t wMonSubmenuItems[NUM_MONMENU_ITEMS + 1];
                     };
-                    struct PACKED {
+                    struct {
                         // field move data
                         //union wFieldMoveData
                         uint8_t wFieldMoveJumptableIndex;
@@ -2359,20 +2358,20 @@ struct PACKED wram_s
                         uint8_t skip_87[1];
                         //void wFieldMoveDataEnd
                     };
-                    struct PACKED {
+                    struct {
                         // hidden items
                         uint8_t wCurMapScriptBank;
                         uint8_t wRemainingBGEventCount;
                         uint8_t wBottomRightYCoord;
                         uint8_t wBottomRightXCoord;
                     };
-                    struct PACKED {
+                    struct {
                         // heal machine anim
                         uint8_t wHealMachineAnimType;
                         uint8_t wHealMachineTempOBP1;
                         uint8_t wHealMachineAnimState;
                     };
-                    struct PACKED {
+                    struct {
                         // decorations
                         uint8_t wCurDecoration;
                         uint8_t wSelectedDecorationSide;
@@ -2381,27 +2380,27 @@ struct PACKED wram_s
                         uint8_t wChangedDecorations;
                         uint8_t wCurDecorationCategory;
                     };
-                    struct PACKED {
+                    struct {
                         // withdraw/deposit items
                         uint8_t wPCItemQuantityChange;
                         uint8_t wPCItemQuantity;
                     };
-                    struct PACKED {
+                    struct {
                         // mail
                         uint16_t wCurMailAuthorID;
                         uint8_t wCurMailIndex;
                     };
-                    struct PACKED {
+                    struct {
                         // kurt
                         uint8_t wKurtApricornCount;
                         uint8_t wKurtApricornItems[10];
                     };
-                    struct PACKED {
+                    struct {
                         // tree mons
                         uint8_t wTreeMonCoordScore;
                         uint8_t wTreeMonOTIDScore;
                     };
-                    struct PACKED {
+                    struct {
                         // restart clock
                         uint8_t wRestartClockCurDivision;
                         uint8_t wRestartClockPrevDivision;
@@ -2410,13 +2409,13 @@ struct PACKED wram_s
                         uint8_t wRestartClockHour;
                         uint8_t wRestartClockMin;
                     };
-                    struct PACKED {
+                    struct {
                         // link
                         uint8_t skip_88[9];
                         uint8_t wLinkBattleRNPreamble[SERIAL_RN_PREAMBLE_LENGTH];
                         uint8_t wLinkBattleRNs[SERIAL_RNS_LENGTH];
                     };
-                    struct PACKED {
+                    struct {
                         // mobile
                         uint8_t wd1ea[1];
                         uint8_t wd1eb[1];
@@ -2430,7 +2429,7 @@ struct PACKED wram_s
                         uint8_t wd1f3[1];
                         uint8_t skip_89[6];
                     };
-                    struct PACKED {
+                    struct {
                         // miscellaneous bytes
                         union {
                             uint8_t wSkipMovesBeforeLevelUp;
@@ -2442,7 +2441,7 @@ struct PACKED wram_s
                         uint8_t skip_90[4];
                         uint8_t wCurEnemyItem;
                     };
-                    struct PACKED {
+                    struct {
                         // miscellaneous words
                         union {
                             uint16_t wBuySellItemPrice;
@@ -2550,20 +2549,20 @@ struct PACKED wram_s
                 uint8_t skip_92[1];
             };
             // Enemy Party
-            struct PACKED {
+            struct {
                 // WRAMX
                 union {
-                    struct PACKED {
+                    struct {
                         uint16_t wPokedexShowPointerAddr;
                         uint8_t wPokedexShowPointerBank;
                         uint8_t skip_93[3];
                         uint16_t wd271;
                         // mobile
                     };
-                    struct PACKED {
+                    struct {
                         uint8_t wUnusedEggHatchFlag;
                     };
-                    struct PACKED {
+                    struct {
                         // enemy party
                         //union wOTPartyData
                         uint8_t wOTPlayerName[NAME_LENGTH];
@@ -2576,7 +2575,7 @@ struct PACKED wram_s
                     };
                 };
                 union {
-                    struct PACKED {
+                    struct {
                         // ot party mons
                         // wOTPartyMon1 - wOTPartyMon6
                         //union wOTPartyMons
@@ -2593,7 +2592,7 @@ struct PACKED wram_s
                         uint8_t wOTPartyMonNickname[(PARTY_LENGTH + 1) - 1][MON_NAME_LENGTH];
                         //void wOTPartyDataEnd
                     };
-                    struct PACKED {
+                    struct {
                         // catch tutorial dude pack
                         uint8_t wDudeNumItems;
                         uint8_t wDudeItems[2 * 4 + 1];
@@ -3024,7 +3023,7 @@ struct PACKED wram_s
                 //void wCurMapDataEnd
             };
             // Party
-            struct PACKED {
+            struct {
                 // WRAMX
                 //union wPokemonData
                 uint8_t wPartyCount;
@@ -3096,9 +3095,9 @@ struct PACKED wram_s
     // bank 2
     union {
         uint8_t wram2[0x1000];
-        struct PACKED {
+        struct {
             // Pic Animations
-            struct PACKED {
+            struct {
                 // WRAMX
                 // 20x18 grid of 8x8 tiles
                 uint8_t wTempTilemap[SCREEN_WIDTH * SCREEN_HEIGHT];
@@ -3140,9 +3139,9 @@ struct PACKED wram_s
     // bank 3
     union {
         uint8_t wram3[0x1000];
-        struct PACKED {
+        struct {
             // Battle Tower RAM
-            struct PACKED {
+            struct {
                 // WRAMX
                 uint8_t w3_d000[1];
                 uint8_t w3_d001[1];
@@ -3163,14 +3162,14 @@ struct PACKED wram_s
                 struct BattleTowerData w3_d582;
                 struct BattleTowerData w3_d662;
                 union {
-                    struct PACKED {
+                    struct {
                         struct BattleTowerData w3_d742;
                     };
-                    struct PACKED {
+                    struct {
                         uint8_t skip_137[0xbe];
                         uint8_t w3_d800[BG_MAP_WIDTH * SCREEN_HEIGHT];
                     };
-                    struct PACKED {
+                    struct {
                         uint8_t skip_138[0xbe];
                         uint8_t wBTChoiceOfLvlGroup;
                         uint8_t skip_139[0x1];
@@ -3197,13 +3196,13 @@ struct PACKED wram_s
                 uint8_t skip_141[0x1c0];
                 uint8_t w3_dc00[SCREEN_WIDTH * SCREEN_HEIGHT];
                 union {
-                    struct PACKED {
+                    struct {
                         uint8_t w3_dd68[SCREEN_WIDTH * SCREEN_HEIGHT];
                         uint8_t skip_142[0x11c];
                         uint8_t w3_dfec[0x10];
                         uint8_t w3_dffc[4];
                     };
-                    struct PACKED {
+                    struct {
                         uint8_t skip_143[0x98];
                         uint8_t w3_de00[0x200];
                     };
@@ -3214,16 +3213,16 @@ struct PACKED wram_s
     // bank 4
     union {
         uint8_t wram4[0x1000];
-        struct PACKED {
+        struct {
             uint8_t dummy_w4_c000;
         };
     };
     // bank 5
     union {
         uint8_t wram5[0x1000];
-        struct PACKED {
+        struct {
             // GBC Video
-            struct PACKED {
+            struct {
                 // WRAMX
                 // ,
                 // ALIGN
@@ -3251,7 +3250,7 @@ struct PACKED wram_s
             };
             uint8_t section_pad_2[112]; // Padding for GBC Video
             // Battle Animations
-            struct PACKED {
+            struct {
                 // WRAMX
                 // wBattleAnimTileDict pairs keys with values
                 // keys: ANIM_GFX_* indexes (taken from anim_*gfx arguments)
@@ -3277,19 +3276,19 @@ struct PACKED wram_s
                 uint8_t wBattleAnimByte;
                 uint8_t wBattleAnimOAMPointerLo;
                 union {
-                    struct PACKED {
+                    struct {
                         uint8_t wBattleObjectTempID;
                         uint8_t wBattleObjectTempXCoord;
                         uint8_t wBattleObjectTempYCoord;
                         uint8_t wBattleObjectTempParam;
                     };
-                    struct PACKED {
+                    struct {
                         uint8_t wBattleBGEffectTempID;
                         uint8_t wBattleBGEffectTempJumptableIndex;
                         uint8_t wBattleBGEffectTempTurn;
                         uint8_t wBattleBGEffectTempParam;
                     };
-                    struct PACKED {
+                    struct {
                         uint8_t wBattleAnimTempOAMFlags;
                         uint8_t wBattleAnimTempFixY;
                         uint8_t wBattleAnimTempTileID;
@@ -3300,27 +3299,27 @@ struct PACKED wram_s
                         uint8_t wBattleAnimTempFrameOAMFlags;
                         uint8_t wBattleAnimTempPalette;
                     };
-                    struct PACKED {
+                    struct {
                         //union wBattleAnimGFXTempTileID
                         uint8_t wBattleAnimGFXTempPicHeight;
                     };
-                    struct PACKED {
+                    struct {
                         uint8_t wBattleSineWaveTempProgress;
                         uint8_t wBattleSineWaveTempOffset;
                         uint8_t wBattleSineWaveTempAmplitude;
                         uint8_t wBattleSineWaveTempTimer;
                     };
-                    struct PACKED {
+                    struct {
                         uint8_t wBattlePicResizeTempBaseTileID;
                         uint16_t wBattlePicResizeTempPointer;
                     };
                 };
                 union {
-                    struct PACKED {
+                    struct {
                         uint8_t skip_145[50];
                         //void wBattleAnimEnd
                     };
-                    struct PACKED {
+                    struct {
                         uint8_t wSurfWaveBGEffect[0x40];
                         //void wSurfWaveBGEffectEnd
                     };
@@ -3328,7 +3327,7 @@ struct PACKED wram_s
             };
             uint8_t section_pad_3[926]; // Padding for Battle Animations
             // Mobile RAM
-            struct PACKED {
+            struct {
                 // WRAMX
                 uint8_t w5_d800[0x200];
                 uint8_t w5_da00[0x200];
@@ -3345,20 +3344,20 @@ struct PACKED wram_s
     // bank 6
     union {
         uint8_t wram6[0x1000];
-        struct PACKED {
+        struct {
             // Scratch RAM
-            struct PACKED {
+            struct {
                 // WRAMX
                 union {
-                    struct PACKED {
+                    struct {
                         uint8_t wScratchTilemap[BG_MAP_WIDTH * BG_MAP_HEIGHT];
                         uint8_t wScratchAttrmap[BG_MAP_WIDTH * BG_MAP_HEIGHT];
                     };
-                    struct PACKED {
+                    struct {
                         uint8_t wDecompressScratch[0x80 * LEN_2BPP_TILE];
                         uint8_t wDecompressEnemyFrontpic[0x80 * LEN_2BPP_TILE];
                     };
-                    struct PACKED {
+                    struct {
                         // unidentified uses
                         uint8_t w6_d000[0x1000];
                     };
@@ -3369,9 +3368,9 @@ struct PACKED wram_s
     // bank 7
     union {
         uint8_t wram7[0x1000];
-        struct PACKED {
+        struct {
             // Stack RAM
-            struct PACKED {
+            struct {
                 // WRAMX
                 uint8_t wWindowStack[0x1000 - 1];
                 uint8_t wWindowStackBottom[1];
@@ -3380,8 +3379,4 @@ struct PACKED wram_s
     };
 };
 
-#undef PACKED
-
-#if defined(__cplusplus) || defined(_MSC_VER)
 #pragma pack(pop)
-#endif

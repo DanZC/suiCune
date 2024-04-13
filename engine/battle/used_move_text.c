@@ -104,8 +104,13 @@ const txt_cmd_s UsedMove2Text[] = {
     text_asm(UsedMoveText_CheckObedience)
 };
 
-static const txt_cmd_s UsedInsteadText[];
 static void UsedMoveText_CheckObedience_GetMoveNameText(struct TextCmdState* state);
+
+static const txt_cmd_s UsedInsteadText[] = {
+    text_far(v_UsedInsteadText)
+    text_asm(UsedMoveText_CheckObedience_GetMoveNameText)
+};
+
 void UsedMoveText_CheckObedience(struct TextCmdState* state){
 //  check obedience
     // LD_A_addr(wAlreadyDisobeyed);
@@ -118,10 +123,7 @@ void UsedMoveText_CheckObedience(struct TextCmdState* state){
     // RET;
     state->hl = UsedInsteadText;
 }
-static const txt_cmd_s UsedInsteadText[] = {
-    text_far(v_UsedInsteadText)
-    text_asm(UsedMoveText_CheckObedience_GetMoveNameText)
-};
+
 static void UsedMoveText_CheckObedience_GetMoveNameText(struct TextCmdState* state) {
     // LD_HL(mMoveNameText);
     // RET;

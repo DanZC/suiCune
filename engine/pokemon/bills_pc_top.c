@@ -491,7 +491,7 @@ empty_box:
     RET;
 
 
-BoxAddresses:
+//BoxAddresses:
     //table_width ['3', 'LoadBoxMonListing.BoxAddresses']
     //dba ['sBox1']
     //dba ['sBox2']

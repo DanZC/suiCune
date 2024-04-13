@@ -34,7 +34,7 @@
 #include "../../engine/phone/scripts/buena.h"
 #include "../../engine/phone/scripts/unused.h"
 
-#define phone(_tc, _tid, _map, _callee_time, _callee_script, _caller_time, _caller_script) (struct PhoneContact){_tc, _tid, MAP_ID(_map), _callee_time, _callee_script, _caller_time, _caller_script}
+#define phone(_tc, _tid, _map, _callee_time, _callee_script, _caller_time, _caller_script) {_tc, _tid, MAP_ID(_map), _callee_time, _callee_script, _caller_time, _caller_script}
 
 const struct PhoneContact PhoneContacts[] = {
 // entries correspond to PHONE_* constants

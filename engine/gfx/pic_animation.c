@@ -6,6 +6,7 @@
 #include "../../home/text.h"
 #include "dma_transfer.h"
 #include "../gfx/load_pics.h"
+#include <stddef.h>
 
 //  Pic animation arrangement.
 #pragma pack(push, 1)
@@ -194,15 +195,15 @@ void (*const PokeAnim_SetupCommands[])(void) = {
 
 
 const uint8_t* PokeAnims[] = {
-    [ANIM_MON_SLOW] = (uint8_t[]){pokeanim(StereoCry, Setup2, Play)},
-    [ANIM_MON_NORMAL] = (uint8_t[]){pokeanim(StereoCry, Setup, Play)},
-    [ANIM_MON_MENU] = (uint8_t[]){pokeanim(CryNoWait, Setup, Play, SetWait, Wait, Idle, Play)},
-    [ANIM_MON_TRADE] = (uint8_t[]){pokeanim(Idle, Play2, Idle, Play, SetWait, Wait, Cry, Setup, Play)},
-    [ANIM_MON_EVOLVE] = (uint8_t[]){pokeanim(Idle, Play, SetWait, Wait, CryNoWait, Setup, Play)},
-    [ANIM_MON_HATCH] = (uint8_t[]){pokeanim(Idle, Play, CryNoWait, Setup, Play, SetWait, Wait, Idle, Play)},
-    [ANIM_MON_HOF] = (uint8_t[]){pokeanim(CryNoWait, Setup, Play, SetWait, Wait, Idle, Play)},
-    [ANIM_MON_EGG1] = (uint8_t[]){pokeanim(Setup, Play)},
-    [ANIM_MON_EGG2] = (uint8_t[]){pokeanim(Idle, Play)}
+    [ANIM_MON_SLOW] = (uint8_t[]){PokeAnim_StereoCry_SetupCommand, PokeAnim_Setup2_SetupCommand, PokeAnim_Play_SetupCommand, PokeAnim_Finish_SetupCommand},
+    [ANIM_MON_NORMAL] = (uint8_t[]){PokeAnim_StereoCry_SetupCommand, PokeAnim_Setup_SetupCommand, PokeAnim_Play_SetupCommand, PokeAnim_Finish_SetupCommand},
+    [ANIM_MON_MENU] = (uint8_t[]){PokeAnim_CryNoWait_SetupCommand, PokeAnim_Setup_SetupCommand, PokeAnim_Play_SetupCommand, PokeAnim_SetWait_SetupCommand, PokeAnim_Wait_SetupCommand, PokeAnim_Idle_SetupCommand, PokeAnim_Play_SetupCommand, PokeAnim_Finish_SetupCommand},
+    [ANIM_MON_TRADE] = (uint8_t[]){PokeAnim_Idle_SetupCommand, PokeAnim_Play2_SetupCommand, PokeAnim_Idle_SetupCommand, PokeAnim_Play_SetupCommand, PokeAnim_SetWait_SetupCommand, PokeAnim_Wait_SetupCommand, PokeAnim_Cry_SetupCommand, PokeAnim_Setup_SetupCommand, PokeAnim_Play_SetupCommand, PokeAnim_Finish_SetupCommand},
+    [ANIM_MON_EVOLVE] = (uint8_t[]){PokeAnim_Idle_SetupCommand, PokeAnim_Play_SetupCommand, PokeAnim_SetWait_SetupCommand, PokeAnim_Wait_SetupCommand, PokeAnim_CryNoWait_SetupCommand, PokeAnim_Setup_SetupCommand, PokeAnim_Play_SetupCommand, PokeAnim_Finish_SetupCommand},
+    [ANIM_MON_HATCH] = (uint8_t[]){PokeAnim_Idle_SetupCommand, PokeAnim_Play_SetupCommand, PokeAnim_CryNoWait_SetupCommand, PokeAnim_Setup_SetupCommand, PokeAnim_Play_SetupCommand, PokeAnim_SetWait_SetupCommand, PokeAnim_Wait_SetupCommand, PokeAnim_Idle_SetupCommand, PokeAnim_Play_SetupCommand, PokeAnim_Finish_SetupCommand},
+    [ANIM_MON_HOF] = (uint8_t[]){PokeAnim_CryNoWait_SetupCommand, PokeAnim_Setup_SetupCommand, PokeAnim_Play_SetupCommand, PokeAnim_SetWait_SetupCommand, PokeAnim_Wait_SetupCommand, PokeAnim_Idle_SetupCommand, PokeAnim_Play_SetupCommand, PokeAnim_Finish_SetupCommand},
+    [ANIM_MON_EGG1] = (uint8_t[]){PokeAnim_Setup_SetupCommand, PokeAnim_Play_SetupCommand, PokeAnim_Finish_SetupCommand},
+    [ANIM_MON_EGG2] = (uint8_t[]){PokeAnim_Idle_SetupCommand, PokeAnim_Play_SetupCommand, PokeAnim_Finish_SetupCommand}
 };
 
 // void PokeAnims(void){

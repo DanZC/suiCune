@@ -26,7 +26,11 @@
 #include "../../util/network.h"
 
 #if defined(NETWORKING_SUPPORT)
+#if defined(_MSC_VER)
+#include "SDL_net.h"
+#else
 #include <SDL2/SDL_net.h>
+#endif
 #endif
 
 struct gb_s gb;

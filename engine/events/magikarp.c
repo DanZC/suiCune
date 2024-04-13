@@ -83,7 +83,7 @@ not_magikarp:
     RET;
 
 
-MagikarpGuruMeasureText:
+//MagikarpGuruMeasureText:
     //text_far ['_MagikarpGuruMeasureText']
     //text_end ['?']
 }

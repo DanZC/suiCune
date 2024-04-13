@@ -36,8 +36,14 @@ static const uint8_t MapSetupScript_Teleport[] = {
     mapsetup_const(LoadWildMonData),
     (uint8_t)-1, // end
 };
-static const uint8_t* const MapSetupScript_Fly = MapSetupScript_Teleport + 1;
-static const uint8_t* const MapSetupScript_Warp = MapSetupScript_Teleport + 3;
+
+//static const uint8_t* const MapSetupScript_Fly = MapSetupScript_Teleport + 1;
+
+#define MapSetupScript_Fly MapSetupScript_Teleport + 1
+
+//static const uint8_t* const MapSetupScript_Warp = MapSetupScript_Teleport + 3;
+
+#define MapSetupScript_Warp MapSetupScript_Teleport + 3
 
 static const uint8_t MapSetupScript_BadWarp[] = {
     mapsetup_const(EnterMapSpawnPoint),
@@ -111,8 +117,14 @@ static const uint8_t MapSetupScript_Fall[] = {
     mapsetup_const(UpdateRoamMons),
     (uint8_t)-1, // end
 };
-static const uint8_t* const MapSetupScript_Door = MapSetupScript_Fall + 1;
-static const uint8_t* const MapSetupScript_Train = MapSetupScript_Fall + 2;
+
+//static const uint8_t* const MapSetupScript_Door = MapSetupScript_Fall + 1;
+
+#define MapSetupScript_Door MapSetupScript_Fall + 1
+
+//static const uint8_t* const MapSetupScript_Train = MapSetupScript_Fall + 2;
+
+#define MapSetupScript_Train MapSetupScript_Fall + 2
 
 static const uint8_t MapSetupScript_ReloadMap[] = {
     mapsetup_const(FadeMapMusicAndPalettes),

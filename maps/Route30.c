@@ -17,9 +17,11 @@ enum {
 };
 
 const Script_fn_t Route30_SceneScripts[] = {
+    0
 };
 
 const struct MapCallback Route30_MapCallbacks[] = {
+    0
 };
 
 const struct MapScripts Route30_MapScripts = {
@@ -31,6 +33,7 @@ const struct MapScripts Route30_MapScripts = {
 };
 
 static const struct CoordEvent Route30_CoordEvents[] = {
+    0
 };
 
 static const struct BGEvent Route30_BGEvents[] = {

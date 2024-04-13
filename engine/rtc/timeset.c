@@ -643,12 +643,17 @@ const txt_cmd_s OakTimeHowManyMinutesText[] = {
 };
 
 static void OakTimeWhoaMinutesText_Function(struct TextCmdState* state);
-static const txt_cmd_s OakTimeWhoaMinutesText_OakTimeMinutesQuestionMarkText[];
 // Whoa!@ @
 const txt_cmd_s OakTimeWhoaMinutesText[] = {
     text_far(v_OakTimeWhoaMinutesText)
     text_asm(OakTimeWhoaMinutesText_Function)
 };
+
+static const txt_cmd_s OakTimeWhoaMinutesText_OakTimeMinutesQuestionMarkText[] = {
+    text_far(v_OakTimeMinutesQuestionMarkText)
+    text_end
+};
+
 static void OakTimeWhoaMinutesText_Function(struct TextCmdState* state){
     // hlcoord(7, 14, wTilemap);
     // CALL(aDisplayMinutesWithMinString);
@@ -657,10 +662,6 @@ static void OakTimeWhoaMinutesText_Function(struct TextCmdState* state){
     state->hl = OakTimeWhoaMinutesText_OakTimeMinutesQuestionMarkText;
     // RET;
 }
-static const txt_cmd_s OakTimeWhoaMinutesText_OakTimeMinutesQuestionMarkText[] = {
-    text_far(v_OakTimeMinutesQuestionMarkText)
-    text_end
-};
 
 static void OakText_ResponseToSetTime_Function(struct TextCmdState* state);
 const txt_cmd_s OakText_ResponseToSetTime[] = {

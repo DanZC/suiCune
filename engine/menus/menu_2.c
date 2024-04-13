@@ -225,10 +225,10 @@ void StartMenu_PrintSafariGameStatus(void){
     RET;
 
 
-slash_500:
+//slash_500:
     //db ['"／５００@"'];
 
-booru_ko:
+//booru_ko:
     //db ['"ボール\u3000\u3000\u3000こ@"'];
 }
 

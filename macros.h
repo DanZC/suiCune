@@ -30,4 +30,10 @@
 #define fallthrough [[fallthrough]]
 #else 
 #define fallthrough 
+
+//size_t offsetof(
+	//structName,
+	//memberName
+//);
+
 #endif

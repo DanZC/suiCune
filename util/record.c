@@ -9,6 +9,12 @@
 
 #define MAX_FRAMES (60 * 60) // 60 seconds of video
 
+#ifdef _MSC_VER
+#ifndef PATH_MAX
+#define PATH_MAX 260
+#endif
+#endif
+
 struct priv_t {
     /* Pointer to allocated memory holding GB file. */
     uint8_t *rom;

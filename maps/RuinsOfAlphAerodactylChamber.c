@@ -20,6 +20,7 @@ const struct MapScripts RuinsOfAlphAerodactylChamber_MapScripts = {
 };
 
 static const struct CoordEvent RuinsOfAlphAerodactylChamber_CoordEvents[] = {
+    0
 };
 
 static const struct BGEvent RuinsOfAlphAerodactylChamber_BGEvents[] = {
@@ -40,6 +41,7 @@ static const struct WarpEventData RuinsOfAlphAerodactylChamber_WarpEvents[] = {
 };
 
 static const struct ObjEvent RuinsOfAlphAerodactylChamber_ObjectEvents[] = {
+    0
 };
 
 const struct MapEvents RuinsOfAlphAerodactylChamber_MapEvents = {

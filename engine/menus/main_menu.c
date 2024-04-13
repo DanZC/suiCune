@@ -49,7 +49,7 @@ void MainMenu(void){
         // [MAINMENUITEM_MOBILE]         = MainMenu_Mobile,
         // [MAINMENUITEM_MOBILE_STUDIUM] = MainMenu_MobileStudium,
     #if _DEBUG
-        [MAINMENUITEM_DEBUG_ROOM]     = MainMenu_DebugRoom,
+        //[MAINMENUITEM_DEBUG_ROOM]     = MainMenu_DebugRoom,
     #endif
     };
 

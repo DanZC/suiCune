@@ -1658,7 +1658,7 @@ void StepFunction_FromMovement(void) {
     RST(aJumpTable);
     RET;
 
-Pointers:
+//Pointers:
 
     //  entries correspond to SPRITEMOVEFN_* constants (see constants/map_object_constants.asm)
     // table_width ['2', 'StepFunction_FromMovement.Pointers']
@@ -4393,7 +4393,7 @@ void Stubbed_UpdateYOffset(void) {
     LD_hl_A;
     RET;
 
-y_offsets:
+//y_offsets:
 
     // db ['0', '-1', '-2', '-3', '-4', '-3', '-2', '-1'];
 }
@@ -4418,7 +4418,7 @@ void UpdateJumpPosition(void) {
     LD_hl_A;
     RET;
 
-y_offsets:
+//y_offsets:
 
     // db ['-4', '-6', '-8', '-10', '-11', '-12', '-12', '-12'];
     // db ['-11', '-10', '-9', '-8', '-6', '-4', '0', '0'];
@@ -4908,7 +4908,7 @@ void SpawnShadow(void) {
     POP_BC;
     RET;
 
-ShadowObject:
+//ShadowObject:
 
     // vtile, palette, movement
     // db ['0x00', 'PAL_OW_SILVER', 'SPRITEMOVEDATA_SHADOW'];

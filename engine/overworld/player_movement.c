@@ -931,7 +931,7 @@ struct PlayerAction {
     uint8_t* const ptr;
 };
 
-#define player_action(_walk, _face, _x, _y, _ptr) (struct PlayerAction) {.dir=_walk, .facing=_face, .xMove=_x, .yMove=_y, .ptr=wram_ptr(_ptr)}
+#define player_action(_walk, _face, _x, _y, _ptr) {.dir=_walk, .facing=_face, .xMove=_x, .yMove=_y, .ptr=wram_ptr(_ptr)}
 //: MACRO
 // ; walk direction, facing, x movement, y movement, tile collision pointer
 //     db \1, \2, \3, \4

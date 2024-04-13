@@ -69,5 +69,5 @@ const struct WildGrassMons SwarmGrassWildMons[] = {
         },
         }
     },
-    {.mapGroup = -1, .mapNumber = -1, .encounterRates = {}, .mons = {}},
+    {.mapGroup = -1, .mapNumber = -1, .encounterRates = { 0 }, .mons = { 0 }},
 };

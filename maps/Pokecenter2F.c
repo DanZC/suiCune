@@ -20,6 +20,7 @@ const Script_fn_t Pokecenter2F_SceneScripts[] = {
 };
 
 const struct MapCallback Pokecenter2F_MapCallbacks[] = {
+    0
 };
 
 const struct MapScripts Pokecenter2F_MapScripts = {
@@ -31,6 +32,7 @@ const struct MapScripts Pokecenter2F_MapScripts = {
 };
 
 static const struct CoordEvent Pokecenter2F_CoordEvents[] = {
+    0
 };
 
 static const struct BGEvent Pokecenter2F_BGEvents[] = {

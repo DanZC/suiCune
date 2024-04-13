@@ -58,6 +58,7 @@ startproject "suiCune"
             "physfs",
             "SDL2",
             "SDL2main",
+            "SDL2_net",
 		}
 		
 		files {

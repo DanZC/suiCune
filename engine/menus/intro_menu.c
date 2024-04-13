@@ -2140,13 +2140,13 @@ void ResetClock(void) {
 
 }
 
-#ifdef _DEBUG
-void DebugMenu(void) {
-    FARCALL(av_ResetClock);
-    JP(mInit);
+//#ifdef _DEBUG
+//void DebugMenu(void) {
+    //FARCALL(av_ResetClock);
+    //JP(mInit);
 
-}
-#endif
+//}
+//#endif
 
 void UpdateTitleTrailSprite(void) {
     //  //  unreferenced

@@ -78,7 +78,7 @@ void OpenMartDialog(void){
     RET;
 
 
-dialogs:
+//dialogs:
     //dw ['MartDialog'];
     //dw ['HerbShop'];
     //dw ['BargainShop'];
@@ -1309,7 +1309,7 @@ NothingToSell:
     RET;
 
 
-NothingToSellText:
+//NothingToSellText:
     //text_far(v_NothingToSellText)
     //text_end
 }

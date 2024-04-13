@@ -9,9 +9,11 @@ enum {
 };
 
 const Script_fn_t CherrygroveMart_SceneScripts[] = {
+    0
 };
 
 const struct MapCallback CherrygroveMart_MapCallbacks[] = {
+    0
 };
 
 const struct MapScripts CherrygroveMart_MapScripts = {
@@ -23,9 +25,11 @@ const struct MapScripts CherrygroveMart_MapScripts = {
 };
 
 static const struct CoordEvent CherrygroveMart_CoordEvents[] = {
+    0
 };
 
 static const struct BGEvent CherrygroveMart_BGEvents[] = {
+    0
 };
 
 static const struct WarpEventData CherrygroveMart_WarpEvents[] = {
