@@ -15,10 +15,10 @@ const struct MapCallback GuideGentsHouse_MapCallbacks[] = {
 };
 
 const struct MapScripts GuideGentsHouse_MapScripts = {
-    .scene_script_count = lengthof(GuideGentsHouse_SceneScripts),
+    .scene_script_count = 0, // lengthof(GuideGentsHouse_SceneScripts),
     .scene_scripts = GuideGentsHouse_SceneScripts,
 
-    .callback_count = lengthof(GuideGentsHouse_MapCallbacks),
+    .callback_count = 0, // lengthof(GuideGentsHouse_MapCallbacks),
     .callbacks = GuideGentsHouse_MapCallbacks,
 };
 
@@ -44,7 +44,7 @@ const struct MapEvents GuideGentsHouse_MapEvents = {
     .warp_event_count = lengthof(GuideGentsHouse_WarpEvents),
     .warp_events = GuideGentsHouse_WarpEvents,
 
-    .coord_event_count = lengthof(GuideGentsHouse_CoordEvents),
+    .coord_event_count = 0, // lengthof(GuideGentsHouse_CoordEvents),
     .coord_events = GuideGentsHouse_CoordEvents,
 
     .bg_event_count = lengthof(GuideGentsHouse_BGEvents),

@@ -1,13 +1,7 @@
 #pragma once
 #include "constants.h"
 
-#if defined(__cplusplus) || defined(_MSC_VER)
 #pragma pack(push, 1)
-#else
-#define __attribute__((packed))
-#endif
-
-#define UNUSED
 
 // A struct representing WRAM.
 struct wram_s

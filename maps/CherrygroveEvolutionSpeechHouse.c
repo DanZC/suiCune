@@ -16,10 +16,10 @@ const struct MapCallback CherrygroveEvolutionSpeechHouse_MapCallbacks[] = {
 };
 
 const struct MapScripts CherrygroveEvolutionSpeechHouse_MapScripts = {
-    .scene_script_count = lengthof(CherrygroveEvolutionSpeechHouse_SceneScripts),
+    .scene_script_count = 0, // lengthof(CherrygroveEvolutionSpeechHouse_SceneScripts),
     .scene_scripts = CherrygroveEvolutionSpeechHouse_SceneScripts,
 
-    .callback_count = lengthof(CherrygroveEvolutionSpeechHouse_MapCallbacks),
+    .callback_count = 0, // lengthof(CherrygroveEvolutionSpeechHouse_MapCallbacks),
     .callbacks = CherrygroveEvolutionSpeechHouse_MapCallbacks,
 };
 
@@ -46,7 +46,7 @@ const struct MapEvents CherrygroveEvolutionSpeechHouse_MapEvents = {
     .warp_event_count = lengthof(CherrygroveEvolutionSpeechHouse_WarpEvents),
     .warp_events = CherrygroveEvolutionSpeechHouse_WarpEvents,
 
-    .coord_event_count = lengthof(CherrygroveEvolutionSpeechHouse_CoordEvents),
+    .coord_event_count = 0, // lengthof(CherrygroveEvolutionSpeechHouse_CoordEvents),
     .coord_events = CherrygroveEvolutionSpeechHouse_CoordEvents,
 
     .bg_event_count = lengthof(CherrygroveEvolutionSpeechHouse_BGEvents),

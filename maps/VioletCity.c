@@ -22,7 +22,7 @@ const struct MapCallback VioletCity_MapCallbacks[] = {
 };
 
 const struct MapScripts VioletCity_MapScripts = {
-    .scene_script_count = lengthof(VioletCity_SceneScripts),
+    .scene_script_count = 0, // lengthof(VioletCity_SceneScripts),
     .scene_scripts = VioletCity_SceneScripts,
 
     .callback_count = lengthof(VioletCity_MapCallbacks),
@@ -70,7 +70,7 @@ const struct MapEvents VioletCity_MapEvents = {
     .warp_event_count = lengthof(VioletCity_WarpEvents),
     .warp_events = VioletCity_WarpEvents,
 
-    .coord_event_count = lengthof(VioletCity_CoordEvents),
+    .coord_event_count = 0, // lengthof(VioletCity_CoordEvents),
     .coord_events = VioletCity_CoordEvents,
 
     .bg_event_count = lengthof(VioletCity_BGEvents),

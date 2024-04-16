@@ -68,3 +68,5 @@ void PlayTransactionSound(void);
 void MartTextbox(const txt_cmd_s* hl);
 //#include "data/items/rooftop_sale.h"
 //#include "data/items/bargain_shop.h"
+extern item_t* Marts[NUM_MARTS+1];
+extern size_t MartsSizes[NUM_MARTS+1];

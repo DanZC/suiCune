@@ -18,10 +18,10 @@ const struct MapCallback CherrygrovePokecenter1F_MapCallbacks[] = {
 };
 
 const struct MapScripts CherrygrovePokecenter1F_MapScripts = {
-    .scene_script_count = lengthof(CherrygrovePokecenter1F_SceneScripts),
+    .scene_script_count = 0, // lengthof(CherrygrovePokecenter1F_SceneScripts),
     .scene_scripts = CherrygrovePokecenter1F_SceneScripts,
 
-    .callback_count = lengthof(CherrygrovePokecenter1F_MapCallbacks),
+    .callback_count = 0, // lengthof(CherrygrovePokecenter1F_MapCallbacks),
     .callbacks = CherrygrovePokecenter1F_MapCallbacks,
 };
 
@@ -50,10 +50,10 @@ const struct MapEvents CherrygrovePokecenter1F_MapEvents = {
     .warp_event_count = lengthof(CherrygrovePokecenter1F_WarpEvents),
     .warp_events = CherrygrovePokecenter1F_WarpEvents,
 
-    .coord_event_count = lengthof(CherrygrovePokecenter1F_CoordEvents),
+    .coord_event_count = 0, // lengthof(CherrygrovePokecenter1F_CoordEvents),
     .coord_events = CherrygrovePokecenter1F_CoordEvents,
 
-    .bg_event_count = lengthof(CherrygrovePokecenter1F_BGEvents),
+    .bg_event_count = 0, // lengthof(CherrygrovePokecenter1F_BGEvents),
     .bg_events = CherrygrovePokecenter1F_BGEvents,
 
     .obj_event_count = lengthof(CherrygrovePokecenter1F_ObjectEvents),

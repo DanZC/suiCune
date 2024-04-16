@@ -109,7 +109,7 @@ uint8_t CheckObjectFlag_Conv(struct MapObject* bc){
         // LD_A_C;
         // AND_A_A;
         // IF_NZ goto masked;
-        if(EventFlagAction_Conv2(bc->objectEventFlag, CHECK_FLAG))
+        if(EventFlagAction_Conv2(bc->objectEventFlag, CHECK_FLAG) != 0)
             return 0xff;
         return 0;
     }

@@ -5616,4 +5616,7 @@ CONVERTED(v_AnimateTileset);
     // REDIRECTED(TrainerCard);
     // REDIRECTED(BadgeGFX2);
     // REDIRECTED(TrainerCard_Page3_LoadGFX);
+
+    // engine/events/heal_machine_anim.c
+    CONVERTED(HealMachineAnim);
 }

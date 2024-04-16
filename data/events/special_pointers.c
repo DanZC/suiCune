@@ -5,11 +5,14 @@
 #include "../../engine/link/link.h"
 #include "../../engine/overworld/events.h"
 #include "../../engine/rtc/timeset.h"
+#include "../../engine/menus/menu_2.h"
 #include "../../engine/events/magikarp.h"
+#include "../../engine/events/heal_machine_anim.h"
 #include "../../engine/overworld/wildmons.h"
 #include "../../engine/overworld/overworld.h"
 #include "../../engine/overworld/warp_connection.h"
 #include "../../engine/tilesets/timeofday_pals.h"
+#include "../../engine/pokemon/health.h"
 #include "../../home/time_palettes.h"
 #include "../../home/audio.h"
 
@@ -45,7 +48,7 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(GiveParkBalls),
     add_special(CheckMagikarpLength),
     add_special(MagikarpHouseSign),
-    // add_special(HealParty), // this is both a special and a predef
+    add_special(HealParty), // this is both a special and a predef
     // add_special(PokemonCenterPC),
     // add_special(PlayersHousePC),
     // add_special(DayCareMan),
@@ -80,7 +83,7 @@ void (*const SpecialsPointers[])(void) = {
     add_special(WaitSFX), // bank 0
     add_special(PlayMapMusic), // bank 0
     add_special(RestartMapMusic), // bank 0
-    // add_special(HealMachineAnim),
+    add_special(HealMachineAnim),
     // add_special(SurfStartStep),
     // add_special(FindPartyMonAboveLevel), // unused
     // add_special(FindPartyMonAtLeastThatHappy), // unused
@@ -99,7 +102,7 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(CheckPokerus),
     // add_special(DisplayCoinCaseBalance),
     // add_special(DisplayMoneyAndCoinBalance),
-    // add_special(PlaceMoneyTopRight),
+    add_special(PlaceMoneyTopRight),
     // add_special(CheckForLuckyNumberWinners),
     add_special(CheckLuckyNumberShowFlag),
     add_special(ResetLuckyNumberShowFlag),
@@ -118,7 +121,7 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(OlderHaircutBrother),
     // add_special(YoungerHaircutBrother),
     // add_special(DaisysGrooming),
-    // add_special(PlayCurMonCry),
+    add_special(PlayCurMonCry),
     // add_special(ProfOaksPCBoot),
     // add_special(GameboyCheck),
     // add_special(TrainerHouse),

@@ -52,6 +52,9 @@ ENDM
 #define depixel2(x, y) do { LD_DE(((x * TILE_WIDTH) << 8) | (y * TILE_WIDTH)); } while(0)
 #define depixel4(x, y, x2, y2) do { LD_DE((((x * TILE_WIDTH) + x2) << 8) | ((y * TILE_WIDTH) + y2)); } while(0)
 
+#define bcpixel2(x, y) do { LD_BC(((x * TILE_WIDTH) << 8) | (y * TILE_WIDTH)); } while(0)
+#define bcpixel4(x, y, x2, y2) do { LD_BC((((x * TILE_WIDTH) + x2) << 8) | ((y * TILE_WIDTH) + y2)); } while(0)
+
 #define pixel2(x, y) (((x * TILE_WIDTH) << 8) | (y * TILE_WIDTH))
 #define pixel4(x, y, x2, y2) ((((x * TILE_WIDTH) + x2) << 8) | ((y * TILE_WIDTH) + y2))
 
@@ -66,3 +69,4 @@ dbsprite: MACRO
 ENDM
 */
 #define dbsprite(_x, _y, _px, _py, _o, _a) (((_y) * TILE_WIDTH) & 0xff) + (_py), (((_x) * TILE_WIDTH) & 0xff) + (_px), _o, _a
+#define dbspriteoam(_x, _y, _px, _py, _o, _a) {.yCoord=(((_y) * TILE_WIDTH) & 0xff) + (_py), .xCoord=(((_x) * TILE_WIDTH) & 0xff) + (_px), .tileID=_o, .attributes=_a}

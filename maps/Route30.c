@@ -17,23 +17,23 @@ enum {
 };
 
 const Script_fn_t Route30_SceneScripts[] = {
-    0
+    0,
 };
 
 const struct MapCallback Route30_MapCallbacks[] = {
-    0
+    0,
 };
 
 const struct MapScripts Route30_MapScripts = {
-    .scene_script_count = lengthof(Route30_SceneScripts),
+    .scene_script_count = 0, // lengthof(Route30_SceneScripts),
     .scene_scripts = Route30_SceneScripts,
 
-    .callback_count = lengthof(Route30_MapCallbacks),
+    .callback_count = 0, // lengthof(Route30_MapCallbacks),
     .callbacks = Route30_MapCallbacks,
 };
 
 static const struct CoordEvent Route30_CoordEvents[] = {
-    0
+    0,
 };
 
 static const struct BGEvent Route30_BGEvents[] = {
@@ -67,7 +67,7 @@ const struct MapEvents Route30_MapEvents = {
     .warp_event_count = lengthof(Route30_WarpEvents),
     .warp_events = Route30_WarpEvents,
 
-    .coord_event_count = lengthof(Route30_CoordEvents),
+    .coord_event_count = 0, // lengthof(Route30_CoordEvents),
     .coord_events = Route30_CoordEvents,
 
     .bg_event_count = lengthof(Route30_BGEvents),

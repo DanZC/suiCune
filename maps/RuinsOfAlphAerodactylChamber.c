@@ -20,7 +20,7 @@ const struct MapScripts RuinsOfAlphAerodactylChamber_MapScripts = {
 };
 
 static const struct CoordEvent RuinsOfAlphAerodactylChamber_CoordEvents[] = {
-    0
+    0,
 };
 
 static const struct BGEvent RuinsOfAlphAerodactylChamber_BGEvents[] = {
@@ -41,20 +41,20 @@ static const struct WarpEventData RuinsOfAlphAerodactylChamber_WarpEvents[] = {
 };
 
 static const struct ObjEvent RuinsOfAlphAerodactylChamber_ObjectEvents[] = {
-    0
+    0,
 };
 
 const struct MapEvents RuinsOfAlphAerodactylChamber_MapEvents = {
     .warp_event_count = lengthof(RuinsOfAlphAerodactylChamber_WarpEvents),
     .warp_events = RuinsOfAlphAerodactylChamber_WarpEvents,
 
-    .coord_event_count = lengthof(RuinsOfAlphAerodactylChamber_CoordEvents),
+    .coord_event_count = 0, // lengthof(RuinsOfAlphAerodactylChamber_CoordEvents),
     .coord_events = RuinsOfAlphAerodactylChamber_CoordEvents,
 
     .bg_event_count = lengthof(RuinsOfAlphAerodactylChamber_BGEvents),
     .bg_events = RuinsOfAlphAerodactylChamber_BGEvents,
 
-    .obj_event_count = lengthof(RuinsOfAlphAerodactylChamber_ObjectEvents),
+    .obj_event_count = 0, // lengthof(RuinsOfAlphAerodactylChamber_ObjectEvents),
     .obj_events = RuinsOfAlphAerodactylChamber_ObjectEvents,
 };
 

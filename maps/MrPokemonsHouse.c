@@ -20,7 +20,7 @@ const struct MapScripts MrPokemonsHouse_MapScripts = {
     .scene_script_count = lengthof(MrPokemonsHouse_SceneScripts),
     .scene_scripts = MrPokemonsHouse_SceneScripts,
 
-    .callback_count = lengthof(MrPokemonsHouse_MapCallbacks),
+    .callback_count = 0, // lengthof(MrPokemonsHouse_MapCallbacks),
     .callbacks = MrPokemonsHouse_MapCallbacks,
 };
 
@@ -50,7 +50,7 @@ const struct MapEvents MrPokemonsHouse_MapEvents = {
     .warp_event_count = lengthof(MrPokemonsHouse_WarpEvents),
     .warp_events = MrPokemonsHouse_WarpEvents,
 
-    .coord_event_count = lengthof(MrPokemonsHouse_CoordEvents),
+    .coord_event_count = 0, // lengthof(MrPokemonsHouse_CoordEvents)
     .coord_events = MrPokemonsHouse_CoordEvents,
 
     .bg_event_count = lengthof(MrPokemonsHouse_BGEvents),

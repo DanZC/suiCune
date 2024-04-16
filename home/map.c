@@ -1628,7 +1628,7 @@ void ReadObjectEvents_Conv(const struct MapEvents* hl){
     //  Fill the remaining sprite IDs and y coords with 0 and -1, respectively.
     //  Bleeds into wObjectMasks due to a bug.  Uncomment the above code to fix.
         // LD_BC(MAPOBJECT_LENGTH);
-        for(uint8_t i = NUM_OBJECTS - rest; i < NUM_OBJECTS; ++i) {
+        for(uint8_t i = NUM_OBJECTS - rest; i < NUM_OBJECTS - 1; ++i) {
         // loop:
             // LD_hl(0);
             // INC_HL;
@@ -1679,6 +1679,8 @@ loop2:
 
 }
 
+#include "flag.h"
+
 uint8_t CopyMapObjectEvents_Conv(struct MapObject* hl, const struct ObjEvent* de, uint8_t count){
     // AND_A_A;
     // RET_Z ;
@@ -1707,6 +1709,12 @@ uint8_t CopyMapObjectEvents_Conv(struct MapObject* hl, const struct ObjEvent* de
         hl[i].objectRange = de[i].sightRange;
         hl[i].objectScript = i;
         hl[i].objectEventFlag = (uint16_t)de[i].eventFlag;
+        if(hl[i].objectEventFlag != 0xffff)
+            printf("%02d: x=%d, y=%d, script=%d, eventFlag=%d (%c)\n", i, hl[i].objectXCoord, hl[i].objectYCoord, i, (uint16_t)de[i].eventFlag,
+                (EventFlagAction_Conv2(hl[i].objectEventFlag, CHECK_FLAG))? '1': '0');
+        else {
+            printf("%02d: x=%d, y=%d, script=%d\n", i, hl[i].objectXCoord, hl[i].objectYCoord, i);
+        }
     // loop2:
         // LD_A_de;
         // INC_DE;
@@ -1751,7 +1759,7 @@ void ClearObjectStructs_Conv(void){
     // LD_BC(OBJECT_LENGTH * (NUM_OBJECT_STRUCTS - 1));
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wObjectStruct, lengthof(wram->wObjectStruct), 0);
+    ByteFill_Conv2(wram->wObjectStruct, sizeof(wram->wObjectStruct), 0);
 
 //  Just to make sure (this is rather pointless)
     // LD_HL(wObject1Struct);

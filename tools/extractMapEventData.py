@@ -171,6 +171,8 @@ def map_json_to_c(dict: Dict[str, any]):
     out += f'const Script_fn_t {dict["map_name"]}_SceneScripts[] = {{\n'
     for script in dict["scene_scripts"]:
         out += f'    {script},\n'
+    if len(dict["scene_scripts"]) == 0:
+        out += '    0,\n'
     out += '};\n\n'
 
     out += f'const struct MapCallback {dict["map_name"]}_MapCallbacks[] = {{\n'
@@ -180,12 +182,20 @@ def map_json_to_c(dict: Dict[str, any]):
         else:
             s = script["script"]
         out += f'    map_callback({script["type"]}, {s}),\n'
+    if len(dict["callbacks"]) == 0:
+        out += '    0,\n'
     out += '};\n\n'
 
     out += f'const struct MapScripts {dict["map_name"]}_MapScripts = {{\n'
-    out += f'    .scene_script_count = lengthof({dict["map_name"]}_SceneScripts),\n'
+    if len(dict["scene_scripts"]) == 0:
+        out += f'    .scene_script_count = 0, // lengthof({dict["map_name"]}_SceneScripts),\n'
+    else:
+        out += f'    .scene_script_count = lengthof({dict["map_name"]}_SceneScripts),\n'
     out += f'    .scene_scripts = {dict["map_name"]}_SceneScripts,\n\n'
-    out += f'    .callback_count = lengthof({dict["map_name"]}_MapCallbacks),\n'
+    if len(dict["callbacks"]) == 0:
+        out += f'    .callback_count = 0, // lengthof({dict["map_name"]}_MapCallbacks),\n'
+    else:
+        out += f'    .callback_count = lengthof({dict["map_name"]}_MapCallbacks),\n'
     out += f'    .callbacks = {dict["map_name"]}_MapCallbacks,\n'
     out += '};\n\n'
     out_h += f'extern const struct MapScripts {dict["map_name"]}_MapScripts;\n'
@@ -193,16 +203,22 @@ def map_json_to_c(dict: Dict[str, any]):
     out += f'static const struct CoordEvent {dict["map_name"]}_CoordEvents[] = {{\n'
     for event in dict["coord_events"]:
         out += f'    coord_event({event["x"]}, {event["y"]}, {event["scene_id"]}, &{event["script"]}),\n'
+    if len(dict["coord_events"]) == 0:
+        out += f'    0,\n'
     out += '};\n\n'
 
     out += f'static const struct BGEvent {dict["map_name"]}_BGEvents[] = {{\n'
     for event in dict["bg_events"]:
         out += f'    bg_event({event["x"]}, {event["y"]}, {event["function"]}, &{event["script"]}),\n'
+    if len(dict["bg_events"]) == 0:
+        out += f'    0,\n'
     out += '};\n\n'
 
     out += f'static const struct WarpEventData {dict["map_name"]}_WarpEvents[] = {{\n'
     for event in dict["warp_events"]:
         out += f'    warp_event({event["x"]}, {event["y"]}, {event["map"]}, {event["warpNumber"]}),\n'
+    if len(dict["warp_events"]) == 0:
+        out += f'    0,\n'
     out += '};\n\n'
 
     out += f'static const struct ObjEvent {dict["map_name"]}_ObjectEvents[] = {{\n'
@@ -210,16 +226,30 @@ def map_json_to_c(dict: Dict[str, any]):
         out += f'    object_event({event["x"]}, {event["y"]}, {event["sprite"]}, {event["movement"]}, '
         out += f'{event["radiusX"]}, {event["radiusY"]}, {event["h1"]}, {event["h2"]}, {event["color"]}, '
         out += f'{event["function"]}, {event["sightRange"]}, &{event["script"]}, {event["eventFlag"]}),\n'
+    if len(dict["object_events"]) == 0:
+        out += f'    0,\n'
     out += '};\n\n'
 
     out += f'const struct MapEvents {dict["map_name"]}_MapEvents = {{\n'
-    out += f'    .warp_event_count = lengthof({dict["map_name"]}_WarpEvents),\n'
+    if len(dict["warp_events"]) == 0:
+        out += f'    .warp_event_count = 0, // lengthof({dict["map_name"]}_WarpEvents),\n'
+    else:
+        out += f'    .warp_event_count = lengthof({dict["map_name"]}_WarpEvents),\n'
     out += f'    .warp_events = {dict["map_name"]}_WarpEvents,\n\n'
-    out += f'    .coord_event_count = lengthof({dict["map_name"]}_CoordEvents),\n'
+    if len(dict["coord_events"]) == 0:
+        out += f'    .coord_event_count = 0, // lengthof({dict["map_name"]}_CoordEvents),\n'
+    else:
+        out += f'    .coord_event_count = lengthof({dict["map_name"]}_CoordEvents),\n'
     out += f'    .coord_events = {dict["map_name"]}_CoordEvents,\n\n'
-    out += f'    .bg_event_count = lengthof({dict["map_name"]}_BGEvents),\n'
+    if len(dict["bg_events"]) == 0:
+        out += f'    .bg_event_count = 0, // lengthof({dict["map_name"]}_BGEvents),\n'
+    else:
+        out += f'    .bg_event_count = lengthof({dict["map_name"]}_BGEvents),\n'
     out += f'    .bg_events = {dict["map_name"]}_BGEvents,\n\n'
-    out += f'    .obj_event_count = lengthof({dict["map_name"]}_ObjectEvents),\n'
+    if len(dict["object_events"]) == 0:
+        out += f'    .obj_event_count = 0, // lengthof({dict["map_name"]}_ObjectEvents),\n'
+    else:
+        out += f'    .obj_event_count = lengthof({dict["map_name"]}_ObjectEvents),\n'
     out += f'    .obj_events = {dict["map_name"]}_ObjectEvents,\n'
     out += '};\n\n'
     out_h += f'extern const struct MapEvents {dict["map_name"]}_MapEvents;\n\n'

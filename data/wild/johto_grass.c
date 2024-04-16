@@ -1955,5 +1955,8 @@ const struct WildGrassMons JohtoGrassWildMons[] = {
         },
         }
     },
-	{.mapGroup = -1, .mapNumber = -1, .encounterRates = { 0 }, .mons = { 0 }},
+    {.mapGroup = -1, .mapNumber = -1, 
+        .encounterRates = { 0 }, 
+        .mons = { { { 0 } }, { { 0 } }, { { 0 } } }
+    },
 };

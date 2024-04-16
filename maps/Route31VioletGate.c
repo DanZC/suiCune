@@ -16,10 +16,10 @@ const struct MapCallback Route31VioletGate_MapCallbacks[] = {
 };
 
 const struct MapScripts Route31VioletGate_MapScripts = {
-    .scene_script_count = lengthof(Route31VioletGate_SceneScripts),
+    .scene_script_count = 0, // lengthof(Route31VioletGate_SceneScripts),
     .scene_scripts = Route31VioletGate_SceneScripts,
 
-    .callback_count = lengthof(Route31VioletGate_MapCallbacks),
+    .callback_count = 0, // lengthof(Route31VioletGate_MapCallbacks),
     .callbacks = Route31VioletGate_MapCallbacks,
 };
 
@@ -47,10 +47,10 @@ const struct MapEvents Route31VioletGate_MapEvents = {
     .warp_event_count = lengthof(Route31VioletGate_WarpEvents),
     .warp_events = Route31VioletGate_WarpEvents,
 
-    .coord_event_count = lengthof(Route31VioletGate_CoordEvents),
+    .coord_event_count = 0, // lengthof(Route31VioletGate_CoordEvents),
     .coord_events = Route31VioletGate_CoordEvents,
 
-    .bg_event_count = lengthof(Route31VioletGate_BGEvents),
+    .bg_event_count = 0, // lengthof(Route31VioletGate_BGEvents),
     .bg_events = Route31VioletGate_BGEvents,
 
     .obj_event_count = lengthof(Route31VioletGate_ObjectEvents),

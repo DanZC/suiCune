@@ -490,6 +490,56 @@ dmg:
 
 }
 
+void DmgToCgbObjPal1_Conv(uint8_t a){
+    // LDH_addr_A(rOBP1);
+    // PUSH_AF;
+    gb_write(rOBP1, a);
+
+    // LDH_A_addr(hCGB);
+    // AND_A_A;
+    // IF_Z goto dmg;
+    if(hram->hCGB == 0) {
+    // dmg:
+        // POP_AF;
+        // RET;
+        return;
+    }
+
+    // PUSH_HL;
+    // PUSH_DE;
+    // PUSH_BC;
+
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(MBANK(awOBPals2));
+    // LDH_addr_A(rSVBK);
+    wbank_push(MBANK(awOBPals2));
+
+    // LD_HL(wOBPals2 + PALETTE_SIZE * 1);
+    // LD_DE(wOBPals1 + PALETTE_SIZE * 1);
+    // LDH_A_addr(rOBP1);
+    // LD_B_A;
+    // LD_C(1);
+    // CALL(aCopyPals);
+    CopyPals_Conv(wOBPals2 + PALETTE_SIZE * 1, wOBPals1 + PALETTE_SIZE * 1, gb_read(rOBP1), 1);
+    // LD_A(TRUE);
+    // LDH_addr_A(hCGBPalUpdate);
+    hram->hCGBPalUpdate = TRUE;
+
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    wbank_pop;
+
+    // POP_BC;
+    // POP_DE;
+    // POP_HL;
+
+
+// dmg:
+    // POP_AF;
+    // RET;
+}
+
 void CopyPals(void){
     //  copy c palettes in order b from de to hl
 

@@ -50,7 +50,7 @@
 #include "engine/items/tmhm2.h"
 //#include "engine/menus/naming_screen.h"
 #include "engine/events/misc_scripts.h"
-//#include "engine/events/heal_machine_anim.h"
+#include "engine/events/heal_machine_anim.h"
 #include "engine/events/whiteout.h"
 #include "engine/events/forced_movement.h"
 //#include "engine/events/itemfinder.h"

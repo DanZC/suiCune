@@ -58,6 +58,9 @@ struct MartDialogGroup {
     uint8_t group;
 };
 
+item_t* Marts[NUM_MARTS+1];
+size_t MartsSizes[NUM_MARTS+1];
+
 const struct MartDialogGroup* GetMartDialogGroup(uint8_t type);
 
 uint32_t GetMartSize(uint16_t de) {

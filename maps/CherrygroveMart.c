@@ -17,10 +17,10 @@ const struct MapCallback CherrygroveMart_MapCallbacks[] = {
 };
 
 const struct MapScripts CherrygroveMart_MapScripts = {
-    .scene_script_count = lengthof(CherrygroveMart_SceneScripts),
+    .scene_script_count = 0, // lengthof(CherrygroveMart_SceneScripts),
     .scene_scripts = CherrygroveMart_SceneScripts,
 
-    .callback_count = lengthof(CherrygroveMart_MapCallbacks),
+    .callback_count = 0, // lengthof(CherrygroveMart_MapCallbacks),
     .callbacks = CherrygroveMart_MapCallbacks,
 };
 
@@ -47,10 +47,10 @@ const struct MapEvents CherrygroveMart_MapEvents = {
     .warp_event_count = lengthof(CherrygroveMart_WarpEvents),
     .warp_events = CherrygroveMart_WarpEvents,
 
-    .coord_event_count = lengthof(CherrygroveMart_CoordEvents),
+    .coord_event_count = 0, // lengthof(CherrygroveMart_CoordEvents),
     .coord_events = CherrygroveMart_CoordEvents,
 
-    .bg_event_count = lengthof(CherrygroveMart_BGEvents),
+    .bg_event_count = 0, // lengthof(CherrygroveMart_BGEvents),
     .bg_events = CherrygroveMart_BGEvents,
 
     .obj_event_count = lengthof(CherrygroveMart_ObjectEvents),

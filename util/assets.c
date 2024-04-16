@@ -41,7 +41,7 @@ asset_s LoadAsset(const char* filename) {
     #else 
     FILE* file = fopen(filename, "rb");
     if(!file) {
-        fprintf(stderr, "LoadAsset Error");
+        fprintf(stderr, "LoadAsset Error: %s", filename);
         return (asset_s){NULL, 0};
     }
     int64_t size = fsize(file);
@@ -129,7 +129,7 @@ asset_s LoadTextAsset(const char* filename) {
 #else 
     FILE* file = fopen(filename, "r");
     if(!file) {
-        fprintf(stderr, "LoadAsset Error");
+        fprintf(stderr, "%s Error: %s", __func__, filename);
         return (asset_s){NULL, 0};
     }
     int64_t size = fsize(file);

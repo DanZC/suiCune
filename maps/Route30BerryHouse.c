@@ -15,10 +15,10 @@ const struct MapCallback Route30BerryHouse_MapCallbacks[] = {
 };
 
 const struct MapScripts Route30BerryHouse_MapScripts = {
-    .scene_script_count = lengthof(Route30BerryHouse_SceneScripts),
+    .scene_script_count = 0, // lengthof(Route30BerryHouse_SceneScripts),
     .scene_scripts = Route30BerryHouse_SceneScripts,
 
-    .callback_count = lengthof(Route30BerryHouse_MapCallbacks),
+    .callback_count = 0, // lengthof(Route30BerryHouse_MapCallbacks),
     .callbacks = Route30BerryHouse_MapCallbacks,
 };
 
@@ -44,7 +44,7 @@ const struct MapEvents Route30BerryHouse_MapEvents = {
     .warp_event_count = lengthof(Route30BerryHouse_WarpEvents),
     .warp_events = Route30BerryHouse_WarpEvents,
 
-    .coord_event_count = lengthof(Route30BerryHouse_CoordEvents),
+    .coord_event_count = 0, // lengthof(Route30BerryHouse_CoordEvents),
     .coord_events = Route30BerryHouse_CoordEvents,
 
     .bg_event_count = lengthof(Route30BerryHouse_BGEvents),

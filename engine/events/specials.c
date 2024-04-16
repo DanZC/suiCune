@@ -7,6 +7,7 @@
 #include "../pokegear/pokegear.h"
 #include "../../home/sram.h"
 #include "../../home/map.h"
+#include "../../home/pokemon.h"
 
 void Special(void){
 //  Run script special de.
@@ -517,9 +518,9 @@ ProximityCoords:
 }
 
 void PlayCurMonCry(void){
-    LD_A_addr(wCurPartySpecies);
-    JP(mPlayMonCry);
-
+    // LD_A_addr(wCurPartySpecies);
+    // JP(mPlayMonCry);
+    PlayMonCry_Conv(wram->wCurPartySpecies);
 }
 
 void GameboyCheck(void){

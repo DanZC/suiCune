@@ -47,10 +47,10 @@ const struct MapEvents Route29Route46Gate_MapEvents = {
     .warp_event_count = lengthof(Route29Route46Gate_WarpEvents),
     .warp_events = Route29Route46Gate_WarpEvents,
 
-    .coord_event_count = lengthof(Route29Route46Gate_CoordEvents),
+    .coord_event_count = 0, // lengthof(Route29Route46Gate_CoordEvents),
     .coord_events = Route29Route46Gate_CoordEvents,
 
-    .bg_event_count = lengthof(Route29Route46Gate_BGEvents),
+    .bg_event_count = 0, // lengthof(Route29Route46Gate_BGEvents),
     .bg_events = Route29Route46Gate_BGEvents,
 
     .obj_event_count = lengthof(Route29Route46Gate_ObjectEvents),

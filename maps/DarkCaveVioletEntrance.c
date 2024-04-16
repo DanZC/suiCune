@@ -22,10 +22,10 @@ const struct MapCallback DarkCaveVioletEntrance_MapCallbacks[] = {
 };
 
 const struct MapScripts DarkCaveVioletEntrance_MapScripts = {
-    .scene_script_count = lengthof(DarkCaveVioletEntrance_SceneScripts),
+    .scene_script_count = 0, // lengthof(DarkCaveVioletEntrance_SceneScripts),
     .scene_scripts = DarkCaveVioletEntrance_SceneScripts,
 
-    .callback_count = lengthof(DarkCaveVioletEntrance_MapCallbacks),
+    .callback_count = 0, // lengthof(DarkCaveVioletEntrance_MapCallbacks),
     .callbacks = DarkCaveVioletEntrance_MapCallbacks,
 };
 
@@ -58,7 +58,7 @@ const struct MapEvents DarkCaveVioletEntrance_MapEvents = {
     .warp_event_count = lengthof(DarkCaveVioletEntrance_WarpEvents),
     .warp_events = DarkCaveVioletEntrance_WarpEvents,
 
-    .coord_event_count = lengthof(DarkCaveVioletEntrance_CoordEvents),
+    .coord_event_count = 0, // lengthof(DarkCaveVioletEntrance_CoordEvents),
     .coord_events = DarkCaveVioletEntrance_CoordEvents,
 
     .bg_event_count = lengthof(DarkCaveVioletEntrance_BGEvents),

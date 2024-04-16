@@ -21,7 +21,7 @@ const struct MapCallback Route31_MapCallbacks[] = {
 };
 
 const struct MapScripts Route31_MapScripts = {
-    .scene_script_count = lengthof(Route31_SceneScripts),
+    .scene_script_count = 0, // lengthof(Route31_SceneScripts),
     .scene_scripts = Route31_SceneScripts,
 
     .callback_count = lengthof(Route31_MapCallbacks),
@@ -57,7 +57,7 @@ const struct MapEvents Route31_MapEvents = {
     .warp_event_count = lengthof(Route31_WarpEvents),
     .warp_events = Route31_WarpEvents,
 
-    .coord_event_count = lengthof(Route31_CoordEvents),
+    .coord_event_count = 0, // lengthof(Route31_CoordEvents),
     .coord_events = Route31_CoordEvents,
 
     .bg_event_count = lengthof(Route31_BGEvents),

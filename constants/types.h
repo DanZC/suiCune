@@ -19,6 +19,9 @@ typedef struct { uint8_t a; uint8_t b; } u8_pair_s;
 
 #define u8_pair(_a, _b) (u8_pair_s){.a = _a, .b = _b}
 
+typedef struct { uint32_t a; bool flag; }  u32_flag_s;
+#define u32_flag(_a, _flag) (u32_flag_s){.a = _a, .flag = _flag}
+
 struct ByteWord 
 {
     uint8_t byte;

@@ -648,6 +648,7 @@ struct Object* CheckFacingObject_Conv(void){
     // LD_BC(wObjectStructs);  // redundant
     // LD_A(0);
     // LDH_addr_A(hMapObjectIndex);
+    hram->hMapObjectIndex = 0;
     // CALL(aIsNPCAtCoord);
     struct Object* bc = IsNPCAtCoord_Conv(res.x, res.y);
     // RET_NC ;

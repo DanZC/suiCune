@@ -20,19 +20,19 @@ const Script_fn_t Pokecenter2F_SceneScripts[] = {
 };
 
 const struct MapCallback Pokecenter2F_MapCallbacks[] = {
-    0
+    0,
 };
 
 const struct MapScripts Pokecenter2F_MapScripts = {
     .scene_script_count = lengthof(Pokecenter2F_SceneScripts),
     .scene_scripts = Pokecenter2F_SceneScripts,
 
-    .callback_count = lengthof(Pokecenter2F_MapCallbacks),
+    .callback_count = 0, // lengthof(Pokecenter2F_MapCallbacks),
     .callbacks = Pokecenter2F_MapCallbacks,
 };
 
 static const struct CoordEvent Pokecenter2F_CoordEvents[] = {
-    0
+    0,
 };
 
 static const struct BGEvent Pokecenter2F_BGEvents[] = {
@@ -59,7 +59,7 @@ const struct MapEvents Pokecenter2F_MapEvents = {
     .warp_event_count = lengthof(Pokecenter2F_WarpEvents),
     .warp_events = Pokecenter2F_WarpEvents,
 
-    .coord_event_count = lengthof(Pokecenter2F_CoordEvents),
+    .coord_event_count = 0, // lengthof(Pokecenter2F_CoordEvents),
     .coord_events = Pokecenter2F_CoordEvents,
 
     .bg_event_count = lengthof(Pokecenter2F_BGEvents),

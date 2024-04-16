@@ -2308,7 +2308,7 @@ void Script_appear_Conv(script_s* s, uint8_t a){
     // LDH_A_addr(hMapObjectIndex);
     // LD_B(0);  // clear
     // CALL(aApplyEventActionAppearDisappear);
-    ApplyEventActionAppearDisappear_Conv(hram->hMapObjectIndex, 0);
+    ApplyEventActionAppearDisappear_Conv(obj, RESET_FLAG);
     // RET;
 }
 
@@ -2346,7 +2346,7 @@ void Script_disappear_Conv(script_s* s, uint8_t a){
     // LDH_A_addr(hMapObjectIndex);
     // LD_B(1);  // set
     // CALL(aApplyEventActionAppearDisappear);
-    ApplyEventActionAppearDisappear_Conv(hram->hMapObjectIndex, 1);
+    ApplyEventActionAppearDisappear_Conv(obj, SET_FLAG);
     // FARCALL(av_UpdateSprites);
     v_UpdateSprites_Conv();
     // RET;
