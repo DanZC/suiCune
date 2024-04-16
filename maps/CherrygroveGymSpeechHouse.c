@@ -8,9 +8,11 @@ enum {
 };
 
 const Script_fn_t CherrygroveGymSpeechHouse_SceneScripts[] = {
+    0
 };
 
 const struct MapCallback CherrygroveGymSpeechHouse_MapCallbacks[] = {
+    0
 };
 
 const struct MapScripts CherrygroveGymSpeechHouse_MapScripts = {
@@ -22,6 +24,7 @@ const struct MapScripts CherrygroveGymSpeechHouse_MapScripts = {
 };
 
 static const struct CoordEvent CherrygroveGymSpeechHouse_CoordEvents[] = {
+    0
 };
 
 static const struct BGEvent CherrygroveGymSpeechHouse_BGEvents[] = {

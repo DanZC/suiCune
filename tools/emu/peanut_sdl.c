@@ -13,7 +13,11 @@
 #include <string.h>
 
 #define NO_PHYSFS
+#ifdef _MSC_VER
+#include <SDL.h>
+#else
 #include <SDL2/SDL.h>
+#endif // _MSVC_VER
 #if !defined(NO_PHYSFS)
 #include <physfs.h>
 #endif

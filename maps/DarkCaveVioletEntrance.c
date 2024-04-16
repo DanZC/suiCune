@@ -14,9 +14,11 @@ enum {
 };
 
 const Script_fn_t DarkCaveVioletEntrance_SceneScripts[] = {
+    0
 };
 
 const struct MapCallback DarkCaveVioletEntrance_MapCallbacks[] = {
+    0
 };
 
 const struct MapScripts DarkCaveVioletEntrance_MapScripts = {
@@ -28,6 +30,7 @@ const struct MapScripts DarkCaveVioletEntrance_MapScripts = {
 };
 
 static const struct CoordEvent DarkCaveVioletEntrance_CoordEvents[] = {
+    0
 };
 
 static const struct BGEvent DarkCaveVioletEntrance_BGEvents[] = {

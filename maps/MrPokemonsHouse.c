@@ -13,6 +13,7 @@ const Script_fn_t MrPokemonsHouse_SceneScripts[] = {
 };
 
 const struct MapCallback MrPokemonsHouse_MapCallbacks[] = {
+    0
 };
 
 const struct MapScripts MrPokemonsHouse_MapScripts = {
@@ -24,6 +25,7 @@ const struct MapScripts MrPokemonsHouse_MapScripts = {
 };
 
 static const struct CoordEvent MrPokemonsHouse_CoordEvents[] = {
+    0
 };
 
 static const struct BGEvent MrPokemonsHouse_BGEvents[] = {

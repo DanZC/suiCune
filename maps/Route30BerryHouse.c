@@ -7,9 +7,11 @@ enum {
 };
 
 const Script_fn_t Route30BerryHouse_SceneScripts[] = {
+    0
 };
 
 const struct MapCallback Route30BerryHouse_MapCallbacks[] = {
+    0
 };
 
 const struct MapScripts Route30BerryHouse_MapScripts = {
@@ -21,6 +23,7 @@ const struct MapScripts Route30BerryHouse_MapScripts = {
 };
 
 static const struct CoordEvent Route30BerryHouse_CoordEvents[] = {
+    0
 };
 
 static const struct BGEvent Route30BerryHouse_BGEvents[] = {

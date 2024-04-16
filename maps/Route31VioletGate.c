@@ -8,9 +8,11 @@ enum {
 };
 
 const Script_fn_t Route31VioletGate_SceneScripts[] = {
+    0
 };
 
 const struct MapCallback Route31VioletGate_MapCallbacks[] = {
+    0
 };
 
 const struct MapScripts Route31VioletGate_MapScripts = {
@@ -22,9 +24,11 @@ const struct MapScripts Route31VioletGate_MapScripts = {
 };
 
 static const struct CoordEvent Route31VioletGate_CoordEvents[] = {
+    0
 };
 
 static const struct BGEvent Route31VioletGate_BGEvents[] = {
+    0
 };
 
 static const struct WarpEventData Route31VioletGate_WarpEvents[] = {

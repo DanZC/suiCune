@@ -8,9 +8,11 @@ enum {
 };
 
 const Script_fn_t Route29Route46Gate_SceneScripts[] = {
+    0
 };
 
 const struct MapCallback Route29Route46Gate_MapCallbacks[] = {
+    0
 };
 
 const struct MapScripts Route29Route46Gate_MapScripts = {
@@ -22,9 +24,11 @@ const struct MapScripts Route29Route46Gate_MapScripts = {
 };
 
 static const struct CoordEvent Route29Route46Gate_CoordEvents[] = {
+    0
 };
 
 static const struct BGEvent Route29Route46Gate_BGEvents[] = {
+    0
 };
 
 static const struct WarpEventData Route29Route46Gate_WarpEvents[] = {

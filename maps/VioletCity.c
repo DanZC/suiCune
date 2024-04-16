@@ -14,6 +14,7 @@ enum {
 };
 
 const Script_fn_t VioletCity_SceneScripts[] = {
+    0
 };
 
 const struct MapCallback VioletCity_MapCallbacks[] = {
@@ -29,6 +30,7 @@ const struct MapScripts VioletCity_MapScripts = {
 };
 
 static const struct CoordEvent VioletCity_CoordEvents[] = {
+    0
 };
 
 static const struct BGEvent VioletCity_BGEvents[] = {

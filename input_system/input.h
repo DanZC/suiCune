@@ -2,8 +2,13 @@
 #define INPUT_H
 
 #include <stdbool.h>
-#include <SDL2/SDL.h>
 #include "uthash.h"
+
+#ifdef _MSC_VER
+#include <SDL.h>
+#else
+#include <SDL2/SDL.h>
+#endif // _MSVC_VER
 
 typedef enum input_state {
     NONE,

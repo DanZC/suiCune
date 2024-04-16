@@ -7,9 +7,11 @@ enum {
 };
 
 const Script_fn_t GuideGentsHouse_SceneScripts[] = {
+    0
 };
 
 const struct MapCallback GuideGentsHouse_MapCallbacks[] = {
+    0
 };
 
 const struct MapScripts GuideGentsHouse_MapScripts = {
@@ -21,6 +23,7 @@ const struct MapScripts GuideGentsHouse_MapScripts = {
 };
 
 static const struct CoordEvent GuideGentsHouse_CoordEvents[] = {
+    0
 };
 
 static const struct BGEvent GuideGentsHouse_BGEvents[] = {
