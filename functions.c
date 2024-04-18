@@ -5619,4 +5619,58 @@ CONVERTED(v_AnimateTileset);
 
     // engine/events/heal_machine_anim.c
     CONVERTED(HealMachineAnim);
+
+    // engine/events/hidden_item.c
+    // REDIRECTED(SetMemEvent);
+    // REDIRECTED(HiddenItemScript);
+
+    // engine/events/npc_trade.c
+    // REDIRECTED(NPCTradeWrongText3);
+    // REDIRECTED(NPCTradeAfterText1);
+    // REDIRECTED(NPCTradeWrongText1);
+    // REDIRECTED(DoNPCTrade);
+    // REDIRECTED(TradeFlagAction);
+    // REDIRECTED(NPCTradeCompleteText2);
+    // REDIRECTED(NPCTradeIntroText1);
+    // REDIRECTED(TradeTexts);
+    // REDIRECTED(NPCTradeCancelText3);
+    // REDIRECTED(NPCTradeAfterText4);
+    // REDIRECTED(NPCTradeAfterText3);
+    // REDIRECTED(Trade_CopyThreeCharString);
+    // REDIRECTED(Trade_CopyTwoBytesReverseEndian);
+    // REDIRECTED(Trade_CopyFourCharString);
+    // REDIRECTED(Trade_GetAttributeOfCurrentPartymon);
+    // REDIRECTED(NPCTradeCompleteText4);
+    // REDIRECTED(CheckTradeGender);
+    // REDIRECTED(NPCTradeIntroText2);
+    // REDIRECTED(NPCTradeAfterText2);
+    // REDIRECTED(Trade_GetAttributeOfLastPartymon);
+    // REDIRECTED(GetTradeMonName);
+    // REDIRECTED(NPCTradeCompleteText3);
+    // REDIRECTED(GetTradeAttr);
+    // REDIRECTED(Trade_CopyTwoBytes);
+    // REDIRECTED(NPCTradeCableText);
+    // REDIRECTED(NPCTradeCancelText1);
+    // REDIRECTED(NPCTradeCompleteText1);
+    // REDIRECTED(Trade_GetDialog);
+    // REDIRECTED(NPCTradeWrongText2);
+    // REDIRECTED(PrintTradeText);
+    // REDIRECTED(TradedForText);
+    // REDIRECTED(NPCTradeIntroText3);
+    // REDIRECTED(NPCTradeCancelText2);
+    // REDIRECTED(CopyTradeName);
+    // REDIRECTED(GetTradeMonNames);
+    // REDIRECTED(NPCTrade);
+
+    // engine/pokemon/caught_data.c
+    // REDIRECTED(SetGiftPartyMonCaughtData);
+    // REDIRECTED(CheckPartyFullAfterContest);
+    // REDIRECTED(CaughtAskNicknameText);
+    // REDIRECTED(SetBoxmonOrEggmonCaughtData);
+    // REDIRECTED(GiveANickname_YesNo);
+    // REDIRECTED(SetGiftMonCaughtData);
+    // REDIRECTED(SetGiftBoxMonCaughtData);
+    // REDIRECTED(SetBoxMonCaughtData);
+    // REDIRECTED(SetCaughtData);
+    // REDIRECTED(SetEggMonCaughtData);
 }

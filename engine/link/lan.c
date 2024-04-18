@@ -121,7 +121,7 @@ void LANConnection_Host(void) {
     for(;; frameCount++) {
         DelayFrame();
 
-        GetJoypad_Conv();
+        GetJoypad_Conv2();
         uint8_t pad = hram->hJoyPressed;
         if(pad & B_BUTTON) {
             CloseWindow_Conv2();
@@ -213,7 +213,7 @@ void LANConnection_Join(void) {
             NetworkCloseConnection();
             return;
         }
-        GetJoypad_Conv();
+        GetJoypad_Conv2();
 
         if(frameCount < 8 * 60 && NetworkCheckLAN()) {
             ClearBox_Conv2(coord(9, 1, wram->wTilemap), TEXTBOX_Y - 2, SCREEN_WIDTH - 8 - 3);

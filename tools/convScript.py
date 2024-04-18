@@ -33,6 +33,7 @@ commands = {
     'pocketisfull': Cmd('pocketisfull', []),
     'specialsound': Cmd('specialsound', []),
     'pokemart': Cmd('pokemart', ['type', 'id']),
+    'trade': Cmd('trade', ['id']),
     'hangup': Cmd('hangup', []),
     'askforphonenumber': Cmd('askforphonenumber', ['contact']),
     'describedecoration': Cmd('describedecoration', ['deco']),
@@ -173,6 +174,11 @@ mvmt_commands = {
     'show_object': Cmd('movement_show_object', []),
     'hide_object': Cmd('movement_hide_object', []),
     'skyfall_top': Cmd('movement_skyfall_top', []),
+    'tree_shake': Cmd('movement_tree_shake', []),
+    'slow_jump_step': Cmd('slow_jump_step', ['dir']),
+    'fast_jump_step': Cmd('fast_jump_step', ['dir']),
+    'set_sliding': Cmd('movement_set_sliding', []),
+    'remove_sliding': Cmd('movement_remove_sliding', []),
     'step_end': Cmd('movement_step_end', []),
 }
 

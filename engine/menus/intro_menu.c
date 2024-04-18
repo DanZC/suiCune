@@ -591,7 +591,7 @@ bool ConfirmContinue_Conv(void) {
         // CALL(aDelayFrame);
         DelayFrame();
         // CALL(aGetJoypad);
-        GetJoypad_Conv();
+        GetJoypad_Conv2();
         // LD_HL(hJoyPressed);
         // BIT_hl(A_BUTTON_F);
         // IF_NZ goto PressA;
@@ -1974,7 +1974,7 @@ void TitleScreenMain_Conv(void) {
 
         //  Save data can be deleted by pressing Up + B + Select.
         // CALL(aGetJoypad);
-        GetJoypad_Conv();
+        GetJoypad_Conv2();
         // LD_HL(hJoyDown);
         // LD_A_hl;
         // AND_A(D_UP + B_BUTTON + SELECT);

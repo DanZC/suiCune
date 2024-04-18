@@ -535,7 +535,7 @@ void Movement_tree_shake(struct Object* bc){
     // LD_HL(OBJECT_STEP_TYPE);
     // ADD_HL_BC;
     // LD_hl(STEP_TYPE_SLEEP);
-    bc->stepType = OBJECT_STEP_TYPE;
+    bc->stepType = STEP_TYPE_SLEEP;
 
     // LD_HL(OBJECT_ACTION);
     // ADD_HL_BC;

@@ -35,6 +35,7 @@
 #include "../events/trainer_scripts.h"
 #include "../events/std_collision.h"
 #include "../events/overworld.h"
+#include "../events/hidden_item.h"
 
 // INCLUDE "constants.asm"
 
@@ -349,7 +350,7 @@ void HandleMapTimeAndJoypad(void){
     // CALL(aUpdateTime);
     UpdateTime_Conv();
     // CALL(aGetJoypad);
-    GetJoypad_Conv();
+    GetJoypad_Conv2();
     // CALL(aTimeOfDayPals);
     TimeOfDayPals_Conv();
     // RET;
@@ -1580,7 +1581,7 @@ u8_flag_s BGEventJumptable_Conv(uint8_t a){
             // LD_A(BANK(aHiddenItemScript));
             // LD_HL(mHiddenItemScript);
             // CALL(aCallScript);
-            b = CallScript_Conv2(NULL);
+            b = CallScript_Conv2(HiddenItemScript);
             // SCF;
             // RET;
             return u8_flag(b, true);

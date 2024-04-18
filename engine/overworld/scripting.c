@@ -28,6 +28,7 @@
 #include "../events/whiteout.h"
 #include "../events/mom_phone.h"
 #include "../events/checksave.h"
+#include "../events/npc_trade.h"
 #include "events.h"
 #include "variables.h"
 #include "landmarks.h"
@@ -1354,6 +1355,15 @@ void Script_trade(void){
     FARCALL(aNPCTrade);
     RET;
 
+}
+
+void Script_trade_Conv(script_s* s, uint8_t trade){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // LD_E_A;
+    // FARCALL(aNPCTrade);
+    NPCTrade(trade);
+    // RET;
 }
 
 void Script_phonecall(void){

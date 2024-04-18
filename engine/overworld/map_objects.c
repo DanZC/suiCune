@@ -345,6 +345,7 @@ void SetFacingWeirdTree(struct Object* bc){
     // LD_hl_A;
     bc->stepFrame++;
     // maskbits(NUM_DIRECTIONS, 2);
+    uint8_t f = bc->stepFrame & (3 << 2);
     // RRCA;
     // RRCA;
     // ADD_A(FACING_WEIRD_TREE_0);
@@ -352,7 +353,7 @@ void SetFacingWeirdTree(struct Object* bc){
     // ADD_HL_BC;
     // LD_hl_A;
     // RET;
-    bc->facingStep = ((bc->stepFrame & (3 << 2)) >> 2) + FACING_WEIRD_TREE_0;
+    bc->facingStep = (f >> 2) + FACING_WEIRD_TREE_0;
 }
 
 void SetFacingBigDollAsym(struct Object* bc){

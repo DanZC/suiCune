@@ -70,6 +70,7 @@ void Script_pokemart(void);
 void Script_pokemart_Conv(script_s* s, uint8_t mart_type, uint16_t mart_id);
 void Script_elevator(void);
 void Script_trade(void);
+void Script_trade_Conv(script_s* s, uint8_t trade);
 void Script_phonecall(void);
 void Script_hangup(void);
 void Script_hangup_Conv(script_s* s);

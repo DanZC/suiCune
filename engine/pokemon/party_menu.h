@@ -1,5 +1,6 @@
-void SelectMonFromParty(void);
+u8_flag_s SelectMonFromParty(void);
 void SelectTradeOrDayCareMon(void);
+u8_flag_s SelectTradeOrDayCareMon_Conv(uint8_t b);
 void InitPartyMenuLayout(void);
 void LoadPartyMenuGFX(void);
 void WritePartyMenuTilemap(void);

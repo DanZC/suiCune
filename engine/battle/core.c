@@ -41,6 +41,7 @@
 #include "../pokemon/mon_stats.h"
 #include "../pokemon/move_mon.h"
 #include "../pokemon/evolve.h"
+#include "../pokemon/party_menu.h"
 #include "../../data/text/battle.h"
 #include "../../data/text/common.h"
 #include "../../data/wild/treemons_asleep.h"
@@ -4359,120 +4360,150 @@ bool IsMobileBattle_Conv(void){
 }
 
 void SetUpBattlePartyMenu(void){
-    CALL(aClearBGPalettes);
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
     return SetUpBattlePartyMenu_Loop();
 }
 
 void SetUpBattlePartyMenu_Loop(void){
 //  //  switch to fullscreen menu?
-    FARCALL(aLoadPartyMenuGFX);
-    FARCALL(aInitPartyMenuWithCancel);
-    FARCALL(aInitPartyMenuBGPal7);
-    FARCALL(aInitPartyMenuGFX);
-    RET;
-
+    // FARCALL(aLoadPartyMenuGFX);
+    LoadPartyMenuGFX();
+    // FARCALL(aInitPartyMenuWithCancel);
+    InitPartyMenuWithCancel();
+    // FARCALL(aInitPartyMenuBGPal7);
+    InitPartyMenuBGPal7();
+    // FARCALL(aInitPartyMenuGFX);
+    InitPartyMenuGFX();
+    // RET;
 }
 
 void JumpToPartyMenuAndPrintText(void){
-    FARCALL(aWritePartyMenuTilemap);
-    FARCALL(aPrintPartyMenuText);
-    CALL(aWaitBGMap);
-    CALL(aSetPalettes);
-    CALL(aDelayFrame);
-    RET;
-
+    // FARCALL(aWritePartyMenuTilemap);
+    WritePartyMenuTilemap();
+    // FARCALL(aPrintPartyMenuText);
+    PrintPartyMenuText();
+    // CALL(aWaitBGMap);
+    WaitBGMap_Conv();
+    // CALL(aSetPalettes);
+    SetPalettes_Conv();
+    // CALL(aDelayFrame);
+    DelayFrame();
+    // RET;
 }
 
-void SelectBattleMon(void){
-    CALL(aIsMobileBattle);
-    IF_Z goto mobile;
-    FARCALL(aPartyMenuSelect);
-    RET;
-
-
-mobile:
-    FARCALL(aMobile_PartyMenuSelect);
-    RET;
-
+u8_flag_s SelectBattleMon(void){
+    // CALL(aIsMobileBattle);
+    // IF_Z goto mobile;
+    if(IsMobileBattle_Conv()) {
+    // mobile:
+        // FARCALL(aMobile_PartyMenuSelect);
+        // RET;
+        return u8_flag(0, false);
+    }
+    // FARCALL(aPartyMenuSelect);
+    u8_flag_s res = PartyMenuSelect();
+    // RET;
+    return res;
 }
 
-void PickPartyMonInBattle(void){
+bool PickPartyMonInBattle(void){
 
-loop:
-    LD_A(PARTYMENUACTION_SWITCH);  // Which PKMN?
-    LD_addr_A(wPartyMenuActionText);
-    CALL(aJumpToPartyMenuAndPrintText);
-    CALL(aSelectBattleMon);
-    RET_C ;
-    CALL(aCheckIfCurPartyMonIsFitToFight);
-    IF_Z goto loop;
-    XOR_A_A;
-    RET;
-
+    do {
+    // loop:
+        // LD_A(PARTYMENUACTION_SWITCH);  // Which PKMN?
+        // LD_addr_A(wPartyMenuActionText);
+        wram->wPartyMenuActionText = PARTYMENUACTION_SWITCH;
+        // CALL(aJumpToPartyMenuAndPrintText);
+        JumpToPartyMenuAndPrintText();
+        // CALL(aSelectBattleMon);
+        u8_flag_s res = SelectBattleMon();
+        // RET_C ;
+        if(res.flag)
+            return true;
+        // CALL(aCheckIfCurPartyMonIsFitToFight);
+        // IF_Z goto loop;
+    } while(!CheckIfCurPartyMonIsFitToFight_Conv());
+    // XOR_A_A;
+    // RET;
+    return false;
 }
 
-void SwitchMonAlreadyOut(void){
-    LD_HL(wCurBattleMon);
-    LD_A_addr(wCurPartyMon);
-    CP_A_hl;
-    IF_NZ goto notout;
+bool SwitchMonAlreadyOut(void){
+    // LD_HL(wCurBattleMon);
+    // LD_A_addr(wCurPartyMon);
+    // CP_A_hl;
+    // IF_NZ goto notout;
+    if(wram->wCurBattleMon != wram->wCurPartyMon)
+        return false;
 
-    LD_HL(mBattleText_MonIsAlreadyOut);
-    CALL(aStdBattleTextbox);
-    SCF;
-    RET;
+    // LD_HL(mBattleText_MonIsAlreadyOut);
+    // CALL(aStdBattleTextbox);
+    StdBattleTextbox_Conv2(BattleText_MonIsAlreadyOut);
+    // SCF;
+    // RET;
+    return true;
 
-
-notout:
-    XOR_A_A;
-    RET;
-
+// notout:
+    // XOR_A_A;
+    // RET;
 }
 
-void ForcePickPartyMonInBattle(void){
+bool ForcePickPartyMonInBattle(void){
+//  Can't back out.
+    while(1) {
+    // pick:
+        // CALL(aPickPartyMonInBattle);
+        // RET_NC ;
+        if(!PickPartyMonInBattle())
+            return false;
+        // CALL(aCheckMobileBattleError);
+        // RET_C ;
+        if(CheckMobileBattleError_Conv())
+            return true;
+
+        // LD_DE(SFX_WRONG);
+        // CALL(aPlaySFX);
+        PlaySFX_Conv(SFX_WRONG);
+        // CALL(aWaitSFX);
+        WaitSFX_Conv();
+        // goto pick;
+    }
+}
+
+bool PickSwitchMonInBattle(void){
+    do {
+    // pick:
+        // CALL(aPickPartyMonInBattle);
+        // RET_C ;
+        if(PickPartyMonInBattle())
+            return true;
+        // CALL(aSwitchMonAlreadyOut);
+        // IF_C goto pick;
+    } while(SwitchMonAlreadyOut());
+    // XOR_A_A;
+    // RET;
+    return false;
+}
+
+bool ForcePickSwitchMonInBattle(void){
 //  Can't back out.
 
+    do {
+    // pick:
+        // CALL(aForcePickPartyMonInBattle);
+        ForcePickPartyMonInBattle();
+        // CALL(aCheckMobileBattleError);
+        // RET_C ;
+        if(CheckMobileBattleError_Conv())
+            return true;
+        // CALL(aSwitchMonAlreadyOut);
+        // IF_C goto pick;
+    } while(SwitchMonAlreadyOut());
 
-pick:
-    CALL(aPickPartyMonInBattle);
-    RET_NC ;
-    CALL(aCheckMobileBattleError);
-    RET_C ;
-
-    LD_DE(SFX_WRONG);
-    CALL(aPlaySFX);
-    CALL(aWaitSFX);
-    goto pick;
-
-    return PickSwitchMonInBattle();
-}
-
-void PickSwitchMonInBattle(void){
-
-pick:
-    CALL(aPickPartyMonInBattle);
-    RET_C ;
-    CALL(aSwitchMonAlreadyOut);
-    IF_C goto pick;
-    XOR_A_A;
-    RET;
-
-}
-
-void ForcePickSwitchMonInBattle(void){
-//  Can't back out.
-
-
-pick:
-    CALL(aForcePickPartyMonInBattle);
-    CALL(aCheckMobileBattleError);
-    RET_C ;
-    CALL(aSwitchMonAlreadyOut);
-    IF_C goto pick;
-
-    XOR_A_A;
-    RET;
-
+    // XOR_A_A;
+    // RET;
+    return false;
 }
 
 void LostBattle(void){
@@ -4589,10 +4620,10 @@ void EnemyMonFaintedAnimation(void){
 }
 
 void PlayerMonFaintedAnimation(void){
-    hlcoord(1, 10, wTilemap);
-    decoord(1, 11, wTilemap);
-    JP(mMonFaintedAnimation);
-
+    // hlcoord(1, 10, wTilemap);
+    // decoord(1, 11, wTilemap);
+    // JP(mMonFaintedAnimation);
+    return MonFaintedAnimation_Conv(coord(1, 11, wram->wTilemap), coord(1, 10, wram->wTilemap));
 }
 
 void MonFaintedAnimation(void){
@@ -5533,28 +5564,43 @@ bool OfferSwitch_Conv(void){
     // TODO: Come back and implement switching.
     if(wram->wMenuCursorY == 1) {
         // CALL(aSetUpBattlePartyMenu);
+        SetUpBattlePartyMenu();
         // CALL(aPickSwitchMonInBattle);
         // IF_C goto canceled_switch;
-        // LD_A_addr(wCurBattleMon);
-        // LD_addr_A(wLastPlayerMon);
-        // LD_A_addr(wCurPartyMon);
-        // LD_addr_A(wCurBattleMon);
-        // CALL(aClearPalettes);
-        // CALL(aDelayFrame);
-        // CALL(av_LoadHPBar);
-        // POP_AF;
-        // LD_addr_A(wCurPartyMon);
-        // XOR_A_A;
-        // LD_addr_A(wCurEnemyMove);
-        // LD_addr_A(wCurPlayerMove);
-        // AND_A_A;
-        // RET;
-
+        bool cancel = PickSwitchMonInBattle();
+        if(!cancel) {
+            // LD_A_addr(wCurBattleMon);
+            // LD_addr_A(wLastPlayerMon);
+            wram->wLastPlayerMon = wram->wCurBattleMon;
+            // LD_A_addr(wCurPartyMon);
+            // LD_addr_A(wCurBattleMon);
+            wram->wCurBattleMon = wram->wCurPartyMon;
+            // CALL(aClearPalettes);
+            ClearPalettes_Conv();
+            // CALL(aDelayFrame);
+            DelayFrame();
+            // CALL(av_LoadHPBar);
+            v_LoadHPBar_Conv();
+            // POP_AF;
+            // LD_addr_A(wCurPartyMon);
+            wram->wCurPartyMon = cur;
+            // XOR_A_A;
+            // LD_addr_A(wCurEnemyMove);
+            wram->wCurEnemyMove = NO_MOVE;
+            // LD_addr_A(wCurPlayerMove);
+            wram->wCurPlayerMove = NO_MOVE;
+            // AND_A_A;
+            // RET;
+            return true;
+        }
 
     // canceled_switch:
         // CALL(aClearPalettes);
+        ClearPalettes_Conv();
         // CALL(aDelayFrame);
+        DelayFrame();
         // CALL(av_LoadHPBar);
+        v_LoadHPBar_Conv();
     }
 
 // said_no:
@@ -10797,6 +10843,12 @@ void v_LoadHPBar(void){
     CALLFAR(aLoadHPBar);
     RET;
 
+}
+
+void v_LoadHPBar_Conv(void){
+    // CALLFAR(aLoadHPBar);
+    // RET;
+    return LoadHPBar_Conv();
 }
 
 void LoadHPExpBarGFX(void){

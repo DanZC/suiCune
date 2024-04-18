@@ -1,0 +1,11 @@
+void CheckPartyFullAfterContest(void);
+void GiveANickname_YesNo(void);
+void CaughtAskNicknameText(void);
+void SetCaughtData(void);
+void SetBoxmonOrEggmonCaughtData(void);
+void SetBoxMonCaughtData(void);
+void SetGiftBoxMonCaughtData(void);
+void SetGiftPartyMonCaughtData(uint8_t b);
+void SetGiftMonCaughtData(void);
+void SetGiftMonCaughtData_Conv(struct PartyMon* hl, uint8_t b);
+void SetEggMonCaughtData(void);

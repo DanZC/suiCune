@@ -23,13 +23,13 @@
 
 // SECTION "Map Scripts 2", ROMX
 
-// #include "../../maps/RuinsOfAlphOutside.h"
+#include "../../maps/RuinsOfAlphOutside.h"
 // #include "../../maps/RuinsOfAlphHoOhChamber.h"
 // #include "../../maps/RuinsOfAlphKabutoChamber.h"
 // #include "../../maps/RuinsOfAlphOmanyteChamber.h"
 #include "../../maps/RuinsOfAlphAerodactylChamber.h"
-// #include "../../maps/RuinsOfAlphInnerChamber.h"
-// #include "../../maps/RuinsOfAlphResearchCenter.h"
+#include "../../maps/RuinsOfAlphInnerChamber.h"
+#include "../../maps/RuinsOfAlphResearchCenter.h"
 // #include "../../maps/RuinsOfAlphHoOhItemRoom.h"
 // #include "../../maps/RuinsOfAlphKabutoItemRoom.h"
 // #include "../../maps/RuinsOfAlphOmanyteItemRoom.h"
@@ -38,9 +38,9 @@
 // #include "../../maps/RuinsOfAlphKabutoWordRoom.h"
 // #include "../../maps/RuinsOfAlphOmanyteWordRoom.h"
 // #include "../../maps/RuinsOfAlphAerodactylWordRoom.h"
-// #include "../../maps/UnionCave1F.h"
-// #include "../../maps/UnionCaveB1F.h"
-// #include "../../maps/UnionCaveB2F.h"
+#include "../../maps/UnionCave1F.h"
+#include "../../maps/UnionCaveB1F.h"
+#include "../../maps/UnionCaveB2F.h"
 // #include "../../maps/SlowpokeWellB1F.h"
 // #include "../../maps/SlowpokeWellB2F.h"
 // #include "../../maps/OlivineLighthouse1F.h"
@@ -74,17 +74,17 @@
 // SECTION "Map Scripts 5", ROMX
 
 // #include "../../maps/Route11.h"
-// #include "../../maps/VioletMart.h"
+#include "../../maps/VioletMart.h"
 // #include "../../maps/VioletGym.h"
 // #include "../../maps/EarlsPokemonAcademy.h"
-// #include "../../maps/VioletNicknameSpeechHouse.h"
+#include "../../maps/VioletNicknameSpeechHouse.h"
 // #include "../../maps/VioletPokecenter1F.h"
 // #include "../../maps/VioletKylesHouse.h"
-// #include "../../maps/Route32RuinsOfAlphGate.h"
+#include "../../maps/Route32RuinsOfAlphGate.h"
 // #include "../../maps/Route32Pokecenter1F.h"
 // #include "../../maps/Route35GoldenrodGate.h"
 // #include "../../maps/Route35NationalParkGate.h"
-// #include "../../maps/Route36RuinsOfAlphGate.h"
+#include "../../maps/Route36RuinsOfAlphGate.h"
 // #include "../../maps/Route36NationalParkGate.h"
 
 
@@ -255,9 +255,9 @@
 // SECTION "Map Scripts 14", ROMX
 
 // #include "../../maps/CeruleanCity.h"
-// #include "../../maps/SproutTower1F.h"
-// #include "../../maps/SproutTower2F.h"
-// #include "../../maps/SproutTower3F.h"
+#include "../../maps/SproutTower1F.h"
+#include "../../maps/SproutTower2F.h"
+#include "../../maps/SproutTower3F.h"
 // #include "../../maps/TinTower1F.h"
 // #include "../../maps/TinTower2F.h"
 // #include "../../maps/TinTower3F.h"
@@ -330,7 +330,7 @@
 // SECTION "Map Scripts 17", ROMX
 
 // #include "../../maps/MahoganyTown.h"
-// #include "../../maps/Route32.h"
+#include "../../maps/Route32.h"
 // #include "../../maps/VermilionFishingSpeechHouse.h"
 // #include "../../maps/VermilionPokecenter1F.h"
 // #include "../../maps/VermilionPokecenter2FBeta.h"
@@ -351,7 +351,7 @@
 
 // SECTION "Map Scripts 18", ROMX
 
-// #include "../../maps/Route36.h"
+#include "../../maps/Route36.h"
 // #include "../../maps/FuchsiaCity.h"
 // #include "../../maps/BlackthornGym1F.h"
 // #include "../../maps/BlackthornGym2F.h"
@@ -400,7 +400,7 @@
 // SECTION "Map Scripts 20", ROMX
 
 #include "../../maps/CherrygroveCity.h"
-// #include "../../maps/Route35.h"
+#include "../../maps/Route35.h"
 // #include "../../maps/Route43.h"
 // #include "../../maps/Route44.h"
 // #include "../../maps/Route45.h"
@@ -442,7 +442,7 @@
 #include "../../maps/NewBarkTown.h"
 #include "../../maps/VioletCity.h"
 // #include "../../maps/OlivineCity.h"
-// #include "../../maps/Route37.h"
+#include "../../maps/Route37.h"
 // #include "../../maps/Route42.h"
 #include "../../maps/Route46.h"
 // #include "../../maps/ViridianCity.h"
@@ -458,7 +458,7 @@
 
 // SECTION "Map Scripts 24", ROMX
 
-// #include "../../maps/Route33.h"
+#include "../../maps/Route33.h"
 // #include "../../maps/Route2.h"
 // #include "../../maps/Route1.h"
 // #include "../../maps/PalletTown.h"

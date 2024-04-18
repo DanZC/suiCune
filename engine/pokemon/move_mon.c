@@ -4,6 +4,7 @@
 #include "../../home/print_text.h"
 #include "../../home/sram.h"
 #include "../../home/copy.h"
+#include "../../home/pokemon.h"
 #include "../../data/moves/moves.h"
 
 #define RANDY_OT_ID (01001)
@@ -1903,6 +1904,45 @@ void ComputeNPCTrademonStats(void){
     LD_hl_A;
     RET;
 
+}
+
+void ComputeNPCTrademonStats_Conv(uint8_t curPartyMon){
+    // LD_A(MON_LEVEL);
+    // CALL(aGetPartyParamLocation);
+    struct PartyMon* bc = &wram->wPartyMon[curPartyMon];
+    // LD_A_hl;
+    // LD_addr_A(MON_LEVEL);  // should be "ld [wCurPartyLevel], a"
+    wram->wCurPartyLevel = bc->mon.level;
+    // LD_A(MON_SPECIES);
+    // CALL(aGetPartyParamLocation);
+    // LD_A_hl;
+    // LD_addr_A(wCurSpecies);
+    wram->wCurSpecies = bc->mon.species;
+    // CALL(aGetBaseData);
+    GetBaseData_Conv();
+    // LD_A(MON_MAXHP);
+    // CALL(aGetPartyParamLocation);
+    // LD_D_H;
+    // LD_E_L;
+    // PUSH_DE;
+    uint16_t max_hp = bc->maxHP;
+    // LD_A(MON_STAT_EXP - 1);
+    // CALL(aGetPartyParamLocation);
+    uint16_t* stats = (uint16_t*)(((uint8_t*)bc) + offsetof(struct PartyMon, stats));
+    uint16_t* statExp = (uint16_t*)(((uint8_t*)bc) + offsetof(struct BoxMon, statExp));
+    // LD_B(TRUE);
+    // CALL(aCalcMonStats);
+    CalcMonStats_Conv(stats, statExp, bc->mon.DVs, TRUE);
+    // POP_DE;
+    // LD_A(MON_HP);
+    // CALL(aGetPartyParamLocation);
+    // LD_A_de;
+    // INC_DE;
+    // LD_hli_A;
+    // LD_A_de;
+    // LD_hl_A;
+    bc->HP = max_hp;
+    // RET;
 }
 
 void CalcMonStats(void){

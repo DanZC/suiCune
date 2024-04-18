@@ -60,7 +60,7 @@
 //#include "engine/events/elevator.h"
 //#include "engine/events/bug_contest/contest.h"
 #include "engine/events/repel.h"
-//#include "engine/events/hidden_item.h"
+#include "engine/events/hidden_item.h"
 #include "engine/events/std_collision.h"
 //#include "engine/events/bug_contest/judging.h"
 //#include "engine/events/pokerus/apply_pokerus_tick.h"
@@ -200,7 +200,7 @@
 //#include "engine/gfx/trademon_frontpic.h"
 //#include "engine/events/pokerus/check_pokerus.h"
 //#include "engine/events/lucky_number.h"
-//#include "engine/pokemon/caught_data.h"
+#include "engine/pokemon/caught_data.h"
 //#include "engine/pokemon/search2.h"
 #include "engine/pokemon/stats_screen.h"
 #include "engine/events/catch_tutorial.h"
@@ -456,7 +456,7 @@
 // SECTION "bank3F", ROMX
 
 #include "engine/tilesets/tileset_anims.h"
-//#include "engine/events/npc_trade.h"
+#include "engine/events/npc_trade.h"
 #include "engine/events/mom_phone.h"
 
 // SECTION "mobile40", ROMX

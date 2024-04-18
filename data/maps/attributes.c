@@ -101,14 +101,35 @@ map_attributes(Route31, ROUTE_31, 0x05,
     connection(ROUTE_31, south, Route30, ROUTE_30, 10)
     connection(ROUTE_31, west, VioletCity, VIOLET_CITY, -9));
 
+map_attributes(Route32, ROUTE_32, 0x05,
+    connection(ROUTE_32, north, VioletCity, VIOLET_CITY, 0)
+    connection(ROUTE_32, south, Route33, ROUTE_33, 0));
+
+map_attributes(Route33, ROUTE_33, 0x05,
+    connection(ROUTE_33, north, Route32, ROUTE_32, 0)
+    connection(ROUTE_33, west, AzaleaTown, AZALEA_TOWN, 0));
+
+map_attributes(Route35, ROUTE_35, 0x05,
+    connection(ROUTE_35, north, Route36, ROUTE_36, 0)
+    connection(ROUTE_35, south, GoldenrodCity, GOLDENROD_CITY, -5));
+
+map_attributes(Route36, ROUTE_36, 0x05,
+    connection(ROUTE_36, north, Route37, ROUTE_37, 10)
+    connection(ROUTE_36, south, Route35, ROUTE_35, 0)
+    connection(ROUTE_36, east, VioletCity, VIOLET_CITY, 0));
+
+map_attributes(Route37, ROUTE_37, 0x05,
+    connection(ROUTE_37, north, EcruteakCity, ECRUTEAK_CITY, -5)
+    connection(ROUTE_37, south, Route36, ROUTE_36, -10));
+
 map_attributes(Route46, ROUTE_46, 0x05,
     connection(ROUTE_46, south, Route29, ROUTE_29, -10)
     connection(ROUTE_46, east, Route45, ROUTE_45, -36));
 
 // map_attributes(Route23, ROUTE_23, 0x0f, 0);
-// map_attributes(SproutTower1F, SPROUT_TOWER_1F, 0x00, 0);
-// map_attributes(SproutTower2F, SPROUT_TOWER_2F, 0x00, 0);
-// map_attributes(SproutTower3F, SPROUT_TOWER_3F, 0x00, 0);
+map_attributes(SproutTower1F, SPROUT_TOWER_1F, 0x00, 0);
+map_attributes(SproutTower2F, SPROUT_TOWER_2F, 0x00, 0);
+map_attributes(SproutTower3F, SPROUT_TOWER_3F, 0x00, 0);
 // map_attributes(TinTower1F, TIN_TOWER_1F, 0x00, 0);
 // map_attributes(TinTower2F, TIN_TOWER_2F, 0x00, 0);
 // map_attributes(TinTower3F, TIN_TOWER_3F, 0x00, 0);
@@ -127,13 +148,13 @@ map_attributes(Route46, ROUTE_46, 0x05,
 // map_attributes(RadioTower3F, RADIO_TOWER_3F, 0x00, 0);
 // map_attributes(RadioTower4F, RADIO_TOWER_4F, 0x00, 0);
 // map_attributes(RadioTower5F, RADIO_TOWER_5F, 0x00, 0);
-// map_attributes(RuinsOfAlphOutside, RUINS_OF_ALPH_OUTSIDE, 0x05, 0);
+map_attributes(RuinsOfAlphOutside, RUINS_OF_ALPH_OUTSIDE, 0x05, 0);
 // map_attributes(RuinsOfAlphHoOhChamber, RUINS_OF_ALPH_HO_OH_CHAMBER, 0x00, 0);
 // map_attributes(RuinsOfAlphKabutoChamber, RUINS_OF_ALPH_KABUTO_CHAMBER, 0x00, 0);
 // map_attributes(RuinsOfAlphOmanyteChamber, RUINS_OF_ALPH_OMANYTE_CHAMBER, 0x00, 0);
 map_attributes(RuinsOfAlphAerodactylChamber, RUINS_OF_ALPH_AERODACTYL_CHAMBER, 0x00, 0);
-// map_attributes(RuinsOfAlphInnerChamber, RUINS_OF_ALPH_INNER_CHAMBER, 0x00, 0);
-// map_attributes(RuinsOfAlphResearchCenter, RUINS_OF_ALPH_RESEARCH_CENTER, 0x00, 0);
+map_attributes(RuinsOfAlphInnerChamber, RUINS_OF_ALPH_INNER_CHAMBER, 0x00, 0);
+map_attributes(RuinsOfAlphResearchCenter, RUINS_OF_ALPH_RESEARCH_CENTER, 0x00, 0);
 // map_attributes(RuinsOfAlphHoOhItemRoom, RUINS_OF_ALPH_HO_OH_ITEM_ROOM, 0x00, 0);
 // map_attributes(RuinsOfAlphKabutoItemRoom, RUINS_OF_ALPH_KABUTO_ITEM_ROOM, 0x00, 0);
 // map_attributes(RuinsOfAlphOmanyteItemRoom, RUINS_OF_ALPH_OMANYTE_ITEM_ROOM, 0x00, 0);
@@ -142,9 +163,9 @@ map_attributes(RuinsOfAlphAerodactylChamber, RUINS_OF_ALPH_AERODACTYL_CHAMBER, 0
 // map_attributes(RuinsOfAlphKabutoWordRoom, RUINS_OF_ALPH_KABUTO_WORD_ROOM, 0x00, 0);
 // map_attributes(RuinsOfAlphOmanyteWordRoom, RUINS_OF_ALPH_OMANYTE_WORD_ROOM, 0x00, 0);
 // map_attributes(RuinsOfAlphAerodactylWordRoom, RUINS_OF_ALPH_AERODACTYL_WORD_ROOM, 0x00, 0);
-// map_attributes(UnionCave1F, UNION_CAVE_1F, 0x09, 0);
-// map_attributes(UnionCaveB1F, UNION_CAVE_B1F, 0x09, 0);
-// map_attributes(UnionCaveB2F, UNION_CAVE_B2F, 0x09, 0);
+map_attributes(UnionCave1F, UNION_CAVE_1F, 0x09, 0);
+map_attributes(UnionCaveB1F, UNION_CAVE_B1F, 0x09, 0);
+map_attributes(UnionCaveB2F, UNION_CAVE_B2F, 0x09, 0);
 // map_attributes(SlowpokeWellB1F, SLOWPOKE_WELL_B1F, 0x09, 0);
 // map_attributes(SlowpokeWellB2F, SLOWPOKE_WELL_B2F, 0x09, 0);
 // map_attributes(OlivineLighthouse1F, OLIVINE_LIGHTHOUSE_1F, 0x00, 0);
@@ -251,17 +272,17 @@ map_attributes(DarkCaveVioletEntrance, DARK_CAVE_VIOLET_ENTRANCE, 0x09, 0);
 // map_attributes(LakeOfRageMagikarpHouse, LAKE_OF_RAGE_MAGIKARP_HOUSE, 0x00, 0);
 // map_attributes(Route43MahoganyGate, ROUTE_43_MAHOGANY_GATE, 0x00, 0);
 // map_attributes(Route43Gate, ROUTE_43_GATE, 0x00, 0);
-// map_attributes(VioletMart, VIOLET_MART, 0x00, 0);
+map_attributes(VioletMart, VIOLET_MART, 0x00, 0);
 // map_attributes(VioletGym, VIOLET_GYM, 0x00, 0);
 // map_attributes(EarlsPokemonAcademy, EARLS_POKEMON_ACADEMY, 0x00, 0);
-// map_attributes(VioletNicknameSpeechHouse, VIOLET_NICKNAME_SPEECH_HOUSE, 0x00, 0);
+map_attributes(VioletNicknameSpeechHouse, VIOLET_NICKNAME_SPEECH_HOUSE, 0x00, 0);
 // map_attributes(VioletPokecenter1F, VIOLET_POKECENTER_1F, 0x00, 0);
 // map_attributes(VioletKylesHouse, VIOLET_KYLES_HOUSE, 0x00, 0);
-// map_attributes(Route32RuinsOfAlphGate, ROUTE_32_RUINS_OF_ALPH_GATE, 0x00, 0);
+map_attributes(Route32RuinsOfAlphGate, ROUTE_32_RUINS_OF_ALPH_GATE, 0x00, 0);
 // map_attributes(Route32Pokecenter1F, ROUTE_32_POKECENTER_1F, 0x00, 0);
 // map_attributes(Route35GoldenrodGate, ROUTE_35_GOLDENROD_GATE, 0x00, 0);
 // map_attributes(Route35NationalParkGate, ROUTE_35_NATIONAL_PARK_GATE, 0x00, 0);
-// map_attributes(Route36RuinsOfAlphGate, ROUTE_36_RUINS_OF_ALPH_GATE, 0x00, 0);
+map_attributes(Route36RuinsOfAlphGate, ROUTE_36_RUINS_OF_ALPH_GATE, 0x00, 0);
 // map_attributes(Route36NationalParkGate, ROUTE_36_NATIONAL_PARK_GATE, 0x00, 0);
 // map_attributes(GoldenrodGym, GOLDENROD_GYM, 0x00, 0);
 // map_attributes(GoldenrodBikeShop, GOLDENROD_BIKE_SHOP, 0x00, 0);

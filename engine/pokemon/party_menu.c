@@ -1,6 +1,7 @@
 #include "../../constants.h"
 #include "party_menu.h"
 #include "mon_stats.h"
+#include "../../home/delay.h"
 #include "../../home/audio.h"
 #include "../../home/gfx.h"
 #include "../../home/menu.h"
@@ -9,24 +10,34 @@
 #include "../../home/text.h"
 #include "../../home/tilemap.h"
 #include "../../home/print_text.h"
+#include "../../home/sprite_updates.h"
+#include "../../home/map.h"
 #include "../gfx/color.h"
 #include "../gfx/sprites.h"
 #include "../gfx/mon_icons.h"
 #include "../../data/party_menu_qualities.h"
 
-void SelectMonFromParty(void){
-    CALL(aDisableSpriteUpdates);
-    XOR_A_A;
-    LD_addr_A(wPartyMenuActionText);
-    CALL(aClearBGPalettes);
-    CALL(aInitPartyMenuLayout);
-    CALL(aWaitBGMap);
-    CALL(aSetPalettes);
-    CALL(aDelayFrame);
-    CALL(aPartyMenuSelect);
-    CALL(aReturnToMapWithSpeechTextbox);
-    RET;
-
+u8_flag_s SelectMonFromParty(void){
+    // CALL(aDisableSpriteUpdates);
+    DisableSpriteUpdates_Conv();
+    // XOR_A_A;
+    // LD_addr_A(wPartyMenuActionText);
+    wram->wPartyMenuActionText = 0;
+    // CALL(aClearBGPalettes);
+    // CALL(aInitPartyMenuLayout);
+    InitPartyMenuLayout();
+    // CALL(aWaitBGMap);
+    WaitBGMap_Conv();
+    // CALL(aSetPalettes);
+    SetPalettes_Conv();
+    // CALL(aDelayFrame);
+    DelayFrame();
+    // CALL(aPartyMenuSelect);
+    u8_flag_s res = PartyMenuSelect();
+    // CALL(aReturnToMapWithSpeechTextbox);
+    ReturnToMapWithSpeechTextbox_Conv();
+    // RET;
+    return res;
 }
 
 void SelectTradeOrDayCareMon(void){
@@ -44,6 +55,33 @@ void SelectTradeOrDayCareMon(void){
     CALL(aReturnToMapWithSpeechTextbox);
     RET;
 
+}
+
+u8_flag_s SelectTradeOrDayCareMon_Conv(uint8_t b){
+    // LD_A_B;
+    // LD_addr_A(wPartyMenuActionText);
+    wram->wPartyMenuActionText = b;
+    // CALL(aDisableSpriteUpdates);
+    DisableSpriteUpdates_Conv();
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
+    // CALL(aInitPartyMenuLayout);
+    InitPartyMenuLayout();
+    // CALL(aWaitBGMap);
+    WaitBGMap_Conv();
+    // LD_B(SCGB_PARTY_MENU);
+    // CALL(aGetSGBLayout);
+    GetSGBLayout_Conv(SCGB_PARTY_MENU);
+    // CALL(aSetPalettes);
+    SetPalettes_Conv();
+    // CALL(aDelayFrame);
+    DelayFrame();
+    // CALL(aPartyMenuSelect);
+    u8_flag_s res = PartyMenuSelect();
+    // CALL(aReturnToMapWithSpeechTextbox);
+    ReturnToMapWithSpeechTextbox_Conv();
+    // RET;
+    return res;
 }
 
 void InitPartyMenuLayout(void){

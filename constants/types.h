@@ -209,23 +209,23 @@ Object2
     uint8_t padding[7];
 };
 
-#if defined(__cplusplus) || defined(_MSC_VER)
-struct 
-#else
-struct __attribute__((packed))
-#endif
-NPCTrade
-{
-    uint8_t dialog;
-    uint8_t giveMon;
-    uint8_t getMon;
-    uint8_t nickname[MON_NAME_LENGTH];
-    uint16_t dvs;
-    uint8_t item;
-    uint16_t otId;
-    uint8_t otName[NAME_LENGTH];
-    uint16_t gender;
-};
+// #if defined(__cplusplus) || defined(_MSC_VER)
+// struct 
+// #else
+// struct __attribute__((packed))
+// #endif
+// NPCTrade
+// {
+//     uint8_t dialog;
+//     uint8_t giveMon;
+//     uint8_t getMon;
+//     uint8_t nickname[MON_NAME_LENGTH];
+//     uint16_t dvs;
+//     uint8_t item;
+//     uint16_t otId;
+//     uint8_t otName[NAME_LENGTH];
+//     uint16_t gender;
+// };
 
 #if defined(__cplusplus) || defined(_MSC_VER)
 struct BaseMon
@@ -1383,6 +1383,18 @@ struct CallerLocation {
     uint8_t tid;
     uint8_t mgroup;
     uint8_t mnum;
+};
+
+struct NPCTrade {
+    uint8_t dialogSet;
+    species_t requestedMon;
+    species_t offeredMon;
+    const char nickname[12];
+    uint8_t dvs[2];
+    item_t item;
+    uint16_t OTID;
+    const char OTName[12];
+    uint8_t genderRequested;
 };
 
 typedef struct ItemPocketEntry {

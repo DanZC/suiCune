@@ -1,0 +1,16 @@
+{
+    "RooftopSaleMart1": [
+        {"item":"POKE_BALL",    "price": 150},
+        {"item":"GREAT_BALL",   "price": 500},
+        {"item":"SUPER_POTION", "price": 500},
+        {"item":"FULL_HEAL",    "price": 500},
+        {"item":"REVIVE",       "price":1200}
+    ],
+    "RooftopSaleMart2": [
+        {"item":"HYPER_POTION", "price":1000},
+        {"item":"FULL_RESTORE", "price":2000},
+        {"item":"FULL_HEAL",    "price": 500},
+        {"item":"ULTRA_BALL",   "price":1000},
+        {"item":"PROTEIN",      "price":7800}
+    ]
+}

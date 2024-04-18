@@ -690,7 +690,7 @@ void JoyWaitAorB_Conv(void) {
         DelayFrame();
 
         // CALL(aGetJoypad);
-        GetJoypad_Conv();
+        GetJoypad_Conv2();
 
         // LDH_A_addr(hJoyPressed);
         // AND_A(A_BUTTON | B_BUTTON);

@@ -6,6 +6,7 @@ uint8_t* GetName_Conv2(uint8_t type, uint8_t index);
 void GetNthString(void);
 uint16_t GetNthString_Conv(uint16_t hl, uint8_t a);
 void GetBasePokemonName(void);
+void GetBasePokemonName_Conv2(species_t a);
 void GetPokemonName(void);
 void GetPokemonName_Conv(void);
 uint8_t* GetPokemonName_Conv2(species_t index);

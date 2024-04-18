@@ -55,3 +55,7 @@ void JSONDestroyMarts(void){
         }
     }
 }
+
+void JSONLoadTables(void) {
+    JSONLoadMarts();
+}

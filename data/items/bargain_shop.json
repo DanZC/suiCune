@@ -1,0 +1,9 @@
+{
+    "BargainShopData": [
+        {"item":"NUGGET",     "price":4500},
+        {"item":"PEARL",      "price": 650},
+        {"item":"BIG_PEARL",  "price":3500},
+        {"item":"STARDUST",   "price": 900},
+        {"item":"STAR_PIECE", "price":4600}
+    ]
+}

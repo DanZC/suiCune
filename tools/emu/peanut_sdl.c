@@ -3712,7 +3712,7 @@ int main(int argc, char* argv[]) {
     }
 
     PopulateConstantsHashtable();
-    JSONLoadMarts();
+    JSONLoadTables();
 
     SDL_AudioDeviceID dev;
 

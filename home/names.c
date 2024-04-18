@@ -353,6 +353,46 @@ void GetBasePokemonName_Conv(void){
     return;
 }
 
+//  Discards gender (Nidoran).
+void GetBasePokemonName_Conv2(species_t a){
+
+    // PUSH_HL;
+    // CALL(aGetPokemonName);
+    uint8_t* hl = GetPokemonName_Conv2(a);
+
+    // LD_HL(wStringBuffer1);
+    uint8_t x;
+
+    for(;;hl++) 
+    {
+        // LD_A_hl;
+        x = *hl;
+
+        // CP_A(0x50);
+        // IF_Z goto quit;
+        if(x == 0x50) 
+            break;
+        
+        // CP_A(0xef);
+        // IF_Z goto end;
+        // CP_A(0xf5);
+        // IF_Z goto end;
+        if(x == 0xef || x == 0xf5)
+        {
+            // LD_hl(0x50);
+            *hl = 0x50;
+            break;
+        }
+
+        // INC_HL;
+        // goto loop;
+    }
+
+    // POP_HL;
+    // RET;
+    return;
+}
+
 void GetPokemonName(void){
     //  Get Pokemon name for wNamedObjectIndex.
 

@@ -1,0 +1,62 @@
+#pragma once
+//// EVENTS
+extern const struct MapScripts Route36_MapScripts;
+extern const struct MapEvents Route36_MapEvents;
+
+//// CODE
+
+bool Route36_MapScripts_DummyScene0(script_s* s);
+bool Route36_MapScripts_DummyScene1(script_s* s);
+bool Route36_MapScripts_ArthurCallback(script_s* s);
+bool Route36_MapScripts_ArthurAppears(script_s* s);
+bool Route36SuicuneScript(script_s* s);
+bool SudowoodoScript(script_s* s);
+bool WateredWeirdTreeScript(script_s* s);
+bool DidntUseSquirtbottleScript(script_s* s);
+bool DidntCatchSudowoodo(script_s* s);
+bool Route36FloriaScript(script_s* s);
+bool Route36RockSmashGuyScript(script_s* s);
+bool Route36LassScript(script_s* s);
+extern const struct TrainerObj TrainerSchoolboyAlan1;
+bool TrainerSchoolboyAlan1_Script(script_s* s);
+extern const struct TrainerObj TrainerPsychicMark;
+bool TrainerPsychicMark_Script(script_s* s);
+bool ArthurScript(script_s* s);
+bool ArthurNotThursdayScript(script_s* s);
+bool Route36Sign(script_s* s);
+bool RuinsOfAlphNorthSign(script_s* s);
+bool Route36TrainerTips1(script_s* s);
+bool Route36TrainerTips2(script_s* s);
+bool Route36FruitTree(script_s* s);
+extern const uint8_t SudowoodoShakeMovement[];
+extern const uint8_t WeirdTreeMovement_Flee[];
+extern const uint8_t FloriaMovement1[];
+extern const uint8_t FloriaMovement2[];
+extern const uint8_t Route36SuicuneMovement[];
+extern const txt_cmd_s UseSquirtbottleText[];
+extern const txt_cmd_s UsedSquirtbottleText[];
+extern const txt_cmd_s SudowoodoAttackedText[];
+extern const txt_cmd_s FloriaText1[];
+extern const txt_cmd_s FloriaText2[];
+extern const txt_cmd_s RockSmashGuyText1[];
+extern const txt_cmd_s RockSmashGuyText2[];
+extern const txt_cmd_s Text_ReceivedTM08[];
+extern const txt_cmd_s RockSmashGuyText3[];
+extern const txt_cmd_s UnusedOddTreeText[];
+extern const txt_cmd_s Route36LassText[];
+extern const txt_cmd_s Route36LassText_ClearedSudowoodo[];
+extern const txt_cmd_s PsychicMarkSeenText[];
+extern const txt_cmd_s PsychicMarkBeatenText[];
+extern const txt_cmd_s PsychicMarkAfterBattleText[];
+extern const txt_cmd_s SchoolboyAlan1SeenText[];
+extern const txt_cmd_s SchoolboyAlan1BeatenText[];
+extern const txt_cmd_s SchoolboyAlanBooksText[];
+extern const txt_cmd_s MeetArthurText[];
+extern const txt_cmd_s ArthurGivesGiftText[];
+extern const txt_cmd_s ArthurGaveGiftText[];
+extern const txt_cmd_s ArthurThursdayText[];
+extern const txt_cmd_s ArthurNotThursdayText[];
+extern const txt_cmd_s Route36SignText[];
+extern const txt_cmd_s RuinsOfAlphNorthSignText[];
+extern const txt_cmd_s Route36TrainerTips1Text[];
+extern const txt_cmd_s Route36TrainerTips2Text[];
