@@ -6,6 +6,7 @@
 #include "../../home/copy.h"
 #include "../../home/pokemon.h"
 #include "../../data/moves/moves.h"
+#include <stddef.h>
 
 #define RANDY_OT_ID (01001)
 
