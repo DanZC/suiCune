@@ -1,6 +1,8 @@
 #include "../../constants.h"
 #include "johto_grass.h"
 
+struct WildGrassMons* JohtoGrassWildMons;
+#if 0
 const struct WildGrassMons JohtoGrassWildMons[] = {
 // Johto Pokémon in grass
     {MAP_ID(SPROUT_TOWER_2F),
@@ -1960,3 +1962,4 @@ const struct WildGrassMons JohtoGrassWildMons[] = {
         .mons = { { { 0 } }, { { 0 } }, { { 0 } } }
     },
 };
+#endif

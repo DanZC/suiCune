@@ -1680,6 +1680,7 @@ loop2:
 }
 
 #include "flag.h"
+#include "../data/script_pointers.h"
 
 uint8_t CopyMapObjectEvents_Conv(struct MapObject* hl, const struct ObjEvent* de, uint8_t count){
     // AND_A_A;
@@ -1707,7 +1708,7 @@ uint8_t CopyMapObjectEvents_Conv(struct MapObject* hl, const struct ObjEvent* de
         hl[i].objectTimeOfDay = de[i].h2;
         hl[i].objectColor = (de[i].color << 4) | (de[i].function & 0xf);
         hl[i].objectRange = de[i].sightRange;
-        hl[i].objectScript = i;
+        hl[i].objectScript = GetGBScriptPointer(wram->wMapGroup, wram->wMapNumber, i);
         hl[i].objectEventFlag = (uint16_t)de[i].eventFlag;
         if(hl[i].objectEventFlag != 0xffff)
             printf("%02d: x=%d, y=%d, script=%d, eventFlag=%d (%c)\n", i, hl[i].objectXCoord, hl[i].objectYCoord, i, (uint16_t)de[i].eventFlag,

@@ -324,17 +324,29 @@ bool LoadTrainer_continue_Conv(void){
         gScriptAfterPointer = hl->script;
     }
     else {
-        // LD_A_addr(wSeenTrainerBank);
-        // CALL(aGetFarWord);
-        // LD_DE(wTempTrainer);
-        // LD_BC(wTempTrainerEnd - wTempTrainer);
-        // LD_A_addr(wSeenTrainerBank);
-        // CALL(aFarCopyBytes);
-        gSeenTextPointer = NULL;
-        gWinTextPointer = NULL;
-        gLossTextPointer = NULL;
-        gScriptAfterPointer = NULL;
-        CopyBytes_Conv2(&wram->wTempTrainerEventFlag, AbsGBToRAMAddr((wram->wSeenTrainerBank << 14) | bc->objectScript), (&wram->wRunningTrainerBattleScript - (uint8_t*)&wram->wTempTrainerEventFlag));
+        if(convertedFunc[(GetMapScriptsBank_Conv() << 14) | bc->objectScript]) {
+            const struct TrainerObj* hl = (const struct TrainerObj*)convertedFunc[(GetMapScriptsBank_Conv() << 14) | bc->objectScript];
+            wram->wTempTrainerEventFlag = hl->event_flag;
+            wram->wTempTrainerClass = hl->tclass;
+            wram->wTempTrainerID = hl->tid;
+            gSeenTextPointer = hl->seenText;
+            gWinTextPointer = hl->winText;
+            gLossTextPointer = hl->lossText;
+            gScriptAfterPointer = hl->script;
+        }
+        else {
+            // LD_A_addr(wSeenTrainerBank);
+            // CALL(aGetFarWord);
+            // LD_DE(wTempTrainer);
+            // LD_BC(wTempTrainerEnd - wTempTrainer);
+            // LD_A_addr(wSeenTrainerBank);
+            // CALL(aFarCopyBytes);
+            gSeenTextPointer = NULL;
+            gWinTextPointer = NULL;
+            gLossTextPointer = NULL;
+            gScriptAfterPointer = NULL;
+            CopyBytes_Conv2(&wram->wTempTrainerEventFlag, AbsGBToRAMAddr((wram->wSeenTrainerBank << 14) | bc->objectScript), (&wram->wRunningTrainerBattleScript - (uint8_t*)&wram->wTempTrainerEventFlag));
+        }
     }
     // XOR_A_A;
     // LD_addr_A(wRunningTrainerBattleScript);

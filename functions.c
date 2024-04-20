@@ -4791,9 +4791,104 @@ void init_function_pointers(void) {
 
     // maps/CherrygroveCity.c
     CONVERTED_SCRIPT(CherrygroveCityGuideGent);
-    CONVERTED_SCRIPT(CherrygroveCityPokecenterSign);
+    CONVERTED_SCRIPT(CherrygroveSilverSceneSouth);
+    CONVERTED_SCRIPT(CherrygroveSilverSceneNorth);
     CONVERTED_SCRIPT(CherrygroveTeacherScript);
     CONVERTED_SCRIPT(CherrygroveYoungsterScript);
+    CONVERTED_SCRIPT(MysticWaterGuy);
+    CONVERTED_SCRIPT(CherrygroveCitySign);
+    CONVERTED_SCRIPT(GuideGentsHouseSign);
+    CONVERTED_SCRIPT(CherrygroveCityPokecenterSign);
+    CONVERTED_SCRIPT(CherrygroveCityMartSign);
+
+    // maps/Route29.c
+    CONVERTED_SCRIPT(Route29Tutorial1);
+    CONVERTED_SCRIPT(Route29Tutorial2);
+    CONVERTED_SCRIPT(Script_RefusedTutorial1);
+    CONVERTED_SCRIPT(Script_RefusedTutorial2);
+    CONVERTED_SCRIPT(CatchingTutorialDudeScript);
+    CONVERTED_SCRIPT(Route29YoungsterScript);
+    CONVERTED_SCRIPT(Route29TeacherScript);
+    CONVERTED_SCRIPT(Route29FisherScript);
+    CONVERTED_SCRIPT(Route29CooltrainerMScript);
+    CONVERTED_SCRIPT(TuscanyScript);
+    CONVERTED_SCRIPT(TuscanyTuesdayScript);
+    CONVERTED_SCRIPT(TuscanyDoneScript);
+    CONVERTED_SCRIPT(TuscanyNotTuesdayScript);
+    CONVERTED_SCRIPT(Route29Sign1);
+    CONVERTED_SCRIPT(Route29Sign2);
+    CONVERTED_SCRIPT(Route29FruitTree);
+
+    // maps/Route30.c
+    CONVERTED_SCRIPT(YoungsterJoey_ImportantBattleScript);
+    CONVERTED_SCRIPT(TrainerYoungsterJoey);
+    CONVERTED_SCRIPT(TrainerYoungsterMikey);
+    CONVERTED_SCRIPT(TrainerBugCatcherDon);
+    CONVERTED_SCRIPT(Route30YoungsterScript);
+    CONVERTED_SCRIPT(Route30FruitTree1);
+    CONVERTED_SCRIPT(Route30FruitTree2);
+    CONVERTED_SCRIPT(Route30CooltrainerFScript);
+    CONVERTED_SCRIPT(Route30Antidote);
+
+    // maps/Route31.c
+    CONVERTED_SCRIPT(Route31MailRecipientScript);
+    CONVERTED_SCRIPT(Route31YoungsterScript);
+    CONVERTED_SCRIPT(TrainerBugCatcherWade1);
+    CONVERTED_SCRIPT(Route31CooltrainerMScript);
+    CONVERTED_SCRIPT(Route31FruitTree);
+    CONVERTED_SCRIPT(Route31Potion);
+    CONVERTED_SCRIPT(Route31PokeBall);
+
+    // maps/Route30BerryHouse.c
+    CONVERTED_SCRIPT(Route30BerryHousePokefanMScript);
+
+    // maps/Route31VioletGate.c
+    CONVERTED_SCRIPT(Route31VioletGateOfficerScript);
+    CONVERTED_SCRIPT(Route31VioletGateCooltrainerFScript);
+
+    // maps/CherrygroveEvolutionSpeechHouse.c
+    CONVERTED_SCRIPT(CherrygroveEvolutionSpeechHouseLassScript);
+    CONVERTED_SCRIPT(CherrygroveEvolutionSpeechHouseYoungsterScript);
+
+    // maps/CherrygroveGymSpeechHouse.c
+    CONVERTED_SCRIPT(CherrygroveGymSpeechHousePokefanMScript);
+    CONVERTED_SCRIPT(CherrygroveGymSpeechHouseBugCatcherScript);
+
+    // maps/CherrygrovePokecenter1F.c
+    CONVERTED_SCRIPT(CherrygrovePokecenter1FNurseScript);
+    CONVERTED_SCRIPT(CherrygrovePokecenter1FFisherScript);
+    CONVERTED_SCRIPT(CherrygrovePokecenter1FGentlemanScript);
+    CONVERTED_SCRIPT(CherrygrovePokecenter1FTeacherScript);
+
+    // maps/CherrygroveMart.c
+    CONVERTED_SCRIPT(CherrygroveMartClerkScript);
+    CONVERTED_SCRIPT(CherrygroveMartCooltrainerMScript);
+    CONVERTED_SCRIPT(CherrygroveMartYoungsterScript);
+
+    // maps/Pokecenter2F.c
+    CONVERTED_SCRIPT(LinkReceptionistScript_Trade);
+    CONVERTED_SCRIPT(LinkReceptionistScript_Battle);
+    CONVERTED_SCRIPT(LinkReceptionistScript_TimeCapsule);
+    CONVERTED_SCRIPT(Pokecenter2FOfficerScript);
+
+    // maps/MrPokemonsHouse.c
+    CONVERTED_SCRIPT(MrPokemonsHouse_MrPokemonScript);
+
+    // maps/PlayersNeighborsHouse.c
+    CONVERTED_SCRIPT(PlayersNeighborsDaughterScript);
+    CONVERTED_SCRIPT(PlayersNeighborScript);
+
+    // maps/ElmsLab.c
+    CONVERTED_SCRIPT(ProfElmScript);
+    CONVERTED_SCRIPT(ElmsAideScript);
+    CONVERTED_SCRIPT(CyndaquilPokeBallScript);
+    CONVERTED_SCRIPT(TotodilePokeBallScript);
+    CONVERTED_SCRIPT(ChikoritaPokeBallScript);
+    CONVERTED_SCRIPT(CopScript);
+
+    // maps/ElmsHouse.c
+    CONVERTED_SCRIPT(ElmsWife);
+    CONVERTED_SCRIPT(ElmsSon);
 
     // engine/events/overworld.c
     // REDIRECTED(Script_WaterfallFromMenu);

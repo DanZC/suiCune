@@ -1202,7 +1202,14 @@ static u8_flag_s ObjectEventTypeArray_itemball(struct MapObject* bc) {
         wram->wItemBallQuantity = ball->quantity;
     }
     else {
-        FarCopyBytes_Conv(wItemBallData, GetMapScriptsBank_Conv(), bc->objectScript, wItemBallDataEnd - wItemBallData);
+        if(redirectFunc[(GetMapScriptsBank_Conv() << 14) | bc->objectScript]) {
+            const struct ItemBall* ball = (const struct ItemBall*)redirectFunc[(GetMapScriptsBank_Conv() << 14) | bc->objectScript];
+            wram->wItemBallItemID = ball->item;
+            wram->wItemBallQuantity = ball->quantity;
+        }
+        else {
+            FarCopyBytes_Conv(wItemBallData, GetMapScriptsBank_Conv(), bc->objectScript, wItemBallDataEnd - wItemBallData);
+        }
     }
     // LD_A(PLAYEREVENT_ITEMBALL);
     // SCF;

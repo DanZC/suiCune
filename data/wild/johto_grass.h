@@ -1,3 +1,3 @@
 #pragma once
 
-extern const struct WildGrassMons JohtoGrassWildMons[];
+extern struct WildGrassMons* JohtoGrassWildMons;

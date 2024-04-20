@@ -153,7 +153,7 @@ bool LinkReceptionistScript_Trade(script_s* s) {
     opentext
     writetext(Text_TradeReceptionistIntro)
     yesorno
-    // iffalse(Cancel)
+    iffalse(Cancel)
     // special(Mobile_DummyReturnFalse) // always returns false
     // iffalse(NoMobile)
     // writetext(Text_TradeReceptionistMobile)

@@ -30,6 +30,7 @@ static void FindItemInBallScript_TryReceiveItem(void) {
     CopyName2_Conv2(wram->wStringBuffer3, GetItemName_Conv2(wram->wItemBallItemID));
     // LD_A_addr(wItemBallItemID);
     // LD_addr_A(wCurItem);
+    wram->wCurItem = wram->wItemBallItemID;
     // LD_A_addr(wItemBallQuantity);
     // LD_addr_A(wItemQuantityChange);
     // LD_HL(wNumItems);

@@ -4043,6 +4043,7 @@ void Script_giveitem_Conv(script_s* s, item_t item, uint8_t quantity){
 
 // ok:
     // LD_addr_A(wCurItem);
+    wram->wCurItem = item;
     // CALL(aGetScriptByte);
     // LD_addr_A(wItemQuantityChange);
     wram->wItemQuantityChange = quantity;
