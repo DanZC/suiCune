@@ -6,7 +6,7 @@
 
 #if defined(NETWORKING_SUPPORT)
 #if defined(_MSC_VER)
-#include "SDL_net.h"
+#include <SDL_NET.h>
 #else
 #include <SDL2/SDL_net.h>
 #endif
@@ -169,9 +169,9 @@ bool NetworkInit(void) {
             printf("Could not send UDP packet on port %d. Is the port blocked?\n", UDP_PORT);
             return false;
         }
-        do {
-            while(SDLNet_UDP_Recv(host, packet) == 0) {}
-        } while(HostToNet32(*(uint32_t*)packet->data) != check);
+        //do {
+            //while(SDLNet_UDP_Recv(host, packet) == 0) {}
+        //} while(HostToNet32(*(uint32_t*)packet->data) != check);
         printf("Public host: %d.%d.%d.%d\n", packet->address.host & 0xff,
             (packet->address.host >> 8) & 0xff,
             (packet->address.host >> 16) & 0xff,
