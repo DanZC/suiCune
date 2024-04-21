@@ -15,3 +15,4 @@ void ShiftMoves(void);
 void ShiftMoves_Conv(move_t* hl);
 void EvoFlagAction(void);
 void GetPreEvolution(void);
+species_t GetPreEvolution_Conv(species_t species);

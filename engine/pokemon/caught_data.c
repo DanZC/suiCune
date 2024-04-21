@@ -1,5 +1,10 @@
 #include "../../constants.h"
 #include "caught_data.h"
+#include "../../home/map.h"
+#include "../../home/menu.h"
+#include "../../home/text.h"
+#include "../../home/sram.h"
+#include "../../data/text/common.h"
 
 void CheckPartyFullAfterContest(void){
     LD_A_addr(wContestMonSpecies);
@@ -161,19 +166,18 @@ DidntCatchAnything:
 
 }
 
-void GiveANickname_YesNo(void){
-    LD_HL(mCaughtAskNicknameText);
-    CALL(aPrintText);
-    JP(mYesNoBox);
-
+bool GiveANickname_YesNo(void){
+    // LD_HL(mCaughtAskNicknameText);
+    // CALL(aPrintText);
+    PrintText_Conv2(CaughtAskNicknameText);
+    // JP(mYesNoBox);
+    return YesNoBox_Conv();
 }
 
-void CaughtAskNicknameText(void){
-    //text_far ['_CaughtAskNicknameText']
-    //text_end ['?']
-
-    return SetCaughtData();
-}
+const txt_cmd_s CaughtAskNicknameText[] = {
+    text_far(v_CaughtAskNicknameText)
+    text_end
+};
 
 void SetCaughtData(void){
     LD_A_addr(wPartyCount);
@@ -181,6 +185,15 @@ void SetCaughtData(void){
     LD_HL(wPartyMon1CaughtLevel);
     CALL(aGetPartyLocation);
     return SetBoxmonOrEggmonCaughtData();
+}
+
+void SetCaughtData_Conv(void){
+    // LD_A_addr(wPartyCount);
+    // DEC_A;
+    // LD_HL(wPartyMon1CaughtLevel);
+    // CALL(aGetPartyLocation);
+    // return SetBoxmonOrEggmonCaughtData();
+    return SetBoxmonOrEggmonCaughtData_Conv(&wram->wPartyMon[wram->wPartyCount - 1].mon);
 }
 
 void SetBoxmonOrEggmonCaughtData(void){
@@ -219,6 +232,51 @@ NotPokecenter2F:
 
 }
 
+void SetBoxmonOrEggmonCaughtData_Conv(struct BoxMon* boxmon){
+    // LD_A_addr(wTimeOfDay);
+    // INC_A;
+    // RRCA;
+    // RRCA;
+    // LD_B_A;
+    uint8_t time = ((wram->wTimeOfDay + 1) << 6);
+    // LD_A_addr(wCurPartyLevel);
+    // OR_A_B;
+    // LD_hli_A;
+    boxmon->caughtTimeLevel = (time | wram->wCurPartyLevel);
+    // LD_A_addr(wMapGroup);
+    // LD_B_A;
+    uint8_t b = wram->wMapGroup;
+    // LD_A_addr(wMapNumber);
+    // LD_C_A;
+    uint8_t c = wram->wMapNumber;
+    // CP_A(MAP_POKECENTER_2F);
+    // IF_NZ goto NotPokecenter2F;
+    // LD_A_B;
+    // CP_A(GROUP_POKECENTER_2F);
+    // IF_NZ goto NotPokecenter2F;
+
+    if(b == GROUP_POKECENTER_2F && c == MAP_POKECENTER_2F) {
+        // LD_A_addr(wBackupMapGroup);
+        // LD_B_A;
+        b = wram->wBackupMapGroup;
+        // LD_A_addr(wBackupMapNumber);
+        // LD_C_A;
+        c = wram->wBackupMapNumber;
+    }
+
+// NotPokecenter2F:
+    // CALL(aGetWorldMapLocation);
+    // LD_B_A;
+    uint8_t loc = GetWorldMapLocation_Conv(b, c);
+    // LD_A_addr(wPlayerGender);
+    // RRCA;  // shift bit 0 (PLAYERGENDER_FEMALE_F) to bit 7 (CAUGHT_GENDER_MASK)
+    uint8_t gender = (wram->wPlayerGender << 7);
+    // OR_A_B;
+    // LD_hl_A;
+    // RET;
+    boxmon->caughtGenderLocation = (loc | gender);
+}
+
 void SetBoxMonCaughtData(void){
     LD_A(BANK(sBoxMon1CaughtLevel));
     CALL(aOpenSRAM);
@@ -229,16 +287,20 @@ void SetBoxMonCaughtData(void){
 
 }
 
-void SetGiftBoxMonCaughtData(void){
-    PUSH_BC;
-    LD_A(BANK(sBoxMon1CaughtLevel));
-    CALL(aOpenSRAM);
-    LD_HL(sBoxMon1CaughtLevel);
-    POP_BC;
-    CALL(aSetGiftMonCaughtData);
-    CALL(aCloseSRAM);
-    RET;
-
+void SetGiftBoxMonCaughtData(uint8_t b){
+    // PUSH_BC;
+    // LD_A(BANK(sBoxMon1CaughtLevel));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asBoxMon1CaughtLevel));
+    // LD_HL(sBoxMon1CaughtLevel);
+    uint16_t hl = sBoxMon1CaughtLevel;
+    // POP_BC;
+    // CALL(aSetGiftMonCaughtData);
+    gb_write(hl++, 0);
+    gb_write(hl, LANDMARK_GIFT | ((b & 1) << 7));
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
 }
 
 void SetGiftPartyMonCaughtData(uint8_t b){
@@ -249,7 +311,7 @@ void SetGiftPartyMonCaughtData(uint8_t b){
     // CALL(aGetPartyLocation);
     struct PartyMon* hl = wram->wPartyMon + (wram->wPartyCount - 1);
     // POP_BC;
-    return SetGiftMonCaughtData_Conv(hl, b);
+    return SetGiftMonCaughtData_Conv(&hl->mon, b);
 }
 
 void SetGiftMonCaughtData(void){
@@ -263,15 +325,15 @@ void SetGiftMonCaughtData(void){
 
 }
 
-void SetGiftMonCaughtData_Conv(struct PartyMon* hl, uint8_t b){
+void SetGiftMonCaughtData_Conv(struct BoxMon* hl, uint8_t b){
     // XOR_A_A;
     // LD_hli_A;
-    hl->mon.caughtTimeLevel = 0;
+    hl->caughtTimeLevel = 0;
     // LD_A(LANDMARK_GIFT);
     // RRC_B;
     // OR_A_B;
     // LD_hl_A;
-    hl->mon.caughtGenderLocation = LANDMARK_GIFT | ((b & 1) << 7);
+    hl->caughtGenderLocation = LANDMARK_GIFT | ((b & 1) << 7);
     // RET;
 }
 

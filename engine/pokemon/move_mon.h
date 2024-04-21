@@ -16,7 +16,8 @@ void DepositBreedmon(void);
 void SendMonIntoBox(void);
 void ShiftBoxMon(void);
 void GiveEgg(void);
-void String_Egg(void);
+bool GiveEgg_Conv(void);
+extern const char String_Egg[];
 void RemoveMonFromPartyOrBox(void);
 void RemoveMonFromPartyOrBox_Conv(uint8_t param);
 void ComputeNPCTrademonStats(void);
@@ -26,5 +27,7 @@ void CalcMonStats_Conv(uint16_t* stats, const uint16_t* statExp, uint16_t dvs, u
 void CalcMonStatC(void);
 uint16_t CalcMonStatC_Conv(const uint16_t* statExp, uint16_t dvs, uint8_t b, uint8_t c);
 void GivePoke(void);
-void WasSentToBillsPCText(void);
+uint8_t GivePoke_Conv(uint8_t b, const char* nickname, const char* otName);
+extern const txt_cmd_s WasSentToBillsPCText[];
 void InitNickname(void);
+void InitNickname_Conv(uint8_t* hl);

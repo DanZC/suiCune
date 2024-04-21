@@ -40,6 +40,7 @@
 #include "../events/specials.h"
 #include "../items/items.h"
 #include "../items/mart.h"
+#include "../pokemon/move_mon.h"
 #include "../../data/text/common.h"
 #include "../../data/items/pocket_names.h"
 #include "../events/std_scripts.h"
@@ -4566,6 +4567,41 @@ ok:
 
 }
 
+void Script_givepoke_Conv(script_s* s, species_t species, uint8_t lvl, item_t item, bool ext, const char* nickname, const char* otName){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wCurPartySpecies);
+    wram->wCurPartySpecies = species;
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wCurPartyLevel);
+    wram->wCurPartyLevel = lvl;
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wCurItem);
+    wram->wCurItem = item;
+    // CALL(aGetScriptByte);
+    // AND_A_A;
+    // LD_B_A;
+    // IF_Z goto ok;
+    // LD_HL(wScriptPos);
+    // LD_E_hl;
+    // INC_HL;
+    // LD_D_hl;
+    // CALL(aGetScriptByte);
+    // CALL(aGetScriptByte);
+    // CALL(aGetScriptByte);
+    // CALL(aGetScriptByte);
+// ok:
+    // FARCALL(aGivePoke);
+    wram->wScriptVar = GivePoke_Conv(ext? 1: 0, nickname, otName);
+    // LD_A_B;
+    // LD_addr_A(wScriptVar);
+    // RET;
+}
+
+void Script_givepokesimple_Conv(script_s* s, species_t species, uint8_t lvl, item_t item){
+    return Script_givepoke_Conv(s, species, lvl, item, false, NULL, NULL);
+}
+
 void Script_giveegg(void){
 //  if no room in the party, return 0 in wScriptVar
 
@@ -4582,6 +4618,33 @@ void Script_giveegg(void){
     LD_addr_A(wScriptVar);
     RET;
 
+}
+
+//  if no room in the party, return 0 in wScriptVar
+//  Does not seem to matter in the code since the
+//  scripts check party length before giving the egg
+//  anyway.
+void Script_giveegg_Conv(script_s* s, species_t species, uint8_t lvl){
+    (void)s;
+    // XOR_A_A;  // PARTYMON
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = 0;
+    // LD_addr_A(wMonType);
+    wram->wMonType = PARTYMON;
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wCurPartySpecies);
+    wram->wCurPartySpecies = species;
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wCurPartyLevel);
+    wram->wCurPartyLevel = lvl;
+    // FARCALL(aGiveEgg);
+    // RET_NC ;
+    if(GiveEgg_Conv())
+        return;
+    // LD_A(2);
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = 2;
+    // RET;
 }
 
 void Script_setevent(void){

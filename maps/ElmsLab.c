@@ -297,7 +297,7 @@ bool CyndaquilPokeBallScript(script_s* s) {
     playsound(SFX_CAUGHT_MON)
     waitsfx
     promptbutton
-    //givepoke(CYNDAQUIL, 5, BERRY)
+    givepoke(CYNDAQUIL, 5, BERRY)
     closetext
     readvar(VAR_FACING)
     ifequal_jump(RIGHT, ElmDirectionsScript)
@@ -329,7 +329,7 @@ bool TotodilePokeBallScript(script_s* s) {
     playsound(SFX_CAUGHT_MON)
     waitsfx
     promptbutton
-    //givepoke(TOTODILE, 5, BERRY)
+    givepoke(TOTODILE, 5, BERRY)
     closetext
     applymovement(PLAYER, AfterTotodileMovement)
     sjump(ElmDirectionsScript)
@@ -359,7 +359,7 @@ bool ChikoritaPokeBallScript(script_s* s) {
     playsound(SFX_CAUGHT_MON)
     waitsfx
     promptbutton
-    //givepoke(CHIKORITA, 5, BERRY)
+    givepoke(CHIKORITA, 5, BERRY)
     closetext
     applymovement(PLAYER, AfterChikoritaMovement)
     sjump(ElmDirectionsScript)

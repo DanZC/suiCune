@@ -895,3 +895,67 @@ found_preevo:
     RET;
 
 }
+
+//  Find the first mon to evolve into wCurPartySpecies.
+//  Return the new species if a pre-evolution is found.
+//  species otherwise.
+species_t GetPreEvolution_Conv(species_t species){
+    // LD_C(0);
+    species_t c = 0;
+
+    do {
+    // loop:
+    //   //  For each Pokemon...
+        // LD_HL(mEvosAttacksPointers);
+        // LD_B(0);
+        // ADD_HL_BC;
+        // ADD_HL_BC;
+        // LD_A_hli;
+        // LD_H_hl;
+        // LD_L_A;
+        const struct EvoData* evo = EvosAttacksPointers[c]->evolutions;
+
+        while(evo->type != 0) {
+        // loop2:
+        //   //  For each evolution...
+            // LD_A_hli;
+            // AND_A_A;
+            // IF_Z goto no_evolve;  // If we jump, this Pokemon does not evolve into wCurPartySpecies.
+            // CP_A(EVOLVE_STAT);  // This evolution type has the extra parameter of stat comparison.
+            // IF_NZ goto not_tyrogue;
+            // INC_HL;
+
+
+        // not_tyrogue:
+            // INC_HL;
+            // LD_A_addr(wCurPartySpecies);
+            // CP_A_hl;
+            // IF_Z goto found_preevo;
+            if(evo->species == species) {
+            // found_preevo:
+                // INC_C;
+                // LD_A_C;
+                // LD_addr_A(wCurPartySpecies);
+                // SCF;
+                // RET;
+                return c;
+            }
+            // INC_HL;
+            evo++;
+            // LD_A_hl;
+            // AND_A_A;
+            // IF_NZ goto loop2;
+        }
+
+
+    // no_evolve:
+        // INC_C;
+        // LD_A_C;
+        // CP_A(NUM_POKEMON);
+        // IF_C goto loop;
+    } while(++c < NUM_POKEMON);
+    // AND_A_A;
+    // RET;
+    return species;
+}
+

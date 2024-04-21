@@ -151,7 +151,7 @@ enum {
 
 // evolution types (used in data/pokemon/evos_attacks.asm)
 enum {
-    EVOLVE_LEVEL,
+    EVOLVE_LEVEL = 1,
     EVOLVE_ITEM,
     EVOLVE_TRADE,
     EVOLVE_HAPPINESS,

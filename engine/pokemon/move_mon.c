@@ -1,12 +1,24 @@
 #include "../../constants.h"
 #include "move_mon.h"
+#include "caught_data.h"
+#include "evolve.h"
 #include "../math/get_square_root.h"
 #include "../../home/print_text.h"
 #include "../../home/sram.h"
 #include "../../home/copy.h"
 #include "../../home/pokemon.h"
+#include "../../home/names.h"
+#include "../../home/menu.h"
+#include "../../home/string.h"
+#include "../../home/map.h"
+#include "../../home/pokedex_flags.h"
+#include "../../home/sprite_updates.h"
+#include "../../home/text.h"
+#include "../../home/random.h"
+#include "../smallflag.h"
 #include "../../data/moves/moves.h"
 #include <stddef.h>
+#include "../../data/text/common.h"
 
 #define RANDY_OT_ID (01001)
 
@@ -1351,11 +1363,131 @@ got_init_happiness:
 
 }
 
-void String_Egg(void){
-    //db ['"EGG@"'];
+bool GiveEgg_Conv(void){
+    // LD_A_addr(wCurPartySpecies);
+    // PUSH_AF;
+    species_t a = wram->wCurPartySpecies;
+    // CALLFAR(aGetPreEvolution);
+    // CALLFAR(aGetPreEvolution);
+    wram->wCurPartySpecies = GetPreEvolution_Conv(GetPreEvolution_Conv(wram->wCurPartySpecies));
+    // LD_A_addr(wCurPartySpecies);
+    // DEC_A;
+    species_t pspecies = wram->wCurPartySpecies - 1;
 
-    return RemoveMonFromPartyOrBox();
+//  TryAddMonToParty sets Seen and Caught flags
+//  when it is successful.  This routine will make
+//  sure that we aren't newly setting flags.
+    // PUSH_AF;
+    // CALL(aCheckCaughtMon);
+    bool caught = CheckCaughtMon_Conv(pspecies);
+    // POP_AF;
+    // PUSH_BC;
+    // CALL(aCheckSeenMon);
+    bool seen = CheckSeenMon_Conv(pspecies);
+    // PUSH_BC;
+
+    // CALL(aTryAddMonToParty);
+    SafeCallGBAuto(aTryAddMonToParty);
+
+//  If we haven't caught this Pokemon before receiving
+//  the Egg, reset the flag that was just set by
+//  TryAddMonToParty.
+    // POP_BC;
+    // LD_A_C;
+    // AND_A_A;
+    // IF_NZ goto skip_caught_flag;
+    if(!caught) {
+        // LD_A_addr(wCurPartySpecies);
+        // DEC_A;
+        // LD_C_A;
+        // LD_D(0x0);
+        // LD_HL(wPokedexCaught);
+        // LD_B(RESET_FLAG);
+        // PREDEF(pSmallFarFlagAction);
+        SmallFarFlagAction_Conv(wram->wPokedexCaught, pspecies, RESET_FLAG);
+    }
+
+// skip_caught_flag:
+//  If we haven't seen this Pokemon before receiving
+//  the Egg, reset the flag that was just set by
+//  TryAddMonToParty.
+    // POP_BC;
+    // LD_A_C;
+    // AND_A_A;
+    // IF_NZ goto skip_seen_flag;
+    if(!seen) {
+        // LD_A_addr(wCurPartySpecies);
+        // DEC_A;
+        // LD_C_A;
+        // LD_D(0x0);
+        // LD_HL(wPokedexSeen);
+        // LD_B(RESET_FLAG);
+        // PREDEF(pSmallFarFlagAction);
+        SmallFarFlagAction_Conv(wram->wPokedexSeen, pspecies, RESET_FLAG);
+    }
+
+// skip_seen_flag:
+    // POP_AF;
+    // LD_addr_A(wCurPartySpecies);
+    wram->wCurPartySpecies = a;
+    // LD_A_addr(wPartyCount);
+    // DEC_A;
+    // LD_BC(PARTYMON_STRUCT_LENGTH);
+    // LD_HL(wPartyMon1Species);
+    // CALL(aAddNTimes);
+    // LD_A_addr(wCurPartySpecies);
+    // LD_hl_A;
+    wram->wPartyMon[wram->wPartyCount - 1].mon.species = wram->wCurPartySpecies;
+    // LD_HL(wPartyCount);
+    // LD_A_hl;
+    // LD_B(0);
+    // LD_C_A;
+    // ADD_HL_BC;
+    // LD_A(EGG);
+    // LD_hl_A;
+    wram->wPartySpecies[wram->wPartyCount - 1] = EGG;
+    // LD_A_addr(wPartyCount);
+    // DEC_A;
+    // LD_HL(wPartyMonNicknames);
+    // CALL(aSkipNames);
+    // LD_DE(mString_Egg);
+    // CALL(aCopyName2);
+    U82CA(wram->wPartyMonNickname[wram->wPartyCount - 1], String_Egg);
+    // LD_A_addr(wPartyCount);
+    // DEC_A;
+    // LD_HL(wPartyMon1Happiness);
+    // LD_BC(PARTYMON_STRUCT_LENGTH);
+    // CALL(aAddNTimes);
+    // LD_A_addr(wDebugFlags);
+    // BIT_A(DEBUG_FIELD_F);
+    if(bit_test(wram->wDebugFlags, DEBUG_FIELD_F)) {
+        wram->wPartyMon[wram->wPartyCount - 1].mon.happiness = 1;
+    }
+    else {
+        wram->wPartyMon[wram->wPartyCount - 1].mon.happiness = wram->wBaseEggSteps;
+    }
+    // LD_A(1);
+    // IF_NZ goto got_init_happiness;
+    // LD_A_addr(wBaseEggSteps);
+
+
+// got_init_happiness:
+    // LD_hl_A;
+    // LD_A_addr(wPartyCount);
+    // DEC_A;
+    // LD_HL(wPartyMon1HP);
+    // LD_BC(PARTYMON_STRUCT_LENGTH);
+    // CALL(aAddNTimes);
+    // XOR_A_A;
+    // LD_hli_A;
+    // LD_hl_A;
+    wram->wPartyMon[wram->wPartyCount - 1].HP = 0;
+    // AND_A_A;
+    // RET;
+    return true;
 }
+
+const char String_Egg[] = "EGG@";
 
 void RemoveMonFromPartyOrBox(void){
     LD_HL(wPartyCount);
@@ -2659,12 +2791,271 @@ FailedToGiveMon:
 
 }
 
-void WasSentToBillsPCText(void){
-    //text_far ['_WasSentToBillsPCText']
-    //text_end ['?']
+uint8_t GivePoke_Conv(uint8_t b, const char* nickname, const char* otName){
+    // PUSH_DE;
+    // PUSH_BC;
+    // XOR_A_A;  // PARTYMON
+    // LD_addr_A(wMonType);
+    wram->wMonType = PARTYMON;
+    // CALL(aTryAddMonToParty);
+    struct cpu_registers_s regs = SafeCallGBAutoRet(aTryAddMonToParty);
+    // IF_NC goto failed;
+    uint8_t* de;
+    uint8_t a;
+    if(!regs.f_bits.c) {
+    // failed:
+        // LD_A_addr(wCurPartySpecies);
+        // LD_addr_A(wTempEnemyMonSpecies);
+        wram->wTempEnemyMonSpecies = wram->wCurPartySpecies;
+        // CALLFAR(aLoadEnemyMon);
+        SafeCallGBAuto(aLoadEnemyMon);
+        // CALL(aSendMonIntoBox);
+        struct cpu_registers_s regs2 = SafeCallGBAutoRet(aSendMonIntoBox);
+        // JP_NC (mGivePoke_FailedToGiveMon);
+        if(!regs2.f_bits.c)
+            return 0x2;
+        // LD_A(BOXMON);
+        // LD_addr_A(wMonType);
+        wram->wMonType = BOXMON;
+        // XOR_A_A;
+        // LD_addr_A(wCurPartyMon);
+        wram->wCurPartyMon = 0;
+        // LD_DE(wMonOrItemNameBuffer);
+        de = wram->wMonOrItemNameBuffer;
+        // POP_BC;
+        // LD_A_B;
+        a = b;
+        // LD_B(1);
+        b = 1;
+        // PUSH_BC;
+        // PUSH_DE;
+        // PUSH_AF;
+        // LD_A_addr(wCurItem);
+        // AND_A_A;
+        // IF_Z goto done;
+        if(wram->wCurItem != NO_ITEM) {
+            // LD_A_addr(wCurItem);
+            // LD_addr_A(sBoxMon1Item);
+            gb_write(sBoxMon1Item, wram->wCurItem);
+        }
+    }
+    else {
+        // LD_HL(wPartyMonNicknames);
+        // LD_A_addr(wPartyCount);
+        // DEC_A;
+        // LD_addr_A(wCurPartyMon);
+        // CALL(aSkipNames);
+        // LD_D_H;
+        // LD_E_L;
+        de = wram->wPartyMonNickname[wram->wPartyCount - 1];
+        // POP_BC;
+        // LD_A_B;
+        a = b;
+        // LD_B(0);
+        b = 0;
+        // PUSH_BC;
+        // PUSH_DE;
+        // PUSH_AF;
+        // LD_A_addr(wCurItem);
+        // AND_A_A;
+        // IF_Z goto done;
+        if(wram->wCurItem != NO_ITEM) {
+            // LD_A_addr(wCurPartyMon);
+            // LD_HL(wPartyMon1Item);
+            // LD_BC(PARTYMON_STRUCT_LENGTH);
+            // CALL(aAddNTimes);
+            // LD_A_addr(wCurItem);
+            // LD_hl_A;
+            wram->wPartyMon[wram->wCurPartyMon].mon.item = wram->wCurItem;
+            // goto done;
+        }
+    }
 
-    return InitNickname();
+// done:
+    // LD_A_addr(wCurPartySpecies);
+    // LD_addr_A(wNamedObjectIndex);
+    // LD_addr_A(wTempEnemyMonSpecies);
+    // CALL(aGetPokemonName);
+    // LD_HL(wStringBuffer1);
+    // LD_DE(wMonOrItemNameBuffer);
+    // LD_BC(MON_NAME_LENGTH);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wMonOrItemNameBuffer, GetPokemonName_Conv2(wram->wCurPartySpecies), MON_NAME_LENGTH);
+    // POP_AF;
+    // AND_A_A;
+    // JP_Z (mGivePoke_wildmon);
+    if(a == 0) {
+    // wildmon:
+        // POP_DE;
+        // POP_BC;
+        // PUSH_BC;
+        // PUSH_DE;
+        // LD_A_B;
+        // AND_A_A;
+        // IF_Z goto party;
+        if(b == 0) {
+        // party:
+            // FARCALL(aSetCaughtData);
+            SetCaughtData_Conv();
+        }
+        else {
+            // FARCALL(aSetBoxMonCaughtData);
+            SafeCallGBAuto(aSetBoxMonCaughtData);
+            // goto set_caught_data;
+        }
+
+    // set_caught_data:
+        // FARCALL(aGiveANickname_YesNo);
+        // POP_DE;
+        // IF_C goto skip_nickname;
+        if(GiveANickname_YesNo()) {
+            // CALL(aInitNickname);
+            InitNickname_Conv(wram->wStringBuffer1);
+        }
+    }
+    else {
+        // POP_DE;
+        // POP_BC;
+        // POP_HL;
+        // PUSH_BC;
+        // PUSH_HL;
+        // LD_A_addr(wScriptBank);
+        // CALL(aGetFarWord);
+        // LD_BC(MON_NAME_LENGTH);
+        // LD_A_addr(wScriptBank);
+        // CALL(aFarCopyBytes);
+        CopyBytes_Conv2(de, U82C(nickname), MON_NAME_LENGTH);
+        // POP_HL;
+        // INC_HL;
+        // INC_HL;
+        // LD_A_addr(wScriptBank);
+        // CALL(aGetFarWord);
+        // POP_BC;
+        // LD_A_B;
+        // AND_A_A;
+        // PUSH_DE;
+        // PUSH_BC;
+        // IF_NZ goto send_to_box;
+        uint8_t* hl2 = U82C(otName);
+        if(b != 0) {
+        // send_to_box:
+            // LD_A(BANK(sBoxMonOTs));
+            // CALL(aOpenSRAM);
+            OpenSRAM_Conv(MBANK(asBoxMonOTs));
+            // LD_DE(sBoxMonOTs);
+            uint16_t de2 = sBoxMonOTs;
+
+            uint8_t n;
+            do {
+            // loop:
+                // LD_A_addr(wScriptBank);
+                // CALL(aGetFarByte);
+                n = *(hl2++);
+                // LD_de_A;
+                gb_write(de2++, n);
+                // INC_HL;
+                // INC_DE;
+                // CP_A(0x50);
+                // IF_NZ goto loop;
+            } while(n != 0x50);
+            // LD_A_addr(wScriptBank);
+            // CALL(aGetFarByte);
+            // LD_B_A;
+            b = *hl2;
+            // LD_HL(sBoxMon1ID);
+            // CALL(aRandom);
+            // LD_hli_A;
+            gb_write(sBoxMon1ID, Random_Conv());
+            // CALL(aRandom);
+            // LD_hl_A;
+            gb_write(sBoxMon1ID + 1, Random_Conv());
+            // CALL(aCloseSRAM);
+            CloseSRAM_Conv();
+            // FARCALL(aSetGiftBoxMonCaughtData);
+            SetGiftBoxMonCaughtData(b);
+            // goto skip_nickname;
+        }
+        else {
+            // PUSH_HL;
+            // LD_A_addr(wCurPartyMon);
+            // LD_HL(wPartyMonOTs);
+            // CALL(aSkipNames);
+            // LD_D_H;
+            // LD_E_L;
+            uint8_t* de2 = wram->wPartyMonOT[wram->wCurPartyMon];
+            // POP_HL;
+
+            uint8_t n;
+            do {
+            // otnameloop:
+                // LD_A_addr(wScriptBank);
+                // CALL(aGetFarByte);
+                n = *(hl2++);
+                // LD_de_A;
+                *(de2++) = n;
+                // INC_HL;
+                // INC_DE;
+                // CP_A(0x50);
+                // IF_NZ goto otnameloop;
+            } while(n != 0x50);
+            // LD_A_addr(wScriptBank);
+            // CALL(aGetFarByte);
+            // LD_B_A;
+            b = *hl2;
+            // PUSH_BC;
+            // LD_A_addr(wCurPartyMon);
+            // LD_HL(wPartyMon1ID);
+            // LD_BC(PARTYMON_STRUCT_LENGTH);
+            // CALL(aAddNTimes);
+            // LD_A(HIGH(RANDY_OT_ID));
+            // LD_hli_A;
+            // LD_hl(LOW(RANDY_OT_ID));
+            wram->wPartyMon[wram->wCurPartyMon].mon.id = ReverseEndian16(RANDY_OT_ID);
+            // POP_BC;
+            // FARCALL(aSetGiftPartyMonCaughtData);
+            SetGiftBoxMonCaughtData(b);
+            // goto skip_nickname;
+        }
+    }
+
+// skip_nickname:
+    // POP_BC;
+    // POP_DE;
+    // LD_A_B;
+    // AND_A_A;
+    // RET_Z ;
+    if(b == 0)
+        return 0;
+    // LD_HL(mWasSentToBillsPCText);
+    // CALL(aPrintText);
+    PrintText_Conv2(WasSentToBillsPCText);
+    // LD_A(BANK(sBoxMonNicknames));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asBoxMonNicknames));
+    // LD_HL(wMonOrItemNameBuffer);
+    // LD_DE(sBoxMonNicknames);
+    // LD_BC(MON_NAME_LENGTH);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv(sBoxMonNicknames, wMonOrItemNameBuffer, MON_NAME_LENGTH);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // LD_B(0x1);
+    // RET;
+    return 0x1;
+
+
+// FailedToGiveMon:
+    // POP_BC;
+    // POP_DE;
+    // LD_B(0x2);
+    // RET;
+    // return 0x2;
 }
+
+const txt_cmd_s WasSentToBillsPCText[] = {
+    text_far(v_WasSentToBillsPCText)
+    text_end
+};
 
 void InitNickname(void){
     PUSH_DE;
@@ -2681,5 +3072,30 @@ void InitNickname(void){
     LD_HL(mExitAllMenus);
     RST(aFarCall);
     RET;
+
+}
+
+void InitNickname_Conv(uint8_t* hl){
+    // PUSH_DE;
+    // CALL(aLoadStandardMenuHeader);
+    LoadStandardMenuHeader_Conv();
+    // CALL(aDisableSpriteUpdates);
+    DisableSpriteUpdates_Conv();
+    // POP_DE;
+    // PUSH_DE;
+    // LD_B(NAME_MON);
+    struct cpu_registers_s regs = gb.cpu_reg;
+    // FARCALL(aNamingScreen);
+    regs.b = NAME_MON;
+    SafeCallGB(aNamingScreen, &regs);
+    // POP_HL;
+    // LD_DE(wStringBuffer1);
+    // CALL(aInitName);
+    InitName_Conv2(hl, wram->wStringBuffer1);
+    // LD_A(0x4);  // ExitAllMenus is in bank 0// maybe it used to be in bank 4
+    // LD_HL(mExitAllMenus);
+    ExitAllMenus_Conv();
+    // RST(aFarCall);
+    // RET;
 
 }
