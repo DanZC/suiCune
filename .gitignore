@@ -76,4 +76,9 @@ suiCune.vcxproj
 suiCune.vcxproj.filters
 assets.zip
 suiCune.vcxproj.user
-bin-obj/Debug-windows-x86-suiCunesuiCune.log
+
+# build stuff
+bin-obj/
+bin/
+*.log
+*.pdb
