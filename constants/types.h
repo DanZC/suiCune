@@ -1185,6 +1185,7 @@ struct ConditionalEvent
     uint16_t eventFlag;
     Script_fn_t script;
 };
+#define conditional_event(_evflag, _script) {.eventFlag=_evflag, .script=&_script}
 
 struct BGEvent
 {

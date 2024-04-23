@@ -2,6 +2,8 @@
 #include "decorations.h"
 #include "../../home/names.h"
 #include "../../home/copy_name.h"
+#include "../../home/map.h"
+#include "../../home/flag.h"
 #include "../../data/decorations/attributes.h"
 #include "../../data/decorations/decorations.h"
 #include "../../data/decorations/names.h"
@@ -545,7 +547,7 @@ const struct Decoration* GetDecorationData_Conv(uint8_t a){
     // LD_BC(DECOATTR_STRUCT_LENGTH);
     // CALL(aAddNTimes);
     // RET;
-    return DecorationAttributes + a;
+    return DecorationAttributes + a + 1;
 }
 
 void GetDecorationName(void){
@@ -646,8 +648,18 @@ void GetDecorationSprite(void){
 // INCLUDE "data/decorations/attributes.asm"
 
 // INCLUDE "data/decorations/names.asm"
+}
 
-    return GetDecoName();
+uint8_t GetDecorationSprite_Conv(uint8_t c){
+    // LD_A_C;
+    // CALL(aGetDecorationData);
+    const struct Decoration* hl = GetDecorationData_Conv(c);
+    // LD_DE(DECOATTR_SPRITE);
+    // ADD_HL_DE;
+    // LD_A_hl;
+    // LD_C_A;
+    // RET;
+    return hl->tile;
 }
 
 void GetDecoName(void){
@@ -1640,49 +1652,61 @@ Script_fn_t DecorationDesc_GiantOrnament_Conv(void){
 
 void ToggleMaptileDecorations(void){
 // tile coordinates work the same way as for changeblock
-    LD_DE((0 << 8) | 4);  // bed coordinates
-    LD_A_addr(wDecoBed);
-    CALL(aSetDecorationTile);
-    LD_DE((7 << 8) | 4);  // plant coordinates
-    LD_A_addr(wDecoPlant);
-    CALL(aSetDecorationTile);
-    LD_DE((6 << 8) | 0);  // poster coordinates
-    LD_A_addr(wDecoPoster);
-    CALL(aSetDecorationTile);
-    CALL(aSetPosterVisibility);
-    LD_DE((0 << 8) | 0);  // carpet top-left coordinates
-    CALL(aPadCoords_de);
-    LD_A_addr(wDecoCarpet);
-    AND_A_A;
-    RET_Z ;
-    CALL(av_GetDecorationSprite);
-    LD_hl_A;
-    PUSH_AF;
-    LD_DE((0 << 8) | 2);  // carpet bottom-left coordinates
-    CALL(aPadCoords_de);
-    POP_AF;
-    INC_A;
-    LD_hli_A;  // carpet bottom-left block
-    INC_A;
-    LD_hli_A;  // carpet bottom-middle block
-    DEC_A;
-    LD_hl_A;  // carpet bottom-right block
-    RET;
-
+    // LD_DE((0 << 8) | 4);  // bed coordinates
+    // LD_A_addr(wDecoBed);
+    // CALL(aSetDecorationTile);
+    SetDecorationTile_Conv(wram->wDecoBed, 0, 4);
+    // LD_DE((7 << 8) | 4);  // plant coordinates
+    // LD_A_addr(wDecoPlant);
+    // CALL(aSetDecorationTile);
+    SetDecorationTile_Conv(wram->wDecoPlant, 7, 4);
+    // LD_DE((6 << 8) | 0);  // poster coordinates
+    // LD_A_addr(wDecoPoster);
+    // CALL(aSetDecorationTile);
+    SetDecorationTile_Conv(wram->wDecoPoster, 6, 0);
+    // CALL(aSetPosterVisibility);
+    SetPosterVisibility();
+    // LD_DE((0 << 8) | 0);  // carpet top-left coordinates
+    // CALL(aPadCoords_de);
+    uint8_t* hl = PadCoords_de_Conv(0, 0);
+    // LD_A_addr(wDecoCarpet);
+    // AND_A_A;
+    // RET_Z ;
+    if(wram->wDecoCarpet == 0)
+        return;
+    // CALL(av_GetDecorationSprite);
+    uint8_t sprite = v_GetDecorationSprite_Conv(wram->wDecoCarpet);
+    // LD_hl_A;
+    *hl = sprite;
+    // PUSH_AF;
+    // LD_DE((0 << 8) | 2);  // carpet bottom-left coordinates
+    // CALL(aPadCoords_de);
+    hl = PadCoords_de_Conv(0, 2);
+    // POP_AF;
+    // INC_A;
+    // LD_hli_A;  // carpet bottom-left block
+    *(hl++) = ++sprite;
+    // INC_A;
+    // LD_hli_A;  // carpet bottom-middle block
+    *(hl++) = ++sprite;
+    // DEC_A;
+    // LD_hl_A;  // carpet bottom-right block
+    *hl = --sprite;
+    // RET;
 }
 
 void SetPosterVisibility(void){
-    LD_B(SET_FLAG);
-    LD_A_addr(wDecoPoster);
-    AND_A_A;
-    IF_NZ goto ok;
-    LD_B(RESET_FLAG);
+    // LD_B(SET_FLAG);
+    // LD_A_addr(wDecoPoster);
+    // AND_A_A;
+    // IF_NZ goto ok;
+    // LD_B(RESET_FLAG);
+    uint8_t b = (wram->wDecoPoster != 0)? SET_FLAG: RESET_FLAG;
 
-
-ok:
-    LD_DE(EVENT_PLAYERS_ROOM_POSTER);
-    JP(mEventFlagAction);
-
+// ok:
+    // LD_DE(EVENT_PLAYERS_ROOM_POSTER);
+    // JP(mEventFlagAction);
+    EventFlagAction_Conv2(EVENT_PLAYERS_ROOM_POSTER, b);
 }
 
 void SetDecorationTile(void){
@@ -1697,25 +1721,43 @@ void SetDecorationTile(void){
 
 }
 
-void ToggleDecorationsVisibility(void){
-    LD_DE(EVENT_PLAYERS_HOUSE_2F_CONSOLE);
-    LD_HL(wVariableSprites + SPRITE_CONSOLE - SPRITE_VARS);
-    LD_A_addr(wDecoConsole);
-    CALL(aToggleDecorationVisibility);
-    LD_DE(EVENT_PLAYERS_HOUSE_2F_DOLL_1);
-    LD_HL(wVariableSprites + SPRITE_DOLL_1 - SPRITE_VARS);
-    LD_A_addr(wDecoLeftOrnament);
-    CALL(aToggleDecorationVisibility);
-    LD_DE(EVENT_PLAYERS_HOUSE_2F_DOLL_2);
-    LD_HL(wVariableSprites + SPRITE_DOLL_2 - SPRITE_VARS);
-    LD_A_addr(wDecoRightOrnament);
-    CALL(aToggleDecorationVisibility);
-    LD_DE(EVENT_PLAYERS_HOUSE_2F_BIG_DOLL);
-    LD_HL(wVariableSprites + SPRITE_BIG_DOLL - SPRITE_VARS);
-    LD_A_addr(wDecoBigDoll);
-    CALL(aToggleDecorationVisibility);
-    RET;
+void SetDecorationTile_Conv(uint8_t a, uint8_t d, uint8_t e){
+    // PUSH_AF;
+    // CALL(aPadCoords_de);
+    // POP_AF;
+    uint8_t* hl = PadCoords_de_Conv(d, e);
+    // AND_A_A;
+    // RET_Z ;
+    if(a == 0)
+        return;
+    // CALL(av_GetDecorationSprite);
+    // LD_hl_A;
+    *hl = v_GetDecorationSprite_Conv(a);
+    // RET;
+}
 
+void ToggleDecorationsVisibility(void){
+    // LD_DE(EVENT_PLAYERS_HOUSE_2F_CONSOLE);
+    // LD_HL(wVariableSprites + SPRITE_CONSOLE - SPRITE_VARS);
+    // LD_A_addr(wDecoConsole);
+    // CALL(aToggleDecorationVisibility);
+    ToggleDecorationVisibility_Conv(wram->wVariableSprites + (SPRITE_CONSOLE - SPRITE_VARS), EVENT_PLAYERS_HOUSE_2F_CONSOLE, wram->wDecoConsole);
+    // LD_DE(EVENT_PLAYERS_HOUSE_2F_DOLL_1);
+    // LD_HL(wVariableSprites + SPRITE_DOLL_1 - SPRITE_VARS);
+    // LD_A_addr(wDecoLeftOrnament);
+    // CALL(aToggleDecorationVisibility);
+    ToggleDecorationVisibility_Conv(wram->wVariableSprites + (SPRITE_DOLL_1 - SPRITE_VARS), EVENT_PLAYERS_HOUSE_2F_DOLL_1, wram->wDecoLeftOrnament);
+    // LD_DE(EVENT_PLAYERS_HOUSE_2F_DOLL_2);
+    // LD_HL(wVariableSprites + SPRITE_DOLL_2 - SPRITE_VARS);
+    // LD_A_addr(wDecoRightOrnament);
+    // CALL(aToggleDecorationVisibility);
+    ToggleDecorationVisibility_Conv(wram->wVariableSprites + (SPRITE_DOLL_2 - SPRITE_VARS), EVENT_PLAYERS_HOUSE_2F_DOLL_2, wram->wDecoRightOrnament);
+    // LD_DE(EVENT_PLAYERS_HOUSE_2F_BIG_DOLL);
+    // LD_HL(wVariableSprites + SPRITE_BIG_DOLL - SPRITE_VARS);
+    // LD_A_addr(wDecoBigDoll);
+    // CALL(aToggleDecorationVisibility);
+    ToggleDecorationVisibility_Conv(wram->wVariableSprites + (SPRITE_BIG_DOLL - SPRITE_VARS), EVENT_PLAYERS_HOUSE_2F_BIG_DOLL, wram->wDecoBigDoll);
+    // RET;
 }
 
 void ToggleDecorationVisibility(void){
@@ -1733,6 +1775,24 @@ hide:
 
 }
 
+void ToggleDecorationVisibility_Conv(uint8_t* hl, uint16_t de, uint8_t a){
+    // AND_A_A;
+    // IF_Z goto hide;
+    if(a == 0) {
+    // hide:
+        // LD_B(SET_FLAG);
+        // JP(mEventFlagAction);
+        EventFlagAction_Conv2(de, SET_FLAG);
+        return;
+    }
+    // CALL(av_GetDecorationSprite);
+    // LD_hl_A;
+    *hl = v_GetDecorationSprite_Conv(a);
+    // LD_B(RESET_FLAG);
+    // JP(mEventFlagAction);
+    EventFlagAction_Conv2(de, RESET_FLAG);
+}
+
 void v_GetDecorationSprite(void){
     LD_C_A;
     PUSH_DE;
@@ -1743,6 +1803,10 @@ void v_GetDecorationSprite(void){
     LD_A_C;
     RET;
 
+}
+
+uint8_t v_GetDecorationSprite_Conv(uint8_t a) {
+    return GetDecorationSprite_Conv(a);
 }
 
 void PadCoords_de(void){
@@ -1756,4 +1820,17 @@ void PadCoords_de(void){
     CALL(aGetBlockLocation);
     RET;
 
+}
+
+uint8_t* PadCoords_de_Conv(uint8_t d, uint8_t e){
+//  adjusts coordinates, the same way as Script_changeblock
+    // LD_A_D;
+    // ADD_A(4);
+    // LD_D_A;
+    // LD_A_E;
+    // ADD_A(4);
+    // LD_E_A;
+    // CALL(aGetBlockLocation);
+    // RET;
+    return GetBlockLocation_Conv(d + 4, e + 4);
 }

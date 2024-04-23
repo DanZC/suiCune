@@ -1,7 +1,7 @@
 void HasNoItems(void);
 void TossItemFromPC(void);
 void CantUseItem(void);
-void ItemsOakWarningText(void);
+extern const txt_cmd_s ItemsOakWarningText[];
 void PartyMonItemName(void);
 void PartyMonItemName_Conv(item_t item);
 void CancelPokemonAction(void);

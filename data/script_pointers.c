@@ -133,6 +133,17 @@ void PopulateMapScriptTable(void) {
 
     entry(ELMS_HOUSE, 0, ElmsWife);
     entry(ELMS_HOUSE, 1, ElmsSon);
+
+    entry(PLAYERS_HOUSE_1F, 0, MomScript);
+    entry(PLAYERS_HOUSE_1F, 1, MomScript);
+    entry(PLAYERS_HOUSE_1F, 2, MomScript);
+    entry(PLAYERS_HOUSE_1F, 3, MomScript);
+    entry(PLAYERS_HOUSE_1F, 4, NeighborScript);
+
+    entry(PLAYERS_HOUSE_2F, 0, PlayersHouseGameConsoleScript);
+    entry(PLAYERS_HOUSE_2F, 1, PlayersHouseDoll1Script);
+    entry(PLAYERS_HOUSE_2F, 2, PlayersHouseDoll2Script);
+    entry(PLAYERS_HOUSE_2F, 3, PlayersHouseBigDollScript);
 }
 
 const void* GetRealScriptPointer(uint8_t group, uint8_t map, uint8_t index) {

@@ -666,10 +666,10 @@ bool CheckObjectTime_Conv(struct MapObject* bc){
             // AND_A_hl;
             // IF_NZ goto timeofday_always;
             if(TimesOfDay[wram->wTimeOfDay] & bc->objectTimeOfDay)
-                return true;
+                return false;
             // SCF;
             // RET;
-            return false;
+            return true;
         }
     }
     else {
@@ -687,7 +687,7 @@ bool CheckObjectTime_Conv(struct MapObject* bc){
         // CP_A_E;
         // IF_Z goto yes;
         if(d == e) {
-            return true;
+            return false;
         }
         // IF_C goto check_timeofday;
         else if(d < e) {
@@ -696,41 +696,41 @@ bool CheckObjectTime_Conv(struct MapObject* bc){
             // CP_A_hl;
             // IF_C goto no;
             if(e < hram->hHours)
-                return false;
+                return true;
             // LD_A_hl;
             // CP_A_D;
             // IF_NC goto yes;
             if(hram->hHours >= d)
-                return true;
+                return false;
             // goto no;
-            return false;
+            return true;
         }
         else {
             // LD_A_hl;
             // CP_A_D;
             // IF_NC goto yes;
             if(hram->hHours >= d)
-                return true;
+                return false;
             // CP_A_E;
             // IF_C goto yes;
             // IF_Z goto yes;
             if(hram->hHours <= e)
-                return true;
+                return false;
             // goto no;
-            return false;
+            return true;
         }
 
 
     yes:
         // AND_A_A;
         // RET;
-        return true;
+        return false;
 
 
     no:
         // SCF;
         // RET;
-        return false;
+        return true;
     }
 }
 

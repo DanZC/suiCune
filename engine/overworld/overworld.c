@@ -461,6 +461,10 @@ struct SpriteLoadData GetSprite_Conv(uint8_t a){
     if(res.flag)
         return res;
 
+    if(res.type == 0) {
+        const struct OverworldSprite* hl = &OverworldSprites[0];
+        return (struct SpriteLoadData){.path=hl->path, .length=hl->length, .type=hl->type};
+    }
     // LD_HL(mOverworldSprites + SPRITEDATA_ADDR);
     // DEC_A;
     // LD_C_A;

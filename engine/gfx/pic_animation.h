@@ -32,7 +32,7 @@ void PokeAnim_DeinitFrames(void);
 void AnimateMon_CheckIfPokemon(void);
 bool AnimateMon_CheckIfPokemon_Conv(void);
 void PokeAnim_InitPicAttributes(void);
-void PokeAnim_InitPicAttributes_Conv(uint8_t* bc, uint8_t* hl, uint8_t d);
+void PokeAnim_InitPicAttributes_Conv(const uint8_t* bc, uint8_t* hl, uint8_t d);
 void PokeAnim_InitAnim(void);
 void PokeAnim_InitAnim_Conv(uint8_t b, uint8_t c);
 void PokeAnim_DoAnimScript(void);

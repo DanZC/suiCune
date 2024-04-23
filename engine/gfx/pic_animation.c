@@ -46,7 +46,7 @@ struct PokeAnim {
 #define get_wram_raw_offset_ptr(_x) (gb.wram + ((WRAM_BANK_SIZE * MBANK(a##_x)) + _x - WRAM_1_ADDR))
 struct PokeAnim* const pokeAnim = (struct PokeAnim*)get_wram_raw_offset_ptr(wPokeAnimStruct);
 
-static uint8_t* lPokeAnimPointer;
+static const uint8_t* lPokeAnimPointer;
 static uint8_t* lPokeAnimCoord;
 
 void Unused_AnimateMon_Slow_Normal(void){
@@ -312,7 +312,7 @@ void LoadMonAnimation_Conv(uint8_t* hl, uint8_t d, uint8_t e){
     // LD_A_hli;
     // LD_B_hl;
     // LD_C_A;
-    uint8_t* bc = (uint8_t*)PokeAnims[e];
+    const uint8_t* bc = PokeAnims[e];
     // POP_HL;
     // CALL(aPokeAnim_InitPicAttributes);
     PokeAnim_InitPicAttributes_Conv(bc, hl, d);
@@ -641,7 +641,7 @@ void PokeAnim_InitPicAttributes(void){
 
 }
 
-void PokeAnim_InitPicAttributes_Conv(uint8_t* bc, uint8_t* hl, uint8_t d){
+void PokeAnim_InitPicAttributes_Conv(const uint8_t* bc, uint8_t* hl, uint8_t d){
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(BANK(wPokeAnimStruct));

@@ -27,6 +27,7 @@ void DoDecorationAction2(void);
 void GetDecorationFlag(void);
 void DecorationFlagAction(void);
 void GetDecorationSprite(void);
+uint8_t GetDecorationSprite_Conv(uint8_t c);
 void GetDecoName(void);
 const uint8_t* GetDecoName_Conv(const struct Decoration* hl);
 void DecoAction_nothing(void);
@@ -88,10 +89,14 @@ Script_fn_t DecorationDesc_GiantOrnament_Conv(void);
 void ToggleMaptileDecorations(void);
 void SetPosterVisibility(void);
 void SetDecorationTile(void);
+void SetDecorationTile_Conv(uint8_t a, uint8_t d, uint8_t e);
 void ToggleDecorationsVisibility(void);
 void ToggleDecorationVisibility(void);
+void ToggleDecorationVisibility_Conv(uint8_t* hl, uint16_t de, uint8_t a);
 void v_GetDecorationSprite(void);
+uint8_t v_GetDecorationSprite_Conv(uint8_t a);
 void PadCoords_de(void);
+uint8_t* PadCoords_de_Conv(uint8_t d, uint8_t e);
 //#include "data/decorations/attributes.h"
 //#include "data/decorations/names.h"
 //#include "data/decorations/decorations.h"

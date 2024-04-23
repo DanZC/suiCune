@@ -4789,6 +4789,11 @@ void init_function_pointers(void) {
     // engine/pokegear/townmap_convertlinebreakcharacters.c
     CONVERTED(TownMap_ConvertLineBreakCharacters);
 
+    // maps/NewBarkTown.c
+    CONVERTED_SCRIPT(NewBarkTownTeacherScript);
+    CONVERTED_SCRIPT(NewBarkTownFisherScript);
+    CONVERTED_SCRIPT(NewBarkTownSilverScript);
+
     // maps/CherrygroveCity.c
     CONVERTED_SCRIPT(CherrygroveCityGuideGent);
     CONVERTED_SCRIPT(CherrygroveSilverSceneSouth);
@@ -4889,6 +4894,16 @@ void init_function_pointers(void) {
     // maps/ElmsHouse.c
     CONVERTED_SCRIPT(ElmsWife);
     CONVERTED_SCRIPT(ElmsSon);
+
+    // maps/PlayersHouse2F.c
+    CONVERTED_SCRIPT(PlayersHouseGameConsoleScript);
+    CONVERTED_SCRIPT(PlayersHouseDoll1Script);
+    CONVERTED_SCRIPT(PlayersHouseDoll2Script);
+    CONVERTED_SCRIPT(PlayersHouseBigDollScript);
+
+    // maps/PlayersHouse1F.c
+    CONVERTED_SCRIPT(MomScript);
+    CONVERTED_SCRIPT(NeighborScript);
 
     // engine/events/overworld.c
     // REDIRECTED(Script_WaterfallFromMenu);
@@ -5099,10 +5114,10 @@ void init_function_pointers(void) {
     // REDIRECTED(GetDecoName);
     // REDIRECTED(DecoAction_setupcarpet);
     // REDIRECTED(GetDecorationSprite);
-    // REDIRECTED(ToggleMaptileDecorations);
+    CONVERTED(ToggleMaptileDecorations);
     // REDIRECTED(DecoAction_FinishUp_Ornament);
     // REDIRECTED(GetDecorationName);
-    // REDIRECTED(ToggleDecorationsVisibility);
+    CONVERTED(ToggleDecorationsVisibility);
     // REDIRECTED(PopulateDecoCategoryMenu);
     // REDIRECTED(DecoAction_TryPutItAway);
     // REDIRECTED(DecoConsoleMenu);
@@ -5768,4 +5783,10 @@ CONVERTED(v_AnimateTileset);
     // REDIRECTED(SetBoxMonCaughtData);
     // REDIRECTED(SetCaughtData);
     // REDIRECTED(SetEggMonCaughtData);
+
+    // engine/overworld/select_menu.c
+    // REDIRECTED(CheckRegisteredItem);
+    // REDIRECTED(SelectMenu);
+    // REDIRECTED(UseRegisteredItem);
+    // REDIRECTED(MayRegisterItemText);
 }

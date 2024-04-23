@@ -7,6 +7,7 @@
 #include "audio.h"
 #include "tilemap.h"
 #include "window.h"
+#include "joypad.h"
 #include "../charmap.h"
 #include "../engine/menus/menu.h"
 
@@ -2176,11 +2177,14 @@ void PlayClickSFX_Conv(void) {
     return PlaySFX_Conv(SFX_READ_TEXT_2);
 }
 
-void MenuTextboxWaitButton(void) {
-    CALL(aMenuTextbox);
-    CALL(aWaitButton);
-    CALL(aExitMenu);
-    RET;
+void MenuTextboxWaitButton(const struct TextCmd* hl) {
+    // CALL(aMenuTextbox);
+    MenuTextbox_Conv(hl);
+    // CALL(aWaitButton);
+    WaitButton_Conv();
+    // CALL(aExitMenu);
+    ExitMenu_Conv2();
+    // RET;
 }
 
 void Place2DMenuItemName(void) {

@@ -13,6 +13,7 @@
 #include "../../engine/overworld/warp_connection.h"
 #include "../../engine/tilesets/timeofday_pals.h"
 #include "../../engine/pokemon/health.h"
+#include "../../engine/overworld/decorations.h"
 #include "../../home/time_palettes.h"
 #include "../../home/audio.h"
 
@@ -94,8 +95,8 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(DayCareMon2),
     // add_special(SelectRandomBugContestContestants),
     // add_special(ActivateFishingSwarm),
-    // add_special(ToggleMaptileDecorations),
-    // add_special(ToggleDecorationsVisibility),
+    add_special(ToggleMaptileDecorations),
+    add_special(ToggleDecorationsVisibility),
     // add_special(GiveShuckle),
     // add_special(ReturnShuckie),
     // add_special(BillsGrandfather),

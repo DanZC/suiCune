@@ -14,6 +14,7 @@
 #include "player_step.h"
 #include "player_object.h"
 #include "map_objects.h"
+#include "select_menu.h"
 #include "../../home/joypad.h"
 #include "../../home/queue_script.h"
 #include "../../home/delay.h"
@@ -1916,7 +1917,8 @@ bool StartMenuScript(script_s* s){
 bool SelectMenuScript(script_s* s){
     SCRIPT_BEGIN
     //callasm ['SelectMenu']
-    //sjump ['SelectMenuCallback']
+    SelectMenu();
+    sjump(SelectMenuCallback)
     SCRIPT_END
 }
 

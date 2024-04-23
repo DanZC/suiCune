@@ -1005,7 +1005,8 @@ void TrainerChar(void) {
 
 void TrainerChar_Conv(struct TextPrintState* state) {
     //  print_name TrainerCharText
-    PlaceCommandCharacter_Conv(state, Utf8ToCrystal("TRAINER@"));
+    uint8_t buffer[8];
+    PlaceCommandCharacter_Conv(state, U82CA(buffer, "TRAINER@"));
 }
 
 void TMChar(void) {
@@ -1016,7 +1017,8 @@ void TMChar(void) {
 
 void TMChar_Conv(struct TextPrintState* state) {
     //  print_name TMCharText
-    PlaceCommandCharacter_Conv(state, Utf8ToCrystal("TM@"));
+    uint8_t buffer[8];
+    PlaceCommandCharacter_Conv(state, U82CA(buffer, "TM@"));
 }
 
 void PCChar(void) {
@@ -1027,7 +1029,8 @@ void PCChar(void) {
 
 void PCChar_Conv(struct TextPrintState* state) {
     //  print_name PCCharText
-    PlaceCommandCharacter_Conv(state, Utf8ToCrystal("PC@"));
+    uint8_t buffer[8];
+    PlaceCommandCharacter_Conv(state, U82CA(buffer, "PC@"));
 }
 
 void RocketChar(void) {
@@ -1038,7 +1041,8 @@ void RocketChar(void) {
 
 void RocketChar_Conv(struct TextPrintState* state) {
     //  print_name RocketCharText
-    PlaceCommandCharacter_Conv(state, Utf8ToCrystal("ROCKET@")); // mRocketCharText
+    uint8_t buffer[16];
+    PlaceCommandCharacter_Conv(state, U82CA(buffer, "ROCKET@")); // mRocketCharText
 }
 
 void PlacePOKe(void) {
@@ -1071,7 +1075,8 @@ void SixDotsChar(void) {
 
 void SixDotsChar_Conv(struct TextPrintState* state) {
     // print_name SixDotsCharText
-    PlaceCommandCharacter_Conv(state, Utf8ToCrystal("……@")); // mSixDotsCharText
+    uint8_t buffer[8];
+    PlaceCommandCharacter_Conv(state, U82CA(buffer, "……@")); // mSixDotsCharText
 }
 
 void PlacePKMN(void) {
@@ -1175,6 +1180,7 @@ enemy:
 }
 
 void PlaceBattlersName_Conv(struct TextPrintState* state, bool is_enemy) {
+    uint8_t buffer[16];
     // PUSH_DE;
     // AND_A_A;
     // IF_NZ goto enemy;
@@ -1189,7 +1195,7 @@ void PlaceBattlersName_Conv(struct TextPrintState* state, bool is_enemy) {
 // enemy:
     // LD_DE(mEnemyText);
     // CALL(aPlaceString);
-    struct TextPrintState temp = {.hl = state->hl, .de = Utf8ToCrystal("Enemy @"), .bc = state->bc};
+    struct TextPrintState temp = {.hl = state->hl, .de = U82CA(buffer, "Enemy @"), .bc = state->bc};
     PlaceString_Conv(&temp, state->hl);
     // LD_H_B;
     // LD_L_C;
@@ -1296,6 +1302,7 @@ void PlaceGenderedPlayerName(void) {
 }
 
 void PlaceGenderedPlayerName_Conv(struct TextPrintState* state) {
+    uint8_t buffer[8];
     // PUSH_DE;
     // LD_DE(wPlayerName);
     // CALL(aPlaceString);
@@ -1312,9 +1319,9 @@ void PlaceGenderedPlayerName_Conv(struct TextPrintState* state) {
     // LD_DE(mChanSuffixText);
     // JR(mPlaceCommandCharacter);
     if(bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F)) {
-        return PlaceCommandCharacter_Conv(state, Utf8ToCrystal("@")); // Chan suffix (empty string in English)
+        return PlaceCommandCharacter_Conv(state, U82CA(buffer, "@")); // Chan suffix (empty string in English)
     }
-    return PlaceCommandCharacter_Conv(state, Utf8ToCrystal("@")); // Kun suffix (empty string in English)
+    return PlaceCommandCharacter_Conv(state, U82CA(buffer, "@")); // Kun suffix (empty string in English)
 }
 
 void PlaceCommandCharacter(void) {
@@ -1917,12 +1924,12 @@ void TextScroll_Conv(struct TextPrintState* state) {
         uint8_t x = TEXTBOX_INNERW;
         do {
         // row:
-        //     LD_A_hli;
-        //     LD_de_A;
-        //     INC_DE;
+            // LD_A_hli;
+            // LD_de_A;
+            // INC_DE;
             *(state->de++) = *(state->hl++);
-        //     DEC_C;
-        //     IF_NZ goto row;
+            // DEC_C;
+            // IF_NZ goto row;
         } while(--x != 0);
 
         // INC_DE;
@@ -2359,7 +2366,7 @@ void TextCommand_START_Conv(struct TextPrintState* state) {
 //  write text until "@"
 void TextCommand_START_Conv2(struct TextCmdState* state, const struct TextCmd* cmd) {
     static const txt_cmd_s cmd_end = {TX_END, .end=0};
-    uint8_t tempbuf[256];
+    uint8_t tempbuf[1024];
     // PEEK("");
     // LD_D_H;
     // LD_E_L;
@@ -3775,6 +3782,7 @@ Day:
 //  print the day of the week
 void TextCommand_DAY_Conv2(struct TextCmdState* state, const struct TextCmd* cmd) {
     (void)cmd;
+    uint8_t buffer[8];
     static const char* Days[] = {
         "SUN@",
         "MON@",
@@ -3805,7 +3813,7 @@ void TextCommand_DAY_Conv2(struct TextCmdState* state, const struct TextCmd* cmd
     // LD_D_H;
     // LD_E_L;
     // uint16_t de = gb_read16(hl);
-    uint8_t* de = Utf8ToCrystal(Days[wd]);
+    uint8_t* de = U82CA(buffer, Days[wd]);
 
     // POP_HL;
     struct TextPrintState temp = {.hl = state->bc, .de = de, .bc = state->bc};
@@ -3818,7 +3826,7 @@ void TextCommand_DAY_Conv2(struct TextCmdState* state, const struct TextCmd* cmd
 
     // LD_DE(mTextCommand_DAY_Day);
     // CALL(aPlaceString);
-    struct TextPrintState temp2 = {.hl = hl, .de = Utf8ToCrystal(Day), .bc = temp.bc};
+    struct TextPrintState temp2 = {.hl = hl, .de = U82CA(buffer, Day), .bc = temp.bc};
     PlaceString_Conv(&temp2, hl);
     // POP_HL;
     state->bc = temp2.bc;

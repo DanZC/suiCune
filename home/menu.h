@@ -120,7 +120,7 @@ void MenuClickSound(void);
 void MenuClickSound_Conv(uint8_t a);
 void PlayClickSFX(void);
 void PlayClickSFX_Conv(void);
-void MenuTextboxWaitButton(void);
+void MenuTextboxWaitButton(const struct TextCmd* hl);
 void Place2DMenuItemName(void);
 void Place2DMenuItemName_Conv(uint8_t* hl, const char* de);
 void v_2DMenu(void);

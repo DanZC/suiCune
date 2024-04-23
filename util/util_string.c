@@ -155,6 +155,9 @@ uint8_t* Utf8ToCrystal(const char* src)
         src++;
     nextchar:;
     }
+    if(i >= sizeof(lCrystalTextConvBuffer) - 1) {
+        printf("Truncated string of size %llu+ to size %llu.\n", i, sizeof(lCrystalTextConvBuffer) - 1);
+    }
     lCrystalTextConvBuffer[i] = CHAR_TERM;
     return lCrystalTextConvBuffer;
 }
@@ -196,6 +199,9 @@ uint8_t* Utf8ToCrystalBuffer(uint8_t* dest, size_t dest_size, const char* src)
         dest[i++] = CHAR_QMARK;
         src++;
     nextchar:;
+    }
+    if( i - 1 >= dest_size) {
+        printf("Truncated string of size %llu+ to size %llu.\n", i, dest_size);
     }
     dest[i] = CHAR_TERM;
     return dest;

@@ -2,6 +2,8 @@
 #include "mon_menu.h"
 #include "../../home/names.h"
 #include "../../home/copy_name.h"
+#include "../../home/menu.h"
+#include "../../data/text/common.h"
 
 void HasNoItems(void){
     LD_A_addr(wNumItems);
@@ -102,16 +104,16 @@ ItemsTooImportantText:
 }
 
 void CantUseItem(void){
-    LD_HL(mItemsOakWarningText);
-    CALL(aMenuTextboxWaitButton);
-    RET;
-
+    // LD_HL(mItemsOakWarningText);
+    // CALL(aMenuTextboxWaitButton);
+    // RET;
+    MenuTextboxWaitButton(ItemsOakWarningText);
 }
 
-void ItemsOakWarningText(void){
-    //text_far ['_ItemsOakWarningText']
-    //text_end ['?']
-}
+const txt_cmd_s ItemsOakWarningText[] = {
+    text_far(v_ItemsOakWarningText)
+    text_end
+};
 
 void PartyMonItemName(void){
     LD_A_addr(wCurItem);

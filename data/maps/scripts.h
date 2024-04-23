@@ -153,8 +153,8 @@
 
 // #include "../../maps/Route34.h"
 #include "../../maps/ElmsLab.h"
-// #include "../../maps/PlayersHouse1F.h"
-// #include "../../maps/PlayersHouse2F.h"
+#include "../../maps/PlayersHouse1F.h"
+#include "../../maps/PlayersHouse2F.h"
 #include "../../maps/PlayersNeighborsHouse.h"
 #include "../../maps/ElmsHouse.h"
 // #include "../../maps/Route26HealHouse.h"
