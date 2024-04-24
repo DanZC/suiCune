@@ -80,7 +80,7 @@
 #include "engine/items/mart.h"
 #include "engine/events/money.h"
 //#include "data/items/marts.h"
-//#include "engine/events/mom.h"
+#include "engine/events/mom.h"
 //#include "engine/events/daycare.h"
 //#include "engine/events/print_unown.h"
 //#include "engine/events/print_photo.h"

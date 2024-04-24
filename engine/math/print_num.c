@@ -1190,7 +1190,7 @@ uint8_t* v_PrintNum_Conv2(uint8_t* hl, const uint8_t* de, uint8_t b, uint8_t c){
         // LD_A(0xf0);
         // LD_hli_A;
         *(hl++) = 0xf0;
-        printf("$_");
+        // printf("$_");
 
         // RES_B(5);  // 100xxxxx or 010xxxxx
         bit_reset(b, PRINTNUM_MONEY_F);

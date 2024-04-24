@@ -8,6 +8,7 @@
 #include "../../engine/menus/menu_2.h"
 #include "../../engine/events/magikarp.h"
 #include "../../engine/events/heal_machine_anim.h"
+#include "../../engine/events/mom.h"
 #include "../../engine/overworld/wildmons.h"
 #include "../../engine/overworld/overworld.h"
 #include "../../engine/overworld/warp_connection.h"
@@ -56,7 +57,7 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(DayCareLady),
     // add_special(DayCareManOutside),
     // add_special(MoveDeletion),
-    // add_special(BankOfMom),
+    add_special(BankOfMom),
     // add_special(MagnetTrain),
     // add_special(NameRival),
     add_special(SetDayOfWeek),

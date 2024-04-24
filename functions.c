@@ -5789,4 +5789,34 @@ CONVERTED(v_AnimateTileset);
     // REDIRECTED(SelectMenu);
     // REDIRECTED(UseRegisteredItem);
     // REDIRECTED(MayRegisterItemText);
+
+    // engine/events/mom.c
+    // REDIRECTED(Mom_ContinueMenuSetup);
+    // REDIRECTED(MomJustDoWhatYouCanText);
+    // REDIRECTED(MomBankWhatDoYouWantToDoText);
+    // REDIRECTED(MomNotEnoughRoomInBankText);
+    // REDIRECTED(MomLeavingText2);
+    // REDIRECTED(MomSaveMoneyText);
+    // REDIRECTED(DSTChecks);
+    // REDIRECTED(Mom_DepositString);
+    // REDIRECTED(MomIsThisAboutYourMoneyText);
+    // REDIRECTED(MomStoredMoneyText);
+    // REDIRECTED(Mom_WithdrawDepositMenuJoypad);
+    // REDIRECTED(Mom_SetUpDepositMenu);
+    // REDIRECTED(MomNotEnoughRoomInWalletText);
+    CONVERTED(BankOfMom);
+    // REDIRECTED(MomLeavingText3);
+    // REDIRECTED(Mon_WithdrawString);
+    // REDIRECTED(Mom_Wait10Frames);
+    // REDIRECTED(Mom_SavedString);
+    // REDIRECTED(Mom_HeldString);
+    // REDIRECTED(MomStoreMoneyText);
+    // REDIRECTED(MomLeavingText1);
+    // REDIRECTED(Mom_SetUpWithdrawMenu);
+    // REDIRECTED(MomTakeMoneyText);
+    // REDIRECTED(MomInsufficientFundsInWalletText);
+    // REDIRECTED(MomStartSavingMoneyText);
+    // REDIRECTED(MomHaventSavedThatMuchText);
+    // REDIRECTED(MomTakenMoneyText);
+    // REDIRECTED(BankOfMom_MenuHeader);
 }
