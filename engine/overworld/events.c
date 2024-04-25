@@ -1555,7 +1555,7 @@ u8_flag_s BGEventJumptable_Conv(uint8_t a){
             // AND_A(0b1100);
             // CP_A_B;
             // JP_NZ (mBGEventJumptable_dontread);
-            if((wram->wPlayerStruct.facing & 0b1100) == b)
+            if((wram->wPlayerStruct.facing & 0b1100) != b)
                 return u8_flag(0, false);
             fallthrough;
         case BGEVENT_READ:

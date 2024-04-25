@@ -545,6 +545,27 @@ loop:
 
 }
 
+void ScrollingMenu_ClearLeftColumn_Conv(void){
+    // CALL(aMenuBoxCoord2Tile);
+    // LD_DE(SCREEN_WIDTH);
+    // ADD_HL_DE;
+    tile_t* hl = MenuBoxCoord2Tile_Conv() + SCREEN_WIDTH;
+    // LD_DE(2 * SCREEN_WIDTH);
+    // LD_A_addr(wMenuData_ScrollingMenuHeight);
+    uint8_t a = GetMenuData()->scrollingMenu.rows;
+
+    do {
+    // loop:
+        // LD_hl(0x7f);
+        *hl = 0x7f;
+        // ADD_HL_DE;
+        hl += 2 * SCREEN_WIDTH;
+        // DEC_A;
+        // IF_NZ goto loop;
+    } while(--a != 0);
+    // RET;
+}
+
 void InitScrollingMenuCursor(void){
     LD_HL(wMenuData_ItemsPointerAddr);
     LD_A_hli;

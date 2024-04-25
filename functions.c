@@ -3461,7 +3461,7 @@ void init_function_pointers(void) {
     // REDIRECTED(CopyBoxmonToTempMon);
     // REDIRECTED(BillsPC_DepositMenu);
     // REDIRECTED(BillsPC_ChangeBoxMenu);
-    // REDIRECTED(ClearPCItemScreen);
+    CONVERTED(ClearPCItemScreen);
     // REDIRECTED(LoadBoxMonListing);
     // REDIRECTED(v_BillsPC);
     // REDIRECTED(PCCantTakeText);
@@ -5819,4 +5819,38 @@ CONVERTED(v_AnimateTileset);
     // REDIRECTED(MomHaventSavedThatMuchText);
     // REDIRECTED(MomTakenMoneyText);
     // REDIRECTED(BankOfMom_MenuHeader);
+
+    // engine/events/pokecenter_pc.c
+    // REDIRECTED(PokemonCenterPC);
+    // REDIRECTED(PlayerLogOffMenu);
+    // REDIRECTED(PC_CheckPartyForPokemon);
+    // REDIRECTED(PlayerDecorationMenu);
+    // REDIRECTED(PCItemsJoypad);
+    // REDIRECTED(PC_PlaySwapItemsSound);
+    // REDIRECTED(v_PlayersHousePC);
+    // REDIRECTED(PlayerTossItemMenu);
+    // REDIRECTED(OaksPC);
+    // REDIRECTED(PlayerMailBoxMenu);
+    // REDIRECTED(PlayerWithdrawItemMenu);
+    // REDIRECTED(PC_DisplayText);
+    // REDIRECTED(PokecenterBillsPCText);
+    // REDIRECTED(PC_PlayBootSound);
+    // REDIRECTED(PokecenterOaksPCText);
+    // REDIRECTED(PlayersPC);
+    // REDIRECTED(PlayersPCTurnOnText);
+    // REDIRECTED(PlayersPCMenuData);
+    // REDIRECTED(v_PlayersPC);
+    // REDIRECTED(PokecenterPCWhoseText);
+    // REDIRECTED(PokecenterPCTurnOnText);
+    // REDIRECTED(PC_DisplayTextWaitMenu);
+    // REDIRECTED(PlayerDepositItemMenu);
+    // REDIRECTED(BillsPC);
+    // REDIRECTED(PokecenterPlayersPCText);
+    // REDIRECTED(HallOfFamePC);
+    // REDIRECTED(PlayersPCAskWhatDoText);
+    // REDIRECTED(PokecenterPCOaksClosedText);
+    // REDIRECTED(PC_PlayChoosePCSound);
+    // REDIRECTED(PC_PlayShutdownSound);
+    // REDIRECTED(PC_WaitPlaySFX);
+    // REDIRECTED(TurnOffPC);
 }

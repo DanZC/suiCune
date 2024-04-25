@@ -52,7 +52,7 @@ void (*const SpecialsPointers[])(void) = {
     add_special(MagikarpHouseSign),
     add_special(HealParty), // this is both a special and a predef
     // add_special(PokemonCenterPC),
-    // add_special(PlayersHousePC),
+    add_special(PlayersHousePC),
     // add_special(DayCareMan),
     // add_special(DayCareLady),
     // add_special(DayCareManOutside),

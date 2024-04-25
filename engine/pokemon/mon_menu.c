@@ -3,6 +3,9 @@
 #include "../../home/names.h"
 #include "../../home/copy_name.h"
 #include "../../home/menu.h"
+#include "../../home/item.h"
+#include "../items/items.h"
+#include "../items/buy_sell_toss.h"
 #include "../../data/text/common.h"
 
 void HasNoItems(void){
@@ -31,6 +34,46 @@ done:
     AND_A_A;
     RET;
 
+}
+
+bool HasNoItems_Conv(void){
+    // LD_A_addr(wNumItems);
+    // AND_A_A;
+    // RET_NZ ;
+    if(wram->wNumItems != 0)
+        return false;
+    // LD_A_addr(wNumKeyItems);
+    // AND_A_A;
+    // RET_NZ ;
+    if(wram->wNumKeyItems != 0)
+        return false;
+    // LD_A_addr(wNumBalls);
+    // AND_A_A;
+    // RET_NZ ;
+    if(wram->wNumBalls != 0)
+        return false;
+    // LD_HL(wTMsHMs);
+    uint8_t* hl = wram->wTMsHMs;
+    // LD_B(NUM_TMS + NUM_HMS);
+    uint8_t b = NUM_TMS + NUM_HMS;
+
+    do {
+    // loop:
+        // LD_A_hli;
+        // AND_A_A;
+        // IF_NZ goto done;
+        if(*(hl++) != 0) {
+        // done:
+            // AND_A_A;
+            // RET;
+            return false;
+        }
+        // DEC_B;
+        // IF_NZ goto loop;
+    } while(--b != 0);
+    // SCF;
+    // RET;
+    return true;
 }
 
 void TossItemFromPC(void){
@@ -101,6 +144,102 @@ ItemsTooImportantText:
     //text_end ['?']
 
     return CantUseItem();
+}
+
+static void TossItemFromPC_CantToss(void) {
+    static const txt_cmd_s ItemsTooImportantText[] = {
+        text_far(v_ItemsTooImportantText)
+        text_end
+    };
+    // LD_HL(mTossItemFromPC_ItemsTooImportantText);
+    // CALL(aMenuTextboxBackup);
+    MenuTextboxBackup_Conv(ItemsTooImportantText);
+    // RET;
+}
+
+bool TossItemFromPC_Conv(item_pocket_s* de){
+    static const txt_cmd_s ItemsTossOutHowManyText[] = {
+        text_far(v_ItemsTossOutHowManyText)
+        text_end
+    };
+
+    static const txt_cmd_s ItemsThrowAwayText[] = {
+        text_far(v_ItemsThrowAwayText)
+        text_end
+    };
+
+    static const txt_cmd_s ItemsDiscardedText[] = {
+        text_far(v_ItemsDiscardedText)
+        text_end
+    };
+    // PUSH_DE;
+    // CALL(aPartyMonItemName);
+    PartyMonItemName_Conv(wram->wCurItem);
+    // FARCALL(av_CheckTossableItem);
+    // LD_A_addr(wItemAttributeValue);
+    // AND_A_A;
+    // IF_NZ goto key_item;
+    if(!v_CheckTossableItem_Conv(wram->wCurItem)) {
+    // key_item:
+        // CALL(aTossItemFromPC_CantToss);
+        TossItemFromPC_CantToss();
+
+    // quit:
+        // POP_HL;
+        // SCF;
+        // RET;
+        return true;
+    }
+    // LD_HL(mTossItemFromPC_ItemsTossOutHowManyText);
+    // CALL(aMenuTextbox);
+    MenuTextbox_Conv(ItemsTossOutHowManyText);
+    // FARCALL(aSelectQuantityToToss);
+    bool quit = SelectQuantityToToss();
+    // PUSH_AF;
+    // CALL(aCloseWindow);
+    CloseWindow_Conv2();
+    // CALL(aExitMenu);
+    ExitMenu_Conv2();
+    // POP_AF;
+    // IF_C goto quit;
+    if(quit)
+        return true;
+    // LD_HL(mTossItemFromPC_ItemsThrowAwayText);
+    // CALL(aMenuTextbox);
+    MenuTextbox_Conv(ItemsThrowAwayText);
+    // CALL(aYesNoBox);
+    bool yes = YesNoBox_Conv();
+    // PUSH_AF;
+    // CALL(aExitMenu);
+    ExitMenu_Conv2();
+    // POP_AF;
+    // IF_C goto quit;
+    if(yes) {
+        // POP_HL;
+        // LD_A_addr(wCurItemQuantity);
+        // CALL(aTossItem);
+        TossItem_Conv(de, wram->wCurItem);
+        // CALL(aPartyMonItemName);
+        PartyMonItemName_Conv(wram->wCurItem);
+        // LD_HL(mTossItemFromPC_ItemsDiscardedText);
+        // CALL(aMenuTextbox);
+        MenuTextbox_Conv(ItemsDiscardedText);
+        // CALL(aExitMenu);
+        ExitMenu_Conv2();
+        // AND_A_A;
+        // RET;
+        return false;
+    }
+    else {
+    // key_item:
+        // CALL(aTossItemFromPC_CantToss);
+
+    // quit:
+        // POP_HL;
+        // SCF;
+        // RET;
+        return true;
+    }
 }
 
 void CantUseItem(void){

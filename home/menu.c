@@ -1415,7 +1415,7 @@ u8_flag_s DoNthMenu_Conv(void) {
     // CALL(aInitMenuCursorAndButtonPermissions);
     InitMenuCursorAndButtonPermissions_Conv();
     // CALL(aGetStaticMenuJoypad);
-    bool cancel = GetStaticMenuJoypad_Conv();
+    bool cancel = GetStaticMenuJoypad_Conv2();
     // CALL(aGetMenuJoypad);
     uint8_t joypad = GetMenuJoypad_Conv();
     // CALL(aMenuClickSound);
@@ -1790,6 +1790,15 @@ bool GetStaticMenuJoypad_Conv(void) {
     return ContinueGettingMenuJoypad_Conv(StaticMenuJoypad_Conv());
 }
 
+bool GetStaticMenuJoypad_Conv2(void) {
+    // XOR_A_A;
+    // LD_addr_A(wMenuJoypad);
+    wram->wMenuJoypad = 0;
+    // CALL(aStaticMenuJoypad);
+
+    return ContinueGettingMenuJoypad_Conv2(StaticMenuJoypad_Conv());
+}
+
 void ContinueGettingMenuJoypad(void) {
     BIT_A(A_BUTTON_F);
     IF_NZ goto a_button;
@@ -2022,6 +2031,22 @@ void PlaceNthMenuStrings(void) {
     RET;
 }
 
+void PlaceNthMenuStrings_Conv(const char** strings, uint8_t* de, uint8_t selection) {
+    uint8_t buf[32];
+    // PUSH_DE;
+    // LD_A_addr(wMenuSelection);
+    // CALL(aGetMenuDataPointerTableEntry);
+    // INC_HL;
+    // INC_HL;
+    // LD_A_hli;
+    // LD_D_hl;
+    // LD_E_A;
+    // POP_HL;
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82CA(buf, ((const struct LabeledMenuItem*)strings)[selection].label), de);
+    // RET;
+}
+
 void GetNthMenuStrings(void) {
     //  //  unreferenced
     CALL(aGetMenuDataPointerTableEntry);
@@ -2040,6 +2065,17 @@ void MenuJumptable(void) {
     LD_H_hl;
     LD_L_A;
     JP_hl;
+}
+
+u8_flag_s MenuJumptable_Conv(void) {
+    // LD_A_addr(wMenuSelection);
+    // CALL(aGetMenuDataPointerTableEntry);
+    const struct MenuData* data = GetMenuData();
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // JP_hl;
+    return data->setupMenu.labelList[wram->wMenuSelection].function();
 }
 
 void GetMenuDataPointerTableEntry(void) {

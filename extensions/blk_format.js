@@ -371,17 +371,417 @@ var binFormat = {
     // },
 }
 
+function tokenizeC(text) {
+    let match = text.match(/\/\/[^\n]+|[0-9]+|[_a-zA-Z]\w*|[-+*/\{\},\(\)\=\[\]]/g);
+    match = match.filter(function(t) { return !t.startsWith('//'); });
+    return match;
+}
+
+function parseEnum(state) {
+	state.i += 2;
+    let values = [];
+    while(state.tokens[state.i] !== '}') {
+    	var e = parseExpr(state);
+        if(e !== null) {
+        	values.push(e);
+        	if(state.tokens[state.i] === '=') {
+        	    state.i++;
+        	    parseExpr(state);
+        	}
+            if(state.tokens[state.i] === ',')
+                state.i += 1;
+        }
+        else {
+        	state.i += 1;
+        }
+    }
+    state.i += 1;
+    return {'type': 'enum', 'values': values};
+}
+
+function isNumber(n) { return !isNaN(parseFloat(n)) && !isNaN(n - 0) }
+
+function isAlphaNum(str) {
+    return !!str.match(/^[_A-Za-z]\w+/i);
+}
+
+function parseExprUnit(state) {
+    if(isNumber(state.tokens[state.i])) {
+        var num = state.tokens[state.i];
+        state.i++;
+        return num;
+    }
+    else if(isAlphaNum(state.tokens[state.i])) {
+    	var val = state.tokens[state.i];
+        state.i++;
+        return val;
+    }
+    else if(state.tokens[state.i] == '(') {
+        state.i++;
+        var expr = parseExpr(state);
+        state.i++;
+        return expr;
+    }
+    else if(state.tokens[state.i] == '&') {
+        state.i++;
+        var expr = parseExprUnit(state);
+        return '&' + expr;
+    }
+    else if(state.tokens[state.i] == '-') {
+        state.i++;
+        var expr = parseExprUnit(state);
+        return '-' + expr;
+    }
+    else {
+        return null;
+    }
+}
+
+ops = ['+', '-', '*', '/']
+
+function parseExpr(state) {
+    var res = parseExprUnit(state);
+    var lhs = res;
+    while(1) {
+        var op = state.tokens[state.i];
+        var isAnOp = op in ops;
+        if(isAnOp === false) {
+        	return lhs;
+        }
+        state.i++;
+        var rhs = parseExprUnit(state);
+        if(rhs === null)
+            break;
+        lhs = `${lhs} ${op} ${rhs}`
+    }
+    return lhs;
+}
+
+function parseMacroArgs(state) {
+    args = []
+    state.i++;
+    while(state.tokens[state.i] !== ')') {
+        args.push(parseExpr(state));
+        if(state.tokens[state.i] === ',')
+            state.i++;
+    }
+    state.i++;
+    return args;
+}
+
+function parseCoordEvent(state) {
+    state.i++;
+    args = parseMacroArgs(state);
+    if(state.tokens[state.i] === ',')
+        state.i++;
+    return {
+        'x': parseInt(args[0]),
+        'y': parseInt(args[1]),
+        'scene': args[2],
+        'script': args[3],
+    }
+}
+
+function parseCoordEvents(state) {
+    state.i++;
+    var name = state.tokens[state.i];
+    state.i += 5;
+    var coords = [];
+    if(state.tokens[state.i] === '0') {
+    	while(state.tokens[state.i] !== '}') state.i++;
+        state.i++;
+        return {
+            'name': name,
+            'type': 'coords',
+            'coords': coords
+    	}
+    }
+    while(state.tokens[state.i] !== '}') {
+        coords.push(parseCoordEvent(state));
+    }
+    state.i++;
+    return {
+        'name': name,
+        'type': 'coords',
+        'coords': coords
+    }
+}
+
+function parseMapCallback(state) {
+    state.i++;
+    args = parseMacroArgs(state);
+    if(state.tokens[state.i] === ',')
+        state.i++;
+    return {
+        'type': args[0],
+        'callback': args[1],
+    }
+}
+
+function parseMapCallbacks(state) {
+    state.i++;
+    var name = state.tokens[state.i];
+    state.i += 5;
+    var callbacks = []
+    if(state.tokens[state.i] === '0') {
+    	while(state.tokens[state.i] !== '}') state.i++;
+        state.i++;
+        return {
+            'name': name,
+            'type': 'map_callback',
+            'callbacks': callbacks
+    	}
+    }
+    else {
+        while(state.tokens[state.i] !== '}') {
+            callbacks.push(parseMapCallback(state));
+        }
+        state.i++;
+        return {
+            'name': name,
+            'type': 'map_callback',
+            'callbacks': callbacks
+        }
+    }
+}
+
+function parseSceneScripts(state) {
+    state.i++;
+    var name = state.tokens[state.i];
+    state.i += 5;
+    scene_scripts = []
+    if(state.tokens[state.i] === '0') {
+    	while(state.tokens[state.i] !== '}') state.i++;
+        state.i++;
+        return {
+            'name': name,
+            'type': 'scene_scripts',
+            'scene_scripts': scene_scripts
+    	}
+    }
+    while(state.tokens[state.i] !== '}') {
+        var expr = parseExpr(state);
+        scene_scripts.push(expr);
+        if(state.tokens[state.i] === ',')
+            state.i++;
+    }
+    state.i++;
+    return {
+        'name': name,
+        'type': 'scene_scripts',
+        'scene_scripts': scene_scripts
+	}
+}
+
+function parseBGEvent(state) {
+    state.i++;
+    args = parseMacroArgs(state);
+    if(state.tokens[state.i] === ',')
+        state.i++;
+    return {
+        'x': parseInt(args[0]),
+        'y': parseInt(args[1]),
+        'function': args[2],
+        'script': args[3],
+    }
+}
+
+function parseBGEvents(state) {
+    state.i++;
+    var name = state.tokens[state.i];
+    state.i += 5;
+    var bg_events = [];
+    if(state.tokens[state.i] === '0') {
+    	while(state.tokens[state.i] !== '}') state.i++;
+        state.i++;
+        return {
+            'name': name,
+            'type': 'bg_events',
+            'bg_events': bg_events
+    	}
+    }
+    while(state.tokens[state.i] !== '}') {
+        bg_events.push(parseBGEvent(state));
+    }
+    state.i++;
+    return {
+        'name': name,
+        'type': 'bg_events',
+        'bg_events': bg_events
+    }
+}
+
+function parseWarpEvent(state) {
+    state.i++;
+    args = parseMacroArgs(state);
+    if(state.tokens[state.i] === ',')
+        state.i++;
+    return {
+        'x': parseInt(args[0]),
+        'y': parseInt(args[1]),
+        'map': args[2],
+        'warpNumber': args[3],
+    }
+}
+
+function parseWarpEvents(state) {
+    state.i++;
+    var name = state.tokens[state.i];
+    state.i += 5;
+    var warp_events = [];
+    if(state.tokens[state.i] === '0') {
+    	while(state.tokens[state.i] !== '}') state.i++;
+        state.i++;
+        return {
+            'name': name,
+            'type': 'warp_events',
+            'warp_events': warp_events
+    	}
+    }
+    while(state.tokens[state.i] !== '}') {
+        warp_events.push(parseWarpEvent(state));
+    }
+    state.i++;
+    return {
+        'name': name,
+        'type': 'warp_events',
+        'warp_events': warp_events
+    }
+}
+
+function parseObjEvent(state) {
+    state.i++;
+    args = parseMacroArgs(state);
+    if(state.tokens[state.i] === ',')
+        state.i++;
+    return {
+        'x': parseInt(args[0]),
+        'y': parseInt(args[1]),
+        'sprite': args[2],
+        'movement': args[3],
+        'radiusX': args[4],
+        'radiusY': args[5],
+        'h1': args[6],
+        'h2': args[7],
+        'color': args[8],
+        'func': args[9],
+        'sight': args[10],
+        'data': args[11],
+        'eventFlag': args[12],
+    }
+}
+
+function parseObjEvents(state) {
+    state.i++;
+    var name = state.tokens[state.i];
+    state.i += 5;
+    var obj_events = [];
+    if(state.tokens[state.i] === '0') {
+    	while(state.tokens[state.i] !== '}') state.i++;
+        state.i++;
+        return {
+            'name': name,
+            'type': 'obj_events',
+            'obj_events': obj_events
+    	}
+    }
+    while(state.tokens[state.i] !== '}') {
+        obj_events.push(parseObjEvent(state));
+    }
+    state.i++;
+    return {
+        'name': name,
+        'type': 'obj_events',
+        'obj_events': obj_events
+    }
+}
+
+function parseDataObject(state) {
+    if(state.tokens[state.i] == 'static') {
+        state.i++;
+    }
+    if(state.tokens[state.i] == 'const') {
+        state.i++;
+    }
+    if(state.tokens[state.i] == 'struct') {
+        state.i++;
+        switch(state.tokens[state.i]) {
+            case 'MapCallback':
+                return parseMapCallbacks(state);
+            case 'CoordEvent':
+                return parseCoordEvents(state);
+            case 'BGEvent':
+                return parseBGEvents(state);
+            case 'WarpEventData':
+                return parseWarpEvents(state);
+            case 'ObjEvent':
+                return parseObjEvents(state);
+            default: {
+                while(state.tokens[state.i] !== '}') {
+                    state.i++;
+                }
+                state.i++;
+            } break;
+        }
+        return {};
+    }
+    else if(state.tokens[state.i] == 'Script_fn_t') {
+        return parseSceneScripts(state);
+    }
+    state.i++;
+    return {};
+}
+
+function parseC(text) {
+    let tokens = tokenizeC(text);
+    let state = {'tokens': tokens, 'i': 0};
+    let objects = []
+    while(state.i < tokens.length) {
+        if(tokens[state.i] === 'enum') {
+            objects.push(parseEnum(state));
+        }
+        else if(tokens[state.i] === 'const' || tokens[state.i] === 'static') {
+            objects.push(parseDataObject(state));
+        }
+        else {
+            state.i++;
+        }
+    }
+    return objects;
+}
+
+function CamelCaseToSnakeCaps(str) {
+    var outstr = '';
+    var lastLowercase = false;
+    var lastNumber = false;
+    for(var i = 0; i < str.length; ++i) {
+        if(str[i] == str[i].toUpperCase() && (lastLowercase || (!lastNumber && isNumber(str[i])))) {
+            outstr += '_' + str[i];
+            lastLowercase = false;
+        }
+        else {
+            lastLowercase = true;
+            outstr += str[i].toUpperCase();
+        }
+        if(isNumber(str[i])) {
+            lastNumber = true;
+        }
+        else {
+            lastNumber = false;
+        }
+    }
+    return outstr;
+}
+
 var blkFormat = {
     name: "BLK map format",
     extension: "blk",
 
     read: function(fileName) {
         var cur_dir = tiled.projectFilePath.substring(0, tiled.projectFilePath.lastIndexOf("/"));
-        var path_to_map_id = {}
-        path_to_map_id[cur_dir + "/maps/Pokecenter2F.blk"] = "POKECENTER_2F";
-        path_to_map_id[cur_dir + "/maps/TradeCenter.blk"] = "TRADE_CENTER";
-        path_to_map_id[cur_dir + "/maps/Colosseum.blk"] = "COLOSSEUM";
-        path_to_map_id[cur_dir + "/maps/DayCare.blk"] = "DAY_CARE";
+        var ffileName = fileName.substring(fileName.lastIndexOf("/") + 1, fileName.lastIndexOf("."));
+        tiled.log(ffileName);
+        tiled.log(CamelCaseToSnakeCaps("Pokecenter2F"));
         // var dir = tiled.promptDirectory(tiled.projectFilePath.replace(/\/suiCune\.tile-project/, '/'), "project directory");
         var file = new BinaryFile(fileName, BinaryFile.ReadOnly);
         var bytes = new Uint8Array(file.readAll());
@@ -405,10 +805,11 @@ var blkFormat = {
         for(var key in maps) {
             tiled.log(`    ${key}: ${maps[key].w}, ${maps[key].h}`);
         }
-        if(path_to_map_id.hasOwnProperty(fileName)) {
-            tiled.log(`    ${fileName}: ${path_to_map_id[fileName]}, ${maps[key].h}`);
-            map.width = parseInt(maps[path_to_map_id[fileName]].w);
-            map.height = parseInt(maps[path_to_map_id[fileName]].h);
+        var cfileName = CamelCaseToSnakeCaps(ffileName);
+        if(cfileName in maps) {
+            tiled.log(`    ${ffileName} (${cfileName}): ${maps[key].w}, ${maps[key].h}`);
+            map.width = parseInt(maps[cfileName].w);
+            map.height = parseInt(maps[cfileName].h);
         }
         else {
             var whstring = tiled.prompt("Enter the width and height of the map \"w, h\"", "30, 9").split(',');
@@ -429,12 +830,176 @@ var blkFormat = {
         edit.apply();
         map.addLayer(layer);
 
-        var asmfile = fileName.substring(0, fileName.lastIndexOf(".")) + ".asm";
-        readEventASM(map, asmfile);
+        // var asmfile = fileName.substring(0, fileName.lastIndexOf(".")) + ".asm";
+        // readEventASM(map, asmfile);
 
         return map;
     },
+    write: function(map, fileName) {
+        var file = new BinaryFile(fileName, BinaryFile.WriteOnly);
+        var data = []
+        for(let y = 0; y < map.height; ++y) {
+            for(let x = 0; x < map.width; ++x) {
+                var tile = map.layerAt(0).cellAt(x, y).tileId;
+                tiled.log(`${tile},`);
+                data.push(tile);
+            }
+        }
+        tiled.log(`${data}`);
+        file.write(data);
+        file.commit();
+    },
+}
+
+var cFormat = {
+    name: "C map format",
+    extension: "c",
+    read: function(fileName) {
+        var file = new TextFile(fileName, TextFile.ReadOnly);
+        var cText = file.readAll();
+        var eventsSection = cText.substring(cText.indexOf("//// EVENTS") + 11, cText.indexOf('//// CODE'));
+        var objects = parseC(eventsSection);
+        var cur_dir = tiled.projectFilePath.substring(0, tiled.projectFilePath.lastIndexOf("/"));
+        var mapPath = tiled.promptOpenFile(cur_dir + "/maps/", "BLK map (*.blk)", "BLK map");
+        var map = blkFormat.read(mapPath);
+
+        const sprite_id_to_path = {
+            "SPRITE_CHRIS": "/gfx/sprites/chris.png",
+            "SPRITE_BUG_CATCHER": "/gfx/sprites/bug_catcher.png",
+            "SPRITE_COOLTRAINER_M": "/gfx/sprites/cooltrainer_m.png",
+            "SPRITE_FISHER": "/gfx/sprites/fisher.png",
+            "SPRITE_FRUIT_TREE": "/gfx/sprites/fruit_tree.png",
+            "SPRITE_TEACHER": "/gfx/sprites/teacher.png",
+            "SPRITE_LINK_RECEPTIONIST": "/gfx/sprites/link_receptionist.png",
+            "SPRITE_OFFICER": "/gfx/sprites/officer.png",
+            "SPRITE_POKE_BALL": "/gfx/sprites/poke_ball.png",
+            "SPRITE_SILVER": "/gfx/sprites/silver.png",
+            "SPRITE_YOUNGSTER": "/gfx/sprites/youngster.png",
+        };
+        const default_sprite_pal = {
+            'SPRITE_FRUIT_TREE': 'PAL_NPC_TREE',
+            'SPRITE_POKE_BALL': 'PAL_NPC_RED',
+            'SPRITE_OFFICER': 'PAL_NPC_BLUE',
+        };
+        var sprite_table = {};
+        var names = []
+
+        for(var object of objects) {
+            switch(object.type) {
+            case 'enum':
+                names = object.values;
+                break;
+            case 'bg_events':
+                if(object.bg_events.length == 0) {
+                    tiled.log(`bg_events = []`);
+                }
+                else {
+                    var bgLayer = new ObjectGroup("bgs");
+                    for(var i = 0; i < object.bg_events.length; ++i) {
+                        var bg = object.bg_events[i];
+                        var obj = new MapObject("");
+                        obj.x = bg.x * 16;
+                        obj.y = bg.y * 16;
+                        obj.width = 16;
+                        obj.height = 16;
+                        obj.className = 'bg';
+                        obj.setProperty('type', bg.function);
+                        obj.setProperty('script', bg.script);
+                        bgLayer.addObject(obj);
+                    }
+                    map.addLayer(bgLayer);
+                }
+                break;
+            case 'warp_events':
+                if(object.warp_events.length == 0) {
+                    tiled.log(`warp_events = []`);
+                }
+                else {
+                    var warpLayer = new ObjectGroup("warps");
+                    for(var i = 0; i < object.warp_events.length; ++i) {
+                        var warp = object.warp_events[i];
+                        var obj = new MapObject("");
+                        obj.x = warp.x * 16;
+                        obj.y = warp.y * 16;
+                        obj.width = 16;
+                        obj.height = 16;
+                        obj.className = 'warp';
+                        obj.setProperty('map', warp.map);
+                        obj.setProperty('warpNum', warp.warpNum);
+                        warpLayer.addObject(obj);
+                    }
+                    map.addLayer(warpLayer);
+                }
+                break;
+            case 'obj_events':
+                if(object.obj_events.length == 0) {
+                    tiled.log(`obj_events = []`);
+                }
+                else {
+                    var objLayer = new ObjectGroup("objs");
+                    for(var i = 0; i < object.obj_events.length; ++i) {
+                        var o = object.obj_events[i];
+                        var obj = new MapObject("");
+                        obj.x = o.x * 16;
+                        obj.y = (o.y + 1) * 16;
+                        obj.width = 16;
+                        obj.height = 16;
+                        obj.className = 'obj';
+                        obj.name = names[i];
+                        var sprite = o.sprite;
+                        var palette = o.color;
+                        if(!sprite_id_to_path.hasOwnProperty(sprite)) {
+                            sprite = 'SPRITE_CHRIS';
+                        }
+                        if(!obj_pals.hasOwnProperty(palette)) {
+                            if(!default_sprite_pal.hasOwnProperty(sprite))
+                                palette = 'PAL_NPC_RED';
+                            else
+                                palette = default_sprite_pal[sprite];
+                        }
+                        if(sprite_table.hasOwnProperty(sprite)) {
+                            obj.tile = sprite_table[sprite].tiles[0];
+                        }
+                        else {
+                            var sprites = new Tileset(sprite);
+                            sprites.setTileSize(16, 16);
+                            sprites.transparentColor = "#ffffff";
+                            sprites.image = cur_dir + sprite_id_to_path[sprite];
+                            var img = new Image(cur_dir + sprite_id_to_path[sprite]);
+                            // img.setColor(3, obj_pals[palette][0]);
+                            img.setColor(2, obj_pals[palette][1]);
+                            img.setColor(1, obj_pals[palette][2]);
+                            img.setColor(0, obj_pals[palette][3]);
+                            // img.setColor(0, rgb( 7, 7, 7));
+                            sprites.loadFromImage(img);
+                            map.addTileset(sprites);
+                            obj.tile = sprites.tiles[0];
+                            sprite_table[sprite] = sprites;
+                        }
+                        obj.setProperty('sprite', o.sprite);
+                        obj.setProperty('movement_data', o.movement);
+                        obj.setProperty('radiusX', o.radiusX);
+                        obj.setProperty('radiusY', o.radiusY);
+                        obj.setProperty('h1', o.h1);
+                        obj.setProperty('h2', o.h2);
+                        obj.setProperty('palette', o.color);
+                        obj.setProperty('obj_type', o.func);
+                        obj.setProperty('sight', o.sight);
+                        obj.setProperty('script', o.data);
+                        obj.setProperty('event_flag', o.eventFlag);
+                        objLayer.addObject(obj);
+                    }
+                    map.addLayer(objLayer);
+                }
+                break;
+            default:
+                break;
+            }
+        }
+        return map;
+    }
 }
 
 tiled.registerMapFormat("bin", binFormat);
 tiled.registerMapFormat("blk", blkFormat);
+tiled.registerMapFormat("c", cFormat);

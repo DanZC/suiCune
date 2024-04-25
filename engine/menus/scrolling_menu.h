@@ -9,6 +9,7 @@ u8_flag_s ScrollingMenuJoyAction_Conv(const struct MenuData* data);
 void ScrollingMenu_GetCursorPosition(void);
 uint8_t ScrollingMenu_GetCursorPosition_Conv(void);
 void ScrollingMenu_ClearLeftColumn(void);
+void ScrollingMenu_ClearLeftColumn_Conv(void);
 void InitScrollingMenuCursor(void);
 void InitScrollingMenuCursor_Conv(const struct MenuData* data);
 void ScrollingMenu_InitFlags(void);

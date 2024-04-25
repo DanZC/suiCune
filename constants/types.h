@@ -1309,6 +1309,11 @@ struct StartMenuItem {
     const char* desc;
 };
 
+struct LabeledMenuItem {
+    u8_flag_s (*function)(void);
+    const char* label;
+};
+
 struct MenuCoords {
     uint8_t y1;
     uint8_t x1;
@@ -1352,6 +1357,7 @@ struct MenuData {
             union {
                 const char ** stringsList;
                 const struct StartMenuItem* startMenuList;
+                const struct LabeledMenuItem* labelList;
             };
         } setupMenu;
         struct {

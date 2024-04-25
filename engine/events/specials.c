@@ -1,5 +1,6 @@
 #include "../../constants.h"
 #include "specials.h"
+#include "pokecenter_pc.h"
 #include "../../data/events/special_pointers.h"
 #include "../overworld/map_objects.h"
 #include "../overworld/time.h"
@@ -190,13 +191,13 @@ void DisplayLinkRecord(void){
 }
 
 void PlayersHousePC(void){
-    XOR_A_A;
-    LD_addr_A(wScriptVar);
-    FARCALL(av_PlayersHousePC);
-    LD_A_C;
-    LD_addr_A(wScriptVar);
-    RET;
-
+    // XOR_A_A;
+    // LD_addr_A(wScriptVar);
+    // FARCALL(av_PlayersHousePC);
+    // LD_A_C;
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = (v_PlayersHousePC())? TRUE: FALSE;
+    // RET;
 }
 
 void CheckMysteryGift(void){

@@ -76,7 +76,7 @@
 #include "engine/menus/save.h"
 #include "engine/overworld/spawn_points.h"
 #include "engine/overworld/map_setup.h"
-//#include "engine/events/pokecenter_pc.h"
+#include "engine/events/pokecenter_pc.h"
 #include "engine/items/mart.h"
 #include "engine/events/money.h"
 //#include "data/items/marts.h"

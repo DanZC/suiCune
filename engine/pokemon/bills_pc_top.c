@@ -2,6 +2,10 @@
 #include "bills_pc_top.h"
 #include "../../home/copy.h"
 #include "../../home/sram.h"
+#include "../../home/clear_sprites.h"
+#include "../../home/tilemap.h"
+#include "../../home/sprite_updates.h"
+#include "../../home/text.h"
 
 void v_BillsPC(void){
     CALL(av_BillsPC_CheckCanUsePC);
@@ -327,25 +331,33 @@ void BillsPC_ChangeBoxMenu(void){
 }
 
 void ClearPCItemScreen(void){
-    CALL(aDisableSpriteUpdates);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    CALL(aClearBGPalettes);
-    CALL(aClearSprites);
-    hlcoord(0, 0, wTilemap);
-    LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
-    LD_A(0x7f);
-    CALL(aByteFill);
-    hlcoord(0, 0, wTilemap);
-    LD_BC((10 << 8) | 18);
-    CALL(aTextbox);
-    hlcoord(0, 12, wTilemap);
-    LD_BC((4 << 8) | 18);
-    CALL(aTextbox);
-    CALL(aWaitBGMap2);
-    CALL(aSetPalettes);  // load regular palettes?
-    RET;
-
+    // CALL(aDisableSpriteUpdates);
+    // XOR_A_A;
+    DisableSpriteUpdates_Conv();
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
+    // CALL(aClearSprites);
+    ClearSprites_Conv();
+    // hlcoord(0, 0, wTilemap);
+    // LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
+    // LD_A(0x7f);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_HEIGHT * SCREEN_WIDTH, 0x7f);
+    // hlcoord(0, 0, wTilemap);
+    // LD_BC((10 << 8) | 18);
+    // CALL(aTextbox);
+    Textbox_Conv2(coord(0, 0, wram->wTilemap), 10, 18);
+    // hlcoord(0, 12, wTilemap);
+    // LD_BC((4 << 8) | 18);
+    // CALL(aTextbox);
+    Textbox_Conv2(coord(0, 12, wram->wTilemap), 4, 18);
+    // CALL(aWaitBGMap2);
+    WaitBGMap2_Conv();
+    // CALL(aSetPalettes);  // load regular palettes?
+    SetPalettes_Conv();
+    // RET;
 }
 
 void CopyBoxmonToTempMon(void){

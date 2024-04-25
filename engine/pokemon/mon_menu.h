@@ -1,5 +1,7 @@
 void HasNoItems(void);
+bool HasNoItems_Conv(void);
 void TossItemFromPC(void);
+bool TossItemFromPC_Conv(item_pocket_s* de);
 void CantUseItem(void);
 extern const txt_cmd_s ItemsOakWarningText[];
 void PartyMonItemName(void);
