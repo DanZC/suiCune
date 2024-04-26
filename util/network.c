@@ -146,6 +146,8 @@ static enum gb_serial_rx_ret_e gb_serial_rx_test(uint8_t* x) {
     return GB_SERIAL_RX_NO_CONNECTION;
 }
 
+#define MAX_TRIES_DETECT_PACKET_SENT 32
+
 bool NetworkInit(void) {
     if (SDLNet_Init() < 0) {
         printf("An error occurred while initializing SDL_Net.\n");
@@ -169,9 +171,30 @@ bool NetworkInit(void) {
             printf("Could not send UDP packet on port %d. Is the port blocked?\n", UDP_PORT);
             return false;
         }
-        //do {
-            //while(SDLNet_UDP_Recv(host, packet) == 0) {}
-        //} while(HostToNet32(*(uint32_t*)packet->data) != check);
+        // Clear previous value.
+        *(uint32_t*)packet->data = 0;
+
+        // Perform some number of tries to get the packet off the network.
+        // After that, it assumes the packet got lost.
+        int tries = 0;
+        do {
+            while(SDLNet_UDP_Recv(host, packet) == 0) {
+                SDL_Delay(1);
+                tries++;
+                if(tries > MAX_TRIES_DETECT_PACKET_SENT)
+                    break;
+            }
+
+            // If the check value isn't what we expect, we reject it.
+            if(HostToNet32(*(uint32_t*)packet->data) != check) {
+                printf("WARNING: A problem occurred when trying to get this machine's IP address.\n");
+                tries++;
+                continue;
+            }
+            else {
+                break;
+            }
+        } while(tries <= MAX_TRIES_DETECT_PACKET_SENT);
         printf("Public host: %d.%d.%d.%d\n", packet->address.host & 0xff,
             (packet->address.host >> 8) & 0xff,
             (packet->address.host >> 16) & 0xff,

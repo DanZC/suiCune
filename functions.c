@@ -671,7 +671,7 @@ void init_function_pointers(void) {
     REDIRECTED(v_CopyTilemapAtOnce);
     REDIRECTED(v_CopyTilemapAtOnce_CopyBGMapViaStack);
     REDIRECTED(SetPalettes);
-    REDIRECTED(ClearBGPalettes);
+    CONVERTED(ClearBGPalettes);
     REDIRECTED(CopyTilemapAtOnce);
     REDIRECTED(CopyAttrmapAndTilemapToWRAMBank3);
     REDIRECTED(GetMemSGBLayout);
