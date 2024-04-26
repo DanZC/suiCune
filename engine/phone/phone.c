@@ -835,7 +835,7 @@ bool CheckSpecialPhoneCall_Conv(void){
     // LD_A_hli;
     // LD_H_hl;
     // LD_L_A;
-    const struct SpecialCall* spec = SpecialPhoneCallList + (wram->wSpecialPhoneCallID - 1);
+    const struct SpecialCall* spec = SpecialPhoneCallList + (wram->wSpecialPhoneCallID);
     // CALL(av_hl_);
     // IF_NC goto NoPhoneCall;
     if(!spec->condition())
@@ -1202,11 +1202,12 @@ bool Script_ReceivePhoneCall(script_s* s) {
     SCRIPT_BEGIN
     refreshscreen
     RingTwice_StartCall();
-    scall(gCallerContact.calleeScript);
+    scall(gCallerContact.callerScript);
     waitbutton
     HangUp();
     closetext
     InitCallReceiveDelay();
+    s_end
     SCRIPT_END
 }
 

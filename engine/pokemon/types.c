@@ -55,7 +55,7 @@ void PrintMonTypes_Conv(uint8_t* hl){
     // PUSH_HL;
     // CALL(aGetBaseData);
     // POP_HL;
-    GetBaseData_Conv();
+    GetBaseData_Conv2(wram->wCurSpecies);
 
     // PUSH_HL;
     // LD_A_addr(wBaseType1);

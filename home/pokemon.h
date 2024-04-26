@@ -28,6 +28,7 @@ void Print8BitNumLeftAlign_Conv(uint8_t* hl, uint8_t a, uint8_t c);
 void GetNthMove(void);
 void GetBaseData(void);
 void GetBaseData_Conv(void);
+void GetBaseData_Conv2(species_t species);
 void GetCurNickname(void);
 void GetCurNickname_Conv(void);
 void GetNickname(void);

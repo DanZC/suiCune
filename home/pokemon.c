@@ -9,6 +9,8 @@
 #include "../engine/pokemon/correct_nick_errors.h"
 #include "../charmap.h"
 #include "../data/pokemon/base_stats.h"
+#include "../data/pokemon/pic_pointers.h"
+#include "../data/pokemon/unown_pic_pointers.h"
 
 void IsAPokemon(void){
     //  Return carry if species a is not a Pokemon.
@@ -667,6 +669,7 @@ void GetBaseData_Conv(void){
 }
 
 void GetBaseData_Conv2(species_t species){
+    printf("%s:: %d\n", __func__, species);
 //  Egg doesn't have BaseData
     if(species == EGG)
     {
@@ -677,8 +680,8 @@ void GetBaseData_Conv2(species_t species){
 
     //  Beta front and back sprites
     //  (see pokegold-spaceworld's data/pokemon/base_stats/*)
-        gb_write16(wBaseUnusedFrontpic,     mUnusedEggPic);
-        gb_write16(wBaseUnusedFrontpic + 2, mUnusedEggPic);
+        // gb_write16(wBaseUnusedFrontpic,     mUnusedEggPic);
+        // gb_write16(wBaseUnusedFrontpic + 2, mUnusedEggPic);
     }
     else 
     {
@@ -686,17 +689,40 @@ void GetBaseData_Conv2(species_t species){
     //  Get BaseData
         //DEC_A;
         const struct BaseData* hl = BasePokemonData + (species - 1);
-        CopyBytes_Conv2(&wram->wBaseDexNo, hl, sizeof(struct BaseData));
         //LD_BC(BASE_DATA_SIZE);
         //LD_HL(mBaseData);
         //CALL(aAddNTimes);
         //LD_DE(wCurBaseData);
         //LD_BC(BASE_DATA_SIZE);
         //CALL(aCopyBytes);
+        CopyBytes_Conv2(&wram->wBaseDexNo, hl, sizeof(struct BaseData));
+        // If our pic size is 0, we haven't initialized it yet.
+        if(hl->picSize == 0) {
+            // We dynamically get the base pic size by loading the frontpic and counting how many tiles
+            // horizontally the pic takes up and then cache the result in BasePokemonData.
+
+            // If our species is unown, we use the Unown pic table.
+            const char* (*const hl)[2] = ((species == UNOWN)? UnownPicPointers: PokemonPicPointers);
+            unown_letter_t c = wram->wUnownLetter;
+
+            // We either get the species or an unown letter, which will be the index into the table.
+            uint16_t a = (species == UNOWN)? c: species;
+            const char *path = hl[a - 1][0];
+            int w, h;
+            LoadDimensionsFromPNG(path, &w, &h);
+
+            // We assume pics have a square proportion (if a pic has a non-square proportion, we must
+            // do something more involved since a frontpic image has multiple frames, stacked vertically)
+            uint8_t size = (uint8_t)((((w / TILE_WIDTH) & 0xf) << 4) | ((w / TILE_WIDTH) & 0xf));
+            wram->wBasePicSize = size;
+
+            // We cache it back into the table.
+            BasePokemonData[species - 1].picSize = size;
+        }
     }
 
     //  Replace Pokedex # with species
-    wram->wBaseDexNo = wram->wCurSpecies;
+    wram->wBaseDexNo = species;
 }
 
 void GetCurNickname(void){

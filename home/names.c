@@ -489,7 +489,11 @@ void GetPokemonName_Conv(void){
 
 //  Get Pokemon name for wNamedObjectIndex.
 uint8_t* GetPokemonName_Conv2(species_t index){
-
+    if(index == 0 || index > NUM_POKEMON) {
+        // Just in case...
+        U82CB(wram->wStringBuffer1, MON_NAME_LENGTH, "?@");
+        return wram->wStringBuffer1;
+    }
     // LDH_A_addr(hROMBank);
     // PUSH_AF;
     // PUSH_HL;

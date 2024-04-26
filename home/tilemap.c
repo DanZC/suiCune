@@ -6,11 +6,11 @@
 #include "../engine/gfx/cgb_layouts.h"
 
 void ClearBGPalettes(void) {
-    SET_PC(aClearBGPalettes);
+    // SET_PC(aClearBGPalettes);
     // CALL(aClearPalettes);
     // return WaitBGMap();
-    ClearBGPalettes_Conv();
-    RET;
+    return ClearBGPalettes_Conv();
+    // RET;
 }
 
 void ClearBGPalettes_Conv(void) {

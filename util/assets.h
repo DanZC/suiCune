@@ -19,6 +19,8 @@ void LoadPNG2bppAssetToVRAM(void* dest, const char* filename);
 void LoadPNG2bppAssetToVRAMByColumn(void* dest, const char* filename);
 void LoadPNG2bppAssetSectionToVRAM(void* dest, const char* filename, int start_tile, int tile_count);
 
+void LoadDimensionsFromPNG(const char* filename, int* w, int* h);
+
 void LoadPaletteAssetToBuffer(void* dest, size_t dest_size, const char* filename, size_t count);
 #define LoadPaletteAssetToArray(_arr, _filename, _count) LoadPaletteAssetToBuffer(_arr, sizeof(_arr), _filename, _count)
 void LoadPaletteAssetColorsToBuffer(void* dest, size_t dest_size, const char* filename, size_t color_idx, size_t color_count);

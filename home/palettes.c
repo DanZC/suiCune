@@ -1,6 +1,7 @@
 #include "../constants.h"
 #include "palettes.h"
 #include "copy.h"
+#include "delay.h"
 #include "../engine/tilesets/map_palettes.h"
 
 //  Functions dealing with palettes.
@@ -703,24 +704,28 @@ void GSReloadPalettes(void){
 }
 
 void ReloadSpritesNoPalettes(void){
-        LDH_A_addr(hCGB);
-    AND_A_A;
-    RET_Z ;
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(MBANK(awBGPals2));
-    LDH_addr_A(rSVBK);
-    LD_HL(wBGPals2);
-    LD_BC((8 * PALETTE_SIZE) + (2 * PALETTE_SIZE));
-    XOR_A_A;
-    CALL(aByteFill);
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    LD_A(TRUE);
-    LDH_addr_A(hCGBPalUpdate);
-    CALL(aDelayFrame);
-    RET;
-
+    // LDH_A_addr(hCGB);
+    // AND_A_A;
+    // RET_Z ;
+    if(hram->hCGB == 0)
+        return;
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(MBANK(awBGPals2));
+    // LDH_addr_A(rSVBK);
+    // LD_HL(wBGPals2);
+    // LD_BC((8 * PALETTE_SIZE) + (2 * PALETTE_SIZE));
+    // XOR_A_A;
+    // CALL(aByteFill);
+    ByteFill_Conv2(wram->wBGPals2, (8 * PALETTE_SIZE) + (2 * PALETTE_SIZE), 0);
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // LD_A(TRUE);
+    // LDH_addr_A(hCGBPalUpdate);
+    hram->hCGBPalUpdate = TRUE;
+    // CALL(aDelayFrame);
+    DelayFrame();
+    // RET;
 }
 
 void SwapTextboxPalettes(void){

@@ -1880,7 +1880,7 @@ uint8_t PokeAnim_GetFrontpicDims_Conv(void){
     // LD_addr_A(wCurSpecies);
     wram->wCurSpecies = wram->wCurPartySpecies;
     // CALL(aGetBaseData);
-    GetBaseData_Conv();
+    GetBaseData_Conv2(wram->wCurSpecies);
     // LD_A_addr(wBasePicSize);
     // AND_A(0xf);
     // LD_C_A;

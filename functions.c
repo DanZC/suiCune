@@ -32,7 +32,7 @@ void init_function_pointers(void) {
     CONVERTED(WaitSFX);
     // CONVERTED(PlayMapMusic);
     REDIRECTED(PlayMusic);
-    REDIRECTED(FadeToMapMusic);
+    CONVERTED(FadeToMapMusic);
     REDIRECTED(PlayCry);
     REDIRECTED(SkipMusic);
     REDIRECTED(CheckSFX);
@@ -391,7 +391,7 @@ void init_function_pointers(void) {
     // REDIRECTED(ScrollBGMapPalettes);
     REDIRECTED(ForceUpdateCGBPals);
     // REDIRECTED(DmgToCgbObjPal1);
-    // REDIRECTED(ReloadSpritesNoPalettes);
+    CONVERTED(ReloadSpritesNoPalettes);
     CONVERTED(GSReloadPalettes);
 
     // home/pokedex_flags.c

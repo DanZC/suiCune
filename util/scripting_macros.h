@@ -113,7 +113,7 @@
 #define readvar(_var)               SCRIPT_EVCMD(Script_readvar_Conv, _var)
 #define writevar(_var)              SCRIPT_EVCMD(Script_writevar_Conv, _var)
 #define loadvar(_var, _value)       SCRIPT_EVCMD(Script_loadvar_Conv, _var, _value)
-#define getmonname(_mon, _b)        SCRIPT_EVCMD(Script_getmonname_Conv, _mon, _b)
+#define getmonname(_b, _mon)        SCRIPT_EVCMD(Script_getmonname_Conv, _b, _mon)
 #define getitemname(_b, _item)      SCRIPT_EVCMD(Script_getitemname_Conv, _item, _b)
 #define getcurlandmarkname(b)       SCRIPT_EVCMD(Script_getcurlandmarkname_Conv, b)
 #define getlandmarkname(_a, _b)     SCRIPT_EVCMD(Script_getlandmarkname_Conv, _a, _b)

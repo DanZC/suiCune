@@ -1,4 +1,5 @@
 #include "../../constants.h"
+#if 0
 #include "../../util/variadic_macros.h"
 #include <stddef.h>
 #define tmhm_id_byte(_x) (_x >> 3)
@@ -4602,3 +4603,6 @@ const struct BaseData BasePokemonData[] = {
 };
 
 static_assert(lengthof(BasePokemonData) == NUM_POKEMON, "");
+#else
+struct BaseData BasePokemonData[NUM_POKEMON];
+#endif

@@ -2188,7 +2188,7 @@ void StatsScreenDPad_Conv(void){
         // PREDEF(pGetUnownLetter);
         GetUnownLetter_Conv(wram->wTempMon.mon.DVs);
         // CALL(aGetBaseData);
-        GetBaseData_Conv();
+        GetBaseData_Conv2(wram->wCurSpecies);
         // CALL(aBillsPC_CopyMon);
         BillsPC_CopyMon_Conv();
 

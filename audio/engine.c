@@ -235,7 +235,7 @@ void FadeMusic(void) {
             gb_write(wMusicFadeCount, gb_read(wMusicFade) & 0x3F);  // get new count
             uint8_t curVol = gb_read(wVolume) & VOLUME_SO1_LEVEL;   // get SO1 volume
             if (gb_read(wMusicFade) & (1 << MUSIC_FADE_IN_F)) {     // fading in?
-                if (gb_read(wVolume) & (MAX_VOLUME & 0xF)) {        // are we done?
+                if ((gb_read(wVolume) & (MAX_VOLUME & 0xF)) == (MAX_VOLUME & 0xF)) {        // are we done?
                     gb_write(wMusicFade, 0);                        // we're done
                     return;
                 }

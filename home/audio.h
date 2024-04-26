@@ -22,6 +22,7 @@ void FadeInToMusic(void);
 void SkipMusic(void);
 void SkipMusic_Conv(uint8_t a);
 void FadeToMapMusic(void);
+void FadeToMapMusic_Conv(void);
 void PlayMapMusic(void);
 void PlayMapMusic_Conv(void);
 void PlayMapMusicBike(void);

@@ -984,7 +984,7 @@ void Script_pokepic_Conv(script_s* s, species_t species){
 
 // ok:
     // LD_addr_A(wCurPartySpecies);
-    wram->wCurSpecies = species;
+    wram->wCurPartySpecies = species;
     // FARCALL(aPokepic);
     Pokepic();
     // RET;
@@ -3646,7 +3646,7 @@ gotit:
     return GetStringBuffer();
 }
 
-void Script_getmonname_Conv(script_s* s, species_t species, uint8_t buf){
+void Script_getmonname_Conv(script_s* s, uint8_t buf, species_t species){
     (void)s;
     // CALL(aGetScriptByte);
     // AND_A_A;

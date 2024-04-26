@@ -2052,7 +2052,7 @@ void ComputeNPCTrademonStats_Conv(uint8_t curPartyMon){
     // LD_addr_A(wCurSpecies);
     wram->wCurSpecies = bc->mon.species;
     // CALL(aGetBaseData);
-    GetBaseData_Conv();
+    GetBaseData_Conv2(bc->mon.species);
     // LD_A(MON_MAXHP);
     // CALL(aGetPartyParamLocation);
     // LD_D_H;

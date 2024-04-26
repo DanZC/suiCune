@@ -227,7 +227,7 @@ void GetVarAction(void);
 uint8_t* GetVarAction_Conv(uint8_t a);
 void Script_checkver(void);
 void Script_getmonname(void);
-void Script_getmonname_Conv(script_s* s, species_t species, uint8_t buf);
+void Script_getmonname_Conv(script_s* s, uint8_t buf, species_t species);
 void GetStringBuffer(void);
 void GetStringBuffer_Conv(uint8_t a, const uint8_t* de);
 void CopyConvertedText(void);

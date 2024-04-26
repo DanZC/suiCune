@@ -298,7 +298,6 @@ void WaitPlaySFX_Conv(uint16_t de) {
 }
 
 void WaitSFX(void) {  // infinite loop until sfx is done playing
-    PEEK("");
     return WaitSFX_Conv();
     PUSH_AF;
     PUSH_BC;
@@ -428,6 +427,7 @@ void SkipMusic_Conv(uint8_t a) {
 }
 
 void FadeToMapMusic(void) {
+    return FadeToMapMusic_Conv();
     PUSH_HL;  // push hl
     PUSH_DE;  // push de
     PUSH_BC;  // push bc
@@ -453,6 +453,40 @@ done:
     POP_DE;  // pop de
     POP_HL;  // pop hl
     RET;     // ret
+}
+
+void FadeToMapMusic_Conv(void) {
+    // PUSH_HL;  // push hl
+    // PUSH_DE;  // push de
+    // PUSH_BC;  // push bc
+    // PUSH_AF;  // push af
+
+    // CALL(aGetMapMusic_MaybeSpecial);  // call GetMapMusic_MaybeSpecial
+    // LD_A_addr(wMapMusic);             // ld a, [wMapMusic]
+    // CP_A_E;                           // cp e
+    // IF_Z goto done;                   // jr z, .done
+    uint16_t music = GetMapMusic_MaybeSpecial_Conv();
+    if(music == wram->wMapMusic)
+        return;
+
+    // LD_A(8);                      // ld a, 8
+    // LD_addr_A(wMusicFade);        // ld [wMusicFade], a
+    wram->wMusicFade = 8;
+    // LD_A_E;                       // ld a, e
+    // LD_addr_A(wMusicFadeID);      // ld [wMusicFadeID], a
+    // LD_A_D;                       // ld a, d
+    // LD_addr_A(wMusicFadeID + 1);  // ld [wMusicFadeID + 1], a
+    wram->wMusicFadeID = music;
+    // LD_A_E;                       // ld a, e
+    // LD_addr_A(wMapMusic);         // ld [wMapMusic], a
+    wram->wMapMusic = (uint8_t)music;
+
+// done:
+    // POP_AF;  // pop af
+    // POP_BC;  // pop bc
+    // POP_DE;  // pop de
+    // POP_HL;  // pop hl
+    // RET;     // ret
 }
 
 void PlayMapMusic(void) {

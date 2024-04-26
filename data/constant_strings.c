@@ -20,6 +20,7 @@ struct StringIDPair *constant_strings = NULL;
 #define tm_entry(tmNum, tmName)       do {  \
         entry(tmNum);                       \
         entry(TM_##tmName);                 \
+        entry(tmName##_TMNUM);              \
     } while(0)
 
 #define hm_entry(hmNum, hmName)       do {  \
@@ -1252,6 +1253,58 @@ void PopulateConstantsHashtable(void) {
     map_entry(ROUTE_30_BERRY_HOUSE);
     map_entry(MR_POKEMONS_HOUSE);
     map_entry(ROUTE_31_VIOLET_GATE);
+
+    entry(NORMAL);
+    entry(FIGHTING);
+    entry(FLYING);
+    entry(POISON);
+    entry(GROUND);
+    entry(ROCK);
+    entry(BIRD);
+    entry(BUG);
+    entry(GHOST);
+    entry(STEEL);
+    entry(CURSE_TYPE);
+    entry(FIRE);
+    entry(WATER);
+    entry(GRASS);
+    entry(ELECTRIC);
+    entry(PSYCHIC_TYPE);
+    entry(ICE);
+    entry(DRAGON);
+    entry(DARK);
+
+    entry(EGG_MONSTER);
+    entry(EGG_WATER_1);
+    entry(EGG_BUG);
+    entry(EGG_FLYING);
+    entry(EGG_GROUND);
+    entry(EGG_FAIRY);
+    entry(EGG_PLANT);
+    entry(EGG_HUMANSHAPE);
+    entry(EGG_WATER_3);
+    entry(EGG_MINERAL);
+    entry(EGG_INDETERMINATE);
+    entry(EGG_WATER_2);
+    entry(EGG_DITTO);
+    entry(EGG_DRAGON);
+    entry(EGG_NONE);
+
+    entry(GENDER_F0);
+    entry(GENDER_F12_5);
+    entry(GENDER_F25);
+    entry(GENDER_F50);
+    entry(GENDER_F75);
+    entry(GENDER_F100);
+    entry(GENDER_UNKNOWN);
+
+    entry(GROWTH_MEDIUM_FAST);
+    entry(GROWTH_SLIGHTLY_FAST);
+    entry(GROWTH_SLIGHTLY_SLOW);
+    entry(GROWTH_MEDIUM_SLOW);
+    entry(GROWTH_FAST);
+    entry(GROWTH_SLOW);
+    entry(NUM_GROWTH_RATES);
 }
 
 u32_flag_s FindConstantValueByString(const char* name) {

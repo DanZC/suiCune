@@ -2,6 +2,8 @@
 #include "mail.h"
 #include "../../home/sram.h"
 #include "../../home/copy.h"
+#include "../../home/menu.h"
+#include "../../data/text/common.h"
 
 void SendMailToPC(void){
     LD_A(MON_ITEM);
@@ -300,18 +302,21 @@ void RestorePartyMonMail(void){
 }
 
 void DeletePartyMonMail(void){
-    LD_A(BANK(sPartyMail));
-    CALL(aOpenSRAM);
-    XOR_A_A;
-    LD_HL(sPartyMail);
-    LD_BC(PARTY_LENGTH * MAIL_STRUCT_LENGTH);
-    CALL(aByteFill);
-    XOR_A_A;
-    LD_HL(sMailboxCount);
-    LD_BC(1 + MAILBOX_CAPACITY * MAIL_STRUCT_LENGTH);
-    CALL(aByteFill);
-    JP(mCloseSRAM);
-
+    // LD_A(BANK(sPartyMail));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asPartyMail));
+    // XOR_A_A;
+    // LD_HL(sPartyMail);
+    // LD_BC(PARTY_LENGTH * MAIL_STRUCT_LENGTH);
+    // CALL(aByteFill);
+    ByteFill_Conv(sPartyMail, PARTY_LENGTH * MAIL_STRUCT_LENGTH, 0);
+    // XOR_A_A;
+    // LD_HL(sMailboxCount);
+    // LD_BC(1 + MAILBOX_CAPACITY * MAIL_STRUCT_LENGTH);
+    // CALL(aByteFill);
+    ByteFill_Conv(sMailboxCount, 1 + MAILBOX_CAPACITY * MAIL_STRUCT_LENGTH, 0);
+    // JP(mCloseSRAM);
+    CloseSRAM_Conv();
 }
 
 void IsAnyMonHoldingMail(void){
@@ -342,23 +347,23 @@ no_mons:
 }
 
 void v_PlayerMailBoxMenu(void){
-    CALL(aInitMail);
-    IF_Z goto nomail;
-    CALL(aLoadStandardMenuHeader);
+    static const txt_cmd_s EmptyMailboxText[] = {
+        text_far(v_EmptyMailboxText)
+        text_end
+    };
+    // CALL(aInitMail);
+    // IF_Z goto nomail;
+    if(!InitMail_Conv()) {
+    // nomail:
+        // LD_HL(mv_PlayerMailBoxMenu_EmptyMailboxText);
+        // JP(mMenuTextboxBackup);
+        return MenuTextboxBackup_Conv(EmptyMailboxText);
+    }
+    // CALL(aLoadStandardMenuHeader);
+    LoadStandardMenuHeader_Conv();
     CALL(aMailboxPC);
-    JP(mCloseWindow);
-
-
-nomail:
-    LD_HL(mv_PlayerMailBoxMenu_EmptyMailboxText);
-    JP(mMenuTextboxBackup);
-
-
-EmptyMailboxText:
-    //text_far ['_EmptyMailboxText']
-    //text_end ['?']
-
-    return InitMail();
+    // JP(mCloseWindow);
+    CloseWindow_Conv2();
 }
 
 void InitMail(void){
@@ -393,6 +398,50 @@ done:
     AND_A_A;
     RET;
 
+}
+
+bool InitMail_Conv(void){
+//  return z if no mail
+    // LD_A(BANK(sMailboxCount));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(sMailboxCount));
+    // LD_A_addr(sMailboxCount);
+    uint8_t mailboxCount = gb_read(sMailboxCount);
+    // CALL(aCloseSRAM);
+
+//  initialize wMailboxCount from sMailboxCount
+    // LD_HL(wMailboxCount);
+    // LD_hli_A;
+    wram->wMailboxCount = mailboxCount;
+    //assert ['wMailboxCount + 1 == wMailboxItems'];
+    uint8_t i = 0;
+    // AND_A_A;
+    // IF_Z goto done;  // if no mail, we're done
+    if(mailboxCount != 0) {
+    //  initialize wMailboxItems with incrementing values starting at 1
+        // LD_B_A;
+        uint8_t b = mailboxCount;
+        // LD_A(1);
+        uint8_t a = 1;
+
+        do {
+        // loop:
+            // LD_hli_A;
+            wram->wMailboxItems[i++] = a++;
+            // INC_A;
+            // DEC_B;
+            // IF_NZ goto loop;
+        } while(--b != 0);
+    }
+
+// done:
+    // LD_hl(-1);  // terminate
+    wram->wMailboxItems[i] = (uint8_t)-1;
+
+    // LD_A_addr(wMailboxCount);
+    // AND_A_A;
+    // RET;
+    return wram->wMailboxCount != 0;
 }
 
 void MailboxPC_GetMailAuthor(void){

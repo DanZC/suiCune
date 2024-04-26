@@ -138,11 +138,11 @@ asset_s LoadTextAsset(const char* filename) {
         fprintf(stderr, "LoadAsset Error: Bad malloc.");
         return (asset_s){NULL, 0};
     }
-    fread(buf, (size_t)size, 1, file);
+    memset(buf, 0, (size_t)size + 1);
+    size_t read = fread(buf, 1, (size_t)size, file);
     fclose(file);
-    buf[size] = '\0';
 #endif
-    return (asset_s){buf, (size_t)size};
+    return (asset_s){buf, read};
 }
 
 // Returns false if ptr is NULL or size is 0.
@@ -428,6 +428,23 @@ void LoadPNG2bppAssetSectionToVRAM(void* dest, const char* filename, int start_t
         }
     }
     stbi_image_free(pix);
+}
+
+void LoadDimensionsFromPNG(const char* filename, int* w, int* h) {
+    asset_s a = LoadAsset(filename);
+    // printf("Loaded asset %s (%lld bytes)\n", filename, a.size);
+    if(!a.ptr) {
+        exit(-1);
+    }
+    int n;
+    uint8_t* pix = stbi_load_from_memory(a.ptr, (int)a.size, w, h, &n, 0);
+    if(!pix) {
+        fprintf(stderr, "%s: Load error on image %s. Reason: %s\n", __func__, filename, stbi_failure_reason());
+        exit(-1);
+    }
+    FreeAsset(a);
+    stbi_image_free(pix);
+    return;
 }
 
 // static char pal_text_buffer[32];

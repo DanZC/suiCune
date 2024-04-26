@@ -498,7 +498,7 @@ void StatsScreen_CopyToTempMon_Conv(void){
         // LD_addr_A(wCurSpecies);
         wram->wCurSpecies = wram->wBufferMon.mon.species;
         // CALL(aGetBaseData);
-        GetBaseData_Conv();
+        GetBaseData_Conv2(wram->wBufferMon.mon.species);
         // LD_HL(wBufferMon);
         // LD_DE(wTempMon);
         // LD_BC(PARTYMON_STRUCT_LENGTH);

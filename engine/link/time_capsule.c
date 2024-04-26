@@ -134,7 +134,7 @@ bool ValidateOTTrademon_Conv(uint8_t mon){
     // LD_addr_A(wCurSpecies);
     wram->wCurSpecies = a;
     // CALL(aGetBaseData);
-    GetBaseData_Conv();
+    GetBaseData_Conv2(a);
     // LD_HL(wLinkOTPartyMonTypes);
     // ADD_HL_BC;
     // ADD_HL_BC;

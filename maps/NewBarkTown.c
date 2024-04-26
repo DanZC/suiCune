@@ -3,7 +3,7 @@
 #include "NewBarkTown.h"
 //// EVENTS
 enum {
-    NEWBARKTOWN_TEACHER,
+    NEWBARKTOWN_TEACHER = 2,
     NEWBARKTOWN_FISHER,
     NEWBARKTOWN_SILVER,
 };

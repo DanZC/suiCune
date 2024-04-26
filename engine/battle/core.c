@@ -5663,7 +5663,7 @@ void ShowSetEnemyMonAndSendOutAnimation(void){
     // LD_addr_A(wCurSpecies);
     wram->wCurSpecies = wram->wTempEnemyMonSpecies;
     // CALL(aGetBaseData);
-    GetBaseData_Conv();
+    GetBaseData_Conv2(wram->wTempEnemyMonSpecies);
     // LD_A(OTPARTYMON);
     // LD_addr_A(wMonType);
     wram->wMonType = OTPARTYMON;
@@ -6454,7 +6454,7 @@ void InitBattleMon(void){
     // LD_addr_A(wCurSpecies);
     wram->wCurSpecies = wram->wBattleMon.species;
     // CALL(aGetBaseData);
-    GetBaseData_Conv();
+    GetBaseData_Conv2(wram->wBattleMon.species);
     // LD_A_addr(wBaseType1);
     // LD_addr_A(wBattleMonType1);
     wram->wBattleMon.type1 = wram->wBaseType1;
@@ -6621,7 +6621,7 @@ void InitEnemyMon(void){
     // LD_addr_A(wCurSpecies);
     wram->wCurSpecies = wram->wEnemyMon.species;
     // CALL(aGetBaseData);
-    GetBaseData_Conv();
+    GetBaseData_Conv2(wram->wEnemyMon.species);
     // LD_HL(wOTPartyMonNicknames);
     // LD_A_addr(wCurPartyMon);
     // CALL(aSkipNames);
@@ -7638,7 +7638,7 @@ void PrintPlayerHUD(void){
     // LD_addr_A(wCurSpecies);
     wram->wCurSpecies = a;
     // CALL(aGetBaseData);
-    GetBaseData_Conv();
+    GetBaseData_Conv2(a);
 
     // POP_HL;
     // DEC_HL;
@@ -7879,7 +7879,7 @@ uint8_t DrawEnemyHUD_Conv(void){
     // LD_addr_A(wCurPartySpecies);
     wram->wCurPartySpecies = wram->wTempEnemyMonSpecies;
     // CALL(aGetBaseData);
-    GetBaseData_Conv();
+    GetBaseData_Conv2(wram->wTempEnemyMonSpecies);
     // LD_DE(wEnemyMonNickname);
     // hlcoord(1, 0, wTilemap);
     // CALL(aBattle_DummyFunction);
@@ -9382,7 +9382,7 @@ void LoadEnemyMon(void){
 
 //  Grab the BaseData for this species
     // CALL(aGetBaseData);
-    GetBaseData_Conv();
+    GetBaseData_Conv2(wram->wTempEnemyMonSpecies);
 
 //  Let's get the item:
 
@@ -12460,7 +12460,7 @@ void DropEnemySub(void){
     // LD_addr_A(wCurPartySpecies);
     wram->wCurPartySpecies = wram->wEnemyMon.species;
     // CALL(aGetBaseData);
-    GetBaseData_Conv();
+    GetBaseData_Conv2(wram->wEnemyMon.species);
     // LD_HL(wEnemyMonDVs);
     // PREDEF(pGetUnownLetter);
     GetUnownLetter_Conv(wram->wEnemyMon.dvs);

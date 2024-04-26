@@ -11,6 +11,7 @@ void DeletePartyMonMail(void);
 void IsAnyMonHoldingMail(void);
 void v_PlayerMailBoxMenu(void);
 void InitMail(void);
+bool InitMail_Conv(void);
 void MailboxPC_GetMailAuthor(void);
 void MailboxPC_PrintMailAuthor(void);
 void MailboxPC(void);

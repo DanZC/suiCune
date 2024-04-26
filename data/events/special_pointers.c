@@ -2,6 +2,8 @@
 #include "../../engine/events/specials.h"
 #include "../../home/map_objects.h"
 #include "../../home/gfx.h"
+#include "../../home/palettes.h"
+#include "../../home/tilemap.h"
 #include "../../engine/link/link.h"
 #include "../../engine/overworld/events.h"
 #include "../../engine/rtc/timeset.h"
@@ -74,8 +76,8 @@ void (*const SpecialsPointers[])(void) = {
     add_special(FadeBlackQuickly),
     add_special(FadeInPalettes),
     add_special(FadeInQuickly),
-    // add_special(ReloadSpritesNoPalettes), // bank 0
-    // add_special(ClearBGPalettes), // bank 0
+    add_special(ReloadSpritesNoPalettes), // bank 0
+    add_special(ClearBGPalettes), // bank 0
     add_special(UpdateTimePals), // bank 0
     // add_special(ClearTilemap), // bank 0// unused as special
     add_special(UpdateSprites), // bank 0
