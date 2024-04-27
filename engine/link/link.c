@@ -25,6 +25,7 @@
 #include "../../home/clear_sprites.h"
 #include "../../home/sram.h"
 #include "../../data/text/common.h"
+#include "../../data/items/catch_rate_items.h"
 
 void LinkCommunications(void){
     // CALL(aClearBGPalettes);
@@ -1429,6 +1430,38 @@ end:
 // INCLUDE "data/items/catch_rate_items.asm"
 
     return Link_CopyOTData();
+}
+
+item_t TimeCapsule_ReplaceTeruSama_Conv(item_t item){
+    // LD_A_B;
+    // AND_A_A;
+    // RET_Z ;
+    if(item == NO_ITEM)
+        return item;
+    // PUSH_HL;
+    // LD_HL(mTimeCapsule_CatchRateItems);
+
+    for(uint32_t i = 0; TimeCapsule_CatchRateItems[i] != 0; i += 2) {
+    // loop:
+        // LD_A_hli;
+        // AND_A_A;
+        // IF_Z goto end;
+        // CP_A_B;
+        // IF_Z goto found;
+        if(TimeCapsule_CatchRateItems[i] == item) {
+        // found:
+            // LD_B_hl;
+            return TimeCapsule_CatchRateItems[i + 1];
+        }
+        // INC_HL;
+        // goto loop;
+    }
+
+// end:
+    // POP_HL;
+    // RET;
+    return item;
+// INCLUDE "data/items/catch_rate_items.asm"
 }
 
 void Link_CopyOTData(void){

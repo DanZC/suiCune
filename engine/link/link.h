@@ -13,6 +13,7 @@ void Link_PrepPartyData_Gen2(void);
 void Link_CopyMailPreamble(void);
 void Link_ConvertPartyStruct1to2(void);
 void TimeCapsule_ReplaceTeruSama(void);
+item_t TimeCapsule_ReplaceTeruSama_Conv(item_t item);
 void Link_CopyOTData(void);
 void Link_CopyOTData_Conv(void* de_, const void* hl_, uint16_t bc);
 void Link_CopyRandomNumbers(void);

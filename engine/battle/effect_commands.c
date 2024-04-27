@@ -10399,7 +10399,7 @@ void BattleCommand_Screen(void){
     // CALL(aGetBattleVar);
     // CP_A(EFFECT_LIGHT_SCREEN);
     // IF_NZ goto Reflect;
-    if(GetBattleVar_Conv(EFFECT_LIGHT_SCREEN) == EFFECT_LIGHT_SCREEN) {
+    if(GetBattleVar_Conv(BATTLE_VARS_MOVE_EFFECT) == EFFECT_LIGHT_SCREEN) {
         // BIT_hl(SCREENS_LIGHT_SCREEN);
         // IF_NZ goto failed;
         if(bit_test(*hl, SCREENS_LIGHT_SCREEN)) {

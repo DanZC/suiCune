@@ -17,6 +17,7 @@
 #include "../gfx/dma_transfer.h"
 #include "../gfx/color.h"
 #include "../gfx/pic_animation.h"
+#include "../link/link.h"
 #include "bills_pc.h"
 #include "stats_screen.h"
 #include "tempmon.h"
@@ -922,7 +923,7 @@ void StatsScreen_InitUpperHalf(void){
     // CALL(aCopyNickname);
     // hlcoord(8, 2, wTilemap);
     // CALL(aPlaceString);
-    PlaceStringSimple(CopyNickname_Conv(GetNicknamenamePointer_Conv()), coord(8, 2, wram->wTilemap));
+    PlaceStringSimple(CopyNickname_Conv(GetNicknamenamePointer2_Conv()), coord(8, 2, wram->wTilemap));
     // hlcoord(18, 0, wTilemap);
     // CALL(aStatsScreen_InitUpperHalf_PlaceGenderChar);
     StatsScreen_PlaceGenderChar(coord(18, 0, wram->wTilemap));
@@ -1284,11 +1285,12 @@ static uint8_t* LoadGreenPage_GetItemName(void) {
         return U82C("---@");
     // LD_B_A;
     // FARCALL(aTimeCapsule_ReplaceTeruSama);
+    item_t item = TimeCapsule_ReplaceTeruSama_Conv(wram->wTempMon.mon.item);
     // LD_A_B;
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetItemName);
     // RET;
-    return U82C("---@");
+    return GetItemName_Conv2(item);
 }
 
 void LoadGreenPage(void){
@@ -2179,6 +2181,34 @@ uint8_t* GetNicknamenamePointer_Conv(void){
             return NULL;
         case TEMPMON:
             return wram->wBufferMonOT;
+    }
+    return NULL;
+    // LD_A_addr(wMonType);
+    // CP_A(TEMPMON);
+    // RET_Z ;
+    // LD_A_addr(wCurPartyMon);
+    // JP(mSkipNames);
+
+}
+
+uint8_t* GetNicknamenamePointer2_Conv(void){
+    // LD_A_addr(wMonType);
+    // ADD_A_A;
+    // LD_C_A;
+    // LD_B(0);
+    // ADD_HL_BC;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    switch(wram->wMonType) {
+        case PARTYMON:
+            return wram->wPartyMonNickname[wram->wCurPartyMon];
+        case OTPARTYMON:
+            return wram->wOTPartyMonNickname[wram->wCurPartyMon];
+        case BOXMON: 
+            return NULL;
+        case TEMPMON:
+            return wram->wBufferMonNickname;
     }
     return NULL;
     // LD_A_addr(wMonType);

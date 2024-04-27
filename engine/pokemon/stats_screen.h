@@ -51,6 +51,7 @@ void CopyNickname(void);
 uint8_t* CopyNickname_Conv(uint8_t* hl);
 void GetNicknamenamePointer(void);
 uint8_t* GetNicknamenamePointer_Conv(void);
+uint8_t* GetNicknamenamePointer2_Conv(void);
 void CheckFaintedFrzSlp(void);
 bool CheckFaintedFrzSlp_Conv(struct PartyMon* bc);
 //#include "gfx/font/space.2bpp"
