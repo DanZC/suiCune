@@ -15,6 +15,7 @@ bool IsSFXPlaying_Conv(void);
 void MaxVolume(void);
 void MaxVolume_Conv(void);
 void LowVolume(void);
+void LowVolume_Conv(void);
 void MinVolume(void);
 void MinVolume_Conv(void);
 void FadeOutToMusic(void);

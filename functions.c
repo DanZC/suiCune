@@ -3313,7 +3313,7 @@ void init_function_pointers(void) {
     REDIRECTED(StatsScreen_SetJumptableIndex);
     REDIRECTED(StatsScreen_LoadGFX);
     REDIRECTED(StatsScreen_LoadTextboxSpaceGFX);
-    REDIRECTED(BattleStatsScreenInit);
+    CONVERTED(BattleStatsScreenInit);
     REDIRECTED(StatsScreen_LoadPageIndicators);
     CONVERTED(LoadGreenPage);
     REDIRECTED(StatsScreen_JoypadAction);
@@ -4086,8 +4086,8 @@ void init_function_pointers(void) {
     // REDIRECTED(BattleMenuHeader);
     REDIRECTED(LoadBattleMenu);
     // REDIRECTED(SafariBattleMenuHeader);
-    REDIRECTED(ContestBattleMenu);
-    REDIRECTED(CommonBattleMenu);
+    // CONVERTED(ContestBattleMenu);
+    // CONVERTED(CommonBattleMenu);
     // REDIRECTED(ContestBattleMenuHeader);
 
     // engine/rtc/timeset.c
@@ -5853,4 +5853,7 @@ CONVERTED(v_AnimateTileset);
     // REDIRECTED(PC_PlayShutdownSound);
     // REDIRECTED(PC_WaitPlaySFX);
     // REDIRECTED(TurnOffPC);
+
+    // engine/battle/returntobattle_useball.c
+    CONVERTED(v_ReturnToBattle_UseBall);
 }

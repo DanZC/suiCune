@@ -2865,6 +2865,7 @@ void gb_run_frame(void) {
 }
 
 void gb_finish_frame(void) {
+    gb.display.window_clear = 0;
     for (int line = 0; line < 144; line++) {
         gb.gb_reg.LY = line;
         LCD();

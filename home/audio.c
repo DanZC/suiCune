@@ -374,6 +374,13 @@ void LowVolume(void) {
     RET;                 // ret
 }
 
+void LowVolume_Conv(void) {
+    // LD_A(0x33);          // ld a, $33 ; 50%
+    // LD_addr_A(wVolume);  // ld [wVolume], a
+    wram->wVolume = 0x33;
+    // RET;                 // ret
+}
+
 void MinVolume(void) {
     XOR_A_A;             // xor a
     LD_addr_A(wVolume);  // ld [wVolume], a

@@ -909,10 +909,10 @@ void LoadMenuHeader_Conv(uint16_t hl) {
 }
 
 void LoadMenuHeader_Conv2(const struct MenuHeader* hl) {
-    PushWindow_Conv();
     // CALL(aCopyMenuHeader);
     CopyMenuHeader_Conv2(hl);
     // CALL(aPushWindow);
+    PushWindow_Conv();
     // RET;
 }
 
@@ -1333,10 +1333,10 @@ void OffsetMenuHeader(void) {
 }
 
 void OffsetMenuHeader_Conv2(const struct MenuHeader* hl, uint8_t d, uint8_t e) {
-    PushWindow_Conv();
     // CALL(av_OffsetMenuHeader);
     v_OffsetMenuHeader_Conv(hl, d, e);
     // CALL(aPushWindow);
+    PushWindow_Conv();
     // RET;
 }
 
@@ -2163,6 +2163,39 @@ void ClearWindowData_Conv(void) {
     // RET;
 }
 
+void ClearWindowData_Conv2(void) {
+    ByteFill_Conv2(&wram->wWindowStackPointer, (wMenuMetadataEnd - wMenuMetadata), 0);
+    ByteFill_Conv2(&wram->wMenuFlags, (wMenuHeaderEnd - wMenuHeader), 0);
+    ByteFill_Conv2(&wram->wMenuDataFlags, (wMenuDataEnd - wMenuData), 0);
+    ByteFill_Conv2(&wram->w2DMenuCursorInitY, (wMoreMenuDataEnd - wMoreMenuData), 0);
+
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+
+    // LD_A(BANK(wWindowStack));
+    // LDH_addr_A(rSVBK);
+
+    // XOR_A_A;
+    // LD_HL(wWindowStackBottom);
+    // LD_hld_A;
+    wram->wWindowStackBottom[0] = 0;
+    // LD_hld_A;
+    wram->wWindowStackBottom[-1] = 0;
+
+    // LD_A_L;
+    // LD_addr_A(wWindowStackPointer);
+    gWindowStackPointer = 0;
+    ByteFill_Conv2(gWindowStack, sizeof(gWindowStack), 0);
+    ByteFill_Conv2(gTileBackupStack, sizeof(gTileBackupStack), 0);
+    // LD_A_H;
+    // LD_addr_A(wWindowStackPointer + 1);
+    wram->wWindowStackPointer = wWindowStackBottom - 2;
+
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // RET;
+}
+
 void MenuClickSound(void) {
     PUSH_AF;
     AND_A(A_BUTTON | B_BUTTON);
@@ -2238,6 +2271,7 @@ void Place2DMenuItemName(void) {
 }
 
 void Place2DMenuItemName_Conv(uint8_t* hl, const char* de) {
+    uint8_t buf[128];
     // LDH_addr_A(hTempBank);
     // LDH_A_addr(hROMBank);
     // PUSH_AF;
@@ -2245,7 +2279,8 @@ void Place2DMenuItemName_Conv(uint8_t* hl, const char* de) {
     // RST(aBankswitch);
 
     // CALL(aPlaceString);
-    PlaceStringSimple(hl, U82C(de));
+    printf("%s\n", de);
+    PlaceStringSimple(U82CA(buf, de), hl);
     // POP_AF;
     // RST(aBankswitch);
 
@@ -2260,6 +2295,16 @@ void v_2DMenu(void) {
     RET;
 }
 
+u8_flag_s v_2DMenu_Conv(void) {
+    // LDH_A_addr(hROMBank);
+    // LD_addr_A(wMenuData_2DMenuItemStringsBank);
+    // FARCALL(av_2DMenu_);
+    bool cancel = v_2DMenu__Conv();
+    // LD_A_addr(wMenuCursorPosition);
+    // RET;
+    return u8_flag(wram->wMenuCursorPosition, cancel);
+}
+
 void InterpretBattleMenu(void) {
     LDH_A_addr(hROMBank);
     LD_addr_A(wMenuData_2DMenuItemStringsBank);
@@ -2268,14 +2313,14 @@ void InterpretBattleMenu(void) {
     RET;
 }
 
-uint8_t InterpretBattleMenu_Conv(void) {
+u8_flag_s InterpretBattleMenu_Conv(void) {
     // LDH_A_addr(hROMBank);
     // LD_addr_A(wMenuData_2DMenuItemStringsBank);
     // FARCALL(av_InterpretBattleMenu);
-    v_InterpretBattleMenu_Conv();
+    bool c = v_InterpretBattleMenu_Conv();
     // LD_A_addr(wMenuCursorPosition);
     // RET;
-    return wram->wMenuCursorPosition;
+    return u8_flag(wram->wMenuCursorPosition, c);
 }
 
 void InterpretMobileMenu(void) {

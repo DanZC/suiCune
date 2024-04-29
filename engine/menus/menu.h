@@ -1,6 +1,7 @@
 void v_2DMenu_(void);
+bool v_2DMenu__Conv(void);
 void v_InterpretBattleMenu(void);
-void v_InterpretBattleMenu_Conv(void);
+bool v_InterpretBattleMenu_Conv(void);
 void v_InterpretMobileMenu(void);
 void Draw2DMenu(void);
 void Draw2DMenu_Conv(const struct MenuData* data);
@@ -48,4 +49,5 @@ void v_InitVerticalMenuCursor(void);
 void v_InitVerticalMenuCursor_Conv(const struct MenuData* data);
 
 extern struct MenuHeader gWindowStack[32];
+extern uint8_t gTileBackupStack[32][SCREEN_WIDTH * SCREEN_HEIGHT * 2];
 extern uint32_t gWindowStackPointer;

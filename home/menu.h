@@ -119,6 +119,7 @@ u8_flag_s MenuJumptable_Conv(void);
 void GetMenuDataPointerTableEntry(void);
 void ClearWindowData(void);
 void ClearWindowData_Conv(void);
+void ClearWindowData_Conv2(void);
 void MenuClickSound(void);
 void MenuClickSound_Conv(uint8_t a);
 void PlayClickSFX(void);
@@ -127,8 +128,9 @@ void MenuTextboxWaitButton(const struct TextCmd* hl);
 void Place2DMenuItemName(void);
 void Place2DMenuItemName_Conv(uint8_t* hl, const char* de);
 void v_2DMenu(void);
+u8_flag_s v_2DMenu_Conv(void);
 void InterpretBattleMenu(void);
-uint8_t InterpretBattleMenu_Conv(void);
+u8_flag_s InterpretBattleMenu_Conv(void);
 void InterpretMobileMenu(void);
 
 extern const void* gMenuDataPointer;

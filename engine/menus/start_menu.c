@@ -435,7 +435,7 @@ static const struct MenuHeader menuHeader = {
 };
 
     // CALL(aClearWindowData);
-    ClearWindowData_Conv();
+    ClearWindowData_Conv2();
 
     // LD_DE(SFX_MENU);
     // CALL(aPlaySFX);

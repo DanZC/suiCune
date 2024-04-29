@@ -112,7 +112,7 @@
 #include "engine/overworld/decorations.h"
 //#include "engine/pokemon/level_up_happiness.h"
 #include "engine/battle/read_trainer_dvs.h"
-//#include "engine/battle/returntobattle_useball.h"
+#include "engine/battle/returntobattle_useball.h"
 //#include "engine/battle/consume_held_item.h"
 //#include "data/moves/effects.h"
 //#include "engine/events/kurt_selectquantity_interpretjoypad.h"

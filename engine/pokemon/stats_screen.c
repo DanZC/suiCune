@@ -38,15 +38,19 @@ enum {
 void (*const StatsScreenPointerTable[])(void);
 
 void BattleStatsScreenInit(void){
-    LD_A_addr(wLinkMode);
-    CP_A(LINK_MOBILE);
-    JR_NZ (mStatsScreenInit);
+    // LD_A_addr(wLinkMode);
+    // CP_A(LINK_MOBILE);
+    // JR_NZ (mStatsScreenInit);
+    if(wram->wLinkMode != LINK_MOBILE)
+        return StatsScreenInit();
 
-    LD_A_addr(wBattleMode);
-    AND_A_A;
-    JR_Z (mStatsScreenInit);
-    JR(mv_MobileStatsScreenInit);
-
+    // LD_A_addr(wBattleMode);
+    // AND_A_A;
+    // JR_Z (mStatsScreenInit);
+    if(wram->wBattleMode == 0)
+        return StatsScreenInit();
+    // JR(mv_MobileStatsScreenInit);
+    return v_MobileStatsScreenInit();
 }
 
 void StatsScreenInit(void){

@@ -8,6 +8,7 @@
 #include "../../home/tilemap.h"
 #include "../../home/text.h"
 #include "../../home/map_objects.h"
+#include "../../home/battle.h"
 #include "../gfx/sprites.h"
 #include "../../data/text/common.h"
 #include "../../charmap.h"
@@ -29,6 +30,23 @@ void v_2DMenu_(void){
 
 }
 
+bool v_2DMenu__Conv(void){
+    // LD_HL(mCopyMenuData);
+    // LD_A_addr(wMenuData_2DMenuItemStringsBank);
+    // RST(aFarCall);
+    const struct MenuData* data = GetMenuData();
+
+    // CALL(aDraw2DMenu);
+    Draw2DMenu_Conv(data);
+    // CALL(aUpdateSprites);
+    UpdateSprites_Conv();
+    // CALL(aApplyTilemap);
+    ApplyTilemap_Conv();
+    // CALL(aGet2DMenuSelection);
+    // RET;
+    return Get2DMenuSelection_Conv(data);
+}
+
 void v_InterpretBattleMenu(void){
     LD_HL(mCopyMenuData);
     LD_A_addr(wMenuData_2DMenuItemStringsBank);
@@ -43,7 +61,7 @@ void v_InterpretBattleMenu(void){
 
 }
 
-void v_InterpretBattleMenu_Conv(void){
+bool v_InterpretBattleMenu_Conv(void){
     // LD_HL(mCopyMenuData);
     // LD_A_addr(wMenuData_2DMenuItemStringsBank);
     // RST(aFarCall);
@@ -52,13 +70,14 @@ void v_InterpretBattleMenu_Conv(void){
     // CALL(aDraw2DMenu);
     Draw2DMenu_Conv(data);
     // FARCALL(aMobileTextBorder);
+    MobileTextBorder_Conv();
     // CALL(aUpdateSprites);
     UpdateSprites_Conv();
     // CALL(aApplyTilemap);
     ApplyTilemap_Conv();
     // CALL(aGet2DMenuSelection);
-    Get2DMenuSelection_Conv(data);
     // RET;
+    return Get2DMenuSelection_Conv(data);
 }
 
 void v_InterpretMobileMenu(void){
@@ -327,12 +346,12 @@ void Place2DMenuItemStrings_Conv(const struct MenuData* data){
     const char **de = data->_2dMenu.options;
     // CALL(aGetMenuTextStartCoord);
     uint8_t b, c;
-    GetMenuTextStartCoord_Conv(&b, &c);
+    GetMenuTextStartCoord_Conv2(data, &b, &c);
     // CALL(aCoord2Tile);
     uint8_t* hl = Coord2Tile_Conv(c, b);
     // CALL(aGet2DMenuNumberOfRows);
     // LD_B_A;
-    b = Get2DMenuNumberOfRows_Conv();
+    b = Get2DMenuNumberOfRows_Conv2(data);
 
     do {
     // row:
@@ -341,7 +360,7 @@ void Place2DMenuItemStrings_Conv(const struct MenuData* data){
         uint8_t* hl2 = hl;
         // CALL(aGet2DMenuNumberOfColumns);
         // LD_C_A;
-        c = Get2DMenuNumberOfColumns_Conv();
+        c = Get2DMenuNumberOfColumns_Conv2(data);
 
         do {
         // col:
@@ -1777,10 +1796,10 @@ void v_ExitMenu_Conv2(void){
     // LD_A_H;
     // OR_A_L;
     // IF_Z goto done;
-    // if(gWindowStackPointer != 0) {
+    if(gWindowStackPointer != 0) {
         // CALL(aPopWindow);
-        // PopWindow_Conv2(&gWindowStack[--gWindowStackPointer]);
-    // }
+        PopWindow_Conv2(&gWindowStack[gWindowStackPointer - 1]);
+    }
 
 
 // done:

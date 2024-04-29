@@ -32,7 +32,7 @@ void RefreshScreen(void){
 
 void RefreshScreen_Conv(void){
     // CALL(aClearWindowData);
-    ClearWindowData_Conv();
+    ClearWindowData_Conv2();
     // LDH_A_addr(hROMBank);
     // PUSH_AF;
     // LD_A(BANK(aReanchorBGMap_NoOAMUpdate));  // aka BANK(LoadFonts_NoOAMUpdate)
@@ -96,7 +96,7 @@ void CloseText_Conv(void){
     // CALL(aCloseText_CloseText);
 // CloseText:
     // CALL(aClearWindowData);
-    ClearWindowData_Conv();
+    ClearWindowData_Conv2();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = 0;
@@ -151,7 +151,7 @@ void OpenText(void){
 
 void OpenText_Conv(void){
     // CALL(aClearWindowData);
-    ClearWindowData_Conv();
+    ClearWindowData_Conv2();
     // LDH_A_addr(hROMBank);
     // PUSH_AF;
     // LD_A(BANK(aReanchorBGMap_NoOAMUpdate));  // aka BANK(LoadFonts_NoOAMUpdate)

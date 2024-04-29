@@ -488,7 +488,7 @@ void ClearBattleRAM_Conv(void){
     ResetEnemyStatLevels_Conv();
 
     // CALL(aClearWindowData);
-    ClearWindowData_Conv();
+    ClearWindowData_Conv2();
 
     // LD_HL(hBGMapAddress);
     // XOR_A_A;  // LOW(vBGMap0)

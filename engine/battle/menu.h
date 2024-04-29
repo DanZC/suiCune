@@ -1,4 +1,5 @@
 void LoadBattleMenu(void);
+bool LoadBattleMenu_Conv(void);
 void SafariBattleMenu(void);
 void ContestBattleMenu(void);
 void CommonBattleMenu(void);

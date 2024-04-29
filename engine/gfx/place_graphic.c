@@ -200,7 +200,7 @@ void PlaceGraphicYStagger_Conv(uint8_t* hl, uint8_t b, uint8_t c){
         // DEC_C;
         // ADD_HL_BC;
         // POP_BC;
-        hl += c - 1;
+        hl += b - 1;
 
         // LDH_A_addr(hGraphicStartTile);
         a = hram->hGraphicStartTile;

@@ -3,6 +3,8 @@
 #include "../../home/menu.h"
 #include "../../home/print_text.h"
 
+static void PrintParkBallsRemaining(void);
+
 void LoadBattleMenu(void){
     LD_HL(mBattleMenuHeader);
     CALL(aLoadMenuHeader);
@@ -36,7 +38,7 @@ static const struct MenuHeader BattleMenuHeader = {
     }
 };
 
-void LoadBattleMenu_Conv(void){
+bool LoadBattleMenu_Conv(void){
     // LD_HL(mBattleMenuHeader);
     // CALL(aLoadMenuHeader);
     LoadMenuHeader_Conv2(&BattleMenuHeader);
@@ -44,13 +46,14 @@ void LoadBattleMenu_Conv(void){
     // LD_addr_A(wMenuCursorPosition);
     wram->wMenuCursorPosition = wram->wBattleMenuCursorPosition;
     // CALL(aInterpretBattleMenu);
-    InterpretBattleMenu_Conv();
+    u8_flag_s res = InterpretBattleMenu_Conv();
     // LD_A_addr(wMenuCursorPosition);
     // LD_addr_A(wBattleMenuCursorPosition);
     wram->wBattleMenuCursorPosition = wram->wMenuCursorPosition;
     // CALL(aExitMenu);
     ExitMenu_Conv2();
     // RET;
+    return res.flag;
 }
 
 void SafariBattleMenu(void){
@@ -61,23 +64,47 @@ void SafariBattleMenu(void){
 
 }
 
+static const struct MenuHeader ContestBattleMenuHeader = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(2, 12, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1),
+    .defaultOption = 1,  // default option
+    .data = &(struct MenuData) {
+        .flags = STATICMENU_CURSOR | STATICMENU_DISABLE_B,  // flags
+        ._2dMenu = {
+            .rows=2, .cols=2,  // rows, columns
+            .spacing=12,  // spacing
+            .options = (const char*[]) {
+                "FIGHT@",
+                "<PKMN>@",
+                "PARKBALL×  @",
+                "RUN@",
+            }
+        },
+        .function = PrintParkBallsRemaining,
+    }
+};
+
 void ContestBattleMenu(void){
-    LD_HL(mContestBattleMenuHeader);
-    CALL(aLoadMenuHeader);
+    // LD_HL(mContestBattleMenuHeader);
+    // CALL(aLoadMenuHeader);
+    LoadMenuHeader_Conv2(&ContestBattleMenuHeader);
 // fallthrough
 
     return CommonBattleMenu();
 }
 
 void CommonBattleMenu(void){
-    LD_A_addr(wBattleMenuCursorPosition);
-    LD_addr_A(wMenuCursorPosition);
-    CALL(av_2DMenu);
-    LD_A_addr(wMenuCursorPosition);
-    LD_addr_A(wBattleMenuCursorPosition);
-    CALL(aExitMenu);
-    RET;
-
+    // LD_A_addr(wBattleMenuCursorPosition);
+    // LD_addr_A(wMenuCursorPosition);
+    wram->wMenuCursorPosition = wram->wBattleMenuCursorPosition;
+    // CALL(av_2DMenu);
+    u8_flag_s res = v_2DMenu_Conv();
+    // LD_A_addr(wMenuCursorPosition);
+    // LD_addr_A(wBattleMenuCursorPosition);
+    wram->wBattleMenuCursorPosition = res.a;
+    // CALL(aExitMenu);
+    ExitMenu_Conv2();
+    // RET;
 }
 
 // void BattleMenuHeader(void){
@@ -135,31 +162,11 @@ PrintSafariBallsRemaining:
 
 }
 
-// static void PrintParkBallsRemaining(void) {
-//     // hlcoord(13, 16, wTilemap);
-//     // LD_DE(wParkBallsRemaining);
-//     // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
-//     // CALL(aPrintNum);
-//     // RET;
-//     PrintNum_Conv2(coord(13, 16, wram->wTilemap), &wram->wParkBallsRemaining, PRINTNUM_LEADINGZEROS | 1, 2);
-// }
-
-// static const struct MenuHeader ContestBattleMenuHeader = {
-//     .flags = MENU_BACKUP_TILES,  // flags
-//     .coord = menu_coords(2, 12, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1),
-//     .defaultOption = 1,  // default option
-//     .data = &(struct MenuData) {
-//         .flags = STATICMENU_CURSOR | STATICMENU_DISABLE_B,  // flags
-//         ._2dMenu = {
-//             .rows=2, .cols=2,  // rows, columns
-//             .spacing=12,  // spacing
-//             .options = (const char*[]) {
-//                 "FIGHT@",
-//                 "<PKMN>@",
-//                 "PARKBALL×  @",
-//                 "RUN@",
-//             }
-//         },
-//         .function = PrintParkBallsRemaining,
-//     }
-// };
+static void PrintParkBallsRemaining(void) {
+    // hlcoord(13, 16, wTilemap);
+    // LD_DE(wParkBallsRemaining);
+    // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
+    // CALL(aPrintNum);
+    // RET;
+    PrintNum_Conv2(coord(13, 16, wram->wTilemap), &wram->wParkBallsRemaining, PRINTNUM_LEADINGZEROS | 1, 2);
+}

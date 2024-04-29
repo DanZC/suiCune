@@ -8,6 +8,7 @@
 #include "trainer_huds.h"
 #include "start_battle.h"
 #include "sliding_intro.h"
+#include "menu.h"
 #include "../../home/battle.h"
 #include "../../home/audio.h"
 #include "../../home/array.h"
@@ -24,6 +25,7 @@
 #include "../../home/gfx.h"
 #include "../../home/map_objects.h"
 #include "../../home/sprite_updates.h"
+#include "../../home/lcd.h"
 #include "../../data/trainers/leaders.h"
 #include "../pokemon/experience.h"
 #include "../pokemon/health.h"
@@ -33,6 +35,7 @@
 #include "../gfx/color.h"
 #include "../gfx/player_gfx.h"
 #include "../gfx/place_graphic.h"
+#include "../gfx/mon_icons.h"
 #include "../../gfx/misc.h"
 #include "../smallflag.h"
 #include "../pokemon/bills_pc_top.h"
@@ -42,6 +45,8 @@
 #include "../pokemon/move_mon.h"
 #include "../pokemon/evolve.h"
 #include "../pokemon/party_menu.h"
+#include "../items/pack.h"
+#include "../items/items.h"
 #include "../../data/text/battle.h"
 #include "../../data/text/common.h"
 #include "../../data/wild/treemons_asleep.h"
@@ -363,9 +368,9 @@ void BattleTurn(void){
         // loop1:
             {
                 // CALL(aBattleMenu);
-                struct cpu_registers_s regs = SafeCallGBAutoRet(aBattleMenu);
+                // struct cpu_registers_s regs = SafeCallGBAutoRet(aBattleMenu);
                 // IF_C goto quit;
-                if(regs.f_bits.c)
+                if(BattleMenu())
                     goto quit;
             }
             // LD_A_addr(wBattleEnded);
@@ -4200,7 +4205,7 @@ bool AskUseNextPokemon_Conv(void){
     // LD_HL(wPartyMon1Speed);
     // LD_DE(wEnemyMonSpeed);
     // JP(mTryToRunAwayFromBattle);
-    return TryToRunAwayFromBattle_Conv(wram->wPartyMon, &wram->wEnemyMon);
+    return TryToRunAwayFromBattle_Conv(&wram->wBattleMon, &wram->wEnemyMon);
 }
 
 void ForcePlayerMonChoice(void){
@@ -6259,7 +6264,7 @@ static bool TryToRunAwayFromBattle_can_escape(void) {
 
 //  Run away from battle, with or without item
 //  Returns true if escape was successful.
-bool TryToRunAwayFromBattle_Conv(const struct PartyMon* hl, const struct BattleMon* de){
+bool TryToRunAwayFromBattle_Conv(const struct BattleMon* hl, const struct BattleMon* de){
     // LD_A_addr(wBattleType);
     switch(wram->wBattleType) {
         // CP_A(BATTLETYPE_DEBUG);
@@ -6349,7 +6354,7 @@ bool TryToRunAwayFromBattle_Conv(const struct PartyMon* hl, const struct BattleM
     // LDH_addr_A(hEnemyMonSpeed + 1);
     // CALL(aSafeLoadTempTilemapToTilemap);
     SafeLoadTempTilemapToTilemap_Conv();
-    uint16_t a_speed = HIGH(hl->speed) | (LOW(hl->speed) << 8);
+    uint16_t a_speed = hl->speed[1] | (hl->speed[0] << 8);
     uint16_t b_speed = de->speed[1] | (de->speed[0] << 8);
     // LD_DE(hMultiplicand + 1);
     // LD_HL(hEnemyMonSpeed);
@@ -8076,7 +8081,22 @@ void Battle_DummyFunction(void){
     // RET;
 }
 
-void BattleMenu(void){
+static bool BattleMenu_PKMN_GetMenu(void) {
+    // CALL(aIsMobileBattle);
+    // IF_Z goto mobile;
+    if(IsMobileBattle_Conv()) {
+    // mobile:
+        // FARCALL(aMobileBattleMonMenu);
+        return SafeCallGBAutoRet(aMobileBattleMonMenu).f_bits.c != 0;
+        // RET;
+    }
+    // FARCALL(aBattleMonMenu);
+    return SafeCallGBAutoRet(aBattleMonMenu).f_bits.c != 0;
+    // RET;
+}
+
+bool BattleMenu(void){
+BattleMenu_begin:
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = 0;
@@ -8095,7 +8115,8 @@ void BattleMenu(void){
         UpdateBattleHuds();
         // CALL(aEmptyBattleTextbox);
         EmptyBattleTextbox();
-        CALL(aLoadTilemapToTempTilemap);
+        // CALL(aLoadTilemapToTempTilemap);
+        LoadTilemapToTempTilemap_Conv();
     }
 // ok:
 
@@ -8116,11 +8137,14 @@ void BattleMenu(void){
                 v_DudeAutoInput_DownA();
 
         // skip_dude_pack_select:
-            CALL(aLoadBattleMenu2);
-            RET_C ;
+            // CALL(aLoadBattleMenu2);
+            // RET_C ;
+            if(LoadBattleMenu2())
+                return true;
         }
         else {
-            FARCALL(aContestBattleMenu);
+            // FARCALL(aContestBattleMenu);
+            ContestBattleMenu();
             // goto next;
         }
 
@@ -8138,10 +8162,343 @@ void BattleMenu(void){
         // CP_A(0x4);
         // JP_Z (mBattleMenu_Run);
         switch(wram->wBattleMenuCursorPosition) {
-            case 0x1: return BattleMenu_Fight();
-            case 0x3: return BattleMenu_Pack();
-            case 0x2: return BattleMenu_PKMN();
-            case 0x4: return BattleMenu_Run();
+            case 0x1: {
+            // BattleMenu_Fight:
+                // XOR_A_A;
+                // LD_addr_A(wNumFleeAttempts);
+                wram->wNumFleeAttempts = 0;
+                // CALL(aSafeLoadTempTilemapToTilemap);
+                SafeLoadTempTilemapToTilemap_Conv();
+                // AND_A_A;
+                // RET;
+                return false;
+            }
+            case 0x3: {
+            // BattleMenu_Pack:
+                // LD_A_addr(wLinkMode);
+                // AND_A_A;
+                // JP_NZ (mBattleMenu_Pack_ItemsCantBeUsed);
+
+                // LD_A_addr(wInBattleTowerBattle);
+                // AND_A_A;
+                // JP_NZ (mBattleMenu_Pack_ItemsCantBeUsed);
+                if(wram->wLinkMode != 0 || wram->wInBattleTowerBattle) {
+                // ItemsCantBeUsed:
+                    // LD_HL(mBattleText_ItemsCantBeUsedHere);
+                    // CALL(aStdBattleTextbox);
+                    StdBattleTextbox_Conv2(BattleText_ItemsCantBeUsedHere);
+                    // JP(mBattleMenu);
+                    goto BattleMenu_begin;
+                }
+
+                // CALL(aLoadStandardMenuHeader);
+                LoadStandardMenuHeader_Conv();
+
+                // LD_A_addr(wBattleType);
+                // CP_A(BATTLETYPE_TUTORIAL);
+                // IF_Z goto tutorial;
+                // CP_A(BATTLETYPE_CONTEST);
+                // IF_Z goto contest;
+                switch(wram->wBattleType) {
+                    default:
+                        // FARCALL(aBattlePack);
+                        BattlePack();
+                        // LD_A_addr(wBattlePlayerAction);
+                        // AND_A_A;  // BATTLEPLAYERACTION_USEMOVE?
+                        // IF_Z goto didnt_use_item;
+                        if(wram->wBattlePlayerAction == BATTLEPLAYERACTION_USEMOVE) {
+                        // didnt_use_item:
+                            // CALL(aClearPalettes);
+                            ClearPalettes_Conv();
+                            // CALL(aDelayFrame);
+                            DelayFrame();
+                            // CALL(av_LoadBattleFontsHPBar);
+                            v_LoadBattleFontsHPBar();
+                            // CALL(aGetBattleMonBackpic);
+                            GetBattleMonBackpic();
+                            // CALL(aGetEnemyMonFrontpic);
+                            GetEnemyMonFrontpic();
+                            // CALL(aExitMenu);
+                            ExitMenu_Conv2();
+                            // CALL(aWaitBGMap);
+                            WaitBGMap_Conv();
+                            // CALL(aFinishBattleAnim);
+                            FinishBattleAnim();
+                            // CALL(aLoadTilemapToTempTilemap);
+                            LoadTilemapToTempTilemap_Conv();
+                            // JP(mBattleMenu);
+                            goto BattleMenu_begin;
+                        }
+                        // goto got_item;
+                        break;
+                    case BATTLETYPE_TUTORIAL:
+                    // tutorial:
+                        // FARCALL(aTutorialPack);
+                        TutorialPack();
+                        // LD_A(POKE_BALL);
+                        // LD_addr_A(wCurItem);
+                        wram->wCurItem = POKE_BALL;
+                        // CALL(aDoItemEffect);
+                        SafeCallGBAuto(aDoItemEffect);
+                        // goto got_item;
+                        break;
+                    case BATTLETYPE_CONTEST:
+                    // contest:
+                        // LD_A(PARK_BALL);
+                        // LD_addr_A(wCurItem);
+                        wram->wCurItem = PARK_BALL;
+                        // CALL(aDoItemEffect);
+                        SafeCallGBAuto(aDoItemEffect);
+                        break;
+                }
+
+            // got_item:
+                // CALL(aBattleMenu_Pack_UseItem);
+                // RET;
+            // UseItem:
+                // LD_A_addr(wWildMon);
+                // AND_A_A;
+                // IF_NZ goto run;
+                if(wram->wWildMon != 0) {
+                // run:
+                    // XOR_A_A;
+                    // LD_addr_A(wWildMon);
+                    wram->wWildMon = 0;
+                    // LD_A_addr(wBattleResult);
+                    // AND_A(BATTLERESULT_BITMASK);
+                    // LD_addr_A(wBattleResult);  // WIN
+                    wram->wBattleResult &= BATTLERESULT_BITMASK;
+                    // CALL(aClearWindowData);
+                    ClearWindowData_Conv2();
+                    // CALL(aSetPalettes);
+                    SetPalettes_Conv();
+                    // SCF;
+                    // RET;
+                    return true;
+                }
+                // CALLFAR(aCheckItemPocket);
+                // LD_A_addr(wItemAttributeValue);
+                // CP_A(BALL);
+                // IF_Z goto ball;
+                if(CheckItemPocket_Conv(wram->wCurItem) != BALL) {
+                    // CALL(aClearBGPalettes);
+                    ClearBGPalettes_Conv();
+                }
+
+            // ball:
+                // XOR_A_A;
+                // LDH_addr_A(hBGMapMode);
+                hram->hBGMapMode = 0;
+                // CALL(av_LoadBattleFontsHPBar);
+                v_LoadBattleFontsHPBar();
+                // CALL(aClearSprites);
+                ClearSprites_Conv();
+                // LD_A_addr(wBattleType);
+                // CP_A(BATTLETYPE_TUTORIAL);
+                // IF_Z goto tutorial2;
+                if(wram->wBattleType != BATTLETYPE_TUTORIAL) {
+                    // CALL(aGetBattleMonBackpic);
+                    GetBattleMonBackpic();
+                }
+
+            // tutorial2:
+                // CALL(aGetEnemyMonFrontpic);
+                GetEnemyMonFrontpic();
+                // LD_A(0x1);
+                // LD_addr_A(wMenuCursorY);
+                wram->wMenuCursorY = 0x1;
+                // CALL(aExitMenu);
+                ExitMenu_Conv2();
+                // CALL(aUpdateBattleHUDs);
+                UpdateBattleHUDs();
+                // CALL(aWaitBGMap);
+                WaitBGMap_Conv();
+                // CALL(aLoadTilemapToTempTilemap);
+                LoadTilemapToTempTilemap_Conv();
+                // CALL(aClearWindowData);
+                ClearWindowData_Conv2();
+                // CALL(aFinishBattleAnim);
+                FinishBattleAnim();
+                // AND_A_A;
+                // RET;
+                return false;
+            } break;
+            case 0x2: {
+            // BattleMenu_PKMN:
+                // CALL(aLoadStandardMenuHeader);
+                LoadStandardMenuHeader_Conv();
+
+            BattleMenuPKMN_ReturnFromStats:
+                // CALL(aExitMenu);
+                ExitMenu_Conv2();
+                // CALL(aLoadStandardMenuHeader);
+                LoadStandardMenuHeader_Conv();
+                // CALL(aClearBGPalettes);
+                ClearBGPalettes_Conv();
+
+                while(1) {
+                BattleMenuPKMN_Loop:
+                    // CALL(aSetUpBattlePartyMenu_Loop);
+                    SetUpBattlePartyMenu_Loop();
+                    // XOR_A_A;
+                    // LD_addr_A(wPartyMenuActionText);
+                    wram->wPartyMenuActionText = 0;
+                    // CALL(aJumpToPartyMenuAndPrintText);
+                    JumpToPartyMenuAndPrintText();
+                    // CALL(aSelectBattleMon);
+                    u8_flag_s res = SelectBattleMon();
+                    // IF_C goto Cancel;
+                    if(res.flag)
+                        goto Cancel;
+
+                    while(1) {
+                    // loop:
+                        // FARCALL(aFreezeMonIcons);
+                        FreezeMonIcons_Conv();
+                        // CALL(aBattleMenuPKMN_Loop_GetMenu);
+                        // IF_C goto PressedB;
+                        if(BattleMenu_PKMN_GetMenu())
+                            break;
+                        // CALL(aPlaceHollowCursor);
+                        PlaceHollowCursor_Conv();
+                        // LD_A_addr(wMenuCursorY);
+                        switch(wram->wMenuCursorY) {
+                            // CP_A(0x1);  // SWITCH
+                            // JP_Z (mTryPlayerSwitch);
+                            case 0x1: {  // SWITCH
+                            // TryPlayerSwitch:
+                                // LD_A_addr(wCurBattleMon);
+                                // LD_D_A;
+                                // LD_A_addr(wCurPartyMon);
+                                // CP_A_D;
+                                // IF_NZ goto check_trapped;
+                                if(wram->wCurBattleMon == wram->wCurPartyMon) {
+                                    // LD_HL(mBattleText_MonIsAlreadyOut);
+                                    // CALL(aStdBattleTextbox);
+                                    StdBattleTextbox_Conv2(BattleText_MonIsAlreadyOut);
+                                    // JP(mBattleMenuPKMN_Loop);
+                                    goto BattleMenuPKMN_Loop;
+                                }
+
+                            // check_trapped:
+                                // LD_A_addr(wPlayerWrapCount);
+                                // AND_A_A;
+                                // IF_NZ goto trapped;
+                                // LD_A_addr(wEnemySubStatus5);
+                                // BIT_A(SUBSTATUS_CANT_RUN);
+                                // IF_Z goto try_switch;
+                                if(wram->wPlayerWrapCount != 0 || bit_test(wram->wEnemySubStatus5, SUBSTATUS_CANT_RUN)) {
+                                // trapped:
+                                    // LD_HL(mBattleText_MonCantBeRecalled);
+                                    // CALL(aStdBattleTextbox);
+                                    StdBattleTextbox_Conv2(BattleText_MonCantBeRecalled);
+                                    // JP(mBattleMenuPKMN_Loop);
+                                    goto BattleMenuPKMN_Loop;
+                                }
+
+                            // try_switch:
+                                // CALL(aCheckIfCurPartyMonIsFitToFight);
+                                // JP_Z (mBattleMenuPKMN_Loop);
+                                if(CheckIfCurPartyMonIsFitToFight_Conv())
+                                    goto BattleMenuPKMN_Loop;
+                                // LD_A_addr(wCurBattleMon);
+                                // LD_addr_A(wLastPlayerMon);
+                                wram->wLastPlayerMon = wram->wCurBattleMon;
+                                // LD_A(BATTLEPLAYERACTION_SWITCH);
+                                // LD_addr_A(wBattlePlayerAction);
+                                wram->wBattlePlayerAction = BATTLEPLAYERACTION_SWITCH;
+                                // CALL(aClearPalettes);
+                                ClearPalettes_Conv();
+                                // CALL(aDelayFrame);
+                                DelayFrame();
+                                // CALL(aClearSprites);
+                                ClearSprites_Conv();
+                                // CALL(av_LoadHPBar);
+                                v_LoadHPBar_Conv();
+                                // CALL(aCloseWindow);
+                                CloseWindow_Conv2();
+                                // CALL(aGetMemSGBLayout);
+                                GetMemSGBLayout_Conv();
+                                // CALL(aSetPalettes);
+                                SetPalettes_Conv();
+                                // LD_A_addr(wCurPartyMon);
+                                // LD_addr_A(wCurBattleMon);
+                                wram->wCurBattleMon = wram->wCurPartyMon;
+                                return SafeCallGBAutoRet(aPlayerSwitch).f_bits.c != 0;
+                            } break;
+                            // CP_A(0x2);  // STATS
+                            // IF_Z goto Stats;
+                            case 0x2:  // STATS
+                            // Stats:
+                                // CALL(aBattle_StatsScreen);
+                                Battle_StatsScreen();
+                                // CALL(aCheckMobileBattleError);
+                                // IF_C goto Cancel;
+                                if(CheckMobileBattleError_Conv())
+                                    goto Cancel;
+                                // JP(mBattleMenuPKMN_ReturnFromStats);
+                                goto BattleMenuPKMN_ReturnFromStats;
+                            // CP_A(0x3);  // CANCEL
+                            // IF_Z goto Cancel;
+                            case 0x3:  // CANCEL
+                                goto Cancel;
+                        }
+                        // goto loop;
+                    }
+
+
+                // PressedB:
+                    // CALL(aCheckMobileBattleError);
+                    // IF_C goto Cancel;
+                    // JR(mBattleMenuPKMN_Loop);
+                    if(CheckMobileBattleError_Conv()) {
+                    Cancel:
+                        // CALL(aClearSprites);
+                        ClearSprites_Conv();
+                        // CALL(aClearPalettes);
+                        ClearPalettes_Conv();
+                        // CALL(aDelayFrame);
+                        DelayFrame();
+                        // CALL(av_LoadHPBar);
+                        v_LoadHPBar_Conv();
+                        // CALL(aCloseWindow);
+                        CloseWindow_Conv2();
+                        // CALL(aLoadTilemapToTempTilemap);
+                        LoadTilemapToTempTilemap_Conv();
+                        // CALL(aGetMemSGBLayout);
+                        GetMemSGBLayout_Conv();
+                        // CALL(aSetPalettes);
+                        SetPalettes_Conv();
+                        // JP(mBattleMenu);
+                        goto BattleMenu_begin;
+                    }
+                    continue;
+                }
+            } break;
+            case 0x4: {
+            // BattleMenu_Run:
+                // CALL(aSafeLoadTempTilemapToTilemap);
+                SafeLoadTempTilemapToTilemap_Conv();
+                // LD_A(0x3);
+                // LD_addr_A(wMenuCursorY);
+                wram->wMenuCursorY = 0x3;
+                // LD_HL(wBattleMonSpeed);
+                // LD_DE(wEnemyMonSpeed);
+                // CALL(aTryToRunAwayFromBattle);
+                bool success = TryToRunAwayFromBattle_Conv(&wram->wBattleMon, &wram->wEnemyMon);
+                // LD_A(FALSE);
+                // LD_addr_A(wFailedToFlee);
+                wram->wFailedToFlee = FALSE;
+                // RET_C ;
+                if(success)
+                    return true;
+                // LD_A_addr(wBattlePlayerAction);
+                // AND_A_A;  // BATTLEPLAYERACTION_USEMOVE?
+                // RET_NZ ;
+                if(wram->wBattlePlayerAction != 0)
+                    return false;
+                // JP(mBattleMenu);
+            } goto BattleMenu_begin;
             default: break;
         }
         // goto loop;
@@ -8154,36 +8511,44 @@ void BattleMenu_Fight(void){
     CALL(aSafeLoadTempTilemapToTilemap);
     AND_A_A;
     RET;
-
 }
 
-void LoadBattleMenu2(void){
+bool LoadBattleMenu2(void){
     // CALL(aIsMobileBattle);
     // IF_Z goto mobile;
     if(!IsMobileBattle_Conv()) {
-        FARCALL(aLoadBattleMenu);
-        AND_A_A;
-        RET;
+        // FARCALL(aLoadBattleMenu);
+        LoadBattleMenu_Conv();
+        // AND_A_A;
+        // RET;
+        return false;
     }
 
 // mobile:
-    FARCALL(aMobile_LoadBattleMenu);
-    LD_A_addr(wcd2b);
-    AND_A_A;
-    RET_Z ;
+    // FARCALL(aMobile_LoadBattleMenu);
+    //  TODO: Mobile_LoadBattleMenu stuff
+    // LD_A_addr(wcd2b);
+    // AND_A_A;
+    // RET_Z ;
+    if(wram->wcd2b[0] == 0)
+        return false;
 
-    LD_HL(wcd2a);
-    BIT_hl(4);
-    IF_NZ goto error;
-    LD_HL(mBattleText_LinkErrorBattleCanceled);
-    CALL(aStdBattleTextbox);
-    LD_C(60);
-    CALL(aDelayFrames);
+    // LD_HL(wcd2a);
+    // BIT_hl(4);
+    // IF_NZ goto error;
+    if(!bit_test(wram->wcd2a, 4)) {
+        // LD_HL(mBattleText_LinkErrorBattleCanceled);
+        // CALL(aStdBattleTextbox);
+        StdBattleTextbox_Conv2(BattleText_LinkErrorBattleCanceled);
+        // LD_C(60);
+        // CALL(aDelayFrames);
+        DelayFrames_Conv(60);
+    }
 
-error:
-    SCF;
-    RET;
-
+// error:
+    // SCF;
+    // RET;
+    return true;
 }
 
 void BattleMenu_Pack(void){
@@ -8371,42 +8736,54 @@ mobile:
 }
 
 void Battle_StatsScreen(void){
-    CALL(aDisableLCD);
+    // CALL(aDisableLCD);
+    DisableLCD();
 
-    LD_HL(vTiles2 + LEN_2BPP_TILE * 0x31);
-    LD_DE(vTiles0);
-    LD_BC(0x11 * LEN_2BPP_TILE);
-    CALL(aCopyBytes);
+    // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x31);
+    // LD_DE(vTiles0);
+    // LD_BC(0x11 * LEN_2BPP_TILE);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(vram->vTiles0, vram->vTiles2 + LEN_2BPP_TILE * 0x31, 0x11 * LEN_2BPP_TILE);
 
-    LD_HL(vTiles2);
-    LD_DE(vTiles0 + LEN_2BPP_TILE * 0x11);
-    LD_BC(0x31 * LEN_2BPP_TILE);
-    CALL(aCopyBytes);
+    // LD_HL(vTiles2);
+    // LD_DE(vTiles0 + LEN_2BPP_TILE * 0x11);
+    // LD_BC(0x31 * LEN_2BPP_TILE);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(vram->vTiles0 + LEN_2BPP_TILE * 0x11, vram->vTiles2, 0x31 * LEN_2BPP_TILE);
 
-    CALL(aEnableLCD);
+    // CALL(aEnableLCD);
+    EnableLCD();
 
-    CALL(aClearSprites);
-    CALL(aLowVolume);
-    XOR_A_A;  // PARTYMON
-    LD_addr_A(wMonType);
-    FARCALL(aBattleStatsScreenInit);
-    CALL(aMaxVolume);
+    // CALL(aClearSprites);
+    ClearSprites_Conv();
+    // CALL(aLowVolume);
+    LowVolume_Conv();
+    // XOR_A_A;  // PARTYMON
+    // LD_addr_A(wMonType);
+    wram->wMonType = PARTYMON;
+    // FARCALL(aBattleStatsScreenInit);
+    BattleStatsScreenInit();
+    // CALL(aMaxVolume);
+    MaxVolume_Conv();
 
-    CALL(aDisableLCD);
+    // CALL(aDisableLCD);
+    DisableLCD();
 
-    LD_HL(vTiles0);
-    LD_DE(vTiles2 + LEN_2BPP_TILE * 0x31);
-    LD_BC(0x11 * LEN_2BPP_TILE);
-    CALL(aCopyBytes);
+    // LD_HL(vTiles0);
+    // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x31);
+    // LD_BC(0x11 * LEN_2BPP_TILE);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(vram->vTiles2 + LEN_2BPP_TILE * 0x31, vram->vTiles0, 0x11 * LEN_2BPP_TILE);
 
-    LD_HL(vTiles0 + LEN_2BPP_TILE * 0x11);
-    LD_DE(vTiles2);
-    LD_BC(0x31 * LEN_2BPP_TILE);
-    CALL(aCopyBytes);
+    // LD_HL(vTiles0 + LEN_2BPP_TILE * 0x11);
+    // LD_DE(vTiles2);
+    // LD_BC(0x31 * LEN_2BPP_TILE);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(vram->vTiles2, vram->vTiles0 + LEN_2BPP_TILE * 0x11, 0x31 * LEN_2BPP_TILE);
 
-    CALL(aEnableLCD);
-    RET;
-
+    // CALL(aEnableLCD);
+    EnableLCD();
+    // RET;
 }
 
 void TryPlayerSwitch(void){

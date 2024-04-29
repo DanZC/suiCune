@@ -742,7 +742,7 @@ void ClearTilemapEtc_Conv(void){
     // CALL(aLoadStandardFont);
     LoadStandardFont();
     // CALL(aClearWindowData);
-    ClearWindowData_Conv();
+    ClearWindowData_Conv2();
     // RET;
 }
 
