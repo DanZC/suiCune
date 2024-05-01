@@ -103,6 +103,16 @@ struct BattleAnim
     uint8_t padding[7];
 };
 
+struct BattleAnimObj 
+{
+    uint8_t flags;
+    uint8_t enemyAnim;
+    uint8_t videoSeq;
+    uint8_t callback;
+    uint8_t palette;
+    uint8_t tileOffset;
+};
+
 struct ItemAttr
 {
     uint16_t price;
@@ -983,6 +993,12 @@ struct ItemPrice
 };
 typedef struct ItemPrice item_price_s;
 
+struct ItemPal 
+{
+    item_t item;
+    uint8_t pal;
+};
+
 struct WildGrassMons
 {
     uint8_t mapGroup;
@@ -1504,6 +1520,13 @@ typedef struct Script script_s;
 struct OAMData 
 {
     uint8_t vtile_offset;
+    const uint8_t* ptr;
+};
+
+struct BattleOAMData 
+{
+    uint8_t vtile_offset;
+    uint8_t data_length;
     const uint8_t* ptr;
 };
 

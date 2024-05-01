@@ -22,7 +22,9 @@
 #include "../gfx/color.h"
 #include "../pokemon/stats_screen.h"
 #include "../phone/phone.h"
+#include "../battle/core.h"
 #include "../../util/scripting.h"
+#include <stdlib.h>
 
 typedef struct {
     const char* name;
@@ -42,6 +44,7 @@ void Handler_Stats(void);
 void Handler_Pics(void);
 void Handler_Script(void);
 void Handler_TradeAnim(void);
+void Handler_BattleAnim(void);
 
 static DebugMenuOption debugMenuOptions[] = {
     {"FIGHT@", Handler_Fight},
@@ -57,6 +60,7 @@ static DebugMenuOption debugMenuOptions[] = {
     {"PICS@", Handler_Pics},
     {"SCRIPT@", Handler_Script},
     {"TRADE@", Handler_TradeAnim},
+    {"BANIMS@", Handler_BattleAnim},
 };
 
 #define MAX_OPTIONS_PER_PAGE 7
@@ -64,6 +68,25 @@ static DebugMenuOption debugMenuOptions[] = {
 
 static uint8_t cursorIndex = 0;
 static uint8_t currentPage = 0;
+
+static tile_t* sDebugMenuTilemapBuffer;
+static tile_t* sDebugMenuAttrmapBuffer;
+
+void DebugMenu_SaveTilemap(void) {
+    CopyBytes_Conv2(sDebugMenuTilemapBuffer, coord(0, 0, wram->wTilemap), sizeof(wram->wTilemap));
+}
+
+void DebugMenu_RestoreTilemap(void) {
+    CopyBytes_Conv2(coord(0, 0, wram->wTilemap), sDebugMenuTilemapBuffer, sizeof(wram->wTilemap));
+}
+
+void DebugMenu_SaveAttrmap(void) {
+    CopyBytes_Conv2(sDebugMenuAttrmapBuffer, coord(0, 0, wram->wAttrmap), sizeof(wram->wAttrmap));
+}
+
+void DebugMenu_RestoreAttrmap(void) {
+    CopyBytes_Conv2(coord(0, 0, wram->wAttrmap), sDebugMenuAttrmapBuffer, sizeof(wram->wAttrmap));
+}
 
 void DebugMenu_PrintStrings() {
     uint8_t* hl = wram->wTilemap + coordidx(6, 1);
@@ -112,6 +135,10 @@ static void DebugMenu_MenuBox(void) {
 void DebugMenu(void) {
     uint8_t inMenu = hram->hInMenu;
     hram->hInMenu = 1;
+
+    sDebugMenuTilemapBuffer = malloc(sizeof(wram->wTilemap) * 2);
+    sDebugMenuAttrmapBuffer = sDebugMenuTilemapBuffer + sizeof(wram->wTilemap);
+
     PlayMusic_Conv(MUSIC_NONE);
     DelayFrame();
     PlayMusic_Conv(DEBUG_MENU_MUSIC);
@@ -149,6 +176,9 @@ void DebugMenu(void) {
     }
     PlayMusic_Conv(MUSIC_NONE);
     DelayFrame();
+
+    free(sDebugMenuTilemapBuffer); // also frees sDebugMenuAttrmapBuffer
+
     hram->hInMenu = inMenu;
 }
 
@@ -218,6 +248,11 @@ void Handler_TradeAnim(void) {
     PlayMusic_Conv(DEBUG_MENU_MUSIC);
 }
 
+void Handler_BattleAnim(void) {
+    DebugMenu_BattleAnim();
+    PlayMusic_Conv(DEBUG_MENU_MUSIC);
+}
+
 static const char* DebugMenu_MusicNames[] = {
     [MUSIC_NONE] = "NONE@",
     [MUSIC_TITLE] = "TITLE@",
@@ -244,8 +279,8 @@ static const char* DebugMenu_SoundNames[] = {
     [SFX_ITEM] = "ITEM@",
     [SFX_CAUGHT_MON] = "CAUGHT MON@",
     [SFX_POTION] = "POTION@",
-    [SFX_WARP_TO] = "WARP TO",
-    [SFX_WARP_FROM] = "WARP FROM",
+    [SFX_WARP_TO] = "WARP TO@",
+    [SFX_WARP_FROM] = "WARP FROM@",
     [SFX_CALL] = "CALL@",
     [SFX_HANG_UP] = "HANG UP@",
     [SFX_NO_SIGNAL] = "NO SIGNAL@",
@@ -370,8 +405,8 @@ static void DebugMenu_BattleTest_StartBattle(uint8_t tclass, uint8_t tid) {
     DelayFrames_Conv(10);
 
     // Rival name and Player name are null by default. 
-    Utf8ToCrystalBuffer(wram->wRivalName, NAME_LENGTH, "???@");
-    Utf8ToCrystalBuffer(wram->wPlayerName, NAME_LENGTH, "PLAYER@");
+    U82CB(wram->wRivalName, NAME_LENGTH, "???@");
+    U82CB(wram->wPlayerName, NAME_LENGTH, "PLAYER@");
 
     wram->wBattleType = BATTLETYPE_NORMAL;
     wram->wInBattleTowerBattle = 0;
@@ -578,6 +613,7 @@ void DebugMenu_GFXTest(void) {
 }
 
 void DebugMenu_Stats(void) {
+    LoadStandardMenuHeader_Conv();
     Utf8ToCrystalBuffer(wram->wPlayerName, NAME_LENGTH, "PLAYER@");
 
     wram->wCurPartySpecies = CHARIZARD;
@@ -594,10 +630,7 @@ void DebugMenu_Stats(void) {
 
     SAFECALL(aStatsScreenInit);
 
-    ClearTilemap_Conv2();
-    ByteFill_Conv2(vram->vTiles0, 2048, 0);
-    ByteFill_Conv2(vram->vTiles1, 2048, 0);
-    ByteFill_Conv2(vram->vTiles2, 2048, 0);
+    ExitMenu_Conv2();
     v_LoadFontsExtra1_Conv();
     v_LoadFontsExtra2_Conv();
     v_LoadStandardFont_Conv();
@@ -641,6 +674,8 @@ static void DebugMenu_Pics_SetLayout(void) {
 }
 
 void DebugMenu_Pics(void) {
+    DebugMenu_SaveTilemap();
+    DebugMenu_SaveAttrmap();
     ClearScreen_Conv2();
     v_LoadFontsExtra1_Conv();
     v_LoadFontsExtra2_Conv();
@@ -683,11 +718,8 @@ void DebugMenu_Pics(void) {
         DelayFrame();
     }
 
-    ClearTilemap_Conv2();
-    ByteFill_Conv2(wram->wAttrmap, (SCREEN_WIDTH * SCREEN_HEIGHT), PAL_BG_TEXT);
-    ByteFill_Conv2(vram->vTiles0, 2048, 0);
-    ByteFill_Conv2(vram->vTiles1, 2048, 0);
-    ByteFill_Conv2(vram->vTiles2, 2048, 0);
+    DebugMenu_RestoreTilemap();
+    DebugMenu_RestoreAttrmap();
     v_LoadFontsExtra1_Conv();
     v_LoadFontsExtra2_Conv();
     v_LoadStandardFont_Conv();
@@ -760,6 +792,7 @@ const txt_cmd_s Text_LANTestFail[] = {
 };
 
 void DebugMenu_Link(void) {
+    LoadStandardMenuHeader_Conv();
     ClearScreen_Conv2();
     v_LoadFontsExtra1_Conv();
     v_LoadFontsExtra2_Conv();
@@ -788,6 +821,7 @@ void DebugMenu_Link(void) {
     CloseWindow_Conv2();
 
     NetworkCloseConnection();
+    ExitMenu_Conv2();
 }
 
 void DebugMenu_TradeAnim(void) {
@@ -801,4 +835,120 @@ void DebugMenu_TradeAnim(void) {
     U82CA(wram->wPlayerTrademon.nickname, "A@");
     U82CA(wram->wOTTrademon.nickname, "A@");
     SafeCallGBAuto(aTradeAnimationPlayer2);
+}
+
+static void DebugMenu_BattleAnim_PlaceText(move_t move) {
+    char buffer[64];
+    sprintf(buffer, "MOVE - 0x%02X@", move);
+    PlaceStringSimple(U82C(buffer), coord(TEXTBOX_INNERX, TEXTBOX_Y + 1, wram->wTilemap));
+    sprintf(buffer, "TURN - %d@", hram->hBattleTurn);
+    PlaceStringSimple(U82C(buffer), coord(TEXTBOX_INNERX, TEXTBOX_Y + 2, wram->wTilemap));
+    sprintf(buffer, "B - BACK@");
+    PlaceStringSimple(U82C(buffer), coord(TEXTBOX_INNERX, TEXTBOX_Y + 3, wram->wTilemap));
+}
+
+void DebugMenu_BattleAnim(void) {
+    DebugMenu_SaveTilemap();
+    DebugMenu_SaveAttrmap();
+    ClearScreen_Conv2();
+    move_t mv = NO_MOVE + 1;
+
+    uint8_t options = wram->wOptions;
+    wram->wOptions &= 0xfc;
+
+// Add Pokemon to party
+    wram->wCurPartySpecies = PIKACHU;
+    wram->wCurPartyLevel = 50;
+    wram->wPartyCount = 0;
+    wram->wMonType = PARTYMON;
+    {
+        wbank_push(MBANK(awPartyMon1));
+        PREDEF(pTryAddMonToParty);
+        wbank_pop;
+    }
+    U82CA(wram->wBattleMonNickname, "PIKACHU@");
+
+    wram->wCurPartySpecies = CHARIZARD;
+    wram->wCurPartyLevel = 50;
+    wram->wPartyCount = 0;
+    wram->wMonType = OTPARTYMON;
+    {
+        wbank_push(MBANK(awOTPartyMon1));
+        PREDEF(pTryAddMonToParty);
+        wbank_pop;
+    }
+    U82CA(wram->wEnemyMonNickname, "CHARIZARD@");
+
+    wram->wCurPartyMon = 0;
+    wram->wCurOTMon = 0;
+
+    LoadEnemyMonToSwitchTo_Conv(0);
+    UpdateEnemyHUD();
+    InitBattleMon();
+    UpdatePlayerHUD();
+    v_LoadBattleFontsHPBar();
+    GetBattleMonBackpic();
+    wram->wTempBattleMonSpecies = wram->wPartyMon[0].mon.species;
+    wram->wTempEnemyMonSpecies = wram->wOTPartySpecies[0];
+    GetSGBLayout_Conv(SCGB_BATTLE_COLORS);
+    hram->hGraphicStartTile = 0x31;
+    PlaceGraphicYStagger_Conv(coord(2, 6, wram->wTilemap), 6, 6);
+    GetEnemyMonFrontpic();
+    hram->hGraphicStartTile = 0;
+    PlaceGraphicYStagger_Conv(coord(12, 0, wram->wTilemap), 7, 7);
+    SpeechTextbox_Conv2();
+    DebugMenu_BattleAnim_PlaceText(mv);
+    ApplyTilemap_Conv();
+
+    while(1) {
+        GetJoypad_Conv();
+        if(hram->hJoyPressed & (B_BUTTON))
+            break;
+        
+        int8_t dir = -((hram->hJoyPressed & D_DOWN)? 1: 0) + ((hram->hJoyPressed & D_UP)? 1: 0);
+
+        if(dir < 0) {
+            mv--;
+            if(mv == NO_MOVE) mv = NUM_ATTACKS;
+            SpeechTextbox_Conv2();
+            DebugMenu_BattleAnim_PlaceText(mv);
+        }
+        else if(dir > 0) {
+            mv++;
+            if(mv > NUM_ATTACKS) mv = NO_MOVE + 1;
+            SpeechTextbox_Conv2();
+            DebugMenu_BattleAnim_PlaceText(mv);
+        }
+
+        if(hram->hJoyPressed & D_LEFT) {
+            hram->hBattleTurn = 0;
+            SpeechTextbox_Conv2();
+            DebugMenu_BattleAnim_PlaceText(mv);
+        }
+
+        if(hram->hJoyPressed & D_RIGHT) {
+            hram->hBattleTurn = 1;
+            SpeechTextbox_Conv2();
+            DebugMenu_BattleAnim_PlaceText(mv);
+        }
+
+        if(hram->hJoyPressed & (A_BUTTON)) {
+            wram->wFXAnimID = mv;
+            wram->wNumHits = 1;
+            WaitBGMap_Conv();
+            SafeCallGBAuto(aPlayBattleAnim);
+            FinishBattleAnim();
+            EmptyBattleTextbox();
+            DebugMenu_BattleAnim_PlaceText(mv);
+        }
+        DelayFrame();
+    }
+    wram->wOptions = options;
+    ClearScreen_Conv2();
+    DelayFrames_Conv(4);
+    DebugMenu_RestoreTilemap();
+    DebugMenu_RestoreAttrmap();
+    v_LoadFontsExtra1_Conv();
+    v_LoadFontsExtra2_Conv();
+    v_LoadStandardFont_Conv();
 }

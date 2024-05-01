@@ -1,5 +1,8 @@
 #include "../../constants.h"
 #include "anim_commands.h"
+#include "core.h"
+#include "helpers.h"
+#include "functions.h"
 #include "../../home/delay.h"
 
 //  Battle animation command interpreter.
@@ -1730,45 +1733,60 @@ void BattleAnim_SetOBPals(void){
 }
 
 void BattleAnim_UpdateOAM_All(void){
-    LD_A(0);
-    LD_addr_A(wBattleAnimOAMPointerLo);
-    LD_HL(wActiveAnimObjects);
-    LD_E(NUM_ANIM_OBJECTS);
+    // LD_A(0);
+    // LD_addr_A(wBattleAnimOAMPointerLo);
+    uint8_t oamIndex = 0;
+    // LD_HL(wActiveAnimObjects);
+    struct BattleAnim* hl = wram->wAnimObject;
+    // LD_E(NUM_ANIM_OBJECTS);
+    uint8_t e = NUM_ANIM_OBJECTS;
 
-loop:
-    LD_A_hl;
-    AND_A_A;
-    IF_Z goto next;
-    LD_C_L;
-    LD_B_H;
-    PUSH_HL;
-    PUSH_DE;
-    CALL(aDoBattleAnimFrame);
-    CALL(aBattleAnimOAMUpdate);
-    POP_DE;
-    POP_HL;
-    IF_C goto done;
+    do {
+    // loop:
+        // LD_A_hl;
+        // AND_A_A;
+        // IF_Z goto next;
+        if(hl->index == 0)
+            continue;
+        // LD_C_L;
+        // LD_B_H;
+        // PUSH_HL;
+        // PUSH_DE;
+        // CALL(aDoBattleAnimFrame);
+        DoBattleAnimFrame_Conv(hl);
+        // CALL(aBattleAnimOAMUpdate);
+        bool error = BattleAnimOAMUpdate_Conv(hl, &oamIndex);
+        // POP_DE;
+        // POP_HL;
+        // IF_C goto done;
+        if(error)
+            return;
 
+    // next:
+        // LD_BC(BATTLEANIMSTRUCT_LENGTH);
+        // ADD_HL_BC;
+        // DEC_E;
+        // IF_NZ goto loop;
+    } while(hl++, --e != 0);
+    // LD_A_addr(wBattleAnimOAMPointerLo);
+    // LD_L_A;
+    // LD_H(HIGH(wVirtualOAM));
 
-next:
-    LD_BC(BATTLEANIMSTRUCT_LENGTH);
-    ADD_HL_BC;
-    DEC_E;
-    IF_NZ goto loop;
-    LD_A_addr(wBattleAnimOAMPointerLo);
-    LD_L_A;
-    LD_H(HIGH(wVirtualOAM));
+    while(oamIndex < NUM_SPRITE_OAM_STRUCTS) {
+    // loop2:
+        // LD_A_L;
+        // CP_A(LOW(wVirtualOAMEnd));
+        // IF_NC goto done;
+        // XOR_A_A;
+        // LD_hli_A;
+        wram->wVirtualOAMSprite[oamIndex].yCoord = 0;
+        wram->wVirtualOAMSprite[oamIndex].xCoord = 0;
+        wram->wVirtualOAMSprite[oamIndex].tileID = 0;
+        wram->wVirtualOAMSprite[oamIndex].attributes = 0;
+        // goto loop2;
+        oamIndex++;
+    }
 
-loop2:
-    LD_A_L;
-    CP_A(LOW(wVirtualOAMEnd));
-    IF_NC goto done;
-    XOR_A_A;
-    LD_hli_A;
-    goto loop2;
-
-
-done:
-    RET;
-
+// done:
+    // RET;
 }

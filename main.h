@@ -393,7 +393,7 @@
 #include "engine/battle_anims/anim_commands.h"
 #include "engine/battle_anims/core.h"
 #include "engine/battle_anims/functions.h"
-//#include "engine/battle_anims/helpers.h"
+#include "engine/battle_anims/helpers.h"
 
 // SECTION "Pic Animations 1", ROMX
 

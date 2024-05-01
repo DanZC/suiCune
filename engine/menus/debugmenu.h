@@ -18,6 +18,7 @@ void DebugMenu_Pics(void);
 void DebugMenu_Scripting(void);
 void DebugMenu_Link(void);
 void DebugMenu_TradeAnim(void);
+void DebugMenu_BattleAnim(void);
 // void debugMenuOptionField();
 // void debugMenuOptionFight();
 // void debugMenuOptionSubGames();
