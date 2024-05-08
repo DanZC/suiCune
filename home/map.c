@@ -4457,7 +4457,7 @@ void ReloadTilesetAndPalettes_Conv(void){
     LoadTilesetGFX_Conv();
     // LD_A(9);
     // CALL(aSkipMusic);
-    SkipMusic_Conv(9);
+    SkipMusic_Conv(3);
     // POP_AF;
     // RST(aBankswitch);
 

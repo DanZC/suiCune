@@ -69,6 +69,7 @@ extern const txt_cmd_s PocketIsFullText[];
 void Script_pokemart(void);
 void Script_pokemart_Conv(script_s* s, uint8_t mart_type, uint16_t mart_id);
 void Script_elevator(void);
+void Script_elevator_Conv(script_s* s, const struct ElevatorData* data);
 void Script_trade(void);
 void Script_trade_Conv(script_s* s, uint8_t trade);
 void Script_phonecall(void);

@@ -29,6 +29,7 @@
 #include "../events/mom_phone.h"
 #include "../events/checksave.h"
 #include "../events/npc_trade.h"
+#include "../events/elevator.h"
 #include "events.h"
 #include "variables.h"
 #include "landmarks.h"
@@ -1348,6 +1349,24 @@ void Script_elevator(void){
     LD_addr_A(wScriptVar);
     RET;
 
+}
+
+void Script_elevator_Conv(script_s* s, const struct ElevatorData* data){
+    (void)s;
+    // XOR_A_A;
+    // LD_addr_A(wScriptVar);
+    // CALL(aGetScriptByte);
+    // LD_E_A;
+    // CALL(aGetScriptByte);
+    // LD_D_A;
+    // LD_A_addr(wScriptBank);
+    // LD_B_A;
+    // FARCALL(aElevator);
+    // RET_C ;
+    // LD_A(TRUE);
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = (Elevator(data))? FALSE: TRUE;
+    // RET;
 }
 
 void Script_trade(void){

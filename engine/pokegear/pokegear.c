@@ -276,7 +276,7 @@ void PokeGear_InitTilemap_Conv(void) {
     InitPokegearModeIndicatorArrow_Conv();
     // LD_A(8);
     // CALL(aSkipMusic);
-    SkipMusic_Conv(8);
+    SkipMusic_Conv(4);
 
     // LD_A(LCDC_DEFAULT);
     // LDH_addr_A(rLCDC);
@@ -4086,7 +4086,7 @@ void v_TownMap(void){
     ClearSpriteAnims_Conv();
     // LD_A(8);
     // CALL(aSkipMusic);
-    SkipMusic_Conv(8);
+    SkipMusic_Conv(4);
     // LD_A(LCDC_DEFAULT);
     // LDH_addr_A(rLCDC);
     gb_write(rLCDC, LCDC_DEFAULT);

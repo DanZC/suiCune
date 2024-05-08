@@ -1339,6 +1339,20 @@ struct MapHeader
     uint8_t fishingGroup;
 };
 
+struct ElevatorFloorData 
+{
+    uint8_t floor;
+    uint8_t warpNum;
+    uint8_t mapGroup;
+    uint8_t mapNum;
+};
+
+struct ElevatorData 
+{
+    uint8_t count;
+    const struct ElevatorFloorData* floorData;
+};
+
 struct StartMenuItem {
     uint8_t (*function)(void);
     const char* label;

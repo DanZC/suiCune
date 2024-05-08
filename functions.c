@@ -4806,6 +4806,16 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(CherrygroveCityPokecenterSign);
     CONVERTED_SCRIPT(CherrygroveCityMartSign);
 
+    // maps/VioletCity.c
+    CONVERTED_SCRIPT(VioletCityEarlScript);
+    CONVERTED_SCRIPT(VioletCityLassScript);
+    CONVERTED_SCRIPT(VioletCitySuperNerdScript);
+    CONVERTED_SCRIPT(VioletCityGrampsScript);
+    CONVERTED_SCRIPT(VioletCityYoungsterScript);
+    CONVERTED_SCRIPT(VioletCityFruitTree);
+    CONVERTED_SCRIPT(VioletCityPPUp);
+    CONVERTED_SCRIPT(VioletCityRareCandy);
+
     // maps/Route29.c
     CONVERTED_SCRIPT(Route29Tutorial1);
     CONVERTED_SCRIPT(Route29Tutorial2);
@@ -4904,6 +4914,27 @@ void init_function_pointers(void) {
     // maps/PlayersHouse1F.c
     CONVERTED_SCRIPT(MomScript);
     CONVERTED_SCRIPT(NeighborScript);
+
+    // maps/SproutTower1F.c
+    CONVERTED_SCRIPT(SproutTower1FSage1Script);
+    CONVERTED_SCRIPT(SproutTower1FSage2Script);
+    CONVERTED_SCRIPT(SproutTower1FGrannyScript);
+    CONVERTED_SCRIPT(SproutTower1FTeacherScript);
+    CONVERTED_SCRIPT(TrainerSageChow);
+    CONVERTED_SCRIPT(SproutTower1FParlyzHeal);
+
+    // maps/SproutTower2F.c
+    CONVERTED_SCRIPT(TrainerSageNico);
+    CONVERTED_SCRIPT(TrainerSageEdmond);
+    CONVERTED_SCRIPT(SproutTower2FXAccuracy);
+
+    // maps/SproutTower3F.c
+    CONVERTED_SCRIPT(TrainerSageJin);
+    CONVERTED_SCRIPT(TrainerSageTroy);
+    CONVERTED_SCRIPT(SageLiScript);
+    CONVERTED_SCRIPT(TrainerSageNeal);
+    CONVERTED_SCRIPT(SproutTower3FPotion);
+    CONVERTED_SCRIPT(SproutTower3FEscapeRope);
 
     // engine/events/overworld.c
     // REDIRECTED(Script_WaterfallFromMenu);
@@ -5865,4 +5896,29 @@ CONVERTED(v_AnimateTileset);
 
     // engine/battle_anims/pokeball_wobble.c
     // CONVERTED(GetPokeBallWobble);
+
+    // engine/battle/consume_held_item.c
+    CONVERTED(ConsumeHeldItem);
+
+    // engine/menus/init_gender.c
+    // CONVERTED(LoadGenderScreenLightBlueTile);
+    // CONVERTED(AreYouABoyOrAreYouAGirlText);
+    CONVERTED(InitCrystalData);
+    CONVERTED(InitGender);
+    CONVERTED(InitGenderScreen);
+    // CONVERTED(LoadGenderScreenPal);
+
+    // engine/events/elevator.c
+    // CONVERTED(Elevator_MenuData);
+    // CONVERTED(Elevator_GetCurrentFloorText);
+    // CONVERTED(GetElevatorFloorStrings);
+    // CONVERTED(GetFloorString);
+    // CONVERTED(AskFloorElevatorText);
+    // CONVERTED(Elevator_GoToFloor);
+    // CONVERTED(FloorToString);
+    // CONVERTED(Elevator_MenuHeader);
+    // CONVERTED(Elevator_AskWhichFloor);
+    // CONVERTED(Elevator);
+    // CONVERTED(Elevator_GetCurrentFloorString);
+    // CONVERTED(Elevator_CurrentFloorText);
 }

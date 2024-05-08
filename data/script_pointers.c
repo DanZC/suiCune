@@ -55,6 +55,15 @@ void PopulateMapScriptTable(void) {
     entry(CHERRYGROVE_CITY, COORD_OFFSET + 0, CherrygroveSilverSceneNorth);
     entry(CHERRYGROVE_CITY, COORD_OFFSET + 1, CherrygroveSilverSceneSouth);
 
+    entry(VIOLET_CITY, 0, VioletCityEarlScript);
+    entry(VIOLET_CITY, 1, VioletCityLassScript);
+    entry(VIOLET_CITY, 2, VioletCitySuperNerdScript);
+    entry(VIOLET_CITY, 3, VioletCityGrampsScript);
+    entry(VIOLET_CITY, 4, VioletCityYoungsterScript);
+    entry(VIOLET_CITY, 5, VioletCityFruitTree);
+    entry(VIOLET_CITY, 6, VioletCityPPUp);
+    entry(VIOLET_CITY, 7, VioletCityRareCandy);
+
     entry(ROUTE_29, 0, CatchingTutorialDudeScript);
     entry(ROUTE_29, 1, Route29YoungsterScript);
     entry(ROUTE_29, 2, Route29TeacherScript);
@@ -144,6 +153,25 @@ void PopulateMapScriptTable(void) {
     entry(PLAYERS_HOUSE_2F, 1, PlayersHouseDoll1Script);
     entry(PLAYERS_HOUSE_2F, 2, PlayersHouseDoll2Script);
     entry(PLAYERS_HOUSE_2F, 3, PlayersHouseBigDollScript);
+
+    entry(SPROUT_TOWER_1F, 0, SproutTower1FSage1Script);
+    entry(SPROUT_TOWER_1F, 1, SproutTower1FSage2Script);
+    entry(SPROUT_TOWER_1F, 2, SproutTower1FGrannyScript);
+    entry(SPROUT_TOWER_1F, 3, SproutTower1FTeacherScript);
+    entry(SPROUT_TOWER_1F, 4, TrainerSageChow);
+    entry(SPROUT_TOWER_1F, 5, SproutTower1FParlyzHeal);
+
+    entry(SPROUT_TOWER_2F, 0, TrainerSageNico);
+    entry(SPROUT_TOWER_2F, 1, TrainerSageEdmond);
+    entry(SPROUT_TOWER_2F, 2, SproutTower2FXAccuracy);
+
+    entry(SPROUT_TOWER_3F, 0, TrainerSageJin);
+    entry(SPROUT_TOWER_3F, 1, TrainerSageTroy);
+    entry(SPROUT_TOWER_3F, 2, SageLiScript);
+    entry(SPROUT_TOWER_3F, 3, TrainerSageNeal);
+    entry(SPROUT_TOWER_3F, 4, SproutTower3FPotion);
+    entry(SPROUT_TOWER_3F, 5, SproutTower3FEscapeRope);
+    entry(SPROUT_TOWER_3F, 6, ObjectEvent);
 }
 
 const void* GetRealScriptPointer(uint8_t group, uint8_t map, uint8_t index) {

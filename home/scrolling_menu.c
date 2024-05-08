@@ -5,6 +5,7 @@
 #include "menu.h"
 #include "tilemap.h"
 #include "time_palettes.h"
+#include "text.h"
 #include "../engine/menus/scrolling_menu.h"
 
 void ScrollingMenu(void){
@@ -86,6 +87,28 @@ void InitScrollingMenu(void){
     POP_BC;
     JP(mTextbox);
 
+}
+
+void InitScrollingMenu_Conv(void){
+    // LD_A_addr(wMenuBorderTopCoord);
+    // DEC_A;
+    // LD_B_A;
+    // LD_A_addr(wMenuBorderBottomCoord);
+    // SUB_A_B;
+    // LD_D_A;
+    uint8_t d = wram->wMenuBorderBottomCoord - (wram->wMenuBorderTopCoord - 1);
+    // LD_A_addr(wMenuBorderLeftCoord);
+    // DEC_A;
+    // LD_C_A;
+    // LD_A_addr(wMenuBorderRightCoord);
+    // SUB_A_C;
+    // LD_E_A;
+    uint8_t e = wram->wMenuBorderRightCoord - (wram->wMenuBorderLeftCoord - 1);
+    // PUSH_DE;
+    // CALL(aCoord2Tile);
+    // POP_BC;
+    // JP(mTextbox);
+    Textbox_Conv2(Coord2Tile_Conv(wram->wMenuBorderLeftCoord - 1, wram->wMenuBorderTopCoord - 1), d, e);
 }
 
 void JoyTextDelay_ForcehJoyDown(void){

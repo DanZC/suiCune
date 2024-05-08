@@ -57,7 +57,7 @@
 #include "engine/menus/start_menu.h"
 #include "engine/pokemon/mon_menu.h"
 #include "engine/overworld/select_menu.h"
-//#include "engine/events/elevator.h"
+#include "engine/events/elevator.h"
 //#include "engine/events/bug_contest/contest.h"
 #include "engine/events/repel.h"
 #include "engine/events/hidden_item.h"
@@ -113,7 +113,7 @@
 //#include "engine/pokemon/level_up_happiness.h"
 #include "engine/battle/read_trainer_dvs.h"
 #include "engine/battle/returntobattle_useball.h"
-//#include "engine/battle/consume_held_item.h"
+#include "engine/battle/consume_held_item.h"
 //#include "data/moves/effects.h"
 //#include "engine/events/kurt_selectquantity_interpretjoypad.h"
 
@@ -167,7 +167,7 @@
 
 // SECTION "Crystal Features 1", ROMX
 
-//#include "engine/menus/init_gender.h"
+#include "engine/menus/init_gender.h"
 //#include "engine/items/pack_kris.h"
 //#include "engine/events/move_tutor.h"
 #include "engine/gfx/crystal_layouts.h"
