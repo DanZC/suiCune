@@ -13,6 +13,7 @@
 #include <string.h>
 
 #define NO_PHYSFS
+// #define DEBUG_WINDOW
 #ifdef _MSC_VER
 #include <SDL.h>
 #else
@@ -3304,7 +3305,17 @@ void get_input(void) {
         switch (event.type) {
             case SDL_QUIT:
                 exit(0);
-
+#if defined(DEBUG_WINDOW)
+            case SDL_WINDOWEVENT: {
+                if(event.window.event == SDL_WINDOWEVENT_CLOSE) {
+                    if(event.window.windowID == SDL_GetWindowID(window))
+                        exit(0);
+                    else {
+                        SDL_HideWindow(SDL_GetWindowFromID(event.window.windowID));
+                    }
+                }
+            } break;
+#endif
             case SDL_CONTROLLERBUTTONDOWN:
             case SDL_CONTROLLERBUTTONUP:
                 switch (event.cbutton.button) {
@@ -3469,6 +3480,28 @@ void sdl_loop(void) {
     SDL_RenderCopy(renderer, texture, NULL, NULL);
     SDL_RenderPresent(renderer);
 
+#if defined(DEBUG_WINDOW)
+    SDL_RenderClear(dbg_renderer);
+    
+    for(int tile = 0; tile < 384; tile++) {
+        for(int y = 0; y < 8; ++y) {
+            for(int x = 0; x < 8; ++x) {
+                uint8_t t1 = gb.vram[(tile * 0x10) + y * 2] << x;
+                uint8_t t2 = gb.vram[(tile * 0x10) + y * 2 + 1] << x;
+                uint8_t p = ((t1 & 0x80) >> 6) | ((t2 & 0x80) >> 7);
+                switch(p) {
+                    case 0x3: SDL_SetRenderDrawColor(dbg_renderer,   0,   0,   0, SDL_ALPHA_OPAQUE); break;
+                    case 0x2: SDL_SetRenderDrawColor(dbg_renderer,  86,  86,  86, SDL_ALPHA_OPAQUE); break;
+                    case 0x1: SDL_SetRenderDrawColor(dbg_renderer, 170, 170, 170, SDL_ALPHA_OPAQUE); break;
+                    case 0x0: SDL_SetRenderDrawColor(dbg_renderer, 252, 252, 252, SDL_ALPHA_OPAQUE); break;
+                }
+                SDL_RenderDrawRect(dbg_renderer, &(const SDL_Rect){x + ((tile % 16) * 8), y + ((tile / 16) * 8), 1, 1});
+            }
+        }
+    }
+    SDL_RenderPresent(dbg_renderer);
+#endif
+
     /* Use a delay that will draw the screen at a rate of 59.7275 Hz. */
     new_ticks = SDL_GetTicks();
 
@@ -3530,6 +3563,10 @@ void sdl_loop(void) {
 void cleanup(void) {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+#if defined(DEBUG_WINDOW)
+    SDL_DestroyRenderer(dbg_renderer);
+    SDL_DestroyWindow(dbg_window);
+#endif
     SDL_DestroyTexture(texture);
     SDL_GameControllerClose(controller);
     SDL_Quit();

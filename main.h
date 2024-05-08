@@ -40,7 +40,7 @@
 //#include "engine/pokemon/breedmon_level_growth.h"
 //#include "engine/events/bug_contest/caught_mon.h"
 #include "engine/items/item_effects.h"
-//#include "engine/battle_anims/pokeball_wobble.h"
+#include "engine/battle_anims/pokeball_wobble.h"
 //#include "engine/pokemon/knows_move.h"
 
 // SECTION "bank4", ROMX

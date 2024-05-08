@@ -837,7 +837,7 @@ void DebugMenu_TradeAnim(void) {
     SafeCallGBAuto(aTradeAnimationPlayer2);
 }
 
-static void DebugMenu_BattleAnim_PlaceText(move_t move) {
+static void DebugMenu_BattleAnim_PlaceText(uint16_t move) {
     char buffer[64];
     sprintf(buffer, "MOVE - 0x%02X@", move);
     PlaceStringSimple(U82C(buffer), coord(TEXTBOX_INNERX, TEXTBOX_Y + 1, wram->wTilemap));
@@ -851,7 +851,7 @@ void DebugMenu_BattleAnim(void) {
     DebugMenu_SaveTilemap();
     DebugMenu_SaveAttrmap();
     ClearScreen_Conv2();
-    move_t mv = NO_MOVE + 1;
+    uint16_t anim = NO_MOVE + 1;
 
     uint8_t options = wram->wOptions;
     wram->wOptions &= 0xfc;
@@ -897,7 +897,7 @@ void DebugMenu_BattleAnim(void) {
     hram->hGraphicStartTile = 0;
     PlaceGraphicYStagger_Conv(coord(12, 0, wram->wTilemap), 7, 7);
     SpeechTextbox_Conv2();
-    DebugMenu_BattleAnim_PlaceText(mv);
+    DebugMenu_BattleAnim_PlaceText(anim);
     ApplyTilemap_Conv();
 
     while(1) {
@@ -905,41 +905,60 @@ void DebugMenu_BattleAnim(void) {
         if(hram->hJoyPressed & (B_BUTTON))
             break;
         
-        int8_t dir = -((hram->hJoyPressed & D_DOWN)? 1: 0) + ((hram->hJoyPressed & D_UP)? 1: 0);
+        int8_t dir = -((hram->hJoyPressed & D_LEFT)? 1: 0) + ((hram->hJoyPressed & D_RIGHT)? 1: 0);
+        int8_t dir2 = -((hram->hJoyPressed & D_DOWN)? 1: 0) + ((hram->hJoyPressed & D_UP)? 1: 0);
 
         if(dir < 0) {
-            mv--;
-            if(mv == NO_MOVE) mv = NUM_ATTACKS;
+            anim--;
+            if(anim == NO_MOVE) anim = NUM_BATTLE_ANIMS + 1;
             SpeechTextbox_Conv2();
-            DebugMenu_BattleAnim_PlaceText(mv);
+            DebugMenu_BattleAnim_PlaceText(anim);
         }
         else if(dir > 0) {
-            mv++;
-            if(mv > NUM_ATTACKS) mv = NO_MOVE + 1;
+            anim++;
+            if(anim > NUM_BATTLE_ANIMS + 1) anim = NO_MOVE + 1;
             SpeechTextbox_Conv2();
-            DebugMenu_BattleAnim_PlaceText(mv);
+            DebugMenu_BattleAnim_PlaceText(anim);
         }
 
-        if(hram->hJoyPressed & D_LEFT) {
-            hram->hBattleTurn = 0;
+        if(dir2 < 0) {
+            if(anim < NO_MOVE + 10) anim = NO_MOVE + 1;
+            else anim -= 10;
             SpeechTextbox_Conv2();
-            DebugMenu_BattleAnim_PlaceText(mv);
+            DebugMenu_BattleAnim_PlaceText(anim);
+        }
+        else if(dir2 > 0) {
+            if(anim > (NUM_BATTLE_ANIMS + 1) - 10) anim = NUM_BATTLE_ANIMS + 1;
+            else anim += 10;
+            SpeechTextbox_Conv2();
+            DebugMenu_BattleAnim_PlaceText(anim);
         }
 
-        if(hram->hJoyPressed & D_RIGHT) {
-            hram->hBattleTurn = 1;
+        if(hram->hJoyPressed & SELECT) {
+            hram->hBattleTurn ^= 1;
             SpeechTextbox_Conv2();
-            DebugMenu_BattleAnim_PlaceText(mv);
+            DebugMenu_BattleAnim_PlaceText(anim);
         }
 
         if(hram->hJoyPressed & (A_BUTTON)) {
-            wram->wFXAnimID = mv;
+            if(anim == NUM_BATTLE_ANIMS + 1) {
+                wram->wFXAnimID = ANIM_THROW_POKE_BALL;
+                wram->wBattleAnimParam = POKE_BALL;
+            }
+            else if(anim == GROWL || anim == ROAR) {
+                wram->wFXAnimID = anim;
+                wram->wBattleAnimParam = (hram->hBattleTurn == 0)? wram->wBattleMon.species: wram->wEnemyMon.species;
+            }
+            else {
+                wram->wFXAnimID = anim;
+                wram->wBattleAnimParam = 0;
+            }
             wram->wNumHits = 1;
             WaitBGMap_Conv();
             SafeCallGBAuto(aPlayBattleAnim);
             FinishBattleAnim();
             EmptyBattleTextbox();
-            DebugMenu_BattleAnim_PlaceText(mv);
+            DebugMenu_BattleAnim_PlaceText(anim);
         }
         DelayFrame();
     }

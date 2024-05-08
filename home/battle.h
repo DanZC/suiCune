@@ -42,4 +42,5 @@ void StdBattleTextbox_Conv2(const struct TextCmd* hl);
 void GetBattleAnimPointer(void);
 void GetBattleAnimByte(void);
 void PushLYOverrides(void);
+void PushLYOverrides_Conv(void);
 #include "battle_vars.h"

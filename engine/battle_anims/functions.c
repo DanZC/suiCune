@@ -638,7 +638,7 @@ void BattleAnimFunction_PokeBall(struct BattleAnim* bc) {
         if(v1 & 0x1f)
             return;
         // LD_hl_A;
-        bc->var1 = v1;
+        bc->var1 = v1 & 0x1f;
         // LD_HL(BATTLEANIMSTRUCT_VAR2);
         // ADD_HL_BC;
         // LD_A_hl;
@@ -2016,7 +2016,7 @@ void BattleAnimFunction_Sing(struct BattleAnim* bc) {
         // LD_A_hl;
         // CP_A(0xb8);
         // IF_C goto move;
-        if(bc->xCoord < 0xb8) {
+        if(bc->xCoord >= 0xb8) {
             // CALL(aDeinitBattleAnimation);
             DeinitBattleAnimation_Conv(bc);
             // RET;
@@ -2117,6 +2117,7 @@ void BattleAnimFunction_WaterGun(struct BattleAnim* bc) {
             // INC_hl;
             bc->yOffset++;
             // RET;
+            return;
         }
 
     // splash:
@@ -3054,6 +3055,7 @@ void BattleAnimFunction_Spikes(struct BattleAnim* bc) {
             // CALL(aBattleAnim_StepThrownToTarget);
             BattleAnim_StepThrownToTarget(bc, &bc->var2, bc->var2);
             // RET;
+            return;
         }
 
     // wait:
@@ -3690,10 +3692,10 @@ void BattleAnimFunction_ConfuseRay(struct BattleAnim* bc) {
         // AND_A(0x80);
         // RLCA;
         // LD_hl_A;
-        bc->param = (bc->param >> 7);
+        bc->param = ((bc->param & 0x80) >> 7);
         // ADD_A(BATTLEANIMFRAMESET_5D);  // BATTLEANIMFRAMESET_5E
         // CALL(aReinitBattleAnimFrameset);
-        ReinitBattleAnimFrameset_Conv(bc, BATTLEANIMFRAMESET_5D);
+        ReinitBattleAnimFrameset_Conv(bc, bc->param + BATTLEANIMFRAMESET_5D);
         // RET;
         return;
 
@@ -3704,6 +3706,7 @@ void BattleAnimFunction_ConfuseRay(struct BattleAnim* bc) {
         // LD_A_hl;
         // SWAP_A;
         // LD_D_A;
+        uint8_t param = (bc->param << 4) | (bc->param >> 4);
         // LD_HL(BATTLEANIMSTRUCT_VAR2);
         // ADD_HL_BC;
         // LD_A_hl;
@@ -3715,14 +3718,14 @@ void BattleAnimFunction_ConfuseRay(struct BattleAnim* bc) {
         // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->yOffset = BattleAnim_Sine_Conv((bc->param << 4) | (bc->param >> 4), var2);
+        bc->yOffset = BattleAnim_Sine_Conv(var2, param);
         // POP_DE;
         // POP_AF;
         // CALL(aBattleAnim_Cosine);
         // LD_HL(BATTLEANIMSTRUCT_XOFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->xOffset = BattleAnim_Cosine_Conv((bc->param << 4) | (bc->param >> 4), var2);
+        bc->xOffset = BattleAnim_Cosine_Conv(var2, param);
         // LD_HL(BATTLEANIMSTRUCT_XCOORD);
         // ADD_HL_BC;
         // LD_A_hl;
@@ -4083,6 +4086,7 @@ void BattleAnimFunction_Paralyzed(struct BattleAnim* bc) {
             // DEC_hl;
             bc->var1--;
             // RET;
+            return;
         }
 
     // var1_zero:
@@ -4742,7 +4746,7 @@ void BattleAnimFunction_AbsorbCircle(struct BattleAnim* bc) {
     // LD_HL(BATTLEANIMSTRUCT_XOFFSET);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->xOffset = BattleAnim_Sine_Conv(bc->param, bc->var1);
+    bc->xOffset = BattleAnim_Cosine_Conv(bc->param, bc->var1);
     // LD_HL(BATTLEANIMSTRUCT_PARAM);
     // ADD_HL_BC;
     // INC_hl;
@@ -4777,7 +4781,7 @@ void BattleAnimFunction_AbsorbCircle(struct BattleAnim* bc) {
     // ADD_HL_BC;
     // CP_A(0x5a);
     // IF_NC goto increase_radius;
-    if(bc->xCoord == 0x5a) {
+    if(bc->xCoord >= 0x5a) {
     // increase_radius:
         // INC_hl;
         bc->var1++;
@@ -6250,7 +6254,7 @@ void BattleAnim_StepToTarget(struct BattleAnim* bc, uint8_t a) {
     // ADD_HL_BC;
     // ADD_A_hl;
     // LD_hl_A;
-    bc->xCoord += a;
+    bc->xCoord += (a & 0xf);
     // SRL_E;
     // LD_HL(BATTLEANIMSTRUCT_YCOORD);
     // ADD_HL_BC;
@@ -6259,7 +6263,7 @@ void BattleAnim_StepToTarget(struct BattleAnim* bc, uint8_t a) {
     // DEC_hl;
     // DEC_E;
     // IF_NZ goto loop;
-    bc->yCoord += a >> 1;
+    bc->yCoord -= (a & 0xf) >> 1;
     // RET;
 }
 

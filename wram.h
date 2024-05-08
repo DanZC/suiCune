@@ -3294,7 +3294,7 @@ struct wram_s
                         uint8_t wBattleAnimTempPalette;
                     };
                     struct {
-                        //union wBattleAnimGFXTempTileID
+                        uint8_t wBattleAnimGFXTempTileID;
                         uint8_t wBattleAnimGFXTempPicHeight;
                     };
                     struct {

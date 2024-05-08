@@ -207,6 +207,37 @@ static void CopyPNG2bppGrayTileToGB(uint8_t* dest, const uint8_t* src, int strid
     }
 }
 
+// Converts an 8x8 2bpp grayscale square from a src image with stride width to GB pixel format and writes the result
+// to dest.
+static bool CopyPNG2bppGrayTileToGBIfNotEmpty(uint8_t* dest, const uint8_t* src, int stride) {
+    if(stride == 0)
+        return false;
+    bool empty = true;
+    uint8_t d[16] = {};
+    for(int yy = 0; yy < 8; ++yy) {
+        d[yy * 2 + 0] = 0;
+        d[yy * 2 + 1] = 0;
+        for(int xx = 0; xx < 8; ++xx) {
+            uint8_t pixel;
+            switch(src[yy*stride + xx]) {
+                case 0x00: pixel = 0x3; empty = false; break;
+                case 0x55: pixel = 0x2; empty = false; break;
+                case 0xaa: pixel = 0x1; empty = false; break;
+                default: fprintf(stderr, "%s: Pixel error #%06X.\n", __func__, src[yy*stride + xx]);
+                    // fallthrough
+                case 0xff: pixel = 0x0; break;
+            }
+            d[yy * 2 + 0] |= ((pixel & 0b01)? (1 << (7 - xx)): 0);
+            d[yy * 2 + 1] |= ((pixel & 0b10)? (1 << (7 - xx)): 0);
+        }
+    }
+    if(!empty) {
+        memcpy(dest, d, sizeof(d));
+        return true;
+    }
+    return false;
+}
+
 // Converts an 8x8 2bpp color square from a src image with stride width to GB pixel format and writes the result
 // to dest.
 static void CopyPNG2bppColorTileToGB(uint8_t* dest, const uint8_t* src, int stride, int n, const uint32_t pal[]) {
@@ -415,6 +446,47 @@ void LoadPNG2bppAssetSectionToVRAM(void* dest, const char* filename, int start_t
     if(n == 1) {
         for(int i = 0; i < numTiles; ++i) {
             CopyPNG2bppGrayTileToGB(&d[i * LEN_2BPP_TILE], &pix[((((start_tile+i)/tilesPerRow)*8)*x) + (((start_tile+i)%tilesPerRow)*8)], x);
+        }
+    }
+    else {
+        // Hack to make palette conversion work.
+        const uint32_t* palette = (uint32_t*)&stbi_g_png_palette[0];
+        // for(int i = 0; i < 4; ++i) {
+        //     printf("Color %d: r=%d, g=%d, b=%d\n", i, palette[i] & 0xff, (palette[i] & 0xff00) >> 8, (palette[i] & 0xff0000) >> 16);
+        // }
+        for(int i = 0; i < numTiles; ++i) {
+            CopyPNG2bppColorTileToGB(&d[i * LEN_2BPP_TILE], &pix[((((start_tile+i)/tilesPerRow)*8*n)*x) + (((start_tile+i)%tilesPerRow)*8*n)], x, n, palette);
+        }
+    }
+    stbi_image_free(pix);
+}
+
+// Loads a 2bpp PNG asset section from an archive, converts it to GB pixel format,
+// and writes the result to dest, assumedly a vram destination. Skips any empty tiles.
+void LoadPNG2bppAssetSectionToVRAM_SkipEmptyTiles(void* dest, const char* filename, int start_tile, int tile_count) {
+    uint8_t* d = dest;
+    asset_s a = LoadAsset(filename);
+    // printf("Loaded asset %s (%lld bytes)\n", filename, a.size);
+    if(!a.ptr) {
+        exit(-1);
+    }
+    int x, y, n;
+    uint8_t* pix = stbi_load_from_memory(a.ptr, (int)a.size, &x, &y, &n, 0);
+    if(!pix) {
+        fprintf(stderr, "%s: Load error on image %s. Reason: %s\n", __func__, filename, stbi_failure_reason());
+        exit(-1);
+    }
+    // printf("2bpp %d-channel %dx%d image (%s)\n", n, x, y, filename);
+    FreeAsset(a);
+    int numTiles = (((y / 8) * (x / 8)) - start_tile > tile_count)? tile_count: ((y / 8) * (x / 8)) - start_tile;
+    int tilesPerRow = (x / 8);
+    // printf("%d tiles to write.\n", numTiles);
+    int dst_skipped = 0;
+    if(n == 1) {
+        for(int i = 0; i < numTiles + dst_skipped; ++i) {
+            uint8_t* dst = d + ((i - dst_skipped) * LEN_2BPP_TILE);
+            bool b = CopyPNG2bppGrayTileToGBIfNotEmpty(dst, &pix[((((start_tile+i)/tilesPerRow)*8)*x) + (((start_tile+i)%tilesPerRow)*8)], x);
+            if(!b) dst_skipped++;
         }
     }
     else {

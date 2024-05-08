@@ -40,7 +40,7 @@ void init_function_pointers(void) {
     REDIRECTED(SFXChannelsOff);
 
     // home/battle.c
-    // REDIRECTED(UpdateBattleHuds);
+    CONVERTED(UpdateBattleHuds);
     REDIRECTED(OpponentPartyAttr);
     REDIRECTED(UpdateOpponentInParty);
     REDIRECTED(GetPartyLocation);
@@ -1578,7 +1578,7 @@ void init_function_pointers(void) {
     // REDIRECTED(ShowLinkBattleParticipantsAfterEnd);
     // REDIRECTED(UpdateBattleStateAndExperienceAfterEnemyFaint);
     // REDIRECTED(GetRoamMonMapNumber);
-    // REDIRECTED(RecallPlayerMon);
+    CONVERTED(RecallPlayerMon);
     // CONVERTED(NewBattleMonStatus);
     CONVERTED(AddBattleParticipant);
     // REDIRECTED(LoadEnemyMonToSwitchTo);
@@ -2273,14 +2273,14 @@ void init_function_pointers(void) {
     REDIRECTED(GetTrainerName);
 
     // engine/battle_anims/anim_commands.c
-    REDIRECTED(PlayBattleAnim);
+    CONVERTED(PlayBattleAnim);
     REDIRECTED(BattleAnimCmd_ClearObjs);
     REDIRECTED(BattleAnimCmd_DropSub);
     REDIRECTED(BattleAnimCmd_BattlerGFX_2Row);
     REDIRECTED(BattleAnimCmd_1GFX);
-    REDIRECTED(BattleAnimClearHud);
+    CONVERTED(BattleAnimClearHud);
     REDIRECTED(BattleAnimCmd_ResetObp0);
-    REDIRECTED(v_PlayBattleAnim);
+    CONVERTED(v_PlayBattleAnim);
     REDIRECTED(BattleAnimCmd_Jump);
     REDIRECTED(BattleAnimCmd_OBP0);
     REDIRECTED(RunBattleAnimCommand);
@@ -2290,7 +2290,7 @@ void init_function_pointers(void) {
     REDIRECTED(BattleAnimCmd_IncObj);
     REDIRECTED(BattleAnimCmd_IncBGEffect);
     REDIRECTED(RunBattleAnimScript);
-    REDIRECTED(BattleAnimRequestPals);
+    CONVERTED(BattleAnimRequestPals);
     REDIRECTED(BattleAnimCmd_BeatUp);
     REDIRECTED(BattleAnimCmd_OAMOff);
     REDIRECTED(BattleAnimCmd_OBP1);
@@ -2306,20 +2306,20 @@ void init_function_pointers(void) {
     REDIRECTED(BattleAnimCmd_Sound);
     REDIRECTED(BattleAnimCmd_ED);
     REDIRECTED(ClearBattleAnims);
-    REDIRECTED(BattleAnim_RevertPals);
+    CONVERTED(BattleAnim_RevertPals);
     REDIRECTED(BattleAnimCmd_BGP);
-    REDIRECTED(GetMinimizePic);
+    // REDIRECTED(GetMinimizePic);
     REDIRECTED(BattleAnimCmd_KeepSprites);
     REDIRECTED(BattleAnimCmd_Obj);
     REDIRECTED(BattleAnimCmd_EA);
     REDIRECTED(BattleAnimCmd_IfParamAnd);
-    REDIRECTED(BattleAnim_ClearOAM);
-    REDIRECTED(ClearActorHud);
+    CONVERTED(BattleAnim_ClearOAM);
+    CONVERTED(ClearActorHud);
     REDIRECTED(BattleAnimCmd_BattlerGFX_1Row);
     REDIRECTED(BattleAnimCmd_CheckPokeball);
     REDIRECTED(BattleAnimCmd_EC);
     REDIRECTED(BattleAnimCmd_UpdateActorPic);
-    REDIRECTED(BattleAnim_SetOBPals);
+    // CONVERTED(BattleAnim_SetOBPals);
     REDIRECTED(BattleAnimCmd_IfParamEqual);
     REDIRECTED(BattleAnimCmd_MinimizeOpp);
     REDIRECTED(BattleAnimCmd_4GFX);
@@ -2333,18 +2333,18 @@ void init_function_pointers(void) {
     // REDIRECTED(BattleAnimCommands);
     REDIRECTED(BattleAnimCmd_F5);
     CONVERTED(BattleAnimDelayFrame);
-    REDIRECTED(MinimizePic);
-    REDIRECTED(PlayHitSound);
+    // CONVERTED(MinimizePic);
+    CONVERTED(PlayHitSound);
     REDIRECTED(BattleAnimCmd_IfVarEqual);
     REDIRECTED(GetSubstitutePic);
     REDIRECTED(BattleAnimRunScript);
     REDIRECTED(BattleAnimCmd_Minimize);
-    REDIRECTED(BattleAnim_SetBGPals);
+    // CONVERTED(BattleAnim_SetBGPals);
     REDIRECTED(BattleAnimCmd_F6);
     REDIRECTED(BattleAnimCmd_2GFX);
     REDIRECTED(BattleAnimCmd_SetObj);
     REDIRECTED(BattleAnimCmd_EB);
-    REDIRECTED(BattleAnimAssignPals);
+    CONVERTED(BattleAnimAssignPals);
 
     // engine/battle/effect_commands.c
     REDIRECTED(BattleCommand_TriStatusChance);
@@ -2368,7 +2368,7 @@ void init_function_pointers(void) {
     REDIRECTED(BattleCommand_StartLoop);
     REDIRECTED(LightBallBoost);
     REDIRECTED(SetBattleDraw);
-    REDIRECTED(PlayDamageAnim);
+    CONVERTED(PlayDamageAnim);
     REDIRECTED(BattleCommand_DrainTarget);
     REDIRECTED(BattleCommand_DefenseUp2);
     REDIRECTED(GetStatName);
@@ -2428,7 +2428,7 @@ void init_function_pointers(void) {
     REDIRECTED(BattleCommand_Rampage);
     REDIRECTED(BattleCommand_HealNite);
     REDIRECTED(PrintDidntAffect2);
-    REDIRECTED(AnimateCurrentMoveEitherSide);
+    CONVERTED(AnimateCurrentMoveEitherSide);
     REDIRECTED(BattleCommand_BuildOpponentRage);
     REDIRECTED(BattleCommand_CheckRampage);
     REDIRECTED(BattleCommand_EffectChance);
@@ -2462,7 +2462,7 @@ void init_function_pointers(void) {
     REDIRECTED(CheckMist);
     REDIRECTED(BattleCommand_SpecialDefenseUp2);
     REDIRECTED(BattleCommand_ForceSwitch);
-    REDIRECTED(AnimateCurrentMove);
+    CONVERTED(AnimateCurrentMove);
     REDIRECTED(GetMoveData);
     REDIRECTED(BattleCommand_DamageVariation);
     REDIRECTED(PrintDoesntAffect);
@@ -5862,4 +5862,7 @@ CONVERTED(v_AnimateTileset);
     // REDIRECTED(GetBattleAnimFrame);
     // REDIRECTED(GetBattleAnimOAMPointer);
     // REDIRECTED(LoadBattleAnimGFX);
+
+    // engine/battle_anims/pokeball_wobble.c
+    // CONVERTED(GetPokeBallWobble);
 }

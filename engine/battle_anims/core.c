@@ -1,6 +1,7 @@
 #include "../../constants.h"
 #include "core.h"
 #include "helpers.h"
+#include "bg_effects.h"
 #include "../../data/battle_anims/objects.h"
 
 void QueueBattleAnimation(void){
@@ -370,7 +371,7 @@ bool BattleAnimOAMUpdate_Conv(struct BattleAnim* bc, uint8_t* oamIndex){
     // LD_A_addr(wBattleAnimTempTileID);
     // ADD_A_hl;  // tile offset
     // LD_addr_A(wBattleAnimTempTileID);
-    wram->wBattleAnimTempTileID += oam->vtile_offset;
+    wram->wBattleAnimTempTileID += (int8_t)oam->vtile_offset;
     // INC_HL;
     // LD_A_hli;  // oam data length
     // LD_C_A;
@@ -778,4 +779,10 @@ void v_QueueBGEffect(void){
 
 // INCLUDE "data/battle_anims/objects.asm"
 
+}
+
+bool v_QueueBGEffect_Conv(void){
+    // CALLFAR(aQueueBGEffect);
+    // RET;
+    return QueueBGEffect_Conv();
 }

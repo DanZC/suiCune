@@ -18,6 +18,7 @@ void LoadPNG1bppAssetSectionToVRAM(void* dest, const char* filename, int start_t
 void LoadPNG2bppAssetToVRAM(void* dest, const char* filename);
 void LoadPNG2bppAssetToVRAMByColumn(void* dest, const char* filename);
 void LoadPNG2bppAssetSectionToVRAM(void* dest, const char* filename, int start_tile, int tile_count);
+void LoadPNG2bppAssetSectionToVRAM_SkipEmptyTiles(void* dest, const char* filename, int start_tile, int tile_count);
 
 void LoadDimensionsFromPNG(const char* filename, int* w, int* h);
 

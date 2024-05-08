@@ -668,6 +668,71 @@ void CopyPals_Conv(uint16_t hl, uint16_t de, uint8_t b, uint8_t c){
     } while(--c != 0);
 }
 
+void CopyPals_Conv2(uint16_t* hl, const uint16_t* de, uint8_t b, uint8_t c){
+    do {
+        // PUSH_BC;
+        uint8_t bsaved = b;
+        // LD_C(NUM_PAL_COLORS);
+        uint8_t n = NUM_PAL_COLORS;
+
+        do {
+            // PUSH_DE;
+            // PUSH_HL;
+
+        //  get pal color
+            // LD_A_B;
+            // maskbits(1 << PAL_COLOR_SIZE, 0);
+            uint8_t palc = b & (0b11);
+        //  2 bytes per color
+            // ADD_A_A;
+            // LD_L_A;
+            // LD_H(0);
+            // ADD_HL_DE;
+
+            // LD_E_hl;
+            // INC_HL;
+            // LD_D_hl;
+            uint16_t pal = de[palc];
+
+        //  dest
+            // POP_HL;
+        //  write color
+            // LD_hl_E;
+            // INC_HL;
+            // LD_hl_D;
+            // INC_HL;
+            *hl = pal;
+            hl++;
+
+        //  next pal color
+            // for(int rept = 0; rept < PAL_COLOR_SIZE; rept++){
+            // SRL_B;
+            // }
+            b >>= PAL_COLOR_SIZE;
+        //  source
+            // POP_DE;
+        //  done pal?
+            // DEC_C;
+            // IF_NZ goto loop;
+        } while(--n != 0);
+
+    //  de += 8 (next pal)
+        // LD_A(PALETTE_SIZE);
+        // ADD_A_E;
+        // IF_NC goto ok;
+        // INC_D;
+    // ok:
+        // LD_E_A;
+        de += PALETTE_SIZE;
+
+    //  how many more pals?
+        // POP_BC;
+        b = bsaved;
+        // DEC_C;
+        // JR_NZ (mCopyPals);
+    } while(--c != 0);
+}
+
 void ClearVBank1(void){
         LDH_A_addr(hCGB);
     AND_A_A;

@@ -2,6 +2,7 @@
 #include "helpers.h"
 #include "../../data/battle_anims/framesets.h"
 #include "../../data/battle_anims/oam.h"
+#include "../../data/battle_anims/object_gfx.h"
 
 void ReinitBattleAnimFrameset(void){
     LD_HL(BATTLEANIMSTRUCT_FRAMESET_ID);
@@ -277,6 +278,87 @@ void LoadBattleAnimGFX(void){
     CALL(aDecompressRequest2bpp);
     POP_BC;
     RET;
+
+// INCLUDE "data/battle_anims/framesets.asm"
+
+// INCLUDE "data/battle_anims/oam.asm"
+
+// INCLUDE "data/battle_anims/object_gfx.asm"
+
+}
+
+uint8_t LoadBattleAnimGFX_Conv(uint8_t* de, uint8_t a){
+    // PUSH_HL;
+    // LD_L_A;
+    // LD_H(0);
+    // ADD_HL_HL;
+    // ADD_HL_HL;
+    // LD_DE(mAnimObjGFX);
+    // ADD_HL_DE;
+    const struct BattleAnimGFX* gfx = AnimObjGFX + a;
+    // LD_C_hl;
+    // INC_HL;
+    // LD_B_hl;
+    // INC_HL;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // POP_DE;
+    // PUSH_BC;
+    // CALL(aDecompressRequest2bpp);
+    // POP_BC;
+    switch(a) {
+    case ANIM_GFX_STATUS:
+    case ANIM_GFX_HIT:
+    case ANIM_GFX_PLANT:
+    // case ANIM_GFX_WATER:
+    case ANIM_GFX_ROCKS:
+    case ANIM_GFX_NOISE:
+    case ANIM_GFX_EXPLOSION:
+    case ANIM_GFX_LIGHTNING:
+    case ANIM_GFX_REFLECT:
+    case ANIM_GFX_EGG:
+        LoadPNG2bppAssetSectionToVRAM_SkipEmptyTiles(de, gfx->gfxPath, 0x0, gfx->tiles);
+        break;
+    case ANIM_GFX_POKE_BALL:
+        LoadPNG2bppAssetSectionToVRAM(de, gfx->gfxPath, 0x0, 1);
+        LoadPNG2bppAssetSectionToVRAM(de + 1 * LEN_2BPP_TILE, gfx->gfxPath, 0x2, 1);
+        LoadPNG2bppAssetSectionToVRAM(de + 2 * LEN_2BPP_TILE, gfx->gfxPath, 0x4, 4);
+        LoadPNG2bppAssetSectionToVRAM(de + 6 * LEN_2BPP_TILE, gfx->gfxPath, 0x8, 1);
+        LoadPNG2bppAssetSectionToVRAM(de + 7 * LEN_2BPP_TILE, gfx->gfxPath, 0xa, 1);
+        break;
+    case ANIM_GFX_OBJECTS:
+        LoadPNG2bppAssetSectionToVRAM(de, gfx->gfxPath, 0x0, 8);
+        LoadPNG2bppAssetSectionToVRAM(de + 8 * LEN_2BPP_TILE, gfx->gfxPath, 0x8, 1);
+        LoadPNG2bppAssetSectionToVRAM(de + 9 * LEN_2BPP_TILE, gfx->gfxPath, 0xa, 1);
+        LoadPNG2bppAssetSectionToVRAM(de + 10 * LEN_2BPP_TILE, gfx->gfxPath, 0xc, 1);
+        LoadPNG2bppAssetSectionToVRAM(de + 11 * LEN_2BPP_TILE, gfx->gfxPath, 0xe, 1);
+        LoadPNG2bppAssetSectionToVRAM(de + 12 * LEN_2BPP_TILE, gfx->gfxPath, 0x10, 1);
+        LoadPNG2bppAssetSectionToVRAM(de + 13 * LEN_2BPP_TILE, gfx->gfxPath, 0x12, 1);
+        LoadPNG2bppAssetSectionToVRAM(de + 14 * LEN_2BPP_TILE, gfx->gfxPath, 0x14, 4);
+        break;
+    case ANIM_GFX_MISC:
+        LoadPNG2bppAssetSectionToVRAM(de, gfx->gfxPath, 0x0, 11);
+        LoadPNG2bppAssetSectionToVRAM(de + 11 * LEN_2BPP_TILE, gfx->gfxPath, 0xc, 1);
+        LoadPNG2bppAssetSectionToVRAM(de + 12 * LEN_2BPP_TILE, gfx->gfxPath, 0xe, 5);
+        LoadPNG2bppAssetSectionToVRAM(de + 17 * LEN_2BPP_TILE, gfx->gfxPath, 0x14, 1);
+        LoadPNG2bppAssetSectionToVRAM(de + 18 * LEN_2BPP_TILE, gfx->gfxPath, 0x16, 17);
+        LoadPNG2bppAssetSectionToVRAM(de + 35 * LEN_2BPP_TILE, gfx->gfxPath, 0x28, 1);
+        LoadPNG2bppAssetSectionToVRAM(de + 36 * LEN_2BPP_TILE, gfx->gfxPath, 0x2a, 1);
+        LoadPNG2bppAssetSectionToVRAM(de + 37 * LEN_2BPP_TILE, gfx->gfxPath, 0x2c, 3);
+        break;
+    case ANIM_GFX_BEAM:
+        LoadPNG2bppAssetSectionToVRAM(de, gfx->gfxPath, 0x0, 1);
+        LoadPNG2bppAssetSectionToVRAM(de + 1 * LEN_2BPP_TILE, gfx->gfxPath, 0x2, 1);
+        LoadPNG2bppAssetSectionToVRAM(de + 2 * LEN_2BPP_TILE, gfx->gfxPath, 0x5, 2);
+        LoadPNG2bppAssetSectionToVRAM(de + 4 * LEN_2BPP_TILE, gfx->gfxPath, 0xa, 7);
+        break;
+    default:
+        LoadPNG2bppAssetSectionToVRAM(de, gfx->gfxPath, 0x0, gfx->tiles);
+        break;
+    }
+    // RET;
+    return gfx->tiles;
 
 // INCLUDE "data/battle_anims/framesets.asm"
 

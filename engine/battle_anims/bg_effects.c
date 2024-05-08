@@ -124,6 +124,50 @@ load:
     RET;
 }
 
+bool QueueBGEffect_Conv(void) {
+    // SET_PC(aQueueBGEffect);
+    // LD_HL(wActiveBGEffects);
+    struct BattleBGEffect* hl = wram->wBGEffect;
+    // LD_E(NUM_BG_EFFECTS);
+    uint8_t e = NUM_BG_EFFECTS;
+
+    do {
+    // loop:
+        // LD_A_hl;
+        // AND_A_A;
+        // IF_Z goto load;
+        if(hl->function == 0) {
+        // load:
+            // LD_C_L;
+            // LD_B_H;
+            // LD_HL(BG_EFFECT_STRUCT_FUNCTION);
+            // ADD_HL_BC;
+            // LD_A_addr(wBattleBGEffectTempID);
+            // LD_hli_A;
+            hl->function = wram->wBattleBGEffectTempID;
+            // LD_A_addr(wBattleBGEffectTempJumptableIndex);
+            // LD_hli_A;
+            hl->jumptableIndex = wram->wBattleBGEffectTempJumptableIndex;
+            // LD_A_addr(wBattleBGEffectTempTurn);
+            // LD_hli_A;
+            hl->battleTurn = wram->wBattleBGEffectTempTurn;
+            // LD_A_addr(wBattleBGEffectTempParam);
+            // LD_hl_A;
+            hl->param = wram->wBattleBGEffectTempParam;
+            // RET;
+            return false;
+        }
+        // LD_BC(BG_EFFECT_STRUCT_LENGTH);
+        // ADD_HL_BC;
+        hl++;
+        // DEC_E;
+        // IF_NZ goto loop;
+    } while(--e != 0);
+    // SCF;
+    // RET;
+    return true;
+}
+
 void EndBattleBGEffect(void) {
     SET_PC(aEndBattleBGEffect);
     LD_HL(BG_EFFECT_STRUCT_FUNCTION);

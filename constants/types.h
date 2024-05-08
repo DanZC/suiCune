@@ -113,6 +113,12 @@ struct BattleAnimObj
     uint8_t tileOffset;
 };
 
+struct BattleAnimGFX
+{
+    uint8_t tiles;
+    const char* gfxPath;
+};
+
 struct ItemAttr
 {
     uint16_t price;
@@ -1158,6 +1164,17 @@ struct Script
     struct ScriptPosition stack[32];
 };
 
+struct BattleAnimScript;
+
+typedef int (*battleanim_func)(struct BattleAnimScript*);
+
+typedef struct BattleAnimScript {
+    int pos;
+    battleanim_func script;
+    int parent_pos;
+    battleanim_func parent;
+} battleanim_s;
+
 struct MapCallback {
     uint8_t type;
     const Script_fn_t script;
@@ -1421,6 +1438,13 @@ struct NPCTrade {
     uint16_t OTID;
     const char OTName[12];
     uint8_t genderRequested;
+};
+
+struct PokemonCry 
+{
+    uint16_t index;
+    int16_t pitch;
+    uint16_t length;
 };
 
 typedef struct ItemPocketEntry {

@@ -6988,17 +6988,21 @@ done:
 }
 
 void RecallPlayerMon(void){
-    LDH_A_addr(hBattleTurn);
-    PUSH_AF;
-    XOR_A_A;
-    LDH_addr_A(hBattleTurn);
-    LD_addr_A(wNumHits);
-    LD_DE(ANIM_RETURN_MON);
-    CALL(aCall_PlayBattleAnim);
-    POP_AF;
-    LDH_addr_A(hBattleTurn);
-    RET;
-
+    // LDH_A_addr(hBattleTurn);
+    // PUSH_AF;
+    uint8_t turn = hram->hBattleTurn;
+    // XOR_A_A;
+    // LDH_addr_A(hBattleTurn);
+    hram->hBattleTurn = 0;
+    // LD_addr_A(wNumHits);
+    wram->wNumHits = 0;
+    // LD_DE(ANIM_RETURN_MON);
+    // CALL(aCall_PlayBattleAnim);
+    Call_PlayBattleAnim_Conv(ANIM_RETURN_MON);
+    // POP_AF;
+    // LDH_addr_A(hBattleTurn);
+    hram->hBattleTurn = turn;
+    // RET;
 }
 
 void HandleHealingItems(void){
@@ -7433,20 +7437,25 @@ void GetOTPartymonItem_Conv(item_t** hl, item_t** bc){
 }
 
 void UpdateBattleHUDs(void){
-    PUSH_HL;
-    PUSH_DE;
-    PUSH_BC;
-    CALL(aDrawPlayerHUD);
-    LD_HL(wPlayerHPPal);
-    CALL(aSetHPPal);
-    CALL(aCheckDanger);
-    CALL(aDrawEnemyHUD);
-    LD_HL(wEnemyHPPal);
-    CALL(aSetHPPal);
-    POP_BC;
-    POP_DE;
-    POP_HL;
-    RET;
+    // PUSH_HL;
+    // PUSH_DE;
+    // PUSH_BC;
+    // CALL(aDrawPlayerHUD);
+    uint8_t e = DrawPlayerHUD_Conv();
+    // LD_HL(wPlayerHPPal);
+    // CALL(aSetHPPal);
+    SetHPPal_Conv(&wram->wPlayerHPPal, e);
+    // CALL(aCheckDanger);
+    CheckDanger();
+    // CALL(aDrawEnemyHUD);
+    e = DrawEnemyHUD_Conv();
+    // LD_HL(wEnemyHPPal);
+    // CALL(aSetHPPal);
+    SetHPPal_Conv(&wram->wEnemyHPPal, e);
+    // POP_BC;
+    // POP_DE;
+    // POP_HL;
+    // RET;
 
 }
 

@@ -1,6 +1,7 @@
 void ExecuteBGEffects(void);
 void ExecuteBGEffects_Conv(void);
 void QueueBGEffect(void);
+bool QueueBGEffect_Conv(void);
 void EndBattleBGEffect(void);
 void EndBattleBGEffect_Conv(struct BattleBGEffect* bc);
 void DoBattleBGEffectFunction(void);

@@ -5,6 +5,7 @@
 #include "check_battle_scene.h"
 #include "misc.h"
 #include "used_move_text.h"
+#include "../battle_anims/anim_commands.h"
 #include "../../data/items/attributes.h"
 #include "../../data/types/type_matchups.h"
 #include "../../data/types/type_boost_items.h"
@@ -5368,7 +5369,8 @@ void PlayFXAnimID_Conv(uint16_t de){
     // CALL(aDelayFrames);
     DelayFrames_Conv(3);
     // CALLFAR(aPlayBattleAnim);
-    SafeCallGBAuto(aPlayBattleAnim);
+    // SafeCallGBAuto(aPlayBattleAnim);
+    PlayBattleAnim();
     // RET;
 }
 
@@ -11153,21 +11155,25 @@ uint16_t GetItemHeldEffect_Conv(item_t b){
 }
 
 void AnimateCurrentMoveEitherSide(void){
-    PUSH_HL;
-    PUSH_DE;
-    PUSH_BC;
-    LD_A_addr(wBattleAnimParam);
-    PUSH_AF;
-    CALL(aBattleCommand_LowerSub);
-    POP_AF;
-    LD_addr_A(wBattleAnimParam);
-    CALL(aPlayDamageAnim);
-    CALL(aBattleCommand_RaiseSub);
-    POP_BC;
-    POP_DE;
-    POP_HL;
-    RET;
-
+    // PUSH_HL;
+    // PUSH_DE;
+    // PUSH_BC;
+    // LD_A_addr(wBattleAnimParam);
+    // PUSH_AF;
+    uint8_t param = wram->wBattleAnimParam;
+    // CALL(aBattleCommand_LowerSub);
+    BattleCommand_LowerSub();
+    // POP_AF;
+    // LD_addr_A(wBattleAnimParam);
+    wram->wBattleAnimParam = param;
+    // CALL(aPlayDamageAnim);
+    PlayDamageAnim();
+    // CALL(aBattleCommand_RaiseSub);
+    BattleCommand_RaiseSub();
+    // POP_BC;
+    // POP_DE;
+    // POP_HL;
+    // RET;
 }
 
 void AnimateCurrentMove(void){
@@ -11194,28 +11200,33 @@ void AnimateCurrentMove(void){
 }
 
 void PlayDamageAnim(void){
-    XOR_A_A;
-    LD_addr_A(wFXAnimID + 1);
+    // XOR_A_A;
+    // LD_addr_A(wFXAnimID + 1);
 
-    LD_A(BATTLE_VARS_MOVE_ANIM);
-    CALL(aGetBattleVar);
-    AND_A_A;
-    RET_Z ;
+    // LD_A(BATTLE_VARS_MOVE_ANIM);
+    uint8_t anim = GetBattleVar_Conv(BATTLE_VARS_MOVE_ANIM);
+    // CALL(aGetBattleVar);
+    // AND_A_A;
+    // RET_Z ;
+    if(anim == 0)
+        return;
 
-    LD_addr_A(wFXAnimID);
+    // LD_addr_A(wFXAnimID);
+    wram->wFXAnimID = anim;
 
-    LDH_A_addr(hBattleTurn);
-    AND_A_A;
-    LD_A(BATTLEANIM_ENEMY_DAMAGE);
-    IF_Z goto player;
-    LD_A(BATTLEANIM_PLAYER_DAMAGE);
+    // LDH_A_addr(hBattleTurn);
+    // AND_A_A;
+    // LD_A(BATTLEANIM_ENEMY_DAMAGE);
+    // IF_Z goto player;
+    // LD_A(BATTLEANIM_PLAYER_DAMAGE);
 
 
-player:
-    LD_addr_A(wNumHits);
+// player:
+    // LD_addr_A(wNumHits);
+    wram->wNumHits = (hram->hBattleTurn == 0)? BATTLEANIM_ENEMY_DAMAGE: BATTLEANIM_PLAYER_DAMAGE;
 
-    JP(mPlayUserBattleAnim);
-
+    // JP(mPlayUserBattleAnim);
+    return PlayUserBattleAnim_Conv();
 }
 
 void LoadMoveAnim(void){

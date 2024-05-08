@@ -11,6 +11,7 @@
 #include "../data/pokemon/base_stats.h"
 #include "../data/pokemon/pic_pointers.h"
 #include "../data/pokemon/unown_pic_pointers.h"
+#include "../data/pokemon/cries.h"
 
 void IsAPokemon(void){
     //  Return carry if species a is not a Pokemon.
@@ -467,6 +468,21 @@ uint16_t LoadCry_Conv(species_t a){
     return de;
 }
 
+//  Load cry bc.
+const struct PokemonCry* LoadCry_Conv2(species_t a){
+    int16_t index = GetCryIndex_Conv2(a);
+    if(index < 0) 
+        return NULL;
+    uint16_t i = (uint16_t)index;
+
+    const struct PokemonCry* hl = PokemonCries + i;
+
+    wram->wCryPitch = hl->pitch;
+    wram->wCryLength = hl->length;
+
+    return hl;
+}
+
 void GetCryIndex(void){
         AND_A_A;
     IF_Z goto no;
@@ -490,6 +506,12 @@ int16_t GetCryIndex_Conv(species_t index){
     if(index == 0 || index >= (NUM_POKEMON + 1))
         return -1;
     return (index - 1);
+}
+
+int16_t GetCryIndex_Conv2(species_t index){
+    if(index == 0 || index >= (NUM_POKEMON + 1))
+        return -1;
+    return index;
 }
 
 void PrintLevel(void){

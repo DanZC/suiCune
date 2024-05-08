@@ -706,3 +706,26 @@ void PushLYOverrides(void){
     RET;
 
 }
+
+void PushLYOverrides_Conv(void){
+    // LDH_A_addr(hLCDCPointer);
+    // AND_A_A;
+    // RET_Z ;
+    if(hram->hLCDCPointer == 0)
+        return;
+
+    // LD_A(LOW(wLYOverridesBackup));
+    // LD_addr_A(wRequested2bppSource);
+    // LD_A(HIGH(wLYOverridesBackup));
+    // LD_addr_A(wRequested2bppSource + 1);
+
+    // LD_A(LOW(wLYOverrides));
+    // LD_addr_A(wRequested2bppDest);
+    // LD_A(HIGH(wLYOverrides));
+    // LD_addr_A(wRequested2bppDest + 1);
+
+    // LD_A((wLYOverridesEnd - wLYOverrides) / LEN_2BPP_TILE);
+    // LD_addr_A(wRequested2bppSize);
+    CopyBytes_Conv2(wram->wLYOverrides, wram->wLYOverridesBackup, wLYOverridesEnd - wLYOverrides);
+    // RET;
+}
