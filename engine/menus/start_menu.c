@@ -269,6 +269,7 @@ static bool StartMenu_GetInput(void) {
     StartMenu_DrawMenuAccount();
     // CALL(aSetUpMenu);
     SetUpMenu_Conv();
+    wram->w2DMenuNumRows = wram->wMenuItemsList[0];
     // LD_A(0xff);
     // LD_addr_A(wMenuSelection);
     wram->wMenuSelection = 0xff;

@@ -4854,12 +4854,38 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(Route31Potion);
     CONVERTED_SCRIPT(Route31PokeBall);
 
+    // maps/Route32.c
+    CONVERTED_SCRIPT(TrainerFisherJustin);
+    CONVERTED_SCRIPT(TrainerFisherRalph1);
+    CONVERTED_SCRIPT(TrainerFisherHenry);
+    CONVERTED_SCRIPT(TrainerYoungsterAlbert);
+    CONVERTED_SCRIPT(TrainerYoungsterGordon);
+    CONVERTED_SCRIPT(TrainerCamperRoland);
+    CONVERTED_SCRIPT(TrainerPicnickerLiz1);
+    CONVERTED_SCRIPT(Route32CooltrainerMScript);
+    CONVERTED_SCRIPT(TrainerBirdKeeperPeter);
+    CONVERTED_SCRIPT(SlowpokeTailSalesmanScript);
+    CONVERTED_SCRIPT(Route32GreatBall);
+    CONVERTED_SCRIPT(Route32RoarTMGuyScript);
+    CONVERTED_SCRIPT(FriedaScript);
+    CONVERTED_SCRIPT(Route32Repel);
+
+    // maps/Route33.c
+    CONVERTED_SCRIPT(TrainerHikerAnthony);
+    CONVERTED_SCRIPT(Route33LassScript);
+    CONVERTED_SCRIPT(Route33FruitTree);
+
     // maps/Route30BerryHouse.c
     CONVERTED_SCRIPT(Route30BerryHousePokefanMScript);
 
     // maps/Route31VioletGate.c
     CONVERTED_SCRIPT(Route31VioletGateOfficerScript);
     CONVERTED_SCRIPT(Route31VioletGateCooltrainerFScript);
+
+    // maps/Route32RuinsOfAlphGate.c
+    CONVERTED_SCRIPT(Route32RuinsOfAlphGateOfficerScript);
+    CONVERTED_SCRIPT(Route32RuinsOfAlphGatePokefanMScript);
+    CONVERTED_SCRIPT(Route32RuinsOfAlphGateYoungsterScript);
 
     // maps/CherrygroveEvolutionSpeechHouse.c
     CONVERTED_SCRIPT(CherrygroveEvolutionSpeechHouseLassScript);
@@ -4879,6 +4905,9 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(CherrygroveMartClerkScript);
     CONVERTED_SCRIPT(CherrygroveMartCooltrainerMScript);
     CONVERTED_SCRIPT(CherrygroveMartYoungsterScript);
+
+    // maps/GuideGentsHouse.c
+    CONVERTED_SCRIPT(GuideGentsHouseGuideGent);
 
     // maps/Pokecenter2F.c
     CONVERTED_SCRIPT(LinkReceptionistScript_Trade);
@@ -4935,6 +4964,51 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(TrainerSageNeal);
     CONVERTED_SCRIPT(SproutTower3FPotion);
     CONVERTED_SCRIPT(SproutTower3FEscapeRope);
+
+    // maps/RuinsOfAlphOutside.c
+    CONVERTED_SCRIPT(TrainerPsychicNathan);
+    CONVERTED_SCRIPT(RuinsOfAlphOutsideScientistScript);
+    CONVERTED_SCRIPT(RuinsOfAlphOutsideFisherScript);
+    CONVERTED_SCRIPT(RuinsOfAlphOutsideYoungster1Script);
+    CONVERTED_SCRIPT(RuinsOfAlphOutsideYoungster2Script);
+
+    // maps/RuinsOfAlphInnerChamber.c
+    CONVERTED_SCRIPT(RuinsOfAlphInnerChamberFisherScript);
+    CONVERTED_SCRIPT(RuinsOfAlphInnerChamberTeacherScript);
+    CONVERTED_SCRIPT(RuinsOfAlphInnerChamberGrampsScript);
+
+    // maps/RuinsOfAlphResearchCenter.c
+    CONVERTED_SCRIPT(RuinsOfAlphResearchCenterScientist1Script);
+    CONVERTED_SCRIPT(RuinsOfAlphResearchCenterScientist2Script);
+    CONVERTED_SCRIPT(RuinsOfAlphResearchCenterScientist3Script);
+
+    // maps/UnionCave1F.c
+    CONVERTED_SCRIPT(TrainerHikerDaniel);
+    CONVERTED_SCRIPT(TrainerPokemaniacLarry);
+    CONVERTED_SCRIPT(TrainerHikerRussell);
+    CONVERTED_SCRIPT(TrainerFirebreatherRay);
+    CONVERTED_SCRIPT(TrainerFirebreatherBill);
+    CONVERTED_SCRIPT(UnionCave1FGreatBall);
+    CONVERTED_SCRIPT(UnionCave1FXAttack);
+    CONVERTED_SCRIPT(UnionCave1FPotion);
+    CONVERTED_SCRIPT(UnionCave1FAwakening);
+
+    // maps/UnionCaveB1F.c
+    CONVERTED_SCRIPT(TrainerHikerPhillip);
+    CONVERTED_SCRIPT(TrainerHikerLeonard);
+    CONVERTED_SCRIPT(TrainerPokemaniacAndrew);
+    CONVERTED_SCRIPT(TrainerPokemaniacCalvin);
+    CONVERTED_SCRIPT(UnionCaveB1FTMSwift);
+    CONVERTED_SCRIPT(UnionCaveB1FBoulder);
+    CONVERTED_SCRIPT(UnionCaveB1FXDefend);
+
+    // maps/UnionCaveB2F.c
+    CONVERTED_SCRIPT(TrainerCooltrainermNick);
+    CONVERTED_SCRIPT(TrainerCooltrainerfGwen);
+    CONVERTED_SCRIPT(TrainerCooltrainerfEmma);
+    CONVERTED_SCRIPT(UnionCaveB2FElixer);
+    CONVERTED_SCRIPT(UnionCaveB2FHyperPotion);
+    CONVERTED_SCRIPT(UnionCaveLapras);
 
     // engine/events/overworld.c
     // REDIRECTED(Script_WaterfallFromMenu);
@@ -5921,4 +5995,13 @@ CONVERTED(v_AnimateTileset);
     // CONVERTED(Elevator);
     // CONVERTED(Elevator_GetCurrentFloorString);
     // CONVERTED(Elevator_CurrentFloorText);
+
+    // engine/menus/delete_save.c
+    CONVERTED(v_DeleteSaveData);
+
+    // engine/menus/empty_sram.c
+    CONVERTED(EmptyAllSRAMBanks);
+
+    // engine/events/card_key.c
+    // CONVERTED(v_CardKey);
 }

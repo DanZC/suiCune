@@ -105,6 +105,29 @@ void PopulateMapScriptTable(void) {
     entry(ROUTE_31_VIOLET_GATE, 0, Route31VioletGateOfficerScript);
     entry(ROUTE_31_VIOLET_GATE, 1, Route31VioletGateCooltrainerFScript);
 
+    entry(ROUTE_32, 0,  TrainerFisherJustin);
+    entry(ROUTE_32, 1,  TrainerFisherRalph1);
+    entry(ROUTE_32, 2,  TrainerFisherHenry);
+    entry(ROUTE_32, 3,  TrainerYoungsterAlbert);
+    entry(ROUTE_32, 4,  TrainerYoungsterGordon);
+    entry(ROUTE_32, 5,  TrainerCamperRoland);
+    entry(ROUTE_32, 6,  TrainerPicnickerLiz1);
+    entry(ROUTE_32, 7,  Route32CooltrainerMScript);
+    entry(ROUTE_32, 8,  TrainerBirdKeeperPeter);
+    entry(ROUTE_32, 9,  SlowpokeTailSalesmanScript);
+    entry(ROUTE_32, 10, Route32GreatBall);
+    entry(ROUTE_32, 11, Route32RoarTMGuyScript);
+    entry(ROUTE_32, 12, FriedaScript);
+    entry(ROUTE_32, 13, Route32Repel);
+
+    entry(ROUTE_32_RUINS_OF_ALPH_GATE, 0, Route32RuinsOfAlphGateOfficerScript);
+    entry(ROUTE_32_RUINS_OF_ALPH_GATE, 1, Route32RuinsOfAlphGatePokefanMScript);
+    entry(ROUTE_32_RUINS_OF_ALPH_GATE, 2, Route32RuinsOfAlphGateYoungsterScript);
+
+    entry(ROUTE_33, 0, TrainerHikerAnthony);
+    entry(ROUTE_33, 1, Route33LassScript);
+    entry(ROUTE_33, 2, Route33FruitTree);
+
     entry(CHERRYGROVE_EVOLUTION_SPEECH_HOUSE, 0, CherrygroveEvolutionSpeechHouseLassScript);
     entry(CHERRYGROVE_EVOLUTION_SPEECH_HOUSE, 1, CherrygroveEvolutionSpeechHouseYoungsterScript);
 
@@ -172,6 +195,45 @@ void PopulateMapScriptTable(void) {
     entry(SPROUT_TOWER_3F, 4, SproutTower3FPotion);
     entry(SPROUT_TOWER_3F, 5, SproutTower3FEscapeRope);
     entry(SPROUT_TOWER_3F, 6, ObjectEvent);
+
+    entry(RUINS_OF_ALPH_OUTSIDE, 0, TrainerPsychicNathan);
+    entry(RUINS_OF_ALPH_OUTSIDE, 1, RuinsOfAlphOutsideScientistScript);
+    entry(RUINS_OF_ALPH_OUTSIDE, 2, RuinsOfAlphOutsideFisherScript);
+    entry(RUINS_OF_ALPH_OUTSIDE, 3, RuinsOfAlphOutsideYoungster1Script);
+    entry(RUINS_OF_ALPH_OUTSIDE, 4, RuinsOfAlphOutsideYoungster2Script);
+
+    entry(RUINS_OF_ALPH_INNER_CHAMBER, 0, RuinsOfAlphInnerChamberFisherScript);
+    entry(RUINS_OF_ALPH_INNER_CHAMBER, 1, RuinsOfAlphInnerChamberTeacherScript);
+    entry(RUINS_OF_ALPH_INNER_CHAMBER, 2, RuinsOfAlphInnerChamberGrampsScript);
+
+    entry(RUINS_OF_ALPH_RESEARCH_CENTER, 0, RuinsOfAlphResearchCenterScientist1Script);
+    entry(RUINS_OF_ALPH_RESEARCH_CENTER, 1, RuinsOfAlphResearchCenterScientist2Script);
+    entry(RUINS_OF_ALPH_RESEARCH_CENTER, 2, RuinsOfAlphResearchCenterScientist3Script);
+
+    entry(UNION_CAVE_1F, 0, TrainerHikerDaniel);
+    entry(UNION_CAVE_1F, 1, TrainerPokemaniacLarry);
+    entry(UNION_CAVE_1F, 2, TrainerHikerRussell);
+    entry(UNION_CAVE_1F, 3, TrainerFirebreatherRay);
+    entry(UNION_CAVE_1F, 4, TrainerFirebreatherBill);
+    entry(UNION_CAVE_1F, 5, UnionCave1FGreatBall);
+    entry(UNION_CAVE_1F, 6, UnionCave1FXAttack);
+    entry(UNION_CAVE_1F, 7, UnionCave1FPotion);
+    entry(UNION_CAVE_1F, 8, UnionCave1FAwakening);
+
+    entry(UNION_CAVE_B1F, 0, TrainerHikerPhillip);
+    entry(UNION_CAVE_B1F, 1, TrainerHikerLeonard);
+    entry(UNION_CAVE_B1F, 2, TrainerPokemaniacAndrew);
+    entry(UNION_CAVE_B1F, 3, TrainerPokemaniacCalvin);
+    entry(UNION_CAVE_B1F, 4, UnionCaveB1FTMSwift);
+    entry(UNION_CAVE_B1F, 5, UnionCaveB1FBoulder);
+    entry(UNION_CAVE_B1F, 6, UnionCaveB1FXDefend);
+
+    entry(UNION_CAVE_B2F, 0, TrainerCooltrainermNick);
+    entry(UNION_CAVE_B2F, 1, TrainerCooltrainerfGwen);
+    entry(UNION_CAVE_B2F, 2, TrainerCooltrainerfEmma);
+    entry(UNION_CAVE_B2F, 3, UnionCaveB2FElixer);
+    entry(UNION_CAVE_B2F, 4, UnionCaveB2FHyperPotion);
+    entry(UNION_CAVE_B2F, 5, UnionCaveLapras);
 }
 
 const void* GetRealScriptPointer(uint8_t group, uint8_t map, uint8_t index) {

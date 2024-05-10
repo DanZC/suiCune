@@ -1,0 +1,1 @@
+void EmptyAllSRAMBanks(void);
