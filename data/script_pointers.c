@@ -124,6 +124,10 @@ void PopulateMapScriptTable(void) {
     entry(ROUTE_32_RUINS_OF_ALPH_GATE, 1, Route32RuinsOfAlphGatePokefanMScript);
     entry(ROUTE_32_RUINS_OF_ALPH_GATE, 2, Route32RuinsOfAlphGateYoungsterScript);
 
+    entry(ROUTE_32_POKECENTER_1F, 0, Route32Pokecenter1FNurseScript);
+    entry(ROUTE_32_POKECENTER_1F, 1, Route32Pokecenter1FFishingGuruScript);
+    entry(ROUTE_32_POKECENTER_1F, 2, Route32Pokecenter1FCooltrainerFScript);
+
     entry(ROUTE_33, 0, TrainerHikerAnthony);
     entry(ROUTE_33, 1, Route33LassScript);
     entry(ROUTE_33, 2, Route33FruitTree);
@@ -176,6 +180,27 @@ void PopulateMapScriptTable(void) {
     entry(PLAYERS_HOUSE_2F, 1, PlayersHouseDoll1Script);
     entry(PLAYERS_HOUSE_2F, 2, PlayersHouseDoll2Script);
     entry(PLAYERS_HOUSE_2F, 3, PlayersHouseBigDollScript);
+
+    entry(VIOLET_POKECENTER_1F, 0, VioletPokecenterNurse);
+    entry(VIOLET_POKECENTER_1F, 1, VioletPokecenter1FGameboyKidScript);
+    entry(VIOLET_POKECENTER_1F, 2, VioletPokecenter1FGentlemanScript);
+    entry(VIOLET_POKECENTER_1F, 3, VioletPokecenter1FYoungsterScript);
+    entry(VIOLET_POKECENTER_1F, 4, VioletPokecenter1F_ElmsAideScript);
+
+    entry(VIOLET_KYLES_HOUSE, 0, VioletKylesHousePokefanMScript);
+    entry(VIOLET_KYLES_HOUSE, 1, Kyle);
+
+    entry(EARLS_POKEMON_ACADEMY, 0, AcademyEarl);
+    entry(EARLS_POKEMON_ACADEMY, 1, EarlsPokemonAcademyYoungster1Script);
+    entry(EARLS_POKEMON_ACADEMY, 2, EarlsPokemonAcademyGameboyKid1Script);
+    entry(EARLS_POKEMON_ACADEMY, 3, EarlsPokemonAcademyGameboyKid2Script);
+    entry(EARLS_POKEMON_ACADEMY, 4, EarlsPokemonAcademyYoungster2Script);
+    entry(EARLS_POKEMON_ACADEMY, 5, AcademyNotebook);
+
+    entry(VIOLET_GYM, 0, VioletGymFalknerScript);
+    entry(VIOLET_GYM, 1, TrainerBirdKeeperRod);
+    entry(VIOLET_GYM, 2, TrainerBirdKeeperAbe);
+    entry(VIOLET_GYM, 3, VioletGymGuideScript);
 
     entry(SPROUT_TOWER_1F, 0, SproutTower1FSage1Script);
     entry(SPROUT_TOWER_1F, 1, SproutTower1FSage2Script);
@@ -234,6 +259,19 @@ void PopulateMapScriptTable(void) {
     entry(UNION_CAVE_B2F, 3, UnionCaveB2FElixer);
     entry(UNION_CAVE_B2F, 4, UnionCaveB2FHyperPotion);
     entry(UNION_CAVE_B2F, 5, UnionCaveLapras);
+
+    entry(DARK_CAVE_BLACKTHORN_ENTRANCE, 0, DarkCaveBlackthornEntrancePharmacistScript);
+    entry(DARK_CAVE_BLACKTHORN_ENTRANCE, 1, DarkCaveBlackthornEntranceRevive);
+    entry(DARK_CAVE_BLACKTHORN_ENTRANCE, 2, DarkCaveBlackthornEntranceTMSnore);
+
+    entry(DARK_CAVE_VIOLET_ENTRANCE, 0, DarkCaveVioletEntrancePotion);
+    entry(DARK_CAVE_VIOLET_ENTRANCE, 1, DarkCaveVioletEntranceRock);
+    entry(DARK_CAVE_VIOLET_ENTRANCE, 2, DarkCaveVioletEntranceRock);
+    entry(DARK_CAVE_VIOLET_ENTRANCE, 3, DarkCaveVioletEntranceRock);
+    entry(DARK_CAVE_VIOLET_ENTRANCE, 4, DarkCaveVioletEntranceRock);
+    entry(DARK_CAVE_VIOLET_ENTRANCE, 5, DarkCaveVioletEntranceFullHeal);
+    entry(DARK_CAVE_VIOLET_ENTRANCE, 6, DarkCaveVioletEntranceHyperPotion);
+    entry(DARK_CAVE_VIOLET_ENTRANCE, 7, DarkCaveVioletEntranceDireHit);
 }
 
 const void* GetRealScriptPointer(uint8_t group, uint8_t map, uint8_t index) {

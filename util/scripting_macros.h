@@ -32,6 +32,7 @@
 #define pokepic(_p)                 SCRIPT_EVCMD(Script_pokepic_Conv, _p)
 #define closepokepic                SCRIPT_EVCMD(Script_closepokepic_Conv)
 #define verticalmenu                SCRIPT_EVCMD(Script_verticalmenu_Conv)
+#define _2dmenu                     SCRIPT_EVCMD(Script__2dmenu_Conv)
 #define verbosegiveitem(_i, _q)     SCRIPT_EVCMD(Script_verbosegiveitem_Conv, _i, _q)
 #define itemnotify                  SCRIPT_EVCMD(Script_itemnotify_Conv)
 #define pocketisfull                SCRIPT_EVCMD(Script_pocketisfull_Conv)

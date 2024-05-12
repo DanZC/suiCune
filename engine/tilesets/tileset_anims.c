@@ -949,10 +949,10 @@ void AnimateLavaBubbleTile2(uint8_t* de){
 }
 
 const char* LavaBubbleTileFrames[] = {
-    "gfx/tilesets/lava/1.2bpp",
-    "gfx/tilesets/lava/2.2bpp",
-    "gfx/tilesets/lava/3.2bpp",
-    "gfx/tilesets/lava/4.2bpp",
+    "gfx/tilesets/lava/1.png",
+    "gfx/tilesets/lava/2.png",
+    "gfx/tilesets/lava/3.png",
+    "gfx/tilesets/lava/4.png",
 };
 
 //  Input de points to the destination in VRAM, then the source tile frames

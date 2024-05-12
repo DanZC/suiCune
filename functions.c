@@ -4887,6 +4887,11 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(Route32RuinsOfAlphGatePokefanMScript);
     CONVERTED_SCRIPT(Route32RuinsOfAlphGateYoungsterScript);
 
+    // maps/Route32Pokecenter1F.c
+    CONVERTED_SCRIPT(Route32Pokecenter1FNurseScript);
+    CONVERTED_SCRIPT(Route32Pokecenter1FFishingGuruScript);
+    CONVERTED_SCRIPT(Route32Pokecenter1FCooltrainerFScript);
+
     // maps/CherrygroveEvolutionSpeechHouse.c
     CONVERTED_SCRIPT(CherrygroveEvolutionSpeechHouseLassScript);
     CONVERTED_SCRIPT(CherrygroveEvolutionSpeechHouseYoungsterScript);
@@ -4943,6 +4948,31 @@ void init_function_pointers(void) {
     // maps/PlayersHouse1F.c
     CONVERTED_SCRIPT(MomScript);
     CONVERTED_SCRIPT(NeighborScript);
+
+    // maps/VioletPokecenter1F.c
+    CONVERTED_SCRIPT(VioletPokecenterNurse);
+    CONVERTED_SCRIPT(VioletPokecenter1FGameboyKidScript);
+    CONVERTED_SCRIPT(VioletPokecenter1FGentlemanScript);
+    CONVERTED_SCRIPT(VioletPokecenter1FYoungsterScript);
+    CONVERTED_SCRIPT(VioletPokecenter1F_ElmsAideScript);
+
+    // maps/VioletKylesHouse.c
+    CONVERTED_SCRIPT(VioletKylesHousePokefanMScript);
+    CONVERTED_SCRIPT(Kyle);
+
+    // maps/EarlsPokemonAcedemy.c
+    CONVERTED_SCRIPT(AcademyEarl);
+    CONVERTED_SCRIPT(EarlsPokemonAcademyYoungster1Script);
+    CONVERTED_SCRIPT(EarlsPokemonAcademyGameboyKid1Script);
+    CONVERTED_SCRIPT(EarlsPokemonAcademyGameboyKid2Script);
+    CONVERTED_SCRIPT(EarlsPokemonAcademyYoungster2Script);
+    CONVERTED_SCRIPT(AcademyNotebook);
+
+    // maps/VioletGym.c
+    CONVERTED_SCRIPT(VioletGymFalknerScript);
+    CONVERTED_SCRIPT(TrainerBirdKeeperRod);
+    CONVERTED_SCRIPT(TrainerBirdKeeperAbe);
+    CONVERTED_SCRIPT(VioletGymGuideScript);
 
     // maps/SproutTower1F.c
     CONVERTED_SCRIPT(SproutTower1FSage1Script);
@@ -5009,6 +5039,21 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(UnionCaveB2FElixer);
     CONVERTED_SCRIPT(UnionCaveB2FHyperPotion);
     CONVERTED_SCRIPT(UnionCaveLapras);
+
+    // maps/DarkCaveBlackthornEntrance.c
+    CONVERTED_SCRIPT(DarkCaveBlackthornEntrancePharmacistScript);
+    CONVERTED_SCRIPT(DarkCaveBlackthornEntranceRevive);
+    CONVERTED_SCRIPT(DarkCaveBlackthornEntranceTMSnore);
+
+    // maps/DarkCaveVioletEntrance.c
+    CONVERTED_SCRIPT(DarkCaveVioletEntrancePotion);
+    CONVERTED_SCRIPT(DarkCaveVioletEntranceRock);
+    CONVERTED_SCRIPT(DarkCaveVioletEntranceRock);
+    CONVERTED_SCRIPT(DarkCaveVioletEntranceRock);
+    CONVERTED_SCRIPT(DarkCaveVioletEntranceRock);
+    CONVERTED_SCRIPT(DarkCaveVioletEntranceFullHeal);
+    CONVERTED_SCRIPT(DarkCaveVioletEntranceHyperPotion);
+    CONVERTED_SCRIPT(DarkCaveVioletEntranceDireHit);
 
     // engine/events/overworld.c
     // REDIRECTED(Script_WaterfallFromMenu);

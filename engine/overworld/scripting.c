@@ -1048,6 +1048,22 @@ ok:
 
 }
 
+void Script__2dmenu_Conv(script_s* s){
+    (void)s;
+    // LD_A_addr(wScriptBank);
+    // LD_HL(mv_2DMenu);
+    u8_flag_s res = v_2DMenu_Conv();
+    // RST(aFarCall);
+    // LD_A_addr(wMenuCursorPosition);
+    // IF_NC goto ok;
+    // XOR_A_A;
+
+// ok:
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = (res.flag)? 0: res.a;
+    // RET;
+}
+
 void Script_battletowertext(void){
     CALL(aSetUpTextbox);
     CALL(aGetScriptByte);

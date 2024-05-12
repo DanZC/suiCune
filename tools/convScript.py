@@ -28,6 +28,7 @@ commands = {
     'pokepic': Cmd('pokepic', ['species']),
     'closepokepic': Cmd('closepokepic', []),
     'verticalmenu': Cmd('verticalmenu', []),
+    '_2dmenu': Cmd('_2dmenu', []),
     'verbosegiveitem': Cmd('verbosegiveitem', ['item', 'count']),
     'itemnotify': Cmd('itemnotify', []),
     'pocketisfull': Cmd('pocketisfull', []),
