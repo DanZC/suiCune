@@ -6008,10 +6008,10 @@ CONVERTED(v_AnimateTileset);
     CONVERTED(v_ReturnToBattle_UseBall);
 
     // engine/battle_anims/helpers.c
-    // REDIRECTED(ReinitBattleAnimFrameset);
-    // REDIRECTED(GetBattleAnimFrame);
-    // REDIRECTED(GetBattleAnimOAMPointer);
-    // REDIRECTED(LoadBattleAnimGFX);
+    // CONVERTED(ReinitBattleAnimFrameset);
+    // CONVERTED(GetBattleAnimFrame);
+    // CONVERTED(GetBattleAnimOAMPointer);
+    // CONVERTED(LoadBattleAnimGFX);
 
     // engine/battle_anims/pokeball_wobble.c
     // CONVERTED(GetPokeBallWobble);
@@ -6049,4 +6049,50 @@ CONVERTED(v_AnimateTileset);
 
     // engine/events/card_key.c
     // CONVERTED(v_CardKey);
+
+    // engine/battle/move_effects/sketch.c
+    // CONVERTED(BattleCommand_Sketch);
+
+    // engine/battle/move_effects/transform.c
+    // CONVERTED(BattleCommand_Transform);
+    // CONVERTED(BattleSideCopy);
+
+    // engine/events/prof_oaks_pc.c
+    // CONVERTED(FindOakRating);
+    // CONVERTED(OakRating11);
+    // CONVERTED(OakPCText4);
+    // CONVERTED(Rate);
+    // CONVERTED(OakRating12);
+    // CONVERTED(OakRating03);
+    CONVERTED(ProfOaksPCBoot);
+    // CONVERTED(OakRating09);
+    // CONVERTED(OakPCText2);
+    // CONVERTED(OakRating15);
+    // CONVERTED(OakRating14);
+    // CONVERTED(OakRating17);
+    // CONVERTED(OakRating02);
+    // CONVERTED(OakRating04);
+    // CONVERTED(OakRating18);
+    // CONVERTED(OakRating10);
+    // CONVERTED(OakPCText3);
+    // CONVERTED(OakRating19);
+    // CONVERTED(OakPCText1);
+    // CONVERTED(OakRating06);
+    // CONVERTED(OakRating13);
+    // CONVERTED(OakRating16);
+    // CONVERTED(OakRating08);
+    CONVERTED(ProfOaksPCRating);
+    // CONVERTED(OakRating05);
+    // CONVERTED(OakRating07);
+    CONVERTED(ProfOaksPC);
+    // CONVERTED(OakRating01);
+
+    // engine/events/squirtbottle.c
+    CONVERTED(v_Squirtbottle);
+
+    // engine/events/checkforhiddenitems.c
+    // CONVERTED(CheckForHiddenItems);
+
+    // engine/events/itemfinder.c
+    CONVERTED(ItemFinder);
 }

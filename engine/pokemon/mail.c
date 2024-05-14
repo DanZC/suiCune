@@ -400,14 +400,15 @@ done:
 
 }
 
+//  return false (z) if no mail
 bool InitMail_Conv(void){
-//  return z if no mail
     // LD_A(BANK(sMailboxCount));
     // CALL(aOpenSRAM);
     OpenSRAM_Conv(MBANK(sMailboxCount));
     // LD_A_addr(sMailboxCount);
     uint8_t mailboxCount = gb_read(sMailboxCount);
     // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
 
 //  initialize wMailboxCount from sMailboxCount
     // LD_HL(wMailboxCount);

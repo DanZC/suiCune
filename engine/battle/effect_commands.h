@@ -240,6 +240,7 @@ void BattleCommand_MoveDelay(void);
 void BattleCommand_ClearText(void);
 void SkipToBattleCommand(uint8_t b);
 void GetMoveAttr(void);
+const struct Move* GetMoveAttr_Conv(move_t a);
 void GetMoveData(void);
 void GetMoveData_Conv(struct Move* de, move_t a);
 void GetMoveByte(void);
@@ -247,6 +248,7 @@ void DisappearUser(void);
 void AppearUserLowerSub(void);
 void AppearUserRaiseSub(void);
 void v_CheckBattleScene(void);
+bool v_CheckBattleScene_Conv(void);
 extern struct BattleCmdState gBattleCmdState;
 //#include "data/moves/critical_hit_moves.h"
 //#include "data/battle/critical_hit_chances.h"
@@ -263,7 +265,7 @@ extern struct BattleCmdState gBattleCmdState;
 #include "./move_effects/snore.h"
 #include "./move_effects/conversion2.h"
 #include "./move_effects/lock_on.h"
-//#include "engine/battle/move_effects/sketch.h"
+#include "./move_effects/sketch.h"
 #include "./move_effects/sleep_talk.h"
 #include "./move_effects/destiny_bond.h"
 #include "./move_effects/spite.h"
@@ -283,7 +285,7 @@ extern struct BattleCmdState gBattleCmdState;
 #include "./move_effects/disable.h"
 #include "./move_effects/pay_day.h"
 #include "./move_effects/conversion.h"
-//#include "engine/battle/move_effects/transform.h"
+#include "./move_effects/transform.h"
 #include "./move_effects/selfdestruct.h"
 #include "./move_effects/mirror_move.h"
 #include "./move_effects/metronome.h"

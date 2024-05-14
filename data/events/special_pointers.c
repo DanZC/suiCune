@@ -11,6 +11,7 @@
 #include "../../engine/events/magikarp.h"
 #include "../../engine/events/heal_machine_anim.h"
 #include "../../engine/events/mom.h"
+#include "../../engine/events/prof_oaks_pc.h"
 #include "../../engine/overworld/wildmons.h"
 #include "../../engine/overworld/overworld.h"
 #include "../../engine/overworld/warp_connection.h"
@@ -126,7 +127,7 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(YoungerHaircutBrother),
     // add_special(DaisysGrooming),
     add_special(PlayCurMonCry),
-    // add_special(ProfOaksPCBoot),
+    add_special(ProfOaksPCBoot),
     // add_special(GameboyCheck),
     // add_special(TrainerHouse),
     // add_special(PhotoStudio),

@@ -19,9 +19,9 @@ void ConsumeHeldItem(void){
         bmon = &wram->wEnemyMon;
         // LD_A_addr(wCurOTMon);
         curMon = wram->wCurOTMon;
+        // IF_Z goto theirturn;
     }
     else {
-        // IF_Z goto theirturn;
         // LD_HL(wPartyMon1Item);
         pmon = wram->wPartyMon;
         // LD_DE(wBattleMonItem);

@@ -196,6 +196,8 @@ extern uint8_t gCurMapCallbackCount;
 extern const struct MapCallback* gCurMapCallbacksPointer;
 extern uint8_t gCurMapSceneScriptCount;
 extern const Script_fn_t* gCurMapSceneScriptsPointer;
+extern uint8_t gCurMapBGEventCount;
+extern const struct BGEvent* gCurMapBGEventsPointer;
 extern uint8_t gCurMapObjectEventCount;
 extern const struct ObjEvent* gCurMapObjectEventsPointer;
 

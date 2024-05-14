@@ -1,5 +1,6 @@
 #include "../../constants.h"
 #include "pokecenter_pc.h"
+#include "prof_oaks_pc.h"
 #include "../../home/menu.h"
 #include "../../home/audio.h"
 #include "../../home/tilemap.h"
@@ -220,7 +221,7 @@ void OaksPC(void){
     // CALL(aPC_DisplayText);
     PC_DisplayText_Conv(PokecenterOaksPCText);
     // FARCALL(aProfOaksPC);
-    SafeCallGBAuto(aProfOaksPC);
+    ProfOaksPC();
     // AND_A_A;
     // RET;
 }

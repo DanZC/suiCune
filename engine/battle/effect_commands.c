@@ -11148,7 +11148,7 @@ uint16_t GetItemHeldEffect_Conv(item_t b){
     // CALL(aGetFarWord);
     // LD_B_L;
     // LD_C_H;
-    uint16_t bc = (ItemAttributes[b - 1].effect << 8) | ItemAttributes[b - 1].param;
+    uint16_t bc = (ItemAttributes[b].effect << 8) | ItemAttributes[b].param;
     // POP_HL;
     // RET;
     return bc;
@@ -11411,6 +11411,17 @@ void GetMoveAttr(void){
 
 }
 
+//  Assuming hl = Moves + x, return attribute x of move a.
+const struct Move* GetMoveAttr_Conv(move_t a){
+    // PUSH_BC;
+    // LD_BC(MOVE_LENGTH);
+    // CALL(aAddNTimes);
+    // CALL(aGetMoveByte);
+    // POP_BC;
+    // RET;
+    return Moves + a;
+}
+
 void GetMoveData(void){
 //  Copy move struct a to de.
     LD_HL(mMoves);
@@ -11468,4 +11479,18 @@ void v_CheckBattleScene(void){
     REG_F_C = CheckBattleScene_Conv()? 0: 1;
     RET;
 
+}
+
+//  Checks the options.  Returns true if battle animations are disabled.
+bool v_CheckBattleScene_Conv(void){
+    // PUSH_HL;
+    // PUSH_DE;
+    // PUSH_BC;
+    // FARCALL(aCheckBattleScene);
+    // POP_BC;
+    // POP_DE;
+    // POP_HL;
+    // REG_F_C = CheckBattleScene_Conv()? 0: 1;
+    // RET;
+    return CheckBattleScene_Conv()? false: true;
 }

@@ -2,6 +2,19 @@ import sys
 import os.path as fs
 from glob import glob
 
+skip_files = [
+    'data/events/pokedex_ratings.asm',
+    'data/items/mom_phone.asm',
+    'data/maps/map_data.asm',
+    'data/maps/scripts.asm',
+    'data/maps/sgb_roof_pal_inds.asm',
+    'data/moves/effects_pointers.asm',
+    'data/moves/grammar.asm',
+    'data/text/common.asm',
+    'data/trainers/party_pointers.asm',
+    'engine/overworld/map_object_action.asm'
+]
+
 # Counts the number of asm files and how many are converted in each directory.
 
 def count_dir(dir):
@@ -9,6 +22,8 @@ def count_dir(dir):
     file_count = 0
     for path in glob(f'{dir}/*.asm'):
         if path.rsplit('\\', maxsplit=1)[1].startswith('unused_'):
+            continue
+        if path.replace('\\', '/') in skip_files:
             continue
         if fs.isfile(path.replace('.asm', '.c')):
             converted_count += 1
