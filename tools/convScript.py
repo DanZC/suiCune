@@ -30,6 +30,7 @@ commands = {
     'verticalmenu': Cmd('verticalmenu', []),
     '_2dmenu': Cmd('_2dmenu', []),
     'verbosegiveitem': Cmd('verbosegiveitem', ['item', 'count']),
+    'verbosegiveitemvar': Cmd('verbosegiveitemvar', ['item', 'var']),
     'itemnotify': Cmd('itemnotify', []),
     'pocketisfull': Cmd('pocketisfull', []),
     'specialsound': Cmd('specialsound', []),

@@ -115,7 +115,7 @@
 #include "engine/battle/returntobattle_useball.h"
 #include "engine/battle/consume_held_item.h"
 //#include "data/moves/effects.h"
-//#include "engine/events/kurt_selectquantity_interpretjoypad.h"
+#include "engine/events/kurt_selectquantity_interpretjoypad.h"
 
 // SECTION "bankA", ROMX
 
@@ -269,7 +269,7 @@
 
 // SECTION "Crystal Features 2", ROMX
 
-//#include "engine/events/kurt.h"
+#include "engine/events/kurt.h"
 #include "engine/gfx/player_gfx.h"
 //#include "mobile/mobile_22.h"
 #include "engine/events/unown_walls.h"

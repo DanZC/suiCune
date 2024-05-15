@@ -1158,6 +1158,41 @@ ok2:
 
 }
 
+void Script_verbosegiveitemvar_Conv(script_s* s, item_t item, uint8_t action){
+    // CALL(aGetScriptByte);
+    // CP_A(ITEM_FROM_MEM);
+    // IF_NZ goto ok;
+    // LD_A_addr(wScriptVar);
+
+// ok:
+    // LD_addr_A(wCurItem);
+    wram->wCurItem = (item != ITEM_FROM_MEM)? item: wram->wScriptVar;
+    // CALL(aGetScriptByte);
+    // CALL(aGetVarAction);
+    // LD_A_de;
+    // LD_addr_A(wItemQuantityChange);
+    wram->wItemQuantityChange = *GetVarAction_Conv(action);
+    // LD_HL(wNumItems);
+    // CALL(aReceiveItem);
+    bool ok = ReceiveItem_Conv((item_pocket_s*)&wram->wNumItems, wram->wCurItem, wram->wItemQuantityChange);
+    // LD_A(TRUE);
+    // IF_C goto ok2;
+    // XOR_A_A;
+
+// ok2:
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = (ok)? TRUE: FALSE;
+    // CALL(aCurItemName);
+    // LD_DE(wStringBuffer1);
+    // LD_A(STRING_BUFFER_4);
+    // CALL(aCopyConvertedText);
+    CopyConvertedText_Conv(STRING_BUFFER_4, CurItemName_Conv(wram->wCurItem));
+    // LD_B(BANK(aGiveItemScript));
+    // LD_DE(mGiveItemScript);
+    // JP(mScriptCall);
+    Script_CallScript(s, GiveItemScript);
+}
+
 void Script_itemnotify(void){
     CALL(aGetPocketName);
     CALL(aCurItemName);

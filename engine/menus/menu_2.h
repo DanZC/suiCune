@@ -17,4 +17,5 @@ void StartMenu_PrintSafariGameStatus(void);
 void StartMenu_DrawBugContestStatusBox(void);
 void StartMenu_PrintBugContestStatus(void);
 void FindApricornsInBag(void);
+bool FindApricornsInBag_Conv(void);
 //#include "data/items/apricorn_balls.h"

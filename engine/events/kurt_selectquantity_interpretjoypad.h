@@ -1,0 +1,1 @@
+u8_flag_s Kurt_SelectQuantity_InterpretJoypad(void);

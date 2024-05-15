@@ -1,0 +1,15 @@
+void Kurt_PrintTextWhichApricorn(void);
+void Kurt_PrintTextHowMany(void);
+void SelectApricornForKurt(void);
+void Kurt_SelectApricorn(void);
+uint8_t Kurt_SelectApricorn_Conv(void);
+void Kurt_SelectQuantity(void);
+bool Kurt_SelectQuantity_Conv(void);
+void PlaceApricornQuantity(void);
+void Kurt_GetQuantityOfApricorn(void);
+uint8_t Kurt_GetQuantityOfApricorn_Conv(item_t apricorn);
+void Kurt_GiveUpSelectedQuantityOfSelectedApricorn(void);
+void Kurt_GetAddressOfApricornQuantity(void);
+uint8_t Kurt_GetAddressOfApricornQuantity_Conv(uint8_t a);
+void Kurt_GetRidOfItem(void);
+void Kurt_GetRidOfItem_Conv(void);

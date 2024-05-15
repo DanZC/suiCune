@@ -84,6 +84,10 @@ map_attributes(VioletCity, VIOLET_CITY, 0x05,
     connection(VIOLET_CITY, west, Route36, ROUTE_36, 0)
     connection(VIOLET_CITY, east, Route31, ROUTE_31, 9));
 
+map_attributes(AzaleaTown, AZALEA_TOWN, 0x05,
+    connection(AZALEA_TOWN, west, Route34, ROUTE_34, -18)
+    connection(AZALEA_TOWN, east, Route33, ROUTE_33, 0));
+
 map_attributes(Route27, ROUTE_27, 0x35,
     connection(ROUTE_27, west, NewBarkTown, NEW_BARK_TOWN, 0)
     connection(ROUTE_27, east, Route26, ROUTE_26, -45));
@@ -108,6 +112,10 @@ map_attributes(Route32, ROUTE_32, 0x05,
 map_attributes(Route33, ROUTE_33, 0x05,
     connection(ROUTE_33, north, Route32, ROUTE_32, 0)
     connection(ROUTE_33, west, AzaleaTown, AZALEA_TOWN, 0));
+
+map_attributes(Route34, ROUTE_34, 0x05,
+    connection(ROUTE_34, north, GoldenrodCity, GOLDENROD_CITY, -5)
+    connection(ROUTE_34, east, AzaleaTown, AZALEA_TOWN, 18));
 
 map_attributes(Route35, ROUTE_35, 0x05,
     connection(ROUTE_35, north, Route36, ROUTE_36, 0)
@@ -166,8 +174,8 @@ map_attributes(RuinsOfAlphResearchCenter, RUINS_OF_ALPH_RESEARCH_CENTER, 0x00, 0
 map_attributes(UnionCave1F, UNION_CAVE_1F, 0x09, 0);
 map_attributes(UnionCaveB1F, UNION_CAVE_B1F, 0x09, 0);
 map_attributes(UnionCaveB2F, UNION_CAVE_B2F, 0x09, 0);
-// map_attributes(SlowpokeWellB1F, SLOWPOKE_WELL_B1F, 0x09, 0);
-// map_attributes(SlowpokeWellB2F, SLOWPOKE_WELL_B2F, 0x09, 0);
+map_attributes(SlowpokeWellB1F, SLOWPOKE_WELL_B1F, 0x09, 0);
+map_attributes(SlowpokeWellB2F, SLOWPOKE_WELL_B2F, 0x09, 0);
 // map_attributes(OlivineLighthouse1F, OLIVINE_LIGHTHOUSE_1F, 0x00, 0);
 // map_attributes(OlivineLighthouse2F, OLIVINE_LIGHTHOUSE_2F, 0x00, 0);
 // map_attributes(OlivineLighthouse3F, OLIVINE_LIGHTHOUSE_3F, 0x00, 0);
@@ -178,7 +186,7 @@ map_attributes(UnionCaveB2F, UNION_CAVE_B2F, 0x09, 0);
 // map_attributes(TeamRocketBaseB1F, TEAM_ROCKET_BASE_B1F, 0x00, 0);
 // map_attributes(TeamRocketBaseB2F, TEAM_ROCKET_BASE_B2F, 0x00, 0);
 // map_attributes(TeamRocketBaseB3F, TEAM_ROCKET_BASE_B3F, 0x00, 0);
-// map_attributes(IlexForest, ILEX_FOREST, 0x05, 0);
+map_attributes(IlexForest, ILEX_FOREST, 0x05, 0);
 // map_attributes(GoldenrodUnderground, GOLDENROD_UNDERGROUND, 0x00, 0);
 // map_attributes(GoldenrodUndergroundSwitchRoomEntrances, GOLDENROD_UNDERGROUND_SWITCH_ROOM_ENTRANCES, 0x00, 0);
 // map_attributes(GoldenrodDeptStoreB1F, GOLDENROD_DEPT_STORE_B1F, 0x00, 0);
@@ -263,11 +271,11 @@ map_attributes(DarkCaveBlackthornEntrance, DARK_CAVE_BLACKTHORN_ENTRANCE, 0x09, 
 // map_attributes(Route10Pokecenter2FBeta, ROUTE_10_POKECENTER_2F_BETA, 0x00, 0);
 // map_attributes(PowerPlant, POWER_PLANT, 0x00, 0);
 // map_attributes(BillsHouse, BILLS_HOUSE, 0x00, 0);
-// map_attributes(AzaleaPokecenter1F, AZALEA_POKECENTER_1F, 0x00, 0);
-// map_attributes(CharcoalKiln, CHARCOAL_KILN, 0x00, 0);
-// map_attributes(AzaleaMart, AZALEA_MART, 0x00, 0);
-// map_attributes(KurtsHouse, KURTS_HOUSE, 0x00, 0);
-// map_attributes(AzaleaGym, AZALEA_GYM, 0x00, 0);
+map_attributes(AzaleaPokecenter1F, AZALEA_POKECENTER_1F, 0x00, 0);
+map_attributes(CharcoalKiln, CHARCOAL_KILN, 0x00, 0);
+map_attributes(AzaleaMart, AZALEA_MART, 0x00, 0);
+map_attributes(KurtsHouse, KURTS_HOUSE, 0x00, 0);
+map_attributes(AzaleaGym, AZALEA_GYM, 0x00, 0);
 // map_attributes(LakeOfRageHiddenPowerHouse, LAKE_OF_RAGE_HIDDEN_POWER_HOUSE, 0x00, 0);
 // map_attributes(LakeOfRageMagikarpHouse, LAKE_OF_RAGE_MAGIKARP_HOUSE, 0x00, 0);
 // map_attributes(Route43MahoganyGate, ROUTE_43_MAHOGANY_GATE, 0x00, 0);
@@ -303,8 +311,8 @@ map_attributes(Route36RuinsOfAlphGate, ROUTE_36_RUINS_OF_ALPH_GATE, 0x00, 0);
 // map_attributes(GoldenrodGameCorner, GOLDENROD_GAME_CORNER, 0x00, 0);
 // map_attributes(GoldenrodPokecenter1F, GOLDENROD_POKECENTER_1F, 0x00, 0);
 // map_attributes(PokecomCenterAdminOfficeMobile, POKECOM_CENTER_ADMIN_OFFICE_MOBILE, 0x00, 0);
-// map_attributes(IlexForestAzaleaGate, ILEX_FOREST_AZALEA_GATE, 0x00, 0);
-// map_attributes(Route34IlexForestGate, ROUTE_34_ILEX_FOREST_GATE, 0x00, 0);
+map_attributes(IlexForestAzaleaGate, ILEX_FOREST_AZALEA_GATE, 0x00, 0);
+map_attributes(Route34IlexForestGate, ROUTE_34_ILEX_FOREST_GATE, 0x00, 0);
 // map_attributes(DayCare, DAY_CARE, 0x00, 0);
 // map_attributes(VermilionFishingSpeechHouse, VERMILION_FISHING_SPEECH_HOUSE, 0x00, 0);
 // map_attributes(VermilionPokecenter1F, VERMILION_POKECENTER_1F, 0x00, 0);

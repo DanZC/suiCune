@@ -4816,6 +4816,19 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(VioletCityPPUp);
     CONVERTED_SCRIPT(VioletCityRareCandy);
 
+    // maps/AzaleaTown.c
+    CONVERTED_SCRIPT(AzaleaTownRocket1Script);
+    CONVERTED_SCRIPT(AzaleaTownGrampsScript);
+    CONVERTED_SCRIPT(AzaleaTownTeacherScript);
+    CONVERTED_SCRIPT(AzaleaTownYoungsterScript);
+    CONVERTED_SCRIPT(AzaleaTownSlowpokeScript);
+    CONVERTED_SCRIPT(AzaleaTownSlowpokeScript);
+    CONVERTED_SCRIPT(AzaleaTownSlowpokeScript);
+    CONVERTED_SCRIPT(AzaleaTownSlowpokeScript);
+    CONVERTED_SCRIPT(WhiteApricornTree);
+    CONVERTED_SCRIPT(AzaleaTownRocket2Script);
+    CONVERTED_SCRIPT(AzaleaTownKurtScript);
+
     // maps/Route29.c
     CONVERTED_SCRIPT(Route29Tutorial1);
     CONVERTED_SCRIPT(Route29Tutorial2);
@@ -4874,6 +4887,21 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(TrainerHikerAnthony);
     CONVERTED_SCRIPT(Route33LassScript);
     CONVERTED_SCRIPT(Route33FruitTree);
+
+    // maps/Route34.c
+    CONVERTED_SCRIPT(TrainerCamperTodd1);
+    CONVERTED_SCRIPT(TrainerYoungsterSamuel);
+    CONVERTED_SCRIPT(TrainerYoungsterIan);
+    CONVERTED_SCRIPT(TrainerPicnickerGina1);
+    CONVERTED_SCRIPT(OfficerKeithScript);
+    CONVERTED_SCRIPT(TrainerPokefanmBrandon);
+    CONVERTED_SCRIPT(DayCareManScript_Outside);
+    CONVERTED_SCRIPT(DayCareMon1Script);
+    CONVERTED_SCRIPT(DayCareMon2Script);
+    CONVERTED_SCRIPT(TrainerCooltrainerfIrene);
+    CONVERTED_SCRIPT(TrainerCooltrainerfJenn);
+    CONVERTED_SCRIPT(TrainerCooltrainerfKate);
+    CONVERTED_SCRIPT(Route34Nugget);
 
     // maps/Route30BerryHouse.c
     CONVERTED_SCRIPT(Route30BerryHousePokefanMScript);
@@ -4956,6 +4984,11 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(VioletPokecenter1FYoungsterScript);
     CONVERTED_SCRIPT(VioletPokecenter1F_ElmsAideScript);
 
+    // maps/VioletMart.c
+    CONVERTED_SCRIPT(VioletMartClerkScript);
+    CONVERTED_SCRIPT(VioletMartGrannyScript);
+    CONVERTED_SCRIPT(VioletMartCooltrainerMScript);
+
     // maps/VioletKylesHouse.c
     CONVERTED_SCRIPT(VioletKylesHousePokefanMScript);
     CONVERTED_SCRIPT(Kyle);
@@ -4973,6 +5006,38 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(TrainerBirdKeeperRod);
     CONVERTED_SCRIPT(TrainerBirdKeeperAbe);
     CONVERTED_SCRIPT(VioletGymGuideScript);
+
+    // maps/AzaleaPokecenter1F.c
+    CONVERTED_SCRIPT(AzaleaPokecenter1FNurseScript);
+    CONVERTED_SCRIPT(AzaleaPokecenter1FGentlemanScript);
+    CONVERTED_SCRIPT(AzaleaPokecenter1FFishingGuruScript);
+    CONVERTED_SCRIPT(AzaleaPokecenter1FPokefanFScript);
+
+    // maps/AzaleaMart.c
+    CONVERTED_SCRIPT(AzaleaMartClerkScript);
+    CONVERTED_SCRIPT(AzaleaMartCooltrainerMScript);
+    CONVERTED_SCRIPT(AzaleaMartBugCatcherScript);
+
+    // maps/AzaleaGym.c
+    CONVERTED_SCRIPT(AzaleaGymBugsyScript);
+    CONVERTED_SCRIPT(TrainerBugCatcherBenny);
+    CONVERTED_SCRIPT(TrainerBugCatcherAl);
+    CONVERTED_SCRIPT(TrainerBugCatcherJosh);
+    CONVERTED_SCRIPT(TrainerTwinsAmyandmay1);
+    CONVERTED_SCRIPT(TrainerTwinsAmyandmay2);
+    CONVERTED_SCRIPT(AzaleaGymGuideScript);
+
+    // maps/KurtsHouse.c
+    CONVERTED_SCRIPT(Kurt1);
+    CONVERTED_SCRIPT(KurtsGranddaughter1);
+    CONVERTED_SCRIPT(KurtsHouseSlowpoke);
+    CONVERTED_SCRIPT(Kurt2);
+    CONVERTED_SCRIPT(KurtsGranddaughter2);
+
+    // maps/CharcoalKiln.c
+    CONVERTED_SCRIPT(CharcoalKilnBoss);
+    CONVERTED_SCRIPT(CharcoalKilnApprentice);
+    CONVERTED_SCRIPT(CharcoalKilnFarfetchd);
 
     // maps/SproutTower1F.c
     CONVERTED_SCRIPT(SproutTower1FSage1Script);
@@ -5039,6 +5104,37 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(UnionCaveB2FElixer);
     CONVERTED_SCRIPT(UnionCaveB2FHyperPotion);
     CONVERTED_SCRIPT(UnionCaveLapras);
+
+    // maps/SlowpokeWellB1F.c
+    CONVERTED_SCRIPT(TrainerGruntM29);
+    CONVERTED_SCRIPT(TrainerGruntM1);
+    CONVERTED_SCRIPT(TrainerGruntM2);
+    CONVERTED_SCRIPT(TrainerGruntF1);
+    CONVERTED_SCRIPT(SlowpokeWellB1FSlowpokeWithMailScript);
+    CONVERTED_SCRIPT(SlowpokeWellB1FTaillessSlowpokeScript);
+    CONVERTED_SCRIPT(SlowpokeWellB1FKurtScript);
+    CONVERTED_SCRIPT(SlowpokeWellB1FBoulder);
+    CONVERTED_SCRIPT(SlowpokeWellB1FSuperPotion);
+
+    // maps/SlowpokeWellB2F.c
+    CONVERTED_SCRIPT(SlowpokeWellB2FGymGuideScript);
+    CONVERTED_SCRIPT(SlowpokeWellB2FTMRainDance);
+
+    // maps/IlexForest.c
+    CONVERTED_SCRIPT(IlexForestFarfetchdScript);
+    CONVERTED_SCRIPT(IlexForestCharcoalApprenticeScript);
+    CONVERTED_SCRIPT(IlexForestCharcoalMasterScript);
+    CONVERTED_SCRIPT(IlexForestHeadbuttGuyScript);
+    CONVERTED_SCRIPT(IlexForestRevive);
+    CONVERTED_SCRIPT(IlexForestLassScript);
+    CONVERTED_SCRIPT(TrainerBugCatcherWayne);
+    CONVERTED_SCRIPT(IlexForestXAttack);
+    CONVERTED_SCRIPT(IlexForestAntidote);
+    CONVERTED_SCRIPT(IlexForestEther);
+
+    // maps/IlexForestAzaleaGate.c
+    CONVERTED_SCRIPT(IlexForestAzaleaGateOfficerScript);
+    CONVERTED_SCRIPT(IlexForestAzaleaGateGrannyScript);
 
     // maps/DarkCaveBlackthornEntrance.c
     CONVERTED_SCRIPT(DarkCaveBlackthornEntrancePharmacistScript);
@@ -5546,7 +5642,7 @@ void init_function_pointers(void) {
     // REDIRECTED(PackFGFX);
 
     // engine/items/update_item_description.c
-    // REDIRECTED(UpdateItemDescription);
+    // CONVERTED(UpdateItemDescription);
 
     // engine/items/print_item_description.c
     // REDIRECTED(PrintItemDescription);
@@ -6095,4 +6191,19 @@ CONVERTED(v_AnimateTileset);
 
     // engine/events/itemfinder.c
     CONVERTED(ItemFinder);
+
+    // engine/events/kurt.c
+    // REDIRECTED(Kurt_GetRidOfItem);
+    // REDIRECTED(Kurt_SelectApricorn);
+    // REDIRECTED(Kurt_SelectQuantity);
+    // CONVERTED(Kurt_PrintTextHowMany);
+    CONVERTED(SelectApricornForKurt);
+    // REDIRECTED(Kurt_GiveUpSelectedQuantityOfSelectedApricorn);
+    // REDIRECTED(Kurt_GetQuantityOfApricorn);
+    // CONVERTED(Kurt_PrintTextWhichApricorn);
+    // REDIRECTED(Kurt_GetAddressOfApricornQuantity);
+    // REDIRECTED(PlaceApricornQuantity);
+
+    // engine/events/kurt_selectquantity_interpretjoypad.c
+    // CONVERTED(Kurt_SelectQuantity_InterpretJoypad);
 }

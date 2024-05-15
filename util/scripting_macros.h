@@ -34,6 +34,7 @@
 #define verticalmenu                SCRIPT_EVCMD(Script_verticalmenu_Conv)
 #define _2dmenu                     SCRIPT_EVCMD(Script__2dmenu_Conv)
 #define verbosegiveitem(_i, _q)     SCRIPT_EVCMD(Script_verbosegiveitem_Conv, _i, _q)
+#define verbosegiveitemvar(_i,_v)   SCRIPT_EVCMD(Script_verbosegiveitemvar_Conv, _i, _v)
 #define itemnotify                  SCRIPT_EVCMD(Script_itemnotify_Conv)
 #define pocketisfull                SCRIPT_EVCMD(Script_pocketisfull_Conv)
 #define specialsound                SCRIPT_EVCMD(Script_specialsound_Conv)

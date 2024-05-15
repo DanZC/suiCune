@@ -5,6 +5,9 @@
 #include "../../home/print_text.h"
 #include "../../home/names.h"
 #include "../../home/pokemon.h"
+#include "../../home/copy.h"
+#include "../../home/item.h"
+#include "../../data/items/apricorn_balls.h"
 #include "../items/items.h"
 
 void PlaceMenuItemName(void){
@@ -362,6 +365,75 @@ addtobuffer:
     LD_hl_A;
     POP_HL;
     RET;
+
+// INCLUDE "data/items/apricorn_balls.asm"
+
+}
+
+static void FindApricornsInBag_addtobuffer(item_t a) {
+    // PUSH_HL;
+    // LD_HL(wKurtApricornCount);
+    // INC_hl;
+    // LD_E_hl;
+    // LD_D(0);
+    // ADD_HL_DE;
+    // LD_hl_A;
+    wram->wKurtApricornItems[wram->wKurtApricornCount++] = a;
+    // POP_HL;
+    // RET;
+}
+
+bool FindApricornsInBag_Conv(void){
+//  Checks the bag for Apricorns.
+    // LD_HL(wKurtApricornCount);
+    wram->wKurtApricornCount = 0;
+    // XOR_A_A;
+    // LD_hli_A;
+    //assert ['wKurtApricornCount + 1 == wKurtApricornItems'];
+    // DEC_A;
+    // LD_BC(10);
+    // CALL(aByteFill);
+    ByteFill_Conv2(wram->wKurtApricornItems, 10, 0xff);
+    // LD_HL(mApricornBalls);
+    const struct U8Item* hl = ApricornBalls;
+
+    uint8_t a;
+    while(1) {
+    // loop:
+        // LD_A_hl;
+        a = hl->value;
+        // CP_A(-1);
+        // IF_Z goto done;
+        if(a == 0xff) {
+        // done:
+            // LD_A_addr(wKurtApricornCount);
+            // AND_A_A;
+            // RET_NZ ;
+            if(wram->wKurtApricornCount != 0)
+                return true;
+            // SCF;
+            // RET;
+            return false;
+        }
+        // PUSH_HL;
+        // LD_addr_A(wCurItem);
+        wram->wCurItem = a;
+        // LD_HL(wNumItems);
+        // CALL(aCheckItem);
+        // POP_HL;
+        // IF_NC goto nope;
+        if(CheckItem_Conv(a, &wram->wNumItems)) {
+            // LD_A_hl;
+            // CALL(aFindApricornsInBag_addtobuffer);
+            FindApricornsInBag_addtobuffer(hl->item);
+        }
+
+    // nope:
+        // INC_HL;
+        // INC_HL;
+        hl++;
+        // goto loop;
+    }
 
 // INCLUDE "data/items/apricorn_balls.asm"
 

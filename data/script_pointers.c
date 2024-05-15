@@ -64,6 +64,19 @@ void PopulateMapScriptTable(void) {
     entry(VIOLET_CITY, 6, VioletCityPPUp);
     entry(VIOLET_CITY, 7, VioletCityRareCandy);
 
+    entry(AZALEA_TOWN, 0, AzaleaTownRocket1Script);
+    entry(AZALEA_TOWN, 1, AzaleaTownGrampsScript);
+    entry(AZALEA_TOWN, 2, AzaleaTownTeacherScript);
+    entry(AZALEA_TOWN, 3, AzaleaTownYoungsterScript);
+    entry(AZALEA_TOWN, 4, AzaleaTownSlowpokeScript);
+    entry(AZALEA_TOWN, 5, AzaleaTownSlowpokeScript);
+    entry(AZALEA_TOWN, 6, AzaleaTownSlowpokeScript);
+    entry(AZALEA_TOWN, 7, AzaleaTownSlowpokeScript);
+    entry(AZALEA_TOWN, 8, WhiteApricornTree);
+    entry(AZALEA_TOWN, 9, ObjectEvent);
+    entry(AZALEA_TOWN, 10, AzaleaTownRocket2Script);
+    entry(AZALEA_TOWN, 11, AzaleaTownKurtScript);
+
     entry(ROUTE_29, 0, CatchingTutorialDudeScript);
     entry(ROUTE_29, 1, Route29YoungsterScript);
     entry(ROUTE_29, 2, Route29TeacherScript);
@@ -132,6 +145,25 @@ void PopulateMapScriptTable(void) {
     entry(ROUTE_33, 1, Route33LassScript);
     entry(ROUTE_33, 2, Route33FruitTree);
 
+    entry(ROUTE_34, 0, TrainerCamperTodd1);
+    entry(ROUTE_34, 1, TrainerYoungsterSamuel);
+    entry(ROUTE_34, 2, TrainerYoungsterIan);
+    entry(ROUTE_34, 3, TrainerPicnickerGina1);
+    entry(ROUTE_34, 4, OfficerKeithScript);
+    entry(ROUTE_34, 5, TrainerPokefanmBrandon);
+    entry(ROUTE_34, 6, DayCareManScript_Outside);
+    entry(ROUTE_34, 7, DayCareMon1Script);
+    entry(ROUTE_34, 8, DayCareMon2Script);
+    entry(ROUTE_34, 9, TrainerCooltrainerfIrene);
+    entry(ROUTE_34, 10, TrainerCooltrainerfJenn);
+    entry(ROUTE_34, 11, TrainerCooltrainerfKate);
+    entry(ROUTE_34, 12, Route34Nugget);
+
+    entry(ROUTE_34_ILEX_FOREST_GATE, 0, Route34IlexForestGateTeacherScript);
+    entry(ROUTE_34_ILEX_FOREST_GATE, 1, Route34IlexForestGateButterfreeScript);
+    entry(ROUTE_34_ILEX_FOREST_GATE, 2, Route34IlexForestGateLassScript);
+    entry(ROUTE_34_ILEX_FOREST_GATE, 3, Route34IlexForestGateTeacherScript);
+
     entry(CHERRYGROVE_EVOLUTION_SPEECH_HOUSE, 0, CherrygroveEvolutionSpeechHouseLassScript);
     entry(CHERRYGROVE_EVOLUTION_SPEECH_HOUSE, 1, CherrygroveEvolutionSpeechHouseYoungsterScript);
 
@@ -187,6 +219,10 @@ void PopulateMapScriptTable(void) {
     entry(VIOLET_POKECENTER_1F, 3, VioletPokecenter1FYoungsterScript);
     entry(VIOLET_POKECENTER_1F, 4, VioletPokecenter1F_ElmsAideScript);
 
+    entry(VIOLET_MART, 0, VioletMartClerkScript);
+    entry(VIOLET_MART, 1, VioletMartGrannyScript);
+    entry(VIOLET_MART, 2, VioletMartCooltrainerMScript);
+
     entry(VIOLET_KYLES_HOUSE, 0, VioletKylesHousePokefanMScript);
     entry(VIOLET_KYLES_HOUSE, 1, Kyle);
 
@@ -201,6 +237,33 @@ void PopulateMapScriptTable(void) {
     entry(VIOLET_GYM, 1, TrainerBirdKeeperRod);
     entry(VIOLET_GYM, 2, TrainerBirdKeeperAbe);
     entry(VIOLET_GYM, 3, VioletGymGuideScript);
+
+    entry(AZALEA_POKECENTER_1F, 0, AzaleaPokecenter1FNurseScript);
+    entry(AZALEA_POKECENTER_1F, 1, AzaleaPokecenter1FGentlemanScript);
+    entry(AZALEA_POKECENTER_1F, 2, AzaleaPokecenter1FFishingGuruScript);
+    entry(AZALEA_POKECENTER_1F, 3, AzaleaPokecenter1FPokefanFScript);
+
+    entry(AZALEA_MART, 0, AzaleaMartClerkScript);
+    entry(AZALEA_MART, 1, AzaleaMartCooltrainerMScript);
+    entry(AZALEA_MART, 2, AzaleaMartBugCatcherScript);
+
+    entry(AZALEA_GYM, 0, AzaleaGymBugsyScript);
+    entry(AZALEA_GYM, 1, TrainerBugCatcherBenny);
+    entry(AZALEA_GYM, 2, TrainerBugCatcherAl);
+    entry(AZALEA_GYM, 3, TrainerBugCatcherJosh);
+    entry(AZALEA_GYM, 4, TrainerTwinsAmyandmay1);
+    entry(AZALEA_GYM, 5, TrainerTwinsAmyandmay2);
+    entry(AZALEA_GYM, 6, AzaleaGymGuideScript);
+
+    entry(KURTS_HOUSE, 0, Kurt1);
+    entry(KURTS_HOUSE, 1, KurtsGranddaughter1);
+    entry(KURTS_HOUSE, 2, KurtsHouseSlowpoke);
+    entry(KURTS_HOUSE, 3, Kurt2);
+    entry(KURTS_HOUSE, 4, KurtsGranddaughter2);
+
+    entry(CHARCOAL_KILN, 0, CharcoalKilnBoss);
+    entry(CHARCOAL_KILN, 1, CharcoalKilnApprentice);
+    entry(CHARCOAL_KILN, 2, CharcoalKilnFarfetchd);
 
     entry(SPROUT_TOWER_1F, 0, SproutTower1FSage1Script);
     entry(SPROUT_TOWER_1F, 1, SproutTower1FSage2Script);
@@ -259,6 +322,34 @@ void PopulateMapScriptTable(void) {
     entry(UNION_CAVE_B2F, 3, UnionCaveB2FElixer);
     entry(UNION_CAVE_B2F, 4, UnionCaveB2FHyperPotion);
     entry(UNION_CAVE_B2F, 5, UnionCaveLapras);
+
+    entry(SLOWPOKE_WELL_B1F, 0, TrainerGruntM29);
+    entry(SLOWPOKE_WELL_B1F, 1, TrainerGruntM1);
+    entry(SLOWPOKE_WELL_B1F, 2, TrainerGruntM2);
+    entry(SLOWPOKE_WELL_B1F, 3, TrainerGruntF1);
+    entry(SLOWPOKE_WELL_B1F, 4, SlowpokeWellB1FSlowpokeWithMailScript);
+    entry(SLOWPOKE_WELL_B1F, 5, SlowpokeWellB1FTaillessSlowpokeScript);
+    entry(SLOWPOKE_WELL_B1F, 6, SlowpokeWellB1FKurtScript);
+    entry(SLOWPOKE_WELL_B1F, 7, SlowpokeWellB1FBoulder);
+    entry(SLOWPOKE_WELL_B1F, 8, SlowpokeWellB1FSuperPotion);
+
+    entry(SLOWPOKE_WELL_B2F, 0, SlowpokeWellB2FGymGuideScript);
+    entry(SLOWPOKE_WELL_B2F, 1, SlowpokeWellB2FTMRainDance);
+
+    entry(ILEX_FOREST, 0, IlexForestFarfetchdScript);
+    entry(ILEX_FOREST, 1, IlexForestCharcoalApprenticeScript);
+    entry(ILEX_FOREST, 2, IlexForestCharcoalMasterScript);
+    entry(ILEX_FOREST, 3, IlexForestHeadbuttGuyScript);
+    entry(ILEX_FOREST, 4, IlexForestRevive);
+    entry(ILEX_FOREST, 5, ObjectEvent);
+    entry(ILEX_FOREST, 6, IlexForestLassScript);
+    entry(ILEX_FOREST, 7, TrainerBugCatcherWayne);
+    entry(ILEX_FOREST, 8, IlexForestXAttack);
+    entry(ILEX_FOREST, 9, IlexForestAntidote);
+    entry(ILEX_FOREST, 10, IlexForestEther);
+
+    entry(ILEX_FOREST_AZALEA_GATE, 0, IlexForestAzaleaGateOfficerScript);
+    entry(ILEX_FOREST_AZALEA_GATE, 1, IlexForestAzaleaGateGrannyScript);
 
     entry(DARK_CAVE_BLACKTHORN_ENTRANCE, 0, DarkCaveBlackthornEntrancePharmacistScript);
     entry(DARK_CAVE_BLACKTHORN_ENTRANCE, 1, DarkCaveBlackthornEntranceRevive);

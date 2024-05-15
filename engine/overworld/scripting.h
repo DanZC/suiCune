@@ -55,6 +55,7 @@ void Script_verbosegiveitem_Conv(script_s* s, item_t item, uint8_t quantity);
 void GiveItemScript_DummyFunction(void);
 bool GiveItemScript(script_s* s);
 void Script_verbosegiveitemvar(void);
+void Script_verbosegiveitemvar_Conv(script_s* s, item_t item, uint8_t action);
 void Script_itemnotify(void);
 void Script_itemnotify_Conv(script_s* s);
 void Script_pocketisfull(void);

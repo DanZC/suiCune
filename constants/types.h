@@ -1471,6 +1471,11 @@ typedef struct ItemPocket {
     item_pocket_en_s pocket[];
 } item_pocket_s;
 
+struct U8Item {
+    uint8_t value;
+    item_t item;
+};
+
 struct CoordsTileId
 {
     int8_t x;

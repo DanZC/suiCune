@@ -41,8 +41,8 @@
 #include "../../maps/UnionCave1F.h"
 #include "../../maps/UnionCaveB1F.h"
 #include "../../maps/UnionCaveB2F.h"
-// #include "../../maps/SlowpokeWellB1F.h"
-// #include "../../maps/SlowpokeWellB2F.h"
+#include "../../maps/SlowpokeWellB1F.h"
+#include "../../maps/SlowpokeWellB2F.h"
 // #include "../../maps/OlivineLighthouse1F.h"
 // #include "../../maps/OlivineLighthouse2F.h"
 // #include "../../maps/OlivineLighthouse3F.h"
@@ -66,8 +66,8 @@
 // #include "../../maps/OlivineLighthouse6F.h"
 // #include "../../maps/GoldenrodPokecenter1F.h"
 // #include "../../maps/PokecomCenterAdminOfficeMobile.h"
-// #include "../../maps/IlexForestAzaleaGate.h"
-// #include "../../maps/Route34IlexForestGate.h"
+#include "../../maps/IlexForestAzaleaGate.h"
+#include "../../maps/Route34IlexForestGate.h"
 // #include "../../maps/DayCare.h"
 
 
@@ -95,7 +95,7 @@
 // #include "../../maps/TeamRocketBaseB1F.h"
 // #include "../../maps/TeamRocketBaseB2F.h"
 // #include "../../maps/TeamRocketBaseB3F.h"
-// #include "../../maps/IlexForest.h"
+#include "../../maps/IlexForest.h"
 
 
 // SECTION "Map Scripts 7", ROMX
@@ -151,7 +151,7 @@
 
 // SECTION "Map Scripts 9", ROMX
 
-// #include "../../maps/Route34.h"
+#include "../../maps/Route34.h"
 #include "../../maps/ElmsLab.h"
 #include "../../maps/PlayersHouse1F.h"
 #include "../../maps/PlayersHouse2F.h"
@@ -320,11 +320,11 @@
 // #include "../../maps/DragonsDenB1F.h"
 // #include "../../maps/DragonShrine.h"
 // #include "../../maps/TohjoFalls.h"
-// #include "../../maps/AzaleaPokecenter1F.h"
-// #include "../../maps/CharcoalKiln.h"
-// #include "../../maps/AzaleaMart.h"
-// #include "../../maps/KurtsHouse.h"
-// #include "../../maps/AzaleaGym.h"
+#include "../../maps/AzaleaPokecenter1F.h"
+#include "../../maps/CharcoalKiln.h"
+#include "../../maps/AzaleaMart.h"
+#include "../../maps/KurtsHouse.h"
+#include "../../maps/AzaleaGym.h"
 
 
 // SECTION "Map Scripts 17", ROMX
@@ -380,7 +380,7 @@
 
 // SECTION "Map Scripts 19", ROMX
 
-// #include "../../maps/AzaleaTown.h"
+#include "../../maps/AzaleaTown.h"
 // #include "../../maps/GoldenrodCity.h"
 // #include "../../maps/SaffronCity.h"
 // #include "../../maps/MahoganyRedGyaradosSpeechHouse.h"

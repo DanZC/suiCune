@@ -12,6 +12,7 @@
 #include "../../engine/events/heal_machine_anim.h"
 #include "../../engine/events/mom.h"
 #include "../../engine/events/prof_oaks_pc.h"
+#include "../../engine/events/kurt.h"
 #include "../../engine/overworld/wildmons.h"
 #include "../../engine/overworld/overworld.h"
 #include "../../engine/overworld/warp_connection.h"
@@ -112,7 +113,7 @@ void (*const SpecialsPointers[])(void) = {
     add_special(CheckLuckyNumberShowFlag),
     add_special(ResetLuckyNumberShowFlag),
     // add_special(PrintTodaysLuckyNumber),
-    // add_special(SelectApricornForKurt),
+    add_special(SelectApricornForKurt),
     // add_special(NameRater),
     // add_special(DisplayLinkRecord),
     // add_special(GetFirstPokemonHappiness),
