@@ -37,11 +37,12 @@
 #include "../events/std_collision.h"
 #include "../events/overworld.h"
 #include "../events/hidden_item.h"
+#include "../menus/debug_field_menu.h"
 
 // INCLUDE "constants.asm"
 
 Script_fn_t gMapReentryScriptAddress;
-
+static bool DebugFieldMenuScript(script_s* s);
 
 // SECTION "Events", ROMX
 
@@ -1874,6 +1875,9 @@ u8_flag_s CheckMenuOW_Conv(void){
     // LDH_A_addr(hJoyPressed);
     uint8_t a = hram->hJoyPressed;
 
+    if(bit_test(a, SELECT_F) && bit_test(hram->hJoyDown, B_BUTTON_F)) {
+        return u8_flag(CallScript_Conv2(DebugFieldMenuScript), true);
+    }
     // BIT_A(SELECT_F);
     // IF_NZ goto Select;
     if(bit_test(a, SELECT_F)) {
@@ -1903,6 +1907,14 @@ u8_flag_s CheckMenuOW_Conv(void){
     // XOR_A_A;
     // RET;
     return u8_flag(0, false);
+}
+
+static bool DebugFieldMenuScript(script_s* s){
+    SCRIPT_BEGIN
+    //callasm ['SelectMenu']
+    DebugFieldMenu();
+    sjump(SelectMenuCallback)
+    SCRIPT_END
 }
 
 bool StartMenuScript(script_s* s){

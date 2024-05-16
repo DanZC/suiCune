@@ -76,7 +76,7 @@ void SpawnPlayer(void){
     // LDH_addr_A(hObjectStructIndex);
     // LD_DE(wObjectStructs);
     // CALL(aCopyMapObjectToObjectStruct);
-    CopyMapObjectToObjectStruct_Conv(wram->wObjectStruct, (struct MapObject*)wram_ptr(wMapObjects), PLAYER_OBJECT, PLAYER_OBJECT);
+    CopyMapObjectToObjectStruct_Conv(&wram->wPlayerStruct, bc, PLAYER_OBJECT, PLAYER_OBJECT);
     // LD_A(PLAYER);
     // LD_addr_A(wCenteredObject);
     wram->wCenteredObject = PLAYER;

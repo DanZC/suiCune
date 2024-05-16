@@ -140,6 +140,7 @@ void Pokegear_DummyFunction(void);
 void FlyMap(void);
 void Pokedex_GetArea(void);
 void TownMapBGUpdate(void);
+void TownMapBGUpdate_Conv(uint16_t hl);
 void FillJohtoMap(void);
 void FillJohtoMap_Conv(void);
 void FillKantoMap(void);
@@ -149,14 +150,16 @@ void FillTownMap_Conv(const uint8_t* map);
 void TownMapPals(void);
 void TownMapPals_Conv(void);
 void TownMapMon(void);
+struct SpriteAnim* TownMapMon_Conv(void);
 void TownMapPlayerIcon(void);
+struct SpriteAnim* TownMapPlayerIcon_Conv(uint8_t location);
 void LoadTownMapGFX(void);
 void LoadTownMapGFX_Conv(void);
 extern const char JohtoMap[];
 extern const char KantoMap[];
 void PokedexNestIconGFX(void);
 // void FlyMapLabelBorderGFX(void);
-void EntireFlyMap(void);
+uint8_t EntireFlyMap(void);
 //#include "gfx/pokegear/fast_ship.2bpp"
 //#include "gfx/pokegear/pokegear_sprites.2bpp.lz"
 //#include "gfx/pokegear/radio.tilemap.rle"

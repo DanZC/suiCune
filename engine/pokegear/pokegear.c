@@ -21,6 +21,8 @@
 #include "../overworld/landmarks.h"
 #include "../gfx/player_gfx.h"
 #include "../gfx/sprites.h"
+#include "../gfx/mon_icons.h"
+#include "../../data/maps/flypoints.h"
 #include "../../audio/engine.h"
 #include "../rtc/print_hours_mins.h"
 #include "../../gfx/font.h"
@@ -32,6 +34,7 @@
 void (*gPokegearRadioChannelAddr)(void);
 struct SpriteAnim* gPokegearMapCursorObjectPointer = NULL;
 struct SpriteAnim* gTownMapCursorObjectPointer = NULL;
+struct SpriteAnim* gTownMapCursorCoordinates = NULL;
 
 //  Pokégear cards
 enum {
@@ -4538,93 +4541,106 @@ Finally:
 
 }
 
+static void TownMapBubble_Name(void) {
+//  We need the map location of the default flypoint
+    // LD_A_addr(wTownMapPlayerIconLandmark);
+    // LD_L_A;
+    // LD_H(0);
+    // ADD_HL_HL;  // two bytes per flypoint
+    // LD_DE(mFlypoints);
+    // ADD_HL_DE;
+    // LD_E_hl;
+    // FARCALL(aGetLandmarkName);
+    // hlcoord(2, 1, wTilemap);
+    // LD_DE(wStringBuffer1);
+    // CALL(aPlaceString);
+    PlaceStringSimple(GetLandmarkName_Conv(Flypoints[wram->wTownMapPlayerIconLandmark].landmark), coord(2, 1, wram->wTilemap));
+    // RET;
+}
+
 void TownMapBubble(void){
 //  Draw the bubble containing the location text in the town map HUD
 
 //  Top-left corner
-    hlcoord(1, 0, wTilemap);
-    LD_A(0x30);
-    LD_hli_A;
+    // hlcoord(1, 0, wTilemap);
+    // LD_A(0x30);
+    // LD_hli_A;
+    *coord(1, 0, wram->wTilemap) = 0x30;
 //  Top row
-    LD_BC(16);
-    LD_A(0x7f);
-    CALL(aByteFill);
+    // LD_BC(16);
+    // LD_A(0x7f);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(2, 0, wram->wTilemap), 16, 0x7f);
 //  Top-right corner
-    LD_A(0x31);
-    LD_hl_A;
-    hlcoord(1, 1, wTilemap);
+    // LD_A(0x31);
+    // LD_hl_A;
+    *coord(18, 0, wram->wTilemap) = 0x31;
+    // hlcoord(1, 1, wTilemap);
 
 //  Middle row
-    LD_BC(SCREEN_WIDTH - 2);
-    LD_A(0x7f);
-    CALL(aByteFill);
+    // LD_BC(SCREEN_WIDTH - 2);
+    // LD_A(0x7f);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(1, 1, wram->wTilemap), SCREEN_WIDTH - 2, 0x7f);
 
 //  Bottom-left corner
-    hlcoord(1, 2, wTilemap);
-    LD_A(0x32);
-    LD_hli_A;
+    // hlcoord(1, 2, wTilemap);
+    // LD_A(0x32);
+    // LD_hli_A;
+    *coord(1, 2, wram->wTilemap) = 0x32;
 //  Bottom row
-    LD_BC(16);
-    LD_A(0x7f);
-    CALL(aByteFill);
+    // LD_BC(16);
+    // LD_A(0x7f);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(2, 2, wram->wTilemap), 16, 0x7f);
 //  Bottom-right corner
-    LD_A(0x33);
-    LD_hl_A;
+    // LD_A(0x33);
+    // LD_hl_A;
+    *coord(18, 2, wram->wTilemap) = 0x33;
 
 //  Print "Where?"
-    hlcoord(2, 0, wTilemap);
-    LD_DE(mTownMapBubble_Where);
-    CALL(aPlaceString);
+    // hlcoord(2, 0, wTilemap);
+    // LD_DE(mTownMapBubble_Where);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C("Where?@"), coord(2, 0, wram->wTilemap));
 //  Print the name of the default flypoint
-    CALL(aTownMapBubble_Name);
+    // CALL(aTownMapBubble_Name);
+    TownMapBubble_Name();
 //  Up/down arrows
-    hlcoord(18, 1, wTilemap);
-    LD_hl(0x34);
-    RET;
+    // hlcoord(18, 1, wTilemap);
+    // LD_hl(0x34);
+    *coord(18, 1, wram->wTilemap) = 0x34;
+    // RET;
+    return;
 
-
-Where:
+// Where:
     //db ['"Where?@"'];
-
-
-Name:
-//  We need the map location of the default flypoint
-    LD_A_addr(wTownMapPlayerIconLandmark);
-    LD_L_A;
-    LD_H(0);
-    ADD_HL_HL;  // two bytes per flypoint
-    LD_DE(mFlypoints);
-    ADD_HL_DE;
-    LD_E_hl;
-    FARCALL(aGetLandmarkName);
-    hlcoord(2, 1, wTilemap);
-    LD_DE(wStringBuffer1);
-    CALL(aPlaceString);
-    RET;
-
 }
 
 void GetMapCursorCoordinates(void){
-    LD_A_addr(wTownMapPlayerIconLandmark);
-    LD_L_A;
-    LD_H(0);
-    ADD_HL_HL;
-    LD_DE(mFlypoints);
-    ADD_HL_DE;
-    LD_E_hl;
-    FARCALL(aGetLandmarkCoords);
-    LD_A_addr(wTownMapCursorCoordinates);
-    LD_C_A;
-    LD_A_addr(wTownMapCursorCoordinates + 1);
-    LD_B_A;
-    LD_HL(4);
-    ADD_HL_BC;
-    LD_hl_E;
-    LD_HL(5);
-    ADD_HL_BC;
-    LD_hl_D;
-    RET;
-
+    // LD_A_addr(wTownMapPlayerIconLandmark);
+    // LD_L_A;
+    // LD_H(0);
+    // ADD_HL_HL;
+    // LD_DE(mFlypoints);
+    // ADD_HL_DE;
+    // LD_E_hl;
+    uint8_t e = Flypoints[wram->wTownMapPlayerIconLandmark].landmark;
+    // FARCALL(aGetLandmarkCoords);
+    struct Coords coord = GetLandmarkCoords_Conv(e);
+    // LD_A_addr(wTownMapCursorCoordinates);
+    // LD_C_A;
+    // LD_A_addr(wTownMapCursorCoordinates + 1);
+    // LD_B_A;
+    // LD_HL(4);
+    // ADD_HL_BC;
+    // LD_hl_E;
+    gTownMapCursorCoordinates->xCoord = (uint8_t)coord.x;
+    // LD_HL(5);
+    // ADD_HL_BC;
+    // LD_hl_D;
+    gTownMapCursorCoordinates->yCoord = (uint8_t)coord.y;
+    // RET;
 }
 
 void CheckIfVisitedFlypoint(void){
@@ -5087,6 +5103,42 @@ tiles:
 
 }
 
+//  Update BG Map tiles and attributes
+void TownMapBGUpdate_Conv(uint16_t hl){
+//  BG Map address
+    // LD_A_L;
+    // LDH_addr_A(hBGMapAddress);
+    // LD_A_H;
+    // LDH_addr_A(hBGMapAddress + 1);
+    hram->hBGMapAddress = hl;
+//  Only update palettes on CGB
+    // LDH_A_addr(hCGB);
+    // AND_A_A;
+    // IF_Z goto tiles;
+    if(hram->hCGB != 0) {
+    //  BG Map mode 2 (palettes)
+        // LD_A(2);
+        // LDH_addr_A(hBGMapMode);
+        hram->hBGMapMode = 2;
+    //  The BG Map is updated in thirds, so we wait
+
+    //  3 frames to update the whole screen's palettes.
+        // LD_C(3);
+        // CALL(aDelayFrames);
+        DelayFrames_Conv(3);
+    }
+// tiles:
+//  Update BG Map tiles
+    // CALL(aWaitBGMap);
+    WaitBGMap_Conv();
+//  Turn off BG Map update
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    // RET;
+    return;
+}
+
 void FillJohtoMap(void){
     LD_DE(mJohtoMap);
     JR(mFillTownMap);
@@ -5200,10 +5252,8 @@ update:
     RET;
 
 
-PalMap:
+// PalMap:
 // INCLUDE "gfx/pokegear/town_map_palette_map.asm"
-
-    return TownMapMon();
 }
 
 enum {
@@ -5307,29 +5357,67 @@ void TownMapMon(void){
 //  Draw the FlyMon icon at town map location
 
 //  Get FlyMon species
-    LD_A_addr(wCurPartyMon);
-    LD_HL(wPartySpecies);
-    LD_E_A;
-    LD_D(0);
-    ADD_HL_DE;
-    LD_A_hl;
-    LD_addr_A(wTempIconSpecies);
+    // LD_A_addr(wCurPartyMon);
+    // LD_HL(wPartySpecies);
+    // LD_E_A;
+    // LD_D(0);
+    // ADD_HL_DE;
+    // LD_A_hl;
+    // LD_addr_A(wTempIconSpecies);
+    wram->wTempIconSpecies = wram->wPartySpecies[wram->wCurPartyMon];
 //  Get FlyMon icon
-    LD_E(0x08);  // starting tile in VRAM
-    FARCALL(aGetSpeciesIcon);
+    // LD_E(0x08);  // starting tile in VRAM
+    // FARCALL(aGetSpeciesIcon);
+    GetSpeciesIcon_Conv(0x08);
 //  Animation/palette
     //depixel ['0', '0']
-    depixel2(0, 0);
-    LD_A(SPRITE_ANIM_INDEX_PARTY_MON);
-    CALL(aInitSpriteAnimStruct);
-    LD_HL(SPRITEANIMSTRUCT_TILE_ID);
-    ADD_HL_BC;
-    LD_hl(0x08);
-    LD_HL(SPRITEANIMSTRUCT_ANIM_SEQ_ID);
-    ADD_HL_BC;
-    LD_hl(SPRITE_ANIM_SEQ_NULL);
-    RET;
+    // depixel2(0, 0);
+    // LD_A(SPRITE_ANIM_INDEX_PARTY_MON);
+    // CALL(aInitSpriteAnimStruct);
+    struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_PARTY_MON, pixel2(0, 0));
+    // LD_HL(SPRITEANIMSTRUCT_TILE_ID);
+    // ADD_HL_BC;
+    // LD_hl(0x08);
+    bc->tileID = 0x08;
+    // LD_HL(SPRITEANIMSTRUCT_ANIM_SEQ_ID);
+    // ADD_HL_BC;
+    // LD_hl(SPRITE_ANIM_SEQ_NULL);
+    bc->animSeqID = SPRITE_ANIM_SEQ_NULL;
+    // RET;
+}
 
+//  Draw the FlyMon icon at town map location
+struct SpriteAnim* TownMapMon_Conv(void){
+
+//  Get FlyMon species
+    // LD_A_addr(wCurPartyMon);
+    // LD_HL(wPartySpecies);
+    // LD_E_A;
+    // LD_D(0);
+    // ADD_HL_DE;
+    // LD_A_hl;
+    // LD_addr_A(wTempIconSpecies);
+    wram->wTempIconSpecies = wram->wPartySpecies[wram->wCurPartyMon];
+//  Get FlyMon icon
+    // LD_E(0x08);  // starting tile in VRAM
+    // FARCALL(aGetSpeciesIcon);
+    GetSpeciesIcon_Conv(0x08);
+//  Animation/palette
+    //depixel ['0', '0']
+    // depixel2(0, 0);
+    // LD_A(SPRITE_ANIM_INDEX_PARTY_MON);
+    // CALL(aInitSpriteAnimStruct);
+    struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_PARTY_MON, pixel2(0, 0));
+    // LD_HL(SPRITEANIMSTRUCT_TILE_ID);
+    // ADD_HL_BC;
+    // LD_hl(0x08);
+    bc->tileID = 0x08;
+    // LD_HL(SPRITEANIMSTRUCT_ANIM_SEQ_ID);
+    // ADD_HL_BC;
+    // LD_hl(SPRITE_ANIM_SEQ_NULL);
+    bc->animSeqID = SPRITE_ANIM_SEQ_NULL;
+    // RET;
+    return bc;
 }
 
 void TownMapPlayerIcon(void){
@@ -5379,6 +5467,62 @@ got_gender:
 
 }
 
+struct SpriteAnim* TownMapPlayerIcon_Conv(uint8_t location){
+//  Draw the player icon at town map location in a
+    // PUSH_AF;
+    // FARCALL(aGetPlayerIcon);
+    const char* path = GetPlayerIcon_Conv2();
+//  Standing icon
+    // LD_HL(vTiles0 + LEN_2BPP_TILE * 0x10);
+    // LD_C(4);  // # tiles
+    // CALL(aRequest2bpp);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles0 + LEN_2BPP_TILE * 0x10, path, 0, 4);
+//  Walking icon
+    // LD_HL(12 * LEN_2BPP_TILE);
+    // ADD_HL_DE;
+    // LD_D_H;
+    // LD_E_L;
+    // LD_HL(vTiles0 + LEN_2BPP_TILE * 0x14);
+    // LD_C(4);  // # tiles
+    // LD_A(BANK(aChrisSpriteGFX));  // does nothing
+    // CALL(aRequest2bpp);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles0 + LEN_2BPP_TILE * 0x14, path, 12, 4);
+//  Animation/palette
+    //depixel ['0', '0']
+    // depixel2(0, 0);
+    // LD_B(SPRITE_ANIM_INDEX_RED_WALK);  // Male
+    // LD_A_addr(wPlayerGender);
+    // BIT_A(PLAYERGENDER_FEMALE_F);
+    // IF_Z goto got_gender;
+    // LD_B(SPRITE_ANIM_INDEX_BLUE_WALK);  // Female
+    uint8_t b = (bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))? SPRITE_ANIM_INDEX_BLUE_WALK: SPRITE_ANIM_INDEX_RED_WALK;
+
+// got_gender:
+    // LD_A_B;
+    // CALL(aInitSpriteAnimStruct);
+    struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(b, pixel2(0, 0));
+    // LD_HL(SPRITEANIMSTRUCT_TILE_ID);
+    // ADD_HL_BC;
+    // LD_hl(0x10);
+    bc->tileID = 0x10;
+    // POP_AF;
+    // LD_E_A;
+    // PUSH_BC;
+    // FARCALL(aGetLandmarkCoords);
+    struct Coords coord = GetLandmarkCoords_Conv(location);
+    // POP_BC;
+    // LD_HL(SPRITEANIMSTRUCT_XCOORD);
+    // ADD_HL_BC;
+    // LD_hl_E;
+    bc->xCoord = (uint8_t)coord.x;
+    // LD_HL(SPRITEANIMSTRUCT_YCOORD);
+    // ADD_HL_BC;
+    // LD_hl_D;
+    bc->yCoord = (uint8_t)coord.y;
+    // RET;
+    return bc;
+}
+
 void LoadTownMapGFX(void){
     // LD_HL(mTownMapGFX);
     // LD_DE(vTiles2);
@@ -5406,150 +5550,215 @@ void PokedexNestIconGFX(void){
 // INCBIN "gfx/pokegear/dexmap_nest_icon.2bpp"
 }
 
-// static const char FlyMapLabelBorderGFX[] = "gfx/pokegear/flymap_label_border.png";
+static const char FlyMapLabelBorderGFX[] = "gfx/pokegear/flymap_label_border.png";
 
-void EntireFlyMap(void){
+static void EntireFlyMap_HandleDPad(void){
+    // LD_HL(hJoyLast);
+    uint8_t joy = hram->hJoyLast;
+    // LD_A_hl;
+    // AND_A(D_DOWN | D_RIGHT);
+    // IF_NZ goto ScrollNext;
+    if(joy & (D_DOWN | D_RIGHT)) {
+    // ScrollNext:
+        // LD_HL(wTownMapPlayerIconLandmark);
+        // LD_A_hl;
+        // CP_A(NUM_FLYPOINTS - 1);
+        // IF_C goto NotAtEndYet;
+        if(wram->wTownMapPlayerIconLandmark >= NUM_FLYPOINTS - 1) {
+            // LD_hl(-1);
+            wram->wTownMapPlayerIconLandmark = 0xff;
+        }
+    // NotAtEndYet:
+        // INC_hl;
+        wram->wTownMapPlayerIconLandmark++;
+        // goto FillMap;
+    }
+    // LD_A_hl;
+    // AND_A(D_UP | D_LEFT);
+    // IF_NZ goto ScrollPrev;
+    else if(joy & (D_UP | D_LEFT)) {
+    // ScrollPrev:
+        // LD_HL(wTownMapPlayerIconLandmark);
+        // LD_A_hl;
+        // AND_A_A;
+        // IF_NZ goto NotAtStartYet;
+        if(wram->wTownMapPlayerIconLandmark == 0) {
+            // LD_hl(NUM_FLYPOINTS);
+            wram->wTownMapPlayerIconLandmark = NUM_FLYPOINTS;
+        }
+
+    // NotAtStartYet:
+        // DEC_hl;
+        wram->wTownMapPlayerIconLandmark--;
+    }
+    else {
+        return;
+    }
+    // RET;
+
+// FillMap:
+    uint16_t b;
+    uint8_t y;
+    // LD_A_addr(wTownMapPlayerIconLandmark);
+    // CP_A(KANTO_FLYPOINT);
+    // IF_C goto InJohto;
+    if(wram->wTownMapPlayerIconLandmark >= KANTO_FLYPOINT) {
+        // CALL(aFillKantoMap);
+        FillKantoMap_Conv();
+        // XOR_A_A;
+        y = 0;
+        // LD_B(HIGH(vBGMap1));
+        b = vBGMap1;
+        // goto Finally;
+    }
+    else {
+    // InJohto:
+        // CALL(aFillJohtoMap);
+        FillJohtoMap_Conv();
+        // LD_A(SCREEN_HEIGHT_PX);
+        y = SCREEN_HEIGHT_PX;
+        // LD_B(HIGH(vBGMap0));
+        b = vBGMap0;
+    }
+
+// Finally:
+    // LDH_addr_A(hWY);
+    hram->hWY = y;
+    // LD_A_B;
+    // LDH_addr_A(hBGMapAddress + 1);
+    hram->hBGMapAddress = b;
+    // CALL(aTownMapBubble);
+    TownMapBubble();
+    // CALL(aWaitBGMap);
+    WaitBGMap_Conv();
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    // RET;
+}
+
 //  //  unreferenced
 //  Similar to _FlyMap, but scrolls through the entire
 //  Flypoints data of both regions. A debug function?
-    XOR_A_A;
-    LD_addr_A(wTownMapPlayerIconLandmark);
-    CALL(aClearBGPalettes);
-    CALL(aClearTilemap);
-    CALL(aClearSprites);
-    LD_HL(hInMenu);
-    LD_A_hl;
-    PUSH_AF;
-    LD_hl(0x1);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    FARCALL(aClearSpriteAnims);
-    CALL(aLoadTownMapGFX);
-    LD_DE(mFlyMapLabelBorderGFX);
-    LD_HL(vTiles2 + LEN_2BPP_TILE * 0x30);
-    LD_BC((BANK(aFlyMapLabelBorderGFX) << 8) | 6);
-    CALL(aRequest1bpp);
-    CALL(aFillKantoMap);
-    CALL(aTownMapBubble);
-    CALL(aTownMapPals);
-    hlbgcoord(0, 0, vBGMap1);
-    CALL(aTownMapBGUpdate);
-    CALL(aFillJohtoMap);
-    CALL(aTownMapBubble);
-    CALL(aTownMapPals);
-    hlbgcoord(0, 0, vBGMap0);
-    CALL(aTownMapBGUpdate);
-    CALL(aTownMapMon);
-    LD_A_C;
-    LD_addr_A(wTownMapCursorCoordinates);
-    LD_A_B;
-    LD_addr_A(wTownMapCursorCoordinates + 1);
-    LD_B(SCGB_POKEGEAR_PALS);
-    CALL(aGetSGBLayout);
-    CALL(aSetPalettes);
+uint8_t EntireFlyMap(void){
+    // XOR_A_A;
+    // LD_addr_A(wTownMapPlayerIconLandmark);
+    wram->wTownMapPlayerIconLandmark = 0;
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
+    // CALL(aClearTilemap);
+    ClearTilemap_Conv2();
+    // CALL(aClearSprites);
+    ClearSprites_Conv();
+    // LD_HL(hInMenu);
+    // LD_A_hl;
+    // PUSH_AF;
+    uint8_t inMenu = hram->hInMenu;
+    // LD_hl(0x1);
+    hram->hInMenu = 0x1;
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    // FARCALL(aClearSpriteAnims);
+    ClearSpriteAnims_Conv();
+    // CALL(aLoadTownMapGFX);
+    LoadTownMapGFX_Conv();
+    // LD_DE(mFlyMapLabelBorderGFX);
+    // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x30);
+    // LD_BC((BANK(aFlyMapLabelBorderGFX) << 8) | 6);
+    // CALL(aRequest1bpp);
+    LoadPNG1bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x30, FlyMapLabelBorderGFX, 0, 6);
+    // CALL(aFillKantoMap);
+    FillKantoMap_Conv();
+    // CALL(aTownMapBubble);
+    TownMapBubble();
+    // CALL(aTownMapPals);
+    TownMapPals_Conv();
+    // hlbgcoord(0, 0, vBGMap1);
+    // CALL(aTownMapBGUpdate);
+    TownMapBGUpdate_Conv(vBGMap1);
+    // CALL(aFillJohtoMap);
+    FillJohtoMap_Conv();
+    // CALL(aTownMapBubble);
+    TownMapBubble();
+    // CALL(aTownMapPals);
+    TownMapPals_Conv();
+    // hlbgcoord(0, 0, vBGMap0);
+    // CALL(aTownMapBGUpdate);
+    TownMapBGUpdate_Conv(vBGMap0);
+    // CALL(aTownMapMon);
+    // LD_A_C;
+    // LD_addr_A(wTownMapCursorCoordinates);
+    // LD_A_B;
+    // LD_addr_A(wTownMapCursorCoordinates + 1);
+    gTownMapCursorCoordinates = TownMapPlayerIcon_Conv(wram->wTownMapPlayerIconLandmark);
+    // LD_B(SCGB_POKEGEAR_PALS);
+    // CALL(aGetSGBLayout);
+    GetSGBLayout_Conv(SCGB_POKEGEAR_PALS);
+    // CALL(aSetPalettes);
+    SetPalettes_Conv();
 
-loop:
-    CALL(aJoyTextDelay);
-    LD_HL(hJoyPressed);
-    LD_A_hl;
-    AND_A(B_BUTTON);
-    IF_NZ goto pressedB;
-    LD_A_hl;
-    AND_A(A_BUTTON);
-    IF_NZ goto pressedA;
-    CALL(aEntireFlyMap_HandleDPad);
-    CALL(aGetMapCursorCoordinates);
-    FARCALL(aPlaySpriteAnimations);
-    CALL(aDelayFrame);
-    goto loop;
+    uint8_t a;
+    while(1) {
+    // loop:
+        // CALL(aJoyTextDelay);
+        JoyTextDelay_Conv();
+        // LD_HL(hJoyPressed);
+        // LD_A_hl;
+        // AND_A(B_BUTTON);
+        // IF_NZ goto pressedB;
+        if(hram->hJoyPressed & B_BUTTON) {
+        // pressedB:
+            // LD_A(-1);
+            // goto exit;
+            a = 0xff;
+            break;
+        }
+        // LD_A_hl;
+        // AND_A(A_BUTTON);
+        // IF_NZ goto pressedA;
+        else if(hram->hJoypadPressed & A_BUTTON) {
+        // pressedA:
+            // LD_A_addr(wTownMapPlayerIconLandmark);
+            // LD_L_A;
+            // LD_H(0);
+            // ADD_HL_HL;
+            // LD_DE(mFlypoints + 1);
+            // ADD_HL_DE;
+            // LD_A_hl;
+            a = Flypoints[wram->wTownMapPlayerIconLandmark].spawn;
+            break;
+        }
+        // CALL(aEntireFlyMap_HandleDPad);
+        EntireFlyMap_HandleDPad();
+        // CALL(aGetMapCursorCoordinates);
+        GetMapCursorCoordinates();
+        // FARCALL(aPlaySpriteAnimations);
+        PlaySpriteAnimations_Conv();
+        // CALL(aDelayFrame);
+        DelayFrame();
+        // goto loop;
+    }
 
-
-pressedB:
-    LD_A(-1);
-    goto exit;
-
-
-pressedA:
-    LD_A_addr(wTownMapPlayerIconLandmark);
-    LD_L_A;
-    LD_H(0);
-    ADD_HL_HL;
-    LD_DE(mFlypoints + 1);
-    ADD_HL_DE;
-    LD_A_hl;
-
-exit:
-    LD_addr_A(wTownMapPlayerIconLandmark);
-    POP_AF;
-    LDH_addr_A(hInMenu);
-    CALL(aClearBGPalettes);
-    LD_A(SCREEN_HEIGHT_PX);
-    LDH_addr_A(hWY);
-    XOR_A_A;  // LOW(vBGMap0)
-    LDH_addr_A(hBGMapAddress);
-    LD_A(HIGH(vBGMap0));
-    LDH_addr_A(hBGMapAddress + 1);
-    LD_A_addr(wTownMapPlayerIconLandmark);
-    LD_E_A;
-    RET;
-
-
-HandleDPad:
-    LD_HL(hJoyLast);
-    LD_A_hl;
-    AND_A(D_DOWN | D_RIGHT);
-    IF_NZ goto ScrollNext;
-    LD_A_hl;
-    AND_A(D_UP | D_LEFT);
-    IF_NZ goto ScrollPrev;
-    RET;
-
-
-ScrollNext:
-    LD_HL(wTownMapPlayerIconLandmark);
-    LD_A_hl;
-    CP_A(NUM_FLYPOINTS - 1);
-    IF_C goto NotAtEndYet;
-    LD_hl(-1);
-
-NotAtEndYet:
-    INC_hl;
-    goto FillMap;
-
-
-ScrollPrev:
-    LD_HL(wTownMapPlayerIconLandmark);
-    LD_A_hl;
-    AND_A_A;
-    IF_NZ goto NotAtStartYet;
-    LD_hl(NUM_FLYPOINTS);
-
-NotAtStartYet:
-    DEC_hl;
-
-FillMap:
-    LD_A_addr(wTownMapPlayerIconLandmark);
-    CP_A(KANTO_FLYPOINT);
-    IF_C goto InJohto;
-    CALL(aFillKantoMap);
-    XOR_A_A;
-    LD_B(HIGH(vBGMap1));
-    goto Finally;
-
-
-InJohto:
-    CALL(aFillJohtoMap);
-    LD_A(SCREEN_HEIGHT_PX);
-    LD_B(HIGH(vBGMap0));
-
-Finally:
-    LDH_addr_A(hWY);
-    LD_A_B;
-    LDH_addr_A(hBGMapAddress + 1);
-    CALL(aTownMapBubble);
-    CALL(aWaitBGMap);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    RET;
+// exit:
+    // LD_addr_A(wTownMapPlayerIconLandmark);
+    wram->wTownMapPlayerIconLandmark = a;
+    // POP_AF;
+    // LDH_addr_A(hInMenu);
+    hram->hInMenu = inMenu;
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
+    // LD_A(SCREEN_HEIGHT_PX);
+    // LDH_addr_A(hWY);
+    hram->hWY = SCREEN_HEIGHT_PX;
+    // XOR_A_A;  // LOW(vBGMap0)
+    // LDH_addr_A(hBGMapAddress);
+    // LD_A(HIGH(vBGMap0));
+    // LDH_addr_A(hBGMapAddress + 1);
+    hram->hBGMapAddress = vBGMap0;
+    // LD_A_addr(wTownMapPlayerIconLandmark);
+    // LD_E_A;
+    return wram->wTownMapPlayerIconLandmark;
+    // RET;
 
 }

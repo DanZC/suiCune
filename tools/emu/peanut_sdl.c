@@ -1088,7 +1088,7 @@ void gb_draw_line(void) {
                 if (gb.cgb.cgbMode && (c && !(pixelsPrio[disp_x] && (pixels[disp_x] & 0x3)) && !((OF & OBJ_PRIORITY) && (pixels[disp_x] & 0x3)))) {
                     /* Set pixel colour. */
                     pixels[disp_x] = ((OF & OBJ_CGB_PALETTE) << 2) + c + 0x20;  // add 0x20 to differentiate from BG
-                } else if (c && !(OF & OBJ_PRIORITY && pixels[disp_x] & 0x3)) {
+                } else if (!gb.cgb.cgbMode && c && !((OF & OBJ_PRIORITY) && (pixels[disp_x] & 0x3))) {
                     /* Set pixel colour. */
                     pixels[disp_x] = (OF & OBJ_PALETTE)
                                          ? gb.display.sp_palette[c + 4]
