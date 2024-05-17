@@ -2,23 +2,23 @@
 
 // SECTION "Map Scripts 1", ROMX
 
-// #include "../../maps/GoldenrodGym.h"
-// #include "../../maps/GoldenrodBikeShop.h"
-// #include "../../maps/GoldenrodHappinessRater.h"
+#include "../../maps/GoldenrodGym.h"
+#include "../../maps/GoldenrodBikeShop.h"
+#include "../../maps/GoldenrodHappinessRater.h"
 // #include "../../maps/BillsFamilysHouse.h"
-// #include "../../maps/GoldenrodMagnetTrainStation.h"
-// #include "../../maps/GoldenrodFlowerShop.h"
-// #include "../../maps/GoldenrodPPSpeechHouse.h"
-// #include "../../maps/GoldenrodNameRater.h"
-// #include "../../maps/GoldenrodDeptStore1F.h"
-// #include "../../maps/GoldenrodDeptStore2F.h"
-// #include "../../maps/GoldenrodDeptStore3F.h"
-// #include "../../maps/GoldenrodDeptStore4F.h"
-// #include "../../maps/GoldenrodDeptStore5F.h"
-// #include "../../maps/GoldenrodDeptStore6F.h"
-// #include "../../maps/GoldenrodDeptStoreElevator.h"
-// #include "../../maps/GoldenrodDeptStoreRoof.h"
-// #include "../../maps/GoldenrodGameCorner.h"
+#include "../../maps/GoldenrodMagnetTrainStation.h"
+#include "../../maps/GoldenrodFlowerShop.h"
+#include "../../maps/GoldenrodPPSpeechHouse.h"
+#include "../../maps/GoldenrodNameRater.h"
+#include "../../maps/GoldenrodDeptStore1F.h"
+#include "../../maps/GoldenrodDeptStore2F.h"
+#include "../../maps/GoldenrodDeptStore3F.h"
+#include "../../maps/GoldenrodDeptStore4F.h"
+#include "../../maps/GoldenrodDeptStore5F.h"
+#include "../../maps/GoldenrodDeptStore6F.h"
+#include "../../maps/GoldenrodDeptStoreElevator.h"
+#include "../../maps/GoldenrodDeptStoreRoof.h"
+#include "../../maps/GoldenrodGameCorner.h"
 
 
 // SECTION "Map Scripts 2", ROMX
@@ -53,8 +53,8 @@
 
 // #include "../../maps/NationalPark.h"
 // #include "../../maps/NationalParkBugContest.h"
-// #include "../../maps/RadioTower1F.h"
-// #include "../../maps/RadioTower2F.h"
+#include "../../maps/RadioTower1F.h"
+#include "../../maps/RadioTower2F.h"
 // #include "../../maps/RadioTower3F.h"
 // #include "../../maps/RadioTower4F.h"
 
@@ -65,7 +65,8 @@
 // #include "../../maps/OlivineLighthouse5F.h"
 // #include "../../maps/OlivineLighthouse6F.h"
 // #include "../../maps/GoldenrodPokecenter1F.h"
-// #include "../../maps/PokecomCenterAdminOfficeMobile.h"
+#include "../../maps/PokecomCenter.h"
+#include "../../maps/PokecomCenterAdminOfficeMobile.h"
 #include "../../maps/IlexForestAzaleaGate.h"
 #include "../../maps/Route34IlexForestGate.h"
 // #include "../../maps/DayCare.h"
@@ -166,9 +167,9 @@
 // SECTION "Map Scripts 10", ROMX
 
 // #include "../../maps/Route22.h"
-// #include "../../maps/GoldenrodUnderground.h"
-// #include "../../maps/GoldenrodUndergroundSwitchRoomEntrances.h"
-// #include "../../maps/GoldenrodDeptStoreB1F.h"
+#include "../../maps/GoldenrodUnderground.h"
+#include "../../maps/GoldenrodUndergroundSwitchRoomEntrances.h"
+#include "../../maps/GoldenrodDeptStoreB1F.h"
 // #include "../../maps/GoldenrodUndergroundWarehouse.h"
 // #include "../../maps/MountMortar1FOutside.h"
 // #include "../../maps/MountMortar1FInside.h"
@@ -381,7 +382,7 @@
 // SECTION "Map Scripts 19", ROMX
 
 #include "../../maps/AzaleaTown.h"
-// #include "../../maps/GoldenrodCity.h"
+#include "../../maps/GoldenrodCity.h"
 // #include "../../maps/SaffronCity.h"
 // #include "../../maps/MahoganyRedGyaradosSpeechHouse.h"
 // #include "../../maps/MahoganyGym.h"

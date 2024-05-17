@@ -1,0 +1,67 @@
+#pragma once
+//// EVENTS
+extern const struct MapScripts GoldenrodUnderground_MapScripts;
+extern const struct MapEvents GoldenrodUnderground_MapEvents;
+
+//// CODE
+
+bool GoldenrodUnderground_MapScripts_ResetSwitches(script_s* s);
+bool GoldenrodUnderground_MapScripts_CheckBasementKey(script_s* s);
+bool GoldenrodUnderground_MapScripts_LockBasementDoor(script_s* s);
+bool GoldenrodUnderground_MapScripts_CheckDayOfWeek(script_s* s);
+extern const struct TrainerObj TrainerSupernerdEric;
+bool TrainerSupernerdEric_Script(script_s* s);
+extern const struct TrainerObj TrainerSupernerdTeru;
+bool TrainerSupernerdTeru_Script(script_s* s);
+extern const struct TrainerObj TrainerPokemaniacIssac;
+bool TrainerPokemaniacIssac_Script(script_s* s);
+extern const struct TrainerObj TrainerPokemaniacDonald;
+bool TrainerPokemaniacDonald_Script(script_s* s);
+bool BitterMerchantScript(script_s* s);
+bool BargainMerchantScript(script_s* s);
+bool OlderHaircutBrotherScript(script_s* s);
+bool YoungerHaircutBrotherScript(script_s* s);
+bool EitherHaircutBrotherScript_SlightlyHappier(script_s* s);
+bool EitherHaircutBrotherScript_Happier(script_s* s);
+bool EitherHaircutBrotherScript_MuchHappier(script_s* s);
+bool BasementDoorScript(script_s* s);
+bool GoldenrodUndergroundScript_ShopClosed(script_s* s);
+extern const struct ItemBall GoldenrodUndergroundCoinCase;
+bool GoldenrodUndergroundNoEntrySign(script_s* s);
+extern const struct HiddenItem GoldenrodUndergroundHiddenParlyzHeal;
+extern const struct HiddenItem GoldenrodUndergroundHiddenSuperPotion;
+extern const struct HiddenItem GoldenrodUndergroundHiddenAntidote;
+extern const txt_cmd_s SupernerdEricSeenText[];
+extern const txt_cmd_s SupernerdEricBeatenText[];
+extern const txt_cmd_s SupernerdEricAfterBattleText[];
+extern const txt_cmd_s SupernerdTeruSeenText[];
+extern const txt_cmd_s SupernerdTeruBeatenText[];
+extern const txt_cmd_s SupernerdTeruAfterBattleText[];
+extern const txt_cmd_s PokemaniacIssacSeenText[];
+extern const txt_cmd_s PokemaniacIssacBeatenText[];
+extern const txt_cmd_s PokemaniacIssacAfterBattleText[];
+extern const txt_cmd_s PokemaniacDonaldSeenText[];
+extern const txt_cmd_s PokemaniacDonaldBeatenText[];
+extern const txt_cmd_s PokemaniacDonaldAfterBattleText[];
+extern const txt_cmd_s GoldenrodUndergroundTheDoorsLockedText[];
+extern const txt_cmd_s GoldenrodUndergroundTheDoorIsOpenText[];
+extern const txt_cmd_s GoldenrodUndergroundBasementKeyOpenedDoorText[];
+extern const txt_cmd_s GoldenrodUndergroundOlderHaircutBrotherOfferHaircutText[];
+extern const txt_cmd_s GoldenrodUndergroundOlderHaircutBrotherAskWhichMonText[];
+extern const txt_cmd_s GoldenrodUndergroundOlderHaircutBrotherWatchItBecomeBeautifulText[];
+extern const txt_cmd_s GoldenrodUndergroundOlderHaircutBrotherAllDoneText[];
+extern const txt_cmd_s GoldenrodUndergroundOlderHaircutBrotherThatsAShameText[];
+extern const txt_cmd_s GoldenrodUndergroundOlderHaircutBrotherYoullNeedMoreMoneyText[];
+extern const txt_cmd_s GoldenrodUndergroundOlderHaircutBrotherOneHaircutADayText[];
+extern const txt_cmd_s GoldenrodUndergroundYoungerHaircutBrotherOfferHaircutText[];
+extern const txt_cmd_s GoldenrodUndergroundYoungerHaircutBrotherAskWhichMonText[];
+extern const txt_cmd_s GoldenrodUndergroundYoungerHaircutBrotherIllMakeItLookCoolText[];
+extern const txt_cmd_s GoldenrodUndergroundYoungerHaircutBrotherAllDoneText[];
+extern const txt_cmd_s GoldenrodUndergroundYoungerHaircutBrotherHowDisappointingText[];
+extern const txt_cmd_s GoldenrodUndergroundYoungerHaircutBrotherShortOnFundsText[];
+extern const txt_cmd_s GoldenrodUndergroundYoungerHaircutBrotherOneHaircutADayText[];
+extern const txt_cmd_s HaircutBrosText_SlightlyHappier[];
+extern const txt_cmd_s HaircutBrosText_Happier[];
+extern const txt_cmd_s HaircutBrosText_MuchHappier[];
+extern const txt_cmd_s GoldenrodUndergroundWeAreNotOpenTodayText[];
+extern const txt_cmd_s GoldenrodUndergroundNoEntryText[];

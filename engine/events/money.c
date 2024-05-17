@@ -503,6 +503,30 @@ okay:
 
 }
 
+bool TakeCoins_Conv(const uint8_t* bc){
+    // LD_A(2);
+    // LD_DE(wCoins);
+    // CALL(aSubtractFunds);
+    bool carry = SubtractFunds_Conv((uint8_t*)&wram->wCoins, bc, 2);
+    // IF_NC goto okay;
+    if(carry) {
+    // leave with 0 coins
+        // XOR_A_A;
+        // LD_de_A;
+        // INC_DE;
+        // LD_de_A;
+        wram->wCoins = 0;
+        // SCF;
+        // RET;
+        return true;
+    }
+
+// okay:
+    // AND_A_A;
+    // RET;
+    return false;
+}
+
 void CheckCoins(void){
     LD_A(2);
     LD_DE(wCoins);

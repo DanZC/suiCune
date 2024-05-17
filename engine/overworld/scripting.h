@@ -282,6 +282,7 @@ uint8_t* LoadMoneyAmountToMem_Conv(uint32_t amount);
 void Script_givecoins(void);
 void Script_givecoins_Conv(script_s* s, uint16_t amount);
 void Script_takecoins(void);
+void Script_takecoins_Conv(script_s* s, uint16_t amount);
 void Script_checkcoins(void);
 void Script_checkcoins_Conv(script_s* s, uint16_t amount);
 void LoadCoinAmountToMem(void);

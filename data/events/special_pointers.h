@@ -69,7 +69,7 @@ enum {
     special_const(RestartMapMusic), // bank 0
     special_const(HealMachineAnim),
     special_const(SurfStartStep),
-    special_const(FindPartyMonAboveLevel), // unused
+    special_const(FindPartyMonAboveLevel), // unused // 0x40
     special_const(FindPartyMonAtLeastThatHappy), // unused
     special_const(FindPartyMonThatSpecies),
     special_const(FindPartyMonThatSpeciesYourTrainerID),
@@ -85,7 +85,7 @@ enum {
     special_const(BillsGrandfather),
     special_const(CheckPokerus),
     special_const(DisplayCoinCaseBalance),
-    special_const(DisplayMoneyAndCoinBalance),
+    special_const(DisplayMoneyAndCoinBalance), // 0x50
     special_const(PlaceMoneyTopRight),
     special_const(CheckForLuckyNumberWinners),
     special_const(CheckLuckyNumberShowFlag),
@@ -101,7 +101,7 @@ enum {
     special_const(RandomPhoneMon),
     special_const(LoadUsedSpritesGFX),
     special_const(PlaySlowCry),
-    special_const(SnorlaxAwake),
+    special_const(SnorlaxAwake), // 0x60
     special_const(OlderHaircutBrother),
     special_const(YoungerHaircutBrother),
     special_const(DaisysGrooming),
@@ -119,7 +119,7 @@ enum {
     special_const(Function11ac3e),
     special_const(Function11b444),
     special_const(Function11b5e8),
-    special_const(Function11b7e5),
+    special_const(Function11b7e5), // 0x70
     special_const(Function11b879),
     special_const(Function11b920),
     special_const(Function11b93b),
@@ -135,7 +135,7 @@ enum {
     special_const(GiveOddEgg),
     special_const(Reset), // bank 0
     special_const(Function1011f1),
-    special_const(Function101220),
+    special_const(Function101220), // 0x80
     special_const(Function101225),
     special_const(Function101231),
     special_const(MoveTutor),
@@ -151,7 +151,7 @@ enum {
     special_const(HoOhChamber),
     special_const(Function102142),
     special_const(CelebiShrineEvent),
-    special_const(CheckCaughtCelebi),
+    special_const(CheckCaughtCelebi), // 0x90
     special_const(PokeSeer),
     special_const(BuenasPassword),
     special_const(BuenaPrize),
@@ -167,7 +167,7 @@ enum {
     special_const(StubbedTrainerRankings_Healings),
     special_const(RefreshSprites),
     special_const(Function1037c2),
-    special_const(Mobile_DummyReturnFalse),
+    special_const(Mobile_DummyReturnFalse), // 0xA0
     special_const(Function103780),
     special_const(Function10387b),
     special_const(AskRememberPassword),

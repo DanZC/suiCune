@@ -25,6 +25,7 @@ commands = {
     'yesorno': Cmd('yesorno', []),
     'loadmenu': Cmd('loadmenu', ['header']),
     'closemenu': Cmd('closemenu', []),
+    'closewindow': Cmd('closewindow', []),
     'pokepic': Cmd('pokepic', ['species']),
     'closepokepic': Cmd('closepokepic', []),
     'verticalmenu': Cmd('verticalmenu', []),
@@ -118,8 +119,10 @@ commands = {
     'takeitem': Cmd('takeitem', ['item', 'count']),
     'checkitem': Cmd('checkitem', ['item', 'count']),
     'givemoney': Cmd('givemoney', ['account', 'amount']),
+    'takemoney': Cmd('takemoney', ['account', 'amount']),
     'checkmoney': Cmd('checkmoney', ['account', 'amount']),
     'givecoins': Cmd('givecoins', ['amount']),
+    'takecoins': Cmd('takecoins', ['amount']),
     'checkcoins': Cmd('checkcoins', ['amount']),
     'checktime': Cmd('checktime', ['tod']),
     'addcellnum': Cmd('addcellnum', ['contact']),
@@ -263,7 +266,7 @@ def format_command(cmd: str, parts: List[str]):
                 return f"{cmd}({parts[0][1:]})"
             else:
                 return f"{cmd}_jump({parts[0]})"
-        if cmd in ['ifequal', 'ifnotequal', 'ifless']:
+        if cmd in ['ifequal', 'ifnotequal', 'ifless', 'ifgreater']:
             if parts[1].startswith('.'):
                 return f"{cmd}({format_arg(parts[0])}, {parts[1][1:]})"
             else:

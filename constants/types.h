@@ -1346,6 +1346,7 @@ struct ElevatorFloorData
     uint8_t mapGroup;
     uint8_t mapNum;
 };
+#define elevfloor(_floor, _warpNum, _map) {_floor, _warpNum, MAP_ID(_map)}
 
 struct ElevatorData 
 {

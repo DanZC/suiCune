@@ -2,6 +2,8 @@
 #define CONSTANTS_H
 extern void (*redirectFunc[])(void);
 extern void (*convertedFunc[])(void);
+// Uncomment the below line to use converted overworld loop.
+// #define CONVERTED_OVERWORLD_LOOP 1
 #include <stdio.h>
 #include "tools/emu/peanut_gb.h"
 

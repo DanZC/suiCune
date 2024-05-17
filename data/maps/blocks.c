@@ -741,3 +741,5 @@ const char BattleTowerOutside_Blocks[] = "maps/BattleTowerOutside.blk";
 const char BetaBlank_Blocks[] = "maps/unused/BetaBlank.blk"; // unreferenced
 
 const char GoldenrodDeptStoreRoof_Blocks[] = "maps/GoldenrodDeptStoreRoof.blk";
+
+const char PokecomCenter_Blocks[] = "maps/PokecomCenter.blk";

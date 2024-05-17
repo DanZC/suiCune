@@ -4387,6 +4387,15 @@ void Script_takecoins(void){
 
 }
 
+void Script_takecoins_Conv(script_s* s, uint16_t amount){
+    (void)s;
+    // CALL(aLoadCoinAmountToMem);
+    uint8_t* amt = LoadCoinAmountToMem_Conv(amount);
+    // FARCALL(aTakeCoins);
+    TakeCoins_Conv(amt);
+    // RET;
+}
+
 void Script_checkcoins(void){
     CALL(aLoadCoinAmountToMem);
     FARCALL(aCheckCoins);

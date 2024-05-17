@@ -18,5 +18,6 @@ void AddFunds_Conv(uint8_t* de, const uint8_t* bc, uint8_t a);
 void GiveCoins(void);
 bool GiveCoins_Conv(const uint8_t* bc);
 void TakeCoins(void);
+bool TakeCoins_Conv(const uint8_t* bc);
 void CheckCoins(void);
 u8_flag_s CheckCoins_Conv(const uint8_t* bc);

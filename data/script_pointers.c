@@ -20,6 +20,7 @@ struct ScriptGBPtr *gb_script_table = NULL;
 
 #define _idx(_group, _id, _i) (_group << 16) | (_id << 8) | _i
 #define entry(_map, _i, _script) add_entry(GROUP_##_map, MAP_##_map, _i, &_script, a##_script)
+#define entry2(_map, _i, _script, _gb) add_entry(GROUP_##_map, MAP_##_map, _i, &_script, _gb)
 
 static void add_entry(uint8_t group, uint8_t map, uint8_t index, const void* script, uint32_t gb_ptr) {
     struct ScriptGBPtr* item = malloc(sizeof(*item));
@@ -76,6 +77,22 @@ void PopulateMapScriptTable(void) {
     entry(AZALEA_TOWN, 9, ObjectEvent);
     entry(AZALEA_TOWN, 10, AzaleaTownRocket2Script);
     entry(AZALEA_TOWN, 11, AzaleaTownKurtScript);
+
+    entry(GOLDENROD_CITY, 0, GoldenrodCityPokefanMScript);
+    entry(GOLDENROD_CITY, 1, GoldenrodCityYoungster1Script);
+    entry(GOLDENROD_CITY, 2, GoldenrodCityCooltrainerF1Script);
+    entry(GOLDENROD_CITY, 3, GoldenrodCityCooltrainerF2Script);
+    entry(GOLDENROD_CITY, 4, GoldenrodCityYoungster2Script);
+    entry(GOLDENROD_CITY, 5, GoldenrodCityLassScript);
+    entry(GOLDENROD_CITY, 6, GoldenrodCityGrampsScript);
+    entry(GOLDENROD_CITY, 7, GoldenrodCityRocketScoutScript);
+    entry(GOLDENROD_CITY, 8, GoldenrodCityRocket1Script);
+    entry(GOLDENROD_CITY, 9, GoldenrodCityRocket2Script);
+    entry(GOLDENROD_CITY, 10, GoldenrodCityRocket3Script);
+    entry(GOLDENROD_CITY, 11, GoldenrodCityRocket4Script);
+    entry(GOLDENROD_CITY, 12, GoldenrodCityRocket5Script);
+    entry(GOLDENROD_CITY, 13, GoldenrodCityRocket6Script);
+    entry(GOLDENROD_CITY, 14, MoveTutorScript);
 
     entry(ROUTE_29, 0, CatchingTutorialDudeScript);
     entry(ROUTE_29, 1, Route29YoungsterScript);
@@ -163,6 +180,18 @@ void PopulateMapScriptTable(void) {
     entry(ROUTE_34_ILEX_FOREST_GATE, 1, Route34IlexForestGateButterfreeScript);
     entry(ROUTE_34_ILEX_FOREST_GATE, 2, Route34IlexForestGateLassScript);
     entry(ROUTE_34_ILEX_FOREST_GATE, 3, Route34IlexForestGateTeacherScript);
+
+    entry(ROUTE_35, 0,  TrainerCamperIvan);
+    entry(ROUTE_35, 1,  TrainerCamperElliot);
+    entry(ROUTE_35, 2,  TrainerPicnickerBrooke);
+    entry(ROUTE_35, 3,  TrainerPicnickerKim);
+    entry(ROUTE_35, 4,  TrainerBirdKeeperBryan);
+    entry(ROUTE_35, 5,  TrainerFirebreatherWalt);
+    entry(ROUTE_35, 6,  TrainerBugCatcherArnie);
+    entry(ROUTE_35, 7,  TrainerJugglerIrwin);
+    entry(ROUTE_35, 8,  TrainerOfficerDirk);
+    entry(ROUTE_35, 9,  Route35FruitTree);
+    entry(ROUTE_35, 10, Route35TMRollout);
 
     entry(CHERRYGROVE_EVOLUTION_SPEECH_HOUSE, 0, CherrygroveEvolutionSpeechHouseLassScript);
     entry(CHERRYGROVE_EVOLUTION_SPEECH_HOUSE, 1, CherrygroveEvolutionSpeechHouseYoungsterScript);
@@ -265,6 +294,127 @@ void PopulateMapScriptTable(void) {
     entry(CHARCOAL_KILN, 1, CharcoalKilnApprentice);
     entry(CHARCOAL_KILN, 2, CharcoalKilnFarfetchd);
 
+    entry(GOLDENROD_BIKE_SHOP, 0, GoldenrodBikeShopClerkScript);
+
+    entry(GOLDENROD_FLOWER_SHOP, 0, FlowerShopTeacherScript);
+    entry(GOLDENROD_FLOWER_SHOP, 1, FlowerShopFloriaScript);
+
+    entry(GOLDENROD_HAPPINESS_RATER, 0, GoldenrodHappinessRaterTeacherScript);
+    entry(GOLDENROD_HAPPINESS_RATER, 1, GoldenrodHappinessRaterPokefanMScript);
+    entry(GOLDENROD_HAPPINESS_RATER, 2, GoldenrodHappinessRaterTwinScript);
+
+    entry(GOLDENROD_MAGNET_TRAIN_STATION, 0, GoldenrodMagnetTrainStationOfficerScript);
+    entry(GOLDENROD_MAGNET_TRAIN_STATION, 1, GoldenrodMagnetTrainStationGentlemanScript);
+
+    entry(GOLDENROD_NAME_RATER, 0, GoldenrodNameRater);
+
+    entry(GOLDENROD_PP_SPEECH_HOUSE, 0, GoldenrodPPSpeechHouseFisherScript);
+    entry(GOLDENROD_PP_SPEECH_HOUSE, 1, GoldenrodPPSpeechHouseLassScript);
+
+    entry(GOLDENROD_GAME_CORNER, 0,  GoldenrodGameCornerCoinVendorScript);
+    entry(GOLDENROD_GAME_CORNER, 1,  GoldenrodGameCornerTMVendorScript);
+    entry(GOLDENROD_GAME_CORNER, 2,  GoldenrodGameCornerPrizeMonVendorScript);
+    entry(GOLDENROD_GAME_CORNER, 3,  GoldenrodGameCornerPharmacistScript);
+    entry(GOLDENROD_GAME_CORNER, 4,  GoldenrodGameCornerPharmacistScript);
+    entry(GOLDENROD_GAME_CORNER, 5,  GoldenrodGameCornerPokefanM1Script);
+    entry(GOLDENROD_GAME_CORNER, 6,  GoldenrodGameCornerCooltrainerMScript);
+    entry(GOLDENROD_GAME_CORNER, 7,  GoldenrodGameCornerPokefanFScript);
+    entry(GOLDENROD_GAME_CORNER, 8,  GoldenrodGameCornerCooltrainerFScript);
+    entry(GOLDENROD_GAME_CORNER, 9,  GoldenrodGameCornerGentlemanScript);
+    entry(GOLDENROD_GAME_CORNER, 10, GoldenrodGameCornerPokefanM2Script);
+    entry(GOLDENROD_GAME_CORNER, 11, MoveTutorInsideScript);
+
+    entry(GOLDENROD_GYM, 0, GoldenrodGymWhitneyScript);
+    entry(GOLDENROD_GYM, 1, TrainerLassCarrie);
+    entry(GOLDENROD_GYM, 2, TrainerLassBridget);
+    entry(GOLDENROD_GYM, 3, TrainerBeautyVictoria);
+    entry(GOLDENROD_GYM, 4, TrainerBeautySamantha);
+    entry(GOLDENROD_GYM, 5, GoldenrodGymGuideScript);
+
+    entry(GOLDENROD_UNDERGROUND, 0, TrainerSupernerdEric);
+    entry(GOLDENROD_UNDERGROUND, 1, TrainerSupernerdTeru);
+    entry(GOLDENROD_UNDERGROUND, 2, TrainerPokemaniacIssac);
+    entry(GOLDENROD_UNDERGROUND, 3, TrainerPokemaniacDonald);
+    entry(GOLDENROD_UNDERGROUND, 4, GoldenrodUndergroundCoinCase);
+    entry(GOLDENROD_UNDERGROUND, 5, BargainMerchantScript);
+    entry(GOLDENROD_UNDERGROUND, 6, OlderHaircutBrotherScript);
+    entry(GOLDENROD_UNDERGROUND, 7, YoungerHaircutBrotherScript);
+    entry(GOLDENROD_UNDERGROUND, 8, BitterMerchantScript);
+
+    entry(GOLDENROD_UNDERGROUND_SWITCH_ROOM_ENTRANCES, 0, TrainerBurglarDuncan);
+    entry(GOLDENROD_UNDERGROUND_SWITCH_ROOM_ENTRANCES, 1, TrainerBurglarEddie);
+    entry(GOLDENROD_UNDERGROUND_SWITCH_ROOM_ENTRANCES, 2, TrainerGruntM13);
+    entry(GOLDENROD_UNDERGROUND_SWITCH_ROOM_ENTRANCES, 3, TrainerGruntM11);
+    entry(GOLDENROD_UNDERGROUND_SWITCH_ROOM_ENTRANCES, 4, TrainerGruntM25);
+    entry(GOLDENROD_UNDERGROUND_SWITCH_ROOM_ENTRANCES, 5, TrainerGruntF3);
+    entry(GOLDENROD_UNDERGROUND_SWITCH_ROOM_ENTRANCES, 6, GoldenrodUndergroundSwitchRoomEntrancesTeacherScript);
+    entry(GOLDENROD_UNDERGROUND_SWITCH_ROOM_ENTRANCES, 7, GoldenrodUndergroundSwitchRoomEntrancesSuperNerdScript);
+    entry(GOLDENROD_UNDERGROUND_SWITCH_ROOM_ENTRANCES, 8, GoldenrodUndergroundSwitchRoomEntrancesSmokeBall);
+    entry(GOLDENROD_UNDERGROUND_SWITCH_ROOM_ENTRANCES, 9, GoldenrodUndergroundSwitchRoomEntrancesFullHeal);
+
+    entry(GOLDENROD_DEPT_STORE_1F, 0, GoldenrodDeptStore1FReceptionistScript);
+    entry(GOLDENROD_DEPT_STORE_1F, 1, GoldenrodDeptStore1FPokefanFScript);
+    entry(GOLDENROD_DEPT_STORE_1F, 2, GoldenrodDeptStore1FBugCatcherScript);
+    entry(GOLDENROD_DEPT_STORE_1F, 3, GoldenrodDeptStore1FGentlemanScript);
+
+    // maps/GoldenrodDeptStore2F.c
+    entry(GOLDENROD_DEPT_STORE_2F, 0, GoldenrodDeptStore2FClerk1Script);
+    entry(GOLDENROD_DEPT_STORE_2F, 1, GoldenrodDeptStore2FClerk2Script);
+    entry(GOLDENROD_DEPT_STORE_2F, 2, GoldenrodDeptStore2FYoungsterScript);
+    entry(GOLDENROD_DEPT_STORE_2F, 3, GoldenrodDeptStore2FCooltrainerFScript);
+    entry(GOLDENROD_DEPT_STORE_2F, 4, GoldenrodDeptStore2FGentlemanScript);
+
+    // maps/GoldenrodDeptStore3F.c
+    entry(GOLDENROD_DEPT_STORE_3F, 0, GoldenrodDeptStore3FClerkScript);
+    entry(GOLDENROD_DEPT_STORE_3F, 1, GoldenrodDeptStore3FSuperNerdScript);
+    entry(GOLDENROD_DEPT_STORE_3F, 2, GoldenrodDeptStore3FRockerScript);
+
+    // maps/GoldenrodDeptStore4F.c
+    entry(GOLDENROD_DEPT_STORE_4F, 0, GoldenrodDeptStore4FClerkScript);
+    entry(GOLDENROD_DEPT_STORE_4F, 1, GoldenrodDeptStore4FCooltrainerMScript);
+    entry(GOLDENROD_DEPT_STORE_4F, 2, GoldenrodDeptStore4FBugCatcherScript);
+    entry(GOLDENROD_DEPT_STORE_4F, 3, GoldenrodDeptStore4FGameboyKidScript);
+
+    // maps/GoldenrodDeptStore5F.c
+    entry(GOLDENROD_DEPT_STORE_5F, 0, GoldenrodDeptStore5FClerkScript);
+    entry(GOLDENROD_DEPT_STORE_5F, 1, GoldenrodDeptStore5FLassScript);
+    entry(GOLDENROD_DEPT_STORE_5F, 2, Mike);
+    entry(GOLDENROD_DEPT_STORE_5F, 3, GoldenrodDeptStore5FPokefanMScript);
+    entry(GOLDENROD_DEPT_STORE_5F, 4, Carrie);
+    entry(GOLDENROD_DEPT_STORE_5F, 5, GoldenrodDeptStore5FReceptionistScript);
+
+    // maps/GoldenrodDeptStore6F.c
+    entry(GOLDENROD_DEPT_STORE_6F, 0, GoldenrodDeptStore6FLassScript);
+    entry(GOLDENROD_DEPT_STORE_6F, 1, GoldenrodDeptStore6FSuperNerdScript);
+
+    // maps/GoldenrodDeptStoreB1F.c
+    entry(GOLDENROD_DEPT_STORE_B1F, 0, GoldenrodDeptStoreB1FEther);
+    entry(GOLDENROD_DEPT_STORE_B1F, 1, GoldenrodDeptStoreB1FAmuletCoin);
+    entry(GOLDENROD_DEPT_STORE_B1F, 2, GoldenrodDeptStoreB1FBurnHeal);
+    entry(GOLDENROD_DEPT_STORE_B1F, 3, GoldenrodDeptStoreB1FUltraBall);
+    entry(GOLDENROD_DEPT_STORE_B1F, 4, GoldenrodDeptStoreB1FBlackBelt1Script);
+    entry(GOLDENROD_DEPT_STORE_B1F, 5, GoldenrodDeptStoreB1FBlackBelt2Script);
+    entry(GOLDENROD_DEPT_STORE_B1F, 6, GoldenrodDeptStoreB1FBlackBelt3Script);
+    entry(GOLDENROD_DEPT_STORE_B1F, 7, GoldenrodDeptStoreB1FMachopScript);
+
+    // maps/PokecomCenter.c
+    entry(GOLDENROD_POKECENTER_1F, 0, GoldenrodPokecenter1FNurseScript);
+    entry2(GOLDENROD_POKECENTER_1F, 1, GoldenrodPokecenter1FTradeCornerAttendantScript, aGoldenrodPokecenter1F_GSBallSceneLeft_gsball);
+    entry2(GOLDENROD_POKECENTER_1F, 2, GoldenrodPokecenter1FSuperNerdScript, aGoldenrodPokecenter1F_GSBallSceneLeft_gsball + 1);
+    entry(GOLDENROD_POKECENTER_1F, 3, GoldenrodPokecenter1FGameboyKidScript);
+    entry(GOLDENROD_POKECENTER_1F, 4, GoldenrodPokecenter1FLassScript);
+    entry(GOLDENROD_POKECENTER_1F, 5, GoldenrodPokecenter1FPokefanF);
+    entry2(GOLDENROD_POKECENTER_1F, 6, GoldenrodPokecenter1FLass2Script, aGoldenrodPokecenter1F_GSBallSceneLeft_gsball + 2);
+    entry2(GOLDENROD_POKECENTER_1F, 7, GoldenrodPokecenter1FYoungsterScript, aGoldenrodPokecenter1F_GSBallSceneLeft_gsball + 3);
+    entry2(GOLDENROD_POKECENTER_1F, 8, GoldenrodPokecenter1FTeacherScript, aGoldenrodPokecenter1F_GSBallSceneLeft_gsball + 4);
+    entry2(GOLDENROD_POKECENTER_1F, 9, GoldenrodPokecenter1FRockerScript, aGoldenrodPokecenter1F_GSBallSceneLeft_gsball + 5);
+    entry2(GOLDENROD_POKECENTER_1F, 10, GoldenrodPokecenter1FGrampsScript, aGoldenrodPokecenter1F_GSBallSceneLeft_gsball + 6);
+
+    // maps/PokecomCenterAdminOfficeMobile.c
+    entry(POKECOM_CENTER_ADMIN_OFFICE_MOBILE, 0, PokecomCenterAdminOfficeMobileScientist1Script);
+    entry(POKECOM_CENTER_ADMIN_OFFICE_MOBILE, 1, PokecomCenterAdminOfficeMobileScientist2Script);
+    entry(POKECOM_CENTER_ADMIN_OFFICE_MOBILE, 2, PokecomCenterAdminOfficeMobileScientist3Script);
+
     entry(SPROUT_TOWER_1F, 0, SproutTower1FSage1Script);
     entry(SPROUT_TOWER_1F, 1, SproutTower1FSage2Script);
     entry(SPROUT_TOWER_1F, 2, SproutTower1FGrannyScript);
@@ -350,6 +500,27 @@ void PopulateMapScriptTable(void) {
 
     entry(ILEX_FOREST_AZALEA_GATE, 0, IlexForestAzaleaGateOfficerScript);
     entry(ILEX_FOREST_AZALEA_GATE, 1, IlexForestAzaleaGateGrannyScript);
+
+    // maps/RadioTower1F.c
+    entry(RADIO_TOWER_1F, 0, RadioTower1FReceptionistScript);
+    entry(RADIO_TOWER_1F, 1, RadioTower1FLassScript);
+    entry(RADIO_TOWER_1F, 2, RadioTower1FYoungsterScript);
+    entry(RADIO_TOWER_1F, 3, TrainerGruntM3);
+    entry(RADIO_TOWER_1F, 4, RadioTower1FLuckyNumberManScript);
+    entry(RADIO_TOWER_1F, 5, RadioTower1FRadioCardWomanScript);
+
+    // maps/RadioTower2F.c
+    entry(RADIO_TOWER_2F, 0,  RadioTower2FSuperNerdScript);
+    entry(RADIO_TOWER_2F, 1,  RadioTower2FTeacherScript);
+    entry(RADIO_TOWER_2F, 2,  TrainerGruntM4);
+    entry(RADIO_TOWER_2F, 3,  TrainerGruntM5);
+    entry(RADIO_TOWER_2F, 4,  TrainerGruntM6);
+    entry(RADIO_TOWER_2F, 5,  TrainerGruntF2);
+    entry(RADIO_TOWER_2F, 6,  RadioTower2FBlackBelt1Script);
+    entry(RADIO_TOWER_2F, 7,  RadioTower2FBlackBelt2Script);
+    entry(RADIO_TOWER_2F, 8,  RadioTowerJigglypuff);
+    entry(RADIO_TOWER_2F, 9,  Buena);
+    entry(RADIO_TOWER_2F, 10, RadioTowerBuenaPrizeReceptionist);
 
     entry(DARK_CAVE_BLACKTHORN_ENTRANCE, 0, DarkCaveBlackthornEntrancePharmacistScript);
     entry(DARK_CAVE_BLACKTHORN_ENTRANCE, 1, DarkCaveBlackthornEntranceRevive);

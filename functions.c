@@ -629,7 +629,9 @@ void init_function_pointers(void) {
     // REDIRECTED(TalkToTrainer);
     // REDIRECTED(LoadTrainer_continue);
     // REDIRECTED(FacingPlayerDistance);
-// CONVERTED(PrintWinLossText);
+#if CONVERTED_OVERWORLD_LOOP
+    CONVERTED(PrintWinLossText);
+#endif
     // REDIRECTED(v_CheckTrainerBattle);
     // REDIRECTED(CheckTrainerBattle);
 
@@ -1232,7 +1234,9 @@ void init_function_pointers(void) {
     // REDIRECTED(BGEvent);
     // REDIRECTED(Call_a_de);
     // REDIRECTED(GetBlockLocation);
-    // REDIRECTED(GetWarpDestCoords);
+#if CONVERTED_OVERWORLD_LOOP
+    CONVERTED(GetWarpDestCoords);
+#endif
     // REDIRECTED(GetMapPointer);
     // REDIRECTED(CopyMapPartialAndAttributes);
     REDIRECTED(GetWorldMapLocation);
@@ -2807,7 +2811,9 @@ void init_function_pointers(void) {
     // engine/overworld/events.c
     // REDIRECTED(PlayerEventScriptPointers);
     // REDIRECTED(FallIntoMapScript);
-// CONVERTED(OverworldLoop);
+#if CONVERTED_OVERWORLD_LOOP
+    CONVERTED(OverworldLoop);
+#endif
     // REDIRECTED(OWPlayerInput);
     // REDIRECTED(DisableCoordEvents);
     // REDIRECTED(UnusedPlayerEventScript);
@@ -4829,6 +4835,23 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(AzaleaTownRocket2Script);
     CONVERTED_SCRIPT(AzaleaTownKurtScript);
 
+    // maps/GoldenrodCity.c
+    CONVERTED_SCRIPT(GoldenrodCityPokefanMScript);
+    CONVERTED_SCRIPT(GoldenrodCityYoungster1Script);
+    CONVERTED_SCRIPT(GoldenrodCityCooltrainerF1Script);
+    CONVERTED_SCRIPT(GoldenrodCityCooltrainerF2Script);
+    CONVERTED_SCRIPT(GoldenrodCityYoungster2Script);
+    CONVERTED_SCRIPT(GoldenrodCityLassScript);
+    CONVERTED_SCRIPT(GoldenrodCityGrampsScript);
+    CONVERTED_SCRIPT(GoldenrodCityRocketScoutScript);
+    CONVERTED_SCRIPT(GoldenrodCityRocket1Script);
+    CONVERTED_SCRIPT(GoldenrodCityRocket2Script);
+    CONVERTED_SCRIPT(GoldenrodCityRocket3Script);
+    CONVERTED_SCRIPT(GoldenrodCityRocket4Script);
+    CONVERTED_SCRIPT(GoldenrodCityRocket5Script);
+    CONVERTED_SCRIPT(GoldenrodCityRocket6Script);
+    CONVERTED_SCRIPT(MoveTutorScript);
+
     // maps/Route29.c
     CONVERTED_SCRIPT(Route29Tutorial1);
     CONVERTED_SCRIPT(Route29Tutorial2);
@@ -4902,6 +4925,19 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(TrainerCooltrainerfJenn);
     CONVERTED_SCRIPT(TrainerCooltrainerfKate);
     CONVERTED_SCRIPT(Route34Nugget);
+
+    // maps/Route35.c
+    CONVERTED_SCRIPT(TrainerCamperIvan);
+    CONVERTED_SCRIPT(TrainerCamperElliot);
+    CONVERTED_SCRIPT(TrainerPicnickerBrooke);
+    CONVERTED_SCRIPT(TrainerPicnickerKim);
+    CONVERTED_SCRIPT(TrainerBirdKeeperBryan);
+    CONVERTED_SCRIPT(TrainerFirebreatherWalt);
+    CONVERTED_SCRIPT(TrainerBugCatcherArnie);
+    CONVERTED_SCRIPT(TrainerJugglerIrwin);
+    CONVERTED_SCRIPT(TrainerOfficerDirk);
+    CONVERTED_SCRIPT(Route35FruitTree);
+    CONVERTED_SCRIPT(Route35TMRollout);
 
     // maps/Route30BerryHouse.c
     CONVERTED_SCRIPT(Route30BerryHousePokefanMScript);
@@ -5039,6 +5075,139 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(CharcoalKilnApprentice);
     CONVERTED_SCRIPT(CharcoalKilnFarfetchd);
 
+    // maps/GoldenrodBikeShop.c
+    CONVERTED_SCRIPT(GoldenrodBikeShopClerkScript);
+
+    // maps/GoldenrodFlowerShop.c
+    CONVERTED_SCRIPT(FlowerShopTeacherScript);
+    CONVERTED_SCRIPT(FlowerShopFloriaScript);
+
+    // maps/GoldenrodHappinessRater.c
+    CONVERTED_SCRIPT(GoldenrodHappinessRaterTeacherScript);
+    CONVERTED_SCRIPT(GoldenrodHappinessRaterPokefanMScript);
+    CONVERTED_SCRIPT(GoldenrodHappinessRaterTwinScript);
+
+    // maps/GoldenrodMagnetTrainStation.c
+    CONVERTED_SCRIPT(GoldenrodMagnetTrainStationOfficerScript);
+    CONVERTED_SCRIPT(GoldenrodMagnetTrainStationGentlemanScript);
+
+    // maps/GoldenrodNameRater.c
+    CONVERTED_SCRIPT(GoldenrodNameRater);
+
+    // maps/GoldenrodPPSpeechHouse.c
+    CONVERTED_SCRIPT(GoldenrodPPSpeechHouseFisherScript);
+    CONVERTED_SCRIPT(GoldenrodPPSpeechHouseLassScript);
+
+    // maps/GoldenrodGameCorner.c
+    CONVERTED_SCRIPT(GoldenrodGameCornerCoinVendorScript);
+    CONVERTED_SCRIPT(GoldenrodGameCornerTMVendorScript);
+    CONVERTED_SCRIPT(GoldenrodGameCornerPrizeMonVendorScript);
+    CONVERTED_SCRIPT(GoldenrodGameCornerPharmacistScript);
+    CONVERTED_SCRIPT(GoldenrodGameCornerPharmacistScript);
+    CONVERTED_SCRIPT(GoldenrodGameCornerPokefanM1Script);
+    CONVERTED_SCRIPT(GoldenrodGameCornerCooltrainerMScript);
+    CONVERTED_SCRIPT(GoldenrodGameCornerPokefanFScript);
+    CONVERTED_SCRIPT(GoldenrodGameCornerCooltrainerFScript);
+    CONVERTED_SCRIPT(GoldenrodGameCornerGentlemanScript);
+    CONVERTED_SCRIPT(GoldenrodGameCornerPokefanM2Script);
+    CONVERTED_SCRIPT(MoveTutorInsideScript);
+
+    // maps/GoldenrodGym.c
+    CONVERTED_SCRIPT(GoldenrodGymWhitneyScript);
+    CONVERTED_SCRIPT(TrainerLassCarrie);
+    CONVERTED_SCRIPT(TrainerLassBridget);
+    CONVERTED_SCRIPT(TrainerBeautyVictoria);
+    CONVERTED_SCRIPT(TrainerBeautySamantha);
+    CONVERTED_SCRIPT(GoldenrodGymGuideScript);
+
+    // maps/GoldenrodUnderground.c
+    CONVERTED_SCRIPT(TrainerSupernerdEric);
+    CONVERTED_SCRIPT(TrainerSupernerdTeru);
+    CONVERTED_SCRIPT(TrainerPokemaniacIssac);
+    CONVERTED_SCRIPT(TrainerPokemaniacDonald);
+    CONVERTED_SCRIPT(GoldenrodUndergroundCoinCase);
+    CONVERTED_SCRIPT(BargainMerchantScript);
+    CONVERTED_SCRIPT(OlderHaircutBrotherScript);
+    CONVERTED_SCRIPT(YoungerHaircutBrotherScript);
+    CONVERTED_SCRIPT(BitterMerchantScript);
+
+    // maps/GoldenrodUndergroundSwitchRoomEntrances.c
+    CONVERTED_SCRIPT(TrainerBurglarDuncan);
+    CONVERTED_SCRIPT(TrainerBurglarEddie);
+    CONVERTED_SCRIPT(TrainerGruntM13);
+    CONVERTED_SCRIPT(TrainerGruntM11);
+    CONVERTED_SCRIPT(TrainerGruntM25);
+    CONVERTED_SCRIPT(TrainerGruntF3);
+    CONVERTED_SCRIPT(GoldenrodUndergroundSwitchRoomEntrancesTeacherScript);
+    CONVERTED_SCRIPT(GoldenrodUndergroundSwitchRoomEntrancesSuperNerdScript);
+    CONVERTED_SCRIPT(GoldenrodUndergroundSwitchRoomEntrancesSmokeBall);
+    CONVERTED_SCRIPT(GoldenrodUndergroundSwitchRoomEntrancesFullHeal);
+    // CONVERTED_SCRIPT(ObjectEvent);
+
+    // maps/GoldenrodDeptStore1F.c
+    CONVERTED_SCRIPT(GoldenrodDeptStore1FReceptionistScript);
+    CONVERTED_SCRIPT(GoldenrodDeptStore1FPokefanFScript);
+    CONVERTED_SCRIPT(GoldenrodDeptStore1FBugCatcherScript);
+    CONVERTED_SCRIPT(GoldenrodDeptStore1FGentlemanScript);
+
+    // maps/GoldenrodDeptStore2F.c
+    CONVERTED_SCRIPT(GoldenrodDeptStore2FClerk1Script);
+    CONVERTED_SCRIPT(GoldenrodDeptStore2FClerk2Script);
+    CONVERTED_SCRIPT(GoldenrodDeptStore2FYoungsterScript);
+    CONVERTED_SCRIPT(GoldenrodDeptStore2FCooltrainerFScript);
+    CONVERTED_SCRIPT(GoldenrodDeptStore2FGentlemanScript);
+
+    // maps/GoldenrodDeptStore3F.c
+    CONVERTED_SCRIPT(GoldenrodDeptStore3FClerkScript);
+    CONVERTED_SCRIPT(GoldenrodDeptStore3FSuperNerdScript);
+    CONVERTED_SCRIPT(GoldenrodDeptStore3FRockerScript);
+
+    // maps/GoldenrodDeptStore4F.c
+    CONVERTED_SCRIPT(GoldenrodDeptStore4FClerkScript);
+    CONVERTED_SCRIPT(GoldenrodDeptStore4FCooltrainerMScript);
+    CONVERTED_SCRIPT(GoldenrodDeptStore4FBugCatcherScript);
+    CONVERTED_SCRIPT(GoldenrodDeptStore4FGameboyKidScript);
+
+    // maps/GoldenrodDeptStore5F.c
+    CONVERTED_SCRIPT(GoldenrodDeptStore5FClerkScript);
+    CONVERTED_SCRIPT(GoldenrodDeptStore5FLassScript);
+    CONVERTED_SCRIPT(Mike);
+    CONVERTED_SCRIPT(GoldenrodDeptStore5FPokefanMScript);
+    CONVERTED_SCRIPT(Carrie);
+    CONVERTED_SCRIPT(GoldenrodDeptStore5FReceptionistScript);
+
+    // maps/GoldenrodDeptStore6F.c
+    CONVERTED_SCRIPT(GoldenrodDeptStore6FLassScript);
+    CONVERTED_SCRIPT(GoldenrodDeptStore6FSuperNerdScript);
+
+    // maps/GoldenrodDeptStoreB1F.c
+    CONVERTED_SCRIPT(GoldenrodDeptStoreB1FEther);
+    CONVERTED_SCRIPT(GoldenrodDeptStoreB1FAmuletCoin);
+    CONVERTED_SCRIPT(GoldenrodDeptStoreB1FBurnHeal);
+    CONVERTED_SCRIPT(GoldenrodDeptStoreB1FUltraBall);
+    CONVERTED_SCRIPT(GoldenrodDeptStoreB1FBlackBelt1Script);
+    CONVERTED_SCRIPT(GoldenrodDeptStoreB1FBlackBelt2Script);
+    CONVERTED_SCRIPT(GoldenrodDeptStoreB1FBlackBelt3Script);
+    CONVERTED_SCRIPT(GoldenrodDeptStoreB1FMachopScript);
+
+    // maps/PokecomCenter.c
+    CONVERTED_SCRIPT(GoldenrodPokecenter1FNurseScript);
+    CONVERTED_SCRIPT2(GoldenrodPokecenter1FTradeCornerAttendantScript, aGoldenrodPokecenter1F_GSBallSceneLeft_gsball);
+    CONVERTED_SCRIPT2(GoldenrodPokecenter1FSuperNerdScript, aGoldenrodPokecenter1F_GSBallSceneLeft_gsball + 1);
+    CONVERTED_SCRIPT(GoldenrodPokecenter1FGameboyKidScript);
+    CONVERTED_SCRIPT(GoldenrodPokecenter1FLassScript);
+    CONVERTED_SCRIPT(GoldenrodPokecenter1FPokefanF);
+    CONVERTED_SCRIPT2(GoldenrodPokecenter1FLass2Script, aGoldenrodPokecenter1F_GSBallSceneLeft_gsball + 2);
+    CONVERTED_SCRIPT2(GoldenrodPokecenter1FYoungsterScript, aGoldenrodPokecenter1F_GSBallSceneLeft_gsball + 3);
+    CONVERTED_SCRIPT2(GoldenrodPokecenter1FTeacherScript, aGoldenrodPokecenter1F_GSBallSceneLeft_gsball + 4);
+    CONVERTED_SCRIPT2(GoldenrodPokecenter1FRockerScript, aGoldenrodPokecenter1F_GSBallSceneLeft_gsball + 5);
+    CONVERTED_SCRIPT2(GoldenrodPokecenter1FGrampsScript, aGoldenrodPokecenter1F_GSBallSceneLeft_gsball + 6);
+
+    // maps/PokecomCenterAdminOfficeMobile.c
+    CONVERTED_SCRIPT(PokecomCenterAdminOfficeMobileScientist1Script);
+    CONVERTED_SCRIPT(PokecomCenterAdminOfficeMobileScientist2Script);
+    CONVERTED_SCRIPT(PokecomCenterAdminOfficeMobileScientist3Script);
+
     // maps/SproutTower1F.c
     CONVERTED_SCRIPT(SproutTower1FSage1Script);
     CONVERTED_SCRIPT(SproutTower1FSage2Script);
@@ -5135,6 +5304,27 @@ void init_function_pointers(void) {
     // maps/IlexForestAzaleaGate.c
     CONVERTED_SCRIPT(IlexForestAzaleaGateOfficerScript);
     CONVERTED_SCRIPT(IlexForestAzaleaGateGrannyScript);
+
+    // maps/RadioTower1F.c
+    CONVERTED_SCRIPT(RadioTower1FReceptionistScript);
+    CONVERTED_SCRIPT(RadioTower1FLassScript);
+    CONVERTED_SCRIPT(RadioTower1FYoungsterScript);
+    CONVERTED_SCRIPT(TrainerGruntM3);
+    CONVERTED_SCRIPT(RadioTower1FLuckyNumberManScript);
+    CONVERTED_SCRIPT(RadioTower1FRadioCardWomanScript);
+
+    // maps/RadioTower2F.c
+    CONVERTED_SCRIPT(RadioTower2FSuperNerdScript);
+    CONVERTED_SCRIPT(RadioTower2FTeacherScript);
+    CONVERTED_SCRIPT(TrainerGruntM4);
+    CONVERTED_SCRIPT(TrainerGruntM5);
+    CONVERTED_SCRIPT(TrainerGruntM6);
+    CONVERTED_SCRIPT(TrainerGruntF2);
+    CONVERTED_SCRIPT(RadioTower2FBlackBelt1Script);
+    CONVERTED_SCRIPT(RadioTower2FBlackBelt2Script);
+    CONVERTED_SCRIPT(RadioTowerJigglypuff);
+    CONVERTED_SCRIPT(Buena);
+    CONVERTED_SCRIPT(RadioTowerBuenaPrizeReceptionist);
 
     // maps/DarkCaveBlackthornEntrance.c
     CONVERTED_SCRIPT(DarkCaveBlackthornEntrancePharmacistScript);

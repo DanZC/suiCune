@@ -88,6 +88,10 @@ map_attributes(AzaleaTown, AZALEA_TOWN, 0x05,
     connection(AZALEA_TOWN, west, Route34, ROUTE_34, -18)
     connection(AZALEA_TOWN, east, Route33, ROUTE_33, 0));
 
+map_attributes(GoldenrodCity, GOLDENROD_CITY, 0x35,
+    connection(GOLDENROD_CITY, north, Route35, ROUTE_35, 5)
+    connection(GOLDENROD_CITY, south, Route34, ROUTE_34, 5));
+
 map_attributes(Route27, ROUTE_27, 0x35,
     connection(ROUTE_27, west, NewBarkTown, NEW_BARK_TOWN, 0)
     connection(ROUTE_27, east, Route26, ROUTE_26, -45));
@@ -151,8 +155,8 @@ map_attributes(SproutTower3F, SPROUT_TOWER_3F, 0x00, 0);
 // map_attributes(BurnedTowerB1F, BURNED_TOWER_B1F, 0x09, 0);
 // map_attributes(NationalPark, NATIONAL_PARK, 0x00, 0);
 // map_attributes(NationalParkBugContest, NATIONAL_PARK_BUG_CONTEST, 0x00, 0);
-// map_attributes(RadioTower1F, RADIO_TOWER_1F, 0x00, 0);
-// map_attributes(RadioTower2F, RADIO_TOWER_2F, 0x00, 0);
+map_attributes(RadioTower1F, RADIO_TOWER_1F, 0x00, 0);
+map_attributes(RadioTower2F, RADIO_TOWER_2F, 0x00, 0);
 // map_attributes(RadioTower3F, RADIO_TOWER_3F, 0x00, 0);
 // map_attributes(RadioTower4F, RADIO_TOWER_4F, 0x00, 0);
 // map_attributes(RadioTower5F, RADIO_TOWER_5F, 0x00, 0);
@@ -187,9 +191,9 @@ map_attributes(SlowpokeWellB2F, SLOWPOKE_WELL_B2F, 0x09, 0);
 // map_attributes(TeamRocketBaseB2F, TEAM_ROCKET_BASE_B2F, 0x00, 0);
 // map_attributes(TeamRocketBaseB3F, TEAM_ROCKET_BASE_B3F, 0x00, 0);
 map_attributes(IlexForest, ILEX_FOREST, 0x05, 0);
-// map_attributes(GoldenrodUnderground, GOLDENROD_UNDERGROUND, 0x00, 0);
-// map_attributes(GoldenrodUndergroundSwitchRoomEntrances, GOLDENROD_UNDERGROUND_SWITCH_ROOM_ENTRANCES, 0x00, 0);
-// map_attributes(GoldenrodDeptStoreB1F, GOLDENROD_DEPT_STORE_B1F, 0x00, 0);
+map_attributes(GoldenrodUnderground, GOLDENROD_UNDERGROUND, 0x00, 0);
+map_attributes(GoldenrodUndergroundSwitchRoomEntrances, GOLDENROD_UNDERGROUND_SWITCH_ROOM_ENTRANCES, 0x00, 0);
+map_attributes(GoldenrodDeptStoreB1F, GOLDENROD_DEPT_STORE_B1F, 0x00, 0);
 // map_attributes(GoldenrodUndergroundWarehouse, GOLDENROD_UNDERGROUND_WAREHOUSE, 0x00, 0);
 // map_attributes(MountMortar1FOutside, MOUNT_MORTAR_1F_OUTSIDE, 0x09, 0);
 // map_attributes(MountMortar1FInside, MOUNT_MORTAR_1F_INSIDE, 0x09, 0);
@@ -292,25 +296,26 @@ map_attributes(Route32Pokecenter1F, ROUTE_32_POKECENTER_1F, 0x00, 0);
 // map_attributes(Route35NationalParkGate, ROUTE_35_NATIONAL_PARK_GATE, 0x00, 0);
 map_attributes(Route36RuinsOfAlphGate, ROUTE_36_RUINS_OF_ALPH_GATE, 0x00, 0);
 // map_attributes(Route36NationalParkGate, ROUTE_36_NATIONAL_PARK_GATE, 0x00, 0);
-// map_attributes(GoldenrodGym, GOLDENROD_GYM, 0x00, 0);
-// map_attributes(GoldenrodBikeShop, GOLDENROD_BIKE_SHOP, 0x00, 0);
-// map_attributes(GoldenrodHappinessRater, GOLDENROD_HAPPINESS_RATER, 0x00, 0);
+map_attributes(GoldenrodGym, GOLDENROD_GYM, 0x00, 0);
+map_attributes(GoldenrodBikeShop, GOLDENROD_BIKE_SHOP, 0x00, 0);
+map_attributes(GoldenrodHappinessRater, GOLDENROD_HAPPINESS_RATER, 0x00, 0);
 // map_attributes(BillsFamilysHouse, BILLS_FAMILYS_HOUSE, 0x00, 0);
-// map_attributes(GoldenrodMagnetTrainStation, GOLDENROD_MAGNET_TRAIN_STATION, 0x00, 0);
-// map_attributes(GoldenrodFlowerShop, GOLDENROD_FLOWER_SHOP, 0x00, 0);
-// map_attributes(GoldenrodPPSpeechHouse, GOLDENROD_PP_SPEECH_HOUSE, 0x00, 0);
-// map_attributes(GoldenrodNameRater, GOLDENROD_NAME_RATER, 0x00, 0);
-// map_attributes(GoldenrodDeptStore1F, GOLDENROD_DEPT_STORE_1F, 0x00, 0);
-// map_attributes(GoldenrodDeptStore2F, GOLDENROD_DEPT_STORE_2F, 0x00, 0);
-// map_attributes(GoldenrodDeptStore3F, GOLDENROD_DEPT_STORE_3F, 0x00, 0);
-// map_attributes(GoldenrodDeptStore4F, GOLDENROD_DEPT_STORE_4F, 0x00, 0);
-// map_attributes(GoldenrodDeptStore5F, GOLDENROD_DEPT_STORE_5F, 0x00, 0);
-// map_attributes(GoldenrodDeptStore6F, GOLDENROD_DEPT_STORE_6F, 0x00, 0);
-// map_attributes(GoldenrodDeptStoreElevator, GOLDENROD_DEPT_STORE_ELEVATOR, 0x00, 0);
-// map_attributes(GoldenrodDeptStoreRoof, GOLDENROD_DEPT_STORE_ROOF, 0x24, 0);
-// map_attributes(GoldenrodGameCorner, GOLDENROD_GAME_CORNER, 0x00, 0);
+map_attributes(GoldenrodMagnetTrainStation, GOLDENROD_MAGNET_TRAIN_STATION, 0x00, 0);
+map_attributes(GoldenrodFlowerShop, GOLDENROD_FLOWER_SHOP, 0x00, 0);
+map_attributes(GoldenrodPPSpeechHouse, GOLDENROD_PP_SPEECH_HOUSE, 0x00, 0);
+map_attributes(GoldenrodNameRater, GOLDENROD_NAME_RATER, 0x00, 0);
+map_attributes(GoldenrodDeptStore1F, GOLDENROD_DEPT_STORE_1F, 0x00, 0);
+map_attributes(GoldenrodDeptStore2F, GOLDENROD_DEPT_STORE_2F, 0x00, 0);
+map_attributes(GoldenrodDeptStore3F, GOLDENROD_DEPT_STORE_3F, 0x00, 0);
+map_attributes(GoldenrodDeptStore4F, GOLDENROD_DEPT_STORE_4F, 0x00, 0);
+map_attributes(GoldenrodDeptStore5F, GOLDENROD_DEPT_STORE_5F, 0x00, 0);
+map_attributes(GoldenrodDeptStore6F, GOLDENROD_DEPT_STORE_6F, 0x00, 0);
+map_attributes(GoldenrodDeptStoreElevator, GOLDENROD_DEPT_STORE_ELEVATOR, 0x00, 0);
+map_attributes(GoldenrodDeptStoreRoof, GOLDENROD_DEPT_STORE_ROOF, 0x24, 0);
+map_attributes(GoldenrodGameCorner, GOLDENROD_GAME_CORNER, 0x00, 0);
 // map_attributes(GoldenrodPokecenter1F, GOLDENROD_POKECENTER_1F, 0x00, 0);
-// map_attributes(PokecomCenterAdminOfficeMobile, POKECOM_CENTER_ADMIN_OFFICE_MOBILE, 0x00, 0);
+map_attributes(PokecomCenter, GOLDENROD_POKECENTER_1F, 0x00, 0);
+map_attributes(PokecomCenterAdminOfficeMobile, POKECOM_CENTER_ADMIN_OFFICE_MOBILE, 0x00, 0);
 map_attributes(IlexForestAzaleaGate, ILEX_FOREST_AZALEA_GATE, 0x00, 0);
 map_attributes(Route34IlexForestGate, ROUTE_34_ILEX_FOREST_GATE, 0x00, 0);
 // map_attributes(DayCare, DAY_CARE, 0x00, 0);

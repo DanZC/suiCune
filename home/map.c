@@ -725,7 +725,11 @@ static u8_flag_s GetDestinationWarpNumber_Function(void) {
     // LD_A_hli;
     // LD_H_hl;
     // LD_L_A;
+#if CONVERTED_OVERWORLD_LOOP
+    const struct WarpEventData* hl = gCurMapWarpsPointer;
+#else
     const struct WarpEventData* hl = GBToRAMAddr(wram->wCurMapWarpsPointer);
+#endif
 
     do {
     // loop:
@@ -859,7 +863,11 @@ static void CopyWarpData_Function(uint8_t c) {
     // LD_A_hli;
     // LD_H_hl;
     // LD_L_A;
+#if CONVERTED_OVERWORLD_LOOP
+    const struct WarpEventData* hl = gCurMapWarpsPointer;
+#else
     const struct WarpEventData* hl = GBToRAMAddr(wram->wCurMapWarpsPointer);
+#endif
     // LD_A_C;
     // DEC_A;
     // LD_BC(WARP_EVENT_SIZE);
@@ -1777,6 +1785,7 @@ void ClearObjectStructs_Conv(void){
 }
 
 void GetWarpDestCoords(void){
+    return GetWarpDestCoords_Conv();
     CALL(aGetMapScriptsBank);
     RST(aBankswitch);
 

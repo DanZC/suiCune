@@ -435,3 +435,4 @@ extern const char BattleTowerElevator_Blocks[];
 extern const char BattleTowerOutside_Blocks[];
 extern const char BetaBlank_Blocks[]; // unreferenced
 extern const char GoldenrodDeptStoreRoof_Blocks[];
+extern const char PokecomCenter_Blocks[];
