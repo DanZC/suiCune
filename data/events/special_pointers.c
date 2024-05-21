@@ -13,6 +13,8 @@
 #include "../../engine/events/mom.h"
 #include "../../engine/events/prof_oaks_pc.h"
 #include "../../engine/events/kurt.h"
+#include "../../engine/events/haircut.h"
+#include "../../engine/events/happiness_egg.h"
 #include "../../engine/overworld/wildmons.h"
 #include "../../engine/overworld/overworld.h"
 #include "../../engine/overworld/warp_connection.h"
@@ -63,7 +65,7 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(MoveDeletion),
     add_special(BankOfMom),
     // add_special(MagnetTrain),
-    // add_special(NameRival),
+    add_special(NameRival),
     add_special(SetDayOfWeek),
     add_special(OverworldTownMap),
     // add_special(UnownPrinter),
@@ -104,29 +106,29 @@ void (*const SpecialsPointers[])(void) = {
     add_special(ToggleDecorationsVisibility),
     // add_special(GiveShuckle),
     // add_special(ReturnShuckie),
-    // add_special(BillsGrandfather),
+    add_special(BillsGrandfather),
     // add_special(CheckPokerus),
-    // add_special(DisplayCoinCaseBalance),
-    // add_special(DisplayMoneyAndCoinBalance),
+    add_special(DisplayCoinCaseBalance),
+    add_special(DisplayMoneyAndCoinBalance),
     add_special(PlaceMoneyTopRight),
     // add_special(CheckForLuckyNumberWinners),
     add_special(CheckLuckyNumberShowFlag),
     add_special(ResetLuckyNumberShowFlag),
     // add_special(PrintTodaysLuckyNumber),
     add_special(SelectApricornForKurt),
-    // add_special(NameRater),
+    add_special(NameRater),
     // add_special(DisplayLinkRecord),
     // add_special(GetFirstPokemonHappiness),
-    // add_special(CheckFirstMonIsEgg),
+    add_special(CheckFirstMonIsEgg),
     // add_special(RandomUnseenWildMon),
     add_special(RandomPhoneWildMon),
     add_special(RandomPhoneMon),
     // add_special(LoadUsedSpritesGFX),
     // add_special(PlaySlowCry),
     // add_special(SnorlaxAwake),
-    // add_special(OlderHaircutBrother),
-    // add_special(YoungerHaircutBrother),
-    // add_special(DaisysGrooming),
+    add_special(OlderHaircutBrother),
+    add_special(YoungerHaircutBrother),
+    add_special(DaisysGrooming),
     add_special(PlayCurMonCry),
     add_special(ProfOaksPCBoot),
     // add_special(GameboyCheck),

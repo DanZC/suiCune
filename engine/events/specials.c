@@ -1,6 +1,8 @@
 #include "../../constants.h"
 #include "specials.h"
 #include "pokecenter_pc.h"
+#include "name_rater.h"
+#include "../menus/naming_screen.h"
 #include "../../data/events/special_pointers.h"
 #include "../overworld/map_objects.h"
 #include "../overworld/time.h"
@@ -9,6 +11,7 @@
 #include "../../home/sram.h"
 #include "../../home/map.h"
 #include "../../home/pokemon.h"
+#include "../../home/string.h"
 
 void Special(void){
 //  Run script special de.
@@ -143,25 +146,22 @@ void FoundNone(void){
 }
 
 void NameRival(void){
-    LD_B(NAME_RIVAL);
-    LD_DE(wRivalName);
-    FARCALL(av_NamingScreen);
-    LD_HL(wRivalName);
-    LD_DE(mNameRival_DefaultName);
-    CALL(aInitName);
-    RET;
-
-
-DefaultName:
-    //db ['"SILVER@"'];
-
-    return NameRater();
+    static const char DefaultName[] = "SILVER@";
+    // LD_B(NAME_RIVAL);
+    // LD_DE(wRivalName);
+    // FARCALL(av_NamingScreen);
+    v_NamingScreen_Conv(wram->wRivalName, NAME_RIVAL);
+    // LD_HL(wRivalName);
+    // LD_DE(mNameRival_DefaultName);
+    // CALL(aInitName);
+    InitName_Conv2(wram->wRivalName, U82C(DefaultName));
+    // RET;
 }
 
 void NameRater(void){
-    FARCALL(av_NameRater);
-    RET;
-
+    // FARCALL(av_NameRater);
+    // RET;
+    return v_NameRater();
 }
 
 void OverworldTownMap(void){

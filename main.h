@@ -14,9 +14,9 @@
 #include "engine/math/math.h"
 #include "data/items/attributes.h"
 #include "engine/overworld/npc_movement.h"
-//#include "engine/events/happiness_egg.h"
+#include "engine/events/happiness_egg.h"
 //#include "engine/events/shuckle.h"
-//#include "engine/events/haircut.h"
+#include "engine/events/haircut.h"
 
 // SECTION "bank2", ROMX
 
@@ -48,7 +48,7 @@
 #include "engine/items/pack.h"
 #include "engine/overworld/time.h"
 #include "engine/items/tmhm2.h"
-//#include "engine/menus/naming_screen.h"
+#include "engine/menus/naming_screen.h"
 #include "engine/events/misc_scripts.h"
 #include "engine/events/heal_machine_anim.h"
 #include "engine/events/whiteout.h"
@@ -444,7 +444,7 @@
 
 #include "engine/gfx/load_font.h"
 #include "engine/link/time_capsule.h"
-//#include "engine/events/name_rater.h"
+#include "engine/events/name_rater.h"
 //#include "engine/events/play_slow_cry.h"
 //#include "engine/pokedex/new_pokedex_entry.h"
 //#include "engine/link/time_capsule_2.h"

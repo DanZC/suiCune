@@ -738,9 +738,9 @@ void ClearTilemapEtc_Conv(void){
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // CALL(aLoadFontsExtra);
-    LoadFontsExtra();
+    LoadFontsExtra_Conv();
     // CALL(aLoadStandardFont);
-    LoadStandardFont();
+    LoadStandardFont_Conv();
     // CALL(aClearWindowData);
     ClearWindowData_Conv2();
     // RET;

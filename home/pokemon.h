@@ -33,6 +33,7 @@ void GetBaseData_Conv(void);
 void GetBaseData_Conv2(species_t species);
 void GetCurNickname(void);
 void GetCurNickname_Conv(void);
+uint8_t* GetCurNickname_Conv2(void);
 void GetNickname(void);
 void GetNickname_Conv(uint16_t hl, uint8_t a);
 void GetNickname_Conv2(const uint8_t* hl, uint8_t a);

@@ -170,9 +170,9 @@ void SafeCallGB(uint32_t address, struct cpu_registers_s* regs) {
     }
     else 
     {
-        SAVE_REGS;
+        struct cpu_registers_s copy = gb.cpu_reg;
         SafeCallGBInternal(address);
-        RESTORE_REGS;
+        gb.cpu_reg = copy;
     }
 }
 

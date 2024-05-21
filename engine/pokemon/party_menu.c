@@ -24,6 +24,7 @@ u8_flag_s SelectMonFromParty(void){
     // LD_addr_A(wPartyMenuActionText);
     wram->wPartyMenuActionText = 0;
     // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
     // CALL(aInitPartyMenuLayout);
     InitPartyMenuLayout();
     // CALL(aWaitBGMap);

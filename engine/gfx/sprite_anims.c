@@ -4,6 +4,7 @@
 #include "../../home/audio.h"
 #include "../movie/splash.h"
 #include "../pokegear/pokegear.h"
+#include "../menus/naming_screen.h"
 
 static void AnimSeq_Null_Conv(struct SpriteAnim* bc);
 static void AnimSeq_PartyMon_Conv(struct SpriteAnim* bc);
@@ -573,9 +574,10 @@ void AnimSeq_NamingScreenCursor(void){
 }
 
 static void AnimSeq_NamingScreenCursor_Conv(struct SpriteAnim* bc){
-    REG_BC = (bc - wram->wSpriteAnim) * SPRITEANIMSTRUCT_LENGTH + wSpriteAnimationStructs;
-    CALLFAR(aNamingScreen_AnimateCursor);
-    RET;
+    // REG_BC = (bc - wram->wSpriteAnim) * SPRITEANIMSTRUCT_LENGTH + wSpriteAnimationStructs;
+    // CALLFAR(aNamingScreen_AnimateCursor);
+    // RET;
+    return NamingScreen_AnimateCursor_Conv(bc);
 }
 
 void AnimSeq_MailCursor(void){

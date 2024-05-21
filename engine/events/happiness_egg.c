@@ -1,5 +1,7 @@
 #include "../../constants.h"
 #include "happiness_egg.h"
+#include "haircut.h"
+#include "../../home/names.h"
 
 void GetFirstPokemonHappiness(void){
     LD_HL(wPartyMon1Happiness);
@@ -25,19 +27,20 @@ done:
 }
 
 void CheckFirstMonIsEgg(void){
-    LD_A_addr(wPartySpecies);
-    LD_addr_A(wNamedObjectIndex);
-    CP_A(EGG);
-    LD_A(TRUE);
-    IF_Z goto egg;
-    XOR_A_A;
+    // LD_A_addr(wPartySpecies);
+    // LD_addr_A(wNamedObjectIndex);
+    // CP_A(EGG);
+    // LD_A(TRUE);
+    // IF_Z goto egg;
+    // XOR_A_A;
+    wram->wScriptVar = (wram->wPartySpecies[0] == EGG)? FALSE: TRUE;
 
-
-egg:
-    LD_addr_A(wScriptVar);
-    CALL(aGetPokemonName);
-    JP(mCopyPokemonName_Buffer1_Buffer3);
-
+// egg:
+    // LD_addr_A(wScriptVar);
+    // CALL(aGetPokemonName);
+    GetPokemonName_Conv2(wram->wPartySpecies[0]);
+    // JP(mCopyPokemonName_Buffer1_Buffer3);
+    return CopyPokemonName_Buffer1_Buffer3();
 }
 
 void ChangeHappiness(void){

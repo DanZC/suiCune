@@ -829,3 +829,9 @@ void GetNickname_Conv2(const uint8_t* hl, uint8_t a){
 void GetCurNickname_Conv(void){
     return GetNickname_Conv(wPartyMonNicknames, gb_read(wCurPartyMon));
 }
+
+uint8_t* GetCurNickname_Conv2(void){
+    CopyBytes_Conv2(wram->wStringBuffer1, wram->wPartyMonNickname[wram->wCurPartyMon], MON_NAME_LENGTH);
+    CorrectNickErrors_Conv(wram->wStringBuffer1);
+    return wram->wStringBuffer1;
+}

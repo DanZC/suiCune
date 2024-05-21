@@ -3791,7 +3791,7 @@ void init_function_pointers(void) {
     // REDIRECTED(SlotMachine);
     // REDIRECTED(ScriptReturnCarry);
     // REDIRECTED(CheckPokerus);
-    // REDIRECTED(NameRival);
+    // CONVERTED(NameRival);
     // REDIRECTED(DisplayLinkRecord);
     // REDIRECTED(StartGameCornerGame);
     // REDIRECTED(Diploma);
@@ -4154,7 +4154,7 @@ void init_function_pointers(void) {
 
     // engine/events/happiness_egg.c
     // REDIRECTED(GetFirstPokemonHappiness);
-    // REDIRECTED(CheckFirstMonIsEgg);
+    CONVERTED(CheckFirstMonIsEgg);
     // REDIRECTED(DayCareStep);
     // REDIRECTED(ChangeHappiness);
     // REDIRECTED(StepHappiness);
@@ -6396,4 +6396,61 @@ CONVERTED(v_AnimateTileset);
 
     // engine/events/kurt_selectquantity_interpretjoypad.c
     // CONVERTED(Kurt_SelectQuantity_InterpretJoypad);
+
+    // engine/events/name_rater.c
+    // CONVERTED(NameRaterWhatNameText);
+    // CONVERTED(NameRaterEggText);
+    // CONVERTED(NameRaterComeAgainText);
+    CONVERTED(v_NameRater);
+    // CONVERTED(NameRaterNamedText);
+    // CONVERTED(CheckIfMonIsYourOT);
+    // CONVERTED(NameRaterBetterNameText);
+    // CONVERTED(GetNicknamenameLength);
+    // CONVERTED(IsNewNameEmpty);
+    // CONVERTED(NameRaterSameNameText);
+    // CONVERTED(NameRaterHelloText);
+    // CONVERTED(CompareNewToOld);
+    // CONVERTED(NameRaterWhichMonText);
+    // CONVERTED(NameRaterFinishedText);
+    // CONVERTED(NameRaterPerfectNameText);
+
+    // engine/events/haircut.c
+    CONVERTED(BillsGrandfather);
+    CONVERTED(DaisysGrooming);
+    // REDIRECTED(HaircutOrGrooming);
+    CONVERTED(CopyPokemonName_Buffer1_Buffer3);
+    CONVERTED(YoungerHaircutBrother);
+    CONVERTED(OlderHaircutBrother);
+    // REDIRECTED(DummyPredef1);
+
+    // engine/menus/naming_screen.c
+    // REDIRECTED(NamingScreenGFX_UnderLine);
+    // REDIRECTED(NamingScreenGFX_Border);
+    // REDIRECTED(NamingScreen_GetTextCursorPosition);
+    // REDIRECTED(MailComposition_TryAddLastCharacter);
+    CONVERTED(LoadNamingScreenGFX);
+    // REDIRECTED(NamingScreen);
+    // REDIRECTED(NamingScreen_TryAddCharacter);
+    // REDIRECTED(NamingScreen_LoadNextCharacter);
+    // REDIRECTED(v_NamingScreen);
+    // REDIRECTED(NamingScreenGFX_Cursor);
+    // REDIRECTED(v_ComposeMailMessage);
+    // REDIRECTED(ComposeMail_GetCursorPosition);
+    // REDIRECTED(NamingScreen_InitNameEntry);
+    // REDIRECTED(NamingScreen_StoreEntry);
+    // REDIRECTED(NamingScreen_GetCursorPosition);
+    // REDIRECTED(NamingScreenGFX_MiddleLine);
+    // REDIRECTED(AddDakutenToCharacter);
+    // REDIRECTED(NamingScreen_AnimateCursor);
+    // REDIRECTED(NamingScreenJoypadLoop);
+    // REDIRECTED(ComposeMail_AnimateCursor);
+    // REDIRECTED(NamingScreen_AdvanceCursor_CheckEndOfString);
+    // REDIRECTED(MailComposition_TryAddCharacter);
+    // REDIRECTED(NamingScreen_PressedA_GetCursorCommand);
+    // REDIRECTED(NamingScreen_IsTargetBox);
+    // REDIRECTED(NamingScreenGFX_End);
+    // REDIRECTED(NamingScreen_ApplyTextInputMode);
+    // REDIRECTED(NamingScreen_GetLastCharacter);
+    // REDIRECTED(NamingScreen_DeleteCharacter);
+    // REDIRECTED(NamingScreen_InitText);
 }

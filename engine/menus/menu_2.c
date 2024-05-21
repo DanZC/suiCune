@@ -142,62 +142,57 @@ const struct MenuHeader MoneyBottomLeftMenuHeader = {
 
 void DisplayCoinCaseBalance(void){
 // Place a text box of size 1x7 at 11, 0.
-    hlcoord(11, 0, wTilemap);
-    LD_B(1);
-    LD_C(7);
-    CALL(aTextbox);
-    hlcoord(12, 0, wTilemap);
-    LD_DE(mCoinString);
-    CALL(aPlaceString);
-    hlcoord(17, 1, wTilemap);
-    LD_DE(mShowMoney_TerminatorString);
-    CALL(aPlaceString);
-    LD_DE(wCoins);
-    LD_BC((2 << 8) | 4);
-    hlcoord(13, 1, wTilemap);
-    CALL(aPrintNum);
-    RET;
-
+    // hlcoord(11, 0, wTilemap);
+    // LD_B(1);
+    // LD_C(7);
+    // CALL(aTextbox);
+    Textbox_Conv2(coord(11, 0, wram->wTilemap), 1, 7);
+    // hlcoord(12, 0, wTilemap);
+    // LD_DE(mCoinString);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(CoinString), coord(12, 0, wram->wTilemap));
+    // hlcoord(17, 1, wTilemap);
+    // LD_DE(mShowMoney_TerminatorString);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(ShowMoney_TerminatorString), coord(17, 1, wram->wTilemap));
+    // LD_DE(wCoins);
+    // LD_BC((2 << 8) | 4);
+    // hlcoord(13, 1, wTilemap);
+    // CALL(aPrintNum);
+    PrintNum_Conv2(coord(13, 1, wram->wTilemap), &wram->wCoins, 2, 4);
+    // RET;
 }
 
 void DisplayMoneyAndCoinBalance(void){
-    hlcoord(5, 0, wTilemap);
-    LD_B(3);
-    LD_C(13);
-    CALL(aTextbox);
-    hlcoord(6, 1, wTilemap);
-    LD_DE(mMoneyString);
-    CALL(aPlaceString);
-    hlcoord(12, 1, wTilemap);
-    LD_DE(wMoney);
-    LD_BC((PRINTNUM_MONEY | 3 << 8) | 6);
-    CALL(aPrintNum);
-    hlcoord(6, 3, wTilemap);
-    LD_DE(mCoinString);
-    CALL(aPlaceString);
-    hlcoord(15, 3, wTilemap);
-    LD_DE(wCoins);
-    LD_BC((2 << 8) | 4);
-    CALL(aPrintNum);
-    RET;
-
+    // hlcoord(5, 0, wTilemap);
+    // LD_B(3);
+    // LD_C(13);
+    // CALL(aTextbox);
+    Textbox_Conv2(coord(5, 0, wram->wTilemap), 3, 13);
+    // hlcoord(6, 1, wTilemap);
+    // LD_DE(mMoneyString);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(MoneyString), coord(6, 1, wram->wTilemap));
+    // hlcoord(12, 1, wTilemap);
+    // LD_DE(wMoney);
+    // LD_BC((PRINTNUM_MONEY | 3 << 8) | 6);
+    // CALL(aPrintNum);
+    PrintNum_Conv2(coord(12, 1, wram->wTilemap), wram->wMoney, PRINTNUM_MONEY | 3, 6);
+    // hlcoord(6, 3, wTilemap);
+    // LD_DE(mCoinString);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(CoinString), coord(6, 3, wram->wTilemap));
+    // hlcoord(15, 3, wTilemap);
+    // LD_DE(wCoins);
+    // LD_BC((2 << 8) | 4);
+    // CALL(aPrintNum);
+    PrintNum_Conv2(coord(15, 3, wram->wTilemap), &wram->wCoins, 2, 4);
+    // RET;
 }
 
-void MoneyString(void){
-    //db ['"MONEY@"'];
-    return CoinString();
-}
-
-void CoinString(void){
-    //db ['"COIN@"'];
-    return ShowMoney_TerminatorString();
-}
-
-void ShowMoney_TerminatorString(void){
-    //db ['"@"'];
-
-    return StartMenu_PrintSafariGameStatus();
-}
+const char MoneyString[] = "MONEY@";
+const char CoinString[] = "COIN@";
+const char ShowMoney_TerminatorString[] = "@";
 
 void StartMenu_PrintSafariGameStatus(void){
 //  //  unreferenced
