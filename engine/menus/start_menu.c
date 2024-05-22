@@ -5,6 +5,7 @@
 #include "intro_menu.h"
 #include "save.h"
 #include "trainer_card.h"
+#include "../pokedex/pokedex.h"
 #include "../pokegear/pokegear.h"
 #include "../items/pack.h"
 #include "../pokemon/party_menu.h"
@@ -754,9 +755,12 @@ empty:
 
 //  Pokedex
 uint8_t StartMenu_Pokedex_Conv(void) {
-    struct cpu_registers_s regs = { 0 };
-    SafeCallGB(aStartMenu_Pokedex, &regs);
-    return regs.a;
+    if(wram->wPartyCount == 0)
+        return STARTMENURET_REOPEN;
+    FadeToMenu_Conv();
+    Pokedex();
+    CloseSubmenu_Conv();
+    return STARTMENURET_REOPEN;
 }
 
 void StartMenu_Pokegear(void){

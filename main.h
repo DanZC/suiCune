@@ -154,7 +154,7 @@
 
 // SECTION "bank10", ROMX
 
-//#include "engine/pokedex/pokedex.h"
+#include "engine/pokedex/pokedex.h"
 //#include "data/moves/moves.h"
 #include "engine/pokemon/evolve.h"
 
@@ -602,7 +602,7 @@
 
 #include "engine/rtc/print_hours_mins.h"
 //#include "engine/events/diploma.h"
-//#include "engine/pokedex/pokedex_3.h"
+#include "engine/pokedex/pokedex_3.h"
 #include "engine/events/catch_tutorial_input.h"
 #include "engine/pokegear/townmap_convertlinebreakcharacters.h"
 

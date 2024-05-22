@@ -54,6 +54,7 @@ SRCS   := tools/emu/peanut_sdl.c tools/emu/minigb_apu/minigb_apu.c \
 	$(wildcard engine/overworld/*.c) \
 	$(wildcard engine/phone/*.c) \
 	$(wildcard engine/phone/scripts/*.c) \
+	$(wildcard engine/pokedex/*.c) \
 	$(wildcard engine/pokegear/*.c) \
 	$(wildcard engine/pokemon/*.c) \
 	$(wildcard engine/rtc/*.c) \
@@ -135,6 +136,7 @@ clean:
 	$(wildcard engine/overworld/*.o) \
 	$(wildcard engine/phone/*.o) \
 	$(wildcard engine/phone/scripts/*.o) \
+	$(wildcard engine/pokedex/*.o) \
 	$(wildcard engine/pokegear/*.o) \
 	$(wildcard engine/pokemon/*.o) \
 	$(wildcard engine/rtc/*.o) \

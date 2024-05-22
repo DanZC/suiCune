@@ -414,40 +414,58 @@ const char StatsScreenPagePals[] = "gfx/stats/pages.pal";
 const char StatsScreenPals[] = "gfx/stats/stats.pal";
 
 void v_CGB_Pokedex(void){
-    LD_DE(wBGPals1);
-    LD_A(PREDEFPAL_POKEDEX);
-    CALL(aGetPredefPal);
-    CALL(aLoadHLPaletteIntoDE);  // dex interface palette
-    LD_A_addr(wCurPartySpecies);
-    CP_A(0xff);
-    IF_NZ goto is_pokemon;
-    LD_HL(mPokedexQuestionMarkPalette);
-    CALL(aLoadHLPaletteIntoDE);  // green question mark palette
-    goto got_palette;
+    uint16_t palbuf[4 * NUM_PAL_COLORS];
+    // LD_DE(wBGPals1);
+    uint16_t* de = (uint16_t*)wram->wBGPals1;
+    // LD_A(PREDEFPAL_POKEDEX);
+    // CALL(aGetPredefPal);
+    // CALL(aLoadHLPaletteIntoDE);  // dex interface palette
+    LoadHLPaletteIntoDE_Conv(de, GetPredefPal_Conv(PREDEFPAL_POKEDEX));
+    de += 4;
+    // LD_A_addr(wCurPartySpecies);
+    // CP_A(0xff);
+    // IF_NZ goto is_pokemon;
+    if(wram->wCurPartySpecies == 0xff) {
+        // LD_HL(mPokedexQuestionMarkPalette);
+        LoadPaletteAssetColorsToArray(palbuf, PokedexQuestionMarkPalette, 0, 4);
+        // CALL(aLoadHLPaletteIntoDE);  // green question mark palette
+        LoadHLPaletteIntoDE_Conv(de, palbuf);
+        de += 4;
+        // goto got_palette;
+    }
+    else {
+    // is_pokemon:
+        // CALL(aGetMonPalettePointer);
+        LoadPaletteAssetColorsToArray(palbuf, v_GetMonPalettePointer_Conv(wram->wCurPartySpecies), 0, 2);
+        // CALL(aLoadPalette_White_Col1_Col2_Black);  // mon palette
+        LoadPalette_White_Col1_Col2_Black_Conv(de, palbuf);
+    }
 
-
-is_pokemon:
-    CALL(aGetMonPalettePointer);
-    CALL(aLoadPalette_White_Col1_Col2_Black);  // mon palette
-
-got_palette:
-    CALL(aWipeAttrmap);
-    hlcoord(1, 1, wAttrmap);
-    LD_BC((7 << 8) | 7);
-    LD_A(0x1);  // green question mark palette
-    CALL(aFillBoxCGB);
-    CALL(aInitPartyMenuOBPals);
-    LD_HL(mPokedexCursorPalette);
-    LD_DE(wOBPals1 + PALETTE_SIZE * 7);  // green cursor palette
-    LD_BC(1 * PALETTE_SIZE);
-    LD_A(MBANK(awOBPals1));
-    CALL(aFarCopyWRAM);
-    CALL(aApplyAttrmap);
-    CALL(aApplyPals);
-    LD_A(TRUE);
-    LDH_addr_A(hCGBPalUpdate);
-    RET;
-
+// got_palette:
+    // CALL(aWipeAttrmap);
+    WipeAttrmap();
+    // hlcoord(1, 1, wAttrmap);
+    // LD_BC((7 << 8) | 7);
+    // LD_A(0x1);  // green question mark palette
+    // CALL(aFillBoxCGB);
+    FillBoxCGB_Conv(coord(1, 1, wram->wAttrmap), 7, 7, 0x1);
+    // CALL(aInitPartyMenuOBPals);
+    InitPartyMenuOBPals();
+    // LD_HL(mPokedexCursorPalette);
+    // LD_DE(wOBPals1 + PALETTE_SIZE * 7);  // green cursor palette
+    // LD_BC(1 * PALETTE_SIZE);
+    // LD_A(MBANK(awOBPals1));
+    // CALL(aFarCopyWRAM);
+    LoadPaletteAssetColorsToArray(palbuf, PokedexCursorPalette, 0, NUM_PAL_COLORS);
+    CopyBytes_Conv2(wram->wOBPals1 + PALETTE_SIZE * 7, palbuf, 1 * PALETTE_SIZE);
+    // CALL(aApplyAttrmap);
+    ApplyAttrmap_Conv();
+    // CALL(aApplyPals);
+    ApplyPals_Conv();
+    // LD_A(TRUE);
+    // LDH_addr_A(hCGBPalUpdate);
+    hram->hCGBPalUpdate = TRUE;
+    // RET;
 }
 
 // void PokedexQuestionMarkPalette(void){
