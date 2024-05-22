@@ -1897,7 +1897,7 @@ loop:
 static int BattleAnim_Growl(battleanim_s* anim) {
     ANIM_BEGIN
     anim_1gfx(ANIM_GFX_NOISE)
-    // anim_battlergfx_2row
+    anim_battlergfx_1row // anim_battlergfx_2row
     anim_bgeffect(ANIM_BG_CYCLE_OBPALS_GRAY_AND_YELLOW, 0x0, 0x2, 0x0)
     anim_cry(0x0)
 loop:
@@ -3225,7 +3225,7 @@ static int BattleAnim_BoneClub(battleanim_s* anim) {
 static int BattleAnim_Barrier(battleanim_s* anim) {
     ANIM_BEGIN
     anim_1gfx(ANIM_GFX_REFLECT)
-	// anim_battlergfx_2row
+    anim_battlergfx_1row // anim_battlergfx_2row
     anim_bgeffect(ANIM_BG_CYCLE_OBPALS_GRAY_AND_YELLOW, 0x0, 0x2, 0x0)
     anim_wait(8)
     anim_sound(0, 0, SFX_SHINE)
@@ -4024,7 +4024,7 @@ static int BattleAnim_IcyWind(battleanim_s* anim) {
     anim_1gfx(ANIM_GFX_SPEED)
     anim_bgeffect(ANIM_BG_CYCLE_OBPALS_GRAY_AND_YELLOW, 0x0, 0x2, 0x0)
     anim_bgeffect(ANIM_BG_ALTERNATE_HUES, 0x0, 0x2, 0x0)
-	// anim_battlergfx_1row
+    anim_battlergfx_2row // anim_battlergfx_1row
     anim_sound(0, 0, SFX_PSYCHIC)
 loop:
     anim_wait(8)
@@ -5418,8 +5418,8 @@ loop:
 
 static int BattleAnim_TargetObj_1Row(battleanim_s* anim) {
     ANIM_BEGIN
-    // anim_battlergfx_2row
-    // anim_bgeffect(ANIM_BG_BATTLEROBJ_1ROW, 0x0, BG_EFFECT_TARGET, 0x0)
+    anim_battlergfx_1row // anim_battlergfx_2row
+    anim_bgeffect(ANIM_BG_BATTLEROBJ_1ROW, 0x0, BG_EFFECT_TARGET, 0x0)
     anim_wait(6)
     anim_ret
     ANIM_END
@@ -5427,8 +5427,8 @@ static int BattleAnim_TargetObj_1Row(battleanim_s* anim) {
 
 static int BattleAnim_TargetObj_2Row(battleanim_s* anim) {
     ANIM_BEGIN
-    // anim_battlergfx_1row
-    // anim_bgeffect(ANIM_BG_BATTLEROBJ_2ROW, 0x0, BG_EFFECT_TARGET, 0x0)
+    anim_battlergfx_2row // anim_battlergfx_1row
+    anim_bgeffect(ANIM_BG_BATTLEROBJ_2ROW, 0x0, BG_EFFECT_TARGET, 0x0)
     anim_wait(6)
     anim_ret
     ANIM_END
@@ -5447,8 +5447,8 @@ static int BattleAnim_ShowMon_0(battleanim_s* anim) {
 
 static int BattleAnim_UserObj_1Row(battleanim_s* anim) {
     ANIM_BEGIN
-    // anim_battlergfx_2row
-    // anim_bgeffect(ANIM_BG_BATTLEROBJ_1ROW, 0x0, BG_EFFECT_USER, 0x0)
+    anim_battlergfx_1row // anim_battlergfx_2row
+    anim_bgeffect(ANIM_BG_BATTLEROBJ_1ROW, 0x0, BG_EFFECT_USER, 0x0)
     anim_wait(6)
     anim_ret
     ANIM_END
@@ -5456,8 +5456,8 @@ static int BattleAnim_UserObj_1Row(battleanim_s* anim) {
 
 static int BattleAnim_UserObj_2Row(battleanim_s* anim) {
     ANIM_BEGIN
-    // anim_battlergfx_1row
-    // anim_bgeffect(ANIM_BG_BATTLEROBJ_2ROW, 0x0, BG_EFFECT_USER, 0x0)
+    anim_battlergfx_2row // anim_battlergfx_1row
+    anim_bgeffect(ANIM_BG_BATTLEROBJ_2ROW, 0x0, BG_EFFECT_USER, 0x0)
     anim_wait(4)
     anim_ret
     ANIM_END
