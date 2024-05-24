@@ -15,6 +15,7 @@
 #include "../../engine/events/kurt.h"
 #include "../../engine/events/haircut.h"
 #include "../../engine/events/happiness_egg.h"
+#include "../../engine/events/daycare.h"
 #include "../../engine/overworld/wildmons.h"
 #include "../../engine/overworld/overworld.h"
 #include "../../engine/overworld/warp_connection.h"
@@ -59,9 +60,9 @@ void (*const SpecialsPointers[])(void) = {
     add_special(HealParty), // this is both a special and a predef
     // add_special(PokemonCenterPC),
     add_special(PlayersHousePC),
-    // add_special(DayCareMan),
-    // add_special(DayCareLady),
-    // add_special(DayCareManOutside),
+    add_special(DayCareMan),
+    add_special(DayCareLady),
+    add_special(DayCareManOutside),
     // add_special(MoveDeletion),
     add_special(BankOfMom),
     // add_special(MagnetTrain),

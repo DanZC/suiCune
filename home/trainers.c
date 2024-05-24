@@ -218,8 +218,11 @@ bool v_CheckTrainerBattle_Conv(void){
         uint16_t eventFlag;
         if(de->objectScript <= NUM_OBJECTS)
             eventFlag = gCurMapObjectEventsPointer[de->objectScript].trainer->event_flag;
+        else if(convertedFunc[(GetMapScriptsBank_Conv() << 14) | de->objectScript]){
+            eventFlag = ((struct TrainerObj*)convertedFunc[(GetMapScriptsBank_Conv() << 14) | de->objectScript])->event_flag;
+        }
         else {
-            eventFlag = gb_read16(gb_read16(de->objectScript));
+            eventFlag = *(uint16_t*)AbsGBROMToRAMAddr((GetMapScriptsBank_Conv() << 14) | de->objectScript);
         }
         // LD_A_C;
         // POP_DE;

@@ -1,6 +1,7 @@
 #include "../../constants.h"
 #include "experience.h"
 #include "../../data/growth_rates.h"
+#include "../../home/pokemon.h"
 
 void CalcLevel(void){
     LD_A_addr(wTempMonSpecies);
@@ -36,6 +37,53 @@ got_level:
     DEC_D;
     RET;
 
+}
+
+uint8_t CalcLevel_Conv(struct PartyMon* mon){
+    // LD_A_addr(wTempMonSpecies);
+    // LD_addr_A(wCurSpecies);
+    // CALL(aGetBaseData);
+    GetBaseData_Conv2(mon->mon.species);
+    // LD_D(1);
+    uint8_t d = 1;
+
+    while(1) {
+    // next_level:
+        // INC_D;
+        d++;
+        // LD_A_D;
+        // CP_A(LOW(MAX_LEVEL + 1));
+        // IF_Z goto got_level;
+        if(d == MAX_LEVEL + 1)
+            break;
+        // CALL(aCalcExpAtLevel);
+        uint32_t exp = CalcExpAtLevel_Conv(d);
+        uint32_t mon_exp = (mon->mon.exp[0] | (mon->mon.exp[1] << 8) | (mon->mon.exp[2] << 16));
+        // PUSH_HL;
+        // LD_HL(wTempMonExp + 2);
+        // LDH_A_addr(hProduct + 3);
+        // LD_C_A;
+        // LD_A_hld;
+        // SUB_A_C;
+        // LDH_A_addr(hProduct + 2);
+        // LD_C_A;
+        // LD_A_hld;
+        // SBC_A_C;
+        // LDH_A_addr(hProduct + 1);
+        // LD_C_A;
+        // LD_A_hl;
+        // SBC_A_C;
+        // POP_HL;
+        // IF_NC goto next_level;
+        if(mon_exp < exp)
+            break;
+    }
+
+// got_level:
+    // DEC_D;
+    --d;
+    // RET;
+    return d;
 }
 
 void CalcExpAtLevel(void){

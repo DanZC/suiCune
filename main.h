@@ -37,7 +37,7 @@
 //#include "engine/battle/anim_hp_bar.h"
 #include "engine/pokemon/move_mon.h"
 #include "engine/pokemon/bills_pc_top.h"
-//#include "engine/pokemon/breedmon_level_growth.h"
+#include "engine/pokemon/breedmon_level_growth.h"
 //#include "engine/events/bug_contest/caught_mon.h"
 #include "engine/items/item_effects.h"
 #include "engine/battle_anims/pokeball_wobble.h"
@@ -81,10 +81,10 @@
 #include "engine/events/money.h"
 //#include "data/items/marts.h"
 #include "engine/events/mom.h"
-//#include "engine/events/daycare.h"
+#include "engine/events/daycare.h"
 //#include "engine/events/print_unown.h"
 //#include "engine/events/print_photo.h"
-//#include "engine/pokemon/breeding.h"
+#include "engine/pokemon/breeding.h"
 
 // SECTION "Roofs", ROMX
 

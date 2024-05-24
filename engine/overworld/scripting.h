@@ -259,6 +259,7 @@ void ResetStringBuffer1_Conv(void);
 void Script_getstring(void);
 void Script_getstring_Conv(script_s* s, uint8_t a, const char* hl);
 void Script_givepokemail(void);
+void Script_givepokemail_Conv(script_s* s, const struct Pokemail* mail);
 void Script_checkpokemail(void);
 void Script_checkpokemail_Conv(script_s* s, const char* text);
 void Script_giveitem(void);

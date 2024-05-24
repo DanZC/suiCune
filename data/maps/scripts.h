@@ -5,7 +5,7 @@
 #include "../../maps/GoldenrodGym.h"
 #include "../../maps/GoldenrodBikeShop.h"
 #include "../../maps/GoldenrodHappinessRater.h"
-// #include "../../maps/BillsFamilysHouse.h"
+#include "../../maps/BillsFamilysHouse.h"
 #include "../../maps/GoldenrodMagnetTrainStation.h"
 #include "../../maps/GoldenrodFlowerShop.h"
 #include "../../maps/GoldenrodPPSpeechHouse.h"
@@ -69,7 +69,7 @@
 #include "../../maps/PokecomCenterAdminOfficeMobile.h"
 #include "../../maps/IlexForestAzaleaGate.h"
 #include "../../maps/Route34IlexForestGate.h"
-// #include "../../maps/DayCare.h"
+#include "../../maps/DayCare.h"
 
 
 // SECTION "Map Scripts 5", ROMX
@@ -83,7 +83,7 @@
 #include "../../maps/VioletKylesHouse.h"
 #include "../../maps/Route32RuinsOfAlphGate.h"
 #include "../../maps/Route32Pokecenter1F.h"
-// #include "../../maps/Route35GoldenrodGate.h"
+#include "../../maps/Route35GoldenrodGate.h"
 // #include "../../maps/Route35NationalParkGate.h"
 #include "../../maps/Route36RuinsOfAlphGate.h"
 // #include "../../maps/Route36NationalParkGate.h"

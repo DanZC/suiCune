@@ -42,6 +42,7 @@
 #include "../items/items.h"
 #include "../items/mart.h"
 #include "../pokemon/move_mon.h"
+#include "../pokemon/mail.h"
 #include "../../data/text/common.h"
 #include "../../data/items/pocket_names.h"
 #include "../events/std_scripts.h"
@@ -4052,6 +4053,28 @@ void Script_givepokemail(void){
     FARCALL(aGivePokeMail);
     RET;
 
+}
+
+void Script_givepokemail_Conv(script_s* s, const struct Pokemail* mail){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // LD_L_A;
+    // CALL(aGetScriptByte);
+    // LD_H_A;
+    // LD_A_addr(wScriptBank);
+    // CALL(aGetFarByte);
+    // LD_B_A;
+    // PUSH_BC;
+    // INC_HL;
+    // LD_BC(MAIL_MSG_LENGTH);
+    // LD_DE(wMonMailMessageBuffer);
+    // LD_A_addr(wScriptBank);
+    // CALL(aFarCopyBytes);
+    U82CB(wram->wMonMailMessageBuffer, MAIL_MSG_LENGTH, mail->message);
+    // POP_BC;
+    // FARCALL(aGivePokeMail);
+    GivePokeMail_Conv(mail);
+    // RET;
 }
 
 void Script_checkpokemail(void){

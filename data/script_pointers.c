@@ -181,6 +181,10 @@ void PopulateMapScriptTable(void) {
     entry(ROUTE_34_ILEX_FOREST_GATE, 2, Route34IlexForestGateLassScript);
     entry(ROUTE_34_ILEX_FOREST_GATE, 3, Route34IlexForestGateTeacherScript);
 
+    // maps/DayCare.c
+    entry(DAY_CARE, 0, DayCareManScript_Inside);
+    entry(DAY_CARE, 1, DayCareLadyScript);
+
     entry(ROUTE_35, 0,  TrainerCamperIvan);
     entry(ROUTE_35, 1,  TrainerCamperElliot);
     entry(ROUTE_35, 2,  TrainerPicnickerBrooke);
@@ -192,6 +196,11 @@ void PopulateMapScriptTable(void) {
     entry(ROUTE_35, 8,  TrainerOfficerDirk);
     entry(ROUTE_35, 9,  Route35FruitTree);
     entry(ROUTE_35, 10, Route35TMRollout);
+
+    // maps/Route35GoldenrodGate.c
+    entry(ROUTE_35_GOLDENROD_GATE, 0, RandyScript);
+    entry(ROUTE_35_GOLDENROD_GATE, 1, Route35GoldenrodGatePokefanFScript);
+    entry(ROUTE_35_GOLDENROD_GATE, 2, Route35GoldenrodGateFisherScript);
 
     entry(CHERRYGROVE_EVOLUTION_SPEECH_HOUSE, 0, CherrygroveEvolutionSpeechHouseLassScript);
     entry(CHERRYGROVE_EVOLUTION_SPEECH_HOUSE, 1, CherrygroveEvolutionSpeechHouseYoungsterScript);
@@ -310,6 +319,10 @@ void PopulateMapScriptTable(void) {
 
     entry(GOLDENROD_PP_SPEECH_HOUSE, 0, GoldenrodPPSpeechHouseFisherScript);
     entry(GOLDENROD_PP_SPEECH_HOUSE, 1, GoldenrodPPSpeechHouseLassScript);
+
+    entry(BILLS_FAMILYS_HOUSE, 0, BillScript);
+    entry(BILLS_FAMILYS_HOUSE, 1, BillsMomScript);
+    entry(BILLS_FAMILYS_HOUSE, 2, BillsSisterScript);
 
     entry(GOLDENROD_GAME_CORNER, 0,  GoldenrodGameCornerCoinVendorScript);
     entry(GOLDENROD_GAME_CORNER, 1,  GoldenrodGameCornerTMVendorScript);

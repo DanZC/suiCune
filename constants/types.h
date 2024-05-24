@@ -711,13 +711,14 @@ struct __attribute__((packed))
 #endif
 MailMsg
 {
-    uint8_t message[NAME_LENGTH + 1];
+    uint8_t message[MAIL_MSG_LENGTH + 1];
     uint8_t author[PLAYER_NAME_LENGTH];
     uint16_t nationality;
     uint16_t authorID;
     species_t species;
     uint8_t type;
 };
+static_assert(sizeof(struct MailMsg) == MAIL_STRUCT_LENGTH);
 
 #if defined(__cplusplus) || defined(_MSC_VER)
 struct
@@ -1453,6 +1454,11 @@ struct NPCTrade {
     uint16_t OTID;
     const char OTName[12];
     uint8_t genderRequested;
+};
+
+struct Pokemail {
+    item_t item;
+    const char* message;
 };
 
 struct PokemonCry 

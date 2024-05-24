@@ -265,6 +265,66 @@ void GivePokeMail(void){
 
 }
 
+void GivePokeMail_Conv(const struct Pokemail* mail){
+    // LD_A_addr(wPartyCount);
+    // DEC_A;
+    // PUSH_AF;
+    uint8_t a = wram->wPartyCount - 1;
+    // PUSH_BC;
+    // LD_HL(wPartyMon1Item);
+    // LD_BC(PARTYMON_STRUCT_LENGTH);
+    // CALL(aAddNTimes);
+    // POP_BC;
+    // LD_hl_B;
+    wram->wPartyMon[a].mon.item = mail->item;
+    // POP_AF;
+    // PUSH_BC;
+    // PUSH_AF;
+    // LD_HL(sPartyMail);
+    // LD_BC(MAIL_STRUCT_LENGTH);
+    // CALL(aAddNTimes);
+    uint16_t partyMail = sPartyMail + (a * MAIL_STRUCT_LENGTH);
+    // LD_D_H;
+    // LD_E_L;
+    // LD_HL(wMonMailMessageBuffer);
+    // LD_BC(MAIL_MSG_LENGTH + 1);
+    // LD_A(BANK(sPartyMail));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asPartyMail));
+    // CALL(aCopyBytes);
+    struct MailMsg* de = (struct MailMsg*)GBToRAMAddr(partyMail);
+    CopyBytes_Conv2(de->message, wram->wMonMailMessageBuffer, MAIL_MSG_LENGTH + 1);
+    // POP_AF;
+    // PUSH_AF;
+    // LD_HL(wPartyMonOTs);
+    // LD_BC(NAME_LENGTH);
+    // CALL(aAddNTimes);
+    // LD_BC(NAME_LENGTH - 1);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(de->author, wram->wPartyMonOT[a], NAME_LENGTH - 1);
+    // POP_AF;
+    // LD_HL(wPartyMon1ID);
+    // LD_BC(PARTYMON_STRUCT_LENGTH);
+    // CALL(aAddNTimes);
+    // LD_A_hli;
+    // LD_de_A;
+    // INC_DE;
+    // LD_A_hl;
+    // LD_de_A;
+    de->authorID = wram->wPartyMon[a].mon.id;
+    // INC_DE;
+    // LD_A_addr(wCurPartySpecies);
+    // LD_de_A;
+    // INC_DE;
+    de->species = wram->wCurPartySpecies;
+    // POP_BC;
+    // LD_A_B;
+    // LD_de_A;
+    de->type = mail->item;
+    // JP(mCloseSRAM);
+    CloseSRAM_Conv();
+}
+
 void BackupPartyMonMail(void){
     // LD_A(BANK(sPartyMail));
     // CALL(aOpenSRAM);

@@ -5,6 +5,7 @@ void MoveMailFromPCToParty(void);
 void GetMailboxCount(void);
 void CheckPokeMail(void);
 void GivePokeMail(void);
+void GivePokeMail_Conv(const struct Pokemail* mail);
 void BackupPartyMonMail(void);
 void RestorePartyMonMail(void);
 void DeletePartyMonMail(void);

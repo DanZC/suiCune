@@ -125,6 +125,7 @@
 #define getmoney(_b, _act)          SCRIPT_EVCMD(Script_getmoney_Conv, _b, _act)
 #define getnum(_num)                SCRIPT_EVCMD(Script_getnum_Conv, _num)
 #define getstring(_b, _str)         SCRIPT_EVCMD(Script_getstring_Conv, _b, _str)
+#define givepokemail(_mail)         SCRIPT_EVCMD(Script_givepokemail_Conv, _mail)
 #define checkpokemail(_str)         SCRIPT_EVCMD(Script_checkpokemail_Conv, _str)
 #define giveitem(_i, _q)            SCRIPT_EVCMD(Script_giveitem_Conv, _i, _q)
 #define takeitem(_i, _q)            SCRIPT_EVCMD(Script_takeitem_Conv, _i, _q)

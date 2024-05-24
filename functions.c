@@ -4956,6 +4956,15 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(Route32Pokecenter1FFishingGuruScript);
     CONVERTED_SCRIPT(Route32Pokecenter1FCooltrainerFScript);
 
+    // maps/DayCare.c
+    CONVERTED_SCRIPT(DayCareManScript_Inside);
+    CONVERTED_SCRIPT(DayCareLadyScript);
+
+    // maps/Route35GoldenrodGate.c
+    CONVERTED_SCRIPT(RandyScript);
+    CONVERTED_SCRIPT(Route35GoldenrodGatePokefanFScript);
+    CONVERTED_SCRIPT(Route35GoldenrodGateFisherScript);
+
     // maps/CherrygroveEvolutionSpeechHouse.c
     CONVERTED_SCRIPT(CherrygroveEvolutionSpeechHouseLassScript);
     CONVERTED_SCRIPT(CherrygroveEvolutionSpeechHouseYoungsterScript);
@@ -5097,6 +5106,11 @@ void init_function_pointers(void) {
     // maps/GoldenrodPPSpeechHouse.c
     CONVERTED_SCRIPT(GoldenrodPPSpeechHouseFisherScript);
     CONVERTED_SCRIPT(GoldenrodPPSpeechHouseLassScript);
+
+    // maps/BillsFamilysHouse.c
+    CONVERTED_SCRIPT(BillScript);
+    CONVERTED_SCRIPT(BillsMomScript);
+    CONVERTED_SCRIPT(BillsSisterScript);
 
     // maps/GoldenrodGameCorner.c
     CONVERTED_SCRIPT(GoldenrodGameCornerCoinVendorScript);
@@ -6573,4 +6587,52 @@ CONVERTED(v_AnimateTileset);
     // REDIRECTED(DrawPokedexListWindow);
     // REDIRECTED(DrawDexEntryScreenRightEdge);
     // REDIRECTED(LoadQuestionMarkPic);
+
+    // engine/events/daycare.c
+    // CONVERTED(DayCare_InitBreeding);
+    // CONVERTED(DayCareManIntroText);
+    // CONVERTED(DayCare_AskWithdrawBreedMon);
+    // CONVERTED(DayCare_GetCurrentPartyMember);
+    // CONVERTED(DayCare_GiveEgg);
+    CONVERTED(DayCareLady);
+    // CONVERTED(DayCareAskDepositPokemon);
+    // CONVERTED(GetPriceToRetrieveBreedmon);
+    // CONVERTED(PrintDayCareText);
+    // CONVERTED(DayCare_GetBackMonForMoney);
+    CONVERTED(DayCareManOutside);
+    CONVERTED(DayCareMan);
+    // CONVERTED(DayCare_DepositPokemonText);
+    // CONVERTED(DayCareLadyIntroText);
+
+    // engine/pokemon/breedmon_level_growth.c
+    // REDIRECTED(GetBreedMon2LevelGrowth);
+    // REDIRECTED(GetBreedMon1LevelGrowth);
+
+    // engine/pokemon/breeding.c
+    // REDIRECTED(LeftWithDayCareLadyText);
+    // REDIRECTED(LeftWithDayCareManText);
+    // REDIRECTED(GetEggMove);
+    // REDIRECTED(EggHatch_DoAnimFrame);
+    // REDIRECTED(DayCareMon2);
+    // REDIRECTED(DoEggStep);
+    // REDIRECTED(GetBreedmonMovePointer);
+    // REDIRECTED(HatchEggs);
+    // REDIRECTED(LoadEggMove);
+    // REDIRECTED(Hatch_ShellFragmentLoop);
+    // REDIRECTED(GetEggFrontpic);
+    // REDIRECTED(EggHatch_AnimationSequence);
+    // REDIRECTED(Hatch_LoadFrontpicPal);
+    // REDIRECTED(EggHatchGFX);
+    // REDIRECTED(GetHeritableMoves);
+    // REDIRECTED(GetHatchlingFrontpic);
+    // REDIRECTED(CheckBreedmonCompatibility);
+    // REDIRECTED(OverworldHatchEgg);
+    // REDIRECTED(InitEggMoves);
+    // REDIRECTED(DayCareMonPrintEmptyString);
+    // REDIRECTED(Hatch_InitShellFragments);
+    // REDIRECTED(DayCareMon1);
+    // REDIRECTED(EggHatch_CrackShell);
+    // REDIRECTED(DayCareMonCursor);
+    // REDIRECTED(DayCareMonCompatibilityText);
+    // REDIRECTED(Hatch_UpdateFrontpicBGMapCenter);
 }
