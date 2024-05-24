@@ -959,10 +959,11 @@ bool GetEggMove_Conv(const move_t* de){
         // goto loop4;
     }
 
+    const move_t* tmhm = TMHMMoves;
 
 inherit_tmhm:
     // LD_HL(mTMHMMoves);
-    const move_t* tmhm = TMHMMoves;
+    //const move_t* tmhm = TMHMMoves;
 
     do {
     // loop5:
@@ -1664,7 +1665,7 @@ void DayCareMonPrintEmptyString(void){
     RET;
 
 
-string:
+//string:
     //db ['"@"'];
 
 }

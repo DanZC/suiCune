@@ -2679,7 +2679,7 @@ void Pokedex_UpdateSearchResultsCursorOAM(void){
     RET;
 
 
-CursorOAM:
+//CursorOAM:
     //dbsprite ['9', '3', '-1', '3', '0x30', '7']
     //dbsprite ['9', '2', '-1', '3', '0x31', '7']
     //dbsprite ['10', '2', '-1', '3', '0x32', '7']

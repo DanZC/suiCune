@@ -106,7 +106,7 @@ void DoBattleAnimFrame(void) {
     }
     RET;
 
-Jumptable:
+//Jumptable:
 
     //  entries correspond to BATTLEANIMFUNC_* constants
     // dw ['BattleAnimFunction_Null'];
