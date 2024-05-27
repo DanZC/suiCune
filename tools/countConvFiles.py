@@ -10,6 +10,8 @@ skip_files = [
     'data/maps/sgb_roof_pal_inds.asm',
     'data/moves/effects_pointers.asm',
     'data/moves/grammar.asm',
+    'data/pokemon/egg_move_pointers.asm',
+    'data/pokemon/evos_attacks.asm',
     'data/text/common.asm',
     'data/trainers/party_pointers.asm',
     'engine/overworld/map_object_action.asm'
@@ -58,6 +60,7 @@ counts = {
     'gfx': count_dir('gfx'),
     'home': count_dir('home'),
     'maps': count_dir('maps'),
+    'mobile': count_dir('mobile'),
     'data/battle/ai': count_dir('data/battle/ai'),
     'data/battle': count_dir('data/battle'),
     'data/battle_anims': count_dir('data/battle_anims'),

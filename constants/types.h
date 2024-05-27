@@ -784,6 +784,17 @@ TradeMon
     uint8_t caughtData;
 };
 
+#if defined(__cplusplus) || defined(_MSC_VER)
+struct
+#else
+struct __attribute__((packed)) 
+#endif
+NicknamedMon {
+    struct PartyMon pmon;
+    uint8_t nickname[MON_NAME_LENGTH];
+};
+static_assert(sizeof(struct NicknamedMon) == NICKNAMED_MON_STRUCT_LENGTH);
+
 struct Move
 {
     uint8_t animation;

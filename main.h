@@ -487,11 +487,11 @@
 //#include "mobile/mobile_45.h"
 //#include "mobile/mobile_45_sprite_engine.h"
 //#include "mobile/mobile_45_2.h"
-//#include "mobile/mobile_45_stadium.h"
+#include "mobile/mobile_45_stadium.h"
 
 // SECTION "mobile46", ROMX
 
-//#include "mobile/mobile_46.h"
+#include "mobile/mobile_46.h"
 
 // SECTION "Battle Tower", ROMX
 
@@ -631,7 +631,7 @@
 // SECTION "Crystal Events", ROMX
 
 //#include "engine/events/battle_tower/load_trainer.h"
-//#include "engine/events/odd_egg.h"
+#include "engine/events/odd_egg.h"
 
 // SECTION "Stadium 2 Checksums", ROMX[$7DE0], BANK[$7F]
 

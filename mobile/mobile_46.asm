@@ -3722,26 +3722,26 @@ pushc
 setcharmap ascii
 
 .decodeBase64Character
-	cp "+"
+	cp 43 ; "+"
 	jr c, .asm_119c68
 	jr z, .asm_119c80
-	cp "/"
+	cp 47 ; "/"
 	jr c, .asm_119c68
 	jr z, .asm_119c84
-	cp "0"
+	cp 48 ; "0"
 	jr c, .asm_119c68
-	cp "9" + 1
+	cp 57 + 1 ; "9" + 1
 	jr c, .asm_119c88
-	cp "="
+	cp 61 ; "="
 	jr c, .asm_119c68
 	jr z, .asm_119c8c
-	cp "A"
+	cp 65 ; "A"
 	jr c, .asm_119c68
-	cp "Z" + 1
+	cp 90 + 1 ; "Z" + 1
 	jr c, .asm_119c8f
-	cp "a"
+	cp 97 ; "a"
 	jr c, .asm_119c68
-	cp "z" + 1
+	cp 122 + 1 ; "z" + 1
 	jr c, .asm_119c93
 
 popc
@@ -4038,7 +4038,7 @@ Function119e4f:
 .loop2
 	ld a, [de]
 	inc de
-	cp "\n"
+	cp 0 ; "\n"
 	jr z, .newline
 	cp [hl]
 	jr nz, .unequal

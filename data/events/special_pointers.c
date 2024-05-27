@@ -24,6 +24,7 @@
 #include "../../engine/overworld/decorations.h"
 #include "../../home/time_palettes.h"
 #include "../../home/audio.h"
+#include "../../mobile/mobile_45_stadium.h"
 
 #define add_special(_n) [SP_##_n] = _n
 
@@ -157,7 +158,7 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(LoadOpponentTrainerAndPokemonWithOTSprite),
     // add_special(Function11ba38),
     // add_special(CheckForBattleTowerRules),
-    // add_special(GiveOddEgg),
+    add_special(GiveOddEgg),
     // add_special(Reset), // bank 0
     // add_special(Function1011f1),
     // add_special(Function101220),
