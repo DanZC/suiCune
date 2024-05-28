@@ -2,7 +2,13 @@
 #include "unown_walls.h"
 #include "../../home/map.h"
 #include "../../home/flag.h"
+#include "../../home/menu.h"
+#include "../../home/map_objects.h"
+#include "../../home/tilemap.h"
+#include "../../home/joypad.h"
+#include "../../home/audio.h"
 #include "../../data/maps/attributes.h"
+#include "../../data/events/unown_walls.h"
 
 void HoOhChamber(void){
     LD_HL(wPartySpecies);
@@ -155,179 +161,249 @@ done:
 
 }
 
+void SpecialKabutoChamber_Conv(void){
+    // PUSH_HL;
+    // PUSH_DE;
+
+    // CALL(aGetMapAttributesPointer);
+    const struct MapAttr* attr = GetMapAttributesPointer_Conv2();
+    // LD_A_H;
+    // CP_A(HIGH(aRuinsOfAlphKabutoChamber_MapAttributes));
+    // IF_NZ goto done;
+    // LD_A_L;
+    // CP_A(LOW(aRuinsOfAlphKabutoChamber_MapAttributes));
+    // IF_NZ goto done;
+    if(attr == &RuinsOfAlphKabutoChamber_MapAttributes) {
+        // LD_DE(EVENT_WALL_OPENED_IN_KABUTO_CHAMBER);
+        // LD_B(SET_FLAG);
+        // CALL(aEventFlagAction);
+        EventFlagAction_Conv2(EVENT_WALL_OPENED_IN_KABUTO_CHAMBER, SET_FLAG);
+    }
+
+// done:
+    // POP_DE;
+    // POP_HL;
+    // RET;
+}
+
 void DisplayUnownWords(void){
-    LD_A_addr(wScriptVar);
-    LD_HL(mMenuHeaders_UnownWalls);
-    AND_A_A;
-    IF_Z goto load;
+    // LD_A_addr(wScriptVar);
+    // LD_HL(mMenuHeaders_UnownWalls);
+    // AND_A_A;
+    // IF_Z goto load;
 
-    LD_D(0x0);
-    LD_E(0x5);
+    // LD_D(0x0);
+    // LD_E(0x5);
+    const struct MenuHeader* hdr = MenuHeaders_UnownWalls + wram->wScriptVar;
 
-loop:
-    ADD_HL_DE;
-    DEC_A;
-    IF_NZ goto loop;
+// loop:
+    // ADD_HL_DE;
+    // DEC_A;
+    // IF_NZ goto loop;
 
 
-load:
-    CALL(aLoadMenuHeader);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    CALL(aMenuBox);
-    CALL(aUpdateSprites);
-    CALL(aApplyTilemap);
-    CALL(aMenuBoxCoord2Tile);
-    INC_HL;
-    LD_D(0);
-    LD_E(SCREEN_WIDTH);
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_A_addr(wScriptVar);
-    LD_C_A;
-    LD_DE(mUnownWalls);
-    AND_A_A;
-    IF_Z goto copy;
+// load:
+    // CALL(aLoadMenuHeader);
+    LoadMenuHeader_Conv2(hdr);
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    // CALL(aMenuBox);
+    MenuBox_Conv();
+    // CALL(aUpdateSprites);
+    UpdateSprites_Conv();
+    // CALL(aApplyTilemap);
+    ApplyTilemap_Conv();
+    // CALL(aMenuBoxCoord2Tile);
+    tile_t* hl = MenuBoxCoord2Tile_Conv();
+    // INC_HL;
+    // LD_D(0);
+    // LD_E(SCREEN_WIDTH);
+    // ADD_HL_DE;
+    // ADD_HL_DE;
+    hl += 2*SCREEN_WIDTH + 1;
+    // LD_A_addr(wScriptVar);
+    // LD_C_A;
+    // LD_DE(mUnownWalls);
+    const uint8_t* de = UnownWalls[wram->wScriptVar];
+    // AND_A_A;
+    // IF_Z goto copy;
 
-loop2:
-    LD_A_de;
-    INC_DE;
-    CP_A(-1);
-    IF_NZ goto loop2;
-    DEC_C;
-    IF_NZ goto loop2;
+// loop2:
+    // LD_A_de;
+    // INC_DE;
+    // CP_A(-1);
+    // IF_NZ goto loop2;
+    // DEC_C;
+    // IF_NZ goto loop2;
 
-copy:
-    CALL(av_DisplayUnownWords_CopyWord);
-    LD_BC(wAttrmap - wTilemap);
-    ADD_HL_BC;
-    CALL(av_DisplayUnownWords_FillAttr);
-    CALL(aWaitBGMap2);
-    CALL(aJoyWaitAorB);
-    CALL(aPlayClickSFX);
-    CALL(aCloseWindow);
-    RET;
-
+// copy:
+    // CALL(av_DisplayUnownWords_CopyWord);
+    v_DisplayUnownWords_CopyWord(hl, de);
+    // LD_BC(wAttrmap - wTilemap);
+    // ADD_HL_BC;
+    hl += wAttrmap - wTilemap;
+    // CALL(av_DisplayUnownWords_FillAttr);
+    v_DisplayUnownWords_FillAttr(hl, de);
+    // CALL(aWaitBGMap2);
+    WaitBGMap2_Conv();
+    // CALL(aJoyWaitAorB);
+    JoyWaitAorB_Conv();
+    // CALL(aPlayClickSFX);
+    PlayClickSFX_Conv();
+    // CALL(aCloseWindow);
+    CloseWindow_Conv2();
+    // RET;
 // INCLUDE "data/events/unown_walls.asm"
-
-    return v_DisplayUnownWords_FillAttr();
 }
 
-void v_DisplayUnownWords_FillAttr(void){
-    LD_A_de;
-    CP_A(0xff);
-    RET_Z ;
-    CP_A(0x60);
-    LD_A(VRAM_BANK_1 | PAL_BG_BROWN);
-    IF_C goto got_pal;
-    LD_A(PAL_BG_BROWN);
+static void v_DisplayUnownWords_FillAttr_PlaceSquare(uint8_t* hl, uint8_t a) {
+    // PUSH_HL;
+    // LD_hli_A;
+    hl[0] = a;
+    // LD_hld_A;
+    hl[1] = a;
+    // LD_B(0);
+    // LD_C(SCREEN_WIDTH);
+    // ADD_HL_BC;
+    // LD_hli_A;
+    hl[SCREEN_WIDTH] = a;
+    // LD_hl_A;
+    hl[SCREEN_WIDTH + 1] = a;
+    // POP_HL;
+    // RET;
+}
 
+void v_DisplayUnownWords_FillAttr(uint8_t* hl, const uint8_t* de){
+    while(*de != 0xff) {
+        // LD_A_de;
+        // CP_A(0xff);
+        // RET_Z ;
+        // CP_A(0x60);
+        // LD_A(VRAM_BANK_1 | PAL_BG_BROWN);
+        // IF_C goto got_pal;
+        // LD_A(PAL_BG_BROWN);
+        uint8_t a = (*de < 0x60)? VRAM_BANK_1 | PAL_BG_BROWN: PAL_BG_BROWN;
 
-got_pal:
-    CALL(av_DisplayUnownWords_FillAttr_PlaceSquare);
-    INC_HL;
-    INC_HL;
-    INC_DE;
-    JR(mv_DisplayUnownWords_FillAttr);
-
-
-PlaceSquare:
-    PUSH_HL;
-    LD_hli_A;
-    LD_hld_A;
-    LD_B(0);
-    LD_C(SCREEN_WIDTH);
-    ADD_HL_BC;
-    LD_hli_A;
-    LD_hl_A;
-    POP_HL;
-    RET;
+    // got_pal:
+        // CALL(av_DisplayUnownWords_FillAttr_PlaceSquare);
+        v_DisplayUnownWords_FillAttr_PlaceSquare(hl, a);
+        // INC_HL;
+        // INC_HL;
+        hl += 2;
+        // INC_DE;
+        de++;
+        // JR(mv_DisplayUnownWords_FillAttr);
+    }
 
 }
 
-void v_DisplayUnownWords_CopyWord(void){
-    PUSH_HL;
-    PUSH_DE;
+static void v_DisplayUnownWords_CopyWord_ConvertChar(uint8_t* hl, uint8_t c) {
+    // PUSH_HL;
+    // LD_A_C;
+    // CP_A(0x60);
+    // IF_Z goto Tile60;
+    if(c == 0x60) {
+    // Tile60:
+        // LD_hl(0x5b);
+        hl[0] = 0x5b;
+        // INC_HL;
+        // LD_hl(0x5c);
+        hl[1] = 0x5c;
+        // LD_BC(SCREEN_WIDTH - 1);
+        // ADD_HL_BC;
+        // LD_hl(0x4d);
+        hl[SCREEN_WIDTH] = 0x4d;
+        // INC_HL;
+        // LD_hl(0x5d);
+        hl[SCREEN_WIDTH + 1] = 0x5d;
+        // POP_HL;
+        // RET;
+        return;
+    }
+    // CP_A(0x62);
+    // IF_Z goto Tile62;
+    else if(c == 0x62) {
+    // Tile62:
+        // LD_hl(0x4e);
+        hl[0] = 0x4e;
+        // INC_HL;
+        // LD_hl(0x4f);
+        hl[1] = 0x4f;
+        // LD_BC(SCREEN_WIDTH - 1);
+        // ADD_HL_BC;
+        // LD_hl(0x5e);
+        hl[SCREEN_WIDTH] = 0x5e;
+        // INC_HL;
+        // LD_hl(0x5f);
+        hl[SCREEN_WIDTH + 1] = 0x5f;
+        // POP_HL;
+        // RET;
+        return;
+    }
+    // CP_A(0x64);
+    // IF_Z goto Tile64;
+    else if(c == 0x64) {
+    // Tile64:
+        // LD_hl(0x2);
+        hl[0] = 0x2;
+        // INC_HL;
+        // LD_hl(0x3);
+        hl[1] = 0x3;
+        // LD_BC(SCREEN_WIDTH - 1);
+        // ADD_HL_BC;
+        // LD_hl(0x3);
+        hl[SCREEN_WIDTH] = 0x3;
+        // INC_HL;
+        // LD_hl(0x2);
+        hl[SCREEN_WIDTH + 1] = 0x2;
+        // POP_HL;
+        // RET;
+        return;
+    }
+    // LD_hli_A;
+    hl[0] = c;
+    // INC_A;
+    // LD_hld_A;
+    hl[1] = c + 1;
+    // DEC_A;
+    // LD_B(0);
+    // LD_C(SCREEN_WIDTH);
+    // ADD_HL_BC;
+    // LD_C(0x10);
+    // ADD_A_C;
+    // LD_hli_A;
+    hl[SCREEN_WIDTH] = c + 0x10;
+    // INC_A;
+    // LD_hl_A;
+    hl[SCREEN_WIDTH + 1] = c + 0x11;
+    // POP_HL;
+    // RET;
+}
 
-word_loop:
-    LD_A_de;
-    CP_A(0xff);
-    IF_Z goto word_done;
-    LD_C_A;
-    CALL(av_DisplayUnownWords_CopyWord_ConvertChar);
-    INC_HL;
-    INC_HL;
-    INC_DE;
-    goto word_loop;
+void v_DisplayUnownWords_CopyWord(uint8_t* hl, const uint8_t* de){
+    // PUSH_HL;
+    // PUSH_DE;
+
+    while(*de != 0xff) {
+    // word_loop:
+        // LD_A_de;
+        // CP_A(0xff);
+        // IF_Z goto word_done;
+        // LD_C_A;
+        // CALL(av_DisplayUnownWords_CopyWord_ConvertChar);
+        v_DisplayUnownWords_CopyWord_ConvertChar(hl, *de);
+        // INC_HL;
+        // INC_HL;
+        hl += 2;
+        // INC_DE;
+        de++;
+        // goto word_loop;
+    }
 
 
-word_done:
-    POP_DE;
-    POP_HL;
-    RET;
-
-
-ConvertChar:
-    PUSH_HL;
-    LD_A_C;
-    CP_A(0x60);
-    IF_Z goto Tile60;
-    CP_A(0x62);
-    IF_Z goto Tile62;
-    CP_A(0x64);
-    IF_Z goto Tile64;
-    LD_hli_A;
-    INC_A;
-    LD_hld_A;
-    DEC_A;
-    LD_B(0);
-    LD_C(SCREEN_WIDTH);
-    ADD_HL_BC;
-    LD_C(0x10);
-    ADD_A_C;
-    LD_hli_A;
-    INC_A;
-    LD_hl_A;
-    POP_HL;
-    RET;
-
-
-Tile60:
-    LD_hl(0x5b);
-    INC_HL;
-    LD_hl(0x5c);
-    LD_BC(SCREEN_WIDTH - 1);
-    ADD_HL_BC;
-    LD_hl(0x4d);
-    INC_HL;
-    LD_hl(0x5d);
-    POP_HL;
-    RET;
-
-
-Tile62:
-    LD_hl(0x4e);
-    INC_HL;
-    LD_hl(0x4f);
-    LD_BC(SCREEN_WIDTH - 1);
-    ADD_HL_BC;
-    LD_hl(0x5e);
-    INC_HL;
-    LD_hl(0x5f);
-    POP_HL;
-    RET;
-
-
-Tile64:
-    LD_hl(0x2);
-    INC_HL;
-    LD_hl(0x3);
-    LD_BC(SCREEN_WIDTH - 1);
-    ADD_HL_BC;
-    LD_hl(0x3);
-    INC_HL;
-    LD_hl(0x2);
-    POP_HL;
-    RET;
-
+// word_done:
+    // POP_DE;
+    // POP_HL;
+    // RET;
 }

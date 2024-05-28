@@ -25,17 +25,17 @@
 
 #include "../../maps/RuinsOfAlphOutside.h"
 // #include "../../maps/RuinsOfAlphHoOhChamber.h"
-// #include "../../maps/RuinsOfAlphKabutoChamber.h"
+#include "../../maps/RuinsOfAlphKabutoChamber.h"
 // #include "../../maps/RuinsOfAlphOmanyteChamber.h"
 #include "../../maps/RuinsOfAlphAerodactylChamber.h"
 #include "../../maps/RuinsOfAlphInnerChamber.h"
 #include "../../maps/RuinsOfAlphResearchCenter.h"
 // #include "../../maps/RuinsOfAlphHoOhItemRoom.h"
-// #include "../../maps/RuinsOfAlphKabutoItemRoom.h"
+#include "../../maps/RuinsOfAlphKabutoItemRoom.h"
 // #include "../../maps/RuinsOfAlphOmanyteItemRoom.h"
 // #include "../../maps/RuinsOfAlphAerodactylItemRoom.h"
 // #include "../../maps/RuinsOfAlphHoOhWordRoom.h"
-// #include "../../maps/RuinsOfAlphKabutoWordRoom.h"
+#include "../../maps/RuinsOfAlphKabutoWordRoom.h"
 // #include "../../maps/RuinsOfAlphOmanyteWordRoom.h"
 // #include "../../maps/RuinsOfAlphAerodactylWordRoom.h"
 #include "../../maps/UnionCave1F.h"
@@ -51,8 +51,8 @@
 
 // SECTION "Map Scripts 3", ROMX
 
-// #include "../../maps/NationalPark.h"
-// #include "../../maps/NationalParkBugContest.h"
+#include "../../maps/NationalPark.h"
+#include "../../maps/NationalParkBugContest.h"
 #include "../../maps/RadioTower1F.h"
 #include "../../maps/RadioTower2F.h"
 // #include "../../maps/RadioTower3F.h"
@@ -84,9 +84,9 @@
 #include "../../maps/Route32RuinsOfAlphGate.h"
 #include "../../maps/Route32Pokecenter1F.h"
 #include "../../maps/Route35GoldenrodGate.h"
-// #include "../../maps/Route35NationalParkGate.h"
+#include "../../maps/Route35NationalParkGate.h"
 #include "../../maps/Route36RuinsOfAlphGate.h"
-// #include "../../maps/Route36NationalParkGate.h"
+#include "../../maps/Route36NationalParkGate.h"
 
 
 // SECTION "Map Scripts 6", ROMX

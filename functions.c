@@ -4939,6 +4939,17 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(Route35FruitTree);
     CONVERTED_SCRIPT(Route35TMRollout);
 
+    // maps/Route36.c
+    CONVERTED_SCRIPT(TrainerPsychicMark);
+    CONVERTED_SCRIPT(TrainerSchoolboyAlan1);
+    CONVERTED_SCRIPT(SudowoodoScript);
+    CONVERTED_SCRIPT(Route36LassScript);
+    CONVERTED_SCRIPT(Route36RockSmashGuyScript);
+    CONVERTED_SCRIPT(Route36FruitTree);
+    CONVERTED_SCRIPT(ArthurScript);
+    CONVERTED_SCRIPT(Route36FloriaScript);
+    // CONVERTED_SCRIPT(ObjectEvent);
+
     // maps/Route30BerryHouse.c
     CONVERTED_SCRIPT(Route30BerryHousePokefanMScript);
 
@@ -4964,6 +4975,29 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(RandyScript);
     CONVERTED_SCRIPT(Route35GoldenrodGatePokefanFScript);
     CONVERTED_SCRIPT(Route35GoldenrodGateFisherScript);
+
+    // maps/Route35NationalParkGate.c
+    CONVERTED_SCRIPT(Route35OfficerScriptContest);
+    CONVERTED_SCRIPT(Route35NationalParkGateYoungsterScript);
+    CONVERTED_SCRIPT(Route35NationalParkGateOfficerScript);
+
+    // maps/Route36NationalParkGate.c
+    CONVERTED_SCRIPT(Route36OfficerScriptContest);
+    CONVERTED_SCRIPT(BugCatchingContestant1BScript);
+    CONVERTED_SCRIPT(BugCatchingContestant2BScript);
+    CONVERTED_SCRIPT(BugCatchingContestant3BScript);
+    CONVERTED_SCRIPT(BugCatchingContestant4BScript);
+    CONVERTED_SCRIPT(BugCatchingContestant5BScript);
+    CONVERTED_SCRIPT(BugCatchingContestant6BScript);
+    CONVERTED_SCRIPT(BugCatchingContestant7BScript);
+    CONVERTED_SCRIPT(BugCatchingContestant8BScript);
+    CONVERTED_SCRIPT(BugCatchingContestant9BScript);
+    CONVERTED_SCRIPT(BugCatchingContestant10BScript);
+    CONVERTED_SCRIPT(Route36NationalParkGateOfficerScript);
+
+    // maps/Route36RuinsOfAlphGate.c
+    CONVERTED_SCRIPT(Route36RuinsOfAlphGateOfficerScript);
+    CONVERTED_SCRIPT(Route36RuinsOfAlphGateGrampsScript);
 
     // maps/CherrygroveEvolutionSpeechHouse.c
     CONVERTED_SCRIPT(CherrygroveEvolutionSpeechHouseLassScript);
@@ -5260,6 +5294,16 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(RuinsOfAlphResearchCenterScientist2Script);
     CONVERTED_SCRIPT(RuinsOfAlphResearchCenterScientist3Script);
 
+    // maps/RuinsOfAlphKabutoChamber.c
+    CONVERTED_SCRIPT(RuinsOfAlphKabutoChamberReceptionistScript);
+    CONVERTED_SCRIPT(RuinsOfAlphKabutoChamberScientistScript);
+
+    // maps/RuinsOfAlphKabutoItemRoom.c
+    CONVERTED_SCRIPT(RuinsOfAlphKabutoItemRoomBerry);
+    CONVERTED_SCRIPT(RuinsOfAlphKabutoItemRoomPsncureberry);
+    CONVERTED_SCRIPT(RuinsOfAlphKabutoItemRoomHealPowder);
+    CONVERTED_SCRIPT(RuinsOfAlphKabutoItemRoomEnergypowder);
+
     // maps/UnionCave1F.c
     CONVERTED_SCRIPT(TrainerHikerDaniel);
     CONVERTED_SCRIPT(TrainerPokemaniacLarry);
@@ -5339,6 +5383,36 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(RadioTowerJigglypuff);
     CONVERTED_SCRIPT(Buena);
     CONVERTED_SCRIPT(RadioTowerBuenaPrizeReceptionist);
+
+    // maps/NationalPark.c
+    CONVERTED_SCRIPT(NationalParkLassScript);
+    CONVERTED_SCRIPT(NationalParkPokefanFScript);
+    CONVERTED_SCRIPT(NationalParkTeacher1Script);
+    CONVERTED_SCRIPT(NationalParkYoungster1Script);
+    CONVERTED_SCRIPT(NationalParkYoungster2Script);
+    CONVERTED_SCRIPT(NationalParkTeacher2Script);
+    CONVERTED_SCRIPT(NationalParkPersian);
+    CONVERTED_SCRIPT(TrainerSchoolboyJack1);
+    CONVERTED_SCRIPT(TrainerPokefanfBeverly1);
+    CONVERTED_SCRIPT(TrainerPokefanmWilliam);
+    CONVERTED_SCRIPT(TrainerLassKrise);
+    CONVERTED_SCRIPT(NationalParkParlyzHeal);
+    CONVERTED_SCRIPT(NationalParkGameboyKidScript);
+    CONVERTED_SCRIPT(NationalParkTMDig);
+
+    // maps/NationalParkBugContest.c
+    CONVERTED_SCRIPT(BugCatchingContestant1AScript);
+    CONVERTED_SCRIPT(BugCatchingContestant2AScript);
+    CONVERTED_SCRIPT(BugCatchingContestant3AScript);
+    CONVERTED_SCRIPT(BugCatchingContestant4AScript);
+    CONVERTED_SCRIPT(BugCatchingContestant5AScript);
+    CONVERTED_SCRIPT(BugCatchingContestant6AScript);
+    CONVERTED_SCRIPT(BugCatchingContestant7AScript);
+    CONVERTED_SCRIPT(BugCatchingContestant8AScript);
+    CONVERTED_SCRIPT(BugCatchingContestant9AScript);
+    CONVERTED_SCRIPT(BugCatchingContestant10AScript);
+    CONVERTED_SCRIPT(NationalParkBugContestParlyzHeal);
+    CONVERTED_SCRIPT(NationalParkBugContestTMDig);
 
     // maps/DarkCaveBlackthornEntrance.c
     CONVERTED_SCRIPT(DarkCaveBlackthornEntrancePharmacistScript);

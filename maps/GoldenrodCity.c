@@ -51,9 +51,10 @@ static const struct BGEvent GoldenrodCity_BGEvents[] = {
     bg_event(16, 22, BGEVENT_READ, &GoldenrodCityGameCornerSign),
     bg_event(12, 7, BGEVENT_READ, &GoldenrodCityNameRaterSign),
     bg_event(8, 6, BGEVENT_READ, &GoldenrodCityUndergroundSignNorth),
-    bg_event(12, 30, BGEVENT_READ, &GoldenrodCityUndergroundSignSouth),
+    bg_event(10, 30, BGEVENT_READ, &GoldenrodCityUndergroundSignSouth),
     bg_event(16, 27, BGEVENT_UP, &GoldenrodCityPokecenterSign),
     bg_event(30, 6, BGEVENT_READ, &GoldenrodCityFlowerShopSign),
+    bg_event(17, 27, BGEVENT_READ, &GoldenrodCityPokecenterSign),
 };
 
 static const struct WarpEventData GoldenrodCity_WarpEvents[] = {
@@ -70,8 +71,8 @@ static const struct WarpEventData GoldenrodCity_WarpEvents[] = {
     warp_event(5, 15, RADIO_TOWER_1F, 1),
     warp_event(19, 1, ROUTE_35_GOLDENROD_GATE, 3),
     warp_event(9, 5, GOLDENROD_UNDERGROUND_SWITCH_ROOM_ENTRANCES, 8),
-    warp_event(11, 29, GOLDENROD_UNDERGROUND_SWITCH_ROOM_ENTRANCES, 5),
-    warp_event(15, 27, GOLDENROD_POKECENTER_1F, 1),
+    warp_event(9, 29, GOLDENROD_UNDERGROUND_SWITCH_ROOM_ENTRANCES, 5),
+    warp_event(14, 27, GOLDENROD_POKECENTER_1F, 1),
 };
 
 static const struct ObjEvent GoldenrodCity_ObjectEvents[] = {
@@ -81,7 +82,7 @@ static const struct ObjEvent GoldenrodCity_ObjectEvents[] = {
     object_event(20, 26, SPRITE_COOLTRAINER_F, SPRITEMOVEDATA_WANDER, 1, 2, -1, -1, 0, OBJECTTYPE_SCRIPT, 0, &GoldenrodCityCooltrainerF2Script, EVENT_GOLDENROD_CITY_CIVILIANS),
     object_event(19, 17, SPRITE_YOUNGSTER, SPRITEMOVEDATA_WANDER, 1, 1, -1, -1, PAL_NPC_RED, OBJECTTYPE_SCRIPT, 0, &GoldenrodCityYoungster2Script, EVENT_GOLDENROD_CITY_CIVILIANS),
     object_event(17, 10, SPRITE_LASS, SPRITEMOVEDATA_WALK_LEFT_RIGHT, 2, 0, -1, -1, PAL_NPC_GREEN, OBJECTTYPE_SCRIPT, 0, &GoldenrodCityLassScript, EVENT_GOLDENROD_CITY_CIVILIANS),
-    object_event(11, 27, SPRITE_GRAMPS, SPRITEMOVEDATA_WALK_LEFT_RIGHT, 1, 0, -1, -1, 0, OBJECTTYPE_SCRIPT, 0, &GoldenrodCityGrampsScript, EVENT_GOLDENROD_CITY_CIVILIANS),
+    object_event(9, 27, SPRITE_GRAMPS, SPRITEMOVEDATA_WALK_LEFT_RIGHT, 1, 0, -1, -1, 0, OBJECTTYPE_SCRIPT, 0, &GoldenrodCityGrampsScript, EVENT_GOLDENROD_CITY_CIVILIANS),
     object_event(4, 16, SPRITE_ROCKET, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, -1, 0, OBJECTTYPE_SCRIPT, 0, &GoldenrodCityRocketScoutScript, EVENT_GOLDENROD_CITY_ROCKET_SCOUT),
     object_event(28, 20, SPRITE_ROCKET, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, -1, 0, OBJECTTYPE_SCRIPT, 0, &GoldenrodCityRocket1Script, EVENT_GOLDENROD_CITY_ROCKET_TAKEOVER),
     object_event(8, 15, SPRITE_ROCKET, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, -1, 0, OBJECTTYPE_SCRIPT, 0, &GoldenrodCityRocket2Script, EVENT_GOLDENROD_CITY_ROCKET_TAKEOVER),
@@ -411,7 +412,8 @@ bool GoldenrodCityUndergroundSignSouth(script_s* s) {
 }
 bool GoldenrodCityPokecenterSign(script_s* s) {
     SCRIPT_BEGIN
-    jumpstd(PokecenterSignScript)
+    jumptext(GoldenrodCityPokeComCenterSignText)
+    // jumpstd(PokecenterSignScript)
     SCRIPT_END
 }
 bool GoldenrodCityFlowerShopSign(script_s* s) {

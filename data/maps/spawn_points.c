@@ -26,7 +26,7 @@ const struct Spawn SpawnPoints[] = {
     [SPAWN_UNION_CAVE]  = {MAP_ID(ROUTE_32),                    .coord={11, 74}},
     [SPAWN_AZALEA]      = {MAP_ID(AZALEA_TOWN),                 .coord={15, 10}},
     [SPAWN_CIANWOOD]    = {MAP_ID(CIANWOOD_CITY),               .coord={23, 44}},
-    [SPAWN_GOLDENROD]   = {MAP_ID(GOLDENROD_CITY),              .coord={15, 28}},
+    [SPAWN_GOLDENROD]   = {MAP_ID(GOLDENROD_CITY),              .coord={14, 28}},
     [SPAWN_OLIVINE]     = {MAP_ID(OLIVINE_CITY),                .coord={13, 22}},
     [SPAWN_ECRUTEAK]    = {MAP_ID(ECRUTEAK_CITY),               .coord={23, 28}},
     [SPAWN_MAHOGANY]    = {MAP_ID(MAHOGANY_TOWN),               .coord={15, 14}},

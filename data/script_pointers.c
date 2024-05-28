@@ -202,6 +202,36 @@ void PopulateMapScriptTable(void) {
     entry(ROUTE_35_GOLDENROD_GATE, 1, Route35GoldenrodGatePokefanFScript);
     entry(ROUTE_35_GOLDENROD_GATE, 2, Route35GoldenrodGateFisherScript);
 
+    entry(ROUTE_35_NATIONAL_PARK_GATE, 0, Route35OfficerScriptContest);
+    entry(ROUTE_35_NATIONAL_PARK_GATE, 1, Route35NationalParkGateYoungsterScript);
+    entry(ROUTE_35_NATIONAL_PARK_GATE, 2, Route35NationalParkGateOfficerScript);
+
+    entry(ROUTE_36, 0, TrainerPsychicMark);
+    entry(ROUTE_36, 1, TrainerSchoolboyAlan1);
+    entry(ROUTE_36, 2, SudowoodoScript);
+    entry(ROUTE_36, 3, Route36LassScript);
+    entry(ROUTE_36, 4, Route36RockSmashGuyScript);
+    entry(ROUTE_36, 5, Route36FruitTree);
+    entry(ROUTE_36, 6, ArthurScript);
+    entry(ROUTE_36, 7, Route36FloriaScript);
+    entry(ROUTE_36, 8, ObjectEvent);
+
+    entry(ROUTE_36_NATIONAL_PARK_GATE, 0,  Route36OfficerScriptContest);
+    entry(ROUTE_36_NATIONAL_PARK_GATE, 1,  BugCatchingContestant1BScript);
+    entry(ROUTE_36_NATIONAL_PARK_GATE, 2,  BugCatchingContestant2BScript);
+    entry(ROUTE_36_NATIONAL_PARK_GATE, 3,  BugCatchingContestant3BScript);
+    entry(ROUTE_36_NATIONAL_PARK_GATE, 4,  BugCatchingContestant4BScript);
+    entry(ROUTE_36_NATIONAL_PARK_GATE, 5,  BugCatchingContestant5BScript);
+    entry(ROUTE_36_NATIONAL_PARK_GATE, 6,  BugCatchingContestant6BScript);
+    entry(ROUTE_36_NATIONAL_PARK_GATE, 7,  BugCatchingContestant7BScript);
+    entry(ROUTE_36_NATIONAL_PARK_GATE, 8,  BugCatchingContestant8BScript);
+    entry(ROUTE_36_NATIONAL_PARK_GATE, 9,  BugCatchingContestant9BScript);
+    entry(ROUTE_36_NATIONAL_PARK_GATE, 10, BugCatchingContestant10BScript);
+    entry(ROUTE_36_NATIONAL_PARK_GATE, 11, Route36NationalParkGateOfficerScript);
+
+    entry(ROUTE_36_RUINS_OF_ALPH_GATE, 0, Route36RuinsOfAlphGateOfficerScript);
+    entry(ROUTE_36_RUINS_OF_ALPH_GATE, 1, Route36RuinsOfAlphGateGrampsScript);
+
     entry(CHERRYGROVE_EVOLUTION_SPEECH_HOUSE, 0, CherrygroveEvolutionSpeechHouseLassScript);
     entry(CHERRYGROVE_EVOLUTION_SPEECH_HOUSE, 1, CherrygroveEvolutionSpeechHouseYoungsterScript);
 
@@ -461,6 +491,14 @@ void PopulateMapScriptTable(void) {
     entry(RUINS_OF_ALPH_RESEARCH_CENTER, 1, RuinsOfAlphResearchCenterScientist2Script);
     entry(RUINS_OF_ALPH_RESEARCH_CENTER, 2, RuinsOfAlphResearchCenterScientist3Script);
 
+    entry(RUINS_OF_ALPH_KABUTO_CHAMBER, 0, RuinsOfAlphKabutoChamberReceptionistScript);
+    entry(RUINS_OF_ALPH_KABUTO_CHAMBER, 1, RuinsOfAlphKabutoChamberScientistScript);
+
+    entry(RUINS_OF_ALPH_KABUTO_ITEM_ROOM, 0, RuinsOfAlphKabutoItemRoomBerry);
+    entry(RUINS_OF_ALPH_KABUTO_ITEM_ROOM, 1, RuinsOfAlphKabutoItemRoomPsncureberry);
+    entry(RUINS_OF_ALPH_KABUTO_ITEM_ROOM, 2, RuinsOfAlphKabutoItemRoomHealPowder);
+    entry(RUINS_OF_ALPH_KABUTO_ITEM_ROOM, 3, RuinsOfAlphKabutoItemRoomEnergypowder);
+
     entry(UNION_CAVE_1F, 0, TrainerHikerDaniel);
     entry(UNION_CAVE_1F, 1, TrainerPokemaniacLarry);
     entry(UNION_CAVE_1F, 2, TrainerHikerRussell);
@@ -534,6 +572,34 @@ void PopulateMapScriptTable(void) {
     entry(RADIO_TOWER_2F, 8,  RadioTowerJigglypuff);
     entry(RADIO_TOWER_2F, 9,  Buena);
     entry(RADIO_TOWER_2F, 10, RadioTowerBuenaPrizeReceptionist);
+
+    entry(NATIONAL_PARK, 0,  NationalParkLassScript);
+    entry(NATIONAL_PARK, 1,  NationalParkPokefanFScript);
+    entry(NATIONAL_PARK, 2,  NationalParkTeacher1Script);
+    entry(NATIONAL_PARK, 3,  NationalParkYoungster1Script);
+    entry(NATIONAL_PARK, 4,  NationalParkYoungster2Script);
+    entry(NATIONAL_PARK, 5,  NationalParkTeacher2Script);
+    entry(NATIONAL_PARK, 6,  NationalParkPersian);
+    entry(NATIONAL_PARK, 7,  TrainerSchoolboyJack1);
+    entry(NATIONAL_PARK, 8,  TrainerPokefanfBeverly1);
+    entry(NATIONAL_PARK, 9,  TrainerPokefanmWilliam);
+    entry(NATIONAL_PARK, 10, TrainerLassKrise);
+    entry(NATIONAL_PARK, 11, NationalParkParlyzHeal);
+    entry(NATIONAL_PARK, 12, NationalParkGameboyKidScript);
+    entry(NATIONAL_PARK, 13, NationalParkTMDig);
+
+    entry(NATIONAL_PARK_BUG_CONTEST, 0,  BugCatchingContestant1AScript);
+    entry(NATIONAL_PARK_BUG_CONTEST, 1,  BugCatchingContestant2AScript);
+    entry(NATIONAL_PARK_BUG_CONTEST, 2,  BugCatchingContestant3AScript);
+    entry(NATIONAL_PARK_BUG_CONTEST, 3,  BugCatchingContestant4AScript);
+    entry(NATIONAL_PARK_BUG_CONTEST, 4,  BugCatchingContestant5AScript);
+    entry(NATIONAL_PARK_BUG_CONTEST, 5,  BugCatchingContestant6AScript);
+    entry(NATIONAL_PARK_BUG_CONTEST, 6,  BugCatchingContestant7AScript);
+    entry(NATIONAL_PARK_BUG_CONTEST, 7,  BugCatchingContestant8AScript);
+    entry(NATIONAL_PARK_BUG_CONTEST, 8,  BugCatchingContestant9AScript);
+    entry(NATIONAL_PARK_BUG_CONTEST, 9,  BugCatchingContestant10AScript);
+    entry(NATIONAL_PARK_BUG_CONTEST, 10, NationalParkBugContestParlyzHeal);
+    entry(NATIONAL_PARK_BUG_CONTEST, 11, NationalParkBugContestTMDig);
 
     entry(DARK_CAVE_BLACKTHORN_ENTRANCE, 0, DarkCaveBlackthornEntrancePharmacistScript);
     entry(DARK_CAVE_BLACKTHORN_ENTRANCE, 1, DarkCaveBlackthornEntranceRevive);

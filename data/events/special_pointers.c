@@ -16,6 +16,7 @@
 #include "../../engine/events/haircut.h"
 #include "../../engine/events/happiness_egg.h"
 #include "../../engine/events/daycare.h"
+#include "../../engine/events/unown_walls.h"
 #include "../../engine/overworld/wildmons.h"
 #include "../../engine/overworld/overworld.h"
 #include "../../engine/overworld/warp_connection.h"
@@ -168,7 +169,7 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(OmanyteChamber),
     // add_special(Function11c1ab),
     // add_special(BattleTowerAction),
-    // add_special(DisplayUnownWords),
+    add_special(DisplayUnownWords),
     // add_special(Menu_ChallengeExplanationCancel),
     // add_special(Function17d2b6),
     // add_special(Function17d2ce),

@@ -401,7 +401,7 @@ const char AzaleaTown_Blocks[] = "maps/AzaleaTown.blk";
 
 const char CianwoodCity_Blocks[] = "maps/CianwoodCity.blk";
 
-const char GoldenrodCity_Blocks[] = "maps/GoldenrodCity.blk";
+const char GoldenrodCity_Blocks[] = "maps/GoldenrodCity_JP.blk";
 
 const char OlivineCity_Blocks[] = "maps/OlivineCity.blk";
 
