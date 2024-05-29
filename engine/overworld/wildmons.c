@@ -8,15 +8,18 @@
 #include "../../home/names.h"
 #include "../../data/wild/johto_grass.h"
 #include "../../data/wild/kanto_grass.h"
+#include "../../data/wild/johto_water.h"
+#include "../../data/wild/kanto_water.h"
+#include "../../data/wild/swarm_grass.h"
 #include "../../data/wild/probabilities.h"
 #include "../../data/trainers/parties.h"
 #include "../../data/wild/roammon_maps.h"
 
 void LoadWildMonData(void){
     // CALL(av_GrassWildmonLookup);
-    const struct WildGrassMons* grass = v_GrassWildmonLookup_Conv();
+    const struct WildMons gmons = v_GrassWildmonLookup_Conv();
     // IF_C goto copy;
-    if(grass == NULL) {
+    if(gmons.grassMons == NULL) {
         // LD_HL(wMornEncounterRate);
         // XOR_A_A;
         // LD_hli_A;
@@ -29,6 +32,7 @@ void LoadWildMonData(void){
     }
     else {
     // copy:
+        const struct WildGrassMons* const grass = gmons.grassMons;
         // INC_HL;
         // INC_HL;
         // LD_DE(wMornEncounterRate);
@@ -41,12 +45,18 @@ void LoadWildMonData(void){
 
 // done_copy:
     // CALL(av_WaterWildmonLookup);
+    const struct WildMons wmons = v_WaterWildmonLookup_Conv();
     // LD_A(0);
     // IF_NC goto no_copy;
-    // INC_HL;
-    // INC_HL;
-    // LD_A_hl;
-
+    if(wmons.waterMons == NULL) {
+        wram->wWaterEncounterRate = 0;
+    }
+    else {
+        // INC_HL;
+        // INC_HL;
+        // LD_A_hl;
+        wram->wWaterEncounterRate = wmons.waterMons->encounterRate;
+    }
 // no_copy:
     // LD_addr_A(wWaterEncounterRate);
     // RET;
@@ -284,7 +294,7 @@ static bool TryWildEncounter_EncounterRate(void) {
 bool TryWildEncounter_Conv(void){
     // CALL(aTryWildEncounter_EncounterRate);
     // IF_NC goto no_battle;
-    if(TryWildEncounter_EncounterRate() && ChooseWildEncounter_Conv() && !CheckRepelEffect_Conv())
+    if(TryWildEncounter_EncounterRate() && ChooseWildEncounter_Conv() && !CheckRepelEffect_Conv() && !bit_test(hram->hJoyDown, B_BUTTON_F))
         return true;
     // CALL(aChooseWildEncounter);
     // IF_NZ goto no_battle;
@@ -527,8 +537,8 @@ startwildbattle:
 bool ChooseWildEncounter_Conv(void){
     // CALL(aLoadWildMonDataPointer);
     // JP_NC (mChooseWildEncounter_nowildbattle);
-    const struct WildGrassMons* hl = LoadWildMonDataPointer_Conv();
-    if(hl == NULL)
+    const struct WildMons hl = LoadWildMonDataPointer_Conv();
+    if(hl.grassMons == NULL)
         return false;
     // CALL(aCheckEncounterRoamMon);
     // JP_C (mChooseWildEncounter_startwildbattle);
@@ -545,7 +555,7 @@ bool ChooseWildEncounter_Conv(void){
     // LD_BC(NUM_GRASSMON * 2);
     // CALL(aAddNTimes);
     // LD_DE(mGrassMonProbTable);
-    const uint8_t* de = GrassMonProbTable;
+    const uint8_t* de = (CheckOnWater_Conv())? WaterMonProbTable: GrassMonProbTable;
 
 // watermon:
 //  hl contains the pointer to the wild mon data, let's save that to the stack
@@ -583,7 +593,7 @@ bool ChooseWildEncounter_Conv(void){
     // ADD_HL_BC;  // this selects our mon
     // LD_A_hli;
     // LD_B_A;
-    uint8_t level = hl->mons[wram->wTimeOfDay][i].level;
+    uint8_t level = (hl.type == 1)? hl.waterMons->mons[i].level: hl.grassMons->mons[wram->wTimeOfDay][i].level;
 //  If the Pokemon is encountered by surfing, we need to give the levels some variety.
     // CALL(aCheckOnWater);
     // IF_NZ goto ok;
@@ -622,7 +632,7 @@ bool ChooseWildEncounter_Conv(void){
     // LD_addr_A(wCurPartyLevel);
     wram->wCurPartyLevel = level;
     // LD_B_hl;
-    species_t s = hl->mons[wram->wTimeOfDay][i].species;
+    species_t s = (hl.type == 1)? hl.waterMons->mons[i].species: hl.grassMons->mons[wram->wTimeOfDay][i].species;
 // ld a, b
     // CALL(aValidateTempWildMonSpecies);
     // IF_C goto nowildbattle;
@@ -749,9 +759,11 @@ void LoadWildMonDataPointer(void){
     return v_GrassWildmonLookup();
 }
 
-const struct WildGrassMons* LoadWildMonDataPointer_Conv(void){
+struct WildMons LoadWildMonDataPointer_Conv(void){
     // CALL(aCheckOnWater);
     // JR_Z (mv_WaterWildmonLookup);
+    if(CheckOnWater_Conv())
+        return v_WaterWildmonLookup_Conv();
     // return v_GrassWildmonLookup();
     return v_GrassWildmonLookup_Conv();
 }
@@ -769,18 +781,21 @@ void v_GrassWildmonLookup(void){
 
 }
 
-const struct WildGrassMons* v_GrassWildmonLookup_Conv(void){
+struct WildMons v_GrassWildmonLookup_Conv(void){
     // LD_HL(mSwarmGrassWildMons);
     // LD_BC(GRASS_WILDDATA_LENGTH);
     // CALL(av_SwarmWildmonCheck);
+    struct WildMons mons = v_SwarmWildmonCheck_Conv((struct WildMons){.type = 0, .grassMons = SwarmGrassWildMons});
     // RET_C ;
+    if(mons.grassMons != NULL)
+        return mons;
     // LD_HL(mJohtoGrassWildMons);
     // LD_DE(mKantoGrassWildMons);
     const struct WildGrassMons* hl = (IsInJohto_Conv() == JOHTO_REGION)? JohtoGrassWildMons: KantoGrassWildMons;
     // CALL(av_JohtoWildmonCheck);
     // LD_BC(GRASS_WILDDATA_LENGTH);
     // JR(mv_NormalWildmonOK);
-    return v_NormalWildmonOK_Conv(hl);
+    return v_NormalWildmonOK_Conv((struct WildMons){.type = 0, .grassMons = hl});
 }
 
 void v_WaterWildmonLookup(void){
@@ -794,6 +809,20 @@ void v_WaterWildmonLookup(void){
     LD_BC(WATER_WILDDATA_LENGTH);
     JR(mv_NormalWildmonOK);
 
+}
+
+struct WildMons v_WaterWildmonLookup_Conv(void){
+    // LD_HL(mSwarmWaterWildMons);
+    // LD_BC(WATER_WILDDATA_LENGTH);
+    // CALL(av_SwarmWildmonCheck);
+    // RET_C ;
+    // LD_HL(mJohtoWaterWildMons);
+    // LD_DE(mKantoWaterWildMons);
+    // CALL(av_JohtoWildmonCheck);
+    const struct WildWaterMons* hl = (IsInJohto_Conv() == JOHTO_REGION)? JohtoWaterWildMons: KantoWaterWildMons;
+    // LD_BC(WATER_WILDDATA_LENGTH);
+    // JR(mv_NormalWildmonOK);
+    return v_NormalWildmonOK_Conv((struct WildMons){.type = 1, .waterMons = hl});
 }
 
 void v_JohtoWildmonCheck(void){
@@ -844,6 +873,55 @@ CheckYanma:
 
 }
 
+struct WildMons v_SwarmWildmonCheck_Conv(struct WildMons mons){
+    // CALL(aCopyCurrMapDE);
+    struct MapId map = CopyCurrMapDE_Conv();
+    // PUSH_HL;
+    // LD_HL(wSwarmFlags);
+    // BIT_hl(SWARMFLAGS_DUNSPARCE_SWARM_F);
+    // POP_HL;
+    // IF_Z goto CheckYanma;
+    // LD_A_addr(wDunsparceMapGroup);
+    // CP_A_D;
+    // IF_NZ goto CheckYanma;
+    // LD_A_addr(wDunsparceMapNumber);
+    // CP_A_E;
+    // IF_NZ goto CheckYanma;
+    if(bit_test(wram->wSwarmFlags, SWARMFLAGS_DUNSPARCE_SWARM_F) 
+    && wram->wDunsparceMapGroup == map.mapGroup
+    && wram->wDunsparceMapNumber == map.mapNumber) {
+        // CALL(aLookUpWildmonsForMapDE);
+        mons = LookUpWildmonsForMapDE_Conv(mons, map);
+        // JR_NC (mv_NoSwarmWildmon);
+        // SCF;
+        // RET;
+        return mons;
+    }
+
+// CheckYanma:
+    // PUSH_HL;
+    // LD_HL(wSwarmFlags);
+    // BIT_hl(SWARMFLAGS_YANMA_SWARM_F);
+    // POP_HL;
+    // JR_Z (mv_NoSwarmWildmon);
+    // LD_A_addr(wYanmaMapGroup);
+    // CP_A_D;
+    // JR_NZ (mv_NoSwarmWildmon);
+    // LD_A_addr(wYanmaMapNumber);
+    // CP_A_E;
+    // JR_NZ (mv_NoSwarmWildmon);
+    if(bit_test(wram->wSwarmFlags, SWARMFLAGS_YANMA_SWARM_F) 
+    && wram->wYanmaMapGroup == map.mapGroup
+    && wram->wYanmaMapNumber == map.mapNumber) {
+        // CALL(aLookUpWildmonsForMapDE);
+        // JR_NC (mv_NoSwarmWildmon);
+        // SCF;
+        // RET;
+        return LookUpWildmonsForMapDE_Conv(mons, map);
+    }
+    return (struct WildMons){.type = 0xff, .grassMons = NULL};
+}
+
 void v_NoSwarmWildmon(void){
     AND_A_A;
     RET;
@@ -856,7 +934,7 @@ void v_NormalWildmonOK(void){
 
 }
 
-const struct WildGrassMons* v_NormalWildmonOK_Conv(const struct WildGrassMons* hl){
+struct WildMons v_NormalWildmonOK_Conv(struct WildMons hl){
     // CALL(aCopyCurrMapDE);
     struct MapId mapId = CopyCurrMapDE_Conv();
     // JR(mLookUpWildmonsForMapDE);
@@ -916,31 +994,61 @@ yup:
 
 }
 
-const struct WildGrassMons* LookUpWildmonsForMapDE_Conv(const struct WildGrassMons* hl, struct MapId de){
-    do {
-    // loop:
-        // PUSH_HL;
-        // LD_A_hl;
-        // INC_A;
-        // IF_Z goto nope;
-        if(hl->mapNumber == 0xff)
-            return NULL;
-        // LD_A_D;
-        // CP_A_hl;
-        // IF_NZ goto next;
-        if(hl->mapNumber == de.mapNumber && hl->mapGroup == de.mapGroup)
-            return hl;
-        // INC_HL;
-        // LD_A_E;
-        // CP_A_hl;
-        // IF_Z goto yup;
+struct WildMons LookUpWildmonsForMapDE_Conv(struct WildMons wm, struct MapId de){
+    if(wm.type == 0) {
+        const struct WildGrassMons* hl = wm.grassMons;
+        do {
+        // loop:
+            // PUSH_HL;
+            // LD_A_hl;
+            // INC_A;
+            // IF_Z goto nope;
+            if(hl->mapNumber == 0xff)
+                return (struct WildMons){.type = 0xff, .grassMons = NULL};
+            // LD_A_D;
+            // CP_A_hl;
+            // IF_NZ goto next;
+            if(hl->mapNumber == de.mapNumber && hl->mapGroup == de.mapGroup)
+                return (struct WildMons){.type = 0, .grassMons = hl};
+            // INC_HL;
+            // LD_A_E;
+            // CP_A_hl;
+            // IF_Z goto yup;
 
-    // next:
-        // POP_HL;
-        // ADD_HL_BC;
-        // goto loop;
-        hl++;
-    } while(1);
+        // next:
+            // POP_HL;
+            // ADD_HL_BC;
+            // goto loop;
+            hl++;
+        } while(1);
+    }
+    else {
+        const struct WildWaterMons* hl = wm.waterMons;
+        do {
+        // loop:
+            // PUSH_HL;
+            // LD_A_hl;
+            // INC_A;
+            // IF_Z goto nope;
+            if(hl->mapNumber == 0xff)
+                return (struct WildMons){.type = 0xff, .waterMons = NULL};
+            // LD_A_D;
+            // CP_A_hl;
+            // IF_NZ goto next;
+            if(hl->mapNumber == de.mapNumber && hl->mapGroup == de.mapGroup)
+                return (struct WildMons){.type = 1, .waterMons = hl};
+            // INC_HL;
+            // LD_A_E;
+            // CP_A_hl;
+            // IF_Z goto yup;
+
+        // next:
+            // POP_HL;
+            // ADD_HL_BC;
+            // goto loop;
+            hl++;
+        } while(1);
+    }
 
 // nope:
     // POP_HL;
@@ -1475,12 +1583,12 @@ void RandomPhoneWildMon(void){
     // IF_C goto ok;
     // LD_HL(mKantoGrassWildMons);
     // CALL(aLookUpWildmonsForMapDE);
-    const struct WildGrassMons* mons = LookUpWildmonsForMapDE_Conv(
-        JohtoGrassWildMons, (struct MapId){loc.mgroup, loc.mnum});
+    struct WildMons mons = LookUpWildmonsForMapDE_Conv(
+        (struct WildMons){.grassMons = JohtoGrassWildMons, .type=0}, (struct MapId){loc.mgroup, loc.mnum});
 
-    if(mons == NULL)
+    if(mons.grassMons == NULL)
         mons = LookUpWildmonsForMapDE_Conv(
-            KantoGrassWildMons, (struct MapId){loc.mgroup, loc.mnum});
+            (struct WildMons){.grassMons = KantoGrassWildMons, .type=0}, (struct MapId){loc.mgroup, loc.mnum});
 
 // ok:
     // LD_BC(5 + 0 * 2);
@@ -1505,7 +1613,7 @@ void RandomPhoneWildMon(void){
     // ADD_HL_BC;
     // INC_HL;
     // LD_A_hl;
-    species_t s = mons->mons[wram->wTimeOfDay][Random_Conv() & 0b11].species;
+    species_t s = mons.grassMons->mons[wram->wTimeOfDay][Random_Conv() & 0b11].species;
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetPokemonName);
     // LD_HL(wStringBuffer1);

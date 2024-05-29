@@ -1033,10 +1033,13 @@ struct WildWaterMons
     struct { uint8_t level; species_t species; } mons[3];
 };
 
-union WildMons
+struct WildMons
 {
-    const struct WildGrassMons* grassMons;
-    const struct WildWaterMons* waterMons;
+    uint8_t type;
+    union {
+        const struct WildGrassMons* grassMons;
+        const struct WildWaterMons* waterMons;
+    };
 };
 
 struct TimeFishGroup 

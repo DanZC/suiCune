@@ -5,6 +5,8 @@
 #include "json_load.h"
 #include "../engine/items/mart.h"
 #include "wild/johto_grass.h"
+#include "wild/johto_water.h"
+#include "wild/kanto_water.h"
 #include "pokemon/base_stats.h"
 
 const char MartJSONPath[] = "data/items/marts.json";
@@ -146,10 +148,65 @@ static void JSONLoadWildGrassEncounterTable(struct WildGrassMons** table, const 
     free(root);
 }
 
-const char WildJSONPath[] = "data/wild/johto_grass.json";
+static void JSONLoadWildWaterEncounterTable(struct WildWaterMons** table, const char* json_path) {
+    if(*table) free(*table);
+    asset_s a = LoadTextAsset(json_path);
+    json_value_t* root = json_parse(a.ptr, a.size);
+    assert(root);
+
+    json_object_t* root_object = json_value_as_object(root);
+    assert(root_object);
+
+    *table = malloc(sizeof(struct WildGrassMons) * (root_object->length + 1));
+    json_object_element_t* map_el = root_object->start;
+    for(size_t i = 0; i < root_object->length; ++i) {
+        u32_flag_s map_id = FindConstantValueByString(map_el->name->string);
+        if(!map_id.flag)
+            break;
+        (*table)[i].mapGroup = (uint8_t)(map_id.a >> 8);
+        (*table)[i].mapNumber = (uint8_t)(map_id.a & 0xff);
+        json_object_t* obj = json_value_as_object(map_el->value);
+        for(json_object_element_t* obj_it = obj->start; obj_it; obj_it = obj_it->next) {
+            if(strcmp(obj_it->name->string, "encounter_rate") == 0) {
+                int_flag_s rate = JSONValueToInt(obj_it->value);
+                assert(rate.flag);
+                (*table)[i].encounterRate = (uint8_t)(rate.a percent);
+            }
+            else if(strcmp(obj_it->name->string, "encounters") == 0) {
+                json_array_t* encounters = json_value_as_array(obj_it->value);
+                assert(encounters->length == lengthof((*table)[i].mons));
+                size_t k = 0;
+                for(json_array_element_t* encounters_it = encounters->start; encounters_it; encounters_it = encounters_it->next) {
+                    json_object_t* encounter_obj = json_value_as_object(encounters_it->value);
+                    for(json_object_element_t* encounter_obj_it = encounter_obj->start; encounter_obj_it; encounter_obj_it = encounter_obj_it->next) {
+                        if(strcmp(encounter_obj_it->name->string, "level") == 0) {
+                            (*table)[i].mons[k].level = JSONValueToIntUnsafe(encounter_obj_it->value);
+                        }
+                        else if(strcmp(encounter_obj_it->name->string, "species") == 0) {
+                            u32_flag_s species_res = JSONStringToConstant(encounter_obj_it->value);
+                            (*table)[i].mons[k].species = (species_t)species_res.a;
+                        }
+                    }
+                    k++;
+                }
+            }
+        }
+        map_el = map_el->next;
+    }
+    (*table)[root_object->length].mapGroup = (uint8_t)-1;
+    (*table)[root_object->length].mapNumber = (uint8_t)-1;
+    FreeAsset(a);
+    free(root);
+}
+
+const char JohtoGrassJSONPath[] = "data/wild/johto_grass.json";
+const char JohtoWaterJSONPath[] = "data/wild/johto_water.json";
+const char KantoWaterJSONPath[] = "data/wild/kanto_water.json";
 
 void JSONLoadWildEncounters(void) {
-    JSONLoadWildGrassEncounterTable(&JohtoGrassWildMons, WildJSONPath);
+    JSONLoadWildGrassEncounterTable(&JohtoGrassWildMons, JohtoGrassJSONPath);
+    JSONLoadWildWaterEncounterTable(&JohtoWaterWildMons, JohtoWaterJSONPath);
+    JSONLoadWildWaterEncounterTable(&KantoWaterWildMons, KantoWaterJSONPath);
 }
 
 const char PokemonBaseStatsPath[] = "data/pokemon/base_stats.json";

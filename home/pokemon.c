@@ -137,16 +137,15 @@ void DrawBattleHPBar_Conv(uint8_t* hl, uint8_t d, uint8_t e, uint8_t b, uint8_t 
     do {
     // template:
         // LD_hli_A;
-        *(hl++) = 0x62;
+        *(hl2++) = 0x62;
         // DEC_D;
         // IF_NZ goto template;
     } while(--d != 0);
     // LD_A(0x6b);  // bar end
     // ADD_A_B;
     // LD_hl_A;
-    *(hl) = 0x6b + b;
+    *(hl2) = 0x6b + b;
     // POP_HL;
-    hl = hl2;
 
 //  Safety check # pixels
     // LD_A_E;

@@ -1,0 +1,410 @@
+{
+  "TOHJO_FALLS": {
+    "encounter_rate": 4,
+    "encounters": [
+      {
+        "level": 20,
+        "species": "GOLDEEN"
+      },
+      {
+        "level": 20,
+        "species": "SLOWPOKE"
+      },
+      {
+        "level": 20,
+        "species": "SEAKING"
+      }
+    ]
+  },
+  "VERMILION_PORT": {
+    "encounter_rate": 2,
+    "encounters": [
+      {
+        "level": 35,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 30,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 35,
+        "species": "TENTACRUEL"
+      }
+    ]
+  },
+  "ROUTE_4": {
+    "encounter_rate": 4,
+    "encounters": [
+      {
+        "level": 10,
+        "species": "GOLDEEN"
+      },
+      {
+        "level": 5,
+        "species": "GOLDEEN"
+      },
+      {
+        "level": 10,
+        "species": "SEAKING"
+      }
+    ]
+  },
+  "ROUTE_6": {
+    "encounter_rate": 2,
+    "encounters": [
+      {
+        "level": 10,
+        "species": "PSYDUCK"
+      },
+      {
+        "level": 5,
+        "species": "PSYDUCK"
+      },
+      {
+        "level": 10,
+        "species": "GOLDUCK"
+      }
+    ]
+  },
+  "ROUTE_9": {
+    "encounter_rate": 4,
+    "encounters": [
+      {
+        "level": 15,
+        "species": "GOLDEEN"
+      },
+      {
+        "level": 10,
+        "species": "GOLDEEN"
+      },
+      {
+        "level": 15,
+        "species": "SEAKING"
+      }
+    ]
+  },
+  "ROUTE_10_NORTH": {
+    "encounter_rate": 4,
+    "encounters": [
+      {
+        "level": 15,
+        "species": "GOLDEEN"
+      },
+      {
+        "level": 10,
+        "species": "GOLDEEN"
+      },
+      {
+        "level": 15,
+        "species": "SEAKING"
+      }
+    ]
+  },
+  "ROUTE_12": {
+    "encounter_rate": 6,
+    "encounters": [
+      {
+        "level": 25,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 25,
+        "species": "QUAGSIRE"
+      },
+      {
+        "level": 25,
+        "species": "TENTACRUEL"
+      }
+    ]
+  },
+  "ROUTE_13": {
+    "encounter_rate": 6,
+    "encounters": [
+      {
+        "level": 25,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 25,
+        "species": "QUAGSIRE"
+      },
+      {
+        "level": 25,
+        "species": "TENTACRUEL"
+      }
+    ]
+  },
+  "ROUTE_19": {
+    "encounter_rate": 6,
+    "encounters": [
+      {
+        "level": 35,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 30,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 35,
+        "species": "TENTACRUEL"
+      }
+    ]
+  },
+  "ROUTE_20": {
+    "encounter_rate": 6,
+    "encounters": [
+      {
+        "level": 35,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 30,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 35,
+        "species": "TENTACRUEL"
+      }
+    ]
+  },
+  "ROUTE_21": {
+    "encounter_rate": 6,
+    "encounters": [
+      {
+        "level": 35,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 30,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 35,
+        "species": "TENTACRUEL"
+      }
+    ]
+  },
+  "ROUTE_22": {
+    "encounter_rate": 2,
+    "encounters": [
+      {
+        "level": 10,
+        "species": "POLIWAG"
+      },
+      {
+        "level": 5,
+        "species": "POLIWAG"
+      },
+      {
+        "level": 10,
+        "species": "POLIWHIRL"
+      }
+    ]
+  },
+  "ROUTE_24": {
+    "encounter_rate": 4,
+    "encounters": [
+      {
+        "level": 10,
+        "species": "GOLDEEN"
+      },
+      {
+        "level": 5,
+        "species": "GOLDEEN"
+      },
+      {
+        "level": 10,
+        "species": "SEAKING"
+      }
+    ]
+  },
+  "ROUTE_25": {
+    "encounter_rate": 4,
+    "encounters": [
+      {
+        "level": 10,
+        "species": "GOLDEEN"
+      },
+      {
+        "level": 5,
+        "species": "GOLDEEN"
+      },
+      {
+        "level": 10,
+        "species": "SEAKING"
+      }
+    ]
+  },
+  "ROUTE_26": {
+    "encounter_rate": 6,
+    "encounters": [
+      {
+        "level": 30,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 25,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 30,
+        "species": "TENTACRUEL"
+      }
+    ]
+  },
+  "ROUTE_27": {
+    "encounter_rate": 6,
+    "encounters": [
+      {
+        "level": 20,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 15,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 20,
+        "species": "TENTACRUEL"
+      }
+    ]
+  },
+  "ROUTE_28": {
+    "encounter_rate": 2,
+    "encounters": [
+      {
+        "level": 40,
+        "species": "POLIWAG"
+      },
+      {
+        "level": 35,
+        "species": "POLIWAG"
+      },
+      {
+        "level": 40,
+        "species": "POLIWHIRL"
+      }
+    ]
+  },
+  "PALLET_TOWN": {
+    "encounter_rate": 6,
+    "encounters": [
+      {
+        "level": 35,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 30,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 35,
+        "species": "TENTACRUEL"
+      }
+    ]
+  },
+  "VIRIDIAN_CITY": {
+    "encounter_rate": 2,
+    "encounters": [
+      {
+        "level": 10,
+        "species": "POLIWAG"
+      },
+      {
+        "level": 5,
+        "species": "POLIWAG"
+      },
+      {
+        "level": 10,
+        "species": "POLIWHIRL"
+      }
+    ]
+  },
+  "CERULEAN_CITY": {
+    "encounter_rate": 4,
+    "encounters": [
+      {
+        "level": 10,
+        "species": "GOLDEEN"
+      },
+      {
+        "level": 5,
+        "species": "GOLDEEN"
+      },
+      {
+        "level": 10,
+        "species": "SEAKING"
+      }
+    ]
+  },
+  "VERMILION_CITY": {
+    "encounter_rate": 6,
+    "encounters": [
+      {
+        "level": 35,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 30,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 35,
+        "species": "TENTACRUEL"
+      }
+    ]
+  },
+  "CELADON_CITY": {
+    "encounter_rate": 2,
+    "encounters": [
+      {
+        "level": 20,
+        "species": "GRIMER"
+      },
+      {
+        "level": 15,
+        "species": "GRIMER"
+      },
+      {
+        "level": 15,
+        "species": "MUK"
+      }
+    ]
+  },
+  "FUCHSIA_CITY": {
+    "encounter_rate": 2,
+    "encounters": [
+      {
+        "level": 20,
+        "species": "MAGIKARP"
+      },
+      {
+        "level": 15,
+        "species": "MAGIKARP"
+      },
+      {
+        "level": 10,
+        "species": "MAGIKARP"
+      }
+    ]
+  },
+  "CINNABAR_ISLAND": {
+    "encounter_rate": 6,
+    "encounters": [
+      {
+        "level": 35,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 30,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 35,
+        "species": "TENTACRUEL"
+      }
+    ]
+  }
+}

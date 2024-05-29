@@ -2830,7 +2830,7 @@ uint16_t GetMaxHP_Conv(void){
     // AND_A_A;
     // IF_Z goto ok;
     // LD_HL(wEnemyMonMaxHP);
-    uint16_t hp = ReverseEndian16((hram->hBattleTurn == 0)? wram->wBattleMon.hp: wram->wEnemyMon.hp);
+    uint16_t hp = ReverseEndian16((hram->hBattleTurn == 0)? wram->wBattleMon.maxHP: wram->wEnemyMon.maxHP);
 
 // ok:
     // LD_A_hli;
@@ -10103,6 +10103,7 @@ Happiness:
         // LD_A_hld;
         // LD_addr_A(wEnemyMonHP);
         wram->wEnemyMon.hp = wram->wOTPartyMon[wram->wCurPartyMon].HP;
+        wram->wEnemyMon.maxHP = wram->wOTPartyMon[wram->wCurPartyMon].maxHP;
 
     //  Make sure everything knows which monster the opponent is using
         // LD_A_addr(wCurPartyMon);

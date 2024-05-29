@@ -1,0 +1,648 @@
+{
+  "RUINS_OF_ALPH_OUTSIDE": {
+    "encounter_rate": 2,
+    "encounters": [
+      {
+        "level": 15,
+        "species": "WOOPER"
+      },
+      {
+        "level": 20,
+        "species": "QUAGSIRE"
+      },
+      {
+        "level": 15,
+        "species": "QUAGSIRE"
+      }
+    ]
+  },
+  "UNION_CAVE_1F": {
+    "encounter_rate": 2,
+    "encounters": [
+      {
+        "level": 15,
+        "species": "WOOPER"
+      },
+      {
+        "level": 20,
+        "species": "QUAGSIRE"
+      },
+      {
+        "level": 15,
+        "species": "QUAGSIRE"
+      }
+    ]
+  },
+  "UNION_CAVE_B1F": {
+    "encounter_rate": 2,
+    "encounters": [
+      {
+        "level": 15,
+        "species": "WOOPER"
+      },
+      {
+        "level": 20,
+        "species": "QUAGSIRE"
+      },
+      {
+        "level": 15,
+        "species": "QUAGSIRE"
+      }
+    ]
+  },
+  "UNION_CAVE_B2F": {
+    "encounter_rate": 4,
+    "encounters": [
+      {
+        "level": 15,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 20,
+        "species": "QUAGSIRE"
+      },
+      {
+        "level": 20,
+        "species": "TENTACRUEL"
+      }
+    ]
+  },
+  "SLOWPOKE_WELL_B1F": {
+    "encounter_rate": 2,
+    "encounters": [
+      {
+        "level": 15,
+        "species": "SLOWPOKE"
+      },
+      {
+        "level": 20,
+        "species": "SLOWPOKE"
+      },
+      {
+        "level": 10,
+        "species": "SLOWPOKE"
+      }
+    ]
+  },
+  "SLOWPOKE_WELL_B2F": {
+    "encounter_rate": 2,
+    "encounters": [
+      {
+        "level": 15,
+        "species": "SLOWPOKE"
+      },
+      {
+        "level": 20,
+        "species": "SLOWPOKE"
+      },
+      {
+        "level": 20,
+        "species": "SLOWBRO"
+      }
+    ]
+  },
+  "ILEX_FOREST": {
+    "encounter_rate": 2,
+    "encounters": [
+      {
+        "level": 15,
+        "species": "PSYDUCK"
+      },
+      {
+        "level": 10,
+        "species": "PSYDUCK"
+      },
+      {
+        "level": 15,
+        "species": "GOLDUCK"
+      }
+    ]
+  },
+  "MOUNT_MORTAR_1F_OUTSIDE": {
+    "encounter_rate": 4,
+    "encounters": [
+      {
+        "level": 15,
+        "species": "GOLDEEN"
+      },
+      {
+        "level": 20,
+        "species": "MARILL"
+      },
+      {
+        "level": 20,
+        "species": "SEAKING"
+      }
+    ]
+  },
+  "MOUNT_MORTAR_2F_INSIDE": {
+    "encounter_rate": 2,
+    "encounters": [
+      {
+        "level": 20,
+        "species": "GOLDEEN"
+      },
+      {
+        "level": 25,
+        "species": "MARILL"
+      },
+      {
+        "level": 25,
+        "species": "SEAKING"
+      }
+    ]
+  },
+  "MOUNT_MORTAR_B1F": {
+    "encounter_rate": 2,
+    "encounters": [
+      {
+        "level": 15,
+        "species": "GOLDEEN"
+      },
+      {
+        "level": 20,
+        "species": "MARILL"
+      },
+      {
+        "level": 20,
+        "species": "SEAKING"
+      }
+    ]
+  },
+  "WHIRL_ISLAND_SW": {
+    "encounter_rate": 4,
+    "encounters": [
+      {
+        "level": 20,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 15,
+        "species": "HORSEA"
+      },
+      {
+        "level": 20,
+        "species": "TENTACRUEL"
+      }
+    ]
+  },
+  "WHIRL_ISLAND_B2F": {
+    "encounter_rate": 4,
+    "encounters": [
+      {
+        "level": 15,
+        "species": "HORSEA"
+      },
+      {
+        "level": 20,
+        "species": "HORSEA"
+      },
+      {
+        "level": 20,
+        "species": "TENTACRUEL"
+      }
+    ]
+  },
+  "WHIRL_ISLAND_LUGIA_CHAMBER": {
+    "encounter_rate": 4,
+    "encounters": [
+      {
+        "level": 20,
+        "species": "HORSEA"
+      },
+      {
+        "level": 20,
+        "species": "TENTACRUEL"
+      },
+      {
+        "level": 20,
+        "species": "SEADRA"
+      }
+    ]
+  },
+  "SILVER_CAVE_ROOM_2": {
+    "encounter_rate": 2,
+    "encounters": [
+      {
+        "level": 35,
+        "species": "SEAKING"
+      },
+      {
+        "level": 35,
+        "species": "GOLDUCK"
+      },
+      {
+        "level": 35,
+        "species": "GOLDEEN"
+      }
+    ]
+  },
+  "DARK_CAVE_VIOLET_ENTRANCE": {
+    "encounter_rate": 2,
+    "encounters": [
+      {
+        "level": 15,
+        "species": "MAGIKARP"
+      },
+      {
+        "level": 10,
+        "species": "MAGIKARP"
+      },
+      {
+        "level": 5,
+        "species": "MAGIKARP"
+      }
+    ]
+  },
+  "DARK_CAVE_BLACKTHORN_ENTRANCE": {
+    "encounter_rate": 2,
+    "encounters": [
+      {
+        "level": 15,
+        "species": "MAGIKARP"
+      },
+      {
+        "level": 10,
+        "species": "MAGIKARP"
+      },
+      {
+        "level": 5,
+        "species": "MAGIKARP"
+      }
+    ]
+  },
+  "DRAGONS_DEN_B1F": {
+    "encounter_rate": 4,
+    "encounters": [
+      {
+        "level": 15,
+        "species": "MAGIKARP"
+      },
+      {
+        "level": 10,
+        "species": "MAGIKARP"
+      },
+      {
+        "level": 10,
+        "species": "DRATINI"
+      }
+    ]
+  },
+  "OLIVINE_PORT": {
+    "encounter_rate": 2,
+    "encounters": [
+      {
+        "level": 20,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 15,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 20,
+        "species": "TENTACRUEL"
+      }
+    ]
+  },
+  "ROUTE_30": {
+    "encounter_rate": 2,
+    "encounters": [
+      {
+        "level": 20,
+        "species": "POLIWAG"
+      },
+      {
+        "level": 15,
+        "species": "POLIWAG"
+      },
+      {
+        "level": 20,
+        "species": "POLIWHIRL"
+      }
+    ]
+  },
+  "ROUTE_31": {
+    "encounter_rate": 2,
+    "encounters": [
+      {
+        "level": 20,
+        "species": "POLIWAG"
+      },
+      {
+        "level": 15,
+        "species": "POLIWAG"
+      },
+      {
+        "level": 20,
+        "species": "POLIWHIRL"
+      }
+    ]
+  },
+  "ROUTE_32": {
+    "encounter_rate": 6,
+    "encounters": [
+      {
+        "level": 15,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 20,
+        "species": "QUAGSIRE"
+      },
+      {
+        "level": 20,
+        "species": "TENTACRUEL"
+      }
+    ]
+  },
+  "ROUTE_34": {
+    "encounter_rate": 6,
+    "encounters": [
+      {
+        "level": 20,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 15,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 20,
+        "species": "TENTACRUEL"
+      }
+    ]
+  },
+  "ROUTE_35": {
+    "encounter_rate": 4,
+    "encounters": [
+      {
+        "level": 20,
+        "species": "PSYDUCK"
+      },
+      {
+        "level": 15,
+        "species": "PSYDUCK"
+      },
+      {
+        "level": 20,
+        "species": "GOLDUCK"
+      }
+    ]
+  },
+  "ROUTE_40": {
+    "encounter_rate": 6,
+    "encounters": [
+      {
+        "level": 20,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 15,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 20,
+        "species": "TENTACRUEL"
+      }
+    ]
+  },
+  "ROUTE_41": {
+    "encounter_rate": 6,
+    "encounters": [
+      {
+        "level": 20,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 20,
+        "species": "TENTACRUEL"
+      },
+      {
+        "level": 20,
+        "species": "MANTINE"
+      }
+    ]
+  },
+  "ROUTE_42": {
+    "encounter_rate": 4,
+    "encounters": [
+      {
+        "level": 20,
+        "species": "GOLDEEN"
+      },
+      {
+        "level": 15,
+        "species": "GOLDEEN"
+      },
+      {
+        "level": 20,
+        "species": "SEAKING"
+      }
+    ]
+  },
+  "ROUTE_43": {
+    "encounter_rate": 2,
+    "encounters": [
+      {
+        "level": 20,
+        "species": "MAGIKARP"
+      },
+      {
+        "level": 15,
+        "species": "MAGIKARP"
+      },
+      {
+        "level": 10,
+        "species": "MAGIKARP"
+      }
+    ]
+  },
+  "ROUTE_44": {
+    "encounter_rate": 2,
+    "encounters": [
+      {
+        "level": 25,
+        "species": "POLIWAG"
+      },
+      {
+        "level": 20,
+        "species": "POLIWAG"
+      },
+      {
+        "level": 25,
+        "species": "POLIWHIRL"
+      }
+    ]
+  },
+  "ROUTE_45": {
+    "encounter_rate": 2,
+    "encounters": [
+      {
+        "level": 20,
+        "species": "MAGIKARP"
+      },
+      {
+        "level": 15,
+        "species": "MAGIKARP"
+      },
+      {
+        "level": 5,
+        "species": "MAGIKARP"
+      }
+    ]
+  },
+  "NEW_BARK_TOWN": {
+    "encounter_rate": 6,
+    "encounters": [
+      {
+        "level": 20,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 15,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 20,
+        "species": "TENTACRUEL"
+      }
+    ]
+  },
+  "CHERRYGROVE_CITY": {
+    "encounter_rate": 6,
+    "encounters": [
+      {
+        "level": 20,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 15,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 20,
+        "species": "TENTACRUEL"
+      }
+    ]
+  },
+  "VIOLET_CITY": {
+    "encounter_rate": 2,
+    "encounters": [
+      {
+        "level": 20,
+        "species": "POLIWAG"
+      },
+      {
+        "level": 15,
+        "species": "POLIWAG"
+      },
+      {
+        "level": 20,
+        "species": "POLIWHIRL"
+      }
+    ]
+  },
+  "CIANWOOD_CITY": {
+    "encounter_rate": 6,
+    "encounters": [
+      {
+        "level": 20,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 15,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 20,
+        "species": "TENTACRUEL"
+      }
+    ]
+  },
+  "OLIVINE_CITY": {
+    "encounter_rate": 6,
+    "encounters": [
+      {
+        "level": 20,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 15,
+        "species": "TENTACOOL"
+      },
+      {
+        "level": 20,
+        "species": "TENTACRUEL"
+      }
+    ]
+  },
+  "ECRUTEAK_CITY": {
+    "encounter_rate": 2,
+    "encounters": [
+      {
+        "level": 20,
+        "species": "POLIWAG"
+      },
+      {
+        "level": 15,
+        "species": "POLIWAG"
+      },
+      {
+        "level": 20,
+        "species": "POLIWHIRL"
+      }
+    ]
+  },
+  "LAKE_OF_RAGE": {
+    "encounter_rate": 6,
+    "encounters": [
+      {
+        "level": 15,
+        "species": "MAGIKARP"
+      },
+      {
+        "level": 10,
+        "species": "MAGIKARP"
+      },
+      {
+        "level": 15,
+        "species": "GYARADOS"
+      }
+    ]
+  },
+  "BLACKTHORN_CITY": {
+    "encounter_rate": 4,
+    "encounters": [
+      {
+        "level": 15,
+        "species": "MAGIKARP"
+      },
+      {
+        "level": 10,
+        "species": "MAGIKARP"
+      },
+      {
+        "level": 5,
+        "species": "MAGIKARP"
+      }
+    ]
+  },
+  "SILVER_CAVE_OUTSIDE": {
+    "encounter_rate": 2,
+    "encounters": [
+      {
+        "level": 35,
+        "species": "POLIWHIRL"
+      },
+      {
+        "level": 40,
+        "species": "POLIWHIRL"
+      },
+      {
+        "level": 35,
+        "species": "POLIWAG"
+      }
+    ]
+  }
+}
