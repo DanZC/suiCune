@@ -94,8 +94,11 @@ bool WildBattleScript(script_s* s);
 void CanUseSweetScent(void);
 bool CanUseSweetScent_Conv(void);
 void v_TryWildEncounter_BugContest(void);
+bool v_TryWildEncounter_BugContest_Conv(void);
 void ChooseWildEncounter_BugContest(void);
+void ChooseWildEncounter_BugContest_Conv(void);
 void TryWildEncounter_BugContest(void);
+bool TryWildEncounter_BugContest_Conv(void);
 void DoBikeStep(void);
 bool DoBikeStep_Conv(void);
 //#include "constants.h"

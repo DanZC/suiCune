@@ -17,6 +17,8 @@
 #include "../../engine/events/happiness_egg.h"
 #include "../../engine/events/daycare.h"
 #include "../../engine/events/unown_walls.h"
+#include "../../engine/events/bug_contest/contest.h"
+#include "../../engine/events/bug_contest/contest_2.h"
 #include "../../engine/overworld/wildmons.h"
 #include "../../engine/overworld/overworld.h"
 #include "../../engine/overworld/warp_connection.h"
@@ -54,9 +56,9 @@ void (*const SpecialsPointers[])(void) = {
 // Map events
     // add_special(BugContestJudging),
     // add_special(CheckPartyFullAfterContest),
-    // add_special(ContestDropOffMons),
-    // add_special(ContestReturnMons),
-    // add_special(GiveParkBalls),
+    add_special(ContestDropOffMons),
+    add_special(ContestReturnMons),
+    add_special(GiveParkBalls),
     add_special(CheckMagikarpLength),
     add_special(MagikarpHouseSign),
     add_special(HealParty), // this is both a special and a predef
@@ -103,7 +105,7 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(UnusedCheckUnusedTwoDayTimer), // unused
     // add_special(DayCareMon1),
     // add_special(DayCareMon2),
-    // add_special(SelectRandomBugContestContestants),
+    add_special(SelectRandomBugContestContestants),
     // add_special(ActivateFishingSwarm),
     add_special(ToggleMaptileDecorations),
     add_special(ToggleDecorationsVisibility),

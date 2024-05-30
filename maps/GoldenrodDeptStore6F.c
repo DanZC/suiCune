@@ -79,9 +79,9 @@ static const struct MenuHeader GoldenrodVendingMachine_MenuHeader = {
         .verticalMenu = {
             .count = 4, // items
             .options = (const char*[]) {
-                "FRESH WATER  ¥200@",
-                "SODA POP     ¥300@",
-                "LEMONADE     ¥350@",
+                "FRESH WATER  ¥" _s(GOLDENRODDEPTSTORE6F_FRESH_WATER_PRICE) "@",
+                "SODA POP     ¥" _s(GOLDENRODDEPTSTORE6F_SODA_POP_PRICE)    "@",
+                "LEMONADE     ¥" _s(GOLDENRODDEPTSTORE6F_LEMONADE_PRICE)    "@",
                 "CANCEL@",
             },
         },

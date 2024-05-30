@@ -9,6 +9,7 @@
 #include "../pokegear/pokegear.h"
 #include "../items/pack.h"
 #include "../pokemon/party_menu.h"
+#include "../pokemon/mon_menu.h"
 #include "../../home/audio.h"
 #include "../../home/delay.h"
 #include "../../home/copy.h"
@@ -22,6 +23,7 @@
 #include "../../home/map_objects.h"
 #include "../../home/time_palettes.h"
 #include "../overworld/init_map.h"
+#include "../events/bug_contest/contest.h"
 #include "../../data/text/common.h"
 #include "../../home/queue_script.h"
 
@@ -647,9 +649,27 @@ DontEndContest:
 
 //  Retire from the bug catching contest.
 uint8_t StartMenu_Quit_Conv(void) {
-    struct cpu_registers_s regs = { 0 };
-    SafeCallGB(aStartMenu_Quit, &regs);
-    return regs.a;
+    static const txt_cmd_s StartMenuContestEndText[] = {
+        text_far(v_StartMenuContestEndText)
+        text_end
+    };
+    // LD_HL(mStartMenu_Quit_StartMenuContestEndText);
+    // CALL(aStartMenuYesNo);
+    // IF_C goto DontEndContest;
+    if(StartMenuYesNo_Conv(StartMenuContestEndText)) {
+        // LD_A(BANK(aBugCatchingContestReturnToGateScript));
+        // LD_HL(mBugCatchingContestReturnToGateScript);
+        // CALL(aFarQueueScript);
+        QueueScript_Conv2(BugCatchingContestReturnToGateScript);
+        // LD_A(STARTMENURET_EXIT_MENU_RUN_SCRIPT);
+        // RET;
+        return STARTMENURET_EXIT_MENU_RUN_SCRIPT;
+    }
+
+// DontEndContest:
+    // LD_A(STARTMENURET_REOPEN);
+    // RET;
+    return STARTMENURET_REOPEN;
 }
 
 void StartMenu_Save(void){

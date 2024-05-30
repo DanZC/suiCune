@@ -7,4 +7,4 @@ struct ContestMon {
     uint8_t max;
 };
 
-const struct ContestMon ContestMons[];
+extern const struct ContestMon ContestMons[];

@@ -348,7 +348,7 @@ const txt_cmd_s Route35NationalParkGateOfficer1GiveParkBallsText[] = {
 };
 const txt_cmd_s Route35NationalParkGatePlayerReceivedParkBallsText[] = {
     text_start("<PLAYER> received"
-        t_line "{d:BUG_CONTEST_BALLS} PARK BALLS."
+        t_line _s(BUG_CONTEST_BALLS) " PARK BALLS."
         t_done )
 };
 const txt_cmd_s Route35NationalParkGateOfficer1ExplainsRulesText[] = {
@@ -356,7 +356,7 @@ const txt_cmd_s Route35NationalParkGateOfficer1ExplainsRulesText[] = {
         t_line "gets the strong-"
         t_cont "est bug #MON"
         t_cont "is the winner."
-        t_para "You have {d:BUG_CONTEST_MINUTES}"
+        t_para "You have " _s(BUG_CONTEST_MINUTES)
         t_line "minutes."
         t_para "If you run out of"
         t_line "PARK BALLS, you're"

@@ -94,7 +94,8 @@ void MainMenu(void){
         // XOR_A_A;
         // LD_addr_A(wDisableTextAcceleration);
         wram->wDisableTextAcceleration = 0;
-        CALL(aClearTilemapEtc);
+        // CALL(aClearTilemapEtc);
+        ClearTilemapEtc_Conv();
         // LD_B(SCGB_DIPLOMA);
         // CALL(aGetSGBLayout);
         GetSGBLayout_Conv(SCGB_DIPLOMA);

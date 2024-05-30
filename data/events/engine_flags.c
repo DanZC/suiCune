@@ -1,53 +1,52 @@
 #include "../../constants.h"
 #include "engine_flags.h"
 
-#define WRAM_PTR(_x) (gb.wram + (0x1000 * MBANK(a##_x)) + (_x - WRAM0_Begin))
-#define engine_flag(_x, _bit) {WRAM_PTR(_x) + (_bit / 8), _bit % 8}
+#define engine_flag(_x, _bit) {wram_ptr(_x) + (_bit / 8), _bit % 8}
 
 const struct EngineFlag EngineFlags[] = {
-    [ENGINE_RADIO_CARD] = {WRAM_PTR(wPokegearFlags), POKEGEAR_RADIO_CARD_F},
-    [ENGINE_MAP_CARD] = {WRAM_PTR(wPokegearFlags), POKEGEAR_MAP_CARD_F},
-    [ENGINE_PHONE_CARD] = {WRAM_PTR(wPokegearFlags), POKEGEAR_PHONE_CARD_F},
-    [ENGINE_EXPN_CARD] = {WRAM_PTR(wPokegearFlags), POKEGEAR_EXPN_CARD_F},
-    [ENGINE_POKEGEAR] = {WRAM_PTR(wPokegearFlags), POKEGEAR_OBTAINED_F},
+    [ENGINE_RADIO_CARD] = engine_flag(wPokegearFlags, POKEGEAR_RADIO_CARD_F),
+    [ENGINE_MAP_CARD] = engine_flag(wPokegearFlags, POKEGEAR_MAP_CARD_F),
+    [ENGINE_PHONE_CARD] = engine_flag(wPokegearFlags, POKEGEAR_PHONE_CARD_F),
+    [ENGINE_EXPN_CARD] = engine_flag(wPokegearFlags, POKEGEAR_EXPN_CARD_F),
+    [ENGINE_POKEGEAR] = engine_flag(wPokegearFlags, POKEGEAR_OBTAINED_F),
     // day-care
-    [ENGINE_DAY_CARE_MAN_HAS_EGG] = {WRAM_PTR(wDayCareMan), DAYCAREMAN_HAS_EGG_F},
-    [ENGINE_DAY_CARE_MAN_HAS_MON] = {WRAM_PTR(wDayCareMan), DAYCAREMAN_HAS_MON_F},
-    [ENGINE_DAY_CARE_LADY_HAS_MON] = {WRAM_PTR(wDayCareLady), DAYCARELADY_HAS_MON_F},
+    [ENGINE_DAY_CARE_MAN_HAS_EGG] = engine_flag(wDayCareMan, DAYCAREMAN_HAS_EGG_F),
+    [ENGINE_DAY_CARE_MAN_HAS_MON] = engine_flag(wDayCareMan, DAYCAREMAN_HAS_MON_F),
+    [ENGINE_DAY_CARE_LADY_HAS_MON] = engine_flag(wDayCareLady, DAYCARELADY_HAS_MON_F),
 
-    [ENGINE_MOM_SAVING_MONEY] = {WRAM_PTR(wMomSavingMoney), MOM_SAVING_SOME_MONEY_F},
-    [ENGINE_MOM_ACTIVE] = {WRAM_PTR(wMomSavingMoney), MOM_ACTIVE_F},
+    [ENGINE_MOM_SAVING_MONEY] = engine_flag(wMomSavingMoney, MOM_SAVING_SOME_MONEY_F),
+    [ENGINE_MOM_ACTIVE] = engine_flag(wMomSavingMoney, MOM_ACTIVE_F),
 
     // unused, possibly related to a 2-day timer
-    [ENGINE_UNUSED_TWO_DAY_TIMER_ON] = {WRAM_PTR(wUnusedTwoDayTimerOn), 0},
+    [ENGINE_UNUSED_TWO_DAY_TIMER_ON] = engine_flag(wUnusedTwoDayTimerOn, 0),
 
-    [ENGINE_POKEDEX] = {WRAM_PTR(wStatusFlags), STATUSFLAGS_POKEDEX_F},
-    [ENGINE_UNOWN_DEX] = {WRAM_PTR(wStatusFlags), STATUSFLAGS_UNOWN_DEX_F},
-    [ENGINE_CAUGHT_POKERUS] = {WRAM_PTR(wStatusFlags), STATUSFLAGS_CAUGHT_POKERUS_F},
-    [ENGINE_ROCKET_SIGNAL_ON_CH20] = {WRAM_PTR(wStatusFlags), STATUSFLAGS_ROCKET_SIGNAL_F},
-    [ENGINE_CREDITS_SKIP] = {WRAM_PTR(wStatusFlags), STATUSFLAGS_HALL_OF_FAME_F},
-    [ENGINE_MAIN_MENU_MOBILE_CHOICES] = {WRAM_PTR(wStatusFlags), STATUSFLAGS_MAIN_MENU_MOBILE_CHOICES_F},
+    [ENGINE_POKEDEX] = engine_flag(wStatusFlags, STATUSFLAGS_POKEDEX_F),
+    [ENGINE_UNOWN_DEX] = engine_flag(wStatusFlags, STATUSFLAGS_UNOWN_DEX_F),
+    [ENGINE_CAUGHT_POKERUS] = engine_flag(wStatusFlags, STATUSFLAGS_CAUGHT_POKERUS_F),
+    [ENGINE_ROCKET_SIGNAL_ON_CH20] = engine_flag(wStatusFlags, STATUSFLAGS_ROCKET_SIGNAL_F),
+    [ENGINE_CREDITS_SKIP] = engine_flag(wStatusFlags, STATUSFLAGS_HALL_OF_FAME_F),
+    [ENGINE_MAIN_MENU_MOBILE_CHOICES] = engine_flag(wStatusFlags, STATUSFLAGS_MAIN_MENU_MOBILE_CHOICES_F),
 
-    [ENGINE_BUG_CONTEST_TIMER] = {WRAM_PTR(wStatusFlags2), STATUSFLAGS2_BUG_CONTEST_TIMER_F},
-    [ENGINE_SAFARI_ZONE] = {WRAM_PTR(wStatusFlags2), STATUSFLAGS2_SAFARI_GAME_F},
-    [ENGINE_ROCKETS_IN_RADIO_TOWER] = {WRAM_PTR(wStatusFlags2), STATUSFLAGS2_ROCKETS_IN_RADIO_TOWER_F},
-    [ENGINE_BIKE_SHOP_CALL_ENABLED] = {WRAM_PTR(wStatusFlags2), STATUSFLAGS2_BIKE_SHOP_CALL_F},
-    [ENGINE_15] = {WRAM_PTR(wStatusFlags2), STATUSFLAGS2_UNUSED_5_F},
-    [ENGINE_REACHED_GOLDENROD] = {WRAM_PTR(wStatusFlags2), STATUSFLAGS2_REACHED_GOLDENROD_F},
-    [ENGINE_ROCKETS_IN_MAHOGANY] = {WRAM_PTR(wStatusFlags2), STATUSFLAGS2_ROCKETS_IN_MAHOGANY_F},
+    [ENGINE_BUG_CONTEST_TIMER] = engine_flag(wStatusFlags2, STATUSFLAGS2_BUG_CONTEST_TIMER_F),
+    [ENGINE_SAFARI_ZONE] = engine_flag(wStatusFlags2, STATUSFLAGS2_SAFARI_GAME_F),
+    [ENGINE_ROCKETS_IN_RADIO_TOWER] = engine_flag(wStatusFlags2, STATUSFLAGS2_ROCKETS_IN_RADIO_TOWER_F),
+    [ENGINE_BIKE_SHOP_CALL_ENABLED] = engine_flag(wStatusFlags2, STATUSFLAGS2_BIKE_SHOP_CALL_F),
+    [ENGINE_15] = engine_flag(wStatusFlags2, STATUSFLAGS2_UNUSED_5_F),
+    [ENGINE_REACHED_GOLDENROD] = engine_flag(wStatusFlags2, STATUSFLAGS2_REACHED_GOLDENROD_F),
+    [ENGINE_ROCKETS_IN_MAHOGANY] = engine_flag(wStatusFlags2, STATUSFLAGS2_ROCKETS_IN_MAHOGANY_F),
 
-    [ENGINE_STRENGTH_ACTIVE] = {WRAM_PTR(wBikeFlags), BIKEFLAGS_STRENGTH_ACTIVE_F},
-    [ENGINE_ALWAYS_ON_BIKE] = {WRAM_PTR(wBikeFlags), BIKEFLAGS_ALWAYS_ON_BIKE_F},
-    [ENGINE_DOWNHILL] = {WRAM_PTR(wBikeFlags), BIKEFLAGS_DOWNHILL_F},
+    [ENGINE_STRENGTH_ACTIVE] = engine_flag(wBikeFlags, BIKEFLAGS_STRENGTH_ACTIVE_F),
+    [ENGINE_ALWAYS_ON_BIKE] = engine_flag(wBikeFlags, BIKEFLAGS_ALWAYS_ON_BIKE_F),
+    [ENGINE_DOWNHILL] = engine_flag(wBikeFlags, BIKEFLAGS_DOWNHILL_F),
 
-    [ENGINE_ZEPHYRBADGE] = {WRAM_PTR(wJohtoBadges), ZEPHYRBADGE},
-    [ENGINE_HIVEBADGE] = {WRAM_PTR(wJohtoBadges), HIVEBADGE},
-    [ENGINE_PLAINBADGE] = {WRAM_PTR(wJohtoBadges), PLAINBADGE},
-    [ENGINE_FOGBADGE] = {WRAM_PTR(wJohtoBadges), FOGBADGE},
-    [ENGINE_MINERALBADGE] = {WRAM_PTR(wJohtoBadges), MINERALBADGE},
-    [ENGINE_STORMBADGE] = {WRAM_PTR(wJohtoBadges), STORMBADGE},
-    [ENGINE_GLACIERBADGE] = {WRAM_PTR(wJohtoBadges), GLACIERBADGE},
-    [ENGINE_RISINGBADGE] = {WRAM_PTR(wJohtoBadges), RISINGBADGE},
+    [ENGINE_ZEPHYRBADGE] = engine_flag(wJohtoBadges, ZEPHYRBADGE),
+    [ENGINE_HIVEBADGE] = engine_flag(wJohtoBadges, HIVEBADGE),
+    [ENGINE_PLAINBADGE] = engine_flag(wJohtoBadges, PLAINBADGE),
+    [ENGINE_FOGBADGE] = engine_flag(wJohtoBadges, FOGBADGE),
+    [ENGINE_MINERALBADGE] = engine_flag(wJohtoBadges, MINERALBADGE),
+    [ENGINE_STORMBADGE] = engine_flag(wJohtoBadges, STORMBADGE),
+    [ENGINE_GLACIERBADGE] = engine_flag(wJohtoBadges, GLACIERBADGE),
+    [ENGINE_RISINGBADGE] = engine_flag(wJohtoBadges, RISINGBADGE),
 
     [ENGINE_BOULDERBADGE] = engine_flag(wKantoBadges, BOULDERBADGE),
     [ENGINE_CASCADEBADGE] = engine_flag(wKantoBadges, CASCADEBADGE),

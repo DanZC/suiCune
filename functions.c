@@ -748,7 +748,7 @@ void init_function_pointers(void) {
     //REDIRECTED(TitleScreenTimer);
     //REDIRECTED(TitleScreenEntrance);
     //REDIRECTED(StartTitleScreen);
-    REDIRECTED(IntroSequence);
+    CONVERTED(IntroSequence);
     //REDIRECTED(GameInit);
     //REDIRECTED(Copyright);
     //REDIRECTED(ResetClock);
@@ -7125,4 +7125,19 @@ CONVERTED(v_AnimateTileset);
     // REDIRECTED(Function117b06);
     // REDIRECTED(Unknown_117a47);
     // REDIRECTED(Function117764_b_button);
+
+    // engine/events/bug_contest/contest.c
+    // REDIRECTED(BugCatchingContestOverScript);
+    // REDIRECTED(BugCatchingContestIsOverText);
+    CONVERTED(GiveParkBalls);
+    // REDIRECTED(BugCatchingContestOutOfBallsScript);
+    // REDIRECTED(BugCatchingContestBattleScript);
+    // REDIRECTED(BugCatchingContestTimeUpText);
+    // REDIRECTED(BugCatchingContestReturnToGateScript);
+
+    // engine/events/bug_contest/contest_2.c
+    CONVERTED(ContestReturnMons);
+    CONVERTED(ContestDropOffMons);
+    CONVERTED(SelectRandomBugContestContestants);
+    // REDIRECTED(CheckBugContestContestantFlag);
 }

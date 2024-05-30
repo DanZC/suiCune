@@ -1506,9 +1506,9 @@ void IntroSequence(void){
     // CALLFAR(aSplashScreen);
     bool skip = SplashScreen();
     // JR_C (mStartTitleScreen);
-    if(!skip)
+    if(!skip) SafeCallGBAuto(aCrystalIntro);
 // Comment the line below to remove the intro movie.
-        FARCALL(aCrystalIntro);
+        // FARCALL(aCrystalIntro);
 
 // fallthrough
 
@@ -1566,7 +1566,7 @@ loop:
     // JP_hl;
     switch(REG_A) {
         default:
-        case TITLESCREENOPTION_MAIN_MENU:           return Intro_MainMenu();
+        case TITLESCREENOPTION_MAIN_MENU:           JP(aIntro_MainMenu);
         case TITLESCREENOPTION_DELETE_SAVE_DATA:    return DeleteSaveData();
         case TITLESCREENOPTION_RESTART:             return IntroSequence();
         case TITLESCREENOPTION_UNUSED:              return IntroSequence();

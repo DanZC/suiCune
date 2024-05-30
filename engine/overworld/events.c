@@ -26,6 +26,8 @@
 #include "../../home/flag.h"
 #include "../../home/gfx.h"
 #include "../../home/menu.h"
+#include "../../home/random.h"
+#include "../../home/math.h"
 #include "../phone/phone.h"
 #include "../menus/start_menu.h"
 #include "../events/forced_movement.h"
@@ -37,7 +39,9 @@
 #include "../events/std_collision.h"
 #include "../events/overworld.h"
 #include "../events/hidden_item.h"
+#include "../events/bug_contest/contest.h"
 #include "../menus/debug_field_menu.h"
+#include "../../data/wild/bug_contest_mons.h"
 
 // INCLUDE "constants.asm"
 
@@ -1018,7 +1022,7 @@ u8_flag_s CheckTimeEvents_Conv(void){
         // CALL(aCallScript);
         // SCF;
         // RET;
-        return u8_flag(0, false);
+        return u8_flag(CallScript_Conv2(BugCatchingContestOverScript), true);
     }
     // XOR_A_A;
     // RET;
@@ -2598,11 +2602,14 @@ u8_flag_s RandomEncounter_Conv(void){
     // bug_contest:
         // CALL(av_TryWildEncounter_BugContest);
         // IF_NC goto nope;
+        if(!v_TryWildEncounter_BugContest_Conv())
+            return u8_flag(1, false);
         // goto ok_bug_contest;
     // ok_bug_contest:
         // LD_A(BANK(aBugCatchingContestBattleScript));
         // LD_HL(mBugCatchingContestBattleScript);
         // goto done;
+        return u8_flag(CallScript_Conv2(BugCatchingContestBattleScript), true);
     }
     // FARCALL(aTryWildEncounter);
     // IF_NZ goto nope;
@@ -2706,6 +2713,18 @@ void v_TryWildEncounter_BugContest(void){
 
 }
 
+bool v_TryWildEncounter_BugContest_Conv(void){
+    // CALL(aTryWildEncounter_BugContest);
+    // RET_NC ;
+    if(!TryWildEncounter_BugContest_Conv())
+        return false;
+    // CALL(aChooseWildEncounter_BugContest);
+    ChooseWildEncounter_BugContest_Conv();
+    // FARCALL(aCheckRepelEffect);
+    return !CheckRepelEffect_Conv();
+    // RET;
+}
+
 void ChooseWildEncounter_BugContest(void){
 //  Pick a random mon out of ContestMons.
 
@@ -2766,6 +2785,81 @@ GotLevel:
 
 }
 
+//  Pick a random mon out of ContestMons.
+void ChooseWildEncounter_BugContest_Conv(void){
+    uint8_t a;
+    do {
+    // loop:
+        // CALL(aRandom);
+        a = Random_Conv();
+        // CP_A(100 << 1);
+        // IF_NC goto loop;
+    } while(a >= 100 << 1);
+    // SRL_A;
+    a >>= 1;
+
+    // LD_HL(mContestMons);
+    const struct ContestMon* hl = ContestMons;
+    // LD_DE(4);
+
+    while(a >= hl->pct) {
+    // CheckMon:
+        // SUB_A_hl;
+        // IF_C goto GotMon;
+        a -= hl->pct;
+        // ADD_HL_DE;
+        hl++;
+        // goto CheckMon;
+    }
+
+
+// GotMon:
+    // INC_HL;
+
+//  Species
+    // LD_A_hli;
+    // LD_addr_A(wTempWildMonSpecies);
+    wram->wTempWildMonSpecies = hl->species;
+
+//  Min level
+    // LD_A_hli;
+    // LD_D_A;
+    uint8_t d = hl->min;
+
+//  Max level
+    // LD_A_hl;
+
+    // SUB_A_D;
+    a = hl->max - d;
+    // IF_NZ goto RandomLevel;
+
+//  If min and max are the same.
+    if(a == 0) {
+        // LD_A_D;
+        a = d;
+        // goto GotLevel;
+    }
+    else {
+    // RandomLevel:
+    //  Get a random level between the min and max.
+        // LD_C_A;
+        // INC_C;
+        // CALL(aRandom);
+        Random_Conv();
+        // LDH_A_addr(hRandomAdd);
+        // CALL(aSimpleDivide);
+        // ADD_A_D;
+        a = SimpleDivide_Conv(hram->hRandomAdd, a + 1).rem + d;
+    }
+
+// GotLevel:
+    // LD_addr_A(wCurPartyLevel);
+    wram->wCurPartyLevel = a;
+
+    // XOR_A_A;
+    // RET;
+}
+
 void TryWildEncounter_BugContest(void){
     LD_A_addr(wPlayerStandingTile);
     CALL(aCheckSuperTallGrassTile);
@@ -2786,8 +2880,35 @@ ok:
     RET;
 
 // INCLUDE "data/wild/bug_contest_mons.asm"
+}
 
-    return DoBikeStep();
+bool TryWildEncounter_BugContest_Conv(void){
+    // LD_A_addr(wPlayerStandingTile);
+    // CALL(aCheckSuperTallGrassTile);
+    // LD_B(40 percent);
+    // IF_Z goto ok;
+    // LD_B(20 percent);
+    uint8_t b = (CheckSuperTallGrassTile_Conv(wram->wPlayerStruct.nextTile))
+        ? 40 percent
+        : 20 percent;
+
+// ok:
+    // FARCALL(aApplyMusicEffectOnEncounterRate);
+    b = ApplyMusicEffectOnEncounterRate_Conv(b);
+    // FARCALL(aApplyCleanseTagEffectOnEncounterRate);
+    b = ApplyCleanseTagEffectOnEncounterRate_Conv(b);
+    // CALL(aRandom);
+    Random_Conv();
+    // LDH_A_addr(hRandomAdd);
+    // CP_A_B;
+    // RET_C ;
+    if(hram->hRandomAdd < b)
+        return true;
+    // LD_A(1);
+    // AND_A_A;
+    // RET;
+    return false;
+// INCLUDE "data/wild/bug_contest_mons.asm"
 }
 
 void DoBikeStep(void){

@@ -63,6 +63,7 @@ void PushSGBPals(void);
 void v_PushSGBPals(void);
 void InitSGBBorder(void);
 void InitCGBPals(void);
+void InitCGBPals_Conv(void);
 void v_InitSGBBorderPals(void);
 void UpdateSGBBorder(void);
 void PushSGBBorder(void);

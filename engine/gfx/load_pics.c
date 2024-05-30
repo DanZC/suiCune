@@ -1013,6 +1013,7 @@ void PadFrontpic_Conv(uint8_t* hl, uint8_t* de, uint8_t b){
         // XOR_A_A;
         // CALL(aPadFrontpic_Fill);
         hl = PadFrontpic_Fill(hl, 7 << 4, 0);
+        hl = PadFrontpic_Fill(hl, 7 << 4, 0);
 
         do {
         // five_loop:
@@ -1031,7 +1032,6 @@ void PadFrontpic_Conv(uint8_t* hl, uint8_t* de, uint8_t b){
         // LD_C(7 << 4);
         // XOR_A_A;
         // CALL(aPadFrontpic_Fill);
-        hl = PadFrontpic_Fill(hl, 7 << 4, 0);
         // RET;
         return;
     }

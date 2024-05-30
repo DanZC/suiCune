@@ -665,11 +665,11 @@ const txt_cmd_s RadioTower2FBuenaNoBlueCardText[] = {
 const txt_cmd_s RadioTower2FBuenaOfferPhoneNumberText[] = {
     text_start("BUENA: Oh! Your"
         t_line "BLUE CARD reached"
-        t_para "{d:BLUE_CARD_POINT_CAP} points today!"
+        t_para _s(BLUE_CARD_POINT_CAP) " points today!"
         t_line "That's so wild!"
         t_para "Hmm… There isn't a"
         t_line "prize for hitting"
-        t_cont "{d:BLUE_CARD_POINT_CAP} points, but…"
+        t_cont _s(BLUE_CARD_POINT_CAP) " points, but…"
         t_para "You came by so"
         t_line "often, <PLAY_G>."
         t_para "I'll make you a"

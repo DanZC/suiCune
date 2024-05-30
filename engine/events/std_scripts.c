@@ -403,7 +403,7 @@ bool BugContestResultsWarpScript(script_s* s) {
     setevent(EVENT_ROUTE_36_NATIONAL_PARK_GATE_OFFICER_CONTEST_DAY)
     clearevent(EVENT_ROUTE_36_NATIONAL_PARK_GATE_OFFICER_NOT_CONTEST_DAY)
     setevent(EVENT_WARPED_FROM_ROUTE_35_NATIONAL_PARK_GATE)
-    // warp
+    warp(ROUTE_36_NATIONAL_PARK_GATE, 0, 4)
     applymovement(PLAYER, Movement_ContestResults_WalkAfterWarp)
     SCRIPT_FALLTHROUGH(BugContestResultsScript)
 }

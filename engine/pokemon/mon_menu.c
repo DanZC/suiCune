@@ -685,6 +685,16 @@ void StartMenuYesNo(void){
 
 }
 
+bool StartMenuYesNo_Conv(const struct TextCmd* hl){
+    // CALL(aMenuTextbox);
+    MenuTextbox_Conv(hl);
+    // CALL(aYesNoBox);
+    bool res = YesNoBox_Conv();
+    // JP(mExitMenu);
+    ExitMenu_Conv2();
+    return res;
+}
+
 void ComposeMailMessage(void){
     LD_DE(wTempMailMessage);
     FARCALL(av_ComposeMailMessage);

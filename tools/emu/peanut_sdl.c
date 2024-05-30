@@ -26,9 +26,13 @@
 #include "minigb_apu/minigb_apu.h"
 #include "peanut_gb.h"
 #include "../../home/lcd.h"
+#include "../../home/init.h"
 #include "rom_patches.h"
 #include "../../util/record.h"
 #include "../../util/network.h"
+#include "../../util/soft_reset.h"
+
+extern jmp_buf reset_point;
 
 #if defined(NETWORKING_SUPPORT)
 #if defined(_MSC_VER)
@@ -3401,7 +3405,7 @@ void get_input(void) {
                         break;
 
                     case SDLK_r:
-                        gb_reset();
+                        SoftReset(1);
                         break;
                 }
 
@@ -3869,6 +3873,15 @@ int main(int argc, char* argv[]) {
 
     SDL_RenderPresent(dbg_renderer);
 #endif
+    if(setjmp(reset_point)) {
+        gb_reset();
+        gb.cpu_reg.pc = 0x0150;
+    }
+    else {
+        gb.cpu_reg.pc = 0x0100;
+    }
+    Bankswitch_Conv(0);
+    gb.cpu_reg.sp = 0xFFFE;
 
     while (SDL_QuitRequested() == SDL_FALSE) {
         /* Execute CPU cycles until the screen has to be redrawn. */

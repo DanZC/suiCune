@@ -396,7 +396,7 @@ const txt_cmd_s RuinsOfAlphResearchCenterComputerText[] = {
 const txt_cmd_s RuinsOfAlphResearchCenterComputerText_GotAllUnown[] = {
     text_start("Mystery #MON"
         t_line "Name: UNOWN"
-        t_para "A total of {d:NUM_UNOWN}"
+        t_para "A total of " _s(NUM_UNOWN)
         t_line "kinds found."
         t_done )
 };

@@ -26,6 +26,7 @@ void GetPartyItemLocation(void);
 void ReceiveItemFromPokemon(void);
 void GiveItemToPokemon(void);
 void StartMenuYesNo(void);
+bool StartMenuYesNo_Conv(const struct TextCmd* hl);
 void ComposeMailMessage(void);
 void MonMailAction(void);
 void OpenPartyStats(void);

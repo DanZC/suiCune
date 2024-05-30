@@ -3977,13 +3977,14 @@ void Script_getnum(void){
 }
 
 void Script_getnum_Conv(script_s* s, uint8_t a){
+    (void)s;
     // CALL(aResetStringBuffer1);
     ResetStringBuffer1_Conv();
     // LD_DE(wScriptVar);
     // LD_HL(wStringBuffer1);
     // LD_BC((PRINTNUM_LEFTALIGN | 1 << 8) | 3);
     // CALL(aPrintNum);
-    PrintNum_Conv2(wram->wStringBuffer1, &s->var, (PRINTNUM_LEFTALIGN | 1), 3);
+    PrintNum_Conv2(wram->wStringBuffer1, &wram->wScriptVar, (PRINTNUM_LEFTALIGN | 1), 3);
     // LD_DE(wStringBuffer1);
     // JP(mGetStringBuffer);
     return GetStringBuffer_Conv(a, wram->wStringBuffer1);

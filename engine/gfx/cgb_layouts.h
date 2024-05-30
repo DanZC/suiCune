@@ -1,4 +1,5 @@
 void CheckCGB(void);
+bool CheckCGB_Conv(void);
 void LoadSGBLayoutCGB(void);
 void LoadSGBLayoutCGB_Conv(uint8_t b);
 // void CGBLayoutJumptable(void);

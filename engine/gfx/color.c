@@ -1621,6 +1621,88 @@ loop:
 
 }
 
+static void InitCGBPals_LoadWhitePals(uint16_t* hl) {
+    // LD_C(4 * 16);
+    uint8_t c = 4 * 16;
+
+    do {
+    // loop:
+        // LD_A(LOW(PALRGB_WHITE));
+        // LD_hli_A;
+        // LD_A(HIGH(PALRGB_WHITE));
+        // LD_hli_A;
+        *(hl++) = PALRGB_WHITE;
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(--c != 0);
+    // RET;
+}
+
+void InitCGBPals_Conv(void){
+    // CALL(aCheckCGB);
+    // RET_Z ;
+    if(!CheckCGB_Conv())
+        return;
+
+//  CGB only
+    // LD_A(MBANK(avTiles3));
+    // LDH_addr_A(rVBK);
+    // LD_HL(vTiles3);
+    // LD_BC(0x200 * LEN_2BPP_TILE);
+    // XOR_A_A;
+    // CALL(aByteFill);
+    ByteFill_Conv2(vram->vTiles3, 0x200 * LEN_2BPP_TILE, 0);
+    // LD_A(MBANK(avTiles0));
+    // LDH_addr_A(rVBK);
+    // LD_A(1 << rBGPI_AUTO_INCREMENT);
+    // LDH_addr_A(rBGPI);
+    gb_write(rBGPI, 1 << rBGPI_AUTO_INCREMENT);
+    // LD_C(4 * 8);
+    uint8_t c = 4 * 8;
+
+    do {
+    // bgpals_loop:
+        // LD_A(LOW(PALRGB_WHITE));
+        // LDH_addr_A(rBGPD);
+        gb_write(rBGPD, LOW(PALRGB_WHITE));
+        // LD_A(HIGH(PALRGB_WHITE));
+        // LDH_addr_A(rBGPD);
+        gb_write(rBGPD, HIGH(PALRGB_WHITE));
+        // DEC_C;
+        // IF_NZ goto bgpals_loop;
+    } while(--c != 0);
+    // LD_A(1 << rOBPI_AUTO_INCREMENT);
+    // LDH_addr_A(rOBPI);
+    gb_write(rOBPI, 1 << rOBPI_AUTO_INCREMENT);
+    // LD_C(4 * 8);
+    c = 4 * 8;
+
+    do {
+    // obpals_loop:
+        // LD_A(LOW(PALRGB_WHITE));
+        // LDH_addr_A(rOBPD);
+        gb_write(rOBPD, LOW(PALRGB_WHITE));
+        // LD_A(HIGH(PALRGB_WHITE));
+        // LDH_addr_A(rOBPD);
+        gb_write(rOBPD, HIGH(PALRGB_WHITE));
+        // DEC_C;
+        // IF_NZ goto obpals_loop;
+    } while(--c != 0);
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(BANK(wBGPals1));
+    // LDH_addr_A(rSVBK);
+    // LD_HL(wBGPals1);
+    // CALL(aInitCGBPals_LoadWhitePals);
+    InitCGBPals_LoadWhitePals((uint16_t*)wram_ptr(wBGPals1));
+    // LD_HL(wBGPals2);
+    // CALL(aInitCGBPals_LoadWhitePals);
+    InitCGBPals_LoadWhitePals((uint16_t*)wram_ptr(wBGPals2));
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // RET;
+}
+
 void v_InitSGBBorderPals(void){
     LD_HL(mv_InitSGBBorderPals_PacketPointerTable);
     LD_C(9);

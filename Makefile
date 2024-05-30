@@ -45,6 +45,7 @@ SRCS   := tools/emu/peanut_sdl.c tools/emu/minigb_apu/minigb_apu.c \
 	$(wildcard engine/battle/move_effects/*.c) \
 	$(wildcard engine/battle_anims/*.c) \
 	$(wildcard engine/events/*.c) \
+	$(wildcard engine/events/bug_contest/*.c) \
 	$(wildcard engine/gfx/*.c) \
 	$(wildcard engine/items/*.c) \
 	$(wildcard engine/link/*.c) \
@@ -128,6 +129,7 @@ clean:
 	$(wildcard engine/battle/move_effects/*.o) \
 	$(wildcard engine/battle_anims/*.o) \
 	$(wildcard engine/events/*.o) \
+	$(wildcard engine/events/bug_contest/*.o) \
 	$(wildcard engine/gfx/*.o) \
 	$(wildcard engine/items/*.o) \
 	$(wildcard engine/link/*.o) \

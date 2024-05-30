@@ -456,7 +456,7 @@ const txt_cmd_s SchoolboyJackTradeMonText[] = {
     text_start("There is a lot"
         t_line "to learn."
         t_para "For example…"
-        t_para "There are {d:NUM_TMS} kinds"
+        t_para "There are " _s(NUM_TMS) " kinds"
         t_line "of TMs."
         t_para "Traded #MON"
         t_line "level up faster."
