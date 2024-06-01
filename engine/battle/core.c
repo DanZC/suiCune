@@ -6437,20 +6437,29 @@ void InitBattleMon(void){
     // LD_DE(wBattleMonSpecies);
     // LD_BC(MON_ID);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(&wram->wBattleMon.species, &hl->mon.species, MON_ID);
+    wram->wBattleMon.species = hl->mon.species;
+    wram->wBattleMon.item = hl->mon.item;
+    CopyBytes_Conv2(&wram->wBattleMon.moves, &hl->mon.moves, NUM_MOVES * sizeof(move_t));
     // LD_BC(MON_DVS - MON_ID);
     // ADD_HL_BC;
     // LD_DE(wBattleMonDVs);
     // LD_BC(MON_POKERUS - MON_DVS);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(&wram->wBattleMon.dvs, &wram->wPartyMon[wram->wCurPartyMon].mon.DVs, MON_POKERUS - MON_DVS);
+    wram->wBattleMon.dvs = wram->wPartyMon[wram->wCurPartyMon].mon.DVs;
+    CopyBytes_Conv2(&wram->wBattleMon.pp, &wram->wPartyMon[wram->wCurPartyMon].mon.PP, NUM_MOVES);
+    wram->wBattleMon.happiness = wram->wPartyMon[wram->wCurPartyMon].mon.happiness;
     // INC_HL;
     // INC_HL;
     // INC_HL;
     // LD_DE(wBattleMonLevel);
     // LD_BC(PARTYMON_STRUCT_LENGTH - MON_LEVEL);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(&wram->wBattleMon.level, &hl->mon.level, PARTYMON_STRUCT_LENGTH - MON_LEVEL);
+    wram->wBattleMon.level = hl->mon.level;
+    wram->wBattleMon.status[0] = hl->status;
+    wram->wBattleMon.status[1] = hl->unused;
+    wram->wBattleMon.hp = hl->HP;
+    wram->wBattleMon.maxHP = hl->maxHP;
+    CopyBytes_Conv2(wram->wBattleMon.stats, hl->stats, sizeof(wram->wBattleMon.stats));
     // LD_A_addr(wBattleMonSpecies);
     // LD_addr_A(wTempBattleMonSpecies);
     wram->wTempBattleMonSpecies = wram->wBattleMon.species;
@@ -6605,7 +6614,9 @@ void InitEnemyMon(void){
     // LD_DE(wEnemyMonSpecies);
     // LD_BC(MON_ID);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(&wram->wEnemyMon.species, &wram->wOTPartyMon[wram->wCurPartyMon].mon.species, MON_ID);
+    wram->wEnemyMon.species = wram->wOTPartyMon[wram->wCurPartyMon].mon.species;
+    wram->wEnemyMon.item = wram->wOTPartyMon[wram->wCurPartyMon].mon.item;
+    CopyBytes_Conv2(&wram->wEnemyMon.moves, &wram->wOTPartyMon[wram->wCurPartyMon].mon.moves, NUM_MOVES * sizeof(move_t));
     // LD_BC(MON_DVS - MON_ID);
     // ADD_HL_BC;
     // LD_DE(wEnemyMonDVs);
@@ -11114,7 +11125,8 @@ void BadgeStatBoosts(void){
     b = (badges & ((1 << ZEPHYRBADGE) | (1 << HIVEBADGE) | (1 << FOGBADGE) | (1 << STORMBADGE) | (1 << GLACIERBADGE) | (1 << RISINGBADGE))) | b | c;
 
     // LD_HL(wBattleMonAttack);
-    uint8_t* hl = wram->wBattleMon.attack;
+    uint8_t stat = 0;
+    uint8_t* hl = wram->wBattleMon.stats[stat];
     // LD_C(4);
     c = 4;
     uint8_t a = 0;
@@ -11129,7 +11141,7 @@ void BadgeStatBoosts(void){
         // CALL_C (aBoostStat);
         // INC_HL;
         // INC_HL;
-        hl += 2;
+        hl = wram->wBattleMon.stats[++stat];
     //  Check every other badge.
         // SRL_B;
         b >>= 2;

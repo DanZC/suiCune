@@ -476,13 +476,13 @@ void LoadMansionPalette(void){
     // LD_HL(mMansionPalette1 + PALETTE_SIZE * 6);
     // LD_BC(1 * PALETTE_SIZE);
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_WATER, MansionPalette1 + PALETTE_SIZE * 6, 1 * PALETTE_SIZE);
+    CopyBytes_Conv2(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_WATER, MansionPalette1 + NUM_PAL_COLORS * 6, 1 * PALETTE_SIZE);
     // LD_A(BANK(wBGPals1));
     // LD_DE(wBGPals1 + PALETTE_SIZE * PAL_BG_ROOF);
     // LD_HL(mMansionPalette1 + PALETTE_SIZE * 8);
     // LD_BC(1 * PALETTE_SIZE);
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_ROOF, MansionPalette1 + PALETTE_SIZE * 8, 1 * PALETTE_SIZE);
+    CopyBytes_Conv2(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_ROOF, MansionPalette1 + NUM_PAL_COLORS * 8, 1 * PALETTE_SIZE);
     // RET;
 
 }

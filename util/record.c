@@ -52,8 +52,9 @@ void TakeScreenshot(const char* path) {
 }
 
 static void GenerateMP4(const char* in_dir, const char* out) {
-    char cmd[256];
-    snprintf(cmd, sizeof(cmd), FFMPEG_PROG " -framerate 60 -pattern_type sequence -i \"%s/frame%%08d.bmp\" -c:v libx264 -pix_fmt yuv420p %s", in_dir, out);
+    char cmd[512];
+    if(snprintf(cmd, sizeof(cmd), FFMPEG_PROG " -framerate 60 -pattern_type sequence -i \"%s/frame%%08d.bmp\" -c:v libx264 -pix_fmt yuv420p %s", in_dir, out) < 0)
+        return;
     printf("%s\n", cmd);
     int error = system(cmd);
     if(error == EXIT_SUCCESS) {
@@ -65,14 +66,14 @@ static void GenerateMP4(const char* in_dir, const char* out) {
 }
 
 static void DeleteDir(const char* in_dir) {
-    char cmd[128];
+    char cmd[PATH_MAX + 21];
     snprintf(cmd, sizeof(cmd), "rm -rf %s", in_dir);
     printf("%s\n", cmd);
     system(cmd);
 }
 
 static void CreateDir(const char* in_dir) {
-    char cmd[128];
+    char cmd[PATH_MAX + 21];
     snprintf(cmd, sizeof(cmd), "mkdir \"%s\"", in_dir);
     printf("%s\n", cmd);
     system(cmd);

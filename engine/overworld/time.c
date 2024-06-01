@@ -430,7 +430,7 @@ bool CheckBugContestTimer_Conv(void){
         // LD_B_A;
         // LD_A_addr(wBugContestMinsRemaining);
         // SBC_A_B;
-        temp = wram->wBugContestSecsRemaining - wram->wSecondsSince - carry;
+        temp = wram->wBugContestMinsRemaining - wram->wMinutesSince - carry;
         // LD_addr_A(wBugContestMinsRemaining);
         wram->wBugContestMinsRemaining = (temp & 0xff);
         carry = (temp & 0xff00)? 1: 0;

@@ -2149,7 +2149,7 @@ void ClearWindowData_Conv(void) {
     // LD_hld_A;
     wram->wWindowStackBottom[0] = 0;
     // LD_hld_A;
-    wram->wWindowStackBottom[-1] = 0;
+    wram->wWindowStack[0xffe] = 0;
 
     // LD_A_L;
     // LD_addr_A(wWindowStackPointer);
@@ -2180,7 +2180,7 @@ void ClearWindowData_Conv2(void) {
     // LD_hld_A;
     wram->wWindowStackBottom[0] = 0;
     // LD_hld_A;
-    wram->wWindowStackBottom[-1] = 0;
+    wram->wWindowStack[0xffe] = 0;
 
     // LD_A_L;
     // LD_addr_A(wWindowStackPointer);

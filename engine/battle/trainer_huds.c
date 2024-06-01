@@ -201,6 +201,7 @@ void StageBallTilesData_Conv(uint8_t count, const struct PartyMon* hl){
 
     // LD_DE(wBattleHUDTiles);
     de = wram->wBattleHUDTiles;
+    if(count > PARTY_LENGTH) count = PARTY_LENGTH;
 
     do {
     // loop2:
