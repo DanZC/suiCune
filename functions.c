@@ -4852,6 +4852,15 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(GoldenrodCityRocket6Script);
     CONVERTED_SCRIPT(MoveTutorScript);
 
+    // maps/EcruteakCity.c
+    CONVERTED_SCRIPT(EcruteakCityGramps1Script);
+    CONVERTED_SCRIPT(EcruteakCityGramps2Script);
+    CONVERTED_SCRIPT(EcruteakCityLass1Script);
+    CONVERTED_SCRIPT(EcruteakCityLass2Script);
+    CONVERTED_SCRIPT(EcruteakCityFisherScript);
+    CONVERTED_SCRIPT(EcruteakCityYoungsterScript);
+    CONVERTED_SCRIPT(EcruteakCityGramps3Script);
+
     // maps/Route29.c
     CONVERTED_SCRIPT(Route29Tutorial1);
     CONVERTED_SCRIPT(Route29Tutorial2);
@@ -4950,6 +4959,35 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(Route36FloriaScript);
     // CONVERTED_SCRIPT(ObjectEvent);
 
+    // maps/Route37.c
+    CONVERTED_SCRIPT(TrainerTwinsAnnandanne1);
+    CONVERTED_SCRIPT(TrainerTwinsAnnandanne2);
+    CONVERTED_SCRIPT(TrainerPsychicGreg);
+    CONVERTED_SCRIPT(Route37FruitTree1);
+    CONVERTED_SCRIPT(SunnyScript);
+    CONVERTED_SCRIPT(Route37FruitTree2);
+    CONVERTED_SCRIPT(Route37FruitTree3);
+
+    // maps/Route38.c
+    CONVERTED_SCRIPT(TrainerSchoolboyChad1);
+    CONVERTED_SCRIPT(TrainerLassDana1);
+    CONVERTED_SCRIPT(TrainerBirdKeeperToby);
+    CONVERTED_SCRIPT(TrainerBeautyValerie);
+    CONVERTED_SCRIPT(TrainerSailorHarry);
+    CONVERTED_SCRIPT(Route38FruitTree);
+    CONVERTED_SCRIPT(TrainerBeautyOlivia);
+
+    // maps/Route42.c
+    CONVERTED_SCRIPT(TrainerFisherTully);
+    CONVERTED_SCRIPT(TrainerHikerBenjamin);
+    CONVERTED_SCRIPT(TrainerPokemaniacShane);
+    CONVERTED_SCRIPT(Route42FruitTree1);
+    CONVERTED_SCRIPT(Route42FruitTree2);
+    CONVERTED_SCRIPT(Route42FruitTree3);
+    CONVERTED_SCRIPT(Route42UltraBall);
+    CONVERTED_SCRIPT(Route42SuperPotion);
+    // CONVERTED_SCRIPT(ObjectEvent);
+
     // maps/Route30BerryHouse.c
     CONVERTED_SCRIPT(Route30BerryHousePokefanMScript);
 
@@ -4998,6 +5036,12 @@ void init_function_pointers(void) {
     // maps/Route36RuinsOfAlphGate.c
     CONVERTED_SCRIPT(Route36RuinsOfAlphGateOfficerScript);
     CONVERTED_SCRIPT(Route36RuinsOfAlphGateGrampsScript);
+
+    // maps/Route38EcruteakGate.c
+    CONVERTED_SCRIPT(Route38EcruteakGateOfficerScript);
+
+    // maps/Route42EcruteakGate.c
+    CONVERTED_SCRIPT(Route42EcruteakGateOfficerScript);
 
     // maps/CherrygroveEvolutionSpeechHouse.c
     CONVERTED_SCRIPT(CherrygroveEvolutionSpeechHouseLassScript);
@@ -5256,6 +5300,60 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(PokecomCenterAdminOfficeMobileScientist2Script);
     CONVERTED_SCRIPT(PokecomCenterAdminOfficeMobileScientist3Script);
 
+    // maps/EcruteakGym.c
+    CONVERTED_SCRIPT(EcruteakGymMortyScript);
+    CONVERTED_SCRIPT(TrainerSageJeffrey);
+    CONVERTED_SCRIPT(TrainerSagePing);
+    CONVERTED_SCRIPT(TrainerMediumMartha);
+    CONVERTED_SCRIPT(TrainerMediumGrace);
+    CONVERTED_SCRIPT(EcruteakGymGuideScript);
+    // CONVERTED_SCRIPT(ObjectEvent);
+
+    // maps/EcruteakItemfinderHouse.c
+    CONVERTED_SCRIPT(EcruteakItemfinderGuy);
+    CONVERTED_SCRIPT(EcruteakHistoryBook);
+
+    // maps/EcruteakLugiaSpeechHouse.c
+    CONVERTED_SCRIPT(EcruteakLugiaSpeechHouseGrampsScript);
+    CONVERTED_SCRIPT(EcruteakLugiaSpeechHouseYoungsterScript);
+
+    // maps/EcruteakMart.c
+    CONVERTED_SCRIPT(EcruteakMartClerkScript);
+    CONVERTED_SCRIPT(EcruteakMartSuperNerdScript);
+    CONVERTED_SCRIPT(EcruteakMartGrannyScript);
+
+    // maps/EcruteakPokecenter1F.c
+    CONVERTED_SCRIPT(EcruteakPokecenter1FNurseScript);
+    CONVERTED_SCRIPT(EcruteakPokecenter1FPokefanMScript);
+    CONVERTED_SCRIPT(EcruteakPokecenter1FCooltrainerFScript);
+    CONVERTED_SCRIPT(EcruteakPokecenter1FGymGuideScript);
+    // CONVERTED_SCRIPT(ObjectEvent);
+
+    // maps/EcruteakTinTowerEntrance.c
+    CONVERTED_SCRIPT(EcruteakTinTowerEntranceSageScript);
+    CONVERTED_SCRIPT(EcruteakTinTowerEntranceSageScript);
+    CONVERTED_SCRIPT(EcruteakTinTowerEntranceWanderingSageScript);
+    CONVERTED_SCRIPT(EcruteakTinTowerEntranceGrampsScript);
+
+    // maps/DanceTheatre.c
+    CONVERTED_SCRIPT(TrainerKimonoGirlNaoko);
+    CONVERTED_SCRIPT(TrainerKimonoGirlSayo);
+    CONVERTED_SCRIPT(TrainerKimonoGirlZuki);
+    CONVERTED_SCRIPT(TrainerKimonoGirlKuni);
+    CONVERTED_SCRIPT(TrainerKimonoGirlMiki);
+    CONVERTED_SCRIPT(DanceTheaterSurfGuy);
+    CONVERTED_SCRIPT(DanceTheaterRhydon);
+    CONVERTED_SCRIPT(DanceTheatreCooltrainerMScript);
+    CONVERTED_SCRIPT(DanceTheatreGrannyScript);
+
+    // maps/WiseTriosRoom.c
+    CONVERTED_SCRIPT(WiseTriosRoomSage1Script);
+    CONVERTED_SCRIPT(WiseTriosRoomSage2Script);
+    CONVERTED_SCRIPT(WiseTriosRoomSage3Script);
+    CONVERTED_SCRIPT(TrainerSageGaku);
+    CONVERTED_SCRIPT(TrainerSageMasa);
+    CONVERTED_SCRIPT(TrainerSageKoji);
+
     // maps/SproutTower1F.c
     CONVERTED_SCRIPT(SproutTower1FSage1Script);
     CONVERTED_SCRIPT(SproutTower1FSage2Script);
@@ -5413,6 +5511,24 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(BugCatchingContestant10AScript);
     CONVERTED_SCRIPT(NationalParkBugContestParlyzHeal);
     CONVERTED_SCRIPT(NationalParkBugContestTMDig);
+
+    // maps/BurnedTower1F.c
+    CONVERTED_SCRIPT(BurnedTower1FRock);
+    CONVERTED_SCRIPT(BurnedTower1FEusineScript);
+    // CONVERTED_SCRIPT(ObjectEvent);
+    CONVERTED_SCRIPT(BurnedTower1FMortyScript);
+    CONVERTED_SCRIPT(BurnedTower1FHPUp);
+
+    // maps/BurnedTowerB1F.c
+    CONVERTED_SCRIPT(BurnedTowerB1FBoulder);
+    // CONVERTED_SCRIPT(ObjectEvent);
+    // CONVERTED_SCRIPT(ObjectEvent);
+    // CONVERTED_SCRIPT(ObjectEvent);
+    // CONVERTED_SCRIPT(ObjectEvent);
+    // CONVERTED_SCRIPT(ObjectEvent);
+    // CONVERTED_SCRIPT(ObjectEvent);
+    CONVERTED_SCRIPT(BurnedTowerB1FTMEndure);
+    CONVERTED_SCRIPT(BurnedTowerB1FEusine);
 
     // maps/DarkCaveBlackthornEntrance.c
     CONVERTED_SCRIPT(DarkCaveBlackthornEntrancePharmacistScript);

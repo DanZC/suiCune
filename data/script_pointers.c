@@ -94,6 +94,14 @@ void PopulateMapScriptTable(void) {
     entry(GOLDENROD_CITY, 13, GoldenrodCityRocket6Script);
     entry(GOLDENROD_CITY, 14, MoveTutorScript);
 
+    entry(ECRUTEAK_CITY, 0, EcruteakCityGramps1Script);
+    entry(ECRUTEAK_CITY, 1, EcruteakCityGramps2Script);
+    entry(ECRUTEAK_CITY, 2, EcruteakCityLass1Script);
+    entry(ECRUTEAK_CITY, 3, EcruteakCityLass2Script);
+    entry(ECRUTEAK_CITY, 4, EcruteakCityFisherScript);
+    entry(ECRUTEAK_CITY, 5, EcruteakCityYoungsterScript);
+    entry(ECRUTEAK_CITY, 6, EcruteakCityGramps3Script);
+
     entry(ROUTE_29, 0, CatchingTutorialDudeScript);
     entry(ROUTE_29, 1, Route29YoungsterScript);
     entry(ROUTE_29, 2, Route29TeacherScript);
@@ -231,6 +239,36 @@ void PopulateMapScriptTable(void) {
 
     entry(ROUTE_36_RUINS_OF_ALPH_GATE, 0, Route36RuinsOfAlphGateOfficerScript);
     entry(ROUTE_36_RUINS_OF_ALPH_GATE, 1, Route36RuinsOfAlphGateGrampsScript);
+
+    entry(ROUTE_37, 0, TrainerTwinsAnnandanne1);
+    entry(ROUTE_37, 1, TrainerTwinsAnnandanne2);
+    entry(ROUTE_37, 2, TrainerPsychicGreg);
+    entry(ROUTE_37, 3, Route37FruitTree1);
+    entry(ROUTE_37, 4, SunnyScript);
+    entry(ROUTE_37, 5, Route37FruitTree2);
+    entry(ROUTE_37, 6, Route37FruitTree3);
+
+    entry(ROUTE_38, 0, TrainerSchoolboyChad1);
+    entry(ROUTE_38, 1, TrainerLassDana1);
+    entry(ROUTE_38, 2, TrainerBirdKeeperToby);
+    entry(ROUTE_38, 3, TrainerBeautyValerie);
+    entry(ROUTE_38, 4, TrainerSailorHarry);
+    entry(ROUTE_38, 5, Route38FruitTree);
+    entry(ROUTE_38, 6, TrainerBeautyOlivia);
+
+    entry(ROUTE_38_ECRUTEAK_GATE, 0, Route38EcruteakGateOfficerScript);
+
+    entry(ROUTE_42, 0, TrainerFisherTully);
+    entry(ROUTE_42, 1, TrainerHikerBenjamin);
+    entry(ROUTE_42, 2, TrainerPokemaniacShane);
+    entry(ROUTE_42, 3, Route42FruitTree1);
+    entry(ROUTE_42, 4, Route42FruitTree2);
+    entry(ROUTE_42, 5, Route42FruitTree3);
+    entry(ROUTE_42, 6, Route42UltraBall);
+    entry(ROUTE_42, 7, Route42SuperPotion);
+    entry(ROUTE_42, 8, ObjectEvent);
+
+    entry(ROUTE_42_ECRUTEAK_GATE, 0, Route42EcruteakGateOfficerScript);
 
     entry(CHERRYGROVE_EVOLUTION_SPEECH_HOUSE, 0, CherrygroveEvolutionSpeechHouseLassScript);
     entry(CHERRYGROVE_EVOLUTION_SPEECH_HOUSE, 1, CherrygroveEvolutionSpeechHouseYoungsterScript);
@@ -458,6 +496,52 @@ void PopulateMapScriptTable(void) {
     entry(POKECOM_CENTER_ADMIN_OFFICE_MOBILE, 1, PokecomCenterAdminOfficeMobileScientist2Script);
     entry(POKECOM_CENTER_ADMIN_OFFICE_MOBILE, 2, PokecomCenterAdminOfficeMobileScientist3Script);
 
+    entry(ECRUTEAK_GYM, 0, EcruteakGymMortyScript);
+    entry(ECRUTEAK_GYM, 1, TrainerSageJeffrey);
+    entry(ECRUTEAK_GYM, 2, TrainerSagePing);
+    entry(ECRUTEAK_GYM, 3, TrainerMediumMartha);
+    entry(ECRUTEAK_GYM, 4, TrainerMediumGrace);
+    entry(ECRUTEAK_GYM, 5, EcruteakGymGuideScript);
+    entry(ECRUTEAK_GYM, 6, ObjectEvent);
+
+    entry(ECRUTEAK_ITEMFINDER_HOUSE, 0, EcruteakItemfinderGuy);
+    entry(ECRUTEAK_ITEMFINDER_HOUSE, 1, EcruteakHistoryBook);
+
+    entry(ECRUTEAK_LUGIA_SPEECH_HOUSE, 0, EcruteakLugiaSpeechHouseGrampsScript);
+    entry(ECRUTEAK_LUGIA_SPEECH_HOUSE, 1, EcruteakLugiaSpeechHouseYoungsterScript);
+
+    entry(ECRUTEAK_MART, 0, EcruteakMartClerkScript);
+    entry(ECRUTEAK_MART, 1, EcruteakMartSuperNerdScript);
+    entry(ECRUTEAK_MART, 2, EcruteakMartGrannyScript);
+
+    entry(ECRUTEAK_POKECENTER_1F, 0, EcruteakPokecenter1FNurseScript);
+    entry(ECRUTEAK_POKECENTER_1F, 1, EcruteakPokecenter1FPokefanMScript);
+    entry(ECRUTEAK_POKECENTER_1F, 2, EcruteakPokecenter1FCooltrainerFScript);
+    entry(ECRUTEAK_POKECENTER_1F, 3, EcruteakPokecenter1FGymGuideScript);
+    entry(ECRUTEAK_POKECENTER_1F, 4, ObjectEvent);
+
+    entry(ECRUTEAK_TIN_TOWER_ENTRANCE, 0, EcruteakTinTowerEntranceSageScript);
+    entry(ECRUTEAK_TIN_TOWER_ENTRANCE, 1, EcruteakTinTowerEntranceSageScript);
+    entry(ECRUTEAK_TIN_TOWER_ENTRANCE, 2, EcruteakTinTowerEntranceWanderingSageScript);
+    entry(ECRUTEAK_TIN_TOWER_ENTRANCE, 3, EcruteakTinTowerEntranceGrampsScript);
+
+    entry(DANCE_THEATRE, 0, TrainerKimonoGirlNaoko);
+    entry(DANCE_THEATRE, 1, TrainerKimonoGirlSayo);
+    entry(DANCE_THEATRE, 2, TrainerKimonoGirlZuki);
+    entry(DANCE_THEATRE, 3, TrainerKimonoGirlKuni);
+    entry(DANCE_THEATRE, 4, TrainerKimonoGirlMiki);
+    entry(DANCE_THEATRE, 5, DanceTheaterSurfGuy);
+    entry(DANCE_THEATRE, 6, DanceTheaterRhydon);
+    entry(DANCE_THEATRE, 7, DanceTheatreCooltrainerMScript);
+    entry(DANCE_THEATRE, 8, DanceTheatreGrannyScript);
+
+    entry(WISE_TRIOS_ROOM, 0, WiseTriosRoomSage1Script);
+    entry(WISE_TRIOS_ROOM, 1, WiseTriosRoomSage2Script);
+    entry(WISE_TRIOS_ROOM, 2, WiseTriosRoomSage3Script);
+    entry(WISE_TRIOS_ROOM, 3, TrainerSageGaku);
+    entry(WISE_TRIOS_ROOM, 4, TrainerSageMasa);
+    entry(WISE_TRIOS_ROOM, 5, TrainerSageKoji);
+
     entry(SPROUT_TOWER_1F, 0, SproutTower1FSage1Script);
     entry(SPROUT_TOWER_1F, 1, SproutTower1FSage2Script);
     entry(SPROUT_TOWER_1F, 2, SproutTower1FGrannyScript);
@@ -600,6 +684,22 @@ void PopulateMapScriptTable(void) {
     entry(NATIONAL_PARK_BUG_CONTEST, 9,  BugCatchingContestant10AScript);
     entry(NATIONAL_PARK_BUG_CONTEST, 10, NationalParkBugContestParlyzHeal);
     entry(NATIONAL_PARK_BUG_CONTEST, 11, NationalParkBugContestTMDig);
+
+    entry(BURNED_TOWER_1F, 0, BurnedTower1FRock);
+    entry(BURNED_TOWER_1F, 1, BurnedTower1FEusineScript);
+    entry(BURNED_TOWER_1F, 2, ObjectEvent);
+    entry(BURNED_TOWER_1F, 3, BurnedTower1FMortyScript);
+    entry(BURNED_TOWER_1F, 4, BurnedTower1FHPUp);
+
+    entry(BURNED_TOWER_B1F, 0, BurnedTowerB1FBoulder);
+    entry(BURNED_TOWER_B1F, 1, ObjectEvent);
+    entry(BURNED_TOWER_B1F, 2, ObjectEvent);
+    entry(BURNED_TOWER_B1F, 3, ObjectEvent);
+    entry(BURNED_TOWER_B1F, 4, ObjectEvent);
+    entry(BURNED_TOWER_B1F, 5, ObjectEvent);
+    entry(BURNED_TOWER_B1F, 6, ObjectEvent);
+    entry(BURNED_TOWER_B1F, 7, BurnedTowerB1FTMEndure);
+    entry(BURNED_TOWER_B1F, 8, BurnedTowerB1FEusine);
 
     entry(DARK_CAVE_BLACKTHORN_ENTRANCE, 0, DarkCaveBlackthornEntrancePharmacistScript);
     entry(DARK_CAVE_BLACKTHORN_ENTRANCE, 1, DarkCaveBlackthornEntranceRevive);

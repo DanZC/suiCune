@@ -194,14 +194,14 @@
 
 // SECTION "Map Scripts 11", ROMX
 
-// #include "../../maps/EcruteakTinTowerEntrance.h"
-// #include "../../maps/WiseTriosRoom.h"
-// #include "../../maps/EcruteakPokecenter1F.h"
-// #include "../../maps/EcruteakLugiaSpeechHouse.h"
-// #include "../../maps/DanceTheatre.h"
-// #include "../../maps/EcruteakMart.h"
-// #include "../../maps/EcruteakGym.h"
-// #include "../../maps/EcruteakItemfinderHouse.h"
+#include "../../maps/EcruteakTinTowerEntrance.h"
+#include "../../maps/WiseTriosRoom.h"
+#include "../../maps/EcruteakPokecenter1F.h"
+#include "../../maps/EcruteakLugiaSpeechHouse.h"
+#include "../../maps/DanceTheatre.h"
+#include "../../maps/EcruteakMart.h"
+#include "../../maps/EcruteakGym.h"
+#include "../../maps/EcruteakItemfinderHouse.h"
 // #include "../../maps/ViridianGym.h"
 // #include "../../maps/ViridianNicknameSpeechHouse.h"
 // #include "../../maps/TrainerHouse1F.h"
@@ -224,7 +224,7 @@
 // #include "../../maps/OlivineGoodRodHouse.h"
 // #include "../../maps/OlivineCafe.h"
 // #include "../../maps/OlivineMart.h"
-// #include "../../maps/Route38EcruteakGate.h"
+#include "../../maps/Route38EcruteakGate.h"
 // #include "../../maps/Route39Barn.h"
 // #include "../../maps/Route39Farmhouse.h"
 // #include "../../maps/ManiasHouse.h"
@@ -268,8 +268,8 @@
 // #include "../../maps/TinTower7F.h"
 // #include "../../maps/TinTower8F.h"
 // #include "../../maps/TinTower9F.h"
-// #include "../../maps/BurnedTower1F.h"
-// #include "../../maps/BurnedTowerB1F.h"
+#include "../../maps/BurnedTower1F.h"
+#include "../../maps/BurnedTowerB1F.h"
 
 
 // SECTION "Map Scripts 15", ROMX
@@ -387,7 +387,7 @@
 // #include "../../maps/MahoganyRedGyaradosSpeechHouse.h"
 // #include "../../maps/MahoganyGym.h"
 // #include "../../maps/MahoganyPokecenter1F.h"
-// #include "../../maps/Route42EcruteakGate.h"
+#include "../../maps/Route42EcruteakGate.h"
 // #include "../../maps/LakeOfRageHiddenPowerHouse.h"
 // #include "../../maps/LakeOfRageMagikarpHouse.h"
 // #include "../../maps/Route43MahoganyGate.h"
@@ -415,7 +415,7 @@
 #include "../../maps/Route27.h"
 #include "../../maps/Route29.h"
 #include "../../maps/Route30.h"
-// #include "../../maps/Route38.h"
+#include "../../maps/Route38.h"
 // #include "../../maps/Route13.h"
 // #include "../../maps/PewterNidoranSpeechHouse.h"
 // #include "../../maps/PewterGym.h"
@@ -427,7 +427,7 @@
 
 // SECTION "Map Scripts 22", ROMX
 
-// #include "../../maps/EcruteakCity.h"
+#include "../../maps/EcruteakCity.h"
 // #include "../../maps/BlackthornCity.h"
 // #include "../../maps/Route26.h"
 // #include "../../maps/Route28.h"
@@ -444,7 +444,7 @@
 #include "../../maps/VioletCity.h"
 // #include "../../maps/OlivineCity.h"
 #include "../../maps/Route37.h"
-// #include "../../maps/Route42.h"
+#include "../../maps/Route42.h"
 #include "../../maps/Route46.h"
 // #include "../../maps/ViridianCity.h"
 // #include "../../maps/CeladonCity.h"
