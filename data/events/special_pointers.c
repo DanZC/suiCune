@@ -54,7 +54,7 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(GetMysteryGiftItem),
     // add_special(UnlockMysteryGift),
 // Map events
-    // add_special(BugContestJudging),
+    add_special(BugContestJudging),
     // add_special(CheckPartyFullAfterContest),
     add_special(ContestDropOffMons),
     add_special(ContestReturnMons),

@@ -131,6 +131,7 @@ else
 endc
 ENDM*/
 #define step_sleep(_x) (movement_step_sleep + (_x - 1))
+#define step_sleep2(_x) movement_step_sleep + 8, _x
 
 // const_skip 8 // all step_sleep values
 

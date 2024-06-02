@@ -62,7 +62,7 @@
 #include "engine/events/repel.h"
 #include "engine/events/hidden_item.h"
 #include "engine/events/std_collision.h"
-//#include "engine/events/bug_contest/judging.h"
+#include "engine/events/bug_contest/judging.h"
 //#include "engine/events/pokerus/apply_pokerus_tick.h"
 #include "engine/events/bug_contest/contest_2.h"
 //#include "engine/pokemon/correct_party_errors.h"

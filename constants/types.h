@@ -739,7 +739,7 @@ Roamer
 struct BugContestWinner
 {
     uint8_t winnerID;
-    uint8_t mon;
+    species_t mon;
     uint16_t score;
 };
 
@@ -1157,6 +1157,17 @@ struct BuenaPassword {
         struct BuenaItem item;
         struct BuenaString str;
     };
+};
+
+struct BugPlaceMon {
+    species_t mon;
+    uint16_t score;
+};
+
+struct BugContestant {
+    uint8_t tclass; 
+    uint8_t tid;
+    struct BugPlaceMon place[3];
 };
 
 struct Script;

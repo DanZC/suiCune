@@ -7139,5 +7139,22 @@ CONVERTED(v_AnimateTileset);
     CONVERTED(ContestReturnMons);
     CONVERTED(ContestDropOffMons);
     CONVERTED(SelectRandomBugContestContestants);
-    // REDIRECTED(CheckBugContestContestantFlag);
+    // CONVERTED(CheckBugContestContestantFlag);
+
+    // engine/events/bug_contest/judging.c
+    // CONVERTED(ContestScore);
+    // CONVERTED(BugContest_JudgeContestants);
+    // CONVERTED(DetermineContestWinners);
+    // CONVERTED(ContestJudging_FirstPlaceText);
+    // CONVERTED(ContestJudging_SecondPlaceScoreText);
+    // CONVERTED(v_BugContestJudging);
+    // CONVERTED(ContestJudging_ThirdPlaceScoreText);
+    // CONVERTED(LoadContestantName);
+    // CONVERTED(ContestJudging_SecondPlaceText);
+    // CONVERTED(BugContest_GetPlayersResult);
+    // CONVERTED(CopyTempContestant);
+    // CONVERTED(ContestJudging_ThirdPlaceText);
+    // CONVERTED(ComputeAIContestantScores);
+    // CONVERTED(ContestJudging_FirstPlaceScoreText);
+    // CONVERTED(ClearContestResults);
 }

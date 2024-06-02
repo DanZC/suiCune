@@ -2,6 +2,7 @@
 #include "specials.h"
 #include "pokecenter_pc.h"
 #include "name_rater.h"
+#include "bug_contest/judging.h"
 #include "../menus/naming_screen.h"
 #include "../../data/events/special_pointers.h"
 #include "../overworld/map_objects.h"
@@ -254,11 +255,11 @@ ReceiveItemText:
 }
 
 void BugContestJudging(void){
-    FARCALL(av_BugContestJudging);
-    LD_A_B;
-    LD_addr_A(wScriptVar);
-    RET;
-
+    // FARCALL(av_BugContestJudging);
+    // LD_A_B;
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = v_BugContestJudging();
+    // RET;
 }
 
 void MapRadio(void){

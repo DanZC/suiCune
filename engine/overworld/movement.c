@@ -473,9 +473,9 @@ void Movement_step_sleep(struct Object* bc){
 //  parameters:
 //     duration (DecimalParam)
 
-    CALL(aJumpMovementPointer);
+    // CALL(aJumpMovementPointer);
     // JR(mMovement_step_sleep_common);
-    return Movement_step_sleep_common(bc, 0);
+    return Movement_step_sleep_common(bc, JumpMovementPointer_Conv(bc));
 }
 
 void Movement_step_sleep_common(struct Object* bc, uint8_t a){

@@ -1321,7 +1321,7 @@ uint8_t* GetPocketName_Conv(void){
     // LD_E_A;
     // LD_HL(wStringBuffer3);
     // CALL(aCopyName2);
-    return Utf8ToCrystalBuffer(wram->wStringBuffer3, sizeof(wram->wStringBuffer3), ItemPocketNames[CheckItemPocket_Conv(wram->wCurItem)]);
+    return Utf8ToCrystalBuffer(wram->wStringBuffer3, sizeof(wram->wStringBuffer3), ItemPocketNames[CheckItemPocket_Conv(wram->wCurItem) - 1]);
     // RET;
 
 // INCLUDE "data/items/pocket_names.asm"
@@ -2712,7 +2712,7 @@ void Script_earthquake(void){
 
 const uint8_t EarthquakeMovement[] = {
     step_shake(16),  // the 16 gets overwritten with the script byte
-    step_sleep(16),  // the 16 gets overwritten with the lower 6 bits of the script byte
+    step_sleep2(16),  // the 16 gets overwritten with the lower 6 bits of the script byte
     movement_step_end
 };
 

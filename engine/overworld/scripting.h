@@ -155,7 +155,7 @@ void Script_showemote_Conv(script_s* s, uint8_t emote, uint8_t obj, uint8_t fram
 bool ShowEmoteScript(script_s* s);
 void Script_earthquake(void);
 void Script_earthquake_Conv(script_s* s, uint8_t amt);
-extern const uint8_t EarthquakeMovement[4];
+extern const uint8_t EarthquakeMovement[5];
 void Script_loadpikachudata(void);
 void Script_randomwildmon(void);
 void Script_randomwildmon_Conv(script_s* s);

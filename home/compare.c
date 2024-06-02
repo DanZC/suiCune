@@ -29,16 +29,19 @@ bool CompareBytes_Conv(uint16_t de, uint16_t hl, uint8_t c){
 }
 
 //  Compare c bytes at de and hl.
-//  Return z if they all match.
-bool CompareBytes_Conv2(const void* de, const void* hl, uint8_t c){
+//  Return 0 (z) if they all match.
+//  Return -1 (c) if de is less than hl.
+int CompareBytes_Conv2(const void* de, const void* hl, uint8_t c){
     const uint8_t* de_ = de;
     const uint8_t* hl_ = hl;
     do {
-        if(*(de_) != *(hl_)) 
-            return false;
+        if(*(de_) < *(hl_)) 
+            return -1;
+        if(*(de_) > *(hl_)) 
+            return 1;
         de_++, hl_++;
     } while(--c != 0);
-    return true;
+    return 0;
 }
 
 bool Test_CompareBytes(void)
