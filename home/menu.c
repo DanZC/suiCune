@@ -1183,6 +1183,12 @@ void PlaceYesNoBox(void) {
     JR(mv_YesNoBox);
 }
 
+//  Return true (yes) or false (no).
+bool PlaceYesNoBox_Conv(uint8_t b, uint8_t c) {
+    // LD_BC(((SCREEN_WIDTH - 6) << 8) | 7);
+    return v_YesNoBox_Conv(b, c);
+}
+
 void PlaceGenericTwoOptionBox(void) {
     //  //  unreferenced
     CALL(aLoadMenuHeader);

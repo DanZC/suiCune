@@ -4,26 +4,34 @@
 #include "../../home/names.h"
 
 void GetFirstPokemonHappiness(void){
-    LD_HL(wPartyMon1Happiness);
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    LD_DE(wPartySpecies);
+    // LD_HL(wPartyMon1Happiness);
+    struct PartyMon* hl = wram->wPartyMon;
+    // LD_BC(PARTYMON_STRUCT_LENGTH);
+    // LD_DE(wPartySpecies);
+    species_t* de = wram->wPartySpecies;
 
-loop:
-    LD_A_de;
-    CP_A(EGG);
-    IF_NZ goto done;
-    INC_DE;
-    ADD_HL_BC;
-    goto loop;
+    while(*de == EGG) {
+    // loop:
+        // LD_A_de;
+        // CP_A(EGG);
+        // IF_NZ goto done;
+        // INC_DE;
+        // ADD_HL_BC;
+        // goto loop;
+        de++;
+        hl++;
+    }
 
 
-done:
-    LD_addr_A(wNamedObjectIndex);
-    LD_A_hl;
-    LD_addr_A(wScriptVar);
-    CALL(aGetPokemonName);
-    JP(mCopyPokemonName_Buffer1_Buffer3);
-
+// done:
+    // LD_addr_A(wNamedObjectIndex);
+    // LD_A_hl;
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = hl->mon.happiness;
+    // CALL(aGetPokemonName);
+    GetPokemonName_Conv2(*de);
+    // JP(mCopyPokemonName_Buffer1_Buffer3);
+    CopyPokemonName_Buffer1_Buffer3();
 }
 
 void CheckFirstMonIsEgg(void){
@@ -33,7 +41,7 @@ void CheckFirstMonIsEgg(void){
     // LD_A(TRUE);
     // IF_Z goto egg;
     // XOR_A_A;
-    wram->wScriptVar = (wram->wPartySpecies[0] == EGG)? FALSE: TRUE;
+    wram->wScriptVar = (wram->wPartySpecies[0] == EGG)? TRUE: FALSE;
 
 // egg:
     // LD_addr_A(wScriptVar);

@@ -370,7 +370,7 @@ void SavedTheGame(void){
 // wait 32 frames
     // LD_C(32);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(32);
+    // DelayFrames_Conv(32);
 // copy the original text speed setting to the stack
     // LD_A_addr(wOptions);
     // PUSH_AF;
@@ -525,11 +525,11 @@ void SavingDontTurnOffThePower(void){
 // Set the text speed to medium
     // LD_A(TEXT_DELAY_MED);
     // LD_addr_A(wOptions);
-    wram->wOptions = TEXT_DELAY_FAST;
+    // wram->wOptions = TEXT_DELAY_FAST;
 // SAVING... DON'T TURN OFF THE POWER.
     // LD_HL(mSavingDontTurnOffThePowerText);
     // CALL(aPrintText);
-    PrintText_Conv2(SavingDontTurnOffThePowerText);
+    // PrintText_Conv2(SavingDontTurnOffThePowerText);
 // Restore the text speed setting
     // POP_AF;
     // LD_addr_A(wOptions);
@@ -537,7 +537,7 @@ void SavingDontTurnOffThePower(void){
 // Wait for 16 frames
     // LD_C(16);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(16);
+    // DelayFrames_Conv(16);
     // RET;
 }
 

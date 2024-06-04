@@ -3642,7 +3642,7 @@ void init_function_pointers(void) {
     // // REDIRECTED(ItemLooksBitterText);
     // REDIRECTED(LureBallMultiplier);
     // REDIRECTED(Ball_BoxIsFullMessage);
-    // REDIRECTED(CantUseOnEggMessage);
+    CONVERTED(CantUseOnEggMessage);
     // REDIRECTED(ItemUsedText);
     // REDIRECTED(PPRestoreItem_Cancel);
     // REDIRECTED(LooksBitterMessage);
@@ -3700,7 +3700,7 @@ void init_function_pointers(void) {
     // REDIRECTED(IsMonFainted);
     // REDIRECTED(IsMonAtFullHealth);
     // REDIRECTED(RestoreAllPP);
-    // REDIRECTED(IsntTheTimeMessage);
+    CONVERTED(IsntTheTimeMessage);
     // REDIRECTED(HealStatus);
     // REDIRECTED(LoadCurHPIntoBuffer3);
     // REDIRECTED(GorgeousBoxEffect);
@@ -3742,7 +3742,7 @@ void init_function_pointers(void) {
     // REDIRECTED(RestoreHPEffect);
     // REDIRECTED(ItemCantUseOnEggText);
     // REDIRECTED(UltraBallMultiplier);
-    // REDIRECTED(WontHaveAnyEffectMessage);
+    CONVERTED(WontHaveAnyEffectMessage);
     // REDIRECTED(RepelEffect);
     // REDIRECTED(BattleRestorePP);
     // REDIRECTED(HeavyBallMultiplier);
@@ -6414,7 +6414,7 @@ CONVERTED(v_AnimateTileset);
 
     // engine/pokemon/caught_data.c
     // REDIRECTED(SetGiftPartyMonCaughtData);
-    // REDIRECTED(CheckPartyFullAfterContest);
+    // CONVERTED(CheckPartyFullAfterContest);
     // REDIRECTED(CaughtAskNicknameText);
     // REDIRECTED(SetBoxmonOrEggmonCaughtData);
     // REDIRECTED(GiveANickname_YesNo);
@@ -7273,4 +7273,25 @@ CONVERTED(v_AnimateTileset);
     // CONVERTED(ComputeAIContestantScores);
     // CONVERTED(ContestJudging_FirstPlaceScoreText);
     // CONVERTED(ClearContestResults);
+
+    // engine/events/bug_contest/display_stats.c
+    // CONVERTED(DisplayCaughtContestMonStats);
+    // CONVERTED(DisplayAlreadyCaughtText);
+    // CONVERTED(DummyPredef2F);
+    // CONVERTED(ContestAskSwitchText);
+    // CONVERTED(DummyPredef38);
+    // CONVERTED(DummyPredef39);
+
+    // engine/events/bug_contest/caught_mon.c
+    CONVERTED(BugContest_SetCaughtContestMon);
+
+    // engine/pokedex/unown_dex.c
+    // CONVERTED(UpdateUnownDex);
+    // REDIRECTED(PrintUnownWord);
+
+    // engine/pokemon/move_mon_wo_mail.c
+    // CONVERTED(InsertPokemonIntoBox);
+    // CONVERTED(InsertPokemonIntoParty);
+    // CONVERTED(InsertSpeciesIntoBoxOrParty);
+    // CONVERTED(InsertDataIntoBoxOrParty);
 }

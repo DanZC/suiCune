@@ -232,7 +232,7 @@ void BugContest_JudgeContestants(uint16_t playerScore){
     // LD_hli_A;
     // LDH_A_addr(hProduct + 1);
     // LD_hl_A;
-    wram->wBugContestTemp.score = playerScore;
+    wram->wBugContestTemp.score = ReverseEndian16(playerScore);
     // CALL(aDetermineContestWinners);
     DetermineContestWinners();
     // RET;
@@ -258,7 +258,7 @@ void DetermineContestWinners(void){
     // LD_C(2);
     // CALL(aCompareBytes);
     // IF_C goto not_first_place;
-    if(wram->wBugContestTemp.score >= wram->wBugContestWinners[0].score) {
+    if(ReverseEndian16(wram->wBugContestTemp.score) >= ReverseEndian16(wram->wBugContestWinners[0].score)) {
         // LD_HL(wBugContestSecondPlaceWinnerID);
         // LD_DE(wBugContestThirdPlaceWinnerID);
         // LD_BC(BUG_CONTESTANT_SIZE);
@@ -281,7 +281,7 @@ void DetermineContestWinners(void){
     // LD_C(2);
     // CALL(aCompareBytes);
     // IF_C goto not_second_place;
-    else if(wram->wBugContestTemp.score >= wram->wBugContestWinners[1].score) {
+    else if(ReverseEndian16(wram->wBugContestTemp.score) >= ReverseEndian16(wram->wBugContestWinners[1].score)) {
         // LD_HL(wBugContestSecondPlaceWinnerID);
         // LD_DE(wBugContestThirdPlaceWinnerID);
         // LD_BC(BUG_CONTESTANT_SIZE);
@@ -299,7 +299,7 @@ void DetermineContestWinners(void){
     // LD_C(2);
     // CALL(aCompareBytes);
     // IF_C goto done;
-    else if(wram->wBugContestTemp.score >= wram->wBugContestWinners[2].score) {
+    else if(ReverseEndian16(wram->wBugContestTemp.score) >= ReverseEndian16(wram->wBugContestWinners[2].score)) {
         // LD_HL(wBugContestThirdPlaceWinnerID);
         // CALL(aCopyTempContestant);
         CopyTempContestant(wram->wBugContestWinners + 2);
@@ -389,7 +389,7 @@ void ComputeAIContestantScores(void){
         // LD_addr_A(wBugContestTempScore);
         // LD_A_L;
         // LD_addr_A(wBugContestTempScore + 1);
-        wram->wBugContestTemp.score = score;
+        wram->wBugContestTemp.score = ReverseEndian16(score);
         // PUSH_DE;
         // CALL(aDetermineContestWinners);
         DetermineContestWinners();

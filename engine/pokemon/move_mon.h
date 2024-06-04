@@ -1,11 +1,13 @@
 void TryAddMonToParty(void);
+bool TryAddMonToParty_Conv(species_t species, uint8_t level);
 void GeneratePartyMonStats(void);
+bool GeneratePartyMonStats_Conv(struct PartyMon* hl, species_t species, uint8_t level, uint8_t monType, uint8_t battleMode);
 void FillPP(void);
 void FillPP_Conv(uint8_t* de, const move_t* hl);
 void AddTempmonToParty(void);
 void SendGetMonIntoFromBox(void);
 void CloseSRAM_And_SetCarryFlag(void);
-void RestorePPOfDepositedPokemon(void);
+void RestorePPOfDepositedPokemon(uint8_t b);
 void RetrieveMonFromDayCareMan(void);
 bool RetrieveMonFromDayCareMan_Conv(void);
 void RetrieveMonFromDayCareLady(void);

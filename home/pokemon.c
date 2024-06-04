@@ -533,11 +533,11 @@ void PrintLevel(void){
 }
 
 //  Print wTempMonLevel at hl
-void PrintLevel_Conv(uint8_t* hl){
+void PrintLevel_Conv(uint8_t* hl, uint8_t lvl){
     // LD_A_addr(wTempMonLevel);
     // LD_hl(0x6e);
     // INC_HL;
-    uint8_t a = wram->wTempMon.mon.level;
+    uint8_t a = lvl;
     *(hl++) = CHAR_LV;
 
 //  How many digits?

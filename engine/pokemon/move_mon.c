@@ -19,6 +19,11 @@
 #include "../../home/text.h"
 #include "../../home/random.h"
 #include "../../home/audio.h"
+#include "../gfx/load_pics.h"
+#include "../battle/read_trainer_dvs.h"
+#include "../pokedex/unown_dex.h"
+#include "../items/item_effects.h"
+#include "../menus/naming_screen.h"
 #include "../smallflag.h"
 #include "../../data/moves/moves.h"
 #include <stddef.h>
@@ -110,6 +115,101 @@ initializeStats:
     LD_BC(PARTYMON_STRUCT_LENGTH);
     CALL(aAddNTimes);
     return GeneratePartyMonStats();
+}
+
+bool TryAddMonToParty_Conv(species_t species, uint8_t level){
+//  Check if to copy wild mon or generate a new one
+// Whose is it?
+    // LD_DE(wPartyCount);
+    // LD_A_addr(wMonType);
+    // AND_A(0xf);
+    // IF_Z goto getpartylocation;  // PARTYMON
+    // LD_DE(wOTPartyCount);
+    struct PartyMon* de = (wram->wMonType & 0xf)? wram->wOTPartyMon: wram->wPartyMon;
+    uint8_t* partyCount = (wram->wMonType & 0xf)? &wram->wOTPartyCount: &wram->wPartyCount;
+    species_t* partySpecies = (wram->wMonType & 0xf)? wram->wOTPartySpecies: wram->wPartySpecies;
+
+// getpartylocation:
+// Do we have room for it?
+    // LD_A_de;
+    // INC_A;
+    // CP_A(PARTY_LENGTH + 1);
+    // RET_NC ;
+    if(*partyCount + 1 >= PARTY_LENGTH + 1)
+        return false;
+// Increase the party count
+    // LD_de_A;
+    // LD_A_de;  // Why are we doing this?
+    // LDH_addr_A(hMoveMon);  // HRAM backup
+    hram->hMoveMon = ++*partyCount;
+    // ADD_A_E;
+    // LD_E_A;
+    // IF_NC goto loadspecies;
+    // INC_D;
+
+
+// loadspecies:
+// Load the species of the Pokemon into the party list.
+// The terminator is usually here, but it'll be back.
+    // LD_A_addr(wCurPartySpecies);
+    // LD_de_A;
+    partySpecies[hram->hMoveMon - 1] = species;
+// Load the terminator into the next slot.
+    // INC_DE;
+    // LD_A(-1);
+    // LD_de_A;
+    partySpecies[hram->hMoveMon] = (species_t)-1;
+// Now let's load the OT name.
+    // LD_HL(wPartyMonOTs);
+    // LD_A_addr(wMonType);
+    // AND_A(0xf);
+    // IF_Z goto loadOTname;
+    // LD_HL(wOTPartyMonOTs);
+    uint8_t* ot = (wram->wMonType & 0xf)? wram->wOTPartyMonOT[hram->hMoveMon - 1]: wram->wPartyMonOT[hram->hMoveMon - 1];
+
+// loadOTname:
+    // LDH_A_addr(hMoveMon);  // Restore index from backup
+    // DEC_A;
+    // CALL(aSkipNames);
+    // LD_D_H;
+    // LD_E_L;
+    // LD_HL(wPlayerName);
+    // LD_BC(NAME_LENGTH);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(ot, wram->wPlayerName, NAME_LENGTH);
+// Only initialize the nickname for party mon
+    // LD_A_addr(wMonType);
+    // AND_A_A;
+    // IF_NZ goto skipnickname;
+    if(wram->wMonType == 0) {
+        // LD_A_addr(wCurPartySpecies);
+        // LD_addr_A(wNamedObjectIndex);
+        // CALL(aGetPokemonName);
+        // LD_HL(wPartyMonNicknames);
+        // LDH_A_addr(hMoveMon);
+        // DEC_A;
+        // CALL(aSkipNames);
+        // LD_D_H;
+        // LD_E_L;
+        // LD_HL(wStringBuffer1);
+        // LD_BC(MON_NAME_LENGTH);
+        // CALL(aCopyBytes);
+        CopyBytes_Conv2(wram->wPartyMonNickname[hram->hMoveMon - 1], GetPokemonName_Conv2(species), MON_NAME_LENGTH);
+    }
+
+// skipnickname:
+    // LD_HL(wPartyMon1Species);
+    // LD_A_addr(wMonType);
+    // AND_A(0xf);
+    // IF_Z goto initializeStats;
+    // LD_HL(wOTPartyMon1Species);
+
+// initializeStats:
+    // LDH_A_addr(hMoveMon);
+    // DEC_A;
+    // LD_BC(PARTYMON_STRUCT_LENGTH);
+    // CALL(aAddNTimes);
+    return GeneratePartyMonStats_Conv(de + (hram->hMoveMon - 1), species, level, wram->wMonType, wram->wBattleMode);
 }
 
 void GeneratePartyMonStats(void){
@@ -409,6 +509,359 @@ done:
     SCF;  // When this function returns, the carry flag indicates success vs failure.
     RET;
 
+}
+
+//  wBattleMode specifies whether it's a wild mon or not.
+//  wMonType specifies whether it's an opposing mon or not.
+//  wCurPartySpecies/wCurPartyLevel specify the species and level.
+//  hl points to the wPartyMon struct to fill.
+bool GeneratePartyMonStats_Conv(struct PartyMon* hl, species_t species, uint8_t level, uint8_t monType, uint8_t battleMode){
+    // LD_E_L;
+    // LD_D_H;
+    // PUSH_HL;
+
+// Initialize the species
+    // LD_A_addr(wCurPartySpecies);
+    // LD_addr_A(wCurSpecies);
+    // CALL(aGetBaseData);
+    GetBaseData_Conv2(species);
+    // LD_A_addr(wBaseDexNo);
+    // LD_de_A;
+    hl->mon.species = wram->wBaseDexNo;
+    // INC_DE;
+
+// Copy the item if it's a wild mon
+    // LD_A_addr(wBattleMode);
+    // AND_A_A;
+    // LD_A(0x0);
+    // IF_Z goto skipitem;
+    // LD_A_addr(wEnemyMonItem);
+
+// skipitem:
+    // LD_de_A;
+    if(battleMode != 0x0)
+        hl->mon.item = wram->wEnemyMon.item;
+    else
+        hl->mon.item = NO_ITEM;
+    // INC_DE;
+
+// Copy the moves if it's a wild mon
+    // PUSH_DE;
+    // LD_H_D;
+    // LD_L_E;
+    // LD_A_addr(wBattleMode);
+    // AND_A_A;
+    // IF_Z goto randomlygeneratemoves;
+    // LD_A_addr(wMonType);
+    // AND_A_A;
+    // IF_NZ goto randomlygeneratemoves;
+    if(battleMode == 0 || monType != 0) {
+    // randomlygeneratemoves:
+        // XOR_A_A;
+        // for(int rept = 0; rept < NUM_MOVES - 1; rept++){
+        // LD_hli_A;
+        // }
+        // LD_hl_A;
+        ByteFill_Conv2(hl->mon.moves, sizeof(hl->mon.moves), 0);
+        // LD_addr_A(wSkipMovesBeforeLevelUp);
+        // PREDEF(pFillMoves);
+        FillMoves_Conv(hl->mon.moves, hl->mon.PP, species, level);
+    }
+    else {
+        // LD_DE(wEnemyMonMoves);
+        // for(int rept = 0; rept < NUM_MOVES - 1; rept++){
+        // LD_A_de;
+        // INC_DE;
+        // LD_hli_A;
+        // }
+        // LD_A_de;
+        // LD_hl_A;
+        // goto next;
+        CopyBytes_Conv2(hl->mon.moves, wram->wEnemyMon.moves, sizeof(wram->wEnemyMon.moves));
+    }
+
+// next:
+    // POP_DE;
+    // for(int rept = 0; rept < NUM_MOVES; rept++){
+    // INC_DE;
+    // }
+
+// Initialize ID.
+    // LD_A_addr(wPlayerID);
+    // LD_de_A;
+    // INC_DE;
+    // LD_A_addr(wPlayerID + 1);
+    // LD_de_A;
+    // INC_DE;
+    hl->mon.id = wram->wPlayerID;
+
+// Initialize Exp.
+    // PUSH_DE;
+    // LD_A_addr(wCurPartyLevel);
+    // LD_D_A;
+    // CALLFAR(aCalcExpAtLevel);
+    uint32_t exp = CalcExpAtLevel_Conv(level);
+    // POP_DE;
+    // LDH_A_addr(hProduct + 1);
+    // LD_de_A;
+    hl->mon.exp[0] = HIGH(exp >> 8);
+    // INC_DE;
+    // LDH_A_addr(hProduct + 2);
+    // LD_de_A;
+    hl->mon.exp[1] = HIGH(exp);
+    // INC_DE;
+    // LDH_A_addr(hProduct + 3);
+    // LD_de_A;
+    hl->mon.exp[2] = LOW(exp);
+    // INC_DE;
+
+// Initialize stat experience.
+    // XOR_A_A;
+    // LD_B(MON_DVS - MON_STAT_EXP);
+
+    for(uint32_t i = 0; i < NUM_EXP_STATS; ++i) {
+    // loop:
+        // LD_de_A;
+        hl->mon.statExp[i] = 0;
+        // INC_DE;
+        // DEC_B;
+        // IF_NZ goto loop;
+    }
+
+    // POP_HL;
+    // PUSH_HL;
+    // LD_A_addr(wMonType);
+    // AND_A(0xf);
+    // IF_Z goto registerpokedex;
+    uint16_t bc;
+    if((monType & 0xf) == 0) {
+    // registerpokedex:
+        // LD_A_addr(wCurPartySpecies);
+        // LD_addr_A(wTempSpecies);
+        // DEC_A;
+        // PUSH_DE;
+        // CALL(aCheckCaughtMon);
+        CheckCaughtMon_Conv(species - 1);
+        // LD_A_addr(wTempSpecies);
+        // DEC_A;
+        // CALL(aSetSeenAndCaughtMon);
+        SetSeenAndCaughtMon_Conv(species - 1);
+        // POP_DE;
+
+        // POP_HL;
+        // PUSH_HL;
+        // LD_A_addr(wBattleMode);
+        // AND_A_A;
+        // IF_NZ goto copywildmonDVs;
+        if(battleMode != 0)
+            goto copywildmonDVs;
+
+        // CALL(aRandom);
+        // LD_B_A;
+        bc = Random_Conv() << 8;
+        // CALL(aRandom);
+        // LD_C_A;
+        bc |= Random_Conv();
+    }
+    else {
+        // PUSH_HL;
+        // FARCALL(aGetTrainerDVs);
+        bc = GetTrainerDVs_Conv(wram->wOtherTrainerClass);
+        // POP_HL;
+        // goto initializeDVs;
+    }
+
+// initializeDVs:
+    // LD_A_B;
+    // LD_de_A;
+    // INC_DE;
+    // LD_A_C;
+    // LD_de_A;
+    // INC_DE;
+    hl->mon.DVs = ReverseEndian16(bc);
+
+// Initialize PP.
+    // PUSH_HL;
+    // PUSH_DE;
+    // INC_HL;
+    // INC_HL;
+    // CALL(aFillPP);
+    FillPP_Conv(hl->mon.PP, hl->mon.moves);
+    // POP_DE;
+    // POP_HL;
+    // for(int rept = 0; rept < NUM_MOVES; rept++){
+    // INC_DE;
+    // }
+
+// Initialize happiness.
+    // LD_A(BASE_HAPPINESS);
+    // LD_de_A;
+    // INC_DE;
+    hl->mon.happiness = BASE_HAPPINESS;
+
+    // XOR_A_A;
+// PokerusStatus
+    // LD_de_A;
+    // INC_DE;
+    hl->mon.pokerusStatus = 0;
+// CaughtData/CaughtTime/CaughtLevel
+    // LD_de_A;
+    // INC_DE;
+    hl->mon.caughtTimeLevel = 0;
+// CaughtGender/CaughtLocation
+    // LD_de_A;
+    // INC_DE;
+    hl->mon.caughtGenderLocation = 0;
+
+// Initialize level.
+    // LD_A_addr(wCurPartyLevel);
+    // LD_de_A;
+    // INC_DE;
+    hl->mon.level = level;
+
+    // XOR_A_A;
+// Status
+    // LD_de_A;
+    // INC_DE;
+    hl->status = 0;
+// Unused
+    // LD_de_A;
+    // INC_DE;
+    hl->unused = 0;
+
+// Initialize HP.
+    uint16_t* statxp = (uint16_t*)((uint8_t*)hl + offsetof(struct BoxMon, statExp));
+    // LD_BC(MON_STAT_EXP - 1);
+    // ADD_HL_BC;
+    // LD_A(1);
+    // LD_C_A;
+    // LD_B(FALSE);
+    // CALL(aCalcMonStatC);
+    // LDH_A_addr(hProduct + 2);
+    // LD_de_A;
+    // INC_DE;
+    // LDH_A_addr(hProduct + 3);
+    // LD_de_A;
+    // INC_DE;
+    hl->HP = CalcMonStatC_Conv(statxp, hl->mon.DVs, FALSE, 1);
+    goto initstats;
+
+
+copywildmonDVs:
+    // LD_A_addr(wEnemyMonDVs);
+    // LD_de_A;
+    // INC_DE;
+    // LD_A_addr(wEnemyMonDVs + 1);
+    // LD_de_A;
+    // INC_DE;
+    hl->mon.DVs = wram->wEnemyMon.dvs;
+
+    // PUSH_HL;
+    // LD_HL(wEnemyMonPP);
+    // LD_B(NUM_MOVES);
+
+// wildmonpploop:
+    // LD_A_hli;
+    // LD_de_A;
+    // INC_DE;
+    // DEC_B;
+    // IF_NZ goto wildmonpploop;
+    CopyBytes_Conv2(hl->mon.PP, wram->wEnemyMon.pp, sizeof(wram->wEnemyMon.pp));
+    // POP_HL;
+
+// Initialize happiness.
+    // LD_A(BASE_HAPPINESS);
+    // LD_de_A;
+    // INC_DE;
+    hl->mon.happiness = BASE_HAPPINESS;
+
+    // XOR_A_A;
+// PokerusStatus
+    // LD_de_A;
+    // INC_DE;
+    hl->mon.pokerusStatus = 0;
+// CaughtData/CaughtTime/CaughtLevel
+    // LD_de_A;
+    // INC_DE;
+    hl->mon.caughtTimeLevel = 0;
+// CaughtGender/CaughtLocation
+    // LD_de_A;
+    // INC_DE;
+    hl->mon.caughtGenderLocation = 0;
+
+// Initialize level.
+    // LD_A_addr(wCurPartyLevel);
+    // LD_de_A;
+    // INC_DE;
+    hl->mon.level = level;
+
+    // LD_HL(wEnemyMonStatus);
+// Copy wEnemyMonStatus
+    // LD_A_hli;
+    // LD_de_A;
+    // INC_DE;
+    hl->status = wram->wEnemyMon.status[0];
+// Copy EnemyMonUnused
+    // LD_A_hli;
+    // LD_de_A;
+    // INC_DE;
+    hl->unused = wram->wEnemyMon.status[1];
+// Copy wEnemyMonHP
+    // LD_A_hli;
+    // LD_de_A;
+    // INC_DE;
+    // LD_A_hl;
+    // LD_de_A;
+    // INC_DE;
+    hl->HP = wram->wEnemyMon.hp;
+
+initstats:
+    // LD_A_addr(wBattleMode);
+    // DEC_A;
+    // IF_NZ goto generatestats;
+    if(battleMode == 1) {
+        // LD_HL(wEnemyMonMaxHP);
+        hl->maxHP = wram->wEnemyMon.maxHP;
+        // LD_BC(PARTYMON_STRUCT_LENGTH - MON_MAXHP);
+        // CALL(aCopyBytes);
+        CopyBytes_Conv2(hl->stats, (uint16_t*)wram_ptr(wEnemyMonStats), sizeof(hl->stats));
+        // POP_HL;
+        // goto registerunowndex;
+    }
+    else {
+    // generatestats:
+        const uint16_t* statxp = (uint16_t*)((uint8_t*)hl + offsetof(struct BoxMon, statExp));
+        uint16_t* stats = (uint16_t*)((uint8_t*)hl + offsetof(struct PartyMon, maxHP));
+        // POP_HL;
+        // LD_BC(MON_STAT_EXP - 1);
+        // ADD_HL_BC;
+        // LD_B(FALSE);
+        // CALL(aCalcMonStats);
+        CalcMonStats_Conv(stats, statxp, hl->mon.DVs, FALSE);
+    }
+
+// registerunowndex:
+    // LD_A_addr(wMonType);
+    // AND_A(0xf);
+    // IF_NZ goto done;
+    // LD_A_addr(wCurPartySpecies);
+    // CP_A(UNOWN);
+    // IF_NZ goto done;
+    if((monType & 0xf) == 0 && species == UNOWN) {
+        // LD_HL(wPartyMon1DVs);
+        // LD_A_addr(wPartyCount);
+        // DEC_A;
+        // LD_BC(PARTYMON_STRUCT_LENGTH);
+        // CALL(aAddNTimes);
+        // PREDEF(pGetUnownLetter);
+        // CALLFAR(aUpdateUnownDex);
+        UpdateUnownDex_Conv(GetUnownLetter_Conv(hl->mon.DVs));
+    }
+
+// done:
+    // SCF;  // When this function returns, the carry flag indicates success vs failure.
+    // RET;
+    return true;
 }
 
 void FillPP(void){
@@ -824,72 +1277,88 @@ void CloseSRAM_And_SetCarryFlag(void){
 
 }
 
-void RestorePPOfDepositedPokemon(void){
-    LD_A_B;
-    LD_HL(sBoxMons);
-    LD_BC(BOXMON_STRUCT_LENGTH);
-    CALL(aAddNTimes);
-    LD_B_H;
-    LD_C_L;
-    LD_HL(MON_PP);
-    ADD_HL_BC;
-    PUSH_HL;
-    PUSH_BC;
-    LD_DE(wTempMonPP);
-    LD_BC(NUM_MOVES);
-    CALL(aCopyBytes);
-    POP_BC;
-    LD_HL(MON_MOVES);
-    ADD_HL_BC;
-    PUSH_HL;
-    LD_DE(wTempMonMoves);
-    LD_BC(NUM_MOVES);
-    CALL(aCopyBytes);
-    POP_HL;
-    POP_DE;
+void RestorePPOfDepositedPokemon(uint8_t b){
+    // LD_A_B;
+    // LD_HL(sBoxMons);
+    // LD_BC(BOXMON_STRUCT_LENGTH);
+    // CALL(aAddNTimes);
+    // LD_B_H;
+    // LD_C_L;
+    struct BoxMon* bc = (struct BoxMon*)GBToRAMAddr(sBoxMons + b * BOXMON_STRUCT_LENGTH);
+    // LD_HL(MON_PP);
+    // ADD_HL_BC;
+    // PUSH_HL;
+    // PUSH_BC;
+    // LD_DE(wTempMonPP);
+    // LD_BC(NUM_MOVES);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wTempMon.mon.PP, bc->PP, sizeof(bc->PP));
+    // POP_BC;
+    // LD_HL(MON_MOVES);
+    // ADD_HL_BC;
+    // PUSH_HL;
+    move_t* hl = bc->moves;
+    // LD_DE(wTempMonMoves);
+    // LD_BC(NUM_MOVES);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wTempMon.mon.moves, bc->moves, sizeof(bc->moves));
+    // POP_HL;
+    // POP_DE;
+    uint8_t* de = bc->PP;
 
-    LD_A_addr(wMenuCursorY);
-    PUSH_AF;
-    LD_A_addr(wMonType);
-    PUSH_AF;
-    LD_B(0);
+    // LD_A_addr(wMenuCursorY);
+    // PUSH_AF;
+    uint8_t menuCursorY = wram->wMenuCursorY;
+    // LD_A_addr(wMonType);
+    // PUSH_AF;
+    uint8_t monType = wram->wMonType;
+    // LD_B(0);
+    b = 0;
 
-loop:
-    LD_A_hli;
-    AND_A_A;
-    IF_Z goto done;
-    LD_addr_A(wTempMonMoves);
-    LD_A(BOXMON);
-    LD_addr_A(wMonType);
-    LD_A_B;
-    LD_addr_A(wMenuCursorY);
-    PUSH_BC;
-    PUSH_HL;
-    PUSH_DE;
-    FARCALL(aGetMaxPPOfMove);
-    POP_DE;
-    POP_HL;
-    LD_A_addr(wTempPP);
-    LD_B_A;
-    LD_A_de;
-    AND_A(0b11000000);
-    ADD_A_B;
-    LD_de_A;
-    POP_BC;
-    INC_DE;
-    INC_B;
-    LD_A_B;
-    CP_A(NUM_MOVES);
-    IF_C goto loop;
+    do {
+    // loop:
+        // LD_A_hli;
+        // AND_A_A;
+        // IF_Z goto done;
+        if(*hl == NO_MOVE)
+            break;
+        // LD_addr_A(wTempMonMoves);
+        wram->wTempMon.mon.moves[0] = *(hl++);
+        // LD_A(BOXMON);
+        // LD_addr_A(wMonType);
+        // LD_A_B;
+        // LD_addr_A(wMenuCursorY);
+        // PUSH_BC;
+        // PUSH_HL;
+        // PUSH_DE;
+        // FARCALL(aGetMaxPPOfMove);
+        uint8_t pp = GetMaxPPOfMove_Conv(bc, BOXMON, b);
+        // POP_DE;
+        // POP_HL;
+        // LD_A_addr(wTempPP);
+        // LD_B_A;
+        // LD_A_de;
+        // AND_A(0b11000000);
+        // ADD_A_B;
+        // LD_de_A;
+        *de = pp + (*de & 0b11000000);
+        // POP_BC;
+        // INC_DE;
+        de++;
+        // INC_B;
+        // LD_A_B;
+        // CP_A(NUM_MOVES);
+        // IF_C goto loop;
+    } while(++b != NUM_MOVES);
 
-
-done:
-    POP_AF;
-    LD_addr_A(wMonType);
-    POP_AF;
-    LD_addr_A(wMenuCursorY);
-    RET;
-
+// done:
+    // POP_AF;
+    // LD_addr_A(wMonType);
+    wram->wMonType = monType;
+    // POP_AF;
+    // LD_addr_A(wMenuCursorY);
+    wram->wMenuCursorY = menuCursorY;
+    // RET;
 }
 
 void RetrieveMonFromDayCareMan(void){
@@ -3310,10 +3779,8 @@ void InitNickname_Conv(uint8_t* hl){
     // POP_DE;
     // PUSH_DE;
     // LD_B(NAME_MON);
-    struct cpu_registers_s regs = gb.cpu_reg;
     // FARCALL(aNamingScreen);
-    regs.b = NAME_MON;
-    SafeCallGB(aNamingScreen, &regs);
+    NamingScreen_Conv(hl, NAME_MON);
     // POP_HL;
     // LD_DE(wStringBuffer1);
     // CALL(aInitName);

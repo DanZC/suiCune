@@ -3021,7 +3021,7 @@ struct wram_s
                 // WRAMX
                 //union wPokemonData
                 uint8_t wPartyCount;
-                uint8_t wPartySpecies[PARTY_LENGTH];
+                species_t wPartySpecies[PARTY_LENGTH];
                 uint8_t wPartyEnd;
                 // older code doesn't check wPartyCount
                 // wPartyMon1 - wPartyMon6

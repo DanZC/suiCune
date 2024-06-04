@@ -7714,9 +7714,8 @@ void PrintPlayerHUD(void){
 // copy_level:
     // LD_A_addr(wBattleMonLevel);
     // LD_addr_A(wTempMonLevel);
-    wram->wTempMon.mon.level = wram->wBattleMon.level;
     // JP(mPrintLevel);
-    PrintLevel_Conv(hl2);
+    PrintLevel_Conv(hl2, wram->wBattleMon.level);
 }
 
 void UpdateEnemyHUD(void){
@@ -7972,9 +7971,8 @@ uint8_t DrawEnemyHUD_Conv(void){
     // print_level:
         // LD_A_addr(wEnemyMonLevel);
         // LD_addr_A(wTempMonLevel);
-        wram->wTempMon.mon.level = wram->wEnemyMon.level;
         // CALL(aPrintLevel);
-        PrintLevel_Conv(coord(6, 1, wram->wTilemap) - ((gender.flag)? 1: 0));
+        PrintLevel_Conv(coord(6, 1, wram->wTilemap) - ((gender.flag)? 1: 0), wram->wEnemyMon.level);
     }
 
 // skip_level:

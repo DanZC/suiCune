@@ -38,7 +38,7 @@
 #include "engine/pokemon/move_mon.h"
 #include "engine/pokemon/bills_pc_top.h"
 #include "engine/pokemon/breedmon_level_growth.h"
-//#include "engine/events/bug_contest/caught_mon.h"
+#include "engine/events/bug_contest/caught_mon.h"
 #include "engine/items/item_effects.h"
 #include "engine/battle_anims/pokeball_wobble.h"
 //#include "engine/pokemon/knows_move.h"
@@ -230,7 +230,7 @@
 #include "engine/pokemon/experience.h"
 //#include "engine/pokemon/switchpartymons.h"
 #include "engine/gfx/load_pics.h"
-//#include "engine/pokemon/move_mon_wo_mail.h"
+#include "engine/pokemon/move_mon_wo_mail.h"
 //#include "data/pokemon/base_stats.h"
 //#include "data/pokemon/names.h"
 //#include "data/pokemon/unused_pic_banks.h"
@@ -389,7 +389,7 @@
 
 // SECTION "Move Animations", ROMX
 
-//#include "engine/events/bug_contest/display_stats.h"
+#include "engine/events/bug_contest/display_stats.h"
 #include "engine/battle_anims/anim_commands.h"
 #include "engine/battle_anims/core.h"
 #include "engine/battle_anims/functions.h"
@@ -448,7 +448,7 @@
 //#include "engine/events/play_slow_cry.h"
 //#include "engine/pokedex/new_pokedex_entry.h"
 //#include "engine/link/time_capsule_2.h"
-//#include "engine/pokedex/unown_dex.h"
+#include "engine/pokedex/unown_dex.h"
 #include "engine/events/magikarp.h"
 #include "engine/battle/hidden_power.h"
 #include "engine/battle/misc.h"

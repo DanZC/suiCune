@@ -1,6 +1,13 @@
 #include "../../constants.h"
 #include "item_effects.h"
+#include "../../home/item.h"
+#include "../../home/text.h"
+#include "../../home/audio.h"
+#include "../../home/joypad.h"
+#include "../battle_anims/anim_commands.h"
+#include "../battle/returntobattle_useball.h"
 #include "../../data/moves/moves.h"
+#include "../../data/text/common.h"
 
 void v_DoItemEffect(void){
     LD_A_addr(wCurItem);
@@ -1263,9 +1270,9 @@ void AskGiveNicknameText(void){
 }
 
 void ReturnToBattle_UseBall(void){
-    FARCALL(av_ReturnToBattle_UseBall);
-    RET;
-
+    // FARCALL(av_ReturnToBattle_UseBall);
+    // RET;
+    return v_ReturnToBattle_UseBall();
 }
 
 void TownMapEffect(void){
@@ -3021,207 +3028,200 @@ SentTrophyHomeText:
 }
 
 void NoEffect(void){
-    JP(mIsntTheTimeMessage);
-
+    // JP(mIsntTheTimeMessage);
+    return IsntTheTimeMessage();
 }
 
 void Play_SFX_FULL_HEAL(void){
-    PUSH_DE;
-    LD_DE(SFX_FULL_HEAL);
-    CALL(aWaitPlaySFX);
-    POP_DE;
-    RET;
-
+    // PUSH_DE;
+    // LD_DE(SFX_FULL_HEAL);
+    // CALL(aWaitPlaySFX);
+    WaitPlaySFX_Conv(SFX_FULL_HEAL);
+    // POP_DE;
+    // RET;
 }
 
 void UseItemText(void){
-    LD_HL(mItemUsedText);
-    CALL(aPrintText);
-    CALL(aPlay_SFX_FULL_HEAL);
-    CALL(aWaitPressAorB_BlinkCursor);
+    // LD_HL(mItemUsedText);
+    // CALL(aPrintText);
+    PrintText_Conv2(ItemUsedText);
+    // CALL(aPlay_SFX_FULL_HEAL);
+    Play_SFX_FULL_HEAL();
+    // CALL(aWaitPressAorB_BlinkCursor);
+    WaitPressAorB_BlinkCursor_Conv();
     return UseDisposableItem();
 }
 
 void UseDisposableItem(void){
-    LD_HL(wNumItems);
-    LD_A(1);
-    LD_addr_A(wItemQuantityChange);
-    JP(mTossItem);
-
+    // LD_HL(wNumItems);
+    // LD_A(1);
+    // LD_addr_A(wItemQuantityChange);
+    wram->wItemQuantityChange = 1;
+    // JP(mTossItem);
+    TossItem_Conv((item_pocket_s*)&wram->wNumItems, wram->wCurItem);
 }
 
 void UseBallInTrainerBattle(void){
-    CALL(aReturnToBattle_UseBall);
-    LD_DE(ANIM_THROW_POKE_BALL);
-    LD_A_E;
-    LD_addr_A(wFXAnimID);
-    LD_A_D;
-    LD_addr_A(wFXAnimID + 1);
-    XOR_A_A;
-    LD_addr_A(wBattleAnimParam);
-    LDH_addr_A(hBattleTurn);
-    LD_addr_A(wNumHits);
-    PREDEF(pPlayBattleAnim);
-    LD_HL(mBallBlockedText);
-    CALL(aPrintText);
-    LD_HL(mBallDontBeAThiefText);
-    CALL(aPrintText);
-    JR(mUseDisposableItem);
-
+    // CALL(aReturnToBattle_UseBall);
+    ReturnToBattle_UseBall();
+    // LD_DE(ANIM_THROW_POKE_BALL);
+    // LD_A_E;
+    // LD_addr_A(wFXAnimID);
+    // LD_A_D;
+    // LD_addr_A(wFXAnimID + 1);
+    wram->wFXAnimID = ANIM_THROW_POKE_BALL;
+    // XOR_A_A;
+    // LD_addr_A(wBattleAnimParam);
+    wram->wBattleAnimParam = 0;
+    // LDH_addr_A(hBattleTurn);
+    hram->hBattleTurn = 0;
+    // LD_addr_A(wNumHits);
+    wram->wNumHits = 0;
+    // PREDEF(pPlayBattleAnim);
+    PlayBattleAnim();
+    // LD_HL(mBallBlockedText);
+    // CALL(aPrintText);
+    PrintText_Conv2(BallBlockedText);
+    // LD_HL(mBallDontBeAThiefText);
+    // CALL(aPrintText);
+    PrintText_Conv2(BallDontBeAThiefText);
+    // JR(mUseDisposableItem);
+    return UseDisposableItem();
 }
 
 void WontHaveAnyEffect_NotUsedMessage(void){
-    LD_HL(mItemWontHaveEffectText);
-    CALL(aPrintText);
+    // LD_HL(mItemWontHaveEffectText);
+    // CALL(aPrintText);
+    PrintText_Conv2(ItemWontHaveEffectText);
 
 // Item wasn't used.
-    LD_A(0x2);
-    LD_addr_A(wItemEffectSucceeded);
-    RET;
-
+    // LD_A(0x2);
+    // LD_addr_A(wItemEffectSucceeded);
+    wram->wItemEffectSucceeded = 0x2;
+    // RET;
 }
 
 void LooksBitterMessage(void){
-    LD_HL(mItemLooksBitterText);
-    JP(mPrintText);
-
+    // LD_HL(mItemLooksBitterText);
+    // JP(mPrintText);
+    PrintText_Conv2(ItemLooksBitterText);
 }
 
 void Ball_BoxIsFullMessage(void){
-    LD_HL(mBallBoxFullText);
-    CALL(aPrintText);
+    // LD_HL(mBallBoxFullText);
+    // CALL(aPrintText);
+    PrintText_Conv2(BallBoxFullText);
 
 // Item wasn't used.
-    LD_A(0x2);
-    LD_addr_A(wItemEffectSucceeded);
-    RET;
-
+    // LD_A(0x2);
+    // LD_addr_A(wItemEffectSucceeded);
+    wram->wItemEffectSucceeded = 0x2;
+    // RET;
 }
 
 void CantUseOnEggMessage(void){
-    LD_HL(mItemCantUseOnEggText);
-    JR(mCantUseItemMessage);
-
+    // LD_HL(mItemCantUseOnEggText);
+    // JR(mCantUseItemMessage);
+    return CantUseItemMessage(ItemCantUseOnEggText);
 }
 
 void IsntTheTimeMessage(void){
-    LD_HL(mItemOakWarningText);
-    JR(mCantUseItemMessage);
-
+    // LD_HL(mItemOakWarningText);
+    // JR(mCantUseItemMessage);
+    return CantUseItemMessage(ItemOakWarningText);
 }
 
 void WontHaveAnyEffectMessage(void){
-    LD_HL(mItemWontHaveEffectText);
-    JR(mCantUseItemMessage);
-
+    // LD_HL(mItemWontHaveEffectText);
+    // JR(mCantUseItemMessage);
+    return CantUseItemMessage(ItemWontHaveEffectText);
 }
 
 void BelongsToSomeoneElseMessage(void){
 //  //  unreferenced
-    LD_HL(mItemBelongsToSomeoneElseText);
-    JR(mCantUseItemMessage);
-
+    // LD_HL(mItemBelongsToSomeoneElseText);
+    // JR(mCantUseItemMessage);
+    return CantUseItemMessage(ItemBelongsToSomeoneElseText);
 }
 
 void CyclingIsntAllowedMessage(void){
 //  //  unreferenced
-    LD_HL(mNoCyclingText);
-    JR(mCantUseItemMessage);
-
+    // LD_HL(mNoCyclingText);
+    // JR(mCantUseItemMessage);
+    return CantUseItemMessage(NoCyclingText);
 }
 
 void CantGetOnYourBikeMessage(void){
 //  //  unreferenced
-    LD_HL(mItemCantGetOnText);
+    // LD_HL(mItemCantGetOnText);
 // fallthrough
 
-    return CantUseItemMessage();
+    return CantUseItemMessage(ItemCantGetOnText);
 }
 
-void CantUseItemMessage(void){
+void CantUseItemMessage(const txt_cmd_s* hl){
 //  Item couldn't be used.
-    XOR_A_A;
-    LD_addr_A(wItemEffectSucceeded);
-    JP(mPrintText);
-
+    // XOR_A_A;
+    // LD_addr_A(wItemEffectSucceeded);
+    wram->wItemEffectSucceeded = 0x0;
+    // JP(mPrintText);
+    return PrintText_Conv2(hl);
 }
 
-// void ItemLooksBitterText(void){
-    //text_far ['_ItemLooksBitterText']
-    //text_end ['?']
+const txt_cmd_s ItemLooksBitterText[] = {
+    text_far(v_ItemLooksBitterText)
+    text_end
+};
 
-    // return ItemCantUseOnEggText();
-// }
+const txt_cmd_s ItemCantUseOnEggText[] = {
+    text_far(v_ItemCantUseOnEggText)
+    text_end
+};
 
-void ItemCantUseOnEggText(void){
-    //text_far ['_ItemCantUseOnEggText']
-    //text_end ['?']
+const txt_cmd_s ItemOakWarningText[] = {
+    text_far(v_ItemOakWarningText)
+    text_end
+};
 
-    return ItemOakWarningText();
-}
+const txt_cmd_s ItemBelongsToSomeoneElseText[] = {
+    text_far(v_ItemBelongsToSomeoneElseText)
+    text_end
+};
 
-void ItemOakWarningText(void){
-    //text_far ['_ItemOakWarningText']
-    //text_end ['?']
+const txt_cmd_s ItemWontHaveEffectText[] = {
+    text_far(v_ItemWontHaveEffectText)
+    text_end
+};
 
-    return ItemBelongsToSomeoneElseText();
-}
+const txt_cmd_s BallBlockedText[] = {
+    text_far(v_BallBlockedText)
+    text_end
+};
 
-void ItemBelongsToSomeoneElseText(void){
-    //text_far ['_ItemBelongsToSomeoneElseText']
-    //text_end ['?']
+const txt_cmd_s BallDontBeAThiefText[] = {
+    text_far(v_BallDontBeAThiefText)
+    text_end
+};
 
-    return ItemWontHaveEffectText();
-}
+const txt_cmd_s NoCyclingText[] = {
+    text_far(v_NoCyclingText)
+    text_end
+};
 
-void ItemWontHaveEffectText(void){
-    //text_far ['_ItemWontHaveEffectText']
-    //text_end ['?']
+const txt_cmd_s ItemCantGetOnText[] = {
+    text_far(v_ItemCantGetOnText)
+    text_end
+};
 
-    return BallBlockedText();
-}
+const txt_cmd_s BallBoxFullText[] = {
+    text_far(v_BallBoxFullText)
+    text_end
+};
 
-void BallBlockedText(void){
-    //text_far ['_BallBlockedText']
-    //text_end ['?']
-
-    return BallDontBeAThiefText();
-}
-
-void BallDontBeAThiefText(void){
-    //text_far ['_BallDontBeAThiefText']
-    //text_end ['?']
-
-    return NoCyclingText();
-}
-
-void NoCyclingText(void){
-    //text_far ['_NoCyclingText']
-    //text_end ['?']
-
-    return ItemCantGetOnText();
-}
-
-void ItemCantGetOnText(void){
-    //text_far ['_ItemCantGetOnText']
-    //text_end ['?']
-
-    return BallBoxFullText();
-}
-
-void BallBoxFullText(void){
-    //text_far ['_BallBoxFullText']
-    //text_end ['?']
-
-    return ItemUsedText();
-}
-
-void ItemUsedText(void){
-    //text_far ['_ItemUsedText']
-    //text_end ['?']
-
-    return ItemGotOnText();
-}
+const txt_cmd_s ItemUsedText[] = {
+    text_far(v_ItemUsedText)
+    text_end
+};
 
 void ItemGotOnText(void){
 //  //  unreferenced

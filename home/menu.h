@@ -73,6 +73,7 @@ void CopyNameFromMenu(void);
 void YesNoBox(void);
 bool YesNoBox_Conv(void);
 void PlaceYesNoBox(void);
+bool PlaceYesNoBox_Conv(uint8_t b, uint8_t c);
 void PlaceGenericTwoOptionBox(void);
 void v_YesNoBox(void);
 bool v_YesNoBox_Conv(uint8_t b, uint8_t c);

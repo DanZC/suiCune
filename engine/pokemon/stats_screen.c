@@ -921,7 +921,7 @@ void StatsScreen_InitUpperHalf(void){
     PrintNum_Conv2(coord(10, 0, wram->wTilemap), &wram->wTextDecimalByte, PRINTNUM_LEADINGZEROS | 1, 3);
     // hlcoord(14, 0, wTilemap);
     // CALL(aPrintLevel);
-    PrintLevel_Conv(coord(14, 0, wram->wTilemap));
+    PrintLevel_Conv(coord(14, 0, wram->wTilemap), wram->wTempMon.mon.level);
     // LD_HL(mStatsScreen_InitUpperHalf_NicknamePointers);
     // CALL(aGetNicknamenamePointer);
     // CALL(aCopyNickname);
@@ -1105,7 +1105,7 @@ static void LoadPinkPage_PrintNextLevel(uint8_t* hl) {
     }
 // AtMaxLevel:
     // CALL(aPrintLevel);
-    PrintLevel_Conv(hl);
+    PrintLevel_Conv(hl, wram->wTempMon.mon.level);
     // POP_AF;
     // LD_addr_A(wTempMonLevel);
     wram->wTempMon.mon.level = a;

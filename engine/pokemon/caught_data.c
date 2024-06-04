@@ -1,168 +1,222 @@
 #include "../../constants.h"
 #include "caught_data.h"
+#include "move_mon.h"
+#include "move_mon_wo_mail.h"
 #include "../../home/map.h"
 #include "../../home/menu.h"
 #include "../../home/text.h"
 #include "../../home/sram.h"
+#include "../../home/pokemon.h"
+#include "../../home/copy.h"
+#include "../../home/names.h"
 #include "../../data/text/common.h"
 
 void CheckPartyFullAfterContest(void){
-    LD_A_addr(wContestMonSpecies);
-    AND_A_A;
-    JP_Z (mCheckPartyFullAfterContest_DidntCatchAnything);
-    LD_addr_A(wCurPartySpecies);
-    LD_addr_A(wCurSpecies);
-    CALL(aGetBaseData);
-    LD_HL(wPartyCount);
-    LD_A_hl;
-    CP_A(PARTY_LENGTH);
-    JP_NC (mCheckPartyFullAfterContest_TryAddToBox);
-    INC_A;
-    LD_hl_A;
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    LD_A_addr(wContestMonSpecies);
-    LD_hli_A;
-    LD_addr_A(wCurSpecies);
-    LD_A(-1);
-    LD_hl_A;
-    LD_HL(wPartyMon1Species);
-    LD_A_addr(wPartyCount);
-    DEC_A;
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    CALL(aAddNTimes);
-    LD_D_H;
-    LD_E_L;
-    LD_HL(wContestMon);
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    CALL(aCopyBytes);
-    LD_A_addr(wPartyCount);
-    DEC_A;
-    LD_HL(wPartyMonOTs);
-    CALL(aSkipNames);
-    LD_D_H;
-    LD_E_L;
-    LD_HL(wPlayerName);
-    CALL(aCopyBytes);
-    LD_A_addr(wCurPartySpecies);
-    LD_addr_A(wNamedObjectIndex);
-    CALL(aGetPokemonName);
-    LD_HL(wStringBuffer1);
-    LD_DE(wMonOrItemNameBuffer);
-    LD_BC(MON_NAME_LENGTH);
-    CALL(aCopyBytes);
-    CALL(aGiveANickname_YesNo);
-    IF_C goto Party_SkipNickname;
-    LD_A_addr(wPartyCount);
-    DEC_A;
-    LD_addr_A(wCurPartyMon);
-    XOR_A_A;
-    LD_addr_A(wMonType);
-    LD_DE(wMonOrItemNameBuffer);
-    CALLFAR(aInitNickname);
+    // LD_A_addr(wContestMonSpecies);
+    // AND_A_A;
+    // JP_Z (mCheckPartyFullAfterContest_DidntCatchAnything);
+    if(wram->wContestMon.mon.species == 0) {
+    // DidntCatchAnything:
+        // LD_A(BUGCONTEST_NO_CATCH);
+        // LD_addr_A(wScriptVar);
+        wram->wScriptVar = BUGCONTEST_NO_CATCH;
+        // RET;
+        return;
+    }
 
+    // LD_addr_A(wCurPartySpecies);
+    // LD_addr_A(wCurSpecies);
+    // CALL(aGetBaseData);
+    GetBaseData_Conv2(wram->wContestMon.mon.species);
+    // LD_HL(wPartyCount);
+    // LD_A_hl;
+    // CP_A(PARTY_LENGTH);
+    // JP_NC (mCheckPartyFullAfterContest_TryAddToBox);
+    if(wram->wPartyCount >= PARTY_LENGTH) {
+    // TryAddToBox:
+        // LD_A(BANK(sBoxCount));
+        // CALL(aOpenSRAM);
+        OpenSRAM_Conv(MBANK(asBoxCount));
+        // LD_HL(sBoxCount);
+        // LD_A_hl;
+        uint8_t boxCount = gb_read(sBoxCount);
+        // CP_A(MONS_PER_BOX);
+        // CALL(aCloseSRAM);
+        CloseSRAM_Conv();
+        // IF_NC goto BoxFull;
+        if(boxCount < MONS_PER_BOX) {
+            // XOR_A_A;
+            // LD_addr_A(wCurPartyMon);
+            wram->wCurPartyMon = 0;
+            // LD_HL(wContestMon);
+            // LD_DE(wBufferMon);
+            // LD_BC(BOXMON_STRUCT_LENGTH);
+            // CALL(aCopyBytes);
+            CopyBytes_Conv2(&wram->wBufferMon, &wram->wContestMon, sizeof(wram->wBufferMon));
+            // LD_HL(wPlayerName);
+            // LD_DE(wBufferMonOT);
+            // LD_BC(NAME_LENGTH);
+            // CALL(aCopyBytes);
+            CopyBytes_Conv2(wram->wBufferMonOT, wram->wPlayerName, NAME_LENGTH);
+            // CALLFAR(aInsertPokemonIntoBox);
+            InsertPokemonIntoBox();
+            // LD_A_addr(wCurPartySpecies);
+            // LD_addr_A(wNamedObjectIndex);
+            // CALL(aGetPokemonName);
+            GetPokemonName_Conv2(wram->wContestMon.mon.species);
+            // CALL(aGiveANickname_YesNo);
+            // LD_HL(wStringBuffer1);
+            uint8_t* hl = wram->wStringBuffer1;
+            // IF_C goto Box_SkipNickname;
+            if(GiveANickname_YesNo()) {
+                // LD_A(BOXMON);
+                // LD_addr_A(wMonType);
+                wram->wMonType = BOXMON;
+                // LD_DE(wMonOrItemNameBuffer);
+                // CALLFAR(aInitNickname);
+                InitNickname_Conv(wram->wMonOrItemNameBuffer);
+                // LD_HL(wMonOrItemNameBuffer);
+                hl = wram->wMonOrItemNameBuffer;
+            }
 
-Party_SkipNickname:
-    LD_A_addr(wPartyCount);
-    DEC_A;
-    LD_HL(wPartyMonNicknames);
-    CALL(aSkipNames);
-    LD_D_H;
-    LD_E_L;
-    LD_HL(wMonOrItemNameBuffer);
-    CALL(aCopyBytes);
-    LD_A_addr(wPartyCount);
-    DEC_A;
-    LD_HL(wPartyMon1Level);
-    CALL(aGetPartyLocation);
-    LD_A_hl;
-    LD_addr_A(wCurPartyLevel);
-    CALL(aSetCaughtData);
-    LD_A_addr(wPartyCount);
-    DEC_A;
-    LD_HL(wPartyMon1CaughtLocation);
-    CALL(aGetPartyLocation);
-    LD_A_hl;
-    AND_A(CAUGHT_GENDER_MASK);
-    LD_B(LANDMARK_NATIONAL_PARK);
-    OR_A_B;
-    LD_hl_A;
-    XOR_A_A;
-    LD_addr_A(wContestMonSpecies);
-    AND_A_A;  // BUGCONTEST_CAUGHT_MON
-    LD_addr_A(wScriptVar);
-    RET;
+        // Box_SkipNickname:
+            // LD_A(BANK(sBoxMonNicknames));
+            // CALL(aOpenSRAM);
+            OpenSRAM_Conv(MBANK(asBoxMonNicknames));
+            // LD_DE(sBoxMonNicknames);
+            // LD_BC(MON_NAME_LENGTH);
+            // CALL(aCopyBytes);
+            CopyBytes_Conv2(GBToRAMAddr(sBoxMonNicknames), hl, MON_NAME_LENGTH);
+            // CALL(aCloseSRAM);
+            CloseSRAM_Conv();
+        }
 
+    // BoxFull:
+        // LD_A(BANK(sBoxMon1Level));
+        // CALL(aOpenSRAM);
+        OpenSRAM_Conv(MBANK(sBoxMon1Level));
+        // LD_A_addr(sBoxMon1Level);
+        // LD_addr_A(wCurPartyLevel);
+        wram->wCurPartyLevel = gb_read(sBoxMon1Level);
+        // CALL(aCloseSRAM);
+        CloseSRAM_Conv();
+        // CALL(aSetBoxMonCaughtData);
+        SetBoxMonCaughtData();
+        // LD_A(BANK(sBoxMon1CaughtLocation));
+        // CALL(aOpenSRAM);
+        OpenSRAM_Conv(MBANK(sBoxMon1CaughtLocation));
+        // LD_HL(sBoxMon1CaughtLocation);
+        // LD_A_hl;
+        // AND_A(CAUGHT_GENDER_MASK);
+        // LD_B(LANDMARK_NATIONAL_PARK);
+        // OR_A_B;
+        // LD_hl_A;
+        gb_write(sBoxMon1CaughtLocation, (gb_read(sBoxMon1CaughtLocation) & CAUGHT_GENDER_MASK) | LANDMARK_NATIONAL_PARK);
+        // CALL(aCloseSRAM);
+        CloseSRAM_Conv();
+        // XOR_A_A;
+        // LD_addr_A(wContestMon);
+        wram->wContestMon.mon.species = 0;
+        // LD_A(BUGCONTEST_BOXED_MON);
+        // LD_addr_A(wScriptVar);
+        wram->wScriptVar = BUGCONTEST_BOXED_MON;
+        // RET;
+        return;
+    }
+    // INC_A;
+    // LD_hl_A;
+    uint8_t i = wram->wPartyCount++;
+    // LD_C_A;
+    // LD_B(0);
+    // ADD_HL_BC;
+    // LD_A_addr(wContestMonSpecies);
+    // LD_hli_A;
+    wram->wPartySpecies[i] = wram->wContestMon.mon.species;
+    // LD_addr_A(wCurSpecies);
+    wram->wCurSpecies = wram->wContestMon.mon.species;
+    // LD_A(-1);
+    // LD_hl_A;
+    wram->wPartySpecies[i+1] = (species_t)-1;
+    // LD_HL(wPartyMon1Species);
+    // LD_A_addr(wPartyCount);
+    // DEC_A;
+    // LD_BC(PARTYMON_STRUCT_LENGTH);
+    // CALL(aAddNTimes);
+    // LD_D_H;
+    // LD_E_L;
+    // LD_HL(wContestMon);
+    // LD_BC(PARTYMON_STRUCT_LENGTH);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wPartyMon + i, &wram->wContestMon, sizeof(wram->wContestMon));
+    // LD_A_addr(wPartyCount);
+    // DEC_A;
+    // LD_HL(wPartyMonOTs);
+    // CALL(aSkipNames);
+    // LD_D_H;
+    // LD_E_L;
+    // LD_HL(wPlayerName);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wPartyMonOT[i], wram->wPlayerName, NAME_LENGTH);
+    // LD_A_addr(wCurPartySpecies);
+    // LD_addr_A(wNamedObjectIndex);
+    // CALL(aGetPokemonName);
+    // LD_HL(wStringBuffer1);
+    // LD_DE(wMonOrItemNameBuffer);
+    // LD_BC(MON_NAME_LENGTH);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wMonOrItemNameBuffer, GetPokemonName_Conv2(wram->wContestMon.mon.species), MON_NAME_LENGTH);
+    // CALL(aGiveANickname_YesNo);
+    // IF_C goto Party_SkipNickname;
+    if(GiveANickname_YesNo()) {
+        // LD_A_addr(wPartyCount);
+        // DEC_A;
+        // LD_addr_A(wCurPartyMon);
+        wram->wCurPartyMon = i;
+        // XOR_A_A;
+        // LD_addr_A(wMonType);
+        wram->wMonType = 0;
+        // LD_DE(wMonOrItemNameBuffer);
+        // CALLFAR(aInitNickname);
+        InitNickname_Conv(wram->wMonOrItemNameBuffer);
+    }
 
-TryAddToBox:
-    LD_A(BANK(sBoxCount));
-    CALL(aOpenSRAM);
-    LD_HL(sBoxCount);
-    LD_A_hl;
-    CP_A(MONS_PER_BOX);
-    CALL(aCloseSRAM);
-    IF_NC goto BoxFull;
-    XOR_A_A;
-    LD_addr_A(wCurPartyMon);
-    LD_HL(wContestMon);
-    LD_DE(wBufferMon);
-    LD_BC(BOXMON_STRUCT_LENGTH);
-    CALL(aCopyBytes);
-    LD_HL(wPlayerName);
-    LD_DE(wBufferMonOT);
-    LD_BC(NAME_LENGTH);
-    CALL(aCopyBytes);
-    CALLFAR(aInsertPokemonIntoBox);
-    LD_A_addr(wCurPartySpecies);
-    LD_addr_A(wNamedObjectIndex);
-    CALL(aGetPokemonName);
-    CALL(aGiveANickname_YesNo);
-    LD_HL(wStringBuffer1);
-    IF_C goto Box_SkipNickname;
-    LD_A(BOXMON);
-    LD_addr_A(wMonType);
-    LD_DE(wMonOrItemNameBuffer);
-    CALLFAR(aInitNickname);
-    LD_HL(wMonOrItemNameBuffer);
-
-
-Box_SkipNickname:
-    LD_A(BANK(sBoxMonNicknames));
-    CALL(aOpenSRAM);
-    LD_DE(sBoxMonNicknames);
-    LD_BC(MON_NAME_LENGTH);
-    CALL(aCopyBytes);
-    CALL(aCloseSRAM);
-
-
-BoxFull:
-    LD_A(BANK(sBoxMon1Level));
-    CALL(aOpenSRAM);
-    LD_A_addr(sBoxMon1Level);
-    LD_addr_A(wCurPartyLevel);
-    CALL(aCloseSRAM);
-    CALL(aSetBoxMonCaughtData);
-    LD_A(BANK(sBoxMon1CaughtLocation));
-    CALL(aOpenSRAM);
-    LD_HL(sBoxMon1CaughtLocation);
-    LD_A_hl;
-    AND_A(CAUGHT_GENDER_MASK);
-    LD_B(LANDMARK_NATIONAL_PARK);
-    OR_A_B;
-    LD_hl_A;
-    CALL(aCloseSRAM);
-    XOR_A_A;
-    LD_addr_A(wContestMon);
-    LD_A(BUGCONTEST_BOXED_MON);
-    LD_addr_A(wScriptVar);
-    RET;
-
-
-DidntCatchAnything:
-    LD_A(BUGCONTEST_NO_CATCH);
-    LD_addr_A(wScriptVar);
-    RET;
+// Party_SkipNickname:
+    // LD_A_addr(wPartyCount);
+    // DEC_A;
+    // LD_HL(wPartyMonNicknames);
+    // CALL(aSkipNames);
+    // LD_D_H;
+    // LD_E_L;
+    // LD_HL(wMonOrItemNameBuffer);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wPartyMonNickname[i], wram->wMonOrItemNameBuffer, MON_NAME_LENGTH);
+    // LD_A_addr(wPartyCount);
+    // DEC_A;
+    // LD_HL(wPartyMon1Level);
+    // CALL(aGetPartyLocation);
+    // LD_A_hl;
+    // LD_addr_A(wCurPartyLevel);
+    wram->wCurPartyLevel = wram->wContestMon.mon.level;
+    // CALL(aSetCaughtData);
+    SetCaughtData_Conv();
+    // LD_A_addr(wPartyCount);
+    // DEC_A;
+    // LD_HL(wPartyMon1CaughtLocation);
+    // CALL(aGetPartyLocation);
+    // LD_A_hl;
+    // AND_A(CAUGHT_GENDER_MASK);
+    // LD_B(LANDMARK_NATIONAL_PARK);
+    // OR_A_B;
+    // LD_hl_A;
+    wram->wPartyMon[i].mon.caughtGenderLocation = (wram->wPartyMon[i].mon.caughtGenderLocation & CAUGHT_GENDER_MASK) | LANDMARK_NATIONAL_PARK;
+    // XOR_A_A;
+    // LD_addr_A(wContestMonSpecies);
+    wram->wContestMon.mon.species = 0;
+    // AND_A_A;  // BUGCONTEST_CAUGHT_MON
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = BUGCONTEST_CAUGHT_MON;
+    // RET;
+    return;
 
 }
 
@@ -278,13 +332,15 @@ void SetBoxmonOrEggmonCaughtData_Conv(struct BoxMon* boxmon){
 }
 
 void SetBoxMonCaughtData(void){
-    LD_A(BANK(sBoxMon1CaughtLevel));
-    CALL(aOpenSRAM);
-    LD_HL(sBoxMon1CaughtLevel);
-    CALL(aSetBoxmonOrEggmonCaughtData);
-    CALL(aCloseSRAM);
-    RET;
-
+    // LD_A(BANK(sBoxMon1CaughtLevel));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asBoxMon1CaughtLevel));
+    // LD_HL(sBoxMon1CaughtLevel);
+    // CALL(aSetBoxmonOrEggmonCaughtData);
+    SetBoxmonOrEggmonCaughtData_Conv((struct BoxMon*)GBToRAMAddr(sBoxMon1CaughtLevel));
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
 }
 
 void SetGiftBoxMonCaughtData(uint8_t b){

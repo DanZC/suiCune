@@ -22,9 +22,10 @@
 #include "../../engine/overworld/wildmons.h"
 #include "../../engine/overworld/overworld.h"
 #include "../../engine/overworld/warp_connection.h"
+#include "../../engine/overworld/decorations.h"
 #include "../../engine/tilesets/timeofday_pals.h"
 #include "../../engine/pokemon/health.h"
-#include "../../engine/overworld/decorations.h"
+#include "../../engine/pokemon/caught_data.h"
 #include "../../home/time_palettes.h"
 #include "../../home/audio.h"
 #include "../../mobile/mobile_45_stadium.h"
@@ -55,7 +56,7 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(UnlockMysteryGift),
 // Map events
     add_special(BugContestJudging),
-    // add_special(CheckPartyFullAfterContest),
+    add_special(CheckPartyFullAfterContest),
     add_special(ContestDropOffMons),
     add_special(ContestReturnMons),
     add_special(GiveParkBalls),
@@ -123,7 +124,7 @@ void (*const SpecialsPointers[])(void) = {
     add_special(SelectApricornForKurt),
     add_special(NameRater),
     // add_special(DisplayLinkRecord),
-    // add_special(GetFirstPokemonHappiness),
+    add_special(GetFirstPokemonHappiness),
     add_special(CheckFirstMonIsEgg),
     // add_special(RandomUnseenWildMon),
     add_special(RandomPhoneWildMon),
