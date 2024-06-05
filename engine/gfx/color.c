@@ -2391,8 +2391,13 @@ const uint16_t RoofPals[][4] = {
 
 // group 3 (dungeons)
     [MAPGROUP_DUNGEONS] = {
+#if BUGFIX_BETTER_DUNGEON_ROOF_PALS
+        rgb(31,10, 0), rgb(18, 6, 0), // morn/day
+        rgb(18, 5, 9), rgb(17, 8, 7), // nite
+#else
         rgb(21,21,21), rgb(11,11,11), // morn/day
         rgb(21,21,21), rgb(17, 8, 7), // nite
+#endif
     },
 
 // group 4 (Ecruteak)

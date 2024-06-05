@@ -20,7 +20,7 @@ extern const char PokedexQuestionMarkPalette[];
 extern const char PokedexCursorPalette[];
 void v_CGB_BillsPC(void);
 void v_CGB_Unknown(void);
-void BillsPCOrangePalette(void);
+extern const uint16_t BillsPCOrangePalette[];
 void v_CGB_PokedexUnownMode(void);
 void v_CGB_SlotMachine(void);
 void v_CGB_BetaTitleScreen(void);

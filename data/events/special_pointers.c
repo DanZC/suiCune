@@ -17,6 +17,7 @@
 #include "../../engine/events/happiness_egg.h"
 #include "../../engine/events/daycare.h"
 #include "../../engine/events/unown_walls.h"
+#include "../../engine/events/pokecenter_pc.h"
 #include "../../engine/events/bug_contest/contest.h"
 #include "../../engine/events/bug_contest/contest_2.h"
 #include "../../engine/overworld/wildmons.h"
@@ -63,7 +64,7 @@ void (*const SpecialsPointers[])(void) = {
     add_special(CheckMagikarpLength),
     add_special(MagikarpHouseSign),
     add_special(HealParty), // this is both a special and a predef
-    // add_special(PokemonCenterPC),
+    add_special(PokemonCenterPC),
     add_special(PlayersHousePC),
     add_special(DayCareMan),
     add_special(DayCareLady),

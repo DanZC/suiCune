@@ -1,5 +1,6 @@
 #include "../../constants.h"
 #include "mail.h"
+#include "mail_2.h"
 #include "../../home/sram.h"
 #include "../../home/copy.h"
 #include "../../home/menu.h"
@@ -404,6 +405,41 @@ no_mons:
     AND_A_A;
     RET;
 
+}
+
+bool IsAnyMonHoldingMail_Conv(void){
+    // LD_A_addr(wPartyCount);
+    // AND_A_A;
+    // IF_Z goto no_mons;
+    if(wram->wPartyCount == 0)
+        return false;
+    // LD_E_A;
+    uint8_t e = wram->wPartyCount;
+    // LD_HL(wPartyMon1Item);
+    struct PartyMon* hl = wram->wPartyMon;
+
+    do {
+    // loop:
+        // LD_D_hl;
+        // PUSH_HL;
+        // PUSH_DE;
+        // FARCALL(aItemIsMail);
+        // POP_DE;
+        // POP_HL;
+        // RET_C ;
+        if(ItemIsMail_Conv(hl->mon.item))
+            return true;
+        // LD_BC(PARTYMON_STRUCT_LENGTH);
+        // ADD_HL_BC;
+        // DEC_E;
+        // IF_NZ goto loop;
+    } while(hl++, --e != 0);
+
+
+// no_mons:
+    // AND_A_A;
+    // RET;
+    return false;
 }
 
 void v_PlayerMailBoxMenu(void){

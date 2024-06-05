@@ -1733,6 +1733,8 @@ void InitMenuCursorAndButtonPermissions_Conv(void) {
     const struct MenuData* data = GetMenuData();
     // CALL(aInitVerticalMenuCursor);
     InitVerticalMenuCursor_Conv(data);
+    GetMenuIndexSet_Conv2(data);
+    wram->w2DMenuNumRows = wram->wMenuDataItems;
     // LD_HL(wMenuJoypadFilter);
     // LD_A_addr(wMenuDataFlags);
     // BIT_A(3);
@@ -2019,7 +2021,7 @@ void PlaceMenuStrings_Conv(const char** strings, uint8_t* de, uint8_t selection)
     // LD_E_L;
     // POP_HL;
     // CALL(aPlaceString);
-    PlaceStringSimple(de, U82C(hl));
+    PlaceStringSimple(U82C(hl), de);
     // RET;
 }
 

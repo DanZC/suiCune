@@ -812,7 +812,7 @@ struct wram_s
                         // bill's pc data
                         //union wBillsPCData
                         // (species, box number, list index) x30
-                        uint8_t wBillsPCPokemonList[3 * 30];
+                        struct BillsPCMonEntry wBillsPCPokemonList[30];
                         uint8_t skip_33[720];
                         uint8_t wBillsPC_ScrollPosition;
                         uint8_t wBillsPC_CursorPosition;

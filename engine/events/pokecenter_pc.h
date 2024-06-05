@@ -1,10 +1,10 @@
 void PokemonCenterPC(void);
 bool PC_CheckPartyForPokemon(void);
-void BillsPC(void);
-void PlayersPC(void);
-void OaksPC(void);
-void HallOfFamePC(void);
-void TurnOffPC(void);
+u8_flag_s BillsPC(void);
+u8_flag_s PlayersPC(void);
+u8_flag_s OaksPC(void);
+u8_flag_s HallOfFamePC(void);
+u8_flag_s TurnOffPC(void);
 void PC_PlayBootSound(void);
 void PC_PlayShutdownSound(void);
 void PC_PlayChoosePCSound(void);

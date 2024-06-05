@@ -10,6 +10,7 @@ void BackupPartyMonMail(void);
 void RestorePartyMonMail(void);
 void DeletePartyMonMail(void);
 void IsAnyMonHoldingMail(void);
+bool IsAnyMonHoldingMail_Conv(void);
 void v_PlayerMailBoxMenu(void);
 void InitMail(void);
 bool InitMail_Conv(void);

@@ -6,6 +6,7 @@
 #include "../../home/tilemap.h"
 #include "../../home/time_palettes.h"
 #include "../../home/map.h"
+#include "../../home/flag.h"
 #include "../../home/map_objects.h"
 #include "../../home/text.h"
 #include "../../home/item.h"
@@ -38,117 +39,138 @@ enum {
     PCPCITEM_TURN_OFF,  // 4
 };
 
-void PokemonCenterPC(void){
-    CALL(aPC_CheckPartyForPokemon);
-    RET_C ;
-    CALL(aPC_PlayBootSound);
-    LD_HL(mPokecenterPCTurnOnText);
-    CALL(aPC_DisplayText);
-    LD_HL(mPokecenterPCWhoseText);
-    CALL(aPC_DisplayTextWaitMenu);
-    LD_HL(mPokemonCenterPC_TopMenu);
-    CALL(aLoadMenuHeader);
+static uint8_t PokemonCenterPC_ChooseWhichPCListToUse(void) {
+    // CALL(aCheckReceivedDex);
+    // IF_NZ goto got_dex;
+    if(!CheckReceivedDex_Conv()) {
+        // LD_A(PCPC_BEFORE_POKEDEX);
+        // RET;
+        return PCPC_BEFORE_POKEDEX;
+    }
 
-loop:
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    CALL(aPokemonCenterPC_ChooseWhichPCListToUse);
-    LD_addr_A(wWhichIndexSet);
-    CALL(aDoNthMenu);
-    IF_C goto shutdown;
-    LD_A_addr(wMenuSelection);
-    LD_HL(mPokemonCenterPC_Jumptable);
-    CALL(aMenuJumptable);
-    IF_NC goto loop;
+// got_dex:
+    // LD_A_addr(wHallOfFameCount);
+    // AND_A_A;
+    // LD_A(PCPC_BEFORE_HOF);
+    // RET_Z ;
+    else if(wram->wHallOfFameCount == 0)
+        return PCPC_BEFORE_HOF;
+    // LD_A(PCPC_POSTGAME);
+    // RET;
+    return PCPC_POSTGAME;
+}
 
-
-shutdown:
-    CALL(aPC_PlayShutdownSound);
-    CALL(aExitMenu);
-    CALL(aCloseWindow);
-    RET;
-
-
-TopMenu:
-    //db ['MENU_BACKUP_TILES | MENU_NO_CLICK_SFX'];  // flags
-    //menu_coords ['0', '0', '15', '12'];
+static const struct MenuHeader PokemonCenterPC_TopMenu = {
+    .flags = MENU_BACKUP_TILES | MENU_NO_CLICK_SFX,  // flags
+    .coord = menu_coords(0, 0, 15, 12),
     //dw ['.MenuData'];
-    //db ['1'];  // default option
+    .data = &(struct MenuData) {
+    // MenuData:
+        .flags = STATICMENU_CURSOR | STATICMENU_WRAP,  // flags
+        .setupMenu = {
+            .count = 0,  // items
+            //dw ['.WhichPC'];
+            .itemList = (const uint8_t*[]) {
+                // WhichPC:
+                //  entries correspond to PCPC_* constants
+                [PCPC_BEFORE_POKEDEX] = (uint8_t[]){
+                    3,
+                    PCPCITEM_BILLS_PC,
+                    PCPCITEM_PLAYERS_PC,
+                    PCPCITEM_TURN_OFF,
+                    (uint8_t)-1,  // end
+                },
 
+                [PCPC_BEFORE_HOF] = (uint8_t[]){
+                    4,
+                    PCPCITEM_BILLS_PC,
+                    PCPCITEM_PLAYERS_PC,
+                    PCPCITEM_OAKS_PC,
+                    PCPCITEM_TURN_OFF,
+                    (uint8_t)-1,  // end
+                },
 
-MenuData:
-    //db ['STATICMENU_CURSOR | STATICMENU_WRAP'];  // flags
-    //db ['0'];  // items
-    //dw ['.WhichPC'];
-    //dw ['PlaceNthMenuStrings'];
-    //dw ['.Jumptable'];
-
-
-Jumptable:
-//  entries correspond to PCPCITEM_* constants
-    //dw ['PlayersPC', '.String_PlayersPC'];
-    //dw ['BillsPC', '.String_BillsPC'];
-    //dw ['OaksPC', '.String_OaksPC'];
-    //dw ['HallOfFamePC', '.String_HallOfFame'];
-    //dw ['TurnOffPC', '.String_TurnOff'];
+                [PCPC_POSTGAME] = (uint8_t[]){
+                    5,
+                    PCPCITEM_BILLS_PC,
+                    PCPCITEM_PLAYERS_PC,
+                    PCPCITEM_OAKS_PC,
+                    PCPCITEM_HALL_OF_FAME,
+                    PCPCITEM_TURN_OFF,
+                    -1,  // end
+                },
+            },
+            //dw ['PlaceNthMenuStrings'];
+            .displayFunction = PlaceNthMenuStrings_Conv,
+            //dw ['.Jumptable'];
+            .labelList = (struct LabeledMenuItem[]){
+            // Jumptable:
+            //  entries correspond to PCPCITEM_* constants
+                [PCPCITEM_PLAYERS_PC]   = {PlayersPC, "<PLAYER>'s PC@"},
+                [PCPCITEM_BILLS_PC]     = {BillsPC, "BILL's PC@"},
+                [PCPCITEM_OAKS_PC]      = {OaksPC, "PROF.OAK's PC@"},
+                [PCPCITEM_HALL_OF_FAME] = {HallOfFamePC, "HALL OF FAME@"},
+                [PCPCITEM_TURN_OFF]     = {TurnOffPC, "TURN OFF@"},
+            },
+        },
+    },
+    .defaultOption = 1,  // default option
+};
 
 
 // static const char String_PlayersPC[] = "<PLAYER>'s PC@";
 // static const char String_BillsPC[] = "BILL's PC@";
+// static const char String_OaksPC[] = "PROF.OAK's PC@";
+// static const char String_HallOfFame[] = "HALL OF FAME@";
+// static const char String_TurnOff[] = "TURN OFF@";
 
-String_OaksPC:
-//     db "PROF.OAK's PC@"
+void PokemonCenterPC(void){
+    // CALL(aPC_CheckPartyForPokemon);
+    // RET_C ;
+    if(!PC_CheckPartyForPokemon())
+        return;
+    // CALL(aPC_PlayBootSound);
+    PC_PlayBootSound();
+    // LD_HL(mPokecenterPCTurnOnText);
+    // CALL(aPC_DisplayText);
+    PC_DisplayText_Conv(PokecenterPCTurnOnText);
+    // LD_HL(mPokecenterPCWhoseText);
+    // CALL(aPC_DisplayTextWaitMenu);
+    PC_DisplayTextWaitMenu_Conv(PokecenterPCWhoseText);
+    // LD_HL(mPokemonCenterPC_TopMenu);
+    // CALL(aLoadMenuHeader);
+    LoadMenuHeader_Conv2(&PokemonCenterPC_TopMenu);
 
-String_HallOfFame:
-// db "HALL OF FAME@"
+    u8_flag_s res;
+    do {
+    // loop:
+        // XOR_A_A;
+        // LDH_addr_A(hBGMapMode);
+        hram->hBGMapMode = 0;
+        // CALL(aPokemonCenterPC_ChooseWhichPCListToUse);
+        // LD_addr_A(wWhichIndexSet);
+        wram->wWhichIndexSet = PokemonCenterPC_ChooseWhichPCListToUse();
+        // CALL(aDoNthMenu);
+        // IF_C goto shutdown;
+        res = DoNthMenu_Conv();
+        if(res.flag)
+            break;
+        // LD_A_addr(wMenuSelection);
+        // LD_HL(mPokemonCenterPC_Jumptable);
+        // CALL(aMenuJumptable);
+        res = MenuJumptable_Conv();
+        // IF_NC goto loop;
+    } while(!res.flag);
 
-String_TurnOff:
-//    db "TURN OFF@"
-
-
-WhichPC:
-//  entries correspond to PCPC_* constants
-
-// PCPC_BEFORE_POKEDEX
-    //db ['3'];
-    //db ['PCPCITEM_BILLS_PC'];
-    //db ['PCPCITEM_PLAYERS_PC'];
-    //db ['PCPCITEM_TURN_OFF'];
-    //db ['-1'];  // end
-
-// PCPC_BEFORE_HOF
-    //db ['4'];
-    //db ['PCPCITEM_BILLS_PC'];
-    //db ['PCPCITEM_PLAYERS_PC'];
-    //db ['PCPCITEM_OAKS_PC'];
-    //db ['PCPCITEM_TURN_OFF'];
-    //db ['-1'];  // end
-
-// PCPC_POSTGAME
-    //db ['5'];
-    //db ['PCPCITEM_BILLS_PC'];
-    //db ['PCPCITEM_PLAYERS_PC'];
-    //db ['PCPCITEM_OAKS_PC'];
-    //db ['PCPCITEM_HALL_OF_FAME'];
-    //db ['PCPCITEM_TURN_OFF'];
-    //db ['-1'];  // end
-
-
-ChooseWhichPCListToUse:
-    CALL(aCheckReceivedDex);
-    IF_NZ goto got_dex;
-    LD_A(PCPC_BEFORE_POKEDEX);
-    RET;
-
-
-got_dex:
-    LD_A_addr(wHallOfFameCount);
-    AND_A_A;
-    LD_A(PCPC_BEFORE_HOF);
-    RET_Z ;
-    LD_A(PCPC_POSTGAME);
-    RET;
-
+// shutdown:
+    // CALL(aPC_PlayShutdownSound);
+    PC_PlayShutdownSound();
+    // CALL(aExitMenu);
+    ExitMenu_Conv2();
+    // CALL(aCloseWindow);
+    CloseWindow_Conv2();
+    // RET;
+    return;
 }
 
 bool PC_CheckPartyForPokemon(void){
@@ -190,17 +212,20 @@ enum {
     PLAYERSPCITEM_TURN_OFF,  // 6
 };
 
-void BillsPC(void){
-    CALL(aPC_PlayChoosePCSound);
-    LD_HL(mPokecenterBillsPCText);
-    CALL(aPC_DisplayText);
-    FARCALL(av_BillsPC);
-    AND_A_A;
-    RET;
-
+u8_flag_s BillsPC(void){
+    // CALL(aPC_PlayChoosePCSound);
+    PC_PlayChoosePCSound();
+    // LD_HL(mPokecenterBillsPCText);
+    // CALL(aPC_DisplayText);
+    PC_DisplayText_Conv(PokecenterBillsPCText);
+    // FARCALL(av_BillsPC);
+    v_BillsPC();
+    // AND_A_A;
+    // RET;
+    return u8_flag(0, false);
 }
 
-void PlayersPC(void){
+u8_flag_s PlayersPC(void){
     // CALL(aPC_PlayChoosePCSound);
     PC_PlayChoosePCSound();
     // LD_HL(mPokecenterPlayersPCText);
@@ -208,13 +233,13 @@ void PlayersPC(void){
     PC_DisplayText_Conv(PokecenterPlayersPCText);
     // LD_B(PLAYERSPC_NORMAL);
     // CALL(av_PlayersPC);
-    v_PlayersPC(PLAYERSPC_NORMAL);
+    u8_flag_s res = v_PlayersPC(PLAYERSPC_NORMAL);
     // AND_A_A;
     // RET;
-    return;
+    return res;
 }
 
-void OaksPC(void){
+u8_flag_s OaksPC(void){
     // CALL(aPC_PlayChoosePCSound);
     PC_PlayChoosePCSound();
     // LD_HL(mPokecenterOaksPCText);
@@ -224,9 +249,10 @@ void OaksPC(void){
     ProfOaksPC();
     // AND_A_A;
     // RET;
+    return u8_flag(0, false);
 }
 
-void HallOfFamePC(void){
+u8_flag_s HallOfFamePC(void){
     // CALL(aPC_PlayChoosePCSound);
     PC_PlayChoosePCSound();
     // CALL(aFadeToMenu);
@@ -237,14 +263,16 @@ void HallOfFamePC(void){
     CloseSubmenu_Conv();
     // AND_A_A;
     // RET;
+    return u8_flag(0, false);
 }
 
-void TurnOffPC(void){
-    LD_HL(mPokecenterPCOaksClosedText);
-    CALL(aPrintText);
-    SCF;
-    RET;
-
+u8_flag_s TurnOffPC(void){
+    // LD_HL(mPokecenterPCOaksClosedText);
+    // CALL(aPrintText);
+    PrintText_Conv2(PokecenterPCOaksClosedText);
+    // SCF;
+    // RET;
+    return u8_flag(0, true);
 }
 
 void PC_PlayBootSound(void){

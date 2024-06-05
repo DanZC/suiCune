@@ -205,25 +205,33 @@ void MoveMonWOMail_InsertMon_SaveGame(void){
 
 }
 
-void StartMoveMonWOMail_SaveGame(void){
-    LD_HL(mMoveMonWOMailSaveText);
-    CALL(aMenuTextbox);
-    CALL(aYesNoBox);
-    CALL(aExitMenu);
-    IF_C goto refused;
-    CALL(aAskOverwriteSaveFile);
-    IF_C goto refused;
-    CALL(aPauseGameLogic);
-    CALL(av_SavingDontTurnOffThePower);
-    CALL(aResumeGameLogic);
-    AND_A_A;
-    RET;
+bool StartMoveMonWOMail_SaveGame(void){
+    // LD_HL(mMoveMonWOMailSaveText);
+    // CALL(aMenuTextbox);
+    MenuTextbox_Conv(MoveMonWOMailSaveText);
+    // CALL(aYesNoBox);
+    bool yes = YesNoBox_Conv();
+    // CALL(aExitMenu);
+    ExitMenu_Conv2();
+    // IF_C goto refused;
+    // CALL(aAskOverwriteSaveFile);
+    // IF_C goto refused;
+    if(yes && AskOverwriteSaveFile()) {
+        // CALL(aPauseGameLogic);
+        PauseGameLogic();
+        // CALL(av_SavingDontTurnOffThePower);
+        v_SavingDontTurnOffThePower();
+        // CALL(aResumeGameLogic);
+        ResumeGameLogic();
+        // AND_A_A;
+        // RET;
+        return true;
+    }
 
-
-refused:
-    SCF;
-    RET;
-
+// refused:
+    // SCF;
+    // RET;
+    return false;
 }
 
 void PauseGameLogic(void){

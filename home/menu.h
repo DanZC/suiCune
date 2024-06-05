@@ -55,6 +55,7 @@ void CopyMenuHeader(void);
 void CopyMenuHeader_Conv(uint16_t hl);
 void CopyMenuHeader_Conv2(const struct MenuHeader* hl);
 void StoreMenuCursorPosition(void);
+void StoreMenuCursorPosition_Conv(uint8_t a);
 void MenuTextbox(void);
 void MenuTextbox_Conv(const struct TextCmd* hl);
 void Menu_DummyFunction(void);

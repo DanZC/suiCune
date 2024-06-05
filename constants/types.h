@@ -1547,6 +1547,12 @@ struct Decoration {
     uint8_t tile;
 };
 
+struct BillsPCMonEntry {
+    species_t species;
+    uint8_t boxNumber;
+    uint8_t listIndex;
+};
+
 struct EvoData {
     uint8_t type;
     union {

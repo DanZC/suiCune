@@ -5,6 +5,7 @@
 #include "breedmon_level_growth.h"
 #include "health.h"
 #include "experience.h"
+#include "tempmon.h"
 #include "../math/get_square_root.h"
 #include "../../home/print_text.h"
 #include "../../home/sram.h"
@@ -1270,11 +1271,358 @@ CloseSRAM_And_ClearCarryFlag:
 
 }
 
-void CloseSRAM_And_SetCarryFlag(void){
-    CALL(aCloseSRAM);
-    SCF;
-    RET;
+//  Sents/Gets mon into/from Box depending on Parameter
+//  wPokemonWithdrawDepositParameter == 0: get mon into Party
+//  wPokemonWithdrawDepositParameter == 1: sent mon into Box
+//  wPokemonWithdrawDepositParameter == 2: get mon from DayCare
+//  wPokemonWithdrawDepositParameter == 3: put mon into DayCare
+bool SendGetMonIntoFromBox_Conv(uint8_t param){
+    // LD_A(BANK(sBoxCount));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asBoxCount));
+    // LD_A_addr(wPokemonWithdrawDepositParameter);
+    // AND_A_A;
+    // IF_Z goto check_IfPartyIsFull;
+    // CP_A(DAY_CARE_WITHDRAW);
+    // IF_Z goto check_IfPartyIsFull;
+    uint8_t c;
+    uint8_t* count;
+    species_t* species;
+    struct PartyMon* pmon = NULL;
+    struct BoxMon* bmon = NULL;
+    uint8_t* de_ot;
+    if(param == PC_WITHDRAW || param == DAY_CARE_WITHDRAW) {
+    // check_IfPartyIsFull:
+        // LD_HL(wPartyCount);
+        count = &wram->wPartyCount;
+        species = wram->wPartySpecies;
+        // LD_A_hl;
+        // CP_A(PARTY_LENGTH);
+        // JP_Z (mCloseSRAM_And_SetCarryFlag);
+        if(wram->wPartyCount == PARTY_LENGTH)
+            return CloseSRAM_And_SetCarryFlag();
+        c = wram->wPartyCount;
+        // goto there_is_room;
+    }
+    // CP_A(DAY_CARE_DEPOSIT);
+    // LD_HL(wBreedMon1Species);
+    // IF_Z goto breedmon;
+    else if(param == DAY_CARE_DEPOSIT) {
+        bmon = &wram->wBreedMon1;
+        goto breedmon;
+    }
 
+// we want to sent a mon into the Box
+// so check if there's enough space
+    else {
+        // LD_HL(sBoxCount);
+        count = GBToRAMAddr(sBoxCount);
+        species = GBToRAMAddr(sBoxSpecies);
+        // LD_A_hl;
+        c = *count;
+        // CP_A(MONS_PER_BOX);
+        // IF_NZ goto there_is_room;
+        // JP(mCloseSRAM_And_SetCarryFlag);
+        if(c == MONS_PER_BOX)
+            return CloseSRAM_And_SetCarryFlag();
+    }
+
+// there_is_room:
+    // INC_A;
+    // LD_hl_A;
+    *count = ++c;
+    // LD_C_A;
+    // LD_B(0);
+    // ADD_HL_BC;
+    // LD_A_addr(wPokemonWithdrawDepositParameter);
+    // CP_A(DAY_CARE_WITHDRAW);
+    // LD_A_addr(wBreedMon1Species);
+    // IF_Z goto okay1;
+    // LD_A_addr(wCurPartySpecies);
+
+// okay1:
+    // LD_hli_A;
+    species[c-1] = (param == DAY_CARE_WITHDRAW)? wram->wBreedMon1.species: wram->wCurPartySpecies;
+    // LD_hl(0xff);
+    species[c] = (species_t)-1;
+
+    // LD_A_addr(wPokemonWithdrawDepositParameter);
+    // DEC_A;
+    if(param != PC_DEPOSIT) {
+        // LD_HL(wPartyMon1Species);
+        pmon = wram->wPartyMon + (wram->wPartyCount - 1);
+        // LD_BC(PARTYMON_STRUCT_LENGTH);
+        // LD_A_addr(wPartyCount);
+    }
+    // IF_NZ goto okay2;
+    else {
+        // LD_HL(sBoxMon1Species);
+        // LD_BC(BOXMON_STRUCT_LENGTH);
+        // LD_A_addr(sBoxCount);
+        bmon = (struct BoxMon*)GBToRAMAddr(sBoxMon1 + BOXMON_STRUCT_LENGTH * (gb_read(sBoxCount) - 1));
+
+    // okay2:
+        // DEC_A;  // wPartyCount - 1
+        // CALL(aAddNTimes);
+    }
+
+breedmon:
+    // PUSH_HL;
+    // LD_E_L;
+    // LD_D_H;
+    // LD_A_addr(wPokemonWithdrawDepositParameter);
+    // AND_A_A;
+    switch(param) {
+    case PC_WITHDRAW:
+        // LD_HL(sBoxMon1Species);
+        // LD_BC(BOXMON_STRUCT_LENGTH);
+        // IF_Z goto okay3;
+        CopyBytes_Conv2(&pmon->mon, (struct BoxMon*)GBToRAMAddr(sBoxMon1 + BOXMON_STRUCT_LENGTH * wram->wCurPartyMon), sizeof(*bmon));
+        break;
+    case DAY_CARE_WITHDRAW:
+        // CP_A(DAY_CARE_WITHDRAW);
+        // LD_HL(wBreedMon1Species);
+        // IF_Z goto okay4;
+        CopyBytes_Conv2(bmon, &wram->wBreedMon1, sizeof(*bmon));
+        break;
+    case DAY_CARE_DEPOSIT:
+    case PC_DEPOSIT:
+        // LD_HL(wPartyMon1Species);
+        // LD_BC(PARTYMON_STRUCT_LENGTH);
+        CopyBytes_Conv2(bmon, &(wram->wPartyMon + wram->wCurPartyMon)->mon, sizeof(*bmon));
+        break;
+
+    // okay3:
+        // LD_A_addr(wCurPartyMon);
+        // CALL(aAddNTimes);
+
+    // okay4:
+        // LD_BC(BOXMON_STRUCT_LENGTH);
+        // CALL(aCopyBytes);
+    }
+
+    // LD_A_addr(wPokemonWithdrawDepositParameter);
+    switch(param) {
+    case DAY_CARE_DEPOSIT:
+        // CP_A(DAY_CARE_DEPOSIT);
+        // LD_DE(wBreedMon1OT);
+        // IF_Z goto okay5;
+        de_ot = wram->wBreedMon1OT;
+        break;
+    case PC_WITHDRAW:
+    case DAY_CARE_WITHDRAW:
+        // DEC_A;
+        // LD_HL(wPartyMonOTs);
+        // LD_A_addr(wPartyCount);
+        // IF_NZ goto okay6;
+        de_ot = wram->wPartyMonOT[wram->wPartyCount - 1];
+        break;
+    case PC_DEPOSIT:
+        // LD_HL(sBoxMonOTs);
+        // LD_A_addr(sBoxCount);
+        de_ot = GBToRAMAddr(sBoxMonOTs + (gb_read(sBoxCount) - 1) * NAME_LENGTH);
+        break;
+    }
+
+// okay6:
+    // DEC_A;
+    // CALL(aSkipNames);
+    // LD_D_H;
+    // LD_E_L;
+
+// okay5:
+    // LD_HL(sBoxMonOTs);
+    // LD_A_addr(wPokemonWithdrawDepositParameter);
+    // AND_A_A;
+    // IF_Z goto okay7;
+    // LD_HL(wBreedMon1OT);
+    // CP_A(DAY_CARE_WITHDRAW);
+    // IF_Z goto okay8;
+    // LD_HL(wPartyMonOTs);
+
+
+// okay7:
+    // LD_A_addr(wCurPartyMon);
+    // CALL(aSkipNames);
+    switch(param) {
+    case PC_WITHDRAW:
+        CopyBytes_Conv2(de_ot, GBToRAMAddr(sBoxMonOTs + (wram->wCurPartyMon * NAME_LENGTH)), NAME_LENGTH);
+        break;
+    case DAY_CARE_WITHDRAW:
+        CopyBytes_Conv2(de_ot, wram->wBreedMon1OT, NAME_LENGTH);
+        break;
+    case PC_DEPOSIT:
+    case DAY_CARE_DEPOSIT:
+        CopyBytes_Conv2(de_ot, wram->wPartyMonOT[wram->wCurPartyMon], NAME_LENGTH);
+        break;
+    }
+
+// okay8:
+    // LD_BC(NAME_LENGTH);
+    // CALL(aCopyBytes);
+    // LD_A_addr(wPokemonWithdrawDepositParameter);
+    switch(param) {
+    case DAY_CARE_DEPOSIT:
+        // CP_A(DAY_CARE_DEPOSIT);
+        // LD_DE(wBreedMon1Nickname);
+        // IF_Z goto okay9;
+        de_ot = wram->wBreedMon1Nickname;
+        break;
+    case PC_WITHDRAW:
+    case DAY_CARE_WITHDRAW:
+        // DEC_A;
+        // LD_HL(wPartyMonNicknames);
+        // LD_A_addr(wPartyCount);
+        // IF_NZ goto okay10;
+        de_ot = wram->wPartyMonNickname[wram->wPartyCount - 1];
+        break;
+    case PC_DEPOSIT:
+        // LD_HL(sBoxMonNicknames);
+        // LD_A_addr(sBoxCount);
+        de_ot = GBToRAMAddr(sBoxMonNicknames + (gb_read(sBoxCount) - 1) * MON_NAME_LENGTH);
+        break;
+    }
+
+// okay10:
+    // DEC_A;
+    // CALL(aSkipNames);
+    // LD_D_H;
+    // LD_E_L;
+
+// okay9:
+    // LD_HL(sBoxMonNicknames);
+    // LD_A_addr(wPokemonWithdrawDepositParameter);
+    switch(param) {
+    case PC_WITHDRAW:
+        // AND_A_A;
+        // IF_Z goto okay11;
+        CopyBytes_Conv2(de_ot, GBToRAMAddr(sBoxMonNicknames + wram->wCurPartyMon * MON_NAME_LENGTH), MON_NAME_LENGTH);
+        break;
+    case DAY_CARE_WITHDRAW:
+        // LD_HL(wBreedMon1Nickname);
+        // CP_A(DAY_CARE_WITHDRAW);
+        // IF_Z goto okay12;
+        CopyBytes_Conv2(de_ot, wram->wBreedMon1Nickname, MON_NAME_LENGTH);
+        break;
+    case PC_DEPOSIT:
+    case DAY_CARE_DEPOSIT:
+        // LD_HL(wPartyMonNicknames);
+        CopyBytes_Conv2(de_ot, wram->wPartyMonNickname[wram->wCurPartyMon], MON_NAME_LENGTH);
+        break;
+    }
+
+// okay11:
+    // LD_A_addr(wCurPartyMon);
+    // CALL(aSkipNames);
+
+// okay12:
+    // LD_BC(MON_NAME_LENGTH);
+    // CALL(aCopyBytes);
+    // POP_HL;
+
+    // LD_A_addr(wPokemonWithdrawDepositParameter);
+    switch(param) {
+    // CP_A(PC_DEPOSIT);
+    // IF_Z goto took_out_of_box;
+    case PC_DEPOSIT:
+    // took_out_of_box:
+        // LD_A_addr(sBoxCount);
+        // DEC_A;
+        // LD_B_A;
+        // CALL(aRestorePPOfDepositedPokemon);
+        RestorePPOfDepositedPokemon(gb_read(sBoxCount) - 1);
+        break;
+    // CP_A(DAY_CARE_DEPOSIT);
+    // JP_Z (mSendGetMonIntoFromBox_CloseSRAM_And_ClearCarryFlag);
+    case DAY_CARE_DEPOSIT:
+        break;
+    default: {
+        // PUSH_HL;
+        // SRL_A;
+        // ADD_A(0x2);
+        // LD_addr_A(wMonType);
+        wram->wMonType = (param >> 1) + 0x2;
+        // PREDEF(pCopyMonToTempMon);
+        CopyMonToTempMon_Conv();
+        // CALLFAR(aCalcLevel);
+        // LD_A_D;
+        // LD_addr_A(wCurPartyLevel);
+        wram->wCurPartyLevel = CalcLevel_Conv(&wram->wTempMon);
+        // POP_HL;
+
+        // LD_B_H;
+        // LD_C_L;
+        // LD_HL(MON_LEVEL);
+        // ADD_HL_BC;
+        // LD_hl_A;
+        pmon->mon.level = wram->wCurPartyLevel;
+        // LD_HL(MON_MAXHP);
+        // ADD_HL_BC;
+        // LD_D_H;
+        // LD_E_L;
+        // LD_HL(MON_STAT_EXP - 1);
+        // ADD_HL_BC;
+
+        // PUSH_BC;
+        // LD_B(TRUE);
+        // CALL(aCalcMonStats);
+        uint16_t* stats = (uint16_t*)(((uint8_t*)pmon) + offsetof(struct PartyMon, stats));
+        uint16_t* statExp = (uint16_t*)(((uint8_t*)pmon) + offsetof(struct BoxMon, statExp));
+        CalcMonStats_Conv(stats, statExp, pmon->mon.DVs, TRUE);
+        // POP_BC;
+
+        // LD_A_addr(wPokemonWithdrawDepositParameter);
+        // AND_A_A;
+        // IF_NZ goto CloseSRAM_And_ClearCarryFlag;
+        if(param != PC_WITHDRAW)
+            break;
+        // LD_HL(MON_STATUS);
+        // ADD_HL_BC;
+        // XOR_A_A;
+        // LD_hl_A;
+        pmon->status = 0;
+        // LD_HL(MON_HP);
+        // ADD_HL_BC;
+        // LD_D_H;
+        // LD_E_L;
+        // LD_A_addr(wCurPartySpecies);
+        // CP_A(EGG);
+        // IF_Z goto egg;
+        if(wram->wCurPartySpecies != EGG) {
+            // INC_HL;
+            // INC_HL;
+            // LD_A_hli;
+            // LD_de_A;
+            // LD_A_hl;
+            // INC_DE;
+            // LD_de_A;
+            pmon->HP = pmon->maxHP;
+            break;
+        }
+
+    // egg:
+        // XOR_A_A;
+        // LD_de_A;
+        // INC_DE;
+        // LD_de_A;
+        pmon->HP = 0;
+    } break;
+    }
+
+// CloseSRAM_And_ClearCarryFlag:
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // AND_A_A;
+    // RET;
+    return false;
+}
+
+bool CloseSRAM_And_SetCarryFlag(void){
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // SCF;
+    // RET;
+    return true;
 }
 
 void RestorePPOfDepositedPokemon(uint8_t b){

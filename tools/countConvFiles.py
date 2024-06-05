@@ -92,4 +92,18 @@ for k, v in counts.items():
     print(f'{k}: {v[0]:02}/{v[1]:02} converted ({(v[0] / v[1]) * 100:.2f}%)')
 
 print()
+
+l = []
+for k, v in counts.items():
+    if v[1] - v[0] == 0:
+        continue
+    l.append([k, v[1]-v[0]])
+
+l.sort(key=lambda e: e[1], reverse=True)
+
+for n in l:
+    print(f'{n[0]}: {n[1]} left')
+
+print()
+
 print(f"Total: {converted_total:02}/{file_total:02} converted ({(converted_total / file_total) * 100:.2f}%)")

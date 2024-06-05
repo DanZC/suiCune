@@ -4,7 +4,7 @@ void ChangeBoxSaveGame(void);
 bool Link_SaveGame(void);
 void MoveMonWOMail_SaveGame(void);
 void MoveMonWOMail_InsertMon_SaveGame(void);
-void StartMoveMonWOMail_SaveGame(void);
+bool StartMoveMonWOMail_SaveGame(void);
 void PauseGameLogic(void);
 void ResumeGameLogic(void);
 void AddHallOfFameEntry(void);

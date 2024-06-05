@@ -485,35 +485,50 @@ const char PokedexQuestionMarkPalette[] = "gfx/pokedex/question_mark.pal";
 const char PokedexCursorPalette[] = "gfx/pokedex/cursor.pal";
 
 void v_CGB_BillsPC(void){
-    LD_DE(wBGPals1);
-    LD_A(PREDEFPAL_POKEDEX);
-    CALL(aGetPredefPal);
-    CALL(aLoadHLPaletteIntoDE);
-    LD_A_addr(wCurPartySpecies);
-    CP_A(0xff);
-    IF_NZ goto GetMonPalette;
-    LD_HL(mBillsPCOrangePalette);
-    CALL(aLoadHLPaletteIntoDE);
-    goto GotPalette;
+    uint16_t buffer[NUM_PAL_COLORS];
+    // LD_DE(wBGPals1);
+    uint16_t* de = (uint16_t*)wram_ptr(wBGPals1);
+    // LD_A(PREDEFPAL_POKEDEX);
+    // CALL(aGetPredefPal);
+    // CALL(aLoadHLPaletteIntoDE);
+    LoadHLPaletteIntoDE_Conv(de, GetPredefPal_Conv(PREDEFPAL_POKEDEX));
+    de += NUM_PAL_COLORS;
+    // LD_A_addr(wCurPartySpecies);
+    // CP_A(0xff);
+    // IF_NZ goto GetMonPalette;
+    if(wram->wCurPartySpecies == (species_t)-1) {
+        // LD_HL(mBillsPCOrangePalette);
+        // CALL(aLoadHLPaletteIntoDE);
+        LoadHLPaletteIntoDE_Conv(de, BillsPCOrangePalette);
+        de += NUM_PAL_COLORS;
+        // goto GotPalette;
+    }
+    else {
+    // GetMonPalette:
+        // LD_BC(wTempMonDVs);
+        // CALL(aGetPlayerOrMonPalettePointer);
+        // CALL(aLoadPalette_White_Col1_Col2_Black);
+        de = LoadPalette_White_Col1_Col2_Black_Conv(de, GetPlayerOrMonPalettePointer_Conv(buffer, wram->wCurPartySpecies, wram->wTempMon.mon.DVs));
+    }
 
-
-GetMonPalette:
-    LD_BC(wTempMonDVs);
-    CALL(aGetPlayerOrMonPalettePointer);
-    CALL(aLoadPalette_White_Col1_Col2_Black);
-
-GotPalette:
-    CALL(aWipeAttrmap);
-    hlcoord(1, 4, wAttrmap);
-    LD_BC((7 << 8) | 7);
-    LD_A(0x1);  // mon palette
-    CALL(aFillBoxCGB);
-    CALL(aInitPartyMenuOBPals);
-    CALL(aApplyAttrmap);
-    CALL(aApplyPals);
-    LD_A(TRUE);
-    LDH_addr_A(hCGBPalUpdate);
-    RET;
+// GotPalette:
+    // CALL(aWipeAttrmap);
+    WipeAttrmap();
+    // hlcoord(1, 4, wAttrmap);
+    // LD_BC((7 << 8) | 7);
+    // LD_A(0x1);  // mon palette
+    // CALL(aFillBoxCGB);
+    FillBoxCGB_Conv(coord(1, 4, wram->wAttrmap), 7, 7, 0x1);
+    // CALL(aInitPartyMenuOBPals);
+    InitPartyMenuOBPals();
+    // CALL(aApplyAttrmap);
+    ApplyAttrmap_Conv();
+    // CALL(aApplyPals);
+    ApplyPals_Conv();
+    // LD_A(TRUE);
+    // LDH_addr_A(hCGBPalUpdate);
+    hram->hCGBPalUpdate = TRUE;
+    // RET;
 
 }
 
@@ -545,31 +560,45 @@ GotPalette:
 
 }
 
-void BillsPCOrangePalette(void){
+const uint16_t BillsPCOrangePalette[] = {
 // INCLUDE "gfx/pc/orange.pal"
-
-    return v_CGB_PokedexUnownMode();
-}
+    rgb(31, 15,  0),
+    rgb(23, 12,  0),
+    rgb(15,  7,  0),
+    rgb( 0,  0,  0),
+};
 
 void v_CGB_PokedexUnownMode(void){
-    LD_DE(wBGPals1);
-    LD_A(PREDEFPAL_POKEDEX);
-    CALL(aGetPredefPal);
-    CALL(aLoadHLPaletteIntoDE);
-    LD_A_addr(wCurPartySpecies);
-    CALL(aGetMonPalettePointer);
-    CALL(aLoadPalette_White_Col1_Col2_Black);
-    CALL(aWipeAttrmap);
-    hlcoord(7, 5, wAttrmap);
-    LD_BC((7 << 8) | 7);
-    LD_A(0x1);  // mon palette
-    CALL(aFillBoxCGB);
-    CALL(aInitPartyMenuOBPals);
-    CALL(aApplyAttrmap);
-    CALL(aApplyPals);
-    LD_A(TRUE);
-    LDH_addr_A(hCGBPalUpdate);
-    RET;
+    uint16_t buffer[NUM_PAL_COLORS];
+    // LD_DE(wBGPals1);
+    uint16_t* de = (uint16_t*)wram_ptr(wBGPals1);
+    // LD_A(PREDEFPAL_POKEDEX);
+    // CALL(aGetPredefPal);
+    // CALL(aLoadHLPaletteIntoDE);
+    LoadHLPaletteIntoDE_Conv(de, GetPredefPal_Conv(PREDEFPAL_POKEDEX));
+    de += NUM_PAL_COLORS;
+    // LD_A_addr(wCurPartySpecies);
+    // CALL(aGetMonPalettePointer);
+    LoadPaletteAssetColorsToArray(buffer, v_GetMonPalettePointer_Conv(wram->wCurPartySpecies), 0, 2);
+    // CALL(aLoadPalette_White_Col1_Col2_Black);
+    de = LoadPalette_White_Col1_Col2_Black_Conv(de, buffer);
+    // CALL(aWipeAttrmap);
+    WipeAttrmap();
+    // hlcoord(7, 5, wAttrmap);
+    // LD_BC((7 << 8) | 7);
+    // LD_A(0x1);  // mon palette
+    // CALL(aFillBoxCGB);
+    FillBoxCGB_Conv(coord(7, 5, wram->wAttrmap), 7, 7, 0x1);
+    // CALL(aInitPartyMenuOBPals);
+    InitPartyMenuOBPals();
+    // CALL(aApplyAttrmap);
+    ApplyAttrmap_Conv();
+    // CALL(aApplyPals);
+    ApplyPals_Conv();
+    // LD_A(TRUE);
+    // LDH_addr_A(hCGBPalUpdate);
+    hram->hCGBPalUpdate = TRUE;
+    // RET;
 
 }
 

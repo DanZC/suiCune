@@ -1,177 +1,241 @@
 #include "../../constants.h"
 #include "bills_pc_top.h"
+#include "bills_pc.h"
+#include "mail.h"
 #include "../../home/copy.h"
 #include "../../home/sram.h"
 #include "../../home/clear_sprites.h"
 #include "../../home/tilemap.h"
 #include "../../home/sprite_updates.h"
 #include "../../home/text.h"
+#include "../../home/menu.h"
+#include "../../home/gfx.h"
+#include "../../home/map.h"
+#include "../menus/save.h"
+#include "../../data/text/common.h"
+
+static bool v_BillsPC_Jumptable(uint8_t sel);
+
+static bool v_BillsPC_CheckCanUsePC(void) {
+    static const txt_cmd_s PCGottaHavePokemonText[] = {
+        text_far(v_PCGottaHavePokemonText)
+        text_end
+    };
+    // LD_A_addr(wPartyCount);
+    // AND_A_A;
+    // RET_NZ ;
+    if(wram->wPartyCount != 0)
+        return true;
+    // LD_HL(mv_BillsPC_PCGottaHavePokemonText);
+    // CALL(aMenuTextboxBackup);
+    MenuTextboxBackup_Conv(PCGottaHavePokemonText);
+    // SCF;
+    // RET;
+    return false;
+}
+
+static void v_BillsPC_LogIn(void) {
+    static txt_cmd_s PCWhatText[] = {
+        text_far(v_PCWhatText)
+        text_end
+    };
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    // CALL(aLoadStandardMenuHeader);
+    LoadStandardMenuHeader_Conv();
+    // CALL(aClearPCItemScreen);
+    ClearPCItemScreen();
+    // LD_HL(wOptions);
+    // LD_A_hl;
+    // PUSH_AF;
+    uint8_t options = wram->wOptions;
+    // SET_hl(NO_TEXT_SCROLL);
+    bit_set(wram->wOptions, NO_TEXT_SCROLL);
+    // LD_HL(mv_BillsPC_PCWhatText);
+    // CALL(aPrintText);
+    PrintText_Conv2(PCWhatText);
+    // POP_AF;
+    // LD_addr_A(wOptions);
+    wram->wOptions = options;
+    // CALL(aLoadFontsBattleExtra);
+    LoadFontsBattleExtra_Conv();
+    // RET;
+}
+
+static void v_BillsPC_LogOut(void) {
+    // CALL(aCloseSubmenu);
+    CloseSubmenu_Conv();
+    // RET;
+}
+
+static const struct MenuHeader v_BillsPC_MenuHeader = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(0, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1),
+    //dw ['.MenuData'];
+    .data = &(struct MenuData) {
+        .flags = STATICMENU_CURSOR,  // flags
+        .setupMenu = {
+            .count = 0,  // items
+            //dw ['.items'];
+            .itemList = (const uint8_t*[]) {
+                (const uint8_t[]){
+                    5,  // # items
+                    0,  // WITHDRAW
+                    1,  // DEPOSIT
+                    2,  // CHANGE BOX
+                    3,  // MOVE PKMN
+                    4,  // SEE YA!
+                    (uint8_t)-1,
+                }
+            },
+            //dw ['PlaceMenuStrings'];
+            .displayFunction = PlaceMenuStrings_Conv,
+            //dw ['.strings'];
+            .stringsList = (const char*[]) {
+            // strings:
+                "WITHDRAW <PK><MN>@",
+                "DEPOSIT <PK><MN>@",
+                "CHANGE BOX@",
+                "MOVE <PK><MN> W/O MAIL@",
+                "SEE YA!@",
+            },
+        },
+    },
+    .defaultOption = 1,  // default option
+};
+
+static void v_BillsPC_UseBillsPC(void) {
+    // LD_HL(mv_BillsPC_MenuHeader);
+    // CALL(aLoadMenuHeader);
+    LoadMenuHeader_Conv2(&v_BillsPC_MenuHeader);
+    // LD_A(0x1);
+    uint8_t a = 0x1;
+
+    bool quit;
+    do {
+    // loop:
+        // LD_addr_A(wMenuCursorPosition);
+        wram->wMenuCursorPosition = a;
+        // CALL(aSetPalettes);
+        // XOR_A_A;
+        // LD_addr_A(wWhichIndexSet);
+        wram->wWhichIndexSet = 0;
+        // LDH_addr_A(hBGMapMode);
+        hram->hBGMapMode = 0;
+        // CALL(aDoNthMenu);
+        u8_flag_s menuRes = DoNthMenu_Conv();
+        // IF_C goto cancel;
+        if(menuRes.flag)
+            break;
+        // LD_A_addr(wMenuCursorPosition);
+        // PUSH_AF;
+        a = wram->wMenuCursorPosition;
+        // LD_A_addr(wMenuSelection);
+        // LD_HL(mv_BillsPC_Jumptable);
+        // RST(aJumpTable);
+        quit = v_BillsPC_Jumptable(wram->wMenuSelection);
+        // POP_BC;
+        // LD_A_B;
+        // IF_NC goto loop;
+    } while(!quit);
+
+// cancel:
+    // CALL(aCloseWindow);
+    CloseWindow_Conv2();
+    // RET;
+}
 
 void v_BillsPC(void){
-    CALL(av_BillsPC_CheckCanUsePC);
-    RET_C ;
-    CALL(av_BillsPC_LogIn);
-    CALL(av_BillsPC_UseBillsPC);
-    JP(mv_BillsPC_LogOut);
-
-
-CheckCanUsePC:
-    LD_A_addr(wPartyCount);
-    AND_A_A;
-    RET_NZ ;
-    LD_HL(mv_BillsPC_PCGottaHavePokemonText);
-    CALL(aMenuTextboxBackup);
-    SCF;
-    RET;
-
-
-PCGottaHavePokemonText:
-    //text_far ['_PCGottaHavePokemonText']
-    //text_end ['?']
-
-
-LogIn:
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    CALL(aLoadStandardMenuHeader);
-    CALL(aClearPCItemScreen);
-    LD_HL(wOptions);
-    LD_A_hl;
-    PUSH_AF;
-    SET_hl(NO_TEXT_SCROLL);
-    LD_HL(mv_BillsPC_PCWhatText);
-    CALL(aPrintText);
-    POP_AF;
-    LD_addr_A(wOptions);
-    CALL(aLoadFontsBattleExtra);
-    RET;
-
-
-PCWhatText:
-    //text_far ['_PCWhatText']
-    //text_end ['?']
-
-
-LogOut:
-    CALL(aCloseSubmenu);
-    RET;
-
-
-UseBillsPC:
-    LD_HL(mv_BillsPC_MenuHeader);
-    CALL(aLoadMenuHeader);
-    LD_A(0x1);
-
-loop:
-    LD_addr_A(wMenuCursorPosition);
-    CALL(aSetPalettes);
-    XOR_A_A;
-    LD_addr_A(wWhichIndexSet);
-    LDH_addr_A(hBGMapMode);
-    CALL(aDoNthMenu);
-    IF_C goto cancel;
-    LD_A_addr(wMenuCursorPosition);
-    PUSH_AF;
-    LD_A_addr(wMenuSelection);
-    LD_HL(mv_BillsPC_Jumptable);
-    RST(aJumpTable);
-    POP_BC;
-    LD_A_B;
-    IF_NC goto loop;
-
-cancel:
-    CALL(aCloseWindow);
-    RET;
-
-
-MenuHeader:
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['0', '0', 'SCREEN_WIDTH - 1', 'SCREEN_HEIGHT - 1'];
-    //dw ['.MenuData'];
-    //db ['1'];  // default option
-
-
-MenuData:
-    //db ['STATICMENU_CURSOR'];  // flags
-    //db ['0'];  // items
-    //dw ['.items'];
-    //dw ['PlaceMenuStrings'];
-    //dw ['.strings'];
-
-
-strings:
-    //db ['"WITHDRAW <PK><MN>@"'];
-    //db ['"DEPOSIT <PK><MN>@"'];
-    //db ['"CHANGE BOX@"'];
-    //db ['"MOVE <PK><MN> W/O MAIL@"'];
-    //db ['"SEE YA!@"'];
-
-
-Jumptable:
-    //dw ['BillsPC_WithdrawMenu'];
-    //dw ['BillsPC_DepositMenu'];
-    //dw ['BillsPC_ChangeBoxMenu'];
-    //dw ['BillsPC_MovePKMNMenu'];
-    //dw ['BillsPC_SeeYa'];
-
-
-items:
-    //db ['5'];  // # items
-    //db ['0'];  // WITHDRAW
-    //db ['1'];  // DEPOSIT
-    //db ['2'];  // CHANGE BOX
-    //db ['3'];  // MOVE PKMN
-    //db ['4'];  // SEE YA!
-    //db ['-1'];
-
-    return BillsPC_SeeYa();
+    // CALL(av_BillsPC_CheckCanUsePC);
+    // RET_C ;
+    if(!v_BillsPC_CheckCanUsePC())
+        return;
+    // CALL(av_BillsPC_LogIn);
+    v_BillsPC_LogIn();
+    // CALL(av_BillsPC_UseBillsPC);
+    v_BillsPC_UseBillsPC();
+    // JP(mv_BillsPC_LogOut);
+    return v_BillsPC_LogOut();
 }
 
-void BillsPC_SeeYa(void){
-    SCF;
-    RET;
-
+static bool v_BillsPC_Jumptable(uint8_t sel) {
+    switch(sel) {
+    case 0:
+        //dw ['BillsPC_WithdrawMenu'];
+        return BillsPC_WithdrawMenu();
+    // case 1:
+    //     //dw ['BillsPC_DepositMenu'];
+    //     return BillsPC_DepositMenu();
+    // case 2:
+    //     //dw ['BillsPC_ChangeBoxMenu'];
+    //     return BillsPC_ChangeBoxMenu();
+    // case 3:
+    //     //dw ['BillsPC_MovePKMNMenu'];
+    //     return BillsPC_MovePKMNMenu();
+    default:
+        //dw ['BillsPC_SeeYa'];
+        return BillsPC_SeeYa();
+    }
 }
 
-void BillsPC_MovePKMNMenu(void){
-    CALL(aLoadStandardMenuHeader);
-    FARCALL(aIsAnyMonHoldingMail);
-    IF_NC goto no_mail;
-    LD_HL(mBillsPC_MovePKMNMenu_PCMonHoldingMailText);
-    CALL(aPrintText);
-    goto quit;
-
-
-no_mail:
-    FARCALL(aStartMoveMonWOMail_SaveGame);
-    IF_C goto quit;
-    FARCALL(av_MovePKMNWithoutMail);
-    CALL(aReturnToMapFromSubmenu);
-    CALL(aClearPCItemScreen);
-
-
-quit:
-    CALL(aCloseWindow);
-    AND_A_A;
-    RET;
-
-
-PCMonHoldingMailText:
-    //text_far ['_PCMonHoldingMailText']
-    //text_end ['?']
-
-    return BillsPC_DepositMenu();
+bool BillsPC_SeeYa(void){
+    // SCF;
+    // RET;
+    return true;
 }
 
-void BillsPC_DepositMenu(void){
-    CALL(aLoadStandardMenuHeader);
-    FARCALL(av_DepositPKMN);
-    CALL(aReturnToMapFromSubmenu);
-    CALL(aClearPCItemScreen);
-    CALL(aCloseWindow);
-    AND_A_A;
-    RET;
+bool BillsPC_MovePKMNMenu(void){
+    static const txt_cmd_s PCMonHoldingMailText[] = {
+        text_far(v_PCMonHoldingMailText)
+        text_end
+    };
+    // CALL(aLoadStandardMenuHeader);
+    LoadStandardMenuHeader_Conv();
+    // FARCALL(aIsAnyMonHoldingMail);
+    // IF_NC goto no_mail;
+    if(IsAnyMonHoldingMail_Conv()) {
+        // LD_HL(mBillsPC_MovePKMNMenu_PCMonHoldingMailText);
+        // CALL(aPrintText);
+        PrintText_Conv2(PCMonHoldingMailText);
+        // goto quit;
+    }
+    else {
+    // no_mail:
+        // FARCALL(aStartMoveMonWOMail_SaveGame);
+        // IF_C goto quit;
+        if(StartMoveMonWOMail_SaveGame()) {
+            // FARCALL(av_MovePKMNWithoutMail);
+            SafeCallGBAuto(av_MovePKMNWithoutMail);
+            // CALL(aReturnToMapFromSubmenu);
+            ReturnToMapFromSubmenu();
+            // CALL(aClearPCItemScreen);
+            ClearPCItemScreen();
+        }
+    }
 
+// quit:
+    // CALL(aCloseWindow);
+    CloseWindow_Conv2();
+    // AND_A_A;
+    // RET;
+    return false;
+}
+
+bool BillsPC_DepositMenu(void){
+    // CALL(aLoadStandardMenuHeader);
+    LoadStandardMenuHeader_Conv();
+    // FARCALL(av_DepositPKMN);
+    v_DepositPKMN();
+    // CALL(aReturnToMapFromSubmenu);
+    ReturnToMapFromSubmenu();
+    // CALL(aClearPCItemScreen);
+    ClearPCItemScreen();
+    // CALL(aCloseWindow);
+    CloseWindow_Conv2();
+    // AND_A_A;
+    // RET;
+    return false;
 }
 
 void BillsPC_Deposit_CheckPartySize(void){
@@ -288,15 +352,20 @@ bool CheckCurPartyMonFainted_Conv(void){
     return true;
 }
 
-void BillsPC_WithdrawMenu(void){
-    CALL(aLoadStandardMenuHeader);
-    FARCALL(av_WithdrawPKMN);
-    CALL(aReturnToMapFromSubmenu);
-    CALL(aClearPCItemScreen);
-    CALL(aCloseWindow);
-    AND_A_A;
-    RET;
-
+bool BillsPC_WithdrawMenu(void){
+    // CALL(aLoadStandardMenuHeader);
+    LoadStandardMenuHeader_Conv();
+    // FARCALL(av_WithdrawPKMN);
+    SafeCallGBAuto(av_WithdrawPKMN);
+    // CALL(aReturnToMapFromSubmenu);
+    ReturnToMapFromSubmenu();
+    // CALL(aClearPCItemScreen);
+    ClearPCItemScreen();
+    // CALL(aCloseWindow);
+    CloseWindow_Conv2();
+    // AND_A_A;
+    // RET;
+    return false;
 }
 
 void BillsPC_Withdraw_CheckPartySize(void){
@@ -319,15 +388,14 @@ party_full:
 void PCCantTakeText(void){
     //text_far ['_PCCantTakeText']
     //text_end ['?']
-
-    return BillsPC_ChangeBoxMenu();
 }
 
-void BillsPC_ChangeBoxMenu(void){
-    FARCALL(av_ChangeBox);
-    AND_A_A;
-    RET;
-
+bool BillsPC_ChangeBoxMenu(void){
+    // FARCALL(av_ChangeBox);
+    SafeCallGBAuto(av_ChangeBox);
+    // AND_A_A;
+    // RET;
+    return false;
 }
 
 void ClearPCItemScreen(void){
@@ -380,14 +448,14 @@ void CopyBoxmonToTempMon_Conv(void){
     // LD_HL(sBoxMon1Species);
     // LD_BC(BOXMON_STRUCT_LENGTH);
     // CALL(aAddNTimes);
-    uint16_t hl = sBoxMon1Species + wram->wCurPartyMon * BOXMON_STRUCT_LENGTH;
+    struct BoxMon* hl = (struct BoxMon*)GBToRAMAddr(sBoxMon1Species + wram->wCurPartyMon * BOXMON_STRUCT_LENGTH);
     // LD_DE(wTempMonSpecies);
     // LD_BC(BOXMON_STRUCT_LENGTH);
     // LD_A(BANK(sBoxMon1Species));
     // CALL(aOpenSRAM);
     OpenSRAM_Conv(MBANK(sBoxMon1Species));
     // CALL(aCopyBytes);
-    CopyBytes_Conv(wTempMonSpecies, hl, BOXMON_STRUCT_LENGTH);
+    CopyBytes_Conv2(&wram->wTempMon.mon, hl, sizeof(*hl));
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // RET;
