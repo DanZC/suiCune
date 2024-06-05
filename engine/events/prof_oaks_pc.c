@@ -183,6 +183,7 @@ void FindOakRating(uint8_t caught, uint16_t* sfx, const txt_cmd_s** txt){
             // LD_L_A;
             *txt = OakRatings[i].text;
             // RET;
+            return;
         }
         // for(int rept = 0; rept < 4; rept++){
         // INC_HL;
