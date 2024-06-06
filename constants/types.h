@@ -1442,7 +1442,7 @@ struct MenuData {
             uint8_t cols;
             uint8_t rows;
             uint8_t format;
-            uint8_t* list;
+            const uint8_t* list;
             void (*const func1)(const struct MenuData*, tile_t*);
             void (*const func2)(const struct MenuData*, tile_t*);
             void (*const func3)(void);

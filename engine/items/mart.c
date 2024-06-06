@@ -1062,7 +1062,7 @@ const struct MenuHeader MenuHeader_Buy = {
             .rows=4, .cols=8,  // rows, columns
             .format=SCROLLINGMENU_ITEMS_NORMAL,  // item format
             //dbw ['0', 'wCurMartCount']
-            .list=(uint8_t*)&sCurMart.count,
+            .list=&sCurMart.count,
             //dba ['PlaceMenuItemName']
             .func1=PlaceMenuItemName_Conv,
             //dba ['.PrintBCDPrices']

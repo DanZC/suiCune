@@ -167,9 +167,9 @@ static bool v_BillsPC_Jumptable(uint8_t sel) {
     // case 1:
     //     //dw ['BillsPC_DepositMenu'];
     //     return BillsPC_DepositMenu();
-    // case 2:
-    //     //dw ['BillsPC_ChangeBoxMenu'];
-    //     return BillsPC_ChangeBoxMenu();
+    case 2:
+        //dw ['BillsPC_ChangeBoxMenu'];
+        return BillsPC_ChangeBoxMenu();
     // case 3:
     //     //dw ['BillsPC_MovePKMNMenu'];
     //     return BillsPC_MovePKMNMenu();
@@ -392,7 +392,7 @@ void PCCantTakeText(void){
 
 bool BillsPC_ChangeBoxMenu(void){
     // FARCALL(av_ChangeBox);
-    SafeCallGBAuto(av_ChangeBox);
+    v_ChangeBox();
     // AND_A_A;
     // RET;
     return false;

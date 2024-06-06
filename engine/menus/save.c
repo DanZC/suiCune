@@ -110,31 +110,43 @@ void SaveAfterLinkTrade(void){
     // RET;
 }
 
-void ChangeBoxSaveGame(void){
-    PUSH_DE;
-    LD_HL(mChangeBoxSaveText);
-    CALL(aMenuTextbox);
-    CALL(aYesNoBox);
-    CALL(aExitMenu);
-    IF_C goto refused;
-    CALL(aAskOverwriteSaveFile);
-    IF_C goto refused;
-    CALL(aPauseGameLogic);
-    CALL(aSavingDontTurnOffThePower);
-    CALL(aSaveBox);
-    POP_DE;
-    LD_A_E;
-    LD_addr_A(wCurBox);
-    CALL(aLoadBox);
-    CALL(aSavedTheGame);
-    CALL(aResumeGameLogic);
-    AND_A_A;
-    RET;
+void ChangeBoxSaveGame(uint8_t box){
+    // PUSH_DE;
+    // LD_HL(mChangeBoxSaveText);
+    // CALL(aMenuTextbox);
+    MenuTextbox_Conv(ChangeBoxSaveText);
+    // CALL(aYesNoBox);
+    bool yes = YesNoBox_Conv();
+    // CALL(aExitMenu);
+    ExitMenu_Conv2();
+    // IF_C goto refused;
+    // CALL(aAskOverwriteSaveFile);
+    // IF_C goto refused;
+    if(yes && AskOverwriteSaveFile()) {
+        // CALL(aPauseGameLogic);
+        PauseGameLogic();
+        // CALL(aSavingDontTurnOffThePower);
+        SavingDontTurnOffThePower();
+        // CALL(aSaveBox);
+        SaveBox();
+        // POP_DE;
+        // LD_A_E;
+        // LD_addr_A(wCurBox);
+        wram->wCurBox = box;
+        // CALL(aLoadBox);
+        LoadBox();
+        // CALL(aSavedTheGame);
+        SavedTheGame();
+        // CALL(aResumeGameLogic);
+        ResumeGameLogic();
+        // AND_A_A;
+        // RET;
+        return;
+    }
 
-refused:
-    POP_DE;
-    RET;
-
+// refused:
+    // POP_DE;
+    // RET;
 }
 
 // Asks to save the game.

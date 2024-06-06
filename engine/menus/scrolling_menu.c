@@ -462,11 +462,11 @@ u8_flag_s ScrollingMenuJoyAction_Conv(const struct MenuData* data){
             // AND_A_A;
             // IF_Z goto xor_dec_up;
             if(wram->wMenuScrollPosition == 0)
-                return u8_flag(0xff, true);
+                return u8_flag(0xff, false);
             // DEC_hl;
             --wram->wMenuScrollPosition;
             // JP(mxor_a);
-            return u8_flag(D_UP, true);
+            return u8_flag(0, false);
 
         // xor_dec_up:
             // JP(mxor_a_dec_a);
@@ -488,11 +488,11 @@ u8_flag_s ScrollingMenuJoyAction_Conv(const struct MenuData* data){
             // CP_A_B;
             // IF_C goto xor_dec_down;
             if(wram->wScrollingMenuListSize < wram->wMenuScrollPosition + data->scrollingMenu.rows)
-                return u8_flag(0xff, true);
+                return u8_flag(0xff, false);
             // INC_hl;
             wram->wMenuScrollPosition++;
             // JP(mxor_a);
-            return u8_flag(D_DOWN, true);
+            return u8_flag(0, false);
 
         // xor_dec_down:
             // JP(mxor_a_dec_a);
@@ -626,7 +626,7 @@ void InitScrollingMenuCursor_Conv(const struct MenuData* data){
     // LD_A_hli;
     // LD_H_hl;
     // LD_L_A;
-    uint8_t* hl = data->scrollingMenu.list;
+    const uint8_t* hl = data->scrollingMenu.list;
     // LD_A_addr(wMenuData_ItemsPointerBank);
     // CALL(aGetFarByte);
     // LD_addr_A(wScrollingMenuListSize);
@@ -1321,7 +1321,7 @@ void ScrollingMenu_GetListItemCoordAndFunctionArgs_Conv(const struct MenuData* d
     // LD_H_hl;
     // LD_L_A;
     // INC_HL;  // items
-    uint8_t* items = data->scrollingMenu.list + 1;
+    const uint8_t* items = data->scrollingMenu.list + 1;
     // LD_A_addr(wMenuData_ScrollingMenuItemFormat);
     // CP_A(SCROLLINGMENU_ITEMS_NORMAL);
     // IF_Z goto got_spacing;

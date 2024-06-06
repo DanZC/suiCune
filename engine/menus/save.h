@@ -1,6 +1,6 @@
 bool SaveMenu(void);
 void SaveAfterLinkTrade(void);
-void ChangeBoxSaveGame(void);
+void ChangeBoxSaveGame(uint8_t box);
 bool Link_SaveGame(void);
 void MoveMonWOMail_SaveGame(void);
 void MoveMonWOMail_InsertMon_SaveGame(void);

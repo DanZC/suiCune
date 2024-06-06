@@ -683,7 +683,7 @@ void NamingScreen_ApplyTextInputMode(const char* de){
         // ADD_HL_DE;
         // LD_D_H;
         // LD_E_L;
-        de += (mBoxNameInputLower - mNameInputLower);
+        de += (BoxNameInputLower - NameInputLower);
     }
 
 // not_box:
@@ -762,7 +762,7 @@ static void NamingScreenJoypadLoop_Jumptable(void) {
         // CALL(aNamingScreen_IsTargetBox);
         // IF_NZ goto got_cursor_position;
         // LD_D(8 * 8);
-        uint16_t px = (NamingScreen_IsTargetBox())? pixel2(8*8, 3): pixel2(10, 3);
+        uint16_t px = (NamingScreen_IsTargetBox())? pixel2(8, 3): pixel2(10, 3);
 
     // got_cursor_position:
         // LD_A(SPRITE_ANIM_INDEX_NAMING_SCREEN_CURSOR);

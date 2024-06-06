@@ -6,6 +6,8 @@
 #include "stats_screen.h"
 #include "move_mon.h"
 #include "../gfx/load_pics.h"
+#include "../menus/save.h"
+#include "../menus/naming_screen.h"
 #include "../../home/pokemon.h"
 #include "../../home/copy.h"
 #include "../../home/text.h"
@@ -20,6 +22,10 @@
 #include "../../home/joypad.h"
 #include "../../home/names.h"
 #include "../../home/menu.h"
+#include "../../home/scrolling_menu.h"
+#include "../../home/print_text.h"
+#include "../../home/string.h"
+#include "../../home/copy_name.h"
 
 static void v_DepositPKMN_RunJumptable(void);
 
@@ -3483,81 +3489,105 @@ void PCString_PartyFull(void){
 const char PCString_NoReleasingEGGS[] = "No releasing EGGS!@";
 
 void v_ChangeBox(void){
-    CALL(aLoadStandardMenuHeader);
-    CALL(aBillsPC_ClearTilemap);
+    // CALL(aLoadStandardMenuHeader);
+    LoadStandardMenuHeader_Conv();
+    // CALL(aBillsPC_ClearTilemap);
+    BillsPC_ClearTilemap();
 
-loop:
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    CALL(aBillsPC_PrintBoxName);
-    CALL(aBillsPC_PlaceChooseABoxString);
-    LD_HL(mv_ChangeBox_MenuHeader);
-    CALL(aCopyMenuHeader);
-    XOR_A_A;
-    LD_addr_A(wMenuScrollPosition);
-    hlcoord(0, 4, wTilemap);
-    LD_BC((8 << 8) | 9);
-    CALL(aTextbox);
-    CALL(aScrollingMenu);
-    LD_A_addr(wMenuJoypad);
-    CP_A(B_BUTTON);
-    IF_Z goto done;
-    CALL(aBillsPC_PlaceWhatsUpString);
-    CALL(aBillsPC_ChangeBoxSubmenu);
-    goto loop;
+    while(1) {
+    // loop:
+        // XOR_A_A;
+        // LDH_addr_A(hBGMapMode);
+        hram->hBGMapMode = 0x0;
+        // CALL(aBillsPC_PrintBoxName);
+        BillsPC_PrintBoxName();
+        // CALL(aBillsPC_PlaceChooseABoxString);
+        BillsPC_PlaceChooseABoxString();
+        // LD_HL(mv_ChangeBox_MenuHeader);
+        // CALL(aCopyMenuHeader);
+        CopyMenuHeader_Conv2(&v_ChangeBox_MenuHeader);
+        // XOR_A_A;
+        // LD_addr_A(wMenuScrollPosition);
+        wram->wMenuScrollPosition = 0;
+        // hlcoord(0, 4, wTilemap);
+        // LD_BC((8 << 8) | 9);
+        // CALL(aTextbox);
+        Textbox_Conv2(coord(0, 4, wram->wTilemap), 8, 9);
+        // CALL(aScrollingMenu);
+        uint8_t joypad = ScrollingMenu_Conv();
+        // LD_A_addr(wMenuJoypad);
+        // CP_A(B_BUTTON);
+        // IF_Z goto done;
+        if(joypad == B_BUTTON)
+            break;
+        // CALL(aBillsPC_PlaceWhatsUpString);
+        BillsPC_PlaceWhatsUpString();
+        // CALL(aBillsPC_ChangeBoxSubmenu);
+        BillsPC_ChangeBoxSubmenu();
+        // goto loop;
+    }
 
-done:
-    CALL(aCloseWindow);
-    RET;
-
+// done:
+    // CALL(aCloseWindow);
+    CloseWindow_Conv2();
+    // RET;
 }
 
 void BillsPC_ClearTilemap(void){
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    hlcoord(0, 0, wTilemap);
-    LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
-    LD_A(0x7f);
-    CALL(aByteFill);
-    RET;
-
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0x0;
+    // hlcoord(0, 0, wTilemap);
+    // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
+    // LD_A(0x7f);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
+    // RET;
 }
 
-void v_ChangeBox_MenuHeader(void){
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['1', '5', '9', '12'];
-    //dw ['.MenuData'];
-    //db ['1'];  // default option
-
-
-MenuData:
-    //db ['SCROLLINGMENU_CALL_FUNCTION3_NO_SWITCH | SCROLLINGMENU_ENABLE_FUNCTION3'];  // flags
-    //db ['4', '0'];  // rows, columns
-    //db ['SCROLLINGMENU_ITEMS_NORMAL'];  // item format
-    //dba ['.Boxes']
-    //dba ['.PrintBoxNames']
-    //dba ['NULL']
-    //dba ['BillsPC_PrintBoxCountAndCapacity']
-
-
-Boxes:
-    //db ['NUM_BOXES'];
-    for(int x = 0; x < NUM_BOXES; x++){
+static const uint8_t v_ChangeBox_MenuHeader_Boxes[] = {
+    NUM_BOXES,
+    // for(int x = 0; x < NUM_BOXES; x++){
     //db ['x + 1'];
-    }
-    //db ['-1'];
+    // }
+    1,2,3,4,5,6,7,8,9,10,11,12,13,14,
+    (uint8_t)-1,
+};
 
-
-PrintBoxNames:
-    PUSH_DE;
-    LD_A_addr(wMenuSelection);
-    DEC_A;
-    CALL(aGetBoxName);
-    POP_HL;
-    CALL(aPlaceString);
-    RET;
-
+static void v_ChangeBox_MenuHeader_PrintBoxNames(const struct MenuData* data, tile_t* hl) {
+    (void)data;
+    // PUSH_DE;
+    // LD_A_addr(wMenuSelection);
+    // DEC_A;
+    // CALL(aGetBoxName);
+    // POP_HL;
+    // CALL(aPlaceString);
+    PlaceStringSimple(GetBoxName_Conv(wram->wMenuSelection - 1), hl);
+    // RET;
 }
+
+const struct MenuHeader v_ChangeBox_MenuHeader = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(1, 5, 9, 12),
+    //dw ['.MenuData'];
+    .data = &(struct MenuData) {
+    // MenuData:
+        .flags = SCROLLINGMENU_CALL_FUNCTION3_NO_SWITCH | SCROLLINGMENU_ENABLE_FUNCTION3,  // flags
+        .scrollingMenu = {
+            .rows = 4, .cols = 0,  // rows, columns
+            .format = SCROLLINGMENU_ITEMS_NORMAL,  // item format
+            .list = v_ChangeBox_MenuHeader_Boxes,
+            //dba ['.PrintBoxNames']
+            .func1 = v_ChangeBox_MenuHeader_PrintBoxNames,
+            //dba ['NULL']
+            .func2 = NULL,
+            //dba ['BillsPC_PrintBoxCountAndCapacity']
+            .func3 = BillsPC_PrintBoxCountAndCapacity,
+        },
+    },
+    .defaultOption = 1,  // default option
+
+};
 
 void GetBoxName(void){
     LD_BC(BOX_NAME_LENGTH);
@@ -3569,253 +3599,283 @@ void GetBoxName(void){
 
 }
 
-void BillsPC_PrintBoxCountAndCapacity(void){
-    hlcoord(11, 7, wTilemap);
-    LD_BC((5 << 8) | 7);
-    CALL(aTextbox);
-    LD_A_addr(wMenuSelection);
-    CP_A(-1);
-    RET_Z ;
-    hlcoord(12, 9, wTilemap);
-    LD_DE(mBillsPC_PrintBoxCountAndCapacity_Pokemon);
-    CALL(aPlaceString);
-    CALL(aGetBoxCount);
-    LD_addr_A(wTextDecimalByte);
-    hlcoord(13, 11, wTilemap);
-    LD_DE(wTextDecimalByte);
-    LD_BC((1 << 8) | 2);
-    CALL(aPrintNum);
-    LD_DE(mBillsPC_PrintBoxCountAndCapacity_OutOf20);
-    CALL(aPlaceString);
-    RET;
-
-
-Pokemon:
-    //db ['"#MON@"'];
-
-
-OutOf20:
-    //db ['"/{d:MONS_PER_BOX}@"'];  // "/20@"
-
-    return GetBoxCount();
+uint8_t* GetBoxName_Conv(uint8_t a){
+    // LD_BC(BOX_NAME_LENGTH);
+    // LD_HL(wBoxNames);
+    // CALL(aAddNTimes);
+    // LD_D_H;
+    // LD_E_L;
+    // RET;
+    return wram->wBoxNames + (BOX_NAME_LENGTH * a);
 }
 
-void GetBoxCount(void){
-    LD_A_addr(wCurBox);
-    LD_C_A;
-    LD_A_addr(wMenuSelection);
-    DEC_A;
-    CP_A_C;
-    IF_Z goto activebox;
-    LD_C_A;
-    LD_B(0);
-    LD_HL(mGetBoxCount_BoxBankAddresses);
-    ADD_HL_BC;
-    ADD_HL_BC;
-    ADD_HL_BC;
-    LD_A_hli;
-    LD_B_A;
-    CALL(aOpenSRAM);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    LD_A_hl;
-    CALL(aCloseSRAM);
-    LD_C_A;
-    LD_A_addr(wSavedAtLeastOnce);
-    AND_A_A;
-    IF_Z goto newfile;
-    LD_A_C;
-    RET;
+void BillsPC_PrintBoxCountAndCapacity(void){
+    static const char Pokemon[] = "#MON@";
+    static const char OutOf20[] = "/" _s(MONS_PER_BOX) "@";  // "/20@"
+    // hlcoord(11, 7, wTilemap);
+    // LD_BC((5 << 8) | 7);
+    // CALL(aTextbox);
+    Textbox_Conv2(coord(11, 7, wram->wTilemap), 5, 7);
+    // LD_A_addr(wMenuSelection);
+    // CP_A(-1);
+    // RET_Z ;
+    if(wram->wMenuSelection == (uint8_t)-1)
+        return;
+    // hlcoord(12, 9, wTilemap);
+    // LD_DE(mBillsPC_PrintBoxCountAndCapacity_Pokemon);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(Pokemon), coord(12, 9, wram->wTilemap));
+    // CALL(aGetBoxCount);
+    // LD_addr_A(wTextDecimalByte);
+    uint8_t count = GetBoxCount();
+    // hlcoord(13, 11, wTilemap);
+    // LD_DE(wTextDecimalByte);
+    // LD_BC((1 << 8) | 2);
+    // CALL(aPrintNum);
+    uint8_t* hl = PrintNum_Conv2(coord(13, 11, wram->wTilemap), &count, 1, 2);
+    // LD_DE(mBillsPC_PrintBoxCountAndCapacity_OutOf20);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(OutOf20), hl);
+    // RET;
+}
 
-
-newfile:
-    XOR_A_A;
-    RET;
-
-
-activebox:
-    LD_A(BANK(sBoxCount));
-    LD_B_A;
-    CALL(aOpenSRAM);
-    LD_HL(sBoxCount);
-    LD_A_hl;
-    CALL(aCloseSRAM);
-    RET;
-
-
-BoxBankAddresses:
-    //table_width ['3', 'GetBoxCount.BoxBankAddresses']
-    //dba ['sBox1']
-    //dba ['sBox2']
-    //dba ['sBox3']
-    //dba ['sBox4']
-    //dba ['sBox5']
-    //dba ['sBox6']
-    //dba ['sBox7']
-    //dba ['sBox8']
-    //dba ['sBox9']
-    //dba ['sBox10']
-    //dba ['sBox11']
-    //dba ['sBox12']
-    //dba ['sBox13']
-    //dba ['sBox14']
-    //assert_table_length ['NUM_BOXES']
-
-    return BillsPC_PrintBoxName();
+uint8_t GetBoxCount(void){
+    static const uint32_t BoxBankAddresses[] = {
+        //table_width ['3', 'GetBoxCount.BoxBankAddresses']
+        asBox1,
+        asBox2,
+        asBox3,
+        asBox4,
+        asBox5,
+        asBox6,
+        asBox7,
+        asBox8,
+        asBox9,
+        asBox10,
+        asBox11,
+        asBox12,
+        asBox13,
+        asBox14,
+    };
+    static_assert(lengthof(BoxBankAddresses) == NUM_BOXES, "");
+    // LD_A_addr(wCurBox);
+    // LD_C_A;
+    // LD_A_addr(wMenuSelection);
+    // DEC_A;
+    // CP_A_C;
+    uint8_t sel = wram->wMenuSelection - 1;
+    // IF_Z goto activebox;
+    if(sel == wram->wCurBox) {
+    // activebox:
+        // LD_A(BANK(sBoxCount));
+        // LD_B_A;
+        // CALL(aOpenSRAM);
+        OpenSRAM_Conv(MBANK(asBoxCount));
+        // LD_HL(sBoxCount);
+        // LD_A_hl;
+        uint8_t count = gb_read(sBoxCount);
+        // CALL(aCloseSRAM);
+        CloseSRAM_Conv();
+        // RET;
+        return count;
+    }
+    // LD_C_A;
+    // LD_B(0);
+    // LD_HL(mGetBoxCount_BoxBankAddresses);
+    // ADD_HL_BC;
+    // ADD_HL_BC;
+    // ADD_HL_BC;
+    uint32_t boxAddress = BoxBankAddresses[sel];
+    // LD_A_hli;
+    // LD_B_A;
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(boxAddress));
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // LD_A_hl;
+    uint8_t count = gb_read(boxAddress & 0xffff);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // LD_C_A;
+    // LD_A_addr(wSavedAtLeastOnce);
+    // AND_A_A;
+    // IF_Z goto newfile;
+    if(wram->wSavedAtLeastOnce == 0) {
+    // newfile:
+        // XOR_A_A;
+        // RET;
+        return 0;
+    }
+    // LD_A_C;
+    // RET;
+    return count;
 }
 
 void BillsPC_PrintBoxName(void){
-    hlcoord(0, 0, wTilemap);
-    LD_B(2);
-    LD_C(18);
-    CALL(aTextbox);
-    hlcoord(1, 2, wTilemap);
-    LD_DE(mBillsPC_PrintBoxName_Current);
-    CALL(aPlaceString);
-    LD_A_addr(wCurBox);
-    AND_A(0xf);
-    CALL(aGetBoxName);
-    hlcoord(11, 2, wTilemap);
-    CALL(aPlaceString);
-    RET;
-
-
-Current:
-    //db ['"CURRENT@"'];
-
-    return BillsPC_ChangeBoxSubmenu();
+    static const char Current[] = "CURRENT@";
+    // hlcoord(0, 0, wTilemap);
+    // LD_B(2);
+    // LD_C(18);
+    // CALL(aTextbox);
+    Textbox_Conv2(coord(0, 0, wram->wTilemap), 2, 18);
+    // hlcoord(1, 2, wTilemap);
+    // LD_DE(mBillsPC_PrintBoxName_Current);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(Current), coord(1, 2, wram->wTilemap));
+    // LD_A_addr(wCurBox);
+    // AND_A(0xf);
+    // CALL(aGetBoxName);
+    // hlcoord(11, 2, wTilemap);
+    // CALL(aPlaceString);
+    PlaceStringSimple(GetBoxName_Conv(wram->wCurBox & 0xf), coord(11, 2, wram->wTilemap));
+    // RET;
 }
 
+static const struct MenuHeader BillsPC_ChangeBoxSubmenu_MenuHeader = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(11, 4, SCREEN_WIDTH - 1, 13),
+    //dw ['.MenuData'];
+    .data = &(struct MenuData) {
+    // MenuData:
+        .flags = STATICMENU_CURSOR,  // flags
+        .verticalMenu = {
+            .count = 4,  // items
+            .options = (const char*[]) {
+                "SWITCH@",
+                "NAME@",
+                "PRINT@",
+                "QUIT@",
+            },
+        },
+    },
+    .defaultOption = 1,  // default option
+};
+
 void BillsPC_ChangeBoxSubmenu(void){
-    LD_HL(mBillsPC_ChangeBoxSubmenu_MenuHeader);
-    CALL(aLoadMenuHeader);
-    CALL(aVerticalMenu);
-    CALL(aExitMenu);
-    RET_C ;
-    LD_A_addr(wMenuCursorY);
-    CP_A(0x1);
-    IF_Z goto Switch;
-    CP_A(0x2);
-    IF_Z goto Name;
-    CP_A(0x3);
-    IF_Z goto Print;
-    AND_A_A;
-    RET;
-
-
-Print:
-    CALL(aGetBoxCount);
-    AND_A_A;
-    IF_Z goto EmptyBox;
-    LD_E_L;
-    LD_D_H;
-    LD_A_addr(wMenuSelection);
-    DEC_A;
-    LD_C_A;
-    FARCALL(aPrintPCBox);
-    CALL(aBillsPC_ClearTilemap);
-    AND_A_A;
-    RET;
-
-
-EmptyBox:
-    CALL(aBillsPC_PlaceEmptyBoxString_SFX);
-    AND_A_A;
-    RET;
-
-
-Switch:
-    LD_A_addr(wMenuSelection);
-    DEC_A;
-    LD_E_A;
-    LD_A_addr(wCurBox);
-    CP_A_E;
-    RET_Z ;
-    FARCALL(aChangeBoxSaveGame);
-    RET;
-
-
-Name:
-    LD_B(NAME_BOX);
-    LD_DE(wBoxNameBuffer);
-    FARCALL(aNamingScreen);
-    CALL(aClearTilemap);
-    CALL(aLoadStandardFont);
-    CALL(aLoadFontsBattleExtra);
-    LD_A_addr(wMenuSelection);
-    DEC_A;
-    CALL(aGetBoxName);
-    LD_E_L;
-    LD_D_H;
-    LD_HL(wBoxNameBuffer);
-    LD_C(BOX_NAME_LENGTH - 1);
-    CALL(aInitString);
-    LD_A_addr(wMenuSelection);
-    DEC_A;
-    CALL(aGetBoxName);
-    LD_DE(wBoxNameBuffer);
-    CALL(aCopyName2);
-    RET;
+    // LD_HL(mBillsPC_ChangeBoxSubmenu_MenuHeader);
+    // CALL(aLoadMenuHeader);
+    LoadMenuHeader_Conv2(&BillsPC_ChangeBoxSubmenu_MenuHeader);
+    // CALL(aVerticalMenu);
+    bool cancel = !VerticalMenu_Conv();
+    // CALL(aExitMenu);
+    ExitMenu_Conv2();
+    // RET_C ;
+    if(cancel)
+        return;
+    // LD_A_addr(wMenuCursorY);
+    switch(wram->wMenuCursorY) {
+    // CP_A(0x1);
+    // IF_Z goto Switch;
+    case 0x1:
+    // Switch:
+        // LD_A_addr(wMenuSelection);
+        // DEC_A;
+        // LD_E_A;
+        // LD_A_addr(wCurBox);
+        // CP_A_E;
+        // RET_Z ;
+        if(wram->wMenuSelection - 1 == wram->wCurBox)
+            return;
+        // FARCALL(aChangeBoxSaveGame);
+        ChangeBoxSaveGame(wram->wMenuSelection - 1);
+        // RET;
+        return;
+    // CP_A(0x2);
+    // IF_Z goto Name;
+    case 0x2: {
+    // Name:
+        // LD_B(NAME_BOX);
+        // LD_DE(wBoxNameBuffer);
+        // FARCALL(aNamingScreen);
+        NamingScreen_Conv(wram->wBoxNameBuffer, NAME_BOX);
+        // CALL(aClearTilemap);
+        ClearTilemap_Conv2();
+        // CALL(aLoadStandardFont);
+        LoadStandardFont_Conv();
+        // CALL(aLoadFontsBattleExtra);
+        LoadFontsBattleExtra_Conv();
+        // LD_A_addr(wMenuSelection);
+        // DEC_A;
+        // CALL(aGetBoxName);
+        // LD_E_L;
+        // LD_D_H;
+        // LD_HL(wBoxNameBuffer);
+        // LD_C(BOX_NAME_LENGTH - 1);
+        // CALL(aInitString);
+        InitString_Conv2(wram->wBoxNameBuffer, GetBoxName_Conv(wram->wMenuSelection - 1), BOX_NAME_LENGTH - 1);
+        // LD_A_addr(wMenuSelection);
+        // DEC_A;
+        // CALL(aGetBoxName);
+        // LD_DE(wBoxNameBuffer);
+        // CALL(aCopyName2);
+        CopyName2_Conv2(GetBoxName_Conv(wram->wMenuSelection - 1), wram->wBoxNameBuffer);
+        // RET;
+    } return;
+    // CP_A(0x3);
+    // IF_Z goto Print;
+    case 0x3: { // TODO: Replace this option with something else.
+    // Print:
+        // CALL(aGetBoxCount);
+        // AND_A_A;
+        // IF_Z goto EmptyBox;
+        if(GetBoxCount() == 0) {
+        // EmptyBox:
+            // CALL(aBillsPC_PlaceEmptyBoxString_SFX);
+            BillsPC_PlaceEmptyBoxString_SFX();
+            // AND_A_A;
+            // RET;
+            return;
+        }
+        // LD_E_L;
+        // LD_D_H;
+        // LD_A_addr(wMenuSelection);
+        // DEC_A;
+        // LD_C_A;
+        // FARCALL(aPrintPCBox);
+        // CALL(aBillsPC_ClearTilemap);
+        // AND_A_A;
+        // RET;
+    } return;
+    default:
+        // AND_A_A;
+        // RET;
+        return;
+    }
 
     hlcoord(11, 7, wTilemap);  // unreferenced
-
-
-MenuHeader:
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['11', '4', 'SCREEN_WIDTH - 1', '13'];
-    //dw ['.MenuData'];
-    //db ['1'];  // default option
-
-
-MenuData:
-    //db ['STATICMENU_CURSOR'];  // flags
-    //db ['4'];  // items
-    //db ['"SWITCH@"'];
-    //db ['"NAME@"'];
-    //db ['"PRINT@"'];
-    //db ['"QUIT@"'];
 
     return BillsPC_PlaceChooseABoxString();
 }
 
 void BillsPC_PlaceChooseABoxString(void){
-    LD_DE(mBillsPC_PlaceChooseABoxString_ChooseABox);
-    JR(mBillsPC_PlaceChangeBoxString);
-
-
-ChooseABox:
-    //db ['"Choose a BOX.@"'];
-
-    return BillsPC_PlaceWhatsUpString();
+    static const char ChooseABox[] = "Choose a BOX.@";
+    // LD_DE(mBillsPC_PlaceChooseABoxString_ChooseABox);
+    // JR(mBillsPC_PlaceChangeBoxString);
+    return BillsPC_PlaceChangeBoxString_Conv(U82C(ChooseABox));
 }
 
 void BillsPC_PlaceWhatsUpString(void){
-    LD_DE(mBillsPC_PlaceWhatsUpString_WhatsUp);
-    JR(mBillsPC_PlaceChangeBoxString);
-
-
-WhatsUp:
-    //db ['"What\'s up?@"'];
-
-    return BillsPC_PlaceEmptyBoxString_SFX();
+    static const char WhatsUp[] = "What\'s up?@";
+    // LD_DE(mBillsPC_PlaceWhatsUpString_WhatsUp);
+    // JR(mBillsPC_PlaceChangeBoxString);
+    return BillsPC_PlaceChangeBoxString_Conv(U82C(WhatsUp));
 }
 
 void BillsPC_PlaceEmptyBoxString_SFX(void){
-    LD_DE(mBillsPC_PlaceEmptyBoxString_SFX_NoMonString);
-    CALL(aBillsPC_PlaceChangeBoxString);
-    LD_DE(SFX_WRONG);
-    CALL(aWaitPlaySFX);
-    CALL(aWaitSFX);
-    LD_C(50);
-    CALL(aDelayFrames);
-    RET;
-
-
-NoMonString:
-    //db ['"There\'s no #MON.@"'];
-
-    return BillsPC_PlaceChangeBoxString();
+    static const char NoMonString[] = "There\'s no #MON.@";
+    // LD_DE(mBillsPC_PlaceEmptyBoxString_SFX_NoMonString);
+    // CALL(aBillsPC_PlaceChangeBoxString);
+    BillsPC_PlaceChangeBoxString_Conv(U82C(NoMonString));
+    // LD_DE(SFX_WRONG);
+    // CALL(aWaitPlaySFX);
+    WaitPlaySFX_Conv(SFX_WRONG);
+    // CALL(aWaitSFX);
+    WaitSFX_Conv();
+    // LD_C(50);
+    // CALL(aDelayFrames);
+    DelayFrames_Conv(50);
+    // RET;
 }
 
 void BillsPC_PlaceChangeBoxString(void){
@@ -3829,5 +3889,22 @@ void BillsPC_PlaceChangeBoxString(void){
     LD_A(0x1);
     LDH_addr_A(hBGMapMode);
     RET;
+
+}
+
+void BillsPC_PlaceChangeBoxString_Conv(uint8_t* de){
+    // PUSH_DE;
+    // hlcoord(0, 14, wTilemap);
+    // LD_BC((2 << 8) | 18);
+    // CALL(aTextbox);
+    Textbox_Conv2(coord(0, 14, wram->wTilemap), 2, 18);
+    // POP_DE;
+    // hlcoord(1, 16, wTilemap);
+    // CALL(aPlaceString);
+    PlaceStringSimple(de, coord(1, 16, wram->wTilemap));
+    // LD_A(0x1);
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0x1;
+    // RET;
 
 }
