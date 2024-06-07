@@ -291,6 +291,7 @@ uint8_t* LoadCoinAmountToMem_Conv(uint16_t amount);
 void Script_checktime(void);
 void Script_checktime_Conv(script_s* s, uint8_t time);
 void Script_checkpoke(void);
+void Script_checkpoke_Conv(script_s* s, species_t a);
 void Script_addcellnum(void);
 void Script_addcellnum_Conv(script_s* s, uint8_t contact);
 void Script_delcellnum(void);

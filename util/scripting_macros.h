@@ -137,6 +137,7 @@
 #define takecoins(_amt)             SCRIPT_EVCMD(Script_takecoins_Conv, _amt)
 #define checkcoins(_amt)            SCRIPT_EVCMD(Script_checkcoins_Conv, _amt)
 #define checktime(_time)            SCRIPT_EVCMD(Script_checktime_Conv, _time)
+#define checkpoke(_s)               SCRIPT_EVCMD(Script_checkpoke_Conv, _s)
 #define addcellnum(_c)              SCRIPT_EVCMD(Script_addcellnum_Conv, _c)
 #define delcellnum(_c)              SCRIPT_EVCMD(Script_delcellnum_Conv, _c)
 #define checkcellnum(_c)            SCRIPT_EVCMD(Script_checkcellnum_Conv, _c)

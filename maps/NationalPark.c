@@ -280,7 +280,7 @@ bool TrainerPokefanfBeverly1_Script(script_s* s) {
     iftrue(GiveNugget)
     checkcellnum(PHONE_POKEFAN_BEVERLY)
     iftrue(NumberAccepted)
-    //checkpoke(MARILL)
+    checkpoke(MARILL)
     iffalse(NoMarill)
     checkevent(EVENT_BEVERLY_ASKED_FOR_PHONE_NUMBER)
     iftrue(AskAgain)

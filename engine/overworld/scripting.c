@@ -4502,6 +4502,28 @@ void Script_checkpoke(void){
 
 }
 
+void Script_checkpoke_Conv(script_s* s, species_t a){
+    (void)s;
+    // XOR_A_A;
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = FALSE;
+    // CALL(aGetScriptByte);
+    // LD_HL(wPartySpecies);
+    // LD_DE(1);
+    // CALL(aIsInArray);
+    for(uint32_t i = 0; i < lengthof(wram->wPartySpecies); ++i) {
+        if(wram->wPartySpecies[i] == a) {
+            wram->wScriptVar = TRUE;
+            return;
+        }
+    }
+    // RET_NC ;
+    // LD_A(TRUE);
+    // LD_addr_A(wScriptVar);
+    // RET;
+
+}
+
 void Script_addcellnum(void){
     XOR_A_A;
     LD_addr_A(wScriptVar);

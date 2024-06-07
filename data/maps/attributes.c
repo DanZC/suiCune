@@ -92,6 +92,10 @@ map_attributes(GoldenrodCity, GOLDENROD_CITY, 0x35,
     connection(GOLDENROD_CITY, north, Route35, ROUTE_35, 5)
     connection(GOLDENROD_CITY, south, Route34, ROUTE_34, 5));
 
+map_attributes(OlivineCity, OLIVINE_CITY, 0x35,
+    connection(OLIVINE_CITY, north, Route39, ROUTE_39, 5)
+    connection(OLIVINE_CITY, west, Route40, ROUTE_40, 9));
+
 map_attributes(EcruteakCity, ECRUTEAK_CITY, 0x05,
     connection(ECRUTEAK_CITY, south, Route37, ROUTE_37, 5)
     connection(ECRUTEAK_CITY, west, Route38, ROUTE_38, 5)
@@ -143,6 +147,18 @@ map_attributes(Route38, ROUTE_38, 0x05,
     connection(ROUTE_38, west, Route39, ROUTE_39, 0)
     connection(ROUTE_38, east, EcruteakCity, ECRUTEAK_CITY, -5));
 
+map_attributes(Route39, ROUTE_39, 0x05,
+    connection(ROUTE_39, south, OlivineCity, OLIVINE_CITY, -5)
+    connection(ROUTE_39, east, Route38, ROUTE_38, 0));
+
+map_attributes(Route40, ROUTE_40, 0x35,
+    connection(ROUTE_40, south, Route41, ROUTE_41, -15)
+    connection(ROUTE_40, east, OlivineCity, OLIVINE_CITY, -9));
+
+map_attributes(Route41, ROUTE_41, 0x35,
+    connection(ROUTE_41, north, Route40, ROUTE_40, 15)
+    connection(ROUTE_41, west, CianwoodCity, CIANWOOD_CITY, 0));
+
 map_attributes(Route42, ROUTE_42, 0x05,
     connection(ROUTE_42, west, EcruteakCity, ECRUTEAK_CITY, -9)
     connection(ROUTE_42, east, MahoganyTown, MAHOGANY_TOWN, 0));
@@ -193,12 +209,12 @@ map_attributes(UnionCaveB1F, UNION_CAVE_B1F, 0x09, 0);
 map_attributes(UnionCaveB2F, UNION_CAVE_B2F, 0x09, 0);
 map_attributes(SlowpokeWellB1F, SLOWPOKE_WELL_B1F, 0x09, 0);
 map_attributes(SlowpokeWellB2F, SLOWPOKE_WELL_B2F, 0x09, 0);
-// map_attributes(OlivineLighthouse1F, OLIVINE_LIGHTHOUSE_1F, 0x00, 0);
-// map_attributes(OlivineLighthouse2F, OLIVINE_LIGHTHOUSE_2F, 0x00, 0);
-// map_attributes(OlivineLighthouse3F, OLIVINE_LIGHTHOUSE_3F, 0x00, 0);
-// map_attributes(OlivineLighthouse4F, OLIVINE_LIGHTHOUSE_4F, 0x00, 0);
-// map_attributes(OlivineLighthouse5F, OLIVINE_LIGHTHOUSE_5F, 0x00, 0);
-// map_attributes(OlivineLighthouse6F, OLIVINE_LIGHTHOUSE_6F, 0x00, 0);
+map_attributes(OlivineLighthouse1F, OLIVINE_LIGHTHOUSE_1F, 0x00, 0);
+map_attributes(OlivineLighthouse2F, OLIVINE_LIGHTHOUSE_2F, 0x00, 0);
+map_attributes(OlivineLighthouse3F, OLIVINE_LIGHTHOUSE_3F, 0x00, 0);
+map_attributes(OlivineLighthouse4F, OLIVINE_LIGHTHOUSE_4F, 0x00, 0);
+map_attributes(OlivineLighthouse5F, OLIVINE_LIGHTHOUSE_5F, 0x00, 0);
+map_attributes(OlivineLighthouse6F, OLIVINE_LIGHTHOUSE_6F, 0x00, 0);
 // map_attributes(MahoganyMart1F, MAHOGANY_MART_1F, 0x00, 0);
 // map_attributes(TeamRocketBaseB1F, TEAM_ROCKET_BASE_B1F, 0x00, 0);
 // map_attributes(TeamRocketBaseB2F, TEAM_ROCKET_BASE_B2F, 0x00, 0);
@@ -235,17 +251,17 @@ map_attributes(DarkCaveBlackthornEntrance, DARK_CAVE_BLACKTHORN_ENTRANCE, 0x09, 
 // map_attributes(DragonsDenB1F, DRAGONS_DEN_B1F, 0x71, 0);
 // map_attributes(DragonShrine, DRAGON_SHRINE, 0x00, 0);
 // map_attributes(TohjoFalls, TOHJO_FALLS, 0x09, 0);
-// map_attributes(OlivinePokecenter1F, OLIVINE_POKECENTER_1F, 0x00, 0);
-// map_attributes(OlivineGym, OLIVINE_GYM, 0x00, 0);
-// map_attributes(OlivineTimsHouse, OLIVINE_TIMS_HOUSE, 0x00, 0);
+map_attributes(OlivinePokecenter1F, OLIVINE_POKECENTER_1F, 0x00, 0);
+map_attributes(OlivineGym, OLIVINE_GYM, 0x00, 0);
+map_attributes(OlivineTimsHouse, OLIVINE_TIMS_HOUSE, 0x00, 0);
 // map_attributes(OlivineHouseBeta, OLIVINE_HOUSE_BETA, 0x00, 0);
-// map_attributes(OlivinePunishmentSpeechHouse, OLIVINE_PUNISHMENT_SPEECH_HOUSE, 0x00, 0);
-// map_attributes(OlivineGoodRodHouse, OLIVINE_GOOD_ROD_HOUSE, 0x00, 0);
-// map_attributes(OlivineCafe, OLIVINE_CAFE, 0x00, 0);
-// map_attributes(OlivineMart, OLIVINE_MART, 0x00, 0);
+map_attributes(OlivinePunishmentSpeechHouse, OLIVINE_PUNISHMENT_SPEECH_HOUSE, 0x00, 0);
+map_attributes(OlivineGoodRodHouse, OLIVINE_GOOD_ROD_HOUSE, 0x00, 0);
+map_attributes(OlivineCafe, OLIVINE_CAFE, 0x00, 0);
+map_attributes(OlivineMart, OLIVINE_MART, 0x00, 0);
 map_attributes(Route38EcruteakGate, ROUTE_38_ECRUTEAK_GATE, 0x00, 0);
-// map_attributes(Route39Barn, ROUTE_39_BARN, 0x00, 0);
-// map_attributes(Route39Farmhouse, ROUTE_39_FARMHOUSE, 0x00, 0);
+map_attributes(Route39Barn, ROUTE_39_BARN, 0x00, 0);
+map_attributes(Route39Farmhouse, ROUTE_39_FARMHOUSE, 0x00, 0);
 // map_attributes(MahoganyRedGyaradosSpeechHouse, MAHOGANY_RED_GYARADOS_SPEECH_HOUSE, 0x00, 0);
 // map_attributes(MahoganyGym, MAHOGANY_GYM, 0x00, 0);
 // map_attributes(MahoganyPokecenter1F, MAHOGANY_POKECENTER_1F, 0x00, 0);
@@ -352,14 +368,14 @@ map_attributes(DayCare, DAY_CARE, 0x00, 0);
 // map_attributes(PewterPokecenter1F, PEWTER_POKECENTER_1F, 0x00, 0);
 // map_attributes(PewterPokecenter2FBeta, PEWTER_POKECENTER_2F_BETA, 0x00, 0);
 // map_attributes(PewterSnoozeSpeechHouse, PEWTER_SNOOZE_SPEECH_HOUSE, 0x00, 0);
-// map_attributes(OlivinePort, OLIVINE_PORT, 0x0a, 0);
+map_attributes(OlivinePort, OLIVINE_PORT, 0x0a, 0);
 // map_attributes(VermilionPort, VERMILION_PORT, 0x0a, 0);
 // map_attributes(FastShip1F, FAST_SHIP_1F, 0x00, 0);
 // map_attributes(FastShipCabins_NNW_NNE_NE, FAST_SHIP_CABINS_NNW_NNE_NE, 0x00, 0);
 // map_attributes(FastShipCabins_SW_SSW_NW, FAST_SHIP_CABINS_SW_SSW_NW, 0x00, 0);
 // map_attributes(FastShipCabins_SE_SSE_CaptainsCabin, FAST_SHIP_CABINS_SE_SSE_CAPTAINS_CABIN, 0x00, 0);
 // map_attributes(FastShipB1F, FAST_SHIP_B1F, 0x00, 0);
-// map_attributes(OlivinePortPassage, OLIVINE_PORT_PASSAGE, 0x00, 0);
+map_attributes(OlivinePortPassage, OLIVINE_PORT_PASSAGE, 0x00, 0);
 // map_attributes(VermilionPortPassage, VERMILION_PORT_PASSAGE, 0x00, 0);
 // map_attributes(MountMoonSquare, MOUNT_MOON_SQUARE, 0x2d, 0);
 // map_attributes(MountMoonGiftShop, MOUNT_MOON_GIFT_SHOP, 0x00, 0);
@@ -430,8 +446,8 @@ map_attributes(Colosseum, COLOSSEUM, 0x00, 0);
 // map_attributes(BattleTowerBattleRoom, BATTLE_TOWER_BATTLE_ROOM, 0x00, 0);
 // map_attributes(BattleTowerElevator, BATTLE_TOWER_ELEVATOR, 0x00, 0);
 // map_attributes(BattleTowerHallway, BATTLE_TOWER_HALLWAY, 0x00, 0);
-// map_attributes(Route40BattleTowerGate, ROUTE_40_BATTLE_TOWER_GATE, 0x00, 0);
-// map_attributes(BattleTowerOutside, BATTLE_TOWER_OUTSIDE, 0x05, 0);
+map_attributes(Route40BattleTowerGate, ROUTE_40_BATTLE_TOWER_GATE, 0x00, 0);
+map_attributes(BattleTowerOutside, BATTLE_TOWER_OUTSIDE, 0x05, 0);
 // map_attributes(ViridianGym, VIRIDIAN_GYM, 0x00, 0);
 // map_attributes(ViridianNicknameSpeechHouse, VIRIDIAN_NICKNAME_SPEECH_HOUSE, 0x00, 0);
 // map_attributes(TrainerHouse1F, TRAINER_HOUSE_1F, 0x00, 0);

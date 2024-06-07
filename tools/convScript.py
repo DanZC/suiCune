@@ -126,6 +126,7 @@ commands = {
     'takecoins': Cmd('takecoins', ['amount']),
     'checkcoins': Cmd('checkcoins', ['amount']),
     'checktime': Cmd('checktime', ['tod']),
+    'checkpoke': Cmd('checkpoke', ['species']),
     'addcellnum': Cmd('addcellnum', ['contact']),
     'delcellnum': Cmd('delcellnum', ['contact']),
     'checkcellnum': Cmd('checkcellnum', ['contact']),

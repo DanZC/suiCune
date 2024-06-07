@@ -43,10 +43,10 @@
 #include "../../maps/UnionCaveB2F.h"
 #include "../../maps/SlowpokeWellB1F.h"
 #include "../../maps/SlowpokeWellB2F.h"
-// #include "../../maps/OlivineLighthouse1F.h"
-// #include "../../maps/OlivineLighthouse2F.h"
-// #include "../../maps/OlivineLighthouse3F.h"
-// #include "../../maps/OlivineLighthouse4F.h"
+#include "../../maps/OlivineLighthouse1F.h"
+#include "../../maps/OlivineLighthouse2F.h"
+#include "../../maps/OlivineLighthouse3F.h"
+#include "../../maps/OlivineLighthouse4F.h"
 
 
 // SECTION "Map Scripts 3", ROMX
@@ -62,8 +62,8 @@
 // SECTION "Map Scripts 4", ROMX
 
 // #include "../../maps/RadioTower5F.h"
-// #include "../../maps/OlivineLighthouse5F.h"
-// #include "../../maps/OlivineLighthouse6F.h"
+#include "../../maps/OlivineLighthouse5F.h"
+#include "../../maps/OlivineLighthouse6F.h"
 // #include "../../maps/GoldenrodPokecenter1F.h"
 #include "../../maps/PokecomCenter.h"
 #include "../../maps/PokecomCenterAdminOfficeMobile.h"
@@ -136,14 +136,14 @@
 // #include "../../maps/SafariZoneFuchsiaGateBeta.h"
 // #include "../../maps/SafariZoneBeta.h"
 // #include "../../maps/VictoryRoad.h"
-// #include "../../maps/OlivinePort.h"
+#include "../../maps/OlivinePort.h"
 // #include "../../maps/VermilionPort.h"
 // #include "../../maps/FastShip1F.h"
 // #include "../../maps/FastShipCabins_NNW_NNE_NE.h"
 // #include "../../maps/FastShipCabins_SW_SSW_NW.h"
 // #include "../../maps/FastShipCabins_SE_SSE_CaptainsCabin.h"
 // #include "../../maps/FastShipB1F.h"
-// #include "../../maps/OlivinePortPassage.h"
+#include "../../maps/OlivinePortPassage.h"
 // #include "../../maps/VermilionPortPassage.h"
 // #include "../../maps/MountMoonSquare.h"
 // #include "../../maps/MountMoonGiftShop.h"
@@ -216,17 +216,17 @@
 
 // SECTION "Map Scripts 12", ROMX
 
-// #include "../../maps/OlivinePokecenter1F.h"
-// #include "../../maps/OlivineGym.h"
-// #include "../../maps/OlivineTimsHouse.h"
+#include "../../maps/OlivinePokecenter1F.h"
+#include "../../maps/OlivineGym.h"
+#include "../../maps/OlivineTimsHouse.h"
 // #include "../../maps/OlivineHouseBeta.h"
-// #include "../../maps/OlivinePunishmentSpeechHouse.h"
-// #include "../../maps/OlivineGoodRodHouse.h"
-// #include "../../maps/OlivineCafe.h"
-// #include "../../maps/OlivineMart.h"
+#include "../../maps/OlivinePunishmentSpeechHouse.h"
+#include "../../maps/OlivineGoodRodHouse.h"
+#include "../../maps/OlivineCafe.h"
+#include "../../maps/OlivineMart.h"
 #include "../../maps/Route38EcruteakGate.h"
-// #include "../../maps/Route39Barn.h"
-// #include "../../maps/Route39Farmhouse.h"
+#include "../../maps/Route39Barn.h"
+#include "../../maps/Route39Farmhouse.h"
 // #include "../../maps/ManiasHouse.h"
 // #include "../../maps/CianwoodGym.h"
 // #include "../../maps/CianwoodPokecenter1F.h"
@@ -238,8 +238,8 @@
 // #include "../../maps/BattleTowerBattleRoom.h"
 // #include "../../maps/BattleTowerElevator.h"
 // #include "../../maps/BattleTowerHallway.h"
-// #include "../../maps/Route40BattleTowerGate.h"
-// #include "../../maps/BattleTowerOutside.h"
+#include "../../maps/Route40BattleTowerGate.h"
+#include "../../maps/BattleTowerOutside.h"
 
 
 // SECTION "Map Scripts 13", ROMX
@@ -432,9 +432,9 @@
 // #include "../../maps/Route26.h"
 // #include "../../maps/Route28.h"
 #include "../../maps/Route31.h"
-// #include "../../maps/Route39.h"
-// #include "../../maps/Route40.h"
-// #include "../../maps/Route41.h"
+#include "../../maps/Route39.h"
+#include "../../maps/Route40.h"
+#include "../../maps/Route41.h"
 // #include "../../maps/Route12.h"
 
 
@@ -442,7 +442,7 @@
 
 #include "../../maps/NewBarkTown.h"
 #include "../../maps/VioletCity.h"
-// #include "../../maps/OlivineCity.h"
+#include "../../maps/OlivineCity.h"
 #include "../../maps/Route37.h"
 #include "../../maps/Route42.h"
 #include "../../maps/Route46.h"

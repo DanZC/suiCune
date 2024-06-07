@@ -94,6 +94,11 @@ void PopulateMapScriptTable(void) {
     entry(GOLDENROD_CITY, 13, GoldenrodCityRocket6Script);
     entry(GOLDENROD_CITY, 14, MoveTutorScript);
 
+    entry(OLIVINE_CITY, 0, OlivineCitySailor1Script);
+    entry(OLIVINE_CITY, 1, OlivineCityStandingYoungsterScript);
+    entry(OLIVINE_CITY, 2, OlivineCitySailor2Script);
+    entry(OLIVINE_CITY, 3, ObjectEvent);
+
     entry(ECRUTEAK_CITY, 0, EcruteakCityGramps1Script);
     entry(ECRUTEAK_CITY, 1, EcruteakCityGramps2Script);
     entry(ECRUTEAK_CITY, 2, EcruteakCityLass1Script);
@@ -257,6 +262,51 @@ void PopulateMapScriptTable(void) {
     entry(ROUTE_38, 6, TrainerBeautyOlivia);
 
     entry(ROUTE_38_ECRUTEAK_GATE, 0, Route38EcruteakGateOfficerScript);
+
+    entry(ROUTE_39, 0, TrainerSailorEugene);
+    entry(ROUTE_39, 1, TrainerPokefanmDerek);
+    entry(ROUTE_39, 2, TrainerPokefanfRuth);
+    entry(ROUTE_39, 3, Route39Miltank);
+    entry(ROUTE_39, 4, Route39Miltank);
+    entry(ROUTE_39, 5, Route39Miltank);
+    entry(ROUTE_39, 6, Route39Miltank);
+    entry(ROUTE_39, 7, TrainerPsychicNorman);
+    entry(ROUTE_39, 8, Route39FruitTree);
+    entry(ROUTE_39, 9, TrainerPokefanfJaime);
+
+    entry(ROUTE_39_BARN, 0, Route39BarnTwin1Script);
+    entry(ROUTE_39_BARN, 1, Route39BarnTwin2Script);
+    entry(ROUTE_39_BARN, 2, MoomooScript);
+
+    entry(ROUTE_39_FARMHOUSE, 0, PokefanM_DairyFarmer);
+    entry(ROUTE_39_FARMHOUSE, 1, PokefanF_SnoreFarmer);
+
+    entry(ROUTE_40, 0, TrainerSwimmermSimon);
+    entry(ROUTE_40, 1, TrainerSwimmermRandall);
+    entry(ROUTE_40, 2, TrainerSwimmerfElaine);
+    entry(ROUTE_40, 3, TrainerSwimmerfPaula);
+    entry(ROUTE_40, 4, Route40Rock);
+    entry(ROUTE_40, 5, Route40Rock);
+    entry(ROUTE_40, 6, Route40Rock);
+    entry(ROUTE_40, 7, Route40Lass1Script);
+    entry(ROUTE_40, 8, MonicaScript);
+    entry(ROUTE_40, 9, Route40PokefanMScript);
+    entry(ROUTE_40, 10, Route40Lass2Script);
+    entry(ROUTE_40, 11, Route40StandingYoungsterScript);
+
+    entry(ROUTE_40_BATTLE_TOWER_GATE, 0, Route40BattleTowerGateRockerScript);
+    entry(ROUTE_40_BATTLE_TOWER_GATE, 1, Route40BattleTowerGateTwinScript);
+
+    entry(ROUTE_41, 0, TrainerSwimmermCharlie);
+    entry(ROUTE_41, 1, TrainerSwimmermGeorge);
+    entry(ROUTE_41, 2, TrainerSwimmermBerke);
+    entry(ROUTE_41, 3, TrainerSwimmermKirk);
+    entry(ROUTE_41, 4, TrainerSwimmermMathew);
+    entry(ROUTE_41, 5, TrainerSwimmerfKaylee);
+    entry(ROUTE_41, 6, TrainerSwimmerfSusie);
+    entry(ROUTE_41, 7, TrainerSwimmerfDenise);
+    entry(ROUTE_41, 8, TrainerSwimmerfKara);
+    entry(ROUTE_41, 9, TrainerSwimmerfWendy);
 
     entry(ROUTE_42, 0, TrainerFisherTully);
     entry(ROUTE_42, 1, TrainerHikerBenjamin);
@@ -542,6 +592,63 @@ void PopulateMapScriptTable(void) {
     entry(WISE_TRIOS_ROOM, 4, TrainerSageMasa);
     entry(WISE_TRIOS_ROOM, 5, TrainerSageKoji);
 
+    entry(OLIVINE_CAFE, 0, OlivineCafeStrengthSailorScript);
+    entry(OLIVINE_CAFE, 1, OlivineCafeFishingGuruScript);
+    entry(OLIVINE_CAFE, 2, OlivineCafeSailorScript);
+
+    entry(OLIVINE_GOOD_ROD_HOUSE, 0, GoodRodGuru);
+
+    entry(OLIVINE_GYM, 0, OlivineGymJasmineScript);
+    entry(OLIVINE_GYM, 1, OlivineGymGuideScript);
+
+    entry(OLIVINE_LIGHTHOUSE_1F, 0, OlivineLighthouse1FSailorScript);
+    entry(OLIVINE_LIGHTHOUSE_1F, 1, OlivineLighthouse1FPokefanFScript);
+
+    entry(OLIVINE_LIGHTHOUSE_2F, 0, TrainerSailorHuey);
+    entry(OLIVINE_LIGHTHOUSE_2F, 1, TrainerGentlemanAlfred);
+
+    entry(OLIVINE_LIGHTHOUSE_3F, 0, TrainerSailorTerrell);
+    entry(OLIVINE_LIGHTHOUSE_3F, 1, TrainerGentlemanPreston);
+    entry(OLIVINE_LIGHTHOUSE_3F, 2, TrainerBirdKeeperTheo);
+    entry(OLIVINE_LIGHTHOUSE_3F, 3, OlivineLighthouse3FEther);
+
+    entry(OLIVINE_LIGHTHOUSE_4F, 0, TrainerSailorKent);
+    entry(OLIVINE_LIGHTHOUSE_4F, 1, TrainerLassConnie);
+
+    entry(OLIVINE_LIGHTHOUSE_5F, 0, TrainerSailorErnest);
+    entry(OLIVINE_LIGHTHOUSE_5F, 1, TrainerBirdKeeperDenis);
+    entry(OLIVINE_LIGHTHOUSE_5F, 2, OlivineLighthouse5FRareCandy);
+    entry(OLIVINE_LIGHTHOUSE_5F, 3, OlivineLighthouse5FSuperRepel);
+    entry(OLIVINE_LIGHTHOUSE_5F, 4, OlivineLighthouse5FTMSwagger);
+
+    entry(OLIVINE_LIGHTHOUSE_6F, 0, OlivineLighthouseJasmine);
+    entry(OLIVINE_LIGHTHOUSE_6F, 1, OlivineLighthouseAmphy);
+    entry(OLIVINE_LIGHTHOUSE_6F, 2, OlivineLighthouse6FSuperPotion);
+
+    entry(OLIVINE_MART, 0, OlivineMartClerkScript);
+    entry(OLIVINE_MART, 1, OlivineMartCooltrainerFScript);
+    entry(OLIVINE_MART, 2, OlivineMartLassScript);
+
+    entry(OLIVINE_POKECENTER_1F, 0, OlivinePokecenter1FNurseScript);
+    entry(OLIVINE_POKECENTER_1F, 1, OlivinePokecenter1FFishingGuruScript);
+    entry(OLIVINE_POKECENTER_1F, 2, OlivinePokecenter1FFisherScript);
+    entry(OLIVINE_POKECENTER_1F, 3, OlivinePokecenter1FTeacherScript);
+
+    entry(OLIVINE_PORT, 0, OlivinePortSailorAtGangwayScript);
+    entry(OLIVINE_PORT, 1, OlivinePortSailorBeforeHOFScript);
+    entry(OLIVINE_PORT, 2, OlivinePortSailorAfterHOFScript);
+    entry(OLIVINE_PORT, 3, OlivinePortFishingGuru1Script);
+    entry(OLIVINE_PORT, 4, OlivinePortFishingGuru2Script);
+    entry(OLIVINE_PORT, 5, OlivinePortYoungsterScript);
+    entry(OLIVINE_PORT, 6, OlivinePortCooltrainerFScript);
+
+    entry(OLIVINE_PORT_PASSAGE, 0, OlivinePortPassagePokefanMScript);
+
+    entry(OLIVINE_PUNISHMENT_SPEECH_HOUSE, 0, OlivinePunishmentSpeechHouseDad);
+    entry(OLIVINE_PUNISHMENT_SPEECH_HOUSE, 1, OlivinePunishmentSpeechHouseDaughter);
+
+    entry(OLIVINE_TIMS_HOUSE, 0, Tim);
+
     entry(SPROUT_TOWER_1F, 0, SproutTower1FSage1Script);
     entry(SPROUT_TOWER_1F, 1, SproutTower1FSage2Script);
     entry(SPROUT_TOWER_1F, 2, SproutTower1FGrannyScript);
@@ -700,6 +807,11 @@ void PopulateMapScriptTable(void) {
     entry(BURNED_TOWER_B1F, 6, ObjectEvent);
     entry(BURNED_TOWER_B1F, 7, BurnedTowerB1FTMEndure);
     entry(BURNED_TOWER_B1F, 8, BurnedTowerB1FEusine);
+
+    entry(BATTLE_TOWER_OUTSIDE, 0, BattleTowerOutsideYoungsterScript);
+    entry(BATTLE_TOWER_OUTSIDE, 1, BattleTowerOutsideBeautyScript);
+    entry(BATTLE_TOWER_OUTSIDE, 2, BattleTowerOutsideSailorScript);
+    entry(BATTLE_TOWER_OUTSIDE, 3, ObjectEvent);
 
     entry(DARK_CAVE_BLACKTHORN_ENTRANCE, 0, DarkCaveBlackthornEntrancePharmacistScript);
     entry(DARK_CAVE_BLACKTHORN_ENTRANCE, 1, DarkCaveBlackthornEntranceRevive);

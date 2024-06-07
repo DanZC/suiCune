@@ -4852,6 +4852,12 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(GoldenrodCityRocket6Script);
     CONVERTED_SCRIPT(MoveTutorScript);
 
+    // maps/OlivineCity.c
+    CONVERTED_SCRIPT(OlivineCitySailor1Script);
+    CONVERTED_SCRIPT(OlivineCityStandingYoungsterScript);
+    CONVERTED_SCRIPT(OlivineCitySailor2Script);
+    // CONVERTED_SCRIPT(ObjectEvent);
+
     // maps/EcruteakCity.c
     CONVERTED_SCRIPT(EcruteakCityGramps1Script);
     CONVERTED_SCRIPT(EcruteakCityGramps2Script);
@@ -4977,6 +4983,44 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(Route38FruitTree);
     CONVERTED_SCRIPT(TrainerBeautyOlivia);
 
+    // maps/Route39.c
+    CONVERTED_SCRIPT(TrainerSailorEugene);
+    CONVERTED_SCRIPT(TrainerPokefanmDerek);
+    CONVERTED_SCRIPT(TrainerPokefanfRuth);
+    CONVERTED_SCRIPT(Route39Miltank);
+    // CONVERTED_SCRIPT(Route39Miltank);
+    // CONVERTED_SCRIPT(Route39Miltank);
+    // CONVERTED_SCRIPT(Route39Miltank);
+    CONVERTED_SCRIPT(TrainerPsychicNorman);
+    CONVERTED_SCRIPT(Route39FruitTree);
+    CONVERTED_SCRIPT(TrainerPokefanfJaime);
+
+    // maps/Route40.c
+    CONVERTED_SCRIPT(TrainerSwimmermSimon);
+    CONVERTED_SCRIPT(TrainerSwimmermRandall);
+    CONVERTED_SCRIPT(TrainerSwimmerfElaine);
+    CONVERTED_SCRIPT(TrainerSwimmerfPaula);
+    CONVERTED_SCRIPT(Route40Rock);
+    // CONVERTED_SCRIPT(Route40Rock);
+    // CONVERTED_SCRIPT(Route40Rock);
+    CONVERTED_SCRIPT(Route40Lass1Script);
+    CONVERTED_SCRIPT(MonicaScript);
+    CONVERTED_SCRIPT(Route40PokefanMScript);
+    CONVERTED_SCRIPT(Route40Lass2Script);
+    CONVERTED_SCRIPT(Route40StandingYoungsterScript);
+
+    // maps/Route41.c
+    CONVERTED_SCRIPT(TrainerSwimmermCharlie);
+    CONVERTED_SCRIPT(TrainerSwimmermGeorge);
+    CONVERTED_SCRIPT(TrainerSwimmermBerke);
+    CONVERTED_SCRIPT(TrainerSwimmermKirk);
+    CONVERTED_SCRIPT(TrainerSwimmermMathew);
+    CONVERTED_SCRIPT(TrainerSwimmerfKaylee);
+    CONVERTED_SCRIPT(TrainerSwimmerfSusie);
+    CONVERTED_SCRIPT(TrainerSwimmerfDenise);
+    CONVERTED_SCRIPT(TrainerSwimmerfKara);
+    CONVERTED_SCRIPT(TrainerSwimmerfWendy);
+
     // maps/Route42.c
     CONVERTED_SCRIPT(TrainerFisherTully);
     CONVERTED_SCRIPT(TrainerHikerBenjamin);
@@ -5039,6 +5083,19 @@ void init_function_pointers(void) {
 
     // maps/Route38EcruteakGate.c
     CONVERTED_SCRIPT(Route38EcruteakGateOfficerScript);
+
+    // maps/Route39Barn.c
+    CONVERTED_SCRIPT(Route39BarnTwin1Script);
+    CONVERTED_SCRIPT(Route39BarnTwin2Script);
+    CONVERTED_SCRIPT(MoomooScript);
+
+    // maps/Route39Farmhouse.c
+    CONVERTED_SCRIPT(PokefanM_DairyFarmer);
+    CONVERTED_SCRIPT(PokefanF_SnoreFarmer);
+
+    // maps/Route40BattleTowerGate.c
+    CONVERTED_SCRIPT(Route40BattleTowerGateRockerScript);
+    CONVERTED_SCRIPT(Route40BattleTowerGateTwinScript);
 
     // maps/Route42EcruteakGate.c
     CONVERTED_SCRIPT(Route42EcruteakGateOfficerScript);
@@ -5354,6 +5411,78 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(TrainerSageMasa);
     CONVERTED_SCRIPT(TrainerSageKoji);
 
+    // maps/OlivineCafe.c
+    CONVERTED_SCRIPT(OlivineCafeStrengthSailorScript);
+    CONVERTED_SCRIPT(OlivineCafeFishingGuruScript);
+    CONVERTED_SCRIPT(OlivineCafeSailorScript);
+
+    // maps/OlivineGoodRodHouse.c
+    CONVERTED_SCRIPT(GoodRodGuru);
+
+    // maps/OlivineGym.c
+    CONVERTED_SCRIPT(OlivineGymJasmineScript);
+    CONVERTED_SCRIPT(OlivineGymGuideScript);
+
+    // maps/OlivineLighthouse1F.c
+    CONVERTED_SCRIPT(OlivineLighthouse1FSailorScript);
+    CONVERTED_SCRIPT(OlivineLighthouse1FPokefanFScript);
+
+    // maps/OlivineLighthouse2F.c
+    CONVERTED_SCRIPT(TrainerSailorHuey);
+    CONVERTED_SCRIPT(TrainerGentlemanAlfred);
+
+    // maps/OlivineLighthouse3F.c
+    CONVERTED_SCRIPT(TrainerSailorTerrell);
+    CONVERTED_SCRIPT(TrainerGentlemanPreston);
+    CONVERTED_SCRIPT(TrainerBirdKeeperTheo);
+    CONVERTED_SCRIPT(OlivineLighthouse3FEther);
+
+    // maps/OlivineLighthouse4F.c
+    CONVERTED_SCRIPT(TrainerSailorKent);
+    CONVERTED_SCRIPT(TrainerLassConnie);
+
+    // maps/OlivineLighthouse5F.c
+    CONVERTED_SCRIPT(TrainerSailorErnest);
+    CONVERTED_SCRIPT(TrainerBirdKeeperDenis);
+    CONVERTED_SCRIPT(OlivineLighthouse5FRareCandy);
+    CONVERTED_SCRIPT(OlivineLighthouse5FSuperRepel);
+    CONVERTED_SCRIPT(OlivineLighthouse5FTMSwagger);
+
+    // maps/OlivineLighthouse6F.c
+    CONVERTED_SCRIPT(OlivineLighthouseJasmine);
+    CONVERTED_SCRIPT(OlivineLighthouseAmphy);
+    CONVERTED_SCRIPT(OlivineLighthouse6FSuperPotion);
+
+    // maps/OlivineMart.c
+    CONVERTED_SCRIPT(OlivineMartClerkScript);
+    CONVERTED_SCRIPT(OlivineMartCooltrainerFScript);
+    CONVERTED_SCRIPT(OlivineMartLassScript);
+
+    // maps/OlivinePokecenter1F.c
+    CONVERTED_SCRIPT(OlivinePokecenter1FNurseScript);
+    CONVERTED_SCRIPT(OlivinePokecenter1FFishingGuruScript);
+    CONVERTED_SCRIPT(OlivinePokecenter1FFisherScript);
+    CONVERTED_SCRIPT(OlivinePokecenter1FTeacherScript);
+
+    // maps/OlivinePort.c
+    CONVERTED_SCRIPT(OlivinePortSailorAtGangwayScript);
+    CONVERTED_SCRIPT(OlivinePortSailorBeforeHOFScript);
+    CONVERTED_SCRIPT(OlivinePortSailorAfterHOFScript);
+    CONVERTED_SCRIPT(OlivinePortFishingGuru1Script);
+    CONVERTED_SCRIPT(OlivinePortFishingGuru2Script);
+    CONVERTED_SCRIPT(OlivinePortYoungsterScript);
+    CONVERTED_SCRIPT(OlivinePortCooltrainerFScript);
+
+    // maps/OlivinePortPassage.c
+    CONVERTED_SCRIPT(OlivinePortPassagePokefanMScript);
+
+    // maps/OlivinePunishmentSpeechHouse.c
+    CONVERTED_SCRIPT(OlivinePunishmentSpeechHouseDad);
+    CONVERTED_SCRIPT(OlivinePunishmentSpeechHouseDaughter);
+
+    // maps/OlivineTimsHouse.c
+    CONVERTED_SCRIPT(Tim);
+
     // maps/SproutTower1F.c
     CONVERTED_SCRIPT(SproutTower1FSage1Script);
     CONVERTED_SCRIPT(SproutTower1FSage2Script);
@@ -5529,6 +5658,12 @@ void init_function_pointers(void) {
     // CONVERTED_SCRIPT(ObjectEvent);
     CONVERTED_SCRIPT(BurnedTowerB1FTMEndure);
     CONVERTED_SCRIPT(BurnedTowerB1FEusine);
+
+    // maps/BattleTowerOutside.c
+    CONVERTED_SCRIPT(BattleTowerOutsideYoungsterScript);
+    CONVERTED_SCRIPT(BattleTowerOutsideBeautyScript);
+    CONVERTED_SCRIPT(BattleTowerOutsideSailorScript);
+    // CONVERTED_SCRIPT(ObjectEvent);
 
     // maps/DarkCaveBlackthornEntrance.c
     CONVERTED_SCRIPT(DarkCaveBlackthornEntrancePharmacistScript);
