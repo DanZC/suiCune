@@ -50,6 +50,7 @@ void Script_verticalmenu_Conv(script_s* s);
 void Script__2dmenu(void);
 void Script__2dmenu_Conv(script_s* s);
 void Script_battletowertext(void);
+void Script_battletowertext_Conv(script_s* s, uint8_t text);
 void Script_verbosegiveitem(void);
 void Script_verbosegiveitem_Conv(script_s* s, item_t item, uint8_t quantity);
 void GiveItemScript_DummyFunction(void);

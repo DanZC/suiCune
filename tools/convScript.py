@@ -30,6 +30,7 @@ commands = {
     'closepokepic': Cmd('closepokepic', []),
     'verticalmenu': Cmd('verticalmenu', []),
     '_2dmenu': Cmd('_2dmenu', []),
+    'battletowertext': Cmd('battletowertext', ['text']),
     'verbosegiveitem': Cmd('verbosegiveitem', ['item', 'count']),
     'verbosegiveitemvar': Cmd('verbosegiveitemvar', ['item', 'var']),
     'itemnotify': Cmd('itemnotify', []),

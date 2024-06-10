@@ -4337,7 +4337,7 @@ bool CheckMobileBattleError_Conv(void){
     // LD_A_addr(wcd2b);
     // AND_A_A;
     // IF_Z goto not_mobile;
-    if(wram->wcd2b[0] == 0)
+    if(wram->wcd2b == 0)
         return false;
 
 //  We have a mobile battle and something else happened
@@ -8548,7 +8548,7 @@ bool LoadBattleMenu2(void){
     // LD_A_addr(wcd2b);
     // AND_A_A;
     // RET_Z ;
-    if(wram->wcd2b[0] == 0)
+    if(wram->wcd2b == 0)
         return false;
 
     // LD_HL(wcd2a);

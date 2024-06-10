@@ -649,6 +649,12 @@ void PopulateMapScriptTable(void) {
 
     entry(OLIVINE_TIMS_HOUSE, 0, Tim);
 
+    entry(BATTLE_TOWER_1F, 0, BattleTower1FReceptionistScript);
+    entry(BATTLE_TOWER_1F, 1, BattleTower1FYoungsterScript);
+    entry(BATTLE_TOWER_1F, 2, BattleTower1FCooltrainerFScript);
+    entry(BATTLE_TOWER_1F, 3, BattleTower1FBugCatcherScript);
+    entry(BATTLE_TOWER_1F, 4, BattleTower1FGrannyScript);
+
     entry(SPROUT_TOWER_1F, 0, SproutTower1FSage1Script);
     entry(SPROUT_TOWER_1F, 1, SproutTower1FSage2Script);
     entry(SPROUT_TOWER_1F, 2, SproutTower1FGrannyScript);

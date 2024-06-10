@@ -275,7 +275,7 @@
 #include "engine/events/unown_walls.h"
 //#include "engine/events/buena.h"
 //#include "engine/events/dratini.h"
-//#include "engine/events/battle_tower/rules.h"
+#include "engine/events/battle_tower/rules.h"
 //#include "mobile/mobile_22_2.h"
 
 // SECTION "bank23", ROMX
@@ -470,7 +470,7 @@
 #include "engine/overworld/warp_connection.h"
 #include "engine/link/mystery_gift.h"
 #include "engine/battle/used_move_text.h"
-//#include "mobile/mobile_41.h"
+#include "mobile/mobile_41.h"
 #include "engine/gfx/load_overworld_font.h"
 
 // SECTION "mobile42", ROMX
@@ -485,7 +485,7 @@
 // SECTION "mobile45", ROMX
 
 //#include "mobile/mobile_45.h"
-//#include "mobile/mobile_45_sprite_engine.h"
+#include "mobile/mobile_45_sprite_engine.h"
 //#include "mobile/mobile_45_2.h"
 #include "mobile/mobile_45_stadium.h"
 
@@ -495,7 +495,8 @@
 
 // SECTION "Battle Tower", ROMX
 
-//#include "engine/events/battle_tower/trainer_text.h"
+#include "engine/events/battle_tower/battle_tower.h"
+#include "engine/events/battle_tower/trainer_text.h"
 
 // SECTION "bank5B", ROMX
 
@@ -534,7 +535,7 @@
 
 // SECTION "mobile5F", ROMX
 
-//#include "mobile/mobile_5f.h"
+#include "mobile/mobile_5f.h"
 
 // SECTION "Phone Text 2", ROMX
 

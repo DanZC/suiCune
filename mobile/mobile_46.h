@@ -251,7 +251,7 @@ void BattleTowerRoomMenu_WriteMessage(void);
 void Function11a90f(void);
 void BattleTowerRoomMenu_WriteMessage_DoNothing(void);
 void Function11a971(void);
-void BattleTowerRoomMenu_SetMessage(void);
+void BattleTowerRoomMenu_SetMessage(uint8_t* hl);
 void Function11a9ce(void);
 void Function11a9f0(void);
 void Function11a9f4(void);

@@ -18,6 +18,7 @@
 #include "../../home/tilemap.h"
 #include "../../home/window.h"
 #include "../../home/trainers.h"
+#include "../../home/text.h"
 #include "../battle/core.h"
 #include "../battle/read_trainer_party.h"
 #include "../events/engine_flags.h"
@@ -30,6 +31,7 @@
 #include "../events/checksave.h"
 #include "../events/npc_trade.h"
 #include "../events/elevator.h"
+#include "../events/battle_tower/trainer_text.h"
 #include "events.h"
 #include "variables.h"
 #include "landmarks.h"
@@ -1072,6 +1074,17 @@ void Script_battletowertext(void){
     FARCALL(aBattleTowerText);
     RET;
 
+}
+
+void Script_battletowertext_Conv(script_s* s, uint8_t text){
+    (void)s;
+    // CALL(aSetUpTextbox);
+    SetUpTextbox_Conv();
+    // CALL(aGetScriptByte);
+    // LD_C_A;
+    // FARCALL(aBattleTowerText);
+    BattleTowerText(text);
+    // RET;
 }
 
 void Script_verbosegiveitem(void){

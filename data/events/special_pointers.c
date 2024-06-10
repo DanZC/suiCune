@@ -20,6 +20,7 @@
 #include "../../engine/events/pokecenter_pc.h"
 #include "../../engine/events/bug_contest/contest.h"
 #include "../../engine/events/bug_contest/contest_2.h"
+#include "../../engine/events/battle_tower/battle_tower.h"
 #include "../../engine/overworld/wildmons.h"
 #include "../../engine/overworld/overworld.h"
 #include "../../engine/overworld/warp_connection.h"
@@ -162,7 +163,7 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(UnusedBattleTowerDummySpecial1),
     // add_special(LoadOpponentTrainerAndPokemonWithOTSprite),
     // add_special(Function11ba38),
-    // add_special(CheckForBattleTowerRules),
+    add_special(CheckForBattleTowerRules),
     add_special(GiveOddEgg),
     // add_special(Reset), // bank 0
     // add_special(Function1011f1),
@@ -172,7 +173,7 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(MoveTutor),
     // add_special(OmanyteChamber),
     // add_special(Function11c1ab),
-    // add_special(BattleTowerAction),
+    add_special(BattleTowerAction),
     add_special(DisplayUnownWords),
     // add_special(Menu_ChallengeExplanationCancel),
     // add_special(Function17d2b6),

@@ -8,6 +8,7 @@ extern void (*convertedFunc[])(void);
 #include "tools/emu/peanut_gb.h"
 
 //#include "charmap.h"
+#include "util/bugfix.h"
 #include "macros.h"
 
 #include "tools/emu/macros.h"

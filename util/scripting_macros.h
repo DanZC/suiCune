@@ -33,6 +33,7 @@
 #define closepokepic                SCRIPT_EVCMD(Script_closepokepic_Conv)
 #define verticalmenu                SCRIPT_EVCMD(Script_verticalmenu_Conv)
 #define _2dmenu                     SCRIPT_EVCMD(Script__2dmenu_Conv)
+#define battletowertext(_t)         SCRIPT_EVCMD(Script_battletowertext_Conv, _t)
 #define verbosegiveitem(_i, _q)     SCRIPT_EVCMD(Script_verbosegiveitem_Conv, _i, _q)
 #define verbosegiveitemvar(_i,_v)   SCRIPT_EVCMD(Script_verbosegiveitemvar_Conv, _i, _v)
 #define itemnotify                  SCRIPT_EVCMD(Script_itemnotify_Conv)
