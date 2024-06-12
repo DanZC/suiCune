@@ -1481,6 +1481,12 @@ struct NPCTrade {
     uint8_t genderRequested;
 };
 
+struct DexEntry {
+    const char* category;
+    uint16_t height, weight;
+    const char* description;
+};
+
 struct Pokemail {
     item_t item;
     const char* message;

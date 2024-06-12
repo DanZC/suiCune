@@ -162,7 +162,7 @@
 
 #include "engine/events/fruit_trees.h"
 #include "engine/battle/ai/move.h"
-//#include "engine/pokedex/pokedex_2.h"
+#include "engine/pokedex/pokedex_2.h"
 #include "engine/pokemon/mail.h"
 
 // SECTION "Crystal Features 1", ROMX

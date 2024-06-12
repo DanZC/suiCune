@@ -37,9 +37,10 @@ enum {
     BATTLE_SHIFT = 6,
     BATTLE_SCENE = 7,
 };
-#define TEXT_DELAY_FAST 0b001  // 1
-#define TEXT_DELAY_MED 0b011   // 3
-#define TEXT_DELAY_SLOW 0b101  // 5
+#define TEXT_DELAY_INSTANT 0b000  // 0
+#define TEXT_DELAY_FAST 0b001     // 1
+#define TEXT_DELAY_MED 0b011      // 3
+#define TEXT_DELAY_SLOW 0b101     // 5
 
 // wTextboxFrame::
 enum {

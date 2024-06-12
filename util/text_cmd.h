@@ -5,7 +5,7 @@ struct TextCmd {
     uint8_t cmd;
     union {
         const char* const text;
-        uint8_t* const ram;
+        uint8_t* ram;
         uint8_t n;
         uint16_t coord;
         void (*const as)(struct TextCmdState*);
@@ -61,6 +61,7 @@ typedef struct TextCmd txt_cmd_s;
 
 #define t_line      "<LINE>"
 #define t_next      "<NEXT>"
+#define t_page      "<PAGE>"
 #define t_cont      "<CONT>"
 #define t_para      "<PARA>"
 #define t_sixdots   "<……>"

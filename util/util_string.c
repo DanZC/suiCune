@@ -34,6 +34,7 @@ static const struct {
     CHARMAP_ENTRY("<NEXT>", CHAR_NEXT),
     CHARMAP_ENTRY("<LINE>", CHAR_LINE),
     CHARMAP_ENTRY("@", CHAR_TERM),
+    CHARMAP_ENTRY("<PAGE>", CHAR_PAGE),
     CHARMAP_ENTRY("<PARA>", CHAR_PARA),
     CHARMAP_ENTRY("<PLAYER>", CHAR_PLAYER),
     CHARMAP_ENTRY("<RIVAL>", CHAR_RIVAL),
@@ -115,6 +116,7 @@ static const struct {
     CHARMAP_ENTRY("☎", CHAR_PHONE_ICON),
     
     CHARMAP_ENTRY("⁂", CHAR_SHINY_ICON),
+    CHARMAP_ENTRY("<3f>", 0x3f),
 };
 
 // Converts UTF-8 encoded string to Crystal encoding.

@@ -70,6 +70,7 @@
 #define CHAR_TRAINER ('\x5d') // "TRAINER"
 #define CHAR_ROCKET  ('\x5e') // "ROCKET"
 #define CHAR_DEXEND  ('\x5f') 
+#define CHAR_PAGE    ('\x50') 
 
 #define CHAR_SPACE   ('\x7f') // " "
 

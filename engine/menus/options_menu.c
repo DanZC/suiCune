@@ -180,6 +180,7 @@ enum {
     OPT_TEXT_SPEED_FAST,  // 0
     OPT_TEXT_SPEED_MED,  // 1
     OPT_TEXT_SPEED_SLOW,  // 2
+    OPT_TEXT_SPEED_INSTANT,  // 3
 };
 
 void Options_TextSpeed(void){
@@ -259,13 +260,14 @@ bool Options_TextSpeed_Conv(void){
     //  entries correspond to OPT_TEXT_SPEED_* constants
         //dw ['.Fast'];
         // Fast:
-        [OPT_TEXT_SPEED_FAST] = "FAST@",
+        [OPT_TEXT_SPEED_FAST]       = "FAST   @",
         //dw ['.Mid'];
         // Mid:
-        [OPT_TEXT_SPEED_MED] = "MID @",
+        [OPT_TEXT_SPEED_MED]        = "MID    @",
         //dw ['.Slow'];
         // Slow:
-        [OPT_TEXT_SPEED_SLOW] = "SLOW@",
+        [OPT_TEXT_SPEED_SLOW]       = "SLOW   @",
+        [OPT_TEXT_SPEED_INSTANT]    = "INSTANT@",
     };
     // CALL(aGetTextSpeed);
     struct OptionRes res = GetTextSpeed_Conv();
@@ -279,7 +281,7 @@ bool Options_TextSpeed_Conv(void){
         // IF_NZ goto Decrease;
         if(res.c == OPT_TEXT_SPEED_FAST) {
             // LD_C(OPT_TEXT_SPEED_SLOW + 1);
-            res.c = OPT_TEXT_SPEED_SLOW;
+            res.c = OPT_TEXT_SPEED_INSTANT;
         }
         else {
         // Decrease:
@@ -295,7 +297,7 @@ bool Options_TextSpeed_Conv(void){
         // LD_A_C;  // right pressed
         // CP_A(OPT_TEXT_SPEED_SLOW);
         // IF_C goto Increase;
-        if(res.c == OPT_TEXT_SPEED_SLOW) {
+        if(res.c == OPT_TEXT_SPEED_INSTANT) {
             // LD_C(OPT_TEXT_SPEED_FAST - 1);
             res.c = OPT_TEXT_SPEED_FAST;
         }
@@ -371,7 +373,7 @@ static struct OptionRes GetTextSpeed_Conv(void){
         // LD_C(OPT_TEXT_SPEED_SLOW);
         // LD_DE((TEXT_DELAY_MED << 8) | TEXT_DELAY_FAST);
         // RET;
-        return (struct OptionRes){.c=OPT_TEXT_SPEED_SLOW, .d=TEXT_DELAY_MED, .e=TEXT_DELAY_FAST};
+        return (struct OptionRes){.c=OPT_TEXT_SPEED_SLOW, .d=TEXT_DELAY_MED, .e=TEXT_DELAY_INSTANT};
     }
     // CP_A(TEXT_DELAY_FAST);
     // IF_Z goto fast;
@@ -380,7 +382,11 @@ static struct OptionRes GetTextSpeed_Conv(void){
         // LD_C(OPT_TEXT_SPEED_FAST);
         // LD_DE((TEXT_DELAY_SLOW << 8) | TEXT_DELAY_MED);
         // RET;
-        return (struct OptionRes){.c=OPT_TEXT_SPEED_FAST, .d=TEXT_DELAY_SLOW, .e=TEXT_DELAY_MED};
+        return (struct OptionRes){.c=OPT_TEXT_SPEED_FAST, .d=TEXT_DELAY_INSTANT, .e=TEXT_DELAY_MED};
+    }
+
+    if((wram->wOptions & TEXT_DELAY_MASK) == TEXT_DELAY_INSTANT) {
+        return (struct OptionRes){.c=OPT_TEXT_SPEED_INSTANT, .d=TEXT_DELAY_SLOW, .e=TEXT_DELAY_FAST};
     }
 // none of the above
     // LD_C(OPT_TEXT_SPEED_MED);

@@ -7983,4 +7983,12 @@ CONVERTED(v_AnimateTileset);
     // CONVERTED(BTWinF1Text);
     // CONVERTED(BTLossM14Text);
     // CONVERTED(BTLossF5Text);
+
+    // engine/pokedex/pokedex_2.c
+    // CONVERTED(DisplayDexEntry);
+    // CONVERTED(GetDexEntryPointer);
+    // REDIRECTED(AnimateDexSearchSlowpoke);
+    // REDIRECTED(DoDexSearchSlowpokeFrame);
+    // REDIRECTED(POKeString);
+    // REDIRECTED(GetDexEntryPagePointer);
 }

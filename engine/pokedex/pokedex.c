@@ -1,5 +1,6 @@
 #include "../../constants.h"
 #include "pokedex.h"
+#include "pokedex_2.h"
 #include "pokedex_3.h"
 #include "../../home/delay.h"
 #include "../../home/audio.h"
@@ -20,6 +21,7 @@
 #include "../gfx/load_pics.h"
 #include "../../data/pokemon/dex_order_new.h"
 #include "../../data/pokemon/dex_order_alpha.h"
+#include "../../gfx/footprints.h"
 #include "../../charmap.h"
 
 //  Pokedex_RunJumptable.Jumptable indexes
@@ -41,6 +43,21 @@ enum {
 };
 
 #define POKEDEX_SCX (5)
+
+const struct ArrowCursorData {
+    uint8_t mask;
+    uint8_t count;
+    const uint16_t* coords;
+} DexEntryScreen_ArrowCursorData = {
+    .mask = D_RIGHT | D_LEFT,
+    .count = 4,
+    .coords = (const uint16_t[]) {
+        coord(1, 17, 0),  // PAGE
+        coord(6, 17, 0),  // AREA
+        coord(11, 17, 0),  // CRY
+        coord(15, 17, 0),  // PRNT
+    },
+};
 
 void Pokedex(void){
     // LDH_A_addr(hWX);
@@ -223,7 +240,6 @@ void Pokedex_InitCursorPosition(void){
             // CP_A_hl;
             // IF_Z goto done;
             if(b == *hl) {
-                printf("%d, %d\n", wram->wDexListingScrollOffset, wram->wDexListingCursor);
                 return;
             }
             // INC_HL;
@@ -247,7 +263,6 @@ void Pokedex_InitCursorPosition(void){
         // CP_A_hl;
         // IF_Z goto done;
         if(b == *hl) {
-            printf("%d, %d\n", wram->wDexListingScrollOffset, wram->wDexListingCursor);
             return;
         }
         // INC_HL;
@@ -303,8 +318,11 @@ void Pokedex_RunJumptable(void){
         //dw ['Pokedex_UpdateMainScreen'];
         case DEXSTATE_UPDATE_MAIN_SCR: return Pokedex_UpdateMainScreen();
         //dw ['Pokedex_InitDexEntryScreen'];
+        case DEXSTATE_DEX_ENTRY_SCR: return Pokedex_InitDexEntryScreen();
         //dw ['Pokedex_UpdateDexEntryScreen'];
+        case DEXSTATE_UPDATE_DEX_ENTRY_SCR: return Pokedex_UpdateDexEntryScreen();
         //dw ['Pokedex_ReinitDexEntryScreen'];
+        case DEXSTATE_REINIT_DEX_ENTRY_SCR: return Pokedex_ReinitDexEntryScreen();
         //dw ['Pokedex_InitSearchScreen'];
         //dw ['Pokedex_UpdateSearchScreen'];
         //dw ['Pokedex_InitOptionScreen'];
@@ -501,199 +519,241 @@ void Pokedex_UpdateMainScreen(void){
 }
 
 void Pokedex_InitDexEntryScreen(void){
-    CALL(aLowVolume);
-    XOR_A_A;  // page 1
-    LD_addr_A(wPokedexStatus);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    CALL(aClearSprites);
-    CALL(aPokedex_LoadCurrentFootprint);
-    CALL(aPokedex_DrawDexEntryScreenBG);
-    CALL(aPokedex_InitArrowCursor);
-    CALL(aPokedex_GetSelectedMon);
-    LD_addr_A(wPrevDexEntry);
-    FARCALL(aDisplayDexEntry);
-    CALL(aPokedex_DrawFootprint);
-    CALL(aWaitBGMap);
-    LD_A(0xa7);
-    LDH_addr_A(hWX);
-    CALL(aPokedex_GetSelectedMon);
-    LD_addr_A(wCurPartySpecies);
-    LD_A(SCGB_POKEDEX);
-    CALL(aPokedex_GetSGBLayout);
-    LD_A_addr(wCurPartySpecies);
-    CALL(aPlayMonCry);
-    CALL(aPokedex_IncrementDexPointer);
-    RET;
-
+    // CALL(aLowVolume);
+    LowVolume_Conv();
+    // XOR_A_A;  // page 1
+    // LD_addr_A(wPokedexStatus);
+    wram->wPokedexStatus = 0;
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    // CALL(aClearSprites);
+    ClearSprites_Conv();
+    // CALL(aPokedex_LoadCurrentFootprint);
+    Pokedex_LoadCurrentFootprint();
+    // CALL(aPokedex_DrawDexEntryScreenBG);
+    Pokedex_DrawDexEntryScreenBG();
+    // CALL(aPokedex_InitArrowCursor);
+    Pokedex_InitArrowCursor();
+    // CALL(aPokedex_GetSelectedMon);
+    species_t mon = Pokedex_GetSelectedMon();
+    // LD_addr_A(wPrevDexEntry);
+    wram->wPrevDexEntry = mon;
+    // FARCALL(aDisplayDexEntry);
+    DisplayDexEntry(mon);
+    // CALL(aPokedex_DrawFootprint);
+    Pokedex_DrawFootprint();
+    // CALL(aWaitBGMap);
+    WaitBGMap_Conv();
+    // LD_A(0xa7);
+    // LDH_addr_A(hWX);
+    hram->hWX = 0xa7;
+    // CALL(aPokedex_GetSelectedMon);
+    // LD_addr_A(wCurPartySpecies);
+    wram->wCurPartySpecies = Pokedex_GetSelectedMon();
+    // LD_A(SCGB_POKEDEX);
+    // CALL(aPokedex_GetSGBLayout);
+    Pokedex_GetSGBLayout(SCGB_POKEDEX);
+    // LD_A_addr(wCurPartySpecies);
+    // CALL(aPlayMonCry);
+    PlayMonCry_Conv(wram->wCurPartySpecies);
+    // CALL(aPokedex_IncrementDexPointer);
+    Pokedex_IncrementDexPointer();
+    // RET;
 }
 
 void Pokedex_UpdateDexEntryScreen(void){
-    LD_DE(mDexEntryScreen_ArrowCursorData);
-    CALL(aPokedex_MoveArrowCursor);
-    LD_HL(hJoyPressed);
-    LD_A_hl;
-    AND_A(B_BUTTON);
-    IF_NZ goto return_to_prev_screen;
-    LD_A_hl;
-    AND_A(A_BUTTON);
-    IF_NZ goto do_menu_action;
-    CALL(aPokedex_NextOrPreviousDexEntry);
-    RET_NC ;
-    CALL(aPokedex_IncrementDexPointer);
-    RET;
+    // LD_DE(mDexEntryScreen_ArrowCursorData);
+    // CALL(aPokedex_MoveArrowCursor);
+    Pokedex_MoveArrowCursor(&DexEntryScreen_ArrowCursorData);
+    // LD_HL(hJoyPressed);
+    // LD_A_hl;
+    // AND_A(B_BUTTON);
+    // IF_NZ goto return_to_prev_screen;
+    if(hram->hJoyPressed & B_BUTTON) {
+    // return_to_prev_screen:
+        // LD_A_addr(wLastVolume);
+        // AND_A_A;
+        // IF_Z goto max_volume;
+        if(wram->wLastVolume != 0) {
+            // LD_A(MAX_VOLUME);
+            // LD_addr_A(wLastVolume);
+            wram->wLastVolume = MAX_VOLUME;
+        }
 
-
-do_menu_action:
-    LD_A_addr(wDexArrowCursorPosIndex);
-    LD_HL(mDexEntryScreen_MenuActionJumptable);
-    CALL(aPokedex_LoadPointer);
-    JP_hl;
-
-
-return_to_prev_screen:
-    LD_A_addr(wLastVolume);
-    AND_A_A;
-    IF_Z goto max_volume;
-    LD_A(MAX_VOLUME);
-    LD_addr_A(wLastVolume);
-
-
-max_volume:
-    CALL(aMaxVolume);
-    LD_A_addr(wPrevDexEntryJumptableIndex);
-    LD_addr_A(wJumptableIndex);
-    RET;
-
+    // max_volume:
+        // CALL(aMaxVolume);
+        MaxVolume_Conv();
+        // LD_A_addr(wPrevDexEntryJumptableIndex);
+        // LD_addr_A(wJumptableIndex);
+        wram->wJumptableIndex = wram->wPrevDexEntryJumptableIndex;
+        // RET;
+        return;
+    }
+    // LD_A_hl;
+    // AND_A(A_BUTTON);
+    // IF_NZ goto do_menu_action;
+    if(hram->hJoyPressed & A_BUTTON) {
+    // do_menu_action:
+        // LD_A_addr(wDexArrowCursorPosIndex);
+        // LD_HL(mDexEntryScreen_MenuActionJumptable);
+        // CALL(aPokedex_LoadPointer);
+        // JP_hl;
+        return DexEntryScreen_MenuActionJumptable(wram->wDexArrowCursorPosIndex);
+    }
+    // CALL(aPokedex_NextOrPreviousDexEntry);
+    // RET_NC ;
+    if(!Pokedex_NextOrPreviousDexEntry())
+        return;
+    // CALL(aPokedex_IncrementDexPointer);
+    Pokedex_IncrementDexPointer();
+    // RET;
 }
 
 void Pokedex_Page(void){
-    LD_A_addr(wPokedexStatus);
-    XOR_A(1);  // toggle page
-    LD_addr_A(wPokedexStatus);
-    CALL(aPokedex_GetSelectedMon);
-    LD_addr_A(wPrevDexEntry);
-    FARCALL(aDisplayDexEntry);
-    CALL(aWaitBGMap);
-    RET;
-
+    // LD_A_addr(wPokedexStatus);
+    // XOR_A(1);  // toggle page
+    // LD_addr_A(wPokedexStatus);
+    wram->wPokedexStatus ^= 1;
+    // CALL(aPokedex_GetSelectedMon);
+    species_t species = Pokedex_GetSelectedMon();
+    // LD_addr_A(wPrevDexEntry);
+    wram->wPrevDexEntry = species;
+    // FARCALL(aDisplayDexEntry);
+    DisplayDexEntry(species);
+    // CALL(aWaitBGMap);
+    WaitBGMap_Conv();
+    // RET;
 }
 
 void Pokedex_ReinitDexEntryScreen(void){
 //  Reinitialize the Pokédex entry screen after changing the selected mon.
-    CALL(aPokedex_BlackOutBG);
-    XOR_A_A;  // page 1
-    LD_addr_A(wPokedexStatus);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    CALL(aPokedex_DrawDexEntryScreenBG);
-    CALL(aPokedex_InitArrowCursor);
-    CALL(aPokedex_LoadCurrentFootprint);
-    CALL(aPokedex_GetSelectedMon);
-    LD_addr_A(wPrevDexEntry);
-    FARCALL(aDisplayDexEntry);
-    CALL(aPokedex_DrawFootprint);
-    CALL(aPokedex_LoadSelectedMonTiles);
-    CALL(aWaitBGMap);
-    CALL(aPokedex_GetSelectedMon);
-    LD_addr_A(wCurPartySpecies);
-    LD_A(SCGB_POKEDEX);
-    CALL(aPokedex_GetSGBLayout);
-    LD_A_addr(wCurPartySpecies);
-    CALL(aPlayMonCry);
-    LD_HL(wJumptableIndex);
-    DEC_hl;
-    RET;
-
+    // CALL(aPokedex_BlackOutBG);
+    Pokedex_BlackOutBG();
+    // XOR_A_A;  // page 1
+    // LD_addr_A(wPokedexStatus);
+    wram->wPokedexStatus = 1;
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    // CALL(aPokedex_DrawDexEntryScreenBG);
+    Pokedex_DrawDexEntryScreenBG();
+    // CALL(aPokedex_InitArrowCursor);
+    Pokedex_InitArrowCursor();
+    // CALL(aPokedex_LoadCurrentFootprint);
+    Pokedex_LoadCurrentFootprint();
+    // CALL(aPokedex_GetSelectedMon);
+    species_t mon = Pokedex_GetSelectedMon();
+    // LD_addr_A(wPrevDexEntry);
+    wram->wPrevDexEntry = mon;
+    // FARCALL(aDisplayDexEntry);
+    DisplayDexEntry(mon);
+    // CALL(aPokedex_DrawFootprint);
+    Pokedex_DrawFootprint();
+    // CALL(aPokedex_LoadSelectedMonTiles);
+    Pokedex_LoadSelectedMonTiles();
+    // CALL(aWaitBGMap);
+    WaitBGMap_Conv();
+    // CALL(aPokedex_GetSelectedMon);
+    // LD_addr_A(wCurPartySpecies);
+    wram->wCurPartySpecies = Pokedex_GetSelectedMon();
+    // LD_A(SCGB_POKEDEX);
+    // CALL(aPokedex_GetSGBLayout);
+    Pokedex_GetSGBLayout(SCGB_POKEDEX);
+    // LD_A_addr(wCurPartySpecies);
+    // CALL(aPlayMonCry);
+    PlayMonCry_Conv(mon);
+    // LD_HL(wJumptableIndex);
+    // DEC_hl;
+    wram->wJumptableIndex--;
+    // RET;
 }
 
-void DexEntryScreen_ArrowCursorData(void){
-    //db ['D_RIGHT | D_LEFT', '4'];
-    //dwcoord ['1', '17'];  // PAGE
-    //dwcoord ['6', '17'];  // AREA
-    //dwcoord ['11', '17'];  // CRY
-    //dwcoord ['15', '17'];  // PRNT
-
-    return DexEntryScreen_MenuActionJumptable();
-}
-
-void DexEntryScreen_MenuActionJumptable(void){
+void DexEntryScreen_MenuActionJumptable(uint8_t a){
     //dw ['Pokedex_Page'];
     //dw ['.Area'];
     //dw ['.Cry'];
     //dw ['.Print'];
+    switch(a) {
+    case 0:
+        return Pokedex_Page();
+    case 1:
+    // Area:
+    //  TODO: Implement and convert Pokedex Area thing.
+        // CALL(aPokedex_BlackOutBG);
+        // XOR_A_A;
+        // LDH_addr_A(hSCX);
+        // CALL(aDelayFrame);
+        // LD_A(0x7);
+        // LDH_addr_A(hWX);
+        // LD_A(0x90);
+        // LDH_addr_A(hWY);
+        // CALL(aPokedex_GetSelectedMon);
+        // LD_A_addr(wDexCurLocation);
+        // LD_E_A;
+        // PREDEF(pPokedex_GetArea);
+        // CALL(aPokedex_BlackOutBG);
+        // CALL(aDelayFrame);
+        // XOR_A_A;
+        // LDH_addr_A(hBGMapMode);
+        // LD_A(0x90);
+        // LDH_addr_A(hWY);
+        // LD_A(POKEDEX_SCX);
+        // LDH_addr_A(hSCX);
+        // CALL(aDelayFrame);
+        // CALL(aPokedex_RedisplayDexEntry);
+        // CALL(aPokedex_LoadSelectedMonTiles);
+        // CALL(aWaitBGMap);
+        // CALL(aPokedex_GetSelectedMon);
+        // LD_addr_A(wCurPartySpecies);
+        // LD_A(SCGB_POKEDEX);
+        // CALL(aPokedex_GetSGBLayout);
+        // RET;
+        return;
 
+    case 2:
+    // Cry:
+        // CALL(aPokedex_GetSelectedMon);
+        // LD_A_addr(wTempSpecies);
+        // CALL(aGetCryIndex);
+        // LD_E_C;
+        // LD_D_B;
+        // CALL(aPlayCry);
+        PlayMonCry2_Conv(Pokedex_GetSelectedMon());
+        // RET;
+        return;
 
-Area:
-    CALL(aPokedex_BlackOutBG);
-    XOR_A_A;
-    LDH_addr_A(hSCX);
-    CALL(aDelayFrame);
-    LD_A(0x7);
-    LDH_addr_A(hWX);
-    LD_A(0x90);
-    LDH_addr_A(hWY);
-    CALL(aPokedex_GetSelectedMon);
-    LD_A_addr(wDexCurLocation);
-    LD_E_A;
-    PREDEF(pPokedex_GetArea);
-    CALL(aPokedex_BlackOutBG);
-    CALL(aDelayFrame);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    LD_A(0x90);
-    LDH_addr_A(hWY);
-    LD_A(POKEDEX_SCX);
-    LDH_addr_A(hSCX);
-    CALL(aDelayFrame);
-    CALL(aPokedex_RedisplayDexEntry);
-    CALL(aPokedex_LoadSelectedMonTiles);
-    CALL(aWaitBGMap);
-    CALL(aPokedex_GetSelectedMon);
-    LD_addr_A(wCurPartySpecies);
-    LD_A(SCGB_POKEDEX);
-    CALL(aPokedex_GetSGBLayout);
-    RET;
-
-
-Cry:
-    CALL(aPokedex_GetSelectedMon);
-    LD_A_addr(wTempSpecies);
-    CALL(aGetCryIndex);
-    LD_E_C;
-    LD_D_B;
-    CALL(aPlayCry);
-    RET;
-
-
-Print:
-    CALL(aPokedex_ApplyPrintPals);
-    XOR_A_A;
-    LDH_addr_A(hSCX);
-    LD_A_addr(wPrevDexEntryBackup);
-    PUSH_AF;
-    LD_A_addr(wPrevDexEntryJumptableIndex);
-    PUSH_AF;
-    LD_A_addr(wJumptableIndex);
-    PUSH_AF;
-    FARCALL(aPrintDexEntry);
-    POP_AF;
-    LD_addr_A(wJumptableIndex);
-    POP_AF;
-    LD_addr_A(wPrevDexEntryJumptableIndex);
-    POP_AF;
-    LD_addr_A(wPrevDexEntryBackup);
-    CALL(aClearBGPalettes);
-    CALL(aDisableLCD);
-    CALL(aPokedex_LoadInvertedFont);
-    CALL(aPokedex_RedisplayDexEntry);
-    CALL(aEnableLCD);
-    CALL(aWaitBGMap);
-    LD_A(POKEDEX_SCX);
-    LDH_addr_A(hSCX);
-    CALL(aPokedex_ApplyUsualPals);
-    RET;
-
+    case 3:
+    //  TODO: Replace this with something else that makes sense.
+    // Print:
+        // CALL(aPokedex_ApplyPrintPals);
+        // XOR_A_A;
+        // LDH_addr_A(hSCX);
+        // LD_A_addr(wPrevDexEntryBackup);
+        // PUSH_AF;
+        // LD_A_addr(wPrevDexEntryJumptableIndex);
+        // PUSH_AF;
+        // LD_A_addr(wJumptableIndex);
+        // PUSH_AF;
+        // FARCALL(aPrintDexEntry);
+        // POP_AF;
+        // LD_addr_A(wJumptableIndex);
+        // POP_AF;
+        // LD_addr_A(wPrevDexEntryJumptableIndex);
+        // POP_AF;
+        // LD_addr_A(wPrevDexEntryBackup);
+        // CALL(aClearBGPalettes);
+        // CALL(aDisableLCD);
+        // CALL(aPokedex_LoadInvertedFont);
+        // CALL(aPokedex_RedisplayDexEntry);
+        // CALL(aEnableLCD);
+        // CALL(aWaitBGMap);
+        // LD_A(POKEDEX_SCX);
+        // LDH_addr_A(hSCX);
+        // CALL(aPokedex_ApplyUsualPals);
+        // RET;
+        return;
+    }
 }
 
 void Pokedex_RedisplayDexEntry(void){
@@ -1155,61 +1215,76 @@ void Pokedex_UnownModeUpdateCursorGfx(void){
 
 }
 
-void Pokedex_NextOrPreviousDexEntry(void){
-    LD_A_addr(wDexListingCursor);
-    LD_addr_A(wBackupDexListingCursor);
-    LD_A_addr(wDexListingScrollOffset);
-    LD_addr_A(wBackupDexListingPage);
-    LD_HL(hJoyLast);
-    LD_A_hl;
-    AND_A(D_UP);
-    IF_NZ goto up;
-    LD_A_hl;
-    AND_A(D_DOWN);
-    IF_NZ goto down;
-    AND_A_A;
-    RET;
+bool Pokedex_NextOrPreviousDexEntry(void){
+    // LD_A_addr(wDexListingCursor);
+    // LD_addr_A(wBackupDexListingCursor);
+    wram->wBackupDexListingCursor = wram->wDexListingCursor;
+    // LD_A_addr(wDexListingScrollOffset);
+    // LD_addr_A(wBackupDexListingPage);
+    wram->wBackupDexListingPage = wram->wDexListingScrollOffset;
+    // LD_HL(hJoyLast);
+    // LD_A_hl;
+    // AND_A(D_UP);
+    // IF_NZ goto up;
+    if(hram->hJoyLast & D_UP) {
+        while(1) {
+        // up:
+            // LD_A_addr(wDexListingHeight);
+            // LD_D_A;
+            // LD_A_addr(wDexListingEnd);
+            // LD_E_A;
+            // CALL(aPokedex_ListingMoveCursorUp);
+            // IF_NC goto nope;
+            if(!Pokedex_ListingMoveCursorUp())
+                goto nope;
+            // CALL(aPokedex_GetSelectedMon);
+            // CALL(aPokedex_CheckSeen);
+            // IF_NZ goto yep;
+            if(Pokedex_CheckSeen(Pokedex_GetSelectedMon()))
+                return true;
+            // goto up;
+        }
+    }
+    // LD_A_hl;
+    // AND_A(D_DOWN);
+    // IF_NZ goto down;
+    else if(hram->hJoyLast & D_DOWN) {
+        while(1) {
+        // down:
+            // LD_A_addr(wDexListingHeight);
+            // LD_D_A;
+            // LD_A_addr(wDexListingEnd);
+            // LD_E_A;
+            // CALL(aPokedex_ListingMoveCursorDown);
+            // IF_NC goto nope;
+            if(!Pokedex_ListingMoveCursorDown(wram->wDexListingHeight, wram->wDexListingEnd))
+                goto nope;
+            // CALL(aPokedex_GetSelectedMon);
+            // CALL(aPokedex_CheckSeen);
+            // IF_NZ goto yep;
+            if(Pokedex_CheckSeen(Pokedex_GetSelectedMon()))
+                return true;
+            // goto down;
+        }
+    }
+    // AND_A_A;
+    // RET;
+    return false;
 
-
-up:
-    LD_A_addr(wDexListingHeight);
-    LD_D_A;
-    LD_A_addr(wDexListingEnd);
-    LD_E_A;
-    CALL(aPokedex_ListingMoveCursorUp);
-    IF_NC goto nope;
-    CALL(aPokedex_GetSelectedMon);
-    CALL(aPokedex_CheckSeen);
-    IF_NZ goto yep;
-    goto up;
-
-
-down:
-    LD_A_addr(wDexListingHeight);
-    LD_D_A;
-    LD_A_addr(wDexListingEnd);
-    LD_E_A;
-    CALL(aPokedex_ListingMoveCursorDown);
-    IF_NC goto nope;
-    CALL(aPokedex_GetSelectedMon);
-    CALL(aPokedex_CheckSeen);
-    IF_NZ goto yep;
-    goto down;
-
-
-yep:
-    SCF;
-    RET;
-
+// yep:
+    // SCF;
+    // RET;
 
 nope:
-    LD_A_addr(wBackupDexListingCursor);
-    LD_addr_A(wDexListingCursor);
-    LD_A_addr(wBackupDexListingPage);
-    LD_addr_A(wDexListingScrollOffset);
-    AND_A_A;
-    RET;
-
+    // LD_A_addr(wBackupDexListingCursor);
+    // LD_addr_A(wDexListingCursor);
+    wram->wDexListingCursor = wram->wBackupDexListingCursor; 
+    // LD_A_addr(wBackupDexListingPage);
+    // LD_addr_A(wDexListingScrollOffset);
+    wram->wDexListingScrollOffset = wram->wBackupDexListingPage; 
+    // AND_A_A;
+    // RET;
+    return false;
 }
 
 //  Handles D-pad input for a list of Pokémon.
@@ -1368,13 +1443,12 @@ bool Pokedex_ListingPosStayedSame(void){
 }
 
 bool Pokedex_ListingPosChanged(void){
-    printf("%d, %d\n", wram->wDexListingScrollOffset, wram->wDexListingCursor);
     // SCF;
     // RET;
     return true;
 }
 
-void Pokedex_FillColumn(tile_t* hl, uint8_t b, uint8_t a){
+tile_t* Pokedex_FillColumn(tile_t* hl, uint8_t b, uint8_t a){
 //  Fills a column starting at hl, going downwards.
 //  b is the height of the column, and a is the tile it's filled with.
     // PUSH_DE;
@@ -1391,7 +1465,7 @@ void Pokedex_FillColumn(tile_t* hl, uint8_t b, uint8_t a){
     } while(--b != 0);
     // POP_DE;
     // RET;
-
+    return hl;
 }
 
 void Pokedex_DrawMainScreenBG(void){
@@ -1481,52 +1555,54 @@ const uint8_t String_SELECT_OPTION[] = {0x3b, 0x48, 0x49, 0x4a, 0x44, 0x45, 0x46
 const uint8_t String_START_SEARCH[] = {0x3c, 0x3b, 0x41, 0x42, 0x43, 0x4b, 0x4c, 0x4d, 0x4e, 0x3c, 0x50};
 
 void Pokedex_DrawDexEntryScreenBG(void){
-    CALL(aPokedex_FillBackgroundColor2);
-    hlcoord(0, 0, wTilemap);
-    LD_BC((15 << 8) | 18);
-    CALL(aPokedex_PlaceBorder);
-    hlcoord(19, 0, wTilemap);
-    LD_hl(0x34);
-    hlcoord(19, 1, wTilemap);
-    LD_A(0x7f);
-    LD_B(15);
-    CALL(aPokedex_FillColumn);
-    LD_hl(0x39);
-    hlcoord(1, 10, wTilemap);
-    LD_BC(19);
-    LD_A(0x61);
-    CALL(aByteFill);
-    hlcoord(1, 17, wTilemap);
-    LD_BC(18);
-    LD_A(0x7f);
-    CALL(aByteFill);
-    hlcoord(9, 7, wTilemap);
-    LD_DE(mPokedex_DrawDexEntryScreenBG_Height);
-    CALL(aPokedex_PlaceString);
-    hlcoord(9, 9, wTilemap);
-    LD_DE(mPokedex_DrawDexEntryScreenBG_Weight);
-    CALL(aPokedex_PlaceString);
-    hlcoord(0, 17, wTilemap);
-    LD_DE(mPokedex_DrawDexEntryScreenBG_MenuItems);
-    CALL(aPokedex_PlaceString);
-    CALL(aPokedex_PlaceFrontpicTopLeftCorner);
-    RET;
+    static const char Height[] = "HT  ?<ROCKET>?\?<DEXEND>"; // "HT  ?"', '0x5e', '"??"', '0x5f', '-1';  // HT  ?'??"
+    static const char Weight[] = "WT   ???lb"; // "WT   ???lb"', '-1'
+    static const char MenuItems[] = "<3f> PAGE AREA CRY PRNT<ff>";
+    // CALL(aPokedex_FillBackgroundColor2);
+    Pokedex_FillBackgroundColor2();
+    // hlcoord(0, 0, wTilemap);
+    // LD_BC((15 << 8) | 18);
+    // CALL(aPokedex_PlaceBorder);
+    Pokedex_PlaceBorder(coord(0, 0, wram->wTilemap), 15, 18);
+    // hlcoord(19, 0, wTilemap);
+    // LD_hl(0x34);
+    *coord(19, 0, wram->wTilemap) = 0x34;
+    // hlcoord(19, 1, wTilemap);
+    // LD_A(0x7f);
+    // LD_B(15);
+    // CALL(aPokedex_FillColumn);
+    tile_t* hl = Pokedex_FillColumn(coord(19, 1, wram->wTilemap), 15, 0x7f);
+    // LD_hl(0x39);
+    *hl = 0x39;
+    // hlcoord(1, 10, wTilemap);
+    // LD_BC(19);
+    // LD_A(0x61);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(1, 10, wram->wTilemap), 19, 0x61);
+    // hlcoord(1, 17, wTilemap);
+    // LD_BC(18);
+    // LD_A(0x7f);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(1, 17, wram->wTilemap), 18, 0x7f);
+    // hlcoord(9, 7, wTilemap);
+    // LD_DE(mPokedex_DrawDexEntryScreenBG_Height);
+    // CALL(aPokedex_PlaceString);
+    Pokedex_PlaceString(coord(9, 7, wram->wTilemap), U82C(Height));
+    // hlcoord(9, 9, wTilemap);
+    // LD_DE(mPokedex_DrawDexEntryScreenBG_Weight);
+    // CALL(aPokedex_PlaceString);
+    Pokedex_PlaceString(coord(9, 9, wram->wTilemap), U82C(Weight));
+    // hlcoord(0, 17, wTilemap);
+    // LD_DE(mPokedex_DrawDexEntryScreenBG_MenuItems);
+    // CALL(aPokedex_PlaceString);
+    Pokedex_PlaceString(coord(0, 17, wram->wTilemap), U82C(MenuItems));
+    // CALL(aPokedex_PlaceFrontpicTopLeftCorner);
+    Pokedex_PlaceFrontpicTopLeftCorner();
+    // RET;
 
-
-Number:
+// Number:
 //   //  unreferenced
     //db ['0x5c', '0x5d', '-1'];  // No.
-
-Height:
-    //db ['"HT  ?"', '0x5e', '"??"', '0x5f', '-1'];  // HT  ?'??"
-
-Weight:
-    //db ['"WT   ???lb"', '-1'];
-
-MenuItems:
-    //db ['0x3b', '" PAGE AREA CRY PRNT"', '-1'];
-
-    return Pokedex_DrawOptionScreenBG();
 }
 
 void Pokedex_DrawOptionScreenBG(void){
@@ -1756,12 +1832,12 @@ void UnownModeLetterAndCursorCoords(void){
 }
 
 void Pokedex_FillBackgroundColor2(void){
-    hlcoord(0, 0, wTilemap);
-    LD_A(0x32);
-    LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
-    CALL(aByteFill);
-    RET;
-
+    // hlcoord(0, 0, wTilemap);
+    // LD_A(0x32);
+    // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x32);
+    // RET;
 }
 
 void Pokedex_PlaceFrontpicTopLeftCorner(void){
@@ -2033,18 +2109,21 @@ bool Pokedex_PlaceDefaultStringIfNotSeen(tile_t* hl, species_t species){
 }
 
 void Pokedex_DrawFootprint(void){
-    hlcoord(18, 1, wTilemap);
-    LD_A(0x62);
-    LD_hli_A;
-    INC_A;
-    LD_hl_A;
-    hlcoord(18, 2, wTilemap);
-    LD_A(0x64);
-    LD_hli_A;
-    INC_A;
-    LD_hl_A;
-    RET;
-
+    // hlcoord(18, 1, wTilemap);
+    // LD_A(0x62);
+    // LD_hli_A;
+    *coord(18, 1, wram->wTilemap) = 0x62;
+    // INC_A;
+    // LD_hl_A;
+    *coord(19, 1, wram->wTilemap) = 0x63;
+    // hlcoord(18, 2, wTilemap);
+    // LD_A(0x64);
+    // LD_hli_A;
+    *coord(18, 2, wram->wTilemap) = 0x64;
+    // INC_A;
+    // LD_hl_A;
+    *coord(19, 2, wram->wTilemap) = 0x65;
+    // RET;
 }
 
 //  Gets the species of the currently selected Pokémon. This corresponds to the
@@ -2814,148 +2893,184 @@ void Pokedex_PutScrollbarOAM(struct SpriteOAM* de){
 }
 
 void Pokedex_InitArrowCursor(void){
-    XOR_A_A;
-    LD_addr_A(wDexArrowCursorPosIndex);
-    LD_addr_A(wDexArrowCursorDelayCounter);
-    LD_addr_A(wDexArrowCursorBlinkCounter);
-    RET;
-
+    // XOR_A_A;
+    // LD_addr_A(wDexArrowCursorPosIndex);
+    wram->wDexArrowCursorPosIndex = 0;
+    // LD_addr_A(wDexArrowCursorDelayCounter);
+    wram->wDexArrowCursorDelayCounter = 0;
+    // LD_addr_A(wDexArrowCursorBlinkCounter);
+    wram->wDexArrowCursorBlinkCounter = 0;
+    // RET;
 }
 
-void Pokedex_MoveArrowCursor(void){
+bool Pokedex_MoveArrowCursor(const struct ArrowCursorData* de){
 //  bc = [de] - 1
-    LD_A_de;
-    LD_B_A;
-    INC_DE;
-    LD_A_de;
-    DEC_A;
-    LD_C_A;
-    INC_DE;
-    CALL(aPokedex_BlinkArrowCursor);
+    // LD_A_de;
+    // LD_B_A;
+    uint8_t b = de->mask;
+    // INC_DE;
+    // LD_A_de;
+    // DEC_A;
+    // LD_C_A;
+    uint8_t c = de->count - 1;
+    // INC_DE;
+    // CALL(aPokedex_BlinkArrowCursor);
+    Pokedex_BlinkArrowCursor(de);
 
-    LD_HL(hJoyPressed);
-    LD_A_hl;
-    AND_A(D_LEFT | D_UP);
-    AND_A_B;
-    IF_NZ goto move_left_or_up;
-    LD_A_hl;
-    AND_A(D_RIGHT | D_DOWN);
-    AND_A_B;
-    IF_NZ goto move_right_or_down;
-    LD_A_hl;
-    AND_A(SELECT);
-    AND_A_B;
-    IF_NZ goto select;
-    CALL(aPokedex_ArrowCursorDelay);
-    IF_C goto no_action;
-    LD_HL(hJoyLast);
-    LD_A_hl;
-    AND_A(D_LEFT | D_UP);
-    AND_A_B;
-    IF_NZ goto move_left_or_up;
-    LD_A_hl;
-    AND_A(D_RIGHT | D_DOWN);
-    AND_A_B;
-    IF_NZ goto move_right_or_down;
-    goto no_action;
-
+    // LD_HL(hJoyPressed);
+    // LD_A_hl;
+    // AND_A(D_LEFT | D_UP);
+    // AND_A_B;
+    // IF_NZ goto move_left_or_up;
+    if(hram->hJoyPressed & (D_LEFT | D_UP) & b)
+        goto move_left_or_up;
+    // LD_A_hl;
+    // AND_A(D_RIGHT | D_DOWN);
+    // AND_A_B;
+    // IF_NZ goto move_right_or_down;
+    if(hram->hJoyPressed & (D_RIGHT | D_DOWN) & b)
+        goto move_right_or_down;
+    // LD_A_hl;
+    // AND_A(SELECT);
+    // AND_A_B;
+    // IF_NZ goto select;
+    if(hram->hJoyPressed & SELECT & b)
+        goto select;
+    // CALL(aPokedex_ArrowCursorDelay);
+    // IF_C goto no_action;
+    if(Pokedex_ArrowCursorDelay())
+        return false;
+    // LD_HL(hJoyLast);
+    // LD_A_hl;
+    // AND_A(D_LEFT | D_UP);
+    // AND_A_B;
+    // IF_NZ goto move_left_or_up;
+    if(hram->hJoyLast & (D_LEFT | D_UP) & b)
+        goto move_left_or_up;
+    // LD_A_hl;
+    // AND_A(D_RIGHT | D_DOWN);
+    // AND_A_B;
+    // IF_NZ goto move_right_or_down;
+    if(hram->hJoyLast & (D_RIGHT | D_DOWN) & b)
+        goto move_right_or_down;
+    // goto no_action;
+    return false;
 
 move_left_or_up:
-    LD_A_addr(wDexArrowCursorPosIndex);
-    AND_A_A;
-    IF_Z goto no_action;
-    CALL(aPokedex_GetArrowCursorPos);
-    LD_hl(0x7f);
-    LD_HL(wDexArrowCursorPosIndex);
-    DEC_hl;
+    // LD_A_addr(wDexArrowCursorPosIndex);
+    // AND_A_A;
+    // IF_Z goto no_action;
+    if(wram->wDexArrowCursorPosIndex == 0)
+        return false;
+    // CALL(aPokedex_GetArrowCursorPos);
+    // LD_hl(0x7f);
+    *Pokedex_GetArrowCursorPos(de) = 0x7f;
+    // LD_HL(wDexArrowCursorPosIndex);
+    // DEC_hl;
+    wram->wDexArrowCursorPosIndex--;
     goto update_cursor_pos;
 
 
 move_right_or_down:
-    LD_A_addr(wDexArrowCursorPosIndex);
-    CP_A_C;
-    IF_NC goto no_action;
-    CALL(aPokedex_GetArrowCursorPos);
-    LD_hl(0x7f);
-    LD_HL(wDexArrowCursorPosIndex);
-    INC_hl;
+    // LD_A_addr(wDexArrowCursorPosIndex);
+    // CP_A_C;
+    // IF_NC goto no_action;
+    if(wram->wDexArrowCursorPosIndex >= c)
+        return false;
+    // CALL(aPokedex_GetArrowCursorPos);
+    // LD_hl(0x7f);
+    *Pokedex_GetArrowCursorPos(de) = 0x7f;
+    // LD_HL(wDexArrowCursorPosIndex);
+    // INC_hl;
+    wram->wDexArrowCursorPosIndex++;
 
 
 update_cursor_pos:
-    CALL(aPokedex_GetArrowCursorPos);
-    LD_hl(0xed);
-    LD_A(12);
-    LD_addr_A(wDexArrowCursorDelayCounter);
-    XOR_A_A;
-    LD_addr_A(wDexArrowCursorBlinkCounter);
-    SCF;
-    RET;
+    // CALL(aPokedex_GetArrowCursorPos);
+    // LD_hl(0xed);
+    *Pokedex_GetArrowCursorPos(de) = 0xed;
+    // LD_A(12);
+    // LD_addr_A(wDexArrowCursorDelayCounter);
+    wram->wDexArrowCursorDelayCounter = 12;
+    // XOR_A_A;
+    // LD_addr_A(wDexArrowCursorBlinkCounter);
+    wram->wDexArrowCursorBlinkCounter = 0;
+    // SCF;
+    // RET;
+    return true;
 
-
-no_action:
-    AND_A_A;
-    RET;
-
+// no_action:
+    // AND_A_A;
+    // RET;
 
 select:
-    CALL(aPokedex_GetArrowCursorPos);
-    LD_hl(0x7f);
-    LD_A_addr(wDexArrowCursorPosIndex);
-    CP_A_C;
-    IF_C goto update;
-    LD_A(-1);
-
-update:
-    INC_A;
-    LD_addr_A(wDexArrowCursorPosIndex);
+    // CALL(aPokedex_GetArrowCursorPos);
+    // LD_hl(0x7f);
+    *Pokedex_GetArrowCursorPos(de) = 0x7f;
+    // LD_A_addr(wDexArrowCursorPosIndex);
+    // CP_A_C;
+    // IF_C goto update;
+    if(wram->wDexArrowCursorPosIndex >= c)
+        // LD_A(-1);
+        wram->wDexArrowCursorPosIndex = 0;
+    else {
+    // update:
+        // INC_A;
+        // LD_addr_A(wDexArrowCursorPosIndex);
+        wram->wDexArrowCursorPosIndex++;
+    }
     goto update_cursor_pos;
-
-    return Pokedex_GetArrowCursorPos();
 }
 
-void Pokedex_GetArrowCursorPos(void){
-    LD_A_addr(wDexArrowCursorPosIndex);
-    ADD_A_A;
-    LD_L_A;
-    LD_H(0);
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    RET;
-
+tile_t* Pokedex_GetArrowCursorPos(const struct ArrowCursorData* de){
+    // LD_A_addr(wDexArrowCursorPosIndex);
+    // ADD_A_A;
+    // LD_L_A;
+    // LD_H(0);
+    // ADD_HL_DE;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // RET;
+    return wram->wTilemap + de->coords[wram->wDexArrowCursorPosIndex];
 }
 
-void Pokedex_BlinkArrowCursor(void){
-    LD_HL(wDexArrowCursorBlinkCounter);
-    LD_A_hl;
-    INC_hl;
-    AND_A(0x8);
-    IF_Z goto blink_on;
-    CALL(aPokedex_GetArrowCursorPos);
-    LD_hl(0x7f);
-    RET;
-
-
-blink_on:
-    CALL(aPokedex_GetArrowCursorPos);
-    LD_hl(0xed);
-    RET;
-
+void Pokedex_BlinkArrowCursor(const struct ArrowCursorData* de){
+    // LD_HL(wDexArrowCursorBlinkCounter);
+    // LD_A_hl;
+    // INC_hl;
+    // AND_A(0x8);
+    // IF_Z goto blink_on;
+    if(wram->wDexArrowCursorBlinkCounter++ & 0x8) {
+        // CALL(aPokedex_GetArrowCursorPos);
+        // LD_hl(0x7f);
+        *Pokedex_GetArrowCursorPos(de) = 0x7f;
+        // RET;
+    }
+    else {
+    // blink_on:
+        // CALL(aPokedex_GetArrowCursorPos);
+        // LD_hl(0xed);
+        *Pokedex_GetArrowCursorPos(de) = 0xed;
+        // RET;
+    }
 }
 
-void Pokedex_ArrowCursorDelay(void){
 //  Updates the delay counter set when moving the arrow cursor.
 //  Returns whether the delay is active in carry.
-    LD_HL(wDexArrowCursorDelayCounter);
-    LD_A_hl;
-    AND_A_A;
-    RET_Z ;
+bool Pokedex_ArrowCursorDelay(void){
+    // LD_HL(wDexArrowCursorDelayCounter);
+    // LD_A_hl;
+    // AND_A_A;
+    // RET_Z ;
+    if(wram->wDexArrowCursorDelayCounter == 0)
+        return false;
 
-    DEC_hl;
-    SCF;
-    RET;
-
+    // DEC_hl;
+    --wram->wDexArrowCursorDelayCounter;
+    // SCF;
+    // RET;
+    return true;
 }
 
 void Pokedex_FillBox(tile_t* hl, uint8_t w, uint8_t h, uint8_t byte){
@@ -3026,7 +3141,6 @@ void Pokedex_LoadPointer(void){
 void Pokedex_LoadSelectedMonTiles(void){
     // CALL(aPokedex_GetSelectedMon);
     species_t selected = Pokedex_GetSelectedMon();
-    printf("Loading pic for selected mon %d\n", selected);
     // CALL(aPokedex_CheckSeen);
     // IF_Z goto QuestionMark;
     if(!Pokedex_CheckSeen(selected)) {
@@ -3063,51 +3177,53 @@ void Pokedex_LoadSelectedMonTiles(void){
 }
 
 void Pokedex_LoadCurrentFootprint(void){
-    CALL(aPokedex_GetSelectedMon);
+    // CALL(aPokedex_GetSelectedMon);
+    species_t mon = Pokedex_GetSelectedMon();
 
-    return Pokedex_LoadAnyFootprint();
+    return Pokedex_LoadAnyFootprint(mon);
 }
 
-void Pokedex_LoadAnyFootprint(void){
-    LD_A_addr(wTempSpecies);
-    DEC_A;
-    AND_A(0b11111000);
-    SRL_A;
-    SRL_A;
-    SRL_A;
-    LD_E(0);
-    LD_D_A;
-    LD_A_addr(wTempSpecies);
-    DEC_A;
-    AND_A(0b111);
-    SWAP_A;  // * $10
-    LD_L_A;
-    LD_H(0);
-    ADD_HL_DE;
-    LD_DE(mFootprints);
-    ADD_HL_DE;
+void Pokedex_LoadAnyFootprint(species_t a){
+    // LD_A_addr(wTempSpecies);
+    // DEC_A;
+    // AND_A(0b11111000);
+    // SRL_A;
+    // SRL_A;
+    // SRL_A;
+    // LD_E(0);
+    // LD_D_A;
+    // LD_A_addr(wTempSpecies);
+    // DEC_A;
+    // AND_A(0b111);
+    // SWAP_A;  // * $10
+    // LD_L_A;
+    // LD_H(0);
+    // ADD_HL_DE;
+    // LD_DE(mFootprints);
+    // ADD_HL_DE;
+    const char* path = Footprints[a - 1];
 
-    PUSH_HL;
-    LD_E_L;
-    LD_D_H;
-    LD_HL(vTiles2 + LEN_2BPP_TILE * 0x62);
-    LD_BC((BANK(aFootprints) << 8) | 2);
-    CALL(aRequest1bpp);
-    POP_HL;
+    // PUSH_HL;
+    // LD_E_L;
+    // LD_D_H;
+    // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x62);
+    // LD_BC((BANK(aFootprints) << 8) | 2);
+    // CALL(aRequest1bpp);
+    // POP_HL;
 
 // Whoever was editing footprints forgot to fix their
 // tile editor. Now each bottom half is 8 tiles off.
-    LD_DE(8 * LEN_2BPP_TILE);
-    ADD_HL_DE;
+    // LD_DE(8 * LEN_2BPP_TILE);
+    // ADD_HL_DE;
 
-    LD_E_L;
-    LD_D_H;
-    LD_HL(vTiles2 + LEN_2BPP_TILE * 0x64);
-    LD_BC((BANK(aFootprints) << 8) | 2);
-    CALL(aRequest1bpp);
+    // LD_E_L;
+    // LD_D_H;
+    // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x64);
+    // LD_BC((BANK(aFootprints) << 8) | 2);
+    // CALL(aRequest1bpp);
 
-    RET;
-
+    // RET;
+    LoadPNG1bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x62, path, 0, 4);
 }
 
 void Pokedex_LoadGFX(void){

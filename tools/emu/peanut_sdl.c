@@ -75,6 +75,7 @@ SDL_GameController *controller = NULL;
 
 char *rom_file_name = "baserom.gbc";
 char *save_file_name = NULL;
+char *save_file2_name = NULL;
 
 /**
  * Tick the internal RTC by one second.
@@ -368,7 +369,7 @@ void gb_write(const uint_fast16_t addr, const uint8_t val) {
                 gb.selected_rom_bank = gb.selected_rom_bank & gb.num_rom_banks_mask;
             } else if (gb.mbc == 3) {
                 gb.cart_ram_bank = val;
-                gb.cart_ram_bank_offset = 0xA000 - ((gb.cart_ram_bank & 3) << 13);
+                gb.cart_ram_bank_offset = 0xA000 - ((gb.cart_ram_bank & 7) << 13);
             } else if (gb.mbc == 5) {
                 gb.cart_ram_bank = (val & 0x0F);
                 gb.cart_ram_bank_offset = 0xA000 - (gb.cart_ram_bank << 13);
@@ -3194,7 +3195,7 @@ uint8_t *read_rom_to_ram(const char *file_name) {
     return rom;
 }
 
-void read_cart_ram_file(const char *save_file_name, uint8_t **dest,
+void read_cart_ram_file(const char *save_file_name, const char *save_file2_name, uint8_t **dest,
                         const size_t len) {
     FILE *f;
 
@@ -3205,7 +3206,7 @@ void read_cart_ram_file(const char *save_file_name, uint8_t **dest,
     }
 
     /* Allocate enough memory to hold save file. */
-    if ((*dest = malloc(len)) == NULL) {
+    if ((*dest = malloc(len * 2)) == NULL) {
         printf("%d: %s\n", __LINE__, strerror(errno));
         exit(EXIT_FAILURE);
     }
@@ -3222,9 +3223,22 @@ void read_cart_ram_file(const char *save_file_name, uint8_t **dest,
     /* Read save file to allocated memory. */
     if (fread(*dest, sizeof(uint8_t), len, f)) printf("Save loaded\n");
     fclose(f);
+
+    f = fopen(save_file2_name, "rb");
+
+    /* It doesn't matter if the second save file doesn't exist. We initialise the
+     * save memory allocated above. The save file will be created on exit. */
+    if (f == NULL) {
+        memset(*dest + len, 0, len);
+        return;
+    }
+
+    /* Read second save file to allocated memory. */
+    if (fread(*dest + len, sizeof(uint8_t), len, f)) printf("Save 2 loaded\n");
+    fclose(f);
 }
 
-void write_cart_ram_file(const char *save_file_name, uint8_t **dest,
+void write_cart_ram_file(const char *save_file_name, const char *save_file2_name, uint8_t **dest,
                          const size_t len) {
     FILE *f;
 
@@ -3239,6 +3253,16 @@ void write_cart_ram_file(const char *save_file_name, uint8_t **dest,
 
     /* Record save file. */
     fwrite(*dest, sizeof(uint8_t), len, f);
+    fclose(f);
+
+    if ((f = fopen(save_file2_name, "wb")) == NULL) {
+        puts("Unable to open second save file.");
+        printf("%d: %s\n", __LINE__, strerror(errno));
+        exit(EXIT_FAILURE);
+    }
+
+    /* Record second save file. */
+    fwrite(*dest + len, sizeof(uint8_t), len, f);
     fclose(f);
 }
 
@@ -3273,7 +3297,7 @@ void gb_error(const enum gb_error_e gb_err, const uint16_t val) {
 
     if (getchar() == 'q') {
         /* Record save file. */
-        write_cart_ram_file("recovery.sav", &priv->cart_ram,
+        write_cart_ram_file("recovery.sav", "recovery.sav2", &priv->cart_ram,
                             gb_get_save_size());
 
         free(priv->rom);
@@ -3547,6 +3571,7 @@ void sdl_loop(void) {
 
             if (!save_timer) {
                 write_cart_ram_file(save_file_name,
+                                    save_file2_name,
                                     &priv.cart_ram,
                                     gb_get_save_size());
                 save_timer = 60;
@@ -3575,12 +3600,13 @@ void cleanup(void) {
     SDL_GameControllerClose(controller);
     SDL_Quit();
     /* Record save file. */
-    write_cart_ram_file(save_file_name, &priv.cart_ram, gb_get_save_size());
+    write_cart_ram_file(save_file_name, save_file2_name, &priv.cart_ram, gb_get_save_size());
     free(priv.rom);
     free(priv.cart_ram);
     /* If the save file name was automatically generated (which required memory
      * allocated on the help), then free it here. */
     free(save_file_name);
+    free(save_file2_name);
 #ifndef _WIN32  //Crashes, not sure about other plats
     free(rom_file_name);
 #endif
@@ -3684,6 +3710,36 @@ int main(int argc, char* argv[]) {
             *(str_replace++) = extension[i];
     }
 
+    if (save_file2_name == NULL) {
+        char *str_replace;
+        const char extension[] = ".sav2";
+
+        /* Allocate enough space for the ROM file name, for the "sav"
+         * extension and for the null terminator. */
+        save_file2_name = malloc(strlen(rom_file_name) + strlen(extension) + 1);
+
+        if (save_file2_name == NULL) {
+            printf("%d: %s\n", __LINE__, strerror(errno));
+            ret = EXIT_FAILURE;
+            goto out;
+        }
+
+        /* Copy the ROM file name to allocated space. */
+        strcpy(save_file2_name, rom_file_name);
+
+        /* If the file name does not have a dot, or the only dot is at
+         * the start of the file name, set the pointer to begin
+         * replacing the string to the end of the file name, otherwise
+         * set it to the dot. */
+        if ((str_replace = strrchr(save_file2_name, '.')) == NULL ||
+            str_replace == save_file2_name)
+            str_replace = save_file2_name + strlen(save_file2_name);
+
+        /* Copy extension to string including terminating null byte. */
+        for (unsigned int i = 0; i <= strlen(extension); i++)
+            *(str_replace++) = extension[i];
+    }
+
     /* TODO: Sanity check input GB file. */
 
     /* Initialise emulator context. */
@@ -3711,7 +3767,7 @@ int main(int argc, char* argv[]) {
     }
 
     /* Load Save File. */
-    read_cart_ram_file(save_file_name, &priv.cart_ram, gb_get_save_size());
+    read_cart_ram_file(save_file_name, save_file2_name, &priv.cart_ram, gb_get_save_size());
 
     // memset(&gb.cart_rtc, 0xFF, sizeof(gb.cart_rtc));
 
@@ -3901,7 +3957,7 @@ quit:
     SDL_Quit();
 
     /* Record save file. */
-    write_cart_ram_file(save_file_name, &priv.cart_ram, gb_get_save_size());
+    write_cart_ram_file(save_file_name, save_file2_name, &priv.cart_ram, gb_get_save_size());
 
 out:
     free(priv.rom);
@@ -3910,6 +3966,7 @@ out:
     /* If the save file name was automatically generated (which required memory
      * allocated on the help), then free it here. */
     free(save_file_name);
+    free(save_file2_name);
 
 #ifndef _WIN32  //Crashes
     free(rom_file_name);

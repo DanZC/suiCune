@@ -1139,7 +1139,7 @@ void CGB_ApplyPartyMenuHPPals_Conv(void){
 }
 
 void InitPartyMenuOBPals(void){
-    uint16_t buf[32];
+    uint16_t buf[2 * NUM_PAL_COLORS];
     // LD_HL(mPartyMenuOBPals);
     LoadPaletteAssetColorsToBuffer(buf, sizeof(buf), PartyMenuOBPals, 0, 2 * NUM_PAL_COLORS);
     // LD_DE(wOBPals1);

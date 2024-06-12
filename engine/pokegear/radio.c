@@ -17,6 +17,7 @@
 #include "../battle/read_trainer_attributes.h"
 #include "../battle/read_trainer_party.h"
 #include "../../data/text/common.h"
+#include "../../data/pokemon/dex_entries.h"
 #include "../../data/radio/channel_music.h"
 #include "../../data/radio/oaks_pkmn_talk_routes.h"
 #include "../../data/radio/pnp_hidden_people.h"
@@ -27,6 +28,11 @@
 #include "../../charmap.h"
 
 const struct TextCmd* gRadioText = NULL;
+static struct TextCmd gPokedexShowText[2];
+static uint8_t gPokedexShowDescBuffer[128];
+static uint8_t* gPokedexShowDescPtr;
+static uint8_t gPokedexShowTextBuffer[SCREEN_WIDTH*2];
+static uint8_t* gPokedexShowTextPtr;
 
 void PlayRadioShow(void){
 //  If we're already in the radio program proper, we don't need to be here.
@@ -998,103 +1004,130 @@ void PokedexShow1(void){
     // CALL(aStartRadioStation);
     StartRadioStation_Conv();
     // TODO: Convert Pokedex Show
-    wram->wNumRadioLinesPrinted = 1;
-    return;
+    // wram->wNumRadioLinesPrinted = 1;
+    // return;
 
-loop:
-    CALL(aRandom);
-    CP_A(NUM_POKEMON);
-    IF_NC goto loop;
-    LD_C_A;
-    PUSH_BC;
-    LD_A_C;
-    CALL(aCheckCaughtMon);
-    POP_BC;
-    IF_Z goto loop;
-    INC_C;
-    LD_A_C;
-    LD_addr_A(wCurPartySpecies);
-    LD_addr_A(wNamedObjectIndex);
-    CALL(aGetPokemonName);
-    LD_HL(mPokedexShowText);
-    LD_A(POKEDEX_SHOW_2);
-    JP(mNextRadioLine);
-
+    uint8_t a;
+    do {
+        do {
+        // loop:
+            // CALL(aRandom);
+            a = Random_Conv();
+            // CP_A(NUM_POKEMON);
+            // IF_NC goto loop;
+        } while(a >= NUM_POKEMON);
+        // LD_C_A;
+        // PUSH_BC;
+        // LD_A_C;
+        // CALL(aCheckCaughtMon);
+        // POP_BC;
+        // IF_Z goto loop;
+    } while(!CheckCaughtMon_Conv(a));
+    // INC_C;
+    // LD_A_C;
+    // LD_addr_A(wCurPartySpecies);
+    wram->wCurPartySpecies = a + 1;
+    // LD_addr_A(wNamedObjectIndex);
+    // CALL(aGetPokemonName);
+    GetPokemonName_Conv2(wram->wCurPartySpecies);
+    // LD_HL(mPokedexShowText);
+    // LD_A(POKEDEX_SHOW_2);
+    // JP(mNextRadioLine);
+    return NextRadioLine_Conv(PokedexShowText, POKEDEX_SHOW_2);
 }
 
 void PokedexShow2(void){
-    LD_A_addr(wCurPartySpecies);
-    DEC_A;
-    LD_HL(mPokedexDataPointerTable);
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    ADD_HL_BC;
-    LD_A(BANK(aPokedexDataPointerTable));
-    CALL(aGetFarWord);
-    CALL(aPokedexShow_GetDexEntryBank);
-    PUSH_AF;
-    PUSH_HL;
-    CALL(aCopyDexEntryPart1);
-    DEC_HL;
-    LD_hl(0x57);
-    LD_HL(wPokedexShowPointerAddr);
-    CALL(aCopyRadioTextToRAM);
-    POP_HL;
-    POP_AF;
-    CALL(aCopyDexEntryPart2);
-    for(int rept = 0; rept < 4; rept++){
-    INC_HL;
-    }
-    LD_A_L;
-    LD_addr_A(wPokedexShowPointerAddr);
-    LD_A_H;
-    LD_addr_A(wPokedexShowPointerAddr + 1);
-    LD_A(POKEDEX_SHOW_3);
-    JP(mPrintRadioLine);
-
+    // LD_A_addr(wCurPartySpecies);
+    // DEC_A;
+    species_t a = wram->wCurPartySpecies - 1;
+    // LD_HL(mPokedexDataPointerTable);
+    // LD_C_A;
+    // LD_B(0);
+    // ADD_HL_BC;
+    // ADD_HL_BC;
+    // LD_A(BANK(aPokedexDataPointerTable));
+    // CALL(aGetFarWord);
+    const struct DexEntry* hl = PokedexDataPointerTable[a];
+    ByteFill_Conv2(gPokedexShowTextBuffer, sizeof(gPokedexShowTextBuffer), CHAR_TERM);
+    gPokedexShowTextBuffer[0] = CHAR_LINE;
+    U82CA(gPokedexShowDescBuffer, hl->description);
+    gPokedexShowDescPtr = gPokedexShowDescBuffer;
+    gPokedexShowTextPtr = gPokedexShowTextBuffer + 1;
+    // CALL(aPokedexShow_GetDexEntryBank);
+    // PUSH_AF;
+    // PUSH_HL;
+    // CALL(aCopyDexEntryPart1);
+    uint8_t* dst = CopyDexEntryPart1_Conv();
+    // DEC_HL;
+    // LD_hl(0x57);
+    *(dst - 1) = 0x57;
+    gPokedexShowText[1].cmd = TX_END;
+    // LD_HL(wPokedexShowPointerAddr);
+    // CALL(aCopyRadioTextToRAM);
+    CopyRadioTextToRAM_Conv(gPokedexShowText);
+    // POP_HL;
+    // POP_AF;
+    // CALL(aCopyDexEntryPart2);
+    uint8_t* de = CopyDexEntryPart2_Conv();
+    // for(int rept = 0; rept < 4; rept++){
+    // INC_HL;
+    // }
+    // LD_A_L;
+    // LD_addr_A(wPokedexShowPointerAddr);
+    // LD_A_H;
+    // LD_addr_A(wPokedexShowPointerAddr + 1);
+    gPokedexShowDescPtr = de;
+    // LD_A(POKEDEX_SHOW_3);
+    // JP(mPrintRadioLine);
+    return PrintRadioLine_Conv(POKEDEX_SHOW_3);
 }
 
 void PokedexShow3(void){
-    CALL(aCopyDexEntry);
-    LD_A(POKEDEX_SHOW_4);
-    JP(mPrintRadioLine);
-
+    // CALL(aCopyDexEntry);
+    CopyDexEntry_Conv();
+    // LD_A(POKEDEX_SHOW_4);
+    // JP(mPrintRadioLine);
+    return PrintRadioLine_Conv(POKEDEX_SHOW_4);
 }
 
 void PokedexShow4(void){
-    CALL(aCopyDexEntry);
-    LD_A(POKEDEX_SHOW_5);
-    JP(mPrintRadioLine);
-
+    // CALL(aCopyDexEntry);
+    CopyDexEntry_Conv();
+    // LD_A(POKEDEX_SHOW_5);
+    // JP(mPrintRadioLine);
+    return PrintRadioLine_Conv(POKEDEX_SHOW_5);
 }
 
 void PokedexShow5(void){
-    CALL(aCopyDexEntry);
-    LD_A(POKEDEX_SHOW_6);
-    JP(mPrintRadioLine);
-
+    // CALL(aCopyDexEntry);
+    CopyDexEntry_Conv();
+    // LD_A(POKEDEX_SHOW_6);
+    // JP(mPrintRadioLine);
+    return PrintRadioLine_Conv(POKEDEX_SHOW_6);
 }
 
 void PokedexShow6(void){
-    CALL(aCopyDexEntry);
-    LD_A(POKEDEX_SHOW_7);
-    JP(mPrintRadioLine);
-
+    // CALL(aCopyDexEntry);
+    CopyDexEntry_Conv();
+    // LD_A(POKEDEX_SHOW_7);
+    // JP(mPrintRadioLine);
+    return PrintRadioLine_Conv(POKEDEX_SHOW_7);
 }
 
 void PokedexShow7(void){
-    CALL(aCopyDexEntry);
-    LD_A(POKEDEX_SHOW_8);
-    JP(mPrintRadioLine);
-
+    // CALL(aCopyDexEntry);
+    CopyDexEntry_Conv();
+    // LD_A(POKEDEX_SHOW_8);
+    // JP(mPrintRadioLine);
+    return PrintRadioLine_Conv(POKEDEX_SHOW_8);
 }
 
 void PokedexShow8(void){
-    CALL(aCopyDexEntry);
-    LD_A(POKEDEX_SHOW);
-    JP(mPrintRadioLine);
-
+    // CALL(aCopyDexEntry);
+    CopyDexEntry_Conv();
+    // LD_A(POKEDEX_SHOW);
+    // JP(mPrintRadioLine);
+    return PrintRadioLine_Conv(POKEDEX_SHOW);
 }
 
 void CopyDexEntry(void){
@@ -1114,6 +1147,30 @@ void CopyDexEntry(void){
     POP_AF;
     CALL(aCopyDexEntryPart2);
     RET;
+
+}
+
+void CopyDexEntry_Conv(void){
+    // LD_A_addr(wPokedexShowPointerAddr);
+    // LD_L_A;
+    // LD_A_addr(wPokedexShowPointerAddr + 1);
+    // LD_H_A;
+    // LD_A_addr(wPokedexShowPointerBank);
+    // PUSH_AF;
+    // PUSH_HL;
+    // CALL(aCopyDexEntryPart1);
+    uint8_t* hl = CopyDexEntryPart1_Conv();
+    // DEC_HL;
+    // LD_hl(0x57);
+    *(hl - 1) = 0x57;
+    // LD_HL(wPokedexShowPointerAddr);
+    // CALL(aCopyRadioTextToRAM);
+    CopyRadioTextToRAM_Conv(gPokedexShowText);
+    // POP_HL;
+    // POP_AF;
+    // CALL(aCopyDexEntryPart2);
+    CopyDexEntryPart2_Conv();
+    // RET;
 
 }
 
@@ -1140,6 +1197,37 @@ loop:
     return CopyDexEntryPart2();
 }
 
+uint8_t* CopyDexEntryPart1_Conv(void){
+    // LD_DE(wPokedexShowPointerBank);
+    // LD_BC(SCREEN_WIDTH - 1);
+    // CALL(aFarCopyBytes);
+    CopyBytes_Conv2(gPokedexShowTextBuffer + 1, gPokedexShowDescPtr, SCREEN_WIDTH - 1);
+    // LD_HL(wPokedexShowPointerAddr);
+    // LD_hl(TX_START);
+    gPokedexShowText[0].cmd = TX_RAM;
+    // INC_HL;
+    // LD_hl(0x4f);
+    gPokedexShowText[0].ram = gPokedexShowTextBuffer;
+    // INC_HL;
+    uint8_t* hl2 = gPokedexShowTextBuffer;
+
+    uint8_t a;
+    do {
+    // loop:
+        // LD_A_hli;
+        a = *(hl2++);
+        // CP_A(0x50);
+        // RET_Z ;
+        // CP_A(0x4e);
+        // RET_Z ;
+        // CP_A(0x5f);
+        // RET_Z ;
+        // goto loop;
+    } while(a != 0x50 && a != 0x4e && a != 0x5f);
+    return hl2;
+    // return CopyDexEntryPart2();
+}
+
 void CopyDexEntryPart2(void){
     LD_D_A;
 
@@ -1163,6 +1251,36 @@ okay:
     LD_addr_A(wPokedexShowPointerBank);
     RET;
 
+}
+
+uint8_t* CopyDexEntryPart2_Conv(void){
+    // LD_D_A;
+    uint8_t* de = gPokedexShowDescPtr;
+    uint8_t a;
+    do {
+    // loop:
+        // LD_A_D;
+        // CALL(aGetFarByte);
+        a = *(de++);
+        // INC_HL;
+        // CP_A(0x50);
+        // IF_Z goto okay;
+        // CP_A(0x4e);
+        // IF_Z goto okay;
+        // CP_A(0x5f);
+        // IF_NZ goto loop;
+    } while(a != 0x50 && a != 0x4e && a != 0x5f);
+
+// okay:
+    // LD_A_L;
+    // LD_addr_A(wPokedexShowPointerAddr);
+    // LD_A_H;
+    // LD_addr_A(wPokedexShowPointerAddr + 1);
+    gPokedexShowDescPtr = de;
+    // LD_A_D;
+    // LD_addr_A(wPokedexShowPointerBank);
+    return de;
+    // RET;
 }
 
 const txt_cmd_s PokedexShowText[] = {
