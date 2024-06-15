@@ -871,6 +871,8 @@ var cFormat = {
             "SPRITE_FRUIT_TREE": "/gfx/sprites/fruit_tree.png",
             "SPRITE_TEACHER": "/gfx/sprites/teacher.png",
             "SPRITE_LINK_RECEPTIONIST": "/gfx/sprites/link_receptionist.png",
+            "SPRITE_MOM": "/gfx/sprites/mom.png",
+            "SPRITE_POKEFAN_F": "/gfx/sprites/pokefan_f.png",
             "SPRITE_OFFICER": "/gfx/sprites/officer.png",
             "SPRITE_POKE_BALL": "/gfx/sprites/poke_ball.png",
             "SPRITE_SILVER": "/gfx/sprites/silver.png",

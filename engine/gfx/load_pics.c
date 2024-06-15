@@ -235,7 +235,7 @@ void v_GetFrontpic_Conv(uint8_t* de, uint8_t frame){
     // LD_DE(wDecompressEnemyFrontpic);
     // CALL(aFarDecompress);
     int size = c * b;
-    printf("Loading frame %d (tile %d, base %d,%d) of %s.\n", frame, size * frame, b, c, de2);
+    // printf("Loading frame %d (tile %d, base %d,%d) of %s.\n", frame, size * frame, b, c, de2);
     LoadPNG2bppAssetSectionToVRAM(wram->wDecompressEnemyFrontpic, de2, size * frame, size);
     // POP_BC;
     // LD_HL(wDecompressScratch);

@@ -293,7 +293,7 @@
 #include "engine/phone/phone.h"
 #include "engine/rtc/timeset.h"
 #include "engine/pokegear/pokegear.h"
-//#include "engine/events/fish.h"
+#include "engine/events/fish.h"
 //#include "engine/games/slot_machine.h"
 
 // SECTION "Events", ROMX
@@ -446,7 +446,7 @@
 #include "engine/link/time_capsule.h"
 #include "engine/events/name_rater.h"
 //#include "engine/events/play_slow_cry.h"
-//#include "engine/pokedex/new_pokedex_entry.h"
+#include "engine/pokedex/new_pokedex_entry.h"
 //#include "engine/link/time_capsule_2.h"
 #include "engine/pokedex/unown_dex.h"
 #include "engine/events/magikarp.h"

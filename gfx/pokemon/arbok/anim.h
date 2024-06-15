@@ -1,0 +1,16 @@
+static const uint8_t ArbokAnimation[] = {
+    frame2(0,  4),
+    frame2(4,  8),
+    setrepeat(2),
+    frame2(5,  8),
+    frame2(6,  8),
+    dorepeat(3),
+    frame2(4,  8),
+    setrepeat(3),
+    frame2(0,  7),
+    frame2(1,  7),
+    frame2(2,  5),
+    frame2(3,  5),
+    dorepeat(8),
+    endanim,
+};

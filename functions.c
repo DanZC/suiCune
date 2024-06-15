@@ -5761,7 +5761,7 @@ void init_function_pointers(void) {
     // REDIRECTED(Script_FishCastRod);
     // REDIRECTED(HeadbuttFunction);
     // REDIRECTED(AskCutText);
-    // REDIRECTED(FishFunction);
+    CONVERTED(FishFunction);
     // REDIRECTED(TryWhirlpoolOW);
     // REDIRECTED(HasRockSmash);
     // REDIRECTED(RodNothingText);
@@ -7991,4 +7991,11 @@ CONVERTED(v_AnimateTileset);
     // REDIRECTED(DoDexSearchSlowpokeFrame);
     // REDIRECTED(POKeString);
     // REDIRECTED(GetDexEntryPagePointer);
+
+    // engine/pokedex/new_pokedex_entry.c
+    CONVERTED(NewPokedexEntry);
+
+    // engine/events/fish.c
+    // REDIRECTED(GetFishGroupIndex);
+    CONVERTED(Fish);
 }

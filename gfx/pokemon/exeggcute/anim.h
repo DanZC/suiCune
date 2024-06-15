@@ -1,0 +1,18 @@
+static const uint8_t ExeggcuteAnimation[] = {
+    frame2(0,  8),
+    setrepeat(2),
+    frame2(1,  4),
+    frame2(2,  4),
+    dorepeat(2),
+    frame2(0,  1),
+    setrepeat(3),
+    frame2(1,  3),
+    frame2(2,  3),
+    dorepeat(7),
+    frame2(0,  1),
+    frame2(1,  4),
+    frame2(2,  4),
+    frame2(0,  8),
+    frame2(3,  8),
+    endanim,
+};

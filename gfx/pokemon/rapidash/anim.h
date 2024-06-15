@@ -1,0 +1,15 @@
+static const uint8_t RapidashAnimation[] = {
+    frame2(0, 10),
+    frame2(2, 36),
+    frame2(0,  5),
+    frame2(1,  5),
+    frame2(2,  7),
+    frame2(0,  6),
+    frame2(1,  5),
+    frame2(0,  7),
+    setrepeat(4),
+    frame2(2, 12),
+    frame2(3, 12),
+    dorepeat(9),
+    endanim,
+};

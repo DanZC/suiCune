@@ -278,7 +278,7 @@ void SetFacingFish(struct Object* bc){
     // RRCA;
     // RRCA;
     // ADD_A(FACING_FISH_DOWN);
-    a = ((a & 0b11) << 6) + FACING_FISH_DOWN;
+    a = ((a & 0b1100) >> 2) + FACING_FISH_DOWN;
     // LD_HL(OBJECT_FACING_STEP);
     // ADD_HL_BC;
     // LD_hl_A;

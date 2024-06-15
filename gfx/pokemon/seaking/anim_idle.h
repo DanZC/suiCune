@@ -1,0 +1,8 @@
+static const uint8_t SeakingAnimationIdle[] = {
+    setrepeat(2),
+    frame2(0, 15),
+    frame2(3, 15),
+    frame2(4, 15),
+    dorepeat(1),
+    endanim,
+};

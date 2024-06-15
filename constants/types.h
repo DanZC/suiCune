@@ -1170,6 +1170,11 @@ struct BugContestant {
     struct BugPlaceMon place[3];
 };
 
+struct SpeciesLevel {
+    species_t species;
+    uint8_t level;
+};
+
 struct Script;
 
 typedef bool (*Script_fn_t)(struct Script*);

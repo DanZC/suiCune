@@ -7,8 +7,8 @@
 #define frame(_0, ...) frame2(_0, frame_value_(__VA_ARGS__))
 #define endanim endanim_command
 #define delanim delanim_command
+#undef dorestart
 #define dorestart dorestart_command
-#define dowait(_x) dowait_command, (_x)
 
 static const uint8_t Frameset_00[] = {
     frame(SPRITE_ANIM_OAMSET_RED_WALK_1, 32),

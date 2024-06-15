@@ -94,6 +94,7 @@ extern const txt_cmd_s MaySmashText[];
 extern const txt_cmd_s AskRockSmashText[];
 void HasRockSmash(void);
 void FishFunction(void);
+void FishFunction_Conv(uint8_t rod);
 bool Script_NotEvenANibble(script_s* s);
 bool Script_NotEvenANibble2(script_s* s);
 bool Script_NotEvenANibble_FallThrough(script_s* s);

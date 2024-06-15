@@ -6,6 +6,7 @@
 #include "unown_walls.h"
 #include "misc_scripts.h"
 #include "treemons.h"
+#include "fish.h"
 #include "../overworld/map_setup.h"
 #include "../overworld/map_objects.h"
 #include "../overworld/npc_movement.h"
@@ -2438,105 +2439,147 @@ void HasRockSmash(void){
 }
 
 void FishFunction(void){
-    LD_A_E;
-    PUSH_AF;
-    CALL(aFieldMoveJumptableReset);
-    POP_AF;
-    LD_addr_A(wFishingRodUsed);
+    return FishFunction_Conv(REG_E);
+}
 
-loop:
-    LD_HL(mFishFunction_FishTable);
-    CALL(aFieldMoveJumptable);
-    IF_NC goto loop;
-    AND_A(0x7f);
-    LD_addr_A(wFieldMoveSucceeded);
-    RET;
+static uint8_t FishFunction_TryFish(void) {
+    // LD_A_addr(wPlayerState);
+    // CP_A(PLAYER_SURF);
+    // IF_Z goto fail;
+    // CP_A(PLAYER_SURF_PIKA);
+    // IF_Z goto fail;
+    // CALL(aGetFacingTileCoord);
+    // CALL(aGetTileCollision);
+    // CP_A(WATER_TILE);
+    // IF_Z goto facingwater;
+    if(wram->wPlayerState == PLAYER_SURF || wram->wPlayerState == PLAYER_SURF_PIKA
+    || GetTileCollision_Conv(GetFacingTileCoord_Conv().tileId) != WATER_TILE) {
+    // fail:
+        // LD_A(0x3);
+        // RET;
+        return 0x3;
+    }
+
+// facingwater:
+    // CALL(aGetFishingGroup);
+    uint8_t fishGroup = GetFishingGroup_Conv2();
+    // AND_A_A;
+    // IF_NZ goto goodtofish;
+    if(fishGroup == 0) {
+        // LD_A(0x4);
+        // RET;
+        return 0x4;
+    }
+
+// goodtofish:
+    // LD_D_A;
+    // LD_A_addr(wFishingRodUsed);
+    // LD_E_A;
+    // FARCALL(aFish);
+    struct SpeciesLevel fishMon = Fish_Conv(sFieldMoveData.fishingRodUsed, fishGroup);
+    // LD_A_D;
+    // AND_A_A;
+    // IF_Z goto nonibble;
+    if(fishMon.species == 0) {
+    // nonibble:
+        // LD_A(0x1);
+        // RET;
+        return 0x1;
+    }
+    // LD_addr_A(wTempWildMonSpecies);
+    wram->wTempWildMonSpecies = fishMon.species;
+    // LD_A_E;
+    // LD_addr_A(wCurPartyLevel);
+    wram->wCurPartyLevel = fishMon.level;
+    // LD_A(BATTLETYPE_FISH);
+    // LD_addr_A(wBattleType);
+    wram->wBattleType = BATTLETYPE_FISH;
+    // LD_A(0x2);
+    // RET;
+    return 0x2;
+}
 
 
-FishTable:
+static uint8_t FishFunction_FailFish(void) {
+    // LD_A(0x80);
+    // RET;
+    return 0x80;
+}
+
+
+static uint8_t FishFunction_FishGotSomething(void) {
+    // LD_A(0x1);
+    // LD_addr_A(wFishingResult);
+    // sFieldMoveData.fishingResult = 0x1; // Never read
+    // LD_HL(mScript_GotABite);
+    // CALL(aQueueScript);
+    QueueScript_Conv2(Script_GotABite);
+    // LD_A(0x81);
+    // RET;
+    return 0x81;
+}
+
+
+static uint8_t FishFunction_FishNoBite(void) {
+    // LD_A(0x2);
+    // LD_addr_A(wFishingResult);
+    // sFieldMoveData.fishingResult = 0x2; // Never read
+    // LD_HL(mScript_NotEvenANibble);
+    // CALL(aQueueScript);
+    QueueScript_Conv2(Script_NotEvenANibble);
+    // LD_A(0x81);
+    // RET;
+    return 0x81;
+}
+
+static uint8_t FishFunction_FishNoFish(void) {
+    // LD_A(0x0);
+    // LD_addr_A(wFishingResult);
+    // sFieldMoveData.fishingResult = 0x0; // Never read
+    // LD_HL(mScript_NotEvenANibble2);
+    // CALL(aQueueScript);
+    QueueScript_Conv2(Script_NotEvenANibble2);
+    // LD_A(0x81);
+    // RET;
+    return 0x81;
+}
+
+void FishFunction_Conv(uint8_t rod){
+    const field_move_fn_t Jumptable[] = {
+        FishFunction_TryFish,
+        FishFunction_FishNoBite,
+        FishFunction_FishGotSomething,
+        FishFunction_FailFish,
+        FishFunction_FishNoFish,
+    };
+    // LD_A_E;
+    // PUSH_AF;
+    // CALL(aFieldMoveJumptableReset);
+    FieldMoveJumptableReset();
+    // POP_AF;
+    // LD_addr_A(wFishingRodUsed);
+    sFieldMoveData.fishingRodUsed = rod;
+    u8_flag_s res;
+
+    do {
+    // loop:
+        // LD_HL(mFishFunction_FishTable);
+        // CALL(aFieldMoveJumptable);
+        res = FieldMoveJumptable_Conv(Jumptable);
+        // IF_NC goto loop;
+    } while(!res.flag);
+    // AND_A(0x7f);
+    // LD_addr_A(wFieldMoveSucceeded);
+    wram->wFieldMoveSucceeded = res.a & 0x7f;
+    // RET;
+
+
+// FishTable:
     //dw ['.TryFish'];
     //dw ['.FishNoBite'];
     //dw ['.FishGotSomething'];
     //dw ['.FailFish'];
     //dw ['.FishNoFish'];
-
-
-TryFish:
-    LD_A_addr(wPlayerState);
-    CP_A(PLAYER_SURF);
-    IF_Z goto fail;
-    CP_A(PLAYER_SURF_PIKA);
-    IF_Z goto fail;
-    CALL(aGetFacingTileCoord);
-    CALL(aGetTileCollision);
-    CP_A(WATER_TILE);
-    IF_Z goto facingwater;
-
-fail:
-    LD_A(0x3);
-    RET;
-
-
-facingwater:
-    CALL(aGetFishingGroup);
-    AND_A_A;
-    IF_NZ goto goodtofish;
-    LD_A(0x4);
-    RET;
-
-
-goodtofish:
-    LD_D_A;
-    LD_A_addr(wFishingRodUsed);
-    LD_E_A;
-    FARCALL(aFish);
-    LD_A_D;
-    AND_A_A;
-    IF_Z goto nonibble;
-    LD_addr_A(wTempWildMonSpecies);
-    LD_A_E;
-    LD_addr_A(wCurPartyLevel);
-    LD_A(BATTLETYPE_FISH);
-    LD_addr_A(wBattleType);
-    LD_A(0x2);
-    RET;
-
-
-nonibble:
-    LD_A(0x1);
-    RET;
-
-
-FailFish:
-    LD_A(0x80);
-    RET;
-
-
-FishGotSomething:
-    LD_A(0x1);
-    LD_addr_A(wFishingResult);
-    LD_HL(mScript_GotABite);
-    CALL(aQueueScript);
-    LD_A(0x81);
-    RET;
-
-
-FishNoBite:
-    LD_A(0x2);
-    LD_addr_A(wFishingResult);
-    LD_HL(mScript_NotEvenANibble);
-    CALL(aQueueScript);
-    LD_A(0x81);
-    RET;
-
-
-FishNoFish:
-    LD_A(0x0);
-    LD_addr_A(wFishingResult);
-    LD_HL(mScript_NotEvenANibble2);
-    CALL(aQueueScript);
-    LD_A(0x81);
-    RET;
 
 }
 
@@ -2630,7 +2673,7 @@ void Fishing_CheckFacingUp(void){
 
 bool Script_FishCastRod(script_s* s){
     SCRIPT_BEGIN
-    reloadmappart
+    // reloadmappart
     loadmem(hram_ptr(hBGMapMode), 0x0)
     special(UpdateTimePals)
     loademote(EMOTE_ROD)

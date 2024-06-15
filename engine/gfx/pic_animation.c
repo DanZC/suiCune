@@ -6,6 +6,10 @@
 #include "../../home/text.h"
 #include "dma_transfer.h"
 #include "../gfx/load_pics.h"
+#include "../../gfx/pokemon/anims.h"
+#include "../../gfx/pokemon/idles.h"
+#include "../../gfx/pokemon/unown_anims.h"
+#include "../../gfx/pokemon/unown_idles.h"
 #include <stddef.h>
 
 //  Pic animation arrangement.
@@ -48,6 +52,7 @@ struct PokeAnim* const pokeAnim = (struct PokeAnim*)get_wram_raw_offset_ptr(wPok
 
 static const uint8_t* lPokeAnimPointer;
 static uint8_t* lPokeAnimCoord;
+static const uint8_t* lPokeAnimPointerAddr;
 
 void Unused_AnimateMon_Slow_Normal(void){
     hlcoord(12, 0, wTilemap);
@@ -1045,15 +1050,12 @@ void PokeAnim_GetPointer_Conv(void){
     // ADD_HL_DE;
     // LD_A_addr(wPokeAnimPointerBank);
     // CALL(aGetFarWord);
-    union Register hl = {
-        .reg = GetFarWord_Conv(pokeAnim->pointerBank, pokeAnim->pointerAddr + (pokeAnim->frame << 1))
-    };
     // LD_A_L;
     // LD_addr_A(wPokeAnimCommand);
-    pokeAnim->command = hl.lo;
+    pokeAnim->command = lPokeAnimPointerAddr[pokeAnim->frame * 2 + 0];
     // LD_A_H;
     // LD_addr_A(wPokeAnimParameter);
-    pokeAnim->parameter = hl.hi;
+    pokeAnim->parameter = lPokeAnimPointerAddr[pokeAnim->frame * 2 + 1];
     // LD_HL(wPokeAnimFrame);
     // INC_hl;
     pokeAnim->frame++;
@@ -1779,15 +1781,13 @@ void GetMonAnimPointer_Conv(void){
         // LD_A_addr(wPokeAnimIdleFlag);
         // AND_A_A;
         // IF_Z goto idles_egg;
-        if(pokeAnim->idleFlag == 0) {
+        if(pokeAnim->idleFlag) {
             // LD_HL(mEggAnimationIdle);
             // LD_C(BANK(aEggAnimationIdle));
-            pokeAnim->pointerBank = BANK(aEggAnimationIdle);
-            pokeAnim->pointerAddr = mEggAnimationIdle;
+            lPokeAnimPointerAddr = EggAnimationIdle;
         }
         else {
-            pokeAnim->pointerBank = BANK(aEggAnimation);
-            pokeAnim->pointerAddr = mEggAnimation;
+            lPokeAnimPointerAddr = EggAnimation;
         }
 
     // idles_egg:
@@ -1807,20 +1807,18 @@ void GetMonAnimPointer_Conv(void){
     // LD_DE(mUnownAnimationIdlePointers);
     // CALL(aPokeAnim_IsUnown);
     // IF_Z goto unown;
-    uint16_t hl, de;
-    uint8_t c;
+    const uint8_t** hl;
+    const uint8_t** de;
     if(PokeAnim_IsUnown_Conv(pokeAnim->species)) {
-        c = BANK(aUnownAnimationPointers);
-        hl = mUnownAnimationPointers;
-        de = mUnownAnimationIdlePointers;
+        hl = UnownAnimationPointers;
+        de = UnownAnimationIdlePointers;
     }
     // LD_C(BANK(aAnimationPointers));  // aka BANK(AnimationIdlePointers)
     // LD_HL(mAnimationPointers);
     // LD_DE(mAnimationIdlePointers);
     else {
-        c = BANK(aAnimationPointers);
-        hl = mAnimationPointers;
-        de = mAnimationIdlePointers;
+        hl = AnimationPointers;
+        de = AnimationIdlePointers;
     }
 
 // unown:
@@ -1830,7 +1828,7 @@ void GetMonAnimPointer_Conv(void){
     // IF_Z goto idles;
     // LD_H_D;
     // LD_L_E;
-    if(pokeAnim->idleFlag == 0)
+    if(pokeAnim->idleFlag)
         hl = de;
 
 // idles:
@@ -1841,16 +1839,14 @@ void GetMonAnimPointer_Conv(void){
     // LD_D(0);
     // ADD_HL_DE;
     // ADD_HL_DE;
-    hl += (pokeAnim->speciesOrUnown - 1) << 1;
     // LD_A_C;
     // LD_addr_A(wPokeAnimPointerBank);
-    pokeAnim->pointerBank = c;
     // CALL(aGetFarWord);
     // LD_A_L;
     // LD_addr_A(wPokeAnimPointerAddr);
     // LD_A_H;
     // LD_addr_A(wPokeAnimPointerAddr + 1);
-    pokeAnim->pointerAddr = GetFarWord_Conv(c, hl);
+    lPokeAnimPointerAddr = hl[pokeAnim->speciesOrUnown - 1];
     // RET;
 }
 

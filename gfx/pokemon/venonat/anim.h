@@ -1,0 +1,17 @@
+static const uint8_t VenonatAnimation[] = {
+    frame2(2, 10),
+    frame2(0, 10),
+    frame2(2, 10),
+    frame2(0,  6),
+    frame2(1,  6),
+    frame2(0,  6),
+    setrepeat(3),
+    frame2(1,  4),
+    frame2(0,  4),
+    dorepeat(7),
+    setrepeat(2),
+    frame2(1,  2),
+    frame2(0,  2),
+    dorepeat(11),
+    endanim,
+};

@@ -3353,36 +3353,56 @@ void Pokedex_LoadUnownFrontpicTiles(void){
 }
 
 void v_NewPokedexEntry(void){
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    FARCALL(aDrawDexEntryScreenRightEdge);
-    CALL(aPokedex_ResetBGMapMode);
-    CALL(aDisableLCD);
-    CALL(aLoadStandardFont);
-    CALL(aLoadFontsExtra);
-    CALL(aPokedex_LoadGFX);
-    CALL(aPokedex_LoadAnyFootprint);
-    LD_A_addr(wTempSpecies);
-    LD_addr_A(wCurPartySpecies);
-    CALL(aPokedex_DrawDexEntryScreenBG);
-    CALL(aPokedex_DrawFootprint);
-    hlcoord(0, 17, wTilemap);
-    LD_hl(0x3b);
-    INC_HL;
-    LD_BC(19);
-    LD_A(0x7f);
-    CALL(aByteFill);
-    FARCALL(aDisplayDexEntry);
-    CALL(aEnableLCD);
-    CALL(aWaitBGMap);
-    CALL(aGetBaseData);
-    LD_DE(vTiles2);
-    PREDEF(pGetMonFrontpic);
-    LD_A(SCGB_POKEDEX);
-    CALL(aPokedex_GetSGBLayout);
-    LD_A_addr(wCurPartySpecies);
-    CALL(aPlayMonCry);
-    RET;
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    // FARCALL(aDrawDexEntryScreenRightEdge);
+    DrawDexEntryScreenRightEdge();
+    // CALL(aPokedex_ResetBGMapMode);
+    Pokedex_ResetBGMapMode(); // Useless?
+    // CALL(aDisableLCD);
+    DisableLCD_Conv();
+    // CALL(aLoadStandardFont);
+    LoadStandardFont_Conv();
+    // CALL(aLoadFontsExtra);
+    LoadFontsExtra_Conv();
+    // CALL(aPokedex_LoadGFX);
+    Pokedex_LoadGFX();
+    // CALL(aPokedex_LoadAnyFootprint);
+    Pokedex_LoadAnyFootprint(wram->wTempSpecies);
+    // LD_A_addr(wTempSpecies);
+    // LD_addr_A(wCurPartySpecies);
+    wram->wCurPartySpecies = wram->wTempSpecies;
+    // CALL(aPokedex_DrawDexEntryScreenBG);
+    Pokedex_DrawDexEntryScreenBG();
+    // CALL(aPokedex_DrawFootprint);
+    Pokedex_DrawFootprint();
+    // hlcoord(0, 17, wTilemap);
+    // LD_hl(0x3b);
+    *coord(0, 17, wram->wTilemap) = 0x3b;
+    // INC_HL;
+    // LD_BC(19);
+    // LD_A(0x7f);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(1, 17, wram->wTilemap), 19, 0x7f);
+    // FARCALL(aDisplayDexEntry);
+    DisplayDexEntry(wram->wTempSpecies);
+    // CALL(aEnableLCD);
+    EnableLCD_Conv();
+    // CALL(aWaitBGMap);
+    WaitBGMap_Conv();
+    // CALL(aGetBaseData);
+    GetBaseData_Conv2(wram->wTempSpecies);
+    // LD_DE(vTiles2);
+    // PREDEF(pGetMonFrontpic);
+    GetMonFrontpic_Conv(vram->vTiles2);
+    // LD_A(SCGB_POKEDEX);
+    // CALL(aPokedex_GetSGBLayout);
+    Pokedex_GetSGBLayout(SCGB_POKEDEX);
+    // LD_A_addr(wCurPartySpecies);
+    // CALL(aPlayMonCry);
+    PlayMonCry_Conv(wram->wTempSpecies);
+    // RET;
 
 }
 

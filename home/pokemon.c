@@ -690,7 +690,7 @@ void GetBaseData_Conv(void){
 }
 
 void GetBaseData_Conv2(species_t species){
-    printf("%s:: %d\n", __func__, species);
+    // printf("%s:: %d\n", __func__, species);
 //  Egg doesn't have BaseData
     if(species == EGG)
     {
