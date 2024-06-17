@@ -3,6 +3,7 @@
 #include "../../home/random.h"
 #include "../../home/time.h"
 #include "../../home/pokedex_flags.h"
+#include "../events/pokerus/apply_pokerus_tick.h"
 
 void v_InitializeStartDay(void){
     CALL(aInitializeStartDay);
@@ -474,6 +475,24 @@ done:
     XOR_A_A;
     RET;
 
+}
+
+void CheckPokerusTick_Conv(void){
+    // LD_HL(wTimerEventStartDay);
+    // CALL(aCalcDaysSince);
+    CalcDaysSince_Conv(&wram->wTimerEventStartDay);
+    // CALL(aGetDaysSince);
+    uint8_t days = GetDaysSince_Conv();
+    // AND_A_A;
+    // IF_Z goto done;  // not even a day has passed since game start
+    if(days != 0) {
+        // LD_B_A;
+        // FARCALL(aApplyPokerusTick);
+        ApplyPokerusTick(days);
+    }
+// done:
+    // XOR_A_A;
+    // RET;
 }
 
 void SetUnusedTwoDayTimer(void){

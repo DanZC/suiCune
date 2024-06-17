@@ -39,6 +39,8 @@
 #include "../events/std_collision.h"
 #include "../events/overworld.h"
 #include "../events/hidden_item.h"
+#include "../events/poisonstep.h"
+#include "../events/happiness_egg.h"
 #include "../events/bug_contest/contest.h"
 #include "../menus/debug_field_menu.h"
 #include "../../data/wild/bug_contest_mons.h"
@@ -1005,6 +1007,7 @@ u8_flag_s CheckTimeEvents_Conv(void){
         // FARCALL(aCheckDailyResetTimer);
         CheckDailyResetTimer_Conv();
         // FARCALL(aCheckPokerusTick);
+        CheckPokerusTick_Conv();
         // FARCALL(aCheckPhoneCall);
         // RET_C ;
         u8_flag_s res = CheckPhoneCall_Conv();
@@ -2073,7 +2076,7 @@ u8_flag_s CountStep_Conv(void){
 
     if(step == 0) {
         // FARCALL(aStepHappiness);
-        SafeCallGBAuto(aStepHappiness);
+        StepHappiness();
     }
 
 
@@ -2108,9 +2111,8 @@ u8_flag_s CountStep_Conv(void){
 
         // FARCALL(aDoPoisonStep);
         // IF_C goto doscript;
-        struct cpu_registers_s regs = SafeCallGBAutoRet(aDoPoisonStep);
-        if(regs.f_bits.c)
-            goto hatch;
+        if(DoPoisonStep())
+            goto doscript;
     }
 
 // skip_poison:

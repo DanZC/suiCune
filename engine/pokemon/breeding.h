@@ -26,8 +26,9 @@ void Hatch_ShellFragmentLoop(void);
 void DayCareMon1(void);
 void DayCareMon2(void);
 void DayCareMonCursor(void);
-void LeftWithDayCareLadyText(void);
-void LeftWithDayCareManText(void);
+extern const txt_cmd_s LeftWithDayCareLadyText[];
+extern const txt_cmd_s LeftWithDayCareManText[];
 void DayCareMonCompatibilityText(void);
+const txt_cmd_s* DayCareMonCompatibilityText_Conv(const uint8_t* nickname);
 void DayCareMonPrintEmptyString(void);
 //#include "gfx/evo/egg_hatch.2bpp"

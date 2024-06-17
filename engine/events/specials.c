@@ -3,6 +3,7 @@
 #include "pokecenter_pc.h"
 #include "name_rater.h"
 #include "bug_contest/judging.h"
+#include "pokerus/check_pokerus.h"
 #include "../menus/naming_screen.h"
 #include "../../data/events/special_pointers.h"
 #include "../overworld/map_objects.h"
@@ -438,9 +439,9 @@ yanma:
 
 void CheckPokerus(void){
 //  Check if a monster in your party has Pokerus
-    FARCALL(av_CheckPokerus);
-    JP(mScriptReturnCarry);
-
+    // FARCALL(av_CheckPokerus);
+    // JP(mScriptReturnCarry);
+    return ScriptReturnCarry_Conv(v_CheckPokerus());
 }
 
 void ResetLuckyNumberShowFlag(void){

@@ -88,6 +88,9 @@ map_attributes(AzaleaTown, AZALEA_TOWN, 0x05,
     connection(AZALEA_TOWN, west, Route34, ROUTE_34, -18)
     connection(AZALEA_TOWN, east, Route33, ROUTE_33, 0));
 
+map_attributes(CianwoodCity, CIANWOOD_CITY, 0x35,
+    connection(CIANWOOD_CITY, east, Route41, ROUTE_41, 0));
+
 map_attributes(GoldenrodCity, GOLDENROD_CITY, 0x35,
     connection(GOLDENROD_CITY, north, Route35, ROUTE_35, 5)
     connection(GOLDENROD_CITY, south, Route34, ROUTE_34, 5));
@@ -435,13 +438,13 @@ map_attributes(Colosseum, COLOSSEUM, 0x00, 0);
 // map_attributes(Route16Gate, ROUTE_16_GATE, 0x00, 0);
 // map_attributes(Route7SaffronGate, ROUTE_7_SAFFRON_GATE, 0x00, 0);
 // map_attributes(Route17Route18Gate, ROUTE_17_ROUTE_18_GATE, 0x00, 0);
-// map_attributes(ManiasHouse, MANIAS_HOUSE, 0x00, 0);
-// map_attributes(CianwoodGym, CIANWOOD_GYM, 0x00, 0);
-// map_attributes(CianwoodPokecenter1F, CIANWOOD_POKECENTER_1F, 0x00, 0);
-// map_attributes(CianwoodPharmacy, CIANWOOD_PHARMACY, 0x00, 0);
-// map_attributes(CianwoodPhotoStudio, CIANWOOD_PHOTO_STUDIO, 0x00, 0);
-// map_attributes(CianwoodLugiaSpeechHouse, CIANWOOD_LUGIA_SPEECH_HOUSE, 0x00, 0);
-// map_attributes(PokeSeersHouse, POKE_SEERS_HOUSE, 0x00, 0);
+map_attributes(ManiasHouse, MANIAS_HOUSE, 0x00, 0);
+map_attributes(CianwoodGym, CIANWOOD_GYM, 0x00, 0);
+map_attributes(CianwoodPokecenter1F, CIANWOOD_POKECENTER_1F, 0x00, 0);
+map_attributes(CianwoodPharmacy, CIANWOOD_PHARMACY, 0x00, 0);
+map_attributes(CianwoodPhotoStudio, CIANWOOD_PHOTO_STUDIO, 0x00, 0);
+map_attributes(CianwoodLugiaSpeechHouse, CIANWOOD_LUGIA_SPEECH_HOUSE, 0x00, 0);
+map_attributes(PokeSeersHouse, POKE_SEERS_HOUSE, 0x00, 0);
 map_attributes(BattleTower1F, BATTLE_TOWER_1F, 0x00, 0);
 map_attributes(BattleTowerBattleRoom, BATTLE_TOWER_BATTLE_ROOM, 0x00, 0);
 map_attributes(BattleTowerElevator, BATTLE_TOWER_ELEVATOR, 0x00, 0);

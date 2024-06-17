@@ -127,8 +127,6 @@ done:
     RET;
 
 // INCLUDE "data/events/happiness_changes.asm"
-
-    return StepHappiness();
 }
 
 
@@ -236,43 +234,55 @@ void ChangeHappiness_Conv(uint8_t c){
     }
 }
 
-void StepHappiness(void){
 //  Raise the party's happiness by 1 point every other step cycle.
+void StepHappiness(void){
+    // LD_HL(wHappinessStepCount);
+    // LD_A_hl;
+    uint8_t stepCount = (wram->wHappinessStepCount + 1) & 1;
+    // INC_A;
+    // AND_A(1);
+    // LD_hl_A;
+    wram->wHappinessStepCount = stepCount;
+    // RET_NZ ;
+    if(stepCount != 0)
+        return;
 
-    LD_HL(wHappinessStepCount);
-    LD_A_hl;
-    INC_A;
-    AND_A(1);
-    LD_hl_A;
-    RET_NZ ;
+    // LD_DE(wPartyCount);
+    // LD_A_de;
+    // AND_A_A;
+    // RET_Z ;
+    if(wram->wPartyCount != 0)
+        return;
 
-    LD_DE(wPartyCount);
-    LD_A_de;
-    AND_A_A;
-    RET_Z ;
+    // LD_C_A;
+    uint8_t c = wram->wPartyCount;
+    // LD_HL(wPartyMon1Happiness);
+    struct PartyMon* hl = wram->wPartyMon;
+    species_t* de = wram->wPartySpecies;
 
-    LD_C_A;
-    LD_HL(wPartyMon1Happiness);
+    do {
+    // loop:
+        // INC_DE;
+        // LD_A_de;
+        // CP_A(EGG);
+        // IF_Z goto next;
+        if(*de != EGG) {
+            // INC_hl;
+            // IF_NZ goto next;
+            // LD_hl(0xff);
+            if(++hl->mon.happiness == 0)
+                hl->mon.happiness = 0xff;
+        }
 
-loop:
-    INC_DE;
-    LD_A_de;
-    CP_A(EGG);
-    IF_Z goto next;
-    INC_hl;
-    IF_NZ goto next;
-    LD_hl(0xff);
-
-
-next:
-    PUSH_DE;
-    LD_DE(PARTYMON_STRUCT_LENGTH);
-    ADD_HL_DE;
-    POP_DE;
-    DEC_C;
-    IF_NZ goto loop;
-    RET;
-
+    // next:
+        // PUSH_DE;
+        // LD_DE(PARTYMON_STRUCT_LENGTH);
+        // ADD_HL_DE;
+        // POP_DE;
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(hl++, de++, --c != 0);
+    // RET;
 }
 
 void DayCareStep(void){

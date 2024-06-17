@@ -26,6 +26,7 @@ void CheckBugContestTimer(void);
 bool CheckBugContestTimer_Conv(void);
 void InitializeStartDay(void);
 void CheckPokerusTick(void);
+void CheckPokerusTick_Conv(void);
 void SetUnusedTwoDayTimer(void);
 void CheckUnusedTwoDayTimer(void);
 void UnusedSetSwarmFlag(void);

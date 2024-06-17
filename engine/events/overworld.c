@@ -1762,84 +1762,80 @@ bool Script_UsedStrength(script_s* s){
     //text_end ['?']
 }
 
-void AskStrengthScript(void){
-    //callasm ['TryStrengthOW']
-    //iffalse ['.AskStrength']
-    //ifequal ['0x1', '.DontMeetRequirements']
-    //sjump ['.AlreadyUsedStrength']
-
+bool AskStrengthScript(script_s* s){
+    SCRIPT_BEGIN
+    TryStrengthOW();
+    iffalse(AskStrength)
+    ifequal(0x1, DontMeetRequirements)
+    //sjump(AlreadyUsedStrength)
+AlreadyUsedStrength:
+    jumptext(BouldersMoveText)
 
 DontMeetRequirements:
-    //jumptext ['BouldersMayMoveText']
-
-
-AlreadyUsedStrength:
-    //jumptext ['BouldersMoveText']
-
+    jumptext(BouldersMayMoveText)
 
 AskStrength:
-    //opentext ['?']
-    //writetext ['AskStrengthText']
-    //yesorno ['?']
-    //iftrue ['Script_UsedStrength']
-    //closetext ['?']
-    //end ['?']
-
-    return AskStrengthText();
+    opentext
+    writetext(AskStrengthText)
+    yesorno
+    iftrue_jump(Script_UsedStrength)
+    closetext
+    s_end
+    SCRIPT_END
 }
 
-void AskStrengthText(void){
-    //text_far ['_AskStrengthText']
-    //text_end ['?']
+const txt_cmd_s AskStrengthText[] = {
+    text_far(v_AskStrengthText)
+    text_end
+};
 
-    return BouldersMoveText();
-}
+const txt_cmd_s BouldersMoveText[] = {
+    text_far(v_BouldersMoveText)
+    text_end
+};
 
-void BouldersMoveText(void){
-    //text_far ['_BouldersMoveText']
-    //text_end ['?']
-
-    return BouldersMayMoveText();
-}
-
-void BouldersMayMoveText(void){
-    //text_far ['_BouldersMayMoveText']
-    //text_end ['?']
-
-    return TryStrengthOW();
-}
+const txt_cmd_s BouldersMayMoveText[] = {
+    text_far(v_BouldersMayMoveText)
+    text_end
+};
 
 void TryStrengthOW(void){
-    LD_D(STRENGTH);
-    CALL(aCheckPartyMove);
-    IF_C goto nope;
+    // LD_D(STRENGTH);
+    // CALL(aCheckPartyMove);
+    // IF_C goto nope;
 
-    LD_DE(ENGINE_PLAINBADGE);
-    CALL(aCheckEngineFlag);
-    IF_C goto nope;
+    // LD_DE(ENGINE_PLAINBADGE);
+    // CALL(aCheckEngineFlag);
+    // IF_C goto nope;
+    if(!CheckPartyMove_Conv(STRENGTH) || !CheckEngineFlag_Conv(ENGINE_PLAINBADGE)) {
+        wram->wScriptVar = 1;
+        return;
+    }
 
-    LD_HL(wBikeFlags);
-    BIT_hl(BIKEFLAGS_STRENGTH_ACTIVE_F);
-    IF_Z goto already_using;
+    // LD_HL(wBikeFlags);
+    // BIT_hl(BIKEFLAGS_STRENGTH_ACTIVE_F);
+    // IF_Z goto already_using;
+    if(bit_test(wram->wBikeFlags, BIKEFLAGS_STRENGTH_ACTIVE_F)) {
+        // LD_A(2);
+        // goto done;
+        wram->wScriptVar = 2;
+        return;
+    }
+    else {
+    // already_using:
+        // XOR_A_A;
+        // goto done;
+        wram->wScriptVar = 0;
+        return;
+    }
 
-    LD_A(2);
-    goto done;
+// nope:
+    // LD_A(1);
+    // goto done;
 
-
-nope:
-    LD_A(1);
-    goto done;
-
-
-already_using:
-    XOR_A_A;
-    goto done;
-
-
-done:
-    LD_addr_A(wScriptVar);
-    RET;
-
+// done:
+    // LD_addr_A(wScriptVar);
+    // RET;
 }
 
 void WhirlpoolFunction(void){

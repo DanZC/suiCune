@@ -1,0 +1,1 @@
+void LoadPoisonBGPals(void);

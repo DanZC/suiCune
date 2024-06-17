@@ -4,6 +4,7 @@
 #include "../../engine/overworld/scripting.h"
 #include "../../data/text/std_text.h"
 #include "../../data/phone/text.h"
+#include "overworld.h"
 
 bool CoinVendor_IntroScript(script_s* s);
 bool PokecenterNurseScript(script_s* s);
@@ -310,12 +311,12 @@ bool ElevatorButtonScript(script_s* s) {
 }
 bool StrengthBoulderScript(script_s* s) {
     SCRIPT_BEGIN
-    // sjump(AskStrengthScript)
+    sjump(AskStrengthScript)
     SCRIPT_END
 }
 bool SmashRockScript(script_s* s) {
     SCRIPT_BEGIN
-    // sjump(AskRockSmashScript)
+    sjump(AskRockSmashScript)
     SCRIPT_END
 }
 bool PokecenterSignScript(script_s* s) {

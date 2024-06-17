@@ -78,6 +78,19 @@ void PopulateMapScriptTable(void) {
     entry(AZALEA_TOWN, 10, AzaleaTownRocket2Script);
     entry(AZALEA_TOWN, 11, AzaleaTownKurtScript);
 
+    entry(CIANWOOD_CITY, 0, CianwoodCityYoungster);
+    entry(CIANWOOD_CITY, 1, CianwoodCityPokefanM);
+    entry(CIANWOOD_CITY, 2, CianwoodCityLass);
+    entry(CIANWOOD_CITY, 3, CianwoodCityRock);
+    entry(CIANWOOD_CITY, 4, CianwoodCityRock);
+    entry(CIANWOOD_CITY, 5, CianwoodCityRock);
+    entry(CIANWOOD_CITY, 6, CianwoodCityRock);
+    entry(CIANWOOD_CITY, 7, CianwoodCityRock);
+    entry(CIANWOOD_CITY, 8, CianwoodCityRock);
+    entry(CIANWOOD_CITY, 9, CianwoodCityChucksWife);
+    entry(CIANWOOD_CITY, 10, ObjectEvent);
+    entry(CIANWOOD_CITY, 11, ObjectEvent);
+
     entry(GOLDENROD_CITY, 0, GoldenrodCityPokefanMScript);
     entry(GOLDENROD_CITY, 1, GoldenrodCityYoungster1Script);
     entry(GOLDENROD_CITY, 2, GoldenrodCityCooltrainerF1Script);
@@ -654,6 +667,33 @@ void PopulateMapScriptTable(void) {
     entry(BATTLE_TOWER_1F, 2, BattleTower1FCooltrainerFScript);
     entry(BATTLE_TOWER_1F, 3, BattleTower1FBugCatcherScript);
     entry(BATTLE_TOWER_1F, 4, BattleTower1FGrannyScript);
+
+    entry(CIANWOOD_GYM, 0, CianwoodGymChuckScript);
+    entry(CIANWOOD_GYM, 1, TrainerBlackbeltYoshi);
+    entry(CIANWOOD_GYM, 2, TrainerBlackbeltLao);
+    entry(CIANWOOD_GYM, 3, TrainerBlackbeltNob);
+    entry(CIANWOOD_GYM, 4, TrainerBlackbeltLung);
+    entry(CIANWOOD_GYM, 5, CianwoodGymBoulder);
+    entry(CIANWOOD_GYM, 6, CianwoodGymBoulder);
+    entry(CIANWOOD_GYM, 7, CianwoodGymBoulder);
+    entry(CIANWOOD_GYM, 8, CianwoodGymBoulder);
+
+    entry(CIANWOOD_LUGIA_SPEECH_HOUSE, 0, CianwoodLugiaSpeechHouseTeacherScript);
+    entry(CIANWOOD_LUGIA_SPEECH_HOUSE, 1, CianwoodLugiaSpeechHouseLassScript);
+    entry(CIANWOOD_LUGIA_SPEECH_HOUSE, 2, CianwoodLugiaSpeechHouseTwinScript);
+
+    entry(CIANWOOD_PHARMACY, 0, CianwoodPharmacist);
+
+    entry(CIANWOOD_PHOTO_STUDIO, 0, CianwoodPhotoStudioFishingGuruScript);
+
+    entry(CIANWOOD_POKECENTER_1F, 0, CianwoodPokecenter1FNurseScript);
+    entry(CIANWOOD_POKECENTER_1F, 1, CianwoodPokecenter1FLassScript);
+    entry(CIANWOOD_POKECENTER_1F, 2, CianwoodGymGuideScript);
+    entry(CIANWOOD_POKECENTER_1F, 3, CianwoodPokecenter1FSuperNerdScript);
+
+    entry(MANIAS_HOUSE, 0, ManiaScript);
+
+    entry(POKE_SEERS_HOUSE, 0, SeerScript);
 
     entry(SPROUT_TOWER_1F, 0, SproutTower1FSage1Script);
     entry(SPROUT_TOWER_1F, 1, SproutTower1FSage2Script);

@@ -1,5 +1,6 @@
 #include "../constants.h"
 #include "mobile_41.h"
+#include "../home/sram.h"
 #include "../engine/gfx/load_font.h"
 #include "../gfx/font.h"
 
@@ -642,31 +643,41 @@ asm_10617f:
 }
 
 void BackupMobileEventIndex(void){
-    LD_A(BANK(sMobileEventIndex));
-    CALL(aOpenSRAM);
-    LD_A_addr(sMobileEventIndex);
-    PUSH_AF;
-    LD_A(BANK(sMobileEventIndexBackup));
-    CALL(aOpenSRAM);
-    POP_AF;
-    LD_addr_A(sMobileEventIndexBackup);
-    CALL(aCloseSRAM);
-    RET;
-
+    // LD_A(BANK(sMobileEventIndex));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asMobileEventIndex));
+    // LD_A_addr(sMobileEventIndex);
+    // PUSH_AF;
+    uint8_t mobileEventIndex = gb_read(sMobileEventIndex);
+    // LD_A(BANK(sMobileEventIndexBackup));
+    // CALL(aOpenSRAM);
+    CloseSRAM_Conv();
+    OpenSRAM_Conv(MBANK(sMobileEventIndexBackup));
+    // POP_AF;
+    // LD_addr_A(sMobileEventIndexBackup);
+    gb_write(sMobileEventIndexBackup, mobileEventIndex);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
 }
 
 void RestoreMobileEventIndex(void){
-    LD_A(BANK(sMobileEventIndexBackup));
-    CALL(aOpenSRAM);
-    LD_A_addr(sMobileEventIndexBackup);
-    PUSH_AF;
-    LD_A(BANK(sMobileEventIndex));
-    CALL(aOpenSRAM);
-    POP_AF;
-    LD_addr_A(sMobileEventIndex);
-    CALL(aCloseSRAM);
-    RET;
-
+    // LD_A(BANK(sMobileEventIndexBackup));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asMobileEventIndexBackup));
+    // LD_A_addr(sMobileEventIndexBackup);
+    // PUSH_AF;
+    uint8_t mobileEventIndexBackup = gb_read(sMobileEventIndexBackup);
+    // LD_A(BANK(sMobileEventIndex));
+    // CALL(aOpenSRAM);
+    CloseSRAM_Conv();
+    OpenSRAM_Conv(MBANK(asMobileEventIndex));
+    // POP_AF;
+    // LD_addr_A(sMobileEventIndex);
+    gb_write(sMobileEventIndex, mobileEventIndexBackup);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
 }
 
 void VerifyTrainerRankingsChecksum(void){
@@ -684,13 +695,15 @@ void VerifyTrainerRankingsChecksum(void){
 }
 
 void DeleteMobileEventIndex(void){
-    LD_A(BANK(sMobileEventIndex));
-    CALL(aOpenSRAM);
-    XOR_A_A;
-    LD_addr_A(sMobileEventIndex);
-    CALL(aCloseSRAM);
-    RET;
-
+    // LD_A(BANK(sMobileEventIndex));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asMobileEventIndex));
+    // XOR_A_A;
+    // LD_addr_A(sMobileEventIndex);
+    gb_write(sMobileEventIndex, 0);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
 }
 
 void InitializeTrainerRankings(void){

@@ -1486,17 +1486,22 @@ void Function1708f0(void){
 }
 
 void Function170923(void){
-    LD_A(BANK(s5_aa48));  // aka BANK(s5_aa47) and BANK(s5_aa5d)
-    CALL(aOpenSRAM);
-    XOR_A_A;
-    LD_addr_A(s5_aa48);
-    LD_addr_A(s5_aa47);
-    LD_HL(s5_aa5d);
-    LD_BC(MOBILE_LOGIN_PASSWORD_LENGTH);
-    CALL(aByteFill);
-    CALL(aCloseSRAM);
-    RET;
-
+    // LD_A(BANK(s5_aa48));  // aka BANK(s5_aa47) and BANK(s5_aa5d)
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(as5_aa48));
+    // XOR_A_A;
+    // LD_addr_A(s5_aa48);
+    gb_write(s5_aa48, 0);
+    // LD_addr_A(s5_aa47);
+    gb_write(s5_aa47, 0);
+    // LD_HL(s5_aa5d);
+    uint8_t* hl = GBToRAMAddr(s5_aa5d);
+    // LD_BC(MOBILE_LOGIN_PASSWORD_LENGTH);
+    // CALL(aByteFill);
+    ByteFill_Conv2(hl, MOBILE_LOGIN_PASSWORD_LENGTH, 0);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
 }
 
 void BattleTowerAction_EggTicket(void){

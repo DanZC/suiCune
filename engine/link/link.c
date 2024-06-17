@@ -24,6 +24,7 @@
 #include "../../home/joypad.h"
 #include "../../home/clear_sprites.h"
 #include "../../home/sram.h"
+#include "../../mobile/mobile_41.h"
 #include "../../data/text/common.h"
 #include "../../data/items/catch_rate_items.h"
 
@@ -3243,7 +3244,7 @@ void LinkTrade(void){
         SaveAfterLinkTrade();
         // FARCALL(aStubbedTrainerRankings_Trades);
         // FARCALL(aBackupMobileEventIndex);
-        SafeCallGBAuto(aBackupMobileEventIndex);
+        BackupMobileEventIndex();
         // LD_C(40);
         // CALL(aDelayFrames);
         DelayFrames_Conv(40);

@@ -3,10 +3,14 @@
 #include "mon_stats.h"
 #include "move_mon.h"
 #include "../../home/pokemon.h"
+#include "../../home/copy.h"
+#include "../../home/joypad.h"
 #include "../items/tmhm2.h"
+#include "../../home/text.h"
 #include "../../data/pokemon/egg_moves.h"
 #include "../../data/pokemon/evos_attacks_pointers.h"
 #include "../../data/moves/tmhm_moves.h"
+#include "../../data/text/common.h"
 
 void CheckBreedmonCompatibility(void){
     CALL(aCheckBreedmonCompatibility_CheckBreedingGroupCompatibility);
@@ -1557,53 +1561,59 @@ loop:
 }
 
 void DayCareMon1(void){
-    LD_HL(mLeftWithDayCareManText);
-    CALL(aPrintText);
-    LD_A_addr(wBreedMon1Species);
-    CALL(aPlayMonCry);
-    LD_A_addr(wDayCareLady);
-    BIT_A(DAYCARELADY_HAS_MON_F);
-    JR_Z (mDayCareMonCursor);
-    CALL(aPromptButton);
-    LD_HL(wBreedMon2Nickname);
-    CALL(aDayCareMonCompatibilityText);
-    JP(mPrintText);
-
+    // LD_HL(mLeftWithDayCareManText);
+    // CALL(aPrintText);
+    PrintText_Conv2(LeftWithDayCareManText);
+    // LD_A_addr(wBreedMon1Species);
+    // CALL(aPlayMonCry);
+    PlayMonCry_Conv(wram->wBreedMon1.species);
+    // LD_A_addr(wDayCareLady);
+    // BIT_A(DAYCARELADY_HAS_MON_F);
+    // JR_Z (mDayCareMonCursor);
+    if(!bit_test(wram->wDayCareLady, DAYCARELADY_HAS_MON_F))
+        return DayCareMonCursor();
+    // CALL(aPromptButton);
+    PromptButton_Conv();
+    // LD_HL(wBreedMon2Nickname);
+    // CALL(aDayCareMonCompatibilityText);
+    // JP(mPrintText);
+    PrintText_Conv2(DayCareMonCompatibilityText_Conv(wram->wBreedMon2Nickname));
 }
 
 void DayCareMon2(void){
-    LD_HL(mLeftWithDayCareLadyText);
-    CALL(aPrintText);
-    LD_A_addr(wBreedMon2Species);
-    CALL(aPlayMonCry);
-    LD_A_addr(wDayCareMan);
-    BIT_A(DAYCAREMAN_HAS_MON_F);
-    JR_Z (mDayCareMonCursor);
-    CALL(aPromptButton);
-    LD_HL(wBreedMon1Nickname);
-    CALL(aDayCareMonCompatibilityText);
-    JP(mPrintText);
-
+    // LD_HL(mLeftWithDayCareLadyText);
+    // CALL(aPrintText);
+    PrintText_Conv2(LeftWithDayCareLadyText);
+    // LD_A_addr(wBreedMon2Species);
+    // CALL(aPlayMonCry);
+    PlayMonCry_Conv(wram->wBreedMon1.species);
+    // LD_A_addr(wDayCareMan);
+    // BIT_A(DAYCAREMAN_HAS_MON_F);
+    // JR_Z (mDayCareMonCursor);
+    if(!bit_test(wram->wDayCareMan, DAYCARELADY_HAS_MON_F))
+        return DayCareMonCursor();
+    // CALL(aPromptButton);
+    PromptButton_Conv();
+    // LD_HL(wBreedMon1Nickname);
+    // CALL(aDayCareMonCompatibilityText);
+    // JP(mPrintText);
+    PrintText_Conv2(DayCareMonCompatibilityText_Conv(wram->wBreedMon1Nickname));
 }
 
 void DayCareMonCursor(void){
-    JP(mWaitPressAorB_BlinkCursor);
-
+    // JP(mWaitPressAorB_BlinkCursor);
+    return WaitPressAorB_BlinkCursor();
 }
 
-void LeftWithDayCareLadyText(void){
-    //text_far ['_LeftWithDayCareLadyText']
-    //text_end ['?']
+const txt_cmd_s LeftWithDayCareLadyText[] = {
+    text_far(v_LeftWithDayCareLadyText)
+    text_end
+};
 
-    return LeftWithDayCareManText();
-}
-
-void LeftWithDayCareManText(void){
-    //text_far ['_LeftWithDayCareManText']
-    //text_end ['?']
-
-    return DayCareMonCompatibilityText();
-}
+const txt_cmd_s LeftWithDayCareManText[] = {
+    text_far(v_LeftWithDayCareManText)
+    text_end
+};
 
 void DayCareMonCompatibilityText(void){
     PUSH_BC;
@@ -1657,6 +1667,63 @@ BreedShowsInterestText:
     //text_end ['?']
 
     return DayCareMonPrintEmptyString();
+}
+
+const txt_cmd_s* DayCareMonCompatibilityText_Conv(const uint8_t* nickname){
+static const txt_cmd_s BreedBrimmingWithEnergyText[] = {
+    text_far(v_BreedBrimmingWithEnergyText)
+    text_end
+};
+static const txt_cmd_s BreedNoInterestText[] = {
+    text_far(v_BreedNoInterestText)
+    text_end
+};
+static const txt_cmd_s BreedAppearsToCareForText[] = {
+    text_far(v_BreedAppearsToCareForText)
+    text_end
+};
+static const txt_cmd_s BreedFriendlyText[] = {
+    text_far(v_BreedFriendlyText)
+    text_end
+};
+static const txt_cmd_s BreedShowsInterestText[] = {
+    text_far(v_BreedShowsInterestText)
+    text_end
+};
+    // PUSH_BC;
+    // LD_DE(wStringBuffer1);
+    // LD_BC(NAME_LENGTH);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wStringBuffer1, nickname, NAME_LENGTH);
+    // CALL(aCheckBreedmonCompatibility);
+    uint8_t compat = CheckBreedmonCompatibility_Conv();
+    // POP_BC;
+    // LD_A_addr(wBreedingCompatibility);
+    // LD_HL(mDayCareMonCompatibilityText_BreedBrimmingWithEnergyText);
+    // CP_A(-1);
+    // IF_Z goto done;
+    if(compat == (uint8_t)-1)
+        return BreedBrimmingWithEnergyText;
+    // LD_HL(mDayCareMonCompatibilityText_BreedNoInterestText);
+    // AND_A_A;
+    // IF_Z goto done;
+    if(compat == 0)
+        return BreedNoInterestText;
+    // LD_HL(mDayCareMonCompatibilityText_BreedAppearsToCareForText);
+    // CP_A(230);
+    // IF_NC goto done;
+    if(compat >= 230)
+        return BreedAppearsToCareForText;
+    // CP_A(70);
+    // LD_HL(mDayCareMonCompatibilityText_BreedFriendlyText);
+    // IF_NC goto done;
+    if(compat >= 70)
+        return BreedFriendlyText;
+    // LD_HL(mDayCareMonCompatibilityText_BreedShowsInterestText);
+
+// done:
+    // RET;
+    return BreedShowsInterestText;
 }
 
 void DayCareMonPrintEmptyString(void){

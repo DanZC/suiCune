@@ -15,7 +15,7 @@
 #include "data/items/attributes.h"
 #include "engine/overworld/npc_movement.h"
 #include "engine/events/happiness_egg.h"
-//#include "engine/events/shuckle.h"
+#include "engine/events/shuckle.h"
 #include "engine/events/haircut.h"
 
 // SECTION "bank2", ROMX
@@ -41,7 +41,7 @@
 #include "engine/events/bug_contest/caught_mon.h"
 #include "engine/items/item_effects.h"
 #include "engine/battle_anims/pokeball_wobble.h"
-//#include "engine/pokemon/knows_move.h"
+#include "engine/pokemon/knows_move.h"
 
 // SECTION "bank4", ROMX
 
@@ -63,7 +63,7 @@
 #include "engine/events/hidden_item.h"
 #include "engine/events/std_collision.h"
 #include "engine/events/bug_contest/judging.h"
-//#include "engine/events/pokerus/apply_pokerus_tick.h"
+#include "engine/events/pokerus/apply_pokerus_tick.h"
 #include "engine/events/bug_contest/contest_2.h"
 //#include "engine/pokemon/correct_party_errors.h"
 #include "engine/math/get_square_root.h"
@@ -198,7 +198,7 @@
 //#include "data/tilesets.h"
 #include "engine/smallflag.h"
 //#include "engine/gfx/trademon_frontpic.h"
-//#include "engine/events/pokerus/check_pokerus.h"
+#include "engine/events/pokerus/check_pokerus.h"
 //#include "engine/events/lucky_number.h"
 #include "engine/pokemon/caught_data.h"
 //#include "engine/pokemon/search2.h"
@@ -216,7 +216,7 @@
 // SECTION "bank14", ROMX
 
 #include "engine/pokemon/party_menu.h"
-//#include "engine/events/poisonstep.h"
+#include "engine/events/poisonstep.h"
 //#include "engine/events/sweet_scent.h"
 #include "engine/events/squirtbottle.h"
 #include "engine/events/card_key.h"
@@ -385,7 +385,7 @@
 
 #include "engine/battle_anims/bg_effects.h"
 //#include "data/moves/animations.h"
-//#include "engine/events/poisonstep_pals.h"
+#include "engine/events/poisonstep_pals.h"
 
 // SECTION "Move Animations", ROMX
 

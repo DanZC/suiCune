@@ -1927,7 +1927,7 @@ void MovementFunction_Strength(struct Object* bc) {
                 // RES_hl(OBJ_FLAGS2_2);
                 bit_reset(bc->flags2, OBJ_FLAGS2_2);
                 // IF_Z goto ok;
-                if(!test) {
+                if(test) {
                     // LD_HL(OBJECT_RANGE);
                     // ADD_HL_BC;
                     // LD_A_hl;

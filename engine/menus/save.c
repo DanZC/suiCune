@@ -13,6 +13,7 @@
 #include "../rtc/rtc.h"
 #include "../link/mystery_gift.h"
 #include "../pokemon/mail.h"
+#include "../../mobile/mobile_41.h"
 #include "../../data/default_options.h"
 #include "../../data/text/common.h"
 
@@ -454,7 +455,7 @@ void v_SaveGameData(void){
     // FARCALL(aBackupPartyMonMail);
     BackupPartyMonMail();
     // FARCALL(aBackupMobileEventIndex);
-    SafeCallGBAuto(aBackupMobileEventIndex);
+    BackupMobileEventIndex();
     // FARCALL(aSaveRTC);
     SaveRTC_Conv();
     // LD_A(BANK(sBattleTowerChallengeState));
@@ -902,7 +903,7 @@ bool TryLoadSaveFile(void){
         // FARCALL(aRestorePartyMonMail);
         RestorePartyMonMail();
         // FARCALL(aRestoreMobileEventIndex);
-        SafeCallGBAuto(aRestoreMobileEventIndex);
+        RestoreMobileEventIndex();
         // FARCALL(aRestoreMysteryGift);
         RestoreMysteryGift();
         // CALL(aValidateBackupSave);
@@ -933,7 +934,7 @@ bool TryLoadSaveFile(void){
         // FARCALL(aRestorePartyMonMail);
         RestorePartyMonMail();
         // FARCALL(aRestoreMobileEventIndex);
-        SafeCallGBAuto(aRestoreMobileEventIndex);
+        RestoreMobileEventIndex();
         // FARCALL(aRestoreMysteryGift);
         RestoreMysteryGift();
         // CALL(aValidateSave);

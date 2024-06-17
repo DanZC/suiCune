@@ -4835,6 +4835,20 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(AzaleaTownRocket2Script);
     CONVERTED_SCRIPT(AzaleaTownKurtScript);
 
+    // maps/CianwoodCity.c
+    CONVERTED_SCRIPT(CianwoodCityYoungster);
+    CONVERTED_SCRIPT(CianwoodCityPokefanM);
+    CONVERTED_SCRIPT(CianwoodCityLass);
+    CONVERTED_SCRIPT(CianwoodCityRock);
+    // CONVERTED_SCRIPT(CianwoodCityRock);
+    // CONVERTED_SCRIPT(CianwoodCityRock);
+    // CONVERTED_SCRIPT(CianwoodCityRock);
+    // CONVERTED_SCRIPT(CianwoodCityRock);
+    // CONVERTED_SCRIPT(CianwoodCityRock);
+    CONVERTED_SCRIPT(CianwoodCityChucksWife);
+    // CONVERTED_SCRIPT(ObjectEvent);
+    // CONVERTED_SCRIPT(ObjectEvent);
+
     // maps/GoldenrodCity.c
     CONVERTED_SCRIPT(GoldenrodCityPokefanMScript);
     CONVERTED_SCRIPT(GoldenrodCityYoungster1Script);
@@ -5489,6 +5503,40 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(BattleTower1FCooltrainerFScript);
     CONVERTED_SCRIPT(BattleTower1FBugCatcherScript);
     CONVERTED_SCRIPT(BattleTower1FGrannyScript);
+
+    // maps/CianwoodGym.c
+    CONVERTED_SCRIPT(CianwoodGymChuckScript);
+    CONVERTED_SCRIPT(TrainerBlackbeltYoshi);
+    CONVERTED_SCRIPT(TrainerBlackbeltLao);
+    CONVERTED_SCRIPT(TrainerBlackbeltNob);
+    CONVERTED_SCRIPT(TrainerBlackbeltLung);
+    CONVERTED_SCRIPT(CianwoodGymBoulder);
+    // CONVERTED_SCRIPT(CianwoodGymBoulder);
+    // CONVERTED_SCRIPT(CianwoodGymBoulder);
+    // CONVERTED_SCRIPT(CianwoodGymBoulder);
+
+    // maps/CianwoodLugiaSpeechHouse.c
+    CONVERTED_SCRIPT(CianwoodLugiaSpeechHouseTeacherScript);
+    CONVERTED_SCRIPT(CianwoodLugiaSpeechHouseLassScript);
+    CONVERTED_SCRIPT(CianwoodLugiaSpeechHouseTwinScript);
+
+    // maps/CianwoodPharmacy.c
+    CONVERTED_SCRIPT(CianwoodPharmacist);
+
+    // maps/CianwoodPhotoStudio.c
+    CONVERTED_SCRIPT(CianwoodPhotoStudioFishingGuruScript);
+
+    // maps/CianwoodPokecenter1F.c
+    CONVERTED_SCRIPT(CianwoodPokecenter1FNurseScript);
+    CONVERTED_SCRIPT(CianwoodPokecenter1FLassScript);
+    CONVERTED_SCRIPT(CianwoodGymGuideScript);
+    CONVERTED_SCRIPT(CianwoodPokecenter1FSuperNerdScript);
+
+    // maps/ManiasHouse.c
+    CONVERTED_SCRIPT(ManiaScript);
+
+    // maps/PokeSeersHouse.c
+    CONVERTED_SCRIPT(SeerScript);
 
     // maps/SproutTower1F.c
     CONVERTED_SCRIPT(SproutTower1FSage1Script);
@@ -7443,7 +7491,7 @@ CONVERTED(v_AnimateTileset);
     // REDIRECTED(ReadBTTrainerParty);
     // REDIRECTED(Function1708c8);
     // REDIRECTED(BattleTowerAction_GetChallengeState);
-    // REDIRECTED(Function170923);
+    CONVERTED(Function170923);
     // REDIRECTED(UnusedBattleTowerDummySpecial1);
     // REDIRECTED(BT_ChrisName);
     // REDIRECTED(Function1707ac);
@@ -7998,4 +8046,25 @@ CONVERTED(v_AnimateTileset);
     // engine/events/fish.c
     // REDIRECTED(GetFishGroupIndex);
     CONVERTED(Fish);
+
+    // engine/events/shuckle.c
+    CONVERTED(ReturnShuckie);
+    CONVERTED(GiveShuckle);
+    // CONVERTED(SpecialShuckleNickname);
+    // CONVERTED(SpecialShuckleOT);
+
+    // engine/events/poisonstep.c
+    // CONVERTED(DoPoisonStep);
+
+    // engine/events/poisonstep_pals.c
+    // CONVERTED(LoadPoisonBGPals);
+
+    // engine/events/pokerus/check_pokerus.c
+    // CONVERTED(v_CheckPokerus);
+
+    // engine/events/pokerus/apply_pokerus_tick.c
+    // CONVERTED(ApplyPokerusTick);
+
+    // engine/pokemon/knows_move.c
+    // CONVERTED(KnowsMove);
 }

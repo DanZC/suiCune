@@ -18,6 +18,7 @@
 #include "../../engine/events/daycare.h"
 #include "../../engine/events/unown_walls.h"
 #include "../../engine/events/pokecenter_pc.h"
+#include "../../engine/events/shuckle.h"
 #include "../../engine/events/bug_contest/contest.h"
 #include "../../engine/events/bug_contest/contest_2.h"
 #include "../../engine/events/battle_tower/battle_tower.h"
@@ -28,6 +29,7 @@
 #include "../../engine/tilesets/timeofday_pals.h"
 #include "../../engine/pokemon/health.h"
 #include "../../engine/pokemon/caught_data.h"
+#include "../../engine/pokemon/breeding.h"
 #include "../../home/time_palettes.h"
 #include "../../home/audio.h"
 #include "../../mobile/mobile_45_stadium.h"
@@ -106,16 +108,16 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(FindPartyMonThatSpecies),
     // add_special(FindPartyMonThatSpeciesYourTrainerID),
     // add_special(UnusedCheckUnusedTwoDayTimer), // unused
-    // add_special(DayCareMon1),
-    // add_special(DayCareMon2),
+    add_special(DayCareMon1),
+    add_special(DayCareMon2),
     add_special(SelectRandomBugContestContestants),
     // add_special(ActivateFishingSwarm),
     add_special(ToggleMaptileDecorations),
     add_special(ToggleDecorationsVisibility),
-    // add_special(GiveShuckle),
-    // add_special(ReturnShuckie),
+    add_special(GiveShuckle),
+    add_special(ReturnShuckie),
     add_special(BillsGrandfather),
-    // add_special(CheckPokerus),
+    add_special(CheckPokerus),
     add_special(DisplayCoinCaseBalance),
     add_special(DisplayMoneyAndCoinBalance),
     add_special(PlaceMoneyTopRight),

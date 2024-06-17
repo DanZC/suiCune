@@ -4,6 +4,7 @@
 #include "../../home/sram.h"
 #include "../../home/math.h"
 #include "../overworld/time.h"
+#include "../events/battle_tower/battle_tower.h"
 
 void StopRTC(void){
 //  //  unreferenced
@@ -370,7 +371,7 @@ void ClockContinue_Conv(void){
     // FARCALL(aClearDailyTimers);
     ClearDailyTimers();
     // FARCALL(aFunction170923);
-    SafeCallGBAuto(aFunction170923);
+    Function170923();
 
     // LD_A(BANK(s5_aa8c));  // aka BANK(s5_b2fa)
     // CALL(aOpenSRAM);
