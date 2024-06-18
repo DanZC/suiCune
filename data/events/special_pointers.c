@@ -19,6 +19,7 @@
 #include "../../engine/events/unown_walls.h"
 #include "../../engine/events/pokecenter_pc.h"
 #include "../../engine/events/shuckle.h"
+#include "../../engine/events/poke_seer.h"
 #include "../../engine/events/bug_contest/contest.h"
 #include "../../engine/events/bug_contest/contest_2.h"
 #include "../../engine/events/battle_tower/battle_tower.h"
@@ -186,7 +187,7 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(Function102142),
     // add_special(CelebiShrineEvent),
     // add_special(CheckCaughtCelebi),
-    // add_special(PokeSeer),
+    add_special(PokeSeer),
     // add_special(BuenasPassword),
     // add_special(BuenaPrize),
     // add_special(GiveDratini),
