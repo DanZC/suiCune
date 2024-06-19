@@ -3808,10 +3808,10 @@ void init_function_pointers(void) {
     // REDIRECTED(FadeOutMusic);
     // REDIRECTED(UnusedDummySpecial);
     // REDIRECTED(FindPartyMonThatSpecies);
-    // REDIRECTED(FoundNone);
+    CONVERTED(FoundNone);
     // REDIRECTED(FindPartyMonThatSpeciesYourTrainerID);
     // REDIRECTED(NameRater);
-    // REDIRECTED(FoundOne);
+    CONVERTED(FoundOne);
     // REDIRECTED(UnownPuzzle);
     // REDIRECTED(BugContestJudging);
 
@@ -8067,4 +8067,88 @@ CONVERTED(v_AnimateTileset);
 
     // engine/pokemon/knows_move.c
     // CONVERTED(KnowsMove);
+
+    // engine/events/battle_tower/load_trainer.c
+    // CONVERTED(LoadRandomBattleTowerMon);
+    CONVERTED(LoadOpponentTrainerAndPokemon);
+
+    // engine/pokemon/search2.c
+    // CONVERTED(FindThatSpecies);
+    // REDIRECTED(FindAboveLevel);
+    // REDIRECTED(v_FindPartyMonAboveLevel);
+    // CONVERTED(v_FindPartyMonThatSpeciesYourTrainerID);
+    // REDIRECTED(FindAtLeastThatHappy);
+    // CONVERTED(v_FindPartyMonThatSpecies);
+    // REDIRECTED(v_FindPartyMonAtLeastThatHappy);
+    // REDIRECTED(RetroactivelyIgnoreEggs);
+
+    // engine/events/battle_tower/get_trainer_class.c
+    // CONVERTED(GetMobileOTTrainerClass);
+
+    // mobile/mobile_5c.c
+    // CONVERTED(AsciiFontGFX);
+    // CONVERTED(Function170c8b);
+    // CONVERTED(Function172eb9);
+    // CONVERTED(String_171c73);
+    // CONVERTED(String_172e4e);
+    // CONVERTED(Palette_172edf);
+    // CONVERTED(Function171a36);
+    // CONVERTED(Function170c06);
+    // CONVERTED(Function171a95);
+    // CONVERTED(Function172e78);
+    // CONVERTED(PasswordBottomTilemap);
+    // CONVERTED(PichuAnimatedMobileGFX);
+    // CONVERTED(asm_171baf);
+    // CONVERTED(ChooseMobileCenterTilemap);
+    // CONVERTED(Function17005a);
+    // CONVERTED(Function1719c8);
+    // CONVERTED(String_171aa7);
+    // CONVERTED(Function171ac9);
+    CONVERTED(Clears5_a89a);
+    // CONVERTED(String_172e3f);
+    // CONVERTED(Stadium2N64Tilemap);
+    // CONVERTED(Function171a11);
+    // CONVERTED(Stadium2N64Attrmap);
+    // CONVERTED(PasswordSlowpokeLZ);
+    // CONVERTED(Function170000);
+    // CONVERTED(Function170d02);
+    // CONVERTED(Function171bcc);
+    // CONVERTED(Function171ccd);
+    // CONVERTED(CheckBTMonMovesForErrors);
+    // CONVERTED(Function171c66);
+    // CONVERTED(Function171cf0);
+    // CONVERTED(String_172e5d);
+    // CONVERTED(asm_171ba5);
+    // CONVERTED(Stadium2N64GFX);
+    // CONVERTED(Function171ad7);
+    // CONVERTED(MobilePasswordAttrmap);
+    // CONVERTED(Function171c2c);
+    // CONVERTED(Function1719ed);
+    // CONVERTED(Function171c41);
+    // CONVERTED(Function171aec);
+    // CONVERTED(Function171bdc);
+    // CONVERTED(ElectroBallMobileGFX);
+    // CONVERTED(Function170cc6);
+    // CONVERTED(Function171c87);
+    // CONVERTED(Function171b9f);
+    // CONVERTED(Function171beb);
+    // CONVERTED(Function171c39);
+    // CONVERTED(PasswordShiftTilemap);
+    // CONVERTED(MenuHeader_171c6b);
+    // CONVERTED(ChooseMobileCenterAttrmap);
+    // CONVERTED(String_172e58);
+    // CONVERTED(PasswordTopTilemap);
+    // CONVERTED(PichuBorderMobileGFX);
+    // CONVERTED(Jumptable_171a45);
+    // CONVERTED(Function171bbd);
+    // CONVERTED(Function1719d6);
+    // CONVERTED(MobilePasswordPalettes);
+    // CONVERTED(Function171b42);
+    // CONVERTED(String_172e31);
+    // CONVERTED(Function171b4b);
+    // CONVERTED(asm_171c60);
+    // CONVERTED(Function171a5d);
+    // CONVERTED(Function171d2b);
+    // CONVERTED(Function171b85);
+    // CONVERTED(Function170be4);
 }

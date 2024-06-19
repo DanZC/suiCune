@@ -154,12 +154,12 @@ bool LinkReceptionistScript_Trade(script_s* s) {
     writetext(Text_TradeReceptionistIntro)
     yesorno
     iffalse(Cancel)
-    // special(Mobile_DummyReturnFalse) // always returns false
-    // iffalse(NoMobile)
-    // writetext(Text_TradeReceptionistMobile)
-    // special(AskMobileOrCable)
-    // iffalse(Cancel)
-    // ifequal(0x1, Mobile)
+    special(Mobile_DummyReturnFalse) // always returns false
+    iffalse(NoMobile)
+    writetext(Text_TradeReceptionistMobile)
+    special(AskMobileOrCable)
+    iffalse(Cancel)
+    ifequal(0x1, Mobile)
 NoMobile:
     LANConnection();
     iffalse(DidNotSave)

@@ -10,7 +10,7 @@ void v_BattleTowerBattle(void);
 void RunBattleTowerTrainer(void);
 void ReadBTTrainerParty(void);
 void ValidateBTParty(void);
-void BT_ChrisName(void);
+extern const char BT_ChrisName[];
 void Function17042c(void);
 void CopyBTTrainer_FromBT_OT_TowBT_OTTemp(void);
 void SkipBattleTowerTrainer(void);

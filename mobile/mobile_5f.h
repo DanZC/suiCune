@@ -4,6 +4,7 @@ void MobileSelectGFX(void);
 void HaveWantMap(void);
 void HaveWantPals(void);
 void CheckStringForErrors(void);
+bool CheckStringForErrors_Conv(const uint8_t* de, uint8_t c);
 void CheckStringForErrors_IgnoreTerminator(void);
 bool CheckStringForErrors_IgnoreTerminator_Conv(const uint8_t* de, uint8_t c);
 void Function17d0f3(void);

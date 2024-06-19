@@ -1,5 +1,6 @@
 #include "../constants.h"
 #include "mobile_5f.h"
+#include "../charmap.h"
 
 void Function17c000(void){
     CALL(aDisableLCD);
@@ -242,6 +243,73 @@ Done:
     AND_A_A;
     RET;
 
+}
+
+//  Valid character ranges:
+//  $0, $5 - $13, $19 - $1c, $26 - $34, $3a - $3e, $40 - $48, $60 - $ff
+bool CheckStringForErrors_Conv(const uint8_t* de, uint8_t c){
+    do {
+    // loop:
+        // LD_A_de;
+        uint8_t ch = *(de++);
+        // INC_DE;
+        // AND_A_A;  // "<NULL>"
+        // IF_Z goto NextChar;
+        if(ch == CHAR_NULL) continue;
+        // CP_A(FIRST_REGULAR_TEXT_CHAR);
+        // IF_NC goto NextChar;
+        if(ch >= FIRST_REGULAR_TEXT_CHAR) continue;
+        // CP_A(0x4e);
+        // IF_Z goto NextChar;
+        if(ch == 0x4e) continue;
+        // CP_A(0x50);
+        // IF_Z goto Done;
+        if(ch == CHAR_TERM) return false;
+        // CP_A(0x05);
+        // IF_C goto Fail;
+        if(ch < 0x05) return true;
+        // CP_A(0x14);
+        // IF_C goto NextChar;
+        if(ch < 0x14) continue;
+        // CP_A(0x18 + 1);
+        // IF_C goto Fail;
+        if(ch <= 0x18) return true;
+        // CP_A(0x1d);
+        // IF_C goto NextChar;
+        if(ch < 0x1d) continue;
+        // CP_A(0x25 + 1);
+        // IF_C goto Fail;
+        if(ch <= 0x25) return true;
+        // CP_A(0x35);
+        // IF_C goto NextChar;
+        if(ch < 0x35) continue;
+        // CP_A(0x39 + 1);
+        // IF_C goto Fail;
+        if(ch <= 0x39) return true;
+        // CP_A(0x3f);
+        // IF_C goto NextChar;
+        if(ch < 0x3f) continue;
+        // CP_A(0x3f + 1);
+        // IF_C goto Fail;
+        if(ch <= 0x3f) return true;
+        // CP_A(0x49);
+        // IF_C goto NextChar;
+        if(ch < 0x49) continue;
+
+    // Fail:
+        // SCF;
+        // RET;
+        return true;
+
+    // NextChar:
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(--c != 0);
+
+// Done:
+    // AND_A_A;
+    // RET;
+    return false;
 }
 
 void CheckStringForErrors_IgnoreTerminator(void){

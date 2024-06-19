@@ -1202,7 +1202,7 @@ struct wram_s
                         uint8_t wcd22[1];
                         uint8_t wcd23[1];
                         uint8_t wcd24[1];
-                        uint8_t wMobileCommsJumptableIndex[1];
+                        uint8_t wMobileCommsJumptableIndex;
                         uint8_t wcd26[1];
                         uint8_t wcd27[1];
                         uint8_t wcd28[1];
@@ -1256,8 +1256,10 @@ struct wram_s
                         // frames
                         uint8_t wcd47[1];
                         uint8_t skip_45[1];
-                        //union wBTTempOTSprite
-                        uint8_t wcd49;
+                        union {
+                            uint8_t wBTTempOTSprite;
+                            uint8_t wcd49;
+                        };
                         uint8_t wcd4a[1];
                         uint8_t wcd4b[1];
                         union {

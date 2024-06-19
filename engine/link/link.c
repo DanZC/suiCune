@@ -3243,6 +3243,7 @@ void LinkTrade(void){
         // FARCALL(aSaveAfterLinkTrade);
         SaveAfterLinkTrade();
         // FARCALL(aStubbedTrainerRankings_Trades);
+        StubbedTrainerRankings_Trades();
         // FARCALL(aBackupMobileEventIndex);
         BackupMobileEventIndex();
         // LD_C(40);

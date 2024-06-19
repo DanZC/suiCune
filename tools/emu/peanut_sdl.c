@@ -152,7 +152,7 @@ uint8_t gb_read(const uint_fast16_t addr) {
                 if (gb.mbc == 3 && gb.cart_ram_bank >= 0x08)
                     return gb.cart_rtc[gb.cart_ram_bank - 0x08];
                 else
-                    return gb.gb_cart_ram_read(addr - gb.cart_ram_bank_offset);
+                    return gb.gb_cart_ram_read((addr - 0xa000) + (gb.cart_ram_bank << 13));
             }
 
             return 0xFF;
@@ -392,7 +392,7 @@ void gb_write(const uint_fast16_t addr, const uint8_t val) {
                 if (gb.mbc == 3 && gb.cart_ram_bank >= 0x08)
                     gb.cart_rtc[gb.cart_ram_bank - 0x08] = val;
                 else if (gb.num_ram_banks)
-                    gb.gb_cart_ram_write(addr - gb.cart_ram_bank_offset, val);
+                    gb.gb_cart_ram_write((addr - 0xa000) + (gb.cart_ram_bank << 13), val);
             }
 
             return;

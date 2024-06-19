@@ -28,7 +28,7 @@
 // SECTION "bank3", ROMX
 
 #include "engine/events/checktime.h"
-//#include "engine/events/specials.h"
+#include "engine/events/specials.h"
 #include "engine/math/print_num.h"
 #include "engine/pokemon/health.h"
 #include "engine/events/overworld.h"
@@ -201,12 +201,12 @@
 #include "engine/events/pokerus/check_pokerus.h"
 //#include "engine/events/lucky_number.h"
 #include "engine/pokemon/caught_data.h"
-//#include "engine/pokemon/search2.h"
+#include "engine/pokemon/search2.h"
 #include "engine/pokemon/stats_screen.h"
 #include "engine/events/catch_tutorial.h"
 //#include "engine/movie/evolution_animation.h"
 //#include "engine/movie/init_hof_credits.h"
-//#include "engine/events/battle_tower/get_trainer_class.h"
+#include "engine/events/battle_tower/get_trainer_class.h"
 #include "engine/battle/sliding_intro.h"
 //#include "mobile/print_opp_message.h"
 #include "engine/battle/check_battle_scene.h"
@@ -505,7 +505,7 @@
 
 // SECTION "mobile5C", ROMX
 
-//#include "mobile/mobile_5c.h"
+#include "mobile/mobile_5c.h"
 
 // SECTION "Crystal Phone Text 2", ROMX
 
@@ -631,7 +631,7 @@
 
 // SECTION "Crystal Events", ROMX
 
-//#include "engine/events/battle_tower/load_trainer.h"
+#include "engine/events/battle_tower/load_trainer.h"
 #include "engine/events/odd_egg.h"
 
 // SECTION "Stadium 2 Checksums", ROMX[$7DE0], BANK[$7F]

@@ -1,6 +1,7 @@
 #include "../../constants.h"
 #include "player_step.h"
 #include "../../home/map.h"
+#include "../../mobile/mobile_41.h"
 
 void v_HandlePlayerStep(void){
     // LD_A_addr(wPlayerStepFlags);
@@ -94,6 +95,7 @@ void HandlePlayerStep(void){
     //dw ['.mobile'];
     // mobile:
         // FARCALL(aStubbedTrainerRankings_StepCount);
+        StubbedTrainerRankings_StepCount();
         // RET;
         return;
     case 3:

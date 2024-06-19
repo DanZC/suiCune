@@ -276,324 +276,358 @@ done:
 }
 
 void StubbedTrainerRankings_StepCount(void){
-    RET;
-    LD_HL(sTrainerRankingStepCount);
-    JP(mStubbedTrainerRankings_Increment4Byte);
-
+    // RET;
+    // LD_HL(sTrainerRankingStepCount);
+    // JP(mStubbedTrainerRankings_Increment4Byte);
+    return StubbedTrainerRankings_Increment4Byte(sTrainerRankingStepCount);
 }
 
 void StubbedTrainerRankings_BattleTowerWins(void){
 //  //  unreferenced
-    RET;
-    LD_A(BANK(s5_aa8d));
-    CALL(aOpenSRAM);
-    LD_A_addr(s5_aa8d);
-    AND_A_A;
-    CALL(aCloseSRAM);
-    RET_NZ ;
-    LD_HL(sTrainerRankingBattleTowerWins);
-    JP(mStubbedTrainerRankings_Increment2Byte);
-
+    // RET;
+    // LD_A(BANK(s5_aa8d));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(as5_aa8d));
+    // LD_A_addr(s5_aa8d);
+    // AND_A_A;
+    uint8_t a = gb_read(s5_aa8d);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET_NZ ;
+    if(a != 0)
+        return;
+    // LD_HL(sTrainerRankingBattleTowerWins);
+    // JP(mStubbedTrainerRankings_Increment2Byte);
+    return StubbedTrainerRankings_Increment2Byte(sTrainerRankingBattleTowerWins);
 }
 
 void StubbedTrainerRankings_TMsHMsTaught(void){
-    RET;
-    LD_HL(sTrainerRankingTMsHMsTaught);
-    JP(mStubbedTrainerRankings_Increment3Byte);
-
+    // RET;
+    // LD_HL(sTrainerRankingTMsHMsTaught);
+    // JP(mStubbedTrainerRankings_Increment3Byte);
+    return StubbedTrainerRankings_Increment3Byte(sTrainerRankingTMsHMsTaught);
 }
 
 void StubbedTrainerRankings_Battles(void){
-    RET;
-    LD_A_addr(wBattleType);
-    CP_A(BATTLETYPE_TUTORIAL);  // Exclude the Dude’s tutorial battle
-    RET_Z ;
-    LD_HL(sTrainerRankingBattles);
-    JP(mStubbedTrainerRankings_Increment3Byte);
-
+    // RET;
+    // LD_A_addr(wBattleType);
+    // CP_A(BATTLETYPE_TUTORIAL);  // Exclude the Dude’s tutorial battle
+    // RET_Z ;
+    if(wram->wBattleType == BATTLETYPE_TUTORIAL)
+        return;
+    // LD_HL(sTrainerRankingBattles);
+    // JP(mStubbedTrainerRankings_Increment3Byte);
+    return StubbedTrainerRankings_Increment3Byte(sTrainerRankingBattles);
 }
 
 void StubbedTrainerRankings_WildBattles(void){
-    RET;
-    LD_A_addr(wBattleType);
-    CP_A(BATTLETYPE_TUTORIAL);  // Exclude the Dude’s tutorial battle
-    RET_Z ;
-    LD_HL(sTrainerRankingWildBattles);
-    JP(mStubbedTrainerRankings_Increment3Byte);
-
+    // RET;
+    // LD_A_addr(wBattleType);
+    // CP_A(BATTLETYPE_TUTORIAL);  // Exclude the Dude’s tutorial battle
+    // RET_Z ;
+    if(wram->wBattleType == BATTLETYPE_TUTORIAL)
+        return;
+    // LD_HL(sTrainerRankingWildBattles);
+    // JP(mStubbedTrainerRankings_Increment3Byte);
+    return StubbedTrainerRankings_Increment3Byte(sTrainerRankingWildBattles);
 }
 
 void StubbedTrainerRankings_TrainerBattles(void){
-    RET;
-    LD_HL(sTrainerRankingTrainerBattles);
-    JP(mStubbedTrainerRankings_Increment3Byte);
-
+    // RET;
+    // LD_HL(sTrainerRankingTrainerBattles);
+    // JP(mStubbedTrainerRankings_Increment3Byte);
+    return StubbedTrainerRankings_Increment3Byte(sTrainerRankingTrainerBattles);
 }
 
 void StubbedTrainerRankings_Unused1(void){
 //  //  unreferenced
-    RET;
-    LD_HL(sTrainerRankingUnused1);
-    JP(mStubbedTrainerRankings_Increment3Byte);
-
+    // RET;
+    // LD_HL(sTrainerRankingUnused1);
+    // JP(mStubbedTrainerRankings_Increment3Byte);
+    return StubbedTrainerRankings_Increment3Byte(sTrainerRankingUnused1);
 }
 
 void StubbedTrainerRankings_HallOfFame(void){
-    RET;
-    LD_HL(sTrainerRankingHOFEntries);
-    JP(mStubbedTrainerRankings_Increment3Byte);
-
+    // RET;
+    // LD_HL(sTrainerRankingHOFEntries);
+    // JP(mStubbedTrainerRankings_Increment3Byte);
+    return StubbedTrainerRankings_Increment3Byte(sTrainerRankingHOFEntries);
 }
 
 void StubbedTrainerRankings_WildMonsCaught(void){
-    RET;
-    LD_HL(sTrainerRankingWildMonsCaught);
-    JP(mStubbedTrainerRankings_Increment3Byte);
-
+    // RET;
+    // LD_HL(sTrainerRankingWildMonsCaught);
+    // JP(mStubbedTrainerRankings_Increment3Byte);
+    return StubbedTrainerRankings_Increment3Byte(sTrainerRankingWildMonsCaught);
 }
 
 void StubbedTrainerRankings_HookedEncounters(void){
-    RET;
-    LD_HL(sTrainerRankingHookedEncounters);
-    JP(mStubbedTrainerRankings_Increment3Byte);
-
+    // RET;
+    // LD_HL(sTrainerRankingHookedEncounters);
+    // JP(mStubbedTrainerRankings_Increment3Byte);
+    return StubbedTrainerRankings_Increment3Byte(sTrainerRankingHookedEncounters);
 }
 
 void StubbedTrainerRankings_EggsHatched(void){
-    RET;
-    LD_HL(sTrainerRankingEggsHatched);
-    JP(mStubbedTrainerRankings_Increment3Byte);
-
+    // RET;
+    // LD_HL(sTrainerRankingEggsHatched);
+    // JP(mStubbedTrainerRankings_Increment3Byte);
+    return StubbedTrainerRankings_Increment3Byte(sTrainerRankingEggsHatched);
 }
 
 void StubbedTrainerRankings_MonsEvolved(void){
-    RET;
-    LD_HL(sTrainerRankingMonsEvolved);
-    JP(mStubbedTrainerRankings_Increment3Byte);
-
+    // RET;
+    // LD_HL(sTrainerRankingMonsEvolved);
+    // JP(mStubbedTrainerRankings_Increment3Byte);
+    return StubbedTrainerRankings_Increment3Byte(sTrainerRankingMonsEvolved);
 }
 
 void StubbedTrainerRankings_FruitPicked(void){
-    RET;
-    LD_HL(sTrainerRankingFruitPicked);
-    JP(mStubbedTrainerRankings_Increment3Byte);
-
+    // RET;
+    // LD_HL(sTrainerRankingFruitPicked);
+    // JP(mStubbedTrainerRankings_Increment3Byte);
+    return StubbedTrainerRankings_Increment3Byte(sTrainerRankingFruitPicked);
 }
 
 void StubbedTrainerRankings_Healings(void){
-    RET;
-    LD_HL(sTrainerRankingHealings);
-    JP(mStubbedTrainerRankings_Increment3Byte);
-
+    // RET;
+    // LD_HL(sTrainerRankingHealings);
+    // JP(mStubbedTrainerRankings_Increment3Byte);
+    return StubbedTrainerRankings_Increment3Byte(sTrainerRankingHealings);
 }
 
 void StubbedTrainerRankings_MysteryGift(void){
-    RET;
-    LD_HL(sTrainerRankingMysteryGift);
-    JR(mStubbedTrainerRankings_Increment3Byte);
-
+    // RET;
+    // LD_HL(sTrainerRankingMysteryGift);
+    // JR(mStubbedTrainerRankings_Increment3Byte);
+    return StubbedTrainerRankings_Increment3Byte(sTrainerRankingMysteryGift);
 }
 
 void StubbedTrainerRankings_Trades(void){
-    RET;
-    LD_HL(sTrainerRankingTrades);
-    JR(mStubbedTrainerRankings_Increment3Byte);
-
+    // RET;
+    // LD_HL(sTrainerRankingTrades);
+    // JR(mStubbedTrainerRankings_Increment3Byte);
+    return StubbedTrainerRankings_Increment3Byte(sTrainerRankingTrades);
 }
 
 void StubbedTrainerRankings_Fly(void){
-    RET;
-    LD_HL(sTrainerRankingFly);
-    JR(mStubbedTrainerRankings_Increment3Byte);
-
+    // RET;
+    // LD_HL(sTrainerRankingFly);
+    // JR(mStubbedTrainerRankings_Increment3Byte);
+    return StubbedTrainerRankings_Increment3Byte(sTrainerRankingFly);
 }
 
 void StubbedTrainerRankings_Surf(void){
-    RET;
-    LD_HL(sTrainerRankingSurf);
-    JR(mStubbedTrainerRankings_Increment3Byte);
-
+    // RET;
+    // LD_HL(sTrainerRankingSurf);
+    // JR(mStubbedTrainerRankings_Increment3Byte);
+    return StubbedTrainerRankings_Increment3Byte(sTrainerRankingSurf);
 }
 
 void StubbedTrainerRankings_Waterfall(void){
-    RET;
-    LD_HL(sTrainerRankingWaterfall);
-    JR(mStubbedTrainerRankings_Increment3Byte);
-
+    // RET;
+    // LD_HL(sTrainerRankingWaterfall);
+    // JR(mStubbedTrainerRankings_Increment3Byte);
+    return StubbedTrainerRankings_Increment3Byte(sTrainerRankingWaterfall);
 }
 
 void StubbedTrainerRankings_WhiteOuts(void){
-    RET;
-    LD_HL(sTrainerRankingWhiteOuts);
-    JR(mStubbedTrainerRankings_Increment3Byte);
-
+    // RET;
+    // LD_HL(sTrainerRankingWhiteOuts);
+    // JR(mStubbedTrainerRankings_Increment3Byte);
+    return StubbedTrainerRankings_Increment3Byte(sTrainerRankingWhiteOuts);
 }
 
 void StubbedTrainerRankings_LuckyNumberShow(void){
-    RET;
-    LD_HL(sTrainerRankingLuckyNumberShow);
-    JR(mStubbedTrainerRankings_Increment2Byte);
-
+    // RET;
+    // LD_HL(sTrainerRankingLuckyNumberShow);
+    // JR(mStubbedTrainerRankings_Increment2Byte);
+    return StubbedTrainerRankings_Increment2Byte(sTrainerRankingLuckyNumberShow);
 }
 
 void StubbedTrainerRankings_PhoneCalls(void){
-    RET;
-    LD_HL(sTrainerRankingPhoneCalls);
-    JR(mStubbedTrainerRankings_Increment3Byte);
-
+    // RET;
+    // LD_HL(sTrainerRankingPhoneCalls);
+    // JR(mStubbedTrainerRankings_Increment3Byte);
+    return StubbedTrainerRankings_Increment3Byte(sTrainerRankingPhoneCalls);
 }
 
 void StubbedTrainerRankings_Unused2(void){
 //  //  unreferenced
-    RET;
-    LD_HL(sTrainerRankingUnused2);
-    JR(mStubbedTrainerRankings_Increment3Byte);
-
+    // RET;
+    // LD_HL(sTrainerRankingUnused2);
+    // JR(mStubbedTrainerRankings_Increment3Byte);
+    return StubbedTrainerRankings_Increment3Byte(sTrainerRankingUnused2);
 }
 
 void StubbedTrainerRankings_LinkBattles(void){
-    RET;
-    LD_HL(sTrainerRankingLinkBattles);
-    JR(mStubbedTrainerRankings_Increment3Byte);
-
+    // RET;
+    // LD_HL(sTrainerRankingLinkBattles);
+    // JR(mStubbedTrainerRankings_Increment3Byte);
+    return StubbedTrainerRankings_Increment3Byte(sTrainerRankingLinkBattles);
 }
 
 void StubbedTrainerRankings_Splash(void){
-    RET;
+    // RET;
 // Only counts if it’s the player’s turn
-    LDH_A_addr(hBattleTurn);
-    AND_A_A;
-    RET_NZ ;
-    LD_HL(sTrainerRankingSplash);
-    JR(mStubbedTrainerRankings_Increment3Byte);
-
+    // LDH_A_addr(hBattleTurn);
+    // AND_A_A;
+    // RET_NZ ;
+    if(hram->hBattleTurn != 0)
+        return;
+    // LD_HL(sTrainerRankingSplash);
+    // JR(mStubbedTrainerRankings_Increment3Byte);
+    return StubbedTrainerRankings_Increment3Byte(sTrainerRankingSplash);
 }
 
 void StubbedTrainerRankings_TreeEncounters(void){
-    RET;
-    LD_HL(sTrainerRankingTreeEncounters);
-    JR(mStubbedTrainerRankings_Increment3Byte);
-
+    // RET;
+    // LD_HL(sTrainerRankingTreeEncounters);
+    // JR(mStubbedTrainerRankings_Increment3Byte);
+    return StubbedTrainerRankings_Increment3Byte(sTrainerRankingTreeEncounters);
 }
 
 void StubbedTrainerRankings_Unused3(void){
 //  //  unreferenced
-    RET;
-    LD_HL(sTrainerRankingUnused3);
-    JR(mStubbedTrainerRankings_Increment3Byte);
-
+    // RET;
+    // LD_HL(sTrainerRankingUnused3);
+    // JR(mStubbedTrainerRankings_Increment3Byte);
+    return StubbedTrainerRankings_Increment3Byte(sTrainerRankingUnused3);
 }
 
 void StubbedTrainerRankings_ColosseumWins(void){
 //  //  win
-    RET;
-    LD_HL(sTrainerRankingColosseumWins);
-    JR(mStubbedTrainerRankings_Increment3Byte);
-
+    // RET;
+    // LD_HL(sTrainerRankingColosseumWins);
+    // JR(mStubbedTrainerRankings_Increment3Byte);
+    return StubbedTrainerRankings_Increment3Byte(sTrainerRankingColosseumWins);
 }
 
 void StubbedTrainerRankings_ColosseumLosses(void){
 //  //  lose
-    RET;
-    LD_HL(sTrainerRankingColosseumLosses);
-    JR(mStubbedTrainerRankings_Increment3Byte);
-
+    // RET;
+    // LD_HL(sTrainerRankingColosseumLosses);
+    // JR(mStubbedTrainerRankings_Increment3Byte);
+    return StubbedTrainerRankings_Increment3Byte(sTrainerRankingColosseumLosses);
 }
 
 void StubbedTrainerRankings_ColosseumDraws(void){
 //  //  draw
-    RET;
-    LD_HL(sTrainerRankingColosseumDraws);
-    JR(mStubbedTrainerRankings_Increment3Byte);
+    // RET;
+    // LD_HL(sTrainerRankingColosseumDraws);
+    // JR(mStubbedTrainerRankings_Increment3Byte);
+    return StubbedTrainerRankings_Increment3Byte(sTrainerRankingColosseumDraws);
+}
 
 //  Counts uses of both Selfdestruct and Explosion.
-    return StubbedTrainerRankings_Selfdestruct();
-}
-
 void StubbedTrainerRankings_Selfdestruct(void){
-    RET;
+    // RET;
 // Only counts if it’s the player’s turn
-    LDH_A_addr(hBattleTurn);
-    AND_A_A;
-    RET_NZ ;
-    LD_HL(sTrainerRankingSelfdestruct);
-    JR(mStubbedTrainerRankings_Increment3Byte);
-
+    // LDH_A_addr(hBattleTurn);
+    // AND_A_A;
+    // RET_NZ ;
+    if(hram->hBattleTurn != 0)
+        return;
+    // LD_HL(sTrainerRankingSelfdestruct);
+    // JR(mStubbedTrainerRankings_Increment3Byte);
+    return StubbedTrainerRankings_Increment3Byte(sTrainerRankingSelfdestruct);
 }
 
-void StubbedTrainerRankings_Increment4Byte(void){
-    PUSH_BC;
-    LD_BC(3);
-    JR(mStubbedTrainerRankings_Increment);
-
+void StubbedTrainerRankings_Increment4Byte(uint16_t hl){
+    // PUSH_BC;
+    // LD_BC(3);
+    // JR(mStubbedTrainerRankings_Increment);
+    return StubbedTrainerRankings_Increment(hl, 3);
 }
 
-void StubbedTrainerRankings_Increment3Byte(void){
-    PUSH_BC;
-    LD_BC(2);
-    JR(mStubbedTrainerRankings_Increment);
-
+void StubbedTrainerRankings_Increment3Byte(uint16_t hl){
+    // PUSH_BC;
+    // LD_BC(2);
+    // JR(mStubbedTrainerRankings_Increment);
+    return StubbedTrainerRankings_Increment(hl, 2);
 }
 
-void StubbedTrainerRankings_Increment2Byte(void){
-    PUSH_BC;
-    LD_BC(1);
-    JR(mStubbedTrainerRankings_Increment);
-
+void StubbedTrainerRankings_Increment2Byte(uint16_t hl){
+    // PUSH_BC;
+    // LD_BC(1);
+    // JR(mStubbedTrainerRankings_Increment);
+    return StubbedTrainerRankings_Increment(hl, 1);
 }
 
-void StubbedTrainerRankings_Increment1Byte(void){
+void StubbedTrainerRankings_Increment1Byte(uint16_t hl){
 //  //  unreferenced
-    PUSH_BC;
-    LD_BC(0);
+    // PUSH_BC;
+    // LD_BC(0);
 
 //  Increments a big-endian value of bc + 1 bytes at hl
-    return StubbedTrainerRankings_Increment();
+    return StubbedTrainerRankings_Increment(hl, 0);
 }
 
-void StubbedTrainerRankings_Increment(void){
-    LD_A(BANK(sTrainerRankings));
-    CALL(aOpenSRAM);
-    PUSH_HL;
-    PUSH_DE;
-    LD_E_C;
-    INC_E;
+void StubbedTrainerRankings_Increment(uint16_t v, uint16_t bc){
+    // LD_A(BANK(sTrainerRankings));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asTrainerRankings));
+    // PUSH_HL;
+    uint8_t* hl = GBToRAMAddr(v);
+    // PUSH_DE;
+    // LD_E_C;
+    uint8_t e = LOW(bc);
+    // INC_E;
+    e++;
+    bool z = true;
 
-asm_106136:
-    LD_A_hli;
-    INC_A;
-    IF_NZ goto asm_10613d;
-    DEC_E;
-    IF_NZ goto asm_106136;
+    do {
+    // asm_106136:
+        // LD_A_hli;
+        uint8_t a = *(hl++);
+        // INC_A;
+        // IF_NZ goto asm_10613d;
+        if(++a != 0) {
+            z = false;
+            break;
+        }
+        // DEC_E;
+        // IF_NZ goto asm_106136;
+    } while(--e != 0);
 
+// asm_10613d:
+    // POP_DE;
+    // POP_HL;
+    hl = GBToRAMAddr(v);
+    // IF_Z goto asm_10614d;
+    if(!z) {
+        // ADD_HL_BC;
+        hl += bc;
+        do {
+        // asm_106142:
+            // INC_hl;
+            ++*hl;
+            // IF_NZ goto asm_10614d;
+            if(*hl != 0)
+                break;
+            // LD_A_C;
+            // AND_A_A;
+            // IF_Z goto asm_10614d;
+            if(bc == 0)
+                break;
+            // DEC_HL;
+            hl--;
+            // DEC_C;
+            bc--;
+            // goto asm_106142;
+        } while(1);
+    }
 
-asm_10613d:
-    POP_DE;
-    POP_HL;
-    IF_Z goto asm_10614d;
-    ADD_HL_BC;
-
-asm_106142:
-    INC_hl;
-    IF_NZ goto asm_10614d;
-    LD_A_C;
-    AND_A_A;
-    IF_Z goto asm_10614d;
-    DEC_HL;
-    DEC_C;
-    goto asm_106142;
-
-
-asm_10614d:
-    CALL(aUpdateTrainerRankingsChecksum);
-    CALL(aCloseSRAM);
-    POP_BC;
-    RET;
+// asm_10614d:
+    // CALL(aUpdateTrainerRankingsChecksum);
+    UpdateTrainerRankingsChecksum();
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // POP_BC;
+    // RET;
+}
 
 //  Used when SRAM bank 5 isn’t already loaded — what’s the point of this?
-    return UpdateTrainerRankingsChecksum2();
-}
-
 void UpdateTrainerRankingsChecksum2(void){
     RET;
     LD_A(BANK(sTrainerRankings));
@@ -605,41 +639,48 @@ void UpdateTrainerRankingsChecksum2(void){
 }
 
 void UpdateTrainerRankingsChecksum(void){
-    PUSH_DE;
-    CALL(aCalculateTrainerRankingsChecksum);
-    LD_HL(sTrainerRankingsChecksum);
-    LD_hl_D;
-    INC_HL;
-    LD_hl_E;
-    POP_DE;
-    RET;
-
+    // PUSH_DE;
+    // CALL(aCalculateTrainerRankingsChecksum);
+    uint16_t de = CalculateTrainerRankingsChecksum();
+    // LD_HL(sTrainerRankingsChecksum);
+    // LD_hl_D;
+    gb_write(sTrainerRankingsChecksum, HIGH(de));
+    // INC_HL;
+    // LD_hl_E;
+    gb_write(sTrainerRankingsChecksum + 1, LOW(de));
+    // POP_DE;
+    // RET;
 }
 
-void CalculateTrainerRankingsChecksum(void){
-    PUSH_BC;
-    LD_HL(sTrainerRankings);
-    LD_BC(sTrainerRankingsChecksum - sTrainerRankings);
-    XOR_A_A;
-    LD_DE(0);
+uint16_t CalculateTrainerRankingsChecksum(void){
+    // PUSH_BC;
+    // LD_HL(sTrainerRankings);
+    uint8_t* hl = GBToRAMAddr(sTrainerRankings);
+    // LD_BC(sTrainerRankingsChecksum - sTrainerRankings);
+    uint16_t bc = sTrainerRankingsChecksum - sTrainerRankings;
+    // XOR_A_A;
+    // LD_DE(0);
+    uint16_t de = 0;
 
-asm_106179:
-    LD_A_E;
-    ADD_A_hl;
-    LD_E_A;
-    IF_NC goto asm_10617f;
-    INC_D;
+    do {
+    // asm_106179:
+        // LD_A_E;
+        // ADD_A_hl;
+        // LD_E_A;
+        // IF_NC goto asm_10617f;
+        // INC_D;
 
-
-asm_10617f:
-    INC_HL;
-    DEC_BC;
-    LD_A_B;
-    OR_A_C;
-    IF_NZ goto asm_106179;
-    POP_BC;
-    RET;
-
+    // asm_10617f:
+        de += *hl;
+        // INC_HL;
+        // DEC_BC;
+        // LD_A_B;
+        // OR_A_C;
+        // IF_NZ goto asm_106179;
+    } while(hl++, --bc != 0);
+    // POP_BC;
+    // RET;
+    return de;
 }
 
 void BackupMobileEventIndex(void){
@@ -966,78 +1007,107 @@ asm_10630d:
     RET;
 
 //  functions related to the cable club and various NPC scripts referencing communications
-
-    return Mobile_DummyReturnFalse();
 }
 
+// Special to check mobile adapater status.
+// Determines whether the mobile adapater has been activated.
+// Has the following effects in JP Crystal:
+// - Activates the Pokemon Communication Center and changes the map's music to MUSIC_MOBILE_CENTER
+// - Adds option to battle or trade with mobile adapter in Pokemon Cable Club.
+// - Activates the GS Ball event
+// - Opens the Battle Tower
 void Mobile_DummyReturnFalse(void){
-    XOR_A_A;
-    LD_addr_A(wScriptVar);
-    RET;
-
+#if PM_HIDDEN_NETWORK
+    // XOR_A_A;
+    // LD_addr_A(wScriptVar);
+    // RET;
+    wram->wScriptVar = FALSE;
+#else
+    u8_flag_s res = CheckMobileAdapterStatus();
+    wram->wScriptVar = res.a;
+#endif
 }
 
-void Stubbed_Function106314(void){
-    RET;
-    LD_A(BANK(s4_b000));
-    CALL(aOpenSRAM);
-    LD_A_C;
-    CPL;
-    LD_addr_A(s4_b000);
-    CALL(aCloseSRAM);
-    LD_A(BANK(s7_a800));
-    CALL(aOpenSRAM);
-    LD_A_C;
-    LD_addr_A(s7_a800);
-    CALL(aCloseSRAM);
-    RET;
-
+// Sets Mobile Adapter status?
+// Stubbed_Function106314
+void SetMobileAdapterStatus(uint8_t c){
+    // RET;
+    // LD_A(BANK(s4_b000));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(as4_b000));
+    // LD_A_C;
+    // CPL;
+    // LD_addr_A(s4_b000);
+    gb_write(s4_b000, (c ^ 0xff) + 1);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // LD_A(BANK(s7_a800));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(as7_a800));
+    // LD_A_C;
+    // LD_addr_A(s7_a800);
+    gb_write(s7_a800, c);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
 }
 
-void Mobile_AlwaysReturnNotCarry(void){
-    OR_A_A;
-    RET;
-
+u8_flag_s Mobile_AlwaysReturnNotCarry(void){
+#if PM_HIDDEN_NETWORK
+    // OR_A_A;
+    // RET;
+    return false;
+#else
+    return CheckMobileAdapterStatus();
+#endif
 }
 
-void Function106331(void){
-//  //  unreferenced
 //  called by Mobile_DummyReturnFalse in JP Crystal
 // check ~[s4_b000] == [s7_a800]
-    LD_A(BANK(s4_b000));
-    CALL(aOpenSRAM);
-    LD_A_addr(s4_b000);
-    CPL;
-    LD_B_A;
-    CALL(aCloseSRAM);
-    LD_A(BANK(s7_a800));
-    CALL(aOpenSRAM);
-    LD_A_addr(s7_a800);
-    LD_C_A;
-    CALL(aCloseSRAM);
-    LD_A_C;
-    CP_A_B;
-    IF_NZ goto nope;
+u8_flag_s CheckMobileAdapterStatus(void){
+    // LD_A(BANK(s4_b000));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(as4_b000));
+    // LD_A_addr(s4_b000);
+    // CPL;
+    // LD_B_A;
+    uint8_t b = (gb_read(s4_b000) ^ 0xff) + 1;
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // LD_A(BANK(s7_a800));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(as7_a800));
+    // LD_A_addr(s7_a800);
+    // LD_C_A;
+    uint8_t c = gb_read(s7_a800);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // LD_A_C;
+    // CP_A_B;
+    // IF_NZ goto nope;
+    if(c == b) {
+    // check [s7_a800] != 0
+        // AND_A_A;
+        // IF_Z goto nope;
 
-// check [s7_a800] != 0
-    AND_A_A;
-    IF_Z goto nope;
+    // check !([s7_a800] & %01110000)
+        // AND_A(0b10001111);
+        // CP_A_C;
+        // IF_NZ goto nope;
 
-// check !([s7_a800] & %01110000)
-    AND_A(0b10001111);
-    CP_A_C;
-    IF_NZ goto nope;
+        if(c != 0 && !(c & 0b01110000)) {
+            // LD_C_A;
+            // SCF;
+            // RET;
+            return u8_flag(c & 0b10001111, true);
+        }
+    }
 
-    LD_C_A;
-    SCF;
-    RET;
-
-
-nope:
-    XOR_A_A;
-    LD_C_A;
-    RET;
-
+// nope:
+    // XOR_A_A;
+    // LD_C_A;
+    // RET;
+    return u8_flag(0, false);
 }
 
 void Function10635c(void){
@@ -1160,48 +1230,56 @@ void Function1063f3(void){
 }
 
 void Function106403(void){
-    LD_A_addr(wc821);
-    BIT_A(1);
-    IF_NZ goto asm_106426;
-    BIT_A(0);
-    IF_Z goto asm_10640f;
-    RET;
+    // LD_A_addr(wc821);
+    // BIT_A(1);
+    // IF_NZ goto asm_106426;
+    if(bit_test(wram->wc821, 1)) {
+    // asm_106426:
+        // CALL(aMobile_AlwaysReturnNotCarry);
+        u8_flag_s res = CheckMobileAdapterStatus();
+        // LD_A_C;
+        // AND_A_A;
+        // IF_Z goto asm_106435;
+        if(res.a != 0) {
+            // LD_A_addr(wMobileCommsJumptableIndex);
+            // INC_A;
+            // LD_addr_A(wMobileCommsJumptableIndex);
+            wram->wMobileCommsJumptableIndex++;
+            // RET;
+            return;
+        }
 
-
-asm_10640f:
-    LD_A_addr(wcd31);
-    AND_A(0x80);
-    LD_C_A;
-    LD_A_addr(wcd30);
-    OR_A_C;
-    INC_A;
-    LD_C_A;
-    CALL(aStubbed_Function106314);
-    LD_A_addr(wMobileCommsJumptableIndex);
-    INC_A;
-    LD_addr_A(wMobileCommsJumptableIndex);
-    RET;
-
-
-asm_106426:
-    CALL(aMobile_AlwaysReturnNotCarry);
-    LD_A_C;
-    AND_A_A;
-    IF_Z goto asm_106435;
-    LD_A_addr(wMobileCommsJumptableIndex);
-    INC_A;
-    LD_addr_A(wMobileCommsJumptableIndex);
-    RET;
-
-
-asm_106435:
-    LD_C(0x0);
-    CALL(aStubbed_Function106314);
-    LD_A_addr(wMobileCommsJumptableIndex);
-    INC_A;
-    LD_addr_A(wMobileCommsJumptableIndex);
-    RET;
-
+    // asm_106435:
+        // LD_C(0x0);
+        // CALL(aStubbed_Function106314);
+        SetMobileAdapterStatus(0x0);
+        // LD_A_addr(wMobileCommsJumptableIndex);
+        // INC_A;
+        // LD_addr_A(wMobileCommsJumptableIndex);
+        wram->wMobileCommsJumptableIndex++;
+        // RET;
+        return;
+    }
+    // BIT_A(0);
+    // IF_Z goto asm_10640f;
+    if(!bit_test(wram->wc821, 0)) {
+    // asm_10640f:
+        // LD_A_addr(wcd31);
+        // AND_A(0x80);
+        // LD_C_A;
+        // LD_A_addr(wcd30);
+        // OR_A_C;
+        // INC_A;
+        // LD_C_A;
+        // CALL(aStubbed_Function106314);
+        SetMobileAdapterStatus(((wram->wcd31 & 0x80) | wram->wcd30) + 1);
+        // LD_A_addr(wMobileCommsJumptableIndex);
+        // INC_A;
+        // LD_addr_A(wMobileCommsJumptableIndex);
+        wram->wMobileCommsJumptableIndex++;
+        // RET;
+    }
+    // RET;
 }
 
 void Function106442(void){

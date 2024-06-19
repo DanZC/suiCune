@@ -4,9 +4,11 @@
 #include "../../data/wild/treemon_maps.h"
 #include "../../home/map.h"
 #include "../../home/random.h"
+#include "../../mobile/mobile_41.h"
 
 void TreeMonEncounter(void){
     // FARCALL(aStubbedTrainerRankings_TreeEncounters);
+    StubbedTrainerRankings_TreeEncounters();
 
     // XOR_A_A;
     // LD_addr_A(wTempWildMonSpecies);

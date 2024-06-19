@@ -47,10 +47,12 @@
 #include "../pokemon/party_menu.h"
 #include "../items/pack.h"
 #include "../items/items.h"
+#include "../../mobile/mobile_41.h"
 #include "../../data/text/battle.h"
 #include "../../data/text/common.h"
 #include "../../data/wild/treemons_asleep.h"
 #include "../../data/wild/unlocked_unowns.h"
+#include "../../data/wild/flee_mons.h"
 #include "../../data/battle/held_heal_status.h"
 #include "../../data/moves/effects_priorities.h"
 #include "../../data/moves/moves.h"
@@ -336,7 +338,7 @@ void BattleTurn(void){
         wram->wCurDamage = 0;
 
         // CALL(aHandleBerserkGene);
-        SafeCallGBAuto(aHandleBerserkGene);
+        HandleBerserkGene();
         // CALL(aUpdateBattleMonInParty);
         UpdateBattleMonInParty_Conv();
         // FARCALL(aAIChooseMove);
@@ -569,86 +571,135 @@ BattleIsOver:
 
 }
 
+static void HandleBerserkGene_go(struct PartyMon* hl) {
+    // PUSH_DE;
+    // PUSH_BC;
+    // CALLFAR(aGetUserItem);
+    // LD_A_hl;
+    // LD_addr_A(wNamedObjectIndex);
+    // SUB_A(BERSERK_GENE);
+    // POP_BC;
+    // POP_DE;
+    // RET_NZ ;
+    if(hl->mon.item != BERSERK_GENE)
+        return;
+
+    // LD_hl_A;
+    hl->mon.item = NO_ITEM;
+
+    // LD_H_D;
+    // LD_L_E;
+    // LD_A_B;
+    // CALL(aGetPartyLocation);
+    // XOR_A_A;
+    // LD_hl_A;
+    hl->mon.item = NO_ITEM;
+    // LD_A(BATTLE_VARS_SUBSTATUS3);
+    // CALL(aGetBattleVarAddr);
+    uint8_t* ss3 = GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS3);
+    // PUSH_AF;
+    uint8_t ss3Backup = *ss3;
+    // SET_hl(SUBSTATUS_CONFUSED);
+    bit_set(*ss3, SUBSTATUS_CONFUSED);
+    // LD_A(BATTLE_VARS_MOVE_ANIM);
+    // CALL(aGetBattleVarAddr);
+    uint8_t* move = GetBattleVarAddr_Conv(BATTLE_VARS_MOVE_ANIM);
+    // PUSH_HL;
+    // PUSH_AF;
+    uint8_t moveBackup = *move;
+    // XOR_A_A;
+    // LD_hl_A;
+    *move = 0;
+    // LD_addr_A(wAttackMissed);
+    wram->wAttackMissed = FALSE;
+    // LD_addr_A(wEffectFailed);
+    wram->wEffectFailed = FALSE;
+    // FARCALL(aBattleCommand_AttackUp2);
+    BattleCommand_AttackUp2();
+    // POP_AF;
+    // POP_HL;
+    // LD_hl_A;
+    *move = moveBackup;
+    // CALL(aGetItemName);
+    GetItemName_Conv2(moveBackup);
+    // LD_HL(mBattleText_UsersStringBuffer1Activated);
+    // CALL(aStdBattleTextbox);
+    StdBattleTextbox_Conv2(BattleText_UsersStringBuffer1Activated);
+    // CALLFAR(aBattleCommand_StatUpMessage);
+    BattleCommand_StatUpMessage();
+    // POP_AF;
+    // BIT_A(SUBSTATUS_CONFUSED);
+    // RET_NZ ;
+    if(bit_test(ss3Backup, SUBSTATUS_CONFUSED))
+        return;
+    // XOR_A_A;
+    // LD_addr_A(wNumHits);
+    wram->wNumHits = 0;
+    // LD_DE(ANIM_CONFUSED);
+    // CALL(aCall_PlayBattleAnim_OnlyIfVisible);
+    Call_PlayBattleAnim_OnlyIfVisible_Conv(ANIM_CONFUSED);
+    // CALL(aSwitchTurnCore);
+    SwitchTurnCore();
+    // LD_HL(mBecameConfusedText);
+    // JP(mStdBattleTextbox);
+    return StdBattleTextbox_Conv2(BecameConfusedText);
+}
+
+static void HandleBerserkGene_player(void) {
+    // CALL(aSetPlayerTurn);
+    SetPlayerTurn_Conv();
+    // LD_DE(wPartyMon1Item);
+    // LD_A_addr(wCurBattleMon);
+    // LD_B_A;
+    // goto go;
+    return HandleBerserkGene_go(wram->wPartyMon + wram->wCurBattleMon);
+}
+
+static void HandleBerserkGene_enemy(void) {
+    // CALL(aSetEnemyTurn);
+    SetEnemyTurn_Conv();
+    // LD_DE(wOTPartyMon1Item);
+    // LD_A_addr(wCurOTMon);
+    // LD_B_A;
+// fallthrough
+    return HandleBerserkGene_go(wram->wOTPartyMon + wram->wCurOTMon);
+}
+
 void HandleBerserkGene(void){
-    LDH_A_addr(hSerialConnectionStatus);
-    CP_A(USING_EXTERNAL_CLOCK);
-    IF_Z goto reverse;
+    // LDH_A_addr(hSerialConnectionStatus);
+    // CP_A(USING_EXTERNAL_CLOCK);
+    // IF_Z goto reverse;
 
-    CALL(aHandleBerserkGene_player);
-    goto enemy;
+    if(hram->hSerialConnectionStatus == USING_EXTERNAL_CLOCK) {
+        HandleBerserkGene_enemy();
+        HandleBerserkGene_player();
+    }
+    else {
+        HandleBerserkGene_player();
+        HandleBerserkGene_enemy();
+    }
+    // CALL(aHandleBerserkGene_player);
+    // goto enemy;
 
 
-reverse:
-    CALL(aHandleBerserkGene_enemy);
+// reverse:
+    // CALL(aHandleBerserkGene_enemy);
 // fallthrough
 
 
-player:
-    CALL(aSetPlayerTurn);
-    LD_DE(wPartyMon1Item);
-    LD_A_addr(wCurBattleMon);
-    LD_B_A;
-    goto go;
+// player:
+    // CALL(aSetPlayerTurn);
+    // LD_DE(wPartyMon1Item);
+    // LD_A_addr(wCurBattleMon);
+    // LD_B_A;
+    // goto go;
 
-
-enemy:
-    CALL(aSetEnemyTurn);
-    LD_DE(wOTPartyMon1Item);
-    LD_A_addr(wCurOTMon);
-    LD_B_A;
+// enemy:
+    // CALL(aSetEnemyTurn);
+    // LD_DE(wOTPartyMon1Item);
+    // LD_A_addr(wCurOTMon);
+    // LD_B_A;
 // fallthrough
-
-
-go:
-    PUSH_DE;
-    PUSH_BC;
-    CALLFAR(aGetUserItem);
-    LD_A_hl;
-    LD_addr_A(wNamedObjectIndex);
-    SUB_A(BERSERK_GENE);
-    POP_BC;
-    POP_DE;
-    RET_NZ ;
-
-    LD_hl_A;
-
-    LD_H_D;
-    LD_L_E;
-    LD_A_B;
-    CALL(aGetPartyLocation);
-    XOR_A_A;
-    LD_hl_A;
-    LD_A(BATTLE_VARS_SUBSTATUS3);
-    CALL(aGetBattleVarAddr);
-    PUSH_AF;
-    SET_hl(SUBSTATUS_CONFUSED);
-    LD_A(BATTLE_VARS_MOVE_ANIM);
-    CALL(aGetBattleVarAddr);
-    PUSH_HL;
-    PUSH_AF;
-    XOR_A_A;
-    LD_hl_A;
-    LD_addr_A(wAttackMissed);
-    LD_addr_A(wEffectFailed);
-    FARCALL(aBattleCommand_AttackUp2);
-    POP_AF;
-    POP_HL;
-    LD_hl_A;
-    CALL(aGetItemName);
-    LD_HL(mBattleText_UsersStringBuffer1Activated);
-    CALL(aStdBattleTextbox);
-    CALLFAR(aBattleCommand_StatUpMessage);
-    POP_AF;
-    BIT_A(SUBSTATUS_CONFUSED);
-    RET_NZ ;
-    XOR_A_A;
-    LD_addr_A(wNumHits);
-    LD_DE(ANIM_CONFUSED);
-    CALL(aCall_PlayBattleAnim_OnlyIfVisible);
-    CALL(aSwitchTurnCore);
-    LD_HL(mBecameConfusedText);
-    JP(mStdBattleTextbox);
-
 }
 
 void EnemyTriesToFlee(void){
@@ -1089,7 +1140,7 @@ encored:
     // CALL(aSetPlayerTurn);
     SetPlayerTurn_Conv();
     // CALLFAR(aUpdateMoveData);
-    SafeCallGBAuto(aUpdateMoveData);
+    UpdateMoveData();
     // XOR_A_A;
     // LD_addr_A(wPlayerCharging);
     wram->wPlayerCharging = FALSE;
@@ -1294,8 +1345,89 @@ Flee:
     RET;
 
 // INCLUDE "data/wild/flee_mons.asm"
+}
 
-    return CompareMovePriority();
+bool TryEnemyFlee_Conv(void){
+    // LD_A_addr(wBattleMode);
+    // DEC_A;
+    // IF_NZ goto Stay;
+    if(wram->wBattleMode != WILD_BATTLE)
+        return false;
+
+    // LD_A_addr(wPlayerSubStatus5);
+    // BIT_A(SUBSTATUS_CANT_RUN);
+    // IF_NZ goto Stay;
+    if(bit_test(wram->wPlayerSubStatus5, SUBSTATUS_CANT_RUN))
+        return false;
+
+    // LD_A_addr(wEnemyWrapCount);
+    // AND_A_A;
+    // IF_NZ goto Stay;
+    if(wram->wEnemyWrapCount != 0)
+        return false;
+
+    // LD_A_addr(wEnemyMonStatus);
+    // AND_A(1 << FRZ | SLP);
+    // IF_NZ goto Stay;
+    if(wram->wEnemyMon.status[0] & ((1 << FRZ) | SLP))
+        return false;
+
+    // LD_A_addr(wTempEnemyMonSpecies);
+    // LD_DE(1);
+    // LD_HL(mAlwaysFleeMons);
+    // CALL(aIsInArray);
+    // IF_C goto Flee;
+    for(uint32_t i = 0; AlwaysFleeMons[i] != (species_t)-1; ++i) {
+        if(AlwaysFleeMons[i] == wram->wTempEnemyMonSpecies)
+            return true;
+    }
+
+    // CALL(aBattleRandom);
+    // LD_B_A;
+    uint8_t b = BattleRandom_Conv();
+    // CP_A(50 percent + 1);
+    // IF_NC goto Stay;
+    if(b >= 50 percent + 1)
+        return false;
+
+    // PUSH_BC;
+    // LD_A_addr(wTempEnemyMonSpecies);
+    // LD_DE(1);
+    // LD_HL(mOftenFleeMons);
+    // CALL(aIsInArray);
+    // POP_BC;
+    // IF_C goto Flee;
+    for(uint32_t i = 0; OftenFleeMons[i] != (species_t)-1; ++i) {
+        if(OftenFleeMons[i] == wram->wTempEnemyMonSpecies)
+            return true;
+    }
+
+    // LD_A_B;
+    // CP_A(10 percent + 1);
+    // IF_NC goto Stay;
+    if(b >= 10 percent + 1)
+        return false;
+
+    // LD_A_addr(wTempEnemyMonSpecies);
+    // LD_DE(1);
+    // LD_HL(mSometimesFleeMons);
+    // CALL(aIsInArray);
+    // IF_C goto Flee;
+    for(uint32_t i = 0; SometimesFleeMons[i] != (species_t)-1; ++i) {
+        if(SometimesFleeMons[i] == wram->wTempEnemyMonSpecies)
+            return true;
+    }
+
+// Stay:
+    // AND_A_A;
+    // RET;
+    return false;
+
+// Flee:
+    // SCF;
+    // RET;
+
+// INCLUDE "data/wild/flee_mons.asm"
 }
 
 void CompareMovePriority(void){
@@ -12964,6 +13096,7 @@ void CallDoBattle(void){
 
 void BattleIntro(void){
     // FARCALL(aStubbedTrainerRankings_Battles);  // mobile
+    StubbedTrainerRankings_Battles();
     // CALL(aLoadTrainerOrWildMonPic);
     LoadTrainerOrWildMonPic();
     // XOR_A_A;
@@ -13156,6 +13289,7 @@ void InitEnemyTrainer_Conv(uint8_t tclass){
     // LD_addr_A(wTrainerClass);
     wram->wTrainerClass = tclass;
     // FARCALL(aStubbedTrainerRankings_TrainerBattles);
+    StubbedTrainerRankings_TrainerBattles();
     // XOR_A_A;
     // LD_addr_A(wTempEnemyMonSpecies);
     wram->wTempEnemyMonSpecies = 0;
@@ -13242,6 +13376,7 @@ void InitEnemyWildmon(void){
     // LD_addr_A(wBattleMode);
     wram->wBattleMode = WILD_BATTLE;
     // FARCALL(aStubbedTrainerRankings_WildBattles);
+    StubbedTrainerRankings_WildBattles();
     // CALL(aLoadEnemyMon);
     SafeCallGBAuto(aLoadEnemyMon);
     // LD_HL(wEnemyMonMoves);
@@ -14460,6 +14595,7 @@ void BattleStartMessage(void){
         // IF_NZ goto NotFishing;
         if(wram->wBattleType == BATTLETYPE_FISH) {
             // FARCALL(aStubbedTrainerRankings_HookedEncounters);
+            StubbedTrainerRankings_HookedEncounters();
             // LD_HL(mHookedPokemonAttackedText);
             hl = HookedPokemonAttackedText;
             // goto PlaceBattleStartText;

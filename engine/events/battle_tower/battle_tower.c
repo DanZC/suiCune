@@ -1,12 +1,22 @@
 #include "../../../constants.h"
 #include "battle_tower.h"
 #include "rules.h"
+#include "load_trainer.h"
 #include "../../menus/save.h"
+#include "../../overworld/overworld.h"
+#include "../../pokemon/health.h"
+#include "../../battle/core.h"
 #include "../../../home/sram.h"
 #include "../../../home/time.h"
 #include "../../../home/audio.h"
 #include "../../../home/copy.h"
+#include "../../../home/delay.h"
+#include "../../../home/names.h"
+#include "../../../mobile/mobile_41.h"
 #include "../../../mobile/mobile_46.h"
+#include "../../../mobile/mobile_5c.h"
+#include "../../../mobile/mobile_5f.h"
+#include "../../../data/trainers/sprites.h"
 
 void BattleTowerRoomMenu(void){
 //  special
@@ -205,11 +215,12 @@ digit_loop:
 }
 
 void BattleTowerBattle(void){
-    XOR_A_A;  // FALSE
-    LD_addr_A(wBattleTowerBattleEnded);
-    CALL(av_BattleTowerBattle);
-    RET;
-
+    // XOR_A_A;  // FALSE
+    // LD_addr_A(wBattleTowerBattleEnded);
+    wram->wBattleTowerBattleEnded = FALSE;
+    // CALL(av_BattleTowerBattle);
+    v_BattleTowerBattle();
+    // RET;
 }
 
 void UnusedBattleTowerDummySpecial1(void){
@@ -232,199 +243,253 @@ void InitBattleTowerChallengeRAM(void){
 
 void v_BattleTowerBattle(void){
 
-loop:
-    CALL(av_BattleTowerBattle_do_dw);
-    CALL(aDelayFrame);
-    LD_A_addr(wBattleTowerBattleEnded);
-    CP_A(TRUE);
-    IF_NZ goto loop;
-    RET;
+    do {
+    // loop:
+        // CALL(av_BattleTowerBattle_do_dw);
+        switch(wram->wJumptableIndex) {
+        // dw:
+            default:
+            //dw ['RunBattleTowerTrainer'];
+            case 0: RunBattleTowerTrainer(); break;
+            //dw ['SkipBattleTowerTrainer'];
+            case 1: SkipBattleTowerTrainer(); break;
+        }
+        // CALL(aDelayFrame);
+        DelayFrame();
+        // LD_A_addr(wBattleTowerBattleEnded);
+        // CP_A(TRUE);
+        // IF_NZ goto loop;
+    } while(wram->wBattleTowerBattleEnded != TRUE);
+    // RET;
 
-
-do_dw:
+// do_dw:
     //jumptable ['.dw', 'wBattleTowerBattleEnded']
-
-
-dw:
-    //dw ['RunBattleTowerTrainer'];
-    //dw ['SkipBattleTowerTrainer'];
-
-    return RunBattleTowerTrainer();
 }
 
 void RunBattleTowerTrainer(void){
-    LD_A_addr(wOptions);
-    PUSH_AF;
-    LD_HL(wOptions);
-    SET_hl(BATTLE_SHIFT);  // SET MODE
+    // LD_A_addr(wOptions);
+    // PUSH_AF;
+    uint8_t options = wram->wOptions;
+    // LD_HL(wOptions);
+    // SET_hl(BATTLE_SHIFT);  // SET MODE
+    bit_set(wram->wOptions, BATTLE_SHIFT);
 
-    LD_A_addr(wInBattleTowerBattle);
-    PUSH_AF;
-    OR_A(1);
-    LD_addr_A(wInBattleTowerBattle);
+    // LD_A_addr(wInBattleTowerBattle);
+    // PUSH_AF;
+    uint8_t inBattleTowerBattle = wram->wInBattleTowerBattle;
+    // OR_A(1);
+    // LD_addr_A(wInBattleTowerBattle);
+    wram->wInBattleTowerBattle |= 1;
 
-    XOR_A_A;
-    LD_addr_A(wLinkMode);
-    FARCALL(aStubbedTrainerRankings_Healings);
-    FARCALL(aHealParty);
-    CALL(aReadBTTrainerParty);
-    CALL(aClears5_a89a);
+    // XOR_A_A;
+    // LD_addr_A(wLinkMode);
+    wram->wLinkMode = 0;
+    // FARCALL(aStubbedTrainerRankings_Healings);
+    StubbedTrainerRankings_Healings();
+    // FARCALL(aHealParty);
+    HealParty();
+    // CALL(aReadBTTrainerParty);
+    ReadBTTrainerParty();
+    // CALL(aClears5_a89a);
+    Clears5_a89a();
 
-    PREDEF(pStartBattle);
+    // PREDEF(pStartBattle);
+    StartBattle_Conv();
 
-    FARCALL(aLoadPokemonData);
-    FARCALL(aHealParty);
-    LD_A_addr(wBattleResult);
-    LD_addr_A(wScriptVar);
-    AND_A_A;  // WIN?
-    IF_NZ goto lost;
-    LD_A(BANK(sNrOfBeatenBattleTowerTrainers));
-    CALL(aOpenSRAM);
-    LD_A_addr(sNrOfBeatenBattleTowerTrainers);
-    LD_addr_A(wNrOfBeatenBattleTowerTrainers);
-    CALL(aCloseSRAM);
-    LD_HL(wStringBuffer3);
-    LD_A_addr(wNrOfBeatenBattleTowerTrainers);
-    ADD_A(0xf7);
-    LD_hli_A;
-    LD_A(0x50);
-    LD_hl_A;
+    // FARCALL(aLoadPokemonData);
+    LoadPokemonData();
+    // FARCALL(aHealParty);
+    HealParty();
+    // LD_A_addr(wBattleResult);
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = wram->wBattleResult;
+    // AND_A_A;  // WIN?
+    // IF_NZ goto lost;
+    if(wram->wScriptVar == WIN) {
+        // LD_A(BANK(sNrOfBeatenBattleTowerTrainers));
+        // CALL(aOpenSRAM);
+        OpenSRAM_Conv(MBANK(asNrOfBeatenBattleTowerTrainers));
+        // LD_A_addr(sNrOfBeatenBattleTowerTrainers);
+        // LD_addr_A(wNrOfBeatenBattleTowerTrainers);
+        wram->wNrOfBeatenBattleTowerTrainers = gb_read(sNrOfBeatenBattleTowerTrainers);
+        // CALL(aCloseSRAM);
+        CloseSRAM_Conv();
+        // LD_HL(wStringBuffer3);
+        // LD_A_addr(wNrOfBeatenBattleTowerTrainers);
+        // ADD_A(0xf7);
+        // LD_hli_A;
+        wram->wStringBuffer3[0] = wram->wNrOfBeatenBattleTowerTrainers + 0xf7; // CHAR_0
+        // LD_A(0x50);
+        // LD_hl_A;
+        wram->wStringBuffer3[1] = 0x50;
+    }
 
-
-lost:
-    POP_AF;
-    LD_addr_A(wInBattleTowerBattle);
-    POP_AF;
-    LD_addr_A(wOptions);
-    LD_A(TRUE);
-    LD_addr_A(wBattleTowerBattleEnded);
-    RET;
-
+// lost:
+    // POP_AF;
+    // LD_addr_A(wInBattleTowerBattle);
+    wram->wInBattleTowerBattle = inBattleTowerBattle;
+    // POP_AF;
+    // LD_addr_A(wOptions);
+    wram->wOptions = options;
+    // LD_A(TRUE);
+    // LD_addr_A(wBattleTowerBattleEnded);
+    wram->wBattleTowerBattleEnded = TRUE;
+    // RET;
 }
 
 void ReadBTTrainerParty(void){
 //  Initialise the BattleTower-Trainer and his mon
-    CALL(aCopyBTTrainer_FromBT_OT_TowBT_OTTemp);
+    // CALL(aCopyBTTrainer_FromBT_OT_TowBT_OTTemp);
+    CopyBTTrainer_FromBT_OT_TowBT_OTTemp();
 
 //  Check the nicknames for illegal characters, and replace bad nicknames
 //  with their species names.
-    LD_DE(wBT_OTTempMon1Name);
-    LD_C(MON_NAME_LENGTH);
-    FARCALL(aCheckStringForErrors);
-    IF_NC goto skip_mon_1;
+    struct BattleTowerPartyMon* pmon = wram->wBT_OTTemp.party;
+    // LD_DE(wBT_OTTempMon1Name);
+    // LD_C(MON_NAME_LENGTH);
+    // FARCALL(aCheckStringForErrors);
+    // IF_NC goto skip_mon_1;
 
-    LD_A_addr(wBT_OTTempMon1);
-    LD_addr_A(wNamedObjectIndex);
-    CALL(aGetPokemonName);
-    LD_L_E;
-    LD_H_D;
-    LD_DE(wBT_OTTempMon1Name);
-    LD_BC(MON_NAME_LENGTH);
-    CALL(aCopyBytes);
+    if(CheckStringForErrors_Conv(pmon[0].monName, MON_NAME_LENGTH)) {
+        // LD_A_addr(wBT_OTTempMon1);
+        // LD_addr_A(wNamedObjectIndex);
+        // CALL(aGetPokemonName);
+        // LD_L_E;
+        // LD_H_D;
+        // LD_DE(wBT_OTTempMon1Name);
+        // LD_BC(MON_NAME_LENGTH);
+        // CALL(aCopyBytes);
+        CopyBytes_Conv2(pmon[0].monName, GetPokemonName_Conv2(pmon[0].mon.mon.species), MON_NAME_LENGTH);
+    }
 
+// skip_mon_1:
+    // LD_DE(wBT_OTTempMon2Name);
+    // LD_C(MON_NAME_LENGTH);
+    // FARCALL(aCheckStringForErrors);
+    // IF_NC goto skip_mon_2;
+    if(CheckStringForErrors_Conv(pmon[1].monName, MON_NAME_LENGTH)) {
+        // LD_A_addr(wBT_OTTempMon2);
+        // LD_addr_A(wNamedObjectIndex);
+        // CALL(aGetPokemonName);
+        // LD_L_E;
+        // LD_H_D;
+        // LD_DE(wBT_OTTempMon2Name);
+        // LD_BC(MON_NAME_LENGTH);
+        // CALL(aCopyBytes);
+        CopyBytes_Conv2(pmon[1].monName, GetPokemonName_Conv2(pmon[1].mon.mon.species), MON_NAME_LENGTH);
+    }
 
-skip_mon_1:
-    LD_DE(wBT_OTTempMon2Name);
-    LD_C(MON_NAME_LENGTH);
-    FARCALL(aCheckStringForErrors);
-    IF_NC goto skip_mon_2;
-    LD_A_addr(wBT_OTTempMon2);
-    LD_addr_A(wNamedObjectIndex);
-    CALL(aGetPokemonName);
-    LD_L_E;
-    LD_H_D;
-    LD_DE(wBT_OTTempMon2Name);
-    LD_BC(MON_NAME_LENGTH);
-    CALL(aCopyBytes);
+// skip_mon_2:
+    // LD_DE(wBT_OTTempMon3Name);
+    // LD_C(MON_NAME_LENGTH);
+    // FARCALL(aCheckStringForErrors);
+    // IF_NC goto skip_mon_3;
+    if(CheckStringForErrors_Conv(pmon[2].monName, MON_NAME_LENGTH)) {
+        // LD_A_addr(wBT_OTTempMon3);
+        // LD_addr_A(wNamedObjectIndex);
+        // CALL(aGetPokemonName);
+        // LD_L_E;
+        // LD_H_D;
+        // LD_DE(wBT_OTTempMon3Name);
+        // LD_BC(MON_NAME_LENGTH);
+        // CALL(aCopyBytes);
+        CopyBytes_Conv2(pmon[2].monName, GetPokemonName_Conv2(pmon[2].mon.mon.species), MON_NAME_LENGTH);
+    }
 
-
-skip_mon_2:
-    LD_DE(wBT_OTTempMon3Name);
-    LD_C(MON_NAME_LENGTH);
-    FARCALL(aCheckStringForErrors);
-    IF_NC goto skip_mon_3;
-    LD_A_addr(wBT_OTTempMon3);
-    LD_addr_A(wNamedObjectIndex);
-    CALL(aGetPokemonName);
-    LD_L_E;
-    LD_H_D;
-    LD_DE(wBT_OTTempMon3Name);
-    LD_BC(MON_NAME_LENGTH);
-    CALL(aCopyBytes);
-
-
-skip_mon_3:
+// skip_mon_3:
 //  Add the terminator character to each of these names
-    LD_A(0x50);
-    LD_addr_A(wBT_OTTempMon1Name + MON_NAME_LENGTH - 1);
-    LD_addr_A(wBT_OTTempMon2Name + MON_NAME_LENGTH - 1);
-    LD_addr_A(wBT_OTTempMon3Name + MON_NAME_LENGTH - 1);
+    // LD_A(0x50);
+    // LD_addr_A(wBT_OTTempMon1Name + MON_NAME_LENGTH - 1);
+    pmon[0].monName[MON_NAME_LENGTH - 1] = 0x50;
+    // LD_addr_A(wBT_OTTempMon2Name + MON_NAME_LENGTH - 1);
+    pmon[1].monName[MON_NAME_LENGTH - 1] = 0x50;
+    // LD_addr_A(wBT_OTTempMon3Name + MON_NAME_LENGTH - 1);
+    pmon[2].monName[MON_NAME_LENGTH - 1] = 0x50;
 //  Fix errors in the movesets
-    CALL(aCheckBTMonMovesForErrors);
+    // CALL(aCheckBTMonMovesForErrors);
+    CheckBTMonMovesForErrors_Conv();
 //  Repair the trainer name if needed, then copy it to wOTPlayerName
-    LD_DE(wBT_OTTempName);
-    LD_C(NAME_LENGTH - 1);
-    FARCALL(aCheckStringForErrors);
-    IF_NC goto trainer_name_okay;
-    LD_HL(mBT_ChrisName);
-    goto done_trainer_name;
+    // LD_DE(wBT_OTTempName);
+    // LD_C(NAME_LENGTH - 1);
+    // FARCALL(aCheckStringForErrors);
+    // IF_NC goto trainer_name_okay;
+    if(CheckStringForErrors_Conv(wram->wBT_OTTemp.name, NAME_LENGTH - 1)) {
+        // LD_HL(mBT_ChrisName);
+        CopyBytes_Conv2(wram->wOTPlayerName, U82C(BT_ChrisName), NAME_LENGTH - 1);
+        // goto done_trainer_name;
+    }
+    else {
+    // trainer_name_okay:
+        // LD_HL(wBT_OTTempName);
+        CopyBytes_Conv2(wram->wOTPlayerName, wram->wBT_OTTemp.name, NAME_LENGTH - 1);
+    }
 
+// done_trainer_name:
+    // LD_DE(wOTPlayerName);
+    // LD_BC(NAME_LENGTH - 1);
+    // CALL(aCopyBytes);
+    // LD_A(0x50);
+    // LD_de_A;
+    wram->wOTPlayerName[NAME_LENGTH - 1] = 0x50;
 
-trainer_name_okay:
-    LD_HL(wBT_OTTempName);
-
-
-done_trainer_name:
-    LD_DE(wOTPlayerName);
-    LD_BC(NAME_LENGTH - 1);
-    CALL(aCopyBytes);
-    LD_A(0x50);
-    LD_de_A;
-
-    LD_HL(wBT_OTTempTrainerClass);
-    LD_A_hli;
-    LD_addr_A(wOtherTrainerClass);
-    LD_A(LOW(wOTPartyMonNicknames));
-    LD_addr_A(wBGMapBuffer);
-    LD_A(HIGH(wOTPartyMonNicknames));
-    LD_addr_A(wBGMapBuffer + 1);
+    // LD_HL(wBT_OTTempTrainerClass);
+    // LD_A_hli;
+    // LD_addr_A(wOtherTrainerClass);
+    wram->wOtherTrainerClass = wram->wBT_OTTemp.trainerClass;
+    // LD_A(LOW(wOTPartyMonNicknames));
+    // LD_addr_A(wBGMapBuffer);
+    // LD_A(HIGH(wOTPartyMonNicknames));
+    // LD_addr_A(wBGMapBuffer + 1);
+    CopyBytes_Conv2(wram->wOTPartyMonNickname[0], wram->wBT_OTTemp.party[0].monName, NAME_LENGTH);
+    CopyBytes_Conv2(wram->wOTPartyMonNickname[1], wram->wBT_OTTemp.party[1].monName, NAME_LENGTH);
+    CopyBytes_Conv2(wram->wOTPartyMonNickname[2], wram->wBT_OTTemp.party[2].monName, NAME_LENGTH);
 
 // Copy mon into Memory from the address in hl
-    LD_DE(wOTPartyMon1Species);
-    LD_BC(wOTPartyCount);
-    LD_A(BATTLETOWER_PARTY_LENGTH);
-    LD_bc_A;
-    INC_BC;
+    struct BattleTowerPartyMon* hl = wram->wBT_OTTemp.party;
+    // LD_DE(wOTPartyMon1Species);
+    struct PartyMon* de = wram->wOTPartyMon;
+    // LD_BC(wOTPartyCount);
+    // LD_A(BATTLETOWER_PARTY_LENGTH);
+    // LD_bc_A;
+    uint8_t count = wram->wOTPartyCount = BATTLETOWER_PARTY_LENGTH;
+    // INC_BC;
+    species_t* bc = wram->wOTPartySpecies;
 
-otpartymon_loop:
-    PUSH_AF;
-    LD_A_hl;
-    LD_bc_A;
-    INC_BC;
-    PUSH_BC;
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    CALL(aCopyBytes);
-    PUSH_DE;
-    LD_A_addr(wBGMapBuffer);
-    LD_E_A;
-    LD_A_addr(wBGMapBuffer + 1);
-    LD_D_A;
-    LD_BC(MON_NAME_LENGTH);
-    CALL(aCopyBytes);
-    LD_A_E;
-    LD_addr_A(wBGMapBuffer);
-    LD_A_D;
-    LD_addr_A(wBGMapBuffer + 1);
-    POP_DE;
-    POP_BC;
-    POP_AF;
-    DEC_A;
-    AND_A_A;
-    IF_NZ goto otpartymon_loop;
-    LD_A(-1);
-    LD_bc_A;
-    RET;
-
+    do {
+    // otpartymon_loop:
+        // PUSH_AF;
+        // LD_A_hl;
+        // LD_bc_A;
+        // INC_BC;
+        *(bc++) = hl->mon.mon.species;
+        // PUSH_BC;
+        // LD_BC(PARTYMON_STRUCT_LENGTH);
+        // CALL(aCopyBytes);
+        CopyBytes_Conv2(de, &hl->mon, sizeof(*de));
+        // PUSH_DE;
+        // LD_A_addr(wBGMapBuffer);
+        // LD_E_A;
+        // LD_A_addr(wBGMapBuffer + 1);
+        // LD_D_A;
+        de++;
+        hl++;
+        // LD_BC(MON_NAME_LENGTH);
+        // CALL(aCopyBytes);
+        // LD_A_E;
+        // LD_addr_A(wBGMapBuffer);
+        // LD_A_D;
+        // LD_addr_A(wBGMapBuffer + 1);
+        // POP_DE;
+        // POP_BC;
+        // POP_AF;
+        // DEC_A;
+        // AND_A_A;
+        // IF_NZ goto otpartymon_loop;
+    } while(--count != 0);
+    // LD_A(-1);
+    // LD_bc_A;
+    *bc = (species_t)-1;
+    // RET;
 }
 
 void ValidateBTParty(void){
@@ -543,11 +608,7 @@ done_moves:
 
 }
 
-void BT_ChrisName(void){
-    //db ['"CHRIS@"'];
-
-    return Function17042c();
-}
+const char BT_ChrisName[] = "CHRIS@";
 
 void Function17042c(void){
     LD_HL(w3_d202TrainerData);
@@ -622,33 +683,38 @@ next_trainer:
     return CopyBTTrainer_FromBT_OT_TowBT_OTTemp();
 }
 
-void CopyBTTrainer_FromBT_OT_TowBT_OTTemp(void){
 //  copy the BattleTower-Trainer data that lies at 'wBT_OTTrainer' to 'wBT_OTTemp'
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(BANK(wBT_OTTrainer));
-    LDH_addr_A(rSVBK);
+void CopyBTTrainer_FromBT_OT_TowBT_OTTemp(void){
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(BANK(wBT_OTTrainer));
+    // LDH_addr_A(rSVBK);
 
-    LD_HL(wBT_OTTrainer);
-    LD_DE(wBT_OTTemp);
-    LD_BC(BATTLE_TOWER_STRUCT_LENGTH);
-    CALL(aCopyBytes);
+    // LD_HL(wBT_OTTrainer);
+    // LD_DE(wBT_OTTemp);
+    // LD_BC(BATTLE_TOWER_STRUCT_LENGTH);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(&wram->wBT_OTTemp, &wram->wBT_OTTrainer, sizeof(wram->wBT_OTTemp));
 
-    POP_AF;
-    LDH_addr_A(rSVBK);
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
 
-    LD_A(BANK(sBattleTowerChallengeState));
-    CALL(aOpenSRAM);
-    LD_A(BATTLETOWER_CHALLENGE_IN_PROGRESS);
-    LD_addr_A(sBattleTowerChallengeState);
-    LD_HL(sNrOfBeatenBattleTowerTrainers);
-    INC_hl;
-    CALL(aCloseSRAM);
+    // LD_A(BANK(sBattleTowerChallengeState));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asBattleTowerChallengeState));
+    // LD_A(BATTLETOWER_CHALLENGE_IN_PROGRESS);
+    // LD_addr_A(sBattleTowerChallengeState);
+    gb_write(sBattleTowerChallengeState, BATTLETOWER_CHALLENGE_IN_PROGRESS);
+    // LD_HL(sNrOfBeatenBattleTowerTrainers);
+    // INC_hl;
+    gb_write(sNrOfBeatenBattleTowerTrainers, gb_read(sNrOfBeatenBattleTowerTrainers) + 1);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
     return SkipBattleTowerTrainer();
 }
 
 void SkipBattleTowerTrainer(void){
-    RET;
+    // RET;
 
 }
 
@@ -1840,52 +1906,58 @@ void BattleTowerAction_UbersCheck(void){
 }
 
 void LoadOpponentTrainerAndPokemonWithOTSprite(void){
-    FARCALL(aLoadOpponentTrainerAndPokemon);
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(BANK(wBT_OTTrainerClass));
-    LDH_addr_A(rSVBK);
-    LD_HL(wBT_OTTrainerClass);
-    LD_A_hl;
-    DEC_A;
-    LD_C_A;
-    LD_B(0);
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    LD_HL(mBTTrainerClassSprites);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_addr_A(wBTTempOTSprite);
+    // FARCALL(aLoadOpponentTrainerAndPokemon);
+    LoadOpponentTrainerAndPokemon();
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(BANK(wBT_OTTrainerClass));
+    // LDH_addr_A(rSVBK);
+    // LD_HL(wBT_OTTrainerClass);
+    // LD_A_hl;
+    // DEC_A;
+    // LD_C_A;
+    // LD_B(0);
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // LD_HL(mBTTrainerClassSprites);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // LD_addr_A(wBTTempOTSprite);
+    wram->wBTTempOTSprite = BTTrainerClassSprites[wram->wBT_OTTrainer.trainerClass - 1];
 
 //  Load sprite of the opponent trainer
 //  because s/he is chosen randomly and appears out of nowhere
-    LD_A_addr(wScriptVar);
-    DEC_A;
-    SLA_A;
-    LD_E_A;
-    SLA_A;
-    SLA_A;
-    SLA_A;
-    LD_C_A;
-    LD_B(0);
-    LD_D(0);
-    LD_HL(wMapObjects);
-    ADD_HL_BC;
-    INC_HL;
-    LD_A_addr(wBTTempOTSprite);
-    LD_hl_A;
-    LD_HL(wUsedSprites);
-    ADD_HL_DE;
-    LD_hli_A;
-    LDH_addr_A(hUsedSpriteIndex);
-    LD_A_hl;
-    LDH_addr_A(hUsedSpriteTile);
-    FARCALL(aGetUsedSprite);
-    RET;
+    // LD_A_addr(wScriptVar);
+    // DEC_A;
+    // SLA_A;
+    // LD_E_A;
+    uint8_t a = (wram->wScriptVar - 1);
+    // SLA_A;
+    // SLA_A;
+    // SLA_A;
+    // LD_C_A;
+    // LD_B(0);
+    // LD_D(0);
+    // LD_HL(wMapObjects);
+    // ADD_HL_BC;
+    // INC_HL;
+    // LD_A_addr(wBTTempOTSprite);
+    // LD_hl_A;
+    wram->wMapObject[a].sprite = wram->wBTTempOTSprite;
+    // LD_HL(wUsedSprites);
+    // ADD_HL_DE;
+    // LD_hli_A;
+    wram->wUsedSprites[a << 1] = wram->wBTTempOTSprite;
+    // LDH_addr_A(hUsedSpriteIndex);
+    hram->hUsedSpriteIndex = wram->wBTTempOTSprite;
+    // LD_A_hl;
+    // LDH_addr_A(hUsedSpriteTile);
+    hram->hUsedSpriteTile = wram->wUsedSprites[(a << 1) + 1];
+    // FARCALL(aGetUsedSprite);
+    GetUsedSprite_Conv();
+    // RET;
 
 // INCLUDE "data/trainers/sprites.asm"
-
-    return UnusedBattleTowerDummySpecial2();
 }
 
 void UnusedBattleTowerDummySpecial2(void){

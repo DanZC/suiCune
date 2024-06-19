@@ -678,16 +678,23 @@ channel_struct: MACRO
                       ds 1
 ENDM*/
 
+struct BattleTowerPartyMon
+{
+    struct PartyMon mon;
+    uint8_t monName[MON_NAME_LENGTH];
+};
+
 struct BattleTowerData
 {
     uint8_t name[NAME_LENGTH - 1];
     uint8_t trainerClass;
-    struct 
-    {
-        struct PartyMon mon;
-        uint8_t monName[MON_NAME_LENGTH];
-    } party[BATTLETOWER_PARTY_LENGTH];
+    struct BattleTowerPartyMon party[BATTLETOWER_PARTY_LENGTH];
     uint8_t trainerData[BATTLETOWER_TRAINERDATALENGTH];
+};
+
+struct BattleTowerTrainer {
+    char name[11];
+    uint8_t tclass;
 };
 
 /*

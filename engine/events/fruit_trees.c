@@ -5,6 +5,7 @@
 #include "../../data/text/common.h"
 #include "../../home/copy.h"
 #include "../../home/flag.h"
+#include "../../mobile/mobile_41.h"
 
 bool FruitTreeScript(script_s* s){
     SCRIPT_BEGIN
@@ -76,6 +77,7 @@ void CheckFruitTree(void){
 
 void PickedFruitTree(void){
     // FARCALL(aStubbedTrainerRankings_FruitPicked);
+    StubbedTrainerRankings_FruitPicked();
     // LD_B(1);
     // JP(mGetFruitTreeFlag);
     GetFruitTreeFlag_Conv(SET_FLAG, wram->wCurFruitTree);

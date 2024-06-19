@@ -17,6 +17,7 @@
 #include "../events/checktime.h"
 #include "../battle/read_trainer_attributes.h"
 #include "../battle/read_trainer_party.h"
+#include "../../mobile/mobile_41.h"
 #include "../../util/scripting.h"
 #include "../../data/text/common.h"
 #include "../../data/phone/non_trainer_names.h"
@@ -1279,6 +1280,7 @@ void RingTwice_StartCall(void){
     // CALL(aRingTwice_StartCall_Ring);
     RingTwice_StartCall_Ring();
     // FARCALL(aStubbedTrainerRankings_PhoneCalls);
+    StubbedTrainerRankings_PhoneCalls();
     // RET;
 }
 
@@ -1375,6 +1377,7 @@ void PhoneCall_Conv(Script_fn_t de){
     // CALL(aPhoneCall_Ring);
     PhoneCall_Ring();
     // FARCALL(aStubbedTrainerRankings_PhoneCalls);
+    StubbedTrainerRankings_PhoneCalls();
     // RET;
 }
 

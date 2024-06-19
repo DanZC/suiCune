@@ -10,6 +10,7 @@
 #include "../overworld/time.h"
 #include "../menus/intro_menu.h"
 #include "../pokegear/pokegear.h"
+#include "../pokemon/search2.h"
 #include "../../home/sram.h"
 #include "../../home/map.h"
 #include "../../home/pokemon.h"
@@ -116,35 +117,41 @@ void FindPartyMonAtLeastThatHappy(void){
 }
 
 void FindPartyMonThatSpecies(void){
-    LD_A_addr(wScriptVar);
-    LD_B_A;
-    FARCALL(av_FindPartyMonThatSpecies);
-    JR_Z (mFoundNone);
-    JR(mFoundOne);
-
+    // LD_A_addr(wScriptVar);
+    // LD_B_A;
+    // FARCALL(av_FindPartyMonThatSpecies);
+    u8_flag_s res = v_FindPartyMonThatSpecies(wram->wScriptVar);
+    // JR_Z (mFoundNone);
+    if(!res.flag)
+        return FoundNone();
+    // JR(mFoundOne);
+    return FoundOne();
 }
 
 void FindPartyMonThatSpeciesYourTrainerID(void){
-    LD_A_addr(wScriptVar);
-    LD_B_A;
-    FARCALL(av_FindPartyMonThatSpeciesYourTrainerID);
-    JR_Z (mFoundNone);
-    JR(mFoundOne);
-
+    // LD_A_addr(wScriptVar);
+    // LD_B_A;
+    // FARCALL(av_FindPartyMonThatSpeciesYourTrainerID);
+    if(!v_FindPartyMonThatSpeciesYourTrainerID(wram->wScriptVar)) {
+        // JR_Z (mFoundNone);
+        return FoundNone();
+    }
+    // JR(mFoundOne);
+    return FoundOne();
 }
 
 void FoundOne(void){
-    LD_A(TRUE);
-    LD_addr_A(wScriptVar);
-    RET;
-
+    // LD_A(TRUE);
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = TRUE;
+    // RET;
 }
 
 void FoundNone(void){
-    XOR_A_A;
-    LD_addr_A(wScriptVar);
-    RET;
-
+    // XOR_A_A;
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = FALSE;
+    // RET;
 }
 
 void NameRival(void){
@@ -581,10 +588,12 @@ void PrintDiploma(void){
 }
 
 void TrainerHouse(void){
-    LD_A(BANK(sMysteryGiftTrainerHouseFlag));
-    CALL(aOpenSRAM);
-    LD_A_addr(sMysteryGiftTrainerHouseFlag);
-    LD_addr_A(wScriptVar);
-    JP(mCloseSRAM);
-
+    // LD_A(BANK(sMysteryGiftTrainerHouseFlag));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asMysteryGiftTrainerHouseFlag));
+    // LD_A_addr(sMysteryGiftTrainerHouseFlag);
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = gb_read(sMysteryGiftTrainerHouseFlag);
+    // JP(mCloseSRAM);
+    CloseSRAM_Conv();
 }

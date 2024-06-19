@@ -33,6 +33,7 @@
 #include "../../engine/pokemon/breeding.h"
 #include "../../home/time_palettes.h"
 #include "../../home/audio.h"
+#include "../../mobile/mobile_41.h"
 #include "../../mobile/mobile_45_stadium.h"
 
 #define add_special(_n) [SP_##_n] = _n
@@ -106,8 +107,8 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(SurfStartStep),
     // add_special(FindPartyMonAboveLevel), // unused
     // add_special(FindPartyMonAtLeastThatHappy), // unused
-    // add_special(FindPartyMonThatSpecies),
-    // add_special(FindPartyMonThatSpeciesYourTrainerID),
+    add_special(FindPartyMonThatSpecies),
+    add_special(FindPartyMonThatSpeciesYourTrainerID),
     // add_special(UnusedCheckUnusedTwoDayTimer), // unused
     add_special(DayCareMon1),
     add_special(DayCareMon2),
@@ -134,7 +135,7 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(RandomUnseenWildMon),
     add_special(RandomPhoneWildMon),
     add_special(RandomPhoneMon),
-    // add_special(LoadUsedSpritesGFX),
+    add_special(LoadUsedSpritesGFX),
     // add_special(PlaySlowCry),
     // add_special(SnorlaxAwake),
     add_special(OlderHaircutBrother),
@@ -143,7 +144,7 @@ void (*const SpecialsPointers[])(void) = {
     add_special(PlayCurMonCry),
     add_special(ProfOaksPCBoot),
     // add_special(GameboyCheck),
-    // add_special(TrainerHouse),
+    add_special(TrainerHouse),
     // add_special(PhotoStudio),
     add_special(InitRoamMons),
     add_special(FadeOutMusic),
@@ -161,10 +162,10 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(BattleTowerRoomMenu),
     // add_special(Function1700ba),
     // add_special(Function170114),
-    // add_special(BattleTowerBattle),
+    add_special(BattleTowerBattle),
     // add_special(Function1704e1),
     // add_special(UnusedBattleTowerDummySpecial1),
-    // add_special(LoadOpponentTrainerAndPokemonWithOTSprite),
+    add_special(LoadOpponentTrainerAndPokemonWithOTSprite),
     // add_special(Function11ba38),
     add_special(CheckForBattleTowerRules),
     add_special(GiveOddEgg),
@@ -199,10 +200,10 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(Mobile_SelectThreeMons),
     // add_special(Function1037eb),
     // add_special(Function10383c),
-    // add_special(StubbedTrainerRankings_Healings),
+    add_special(StubbedTrainerRankings_Healings),
     add_special(RefreshSprites),
     // add_special(Function1037c2),
-    // add_special(Mobile_DummyReturnFalse),
+    add_special(Mobile_DummyReturnFalse),
     // add_special(Function103780),
     // add_special(Function10387b),
     // add_special(AskRememberPassword),

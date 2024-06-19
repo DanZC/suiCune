@@ -348,6 +348,7 @@ void AddOutdoorSprites_Conv(void){
 }
 
 void LoadUsedSpritesGFX(void){
+    return LoadUsedSpritesGFX_Conv();
     LD_A(MAPCALLBACK_SPRITES);
     CALL(aRunMapCallback);
     CALL(aGetUsedSprites);

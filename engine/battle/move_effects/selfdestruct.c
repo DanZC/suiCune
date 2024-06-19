@@ -7,9 +7,11 @@
 #include "../../../home/battle.h"
 #include "../../../home/battle_vars.h"
 #include "../../../home/tilemap.h"
+#include "../../../mobile/mobile_41.h"
 
 void BattleCommand_Selfdestruct(void){
     // FARCALL(aStubbedTrainerRankings_Selfdestruct);
+    StubbedTrainerRankings_Selfdestruct();
     // LD_A(BATTLEANIM_PLAYER_DAMAGE);
     // LD_addr_A(wNumHits);
     wram->wNumHits = BATTLEANIM_PLAYER_DAMAGE;
