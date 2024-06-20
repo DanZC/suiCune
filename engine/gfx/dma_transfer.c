@@ -105,7 +105,7 @@ static void ReloadMapPart_Function(void) {
     // decoord(0, 0, wTilemap);
     // LD_HL(wScratchTilemap);
     // CALL(mPadTilemapForHDMATransfer);
-    PadAttrmapForHDMATransfer_Conv2(wram->wScratchTilemap, coord(0, 0, wram->wTilemap));
+    PadTilemapForHDMATransfer_Conv2(wram->wScratchTilemap, coord(0, 0, wram->wTilemap));
     // CALL(mDelayFrame);
     DelayFrame();
 
@@ -118,12 +118,12 @@ static void ReloadMapPart_Function(void) {
     gb_write(rVBK, 0x1);
     // LD_HL(wScratchAttrmap);
     // CALL(mHDMATransfer_Wait127Scanlines_toBGMap);
-    CopyBytes_Conv2(gb.vram + VRAM_BANK_SIZE + (hram->hBGMapAddress & 0x1ff0), wram->wScratchAttrmap, 2 * SCREEN_WIDTH);
+    CopyBytes_Conv2(gb.vram + VRAM_BANK_SIZE + (hram->hBGMapAddress & 0x1ff0), wram->wScratchAttrmap, BG_MAP_WIDTH * BG_MAP_HEIGHT);
     // LD_A(0x0);
     // LDH_addr_A(rVBK);
     // LD_HL(wScratchTilemap);
     // CALL(mHDMATransfer_Wait127Scanlines_toBGMap);
-    CopyBytes_Conv2(gb.vram + (hram->hBGMapAddress & 0x1ff0), wram->wScratchAttrmap, 2 * SCREEN_WIDTH);
+    CopyBytes_Conv2(gb.vram + (hram->hBGMapAddress & 0x1ff0), wram->wScratchTilemap, BG_MAP_WIDTH * BG_MAP_HEIGHT);
     // POP_AF;
     // LDH_addr_A(rVBK);
     gb_write(rVBK, vbk);

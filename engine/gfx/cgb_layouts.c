@@ -866,27 +866,32 @@ void v_CGB_Unused0D(void){
 }
 
 void v_CGB_UnownPuzzle(void){
-    LD_HL(mPalPacket_UnownPuzzle + 1);
-    CALL(aCopyFourPalettes);
-    LD_DE(wOBPals1);
-    LD_A(PREDEFPAL_UNOWN_PUZZLE);
-    CALL(aGetPredefPal);
-    CALL(aLoadHLPaletteIntoDE);
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(MBANK(awOBPals1));
-    LDH_addr_A(rSVBK);
-    LD_HL(wOBPals1);
-    LD_A(LOW((1 << 0) * 31 + (1 << 5) * 0 + (1 << 10) * 0));  // (1 << 0) * 31 + (1 << 5) * 0 + (1 << 10) * 0
-    LD_hli_A;
-    LD_A(HIGH((1 << 0) * 31 + (1 << 5) * 0 + (1 << 10) * 0));  // (1 << 0) * 31 + (1 << 5) * 0 + (1 << 10) * 0
-    LD_hl_A;
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    CALL(aWipeAttrmap);
-    CALL(aApplyAttrmap);
-    RET;
-
+    // LD_HL(mPalPacket_UnownPuzzle + 1);
+    // CALL(aCopyFourPalettes);
+    CopyFourPalettes_Conv((const uint8_t*)PalPacket_UnownPuzzle.colors);
+    // LD_DE(wOBPals1);
+    // LD_A(PREDEFPAL_UNOWN_PUZZLE);
+    // CALL(aGetPredefPal);
+    // CALL(aLoadHLPaletteIntoDE);
+    LoadHLPaletteIntoDE_Conv(wram->wOBPals1, GetPredefPal_Conv(PREDEFPAL_UNOWN_PUZZLE));
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(MBANK(awOBPals1));
+    // LDH_addr_A(rSVBK);
+    // LD_HL(wOBPals1);
+    // LD_A(LOW((1 << 0) * 31 + (1 << 5) * 0 + (1 << 10) * 0));  // (1 << 0) * 31 + (1 << 5) * 0 + (1 << 10) * 0
+    // LD_hli_A;
+    wram->wOBPals1[0] = LOW((1 << 0) * 31 + (1 << 5) * 0 + (1 << 10) * 0);
+    // LD_A(HIGH((1 << 0) * 31 + (1 << 5) * 0 + (1 << 10) * 0));  // (1 << 0) * 31 + (1 << 5) * 0 + (1 << 10) * 0
+    // LD_hl_A;
+    wram->wOBPals1[1] = LOW((1 << 0) * 31 + (1 << 5) * 0 + (1 << 10) * 0);
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // CALL(aWipeAttrmap);
+    WipeAttrmap();
+    // CALL(aApplyAttrmap);
+    ApplyAttrmap_Conv();
+    // RET;
 }
 
 void v_CGB_TrainerCard(void){

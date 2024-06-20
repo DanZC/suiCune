@@ -21,6 +21,7 @@ void JoyTextDelay_Conv(void);
 void WaitPressAorB_BlinkCursor(void);
 void WaitPressAorB_BlinkCursor_Conv(void);
 void SimpleWaitPressAorB(void);
+void SimpleWaitPressAorB_Conv(void);
 void PromptButton(void);
 void PromptButton_Conv(void);
 void BlinkCursor(void);

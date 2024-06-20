@@ -724,10 +724,10 @@ void GetBaseData_Conv2(species_t species){
 
             // If our species is unown, we use the Unown pic table.
             const char* (*const hl)[2] = ((species == UNOWN)? UnownPicPointers: PokemonPicPointers);
-            unown_letter_t c = wram->wUnownLetter;
+            // unown_letter_t c = wram->wUnownLetter;
 
             // We either get the species or an unown letter, which will be the index into the table.
-            uint16_t a = (species == UNOWN)? c: species;
+            uint16_t a = (species == UNOWN)? 1: species;
             const char *path = hl[a - 1][0];
             int w, h;
             LoadDimensionsFromPNG(path, &w, &h);

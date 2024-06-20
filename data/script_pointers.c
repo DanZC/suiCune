@@ -736,6 +736,21 @@ void PopulateMapScriptTable(void) {
     entry(RUINS_OF_ALPH_KABUTO_ITEM_ROOM, 2, RuinsOfAlphKabutoItemRoomHealPowder);
     entry(RUINS_OF_ALPH_KABUTO_ITEM_ROOM, 3, RuinsOfAlphKabutoItemRoomEnergypowder);
 
+    entry(RUINS_OF_ALPH_OMANYTE_ITEM_ROOM, 0, RuinsOfAlphOmanyteItemRoomMysteryberry);
+    entry(RUINS_OF_ALPH_OMANYTE_ITEM_ROOM, 1, RuinsOfAlphOmanyteItemRoomMysticWater);
+    entry(RUINS_OF_ALPH_OMANYTE_ITEM_ROOM, 2, RuinsOfAlphOmanyteItemRoomStardust);
+    entry(RUINS_OF_ALPH_OMANYTE_ITEM_ROOM, 3, RuinsOfAlphOmanyteItemRoomStarPiece);
+
+    entry(RUINS_OF_ALPH_AERODACTYL_ITEM_ROOM, 0, RuinsOfAlphAerodactylItemRoomGoldBerry);
+    entry(RUINS_OF_ALPH_AERODACTYL_ITEM_ROOM, 1, RuinsOfAlphAerodactylItemRoomMoonStone);
+    entry(RUINS_OF_ALPH_AERODACTYL_ITEM_ROOM, 2, RuinsOfAlphAerodactylItemRoomHealPowder);
+    entry(RUINS_OF_ALPH_AERODACTYL_ITEM_ROOM, 3, RuinsOfAlphAerodactylItemRoomEnergyRoot);
+
+    entry(RUINS_OF_ALPH_HO_OH_ITEM_ROOM, 0, RuinsOfAlphHoOhItemRoomGoldBerry);
+    entry(RUINS_OF_ALPH_HO_OH_ITEM_ROOM, 1, RuinsOfAlphHoOhItemRoomMysteryberry);
+    entry(RUINS_OF_ALPH_HO_OH_ITEM_ROOM, 2, RuinsOfAlphHoOhItemRoomRevivalHerb);
+    entry(RUINS_OF_ALPH_HO_OH_ITEM_ROOM, 3, RuinsOfAlphHoOhItemRoomCharcoal);
+
     entry(UNION_CAVE_1F, 0, TrainerHikerDaniel);
     entry(UNION_CAVE_1F, 1, TrainerPokemaniacLarry);
     entry(UNION_CAVE_1F, 2, TrainerHikerRussell);

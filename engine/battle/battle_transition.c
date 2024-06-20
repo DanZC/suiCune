@@ -567,6 +567,7 @@ void StartTrainerBattle_SineWave(void){
     }
     // CALL(aStartTrainerBattle_SineWave_DoSineWave);
     StartTrainerBattle_DoSineWave();
+    DelayFrame(); // Needed since without it, the animation is too fast.
     // RET;
 }
 

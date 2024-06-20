@@ -11,6 +11,7 @@
 #include "../menus/intro_menu.h"
 #include "../pokegear/pokegear.h"
 #include "../pokemon/search2.h"
+#include "../games/unown_puzzle.h"
 #include "../../home/sram.h"
 #include "../../home/map.h"
 #include "../../home/pokemon.h"
@@ -279,13 +280,16 @@ void MapRadio(void){
 }
 
 void UnownPuzzle(void){
-    CALL(aFadeToMenu);
-    FARCALL(av_UnownPuzzle);
-    LD_A_addr(wSolvedUnownPuzzle);
-    LD_addr_A(wScriptVar);
-    CALL(aExitAllMenus);
-    RET;
-
+    // CALL(aFadeToMenu);
+    FadeToMenu_Conv();
+    // FARCALL(av_UnownPuzzle);
+    v_UnownPuzzle();
+    // LD_A_addr(wSolvedUnownPuzzle);
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = wram->wSolvedUnownPuzzle;
+    // CALL(aExitAllMenus);
+    ExitAllMenus_Conv();
+    // RET;
 }
 
 void SlotMachine(void){

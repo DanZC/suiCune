@@ -5586,6 +5586,24 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(RuinsOfAlphKabutoItemRoomHealPowder);
     CONVERTED_SCRIPT(RuinsOfAlphKabutoItemRoomEnergypowder);
 
+    // maps/RuinsOfAlphOmanyteItemRoom.c
+    CONVERTED_SCRIPT(RuinsOfAlphOmanyteItemRoomMysteryberry);
+    CONVERTED_SCRIPT(RuinsOfAlphOmanyteItemRoomMysticWater);
+    CONVERTED_SCRIPT(RuinsOfAlphOmanyteItemRoomStardust);
+    CONVERTED_SCRIPT(RuinsOfAlphOmanyteItemRoomStarPiece);
+
+    // maps/RuinsOfAlphAerodactylItemRoom.c
+    CONVERTED_SCRIPT(RuinsOfAlphAerodactylItemRoomGoldBerry);
+    CONVERTED_SCRIPT(RuinsOfAlphAerodactylItemRoomMoonStone);
+    CONVERTED_SCRIPT(RuinsOfAlphAerodactylItemRoomHealPowder);
+    CONVERTED_SCRIPT(RuinsOfAlphAerodactylItemRoomEnergyRoot);
+
+    // maps/RuinsOfAlphHoOhItemRoom.c
+    CONVERTED_SCRIPT(RuinsOfAlphHoOhItemRoomGoldBerry);
+    CONVERTED_SCRIPT(RuinsOfAlphHoOhItemRoomMysteryberry);
+    CONVERTED_SCRIPT(RuinsOfAlphHoOhItemRoomRevivalHerb);
+    CONVERTED_SCRIPT(RuinsOfAlphHoOhItemRoomCharcoal);
+
     // maps/UnionCave1F.c
     CONVERTED_SCRIPT(TrainerHikerDaniel);
     CONVERTED_SCRIPT(TrainerPokemaniacLarry);
@@ -5874,8 +5892,8 @@ void init_function_pointers(void) {
     // REDIRECTED(SpecialKabutoChamber);
     // REDIRECTED(SpecialAerodactylChamber);
     // REDIRECTED(v_DisplayUnownWords_FillAttr);
-    // REDIRECTED(HoOhChamber);
-    // REDIRECTED(OmanyteChamber);
+    CONVERTED(HoOhChamber);
+    CONVERTED(OmanyteChamber);
 
     // engine/events/std_collision.c
     // REDIRECTED(Script_JumpStdFromRAM);
@@ -8151,4 +8169,37 @@ CONVERTED(v_AnimateTileset);
     // CONVERTED(Function171d2b);
     // CONVERTED(Function171b85);
     // CONVERTED(Function170be4);
+
+    // engine/pokemon/level_up_happiness.c
+    CONVERTED(LevelUpHappinessMod);
+
+    // engine/games/unown_puzzle.c
+    // REDIRECTED(HoOhPuzzleLZ);
+    // REDIRECTED(UnownPuzzle_AddPuzzlePieceBorders);
+    // REDIRECTED(GetUnownPuzzleCoordData);
+    // REDIRECTED(CheckSolvedUnownPuzzle);
+    // REDIRECTED(UnownPuzzle_UpdateTilemap);
+    // REDIRECTED(UnownPuzzle_InvalidAction);
+    // REDIRECTED(ConvertLoadedPuzzlePieces);
+    // REDIRECTED(UnownPuzzleCoordData);
+    // REDIRECTED(UnownPuzzle_A);
+    // REDIRECTED(PlaceStartCancelBox);
+    // REDIRECTED(PuzzlePieceBorderData);
+    // REDIRECTED(UnownPuzzleStartCancelLZ);
+    // REDIRECTED(KabutoPuzzleLZ);
+    // REDIRECTED(UnownPuzzleCursorGFX);
+    // REDIRECTED(UnownPuzzle_CheckCurrentTileOccupancy);
+    // REDIRECTED(UnownPuzzleJumptable);
+    // REDIRECTED(FillUnoccupiedPuzzleSpace);
+    // REDIRECTED(OmanytePuzzleLZ);
+    // REDIRECTED(UnownPuzzle_Quit);
+    // REDIRECTED(PlaceUnownPuzzlePieceGFX);
+    // REDIRECTED(LoadUnownPuzzlePiecesGFX);
+    // REDIRECTED(RedrawUnownPuzzlePieces);
+    // REDIRECTED(InitUnownPuzzlePiecePositions);
+    // REDIRECTED(PlaceStartCancelBoxBorder);
+    // REDIRECTED(GetCurrentPuzzlePieceVTileCorner);
+    CONVERTED(v_UnownPuzzle);
+    // REDIRECTED(AerodactylPuzzleLZ);
+    // REDIRECTED(UnownPuzzle_FillBox);
 }

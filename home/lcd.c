@@ -16,7 +16,7 @@ void Function547(void) {
 
 void LCD(void) {  // called from the rendering function, once per line
     if (gb_read(hLCDCPointer)) {
-        gb_write(0xFF00 | gb_read(hLCDCPointer), gb_read(wLYOverrides + gb.gb_reg.LY));
+        gb_write(0xFF00 | gb_read(hLCDCPointer), wram->wLYOverrides[gb.gb_reg.LY]);
     }
 }
 

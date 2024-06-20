@@ -110,7 +110,7 @@
 #include "engine/menus/trainer_card.h"
 #include "engine/events/prof_oaks_pc.h"
 #include "engine/overworld/decorations.h"
-//#include "engine/pokemon/level_up_happiness.h"
+#include "engine/pokemon/level_up_happiness.h"
 #include "engine/battle/read_trainer_dvs.h"
 #include "engine/battle/returntobattle_useball.h"
 #include "engine/battle/consume_held_item.h"
@@ -426,7 +426,7 @@
 
 //#include "engine/events/print_unown_2.h"
 //#include "engine/games/card_flip.h"
-//#include "engine/games/unown_puzzle.h"
+#include "engine/games/unown_puzzle.h"
 //#include "engine/games/memory_game.h"
 #include "engine/pokemon/bills_pc.h"
 

@@ -7,68 +7,80 @@
 #include "../../home/tilemap.h"
 #include "../../home/joypad.h"
 #include "../../home/audio.h"
+#include "../../home/item.h"
 #include "../../data/maps/attributes.h"
 #include "../../data/events/unown_walls.h"
 
 void HoOhChamber(void){
-    LD_HL(wPartySpecies);
-    LD_A_hl;
-    CP_A(HO_OH);  // is Ho-oh the first Pokémon in the party?
-    IF_NZ goto done;  // if not, we're done
-    CALL(aGetMapAttributesPointer);  // pointless?
-    LD_DE(EVENT_WALL_OPENED_IN_HO_OH_CHAMBER);
-    LD_B(SET_FLAG);
-    CALL(aEventFlagAction);
+    // LD_HL(wPartySpecies);
+    // LD_A_hl;
+    // CP_A(HO_OH);  // is Ho-oh the first Pokémon in the party?
+    // IF_NZ goto done;  // if not, we're done
+    if(wram->wPartySpecies[0] == HO_OH) {
+        // CALL(aGetMapAttributesPointer);  // pointless?
+        // LD_DE(EVENT_WALL_OPENED_IN_HO_OH_CHAMBER);
+        // LD_B(SET_FLAG);
+        // CALL(aEventFlagAction);
+        EventFlagAction_Conv2(EVENT_WALL_OPENED_IN_HO_OH_CHAMBER, SET_FLAG);
+    }
 
-done:
-    RET;
-
+// done:
+    // RET;
 }
 
 void OmanyteChamber(void){
-    CALL(aGetMapAttributesPointer);  // pointless?
-    LD_DE(EVENT_WALL_OPENED_IN_OMANYTE_CHAMBER);
-    LD_B(CHECK_FLAG);
-    CALL(aEventFlagAction);
-    LD_A_C;
-    AND_A_A;
-    IF_NZ goto nope;
+    // CALL(aGetMapAttributesPointer);  // pointless?
+    // LD_DE(EVENT_WALL_OPENED_IN_OMANYTE_CHAMBER);
+    // LD_B(CHECK_FLAG);
+    // CALL(aEventFlagAction);
+    // LD_A_C;
+    // AND_A_A;
+    // IF_NZ goto nope;
+    if(EventFlagAction_Conv2(EVENT_WALL_OPENED_IN_OMANYTE_CHAMBER, CHECK_FLAG))
+        return;
 
-    LD_A(WATER_STONE);
-    LD_addr_A(wCurItem);
-    LD_HL(wNumItems);
-    CALL(aCheckItem);
-    IF_C goto open;
+    // LD_A(WATER_STONE);
+    // LD_addr_A(wCurItem);
+    // LD_HL(wNumItems);
+    // CALL(aCheckItem);
+    // IF_C goto open;
+    if(!CheckItem_Conv(WATER_STONE, &wram->wNumItems)) {
+        // LD_A_addr(wPartyCount);
+        // LD_B_A;
+        // INC_B;
+        uint8_t b = wram->wPartyCount + 1;
 
-    LD_A_addr(wPartyCount);
-    LD_B_A;
-    INC_B;
+        item_t item;
+        do {
+        // loop:
+            // DEC_B;
+            --b;
+            // IF_Z goto nope;
+            if(b == 0)
+                return;
+            // LD_A_B;
+            // DEC_A;
+            // LD_addr_A(wCurPartyMon);
+            // PUSH_BC;
+            // LD_A(MON_ITEM);
+            // CALL(aGetPartyParamLocation);
+            // POP_BC;
+            // LD_A_hl;
+            item = wram->wPartyMon[b - 1].mon.item;
+            // CP_A(WATER_STONE);
+            // IF_NZ goto loop;
+        } while(item != WATER_STONE);
+    }
 
-loop:
-    DEC_B;
-    IF_Z goto nope;
-    LD_A_B;
-    DEC_A;
-    LD_addr_A(wCurPartyMon);
-    PUSH_BC;
-    LD_A(MON_ITEM);
-    CALL(aGetPartyParamLocation);
-    POP_BC;
-    LD_A_hl;
-    CP_A(WATER_STONE);
-    IF_NZ goto loop;
+// open:
+    // CALL(aGetMapAttributesPointer);  // pointless?
+    // LD_DE(EVENT_WALL_OPENED_IN_OMANYTE_CHAMBER);
+    // LD_B(SET_FLAG);
+    // CALL(aEventFlagAction);
+    EventFlagAction_Conv2(EVENT_WALL_OPENED_IN_OMANYTE_CHAMBER, SET_FLAG);
 
-
-open:
-    CALL(aGetMapAttributesPointer);  // pointless?
-    LD_DE(EVENT_WALL_OPENED_IN_OMANYTE_CHAMBER);
-    LD_B(SET_FLAG);
-    CALL(aEventFlagAction);
-
-
-nope:
-    RET;
-
+// nope:
+    // RET;
 }
 
 void SpecialAerodactylChamber(void){

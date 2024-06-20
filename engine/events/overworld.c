@@ -2669,7 +2669,7 @@ void Fishing_CheckFacingUp(void){
 
 bool Script_FishCastRod(script_s* s){
     SCRIPT_BEGIN
-    // reloadmappart
+    reloadmappart
     loadmem(hram_ptr(hBGMapMode), 0x0)
     special(UpdateTimePals)
     loademote(EMOTE_ROD)

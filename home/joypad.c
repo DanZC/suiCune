@@ -927,6 +927,7 @@ void SimpleWaitPressAorB_Conv(void) {
     do {
         // CALL(aJoyTextDelay);
         JoyTextDelay_Conv();
+        DelayFrame();
         // LDH_A_addr(hJoyLast);
         // AND_A(A_BUTTON | B_BUTTON);
     } while((hram->hJoyLast & (A_BUTTON | B_BUTTON)) == 0);

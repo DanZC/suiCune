@@ -34,7 +34,7 @@ static bool DebugTeleportScript(script_s* s) {
         movement_step_end
     };
     SCRIPT_BEGIN
-    // reloadmappart
+    reloadmappart
     playsound(SFX_WARP_TO)
     HideSprites_Conv();
     special(UpdateTimePals)

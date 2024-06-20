@@ -3,7 +3,7 @@
 
 #define SCRIPT_BEGIN                switch(s->position) { case 0:
 #define SCRIPT_RET                  s->position = SCRIPT_MAX_FARLABELS + __LINE__ ; Script_end_Conv(s); return false; case SCRIPT_MAX_FARLABELS + __LINE__:
-#define SCRIPT_END                  default: break; } return true;
+#define SCRIPT_END                  (void)0; fallthrough; default: break; } return true;
 #define SCRIPT_CALL(_s)             s->position = SCRIPT_MAX_FARLABELS + __LINE__; Script_CallScript(s, _s); return false; case SCRIPT_MAX_FARLABELS + __LINE__:
 #define SCRIPT_CALLGOTO(_s, _p)     s->position = SCRIPT_MAX_FARLABELS + __LINE__; Script_CallScriptPos(s, _s, _p); return false; case SCRIPT_MAX_FARLABELS + __LINE__:
 #define SCRIPT_CALLLOCAL(_s)        s->position = SCRIPT_MAX_FARLABELS + __LINE__; Script_Push(s); goto _s; case SCRIPT_MAX_FARLABELS + __LINE__:
@@ -17,7 +17,7 @@
 #define SCRIPT_IFNEQUAL(_v,_s)      s->position = SCRIPT_MAX_FARLABELS + __LINE__; if(wram->wScriptVar != (_v)) Script_Goto(s, _s); return false; case SCRIPT_MAX_FARLABELS + __LINE__:
 #define SCRIPT_IFLESS(_v,_s)        s->position = SCRIPT_MAX_FARLABELS + __LINE__; if(wram->wScriptVar <  (_v)) Script_Goto(s, _s); return false; case SCRIPT_MAX_FARLABELS + __LINE__:
 #define SCRIPT_IFGREATER(_v,_s)     s->position = SCRIPT_MAX_FARLABELS + __LINE__; if(wram->wScriptVar >  (_v)) Script_Goto(s, _s); return false; case SCRIPT_MAX_FARLABELS + __LINE__:
-#define SCRIPT_FALLTHROUGH(_s)      default: Script_Goto(s, _s); return false; } return true;
+#define SCRIPT_FALLTHROUGH(_s)      (void)0; fallthrough; default: Script_Goto(s, _s); return false; } return true;
 
 #define special(_s)                 SCRIPT_EVCMD(Script_special_Conv, SP_##_s)
 #define jumptextfaceplayer(_t)      SCRIPT_EVCMD(Script_jumptextfaceplayer_Conv, _t)
