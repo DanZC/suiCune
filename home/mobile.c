@@ -59,7 +59,7 @@ void ReturnMobileAPI(void){
 }
 
 void MobileReceive(void){
-        LDH_A_addr(hROMBank);
+    LDH_A_addr(hROMBank);
     PUSH_AF;
     LD_A(BANK(av_MobileReceive));
     LD_addr_A(wc981);

@@ -4,7 +4,7 @@
 
 // SECTION "bank1", ROMX
 
-//#include "engine/link/place_waiting_text.h"
+#include "engine/link/place_waiting_text.h"
 //#include "engine/gfx/load_push_oam.h"
 #include "engine/overworld/map_objects.h"
 #include "engine/menus/intro_menu.h"

@@ -2869,7 +2869,7 @@ void PlayHitSound(void){
 
     // LD_DE(SFX_SUPER_EFFECTIVE);
     // IF_NC goto play;
-    else if(typeMod > SUPER_EFFECTIVE)
+    else if(typeMod > EFFECTIVE)
         return PlaySFX_Conv(SFX_SUPER_EFFECTIVE);
 
     // LD_DE(SFX_NOT_VERY_EFFECTIVE);

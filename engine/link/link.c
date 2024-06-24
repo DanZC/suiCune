@@ -7,6 +7,7 @@
 #include "../events/poke_seer.h"
 #include "../pokemon/move_mon.h"
 #include "../menus/save.h"
+#include "../battle/core.h"
 #include "../../home/map.h"
 #include "../../home/audio.h"
 #include "../../home/copy.h"
@@ -24,9 +25,13 @@
 #include "../../home/joypad.h"
 #include "../../home/clear_sprites.h"
 #include "../../home/sram.h"
+#include "../../home/random.h"
 #include "../../mobile/mobile_41.h"
 #include "../../data/text/common.h"
 #include "../../data/items/catch_rate_items.h"
+#include "../../util/network.h"
+
+#define USE_NETWORK_XCHG_BYTES 1
 
 void LinkCommunications(void){
     // CALL(aClearBGPalettes);
@@ -257,8 +262,10 @@ done_party:
 void Gen2ToGen2LinkComms(void){
     // CALL(aClearLinkData);
     ClearLinkData();
-    CALL(aLink_PrepPartyData_Gen2);
-    CALL(aFixDataForLinkTransfer);
+    // CALL(aLink_PrepPartyData_Gen2);
+    Link_PrepPartyData_Gen2();
+    // CALL(aFixDataForLinkTransfer);
+    FixDataForLinkTransfer();
     // CALL(aCheckLinkTimeout_Gen2);
     CheckLinkTimeout_Gen2();
     // LD_A_addr(wScriptVar);
@@ -369,163 +376,196 @@ void Gen2ToGen2LinkComms(void){
     Link_CopyOTData_Conv(wram->wLinkData, Link_FindFirstNonControlCharacter_SkipZero(wram->wOTPlayerName), 
         NAME_LENGTH + 1 + PARTY_LENGTH + 1 + 2 + (PARTYMON_STRUCT_LENGTH + NAME_LENGTH * 2) * PARTY_LENGTH);
 
-    LD_DE(wPlayerTrademon);
-    LD_HL(wLinkPatchList1);
-    LD_C(2);
+    // LD_DE(wPlayerTrademon);
+    de = (uint8_t*)&wram->wPlayerTrademon;
+    // LD_HL(wLinkPatchList1);
+    uint8_t* hl = wram->wLinkPatchList1;
+    // LD_C(2);
+    uint8_t c = 2;
 
-loop1:
-    LD_A_de;
-    INC_DE;
-    AND_A_A;
-    IF_Z goto loop1;
-    CP_A(SERIAL_PREAMBLE_BYTE);
-    IF_Z goto loop1;
-    CP_A(SERIAL_NO_DATA_BYTE);
-    IF_Z goto loop1;
-    CP_A(SERIAL_PATCH_LIST_PART_TERMINATOR);
-    IF_Z goto next1;
-    PUSH_HL;
-    PUSH_BC;
-    LD_B(0);
-    DEC_A;
-    LD_C_A;
-    ADD_HL_BC;
-    LD_A(SERIAL_NO_DATA_BYTE);
-    LD_hl_A;
-    POP_BC;
-    POP_HL;
-    goto loop1;
+    do {
+        uint8_t a;
+        while(1) {
+        // loop1:
+            // LD_A_de;
+            a = *(de++);
+            // INC_DE;
+            // AND_A_A;
+            // IF_Z goto loop1;
+            // CP_A(SERIAL_PREAMBLE_BYTE);
+            // IF_Z goto loop1;
+            // CP_A(SERIAL_NO_DATA_BYTE);
+            // IF_Z goto loop1;
+            if(a == 0 || a == SERIAL_PREAMBLE_BYTE || a == SERIAL_NO_DATA_BYTE)
+                continue;
+            // CP_A(SERIAL_PATCH_LIST_PART_TERMINATOR);
+            // IF_Z goto next1;
+            if(a == SERIAL_PATCH_LIST_PART_TERMINATOR)
+                break;
+            // PUSH_HL;
+            // PUSH_BC;
+            // LD_B(0);
+            // DEC_A;
+            // LD_C_A;
+            // ADD_HL_BC;
+            // LD_A(SERIAL_NO_DATA_BYTE);
+            // LD_hl_A;
+            hl[a - 1] = SERIAL_NO_DATA_BYTE;
+            // POP_BC;
+            // POP_HL;
+            // goto loop1;
+        }
 
+    // next1:
+        // LD_HL(wLinkPatchList2);
+        hl = wram->wLinkPatchList2;
+        // DEC_C;
+        // IF_NZ goto loop1;
+    } while(--c != 0);
 
-next1:
-    LD_HL(wLinkPatchList2);
-    DEC_C;
-    IF_NZ goto loop1;
+    // LD_A_addr(wLinkMode);
+    // CP_A(LINK_TRADECENTER);
+    // JP_NZ (mGen2ToGen2LinkComms_skip_mail);
+// TODO: Finish converting this section. For now, mail will not be copyed.
+#if 0
+    if(wram->wLinkMode == LINK_TRADECENTER) {
+        hl = wram->wLinkOTMailMessages;
+        // LD_HL(wLinkOTMail);
+        uint8_t a;
 
-    LD_A_addr(wLinkMode);
-    CP_A(LINK_TRADECENTER);
-    JP_NZ (mGen2ToGen2LinkComms_skip_mail);
-    LD_HL(wLinkOTMail);
+        do {
+        // loop2:
+            // LD_A_hli;
+            a = *(hl++);
+            // CP_A(SERIAL_MAIL_PREAMBLE_BYTE);
+            // IF_NZ goto loop2;
+        } while(a != SERIAL_MAIL_PREAMBLE_BYTE);
 
-loop2:
-    LD_A_hli;
-    CP_A(SERIAL_MAIL_PREAMBLE_BYTE);
-    IF_NZ goto loop2;
+        do {
+        // loop3:
+            // LD_A_hli;
+            a = *(hl++);
+            // CP_A(SERIAL_NO_DATA_BYTE);
+            // IF_Z goto loop3;
+            // CP_A(SERIAL_MAIL_PREAMBLE_BYTE);
+            // IF_Z goto loop3;
+        } while(a == SERIAL_NO_DATA_BYTE || a == SERIAL_MAIL_PREAMBLE_BYTE);
+        // DEC_HL;
+        hl--;
+        // LD_DE(wLinkOTMail);
+        // LD_BC(wLinkDataEnd - wLinkOTMail);  // should be wLinkOTMailEnd - wLinkOTMail
+        // CALL(aCopyBytes);
+        CopyBytes_Conv2(wram->wLinkOTMailMessages, hl, sizeof(wram->wLinkOTMailMessages) + sizeof(wram->wLinkOTMailMetadata) + sizeof(wram->wOTPlayerMailPatchSet));
+        // LD_HL(wLinkOTMail);
+        hl = wram->wLinkOTMailMessages;
+        // LD_BC((MAIL_MSG_LENGTH + 1) * PARTY_LENGTH);
+        uint16_t bc = (MAIL_MSG_LENGTH + 1) * PARTY_LENGTH;
 
-loop3:
-    LD_A_hli;
-    CP_A(SERIAL_NO_DATA_BYTE);
-    IF_Z goto loop3;
-    CP_A(SERIAL_MAIL_PREAMBLE_BYTE);
-    IF_Z goto loop3;
-    DEC_HL;
-    LD_DE(wLinkOTMail);
-    LD_BC(wLinkDataEnd - wLinkOTMail);  // should be wLinkOTMailEnd - wLinkOTMail
-    CALL(aCopyBytes);
-    LD_HL(wLinkOTMail);
-    LD_BC((MAIL_MSG_LENGTH + 1) * PARTY_LENGTH);
+        do {
+        // loop4:
+            // LD_A_hl;
+            // CP_A(SERIAL_MAIL_REPLACEMENT_BYTE);
+            // IF_NZ goto okay1;
+            // LD_hl(SERIAL_NO_DATA_BYTE);
+            if(*hl == SERIAL_MAIL_REPLACEMENT_BYTE)
+                *hl = SERIAL_NO_DATA_BYTE;
 
-loop4:
-    LD_A_hl;
-    CP_A(SERIAL_MAIL_REPLACEMENT_BYTE);
-    IF_NZ goto okay1;
-    LD_hl(SERIAL_NO_DATA_BYTE);
+        // okay1:
+            // INC_HL;
+            // DEC_BC;
+            // LD_A_B;
+            // OR_A_C;
+            // IF_NZ goto loop4;
+        } while(hl++, --bc != 0);
+        LD_DE(wOTPlayerMailPatchSet);
 
-okay1:
-    INC_HL;
-    DEC_BC;
-    LD_A_B;
-    OR_A_C;
-    IF_NZ goto loop4;
-    LD_DE(wOTPlayerMailPatchSet);
-
-loop5:
-    LD_A_de;
-    INC_DE;
-    CP_A(SERIAL_PATCH_LIST_PART_TERMINATOR);
-    IF_Z goto start_copying_mail;
-    LD_HL(wLinkOTMailMetadata);
-    DEC_A;
-    LD_B(0);
-    LD_C_A;
-    ADD_HL_BC;
-    LD_hl(SERIAL_NO_DATA_BYTE);
-    goto loop5;
-
-
-start_copying_mail:
-    LD_HL(wLinkOTMail);
-    LD_DE(wLinkReceivedMail);
-    LD_B(PARTY_LENGTH);
-
-copy_mail_loop:
-    PUSH_BC;
-    LD_BC(MAIL_MSG_LENGTH + 1);
-    CALL(aCopyBytes);
-    LD_A(LOW(MAIL_STRUCT_LENGTH - (MAIL_MSG_LENGTH + 1)));
-    ADD_A_E;
-    LD_E_A;
-    LD_A(HIGH(MAIL_STRUCT_LENGTH - (MAIL_MSG_LENGTH + 1)));
-    ADC_A_D;
-    LD_D_A;
-    POP_BC;
-    DEC_B;
-    IF_NZ goto copy_mail_loop;
-    LD_DE(wLinkReceivedMail);
-    LD_B(PARTY_LENGTH);
-
-copy_author_loop:
-    PUSH_BC;
-    LD_A(LOW(MAIL_MSG_LENGTH + 1));
-    ADD_A_E;
-    LD_E_A;
-    LD_A(HIGH(MAIL_MSG_LENGTH + 1));
-    ADC_A_D;
-    LD_D_A;
-    LD_BC(MAIL_STRUCT_LENGTH - (MAIL_MSG_LENGTH + 1));
-    CALL(aCopyBytes);
-    POP_BC;
-    DEC_B;
-    IF_NZ goto copy_author_loop;
-    LD_B(PARTY_LENGTH);
-    LD_DE(wLinkReceivedMail);
-
-fix_mail_loop:
-    PUSH_BC;
-    PUSH_DE;
-    FARCALL(aIsMailEuropean);
-    LD_A_C;
-    OR_A_A;
-    IF_Z goto next;
-    SUB_A(0x3);
-    IF_NC goto skip;
-    FARCALL(aConvertEnglishMailToFrenchGerman);
-    goto next;
+    loop5:
+        LD_A_de;
+        INC_DE;
+        CP_A(SERIAL_PATCH_LIST_PART_TERMINATOR);
+        IF_Z goto start_copying_mail;
+        LD_HL(wLinkOTMailMetadata);
+        DEC_A;
+        LD_B(0);
+        LD_C_A;
+        ADD_HL_BC;
+        LD_hl(SERIAL_NO_DATA_BYTE);
+        goto loop5;
 
 
-skip:
-    CP_A(0x2);
-    IF_NC goto next;
-    FARCALL(aConvertEnglishMailToSpanishItalian);
+    start_copying_mail:
+        LD_HL(wLinkOTMail);
+        LD_DE(wLinkReceivedMail);
+        LD_B(PARTY_LENGTH);
+
+    copy_mail_loop:
+        PUSH_BC;
+        LD_BC(MAIL_MSG_LENGTH + 1);
+        CALL(aCopyBytes);
+        LD_A(LOW(MAIL_STRUCT_LENGTH - (MAIL_MSG_LENGTH + 1)));
+        ADD_A_E;
+        LD_E_A;
+        LD_A(HIGH(MAIL_STRUCT_LENGTH - (MAIL_MSG_LENGTH + 1)));
+        ADC_A_D;
+        LD_D_A;
+        POP_BC;
+        DEC_B;
+        IF_NZ goto copy_mail_loop;
+        LD_DE(wLinkReceivedMail);
+        LD_B(PARTY_LENGTH);
+
+    copy_author_loop:
+        PUSH_BC;
+        LD_A(LOW(MAIL_MSG_LENGTH + 1));
+        ADD_A_E;
+        LD_E_A;
+        LD_A(HIGH(MAIL_MSG_LENGTH + 1));
+        ADC_A_D;
+        LD_D_A;
+        LD_BC(MAIL_STRUCT_LENGTH - (MAIL_MSG_LENGTH + 1));
+        CALL(aCopyBytes);
+        POP_BC;
+        DEC_B;
+        IF_NZ goto copy_author_loop;
+        LD_B(PARTY_LENGTH);
+        LD_DE(wLinkReceivedMail);
+
+    fix_mail_loop:
+        PUSH_BC;
+        PUSH_DE;
+        FARCALL(aIsMailEuropean);
+        LD_A_C;
+        OR_A_A;
+        IF_Z goto next;
+        SUB_A(0x3);
+        IF_NC goto skip;
+        FARCALL(aConvertEnglishMailToFrenchGerman);
+        goto next;
 
 
-next:
-    POP_DE;
-    LD_HL(MAIL_STRUCT_LENGTH);
-    ADD_HL_DE;
-    LD_D_H;
-    LD_E_L;
-    POP_BC;
-    DEC_B;
-    IF_NZ goto fix_mail_loop;
-    LD_DE(wLinkReceivedMailEnd);
-    XOR_A_A;
-    LD_de_A;
+    skip:
+        CP_A(0x2);
+        IF_NC goto next;
+        FARCALL(aConvertEnglishMailToSpanishItalian);
 
 
-skip_mail:
+    next:
+        POP_DE;
+        LD_HL(MAIL_STRUCT_LENGTH);
+        ADD_HL_DE;
+        LD_D_H;
+        LD_E_L;
+        POP_BC;
+        DEC_B;
+        IF_NZ goto fix_mail_loop;
+        LD_DE(wLinkReceivedMailEnd);
+        XOR_A_A;
+        LD_de_A;
+    }
+#endif
+// skip_mail:
     // LD_HL(wLinkPlayerName);
-    uint8_t* hl = wram->wLinkPlayerName;
+    hl = wram->wLinkPlayerName;
     // LD_DE(wOTPlayerName);
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
@@ -619,7 +659,8 @@ skip_mail:
         gb_write(rIF, rif);
 
     // LET'S DO THIS
-        PREDEF(pStartBattle);
+        // PREDEF(pStartBattle);
+        StartBattle_Conv();
 
         // LDH_A_addr(rIF);
         // LD_H_A;
@@ -640,7 +681,8 @@ skip_mail:
         // LD_addr_A(wOptions);
         wram->wOptions = options;
 
-        FARCALL(aLoadPokemonData);
+        // FARCALL(aLoadPokemonData);
+        LoadPokemonData();
         // JP(mExitLinkCommunications);
         return ExitLinkCommunications();
     }
@@ -818,90 +860,131 @@ void ClearLinkData(void){
 }
 
 void FixDataForLinkTransfer(void){
-    LD_HL(wLinkBattleRNPreamble);
-    LD_A(SERIAL_PREAMBLE_BYTE);
-    LD_B(SERIAL_RN_PREAMBLE_LENGTH);
+    // LD_HL(wLinkBattleRNPreamble);
+    // LD_A(SERIAL_PREAMBLE_BYTE);
+    // LD_B(SERIAL_RN_PREAMBLE_LENGTH);
 
-preamble_loop:
-    LD_hli_A;
-    DEC_B;
-    IF_NZ goto preamble_loop;
+    for(uint32_t i = 0; i < SERIAL_RN_PREAMBLE_LENGTH; ++i) {
+    // preamble_loop:
+        // LD_hli_A;
+        wram->wLinkBattleRNPreamble[i] = 0;
+        // DEC_B;
+        // IF_NZ goto preamble_loop;
+    }
 
     //assert ['wLinkBattleRNPreamble + SERIAL_RN_PREAMBLE_LENGTH == wLinkBattleRNs'];
-    LD_B(SERIAL_RNS_LENGTH);
+    uint8_t* hl = wram->wLinkBattleRNPreamble;
+    // LD_B(SERIAL_RNS_LENGTH);
+    uint8_t b = SERIAL_RNS_LENGTH;
 
-rn_loop:
-    CALL(aRandom);
-    CP_A(SERIAL_PREAMBLE_BYTE);
-    IF_NC goto rn_loop;
-    LD_hli_A;
-    DEC_B;
-    IF_NZ goto rn_loop;
+    do {
+    // rn_loop:
+        uint8_t num;
+        do {
+            // CALL(aRandom);
+            num = Random_Conv();
+            // CP_A(SERIAL_PREAMBLE_BYTE);
+            // IF_NC goto rn_loop;
+        } while(num >= SERIAL_PREAMBLE_BYTE);
+        // LD_hli_A;
+        *(hl++) = num;
+        // DEC_B;
+        // IF_NZ goto rn_loop;
+    } while(--b != 0);
 
-    LD_HL(wPlayerPatchLists);
-    LD_A(SERIAL_PREAMBLE_BYTE);
-    LD_hli_A;
-    LD_hli_A;
-    LD_hli_A;
+    // LD_HL(wPlayerPatchLists);
+    hl = wram->wPlayerPatchLists;
+    // LD_A(SERIAL_PREAMBLE_BYTE);
+    // LD_hli_A;
+    *(hl++) = SERIAL_PREAMBLE_BYTE;
+    // LD_hli_A;
+    *(hl++) = SERIAL_PREAMBLE_BYTE;
+    // LD_hli_A;
+    *(hl++) = SERIAL_PREAMBLE_BYTE;
 
-    LD_B(200);
-    XOR_A_A;
+    // LD_B(200);
+    b = 200;
+    // XOR_A_A;
 
-loop1:
-    LD_hli_A;
-    DEC_B;
-    IF_NZ goto loop1;
+    do {
+    // loop1:
+        // LD_hli_A;
+        *(hl++) = 0;
+        // DEC_B;
+        // IF_NZ goto loop1;
+    } while(--b != 0);
 
-    LD_HL((wLinkData + SERIAL_PREAMBLE_LENGTH + NAME_LENGTH + 1 + PARTY_LENGTH + 1) - 1);
-    LD_DE(wPlayerPatchLists + 10);  // ???
-    LD_BC((0 << 8) | 0);
+    // LD_HL((wLinkData + SERIAL_PREAMBLE_LENGTH + NAME_LENGTH + 1 + PARTY_LENGTH + 1) - 1);
+    hl = (wram->wLinkData + SERIAL_PREAMBLE_LENGTH + NAME_LENGTH + 1 + PARTY_LENGTH + 1) - 1;
+    // LD_DE(wPlayerPatchLists + 10);  // ???
+    uint8_t* de = wram->wPlayerPatchLists + 10;
+    // LD_BC((0 << 8) | 0);
+    b = 0;
+    uint8_t c = 0;
 
-loop2:
-    INC_C;
-    LD_A_C;
-    CP_A(SERIAL_PATCH_LIST_LENGTH + 1);
-    IF_Z goto next1;
-    LD_A_B;
-    DEC_A;
-    IF_NZ goto next2;
-    PUSH_BC;
-    LD_A_addr(wLinkMode);
-    CP_A(LINK_TIMECAPSULE);
-    LD_B(REDMON_STRUCT_LENGTH * PARTY_LENGTH - SERIAL_PATCH_LIST_LENGTH + 1);
-    IF_Z goto got_value;
-    LD_B(2 + PARTYMON_STRUCT_LENGTH * PARTY_LENGTH - SERIAL_PATCH_LIST_LENGTH + 1);
+    while(1) {
+    // loop2:
+        // INC_C;
+        c++;
+        // LD_A_C;
+        // CP_A(SERIAL_PATCH_LIST_LENGTH + 1);
+        // IF_Z goto next1;
+        if(c == SERIAL_PATCH_LIST_LENGTH + 1) {
+        // next1:
+            // LD_A(SERIAL_PATCH_LIST_PART_TERMINATOR);
+            // LD_de_A;
+            *(de++) = SERIAL_PATCH_LIST_PART_TERMINATOR;
+            // INC_DE;
+            // LD_BC((1 << 8) | 0);
+            b = 1;
+            c = 0;
+            // goto loop2;
+            continue;
+        }
+        // LD_A_B;
+        // DEC_A;
+        // IF_NZ goto next2;
+        if(b == 1) {
+            // PUSH_BC;
+            // LD_A_addr(wLinkMode);
+            // CP_A(LINK_TIMECAPSULE);
+            // LD_B(REDMON_STRUCT_LENGTH * PARTY_LENGTH - SERIAL_PATCH_LIST_LENGTH + 1);
+            // IF_Z goto got_value;
+            // LD_B(2 + PARTYMON_STRUCT_LENGTH * PARTY_LENGTH - SERIAL_PATCH_LIST_LENGTH + 1);
+            uint8_t cmp = (wram->wLinkMode == LINK_TIMECAPSULE)
+                ? REDMON_STRUCT_LENGTH * PARTY_LENGTH - SERIAL_PATCH_LIST_LENGTH + 1
+                : 2 + PARTYMON_STRUCT_LENGTH * PARTY_LENGTH - SERIAL_PATCH_LIST_LENGTH + 1;
 
-got_value:
-    LD_A_C;
-    CP_A_B;
-    POP_BC;
-    IF_Z goto done;
+        // got_value:
+            // LD_A_C;
+            // CP_A_B;
+            // POP_BC;
+            // IF_Z goto done;
+            if(c == cmp)
+                break;
+        }
 
-next2:
-    INC_HL;
-    LD_A_hl;
-    CP_A(SERIAL_NO_DATA_BYTE);
-    IF_NZ goto loop2;
-    LD_A_C;
-    LD_de_A;
-    INC_DE;
-    LD_hl(SERIAL_PATCH_REPLACEMENT_BYTE);
-    goto loop2;
+    // next2:
+        // INC_HL;
+        hl++;
+        // LD_A_hl;
+        // CP_A(SERIAL_NO_DATA_BYTE);
+        // IF_NZ goto loop2;
+        if(*hl == SERIAL_NO_DATA_BYTE) {
+            // LD_A_C;
+            // LD_de_A;
+            // INC_DE;
+            *(de++) = c;
+            // LD_hl(SERIAL_PATCH_REPLACEMENT_BYTE);
+            // goto loop2;
+        }
+    }
 
-
-next1:
-    LD_A(SERIAL_PATCH_LIST_PART_TERMINATOR);
-    LD_de_A;
-    INC_DE;
-    LD_BC((1 << 8) | 0);
-    goto loop2;
-
-
-done:
-    LD_A(SERIAL_PATCH_LIST_PART_TERMINATOR);
-    LD_de_A;
-    RET;
-
+// done:
+    // LD_A(SERIAL_PATCH_LIST_PART_TERMINATOR);
+    // LD_de_A;
+    *de = SERIAL_PATCH_LIST_PART_TERMINATOR;
+    // RET;
 }
 
 void Link_PrepPartyData_Gen1(void){
@@ -1086,156 +1169,215 @@ done_steel:
 }
 
 void Link_PrepPartyData_Gen2(void){
-    LD_DE(wLinkData);
-    LD_A(SERIAL_PREAMBLE_BYTE);
-    LD_B(SERIAL_PREAMBLE_LENGTH);
+    // LD_DE(wLinkData);
+    uint8_t* de = wram->wLinkData;
+    // LD_A(SERIAL_PREAMBLE_BYTE);
+    // LD_B(SERIAL_PREAMBLE_LENGTH);
+    uint8_t b = SERIAL_PREAMBLE_LENGTH;
 
-loop1:
-    LD_de_A;
-    INC_DE;
-    DEC_B;
-    IF_NZ goto loop1;
+    do {
+    // loop1:
+        // LD_de_A;
+        *(de++) = SERIAL_PREAMBLE_BYTE;
+        // INC_DE;
+        // DEC_B;
+        // IF_NZ goto loop1;
+    } while(--b != 0);
 
-    LD_HL(wPlayerName);
-    LD_BC(NAME_LENGTH);
-    CALL(aCopyBytes);
+    // LD_HL(wPlayerName);
+    // LD_BC(NAME_LENGTH);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(de, wram->wPlayerName, NAME_LENGTH);
+    de += NAME_LENGTH;
 
-    LD_HL(wPartyCount);
-    LD_BC(1 + PARTY_LENGTH + 1);
-    CALL(aCopyBytes);
+    CopyBytes_Conv2(de, &wram->wPartyCount, sizeof(wram->wPartyCount));
+    de += sizeof(wram->wPartyCount);
+    // LD_HL(wPartyCount);
+    // LD_BC(1 + PARTY_LENGTH + 1);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(de, &wram->wPartySpecies, sizeof(wram->wPartySpecies));
+    de += sizeof(wram->wPartySpecies);
+    CopyBytes_Conv2(de, &wram->wPartyEnd, sizeof(wram->wPartyEnd));
+    de += sizeof(wram->wPartyEnd);
 
-    LD_HL(wPlayerID);
-    LD_BC(2);
-    CALL(aCopyBytes);
+    // LD_HL(wPlayerID);
+    // LD_BC(2);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(de, &wram->wPlayerID, sizeof(wram->wPlayerID));
+    de += sizeof(wram->wPlayerID);
 
-    LD_HL(wPartyMon1Species);
-    LD_BC(PARTY_LENGTH * PARTYMON_STRUCT_LENGTH);
-    CALL(aCopyBytes);
+    // LD_HL(wPartyMon1Species);
+    // LD_BC(PARTY_LENGTH * PARTYMON_STRUCT_LENGTH);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(de, wram->wPartyMon, sizeof(wram->wPartyMon));
+    de += sizeof(wram->wPartyMon);
 
-    LD_HL(wPartyMonOTs);
-    LD_BC(PARTY_LENGTH * NAME_LENGTH);
-    CALL(aCopyBytes);
+    // LD_HL(wPartyMonOTs);
+    // LD_BC(PARTY_LENGTH * NAME_LENGTH);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(de, wram->wPartyMonOT, sizeof(wram->wPartyMonOT));
+    de += sizeof(wram->wPartyMonOT);
 
-    LD_HL(wPartyMonNicknames);
-    LD_BC(PARTY_LENGTH * MON_NAME_LENGTH);
-    CALL(aCopyBytes);
+    // LD_HL(wPartyMonNicknames);
+    // LD_BC(PARTY_LENGTH * MON_NAME_LENGTH);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(de, wram->wPartyMonNickname, sizeof(wram->wPartyMonNickname));
+    de += sizeof(wram->wPartyMonNickname);
 
 //  Okay, we did all that.  Now, are we in the trade center?
-    LD_A_addr(wLinkMode);
-    CP_A(LINK_TRADECENTER);
-    RET_NZ ;
+    // LD_A_addr(wLinkMode);
+    // CP_A(LINK_TRADECENTER);
+    // RET_NZ ;
+    if(wram->wLinkMode != LINK_TRADECENTER)
+        return;
 
 //  Fill 5 bytes at wLinkPlayerMailPreamble with $20
-    LD_DE(wLinkPlayerMailPreamble);
-    LD_A(SERIAL_MAIL_PREAMBLE_BYTE);
-    CALL(aLink_CopyMailPreamble);
+    // LD_DE(wLinkPlayerMailPreamble);
+    // LD_A(SERIAL_MAIL_PREAMBLE_BYTE);
+    // CALL(aLink_CopyMailPreamble);
+    Link_CopyMailPreamble_Conv(wram->wLinkPlayerMailPreamble, SERIAL_MAIL_PREAMBLE_BYTE);
 
 //  Copy all the mail messages to wLinkPlayerMailMessages
-    LD_A(BANK(sPartyMail));
-    CALL(aOpenSRAM);
-    LD_HL(sPartyMail);
-    LD_B(PARTY_LENGTH);
+    // LD_A(BANK(sPartyMail));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asPartyMail));
+    // LD_HL(sPartyMail);
+    const struct MailMsg* hl = (const struct MailMsg*)GBToRAMAddr(sPartyMail);
+    // LD_B(PARTY_LENGTH);
+    b = PARTY_LENGTH;
 
-loop2:
-    PUSH_BC;
-    LD_BC(MAIL_MSG_LENGTH + 1);
-    CALL(aCopyBytes);
-    LD_BC(MAIL_STRUCT_LENGTH - (MAIL_MSG_LENGTH + 1));
-    ADD_HL_BC;
-    POP_BC;
-    DEC_B;
-    IF_NZ goto loop2;
+    do {
+    // loop2:
+        // PUSH_BC;
+        // LD_BC(MAIL_MSG_LENGTH + 1);
+        // CALL(aCopyBytes);
+        CopyBytes_Conv2(de, hl->message, sizeof(hl->message));
+        de += sizeof(hl->message);
+        hl++;
+        // LD_BC(MAIL_STRUCT_LENGTH - (MAIL_MSG_LENGTH + 1));
+        // ADD_HL_BC;
+        // POP_BC;
+        // DEC_B;
+        // IF_NZ goto loop2;
+    } while(--b != 0);
 //  Copy the mail data to wLinkPlayerMailMetadata
-    LD_HL(sPartyMail);
-    LD_B(PARTY_LENGTH);
+    // LD_HL(sPartyMail);
+    hl = (const struct MailMsg*)GBToRAMAddr(sPartyMail);
+    // LD_B(PARTY_LENGTH);
+    b = PARTY_LENGTH;
 
-loop3:
-    PUSH_BC;
-    LD_BC(MAIL_MSG_LENGTH + 1);
-    ADD_HL_BC;
-    LD_BC(MAIL_STRUCT_LENGTH - (MAIL_MSG_LENGTH + 1));
-    CALL(aCopyBytes);
-    POP_BC;
-    DEC_B;
-    IF_NZ goto loop3;
-    LD_B(PARTY_LENGTH);
-    LD_DE(sPartyMail);
-    LD_HL(wLinkPlayerMailMessages);
+    do {
+    // loop3:
+        // PUSH_BC;
+        // LD_BC(MAIL_MSG_LENGTH + 1);
+        // ADD_HL_BC;
+        // LD_BC(MAIL_STRUCT_LENGTH - (MAIL_MSG_LENGTH + 1));
+        // CALL(aCopyBytes);
+        CopyBytes_Conv2(de, hl->author, sizeof(*hl) - sizeof(hl->message));
+        de += sizeof(*hl) - sizeof(hl->message);
+        hl++;
+        // POP_BC;
+        // DEC_B;
+        // IF_NZ goto loop3;
+    } while(--b != 0);
+    // LD_B(PARTY_LENGTH);
+    // LD_DE(sPartyMail);
+    // LD_HL(wLinkPlayerMailMessages);
 
-loop4:
-    PUSH_BC;
-    PUSH_HL;
-    PUSH_DE;
-    PUSH_HL;
-    FARCALL(aIsMailEuropean);
-    POP_DE;
-    LD_A_C;
-    OR_A_A;
-    IF_Z goto next;
-    SUB_A(0x3);
-    IF_NC goto italian_spanish;
-    FARCALL(aConvertFrenchGermanMailToEnglish);
-    goto next;
+// loop4:
+    // PUSH_BC;
+    // PUSH_HL;
+    // PUSH_DE;
+    // PUSH_HL;
+    // FARCALL(aIsMailEuropean);
+    // POP_DE;
+    // LD_A_C;
+    // OR_A_A;
+    // IF_Z goto next;
+    // SUB_A(0x3);
+    // IF_NC goto italian_spanish;
+    // FARCALL(aConvertFrenchGermanMailToEnglish);
+    // goto next;
 
-italian_spanish:
-    CP_A(0x2);
-    IF_NC goto next;
-    FARCALL(aConvertSpanishItalianMailToEnglish);
+// italian_spanish:
+    // CP_A(0x2);
+    // IF_NC goto next;
+    // FARCALL(aConvertSpanishItalianMailToEnglish);
 
-next:
-    POP_DE;
-    LD_HL(MAIL_STRUCT_LENGTH);
-    ADD_HL_DE;
-    LD_D_H;
-    LD_E_L;
-    POP_HL;
-    LD_BC(MAIL_MSG_LENGTH + 1);
-    ADD_HL_BC;
-    POP_BC;
-    DEC_B;
-    IF_NZ goto loop4;
-    CALL(aCloseSRAM);
+// next:
+    // POP_DE;
+    // LD_HL(MAIL_STRUCT_LENGTH);
+    // ADD_HL_DE;
+    // LD_D_H;
+    // LD_E_L;
+    // POP_HL;
+    // LD_BC(MAIL_MSG_LENGTH + 1);
+    // ADD_HL_BC;
+    // POP_BC;
+    // DEC_B;
+    // IF_NZ goto loop4;
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
 
-    LD_HL(wLinkPlayerMailMessages);
-    LD_BC((MAIL_MSG_LENGTH + 1) * PARTY_LENGTH);
+    // LD_HL(wLinkPlayerMailMessages);
+    uint8_t* hl2 = wram->wLinkPlayerMailMessages;
+    // LD_BC((MAIL_MSG_LENGTH + 1) * PARTY_LENGTH);
+    uint16_t bc = sizeof(wram->wLinkPlayerMailMessages);
 
-loop5:
-    LD_A_hl;
-    CP_A(SERIAL_NO_DATA_BYTE);
-    IF_NZ goto skip2;
-    LD_hl(SERIAL_MAIL_REPLACEMENT_BYTE);
+    do {
+    // loop5:
+        // LD_A_hl;
+        // CP_A(SERIAL_NO_DATA_BYTE);
+        // IF_NZ goto skip2;
+        // LD_hl(SERIAL_MAIL_REPLACEMENT_BYTE);
+        if(*hl2 == SERIAL_NO_DATA_BYTE) {
+            *hl2 = SERIAL_MAIL_REPLACEMENT_BYTE;
+        }
 
-skip2:
-    INC_HL;
-    DEC_BC;
-    LD_A_B;
-    OR_A_C;
-    IF_NZ goto loop5;
+    // skip2:
+        // INC_HL;
+        // DEC_BC;
+        // LD_A_B;
+        // OR_A_C;
+        // IF_NZ goto loop5;
+    } while(hl2++, --bc != 0);
 
-    LD_HL(wLinkPlayerMailMetadata);
-    LD_DE(wLinkPlayerMailPatchSet);
-    LD_B((MAIL_STRUCT_LENGTH - (MAIL_MSG_LENGTH + 1)) * PARTY_LENGTH);
-    LD_C(0);
+    // LD_HL(wLinkPlayerMailMetadata);
+    hl2 = wram->wLinkPlayerMailMetadata;
+    // LD_DE(wLinkPlayerMailPatchSet);
+    de = wram->wLinkPlayerMailPatchSet;
+    // LD_B((MAIL_STRUCT_LENGTH - (MAIL_MSG_LENGTH + 1)) * PARTY_LENGTH);
+    b = (MAIL_STRUCT_LENGTH - (MAIL_MSG_LENGTH + 1)) * PARTY_LENGTH;
+    // LD_C(0);
+    uint8_t c = 0;
 
-loop6:
-    INC_C;
-    LD_A_hl;
-    CP_A(SERIAL_NO_DATA_BYTE);
-    IF_NZ goto skip3;
-    LD_hl(SERIAL_PATCH_REPLACEMENT_BYTE);
-    LD_A_C;
-    LD_de_A;
-    INC_DE;
+    do {
+    // loop6:
+        // INC_C;
+        c++;
+        // LD_A_hl;
+        // CP_A(SERIAL_NO_DATA_BYTE);
+        // IF_NZ goto skip3;
+        if(*hl2 == SERIAL_NO_DATA_BYTE) {
+            // LD_hl(SERIAL_PATCH_REPLACEMENT_BYTE);
+            *hl2 = SERIAL_PATCH_REPLACEMENT_BYTE;
+            // LD_A_C;
+            // LD_de_A;
+            *de = c;
+            // INC_DE;
+            de++;
+        }
 
-skip3:
-    INC_HL;
-    DEC_B;
-    IF_NZ goto loop6;
+    // skip3:
+        // INC_HL;
+        // DEC_B;
+        // IF_NZ goto loop6;
+    } while(hl2++, --b != 0);
 
-    LD_A(SERIAL_PATCH_LIST_PART_TERMINATOR);
-    LD_de_A;
-    RET;
-
+    // LD_A(SERIAL_PATCH_LIST_PART_TERMINATOR);
+    // LD_de_A;
+    *de = SERIAL_PATCH_LIST_PART_TERMINATOR;
+    // RET;
 }
 
 void Link_CopyMailPreamble(void){
@@ -1249,6 +1391,20 @@ loop:
     IF_NZ goto loop;
     RET;
 
+}
+
+void Link_CopyMailPreamble_Conv(uint8_t* de, uint8_t a){
+//  fill 5 bytes with the value of a, starting at de
+    // LD_C(SERIAL_MAIL_PREAMBLE_LENGTH);
+    for(uint32_t i = 0; i < SERIAL_MAIL_PREAMBLE_LENGTH; ++i) {
+    // loop:
+        // LD_de_A;
+        de[i] = a;
+        // INC_DE;
+        // DEC_C;
+        // IF_NZ goto loop;
+    }
+    // RET;
 }
 
 void Link_ConvertPartyStruct1to2(void){
@@ -3468,52 +3624,75 @@ void EnterTimeCapsule(void){
 }
 
 void WaitForOtherPlayerToExit(void){
-    LD_C(3);
-    CALL(aDelayFrames);
-    LD_A(CONNECTION_NOT_ESTABLISHED);
-    LDH_addr_A(hSerialConnectionStatus);
-    XOR_A_A;
-    LDH_addr_A(rSB);
-    LDH_addr_A(hSerialReceive);
-    LD_A((0 << rSC_ON) | (1 << rSC_CLOCK));
-    LDH_addr_A(rSC);
-    LD_A((1 << rSC_ON) | (1 << rSC_CLOCK));
-    LDH_addr_A(rSC);
-    LD_C(3);
-    CALL(aDelayFrames);
-    XOR_A_A;
-    LDH_addr_A(rSB);
-    LDH_addr_A(hSerialReceive);
-    LD_A((0 << rSC_ON) | (0 << rSC_CLOCK));
-    LDH_addr_A(rSC);
-    LD_A((1 << rSC_ON) | (0 << rSC_CLOCK));
-    LDH_addr_A(rSC);
-    LD_C(3);
-    CALL(aDelayFrames);
-    XOR_A_A;
-    LDH_addr_A(rSB);
-    LDH_addr_A(hSerialReceive);
-    LDH_addr_A(rSC);
-    LD_C(3);
-    CALL(aDelayFrames);
-    LD_A(CONNECTION_NOT_ESTABLISHED);
-    LDH_addr_A(hSerialConnectionStatus);
-    LDH_A_addr(rIF);
-    PUSH_AF;
-    XOR_A_A;
-    LDH_addr_A(rIF);
-    LD_A(IE_DEFAULT);
-    LDH_addr_A(rIE);
-    POP_AF;
-    LDH_addr_A(rIF);
-    LD_HL(wLinkTimeoutFrames);
-    XOR_A_A;
-    LD_hli_A;
-    LD_hl_A;
-    LDH_addr_A(hVBlank);
-    LD_addr_A(wLinkMode);
-    RET;
-
+    // LD_C(3);
+    // CALL(aDelayFrames);
+    DelayFrames_Conv(3);
+    // LD_A(CONNECTION_NOT_ESTABLISHED);
+    // LDH_addr_A(hSerialConnectionStatus);
+    hram->hSerialConnectionStatus = CONNECTION_NOT_ESTABLISHED;
+    // XOR_A_A;
+    // LDH_addr_A(rSB);
+    gb_write(rSB, 0);
+    // LDH_addr_A(hSerialReceive);
+    hram->hSerialReceive = 0;
+    // LD_A((0 << rSC_ON) | (1 << rSC_CLOCK));
+    // LDH_addr_A(rSC);
+    gb_write(rSC, (0 << rSC_ON) | (1 << rSC_CLOCK));
+    // LD_A((1 << rSC_ON) | (1 << rSC_CLOCK));
+    // LDH_addr_A(rSC);
+    gb_write(rSC, (1 << rSC_ON) | (1 << rSC_CLOCK));
+    // LD_C(3);
+    // CALL(aDelayFrames);
+    DelayFrames_Conv(3);
+    // XOR_A_A;
+    // LDH_addr_A(rSB);
+    gb_write(rSB, 0);
+    // LDH_addr_A(hSerialReceive);
+    hram->hSerialReceive = 0;
+    // LD_A((0 << rSC_ON) | (0 << rSC_CLOCK));
+    // LDH_addr_A(rSC);
+    gb_write(rSC, (0 << rSC_ON) | (1 << rSC_CLOCK));
+    // LD_A((1 << rSC_ON) | (0 << rSC_CLOCK));
+    // LDH_addr_A(rSC);
+    gb_write(rSC, (1 << rSC_ON) | (1 << rSC_CLOCK));
+    // LD_C(3);
+    // CALL(aDelayFrames);
+    DelayFrames_Conv(3);
+    // XOR_A_A;
+    // LDH_addr_A(rSB);
+    gb_write(rSB, 0);
+    // LDH_addr_A(hSerialReceive);
+    hram->hSerialReceive = 0;
+    // LDH_addr_A(rSC);
+    gb_write(rSC, 0);
+    // LD_C(3);
+    // CALL(aDelayFrames);
+    DelayFrames_Conv(3);
+    // LD_A(CONNECTION_NOT_ESTABLISHED);
+    // LDH_addr_A(hSerialConnectionStatus);
+    hram->hSerialConnectionStatus = CONNECTION_NOT_ESTABLISHED;
+    // LDH_A_addr(rIF);
+    // PUSH_AF;
+    uint8_t rif = gb_read(rIF);
+    // XOR_A_A;
+    // LDH_addr_A(rIF);
+    gb_write(rIF, 0);
+    // LD_A(IE_DEFAULT);
+    // LDH_addr_A(rIE);
+    gb_write(rIE, IE_DEFAULT);
+    // POP_AF;
+    // LDH_addr_A(rIF);
+    gb_write(rIF, rif);
+    // LD_HL(wLinkTimeoutFrames);
+    // XOR_A_A;
+    // LD_hli_A;
+    // LD_hl_A;
+    wram->wLinkTimeoutFrames = 0;
+    // LDH_addr_A(hVBlank);
+    hram->hVBlank = 0;
+    // LD_addr_A(wLinkMode);
+    wram->wLinkMode = 0;
+    // RET;
 }
 
 void SetBitsForLinkTradeRequest(void){
@@ -3696,7 +3875,7 @@ void CheckLinkTimeout_Gen2(void){
     // LD_hli_A;
     // XOR_A_A;
     // LD_hl_A;
-    wram->wLinkTimeoutFrames = 3;
+    wram->wLinkTimeoutFrames = 0x300;
     // CALL(aWaitBGMap);
     // LD_A(0x2);
     // LDH_addr_A(hVBlank);
@@ -3728,6 +3907,8 @@ void CheckLinkTimeout_Gen2(void){
         // OR_A_C;
         // IF_NZ goto wait;
     // } while(--bc != 0);
+    DelayFrame();
+    DelayFrame();
     DelayFrame();
 
 //  If other GB is not ready at this point, disconnect due to timeout
@@ -3778,8 +3959,7 @@ static bool Link_CheckCommunicationError_CheckConnected(void) {
     // LD_A_hl;
     // INC_A;
     // RET;
-    ++wram->wLinkTimeoutFrames;
-    return (wram->wLinkTimeoutFrames == 0);
+    return (wram->wLinkTimeoutFrames != 0xffff);
 }
 
 static void Link_CheckComminicationError_AcknowledgeSerial(void) {
@@ -3887,32 +4067,43 @@ void TryQuickSave(void){
 }
 
 void CheckBothSelectedSameRoom(void){
-    LD_A_addr(wChosenCableClubRoom);
-    CALL(aLink_EnsureSync);
-    PUSH_AF;
-    CALL(aLinkDataReceived);
-    CALL(aDelayFrame);
-    CALL(aLinkDataReceived);
-    POP_AF;
-    LD_B_A;
-    LD_A_addr(wChosenCableClubRoom);
-    CP_A_B;
-    IF_NZ goto fail;
-    LD_A_addr(wChosenCableClubRoom);
-    INC_A;
-    LD_addr_A(wLinkMode);
-    XOR_A_A;
-    LDH_addr_A(hVBlank);
-    LD_A(TRUE);
-    LD_addr_A(wScriptVar);
-    RET;
-
-
-fail:
-    XOR_A_A;  // FALSE
-    LD_addr_A(wScriptVar);
-    RET;
-
+    // LD_A_addr(wChosenCableClubRoom);
+    // CALL(aLink_EnsureSync);
+    uint8_t byte = Link_EnsureSync_Conv(wram->wChosenCableClubRoom);
+    // PUSH_AF;
+    // CALL(aLinkDataReceived);
+    LinkDataReceived();
+    // CALL(aDelayFrame);
+    DelayFrame();
+    // CALL(aLinkDataReceived);
+    LinkDataReceived();
+    // POP_AF;
+    // LD_B_A;
+    // LD_A_addr(wChosenCableClubRoom);
+    // CP_A_B;
+    // IF_NZ goto fail;
+    if(wram->wChosenCableClubRoom == byte) {
+        // LD_A_addr(wChosenCableClubRoom);
+        // INC_A;
+        // LD_addr_A(wLinkMode);
+        wram->wLinkMode = wram->wChosenCableClubRoom + 1;
+        // XOR_A_A;
+        // LDH_addr_A(hVBlank);
+        hram->hVBlank = 0;
+        // LD_A(TRUE);
+        // LD_addr_A(wScriptVar);
+        wram->wScriptVar = TRUE;
+        // RET;
+        return;
+    }
+    else {
+    // fail:
+        // XOR_A_A;  // FALSE
+        // LD_addr_A(wScriptVar);
+        wram->wScriptVar = FALSE;
+        // RET;
+        return;
+    }
 }
 
 void TimeCapsule(void){
@@ -3972,11 +4163,12 @@ void CloseLink(void){
 }
 
 void FailedLinkToPast(void){
-    LD_C(40);
-    CALL(aDelayFrames);
-    LD_A(0xe);
-    JP(mLink_EnsureSync);
-
+    // LD_C(40);
+    // CALL(aDelayFrames);
+    DelayFrames_Conv(40);
+    // LD_A(0xe);
+    // JP(mLink_EnsureSync);
+    Link_EnsureSync_Conv(0xe);
 }
 
 void Link_ResetSerialRegistersAfterLinkClosure(void){
@@ -4030,6 +4222,7 @@ done:
 }
 
 uint8_t Link_EnsureSync_Conv(uint8_t a){
+    printf("%s:\n", __func__);
     // ADD_A(0xd0);
     // LD_addr_A(wLinkPlayerSyncBuffer);
     wram->wLinkPlayerSyncBuffer[0] = a + 0xd0;

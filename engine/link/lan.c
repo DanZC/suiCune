@@ -88,7 +88,7 @@ static void PlaceLANConnectionItems(void) {
     for(uint32_t i = 0; i < gLANClientCandidateCount; ++i) {
         PlaceStringSimple(gLANClientCandidates[i].name, coord(x + 1, y, wram->wTilemap));
         *coord(x + 9, y, wram->wTilemap) = (bit_test(gLANClientCandidates[i].gender, PLAYERGENDER_FEMALE_F))? CHAR_FEMALE_ICON: CHAR_MALE_ICON;
-        sprintf(buffer, "%d", gLANClientCandidates[i].trainerId);
+        sprintf(buffer, "%06d", gLANClientCandidates[i].trainerId);
         PlaceStringSimple(U82C(buffer), coord(x + 3, y + 1, wram->wTilemap));
         y += 2;
     }
@@ -145,6 +145,7 @@ void LANConnection_Host(void) {
                 bool success = NetworkLANDirectConnect(0);
                 CloseWindow_Conv2();
                 if(success) {
+                    hram->hSerialConnectionStatus = USING_INTERNAL_CLOCK;
                     CloseWindow_Conv2();
                     wram->wScriptVar = TRUE;
                     return;
@@ -182,8 +183,15 @@ static bool LANConnection_TryJoin(uint8_t which) {
         return false;
     for(int i = 0; i < 60 * 16; ++i) {
         DelayFrame();
-        if(NetworkCheckLAN())
+        // Try again every two seconds.
+        if((i % 120) == 0 && i != 0) {
+            if(!NetworkTryJoinLAN(which, wram->wPlayerName, wram->wPlayerID, wram->wPlayerGender))
+                return false;
+        }
+        if(NetworkCheckLAN()) {
+            hram->hSerialConnectionStatus = USING_EXTERNAL_CLOCK;
             return true;
+        }
     }
     return false;
 }

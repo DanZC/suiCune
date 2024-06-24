@@ -1,8 +1,13 @@
 #include "../constants.h"
 #include "serial.h"
 #include "delay.h"
+#include "../engine/link/place_waiting_text.h"
+#include "copy_tilemap.h"
+
+void Serial_Conv(void);
 
 void Serial(void){
+    return Serial_Conv();
     //  The serial interrupt.
 
     PUSH_AF;
@@ -100,6 +105,122 @@ end:
     POP_AF;
     RET;
 
+}
+
+//  The serial interrupt.
+void Serial_Conv(void){
+    // PUSH_AF;
+    // PUSH_BC;
+    // PUSH_DE;
+    // PUSH_HL;
+
+    // LDH_A_addr(hMobileReceive);
+    // AND_A_A;
+    // IF_NZ goto mobile;
+    if(hram->hMobileReceive != FALSE) {
+    // mobile:
+        // CALL(aMobileReceive);
+    // TODO: Convert MobileReceive
+        // goto end;
+        return;
+    }
+
+    // LD_A_addr(wPrinterConnectionOpen);
+    // BIT_A(0);
+    // IF_NZ goto printer;
+    else if(bit_test(wram->wPrinterConnectionOpen, 0)) {
+    // printer:
+        // CALL(aPrinterReceive);
+    // TODO: Convert PrinterReceive
+        // goto end;
+        return;
+    }
+
+    // LDH_A_addr(hSerialConnectionStatus);
+    // INC_A;  // is it equal to CONNECTION_NOT_ESTABLISHED?
+    // IF_Z goto establish_connection;
+    else if(hram->hSerialConnectionStatus == CONNECTION_NOT_ESTABLISHED) {
+    // establish_connection:
+        // LDH_A_addr(rSB);
+        uint8_t status = gb_read(rSB);
+        // CP_A(USING_EXTERNAL_CLOCK);
+        // IF_Z goto player1;
+        // CP_A(USING_INTERNAL_CLOCK);
+        // IF_NZ goto player2;
+        if(status == USING_EXTERNAL_CLOCK || status == USING_INTERNAL_CLOCK) {
+        // player1:
+            // LDH_addr_A(hSerialReceive);
+            hram->hSerialReceive = status;
+            // LDH_addr_A(hSerialConnectionStatus);
+            hram->hSerialConnectionStatus = status;
+            // CP_A(USING_INTERNAL_CLOCK);
+            // IF_Z goto _player2;
+            if(status == USING_INTERNAL_CLOCK) {
+            // _player2:
+                // XOR_A_A;
+                // LDH_addr_A(rSB);
+                gb_write(rSB, 0);
+            }
+            else {
+                // XOR_A_A;
+                // LDH_addr_A(rSB);
+                gb_write(rSB, 0);
+
+                // LD_A(3);
+                // LDH_addr_A(rDIV);
+
+            // delay_loop:
+                // LDH_A_addr(rDIV);
+                // BIT_A(7);
+                // IF_NZ goto delay_loop;
+
+                // LD_A((0 << rSC_ON) | (0 << rSC_CLOCK));
+                // LDH_addr_A(rSC);
+                gb_write(rSC, (0 << rSC_ON) | (0 << rSC_CLOCK));
+                // LD_A((1 << rSC_ON) | (0 << rSC_CLOCK));
+                // LDH_addr_A(rSC);
+                gb_write(rSC, (1 << rSC_ON) | (0 << rSC_CLOCK));
+                // goto player2;
+            }
+        }
+    }
+    else {
+        // LDH_A_addr(rSB);
+        // LDH_addr_A(hSerialReceive);
+        hram->hSerialReceive = gb_read(rSB);
+
+        // LDH_A_addr(hSerialSend);
+        // LDH_addr_A(rSB);
+        gb_write(rSB, hram->hSerialSend);
+
+        // LDH_A_addr(hSerialConnectionStatus);
+        // CP_A(USING_INTERNAL_CLOCK);
+        // IF_Z goto player2;
+        if(hram->hSerialConnectionStatus != USING_INTERNAL_CLOCK) {
+            // LD_A((0 << rSC_ON) | (0 << rSC_CLOCK));
+            // LDH_addr_A(rSC);
+            gb_write(rSC, (0 << rSC_ON) | (0 << rSC_CLOCK));
+            // LD_A((1 << rSC_ON) | (0 << rSC_CLOCK));
+            // LDH_addr_A(rSC);
+            gb_write(rSC, (1 << rSC_ON) | (0 << rSC_CLOCK));
+            // goto player2;
+        }
+    }
+
+// player2:
+    // LD_A(TRUE);
+    // LDH_addr_A(hSerialReceivedNewData);
+    hram->hSerialReceivedNewData = TRUE;
+    // LD_A(SERIAL_NO_DATA_BYTE);
+    // LDH_addr_A(hSerialSend);
+    hram->hSerialSend = SERIAL_NO_DATA_BYTE;
+
+// end:
+    // POP_HL;
+    // POP_DE;
+    // POP_BC;
+    // POP_AF;
+    // RET;
 }
 
 void Serial_ExchangeBytes(void){
@@ -336,6 +457,7 @@ static void Serial_ExchangeByte_ShortDelay(void) {
 }
 
 uint8_t Serial_ExchangeByte_Conv(const uint8_t* hl){ 
+    printf("%s:\n", __func__);
 timeout_loop:
     // XOR_A_A;
     // LDH_addr_A(hSerialReceivedNewData);
@@ -368,8 +490,10 @@ timeout_loop:
             // AND_A((1 << SERIAL) | (1 << TIMER) | (1 << LCD_STAT) | (1 << VBLANK));
             // CP_A(1 << SERIAL);
             // IF_NZ goto loop;
-            if((gb_read(rIE) & ((1 << SERIAL) | (1 << TIMER) | (1 << LCD_STAT) | (1 << VBLANK))) != (1 << SERIAL))
+            if((gb_read(rIE) & ((1 << SERIAL) | (1 << TIMER) | (1 << LCD_STAT) | (1 << VBLANK))) != (1 << SERIAL)) {
+                DelayFrame();
                 continue;
+            }
             // LD_A_addr(wLinkByteTimeout);
             // DEC_A;
             // LD_addr_A(wLinkByteTimeout);
@@ -489,8 +613,8 @@ timeout_loop:
         // POP_HL;
         // CALL(aCheckLinkTimeoutFramesNonzero);
         // IF_NZ goto loop;
-        if(!CheckLinkTimeoutFramesNonzero_Conv())
-            break;
+        if(CheckLinkTimeoutFramesNonzero_Conv())
+            continue;
         
         return SerialDisconnected_Conv(0);
     } while(1);
@@ -542,39 +666,58 @@ uint8_t SerialDisconnected_Conv(uint8_t a){
 }
 
 void Serial_ExchangeSyncBytes(void){
-        LD_HL(wLinkPlayerSyncBuffer);
-    LD_DE(wLinkReceivedSyncBuffer);
-    LD_C(2);
-    LD_A(TRUE);
-    LDH_addr_A(hSerialIgnoringInitialData);
+    PEEK("");
+    // LD_HL(wLinkPlayerSyncBuffer);
+    const uint8_t* hl = wram->wLinkPlayerSyncBuffer;
+    // LD_DE(wLinkReceivedSyncBuffer);
+    uint8_t* de = wram->wLinkReceivedSyncBuffer;
+    // LD_C(2);
+    uint8_t c = 2;
+    // LD_A(TRUE);
+    // LDH_addr_A(hSerialIgnoringInitialData);
+    hram->hSerialIgnoringInitialData = TRUE;
 
-exchange:
-        CALL(aDelayFrame);
-    LD_A_hl;
-    LDH_addr_A(hSerialSend);
-    CALL(aSerial_ExchangeByte);
-    LD_B_A;
-    INC_HL;
-    LDH_A_addr(hSerialIgnoringInitialData);
-    AND_A_A;
-    LD_A(FALSE);
-    LDH_addr_A(hSerialIgnoringInitialData);
-    IF_NZ goto exchange;
-    LD_A_B;
-    LD_de_A;
-    INC_DE;
-    DEC_C;
-    IF_NZ goto exchange;
-    RET;
-
+    do {
+        uint8_t b, ignore;
+        do {
+        // exchange:
+            // CALL(aDelayFrame);
+            DelayFrame();
+            // LD_A_hl;
+            // LDH_addr_A(hSerialSend);
+            hram->hSerialSend = *hl;
+            // CALL(aSerial_ExchangeByte);
+            // LD_B_A;
+            b = Serial_ExchangeByte_Conv(hl);
+            // INC_HL;
+            hl++;
+            // LDH_A_addr(hSerialIgnoringInitialData);
+            ignore = hram->hSerialIgnoringInitialData;
+            // AND_A_A;
+            // LD_A(FALSE);
+            // LDH_addr_A(hSerialIgnoringInitialData);
+            hram->hSerialIgnoringInitialData = FALSE;
+            // IF_NZ goto exchange;
+        } while(ignore);
+        // LD_A_B;
+        // LD_de_A;
+        *(de++) = b;
+        // INC_DE;
+        // DEC_C;
+        // IF_NZ goto exchange;
+    } while(--c != 0);
+    // RET;
 }
 
 void Serial_PrintWaitingTextAndSyncAndExchangeNybble(void){
-        CALL(aLoadTilemapToTempTilemap);
-    CALLFAR(aPlaceWaitingText);
-    CALL(aWaitLinkTransfer);
-    JP(mSafeLoadTempTilemapToTilemap);
-
+    // CALL(aLoadTilemapToTempTilemap);
+    LoadTilemapToTempTilemap_Conv();
+    // CALLFAR(aPlaceWaitingText);
+    PlaceWaitingText();
+    // CALL(aWaitLinkTransfer);
+    WaitLinkTransfer();
+    // JP(mSafeLoadTempTilemapToTilemap);
+    return SafeLoadTempTilemapToTilemap_Conv();
 }
 
 void Serial_SyncAndExchangeNybble(void){
@@ -654,6 +797,7 @@ void WaitLinkTransfer(void){
     // LD_A_addr(wOtherPlayerLinkAction);
     // LD_addr_A(wOtherPlayerLinkMode);
     wram->wOtherPlayerLinkMode = wram->wOtherPlayerLinkAction;
+    printf("wOtherPlayerLinkMode = %d\n", wram->wOtherPlayerLinkMode);
     // RET;
 }
 
@@ -661,6 +805,7 @@ static void LinkTransfer_Receive(uint8_t b) {
     // LDH_A_addr(hSerialReceive);
     // LD_addr_A(wOtherPlayerLinkMode);
     wram->wOtherPlayerLinkMode = hram->hSerialReceive;
+    printf("wOtherPlayerLinkMode = %d\n", wram->wOtherPlayerLinkMode);
     // AND_A(0xf0);
     // CP_A_B;
     // RET_NZ ;
@@ -673,6 +818,7 @@ static void LinkTransfer_Receive(uint8_t b) {
     // AND_A(0xf);
     // LD_addr_A(wOtherPlayerLinkAction);
     wram->wOtherPlayerLinkAction = wram->wOtherPlayerLinkMode & 0xf;
+    printf("wOtherPlayerLinkAction = %d\n", wram->wOtherPlayerLinkAction);
     // RET;
 }
 

@@ -14,7 +14,7 @@
 #include "../gfx/sprites.h"
 #include "../menus/menu.h"
 
-const char LinkCommsBorderGFX[] = "gfx/trade/border_tiles.2bpp";
+const char LinkCommsBorderGFX[] = "gfx/trade/border_tiles.png";
 
 void v__LoadTradeScreenBorderGFX(void){
     // LD_DE(mLinkCommsBorderGFX);

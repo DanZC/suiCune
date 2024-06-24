@@ -11,6 +11,7 @@ void FixDataForLinkTransfer(void);
 void Link_PrepPartyData_Gen1(void);
 void Link_PrepPartyData_Gen2(void);
 void Link_CopyMailPreamble(void);
+void Link_CopyMailPreamble_Conv(uint8_t* de, uint8_t a);
 void Link_ConvertPartyStruct1to2(void);
 void TimeCapsule_ReplaceTeruSama(void);
 item_t TimeCapsule_ReplaceTeruSama_Conv(item_t item);

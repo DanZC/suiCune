@@ -8202,4 +8202,7 @@ CONVERTED(v_AnimateTileset);
     CONVERTED(v_UnownPuzzle);
     // REDIRECTED(AerodactylPuzzleLZ);
     // REDIRECTED(UnownPuzzle_FillBox);
+
+    // engine/link/place_waiting_text.c
+    CONVERTED(PlaceWaitingText);
 }

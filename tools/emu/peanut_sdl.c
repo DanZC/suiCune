@@ -31,6 +31,8 @@
 #include "../../util/record.h"
 #include "../../util/network.h"
 #include "../../util/soft_reset.h"
+#include <stdbool.h>
+#include "../../home/serial.h"
 
 extern jmp_buf reset_point;
 
@@ -2876,6 +2878,10 @@ void gb_finish_frame(void) {
         gb.gb_reg.LY = line;
         LCD();
         gb_draw_line();
+    }
+    if(gb.gb_reg.IF & SERIAL_INTR) {
+        gb.gb_reg.IF &= ~SERIAL_INTR;
+        Serial();
     }
     sdl_loop();
 }
