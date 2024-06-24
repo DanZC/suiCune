@@ -19,7 +19,7 @@ bool ReceiveKeyItem_Conv(item_t item);
 void TossKeyItem(void);
 bool TossKeyItem_Conv(item_t item, uint8_t count);
 void CheckKeyItems(void);
-bool CheckKeyItems_Conv(uint8_t c);
+bool CheckKeyItems_Conv(item_t c);
 void ReceiveTMHM(void);
 bool ReceiveTMHM_Conv(uint8_t id, uint8_t count);
 void TossTMHM(void);

@@ -20,6 +20,8 @@
 #include "../../engine/events/pokecenter_pc.h"
 #include "../../engine/events/shuckle.h"
 #include "../../engine/events/poke_seer.h"
+#include "../../engine/events/buena.h"
+#include "../../engine/events/buena_menu.h"
 #include "../../engine/events/bug_contest/contest.h"
 #include "../../engine/events/bug_contest/contest_2.h"
 #include "../../engine/events/battle_tower/battle_tower.h"
@@ -189,8 +191,8 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(CelebiShrineEvent),
     // add_special(CheckCaughtCelebi),
     add_special(PokeSeer),
-    // add_special(BuenasPassword),
-    // add_special(BuenaPrize),
+    add_special(BuenasPassword),
+    add_special(BuenaPrize),
     // add_special(GiveDratini),
     // add_special(SampleKenjiBreakCountdown),
     // add_special(BeastsCheck),
@@ -206,7 +208,7 @@ void (*const SpecialsPointers[])(void) = {
     add_special(Mobile_DummyReturnFalse),
     // add_special(Function103780),
     // add_special(Function10387b),
-    // add_special(AskRememberPassword),
+    add_special(AskRememberPassword),
     add_special(LoadMapPalettes),
     // add_special(UnusedFindItemInPCOrBag),
     add_special(InitialSetDSTFlag),

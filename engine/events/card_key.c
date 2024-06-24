@@ -3,12 +3,12 @@
 #include "../../home/map.h"
 #include "../../home/queue_script.h"
 #include "../../util/scripting.h"
-// #include "../../maps/RadioTower3F.h"
+#include "../../maps/RadioTower3F.h"
 
 static bool CardKeyScript(script_s* s) {
     SCRIPT_BEGIN
     closetext
-    // sjump(CardKeySlotScript)
+    sjump(CardKeySlotScript)
     s_end
     SCRIPT_END
 }

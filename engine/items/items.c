@@ -265,7 +265,7 @@ nope:
 bool v_CheckItem_Conv(item_t item, item_t* hl){
     // CALL(aDoesHLEqualNumItems);
     // IF_NZ goto nope;
-    if(hl != wram->wItems) {
+    if(hl == wram->wItems) {
         // PUSH_HL;
         // CALL(aCheckItemPocket);
         uint8_t pocket = CheckItemPocket_Conv(item);
@@ -276,13 +276,32 @@ bool v_CheckItem_Conv(item_t item, item_t* hl){
         // RST(aJumpTable);
         switch(pocket)
         {
-            case ITEM_POCKET: goto Item;
-            case KEY_ITEM_POCKET: goto KeyItem;
-            case BALL_POCKET: goto Ball;
-            case TM_HM_POCKET: goto TMHM;
+            case ITEM:
+                break;
+            case KEY_ITEM:
+            // KeyItem:
+                // LD_H_D;
+                // LD_L_E;
+                // JP(mCheckKeyItems);
+                return CheckKeyItems_Conv(item);
+            case BALL:
+            // Ball:
+                // LD_HL(wNumBalls);
+                // JP(mCheckTheItem);
+                return CheckTheItem_Conv(item, wram->wBalls);
+            case TM_HM:
+            // TMHM:
+                // LD_H_D;
+                // LD_L_E;
+                // LD_A_addr(wCurItem);
+                // LD_C_A;
+                // CALL(aGetTMHMNumber);
+                // JP(mCheckTMHM);
+                return CheckTMHM_Conv(GetTMHMNumber_Conv(item));
+            default:
+                return false;
         }
         // RET;
-        return false;
 
 
     // Pockets:
@@ -293,30 +312,8 @@ bool v_CheckItem_Conv(item_t item, item_t* hl){
         //dw ['.TMHM'];
 
 
-    Ball:
-        // LD_HL(wNumBalls);
-        // JP(mCheckTheItem);
-        return CheckTheItem_Conv(item, wram->wBalls);
-
-
-    TMHM:
-        // LD_H_D;
-        // LD_L_E;
-        // LD_A_addr(wCurItem);
-        // LD_C_A;
-        // CALL(aGetTMHMNumber);
-        // JP(mCheckTMHM);
-        return CheckTMHM_Conv(GetTMHMNumber_Conv(item));
-
-    KeyItem:
-        // LD_H_D;
-        // LD_L_E;
-        // JP(mCheckKeyItems);
-        return CheckKeyItems_Conv(pocket);
-
-
-    Item:
-        ;
+    // Item:
+        // ;
         // LD_H_D;
         // LD_L_E;
     }
@@ -1037,7 +1034,7 @@ done:
 
 }
 
-bool CheckKeyItems_Conv(uint8_t c){
+bool CheckKeyItems_Conv(item_t c){
     // LD_A_addr(wCurItem);
     // LD_C_A;
     // LD_HL(wKeyItems);

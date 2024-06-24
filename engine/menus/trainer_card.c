@@ -108,6 +108,8 @@ void TrainerCard(void){
     //jumptable ['.Jumptable', 'wJumptableIndex']
 }
 
+#define TILE_TRAINERCARD_RIGHTCORNER 0x4 // 0x1c
+
 static const char CardRightCornerGFX[] = "gfx/trainer_card/card_right_corner.png";
 static const char CardStatusGFX[] = "gfx/trainer_card/card_status.png";
 
@@ -135,7 +137,7 @@ static void TrainerCard_InitRAM(void) {
     // LD_BC(1 * LEN_2BPP_TILE);
     // LD_A(BANK(aCardRightCornerGFX));
     // CALL(aFarCopyBytes);
-    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x1c, CardRightCornerGFX, 0, 1);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * TILE_TRAINERCARD_RIGHTCORNER, CardRightCornerGFX, 0, 1);
 
     // LD_HL(mCardStatusGFX);
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x29);
@@ -557,7 +559,7 @@ void TrainerCard_InitBorder(tile_t* hl, uint8_t d){
 
     // LD_A(0x1c);
     // LD_hli_A;
-    *(hl++) = 0x1c;
+    *(hl++) = TILE_TRAINERCARD_RIGHTCORNER;
     // LD_A(0x23);
     // LD_hli_A;
     *(hl++) = 0x23;

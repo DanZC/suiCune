@@ -8415,4 +8415,25 @@ CONVERTED(v_AnimateTileset);
 
     // engine/link/place_waiting_text.c
     CONVERTED(PlaceWaitingText);
+
+    // engine/events/pokerus/pokerus.c
+    CONVERTED(GivePokerusAndConvertBerries);
+    CONVERTED(ConvertBerriesToBerryJuice);
+
+    // engine/events/basement_key.c
+    CONVERTED(v_BasementKey);
+
+    // engine/events/buena.c
+    // CONVERTED(Buena_PrizeMenu);
+    // CONVERTED(Buena_GetPrize);
+    // CONVERTED(Buena_PlacePrizeMenuBox);
+    // CONVERTED(PrintBlueCardBalance);
+    CONVERTED(BuenasPassword);
+    // CONVERTED(Buena_DisplayBlueCardBalance);
+    // CONVERTED(BlueCardBalanceMenuHeader);
+    CONVERTED(BuenaPrize);
+
+    // engine/events/buena_menu.c
+    CONVERTED(AskRememberPassword);
+    CONVERTED(Buena_ExitMenu);
 }

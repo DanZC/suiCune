@@ -132,7 +132,7 @@
 //#include "engine/link/mystery_gift_2.h"
 #include "engine/items/tmhm.h"
 #include "engine/pokemon/print_move_description.h"
-//#include "engine/events/pokerus/pokerus.h"
+#include "engine/events/pokerus/pokerus.h"
 #include "engine/battle/start_battle.h"
 #include "engine/gfx/place_graphic.h"
 
@@ -176,7 +176,7 @@
 //#include "mobile/mobile_menu.h"
 //#include "engine/pokemon/search.h"
 //#include "mobile/mobile_12_2.h"
-//#include "engine/events/buena_menu.h"
+#include "engine/events/buena_menu.h"
 
 // SECTION "bank13", ROMX
 
@@ -220,7 +220,7 @@
 //#include "engine/events/sweet_scent.h"
 #include "engine/events/squirtbottle.h"
 #include "engine/events/card_key.h"
-//#include "engine/events/basement_key.h"
+#include "engine/events/basement_key.h"
 //#include "engine/events/sacred_ash.h"
 #include "engine/pokemon/tempmon.h"
 #include "engine/pokemon/types.h"
@@ -273,7 +273,7 @@
 #include "engine/gfx/player_gfx.h"
 //#include "mobile/mobile_22.h"
 #include "engine/events/unown_walls.h"
-//#include "engine/events/buena.h"
+#include "engine/events/buena.h"
 //#include "engine/events/dratini.h"
 #include "engine/events/battle_tower/rules.h"
 //#include "mobile/mobile_22_2.h"
