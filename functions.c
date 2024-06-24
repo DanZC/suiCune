@@ -4881,6 +4881,26 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(EcruteakCityYoungsterScript);
     CONVERTED_SCRIPT(EcruteakCityGramps3Script);
 
+    // maps/MahoganyTown.c
+    CONVERTED_SCRIPT(MahoganyTownPokefanMScript);
+    CONVERTED_SCRIPT(MahoganyTownGrampsScript);
+    CONVERTED_SCRIPT(MahoganyTownFisherScript);
+    CONVERTED_SCRIPT(MahoganyTownLassScript);
+
+    // maps/LakeOfRage.c
+    CONVERTED_SCRIPT(LakeOfRageLanceScript);
+    CONVERTED_SCRIPT(LakeOfRageGrampsScript);
+    CONVERTED_SCRIPT(LakeOfRageSuperNerdScript);
+    CONVERTED_SCRIPT(LakeOfRageCooltrainerFScript);
+    CONVERTED_SCRIPT(TrainerFisherAndre);
+    CONVERTED_SCRIPT(TrainerFisherRaymond);
+    CONVERTED_SCRIPT(TrainerCooltrainermAaron);
+    CONVERTED_SCRIPT(TrainerCooltrainerfLois);
+    CONVERTED_SCRIPT(RedGyarados);
+    CONVERTED_SCRIPT(WesleyScript);
+    CONVERTED_SCRIPT(LakeOfRageElixer);
+    CONVERTED_SCRIPT(LakeOfRageTMDetect);
+
     // maps/Route29.c
     CONVERTED_SCRIPT(Route29Tutorial1);
     CONVERTED_SCRIPT(Route29Tutorial2);
@@ -5046,6 +5066,29 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(Route42SuperPotion);
     // CONVERTED_SCRIPT(ObjectEvent);
 
+    // maps/Route43.c
+    CONVERTED_SCRIPT(TrainerPokemaniacBen);
+    CONVERTED_SCRIPT(TrainerPokemaniacBrent);
+    CONVERTED_SCRIPT(TrainerPokemaniacRon);
+    CONVERTED_SCRIPT(TrainerFisherMarvin);
+    CONVERTED_SCRIPT(TrainerPicnickerTiffany);
+    CONVERTED_SCRIPT(TrainerCamperSpencer);
+    CONVERTED_SCRIPT(Route43FruitTree);
+    CONVERTED_SCRIPT(Route43MaxEther);
+
+    // maps/Route44.c
+    CONVERTED_SCRIPT(TrainerFisherWilton1);
+    CONVERTED_SCRIPT(TrainerFisherEdgar);
+    CONVERTED_SCRIPT(TrainerPsychicPhil);
+    CONVERTED_SCRIPT(TrainerPokemaniacZach);
+    CONVERTED_SCRIPT(TrainerBirdKeeperVance1);
+    CONVERTED_SCRIPT(TrainerCooltrainermAllen);
+    CONVERTED_SCRIPT(TrainerCooltrainerfCybil);
+    CONVERTED_SCRIPT(Route44FruitTree);
+    CONVERTED_SCRIPT(Route44MaxRevive);
+    CONVERTED_SCRIPT(Route44UltraBall);
+    CONVERTED_SCRIPT(Route44MaxRepel);
+
     // maps/Route30BerryHouse.c
     CONVERTED_SCRIPT(Route30BerryHousePokefanMScript);
 
@@ -5113,6 +5156,14 @@ void init_function_pointers(void) {
 
     // maps/Route42EcruteakGate.c
     CONVERTED_SCRIPT(Route42EcruteakGateOfficerScript);
+
+    // maps/Route43MahoganyGate.c
+    CONVERTED_SCRIPT(Route43MahoganyGateOfficer);
+
+    // maps/Route43Gate.c
+    CONVERTED_SCRIPT(OfficerScript_GuardWithSludgeBomb);
+    CONVERTED_SCRIPT(RocketScript_MakingABundle);
+    CONVERTED_SCRIPT(RocketScript_MakingABundle);
 
     // maps/CherrygroveEvolutionSpeechHouse.c
     CONVERTED_SCRIPT(CherrygroveEvolutionSpeechHouseLassScript);
@@ -5306,6 +5357,15 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(GoldenrodUndergroundSwitchRoomEntrancesSmokeBall);
     CONVERTED_SCRIPT(GoldenrodUndergroundSwitchRoomEntrancesFullHeal);
     // CONVERTED_SCRIPT(ObjectEvent);
+
+    // maps/GoldenrodUndergroundWarehouse.c
+    CONVERTED_SCRIPT(TrainerGruntM24);
+    CONVERTED_SCRIPT(TrainerGruntM14);
+    CONVERTED_SCRIPT(TrainerGruntM15);
+    CONVERTED_SCRIPT(GoldenrodUndergroundWarehouseDirectorScript);
+    CONVERTED_SCRIPT(GoldenrodUndergroundWarehouseMaxEther);
+    CONVERTED_SCRIPT(GoldenrodUndergroundWarehouseTMSleepTalk);
+    CONVERTED_SCRIPT(GoldenrodUndergroundWarehouseUltraBall);
 
     // maps/GoldenrodDeptStore1F.c
     CONVERTED_SCRIPT(GoldenrodDeptStore1FReceptionistScript);
@@ -5538,6 +5598,38 @@ void init_function_pointers(void) {
     // maps/PokeSeersHouse.c
     CONVERTED_SCRIPT(SeerScript);
 
+    // maps/MahoganyGym.c
+    CONVERTED_SCRIPT(MahoganyGymPryceScript);
+    CONVERTED_SCRIPT(TrainerSkierRoxanne);
+    CONVERTED_SCRIPT(TrainerBoarderRonald);
+    CONVERTED_SCRIPT(TrainerSkierClarissa);
+    CONVERTED_SCRIPT(TrainerBoarderBrad);
+    CONVERTED_SCRIPT(TrainerBoarderDouglas);
+    CONVERTED_SCRIPT(MahoganyGymGuideScript);
+
+    // maps/MahoganyMart1F.c
+    CONVERTED_SCRIPT(MahoganyMart1FPharmacistScript);
+    CONVERTED_SCRIPT(MahoganyMart1FBlackBeltScript);
+    // CONVERTED_SCRIPT(ObjectEvent);
+    // CONVERTED_SCRIPT(ObjectEvent);
+    CONVERTED_SCRIPT(MahoganyMart1FGrannyScript);
+
+    // maps/MahoganyPokecenter1F.c
+    CONVERTED_SCRIPT(MahoganyPokecenter1FNurseScript);
+    CONVERTED_SCRIPT(MahoganyPokecenter1FPokefanMScript);
+    CONVERTED_SCRIPT(MahoganyPokecenter1FYoungsterScript);
+    CONVERTED_SCRIPT(MahoganyPokecenter1FCooltrainerFScript);
+
+    // maps/MahoganyRedGyaradosSpeechHouse.c
+    CONVERTED_SCRIPT(MahoganyRedGyaradosSpeechHouseBlackBeltScript);
+    CONVERTED_SCRIPT(MahoganyRedGyaradosSpeechHouseTeacherScript);
+
+    // maps/LakeOfRageHiddenPowerHouse.c
+    CONVERTED_SCRIPT(HiddenPowerGuy);
+
+    // maps/LakeOfRageMagikarpHouse.c
+    CONVERTED_SCRIPT(MagikarpLengthRaterScript);
+
     // maps/SproutTower1F.c
     CONVERTED_SCRIPT(SproutTower1FSage1Script);
     CONVERTED_SCRIPT(SproutTower1FSage2Script);
@@ -5684,6 +5776,31 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(Buena);
     CONVERTED_SCRIPT(RadioTowerBuenaPrizeReceptionist);
 
+    // maps/RadioTower3F.c
+    CONVERTED_SCRIPT(RadioTower3FSuperNerdScript);
+    CONVERTED_SCRIPT(RadioTower3FGymGuideScript);
+    CONVERTED_SCRIPT(RadioTower3FCooltrainerFScript);
+    CONVERTED_SCRIPT(TrainerGruntM7);
+    CONVERTED_SCRIPT(TrainerGruntM8);
+    CONVERTED_SCRIPT(TrainerGruntM9);
+    CONVERTED_SCRIPT(TrainerScientistMarc);
+
+    // maps/RadioTower4F.c
+    CONVERTED_SCRIPT(RadioTower4FFisherScript);
+    CONVERTED_SCRIPT(RadioTower4FDJMaryScript);
+    CONVERTED_SCRIPT(RadioTowerMeowth);
+    CONVERTED_SCRIPT(TrainerGruntM10);
+    CONVERTED_SCRIPT(TrainerExecutivem2);
+    CONVERTED_SCRIPT(TrainerGruntF4);
+    CONVERTED_SCRIPT(TrainerScientistRich);
+
+    // maps/RadioTower5F.c
+    CONVERTED_SCRIPT(Director);
+    // CONVERTED_SCRIPT(ObjectEvent);
+    CONVERTED_SCRIPT(TrainerExecutivef1);
+    CONVERTED_SCRIPT(Ben);
+    CONVERTED_SCRIPT(RadioTower5FUltraBall);
+
     // maps/NationalPark.c
     CONVERTED_SCRIPT(NationalParkLassScript);
     CONVERTED_SCRIPT(NationalParkPokefanFScript);
@@ -5737,6 +5854,99 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(BattleTowerOutsideBeautyScript);
     CONVERTED_SCRIPT(BattleTowerOutsideSailorScript);
     // CONVERTED_SCRIPT(ObjectEvent);
+
+    // maps/WhirlIslandSW.c
+    CONVERTED_SCRIPT(WhirlIslandSWUltraBall);
+
+    // maps/WhirlIslandB1F.c
+    CONVERTED_SCRIPT(WhirlIslandB1FFullRestore);
+    CONVERTED_SCRIPT(WhirlIslandB1FCarbos);
+    CONVERTED_SCRIPT(WhirlIslandB1FCalcium);
+    CONVERTED_SCRIPT(WhirlIslandB1FNugget);
+    CONVERTED_SCRIPT(WhirlIslandB1FEscapeRope);
+    CONVERTED_SCRIPT(WhirlIslandB1FBoulder);
+
+    // maps/WhirlIslandB2F.c
+    CONVERTED_SCRIPT(WhirlIslandB2FFullRestore);
+    CONVERTED_SCRIPT(WhirlIslandB2FMaxRevive);
+    CONVERTED_SCRIPT(WhirlIslandB2FMaxElixer);
+
+    // maps/WhirlIslandLugiaChamber.c
+    CONVERTED_SCRIPT(Lugia);
+
+    // maps/MountMortar1FInside.c
+    CONVERTED_SCRIPT(MountMortar1FBoulder);
+    CONVERTED_SCRIPT(MountMortar1FInsideEscapeRope);
+    CONVERTED_SCRIPT(MountMortar1FInsideMaxRevive);
+    CONVERTED_SCRIPT(MountMortar1FInsideHyperPotion);
+    CONVERTED_SCRIPT(MountMortar1FInsideMaxPotion);
+    CONVERTED_SCRIPT(MountMortar1FInsideNugget);
+    CONVERTED_SCRIPT(TrainerPokemaniacMiller);
+    CONVERTED_SCRIPT(TrainerSupernerdMarkus);
+    CONVERTED_SCRIPT(MountMortar1FInsideIron);
+    CONVERTED_SCRIPT(MountMortar1FInsideUltraBall);
+
+    // maps/MountMortar1FOutside.c
+    CONVERTED_SCRIPT(MountMortar1FOutsideEther);
+    CONVERTED_SCRIPT(MountMortar1FOutsideRevive);
+
+    // maps/MountMortar2FInside.c
+    CONVERTED_SCRIPT(MountMortar2FInsideMaxPotion);
+    CONVERTED_SCRIPT(MountMortar2FInsideRareCandy);
+    CONVERTED_SCRIPT(MountMortar2FInsideTMDefenseCurl);
+    CONVERTED_SCRIPT(MountMortar2FInsideDragonScale);
+    CONVERTED_SCRIPT(MountMortar2FInsideElixer);
+    CONVERTED_SCRIPT(MountMortar2FInsideEscapeRope);
+    CONVERTED_SCRIPT(TrainerSupernerdHugh);
+
+    // maps/MountMortarB1F.c
+    CONVERTED_SCRIPT(MountMortarB1FHyperPotion);
+    CONVERTED_SCRIPT(MountMortarB1FCarbos);
+    CONVERTED_SCRIPT(MountMortarB1FBoulder);
+    CONVERTED_SCRIPT(MountMortarB1FKiyoScript);
+    CONVERTED_SCRIPT(MountMortarB1FFullRestore);
+    CONVERTED_SCRIPT(MountMortarB1FMaxEther);
+    CONVERTED_SCRIPT(MountMortarB1FPPUp);
+
+    // maps/TeamRocketBaseB1F.c
+    // CONVERTED_SCRIPT(ObjectEvent);
+    CONVERTED_SCRIPT(TrainerGruntM16);
+    CONVERTED_SCRIPT(TrainerScientistJed);
+    CONVERTED_SCRIPT(TeamRocketBaseB1FHyperPotion);
+    CONVERTED_SCRIPT(TeamRocketBaseB1FNugget);
+    CONVERTED_SCRIPT(TeamRocketBaseB1FGuardSpec);
+
+    // maps/TeamRocketBaseB2F.c
+    // CONVERTED_SCRIPT(ObjectEvent);
+    // CONVERTED_SCRIPT(ObjectEvent);
+    // CONVERTED_SCRIPT(ObjectEvent);
+    // CONVERTED_SCRIPT(ObjectEvent);
+    CONVERTED_SCRIPT(RocketElectrode1);
+    CONVERTED_SCRIPT(RocketElectrode2);
+    CONVERTED_SCRIPT(RocketElectrode3);
+    // CONVERTED_SCRIPT(ObjectEvent);
+    // CONVERTED_SCRIPT(ObjectEvent);
+    // CONVERTED_SCRIPT(ObjectEvent);
+    CONVERTED_SCRIPT(TrainerGruntM17);
+    CONVERTED_SCRIPT(TrainerGruntM18);
+    CONVERTED_SCRIPT(TrainerGruntM19);
+    CONVERTED_SCRIPT(TeamRocketBaseB2FTMThief);
+
+    // maps/TeamRocketBaseB3F.c
+    CONVERTED_SCRIPT(LanceGetPasswordScript);
+    // CONVERTED_SCRIPT(ObjectEvent);
+    CONVERTED_SCRIPT(RocketBaseMurkrow);
+    CONVERTED_SCRIPT(SlowpokeTailGrunt);
+    CONVERTED_SCRIPT(RaticateTailGrunt);
+    CONVERTED_SCRIPT(TrainerScientistRoss);
+    CONVERTED_SCRIPT(TrainerScientistMitch);
+    CONVERTED_SCRIPT(TeamRocketBaseB3FRocketScript);
+    // CONVERTED_SCRIPT(ObjectEvent);
+    CONVERTED_SCRIPT(TeamRocketBaseB3FProtein);
+    CONVERTED_SCRIPT(TeamRocketBaseB3FXSpecial);
+    CONVERTED_SCRIPT(TeamRocketBaseB3FFullHeal);
+    CONVERTED_SCRIPT(TeamRocketBaseB3FIceHeal);
+    CONVERTED_SCRIPT(TeamRocketBaseB3FUltraBall);
 
     // maps/DarkCaveBlackthornEntrance.c
     CONVERTED_SCRIPT(DarkCaveBlackthornEntrancePharmacistScript);

@@ -55,13 +55,13 @@
 #include "../../maps/NationalParkBugContest.h"
 #include "../../maps/RadioTower1F.h"
 #include "../../maps/RadioTower2F.h"
-// #include "../../maps/RadioTower3F.h"
-// #include "../../maps/RadioTower4F.h"
+#include "../../maps/RadioTower3F.h"
+#include "../../maps/RadioTower4F.h"
 
 
 // SECTION "Map Scripts 4", ROMX
 
-// #include "../../maps/RadioTower5F.h"
+#include "../../maps/RadioTower5F.h"
 #include "../../maps/OlivineLighthouse5F.h"
 #include "../../maps/OlivineLighthouse6F.h"
 // #include "../../maps/GoldenrodPokecenter1F.h"
@@ -92,16 +92,16 @@
 // SECTION "Map Scripts 6", ROMX
 
 // #include "../../maps/Route8.h"
-// #include "../../maps/MahoganyMart1F.h"
-// #include "../../maps/TeamRocketBaseB1F.h"
-// #include "../../maps/TeamRocketBaseB2F.h"
-// #include "../../maps/TeamRocketBaseB3F.h"
+#include "../../maps/MahoganyMart1F.h"
+#include "../../maps/TeamRocketBaseB1F.h"
+#include "../../maps/TeamRocketBaseB2F.h"
+#include "../../maps/TeamRocketBaseB3F.h"
 #include "../../maps/IlexForest.h"
 
 
 // SECTION "Map Scripts 7", ROMX
 
-// #include "../../maps/LakeOfRage.h"
+#include "../../maps/LakeOfRage.h"
 // #include "../../maps/CeladonDeptStore1F.h"
 // #include "../../maps/CeladonDeptStore2F.h"
 // #include "../../maps/CeladonDeptStore3F.h"
@@ -170,11 +170,11 @@
 #include "../../maps/GoldenrodUnderground.h"
 #include "../../maps/GoldenrodUndergroundSwitchRoomEntrances.h"
 #include "../../maps/GoldenrodDeptStoreB1F.h"
-// #include "../../maps/GoldenrodUndergroundWarehouse.h"
-// #include "../../maps/MountMortar1FOutside.h"
-// #include "../../maps/MountMortar1FInside.h"
-// #include "../../maps/MountMortar2FInside.h"
-// #include "../../maps/MountMortarB1F.h"
+#include "../../maps/GoldenrodUndergroundWarehouse.h"
+#include "../../maps/MountMortar1FOutside.h"
+#include "../../maps/MountMortar1FInside.h"
+#include "../../maps/MountMortar2FInside.h"
+#include "../../maps/MountMortarB1F.h"
 // #include "../../maps/IcePath1F.h"
 // #include "../../maps/IcePathB1F.h"
 // #include "../../maps/IcePathB2FMahoganySide.h"
@@ -303,14 +303,14 @@
 // SECTION "Map Scripts 16", ROMX
 
 // #include "../../maps/PewterCity.h"
-// #include "../../maps/WhirlIslandNW.h"
-// #include "../../maps/WhirlIslandNE.h"
-// #include "../../maps/WhirlIslandSW.h"
-// #include "../../maps/WhirlIslandCave.h"
-// #include "../../maps/WhirlIslandSE.h"
-// #include "../../maps/WhirlIslandB1F.h"
-// #include "../../maps/WhirlIslandB2F.h"
-// #include "../../maps/WhirlIslandLugiaChamber.h"
+#include "../../maps/WhirlIslandNW.h"
+#include "../../maps/WhirlIslandNE.h"
+#include "../../maps/WhirlIslandSW.h"
+#include "../../maps/WhirlIslandCave.h"
+#include "../../maps/WhirlIslandSE.h"
+#include "../../maps/WhirlIslandB1F.h"
+#include "../../maps/WhirlIslandB2F.h"
+#include "../../maps/WhirlIslandLugiaChamber.h"
 // #include "../../maps/SilverCaveRoom1.h"
 // #include "../../maps/SilverCaveRoom2.h"
 // #include "../../maps/SilverCaveRoom3.h"
@@ -330,7 +330,7 @@
 
 // SECTION "Map Scripts 17", ROMX
 
-// #include "../../maps/MahoganyTown.h"
+#include "../../maps/MahoganyTown.h"
 #include "../../maps/Route32.h"
 // #include "../../maps/VermilionFishingSpeechHouse.h"
 // #include "../../maps/VermilionPokecenter1F.h"
@@ -384,14 +384,14 @@
 #include "../../maps/AzaleaTown.h"
 #include "../../maps/GoldenrodCity.h"
 // #include "../../maps/SaffronCity.h"
-// #include "../../maps/MahoganyRedGyaradosSpeechHouse.h"
-// #include "../../maps/MahoganyGym.h"
-// #include "../../maps/MahoganyPokecenter1F.h"
+#include "../../maps/MahoganyRedGyaradosSpeechHouse.h"
+#include "../../maps/MahoganyGym.h"
+#include "../../maps/MahoganyPokecenter1F.h"
 #include "../../maps/Route42EcruteakGate.h"
-// #include "../../maps/LakeOfRageHiddenPowerHouse.h"
-// #include "../../maps/LakeOfRageMagikarpHouse.h"
-// #include "../../maps/Route43MahoganyGate.h"
-// #include "../../maps/Route43Gate.h"
+#include "../../maps/LakeOfRageHiddenPowerHouse.h"
+#include "../../maps/LakeOfRageMagikarpHouse.h"
+#include "../../maps/Route43MahoganyGate.h"
+#include "../../maps/Route43Gate.h"
 // #include "../../maps/RedsHouse1F.h"
 // #include "../../maps/RedsHouse2F.h"
 // #include "../../maps/BluesHouse.h"
@@ -402,9 +402,9 @@
 
 #include "../../maps/CherrygroveCity.h"
 #include "../../maps/Route35.h"
-// #include "../../maps/Route43.h"
-// #include "../../maps/Route44.h"
-// #include "../../maps/Route45.h"
+#include "../../maps/Route43.h"
+#include "../../maps/Route44.h"
+#include "../../maps/Route45.h"
 // #include "../../maps/Route19.h"
 // #include "../../maps/Route25.h"
 

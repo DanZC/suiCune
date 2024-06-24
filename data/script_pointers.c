@@ -120,6 +120,24 @@ void PopulateMapScriptTable(void) {
     entry(ECRUTEAK_CITY, 5, EcruteakCityYoungsterScript);
     entry(ECRUTEAK_CITY, 6, EcruteakCityGramps3Script);
 
+    entry(MAHOGANY_TOWN, 0, MahoganyTownPokefanMScript);
+    entry(MAHOGANY_TOWN, 1, MahoganyTownGrampsScript);
+    entry(MAHOGANY_TOWN, 2, MahoganyTownFisherScript);
+    entry(MAHOGANY_TOWN, 3, MahoganyTownLassScript);
+
+    entry(LAKE_OF_RAGE, 0, LakeOfRageLanceScript);
+    entry(LAKE_OF_RAGE, 1, LakeOfRageGrampsScript);
+    entry(LAKE_OF_RAGE, 2, LakeOfRageSuperNerdScript);
+    entry(LAKE_OF_RAGE, 3, LakeOfRageCooltrainerFScript);
+    entry(LAKE_OF_RAGE, 4, TrainerFisherAndre);
+    entry(LAKE_OF_RAGE, 5, TrainerFisherRaymond);
+    entry(LAKE_OF_RAGE, 6, TrainerCooltrainermAaron);
+    entry(LAKE_OF_RAGE, 7, TrainerCooltrainerfLois);
+    entry(LAKE_OF_RAGE, 8, RedGyarados);
+    entry(LAKE_OF_RAGE, 9, WesleyScript);
+    entry(LAKE_OF_RAGE, 10, LakeOfRageElixer);
+    entry(LAKE_OF_RAGE, 11, LakeOfRageTMDetect);
+
     entry(ROUTE_29, 0, CatchingTutorialDudeScript);
     entry(ROUTE_29, 1, Route29YoungsterScript);
     entry(ROUTE_29, 2, Route29TeacherScript);
@@ -333,6 +351,33 @@ void PopulateMapScriptTable(void) {
 
     entry(ROUTE_42_ECRUTEAK_GATE, 0, Route42EcruteakGateOfficerScript);
 
+    entry(ROUTE_43, 0, TrainerPokemaniacBen);
+    entry(ROUTE_43, 1, TrainerPokemaniacBrent);
+    entry(ROUTE_43, 2, TrainerPokemaniacRon);
+    entry(ROUTE_43, 3, TrainerFisherMarvin);
+    entry(ROUTE_43, 4, TrainerPicnickerTiffany);
+    entry(ROUTE_43, 5, TrainerCamperSpencer);
+    entry(ROUTE_43, 6, Route43FruitTree);
+    entry(ROUTE_43, 7, Route43MaxEther);
+    
+    entry(ROUTE_43_MAHOGANY_GATE, 0, Route43MahoganyGateOfficer);
+
+    entry(ROUTE_43_GATE, 0, OfficerScript_GuardWithSludgeBomb);
+    entry(ROUTE_43_GATE, 1, RocketScript_MakingABundle);
+    entry(ROUTE_43_GATE, 2, RocketScript_MakingABundle);
+
+    entry(ROUTE_44, 0, TrainerFisherWilton1);
+    entry(ROUTE_44, 1, TrainerFisherEdgar);
+    entry(ROUTE_44, 2, TrainerPsychicPhil);
+    entry(ROUTE_44, 3, TrainerPokemaniacZach);
+    entry(ROUTE_44, 4, TrainerBirdKeeperVance1);
+    entry(ROUTE_44, 5, TrainerCooltrainermAllen);
+    entry(ROUTE_44, 6, TrainerCooltrainerfCybil);
+    entry(ROUTE_44, 7, Route44FruitTree);
+    entry(ROUTE_44, 8, Route44MaxRevive);
+    entry(ROUTE_44, 9, Route44UltraBall);
+    entry(ROUTE_44, 10, Route44MaxRepel);
+
     entry(CHERRYGROVE_EVOLUTION_SPEECH_HOUSE, 0, CherrygroveEvolutionSpeechHouseLassScript);
     entry(CHERRYGROVE_EVOLUTION_SPEECH_HOUSE, 1, CherrygroveEvolutionSpeechHouseYoungsterScript);
 
@@ -495,6 +540,14 @@ void PopulateMapScriptTable(void) {
     entry(GOLDENROD_UNDERGROUND_SWITCH_ROOM_ENTRANCES, 7, GoldenrodUndergroundSwitchRoomEntrancesSuperNerdScript);
     entry(GOLDENROD_UNDERGROUND_SWITCH_ROOM_ENTRANCES, 8, GoldenrodUndergroundSwitchRoomEntrancesSmokeBall);
     entry(GOLDENROD_UNDERGROUND_SWITCH_ROOM_ENTRANCES, 9, GoldenrodUndergroundSwitchRoomEntrancesFullHeal);
+
+    entry(GOLDENROD_UNDERGROUND_WAREHOUSE, 0, TrainerGruntM24);
+    entry(GOLDENROD_UNDERGROUND_WAREHOUSE, 1, TrainerGruntM14);
+    entry(GOLDENROD_UNDERGROUND_WAREHOUSE, 2, TrainerGruntM15);
+    entry(GOLDENROD_UNDERGROUND_WAREHOUSE, 3, GoldenrodUndergroundWarehouseDirectorScript);
+    entry(GOLDENROD_UNDERGROUND_WAREHOUSE, 4, GoldenrodUndergroundWarehouseMaxEther);
+    entry(GOLDENROD_UNDERGROUND_WAREHOUSE, 5, GoldenrodUndergroundWarehouseTMSleepTalk);
+    entry(GOLDENROD_UNDERGROUND_WAREHOUSE, 6, GoldenrodUndergroundWarehouseUltraBall);
 
     entry(GOLDENROD_DEPT_STORE_1F, 0, GoldenrodDeptStore1FReceptionistScript);
     entry(GOLDENROD_DEPT_STORE_1F, 1, GoldenrodDeptStore1FPokefanFScript);
@@ -695,6 +748,32 @@ void PopulateMapScriptTable(void) {
 
     entry(POKE_SEERS_HOUSE, 0, SeerScript);
 
+    entry(MAHOGANY_GYM, 0, MahoganyGymPryceScript);
+    entry(MAHOGANY_GYM, 1, TrainerSkierRoxanne);
+    entry(MAHOGANY_GYM, 2, TrainerBoarderRonald);
+    entry(MAHOGANY_GYM, 3, TrainerSkierClarissa);
+    entry(MAHOGANY_GYM, 4, TrainerBoarderBrad);
+    entry(MAHOGANY_GYM, 5, TrainerBoarderDouglas);
+    entry(MAHOGANY_GYM, 6, MahoganyGymGuideScript);
+
+    entry(MAHOGANY_MART_1F, 0, MahoganyMart1FPharmacistScript);
+    entry(MAHOGANY_MART_1F, 1, MahoganyMart1FBlackBeltScript);
+    entry(MAHOGANY_MART_1F, 2, ObjectEvent);
+    entry(MAHOGANY_MART_1F, 3, ObjectEvent);
+    entry(MAHOGANY_MART_1F, 4, MahoganyMart1FGrannyScript);
+
+    entry(MAHOGANY_POKECENTER_1F, 0, MahoganyPokecenter1FNurseScript);
+    entry(MAHOGANY_POKECENTER_1F, 1, MahoganyPokecenter1FPokefanMScript);
+    entry(MAHOGANY_POKECENTER_1F, 2, MahoganyPokecenter1FYoungsterScript);
+    entry(MAHOGANY_POKECENTER_1F, 3, MahoganyPokecenter1FCooltrainerFScript);
+
+    entry(MAHOGANY_RED_GYARADOS_SPEECH_HOUSE, 0, MahoganyRedGyaradosSpeechHouseBlackBeltScript);
+    entry(MAHOGANY_RED_GYARADOS_SPEECH_HOUSE, 1, MahoganyRedGyaradosSpeechHouseTeacherScript);
+
+    entry(LAKE_OF_RAGE_HIDDEN_POWER_HOUSE, 0, HiddenPowerGuy);
+
+    entry(LAKE_OF_RAGE_MAGIKARP_HOUSE, 0, MagikarpLengthRaterScript);
+
     entry(SPROUT_TOWER_1F, 0, SproutTower1FSage1Script);
     entry(SPROUT_TOWER_1F, 1, SproutTower1FSage2Script);
     entry(SPROUT_TOWER_1F, 2, SproutTower1FGrannyScript);
@@ -825,6 +904,28 @@ void PopulateMapScriptTable(void) {
     entry(RADIO_TOWER_2F, 9,  Buena);
     entry(RADIO_TOWER_2F, 10, RadioTowerBuenaPrizeReceptionist);
 
+    entry(RADIO_TOWER_3F, 0, RadioTower3FSuperNerdScript);
+    entry(RADIO_TOWER_3F, 1, RadioTower3FGymGuideScript);
+    entry(RADIO_TOWER_3F, 2, RadioTower3FCooltrainerFScript);
+    entry(RADIO_TOWER_3F, 3, TrainerGruntM7);
+    entry(RADIO_TOWER_3F, 4, TrainerGruntM8);
+    entry(RADIO_TOWER_3F, 5, TrainerGruntM9);
+    entry(RADIO_TOWER_3F, 6, TrainerScientistMarc);
+
+    entry(RADIO_TOWER_4F, 0, RadioTower4FFisherScript);
+    entry(RADIO_TOWER_4F, 1, RadioTower4FDJMaryScript);
+    entry(RADIO_TOWER_4F, 2, RadioTowerMeowth);
+    entry(RADIO_TOWER_4F, 3, TrainerGruntM10);
+    entry(RADIO_TOWER_4F, 4, TrainerExecutivem2);
+    entry(RADIO_TOWER_4F, 5, TrainerGruntF4);
+    entry(RADIO_TOWER_4F, 6, TrainerScientistRich);
+
+    entry(RADIO_TOWER_5F, 0, Director);
+    entry(RADIO_TOWER_5F, 1, ObjectEvent);
+    entry(RADIO_TOWER_5F, 2, TrainerExecutivef1);
+    entry(RADIO_TOWER_5F, 3, Ben);
+    entry(RADIO_TOWER_5F, 4, RadioTower5FUltraBall);
+
     entry(NATIONAL_PARK, 0,  NationalParkLassScript);
     entry(NATIONAL_PARK, 1,  NationalParkPokefanFScript);
     entry(NATIONAL_PARK, 2,  NationalParkTeacher1Script);
@@ -873,6 +974,88 @@ void PopulateMapScriptTable(void) {
     entry(BATTLE_TOWER_OUTSIDE, 1, BattleTowerOutsideBeautyScript);
     entry(BATTLE_TOWER_OUTSIDE, 2, BattleTowerOutsideSailorScript);
     entry(BATTLE_TOWER_OUTSIDE, 3, ObjectEvent);
+
+    entry(WHIRL_ISLAND_SW, 0, WhirlIslandSWUltraBall);
+
+    entry(WHIRL_ISLAND_B1F, 0, WhirlIslandB1FFullRestore);
+    entry(WHIRL_ISLAND_B1F, 1, WhirlIslandB1FCarbos);
+    entry(WHIRL_ISLAND_B1F, 2, WhirlIslandB1FCalcium);
+    entry(WHIRL_ISLAND_B1F, 3, WhirlIslandB1FNugget);
+    entry(WHIRL_ISLAND_B1F, 4, WhirlIslandB1FEscapeRope);
+    entry(WHIRL_ISLAND_B1F, 5, WhirlIslandB1FBoulder);
+
+    entry(WHIRL_ISLAND_B2F, 0, WhirlIslandB2FFullRestore);
+    entry(WHIRL_ISLAND_B2F, 1, WhirlIslandB2FMaxRevive);
+    entry(WHIRL_ISLAND_B2F, 2, WhirlIslandB2FMaxElixer);
+
+    entry(WHIRL_ISLAND_LUGIA_CHAMBER, 0, Lugia);
+
+    entry(MOUNT_MORTAR_1F_INSIDE, 0, MountMortar1FBoulder);
+    entry(MOUNT_MORTAR_1F_INSIDE, 1, MountMortar1FInsideEscapeRope);
+    entry(MOUNT_MORTAR_1F_INSIDE, 2, MountMortar1FInsideMaxRevive);
+    entry(MOUNT_MORTAR_1F_INSIDE, 3, MountMortar1FInsideHyperPotion);
+    entry(MOUNT_MORTAR_1F_INSIDE, 4, MountMortar1FInsideMaxPotion);
+    entry(MOUNT_MORTAR_1F_INSIDE, 5, MountMortar1FInsideNugget);
+    entry(MOUNT_MORTAR_1F_INSIDE, 6, TrainerPokemaniacMiller);
+    entry(MOUNT_MORTAR_1F_INSIDE, 7, TrainerSupernerdMarkus);
+    entry(MOUNT_MORTAR_1F_INSIDE, 8, MountMortar1FInsideIron);
+    entry(MOUNT_MORTAR_1F_INSIDE, 9, MountMortar1FInsideUltraBall);
+
+    entry(MOUNT_MORTAR_1F_OUTSIDE, 0, MountMortar1FOutsideEther);
+    entry(MOUNT_MORTAR_1F_OUTSIDE, 1, MountMortar1FOutsideRevive);
+
+    entry(MOUNT_MORTAR_2F_INSIDE, 0, MountMortar2FInsideMaxPotion);
+    entry(MOUNT_MORTAR_2F_INSIDE, 1, MountMortar2FInsideRareCandy);
+    entry(MOUNT_MORTAR_2F_INSIDE, 2, MountMortar2FInsideTMDefenseCurl);
+    entry(MOUNT_MORTAR_2F_INSIDE, 3, MountMortar2FInsideDragonScale);
+    entry(MOUNT_MORTAR_2F_INSIDE, 4, MountMortar2FInsideElixer);
+    entry(MOUNT_MORTAR_2F_INSIDE, 5, MountMortar2FInsideEscapeRope);
+    entry(MOUNT_MORTAR_2F_INSIDE, 6, TrainerSupernerdHugh);
+
+    entry(MOUNT_MORTAR_B1F, 0, MountMortarB1FHyperPotion);
+    entry(MOUNT_MORTAR_B1F, 1, MountMortarB1FCarbos);
+    entry(MOUNT_MORTAR_B1F, 2, MountMortarB1FBoulder);
+    entry(MOUNT_MORTAR_B1F, 3, MountMortarB1FKiyoScript);
+    entry(MOUNT_MORTAR_B1F, 4, MountMortarB1FFullRestore);
+    entry(MOUNT_MORTAR_B1F, 5, MountMortarB1FMaxEther);
+    entry(MOUNT_MORTAR_B1F, 6, MountMortarB1FPPUp);
+
+    entry(TEAM_ROCKET_BASE_B1F, 0, ObjectEvent);
+    entry(TEAM_ROCKET_BASE_B1F, 1, TrainerGruntM16);
+    entry(TEAM_ROCKET_BASE_B1F, 2, TrainerScientistJed);
+    entry(TEAM_ROCKET_BASE_B1F, 3, TeamRocketBaseB1FHyperPotion);
+    entry(TEAM_ROCKET_BASE_B1F, 4, TeamRocketBaseB1FNugget);
+    entry(TEAM_ROCKET_BASE_B1F, 5, TeamRocketBaseB1FGuardSpec);
+
+    entry(TEAM_ROCKET_BASE_B2F, 0, ObjectEvent);
+    entry(TEAM_ROCKET_BASE_B2F, 1, ObjectEvent);
+    entry(TEAM_ROCKET_BASE_B2F, 2, ObjectEvent);
+    entry(TEAM_ROCKET_BASE_B2F, 3, ObjectEvent);
+    entry(TEAM_ROCKET_BASE_B2F, 4, RocketElectrode1);
+    entry(TEAM_ROCKET_BASE_B2F, 5, RocketElectrode2);
+    entry(TEAM_ROCKET_BASE_B2F, 6, RocketElectrode3);
+    entry(TEAM_ROCKET_BASE_B2F, 7, ObjectEvent);
+    entry(TEAM_ROCKET_BASE_B2F, 8, ObjectEvent);
+    entry(TEAM_ROCKET_BASE_B2F, 9, ObjectEvent);
+    entry(TEAM_ROCKET_BASE_B2F, 10, TrainerGruntM17);
+    entry(TEAM_ROCKET_BASE_B2F, 11, TrainerGruntM18);
+    entry(TEAM_ROCKET_BASE_B2F, 12, TrainerGruntM19);
+    entry(TEAM_ROCKET_BASE_B2F, 13, TeamRocketBaseB2FTMThief);
+
+    entry(TEAM_ROCKET_BASE_B3F, 0, LanceGetPasswordScript);
+    entry(TEAM_ROCKET_BASE_B3F, 1, ObjectEvent);
+    entry(TEAM_ROCKET_BASE_B3F, 2, RocketBaseMurkrow);
+    entry(TEAM_ROCKET_BASE_B3F, 3, SlowpokeTailGrunt);
+    entry(TEAM_ROCKET_BASE_B3F, 4, RaticateTailGrunt);
+    entry(TEAM_ROCKET_BASE_B3F, 5, TrainerScientistRoss);
+    entry(TEAM_ROCKET_BASE_B3F, 6, TrainerScientistMitch);
+    entry(TEAM_ROCKET_BASE_B3F, 7, TeamRocketBaseB3FRocketScript);
+    entry(TEAM_ROCKET_BASE_B3F, 8, ObjectEvent);
+    entry(TEAM_ROCKET_BASE_B3F, 9, TeamRocketBaseB3FProtein);
+    entry(TEAM_ROCKET_BASE_B3F, 10, TeamRocketBaseB3FXSpecial);
+    entry(TEAM_ROCKET_BASE_B3F, 11, TeamRocketBaseB3FFullHeal);
+    entry(TEAM_ROCKET_BASE_B3F, 12, TeamRocketBaseB3FIceHeal);
+    entry(TEAM_ROCKET_BASE_B3F, 13, TeamRocketBaseB3FUltraBall);
 
     entry(DARK_CAVE_BLACKTHORN_ENTRANCE, 0, DarkCaveBlackthornEntrancePharmacistScript);
     entry(DARK_CAVE_BLACKTHORN_ENTRANCE, 1, DarkCaveBlackthornEntranceRevive);

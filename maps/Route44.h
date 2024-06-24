@@ -1,0 +1,63 @@
+#pragma once
+//// EVENTS
+extern const struct MapScripts Route44_MapScripts;
+extern const struct MapEvents Route44_MapEvents;
+
+//// CODE
+
+extern const struct TrainerObj TrainerBirdKeeperVance1;
+bool TrainerBirdKeeperVance1_Script(script_s* s);
+bool Route44AskNumber1M(script_s* s);
+bool Route44AskNumber2M(script_s* s);
+bool Route44RegisteredNumberM(script_s* s);
+bool Route44NumberAcceptedM(script_s* s);
+bool Route44NumberDeclinedM(script_s* s);
+bool Route44PhoneFullM(script_s* s);
+bool Route44RematchM(script_s* s);
+bool Route44GiftM(script_s* s);
+bool Route44PackFullM(script_s* s);
+bool VancePackFull(script_s* s);
+bool Route44RematchGiftM(script_s* s);
+extern const struct TrainerObj TrainerPsychicPhil;
+bool TrainerPsychicPhil_Script(script_s* s);
+extern const struct TrainerObj TrainerFisherWilton1;
+bool TrainerFisherWilton1_Script(script_s* s);
+extern const struct TrainerObj TrainerFisherEdgar;
+bool TrainerFisherEdgar_Script(script_s* s);
+extern const struct TrainerObj TrainerCooltrainerfCybil;
+bool TrainerCooltrainerfCybil_Script(script_s* s);
+extern const struct TrainerObj TrainerPokemaniacZach;
+bool TrainerPokemaniacZach_Script(script_s* s);
+extern const struct TrainerObj TrainerCooltrainermAllen;
+bool TrainerCooltrainermAllen_Script(script_s* s);
+bool Route44Sign1(script_s* s);
+bool Route44Sign2(script_s* s);
+bool Route44FruitTree(script_s* s);
+extern const struct ItemBall Route44MaxRevive;
+extern const struct ItemBall Route44UltraBall;
+extern const struct ItemBall Route44MaxRepel;
+extern const struct HiddenItem Route44HiddenElixer;
+extern const txt_cmd_s FisherWilton1SeenText[];
+extern const txt_cmd_s FisherWilton1BeatenText[];
+extern const txt_cmd_s FisherWiltonHugePoliwagText[];
+extern const txt_cmd_s FisherEdgarSeenText[];
+extern const txt_cmd_s FisherEdgarBeatenText[];
+extern const txt_cmd_s FisherEdgarAfterBattleText[];
+extern const txt_cmd_s BirdKeeperVance1SeenText[];
+extern const txt_cmd_s BirdKeeperVance1BeatenText[];
+extern const txt_cmd_s BirdKeeperVanceLegendaryBirdsText[];
+extern const txt_cmd_s BirdKeeperVance2BeatenText[];
+extern const txt_cmd_s PsychicPhilSeenText[];
+extern const txt_cmd_s PsychicPhilBeatenText[];
+extern const txt_cmd_s PsychicPhilAfterBattleText[];
+extern const txt_cmd_s PokemaniacZachSeenText[];
+extern const txt_cmd_s PokemaniacZachBeatenText[];
+extern const txt_cmd_s PokemaniacZachAfterBattleText[];
+extern const txt_cmd_s CooltrainermAllenSeenText[];
+extern const txt_cmd_s CooltrainermAllenBeatenText[];
+extern const txt_cmd_s CooltrainermAllenAfterBattleText[];
+extern const txt_cmd_s CooltrainerfCybilSeenText[];
+extern const txt_cmd_s CooltrainerfCybilBeatenText[];
+extern const txt_cmd_s CooltrainerfCybilAfterBattleText[];
+extern const txt_cmd_s Route44Sign1Text[];
+extern const txt_cmd_s Route44Sign2Text[];

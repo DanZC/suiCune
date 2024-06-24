@@ -1,0 +1,66 @@
+#pragma once
+//// EVENTS
+extern const struct MapScripts TeamRocketBaseB3F_MapScripts;
+extern const struct MapEvents TeamRocketBaseB3F_MapEvents;
+
+//// CODE
+
+bool TeamRocketBaseB3F_MapScripts_LanceGetsPassword(script_s* s);
+bool TeamRocketBaseB3F_MapScripts_DummyScene1(script_s* s);
+bool TeamRocketBaseB3F_MapScripts_DummyScene2(script_s* s);
+bool TeamRocketBaseB3F_MapScripts_DummyScene3(script_s* s);
+bool TeamRocketBaseB3F_MapScripts_CheckGiovanniDoor(script_s* s);
+bool TeamRocketBaseB3F_MapScripts_OpenSesame(script_s* s);
+bool LanceGetPasswordScript(script_s* s);
+bool RocketBaseRival(script_s* s);
+bool TeamRocketBaseB3FRocketScript(script_s* s);
+bool RocketBaseBossLeft(script_s* s);
+bool RocketBaseBossRight(script_s* s);
+bool RocketBaseBoss(script_s* s);
+bool RocketBaseMurkrow(script_s* s);
+extern const struct TrainerObj SlowpokeTailGrunt;
+bool GruntF5Script(script_s* s);
+extern const struct TrainerObj RaticateTailGrunt;
+bool GruntM28Script(script_s* s);
+extern const struct TrainerObj TrainerScientistRoss;
+bool TrainerScientistRoss_Script(script_s* s);
+extern const struct TrainerObj TrainerScientistMitch;
+bool TrainerScientistMitch_Script(script_s* s);
+bool TeamRocketBaseB3FLockedDoor(script_s* s);
+bool TeamRocketBaseB3FOathScript(script_s* s);
+extern const struct ItemBall TeamRocketBaseB3FProtein;
+extern const struct ItemBall TeamRocketBaseB3FXSpecial;
+extern const struct ItemBall TeamRocketBaseB3FFullHeal;
+extern const struct ItemBall TeamRocketBaseB3FIceHeal;
+extern const struct ItemBall TeamRocketBaseB3FUltraBall;
+extern const uint8_t RocketBaseLanceApproachesPlayerMovement[];
+extern const uint8_t RocketBaseLanceLeavesMovement[];
+extern const uint8_t RocketBasePlayerApproachesBossLeftMovement[];
+extern const uint8_t RocketBasePlayerApproachesBossRightMovement[];
+extern const uint8_t RocketBaseBossApproachesPlayerMovement[];
+extern const uint8_t RocketBaseBossHitsTableMovement[];
+extern const uint8_t RocketBaseBossLeavesMovement[];
+extern const uint8_t RocketBaseRivalEnterMovement[];
+extern const uint8_t RocketBaseRivalLeavesMovement[];
+extern const uint8_t RocketBaseRivalShovesPlayerMovement[];
+extern const txt_cmd_s LanceGetPasswordText[];
+extern const txt_cmd_s TeamRocketBaseB3FRocketText[];
+extern const txt_cmd_s RocketBaseRivalText[];
+extern const txt_cmd_s ExecutiveM4BeforeText[];
+extern const txt_cmd_s ExecutiveM4BeatenText[];
+extern const txt_cmd_s ExecutiveM4AfterText[];
+extern const txt_cmd_s RocketBaseMurkrowText[];
+extern const txt_cmd_s GruntF5SeenText[];
+extern const txt_cmd_s GruntF5BeatenText[];
+extern const txt_cmd_s GruntF5AfterBattleText[];
+extern const txt_cmd_s GruntM28SeenText[];
+extern const txt_cmd_s GruntM28BeatenText[];
+extern const txt_cmd_s GruntM28AfterBattleText[];
+extern const txt_cmd_s ScientistRossSeenText[];
+extern const txt_cmd_s ScientistRossBeatenText[];
+extern const txt_cmd_s ScientistRossAfterBattleText[];
+extern const txt_cmd_s ScientistMitchSeenText[];
+extern const txt_cmd_s ScientistMitchBeatenText[];
+extern const txt_cmd_s ScientistMitchAfterBattleText[];
+extern const txt_cmd_s TeamRocketBaseB3FLockedDoorNeedsPasswordText[];
+extern const txt_cmd_s TeamRocketBaseB3FLockedDoorOpenSesameText[];

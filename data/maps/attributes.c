@@ -104,9 +104,30 @@ map_attributes(EcruteakCity, ECRUTEAK_CITY, 0x05,
     connection(ECRUTEAK_CITY, west, Route38, ROUTE_38, 5)
     connection(ECRUTEAK_CITY, east, Route42, ROUTE_42, 9));
 
+map_attributes(MahoganyTown, MAHOGANY_TOWN, 0x71,
+    connection(MAHOGANY_TOWN, north, Route43, ROUTE_43, 0)
+    connection(MAHOGANY_TOWN, west, Route42, ROUTE_42, 0)
+    connection(MAHOGANY_TOWN, east, Route44, ROUTE_44, 0));
+
+map_attributes(LakeOfRage, LAKE_OF_RAGE, 0x05,
+    connection(LAKE_OF_RAGE, south, Route43, ROUTE_43, 5));
+
+// map_attributes(BlackthornCity, BLACKTHORN_CITY, 0x71,
+//     connection(BLACKTHORN_CITY, south, Route45, ROUTE_45, 0)
+//     connection(BLACKTHORN_CITY, west, Route44, ROUTE_44, 9));
+
+// map_attributes(SilverCaveOutside, SILVER_CAVE_OUTSIDE, 0x2c,
+//     connection(SILVER_CAVE_OUTSIDE, east, Route28, ROUTE_28, 9));
+
+// map_attributes(Route26, ROUTE_26, 0x05,
+//     connection(ROUTE_26, west, Route27, ROUTE_27, 45));
+
 map_attributes(Route27, ROUTE_27, 0x35,
     connection(ROUTE_27, west, NewBarkTown, NEW_BARK_TOWN, 0)
     connection(ROUTE_27, east, Route26, ROUTE_26, -45));
+
+// map_attributes(Route28, ROUTE_28, 0x2c,
+//     connection(ROUTE_28, west, SilverCaveOutside, SILVER_CAVE_OUTSIDE, -9));
 
 map_attributes(Route29, ROUTE_29, 0x05, 
     connection(ROUTE_29, north, Route46, ROUTE_46, 10)
@@ -166,9 +187,167 @@ map_attributes(Route42, ROUTE_42, 0x05,
     connection(ROUTE_42, west, EcruteakCity, ECRUTEAK_CITY, -9)
     connection(ROUTE_42, east, MahoganyTown, MAHOGANY_TOWN, 0));
 
+map_attributes(Route43, ROUTE_43, 0x05,
+    connection(ROUTE_43, north, LakeOfRage, LAKE_OF_RAGE, -5)
+    connection(ROUTE_43, south, MahoganyTown, MAHOGANY_TOWN, 0));
+
+map_attributes(Route44, ROUTE_44, 0x71,
+    connection(ROUTE_44, west, MahoganyTown, MAHOGANY_TOWN, 0)
+    connection(ROUTE_44, east, BlackthornCity, BLACKTHORN_CITY, -9));
+
+map_attributes(Route45, ROUTE_45, 0x71,
+    connection(ROUTE_45, north, BlackthornCity, BLACKTHORN_CITY, 0)
+    connection(ROUTE_45, west, Route46, ROUTE_46, 36));
+
 map_attributes(Route46, ROUTE_46, 0x05,
     connection(ROUTE_46, south, Route29, ROUTE_29, -10)
     connection(ROUTE_46, east, Route45, ROUTE_45, -36));
+
+// map_attributes(PewterCity, PEWTER_CITY, 0x0f,
+//     connection(PEWTER_CITY, south, Route2, ROUTE_2, 5)
+//     connection(PEWTER_CITY, east, Route3, ROUTE_3, 5));
+
+// map_attributes(Route2, ROUTE_2, 0x0f,
+//     connection(ROUTE_2, north, PewterCity, PEWTER_CITY, -5)
+//     connection(ROUTE_2, south, ViridianCity, VIRIDIAN_CITY, -5));
+
+// map_attributes(ViridianCity, VIRIDIAN_CITY, 0x0f,
+//     connection(VIRIDIAN_CITY, north, Route2, ROUTE_2, 5)
+//     connection(VIRIDIAN_CITY, south, Route1, ROUTE_1, 10)
+//     connection(VIRIDIAN_CITY, west, Route22, ROUTE_22, 4));
+
+// map_attributes(Route22, ROUTE_22, 0x2c,
+//     connection(ROUTE_22, east, ViridianCity, VIRIDIAN_CITY, -4));
+
+// map_attributes(Route1, ROUTE_1, 0x0f,
+//     connection(ROUTE_1, north, ViridianCity, VIRIDIAN_CITY, -10)
+//     connection(ROUTE_1, south, PalletTown, PALLET_TOWN, 0));
+
+// map_attributes(PalletTown, PALLET_TOWN, 0x0f,
+//     connection(PALLET_TOWN, north, Route1, ROUTE_1, 0)
+//     connection(PALLET_TOWN, south, Route21, ROUTE_21, 0));
+
+// map_attributes(Route21, ROUTE_21, 0x43,
+//     connection(ROUTE_21, north, PalletTown, PALLET_TOWN, 0)
+//     connection(ROUTE_21, south, CinnabarIsland, CINNABAR_ISLAND, 0));
+
+// map_attributes(CinnabarIsland, CINNABAR_ISLAND, 0x43,
+//     connection(CINNABAR_ISLAND, north, Route21, ROUTE_21, 0)
+//     connection(CINNABAR_ISLAND, east, Route20, ROUTE_20, 0));
+
+// map_attributes(Route20, ROUTE_20, 0x43,
+//     connection(ROUTE_20, west, CinnabarIsland, CINNABAR_ISLAND, 0)
+//     connection(ROUTE_20, east, Route19, ROUTE_19, -9));
+
+// map_attributes(Route19, ROUTE_19, 0x43,
+//     connection(ROUTE_19, north, FuchsiaCity, FUCHSIA_CITY, 0)
+//     connection(ROUTE_19, west, Route20, ROUTE_20, 9));
+
+// map_attributes(FuchsiaCity, FUCHSIA_CITY, 0x0f,
+//     connection(FUCHSIA_CITY, south, Route19, ROUTE_19, 0)
+//     connection(FUCHSIA_CITY, west, Route18, ROUTE_18, 7)
+//     connection(FUCHSIA_CITY, east, Route15, ROUTE_15, 9));
+
+// map_attributes(Route18, ROUTE_18, 0x43,
+//     connection(ROUTE_18, west, Route17, ROUTE_17, -38)
+//     connection(ROUTE_18, east, FuchsiaCity, FUCHSIA_CITY, -7));
+
+// map_attributes(Route17, ROUTE_17, 0x43,
+//     connection(ROUTE_17, north, Route16, ROUTE_16, 0)
+//     connection(ROUTE_17, east, Route18, ROUTE_18, 38));
+
+// map_attributes(Route16, ROUTE_16, 0x0f,
+//     connection(ROUTE_16, south, Route17, ROUTE_17, 0)
+//     connection(ROUTE_16, east, CeladonCity, CELADON_CITY, -9));
+
+// map_attributes(CeladonCity, CELADON_CITY, 0x0f,
+//     connection(CELADON_CITY, west, Route16, ROUTE_16, 9)
+//     connection(CELADON_CITY, east, Route7, ROUTE_7, 5));
+
+// map_attributes(Route7, ROUTE_7, 0x0f,
+//     connection(ROUTE_7, west, CeladonCity, CELADON_CITY, -5)
+//     connection(ROUTE_7, east, SaffronCity, SAFFRON_CITY, -9));
+
+// map_attributes(Route15, ROUTE_15, 0x0f,
+//     connection(ROUTE_15, west, FuchsiaCity, FUCHSIA_CITY, -9)
+//     connection(ROUTE_15, east, Route14, ROUTE_14, -9));
+
+// map_attributes(Route14, ROUTE_14, 0x43,
+//     connection(ROUTE_14, north, Route13, ROUTE_13, 0)
+//     connection(ROUTE_14, west, Route15, ROUTE_15, 9));
+
+// map_attributes(Route13, ROUTE_13, 0x43,
+//     connection(ROUTE_13, north, Route12, ROUTE_12, 20)
+//     connection(ROUTE_13, south, Route14, ROUTE_14, 0));
+
+// map_attributes(Route12, ROUTE_12, 0x43,
+//     connection(ROUTE_12, north, LavenderTown, LAVENDER_TOWN, 0)
+//     connection(ROUTE_12, south, Route13, ROUTE_13, -20)
+//     connection(ROUTE_12, west, Route11, ROUTE_11, 9));
+
+// map_attributes(Route11, ROUTE_11, 0x0f,
+//     connection(ROUTE_11, west, VermilionCity, VERMILION_CITY, 0)
+//     connection(ROUTE_11, east, Route12, ROUTE_12, -9));
+
+// map_attributes(LavenderTown, LAVENDER_TOWN, 0x2c,
+//     connection(LAVENDER_TOWN, north, Route10South, ROUTE_10_SOUTH, 0)
+//     connection(LAVENDER_TOWN, south, Route12, ROUTE_12, 0)
+//     connection(LAVENDER_TOWN, west, Route8, ROUTE_8, 0));
+
+// map_attributes(VermilionCity, VERMILION_CITY, 0x43,
+//     connection(VERMILION_CITY, north, Route6, ROUTE_6, 5)
+//     connection(VERMILION_CITY, east, Route11, ROUTE_11, 0));
+
+// map_attributes(Route6, ROUTE_6, 0x0f,
+//     connection(ROUTE_6, north, SaffronCity, SAFFRON_CITY, -5)
+//     connection(ROUTE_6, south, VermilionCity, VERMILION_CITY, -5));
+
+// map_attributes(SaffronCity, SAFFRON_CITY, 0x0f,
+//     connection(SAFFRON_CITY, north, Route5, ROUTE_5, 5)
+//     connection(SAFFRON_CITY, south, Route6, ROUTE_6, 5)
+//     connection(SAFFRON_CITY, west, Route7, ROUTE_7, 9)
+//     connection(SAFFRON_CITY, east, Route8, ROUTE_8, 9));
+
+// map_attributes(Route5, ROUTE_5, 0x0f,
+//     connection(ROUTE_5, north, CeruleanCity, CERULEAN_CITY, -5)
+//     connection(ROUTE_5, south, SaffronCity, SAFFRON_CITY, -5));
+
+// map_attributes(CeruleanCity, CERULEAN_CITY, 0x0f,
+//     connection(CERULEAN_CITY, north, Route24, ROUTE_24, 6)
+//     connection(CERULEAN_CITY, south, Route5, ROUTE_5, 5)
+//     connection(CERULEAN_CITY, west, Route4, ROUTE_4, 5)
+//     connection(CERULEAN_CITY, east, Route9, ROUTE_9, 9));
+
+// map_attributes(Route9, ROUTE_9, 0x2c,
+//     connection(ROUTE_9, south, Route10North, ROUTE_10_NORTH, 20)
+//     connection(ROUTE_9, west, CeruleanCity, CERULEAN_CITY, -9));
+
+// map_attributes(Route24, ROUTE_24, 0x2c,
+//     connection(ROUTE_24, north, Route25, ROUTE_25, 0)
+//     connection(ROUTE_24, south, CeruleanCity, CERULEAN_CITY, -6));
+
+// map_attributes(Route25, ROUTE_25, 0x2c,
+//     connection(ROUTE_25, south, Route24, ROUTE_24, 0));
+
+// map_attributes(Route3, ROUTE_3, 0x2c,
+//     connection(ROUTE_3, west, PewterCity, PEWTER_CITY, -5)
+//     connection(ROUTE_3, east, Route4, ROUTE_4, 0));
+
+// map_attributes(Route4, ROUTE_4, 0x2c,
+//     connection(ROUTE_4, west, Route3, ROUTE_3, 0)
+//     connection(ROUTE_4, east, CeruleanCity, CERULEAN_CITY, -5));
+
+// map_attributes(Route8, ROUTE_8, 0x2c,
+//     connection(ROUTE_8, west, SaffronCity, SAFFRON_CITY, -9)
+//     connection(ROUTE_8, east, LavenderTown, LAVENDER_TOWN, 0));
+
+// map_attributes(Route10North, ROUTE_10_NORTH, 0x2c,
+//     connection(ROUTE_10_NORTH, north, Route9, ROUTE_9, -20)
+//     connection(ROUTE_10_NORTH, south, Route10South, ROUTE_10_SOUTH, 0));
+
+// map_attributes(Route10South, ROUTE_10_SOUTH, 0x2c,
+//     connection(ROUTE_10_SOUTH, north, Route10North, ROUTE_10_NORTH, 0)
+//     connection(ROUTE_10_SOUTH, south, LavenderTown, LAVENDER_TOWN, 0));
 
 // map_attributes(Route23, ROUTE_23, 0x0f, 0);
 map_attributes(SproutTower1F, SPROUT_TOWER_1F, 0x00, 0);
@@ -189,9 +368,9 @@ map_attributes(NationalPark, NATIONAL_PARK, 0x00, 0);
 map_attributes(NationalParkBugContest, NATIONAL_PARK_BUG_CONTEST, 0x00, 0);
 map_attributes(RadioTower1F, RADIO_TOWER_1F, 0x00, 0);
 map_attributes(RadioTower2F, RADIO_TOWER_2F, 0x00, 0);
-// map_attributes(RadioTower3F, RADIO_TOWER_3F, 0x00, 0);
-// map_attributes(RadioTower4F, RADIO_TOWER_4F, 0x00, 0);
-// map_attributes(RadioTower5F, RADIO_TOWER_5F, 0x00, 0);
+map_attributes(RadioTower3F, RADIO_TOWER_3F, 0x00, 0);
+map_attributes(RadioTower4F, RADIO_TOWER_4F, 0x00, 0);
+map_attributes(RadioTower5F, RADIO_TOWER_5F, 0x00, 0);
 map_attributes(RuinsOfAlphOutside, RUINS_OF_ALPH_OUTSIDE, 0x05, 0);
 map_attributes(RuinsOfAlphHoOhChamber, RUINS_OF_ALPH_HO_OH_CHAMBER, 0x00, 0);
 map_attributes(RuinsOfAlphKabutoChamber, RUINS_OF_ALPH_KABUTO_CHAMBER, 0x00, 0);
@@ -218,32 +397,32 @@ map_attributes(OlivineLighthouse3F, OLIVINE_LIGHTHOUSE_3F, 0x00, 0);
 map_attributes(OlivineLighthouse4F, OLIVINE_LIGHTHOUSE_4F, 0x00, 0);
 map_attributes(OlivineLighthouse5F, OLIVINE_LIGHTHOUSE_5F, 0x00, 0);
 map_attributes(OlivineLighthouse6F, OLIVINE_LIGHTHOUSE_6F, 0x00, 0);
-// map_attributes(MahoganyMart1F, MAHOGANY_MART_1F, 0x00, 0);
-// map_attributes(TeamRocketBaseB1F, TEAM_ROCKET_BASE_B1F, 0x00, 0);
-// map_attributes(TeamRocketBaseB2F, TEAM_ROCKET_BASE_B2F, 0x00, 0);
-// map_attributes(TeamRocketBaseB3F, TEAM_ROCKET_BASE_B3F, 0x00, 0);
+map_attributes(MahoganyMart1F, MAHOGANY_MART_1F, 0x00, 0);
+map_attributes(TeamRocketBaseB1F, TEAM_ROCKET_BASE_B1F, 0x00, 0);
+map_attributes(TeamRocketBaseB2F, TEAM_ROCKET_BASE_B2F, 0x00, 0);
+map_attributes(TeamRocketBaseB3F, TEAM_ROCKET_BASE_B3F, 0x00, 0);
 map_attributes(IlexForest, ILEX_FOREST, 0x05, 0);
 map_attributes(GoldenrodUnderground, GOLDENROD_UNDERGROUND, 0x00, 0);
 map_attributes(GoldenrodUndergroundSwitchRoomEntrances, GOLDENROD_UNDERGROUND_SWITCH_ROOM_ENTRANCES, 0x00, 0);
 map_attributes(GoldenrodDeptStoreB1F, GOLDENROD_DEPT_STORE_B1F, 0x00, 0);
-// map_attributes(GoldenrodUndergroundWarehouse, GOLDENROD_UNDERGROUND_WAREHOUSE, 0x00, 0);
-// map_attributes(MountMortar1FOutside, MOUNT_MORTAR_1F_OUTSIDE, 0x09, 0);
-// map_attributes(MountMortar1FInside, MOUNT_MORTAR_1F_INSIDE, 0x09, 0);
-// map_attributes(MountMortar2FInside, MOUNT_MORTAR_2F_INSIDE, 0x09, 0);
-// map_attributes(MountMortarB1F, MOUNT_MORTAR_B1F, 0x09, 0);
+map_attributes(GoldenrodUndergroundWarehouse, GOLDENROD_UNDERGROUND_WAREHOUSE, 0x00, 0);
+map_attributes(MountMortar1FOutside, MOUNT_MORTAR_1F_OUTSIDE, 0x09, 0);
+map_attributes(MountMortar1FInside, MOUNT_MORTAR_1F_INSIDE, 0x09, 0);
+map_attributes(MountMortar2FInside, MOUNT_MORTAR_2F_INSIDE, 0x09, 0);
+map_attributes(MountMortarB1F, MOUNT_MORTAR_B1F, 0x09, 0);
 // map_attributes(IcePath1F, ICE_PATH_1F, 0x09, 0);
 // map_attributes(IcePathB1F, ICE_PATH_B1F, 0x19, 0);
 // map_attributes(IcePathB2FMahoganySide, ICE_PATH_B2F_MAHOGANY_SIDE, 0x19, 0);
 // map_attributes(IcePathB2FBlackthornSide, ICE_PATH_B2F_BLACKTHORN_SIDE, 0x19, 0);
 // map_attributes(IcePathB3F, ICE_PATH_B3F, 0x19, 0);
-// map_attributes(WhirlIslandNW, WHIRL_ISLAND_NW, 0x09, 0);
-// map_attributes(WhirlIslandNE, WHIRL_ISLAND_NE, 0x09, 0);
-// map_attributes(WhirlIslandSW, WHIRL_ISLAND_SW, 0x09, 0);
-// map_attributes(WhirlIslandCave, WHIRL_ISLAND_CAVE, 0x09, 0);
-// map_attributes(WhirlIslandSE, WHIRL_ISLAND_SE, 0x0f, 0);
-// map_attributes(WhirlIslandB1F, WHIRL_ISLAND_B1F, 0x09, 0);
-// map_attributes(WhirlIslandB2F, WHIRL_ISLAND_B2F, 0x2e, 0);
-// map_attributes(WhirlIslandLugiaChamber, WHIRL_ISLAND_LUGIA_CHAMBER, 0x0f, 0);
+map_attributes(WhirlIslandNW, WHIRL_ISLAND_NW, 0x09, 0);
+map_attributes(WhirlIslandNE, WHIRL_ISLAND_NE, 0x09, 0);
+map_attributes(WhirlIslandSW, WHIRL_ISLAND_SW, 0x09, 0);
+map_attributes(WhirlIslandCave, WHIRL_ISLAND_CAVE, 0x09, 0);
+map_attributes(WhirlIslandSE, WHIRL_ISLAND_SE, 0x0f, 0);
+map_attributes(WhirlIslandB1F, WHIRL_ISLAND_B1F, 0x09, 0);
+map_attributes(WhirlIslandB2F, WHIRL_ISLAND_B2F, 0x2e, 0);
+map_attributes(WhirlIslandLugiaChamber, WHIRL_ISLAND_LUGIA_CHAMBER, 0x0f, 0);
 // map_attributes(SilverCaveRoom1, SILVER_CAVE_ROOM_1, 0x09, 0);
 // map_attributes(SilverCaveRoom2, SILVER_CAVE_ROOM_2, 0x09, 0);
 // map_attributes(SilverCaveRoom3, SILVER_CAVE_ROOM_3, 0x09, 0);
@@ -265,9 +444,9 @@ map_attributes(OlivineMart, OLIVINE_MART, 0x00, 0);
 map_attributes(Route38EcruteakGate, ROUTE_38_ECRUTEAK_GATE, 0x00, 0);
 map_attributes(Route39Barn, ROUTE_39_BARN, 0x00, 0);
 map_attributes(Route39Farmhouse, ROUTE_39_FARMHOUSE, 0x00, 0);
-// map_attributes(MahoganyRedGyaradosSpeechHouse, MAHOGANY_RED_GYARADOS_SPEECH_HOUSE, 0x00, 0);
-// map_attributes(MahoganyGym, MAHOGANY_GYM, 0x00, 0);
-// map_attributes(MahoganyPokecenter1F, MAHOGANY_POKECENTER_1F, 0x00, 0);
+map_attributes(MahoganyRedGyaradosSpeechHouse, MAHOGANY_RED_GYARADOS_SPEECH_HOUSE, 0x00, 0);
+map_attributes(MahoganyGym, MAHOGANY_GYM, 0x00, 0);
+map_attributes(MahoganyPokecenter1F, MAHOGANY_POKECENTER_1F, 0x00, 0);
 map_attributes(Route42EcruteakGate, ROUTE_42_ECRUTEAK_GATE, 0x00, 0);
 // map_attributes(DiglettsCave, DIGLETTS_CAVE, 0x09, 0);
 // map_attributes(MountMoon, MOUNT_MOON, 0x09, 0);
@@ -312,10 +491,10 @@ map_attributes(CharcoalKiln, CHARCOAL_KILN, 0x00, 0);
 map_attributes(AzaleaMart, AZALEA_MART, 0x00, 0);
 map_attributes(KurtsHouse, KURTS_HOUSE, 0x00, 0);
 map_attributes(AzaleaGym, AZALEA_GYM, 0x00, 0);
-// map_attributes(LakeOfRageHiddenPowerHouse, LAKE_OF_RAGE_HIDDEN_POWER_HOUSE, 0x00, 0);
-// map_attributes(LakeOfRageMagikarpHouse, LAKE_OF_RAGE_MAGIKARP_HOUSE, 0x00, 0);
-// map_attributes(Route43MahoganyGate, ROUTE_43_MAHOGANY_GATE, 0x00, 0);
-// map_attributes(Route43Gate, ROUTE_43_GATE, 0x00, 0);
+map_attributes(LakeOfRageHiddenPowerHouse, LAKE_OF_RAGE_HIDDEN_POWER_HOUSE, 0x00, 0);
+map_attributes(LakeOfRageMagikarpHouse, LAKE_OF_RAGE_MAGIKARP_HOUSE, 0x00, 0);
+map_attributes(Route43MahoganyGate, ROUTE_43_MAHOGANY_GATE, 0x00, 0);
+map_attributes(Route43Gate, ROUTE_43_GATE, 0x00, 0);
 map_attributes(VioletMart, VIOLET_MART, 0x00, 0);
 map_attributes(VioletGym, VIOLET_GYM, 0x00, 0);
 map_attributes(EarlsPokemonAcademy, EARLS_POKEMON_ACADEMY, 0x00, 0);
