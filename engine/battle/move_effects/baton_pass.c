@@ -9,7 +9,6 @@
 #include "../../../home/menu.h"
 #include "../../../home/text.h"
 
-// TODO: Finishing converting functions.
 void BattleCommand_BatonPass(void){
 //  batonpass
 
@@ -36,14 +35,17 @@ void BattleCommand_BatonPass(void){
     //  Transition into switchmon menu
         // CALL(aLoadStandardMenuHeader);
         LoadStandardMenuHeader_Conv();
-        FARCALL(aSetUpBattlePartyMenu);
+        // FARCALL(aSetUpBattlePartyMenu);
+        SetUpBattlePartyMenu();
 
-        FARCALL(aForcePickSwitchMonInBattle);
+        // FARCALL(aForcePickSwitchMonInBattle);
+        ForcePickSwitchMonInBattle();
 
     //  Return to battle scene
         // CALL(aClearPalettes);
         ClearPalettes_Conv();
-        FARCALL(av_LoadBattleFontsHPBar);
+        // FARCALL(av_LoadBattleFontsHPBar);
+        v_LoadBattleFontsHPBar();
         // CALL(aCloseWindow);
         CloseWindow_Conv2();
         // CALL(aClearSprites);
@@ -62,14 +64,13 @@ void BattleCommand_BatonPass(void){
 
     //  Mobile link battles handle entrances differently
         // FARCALL(aCheckMobileBattleError);
-        struct cpu_registers_s reg = SafeCallGBAutoRet(aCheckMobileBattleError);
         // JP_C (mEndMoveEffect);
-        if(reg.f_bits.c)
+        if(CheckMobileBattleError_Conv())
             return EndMoveEffect();
 
         // LD_HL(mPassedBattleMonEntrance);
         // CALL(aCallBattleCore);
-        SafeCallGBAuto(aPassedBattleMonEntrance);
+        PassedBattleMonEntrance();
 
         // CALL(aResetBatonPassStatus);
         ResetBatonPassStatus();
@@ -99,9 +100,8 @@ void BattleCommand_BatonPass(void){
 
     //  Mobile link battles handle entrances differently
         // FARCALL(aCheckMobileBattleError);
-        struct cpu_registers_s reg = SafeCallGBAutoRet(aCheckMobileBattleError);
         // JP_C (mEndMoveEffect);
-        if(reg.f_bits.c)
+        if(CheckMobileBattleError_Conv())
             return EndMoveEffect();
 
     //  Passed enemy PartyMon entrance
@@ -145,6 +145,7 @@ void BatonPass_LinkPlayerSwitch(void){
     LoadStandardMenuHeader_Conv();
     // LD_HL(mLinkBattleSendReceiveAction);
     // CALL(aCallBattleCore);
+// TODO: Convert LinkBattleSendReceiveAction
     SafeCallGBAuto(aLinkBattleSendReceiveAction);
     // CALL(aCloseWindow);
     CloseWindow_Conv2();

@@ -97,11 +97,10 @@ void CheckPartyFullAfterContest(void){
         OpenSRAM_Conv(MBANK(sBoxMon1Level));
         // LD_A_addr(sBoxMon1Level);
         // LD_addr_A(wCurPartyLevel);
-        wram->wCurPartyLevel = gb_read(sBoxMon1Level);
         // CALL(aCloseSRAM);
         CloseSRAM_Conv();
         // CALL(aSetBoxMonCaughtData);
-        SetBoxMonCaughtData();
+        SetBoxMonCaughtData(gb_read(sBoxMon1Level));
         // LD_A(BANK(sBoxMon1CaughtLocation));
         // CALL(aOpenSRAM);
         OpenSRAM_Conv(MBANK(sBoxMon1CaughtLocation));
@@ -196,9 +195,8 @@ void CheckPartyFullAfterContest(void){
     // CALL(aGetPartyLocation);
     // LD_A_hl;
     // LD_addr_A(wCurPartyLevel);
-    wram->wCurPartyLevel = wram->wContestMon.mon.level;
     // CALL(aSetCaughtData);
-    SetCaughtData_Conv();
+    SetCaughtData_Conv(wram->wContestMon.mon.level);
     // LD_A_addr(wPartyCount);
     // DEC_A;
     // LD_HL(wPartyMon1CaughtLocation);
@@ -241,13 +239,13 @@ void SetCaughtData(void){
     return SetBoxmonOrEggmonCaughtData();
 }
 
-void SetCaughtData_Conv(void){
+void SetCaughtData_Conv(uint8_t level){
     // LD_A_addr(wPartyCount);
     // DEC_A;
     // LD_HL(wPartyMon1CaughtLevel);
     // CALL(aGetPartyLocation);
     // return SetBoxmonOrEggmonCaughtData();
-    return SetBoxmonOrEggmonCaughtData_Conv(&wram->wPartyMon[wram->wPartyCount - 1].mon);
+    return SetBoxmonOrEggmonCaughtData_Conv(&wram->wPartyMon[wram->wPartyCount - 1].mon, level);
 }
 
 void SetBoxmonOrEggmonCaughtData(void){
@@ -286,7 +284,7 @@ NotPokecenter2F:
 
 }
 
-void SetBoxmonOrEggmonCaughtData_Conv(struct BoxMon* boxmon){
+void SetBoxmonOrEggmonCaughtData_Conv(struct BoxMon* boxmon, uint8_t level){
     // LD_A_addr(wTimeOfDay);
     // INC_A;
     // RRCA;
@@ -296,7 +294,7 @@ void SetBoxmonOrEggmonCaughtData_Conv(struct BoxMon* boxmon){
     // LD_A_addr(wCurPartyLevel);
     // OR_A_B;
     // LD_hli_A;
-    boxmon->caughtTimeLevel = (time | wram->wCurPartyLevel);
+    boxmon->caughtTimeLevel = (time | level);
     // LD_A_addr(wMapGroup);
     // LD_B_A;
     uint8_t b = wram->wMapGroup;
@@ -331,13 +329,13 @@ void SetBoxmonOrEggmonCaughtData_Conv(struct BoxMon* boxmon){
     boxmon->caughtGenderLocation = (loc | gender);
 }
 
-void SetBoxMonCaughtData(void){
+void SetBoxMonCaughtData(uint8_t level){
     // LD_A(BANK(sBoxMon1CaughtLevel));
     // CALL(aOpenSRAM);
     OpenSRAM_Conv(MBANK(asBoxMon1CaughtLevel));
     // LD_HL(sBoxMon1CaughtLevel);
     // CALL(aSetBoxmonOrEggmonCaughtData);
-    SetBoxmonOrEggmonCaughtData_Conv((struct BoxMon*)GBToRAMAddr(sBoxMon1CaughtLevel));
+    SetBoxmonOrEggmonCaughtData_Conv((struct BoxMon*)GBToRAMAddr(sBoxMon1CaughtLevel), level);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // RET;
@@ -349,11 +347,10 @@ void SetGiftBoxMonCaughtData(uint8_t b){
     // CALL(aOpenSRAM);
     OpenSRAM_Conv(MBANK(asBoxMon1CaughtLevel));
     // LD_HL(sBoxMon1CaughtLevel);
-    uint16_t hl = sBoxMon1CaughtLevel;
+    struct BoxMon* hl = (struct BoxMon*)GBToRAMAddr(sBoxMon1CaughtLevel);
     // POP_BC;
     // CALL(aSetGiftMonCaughtData);
-    gb_write(hl++, 0);
-    gb_write(hl, LANDMARK_GIFT | ((b & 1) << 7));
+    SetGiftMonCaughtData_Conv(hl, b);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // RET;
@@ -406,4 +403,19 @@ void SetEggMonCaughtData(void){
     LD_addr_A(wCurPartyLevel);
     RET;
 
+}
+
+void SetEggMonCaughtData_Conv(uint8_t a){
+    // LD_A_addr(wCurPartyMon);
+    // LD_HL(wPartyMon1CaughtLevel);
+    // CALL(aGetPartyLocation);
+    // LD_A_addr(wCurPartyLevel);
+    // PUSH_AF;
+    // LD_A(CAUGHT_EGG_LEVEL);
+    // LD_addr_A(wCurPartyLevel);
+    // CALL(aSetBoxmonOrEggmonCaughtData);
+    SetBoxmonOrEggmonCaughtData_Conv(&wram->wPartyMon[a].mon, CAUGHT_EGG_LEVEL);
+    // POP_AF;
+    // LD_addr_A(wCurPartyLevel);
+    // RET;
 }

@@ -33,6 +33,7 @@
 #include "../../engine/pokemon/health.h"
 #include "../../engine/pokemon/caught_data.h"
 #include "../../engine/pokemon/breeding.h"
+#include "../../engine/pokemon/search.h"
 #include "../../home/time_palettes.h"
 #include "../../home/audio.h"
 #include "../../mobile/mobile_41.h"
@@ -195,8 +196,8 @@ void (*const SpecialsPointers[])(void) = {
     add_special(BuenaPrize),
     // add_special(GiveDratini),
     // add_special(SampleKenjiBreakCountdown),
-    // add_special(BeastsCheck),
-    // add_special(MonCheck),
+    add_special(BeastsCheck),
+    add_special(MonCheck),
     add_special(SetPlayerPalette),
     // add_special(UnusedBattleTowerDummySpecial2),
     // add_special(Mobile_SelectThreeMons),

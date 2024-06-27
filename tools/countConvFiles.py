@@ -2,6 +2,9 @@ import sys
 import os.path as fs
 from glob import glob
 
+# These files will be ignored, either because their contents were unused
+# or merged into another converted file.
+
 skip_files = [
     'data/events/pokedex_ratings.asm',
     'data/items/mom_phone.asm',
@@ -21,6 +24,7 @@ skip_files = [
     'data/sgb_ctrl_packets.asm',
     'data/text_buffers.asm',
     'engine/overworld/map_object_action.asm',
+    'engine/pokemon/correct_party_errors.asm',
     'gfx/pokemon/anim_pointers.asm',
     'gfx/pokemon/bitmask_pointers.asm',
     'gfx/pokemon/bitmasks.asm',

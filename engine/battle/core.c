@@ -9084,26 +9084,37 @@ ok:
 }
 
 void PassedBattleMonEntrance(void){
-    LD_C(50);
-    CALL(aDelayFrames);
+    // LD_C(50);
+    // CALL(aDelayFrames);
+    DelayFrames_Conv(50);
 
-    hlcoord(9, 7, wTilemap);
-    LD_BC((5 << 8) | 11);
-    CALL(aClearBox);
+    // hlcoord(9, 7, wTilemap);
+    // LD_BC((5 << 8) | 11);
+    // CALL(aClearBox);
+    ClearBox_Conv2(coord(9, 7, wram->wTilemap), 5, 11);
 
-    LD_A_addr(wCurPartyMon);
-    LD_addr_A(wCurBattleMon);
-    CALL(aAddBattleParticipant);
-    CALL(aInitBattleMon);
-    XOR_A_A;  // FALSE
-    LD_addr_A(wApplyStatLevelMultipliersToEnemy);
-    CALL(aApplyStatLevelMultiplierOnAllStats);
-    CALL(aSendOutPlayerMon);
-    CALL(aEmptyBattleTextbox);
-    CALL(aLoadTilemapToTempTilemap);
-    CALL(aSetPlayerTurn);
-    JP(mSpikesDamage);
-
+    // LD_A_addr(wCurPartyMon);
+    // LD_addr_A(wCurBattleMon);
+    wram->wCurBattleMon = wram->wCurPartyMon;
+    // CALL(aAddBattleParticipant);
+    AddBattleParticipant();
+    // CALL(aInitBattleMon);
+    InitBattleMon();
+    // XOR_A_A;  // FALSE
+    // LD_addr_A(wApplyStatLevelMultipliersToEnemy);
+    wram->wApplyStatLevelMultipliersToEnemy = FALSE;
+    // CALL(aApplyStatLevelMultiplierOnAllStats);
+    ApplyStatLevelMultiplierOnAllStats();
+    // CALL(aSendOutPlayerMon);
+    SendOutPlayerMon();
+    // CALL(aEmptyBattleTextbox);
+    EmptyBattleTextbox();
+    // CALL(aLoadTilemapToTempTilemap);
+    LoadTilemapToTempTilemap_Conv();
+    // CALL(aSetPlayerTurn);
+    SetPlayerTurn_Conv();
+    // JP(mSpikesDamage);
+    return SpikesDamage();
 }
 
 void BattleMenu_Run(void){

@@ -799,40 +799,52 @@ void v_CGB_PartyMenu(void){
 }
 
 void v_CGB_Evolution(void){
-    LD_DE(wBGPals1);
-    LD_A_C;
-    AND_A_A;
-    IF_Z goto pokemon;
-    LD_A(PREDEFPAL_BLACKOUT);
-    CALL(aGetPredefPal);
-    CALL(aLoadHLPaletteIntoDE);
-    goto got_palette;
+    uint16_t dest[NUM_PAL_COLORS];
+    // LD_DE(wBGPals1);
+    uint8_t c = 0;
+    // LD_A_C;
+    // AND_A_A;
+    // IF_Z goto pokemon;
+    //  Always loads c with 0 in original code.
+    if(c != 0) {
+        // LD_A(PREDEFPAL_BLACKOUT);
+        // CALL(aGetPredefPal);
+        // CALL(aLoadHLPaletteIntoDE);
+        LoadHLPaletteIntoDE_Conv(wram->wBGPals1, GetPredefPal_Conv(PREDEFPAL_BLACKOUT));
+        // goto got_palette;
+    }
+    else {
+    // pokemon:
+        uint16_t* de = (uint16_t*)wram_ptr(wBGPals1);
+        // LD_HL(wPartyMon1DVs);
+        // LD_BC(PARTYMON_STRUCT_LENGTH);
+        // LD_A_addr(wCurPartyMon);
+        // CALL(aAddNTimes);
+        // LD_C_L;
+        // LD_B_H;
+        // LD_A_addr(wPlayerHPPal);
+        // CALL(aGetPlayerOrMonPalettePointer);
+        // CALL(aLoadPalette_White_Col1_Col2_Black);
+        LoadPalette_White_Col1_Col2_Black_Conv(de, GetPlayerOrMonPalettePointer_Conv(dest, wram->wPlayerHPPal, wram->wPartyMon[wram->wCurPartyMon].mon.DVs));
+        // LD_HL(mBattleObjectPals);
+        // LD_DE(wOBPals1 + PALETTE_SIZE * PAL_BATTLE_OB_GRAY);
+        // LD_BC(6 * PALETTE_SIZE);
+        // LD_A(MBANK(awOBPals1));
+        // CALL(aFarCopyWRAM);
+        CopyBytes_Conv2(wram->wOBPals1 + PALETTE_SIZE * PAL_BATTLE_OB_GRAY, BattleObjectPals, 6 * PALETTE_SIZE);
+    }
 
-
-pokemon:
-    LD_HL(wPartyMon1DVs);
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    LD_A_addr(wCurPartyMon);
-    CALL(aAddNTimes);
-    LD_C_L;
-    LD_B_H;
-    LD_A_addr(wPlayerHPPal);
-    CALL(aGetPlayerOrMonPalettePointer);
-    CALL(aLoadPalette_White_Col1_Col2_Black);
-    LD_HL(mBattleObjectPals);
-    LD_DE(wOBPals1 + PALETTE_SIZE * PAL_BATTLE_OB_GRAY);
-    LD_BC(6 * PALETTE_SIZE);
-    LD_A(MBANK(awOBPals1));
-    CALL(aFarCopyWRAM);
-
-
-got_palette:
-    CALL(aWipeAttrmap);
-    CALL(aApplyAttrmap);
-    CALL(aApplyPals);
-    LD_A(TRUE);
-    LDH_addr_A(hCGBPalUpdate);
-    RET;
+// got_palette:
+    // CALL(aWipeAttrmap);
+    WipeAttrmap();
+    // CALL(aApplyAttrmap);
+    ApplyAttrmap_Conv();
+    // CALL(aApplyPals);
+    ApplyPals_Conv();
+    // LD_A(TRUE);
+    // LDH_addr_A(hCGBPalUpdate);
+    hram->hCGBPalUpdate = TRUE;
+    // RET;
 
 }
 

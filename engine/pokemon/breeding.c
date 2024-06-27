@@ -2,11 +2,33 @@
 #include "breeding.h"
 #include "mon_stats.h"
 #include "move_mon.h"
+#include "caught_data.h"
 #include "../../home/pokemon.h"
 #include "../../home/copy.h"
 #include "../../home/joypad.h"
-#include "../items/tmhm2.h"
+#include "../../home/audio.h"
+#include "../../home/clear_sprites.h"
 #include "../../home/text.h"
+#include "../../home/flag.h"
+#include "../../home/pokedex_flags.h"
+#include "../../home/string.h"
+#include "../../home/delay.h"
+#include "../../home/tilemap.h"
+#include "../../home/sprite_anims.h"
+#include "../../home/lcd.h"
+#include "../../home/video.h"
+#include "../../home/window.h"
+#include "../../home/map.h"
+#include "../../home/menu.h"
+#include "../../home/names.h"
+#include "../items/tmhm2.h"
+#include "../menus/naming_screen.h"
+#include "../gfx/sprites.h"
+#include "../gfx/load_pics.h"
+#include "../gfx/pic_animation.h"
+#include "../gfx/place_graphic.h"
+#include "../overworld/player_object.h"
+#include "../../mobile/mobile_41.h"
 #include "../../data/pokemon/egg_moves.h"
 #include "../../data/pokemon/evos_attacks_pointers.h"
 #include "../../data/moves/tmhm_moves.h"
@@ -442,240 +464,298 @@ uint8_t CheckBreedmonCompatibility_Conv(void){
     return wram->wBreedingCompatibility;
 }
 
-void DoEggStep(void){
-    LD_DE(wPartySpecies);
-    LD_HL(wPartyMon1Happiness);
-    LD_C(0);
+bool DoEggStep(void){
+    // LD_DE(wPartySpecies);
+    species_t* de = wram->wPartySpecies;
+    // LD_HL(wPartyMon1Happiness);
+    struct PartyMon* hl = wram->wPartyMon;
+    // LD_C(0);
 
-loop:
-    LD_A_de;
-    INC_DE;
-    CP_A(-1);
-    RET_Z ;
-    CP_A(EGG);
-    IF_NZ goto next;
-    DEC_hl;
-    IF_NZ goto next;
-    LD_A(1);
-    AND_A_A;
-    RET;
+    while(1) {
+    // loop:
+        // LD_A_de;
+        // INC_DE;
+        species_t a = *(de++);
+        // CP_A(-1);
+        // RET_Z ;
+        if(a == (species_t)-1)
+            return false;
+        // CP_A(EGG);
+        // IF_NZ goto next;
+        if(a == EGG) {
+            // DEC_hl;
+            // IF_NZ goto next;
+            if(--hl->mon.happiness == 0) {
+                // LD_A(1);
+                // AND_A_A;
+                // RET;
+                return true;
+            }
+        }
 
-
-next:
-    PUSH_DE;
-    LD_DE(PARTYMON_STRUCT_LENGTH);
-    ADD_HL_DE;
-    POP_DE;
-    goto loop;
-
-    return OverworldHatchEgg();
+    // next:
+        // PUSH_DE;
+        // LD_DE(PARTYMON_STRUCT_LENGTH);
+        // ADD_HL_DE;
+        hl++;
+        // POP_DE;
+        // goto loop;
+    }
 }
 
 void OverworldHatchEgg(void){
-    CALL(aRefreshScreen);
-    CALL(aLoadStandardMenuHeader);
-    CALL(aHatchEggs);
-    CALL(aExitAllMenus);
-    CALL(aRestartMapMusic);
-    JP(mCloseText);
+    // CALL(aRefreshScreen);
+    RefreshScreen_Conv();
+    // CALL(aLoadStandardMenuHeader);
+    LoadStandardMenuHeader_Conv();
+    // CALL(aHatchEggs);
+    HatchEggs();
+    // CALL(aExitAllMenus);
+    ExitAllMenus_Conv();
+    // CALL(aRestartMapMusic);
+    RestartMapMusic_Conv();
+    // JP(mCloseText);
+    CloseText_Conv();
+}
 
+static void Text_HatchEgg_Function(struct TextCmdState* state);
+static const txt_cmd_s Text_HatchEgg[] = {
+// Huh? @ @
+    text_far(v_Text_BreedHuh)
+    text_asm(Text_HatchEgg_Function)
+};
+
+static void Text_HatchEgg_Function(struct TextCmdState* state) {
+    static const txt_cmd_s BreedClearboxText[] = {
+        text_far(v_BreedClearboxText)
+        text_end
+    };
+    static const txt_cmd_s BreedEggHatchText[] = {
+        text_far(v_BreedEggHatchText)
+        text_end
+    };
+    // LD_HL(wVramState);
+    // RES_hl(0);
+    bit_reset(wram->wVramState, 0);
+    // PUSH_HL;
+    // PUSH_DE;
+    // PUSH_BC;
+    // LD_A_addr(wCurPartySpecies);
+    // PUSH_AF;
+    // CALL(aEggHatch_AnimationSequence);
+    EggHatch_AnimationSequence();
+    // LD_HL(mHatchEggs_BreedClearboxText);
+    // CALL(aPrintText);
+    PrintText_Conv2(BreedClearboxText);
+    // POP_AF;
+    // LD_addr_A(wCurPartySpecies);
+    // POP_BC;
+    // POP_DE;
+    // POP_HL;
+    // LD_HL(mHatchEggs_BreedEggHatchText);
+    state->hl = BreedEggHatchText;
+    // RET;
 }
 
 void HatchEggs(void){
-    LD_DE(wPartySpecies);
-    LD_HL(wPartyMon1Happiness);
-    XOR_A_A;
-    LD_addr_A(wCurPartyMon);
+    static const txt_cmd_s BreedAskNicknameText[] = {
+        text_far(v_BreedAskNicknameText)
+        text_end
+    };
 
+    // LD_DE(wPartySpecies);
+    species_t* de = wram->wPartySpecies;
+    // LD_HL(wPartyMon1Happiness);
+    struct PartyMon* hl = wram->wPartyMon;
+    // XOR_A_A;
+    // LD_addr_A(wCurPartyMon);
+    uint8_t mon = 0;
 
-loop:
-    LD_A_de;
-    INC_DE;
-    CP_A(-1);
-    JP_Z (mHatchEggs_done);
-    PUSH_DE;
-    PUSH_HL;
-    CP_A(EGG);
-    JP_NZ (mHatchEggs_next);
-    LD_A_hl;
-    AND_A_A;
-    JP_NZ (mHatchEggs_next);
-    LD_hl(0x78);
+    while(*de != (species_t)-1) {
+    // loop:
+        // LD_A_de;
+        // INC_DE;
+        // CP_A(-1);
+        // JP_Z (mHatchEggs_done);
+        species_t species = *(de++);
+        // PUSH_DE;
+        // PUSH_HL;
+        // CP_A(EGG);
+        // JP_NZ (mHatchEggs_next);
+        // LD_A_hl;
+        // AND_A_A;
+        // JP_NZ (mHatchEggs_next);
+        if(species == EGG && hl->mon.happiness == 0) {
+            // LD_hl(0x78);
+            hl->mon.happiness = 0x78;
 
-    PUSH_DE;
+            // PUSH_DE;
 
-    FARCALL(aSetEggMonCaughtData);
-    FARCALL(aStubbedTrainerRankings_EggsHatched);
-    LD_A_addr(wCurPartyMon);
-    LD_HL(wPartyMon1Species);
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    CALL(aAddNTimes);
-    LD_A_hl;
-    LD_addr_A(wCurPartySpecies);
-    DEC_A;
-    CALL(aSetSeenAndCaughtMon);
+            // FARCALL(aSetEggMonCaughtData);
+            SetEggMonCaughtData_Conv(mon);
+            // FARCALL(aStubbedTrainerRankings_EggsHatched);
+            StubbedTrainerRankings_EggsHatched();
+            // LD_A_addr(wCurPartyMon);
+            // LD_HL(wPartyMon1Species);
+            species_t partySpecies = hl->mon.species;
+            // LD_BC(PARTYMON_STRUCT_LENGTH);
+            // CALL(aAddNTimes);
+            // LD_A_hl;
+            // LD_addr_A(wCurPartySpecies);
+            wram->wCurPartySpecies = partySpecies;
+            wram->wCurPartyMon = mon;
+            // DEC_A;
+            // CALL(aSetSeenAndCaughtMon);
+            SetSeenAndCaughtMon_Conv(partySpecies - 1);
 
-    LD_A_addr(wCurPartySpecies);
-    CP_A(TOGEPI);
-    IF_NZ goto nottogepi;
-// set the event flag for hatching togepi
-    LD_DE(EVENT_TOGEPI_HATCHED);
-    LD_B(SET_FLAG);
-    CALL(aEventFlagAction);
+            // LD_A_addr(wCurPartySpecies);
+            // CP_A(TOGEPI);
+            // IF_NZ goto nottogepi;
+            if(partySpecies == TOGEPI) {
+            // set the event flag for hatching togepi
+                // LD_DE(EVENT_TOGEPI_HATCHED);
+                // LD_B(SET_FLAG);
+                // CALL(aEventFlagAction);
+                EventFlagAction_Conv(EVENT_TOGEPI_HATCHED, SET_FLAG);
+            }
 
-nottogepi:
+        // nottogepi:
+            // POP_DE;
 
-    POP_DE;
+            // LD_A_addr(wCurPartySpecies);
+            // DEC_DE;
+            --de;
+            // LD_de_A;
+            *de = partySpecies;
+            de++;
+            // LD_addr_A(wNamedObjectIndex);
+            // LD_addr_A(wCurSpecies);
+            // CALL(aGetPokemonName);
+            GetPokemonName_Conv2(partySpecies);
+            // XOR_A_A;
+            // LD_addr_A(wUnusedEggHatchFlag);
+            wram->wUnusedEggHatchFlag = 0;
+            // CALL(aGetBaseData);
+            GetBaseData_Conv2(partySpecies);
+            // LD_A_addr(wCurPartyMon);
+            // LD_HL(wPartyMon1);
+            // LD_BC(PARTYMON_STRUCT_LENGTH);
+            // CALL(aAddNTimes);
+            // PUSH_HL;
+            // LD_BC(MON_MAXHP);
+            // ADD_HL_BC;
+            // LD_D_H;
+            // LD_E_L;
+            // POP_HL;
+            // PUSH_HL;
+            // LD_BC(MON_LEVEL);
+            // ADD_HL_BC;
+            // LD_A_hl;
+            // LD_addr_A(wCurPartyLevel);
+            wram->wCurPartyLevel = hl->mon.level;
+            // POP_HL;
+            // PUSH_HL;
+            // LD_BC(MON_STATUS);
+            // ADD_HL_BC;
+            // XOR_A_A;
+            // LD_hli_A;
+            // LD_hl_A;
+            hl->status = 0;
+            hl->unused = 0;
+            // POP_HL;
+            // PUSH_HL;
+            // LD_BC(MON_STAT_EXP - 1);
+            // ADD_HL_BC;
+            // LD_B(FALSE);
+            // PREDEF(pCalcMonStats);
+            CalcMonStats_Conv((uint16_t*)wram_ptr(wPartyMon1Stats) + PARTYMON_STRUCT_LENGTH * mon, 
+                (const uint16_t*)wram_ptr(wPartyMon1StatExp) + PARTYMON_STRUCT_LENGTH * mon,
+                hl->mon.DVs, FALSE);
+            // POP_BC;
+            // LD_HL(MON_MAXHP);
+            // ADD_HL_BC;
+            // LD_D_H;
+            // LD_E_L;
+            // LD_HL(MON_HP);
+            // ADD_HL_BC;
+            // LD_A_de;
+            // INC_DE;
+            // LD_hli_A;
+            // LD_A_de;
+            // LD_hl_A;
+            hl->HP = hl->maxHP;
+            // LD_HL(MON_ID);
+            // ADD_HL_BC;
+            // LD_A_addr(wPlayerID);
+            // LD_hli_A;
+            // LD_A_addr(wPlayerID + 1);
+            // LD_hl_A;
+            hl->mon.id = wram->wPlayerID;
+            // LD_A_addr(wCurPartyMon);
+            // LD_HL(wPartyMonOTs);
+            // LD_BC(NAME_LENGTH);
+            // CALL(aAddNTimes);
+            // LD_D_H;
+            // LD_E_L;
+            // LD_HL(wPlayerName);
+            // CALL(aCopyBytes);
+            CopyBytes_Conv2(wram->wPartyMonOT[mon], wram->wPlayerName, NAME_LENGTH);
+            // LD_HL(mHatchEggs_Text_HatchEgg);
+            // CALL(aPrintText);
+            PrintText_Conv2(Text_HatchEgg);
+            // LD_A_addr(wCurPartyMon);
+            // LD_HL(wPartyMonNicknames);
+            // LD_BC(MON_NAME_LENGTH);
+            // CALL(aAddNTimes);
+            // LD_D_H;
+            // LD_E_L;
+            // PUSH_DE;
+            // LD_HL(mHatchEggs_BreedAskNicknameText);
+            // CALL(aPrintText);
+            PrintText_Conv2(BreedAskNicknameText);
+            // CALL(aYesNoBox);
+            // POP_DE;
+            // IF_C goto nonickname;
 
-    LD_A_addr(wCurPartySpecies);
-    DEC_DE;
-    LD_de_A;
-    LD_addr_A(wNamedObjectIndex);
-    LD_addr_A(wCurSpecies);
-    CALL(aGetPokemonName);
-    XOR_A_A;
-    LD_addr_A(wUnusedEggHatchFlag);
-    CALL(aGetBaseData);
-    LD_A_addr(wCurPartyMon);
-    LD_HL(wPartyMon1);
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    CALL(aAddNTimes);
-    PUSH_HL;
-    LD_BC(MON_MAXHP);
-    ADD_HL_BC;
-    LD_D_H;
-    LD_E_L;
-    POP_HL;
-    PUSH_HL;
-    LD_BC(MON_LEVEL);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_addr_A(wCurPartyLevel);
-    POP_HL;
-    PUSH_HL;
-    LD_BC(MON_STATUS);
-    ADD_HL_BC;
-    XOR_A_A;
-    LD_hli_A;
-    LD_hl_A;
-    POP_HL;
-    PUSH_HL;
-    LD_BC(MON_STAT_EXP - 1);
-    ADD_HL_BC;
-    LD_B(FALSE);
-    PREDEF(pCalcMonStats);
-    POP_BC;
-    LD_HL(MON_MAXHP);
-    ADD_HL_BC;
-    LD_D_H;
-    LD_E_L;
-    LD_HL(MON_HP);
-    ADD_HL_BC;
-    LD_A_de;
-    INC_DE;
-    LD_hli_A;
-    LD_A_de;
-    LD_hl_A;
-    LD_HL(MON_ID);
-    ADD_HL_BC;
-    LD_A_addr(wPlayerID);
-    LD_hli_A;
-    LD_A_addr(wPlayerID + 1);
-    LD_hl_A;
-    LD_A_addr(wCurPartyMon);
-    LD_HL(wPartyMonOTs);
-    LD_BC(NAME_LENGTH);
-    CALL(aAddNTimes);
-    LD_D_H;
-    LD_E_L;
-    LD_HL(wPlayerName);
-    CALL(aCopyBytes);
-    LD_HL(mHatchEggs_Text_HatchEgg);
-    CALL(aPrintText);
-    LD_A_addr(wCurPartyMon);
-    LD_HL(wPartyMonNicknames);
-    LD_BC(MON_NAME_LENGTH);
-    CALL(aAddNTimes);
-    LD_D_H;
-    LD_E_L;
-    PUSH_DE;
-    LD_HL(mHatchEggs_BreedAskNicknameText);
-    CALL(aPrintText);
-    CALL(aYesNoBox);
-    POP_DE;
-    IF_C goto nonickname;
+            if(YesNoBox_Conv()) {
+                // LD_A(TRUE);
+                // LD_addr_A(wUnusedEggHatchFlag);
+                // XOR_A_A;
+                // LD_addr_A(wMonType);
+                wram->wMonType = 0;
+                // PUSH_DE;
+                // LD_B(NAME_MON);
+                // FARCALL(aNamingScreen);
+                NamingScreen_Conv(wram->wPartyMonNickname[mon], NAME_MON);
+                // POP_HL;
+                // LD_DE(wStringBuffer1);
+                // CALL(aInitName);
+                InitName_Conv2(wram->wPartyMonNickname[mon], wram->wStringBuffer1);
+                // goto next;
+            }
+            else {
+            // nonickname:
+                // LD_HL(wStringBuffer1);
+                // LD_BC(MON_NAME_LENGTH);
+                // CALL(aCopyBytes);
+                CopyBytes_Conv2(wram->wPartyMonNickname[mon], wram->wStringBuffer1, MON_NAME_LENGTH);
+            }
+        }
 
-    LD_A(TRUE);
-    LD_addr_A(wUnusedEggHatchFlag);
-    XOR_A_A;
-    LD_addr_A(wMonType);
-    PUSH_DE;
-    LD_B(NAME_MON);
-    FARCALL(aNamingScreen);
-    POP_HL;
-    LD_DE(wStringBuffer1);
-    CALL(aInitName);
-    goto next;
+    // next:
+        // LD_HL(wCurPartyMon);
+        // INC_hl;
+        mon++;
+        // POP_HL;
+        // LD_DE(PARTYMON_STRUCT_LENGTH);
+        // ADD_HL_DE;
+        hl++;
+        // POP_DE;
+        // JP(mHatchEggs_loop);
+    }
 
-
-nonickname:
-    LD_HL(wStringBuffer1);
-    LD_BC(MON_NAME_LENGTH);
-    CALL(aCopyBytes);
-
-
-next:
-    LD_HL(wCurPartyMon);
-    INC_hl;
-    POP_HL;
-    LD_DE(PARTYMON_STRUCT_LENGTH);
-    ADD_HL_DE;
-    POP_DE;
-    JP(mHatchEggs_loop);
-
-
-done:
-    RET;
-
-
-Text_HatchEgg:
-// Huh? @ @
-    //text_far ['Text_BreedHuh']
-    //text_asm ['?']
-    LD_HL(wVramState);
-    RES_hl(0);
-    PUSH_HL;
-    PUSH_DE;
-    PUSH_BC;
-    LD_A_addr(wCurPartySpecies);
-    PUSH_AF;
-    CALL(aEggHatch_AnimationSequence);
-    LD_HL(mHatchEggs_BreedClearboxText);
-    CALL(aPrintText);
-    POP_AF;
-    LD_addr_A(wCurPartySpecies);
-    POP_BC;
-    POP_DE;
-    POP_HL;
-    LD_HL(mHatchEggs_BreedEggHatchText);
-    RET;
-
-
-BreedClearboxText:
-    //text_far ['_BreedClearboxText']
-    //text_end ['?']
-
-
-BreedEggHatchText:
-    //text_far ['_BreedEggHatchText']
-    //text_end ['?']
-
-
-BreedAskNicknameText:
-    //text_far ['_BreedAskNicknameText']
-    //text_end ['?']
-
-    return InitEggMoves();
+// done:
+    // RET;
 }
 
 void InitEggMoves(void){
@@ -1287,276 +1367,355 @@ move_t* GetBreedmonMovePointer_Conv(void){
     return wram->wBreedMon2.moves;
 }
 
-void GetEggFrontpic(void){
-    PUSH_DE;
-    LD_addr_A(wCurPartySpecies);
-    LD_addr_A(wCurSpecies);
-    CALL(aGetBaseData);
-    LD_HL(wBattleMonDVs);
-    PREDEF(pGetUnownLetter);
-    POP_DE;
-    PREDEF_JUMP(pGetMonFrontpic);
-
-    return GetHatchlingFrontpic();
+void GetEggFrontpic(tile_t* de, species_t a){
+    // PUSH_DE;
+    // LD_addr_A(wCurPartySpecies);
+    wram->wCurPartySpecies = a;
+    // LD_addr_A(wCurSpecies);
+    wram->wCurSpecies = a;
+    // CALL(aGetBaseData);
+    GetBaseData_Conv2(a);
+    // LD_HL(wBattleMonDVs);
+    // PREDEF(pGetUnownLetter);
+    GetUnownLetter_Conv(wram->wBattleMon.dvs);
+    // POP_DE;
+    // PREDEF_JUMP(pGetMonFrontpic);
+    GetMonFrontpic_Conv(de);
 }
 
-void GetHatchlingFrontpic(void){
-    PUSH_DE;
-    LD_addr_A(wCurPartySpecies);
-    LD_addr_A(wCurSpecies);
-    CALL(aGetBaseData);
-    LD_HL(wBattleMonDVs);
-    PREDEF(pGetUnownLetter);
-    POP_DE;
-    PREDEF_JUMP(pGetAnimatedFrontpic);
-
-    return Hatch_UpdateFrontpicBGMapCenter();
+void GetHatchlingFrontpic(tile_t* de, species_t a){
+    // PUSH_DE;
+    // LD_addr_A(wCurPartySpecies);
+    wram->wCurPartySpecies = a;
+    // LD_addr_A(wCurSpecies);
+    wram->wCurSpecies = a;
+    // CALL(aGetBaseData);
+    GetBaseData_Conv2(a);
+    // LD_HL(wBattleMonDVs);
+    // PREDEF(pGetUnownLetter);
+    GetUnownLetter_Conv(wram->wBattleMon.dvs);
+    // POP_DE;
+    // PREDEF_JUMP(pGetAnimatedFrontpic);
+    GetAnimatedFrontpic_Conv(de, 0);
 }
 
-void Hatch_UpdateFrontpicBGMapCenter(void){
-    PUSH_AF;
-    CALL(aWaitTop);
-    PUSH_HL;
-    PUSH_BC;
-    hlcoord(0, 0, wTilemap);
-    LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
-    LD_A(0x7f);
-    CALL(aByteFill);
-    POP_BC;
-    POP_HL;
-    LD_A_B;
-    LDH_addr_A(hBGMapAddress + 1);
-    LD_A_C;
-    LDH_addr_A(hGraphicStartTile);
-    LD_BC((7 << 8) | 7);
-    PREDEF(pPlaceGraphic);
-    POP_AF;
-    CALL(aHatch_LoadFrontpicPal);
-    CALL(aSetPalettes);
-    JP(mWaitBGMap);
-
+void Hatch_UpdateFrontpicBGMapCenter(tile_t* hl, uint8_t b, uint8_t c, uint8_t a){
+    // PUSH_AF;
+    // CALL(aWaitTop);
+    WaitTop_Conv();
+    // PUSH_HL;
+    // PUSH_BC;
+    // hlcoord(0, 0, wTilemap);
+    // LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
+    // LD_A(0x7f);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_HEIGHT * SCREEN_WIDTH, 0x7f);
+    // POP_BC;
+    // POP_HL;
+    // LD_A_B;
+    // LDH_addr_A(hBGMapAddress + 1);
+    hram->hBGMapAddress = (b << 8) | (hram->hBGMapAddress & 0xff);
+    // LD_A_C;
+    // LDH_addr_A(hGraphicStartTile);
+    hram->hGraphicStartTile = c;
+    // LD_BC((7 << 8) | 7);
+    // PREDEF(pPlaceGraphic);
+    PlaceGraphicYStagger_Conv(hl, 7, 7);
+    // POP_AF;
+    // CALL(aHatch_LoadFrontpicPal);
+    Hatch_LoadFrontpicPal(a);
+    // CALL(aSetPalettes);
+    SetPalettes_Conv();
+    // JP(mWaitBGMap);
+    WaitBGMap_Conv();
 }
 
 void EggHatch_DoAnimFrame(void){
-    PUSH_HL;
-    PUSH_DE;
-    PUSH_BC;
-    CALLFAR(aPlaySpriteAnimations);
-    CALL(aDelayFrame);
-    POP_BC;
-    POP_DE;
-    POP_HL;
-    RET;
-
+    // PUSH_HL;
+    // PUSH_DE;
+    // PUSH_BC;
+    // CALLFAR(aPlaySpriteAnimations);
+    PlaySpriteAnimations_Conv();
+    // CALL(aDelayFrame);
+    DelayFrame();
+    // POP_BC;
+    // POP_DE;
+    // POP_HL;
+    // RET;
 }
+
+static const char EggHatchGFX[] = "gfx/evo/egg_hatch.png";
 
 void EggHatch_AnimationSequence(void){
-    LD_A_addr(wNamedObjectIndex);
-    LD_addr_A(wJumptableIndex);
-    LD_A_addr(wCurSpecies);
-    PUSH_AF;
-    LD_DE(MUSIC_NONE);
-    CALL(aPlayMusic);
-    FARCALL(aBlankScreen);
-    CALL(aDisableLCD);
-    LD_HL(mEggHatchGFX);
-    LD_DE(vTiles0 + LEN_2BPP_TILE * 0x00);
-    LD_BC(2 * LEN_2BPP_TILE);
-    LD_A(BANK(aEggHatchGFX));
-    CALL(aFarCopyBytes);
-    FARCALL(aClearSpriteAnims);
-    LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
-    LD_A_addr(wJumptableIndex);
-    CALL(aGetHatchlingFrontpic);
-    LD_DE(vTiles2 + LEN_2BPP_TILE * 0x31);
-    LD_A(EGG);
-    CALL(aGetEggFrontpic);
-    LD_DE(MUSIC_EVOLUTION);
-    CALL(aPlayMusic);
-    CALL(aEnableLCD);
-    hlcoord(7, 4, wTilemap);
-    LD_B(HIGH(vBGMap0));
-    LD_C(0x31);  // Egg tiles start here
-    LD_A(EGG);
-    CALL(aHatch_UpdateFrontpicBGMapCenter);
-    LD_C(80);
-    CALL(aDelayFrames);
-    XOR_A_A;
-    LD_addr_A(wFrameCounter);
-    LDH_A_addr(hSCX);
-    LD_B_A;
+    // LD_A_addr(wNamedObjectIndex);
+    // LD_addr_A(wJumptableIndex);
+    species_t species = wram->wCurPartySpecies;
+    // LD_A_addr(wCurSpecies);
+    // PUSH_AF;
+    species_t curSpecies = wram->wCurSpecies;
+    // LD_DE(MUSIC_NONE);
+    // CALL(aPlayMusic);
+    PlayMusic_Conv(MUSIC_NONE);
+    // FARCALL(aBlankScreen);
+    BlankScreen();
+    // CALL(aDisableLCD);
+    DisableLCD_Conv();
+    // LD_HL(mEggHatchGFX);
+    // LD_DE(vTiles0 + LEN_2BPP_TILE * 0x00);
+    // LD_BC(2 * LEN_2BPP_TILE);
+    // LD_A(BANK(aEggHatchGFX));
+    // CALL(aFarCopyBytes);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles0 + LEN_2BPP_TILE * 0x00, EggHatchGFX, 0, 2);
+    // FARCALL(aClearSpriteAnims);
+    ClearSpriteAnims_Conv();
+    // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
+    // LD_A_addr(wJumptableIndex);
+    // CALL(aGetHatchlingFrontpic);
+    GetHatchlingFrontpic(vram->vTiles2 + LEN_2BPP_TILE * 0x00, species);
+    // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x31);
+    // LD_A(EGG);
+    // CALL(aGetEggFrontpic);
+    GetEggFrontpic(vram->vTiles2 + LEN_2BPP_TILE * 0x31, EGG);
+    // LD_DE(MUSIC_EVOLUTION);
+    // CALL(aPlayMusic);
+    PlayMusic_Conv(MUSIC_EVOLUTION);
+    // CALL(aEnableLCD);
+    EnableLCD_Conv();
+    // hlcoord(7, 4, wTilemap);
+    // LD_B(HIGH(vBGMap0));
+    // LD_C(0x31);  // Egg tiles start here
+    // LD_A(EGG);
+    // CALL(aHatch_UpdateFrontpicBGMapCenter);
+    Hatch_UpdateFrontpicBGMapCenter(coord(7, 4, wram->wTilemap), HIGH(vBGMap0), 0x31, EGG);
+    // LD_C(80);
+    // CALL(aDelayFrames);
+    DelayFrames_Conv(80);
+    // XOR_A_A;
+    // LD_addr_A(wFrameCounter);
+    wram->wFrameCounter = 0;
+    // LDH_A_addr(hSCX);
+    // LD_B_A;
 
-outerloop:
-    LD_HL(wFrameCounter);
-    LD_A_hl;
-    INC_hl;
-    CP_A(8);
-    IF_NC goto done;
-    LD_E_hl;
+    while(1) {
+    // outerloop:
+        // LD_HL(wFrameCounter);
+        // LD_A_hl;
+        uint8_t frames = wram->wFrameCounter;
+        // INC_hl;
+        wram->wFrameCounter++;
+        // CP_A(8);
+        // IF_NC goto done;
+        if(frames >= 8)
+            break;
+        // LD_E_hl;
+        uint8_t e = wram->wFrameCounter;
 
-loop:
-//  wobble e times
-    LD_A(2);
-    LDH_addr_A(hSCX);
-    LD_A(-2);
-    LD_addr_A(wGlobalAnimXOffset);
-    CALL(aEggHatch_DoAnimFrame);
-    LD_C(2);
-    CALL(aDelayFrames);
-    LD_A(-2);
-    LDH_addr_A(hSCX);
-    LD_A(2);
-    LD_addr_A(wGlobalAnimXOffset);
-    CALL(aEggHatch_DoAnimFrame);
-    LD_C(2);
-    CALL(aDelayFrames);
-    DEC_E;
-    IF_NZ goto loop;
-    LD_C(16);
-    CALL(aDelayFrames);
-    CALL(aEggHatch_CrackShell);
-    goto outerloop;
+        do {
+        // loop:
+        //  wobble e times
+            // LD_A(2);
+            // LDH_addr_A(hSCX);
+            hram->hSCX = 2;
+            // LD_A(-2);
+            // LD_addr_A(wGlobalAnimXOffset);
+            wram->wGlobalAnimXOffset = (uint8_t)-2;
+            // CALL(aEggHatch_DoAnimFrame);
+            EggHatch_DoAnimFrame();
+            // LD_C(2);
+            // CALL(aDelayFrames);
+            DelayFrames_Conv(2);
+            // LD_A(-2);
+            // LDH_addr_A(hSCX);
+            hram->hSCX = (uint8_t)-2;
+            // LD_A(2);
+            // LD_addr_A(wGlobalAnimXOffset);
+            wram->wGlobalAnimXOffset = 2;
+            // CALL(aEggHatch_DoAnimFrame);
+            EggHatch_DoAnimFrame();
+            // LD_C(2);
+            // CALL(aDelayFrames);
+            DelayFrames_Conv(2);
+            // DEC_E;
+            // IF_NZ goto loop;
+        } while(--e != 0);
+        // LD_C(16);
+        // CALL(aDelayFrames);
+        DelayFrames_Conv(16);
+        // CALL(aEggHatch_CrackShell);
+        EggHatch_CrackShell();
+        // goto outerloop;
+    }
 
-
-done:
-    LD_DE(SFX_EGG_HATCH);
-    CALL(aPlaySFX);
-    XOR_A_A;
-    LDH_addr_A(hSCX);
-    LD_addr_A(wGlobalAnimXOffset);
-    CALL(aClearSprites);
-    CALL(aHatch_InitShellFragments);
-    hlcoord(6, 3, wTilemap);
-    LD_B(HIGH(vBGMap0));
-    LD_C(0x00);  // Hatchling tiles start here
-    LD_A_addr(wJumptableIndex);
-    CALL(aHatch_UpdateFrontpicBGMapCenter);
-    CALL(aHatch_ShellFragmentLoop);
-    CALL(aWaitSFX);
-    LD_A_addr(wJumptableIndex);
-    LD_addr_A(wCurPartySpecies);
-    hlcoord(6, 3, wTilemap);
-    LD_D(0x0);
-    LD_E(ANIM_MON_HATCH);
-    PREDEF(pAnimateFrontpic);
-    POP_AF;
-    LD_addr_A(wCurSpecies);
-    RET;
-
+// done:
+    // LD_DE(SFX_EGG_HATCH);
+    // CALL(aPlaySFX);
+    PlaySFX_Conv(SFX_EGG_HATCH);
+    // XOR_A_A;
+    // LDH_addr_A(hSCX);
+    hram->hSCX = 0;
+    // LD_addr_A(wGlobalAnimXOffset);
+    wram->wGlobalAnimXOffset = 0;
+    // CALL(aClearSprites);
+    ClearSprites_Conv();
+    // CALL(aHatch_InitShellFragments);
+    Hatch_InitShellFragments();
+    // hlcoord(6, 3, wTilemap);
+    // LD_B(HIGH(vBGMap0));
+    // LD_C(0x00);  // Hatchling tiles start here
+    // LD_A_addr(wJumptableIndex);
+    // CALL(aHatch_UpdateFrontpicBGMapCenter);
+    Hatch_UpdateFrontpicBGMapCenter(coord(6, 3, wram->wTilemap), HIGH(vBGMap0), 0x00, species);
+    // CALL(aHatch_ShellFragmentLoop);
+    Hatch_ShellFragmentLoop();
+    // CALL(aWaitSFX);
+    WaitSFX_Conv();
+    // LD_A_addr(wJumptableIndex);
+    // LD_addr_A(wCurPartySpecies);
+    wram->wCurPartySpecies = species;
+    // hlcoord(6, 3, wTilemap);
+    // LD_D(0x0);
+    // LD_E(ANIM_MON_HATCH);
+    // PREDEF(pAnimateFrontpic);
+    AnimateFrontpic_Conv(coord(6, 3, wram->wTilemap), 0x0, ANIM_MON_HATCH);
+    // POP_AF;
+    // LD_addr_A(wCurSpecies);
+    wram->wCurSpecies = curSpecies;
+    // RET;
 }
 
-void Hatch_LoadFrontpicPal(void){
-    LD_addr_A(wPlayerHPPal);
-    LD_B(SCGB_EVOLUTION);
-    LD_C(0x0);
-    JP(mGetSGBLayout);
-
+void Hatch_LoadFrontpicPal(uint8_t a){
+    // LD_addr_A(wPlayerHPPal);
+    wram->wPlayerHPPal = a;
+    // LD_B(SCGB_EVOLUTION);
+    // LD_C(0x0);
+    // JP(mGetSGBLayout);
+    return GetSGBLayout_Conv(SCGB_EVOLUTION);
 }
 
 void EggHatch_CrackShell(void){
-    LD_A_addr(wFrameCounter);
-    DEC_A;
-    AND_A(0x7);
-    CP_A(0x7);
-    RET_Z ;
-    SRL_A;
-    RET_NC ;
-    SWAP_A;
-    SRL_A;
-    ADD_A(9 * 8 + 4);
-    LD_D_A;
-    LD_E(11 * 8);
-    LD_A(SPRITE_ANIM_INDEX_EGG_CRACK);
-    CALL(aInitSpriteAnimStruct);
-    LD_HL(SPRITEANIMSTRUCT_TILE_ID);
-    ADD_HL_BC;
-    LD_hl(0x0);
-    LD_DE(SFX_EGG_CRACK);
-    JP(mPlaySFX);
-
-}
-
-void EggHatchGFX(void){
-// INCBIN "gfx/evo/egg_hatch.2bpp"
-
-    return Hatch_InitShellFragments();
+    // LD_A_addr(wFrameCounter);
+    // DEC_A;
+    uint8_t a = (wram->wFrameCounter - 1) & 0x7;
+    // AND_A(0x7);
+    // CP_A(0x7);
+    // RET_Z ;
+    if(a == 0x7)
+        return;
+    // SRL_A;
+    // RET_NC ;
+    if((a & 1) == 0)
+        return;
+    a >>= 1;
+    // SWAP_A;
+    a = (a >> 4) | (a << 4);
+    // SRL_A;
+    // ADD_A(9 * 8 + 4);
+    // LD_D_A;
+    uint16_t de = ((uint16_t)((a >> 1) + 9 * 8 + 4) << 8) | (11 * 8);
+    // LD_E(11 * 8);
+    // LD_A(SPRITE_ANIM_INDEX_EGG_CRACK);
+    // CALL(aInitSpriteAnimStruct);
+    struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_EGG_CRACK, de);
+    // LD_HL(SPRITEANIMSTRUCT_TILE_ID);
+    // ADD_HL_BC;
+    // LD_hl(0x0);
+    bc->tileID = 0x0;
+    // LD_DE(SFX_EGG_CRACK);
+    // JP(mPlaySFX);
+    PlaySFX_Conv(SFX_EGG_CRACK);
 }
 
 void Hatch_InitShellFragments(void){
-    FARCALL(aClearSpriteAnims);
-    LD_HL(mHatch_InitShellFragments_SpriteData);
+    // shell_fragment: MACRO
+    // ; y tile, y pxl, x tile, x pxl, frameset offset, ???
+    //     db (\1 * 8) % $100 + \2, (\3 * 8) % $100 + \4, \5 - SPRITE_ANIM_FRAMESET_EGG_HATCH_1, \6
+    // ENDM
+    #define shell_fragment(_yt, _yp, _xt, _xp, _fo, _unk) (_yt * 8) % 0x100 + _yp, (_xt * 8) % 0x100 + _xp, _fo - SPRITE_ANIM_FRAMESET_EGG_HATCH_1, _unk
 
-loop:
-    LD_A_hli;
-    CP_A(-1);
-    IF_Z goto done;
-    LD_E_A;
-    LD_A_hli;
-    LD_D_A;
-    LD_A_hli;
-    LD_C_A;
-    LD_A_hli;
-    LD_B_A;
-    PUSH_HL;
-    PUSH_BC;
+    static const uint8_t SpriteData[] = {
+        shell_fragment(10, 4,  9, 0, SPRITE_ANIM_FRAMESET_EGG_HATCH_1, 0x3c),
+        shell_fragment(11, 4,  9, 0, SPRITE_ANIM_FRAMESET_EGG_HATCH_2, 0x04),
+        shell_fragment(10, 4, 10, 0, SPRITE_ANIM_FRAMESET_EGG_HATCH_1, 0x30),
+        shell_fragment(11, 4, 10, 0, SPRITE_ANIM_FRAMESET_EGG_HATCH_2, 0x10),
+        shell_fragment(10, 4, 11, 0, SPRITE_ANIM_FRAMESET_EGG_HATCH_3, 0x24),
+        shell_fragment(11, 4, 11, 0, SPRITE_ANIM_FRAMESET_EGG_HATCH_4, 0x1c),
+        shell_fragment(10, 0,  9, 4, SPRITE_ANIM_FRAMESET_EGG_HATCH_1, 0x36),
+        shell_fragment(12, 0,  9, 4, SPRITE_ANIM_FRAMESET_EGG_HATCH_2, 0x0a),
+        shell_fragment(10, 0, 10, 4, SPRITE_ANIM_FRAMESET_EGG_HATCH_3, 0x2a),
+        shell_fragment(12, 0, 10, 4, SPRITE_ANIM_FRAMESET_EGG_HATCH_4, 0x16),
+        -1,
+    };
+    // FARCALL(aClearSpriteAnims);
+    ClearSpriteAnims_Conv();
+    // LD_HL(mHatch_InitShellFragments_SpriteData);
+    const uint8_t* hl = SpriteData;
 
-    LD_A(SPRITE_ANIM_INDEX_EGG_HATCH);
-    CALL(aInitSpriteAnimStruct);
+    while(*hl != (uint8_t)-1) {
+    // loop:
+        // LD_A_hli;
+        // CP_A(-1);
+        // IF_Z goto done;
+        // LD_E_A;
+        uint8_t e = *(hl++);
+        // LD_A_hli;
+        // LD_D_A;
+        uint8_t d = *(hl++);
+        // LD_A_hli;
+        // LD_C_A;
+        uint8_t c = *(hl++);
+        // LD_A_hli;
+        // LD_B_A;
+        uint8_t b = *(hl++);
+        // PUSH_HL;
+        // PUSH_BC;
 
-    LD_HL(SPRITEANIMSTRUCT_TILE_ID);
-    ADD_HL_BC;
-    LD_hl(0x0);
+        // LD_A(SPRITE_ANIM_INDEX_EGG_HATCH);
+        // CALL(aInitSpriteAnimStruct);
+        struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_EGG_HATCH, (d << 8) | e);
 
-    POP_DE;
-    LD_A_E;
-    LD_HL(SPRITEANIMSTRUCT_FRAMESET_ID);
-    ADD_HL_BC;
-    ADD_A_hl;
-    LD_hl_A;
+        // LD_HL(SPRITEANIMSTRUCT_TILE_ID);
+        // ADD_HL_BC;
+        // LD_hl(0x0);
+        bc->tileID = 0x0;
 
-    LD_HL(SPRITEANIMSTRUCT_JUMPTABLE_INDEX);
-    ADD_HL_BC;
-    LD_hl_D;
+        // POP_DE;
+        // LD_A_E;
+        // LD_HL(SPRITEANIMSTRUCT_FRAMESET_ID);
+        // ADD_HL_BC;
+        // ADD_A_hl;
+        // LD_hl_A;
+        bc->framesetID += c;
 
-    POP_HL;
-    goto loop;
+        // LD_HL(SPRITEANIMSTRUCT_JUMPTABLE_INDEX);
+        // ADD_HL_BC;
+        // LD_hl_D;
+        bc->jumptableIndex = b;
 
-done:
-    LD_DE(SFX_EGG_HATCH);
-    CALL(aPlaySFX);
-    CALL(aEggHatch_DoAnimFrame);
-    RET;
+        // POP_HL;
+        // goto loop;
+    }
 
-// shell_fragment: MACRO
-// ; y tile, y pxl, x tile, x pxl, frameset offset, ???
-//     db (\1 * 8) % $100 + \2, (\3 * 8) % $100 + \4, \5 - SPRITE_ANIM_FRAMESET_EGG_HATCH_1, \6
-// ENDM
-
-
-SpriteData:
-    //shell_fragment ['10', '4', '9', '0', 'SPRITE_ANIM_FRAMESET_EGG_HATCH_1', '0x3c']
-    //shell_fragment ['11', '4', '9', '0', 'SPRITE_ANIM_FRAMESET_EGG_HATCH_2', '0x04']
-    //shell_fragment ['10', '4', '10', '0', 'SPRITE_ANIM_FRAMESET_EGG_HATCH_1', '0x30']
-    //shell_fragment ['11', '4', '10', '0', 'SPRITE_ANIM_FRAMESET_EGG_HATCH_2', '0x10']
-    //shell_fragment ['10', '4', '11', '0', 'SPRITE_ANIM_FRAMESET_EGG_HATCH_3', '0x24']
-    //shell_fragment ['11', '4', '11', '0', 'SPRITE_ANIM_FRAMESET_EGG_HATCH_4', '0x1c']
-    //shell_fragment ['10', '0', '9', '4', 'SPRITE_ANIM_FRAMESET_EGG_HATCH_1', '0x36']
-    //shell_fragment ['12', '0', '9', '4', 'SPRITE_ANIM_FRAMESET_EGG_HATCH_2', '0x0a']
-    //shell_fragment ['10', '0', '10', '4', 'SPRITE_ANIM_FRAMESET_EGG_HATCH_3', '0x2a']
-    //shell_fragment ['12', '0', '10', '4', 'SPRITE_ANIM_FRAMESET_EGG_HATCH_4', '0x16']
-    //db ['-1'];
-
-    return Hatch_ShellFragmentLoop();
+// done:
+    // LD_DE(SFX_EGG_HATCH);
+    // CALL(aPlaySFX);
+    PlaySFX_Conv(SFX_EGG_HATCH);
+    // CALL(aEggHatch_DoAnimFrame);
+    EggHatch_DoAnimFrame();
+    // RET;
 }
 
 void Hatch_ShellFragmentLoop(void){
-    LD_C(129);
+    // LD_C(129);
+    uint8_t c = 129;
 
-loop:
-    CALL(aEggHatch_DoAnimFrame);
-    DEC_C;
-    IF_NZ goto loop;
-    RET;
+    do {
+    // loop:
+        // CALL(aEggHatch_DoAnimFrame);
+        EggHatch_DoAnimFrame();
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(--c != 0);
+    // RET;
 
 }
 

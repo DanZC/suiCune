@@ -461,7 +461,7 @@ static void NamingScreen_GetNamingScreenSetup(void) {
             // place_gender:
                 // hlcoord(1, 2, wTilemap);
                 // LD_hl_A;
-                *coord(1, 2, wram->wTilemap) = (res.a == 0)? 0xf5: 0xef; 
+                *coord(1, 2, wram->wTilemap) = (res.a != 0)? 0xef: 0xf5; 
             }
 
         // genderless:

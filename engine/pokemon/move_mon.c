@@ -3939,11 +3939,11 @@ uint8_t GivePoke_Conv(uint8_t b, const char* nickname, const char* otName){
         if(b == 0) {
         // party:
             // FARCALL(aSetCaughtData);
-            SetCaughtData_Conv();
+            SetCaughtData_Conv(wram->wCurPartyLevel);
         }
         else {
             // FARCALL(aSetBoxMonCaughtData);
-            SafeCallGBAuto(aSetBoxMonCaughtData);
+            SetBoxMonCaughtData(wram->wCurPartyLevel);
             // goto set_caught_data;
         }
 

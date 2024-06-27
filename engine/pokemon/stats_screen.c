@@ -160,6 +160,7 @@ void StatsScreenMain(void){
     wram->wJumptableIndex = 0;
 //  ???
     // LD_addr_A(wStatsScreenFlags);
+    wram->wStatsScreenFlags = 0;
     // LD_A_addr(wStatsScreenFlags);
     // AND_A(~STAT_PAGE_MASK);
     // OR_A(PINK_PAGE);  // first_page
@@ -1977,33 +1978,46 @@ const char EggALotMoreTimeString[] = "This EGG needs a" \
     t_next "hatch.@";
 
 void StatsScreen_AnimateEgg(void){
-    CALL(aStatsScreen_GetAnimationParam);
-    RET_NC ;
-    LD_A_addr(wTempMonHappiness);
-    LD_E(0x7);
-    CP_A(6);
-    IF_C goto animate;
-    LD_E(0x8);
-    CP_A(11);
-    IF_C goto animate;
-    RET;
+    // CALL(aStatsScreen_GetAnimationParam);
+    u8_flag_s res = StatsScreen_GetAnimationParam_Conv();
+    // RET_NC ;
+    if(!res.flag)
+        return;
+    // LD_A_addr(wTempMonHappiness);
+    // LD_E(0x7);
+    uint8_t e;
+    if(wram->wTempMon.mon.happiness < 6)
+        e = 0x7;
+    // CP_A(6);
+    // IF_C goto animate;
+    // LD_E(0x8);
+    // CP_A(11);
+    // IF_C goto animate;
+    else if(wram->wTempMon.mon.happiness < 11)
+        e = 0x8;
+    else
+        // RET;
+        return;
 
-
-animate:
-    PUSH_DE;
-    LD_A(0x1);
-    LD_addr_A(wBoxAlignment);
-    CALL(aStatsScreen_LoadTextboxSpaceGFX);
-    LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
-    PREDEF(pGetAnimatedFrontpic);
-    POP_DE;
-    hlcoord(0, 0, wTilemap);
-    LD_D(0x0);
-    PREDEF(pLoadMonAnimation);
-    LD_HL(wStatsScreenFlags);
-    SET_hl(6);
-    RET;
-
+// animate:
+    // PUSH_DE;
+    // LD_A(0x1);
+    // LD_addr_A(wBoxAlignment);
+    wram->wBoxAlignment = 0x1;
+    // CALL(aStatsScreen_LoadTextboxSpaceGFX);
+    StatsScreen_LoadTextboxSpaceGFX();
+    // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
+    // PREDEF(pGetAnimatedFrontpic);
+    GetAnimatedFrontpic_Conv(vram->vTiles2 + LEN_2BPP_TILE * 0x00, 0);
+    // POP_DE;
+    // hlcoord(0, 0, wTilemap);
+    // LD_D(0x0);
+    // PREDEF(pLoadMonAnimation);
+    LoadMonAnimation_Conv(coord(0, 0, wram->wTilemap), 0x0, e);
+    // LD_HL(wStatsScreenFlags);
+    // SET_hl(6);
+    bit_set(wram->wStatsScreenFlags, 6);
+    // RET;
 }
 
 void StatsScreen_LoadPageIndicators(void){

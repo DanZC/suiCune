@@ -6,6 +6,7 @@
 #include "../../home/region.h"
 #include "../../home/copy.h"
 #include "../../home/names.h"
+#include "../../home/map.h"
 #include "../../data/wild/johto_grass.h"
 #include "../../data/wild/kanto_grass.h"
 #include "../../data/wild/johto_water.h"
@@ -223,6 +224,247 @@ RoamMon2:
     INC_DE;
     RET;
 
+}
+
+static u8_flag_s FindNest_AppendNest(uint8_t group, uint8_t map) {
+    // PUSH_DE;
+    // CALL(aGetWorldMapLocation);
+    // LD_C_A;
+    uint8_t c = GetWorldMapLocation_Conv2(group, map);
+    // hlcoord(0, 0, wTilemap);
+    tile_t* hl2 = coord(0, 0, wram->wTilemap);
+    // LD_DE(SCREEN_WIDTH * SCREEN_HEIGHT);
+    uint16_t de = SCREEN_WIDTH * SCREEN_HEIGHT;
+
+    do {
+    // AppendNestLoop:
+        // LD_A_hli;
+        tile_t a = *(hl2++);
+        // CP_A_C;
+        // IF_Z goto found_nest;
+        if(a == c) {
+        // found_nest:
+            // POP_DE;
+            // AND_A_A;
+            // RET;
+            return u8_flag(c, false);
+        }
+        // DEC_DE;
+        // LD_A_E;
+        // OR_A_D;
+        // IF_NZ goto AppendNestLoop;
+    } while(--de != 0);
+    // LD_A_C;
+    // POP_DE;
+    // SCF;
+    // RET;
+    return u8_flag(c, true);
+}
+
+static u8_flag_s FindNest_SearchMapForGrassMon(const struct WildGrassMons* hl, species_t species) {
+    // INC_HL;
+
+    for(uint8_t i = 0; i < 3 * NUM_GRASSMON; ++i) {
+    // ScanMapLoop:
+        // PUSH_AF;
+        // LD_A_addr(wNamedObjectIndex);
+        // CP_A_hl;
+        // IF_Z goto found;
+        if(species == hl->mons[i >> 3][i & 7].species) {
+        // found:
+            // POP_AF;
+            // JP(mFindNest_AppendNest);
+            return FindNest_AppendNest(hl->mapGroup, hl->mapNumber);
+        }
+        // INC_HL;
+        // INC_HL;
+        // POP_AF;
+        // DEC_A;
+        // IF_NZ goto ScanMapLoop;
+    }
+    // AND_A_A;
+    // RET;
+    return u8_flag(0, false);
+}
+
+static u8_flag_s FindNest_SearchMapForWaterMon(const struct WildWaterMons* hl, species_t species) {
+    // INC_HL;
+
+    for(uint8_t i = 0; i < NUM_WATERMON; ++i) {
+    // ScanMapLoop:
+        // PUSH_AF;
+        // LD_A_addr(wNamedObjectIndex);
+        // CP_A_hl;
+        // IF_Z goto found;
+        if(species == hl->mons[i].species) {
+        // found:
+            // POP_AF;
+            // JP(mFindNest_AppendNest);
+            return FindNest_AppendNest(hl->mapGroup, hl->mapNumber);
+        }
+        // INC_HL;
+        // INC_HL;
+        // POP_AF;
+        // DEC_A;
+        // IF_NZ goto ScanMapLoop;
+    }
+    // AND_A_A;
+    // RET;
+    return u8_flag(0, false);
+}
+
+static tile_t* FindNest_FindGrass(tile_t* de, const struct WildGrassMons* hl, species_t species){
+    while(hl->mapGroup != (uint8_t)GROUP_N_A) {
+        // LD_A_hl;
+        // CP_A(-1);
+        // RET_Z ;
+        // PUSH_HL;
+        // LD_A_hli;
+        // LD_B_A;
+        // LD_A_hli;
+        // LD_C_A;
+        // INC_HL;
+        // INC_HL;
+        // INC_HL;
+        // LD_A(NUM_GRASSMON * 3);
+        // CALL(aFindNest_SearchMapForMon);
+        u8_flag_s res = FindNest_SearchMapForGrassMon(hl, species);
+        // IF_NC goto next_grass;
+        if(res.flag) {
+            // LD_de_A;
+            // INC_DE;
+            *(de++) = res.a;
+        }
+
+    // next_grass:
+        // POP_HL;
+        // LD_BC(GRASS_WILDDATA_LENGTH);
+        // ADD_HL_BC;
+        hl++;
+        // goto FindGrass;
+    }
+    return de;
+}
+
+static tile_t* FindNest_FindWater(tile_t* de, const struct WildWaterMons* hl, species_t species) {
+    while(hl->mapGroup != (uint8_t)GROUP_N_A) {
+        // LD_A_hl;
+        // CP_A(-1);
+        // RET_Z ;
+        // PUSH_HL;
+        // LD_A_hli;
+        // LD_B_A;
+        // LD_A_hli;
+        // LD_C_A;
+        // INC_HL;
+        // LD_A(NUM_WATERMON);
+        // CALL(aFindNest_SearchMapForMon);
+        u8_flag_s res = FindNest_SearchMapForWaterMon(hl, species);
+        // IF_NC goto next_water;
+        if(res.flag) {
+            // LD_de_A;
+            // INC_DE;
+            *(de++) = res.a;
+        }
+
+    // next_water:
+        // POP_HL;
+        // LD_BC(WATER_WILDDATA_LENGTH);
+        // ADD_HL_BC;
+        hl++;
+        // goto FindWater;
+    }
+    return de;
+}
+
+static tile_t* FindNest_RoamMon1(tile_t* de, species_t species) {
+    // LD_A_addr(wRoamMon1Species);
+    // LD_B_A;
+    // LD_A_addr(wNamedObjectIndex);
+    // CP_A_B;
+    // RET_NZ ;
+    if(wram->wRoamMon1.species != species)
+        return de;
+    // LD_A_addr(wRoamMon1MapGroup);
+    // LD_B_A;
+    // LD_A_addr(wRoamMon1MapNumber);
+    // LD_C_A;
+    // CALL(aFindNest_AppendNest);
+    u8_flag_s res = FindNest_AppendNest(wram->wRoamMon1.mapId.mapGroup, wram->wRoamMon1.mapId.mapNumber);
+    // RET_NC ;
+    if(res.flag) {
+        // LD_de_A;
+        // INC_DE;
+        *(de++) = res.a;
+    }
+    // RET;
+    return de;
+}
+
+static tile_t* FindNest_RoamMon2(tile_t* de, species_t species) {
+    // LD_A_addr(wRoamMon2Species);
+    // LD_B_A;
+    // LD_A_addr(wNamedObjectIndex);
+    // CP_A_B;
+    // RET_NZ ;
+    if(wram->wRoamMon2.species != species)
+        return de;
+    // LD_A_addr(wRoamMon2MapGroup);
+    // LD_B_A;
+    // LD_A_addr(wRoamMon2MapNumber);
+    // LD_C_A;
+    // CALL(aFindNest_AppendNest);
+    u8_flag_s res = FindNest_AppendNest(wram->wRoamMon2.mapId.mapGroup, wram->wRoamMon2.mapId.mapNumber);
+    // RET_NC ;
+    if(res.flag) {
+        // LD_de_A;
+        // INC_DE;
+        *(de++) = res.a;
+    }
+    // RET;
+    return de;
+}
+
+//  Parameters:
+//  e: 0 = Johto, 1 = Kanto
+//  wNamedObjectIndex: species
+void FindNest_Conv(uint8_t e, species_t species){
+    // hlcoord(0, 0, wTilemap);
+    // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
+    // XOR_A_A;
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x0);
+    // LD_A_E;
+    // AND_A_A;
+    // IF_NZ goto kanto;
+    if(e == JOHTO_REGION) {
+        // decoord(0, 0, wTilemap);
+        tile_t* de = coord(0, 0, wram->wTilemap);
+        // LD_HL(mJohtoGrassWildMons);
+        // CALL(aFindNest_FindGrass);
+        de = FindNest_FindGrass(de, JohtoGrassWildMons, species);
+        // LD_HL(mJohtoWaterWildMons);
+        // CALL(aFindNest_FindWater);
+        de = FindNest_FindWater(de, JohtoWaterWildMons, species);
+        // CALL(aFindNest_RoamMon1);
+        de = FindNest_RoamMon1(de, species);
+        // CALL(aFindNest_RoamMon2);
+        de = FindNest_RoamMon2(de, species);
+        // RET;
+        return;
+    }
+    else {
+    // kanto:
+        // decoord(0, 0, wTilemap);
+        tile_t* de = coord(0, 0, wram->wTilemap);
+        // LD_HL(mKantoGrassWildMons);
+        // CALL(aFindNest_FindGrass);
+        de = FindNest_FindGrass(de, KantoGrassWildMons, species);
+        // LD_HL(mKantoWaterWildMons);
+        // JP(mFindNest_FindWater);
+        FindNest_FindWater(de, KantoWaterWildMons, species);
+        return;
+    }
 }
 
 void TryWildEncounter(void){

@@ -3,6 +3,7 @@ void UpdateSound(void);
 void PlayMusic(void);
 void PlayMusic_Conv(uint16_t);
 void PlayMusic2(void);
+void PlayMusic2_Conv(uint16_t de);
 void PlayCry(void);
 void PlaySFX(void);
 void PlaySFX_Conv(uint16_t de);

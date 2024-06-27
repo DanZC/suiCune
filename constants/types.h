@@ -1426,6 +1426,10 @@ struct MenuData {
         struct {
             uint8_t count;
             const char **const options;
+            struct {
+                uint8_t indent;
+                const char* label;
+            } title;
         } verticalMenu;
         struct {
             uint8_t cols;

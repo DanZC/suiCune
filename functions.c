@@ -8436,4 +8436,12 @@ CONVERTED(v_AnimateTileset);
     // engine/events/buena_menu.c
     CONVERTED(AskRememberPassword);
     CONVERTED(Buena_ExitMenu);
+
+    // engine/pokemon/search.c
+    // CONVERTED(CheckOwnMonAnywhere);
+    // CONVERTED(CheckOwnMon);
+    CONVERTED(MonCheck);
+    // CONVERTED(SearchBoxAddressTable);
+    CONVERTED(BeastsCheck);
+    // CONVERTED(UpdateOTPointer);
 }

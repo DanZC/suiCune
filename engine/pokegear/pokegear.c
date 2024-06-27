@@ -18,7 +18,10 @@
 #include "../../home/lcd.h"
 #include "../../home/sprite_anims.h"
 #include "../../home/menu.h"
+#include "../../home/names.h"
+#include "../smallflag.h"
 #include "../overworld/landmarks.h"
+#include "../overworld/wildmons.h"
 #include "../gfx/player_gfx.h"
 #include "../gfx/sprites.h"
 #include "../gfx/mon_icons.h"
@@ -4643,38 +4646,37 @@ void GetMapCursorCoordinates(void){
     // RET;
 }
 
-void CheckIfVisitedFlypoint(void){
 //  Check if the flypoint loaded in [hl] has been visited yet.
-    PUSH_BC;
-    PUSH_DE;
-    PUSH_HL;
-    LD_L_hl;
-    LD_H(0);
-    ADD_HL_HL;
-    LD_DE(mFlypoints + 1);
-    ADD_HL_DE;
-    LD_C_hl;
-    CALL(aHasVisitedSpawn);
-    POP_HL;
-    POP_DE;
-    POP_BC;
-    AND_A_A;
-    RET;
-
+bool CheckIfVisitedFlypoint(uint8_t fp){
+    // PUSH_BC;
+    // PUSH_DE;
+    // PUSH_HL;
+    // LD_L_hl;
+    // LD_H(0);
+    // ADD_HL_HL;
+    // LD_DE(mFlypoints + 1);
+    // ADD_HL_DE;
+    // LD_C_hl;
+    // CALL(aHasVisitedSpawn);
+    // POP_HL;
+    // POP_DE;
+    // POP_BC;
+    // AND_A_A;
+    // RET;
+    return HasVisitedSpawn(Flypoints[fp].spawn) != 0;
 }
 
-void HasVisitedSpawn(void){
 //  Check if spawn point c has been visited.
-    LD_HL(wVisitedSpawns);
-    LD_B(CHECK_FLAG);
-    LD_D(0);
-    PREDEF(pSmallFarFlagAction);
-    LD_A_C;
-    RET;
+uint8_t HasVisitedSpawn(uint8_t c){
+    // LD_HL(wVisitedSpawns);
+    // LD_B(CHECK_FLAG);
+    // LD_D(0);
+    // PREDEF(pSmallFarFlagAction);
+    // LD_A_C;
+    // RET;
+    return SmallFarFlagAction_Conv(wram->wVisitedSpawns, c, CHECK_FLAG);
 
 // INCLUDE "data/maps/flypoints.asm"
-
-    return Pokegear_DummyFunction();
 }
 
 void Pokegear_DummyFunction(void){
@@ -4770,306 +4772,404 @@ MapHud:
 
 }
 
-void Pokedex_GetArea(void){
-//  e: Current landmark
-    LD_A_addr(wTownMapPlayerIconLandmark);
-    PUSH_AF;
-    LD_A_addr(wTownMapCursorLandmark);
-    PUSH_AF;
-    LD_A_E;
-    LD_addr_A(wTownMapPlayerIconLandmark);
-    CALL(aClearSprites);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    LD_A(0x1);
-    LDH_addr_A(hInMenu);
-    LD_DE(mPokedexNestIconGFX);
-    LD_HL(vTiles0 + LEN_2BPP_TILE * 0x7f);
-    LD_BC((BANK(aPokedexNestIconGFX) << 8) | 1);
-    CALL(aRequest2bpp);
-    CALL(aPokedex_GetArea_GetPlayerOrFastShipIcon);
-    LD_HL(vTiles0 + LEN_2BPP_TILE * 0x78);
-    LD_C(4);
-    CALL(aRequest2bpp);
-    CALL(aLoadTownMapGFX);
-    CALL(aFillKantoMap);
-    CALL(aPokedex_GetArea_PlaceString_MonsNest);
-    CALL(aTownMapPals);
-    hlbgcoord(0, 0, vBGMap1);
-    CALL(aTownMapBGUpdate);
-    CALL(aFillJohtoMap);
-    CALL(aPokedex_GetArea_PlaceString_MonsNest);
-    CALL(aTownMapPals);
-    hlbgcoord(0, 0, vBGMap0);
-    CALL(aTownMapBGUpdate);
-    LD_B(SCGB_POKEGEAR_PALS);
-    CALL(aGetSGBLayout);
-    CALL(aSetPalettes);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    XOR_A_A;  // JOHTO_REGION
-    CALL(aPokedex_GetArea_GetAndPlaceNest);
+static const char* GetPlayerOrFastShipIcon(void){
+    // LD_A_addr(wTownMapPlayerIconLandmark);
+    // CP_A(LANDMARK_FAST_SHIP);
+    // IF_Z goto FastShip;
+    if(wram->wTownMapPlayerIconLandmark == LANDMARK_FAST_SHIP) {
+    // FastShip:
+        // LD_DE(mFastShipGFX);
+        // LD_B(BANK(aFastShipGFX));
+        // RET;
+        return FastShipGFX;
+    }
+    // FARCALL(aGetPlayerIcon);
+    // RET;
+    return GetPlayerIcon_Conv2();
+}
 
-loop:
-    CALL(aJoyTextDelay);
-    LD_HL(hJoyPressed);
-    LD_A_hl;
-    AND_A(A_BUTTON | B_BUTTON);
-    IF_NZ goto a_b;
-    LDH_A_addr(hJoypadDown);
-    AND_A(SELECT);
-    IF_NZ goto select;
-    CALL(aPokedex_GetArea_LeftRightInput);
-    CALL(aPokedex_GetArea_BlinkNestIcons);
-    goto next;
+static void PlaceString_MonsNest(species_t species) {
+    static const char String_SNest[] = "\'S NEST";
+    // hlcoord(0, 0, wTilemap);
+    // LD_BC(SCREEN_WIDTH);
+    // LD_A(0x7f);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_WIDTH, 0x7f);
+    // hlcoord(0, 1, wTilemap);
+    // LD_A(0x06);
+    // LD_hli_A;
+    *coord(0, 1, wram->wTilemap) = 0x06;
+    // LD_BC(SCREEN_WIDTH - 2);
+    // LD_A(0x07);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(1, 1, wram->wTilemap), SCREEN_WIDTH - 2, 0x07);
+    // LD_hl(0x17);
+    *coord(SCREEN_WIDTH - 1, 1, wram->wTilemap) = 0x17;
+    // CALL(aGetPokemonName);
+    uint8_t* de = GetPokemonName_Conv2(species);
+    // hlcoord(2, 0, wTilemap);
+    struct TextPrintState st = {.hl = coord(2, 0, wram->wTilemap), .de = de};
+    // CALL(aPlaceString);
+    PlaceString_Conv(&st, st.hl);
+    // LD_H_B;
+    // LD_L_C;
+    st.hl = st.bc;
+    // LD_DE(mPokedex_GetArea_String_SNest);
+    st.de = U82C(String_SNest);
+    // CALL(aPlaceString);
+    PlaceString_Conv(&st, st.hl);
+    // RET;
+}
 
+static void Pokedex_GetArea_GetAndPlaceNest(uint8_t a, species_t species){
+    // LD_addr_A(wTownMapCursorLandmark);
+    wram->wTownMapCursorLandmark = a;
+    // LD_E_A;
+    // FARCALL(aFindNest);  // load nest landmarks into wTilemap[0,0]
+    FindNest_Conv(a, species);
+    // decoord(0, 0, wTilemap);
+    tile_t* de = coord(0, 0, wram->wTilemap);
+    // LD_HL(wVirtualOAMSprite00);
+    struct SpriteOAM* hl = wram->wVirtualOAMSprite;
 
-select:
-    CALL(aPokedex_GetArea_HideNestsShowPlayer);
+    while(*de != 0) {
+    // nestloop:
+        // LD_A_de;
+        // AND_A_A;
+        // IF_Z goto done_nest;
+        // PUSH_DE;
+        // LD_E_A;
+        // PUSH_HL;
+        // FARCALL(aGetLandmarkCoords);
+        const struct Coords coords = GetLandmarkCoords_Conv(*de);
+        // POP_HL;
+    // load into OAM
+        // LD_A_D;
+        // SUB_A(4);
+        // LD_hli_A;  // y
+        hl->yCoord = coords.y - 4;
+        // LD_A_E;
+        // SUB_A(4);
+        // LD_hli_A;  // x
+        hl->xCoord = coords.x - 4;
+        // LD_A(0x7f);  // nest icon
+        // LD_hli_A;  // tile id
+        hl->tileID = 0x7f;
+        // XOR_A_A;
+        // LD_hli_A;  // attributes
+        hl->attributes = 0;
+        hl++;
+    // next
+        // POP_DE;
+        // INC_DE;
+        de++;
+        // goto nestloop;
+    }
 
-next:
-    CALL(aDelayFrame);
-    goto loop;
+// done_nest:
+    // LD_HL(wVirtualOAM);
+    // decoord(0, 0, wTilemap);
+    // LD_BC(wVirtualOAMEnd - wVirtualOAM);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(coord(0, 0, wram->wTilemap), wram->wVirtualOAMSprite, sizeof(wram->wVirtualOAMSprite)); // ...why?
+    // RET;
+}
 
+static void Pokedex_GetArea_LeftRightInput(uint8_t joypad, species_t species){
+    // LD_A_hl;
+    // AND_A(D_LEFT);
+    // IF_NZ goto left;
+    if(joypad & D_LEFT) {
+    // left:
+        // LDH_A_addr(hWY);
+        // CP_A(SCREEN_HEIGHT_PX);
+        // RET_Z ;
+        if(hram->hWY == SCREEN_HEIGHT_PX)
+            return;
+        // CALL(aClearSprites);
+        ClearSprites_Conv();
+        // LD_A(SCREEN_HEIGHT_PX);
+        // LDH_addr_A(hWY);
+        hram->hWY = SCREEN_HEIGHT_PX;
+        // XOR_A_A;  // JOHTO_REGION
+        // CALL(aPokedex_GetArea_GetAndPlaceNest);
+        Pokedex_GetArea_GetAndPlaceNest(JOHTO_REGION, species);
+        // RET;
+        return;
+    }
+    // LD_A_hl;
+    // AND_A(D_RIGHT);
+    // IF_NZ goto right;
+    if(joypad & D_RIGHT) {
+    // right:
+        // LD_A_addr(wStatusFlags);
+        // BIT_A(STATUSFLAGS_HALL_OF_FAME_F);
+        // RET_Z ;
+        if(!bit_test(wram->wStatusFlags, STATUSFLAGS_HALL_OF_FAME_F))
+            return;
+        // LDH_A_addr(hWY);
+        // AND_A_A;
+        // RET_Z ;
+        if(hram->hWY == 0)
+            return;
+        // CALL(aClearSprites);
+        ClearSprites_Conv();
+        // XOR_A_A;
+        // LDH_addr_A(hWY);
+        hram->hWY = 0;
+        // LD_A(KANTO_REGION);
+        // CALL(aPokedex_GetArea_GetAndPlaceNest);
+        Pokedex_GetArea_GetAndPlaceNest(KANTO_REGION, species);
+        // RET;
+        return;
+    }
+    // RET;
+}
 
-a_b:
-    CALL(aClearSprites);
-    POP_AF;
-    LD_addr_A(wTownMapCursorLandmark);
-    POP_AF;
-    LD_addr_A(wTownMapPlayerIconLandmark);
-    RET;
+static void Pokedex_GetArea_BlinkNestIcons(void) {
+    // LDH_A_addr(hVBlankCounter);
+    // LD_E_A;
+    uint8_t e = hram->hVBlankCounter;
+    // AND_A(0xf);
+    // RET_NZ ;
+    if((e & 0xf) != 0)
+        return;
+    // LD_A_E;
+    // AND_A(0x10);
+    // IF_NZ goto copy_sprites;
+    if((e & 0x10) != 0) {
+    // copy_sprites:
+        // hlcoord(0, 0, wTilemap);
+        // LD_DE(wVirtualOAM);
+        // LD_BC(wVirtualOAMEnd - wVirtualOAM);
+        // CALL(aCopyBytes);
+        CopyBytes_Conv2(wram->wVirtualOAMSprite, coord(0, 0, wram->wTilemap), sizeof(wram->wVirtualOAMSprite));
+        // RET;
+        return;
+    }
+    else {
+        // CALL(aClearSprites);
+        ClearSprites_Conv();
+        // RET;
+        return;
+    }
+}
 
-
-LeftRightInput:
-    LD_A_hl;
-    AND_A(D_LEFT);
-    IF_NZ goto left;
-    LD_A_hl;
-    AND_A(D_RIGHT);
-    IF_NZ goto right;
-    RET;
-
-
-left:
-    LDH_A_addr(hWY);
-    CP_A(SCREEN_HEIGHT_PX);
-    RET_Z ;
-    CALL(aClearSprites);
-    LD_A(SCREEN_HEIGHT_PX);
-    LDH_addr_A(hWY);
-    XOR_A_A;  // JOHTO_REGION
-    CALL(aPokedex_GetArea_GetAndPlaceNest);
-    RET;
-
-
-right:
-    LD_A_addr(wStatusFlags);
-    BIT_A(STATUSFLAGS_HALL_OF_FAME_F);
-    RET_Z ;
-    LDH_A_addr(hWY);
-    AND_A_A;
-    RET_Z ;
-    CALL(aClearSprites);
-    XOR_A_A;
-    LDH_addr_A(hWY);
-    LD_A(KANTO_REGION);
-    CALL(aPokedex_GetArea_GetAndPlaceNest);
-    RET;
-
-
-BlinkNestIcons:
-    LDH_A_addr(hVBlankCounter);
-    LD_E_A;
-    AND_A(0xf);
-    RET_NZ ;
-    LD_A_E;
-    AND_A(0x10);
-    IF_NZ goto copy_sprites;
-    CALL(aClearSprites);
-    RET;
-
-
-copy_sprites:
-    hlcoord(0, 0, wTilemap);
-    LD_DE(wVirtualOAM);
-    LD_BC(wVirtualOAMEnd - wVirtualOAM);
-    CALL(aCopyBytes);
-    RET;
-
-
-PlaceString_MonsNest:
-    hlcoord(0, 0, wTilemap);
-    LD_BC(SCREEN_WIDTH);
-    LD_A(0x7f);
-    CALL(aByteFill);
-    hlcoord(0, 1, wTilemap);
-    LD_A(0x06);
-    LD_hli_A;
-    LD_BC(SCREEN_WIDTH - 2);
-    LD_A(0x07);
-    CALL(aByteFill);
-    LD_hl(0x17);
-    CALL(aGetPokemonName);
-    hlcoord(2, 0, wTilemap);
-    CALL(aPlaceString);
-    LD_H_B;
-    LD_L_C;
-    LD_DE(mPokedex_GetArea_String_SNest);
-    CALL(aPlaceString);
-    RET;
-
-
-String_SNest:
-    //db ['"\'S NEST@"'];
-
-
-GetAndPlaceNest:
-    LD_addr_A(wTownMapCursorLandmark);
-    LD_E_A;
-    FARCALL(aFindNest);  // load nest landmarks into wTilemap[0,0]
-    decoord(0, 0, wTilemap);
-    LD_HL(wVirtualOAMSprite00);
-
-nestloop:
-    LD_A_de;
-    AND_A_A;
-    IF_Z goto done_nest;
-    PUSH_DE;
-    LD_E_A;
-    PUSH_HL;
-    FARCALL(aGetLandmarkCoords);
-    POP_HL;
-// load into OAM
-    LD_A_D;
-    SUB_A(4);
-    LD_hli_A;  // y
-    LD_A_E;
-    SUB_A(4);
-    LD_hli_A;  // x
-    LD_A(0x7f);  // nest icon
-    LD_hli_A;  // tile id
-    XOR_A_A;
-    LD_hli_A;  // attributes
-// next
-    POP_DE;
-    INC_DE;
-    goto nestloop;
-
-
-done_nest:
-    LD_HL(wVirtualOAM);
-    decoord(0, 0, wTilemap);
-    LD_BC(wVirtualOAMEnd - wVirtualOAM);
-    CALL(aCopyBytes);
-    RET;
-
-
-HideNestsShowPlayer:
-    CALL(aPokedex_GetArea_CheckPlayerLocation);
-    RET_C ;
-    LD_A_addr(wTownMapPlayerIconLandmark);
-    LD_E_A;
-    FARCALL(aGetLandmarkCoords);
-    LD_C_E;
-    LD_B_D;
-    LD_DE(mPokedex_GetArea_PlayerOAM);
-    LD_HL(wVirtualOAMSprite00);
-
-ShowPlayerLoop:
-    LD_A_de;
-    CP_A(0x80);
-    IF_Z goto clear_oam;
-    ADD_A_B;
-    LD_hli_A;  // y
-    INC_DE;
-    LD_A_de;
-    ADD_A_C;
-    LD_hli_A;  // x
-    INC_DE;
-    LD_A_de;
-    ADD_A(0x78);  // where the player's sprite is loaded
-    LD_hli_A;  // tile id
-    INC_DE;
-    PUSH_BC;
-    LD_C(PAL_OW_RED);
-    LD_A_addr(wPlayerGender);
-    BIT_A(PLAYERGENDER_FEMALE_F);
-    IF_Z goto male;
-    INC_C;  // PAL_OW_BLUE
-
-male:
-    LD_A_C;
-    LD_hli_A;  // attributes
-    POP_BC;
-    goto ShowPlayerLoop;
-
-
-clear_oam:
-    LD_HL(wVirtualOAMSprite04);
-    LD_BC(wVirtualOAMEnd - wVirtualOAMSprite04);
-    XOR_A_A;
-    CALL(aByteFill);
-    RET;
-
-
-PlayerOAM:
-// y pxl, x pxl, tile offset
-    //db ['-1 * 8', '-1 * 8', '0'];  // top left
-    //db ['-1 * 8', '0 * 8', '1'];  // top right
-    //db ['0 * 8', '-1 * 8', '2'];  // bottom left
-    //db ['0 * 8', '0 * 8', '3'];  // bottom right
-    //db ['0x80'];  // terminator
-
-
-CheckPlayerLocation:
 //  Don't show the player's sprite if you're
 //  not in the same region as what's currently
 //  on the screen.
-    LD_A_addr(wTownMapPlayerIconLandmark);
-    CP_A(LANDMARK_FAST_SHIP);
-    IF_Z goto johto;
-    CP_A(KANTO_LANDMARK);
-    IF_C goto johto;
+static bool Pokedex_GetArea_CheckPlayerLocation(void){
+    // LD_A_addr(wTownMapPlayerIconLandmark);
+    // CP_A(LANDMARK_FAST_SHIP);
+    // IF_Z goto johto;
+    // CP_A(KANTO_LANDMARK);
+    // IF_C goto johto;
+    bool clear;
+    if(wram->wTownMapPlayerIconLandmark == LANDMARK_FAST_SHIP || wram->wTownMapPlayerIconLandmark < KANTO_LANDMARK) {
+    // johto:
+        // LD_A_addr(wTownMapCursorLandmark);
+        // AND_A_A;
+        // IF_NZ goto clear;
+        clear = wram->wTownMapCursorLandmark != 0;
+    }
 //  kanto
-    LD_A_addr(wTownMapCursorLandmark);
-    AND_A_A;
-    IF_Z goto clear;
-    goto ok;
+    else {
+        // LD_A_addr(wTownMapCursorLandmark);
+        // AND_A_A;
+        // IF_Z goto clear;
+        clear = wram->wTownMapCursorLandmark == 0;
+    }
+    if(clear) {
+    // clear:
+        // LD_HL(wVirtualOAM);
+        // LD_BC(wVirtualOAMEnd - wVirtualOAM);
+        // XOR_A_A;
+        // CALL(aByteFill);
+        ByteFill_Conv2(wram->wVirtualOAMSprite, sizeof(wram->wVirtualOAMSprite), 0);
+        // SCF;
+        // RET;
+        return false;
+    }
+    // goto ok;
 
+// ok:
+    // AND_A_A;
+    // RET;
+    return true;
+}
 
-johto:
-    LD_A_addr(wTownMapCursorLandmark);
-    AND_A_A;
-    IF_NZ goto clear;
+static void Pokedex_GetArea_HideNestsShowPlayer(void){
+    static const uint8_t PlayerOAM[] = {
+    // y pxl, x pxl, tile offset
+        -1 * 8, -1 * 8, 0,  // top left
+        -1 * 8,  0 * 8, 1,  // top right
+         0 * 8, -1 * 8, 2,  // bottom left
+         0 * 8,  0 * 8, 3,  // bottom right
+        0x80,  // terminator
+    };
+    // CALL(aPokedex_GetArea_CheckPlayerLocation);
+    // RET_C ;
+    if(!Pokedex_GetArea_CheckPlayerLocation())
+        return;
+    // LD_A_addr(wTownMapPlayerIconLandmark);
+    // LD_E_A;
+    // FARCALL(aGetLandmarkCoords);
+    const struct Coords coords = GetLandmarkCoords_Conv(wram->wTownMapPlayerIconLandmark);
+    // LD_C_E;
+    // LD_B_D;
+    // LD_DE(mPokedex_GetArea_PlayerOAM);
+    const uint8_t* de = PlayerOAM;
+    // LD_HL(wVirtualOAMSprite00);
+    struct SpriteOAM* hl = wram->wVirtualOAMSprite;
 
-ok:
-    AND_A_A;
-    RET;
+    while(*de != 0x80) {
+    // ShowPlayerLoop:
+        // LD_A_de;
+        // CP_A(0x80);
+        // IF_Z goto clear_oam;
+        // ADD_A_B;
+        // LD_hli_A;  // y
+        hl->yCoord = *de + coords.y;
+        // INC_DE;
+        de++;
+        // LD_A_de;
+        // ADD_A_C;
+        // LD_hli_A;  // x
+        hl->xCoord = *de + coords.x;
+        // INC_DE;
+        de++;
+        // LD_A_de;
+        // ADD_A(0x78);  // where the player's sprite is loaded
+        // LD_hli_A;  // tile id
+        hl->tileID = *de + 0x78;
+        // INC_DE;
+        de++;
+        // PUSH_BC;
+        // LD_C(PAL_OW_RED);
+        // LD_A_addr(wPlayerGender);
+        // BIT_A(PLAYERGENDER_FEMALE_F);
+        // IF_Z goto male;
+        // INC_C;  // PAL_OW_BLUE
 
+    // male:
+        // LD_A_C;
+        // LD_hli_A;  // attributes
+        hl->attributes = (bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))? PAL_OW_BLUE: PAL_OW_RED;
+        // POP_BC;
+        // goto ShowPlayerLoop;
+    }
 
-clear:
-    LD_HL(wVirtualOAM);
-    LD_BC(wVirtualOAMEnd - wVirtualOAM);
-    XOR_A_A;
-    CALL(aByteFill);
-    SCF;
-    RET;
+// clear_oam:
+    // LD_HL(wVirtualOAMSprite04);
+    // LD_BC(wVirtualOAMEnd - wVirtualOAMSprite04);
+    // XOR_A_A;
+    // CALL(aByteFill);
+    ByteFill_Conv2(wram->wVirtualOAMSprite + 4, sizeof(wram->wVirtualOAMSprite) - 4 * sizeof(wram->wVirtualOAMSprite[0]), 0x0);
+    // RET;
+}
 
+void Pokedex_GetArea(uint8_t e, species_t species){
+//  e: Current landmark
+    // LD_A_addr(wTownMapPlayerIconLandmark);
+    // PUSH_AF;
+    uint8_t playerIconLandmark = wram->wTownMapPlayerIconLandmark;
+    // LD_A_addr(wTownMapCursorLandmark);
+    // PUSH_AF;
+    uint8_t cursorLandmark = wram->wTownMapCursorLandmark;
+    // LD_A_E;
+    // LD_addr_A(wTownMapPlayerIconLandmark);
+    wram->wTownMapPlayerIconLandmark = e;
+    // CALL(aClearSprites);
+    ClearSprites_Conv();
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    // LD_A(0x1);
+    // LDH_addr_A(hInMenu);
+    hram->hInMenu = 0x1;
+    // LD_DE(mPokedexNestIconGFX);
+    // LD_HL(vTiles0 + LEN_2BPP_TILE * 0x7f);
+    // LD_BC((BANK(aPokedexNestIconGFX) << 8) | 1);
+    // CALL(aRequest2bpp);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles0 + LEN_2BPP_TILE * 0x7f, PokedexNestIconGFX, 0, 1);
+    // CALL(aPokedex_GetArea_GetPlayerOrFastShipIcon);
+    // LD_HL(vTiles0 + LEN_2BPP_TILE * 0x78);
+    // LD_C(4);
+    // CALL(aRequest2bpp);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles0 + LEN_2BPP_TILE * 0x78, GetPlayerOrFastShipIcon(), 0, 4);
+    // CALL(aLoadTownMapGFX);
+    LoadTownMapGFX_Conv();
+    // CALL(aFillKantoMap);
+    FillKantoMap_Conv();
+    // CALL(aPokedex_GetArea_PlaceString_MonsNest);
+    PlaceString_MonsNest(species);
+    // CALL(aTownMapPals);
+    TownMapPals_Conv();
+    // hlbgcoord(0, 0, vBGMap1);
+    // CALL(aTownMapBGUpdate);
+    TownMapBGUpdate_Conv(bgcoord(0, 0, vBGMap1));
+    // CALL(aFillJohtoMap);
+    FillJohtoMap_Conv();
+    // CALL(aPokedex_GetArea_PlaceString_MonsNest);
+    PlaceString_MonsNest(species);
+    // CALL(aTownMapPals);
+    TownMapPals_Conv();
+    // hlbgcoord(0, 0, vBGMap0);
+    // CALL(aTownMapBGUpdate);
+    TownMapBGUpdate_Conv(bgcoord(0, 0, vBGMap0));
+    // LD_B(SCGB_POKEGEAR_PALS);
+    // CALL(aGetSGBLayout);
+    GetSGBLayout_Conv(SCGB_POKEGEAR_PALS);
+    // CALL(aSetPalettes);
+    SetPalettes_Conv();
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0x0;
+    // XOR_A_A;  // JOHTO_REGION
+    // CALL(aPokedex_GetArea_GetAndPlaceNest);
+    Pokedex_GetArea_GetAndPlaceNest(JOHTO_REGION, species);
 
-GetPlayerOrFastShipIcon:
-    LD_A_addr(wTownMapPlayerIconLandmark);
-    CP_A(LANDMARK_FAST_SHIP);
-    IF_Z goto FastShip;
-    FARCALL(aGetPlayerIcon);
-    RET;
-
-
-FastShip:
-    LD_DE(mFastShipGFX);
-    LD_B(BANK(aFastShipGFX));
-    RET;
-
+    while(1) {
+    // loop:
+        // CALL(aJoyTextDelay);
+        JoyTextDelay_Conv();
+        // LD_HL(hJoyPressed);
+        // LD_A_hl;
+        // AND_A(A_BUTTON | B_BUTTON);
+        // IF_NZ goto a_b;
+        if(hram->hJoyPressed & (A_BUTTON | B_BUTTON)) {
+        // a_b:
+            // CALL(aClearSprites);
+            ClearSprites_Conv();
+            // POP_AF;
+            // LD_addr_A(wTownMapCursorLandmark);
+            wram->wTownMapCursorLandmark = cursorLandmark;
+            // POP_AF;
+            // LD_addr_A(wTownMapPlayerIconLandmark);
+            wram->wTownMapPlayerIconLandmark = playerIconLandmark;
+            // RET;
+            return;
+        }
+        // LDH_A_addr(hJoypadDown);
+        // AND_A(SELECT);
+        // IF_NZ goto select;
+        if(hram->hJoypadDown & SELECT) {
+        // select:
+            // CALL(aPokedex_GetArea_HideNestsShowPlayer);
+            Pokedex_GetArea_HideNestsShowPlayer();
+        }
+        else {
+            // CALL(aPokedex_GetArea_LeftRightInput);
+            Pokedex_GetArea_LeftRightInput(hram->hJoypadDown, species);
+            // CALL(aPokedex_GetArea_BlinkNestIcons);
+            Pokedex_GetArea_BlinkNestIcons();
+            // goto next;
+        }
+    // next:
+        // CALL(aDelayFrame);
+        DelayFrame();
+        // goto loop;
+    }
 }
 
 void TownMapBGUpdate(void){
@@ -5546,9 +5646,7 @@ const char JohtoMap[] = "gfx/pokegear/johto.bin";
 
 const char KantoMap[] = "gfx/pokegear/kanto.bin";
 
-void PokedexNestIconGFX(void){
-// INCBIN "gfx/pokegear/dexmap_nest_icon.2bpp"
-}
+const char PokedexNestIconGFX[] = "gfx/pokegear/dexmap_nest_icon.png";
 
 static const char FlyMapLabelBorderGFX[] = "gfx/pokegear/flymap_label_border.png";
 

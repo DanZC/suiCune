@@ -1,5 +1,6 @@
 void LoadWildMonData(void);
 void FindNest(void);
+void FindNest_Conv(uint8_t e, species_t species);
 void TryWildEncounter(void);
 bool TryWildEncounter_Conv(void);
 void GetMapEncounterRate(void);

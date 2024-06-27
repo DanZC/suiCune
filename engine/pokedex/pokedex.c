@@ -19,6 +19,7 @@
 #include "../../home/sram.h"
 #include "../../home/pokemon.h"
 #include "../gfx/load_pics.h"
+#include "../pokegear/pokegear.h"
 #include "../../data/pokemon/dex_order_new.h"
 #include "../../data/pokemon/dex_order_alpha.h"
 #include "../../gfx/footprints.h"
@@ -681,33 +682,50 @@ void DexEntryScreen_MenuActionJumptable(uint8_t a){
     // Area:
     //  TODO: Implement and convert Pokedex Area thing.
         // CALL(aPokedex_BlackOutBG);
+        Pokedex_BlackOutBG();
         // XOR_A_A;
         // LDH_addr_A(hSCX);
+        hram->hSCX = 0;
         // CALL(aDelayFrame);
+        DelayFrame();
         // LD_A(0x7);
         // LDH_addr_A(hWX);
+        hram->hWX = 0x7;
         // LD_A(0x90);
         // LDH_addr_A(hWY);
+        hram->hWY = 0x90;
         // CALL(aPokedex_GetSelectedMon);
         // LD_A_addr(wDexCurLocation);
         // LD_E_A;
         // PREDEF(pPokedex_GetArea);
+        Pokedex_GetArea(wram->wDexCurLocation, Pokedex_GetSelectedMon());
         // CALL(aPokedex_BlackOutBG);
+        Pokedex_BlackOutBG();
         // CALL(aDelayFrame);
+        DelayFrame();
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
+        hram->hBGMapMode = 0x0;
         // LD_A(0x90);
         // LDH_addr_A(hWY);
+        hram->hWY = 0x90;
         // LD_A(POKEDEX_SCX);
         // LDH_addr_A(hSCX);
+        hram->hSCX = POKEDEX_SCX;
         // CALL(aDelayFrame);
+        DelayFrame();
         // CALL(aPokedex_RedisplayDexEntry);
+        Pokedex_RedisplayDexEntry();
         // CALL(aPokedex_LoadSelectedMonTiles);
+        Pokedex_LoadSelectedMonTiles();
         // CALL(aWaitBGMap);
+        WaitBGMap_Conv();
         // CALL(aPokedex_GetSelectedMon);
         // LD_addr_A(wCurPartySpecies);
+        wram->wCurPartySpecies = Pokedex_GetSelectedMon();
         // LD_A(SCGB_POKEDEX);
         // CALL(aPokedex_GetSGBLayout);
+        Pokedex_GetSGBLayout(SCGB_POKEDEX);
         // RET;
         return;
 
@@ -757,12 +775,14 @@ void DexEntryScreen_MenuActionJumptable(uint8_t a){
 }
 
 void Pokedex_RedisplayDexEntry(void){
-    CALL(aPokedex_DrawDexEntryScreenBG);
-    CALL(aPokedex_GetSelectedMon);
-    FARCALL(aDisplayDexEntry);
-    CALL(aPokedex_DrawFootprint);
-    RET;
-
+    // CALL(aPokedex_DrawDexEntryScreenBG);
+    Pokedex_DrawDexEntryScreenBG();
+    // CALL(aPokedex_GetSelectedMon);
+    // FARCALL(aDisplayDexEntry);
+    DisplayDexEntry(Pokedex_GetSelectedMon());
+    // CALL(aPokedex_DrawFootprint);
+    Pokedex_DrawFootprint();
+    // RET;
 }
 
 void Pokedex_InitOptionScreen(void){

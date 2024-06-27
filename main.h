@@ -174,7 +174,7 @@
 //#include "engine/events/celebi.h"
 #include "engine/menus/main_menu.h"
 //#include "mobile/mobile_menu.h"
-//#include "engine/pokemon/search.h"
+#include "engine/pokemon/search.h"
 //#include "mobile/mobile_12_2.h"
 #include "engine/events/buena_menu.h"
 

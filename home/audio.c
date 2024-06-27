@@ -145,6 +145,43 @@ void PlayMusic2(void) {
     RET;     // ret
 }
 
+//  Stop playing music, then play music de.
+void PlayMusic2_Conv(uint16_t de) {
+    // SET_PC(0x3DB9U);
+    PUSH_HL;  // push hl
+    PUSH_DE;  // push de
+    PUSH_BC;  // push bc
+    PUSH_AF;  // push af
+
+    // LDH_A_addr(hROMBank);      // ldh a, [hROMBank]
+    // PUSH_AF;                   // push af
+    uint8_t oldbank = gb_read(hROMBank);
+    // LD_A(BANK(av_PlayMusic));  // ld a, BANK(_PlayMusic)
+    // LDH_addr_A(hROMBank);      // ldh [hROMBank], a
+    hram->hROMBank = BANK(av_PlayMusic);
+    // LD_addr_A(MBC3RomBank);    // ld [MBC3RomBank], a
+    gb_write(MBC3RomBank, BANK(av_PlayMusic));
+
+    // PUSH_DE;  // push de
+    v_PlayMusic(MUSIC_NONE);
+    // CALL(aDelayFrame);  // call DelayFrame
+    DelayFrame();
+    // POP_DE;             // pop de
+    v_PlayMusic(de);
+
+    // POP_AF;                  // pop af
+    // LDH_addr_A(hROMBank);    // ldh [hROMBank], a
+    hram->hROMBank = oldbank;
+    // LD_addr_A(MBC3RomBank);  // ld [MBC3RomBank], a
+    gb_write(MBC3RomBank, oldbank);
+
+    POP_AF;  // pop af
+    POP_BC;  // pop bc
+    POP_DE;  // pop de
+    POP_HL;  // pop hl
+    // RET;     // ret
+}
+
 void PlayCry(void) {
     //  Play cry de.
 

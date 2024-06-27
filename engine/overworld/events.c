@@ -43,6 +43,7 @@
 #include "../events/happiness_egg.h"
 #include "../events/bug_contest/contest.h"
 #include "../menus/debug_field_menu.h"
+#include "../pokemon/breeding.h"
 #include "../../data/wild/bug_contest_mons.h"
 
 // INCLUDE "constants.asm"
@@ -2090,9 +2091,13 @@ u8_flag_s CountStep_Conv(void){
     if(wram->wStepCount == 0x80) {
         // FARCALL(aDoEggStep);
         // IF_NZ goto hatch;
-        struct cpu_registers_s regs = SafeCallGBAutoRet(aDoEggStep);
-        if(!regs.f_bits.z)
-            goto hatch;
+        if(DoEggStep()) {
+        // hatch:
+            // LD_A(PLAYEREVENT_HATCH);
+            // SCF;
+            // RET;
+            return u8_flag(PLAYEREVENT_HATCH, true);
+        }
     }
 
 // skip_egg:
@@ -2131,13 +2136,6 @@ doscript:
     // SCF;
     // RET;
     return u8_flag(0xff, true);
-
-
-hatch:
-    // LD_A(PLAYEREVENT_HATCH);
-    // SCF;
-    // RET;
-    return u8_flag(PLAYEREVENT_HATCH, true);
 
 
 whiteout:
@@ -2252,6 +2250,7 @@ void UnusedPlayerEventScript(void){
 bool HatchEggScript(script_s* s){
     SCRIPT_BEGIN
     //callasm ['OverworldHatchEgg']
+    OverworldHatchEgg();
     s_end
     SCRIPT_END
 }
