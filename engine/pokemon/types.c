@@ -130,7 +130,7 @@ void PrintMoveType_Conv(uint8_t* hl, move_t b){
 
     // LD_B_A;
 
-    return PrintType_Conv(hl, Moves[b - 1].type);
+    return PrintType_Conv(hl, Moves[b].type);
 }
 
 void PrintType(void){

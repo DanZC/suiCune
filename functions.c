@@ -8683,4 +8683,7 @@ CONVERTED(v_AnimateTileset);
     // CONVERTED(SearchBoxAddressTable);
     CONVERTED(BeastsCheck);
     // CONVERTED(UpdateOTPointer);
+
+    // engine/events/move_deleter.c
+    CONVERTED(MoveDeletion);
 }

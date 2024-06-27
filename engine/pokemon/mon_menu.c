@@ -1,12 +1,27 @@
 #include "../../constants.h"
 #include "mon_menu.h"
+#include "tempmon.h"
+#include "mon_stats.h"
+#include "types.h"
+#include "print_move_description.h"
 #include "../../home/names.h"
 #include "../../home/copy_name.h"
 #include "../../home/menu.h"
 #include "../../home/item.h"
+#include "../../home/gfx.h"
+#include "../../home/copy.h"
+#include "../../home/tilemap.h"
+#include "../../home/clear_sprites.h"
+#include "../../home/text.h"
+#include "../../home/print_text.h"
+#include "../../home/pokemon.h"
+#include "../gfx/load_font.h"
+#include "../gfx/sprites.h"
+#include "../gfx/mon_icons.h"
 #include "../items/items.h"
 #include "../items/buy_sell_toss.h"
 #include "../../data/text/common.h"
+#include "../../data/moves/moves.h"
 
 void HasNoItems(void){
     LD_A_addr(wNumItems);
@@ -1174,15 +1189,97 @@ finish:
 
 }
 
-void DeleteMoveScreen2DMenuData(void){
-    //db ['3', '1'];  // cursor start y, x
-    //db ['3', '1'];  // rows, columns
-    //db ['0x40', '0x00'];  // flags
-    //dn ['2', '0'];  // cursor offset
-    //db ['D_UP | D_DOWN | A_BUTTON | B_BUTTON'];  // accepted buttons
+static bool ChooseMoveToDelete_ChooseMoveToDelete(void){
+    // CALL(aSetUpMoveScreenBG);
+    SetUpMoveScreenBG();
+    // LD_DE(mDeleteMoveScreen2DMenuData);
+    // CALL(aLoad2DMenuData);
+    Load2DMenuData_Conv(DeleteMoveScreen2DMenuData);
+    // CALL(aSetUpMoveList);
+    SetUpMoveList();
+    // LD_HL(w2DMenuFlags1);
+    // SET_hl(6);
+    bit_set(wram->w2DMenuFlags1, 6);
+    // goto enter_loop;
 
-    return ManagePokemonMoves();
+    bool quit;
+    while(1) {
+    // enter_loop:
+        // CALL(aPrepareToPlaceMoveData);
+        PrepareToPlaceMoveData();
+        // CALL(aPlaceMoveData);
+        PlaceMoveData();
+        // JP(mChooseMoveToDelete_loop);
+
+    // loop:
+        // CALL(aScrollingMenuJoypad);
+        uint8_t pad = ScrollingMenuJoypad_Conv();
+        // BIT_A(B_BUTTON_F);
+        // JP_NZ (mChooseMoveToDelete_b_button);
+        if(bit_test(pad, B_BUTTON_F)) {
+        // b_button:
+            // SCF;
+            quit = true;
+            break;
+        }
+        // BIT_A(A_BUTTON_F);
+        // JP_NZ (mChooseMoveToDelete_a_button);
+        if(bit_test(pad, A_BUTTON_F)) {
+        // a_button:
+            // AND_A_A;
+            // goto finish;
+            quit = false;
+            break;
+        }
+    }
+
+// finish:
+    // PUSH_AF;
+    // XOR_A_A;
+    // LD_addr_A(wSwitchMon);
+    wram->wSwitchMon = 0;
+    // LD_HL(w2DMenuFlags1);
+    // RES_hl(6);
+    bit_reset(wram->w2DMenuFlags1, 6);
+    // CALL(aClearSprites);
+    ClearSprites_Conv();
+    // CALL(aClearTilemap);
+    ClearTilemap_Conv2();
+    // POP_AF;
+    // RET;
+    return quit;
 }
+
+u8_flag_s ChooseMoveToDelete_Conv(void){
+    // LD_HL(wOptions);
+    // LD_A_hl;
+    // PUSH_AF;
+    uint8_t options = wram->wOptions;
+    // SET_hl(NO_TEXT_SCROLL);
+    bit_set(wram->wOptions, NO_TEXT_SCROLL);
+    // CALL(aLoadFontsBattleExtra);
+    LoadFontsBattleExtra_Conv();
+    // CALL(aChooseMoveToDelete_ChooseMoveToDelete);
+    bool quit = ChooseMoveToDelete_ChooseMoveToDelete();
+    // POP_BC;
+    // LD_A_B;
+    // LD_addr_A(wOptions);
+    wram->wOptions = options;
+    // PUSH_AF;
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
+    // POP_AF;
+    // RET;
+    return u8_flag(wram->wMenuCursorY, quit);
+}
+
+const uint8_t DeleteMoveScreen2DMenuData[] = {
+    3, 1,  // cursor start y, x
+    3, 1,  // rows, columns
+    0x40, 0x00,  // flags
+    (2 << 4) | 0,  // cursor offset
+    D_UP | D_DOWN | A_BUTTON | B_BUTTON,  // accepted buttons
+};
 
 void ManagePokemonMoves(void){
     LD_A_addr(wCurPartySpecies);
@@ -1443,167 +1540,193 @@ void String_MoveWhere(void){
 }
 
 void SetUpMoveScreenBG(void){
-    CALL(aClearBGPalettes);
-    CALL(aClearTilemap);
-    CALL(aClearSprites);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    FARCALL(aLoadStatsScreenPageTilesGFX);
-    FARCALL(aClearSpriteAnims2);
-    LD_A_addr(wCurPartyMon);
-    LD_E_A;
-    LD_D(0);
-    LD_HL(wPartySpecies);
-    ADD_HL_DE;
-    LD_A_hl;
-    LD_addr_A(wTempIconSpecies);
-    LD_E(MONICON_MOVES);
-    FARCALL(aLoadMenuMonIcon);
-    hlcoord(0, 1, wTilemap);
-    LD_B(9);
-    LD_C(18);
-    CALL(aTextbox);
-    hlcoord(0, 11, wTilemap);
-    LD_B(5);
-    LD_C(18);
-    CALL(aTextbox);
-    hlcoord(2, 0, wTilemap);
-    LD_BC((2 << 8) | 3);
-    CALL(aClearBox);
-    XOR_A_A;
-    LD_addr_A(wMonType);
-    LD_HL(wPartyMonNicknames);
-    LD_A_addr(wCurPartyMon);
-    CALL(aGetNickname);
-    hlcoord(5, 1, wTilemap);
-    CALL(aPlaceString);
-    PUSH_BC;
-    FARCALL(aCopyMonToTempMon);
-    POP_HL;
-    CALL(aPrintLevel);
-    LD_HL(wPlayerHPPal);
-    CALL(aSetHPPal);
-    LD_B(SCGB_MOVE_LIST);
-    CALL(aGetSGBLayout);
-    hlcoord(16, 0, wTilemap);
-    LD_BC((1 << 8) | 3);
-    JP(mClearBox);
-
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
+    // CALL(aClearTilemap);
+    ClearTilemap_Conv2();
+    // CALL(aClearSprites);
+    ClearSprites_Conv();
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0x0;
+    // FARCALL(aLoadStatsScreenPageTilesGFX);
+    LoadStatsScreenPageTilesGFX_Conv();
+    // FARCALL(aClearSpriteAnims2);
+    ClearSpriteAnims2_Conv();
+    // LD_A_addr(wCurPartyMon);
+    // LD_E_A;
+    // LD_D(0);
+    // LD_HL(wPartySpecies);
+    // ADD_HL_DE;
+    // LD_A_hl;
+    // LD_addr_A(wTempIconSpecies);
+    wram->wTempIconSpecies = wram->wPartySpecies[wram->wCurPartyMon];
+    // LD_E(MONICON_MOVES);
+    // FARCALL(aLoadMenuMonIcon);
+    LoadMenuMonIcon_Conv(MONICON_MOVES);
+    // hlcoord(0, 1, wTilemap);
+    // LD_B(9);
+    // LD_C(18);
+    // CALL(aTextbox);
+    Textbox_Conv2(coord(0, 1, wram->wTilemap), 9, 18);
+    // hlcoord(0, 11, wTilemap);
+    // LD_B(5);
+    // LD_C(18);
+    // CALL(aTextbox);
+    Textbox_Conv2(coord(0, 11, wram->wTilemap), 5, 18);
+    // hlcoord(2, 0, wTilemap);
+    // LD_BC((2 << 8) | 3);
+    // CALL(aClearBox);
+    ClearBox_Conv2(coord(2, 0, wram->wTilemap), 3, 2);
+    // XOR_A_A;
+    // LD_addr_A(wMonType);
+    wram->wMonType = 0;
+    // LD_HL(wPartyMonNicknames);
+    // LD_A_addr(wCurPartyMon);
+    // CALL(aGetNickname);
+    // hlcoord(5, 1, wTilemap);
+    // CALL(aPlaceString);
+    struct TextPrintState st = {.de = wram->wPartyMonNickname[wram->wCurPartyMon], .hl = coord(5, 1, wram->wTilemap)};
+    PlaceString_Conv(&st, st.hl);
+    // PUSH_BC;
+    // FARCALL(aCopyMonToTempMon);
+    CopyMonToTempMon_Conv();
+    // POP_HL;
+    // CALL(aPrintLevel);
+    PrintLevel_Conv(st.bc, wram->wTempMon.mon.level);
+    // LD_HL(wPlayerHPPal);
+    // CALL(aSetHPPal);
+    uint16_t bc = ReverseEndian16(wram->wPartyMon[wram->wCurPartyMon].HP);
+    uint16_t de = ReverseEndian16(wram->wPartyMon[wram->wCurPartyMon].maxHP);
+    uint8_t e = bc * (6 * 8) / de;
+    SetHPPal_Conv(&wram->wPlayerHPPal, e);
+    // LD_B(SCGB_MOVE_LIST);
+    // CALL(aGetSGBLayout);
+    GetSGBLayout_Conv(SCGB_MOVE_LIST);
+    // hlcoord(16, 0, wTilemap);
+    // LD_BC((1 << 8) | 3);
+    // JP(mClearBox);
+    return ClearBox_Conv2(coord(16, 0, wram->wTilemap), 3, 1);
 }
 
 void SetUpMoveList(void){
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    LD_addr_A(wSwappingMove);
-    LD_addr_A(wMonType);
-    PREDEF(pCopyMonToTempMon);
-    LD_HL(wTempMonMoves);
-    LD_DE(wListMoves_MoveIndicesBuffer);
-    LD_BC(NUM_MOVES);
-    CALL(aCopyBytes);
-    LD_A(SCREEN_WIDTH * 2);
-    LD_addr_A(wListMovesLineSpacing);
-    hlcoord(2, 3, wTilemap);
-    PREDEF(pListMoves);
-    hlcoord(10, 4, wTilemap);
-    PREDEF(pListMovePP);
-    CALL(aWaitBGMap);
-    CALL(aSetPalettes);
-    LD_A_addr(wNumMoves);
-    INC_A;
-    LD_addr_A(w2DMenuNumRows);
-    hlcoord(0, 11, wTilemap);
-    LD_B(5);
-    LD_C(18);
-    JP(mTextbox);
-
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    // LD_addr_A(wSwappingMove);
+    wram->wSwappingMove = 0;
+    // LD_addr_A(wMonType);
+    wram->wMonType = 0;
+    // PREDEF(pCopyMonToTempMon);
+    // LD_HL(wTempMonMoves);
+    // LD_DE(wListMoves_MoveIndicesBuffer);
+    // LD_BC(NUM_MOVES);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wListMoves_MoveIndicesBuffer, wram->wTempMon.mon.moves, sizeof(wram->wTempMon.mon.moves));
+    // LD_A(SCREEN_WIDTH * 2);
+    // LD_addr_A(wListMovesLineSpacing);
+    wram->wListMovesLineSpacing = SCREEN_WIDTH * 2;
+    // hlcoord(2, 3, wTilemap);
+    // PREDEF(pListMoves);
+    ListMoves_Conv(coord(2, 3, wram->wTilemap));
+    // hlcoord(10, 4, wTilemap);
+    // PREDEF(pListMovePP);
+    ListMovePP_Conv(coord(10, 4, wram->wTilemap));
+    // CALL(aWaitBGMap);
+    WaitBGMap_Conv();
+    // CALL(aSetPalettes);
+    SetPalettes_Conv();
+    // LD_A_addr(wNumMoves);
+    // INC_A;
+    // LD_addr_A(w2DMenuNumRows);
+    wram->w2DMenuNumRows = wram->wNumMoves + 1;
+    // hlcoord(0, 11, wTilemap);
+    // LD_B(5);
+    // LD_C(18);
+    // JP(mTextbox);
+    return Textbox_Conv2(coord(0, 11, wram->wTilemap), 5, 18);
 }
 
 void PrepareToPlaceMoveData(void){
-    LD_HL(wPartyMon1Moves);
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    LD_A_addr(wCurPartyMon);
-    CALL(aAddNTimes);
-    LD_A_addr(wMenuCursorY);
-    DEC_A;
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_addr_A(wCurSpecies);
-    hlcoord(1, 12, wTilemap);
-    LD_BC((5 << 8) | 18);
-    JP(mClearBox);
-
+    // LD_HL(wPartyMon1Moves);
+    // LD_BC(PARTYMON_STRUCT_LENGTH);
+    // LD_A_addr(wCurPartyMon);
+    // CALL(aAddNTimes);
+    // LD_A_addr(wMenuCursorY);
+    // DEC_A;
+    // LD_C_A;
+    // LD_B(0);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // LD_addr_A(wCurSpecies);
+    wram->wCurSpecies = wram->wPartyMon[wram->wCurPartyMon].mon.moves[wram->wMenuCursorY - 1]; // weird. is this correct?
+    // hlcoord(1, 12, wTilemap);
+    // LD_BC((5 << 8) | 18);
+    // JP(mClearBox);
+    return ClearBox_Conv2(coord(1, 12, wram->wTilemap), 18, 5);
 }
 
 void PlaceMoveData(void){
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    hlcoord(0, 10, wTilemap);
-    LD_DE(mString_MoveType_Top);
-    CALL(aPlaceString);
-    hlcoord(0, 11, wTilemap);
-    LD_DE(mString_MoveType_Bottom);
-    CALL(aPlaceString);
-    hlcoord(12, 12, wTilemap);
-    LD_DE(mString_MoveAtk);
-    CALL(aPlaceString);
-    LD_A_addr(wCurSpecies);
-    LD_B_A;
-    hlcoord(2, 12, wTilemap);
-    PREDEF(pPrintMoveType);
-    LD_A_addr(wCurSpecies);
-    DEC_A;
-    LD_HL(mMoves + MOVE_POWER);
-    LD_BC(MOVE_LENGTH);
-    CALL(aAddNTimes);
-    LD_A(BANK(aMoves));
-    CALL(aGetFarByte);
-    hlcoord(16, 12, wTilemap);
-    CP_A(2);
-    IF_C goto no_power;
-    LD_addr_A(wTextDecimalByte);
-    LD_DE(wTextDecimalByte);
-    LD_BC((1 << 8) | 3);
-    CALL(aPrintNum);
-    goto description;
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0;
+    // hlcoord(0, 10, wTilemap);
+    // LD_DE(mString_MoveType_Top);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(String_MoveType_Top), coord(0, 10, wram->wTilemap));
+    // hlcoord(0, 11, wTilemap);
+    // LD_DE(mString_MoveType_Bottom);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(String_MoveType_Bottom), coord(0, 11, wram->wTilemap));
+    // hlcoord(12, 12, wTilemap);
+    // LD_DE(mString_MoveAtk);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(String_MoveAtk), coord(12, 12, wram->wTilemap));
+    // LD_A_addr(wCurSpecies);
+    // LD_B_A;
+    // hlcoord(2, 12, wTilemap);
+    // PREDEF(pPrintMoveType);
+    PrintMoveType_Conv(coord(2, 12, wram->wTilemap), wram->wCurSpecies);
+    // LD_A_addr(wCurSpecies);
+    // DEC_A;
+    // LD_HL(mMoves + MOVE_POWER);
+    // LD_BC(MOVE_LENGTH);
+    // CALL(aAddNTimes);
+    // LD_A(BANK(aMoves));
+    // CALL(aGetFarByte);
+    // hlcoord(16, 12, wTilemap);
+    // CP_A(2);
+    // IF_C goto no_power;
+    uint8_t power = Moves[wram->wCurSpecies].power;
+    if(power < 2) {
+    // no_power:
+        // LD_DE(mString_MoveNoPower);
+        // CALL(aPlaceString);
+        PlaceStringSimple(U82C(String_MoveNoPower), coord(16, 12, wram->wTilemap));
+    }
+    else {
+        // LD_addr_A(wTextDecimalByte);
+        // LD_DE(wTextDecimalByte);
+        // LD_BC((1 << 8) | 3);
+        // CALL(aPrintNum);
+        PrintNum_Conv2(coord(16, 12, wram->wTilemap), &power, 1, 3);
+        // goto description;
+    }
 
-
-no_power:
-    LD_DE(mString_MoveNoPower);
-    CALL(aPlaceString);
-
-
-description:
-    hlcoord(1, 14, wTilemap);
-    PREDEF(pPrintMoveDescription);
-    LD_A(0x1);
-    LDH_addr_A(hBGMapMode);
-    RET;
-
+// description:
+    // hlcoord(1, 14, wTilemap);
+    // PREDEF(pPrintMoveDescription);
+    PrintMoveDescription_Conv(coord(1, 14, wram->wTilemap), wram->wCurSpecies);
+    // LD_A(0x1);
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0x1;
+    // RET;
 }
 
-void String_MoveType_Top(void){
-    //db ['"┌─────┐@"'];
-    return String_MoveType_Bottom();
-}
-
-void String_MoveType_Bottom(void){
-    //db ['"│TYPE/└@"'];
-    return String_MoveAtk();
-}
-
-void String_MoveAtk(void){
-    //db ['"ATK/@"'];
-    return String_MoveNoPower();
-}
-
-void String_MoveNoPower(void){
-    //db ['"---@"'];
-
-    return PlaceMoveScreenArrows();
-}
+const char String_MoveType_Top[]    = "┌─────┐";
+const char String_MoveType_Bottom[] = "│TYPE/└";
+const char String_MoveAtk[]         =  "ATK/";
+const char String_MoveNoPower[]     =  "---";
 
 void PlaceMoveScreenArrows(void){
     CALL(aPlaceMoveScreenLeftArrow);

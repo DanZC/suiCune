@@ -1467,21 +1467,25 @@ skip:
 
 }
 
-void UnlockMysteryGift(void){
 //  If [sMysteryGiftUnlocked] was -1, this sets both
 //  [sMysteryGiftUnlocked] and [sMysteryGiftItem] to 0.
-    CALL(aGetMysteryGiftBank);
-    LD_HL(sMysteryGiftUnlocked);
-    LD_A_hl;
-    INC_A;
-    IF_NZ goto ok;
-    LD_hld_A;
-    //assert ['sMysteryGiftUnlocked - 1 == sMysteryGiftItem'];
-    LD_hl_A;
-
-ok:
-    JP(mCloseSRAM);
-
+void UnlockMysteryGift(void){
+    // CALL(aGetMysteryGiftBank);
+    GetMysteryGiftBank();
+    // LD_HL(sMysteryGiftUnlocked);
+    // LD_A_hl;
+    // INC_A;
+    // IF_NZ goto ok;
+    if(gb_read(sMysteryGiftUnlocked) == 0xff) {
+        // LD_hld_A;
+        //assert ['sMysteryGiftUnlocked - 1 == sMysteryGiftItem'];
+        // LD_hl_A;
+        gb_write(sMysteryGiftItem, 0);
+        gb_write(sMysteryGiftUnlocked, 0);
+    }
+// ok:
+    // JP(mCloseSRAM);
+    return CloseSRAM_Conv();
 }
 
 void ResetDailyMysteryGiftLimitIfUnlocked(void){

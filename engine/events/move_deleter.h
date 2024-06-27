@@ -1,0 +1,1 @@
+void MoveDeletion(void);

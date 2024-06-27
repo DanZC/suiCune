@@ -1045,28 +1045,37 @@ void v_CGB_TrainerCard(void){
 }
 
 void v_CGB_MoveList(void){
-    LD_DE(wBGPals1);
-    LD_A(PREDEFPAL_GOLDENROD);
-    CALL(aGetPredefPal);
-    CALL(aLoadHLPaletteIntoDE);
-    LD_A_addr(wPlayerHPPal);
-    LD_L_A;
-    LD_H(0);
-    ADD_HL_HL;
-    ADD_HL_HL;
-    LD_BC(mHPBarPals);
-    ADD_HL_BC;
-    CALL(aLoadPalette_White_Col1_Col2_Black);
-    CALL(aWipeAttrmap);
-    hlcoord(11, 1, wAttrmap);
-    LD_BC((2 << 8) | 9);
-    LD_A(0x1);
-    CALL(aFillBoxCGB);
-    CALL(aApplyAttrmap);
-    CALL(aApplyPals);
-    LD_A(TRUE);
-    LDH_addr_A(hCGBPalUpdate);
-    RET;
+    // LD_DE(wBGPals1);
+    uint16_t* de = (uint16_t*)wram_ptr(wBGPals1);
+    // LD_A(PREDEFPAL_GOLDENROD);
+    // CALL(aGetPredefPal);
+    // CALL(aLoadHLPaletteIntoDE);
+    LoadHLPaletteIntoDE_Conv(de, GetPredefPal_Conv(PREDEFPAL_GOLDENROD));
+    de += NUM_PAL_COLORS;
+    // LD_A_addr(wPlayerHPPal);
+    // LD_L_A;
+    // LD_H(0);
+    // ADD_HL_HL;
+    // ADD_HL_HL;
+    // LD_BC(mHPBarPals);
+    // ADD_HL_BC;
+    // CALL(aLoadPalette_White_Col1_Col2_Black);
+    LoadPalette_White_Col1_Col2_Black_Conv(de, HPBarPals + 2 * wram->wPlayerHPPal);
+    // CALL(aWipeAttrmap);
+    WipeAttrmap();
+    // hlcoord(11, 1, wAttrmap);
+    // LD_BC((2 << 8) | 9);
+    // LD_A(0x1);
+    // CALL(aFillBoxCGB);
+    FillBoxCGB_Conv(coord(11, 1, wram->wAttrmap), 2, 9, 0x1);
+    // CALL(aApplyAttrmap);
+    ApplyAttrmap_Conv();
+    // CALL(aApplyPals);
+    ApplyPals_Conv();
+    // LD_A(TRUE);
+    // LDH_addr_A(hCGBPalUpdate);
+    hram->hCGBPalUpdate = TRUE;
+    // RET;
 
 }
 

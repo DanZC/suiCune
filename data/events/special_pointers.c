@@ -5,6 +5,7 @@
 #include "../../home/palettes.h"
 #include "../../home/tilemap.h"
 #include "../../engine/link/link.h"
+#include "../../engine/link/mystery_gift.h"
 #include "../../engine/overworld/events.h"
 #include "../../engine/rtc/timeset.h"
 #include "../../engine/menus/menu_2.h"
@@ -22,6 +23,7 @@
 #include "../../engine/events/poke_seer.h"
 #include "../../engine/events/buena.h"
 #include "../../engine/events/buena_menu.h"
+#include "../../engine/events/move_deleter.h"
 #include "../../engine/events/bug_contest/contest.h"
 #include "../../engine/events/bug_contest/contest_2.h"
 #include "../../engine/events/battle_tower/battle_tower.h"
@@ -62,7 +64,7 @@ void (*const SpecialsPointers[])(void) = {
     add_special(CableClubCheckWhichChris),
     add_special(CheckMysteryGift),
     // add_special(GetMysteryGiftItem),
-    // add_special(UnlockMysteryGift),
+    add_special(UnlockMysteryGift),
 // Map events
     add_special(BugContestJudging),
     add_special(CheckPartyFullAfterContest),
@@ -77,7 +79,7 @@ void (*const SpecialsPointers[])(void) = {
     add_special(DayCareMan),
     add_special(DayCareLady),
     add_special(DayCareManOutside),
-    // add_special(MoveDeletion),
+    add_special(MoveDeletion),
     add_special(BankOfMom),
     // add_special(MagnetTrain),
     add_special(NameRival),

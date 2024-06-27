@@ -36,7 +36,7 @@ void PrintMoveDescription_Conv(tile_t* hl, move_t move){
     // LD_D_hl;
     // POP_HL;
     // JP(mPlaceString);
-    PlaceStringSimple(hl, U82C(MoveDescriptions[move]));
+    PlaceStringSimple(U82C(MoveDescriptions[move]), hl);
 // INCLUDE "data/moves/descriptions.asm"
 
 }
