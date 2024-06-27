@@ -23,6 +23,8 @@ skip_files = [
     'data/wild/swarm_water.asm',
     'data/sgb_ctrl_packets.asm',
     'data/text_buffers.asm',
+    'engine/battle/getgen1trainerclassname.asm',
+    'engine/link/init_list.asm',
     'engine/overworld/map_object_action.asm',
     'engine/pokemon/correct_party_errors.asm',
     'gfx/pokemon/anim_pointers.asm',

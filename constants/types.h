@@ -1291,6 +1291,21 @@ struct TrainerObj {
     Script_fn_t script;
 };
 
+struct Stonetable {
+    uint8_t warp;
+    uint8_t person;
+    Script_fn_t script;
+};
+#define stonetable(_w, _p, _s) {_w, _p, _s}
+
+struct CmdQueue {
+    uint8_t type;
+    union {
+        const struct Stonetable *stonetable;
+    };
+};
+#define cmdqueue(type, table) {type, .stonetable=table}
+
 struct ObjEvent
 {
     uint8_t sprite;

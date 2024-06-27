@@ -4901,6 +4901,40 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(LakeOfRageElixer);
     CONVERTED_SCRIPT(LakeOfRageTMDetect);
 
+    // maps/BlackthornCity.c
+    CONVERTED_SCRIPT(BlackthornSuperNerdScript);
+    CONVERTED_SCRIPT(BlackthornSuperNerdScript);
+    CONVERTED_SCRIPT(BlackthornGramps1Script);
+    CONVERTED_SCRIPT(BlackthornGramps2Script);
+    CONVERTED_SCRIPT(BlackthornBlackBeltScript);
+    CONVERTED_SCRIPT(BlackthornCooltrainerF1Script);
+    CONVERTED_SCRIPT(BlackthornYoungsterScript);
+    CONVERTED_SCRIPT(SantosScript);
+    CONVERTED_SCRIPT(BlackthornCooltrainerF2Script);
+
+    // maps/Route26.c
+    CONVERTED_SCRIPT(TrainerCooltrainermJake);
+    CONVERTED_SCRIPT(TrainerCooltrainermGaven3);
+    CONVERTED_SCRIPT(TrainerCooltrainerfJoyce);
+    CONVERTED_SCRIPT(TrainerCooltrainerfBeth1);
+    CONVERTED_SCRIPT(TrainerPsychicRichard);
+    CONVERTED_SCRIPT(TrainerFisherScott);
+    CONVERTED_SCRIPT(Route26FruitTree);
+    CONVERTED_SCRIPT(Route26MaxElixer);
+
+    // maps/Route27.c
+    CONVERTED_SCRIPT(TrainerCooltrainermBlake);
+    CONVERTED_SCRIPT(TrainerCooltrainermBrian);
+    CONVERTED_SCRIPT(TrainerCooltrainerfReena);
+    CONVERTED_SCRIPT(TrainerCooltrainerfMegan);
+    CONVERTED_SCRIPT(TrainerPsychicGilbert);
+    CONVERTED_SCRIPT(TrainerBirdKeeperJose2);
+    CONVERTED_SCRIPT(Route27TMSolarbeam);
+    CONVERTED_SCRIPT(Route27RareCandy);
+    CONVERTED_SCRIPT(Route27FisherScript);
+
+    // maps/Route28.c
+
     // maps/Route29.c
     CONVERTED_SCRIPT(Route29Tutorial1);
     CONVERTED_SCRIPT(Route29Tutorial2);
@@ -5088,6 +5122,43 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(Route44MaxRevive);
     CONVERTED_SCRIPT(Route44UltraBall);
     CONVERTED_SCRIPT(Route44MaxRepel);
+
+    // maps/Route45.c
+    CONVERTED_SCRIPT(TrainerHikerErik);
+    CONVERTED_SCRIPT(TrainerHikerMichael);
+    CONVERTED_SCRIPT(TrainerHikerParry);
+    CONVERTED_SCRIPT(TrainerHikerTimothy);
+    CONVERTED_SCRIPT(TrainerBlackbeltKenji);
+    CONVERTED_SCRIPT(TrainerCooltrainermRyan);
+    CONVERTED_SCRIPT(TrainerCooltrainerfKelly);
+    CONVERTED_SCRIPT(Route45FruitTree);
+    CONVERTED_SCRIPT(Route45Nugget);
+    CONVERTED_SCRIPT(Route45Revive);
+    CONVERTED_SCRIPT(Route45Elixer);
+    CONVERTED_SCRIPT(Route45MaxPotion);
+    CONVERTED_SCRIPT(TrainerCamperQuentin);
+
+    // maps/Route46.c
+    CONVERTED_SCRIPT(TrainerHikerBailey);
+    CONVERTED_SCRIPT(TrainerCamperTed);
+    CONVERTED_SCRIPT(TrainerPicnickerErin1);
+    CONVERTED_SCRIPT(Route46FruitTree1);
+    CONVERTED_SCRIPT(Route46FruitTree2);
+    CONVERTED_SCRIPT(Route46XSpeed);
+
+    // maps/Route26HealHouse.c
+    CONVERTED_SCRIPT(Route26HealHouseTeacherScript);
+
+    // maps/Route27SandstormHouse.c
+    CONVERTED_SCRIPT(SandstormHouseWoman);
+
+    // maps/Route28SteelWingHouse.c
+    CONVERTED_SCRIPT(Celebrity);
+    CONVERTED_SCRIPT(CelebritysFearow);
+
+    // maps/Route29Route46Gate.c
+    CONVERTED_SCRIPT(Route29Route46GateOfficerScript);
+    CONVERTED_SCRIPT(Route29Route46GateYoungsterScript);
 
     // maps/Route30BerryHouse.c
     CONVERTED_SCRIPT(Route30BerryHousePokefanMScript);
@@ -5630,6 +5701,72 @@ void init_function_pointers(void) {
     // maps/LakeOfRageMagikarpHouse.c
     CONVERTED_SCRIPT(MagikarpLengthRaterScript);
 
+    // maps/BlackthornDragonSpeechHouse.c
+    CONVERTED_SCRIPT(BlackthornDragonSpeechHouseGrannyScript);
+    CONVERTED_SCRIPT(BlackthornDragonSpeechHouseDratiniScript);
+
+    // maps/BlackthornEmysHouse.c
+    CONVERTED_SCRIPT(Emy);
+
+    // maps/BlackthornGym1F.c
+    CONVERTED_SCRIPT(BlackthornGymClairScript);
+    CONVERTED_SCRIPT(TrainerCooltrainermMike);
+    CONVERTED_SCRIPT(TrainerCooltrainermPaul);
+    CONVERTED_SCRIPT(TrainerCooltrainerfLola);
+    CONVERTED_SCRIPT(BlackthornGymGuideScript);
+
+    // maps/BlackthornGym2F.c
+    CONVERTED_SCRIPT(TrainerCooltrainermCody);
+    CONVERTED_SCRIPT(TrainerCooltrainerfFran);
+    CONVERTED_SCRIPT(BlackthornGymBoulder);
+    // CONVERTED_SCRIPT(BlackthornGymBoulder);
+    // CONVERTED_SCRIPT(BlackthornGymBoulder);
+    // CONVERTED_SCRIPT(BlackthornGymBoulder);
+    // CONVERTED_SCRIPT(BlackthornGymBoulder);
+    // CONVERTED_SCRIPT(BlackthornGymBoulder);
+
+    // maps/BlackthornMart.c
+    CONVERTED_SCRIPT(BlackthornMartClerkScript);
+    CONVERTED_SCRIPT(BlackthornMartCooltrainerMScript);
+    CONVERTED_SCRIPT(BlackthornMartBlackBeltScript);
+
+    // maps/BlackthornPokecenter1F.c
+    CONVERTED_SCRIPT(BlackthornPokecenter1FNurseScript);
+    CONVERTED_SCRIPT(BlackthornPokecenter1FGentlemanScript);
+    CONVERTED_SCRIPT(BlackthornPokecenter1FTwinScript);
+    CONVERTED_SCRIPT(BlackthornPokecenter1FCooltrainerMScript);
+
+    // maps/MoveDeletersHouse.c
+    CONVERTED_SCRIPT(MoveDeleter);
+
+    // maps/IndigoPlateauPokecenter1F.c
+    CONVERTED_SCRIPT(IndigoPlateauPokecenter1FNurseScript);
+    CONVERTED_SCRIPT(IndigoPlateauPokecenter1FClerkScript);
+    CONVERTED_SCRIPT(IndigoPlateauPokecenter1FCooltrainerMScript);
+    // CONVERTED_SCRIPT(ObjectEvent);
+    CONVERTED_SCRIPT(TeleportGuyScript);
+    CONVERTED_SCRIPT(AbraScript);
+
+    // maps/WillsRoom.c
+    CONVERTED_SCRIPT(WillScript_Battle);
+
+    // maps/KogasRoom.c
+    CONVERTED_SCRIPT(KogaScript_Battle);
+
+    // maps/BrunosRoom.c
+    CONVERTED_SCRIPT(BrunoScript_Battle);
+
+    // maps/KarensRoom.c
+    CONVERTED_SCRIPT(KarenScript_Battle);
+
+    // maps/LancesRoom.c
+    CONVERTED_SCRIPT(LancesRoomLanceScript);
+    // CONVERTED_SCRIPT(ObjectEvent);
+    // CONVERTED_SCRIPT(ObjectEvent);
+
+    // maps/HallOfFame.c
+    // CONVERTED_SCRIPT(ObjectEvent);
+
     // maps/SproutTower1F.c
     CONVERTED_SCRIPT(SproutTower1FSage1Script);
     CONVERTED_SCRIPT(SproutTower1FSage2Script);
@@ -5948,6 +6085,50 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(TeamRocketBaseB3FIceHeal);
     CONVERTED_SCRIPT(TeamRocketBaseB3FUltraBall);
 
+    // maps/IcePath1F.c
+    CONVERTED_SCRIPT(IcePath1FHMWaterfall);
+    CONVERTED_SCRIPT(IcePath1FPPUp);
+    CONVERTED_SCRIPT(IcePath1FProtein);
+
+    // maps/IcePathB1F.c
+    CONVERTED_SCRIPT(IcePathB1FBoulder);
+    // CONVERTED_SCRIPT(IcePathB1FBoulder);
+    // CONVERTED_SCRIPT(IcePathB1FBoulder);
+    // CONVERTED_SCRIPT(IcePathB1FBoulder);
+    CONVERTED_SCRIPT(IcePathB1FIron);
+
+    // maps/IcePathB2FBlackthornSide.c
+    CONVERTED_SCRIPT(IcePathB2FBlackthornSideTMRest);
+
+    // maps/IcePathB2FMahoganySide.c
+    CONVERTED_SCRIPT(IcePathB2FMahoganySideBoulder);
+    // CONVERTED_SCRIPT(IcePathB2FMahoganySideBoulder);
+    // CONVERTED_SCRIPT(IcePathB2FMahoganySideBoulder);
+    // CONVERTED_SCRIPT(IcePathB2FMahoganySideBoulder);
+    CONVERTED_SCRIPT(IcePathB2FMahoganySideFullHeal);
+    CONVERTED_SCRIPT(IcePathB2FMahoganySideMaxPotion);
+
+    // maps/IcePathB3F.c
+    CONVERTED_SCRIPT(IcePathB3FNevermeltice);
+    CONVERTED_SCRIPT(IcePathB3FRock);
+
+    // maps/DragonsDenB1F.c
+    CONVERTED_SCRIPT(DragonsDenB1FDragonFangScript);
+    // CONVERTED_SCRIPT(ObjectEvent);
+    CONVERTED_SCRIPT(DragonsDenB1FSilverScript);
+    CONVERTED_SCRIPT(TrainerCooltrainermDarin);
+    CONVERTED_SCRIPT(TrainerCooltrainerfCara);
+    CONVERTED_SCRIPT(TrainerTwinsLeaandpia1);
+    CONVERTED_SCRIPT(TrainerTwinsLeaandpia2);
+    CONVERTED_SCRIPT(DragonsDenB1FCalcium);
+    CONVERTED_SCRIPT(DragonsDenB1FMaxElixer);
+
+    // maps/DragonShrine.c
+    CONVERTED_SCRIPT(DragonShrineElder1Script);
+    CONVERTED_SCRIPT(DragonShrineElder2Script);
+    CONVERTED_SCRIPT(DragonShrineElder3Script);
+    // CONVERTED_SCRIPT(ObjectEvent);
+
     // maps/DarkCaveBlackthornEntrance.c
     CONVERTED_SCRIPT(DarkCaveBlackthornEntrancePharmacistScript);
     CONVERTED_SCRIPT(DarkCaveBlackthornEntranceRevive);
@@ -5962,6 +6143,64 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(DarkCaveVioletEntranceFullHeal);
     CONVERTED_SCRIPT(DarkCaveVioletEntranceHyperPotion);
     CONVERTED_SCRIPT(DarkCaveVioletEntranceDireHit);
+
+    // maps/TinTower1F.c
+    // CONVERTED_SCRIPT(ObjectEvent);
+    // CONVERTED_SCRIPT(ObjectEvent);
+    // CONVERTED_SCRIPT(ObjectEvent);
+    CONVERTED_SCRIPT(TinTower1FEusine);
+    CONVERTED_SCRIPT(TinTower1FSage1Script);
+    CONVERTED_SCRIPT(TinTower1FSage2Script);
+    CONVERTED_SCRIPT(TinTower1FSage3Script);
+    CONVERTED_SCRIPT(TinTower1FSage4Script);
+    CONVERTED_SCRIPT(TinTower1FSage5Script);
+    CONVERTED_SCRIPT(TinTower1FSage6Script);
+
+    // maps/TinTower2F.c
+
+    // maps/TinTower3F.c
+    CONVERTED_SCRIPT(TinTower3FFullHeal);
+
+    // maps/TinTower4F.c
+    CONVERTED_SCRIPT(TinTower4FUltraBall);
+    CONVERTED_SCRIPT(TinTower4FPPUp);
+    CONVERTED_SCRIPT(TinTower4FEscapeRope);
+
+    // maps/TinTower5F.c
+    CONVERTED_SCRIPT(TinTower5FRareCandy);
+
+    // maps/TinTower6F.c
+    CONVERTED_SCRIPT(TinTower6FMaxPotion);
+
+    // maps/TinTower7F.c
+    CONVERTED_SCRIPT(TinTower7FMaxRevive);
+
+    // maps/TinTower8F.c
+    CONVERTED_SCRIPT(TinTower8FNugget);
+    CONVERTED_SCRIPT(TinTower8FMaxElixer);
+    CONVERTED_SCRIPT(TinTower8FFullRestore);
+
+    // maps/TinTower9F.c
+    CONVERTED_SCRIPT(TinTower9FHPUp);
+
+    // maps/TinTowerRoof.c
+    CONVERTED_SCRIPT(TinTowerHoOh);
+
+    // maps/TohjoFalls.c
+    CONVERTED_SCRIPT(TohjoFallsMoonStone);
+
+    // maps/VictoryRoadGate.c
+    CONVERTED_SCRIPT(VictoryRoadGateOfficerScript);
+    CONVERTED_SCRIPT(VictoryRoadGateLeftBlackBeltScript);
+    CONVERTED_SCRIPT(VictoryRoadGateRightBlackBeltScript);
+
+    // maps/VictoryRoad.c
+    // CONVERTED_SCRIPT(ObjectEvent);
+    CONVERTED_SCRIPT(VictoryRoadTMEarthquake);
+    CONVERTED_SCRIPT(VictoryRoadMaxRevive);
+    CONVERTED_SCRIPT(VictoryRoadFullRestore);
+    CONVERTED_SCRIPT(VictoryRoadFullHeal);
+    CONVERTED_SCRIPT(VictoryRoadHPUp);
 
     // engine/events/overworld.c
     // REDIRECTED(Script_WaterfallFromMenu);

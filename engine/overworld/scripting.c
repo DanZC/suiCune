@@ -5179,7 +5179,7 @@ void Script_writecmdqueue(void){
 
 }
 
-void Script_writecmdqueue_Conv(script_s* s, const uint8_t* cmd){
+void Script_writecmdqueue_Conv(script_s* s, const struct CmdQueue* cmd){
     (void)s;
     // CALL(aGetScriptByte);
     // LD_E_A;
@@ -5694,18 +5694,44 @@ void Script_halloffame(void){
 
 }
 
-void Script_credits(void){
-    FARCALL(aRedCredits);
-    return ReturnFromCredits();
+void Script_halloffame_Conv(script_s* s){
+// TODO: Finish converting hall of fame.
+    // LD_HL(wGameTimerPaused);
+    // RES_hl(GAME_TIMER_PAUSED_F);
+    bit_reset(wram->wGameTimerPaused, GAME_TIMER_PAUSED_F);
+    // FARCALL(aStubbedTrainerRankings_HallOfFame);
+    // FARCALL(aStubbedTrainerRankings_HallOfFame2);
+    // FARCALL(aHallOfFame);
+    SafeCallGBAuto(aHallOfFame);
+    // LD_HL(wGameTimerPaused);
+    // SET_hl(GAME_TIMER_PAUSED_F);
+    bit_set(wram->wGameTimerPaused, GAME_TIMER_PAUSED_F);
+    // JR(mReturnFromCredits);
+    return ReturnFromCredits(s);
 }
 
-void ReturnFromCredits(void){
-    CALL(aScript_endall);
-    LD_A(MAPSTATUS_DONE);
-    CALL(aLoadMapStatus);
-    CALL(aStopScript);
-    RET;
+void Script_credits(void){
+    FARCALL(aRedCredits);
+    // return ReturnFromCredits();
+}
 
+void Script_credits_Conv(script_s* s){
+// TODO: Finish converting red credits.
+    // FARCALL(aRedCredits);
+    SafeCallGBAuto(aRedCredits);
+    // return ReturnFromCredits();
+    return ReturnFromCredits(s);
+}
+
+void ReturnFromCredits(script_s* s){
+    // CALL(aScript_endall);
+    Script_endall_Conv(s);
+    // LD_A(MAPSTATUS_DONE);
+    // CALL(aLoadMapStatus);
+    LoadMapStatus_Conv(MAPSTATUS_DONE);
+    // CALL(aStopScript);
+    StopScript_Conv();
+    // RET;
 }
 
 void Script_wait(void){

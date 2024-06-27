@@ -112,22 +112,22 @@ map_attributes(MahoganyTown, MAHOGANY_TOWN, 0x71,
 map_attributes(LakeOfRage, LAKE_OF_RAGE, 0x05,
     connection(LAKE_OF_RAGE, south, Route43, ROUTE_43, 5));
 
-// map_attributes(BlackthornCity, BLACKTHORN_CITY, 0x71,
-//     connection(BLACKTHORN_CITY, south, Route45, ROUTE_45, 0)
-//     connection(BLACKTHORN_CITY, west, Route44, ROUTE_44, 9));
+map_attributes(BlackthornCity, BLACKTHORN_CITY, 0x71,
+    connection(BLACKTHORN_CITY, south, Route45, ROUTE_45, 0)
+    connection(BLACKTHORN_CITY, west, Route44, ROUTE_44, 9));
 
 // map_attributes(SilverCaveOutside, SILVER_CAVE_OUTSIDE, 0x2c,
 //     connection(SILVER_CAVE_OUTSIDE, east, Route28, ROUTE_28, 9));
 
-// map_attributes(Route26, ROUTE_26, 0x05,
-//     connection(ROUTE_26, west, Route27, ROUTE_27, 45));
+map_attributes(Route26, ROUTE_26, 0x05,
+    connection(ROUTE_26, west, Route27, ROUTE_27, 45));
 
 map_attributes(Route27, ROUTE_27, 0x35,
     connection(ROUTE_27, west, NewBarkTown, NEW_BARK_TOWN, 0)
     connection(ROUTE_27, east, Route26, ROUTE_26, -45));
 
-// map_attributes(Route28, ROUTE_28, 0x2c,
-//     connection(ROUTE_28, west, SilverCaveOutside, SILVER_CAVE_OUTSIDE, -9));
+map_attributes(Route28, ROUTE_28, 0x2c,
+    connection(ROUTE_28, west, SilverCaveOutside, SILVER_CAVE_OUTSIDE, -9));
 
 map_attributes(Route29, ROUTE_29, 0x05, 
     connection(ROUTE_29, north, Route46, ROUTE_46, 10)
@@ -349,19 +349,19 @@ map_attributes(Route46, ROUTE_46, 0x05,
 //     connection(ROUTE_10_SOUTH, north, Route10North, ROUTE_10_NORTH, 0)
 //     connection(ROUTE_10_SOUTH, south, LavenderTown, LAVENDER_TOWN, 0));
 
-// map_attributes(Route23, ROUTE_23, 0x0f, 0);
+map_attributes(Route23, ROUTE_23, 0x0f, 0);
 map_attributes(SproutTower1F, SPROUT_TOWER_1F, 0x00, 0);
 map_attributes(SproutTower2F, SPROUT_TOWER_2F, 0x00, 0);
 map_attributes(SproutTower3F, SPROUT_TOWER_3F, 0x00, 0);
-// map_attributes(TinTower1F, TIN_TOWER_1F, 0x00, 0);
-// map_attributes(TinTower2F, TIN_TOWER_2F, 0x00, 0);
-// map_attributes(TinTower3F, TIN_TOWER_3F, 0x00, 0);
-// map_attributes(TinTower4F, TIN_TOWER_4F, 0x00, 0);
-// map_attributes(TinTower5F, TIN_TOWER_5F, 0x00, 0);
-// map_attributes(TinTower6F, TIN_TOWER_6F, 0x00, 0);
-// map_attributes(TinTower7F, TIN_TOWER_7F, 0x00, 0);
-// map_attributes(TinTower8F, TIN_TOWER_8F, 0x00, 0);
-// map_attributes(TinTower9F, TIN_TOWER_9F, 0x00, 0);
+map_attributes(TinTower1F, TIN_TOWER_1F, 0x00, 0);
+map_attributes(TinTower2F, TIN_TOWER_2F, 0x00, 0);
+map_attributes(TinTower3F, TIN_TOWER_3F, 0x00, 0);
+map_attributes(TinTower4F, TIN_TOWER_4F, 0x00, 0);
+map_attributes(TinTower5F, TIN_TOWER_5F, 0x00, 0);
+map_attributes(TinTower6F, TIN_TOWER_6F, 0x00, 0);
+map_attributes(TinTower7F, TIN_TOWER_7F, 0x00, 0);
+map_attributes(TinTower8F, TIN_TOWER_8F, 0x00, 0);
+map_attributes(TinTower9F, TIN_TOWER_9F, 0x00, 0);
 map_attributes(BurnedTower1F, BURNED_TOWER_1F, 0x00, 0);
 map_attributes(BurnedTowerB1F, BURNED_TOWER_B1F, 0x09, 0);
 map_attributes(NationalPark, NATIONAL_PARK, 0x00, 0);
@@ -410,11 +410,11 @@ map_attributes(MountMortar1FOutside, MOUNT_MORTAR_1F_OUTSIDE, 0x09, 0);
 map_attributes(MountMortar1FInside, MOUNT_MORTAR_1F_INSIDE, 0x09, 0);
 map_attributes(MountMortar2FInside, MOUNT_MORTAR_2F_INSIDE, 0x09, 0);
 map_attributes(MountMortarB1F, MOUNT_MORTAR_B1F, 0x09, 0);
-// map_attributes(IcePath1F, ICE_PATH_1F, 0x09, 0);
-// map_attributes(IcePathB1F, ICE_PATH_B1F, 0x19, 0);
-// map_attributes(IcePathB2FMahoganySide, ICE_PATH_B2F_MAHOGANY_SIDE, 0x19, 0);
-// map_attributes(IcePathB2FBlackthornSide, ICE_PATH_B2F_BLACKTHORN_SIDE, 0x19, 0);
-// map_attributes(IcePathB3F, ICE_PATH_B3F, 0x19, 0);
+map_attributes(IcePath1F, ICE_PATH_1F, 0x09, 0);
+map_attributes(IcePathB1F, ICE_PATH_B1F, 0x19, 0);
+map_attributes(IcePathB2FMahoganySide, ICE_PATH_B2F_MAHOGANY_SIDE, 0x19, 0);
+map_attributes(IcePathB2FBlackthornSide, ICE_PATH_B2F_BLACKTHORN_SIDE, 0x19, 0);
+map_attributes(IcePathB3F, ICE_PATH_B3F, 0x19, 0);
 map_attributes(WhirlIslandNW, WHIRL_ISLAND_NW, 0x09, 0);
 map_attributes(WhirlIslandNE, WHIRL_ISLAND_NE, 0x09, 0);
 map_attributes(WhirlIslandSW, WHIRL_ISLAND_SW, 0x09, 0);
@@ -429,10 +429,10 @@ map_attributes(WhirlIslandLugiaChamber, WHIRL_ISLAND_LUGIA_CHAMBER, 0x0f, 0);
 // map_attributes(SilverCaveItemRooms, SILVER_CAVE_ITEM_ROOMS, 0x09, 0);
 map_attributes(DarkCaveVioletEntrance, DARK_CAVE_VIOLET_ENTRANCE, 0x09, 0);
 map_attributes(DarkCaveBlackthornEntrance, DARK_CAVE_BLACKTHORN_ENTRANCE, 0x09, 0);
-// map_attributes(DragonsDen1F, DRAGONS_DEN_1F, 0x09, 0);
-// map_attributes(DragonsDenB1F, DRAGONS_DEN_B1F, 0x71, 0);
-// map_attributes(DragonShrine, DRAGON_SHRINE, 0x00, 0);
-// map_attributes(TohjoFalls, TOHJO_FALLS, 0x09, 0);
+map_attributes(DragonsDen1F, DRAGONS_DEN_1F, 0x09, 0);
+map_attributes(DragonsDenB1F, DRAGONS_DEN_B1F, 0x71, 0);
+map_attributes(DragonShrine, DRAGON_SHRINE, 0x00, 0);
+map_attributes(TohjoFalls, TOHJO_FALLS, 0x09, 0);
 map_attributes(OlivinePokecenter1F, OLIVINE_POKECENTER_1F, 0x00, 0);
 map_attributes(OlivineGym, OLIVINE_GYM, 0x00, 0);
 map_attributes(OlivineTimsHouse, OLIVINE_TIMS_HOUSE, 0x00, 0);
@@ -455,7 +455,7 @@ map_attributes(Route42EcruteakGate, ROUTE_42_ECRUTEAK_GATE, 0x00, 0);
 // map_attributes(RockTunnelB1F, ROCK_TUNNEL_B1F, 0x09, 0);
 // map_attributes(SafariZoneFuchsiaGateBeta, SAFARI_ZONE_FUCHSIA_GATE_BETA, 0x00, 0);
 // map_attributes(SafariZoneBeta, SAFARI_ZONE_BETA, 0x13, 0);
-// map_attributes(VictoryRoad, VICTORY_ROAD, 0x1d, 0);
+map_attributes(VictoryRoad, VICTORY_ROAD, 0x1d, 0);
 map_attributes(EcruteakTinTowerEntrance, ECRUTEAK_TIN_TOWER_ENTRANCE, 0x00, 0);
 map_attributes(WiseTriosRoom, WISE_TRIOS_ROOM, 0x00, 0);
 map_attributes(EcruteakPokecenter1F, ECRUTEAK_POKECENTER_1F, 0x00, 0);
@@ -464,13 +464,13 @@ map_attributes(DanceTheatre, DANCE_THEATRE, 0x00, 0);
 map_attributes(EcruteakMart, ECRUTEAK_MART, 0x00, 0);
 map_attributes(EcruteakGym, ECRUTEAK_GYM, 0x00, 0);
 map_attributes(EcruteakItemfinderHouse, ECRUTEAK_ITEMFINDER_HOUSE, 0x00, 0);
-// map_attributes(BlackthornGym1F, BLACKTHORN_GYM_1F, 0x00, 0);
-// map_attributes(BlackthornGym2F, BLACKTHORN_GYM_2F, 0x00, 0);
-// map_attributes(BlackthornDragonSpeechHouse, BLACKTHORN_DRAGON_SPEECH_HOUSE, 0x00, 0);
-// map_attributes(BlackthornEmysHouse, BLACKTHORN_EMYS_HOUSE, 0x00, 0);
-// map_attributes(BlackthornMart, BLACKTHORN_MART, 0x00, 0);
-// map_attributes(BlackthornPokecenter1F, BLACKTHORN_POKECENTER_1F, 0x00, 0);
-// map_attributes(MoveDeletersHouse, MOVE_DELETERS_HOUSE, 0x00, 0);
+map_attributes(BlackthornGym1F, BLACKTHORN_GYM_1F, 0x00, 0);
+map_attributes(BlackthornGym2F, BLACKTHORN_GYM_2F, 0x00, 0);
+map_attributes(BlackthornDragonSpeechHouse, BLACKTHORN_DRAGON_SPEECH_HOUSE, 0x00, 0);
+map_attributes(BlackthornEmysHouse, BLACKTHORN_EMYS_HOUSE, 0x00, 0);
+map_attributes(BlackthornMart, BLACKTHORN_MART, 0x00, 0);
+map_attributes(BlackthornPokecenter1F, BLACKTHORN_POKECENTER_1F, 0x00, 0);
+map_attributes(MoveDeletersHouse, MOVE_DELETERS_HOUSE, 0x00, 0);
 // map_attributes(CinnabarPokecenter1F, CINNABAR_POKECENTER_1F, 0x00, 0);
 // map_attributes(CinnabarPokecenter2FBeta, CINNABAR_POKECENTER_2F_BETA, 0x00, 0);
 // map_attributes(Route19FuchsiaGate, ROUTE_19_FUCHSIA_GATE, 0x00, 0);
@@ -561,14 +561,14 @@ map_attributes(OlivinePortPassage, OLIVINE_PORT_PASSAGE, 0x00, 0);
 // map_attributes(VermilionPortPassage, VERMILION_PORT_PASSAGE, 0x00, 0);
 // map_attributes(MountMoonSquare, MOUNT_MOON_SQUARE, 0x2d, 0);
 // map_attributes(MountMoonGiftShop, MOUNT_MOON_GIFT_SHOP, 0x00, 0);
-// map_attributes(TinTowerRoof, TIN_TOWER_ROOF, 0x00, 0);
-// map_attributes(IndigoPlateauPokecenter1F, INDIGO_PLATEAU_POKECENTER_1F, 0x00, 0);
-// map_attributes(WillsRoom, WILLS_ROOM, 0x00, 0);
-// map_attributes(KogasRoom, KOGAS_ROOM, 0x00, 0);
-// map_attributes(BrunosRoom, BRUNOS_ROOM, 0x00, 0);
-// map_attributes(KarensRoom, KARENS_ROOM, 0x00, 0);
-// map_attributes(LancesRoom, LANCES_ROOM, 0x00, 0);
-// map_attributes(HallOfFame, HALL_OF_FAME, 0x00, 0);
+map_attributes(TinTowerRoof, TIN_TOWER_ROOF, 0x00, 0);
+map_attributes(IndigoPlateauPokecenter1F, INDIGO_PLATEAU_POKECENTER_1F, 0x00, 0);
+map_attributes(WillsRoom, WILLS_ROOM, 0x00, 0);
+map_attributes(KogasRoom, KOGAS_ROOM, 0x00, 0);
+map_attributes(BrunosRoom, BRUNOS_ROOM, 0x00, 0);
+map_attributes(KarensRoom, KARENS_ROOM, 0x00, 0);
+map_attributes(LancesRoom, LANCES_ROOM, 0x00, 0);
+map_attributes(HallOfFame, HALL_OF_FAME, 0x00, 0);
 // map_attributes(FuchsiaMart, FUCHSIA_MART, 0x00, 0);
 // map_attributes(SafariZoneMainOffice, SAFARI_ZONE_MAIN_OFFICE, 0x00, 0);
 // map_attributes(FuchsiaGym, FUCHSIA_GYM, 0x00, 0);
@@ -588,13 +588,13 @@ map_attributes(OlivinePortPassage, OLIVINE_PORT_PASSAGE, 0x00, 0);
 // map_attributes(Route8SaffronGate, ROUTE_8_SAFFRON_GATE, 0x00, 0);
 // map_attributes(Route12SuperRodHouse, ROUTE_12_SUPER_ROD_HOUSE, 0x00, 0);
 // map_attributes(SilverCavePokecenter1F, SILVER_CAVE_POKECENTER_1F, 0x00, 0);
-// map_attributes(Route28SteelWingHouse, ROUTE_28_STEEL_WING_HOUSE, 0x00, 0);
+map_attributes(Route28SteelWingHouse, ROUTE_28_STEEL_WING_HOUSE, 0x00, 0);
 map_attributes(Pokecenter2F, POKECENTER_2F, 0x00, 0);
 map_attributes(TradeCenter, TRADE_CENTER, 0x00, 0);
 map_attributes(Colosseum, COLOSSEUM, 0x00, 0);
 // map_attributes(TimeCapsule, TIME_CAPSULE, 0x00, 0);
-// map_attributes(MobileTradeRoom, MOBILE_TRADE_ROOM, 0x00, 0);
-// map_attributes(MobileBattleRoom, MOBILE_BATTLE_ROOM, 0x00, 0);
+map_attributes(MobileTradeRoom, MOBILE_TRADE_ROOM, 0x00, 0);
+map_attributes(MobileBattleRoom, MOBILE_BATTLE_ROOM, 0x00, 0);
 // map_attributes(CeladonDeptStore1F, CELADON_DEPT_STORE_1F, 0x00, 0);
 // map_attributes(CeladonDeptStore2F, CELADON_DEPT_STORE_2F, 0x00, 0);
 // map_attributes(CeladonDeptStore3F, CELADON_DEPT_STORE_3F, 0x00, 0);
@@ -639,15 +639,15 @@ map_attributes(BattleTowerOutside, BATTLE_TOWER_OUTSIDE, 0x05, 0);
 // map_attributes(ViridianPokecenter2FBeta, VIRIDIAN_POKECENTER_2F_BETA, 0x00, 0);
 // map_attributes(Route2NuggetHouse, ROUTE_2_NUGGET_HOUSE, 0x00, 0);
 // map_attributes(Route2Gate, ROUTE_2_GATE, 0x00, 0);
-// map_attributes(VictoryRoadGate, VICTORY_ROAD_GATE, 0x00, 0);
+map_attributes(VictoryRoadGate, VICTORY_ROAD_GATE, 0x00, 0);
 map_attributes(ElmsLab, ELMS_LAB, 0x00, 0);
 map_attributes(PlayersHouse1F, PLAYERS_HOUSE_1F, 0x00, 0);
 map_attributes(PlayersHouse2F, PLAYERS_HOUSE_2F, 0x00, 0);
 map_attributes(PlayersNeighborsHouse, PLAYERS_NEIGHBORS_HOUSE, 0x00, 0);
 map_attributes(ElmsHouse, ELMS_HOUSE, 0x00, 0);
-// map_attributes(Route26HealHouse, ROUTE_26_HEAL_HOUSE, 0x00, 0);
-// map_attributes(DayOfWeekSiblingsHouse, DAY_OF_WEEK_SIBLINGS_HOUSE, 0x00, 0);
-// map_attributes(Route27SandstormHouse, ROUTE_27_SANDSTORM_HOUSE, 0x00, 0);
+map_attributes(Route26HealHouse, ROUTE_26_HEAL_HOUSE, 0x00, 0);
+map_attributes(DayOfWeekSiblingsHouse, DAY_OF_WEEK_SIBLINGS_HOUSE, 0x00, 0);
+map_attributes(Route27SandstormHouse, ROUTE_27_SANDSTORM_HOUSE, 0x00, 0);
 map_attributes(Route29Route46Gate, ROUTE_29_ROUTE_46_GATE, 0x00, 0);
 // map_attributes(FightingDojo, FIGHTING_DOJO, 0x00, 0);
 // map_attributes(SaffronGym, SAFFRON_GYM, 0x00, 0);

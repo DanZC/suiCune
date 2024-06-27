@@ -135,7 +135,7 @@
 // #include "../../maps/RockTunnelB1F.h"
 // #include "../../maps/SafariZoneFuchsiaGateBeta.h"
 // #include "../../maps/SafariZoneBeta.h"
-// #include "../../maps/VictoryRoad.h"
+#include "../../maps/VictoryRoad.h"
 #include "../../maps/OlivinePort.h"
 // #include "../../maps/VermilionPort.h"
 // #include "../../maps/FastShip1F.h"
@@ -147,7 +147,7 @@
 // #include "../../maps/VermilionPortPassage.h"
 // #include "../../maps/MountMoonSquare.h"
 // #include "../../maps/MountMoonGiftShop.h"
-// #include "../../maps/TinTowerRoof.h"
+#include "../../maps/TinTowerRoof.h"
 
 
 // SECTION "Map Scripts 9", ROMX
@@ -158,9 +158,9 @@
 #include "../../maps/PlayersHouse2F.h"
 #include "../../maps/PlayersNeighborsHouse.h"
 #include "../../maps/ElmsHouse.h"
-// #include "../../maps/Route26HealHouse.h"
-// #include "../../maps/DayOfWeekSiblingsHouse.h"
-// #include "../../maps/Route27SandstormHouse.h"
+#include "../../maps/Route26HealHouse.h"
+#include "../../maps/DayOfWeekSiblingsHouse.h"
+#include "../../maps/Route27SandstormHouse.h"
 #include "../../maps/Route29Route46Gate.h"
 
 
@@ -175,11 +175,11 @@
 #include "../../maps/MountMortar1FInside.h"
 #include "../../maps/MountMortar2FInside.h"
 #include "../../maps/MountMortarB1F.h"
-// #include "../../maps/IcePath1F.h"
-// #include "../../maps/IcePathB1F.h"
-// #include "../../maps/IcePathB2FMahoganySide.h"
-// #include "../../maps/IcePathB2FBlackthornSide.h"
-// #include "../../maps/IcePathB3F.h"
+#include "../../maps/IcePath1F.h"
+#include "../../maps/IcePathB1F.h"
+#include "../../maps/IcePathB2FMahoganySide.h"
+#include "../../maps/IcePathB2FBlackthornSide.h"
+#include "../../maps/IcePathB3F.h"
 // #include "../../maps/LavenderPokecenter1F.h"
 // #include "../../maps/LavenderPokecenter2FBeta.h"
 // #include "../../maps/MrFujisHouse.h"
@@ -211,7 +211,7 @@
 // #include "../../maps/ViridianPokecenter2FBeta.h"
 // #include "../../maps/Route2NuggetHouse.h"
 // #include "../../maps/Route2Gate.h"
-// #include "../../maps/VictoryRoadGate.h"
+#include "../../maps/VictoryRoadGate.h"
 
 
 // SECTION "Map Scripts 12", ROMX
@@ -244,13 +244,13 @@
 
 // SECTION "Map Scripts 13", ROMX
 
-// #include "../../maps/IndigoPlateauPokecenter1F.h"
-// #include "../../maps/WillsRoom.h"
-// #include "../../maps/KogasRoom.h"
-// #include "../../maps/BrunosRoom.h"
-// #include "../../maps/KarensRoom.h"
-// #include "../../maps/LancesRoom.h"
-// #include "../../maps/HallOfFame.h"
+#include "../../maps/IndigoPlateauPokecenter1F.h"
+#include "../../maps/WillsRoom.h"
+#include "../../maps/KogasRoom.h"
+#include "../../maps/BrunosRoom.h"
+#include "../../maps/KarensRoom.h"
+#include "../../maps/LancesRoom.h"
+#include "../../maps/HallOfFame.h"
 
 
 // SECTION "Map Scripts 14", ROMX
@@ -259,15 +259,15 @@
 #include "../../maps/SproutTower1F.h"
 #include "../../maps/SproutTower2F.h"
 #include "../../maps/SproutTower3F.h"
-// #include "../../maps/TinTower1F.h"
-// #include "../../maps/TinTower2F.h"
-// #include "../../maps/TinTower3F.h"
-// #include "../../maps/TinTower4F.h"
-// #include "../../maps/TinTower5F.h"
-// #include "../../maps/TinTower6F.h"
-// #include "../../maps/TinTower7F.h"
-// #include "../../maps/TinTower8F.h"
-// #include "../../maps/TinTower9F.h"
+#include "../../maps/TinTower1F.h"
+#include "../../maps/TinTower2F.h"
+#include "../../maps/TinTower3F.h"
+#include "../../maps/TinTower4F.h"
+#include "../../maps/TinTower5F.h"
+#include "../../maps/TinTower6F.h"
+#include "../../maps/TinTower7F.h"
+#include "../../maps/TinTower8F.h"
+#include "../../maps/TinTower9F.h"
 #include "../../maps/BurnedTower1F.h"
 #include "../../maps/BurnedTowerB1F.h"
 
@@ -317,10 +317,10 @@
 // #include "../../maps/SilverCaveItemRooms.h"
 #include "../../maps/DarkCaveVioletEntrance.h"
 #include "../../maps/DarkCaveBlackthornEntrance.h"
-// #include "../../maps/DragonsDen1F.h"
-// #include "../../maps/DragonsDenB1F.h"
-// #include "../../maps/DragonShrine.h"
-// #include "../../maps/TohjoFalls.h"
+#include "../../maps/DragonsDen1F.h"
+#include "../../maps/DragonsDenB1F.h"
+#include "../../maps/DragonShrine.h"
+#include "../../maps/TohjoFalls.h"
 #include "../../maps/AzaleaPokecenter1F.h"
 #include "../../maps/CharcoalKiln.h"
 #include "../../maps/AzaleaMart.h"
@@ -346,21 +346,21 @@
 #include "../../maps/TradeCenter.h"
 #include "../../maps/Colosseum.h"
 // #include "../../maps/TimeCapsule.h"
-// #include "../../maps/MobileTradeRoom.h"
-// #include "../../maps/MobileBattleRoom.h"
+#include "../../maps/MobileTradeRoom.h"
+#include "../../maps/MobileBattleRoom.h"
 
 
 // SECTION "Map Scripts 18", ROMX
 
 #include "../../maps/Route36.h"
 // #include "../../maps/FuchsiaCity.h"
-// #include "../../maps/BlackthornGym1F.h"
-// #include "../../maps/BlackthornGym2F.h"
-// #include "../../maps/BlackthornDragonSpeechHouse.h"
-// #include "../../maps/BlackthornEmysHouse.h"
-// #include "../../maps/BlackthornMart.h"
-// #include "../../maps/BlackthornPokecenter1F.h"
-// #include "../../maps/MoveDeletersHouse.h"
+#include "../../maps/BlackthornGym1F.h"
+#include "../../maps/BlackthornGym2F.h"
+#include "../../maps/BlackthornDragonSpeechHouse.h"
+#include "../../maps/BlackthornEmysHouse.h"
+#include "../../maps/BlackthornMart.h"
+#include "../../maps/BlackthornPokecenter1F.h"
+#include "../../maps/MoveDeletersHouse.h"
 // #include "../../maps/FuchsiaMart.h"
 // #include "../../maps/SafariZoneMainOffice.h"
 // #include "../../maps/FuchsiaGym.h"
@@ -428,9 +428,9 @@
 // SECTION "Map Scripts 22", ROMX
 
 #include "../../maps/EcruteakCity.h"
-// #include "../../maps/BlackthornCity.h"
-// #include "../../maps/Route26.h"
-// #include "../../maps/Route28.h"
+#include "../../maps/BlackthornCity.h"
+#include "../../maps/Route26.h"
+#include "../../maps/Route28.h"
 #include "../../maps/Route31.h"
 #include "../../maps/Route39.h"
 #include "../../maps/Route40.h"
@@ -478,9 +478,9 @@
 // #include "../../maps/Route3.h"
 // #include "../../maps/Route4.h"
 // #include "../../maps/Route10South.h"
-// #include "../../maps/Route23.h"
+#include "../../maps/Route23.h"
 // #include "../../maps/SilverCavePokecenter1F.h"
-// #include "../../maps/Route28SteelWingHouse.h"
+#include "../../maps/Route28SteelWingHouse.h"
 
 
 // SECTION "Map Scripts 25", ROMX

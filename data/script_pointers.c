@@ -138,6 +138,42 @@ void PopulateMapScriptTable(void) {
     entry(LAKE_OF_RAGE, 10, LakeOfRageElixer);
     entry(LAKE_OF_RAGE, 11, LakeOfRageTMDetect);
 
+    entry(BLACKTHORN_CITY, 0, BlackthornSuperNerdScript);
+    entry(BLACKTHORN_CITY, 1, BlackthornSuperNerdScript);
+    entry(BLACKTHORN_CITY, 2, BlackthornGramps1Script);
+    entry(BLACKTHORN_CITY, 3, BlackthornGramps2Script);
+    entry(BLACKTHORN_CITY, 4, BlackthornBlackBeltScript);
+    entry(BLACKTHORN_CITY, 5, BlackthornCooltrainerF1Script);
+    entry(BLACKTHORN_CITY, 6, BlackthornYoungsterScript);
+    entry(BLACKTHORN_CITY, 7, SantosScript);
+    entry(BLACKTHORN_CITY, 8, BlackthornCooltrainerF2Script);
+
+    entry(ROUTE_26, 0, TrainerCooltrainermJake);
+    entry(ROUTE_26, 1, TrainerCooltrainermGaven3);
+    entry(ROUTE_26, 2, TrainerCooltrainerfJoyce);
+    entry(ROUTE_26, 3, TrainerCooltrainerfBeth1);
+    entry(ROUTE_26, 4, TrainerPsychicRichard);
+    entry(ROUTE_26, 5, TrainerFisherScott);
+    entry(ROUTE_26, 6, Route26FruitTree);
+    entry(ROUTE_26, 7, Route26MaxElixer);
+    
+    entry(ROUTE_26_HEAL_HOUSE, 0, Route26HealHouseTeacherScript);
+    
+    entry(ROUTE_27, 0, TrainerCooltrainermBlake);
+    entry(ROUTE_27, 1, TrainerCooltrainermBrian);
+    entry(ROUTE_27, 2, TrainerCooltrainerfReena);
+    entry(ROUTE_27, 3, TrainerCooltrainerfMegan);
+    entry(ROUTE_27, 4, TrainerPsychicGilbert);
+    entry(ROUTE_27, 5, TrainerBirdKeeperJose2);
+    entry(ROUTE_27, 6, Route27TMSolarbeam);
+    entry(ROUTE_27, 7, Route27RareCandy);
+    entry(ROUTE_27, 8, Route27FisherScript);
+
+    entry(ROUTE_27_SANDSTORM_HOUSE, 0, SandstormHouseWoman);
+
+    entry(ROUTE_28_STEEL_WING_HOUSE, 0, Celebrity);
+    entry(ROUTE_28_STEEL_WING_HOUSE, 1, CelebritysFearow);
+
     entry(ROUTE_29, 0, CatchingTutorialDudeScript);
     entry(ROUTE_29, 1, Route29YoungsterScript);
     entry(ROUTE_29, 2, Route29TeacherScript);
@@ -377,6 +413,27 @@ void PopulateMapScriptTable(void) {
     entry(ROUTE_44, 8, Route44MaxRevive);
     entry(ROUTE_44, 9, Route44UltraBall);
     entry(ROUTE_44, 10, Route44MaxRepel);
+
+    entry(ROUTE_45, 0, TrainerHikerErik);
+    entry(ROUTE_45, 1, TrainerHikerMichael);
+    entry(ROUTE_45, 2, TrainerHikerParry);
+    entry(ROUTE_45, 3, TrainerHikerTimothy);
+    entry(ROUTE_45, 4, TrainerBlackbeltKenji);
+    entry(ROUTE_45, 5, TrainerCooltrainermRyan);
+    entry(ROUTE_45, 6, TrainerCooltrainerfKelly);
+    entry(ROUTE_45, 7, Route45FruitTree);
+    entry(ROUTE_45, 8, Route45Nugget);
+    entry(ROUTE_45, 9, Route45Revive);
+    entry(ROUTE_45, 10, Route45Elixer);
+    entry(ROUTE_45, 11, Route45MaxPotion);
+    entry(ROUTE_45, 12, TrainerCamperQuentin);
+    
+    entry(ROUTE_46, 0, TrainerHikerBailey);
+    entry(ROUTE_46, 1, TrainerCamperTed);
+    entry(ROUTE_46, 2, TrainerPicnickerErin1);
+    entry(ROUTE_46, 3, Route46FruitTree1);
+    entry(ROUTE_46, 4, Route46FruitTree2);
+    entry(ROUTE_46, 5, Route46XSpeed);
 
     entry(CHERRYGROVE_EVOLUTION_SPEECH_HOUSE, 0, CherrygroveEvolutionSpeechHouseLassScript);
     entry(CHERRYGROVE_EVOLUTION_SPEECH_HOUSE, 1, CherrygroveEvolutionSpeechHouseYoungsterScript);
@@ -774,6 +831,58 @@ void PopulateMapScriptTable(void) {
 
     entry(LAKE_OF_RAGE_MAGIKARP_HOUSE, 0, MagikarpLengthRaterScript);
 
+    entry(BLACKTHORN_DRAGON_SPEECH_HOUSE, 0, BlackthornDragonSpeechHouseGrannyScript);
+    entry(BLACKTHORN_DRAGON_SPEECH_HOUSE, 1, BlackthornDragonSpeechHouseDratiniScript);
+
+    entry(BLACKTHORN_EMYS_HOUSE, 0, Emy);
+
+    entry(BLACKTHORN_GYM_1F, 0, BlackthornGymClairScript);
+    entry(BLACKTHORN_GYM_1F, 1, TrainerCooltrainermMike);
+    entry(BLACKTHORN_GYM_1F, 2, TrainerCooltrainermPaul);
+    entry(BLACKTHORN_GYM_1F, 3, TrainerCooltrainerfLola);
+    entry(BLACKTHORN_GYM_1F, 4, BlackthornGymGuideScript);
+    
+    entry(BLACKTHORN_GYM_2F, 0, TrainerCooltrainermCody);
+    entry(BLACKTHORN_GYM_2F, 1, TrainerCooltrainerfFran);
+    entry(BLACKTHORN_GYM_2F, 2, BlackthornGymBoulder);
+    entry(BLACKTHORN_GYM_2F, 3, BlackthornGymBoulder);
+    entry(BLACKTHORN_GYM_2F, 4, BlackthornGymBoulder);
+    entry(BLACKTHORN_GYM_2F, 5, BlackthornGymBoulder);
+    entry(BLACKTHORN_GYM_2F, 6, BlackthornGymBoulder);
+    entry(BLACKTHORN_GYM_2F, 7, BlackthornGymBoulder);
+
+    entry(BLACKTHORN_MART, 0, BlackthornMartClerkScript);
+    entry(BLACKTHORN_MART, 1, BlackthornMartCooltrainerMScript);
+    entry(BLACKTHORN_MART, 2, BlackthornMartBlackBeltScript);
+
+    entry(BLACKTHORN_POKECENTER_1F, 0, BlackthornPokecenter1FNurseScript);
+    entry(BLACKTHORN_POKECENTER_1F, 1, BlackthornPokecenter1FGentlemanScript);
+    entry(BLACKTHORN_POKECENTER_1F, 2, BlackthornPokecenter1FTwinScript);
+    entry(BLACKTHORN_POKECENTER_1F, 3, BlackthornPokecenter1FCooltrainerMScript);
+    
+    entry(MOVE_DELETERS_HOUSE, 0, MoveDeleter);
+
+    entry(INDIGO_PLATEAU_POKECENTER_1F, 0, IndigoPlateauPokecenter1FNurseScript);
+    entry(INDIGO_PLATEAU_POKECENTER_1F, 1, IndigoPlateauPokecenter1FClerkScript);
+    entry(INDIGO_PLATEAU_POKECENTER_1F, 2, IndigoPlateauPokecenter1FCooltrainerMScript);
+    entry(INDIGO_PLATEAU_POKECENTER_1F, 3, ObjectEvent);
+    entry(INDIGO_PLATEAU_POKECENTER_1F, 4, TeleportGuyScript);
+    entry(INDIGO_PLATEAU_POKECENTER_1F, 5, AbraScript);
+
+    entry(WILLS_ROOM, 0, WillScript_Battle);
+
+    entry(KOGAS_ROOM, 0, KogaScript_Battle);
+
+    entry(BRUNOS_ROOM, 0, BrunoScript_Battle);
+
+    entry(KARENS_ROOM, 0, KarenScript_Battle);
+
+    entry(LANCES_ROOM, 0, LancesRoomLanceScript);
+    entry(LANCES_ROOM, 1, ObjectEvent);
+    entry(LANCES_ROOM, 2, ObjectEvent);
+
+    entry(HALL_OF_FAME, 0, ObjectEvent);
+
     entry(SPROUT_TOWER_1F, 0, SproutTower1FSage1Script);
     entry(SPROUT_TOWER_1F, 1, SproutTower1FSage2Script);
     entry(SPROUT_TOWER_1F, 2, SproutTower1FGrannyScript);
@@ -1057,6 +1166,43 @@ void PopulateMapScriptTable(void) {
     entry(TEAM_ROCKET_BASE_B3F, 12, TeamRocketBaseB3FIceHeal);
     entry(TEAM_ROCKET_BASE_B3F, 13, TeamRocketBaseB3FUltraBall);
 
+    entry(ICE_PATH_1F, 0, IcePath1FHMWaterfall);
+    entry(ICE_PATH_1F, 1, IcePath1FPPUp);
+    entry(ICE_PATH_1F, 2, IcePath1FProtein);
+
+    entry(ICE_PATH_B1F, 0, IcePathB1FBoulder);
+    entry(ICE_PATH_B1F, 1, IcePathB1FBoulder);
+    entry(ICE_PATH_B1F, 2, IcePathB1FBoulder);
+    entry(ICE_PATH_B1F, 3, IcePathB1FBoulder);
+    entry(ICE_PATH_B1F, 4, IcePathB1FIron);
+
+    entry(ICE_PATH_B2F_BLACKTHORN_SIDE, 0, IcePathB2FBlackthornSideTMRest);
+
+    entry(ICE_PATH_B2F_MAHOGANY_SIDE, 0, IcePathB2FMahoganySideBoulder);
+    entry(ICE_PATH_B2F_MAHOGANY_SIDE, 1, IcePathB2FMahoganySideBoulder);
+    entry(ICE_PATH_B2F_MAHOGANY_SIDE, 2, IcePathB2FMahoganySideBoulder);
+    entry(ICE_PATH_B2F_MAHOGANY_SIDE, 3, IcePathB2FMahoganySideBoulder);
+    entry(ICE_PATH_B2F_MAHOGANY_SIDE, 4, IcePathB2FMahoganySideFullHeal);
+    entry(ICE_PATH_B2F_MAHOGANY_SIDE, 5, IcePathB2FMahoganySideMaxPotion);
+
+    entry(ICE_PATH_B3F, 0, IcePathB3FNevermeltice);
+    entry(ICE_PATH_B3F, 1, IcePathB3FRock);
+
+    entry(DRAGONS_DEN_B1F, 0, DragonsDenB1FDragonFangScript);
+    entry(DRAGONS_DEN_B1F, 1, ObjectEvent);
+    entry(DRAGONS_DEN_B1F, 2, DragonsDenB1FSilverScript);
+    entry(DRAGONS_DEN_B1F, 3, TrainerCooltrainermDarin);
+    entry(DRAGONS_DEN_B1F, 4, TrainerCooltrainerfCara);
+    entry(DRAGONS_DEN_B1F, 5, TrainerTwinsLeaandpia1);
+    entry(DRAGONS_DEN_B1F, 6, TrainerTwinsLeaandpia2);
+    entry(DRAGONS_DEN_B1F, 7, DragonsDenB1FCalcium);
+    entry(DRAGONS_DEN_B1F, 8, DragonsDenB1FMaxElixer);
+
+    entry(DRAGON_SHRINE, 0, DragonShrineElder1Script);
+    entry(DRAGON_SHRINE, 1, DragonShrineElder2Script);
+    entry(DRAGON_SHRINE, 2, DragonShrineElder3Script);
+    entry(DRAGON_SHRINE, 3, ObjectEvent);
+
     entry(DARK_CAVE_BLACKTHORN_ENTRANCE, 0, DarkCaveBlackthornEntrancePharmacistScript);
     entry(DARK_CAVE_BLACKTHORN_ENTRANCE, 1, DarkCaveBlackthornEntranceRevive);
     entry(DARK_CAVE_BLACKTHORN_ENTRANCE, 2, DarkCaveBlackthornEntranceTMSnore);
@@ -1069,6 +1215,50 @@ void PopulateMapScriptTable(void) {
     entry(DARK_CAVE_VIOLET_ENTRANCE, 5, DarkCaveVioletEntranceFullHeal);
     entry(DARK_CAVE_VIOLET_ENTRANCE, 6, DarkCaveVioletEntranceHyperPotion);
     entry(DARK_CAVE_VIOLET_ENTRANCE, 7, DarkCaveVioletEntranceDireHit);
+
+    entry(TIN_TOWER_1F, 0, ObjectEvent);
+    entry(TIN_TOWER_1F, 1, ObjectEvent);
+    entry(TIN_TOWER_1F, 2, ObjectEvent);
+    entry(TIN_TOWER_1F, 3, TinTower1FEusine);
+    entry(TIN_TOWER_1F, 4, TinTower1FSage1Script);
+    entry(TIN_TOWER_1F, 5, TinTower1FSage2Script);
+    entry(TIN_TOWER_1F, 6, TinTower1FSage3Script);
+    entry(TIN_TOWER_1F, 7, TinTower1FSage4Script);
+    entry(TIN_TOWER_1F, 8, TinTower1FSage5Script);
+    entry(TIN_TOWER_1F, 9, TinTower1FSage6Script);
+
+    entry(TIN_TOWER_3F, 0, TinTower3FFullHeal);
+
+    entry(TIN_TOWER_4F, 0, TinTower4FUltraBall);
+    entry(TIN_TOWER_4F, 1, TinTower4FPPUp);
+    entry(TIN_TOWER_4F, 2, TinTower4FEscapeRope);
+
+    entry(TIN_TOWER_5F, 0, TinTower5FRareCandy);
+
+    entry(TIN_TOWER_6F, 0, TinTower6FMaxPotion);
+
+    entry(TIN_TOWER_7F, 0, TinTower7FMaxRevive);
+
+    entry(TIN_TOWER_8F, 0, TinTower8FNugget);
+    entry(TIN_TOWER_8F, 1, TinTower8FMaxElixer);
+    entry(TIN_TOWER_8F, 2, TinTower8FFullRestore);
+
+    entry(TIN_TOWER_9F, 0, TinTower9FHPUp);
+
+    entry(TIN_TOWER_ROOF, 0, TinTowerHoOh);
+
+    entry(TOHJO_FALLS, 0, TohjoFallsMoonStone);
+
+    entry(VICTORY_ROAD_GATE, 0, VictoryRoadGateOfficerScript);
+    entry(VICTORY_ROAD_GATE, 1, VictoryRoadGateLeftBlackBeltScript);
+    entry(VICTORY_ROAD_GATE, 2, VictoryRoadGateRightBlackBeltScript);
+
+    entry(VICTORY_ROAD, 0, ObjectEvent);
+    entry(VICTORY_ROAD, 1, VictoryRoadTMEarthquake);
+    entry(VICTORY_ROAD, 2, VictoryRoadMaxRevive);
+    entry(VICTORY_ROAD, 3, VictoryRoadFullRestore);
+    entry(VICTORY_ROAD, 4, VictoryRoadFullHeal);
+    entry(VICTORY_ROAD, 5, VictoryRoadHPUp);
 }
 
 const void* GetRealScriptPointer(uint8_t group, uint8_t map, uint8_t index) {

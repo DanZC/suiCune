@@ -174,6 +174,8 @@
 #define s_end                       SCRIPT_END2
 #define s_endcallback               SCRIPT_ENDCALLBACK
 #define s_endall                    SCRIPT_EVCMD(Script_endall_Conv)
+#define halloffame                  SCRIPT_EVCMD(Script_halloffame_Conv)
+#define credits                     SCRIPT_EVCMD(Script_credits_Conv)
 #define wait(_n)                    SCRIPT_EVCMD(Script_wait_Conv, _n)
 #define checksave                   SCRIPT_EVCMD(Script_checksave_Conv)
 #define s_ret                       SCRIPT_RET

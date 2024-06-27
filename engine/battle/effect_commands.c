@@ -1496,7 +1496,7 @@ static uint8_t BattleCommand_DoTurn_consume_pp(uint8_t* hl) {
         // RET;
     }
     // DEC_hl;
-    (*hl)--;
+    hl[move]--;
     // LD_B(0);
     return 0;
     // RET;

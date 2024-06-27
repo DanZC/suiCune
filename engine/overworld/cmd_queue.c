@@ -3,6 +3,9 @@
 #include "../../home/region.h"
 #include "../../home/map_objects.h"
 #include "../../home/copy.h"
+#include "../../home/stone_queue.h"
+
+struct CmdQueue gCmdQueue[CMDQUEUE_CAPACITY];
 
 void ClearCmdQueue(void){
     // LD_HL(wCmdQueue);
@@ -13,7 +16,7 @@ void ClearCmdQueue(void){
     for(uint32_t c = 0; c < CMDQUEUE_CAPACITY; ++c) {
     // loop:
         // LD_hl_A;
-        wram->wCmdQueue[c * CMDQUEUE_ENTRY_SIZE] = 0;
+        gCmdQueue[c].type = 0;
         // ADD_HL_DE;
         // DEC_C;
         // IF_NZ goto loop;
@@ -32,13 +35,13 @@ void HandleCmdQueue(void){
         // LD_A_hl;
         // AND_A_A;
         // IF_Z goto skip;
-        if(wram->wCmdQueue[c * CMDQUEUE_ENTRY_SIZE] == 0)
+        if(gCmdQueue[c].type == 0)
             continue;
         // PUSH_HL;
         // LD_B_H;
         // LD_C_L;
         // CALL(aHandleQueuedCommand);
-        HandleQueuedCommand_Conv(wram->wCmdQueue + (c * CMDQUEUE_ENTRY_SIZE));
+        HandleQueuedCommand_Conv(gCmdQueue + c);
         // POP_HL;
 
 
@@ -105,43 +108,40 @@ done:
 
 }
 
-static uint8_t* WriteCmdQueue_GetNextEmptyEntry(void) {
+static struct CmdQueue* WriteCmdQueue_GetNextEmptyEntry(void) {
     // LD_HL(wCmdQueue);
-    uint8_t* hl = wram->wCmdQueue;
     // LD_DE(CMDQUEUE_ENTRY_SIZE);
     // LD_C(CMDQUEUE_CAPACITY);
-    uint8_t c = CMDQUEUE_CAPACITY;
 
-    do {
+    for(uint32_t i = 0; i < CMDQUEUE_CAPACITY; ++i) {
     // loop:
         // LD_A_hl;
         // AND_A_A;
         // IF_Z goto done;
-        if(*hl == 0) {
+        if(gCmdQueue[i].type == 0) {
         // done:
             // LD_A(CMDQUEUE_CAPACITY);
             // SUB_A_C;
             // AND_A_A;
             // RET;
-            return hl;
+            return gCmdQueue + i;
         }
         // ADD_HL_DE;
-        hl += CMDQUEUE_ENTRY_SIZE;
         // DEC_C;
         // IF_NZ goto loop;
-    } while(--c != 0);
+    }
     // SCF;
     // RET;
     return NULL;
 }
 
-bool WriteCmdQueue_Conv(const uint8_t* hl){
+bool WriteCmdQueue_Conv(const struct CmdQueue* hl){
     // PUSH_BC;
     // PUSH_DE;
     // CALL(aWriteCmdQueue_GetNextEmptyEntry);
     // LD_D_H;
     // LD_E_L;
-    uint8_t* de = WriteCmdQueue_GetNextEmptyEntry();
+    struct CmdQueue* de = WriteCmdQueue_GetNextEmptyEntry();
     // POP_HL;
     // POP_BC;
     // RET_C ;
@@ -150,10 +150,11 @@ bool WriteCmdQueue_Conv(const uint8_t* hl){
     // LD_A_B;
     // LD_BC(CMDQUEUE_ENTRY_SIZE - 1);
     // CALL(aFarCopyBytes);
-    CopyBytes_Conv2(de, hl, CMDQUEUE_ENTRY_SIZE - 1);
+    CopyBytes_Conv2(de, hl, sizeof(*de));
     // XOR_A_A;
+    de++;
     // LD_hl_A;
-    de[CMDQUEUE_ENTRY_SIZE] = 0;
+    de->type = 0;
     // RET;
     return true;
 }
@@ -184,7 +185,7 @@ done:
 
 bool DelCmdQueue_Conv(uint8_t b){
     // LD_HL(wCmdQueue);
-    uint8_t* hl = wram->wCmdQueue;
+    struct CmdQueue* hl = gCmdQueue;
     // LD_DE(CMDQUEUE_ENTRY_SIZE);
     // LD_C(CMDQUEUE_CAPACITY);
     uint8_t c = CMDQUEUE_CAPACITY;
@@ -194,17 +195,17 @@ bool DelCmdQueue_Conv(uint8_t b){
         // LD_A_hl;
         // CP_A_B;
         // IF_Z goto done;
-        if(*hl == b) {
+        if(hl->type == b) {
         // done:
             // XOR_A_A;
             // LD_hl_A;
-            *hl = 0;
+            hl->type = 0;
             // SCF;
             // RET;
             return true;
         }
         // ADD_HL_DE;
-        hl += CMDQUEUE_ENTRY_SIZE;
+        hl++;
         // DEC_C;
         // IF_NZ goto loop;
     } while(--c != 0);
@@ -221,12 +222,12 @@ void v_DelCmdQueue(void){
 
 }
 
-void v_DelCmdQueue_Conv(uint8_t* bc){
+void v_DelCmdQueue_Conv(struct CmdQueue* bc){
     // LD_HL(CMDQUEUE_TYPE);
     // ADD_HL_BC;
     // LD_hl(0);
     // RET;
-    bc[CMDQUEUE_TYPE] = 0;
+    bc->type = 0;
 }
 
 void HandleQueuedCommand(void){
@@ -265,11 +266,11 @@ Jumptable:
     return CmdQueues_AnonJumptable();
 }
 
-void HandleQueuedCommand_Conv(uint8_t* bc){
+void HandleQueuedCommand_Conv(struct CmdQueue* bc){
     // LD_HL(CMDQUEUE_TYPE);
     // ADD_HL_BC;
     // LD_A_hl;
-    uint8_t idx = bc[CMDQUEUE_TYPE];
+    uint8_t idx = bc->type;
     // CP_A(NUM_CMDQUEUE_TYPES);
     // IF_C goto okay;
     if(idx >= NUM_CMDQUEUE_TYPES) {
@@ -295,8 +296,8 @@ void HandleQueuedCommand_Conv(uint8_t* bc){
         case CMDQUEUE_NULL:         return CmdQueue_Null();
         case CMDQUEUE_TYPE1:        return CmdQueue_Type1();
         case CMDQUEUE_STONETABLE:   return CmdQueue_StoneTable_Conv(bc);
-        case CMDQUEUE_TYPE3:        return CmdQueue_Type3_Conv(bc);
-        case CMDQUEUE_TYPE4:        return CmdQueue_Type4_Conv(bc);
+        // case CMDQUEUE_TYPE3:        return CmdQueue_Type3_Conv(bc);
+        // case CMDQUEUE_TYPE4:        return CmdQueue_Type4_Conv(bc);
     }
 
 // Jumptable:
@@ -446,7 +447,7 @@ void CmdQueue_Type4_Conv(uint8_t* bc){
             // LDH_addr_A(hSCY);
             hram->hSCY = bc[CMDQUEUE_04];
             // CALL(av_DelCmdQueue);
-            v_DelCmdQueue_Conv(bc);
+            // v_DelCmdQueue_Conv(bc);
             // RET;
             return;
         }
@@ -657,7 +658,7 @@ fall_down_hole:
 
 }
 
-void CmdQueue_StoneTable_Conv(uint8_t* bc){
+void CmdQueue_StoneTable_Conv(struct CmdQueue* bc){
     (void)bc;
     // LD_DE(wPlayerStruct);
     struct Object* de = &wram->wPlayerStruct;
@@ -700,8 +701,7 @@ void CmdQueue_StoneTable_Conv(uint8_t* bc){
             continue;
         // CALL(aHandleStoneQueue);
         // IF_C goto fall_down_hole;
-        struct cpu_registers_s regs = SafeCallGBAutoRet(aHandleStoneQueue);
-        if(regs.f_bits.c) {
+        if(HandleStoneQueue_Conv(de, bc->stonetable)) {
         // fall_down_hole:
             // POP_AF;
             // RET;

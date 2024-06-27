@@ -162,6 +162,8 @@ commands = {
     'end': Cmd("s_end", []),
     'endcallback': Cmd("s_endcallback", []),
     'endall': Cmd("s_endall", []),
+    'halloffame': Cmd("halloffame", []),
+    'credits': Cmd("credits", []),
     'wait': Cmd('wait', []),
     'checksave': Cmd('checksave', []),
 }

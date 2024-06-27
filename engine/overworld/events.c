@@ -1919,7 +1919,6 @@ u8_flag_s CheckMenuOW_Conv(void){
 
 static bool DebugFieldMenuScript(script_s* s){
     SCRIPT_BEGIN
-    //callasm ['SelectMenu']
     DebugFieldMenu();
     sjump(SelectMenuCallback)
     SCRIPT_END
@@ -1927,7 +1926,6 @@ static bool DebugFieldMenuScript(script_s* s){
 
 bool StartMenuScript(script_s* s){
     SCRIPT_BEGIN
-    //callasm ['StartMenu']
     StartMenu();
     //sjump ['StartMenuCallback']
     sjump(StartMenuCallback)
@@ -1936,7 +1934,6 @@ bool StartMenuScript(script_s* s){
 
 bool SelectMenuScript(script_s* s){
     SCRIPT_BEGIN
-    //callasm ['SelectMenu']
     SelectMenu();
     sjump(SelectMenuCallback)
     SCRIPT_END
@@ -2246,10 +2243,8 @@ void UnusedPlayerEventScript(void){
     //end ['?']
 }
 
-// TODO: Convert OverworldHatchEgg and finish this script.
 bool HatchEggScript(script_s* s){
     SCRIPT_BEGIN
-    //callasm ['OverworldHatchEgg']
     OverworldHatchEgg();
     s_end
     SCRIPT_END
