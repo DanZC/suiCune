@@ -584,4 +584,4 @@ const uint8_t* const SpriteAnimFrameData[] = {
     [SPRITE_ANIM_FRAMESET_CELEBI_LEFT]                  = Frameset_CelebiLeft,
     [SPRITE_ANIM_FRAMESET_CELEBI_RIGHT]                 = Frameset_CelebiRight,
 };
-static_assert(lengthof(SpriteAnimFrameData) == NUM_SPRITE_ANIM_FRAMESETS);
+static_assert(lengthof(SpriteAnimFrameData) == NUM_SPRITE_ANIM_FRAMESETS, "");

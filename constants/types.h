@@ -725,7 +725,7 @@ MailMsg
     species_t species;
     uint8_t type;
 };
-static_assert(sizeof(struct MailMsg) == MAIL_STRUCT_LENGTH);
+static_assert(sizeof(struct MailMsg) == MAIL_STRUCT_LENGTH, "");
 
 #if defined(__cplusplus) || defined(_MSC_VER)
 struct
@@ -800,7 +800,7 @@ NicknamedMon {
     struct PartyMon pmon;
     uint8_t nickname[MON_NAME_LENGTH];
 };
-static_assert(sizeof(struct NicknamedMon) == NICKNAMED_MON_STRUCT_LENGTH);
+static_assert(sizeof(struct NicknamedMon) == NICKNAMED_MON_STRUCT_LENGTH, "");
 
 struct Move
 {

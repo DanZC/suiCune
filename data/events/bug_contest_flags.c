@@ -13,4 +13,4 @@ const uint16_t BugCatchingContestantEventFlagTable[] = {
     EVENT_BUG_CATCHING_CONTESTANT_9A,
     EVENT_BUG_CATCHING_CONTESTANT_10A,
 };
-static_assert(lengthof(BugCatchingContestantEventFlagTable) == NUM_BUG_CONTESTANTS);
+static_assert(lengthof(BugCatchingContestantEventFlagTable) == NUM_BUG_CONTESTANTS, "");

@@ -20,5 +20,5 @@ const char* ElevatorFloorNames[] = {
     [FLOOR_11F] = "11F@",
     [FLOOR_ROOF] = "ROOF@",
 };
-static_assert(lengthof(ElevatorFloorNames) == NUM_FLOORS);
+static_assert(lengthof(ElevatorFloorNames) == NUM_FLOORS, "");
 

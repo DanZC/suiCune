@@ -20,4 +20,4 @@ const struct NPCTrade NPCTrades[] = {
     npctrade(TRADE_DIALOGSET_GIRL,      CHANSEY,    AERODACTYL, "AEROY@@@@@@", 0x96, 0x66, GOLD_BERRY,   26491, "KIM@@@@@@@@", TRADE_GENDER_EITHER),
     npctrade(TRADE_DIALOGSET_COLLECTOR, DUGTRIO,    MAGNETON,   "MAGGIE@@@@@", 0x96, 0x66, METAL_COAT,   50082, "FOREST@@@@@", TRADE_GENDER_EITHER),
 };
-static_assert(lengthof(NPCTrades) == NUM_NPC_TRADES);
+static_assert(lengthof(NPCTrades) == NUM_NPC_TRADES, "");

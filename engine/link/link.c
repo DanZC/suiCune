@@ -844,7 +844,7 @@ const char String_PleaseWait[] = "PLEASE WAIT!@";
 void ClearLinkData(void){
     // LD_HL(wLinkData);
     // LD_BC(wLinkDataEnd - wLinkData);
-    static_assert(sizeof(wram->wLinkData) == wLinkDataEnd - wLinkData);
+    static_assert(sizeof(wram->wLinkData) == wLinkDataEnd - wLinkData, "");
 
     for(uint32_t i = 0; i < sizeof(wram->wLinkData); ++i) {
     // loop:

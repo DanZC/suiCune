@@ -173,7 +173,7 @@ void (*const Radio_Stations[])(void) = {
     [POKEDEX_SHOW_8] = PokedexShow8,
 };
 
-// _Static_assert(sizeof(Radio_Stations) / sizeof(void(*)(void)) == NUM_RADIO_SEGMENTS, "");
+static_assert(lengthof(Radio_Stations) == NUM_RADIO_SEGMENTS, "");
 
 void RadioJumptable(void){
 //  entries correspond to constants/radio_constants.asm
@@ -695,7 +695,7 @@ void OaksPKMNTalk8(void){
         OPT_FlippedOutText,
         OPT_HeartMeltinglyText,
     };
-    static_assert(lengthof(Adverbs) == NUM_OAKS_POKEMON_TALK_ADVERBS);
+    static_assert(lengthof(Adverbs) == NUM_OAKS_POKEMON_TALK_ADVERBS, "");
 
 // 0-15 are all valid indexes into .Adverbs,
 // so no need for a retry loop
@@ -1945,7 +1945,7 @@ void PeoplePlaces7(void){
         PnP_RightForMeText,
         PnP_OddText,
     };
-    static_assert(lengthof(Adjectives) == NUM_PNP_PLACES_ADJECTIVES);
+    static_assert(lengthof(Adjectives) == NUM_PNP_PLACES_ADJECTIVES, "");
 // 0-15 are all valid indexes into .Adjectives,
 // so no need for a retry loop
     // CALL(aRandom);

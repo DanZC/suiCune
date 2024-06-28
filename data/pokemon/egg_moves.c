@@ -1169,5 +1169,5 @@ const move_t* EggMovePointers[] = {
     NoEggMoves,
     NoEggMoves,
 };
-static_assert(lengthof(EggMovePointers) == NUM_POKEMON);
+static_assert(lengthof(EggMovePointers) == NUM_POKEMON, "");
 

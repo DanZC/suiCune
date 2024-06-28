@@ -1273,4 +1273,4 @@ const char* MoveDescriptions[] = {
     [0xfe] = MoveFEDescription,
     [0xff] = MoveFFDescription,
 };
-static_assert(lengthof(MoveDescriptions) == 0x100);
+static_assert(lengthof(MoveDescriptions) == 0x100, "");

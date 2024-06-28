@@ -2384,4 +2384,4 @@ const uint8_t* const MoveEffectsPointers[] = {
 	DefenseCurl,
 };
 
-static_assert(lengthof(MoveEffectsPointers) == NUM_MOVE_EFECTS);
+static_assert(lengthof(MoveEffectsPointers) == NUM_MOVE_EFECTS, "");

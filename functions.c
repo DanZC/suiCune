@@ -8686,4 +8686,18 @@ CONVERTED(v_AnimateTileset);
 
     // engine/events/move_deleter.c
     CONVERTED(MoveDeletion);
+
+    // engine/events/dratini.c
+    CONVERTED(GiveDratini);
+
+    // engine/pokemon/learn.c
+    // CONVERTED(AskForgetMoveText);
+    // CONVERTED(MoveAskForgetText);
+    // CONVERTED(LearnMove);
+    // CONVERTED(Text_1_2_and_Poof);
+    // CONVERTED(ForgetMove);
+    // CONVERTED(DidNotLearnMoveText);
+    // CONVERTED(StopLearningMoveText);
+    // CONVERTED(MoveCantForgetHMText);
+    // CONVERTED(LearnedMoveText);
 }

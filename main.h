@@ -9,7 +9,7 @@
 #include "engine/overworld/map_objects.h"
 #include "engine/menus/intro_menu.h"
 #include "engine/overworld/init_map.h"
-//#include "engine/pokemon/learn.h"
+#include "engine/pokemon/learn.h"
 #include "engine/pokemon/correct_nick_errors.h"
 #include "engine/math/math.h"
 #include "data/items/attributes.h"
@@ -274,7 +274,7 @@
 //#include "mobile/mobile_22.h"
 #include "engine/events/unown_walls.h"
 #include "engine/events/buena.h"
-//#include "engine/events/dratini.h"
+#include "engine/events/dratini.h"
 #include "engine/events/battle_tower/rules.h"
 //#include "mobile/mobile_22_2.h"
 

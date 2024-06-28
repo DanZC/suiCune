@@ -34,7 +34,7 @@ const uint16_t OddEggProbabilities[] = {
     prob(99),  // 10%
     prob(100), // 1%
 };
-static_assert(lengthof(OddEggProbabilities) == NUM_ODD_EGGS);
+static_assert(lengthof(OddEggProbabilities) == NUM_ODD_EGGS, "");
 
 #define CHAR__(_l) (CHAR_A + (_l - 'A'))
 #define dvs(_0, _1, _2, _3) (_0) << 12 | (_1) << 8 | (_2) << 4 | (_3)
@@ -518,4 +518,4 @@ const struct NicknamedMon OddEggs[] = {
     .nickname = {CHAR__('E'), CHAR__('G'), CHAR__('G'), CHAR_TERM, CHAR_TERM, CHAR_TERM, CHAR_TERM, CHAR_TERM, CHAR_TERM, CHAR_TERM, CHAR_TERM}  // db "EGG@@@@@@@@"
     },
 };
-static_assert(lengthof(OddEggs) == NUM_ODD_EGGS);
+static_assert(lengthof(OddEggs) == NUM_ODD_EGGS, "");

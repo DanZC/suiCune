@@ -38,6 +38,16 @@ HMMoves:
 */
 }
 
-bool IsHMMove_Conv(uint8_t a){
-    return IsInArray_Conv(mIsHMMove_HMMoves, 1, a) != 0xFFFF;
+bool IsHMMove_Conv(move_t a){
+    static const move_t HMMoves[] = {
+        CUT,
+        FLY,
+        SURF,
+        STRENGTH,
+        FLASH,
+        WATERFALL,
+        WHIRLPOOL,
+        (move_t)-1,
+    };
+    return IsInMoveArray(HMMoves, a);
 }

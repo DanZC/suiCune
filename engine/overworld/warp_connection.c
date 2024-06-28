@@ -382,7 +382,7 @@ static void EnterMapWarp_SaveDigWarp(void) {
     // LD_A_addr(wPrevMapGroup);
     // CP_A(GROUP_MOUNT_MOON_SQUARE);
     // IF_NZ goto not_mt_moon_square_or_tin_tower_roof;
-    static_assert((int)GROUP_MOUNT_MOON_SQUARE == (int)GROUP_TIN_TOWER_ROOF);
+    static_assert((int)GROUP_MOUNT_MOON_SQUARE == (int)GROUP_TIN_TOWER_ROOF, "");
     // LD_A_addr(wPrevMapNumber);
     // CP_A(MAP_MOUNT_MOON_SQUARE);
     // RET_Z ;

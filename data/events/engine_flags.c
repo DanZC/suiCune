@@ -201,8 +201,4 @@ const struct EngineFlag EngineFlags[] = {
     [ENGINE_YANMA_SWARM] = engine_flag(wSwarmFlags, SWARMFLAGS_YANMA_SWARM_F),
 };
 
-#if defined(__cplusplus) || defined(_MSC_VER)
 static_assert(lengthof(EngineFlags) == NUM_ENGINE_FLAGS, "");
-#else
-_Static_assert(lengthof(EngineFlags) == NUM_ENGINE_FLAGS, "");
-#endif

@@ -2206,7 +2206,7 @@ void (*const TextCommands2[])(struct TextCmdState*, const struct TextCmd*) = {
     [TX_FAR] = TextCommand_FAR_Conv2
 };
 
-static_assert(sizeof(TextCommands) / sizeof(void(*)(void)) == NUM_TEXT_CMDS, "");
+static_assert(lengthof(TextCommands) == NUM_TEXT_CMDS, "");
 
 void DoTextUntilTerminator_Conv(struct TextPrintState* state) {
     while(1)

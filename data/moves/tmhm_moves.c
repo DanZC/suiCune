@@ -87,5 +87,5 @@ const move_t TMHMMoves[] = {
 // 	db MT{02d:n}_MOVE
 // endr
 };
-static_assert(lengthof(TMHMMoves) == NUM_TM_HM_TUTOR);
+static_assert(lengthof(TMHMMoves) == NUM_TM_HM_TUTOR, "");
 	// db 0 ; end

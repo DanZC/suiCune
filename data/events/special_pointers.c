@@ -24,6 +24,7 @@
 #include "../../engine/events/buena.h"
 #include "../../engine/events/buena_menu.h"
 #include "../../engine/events/move_deleter.h"
+#include "../../engine/events/dratini.h"
 #include "../../engine/events/bug_contest/contest.h"
 #include "../../engine/events/bug_contest/contest_2.h"
 #include "../../engine/events/battle_tower/battle_tower.h"
@@ -196,7 +197,7 @@ void (*const SpecialsPointers[])(void) = {
     add_special(PokeSeer),
     add_special(BuenasPassword),
     add_special(BuenaPrize),
-    // add_special(GiveDratini),
+    add_special(GiveDratini),
     // add_special(SampleKenjiBreakCountdown),
     add_special(BeastsCheck),
     add_special(MonCheck),
