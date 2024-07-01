@@ -197,7 +197,7 @@
 #include "engine/menus/delete_save.h"
 //#include "data/tilesets.h"
 #include "engine/smallflag.h"
-//#include "engine/gfx/trademon_frontpic.h"
+#include "engine/gfx/trademon_frontpic.h"
 #include "engine/events/pokerus/check_pokerus.h"
 //#include "engine/events/lucky_number.h"
 #include "engine/pokemon/caught_data.h"

@@ -1322,15 +1322,21 @@ void v_CGB_GamefreakLogo(void){
 }
 
 void v_CGB_PlayerOrMonFrontpicPals(void){
-    LD_DE(wBGPals1);
-    LD_A_addr(wCurPartySpecies);
-    LD_BC(wTempMonDVs);
-    CALL(aGetPlayerOrMonPalettePointer);
-    CALL(aLoadPalette_White_Col1_Col2_Black);
-    CALL(aWipeAttrmap);
-    CALL(aApplyAttrmap);
-    CALL(aApplyPals);
-    RET;
+    uint16_t buffer[NUM_PAL_COLORS];
+    // LD_DE(wBGPals1);
+    // LD_A_addr(wCurPartySpecies);
+    // LD_BC(wTempMonDVs);
+    // CALL(aGetPlayerOrMonPalettePointer);
+    uint16_t* pal = GetPlayerOrMonPalettePointer_Conv(buffer, wram->wCurPartySpecies, wram->wTempMon.mon.DVs);
+    // CALL(aLoadPalette_White_Col1_Col2_Black);
+    LoadPalette_White_Col1_Col2_Black_Conv((uint16_t*)wram_ptr(wBGPals1), pal);
+    // CALL(aWipeAttrmap);
+    WipeAttrmap();
+    // CALL(aApplyAttrmap);
+    ApplyAttrmap_Conv();
+    // CALL(aApplyPals);
+    ApplyPals_Conv();
+    // RET;
 
 }
 
@@ -1350,33 +1356,44 @@ void v_CGB_Unused1E(void){
 }
 
 void v_CGB_TradeTube(void){
-    LD_HL(mPalPacket_TradeTube + 1);
-    CALL(aCopyFourPalettes);
-    LD_HL(mPartyMenuOBPals);
-    LD_DE(wOBPals1);
-    LD_BC(1 * PALETTE_SIZE);
-    LD_A(MBANK(awOBPals1));
-    CALL(aFarCopyWRAM);
-    LD_DE(wOBPals1 + PALETTE_SIZE * 7);
-    LD_A(PREDEFPAL_TRADE_TUBE);
-    CALL(aGetPredefPal);
-    CALL(aLoadHLPaletteIntoDE);
-    CALL(aWipeAttrmap);
-    RET;
-
+    uint16_t buffer[NUM_PAL_COLORS];
+    // LD_HL(mPalPacket_TradeTube + 1);
+    // CALL(aCopyFourPalettes);
+    CopyFourPalettes_Conv((const uint8_t*)PalPacket_TradeTube.colors);
+    // LD_HL(mPartyMenuOBPals);
+    LoadPaletteAssetToArray(buffer, PartyMenuOBPals, 1);
+    // LD_DE(wOBPals1);
+    // LD_BC(1 * PALETTE_SIZE);
+    // LD_A(MBANK(awOBPals1));
+    // CALL(aFarCopyWRAM);
+    CopyBytes_Conv2(wram->wOBPals1, buffer, 1 * PALETTE_SIZE);
+    // LD_DE(wOBPals1 + PALETTE_SIZE * 7);
+    // LD_A(PREDEFPAL_TRADE_TUBE);
+    // CALL(aGetPredefPal);
+    const uint16_t* hl = GetPredefPal_Conv(PREDEFPAL_TRADE_TUBE);
+    // CALL(aLoadHLPaletteIntoDE);
+    LoadHLPaletteIntoDE_Conv(wram->wOBPals1 + PALETTE_SIZE * 7, hl);
+    // CALL(aWipeAttrmap);
+    WipeAttrmap();
+    // RET;
 }
 
 void v_CGB_TrainerOrMonFrontpicPals(void){
-    LD_DE(wBGPals1);
-    LD_A_addr(wCurPartySpecies);
-    LD_BC(wTempMonDVs);
-    CALL(aGetFrontpicPalettePointer);
-    CALL(aLoadPalette_White_Col1_Col2_Black);
-    CALL(aWipeAttrmap);
-    CALL(aApplyAttrmap);
-    CALL(aApplyPals);
-    RET;
-
+    uint16_t buffer[NUM_PAL_COLORS];
+    // LD_DE(wBGPals1);
+    // LD_A_addr(wCurPartySpecies);
+    // LD_BC(wTempMonDVs);
+    // CALL(aGetFrontpicPalettePointer);
+    uint16_t* pal = GetFrontpicPalettePointer_Conv(buffer, wram->wCurPartySpecies, wram->wTempMon.mon.DVs);
+    // CALL(aLoadPalette_White_Col1_Col2_Black);
+    LoadPalette_White_Col1_Col2_Black_Conv((uint16_t*)wram_ptr(wBGPals1), pal);
+    // CALL(aWipeAttrmap);
+    WipeAttrmap();
+    // CALL(aApplyAttrmap);
+    ApplyAttrmap_Conv();
+    // CALL(aApplyPals);
+    ApplyPals_Conv();
+    // RET;
 }
 
 void v_CGB_MysteryGift(void){

@@ -71,5 +71,5 @@ void CableClubCheckWhichChris(void);
 void GSLinkCommsBorderGFX(void);
 void CheckSRAM0Flag(void);
 //#include "data/items/catch_rate_items.h"
-//#include "engine/movie/trade_animation.h"
+#include "../movie/trade_animation.h"
 //#include "gfx/trade/unused_gs_border_tiles.2bpp"

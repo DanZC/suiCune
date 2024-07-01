@@ -14,6 +14,7 @@
 #include "../pokemon/mon_stats.h"
 #include "../pokemon/move_mon.h"
 #include "../pokemon/caught_data.h"
+#include "../movie/trade_animation.h"
 #include "../../data/events/npc_trades.h"
 #include "../../data/text/common.h"
 
@@ -80,7 +81,7 @@ void NPCTrade(uint8_t e){
     PrintText_Conv2(NPCTradeCableText);
 
     // CALL(aDoNPCTrade);
-    SafeCallGBAuto(aDoNPCTrade);
+    DoNPCTrade();
     // CALL(aNPCTrade_TradeAnimation);
     NPCTrade_TradeAnimation();
     // CALL(aGetTradeMonNames);
@@ -114,7 +115,7 @@ static void NPCTrade_TradeAnimation(void){
     // PUSH_AF;
     uint8_t tradeDialog = wram->wTradeDialog;
     // PREDEF(pTradeAnimation);
-    SafeCallGBAuto(aTradeAnimation);
+    TradeAnimation();
     // POP_AF;
     // LD_addr_A(wTradeDialog);
     wram->wTradeDialog = tradeDialog;

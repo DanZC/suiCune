@@ -24,6 +24,7 @@
 #include "../phone/phone.h"
 #include "../battle/core.h"
 #include "../../util/scripting.h"
+#include "../movie/trade_animation.h"
 #include <stdlib.h>
 
 typedef struct {
@@ -832,9 +833,11 @@ void DebugMenu_TradeAnim(void) {
     U82CA(wram->wOTTrademon.otName, "PLAYER@");
     U82CA(wram->wPlayerTrademon.speciesName, "A@");
     U82CA(wram->wOTTrademon.speciesName, "A@");
+    U82CA(wram->wPlayerTrademon.senderName, "A@");
+    U82CA(wram->wOTTrademon.senderName, "B@");
     U82CA(wram->wPlayerTrademon.nickname, "A@");
     U82CA(wram->wOTTrademon.nickname, "A@");
-    SafeCallGBAuto(aTradeAnimationPlayer2);
+    TradeAnimation();
 }
 
 static void DebugMenu_BattleAnim_PlaceText(uint16_t move) {

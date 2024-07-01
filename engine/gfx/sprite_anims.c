@@ -3,6 +3,7 @@
 #include "sprites.h"
 #include "../../home/audio.h"
 #include "../movie/splash.h"
+#include "../movie/trade_animation.h"
 #include "../pokegear/pokegear.h"
 #include "../menus/naming_screen.h"
 
@@ -1394,10 +1395,7 @@ void AnimSeq_TrademonInTube(void){
 }
 
 static void AnimSeq_TrademonInTube_Conv(struct SpriteAnim* bc){
-    PUSH_BC;
-    REG_BC = (bc - wram->wSpriteAnim) * SPRITEANIMSTRUCT_LENGTH + wSpriteAnimationStructs;
-    CALLFAR(aTradeAnim_AnimateTrademonInTube);
-    POP_BC;
+    TradeAnim_AnimateTrademonInTube(bc);
 }
 
 void AnimSeq_RevealNewMon(void){

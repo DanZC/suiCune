@@ -3306,13 +3306,13 @@ void LinkTrade(void){
         // IF_Z goto player_2;
         if(hram->hSerialConnectionStatus != USING_EXTERNAL_CLOCK) {
             // PREDEF(pTradeAnimation);
-            SafeCallGBAuto(aTradeAnimation);
+            TradeAnimation();
             // goto done_animation;
         }
         else {
         // player_2:
             // PREDEF(pTradeAnimationPlayer2);
-            SafeCallGBAuto(aTradeAnimationPlayer2);
+            TradeAnimationPlayer2();
         }
 
     // done_animation:
