@@ -1038,35 +1038,36 @@ void TrainerWalkToPlayer(void){
     // RET;
 }
 
+static uint8_t SurfStartStep_GetMovementData(void){
+    static const uint8_t movement_data[] = {
+        slow_step(DOWN),
+        slow_step(UP),
+        slow_step(LEFT),
+        slow_step(RIGHT),
+    };
+    // LD_A_addr(wPlayerDirection);
+    // SRL_A;
+    // SRL_A;
+    // maskbits(NUM_DIRECTIONS, 0);
+    // LD_E_A;
+    // LD_D(0);
+    // LD_HL(mSurfStartStep_movement_data);
+    // ADD_HL_DE;
+    // LD_A_hl;
+    // RET;
+    return movement_data[(wram->wPlayerStruct.facing & 0b00001100) >> 2];
+}
+
 void SurfStartStep(void){
-    CALL(aInitMovementBuffer);
-    CALL(aSurfStartStep_GetMovementData);
-    CALL(aAppendToMovementBuffer);
-    LD_A(movement_step_end);
-    CALL(aAppendToMovementBuffer);
-    RET;
-
-
-GetMovementData:
-    LD_A_addr(wPlayerDirection);
-    SRL_A;
-    SRL_A;
-    maskbits(NUM_DIRECTIONS, 0);
-    LD_E_A;
-    LD_D(0);
-    LD_HL(mSurfStartStep_movement_data);
-    ADD_HL_DE;
-    LD_A_hl;
-    RET;
-
-
-movement_data:
-    //slow_step ['DOWN']
-    //slow_step ['UP']
-    //slow_step ['LEFT']
-    //slow_step ['RIGHT']
-
-    return FollowNotExact();
+    // CALL(aInitMovementBuffer);
+    InitMovementBuffer_Conv(PLAYER);
+    // CALL(aSurfStartStep_GetMovementData);
+    // CALL(aAppendToMovementBuffer);
+    AppendToMovementBuffer_Conv(SurfStartStep_GetMovementData());
+    // LD_A(movement_step_end);
+    // CALL(aAppendToMovementBuffer);
+    AppendToMovementBuffer_Conv(movement_step_end);
+    // RET;
 }
 
 void FollowNotExact(void){

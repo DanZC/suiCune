@@ -25,6 +25,9 @@
 #include "../../engine/events/buena_menu.h"
 #include "../../engine/events/move_deleter.h"
 #include "../../engine/events/dratini.h"
+#include "../../engine/events/lucky_number.h"
+#include "../../engine/events/move_tutor.h"
+#include "../../engine/events/play_slow_cry.h"
 #include "../../engine/events/bug_contest/contest.h"
 #include "../../engine/events/bug_contest/contest_2.h"
 #include "../../engine/events/battle_tower/battle_tower.h"
@@ -32,6 +35,7 @@
 #include "../../engine/overworld/overworld.h"
 #include "../../engine/overworld/warp_connection.h"
 #include "../../engine/overworld/decorations.h"
+#include "../../engine/overworld/player_object.h"
 #include "../../engine/tilesets/timeofday_pals.h"
 #include "../../engine/pokemon/health.h"
 #include "../../engine/pokemon/caught_data.h"
@@ -110,7 +114,7 @@ void (*const SpecialsPointers[])(void) = {
     add_special(PlayMapMusic), // bank 0
     add_special(RestartMapMusic), // bank 0
     add_special(HealMachineAnim),
-    // add_special(SurfStartStep),
+    add_special(SurfStartStep),
     // add_special(FindPartyMonAboveLevel), // unused
     // add_special(FindPartyMonAtLeastThatHappy), // unused
     add_special(FindPartyMonThatSpecies),
@@ -129,10 +133,10 @@ void (*const SpecialsPointers[])(void) = {
     add_special(DisplayCoinCaseBalance),
     add_special(DisplayMoneyAndCoinBalance),
     add_special(PlaceMoneyTopRight),
-    // add_special(CheckForLuckyNumberWinners),
+    add_special(CheckForLuckyNumberWinners),
     add_special(CheckLuckyNumberShowFlag),
     add_special(ResetLuckyNumberShowFlag),
-    // add_special(PrintTodaysLuckyNumber),
+    add_special(PrintTodaysLuckyNumber),
     add_special(SelectApricornForKurt),
     add_special(NameRater),
     // add_special(DisplayLinkRecord),
@@ -142,14 +146,14 @@ void (*const SpecialsPointers[])(void) = {
     add_special(RandomPhoneWildMon),
     add_special(RandomPhoneMon),
     add_special(LoadUsedSpritesGFX),
-    // add_special(PlaySlowCry),
+    add_special(PlaySlowCry),
     // add_special(SnorlaxAwake),
     add_special(OlderHaircutBrother),
     add_special(YoungerHaircutBrother),
     add_special(DaisysGrooming),
     add_special(PlayCurMonCry),
     add_special(ProfOaksPCBoot),
-    // add_special(GameboyCheck),
+    add_special(GameboyCheck),
     add_special(TrainerHouse),
     // add_special(PhotoStudio),
     add_special(InitRoamMons),
@@ -180,7 +184,7 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(Function101220),
     // add_special(Function101225),
     // add_special(Function101231),
-    // add_special(MoveTutor),
+    add_special(MoveTutor),
     add_special(OmanyteChamber),
     // add_special(Function11c1ab),
     add_special(BattleTowerAction),

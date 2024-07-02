@@ -687,7 +687,7 @@ void Gen2ToGen2LinkComms(void){
         return ExitLinkCommunications();
     }
     else {
-    ready_to_trade:
+    // ready_to_trade:
         // LD_DE(MUSIC_ROUTE_30);
         // CALL(aPlayMusic);
         PlayMusic_Conv(MUSIC_ROUTE_30);

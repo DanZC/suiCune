@@ -538,29 +538,33 @@ void PlayCurMonCry(void){
 }
 
 void GameboyCheck(void){
-    LDH_A_addr(hCGB);
-    AND_A_A;
-    IF_NZ goto cgb;
-    LDH_A_addr(hSGB);
-    AND_A_A;
-    IF_NZ goto sgb;
-//  gb
-    XOR_A_A;  // GBCHECK_GB
-    goto done;
+    // LDH_A_addr(hCGB);
+    // AND_A_A;
+    // IF_NZ goto cgb;
+    if(hram->hCGB != 0) {
+    // cgb:
+        // LD_A(GBCHECK_CGB);
+        wram->wScriptVar = GBCHECK_CGB;
+    }
+    // LDH_A_addr(hSGB);
+    // AND_A_A;
+    // IF_NZ goto sgb;
+    else if(hram->hSGB != 0) {
+    // sgb:
+        // LD_A(GBCHECK_SGB);
+        // goto done;
+        wram->wScriptVar = GBCHECK_SGB;
+    }
+    else {
+    //  gb
+        // XOR_A_A;  // GBCHECK_GB
+        // goto done;
+        wram->wScriptVar = GBCHECK_GB;
+    }
 
-
-sgb:
-    LD_A(GBCHECK_SGB);
-    goto done;
-
-
-cgb:
-    LD_A(GBCHECK_CGB);
-
-done:
-    LD_addr_A(wScriptVar);
-    RET;
-
+// done:
+    // LD_addr_A(wScriptVar);
+    // RET;
 }
 
 void FadeOutMusic(void){

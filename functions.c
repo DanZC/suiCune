@@ -8798,4 +8798,15 @@ CONVERTED(v_AnimateTileset);
     // engine/gfx/trademon_frontpic.c
     CONVERTED(GetTrademonFrontpic);
     CONVERTED(AnimateTrademonFrontpic);
+
+    // engine/events/lucky_number.c
+    CONVERTED(PrintTodaysLuckyNumber);
+    CONVERTED(CheckForLuckyNumberWinners);
+
+    // engine/events/move_tutor.c
+    // REDIRECTED(CheckCanLearnMoveTutorMove);
+    CONVERTED(MoveTutor);
+
+    // engine/events/play_slow_cry.c
+    CONVERTED(PlaySlowCry);
 }

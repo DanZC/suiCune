@@ -2136,7 +2136,6 @@ loop2:
 }
 
 const char TradeGameBoyTilemap[] = "gfx/trade/game_boy.tilemap";   //  6x8
-// const char TradeGameBoyTilemap[] = "gfx/trade/game_boy2.tilemap";   //  6x8
 const char TradeLinkTubeTilemap[] = "gfx/trade/link_cable.tilemap";   //  12x3
 
 const char TradeArrowRightGFX[] = "gfx/trade/arrow_right.png";

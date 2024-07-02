@@ -2,8 +2,12 @@
 #include "tmhm.h"
 #include "tmhm2.h"
 #include "items.h"
+#include "../pokemon/party_menu.h"
 #include "../../home/menu.h"
 #include "../../home/tilemap.h"
+#include "../../home/copy.h"
+#include "../../home/delay.h"
+#include "../../home/audio.h"
 #include "../../data/text/common.h"
 
 static void TMHMPocket_ConvertItemToTMHMNumber(void){
@@ -106,58 +110,74 @@ NotTMHM:
 
 }
 
-void ChooseMonToLearnTMHM(void){
-    LD_HL(wStringBuffer2);
-    LD_DE(wTMHMMoveNameBackup);
-    LD_BC(MOVE_NAME_LENGTH - 1);
-    CALL(aCopyBytes);
-    CALL(aClearBGPalettes);
+u8_flag_s ChooseMonToLearnTMHM(void){
+    // LD_HL(wStringBuffer2);
+    // LD_DE(wTMHMMoveNameBackup);
+    // LD_BC(MOVE_NAME_LENGTH - 1);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wTMHMMoveNameBackup, wram->wStringBuffer2, MOVE_NAME_LENGTH - 1);
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
     return ChooseMonToLearnTMHM_NoRefresh();
 }
 
-void ChooseMonToLearnTMHM_NoRefresh(void){
-    FARCALL(aLoadPartyMenuGFX);
-    FARCALL(aInitPartyMenuWithCancel);
-    FARCALL(aInitPartyMenuGFX);
-    LD_A(PARTYMENUACTION_TEACH_TMHM);
-    LD_addr_A(wPartyMenuActionText);
+u8_flag_s ChooseMonToLearnTMHM_NoRefresh(void){
+    // FARCALL(aLoadPartyMenuGFX);
+    LoadPartyMenuGFX();
+    // FARCALL(aInitPartyMenuWithCancel);
+    InitPartyMenuWithCancel();
+    // FARCALL(aInitPartyMenuGFX);
+    InitPartyMenuGFX();
+    // LD_A(PARTYMENUACTION_TEACH_TMHM);
+    // LD_addr_A(wPartyMenuActionText);
+    wram->wPartyMenuActionText = PARTYMENUACTION_TEACH_TMHM;
 
-loopback:
-    FARCALL(aWritePartyMenuTilemap);
-    FARCALL(aPrintPartyMenuText);
-    CALL(aWaitBGMap);
-    CALL(aSetPalettes);
-    CALL(aDelayFrame);
-    FARCALL(aPartyMenuSelect);
-    PUSH_AF;
-    LD_A_addr(wCurPartySpecies);
-    CP_A(EGG);
-    POP_BC;  // now contains the former contents of af
-    IF_Z goto egg;
-    PUSH_BC;
-    LD_HL(wTMHMMoveNameBackup);
-    LD_DE(wStringBuffer2);
-    LD_BC(MOVE_NAME_LENGTH - 1);
-    CALL(aCopyBytes);
-    POP_AF;  // now contains the original contents of af
-    RET;
-
-
-egg:
-    PUSH_HL;
-    PUSH_DE;
-    PUSH_BC;
-    PUSH_AF;
-    LD_DE(SFX_WRONG);
-    CALL(aPlaySFX);
-    CALL(aWaitSFX);
-    POP_AF;
-    POP_BC;
-    POP_DE;
-    POP_HL;
-    goto loopback;
-
-    return TeachTMHM();
+    while(1) {
+    // loopback:
+        // FARCALL(aWritePartyMenuTilemap);
+        WritePartyMenuTilemap();
+        // FARCALL(aPrintPartyMenuText);
+        PrintPartyMenuText();
+        // CALL(aWaitBGMap);
+        WaitBGMap_Conv();
+        // CALL(aSetPalettes);
+        SetPalettes_Conv();
+        // CALL(aDelayFrame);
+        DelayFrame();
+        // FARCALL(aPartyMenuSelect);
+        u8_flag_s res = PartyMenuSelect();
+        // PUSH_AF;
+        // LD_A_addr(wCurPartySpecies);
+        // CP_A(EGG);
+        // POP_BC;  // now contains the former contents of af
+        // IF_Z goto egg;
+        if(wram->wCurPartySpecies != EGG) {
+            // PUSH_BC;
+            // LD_HL(wTMHMMoveNameBackup);
+            // LD_DE(wStringBuffer2);
+            // LD_BC(MOVE_NAME_LENGTH - 1);
+            // CALL(aCopyBytes);
+            CopyBytes_Conv2(wram->wStringBuffer2, wram->wTMHMMoveNameBackup, MOVE_NAME_LENGTH - 1);
+            // POP_AF;  // now contains the original contents of af
+            // RET;
+            return res;
+        }
+    // egg:
+        // PUSH_HL;
+        // PUSH_DE;
+        // PUSH_BC;
+        // PUSH_AF;
+        // LD_DE(SFX_WRONG);
+        // CALL(aPlaySFX);
+        PlaySFX_Conv(SFX_WRONG);
+        // CALL(aWaitSFX);
+        WaitSFX_Conv();
+        // POP_AF;
+        // POP_BC;
+        // POP_DE;
+        // POP_HL;
+        // goto loopback;
+    }
 }
 
 void TeachTMHM(void){
