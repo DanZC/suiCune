@@ -82,13 +82,19 @@ void LANConnection(void) {
     CloseWindow_Conv2();
 }
 
+void LANCloseConnection(void) {
+    NetworkCloseConnection();
+}
+
 static void PlaceLANConnectionItems(void) {
     char buffer[16];
     uint8_t x = 7, y = 2;
-    for(uint32_t i = 0; i < gLANClientCandidateCount; ++i) {
-        PlaceStringSimple(gLANClientCandidates[i].name, coord(x + 1, y, wram->wTilemap));
-        *coord(x + 9, y, wram->wTilemap) = (bit_test(gLANClientCandidates[i].gender, PLAYERGENDER_FEMALE_F))? CHAR_FEMALE_ICON: CHAR_MALE_ICON;
-        sprintf(buffer, "%06d", gLANClientCandidates[i].trainerId);
+    const uint32_t candidateCount = NetworkGetLANCandidateCount();
+    for(uint32_t i = 0; i < candidateCount; ++i) {
+        LANClient* candidate = NetworkGetLANCandidate(i);
+        PlaceStringSimple(candidate->name, coord(x + 1, y, wram->wTilemap));
+        *coord(x + 9, y, wram->wTilemap) = (bit_test(candidate->gender, PLAYERGENDER_FEMALE_F))? CHAR_FEMALE_ICON: CHAR_MALE_ICON;
+        sprintf(buffer, "%06d", candidate->trainerId);
         PlaceStringSimple(U82C(buffer), coord(x + 3, y + 1, wram->wTilemap));
         y += 2;
     }
@@ -97,11 +103,12 @@ static void PlaceLANConnectionItems(void) {
 
 static void PlaceLANConnectionMenuCursor(uint32_t selection) {
     uint8_t x = 7, y = 2;
-    for(uint32_t i = 0; i < gLANClientCandidateCount; ++i) {
+    const uint32_t candidateCount = NetworkGetLANCandidateCount();
+    for(uint32_t i = 0; i < candidateCount; ++i) {
         *coord(x, y, wram->wTilemap) = (i == selection)? CHAR_RIGHT_CURSOR: CHAR_SPACE;
         y += 2;
     }
-    *coord(x, y, wram->wTilemap) = (selection == gLANClientCandidateCount)? CHAR_RIGHT_CURSOR: CHAR_SPACE;
+    *coord(x, y, wram->wTilemap) = (selection == candidateCount)? CHAR_RIGHT_CURSOR: CHAR_SPACE;
 }
 
 void LANConnection_Host(void) {
@@ -133,7 +140,8 @@ void LANConnection_Host(void) {
         }
 
         if(NetworkCheckLAN()) {
-            CopyBytes_Conv2(wram->wStringBuffer1, gLANClientCandidates[0].name, sizeof(gLANClientCandidates[0].name) - 1);
+            const LANClient* candidate = NetworkGetLANCandidate(0);
+            CopyBytes_Conv2(wram->wStringBuffer1, candidate->name, sizeof(candidate->name) - 1);
             wram->wStringBuffer1[11] = CHAR_TERM;
             MapTextbox_Conv(Text_WillYouAccept);
             bool yes = YesNoBox_Conv();
@@ -145,7 +153,6 @@ void LANConnection_Host(void) {
                 bool success = NetworkLANDirectConnect(0);
                 CloseWindow_Conv2();
                 if(success) {
-                    hram->hSerialConnectionStatus = USING_INTERNAL_CLOCK;
                     CloseWindow_Conv2();
                     wram->wScriptVar = TRUE;
                     return;
@@ -189,7 +196,6 @@ static bool LANConnection_TryJoin(uint8_t which) {
                 return false;
         }
         if(NetworkCheckLAN()) {
-            hram->hSerialConnectionStatus = USING_EXTERNAL_CLOCK;
             return true;
         }
     }
@@ -213,7 +219,7 @@ void LANConnection_Join(void) {
 
     int frameCount = 0;
     for(;;++frameCount) {
-        if(frameCount >= 8 * 60 && gLANClientCandidateCount == 0) {
+        if(frameCount >= 8 * 60 && NetworkGetLANCandidateCount() == 0) {
             MapTextbox_Conv(Text_CouldntFindAny);
             CloseWindow_Conv2();
             wram->wScriptVar = FALSE;
@@ -231,6 +237,7 @@ void LANConnection_Join(void) {
             continue;
         }
 
+        const uint32_t candidateCount = NetworkGetLANCandidateCount();
         uint8_t pad = GetMenuJoypad_Conv();
         if(pad & B_BUTTON) {
             PlayClickSFX_Conv();
@@ -243,7 +250,7 @@ void LANConnection_Join(void) {
         else if(pad & A_BUTTON) {
             PlayClickSFX_Conv();
             CloseWindow_Conv2();
-            if(selection >= gLANClientCandidateCount) {
+            if(selection >= candidateCount) {
                 wram->wScriptVar = FALSE;
                 MapTextbox_Conv(Text_Cancelled);
                 NetworkCloseConnection();
@@ -251,7 +258,8 @@ void LANConnection_Join(void) {
                 return;
             }
 
-            CopyBytes_Conv2(wram->wStringBuffer1, gLANClientCandidates[selection].name, sizeof(gLANClientCandidates[selection].name) - 1);
+            const LANClient* candidate = NetworkGetLANCandidate(selection);
+            CopyBytes_Conv2(wram->wStringBuffer1, candidate->name, sizeof(candidate->name) - 1);
             wram->wStringBuffer1[11] = CHAR_TERM;
             MapTextbox_Conv(Text_WillYouConnect);
             bool yes = YesNoBox_Conv();
@@ -281,13 +289,13 @@ void LANConnection_Join(void) {
         }
         else if(hram->hJoyPressed & D_DOWN) {
             selection++;
-            if(selection > gLANClientCandidateCount)
+            if(selection > candidateCount)
                 selection = 0;
             PlaceLANConnectionMenuCursor(selection);
         }
         else if(hram->hJoyPressed & D_UP) {
             if(selection == 0)
-                selection = gLANClientCandidateCount;
+                selection = candidateCount;
             else
                 selection--;
             PlaceLANConnectionMenuCursor(selection);

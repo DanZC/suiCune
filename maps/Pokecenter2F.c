@@ -187,6 +187,7 @@ NoMobile:
     s_end
 FriendNotReady:
     special(WaitForOtherPlayerToExit)
+    LANCloseConnection();
     writetext(YourFriendIsNotReadyText)
     closetext
     s_end
@@ -208,6 +209,7 @@ DidNotSave:
     writetext(Text_PleaseComeAgain)
 AbortLink:
     special(WaitForOtherPlayerToExit)
+    LANCloseConnection();
 Cancel:
     closetext
     s_end

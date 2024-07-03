@@ -27,9 +27,13 @@ static UDPsocket host;
 static UDPpacket* packet;
 static TCPsocket serial;
 static TCPsocket cserial;
+static TCPsocket linkSocket;
 static SDLNet_SocketSet sockets;
 static IPaddress localhost;
 static uint32_t hostUniqueId;
+
+static LANClient gLANClientCandidates[16];
+static uint32_t gLANClientCandidateCount;
 
 // A networking interface for suiCune. Supports both LAN (local) connections, emulating
 // the standard link cable connection, and internet (remote) connections, emulating
@@ -161,10 +165,13 @@ bool NetworkInit(void) {
         SDLNet_ResolveHost(&localhost, "localhost", UDP_PORT);
         packet = SDLNet_AllocPacket(UDP_PACKET_SIZE);
         packet->maxlen = UDP_PACKET_SIZE;
+        packet->address.host = INADDR_ANY;
+        packet->address.port = HostToNet16(UDP_PORT);
 
         sockets = SDLNet_AllocSocketSet(1);
 
         hostUniqueId = (uint32_t)rand() + (uint32_t)time(NULL);
+        printf("Unique id: %d\n", hostUniqueId);
         gNetworkingInit = true;
         gNetworkState = NETSTATE_NOTHING;
         gb.gb_serial_rx = gb_serial_rx_test;
@@ -176,26 +183,38 @@ bool NetworkInit(void) {
 void gb_serial_tx(const uint8_t x) {
     // send byte
     printf("Send: $%02x\n", x);
-    SDLNet_TCP_Send(serial, &x, sizeof(x));
+    SDLNet_TCP_Send(linkSocket, &x, sizeof(x));
 }
 
 enum gb_serial_rx_ret_e gb_serial_rx(uint8_t* x) {
     // receive byte
-    uint32_t frames = 0;
-    while(SDLNet_CheckSockets(sockets, 0) == 0) { 
-        DelayFrame(); 
-        frames++;
-        if(frames > 120)
-            return GB_SERIAL_RX_NO_CONNECTION;
+    int ready = SDLNet_CheckSockets(sockets, 0);
+    if(ready < 0) {
+        printf("Error: %s\n", SDLNet_GetError());
+        return GB_SERIAL_RX_NO_CONNECTION;
     }
-    if(SDLNet_TCP_Recv(serial, x, 1) == 0) {
+    else if(ready == 0) {
+        return GB_SERIAL_RX_NO_CONNECTION;
+    }
+    int bytes = SDLNet_TCP_Recv(linkSocket, x, 1);
+    if(bytes == 0) {
+        return GB_SERIAL_RX_NO_CONNECTION;
+    }
+    else if(bytes < 0) {
+        printf("Error: %s\n", SDLNet_GetError());
         return GB_SERIAL_RX_NO_CONNECTION;
     }
     printf("Recv: $%02x\n", *x);
     return GB_SERIAL_RX_SUCCESS;
 }
 
+static void NetworkTossQueueingPackets(void) {
+    // Toss any packets waiting.
+    while(SDLNet_UDP_Recv(host, packet) == 1) {}
+}
+
 bool NetworkBroadcastLAN(const uint8_t* name, uint16_t id, uint8_t gender) {
+    NetworkTossQueueingPackets();
     memset(packet->data, 0, UDP_PACKET_SIZE);
     CmdPacket_s* cmd = (CmdPacket_s*)packet->data;
     cmd->type = CMD_HOST_LAN;
@@ -217,8 +236,7 @@ bool NetworkBroadcastLAN(const uint8_t* name, uint16_t id, uint8_t gender) {
 }
 
 void NetworkStartJoining(void) {
-    // Toss any packets waiting.
-    while(SDLNet_UDP_Recv(host, packet) == 1) {}
+    NetworkTossQueueingPackets();
     gNetworkState = NETSTATE_JOINING;
 }
 
@@ -248,9 +266,6 @@ bool NetworkTryJoinLAN(uint8_t which, const uint8_t* name, uint16_t id, uint8_t 
     return false;
 }
 
-LANClient gLANClientCandidates[16];
-uint32_t gLANClientCandidateCount;
-
 bool NetworkTryRecvUDP(void) {
     int error = SDLNet_UDP_Recv(host, packet);
     if(error == -1) {
@@ -261,9 +276,9 @@ bool NetworkTryRecvUDP(void) {
 }
 
 // Is this a duplicate of a host we already added?
-static bool NetworkCheckDuplicateLANCandidate(uint32_t host) {
+static bool NetworkCheckDuplicateLANCandidate(uint32_t uid) {
     for(uint32_t i = 0; i < gLANClientCandidateCount; ++i) {
-        if(gLANClientCandidates[i].address == host)
+        if(gLANClientCandidates[i].uid == uid)
             return true;
     }
     return false;
@@ -279,6 +294,7 @@ static void NetworkAddLANCandidate(void) {
         (lan->address >> 24) & 0xff);
     memset(lan->name, 0x50, sizeof(lan->name));
     CmdPacket_s* cmd = (CmdPacket_s*)packet->data;
+    lan->uid = HostToNet32(cmd->uid);
     memcpy(lan->name, cmd->host_lan.name, 10);
     lan->name[10] = 0x50;
     lan->trainerId = HostToNet16(cmd->host_lan.trainerId);
@@ -287,7 +303,8 @@ static void NetworkAddLANCandidate(void) {
 }
 
 static bool NetworkTryAddLANCandidate(void) {
-    if(NetworkCheckDuplicateLANCandidate(packet->address.host))
+    CmdPacket_s* cmd = (CmdPacket_s*)packet->data;
+    if(NetworkCheckDuplicateLANCandidate(HostToNet32(cmd->uid)))
         return false;
     NetworkAddLANCandidate();
     return true;
@@ -303,6 +320,7 @@ static void NetworkStageLANCandidate(void) {
         (lan->address >> 24) & 0xff);
     memset(lan->name, 0x50, sizeof(lan->name));
     CmdPacket_s* cmd = (CmdPacket_s*)packet->data;
+    lan->uid = HostToNet32(cmd->uid);
     memcpy(lan->name, cmd->host_lan.name, 10);
     lan->trainerId = HostToNet16(cmd->host_lan.trainerId);
     lan->gender = cmd->host_lan.gender;
@@ -350,14 +368,31 @@ bool NetworkCheckLAN(void) {
 void NetworkClearLANCache(void) {
     gLANClientCandidateCount = 0;
     memset(gLANClientCandidates, 0, sizeof(gLANClientCandidates));
+    NetworkTossQueueingPackets();
+}
+
+LANClient* NetworkGetLANCandidate(uint8_t which) {
+    return gLANClientCandidates + which;
+}
+
+uint32_t NetworkGetLANCandidateCount(void) {
+    return gLANClientCandidateCount;
+}
+
+static void NetworkSetLinkSocket(TCPsocket socket) {
+    if(linkSocket != NULL) {
+        SDLNet_TCP_DelSocket(sockets, linkSocket);
+    }
+    linkSocket = socket;
+    SDLNet_TCP_AddSocket(sockets, linkSocket);
 }
 
 bool NetworkLANDirectConnect(uint32_t which) {
     serial = SDLNet_TCP_Open(&(IPaddress){.host = INADDR_ANY, .port = HostToNet16(TCP_PORT)});
-    SDLNet_TCP_AddSocket(sockets, serial);
     packet->address.host = gLANClientCandidates[which].address;
     CmdPacket_s* cmd = (CmdPacket_s*)packet->data;
     cmd->type = CMD_ACCEPT_JOIN_LAN;
+    cmd->uid = HostToNet32(hostUniqueId);
     SDLNet_UDP_Send(host, -1, packet);
     uint32_t timeout = 60 * 8;
     while(!(cserial = SDLNet_TCP_Accept(serial))) {
@@ -365,7 +400,6 @@ bool NetworkLANDirectConnect(uint32_t which) {
         if(--timeout == 0) {
             printf("Connection timed out...\n");
             SDLNet_TCP_Close(serial);
-            SDLNet_TCP_DelSocket(sockets, serial);
             serial = NULL;
             return false;
         }
@@ -375,6 +409,7 @@ bool NetworkLANDirectConnect(uint32_t which) {
         (packet->address.host >> 8) & 0xff,
         (packet->address.host >> 16) & 0xff,
         (packet->address.host >> 24) & 0xff);
+    NetworkSetLinkSocket(cserial);
     gNetworkState = NETSTATE_LAN_HOST;
     gb.gb_serial_rx = gb_serial_rx;
     gb.gb_serial_tx = gb_serial_tx;
@@ -384,7 +419,7 @@ bool NetworkLANDirectConnect(uint32_t which) {
 bool NetworkAcceptLANConnection(void) {
     serial = SDLNet_TCP_Open(&(IPaddress){.host = packet->address.host, .port = HostToNet16(TCP_PORT)});
     if(serial != NULL) {
-        SDLNet_TCP_AddSocket(sockets, serial);
+        NetworkSetLinkSocket(serial);
         gNetworkState = NETSTATE_LAN_CLIENT;
         printf("Connected to %d.%d.%d.%d!\n",
             packet->address.host & 0xff, 
@@ -405,6 +440,10 @@ bool NetworkAcceptLANConnection(void) {
 }
 
 void NetworkCloseConnection(void) {
+    if(linkSocket) {
+        SDLNet_TCP_DelSocket(sockets, linkSocket);
+        linkSocket = NULL;
+    }
     if(cserial) {
         SDLNet_TCP_Close(cserial);
         cserial = NULL;
