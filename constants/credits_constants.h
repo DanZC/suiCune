@@ -108,11 +108,11 @@ enum {
 
 // CreditsScript indexes (see data/credits_script.asm)
 enum {
-    CREDITS_END = -1,
-    CREDITS_WAIT = -2,
-    CREDITS_SCENE = -3,
-    CREDITS_CLEAR = -4,
-    CREDITS_MUSIC = -5,
-    CREDITS_WAIT2 = -6,
-    CREDITS_THEEND = -7,
+    CREDITS_END =   (uint8_t)-1,
+    CREDITS_WAIT =  (uint8_t)-2,
+    CREDITS_SCENE = (uint8_t)-3,
+    CREDITS_CLEAR = (uint8_t)-4,
+    CREDITS_MUSIC = (uint8_t)-5,
+    CREDITS_WAIT2 = (uint8_t)-6,
+    CREDITS_THEEND = (uint8_t)-7,
 };

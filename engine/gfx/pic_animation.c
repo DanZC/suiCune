@@ -2037,3 +2037,36 @@ fail:
     RET;
 
 }
+
+void HOF_AnimateFrontpic_Conv(uint8_t* de, uint8_t c){
+    // CALL(aAnimateMon_CheckIfPokemon);
+    // IF_C goto fail;
+    if(!AnimateMon_CheckIfPokemon_Conv()) {
+    // fail:
+        // XOR_A_A;
+        // LD_addr_A(wBoxAlignment);
+        wram->wBoxAlignment = 0x0;
+        // INC_A;
+        // LD_addr_A(wCurPartySpecies);
+        wram->wCurPartySpecies = BULBASAUR;
+        // RET;
+        return;
+    }
+    // LD_H_D;
+    // LD_L_E;
+    // PUSH_BC;
+    // PUSH_HL;
+    // LD_DE(vTiles2);
+    // PREDEF(pGetAnimatedFrontpic);
+    GetAnimatedFrontpic_Conv(vram->vTiles2, 0);
+    // POP_HL;
+    // POP_BC;
+    // LD_D(0);
+    // LD_E_C;
+    // CALL(aAnimateFrontpic);
+    AnimateFrontpic_Conv(de, 0, c);
+    // XOR_A_A;
+    // LD_addr_A(wBoxAlignment);
+    wram->wBoxAlignment = 0x0;
+    // RET;
+}

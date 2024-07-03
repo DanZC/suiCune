@@ -25,6 +25,8 @@
 #include "../battle/core.h"
 #include "../../util/scripting.h"
 #include "../movie/trade_animation.h"
+#include "../movie/init_hof_credits.h"
+#include "../movie/credits.h"
 #include <stdlib.h>
 
 typedef struct {
@@ -46,6 +48,7 @@ void Handler_Pics(void);
 void Handler_Script(void);
 void Handler_TradeAnim(void);
 void Handler_BattleAnim(void);
+void Handler_Credits(void);
 
 static DebugMenuOption debugMenuOptions[] = {
     {"FIGHT@", Handler_Fight},
@@ -62,6 +65,7 @@ static DebugMenuOption debugMenuOptions[] = {
     {"SCRIPT@", Handler_Script},
     {"TRADE@", Handler_TradeAnim},
     {"BANIMS@", Handler_BattleAnim},
+    {"CREDITS@", Handler_Credits},
 };
 
 #define MAX_OPTIONS_PER_PAGE 7
@@ -251,6 +255,11 @@ void Handler_TradeAnim(void) {
 
 void Handler_BattleAnim(void) {
     DebugMenu_BattleAnim();
+    PlayMusic_Conv(DEBUG_MENU_MUSIC);
+}
+
+void Handler_Credits(void) {
+    DebugMenu_Credits();
     PlayMusic_Conv(DEBUG_MENU_MUSIC);
 }
 
@@ -973,4 +982,10 @@ void DebugMenu_BattleAnim(void) {
     v_LoadFontsExtra1_Conv();
     v_LoadFontsExtra2_Conv();
     v_LoadStandardFont_Conv();
+}
+
+void DebugMenu_Credits(void) {
+    ClearScreen_Conv2();
+    InitDisplayForRedCredits();
+    Credits(0);
 }

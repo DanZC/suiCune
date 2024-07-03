@@ -1,5 +1,6 @@
 #include "../constants.h"
 #include "mobile_41.h"
+#include "../home/copy.h"
 #include "../home/sram.h"
 #include "../engine/gfx/load_font.h"
 #include "../gfx/font.h"
@@ -9,36 +10,49 @@
 
 //  Copies certain values at the time the player enters the Hall of Fame.
 void StubbedTrainerRankings_HallOfFame2(void){
-    RET;
-    LD_A(BANK(sTrainerRankingGameTimeHOF));
-    CALL(aOpenSRAM);
+    // RET;
+    // LD_A(BANK(sTrainerRankingGameTimeHOF));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asTrainerRankingGameTimeHOF));
 
-    LD_HL(wGameTimeHours);
-    LD_DE(sTrainerRankingGameTimeHOF);
-    LD_BC(4);
-    CALL(aCopyBytes);
+    // LD_HL(wGameTimeHours);
+    // LD_DE(sTrainerRankingGameTimeHOF);
+    uint8_t* time = GBToRAMAddr(sTrainerRankingGameTimeHOF);
+    // LD_BC(4);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(time, &wram->wGameTimeHours, 2);
+    time[2] = wram->wGameTimeMinutes;
+    time[3] = wram->wGameTimeSeconds;
 
-    LD_HL(sTrainerRankingStepCount);
-    LD_DE(sTrainerRankingStepCountHOF);
-    LD_BC(4);
-    CALL(aCopyBytes);
+    // LD_HL(sTrainerRankingStepCount);
+    // LD_DE(sTrainerRankingStepCountHOF);
+    // LD_BC(4);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(GBToRAMAddr(sTrainerRankingStepCountHOF), GBToRAMAddr(sTrainerRankingStepCount), 4);
 
 // sTrainerRankingHealings is only a 3-byte value.
 // One extraneous byte is copied from sTrainerRankingMysteryGift.
-    LD_HL(sTrainerRankingHealings);
-    LD_DE(sTrainerRankingHealingsHOF);
-    LD_BC(4);
-    CALL(aCopyBytes);
+#if BUGFIX_HALLOFFAME_RANKING_HEALINGS
+    CopyBytes_Conv2(GBToRAMAddr(sTrainerRankingHealingsHOF), GBToRAMAddr(sTrainerRankingHealings), 3);
+#else
+    // LD_HL(sTrainerRankingHealings);
+    // LD_DE(sTrainerRankingHealingsHOF);
+    // LD_BC(4);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(GBToRAMAddr(sTrainerRankingHealingsHOF), GBToRAMAddr(sTrainerRankingHealings), 4);
+#endif
 
-    LD_HL(sTrainerRankingBattles);
-    LD_DE(sTrainerRankingBattlesHOF);
-    LD_BC(3);
-    CALL(aCopyBytes);
+    // LD_HL(sTrainerRankingBattles);
+    // LD_DE(sTrainerRankingBattlesHOF);
+    // LD_BC(3);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(GBToRAMAddr(sTrainerRankingBattlesHOF), GBToRAMAddr(sTrainerRankingBattles), 3);
 
-    CALL(aUpdateTrainerRankingsChecksum);
-    CALL(aCloseSRAM);
-    RET;
-
+    // CALL(aUpdateTrainerRankingsChecksum);
+    UpdateTrainerRankingsChecksum();
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
 }
 
 void StubbedTrainerRankings_MagikarpLength(void){

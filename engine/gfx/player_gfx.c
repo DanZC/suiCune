@@ -262,12 +262,14 @@ void GetCardPic(void){
 }
 
 void GetPlayerBackpic(void){
-    LD_A_addr(wPlayerGender);
-    BIT_A(PLAYERGENDER_FEMALE_F);
-    JR_Z (mGetChrisBackpic);
-    CALL(aGetKrisBackpic);
-    RET;
-
+    // LD_A_addr(wPlayerGender);
+    // BIT_A(PLAYERGENDER_FEMALE_F);
+    // JR_Z (mGetChrisBackpic);
+    if(!bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))
+        return GetChrisBackpic();
+    // CALL(aGetKrisBackpic);
+    // RET;
+    return GetKrisBackpic();
 }
 
 void GetChrisBackpic(void){
@@ -282,39 +284,45 @@ void GetChrisBackpic(void){
 }
 
 void HOF_LoadTrainerFrontpic(void){
-    CALL(aWaitBGMap);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
+    // CALL(aWaitBGMap);
+    WaitBGMap_Conv();
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0x0;
 
 //  Get class
-    LD_E(CHRIS);
-    LD_A_addr(wPlayerGender);
-    BIT_A(PLAYERGENDER_FEMALE_F);
-    IF_Z goto got_class;
-    LD_E(KRIS);
+    // LD_E(CHRIS);
+    // LD_A_addr(wPlayerGender);
+    // BIT_A(PLAYERGENDER_FEMALE_F);
+    // IF_Z goto got_class;
+    // LD_E(KRIS);
 
-got_class:
-    LD_A_E;
-    LD_addr_A(wTrainerClass);
+// got_class:
+    // LD_A_E;
+    // LD_addr_A(wTrainerClass);
+    wram->wTrainerClass = (bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))? KRIS: CHRIS;
 
 //  Load pic
-    LD_DE(mChrisPic);
-    LD_A_addr(wPlayerGender);
-    BIT_A(PLAYERGENDER_FEMALE_F);
-    IF_Z goto got_pic;
-    LD_DE(mKrisPic);
+    // LD_DE(mChrisPic);
+    // LD_A_addr(wPlayerGender);
+    // BIT_A(PLAYERGENDER_FEMALE_F);
+    // IF_Z goto got_pic;
+    // LD_DE(mKrisPic);
+    const char* pic = (bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))? KrisPic: ChrisPic;
 
-got_pic:
-    LD_HL(vTiles2);
-    LD_B(BANK(aChrisPic));  // aka BANK(KrisPic)
-    LD_C(7 * 7);
-    CALL(aGet2bpp);
+// got_pic:
+    // LD_HL(vTiles2);
+    // LD_B(BANK(aChrisPic));  // aka BANK(KrisPic)
+    // LD_C(7 * 7);
+    // CALL(aGet2bpp);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2, pic, 0, 7 * 7);
 
-    CALL(aWaitBGMap);
-    LD_A(0x1);
-    LDH_addr_A(hBGMapMode);
-    RET;
-
+    // CALL(aWaitBGMap);
+    WaitBGMap_Conv();
+    // LD_A(0x1);
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0x1;
+    // RET;
 }
 
 void DrawIntroPlayerPic(void){

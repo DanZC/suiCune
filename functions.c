@@ -2170,7 +2170,7 @@ void init_function_pointers(void) {
     // REDIRECTED(MovePlayerPic);
     // REDIRECTED(KrisCardPic);
     // REDIRECTED(ChrisPic);
-    // REDIRECTED(HOF_LoadTrainerFrontpic);
+    // CONVERTED(HOF_LoadTrainerFrontpic);
     // REDIRECTED(GetPlayerNameArray);
     // REDIRECTED(GetPlayerIcon);
     CONVERTED(GetKrisBackpic);
@@ -8809,4 +8809,49 @@ CONVERTED(v_AnimateTileset);
 
     // engine/events/play_slow_cry.c
     CONVERTED(PlaySlowCry);
+
+    // engine/movie/init_hof_credits.c
+    // CONVERTED(InitDisplayForRedCredits);
+    // CONVERTED(InitDisplayForHallOfFame);
+    // CONVERTED(ResetDisplayBetweenHallOfFameMons);
+
+    // engine/movie/credits.c
+    // CONVERTED(Credits_HandleBButton);
+    // CONVERTED(Credits_HandleAButton);
+    // CONVERTED(Credits);
+    // CONVERTED(Credits_RequestGFX);
+    // CONVERTED(Credits_Jumptable);
+    // CONVERTED(CreditsDittoGFX);
+    // CONVERTED(DrawCreditsBorder);
+    // CONVERTED(Credits_LoadBorderGFX);
+    // CONVERTED(CreditsPalettes);
+    // CONVERTED(Credits_LoopBack);
+    // CONVERTED(CreditsBorderGFX);
+    // CONVERTED(ParseCredits);
+    // CONVERTED(CreditsPichuGFX);
+    // CONVERTED(CreditsMonsGFX);
+    // CONVERTED(Credits_Next);
+    // CONVERTED(CreditsSmoochumGFX);
+    // CONVERTED(Credits_PrepBGMapUpdate);
+    // CONVERTED(GetCreditsPalette);
+    // CONVERTED(CreditsIgglybuffGFX);
+    // CONVERTED(Credits_LYOverride);
+    // CONVERTED(Credits_TheEnd);
+    // CONVERTED(Credits_UpdateGFXRequestPath);
+    // CONVERTED(ConstructCreditsTilemap);
+
+    // engine/events/halloffame.c
+    // CONVERTED(HOF_SlideBackpic);
+    // CONVERTED(DisplayHOFMon);
+    // CONVERTED(HOF_SlideFrontpic);
+    // CONVERTED(LoadHOFTeam);
+    // CONVERTED(HOF_AnimatePlayerPic);
+    // CONVERTED(v_HallOfFamePC);
+    CONVERTED(HallOfFame);
+    // CONVERTED(HallOfFame_PlayMusicDE);
+    // CONVERTED(HallOfFame_FadeOutMusic);
+    // CONVERTED(AnimateHallOfFame);
+    // CONVERTED(GetHallOfFameParty);
+    CONVERTED(RedCredits);
+    // CONVERTED(AnimateHOFMonEntrance);
 }

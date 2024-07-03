@@ -205,7 +205,7 @@
 #include "engine/pokemon/stats_screen.h"
 #include "engine/events/catch_tutorial.h"
 //#include "engine/movie/evolution_animation.h"
-//#include "engine/movie/init_hof_credits.h"
+#include "engine/movie/init_hof_credits.h"
 #include "engine/events/battle_tower/get_trainer_class.h"
 #include "engine/battle/sliding_intro.h"
 //#include "mobile/print_opp_message.h"
@@ -265,7 +265,7 @@
 //#include "engine/printer/printer_serial.h"
 //#include "engine/printer/printer.h"
 //#include "gfx/battle_anims.h"
-//#include "engine/events/halloffame.h"
+#include "engine/events/halloffame.h"
 
 // SECTION "Crystal Features 2", ROMX
 
@@ -298,6 +298,9 @@
 
 // SECTION "Events", ROMX
 #include "engine/overworld/events.h"
+
+// SECTION "Credits", ROMX
+#include "engine/movie/credits.h"
 
 // SECTION "Phone Scripts 1", ROMX
 

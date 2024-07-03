@@ -1,6 +1,7 @@
 #include "../../constants.h"
 #include "pokecenter_pc.h"
 #include "prof_oaks_pc.h"
+#include "halloffame.h"
 #include "../../home/menu.h"
 #include "../../home/audio.h"
 #include "../../home/tilemap.h"
@@ -258,7 +259,7 @@ u8_flag_s HallOfFamePC(void){
     // CALL(aFadeToMenu);
     FadeToMenu_Conv();
     // FARCALL(av_HallOfFamePC);
-    SafeCallGBAuto(av_HallOfFamePC);
+    v_HallOfFamePC();
     // CALL(aCloseSubmenu);
     CloseSubmenu_Conv();
     // AND_A_A;

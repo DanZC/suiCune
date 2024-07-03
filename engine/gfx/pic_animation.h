@@ -71,3 +71,4 @@ void PokeAnim_GetSpeciesOrUnown(void);
 uint8_t PokeAnim_GetSpeciesOrUnown_Conv(species_t a);
 void Unused_HOF_AnimateAlignedFrontpic(void);
 void HOF_AnimateFrontpic(void);
+void HOF_AnimateFrontpic_Conv(uint8_t* de, uint8_t c);

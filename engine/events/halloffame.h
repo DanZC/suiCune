@@ -1,0 +1,13 @@
+void HallOfFame(void);
+void RedCredits(void);
+void HallOfFame_FadeOutMusic(void);
+void HallOfFame_PlayMusicDE(uint16_t de);
+void AnimateHallOfFame(void);
+void GetHallOfFameParty(void);
+void AnimateHOFMonEntrance(struct HOFMon* mon);
+void HOF_SlideBackpic(void);
+void HOF_SlideFrontpic(void);
+void v_HallOfFamePC(void);
+bool LoadHOFTeam(void);
+void DisplayHOFMon(const struct HOFMon* mon);
+void HOF_AnimatePlayerPic(void);

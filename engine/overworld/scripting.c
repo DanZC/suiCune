@@ -31,6 +31,7 @@
 #include "../events/checksave.h"
 #include "../events/npc_trade.h"
 #include "../events/elevator.h"
+#include "../events/halloffame.h"
 #include "../events/battle_tower/trainer_text.h"
 #include "events.h"
 #include "variables.h"
@@ -51,6 +52,7 @@
 #include "../../home/menu.h"
 #include "../phone/phone.h"
 #include "../gfx/dma_transfer.h"
+#include "../../mobile/mobile_41.h"
 #include <assert.h>
 
 static const struct TextCmd* lScriptText = NULL;
@@ -5695,14 +5697,15 @@ void Script_halloffame(void){
 }
 
 void Script_halloffame_Conv(script_s* s){
-// TODO: Finish converting hall of fame.
     // LD_HL(wGameTimerPaused);
     // RES_hl(GAME_TIMER_PAUSED_F);
     bit_reset(wram->wGameTimerPaused, GAME_TIMER_PAUSED_F);
     // FARCALL(aStubbedTrainerRankings_HallOfFame);
+    StubbedTrainerRankings_HallOfFame();
     // FARCALL(aStubbedTrainerRankings_HallOfFame2);
+    StubbedTrainerRankings_HallOfFame2();
     // FARCALL(aHallOfFame);
-    SafeCallGBAuto(aHallOfFame);
+    HallOfFame();
     // LD_HL(wGameTimerPaused);
     // SET_hl(GAME_TIMER_PAUSED_F);
     bit_set(wram->wGameTimerPaused, GAME_TIMER_PAUSED_F);
@@ -5716,9 +5719,8 @@ void Script_credits(void){
 }
 
 void Script_credits_Conv(script_s* s){
-// TODO: Finish converting red credits.
     // FARCALL(aRedCredits);
-    SafeCallGBAuto(aRedCredits);
+    RedCredits();
     // return ReturnFromCredits();
     return ReturnFromCredits(s);
 }
