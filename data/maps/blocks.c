@@ -36,17 +36,19 @@ const char BetaBlackthornCity_Blocks[] = "maps/unused/BetaBlackthornCity.blk"; /
 
 const char Route10South_Blocks[] = "maps/Route10South.blk";
 
-const char Pokecenter2F_Blocks[] = "maps/Pokecenter2F.blk";
-const char CinnabarPokecenter2FBeta_Blocks[] = "maps/Pokecenter2F.blk";
-const char CeruleanPokecenter2FBeta_Blocks[] = "maps/Pokecenter2F.blk";
-const char Route10Pokecenter2FBeta_Blocks[] = "maps/Pokecenter2F.blk";
-const char VermilionPokecenter2FBeta_Blocks[] = "maps/Pokecenter2F.blk";
-const char PewterPokecenter2FBeta_Blocks[] = "maps/Pokecenter2F.blk";
-const char FuchsiaPokecenter2FBeta_Blocks[] = "maps/Pokecenter2F.blk";
-const char LavenderPokecenter2FBeta_Blocks[] = "maps/Pokecenter2F.blk";
-const char CeladonPokecenter2FBeta_Blocks[] = "maps/Pokecenter2F.blk";
-const char ViridianPokecenter2FBeta_Blocks[] = "maps/Pokecenter2F.blk";
-const char SaffronPokecenter2FBeta_Blocks[] = "maps/Pokecenter2F.blk";
+#define POKECENTER2F_BLOCKS "maps/Pokecenter2F_jp.blk"
+const char Pokecenter2F_Blocks[] = POKECENTER2F_BLOCKS;
+const char CinnabarPokecenter2FBeta_Blocks[] = POKECENTER2F_BLOCKS;
+const char CeruleanPokecenter2FBeta_Blocks[] = POKECENTER2F_BLOCKS;
+const char Route10Pokecenter2FBeta_Blocks[] = POKECENTER2F_BLOCKS;
+const char VermilionPokecenter2FBeta_Blocks[] = POKECENTER2F_BLOCKS;
+const char PewterPokecenter2FBeta_Blocks[] = POKECENTER2F_BLOCKS;
+const char FuchsiaPokecenter2FBeta_Blocks[] = POKECENTER2F_BLOCKS;
+const char LavenderPokecenter2FBeta_Blocks[] = POKECENTER2F_BLOCKS;
+const char CeladonPokecenter2FBeta_Blocks[] = POKECENTER2F_BLOCKS;
+const char ViridianPokecenter2FBeta_Blocks[] = POKECENTER2F_BLOCKS;
+const char SaffronPokecenter2FBeta_Blocks[] = POKECENTER2F_BLOCKS;
+#undef POKECENTER2F_BLOCKS
 
 const char Route41_Blocks[] = "maps/Route41.blk";
 

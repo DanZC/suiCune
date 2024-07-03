@@ -41,8 +41,8 @@ static const struct BGEvent Pokecenter2F_BGEvents[] = {
 
 static const struct WarpEventData Pokecenter2F_WarpEvents[] = {
     warp_event(0, 7, POKECENTER_2F, -1),
-    warp_event(5, 0, TRADE_CENTER, 1),
-    warp_event(9, 0, COLOSSEUM, 1),
+    warp_event(4, 0, TRADE_CENTER, 1),
+    warp_event(8, 0, COLOSSEUM, 1),
     warp_event(13, 2, TIME_CAPSULE, 1),
     warp_event(6, 0, MOBILE_TRADE_ROOM, 1),
     warp_event(10, 0, MOBILE_BATTLE_ROOM, 1),
@@ -492,27 +492,34 @@ bool Pokecenter2F_CheckGender(script_s* s) {
     SCRIPT_BEGIN
     checkflag(ENGINE_PLAYER_IS_FEMALE)
     iftrue(Female)
-    applymovementlasttalked(Pokecenter2FMovementData_ReceptionistWalksUpAndLeft_LookRight)
-    applymovement(PLAYER, Pokecenter2FMovementData_PlayerTakesThreeStepsUp)
+    // applymovementlasttalked(Pokecenter2FMovementData_ReceptionistWalksUpAndLeft_LookRight)
+    applymovementlasttalked(Pokecenter2FMovementData_ReceptionistWalksUpAndRight_LookLeft)
+    // applymovement(PLAYER, Pokecenter2FMovementData_PlayerTakesThreeStepsUp)
+    applymovement(PLAYER, Pokecenter2FMobileMovementData_PlayerWalksIntoCableRoom)
     s_end
 Female:
-    applymovementlasttalked(Pokecenter2FMovementData_ReceptionistWalksUpAndLeft_LookRight_2)
+    // applymovementlasttalked(Pokecenter2FMovementData_ReceptionistWalksUpAndLeft_LookRight_2)
+    applymovementlasttalked(Pokecenter2FMovementData_ReceptionistWalksUpAndRight_LookLeft)
     applymovement(PLAYER, Pokecenter2FMovementData_PlayerTakesTwoStepsUp)
     opentext
     writetext(Text_OhPleaseWait)
     waitbutton
     closetext
-    applymovementlasttalked(Pokecenter2FMovementData_ReceptionistLooksRight)
-    turnobject(PLAYER, LEFT)
+    // applymovementlasttalked(Pokecenter2FMovementData_ReceptionistLooksRight)
+    // turnobject(PLAYER, LEFT)
+    applymovementlasttalked(Pokecenter2FMovementData_ReceptionistLooksLeft)
+    turnobject(PLAYER, RIGHT)
     opentext
     writetext(Text_ChangeTheLook)
     waitbutton
     closetext
     playsound(SFX_TINGLE)
-    applymovement(PLAYER, Pokecenter2FMovementData_PlayerSpinsClockwiseEndsFacingRight)
+    // applymovement(PLAYER, Pokecenter2FMovementData_PlayerSpinsClockwiseEndsFacingRight)
+    applymovement(PLAYER, Pokecenter2FMovementData_PlayerSpinsClockwiseEndsFacingLeft)
     setval((PAL_NPC_RED << 4))
     special(SetPlayerPalette)
-    applymovement(PLAYER, Pokecenter2FMovementData_PlayerSpinsClockwiseEndsFacingLeft)
+    // applymovement(PLAYER, Pokecenter2FMovementData_PlayerSpinsClockwiseEndsFacingLeft)
+    applymovement(PLAYER, Pokecenter2FMovementData_PlayerSpinsClockwiseEndsFacingRight)
     setflag(ENGINE_KRIS_IN_CABLE_CLUB)
     special(UpdatePlayerSprite)
     opentext
@@ -520,7 +527,8 @@ Female:
     waitbutton
     closetext
     showemote(EMOTE_SHOCK, PLAYER, 15)
-    applymovement(PLAYER, Pokecenter2FMovementData_PlayerTakesOneStepUp)
+    // applymovement(PLAYER, Pokecenter2FMovementData_PlayerTakesOneStepUp)
+    applymovement(PLAYER, Pokecenter2FMovementData_PlayerTakesOneStepLeftOneStepUp_2)
     s_end
     SCRIPT_END
 }
@@ -528,12 +536,16 @@ bool Script_WalkOutOfLinkTradeRoom(script_s* s) {
     SCRIPT_BEGIN
     checkflag(ENGINE_KRIS_IN_CABLE_CLUB)
     iftrue(Female)
-    applymovement(POKECENTER2F_TRADE_RECEPTIONIST, Pokecenter2FMovementData_ReceptionistStepsRightLooksDown_3)
-    applymovement(PLAYER, Pokecenter2FMovementData_PlayerTakesThreeStepsDown)
-    applymovement(POKECENTER2F_TRADE_RECEPTIONIST, Pokecenter2FMovementData_ReceptionistStepsRightAndDown)
+    // applymovement(POKECENTER2F_TRADE_RECEPTIONIST, Pokecenter2FMovementData_ReceptionistStepsRightLooksDown_3)
+    // applymovement(PLAYER, Pokecenter2FMovementData_PlayerTakesThreeStepsDown)
+    // applymovement(POKECENTER2F_TRADE_RECEPTIONIST, Pokecenter2FMovementData_ReceptionistStepsRightAndDown)
+    applymovement(POKECENTER2F_TRADE_RECEPTIONIST, Pokecenter2FMobileMovementData_ReceptionistWalksUpAndRight)
+    applymovement(PLAYER, Pokecenter2FMovementData_PlayerWalksOutOfCableRoom)
+    applymovement(POKECENTER2F_TRADE_RECEPTIONIST, Pokecenter2FMobileMovementData_ReceptionistWalksLeftAndDown)
     s_end
 Female:
-    applymovement(POKECENTER2F_TRADE_RECEPTIONIST, Pokecenter2FMovementData_ReceptionistStepsRightLooksDown_3)
+    // applymovement(POKECENTER2F_TRADE_RECEPTIONIST, Pokecenter2FMovementData_ReceptionistStepsRightLooksDown_3)
+    applymovement(POKECENTER2F_TRADE_RECEPTIONIST, Pokecenter2FMobileMovementData_ReceptionistWalksUpAndRight)
     applymovement(PLAYER, Pokecenter2FMovementData_PlayerTakesOneStepDown_2)
     clearflag(ENGINE_KRIS_IN_CABLE_CLUB)
     playsound(SFX_TINGLE)
@@ -542,8 +554,10 @@ Female:
     special(SetPlayerPalette)
     applymovement(PLAYER, Pokecenter2FMovementData_PlayerSpinsClockwiseEndsFacingLeft)
     special(UpdatePlayerSprite)
-    applymovement(PLAYER, Pokecenter2FMovementData_PlayerTakesTwoStepsDown_2)
-    applymovement(POKECENTER2F_TRADE_RECEPTIONIST, Pokecenter2FMovementData_ReceptionistStepsRightAndDown)
+    // applymovement(PLAYER, Pokecenter2FMovementData_PlayerTakesTwoStepsDown_2)
+    applymovement(PLAYER, Pokecenter2FMovementData_PlayerTakesOneStepRightTwoStepsDown_2)
+    // applymovement(POKECENTER2F_TRADE_RECEPTIONIST, Pokecenter2FMovementData_ReceptionistStepsRightAndDown)
+    applymovement(POKECENTER2F_TRADE_RECEPTIONIST, Pokecenter2FMobileMovementData_ReceptionistWalksLeftAndDown)
     s_end
     SCRIPT_END
 }
@@ -551,12 +565,16 @@ bool Script_WalkOutOfLinkBattleRoom(script_s* s) {
     SCRIPT_BEGIN
     checkflag(ENGINE_KRIS_IN_CABLE_CLUB)
     iftrue(Female)
-    applymovement(POKECENTER2F_BATTLE_RECEPTIONIST, Pokecenter2FMovementData_ReceptionistStepsRightLooksDown_3)
-    applymovement(PLAYER, Pokecenter2FMovementData_PlayerTakesThreeStepsDown)
-    applymovement(POKECENTER2F_BATTLE_RECEPTIONIST, Pokecenter2FMovementData_ReceptionistStepsRightAndDown)
+    // applymovement(POKECENTER2F_BATTLE_RECEPTIONIST, Pokecenter2FMovementData_ReceptionistStepsRightLooksDown_3)
+    // applymovement(PLAYER, Pokecenter2FMovementData_PlayerTakesThreeStepsDown)
+    // applymovement(POKECENTER2F_BATTLE_RECEPTIONIST, Pokecenter2FMovementData_ReceptionistStepsRightAndDown)
+    applymovement(POKECENTER2F_BATTLE_RECEPTIONIST, Pokecenter2FMobileMovementData_ReceptionistWalksUpAndRight)
+    applymovement(PLAYER, Pokecenter2FMovementData_PlayerWalksOutOfCableRoom)
+    applymovement(POKECENTER2F_BATTLE_RECEPTIONIST, Pokecenter2FMobileMovementData_ReceptionistWalksLeftAndDown)
     s_end
 Female:
-    applymovement(POKECENTER2F_BATTLE_RECEPTIONIST, Pokecenter2FMovementData_ReceptionistStepsRightLooksDown_3)
+    // applymovement(POKECENTER2F_BATTLE_RECEPTIONIST, Pokecenter2FMovementData_ReceptionistStepsRightLooksDown_3)
+    applymovement(POKECENTER2F_BATTLE_RECEPTIONIST, Pokecenter2FMobileMovementData_ReceptionistWalksUpAndRight)
     applymovement(PLAYER, Pokecenter2FMovementData_PlayerTakesOneStepDown_2)
     clearflag(ENGINE_KRIS_IN_CABLE_CLUB)
     playsound(SFX_TINGLE)
@@ -565,8 +583,10 @@ Female:
     special(SetPlayerPalette)
     applymovement(PLAYER, Pokecenter2FMovementData_PlayerSpinsClockwiseEndsFacingLeft)
     special(UpdatePlayerSprite)
-    applymovement(PLAYER, Pokecenter2FMovementData_PlayerTakesTwoStepsDown_2)
-    applymovement(POKECENTER2F_BATTLE_RECEPTIONIST, Pokecenter2FMovementData_ReceptionistStepsRightAndDown)
+    // applymovement(PLAYER, Pokecenter2FMovementData_PlayerTakesTwoStepsDown_2)
+    applymovement(PLAYER, Pokecenter2FMovementData_PlayerTakesOneStepRightTwoStepsDown_2)
+    // applymovement(POKECENTER2F_BATTLE_RECEPTIONIST, Pokecenter2FMovementData_ReceptionistStepsRightAndDown)
+    applymovement(POKECENTER2F_BATTLE_RECEPTIONIST, Pokecenter2FMobileMovementData_ReceptionistWalksLeftAndDown)
     s_end
     SCRIPT_END
 }
@@ -706,6 +726,12 @@ const uint8_t Pokecenter2FMovementData_ReceptionistWalksUpAndLeft_LookRight[] = 
     turn_head(RIGHT),
     movement_step_end,
 };
+const uint8_t Pokecenter2FMovementData_ReceptionistWalksUpAndRight_LookLeft[] = {
+    slow_step(UP),
+    slow_step(RIGHT),
+    turn_head(LEFT),
+    movement_step_end,
+};
 const uint8_t Pokecenter2FMobileMobileMovementData_ReceptionistWalksUpAndLeft_LookDown[] = {
     slow_step(UP),
     slow_step(LEFT),
@@ -732,6 +758,10 @@ const uint8_t Pokecenter2FMovementData_ReceptionistLooksRight[] = {
     turn_head(RIGHT),
     movement_step_end,
 };
+const uint8_t Pokecenter2FMovementData_ReceptionistLooksLeft[] = {
+    turn_head(RIGHT),
+    movement_step_end,
+};
 const uint8_t Pokecenter2FMovementData_PlayerTakesThreeStepsUp[] = {
     step(UP),
     step(UP),
@@ -751,6 +781,13 @@ const uint8_t Pokecenter2FMobileMovementData_PlayerWalksIntoMobileBattleRoom[] =
     step(UP),
     step(UP),
     step(RIGHT),
+    step(UP),
+    movement_step_end,
+};
+const uint8_t Pokecenter2FMobileMovementData_PlayerWalksIntoCableRoom[] = {
+    step(UP),
+    step(UP),
+    step(LEFT),
     step(UP),
     movement_step_end,
 };
@@ -823,6 +860,24 @@ const uint8_t Pokecenter2FMobileMovementData_ReceptionistWalksRightAndDown[] = {
     slow_step(DOWN),
     movement_step_end,
 };
+const uint8_t Pokecenter2FMobileMovementData_ReceptionistWalksUpAndRight[] = {
+    slow_step(UP),
+    slow_step(RIGHT),
+    turn_head(LEFT),
+    movement_step_end,
+};
+const uint8_t Pokecenter2FMovementData_PlayerWalksOutOfCableRoom[] = {
+    step(DOWN),
+    step(RIGHT),
+    step(DOWN),
+    step(DOWN),
+    movement_step_end,
+};
+const uint8_t Pokecenter2FMobileMovementData_ReceptionistWalksLeftAndDown[] = {
+    slow_step(LEFT),
+    slow_step(DOWN),
+    movement_step_end,
+};
 const uint8_t Pokecenter2FMovementData_PlayerSpinsClockwiseEndsFacingRight[] = {
     turn_head(DOWN),
     turn_head(LEFT),
@@ -853,6 +908,17 @@ const uint8_t Pokecenter2FMovementData_PlayerTakesOneStepDown_2[] = {
 const uint8_t Pokecenter2FMovementData_PlayerTakesTwoStepsDown_2[] = {
     step(DOWN),
     step(DOWN),
+    movement_step_end,
+};
+const uint8_t Pokecenter2FMovementData_PlayerTakesOneStepRightTwoStepsDown_2[] = {
+    step(RIGHT),
+    step(DOWN),
+    step(DOWN),
+    movement_step_end,
+};
+const uint8_t Pokecenter2FMovementData_PlayerTakesOneStepLeftOneStepUp_2[] = {
+    step(LEFT),
+    step(UP),
     movement_step_end,
 };
 const uint8_t Pokecenter2FMovementData_PlayerTakesOneStepUp_2[] = {
