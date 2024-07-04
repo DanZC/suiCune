@@ -167,11 +167,12 @@ NoMobile:
     writetext(Text_PleaseWait)
     special(WaitForLinkedFriend)
     iffalse(FriendNotReady)
-    writetext(Text_MustSaveGame)
-    yesorno
-    iffalse(DidNotSave)
-    special(TryQuickSave)
-    iffalse(DidNotSave)
+// For now, removing saving step
+    // writetext(Text_MustSaveGame)
+    // yesorno
+    // iffalse(DidNotSave)
+    // special(TryQuickSave)
+    // iffalse(DidNotSave)
     writetext(Text_PleaseWait)
     special(CheckLinkTimeout_Receptionist)
     iffalse(LinkTimedOut)
@@ -492,8 +493,9 @@ bool Script_WalkOutOfMobileBattleRoom(script_s* s) {
 }
 bool Pokecenter2F_CheckGender(script_s* s) {
     SCRIPT_BEGIN
-    checkflag(ENGINE_PLAYER_IS_FEMALE)
-    iftrue(Female)
+// Removing gender check and allowing Kris to be in cable room.
+    // checkflag(ENGINE_PLAYER_IS_FEMALE)
+    // iftrue(Female)
     // applymovementlasttalked(Pokecenter2FMovementData_ReceptionistWalksUpAndLeft_LookRight)
     applymovementlasttalked(Pokecenter2FMovementData_ReceptionistWalksUpAndRight_LookLeft)
     // applymovement(PLAYER, Pokecenter2FMovementData_PlayerTakesThreeStepsUp)
@@ -761,7 +763,7 @@ const uint8_t Pokecenter2FMovementData_ReceptionistLooksRight[] = {
     movement_step_end,
 };
 const uint8_t Pokecenter2FMovementData_ReceptionistLooksLeft[] = {
-    turn_head(RIGHT),
+    turn_head(LEFT),
     movement_step_end,
 };
 const uint8_t Pokecenter2FMovementData_PlayerTakesThreeStepsUp[] = {

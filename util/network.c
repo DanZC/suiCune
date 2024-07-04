@@ -35,6 +35,8 @@ static uint32_t hostUniqueId;
 static LANClient gLANClientCandidates[16];
 static uint32_t gLANClientCandidateCount;
 
+uint8_t gOtherPlayerGender;
+
 // A networking interface for suiCune. Supports both LAN (local) connections, emulating
 // the standard link cable connection, and internet (remote) connections, emulating
 // the mobile GB connection.
@@ -472,13 +474,13 @@ void NetworkDeinit(void) {
 int Network_ExchangeByte(uint8_t* rx, uint8_t tx) {
     switch(gNetworkState) {
     case NETSTATE_LAN_HOST: {
-        if(SDLNet_TCP_Send(cserial, &tx, sizeof(tx)) <= 0)
+        if(SDLNet_TCP_Send(linkSocket, &tx, sizeof(tx)) <= 0)
             return NETWORK_XCHG_ERROR_SEND;
 
         uint32_t tries = 0;
         while(tries < 60) {
             if(SDLNet_CheckSockets(sockets, 0) != 0) {
-                if(SDLNet_TCP_Recv(cserial, rx, sizeof(*rx)) <= 0)
+                if(SDLNet_TCP_Recv(linkSocket, rx, sizeof(*rx)) <= 0)
                     return NETWORK_XCHG_ERROR_RECV;
                 return NETWORK_XCHG_OK;
             }
@@ -492,10 +494,10 @@ int Network_ExchangeByte(uint8_t* rx, uint8_t tx) {
         uint32_t tries = 0;
         while(tries < 60) {
             if(SDLNet_CheckSockets(sockets, 0) != 0) {
-                if(SDLNet_TCP_Recv(serial, rx, sizeof(*rx)) <= 0) {
+                if(SDLNet_TCP_Recv(linkSocket, rx, sizeof(*rx)) <= 0) {
                     return NETWORK_XCHG_ERROR_RECV;
                 }
-                if(SDLNet_TCP_Send(serial, &tx, sizeof(tx)) <= 0) {
+                if(SDLNet_TCP_Send(linkSocket, &tx, sizeof(tx)) <= 0) {
                     return NETWORK_XCHG_ERROR_SEND;
                 }
                 return NETWORK_XCHG_OK;
@@ -511,16 +513,44 @@ int Network_ExchangeByte(uint8_t* rx, uint8_t tx) {
     }
 }
 
+bool Network_SafeExchangeByte(uint8_t* rx, uint8_t tx) {
+    int timeout_count = 0;
+    int error;
+    if(serial == NULL && cserial == NULL)
+        goto no_connection;
+try_again:
+    error = Network_ExchangeByte(rx, tx);
+    switch(error) {
+    case NETWORK_XCHG_OK:
+        return true;
+    case NETWORK_XCHG_ERROR_RECV:
+    case NETWORK_XCHG_ERROR_SEND:
+        printf("SDLNet error: %s\n", SDLNet_GetError());
+        return false;
+    case NETWORK_XCHG_TIMEOUT:
+        printf("Timeout, trying again...\n");
+        timeout_count++;
+        if(timeout_count > 8)
+            return false;
+        goto try_again;
+    case NETWORK_XCHG_NO_CONNECTION:
+    no_connection:
+        printf("No connection established...\n");
+        return false;
+    }
+    return false;
+}
+
 int Network_ExchangeBytes(void* rx, const void* tx, int len) {
     switch(gNetworkState) {
     case NETSTATE_LAN_HOST: {
-        if(SDLNet_TCP_Send(cserial, tx, len) <= len)
+        if(SDLNet_TCP_Send(linkSocket, tx, len) <= len)
             return NETWORK_XCHG_ERROR_SEND;
 
         uint32_t tries = 0;
         while(tries < 60) {
             if(SDLNet_CheckSockets(sockets, 0) != 0) {
-                if(SDLNet_TCP_Recv(cserial, rx, len) <= 0)
+                if(SDLNet_TCP_Recv(linkSocket, rx, len) <= 0)
                     return NETWORK_XCHG_ERROR_RECV;
                 return NETWORK_XCHG_OK;
             }
@@ -534,10 +564,10 @@ int Network_ExchangeBytes(void* rx, const void* tx, int len) {
         uint32_t tries = 0;
         while(tries < 60) {
             if(SDLNet_CheckSockets(sockets, 0) != 0) {
-                if(SDLNet_TCP_Recv(serial, rx, len) <= 0) {
+                if(SDLNet_TCP_Recv(linkSocket, rx, len) <= 0) {
                     return NETWORK_XCHG_ERROR_RECV;
                 }
-                if(SDLNet_TCP_Send(serial, tx, len) <= len) {
+                if(SDLNet_TCP_Send(linkSocket, tx, len) <= len) {
                     return NETWORK_XCHG_ERROR_SEND;
                 }
                 return NETWORK_XCHG_OK;
@@ -557,7 +587,7 @@ bool Network_SafeExchangeBytes(void *rx, const void *tx, int len)
 {
     int timeout_count = 0;
     int error;
-    if(serial == NULL && cserial == NULL)
+    if(linkSocket == NULL)
         goto no_connection;
 try_again:
     error = Network_ExchangeBytes(rx, tx, len);
@@ -580,6 +610,42 @@ try_again:
         return false;
     }
     return false;
+}
+
+int Network_SendByte(uint8_t byte) {
+    if(linkSocket == NULL)
+        return NETWORK_XCHG_NO_CONNECTION;
+    if(SDLNet_TCP_Send(linkSocket, &byte, 1) <= 1)
+        return NETWORK_XCHG_ERROR_SEND;
+    return NETWORK_XCHG_OK;
+}
+
+int Network_TryRecvByte(uint8_t* dest) {
+    int ready = SDLNet_CheckSockets(sockets, 0);
+    if(ready < 0)
+        return NETWORK_XCHG_ERROR_RECV;
+    else if(ready == 0)
+        return NETWORK_XCHG_TIMEOUT;
+    else {
+        int error = SDLNet_TCP_Recv(linkSocket, dest, 1);
+        if(error <= 0)
+            return NETWORK_XCHG_ERROR_RECV;
+        return NETWORK_XCHG_OK;
+    }
+}
+
+bool Network_SafeTryRecvByte(uint8_t* dest) {
+    int error = Network_TryRecvByte(dest);
+    switch(error) {
+    case NETWORK_XCHG_OK:
+        return true;
+    default:
+    case NETWORK_XCHG_ERROR_RECV:
+        printf("Error: %s\n", SDLNet_GetError());
+        return false;
+    case NETWORK_XCHG_TIMEOUT:
+        return false;
+    }
 }
 
 #else 

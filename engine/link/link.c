@@ -285,10 +285,11 @@ void Gen2ToGen2LinkComms(void){
         hram->hSerialSend = 0;
         // LD_A((0 << rSC_ON) | (1 << rSC_CLOCK));
         // LDH_addr_A(rSC);
-        gb_write(rSC, (0 << rSC_ON) | (1 << rSC_CLOCK));
+        // gb_write(rSC, (0 << rSC_ON) | (1 << rSC_CLOCK));
         // LD_A((1 << rSC_ON) | (1 << rSC_CLOCK));
         // LDH_addr_A(rSC);
-        gb_write(rSC, (1 << rSC_ON) | (1 << rSC_CLOCK));
+        // gb_write(rSC, (1 << rSC_ON) | (1 << rSC_CLOCK));
+        Network_SendByte(0);
 
         // CALL(aDelayFrame);
         DelayFrame();
@@ -297,10 +298,11 @@ void Gen2ToGen2LinkComms(void){
         hram->hSerialSend = 0;
         // LD_A((0 << rSC_ON) | (1 << rSC_CLOCK));
         // LDH_addr_A(rSC);
-        gb_write(rSC, (0 << rSC_ON) | (1 << rSC_CLOCK));
+        // gb_write(rSC, (0 << rSC_ON) | (1 << rSC_CLOCK));
         // LD_A((1 << rSC_ON) | (1 << rSC_CLOCK));
         // LDH_addr_A(rSC);
-        gb_write(rSC, (1 << rSC_ON) | (1 << rSC_CLOCK));
+        // gb_write(rSC, (1 << rSC_ON) | (1 << rSC_CLOCK));
+        Network_SendByte(0);
     }
 
 // player_1:
@@ -341,7 +343,7 @@ void Gen2ToGen2LinkComms(void){
     // LD_DE(wOTPatchLists);
     // LD_BC(200);
     // CALL(aSerial_ExchangeBytes);
-    Serial_ExchangeBytes_Conv(wram->wOTPatchLists, wram->wPlayerPatchLists, 200);
+    Network_SafeExchangeBytes(wram->wOTPatchLists, wram->wPlayerPatchLists, 200);
 
     // LD_A_addr(wLinkMode);
     // CP_A(LINK_TRADECENTER);
@@ -351,7 +353,7 @@ void Gen2ToGen2LinkComms(void){
         // LD_DE(wLinkOTMail);
         // LD_BC(wLinkPlayerMailEnd - wLinkPlayerMail);
         // CALL(aExchangeBytes);
-        ExchangeBytes_Conv(wram->wLinkOTMailMessages, wram->wLinkPlayerMailPreamble, wLinkPlayerMailEnd - wLinkPlayerMail);
+        Network_SafeExchangeBytes(wram->wLinkOTMailMessages, wram->wLinkPlayerMailPreamble, wLinkPlayerMailEnd - wLinkPlayerMail);
     }
 
 // not_trading:
@@ -2863,15 +2865,16 @@ void ExitLinkCommunications(void){
     wram->wUnusedLinkCommunicationByte = 0;
     // XOR_A_A;
     // LDH_addr_A(rSB);
-    gb_write(rSB, 0);
+    // gb_write(rSB, 0);
     // LDH_addr_A(hSerialSend);
-    hram->hSerialSend = 0;
+    // hram->hSerialSend = 0;
     // LD_A((0 << rSC_ON) | (1 << rSC_CLOCK));
     // LDH_addr_A(rSC);
-    gb_write(rSC, (0 << rSC_ON) | (1 << rSC_CLOCK));
+    // gb_write(rSC, (0 << rSC_ON) | (1 << rSC_CLOCK));
     // LD_A((1 << rSC_ON) | (1 << rSC_CLOCK));
     // LDH_addr_A(rSC);
-    gb_write(rSC, (1 << rSC_ON) | (1 << rSC_CLOCK));
+    // gb_write(rSC, (1 << rSC_ON) | (1 << rSC_CLOCK));
+    Network_SendByte(0);
     // RET;
 }
 
@@ -3632,29 +3635,31 @@ void WaitForOtherPlayerToExit(void){
     hram->hSerialConnectionStatus = CONNECTION_NOT_ESTABLISHED;
     // XOR_A_A;
     // LDH_addr_A(rSB);
-    gb_write(rSB, 0);
+    // gb_write(rSB, 0);
     // LDH_addr_A(hSerialReceive);
     hram->hSerialReceive = 0;
     // LD_A((0 << rSC_ON) | (1 << rSC_CLOCK));
     // LDH_addr_A(rSC);
-    gb_write(rSC, (0 << rSC_ON) | (1 << rSC_CLOCK));
+    // gb_write(rSC, (0 << rSC_ON) | (1 << rSC_CLOCK));
     // LD_A((1 << rSC_ON) | (1 << rSC_CLOCK));
     // LDH_addr_A(rSC);
-    gb_write(rSC, (1 << rSC_ON) | (1 << rSC_CLOCK));
+    // gb_write(rSC, (1 << rSC_ON) | (1 << rSC_CLOCK));
+    Network_SendByte(0);
     // LD_C(3);
     // CALL(aDelayFrames);
     DelayFrames_Conv(3);
     // XOR_A_A;
     // LDH_addr_A(rSB);
-    gb_write(rSB, 0);
+    // gb_write(rSB, 0);
     // LDH_addr_A(hSerialReceive);
     hram->hSerialReceive = 0;
     // LD_A((0 << rSC_ON) | (0 << rSC_CLOCK));
     // LDH_addr_A(rSC);
-    gb_write(rSC, (0 << rSC_ON) | (1 << rSC_CLOCK));
+    // gb_write(rSC, (0 << rSC_ON) | (1 << rSC_CLOCK));
     // LD_A((1 << rSC_ON) | (0 << rSC_CLOCK));
     // LDH_addr_A(rSC);
-    gb_write(rSC, (1 << rSC_ON) | (1 << rSC_CLOCK));
+    // gb_write(rSC, (1 << rSC_ON) | (1 << rSC_CLOCK));
+    Network_SendByte(0);
     // LD_C(3);
     // CALL(aDelayFrames);
     DelayFrames_Conv(3);
@@ -3671,6 +3676,7 @@ void WaitForOtherPlayerToExit(void){
     // LD_A(CONNECTION_NOT_ESTABLISHED);
     // LDH_addr_A(hSerialConnectionStatus);
     hram->hSerialConnectionStatus = CONNECTION_NOT_ESTABLISHED;
+    gOtherPlayerGender = 0;
     // LDH_A_addr(rIF);
     // PUSH_AF;
     uint8_t rif = gb_read(rIF);
@@ -3692,6 +3698,7 @@ void WaitForOtherPlayerToExit(void){
     hram->hVBlank = 0;
     // LD_addr_A(wLinkMode);
     wram->wLinkMode = 0;
+    NetworkCloseConnection();
     // RET;
 }
 
@@ -3737,16 +3744,17 @@ void WaitForLinkedFriend(void){
     if(wram->wPlayerLinkAction != 0) {
         // LD_A(USING_INTERNAL_CLOCK);
         // LDH_addr_A(rSB);
-        gb_write(rSB, USING_INTERNAL_CLOCK);
+        // gb_write(rSB, USING_INTERNAL_CLOCK);
         // XOR_A_A;
         // LDH_addr_A(hSerialReceive);
         hram->hSerialReceive = 0;
         // LD_A((0 << rSC_ON) | (0 << rSC_CLOCK));
         // LDH_addr_A(rSC);
-        gb_write(rSC, (0 << rSC_ON) | (0 << rSC_CLOCK));
+        // gb_write(rSC, (0 << rSC_ON) | (0 << rSC_CLOCK));
         // LD_A((1 << rSC_ON) | (0 << rSC_CLOCK));
         // LDH_addr_A(rSC);
-        gb_write(rSC, (1 << rSC_ON) | (0 << rSC_CLOCK));
+        // gb_write(rSC, (1 << rSC_ON) | (0 << rSC_CLOCK));
+        Network_SendByte(USING_INTERNAL_CLOCK);
         // CALL(aDelayFrame);
         DelayFrame();
         // CALL(aDelayFrame);
@@ -3805,13 +3813,14 @@ void WaitForLinkedFriend(void){
     // not_done:
         // LD_A(USING_EXTERNAL_CLOCK);
         // LDH_addr_A(rSB);
-        gb_write(rSB, USING_EXTERNAL_CLOCK);
+        // gb_write(rSB, USING_EXTERNAL_CLOCK);
         // LD_A((0 << rSC_ON) | (1 << rSC_CLOCK));
         // LDH_addr_A(rSC);
-        gb_write(rSC, (0 << rSC_ON) | (1 << rSC_CLOCK));
+        // gb_write(rSC, (0 << rSC_ON) | (1 << rSC_CLOCK));
         // LD_A((1 << rSC_ON) | (1 << rSC_CLOCK));
         // LDH_addr_A(rSC);
-        gb_write(rSC, (1 << rSC_ON) | (1 << rSC_CLOCK));
+        // gb_write(rSC, (1 << rSC_ON) | (1 << rSC_CLOCK));
+        Network_SendByte(USING_EXTERNAL_CLOCK);
         // CALL(aDelayFrame);
         DelayFrame();
         // goto loop;
@@ -3907,6 +3916,7 @@ void CheckLinkTimeout_Gen2(void){
         // OR_A_C;
         // IF_NZ goto wait;
     // } while(--bc != 0);
+    Network_SafeExchangeBytes(&wram->wOtherPlayerLinkMode, &wram->wPlayerLinkAction, 1);
     DelayFrame();
     DelayFrame();
     DelayFrame();
@@ -4280,6 +4290,11 @@ void CableClubCheckWhichChris(void){
     // LD_addr_A(wScriptVar);
     wram->wScriptVar = (hram->hSerialConnectionStatus == USING_EXTERNAL_CLOCK)? TRUE: FALSE;
     // RET;
+}
+
+// Returns true if the other player is playing as Kris, false otherwise.
+void CableClubCheckOtherPlayerGender(void) {
+    wram->wScriptVar = (bit_test(gOtherPlayerGender, PLAYERGENDER_FEMALE_F))? TRUE: FALSE;
 }
 
 void GSLinkCommsBorderGFX(void){

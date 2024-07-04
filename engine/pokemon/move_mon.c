@@ -1290,7 +1290,7 @@ bool SendGetMonIntoFromBox_Conv(uint8_t param){
     species_t* species;
     struct PartyMon* pmon = NULL;
     struct BoxMon* bmon = NULL;
-    uint8_t* de_ot;
+    uint8_t* de_ot = NULL;
     if(param == PC_WITHDRAW || param == DAY_CARE_WITHDRAW) {
     // check_IfPartyIsFull:
         // LD_HL(wPartyCount);

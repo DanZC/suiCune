@@ -7,6 +7,9 @@ extern const struct MapEvents TradeCenter_MapEvents;
 
 bool TradeCenter_MapScripts_InitializeTradeCenter(script_s* s);
 bool TradeCenter_MapScripts_DummyScene(script_s* s);
+bool TradeCenter_MapScripts_SetupOtherPlayer(script_s* s);
+bool TradeCenter_MapScripts_SetWhichKris(script_s* s);
+bool TradeCenter_MapScripts_Kris2(script_s* s);
 bool TradeCenter_MapScripts_SetWhichChris(script_s* s);
 bool TradeCenter_MapScripts_Chris2(script_s* s);
 bool TradeCenter_MapScripts_InitializeAndPreparePokecenter2F(script_s* s);

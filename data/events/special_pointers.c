@@ -68,7 +68,7 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(TimeCapsule),
     add_special(CableClubCheckWhichChris),
     add_special(CheckMysteryGift),
-    // add_special(GetMysteryGiftItem),
+    add_special(GetMysteryGiftItem),
     add_special(UnlockMysteryGift),
 // Map events
     add_special(BugContestJudging),
@@ -123,7 +123,7 @@ void (*const SpecialsPointers[])(void) = {
     add_special(DayCareMon1),
     add_special(DayCareMon2),
     add_special(SelectRandomBugContestContestants),
-    // add_special(ActivateFishingSwarm),
+    add_special(ActivateFishingSwarm),
     add_special(ToggleMaptileDecorations),
     add_special(ToggleDecorationsVisibility),
     add_special(GiveShuckle),

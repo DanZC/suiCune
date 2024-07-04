@@ -2,10 +2,13 @@
 #include "../util/scripting.h"
 #include "TradeCenter.h"
 #include "Colosseum.h"
+#include "../engine/link/link.h"
 //// EVENTS
 enum {
     TRADECENTER_CHRIS1 = 2,
     TRADECENTER_CHRIS2,
+    TRADECENTER_KRIS1,
+    TRADECENTER_KRIS2,
 };
 
 const Script_fn_t TradeCenter_SceneScripts[] = {
@@ -14,7 +17,7 @@ const Script_fn_t TradeCenter_SceneScripts[] = {
 };
 
 const struct MapCallback TradeCenter_MapCallbacks[] = {
-    map_callback(MAPCALLBACK_OBJECTS, TradeCenter_MapScripts_SetWhichChris),
+    map_callback(MAPCALLBACK_OBJECTS, TradeCenter_MapScripts_SetupOtherPlayer),
 };
 
 const struct MapScripts TradeCenter_MapScripts = {
@@ -42,6 +45,8 @@ static const struct WarpEventData TradeCenter_WarpEvents[] = {
 static const struct ObjEvent TradeCenter_ObjectEvents[] = {
     object_event(3, 4, SPRITE_CHRIS, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, -1, 0, OBJECTTYPE_SCRIPT, 0, &CableClubFriendScript, EVENT_TEMPORARY_UNTIL_MAP_RELOAD_1),
     object_event(6, 4, SPRITE_CHRIS, SPRITEMOVEDATA_STANDING_LEFT, 0, 0, -1, -1, 0, OBJECTTYPE_SCRIPT, 0, &CableClubFriendScript, EVENT_TEMPORARY_UNTIL_MAP_RELOAD_2),
+    object_event(3, 4, SPRITE_KRIS, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, -1, 0, OBJECTTYPE_SCRIPT, 0, &CableClubFriendScript, EVENT_TEMPORARY_UNTIL_MAP_RELOAD_3),
+    object_event(6, 4, SPRITE_KRIS, SPRITEMOVEDATA_STANDING_LEFT, 0, 0, -1, -1, 0, OBJECTTYPE_SCRIPT, 0, &CableClubFriendScript, EVENT_TEMPORARY_UNTIL_MAP_RELOAD_4),
 };
 
 const struct MapEvents TradeCenter_MapEvents = {
@@ -59,9 +64,6 @@ const struct MapEvents TradeCenter_MapEvents = {
 };
 
 //// CODE
-#include "../constants.h"
-#include "../util/scripting.h"
-#include "TradeCenter.h"
 
 bool TradeCenter_MapScripts_InitializeTradeCenter(script_s* s) {
     SCRIPT_BEGIN
@@ -74,8 +76,35 @@ bool TradeCenter_MapScripts_DummyScene(script_s* s) {
     s_end
     SCRIPT_END
 }
+bool TradeCenter_MapScripts_SetupOtherPlayer(script_s* s) {
+    SCRIPT_BEGIN
+    CableClubCheckOtherPlayerGender();
+    iffalse_jump(TradeCenter_MapScripts_SetWhichChris)
+    sjump(TradeCenter_MapScripts_SetWhichKris)
+    SCRIPT_END
+}
+bool TradeCenter_MapScripts_SetWhichKris(script_s* s) {
+    SCRIPT_BEGIN
+    disappear(TRADECENTER_CHRIS1)
+    disappear(TRADECENTER_CHRIS2)
+    special(CableClubCheckWhichChris)
+    iffalse_jump(TradeCenter_MapScripts_Kris2)
+    disappear(TRADECENTER_KRIS2)
+    appear(TRADECENTER_KRIS1)
+    s_endcallback
+    SCRIPT_END
+}
+bool TradeCenter_MapScripts_Kris2(script_s* s) {
+    SCRIPT_BEGIN
+    disappear(TRADECENTER_KRIS1)
+    appear(TRADECENTER_KRIS2)
+    s_endcallback
+    SCRIPT_END
+}
 bool TradeCenter_MapScripts_SetWhichChris(script_s* s) {
     SCRIPT_BEGIN
+    disappear(TRADECENTER_KRIS1)
+    disappear(TRADECENTER_KRIS2)
     special(CableClubCheckWhichChris)
     iffalse_jump(TradeCenter_MapScripts_Chris2)
     disappear(TRADECENTER_CHRIS2)

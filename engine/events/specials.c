@@ -16,6 +16,10 @@
 #include "../../home/map.h"
 #include "../../home/pokemon.h"
 #include "../../home/string.h"
+#include "../../home/item.h"
+#include "../../home/names.h"
+#include "../../home/text.h"
+#include "../../data/text/common.h"
 
 void Special(void){
 //  Run script special de.
@@ -227,40 +231,47 @@ void CheckMysteryGift(void){
 }
 
 void GetMysteryGiftItem(void){
-    LD_A(BANK(sMysteryGiftItem));
-    CALL(aOpenSRAM);
-    LD_A_addr(sMysteryGiftItem);
-    LD_addr_A(wCurItem);
-    LD_A(1);
-    LD_addr_A(wItemQuantityChange);
-    LD_HL(wNumItems);
-    CALL(aReceiveItem);
-    IF_NC goto no_room;
-    XOR_A_A;
-    LD_addr_A(sMysteryGiftItem);
-    CALL(aCloseSRAM);
-    LD_A_addr(wCurItem);
-    LD_addr_A(wNamedObjectIndex);
-    CALL(aGetItemName);
-    LD_HL(mGetMysteryGiftItem_ReceiveItemText);
-    CALL(aPrintText);
-    LD_A(TRUE);
-    LD_addr_A(wScriptVar);
-    RET;
-
-
-no_room:
-    CALL(aCloseSRAM);
-    XOR_A_A;
-    LD_addr_A(wScriptVar);
-    RET;
-
-
-ReceiveItemText:
-    //text_far ['_ReceiveItemText']
-    //text_end ['?']
-
-    return BugContestJudging();
+    static const txt_cmd_s ReceiveItemText[] = {
+        text_far(v_ReceiveItemText)
+        text_end
+    };
+    // LD_A(BANK(sMysteryGiftItem));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asMysteryGiftItem));
+    // LD_A_addr(sMysteryGiftItem);
+    // LD_addr_A(wCurItem);
+    wram->wCurItem = gb_read(sMysteryGiftItem);
+    // LD_A(1);
+    // LD_addr_A(wItemQuantityChange);
+    // LD_HL(wNumItems);
+    // CALL(aReceiveItem);
+    // IF_NC goto no_room;
+    if(!ReceiveItem_Conv((item_pocket_s*)&wram->wNumItems, wram->wCurItem, 1)) {
+    // no_room:
+        // CALL(aCloseSRAM);
+        CloseSRAM_Conv();
+        // XOR_A_A;
+        // LD_addr_A(wScriptVar);
+        wram->wScriptVar = FALSE;
+        // RET;
+        return;
+    }
+    // XOR_A_A;
+    // LD_addr_A(sMysteryGiftItem);
+    gb_write(sMysteryGiftItem, NO_ITEM);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // LD_A_addr(wCurItem);
+    // LD_addr_A(wNamedObjectIndex);
+    // CALL(aGetItemName);
+    GetItemName_Conv2(wram->wCurItem);
+    // LD_HL(mGetMysteryGiftItem_ReceiveItemText);
+    // CALL(aPrintText);
+    PrintText_Conv2(ReceiveItemText);
+    // LD_A(TRUE);
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = TRUE;
+    // RET;
 }
 
 void BugContestJudging(void){
@@ -421,10 +432,10 @@ void UnusedCheckUnusedTwoDayTimer(void){
 }
 
 void ActivateFishingSwarm(void){
-    LD_A_addr(wScriptVar);
-    LD_addr_A(wFishingSwarmFlag);
-    RET;
-
+    // LD_A_addr(wScriptVar);
+    // LD_addr_A(wFishingSwarmFlag);
+    wram->wFishingSwarmFlag = wram->wScriptVar;
+    // RET;
 }
 
 void StoreSwarmMapIndices(void){

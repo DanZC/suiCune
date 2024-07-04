@@ -32,3 +32,9 @@ void NetworkDeinit(void);
 int Network_ExchangeByte(uint8_t* rx, uint8_t tx);
 int Network_ExchangeBytes(void* rx, const void* tx, int len);
 bool Network_SafeExchangeBytes(void* rx, const void* tx, int len);
+
+int Network_SendByte(uint8_t byte);
+int Network_TryRecvByte(uint8_t* dest);
+bool Network_SafeTryRecvByte(uint8_t* dest);
+
+extern uint8_t gOtherPlayerGender;

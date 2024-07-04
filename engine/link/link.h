@@ -68,6 +68,7 @@ void Link_ResetSerialRegistersAfterLinkClosure(void);
 void Link_EnsureSync(void);
 uint8_t Link_EnsureSync_Conv(uint8_t a);
 void CableClubCheckWhichChris(void);
+void CableClubCheckOtherPlayerGender(void);
 void GSLinkCommsBorderGFX(void);
 void CheckSRAM0Flag(void);
 //#include "data/items/catch_rate_items.h"

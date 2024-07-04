@@ -155,6 +155,8 @@ void LANConnection_Host(void) {
                 if(success) {
                     CloseWindow_Conv2();
                     wram->wScriptVar = TRUE;
+                    gOtherPlayerGender = candidate->gender;
+                    hram->hSerialConnectionStatus = USING_INTERNAL_CLOCK;
                     return;
                 }
                 else {
@@ -272,6 +274,8 @@ void LANConnection_Join(void) {
                 CloseWindow_Conv2();
                 if(success) {
                     wram->wScriptVar = TRUE;
+                    gOtherPlayerGender = candidate->gender;
+                    hram->hSerialConnectionStatus = USING_EXTERNAL_CLOCK;
                     return;
                 }
                 else {
