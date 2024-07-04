@@ -5767,6 +5767,10 @@ void init_function_pointers(void) {
     // maps/HallOfFame.c
     // CONVERTED_SCRIPT(ObjectEvent);
 
+    // maps/SilverCavePokecenter1F.c
+    CONVERTED_SCRIPT(SilverCavePokecenter1FNurseScript);
+    CONVERTED_SCRIPT(SilverCavePokecenter1FGrannyScript);
+
     // maps/SproutTower1F.c
     CONVERTED_SCRIPT(SproutTower1FSage1Script);
     CONVERTED_SCRIPT(SproutTower1FSage2Script);
@@ -6201,6 +6205,24 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(VictoryRoadFullRestore);
     CONVERTED_SCRIPT(VictoryRoadFullHeal);
     CONVERTED_SCRIPT(VictoryRoadHPUp);
+
+    // maps/SilverCaveItemRooms.c
+    CONVERTED_SCRIPT(SilverCaveItemRoomsMaxRevive);
+    CONVERTED_SCRIPT(SilverCaveItemRoomsFullRestore);
+
+    // maps/SilverCaveRoom1.c
+    CONVERTED_SCRIPT(SilverCaveRoom1MaxElixer);
+    CONVERTED_SCRIPT(SilverCaveRoom1Protein);
+    CONVERTED_SCRIPT(SilverCaveRoom1EscapeRope);
+    CONVERTED_SCRIPT(SilverCaveRoom1UltraBall);
+
+    // maps/SilverCaveRoom2.c
+    CONVERTED_SCRIPT(SilverCaveRoom2Calcium);
+    CONVERTED_SCRIPT(SilverCaveRoom2UltraBall);
+    CONVERTED_SCRIPT(SilverCaveRoom2PPUp);
+
+    // maps/SilverCaveRoom3.c
+    CONVERTED_SCRIPT(Red);
 
     // engine/events/overworld.c
     // REDIRECTED(Script_WaterfallFromMenu);

@@ -883,6 +883,9 @@ void PopulateMapScriptTable(void) {
 
     entry(HALL_OF_FAME, 0, ObjectEvent);
 
+    entry(SILVER_CAVE_POKECENTER_1F, 0, SilverCavePokecenter1FNurseScript);
+    entry(SILVER_CAVE_POKECENTER_1F, 1, SilverCavePokecenter1FGrannyScript);
+
     entry(SPROUT_TOWER_1F, 0, SproutTower1FSage1Script);
     entry(SPROUT_TOWER_1F, 1, SproutTower1FSage2Script);
     entry(SPROUT_TOWER_1F, 2, SproutTower1FGrannyScript);
@@ -1259,6 +1262,20 @@ void PopulateMapScriptTable(void) {
     entry(VICTORY_ROAD, 3, VictoryRoadFullRestore);
     entry(VICTORY_ROAD, 4, VictoryRoadFullHeal);
     entry(VICTORY_ROAD, 5, VictoryRoadHPUp);
+
+    entry(SILVER_CAVE_ITEM_ROOMS, 0, SilverCaveItemRoomsMaxRevive);
+    entry(SILVER_CAVE_ITEM_ROOMS, 1, SilverCaveItemRoomsFullRestore);
+
+    entry(SILVER_CAVE_ROOM_1, 0, SilverCaveRoom1MaxElixer);
+    entry(SILVER_CAVE_ROOM_1, 1, SilverCaveRoom1Protein);
+    entry(SILVER_CAVE_ROOM_1, 2, SilverCaveRoom1EscapeRope);
+    entry(SILVER_CAVE_ROOM_1, 3, SilverCaveRoom1UltraBall);
+
+    entry(SILVER_CAVE_ROOM_2, 0, SilverCaveRoom2Calcium);
+    entry(SILVER_CAVE_ROOM_2, 1, SilverCaveRoom2UltraBall);
+    entry(SILVER_CAVE_ROOM_2, 2, SilverCaveRoom2PPUp);
+
+    entry(SILVER_CAVE_ROOM_3, 0, Red);
 }
 
 const void* GetRealScriptPointer(uint8_t group, uint8_t map, uint8_t index) {

@@ -311,10 +311,10 @@
 #include "../../maps/WhirlIslandB1F.h"
 #include "../../maps/WhirlIslandB2F.h"
 #include "../../maps/WhirlIslandLugiaChamber.h"
-// #include "../../maps/SilverCaveRoom1.h"
-// #include "../../maps/SilverCaveRoom2.h"
-// #include "../../maps/SilverCaveRoom3.h"
-// #include "../../maps/SilverCaveItemRooms.h"
+#include "../../maps/SilverCaveRoom1.h"
+#include "../../maps/SilverCaveRoom2.h"
+#include "../../maps/SilverCaveRoom3.h"
+#include "../../maps/SilverCaveItemRooms.h"
 #include "../../maps/DarkCaveVioletEntrance.h"
 #include "../../maps/DarkCaveBlackthornEntrance.h"
 #include "../../maps/DragonsDen1F.h"
@@ -479,11 +479,11 @@
 // #include "../../maps/Route4.h"
 // #include "../../maps/Route10South.h"
 #include "../../maps/Route23.h"
-// #include "../../maps/SilverCavePokecenter1F.h"
+#include "../../maps/SilverCavePokecenter1F.h"
 #include "../../maps/Route28SteelWingHouse.h"
 
 
 // SECTION "Map Scripts 25", ROMX
 
-// #include "../../maps/SilverCaveOutside.h"
+#include "../../maps/SilverCaveOutside.h"
 // #include "../../maps/Route10North.h"

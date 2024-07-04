@@ -116,8 +116,8 @@ map_attributes(BlackthornCity, BLACKTHORN_CITY, 0x71,
     connection(BLACKTHORN_CITY, south, Route45, ROUTE_45, 0)
     connection(BLACKTHORN_CITY, west, Route44, ROUTE_44, 9));
 
-// map_attributes(SilverCaveOutside, SILVER_CAVE_OUTSIDE, 0x2c,
-//     connection(SILVER_CAVE_OUTSIDE, east, Route28, ROUTE_28, 9));
+map_attributes(SilverCaveOutside, SILVER_CAVE_OUTSIDE, 0x2c,
+    connection(SILVER_CAVE_OUTSIDE, east, Route28, ROUTE_28, 9));
 
 map_attributes(Route26, ROUTE_26, 0x05,
     connection(ROUTE_26, west, Route27, ROUTE_27, 45));
@@ -423,10 +423,10 @@ map_attributes(WhirlIslandSE, WHIRL_ISLAND_SE, 0x0f, 0);
 map_attributes(WhirlIslandB1F, WHIRL_ISLAND_B1F, 0x09, 0);
 map_attributes(WhirlIslandB2F, WHIRL_ISLAND_B2F, 0x2e, 0);
 map_attributes(WhirlIslandLugiaChamber, WHIRL_ISLAND_LUGIA_CHAMBER, 0x0f, 0);
-// map_attributes(SilverCaveRoom1, SILVER_CAVE_ROOM_1, 0x09, 0);
-// map_attributes(SilverCaveRoom2, SILVER_CAVE_ROOM_2, 0x09, 0);
-// map_attributes(SilverCaveRoom3, SILVER_CAVE_ROOM_3, 0x09, 0);
-// map_attributes(SilverCaveItemRooms, SILVER_CAVE_ITEM_ROOMS, 0x09, 0);
+map_attributes(SilverCaveRoom1, SILVER_CAVE_ROOM_1, 0x09, 0);
+map_attributes(SilverCaveRoom2, SILVER_CAVE_ROOM_2, 0x09, 0);
+map_attributes(SilverCaveRoom3, SILVER_CAVE_ROOM_3, 0x09, 0);
+map_attributes(SilverCaveItemRooms, SILVER_CAVE_ITEM_ROOMS, 0x09, 0);
 map_attributes(DarkCaveVioletEntrance, DARK_CAVE_VIOLET_ENTRANCE, 0x09, 0);
 map_attributes(DarkCaveBlackthornEntrance, DARK_CAVE_BLACKTHORN_ENTRANCE, 0x09, 0);
 map_attributes(DragonsDen1F, DRAGONS_DEN_1F, 0x09, 0);
@@ -587,7 +587,7 @@ map_attributes(HallOfFame, HALL_OF_FAME, 0x00, 0);
 // map_attributes(LavRadioTower1F, LAV_RADIO_TOWER_1F, 0x00, 0);
 // map_attributes(Route8SaffronGate, ROUTE_8_SAFFRON_GATE, 0x00, 0);
 // map_attributes(Route12SuperRodHouse, ROUTE_12_SUPER_ROD_HOUSE, 0x00, 0);
-// map_attributes(SilverCavePokecenter1F, SILVER_CAVE_POKECENTER_1F, 0x00, 0);
+map_attributes(SilverCavePokecenter1F, SILVER_CAVE_POKECENTER_1F, 0x00, 0);
 map_attributes(Route28SteelWingHouse, ROUTE_28_STEEL_WING_HOUSE, 0x00, 0);
 map_attributes(Pokecenter2F, POKECENTER_2F, 0x00, 0);
 map_attributes(TradeCenter, TRADE_CENTER, 0x00, 0);
