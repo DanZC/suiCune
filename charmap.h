@@ -212,7 +212,7 @@
 #define CHAR_QMARK      ((uint8_t)'\xe6') // "?"
 #define CHAR_EMARK      ((uint8_t)'\xe7') // "!"
 #define CHAR_PERIOD     ((uint8_t)'\xe8') // "."
-#define CHAR_AMPERSAND  ((uint8_t)'\xe6') // "&"
+#define CHAR_AMPERSAND  ((uint8_t)'\xe9') // "&"
 
 /*
 	charmap "(",         $9a

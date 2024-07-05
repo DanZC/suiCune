@@ -517,6 +517,7 @@ static bool LinkTradeMenu_TryAnims(void) {
 // skip_anims:
     // CALL(aJoyTextDelay);
     JoyTextDelay_Conv();
+    DelayFrame();
     // CALL(aLinkTradeMenu_GetJoypad);
     // AND_A_A;
     // RET_Z ;
@@ -552,6 +553,7 @@ static void LinkTradeMenu_loop(void) {
         // AND_A_B;
         // IF_Z goto loop;
     } while((wram->wMenuJoypadFilter & LinkTradeMenu_GetJoypad()) == 0);
+    printf("CursorY = %d\n", (wram->wMenuCursorY));
 
 // done:
     // RET;

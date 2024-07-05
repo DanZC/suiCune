@@ -373,7 +373,7 @@ void NetworkClearLANCache(void) {
     NetworkTossQueueingPackets();
 }
 
-LANClient* NetworkGetLANCandidate(uint8_t which) {
+LANClient* NetworkGetLANCandidate(uint32_t which) {
     return gLANClientCandidates + which;
 }
 
@@ -544,12 +544,16 @@ try_again:
 int Network_ExchangeBytes(void* rx, const void* tx, int len) {
     switch(gNetworkState) {
     case NETSTATE_LAN_HOST: {
-        if(SDLNet_TCP_Send(linkSocket, tx, len) <= len)
+        if(SDLNet_TCP_Send(linkSocket, tx, len) < len)
             return NETWORK_XCHG_ERROR_SEND;
 
         uint32_t tries = 0;
         while(tries < 60) {
-            if(SDLNet_CheckSockets(sockets, 0) != 0) {
+            int ready = SDLNet_CheckSockets(sockets, 0);
+            if(ready < 0) {
+                return NETWORK_XCHG_ERROR_RECV;
+            }
+            else if(ready > 0) {
                 if(SDLNet_TCP_Recv(linkSocket, rx, len) <= 0)
                     return NETWORK_XCHG_ERROR_RECV;
                 return NETWORK_XCHG_OK;
@@ -563,11 +567,15 @@ int Network_ExchangeBytes(void* rx, const void* tx, int len) {
     case NETSTATE_LAN_CLIENT: {
         uint32_t tries = 0;
         while(tries < 60) {
-            if(SDLNet_CheckSockets(sockets, 0) != 0) {
+            int ready = SDLNet_CheckSockets(sockets, 0);
+            if(ready < 0) {
+                return NETWORK_XCHG_ERROR_RECV;
+            }
+            else if(ready > 0) {
                 if(SDLNet_TCP_Recv(linkSocket, rx, len) <= 0) {
                     return NETWORK_XCHG_ERROR_RECV;
                 }
-                if(SDLNet_TCP_Send(linkSocket, tx, len) <= len) {
+                if(SDLNet_TCP_Send(linkSocket, tx, len) < len) {
                     return NETWORK_XCHG_ERROR_SEND;
                 }
                 return NETWORK_XCHG_OK;
@@ -593,6 +601,16 @@ try_again:
     error = Network_ExchangeBytes(rx, tx, len);
     switch(error) {
     case NETWORK_XCHG_OK:
+        printf("Send:");
+        for(int i = 0; i < len; ++i) {
+            printf(" $%02X", ((uint8_t*)tx)[i]);
+        }
+        printf(".\n");
+        printf("Recv:");
+        for(int i = 0; i < len; ++i) {
+            printf(" $%02X", ((uint8_t*)rx)[i]);
+        }
+        printf(".\n");
         return true;
     case NETWORK_XCHG_ERROR_RECV:
     case NETWORK_XCHG_ERROR_SEND:
@@ -612,10 +630,15 @@ try_again:
     return false;
 }
 
+void Network_FlushPendingPacketsAndSync(void) {
+    uint8_t sink;
+    while(SDLNet_CheckSockets(sockets, 0) > 0 && SDLNet_TCP_Recv(linkSocket, &sink, 1) > 0) {}
+}
+
 int Network_SendByte(uint8_t byte) {
     if(linkSocket == NULL)
         return NETWORK_XCHG_NO_CONNECTION;
-    if(SDLNet_TCP_Send(linkSocket, &byte, 1) <= 1)
+    if(SDLNet_TCP_Send(linkSocket, &byte, 1) <= 0)
         return NETWORK_XCHG_ERROR_SEND;
     return NETWORK_XCHG_OK;
 }

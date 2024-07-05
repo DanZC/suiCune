@@ -279,7 +279,7 @@ void Gen2ToGen2LinkComms(void){
     if(hram->hSerialConnectionStatus == USING_INTERNAL_CLOCK) {
         // LD_C(3);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(3);
+        // DelayFrames_Conv(3);
         // XOR_A_A;
         // LDH_addr_A(hSerialSend);
         hram->hSerialSend = 0;
@@ -289,10 +289,10 @@ void Gen2ToGen2LinkComms(void){
         // LD_A((1 << rSC_ON) | (1 << rSC_CLOCK));
         // LDH_addr_A(rSC);
         // gb_write(rSC, (1 << rSC_ON) | (1 << rSC_CLOCK));
-        Network_SendByte(0);
+        // Network_SendByte(0);
 
         // CALL(aDelayFrame);
-        DelayFrame();
+        // DelayFrame();
         // XOR_A_A;
         // LDH_addr_A(hSerialSend);
         hram->hSerialSend = 0;
@@ -302,7 +302,7 @@ void Gen2ToGen2LinkComms(void){
         // LD_A((1 << rSC_ON) | (1 << rSC_CLOCK));
         // LDH_addr_A(rSC);
         // gb_write(rSC, (1 << rSC_ON) | (1 << rSC_CLOCK));
-        Network_SendByte(0);
+        // Network_SendByte(0);
     }
 
 // player_1:
@@ -324,20 +324,18 @@ void Gen2ToGen2LinkComms(void){
     // LD_DE(wEnemyMon);
     // LD_BC(SERIAL_RN_PREAMBLE_LENGTH + SERIAL_RNS_LENGTH);
     // CALL(aSerial_ExchangeBytes);
-    de = Serial_ExchangeBytes_Conv(&wram->wEnemyMon, wram->wLinkBattleRNPreamble, SERIAL_RN_PREAMBLE_LENGTH + SERIAL_RNS_LENGTH);
+    Network_SafeExchangeBytes(&wram->wEnemyMon, wram->wLinkBattleRNs, SERIAL_RNS_LENGTH);
     // LD_A(SERIAL_NO_DATA_BYTE);
     // LD_de_A;
-    *de = SERIAL_NO_DATA_BYTE;
 
     // LD_HL(wLinkData);
     // LD_DE(wOTPartyData);
     // LD_BC(SERIAL_PREAMBLE_LENGTH + NAME_LENGTH + 1 + PARTY_LENGTH + 1 + 2 + (PARTYMON_STRUCT_LENGTH + NAME_LENGTH * 2) * PARTY_LENGTH + 3);
     // CALL(aSerial_ExchangeBytes);
-    de = Serial_ExchangeBytes_Conv(wram->wOTPlayerName, wram->wLinkData, 
-        SERIAL_PREAMBLE_LENGTH + NAME_LENGTH + 1 + PARTY_LENGTH + 1 + 2 + (PARTYMON_STRUCT_LENGTH + NAME_LENGTH * 2) * PARTY_LENGTH + 3);
+    Network_SafeExchangeBytes(wram->wOTPlayerName, wram->wLinkPlayerName, 
+        NAME_LENGTH + 1 + PARTY_LENGTH + 1 + 2 + (PARTYMON_STRUCT_LENGTH + NAME_LENGTH * 2) * PARTY_LENGTH + 3);
     // LD_A(SERIAL_NO_DATA_BYTE);
     // LD_de_A;
-    *de = SERIAL_NO_DATA_BYTE;
 
     // LD_HL(wPlayerPatchLists);
     // LD_DE(wOTPatchLists);
@@ -1736,7 +1734,7 @@ const void* Link_FindFirstNonControlCharacter_AllowZero(const void* hl_){
 // All functions have been combined into a single function
 // to prevent stack overflow during iterative calls. 
 void InitTradeMenuDisplay(void){
-    static const char String_Stats_Trade[] = "STATS\t TRADE@";
+    static const char String_Stats_Trade[] = "STATS     TRADE@";
 
     static const txt_cmd_s LinkTradeCantBattleText[] = {
         text_far(v_LinkTradeCantBattleText)
@@ -1749,6 +1747,7 @@ void InitTradeMenuDisplay(void){
     };
     tile_t* hl;
     uint8_t ctl;
+    uint8_t menuY = 1;
 
 InitTradeMenuDisplay:
     // CALL(aClearScreen);
@@ -1859,7 +1858,7 @@ LinkTrade_TradeStatsMenu:
     LoadTilemapToTempTilemap_Conv();
     // LD_A_addr(wMenuCursorY);
     // PUSH_AF;
-    uint8_t menuY = wram->wMenuCursorY;
+    menuY = wram->wMenuCursorY;
     // hlcoord(0, 15, wTilemap);
     // LD_B(1);
     // LD_C(18);
@@ -2164,7 +2163,7 @@ LinkTradePartymonMenuLoop:
     // IF_Z goto not_a_button;
     // JP(mLinkTrade_TradeStatsMenu);
     if(bit_test(ctl, A_BUTTON_F))
-        return LinkTrade_TradeStatsMenu();
+        goto LinkTrade_TradeStatsMenu;
 
 
 // not_a_button:
@@ -2252,6 +2251,7 @@ LinkTradePartymonMenuCheckCancel:
         // loop2:
             // CALL(aJoyTextDelay);
             JoyTextDelay_Conv();
+            DelayFrame();
             // LDH_A_addr(hJoyLast);
             // AND_A_A;
             // IF_Z goto loop2;
@@ -3843,6 +3843,7 @@ void WaitForLinkedFriend(void){
 }
 
 void CheckLinkTimeout_Receptionist(void){
+    PEEK("");
     // LD_A(0x1);
     // LD_addr_A(wPlayerLinkAction);
     wram->wPlayerLinkAction = 0x1;
@@ -3916,7 +3917,6 @@ void CheckLinkTimeout_Gen2(void){
         // OR_A_C;
         // IF_NZ goto wait;
     // } while(--bc != 0);
-    Network_SafeExchangeBytes(&wram->wOtherPlayerLinkMode, &wram->wPlayerLinkAction, 1);
     DelayFrame();
     DelayFrame();
     DelayFrame();
@@ -3926,6 +3926,7 @@ void CheckLinkTimeout_Gen2(void){
     // CP_A(0x5);
     // IF_NZ goto timeout;
 
+    printf("Check wOtherPlayerLinkMode == 5: %d\n", wram->wOtherPlayerLinkMode);
     if(wram->wOtherPlayerLinkMode == 0x5) {
     //  Another check to increase reliability
         // LD_A(0x6);
@@ -3941,11 +3942,13 @@ void CheckLinkTimeout_Gen2(void){
         // LD_A_addr(wOtherPlayerLinkMode);
         // CP_A(0x6);
         // IF_Z goto exit;
+        printf("Check wOtherPlayerLinkMode == 6: %d\n", wram->wOtherPlayerLinkMode);
         if(wram->wOtherPlayerLinkMode == 0x6) {
         // exit:
             // XOR_A_A;
             // LDH_addr_A(hVBlank);
             hram->hVBlank = 0;
+            wram->wScriptVar = TRUE;
             // RET;
             return;
         }
@@ -4077,6 +4080,7 @@ void TryQuickSave(void){
 }
 
 void CheckBothSelectedSameRoom(void){
+    PEEK("");
     // LD_A_addr(wChosenCableClubRoom);
     // CALL(aLink_EnsureSync);
     uint8_t byte = Link_EnsureSync_Conv(wram->wChosenCableClubRoom);
@@ -4233,6 +4237,7 @@ done:
 
 uint8_t Link_EnsureSync_Conv(uint8_t a){
     printf("%s:\n", __func__);
+    Network_FlushPendingPacketsAndSync();
     // ADD_A(0xd0);
     // LD_addr_A(wLinkPlayerSyncBuffer);
     wram->wLinkPlayerSyncBuffer[0] = a + 0xd0;

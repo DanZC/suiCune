@@ -23,6 +23,8 @@
 #include "../pokemon/stats_screen.h"
 #include "../phone/phone.h"
 #include "../battle/core.h"
+#include "../link/link.h"
+#include "../link/link_trade.h"
 #include "../../util/scripting.h"
 #include "../movie/trade_animation.h"
 #include "../movie/init_hof_credits.h"
@@ -49,6 +51,7 @@ void Handler_Script(void);
 void Handler_TradeAnim(void);
 void Handler_BattleAnim(void);
 void Handler_Credits(void);
+void Handler_TradeTest(void);
 
 static DebugMenuOption debugMenuOptions[] = {
     {"FIGHT@", Handler_Fight},
@@ -66,6 +69,7 @@ static DebugMenuOption debugMenuOptions[] = {
     {"TRADE@", Handler_TradeAnim},
     {"BANIMS@", Handler_BattleAnim},
     {"CREDITS@", Handler_Credits},
+    {"TRD TEST@", Handler_TradeTest},
 };
 
 #define MAX_OPTIONS_PER_PAGE 7
@@ -260,6 +264,11 @@ void Handler_BattleAnim(void) {
 
 void Handler_Credits(void) {
     DebugMenu_Credits();
+    PlayMusic_Conv(DEBUG_MENU_MUSIC);
+}
+
+void Handler_TradeTest(void) {
+    DebugMenu_TradeTest();
     PlayMusic_Conv(DEBUG_MENU_MUSIC);
 }
 
@@ -988,4 +997,32 @@ void DebugMenu_Credits(void) {
     ClearScreen_Conv2();
     InitDisplayForRedCredits();
     Credits(0);
+}
+
+void DebugMenu_TradeTest(void) {
+    DebugMenu_SaveTilemap();
+    DebugMenu_SaveAttrmap();
+    ClearScreen_Conv2();
+    U82CA(wram->wPlayerName, "PLAYER@");
+    U82CA(wram->wOTPlayerName, "OTHER@");
+    wram->wPartyCount = 1;
+    wram->wPartySpecies[0] = TEDDIURSA;
+    wram->wPartySpecies[1] = (species_t)-1;
+    wram->wPartyMon[0].mon.species = TEDDIURSA;
+    U82CA(wram->wPartyMonNickname[0], "KODA@");
+    wram->wOTPartyCount = 1;
+    wram->wOTPartySpecies[0] = MEOWTH;
+    wram->wOTPartySpecies[1] = (species_t)-1;
+    wram->wOTPartyMon[0].mon.species = MEOWTH;
+    U82CA(wram->wOTPartyMonNickname[0], "MORGANA@");
+    LinkComms_LoadPleaseWaitTextboxBorderGFX();
+    SetTradeRoomBGPals();
+    WaitBGMap2_Conv();
+    PlayMusic_Conv(MUSIC_ROUTE_30);
+    InitTradeMenuDisplay();
+    DebugMenu_RestoreTilemap();
+    DebugMenu_RestoreAttrmap();
+    v_LoadFontsExtra1_Conv();
+    v_LoadFontsExtra2_Conv();
+    v_LoadStandardFont_Conv();
 }

@@ -14,7 +14,7 @@ void LinkMonStatsScreen(void){
     // LD_addr_A(wCurPartyMon);
     wram->wCurPartyMon = wram->wMenuCursorY - 1;
     // CALL(aLowVolume);
-    LowVolume();
+    LowVolume_Conv();
     // PREDEF(pStatsScreenInit);
     StatsScreenInit();
     // LD_A_addr(wCurPartyMon);

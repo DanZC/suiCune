@@ -348,7 +348,7 @@ void v_InitMG_Mobile_LinkTradePalMap(void){
     // LD_BC((6 << 8) | 1);
     // hlcoord(17, 9, wAttrmap);
     // CALL(aCrystal_FillBoxCGB);
-    Crystal_FillBoxCGB_Conv(coord(17, 9, wram->wAttrmap), 17, 9, 0x3);
+    Crystal_FillBoxCGB_Conv(coord(17, 9, wram->wAttrmap), 6, 1, 0x3);
     // LD_A(0x2);
     // hlcoord(2, 16, wAttrmap);
     tile_t* hl = coord(2, 16, wram->wAttrmap);
