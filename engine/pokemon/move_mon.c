@@ -2713,7 +2713,7 @@ void RemoveMonFromPartyOrBox_Conv(uint8_t param){
         // DEC_A;
         // LD_hli_A;
         wram->wPartyCount--;
-        wptr = wram->wPartySpecies;
+        wptr = wram->wPartySpecies + wram->wCurPartyMon;
         species_t a;
         do {
         // loop:

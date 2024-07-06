@@ -735,6 +735,7 @@ void Serial_SyncAndExchangeNybble(void){
 }
 
 void WaitLinkTransfer(void){
+    Network_FlushPendingPacketsAndSync();
     // LD_A(0xff);
     // LD_addr_A(wOtherPlayerLinkAction);
     wram->wOtherPlayerLinkAction = 0xff;

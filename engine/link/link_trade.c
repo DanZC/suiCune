@@ -342,7 +342,7 @@ void PrintWaitingTextAndSyncAndExchangeNybble(void){
     // FARCALL(aWaitLinkTransfer);
     WaitLinkTransfer();
     // CALL(aCall_ExitMenu);
-    ExitMenu_Conv();
+    ExitMenu_Conv2();
     // CALL(aWaitBGMap2);
     WaitBGMap2_Conv();
     // RET;

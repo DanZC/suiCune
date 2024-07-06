@@ -113,7 +113,7 @@ bool ValidateOTTrademon_Conv(uint8_t mon){
     // CP_A(LINK_TIMECAPSULE);
     // IF_NZ goto normal;
 // If we're in the time capsule we require additional checks.
-    if(wram->wLinkMode == LINK_TIMECAPSULE)
+    if(wram->wLinkMode != LINK_TIMECAPSULE)
         return true;
     // LD_HL(wOTPartySpecies);
     // LD_A_addr(wCurOTTradePartyMon);

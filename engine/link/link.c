@@ -2007,7 +2007,7 @@ joy_loop:
     // LD_A_addr(wOtherPlayerLinkMode);
     // CP_A(0xf);
     // JP_Z (mInitTradeMenuDisplay);
-    if(wram->wOtherPlayerLinkMode & 0xf)
+    if(wram->wOtherPlayerLinkMode == 0xf)
         goto InitTradeMenuDisplay;
     // LD_addr_A(wCurOTTradePartyMon);
     wram->wCurOTTradePartyMon = wram->wOtherPlayerLinkMode & 0xf;
@@ -3044,7 +3044,7 @@ void LinkTrade(void){
     // PUSH_AF;
     uint8_t joypad = ScrollingMenuJoypad_Conv();
     // CALL(aCall_ExitMenu);
-    ExitMenu_Conv();
+    ExitMenu_Conv2();
     // CALL(aWaitBGMap2);
     WaitBGMap2_Conv();
     // POP_AF;
