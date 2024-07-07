@@ -228,7 +228,7 @@
 #include "engine/pokemon/mon_stats.h"
 //#include "engine/link/init_list.h"
 #include "engine/pokemon/experience.h"
-//#include "engine/pokemon/switchpartymons.h"
+#include "engine/pokemon/switchpartymons.h"
 #include "engine/gfx/load_pics.h"
 #include "engine/pokemon/move_mon_wo_mail.h"
 //#include "data/pokemon/base_stats.h"
@@ -612,7 +612,7 @@
 
 // SECTION "European Mail", ROMX
 
-//#include "engine/pokemon/european_mail.h"
+#include "engine/pokemon/european_mail.h"
 
 // SECTION "Debug Room", ROMX
 

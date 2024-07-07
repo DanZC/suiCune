@@ -8876,4 +8876,17 @@ CONVERTED(v_AnimateTileset);
     // CONVERTED(GetHallOfFameParty);
     CONVERTED(RedCredits);
     // CONVERTED(AnimateHOFMonEntrance);
+
+    // engine/pokemon/european_mail.c
+    // CONVERTED(ConvertSpanishItalianMailToEnglish);
+    // CONVERTED(ConvertFrenchGermanMailToEnglish);
+    // CONVERTED(StandardEnglishFont);
+    // CONVERTED(ConvertEnglishMailToSpanishItalian);
+    // CONVERTED(ConvertEnglishMailToFrenchGerman);
+    // CONVERTED(SpanishItalianFont);
+    // CONVERTED(IsMailEuropean);
+    // CONVERTED(FrenchGermanFont);
+
+    // engine/pokemon/switchpartymons.c
+    CONVERTED(v_SwitchPartyMons);
 }
