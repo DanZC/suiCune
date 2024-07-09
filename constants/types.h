@@ -1523,6 +1523,12 @@ struct Pokemail {
     const char* message;
 };
 
+struct MonMenuOption {
+    uint8_t category;
+    uint8_t item;
+    move_t value;
+};
+
 struct PokemonCry 
 {
     uint16_t index;

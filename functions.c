@@ -1488,7 +1488,7 @@ void init_function_pointers(void) {
     // REDIRECTED(CheckIfCurPartyMonIsFitToFight);
     // REDIRECTED(FillEnemyMovesFromMoveIndicesBuffer);
     // REDIRECTED(PlayerMonFaintedAnimation);
-    // CONVERTED(SendOutPlayerMon);
+    CONVERTED(SendOutPlayerMon);
     // REDIRECTED(BattleMenu_PKMN);
     CONVERTED(EndOpponentProtectEndureDestinyBond);
     // REDIRECTED(GetRoamMonMapGroup);
@@ -8889,4 +8889,16 @@ CONVERTED(v_AnimateTileset);
 
     // engine/pokemon/switchpartymons.c
     CONVERTED(v_SwitchPartyMons);
+
+    // engine/pokemon/mon_submenu.c
+    // CONVERTED(TerminateMonSubmenu);
+    // CONVERTED(AddMonMenuItem);
+    // CONVERTED(PopulateMonMenu);
+    // CONVERTED(ResetMonSubmenu);
+    // CONVERTED(GetMonMenuString);
+    // CONVERTED(MonMenuLoop);
+    // CONVERTED(BattleMonMenu);
+    // CONVERTED(MonSubmenu);
+    // CONVERTED(IsFieldMove);
+    // CONVERTED(GetMonSubmenuItems);
 }

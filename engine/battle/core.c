@@ -45,6 +45,7 @@
 #include "../pokemon/move_mon.h"
 #include "../pokemon/evolve.h"
 #include "../pokemon/party_menu.h"
+#include "../pokemon/mon_submenu.h"
 #include "../items/pack.h"
 #include "../items/items.h"
 #include "../../mobile/mobile_41.h"
@@ -6050,7 +6051,7 @@ bool CheckIfCurPartyMonIsFitToFight_Conv(void){
     // LD_A_hli;
     // OR_A_hl;
     // RET_NZ ;
-    if(wram->wPartyMon[wram->wCurPartyMon].HP != 0)
+    if(wram->wPartyMon[wram->wCurPartyMon].HP != 0 && wram->wPartySpecies[wram->wCurPartyMon] != EGG)
         return true;
 
     // LD_A_addr(wBattleHasJustStarted);
@@ -8241,7 +8242,7 @@ static bool BattleMenu_PKMN_GetMenu(void) {
         // RET;
     }
     // FARCALL(aBattleMonMenu);
-    return SafeCallGBAutoRet(aBattleMonMenu).f_bits.c != 0;
+    return BattleMonMenu();
     // RET;
 }
 
@@ -8549,7 +8550,7 @@ BattleMenu_begin:
                             // try_switch:
                                 // CALL(aCheckIfCurPartyMonIsFitToFight);
                                 // JP_Z (mBattleMenuPKMN_Loop);
-                                if(CheckIfCurPartyMonIsFitToFight_Conv())
+                                if(!CheckIfCurPartyMonIsFitToFight_Conv())
                                     goto BattleMenuPKMN_Loop;
                                 // LD_A_addr(wCurBattleMon);
                                 // LD_addr_A(wLastPlayerMon);
