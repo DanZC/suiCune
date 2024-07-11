@@ -7,6 +7,7 @@
 #include "../../home/print_text.h"
 #include "../../home/pokedex_flags.h"
 #include "../../data/pokemon/dex_entries.h"
+#include "../../charmap.h"
 
 void AnimateDexSearchSlowpoke(void){
     LD_HL(mAnimateDexSearchSlowpoke_FrameIDs);
@@ -350,6 +351,52 @@ done:
     POP_HL;
     RET;
 
+// INCLUDE "data/pokemon/dex_entry_pointers.asm"
+
+}
+
+uint8_t* GetDexEntryPagePointer_Conv(species_t b, uint8_t c){
+    // CALL(aGetDexEntryPointer);
+    const struct DexEntry* entry = GetDexEntryPointer(b);
+    // PUSH_HL;
+    // LD_H_D;
+    // LD_L_E;
+//  skip species name
+
+// loop1:
+    // LD_A_B;
+    // CALL(aGetFarByte);
+    // INC_HL;
+    // CP_A(0x50);
+    // IF_NZ goto loop1;
+//  skip height and weight
+    // for(int rept = 0; rept < 4; rept++){
+    // INC_HL;
+    // }
+    uint8_t* de = U82C(entry->description);
+//  if c != 1: skip entry
+    // DEC_C;
+    // IF_Z goto done;
+    if(c != 1) {
+    //  skip entry
+    // loop2:
+        // LD_A_B;
+        // CALL(aGetFarByte);
+        // INC_HL;
+        // CP_A(0x50);
+        // IF_NZ goto loop2;
+        while(*de != CHAR_PAGE) 
+            de++;
+        de++;
+    }
+
+
+// done:
+    // LD_D_H;
+    // LD_E_L;
+    // POP_HL;
+    // RET;
+    return de;
 // INCLUDE "data/pokemon/dex_entry_pointers.asm"
 
 }

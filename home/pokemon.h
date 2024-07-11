@@ -25,6 +25,7 @@ int16_t GetCryIndex_Conv2(species_t index);
 void PrintLevel(void);
 void PrintLevel_Conv(uint8_t* hl, uint8_t lvl);
 void PrintLevel_Force3Digits(void);
+void PrintLevel_Force3Digits_Conv(uint8_t* hl, uint8_t a);
 void Print8BitNumLeftAlign(void);
 void Print8BitNumLeftAlign_Conv(uint8_t* hl, uint8_t a, uint8_t c);
 void GetNthMove(void);

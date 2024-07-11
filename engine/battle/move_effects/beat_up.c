@@ -305,6 +305,10 @@ void BattleCommand_BeatUpFailText(void){
     if(wram->wBeatUpHitAtLeastOnce)
         return;
 
+#if BUGFIX_BEAT_UP_FAIL_TEXT
+    wram->wAttackMissed = TRUE;
+#endif
+
     // JP(mPrintButItFailed);
     return PrintButItFailed();
 

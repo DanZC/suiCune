@@ -8901,4 +8901,80 @@ CONVERTED(v_AnimateTileset);
     // CONVERTED(MonSubmenu);
     // CONVERTED(IsFieldMove);
     // CONVERTED(GetMonSubmenuItems);
+
+    // engine/battle/link_result.c
+    CONVERTED(DetermineLinkBattleResult);
+
+    // engine/events/sacred_ash.c
+    CONVERTED(v_SacredAsh);
+    // CONVERTED(SacredAshScript);
+    // CONVERTED(CheckAnyFaintedMon);
+
+    // engine/events/sweet_scent.c
+    // CONVERTED(UseSweetScentText);
+    // CONVERTED(SweetScentNothingText);
+    // CONVERTED(SweetScentNothing);
+    // CONVERTED(SweetScentEncounter);
+    CONVERTED(SweetScentFromMenu);
+
+    // engine/printer/print_party.c
+    CONVERTED(PrintPage1);
+    CONVERTED(PrintPartyMonPage2);
+    // CONVERTED(PrintParty_MoveString);
+    // CONVERTED(GBPrinterString_Printing);
+    // CONVERTED(GBPrinterString_CheckingLink);
+    // REDIRECTED(GetCurPartyMonName);
+    CONVERTED(PrintPage2);
+    // CONVERTED(PrintParty_IDNoString);
+    // CONVERTED(PlaceGenderAndShininess);
+    // CONVERTED(PrintParty_NoMoveString);
+    // CONVERTED(GBPrinterString_PrinterError2);
+    // CONVERTED(PlaceMoveNameString);
+    // CONVERTED(GBPrinterString_PrinterError1);
+    // CONVERTED(GBPrinterHPIcon);
+    // CONVERTED(GBPrinterString_Transmitting);
+    // CONVERTED(GBPrinterLvIcon);
+    // CONVERTED(PrintParty_OTString);
+    // CONVERTED(PrintParty_StatsString);
+    CONVERTED(PrintPartyMonPage1);
+    // CONVERTED(GBPrinterString_Null);
+    // CONVERTED(GBPrinterStrings);
+    // CONVERTED(GBPrinterString_PrinterError4);
+    // CONVERTED(GBPrinterString_PrinterError3);
+
+    // engine/printer/printer.c
+    // REDIRECTED(PlacePrinterStatusStringBorderless);
+    // REDIRECTED(Printer_PlaceBottomBorders);
+    // REDIRECTED(CheckPrinterStatus);
+    CONVERTED(Printer_ResetJoypadRegisters);
+    // CONVERTED(Printer_PrepareTilemapForPrint);
+    CONVERTED(Printer_ExitPrinter);
+    // REDIRECTED(PrintPCBox_Page3);
+    // REDIRECTED(PrintMailAndExit);
+    CONVERTED(Printer_CopyTilemapToBuffer);
+    // REDIRECTED(PrinterStatusStringPointers);
+    // CONVERTED(SendScreenToPrinter);
+    // REDIRECTED(PrintPCBox);
+    // REDIRECTED(PlacePrinterStatusString);
+    // REDIRECTED(PrintPCBox_Page2);
+    // REDIRECTED(String_PressBToCancel);
+    CONVERTED(Printer_PlaceTopBorder);
+    // REDIRECTED(Printer_CopyBufferToTilemap);
+    // REDIRECTED(Printer_RestartMapMusic);
+    // REDIRECTED(v_PrintDiploma);
+    // REDIRECTED(PrintUnownStamp);
+    // REDIRECTED(Printer_PlaceSideBorders);
+    // REDIRECTED(CheckCancelPrint);
+    CONVERTED(PrintDexEntry);
+    // REDIRECTED(Printer_GetMonGender);
+    CONVERTED(PrintPartymon);
+    // REDIRECTED(Printer_PrintBoxListSegment);
+    CONVERTED(Printer_PlayMusic);
+    // REDIRECTED(Printer_GetBoxMonSpecies);
+    // REDIRECTED(PrintMail);
+    // REDIRECTED(PrintPCBox_Page4);
+    // REDIRECTED(Printer_PlaceEmptyBoxSlotString);
+    CONVERTED(Printer_CleanUpAfterSend);
+    // REDIRECTED(Printer_ResetRegistersAndStartDataSend);
+    // REDIRECTED(PrintPCBox_Page1);
 }

@@ -8624,7 +8624,7 @@ void BattleCommand_ForceSwitch(void){
                 goto fail;
             }
             // CALL(aUpdateEnemyMonInParty);
-            UpdateEnemyMonInParty();
+            UpdateEnemyMonInParty_Conv();
             // LD_A(0x1);
             // LD_addr_A(wBattleAnimParam);
             wram->wBattleAnimParam = 0x1;
@@ -8938,8 +8938,7 @@ void BattleCommand_EndLoop(void){
             // RES_hl(SUBSTATUS_IN_LOOP);
             bit_reset(*GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS3), SUBSTATUS_IN_LOOP);
             // CALL(aBattleCommand_BeatUpFailText);
-            // BattleCommand_BeatUpFailText();
-            SafeCallGBAuto(aBattleCommand_BeatUpFailText);
+            BattleCommand_BeatUpFailText();
             // JP(mEndMoveEffect);
             return EndMoveEffect();
         // CP_A(EFFECT_TRIPLE_KICK);

@@ -564,6 +564,16 @@ void PrintLevel_Force3Digits(void){
     return Print8BitNumLeftAlign();
 }
 
+void PrintLevel_Force3Digits_Conv(uint8_t* hl, uint8_t a){
+    //  Print :L and all 3 digits
+    // LD_hl(0x6e);
+    *hl = 0x6e;
+    // INC_HL;
+    // LD_C(3);
+
+    return Print8BitNumLeftAlign_Conv(hl + 1, a, 3);
+}
+
 void Print8BitNumLeftAlign(void){
         LD_addr_A(wTextDecimalByte);
     LD_DE(wTextDecimalByte);

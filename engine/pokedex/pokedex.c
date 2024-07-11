@@ -20,6 +20,7 @@
 #include "../../home/pokemon.h"
 #include "../gfx/load_pics.h"
 #include "../pokegear/pokegear.h"
+#include "../printer/printer.h"
 #include "../../data/pokemon/dex_order_new.h"
 #include "../../data/pokemon/dex_order_alpha.h"
 #include "../../gfx/footprints.h"
@@ -741,36 +742,52 @@ void DexEntryScreen_MenuActionJumptable(uint8_t a){
         // RET;
         return;
 
-    case 3:
-    //  TODO: Replace this with something else that makes sense.
+    case 3: {
     // Print:
         // CALL(aPokedex_ApplyPrintPals);
+        Pokedex_ApplyPrintPals();
         // XOR_A_A;
         // LDH_addr_A(hSCX);
+        hram->hSCX = 0x0;
         // LD_A_addr(wPrevDexEntryBackup);
         // PUSH_AF;
+        uint8_t prevDexEntry = wram->wPrevDexEntryBackup;
         // LD_A_addr(wPrevDexEntryJumptableIndex);
         // PUSH_AF;
+        uint8_t prevDexEntryJtIdx = wram->wPrevDexEntryJumptableIndex;
         // LD_A_addr(wJumptableIndex);
         // PUSH_AF;
+        uint8_t jumptableIndex = wram->wJumptableIndex;
         // FARCALL(aPrintDexEntry);
+        PrintDexEntry();
         // POP_AF;
         // LD_addr_A(wJumptableIndex);
+        wram->wJumptableIndex = jumptableIndex;
         // POP_AF;
         // LD_addr_A(wPrevDexEntryJumptableIndex);
+        wram->wPrevDexEntryJumptableIndex = prevDexEntryJtIdx;
         // POP_AF;
         // LD_addr_A(wPrevDexEntryBackup);
+        wram->wPrevDexEntryBackup = prevDexEntry;
         // CALL(aClearBGPalettes);
+        ClearBGPalettes_Conv();
         // CALL(aDisableLCD);
+        DisableLCD_Conv();
         // CALL(aPokedex_LoadInvertedFont);
+        Pokedex_LoadInvertedFont();
         // CALL(aPokedex_RedisplayDexEntry);
+        Pokedex_RedisplayDexEntry();
         // CALL(aEnableLCD);
+        EnableLCD_Conv();
         // CALL(aWaitBGMap);
+        WaitBGMap_Conv();
         // LD_A(POKEDEX_SCX);
         // LDH_addr_A(hSCX);
+        hram->hSCX = POKEDEX_SCX;
         // CALL(aPokedex_ApplyUsualPals);
+        Pokedex_ApplyUsualPals();
         // RET;
-        return;
+    } return;
     }
 }
 

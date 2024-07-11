@@ -121,7 +121,7 @@
 
 #include "engine/link/link.h"
 #include "engine/overworld/wildmons.h"
-//#include "engine/battle/link_result.h"
+#include "engine/battle/link_result.h"
 
 // SECTION "bankB", ROMX
 
@@ -217,11 +217,11 @@
 
 #include "engine/pokemon/party_menu.h"
 #include "engine/events/poisonstep.h"
-//#include "engine/events/sweet_scent.h"
+#include "engine/events/sweet_scent.h"
 #include "engine/events/squirtbottle.h"
 #include "engine/events/card_key.h"
 #include "engine/events/basement_key.h"
-//#include "engine/events/sacred_ash.h"
+#include "engine/events/sacred_ash.h"
 #include "engine/pokemon/tempmon.h"
 #include "engine/pokemon/types.h"
 //#include "engine/battle/getgen1trainerclassname.h"
@@ -263,7 +263,7 @@
 // SECTION "bank21", ROMX
 
 //#include "engine/printer/printer_serial.h"
-//#include "engine/printer/printer.h"
+#include "engine/printer/printer.h"
 //#include "gfx/battle_anims.h"
 #include "engine/events/halloffame.h"
 
@@ -600,7 +600,7 @@
 
 // SECTION "Print Party", ROMX
 
-//#include "engine/printer/print_party.h"
+#include "engine/printer/print_party.h"
 
 // SECTION "bank77", ROMX
 

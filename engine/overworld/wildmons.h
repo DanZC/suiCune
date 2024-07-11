@@ -4,6 +4,7 @@ void FindNest_Conv(uint8_t e, species_t species);
 void TryWildEncounter(void);
 bool TryWildEncounter_Conv(void);
 void GetMapEncounterRate(void);
+uint8_t GetMapEncounterRate_Conv(void);
 void ApplyMusicEffectOnEncounterRate(void);
 uint8_t ApplyMusicEffectOnEncounterRate_Conv(uint8_t b);
 void ApplyCleanseTagEffectOnEncounterRate(void);
