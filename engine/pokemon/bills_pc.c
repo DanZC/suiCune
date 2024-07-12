@@ -8,6 +8,7 @@
 #include "../gfx/load_pics.h"
 #include "../menus/save.h"
 #include "../menus/naming_screen.h"
+#include "../printer/printer.h"
 #include "../../home/pokemon.h"
 #include "../../home/copy.h"
 #include "../../home/text.h"
@@ -3814,7 +3815,7 @@ void BillsPC_ChangeBoxSubmenu(void){
     } return;
     // CP_A(0x3);
     // IF_Z goto Print;
-    case 0x3: { // TODO: Replace this option with something else.
+    case 0x3: {
     // Print:
         // CALL(aGetBoxCount);
         // AND_A_A;
@@ -3829,11 +3830,14 @@ void BillsPC_ChangeBoxSubmenu(void){
         }
         // LD_E_L;
         // LD_D_H;
+        uint32_t de = GetBoxPointer_Conv(wram->wMenuSelection);
         // LD_A_addr(wMenuSelection);
         // DEC_A;
         // LD_C_A;
         // FARCALL(aPrintPCBox);
+        PrintPCBox(de, wram->wMenuSelection - 1);
         // CALL(aBillsPC_ClearTilemap);
+        BillsPC_ClearTilemap();
         // AND_A_A;
         // RET;
     } return;
@@ -3843,9 +3847,7 @@ void BillsPC_ChangeBoxSubmenu(void){
         return;
     }
 
-    hlcoord(11, 7, wTilemap);  // unreferenced
-
-    return BillsPC_PlaceChooseABoxString();
+    // hlcoord(11, 7, wTilemap);  // unreferenced
 }
 
 void BillsPC_PlaceChooseABoxString(void){

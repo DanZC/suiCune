@@ -28,6 +28,7 @@ skip_files = [
     'engine/link/init_list.asm',
     'engine/overworld/map_object_action.asm',
     'engine/pokemon/correct_party_errors.asm',
+    'engine/printer/printer_serial.asm',
     'gfx/pokemon/anim_pointers.asm',
     'gfx/pokemon/bitmask_pointers.asm',
     'gfx/pokemon/bitmasks.asm',

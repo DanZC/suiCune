@@ -5,13 +5,6 @@
 #include <memory.h>
 #include <SDL2/SDL.h>
 
-// static uint32_t CGBToRGB32(uint16_t x) {
-//     uint8_t b = ((x >> 10) & 0x1f) << 3;
-//     uint8_t g = ((x >>  5) & 0x1f) << 3;
-//     uint8_t r = ((x      ) & 0x1f) << 3;
-//     return (0xff << 24) | (r << 16) | (g << 8) | b;
-// }
-
 void PrinterRenderTile(uint32_t* dest, size_t dest_stride, uint8_t attr, tile_t tile) {
     (void)attr;
     uint16_t t;
@@ -37,23 +30,56 @@ void PrinterRenderTile(uint32_t* dest, size_t dest_stride, uint8_t attr, tile_t 
     }
 }
 
-void PrinterSaveTilemapToDisk(const uint8_t* tilemap, const uint8_t* attrmap, uint8_t w, uint8_t h) {
-    char name[128];
-    const uint8_t w2 = w * 8;
-    const uint8_t h2 = h * 8;
-    uint32_t* data = (uint32_t*)malloc(sizeof(uint32_t) * w2 * h2);
-    memset(data, 0, LEN_2BPP_TILE * w * h);
+uint32_t* gPrinterImageBuffer;
+size_t gPrinterImageSize;
+size_t gPrinterImageCap;
 
+void Printer_Begin(void) {
+    if(gPrinterImageBuffer != NULL)
+        free(gPrinterImageBuffer);
+    const size_t w2 = SCREEN_WIDTH * 8;
+    const size_t h2 = SCREEN_HEIGHT * 8;
+    gPrinterImageBuffer = (uint32_t*)malloc(sizeof(uint32_t) * w2 * h2);
+    memset(gPrinterImageBuffer, 0, sizeof(uint32_t) * w2 * h2);
+    gPrinterImageSize = 0;
+    gPrinterImageCap = w2 * h2;
+}
+
+void Printer_AppendTilemap(const uint8_t* tilemap, const uint8_t* attrmap, uint8_t h) {
+    const size_t w2 = SCREEN_WIDTH * 8;
+    const size_t h2 = h * 8;
+    const uint8_t w = SCREEN_WIDTH;
+    uint32_t* dest = gPrinterImageBuffer + gPrinterImageSize;
+    while(gPrinterImageSize + w2 * h2 > gPrinterImageCap) {
+        gPrinterImageBuffer = realloc(gPrinterImageBuffer, (gPrinterImageCap * 2) * sizeof(uint32_t));
+        dest = gPrinterImageBuffer + gPrinterImageSize;
+        gPrinterImageCap = gPrinterImageCap * 2;
+    }
     for(int y = 0; y < h; ++y) {
         for(int x = 0; x < w; ++x) {
-            PrinterRenderTile(data + ((y * 8) * w2) + x * 8, w2, attrmap[(y*w + x)], tilemap[y*w + x]);
+            PrinterRenderTile(dest + ((y * 8) * w2) + x * 8, w2, attrmap[(y*w + x)], tilemap[y*w + x]);
         }
     }
-    SDL_Surface* surf = SDL_CreateRGBSurfaceFrom(data, w * 8, h * 8, 32, w * 8 * 4, 0xff0000, 0x00ff00, 0x0000ff, 0xff000000);
+    gPrinterImageSize = gPrinterImageSize + w2 * h2;
+}
+
+void Printer_SaveToDisk(void) {
+    char name[128];
+    const size_t w2 = SCREEN_WIDTH * 8;
+    const size_t h2 = (gPrinterImageSize / w2);
+    SDL_Surface* surf = SDL_CreateRGBSurfaceFrom(gPrinterImageBuffer, w2, h2, 32, w2 * 4, 0xff0000, 0x00ff00, 0x0000ff, 0xff000000);
     time_t now = time(NULL);
     struct tm *nowt = localtime(&now);
     strftime(name, sizeof(name), "./printer%Y_%m_%d_T%H_%M_%S.bmp", nowt);
     SDL_SaveBMP(surf, name);
     SDL_FreeSurface(surf);
-    free(data);
+    return Printer_CleanUp();
+}
+
+void Printer_CleanUp(void) {
+    if(gPrinterImageBuffer != NULL)
+        free(gPrinterImageBuffer);
+    gPrinterImageBuffer = NULL;
+    gPrinterImageSize = 0;
+    gPrinterImageCap = 0;
 }

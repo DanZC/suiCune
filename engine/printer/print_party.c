@@ -496,5 +496,5 @@ const char PrintParty_StatsString[] = "ATTACK"
 
 const char PrintParty_NoMoveString[] = "------------@";
 
-const char GBPrinterHPIcon[] = "gfx/printer/hp.1bpp";
-const char GBPrinterLvIcon[] = "gfx/printer/lv.1bpp";
+const char GBPrinterHPIcon[] = "gfx/printer/hp.png";
+const char GBPrinterLvIcon[] = "gfx/printer/lv.png";

@@ -8977,4 +8977,7 @@ CONVERTED(v_AnimateTileset);
     CONVERTED(Printer_CleanUpAfterSend);
     // REDIRECTED(Printer_ResetRegistersAndStartDataSend);
     // REDIRECTED(PrintPCBox_Page1);
+
+    // engine/events/print_photo.c
+    CONVERTED(PhotoStudio);
 }

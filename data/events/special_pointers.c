@@ -28,6 +28,7 @@
 #include "../../engine/events/lucky_number.h"
 #include "../../engine/events/move_tutor.h"
 #include "../../engine/events/play_slow_cry.h"
+#include "../../engine/events/print_photo.h"
 #include "../../engine/events/bug_contest/contest.h"
 #include "../../engine/events/bug_contest/contest_2.h"
 #include "../../engine/events/battle_tower/battle_tower.h"
@@ -155,7 +156,7 @@ void (*const SpecialsPointers[])(void) = {
     add_special(ProfOaksPCBoot),
     add_special(GameboyCheck),
     add_special(TrainerHouse),
-    // add_special(PhotoStudio),
+    add_special(PhotoStudio),
     add_special(InitRoamMons),
     add_special(FadeOutMusic),
     // add_special(Diploma),

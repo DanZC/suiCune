@@ -8,11 +8,15 @@
 #include "../../home/text.h"
 #include "../../home/palettes.h"
 #include "../../home/joypad.h"
+#include "../../home/names.h"
+#include "../../home/sram.h"
+#include "../../home/pokemon.h"
+#include "../pokemon/mon_stats.h"
 #include "../../gfx/misc.h"
 #include "../../util/printer.h"
 
 bool SendScreenToPrinter(void){
-    uint8_t frames = 60;
+    uint8_t frames = 30;
     do {
     // loop:
         // CALL(aJoyTextDelay);
@@ -38,7 +42,7 @@ bool SendScreenToPrinter(void){
         // goto loop;
     } while(--frames != 0);
 
-    PrinterSaveTilemapToDisk(wram->wPrinterTilemapBuffer, wram->wAttrmap, SCREEN_WIDTH, wram->wPrinterQueueLength * 2);
+    Printer_AppendTilemap(wram->wPrinterTilemapBuffer, wram->wAttrmap, wram->wPrinterQueueLength * 2);
 
 
 // finished:
@@ -100,6 +104,7 @@ void PrintDexEntry(void){
     // LDH_addr_A(rIE);
 
     // CALL(aPrinter_StartTransmission);
+    Printer_Begin();
     // LD_A((1 << 4) | 0);
     // LD_addr_A(wPrinterMargins);
     wram->wPrinterMargins = (1 << 4) | 0;
@@ -146,7 +151,8 @@ void PrintDexEntry(void){
         // LD_addr_A(wPrinterQueueLength);
         wram->wPrinterQueueLength = 8 / 2;
         // CALL(aSendScreenToPrinter);
-        SendScreenToPrinter();
+        if(!SendScreenToPrinter())
+            Printer_SaveToDisk();
     }
 
 // skip_second_page:
@@ -154,6 +160,7 @@ void PrintDexEntry(void){
     // LDH_addr_A(hVBlank);
     // CALL(aPrinter_CleanUpAfterSend);
     Printer_CleanUpAfterSend();
+    Printer_CleanUp();
 
     // XOR_A_A;
     // LDH_addr_A(rIF);
@@ -181,102 +188,138 @@ void PrintDexEntry(void){
     // RET;
 }
 
-void PrintPCBox(void){
-    LD_A_addr(wPrinterQueueLength);
-    PUSH_AF;
-    LD_A(18 / 2);
-    LD_addr_A(wPrinterQueueLength);
+void PrintPCBox(uint32_t de, uint8_t c){
+    // LD_A_addr(wPrinterQueueLength);
+    // PUSH_AF;
+    uint8_t queueLength = wram->wPrinterQueueLength;
+    // LD_A(18 / 2);
+    // LD_addr_A(wPrinterQueueLength);
+    wram->wPrinterQueueLength = 18 / 2;
 
-    LD_A_E;
-    LD_addr_A(wAddrOfBoxToPrint);
-    LD_A_D;
-    LD_addr_A(wAddrOfBoxToPrint + 1);
-    LD_A_B;
-    LD_addr_A(wBankOfBoxToPrint);
-    LD_A_C;
-    LD_addr_A(wWhichBoxToPrint);
+    // LD_A_E;
+    // LD_addr_A(wAddrOfBoxToPrint);
+    // LD_A_D;
+    // LD_addr_A(wAddrOfBoxToPrint + 1);
+    wram->wAddrOfBoxToPrint = (de & 0xffff);
+    // LD_A_B;
+    // LD_addr_A(wBankOfBoxToPrint);
+    wram->wBankOfBoxToPrint = MBANK(de);
+    // LD_A_C;
+    // LD_addr_A(wWhichBoxToPrint);
+    wram->wWhichBoxToPrint = c;
 
-    XOR_A_A;
-    LDH_addr_A(hPrinter);
-    LD_addr_A(wFinishedPrintingBox);
-    CALL(aPrinter_PlayMusic);
+    // XOR_A_A;
+    // LDH_addr_A(hPrinter);
+    hram->hPrinter = 0;
+    // LD_addr_A(wFinishedPrintingBox);
+    wram->wFinishedPrintingBox = 0;
+    // CALL(aPrinter_PlayMusic);
+    Printer_PlayMusic();
 
-    LDH_A_addr(rIE);
-    PUSH_AF;
-    XOR_A_A;
-    LDH_addr_A(rIF);
-    LD_A((1 << SERIAL) | (1 << VBLANK));
-    LDH_addr_A(rIE);
+    // LDH_A_addr(rIE);
+    // PUSH_AF;
+    // XOR_A_A;
+    // LDH_addr_A(rIF);
+    // LD_A((1 << SERIAL) | (1 << VBLANK));
+    // LDH_addr_A(rIE);
 
-    LD_HL(hVBlank);
-    LD_A_hl;
-    PUSH_AF;
-    LD_hl(4);  // vblank mode that calls AskSerial
+    // LD_HL(hVBlank);
+    // LD_A_hl;
+    // PUSH_AF;
+    // LD_hl(4);  // vblank mode that calls AskSerial
+    Printer_Begin();
 
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    CALL(aPrintPCBox_Page1);
-    LD_A((1 << 4) | 0);  // to be loaded to wPrinterMargins
-    CALL(aPrinter_PrepareTilemapForPrint);
-    CALL(aPrinter_ResetRegistersAndStartDataSend);
-    IF_C goto cancel;
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0x0;
+    // CALL(aPrintPCBox_Page1);
+    PrintPCBox_Page1();
+    // LD_A((1 << 4) | 0);  // to be loaded to wPrinterMargins
+    // CALL(aPrinter_PrepareTilemapForPrint);
+    Printer_PrepareTilemapForPrint((1 << 4) | 0);
+    // CALL(aPrinter_ResetRegistersAndStartDataSend);
+    // IF_C goto cancel;
+    if(!Printer_ResetRegistersAndStartDataSend()) {
+        // CALL(aPrinter_CleanUpAfterSend);
+        Printer_CleanUpAfterSend();
+        // LD_C(12);
+        // CALL(aDelayFrames);
+        DelayFrames_Conv(12);
+        // XOR_A_A;
+        // LDH_addr_A(hBGMapMode);
+        hram->hBGMapMode = 0x0;
+        // CALL(aPrintPCBox_Page2);
+        PrintPCBox_Page2();
+        // LD_A((0 << 4) | 0);  // to be loaded to wPrinterMargins
+        // CALL(aPrinter_PrepareTilemapForPrint);
+        Printer_PrepareTilemapForPrint((0 << 4) | 0);
+        // CALL(aPrinter_ResetRegistersAndStartDataSend);
+        // IF_C goto cancel;
+        if(!Printer_ResetRegistersAndStartDataSend()) {
+            // CALL(aPrinter_CleanUpAfterSend);
+            Printer_CleanUpAfterSend();
+            // LD_C(12);
+            // CALL(aDelayFrames);
+            DelayFrames_Conv(12);
 
-    CALL(aPrinter_CleanUpAfterSend);
-    LD_C(12);
-    CALL(aDelayFrames);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    CALL(aPrintPCBox_Page2);
-    LD_A((0 << 4) | 0);  // to be loaded to wPrinterMargins
-    CALL(aPrinter_PrepareTilemapForPrint);
-    CALL(aPrinter_ResetRegistersAndStartDataSend);
-    IF_C goto cancel;
+            // XOR_A_A;
+            // LDH_addr_A(hBGMapMode);
+            hram->hBGMapMode = 0x0;
+            // CALL(aPrintPCBox_Page3);
+            PrintPCBox_Page3();
+            // LD_A((0 << 4) | 0);  // to be loaded to wPrinterMargins
+            // CALL(aPrinter_PrepareTilemapForPrint);
+            Printer_PrepareTilemapForPrint((0 << 4) | 0);
+            // CALL(aPrinter_ResetRegistersAndStartDataSend);
+            // IF_C goto cancel;
+            if(!Printer_ResetRegistersAndStartDataSend()) {
+                // CALL(aPrinter_CleanUpAfterSend);
+                Printer_CleanUpAfterSend();
+                // LD_C(12);
+                // CALL(aDelayFrames);
+                DelayFrames_Conv(12);
 
-    CALL(aPrinter_CleanUpAfterSend);
-    LD_C(12);
-    CALL(aDelayFrames);
-
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    CALL(aPrintPCBox_Page3);
-    LD_A((0 << 4) | 0);  // to be loaded to wPrinterMargins
-    CALL(aPrinter_PrepareTilemapForPrint);
-    CALL(aPrinter_ResetRegistersAndStartDataSend);
-    IF_C goto cancel;
-
-    CALL(aPrinter_CleanUpAfterSend);
-    LD_C(12);
-    CALL(aDelayFrames);
-
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    CALL(aPrintPCBox_Page4);
-    LD_A((0 << 4) | 3);  // to be loaded to wPrinterMargins
-    CALL(aPrinter_PrepareTilemapForPrint);
-    CALL(aPrinter_ResetRegistersAndStartDataSend);
+                // XOR_A_A;
+                // LDH_addr_A(hBGMapMode);
+                hram->hBGMapMode = 0x0;
+                // CALL(aPrintPCBox_Page4);
+                PrintPCBox_Page4();
+                // LD_A((0 << 4) | 3);  // to be loaded to wPrinterMargins
+                // CALL(aPrinter_PrepareTilemapForPrint);
+                Printer_PrepareTilemapForPrint((0 << 4) | 3);
+                // CALL(aPrinter_ResetRegistersAndStartDataSend);
+                if(!Printer_ResetRegistersAndStartDataSend())
+                    Printer_SaveToDisk();
+            }
+        }
+    }
 
 cancel:
-    POP_AF;
-    LDH_addr_A(hVBlank);
-    CALL(aPrinter_CleanUpAfterSend);
+    // POP_AF;
+    // LDH_addr_A(hVBlank);
+    // CALL(aPrinter_CleanUpAfterSend);
+    Printer_CleanUpAfterSend();
+    Printer_CleanUp();
 
-    XOR_A_A;
-    LDH_addr_A(rIF);
-    POP_AF;
-    LDH_addr_A(rIE);
-    CALL(aPrinter_ExitPrinter);
+    // XOR_A_A;
+    // LDH_addr_A(rIF);
+    // POP_AF;
+    // LDH_addr_A(rIE);
+    // CALL(aPrinter_ExitPrinter);
+    Printer_ExitPrinter();
 
-    POP_AF;
-    LD_addr_A(wPrinterQueueLength);
-    RET;
-
+    // POP_AF;
+    // LD_addr_A(wPrinterQueueLength);
+    wram->wPrinterQueueLength = queueLength;
+    // RET;
 }
 
-void Printer_ResetRegistersAndStartDataSend(void){
-    CALL(aPrinter_ResetJoypadRegisters);
-    CALL(aSendScreenToPrinter);
-    RET;
-
+bool Printer_ResetRegistersAndStartDataSend(void){
+    // CALL(aPrinter_ResetJoypadRegisters);
+    Printer_ResetJoypadRegisters();
+    // CALL(aSendScreenToPrinter);
+    // RET;
+    return SendScreenToPrinter();
 }
 
 void PrintUnownStamp(void){
@@ -425,6 +468,7 @@ void PrintPartymon(void){
     PrintPartyMonPage1();
     // LD_A((1 << 4) | 0);  // to be loaded to wPrinterMargins
     // CALL(aPrinter_PrepareTilemapForPrint);
+    Printer_Begin();
     Printer_PrepareTilemapForPrint((1 << 4) | 0);
 
     // LD_HL(hVBlank);
@@ -461,7 +505,8 @@ void PrintPartymon(void){
         // CALL(aPrinter_ResetJoypadRegisters);
         Printer_ResetJoypadRegisters();
         // CALL(aSendScreenToPrinter);
-        SendScreenToPrinter();
+        if(!SendScreenToPrinter())
+            Printer_SaveToDisk();
     }
 
 // cancel:
@@ -469,6 +514,7 @@ void PrintPartymon(void){
     // LDH_addr_A(hVBlank);
     // CALL(aPrinter_CleanUpAfterSend);
     Printer_CleanUpAfterSend();
+    Printer_CleanUp();
 
     // CALL(aPrinter_CopyBufferToTilemap);
     Printer_CopyBufferToTilemap();
@@ -778,264 +824,321 @@ const char* PrinterStatusStringPointers[] = {
 };
 
 void PrintPCBox_Page1(void){
-    XOR_A_A;
-    LD_addr_A(wWhichBoxMonToPrint);
-    hlcoord(0, 0, wTilemap);
-    LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
-    LD_A(0x7f);
-    CALL(aByteFill);
-    CALL(aPrinter_PlaceEmptyBoxSlotString);
+    // XOR_A_A;
+    // LD_addr_A(wWhichBoxMonToPrint);
+    wram->wWhichBoxMonToPrint = 0x0;
+    // hlcoord(0, 0, wTilemap);
+    // LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
+    // LD_A(0x7f);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_HEIGHT * SCREEN_WIDTH, 0x7f);
+    // CALL(aPrinter_PlaceEmptyBoxSlotString);
+    Printer_PlaceEmptyBoxSlotString();
 
-    hlcoord(0, 0, wTilemap);
-    LD_BC(9 * SCREEN_WIDTH);
-    LD_A(0x7f);
-    CALL(aByteFill);
+    // hlcoord(0, 0, wTilemap);
+    // LD_BC(9 * SCREEN_WIDTH);
+    // LD_A(0x7f);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(0, 0, wram->wTilemap), 9 * SCREEN_WIDTH, 0x7f);
 
-    CALL(aPrinter_PlaceSideBorders);
-    CALL(aPrinter_PlaceTopBorder);
+    // CALL(aPrinter_PlaceSideBorders);
+    Printer_PlaceSideBorders();
+    // CALL(aPrinter_PlaceTopBorder);
+    Printer_PlaceTopBorder();
 
-    hlcoord(4, 3, wTilemap);
-    LD_DE(mPrintPCBox_Page1_String_PokemonList);
-    CALL(aPlaceString);
+    // hlcoord(4, 3, wTilemap);
+    // LD_DE(mPrintPCBox_Page1_String_PokemonList);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C("#MON LIST@"), coord(4, 3, wram->wTilemap));
 
-    LD_A_addr(wWhichBoxToPrint);
-    LD_BC(BOX_NAME_LENGTH);
-    LD_HL(wBoxNames);
-    CALL(aAddNTimes);
-    LD_D_H;
-    LD_E_L;
-    hlcoord(6, 5, wTilemap);
-    CALL(aPlaceString);
-    LD_A(1);
-    CALL(aPrinter_GetBoxMonSpecies);
-    hlcoord(2, 9, wTilemap);
-    LD_C(3);
-    CALL(aPrinter_PrintBoxListSegment);
-    RET;
-
-
-String_PokemonList:
-    //db ['"#MON LIST@"'];
-
-    return PrintPCBox_Page2();
+    // LD_A_addr(wWhichBoxToPrint);
+    // LD_BC(BOX_NAME_LENGTH);
+    // LD_HL(wBoxNames);
+    // CALL(aAddNTimes);
+    // LD_D_H;
+    // LD_E_L;
+    // hlcoord(6, 5, wTilemap);
+    // CALL(aPlaceString);
+    PlaceStringSimple(wram->wBoxNames + wram->wWhichBoxToPrint * BOX_NAME_LENGTH, coord(6, 5, wram->wTilemap));
+    // LD_A(1);
+    // CALL(aPrinter_GetBoxMonSpecies);
+    uint16_t de = Printer_GetBoxMonSpecies(1);
+    // hlcoord(2, 9, wTilemap);
+    // LD_C(3);
+    // CALL(aPrinter_PrintBoxListSegment);
+    Printer_PrintBoxListSegment(coord(2, 9, wram->wTilemap), de, 3);
+    // RET;
 }
 
 void PrintPCBox_Page2(void){
-    hlcoord(0, 0, wTilemap);
-    LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
-    LD_A(0x7f);
-    CALL(aByteFill);
-    CALL(aPrinter_PlaceEmptyBoxSlotString);
-    CALL(aPrinter_PlaceSideBorders);
-    LD_A_addr(wFinishedPrintingBox);
-    AND_A_A;
-    RET_NZ ;
-    LD_A(4);
-    CALL(aPrinter_GetBoxMonSpecies);
-    hlcoord(2, 0, wTilemap);
-    LD_C(6);
-    CALL(aPrinter_PrintBoxListSegment);
-    RET;
+    // hlcoord(0, 0, wTilemap);
+    // LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
+    // LD_A(0x7f);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_HEIGHT * SCREEN_WIDTH, 0x7f);
+    // CALL(aPrinter_PlaceEmptyBoxSlotString);
+    Printer_PlaceEmptyBoxSlotString();
+    // CALL(aPrinter_PlaceSideBorders);
+    Printer_PlaceSideBorders();
+    // LD_A_addr(wFinishedPrintingBox);
+    // AND_A_A;
+    // RET_NZ ;
+    if(wram->wFinishedPrintingBox)
+        return;
+    // LD_A(4);
+    // CALL(aPrinter_GetBoxMonSpecies);
+    uint16_t de = Printer_GetBoxMonSpecies(4);
+    // hlcoord(2, 0, wTilemap);
+    // LD_C(6);
+    // CALL(aPrinter_PrintBoxListSegment);
+    Printer_PrintBoxListSegment(coord(2, 0, wram->wTilemap), de, 6);
+    // RET;
 
 }
 
 void PrintPCBox_Page3(void){
-    hlcoord(0, 0, wTilemap);
-    LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
-    LD_A(0x7f);
-    CALL(aByteFill);
-    CALL(aPrinter_PlaceEmptyBoxSlotString);
-    CALL(aPrinter_PlaceSideBorders);
-    LD_A_addr(wFinishedPrintingBox);
-    AND_A_A;
-    RET_NZ ;
-    LD_A(10);
-    CALL(aPrinter_GetBoxMonSpecies);
-    hlcoord(2, 0, wTilemap);
-    LD_C(6);
-    CALL(aPrinter_PrintBoxListSegment);
-    RET;
-
+    // hlcoord(0, 0, wTilemap);
+    // LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
+    // LD_A(0x7f);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_HEIGHT * SCREEN_WIDTH, 0x7f);
+    // CALL(aPrinter_PlaceEmptyBoxSlotString);
+    Printer_PlaceEmptyBoxSlotString();
+    // CALL(aPrinter_PlaceSideBorders);
+    Printer_PlaceSideBorders();
+    // LD_A_addr(wFinishedPrintingBox);
+    // AND_A_A;
+    // RET_NZ ;
+    if(wram->wFinishedPrintingBox)
+        return;
+    // LD_A(10);
+    // CALL(aPrinter_GetBoxMonSpecies);
+    uint16_t de = Printer_GetBoxMonSpecies(10);
+    // hlcoord(2, 0, wTilemap);
+    // LD_C(6);
+    // CALL(aPrinter_PrintBoxListSegment);
+    Printer_PrintBoxListSegment(coord(2, 0, wram->wTilemap), de, 6);
+    // RET;
 }
 
 void PrintPCBox_Page4(void){
-    hlcoord(0, 0, wTilemap);
-    LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
-    LD_A(0x7f);
-    CALL(aByteFill);
-    CALL(aPrinter_PlaceEmptyBoxSlotString);
-    hlcoord(1, 15, wTilemap);
-    LD_BC((2 << 8) | 18);
-    CALL(aClearBox);
-    CALL(aPrinter_PlaceSideBorders);
-    CALL(aPrinter_PlaceBottomBorders);
-    LD_A_addr(wFinishedPrintingBox);
-    AND_A_A;
-    RET_NZ ;
-    LD_A(16);
-    CALL(aPrinter_GetBoxMonSpecies);
-    hlcoord(2, 0, wTilemap);
-    LD_C(5);
-    CALL(aPrinter_PrintBoxListSegment);
-    RET;
-
+    // hlcoord(0, 0, wTilemap);
+    // LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
+    // LD_A(0x7f);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_HEIGHT * SCREEN_WIDTH, 0x7f);
+    // CALL(aPrinter_PlaceEmptyBoxSlotString);
+    Printer_PlaceEmptyBoxSlotString();
+    // hlcoord(1, 15, wTilemap);
+    // LD_BC((2 << 8) | 18);
+    // CALL(aClearBox);
+    ClearBox_Conv2(coord(1, 15, wram->wTilemap), 18, 2);
+    // CALL(aPrinter_PlaceSideBorders);
+    Printer_PlaceSideBorders();
+    // CALL(aPrinter_PlaceBottomBorders);
+    Printer_PlaceBottomBorders();
+    // LD_A_addr(wFinishedPrintingBox);
+    // AND_A_A;
+    // RET_NZ ;
+    if(wram->wFinishedPrintingBox)
+        return;
+    // LD_A(16);
+    // CALL(aPrinter_GetBoxMonSpecies);
+    uint16_t de = Printer_GetBoxMonSpecies(16);
+    // hlcoord(2, 0, wTilemap);
+    // LD_C(5);
+    // CALL(aPrinter_PrintBoxListSegment);
+    Printer_PrintBoxListSegment(coord(2, 0, wram->wTilemap), de, 5);
+    // RET;
 }
 
-void Printer_PrintBoxListSegment(void){
-    LD_A_addr(wBankOfBoxToPrint);
-    CALL(aOpenSRAM);
+void Printer_PrintBoxListSegment(tile_t* hl, uint16_t de, uint8_t c){
+    // LD_A_addr(wBankOfBoxToPrint);
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(wram->wBankOfBoxToPrint);
+    species_t* boxSpecies = (species_t*)GBToRAMAddr(de);
 
-loop:
-    LD_A_C;
-    AND_A_A;
-    JP_Z (mPrinter_PrintBoxListSegment_max_length);
-    DEC_C;
-    LD_A_de;
-    CP_A(0xff);
-    JP_Z (mPrinter_PrintBoxListSegment_finish);
-    LD_addr_A(wNamedObjectIndex);
-    LD_addr_A(wCurPartySpecies);
+    while(1) {
+    // loop:
+        // LD_A_C;
+        // AND_A_A;
+        // JP_Z (mPrinter_PrintBoxListSegment_max_length);
+        if(c == 0)
+            goto max_length;
+        // DEC_C;
+        --c;
+        // LD_A_de;
+        // CP_A(0xff);
+        // JP_Z (mPrinter_PrintBoxListSegment_finish);
+        printf("species = %d vs %d vs %d\n", *boxSpecies, boxSpecies[1], boxSpecies[-1]);
+        if(*boxSpecies == (species_t)-1)
+            break;
+        // LD_addr_A(wNamedObjectIndex);
+        // LD_addr_A(wCurPartySpecies);
+        wram->wCurPartySpecies = *boxSpecies;
 
-    PUSH_BC;
-    PUSH_HL;
-    PUSH_DE;
+        // PUSH_BC;
+        // PUSH_HL;
+        // PUSH_DE;
 
-    PUSH_HL;
-    LD_BC(16);
-    LD_A(0x7f);
-    CALL(aByteFill);
-    POP_HL;
+        // PUSH_HL;
+        // LD_BC(16);
+        // LD_A(0x7f);
+        // CALL(aByteFill);
+        ByteFill_Conv2(hl, 16, 0x7f);
+        // POP_HL;
 
-    PUSH_HL;
-    CALL(aGetBasePokemonName);
-    POP_HL;
+        // PUSH_HL;
+        // CALL(aGetBasePokemonName);
+        // POP_HL;
 
-    PUSH_HL;
-    CALL(aPlaceString);
-    LD_A_addr(wCurPartySpecies);
-    CP_A(EGG);
-    POP_HL;
-    IF_Z goto ok2;
+        // PUSH_HL;
+        // CALL(aPlaceString);
+        PlaceStringSimple(GetBasePokemonName_Conv2(*boxSpecies), hl);
+        // LD_A_addr(wCurPartySpecies);
+        // CP_A(EGG);
+        // POP_HL;
+        // IF_Z goto ok2;
+        if(wram->wCurPartySpecies != EGG) {
+            // LD_BC(MON_NAME_LENGTH);
+            // ADD_HL_BC;
+            tile_t* hl2 = hl + MON_NAME_LENGTH;
+            // CALL(aPrinter_GetMonGender);
+            hl2 = Printer_GetMonGender(hl2);
+            // LD_BC(SCREEN_WIDTH - MON_NAME_LENGTH);
+            // ADD_HL_BC;
+            hl2 += SCREEN_WIDTH - MON_NAME_LENGTH;
+            // LD_A(0xf3);
+            // LD_hli_A;
+            *(hl2++) = 0xf3;
 
-    LD_BC(MON_NAME_LENGTH);
-    ADD_HL_BC;
-    CALL(aPrinter_GetMonGender);
-    LD_BC(SCREEN_WIDTH - MON_NAME_LENGTH);
-    ADD_HL_BC;
-    LD_A(0xf3);
-    LD_hli_A;
+            // PUSH_HL;
+            // LD_BC(14);
+            // LD_A(0x7f);
+            // CALL(aByteFill);
+            ByteFill_Conv2(hl2, 14, 0x7f);
+            // POP_HL;
 
-    PUSH_HL;
-    LD_BC(14);
-    LD_A(0x7f);
-    CALL(aByteFill);
-    POP_HL;
+            // PUSH_HL;
+            // LD_A_addr(wAddrOfBoxToPrint);
+            // LD_L_A;
+            // LD_A_addr(wAddrOfBoxToPrint + 1);
+            // LD_H_A;
+            // LD_BC(sBoxMonNicknames - sBox);
+            // ADD_HL_BC;
+            uint8_t* nicknames = (uint8_t*)GBToRAMAddr(wram->wAddrOfBoxToPrint + (sBoxMonNicknames - sBox));
+            // LD_BC(MON_NAME_LENGTH);
+            // LD_A_addr(wWhichBoxMonToPrint);
+            // CALL(aAddNTimes);
+            // LD_E_L;
+            // LD_D_H;
+            uint8_t* nick = nicknames + (wram->wWhichBoxMonToPrint * MON_NAME_LENGTH);
+            // POP_HL;
 
-    PUSH_HL;
-    LD_A_addr(wAddrOfBoxToPrint);
-    LD_L_A;
-    LD_A_addr(wAddrOfBoxToPrint + 1);
-    LD_H_A;
-    LD_BC(sBoxMonNicknames - sBox);
-    ADD_HL_BC;
-    LD_BC(MON_NAME_LENGTH);
-    LD_A_addr(wWhichBoxMonToPrint);
-    CALL(aAddNTimes);
-    LD_E_L;
-    LD_D_H;
-    POP_HL;
+            // PUSH_HL;
+            // CALL(aPlaceString);
+            PlaceStringSimple(nick, hl2);
+            // POP_HL;
 
-    PUSH_HL;
-    CALL(aPlaceString);
-    POP_HL;
+            // LD_BC(MON_NAME_LENGTH);
+            // ADD_HL_BC;
+            // PUSH_HL;
+            hl2 += MON_NAME_LENGTH;
+            // LD_A_addr(wAddrOfBoxToPrint);
+            // LD_L_A;
+            // LD_A_addr(wAddrOfBoxToPrint + 1);
+            // LD_H_A;
+            // LD_BC(2 + MONS_PER_BOX + MON_LEVEL);
+            // ADD_HL_BC;
+            // LD_BC(BOXMON_STRUCT_LENGTH);
+            // LD_A_addr(wWhichBoxMonToPrint);
+            // CALL(aAddNTimes);
+            // LD_A_hl;
+            uint8_t level = ((struct BoxMon*)GBToRAMAddr(wram->wAddrOfBoxToPrint + 2 + MONS_PER_BOX))[wram->wWhichBoxMonToPrint].level;
+            // POP_HL;
+            // CALL(aPrintLevel_Force3Digits);
+            PrintLevel_Force3Digits_Conv(hl2, level);
+        }
+    // ok2:
+        // LD_HL(wWhichBoxMonToPrint);
+        // INC_hl;
+        wram->wWhichBoxMonToPrint++;
+        // POP_DE;
+        // POP_HL;
+        // LD_BC(3 * SCREEN_WIDTH);
+        // ADD_HL_BC;
+        hl += 3 * SCREEN_WIDTH;
+        // POP_BC;
+        // INC_DE;
+        boxSpecies++;
+        // JP(mPrinter_PrintBoxListSegment_loop);
+    }
 
-    LD_BC(MON_NAME_LENGTH);
-    ADD_HL_BC;
-    PUSH_HL;
-    LD_A_addr(wAddrOfBoxToPrint);
-    LD_L_A;
-    LD_A_addr(wAddrOfBoxToPrint + 1);
-    LD_H_A;
-    LD_BC(2 + MONS_PER_BOX + MON_LEVEL);
-    ADD_HL_BC;
-    LD_BC(BOXMON_STRUCT_LENGTH);
-    LD_A_addr(wWhichBoxMonToPrint);
-    CALL(aAddNTimes);
-    LD_A_hl;
-    POP_HL;
-    CALL(aPrintLevel_Force3Digits);
-
-ok2:
-    LD_HL(wWhichBoxMonToPrint);
-    INC_hl;
-    POP_DE;
-    POP_HL;
-    LD_BC(3 * SCREEN_WIDTH);
-    ADD_HL_BC;
-    POP_BC;
-    INC_DE;
-    JP(mPrinter_PrintBoxListSegment_loop);
-
-
-finish:
-    LD_A(0x1);
-    LD_addr_A(wFinishedPrintingBox);
+// finish:
+    // LD_A(0x1);
+    // LD_addr_A(wFinishedPrintingBox);
+    wram->wFinishedPrintingBox = 0x1;
 
 max_length:
-    CALL(aCloseSRAM);
-    RET;
-
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
 }
 
-void Printer_GetMonGender(void){
-    PUSH_HL;
-    LD_A_addr(wAddrOfBoxToPrint);
-    LD_L_A;
-    LD_A_addr(wAddrOfBoxToPrint + 1);
-    LD_H_A;
-    LD_BC(2 + MONS_PER_BOX + MON_DVS);
-    ADD_HL_BC;
-    LD_BC(BOXMON_STRUCT_LENGTH);
-    LD_A_addr(wWhichBoxMonToPrint);
-    CALL(aAddNTimes);
-    LD_DE(wTempMonDVs);
-    LD_A_hli;
-    LD_de_A;
-    INC_DE;
-    LD_A_hli;
-    LD_de_A;
-    LD_A_addr(wWhichBoxMonToPrint);
-    LD_addr_A(wCurPartyMon);
-    LD_A(TEMPMON);
-    LD_addr_A(wMonType);
-    FARCALL(aGetGender);
-    LD_A(0x7f);
-    IF_C goto got_gender;
-    LD_A(0xef);
-    IF_NZ goto got_gender;
-    LD_A(0xf5);
+tile_t* Printer_GetMonGender(tile_t* hl){
+    // PUSH_HL;
+    // LD_A_addr(wAddrOfBoxToPrint);
+    // LD_L_A;
+    // LD_A_addr(wAddrOfBoxToPrint + 1);
+    // LD_H_A;
+    // LD_BC(2 + MONS_PER_BOX + MON_DVS);
+    // ADD_HL_BC;
+    struct BoxMon* boxMon = (struct BoxMon*)GBToRAMAddr(wram->wAddrOfBoxToPrint + 2 + MONS_PER_BOX);
+    // LD_BC(BOXMON_STRUCT_LENGTH);
+    // LD_A_addr(wWhichBoxMonToPrint);
+    // CALL(aAddNTimes);
+    // LD_DE(wTempMonDVs);
+    // LD_A_hli;
+    // LD_de_A;
+    // INC_DE;
+    // LD_A_hli;
+    // LD_de_A;
+    wram->wTempMon.mon.DVs = boxMon[wram->wWhichBoxMonToPrint].DVs;
+    // LD_A_addr(wWhichBoxMonToPrint);
+    // LD_addr_A(wCurPartyMon);
+    wram->wCurPartyMon = wram->wWhichBoxMonToPrint;
+    // LD_A(TEMPMON);
+    // LD_addr_A(wMonType);
+    // FARCALL(aGetGender);
+    u8_flag_s res = GetGender_Conv(TEMPMON);
+    // LD_A(0x7f);
+    // IF_C goto got_gender;
+    // LD_A(0xef);
+    // IF_NZ goto got_gender;
+    // LD_A(0xf5);
 
-got_gender:
-    POP_HL;
-    LD_hli_A;
-    RET;
-
+// got_gender:
+    // POP_HL;
+    // LD_hli_A;
+    *(hl++) = (res.flag)? 0x7f: (res.a != 0)? 0xef: 0xf5;
+    // RET;
+    return hl;
 }
 
-void Printer_GetBoxMonSpecies(void){
-    PUSH_HL;
-    LD_E_A;
-    LD_D(0);
-    LD_A_addr(wAddrOfBoxToPrint);
-    LD_L_A;
-    LD_A_addr(wAddrOfBoxToPrint + 1);
-    LD_H_A;
-    ADD_HL_DE;
-    LD_E_L;
-    LD_D_H;
-    POP_HL;
-    RET;
-
+uint16_t Printer_GetBoxMonSpecies(uint8_t a){
+    // PUSH_HL;
+    // LD_E_A;
+    // LD_D(0);
+    // LD_A_addr(wAddrOfBoxToPrint);
+    // LD_L_A;
+    // LD_A_addr(wAddrOfBoxToPrint + 1);
+    // LD_H_A;
+    // ADD_HL_DE;
+    // LD_E_L;
+    // LD_D_H;
+    // POP_HL;
+    // RET;
+    return wram->wAddrOfBoxToPrint + a;
 }
 
 void Printer_PlaceTopBorder(void){
@@ -1062,58 +1165,74 @@ void Printer_PlaceTopBorder(void){
 }
 
 void Printer_PlaceSideBorders(void){
-    hlcoord(0, 0, wTilemap);
-    LD_DE(SCREEN_WIDTH - 1);
-    LD_C(SCREEN_HEIGHT);
+    // hlcoord(0, 0, wTilemap);
+    tile_t* hl = coord(0, 0, wram->wTilemap);
+    // LD_DE(SCREEN_WIDTH - 1);
+    // LD_C(SCREEN_HEIGHT);
+    uint8_t c = SCREEN_HEIGHT;
 
-loop:
-    LD_A(0x7c);
-    LD_hl_A;
-    ADD_HL_DE;
-    LD_A(0x7c);
-    LD_hli_A;
-    DEC_C;
-    IF_NZ goto loop;
-    RET;
-
+    do {
+    // loop:
+        // LD_A(0x7c);
+        // LD_hl_A;
+        hl[0] = 0x7c;
+        // ADD_HL_DE;
+        // LD_A(0x7c);
+        // LD_hli_A;
+        hl[SCREEN_WIDTH - 1] = 0x7c;
+        hl += SCREEN_WIDTH;
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(--c != 0);
+    // RET;
 }
 
 void Printer_PlaceBottomBorders(void){
-    hlcoord(0, 17, wTilemap);
-    LD_A(0x7d);
-    LD_hli_A;
-    LD_A(0x7a);
-    LD_C(SCREEN_WIDTH - 2);
+    // hlcoord(0, 17, wTilemap);
+    tile_t* hl = coord(0, 17, wram->wTilemap);
+    // LD_A(0x7d);
+    // LD_hli_A;
+    *(hl++) = 0x7d;
+    // LD_A(0x7a);
+    // LD_C(SCREEN_WIDTH - 2);
+    uint8_t c = SCREEN_WIDTH - 2;
 
-loop:
-    LD_hli_A;
-    DEC_C;
-    IF_NZ goto loop;
-    LD_A(0x7e);
-    LD_hl_A;
-    RET;
-
+    do {
+    // loop:
+        // LD_hli_A;
+        *(hl++) = 0x7a;
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(--c != 0);
+    // LD_A(0x7e);
+    // LD_hl_A;
+    *hl = 0x7e;
+    // RET;
 }
 
 void Printer_PlaceEmptyBoxSlotString(void){
-    hlcoord(2, 0, wTilemap);
-    LD_C(6);
+    static const char EmptyBoxSlotString[] = "  ------@";
+    // hlcoord(2, 0, wTilemap);
+    tile_t* hl = coord(2, 0, wram->wTilemap);
+    // LD_C(6);
+    uint8_t c = 6;
+    uint8_t* str = U82C(EmptyBoxSlotString);
 
-loop:
-    PUSH_BC;
-    PUSH_HL;
-    LD_DE(mPrinter_PlaceEmptyBoxSlotString_EmptyBoxSlotString);
-    CALL(aPlaceString);
-    POP_HL;
-    LD_BC(3 * SCREEN_WIDTH);
-    ADD_HL_BC;
-    POP_BC;
-    DEC_C;
-    IF_NZ goto loop;
-    RET;
-
-
-EmptyBoxSlotString:
-    //db ['"  ------@"'];
+    do {
+    // loop:
+        // PUSH_BC;
+        // PUSH_HL;
+        // LD_DE(mPrinter_PlaceEmptyBoxSlotString_EmptyBoxSlotString);
+        // CALL(aPlaceString);
+        PlaceStringSimple(str, hl);
+        // POP_HL;
+        // LD_BC(3 * SCREEN_WIDTH);
+        // ADD_HL_BC;
+        hl += 3 * SCREEN_WIDTH;
+        // POP_BC;
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(--c != 0);
+    // RET;
 
 }

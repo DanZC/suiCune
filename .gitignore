@@ -68,6 +68,7 @@ tools/blk_to_tmx.py
 
 # screenshots and recordings
 screenshot*.bmp
+printer*.bmp
 recording*.mp4
 assets.zip
 suiCune.sln

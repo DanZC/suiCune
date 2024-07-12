@@ -83,7 +83,7 @@
 #include "engine/events/mom.h"
 #include "engine/events/daycare.h"
 //#include "engine/events/print_unown.h"
-//#include "engine/events/print_photo.h"
+#include "engine/events/print_photo.h"
 #include "engine/pokemon/breeding.h"
 
 // SECTION "Roofs", ROMX
