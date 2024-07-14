@@ -1,6 +1,8 @@
 #include "../../constants.h"
 #include "mystery_gift.h"
 #include "mystery_gift_2.h"
+#include "lan.h"
+#include "../../util/network.h"
 #include "../../home/sram.h"
 #include "../../home/copy.h"
 #include "../../home/tilemap.h"
@@ -9,6 +11,7 @@
 #include "../../home/clear_sprites.h"
 #include "../../home/names.h"
 #include "../../home/delay.h"
+#include "../../home/joypad.h"
 #include "../smallflag.h"
 #include "../overworld/decorations.h"
 #include "../../mobile/mobile_41.h"
@@ -178,11 +181,11 @@ void DoMysteryGift(void){
         text_far(v_MysteryGiftSentText)
         text_end
     };
-    static const char String_PressAToLink_BToCancel[] = 
-               "Press A to"
-        t_next "link IR-Device"
-        t_next "Press B to"
-        t_next "cancel it.";
+    // static const char String_PressAToLink_BToCancel[] = 
+    //            "Press A to"
+    //     t_next "link IR-Device"
+    //     t_next "Press B to"
+    //     t_next "cancel it.";
     while(1) {
         // CALL(aClearTilemap);
         ClearTilemap_Conv2();
@@ -195,7 +198,7 @@ void DoMysteryGift(void){
         // hlcoord(3, 8, wTilemap);
         // LD_DE(mDoMysteryGift_String_PressAToLink_BToCancel);
         // CALL(aPlaceString);
-        PlaceStringSimple(U82C(String_PressAToLink_BToCancel), coord(3, 8, wram->wTilemap));
+        // PlaceStringSimple(U82C(String_PressAToLink_BToCancel), coord(3, 8, wram->wTilemap));
         // CALL(aWaitBGMap);
         WaitBGMap_Conv();
 
@@ -215,8 +218,7 @@ void DoMysteryGift(void){
         // PUSH_AF;
         // CALL(aExchangeMysteryGiftData);
     // TODO: Actually implement mystery gift exchange.
-        DelayFrames_Conv(120);
-        uint8_t d = MG_CANCELED;
+        uint8_t d = ExchangeMysteryGiftData();
         // LD_D_A;
         // XOR_A_A;
         // LDH_addr_A(rIF);
@@ -433,84 +435,127 @@ void DoMysteryGift(void){
 
 }
 
-void ExchangeMysteryGiftData(void){
-    NOP;
-    FARCALL(aClearChannels);
-    CALL(aInitializeIRCommunicationInterrupts);
+uint8_t ExchangeMysteryGiftData(void){
+    static const char String_ExchangingData_BToCancel[] = 
+               "Exchanging"
+        t_next "data<...> <...>"
+        t_next "Press B to"
+        t_next "cancel.";
+    // NOP;
+    // FARCALL(aClearChannels);
+    // CALL(aInitializeIRCommunicationInterrupts);
+    LANConnection();
+    if(wram->wScriptVar == FALSE)
+        return MG_CANCELED;
 
+    PlaceStringSimple(U82C(String_ExchangingData_BToCancel), coord(3, 8, wram->wTilemap));
+    Network_FlushPendingPacketsAndSync();
 
-restart:
-    CALL(aBeginIRCommunication);
-    CALL(aInitializeIRCommunicationRoles);
-    LDH_A_addr(hMGStatusFlags);
-    CP_A(MG_CANCELED);
-    JP_Z (mEndOrContinueMysteryGiftIRCommunication);
-    CP_A(MG_OKAY);
-    IF_NZ goto restart;
+    int res;
+    do {
+    // restart:
+        GetJoypad_Conv2();
+        // CALL(aBeginIRCommunication);
+        // CALL(aInitializeIRCommunicationRoles);
+        res = Network_ExchangeBytes(&wram->wMysteryGiftGameVersion, wram->wMysteryGiftStaging, 80);
+        // LDH_A_addr(hMGStatusFlags);
+        // CP_A(MG_CANCELED);
+        // JP_Z (mEndOrContinueMysteryGiftIRCommunication);
+        if(res == NETWORK_XCHG_NO_CONNECTION || bit_test(hram->hJoyPressed, B_BUTTON_F)) {
+            LANCloseConnection();
+            return MG_CANCELED;
+        }
+        // CP_A(MG_OKAY);
+        // IF_NZ goto restart;
+        DelayFrame();
+    } while(res != NETWORK_XCHG_OK);
 
-    LDH_A_addr(hMGRole);
-    CP_A(IR_SENDER);
-    JR_Z (mSenderExchangeMysteryGiftDataPayloads);
+    Network_FlushPendingPacketsAndSync();
+    StagePartyDataForMysteryGift();
+    do {
+    // restart:
+        GetJoypad_Conv2();
+        // CALL(aBeginIRCommunication);
+        // CALL(aInitializeIRCommunicationRoles);
+        res = Network_ExchangeBytes(wram->wMysteryGiftTrainer, wram->wMysteryGiftStaging, sizeof(wram->wMysteryGiftTrainer));
+        // LDH_A_addr(hMGStatusFlags);
+        // CP_A(MG_CANCELED);
+        // JP_Z (mEndOrContinueMysteryGiftIRCommunication);
+        if(res == NETWORK_XCHG_NO_CONNECTION || bit_test(hram->hJoyPressed, B_BUTTON_F)) {
+            LANCloseConnection();
+            return MG_CANCELED;
+        }
+        // CP_A(MG_OKAY);
+        // IF_NZ goto restart;
+        DelayFrame();
+    } while(res != NETWORK_XCHG_OK);
+
+    LANCloseConnection();
+    return MG_OKAY;
+
+    // LDH_A_addr(hMGRole);
+    // CP_A(IR_SENDER);
+    // JR_Z (mSenderExchangeMysteryGiftDataPayloads);
 //  receiver
-    LD_HL(hMGExchangedByte);
-    LD_B(1);
-    CALL(aTryReceivingIRDataBlock);
-    IF_NZ goto failed;
-    CALL(aReceiveMysteryGiftDataPayload_GotRegionPrefix);
-    JP_NZ (mEndOrContinueMysteryGiftIRCommunication);
-    JR(mReceiverExchangeMysteryGiftDataPayloads_GotPayload);
+    // LD_HL(hMGExchangedByte);
+    // LD_B(1);
+    // CALL(aTryReceivingIRDataBlock);
+    // IF_NZ goto failed;
+    // CALL(aReceiveMysteryGiftDataPayload_GotRegionPrefix);
+    // JP_NZ (mEndOrContinueMysteryGiftIRCommunication);
+    // JR(mReceiverExchangeMysteryGiftDataPayloads_GotPayload);
 
 
-failed:
+// failed:
 // Delay frame
 
-wait_frame:
-    LDH_A_addr(rLY);
-    CP_A(LY_VBLANK);
-    IF_C goto wait_frame;
+// wait_frame:
+    // LDH_A_addr(rLY);
+    // CP_A(LY_VBLANK);
+    // IF_C goto wait_frame;
 
-    LD_C(LOW(rRP));
-    LD_A(rRP_ENABLE_READ_MASK);
-    LDH_c_A;
+    // LD_C(LOW(rRP));
+    // LD_A(rRP_ENABLE_READ_MASK);
+    // LDH_c_A;
 
-    LD_B(60 * 4);  // 4 seconds
+    // LD_B(60 * 4);  // 4 seconds
 
-continue_:
-    PUSH_BC;
-    CALL(aMysteryGift_UpdateJoypad);
-    LD_B(1 << rRP_RECEIVING);
-    LD_C(LOW(rRP));
+// continue_:
+    // PUSH_BC;
+    // CALL(aMysteryGift_UpdateJoypad);
+    // LD_B(1 << rRP_RECEIVING);
+    // LD_C(LOW(rRP));
 
-in_vblank:
-    LDH_A_c;
-    AND_A_B;
-    LD_B_A;
-    LDH_A_addr(rLY);
-    CP_A(LY_VBLANK);
-    IF_NC goto in_vblank;
+// in_vblank:
+    // LDH_A_c;
+    // AND_A_B;
+    // LD_B_A;
+    // LDH_A_addr(rLY);
+    // CP_A(LY_VBLANK);
+    // IF_NC goto in_vblank;
 
-wait_vblank:
-    LDH_A_c;
-    AND_A_B;
-    LD_B_A;
-    LDH_A_addr(rLY);
-    CP_A(LY_VBLANK);
-    IF_C goto wait_vblank;
-    LD_A_B;
-    POP_BC;
+// wait_vblank:
+    // LDH_A_c;
+    // AND_A_B;
+    // LD_B_A;
+    // LDH_A_addr(rLY);
+    // CP_A(LY_VBLANK);
+    // IF_C goto wait_vblank;
+    // LD_A_B;
+    // POP_BC;
 // Restart if the 4-second timeout has elapsed
-    DEC_B;
-    IF_Z goto restart;
+    // DEC_B;
+    // IF_Z goto restart;
 // Restart if rRP is not receiving data
-    OR_A_A;
-    IF_NZ goto restart;
+    // OR_A_A;
+    // IF_NZ goto restart;
 // Check if we've pressed the B button to cancel
-    LDH_A_addr(hMGJoypadReleased);
-    BIT_A(B_BUTTON_F);
-    IF_Z goto continue_;
-    LD_A(MG_CANCELED);
-    LDH_addr_A(hMGStatusFlags);
-    JP(mEndOrContinueMysteryGiftIRCommunication);
+    // LDH_A_addr(hMGJoypadReleased);
+    // BIT_A(B_BUTTON_F);
+    // IF_Z goto continue_;
+    // LD_A(MG_CANCELED);
+    // LDH_addr_A(hMGStatusFlags);
+    // JP(mEndOrContinueMysteryGiftIRCommunication);
 
 }
 

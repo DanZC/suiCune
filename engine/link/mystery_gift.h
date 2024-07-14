@@ -1,5 +1,5 @@
 void DoMysteryGift(void);
-void ExchangeMysteryGiftData(void);
+uint8_t ExchangeMysteryGiftData(void);
 void ReceiverExchangeMysteryGiftDataPayloads(void);
 void ReceiverExchangeMysteryGiftDataPayloads_GotPayload(void);
 void SenderExchangeMysteryGiftDataPayloads(void);
