@@ -1,6 +1,18 @@
 #include "../../constants.h"
 #include "mystery_gift.h"
+#include "mystery_gift_2.h"
 #include "../../home/sram.h"
+#include "../../home/copy.h"
+#include "../../home/tilemap.h"
+#include "../../home/lcd.h"
+#include "../../home/text.h"
+#include "../../home/clear_sprites.h"
+#include "../../home/names.h"
+#include "../../home/delay.h"
+#include "../smallflag.h"
+#include "../overworld/decorations.h"
+#include "../../mobile/mobile_41.h"
+#include "../../data/text/common.h"
 
 //  hMGRole values
 #define IR_RECEIVER (1)
@@ -28,265 +40,396 @@
 
 #define NAME_CARD_PREFIX (0x3c)
 
-void DoMysteryGift(void){
-    CALL(aClearTilemap);
-    CALL(aClearSprites);
-    CALL(aWaitBGMap);
-    CALL(aInitMysteryGiftLayout);
-    hlcoord(3, 8, wTilemap);
-    LD_DE(mDoMysteryGift_String_PressAToLink_BToCancel);
-    CALL(aPlaceString);
-    CALL(aWaitBGMap);
+static bool DoMysteryGift_CheckAlreadyGotFiveGiftsToday(void){
+    // CALL(aGetMysteryGiftBank);
+    GetMysteryGiftBank();
+    // LD_A_addr(sNumDailyMysteryGiftPartnerIDs);
+    // CP_A(MAX_MYSTERY_GIFT_PARTNERS);
+    bool res = gb_read(sNumDailyMysteryGiftPartnerIDs) >= MAX_MYSTERY_GIFT_PARTNERS;
+    // JP(mCloseSRAM);
+    CloseSRAM_Conv();
+    return res;
+}
 
-// Prepare the first of two messages for wMysteryGiftPartnerData
-    FARCALL(aStageDataForMysteryGift);
-    CALL(aClearMysteryGiftTrainer);
-    LD_A(2);
-    LD_addr_A(wMysteryGiftMessageCount);
-    LD_A(wMysteryGiftPartnerDataEnd - wMysteryGiftPartnerData);
-    LD_addr_A(wMysteryGiftStagedDataLength);
+static bool DoMysteryGift_CheckAlreadyGotAGiftFromThatPerson(void){
+    // CALL(aGetMysteryGiftBank);
+    GetMysteryGiftBank();
+    // LD_A_addr(wMysteryGiftPartnerID);
+    // LD_B_A;
+    // LD_A_addr(wMysteryGiftPartnerID + 1);
+    // LD_C_A;
+    uint16_t bc = ReverseEndian16(wram->wMysteryGiftPartnerID);
+    // LD_A_addr(sNumDailyMysteryGiftPartnerIDs);
+    // LD_D_A;
+    uint8_t d = gb_read(sNumDailyMysteryGiftPartnerIDs);
+    // LD_HL(sDailyMysteryGiftPartnerIDs);
+    uint16_t* hl = (uint16_t*)GBToRAMAddr(sDailyMysteryGiftPartnerIDs);
 
-    LDH_A_addr(rIE);
-    PUSH_AF;
-    CALL(aExchangeMysteryGiftData);
-    LD_D_A;
-    XOR_A_A;
-    LDH_addr_A(rIF);
-    POP_AF;
-    LDH_addr_A(rIE);
+    do {
+    // loop:
+        // LD_A_D;
+        // AND_A_A;
+        // IF_Z goto No;
+        // LD_A_hli;
+        // CP_A_B;
+        // IF_NZ goto skip;
+        // LD_A_hl;
+        // CP_A_C;
+        // IF_Z goto Yes;
+        if(ReverseEndian16(*hl) == bc) {
+        // Yes:
+            // SCF;
+            CloseSRAM_Conv();
+            return true;
+        }
 
-    PUSH_DE;
-    CALL(aClearTilemap);
-    CALL(aEnableLCD);
-    CALL(aWaitBGMap);
-    LD_B(SCGB_DIPLOMA);
-    CALL(aGetSGBLayout);
-    CALL(aSetPalettes);
-    POP_DE;
+    // skip:
+        // INC_HL;
+        // DEC_D;
+        // goto loop;
+    } while(hl++, --d != 0);
 
-    hlcoord(2, 8, wTilemap);
-    LD_A_D;
-    LD_DE(mDoMysteryGift_MysteryGiftCanceledText);  // Link has been canceled
-    CP_A(MG_CANCELED);
-    JP_Z (mDoMysteryGift_LinkCanceled);
-    CP_A(MG_OKAY);
-    JP_NZ (mDoMysteryGift_CommunicationError);
-    LD_A_addr(wMysteryGiftGameVersion);
-    CP_A(POKEMON_PIKACHU_2_VERSION);
-    IF_Z goto skip_checks;
-    CALL(aDoMysteryGift_CheckAlreadyGotFiveGiftsToday);
-    LD_HL(mDoMysteryGift_MysteryGiftFiveADayText);  // Only 5 gifts a day
-    JP_NC (mDoMysteryGift_PrintTextAndExit);
-    CALL(aDoMysteryGift_CheckAlreadyGotAGiftFromThatPerson);
-    LD_HL(mDoMysteryGift_MysteryGiftOneADayText);  // Only one gift a day per person
-    JP_C (mDoMysteryGift_PrintTextAndExit);
+// No:
+    // JP(mCloseSRAM);
+    CloseSRAM_Conv();
+    return false;
+}
 
-skip_checks:
-    LD_A_addr(wMysteryGiftPlayerBackupItem);
-    AND_A_A;
-    JP_NZ (mDoMysteryGift_GiftWaiting);
-    LD_A_addr(wMysteryGiftPartnerBackupItem);
-    AND_A_A;
-    JP_NZ (mDoMysteryGift_FriendNotReady);
-    LD_A_addr(wMysteryGiftGameVersion);
-    CP_A(POKEMON_PIKACHU_2_VERSION);
-    IF_Z goto skip_append_save;
-    CALL(aDoMysteryGift_AddMysteryGiftPartnerID);
-    LD_A_addr(wMysteryGiftGameVersion);
-    CP_A(RESERVED_GAME_VERSION);
-    IF_Z goto skip_append_save;
-    CALL(aDoMysteryGift_SaveMysteryGiftTrainerName);
-    FARCALL(aRestoreMobileEventIndex);
-    FARCALL(aStubbedTrainerRankings_MysteryGift);
-    FARCALL(aBackupMobileEventIndex);
+static void DoMysteryGift_AddMysteryGiftPartnerID(void){
+    // CALL(aGetMysteryGiftBank);
+    GetMysteryGiftBank();
+    // LD_HL(sNumDailyMysteryGiftPartnerIDs);
+    // LD_A_hl;
+    uint8_t numIDs = gb_read(sNumDailyMysteryGiftPartnerIDs);
+    // INC_hl;
+    gb_write(sNumDailyMysteryGiftPartnerIDs, numIDs + 1);
+    // LD_HL(sDailyMysteryGiftPartnerIDs);  // could have done "inc hl" instead
+    uint16_t* hl = (uint16_t*)GBToRAMAddr(sDailyMysteryGiftPartnerIDs);
+    // LD_E_A;
+    // LD_D(0);
+    // ADD_HL_DE;
+    // ADD_HL_DE;
+    // LD_A_addr(wMysteryGiftPartnerID);
+    // LD_hli_A;
+    // LD_A_addr(wMysteryGiftPartnerID + 1);
+    // LD_hl_A;
+    hl[numIDs] = wram->wMysteryGiftPartnerID;
+    // JP(mCloseSRAM);
+    CloseSRAM_Conv();
+}
 
-skip_append_save:
-    LD_A_addr(wMysteryGiftPartnerSentDeco);
-    AND_A_A;
-    IF_Z goto SentItem;
-//  sent decoration
-    LD_A_addr(wMysteryGiftPartnerWhichDeco);
-    LD_C_A;
-    FARCALL(aMysteryGiftGetDecoration);
-    PUSH_BC;
-    CALL(aCheckAndSetMysteryGiftDecorationAlreadyReceived);
-    POP_BC;
-    IF_NZ goto SentItem;
-//  keep the decoration if it wasn't already received
-    CALLFAR(aGetDecorationName_c);
-    LD_H_D;
-    LD_L_E;
-    LD_DE(wStringBuffer1);
-    LD_BC(ITEM_NAME_LENGTH);
-    CALL(aCopyBytes);
-    LD_HL(mDoMysteryGift_MysteryGiftSentHomeText);  // sent decoration to home
-    goto PrintTextAndExit;
-
-
-SentItem:
-    CALL(aGetMysteryGiftBank);
-    LD_A_addr(wMysteryGiftPartnerWhichItem);
-    LD_C_A;
-    FARCALL(aMysteryGiftGetItem);
-    LD_A_C;
-    LD_addr_A(sBackupMysteryGiftItem);
-    LD_addr_A(wNamedObjectIndex);
-    CALL(aCloseSRAM);
-    CALL(aGetItemName);
-    LD_HL(mDoMysteryGift_MysteryGiftSentText);  // sent item/decoration
-    goto PrintTextAndExit;
-
-
-LinkCanceled:
-    LD_HL(mDoMysteryGift_MysteryGiftCanceledText);  // Link has been canceled
-    goto PrintTextAndExit;
-
-
-CommunicationError:
-    LD_HL(mDoMysteryGift_MysteryGiftCommErrorText);  // Communication error
-    CALL(aPrintText);
-    JP(mDoMysteryGift);
-
-
-GiftWaiting:
-    LD_HL(mDoMysteryGift_RetrieveMysteryGiftText);  // receive gift at counter
-    goto PrintTextAndExit;
-
-
-FriendNotReady:
-    LD_HL(mDoMysteryGift_YourFriendIsNotReadyText);  // friend not ready
-// fallthrough
-
-
-PrintTextAndExit:
-    CALL(aPrintText);
-    LD_A(LCDC_DEFAULT);
-    LDH_addr_A(rLCDC);
-    RET;
-
-
-String_PressAToLink_BToCancel:
-    //db ['"Press A to"'];
-    //next ['"link IR-Device"']
-    //next ['"Press B to"']
-    //next ['"cancel it."']
-    //db ['"@"'];
-
-
-MysteryGiftCanceledText:
-    //text_far ['_MysteryGiftCanceledText']
-    //text_end ['?']
-
-
-MysteryGiftCommErrorText:
-    //text_far ['_MysteryGiftCommErrorText']
-    //text_end ['?']
-
-
-RetrieveMysteryGiftText:
-    //text_far ['_RetrieveMysteryGiftText']
-    //text_end ['?']
-
-
-YourFriendIsNotReadyText:
-    //text_far ['_YourFriendIsNotReadyText']
-    //text_end ['?']
-
-
-MysteryGiftFiveADayText:
-    //text_far ['_MysteryGiftFiveADayText']
-    //text_end ['?']
-
-
-MysteryGiftOneADayText:
-    //text_far ['_MysteryGiftOneADayText']
-    //text_end ['?']
-
-
-MysteryGiftSentText:
-    //text_far ['_MysteryGiftSentText']
-    //text_end ['?']
-
-
-MysteryGiftSentHomeText:
-    //text_far ['_MysteryGiftSentHomeText']
-    //text_end ['?']
-
-
-CheckAlreadyGotFiveGiftsToday:
-    CALL(aGetMysteryGiftBank);
-    LD_A_addr(sNumDailyMysteryGiftPartnerIDs);
-    CP_A(MAX_MYSTERY_GIFT_PARTNERS);
-    JP(mCloseSRAM);
-
-
-CheckAlreadyGotAGiftFromThatPerson:
-    CALL(aGetMysteryGiftBank);
-    LD_A_addr(wMysteryGiftPartnerID);
-    LD_B_A;
-    LD_A_addr(wMysteryGiftPartnerID + 1);
-    LD_C_A;
-    LD_A_addr(sNumDailyMysteryGiftPartnerIDs);
-    LD_D_A;
-    LD_HL(sDailyMysteryGiftPartnerIDs);
-
-loop:
-    LD_A_D;
-    AND_A_A;
-    IF_Z goto No;
-    LD_A_hli;
-    CP_A_B;
-    IF_NZ goto skip;
-    LD_A_hl;
-    CP_A_C;
-    IF_Z goto Yes;
-
-skip:
-    INC_HL;
-    DEC_D;
-    goto loop;
-
-Yes:
-    SCF;
-
-No:
-    JP(mCloseSRAM);
-
-
-AddMysteryGiftPartnerID:
-    CALL(aGetMysteryGiftBank);
-    LD_HL(sNumDailyMysteryGiftPartnerIDs);
-    LD_A_hl;
-    INC_hl;
-    LD_HL(sDailyMysteryGiftPartnerIDs);  // could have done "inc hl" instead
-    LD_E_A;
-    LD_D(0);
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_A_addr(wMysteryGiftPartnerID);
-    LD_hli_A;
-    LD_A_addr(wMysteryGiftPartnerID + 1);
-    LD_hl_A;
-    JP(mCloseSRAM);
-
-
-SaveMysteryGiftTrainerName:
-    CALL(aGetMysteryGiftBank);
-    LD_A(TRUE);
-    LD_addr_A(sMysteryGiftTrainerHouseFlag);
-    LD_HL(wMysteryGiftPartnerName);
-    LD_DE(sMysteryGiftPartnerName);
-    LD_BC(NAME_LENGTH);
-    CALL(aCopyBytes);
+static void DoMysteryGift_SaveMysteryGiftTrainerName(void){
+    // CALL(aGetMysteryGiftBank);
+    GetMysteryGiftBank();
+    // LD_A(TRUE);
+    // LD_addr_A(sMysteryGiftTrainerHouseFlag);
+    gb_write(sMysteryGiftTrainerHouseFlag, TRUE);
+    // LD_HL(wMysteryGiftPartnerName);
+    // LD_DE(sMysteryGiftPartnerName);
+    // LD_BC(NAME_LENGTH);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(GBToRAMAddr(sMysteryGiftPartnerName), wram->wMysteryGiftPartnerName, NAME_LENGTH);
     //assert ['sMysteryGiftPartnerName + NAME_LENGTH == sMysteryGiftUnusedFlag'];
-    LD_A(TRUE);
-    LD_de_A;
-    INC_DE;
+    // LD_A(TRUE);
+    // LD_de_A;
+    gb_write(sMysteryGiftUnusedFlag, TRUE);
+    // INC_DE;
     //assert ['sMysteryGiftUnusedFlag + 1 == sMysteryGiftTrainer'];
-    LD_HL(wMysteryGiftTrainer);
-    LD_BC(wMysteryGiftTrainerEnd - wMysteryGiftTrainer);
-    CALL(aCopyBytes);
-    JP(mCloseSRAM);
+    // LD_HL(wMysteryGiftTrainer);
+    // LD_BC(wMysteryGiftTrainerEnd - wMysteryGiftTrainer);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(GBToRAMAddr(sMysteryGiftTrainer), wram->wMysteryGiftTrainer, sizeof(wram->wMysteryGiftTrainer));
+    // JP(mCloseSRAM);
+    CloseSRAM_Conv();
+}
+
+void DoMysteryGift(void){
+    static const txt_cmd_s MysteryGiftCanceledText[] = {
+        text_far(v_MysteryGiftCanceledText)
+        text_end
+    };
+    static const txt_cmd_s MysteryGiftCommErrorText[] = {
+        text_far(v_MysteryGiftCommErrorText)
+        text_end
+    };
+    static const txt_cmd_s RetrieveMysteryGiftText[] = {
+        text_far(v_RetrieveMysteryGiftText)
+        text_end
+    };
+
+    static const txt_cmd_s YourFriendIsNotReadyText[] = {
+        text_far(v_YourFriendIsNotReadyText)
+        text_end
+    };
+
+    static const txt_cmd_s MysteryGiftFiveADayText[] = {
+        text_far(v_MysteryGiftFiveADayText)
+        text_end
+    };
+    static const txt_cmd_s MysteryGiftOneADayText[] = {
+        text_far(v_MysteryGiftOneADayText)
+        text_end
+    };
+    static const txt_cmd_s MysteryGiftSentHomeText[] = {
+        text_far(v_MysteryGiftSentHomeText)
+        text_end
+    };
+    static const txt_cmd_s MysteryGiftSentText[] = {
+        text_far(v_MysteryGiftSentText)
+        text_end
+    };
+    static const char String_PressAToLink_BToCancel[] = 
+               "Press A to"
+        t_next "link IR-Device"
+        t_next "Press B to"
+        t_next "cancel it.";
+    while(1) {
+        // CALL(aClearTilemap);
+        ClearTilemap_Conv2();
+        // CALL(aClearSprites);
+        ClearSprites_Conv();
+        // CALL(aWaitBGMap);
+        WaitBGMap_Conv();
+        // CALL(aInitMysteryGiftLayout);
+        InitMysteryGiftLayout();
+        // hlcoord(3, 8, wTilemap);
+        // LD_DE(mDoMysteryGift_String_PressAToLink_BToCancel);
+        // CALL(aPlaceString);
+        PlaceStringSimple(U82C(String_PressAToLink_BToCancel), coord(3, 8, wram->wTilemap));
+        // CALL(aWaitBGMap);
+        WaitBGMap_Conv();
+
+    // Prepare the first of two messages for wMysteryGiftPartnerData
+        // FARCALL(aStageDataForMysteryGift);
+        StageDataForMysteryGift();
+        // CALL(aClearMysteryGiftTrainer);
+        ClearMysteryGiftTrainer();
+        // LD_A(2);
+        // LD_addr_A(wMysteryGiftMessageCount);
+        wram->wMysteryGiftMessageCount = 2;
+        // LD_A(wMysteryGiftPartnerDataEnd - wMysteryGiftPartnerData);
+        // LD_addr_A(wMysteryGiftStagedDataLength);
+        wram->wMysteryGiftStagedDataLength = wMysteryGiftPartnerDataEnd - wMysteryGiftPartnerData;
+
+        // LDH_A_addr(rIE);
+        // PUSH_AF;
+        // CALL(aExchangeMysteryGiftData);
+    // TODO: Actually implement mystery gift exchange.
+        DelayFrames_Conv(120);
+        uint8_t d = MG_CANCELED;
+        // LD_D_A;
+        // XOR_A_A;
+        // LDH_addr_A(rIF);
+        // POP_AF;
+        // LDH_addr_A(rIE);
+
+        // PUSH_DE;
+        // CALL(aClearTilemap);
+        ClearTilemap_Conv2();
+        // CALL(aEnableLCD);
+        EnableLCD_Conv();
+        // CALL(aWaitBGMap);
+        WaitBGMap_Conv();
+        // LD_B(SCGB_DIPLOMA);
+        // CALL(aGetSGBLayout);
+        GetSGBLayout_Conv(SCGB_DIPLOMA);
+        // CALL(aSetPalettes);
+        SetPalettes_Conv();
+        // POP_DE;
+
+        // hlcoord(2, 8, wTilemap);
+        // LD_A_D;
+        // LD_DE(mDoMysteryGift_MysteryGiftCanceledText);  // Link has been canceled
+        // CP_A(MG_CANCELED);
+        // JP_Z (mDoMysteryGift_LinkCanceled);
+        if(d == MG_CANCELED) {
+        // LinkCanceled:
+            // LD_HL(mDoMysteryGift_MysteryGiftCanceledText);  // Link has been canceled
+            // goto PrintTextAndExit;
+            // CALL(aPrintText);
+            PrintText_Conv2(MysteryGiftCanceledText);
+            // LD_A(LCDC_DEFAULT);
+            // LDH_addr_A(rLCDC);
+            gb_write(rLCDC, LCDC_DEFAULT);
+            // RET;
+            return;
+        }
+        // CP_A(MG_OKAY);
+        // JP_NZ (mDoMysteryGift_CommunicationError);
+        else if(d != MG_OKAY) {
+        // CommunicationError:
+            // LD_HL(mDoMysteryGift_MysteryGiftCommErrorText);  // Communication error
+            // CALL(aPrintText);
+            PrintText_Conv2(MysteryGiftCommErrorText);
+            // JP(mDoMysteryGift);
+            continue;
+        }
+        // LD_A_addr(wMysteryGiftGameVersion);
+        // CP_A(POKEMON_PIKACHU_2_VERSION);
+        // IF_Z goto skip_checks;
+        if(wram->wMysteryGiftGameVersion != POKEMON_PIKACHU_2_VERSION) {
+            // CALL(aDoMysteryGift_CheckAlreadyGotFiveGiftsToday);
+            // LD_HL(mDoMysteryGift_MysteryGiftFiveADayText);  // Only 5 gifts a day
+            // JP_NC (mDoMysteryGift_PrintTextAndExit);
+            if(DoMysteryGift_CheckAlreadyGotFiveGiftsToday()) {
+                PrintText_Conv2(MysteryGiftFiveADayText);
+                // LD_A(LCDC_DEFAULT);
+                // LDH_addr_A(rLCDC);
+                gb_write(rLCDC, LCDC_DEFAULT);
+                // RET;
+                return;
+            }
+            // CALL(aDoMysteryGift_CheckAlreadyGotAGiftFromThatPerson);
+            // LD_HL(mDoMysteryGift_MysteryGiftOneADayText);  // Only one gift a day per person
+            // JP_C (mDoMysteryGift_PrintTextAndExit);
+            if(DoMysteryGift_CheckAlreadyGotAGiftFromThatPerson()) {
+                PrintText_Conv2(MysteryGiftOneADayText);
+                // LD_A(LCDC_DEFAULT);
+                // LDH_addr_A(rLCDC);
+                gb_write(rLCDC, LCDC_DEFAULT);
+                // RET;
+                return;
+            }
+        }
+
+    // skip_checks:
+        // LD_A_addr(wMysteryGiftPlayerBackupItem);
+        // AND_A_A;
+        // JP_NZ (mDoMysteryGift_GiftWaiting);
+        if(wram->wMysteryGiftPlayerBackupItem != NO_ITEM) {
+        // GiftWaiting:
+            // LD_HL(mDoMysteryGift_RetrieveMysteryGiftText);  // receive gift at counter
+            // goto PrintTextAndExit;
+            // CALL(aPrintText);
+            PrintText_Conv2(RetrieveMysteryGiftText);
+            // LD_A(LCDC_DEFAULT);
+            // LDH_addr_A(rLCDC);
+            gb_write(rLCDC, LCDC_DEFAULT);
+            // RET;
+            return;
+        }
+        // LD_A_addr(wMysteryGiftPartnerBackupItem);
+        // AND_A_A;
+        // JP_NZ (mDoMysteryGift_FriendNotReady);
+        if(wram->wMysteryGiftPartnerBackupItem != NO_ITEM) {
+        // FriendNotReady:
+            // LD_HL(mDoMysteryGift_YourFriendIsNotReadyText);  // friend not ready
+            // CALL(aPrintText);
+            PrintText_Conv2(YourFriendIsNotReadyText);
+            // LD_A(LCDC_DEFAULT);
+            // LDH_addr_A(rLCDC);
+            gb_write(rLCDC, LCDC_DEFAULT);
+            // RET;
+            return;
+        }
+        // LD_A_addr(wMysteryGiftGameVersion);
+        // CP_A(POKEMON_PIKACHU_2_VERSION);
+        // IF_Z goto skip_append_save;
+        if(wram->wMysteryGiftGameVersion != POKEMON_PIKACHU_2_VERSION) {
+            // CALL(aDoMysteryGift_AddMysteryGiftPartnerID);
+            DoMysteryGift_AddMysteryGiftPartnerID();
+            // LD_A_addr(wMysteryGiftGameVersion);
+            // CP_A(RESERVED_GAME_VERSION);
+            // IF_Z goto skip_append_save;
+            if(wram->wMysteryGiftGameVersion != RESERVED_GAME_VERSION) {
+                // CALL(aDoMysteryGift_SaveMysteryGiftTrainerName);
+                DoMysteryGift_SaveMysteryGiftTrainerName();
+                // FARCALL(aRestoreMobileEventIndex);
+                RestoreMobileEventIndex();
+                // FARCALL(aStubbedTrainerRankings_MysteryGift);
+                StubbedTrainerRankings_MysteryGift();
+                // FARCALL(aBackupMobileEventIndex);
+                BackupMobileEventIndex();
+            }
+        }
+
+    // skip_append_save:
+        // LD_A_addr(wMysteryGiftPartnerSentDeco);
+        // AND_A_A;
+        // IF_Z goto SentItem;
+        if(wram->wMysteryGiftPartnerSentDeco) {
+        //  sent decoration
+            // LD_A_addr(wMysteryGiftPartnerWhichDeco);
+            // LD_C_A;
+            // FARCALL(aMysteryGiftGetDecoration);
+            uint8_t deco = MysteryGiftGetDecoration(wram->wMysteryGiftPartnerWhichDeco);
+            // PUSH_BC;
+            // CALL(aCheckAndSetMysteryGiftDecorationAlreadyReceived);
+            // POP_BC;
+            // IF_NZ goto SentItem;
+            if(!CheckAndSetMysteryGiftDecorationAlreadyReceived(deco)) {
+            //  keep the decoration if it wasn't already received
+                // CALLFAR(aGetDecorationName_c);
+                // LD_H_D;
+                // LD_L_E;
+                // LD_DE(wStringBuffer1);
+                // LD_BC(ITEM_NAME_LENGTH);
+                // CALL(aCopyBytes);
+                GetDecorationName_c(deco);
+                // LD_HL(mDoMysteryGift_MysteryGiftSentHomeText);  // sent decoration to home
+                // goto PrintTextAndExit;
+                // CALL(aPrintText);
+                PrintText_Conv2(MysteryGiftSentHomeText);
+                // LD_A(LCDC_DEFAULT);
+                // LDH_addr_A(rLCDC);
+                gb_write(rLCDC, LCDC_DEFAULT);
+                // RET;
+                return;
+            }
+        }
+
+    // SentItem:
+        // CALL(aGetMysteryGiftBank);
+        GetMysteryGiftBank();
+        // LD_A_addr(wMysteryGiftPartnerWhichItem);
+        // LD_C_A;
+        // FARCALL(aMysteryGiftGetItem);
+        // LD_A_C;
+        item_t item = MysteryGiftGetItem(wram->wMysteryGiftPartnerWhichItem);
+        // LD_addr_A(sBackupMysteryGiftItem);
+        gb_write(sBackupMysteryGiftItem, item);
+        // LD_addr_A(wNamedObjectIndex);
+        // CALL(aCloseSRAM);
+        CloseSRAM_Conv();
+        // CALL(aGetItemName);
+        GetItemName_Conv2(item);
+        // LD_HL(mDoMysteryGift_MysteryGiftSentText);  // sent item/decoration
+        // goto PrintTextAndExit;
+        // CALL(aPrintText);
+        PrintText_Conv2(MysteryGiftSentText);
+        // LD_A(LCDC_DEFAULT);
+        // LDH_addr_A(rLCDC);
+        gb_write(rLCDC, LCDC_DEFAULT);
+        // RET;
+        return;
+
+    // LinkCanceled:
+        // LD_HL(mDoMysteryGift_MysteryGiftCanceledText);  // Link has been canceled
+        // goto PrintTextAndExit;
+
+
+    // CommunicationError:
+        // LD_HL(mDoMysteryGift_MysteryGiftCommErrorText);  // Communication error
+        // CALL(aPrintText);
+        // JP(mDoMysteryGift);
+
+
+    // GiftWaiting:
+        // LD_HL(mDoMysteryGift_RetrieveMysteryGiftText);  // receive gift at counter
+        // goto PrintTextAndExit;
+
+
+    // FriendNotReady:
+        // LD_HL(mDoMysteryGift_YourFriendIsNotReadyText);  // friend not ready
+    // fallthrough
+
+
+    // PrintTextAndExit:
+        // CALL(aPrintText);
+        // LD_A(LCDC_DEFAULT);
+        // LDH_addr_A(rLCDC);
+        // RET;
+    }
 
 }
 
@@ -1415,56 +1558,71 @@ void MysteryGift_UpdateJoypad(void){
 
 }
 
-void CheckAndSetMysteryGiftDecorationAlreadyReceived(void){
-//  Return nz if decoration c was already received
-    CALL(aGetMysteryGiftBank);
-    LD_D(0);
-    LD_B(CHECK_FLAG);
-    LD_HL(sMysteryGiftDecorationsReceived);
-    LDA_PREDEF(pSmallFarFlagAction);
-    PUSH_HL;
-    PUSH_BC;
-    CALL(aPredef);
-    CALL(aCloseSRAM);
-    LD_A_C;
-    AND_A_A;
-    POP_BC;
-    POP_HL;
-    RET_NZ ;
-    CALL(aGetMysteryGiftBank);
-    LD_B(SET_FLAG);
-    PREDEF(pSmallFarFlagAction);
-    CALL(aCloseSRAM);
-    XOR_A_A;
-    RET;
-
+//  Return true (nz) if decoration c was already received
+bool CheckAndSetMysteryGiftDecorationAlreadyReceived(uint8_t c){
+    // CALL(aGetMysteryGiftBank);
+    GetMysteryGiftBank();
+    // LD_D(0);
+    // LD_B(CHECK_FLAG);
+    // LD_HL(sMysteryGiftDecorationsReceived);
+    // LDA_PREDEF(pSmallFarFlagAction);
+    // PUSH_HL;
+    // PUSH_BC;
+    // CALL(aPredef);
+    uint8_t res = SmallFarFlagAction_Conv((uint8_t*)GBToRAMAddr(sMysteryGiftDecorationsReceived), c, CHECK_FLAG);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // LD_A_C;
+    // AND_A_A;
+    // POP_BC;
+    // POP_HL;
+    // RET_NZ ;
+    if(res != 0)
+        return true;
+    // CALL(aGetMysteryGiftBank);
+    GetMysteryGiftBank();
+    // LD_B(SET_FLAG);
+    // PREDEF(pSmallFarFlagAction);
+    SmallFarFlagAction_Conv((uint8_t*)GBToRAMAddr(sMysteryGiftDecorationsReceived), c, SET_FLAG);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // XOR_A_A;
+    // RET;
+    return false;
 }
 
 void CopyMysteryGiftReceivedDecorationsToPC(void){
-    CALL(aGetMysteryGiftBank);
-    LD_C(0);
+    // CALL(aGetMysteryGiftBank);
+    GetMysteryGiftBank();
+    uint8_t* hl = GBToRAMAddr(sMysteryGiftDecorationsReceived);
+    // LD_C(0);
+    for(uint32_t c = 0; c < NUM_NON_TROPHY_DECOS; ++c) {
+    // loop:
+        // PUSH_BC;
+        // LD_D(0);
+        // LD_B(CHECK_FLAG);
+        // LD_HL(sMysteryGiftDecorationsReceived);
+        // PREDEF(pSmallFarFlagAction);
+        uint8_t a = SmallFarFlagAction_Conv(hl, c, CHECK_FLAG);
+        // LD_A_C;
+        // AND_A_A;
+        // POP_BC;
+        // IF_Z goto skip;
+        if(a != 0) { // Is this logic correct? Only set flags for decorations received before? 
+            // PUSH_BC;
+            // CALLFAR(aSetSpecificDecorationFlag);
+            SetSpecificDecorationFlag_Conv(c);
+            // POP_BC;
+        }
 
-loop:
-    PUSH_BC;
-    LD_D(0);
-    LD_B(CHECK_FLAG);
-    LD_HL(sMysteryGiftDecorationsReceived);
-    PREDEF(pSmallFarFlagAction);
-    LD_A_C;
-    AND_A_A;
-    POP_BC;
-    IF_Z goto skip;
-    PUSH_BC;
-    CALLFAR(aSetSpecificDecorationFlag);
-    POP_BC;
-
-skip:
-    INC_C;
-    LD_A_C;
-    CP_A(NUM_NON_TROPHY_DECOS);
-    IF_C goto loop;
-    JP(mCloseSRAM);
-
+    // skip:
+        // INC_C;
+        // LD_A_C;
+        // CP_A(NUM_NON_TROPHY_DECOS);
+        // IF_C goto loop;
+    }
+    // JP(mCloseSRAM);
+    CloseSRAM_Conv();
 }
 
 //  If [sMysteryGiftUnlocked] was -1, this sets both
@@ -1489,16 +1647,20 @@ void UnlockMysteryGift(void){
 }
 
 void ResetDailyMysteryGiftLimitIfUnlocked(void){
-    CALL(aGetMysteryGiftBank);
-    LD_A_addr(sNumDailyMysteryGiftPartnerIDs);
-    CP_A(-1);  // locked?
-    IF_Z goto dont_clear;
-    XOR_A_A;
-    LD_addr_A(sNumDailyMysteryGiftPartnerIDs);
+    // CALL(aGetMysteryGiftBank);
+    GetMysteryGiftBank();
+    // LD_A_addr(sNumDailyMysteryGiftPartnerIDs);
+    // CP_A(-1);  // locked?
+    // IF_Z goto dont_clear;
+    if(gb_read(sNumDailyMysteryGiftPartnerIDs) != 0xff) {
+        // XOR_A_A;
+        // LD_addr_A(sNumDailyMysteryGiftPartnerIDs);
+        gb_write(sNumDailyMysteryGiftPartnerIDs, 0);
+    }
 
-dont_clear:
-    JP(mCloseSRAM);
-
+// dont_clear:
+    // JP(mCloseSRAM);
+    CloseSRAM_Conv();
 }
 
 void BackupMysteryGift(void){
@@ -1542,16 +1704,17 @@ void RestoreMysteryGift(void){
 }
 
 void ClearMysteryGiftTrainer(void){
-    LD_HL(wMysteryGiftTrainer);
-    XOR_A_A;
-    LD_B(wMysteryGiftTrainerEnd - wMysteryGiftTrainer);
-
-loop:
-    LD_hli_A;
-    DEC_B;
-    IF_NZ goto loop;
-    RET;
-
+    // LD_HL(wMysteryGiftTrainer);
+    // XOR_A_A;
+    // LD_B(wMysteryGiftTrainerEnd - wMysteryGiftTrainer);
+    for(uint32_t i = 0; i < lengthof(wram->wMysteryGiftTrainer); ++i) {
+    // loop:
+        // LD_hli_A;
+        wram->wMysteryGiftTrainer[i] = 0;
+        // DEC_B;
+        // IF_NZ goto loop;
+    }
+    // RET;
 }
 
 void GetMysteryGiftBank(void){
@@ -1560,216 +1723,267 @@ void GetMysteryGiftBank(void){
     OpenSRAM_Conv(MBANK(asMysteryGiftData));
 }
 
-void StagePartyDataForMysteryGift(void){
 //  You will be sending this data to your mystery gift partner.
 //  Structure is the same as a trainer with species and moves
 //  defined.
-    LD_A(BANK(sPokemonData));
-    CALL(aOpenSRAM);
-    LD_DE(wMysteryGiftStaging);
-    LD_BC(sPokemonData + wPartyMons - wPokemonData);
-    LD_HL(sPokemonData + wPartySpecies - wPokemonData);
+void StagePartyDataForMysteryGift(void){
+    // LD_A(BANK(sPokemonData));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asPokemonData));
+    // LD_DE(wMysteryGiftStaging);
+    uint8_t* de = wram->wMysteryGiftStaging;
+    // LD_BC(sPokemonData + wPartyMons - wPokemonData);
+    struct PartyMon* bc = (struct PartyMon*)GBToRAMAddr(sPokemonData + wPartyMons - wPokemonData);
+    // LD_HL(sPokemonData + wPartySpecies - wPokemonData);
+    species_t* hl = (species_t*)GBToRAMAddr(sPokemonData + wPartySpecies - wPokemonData);
 
-loop:
-    LD_A_hli;
-    CP_A(-1);
-    IF_Z goto party_end;
-    CP_A(EGG);
-    IF_Z goto next;
-    PUSH_HL;
-// copy level
-    LD_HL(MON_LEVEL);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_de_A;
-    INC_DE;
-// copy species
-    LD_HL(MON_SPECIES);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_de_A;
-    INC_DE;
-// copy moves
-    LD_HL(MON_MOVES);
-    ADD_HL_BC;
-    PUSH_BC;
-    LD_BC(NUM_MOVES);
-    CALL(aCopyBytes);
-    POP_BC;
-    POP_HL;
+    while(*hl != (species_t)-1) {
+    // loop:
+        // LD_A_hli;
+        // CP_A(-1);
+        // IF_Z goto party_end;
+        // CP_A(EGG);
+        // IF_Z goto next;
+        if(*hl != EGG) {
+            // PUSH_HL;
+        // copy level
+            // LD_HL(MON_LEVEL);
+            // ADD_HL_BC;
+            // LD_A_hl;
+            // LD_de_A;
+            // INC_DE;
+            *(de++) = bc->mon.level;
+        // copy species
+            // LD_HL(MON_SPECIES);
+            // ADD_HL_BC;
+            // LD_A_hl;
+            // LD_de_A;
+            // INC_DE;
+            CopyBytes_Conv2(de, &bc->mon.species, sizeof(bc->mon.species));
+            de += sizeof(bc->mon.species);
+        // copy moves
+            // LD_HL(MON_MOVES);
+            // ADD_HL_BC;
+            // PUSH_BC;
+            // LD_BC(NUM_MOVES);
+            // CALL(aCopyBytes);
+            CopyBytes_Conv2(de, bc->mon.moves, sizeof(bc->mon.moves));
+            de += sizeof(bc->mon.moves);
+            // POP_BC;
+            // POP_HL;
+        }
 
-next:
-    PUSH_HL;
-    LD_HL(PARTYMON_STRUCT_LENGTH);
-    ADD_HL_BC;
-    LD_B_H;
-    LD_C_L;
-    POP_HL;
-    goto loop;
+    // next:
+        // PUSH_HL;
+        // LD_HL(PARTYMON_STRUCT_LENGTH);
+        // ADD_HL_BC;
+        // LD_B_H;
+        // LD_C_L;
+        bc++;
+        // POP_HL;
+        hl++;
+        // goto loop;
+    }
 
-party_end:
-    LD_A(-1);
-    LD_de_A;
-    LD_A(wMysteryGiftTrainerEnd - wMysteryGiftTrainer);
-    LD_addr_A(wUnusedMysteryGiftStagedDataLength);
-    JP(mCloseSRAM);
+// party_end:
+    // LD_A(-1);
+    // LD_de_A;
+    *(de++) = (species_t)-1;
+    // LD_A(wMysteryGiftTrainerEnd - wMysteryGiftTrainer);
+    // LD_addr_A(wUnusedMysteryGiftStagedDataLength);
+    // JP(mCloseSRAM);
+    CloseSRAM_Conv();
+}
 
+static void InitMysteryGiftLayout_LoadNGFX(tile_t* hl, tile_t a, uint8_t b) {
+// Load5GFX:
+    // LD_B(5);
+    // goto gfx_loop;
+
+// Load6GFX:
+//   //  unreferenced
+    // LD_B(6);
+    // goto gfx_loop;
+
+// Load16GFX:
+    // LD_B(16);
+    do {
+    // gfx_loop:
+        // LD_hli_A;
+        *(hl++) = a++;
+        // INC_A;
+        // DEC_B;
+        // IF_NZ goto gfx_loop;
+    } while(--b != 0);
+    // RET;
+}
+
+static void InitMysteryGiftLayout_LoadNColumn(tile_t* hl, tile_t a, uint8_t b) {
+// Load9Column:
+    // LD_B(9);
+    // goto col_loop;
+
+// Load11Column:
+    // LD_B(11);
+    // goto col_loop;
+
+// Load14Column:
+    // LD_B(14);
+    do {
+    // col_loop:
+        // LD_hl_A;
+        *hl = a;
+        // LD_DE(SCREEN_WIDTH);
+        // ADD_HL_DE;
+        hl += SCREEN_WIDTH;
+        // DEC_B;
+        // IF_NZ goto col_loop;
+    } while(--b != 0);
+    // RET;
+}
+
+static void InitMysteryGiftLayout_Load16Row(tile_t* hl, tile_t a) {
+    // LD_B(16);
+    uint8_t b = 16;
+    do {
+    // row_loop:
+        // LD_hli_A;
+        *(hl++) = a;
+        // DEC_B;
+        // IF_NZ goto row_loop;
+    } while(--b != 0);
+    // RET;
 }
 
 void InitMysteryGiftLayout(void){
-    CALL(aClearBGPalettes);
-    CALL(aDisableLCD);
-    LD_HL(mMysteryGiftGFX);
-    LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
-    LD_A(BANK(aMysteryGiftGFX));
-    LD_BC(0x43 * LEN_2BPP_TILE);
-    CALL(aFarCopyBytes);
-    hlcoord(0, 0, wTilemap);
-    LD_A(0x42);
-    LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
-    CALL(aByteFill);
-    hlcoord(3, 7, wTilemap);
-    LD_BC((9 << 8) | 15);
-    CALL(aClearBox);
-    hlcoord(0, 0, wTilemap);
-    LD_A(0x0);
-    LD_hli_A;
-    INC_A;
-    LD_hl_A;
-    hlcoord(0, 1, wTilemap);
-    INC_A;
-    LD_hli_A;
-    INC_A;
-    LD_hl_A;
-    hlcoord(7, 1, wTilemap);
-    LD_A(0x12);
-    CALL(aInitMysteryGiftLayout_Load5GFX);
-    hlcoord(2, 2, wTilemap);
-    LD_A(0x17);
-    CALL(aInitMysteryGiftLayout_Load16GFX);
-    hlcoord(2, 3, wTilemap);
-    LD_A(0x27);
-    CALL(aInitMysteryGiftLayout_Load16GFX);
-    hlcoord(9, 4, wTilemap);
-    LD_A(0x37);
-    LD_hli_A;
-    INC_A;
-    LD_hl_A;
-    hlcoord(1, 2, wTilemap);
-    LD_hl(0x4);
-    hlcoord(1, 3, wTilemap);
-    LD_A(0x5);
-    CALL(aInitMysteryGiftLayout_Load14Column);
-    LD_A(0x9);
-    hlcoord(18, 5, wTilemap);
-    CALL(aInitMysteryGiftLayout_Load11Column);
-    hlcoord(2, 5, wTilemap);
-    LD_A(0xb);
-    CALL(aInitMysteryGiftLayout_Load16Row);
-    hlcoord(2, 16, wTilemap);
-    LD_A(0x7);
-    CALL(aInitMysteryGiftLayout_Load16Row);
-    hlcoord(2, 5, wTilemap);
-    LD_A(0xd);
-    CALL(aInitMysteryGiftLayout_Load5GFX);
-    hlcoord(7, 5, wTilemap);
-    LD_hl(0xc);
-    hlcoord(18, 5, wTilemap);
-    LD_hl(0xa);
-    hlcoord(18, 16, wTilemap);
-    LD_hl(0x8);
-    hlcoord(1, 16, wTilemap);
-    LD_hl(0x6);
-    hlcoord(2, 6, wTilemap);
-    LD_A(0x3a);
-    CALL(aInitMysteryGiftLayout_Load16Row);
-    hlcoord(2, 15, wTilemap);
-    LD_A(0x40);
-    CALL(aInitMysteryGiftLayout_Load16Row);
-    hlcoord(2, 6, wTilemap);
-    LD_A(0x3c);
-    CALL(aInitMysteryGiftLayout_Load9Column);
-    hlcoord(17, 6, wTilemap);
-    LD_A(0x3e);
-    CALL(aInitMysteryGiftLayout_Load9Column);
-    hlcoord(2, 6, wTilemap);
-    LD_hl(0x39);
-    hlcoord(17, 6, wTilemap);
-    LD_hl(0x3b);
-    hlcoord(2, 15, wTilemap);
-    LD_hl(0x3f);
-    hlcoord(17, 15, wTilemap);
-    LD_hl(0x41);
-    CALL(aEnableLCD);
-    CALL(aWaitBGMap);
-    LD_B(SCGB_MYSTERY_GIFT);
-    CALL(aGetSGBLayout);
-    CALL(aSetPalettes);
-    RET;
-
-
-Load5GFX:
-    LD_B(5);
-    goto gfx_loop;
-
-
-Load6GFX:
-//   //  unreferenced
-    LD_B(6);
-    goto gfx_loop;
-
-
-Load16GFX:
-    LD_B(16);
-
-
-gfx_loop:
-    LD_hli_A;
-    INC_A;
-    DEC_B;
-    IF_NZ goto gfx_loop;
-    RET;
-
-
-Load9Column:
-    LD_B(9);
-    goto col_loop;
-
-
-Load11Column:
-    LD_B(11);
-    goto col_loop;
-
-
-Load14Column:
-    LD_B(14);
-
-
-col_loop:
-    LD_hl_A;
-    LD_DE(SCREEN_WIDTH);
-    ADD_HL_DE;
-    DEC_B;
-    IF_NZ goto col_loop;
-    RET;
-
-
-Load16Row:
-    LD_B(16);
-
-row_loop:
-    LD_hli_A;
-    DEC_B;
-    IF_NZ goto row_loop;
-    RET;
-
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
+    // CALL(aDisableLCD);
+    DisableLCD_Conv();
+    // LD_HL(mMysteryGiftGFX);
+    // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
+    // LD_A(BANK(aMysteryGiftGFX));
+    // LD_BC(0x43 * LEN_2BPP_TILE);
+    // CALL(aFarCopyBytes);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x00, MysteryGiftGFX, 0, 0x43);
+    // hlcoord(0, 0, wTilemap);
+    // LD_A(0x42);
+    // LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_HEIGHT * SCREEN_WIDTH, 0x42);
+    // hlcoord(3, 7, wTilemap);
+    // LD_BC((9 << 8) | 15);
+    // CALL(aClearBox);
+    ClearBox_Conv2(coord(3, 7, wram->wTilemap), 15, 9);
+    // hlcoord(0, 0, wTilemap);
+    // LD_A(0x0);
+    // LD_hli_A;
+    *coord(0, 0, wram->wTilemap) = 0x0;
+    // INC_A;
+    // LD_hl_A;
+    *coord(1, 0, wram->wTilemap) = 0x1;
+    // hlcoord(0, 1, wTilemap);
+    // INC_A;
+    // LD_hli_A;
+    *coord(0, 1, wram->wTilemap) = 0x2;
+    // INC_A;
+    // LD_hl_A;
+    *coord(1, 1, wram->wTilemap) = 0x3;
+    // hlcoord(7, 1, wTilemap);
+    // LD_A(0x12);
+    // CALL(aInitMysteryGiftLayout_Load5GFX);
+    InitMysteryGiftLayout_LoadNGFX(coord(7, 1, wram->wTilemap), 0x12, 5);
+    // hlcoord(2, 2, wTilemap);
+    // LD_A(0x17);
+    // CALL(aInitMysteryGiftLayout_Load16GFX);
+    InitMysteryGiftLayout_LoadNGFX(coord(2, 2, wram->wTilemap), 0x17, 16);
+    // hlcoord(2, 3, wTilemap);
+    // LD_A(0x27);
+    // CALL(aInitMysteryGiftLayout_Load16GFX);
+    InitMysteryGiftLayout_LoadNGFX(coord(2, 3, wram->wTilemap), 0x27, 16);
+    // hlcoord(9, 4, wTilemap);
+    // LD_A(0x37);
+    // LD_hli_A;
+    *coord(9, 4, wram->wTilemap) = 0x37;
+    // INC_A;
+    // LD_hl_A;
+    *coord(10, 4, wram->wTilemap) = 0x38;
+    // hlcoord(1, 2, wTilemap);
+    // LD_hl(0x4);
+    *coord(1, 2, wram->wTilemap) = 0x4;
+    // hlcoord(1, 3, wTilemap);
+    // LD_A(0x5);
+    // CALL(aInitMysteryGiftLayout_Load14Column);
+    InitMysteryGiftLayout_LoadNColumn(coord(1, 3, wram->wTilemap), 0x5, 14);
+    // LD_A(0x9);
+    // hlcoord(18, 5, wTilemap);
+    // CALL(aInitMysteryGiftLayout_Load11Column);
+    InitMysteryGiftLayout_LoadNColumn(coord(18, 5, wram->wTilemap), 0x9, 11);
+    // hlcoord(2, 5, wTilemap);
+    // LD_A(0xb);
+    // CALL(aInitMysteryGiftLayout_Load16Row);
+    InitMysteryGiftLayout_Load16Row(coord(2, 5, wram->wTilemap), 0xb);
+    // hlcoord(2, 16, wTilemap);
+    // LD_A(0x7);
+    // CALL(aInitMysteryGiftLayout_Load16Row);
+    InitMysteryGiftLayout_Load16Row(coord(2, 16, wram->wTilemap), 0x7);
+    // hlcoord(2, 5, wTilemap);
+    // LD_A(0xd);
+    // CALL(aInitMysteryGiftLayout_Load5GFX);
+    InitMysteryGiftLayout_LoadNGFX(coord(2, 5, wram->wTilemap), 0xd, 5);
+    // hlcoord(7, 5, wTilemap);
+    // LD_hl(0xc);
+    *coord(7, 5, wram->wTilemap) = 0xc;
+    // hlcoord(18, 5, wTilemap);
+    // LD_hl(0xa);
+    *coord(18, 5, wram->wTilemap) = 0xa;
+    // hlcoord(18, 16, wTilemap);
+    // LD_hl(0x8);
+    *coord(18, 16, wram->wTilemap) = 0x8;
+    // hlcoord(1, 16, wTilemap);
+    // LD_hl(0x6);
+    *coord(1, 16, wram->wTilemap) = 0x6;
+    // hlcoord(2, 6, wTilemap);
+    // LD_A(0x3a);
+    // CALL(aInitMysteryGiftLayout_Load16Row);
+    InitMysteryGiftLayout_Load16Row(coord(2, 6, wram->wTilemap), 0x3a);
+    // hlcoord(2, 15, wTilemap);
+    // LD_A(0x40);
+    // CALL(aInitMysteryGiftLayout_Load16Row);
+    InitMysteryGiftLayout_Load16Row(coord(2, 15, wram->wTilemap), 0x40);
+    // hlcoord(2, 6, wTilemap);
+    // LD_A(0x3c);
+    // CALL(aInitMysteryGiftLayout_Load9Column);
+    InitMysteryGiftLayout_LoadNColumn(coord(2, 6, wram->wTilemap), 0x3c, 9);
+    // hlcoord(17, 6, wTilemap);
+    // LD_A(0x3e);
+    // CALL(aInitMysteryGiftLayout_Load9Column);
+    InitMysteryGiftLayout_LoadNColumn(coord(17, 6, wram->wTilemap), 0x3e, 9);
+    // hlcoord(2, 6, wTilemap);
+    // LD_hl(0x39);
+    *coord(2, 6, wram->wTilemap) = 0x39;
+    // hlcoord(17, 6, wTilemap);
+    // LD_hl(0x3b);
+    *coord(17, 6, wram->wTilemap) = 0x3b;
+    // hlcoord(2, 15, wTilemap);
+    // LD_hl(0x3f);
+    *coord(2, 15, wram->wTilemap) = 0x3f;
+    // hlcoord(17, 15, wTilemap);
+    // LD_hl(0x41);
+    *coord(17, 15, wram->wTilemap) = 0x41;
+    // CALL(aEnableLCD);
+    EnableLCD_Conv();
+    // CALL(aWaitBGMap);
+    WaitBGMap_Conv();
+    // LD_B(SCGB_MYSTERY_GIFT);
+    // CALL(aGetSGBLayout);
+    GetSGBLayout_Conv(SCGB_MYSTERY_GIFT);
+    // CALL(aSetPalettes);
+    SetPalettes_Conv();
+    // RET;
 }
 
-void MysteryGiftGFX(void){
-// INCBIN "gfx/mystery_gift/mystery_gift.2bpp"
-
-    return DoNameCardSwap();
-}
+const char MysteryGiftGFX[] = "gfx/mystery_gift/mystery_gift.png";
 
 void DoNameCardSwap(void){
     CALL(aClearTilemap);

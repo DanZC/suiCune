@@ -593,8 +593,7 @@ void DoDecorationAction2(void){
     RST(aJumpTable);
     RET;
 
-
-DecoActions:
+// DecoActions:
     //table_width ['2', 'DoDecorationAction2.DecoActions']
     //dw ['DecoAction_nothing'];
     //dw ['DecoAction_setupbed'];
@@ -612,28 +611,27 @@ DecoActions:
     //dw ['DecoAction_setupornament'];
     //dw ['DecoAction_putawayornament'];
     //assert_table_length ['NUM_DECO_ACTIONS + 1']
-
-    return GetDecorationFlag();
 }
 
-void GetDecorationFlag(void){
-    CALL(aGetDecorationData);
-    LD_DE(DECOATTR_EVENT_FLAG);
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_D_hl;
-    LD_E_A;
-    RET;
-
+uint16_t GetDecorationFlag(uint8_t c){
+    // CALL(aGetDecorationData);
+    const struct Decoration* hl = GetDecorationData_Conv(c);
+    // LD_DE(DECOATTR_EVENT_FLAG);
+    // ADD_HL_DE;
+    // LD_A_hli;
+    // LD_D_hl;
+    // LD_E_A;
+    // RET;
+    return hl->event_flag;
 }
 
-void DecorationFlagAction(void){
-    PUSH_BC;
-    CALL(aGetDecorationFlag);
-    POP_BC;
-    CALL(aEventFlagAction);
-    RET;
-
+uint8_t DecorationFlagAction(uint8_t c, uint8_t b){
+    // PUSH_BC;
+    // CALL(aGetDecorationFlag);
+    // POP_BC;
+    // CALL(aEventFlagAction);
+    return EventFlagAction_Conv2(GetDecorationFlag(c), b);
+    // RET;
 }
 
 void GetDecorationSprite(void){
@@ -1330,15 +1328,16 @@ void DecorationFlagAction_c(void){
 
 }
 
-void GetDecorationName_c(void){
-    LD_A_C;
-    CALL(aGetDecorationID);
-    LD_HL(wStringBuffer1);
-    PUSH_HL;
-    CALL(aGetDecorationName);
-    POP_DE;
-    RET;
-
+uint8_t* GetDecorationName_c(uint8_t c){
+    // LD_A_C;
+    // CALL(aGetDecorationID);
+    // LD_HL(wStringBuffer1);
+    // PUSH_HL;
+    // CALL(aGetDecorationName);
+    // POP_DE;
+    // RET;
+    GetDecorationName_Conv(wram->wStringBuffer1, GetDecorationID(c));
+    return wram->wStringBuffer1;
 }
 
 void SetSpecificDecorationFlag(void){
@@ -1350,18 +1349,27 @@ void SetSpecificDecorationFlag(void){
 
 }
 
-void GetDecorationID(void){
-    PUSH_HL;
-    PUSH_DE;
-    LD_E_A;
-    LD_D(0);
-    LD_HL(mDecorationIDs);
-    ADD_HL_DE;
-    LD_A_hl;
-    POP_DE;
-    POP_HL;
-    RET;
+void SetSpecificDecorationFlag_Conv(uint8_t c){
+    // LD_A_C;
+    // CALL(aGetDecorationID);
+    // LD_B(SET_FLAG);
+    // CALL(aDecorationFlagAction);
+    DecorationFlagAction(GetDecorationID(c), SET_FLAG);
+    // RET;
+}
 
+uint8_t GetDecorationID(uint8_t c){
+    // PUSH_HL;
+    // PUSH_DE;
+    // LD_E_A;
+    // LD_D(0);
+    // LD_HL(mDecorationIDs);
+    // ADD_HL_DE;
+    // LD_A_hl;
+    // POP_DE;
+    // POP_HL;
+    // RET;
+    return DecorationIDs[c];
 }
 
 void SetAllDecorationFlags(void){

@@ -25,6 +25,7 @@
 #include "../battle/core.h"
 #include "../link/link.h"
 #include "../link/link_trade.h"
+#include "../link/mystery_gift.h"
 #include "../../util/scripting.h"
 #include "../movie/trade_animation.h"
 #include "../movie/init_hof_credits.h"
@@ -52,6 +53,7 @@ void Handler_TradeAnim(void);
 void Handler_BattleAnim(void);
 void Handler_Credits(void);
 void Handler_TradeTest(void);
+void Handler_MysteryGift(void);
 
 static DebugMenuOption debugMenuOptions[] = {
     {"FIGHT@", Handler_Fight},
@@ -70,6 +72,7 @@ static DebugMenuOption debugMenuOptions[] = {
     {"BANIMS@", Handler_BattleAnim},
     {"CREDITS@", Handler_Credits},
     {"TRD TEST@", Handler_TradeTest},
+    {"MYSTRY G@", Handler_MysteryGift},
 };
 
 #define MAX_OPTIONS_PER_PAGE 7
@@ -269,6 +272,11 @@ void Handler_Credits(void) {
 
 void Handler_TradeTest(void) {
     DebugMenu_TradeTest();
+    PlayMusic_Conv(DEBUG_MENU_MUSIC);
+}
+
+void Handler_MysteryGift(void) {
+    DebugMenu_MysteryGift();
     PlayMusic_Conv(DEBUG_MENU_MUSIC);
 }
 
@@ -1020,6 +1028,20 @@ void DebugMenu_TradeTest(void) {
     WaitBGMap2_Conv();
     PlayMusic_Conv(MUSIC_ROUTE_30);
     InitTradeMenuDisplay();
+    DebugMenu_RestoreTilemap();
+    DebugMenu_RestoreAttrmap();
+    v_LoadFontsExtra1_Conv();
+    v_LoadFontsExtra2_Conv();
+    v_LoadStandardFont_Conv();
+}
+
+void DebugMenu_MysteryGift(void) {
+    DebugMenu_SaveTilemap();
+    DebugMenu_SaveAttrmap();
+    ClearScreen_Conv2();
+
+    DoMysteryGift();
+
     DebugMenu_RestoreTilemap();
     DebugMenu_RestoreAttrmap();
     v_LoadFontsExtra1_Conv();

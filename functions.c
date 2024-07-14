@@ -4021,7 +4021,7 @@ void init_function_pointers(void) {
     // engine/overworld/time.c
     // REDIRECTED(RestartDailyResetTimer);
     // REDIRECTED(CheckBugContestTimer);
-    // REDIRECTED(DoMysteryGiftIfDayHasPassed);
+    CONVERTED(DoMysteryGiftIfDayHasPassed);
     // REDIRECTED(CopyDayHourToHL);
     // REDIRECTED(CheckDayDependentEventHL);
     // REDIRECTED(CopyDayToHL);
@@ -6577,7 +6577,7 @@ void init_function_pointers(void) {
     // REDIRECTED(StartSlowIRTimer);
     // REDIRECTED(InfraredLEDReceiveTimedOut);
     // REDIRECTED(ReceiveMysteryGiftDataPayload_GotRegionPrefix);
-    // REDIRECTED(DoMysteryGift);
+    CONVERTED(DoMysteryGift);
     // REDIRECTED(ReceivedWrongIRMessagePrefix);
     // REDIRECTED(ClearMysteryGiftTrainer);
     // REDIRECTED(UnlockMysteryGift);
@@ -8980,4 +8980,10 @@ CONVERTED(v_AnimateTileset);
 
     // engine/events/print_photo.c
     CONVERTED(PhotoStudio);
+
+    // engine/link/mystery_gift_2.c
+    // CONVERTED(MysteryGiftFallbackItem);
+    // CONVERTED(MysteryGiftGetItem);
+    CONVERTED(StageDataForMysteryGift);
+    // CONVERTED(MysteryGiftGetDecoration);
 }

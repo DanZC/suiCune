@@ -129,7 +129,7 @@
 //#include "data/trainers/class_names.h"
 #include "engine/battle/ai/redundant.h"
 #include "engine/events/move_deleter.h"
-//#include "engine/link/mystery_gift_2.h"
+#include "engine/link/mystery_gift_2.h"
 #include "engine/items/tmhm.h"
 #include "engine/pokemon/print_move_description.h"
 #include "engine/events/pokerus/pokerus.h"

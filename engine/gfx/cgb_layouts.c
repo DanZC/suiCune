@@ -1397,41 +1397,55 @@ void v_CGB_TrainerOrMonFrontpicPals(void){
 }
 
 void v_CGB_MysteryGift(void){
-    LD_HL(mv_CGB_MysteryGift_MysteryGiftPalettes);
-    LD_DE(wBGPals1);
-    LD_BC(2 * PALETTE_SIZE);
-    LD_A(MBANK(awBGPals1));
-    CALL(aFarCopyWRAM);
-    CALL(aApplyPals);
-    CALL(aWipeAttrmap);
-    hlcoord(3, 7, wAttrmap);
-    LD_BC((8 << 8) | 14);
-    LD_A(0x1);
-    CALL(aFillBoxCGB);
-    hlcoord(1, 5, wAttrmap);
-    LD_BC((1 << 8) | 18);
-    LD_A(0x1);
-    CALL(aFillBoxCGB);
-    hlcoord(1, 16, wAttrmap);
-    LD_BC((1 << 8) | 18);
-    LD_A(0x1);
-    CALL(aFillBoxCGB);
-    hlcoord(0, 0, wAttrmap);
-    LD_BC((17 << 8) | 2);
-    LD_A(0x1);
-    CALL(aFillBoxCGB);
-    hlcoord(18, 5, wAttrmap);
-    LD_BC((12 << 8) | 1);
-    LD_A(0x1);
-    CALL(aFillBoxCGB);
-    CALL(aApplyAttrmap);
-    RET;
-
-
-MysteryGiftPalettes:
-// INCLUDE "gfx/mystery_gift/mystery_gift.pal"
-
-    return GS_CGB_MysteryGift();
+    // INCLUDE "gfx/mystery_gift/mystery_gift.pal"
+    const uint16_t MysteryGiftPalettes[] = {
+        rgb(31, 31, 31),
+        rgb(16, 31, 14),
+        rgb( 5, 14, 21),
+        rgb( 5, 13, 10),
+        rgb(31, 31, 31),
+        rgb(11, 21, 25),
+        rgb( 5, 14, 21),
+        rgb( 0,  3, 19),
+    };
+    // LD_HL(mv_CGB_MysteryGift_MysteryGiftPalettes);
+    // LD_DE(wBGPals1);
+    // LD_BC(2 * PALETTE_SIZE);
+    // LD_A(MBANK(awBGPals1));
+    // CALL(aFarCopyWRAM);
+    CopyBytes_Conv2(wram->wBGPals1, MysteryGiftPalettes, 2 * PALETTE_SIZE);
+    // CALL(aApplyPals);
+    ApplyPals_Conv();
+    // CALL(aWipeAttrmap);
+    WipeAttrmap();
+    // hlcoord(3, 7, wAttrmap);
+    // LD_BC((8 << 8) | 14);
+    // LD_A(0x1);
+    // CALL(aFillBoxCGB);
+    FillBoxCGB_Conv(coord(3, 7, wram->wAttrmap), 8, 14, 0x1);
+    // hlcoord(1, 5, wAttrmap);
+    // LD_BC((1 << 8) | 18);
+    // LD_A(0x1);
+    // CALL(aFillBoxCGB);
+    FillBoxCGB_Conv(coord(1, 5, wram->wAttrmap), 1, 18, 0x1);
+    // hlcoord(1, 16, wAttrmap);
+    // LD_BC((1 << 8) | 18);
+    // LD_A(0x1);
+    // CALL(aFillBoxCGB);
+    FillBoxCGB_Conv(coord(1, 16, wram->wAttrmap), 1, 18, 0x1);
+    // hlcoord(0, 0, wAttrmap);
+    // LD_BC((17 << 8) | 2);
+    // LD_A(0x1);
+    // CALL(aFillBoxCGB);
+    FillBoxCGB_Conv(coord(0, 0, wram->wAttrmap), 17, 2, 0x1);
+    // hlcoord(18, 5, wAttrmap);
+    // LD_BC((12 << 8) | 1);
+    // LD_A(0x1);
+    // CALL(aFillBoxCGB);
+    FillBoxCGB_Conv(coord(0, 0, wram->wAttrmap), 12, 8, 0x1);
+    // CALL(aApplyAttrmap);
+    ApplyAttrmap_Conv();
+    // RET;
 }
 
 void GS_CGB_MysteryGift(void){

@@ -115,7 +115,7 @@ void Credits(uint8_t b){
     // LD_A(0x5);
     // LDH_addr_A(hVBlank);
     hram->hVBlank = 0x5;
-#if BUGFIX_HINMENU_NOT_PRESERVED
+#if BUGFIX_CREDITS_HINMENU_NOT_PRESERVED
     uint8_t inMenu = hram->hInMenu;
 #endif
     // LD_A(TRUE);
@@ -154,7 +154,7 @@ void Credits(uint8_t b){
     hram->hLCDCPointer = 0x0;
     // LDH_addr_A(hBGMapAddress);
     hram->hBGMapAddress = (hram->hBGMapAddress & 0xff00) | 0x0;
-#if BUGFIX_HINMENU_NOT_PRESERVED
+#if BUGFIX_CREDITS_HINMENU_NOT_PRESERVED
     hram->hInMenu = inMenu;
 #endif
     // POP_AF;

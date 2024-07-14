@@ -286,7 +286,7 @@ bool CheckOwnMon(const struct BoxMon* hl, const uint8_t* ot, species_t species){
     // LD_HL(wPlayerName);
     const uint8_t* plyr = wram->wPlayerName;
 
-#if BUGFIX_OWN_MON_OT_CHECK
+#if BUGFIX_OWN_MON_OT_CHECK_NAME_LENGTH
     for(int rept = 0; rept < PLAYER_NAME_LENGTH - 1; rept++)
 #else
     for(int rept = 0; rept < NAME_LENGTH_JAPANESE - 1; rept++)  //  should be PLAYER_NAME_LENGTH - 1

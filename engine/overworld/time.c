@@ -3,6 +3,8 @@
 #include "../../home/random.h"
 #include "../../home/time.h"
 #include "../../home/pokedex_flags.h"
+#include "../../home/sram.h"
+#include "../link/mystery_gift.h"
 #include "../events/pokerus/apply_pokerus_tick.h"
 
 void v_InitializeStartDay(void){
@@ -577,35 +579,44 @@ bool v_CheckLuckyNumberShowFlag_Conv(void){
 }
 
 void DoMysteryGiftIfDayHasPassed(void){
-    LD_A(BANK(sMysteryGiftTimer));
-    CALL(aOpenSRAM);
-    LD_HL(sMysteryGiftTimer);
-    LD_A_hli;
-    LD_addr_A(wTempMysteryGiftTimer);
-    LD_A_hl;
-    LD_addr_A(wTempMysteryGiftTimer + 1);
-    CALL(aCloseSRAM);
+    // LD_A(BANK(sMysteryGiftTimer));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asMysteryGiftTimer));
+    // LD_HL(sMysteryGiftTimer);
+    // LD_A_hli;
+    // LD_addr_A(wTempMysteryGiftTimer);
+    // LD_A_hl;
+    // LD_addr_A(wTempMysteryGiftTimer + 1);
+    wram->wTempMysteryGiftTimer = gb_read16(sMysteryGiftTimer);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
 
-    LD_HL(wTempMysteryGiftTimer);
-    CALL(aCheckDayDependentEventHL);
-    IF_NC goto not_timed_out;
-    LD_HL(wTempMysteryGiftTimer);
-    CALL(aInitOneDayCountdown);
-    CALL(aCloseSRAM);
-    FARCALL(aResetDailyMysteryGiftLimitIfUnlocked);
+    // LD_HL(wTempMysteryGiftTimer);
+    // CALL(aCheckDayDependentEventHL);
+    // IF_NC goto not_timed_out;
+    if(CheckDayDependentEventHL_Conv((uint8_t*)&wram->wTempMysteryGiftTimer)) {
+        // LD_HL(wTempMysteryGiftTimer);
+        // CALL(aInitOneDayCountdown);
+        InitOneDayCountdown_Conv((uint8_t*)&wram->wTempMysteryGiftTimer);
+        // CALL(aCloseSRAM);
+        CloseSRAM_Conv();
+        // FARCALL(aResetDailyMysteryGiftLimitIfUnlocked);
+        ResetDailyMysteryGiftLimitIfUnlocked();
+    }
 
-
-not_timed_out:
-    LD_A(BANK(sMysteryGiftTimer));
-    CALL(aOpenSRAM);
-    LD_HL(wTempMysteryGiftTimer);
-    LD_A_hli;
-    LD_addr_A(sMysteryGiftTimer);
-    LD_A_hl;
-    LD_addr_A(sMysteryGiftTimer + 1);
-    CALL(aCloseSRAM);
-    RET;
-
+// not_timed_out:
+    // LD_A(BANK(sMysteryGiftTimer));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asMysteryGiftTimer));
+    // LD_HL(wTempMysteryGiftTimer);
+    // LD_A_hli;
+    // LD_addr_A(sMysteryGiftTimer);
+    // LD_A_hl;
+    // LD_addr_A(sMysteryGiftTimer + 1);
+    gb_write(sMysteryGiftTimer, wram->wTempMysteryGiftTimer);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
 }
 
 void UpdateTimeRemaining(void){
