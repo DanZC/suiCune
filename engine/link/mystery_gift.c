@@ -43,60 +43,60 @@
 
 #define NAME_CARD_PREFIX (0x3c)
 
-static bool DoMysteryGift_CheckAlreadyGotFiveGiftsToday(void){
-    // CALL(aGetMysteryGiftBank);
-    GetMysteryGiftBank();
-    // LD_A_addr(sNumDailyMysteryGiftPartnerIDs);
-    // CP_A(MAX_MYSTERY_GIFT_PARTNERS);
-    bool res = gb_read(sNumDailyMysteryGiftPartnerIDs) >= MAX_MYSTERY_GIFT_PARTNERS;
-    // JP(mCloseSRAM);
-    CloseSRAM_Conv();
-    return res;
-}
+// static bool DoMysteryGift_CheckAlreadyGotFiveGiftsToday(void){
+//     // CALL(aGetMysteryGiftBank);
+//     GetMysteryGiftBank();
+//     // LD_A_addr(sNumDailyMysteryGiftPartnerIDs);
+//     // CP_A(MAX_MYSTERY_GIFT_PARTNERS);
+//     bool res = gb_read(sNumDailyMysteryGiftPartnerIDs) >= MAX_MYSTERY_GIFT_PARTNERS;
+//     // JP(mCloseSRAM);
+//     CloseSRAM_Conv();
+//     return res;
+// }
 
-static bool DoMysteryGift_CheckAlreadyGotAGiftFromThatPerson(void){
-    // CALL(aGetMysteryGiftBank);
-    GetMysteryGiftBank();
-    // LD_A_addr(wMysteryGiftPartnerID);
-    // LD_B_A;
-    // LD_A_addr(wMysteryGiftPartnerID + 1);
-    // LD_C_A;
-    uint16_t bc = ReverseEndian16(wram->wMysteryGiftPartnerID);
-    // LD_A_addr(sNumDailyMysteryGiftPartnerIDs);
-    // LD_D_A;
-    uint8_t d = gb_read(sNumDailyMysteryGiftPartnerIDs);
-    // LD_HL(sDailyMysteryGiftPartnerIDs);
-    uint16_t* hl = (uint16_t*)GBToRAMAddr(sDailyMysteryGiftPartnerIDs);
+// static bool DoMysteryGift_CheckAlreadyGotAGiftFromThatPerson(void){
+//     // CALL(aGetMysteryGiftBank);
+//     GetMysteryGiftBank();
+//     // LD_A_addr(wMysteryGiftPartnerID);
+//     // LD_B_A;
+//     // LD_A_addr(wMysteryGiftPartnerID + 1);
+//     // LD_C_A;
+//     uint16_t bc = ReverseEndian16(wram->wMysteryGiftPartnerID);
+//     // LD_A_addr(sNumDailyMysteryGiftPartnerIDs);
+//     // LD_D_A;
+//     uint8_t d = gb_read(sNumDailyMysteryGiftPartnerIDs);
+//     // LD_HL(sDailyMysteryGiftPartnerIDs);
+//     uint16_t* hl = (uint16_t*)GBToRAMAddr(sDailyMysteryGiftPartnerIDs);
 
-    do {
-    // loop:
-        // LD_A_D;
-        // AND_A_A;
-        // IF_Z goto No;
-        // LD_A_hli;
-        // CP_A_B;
-        // IF_NZ goto skip;
-        // LD_A_hl;
-        // CP_A_C;
-        // IF_Z goto Yes;
-        if(ReverseEndian16(*hl) == bc) {
-        // Yes:
-            // SCF;
-            CloseSRAM_Conv();
-            return true;
-        }
+//     do {
+//     // loop:
+//         // LD_A_D;
+//         // AND_A_A;
+//         // IF_Z goto No;
+//         // LD_A_hli;
+//         // CP_A_B;
+//         // IF_NZ goto skip;
+//         // LD_A_hl;
+//         // CP_A_C;
+//         // IF_Z goto Yes;
+//         if(ReverseEndian16(*hl) == bc) {
+//         // Yes:
+//             // SCF;
+//             CloseSRAM_Conv();
+//             return true;
+//         }
 
-    // skip:
-        // INC_HL;
-        // DEC_D;
-        // goto loop;
-    } while(hl++, --d != 0);
+//     // skip:
+//         // INC_HL;
+//         // DEC_D;
+//         // goto loop;
+//     } while(hl++, --d != 0);
 
-// No:
-    // JP(mCloseSRAM);
-    CloseSRAM_Conv();
-    return false;
-}
+// // No:
+//     // JP(mCloseSRAM);
+//     CloseSRAM_Conv();
+//     return false;
+// }
 
 static void DoMysteryGift_AddMysteryGiftPartnerID(void){
     // CALL(aGetMysteryGiftBank);
@@ -165,14 +165,14 @@ void DoMysteryGift(void){
         text_end
     };
 
-    static const txt_cmd_s MysteryGiftFiveADayText[] = {
-        text_far(v_MysteryGiftFiveADayText)
-        text_end
-    };
-    static const txt_cmd_s MysteryGiftOneADayText[] = {
-        text_far(v_MysteryGiftOneADayText)
-        text_end
-    };
+    // static const txt_cmd_s MysteryGiftFiveADayText[] = {
+    //     text_far(v_MysteryGiftFiveADayText)
+    //     text_end
+    // };
+    // static const txt_cmd_s MysteryGiftOneADayText[] = {
+    //     text_far(v_MysteryGiftOneADayText)
+    //     text_end
+    // };
     static const txt_cmd_s MysteryGiftSentHomeText[] = {
         text_far(v_MysteryGiftSentHomeText)
         text_end
@@ -181,6 +181,11 @@ void DoMysteryGift(void){
         text_far(v_MysteryGiftSentText)
         text_end
     };
+    OpenSRAM_Conv(MBANK(asPlayerData));
+    wram->wPlayerGender = gb_read(sCrystalData);
+    CopyBytes_Conv2(&wram->wPlayerID,  GBToRAMAddr(sPlayerData + (wPlayerID - wPlayerData)), 2);
+    CopyBytes_Conv2(wram->wPlayerName, GBToRAMAddr(sPlayerData + (wPlayerName - wPlayerData)), NAME_LENGTH);
+    CloseSRAM_Conv();
     // static const char String_PressAToLink_BToCancel[] = 
     //            "Press A to"
     //     t_next "link IR-Device"
@@ -269,6 +274,8 @@ void DoMysteryGift(void){
         // LD_A_addr(wMysteryGiftGameVersion);
         // CP_A(POKEMON_PIKACHU_2_VERSION);
         // IF_Z goto skip_checks;
+    // Temporary fix
+#if 0
         if(wram->wMysteryGiftGameVersion != POKEMON_PIKACHU_2_VERSION) {
             // CALL(aDoMysteryGift_CheckAlreadyGotFiveGiftsToday);
             // LD_HL(mDoMysteryGift_MysteryGiftFiveADayText);  // Only 5 gifts a day
@@ -293,6 +300,7 @@ void DoMysteryGift(void){
                 return;
             }
         }
+#endif
 
     // skip_checks:
         // LD_A_addr(wMysteryGiftPlayerBackupItem);
