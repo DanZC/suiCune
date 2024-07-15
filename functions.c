@@ -4912,6 +4912,29 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(SantosScript);
     CONVERTED_SCRIPT(BlackthornCooltrainerF2Script);
 
+    // maps/ViridianCity.c
+    CONVERTED_SCRIPT(ViridianCityCoffeeGramps);
+    CONVERTED_SCRIPT(ViridianCityGrampsNearGym);
+    CONVERTED_SCRIPT(ViridianCityDreamEaterFisher);
+    CONVERTED_SCRIPT(ViridianCityYoungsterScript);
+
+    // maps/Route1.c
+    CONVERTED_SCRIPT(TrainerSchoolboyDanny);
+    CONVERTED_SCRIPT(TrainerCooltrainerfQuinn);
+    CONVERTED_SCRIPT(Route1FruitTree);
+
+    // maps/Route2.c
+    CONVERTED_SCRIPT(TrainerBugCatcherRob);
+    CONVERTED_SCRIPT(TrainerBugCatcherEd);
+    CONVERTED_SCRIPT(TrainerBugCatcherDoug);
+    CONVERTED_SCRIPT(Route2DireHit);
+    CONVERTED_SCRIPT(Route2MaxPotion);
+    CONVERTED_SCRIPT(Route2Carbos);
+    CONVERTED_SCRIPT(Route2Elixer);
+    CONVERTED_SCRIPT(Route2FruitTree);
+
+    // maps/Route22.c
+
     // maps/Route26.c
     CONVERTED_SCRIPT(TrainerCooltrainermJake);
     CONVERTED_SCRIPT(TrainerCooltrainermGaven3);
@@ -5145,6 +5168,12 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(Route46FruitTree1);
     CONVERTED_SCRIPT(Route46FruitTree2);
     CONVERTED_SCRIPT(Route46XSpeed);
+
+    // maps/Route2Gate.c
+    CONVERTED_SCRIPT(Route2GateScientistScript);
+
+    // maps/Route2NuggetHouse.c
+    CONVERTED_SCRIPT(Route2NuggetHouseFisherScript);
 
     // maps/Route26HealHouse.c
     CONVERTED_SCRIPT(Route26HealHouseTeacherScript);
@@ -5765,6 +5794,38 @@ void init_function_pointers(void) {
     // CONVERTED_SCRIPT(ObjectEvent);
 
     // maps/HallOfFame.c
+    // CONVERTED_SCRIPT(ObjectEvent);
+
+    // maps/ViridianGym.c
+    CONVERTED_SCRIPT(ViridianGymBlueScript);
+    CONVERTED_SCRIPT(ViridianGymGuideScript);
+
+    // maps/ViridianMart.c
+    CONVERTED_SCRIPT(ViridianMartClerkScript);
+    CONVERTED_SCRIPT(ViridianMartLassScript);
+    CONVERTED_SCRIPT(ViridianMartCooltrainerMScript);
+
+    // maps/ViridianNicknameSpeechHouse.c
+    CONVERTED_SCRIPT(ViridianNicknameSpeechHousePokefanMScript);
+    CONVERTED_SCRIPT(ViridianNicknameSpeechHouseLassScript);
+    CONVERTED_SCRIPT(Speary);
+    CONVERTED_SCRIPT(Rattey);
+
+    // maps/ViridianPokecenter1F.c
+    CONVERTED_SCRIPT(ViridianPokecenter1FNurseScript);
+    CONVERTED_SCRIPT(ViridianPokecenter1FCooltrainerMScript);
+    CONVERTED_SCRIPT(ViridianPokecenter1FCooltrainerFScript);
+    CONVERTED_SCRIPT(ViridianPokecenter1FBugCatcherScript);
+
+    // maps/TrainerHouse1F.c
+    CONVERTED_SCRIPT(TrainerHouse1FReceptionistScript);
+    CONVERTED_SCRIPT(TrainerHouse1FCooltrainerMScript);
+    CONVERTED_SCRIPT(TrainerHouse1FCooltrainerFScript);
+    CONVERTED_SCRIPT(TrainerHouse1FYoungsterScript);
+    CONVERTED_SCRIPT(TrainerHouse1FGentlemanScript);
+
+    // maps/TrainerHouseB1F.c
+    // CONVERTED_SCRIPT(ObjectEvent);
     // CONVERTED_SCRIPT(ObjectEvent);
 
     // maps/SilverCavePokecenter1F.c

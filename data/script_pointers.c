@@ -148,6 +148,28 @@ void PopulateMapScriptTable(void) {
     entry(BLACKTHORN_CITY, 7, SantosScript);
     entry(BLACKTHORN_CITY, 8, BlackthornCooltrainerF2Script);
 
+    entry(VIRIDIAN_CITY, 0, ViridianCityCoffeeGramps);
+    entry(VIRIDIAN_CITY, 1, ViridianCityGrampsNearGym);
+    entry(VIRIDIAN_CITY, 2, ViridianCityDreamEaterFisher);
+    entry(VIRIDIAN_CITY, 3, ViridianCityYoungsterScript);
+
+    entry(ROUTE_1, 0, TrainerSchoolboyDanny);
+    entry(ROUTE_1, 1, TrainerCooltrainerfQuinn);
+    entry(ROUTE_1, 2, Route1FruitTree);
+
+    entry(ROUTE_2, 0, TrainerBugCatcherRob);
+    entry(ROUTE_2, 1, TrainerBugCatcherEd);
+    entry(ROUTE_2, 2, TrainerBugCatcherDoug);
+    entry(ROUTE_2, 3, Route2DireHit);
+    entry(ROUTE_2, 4, Route2MaxPotion);
+    entry(ROUTE_2, 5, Route2Carbos);
+    entry(ROUTE_2, 6, Route2Elixer);
+    entry(ROUTE_2, 7, Route2FruitTree);
+
+    entry(ROUTE_2_GATE, 0, Route2GateScientistScript);
+
+    entry(ROUTE_2_NUGGET_HOUSE, 0, Route2NuggetHouseFisherScript);
+
     entry(ROUTE_26, 0, TrainerCooltrainermJake);
     entry(ROUTE_26, 1, TrainerCooltrainermGaven3);
     entry(ROUTE_26, 2, TrainerCooltrainerfJoyce);
@@ -882,6 +904,32 @@ void PopulateMapScriptTable(void) {
     entry(LANCES_ROOM, 2, ObjectEvent);
 
     entry(HALL_OF_FAME, 0, ObjectEvent);
+
+    entry(VIRIDIAN_GYM, 0, ViridianGymBlueScript);
+    entry(VIRIDIAN_GYM, 1, ViridianGymGuideScript);
+
+    entry(VIRIDIAN_MART, 0, ViridianMartClerkScript);
+    entry(VIRIDIAN_MART, 1, ViridianMartLassScript);
+    entry(VIRIDIAN_MART, 2, ViridianMartCooltrainerMScript);
+
+    entry(VIRIDIAN_NICKNAME_SPEECH_HOUSE, 0, ViridianNicknameSpeechHousePokefanMScript);
+    entry(VIRIDIAN_NICKNAME_SPEECH_HOUSE, 1, ViridianNicknameSpeechHouseLassScript);
+    entry(VIRIDIAN_NICKNAME_SPEECH_HOUSE, 2, Speary);
+    entry(VIRIDIAN_NICKNAME_SPEECH_HOUSE, 3, Rattey);
+
+    entry(VIRIDIAN_POKECENTER_1F, 0, ViridianPokecenter1FNurseScript);
+    entry(VIRIDIAN_POKECENTER_1F, 1, ViridianPokecenter1FCooltrainerMScript);
+    entry(VIRIDIAN_POKECENTER_1F, 2, ViridianPokecenter1FCooltrainerFScript);
+    entry(VIRIDIAN_POKECENTER_1F, 3, ViridianPokecenter1FBugCatcherScript);
+
+    entry(TRAINER_HOUSE_1F, 0, TrainerHouse1FReceptionistScript);
+    entry(TRAINER_HOUSE_1F, 1, TrainerHouse1FCooltrainerMScript);
+    entry(TRAINER_HOUSE_1F, 2, TrainerHouse1FCooltrainerFScript);
+    entry(TRAINER_HOUSE_1F, 3, TrainerHouse1FYoungsterScript);
+    entry(TRAINER_HOUSE_1F, 4, TrainerHouse1FGentlemanScript);
+
+    entry(TRAINER_HOUSE_B1F, 0, ObjectEvent);
+    entry(TRAINER_HOUSE_B1F, 1, ObjectEvent);
 
     entry(SILVER_CAVE_POKECENTER_1F, 0, SilverCavePokecenter1FNurseScript);
     entry(SILVER_CAVE_POKECENTER_1F, 1, SilverCavePokecenter1FGrannyScript);

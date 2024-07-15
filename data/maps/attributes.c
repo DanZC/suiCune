@@ -207,21 +207,21 @@ map_attributes(Route46, ROUTE_46, 0x05,
 //     connection(PEWTER_CITY, south, Route2, ROUTE_2, 5)
 //     connection(PEWTER_CITY, east, Route3, ROUTE_3, 5));
 
-// map_attributes(Route2, ROUTE_2, 0x0f,
-//     connection(ROUTE_2, north, PewterCity, PEWTER_CITY, -5)
-//     connection(ROUTE_2, south, ViridianCity, VIRIDIAN_CITY, -5));
+map_attributes(Route2, ROUTE_2, 0x0f,
+    connection(ROUTE_2, north, PewterCity, PEWTER_CITY, -5)
+    connection(ROUTE_2, south, ViridianCity, VIRIDIAN_CITY, -5));
 
-// map_attributes(ViridianCity, VIRIDIAN_CITY, 0x0f,
-//     connection(VIRIDIAN_CITY, north, Route2, ROUTE_2, 5)
-//     connection(VIRIDIAN_CITY, south, Route1, ROUTE_1, 10)
-//     connection(VIRIDIAN_CITY, west, Route22, ROUTE_22, 4));
+map_attributes(ViridianCity, VIRIDIAN_CITY, 0x0f,
+    connection(VIRIDIAN_CITY, north, Route2, ROUTE_2, 5)
+    connection(VIRIDIAN_CITY, south, Route1, ROUTE_1, 10)
+    connection(VIRIDIAN_CITY, west, Route22, ROUTE_22, 4));
 
-// map_attributes(Route22, ROUTE_22, 0x2c,
-//     connection(ROUTE_22, east, ViridianCity, VIRIDIAN_CITY, -4));
+map_attributes(Route22, ROUTE_22, 0x2c,
+    connection(ROUTE_22, east, ViridianCity, VIRIDIAN_CITY, -4));
 
-// map_attributes(Route1, ROUTE_1, 0x0f,
-//     connection(ROUTE_1, north, ViridianCity, VIRIDIAN_CITY, -10)
-//     connection(ROUTE_1, south, PalletTown, PALLET_TOWN, 0));
+map_attributes(Route1, ROUTE_1, 0x0f,
+    connection(ROUTE_1, north, ViridianCity, VIRIDIAN_CITY, -10)
+    connection(ROUTE_1, south, PalletTown, PALLET_TOWN, 0));
 
 // map_attributes(PalletTown, PALLET_TOWN, 0x0f,
 //     connection(PALLET_TOWN, north, Route1, ROUTE_1, 0)
@@ -630,15 +630,15 @@ map_attributes(BattleTowerElevator, BATTLE_TOWER_ELEVATOR, 0x00, 0);
 map_attributes(BattleTowerHallway, BATTLE_TOWER_HALLWAY, 0x00, 0);
 map_attributes(Route40BattleTowerGate, ROUTE_40_BATTLE_TOWER_GATE, 0x00, 0);
 map_attributes(BattleTowerOutside, BATTLE_TOWER_OUTSIDE, 0x05, 0);
-// map_attributes(ViridianGym, VIRIDIAN_GYM, 0x00, 0);
-// map_attributes(ViridianNicknameSpeechHouse, VIRIDIAN_NICKNAME_SPEECH_HOUSE, 0x00, 0);
-// map_attributes(TrainerHouse1F, TRAINER_HOUSE_1F, 0x00, 0);
-// map_attributes(TrainerHouseB1F, TRAINER_HOUSE_B1F, 0x00, 0);
-// map_attributes(ViridianMart, VIRIDIAN_MART, 0x00, 0);
-// map_attributes(ViridianPokecenter1F, VIRIDIAN_POKECENTER_1F, 0x00, 0);
+map_attributes(ViridianGym, VIRIDIAN_GYM, 0x00, 0);
+map_attributes(ViridianNicknameSpeechHouse, VIRIDIAN_NICKNAME_SPEECH_HOUSE, 0x00, 0);
+map_attributes(TrainerHouse1F, TRAINER_HOUSE_1F, 0x00, 0);
+map_attributes(TrainerHouseB1F, TRAINER_HOUSE_B1F, 0x00, 0);
+map_attributes(ViridianMart, VIRIDIAN_MART, 0x00, 0);
+map_attributes(ViridianPokecenter1F, VIRIDIAN_POKECENTER_1F, 0x00, 0);
 // map_attributes(ViridianPokecenter2FBeta, VIRIDIAN_POKECENTER_2F_BETA, 0x00, 0);
-// map_attributes(Route2NuggetHouse, ROUTE_2_NUGGET_HOUSE, 0x00, 0);
-// map_attributes(Route2Gate, ROUTE_2_GATE, 0x00, 0);
+map_attributes(Route2NuggetHouse, ROUTE_2_NUGGET_HOUSE, 0x00, 0);
+map_attributes(Route2Gate, ROUTE_2_GATE, 0x00, 0);
 map_attributes(VictoryRoadGate, VICTORY_ROAD_GATE, 0x00, 0);
 map_attributes(ElmsLab, ELMS_LAB, 0x00, 0);
 map_attributes(PlayersHouse1F, PLAYERS_HOUSE_1F, 0x00, 0);

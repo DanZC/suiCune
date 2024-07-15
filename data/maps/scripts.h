@@ -166,7 +166,7 @@
 
 // SECTION "Map Scripts 10", ROMX
 
-// #include "../../maps/Route22.h"
+#include "../../maps/Route22.h"
 #include "../../maps/GoldenrodUnderground.h"
 #include "../../maps/GoldenrodUndergroundSwitchRoomEntrances.h"
 #include "../../maps/GoldenrodDeptStoreB1F.h"
@@ -202,15 +202,15 @@
 #include "../../maps/EcruteakMart.h"
 #include "../../maps/EcruteakGym.h"
 #include "../../maps/EcruteakItemfinderHouse.h"
-// #include "../../maps/ViridianGym.h"
-// #include "../../maps/ViridianNicknameSpeechHouse.h"
-// #include "../../maps/TrainerHouse1F.h"
-// #include "../../maps/TrainerHouseB1F.h"
-// #include "../../maps/ViridianMart.h"
-// #include "../../maps/ViridianPokecenter1F.h"
+#include "../../maps/ViridianGym.h"
+#include "../../maps/ViridianNicknameSpeechHouse.h"
+#include "../../maps/TrainerHouse1F.h"
+#include "../../maps/TrainerHouseB1F.h"
+#include "../../maps/ViridianMart.h"
+#include "../../maps/ViridianPokecenter1F.h"
 // #include "../../maps/ViridianPokecenter2FBeta.h"
-// #include "../../maps/Route2NuggetHouse.h"
-// #include "../../maps/Route2Gate.h"
+#include "../../maps/Route2NuggetHouse.h"
+#include "../../maps/Route2Gate.h"
 #include "../../maps/VictoryRoadGate.h"
 
 
@@ -446,7 +446,7 @@
 #include "../../maps/Route37.h"
 #include "../../maps/Route42.h"
 #include "../../maps/Route46.h"
-// #include "../../maps/ViridianCity.h"
+#include "../../maps/ViridianCity.h"
 // #include "../../maps/CeladonCity.h"
 // #include "../../maps/Route15.h"
 // #include "../../maps/VermilionCity.h"
@@ -460,8 +460,8 @@
 // SECTION "Map Scripts 24", ROMX
 
 #include "../../maps/Route33.h"
-// #include "../../maps/Route2.h"
-// #include "../../maps/Route1.h"
+#include "../../maps/Route2.h"
+#include "../../maps/Route1.h"
 // #include "../../maps/PalletTown.h"
 // #include "../../maps/Route21.h"
 // #include "../../maps/CinnabarIsland.h"
