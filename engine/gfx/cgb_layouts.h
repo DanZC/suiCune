@@ -47,6 +47,8 @@ void v_CGB_TradeTube(void);
 void v_CGB_TrainerOrMonFrontpicPals(void);
 void v_CGB_MysteryGift(void);
 void GS_CGB_MysteryGift(void);
+
+void v_CGB_Evolution2(void);
 //#include "gfx/stats/pages.pal"
 //#include "gfx/stats/stats.pal"
 //#include "gfx/pokedex/question_mark.pal"

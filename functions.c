@@ -9047,4 +9047,7 @@ CONVERTED(v_AnimateTileset);
     // CONVERTED(MysteryGiftGetItem);
     CONVERTED(StageDataForMysteryGift);
     // CONVERTED(MysteryGiftGetDecoration);
+
+    // engine/movie/evolution_animation.c
+    REDIRECTED(EvolutionAnimation);
 }

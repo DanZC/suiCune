@@ -848,6 +848,31 @@ void v_CGB_Evolution(void){
 
 }
 
+void v_CGB_Evolution2(void){
+    // LD_DE(wBGPals1);
+    // LD_A_C;
+    // AND_A_A;
+    // IF_Z goto pokemon;
+    // LD_A(PREDEFPAL_BLACKOUT);
+    // CALL(aGetPredefPal);
+    // CALL(aLoadHLPaletteIntoDE);
+    LoadHLPaletteIntoDE_Conv(wram->wBGPals1, GetPredefPal_Conv(PREDEFPAL_BLACKOUT));
+    // goto got_palette;
+
+// got_palette:
+    // CALL(aWipeAttrmap);
+    WipeAttrmap();
+    // CALL(aApplyAttrmap);
+    ApplyAttrmap_Conv();
+    // CALL(aApplyPals);
+    ApplyPals_Conv();
+    // LD_A(TRUE);
+    // LDH_addr_A(hCGBPalUpdate);
+    hram->hCGBPalUpdate = TRUE;
+    // RET;
+
+}
+
 void v_CGB_GSTitleScreen(void){
     LD_HL(mUnusedGSTitleBGPals);
     LD_DE(wBGPals1);
