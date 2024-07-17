@@ -1,410 +1,551 @@
 #include "../../constants.h"
 #include "evolve.h"
+#include "learn.h"
+#include "tempmon.h"
+#include "move_mon.h"
+#include "../smallflag.h"
+#include "../../home/copy.h"
+#include "../../home/audio.h"
+#include "../../home/names.h"
+#include "../../home/copy_name.h"
+#include "../../home/pokemon.h"
+#include "../../home/text.h"
+#include "../../home/delay.h"
+#include "../../home/clear_sprites.h"
+#include "../../home/pokedex_flags.h"
+#include "../gfx/load_pics.h"
+#include "../pokedex/unown_dex.h"
+#include "../movie/evolution_animation.h"
+#include "../../mobile/mobile_41.h"
+#include "../../data/text/common.h"
 #include "../../data/pokemon/evos_attacks_pointers.h"
 #include "../../data/moves/moves.h"
 
 void EvolvePokemon(void){
-    LD_HL(wEvolvableFlags);
-    XOR_A_A;
-    LD_hl_A;
-    LD_A_addr(wCurPartyMon);
-    LD_C_A;
-    LD_B(SET_FLAG);
-    CALL(aEvoFlagAction);
+    // LD_HL(wEvolvableFlags);
+    // XOR_A_A;
+    // LD_hl_A;
+    wram->wEvolvableFlags[0] = 0;
+    // LD_A_addr(wCurPartyMon);
+    // LD_C_A;
+    // LD_B(SET_FLAG);
+    // CALL(aEvoFlagAction);
+    EvoFlagAction(wram->wEvolvableFlags, wram->wCurPartyMon, SET_FLAG);
     return EvolveAfterBattle();
 }
 
 void EvolveAfterBattle(void){
-    XOR_A_A;
-    LD_addr_A(wMonTriedToEvolve);
-    DEC_A;
-    LD_addr_A(wCurPartyMon);
-    PUSH_HL;
-    PUSH_BC;
-    PUSH_DE;
-    LD_HL(wPartyCount);
+    // XOR_A_A;
+    // LD_addr_A(wMonTriedToEvolve);
+    wram->wMonTriedToEvolve = 0;
+    // DEC_A;
+    // LD_addr_A(wCurPartyMon);
+    wram->wCurPartyMon = 0xff;
+    // PUSH_HL;
+    // PUSH_BC;
+    // PUSH_DE;
+    // LD_HL(wPartyCount);
 
-    PUSH_HL;
+    // PUSH_HL;
 
-    return EvolveAfterBattle_MasterLoop();
+    return EvolveAfterBattle_MasterLoop(wram->wPartySpecies - 1);
 }
 
-void EvolveAfterBattle_MasterLoop(void){
-    LD_HL(wCurPartyMon);
-    INC_hl;
-
-    POP_HL;
-
-    INC_HL;
-    LD_A_hl;
-    CP_A(0xff);
-    JP_Z (mEvolveAfterBattle_MasterLoop_ReturnToMap);
-
-    LD_addr_A(wEvolutionOldSpecies);
-
-    PUSH_HL;
-    LD_A_addr(wCurPartyMon);
-    LD_C_A;
-    LD_HL(wEvolvableFlags);
-    LD_B(CHECK_FLAG);
-    CALL(aEvoFlagAction);
-    LD_A_C;
-    AND_A_A;
-    JP_Z (mEvolveAfterBattle_MasterLoop);
-
-    LD_A_addr(wEvolutionOldSpecies);
-    DEC_A;
-    LD_B(0);
-    LD_C_A;
-    LD_HL(mEvosAttacksPointers);
-    ADD_HL_BC;
-    ADD_HL_BC;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-
-    PUSH_HL;
-    XOR_A_A;
-    LD_addr_A(wMonType);
-    PREDEF(pCopyMonToTempMon);
-    POP_HL;
-
-
-loop:
-    LD_A_hli;
-    AND_A_A;
-    JR_Z (mEvolveAfterBattle_MasterLoop);
-
-    LD_B_A;
-
-    CP_A(EVOLVE_TRADE);
-    IF_Z goto trade;
-
-    LD_A_addr(wLinkMode);
-    AND_A_A;
-    JP_NZ (mEvolveAfterBattle_MasterLoop_dont_evolve_2);
-
-    LD_A_B;
-    CP_A(EVOLVE_ITEM);
-    JP_Z (mEvolveAfterBattle_MasterLoop_item);
-
-    LD_A_addr(wForceEvolution);
-    AND_A_A;
-    JP_NZ (mEvolveAfterBattle_MasterLoop_dont_evolve_2);
-
-    LD_A_B;
-    CP_A(EVOLVE_LEVEL);
-    JP_Z (mEvolveAfterBattle_MasterLoop_level);
-
-    CP_A(EVOLVE_HAPPINESS);
-    IF_Z goto happiness;
-
-//  EVOLVE_STAT
-    LD_A_addr(wTempMonLevel);
-    CP_A_hl;
-    JP_C (mEvolveAfterBattle_MasterLoop_dont_evolve_1);
-
-    CALL(aIsMonHoldingEverstone);
-    JP_Z (mEvolveAfterBattle_MasterLoop_dont_evolve_1);
-
-    PUSH_HL;
-    LD_DE(wTempMonAttack);
-    LD_HL(wTempMonDefense);
-    LD_C(2);
-    CALL(aCompareBytes);
-    LD_A(ATK_EQ_DEF);
-    IF_Z goto got_tyrogue_evo;
-    LD_A(ATK_LT_DEF);
-    IF_C goto got_tyrogue_evo;
-    LD_A(ATK_GT_DEF);
-
-got_tyrogue_evo:
-    POP_HL;
-
-    INC_HL;
-    CP_A_hl;
-    JP_NZ (mEvolveAfterBattle_MasterLoop_dont_evolve_2);
-
-    INC_HL;
-    goto proceed;
-
-
-happiness:
-    LD_A_addr(wTempMonHappiness);
-    CP_A(HAPPINESS_TO_EVOLVE);
-    JP_C (mEvolveAfterBattle_MasterLoop_dont_evolve_2);
-
-    CALL(aIsMonHoldingEverstone);
-    JP_Z (mEvolveAfterBattle_MasterLoop_dont_evolve_2);
-
-    LD_A_hli;
-    CP_A(TR_ANYTIME);
-    IF_Z goto proceed;
-    CP_A(TR_MORNDAY);
-    IF_Z goto happiness_daylight;
-
-//  TR_NITE
-    LD_A_addr(wTimeOfDay);
-    CP_A(NITE_F);
-    JP_NZ (mEvolveAfterBattle_MasterLoop_dont_evolve_3);
-    goto proceed;
-
-
-happiness_daylight:
-    LD_A_addr(wTimeOfDay);
-    CP_A(NITE_F);
-    JP_Z (mEvolveAfterBattle_MasterLoop_dont_evolve_3);
-    goto proceed;
-
-
-trade:
-    LD_A_addr(wLinkMode);
-    AND_A_A;
-    JP_Z (mEvolveAfterBattle_MasterLoop_dont_evolve_2);
-
-    CALL(aIsMonHoldingEverstone);
-    JP_Z (mEvolveAfterBattle_MasterLoop_dont_evolve_2);
-
-    LD_A_hli;
-    LD_B_A;
-    INC_A;
-    IF_Z goto proceed;
-
-    LD_A_addr(wLinkMode);
-    CP_A(LINK_TIMECAPSULE);
-    JP_Z (mEvolveAfterBattle_MasterLoop_dont_evolve_3);
-
-    LD_A_addr(wTempMonItem);
-    CP_A_B;
-    JP_NZ (mEvolveAfterBattle_MasterLoop_dont_evolve_3);
-
-    XOR_A_A;
-    LD_addr_A(wTempMonItem);
-    goto proceed;
-
-
-item:
-    LD_A_hli;
-    LD_B_A;
-    LD_A_addr(wCurItem);
-    CP_A_B;
-    JP_NZ (mEvolveAfterBattle_MasterLoop_dont_evolve_3);
-
-    LD_A_addr(wForceEvolution);
-    AND_A_A;
-    JP_Z (mEvolveAfterBattle_MasterLoop_dont_evolve_3);
-    LD_A_addr(wLinkMode);
-    AND_A_A;
-    JP_NZ (mEvolveAfterBattle_MasterLoop_dont_evolve_3);
-    goto proceed;
-
-
-level:
-    LD_A_hli;
-    LD_B_A;
-    LD_A_addr(wTempMonLevel);
-    CP_A_B;
-    JP_C (mEvolveAfterBattle_MasterLoop_dont_evolve_3);
-    CALL(aIsMonHoldingEverstone);
-    JP_Z (mEvolveAfterBattle_MasterLoop_dont_evolve_3);
-
-
-proceed:
-    LD_A_addr(wTempMonLevel);
-    LD_addr_A(wCurPartyLevel);
-    LD_A(0x1);
-    LD_addr_A(wMonTriedToEvolve);
-
-    PUSH_HL;
-
-    LD_A_hl;
-    LD_addr_A(wEvolutionNewSpecies);
-    LD_A_addr(wCurPartyMon);
-    LD_HL(wPartyMonNicknames);
-    CALL(aGetNickname);
-    CALL(aCopyName1);
-    LD_HL(mEvolvingText);
-    CALL(aPrintText);
-
-    LD_C(50);
-    CALL(aDelayFrames);
-
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    hlcoord(0, 0, wTilemap);
-    LD_BC((12 << 8) | 20);
-    CALL(aClearBox);
-
-    LD_A(0x1);
-    LDH_addr_A(hBGMapMode);
-    CALL(aClearSprites);
-
-    FARCALL(aEvolutionAnimation);
-
-    PUSH_AF;
-    CALL(aClearSprites);
-    POP_AF;
-    JP_C (mCancelEvolution);
-
-    LD_HL(mCongratulationsYourPokemonText);
-    CALL(aPrintText);
-
-    POP_HL;
-
-    LD_A_hl;
-    LD_addr_A(wCurSpecies);
-    LD_addr_A(wTempMonSpecies);
-    LD_addr_A(wEvolutionNewSpecies);
-    LD_addr_A(wNamedObjectIndex);
-    CALL(aGetPokemonName);
-
-    PUSH_HL;
-    LD_HL(mEvolvedIntoText);
-    CALL(aPrintTextboxText);
-    FARCALL(aStubbedTrainerRankings_MonsEvolved);
-
-    LD_DE(MUSIC_NONE);
-    CALL(aPlayMusic);
-    LD_DE(SFX_CAUGHT_MON);
-    CALL(aPlaySFX);
-    CALL(aWaitSFX);
-
-    LD_C(40);
-    CALL(aDelayFrames);
-
-    CALL(aClearTilemap);
-    CALL(aUpdateSpeciesNameIfNotNicknamed);
-    CALL(aGetBaseData);
-
-    LD_HL(wTempMonExp + 2);
-    LD_DE(wTempMonMaxHP);
-    LD_B(TRUE);
-    PREDEF(pCalcMonStats);
-
-    LD_A_addr(wCurPartyMon);
-    LD_HL(wPartyMons);
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    CALL(aAddNTimes);
-    LD_E_L;
-    LD_D_H;
-    LD_BC(MON_MAXHP);
-    ADD_HL_BC;
-    LD_A_hli;
-    LD_B_A;
-    LD_C_hl;
-    LD_HL(wTempMonMaxHP + 1);
-    LD_A_hld;
-    SUB_A_C;
-    LD_C_A;
-    LD_A_hl;
-    SBC_A_B;
-    LD_B_A;
-    LD_HL(wTempMonHP + 1);
-    LD_A_hl;
-    ADD_A_C;
-    LD_hld_A;
-    LD_A_hl;
-    ADC_A_B;
-    LD_hl_A;
-
-    LD_HL(wTempMonSpecies);
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    CALL(aCopyBytes);
-
-    LD_A_addr(wCurSpecies);
-    LD_addr_A(wTempSpecies);
-    XOR_A_A;
-    LD_addr_A(wMonType);
-    CALL(aLearnLevelMoves);
-    LD_A_addr(wTempSpecies);
-    DEC_A;
-    CALL(aSetSeenAndCaughtMon);
-
-    LD_A_addr(wTempSpecies);
-    CP_A(UNOWN);
-    IF_NZ goto skip_unown;
-
-    LD_HL(wTempMonDVs);
-    PREDEF(pGetUnownLetter);
-    CALLFAR(aUpdateUnownDex);
-
-
-skip_unown:
-    POP_DE;
-    POP_HL;
-    LD_A_addr(wTempMonSpecies);
-    LD_hl_A;
-    PUSH_HL;
-    LD_L_E;
-    LD_H_D;
-    JP(mEvolveAfterBattle_MasterLoop);
-
-
-dont_evolve_1:
-    INC_HL;
-
-dont_evolve_2:
-    INC_HL;
-
-dont_evolve_3:
-    INC_HL;
-    JP(mEvolveAfterBattle_MasterLoop_loop);
-
-
-UnusedReturnToMap:
+void EvolveAfterBattle_MasterLoop(species_t* species){
+MasterLoop:
+    // LD_HL(wCurPartyMon);
+    // INC_hl;
+    wram->wCurPartyMon++;
+
+    // POP_HL;
+
+    // INC_HL;
+    species++;
+    // LD_A_hl;
+    // CP_A(0xff);
+    // JP_Z (mEvolveAfterBattle_MasterLoop_ReturnToMap);
+    if(*species == (species_t)-1) {
+    // ReturnToMap:
+        // POP_DE;
+        // POP_BC;
+        // POP_HL;
+        // LD_A_addr(wLinkMode);
+        // AND_A_A;
+        // RET_NZ ;
+        if(wram->wLinkMode != 0)
+            return;
+        // LD_A_addr(wBattleMode);
+        // AND_A_A;
+        // RET_NZ ;
+        if(wram->wBattleMode != 0)
+            return;
+        // LD_A_addr(wMonTriedToEvolve);
+        // AND_A_A;
+        // CALL_NZ (aRestartMapMusic);
+        if(wram->wMonTriedToEvolve)
+            RestartMapMusic_Conv();
+        // RET;
+        return;
+    }
+
+    // LD_addr_A(wEvolutionOldSpecies);
+    wram->wEvolutionOldSpecies = *species;
+
+    // PUSH_HL;
+    // LD_A_addr(wCurPartyMon);
+    // LD_C_A;
+    // LD_HL(wEvolvableFlags);
+    // LD_B(CHECK_FLAG);
+    // CALL(aEvoFlagAction);
+    // LD_A_C;
+    // AND_A_A;
+    // JP_Z (mEvolveAfterBattle_MasterLoop);
+    if(!EvoFlagAction(wram->wEvolvableFlags, wram->wCurPartyMon, CHECK_FLAG))
+        goto MasterLoop;
+
+    // LD_A_addr(wEvolutionOldSpecies);
+    // DEC_A;
+    // LD_B(0);
+    // LD_C_A;
+    // LD_HL(mEvosAttacksPointers);
+    // ADD_HL_BC;
+    // ADD_HL_BC;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    const struct EvoData* evos = EvosAttacksPointers[wram->wEvolutionOldSpecies - 1]->evolutions;
+
+    // PUSH_HL;
+    // XOR_A_A;
+    // LD_addr_A(wMonType);
+    wram->wMonType = PARTYMON;
+    // PREDEF(pCopyMonToTempMon);
+    CopyMonToTempMon_Conv();
+    // POP_HL;
+
+    while(1) {
+    loop:
+        // LD_A_hli;
+        // AND_A_A;
+        // JR_Z (mEvolveAfterBattle_MasterLoop);
+        if(evos->type == 0)
+            goto MasterLoop;
+
+        // LD_B_A;
+
+        // CP_A(EVOLVE_TRADE);
+        // IF_Z goto trade;
+        if(evos->type == EVOLVE_TRADE) {
+        // trade:
+            // LD_A_addr(wLinkMode);
+            // AND_A_A;
+            // JP_Z (mEvolveAfterBattle_MasterLoop_dont_evolve_2);
+
+            // CALL(aIsMonHoldingEverstone);
+            // JP_Z (mEvolveAfterBattle_MasterLoop_dont_evolve_2);
+            if(wram->wLinkMode == 0 || IsMonHoldingEverstone())
+                goto dont_evolve_2;
+
+            // LD_A_hli;
+            // LD_B_A;
+            item_t trade_item = evos->trade.heldItem;
+            // INC_A;
+            // IF_Z goto proceed;
+            if(trade_item != (item_t)-1) {
+                // LD_A_addr(wLinkMode);
+                // CP_A(LINK_TIMECAPSULE);
+                // JP_Z (mEvolveAfterBattle_MasterLoop_dont_evolve_3);
+
+                // LD_A_addr(wTempMonItem);
+                // CP_A_B;
+                // JP_NZ (mEvolveAfterBattle_MasterLoop_dont_evolve_3);
+                if(wram->wLinkMode == LINK_TIMECAPSULE || wram->wTempMon.mon.item != trade_item)
+                    goto dont_evolve_3;
+
+                // XOR_A_A;
+                // LD_addr_A(wTempMonItem);
+                wram->wTempMon.mon.item = NO_ITEM; // Consume item
+            }
+            // goto proceed;
+        }
+
+        // LD_A_addr(wLinkMode);
+        // AND_A_A;
+        // JP_NZ (mEvolveAfterBattle_MasterLoop_dont_evolve_2);
+        else if(wram->wLinkMode != 0) {
+            goto dont_evolve_2;
+        }
+
+        // LD_A_B;
+        // CP_A(EVOLVE_ITEM);
+        // JP_Z (mEvolveAfterBattle_MasterLoop_item);
+        else if(evos->type == EVOLVE_ITEM) {
+        // item:
+            // LD_A_hli;
+            // LD_B_A;
+            item_t ev_item = evos->item.useItem;
+            // LD_A_addr(wCurItem);
+            // CP_A_B;
+            // JP_NZ (mEvolveAfterBattle_MasterLoop_dont_evolve_3);
+            if(wram->wCurItem != ev_item)
+                goto dont_evolve_3;
+
+            // LD_A_addr(wForceEvolution);
+            // AND_A_A;
+            // JP_Z (mEvolveAfterBattle_MasterLoop_dont_evolve_3);
+            // LD_A_addr(wLinkMode);
+            // AND_A_A;
+            // JP_NZ (mEvolveAfterBattle_MasterLoop_dont_evolve_3);
+            if(wram->wForceEvolution == 0 || wram->wLinkMode != 0)
+                goto dont_evolve_3;
+            // goto proceed;
+        }
+
+        // LD_A_addr(wForceEvolution);
+        // AND_A_A;
+        // JP_NZ (mEvolveAfterBattle_MasterLoop_dont_evolve_2);
+        else if(wram->wForceEvolution != 0) {
+            goto dont_evolve_2;
+        }
+
+        // LD_A_B;
+        // CP_A(EVOLVE_LEVEL);
+        // JP_Z (mEvolveAfterBattle_MasterLoop_level);
+        else if(evos->type == EVOLVE_LEVEL) {
+        // level:
+            // LD_A_hli;
+            // LD_B_A;
+            uint8_t lvl = evos->lvl.level;
+            // LD_A_addr(wTempMonLevel);
+            // CP_A_B;
+            // JP_C (mEvolveAfterBattle_MasterLoop_dont_evolve_3);
+            // CALL(aIsMonHoldingEverstone);
+            // JP_Z (mEvolveAfterBattle_MasterLoop_dont_evolve_3);
+            if(wram->wTempMon.mon.level < lvl || IsMonHoldingEverstone())
+                goto dont_evolve_3;
+        }
+
+        // CP_A(EVOLVE_HAPPINESS);
+        // IF_Z goto happiness;
+        else if(evos->type == EVOLVE_HAPPINESS) {
+        // happiness:
+            // LD_A_addr(wTempMonHappiness);
+            // CP_A(HAPPINESS_TO_EVOLVE);
+            // JP_C (mEvolveAfterBattle_MasterLoop_dont_evolve_2);
+
+            // CALL(aIsMonHoldingEverstone);
+            // JP_Z (mEvolveAfterBattle_MasterLoop_dont_evolve_2);
+            if(wram->wTempMon.mon.happiness < HAPPINESS_TO_EVOLVE || IsMonHoldingEverstone())
+                goto dont_evolve_2;
+
+            // LD_A_hli;
+            // CP_A(TR_ANYTIME);
+            // IF_Z goto proceed;
+            // CP_A(TR_MORNDAY);
+            // IF_Z goto happiness_daylight;
+            if(evos->happiness.timeOfDay == TR_MORNDAY) {
+            // happiness_daylight:
+                // LD_A_addr(wTimeOfDay);
+                // CP_A(NITE_F);
+                // JP_Z (mEvolveAfterBattle_MasterLoop_dont_evolve_3);
+                // goto proceed;
+                if(wram->wTimeOfDay == NITE_F)
+                    goto dont_evolve_3;
+            }
+        //  TR_NITE
+            else if(evos->happiness.timeOfDay == TR_NITE) {
+                // LD_A_addr(wTimeOfDay);
+                // CP_A(NITE_F);
+                // JP_NZ (mEvolveAfterBattle_MasterLoop_dont_evolve_3);
+                if(wram->wTimeOfDay != NITE_F)
+                    goto dont_evolve_3;
+                // goto proceed;
+            }
+            // goto proceed;
+        }
+
+    //  EVOLVE_STAT
+        else if(evos->type == EVOLVE_STAT) {
+            // LD_A_addr(wTempMonLevel);
+            // CP_A_hl;
+            // JP_C (mEvolveAfterBattle_MasterLoop_dont_evolve_1);
+
+            // CALL(aIsMonHoldingEverstone);
+            // JP_Z (mEvolveAfterBattle_MasterLoop_dont_evolve_1);
+            if(wram->wTempMon.mon.level < evos->stat.level || IsMonHoldingEverstone())
+                goto dont_evolve_1;
+
+            // PUSH_HL;
+            // LD_DE(wTempMonAttack);
+            uint16_t atk = ReverseEndian16(wram->wTempMon.attack);
+            // LD_HL(wTempMonDefense);
+            uint16_t def = ReverseEndian16(wram->wTempMon.defense);
+            // LD_C(2);
+            // CALL(aCompareBytes);
+            // LD_A(ATK_EQ_DEF);
+            // IF_Z goto got_tyrogue_evo;
+            // LD_A(ATK_LT_DEF);
+            // IF_C goto got_tyrogue_evo;
+            // LD_A(ATK_GT_DEF);
+            uint8_t state = (atk == def)? ATK_EQ_DEF: (atk < def)? ATK_LT_DEF: ATK_GT_DEF;
+
+        // got_tyrogue_evo:
+            // POP_HL;
+
+            // INC_HL;
+            // CP_A_hl;
+            // JP_NZ (mEvolveAfterBattle_MasterLoop_dont_evolve_2);
+            if(evos->stat.atkDefCmp != state)
+                goto dont_evolve_2;
+
+            // INC_HL;
+            // goto proceed;
+        }
+        else {
+        }
+
+    // proceed:
+        // LD_A_addr(wTempMonLevel);
+        // LD_addr_A(wCurPartyLevel);
+        wram->wCurPartyLevel = wram->wTempMon.mon.level;
+        // LD_A(0x1);
+        // LD_addr_A(wMonTriedToEvolve);
+        wram->wMonTriedToEvolve = 0x1;
+
+        // PUSH_HL;
+
+        // LD_A_hl;
+        // LD_addr_A(wEvolutionNewSpecies);
+        wram->wEvolutionNewSpecies = evos->species;
+        // LD_A_addr(wCurPartyMon);
+        // LD_HL(wPartyMonNicknames);
+        // CALL(aGetNickname);
+        // CALL(aCopyName1);
+        CopyName1_Conv2(GetCurNickname_Conv2());
+        // LD_HL(mEvolvingText);
+        // CALL(aPrintText);
+        PrintText_Conv2(EvolvingText);
+
+        // LD_C(50);
+        // CALL(aDelayFrames);
+        DelayFrames_Conv(50);
+
+        // XOR_A_A;
+        // LDH_addr_A(hBGMapMode);
+        // hlcoord(0, 0, wTilemap);
+        // LD_BC((12 << 8) | 20);
+        // CALL(aClearBox);
+        ClearBox_Conv2(coord(0, 0, wram->wTilemap), 20, 12);
+
+        // LD_A(0x1);
+        // LDH_addr_A(hBGMapMode);
+        hram->hBGMapMode = 0x1;
+        // CALL(aClearSprites);
+        ClearSprites_Conv();
+
+        // FARCALL(aEvolutionAnimation);
+        bool cancel = EvolutionAnimation_Conv();
+
+        // PUSH_AF;
+        // CALL(aClearSprites);
+        ClearSprites_Conv();
+        // POP_AF;
+        // JP_C (mCancelEvolution);
+        if(cancel) {
+        // Inlined CancelEvolution to reduce stack smashing. 
+            // LD_HL(mStoppedEvolvingText);
+            // CALL(aPrintText);
+            PrintText_Conv2(StoppedEvolvingText);
+            // CALL(aClearTilemap);
+            ClearTilemap_Conv2();
+            // POP_HL;
+            // JP(mEvolveAfterBattle_MasterLoop);
+            goto MasterLoop;
+        }
+
+        // LD_HL(mCongratulationsYourPokemonText);
+        // CALL(aPrintText);
+        PrintText_Conv2(CongratulationsYourPokemonText);
+
+        // POP_HL;
+
+        // LD_A_hl;
+        // LD_addr_A(wCurSpecies);
+        wram->wCurSpecies = evos->species;
+        // LD_addr_A(wTempMonSpecies);
+        wram->wTempMon.mon.species = evos->species;
+        // LD_addr_A(wEvolutionNewSpecies);
+        wram->wEvolutionNewSpecies = evos->species;
+        // LD_addr_A(wNamedObjectIndex);
+        // CALL(aGetPokemonName);
+        GetPokemonName_Conv2(evos->species);
+
+        // PUSH_HL;
+        // LD_HL(mEvolvedIntoText);
+        // CALL(aPrintTextboxText);
+        PrintTextboxText_Conv2(EvolvedIntoText);
+        // FARCALL(aStubbedTrainerRankings_MonsEvolved);
+        StubbedTrainerRankings_MonsEvolved();
+
+        // LD_DE(MUSIC_NONE);
+        // CALL(aPlayMusic);
+        PlayMusic_Conv(MUSIC_NONE);
+        // LD_DE(SFX_CAUGHT_MON);
+        // CALL(aPlaySFX);
+        PlaySFX_Conv(SFX_CAUGHT_MON);
+        // CALL(aWaitSFX);
+        WaitSFX_Conv();
+
+        // LD_C(40);
+        // CALL(aDelayFrames);
+        DelayFrames_Conv(40);
+
+        // CALL(aClearTilemap);
+        ClearTilemap_Conv2();
+        // CALL(aUpdateSpeciesNameIfNotNicknamed);
+        UpdateSpeciesNameIfNotNicknamed();
+        // CALL(aGetBaseData);
+        GetBaseData_Conv2(wram->wCurSpecies);
+
+        const uint16_t* statxp = (uint16_t*)((uint8_t*)&wram->wTempMon + offsetof(struct BoxMon, statExp));
+        uint16_t* stats = (uint16_t*)((uint8_t*)&wram->wTempMon + offsetof(struct PartyMon, maxHP));
+        // LD_HL(wTempMonExp + 2);
+        // LD_DE(wTempMonMaxHP);
+        // LD_B(TRUE);
+        // PREDEF(pCalcMonStats);
+        CalcMonStats_Conv(stats, statxp, wram->wTempMon.mon.DVs, TRUE);
+
+        // LD_A_addr(wCurPartyMon);
+        // LD_HL(wPartyMons);
+        // LD_BC(PARTYMON_STRUCT_LENGTH);
+        // CALL(aAddNTimes);
+        struct PartyMon* mon = wram->wPartyMon + wram->wCurPartyMon;
+        // LD_E_L;
+        // LD_D_H;
+        // LD_BC(MON_MAXHP);
+        // ADD_HL_BC;
+        // LD_A_hli;
+        // LD_B_A;
+        // LD_C_hl;
+        uint16_t maxHP = ReverseEndian16(mon->maxHP);
+        // LD_HL(wTempMonMaxHP + 1);
+        // LD_A_hld;
+        // SUB_A_C;
+        // LD_C_A;
+        // LD_A_hl;
+        // SBC_A_B;
+        // LD_B_A;
+        uint16_t bc = ReverseEndian16(wram->wTempMon.maxHP) - maxHP;
+        // LD_HL(wTempMonHP + 1);
+        // LD_A_hl;
+        // ADD_A_C;
+        // LD_hld_A;
+        // LD_A_hl;
+        // ADC_A_B;
+        // LD_hl_A;
+        wram->wTempMon.HP = ReverseEndian16(ReverseEndian16(wram->wTempMon.HP) + bc);
+
+        // LD_HL(wTempMonSpecies);
+        // LD_BC(PARTYMON_STRUCT_LENGTH);
+        // CALL(aCopyBytes);
+        CopyBytes_Conv2(mon, &wram->wTempMon, sizeof(*mon));
+
+        // LD_A_addr(wCurSpecies);
+        // LD_addr_A(wTempSpecies);
+        // XOR_A_A;
+        // LD_addr_A(wMonType);
+        // CALL(aLearnLevelMoves);
+        LearnLevelMoves_Conv(mon, mon->mon.level, wram->wCurSpecies);
+        // LD_A_addr(wTempSpecies);
+        // DEC_A;
+        // CALL(aSetSeenAndCaughtMon);
+        SetSeenAndCaughtMon_Conv(wram->wCurSpecies - 1);
+
+        // LD_A_addr(wTempSpecies);
+        // CP_A(UNOWN);
+        // IF_NZ goto skip_unown;
+
+        if(wram->wCurSpecies == UNOWN) {
+            // LD_HL(wTempMonDVs);
+            // PREDEF(pGetUnownLetter);
+            // CALLFAR(aUpdateUnownDex);
+            UpdateUnownDex_Conv(GetUnownLetter_Conv(wram->wTempMon.mon.DVs));
+        }
+
+    // skip_unown:
+        // POP_DE;
+        // POP_HL;
+        // LD_A_addr(wTempMonSpecies);
+        // LD_hl_A;
+        *species = wram->wTempMon.mon.species;
+        // PUSH_HL;
+        // LD_L_E;
+        // LD_H_D;
+        // JP(mEvolveAfterBattle_MasterLoop);
+        goto MasterLoop;
+
+    dont_evolve_1:
+        // INC_HL;
+
+    dont_evolve_2:
+        // INC_HL;
+
+    dont_evolve_3:
+        // INC_HL;
+        evos++;
+        // JP(mEvolveAfterBattle_MasterLoop_loop);
+    }
+
+// UnusedReturnToMap:
 //   //  unreferenced
-    POP_HL;
-
-ReturnToMap:
-    POP_DE;
-    POP_BC;
-    POP_HL;
-    LD_A_addr(wLinkMode);
-    AND_A_A;
-    RET_NZ ;
-    LD_A_addr(wBattleMode);
-    AND_A_A;
-    RET_NZ ;
-    LD_A_addr(wMonTriedToEvolve);
-    AND_A_A;
-    CALL_NZ (aRestartMapMusic);
-    RET;
-
+    // POP_HL;
 }
 
 void UpdateSpeciesNameIfNotNicknamed(void){
-    LD_A_addr(wCurSpecies);
-    PUSH_AF;
-    LD_A_addr(wBaseDexNo);
-    LD_addr_A(wNamedObjectIndex);
-    CALL(aGetPokemonName);
-    POP_AF;
-    LD_addr_A(wCurSpecies);
-    LD_HL(wStringBuffer1);
-    LD_DE(wStringBuffer2);
+    // LD_A_addr(wCurSpecies);
+    // PUSH_AF;
+    species_t curSpecies = wram->wCurSpecies;
+    // LD_A_addr(wBaseDexNo);
+    // LD_addr_A(wNamedObjectIndex);
+    // CALL(aGetPokemonName);
+    GetPokemonName_Conv2(wram->wBaseDexNo);
+    // POP_AF;
+    // LD_addr_A(wCurSpecies);
+    wram->wCurSpecies = curSpecies;
+    // LD_HL(wStringBuffer1);
+    uint8_t* hl = wram->wStringBuffer1;
+    // LD_DE(wStringBuffer2);
+    uint8_t* de = wram->wStringBuffer2;
 
-loop:
-    LD_A_de;
-    INC_DE;
-    CP_A_hl;
-    INC_HL;
-    RET_NZ ;
-    CP_A(0x50);
-    IF_NZ goto loop;
+    uint8_t a;
+    do {
+    // loop:
+        // LD_A_de;
+        // INC_DE;
+        a = *(de++);
+        // CP_A_hl;
+        // INC_HL;
+        // RET_NZ ;
+        if(a != *hl)
+            return;
+        hl++;
+        // CP_A(0x50);
+        // IF_NZ goto loop;
+    } while(a != 0x50);
 
-    LD_A_addr(wCurPartyMon);
-    LD_BC(MON_NAME_LENGTH);
-    LD_HL(wPartyMonNicknames);
-    CALL(aAddNTimes);
-    PUSH_HL;
-    LD_A_addr(wCurSpecies);
-    LD_addr_A(wNamedObjectIndex);
-    CALL(aGetPokemonName);
-    LD_HL(wStringBuffer1);
-    POP_DE;
-    LD_BC(MON_NAME_LENGTH);
-    JP(mCopyBytes);
-
+    // LD_A_addr(wCurPartyMon);
+    // LD_BC(MON_NAME_LENGTH);
+    // LD_HL(wPartyMonNicknames);
+    // CALL(aAddNTimes);
+    // PUSH_HL;
+    // LD_A_addr(wCurSpecies);
+    // LD_addr_A(wNamedObjectIndex);
+    // CALL(aGetPokemonName);
+    // LD_HL(wStringBuffer1);
+    // POP_DE;
+    // LD_BC(MON_NAME_LENGTH);
+    // JP(mCopyBytes);
+    CopyBytes_Conv2(wram->wPartyMonNickname[wram->wCurPartyMon], GetPokemonName_Conv2(wram->wCurSpecies), MON_NAME_LENGTH);
 }
 
 void CancelEvolution(void){
@@ -416,46 +557,38 @@ void CancelEvolution(void){
 
 }
 
-void IsMonHoldingEverstone(void){
-    PUSH_HL;
-    LD_A_addr(wCurPartyMon);
-    LD_HL(wPartyMon1Item);
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    CALL(aAddNTimes);
-    LD_A_hl;
-    CP_A(EVERSTONE);
-    POP_HL;
-    RET;
-
+bool IsMonHoldingEverstone(void){
+    // PUSH_HL;
+    // LD_A_addr(wCurPartyMon);
+    // LD_HL(wPartyMon1Item);
+    // LD_BC(PARTYMON_STRUCT_LENGTH);
+    // CALL(aAddNTimes);
+    // LD_A_hl;
+    // CP_A(EVERSTONE);
+    // POP_HL;
+    // RET;
+    return wram->wPartyMon[wram->wCurPartyMon].mon.item == EVERSTONE;
 }
 
-void CongratulationsYourPokemonText(void){
-    //text_far ['_CongratulationsYourPokemonText']
-    //text_end ['?']
+const txt_cmd_s CongratulationsYourPokemonText[] = {
+    text_far(v_CongratulationsYourPokemonText)
+    text_end
+};
 
-    return EvolvedIntoText();
-}
+const txt_cmd_s EvolvedIntoText[] = {
+    text_far(v_EvolvedIntoText)
+    text_end
+};
 
-void EvolvedIntoText(void){
-    //text_far ['_EvolvedIntoText']
-    //text_end ['?']
+const txt_cmd_s StoppedEvolvingText[] = {
+    text_far(v_StoppedEvolvingText)
+    text_end
+};
 
-    return StoppedEvolvingText();
-}
-
-void StoppedEvolvingText(void){
-    //text_far ['_StoppedEvolvingText']
-    //text_end ['?']
-
-    return EvolvingText();
-}
-
-void EvolvingText(void){
-    //text_far ['_EvolvingText']
-    //text_end ['?']
-
-    return LearnLevelMoves();
-}
+const txt_cmd_s EvolvingText[] = {
+    text_far(v_EvolvingText)
+    text_end
+};
 
 void LearnLevelMoves(void){
     LD_A_addr(wTempSpecies);
@@ -527,6 +660,94 @@ done:
     LD_addr_A(wTempSpecies);
     RET;
 
+}
+
+void LearnLevelMoves_Conv(struct PartyMon* mon, uint8_t level, species_t species){
+    // LD_A_addr(wTempSpecies);
+    // LD_addr_A(wCurPartySpecies);
+    // DEC_A;
+    // LD_B(0);
+    // LD_C_A;
+    // LD_HL(mEvosAttacksPointers);
+    // ADD_HL_BC;
+    // ADD_HL_BC;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+
+// skip_evos:
+    // LD_A_hli;
+    // AND_A_A;
+    // IF_NZ goto skip_evos;
+    const struct LevelMove* hl = EvosAttacksPointers[species - 1]->learnset;
+
+    while(1) {
+    find_move:
+        // LD_A_hli;
+        // AND_A_A;
+        // IF_Z goto done;
+        if(hl->level == 0)
+            break;
+
+        // LD_B_A;
+        // LD_A_addr(wCurPartyLevel);
+        // CP_A_B;
+        // LD_A_hli;
+        // IF_NZ goto find_move;
+        if(hl->level != level) {
+            hl++;
+            continue;
+        }
+
+        // PUSH_HL;
+        // LD_D_A;
+        move_t to_learn = hl->move;
+        // LD_HL(wPartyMon1Moves);
+        // LD_A_addr(wCurPartyMon);
+        // LD_BC(PARTYMON_STRUCT_LENGTH);
+        // CALL(aAddNTimes);
+        move_t* moves = mon->mon.moves;
+
+        // LD_B(NUM_MOVES);
+        uint8_t b = NUM_MOVES;
+
+        do {
+        // check_move:
+            // LD_A_hli;
+            // CP_A_D;
+            // IF_Z goto has_move;
+            if(*moves == to_learn) {
+                hl++;
+                goto find_move;
+            }
+            // DEC_B;
+            // IF_NZ goto check_move;
+        } while(--b != 0);
+        // goto learn;
+
+    // has_move:
+        // POP_HL;
+        // goto find_move;
+
+    // learn:
+        // LD_A_D;
+        // LD_addr_A(wPutativeTMHMMove);
+        // LD_addr_A(wNamedObjectIndex);
+        // CALL(aGetMoveName);
+        // CALL(aCopyName1);
+        CopyName1_Conv2(GetMoveName_Conv2(to_learn));
+        // PREDEF(pLearnMove);
+        LearnMove(to_learn);
+        // POP_HL;
+        hl++;
+        // goto find_move;
+    }
+
+// done:
+    // LD_A_addr(wCurPartySpecies);
+    // LD_addr_A(wTempSpecies);
+    wram->wTempSpecies = wram->wCurPartySpecies;
+    // RET;
 }
 
 void FillMoves(void){
@@ -830,13 +1051,13 @@ void ShiftMoves_Conv(move_t* hl){
     // RET;
 }
 
-void EvoFlagAction(void){
-    PUSH_DE;
-    LD_D(0x0);
-    PREDEF(pSmallFarFlagAction);
-    POP_DE;
-    RET;
-
+uint8_t EvoFlagAction(uint8_t* hl, uint8_t c, uint8_t b){
+    // PUSH_DE;
+    // LD_D(0x0);
+    // PREDEF(pSmallFarFlagAction);
+    // POP_DE;
+    // RET;
+    return SmallFarFlagAction_Conv(hl, c, b);
 }
 
 void GetPreEvolution(void){

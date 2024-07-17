@@ -2113,9 +2113,9 @@ void DepositBreedmon_Conv(uint8_t* nickname, uint8_t* ot, struct BoxMon* de, uin
     CopyBytes_Conv2(de, wram->wPartyMon + a, BOXMON_STRUCT_LENGTH);
 }
 
-void SendMonIntoBox(void){
 //  Sends the mon into one of Bills Boxes
 //  the data comes mainly from 'wEnemyMon:'
+void SendMonIntoBox(void){
     LD_A(BANK(sBoxCount));
     CALL(aOpenSRAM);
     LD_DE(sBoxCount);
@@ -2252,6 +2252,189 @@ full:
 
 }
 
+//  Sends the mon into one of Bills Boxes
+//  the data comes mainly from 'wEnemyMon:'
+bool SendMonIntoBox_Conv(void){
+    // LD_A(BANK(sBoxCount));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asBoxCount));
+    // LD_DE(sBoxCount);
+    // LD_A_de;
+    uint8_t boxCount = gb_read(sBoxCount);
+    // CP_A(MONS_PER_BOX);
+    // JP_NC (mSendMonIntoBox_full);
+    if(boxCount >= MONS_PER_BOX) {
+    // full:
+        // CALL(aCloseSRAM);
+        CloseSRAM_Conv();
+        // AND_A_A;
+        // RET;
+        return false;
+    }
+    // INC_A;
+    // LD_de_A;
+    gb_write(sBoxCount, ++boxCount);
+    // LD_A_addr(wCurPartySpecies);
+    // LD_addr_A(wCurSpecies);
+    wram->wCurSpecies = wram->wCurPartySpecies;
+    // LD_C_A;
+    species_t* de = (species_t*)GBToRAMAddr(sBoxSpecies);
+    species_t c = wram->wCurPartySpecies;
+    species_t a;
+    do {
+    // loop:
+        // INC_DE;
+        // LD_A_de;
+        a = *de;
+        // LD_B_A;
+        species_t b = a;
+        // LD_A_C;
+        a = c;
+        // LD_C_B;
+        c = b;
+        // LD_de_A;
+        *de = a;
+        de++;
+        // INC_A;
+        // IF_NZ goto loop;
+    } while(a != 0xff);
+
+    // CALL(aGetBaseData);
+    GetBaseData_Conv2(wram->wCurPartySpecies);
+    // CALL(aShiftBoxMon);
+    ShiftBoxMon_Conv();
+
+    // LD_HL(wPlayerName);
+    // LD_DE(sBoxMonOTs);
+    // LD_BC(NAME_LENGTH);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(GBToRAMAddr(sBoxMonOTs), wram->wPlayerName, NAME_LENGTH);
+
+    // LD_A_addr(wCurPartySpecies);
+    // LD_addr_A(wNamedObjectIndex);
+    // CALL(aGetPokemonName);
+    GetPokemonName_Conv2(wram->wCurPartySpecies);
+
+    // LD_DE(sBoxMonNicknames);
+    // LD_HL(wStringBuffer1);
+    // LD_BC(MON_NAME_LENGTH);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(GBToRAMAddr(sBoxMonNicknames), wram->wStringBuffer1, MON_NAME_LENGTH);
+
+    // LD_HL(wEnemyMon);
+    // LD_DE(sBoxMon1);
+    struct BoxMon* boxmon = (struct BoxMon*)GBToRAMAddr(sBoxMon1);
+    // LD_BC(1 + 1 + NUM_MOVES);  // species + item + moves
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(boxmon, &wram->wEnemyMon, sizeof(species_t) + sizeof(item_t) + sizeof(move_t) * NUM_MOVES);
+
+    // LD_HL(wPlayerID);
+    // LD_A_hli;
+    // LD_de_A;
+    // INC_DE;
+    // LD_A_hl;
+    // LD_de_A;
+    boxmon->id = wram->wPlayerID;
+    // INC_DE;
+    // PUSH_DE;
+    // LD_A_addr(wCurPartyLevel);
+    // LD_D_A;
+    // CALLFAR(aCalcExpAtLevel);
+    uint32_t exp = CalcExpAtLevel_Conv(wram->wCurPartyLevel);
+    // POP_DE;
+    // LDH_A_addr(hProduct + 1);
+    // LD_de_A;
+    boxmon->exp[0] = HIGH(exp >> 8);
+    // INC_DE;
+    // LDH_A_addr(hProduct + 2);
+    // LD_de_A;
+    boxmon->exp[1] = HIGH(exp);
+    // INC_DE;
+    // LDH_A_addr(hProduct + 3);
+    // LD_de_A;
+    boxmon->exp[2] = LOW(exp);
+    // INC_DE;
+
+// Set all 5 Experience Values to 0
+    // XOR_A_A;
+    // LD_B(2 * 5);
+
+    for(uint8_t b = 0; b < 5; b++) {
+    // loop2:
+        // LD_de_A;
+        boxmon->statExp[b] = 0x0;
+        // INC_DE;
+        // DEC_B;
+        // IF_NZ goto loop2;
+    }
+
+    // LD_HL(wEnemyMonDVs);
+    // LD_B(2 + NUM_MOVES);  // DVs and PP // wEnemyMonHappiness - wEnemyMonDVs
+
+// loop3:
+    // LD_A_hli;
+    // LD_de_A;
+    // INC_DE;
+    // DEC_B;
+    // IF_NZ goto loop3;
+    boxmon->DVs = wram->wEnemyMon.dvs;
+    CopyBytes_Conv2(boxmon->PP, wram->wEnemyMon.pp, sizeof(boxmon->PP));
+
+    // LD_A(BASE_HAPPINESS);
+    // LD_de_A;
+    boxmon->happiness = BASE_HAPPINESS;
+    // INC_DE;
+    // XOR_A_A;
+    // LD_de_A;
+    boxmon->pokerusStatus = 0x0;
+    // INC_DE;
+    // LD_de_A;
+    boxmon->caughtTimeLevel = 0x0;
+    // INC_DE;
+    // LD_de_A;
+    boxmon->caughtGenderLocation = 0x0;
+    // INC_DE;
+    // LD_A_addr(wCurPartyLevel);
+    // LD_de_A;
+    boxmon->level = wram->wCurPartyLevel;
+    // LD_A_addr(wCurPartySpecies);
+    // DEC_A;
+    // CALL(aSetSeenAndCaughtMon);
+    SetSeenAndCaughtMon_Conv(wram->wCurPartySpecies - 1);
+    // LD_A_addr(wCurPartySpecies);
+    // CP_A(UNOWN);
+    // IF_NZ goto not_unown;
+    if(wram->wCurPartySpecies == UNOWN) {
+        // LD_HL(sBoxMon1DVs);
+        // PREDEF(pGetUnownLetter);
+        // CALLFAR(aUpdateUnownDex);
+        UpdateUnownDex_Conv(GetUnownLetter_Conv(boxmon->DVs));
+    }
+
+// not_unown:
+    // LD_HL(sBoxMon1Moves);
+    // LD_DE(wTempMonMoves);
+    // LD_BC(NUM_MOVES);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(boxmon->moves, wram->wTempMon.mon.moves, sizeof(boxmon->moves));
+
+    // LD_HL(sBoxMon1PP);
+    // LD_DE(wTempMonPP);
+    // LD_BC(NUM_MOVES);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(boxmon->PP, wram->wTempMon.mon.PP, sizeof(boxmon->PP));
+
+    // LD_B(0);
+    // CALL(aRestorePPOfDepositedPokemon);
+    RestorePPOfDepositedPokemon(0);
+
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // SCF;
+    // RET;
+    return true;
+}
+
 void ShiftBoxMon(void){
     LD_HL(sBoxMonOTs);
     LD_BC(NAME_LENGTH);
@@ -2301,6 +2484,68 @@ loop:
     IF_NZ goto loop;
     RET;
 
+}
+
+static void ShiftBoxMon_shift(void* hl_, uint16_t bc) {
+    // LD_A_addr(sBoxCount);
+    uint8_t boxCount = gb_read(sBoxCount);
+    // CP_A(2);
+    // RET_C ;
+    if(boxCount < 2)
+        return;
+
+    // PUSH_HL;
+    // CALL(aAddNTimes);
+    // DEC_HL;
+    // LD_E_L;
+    // LD_D_H;
+    // POP_HL;
+    uint8_t* de = ((uint8_t*)hl_) + (bc * boxCount) - 1;
+
+    // LD_A_addr(sBoxCount);
+    // DEC_A;
+    // CALL(aAddNTimes);
+    // DEC_HL;
+    uint8_t* hl = ((uint8_t*)hl_) + (bc * (boxCount - 1)) - 1;
+
+    // PUSH_HL;
+    // LD_A_addr(sBoxCount);
+    // DEC_A;
+    // LD_HL(0);
+    // CALL(aAddNTimes);
+    // LD_C_L;
+    // LD_B_H;
+    bc = bc * (boxCount - 1);
+    // POP_HL;
+
+    do {
+    // loop:
+        // LD_A_hld;
+        // LD_de_A;
+        *(de--) = *(hl--);
+        // DEC_DE;
+        // DEC_BC;
+        // LD_A_C;
+        // OR_A_B;
+        // IF_NZ goto loop;
+    } while(--bc != 0);
+    // RET;
+}
+
+void ShiftBoxMon_Conv(void){
+    // LD_HL(sBoxMonOTs);
+    // LD_BC(NAME_LENGTH);
+    // CALL(aShiftBoxMon_shift);
+    ShiftBoxMon_shift(GBToRAMAddr(sBoxMonOTs), NAME_LENGTH);
+
+    // LD_HL(sBoxMonNicknames);
+    // LD_BC(MON_NAME_LENGTH);
+    // CALL(aShiftBoxMon_shift);
+    ShiftBoxMon_shift(GBToRAMAddr(sBoxMonNicknames), NAME_LENGTH);
+
+    // LD_HL(sBoxMons);
+    // LD_BC(BOXMON_STRUCT_LENGTH);
+    ShiftBoxMon_shift(GBToRAMAddr(sBoxMons), sizeof(struct BoxMon));
 }
 
 void GiveEgg(void){

@@ -1,10 +1,5 @@
 #include "../../constants.h"
 
-struct HealingHPEntry {
-    uint8_t item;
-    uint16_t amount;
-};
-
 const struct HealingHPEntry HealingHPAmounts[] = {
     {FRESH_WATER,   50},
     {SODA_POP,      60},
@@ -21,5 +16,5 @@ const struct HealingHPEntry HealingHPAmounts[] = {
     {ENERGY_ROOT,  200},
     {RAGECANDYBAR,  20},
     {BERRY_JUICE,   20},
-    {-1, 0},
+    {(item_t)-1,    0},
 };

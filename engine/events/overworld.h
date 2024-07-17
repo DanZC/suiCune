@@ -47,7 +47,7 @@ bool Script_CantDoWaterfall(script_s* s);
 bool Script_AskWaterfall(script_s* s);
 void EscapeRopeFunction(void);
 void DigFunction(void);
-void EscapeRopeOrDig(void);
+void EscapeRopeOrDig(uint8_t escapeType);
 void TeleportFunction(void);
 void StrengthFunction(void);
 void SetStrengthFlag(void);

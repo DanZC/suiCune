@@ -11,3 +11,4 @@ uint8_t RotateRightC8(uint8_t x);
 uint16_t NativeToBigEndian16(uint16_t x);
 #define BigEndianToNative16 NativeToBigEndian16
 uint16_t ReverseEndian16(uint16_t x);
+void MemSwap(void* a_, void* b_, size_t size);

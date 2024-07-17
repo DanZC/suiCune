@@ -1,11 +1,12 @@
 #include "../constants.h"
 #include "item.h"
 #include "../engine/items/items.h"
+#include "../engine/items/item_effects.h"
 
 void DoItemEffect(void){
-        FARCALL(av_DoItemEffect);
-    RET;
-
+    // FARCALL(av_DoItemEffect);
+    // RET;
+    v_DoItemEffect_Conv(wram->wCurItem);
 }
 
 void CheckTossableItem(void){

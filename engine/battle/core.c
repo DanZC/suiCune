@@ -26,6 +26,7 @@
 #include "../../home/map_objects.h"
 #include "../../home/sprite_updates.h"
 #include "../../home/lcd.h"
+#include "../../home/print_text.h"
 #include "../../data/trainers/leaders.h"
 #include "../pokemon/experience.h"
 #include "../pokemon/health.h"
@@ -46,8 +47,10 @@
 #include "../pokemon/evolve.h"
 #include "../pokemon/party_menu.h"
 #include "../pokemon/mon_submenu.h"
+#include "../pokemon/types.h"
 #include "../items/pack.h"
 #include "../items/items.h"
+#include "../items/item_effects.h"
 #include "../../mobile/mobile_41.h"
 #include "../../data/text/battle.h"
 #include "../../data/text/common.h"
@@ -9163,501 +9166,652 @@ void CheckAmuletCoin_Conv(void){
     // RET;
 }
 
-void MoveSelectionScreen(void){
-    CALL(aIsMobileBattle);
-    IF_NZ goto not_mobile;
-    FARCALL(aMobile_MoveSelectionScreen);
-    RET;
+static void MoveSelectionScreen_swap(void* hl, size_t size) {
+    // PUSH_HL;
+    // LD_A_addr(wSwappingMove);
+    // DEC_A;
+    // LD_C_A;
+    // LD_B(0);
+    // ADD_HL_BC;
+    // LD_D_H;
+    // LD_E_L;
+    uint8_t* a = ((uint8_t*)hl) + (wram->wSwappingMove - 1) * size;
+    // POP_HL;
+    // LD_A_addr(wMenuCursorY);
+    // DEC_A;
+    // LD_C_A;
+    // LD_B(0);
+    // ADD_HL_BC;
+    // LD_A_de;
+    // LD_B_hl;
+    // LD_hl_A;
+    // LD_A_B;
+    // LD_de_A;
+    uint8_t* b = ((uint8_t*)hl) + (wram->wMenuCursorY - 1) * size;
+    // RET;
+    MemSwap(a, b, size);
+}
 
+bool MoveSelectionScreen(void){
+    static const char empty_string[] = "";
+MoveSelectionScreen:
+    // CALL(aIsMobileBattle);
+    // IF_NZ goto not_mobile;
+    // FARCALL(aMobile_MoveSelectionScreen);
+    // RET;
+    if(IsMobileBattle_Conv()) {
+    // TODO: Convert Mobile_MoveSelectionScreen
+        // FARCALL(aMobile_MoveSelectionScreen);
+        // RET;
+        return false;
+    }
 
-not_mobile:
-    LD_HL(wEnemyMonMoves);
-    LD_A_addr(wMoveSelectionMenuType);
-    DEC_A;
-    IF_Z goto got_menu_type;
-    DEC_A;
-    IF_Z goto ether_elixer_menu;
-    CALL(aCheckPlayerHasUsableMoves);
-    RET_Z ;  // use Struggle
-    LD_HL(wBattleMonMoves);
-    goto got_menu_type;
+// not_mobile:
+    // LD_HL(wEnemyMonMoves);
+    move_t* moves = wram->wEnemyMon.moves;
+    // LD_A_addr(wMoveSelectionMenuType);
+    // DEC_A;
+    // IF_Z goto got_menu_type;
+    if(wram->wMoveSelectionMenuType == 0x1) {}
+    // DEC_A;
+    // IF_Z goto ether_elixer_menu;
+    else if(wram->wMoveSelectionMenuType == 0x2) {
+    // ether_elixer_menu:
+        // LD_A(MON_MOVES);
+        // CALL(aGetPartyParamLocation);
+        moves = wram->wPartyMon[wram->wCurPartyMon].mon.moves;
+    }
+    // CALL(aCheckPlayerHasUsableMoves);
+    // RET_Z ;  // use Struggle
+    else if(!CheckPlayerHasUsableMoves())
+        return false;  // use Struggle
+    else {
+        // LD_HL(wBattleMonMoves);
+        moves = wram->wBattleMon.moves;
+        // goto got_menu_type;
+    }
 
+// got_menu_type:
+    // LD_DE(wListMoves_MoveIndicesBuffer);
+    // LD_BC(NUM_MOVES);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wListMoves_MoveIndicesBuffer, moves, sizeof(*moves));
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0x0;
 
-ether_elixer_menu:
-    LD_A(MON_MOVES);
-    CALL(aGetPartyParamLocation);
+    tile_t* hl;
+    uint8_t b;
+    uint8_t c;
+    if(wram->wMoveSelectionMenuType != 0x2) {
+        // hlcoord(4, 17 - NUM_MOVES - 1, wTilemap);
+        hl = coord(4, 17 - NUM_MOVES - 1, wram->wTilemap);
+        // LD_B(4);
+        b = 4;
+        // LD_C(14);
+        c = 14;
+        // LD_A_addr(wMoveSelectionMenuType);
+        // CP_A(0x2);
+        // IF_NZ goto got_dims;
+    }
+    else {
+        // hlcoord(4, 17 - NUM_MOVES - 1 - 4, wTilemap);
+        hl = coord(4, 17 - NUM_MOVES - 1 - 4, wram->wTilemap);
+        // LD_B(4);
+        b = 4;
+        // LD_C(14);
+        c = 14;
+    }
 
+// got_dims:
+    // CALL(aTextbox);
+    Textbox_Conv2(hl, b, c);
 
-got_menu_type:
-    LD_DE(wListMoves_MoveIndicesBuffer);
-    LD_BC(NUM_MOVES);
-    CALL(aCopyBytes);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
+    // hlcoord(6, 17 - NUM_MOVES, wTilemap);
+    // LD_A_addr(wMoveSelectionMenuType);
+    // CP_A(0x2);
+    // IF_NZ goto got_start_coord;
+    // hlcoord(6, 17 - NUM_MOVES - 4, wTilemap);
+    hl = (wram->wMoveSelectionMenuType == 0x2)? coord(6, 17 - NUM_MOVES - 4, wram->wTilemap): coord(6, 17 - NUM_MOVES, wram->wTilemap);
 
-    hlcoord(4, 17 - NUM_MOVES - 1, wTilemap);
-    LD_B(4);
-    LD_C(14);
-    LD_A_addr(wMoveSelectionMenuType);
-    CP_A(0x2);
-    IF_NZ goto got_dims;
-    hlcoord(4, 17 - NUM_MOVES - 1 - 4, wTilemap);
-    LD_B(4);
-    LD_C(14);
+// got_start_coord:
+    // LD_A(SCREEN_WIDTH);
+    // LD_addr_A(wListMovesLineSpacing);
+    wram->wListMovesLineSpacing = SCREEN_WIDTH;
+    // PREDEF(pListMoves);
+    ListMoves_Conv(hl);
 
-got_dims:
-    CALL(aTextbox);
+    if(wram->wMoveSelectionMenuType != 0x2) {
+        // LD_B(5);
+        wram->w2DMenuCursorInitX = 5;
+        // LD_A_addr(wMoveSelectionMenuType);
+        // CP_A(0x2);
+        // LD_A(17 - NUM_MOVES);
+        wram->w2DMenuCursorInitY = 17 - NUM_MOVES;
+        // IF_NZ goto got_default_coord;
+    }
+    else {
+        // LD_B(5);
+        wram->w2DMenuCursorInitX = 5;
+        // LD_A(17 - NUM_MOVES - 4);
+        wram->w2DMenuCursorInitY = 17 - NUM_MOVES - 4;
+    }
 
-    hlcoord(6, 17 - NUM_MOVES, wTilemap);
-    LD_A_addr(wMoveSelectionMenuType);
-    CP_A(0x2);
-    IF_NZ goto got_start_coord;
-    hlcoord(6, 17 - NUM_MOVES - 4, wTilemap);
+// got_default_coord:
+    // LD_addr_A(w2DMenuCursorInitY);
+    // LD_A_B;
+    // LD_addr_A(w2DMenuCursorInitX);
+    // LD_A_addr(wMoveSelectionMenuType);
+    // CP_A(0x1);
+    // IF_Z goto skip_inc;
+    if(wram->wMoveSelectionMenuType != 0x1) {
+        // LD_A_addr(wCurMoveNum);
+        // INC_A;
+        wram->wMenuCursorY = wram->wCurMoveNum - 1;
+    }
+    else {
+        wram->wMenuCursorY = 0x1;
+    }
 
-got_start_coord:
-    LD_A(SCREEN_WIDTH);
-    LD_addr_A(wListMovesLineSpacing);
-    PREDEF(pListMoves);
+// skip_inc:
+    // LD_addr_A(wMenuCursorY);
+    // LD_A(1);
+    // LD_addr_A(wMenuCursorX);
+    wram->wMenuCursorX = 1;
+    // LD_A_addr(wNumMoves);
+    // INC_A;
+    // LD_addr_A(w2DMenuNumRows);
+    wram->w2DMenuNumRows = wram->wNumMoves + 1;
+    // LD_A(1);
+    // LD_addr_A(w2DMenuNumCols);
+    wram->w2DMenuNumCols = 1;
+    // LD_C(STATICMENU_ENABLE_LEFT_RIGHT | STATICMENU_ENABLE_START | STATICMENU_WRAP);
+    c = STATICMENU_ENABLE_LEFT_RIGHT | STATICMENU_ENABLE_START | STATICMENU_WRAP;
+    // LD_A_addr(wMoveSelectionMenuType);
+    // DEC_A;
+    if(wram->wMoveSelectionMenuType == 0x1) {
+        // LD_B(D_DOWN | D_UP | A_BUTTON);
+        wram->wMenuJoypadFilter = D_DOWN | D_UP | A_BUTTON;
+        // IF_Z goto okay;
+    }
+    // DEC_A;
+    else if(wram->wMoveSelectionMenuType == 0x2 || wram->wLinkMode != 0) {
+        // LD_B(D_DOWN | D_UP | A_BUTTON | B_BUTTON);
+        wram->wMenuJoypadFilter = D_DOWN | D_UP | A_BUTTON | B_BUTTON;
+        // IF_Z goto okay;
+        // LD_A_addr(wLinkMode);
+        // AND_A_A;
+        // IF_NZ goto okay;
+    }
+    else {
+        // LD_B(D_DOWN | D_UP | A_BUTTON | B_BUTTON | SELECT);
+        wram->wMenuJoypadFilter = D_DOWN | D_UP | A_BUTTON | B_BUTTON | SELECT;
+    }
 
-    LD_B(5);
-    LD_A_addr(wMoveSelectionMenuType);
-    CP_A(0x2);
-    LD_A(17 - NUM_MOVES);
-    IF_NZ goto got_default_coord;
-    LD_B(5);
-    LD_A(17 - NUM_MOVES - 4);
+// okay:
+    // LD_A_B;
+    // LD_addr_A(wMenuJoypadFilter);
+    // LD_A_C;
+    // LD_addr_A(w2DMenuFlags1);
+    wram->w2DMenuFlags1 = c;
+    // XOR_A_A;
+    // LD_addr_A(w2DMenuFlags2);
+    wram->w2DMenuFlags2 = 0x0;
+    // LD_A(0x10);
+    // LD_addr_A(w2DMenuCursorOffsets);
+    wram->w2DMenuCursorOffsets = 0x10;
 
+    while(1) {
+    // menu_loop:
+        // LD_A_addr(wMoveSelectionMenuType);
+        // AND_A_A;
+        // IF_Z goto battle_player_moves;
+        if(wram->wMoveSelectionMenuType != 0x0) {
+            // DEC_A;
+            // IF_NZ goto interpret_joypad;
+            if(wram->wMoveSelectionMenuType == 0x1) {
+                // hlcoord(11, 14, wTilemap);
+                // LD_DE(mMoveSelectionScreen_empty_string);
+                // CALL(aPlaceString);
+                PlaceStringSimple(U82C(empty_string), coord(11, 14, wram->wTilemap)); // Dummied out text?
+            }
+            // goto interpret_joypad;
+        }
+        else {
+        // battle_player_moves:
+            // CALL(aMoveInfoBox);
+            MoveInfoBox();
+            // LD_A_addr(wSwappingMove);
+            // AND_A_A;
+            // IF_Z goto interpret_joypad;
+            if(wram->wSwappingMove) {
+                // hlcoord(5, 13, wTilemap);
+                // LD_BC(SCREEN_WIDTH);
+                // DEC_A;
+                // CALL(aAddNTimes);
+                // LD_hl(0xec);
+                coord(5, 13, wram->wTilemap)[wram->wSwappingMove - 1] = 0xec;
+            }
+        }
 
-got_default_coord:
-    LD_addr_A(w2DMenuCursorInitY);
-    LD_A_B;
-    LD_addr_A(w2DMenuCursorInitX);
-    LD_A_addr(wMoveSelectionMenuType);
-    CP_A(0x1);
-    IF_Z goto skip_inc;
-    LD_A_addr(wCurMoveNum);
-    INC_A;
+    // interpret_joypad:
+        // LD_A(0x1);
+        // LDH_addr_A(hBGMapMode);
+        hram->hBGMapMode = 0x1;
+        // CALL(aScrollingMenuJoypad);
+        uint8_t joypad = ScrollingMenuJoypad_Conv();
+        // BIT_A(D_UP_F);
+        // JP_NZ (mMoveSelectionScreen_pressed_up);
+        if(bit_test(joypad, D_UP_F)) {
+        // pressed_up:
+            // LD_A_addr(wMenuCursorY);
+            // AND_A_A;
+            // JP_NZ (mMoveSelectionScreen_menu_loop);
+            if(wram->wMenuCursorY != 0)
+                continue;
+            // LD_A_addr(wNumMoves);
+            // INC_A;
+            // LD_addr_A(wMenuCursorY);
+            wram->wMenuCursorY = wram->wNumMoves + 1;
+            // JP(mMoveSelectionScreen_menu_loop);
+            continue;
+        }
+        // BIT_A(D_DOWN_F);
+        // JP_NZ (mMoveSelectionScreen_pressed_down);
+        else if(bit_test(joypad, D_DOWN_F)) {
+        // pressed_down:
+            // LD_A_addr(wMenuCursorY);
+            // LD_B_A;
+            // LD_A_addr(wNumMoves);
+            // INC_A;
+            // INC_A;
+            // CP_A_B;
+            // JP_NZ (mMoveSelectionScreen_menu_loop);
+            if(wram->wMenuCursorY != wram->wNumMoves + 2)
+                continue;
+            // LD_A(0x1);
+            // LD_addr_A(wMenuCursorY);
+            wram->wMenuCursorY = 0x1;
+            // JP(mMoveSelectionScreen_menu_loop);
+            continue;
+        }
+        // BIT_A(SELECT_F);
+        // JP_NZ (mMoveSelectionScreen_pressed_select);
+        else if(bit_test(joypad, SELECT_F)) {
+        // pressed_select:
+            // LD_A_addr(wSwappingMove);
+            // AND_A_A;
+            // IF_Z goto start_swap;
+            if(!wram->wSwappingMove) {
+            // start_swap:
+                // LD_A_addr(wMenuCursorY);
+                // LD_addr_A(wSwappingMove);
+                wram->wSwappingMove = wram->wMenuCursorY;
+                // JP(mMoveSelectionScreen);
+                goto MoveSelectionScreen;
+            }
+            // LD_HL(wBattleMonMoves);
+            // CALL(aMoveSelectionScreen_swap_bytes);
+            MoveSelectionScreen_swap(wram->wBattleMon.moves, sizeof(wram->wBattleMon.moves[0]));
+            // LD_HL(wBattleMonPP);
+            // CALL(aMoveSelectionScreen_swap_bytes);
+            MoveSelectionScreen_swap(wram->wBattleMon.pp, sizeof(wram->wBattleMon.pp[0]));
+            // LD_HL(wPlayerDisableCount);
+            // LD_A_hl;
+            // SWAP_A;
+            // AND_A(0xf);
+            // LD_B_A;
+            // LD_A_addr(wMenuCursorY);
+            // CP_A_B;
+            // IF_NZ goto not_swapping_disabled_move;
+            if(((wram->wPlayerDisableCount >> 4) & 0xf) == wram->wMenuCursorY) {
+                // LD_A_hl;
+                // AND_A(0xf);
+                // LD_B_A;
+                // LD_A_addr(wSwappingMove);
+                // SWAP_A;
+                // ADD_A_B;
+                // LD_hl_A;
+                wram->wPlayerDisableCount = (wram->wPlayerDisableCount & 0xf) | (wram->wSwappingMove << 4);
+                // goto swap_moves_in_party_struct;
+            }
+        // not_swapping_disabled_move:
+            // LD_A_addr(wSwappingMove);
+            // CP_A_B;
+            // IF_NZ goto swap_moves_in_party_struct;
+            else if(((wram->wPlayerDisableCount >> 4) & 0xf) == wram->wSwappingMove) {
+                // LD_A_hl;
+                // AND_A(0xf);
+                // LD_B_A;
+                // LD_A_addr(wMenuCursorY);
+                // SWAP_A;
+                // ADD_A_B;
+                // LD_hl_A;
+                wram->wPlayerDisableCount = (wram->wPlayerDisableCount & 0xf) | (wram->wMenuCursorY << 4);
+            }
 
+        // swap_moves_in_party_struct:
+        //  Fixes the COOLTRAINER glitch
+            // LD_A_addr(wPlayerSubStatus5);
+            // BIT_A(SUBSTATUS_TRANSFORMED);
+            // IF_NZ goto transformed;
+            if(!bit_test(wram->wPlayerSubStatus5, SUBSTATUS_TRANSFORMED)) {
+                // LD_HL(wPartyMon1Moves);
+                // LD_A_addr(wCurBattleMon);
+                // CALL(aGetPartyLocation);
+                // PUSH_HL;
+                // CALL(aMoveSelectionScreen_swap_bytes);
+                MoveSelectionScreen_swap(wram->wPartyMon[wram->wCurBattleMon].mon.moves, sizeof(wram->wPartyMon[wram->wCurBattleMon].mon.moves[0]));
+                // POP_HL;
+                // LD_BC(MON_PP - MON_MOVES);
+                // ADD_HL_BC;
+                // CALL(aMoveSelectionScreen_swap_bytes);
+                MoveSelectionScreen_swap(wram->wPartyMon[wram->wCurBattleMon].mon.PP, sizeof(wram->wPartyMon[wram->wCurBattleMon].mon.PP[0]));
+            }
 
-skip_inc:
-    LD_addr_A(wMenuCursorY);
-    LD_A(1);
-    LD_addr_A(wMenuCursorX);
-    LD_A_addr(wNumMoves);
-    INC_A;
-    LD_addr_A(w2DMenuNumRows);
-    LD_A(1);
-    LD_addr_A(w2DMenuNumCols);
-    LD_C(STATICMENU_ENABLE_LEFT_RIGHT | STATICMENU_ENABLE_START | STATICMENU_WRAP);
-    LD_A_addr(wMoveSelectionMenuType);
-    DEC_A;
-    LD_B(D_DOWN | D_UP | A_BUTTON);
-    IF_Z goto okay;
-    DEC_A;
-    LD_B(D_DOWN | D_UP | A_BUTTON | B_BUTTON);
-    IF_Z goto okay;
-    LD_A_addr(wLinkMode);
-    AND_A_A;
-    IF_NZ goto okay;
-    LD_B(D_DOWN | D_UP | A_BUTTON | B_BUTTON | SELECT);
+        // transformed:
+            // XOR_A_A;
+            // LD_addr_A(wSwappingMove);
+            wram->wSwappingMove = 0;
+            // JP(mMoveSelectionScreen);
+            goto MoveSelectionScreen;
+        }
+        // BIT_A(B_BUTTON_F);
+    // A button
+        // PUSH_AF;
+        const uint8_t bPressed = bit_test(joypad, B_BUTTON_F);
 
+        // XOR_A_A;
+        // LD_addr_A(wSwappingMove);
+        wram->wSwappingMove = 0;
+        // LD_A_addr(wMenuCursorY);
+        // DEC_A;
+        // LD_addr_A(wMenuCursorY);
+        wram->wMenuCursorY--;
+        // LD_B_A;
+        // LD_A_addr(wMoveSelectionMenuType);
+        // DEC_A;
+        // IF_NZ goto not_enemy_moves_process_b;
+        if(wram->wMoveSelectionMenuType == 0x1) {
+            // POP_AF;
+            // RET;
+            return bPressed != 0;
+        }
 
-okay:
-    LD_A_B;
-    LD_addr_A(wMenuJoypadFilter);
-    LD_A_C;
-    LD_addr_A(w2DMenuFlags1);
-    XOR_A_A;
-    LD_addr_A(w2DMenuFlags2);
-    LD_A(0x10);
-    LD_addr_A(w2DMenuCursorOffsets);
+    // not_enemy_moves_process_b:
+        // DEC_A;
+        // LD_A_B;
+        // LD_addr_A(wCurMoveNum);
+        wram->wCurMoveNum = wram->wMenuCursorY;
+        // IF_NZ goto use_move;
+        if(wram->wMoveSelectionMenuType == 0x2) {
+            // POP_AF;
+            // RET;
+            return bPressed != 0;
+        }
 
-menu_loop:
-    LD_A_addr(wMoveSelectionMenuType);
-    AND_A_A;
-    IF_Z goto battle_player_moves;
-    DEC_A;
-    IF_NZ goto interpret_joypad;
-    hlcoord(11, 14, wTilemap);
-    LD_DE(mMoveSelectionScreen_empty_string);
-    CALL(aPlaceString);
-    goto interpret_joypad;
+    // use_move:
+        // POP_AF;
+        // RET_NZ ;
+        if(bPressed)
+            return true;
 
+        // LD_HL(wBattleMonPP);
+        // LD_A_addr(wMenuCursorY);
+        // LD_C_A;
+        // LD_B(0);
+        // ADD_HL_BC;
+        // LD_A_hl;
+        // AND_A(PP_MASK);
+        // IF_Z goto no_pp_left;
+        if((wram->wBattleMon.pp[wram->wMenuCursorY] & PP_MASK) == 0) {
+        // no_pp_left:
+            // LD_HL(mBattleText_TheresNoPPLeftForThisMove);
+        // place_textbox_start_over:
+            // CALL(aStdBattleTextbox);
+            StdBattleTextbox_Conv2(BattleText_TheresNoPPLeftForThisMove);
+            // CALL(aSafeLoadTempTilemapToTilemap);
+            SafeLoadTempTilemapToTilemap_Conv();
+            // JP(mMoveSelectionScreen);
+            goto MoveSelectionScreen;
+        }
+        // LD_A_addr(wPlayerDisableCount);
+        // SWAP_A;
+        // AND_A(0xf);
+        // DEC_A;
+        // CP_A_C;
+        // IF_Z goto move_disabled;
+        if(((wram->wPlayerDisableCount >> 4) & 0xf) == wram->wMenuCursorY) {
+        // move_disabled:
+            // LD_HL(mBattleText_TheMoveIsDisabled);
+            // goto place_textbox_start_over;
+        // place_textbox_start_over:
+            // CALL(aStdBattleTextbox);
+            StdBattleTextbox_Conv2(BattleText_TheMoveIsDisabled);
+            // CALL(aSafeLoadTempTilemapToTilemap);
+            SafeLoadTempTilemapToTilemap_Conv();
+            // JP(mMoveSelectionScreen);
+            goto MoveSelectionScreen;
+        }
+        // LD_A_addr(wUnusedPlayerLockedMove);
+        // AND_A_A;
+        // IF_NZ goto skip2;
+        if(wram->wUnusedPlayerLockedMove != NO_MOVE) {
+            wram->wCurPlayerMove = wram->wUnusedPlayerLockedMove;
+        }
+        else {
+            // LD_A_addr(wMenuCursorY);
+            // LD_HL(wBattleMonMoves);
+            // LD_C_A;
+            // LD_B(0);
+            // ADD_HL_BC;
+            // LD_A_hl;
+            wram->wCurPlayerMove = wram->wBattleMon.moves[wram->wMenuCursorY];
+        }
 
-battle_player_moves:
-    CALL(aMoveInfoBox);
-    LD_A_addr(wSwappingMove);
-    AND_A_A;
-    IF_Z goto interpret_joypad;
-    hlcoord(5, 13, wTilemap);
-    LD_BC(SCREEN_WIDTH);
-    DEC_A;
-    CALL(aAddNTimes);
-    LD_hl(0xec);
+    // skip2:
+        // LD_addr_A(wCurPlayerMove);
+        // XOR_A_A;
+        // RET;
+        return false;
+    }
 
+}
 
-interpret_joypad:
-    LD_A(0x1);
-    LDH_addr_A(hBGMapMode);
-    CALL(aScrollingMenuJoypad);
-    BIT_A(D_UP_F);
-    JP_NZ (mMoveSelectionScreen_pressed_up);
-    BIT_A(D_DOWN_F);
-    JP_NZ (mMoveSelectionScreen_pressed_down);
-    BIT_A(SELECT_F);
-    JP_NZ (mMoveSelectionScreen_pressed_select);
-    BIT_A(B_BUTTON_F);
-// A button
-    PUSH_AF;
+static void MoveInfoBox_PrintPP(uint8_t pp, uint8_t maxpp){
+    // hlcoord(5, 11, wTilemap);
+    // LD_A_addr(wLinkMode);  // What's the point of this check?
+    // CP_A(LINK_MOBILE);
+    // IF_C goto ok;
+    // hlcoord(5, 11, wTilemap);
+    tile_t* hl = coord(5, 11, wram->wTilemap);
 
-    XOR_A_A;
-    LD_addr_A(wSwappingMove);
-    LD_A_addr(wMenuCursorY);
-    DEC_A;
-    LD_addr_A(wMenuCursorY);
-    LD_B_A;
-    LD_A_addr(wMoveSelectionMenuType);
-    DEC_A;
-    IF_NZ goto not_enemy_moves_process_b;
-
-    POP_AF;
-    RET;
-
-
-not_enemy_moves_process_b:
-    DEC_A;
-    LD_A_B;
-    LD_addr_A(wCurMoveNum);
-    IF_NZ goto use_move;
-
-    POP_AF;
-    RET;
-
-
-use_move:
-    POP_AF;
-    RET_NZ ;
-
-    LD_HL(wBattleMonPP);
-    LD_A_addr(wMenuCursorY);
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    LD_A_hl;
-    AND_A(PP_MASK);
-    IF_Z goto no_pp_left;
-    LD_A_addr(wPlayerDisableCount);
-    SWAP_A;
-    AND_A(0xf);
-    DEC_A;
-    CP_A_C;
-    IF_Z goto move_disabled;
-    LD_A_addr(wUnusedPlayerLockedMove);
-    AND_A_A;
-    IF_NZ goto skip2;
-    LD_A_addr(wMenuCursorY);
-    LD_HL(wBattleMonMoves);
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    LD_A_hl;
-
-
-skip2:
-    LD_addr_A(wCurPlayerMove);
-    XOR_A_A;
-    RET;
-
-
-move_disabled:
-    LD_HL(mBattleText_TheMoveIsDisabled);
-    goto place_textbox_start_over;
-
-
-no_pp_left:
-    LD_HL(mBattleText_TheresNoPPLeftForThisMove);
-
-
-place_textbox_start_over:
-    CALL(aStdBattleTextbox);
-    CALL(aSafeLoadTempTilemapToTilemap);
-    JP(mMoveSelectionScreen);
-
-
-empty_string:
-    //db ['"@"'];
-
-
-pressed_up:
-    LD_A_addr(wMenuCursorY);
-    AND_A_A;
-    JP_NZ (mMoveSelectionScreen_menu_loop);
-    LD_A_addr(wNumMoves);
-    INC_A;
-    LD_addr_A(wMenuCursorY);
-    JP(mMoveSelectionScreen_menu_loop);
-
-
-pressed_down:
-    LD_A_addr(wMenuCursorY);
-    LD_B_A;
-    LD_A_addr(wNumMoves);
-    INC_A;
-    INC_A;
-    CP_A_B;
-    JP_NZ (mMoveSelectionScreen_menu_loop);
-    LD_A(0x1);
-    LD_addr_A(wMenuCursorY);
-    JP(mMoveSelectionScreen_menu_loop);
-
-
-pressed_select:
-    LD_A_addr(wSwappingMove);
-    AND_A_A;
-    IF_Z goto start_swap;
-    LD_HL(wBattleMonMoves);
-    CALL(aMoveSelectionScreen_swap_bytes);
-    LD_HL(wBattleMonPP);
-    CALL(aMoveSelectionScreen_swap_bytes);
-    LD_HL(wPlayerDisableCount);
-    LD_A_hl;
-    SWAP_A;
-    AND_A(0xf);
-    LD_B_A;
-    LD_A_addr(wMenuCursorY);
-    CP_A_B;
-    IF_NZ goto not_swapping_disabled_move;
-    LD_A_hl;
-    AND_A(0xf);
-    LD_B_A;
-    LD_A_addr(wSwappingMove);
-    SWAP_A;
-    ADD_A_B;
-    LD_hl_A;
-    goto swap_moves_in_party_struct;
-
-
-not_swapping_disabled_move:
-    LD_A_addr(wSwappingMove);
-    CP_A_B;
-    IF_NZ goto swap_moves_in_party_struct;
-    LD_A_hl;
-    AND_A(0xf);
-    LD_B_A;
-    LD_A_addr(wMenuCursorY);
-    SWAP_A;
-    ADD_A_B;
-    LD_hl_A;
-
-
-swap_moves_in_party_struct:
-//  Fixes the COOLTRAINER glitch
-    LD_A_addr(wPlayerSubStatus5);
-    BIT_A(SUBSTATUS_TRANSFORMED);
-    IF_NZ goto transformed;
-    LD_HL(wPartyMon1Moves);
-    LD_A_addr(wCurBattleMon);
-    CALL(aGetPartyLocation);
-    PUSH_HL;
-    CALL(aMoveSelectionScreen_swap_bytes);
-    POP_HL;
-    LD_BC(MON_PP - MON_MOVES);
-    ADD_HL_BC;
-    CALL(aMoveSelectionScreen_swap_bytes);
-
-
-transformed:
-    XOR_A_A;
-    LD_addr_A(wSwappingMove);
-    JP(mMoveSelectionScreen);
-
-
-swap_bytes:
-    PUSH_HL;
-    LD_A_addr(wSwappingMove);
-    DEC_A;
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    LD_D_H;
-    LD_E_L;
-    POP_HL;
-    LD_A_addr(wMenuCursorY);
-    DEC_A;
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    LD_A_de;
-    LD_B_hl;
-    LD_hl_A;
-    LD_A_B;
-    LD_de_A;
-    RET;
-
-
-start_swap:
-    LD_A_addr(wMenuCursorY);
-    LD_addr_A(wSwappingMove);
-    JP(mMoveSelectionScreen);
-
+// ok:
+    // PUSH_HL;
+    // LD_DE(wStringBuffer1);
+    // LD_BC((1 << 8) | 2);
+    // CALL(aPrintNum);
+    PrintNum_Conv2(hl, &pp, 1, 2);
+    // POP_HL;
+    // INC_HL;
+    // INC_HL;
+    hl += 2;
+    // LD_hl(0xf3);
+    // INC_HL;
+    *(hl++) = 0xf3;
+    // LD_DE(wNamedObjectIndex);
+    // LD_BC((1 << 8) | 2);
+    // CALL(aPrintNum);
+    PrintNum_Conv2(hl, &maxpp, 1, 2);
+    // RET;
 }
 
 void MoveInfoBox(void){
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
+    static const char Disabled[] = "Disabled!@";
+    static const char Type[] = "TYPE/";
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0x0;
 
-    hlcoord(0, 8, wTilemap);
-    LD_B(3);
-    LD_C(9);
-    CALL(aTextbox);
-    CALL(aMobileTextBorder);
+    // hlcoord(0, 8, wTilemap);
+    // LD_B(3);
+    // LD_C(9);
+    // CALL(aTextbox);
+    Textbox_Conv2(coord(0, 8, wram->wTilemap), 3, 9);
+    // CALL(aMobileTextBorder);
+    MobileTextBorder_Conv();
 
-    LD_A_addr(wPlayerDisableCount);
-    AND_A_A;
-    IF_Z goto not_disabled;
+    // LD_A_addr(wPlayerDisableCount);
+    // AND_A_A;
+    // IF_Z goto not_disabled;
 
-    SWAP_A;
-    AND_A(0xf);
-    LD_B_A;
-    LD_A_addr(wMenuCursorY);
-    CP_A_B;
-    IF_NZ goto not_disabled;
+    if(wram->wPlayerDisableCount != 0) {
+        // SWAP_A;
+        // AND_A(0xf);
+        uint8_t which = (wram->wPlayerDisableCount >> 4) & 0xf;
+        // LD_B_A;
+        // LD_A_addr(wMenuCursorY);
+        // CP_A_B;
+        // IF_NZ goto not_disabled;
+        if(which == wram->wMenuCursorY) {
+            // hlcoord(1, 10, wTilemap);
+            // LD_DE(mMoveInfoBox_Disabled);
+            // CALL(aPlaceString);
+            PlaceStringSimple(U82C(Disabled), coord(1, 10, wram->wTilemap));
+            // goto done;
+            return;
+        }
+    }
 
-    hlcoord(1, 10, wTilemap);
-    LD_DE(mMoveInfoBox_Disabled);
-    CALL(aPlaceString);
-    goto done;
+// not_disabled:
+    // LD_HL(wMenuCursorY);
+    // DEC_hl;
+    wram->wMenuCursorY--;
+    // CALL(aSetPlayerTurn);
+    SetPlayerTurn_Conv();
+    // LD_HL(wBattleMonMoves);
+    // LD_A_addr(wMenuCursorY);
+    // LD_C_A;
+    // LD_B(0);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // LD_addr_A(wCurPlayerMove);
+    wram->wCurPlayerMove = wram->wBattleMon.moves[wram->wMenuCursorY];
 
+    // LD_A_addr(wCurBattleMon);
+    // LD_addr_A(wCurPartyMon);
+    wram->wCurPartyMon = wram->wCurBattleMon;
+    // LD_A(WILDMON);
+    // LD_addr_A(wMonType);
+    // CALLFAR(aGetMaxPPOfMove);
+    uint8_t maxpp = GetMaxPPOfMove_Conv(wram->wPartyMon + wram->wCurPartyMon, WILDMON, wram->wMenuCursorY);
 
-not_disabled:
-    LD_HL(wMenuCursorY);
-    DEC_hl;
-    CALL(aSetPlayerTurn);
-    LD_HL(wBattleMonMoves);
-    LD_A_addr(wMenuCursorY);
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_addr_A(wCurPlayerMove);
+    // LD_HL(wMenuCursorY);
+    // LD_C_hl;
+    // INC_hl;
+    // LD_B(0);
+    // LD_HL(wBattleMonPP);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // AND_A(PP_MASK);
+    // LD_addr_A(wStringBuffer1);
+    // CALL(aMoveInfoBox_PrintPP);
+    MoveInfoBox_PrintPP(wram->wBattleMon.pp[wram->wMenuCursorY], maxpp);
+    wram->wMenuCursorY++;
 
-    LD_A_addr(wCurBattleMon);
-    LD_addr_A(wCurPartyMon);
-    LD_A(WILDMON);
-    LD_addr_A(wMonType);
-    CALLFAR(aGetMaxPPOfMove);
+    // hlcoord(1, 9, wTilemap);
+    // LD_DE(mMoveInfoBox_Type);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(Type), coord(1, 9, wram->wTilemap));
 
-    LD_HL(wMenuCursorY);
-    LD_C_hl;
-    INC_hl;
-    LD_B(0);
-    LD_HL(wBattleMonPP);
-    ADD_HL_BC;
-    LD_A_hl;
-    AND_A(PP_MASK);
-    LD_addr_A(wStringBuffer1);
-    CALL(aMoveInfoBox_PrintPP);
+    // hlcoord(7, 11, wTilemap);
+    // LD_hl(0xf3);
+    *coord(7, 11, wram->wTilemap) = 0xf3;
 
-    hlcoord(1, 9, wTilemap);
-    LD_DE(mMoveInfoBox_Type);
-    CALL(aPlaceString);
+    // CALLFAR(aUpdateMoveData);
+    UpdateMoveData();
+    // LD_A_addr(wPlayerMoveStruct + MOVE_ANIM);
+    // LD_B_A;
+    // hlcoord(2, 10, wTilemap);
+    // PREDEF(pPrintMoveType);
+    PrintMoveType_Conv(coord(2, 10, wram->wTilemap), wram->wPlayerMoveStruct.animation);
 
-    hlcoord(7, 11, wTilemap);
-    LD_hl(0xf3);
-
-    CALLFAR(aUpdateMoveData);
-    LD_A_addr(wPlayerMoveStruct + MOVE_ANIM);
-    LD_B_A;
-    hlcoord(2, 10, wTilemap);
-    PREDEF(pPrintMoveType);
-
-
-done:
-    RET;
-
-
-Disabled:
-    //db ['"Disabled!@"'];
-
-Type:
-    //db ['"TYPE/@"'];
-
-
-PrintPP:
-    hlcoord(5, 11, wTilemap);
-    LD_A_addr(wLinkMode);  // What's the point of this check?
-    CP_A(LINK_MOBILE);
-    IF_C goto ok;
-    hlcoord(5, 11, wTilemap);
-
-ok:
-    PUSH_HL;
-    LD_DE(wStringBuffer1);
-    LD_BC((1 << 8) | 2);
-    CALL(aPrintNum);
-    POP_HL;
-    INC_HL;
-    INC_HL;
-    LD_hl(0xf3);
-    INC_HL;
-    LD_DE(wNamedObjectIndex);
-    LD_BC((1 << 8) | 2);
-    CALL(aPrintNum);
-    RET;
-
+// done:
+    // RET;
 }
 
-void CheckPlayerHasUsableMoves(void){
-    LD_A(STRUGGLE);
-    LD_addr_A(wCurPlayerMove);
-    LD_A_addr(wPlayerDisableCount);
-    AND_A_A;
-    LD_HL(wBattleMonPP);
-    IF_NZ goto disabled;
+bool CheckPlayerHasUsableMoves(void){
+    // LD_A(STRUGGLE);
+    // LD_addr_A(wCurPlayerMove);
+    wram->wCurPlayerMove = STRUGGLE;
+    // LD_A_addr(wPlayerDisableCount);
+    // AND_A_A;
+    // LD_HL(wBattleMonPP);
+    uint8_t* pp = wram->wBattleMon.pp;
+    // IF_NZ goto disabled;
+    if(wram->wPlayerDisableCount == 0) {
+        // LD_A_hli;
+        // OR_A_hl;
+        // INC_HL;
+        // OR_A_hl;
+        // INC_HL;
+        // OR_A_hl;
+        // AND_A(PP_MASK);
+        // RET_NZ ;
+        if((pp[0] | pp[1] | pp[2] | pp[3]) & PP_MASK)
+            return true;
+        // goto force_struggle;
+    }
+    else {
+    // disabled:
+        // SWAP_A;
+        // AND_A(0xf);
+        // LD_B_A;
+        uint8_t b = (wram->wPlayerDisableCount >> 4) & 0xf;
+        // LD_D(NUM_MOVES + 1);
+        uint8_t d = NUM_MOVES + 1;
+        // XOR_A_A;
+        uint8_t a = 0;
 
-    LD_A_hli;
-    OR_A_hl;
-    INC_HL;
-    OR_A_hl;
-    INC_HL;
-    OR_A_hl;
-    AND_A(PP_MASK);
-    RET_NZ ;
-    goto force_struggle;
+        while(--d != 0) {
+        // loop:
+            // DEC_D;
+            // IF_Z goto done;
+            // LD_C_hl;
+            // INC_HL;
+            uint8_t c = *(pp++);
+            // DEC_B;
+            // IF_Z goto loop;
+            if(--b == 0)
+                continue;
+            // OR_A_C;
+            a |= c;
+            // goto loop;
+        }
 
 
-disabled:
-    SWAP_A;
-    AND_A(0xf);
-    LD_B_A;
-    LD_D(NUM_MOVES + 1);
-    XOR_A_A;
+    // done:
+    // Bug: this will result in a move with PP Up confusing the game.
+#if BUGFIX_CHECK_PLAYER_USABLE_MOVES
+        if((a & PP_MASK) != 0)
+#else
+        // AND_A_A;  // should be "and PP_MASK"
+        // RET_NZ ;
+        if(a != 0)
+#endif
+            return true;
+    }
 
-loop:
-    DEC_D;
-    IF_Z goto done;
-    LD_C_hl;
-    INC_HL;
-    DEC_B;
-    IF_Z goto loop;
-    OR_A_C;
-    goto loop;
-
-
-done:
-// Bug: this will result in a move with PP Up confusing the game.
-    AND_A_A;  // should be "and PP_MASK"
-    RET_NZ ;
-
-
-force_struggle:
-    LD_HL(mBattleText_MonHasNoMovesLeft);
-    CALL(aStdBattleTextbox);
-    LD_C(60);
-    CALL(aDelayFrames);
-    XOR_A_A;
-    RET;
-
+// force_struggle:
+    // LD_HL(mBattleText_MonHasNoMovesLeft);
+    // CALL(aStdBattleTextbox);
+    StdBattleTextbox_Conv2(BattleText_MonHasNoMovesLeft);
+    // LD_C(60);
+    // CALL(aDelayFrames);
+    DelayFrames_Conv(60);
+    // XOR_A_A;
+    // RET;
+    return false;
 }
 
 void ParseEnemyAction(void){

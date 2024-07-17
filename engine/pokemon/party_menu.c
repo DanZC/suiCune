@@ -16,6 +16,7 @@
 #include "../gfx/sprites.h"
 #include "../gfx/mon_icons.h"
 #include "../../data/party_menu_qualities.h"
+#include "../../data/text/common.h"
 
 u8_flag_s SelectMonFromParty(void){
     // CALL(aDisableSpriteUpdates);
@@ -1082,96 +1083,90 @@ void PrintPartyMenuText(void){
     // RET;
 }
 
+static void PrintPartyMenuActionText_PrintText(const txt_cmd_s* text) {
+    // LD_E_A;
+    // LD_D(0);
+    // ADD_HL_DE;
+    // ADD_HL_DE;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // LD_A_addr(wOptions);
+    // PUSH_AF;
+    uint8_t options = wram->wOptions;
+    // SET_A(NO_TEXT_SCROLL);
+    // LD_addr_A(wOptions);
+    bit_set(wram->wOptions, NO_TEXT_SCROLL);
+    // CALL(aPrintText);
+    PrintText_Conv2(text);
+    // POP_AF;
+    // LD_addr_A(wOptions);
+    wram->wOptions = options;
+    // RET;
+}
+
 void PrintPartyMenuActionText(void){
-    LD_A_addr(wCurPartyMon);
-    LD_HL(wPartyMonNicknames);
-    CALL(aGetNickname);
-    LD_A_addr(wPartyMenuActionText);
-    AND_A(0xf);
-    LD_HL(mPrintPartyMenuActionText_MenuActionTexts);
-    CALL(aPrintPartyMenuActionText_PrintText);
-    RET;
-
-
-MenuActionTexts:
-//  entries correspond to PARTYMENUTEXT_* constants
-    //dw ['.CuredOfPoisonText'];
-    //dw ['.BurnWasHealedText'];
-    //dw ['.WasDefrostedText'];
-    //dw ['.WokeUpText'];
-    //dw ['.RidOfParalysisText'];
-    //dw ['.RecoveredSomeHPText'];
-    //dw ['.HealthReturnedText'];
-    //dw ['.RevitalizedText'];
-    //dw ['.GrewToLevelText'];
-    //dw ['.CameToItsSensesText'];
-
-
-RecoveredSomeHPText:
-    //text_far ['_RecoveredSomeHPText']
-    //text_end ['?']
-
-
-CuredOfPoisonText:
-    //text_far ['_CuredOfPoisonText']
-    //text_end ['?']
-
-
-RidOfParalysisText:
-    //text_far ['_RidOfParalysisText']
-    //text_end ['?']
-
-
-BurnWasHealedText:
-    //text_far ['_BurnWasHealedText']
-    //text_end ['?']
-
-
-WasDefrostedText:
-    //text_far ['_WasDefrostedText']
-    //text_end ['?']
-
-
-WokeUpText:
-    //text_far ['_WokeUpText']
-    //text_end ['?']
-
-
-HealthReturnedText:
-    //text_far ['_HealthReturnedText']
-    //text_end ['?']
-
-
-RevitalizedText:
-    //text_far ['_RevitalizedText']
-    //text_end ['?']
-
-
-GrewToLevelText:
-    //text_far ['_GrewToLevelText']
-    //text_end ['?']
-
-
-CameToItsSensesText:
-    //text_far ['_CameToItsSensesText']
-    //text_end ['?']
-
-
-PrintText:
-    LD_E_A;
-    LD_D(0);
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    LD_A_addr(wOptions);
-    PUSH_AF;
-    SET_A(NO_TEXT_SCROLL);
-    LD_addr_A(wOptions);
-    CALL(aPrintText);
-    POP_AF;
-    LD_addr_A(wOptions);
-    RET;
-
+    static const txt_cmd_s RecoveredSomeHPText[] = {
+        text_far(v_RecoveredSomeHPText)
+        text_end
+    };
+    static const txt_cmd_s CuredOfPoisonText[] = {
+        text_far(v_CuredOfPoisonText)
+        text_end
+    };
+    static const txt_cmd_s RidOfParalysisText[] = {
+        text_far(v_RidOfParalysisText)
+        text_end
+    };
+    static const txt_cmd_s BurnWasHealedText[] = {
+        text_far(v_BurnWasHealedText)
+        text_end
+    };
+    static const txt_cmd_s WasDefrostedText[] = {
+        text_far(v_WasDefrostedText)
+        text_end
+    };
+    static const txt_cmd_s WokeUpText[] = {
+        text_far(v_WokeUpText)
+        text_end
+    };
+    static const txt_cmd_s HealthReturnedText[] = {
+        text_far(v_HealthReturnedText)
+        text_end
+    };
+    static const txt_cmd_s RevitalizedText[] = {
+        text_far(v_RevitalizedText)
+        text_end
+    };
+    static const txt_cmd_s GrewToLevelText[] = {
+        text_far(v_GrewToLevelText)
+        text_end
+    };
+    static const txt_cmd_s CameToItsSensesText[] = {
+        text_far(v_CameToItsSensesText)
+        text_end
+    };
+    static const txt_cmd_s *MenuActionTexts[] = {
+    //  entries correspond to PARTYMENUTEXT_* constants
+        [PARTYMENUTEXT_HEAL_PSN       & 0xf] = CuredOfPoisonText,
+        [PARTYMENUTEXT_HEAL_BRN       & 0xf] = BurnWasHealedText,
+        [PARTYMENUTEXT_HEAL_FRZ       & 0xf] = WasDefrostedText,
+        [PARTYMENUTEXT_HEAL_SLP       & 0xf] = WokeUpText,
+        [PARTYMENUTEXT_HEAL_PAR       & 0xf] = RidOfParalysisText,
+        [PARTYMENUTEXT_HEAL_HP        & 0xf] = RecoveredSomeHPText,
+        [PARTYMENUTEXT_HEAL_ALL       & 0xf] = HealthReturnedText,
+        [PARTYMENUTEXT_REVIVE         & 0xf] = RevitalizedText,
+        [PARTYMENUTEXT_LEVEL_UP       & 0xf] = GrewToLevelText,
+        [PARTYMENUTEXT_HEAL_CONFUSION & 0xf] = CameToItsSensesText,
+    };
+    // LD_A_addr(wCurPartyMon);
+    // LD_HL(wPartyMonNicknames);
+    // CALL(aGetNickname);
+    GetCurNickname_Conv2();
+    // LD_A_addr(wPartyMenuActionText);
+    // AND_A(0xf);
+    // LD_HL(mPrintPartyMenuActionText_MenuActionTexts);
+    // CALL(aPrintPartyMenuActionText_PrintText);
+    PrintPartyMenuActionText_PrintText(MenuActionTexts[wram->wPartyMenuActionText & 0xf]);
+    // RET;
 }

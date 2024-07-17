@@ -66,3 +66,15 @@ uint16_t NativeToBigEndian16(uint16_t x) {
 uint16_t ReverseEndian16(uint16_t x) {
     return (x << 8) | ((x >> 8) & 0xff);
 }
+
+void MemSwap(void* a_, void* b_, size_t size) {
+    uint8_t* a = a_;
+    uint8_t* b = b_;
+    for(size_t i = size; i > 0; --i) {
+        uint8_t temp = *a;
+        *a = *b;
+        *b = temp;
+        a++;
+        b++;
+    }
+}

@@ -205,7 +205,7 @@ void init_function_pointers(void) {
     // REDIRECTED(ReceiveItem);
     // REDIRECTED(CheckTossableItem);
     // REDIRECTED(CheckItem);
-    // REDIRECTED(DoItemEffect);
+    CONVERTED(DoItemEffect);
     // REDIRECTED(TossItem);
 
     // home/joypad.c

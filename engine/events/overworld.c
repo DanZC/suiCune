@@ -25,6 +25,7 @@
 #include "../../home/pokemon.h"
 #include "../../home/queue_script.h"
 #include "../../home/tilemap.h"
+#include "../../home/joypad.h"
 #include "../../data/text/common.h"
 #include "../../data/collision/field_move_blocks.h"
 #include "../../util/scripting.h"
@@ -1417,157 +1418,198 @@ bool Script_AskWaterfall(script_s* s){
     SCRIPT_END
 }
 
-void EscapeRopeFunction(void){
-    CALL(aFieldMoveJumptableReset);
-    LD_A(0x1);
-    JR(mEscapeRopeOrDig);
+enum {
+    ESCAPE_TYPE_ESCAPE_ROPE = 0x1,
+    ESCAPE_TYPE_DIG = 0x2,
+};
 
+void EscapeRopeFunction(void){
+    // CALL(aFieldMoveJumptableReset);
+    FieldMoveJumptableReset();
+    // LD_A(0x1);
+    // JR(mEscapeRopeOrDig);
+
+    return EscapeRopeOrDig(ESCAPE_TYPE_ESCAPE_ROPE);
 }
 
 void DigFunction(void){
-    CALL(aFieldMoveJumptableReset);
-    LD_A(0x2);
+    // CALL(aFieldMoveJumptableReset);
+    FieldMoveJumptableReset();
+    // LD_A(0x2);
 
-    return EscapeRopeOrDig();
+    return EscapeRopeOrDig(ESCAPE_TYPE_DIG);
 }
 
-void EscapeRopeOrDig(void){
-    LD_addr_A(wEscapeRopeOrDigType);
+static bool EscapeRopeOrDig_UsedDigOrEscapeRopeScript(script_s* s){
+    static const uint8_t DigOut[] = {
+        step_dig(32),
+        movement_hide_object,
+        movement_step_end,
+    };
 
-loop:
-    LD_HL(mEscapeRopeOrDig_DigTable);
-    CALL(aFieldMoveJumptable);
-    IF_NC goto loop;
-    AND_A(0x7f);
-    LD_addr_A(wFieldMoveSucceeded);
-    RET;
+    static const uint8_t DigReturn[] = {
+        movement_show_object,
+        return_dig(32),
+        movement_step_end,
+    };
+    SCRIPT_BEGIN
+    waitbutton
+    closetext
+    playsound(SFX_WARP_TO)
+    applymovement(PLAYER, DigOut)
+    scall(Script_AbortBugContest)
+    special(WarpToSpawnPoint)
+    loadvar(VAR_MOVEMENT, PLAYER_NORMAL)
+    newloadmap(MAPSETUP_DOOR)
+    playsound(SFX_WARP_FROM)
+    applymovement(PLAYER, DigReturn)
+    s_end
+    SCRIPT_END
+}
+
+static bool EscapeRopeOrDig_UsedEscapeRopeScript(script_s* s) {
+    static const txt_cmd_s UseEscapeRopeText[] = {
+        text_far(v_UseEscapeRopeText)
+        text_end
+    };
+    SCRIPT_BEGIN
+    reloadmappart
+    special(UpdateTimePals)
+    writetext(UseEscapeRopeText)
+    sjump(EscapeRopeOrDig_UsedDigOrEscapeRopeScript)
+    SCRIPT_END
+}
 
 
-DigTable:
+static bool EscapeRopeOrDig_UsedDigScript(script_s* s) {
+    static const txt_cmd_s UseDigText[] = {
+        text_far(v_UseDigText)
+        text_end
+    };
+    SCRIPT_BEGIN
+    reloadmappart
+    special(UpdateTimePals)
+    writetext(UseDigText)
+    sjump(EscapeRopeOrDig_UsedDigOrEscapeRopeScript)
+    SCRIPT_END
+}
+
+static uint8_t EscapeRopeOrDig_CheckCanDig(void){
+    // CALL(aGetMapEnvironment);
+    uint8_t env = GetMapEnvironment_Conv2();
+    // CP_A(CAVE);
+    // IF_Z goto incave;
+    // CP_A(DUNGEON);
+    // IF_Z goto incave;
+    if(env == CAVE || env == DUNGEON) {
+    // incave:
+        // LD_HL(wDigWarpNumber);
+        // LD_A_hli;
+        // AND_A_A;
+        // IF_Z goto fail;
+        // LD_A_hli;
+        // AND_A_A;
+        // IF_Z goto fail;
+        // LD_A_hl;
+        // AND_A_A;
+        // IF_Z goto fail;
+        // LD_A(0x1);
+        // RET;
+        if(wram->wDigWarpNumber != 0 && wram->wDigMapGroup != 0 && wram->wDigMapNumber != 0) {
+            return 0x1;
+        }
+    }
+
+// fail:
+    // LD_A(0x2);
+    // RET;
+    return 0x2;
+}
+
+static uint8_t EscapeRopeOrDig_DoDig(void){
+    // LD_HL(wDigWarpNumber);
+    // LD_DE(wNextWarp);
+    // LD_BC(3);
+    // CALL(aCopyBytes);
+    wram->wNextWarp = wram->wDigWarpNumber;
+    wram->wNextMapGroup = wram->wDigMapGroup;
+    wram->wNextMapNumber = wram->wDigMapNumber;
+    // CALL(aGetPartyNickname);
+    GetPartyNickname();
+    // LD_A_addr(wEscapeRopeOrDigType);
+    // CP_A(0x2);
+    // IF_NZ goto escaperope;
+    if(wram->wEscapeRopeOrDigType == ESCAPE_TYPE_DIG) {
+        // LD_HL(mEscapeRopeOrDig_UsedDigScript);
+        // CALL(aQueueScript);
+        QueueScript_Conv2(EscapeRopeOrDig_UsedDigScript);
+        // LD_A(0x81);
+        // RET;
+        return 0x81;
+    }
+
+// escaperope:
+    // FARCALL(aSpecialKabutoChamber);
+    SpecialKabutoChamber_Conv();
+    // LD_HL(mEscapeRopeOrDig_UsedEscapeRopeScript);
+    // CALL(aQueueScript);
+    QueueScript_Conv2(EscapeRopeOrDig_UsedEscapeRopeScript);
+    // LD_A(0x81);
+    // RET;
+    return 0x81;
+}
+
+static uint8_t EscapeRopeOrDig_FailDig(void) {
+    static const txt_cmd_s CantUseDigText[] = {
+        text_far(v_CantUseDigText)
+        text_end
+    };
+    // LD_A_addr(wEscapeRopeOrDigType);
+    // CP_A(0x2);
+    // IF_NZ goto failescaperope;
+    if(wram->wEscapeRopeOrDigType == ESCAPE_TYPE_DIG) {
+        // LD_HL(mEscapeRopeOrDig_CantUseDigText);
+        // CALL(aMenuTextbox);
+        MenuTextbox_Conv(CantUseDigText);
+        // CALL(aWaitPressAorB_BlinkCursor);
+        WaitPressAorB_BlinkCursor_Conv();
+        // CALL(aCloseWindow);
+        CloseWindow_Conv2();
+    }
+
+// failescaperope:
+    // LD_A(0x80);
+    // RET;
+    return 0x80;
+}
+
+void EscapeRopeOrDig(uint8_t escapeType){
+    const field_move_fn_t DigTable[] = {
+        EscapeRopeOrDig_CheckCanDig,
+        EscapeRopeOrDig_DoDig,
+        EscapeRopeOrDig_FailDig,
+    };
+    // LD_addr_A(wEscapeRopeOrDigType);
+    wram->wEscapeRopeOrDigType = escapeType;
+
+    u8_flag_s res;
+    do {
+    // loop:
+        // LD_HL(mEscapeRopeOrDig_DigTable);
+        // CALL(aFieldMoveJumptable);
+        res = FieldMoveJumptable_Conv(DigTable);
+        // IF_NC goto loop;
+    } while(!res.flag);
+    // AND_A(0x7f);
+    // LD_addr_A(wFieldMoveSucceeded);
+    wram->wFieldMoveSucceeded = res.a & 0x7f;
+    // RET;
+
+
+// DigTable:
     //dw ['.CheckCanDig'];
     //dw ['.DoDig'];
     //dw ['.FailDig'];
-
-
-CheckCanDig:
-    CALL(aGetMapEnvironment);
-    CP_A(CAVE);
-    IF_Z goto incave;
-    CP_A(DUNGEON);
-    IF_Z goto incave;
-
-fail:
-    LD_A(0x2);
-    RET;
-
-
-incave:
-    LD_HL(wDigWarpNumber);
-    LD_A_hli;
-    AND_A_A;
-    IF_Z goto fail;
-    LD_A_hli;
-    AND_A_A;
-    IF_Z goto fail;
-    LD_A_hl;
-    AND_A_A;
-    IF_Z goto fail;
-    LD_A(0x1);
-    RET;
-
-
-DoDig:
-    LD_HL(wDigWarpNumber);
-    LD_DE(wNextWarp);
-    LD_BC(3);
-    CALL(aCopyBytes);
-    CALL(aGetPartyNickname);
-    LD_A_addr(wEscapeRopeOrDigType);
-    CP_A(0x2);
-    IF_NZ goto escaperope;
-    LD_HL(mEscapeRopeOrDig_UsedDigScript);
-    CALL(aQueueScript);
-    LD_A(0x81);
-    RET;
-
-
-escaperope:
-    FARCALL(aSpecialKabutoChamber);
-    LD_HL(mEscapeRopeOrDig_UsedEscapeRopeScript);
-    CALL(aQueueScript);
-    LD_A(0x81);
-    RET;
-
-
-FailDig:
-    LD_A_addr(wEscapeRopeOrDigType);
-    CP_A(0x2);
-    IF_NZ goto failescaperope;
-    LD_HL(mEscapeRopeOrDig_CantUseDigText);
-    CALL(aMenuTextbox);
-    CALL(aWaitPressAorB_BlinkCursor);
-    CALL(aCloseWindow);
-
-
-failescaperope:
-    LD_A(0x80);
-    RET;
-
-
-UseDigText:
-    //text_far ['_UseDigText']
-    //text_end ['?']
-
-
-UseEscapeRopeText:
-    //text_far ['_UseEscapeRopeText']
-    //text_end ['?']
-
-
-CantUseDigText:
-    //text_far ['_CantUseDigText']
-    //text_end ['?']
-
-
-UsedEscapeRopeScript:
-    //reloadmappart ['?']
-    //special ['UpdateTimePals']
-    //writetext ['.UseEscapeRopeText']
-    //sjump ['.UsedDigOrEscapeRopeScript']
-
-
-UsedDigScript:
-    //reloadmappart ['?']
-    //special ['UpdateTimePals']
-    //writetext ['.UseDigText']
-
-
-UsedDigOrEscapeRopeScript:
-    //waitbutton ['?']
-    //closetext ['?']
-    //playsound ['SFX_WARP_TO']
-    //applymovement ['PLAYER', '.DigOut']
-    //farscall ['Script_AbortBugContest']
-    //special ['WarpToSpawnPoint']
-    //loadvar ['VAR_MOVEMENT', 'PLAYER_NORMAL']
-    //newloadmap ['MAPSETUP_DOOR']
-    //playsound ['SFX_WARP_FROM']
-    //applymovement ['PLAYER', '.DigReturn']
-    //end ['?']
-
-
-DigOut:
-    //step_dig ['32']
-    //hide_object ['?']
-    //step_end ['?']
-
-
-DigReturn:
-    //show_object ['?']
-    //return_dig ['32']
-    //step_end ['?']
-
-    return TeleportFunction();
 }
 
 void TeleportFunction(void){

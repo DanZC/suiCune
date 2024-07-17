@@ -1024,6 +1024,25 @@ struct ItemPal
     uint8_t pal;
 };
 
+struct ItemStat
+{
+    item_t item;
+    uint8_t stat;
+};
+
+struct HealingAction
+{
+    item_t item;
+    uint8_t action_text;
+    uint8_t status;
+};
+
+struct HealingHPEntry 
+{
+    item_t item;
+    uint16_t amount;
+};
+
 struct WildGrassMons
 {
     uint8_t mapGroup;

@@ -3269,10 +3269,12 @@ void TextCommand_SOUND_Conv2(struct TextCmdState* state, const struct TextCmd* c
     // LD_A_hli;
     // LD_B_A;
     uint8_t b = cmd->cmd;
-    if(b == TX_SOUND_FANFARE)
-        printf("sound_fanfare\n");
-    else
-        printf("sound_unk\n");
+    switch(b) {
+        case TX_SOUND_FANFARE:            printf("sound_fanfare\n"); break;
+        case TX_SOUND_CAUGHT_MON:         printf("sound_caught_mon\n"); break;
+        case TX_SOUND_SLOT_MACHINE_START: printf("sound_slot_machine_start\n"); break;
+        default: printf("sound_unk\n"); break;
+    }
     // PUSH_HL;
     // LD_HL(mTextSFX);
 
