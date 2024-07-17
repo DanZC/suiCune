@@ -9049,5 +9049,14 @@ CONVERTED(v_AnimateTileset);
     // CONVERTED(MysteryGiftGetDecoration);
 
     // engine/movie/evolution_animation.c
-    REDIRECTED(EvolutionAnimation);
+    CONVERTED(EvolutionAnimation);
+
+    // engine/events/diploma.c
+    // CONVERTED(PrintDiplomaPage2);
+    // CONVERTED(PlaceDiplomaOnScreen);
+    // CONVERTED(DiplomaPage1Tilemap);
+    // CONVERTED(Diploma_DummyFunction);
+    // CONVERTED(DiplomaPage2Tilemap);
+    // CONVERTED(DiplomaGFX);
+    // CONVERTED(v_Diploma);
 }

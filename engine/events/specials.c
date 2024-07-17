@@ -2,6 +2,7 @@
 #include "specials.h"
 #include "pokecenter_pc.h"
 #include "name_rater.h"
+#include "diploma.h"
 #include "bug_contest/judging.h"
 #include "pokerus/check_pokerus.h"
 #include "../menus/naming_screen.h"
@@ -11,6 +12,7 @@
 #include "../menus/intro_menu.h"
 #include "../pokegear/pokegear.h"
 #include "../pokemon/search2.h"
+#include "../printer/printer.h"
 #include "../games/unown_puzzle.h"
 #include "../../home/sram.h"
 #include "../../home/map.h"
@@ -591,19 +593,23 @@ void FadeOutMusic(void){
 }
 
 void Diploma(void){
-    CALL(aFadeToMenu);
-    FARCALL(av_Diploma);
-    CALL(aExitAllMenus);
-    RET;
-
+    // CALL(aFadeToMenu);
+    FadeToMenu_Conv();
+    // FARCALL(av_Diploma);
+    v_Diploma();
+    // CALL(aExitAllMenus);
+    ExitAllMenus_Conv();
+    // RET;
 }
 
 void PrintDiploma(void){
-    CALL(aFadeToMenu);
-    FARCALL(av_PrintDiploma);
-    CALL(aExitAllMenus);
-    RET;
-
+    // CALL(aFadeToMenu);
+    FadeToMenu_Conv();
+    // FARCALL(av_PrintDiploma);
+    v_PrintDiploma();
+    // CALL(aExitAllMenus);
+    ExitAllMenus_Conv();
+    // RET;
 }
 
 void TrainerHouse(void){

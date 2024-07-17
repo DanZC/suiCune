@@ -159,8 +159,8 @@ void (*const SpecialsPointers[])(void) = {
     add_special(PhotoStudio),
     add_special(InitRoamMons),
     add_special(FadeOutMusic),
-    // add_special(Diploma),
-    // add_special(PrintDiploma),
+    add_special(Diploma),
+    add_special(PrintDiploma),
 
 // Crystal only
     // add_special(Function11ac3e),

@@ -11,7 +11,9 @@
 #include "../../home/names.h"
 #include "../../home/sram.h"
 #include "../../home/pokemon.h"
+#include "../../home/copy_tilemap.h"
 #include "../pokemon/mon_stats.h"
+#include "../events/diploma.h"
 #include "../../gfx/misc.h"
 #include "../../util/printer.h"
 
@@ -532,69 +534,93 @@ void PrintPartymon(void){
 }
 
 void v_PrintDiploma(void){
-    LD_A_addr(wPrinterQueueLength);
-    PUSH_AF;
+    // LD_A_addr(wPrinterQueueLength);
+    // PUSH_AF;
+    uint8_t queueLength = wram->wPrinterQueueLength;
 
-    FARCALL(aPlaceDiplomaOnScreen);
+    // FARCALL(aPlaceDiplomaOnScreen);
+    PlaceDiplomaOnScreen();
 
-    XOR_A_A;
-    LDH_addr_A(hPrinter);
-    CALL(aPrinter_PlayMusic);
+    // XOR_A_A;
+    // LDH_addr_A(hPrinter);
+    hram->hPrinter = 0x0;
+    // CALL(aPrinter_PlayMusic);
+    Printer_PlayMusic();
 
-    LDH_A_addr(rIE);
-    PUSH_AF;
-    XOR_A_A;
-    LDH_addr_A(rIF);
-    LD_A((1 << SERIAL) | (1 << VBLANK));
-    LDH_addr_A(rIE);
+    // LDH_A_addr(rIE);
+    // PUSH_AF;
+    // XOR_A_A;
+    // LDH_addr_A(rIF);
+    // LD_A((1 << SERIAL) | (1 << VBLANK));
+    // LDH_addr_A(rIE);
 
-    LD_HL(hVBlank);
-    LD_A_hl;
-    PUSH_AF;
-    LD_hl(4);  // vblank mode that calls AskSerial
+    // LD_HL(hVBlank);
+    // LD_A_hl;
+    // PUSH_AF;
+    // LD_hl(4);  // vblank mode that calls AskSerial
 
-    LD_A((1 << 4) | 0);  // to be loaded to wPrinterMargins
-    CALL(aPrinter_PrepareTilemapForPrint);
-    CALL(aPrinter_ResetJoypadRegisters);
+    Printer_Begin();
+    // LD_A((1 << 4) | 0);  // to be loaded to wPrinterMargins
+    // CALL(aPrinter_PrepareTilemapForPrint);
+    Printer_PrepareTilemapForPrint((1 << 4) | 0);
+    // CALL(aPrinter_ResetJoypadRegisters);
+    Printer_ResetJoypadRegisters();
 
-    LD_A(18 / 2);
-    LD_addr_A(wPrinterQueueLength);
-    CALL(aSendScreenToPrinter);
-    IF_C goto cancel;
-    CALL(aPrinter_CleanUpAfterSend);
-    LD_C(12);
-    CALL(aDelayFrames);
+    // LD_A(18 / 2);
+    // LD_addr_A(wPrinterQueueLength);
+    wram->wPrinterQueueLength = 18 / 2;
+    // CALL(aSendScreenToPrinter);
+    // IF_C goto cancel;
+    if(!SendScreenToPrinter()) {
+        // CALL(aPrinter_CleanUpAfterSend);
+        Printer_CleanUpAfterSend();
+        // LD_C(12);
+        // CALL(aDelayFrames);
+        DelayFrames_Conv(12);
 
-    CALL(aLoadTilemapToTempTilemap);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
+        // CALL(aLoadTilemapToTempTilemap);
+        LoadTilemapToTempTilemap_Conv();
+        // XOR_A_A;
+        // LDH_addr_A(hBGMapMode);
+        hram->hBGMapMode = 0x0;
 
-    FARCALL(aPrintDiplomaPage2);
+        // FARCALL(aPrintDiplomaPage2);
+        PrintDiplomaPage2();
 
-    LD_A((0 << 4) | 3);  // to be loaded to wPrinterMargins
-    CALL(aPrinter_PrepareTilemapForPrint);
-    CALL(aSafeLoadTempTilemapToTilemap);
-    CALL(aPrinter_ResetJoypadRegisters);
+        // LD_A((0 << 4) | 3);  // to be loaded to wPrinterMargins
+        // CALL(aPrinter_PrepareTilemapForPrint);
+        Printer_PrepareTilemapForPrint((0 << 4) | 3);
+        // CALL(aSafeLoadTempTilemapToTilemap);
+        SafeLoadTempTilemapToTilemap_Conv();
+        // CALL(aPrinter_ResetJoypadRegisters);
+        Printer_ResetJoypadRegisters();
 
-    LD_A(18 / 2);
-    LD_addr_A(wPrinterQueueLength);
-    CALL(aSendScreenToPrinter);
+        // LD_A(18 / 2);
+        // LD_addr_A(wPrinterQueueLength);
+        wram->wPrinterQueueLength = 18 / 2;
+        // CALL(aSendScreenToPrinter);
+        if(!SendScreenToPrinter())
+            Printer_SaveToDisk();
+    }
 
-cancel:
-    POP_AF;
-    LDH_addr_A(hVBlank);
-    CALL(aPrinter_CleanUpAfterSend);
+// cancel:
+    // POP_AF;
+    // LDH_addr_A(hVBlank);
+    // CALL(aPrinter_CleanUpAfterSend);
+    Printer_CleanUpAfterSend();
+    Printer_CleanUp();
 
-    XOR_A_A;
-    LDH_addr_A(rIF);
-    POP_AF;
-    LDH_addr_A(rIE);
-    CALL(aPrinter_ExitPrinter);
+    // XOR_A_A;
+    // LDH_addr_A(rIF);
+    // POP_AF;
+    // LDH_addr_A(rIE);
+    // CALL(aPrinter_ExitPrinter);
+    Printer_ExitPrinter();
 
-    POP_AF;
-    LD_addr_A(wPrinterQueueLength);
-    RET;
-
+    // POP_AF;
+    // LD_addr_A(wPrinterQueueLength);
+    wram->wPrinterQueueLength = queueLength;
+    // RET;
 }
 
 bool CheckCancelPrint(void){
