@@ -605,58 +605,72 @@ void v_CGB_PokedexUnownMode(void){
 }
 
 void v_CGB_SlotMachine(void){
-    LD_HL(mSlotMachinePals);
-    LD_DE(wBGPals1);
-    LD_BC(16 * PALETTE_SIZE);
-    LD_A(MBANK(awBGPals1));
-    CALL(aFarCopyWRAM);
-    CALL(aWipeAttrmap);
-    hlcoord(0, 2, wAttrmap);
-    LD_BC((10 << 8) | 3);
-    LD_A(0x2);  // "3" palette
-    CALL(aFillBoxCGB);
-    hlcoord(17, 2, wAttrmap);
-    LD_BC((10 << 8) | 3);
-    LD_A(0x2);  // "3" palette
-    CALL(aFillBoxCGB);
-    hlcoord(0, 4, wAttrmap);
-    LD_BC((6 << 8) | 3);
-    LD_A(0x3);  // "2" palette
-    CALL(aFillBoxCGB);
-    hlcoord(17, 4, wAttrmap);
-    LD_BC((6 << 8) | 3);
-    LD_A(0x3);  // "2" palette
-    CALL(aFillBoxCGB);
-    hlcoord(0, 6, wAttrmap);
-    LD_BC((2 << 8) | 3);
-    LD_A(0x4);  // "1" palette
-    CALL(aFillBoxCGB);
-    hlcoord(17, 6, wAttrmap);
-    LD_BC((2 << 8) | 3);
-    LD_A(0x4);  // "1" palette
-    CALL(aFillBoxCGB);
-    hlcoord(4, 2, wAttrmap);
-    LD_BC((2 << 8) | 12);
-    LD_A(0x1);  // Vileplume palette
-    CALL(aFillBoxCGB);
-    hlcoord(3, 2, wAttrmap);
-    LD_BC((10 << 8) | 1);
-    LD_A(0x1);  // lights palette
-    CALL(aFillBoxCGB);
-    hlcoord(16, 2, wAttrmap);
-    LD_BC((10 << 8) | 1);
-    LD_A(0x1);  // lights palette
-    CALL(aFillBoxCGB);
-    hlcoord(0, 12, wAttrmap);
-    LD_BC(6 * SCREEN_WIDTH);
-    LD_A(0x7);  // text palette
-    CALL(aByteFill);
-    CALL(aApplyAttrmap);
-    CALL(aApplyPals);
-    LD_A(TRUE);
-    LDH_addr_A(hCGBPalUpdate);
-    RET;
-
+    // LD_HL(mSlotMachinePals);
+    // LD_DE(wBGPals1);
+    // LD_BC(16 * PALETTE_SIZE);
+    // LD_A(MBANK(awBGPals1));
+    // CALL(aFarCopyWRAM);
+    LoadPaletteAssetColorsToArray(wram->wBGPals1, SlotMachinePals, 0, 16 * NUM_PAL_COLORS);
+    // CALL(aWipeAttrmap);
+    WipeAttrmap();
+    // hlcoord(0, 2, wAttrmap);
+    // LD_BC((10 << 8) | 3);
+    // LD_A(0x2);  // "3" palette
+    // CALL(aFillBoxCGB);
+    FillBoxCGB_Conv(coord(0, 2, wram->wAttrmap), 10, 3, 0x2);
+    // hlcoord(17, 2, wAttrmap);
+    // LD_BC((10 << 8) | 3);
+    // LD_A(0x2);  // "3" palette
+    // CALL(aFillBoxCGB);
+    FillBoxCGB_Conv(coord(17, 2, wram->wAttrmap), 10, 3, 0x2);
+    // hlcoord(0, 4, wAttrmap);
+    // LD_BC((6 << 8) | 3);
+    // LD_A(0x3);  // "2" palette
+    // CALL(aFillBoxCGB);
+    FillBoxCGB_Conv(coord(0, 4, wram->wAttrmap), 6, 3, 0x3);
+    // hlcoord(17, 4, wAttrmap);
+    // LD_BC((6 << 8) | 3);
+    // LD_A(0x3);  // "2" palette
+    // CALL(aFillBoxCGB);
+    FillBoxCGB_Conv(coord(17, 4, wram->wAttrmap), 6, 3, 0x3);
+    // hlcoord(0, 6, wAttrmap);
+    // LD_BC((2 << 8) | 3);
+    // LD_A(0x4);  // "1" palette
+    // CALL(aFillBoxCGB);
+    FillBoxCGB_Conv(coord(0, 6, wram->wAttrmap), 2, 3, 0x4);
+    // hlcoord(17, 6, wAttrmap);
+    // LD_BC((2 << 8) | 3);
+    // LD_A(0x4);  // "1" palette
+    // CALL(aFillBoxCGB);
+    FillBoxCGB_Conv(coord(17, 6, wram->wAttrmap), 2, 3, 0x4);
+    // hlcoord(4, 2, wAttrmap);
+    // LD_BC((2 << 8) | 12);
+    // LD_A(0x1);  // Vileplume palette
+    // CALL(aFillBoxCGB);
+    FillBoxCGB_Conv(coord(4, 2, wram->wAttrmap), 2, 12, 0x1);
+    // hlcoord(3, 2, wAttrmap);
+    // LD_BC((10 << 8) | 1);
+    // LD_A(0x1);  // lights palette
+    // CALL(aFillBoxCGB);
+    FillBoxCGB_Conv(coord(3, 2, wram->wAttrmap), 10, 1, 0x1);
+    // hlcoord(16, 2, wAttrmap);
+    // LD_BC((10 << 8) | 1);
+    // LD_A(0x1);  // lights palette
+    // CALL(aFillBoxCGB);
+    FillBoxCGB_Conv(coord(16, 2, wram->wAttrmap), 10, 1, 0x1);
+    // hlcoord(0, 12, wAttrmap);
+    // LD_BC(6 * SCREEN_WIDTH);
+    // LD_A(0x7);  // text palette
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(0, 12, wram->wAttrmap), 6 * SCREEN_WIDTH, 0x7);
+    // CALL(aApplyAttrmap);
+    ApplyAttrmap_Conv();
+    // CALL(aApplyPals);
+    ApplyPals_Conv();
+    // LD_A(TRUE);
+    // LDH_addr_A(hCGBPalUpdate);
+    hram->hCGBPalUpdate = TRUE;
+    // RET;
 }
 
 void v_CGB_BetaTitleScreen(void){

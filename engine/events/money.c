@@ -119,7 +119,7 @@ void CompareMoney(void){
 
 u8_flag_s CompareMoney_Conv(const uint8_t* bc, const uint8_t* de){
     // LD_A(3);
-    return CompareFunds_Conv(bc, de, 3);
+    return CompareFunds_Conv(de, bc, 3);
 }
 
 //  a: number of bytes
@@ -179,7 +179,7 @@ skip_carry:
 //  a: number of bytes
 //  bc: start addr of amount (big-endian)
 //  de: start addr of account (big-endian)
-u8_flag_s CompareFunds_Conv(const uint8_t* bc, const uint8_t* de, uint8_t a){
+u8_flag_s CompareFunds_Conv(const uint8_t* de, const uint8_t* bc, uint8_t a){
     // PUSH_HL;
     // PUSH_DE;
     // PUSH_BC;
@@ -462,7 +462,7 @@ bool GiveCoins_Conv(const uint8_t* bc){
     // LD_A(2);
     // LD_BC(mGiveCoins_maxcoins);
     // CALL(aCompareFunds);
-    u8_flag_s res = CompareFunds_Conv(maxcoins, de, 2);
+    u8_flag_s res = CompareFunds_Conv(de, maxcoins, 2);
     // IF_C goto not_maxed;
     if(res.flag)
         return false;
@@ -539,5 +539,5 @@ u8_flag_s CheckCoins_Conv(const uint8_t* bc){
     // LD_DE(wCoins);
     uint8_t* de = (uint8_t*)&wram->wCoins;
     // JP(mCompareFunds);
-    return CompareFunds_Conv(bc, de, 2);
+    return CompareFunds_Conv(de, bc, 2);
 }

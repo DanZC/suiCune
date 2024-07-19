@@ -7,6 +7,7 @@ void PlaySpriteAnimations_Conv(void);
 void DoNextFrameForAllSprites(void);
 void DoNextFrameForAllSprites_Conv(void);
 void DoNextFrameForFirst16Sprites(void);
+void DoNextFrameForFirst16Sprites_Conv(void);
 void v_InitSpriteAnimStruct(void);
 struct SpriteAnim* v_InitSpriteAnimStruct_Conv(uint8_t a, uint16_t de);
 void DeinitializeSprite(void);

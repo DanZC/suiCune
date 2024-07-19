@@ -13,6 +13,7 @@
 #include "../pokegear/pokegear.h"
 #include "../pokemon/search2.h"
 #include "../printer/printer.h"
+#include "../games/slot_machine.h"
 #include "../games/unown_puzzle.h"
 #include "../../home/sram.h"
 #include "../../home/map.h"
@@ -306,13 +307,15 @@ void UnownPuzzle(void){
 }
 
 void SlotMachine(void){
-    CALL(aCheckCoinsAndCoinCase);
-    RET_C ;
-    LD_A(BANK(av_SlotMachine));
-    LD_HL(mv_SlotMachine);
-    CALL(aStartGameCornerGame);
-    RET;
-
+    // CALL(aCheckCoinsAndCoinCase);
+    // RET_C ;
+    if(!CheckCoinsAndCoinCase())
+        return;
+    // LD_A(BANK(av_SlotMachine));
+    // LD_HL(mv_SlotMachine);
+    // CALL(aStartGameCornerGame);
+    StartGameCornerGame(v_SlotMachine);
+    // RET;
 }
 
 void CardFlip(void){
@@ -335,61 +338,66 @@ void UnusedMemoryGame(void){
 
 }
 
-void StartGameCornerGame(void){
-    CALL(aFarQueueScript);
-    CALL(aFadeToMenu);
-    LD_HL(wQueuedScriptBank);
-    LD_A_hli;
-    PUSH_AF;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    POP_AF;
-    RST(aFarCall);
-    CALL(aExitAllMenus);
-    RET;
-
+void StartGameCornerGame(void (*func)(void)){
+    // CALL(aFarQueueScript);
+    // CALL(aFadeToMenu);
+    FadeToMenu_Conv();
+    // LD_HL(wQueuedScriptBank);
+    // LD_A_hli;
+    // PUSH_AF;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // POP_AF;
+    // RST(aFarCall);
+    func();
+    // CALL(aExitAllMenus);
+    ExitAllMenus_Conv();
+    // RET;
 }
 
-void CheckCoinsAndCoinCase(void){
-    LD_HL(wCoins);
-    LD_A_hli;
-    OR_A_hl;
-    IF_Z goto no_coins;
-    LD_A(COIN_CASE);
-    LD_addr_A(wCurItem);
-    LD_HL(wNumItems);
-    CALL(aCheckItem);
-    IF_NC goto no_coin_case;
-    AND_A_A;
-    RET;
-
-
-no_coins:
-    LD_HL(mCheckCoinsAndCoinCase_NoCoinsText);
-    goto print;
-
-
-no_coin_case:
-    LD_HL(mCheckCoinsAndCoinCase_NoCoinCaseText);
-
-
-print:
-    CALL(aPrintText);
-    SCF;
-    RET;
-
-
-NoCoinsText:
-    //text_far ['_NoCoinsText']
-    //text_end ['?']
-
-
-NoCoinCaseText:
-    //text_far ['_NoCoinCaseText']
-    //text_end ['?']
-
-    return ClearBGPalettesBufferScreen();
+bool CheckCoinsAndCoinCase(void){
+    static const txt_cmd_s NoCoinsText[] = {
+        text_far(v_NoCoinsText)
+        text_end
+    };
+    static const txt_cmd_s NoCoinCaseText[] = {
+        text_far(v_NoCoinCaseText)
+        text_end
+    };
+    // LD_HL(wCoins);
+    // LD_A_hli;
+    // OR_A_hl;
+    // IF_Z goto no_coins;
+    if(wram->wCoins == 0) {
+    // no_coins:
+        // LD_HL(mCheckCoinsAndCoinCase_NoCoinsText);
+        // goto print;
+    // print:
+        // CALL(aPrintText);
+        PrintText_Conv2(NoCoinsText);
+        // SCF;
+        // RET;
+        return false;
+    }
+    // LD_A(COIN_CASE);
+    // LD_addr_A(wCurItem);
+    // LD_HL(wNumItems);
+    // CALL(aCheckItem);
+    // IF_NC goto no_coin_case;
+    if(!CheckItem_Conv(COIN_CASE, wram->wItems)) {
+    // no_coin_case:
+        // LD_HL(mCheckCoinsAndCoinCase_NoCoinCaseText);
+    // print:
+        // CALL(aPrintText);
+        PrintText_Conv2(NoCoinCaseText);
+        // SCF;
+        // RET;
+        return false;
+    }
+    // AND_A_A;
+    // RET;
+    return true;
 }
 
 void ClearBGPalettesBufferScreen(void){

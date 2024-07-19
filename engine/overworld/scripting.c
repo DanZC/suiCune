@@ -4330,11 +4330,12 @@ void CompareMoneyAction_Conv(script_s* s, u8_flag_s res){
     if(res.flag)
         wram->wScriptVar = HAVE_LESS;
     // IF_Z goto exact;
-    if(res.a == 0)
+    else if(res.a == 0)
         wram->wScriptVar = HAVE_AMOUNT;
     // LD_A(HAVE_MORE);
     // goto done;
-    wram->wScriptVar = HAVE_MORE;
+    else
+        wram->wScriptVar = HAVE_MORE;
 
 // exact:
     // LD_A(HAVE_AMOUNT);
@@ -4389,7 +4390,7 @@ uint8_t* LoadMoneyAmountToMem_Conv(uint32_t amount){
     // PUSH_BC;
     // CALL(aGetScriptByte);
     // LD_bc_A;
-    hram->hMoneyTemp[0] = (uint8_t)(amount & 0xff);
+    hram->hMoneyTemp[0] = (uint8_t)((amount >> 16) & 0xff);
     // INC_BC;
     // CALL(aGetScriptByte);
     // LD_bc_A;
@@ -4397,7 +4398,7 @@ uint8_t* LoadMoneyAmountToMem_Conv(uint32_t amount){
     // INC_BC;
     // CALL(aGetScriptByte);
     // LD_bc_A;
-    hram->hMoneyTemp[2] = (uint8_t)((amount >> 16) & 0xff);
+    hram->hMoneyTemp[2] = (uint8_t)(amount & 0xff);
     // POP_BC;
     // RET;
     return hram->hMoneyTemp;

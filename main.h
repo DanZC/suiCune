@@ -294,7 +294,7 @@
 #include "engine/rtc/timeset.h"
 #include "engine/pokegear/pokegear.h"
 #include "engine/events/fish.h"
-//#include "engine/games/slot_machine.h"
+#include "engine/games/slot_machine.h"
 
 // SECTION "Events", ROMX
 #include "engine/overworld/events.h"

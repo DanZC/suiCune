@@ -6,7 +6,7 @@ bool TakeMoney_Conv(uint8_t* de, const uint8_t* bc);
 void CompareMoney(void);
 u8_flag_s CompareMoney_Conv(const uint8_t* bc, const uint8_t* de);
 void CompareFunds(void);
-u8_flag_s CompareFunds_Conv(const uint8_t* bc, const uint8_t* de, uint8_t a);
+u8_flag_s CompareFunds_Conv(const uint8_t* de, const uint8_t* bc, uint8_t a);
 void SubtractMoney(void);
 bool SubtractMoney_Conv(uint8_t* de, const uint8_t* bc);
 void SubtractFunds(void);

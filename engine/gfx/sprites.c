@@ -239,6 +239,60 @@ done:
 
 }
 
+void DoNextFrameForFirst16Sprites_Conv(void){
+    // LD_HL(wSpriteAnimationStructs);
+    struct SpriteAnim* hl = wram->wSpriteAnim;
+    // LD_E(NUM_SPRITE_ANIM_STRUCTS);
+    uint8_t e = NUM_SPRITE_ANIM_STRUCTS;
+
+    do {
+    // loop:
+        // LD_A_hl;
+        // AND_A_A;
+        // IF_Z goto next;
+        if(hl->index != 0) {
+            // LD_C_L;
+            // LD_B_H;
+            // PUSH_HL;
+            // PUSH_DE;
+            // CALL(aDoAnimFrame);  // Uses a massive dw
+            DoAnimFrame_Conv(hl);
+            // CALL(aUpdateAnimFrame);
+            // POP_DE;
+            // POP_HL;
+            // IF_C goto done;
+            if(UpdateAnimFrame_Conv(hl))
+                return;
+        }
+
+    // next:
+        // LD_BC(SPRITEANIMSTRUCT_LENGTH);
+        // ADD_HL_BC;
+        // DEC_E;
+        // IF_NZ goto loop;
+    } while(hl++, --e != 0);
+
+    // LD_A_addr(wCurSpriteOAMAddr);
+    // LD_L_A;
+    // LD_H(HIGH(wVirtualOAMSprite16));
+    uint16_t hl2 = (wVirtualOAMSprite16 & 0xff00) | wram->wCurSpriteOAMAddr;
+
+    while(LOW(hl2) < LOW(wVirtualOAMSprite16)) {
+    // loop2:
+    //   //  Clear (wVirtualOAM + [wCurSpriteOAMAddr] --> Sprites + $40)
+        // LD_A_L;
+        // CP_A(LOW(wVirtualOAMSprite16));
+        // IF_NC goto done;
+        // XOR_A_A;
+        // LD_hli_A;
+        gb_write(hl2++, 0x0);
+        // goto loop2;
+    }
+
+// done:
+    // RET;
+}
+
 void v_InitSpriteAnimStruct(void){
 //  Initialize animation a at pixel x=e, y=d
 //  Find if there's any room in the wSpriteAnimationStructs array, which is 10x16

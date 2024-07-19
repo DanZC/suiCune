@@ -6,6 +6,7 @@
 #include "../movie/trade_animation.h"
 #include "../pokegear/pokegear.h"
 #include "../menus/naming_screen.h"
+#include "../games/slot_machine.h"
 
 static void AnimSeq_Null_Conv(struct SpriteAnim* bc);
 static void AnimSeq_PartyMon_Conv(struct SpriteAnim* bc);
@@ -899,8 +900,9 @@ void AnimSeq_SlotsGolem(void){
 }
 
 static void AnimSeq_SlotsGolem_Conv(struct SpriteAnim* bc){
-    REG_BC = (bc - wram->wSpriteAnim) * SPRITEANIMSTRUCT_LENGTH + wSpriteAnimationStructs;
-    CALLFAR(aSlots_AnimateGolem);
+    // CALLFAR(aSlots_AnimateGolem);
+    Slots_AnimateGolem(bc);
+    // RET;
 }
 
 void AnimSeq_SlotsChansey(void){
@@ -917,8 +919,20 @@ void AnimSeq_SlotsChansey(void){
 }
 
 static void AnimSeq_SlotsChansey_Conv(struct SpriteAnim* bc){
-    REG_BC = (bc - wram->wSpriteAnim) * SPRITEANIMSTRUCT_LENGTH + wSpriteAnimationStructs;
-    FARCALL(aAnimSeq_SlotsChansey);
+    // CALLFAR(aSlots_AnimateChansey);
+    Slots_AnimateChansey(bc);
+    // LD_HL(wSlotsDelay);
+    // LD_A_hl;
+    // CP_A(0x2);
+    // RET_NZ ;
+    if(wram->wSlotsDelay != 0x2)
+        return;
+    // LD_hl(0x3);
+    wram->wSlotsDelay = 0x3;
+    // LD_A(SPRITE_ANIM_FRAMESET_SLOTS_CHANSEY_2);
+    // CALL(av_ReinitSpriteAnimFrame);
+    v_ReinitSpriteAnimFrame_Conv(bc, SPRITE_ANIM_FRAMESET_SLOTS_CHANSEY_2);
+    // RET;
 }
 
 void AnimSeq_SlotsChanseyEgg(void){

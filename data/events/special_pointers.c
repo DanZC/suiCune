@@ -94,7 +94,7 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(UnownPrinter),
     add_special(MapRadio),
     add_special(UnownPuzzle),
-    // add_special(SlotMachine),
+    add_special(SlotMachine),
     // add_special(CardFlip),
     // add_special(UnusedMemoryGame), // unused
     // add_special(ClearBGPalettesBufferScreen), // unused

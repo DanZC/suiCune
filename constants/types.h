@@ -836,6 +836,25 @@ SlotReel
     uint8_t stopDelay;
 };
 
+// Restructured Reel data using real pointers.
+struct SlotReelData
+{
+    const uint8_t* tilemapAddr;
+    struct SpriteOAM* oamAddr;
+    uint8_t reelAction;
+    uint8_t position;
+    uint8_t spinDistance;
+    uint8_t spinRate;
+    uint8_t xCoord;
+    uint8_t manipCounter;
+    uint8_t manipDelay;
+    uint8_t field0b;
+    uint8_t field0c;
+    uint8_t field0d;
+    uint8_t field0e;
+    uint8_t stopDelay;
+};
+
 /*
 
 object_struct: MACRO
