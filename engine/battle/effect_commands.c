@@ -4053,7 +4053,7 @@ void PlayerAttackDamage(struct BattleCmdState* state){
 
     // specialcrit:
         // LD_HL(wBattleMonSpclAtk);
-        atk = (wram->wEnemyMon.spclAtk[0] << 8) | wram->wEnemyMon.spclAtk[1];
+        atk = (wram->wBattleMon.spclAtk[0] << 8) | wram->wBattleMon.spclAtk[1];
         // CALL(aCheckDamageStatsCritical);
         // IF_C goto lightball;
 
@@ -4064,7 +4064,7 @@ void PlayerAttackDamage(struct BattleCmdState* state){
             // LD_C_hl;
             def = ReverseEndian16(wram->wEnemySpDef);
             // LD_HL(wPlayerSpAtk);
-            atk = ReverseEndian16(wram->wEnemySpAtk);
+            atk = ReverseEndian16(wram->wPlayerSpAtk);
         }
 
     // lightball:
@@ -4721,7 +4721,8 @@ void BattleCommand_DamageCalc(void){
     uint8_t atk = gBattleCmdState.b;
 
     gBattleCmdState.a = DamageCalc(pwr, lvl, def, atk);
-    printf("Calculated %d damage.\n", ReverseEndian16(wram->wCurDamage));
+    printf("Calculated %d damage. (pwr=%d, lvl=%d, def=%d, atk=%d)\n", ReverseEndian16(wram->wCurDamage),
+        pwr, lvl, def, atk);
 }
 
 static void DamageCalc_CriticalMultiplier(uint32_t* n) {
@@ -4983,7 +4984,7 @@ DoneItem:
         // LD_hli_A;
         // LD_A(LOW(DAMAGE_CAP));
         // LD_hld_A;
-        wram->wCurDamage = ReverseEndian16(DAMAGE_CAP + MIN_DAMAGE);
+        wram->wCurDamage = ReverseEndian16(DAMAGE_CAP);
     }
     else {
         wram->wCurDamage = ReverseEndian16(dmg + n + MIN_DAMAGE);
