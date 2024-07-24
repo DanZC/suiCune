@@ -1335,7 +1335,7 @@ void GetUnknownSlotReelData(void){
     RET;
 
 
-data:
+//data:
     //table_width ['1', 'GetUnknownSlotReelData.data']
     //db ['0'];  // SLOTS_SEVEN
     //db ['1'];  // SLOTS_POKEBALL

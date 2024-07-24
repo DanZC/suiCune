@@ -1941,8 +1941,11 @@ void NoEffectMessage(void){
 }
 
 void UpdateStatsAfterItem(struct PartyMon* hl){
-    const uint16_t* statxp = (uint16_t*)((uint8_t*)hl + offsetof(struct BoxMon, statExp));
-    uint16_t* stats = (uint16_t*)((uint8_t*)hl + offsetof(struct PartyMon, maxHP));
+    // MSVC doesn't like this
+    //const uint16_t* statxp = (uint16_t*)((uint8_t*)hl + offsetof(struct BoxMon, statExp));
+    const uint16_t* statxp = ((const struct BoxMon*)hl)->statExp;
+    //uint16_t* stats = (uint16_t*)((uint8_t*)hl + offsetof(struct PartyMon, maxHP));
+    uint16_t* stats = ((const struct PartyMon*)hl)->maxHP;
     // LD_A(MON_MAXHP);
     // CALL(aGetPartyParamLocation);
     // LD_D_H;
