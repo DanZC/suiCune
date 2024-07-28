@@ -1,0 +1,66 @@
+#pragma once
+//// EVENTS
+extern const struct MapScripts FastShipCabins_SE_SSE_CaptainsCabin_MapScripts;
+extern const struct MapEvents FastShipCabins_SE_SSE_CaptainsCabin_MapEvents;
+
+//// CODE
+
+bool FastShipCabins_SE_SSE_CaptainsCabin_MapScripts_DummyScene(script_s* s);
+bool SSAquaCaptain(script_s* s);
+bool SSAquaGranddaughterBefore(script_s* s);
+bool SSAquaGrandpa(script_s* s);
+bool SSAquaMetalCoatAndDocking(script_s* s);
+bool SSAquaFoundGranddaughter(script_s* s);
+bool SSAquaGotMetalCoat(script_s* s);
+bool SSAquaGranddaughterAfter(script_s* s);
+extern const struct TrainerObj TrainerPokefanmColin;
+bool TrainerPokefanmColin_Script(script_s* s);
+extern const struct TrainerObj TrainerTwinsMegandpeg1;
+bool TrainerTwinsMegandpeg1_Script(script_s* s);
+extern const struct TrainerObj TrainerTwinsMegandpeg2;
+bool TrainerTwinsMegandpeg2_Script(script_s* s);
+extern const struct TrainerObj TrainerPsychicRodney;
+bool TrainerPsychicRodney_Script(script_s* s);
+extern const struct TrainerObj TrainerPokefanmJeremy;
+bool TrainerPokefanmJeremy_Script(script_s* s);
+extern const struct TrainerObj TrainerPokefanfGeorgia;
+bool TrainerPokefanfGeorgia_Script(script_s* s);
+extern const struct TrainerObj TrainerSupernerdShawn;
+bool TrainerSupernerdShawn_Script(script_s* s);
+bool FastShipCaptainsCabinTrashcan(script_s* s);
+extern const uint8_t SSAquaCaptainsCabinWarpsToGrandpasCabinMovement[];
+extern const uint8_t SSAquaGranddaughterEntersCabinMovement[];
+extern const uint8_t SSAquaGrandpaApproachesPlayerMovement[];
+extern const txt_cmd_s SSAquaCaptainExhaustingText[];
+extern const txt_cmd_s SSAquaCaptainHowDoYouLikeText[];
+extern const txt_cmd_s SSAquaCantFindGranddaughterText[];
+extern const txt_cmd_s SSAquaEntertainedGranddaughterText[];
+extern const txt_cmd_s SSAquaGrandpaHaveThisText[];
+extern const txt_cmd_s SSAquaGrandpaTravellingText[];
+extern const txt_cmd_s SSAquaGranddaughterCaptainPlayWithMeText[];
+extern const txt_cmd_s SSAquaGranddaughterHasToFindGrandpaText[];
+extern const txt_cmd_s SSAquaGranddaughterWasPlayingMText[];
+extern const txt_cmd_s SSAquaGranddaughterWasPlayingFText[];
+extern const txt_cmd_s SSAquaGranddaughterHadFunText[];
+extern const txt_cmd_s PokefanmColinSeenText[];
+extern const txt_cmd_s PokefanmColinBeatenText[];
+extern const txt_cmd_s PokefanmColinAfterBattleText[];
+extern const txt_cmd_s TwinsMegandpeg1SeenText[];
+extern const txt_cmd_s TwinsMegandpeg1BeatenText[];
+extern const txt_cmd_s TwinsMegandpeg1AfterBattleText[];
+extern const txt_cmd_s TwinsMegandpeg2SeenText[];
+extern const txt_cmd_s TwinsMegandpeg2BeatenText[];
+extern const txt_cmd_s TwinsMegandpeg2AfterBattleText[];
+extern const txt_cmd_s PsychicRodneySeenText[];
+extern const txt_cmd_s PsychicRodneyBeatenText[];
+extern const txt_cmd_s PsychicRodneyAfterBattleText[];
+extern const txt_cmd_s PokefanmJeremySeenText[];
+extern const txt_cmd_s PokefanmJeremyBeatenText[];
+extern const txt_cmd_s PokefanmJeremyAfterBattleText[];
+extern const txt_cmd_s PokefanfGeorgiaSeenText[];
+extern const txt_cmd_s PokefanfGeorgiaBeatenText[];
+extern const txt_cmd_s PokefanfGeorgiaAfterBattleText[];
+extern const txt_cmd_s SupernerdShawnSeenText[];
+extern const txt_cmd_s SupernerdShawnBeatenText[];
+extern const txt_cmd_s SupernerdShawnAfterBattleText[];
+extern const txt_cmd_s SSAquaHasArrivedVermilionText[];

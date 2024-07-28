@@ -221,6 +221,7 @@ bool NetworkBroadcastLAN(const uint8_t* name, uint16_t id, uint8_t gender) {
     CmdPacket_s* cmd = (CmdPacket_s*)packet->data;
     cmd->type = CMD_HOST_LAN;
     cmd->uid = HostToNet32(hostUniqueId);
+    memset(cmd->host_lan.name, 0x50, sizeof(cmd->host_lan.name));
     memcpy(cmd->host_lan.name, name, 10);
     cmd->host_lan.trainerId = HostToNet16(id);
     cmd->host_lan.gender = gender;
@@ -248,8 +249,8 @@ bool NetworkTryJoinLAN(uint8_t which, const uint8_t* name, uint16_t id, uint8_t 
         CmdPacket_s* cmd = (CmdPacket_s*)packet->data;
         cmd->type = CMD_JOIN_LAN;
         cmd->uid = HostToNet32(hostUniqueId);
+        memset(cmd->host_lan.name, 0x50, sizeof(cmd->host_lan.name));
         memcpy(cmd->host_lan.name, name, 10);
-        cmd->host_lan.name[10] = 0x50;
         cmd->host_lan.trainerId = HostToNet16(id);
         cmd->host_lan.gender = gender;
         packet->address.host = gLANClientCandidates[which].address;
@@ -298,7 +299,6 @@ static void NetworkAddLANCandidate(void) {
     CmdPacket_s* cmd = (CmdPacket_s*)packet->data;
     lan->uid = HostToNet32(cmd->uid);
     memcpy(lan->name, cmd->host_lan.name, 10);
-    lan->name[10] = 0x50;
     lan->trainerId = HostToNet16(cmd->host_lan.trainerId);
     lan->gender = cmd->host_lan.gender;
     gLANClientCandidateCount++;

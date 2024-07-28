@@ -6285,6 +6285,62 @@ void init_function_pointers(void) {
     // maps/SilverCaveRoom3.c
     CONVERTED_SCRIPT(Red);
 
+    // maps/FastShip1F.c
+    CONVERTED_SCRIPT(FastShip1FSailor1Script);
+    CONVERTED_SCRIPT(FastShip1FSailor2Script);
+    CONVERTED_SCRIPT(FastShip1FSailor3Script);
+    // CONVERTED_SCRIPT(ObjectEvent);
+
+    // maps/FastShipB1F.c
+    CONVERTED_SCRIPT(FastShipB1FSailorScript);
+    CONVERTED_SCRIPT(FastShipB1FSailorScript);
+    CONVERTED_SCRIPT(TrainerSailorJeff);
+    CONVERTED_SCRIPT(TrainerPicnickerDebra);
+    CONVERTED_SCRIPT(TrainerJugglerFritz);
+    CONVERTED_SCRIPT(TrainerSailorGarrett);
+    CONVERTED_SCRIPT(TrainerFisherJonah);
+    CONVERTED_SCRIPT(TrainerBlackbeltWai);
+    CONVERTED_SCRIPT(TrainerSailorKenneth);
+    CONVERTED_SCRIPT(TrainerTeacherShirley);
+    CONVERTED_SCRIPT(TrainerSchoolboyNate);
+    CONVERTED_SCRIPT(TrainerSchoolboyRicky);
+
+    // maps/FastShipCabins_NNW_NNE_NE.c
+    CONVERTED_SCRIPT(TrainerCooltrainermSean);
+    CONVERTED_SCRIPT(TrainerCooltrainerfCarol);
+    CONVERTED_SCRIPT(TrainerPokemaniacEthan);
+    CONVERTED_SCRIPT(TrainerHikerNoland);
+    CONVERTED_SCRIPT(FastShipLazySailorScript);
+    CONVERTED_SCRIPT(TrainerGentlemanEdward);
+    CONVERTED_SCRIPT(TrainerBurglarCorey);
+
+    // maps/FastShipCabins_SE_SSE_CaptainsCabin.c
+    CONVERTED_SCRIPT(SSAquaCaptain);
+    CONVERTED_SCRIPT(SSAquaGrandpa);
+    CONVERTED_SCRIPT(SSAquaGranddaughterAfter);
+    CONVERTED_SCRIPT(SSAquaGranddaughterBefore);
+    CONVERTED_SCRIPT(TrainerPokefanmColin);
+    CONVERTED_SCRIPT(TrainerTwinsMegandpeg1);
+    CONVERTED_SCRIPT(TrainerTwinsMegandpeg2);
+    CONVERTED_SCRIPT(TrainerPsychicRodney);
+    CONVERTED_SCRIPT(TrainerPokefanmJeremy);
+    CONVERTED_SCRIPT(TrainerPokefanfGeorgia);
+    CONVERTED_SCRIPT(TrainerSupernerdShawn);
+
+    // maps/FastShipCabins_SW_SSW_NW.c
+    CONVERTED_SCRIPT(TrainerFirebreatherLyle);
+    CONVERTED_SCRIPT(TrainerBugCatcherKen);
+    CONVERTED_SCRIPT(TrainerBeautyCassie);
+    CONVERTED_SCRIPT(TrainerGuitaristClyde);
+
+    // maps/VermilionPort.c
+    CONVERTED_SCRIPT(VermilionPortSailorAtGangwayScript);
+    CONVERTED_SCRIPT(VermilionPortSailorScript);
+    CONVERTED_SCRIPT(VermilionPortSuperNerdScript);
+
+    // maps/VermilionPortPassage.c
+    CONVERTED_SCRIPT(VermilionPortPassageTeacherScript);
+
     // engine/events/overworld.c
     // REDIRECTED(Script_WaterfallFromMenu);
     // REDIRECTED(UseFlash);

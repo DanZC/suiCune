@@ -56,7 +56,7 @@ static void DebugFlagMenu(void) {
     WaitBGMap_Conv();
     uint16_t flag = EVENT_TEMPORARY_UNTIL_MAP_RELOAD_1;
     while(1) {
-        GetJoypad_Conv();
+        GetJoypad_Conv2();
         if(hram->hJoyPressed & (B_BUTTON))
             break;
 

@@ -1324,6 +1324,55 @@ void PopulateMapScriptTable(void) {
     entry(SILVER_CAVE_ROOM_2, 2, SilverCaveRoom2PPUp);
 
     entry(SILVER_CAVE_ROOM_3, 0, Red);
+    
+    entry(FAST_SHIP_1F, 0, FastShip1FSailor1Script);
+    entry(FAST_SHIP_1F, 1, FastShip1FSailor2Script);
+    entry(FAST_SHIP_1F, 2, FastShip1FSailor3Script);
+    entry(FAST_SHIP_1F, 3, ObjectEvent);
+
+    entry(FAST_SHIP_B1F, 0, FastShipB1FSailorScript);
+    entry(FAST_SHIP_B1F, 1, FastShipB1FSailorScript);
+    entry(FAST_SHIP_B1F, 2, TrainerSailorJeff);
+    entry(FAST_SHIP_B1F, 3, TrainerPicnickerDebra);
+    entry(FAST_SHIP_B1F, 4, TrainerJugglerFritz);
+    entry(FAST_SHIP_B1F, 5, TrainerSailorGarrett);
+    entry(FAST_SHIP_B1F, 6, TrainerFisherJonah);
+    entry(FAST_SHIP_B1F, 7, TrainerBlackbeltWai);
+    entry(FAST_SHIP_B1F, 8, TrainerSailorKenneth);
+    entry(FAST_SHIP_B1F, 9, TrainerTeacherShirley);
+    entry(FAST_SHIP_B1F, 10, TrainerSchoolboyNate);
+    entry(FAST_SHIP_B1F, 11, TrainerSchoolboyRicky);
+
+    entry(FAST_SHIP_CABINS_NNW_NNE_NE, 0, TrainerCooltrainermSean);
+    entry(FAST_SHIP_CABINS_NNW_NNE_NE, 1, TrainerCooltrainerfCarol);
+    entry(FAST_SHIP_CABINS_NNW_NNE_NE, 2, TrainerPokemaniacEthan);
+    entry(FAST_SHIP_CABINS_NNW_NNE_NE, 3, TrainerHikerNoland);
+    entry(FAST_SHIP_CABINS_NNW_NNE_NE, 4, FastShipLazySailorScript);
+    entry(FAST_SHIP_CABINS_NNW_NNE_NE, 5, TrainerGentlemanEdward);
+    entry(FAST_SHIP_CABINS_NNW_NNE_NE, 6, TrainerBurglarCorey);
+
+    entry(FAST_SHIP_CABINS_SE_SSE_CAPTAINS_CABIN, 0, SSAquaCaptain);
+    entry(FAST_SHIP_CABINS_SE_SSE_CAPTAINS_CABIN, 1, SSAquaGrandpa);
+    entry(FAST_SHIP_CABINS_SE_SSE_CAPTAINS_CABIN, 2, SSAquaGranddaughterAfter);
+    entry(FAST_SHIP_CABINS_SE_SSE_CAPTAINS_CABIN, 3, SSAquaGranddaughterBefore);
+    entry(FAST_SHIP_CABINS_SE_SSE_CAPTAINS_CABIN, 4, TrainerPokefanmColin);
+    entry(FAST_SHIP_CABINS_SE_SSE_CAPTAINS_CABIN, 5, TrainerTwinsMegandpeg1);
+    entry(FAST_SHIP_CABINS_SE_SSE_CAPTAINS_CABIN, 6, TrainerTwinsMegandpeg2);
+    entry(FAST_SHIP_CABINS_SE_SSE_CAPTAINS_CABIN, 7, TrainerPsychicRodney);
+    entry(FAST_SHIP_CABINS_SE_SSE_CAPTAINS_CABIN, 8, TrainerPokefanmJeremy);
+    entry(FAST_SHIP_CABINS_SE_SSE_CAPTAINS_CABIN, 9, TrainerPokefanfGeorgia);
+    entry(FAST_SHIP_CABINS_SE_SSE_CAPTAINS_CABIN, 10, TrainerSupernerdShawn);
+
+    entry(FAST_SHIP_CABINS_SW_SSW_NW, 0, TrainerFirebreatherLyle);
+    entry(FAST_SHIP_CABINS_SW_SSW_NW, 1, TrainerBugCatcherKen);
+    entry(FAST_SHIP_CABINS_SW_SSW_NW, 2, TrainerBeautyCassie);
+    entry(FAST_SHIP_CABINS_SW_SSW_NW, 3, TrainerGuitaristClyde);
+
+    entry(VERMILION_PORT, 0, VermilionPortSailorAtGangwayScript);
+    entry(VERMILION_PORT, 1, VermilionPortSailorScript);
+    entry(VERMILION_PORT, 2, VermilionPortSuperNerdScript);
+
+    entry(VERMILION_PORT_PASSAGE, 0, VermilionPortPassageTeacherScript);
 }
 
 const void* GetRealScriptPointer(uint8_t group, uint8_t map, uint8_t index) {

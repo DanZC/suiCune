@@ -160,7 +160,7 @@ void DebugMenu(void) {
     while(1)
     {
         wram->wDisableTextAcceleration = 0;
-        GetJoypad_Conv();
+        GetJoypad_Conv2();
         int8_t dir = -((hram->hJoyPressed & D_UP)? 1: 0) + ((hram->hJoyPressed & D_DOWN)? 1: 0);
         if(dir != 0) {
             DebugMenu_MoveCursor(dir);
@@ -358,7 +358,7 @@ void DebugMenu_SoundTest(void) {
     while(1)
     {
         wram->wDisableTextAcceleration = 0;
-        GetJoypad_Conv();
+        GetJoypad_Conv2();
         int8_t dir = -((hram->hJoyPressed & D_LEFT)? 1: 0) + ((hram->hJoyPressed & D_RIGHT)? 1: 0);
         if(dir != 0) {
             if(editingWhich == 0) {
@@ -556,7 +556,7 @@ void DebugMenu_BattleTest(void) {
     while(1)
     {
         wram->wDisableTextAcceleration = 0;
-        GetJoypad_Conv();
+        GetJoypad_Conv2();
         int8_t hdir = -((hram->hJoyPressed & D_LEFT)? 1: 0) + ((hram->hJoyPressed & D_RIGHT)? 1: 0);
         int8_t vdir = -((hram->hJoyPressed & D_UP)? 1: 0) + ((hram->hJoyPressed & D_DOWN)? 1: 0);
         if(hdir > 0) {
@@ -619,7 +619,7 @@ void DebugMenu_GFXTest(void) {
     while(1)
     {
         wram->wDisableTextAcceleration = 0;
-        GetJoypad_Conv();
+        GetJoypad_Conv2();
         if(hram->hJoyPressed & (B_BUTTON)) 
             break;
         if(hram->hJoyPressed & (A_BUTTON))  {
@@ -718,7 +718,7 @@ void DebugMenu_Pics(void) {
 
     while(1)
     {
-        GetJoypad_Conv();
+        GetJoypad_Conv2();
 
         if(hram->hJoyPressed & (B_BUTTON))
             break;
@@ -930,7 +930,7 @@ void DebugMenu_BattleAnim(void) {
     ApplyTilemap_Conv();
 
     while(1) {
-        GetJoypad_Conv();
+        GetJoypad_Conv2();
         if(hram->hJoyPressed & (B_BUTTON))
             break;
         
