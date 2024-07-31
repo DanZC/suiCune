@@ -58,9 +58,7 @@ const struct MapEvents GoldenrodMagnetTrainStation_MapEvents = {
 };
 
 //// CODE
-#include "../constants.h"
-#include "../util/scripting.h"
-#include "GoldenrodMagnetTrainStation.h"
+// #define DEBUG_TRAIN_STATION 1
 
 bool GoldenrodMagnetTrainStation_MapScripts_DummyScene(script_s* s) {
     SCRIPT_BEGIN
@@ -75,6 +73,7 @@ bool GoldenrodMagnetTrainStationOfficerScript(script_s* s) {
     SCRIPT_BEGIN
     faceplayer
     opentext
+#if !DEBUG_TRAIN_STATION
     checkevent(EVENT_RESTORED_POWER_TO_KANTO)
     iftrue(MagnetTrainToSaffron)
     writetext(GoldenrodMagnetTrainStationOfficerTheTrainHasntComeInText)
@@ -87,6 +86,7 @@ MagnetTrainToSaffron:
     iffalse(DecidedNotToRide)
     checkitem(PASS)
     iffalse(PassNotInBag)
+#endif
     writetext(GoldenrodMagnetTrainStationOfficerRightThisWayText)
     waitbutton
     closetext

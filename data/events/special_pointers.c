@@ -29,6 +29,7 @@
 #include "../../engine/events/move_tutor.h"
 #include "../../engine/events/play_slow_cry.h"
 #include "../../engine/events/print_photo.h"
+#include "../../engine/events/magnet_train.h"
 #include "../../engine/events/bug_contest/contest.h"
 #include "../../engine/events/bug_contest/contest_2.h"
 #include "../../engine/events/battle_tower/battle_tower.h"
@@ -87,7 +88,7 @@ void (*const SpecialsPointers[])(void) = {
     add_special(DayCareManOutside),
     add_special(MoveDeletion),
     add_special(BankOfMom),
-    // add_special(MagnetTrain),
+    add_special(MagnetTrain),
     add_special(NameRival),
     add_special(SetDayOfWeek),
     add_special(OverworldTownMap),

@@ -77,6 +77,8 @@ const struct MapEvents FastShip1F_MapEvents = {
 #include "../util/scripting.h"
 #include "FastShip1F.h"
 
+#define INSTANT_SHIP_ARRIVAL 0
+
 bool FastShip1F_MapScripts_DummyScene0(script_s* s) {
     SCRIPT_BEGIN
     s_end
@@ -116,8 +118,7 @@ bool FastShip1FSailor1Script(script_s* s) {
     SCRIPT_BEGIN
     faceplayer
     opentext
-    clearevent(EVENT_FAST_SHIP_DESTINATION_OLIVINE)
-    goto Arrived;
+#if !INSTANT_SHIP_ARRIVAL
     checkevent(EVENT_FAST_SHIP_HAS_ARRIVED)
     iftrue(Arrived)
     checkevent(EVENT_FAST_SHIP_DESTINATION_OLIVINE)
@@ -131,6 +132,7 @@ Olivine:
     waitbutton
     closetext
     s_end
+#endif
 Arrived:
     checkevent(EVENT_FAST_SHIP_DESTINATION_OLIVINE)
     iftrue(_Olivine)

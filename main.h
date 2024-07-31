@@ -283,7 +283,7 @@
 #include "engine/tilesets/timeofday_pals.h"
 #include "engine/battle/battle_transition.h"
 #include "engine/events/field_moves.h"
-//#include "engine/events/magnet_train.h"
+#include "engine/events/magnet_train.h"
 //#include "engine/battle/battlestart_copytilemapatonce.h"
 #include "engine/gfx/sprites.h"
 #include "engine/gfx/mon_icons.h"

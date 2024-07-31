@@ -5828,6 +5828,12 @@ void init_function_pointers(void) {
     // CONVERTED_SCRIPT(ObjectEvent);
     // CONVERTED_SCRIPT(ObjectEvent);
 
+    // maps/SaffronMagnetTrainStation.c
+    CONVERTED_SCRIPT(SaffronMagnetTrainStationOfficerScript);
+    CONVERTED_SCRIPT(SaffronMagnetTrainStationGymGuideScript);
+    CONVERTED_SCRIPT(SaffronMagnetTrainStationTeacherScript);
+    CONVERTED_SCRIPT(SaffronMagnetTrainStationLassScript);
+
     // maps/SilverCavePokecenter1F.c
     CONVERTED_SCRIPT(SilverCavePokecenter1FNurseScript);
     CONVERTED_SCRIPT(SilverCavePokecenter1FGrannyScript);
@@ -9203,4 +9209,17 @@ CONVERTED(v_AnimateTileset);
     // CONVERTED(ReelAction_DropReel);
     // CONVERTED(SlotsAction_RestartOrQuit);
     // CONVERTED(Reel1Tilemap);
+
+    // engine/events/magnet_train.c
+    // CONVERTED(MagnetTrainBGTiles);
+    // CONVERTED(MagnetTrain_LoadGFX_PlayMusic);
+    // CONVERTED(MagnetTrain_UpdateLYOverrides);
+    // CONVERTED(GetMagnetTrainBGTiles);
+    CONVERTED(MagnetTrain);
+    // CONVERTED(MagnetTrain_Jumptable);
+    // CONVERTED(SetMagnetTrainPals);
+    // CONVERTED(MagnetTrain_Jumptable_FirstRunThrough);
+    // CONVERTED(DrawMagnetTrain);
+    // CONVERTED(MagnetTrain_InitLYOverrides);
+    // CONVERTED(MagnetTrainTilemap);
 }

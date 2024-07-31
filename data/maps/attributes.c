@@ -655,7 +655,7 @@ map_attributes(Route29Route46Gate, ROUTE_29_ROUTE_46_GATE, 0x00, 0);
 // map_attributes(SaffronPokecenter1F, SAFFRON_POKECENTER_1F, 0x00, 0);
 // map_attributes(SaffronPokecenter2FBeta, SAFFRON_POKECENTER_2F_BETA, 0x00, 0);
 // map_attributes(MrPsychicsHouse, MR_PSYCHICS_HOUSE, 0x00, 0);
-// map_attributes(SaffronMagnetTrainStation, SAFFRON_MAGNET_TRAIN_STATION, 0x00, 0);
+map_attributes(SaffronMagnetTrainStation, SAFFRON_MAGNET_TRAIN_STATION, 0x00, 0);
 // map_attributes(SilphCo1F, SILPH_CO_1F, 0x00, 0);
 // map_attributes(CopycatsHouse1F, COPYCATS_HOUSE_1F, 0x00, 0);
 // map_attributes(CopycatsHouse2F, COPYCATS_HOUSE_2F, 0x00, 0);

@@ -291,7 +291,7 @@
 // #include "../../maps/SaffronPokecenter1F.h"
 // #include "../../maps/SaffronPokecenter2FBeta.h"
 // #include "../../maps/MrPsychicsHouse.h"
-// #include "../../maps/SaffronMagnetTrainStation.h"
+#include "../../maps/SaffronMagnetTrainStation.h"
 // #include "../../maps/SilphCo1F.h"
 // #include "../../maps/CopycatsHouse1F.h"
 // #include "../../maps/CopycatsHouse2F.h"

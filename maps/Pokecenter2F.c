@@ -200,6 +200,7 @@ LinkedToFirstGen:
     s_end
 IncompatibleRooms:
     writetext(Text_IncompatibleRooms)
+    LANCloseConnection();
     special(CloseLink)
     closetext
     s_end

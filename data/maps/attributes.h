@@ -376,7 +376,7 @@ decl_map_attr(Route29Route46Gate);
 // decl_map_attr(SaffronPokecenter1F);
 // decl_map_attr(SaffronPokecenter2FBeta);
 // decl_map_attr(MrPsychicsHouse);
-// decl_map_attr(SaffronMagnetTrainStation);
+decl_map_attr(SaffronMagnetTrainStation);
 // decl_map_attr(SilphCo1F);
 // decl_map_attr(CopycatsHouse1F);
 // decl_map_attr(CopycatsHouse2F);

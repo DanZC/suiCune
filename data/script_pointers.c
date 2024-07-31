@@ -931,6 +931,11 @@ void PopulateMapScriptTable(void) {
     entry(TRAINER_HOUSE_B1F, 0, ObjectEvent);
     entry(TRAINER_HOUSE_B1F, 1, ObjectEvent);
 
+    entry(SAFFRON_MAGNET_TRAIN_STATION, 0, SaffronMagnetTrainStationOfficerScript);
+    entry(SAFFRON_MAGNET_TRAIN_STATION, 1, SaffronMagnetTrainStationGymGuideScript);
+    entry(SAFFRON_MAGNET_TRAIN_STATION, 2, SaffronMagnetTrainStationTeacherScript);
+    entry(SAFFRON_MAGNET_TRAIN_STATION, 3, SaffronMagnetTrainStationLassScript);
+
     entry(SILVER_CAVE_POKECENTER_1F, 0, SilverCavePokecenter1FNurseScript);
     entry(SILVER_CAVE_POKECENTER_1F, 1, SilverCavePokecenter1FGrannyScript);
 
