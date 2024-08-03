@@ -444,62 +444,72 @@ load_palettes:
 
 }
 
-void ApplyHPBarPals(void){
-    LD_A_addr(wWhichHPBar);
-    AND_A_A;
-    IF_Z goto Enemy;
-    CP_A(0x1);
-    IF_Z goto Player;
-    CP_A(0x2);
-    IF_Z goto PartyMenu;
-    RET;
+void ApplyHPBarPals(uint8_t c){
+    // LD_A_addr(wWhichHPBar);
+    // AND_A_A;
+    // IF_Z goto Enemy;
+    // CP_A(0x1);
+    // IF_Z goto Player;
+    // CP_A(0x2);
+    // IF_Z goto PartyMenu;
+    // RET;
+    uint16_t* de;
+    switch(wram->wWhichHPBar) {
+    case 0x0:
+    // Enemy:
+        // LD_DE(wBGPals2 + PALETTE_SIZE * PAL_BATTLE_BG_ENEMY_HP + PAL_COLOR_SIZE * 1);
+        de = (uint16_t*)(wram->wBGPals2 + PALETTE_SIZE * PAL_BATTLE_BG_ENEMY_HP + PAL_COLOR_SIZE * 1);
+        goto okay;
 
+    case 0x1:
+    // Player:
+        // LD_DE(wBGPals2 + PALETTE_SIZE * PAL_BATTLE_BG_PLAYER_HP + PAL_COLOR_SIZE * 1);
+        de = (uint16_t*)(wram->wBGPals2 + PALETTE_SIZE * PAL_BATTLE_BG_PLAYER_HP + PAL_COLOR_SIZE * 1);
 
-Enemy:
-    LD_DE(wBGPals2 + PALETTE_SIZE * PAL_BATTLE_BG_ENEMY_HP + PAL_COLOR_SIZE * 1);
-    goto okay;
+    okay:
+        // LD_L_C;
+        // LD_H(0x0);
+        // ADD_HL_HL;
+        // ADD_HL_HL;
+        // LD_BC(mHPBarPals);
+        // ADD_HL_BC;
+        // LD_BC(4);
+        // LD_A(MBANK(awBGPals2));
+        // CALL(aFarCopyWRAM);
+        CopyBytes_Conv2(de, HPBarPals + (c * 2), 4);
+        // LD_A(TRUE);
+        // LDH_addr_A(hCGBPalUpdate);
+        hram->hCGBPalUpdate = TRUE;
+        // RET;
+        return;
 
+    case 0x2: {
+    // PartyMenu:
+        // LD_E_C;
+        // INC_E;
+        // hlcoord(11, 1, wAttrmap);
+        // LD_BC(2 * SCREEN_WIDTH);
+        // LD_A_addr(wCurPartyMon);
 
-Player:
-    LD_DE(wBGPals2 + PALETTE_SIZE * PAL_BATTLE_BG_PLAYER_HP + PAL_COLOR_SIZE * 1);
+    // loop:
+        // AND_A_A;
+        // IF_Z goto done;
+        // ADD_HL_BC;
+        // DEC_A;
+        // goto loop;
+        tile_t* hl = coord(11, 1, wram->wAttrmap) + ((2 * SCREEN_WIDTH) * wram->wCurPartyMon);
 
+    // done:
+        // LD_BC((2 << 8) | 8);
+        // LD_A_E;
+        // CALL(aFillBoxCGB);
+        FillBoxCGB_Conv(hl, 2, 8, c + 1);
+        // RET;
+    } return;
 
-okay:
-    LD_L_C;
-    LD_H(0x0);
-    ADD_HL_HL;
-    ADD_HL_HL;
-    LD_BC(mHPBarPals);
-    ADD_HL_BC;
-    LD_BC(4);
-    LD_A(MBANK(awBGPals2));
-    CALL(aFarCopyWRAM);
-    LD_A(TRUE);
-    LDH_addr_A(hCGBPalUpdate);
-    RET;
-
-
-PartyMenu:
-    LD_E_C;
-    INC_E;
-    hlcoord(11, 1, wAttrmap);
-    LD_BC(2 * SCREEN_WIDTH);
-    LD_A_addr(wCurPartyMon);
-
-loop:
-    AND_A_A;
-    IF_Z goto done;
-    ADD_HL_BC;
-    DEC_A;
-    goto loop;
-
-
-done:
-    LD_BC((2 << 8) | 8);
-    LD_A_E;
-    CALL(aFillBoxCGB);
-    RET;
-
+    default:
+        return;
+    }
 }
 
 void LoadStatsScreenPals(void){

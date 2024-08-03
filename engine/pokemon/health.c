@@ -1,6 +1,7 @@
 #include "../../constants.h"
 #include "health.h"
 #include "../items/item_effects.h"
+#include "../battle/anim_hp_bar.h"
 #include "../../home/tilemap.h"
 
 void HealParty(void){
@@ -256,12 +257,13 @@ void AnimateHPBar(void){
 void AnimateHPBar_Conv(tile_t* hl, uint8_t which){
     wram->wWhichHPBar = which;
 
-    struct cpu_registers_s regs = gb.cpu_reg;
-    regs.hl = RAMAddrToGB(hl);
+    // struct cpu_registers_s regs = gb.cpu_reg;
+    // regs.hl = RAMAddrToGB(hl);
     // CALL(aWaitBGMap);
     WaitBGMap_Conv();
     // CALL(av_AnimateHPBar);
-    SafeCallGB(av_AnimateHPBar, &regs);
+    // SafeCallGB(av_AnimateHPBar, &regs);
+    v_AnimateHPBar(hl);
     // CALL(aWaitBGMap);
     WaitBGMap_Conv();
     // RET;

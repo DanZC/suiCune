@@ -9768,4 +9768,16 @@ CONVERTED(v_AnimateTileset);
     // REDIRECTED(Function1013dd);
     // REDIRECTED(Function101c92);
     // REDIRECTED(Function10156d);
+
+    // engine/battle/anim_hp_bar.c
+    // CONVERTED(ShortHPBar_CalcPixelFrame);
+    // CONVERTED(HPBarAnim_PaletteUpdate);
+    // CONVERTED(ShortAnim_UpdateVariables);
+    // CONVERTED(HPBarAnim_RedrawHPBar);
+    // CONVERTED(v_AnimateHPBar);
+    // CONVERTED(HPBarAnim_BGMapUpdate);
+    // CONVERTED(LongAnim_UpdateVariables);
+    // CONVERTED(HPBarAnim_UpdateHPRemaining);
+    // CONVERTED(LongHPBarAnim_UpdateTiles);
+    // CONVERTED(ShortHPBarAnim_UpdateTiles);
 }

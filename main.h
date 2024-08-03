@@ -34,7 +34,7 @@
 #include "engine/events/overworld.h"
 #include "engine/items/items.h"
 #include "engine/overworld/player_step.h"
-//#include "engine/battle/anim_hp_bar.h"
+#include "engine/battle/anim_hp_bar.h"
 #include "engine/pokemon/move_mon.h"
 #include "engine/pokemon/bills_pc_top.h"
 #include "engine/pokemon/breedmon_level_growth.h"

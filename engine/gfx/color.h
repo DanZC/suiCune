@@ -15,7 +15,7 @@ void LoadMonPaletteAsNthBGPal(void);
 void LoadNthMiddleBGPal(void);
 void LoadBetaPokerPalettes(void);
 void ApplyMonOrTrainerPals(void);
-void ApplyHPBarPals(void);
+void ApplyHPBarPals(uint8_t c);
 void LoadStatsScreenPals(void);
 bool LoadStatsScreenPals_Conv(uint8_t c);
 void LoadMailPalettes(void);
