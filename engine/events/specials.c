@@ -15,6 +15,7 @@
 #include "../printer/printer.h"
 #include "../games/slot_machine.h"
 #include "../games/unown_puzzle.h"
+#include "../battle/core.h"
 #include "../../home/sram.h"
 #include "../../home/map.h"
 #include "../../home/pokemon.h"
@@ -200,11 +201,13 @@ void UnownPrinter(void){
 }
 
 void DisplayLinkRecord(void){
-    CALL(aFadeToMenu);
-    FARCALL(av_DisplayLinkRecord);
-    CALL(aExitAllMenus);
-    RET;
-
+    // CALL(aFadeToMenu);
+    FadeToMenu_Conv();
+    // FARCALL(av_DisplayLinkRecord);
+    v_DisplayLinkRecord();
+    // CALL(aExitAllMenus);
+    ExitAllMenus_Conv();
+    // RET;
 }
 
 void PlayersHousePC(void){

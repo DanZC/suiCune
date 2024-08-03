@@ -1092,7 +1092,7 @@ void AI_Smart_Selfdestruct_Conv(uint8_t* hl){
     // FARCALL(aFindAliveEnemyMons);
     // POP_HL;
     // IF_NC goto notlastmon;
-    if(FindAliveEnemyMons_Conv()) {
+    if(FindAliveEnemyMons_Conv().flag) {
     //  ...greatly discourage this move unless this is the player's last Pokemon too.
         // PUSH_HL;
         // CALL(aAICheckLastPlayerMon);
@@ -4463,7 +4463,7 @@ void AI_Smart_Curse_Conv(uint8_t* hl){
         // FARCALL(aFindAliveEnemyMons);
         // POP_HL;
         // IF_NC goto notlastmon;
-        if(FindAliveEnemyMons_Conv()) {
+        if(FindAliveEnemyMons_Conv().flag) {
             // PUSH_HL;
             // CALL(aAICheckLastPlayerMon);
             // POP_HL;
@@ -4871,7 +4871,7 @@ void AI_Smart_PerishSong_Conv(uint8_t* hl){
     // CALLFAR(aFindAliveEnemyMons);
     // POP_HL;
     // IF_C goto no;
-    if(FindAliveEnemyMons_Conv()) {
+    if(FindAliveEnemyMons_Conv().flag) {
     // no:
         // LD_A_hl;
         // ADD_A(5);

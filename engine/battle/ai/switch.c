@@ -1,5 +1,6 @@
 #include "../../../constants.h"
 #include "switch.h"
+#include "../../../home/pokemon.h"
 #include "../../../data/moves/moves.h"
 #include "../effect_commands.h"
 
@@ -581,6 +582,173 @@ no_last_counter_move:
 
 }
 
+// Returns true (nc) if able to switch.
+bool CheckAbleToSwitch_Conv(void){
+    // XOR_A_A;
+    // LD_addr_A(wEnemySwitchMonParam);
+    wram->wEnemySwitchMonParam = 0x0;
+    // CALL(aFindAliveEnemyMons);
+    // RET_C ;
+    if(FindAliveEnemyMons_Conv().flag)
+        return false;
+
+    // LD_A_addr(wEnemySubStatus1);
+    // BIT_A(SUBSTATUS_PERISH);
+    // IF_Z goto no_perish;
+
+    // LD_A_addr(wEnemyPerishCount);
+    // CP_A(1);
+    // IF_NZ goto no_perish;
+    if(bit_test(wram->wEnemySubStatus1, SUBSTATUS_PERISH) && wram->wEnemyPerishCount == 1) {
+    // Perish count is 1
+        // CALL(aFindAliveEnemyMons);
+        uint8_t c = FindAliveEnemyMons_Conv().a;
+        // CALL(aFindEnemyMonsWithAtLeastQuarterMaxHP);
+        c = FindEnemyMonsWithAtLeastQuarterMaxHP_Conv(c);
+        // CALL(aFindEnemyMonsThatResistPlayer);
+        c = FindEnemyMonsThatResistPlayer_Conv(c);
+        // CALL(aFindAliveEnemyMonsWithASuperEffectiveMove);
+        uint8_t e = FindAliveEnemyMonsWithASuperEffectiveMove_Conv(c);
+
+        // LD_A_E;
+        // CP_A(2);
+        // IF_NZ goto not_2;
+        if(e == 2) {
+            // LD_A_addr(wEnemyAISwitchScore);
+            // ADD_A(0x30);  // maximum chance
+            // LD_addr_A(wEnemySwitchMonParam);
+            wram->wEnemySwitchMonParam = wram->wEnemyAISwitchScore + 0x30;
+            // RET;
+            return true;
+        }
+
+    // not_2:
+        // CALL(aFindAliveEnemyMons);
+        c = FindAliveEnemyMons_Conv().a << 2;
+        // SLA_C;
+        // SLA_C;
+        // LD_B(0xff);
+        uint8_t b = 0;
+
+        while((c & 0x80) == 0) {
+        // loop1:
+            // INC_B;
+            b++;
+            // SLA_C;
+            c <<= 1;
+            // IF_NC goto loop1;
+        }
+
+        // LD_A_B;
+        // ADD_A(0x30);  // maximum chance
+        // LD_addr_A(wEnemySwitchMonParam);
+        wram->wEnemySwitchMonParam = b + 0x30;
+        // RET;
+    }
+
+// no_perish:
+    // CALL(aCheckPlayerMoveTypeMatchups);
+    // LD_A_addr(wEnemyAISwitchScore);
+    // CP_A(11);
+    // RET_NC ;
+    if(CheckPlayerMoveTypeMatchups_Conv() >= 11)
+        return true;
+
+    // LD_A_addr(wLastPlayerCounterMove);
+    // AND_A_A;
+    // IF_Z goto no_last_counter_move;
+    if(wram->wLastPlayerCounterMove != NO_MOVE) {
+        // CALL(aFindEnemyMonsImmuneToLastCounterMove);
+        uint8_t c = FindEnemyMonsImmuneToLastCounterMove_Conv();
+        // LD_A_addr(wEnemyAISwitchScore);
+        // AND_A_A;
+        // IF_Z goto no_last_counter_move;
+        if(c != 0) {
+            // LD_C_A;
+            // CALL(aFindEnemyMonsWithASuperEffectiveMove);
+            uint8_t e = FindEnemyMonsWithASuperEffectiveMove_Conv(c);
+            // LD_A_addr(wEnemyAISwitchScore);
+            // CP_A(0xff);
+            // RET_Z ;
+            if(wram->wEnemyAISwitchScore == 0xff)
+                return true;
+
+            // LD_B_A;
+            uint8_t b = wram->wEnemyAISwitchScore;
+            // LD_A_E;
+            // CP_A(2);
+            // IF_Z goto not_2_again;
+            if(e == 2) {
+                // CALL(aCheckPlayerMoveTypeMatchups);
+                uint8_t score = CheckPlayerMoveTypeMatchups_Conv();
+                // LD_A_addr(wEnemyAISwitchScore);
+                // CP_A(10);
+                // RET_NC ;
+                if(score >= 10)
+                    return true;
+
+                // LD_A_B;
+                // ADD_A(0x10);
+                // LD_addr_A(wEnemySwitchMonParam);
+                wram->wEnemySwitchMonParam = 0x10 + b;
+                // RET;
+                return true;
+            }
+
+        // not_2_again:
+            // LD_C(0x10);
+            c = 0x10;
+            // CALL(aCheckPlayerMoveTypeMatchups);
+            uint8_t score = CheckPlayerMoveTypeMatchups_Conv();
+            // LD_A_addr(wEnemyAISwitchScore);
+            // CP_A(10);
+            // IF_NC goto okay;
+            if(score < 10) {
+                // LD_C(0x20);
+                c = 0x20;
+            }
+
+        // okay:
+            // LD_A_B;
+            // ADD_A_C;
+            // LD_addr_A(wEnemySwitchMonParam);
+            wram->wEnemySwitchMonParam = c + b;
+            // RET;
+            return true;
+        }
+    }
+
+// no_last_counter_move:
+    // CALL(aCheckPlayerMoveTypeMatchups);
+    // LD_A_addr(wEnemyAISwitchScore);
+    // CP_A(10);
+    // RET_NC ;
+    if(CheckPlayerMoveTypeMatchups_Conv() >= 10)
+        return true;
+
+    // CALL(aFindAliveEnemyMons);
+    uint8_t c = FindAliveEnemyMons_Conv().a;
+    // CALL(aFindEnemyMonsWithAtLeastQuarterMaxHP);
+    c = FindEnemyMonsWithAtLeastQuarterMaxHP_Conv(c);
+    // CALL(aFindEnemyMonsThatResistPlayer);
+    c = FindEnemyMonsThatResistPlayer_Conv(c);
+    // CALL(aFindAliveEnemyMonsWithASuperEffectiveMove);
+    uint8_t e = FindAliveEnemyMonsWithASuperEffectiveMove_Conv(c);
+
+    // LD_A_E;
+    // CP_A(0x2);
+    // RET_NZ ;
+    if(e != 0x2)
+        return true;
+
+    // LD_A_addr(wEnemyAISwitchScore);
+    // ADD_A(0x10);
+    // LD_addr_A(wEnemySwitchMonParam);
+    wram->wEnemySwitchMonParam = wram->wEnemyAISwitchScore + 10;
+    // RET;
+    return true;
+}
+
 void FindAliveEnemyMons(void){
     LD_A_addr(wOTPartyCount);
     CP_A(2);
@@ -638,12 +806,12 @@ more_than_one:
 }
 
 // Return carry if enemy only has 1 mon left.
-bool FindAliveEnemyMons_Conv(void){
+u8_flag_s FindAliveEnemyMons_Conv(void){
     // LD_A_addr(wOTPartyCount);
     // CP_A(2);
     // IF_C goto only_one;
     if(wram->wOTPartyCount < 2)
-        return true;
+        return u8_flag(0, false);
 
     // LD_D_A;
     uint8_t d = wram->wOTPartyCount;
@@ -694,13 +862,13 @@ bool FindAliveEnemyMons_Conv(void){
     // AND_A_A;
     // IF_NZ goto more_than_one;
     if(c != 0)
-        return false;
+        return u8_flag(c, false);
 
 
 // only_one:
     // SCF;
     // RET;
-    return true;
+    return u8_flag(0, true);
 
 // more_than_one:
     // AND_A_A;
@@ -774,8 +942,95 @@ next:
     INC_D;
     SRL_C;
     goto loop;
+}
 
-    return FindAliveEnemyMonsWithASuperEffectiveMove();
+uint8_t FindEnemyMonsImmuneToLastCounterMove_Conv(void){
+    // LD_HL(wOTPartyMon1);
+    const struct PartyMon* hl = wram->wOTPartyMon;
+    // LD_A_addr(wOTPartyCount);
+    // LD_B_A;
+    uint8_t b = wram->wOTPartyCount;
+    // LD_C(1 << (PARTY_LENGTH - 1));
+    uint8_t c = 1 << (PARTY_LENGTH - 1);
+    // LD_D(0);
+    uint8_t d = 0;
+    // XOR_A_A;
+    // LD_addr_A(wEnemyAISwitchScore);
+    wram->wEnemyAISwitchScore = 0;
+
+    while(1) {
+    // loop:
+        // LD_A_addr(wCurOTMon);
+        // CP_A_D;
+        // PUSH_HL;
+        // IF_Z goto next;
+        if(wram->wCurOTMon != d) {
+            // PUSH_HL;
+            // PUSH_BC;
+
+        // If the Pokemon has at least 1 HP...
+            // LD_BC(MON_HP);
+            // ADD_HL_BC;
+            // POP_BC;
+            // LD_A_hli;
+            // OR_A_hl;
+            // POP_HL;
+            // IF_Z goto next;
+            if(hl->HP != 0) {
+                // LD_A_hl;
+                // LD_addr_A(wCurSpecies);
+                // CALL(aGetBaseData);
+                GetBaseData_Conv2(hl->mon.species);
+
+            // the player's last move is damaging...
+                // LD_A_addr(wLastPlayerCounterMove);
+                // DEC_A;
+                // LD_HL(mMoves + MOVE_POWER);
+                // CALL(aGetMoveAttr);
+                const struct Move* move = GetMoveAttr_Conv(wram->wLastPlayerCounterMove);
+                // AND_A_A;
+                // IF_Z goto next;
+                if(move->power != 0) {
+                // and the Pokemon is immune to it...
+                    // INC_HL;
+                    // CALL(aGetMoveByte);
+                    // LD_HL(wBaseType);
+                    // CALL(aCheckTypeMatchup);
+                    uint8_t matchup = CheckTypeMatchup_Conv(move->type, wram->wBaseType);
+                    // LD_A_addr(wTypeMatchup);
+                    // AND_A_A;
+                    // IF_NZ goto next;
+
+                    if(matchup == 0) {
+                    // ... encourage that Pokemon.
+                        // LD_A_addr(wEnemyAISwitchScore);
+                        // OR_A_C;
+                        // LD_addr_A(wEnemyAISwitchScore);
+                        wram->wEnemyAISwitchScore |= c;
+                    }
+                }
+            }
+        }
+
+    // next:
+        // POP_HL;
+        // DEC_B;
+        // RET_Z ;
+        if(--b == 0)
+            return wram->wEnemyAISwitchScore;
+
+        // PUSH_BC;
+        // LD_BC(PARTYMON_STRUCT_LENGTH);
+        // ADD_HL_BC;
+        hl++;
+        // POP_BC;
+
+        // INC_D;
+        d++;
+        // SRL_C;
+        c >>= 1;
+        // goto loop;
+    }
 }
 
 void FindAliveEnemyMonsWithASuperEffectiveMove(void){
@@ -931,6 +1186,204 @@ loop2:
 
 }
 
+uint8_t FindAliveEnemyMonsWithASuperEffectiveMove_Conv(uint8_t c){
+    // PUSH_BC;
+    // LD_A_addr(wOTPartyCount);
+    // LD_E_A;
+    uint8_t e = wram->wOTPartyCount;
+    // LD_HL(wOTPartyMon1HP);
+    struct PartyMon* hl = wram->wOTPartyMon;
+    // LD_B(1 << (PARTY_LENGTH - 1));
+    uint8_t b = 1 << (PARTY_LENGTH - 1);
+    // LD_C(0);
+    uint8_t c2 = 0;
+
+    do {
+    // loop:
+        // LD_A_hli;
+        // OR_A_hl;
+        // IF_Z goto next;
+        if(hl->HP != 0) {
+            // LD_A_B;
+            // OR_A_C;
+            // LD_C_A;
+            c2 |= b;
+        }
+
+    // next:
+        // SRL_B;
+        b >>= 1;
+        // PUSH_BC;
+        // LD_BC(wPartyMon2HP - (wPartyMon1HP + 1));
+        // ADD_HL_BC;
+        hl++;
+        // POP_BC;
+        // DEC_E;
+        // IF_NZ goto loop;
+    } while(--e != 0);
+
+    // LD_A_C;
+    // POP_BC;
+
+    // AND_A_C;
+    // LD_C_A;
+// fallthrough
+
+    return FindEnemyMonsWithASuperEffectiveMove_Conv(c2 & c);
+}
+
+uint8_t FindEnemyMonsWithASuperEffectiveMove_Conv(uint8_t c){
+    // LD_A(-1);
+    // LD_addr_A(wEnemyAISwitchScore);
+    wram->wEnemyAISwitchScore = 0xff;
+    // LD_HL(wOTPartyMon1Moves);
+    const struct PartyMon* hl = wram->wOTPartyMon;
+    // LD_B(1 << (PARTY_LENGTH - 1));
+    uint8_t b = 1 << (PARTY_LENGTH - 1);
+    // LD_D(0);
+    uint8_t d = 0;
+    // LD_E(0);
+    uint8_t e = 0;
+
+    do {
+    // loop:
+        // LD_A_B;
+        // AND_A_C;
+        // IF_Z goto next;
+        if((b & c) != 0) {
+            // PUSH_HL;
+            // PUSH_BC;
+        // for move on mon:
+            // LD_B(NUM_MOVES);
+            // LD_C(0);
+
+            for(uint32_t i = 0; i < NUM_MOVES; ++i) {
+            // loop3:
+            // if move is None: break
+                // LD_A_hli;
+                // AND_A_A;
+                // PUSH_HL;
+                // IF_Z goto break3;
+                if(hl->mon.moves[i] == NO_MOVE)
+                    break;
+
+            // if move has no power: continue
+                // DEC_A;
+                // LD_HL(mMoves + MOVE_POWER);
+                // CALL(aGetMoveAttr);
+                const struct Move* move = GetMoveAttr_Conv(hl->mon.moves[i]);
+                // AND_A_A;
+                // IF_Z goto nope;
+                if(move->power == 0)
+                    continue;
+
+            // check type matchups
+                // INC_HL;
+                // CALL(aGetMoveByte);
+                // LD_HL(wBattleMonType1);
+                // CALL(aCheckTypeMatchup);
+                uint8_t matchup = CheckTypeMatchup_Conv(move->type, wram->wBattleMon.types);
+
+            // if immune or not very effective: continue
+                // LD_A_addr(wTypeMatchup);
+                // CP_A(10);
+                // IF_C goto nope;
+                if(matchup < EFFECTIVE)
+                    continue;
+
+            // if neutral: load 1 and continue
+                // LD_E(1);
+                // CP_A(EFFECTIVE + 1);
+                // IF_C goto nope;
+                if(matchup < EFFECTIVE + 1) {
+                    e = 1;
+                    continue;
+                }
+
+            // if super-effective: load 2 and break
+                // LD_E(2);
+                e = 2;
+                // goto break3;
+                break;
+
+
+            // nope:
+                // POP_HL;
+                // DEC_B;
+                // IF_NZ goto loop3;
+            }
+            // goto done;
+
+        // break3:
+            // POP_HL;
+
+        // done:
+            // LD_A_E;
+            // POP_BC;
+            // POP_HL;
+            // CP_A(2);
+            // IF_Z goto done2;  // at least one move is super-effective
+            if(e == 2)
+                goto done2;
+            // CP_A(1);
+            // IF_NZ goto next;  // no move does more than half damage
+
+            if(e == 1) {
+            // encourage this pokemon
+                // LD_A_D;
+                // OR_A_B;
+                // LD_D_A;
+                d |= b;
+                // goto next;  // such a long jump
+            }
+        }
+
+    // next:
+    // next pokemon?
+        // PUSH_BC;
+        // LD_BC(PARTYMON_STRUCT_LENGTH);
+        // ADD_HL_BC;
+        hl++;
+        // POP_BC;
+        // SRL_B;
+        b >>= 1;
+        // IF_NC goto loop;
+    } while(b != 0);
+
+// if no pokemon has a super-effective move: return
+    // LD_A_D;
+    // LD_B_A;
+    // AND_A_A;
+    // RET_Z ;
+    if(d == 0)
+        return e;
+
+done2:
+// convert the bit flag to an int and return
+    // PUSH_BC;
+    // SLA_B;
+    // SLA_B;
+    b <<= 2;
+    // LD_C(0xff);
+    uint8_t c2 = 0;
+
+    while((b & 0x80) == 0) {
+    // loop2:
+        // INC_C;
+        c2++;
+        // SLA_B;
+        b <<= 1;
+        // IF_NC goto loop2;
+    }
+
+    // LD_A_C;
+    // LD_addr_A(wEnemyAISwitchScore);
+    wram->wEnemyAISwitchScore = c2;
+    // POP_BC;
+    // RET;
+    return e;
+}
+
 void FindEnemyMonsThatResistPlayer(void){
     PUSH_BC;
     LD_HL(wOTPartySpecies);
@@ -998,6 +1451,86 @@ done:
 
 }
 
+uint8_t FindEnemyMonsThatResistPlayer_Conv(uint8_t c){
+    // PUSH_BC;
+    // LD_HL(wOTPartySpecies);
+    species_t* hl = wram->wOTPartySpecies;
+    // LD_B(1 << (PARTY_LENGTH - 1));
+    uint8_t b = 1 << (PARTY_LENGTH - 1);
+    // LD_C(0);
+    uint8_t c2 = 0;
+
+    while(*hl != (species_t)-1) {
+    // loop:
+        // LD_A_hli;
+        // CP_A(0xff);
+        // IF_Z goto done;
+
+        // PUSH_HL;
+        // LD_addr_A(wCurSpecies);
+        // CALL(aGetBaseData);
+        GetBaseData_Conv2(*hl);
+        uint8_t type;
+        // LD_A_addr(wLastPlayerCounterMove);
+        // AND_A_A;
+        // IF_Z goto skip_move;
+        // DEC_A;
+        // LD_HL(mMoves + MOVE_POWER);
+        // CALL(aGetMoveAttr);
+        // AND_A_A;
+        // IF_Z goto skip_move;
+        if(wram->wLastPlayerCounterMove != NO_MOVE && GetMoveAttr_Conv(wram->wLastPlayerCounterMove)->power != 0) {
+            // INC_HL;
+            // CALL(aGetMoveByte);
+            type = GetMoveAttr_Conv(wram->wLastPlayerCounterMove)->type;
+            // goto check_type;
+        }
+        else {
+        // skip_move:
+            // LD_A_addr(wBattleMonType1);
+            // LD_HL(wBaseType);
+            // CALL(aCheckTypeMatchup);
+            uint8_t matchup = CheckTypeMatchup_Conv(wram->wBattleMon.type1, wram->wBaseType);
+            // LD_A_addr(wTypeMatchup);
+            // CP_A(10 + 1);
+            // IF_NC goto dont_choose_mon;
+            if(matchup >= 10 + 1)
+                goto dont_choose_mon;
+            // LD_A_addr(wBattleMonType2);
+            type = wram->wBattleMon.type2;
+        }
+
+    // check_type:
+        // LD_HL(wBaseType);
+        // CALL(aCheckTypeMatchup);
+        uint8_t matchup = CheckTypeMatchup_Conv(type, wram->wBaseType);
+        // LD_A_addr(wTypeMatchup);
+        // CP_A(EFFECTIVE + 1);
+        // IF_NC goto dont_choose_mon;
+        if(matchup < EFFECTIVE + 1) {
+            // LD_A_B;
+            // OR_A_C;
+            // LD_C_A;
+            c |= b;
+        }
+
+    dont_choose_mon:
+        // SRL_B;
+        b >>= 1;
+        // POP_HL;
+        hl++;
+        // goto loop;
+    }
+
+// done:
+    // LD_A_C;
+    // POP_BC;
+    // AND_A_C;
+    // LD_C_A;
+    // RET;
+    return c2 & c;
+}
+
 void FindEnemyMonsWithAtLeastQuarterMaxHP(void){
     PUSH_BC;
     LD_DE(wOTPartySpecies);
@@ -1055,4 +1588,74 @@ done:
     LD_C_A;
     RET;
 
+}
+
+uint8_t FindEnemyMonsWithAtLeastQuarterMaxHP_Conv(uint8_t c){
+    // PUSH_BC;
+    // LD_DE(wOTPartySpecies);
+    species_t* de = wram->wOTPartySpecies;
+    // LD_B(1 << (PARTY_LENGTH - 1));
+    uint8_t b = 1 << (PARTY_LENGTH - 1);
+    // LD_C(0);
+    uint8_t c2 = 0;
+    // LD_HL(wOTPartyMon1HP);
+    const struct PartyMon* hl = wram->wOTPartyMon;
+
+    while(*de != (species_t)-1) {
+    // loop:
+        // LD_A_de;
+        // INC_DE;
+        // CP_A(0xff);
+        // IF_Z goto done;
+        de++;
+
+        // PUSH_HL;
+        // PUSH_BC;
+        // LD_B_hl;
+        // INC_HL;
+        // LD_C_hl;
+        // INC_HL;
+        // INC_HL;
+    //  hl = MaxHP + 1
+    //  bc = [CurHP] * 4
+        uint16_t maxHP = ReverseEndian16(hl->maxHP);
+        uint16_t hp = ReverseEndian16(hl->HP);
+        // SRL_C;
+        // RL_B;
+        // SRL_C;
+        // RL_B;
+    //  if bc >= [hl], encourage
+        // LD_A_hld;
+        // CP_A_C;
+        // LD_A_hl;
+        // SBC_A_B;
+        // POP_BC;
+        // IF_NC goto next;
+
+        if(hp * 4 >= maxHP) {
+            // LD_A_B;
+            // OR_A_C;
+            // LD_C_A;
+            c2 |= b;
+        }
+
+    // next:
+        // SRL_B;
+        b >>= 1;
+        // POP_HL;
+        // PUSH_BC;
+        // LD_BC(PARTYMON_STRUCT_LENGTH);
+        // ADD_HL_BC;
+        hl++;
+        // POP_BC;
+        // goto loop;
+    }
+
+// done:
+    // LD_A_C;
+    // POP_BC;
+    // AND_A_C;
+    // LD_C_A;
+    // RET;
+    return c2 & c;
 }

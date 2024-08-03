@@ -1,10 +1,16 @@
 void CheckPlayerMoveTypeMatchups(void);
 uint8_t CheckPlayerMoveTypeMatchups_Conv(void);
 void CheckAbleToSwitch(void);
+bool CheckAbleToSwitch_Conv(void);
 void FindAliveEnemyMons(void);
-bool FindAliveEnemyMons_Conv(void);
+u8_flag_s FindAliveEnemyMons_Conv(void);
 void FindEnemyMonsImmuneToLastCounterMove(void);
+uint8_t FindEnemyMonsImmuneToLastCounterMove_Conv(void);
 void FindAliveEnemyMonsWithASuperEffectiveMove(void);
+uint8_t FindAliveEnemyMonsWithASuperEffectiveMove_Conv(uint8_t c);
 void FindEnemyMonsWithASuperEffectiveMove(void);
+uint8_t FindEnemyMonsWithASuperEffectiveMove_Conv(uint8_t c);
 void FindEnemyMonsThatResistPlayer(void);
+uint8_t FindEnemyMonsThatResistPlayer_Conv(uint8_t c);
 void FindEnemyMonsWithAtLeastQuarterMaxHP(void);
+uint8_t FindEnemyMonsWithAtLeastQuarterMaxHP_Conv(uint8_t c);

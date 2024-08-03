@@ -464,7 +464,7 @@
 
 // SECTION "mobile40", ROMX
 
-//#include "mobile/mobile_40.h"
+#include "mobile/mobile_40.h"
 
 // SECTION "bank41", ROMX
 

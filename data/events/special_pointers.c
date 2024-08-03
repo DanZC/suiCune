@@ -141,7 +141,7 @@ void (*const SpecialsPointers[])(void) = {
     add_special(PrintTodaysLuckyNumber),
     add_special(SelectApricornForKurt),
     add_special(NameRater),
-    // add_special(DisplayLinkRecord),
+    add_special(DisplayLinkRecord),
     add_special(GetFirstPokemonHappiness),
     add_special(CheckFirstMonIsEgg),
     // add_special(RandomUnseenWildMon),

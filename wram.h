@@ -1206,7 +1206,7 @@ struct wram_s
                         uint8_t wcd26[1];
                         uint8_t wcd27[1];
                         uint8_t wcd28[1];
-                        uint8_t wcd29[1];
+                        uint8_t wcd29;
                         union {
                             uint8_t wMobileMonSpecies;
                             uint8_t wcd2a;
@@ -2484,9 +2484,13 @@ struct wram_s
                         uint8_t wBaseSpecialDefense;
                     };
                 };
-                //union wBaseType
-                uint8_t wBaseType1;
-                uint8_t wBaseType2;
+                union {
+                    uint8_t wBaseType[2];
+                    struct {
+                        uint8_t wBaseType1;
+                        uint8_t wBaseType2;
+                    };
+                };
                 uint8_t wBaseCatchRate;
                 uint8_t wBaseExp;
                 //union wBaseItems

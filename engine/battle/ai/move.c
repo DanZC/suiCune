@@ -35,19 +35,19 @@ void AIChooseMove(void){
     // DEC_A;
     // RET_Z ;
     if(wram->wBattleMode == WILD_BATTLE)
-        RET;
+        return;
 
     // LD_A_addr(wLinkMode);
     // AND_A_A;
     // RET_NZ ;
     if(wram->wLinkMode != 0)
-        RET;
+        return;
 
 //  No use picking a move if there's no choice.
     // FARCALL(aCheckEnemyLockedIn);
     // RET_NZ ;
     if(CheckEnemyLockedIn_Conv())
-        RET;
+        return;
 
 //  The default score is 20. Unusable moves are given a score of 80.
 #define AI_SCORE_DEFAULT 20
@@ -301,7 +301,7 @@ void AIChooseMove(void){
     // LD_A_C;
     // LD_addr_A(wCurEnemyMoveNum);
     wram->wCurEnemyMoveNum = moveIdx;
-    RET;
+    // RET;
 }
 
 // void AIScoringPointers(void){

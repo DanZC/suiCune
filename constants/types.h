@@ -765,14 +765,14 @@ struct HallOfFameData
     struct HOFMon mon[PARTY_LENGTH];
 };
 
-struct LinkBattleRecord
-{
+struct LinkBattleRecord {
     uint16_t id;
     uint8_t name[NAME_LENGTH - 1];
     uint16_t wins;
     uint16_t losses;
     uint16_t draws;
 };
+static_assert(sizeof(struct LinkBattleRecord) == LINK_BATTLE_RECORD_LENGTH, "");
 
 #if defined(__cplusplus) || defined(_MSC_VER)
 struct
