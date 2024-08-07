@@ -91,6 +91,12 @@ void CalcBufferMonStats(void){
 
 }
 
+void CalcBufferMonStats_Conv(void){
+    // LD_BC(wBufferMon);
+    // JR(mv_TempMonStatsCalculation);
+    return v_TempMonStatsCalculation_Conv(&wram->wBufferMon);
+}
+
 void CalcTempmonStats(void){
     LD_BC(wTempMon);
     return v_TempMonStatsCalculation();

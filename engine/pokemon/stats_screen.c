@@ -2142,13 +2142,10 @@ uint8_t* CopyNickname_Conv(uint8_t* hl){
     if(wram->wMonType == BOXMON) {
         // LD_A(BANK(sBoxMonNicknames));
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(asBoxMonNicknames));
         // PUSH_DE;
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(wram->wStringBuffer1, hl, MON_NAME_LENGTH);
         // POP_DE;
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
         // RET;
         return wram->wStringBuffer1;
     }
@@ -2195,8 +2192,12 @@ uint8_t* GetNicknamenamePointer_Conv(void){
             return wram->wPartyMonOT[wram->wCurPartyMon];
         case OTPARTYMON:
             return wram->wOTPartyMonOT[wram->wCurPartyMon];
-        case BOXMON: 
-            return NULL;
+        case BOXMON: {
+            OpenSRAM_Conv(MBANK(asBoxMonOTs));
+            CopyBytes_Conv2(wram->wStringBuffer1, GBToRAMAddr(sBoxMonOTs + (wram->wCurPartyMon * NAME_LENGTH)), NAME_LENGTH);
+            CloseSRAM_Conv();
+            return wram->wStringBuffer1;
+        }
         case TEMPMON:
             return wram->wBufferMonOT;
     }
@@ -2223,8 +2224,12 @@ uint8_t* GetNicknamenamePointer2_Conv(void){
             return wram->wPartyMonNickname[wram->wCurPartyMon];
         case OTPARTYMON:
             return wram->wOTPartyMonNickname[wram->wCurPartyMon];
-        case BOXMON: 
-            return NULL;
+        case BOXMON: {
+            OpenSRAM_Conv(MBANK(asBoxMonNicknames));
+            CopyBytes_Conv2(wram->wStringBuffer1, GBToRAMAddr(sBoxMonNicknames), MON_NAME_LENGTH);
+            CloseSRAM_Conv();
+            return wram->wStringBuffer1;
+        }
         case TEMPMON:
             return wram->wBufferMonNickname;
     }

@@ -58,7 +58,7 @@ uint8_t CalcLevel_Conv(struct PartyMon* mon){
             break;
         // CALL(aCalcExpAtLevel);
         uint32_t exp = CalcExpAtLevel_Conv(d);
-        uint32_t mon_exp = (mon->mon.exp[0] | (mon->mon.exp[1] << 8) | (mon->mon.exp[2] << 16));
+        uint32_t mon_exp = (mon->mon.exp[2] | (mon->mon.exp[1] << 8) | (mon->mon.exp[0] << 16));
         // PUSH_HL;
         // LD_HL(wTempMonExp + 2);
         // LDH_A_addr(hProduct + 3);

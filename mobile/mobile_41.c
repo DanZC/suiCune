@@ -707,7 +707,7 @@ void BackupMobileEventIndex(void){
     // LD_A(BANK(sMobileEventIndexBackup));
     // CALL(aOpenSRAM);
     CloseSRAM_Conv();
-    OpenSRAM_Conv(MBANK(sMobileEventIndexBackup));
+    OpenSRAM_Conv(MBANK(asMobileEventIndexBackup));
     // POP_AF;
     // LD_addr_A(sMobileEventIndexBackup);
     gb_write(sMobileEventIndexBackup, mobileEventIndex);

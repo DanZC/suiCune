@@ -1136,7 +1136,7 @@ void PokeBallEffect(void){
 
                     // LD_A(BANK(sBoxMonNicknames));
                     // CALL(aOpenSRAM);
-                    OpenSRAM_Conv(MBANK(sBoxMonNicknames));
+                    OpenSRAM_Conv(MBANK(asBoxMonNicknames));
 
                     // LD_HL(wMonOrItemNameBuffer);
                     // LD_DE(sBoxMonNicknames);

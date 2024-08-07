@@ -295,7 +295,7 @@ static uint8_t* VarAction_BoxFreeSpace(void) {
 //  Remaining slots in the current box.
     // LD_A(BANK(sBoxCount));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(BANK(sBoxCount));
+    OpenSRAM_Conv(MBANK(asBoxCount));
     // LD_HL(sBoxCount);
     // LD_A(MONS_PER_BOX);
     // SUB_A_hl;

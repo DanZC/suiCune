@@ -164,15 +164,15 @@ static bool v_BillsPC_Jumptable(uint8_t sel) {
     case 0:
         //dw ['BillsPC_WithdrawMenu'];
         return BillsPC_WithdrawMenu();
-    // case 1:
+    case 1:
     //     //dw ['BillsPC_DepositMenu'];
-    //     return BillsPC_DepositMenu();
+        return BillsPC_DepositMenu();
     case 2:
         //dw ['BillsPC_ChangeBoxMenu'];
         return BillsPC_ChangeBoxMenu();
-    // case 3:
+    case 3:
     //     //dw ['BillsPC_MovePKMNMenu'];
-    //     return BillsPC_MovePKMNMenu();
+        // return BillsPC_MovePKMNMenu();
     default:
         //dw ['BillsPC_SeeYa'];
         return BillsPC_SeeYa();
@@ -206,7 +206,7 @@ bool BillsPC_MovePKMNMenu(void){
         // IF_C goto quit;
         if(StartMoveMonWOMail_SaveGame()) {
             // FARCALL(av_MovePKMNWithoutMail);
-            SafeCallGBAuto(av_MovePKMNWithoutMail);
+            v_MovePKMNWithoutMail();
             // CALL(aReturnToMapFromSubmenu);
             ReturnToMapFromSubmenu();
             // CALL(aClearPCItemScreen);
@@ -356,7 +356,7 @@ bool BillsPC_WithdrawMenu(void){
     // CALL(aLoadStandardMenuHeader);
     LoadStandardMenuHeader_Conv();
     // FARCALL(av_WithdrawPKMN);
-    SafeCallGBAuto(av_WithdrawPKMN);
+    v_WithdrawPKMN();
     // CALL(aReturnToMapFromSubmenu);
     ReturnToMapFromSubmenu();
     // CALL(aClearPCItemScreen);
@@ -453,7 +453,7 @@ void CopyBoxmonToTempMon_Conv(void){
     // LD_BC(BOXMON_STRUCT_LENGTH);
     // LD_A(BANK(sBoxMon1Species));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(sBoxMon1Species));
+    OpenSRAM_Conv(MBANK(asBoxMon1Species));
     // CALL(aCopyBytes);
     CopyBytes_Conv2(&wram->wTempMon.mon, hl, sizeof(*hl));
     // CALL(aCloseSRAM);

@@ -94,7 +94,7 @@ void CheckPartyFullAfterContest(void){
     // BoxFull:
         // LD_A(BANK(sBoxMon1Level));
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(sBoxMon1Level));
+        OpenSRAM_Conv(MBANK(asBoxMon1Level));
         // LD_A_addr(sBoxMon1Level);
         // LD_addr_A(wCurPartyLevel);
         // CALL(aCloseSRAM);
@@ -103,7 +103,7 @@ void CheckPartyFullAfterContest(void){
         SetBoxMonCaughtData(gb_read(sBoxMon1Level));
         // LD_A(BANK(sBoxMon1CaughtLocation));
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(sBoxMon1CaughtLocation));
+        OpenSRAM_Conv(MBANK(asBoxMon1CaughtLocation));
         // LD_HL(sBoxMon1CaughtLocation);
         // LD_A_hl;
         // AND_A(CAUGHT_GENDER_MASK);

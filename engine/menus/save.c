@@ -171,51 +171,77 @@ bool Link_SaveGame(void){
     return false;
 }
 
-void MoveMonWOMail_SaveGame(void){
-    CALL(aPauseGameLogic);
-    PUSH_DE;
-    CALL(aSaveBox);
-    POP_DE;
-    LD_A_E;
-    LD_addr_A(wCurBox);
-    CALL(aLoadBox);
-    CALL(aResumeGameLogic);
-    RET;
-
+void MoveMonWOMail_SaveGame(uint8_t e){
+    // CALL(aPauseGameLogic);
+    PauseGameLogic();
+    // PUSH_DE;
+    // CALL(aSaveBox);
+    SaveBox();
+    // POP_DE;
+    // LD_A_E;
+    // LD_addr_A(wCurBox);
+    wram->wCurBox = e;
+    // CALL(aLoadBox);
+    LoadBox();
+    // CALL(aResumeGameLogic);
+    ResumeGameLogic();
+    // RET;
 }
 
-void MoveMonWOMail_InsertMon_SaveGame(void){
-    CALL(aPauseGameLogic);
-    PUSH_DE;
-    CALL(aSaveBox);
-    POP_DE;
-    LD_A_E;
-    LD_addr_A(wCurBox);
-    LD_A(TRUE);
-    LD_addr_A(wSaveFileExists);
-    FARCALL(aStageRTCTimeForSave);
-    FARCALL(aBackupMysteryGift);
-    CALL(aValidateSave);
-    CALL(aSaveOptions);
-    CALL(aSavePlayerData);
-    CALL(aSavePokemonData);
-    CALL(aSaveChecksum);
-    CALL(aValidateBackupSave);
-    CALL(aSaveBackupOptions);
-    CALL(aSaveBackupPlayerData);
-    CALL(aSaveBackupPokemonData);
-    CALL(aSaveBackupChecksum);
-    FARCALL(aBackupPartyMonMail);
-    FARCALL(aBackupMobileEventIndex);
-    FARCALL(aSaveRTC);
-    CALL(aLoadBox);
-    CALL(aResumeGameLogic);
-    LD_DE(SFX_SAVE);
-    CALL(aPlaySFX);
-    LD_C(24);
-    CALL(aDelayFrames);
-    RET;
-
+void MoveMonWOMail_InsertMon_SaveGame(uint8_t e){
+    // CALL(aPauseGameLogic);
+    PauseGameLogic();
+    // PUSH_DE;
+    // CALL(aSaveBox);
+    SaveBox();
+    // POP_DE;
+    // LD_A_E;
+    // LD_addr_A(wCurBox);
+    wram->wCurBox = e;
+    // LD_A(TRUE);
+    // LD_addr_A(wSaveFileExists);
+    wram->wSaveFileExists = TRUE;
+    // FARCALL(aStageRTCTimeForSave);
+    StageRTCTimeForSave_Conv();
+    // FARCALL(aBackupMysteryGift);
+    BackupMysteryGift();
+    // CALL(aValidateSave);
+    ValidateSave();
+    // CALL(aSaveOptions);
+    SaveOptions();
+    // CALL(aSavePlayerData);
+    SavePlayerData();
+    // CALL(aSavePokemonData);
+    SavePokemonData();
+    // CALL(aSaveChecksum);
+    SaveChecksum();
+    // CALL(aValidateBackupSave);
+    ValidateBackupSave();
+    // CALL(aSaveBackupOptions);
+    SaveBackupOptions();
+    // CALL(aSaveBackupPlayerData);
+    SaveBackupPlayerData();
+    // CALL(aSaveBackupPokemonData);
+    SaveBackupPokemonData();
+    // CALL(aSaveBackupChecksum);
+    SaveBackupChecksum();
+    // FARCALL(aBackupPartyMonMail);
+    BackupPartyMonMail();
+    // FARCALL(aBackupMobileEventIndex);
+    BackupMobileEventIndex();
+    // FARCALL(aSaveRTC);
+    SaveRTC_Conv();
+    // CALL(aLoadBox);
+    LoadBox();
+    // CALL(aResumeGameLogic);
+    ResumeGameLogic();
+    // LD_DE(SFX_SAVE);
+    // CALL(aPlaySFX);
+    PlaySFX_Conv(SFX_SAVE);
+    // LD_C(24);
+    // CALL(aDelayFrames);
+    DelayFrames_Conv(24);
+    // RET;
 }
 
 bool StartMoveMonWOMail_SaveGame(void){
@@ -722,7 +748,7 @@ void HallOfFame_InitSaveIfNeeded(void){
 void ValidateSave(void){
     // LD_A(BANK(sCheckValue1));  // aka BANK(sCheckValue2)
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(BANK(asCheckValue1));
+    OpenSRAM_Conv(MBANK(asCheckValue1));
     // LD_A(SAVE_CHECK_VALUE_1);
     // LD_addr_A(sCheckValue1);
     gb_write(sCheckValue1, SAVE_CHECK_VALUE_1);
@@ -1355,7 +1381,7 @@ void SaveBoxAddress(uint32_t de){
 //  Load the second part of the active box.
     // LD_A(BANK(sBox));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(sBox));
+    OpenSRAM_Conv(MBANK(asBox));
     // LD_HL(sBox + (wBoxPartialDataEnd - wBoxPartialData));
     // LD_DE(wBoxPartialData);
     // LD_BC((wBoxPartialDataEnd - wBoxPartialData));

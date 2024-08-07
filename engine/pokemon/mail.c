@@ -500,7 +500,7 @@ done:
 bool InitMail_Conv(void){
     // LD_A(BANK(sMailboxCount));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(sMailboxCount));
+    OpenSRAM_Conv(MBANK(asMailboxCount));
     // LD_A_addr(sMailboxCount);
     uint8_t mailboxCount = gb_read(sMailboxCount);
     // CALL(aCloseSRAM);

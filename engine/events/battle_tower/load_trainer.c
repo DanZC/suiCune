@@ -67,7 +67,7 @@ void LoadOpponentTrainerAndPokemon(void){
 
         // LD_A(BANK(sBTTrainers));
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(sBTTrainers));
+        OpenSRAM_Conv(MBANK(asBTTrainers));
 
         // LD_C(BATTLETOWER_STREAK_LENGTH);
         c = BATTLETOWER_STREAK_LENGTH;

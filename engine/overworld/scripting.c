@@ -3895,7 +3895,7 @@ void Script_gettrainername_Conv(script_s* s, uint8_t a, uint8_t b, uint8_t c){
     // FARCALL(aGetTrainerName);
     // JR(mGetStringBuffer);
     (void)s;
-    return GetStringBuffer_Conv(a, GetTrainerName_Conv(c, b));
+    return GetStringBuffer_Conv(a, GetTrainerName_Conv(c-1, b));
 }
 
 void Script_getname(void){

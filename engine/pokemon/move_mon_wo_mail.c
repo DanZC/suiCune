@@ -7,7 +7,7 @@
 void InsertPokemonIntoBox(void){
     // LD_A(BANK(sBoxCount));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(sBoxCount));
+    OpenSRAM_Conv(MBANK(asBoxCount));
     // LD_HL(sBoxCount);
     // CALL(aInsertSpeciesIntoBoxOrParty);
     InsertSpeciesIntoBoxOrParty_Conv(GBToRAMAddr(sBoxCount), GBToRAMAddr(sBoxSpecies));

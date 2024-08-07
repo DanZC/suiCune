@@ -1377,7 +1377,7 @@ breedmon:
         // LD_HL(sBoxMon1Species);
         // LD_BC(BOXMON_STRUCT_LENGTH);
         // IF_Z goto okay3;
-        CopyBytes_Conv2(&pmon->mon, (struct BoxMon*)GBToRAMAddr(sBoxMon1 + BOXMON_STRUCT_LENGTH * wram->wCurPartyMon), sizeof(*bmon));
+        CopyBytes_Conv2(&pmon->mon, (struct BoxMon*)GBToRAMAddr(sBoxMon1 + BOXMON_STRUCT_LENGTH * wram->wCurPartyMon), sizeof(pmon->mon));
         break;
     case DAY_CARE_WITHDRAW:
         // CP_A(DAY_CARE_WITHDRAW);
@@ -1389,7 +1389,7 @@ breedmon:
     case PC_DEPOSIT:
         // LD_HL(wPartyMon1Species);
         // LD_BC(PARTYMON_STRUCT_LENGTH);
-        CopyBytes_Conv2(bmon, &(wram->wPartyMon + wram->wCurPartyMon)->mon, sizeof(*bmon));
+        CopyBytes_Conv2(bmon, &wram->wPartyMon[wram->wCurPartyMon].mon, sizeof(*bmon));
         break;
 
     // okay3:
@@ -1567,7 +1567,7 @@ breedmon:
         // LD_B(TRUE);
         // CALL(aCalcMonStats);
         uint16_t* stats = (uint16_t*)(((uint8_t*)pmon) + offsetof(struct PartyMon, stats));
-        uint16_t* statExp = (uint16_t*)(((uint8_t*)pmon) + offsetof(struct BoxMon, statExp));
+        uint16_t* statExp = (uint16_t*)(((uint8_t*)&pmon->mon) + offsetof(struct BoxMon, statExp));
         CalcMonStats_Conv(stats, statExp, pmon->mon.DVs, TRUE);
         // POP_BC;
 
@@ -3087,7 +3087,7 @@ void RemoveMonFromPartyOrBox_Conv(uint8_t param){
     // Shift mail
         // LD_A(BANK(sPartyMail));
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(sPartyMail));
+        OpenSRAM_Conv(MBANK(asPartyMail));
     // If this is the last mon in our party, no need to shift mail.
         // LD_HL(wPartyCount);
         // LD_A_addr(wCurPartyMon);
@@ -3136,10 +3136,10 @@ void RemoveMonFromPartyOrBox_Conv(uint8_t param){
     else {
         // LD_A(BANK(sBoxCount));
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(sBoxCount));
+        OpenSRAM_Conv(MBANK(asBoxCount));
         // LD_HL(sBoxCount);
         gb_write(sBoxCount, gb_read(sBoxCount) - 1);
-        sptr = sBoxCount + 1;
+        sptr = sBoxCount + wram->wCurPartyMon + 1;
         species_t a;
         do {
         // loop:
@@ -3151,149 +3151,165 @@ void RemoveMonFromPartyOrBox_Conv(uint8_t param){
             // INC_A;
             // IF_NZ goto loop;
         } while(a != 0xff);
+
+        // LD_A_addr(wCurPartyMon);
+        // LD_C_A;
+        // LD_B(0);
+        // ADD_HL_BC;
+        // LD_E_L;
+        // LD_D_H;
+        // INC_DE;
+
+        // LD_HL(wPartyMonOTs);
+        // LD_D(PARTY_LENGTH - 1);
+        // LD_A_addr(wPokemonWithdrawDepositParameter);
+        // AND_A_A;
+        // IF_Z goto party;
+        // LD_HL(sBoxMonOTs);
+        uint8_t (*ots)[NAME_LENGTH] = GBToRAMAddr(sBoxMonOTs);
+        // LD_D(MONS_PER_BOX - 1);
+        uint8_t d = MONS_PER_BOX - 1;
+
+    // party:
+    // If this is the last mon in our party (box),
+    // shift all the other mons up to close the gap.
+        // LD_A_addr(wCurPartyMon);
+        // CALL(aSkipNames);
+        // LD_A_addr(wCurPartyMon);
+        // CP_A_D;
+        // IF_NZ goto delete_inside;
+        if(wram->wCurPartyMon == d) {
+            // LD_hl(-1);
+            // JP(mRemoveMonFromPartyOrBox_finish);
+            ots[wram->wCurPartyMon][0] = -1;
+        }
+        else {
+        // delete_inside:
+        // Shift the OT names
+            // LD_D_H;
+            // LD_E_L;
+            // LD_BC(MON_NAME_LENGTH);
+            // ADD_HL_BC;
+            // LD_BC(wPartyMonNicknames);
+            // LD_A_addr(wPokemonWithdrawDepositParameter);
+            // AND_A_A;
+            // IF_Z goto party2;
+            // LD_BC(sBoxMonNicknames);
+
+        // party2:
+            // CALL(aCopyDataUntil);
+            CopyDataUntil_Conv2(ots[wram->wCurPartyMon], 
+                ots[wram->wCurPartyMon] + MON_NAME_LENGTH,
+                GBToRAMAddr(sBoxMonNicknames));
+        // Shift the struct
+            // LD_HL(wPartyMons);
+            // LD_BC(PARTYMON_STRUCT_LENGTH);
+            // LD_A_addr(wPokemonWithdrawDepositParameter);
+            // AND_A_A;
+            // IF_Z goto party4;
+            // LD_HL(sBoxMons);
+            // LD_BC(BOXMON_STRUCT_LENGTH);
+
+        // party4:
+            // LD_A_addr(wCurPartyMon);
+            // CALL(aAddNTimes);
+            // LD_D_H;
+            // LD_E_L;
+            // LD_A_addr(wPokemonWithdrawDepositParameter);
+            // AND_A_A;
+            // IF_Z goto party5;
+            // LD_BC(BOXMON_STRUCT_LENGTH);
+            // ADD_HL_BC;
+            // LD_BC(sBoxMonOTs);
+            // goto copy;
+
+
+        // party5:
+            // LD_BC(PARTYMON_STRUCT_LENGTH);
+            // ADD_HL_BC;
+            // LD_BC(wPartyMonOTs);
+
+        // copy:
+            struct BoxMon* boxMons = (struct BoxMon*)GBToRAMAddr(sBoxMons);
+            // CALL(aCopyDataUntil);
+            CopyDataUntil_Conv2(boxMons + wram->wCurPartyMon, 
+                boxMons + wram->wCurPartyMon + 1,
+                GBToRAMAddr(sBoxMonOTs));
+        // Shift the nicknames
+            // LD_HL(wPartyMonNicknames);
+            // LD_A_addr(wPokemonWithdrawDepositParameter);
+            // AND_A_A;
+            // IF_Z goto party6;
+            // LD_HL(sBoxMonNicknames);
+
+        // party6:
+            // LD_BC(MON_NAME_LENGTH);
+            // LD_A_addr(wCurPartyMon);
+            // CALL(aAddNTimes);
+            // LD_D_H;
+            // LD_E_L;
+            // LD_BC(MON_NAME_LENGTH);
+            // ADD_HL_BC;
+            // LD_BC(wPartyMonNicknamesEnd);
+            // LD_A_addr(wPokemonWithdrawDepositParameter);
+            // AND_A_A;
+            // IF_Z goto party7;
+            // LD_BC(sBoxMonNicknamesEnd);
+
+        // party7:
+            uint8_t (*nicknames)[MON_NAME_LENGTH] = GBToRAMAddr(sBoxMonNicknames);
+            // CALL(aCopyDataUntil);
+            CopyDataUntil_Conv2(nicknames[wram->wCurPartyMon], 
+                nicknames[wram->wCurPartyMon + 1],
+                GBToRAMAddr(sBoxMonNicknamesEnd));
+        }
+    // Mail time!
+
+        return CloseSRAM_Conv();
+    // finish:
+        // LD_A_addr(wPokemonWithdrawDepositParameter);
+        // AND_A_A;
+        // JP_NZ (mCloseSRAM);
+        // LD_A_addr(wLinkMode);
+        // AND_A_A;
+        // RET_NZ ;
+    // Shift mail
+        // LD_A(BANK(sPartyMail));
+        // CALL(aOpenSRAM);
+    // If this is the last mon in our party, no need to shift mail.
+        // LD_HL(wPartyCount);
+        // LD_A_addr(wCurPartyMon);
+        // CP_A_hl;
+        // IF_Z goto close_sram;
+    // Shift our mail messages up.
+        // LD_HL(sPartyMail);
+        // LD_BC(MAIL_STRUCT_LENGTH);
+        // CALL(aAddNTimes);
+        // PUSH_HL;
+        // ADD_HL_BC;
+        // POP_DE;
+        // LD_A_addr(wCurPartyMon);
+        // LD_B_A;
+
+    // loop2:
+        // PUSH_BC;
+        // PUSH_HL;
+        // LD_BC(MAIL_STRUCT_LENGTH);
+        // CALL(aCopyBytes);
+        // POP_HL;
+        // PUSH_HL;
+        // LD_BC(MAIL_STRUCT_LENGTH);
+        // ADD_HL_BC;
+        // POP_DE;
+        // POP_BC;
+        // INC_B;
+        // LD_A_addr(wPartyCount);
+        // CP_A_B;
+        // IF_NZ goto loop2;
+
+    // close_sram:
+        // JP(mCloseSRAM);
     }
-    // LD_A_addr(wCurPartyMon);
-    // LD_C_A;
-    // LD_B(0);
-    // ADD_HL_BC;
-    // LD_E_L;
-    // LD_D_H;
-    // INC_DE;
-
-    // LD_HL(wPartyMonOTs);
-    // LD_D(PARTY_LENGTH - 1);
-    // LD_A_addr(wPokemonWithdrawDepositParameter);
-    // AND_A_A;
-    // IF_Z goto party;
-    // LD_HL(sBoxMonOTs);
-    // LD_D(MONS_PER_BOX - 1);
-
-
-// party:
-// If this is the last mon in our party (box),
-// shift all the other mons up to close the gap.
-    // LD_A_addr(wCurPartyMon);
-    // CALL(aSkipNames);
-    // LD_A_addr(wCurPartyMon);
-    // CP_A_D;
-    // IF_NZ goto delete_inside;
-    // LD_hl(-1);
-    // JP(mRemoveMonFromPartyOrBox_finish);
-
-
-// delete_inside:
-// Shift the OT names
-    // LD_D_H;
-    // LD_E_L;
-    // LD_BC(MON_NAME_LENGTH);
-    // ADD_HL_BC;
-    // LD_BC(wPartyMonNicknames);
-    // LD_A_addr(wPokemonWithdrawDepositParameter);
-    // AND_A_A;
-    // IF_Z goto party2;
-    // LD_BC(sBoxMonNicknames);
-
-// party2:
-    // CALL(aCopyDataUntil);
-// Shift the struct
-    // LD_HL(wPartyMons);
-    // LD_BC(PARTYMON_STRUCT_LENGTH);
-    // LD_A_addr(wPokemonWithdrawDepositParameter);
-    // AND_A_A;
-    // IF_Z goto party4;
-    // LD_HL(sBoxMons);
-    // LD_BC(BOXMON_STRUCT_LENGTH);
-
-// party4:
-    // LD_A_addr(wCurPartyMon);
-    // CALL(aAddNTimes);
-    // LD_D_H;
-    // LD_E_L;
-    // LD_A_addr(wPokemonWithdrawDepositParameter);
-    // AND_A_A;
-    // IF_Z goto party5;
-    // LD_BC(BOXMON_STRUCT_LENGTH);
-    // ADD_HL_BC;
-    // LD_BC(sBoxMonOTs);
-    // goto copy;
-
-
-// party5:
-    // LD_BC(PARTYMON_STRUCT_LENGTH);
-    // ADD_HL_BC;
-    // LD_BC(wPartyMonOTs);
-
-// copy:
-    // CALL(aCopyDataUntil);
-// Shift the nicknames
-    // LD_HL(wPartyMonNicknames);
-    // LD_A_addr(wPokemonWithdrawDepositParameter);
-    // AND_A_A;
-    // IF_Z goto party6;
-    // LD_HL(sBoxMonNicknames);
-
-// party6:
-    // LD_BC(MON_NAME_LENGTH);
-    // LD_A_addr(wCurPartyMon);
-    // CALL(aAddNTimes);
-    // LD_D_H;
-    // LD_E_L;
-    // LD_BC(MON_NAME_LENGTH);
-    // ADD_HL_BC;
-    // LD_BC(wPartyMonNicknamesEnd);
-    // LD_A_addr(wPokemonWithdrawDepositParameter);
-    // AND_A_A;
-    // IF_Z goto party7;
-    // LD_BC(sBoxMonNicknamesEnd);
-
-// party7:
-    // CALL(aCopyDataUntil);
-// Mail time!
-
-// finish:
-    // LD_A_addr(wPokemonWithdrawDepositParameter);
-    // AND_A_A;
-    // JP_NZ (mCloseSRAM);
-    // LD_A_addr(wLinkMode);
-    // AND_A_A;
-    // RET_NZ ;
-// Shift mail
-    // LD_A(BANK(sPartyMail));
-    // CALL(aOpenSRAM);
-// If this is the last mon in our party, no need to shift mail.
-    // LD_HL(wPartyCount);
-    // LD_A_addr(wCurPartyMon);
-    // CP_A_hl;
-    // IF_Z goto close_sram;
-// Shift our mail messages up.
-    // LD_HL(sPartyMail);
-    // LD_BC(MAIL_STRUCT_LENGTH);
-    // CALL(aAddNTimes);
-    // PUSH_HL;
-    // ADD_HL_BC;
-    // POP_DE;
-    // LD_A_addr(wCurPartyMon);
-    // LD_B_A;
-
-// loop2:
-    // PUSH_BC;
-    // PUSH_HL;
-    // LD_BC(MAIL_STRUCT_LENGTH);
-    // CALL(aCopyBytes);
-    // POP_HL;
-    // PUSH_HL;
-    // LD_BC(MAIL_STRUCT_LENGTH);
-    // ADD_HL_BC;
-    // POP_DE;
-    // POP_BC;
-    // INC_B;
-    // LD_A_addr(wPartyCount);
-    // CP_A_B;
-    // IF_NZ goto loop2;
-
-// close_sram:
-    // JP(mCloseSRAM);
-
 }
 
 void ComputeNPCTrademonStats(void){
@@ -3411,7 +3427,7 @@ void CalcMonStats_Conv(uint16_t* stats, const uint16_t* statExp, uint16_t dvs, u
         // LDH_A_addr(hMultiplicand + 2);
         // LD_de_A;
         // INC_DE;
-        stats[c - STAT_HP] = stat;
+        stats[c - STAT_HP - 1] = stat;
         // LD_A_C;
         // CP_A(STAT_SDEF);  // last stat
         // IF_NZ goto loop;

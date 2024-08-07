@@ -42,10 +42,10 @@ loop:
 
 //  Set all OAM y-positions to 160 to hide them offscreen
 void HideSprites_Conv(void){
-    uint16_t hl = wVirtualOAMSprite00YCoord;
+    struct SpriteOAM* hl = wram->wVirtualOAMSprite;
     uint8_t b = NUM_SPRITE_OAM_STRUCTS;
     do {
-        gb_write(hl, SCREEN_WIDTH_PX);  // y
-        hl += SPRITEOAMSTRUCT_LENGTH;
+        hl->yCoord = SCREEN_WIDTH_PX;  // y
+        hl++;
     } while(--b != 0);
 }
