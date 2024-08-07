@@ -876,7 +876,7 @@ void PokeBallEffect(void){
     // LD_addr_A(wCurPartyLevel);
     wram->wCurPartyLevel = wram->wEnemyMon.level;
     // FARCALL(aLoadEnemyMon);
-    SafeCallGBAuto(aLoadEnemyMon);
+    LoadEnemyMon();
 
     // POP_AF;
     // LD_addr_A(wEnemySubStatus5);

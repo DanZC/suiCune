@@ -1717,3 +1717,9 @@ struct BattleCmdState
     uint8_t a;
     bool carry;
 };
+
+struct EffectFunc 
+{
+    uint8_t effect;
+    void (*func)(void);
+};

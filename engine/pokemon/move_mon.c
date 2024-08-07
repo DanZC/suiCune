@@ -26,6 +26,7 @@
 #include "../items/item_effects.h"
 #include "../menus/naming_screen.h"
 #include "../smallflag.h"
+#include "../battle/core.h"
 #include "../../data/moves/moves.h"
 #include <stddef.h>
 #include "../../data/text/common.h"
@@ -4112,7 +4113,7 @@ uint8_t GivePoke_Conv(uint8_t b, const char* nickname, const char* otName){
         // LD_addr_A(wTempEnemyMonSpecies);
         wram->wTempEnemyMonSpecies = wram->wCurPartySpecies;
         // CALLFAR(aLoadEnemyMon);
-        SafeCallGBAuto(aLoadEnemyMon);
+        LoadEnemyMon();
         // CALL(aSendMonIntoBox);
         struct cpu_registers_s regs2 = SafeCallGBAutoRet(aSendMonIntoBox);
         // JP_NC (mGivePoke_FailedToGiveMon);

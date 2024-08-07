@@ -3,6 +3,7 @@
 #include "../../home/map.h"
 #include "../../home/joypad.h"
 #include "../../home/window.h"
+#include "../../home/item.h"
 #include "../pokemon/mon_menu.h"
 #include "../items/items.h"
 #include "../../data/text/common.h"
@@ -204,7 +205,7 @@ SwitchTo:
         // CALL(aOpenText);
         OpenText_Conv();
         // CALL(aDoItemEffect);
-        SafeCallGBAuto(aDoItemEffect);
+        DoItemEffect();
         // CALL(aCloseText);
         CloseText_Conv();
         // AND_A_A;
@@ -218,7 +219,7 @@ SwitchTo:
         // CALL(aFadeToMenu);
         FadeToMenu_Conv();
         // CALL(aDoItemEffect);
-        SafeCallGBAuto(aDoItemEffect);
+        DoItemEffect();
         // CALL(aCloseSubmenu);
         CloseSubmenu_Conv();
         // CALL(aCloseText);
@@ -235,7 +236,7 @@ SwitchTo:
         // LD_addr_A(wUsingItemWithSelect);
         wram->wUsingItemWithSelect = TRUE;
         // CALL(aDoItemEffect);
-        SafeCallGBAuto(aDoItemEffect);
+        DoItemEffect();
         // XOR_A_A;
         // LD_addr_A(wUsingItemWithSelect);
         wram->wUsingItemWithSelect = FALSE;

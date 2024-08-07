@@ -8674,7 +8674,7 @@ void BattleCommand_ForceSwitch(void){
             // LD_addr_A(wEnemySwitchMonIndex);
             wram->wEnemySwitchMonIndex = a;
             // CALLFAR(aForceEnemySwitch);
-            SafeCallGBAuto(aForceEnemySwitch);
+            ForceEnemySwitch();
 
             // LD_HL(mDraggedOutText);
             // CALL(aStdBattleTextbox);

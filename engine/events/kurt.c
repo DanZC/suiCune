@@ -77,7 +77,7 @@ void SelectApricornForKurt(void){
     // LD_addr_A(wKurtApricornQuantity);
     wram->wKurtApricornQuantity = wram->wItemQuantityChange;
     // CALL(aKurt_GiveUpSelectedQuantityOfSelectedApricorn);
-    SafeCallGBAuto(aKurt_GiveUpSelectedQuantityOfSelectedApricorn);
+    Kurt_GiveUpSelectedQuantityOfSelectedApricorn();
 
 
 done:
