@@ -171,7 +171,7 @@
 //#include "engine/items/pack_kris.h"
 #include "engine/events/move_tutor.h"
 #include "engine/gfx/crystal_layouts.h"
-//#include "engine/events/celebi.h"
+#include "engine/events/celebi.h"
 #include "engine/menus/main_menu.h"
 //#include "mobile/mobile_menu.h"
 #include "engine/pokemon/search.h"

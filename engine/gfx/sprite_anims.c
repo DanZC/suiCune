@@ -7,6 +7,7 @@
 #include "../pokegear/pokegear.h"
 #include "../menus/naming_screen.h"
 #include "../games/slot_machine.h"
+#include "../events/celebi.h"
 
 static void AnimSeq_Null_Conv(struct SpriteAnim* bc);
 static void AnimSeq_PartyMon_Conv(struct SpriteAnim* bc);
@@ -2094,8 +2095,9 @@ void AnimSeq_Celebi(void){
 }
 
 static void AnimSeq_Celebi_Conv(struct SpriteAnim* bc){
-    REG_BC = (bc - wram->wSpriteAnim) * SPRITEANIMSTRUCT_LENGTH + wSpriteAnimationStructs;
-    FARCALL(aUpdateCelebiPosition);
+    // FARCALL(aUpdateCelebiPosition);
+    // RET;
+    return UpdateCelebiPosition(bc);
 }
 
 void AnimSeqs_AnonJumptable(void){

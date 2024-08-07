@@ -9780,4 +9780,18 @@ CONVERTED(v_AnimateTileset);
     // CONVERTED(HPBarAnim_UpdateHPRemaining);
     // CONVERTED(LongHPBarAnim_UpdateTiles);
     // CONVERTED(ShortHPBarAnim_UpdateTiles);
+
+    // engine/events/celebi.c
+    // CONVERTED(CelebiEvent_SetBattleType);
+    // CONVERTED(UpdateCelebiPosition);
+    // CONVERTED(SpecialCelebiGFX);
+    CONVERTED(CelebiShrineEvent);
+    // REDIRECTED(CelebiEvent_SpawnLeaf);
+    // CONVERTED(CheckCaughtCelebi);
+    // CONVERTED(CelebiEvent_CountDown);
+    // CONVERTED(GetCelebiSpriteTile);
+    // CONVERTED(SpecialCelebiLeafGFX);
+    // CONVERTED(LoadCelebiGFX);
+    // CONVERTED(UnusedForestTreeFrames);
+    // CONVERTED(CelebiEvent_Cosine);
 }

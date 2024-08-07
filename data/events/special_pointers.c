@@ -30,6 +30,7 @@
 #include "../../engine/events/play_slow_cry.h"
 #include "../../engine/events/print_photo.h"
 #include "../../engine/events/magnet_train.h"
+#include "../../engine/events/celebi.h"
 #include "../../engine/events/bug_contest/contest.h"
 #include "../../engine/events/bug_contest/contest_2.h"
 #include "../../engine/events/battle_tower/battle_tower.h"
@@ -198,8 +199,8 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(AskMobileOrCable),
     add_special(HoOhChamber),
     // add_special(Function102142),
-    // add_special(CelebiShrineEvent),
-    // add_special(CheckCaughtCelebi),
+    add_special(CelebiShrineEvent),
+    add_special(CheckCaughtCelebi),
     add_special(PokeSeer),
     add_special(BuenasPassword),
     add_special(BuenaPrize),
