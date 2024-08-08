@@ -16,6 +16,8 @@ skip_files = [
     'data/pokemon/egg_move_pointers.asm',
     'data/pokemon/evos_attacks.asm',
     'data/pokemon/dex_entry_pointers.asm',
+    'data/pokemon/gen1_base_special.asm',
+    'data/pokemon/gen1_order.asm',
     'data/sprite_anims/unused_gfx.asm',
     'data/text/common.asm',
     'data/text/mail_input_chars.asm',
@@ -25,7 +27,12 @@ skip_files = [
     'data/text_buffers.asm',
     'engine/battle/battlestart_copytilemapatonce.asm',
     'engine/battle/getgen1trainerclassname.asm',
+    'engine/debug/debug_room.asm',
+    'engine/games/memory_game.asm',
+    'engine/gfx/load_push_oam.asm',
+    'engine/gfx/sgb_layouts.asm',
     'engine/link/init_list.asm',
+    'engine/link/time_capsule_2.asm',
     'engine/overworld/map_object_action.asm',
     'engine/pokemon/correct_party_errors.asm',
     'engine/printer/printer_serial.asm',
@@ -53,6 +60,8 @@ def count_dir(dir):
         if path.rsplit('\\', maxsplit=1)[1].startswith('unused_'):
             continue
         if path.replace('\\', '/') in skip_files:
+            continue
+        if path.endswith('Beta.asm'):
             continue
         if fs.isfile(path.replace('.asm', '.c')):
             converted_count += 1

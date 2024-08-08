@@ -12,6 +12,7 @@
 #include "../menus/intro_menu.h"
 #include "../pokegear/pokegear.h"
 #include "../pokemon/search2.h"
+#include "../pokedex/new_pokedex_entry.h"
 #include "../printer/printer.h"
 #include "../games/slot_machine.h"
 #include "../games/unown_puzzle.h"
@@ -23,6 +24,7 @@
 #include "../../home/item.h"
 #include "../../home/names.h"
 #include "../../home/text.h"
+#include "../../home/pokedex_flags.h"
 #include "../../data/text/common.h"
 
 void Special(void){
@@ -83,20 +85,26 @@ void SetPlayerPalette(void){
 }
 
 void GameCornerPrizeMonCheckDex(void){
-    LD_A_addr(wScriptVar);
-    DEC_A;
-    CALL(aCheckCaughtMon);
-    RET_NZ ;
-    LD_A_addr(wScriptVar);
-    DEC_A;
-    CALL(aSetSeenAndCaughtMon);
-    CALL(aFadeToMenu);
-    LD_A_addr(wScriptVar);
-    LD_addr_A(wNamedObjectIndex);
-    FARCALL(aNewPokedexEntry);
-    CALL(aExitAllMenus);
-    RET;
-
+    // LD_A_addr(wScriptVar);
+    // DEC_A;
+    // CALL(aCheckCaughtMon);
+    // RET_NZ ;
+    if(CheckCaughtMon_Conv(wram->wScriptVar - 1))
+        return;
+    // LD_A_addr(wScriptVar);
+    // DEC_A;
+    // CALL(aSetSeenAndCaughtMon);
+    SetSeenAndCaughtMon_Conv(wram->wScriptVar - 1);
+    // CALL(aFadeToMenu);
+    FadeToMenu_Conv();
+    // LD_A_addr(wScriptVar);
+    // LD_addr_A(wNamedObjectIndex);
+    wram->wNamedObjectIndex = wram->wScriptVar;
+    // FARCALL(aNewPokedexEntry);
+    NewPokedexEntry();
+    // CALL(aExitAllMenus);
+    ExitAllMenus_Conv();
+    // RET;
 }
 
 void UnusedSetSeenMon(void){
@@ -451,25 +459,30 @@ void ActivateFishingSwarm(void){
     // RET;
 }
 
-void StoreSwarmMapIndices(void){
-    LD_A_C;
-    AND_A_A;
-    IF_NZ goto yanma;
-//  swarm dark cave violet entrance
-    LD_A_D;
-    LD_addr_A(wDunsparceMapGroup);
-    LD_A_E;
-    LD_addr_A(wDunsparceMapNumber);
-    RET;
-
-
-yanma:
-    LD_A_D;
-    LD_addr_A(wYanmaMapGroup);
-    LD_A_E;
-    LD_addr_A(wYanmaMapNumber);
-    RET;
-
+void StoreSwarmMapIndices(uint8_t flag, uint8_t group, uint8_t number){
+    // LD_A_C;
+    // AND_A_A;
+    // IF_NZ goto yanma;
+    if(flag == 0){
+    //  swarm dark cave violet entrance
+        // LD_A_D;
+        // LD_addr_A(wDunsparceMapGroup);
+        wram->wDunsparceMapGroup = group;
+        // LD_A_E;
+        // LD_addr_A(wDunsparceMapNumber);
+        wram->wDunsparceMapNumber = number;
+        // RET;
+    }
+    else {
+    // yanma:
+        // LD_A_D;
+        // LD_addr_A(wYanmaMapGroup);
+        wram->wYanmaMapGroup = group;
+        // LD_A_E;
+        // LD_addr_A(wYanmaMapNumber);
+        wram->wYanmaMapNumber = number;
+        // RET;
+    }
 }
 
 void CheckPokerus(void){
@@ -497,62 +510,68 @@ void CheckLuckyNumberShowFlag(void){
     return ScriptReturnCarry_Conv(flag);
 }
 
-void SnorlaxAwake(void){
 //  Check if the Poké Flute channel is playing, and if the player is standing
 //  next to Snorlax.
-
+//  
 //  outputs:
 //  wScriptVar is 1 if the conditions are met, otherwise 0.
-
+void SnorlaxAwake(void){
+    static const uint8_t ProximityCoords[] = {
+    //   x,  y
+        33,  8,  // left
+        34, 10,  // below
+        35, 10,  // below
+        36,  8,  // right
+        36,  9,  // right
+        (uint8_t)-1,
+    };
 //  check background music
-    LD_A_addr(wMapMusic);
-    CP_A(MUSIC_POKE_FLUTE_CHANNEL);
-    IF_NZ goto nope;
+    // LD_A_addr(wMapMusic);
+    // CP_A(MUSIC_POKE_FLUTE_CHANNEL);
+    // IF_NZ goto nope;
+    if(wram->wMapMusic == MUSIC_POKE_FLUTE_CHANNEL){
+        // LD_A_addr(wXCoord);
+        // LD_B_A;
+        uint8_t b = wram->wXCoord;
+        // LD_A_addr(wYCoord);
+        // LD_C_A;
+        uint8_t c = wram->wYCoord;
 
-    LD_A_addr(wXCoord);
-    LD_B_A;
-    LD_A_addr(wYCoord);
-    LD_C_A;
+        // LD_HL(mSnorlaxAwake_ProximityCoords);
+        const uint8_t* hl = ProximityCoords;
 
-    LD_HL(mSnorlaxAwake_ProximityCoords);
+        while(*hl != (uint8_t)-1){
+        // loop:
+            // LD_A_hli;
+            // CP_A(-1);
+            // IF_Z goto nope;
+            // CP_A_B;
+            // IF_NZ goto nextcoord;
 
-loop:
-    LD_A_hli;
-    CP_A(-1);
-    IF_Z goto nope;
-    CP_A_B;
-    IF_NZ goto nextcoord;
-    LD_A_hli;
-    CP_A_C;
-    IF_NZ goto loop;
+            // LD_A_hli;
+            // CP_A_C;
+            // IF_NZ goto loop;
+            if(hl[0] == b && hl[1] == c){
+                // LD_A(TRUE);
+                // goto done;
+                wram->wScriptVar = TRUE;
+                return;
+            }
 
-    LD_A(TRUE);
-    goto done;
+        // nextcoord:
+            // INC_HL;
+            hl += 2;
+            // goto loop;
+        }
+    }
 
+// nope:
+    // XOR_A_A;
 
-nextcoord:
-    INC_HL;
-    goto loop;
-
-
-nope:
-    XOR_A_A;
-
-done:
-    LD_addr_A(wScriptVar);
-    RET;
-
-
-ProximityCoords:
-//   x,  y
-    //db ['33', '8'];  // left
-    //db ['34', '10'];  // below
-    //db ['35', '10'];  // below
-    //db ['36', '8'];  // right
-    //db ['36', '9'];  // right
-    //db ['-1'];
-
-    return PlayCurMonCry();
+// done:
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = FALSE;
+    // RET;
 }
 
 void PlayCurMonCry(void){

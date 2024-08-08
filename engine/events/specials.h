@@ -31,7 +31,7 @@ void ScriptReturnCarry(void);
 void ScriptReturnCarry_Conv(bool carry);
 void UnusedCheckUnusedTwoDayTimer(void);
 void ActivateFishingSwarm(void);
-void StoreSwarmMapIndices(void);
+void StoreSwarmMapIndices(uint8_t flag, uint8_t group, uint8_t number);
 void CheckPokerus(void);
 void ResetLuckyNumberShowFlag(void);
 void CheckLuckyNumberShowFlag(void);

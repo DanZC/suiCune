@@ -85,6 +85,7 @@ void Script_describedecoration_Conv(script_s* s, uint8_t deco);
 void Script_fruittree(void);
 void Script_fruittree_Conv(script_s* s, uint8_t tree);
 void Script_swarm(void);
+void Script_swarm_Conv(script_s* s, uint8_t flag, uint8_t group, uint8_t number);
 void Script_trainertext(void);
 void Script_trainertext_Conv(script_s* s, uint8_t a);
 void Script_scripttalkafter(void);

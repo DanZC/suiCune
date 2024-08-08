@@ -5,8 +5,11 @@
 #include "../../home/random.h"
 #include "../../home/region.h"
 #include "../../home/copy.h"
+#include "../../home/copy_name.h"
+#include "../../home/pokedex_flags.h"
 #include "../../home/names.h"
 #include "../../home/map.h"
+#include "../../home/text.h"
 #include "../../data/wild/johto_grass.h"
 #include "../../data/wild/kanto_grass.h"
 #include "../../data/wild/johto_water.h"
@@ -15,6 +18,7 @@
 #include "../../data/wild/probabilities.h"
 #include "../../data/trainers/parties.h"
 #include "../../data/wild/roammon_maps.h"
+#include "../../data/text/common.h"
 
 void LoadWildMonData(void){
     // CALL(av_GrassWildmonLookup);
@@ -1736,82 +1740,110 @@ bool ValidateTempWildMonSpecies_Conv(species_t a){
 }
 
 void RandomUnseenWildMon(void){
-    FARCALL(aGetCallerLocation);
-    LD_D_B;
-    LD_E_C;
-    LD_HL(mJohtoGrassWildMons);
-    LD_BC(GRASS_WILDDATA_LENGTH);
-    CALL(aLookUpWildmonsForMapDE);
-    IF_C goto GetGrassmon;
-    LD_HL(mKantoGrassWildMons);
-    CALL(aLookUpWildmonsForMapDE);
-    IF_NC goto done;
+    static const txt_cmd_s JustSawSomeRareMonText[] = {
+        text_far(v_JustSawSomeRareMonText)
+        text_end
+    };
+    // FARCALL(aGetCallerLocation);
+    // LD_D_B;
+    // LD_E_C;
+    struct CallerLocation loc = GetCallerLocation_Conv();
+    // LD_HL(mJohtoGrassWildMons);
+    // LD_BC(GRASS_WILDDATA_LENGTH);
+    // CALL(aLookUpWildmonsForMapDE);
+    struct WildMons mons = LookUpWildmonsForMapDE_Conv((struct WildMons){.grassMons = JohtoGrassWildMons, .type=0}, (struct MapId){loc.mgroup, loc.mnum});
+    // IF_C goto GetGrassmon;
+    // LD_HL(mKantoGrassWildMons);
+    // CALL(aLookUpWildmonsForMapDE);
+    // IF_NC goto done;
+    if(mons.grassMons == NULL) {
+        mons = LookUpWildmonsForMapDE_Conv(
+            (struct WildMons){.grassMons = KantoGrassWildMons, .type=0}, (struct MapId){loc.mgroup, loc.mnum});
+        if(mons.grassMons == NULL){
+            wram->wScriptVar = 0x1;
+            return;
+        }
+    }
 
+// GetGrassmon:
+    // PUSH_HL;
+    // LD_BC(5 + 4 * 2);  // Location of the level of the 5th wild Pokemon in that map
+    // ADD_HL_BC;
+    // LD_A_addr(wTimeOfDay);
+    // LD_BC(NUM_GRASSMON * 2);
+    // CALL(aAddNTimes);
 
-GetGrassmon:
-    PUSH_HL;
-    LD_BC(5 + 4 * 2);  // Location of the level of the 5th wild Pokemon in that map
-    ADD_HL_BC;
-    LD_A_addr(wTimeOfDay);
-    LD_BC(NUM_GRASSMON * 2);
-    CALL(aAddNTimes);
-
-randloop1:
-    CALL(aRandom);
-    AND_A(0b11);
-    IF_Z goto randloop1;
-    DEC_A;
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    ADD_HL_BC;
+    uint8_t a;
+    do {
+    // randloop1:
+        // CALL(aRandom);
+        // AND_A(0b11);
+        a = Random_Conv() & 0b11;
+        // IF_Z goto randloop1;
+    } while(a == 0);
+    // DEC_A;
+    // LD_C_A;
+    // LD_B(0);
+    // ADD_HL_BC;
+    // ADD_HL_BC;
+    uint8_t idx = 5 + a;
 //  We now have the pointer to one of the last (rarest) three wild Pokemon found in that area.
-    INC_HL;
-    LD_C_hl;  // Contains the species index of this rare Pokemon
-    POP_HL;
-    LD_DE(5 + 0 * 2);
-    ADD_HL_DE;
-    INC_HL;  // Species index of the most common Pokemon on that route
-    LD_B(4);
+    // INC_HL;
+    // LD_C_hl;  // Contains the species index of this rare Pokemon
+    species_t rare = mons.grassMons->mons[wram->wTimeOfDay][idx].species;
+    // POP_HL;
+    // LD_DE(5 + 0 * 2);
+    // ADD_HL_DE;
+    // INC_HL;  // Species index of the most common Pokemon on that route
+    uint8_t idx2 = 0;
+    // LD_B(4);
 
-loop2:
-    LD_A_hli;
-    CP_A_C;  // Compare this most common Pokemon with the rare one stored in c.
-    IF_Z goto done;
-    INC_HL;
-    DEC_B;
-    IF_NZ goto loop2;
+    while(idx2 < 4){
+    // loop2:
+        // LD_A_hli;
+        // CP_A_C;  // Compare this most common Pokemon with the rare one stored in c.
+        // IF_Z goto done;
+        if(mons.grassMons->mons[wram->wTimeOfDay][idx2].species == rare){
+            wram->wScriptVar = 0x1;
+            return;
+        }
+        // INC_HL;
+        idx2++;
+        // DEC_B;
+        // IF_NZ goto loop2;
+    }
 //  This Pokemon truly is rare.
-    PUSH_BC;
-    DEC_C;
-    LD_A_C;
-    CALL(aCheckSeenMon);
-    POP_BC;
-    IF_NZ goto done;
+    // PUSH_BC;
+    // DEC_C;
+    // LD_A_C;
+    // CALL(aCheckSeenMon);
+    // POP_BC;
+    // IF_NZ goto done;
+    if(CheckSeenMon_Conv(rare - 1)){
+        wram->wScriptVar = 0x1;
+        return;
+    }
 //  Since we haven't seen it, have the caller tell us about it.
-    LD_DE(wStringBuffer1);
-    CALL(aCopyName1);
-    LD_A_C;
-    LD_addr_A(wNamedObjectIndex);
-    CALL(aGetPokemonName);
-    LD_HL(mRandomUnseenWildMon_JustSawSomeRareMonText);
-    CALL(aPrintText);
-    XOR_A_A;
-    LD_addr_A(wScriptVar);
-    RET;
+    // LD_DE(wStringBuffer1);
+    // CALL(aCopyName1);
+    CopyName1_Conv2(wram->wStringBuffer1);
+    // LD_A_C;
+    // LD_addr_A(wNamedObjectIndex);
+    // CALL(aGetPokemonName);
+    GetPokemonName_Conv2(rare);
+    // LD_HL(mRandomUnseenWildMon_JustSawSomeRareMonText);
+    // CALL(aPrintText);
+    PrintText_Conv2(JustSawSomeRareMonText);
+    // XOR_A_A;
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = 0x0;
+    // RET;
+    return;
 
-
-done:
-    LD_A(0x1);
-    LD_addr_A(wScriptVar);
-    RET;
-
-
-JustSawSomeRareMonText:
-    //text_far ['_JustSawSomeRareMonText']
-    //text_end ['?']
-
-    return RandomPhoneWildMon();
+// done:
+    // LD_A(0x1);
+    // LD_addr_A(wScriptVar);
+    // RET;
 }
 
 void RandomPhoneWildMon(void){

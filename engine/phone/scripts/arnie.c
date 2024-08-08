@@ -68,7 +68,7 @@ bool ArnieYanmaSwarm(script_s* s) {
     iftrue_jump(ArnieYanmaAlreadySwarming)
     setflag(ENGINE_YANMA_SWARM)
     getmonname(STRING_BUFFER_4, YANMA)
-    // swarm(SWARM_YANMA, ROUTE_35)
+    swarm(SWARM_YANMA, ROUTE_35)
     getlandmarkname(STRING_BUFFER_5, LANDMARK_ROUTE_35)
     sjump(ArnieSwarmScript)
     SCRIPT_END

@@ -46,6 +46,7 @@
 #define askforphonenumber(_c)       SCRIPT_EVCMD(Script_askforphonenumber_Conv, _c)
 #define describedecoration(_d)      SCRIPT_EVCMD(Script_describedecoration_Conv, _d)
 #define fruittree(_tree)            SCRIPT_EVCMD(Script_fruittree_Conv, _tree)
+#define swarm(_flag, _map)          SCRIPT_EVCMD(Script_swarm_Conv, _flag, MAP_ID(_map))
 #define trainertext(_text)          SCRIPT_EVCMD(Script_trainertext_Conv, _text)
 #define scripttalkafter             SCRIPT_EVCMD(Script_scripttalkafter_Conv)
 #define trainerflagaction(_a)       SCRIPT_EVCMD(Script_trainerflagaction_Conv, _a)

@@ -43,6 +43,7 @@ commands = {
     'askforphonenumber': Cmd('askforphonenumber', ['contact']),
     'describedecoration': Cmd('describedecoration', ['deco']),
     'fruittree': Cmd('fruittree', ['tree']),
+    'swarm': Cmd('swarm', ['flag', 'map']),
     'trainertext': Cmd('trainertext', ['text']),
     'scripttalkafter': Cmd('scripttalkafter', []),
     'trainerflagaction': Cmd('trainerflagaction', ['a']),

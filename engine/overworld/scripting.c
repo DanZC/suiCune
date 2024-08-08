@@ -1590,6 +1590,19 @@ void Script_swarm(void){
 
 }
 
+void Script_swarm_Conv(script_s* s, uint8_t flag, uint8_t group, uint8_t number){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // LD_C_A;
+    // CALL(aGetScriptByte);
+    // LD_D_A;
+    // CALL(aGetScriptByte);
+    // LD_E_A;
+    // FARCALL(aStoreSwarmMapIndices);
+    StoreSwarmMapIndices(flag, group, number);
+    // RET;
+}
+
 void Script_trainertext(void){
     CALL(aGetScriptByte);
     LD_C_A;
