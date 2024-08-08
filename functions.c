@@ -4912,11 +4912,74 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(SantosScript);
     CONVERTED_SCRIPT(BlackthornCooltrainerF2Script);
 
+    // maps/PalletTown.c
+    CONVERTED_SCRIPT(PalletTownTeacherScript);
+    CONVERTED_SCRIPT(PalletTownFisherScript);
+
     // maps/ViridianCity.c
     CONVERTED_SCRIPT(ViridianCityCoffeeGramps);
     CONVERTED_SCRIPT(ViridianCityGrampsNearGym);
     CONVERTED_SCRIPT(ViridianCityDreamEaterFisher);
     CONVERTED_SCRIPT(ViridianCityYoungsterScript);
+
+    // maps/PewterCity.c
+    CONVERTED_SCRIPT(PewterCityCooltrainerFScript);
+    CONVERTED_SCRIPT(PewterCityBugCatcherScript);
+    CONVERTED_SCRIPT(PewterCityGrampsScript);
+    CONVERTED_SCRIPT(PewterCityFruitTree1);
+    CONVERTED_SCRIPT(PewterCityFruitTree2);
+
+    // maps/CeruleanCity.c
+    CONVERTED_SCRIPT(CeruleanCityCooltrainerMScript);
+    CONVERTED_SCRIPT(CeruleanCitySuperNerdScript);
+    CONVERTED_SCRIPT(CeruleanCitySlowbro);
+    CONVERTED_SCRIPT(CeruleanCityCooltrainerFScript);
+    CONVERTED_SCRIPT(CeruleanCityFisherScript);
+    CONVERTED_SCRIPT(CeruleanCityYoungsterScript);
+
+    // maps/VermilionCity.c
+    CONVERTED_SCRIPT(VermilionCityTeacherScript);
+    CONVERTED_SCRIPT(VermilionMachopOwner);
+    CONVERTED_SCRIPT(VermilionMachop);
+    CONVERTED_SCRIPT(VermilionCitySuperNerdScript);
+    CONVERTED_SCRIPT(VermilionSnorlax);
+    CONVERTED_SCRIPT(VermilionGymBadgeGuy);
+
+    // maps/LavenderTown.c
+    CONVERTED_SCRIPT(LavenderTownPokefanMScript);
+    CONVERTED_SCRIPT(LavenderTownTeacherScript);
+    CONVERTED_SCRIPT(LavenderTownGrampsScript);
+    CONVERTED_SCRIPT(LavenderTownYoungsterScript);
+
+    // maps/CeladonCity.c
+    CONVERTED_SCRIPT(CeladonCityFisherScript);
+    CONVERTED_SCRIPT(CeladonCityPoliwrath);
+    CONVERTED_SCRIPT(CeladonCityTeacher1Script);
+    CONVERTED_SCRIPT(CeladonCityGramps1Script);
+    CONVERTED_SCRIPT(CeladonCityGramps2Script);
+    CONVERTED_SCRIPT(CeladonCityYoungster1Script);
+    CONVERTED_SCRIPT(CeladonCityYoungster2Script);
+    CONVERTED_SCRIPT(CeladonCityTeacher2Script);
+    CONVERTED_SCRIPT(CeladonCityLassScript);
+
+    // maps/SaffronCity.c
+    CONVERTED_SCRIPT(SaffronCityLass1Script);
+    CONVERTED_SCRIPT(SaffronCityPokefanMScript);
+    CONVERTED_SCRIPT(SaffronCityCooltrainerMScript);
+    CONVERTED_SCRIPT(SaffronCityCooltrainerFScript);
+    CONVERTED_SCRIPT(SaffronCityFisherScript);
+    CONVERTED_SCRIPT(SaffronCityYoungster1Script);
+    CONVERTED_SCRIPT(SaffronCityYoungster2Script);
+    CONVERTED_SCRIPT(SaffronCityLass2Script);
+
+    // maps/FuchsiaCity.c
+    CONVERTED_SCRIPT(FuchsiaCityYoungster);
+    CONVERTED_SCRIPT(FuchsiaCityPokefanM);
+    CONVERTED_SCRIPT(FuchsiaCityTeacher);
+    CONVERTED_SCRIPT(FuchsiaCityFruitTree);
+
+    // maps/CinnabarIsland.c
+    CONVERTED_SCRIPT(CinnabarIslandBlue);
 
     // maps/Route1.c
     CONVERTED_SCRIPT(TrainerSchoolboyDanny);
@@ -4933,7 +4996,136 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(Route2Elixer);
     CONVERTED_SCRIPT(Route2FruitTree);
 
+    // maps/Route3.c
+    CONVERTED_SCRIPT(TrainerFirebreatherOtis);
+    CONVERTED_SCRIPT(TrainerYoungsterWarren);
+    CONVERTED_SCRIPT(TrainerYoungsterJimmy);
+    CONVERTED_SCRIPT(TrainerFirebreatherBurt);
+
+    // maps/Route4.c
+    CONVERTED_SCRIPT(TrainerBirdKeeperHank);
+    CONVERTED_SCRIPT(TrainerPicnickerHope);
+    CONVERTED_SCRIPT(TrainerPicnickerSharon);
+    CONVERTED_SCRIPT(Route4HPUp);
+
+    // maps/Route5.c
+    CONVERTED_SCRIPT(Route5PokefanMScript);
+
+    // maps/Route6.c
+    CONVERTED_SCRIPT(Route6PokefanMScript);
+    CONVERTED_SCRIPT(TrainerPokefanmRex);
+    CONVERTED_SCRIPT(TrainerPokefanmAllan);
+
+    // maps/Route7.c
+
+    // maps/Route8.c
+    CONVERTED_SCRIPT(TrainerBikerDwayne);
+    CONVERTED_SCRIPT(TrainerBikerHarris);
+    CONVERTED_SCRIPT(TrainerBikerZeke);
+    CONVERTED_SCRIPT(TrainerSupernerdSam);
+    CONVERTED_SCRIPT(TrainerSupernerdTom);
+    CONVERTED_SCRIPT(Route8FruitTree);
+
+    // maps/Route9.c
+    CONVERTED_SCRIPT(TrainerCamperDean);
+    CONVERTED_SCRIPT(TrainerPicnickerHeidi);
+    CONVERTED_SCRIPT(TrainerCamperSid);
+    CONVERTED_SCRIPT(TrainerPicnickerEdna);
+    CONVERTED_SCRIPT(TrainerHikerTim);
+    CONVERTED_SCRIPT(TrainerHikerSidney);
+
+    // maps/Route10North.c
+
+    // maps/Route10South.c
+    CONVERTED_SCRIPT(TrainerHikerJim);
+    CONVERTED_SCRIPT(TrainerPokefanmRobert);
+
+    // maps/Route11.c
+    CONVERTED_SCRIPT(TrainerYoungsterOwen);
+    CONVERTED_SCRIPT(TrainerYoungsterJason);
+    CONVERTED_SCRIPT(TrainerPsychicHerman);
+    CONVERTED_SCRIPT(TrainerPsychicFidel);
+    CONVERTED_SCRIPT(Route11FruitTree);
+
+    // maps/Route12.c
+    CONVERTED_SCRIPT(TrainerFisherMartin);
+    CONVERTED_SCRIPT(TrainerFisherStephen);
+    CONVERTED_SCRIPT(TrainerFisherBarney);
+    CONVERTED_SCRIPT(TrainerFisherKyle);
+    CONVERTED_SCRIPT(Route12Calcium);
+    CONVERTED_SCRIPT(Route12Nugget);
+
+    // maps/Route13.c
+    CONVERTED_SCRIPT(TrainerBirdKeeperPerry);
+    CONVERTED_SCRIPT(TrainerBirdKeeperBret);
+    CONVERTED_SCRIPT(TrainerPokefanmJoshua);
+    CONVERTED_SCRIPT(TrainerHikerKenny);
+    CONVERTED_SCRIPT(TrainerPokefanmAlex);
+
+    // maps/Route14.c
+    CONVERTED_SCRIPT(TrainerPokefanmCarter);
+    CONVERTED_SCRIPT(TrainerBirdKeeperRoy);
+    CONVERTED_SCRIPT(TrainerPokefanmTrevor);
+    CONVERTED_SCRIPT(Kim);
+
+    // maps/Route15.c
+    CONVERTED_SCRIPT(TrainerSchoolboyKipp);
+    CONVERTED_SCRIPT(TrainerSchoolboyTommy);
+    CONVERTED_SCRIPT(TrainerSchoolboyJohnny);
+    CONVERTED_SCRIPT(TrainerSchoolboyBilly);
+    CONVERTED_SCRIPT(TrainerTeacherColette);
+    CONVERTED_SCRIPT(TrainerTeacherHillary);
+    CONVERTED_SCRIPT(Route15PPUp);
+
+    // maps/Route16.c
+
+    // maps/Route17.c
+    CONVERTED_SCRIPT(TrainerBikerRiley);
+    CONVERTED_SCRIPT(TrainerBikerJoel);
+    CONVERTED_SCRIPT(TrainerBikerGlenn);
+    CONVERTED_SCRIPT(TrainerBikerCharles);
+
+    // maps/Route18.c
+    CONVERTED_SCRIPT(TrainerBirdKeeperBoris);
+    CONVERTED_SCRIPT(TrainerBirdKeeperBob);
+
+    // maps/Route19.c
+    CONVERTED_SCRIPT(TrainerSwimmerfDawn);
+    CONVERTED_SCRIPT(TrainerSwimmermHarold);
+    CONVERTED_SCRIPT(TrainerSwimmermJerome);
+    CONVERTED_SCRIPT(TrainerSwimmermTucker);
+    CONVERTED_SCRIPT(Route19Fisher1Script);
+    CONVERTED_SCRIPT(Route19Fisher2Script);
+
+    // maps/Route20.c
+    CONVERTED_SCRIPT(TrainerSwimmerfNicole);
+    CONVERTED_SCRIPT(TrainerSwimmerfLori);
+    CONVERTED_SCRIPT(TrainerSwimmermCameron);
+
+    // maps/Route21.c
+    CONVERTED_SCRIPT(TrainerSwimmerfNikki);
+    CONVERTED_SCRIPT(TrainerSwimmermSeth);
+    CONVERTED_SCRIPT(TrainerFisherArnold);
+
     // maps/Route22.c
+
+    // maps/Route23.c
+
+    // maps/Route24.c
+    CONVERTED_SCRIPT(Route24RocketScript);
+
+    // maps/Route25.c
+    // CONVERTED_SCRIPT(ObjectEvent);
+    // CONVERTED_SCRIPT(ObjectEvent);
+    CONVERTED_SCRIPT(TrainerSchoolboyDudley);
+    CONVERTED_SCRIPT(TrainerLassEllen);
+    CONVERTED_SCRIPT(TrainerSchoolboyJoe);
+    CONVERTED_SCRIPT(TrainerLassLaura);
+    CONVERTED_SCRIPT(TrainerCamperLloyd);
+    CONVERTED_SCRIPT(TrainerLassShannon);
+    CONVERTED_SCRIPT(TrainerSupernerdPat);
+    CONVERTED_SCRIPT(TrainerCooltrainermKevin);
+    CONVERTED_SCRIPT(Route25Protein);
 
     // maps/Route26.c
     CONVERTED_SCRIPT(TrainerCooltrainermJake);

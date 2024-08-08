@@ -74,7 +74,7 @@
 
 // SECTION "Map Scripts 5", ROMX
 
-// #include "../../maps/Route11.h"
+#include "../../maps/Route11.h"
 #include "../../maps/VioletMart.h"
 #include "../../maps/VioletGym.h"
 #include "../../maps/EarlsPokemonAcademy.h"
@@ -91,7 +91,7 @@
 
 // SECTION "Map Scripts 6", ROMX
 
-// #include "../../maps/Route8.h"
+#include "../../maps/Route8.h"
 #include "../../maps/MahoganyMart1F.h"
 #include "../../maps/TeamRocketBaseB1F.h"
 #include "../../maps/TeamRocketBaseB2F.h"
@@ -255,7 +255,7 @@
 
 // SECTION "Map Scripts 14", ROMX
 
-// #include "../../maps/CeruleanCity.h"
+#include "../../maps/CeruleanCity.h"
 #include "../../maps/SproutTower1F.h"
 #include "../../maps/SproutTower2F.h"
 #include "../../maps/SproutTower3F.h"
@@ -302,7 +302,7 @@
 
 // SECTION "Map Scripts 16", ROMX
 
-// #include "../../maps/PewterCity.h"
+#include "../../maps/PewterCity.h"
 #include "../../maps/WhirlIslandNW.h"
 #include "../../maps/WhirlIslandNE.h"
 #include "../../maps/WhirlIslandSW.h"
@@ -353,7 +353,7 @@
 // SECTION "Map Scripts 18", ROMX
 
 #include "../../maps/Route36.h"
-// #include "../../maps/FuchsiaCity.h"
+#include "../../maps/FuchsiaCity.h"
 #include "../../maps/BlackthornGym1F.h"
 #include "../../maps/BlackthornGym2F.h"
 #include "../../maps/BlackthornDragonSpeechHouse.h"
@@ -383,7 +383,7 @@
 
 #include "../../maps/AzaleaTown.h"
 #include "../../maps/GoldenrodCity.h"
-// #include "../../maps/SaffronCity.h"
+#include "../../maps/SaffronCity.h"
 #include "../../maps/MahoganyRedGyaradosSpeechHouse.h"
 #include "../../maps/MahoganyGym.h"
 #include "../../maps/MahoganyPokecenter1F.h"
@@ -405,8 +405,8 @@
 #include "../../maps/Route43.h"
 #include "../../maps/Route44.h"
 #include "../../maps/Route45.h"
-// #include "../../maps/Route19.h"
-// #include "../../maps/Route25.h"
+#include "../../maps/Route19.h"
+#include "../../maps/Route25.h"
 
 
 // SECTION "Map Scripts 21", ROMX
@@ -416,7 +416,7 @@
 #include "../../maps/Route29.h"
 #include "../../maps/Route30.h"
 #include "../../maps/Route38.h"
-// #include "../../maps/Route13.h"
+#include "../../maps/Route13.h"
 // #include "../../maps/PewterNidoranSpeechHouse.h"
 // #include "../../maps/PewterGym.h"
 // #include "../../maps/PewterMart.h"
@@ -435,7 +435,7 @@
 #include "../../maps/Route39.h"
 #include "../../maps/Route40.h"
 #include "../../maps/Route41.h"
-// #include "../../maps/Route12.h"
+#include "../../maps/Route12.h"
 
 
 // SECTION "Map Scripts 23", ROMX
@@ -447,10 +447,10 @@
 #include "../../maps/Route42.h"
 #include "../../maps/Route46.h"
 #include "../../maps/ViridianCity.h"
-// #include "../../maps/CeladonCity.h"
-// #include "../../maps/Route15.h"
-// #include "../../maps/VermilionCity.h"
-// #include "../../maps/Route9.h"
+#include "../../maps/CeladonCity.h"
+#include "../../maps/Route15.h"
+#include "../../maps/VermilionCity.h"
+#include "../../maps/Route9.h"
 // #include "../../maps/CinnabarPokecenter1F.h"
 // #include "../../maps/CinnabarPokecenter2FBeta.h"
 // #include "../../maps/Route19FuchsiaGate.h"
@@ -462,22 +462,22 @@
 #include "../../maps/Route33.h"
 #include "../../maps/Route2.h"
 #include "../../maps/Route1.h"
-// #include "../../maps/PalletTown.h"
-// #include "../../maps/Route21.h"
-// #include "../../maps/CinnabarIsland.h"
-// #include "../../maps/Route20.h"
-// #include "../../maps/Route18.h"
-// #include "../../maps/Route17.h"
-// #include "../../maps/Route16.h"
-// #include "../../maps/Route7.h"
-// #include "../../maps/Route14.h"
-// #include "../../maps/LavenderTown.h"
-// #include "../../maps/Route6.h"
-// #include "../../maps/Route5.h"
-// #include "../../maps/Route24.h"
-// #include "../../maps/Route3.h"
-// #include "../../maps/Route4.h"
-// #include "../../maps/Route10South.h"
+#include "../../maps/PalletTown.h"
+#include "../../maps/Route21.h"
+#include "../../maps/CinnabarIsland.h"
+#include "../../maps/Route20.h"
+#include "../../maps/Route18.h"
+#include "../../maps/Route17.h"
+#include "../../maps/Route16.h"
+#include "../../maps/Route7.h"
+#include "../../maps/Route14.h"
+#include "../../maps/LavenderTown.h"
+#include "../../maps/Route6.h"
+#include "../../maps/Route5.h"
+#include "../../maps/Route24.h"
+#include "../../maps/Route3.h"
+#include "../../maps/Route4.h"
+#include "../../maps/Route10South.h"
 #include "../../maps/Route23.h"
 #include "../../maps/SilverCavePokecenter1F.h"
 #include "../../maps/Route28SteelWingHouse.h"
@@ -486,4 +486,4 @@
 // SECTION "Map Scripts 25", ROMX
 
 #include "../../maps/SilverCaveOutside.h"
-// #include "../../maps/Route10North.h"
+#include "../../maps/Route10North.h"

@@ -148,10 +148,64 @@ void PopulateMapScriptTable(void) {
     entry(BLACKTHORN_CITY, 7, SantosScript);
     entry(BLACKTHORN_CITY, 8, BlackthornCooltrainerF2Script);
 
+    entry(PALLET_TOWN, 0, PalletTownTeacherScript);
+    entry(PALLET_TOWN, 1, PalletTownFisherScript);
+
     entry(VIRIDIAN_CITY, 0, ViridianCityCoffeeGramps);
     entry(VIRIDIAN_CITY, 1, ViridianCityGrampsNearGym);
     entry(VIRIDIAN_CITY, 2, ViridianCityDreamEaterFisher);
     entry(VIRIDIAN_CITY, 3, ViridianCityYoungsterScript);
+
+    entry(PEWTER_CITY, 0, PewterCityCooltrainerFScript);
+    entry(PEWTER_CITY, 1, PewterCityBugCatcherScript);
+    entry(PEWTER_CITY, 2, PewterCityGrampsScript);
+    entry(PEWTER_CITY, 3, PewterCityFruitTree1);
+    entry(PEWTER_CITY, 4, PewterCityFruitTree2);
+
+    entry(CERULEAN_CITY, 0, CeruleanCityCooltrainerMScript);
+    entry(CERULEAN_CITY, 1, CeruleanCitySuperNerdScript);
+    entry(CERULEAN_CITY, 2, CeruleanCitySlowbro);
+    entry(CERULEAN_CITY, 3, CeruleanCityCooltrainerFScript);
+    entry(CERULEAN_CITY, 4, CeruleanCityFisherScript);
+    entry(CERULEAN_CITY, 5, CeruleanCityYoungsterScript);
+
+    entry(VERMILION_CITY, 0, VermilionCityTeacherScript);
+    entry(VERMILION_CITY, 1, VermilionMachopOwner);
+    entry(VERMILION_CITY, 2, VermilionMachop);
+    entry(VERMILION_CITY, 3, VermilionCitySuperNerdScript);
+    entry(VERMILION_CITY, 4, VermilionSnorlax);
+    entry(VERMILION_CITY, 5, VermilionGymBadgeGuy);
+
+    entry(LAVENDER_TOWN, 0, LavenderTownPokefanMScript);
+    entry(LAVENDER_TOWN, 1, LavenderTownTeacherScript);
+    entry(LAVENDER_TOWN, 2, LavenderTownGrampsScript);
+    entry(LAVENDER_TOWN, 3, LavenderTownYoungsterScript);
+
+    entry(CELADON_CITY, 0, CeladonCityFisherScript);
+    entry(CELADON_CITY, 1, CeladonCityPoliwrath);
+    entry(CELADON_CITY, 2, CeladonCityTeacher1Script);
+    entry(CELADON_CITY, 3, CeladonCityGramps1Script);
+    entry(CELADON_CITY, 4, CeladonCityGramps2Script);
+    entry(CELADON_CITY, 5, CeladonCityYoungster1Script);
+    entry(CELADON_CITY, 6, CeladonCityYoungster2Script);
+    entry(CELADON_CITY, 7, CeladonCityTeacher2Script);
+    entry(CELADON_CITY, 8, CeladonCityLassScript);
+
+    entry(SAFFRON_CITY, 0, SaffronCityLass1Script);
+    entry(SAFFRON_CITY, 1, SaffronCityPokefanMScript);
+    entry(SAFFRON_CITY, 2, SaffronCityCooltrainerMScript);
+    entry(SAFFRON_CITY, 3, SaffronCityCooltrainerFScript);
+    entry(SAFFRON_CITY, 4, SaffronCityFisherScript);
+    entry(SAFFRON_CITY, 5, SaffronCityYoungster1Script);
+    entry(SAFFRON_CITY, 6, SaffronCityYoungster2Script);
+    entry(SAFFRON_CITY, 7, SaffronCityLass2Script);
+
+    entry(FUCHSIA_CITY, 0, FuchsiaCityYoungster);
+    entry(FUCHSIA_CITY, 1, FuchsiaCityPokefanM);
+    entry(FUCHSIA_CITY, 2, FuchsiaCityTeacher);
+    entry(FUCHSIA_CITY, 3, FuchsiaCityFruitTree);
+
+    entry(CINNABAR_ISLAND, 0, CinnabarIslandBlue);
 
     entry(ROUTE_1, 0, TrainerSchoolboyDanny);
     entry(ROUTE_1, 1, TrainerCooltrainerfQuinn);
@@ -169,6 +223,108 @@ void PopulateMapScriptTable(void) {
     entry(ROUTE_2_GATE, 0, Route2GateScientistScript);
 
     entry(ROUTE_2_NUGGET_HOUSE, 0, Route2NuggetHouseFisherScript);
+
+    entry(ROUTE_3, 0, TrainerFirebreatherOtis);
+    entry(ROUTE_3, 1, TrainerYoungsterWarren);
+    entry(ROUTE_3, 2, TrainerYoungsterJimmy);
+    entry(ROUTE_3, 3, TrainerFirebreatherBurt);
+
+    entry(ROUTE_4, 0, TrainerBirdKeeperHank);
+    entry(ROUTE_4, 1, TrainerPicnickerHope);
+    entry(ROUTE_4, 2, TrainerPicnickerSharon);
+    entry(ROUTE_4, 3, Route4HPUp);
+
+    entry(ROUTE_5, 0, Route5PokefanMScript);
+
+    entry(ROUTE_6, 0, Route6PokefanMScript);
+    entry(ROUTE_6, 1, TrainerPokefanmRex);
+    entry(ROUTE_6, 2, TrainerPokefanmAllan);
+
+    entry(ROUTE_8, 0, TrainerBikerDwayne);
+    entry(ROUTE_8, 1, TrainerBikerHarris);
+    entry(ROUTE_8, 2, TrainerBikerZeke);
+    entry(ROUTE_8, 3, TrainerSupernerdSam);
+    entry(ROUTE_8, 4, TrainerSupernerdTom);
+    entry(ROUTE_8, 5, Route8FruitTree);
+
+    entry(ROUTE_9, 0, TrainerCamperDean);
+    entry(ROUTE_9, 1, TrainerPicnickerHeidi);
+    entry(ROUTE_9, 2, TrainerCamperSid);
+    entry(ROUTE_9, 3, TrainerPicnickerEdna);
+    entry(ROUTE_9, 4, TrainerHikerTim);
+    entry(ROUTE_9, 5, TrainerHikerSidney);
+
+    entry(ROUTE_10_SOUTH, 0, TrainerHikerJim);
+    entry(ROUTE_10_SOUTH, 1, TrainerPokefanmRobert);
+
+    entry(ROUTE_11, 0, TrainerYoungsterOwen);
+    entry(ROUTE_11, 1, TrainerYoungsterJason);
+    entry(ROUTE_11, 2, TrainerPsychicHerman);
+    entry(ROUTE_11, 3, TrainerPsychicFidel);
+    entry(ROUTE_11, 4, Route11FruitTree);
+
+    entry(ROUTE_12, 0, TrainerFisherMartin);
+    entry(ROUTE_12, 1, TrainerFisherStephen);
+    entry(ROUTE_12, 2, TrainerFisherBarney);
+    entry(ROUTE_12, 3, TrainerFisherKyle);
+    entry(ROUTE_12, 4, Route12Calcium);
+    entry(ROUTE_12, 5, Route12Nugget);
+
+    entry(ROUTE_13, 0, TrainerBirdKeeperPerry);
+    entry(ROUTE_13, 1, TrainerBirdKeeperBret);
+    entry(ROUTE_13, 2, TrainerPokefanmJoshua);
+    entry(ROUTE_13, 3, TrainerHikerKenny);
+    entry(ROUTE_13, 4, TrainerPokefanmAlex);
+
+    entry(ROUTE_14, 0, TrainerPokefanmCarter);
+    entry(ROUTE_14, 1, TrainerBirdKeeperRoy);
+    entry(ROUTE_14, 2, TrainerPokefanmTrevor);
+    entry(ROUTE_14, 3, Kim);
+
+    entry(ROUTE_15, 0, TrainerSchoolboyKipp);
+    entry(ROUTE_15, 1, TrainerSchoolboyTommy);
+    entry(ROUTE_15, 2, TrainerSchoolboyJohnny);
+    entry(ROUTE_15, 3, TrainerSchoolboyBilly);
+    entry(ROUTE_15, 4, TrainerTeacherColette);
+    entry(ROUTE_15, 5, TrainerTeacherHillary);
+    entry(ROUTE_15, 6, Route15PPUp);
+
+    entry(ROUTE_17, 0, TrainerBikerRiley);
+    entry(ROUTE_17, 1, TrainerBikerJoel);
+    entry(ROUTE_17, 2, TrainerBikerGlenn);
+    entry(ROUTE_17, 3, TrainerBikerCharles);
+
+    entry(ROUTE_18, 0, TrainerBirdKeeperBoris);
+    entry(ROUTE_18, 1, TrainerBirdKeeperBob);
+
+    entry(ROUTE_19, 0, TrainerSwimmerfDawn);
+    entry(ROUTE_19, 1, TrainerSwimmermHarold);
+    entry(ROUTE_19, 2, TrainerSwimmermJerome);
+    entry(ROUTE_19, 3, TrainerSwimmermTucker);
+    entry(ROUTE_19, 4, Route19Fisher1Script);
+    entry(ROUTE_19, 5, Route19Fisher2Script);
+
+    entry(ROUTE_20, 0, TrainerSwimmerfNicole);
+    entry(ROUTE_20, 1, TrainerSwimmerfLori);
+    entry(ROUTE_20, 2, TrainerSwimmermCameron);
+
+    entry(ROUTE_21, 0, TrainerSwimmerfNikki);
+    entry(ROUTE_21, 1, TrainerSwimmermSeth);
+    entry(ROUTE_21, 2, TrainerFisherArnold);
+
+    entry(ROUTE_24, 0, Route24RocketScript);
+
+    entry(ROUTE_25, 0, ObjectEvent);
+    entry(ROUTE_25, 1, ObjectEvent);
+    entry(ROUTE_25, 2, TrainerSchoolboyDudley);
+    entry(ROUTE_25, 3, TrainerLassEllen);
+    entry(ROUTE_25, 4, TrainerSchoolboyJoe);
+    entry(ROUTE_25, 5, TrainerLassLaura);
+    entry(ROUTE_25, 6, TrainerCamperLloyd);
+    entry(ROUTE_25, 7, TrainerLassShannon);
+    entry(ROUTE_25, 8, TrainerSupernerdPat);
+    entry(ROUTE_25, 9, TrainerCooltrainermKevin);
+    entry(ROUTE_25, 10, Route25Protein);
 
     entry(ROUTE_26, 0, TrainerCooltrainermJake);
     entry(ROUTE_26, 1, TrainerCooltrainermGaven3);

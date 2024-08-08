@@ -1,0 +1,64 @@
+#pragma once
+//// EVENTS
+extern const struct MapScripts Route25_MapScripts;
+extern const struct MapEvents Route25_MapEvents;
+
+//// CODE
+
+bool Route25_MapScripts_DummyScene0(script_s* s);
+bool Route25_MapScripts_DummyScene1(script_s* s);
+bool Route25MistyDate1Script(script_s* s);
+bool Route25MistyDate2Script(script_s* s);
+extern const struct TrainerObj TrainerSchoolboyDudley;
+bool TrainerSchoolboyDudley_Script(script_s* s);
+extern const struct TrainerObj TrainerLassEllen;
+bool TrainerLassEllen_Script(script_s* s);
+extern const struct TrainerObj TrainerSchoolboyJoe;
+bool TrainerSchoolboyJoe_Script(script_s* s);
+extern const struct TrainerObj TrainerLassLaura;
+bool TrainerLassLaura_Script(script_s* s);
+extern const struct TrainerObj TrainerCamperLloyd;
+bool TrainerCamperLloyd_Script(script_s* s);
+extern const struct TrainerObj TrainerLassShannon;
+bool TrainerLassShannon_Script(script_s* s);
+extern const struct TrainerObj TrainerSupernerdPat;
+bool TrainerSupernerdPat_Script(script_s* s);
+bool TrainerCooltrainermKevin(script_s* s);
+bool BillsHouseSign(script_s* s);
+extern const struct ItemBall Route25Protein;
+extern const struct HiddenItem Route25HiddenPotion;
+extern const uint8_t Route25MistysDateLeavesMovement1[];
+extern const uint8_t Route25MistysDateLeavesMovement2[];
+extern const uint8_t Route25MistyApproachesPlayerMovement1[];
+extern const uint8_t Route25MistyApproachesPlayerMovement2[];
+extern const uint8_t Route25MistyLeavesPlayerMovement1[];
+extern const uint8_t Route25MistyLeavesPlayerMovement2[];
+extern const uint8_t Route25MistyLeavesMovement[];
+extern const txt_cmd_s Route25MistyDateText[];
+extern const txt_cmd_s SchoolboyDudleySeenText[];
+extern const txt_cmd_s SchoolboyDudleyBeatenText[];
+extern const txt_cmd_s SchoolboyDudleyAfterBattleText[];
+extern const txt_cmd_s LassEllenSeenText[];
+extern const txt_cmd_s LassEllenBeatenText[];
+extern const txt_cmd_s LassEllenAfterBattleText[];
+extern const txt_cmd_s SchoolboyJoeSeenText[];
+extern const txt_cmd_s SchoolboyJoeBeatenText[];
+extern const txt_cmd_s SchoolboyJoeAfterBattleText[];
+extern const txt_cmd_s LassLauraSeenText[];
+extern const txt_cmd_s LassLauraBeatenText[];
+extern const txt_cmd_s LassLauraAfterBattleText[];
+extern const txt_cmd_s CamperLloydSeenText[];
+extern const txt_cmd_s CamperLloydBeatenText[];
+extern const txt_cmd_s CamperLloydAfterBattleText[];
+extern const txt_cmd_s LassShannonSeenText[];
+extern const txt_cmd_s LassShannonBeatenText[];
+extern const txt_cmd_s LassShannonAfterBattleText[];
+extern const txt_cmd_s SupernerdPatSeenText[];
+extern const txt_cmd_s SupernerdPatBeatenText[];
+extern const txt_cmd_s SupernerdPatAfterBattleText[];
+extern const txt_cmd_s CooltrainermKevinNuggetText[];
+extern const txt_cmd_s CooltrainermKevinSeenText[];
+extern const txt_cmd_s CooltrainermKevinBeatenText[];
+extern const txt_cmd_s CooltrainermKevinAfterBattleText[];
+extern const txt_cmd_s BillsHouseSignText[];
+extern const txt_cmd_s UnusedBillsHouseSignText[];

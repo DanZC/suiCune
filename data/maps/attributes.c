@@ -203,9 +203,9 @@ map_attributes(Route46, ROUTE_46, 0x05,
     connection(ROUTE_46, south, Route29, ROUTE_29, -10)
     connection(ROUTE_46, east, Route45, ROUTE_45, -36));
 
-// map_attributes(PewterCity, PEWTER_CITY, 0x0f,
-//     connection(PEWTER_CITY, south, Route2, ROUTE_2, 5)
-//     connection(PEWTER_CITY, east, Route3, ROUTE_3, 5));
+map_attributes(PewterCity, PEWTER_CITY, 0x0f,
+    connection(PEWTER_CITY, south, Route2, ROUTE_2, 5)
+    connection(PEWTER_CITY, east, Route3, ROUTE_3, 5));
 
 map_attributes(Route2, ROUTE_2, 0x0f,
     connection(ROUTE_2, north, PewterCity, PEWTER_CITY, -5)
@@ -223,131 +223,131 @@ map_attributes(Route1, ROUTE_1, 0x0f,
     connection(ROUTE_1, north, ViridianCity, VIRIDIAN_CITY, -10)
     connection(ROUTE_1, south, PalletTown, PALLET_TOWN, 0));
 
-// map_attributes(PalletTown, PALLET_TOWN, 0x0f,
-//     connection(PALLET_TOWN, north, Route1, ROUTE_1, 0)
-//     connection(PALLET_TOWN, south, Route21, ROUTE_21, 0));
+map_attributes(PalletTown, PALLET_TOWN, 0x0f,
+    connection(PALLET_TOWN, north, Route1, ROUTE_1, 0)
+    connection(PALLET_TOWN, south, Route21, ROUTE_21, 0));
 
-// map_attributes(Route21, ROUTE_21, 0x43,
-//     connection(ROUTE_21, north, PalletTown, PALLET_TOWN, 0)
-//     connection(ROUTE_21, south, CinnabarIsland, CINNABAR_ISLAND, 0));
+map_attributes(Route21, ROUTE_21, 0x43,
+    connection(ROUTE_21, north, PalletTown, PALLET_TOWN, 0)
+    connection(ROUTE_21, south, CinnabarIsland, CINNABAR_ISLAND, 0));
 
-// map_attributes(CinnabarIsland, CINNABAR_ISLAND, 0x43,
-//     connection(CINNABAR_ISLAND, north, Route21, ROUTE_21, 0)
-//     connection(CINNABAR_ISLAND, east, Route20, ROUTE_20, 0));
+map_attributes(CinnabarIsland, CINNABAR_ISLAND, 0x43,
+    connection(CINNABAR_ISLAND, north, Route21, ROUTE_21, 0)
+    connection(CINNABAR_ISLAND, east, Route20, ROUTE_20, 0));
 
-// map_attributes(Route20, ROUTE_20, 0x43,
-//     connection(ROUTE_20, west, CinnabarIsland, CINNABAR_ISLAND, 0)
-//     connection(ROUTE_20, east, Route19, ROUTE_19, -9));
+map_attributes(Route20, ROUTE_20, 0x43,
+    connection(ROUTE_20, west, CinnabarIsland, CINNABAR_ISLAND, 0)
+    connection(ROUTE_20, east, Route19, ROUTE_19, -9));
 
-// map_attributes(Route19, ROUTE_19, 0x43,
-//     connection(ROUTE_19, north, FuchsiaCity, FUCHSIA_CITY, 0)
-//     connection(ROUTE_19, west, Route20, ROUTE_20, 9));
+map_attributes(Route19, ROUTE_19, 0x43,
+    connection(ROUTE_19, north, FuchsiaCity, FUCHSIA_CITY, 0)
+    connection(ROUTE_19, west, Route20, ROUTE_20, 9));
 
-// map_attributes(FuchsiaCity, FUCHSIA_CITY, 0x0f,
-//     connection(FUCHSIA_CITY, south, Route19, ROUTE_19, 0)
-//     connection(FUCHSIA_CITY, west, Route18, ROUTE_18, 7)
-//     connection(FUCHSIA_CITY, east, Route15, ROUTE_15, 9));
+map_attributes(FuchsiaCity, FUCHSIA_CITY, 0x0f,
+    connection(FUCHSIA_CITY, south, Route19, ROUTE_19, 0)
+    connection(FUCHSIA_CITY, west, Route18, ROUTE_18, 7)
+    connection(FUCHSIA_CITY, east, Route15, ROUTE_15, 9));
 
-// map_attributes(Route18, ROUTE_18, 0x43,
-//     connection(ROUTE_18, west, Route17, ROUTE_17, -38)
-//     connection(ROUTE_18, east, FuchsiaCity, FUCHSIA_CITY, -7));
+map_attributes(Route18, ROUTE_18, 0x43,
+    connection(ROUTE_18, west, Route17, ROUTE_17, -38)
+    connection(ROUTE_18, east, FuchsiaCity, FUCHSIA_CITY, -7));
 
-// map_attributes(Route17, ROUTE_17, 0x43,
-//     connection(ROUTE_17, north, Route16, ROUTE_16, 0)
-//     connection(ROUTE_17, east, Route18, ROUTE_18, 38));
+map_attributes(Route17, ROUTE_17, 0x43,
+    connection(ROUTE_17, north, Route16, ROUTE_16, 0)
+    connection(ROUTE_17, east, Route18, ROUTE_18, 38));
 
-// map_attributes(Route16, ROUTE_16, 0x0f,
-//     connection(ROUTE_16, south, Route17, ROUTE_17, 0)
-//     connection(ROUTE_16, east, CeladonCity, CELADON_CITY, -9));
+map_attributes(Route16, ROUTE_16, 0x0f,
+    connection(ROUTE_16, south, Route17, ROUTE_17, 0)
+    connection(ROUTE_16, east, CeladonCity, CELADON_CITY, -9));
 
-// map_attributes(CeladonCity, CELADON_CITY, 0x0f,
-//     connection(CELADON_CITY, west, Route16, ROUTE_16, 9)
-//     connection(CELADON_CITY, east, Route7, ROUTE_7, 5));
+map_attributes(CeladonCity, CELADON_CITY, 0x0f,
+    connection(CELADON_CITY, west, Route16, ROUTE_16, 9)
+    connection(CELADON_CITY, east, Route7, ROUTE_7, 5));
 
-// map_attributes(Route7, ROUTE_7, 0x0f,
-//     connection(ROUTE_7, west, CeladonCity, CELADON_CITY, -5)
-//     connection(ROUTE_7, east, SaffronCity, SAFFRON_CITY, -9));
+map_attributes(Route7, ROUTE_7, 0x0f,
+    connection(ROUTE_7, west, CeladonCity, CELADON_CITY, -5)
+    connection(ROUTE_7, east, SaffronCity, SAFFRON_CITY, -9));
 
-// map_attributes(Route15, ROUTE_15, 0x0f,
-//     connection(ROUTE_15, west, FuchsiaCity, FUCHSIA_CITY, -9)
-//     connection(ROUTE_15, east, Route14, ROUTE_14, -9));
+map_attributes(Route15, ROUTE_15, 0x0f,
+    connection(ROUTE_15, west, FuchsiaCity, FUCHSIA_CITY, -9)
+    connection(ROUTE_15, east, Route14, ROUTE_14, -9));
 
-// map_attributes(Route14, ROUTE_14, 0x43,
-//     connection(ROUTE_14, north, Route13, ROUTE_13, 0)
-//     connection(ROUTE_14, west, Route15, ROUTE_15, 9));
+map_attributes(Route14, ROUTE_14, 0x43,
+    connection(ROUTE_14, north, Route13, ROUTE_13, 0)
+    connection(ROUTE_14, west, Route15, ROUTE_15, 9));
 
-// map_attributes(Route13, ROUTE_13, 0x43,
-//     connection(ROUTE_13, north, Route12, ROUTE_12, 20)
-//     connection(ROUTE_13, south, Route14, ROUTE_14, 0));
+map_attributes(Route13, ROUTE_13, 0x43,
+    connection(ROUTE_13, north, Route12, ROUTE_12, 20)
+    connection(ROUTE_13, south, Route14, ROUTE_14, 0));
 
-// map_attributes(Route12, ROUTE_12, 0x43,
-//     connection(ROUTE_12, north, LavenderTown, LAVENDER_TOWN, 0)
-//     connection(ROUTE_12, south, Route13, ROUTE_13, -20)
-//     connection(ROUTE_12, west, Route11, ROUTE_11, 9));
+map_attributes(Route12, ROUTE_12, 0x43,
+    connection(ROUTE_12, north, LavenderTown, LAVENDER_TOWN, 0)
+    connection(ROUTE_12, south, Route13, ROUTE_13, -20)
+    connection(ROUTE_12, west, Route11, ROUTE_11, 9));
 
-// map_attributes(Route11, ROUTE_11, 0x0f,
-//     connection(ROUTE_11, west, VermilionCity, VERMILION_CITY, 0)
-//     connection(ROUTE_11, east, Route12, ROUTE_12, -9));
+map_attributes(Route11, ROUTE_11, 0x0f,
+    connection(ROUTE_11, west, VermilionCity, VERMILION_CITY, 0)
+    connection(ROUTE_11, east, Route12, ROUTE_12, -9));
 
-// map_attributes(LavenderTown, LAVENDER_TOWN, 0x2c,
-//     connection(LAVENDER_TOWN, north, Route10South, ROUTE_10_SOUTH, 0)
-//     connection(LAVENDER_TOWN, south, Route12, ROUTE_12, 0)
-//     connection(LAVENDER_TOWN, west, Route8, ROUTE_8, 0));
+map_attributes(LavenderTown, LAVENDER_TOWN, 0x2c,
+    connection(LAVENDER_TOWN, north, Route10South, ROUTE_10_SOUTH, 0)
+    connection(LAVENDER_TOWN, south, Route12, ROUTE_12, 0)
+    connection(LAVENDER_TOWN, west, Route8, ROUTE_8, 0));
 
-// map_attributes(VermilionCity, VERMILION_CITY, 0x43,
-//     connection(VERMILION_CITY, north, Route6, ROUTE_6, 5)
-//     connection(VERMILION_CITY, east, Route11, ROUTE_11, 0));
+map_attributes(VermilionCity, VERMILION_CITY, 0x43,
+    connection(VERMILION_CITY, north, Route6, ROUTE_6, 5)
+    connection(VERMILION_CITY, east, Route11, ROUTE_11, 0));
 
-// map_attributes(Route6, ROUTE_6, 0x0f,
-//     connection(ROUTE_6, north, SaffronCity, SAFFRON_CITY, -5)
-//     connection(ROUTE_6, south, VermilionCity, VERMILION_CITY, -5));
+map_attributes(Route6, ROUTE_6, 0x0f,
+    connection(ROUTE_6, north, SaffronCity, SAFFRON_CITY, -5)
+    connection(ROUTE_6, south, VermilionCity, VERMILION_CITY, -5));
 
-// map_attributes(SaffronCity, SAFFRON_CITY, 0x0f,
-//     connection(SAFFRON_CITY, north, Route5, ROUTE_5, 5)
-//     connection(SAFFRON_CITY, south, Route6, ROUTE_6, 5)
-//     connection(SAFFRON_CITY, west, Route7, ROUTE_7, 9)
-//     connection(SAFFRON_CITY, east, Route8, ROUTE_8, 9));
+map_attributes(SaffronCity, SAFFRON_CITY, 0x0f,
+    connection(SAFFRON_CITY, north, Route5, ROUTE_5, 5)
+    connection(SAFFRON_CITY, south, Route6, ROUTE_6, 5)
+    connection(SAFFRON_CITY, west, Route7, ROUTE_7, 9)
+    connection(SAFFRON_CITY, east, Route8, ROUTE_8, 9));
 
-// map_attributes(Route5, ROUTE_5, 0x0f,
-//     connection(ROUTE_5, north, CeruleanCity, CERULEAN_CITY, -5)
-//     connection(ROUTE_5, south, SaffronCity, SAFFRON_CITY, -5));
+map_attributes(Route5, ROUTE_5, 0x0f,
+    connection(ROUTE_5, north, CeruleanCity, CERULEAN_CITY, -5)
+    connection(ROUTE_5, south, SaffronCity, SAFFRON_CITY, -5));
 
-// map_attributes(CeruleanCity, CERULEAN_CITY, 0x0f,
-//     connection(CERULEAN_CITY, north, Route24, ROUTE_24, 6)
-//     connection(CERULEAN_CITY, south, Route5, ROUTE_5, 5)
-//     connection(CERULEAN_CITY, west, Route4, ROUTE_4, 5)
-//     connection(CERULEAN_CITY, east, Route9, ROUTE_9, 9));
+map_attributes(CeruleanCity, CERULEAN_CITY, 0x0f,
+    connection(CERULEAN_CITY, north, Route24, ROUTE_24, 6)
+    connection(CERULEAN_CITY, south, Route5, ROUTE_5, 5)
+    connection(CERULEAN_CITY, west, Route4, ROUTE_4, 5)
+    connection(CERULEAN_CITY, east, Route9, ROUTE_9, 9));
 
-// map_attributes(Route9, ROUTE_9, 0x2c,
-//     connection(ROUTE_9, south, Route10North, ROUTE_10_NORTH, 20)
-//     connection(ROUTE_9, west, CeruleanCity, CERULEAN_CITY, -9));
+map_attributes(Route9, ROUTE_9, 0x2c,
+    connection(ROUTE_9, south, Route10North, ROUTE_10_NORTH, 20)
+    connection(ROUTE_9, west, CeruleanCity, CERULEAN_CITY, -9));
 
-// map_attributes(Route24, ROUTE_24, 0x2c,
-//     connection(ROUTE_24, north, Route25, ROUTE_25, 0)
-//     connection(ROUTE_24, south, CeruleanCity, CERULEAN_CITY, -6));
+map_attributes(Route24, ROUTE_24, 0x2c,
+    connection(ROUTE_24, north, Route25, ROUTE_25, 0)
+    connection(ROUTE_24, south, CeruleanCity, CERULEAN_CITY, -6));
 
-// map_attributes(Route25, ROUTE_25, 0x2c,
-//     connection(ROUTE_25, south, Route24, ROUTE_24, 0));
+map_attributes(Route25, ROUTE_25, 0x2c,
+    connection(ROUTE_25, south, Route24, ROUTE_24, 0));
 
-// map_attributes(Route3, ROUTE_3, 0x2c,
-//     connection(ROUTE_3, west, PewterCity, PEWTER_CITY, -5)
-//     connection(ROUTE_3, east, Route4, ROUTE_4, 0));
+map_attributes(Route3, ROUTE_3, 0x2c,
+    connection(ROUTE_3, west, PewterCity, PEWTER_CITY, -5)
+    connection(ROUTE_3, east, Route4, ROUTE_4, 0));
 
-// map_attributes(Route4, ROUTE_4, 0x2c,
-//     connection(ROUTE_4, west, Route3, ROUTE_3, 0)
-//     connection(ROUTE_4, east, CeruleanCity, CERULEAN_CITY, -5));
+map_attributes(Route4, ROUTE_4, 0x2c,
+    connection(ROUTE_4, west, Route3, ROUTE_3, 0)
+    connection(ROUTE_4, east, CeruleanCity, CERULEAN_CITY, -5));
 
-// map_attributes(Route8, ROUTE_8, 0x2c,
-//     connection(ROUTE_8, west, SaffronCity, SAFFRON_CITY, -9)
-//     connection(ROUTE_8, east, LavenderTown, LAVENDER_TOWN, 0));
+map_attributes(Route8, ROUTE_8, 0x2c,
+    connection(ROUTE_8, west, SaffronCity, SAFFRON_CITY, -9)
+    connection(ROUTE_8, east, LavenderTown, LAVENDER_TOWN, 0));
 
-// map_attributes(Route10North, ROUTE_10_NORTH, 0x2c,
-//     connection(ROUTE_10_NORTH, north, Route9, ROUTE_9, -20)
-//     connection(ROUTE_10_NORTH, south, Route10South, ROUTE_10_SOUTH, 0));
+map_attributes(Route10North, ROUTE_10_NORTH, 0x2c,
+    connection(ROUTE_10_NORTH, north, Route9, ROUTE_9, -20)
+    connection(ROUTE_10_NORTH, south, Route10South, ROUTE_10_SOUTH, 0));
 
-// map_attributes(Route10South, ROUTE_10_SOUTH, 0x2c,
-//     connection(ROUTE_10_SOUTH, north, Route10North, ROUTE_10_NORTH, 0)
-//     connection(ROUTE_10_SOUTH, south, LavenderTown, LAVENDER_TOWN, 0));
+map_attributes(Route10South, ROUTE_10_SOUTH, 0x2c,
+    connection(ROUTE_10_SOUTH, north, Route10North, ROUTE_10_NORTH, 0)
+    connection(ROUTE_10_SOUTH, south, LavenderTown, LAVENDER_TOWN, 0));
 
 map_attributes(Route23, ROUTE_23, 0x0f, 0);
 map_attributes(SproutTower1F, SPROUT_TOWER_1F, 0x00, 0);
