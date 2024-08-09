@@ -26,7 +26,7 @@ static void BuenasPassword_PlacePasswordChoices(const char** items, uint8_t* de,
     // LD_C_A;
     uint8_t c = selection + (wram->wBuenasPassword & 0xf0);
     // FARCALL(aGetBuenasPassword);
-    uint8_t* str = GetBuenasPassword_Conv(c);
+    uint8_t* str = GetBuenasPassword_Conv(&c);
     // POP_HL;
     // CALL(aPlaceString);
     PlaceStringSimple(str, de);
@@ -73,13 +73,14 @@ void BuenasPassword(void){
     CopyMenuHeader_Conv2(&BuenasPassword_MenuHeader);
     // LD_A_addr(wBuenasPassword);
     // LD_C_A;
+    uint8_t c = wram->wBuenasPassword;
     // FARCALL(aGetBuenasPassword);
-    GetBuenasPassword_Conv(wram->wBuenasPassword);
+    GetBuenasPassword_Conv(&c);
     // LD_A_addr(wMenuBorderLeftCoord);
     // ADD_A_C;
     // ADD_A(0x2);
     // LD_addr_A(wMenuBorderRightCoord);
-    wram->wMenuBorderRightCoord = wram->wMenuBorderLeftCoord + wram->wBuenasPassword + 0x2;
+    wram->wMenuBorderRightCoord = wram->wMenuBorderLeftCoord + c + 0x2;
     // CALL(aPushWindow);
     PushWindow_Conv();
     // CALL(aDoNthMenu);  // menu

@@ -2232,8 +2232,9 @@ void BuenasPassword4(void){
 
 // AlreadyGotIt:
     // LD_C_A;
+    uint8_t c = wram->wBuenasPassword;
     // CALL(aGetBuenasPassword);
-    GetBuenasPassword_Conv(wram->wBuenasPassword);
+    GetBuenasPassword_Conv(&c);
     // LD_HL(mBuenaRadioText4);
     // LD_A(BUENAS_PASSWORD_5);
     // JP(mNextRadioLine);
@@ -2347,7 +2348,8 @@ copy_loop:
 
 //  The password indices are held in c.  High nybble contains the group index, low nybble contains the word index.
 //  Load the password group pointer in hl.
-uint8_t* GetBuenasPassword_Conv(uint8_t c){
+uint8_t* GetBuenasPassword_Conv(uint8_t* c_){
+    uint8_t c = *c_;
     // LD_A_C;
     // SWAP_A;
     // AND_A(0xf);
@@ -2448,6 +2450,7 @@ uint8_t* GetBuenasPassword_Conv(uint8_t c){
     }
     // POP_HL;
     // LD_C_hl;
+    *c_ = pass->points;
     // RET;
     return str;
 // INCLUDE "data/radio/buenas_passwords.asm"

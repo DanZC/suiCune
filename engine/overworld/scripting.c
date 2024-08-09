@@ -5480,7 +5480,7 @@ void Script_pause_Conv(script_s* s, uint8_t a) {
         wram->wScriptDelay = a;
     }
     do {
-        DelayFrames_Conv(2);
+        DelayFrame();
     } while(--wram->wScriptDelay != 0);
 }
 

@@ -63,6 +63,8 @@ void PhoneRing_CopyTilemapAtOnce_Conv(void){
     // LD_A_addr(wSpriteUpdatesEnabled);
     // CP_A(0x0);
     // JP_Z (mWaitBGMap);
+    if(wram->wSpriteUpdatesEnabled == 0x0)
+        return WaitBGMap_Conv();
 
 //  The following is a modified version of _CopyTilemapAtOnce
 //  that waits for [rLY] to be LY_VBLANK - 1 instead of $80 - 1.
@@ -95,7 +97,7 @@ void PhoneRing_CopyTilemapAtOnce_Conv(void){
     // hlcoord(0, 0, wAttrmap);
     // CALL(aPhoneRing_CopyTilemapAtOnce_CopyBGMapViaStack);
     //  Uncommenting the line below causes weird color issues.
-    //  PhoneRing_CopyTilemapAtOnce_CopyBGMapViaStack(GBToRAMAddr(hram->hBGMapAddress & 0xff00), coord(0, 0, wram->wAttrmap));
+    PhoneRing_CopyTilemapAtOnce_CopyBGMapViaStack(GBToRAMAddr(hram->hBGMapAddress & 0xff00), coord(0, 0, wram->wAttrmap));
     // LD_A(MBANK(avBGMap0));
     // LDH_addr_A(rVBK);
     gb_write(rVBK, MBANK(avBGMap0));

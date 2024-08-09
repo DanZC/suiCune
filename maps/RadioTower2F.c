@@ -79,9 +79,6 @@ const struct MapEvents RadioTower2F_MapEvents = {
 };
 
 //// CODE
-#include "../constants.h"
-#include "../util/scripting.h"
-#include "RadioTower2F.h"
 
 #define BLUE_CARD_POINT_CAP 30
 bool RadioTower2FUnusedDummyScene(script_s* s) {

@@ -153,7 +153,7 @@ void BuenasPassword2(void);
 void BuenasPassword3(void);
 void BuenasPassword4(void);
 void GetBuenasPassword(void);
-uint8_t* GetBuenasPassword_Conv(uint8_t c);
+uint8_t* GetBuenasPassword_Conv(uint8_t* c);
 void BuenasPassword5(void);
 void BuenasPassword6(void);
 void BuenasPassword7(void);

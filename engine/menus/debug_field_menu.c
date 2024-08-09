@@ -16,10 +16,12 @@
 #include "../overworld/init_map.h"
 #include "../overworld/map_setup.h"
 #include "../pokegear/pokegear.h"
+#include "../phone/phone.h"
 #include "../../util/scripting.h"
 
 enum {
     DEBUGFIELDITEM_TELEPORT,
+    DEBUGFIELDITEM_PHONE,
     DEBUGFIELDITEM_FLAG,
     DEBUGFIELDITEM_EXIT,
 };
@@ -48,6 +50,20 @@ static bool DebugTeleportScript(script_s* s) {
     applymovement(PLAYER, TeleportTo)
     s_end
     SCRIPT_END
+}
+
+static bool DebugSpecialPhoneCall(script_s* s){
+    SCRIPT_BEGIN
+    pause(15)
+    sjump(Script_ReceivePhoneCall)
+    SCRIPT_END
+}
+
+static void DebugPhoneCall(void){
+    LoadCallerScript_Conv(0x00);
+    gQueuedScriptAddr = DebugSpecialPhoneCall;
+    hram->hMenuReturn = HMENURETURN_SCRIPT;
+    wram->wSpecialPhoneCallID = SPECIALCALL_BIKESHOP;
 }
 
 static void DebugFlagMenu(void) {
@@ -99,9 +115,10 @@ const struct MenuHeader MenuHeader = {
     // MenuData:
         .flags = STATICMENU_CURSOR | STATICMENU_WRAP,  // flags
         .verticalMenu = {
-            .count = 2,  // items
+            .count = 4,  // items
             .options = (const char*[]) {
                 "TELEPORT@",
+                "PHONE@",
                 "FLAG@",
                 "EXIT@",
             },
@@ -145,6 +162,9 @@ loop:
         case DEBUGFIELDITEM_FLAG:
             DebugFlagMenu();
             goto loop;
+        case DEBUGFIELDITEM_PHONE:
+            DebugPhoneCall();
+            break;
         case DEBUGFIELDITEM_EXIT:
             break;
         }
