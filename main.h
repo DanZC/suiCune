@@ -428,7 +428,7 @@
 // SECTION "bank38", ROMX
 
 //#include "engine/events/print_unown_2.h"
-//#include "engine/games/card_flip.h"
+#include "engine/games/card_flip.h"
 #include "engine/games/unown_puzzle.h"
 //#include "engine/games/memory_game.h"
 #include "engine/pokemon/bills_pc.h"

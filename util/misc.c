@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include "misc.h"
 
+// Reverses the bits in a.
 uint8_t BitReverse8(uint8_t a) {
     uint8_t b = 0;
     for(int i = 0; i < 8; ++i) {
@@ -55,18 +56,41 @@ uint8_t RotateRightC8(uint8_t x) {
     return (x >> 1) + (carry << 7);
 }
 
-uint16_t NativeToBigEndian16(uint16_t x) {
+static _Bool IsLittleEndian(void){
     int n = 1;
-    if(*(char*)&n == 1) {
+    return *(char*)&n == 1;
+}
+
+// On little-endian systems, reverses the
+// bytes of the 16-bit value.
+uint16_t NativeToBigEndian16(uint16_t x) {
+    if(IsLittleEndian()) {
         return (x << 8) | ((x >> 8) & 0xff);
     }
     return x;
 }
 
+// On little-endian systems, writes a byte-swapped 
+// copy of an N-byte number from src to dest.
+void NativeToBigEndianN(uint8_t* dest, const uint8_t* src, size_t n) {
+    if(IsLittleEndian()) {
+        for(size_t i = 0; i < n; ++i){
+            dest[i] = src[n-i-1];
+        }
+    }
+    else {
+        for(size_t i = 0; i < n; ++i){
+            dest[i] = src[i];
+        }
+    }
+}
+
+// Reverses the bytes of a 16-bit value.
 uint16_t ReverseEndian16(uint16_t x) {
     return (x << 8) | ((x >> 8) & 0xff);
 }
 
+// Swaps size bytes between a and b.
 void MemSwap(void* a_, void* b_, size_t size) {
     uint8_t* a = a_;
     uint8_t* b = b_;

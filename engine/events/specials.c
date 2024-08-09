@@ -15,6 +15,7 @@
 #include "../pokedex/new_pokedex_entry.h"
 #include "../printer/printer.h"
 #include "../games/slot_machine.h"
+#include "../games/card_flip.h"
 #include "../games/unown_puzzle.h"
 #include "../battle/core.h"
 #include "../../home/sram.h"
@@ -330,13 +331,15 @@ void SlotMachine(void){
 }
 
 void CardFlip(void){
-    CALL(aCheckCoinsAndCoinCase);
-    RET_C ;
-    LD_A(BANK(av_CardFlip));
-    LD_HL(mv_CardFlip);
-    CALL(aStartGameCornerGame);
-    RET;
-
+    // CALL(aCheckCoinsAndCoinCase);
+    // RET_C ;
+    if(!CheckCoinsAndCoinCase())
+        return;
+    // LD_A(BANK(av_CardFlip));
+    // LD_HL(mv_CardFlip);
+    // CALL(aStartGameCornerGame);
+    StartGameCornerGame(v_CardFlip);
+    // RET;
 }
 
 void UnusedMemoryGame(void){

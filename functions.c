@@ -9986,4 +9986,34 @@ CONVERTED(v_AnimateTileset);
     // CONVERTED(LoadCelebiGFX);
     // CONVERTED(UnusedForestTreeFrames);
     // CONVERTED(CelebiEvent_Cosine);
+
+    // engine/games/card_flip.c
+    CONVERTED(v_CardFlip);
+    // CONVERTED(CardFlip_ShuffleDeck);
+    // CONVERTED(PlaceOAMCardBorder);
+    // CONVERTED(CollapseCursorPosition);
+    // CONVERTED(CardFlip_CheckWinCondition);
+    // CONVERTED(CardFlip_PrintCoinBalance);
+    // CONVERTED(CardFlip_InitTilemap);
+    // CONVERTED(CardFlip_FillGreenBox);
+    // CONVERTED(GetCoordsOfChosenCard);
+    // CONVERTED(MemoryGameGFX);
+    // CONVERTED(UnusedCursor_InterpretJoypad_AnimateCursor);
+    // CONVERTED(CardFlip_CopyToBox);
+    // CONVERTED(CardFlip_InitAttrPals);
+    // CONVERTED(CardFlip_BlankDiscardedCardSlot);
+    // CONVERTED(CardFlipOffButtonGFX);
+    // CONVERTED(CardFlipLZ03);
+    // CONVERTED(ChooseCard_HandleJoypad);
+    // CONVERTED(CardFlipLZ02);
+    // CONVERTED(PlaceCardFaceDown);
+    // CONVERTED(CardFlipLZ01);
+    // CONVERTED(CardFlip_DisplayCardFaceUp);
+    // CONVERTED(CardFlip_UpdateCoinBalanceDisplay);
+    // CONVERTED(CardFlip_UpdateCursorOAM);
+    // CONVERTED(CardFlipTilemap);
+    // CONVERTED(CardFlipOnButtonGFX);
+    // CONVERTED(CardFlip_FillBox);
+    // CONVERTED(CardFlip_ShiftDigitsUpOnePixel);
+    // CONVERTED(CardFlip_CopyOAM);
 }
