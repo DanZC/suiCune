@@ -193,7 +193,7 @@
 // SECTION "bank13_2", ROMX
 
 #include "engine/link/link_2.h"
-//#include "engine/rtc/reset_password.h"
+#include "engine/rtc/reset_password.h"
 #include "engine/menus/delete_save.h"
 //#include "data/tilesets.h"
 #include "engine/smallflag.h"

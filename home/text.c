@@ -3076,6 +3076,7 @@ void TextCommand_DECIMAL_Conv2(struct TextCmdState* state, const struct TextCmd*
     // LD_B_A;
     uint8_t b = (a & 0xf) | (1 << PRINTNUM_LEFTALIGN_F);
 
+    printf("text_decimal de=$%04x, bytes=%d, digits=%d", (de[0] << 8) | de[1], b & 0xf, c);
     // CALL(aPrintNum);
     state->bc = PrintNum_Conv2(state->bc, de, b, c);
 

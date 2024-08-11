@@ -489,7 +489,7 @@ void GetJoypad_Conv2(void) {
             uint8_t input = *(hl++);
             if(input == 0xFF) 
             {
-                StopAutoInput_Conv();
+                StopAutoInput_Conv2();
                 input = NO_INPUT;
             }
             else 

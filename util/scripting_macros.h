@@ -82,6 +82,7 @@
 #define loadwildmon(_sp, _lvl)      SCRIPT_EVCMD(Script_loadwildmon_Conv, _sp, _lvl)
 #define loadtrainer(_cl, _id)       SCRIPT_EVCMD(Script_loadtrainer_Conv, _cl, _id)
 #define startbattle                 SCRIPT_EVCMD(Script_startbattle_Conv)
+#define catchtutorial(_type)        SCRIPT_EVCMD(Script_catchtutorial_Conv, _type)
 #define reloadmapafterbattle        SCRIPT_EVCMD(Script_reloadmapafterbattle_Conv)
 #define reloadmap                   SCRIPT_EVCMD(Script_reloadmap_Conv)
 #define scall(_f)                   SCRIPT_CALL(_f)

@@ -1474,7 +1474,7 @@ void init_function_pointers(void) {
     // REDIRECTED(SubtractHP);
     // REDIRECTED(DisplayLinkBattleResult);
     // REDIRECTED(GetHalfHP);
-    // REDIRECTED(ExitBattle);
+    CONVERTED(ExitBattle);
     // REDIRECTED(GetPartyMonDVs);
     CONVERTED(PrintPlayerHUD);
     CONVERTED(EndUserDestinyBond);
@@ -1507,7 +1507,7 @@ void init_function_pointers(void) {
     // REDIRECTED(IsGymLeaderCommon);
     // REDIRECTED(AddBattleMoneyToAccount);
     REDIRECTED(StartBattle);
-    REDIRECTED(Battle_EnemyFirst);
+    CONVERTED(Battle_EnemyFirst);
     CONVERTED(InitBattleMon);
     // REDIRECTED(IsMobileBattle);
     // REDIRECTED(v_LoadHPBar);
@@ -1528,11 +1528,11 @@ void init_function_pointers(void) {
     // REDIRECTED(SelectBattleMon);
     // REDIRECTED(HandlePlayerMonFaint);
     // REDIRECTED(GoMonText);
-    REDIRECTED(ResidualDamage);
+    // REDIRECTED(ResidualDamage);
     CONVERTED(BattleStartMessage);
     // CONVERTED(EnemySwitch);
     REDIRECTED(BattleTurn);
-    // REDIRECTED(EnemyTurn_EndOpponentProtectEndureDestinyBond);
+    CONVERTED(EnemyTurn_EndOpponentProtectEndureDestinyBond);
     // REDIRECTED(GetSixteenthMaxHP);
     // REDIRECTED(GetMaxHP);
     // REDIRECTED(PickSwitchMonInBattle);
@@ -1549,7 +1549,7 @@ void init_function_pointers(void) {
     // REDIRECTED(ResetEnemyStatLevels);
     CONVERTED(ShowSetEnemyMonAndSendOutAnimation);
     // REDIRECTED(ExpPointsText);
-    // REDIRECTED(PlayerTurn_EndOpponentProtectEndureDestinyBond);
+    CONVERTED(PlayerTurn_EndOpponentProtectEndureDestinyBond);
     // REDIRECTED(UseConfusionHealingItem);
     // REDIRECTED(BadgeStatBoosts);
     // REDIRECTED(DrawEnemyHUD);
@@ -1602,7 +1602,7 @@ void init_function_pointers(void) {
     CONVERTED(GetEnemyMonFrontpic);
     // REDIRECTED(BoostExp);
     // REDIRECTED(ApplyPrzEffectOnSpeed);
-    REDIRECTED(Battle_PlayerFirst);
+    CONVERTED(Battle_PlayerFirst);
     CONVERTED(FaintEnemyPokemon);
     // REDIRECTED(ApplyStatusEffectOnEnemyStats);
     // REDIRECTED(HandleMysteryberry);
@@ -10016,4 +10016,8 @@ CONVERTED(v_AnimateTileset);
     // CONVERTED(CardFlip_FillBox);
     // CONVERTED(CardFlip_ShiftDigitsUpOnePixel);
     // CONVERTED(CardFlip_CopyOAM);
+
+    // engine/rtc/reset_password.c
+    CONVERTED(ClockResetPassword);
+    REDIRECTED(v_ResetClock);
 }

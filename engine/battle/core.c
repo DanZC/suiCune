@@ -427,11 +427,13 @@ void BattleTurn(void){
             if(playerFirst) {
             // _false:
                 // CALL(aBattle_PlayerFirst);
-                SafeCallGBAuto(aBattle_PlayerFirst);
+                // SafeCallGBAuto(aBattle_PlayerFirst);
+                Battle_PlayerFirst();
             }
             else {
                 // CALL(aBattle_EnemyFirst);
-                SafeCallGBAuto(aBattle_EnemyFirst);
+                // SafeCallGBAuto(aBattle_EnemyFirst);
+                Battle_EnemyFirst();
                 // goto proceed;
             }
         }
@@ -827,6 +829,7 @@ bool DetermineMoveOrder(void){
         if(priority != 0) {
             // JP_C (mDetermineMoveOrder_player_first);  // player goes first
             // JP(mDetermineMoveOrder_enemy_first);
+            printf("DetermineMoveOrder: priority %s\n", (priority > 0)? "player": "enemy");
             return priority > 0; // True if player has higher priority, false otherwise
         }
 
@@ -911,6 +914,8 @@ bool DetermineMoveOrder(void){
         if(cmp_speed != 0) {
             // JP_NC (mDetermineMoveOrder_player_first);
             // JP(mDetermineMoveOrder_enemy_first);
+            printf("DetermineMoveOrder: speed %s\n", (cmp_speed > 0)? "player": "enemy");
+            printf("   player: %d\n   enemy: %d\n", wram->wBattleMon.speed[0] << 8 | wram->wBattleMon.speed[1], wram->wEnemyMon.speed[0] << 8 | wram->wEnemyMon.speed[1]);
             return cmp_speed > 0; // true if player's speed is higher, false otherwise.
         }
 
@@ -1720,63 +1725,95 @@ uint8_t GetMoveEffect_Conv(move_t b){
 }
 
 void Battle_EnemyFirst(void){
-    CALL(aLoadTilemapToTempTilemap);
-    CALL(aTryEnemyFlee);
-    JP_C (mWildFled_EnemyFled_LinkBattleCanceled);
-    CALL(aSetEnemyTurn);
-    LD_A(0x1);
-    LD_addr_A(wEnemyGoesFirst);
-    CALLFAR(aAI_SwitchOrTryItem);
-    IF_C goto switch_item;
-    CALL(aEnemyTurn_EndOpponentProtectEndureDestinyBond);
-    CALL(aCheckMobileBattleError);
-    RET_C ;
-    LD_A_addr(wForcedSwitch);
-    AND_A_A;
-    RET_NZ ;
-    CALL(aHasPlayerFainted);
-    JP_Z (mHandlePlayerMonFaint);
-    // CALL(aHasEnemyFainted);
-    // JP_Z (mHandleEnemyMonFaint);
-    if(HasEnemyFainted_Conv()) {
-        HandleEnemyMonFaint();
-        RET;
+    // CALL(aLoadTilemapToTempTilemap);
+    LoadTilemapToTempTilemap_Conv();
+    // CALL(aTryEnemyFlee);
+    // JP_C (mWildFled_EnemyFled_LinkBattleCanceled);
+    if(TryEnemyFlee_Conv())
+        return WildFled_EnemyFled_LinkBattleCanceled();
+    // CALL(aSetEnemyTurn);
+    SetEnemyTurn_Conv();
+    // LD_A(0x1);
+    // LD_addr_A(wEnemyGoesFirst);
+    wram->wEnemyGoesFirst = 0x1;
+    // CALLFAR(aAI_SwitchOrTryItem);
+    // IF_C goto switch_item;
+    if(!AI_SwitchOrTryItem()){
+        // CALL(aEnemyTurn_EndOpponentProtectEndureDestinyBond);
+        EnemyTurn_EndOpponentProtectEndureDestinyBond();
+        // CALL(aCheckMobileBattleError);
+        // RET_C ;
+        if(CheckMobileBattleError_Conv())
+            return;
+        // LD_A_addr(wForcedSwitch);
+        // AND_A_A;
+        // RET_NZ ;
+        if(wram->wForcedSwitch)
+            return;
+        // CALL(aHasPlayerFainted);
+        // JP_Z (mHandlePlayerMonFaint);
+        if(HasPlayerFainted_Conv())
+            return HandlePlayerMonFaint();
+        // CALL(aHasEnemyFainted);
+        // JP_Z (mHandleEnemyMonFaint);
+        if(HasEnemyFainted_Conv())
+            return HandleEnemyMonFaint();
     }
 
-
-switch_item:
-    CALL(aSetEnemyTurn);
-    CALL(aResidualDamage);
-    JP_Z (mHandleEnemyMonFaint);
-    CALL(aRefreshBattleHuds);
-    CALL(aPlayerTurn_EndOpponentProtectEndureDestinyBond);
-    CALL(aCheckMobileBattleError);
-    RET_C ;
-    LD_A_addr(wForcedSwitch);
-    AND_A_A;
-    RET_NZ ;
-    CALL(aHasEnemyFainted);
-    JP_Z (mHandleEnemyMonFaint);
-    CALL(aHasPlayerFainted);
-    JP_Z (mHandlePlayerMonFaint);
-    CALL(aSetPlayerTurn);
-    CALL(aResidualDamage);
-    JP_Z (mHandlePlayerMonFaint);
-    CALL(aRefreshBattleHuds);
-    XOR_A_A;  // BATTLEPLAYERACTION_USEMOVE
-    LD_addr_A(wBattlePlayerAction);
-    RET;
-
+// switch_item:
+    // CALL(aSetEnemyTurn);
+    SetEnemyTurn_Conv();
+    // CALL(aResidualDamage);
+    // JP_Z (mHandleEnemyMonFaint);
+    if(ResidualDamage())
+        return HandleEnemyMonFaint();
+    // CALL(aRefreshBattleHuds);
+    RefreshBattleHuds_Conv();
+    // CALL(aPlayerTurn_EndOpponentProtectEndureDestinyBond);
+    PlayerTurn_EndOpponentProtectEndureDestinyBond();
+    // CALL(aCheckMobileBattleError);
+    // RET_C ;
+    if(CheckMobileBattleError_Conv())
+        return;
+    // LD_A_addr(wForcedSwitch);
+    // AND_A_A;
+    // RET_NZ ;
+    if(wram->wForcedSwitch)
+        return;
+    // CALL(aHasEnemyFainted);
+    // JP_Z (mHandleEnemyMonFaint);
+    if(HasEnemyFainted_Conv())
+        return HandleEnemyMonFaint();
+    // CALL(aHasPlayerFainted);
+    // JP_Z (mHandlePlayerMonFaint);
+    if(HasPlayerFainted_Conv())
+        return HandlePlayerMonFaint();
+    // CALL(aSetPlayerTurn);
+    SetPlayerTurn_Conv();
+    // CALL(aResidualDamage);
+    // JP_Z (mHandlePlayerMonFaint);
+    if(ResidualDamage())
+        return HandlePlayerMonFaint();
+    // CALL(aRefreshBattleHuds);
+    RefreshBattleHuds_Conv();
+    // XOR_A_A;  // BATTLEPLAYERACTION_USEMOVE
+    // LD_addr_A(wBattlePlayerAction);
+    wram->wBattlePlayerAction = BATTLEPLAYERACTION_USEMOVE;
+    // RET;
 }
 
 void Battle_PlayerFirst(void){
-    XOR_A_A;
-    LD_addr_A(wEnemyGoesFirst);
-    CALL(aSetEnemyTurn);
-    CALLFAR(aAI_SwitchOrTryItem);
-    PUSH_AF;
-    CALL(aPlayerTurn_EndOpponentProtectEndureDestinyBond);
-    POP_BC;
+    // XOR_A_A;
+    // LD_addr_A(wEnemyGoesFirst);
+    wram->wEnemyGoesFirst = FALSE;
+    // CALL(aSetEnemyTurn);
+    SetEnemyTurn_Conv();
+    // CALLFAR(aAI_SwitchOrTryItem);
+    // PUSH_AF;
+    bool switchedOrItem = AI_SwitchOrTryItem();
+    // CALL(aPlayerTurn_EndOpponentProtectEndureDestinyBond);
+    PlayerTurn_EndOpponentProtectEndureDestinyBond();
+    // POP_BC;
     // LD_A_addr(wForcedSwitch);
     // AND_A_A;
     // RET_NZ ;
@@ -1788,50 +1825,70 @@ void Battle_PlayerFirst(void){
         return;
     // CALL(aHasEnemyFainted);
     // JP_Z (mHandleEnemyMonFaint);
-    if(HasEnemyFainted_Conv()) {
-        HandleEnemyMonFaint();
-        RET;
-    }
-    CALL(aHasPlayerFainted);
-    JP_Z (mHandlePlayerMonFaint);
-    PUSH_BC;
-    CALL(aSetPlayerTurn);
-    CALL(aResidualDamage);
-    POP_BC;
-    JP_Z (mHandlePlayerMonFaint);
-    PUSH_BC;
+    if(HasEnemyFainted_Conv())
+        return HandleEnemyMonFaint();
+    // CALL(aHasPlayerFainted);
+    // JP_Z (mHandlePlayerMonFaint);
+    if(HasPlayerFainted_Conv())
+        return HandlePlayerMonFaint();
+    // PUSH_BC;
+    // CALL(aSetPlayerTurn);
+    SetPlayerTurn_Conv();
+    // CALL(aResidualDamage);
+    // POP_BC;
+    // JP_Z (mHandlePlayerMonFaint);
+    if(ResidualDamage())
+        return HandlePlayerMonFaint();
+    // PUSH_BC;
     // CALL(aRefreshBattleHuds);
     RefreshBattleHuds_Conv();
-    POP_AF;
-    IF_C goto switched_or_used_item;
-    CALL(aLoadTilemapToTempTilemap);
-    CALL(aTryEnemyFlee);
-    JP_C (mWildFled_EnemyFled_LinkBattleCanceled);
-    CALL(aEnemyTurn_EndOpponentProtectEndureDestinyBond);
-    CALL(aCheckMobileBattleError);
-    RET_C ;
-    LD_A_addr(wForcedSwitch);
-    AND_A_A;
-    RET_NZ ;
-    CALL(aHasPlayerFainted);
-    JP_Z (mHandlePlayerMonFaint);
-    CALL(aHasEnemyFainted);
-    JP_Z (mHandleEnemyMonFaint);
+    // POP_AF;
+    // IF_C goto switched_or_used_item;
+    if(!switchedOrItem){
+        // CALL(aLoadTilemapToTempTilemap);
+        // CALL(aTryEnemyFlee);
+        // JP_C (mWildFled_EnemyFled_LinkBattleCanceled);
+        if(TryEnemyFlee_Conv())
+            return WildFled_EnemyFled_LinkBattleCanceled();
+        // CALL(aEnemyTurn_EndOpponentProtectEndureDestinyBond);
+        EnemyTurn_EndOpponentProtectEndureDestinyBond();
+        // CALL(aCheckMobileBattleError);
+        // RET_C ;
+        if(CheckMobileBattleError_Conv())
+            return;
+        // LD_A_addr(wForcedSwitch);
+        // AND_A_A;
+        // RET_NZ ;
+        if(wram->wForcedSwitch)
+            return;
+        // CALL(aHasPlayerFainted);
+        // JP_Z (mHandlePlayerMonFaint);
+        if(HasPlayerFainted_Conv())
+            return HandlePlayerMonFaint();
+        // CALL(aHasEnemyFainted);
+        // JP_Z (mHandleEnemyMonFaint);
+        if(HasEnemyFainted_Conv())
+            return HandleEnemyMonFaint();
+    }
 
-
-switched_or_used_item:
-    CALL(aSetEnemyTurn);
-    CALL(aResidualDamage);
-    JP_Z (mHandleEnemyMonFaint);
-    CALL(aRefreshBattleHuds);
-    XOR_A_A;  // BATTLEPLAYERACTION_USEMOVE
-    LD_addr_A(wBattlePlayerAction);
-    RET;
-
+// switched_or_used_item:
+    // CALL(aSetEnemyTurn);
+    SetEnemyTurn_Conv();
+    // CALL(aResidualDamage);
+    // JP_Z (mHandleEnemyMonFaint);
+    if(ResidualDamage())
+        return HandleEnemyMonFaint();
+    // CALL(aRefreshBattleHuds);
+    RefreshBattleHuds_Conv();
+    // XOR_A_A;  // BATTLEPLAYERACTION_USEMOVE
+    // LD_addr_A(wBattlePlayerAction);
+    wram->wBattlePlayerAction = BATTLEPLAYERACTION_USEMOVE;
+    // RET;
 }
 
 void PlayerTurn_EndOpponentProtectEndureDestinyBond(void){
-    CALL(aSetPlayerTurn);
+    // CALL(aSetPlayerTurn);
+    SetPlayerTurn_Conv();
     // CALL(aEndUserDestinyBond);
     EndUserDestinyBond();
     // CALLFAR(aDoPlayerTurn);
@@ -1841,7 +1898,8 @@ void PlayerTurn_EndOpponentProtectEndureDestinyBond(void){
 }
 
 void EnemyTurn_EndOpponentProtectEndureDestinyBond(void){
-    CALL(aSetEnemyTurn);
+    // CALL(aSetEnemyTurn);
+    SetEnemyTurn_Conv();
     // CALL(aEndUserDestinyBond);
     EndUserDestinyBond();
     // CALLFAR(aDoEnemyTurn);
@@ -1863,8 +1921,7 @@ void EndOpponentProtectEndureDestinyBond(void){
     // CALL(aGetBattleVarAddr);
     // RES_hl(SUBSTATUS_DESTINY_BOND);
     bit_reset(*GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS5_OPP), SUBSTATUS_DESTINY_BOND);
-    RET;
-
+    // RET;
 }
 
 void EndUserDestinyBond(void){
@@ -1922,161 +1979,221 @@ void CheckIfHPIsZero(void){
 
 }
 
-void ResidualDamage(void){
-//  Return z if the user fainted before
+//  Return true (z) if the user fainted before
 //  or as a result of residual damage.
 //  For Sandstorm damage, see HandleWeather.
-
+bool ResidualDamage(void){
     // CALL(aHasUserFainted);
     // RET_Z ;
     if(HasUserFainted_Conv()) {
-        REG_F_Z = 1;
-        RET;
+        return true;
     }
 
-    LD_A(BATTLE_VARS_STATUS);
-    CALL(aGetBattleVar);
-    AND_A(1 << PSN | 1 << BRN);
-    IF_Z goto did_psn_brn;
+    // LD_A(BATTLE_VARS_STATUS);
+    // CALL(aGetBattleVar);
+    uint8_t status = GetBattleVar_Conv(BATTLE_VARS_STATUS);
+    // AND_A(1 << PSN | 1 << BRN);
+    // IF_Z goto did_psn_brn;
+    if(status & (1 << PSN | 1 << BRN)) {
+        // LD_HL(mHurtByPoisonText);
+        // LD_DE(ANIM_PSN);
+        // AND_A(1 << BRN);
+        // IF_Z goto got_anim;
+        const txt_cmd_s* text = (status & (1 << BRN))? HurtByBurnText: HurtByPoisonText;
+        uint16_t anim = (status & (1 << BRN))? ANIM_BRN: ANIM_PSN;
+        // LD_HL(mHurtByBurnText);
+        // LD_DE(ANIM_BRN);
 
-    LD_HL(mHurtByPoisonText);
-    LD_DE(ANIM_PSN);
-    AND_A(1 << BRN);
-    IF_Z goto got_anim;
-    LD_HL(mHurtByBurnText);
-    LD_DE(ANIM_BRN);
+    // got_anim:
+        // PUSH_DE;
+        // CALL(aStdBattleTextbox);
+        StdBattleTextbox_Conv2(text);
+        // POP_DE;
 
-got_anim:
+        // XOR_A_A;
+        // LD_addr_A(wNumHits);
+        wram->wNumHits = 0x0;
+        // CALL(aCall_PlayBattleAnim_OnlyIfVisible);
+        Call_PlayBattleAnim_OnlyIfVisible_Conv(anim);
+        // CALL(aGetEighthMaxHP);
+        uint16_t amount = GetEighthMaxHP_Conv();
+        // LD_DE(wPlayerToxicCount);
+        // LDH_A_addr(hBattleTurn);
+        // AND_A_A;
+        // IF_Z goto check_toxic;
+        // LD_DE(wEnemyToxicCount);
+        uint8_t* toxicCount = (hram->hBattleTurn == 0)? &wram->wPlayerToxicCount: &wram->wEnemyToxicCount;
 
-    PUSH_DE;
-    CALL(aStdBattleTextbox);
-    POP_DE;
+    // check_toxic:
+        // LD_A(BATTLE_VARS_SUBSTATUS5);
+        // CALL(aGetBattleVar);
+        // BIT_A(SUBSTATUS_TOXIC);
+        // IF_Z goto did_toxic;
+        if(bit_test(GetBattleVar_Conv(BATTLE_VARS_SUBSTATUS5), SUBSTATUS_TOXIC)){
+            // CALL(aGetSixteenthMaxHP);
+            // LD_A_de;
+            // INC_A;
+            // LD_de_A;
+            uint8_t count = ++*toxicCount;
+            // LD_HL(0);
 
-    XOR_A_A;
-    LD_addr_A(wNumHits);
-    CALL(aCall_PlayBattleAnim_OnlyIfVisible);
-    CALL(aGetEighthMaxHP);
-    LD_DE(wPlayerToxicCount);
-    LDH_A_addr(hBattleTurn);
-    AND_A_A;
-    IF_Z goto check_toxic;
-    LD_DE(wEnemyToxicCount);
+        // add:
+            // ADD_HL_BC;
+            // DEC_A;
+            // IF_NZ goto add;
+            // LD_B_H;
+            // LD_C_L;
+            amount = GetSixteenthMaxHP_Conv() * count;
+        }
 
-check_toxic:
+    // did_toxic:
+        // CALL(aSubtractHPFromUser);
+        SubtractHPFromUser_Conv(amount);
+    }
 
-    LD_A(BATTLE_VARS_SUBSTATUS5);
-    CALL(aGetBattleVar);
-    BIT_A(SUBSTATUS_TOXIC);
-    IF_Z goto did_toxic;
-    CALL(aGetSixteenthMaxHP);
-    LD_A_de;
-    INC_A;
-    LD_de_A;
-    LD_HL(0);
+// did_psn_brn:
+    // CALL(aHasUserFainted);
+    // JP_Z (mResidualDamage_fainted);
+    if(HasUserFainted_Conv()){
+    // fainted:
+        // CALL(aRefreshBattleHuds);
+        RefreshBattleHuds_Conv();
+        // LD_C(20);
+        // CALL(aDelayFrames);
+        DelayFrames_Conv(20);
+        // XOR_A_A;
+        // RET;
+        return true;
+    }
 
-add:
-    ADD_HL_BC;
-    DEC_A;
-    IF_NZ goto add;
-    LD_B_H;
-    LD_C_L;
+    // LD_A(BATTLE_VARS_SUBSTATUS4);
+    // CALL(aGetBattleVarAddr);
+    // BIT_hl(SUBSTATUS_LEECH_SEED);
+    // IF_Z goto not_seeded;
+    if(bit_test(*GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS4), SUBSTATUS_LEECH_SEED)){
+        // CALL(aSwitchTurnCore);
+        SwitchTurnCore();
+        // XOR_A_A;
+        // LD_addr_A(wNumHits);
+        wram->wNumHits = 0x0;
+        // LD_DE(ANIM_SAP);
+        // LD_A(BATTLE_VARS_SUBSTATUS3_OPP);
+        // CALL(aGetBattleVar);
+        // AND_A(1 << SUBSTATUS_FLYING | 1 << SUBSTATUS_UNDERGROUND);
+        // CALL_Z (aCall_PlayBattleAnim_OnlyIfVisible);
+        if((GetBattleVar_Conv(BATTLE_VARS_SUBSTATUS3_OPP) & ((1 << SUBSTATUS_FLYING | 1 << SUBSTATUS_UNDERGROUND))) == 0)
+            Call_PlayBattleAnim_OnlyIfVisible_Conv(ANIM_SAP);
+        // CALL(aSwitchTurnCore);
+        SwitchTurnCore();
 
-did_toxic:
+        // CALL(aGetEighthMaxHP);
+        uint16_t amount = GetEighthMaxHP_Conv();
+        // CALL(aSubtractHPFromUser);
+        SubtractHPFromUser_Conv(amount);
+        // LD_A(0x1);
+        // LDH_addr_A(hBGMapMode);
+        hram->hBGMapMode = 0x1;
+        // CALL(aRestoreHP);
+        RestoreHP_Conv(amount);
+        // LD_HL(mLeechSeedSapsText);
+        // CALL(aStdBattleTextbox);
+        StdBattleTextbox_Conv2(LeechSeedSapsText);
+    }
 
-    CALL(aSubtractHPFromUser);
-
-did_psn_brn:
-
-    CALL(aHasUserFainted);
-    JP_Z (mResidualDamage_fainted);
-
-    LD_A(BATTLE_VARS_SUBSTATUS4);
-    CALL(aGetBattleVarAddr);
-    BIT_hl(SUBSTATUS_LEECH_SEED);
-    IF_Z goto not_seeded;
-
-    CALL(aSwitchTurnCore);
-    XOR_A_A;
-    LD_addr_A(wNumHits);
-    LD_DE(ANIM_SAP);
-    LD_A(BATTLE_VARS_SUBSTATUS3_OPP);
-    CALL(aGetBattleVar);
-    AND_A(1 << SUBSTATUS_FLYING | 1 << SUBSTATUS_UNDERGROUND);
-    CALL_Z (aCall_PlayBattleAnim_OnlyIfVisible);
-    CALL(aSwitchTurnCore);
-
-    CALL(aGetEighthMaxHP);
-    CALL(aSubtractHPFromUser);
-    LD_A(0x1);
-    LDH_addr_A(hBGMapMode);
-    CALL(aRestoreHP);
-    LD_HL(mLeechSeedSapsText);
-    CALL(aStdBattleTextbox);
-
-not_seeded:
-
-    CALL(aHasUserFainted);
-    IF_Z goto fainted;
+// not_seeded:
+    // CALL(aHasUserFainted);
+    // IF_Z goto fainted;
+    if(HasUserFainted_Conv()){
+    // fainted:
+        // CALL(aRefreshBattleHuds);
+        RefreshBattleHuds_Conv();
+        // LD_C(20);
+        // CALL(aDelayFrames);
+        DelayFrames_Conv(20);
+        // XOR_A_A;
+        // RET;
+        return true;
+    }
 
     // LD_A(BATTLE_VARS_SUBSTATUS1);
     // CALL(aGetBattleVarAddr);
     // BIT_hl(SUBSTATUS_NIGHTMARE);
     // IF_Z goto not_nightmare;
-    if(!bit_test(*GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS1), SUBSTATUS_NIGHTMARE))
-        goto not_nightmare;
-    XOR_A_A;
-    LD_addr_A(wNumHits);
-    LD_DE(ANIM_IN_NIGHTMARE);
-    CALL(aCall_PlayBattleAnim_OnlyIfVisible);
-    CALL(aGetQuarterMaxHP);
-    CALL(aSubtractHPFromUser);
-    LD_HL(mHasANightmareText);
-    CALL(aStdBattleTextbox);
+    if(bit_test(*GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS1), SUBSTATUS_NIGHTMARE)){
+        // XOR_A_A;
+        // LD_addr_A(wNumHits);
+        wram->wNumHits = 0x0;
+        // LD_DE(ANIM_IN_NIGHTMARE);
+        // CALL(aCall_PlayBattleAnim_OnlyIfVisible);
+        Call_PlayBattleAnim_OnlyIfVisible_Conv(ANIM_IN_NIGHTMARE);
+        // CALL(aGetQuarterMaxHP);
+        // CALL(aSubtractHPFromUser);
+        SubtractHPFromUser_Conv(GetQuarterMaxHP_Conv());
+        // LD_HL(mHasANightmareText);
+        // CALL(aStdBattleTextbox);
+        StdBattleTextbox_Conv2(HasANightmareText);
+    }
 
-not_nightmare:
-
-    CALL(aHasUserFainted);
-    IF_Z goto fainted;
+// not_nightmare:
+    // CALL(aHasUserFainted);
+    // IF_Z goto fainted;
+    if(HasUserFainted_Conv()){
+    // fainted:
+        // CALL(aRefreshBattleHuds);
+        RefreshBattleHuds_Conv();
+        // LD_C(20);
+        // CALL(aDelayFrames);
+        DelayFrames_Conv(20);
+        // XOR_A_A;
+        // RET;
+        return true;
+    }
 
     // LD_A(BATTLE_VARS_SUBSTATUS1);
     // CALL(aGetBattleVarAddr);
     // BIT_hl(SUBSTATUS_CURSE);
     // IF_Z goto not_cursed;
-    if(!bit_test(*GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS1), SUBSTATUS_CURSE))
-        goto not_cursed;
+    if(bit_test(*GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS1), SUBSTATUS_CURSE)){
+        PEEK("cursed");
+        // XOR_A_A;
+        // LD_addr_A(wNumHits);
+        wram->wNumHits = 0x0;
+        // LD_DE(ANIM_IN_NIGHTMARE);
+        // CALL(aCall_PlayBattleAnim_OnlyIfVisible);
+        Call_PlayBattleAnim_OnlyIfVisible_Conv(ANIM_IN_NIGHTMARE);
+        // CALL(aGetQuarterMaxHP);
+        // CALL(aSubtractHPFromUser);
+        SubtractHPFromUser_Conv(GetQuarterMaxHP_Conv());
+        // LD_HL(mHurtByCurseText);
+        // CALL(aStdBattleTextbox);
+        StdBattleTextbox_Conv2(HurtByCurseText);
+    }
 
-    PEEK("cursed");
-    XOR_A_A;
-    LD_addr_A(wNumHits);
-    LD_DE(ANIM_IN_NIGHTMARE);
-    CALL(aCall_PlayBattleAnim_OnlyIfVisible);
-    CALL(aGetQuarterMaxHP);
-    CALL(aSubtractHPFromUser);
-    LD_HL(mHurtByCurseText);
-    CALL(aStdBattleTextbox);
+// not_cursed:
+    // LD_HL(wBattleMonHP);
+    // LDH_A_addr(hBattleTurn);
+    // AND_A_A;
+    // IF_Z goto check_fainted;
+    // LD_HL(wEnemyMonHP);
+    uint16_t hp = (hram->hBattleTurn == 0)? wram->wBattleMon.hp: wram->wEnemyMon.hp;
 
+// check_fainted:
+    // LD_A_hli;
+    // OR_A_hl;
+    // RET_NZ ;
 
-not_cursed:
-    LD_HL(wBattleMonHP);
-    LDH_A_addr(hBattleTurn);
-    AND_A_A;
-    IF_Z goto check_fainted;
-    LD_HL(wEnemyMonHP);
-
-
-check_fainted:
-    LD_A_hli;
-    OR_A_hl;
-    RET_NZ ;
-
-
-fainted:
-    CALL(aRefreshBattleHuds);
-    LD_C(20);
-    CALL(aDelayFrames);
-    XOR_A_A;
-    RET;
-
+    if(hp == 0){
+    // fainted:
+        // CALL(aRefreshBattleHuds);
+        RefreshBattleHuds_Conv();
+        // LD_C(20);
+        // CALL(aDelayFrames);
+        DelayFrames_Conv(20);
+        // XOR_A_A;
+        // RET;
+        return true;
+    }
+    return false;
 }
 
 static void HandlePerishSong_do_it(void){

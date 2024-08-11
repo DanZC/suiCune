@@ -2837,6 +2837,7 @@ uint16_t ContinueRevive(struct PartyMon* bc, uint16_t hp){
     // LD_hl_E;
     // JP(mLoadCurHPIntoBuffer3);
     bc->HP = ReverseEndian16(hp);
+    wram->wHPBuffer3 = hp;
     return hp;
 }
 
@@ -2889,6 +2890,7 @@ uint16_t RestoreHealth_Conv(struct PartyMon* bc, uint16_t amount){
     }
     hp += amount;
     // CALL(aLoadCurHPIntoBuffer3);
+    wram->wHPBuffer3 = hp;
     // LD_A(MON_HP + 1);
     // CALL(aGetPartyParamLocation);
     // LD_D_H;
@@ -2939,7 +2941,9 @@ okay:
 bool IsMonFainted(struct PartyMon* bc){
     // PUSH_DE;
     // CALL(aLoadMaxHPIntoBuffer1);
+    wram->wHPBuffer1 = ReverseEndian16(bc->maxHP);
     // CALL(aLoadCurHPIntoBuffer2);
+    wram->wHPBuffer2 = ReverseEndian16(bc->HP);
     // CALL(aLoadHPFromBuffer2);
     // LD_A_D;
     // OR_A_E;
@@ -3072,6 +3076,7 @@ uint16_t GetHealingItemAmount(item_t item){
         // CP_A_D;
         // IF_Z goto done;
         if(hl->item == item) {
+            printf("Healing item: %d, amount %d\n", hl->item, hl->amount);
             return hl->amount;
         }
         // INC_HL;
@@ -3091,6 +3096,7 @@ uint16_t GetHealingItemAmount(item_t item){
     // RET;
 
 // INCLUDE "data/items/heal_hp.asm"
+    printf("Healing item: %d, amount %d\n", item, 0);
     return 0;
 }
 

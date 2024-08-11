@@ -170,6 +170,7 @@ void Script_loadtrainer_Conv(script_s* s, uint8_t tclass, uint8_t tid);
 void Script_startbattle(void);
 void Script_startbattle_Conv(script_s* s);
 void Script_catchtutorial(void);
+void Script_catchtutorial_Conv(script_s* s, uint8_t type);
 void Script_reloadmapafterbattle(void);
 void Script_reloadmapafterbattle_Conv(script_s* s);
 void Script_reloadmap(void);

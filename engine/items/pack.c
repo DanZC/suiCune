@@ -1587,15 +1587,15 @@ void TutorialPack(void){
         v_DudeAutoInput_RightA();
     }
 
-    bool carry;
+    bool done;
     do {
     // loop:
         // CALL(aTutorialPack_RunJumptable);
         TutorialPack_RunJumptable();
         // CALL(aDepositSellTutorial_InterpretJoypad);
-        carry = DepositSellTutorial_InterpretJoypad();
+        done = DepositSellTutorial_InterpretJoypad();
         // IF_C goto loop;
-    } while(carry);
+    } while(!done);
     // XOR_A_A;  // FALSE
     // LD_addr_A(wPackUsedItem);
     wram->wPackUsedItem = FALSE;

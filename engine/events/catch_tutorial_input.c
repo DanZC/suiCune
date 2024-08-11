@@ -30,15 +30,17 @@ void v_DudeAutoInput_DownA(void){
     // LD_HL(mDudeAutoInput_DownA);
     // JR(mv_DudeAutoInput);
     static const uint8_t DudeAutoInput_DownA[] = {
-        NO_INPUT, 0xfe,
-        NO_INPUT, 0xfe,
-        NO_INPUT, 0xfe,
-        NO_INPUT, 0xfe,
+        // NO_INPUT, 0xfe,
+        // NO_INPUT, 0xfe,
+        // NO_INPUT, 0xfe,
+        // NO_INPUT, 0xfe,
+        NO_INPUT, 60,
         D_DOWN, 0x00,
-        NO_INPUT, 0xfe,
-        NO_INPUT, 0xfe,
-        NO_INPUT, 0xfe,
-        NO_INPUT, 0xfe,
+        // NO_INPUT, 0xfe,
+        // NO_INPUT, 0xfe,
+        // NO_INPUT, 0xfe,
+        // NO_INPUT, 0xfe,
+        NO_INPUT, 60,
         A_BUTTON, 0x00,
         NO_INPUT, 0xff,  // end
     };

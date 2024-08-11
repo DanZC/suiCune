@@ -22,6 +22,7 @@
 enum {
     DEBUGFIELDITEM_TELEPORT,
     DEBUGFIELDITEM_PHONE,
+    DEBUGFIELDITEM_TUTORIAL,
     DEBUGFIELDITEM_FLAG,
     DEBUGFIELDITEM_EXIT,
 };
@@ -64,6 +65,19 @@ static void DebugPhoneCall(void){
     gQueuedScriptAddr = DebugSpecialPhoneCall;
     hram->hMenuReturn = HMENURETURN_SCRIPT;
     wram->wSpecialPhoneCallID = SPECIALCALL_BIKESHOP;
+}
+
+static bool DebugShowCatchTutorialScript(script_s* s){
+    SCRIPT_BEGIN
+    loadwildmon(PIDGEY, 5)
+    catchtutorial(BATTLETYPE_TUTORIAL)
+    s_end
+    SCRIPT_END
+}
+
+static void DebugShowCatchTutorial(void){
+    gQueuedScriptAddr = DebugShowCatchTutorialScript;
+    hram->hMenuReturn = HMENURETURN_SCRIPT;
 }
 
 static void DebugFlagMenu(void) {
@@ -115,10 +129,11 @@ const struct MenuHeader MenuHeader = {
     // MenuData:
         .flags = STATICMENU_CURSOR | STATICMENU_WRAP,  // flags
         .verticalMenu = {
-            .count = 4,  // items
+            .count = 5,  // items
             .options = (const char*[]) {
                 "TELEPORT@",
                 "PHONE@",
+                "TUTORIAL@",
                 "FLAG@",
                 "EXIT@",
             },
@@ -164,6 +179,9 @@ loop:
             goto loop;
         case DEBUGFIELDITEM_PHONE:
             DebugPhoneCall();
+            break;
+        case DEBUGFIELDITEM_TUTORIAL:
+            DebugShowCatchTutorial();
             break;
         case DEBUGFIELDITEM_EXIT:
             break;

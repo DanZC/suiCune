@@ -120,7 +120,7 @@ bool Route29Tutorial1(script_s* s) {
     applymovement(ROUTE29_COOLTRAINER_M1, DudeMovementData1b)
     stopfollow
     loadwildmon(RATTATA, 5)
-    //catchtutorial(BATTLETYPE_TUTORIAL)
+    catchtutorial(BATTLETYPE_TUTORIAL)
     turnobject(ROUTE29_COOLTRAINER_M1, UP)
     opentext
     writetext(CatchingTutorialDebriefText)
@@ -147,7 +147,7 @@ bool Route29Tutorial2(script_s* s) {
     applymovement(ROUTE29_COOLTRAINER_M1, DudeMovementData2b)
     stopfollow
     loadwildmon(RATTATA, 5)
-    //catchtutorial(BATTLETYPE_TUTORIAL)
+    catchtutorial(BATTLETYPE_TUTORIAL)
     turnobject(ROUTE29_COOLTRAINER_M1, UP)
     opentext
     writetext(CatchingTutorialDebriefText)
@@ -193,7 +193,7 @@ bool CatchingTutorialDudeScript(script_s* s) {
     iffalse(Declined)
     closetext
     loadwildmon(RATTATA, 5)
-    //catchtutorial(BATTLETYPE_TUTORIAL)
+    catchtutorial(BATTLETYPE_TUTORIAL)
     opentext
     writetext(CatchingTutorialDebriefText)
     waitbutton

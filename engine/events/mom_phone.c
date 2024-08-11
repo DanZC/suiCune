@@ -351,7 +351,7 @@ bool Mom_GiveItemOrDoll_Conv(void){
         // LD_HL(wNumPCItems);
         // CALL(aReceiveItem);
         // RET;
-        return ReceiveItem_Conv((item_pocket_s*)&wram->wNumItems, item->item, 1);
+        return ReceiveItem_Conv((item_pocket_s*)&wram->wNumPCItems, item->item, 1);
     }
 }
 

@@ -22,6 +22,7 @@
 #include "../battle/core.h"
 #include "../battle/read_trainer_party.h"
 #include "../events/engine_flags.h"
+#include "../events/catch_tutorial.h"
 #include "../events/checktime.h"
 #include "../events/money.h"
 #include "../events/pokepic.h"
@@ -2902,6 +2903,18 @@ void Script_catchtutorial(void){
     FARCALL(aCatchTutorial);
     JP(mScript_reloadmap);
 
+}
+
+void Script_catchtutorial_Conv(script_s* s, uint8_t type){
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wBattleType);
+    wram->wBattleType = type;
+    // CALL(aBufferScreen);
+    BufferScreen_Conv();
+    // FARCALL(aCatchTutorial);
+    CatchTutorial();
+    // JP(mScript_reloadmap);
+    return Script_reloadmap_Conv(s);
 }
 
 void Script_reloadmapafterbattle(void){

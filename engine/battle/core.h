@@ -36,7 +36,7 @@ bool HasEnemyFainted_Conv(void);
 void HasPlayerFainted(void);
 bool HasPlayerFainted_Conv(void);
 void CheckIfHPIsZero(void);
-void ResidualDamage(void);
+bool ResidualDamage(void);
 void HandlePerishSong(void);
 void HandleWrap(void);
 void SwitchTurnCore(void);
