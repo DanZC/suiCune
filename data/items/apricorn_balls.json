@@ -1,0 +1,11 @@
+{
+  "ApricornBalls": [
+    {"apricorn": "RED_APRICORN", "ball": "LEVEL_BALL"},
+    {"apricorn": "BLU_APRICORN", "ball": "LURE_BALL"},
+    {"apricorn": "YLW_APRICORN", "ball": "MOON_BALL"},
+    {"apricorn": "GRN_APRICORN", "ball": "FRIEND_BALL"},
+    {"apricorn": "WHT_APRICORN", "ball": "FAST_BALL"},
+    {"apricorn": "BLK_APRICORN", "ball": "HEAVY_BALL"},
+    {"apricorn": "PNK_APRICORN", "ball": "LOVE_BALL"}
+  ]
+}

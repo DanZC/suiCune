@@ -1,0 +1,8 @@
+{
+  "XItemStats": [
+    {"XItem": "X_ATTACK", "ItemStat": "ATTACK"},
+    {"XItem": "X_DEFEND", "ItemStat": "DEFENSE"},
+    {"XItem": "X_SPEED", "ItemStat": "SPEED"},
+    {"XItem": "X_SPECIAL", "ItemStat": "SP_ATTACK"}
+  ]
+}
