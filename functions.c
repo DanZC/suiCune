@@ -10020,4 +10020,18 @@ CONVERTED(v_AnimateTileset);
     // engine/rtc/reset_password.c
     CONVERTED(ClockResetPassword);
     REDIRECTED(v_ResetClock);
+
+    // engine/events/print_unown.c
+    CONVERTED(v_UnownPrinter);
+    // CONVERTED(UnownDexATile);
+    // CONVERTED(UnownDexVacantString);
+    // CONVERTED(UnownDexDoWhatString);
+    // CONVERTED(AlphRuinsStampString);
+    // CONVERTED(UnownDexBTile);
+    // CONVERTED(UnownDexMenuString);
+    CONVERTED(PlaceUnownPrinterFrontpic);
+
+    // engine/events/print_unown_2.c
+    // CONVERTED(RotateUnownFrontpic);
+    // CONVERTED(UnownPrinter_GBPrinterRectangle);
 }

@@ -20,7 +20,6 @@ void DebugMenu_Link(void);
 void DebugMenu_TradeAnim(void);
 void DebugMenu_BattleAnim(void);
 void DebugMenu_Credits(void);
-void DebugMenu_TradeTest(void);
 void DebugMenu_MysteryGift(void);
 // void debugMenuOptionField();
 // void debugMenuOptionFight();

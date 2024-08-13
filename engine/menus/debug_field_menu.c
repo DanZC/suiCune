@@ -1,6 +1,7 @@
 #include "../../constants.h"
 #include "../../home/menu.h"
 #include "../../home/delay.h"
+#include "../../home/copy.h"
 #include "../../home/audio.h"
 #include "../../home/tilemap.h"
 #include "../../home/window.h"
@@ -13,6 +14,7 @@
 #include "../../home/joypad.h"
 #include "../../home/text.h"
 #include "../events/overworld.h"
+#include "../events/specials.h"
 #include "../overworld/init_map.h"
 #include "../overworld/map_setup.h"
 #include "../pokegear/pokegear.h"
@@ -23,6 +25,7 @@ enum {
     DEBUGFIELDITEM_TELEPORT,
     DEBUGFIELDITEM_PHONE,
     DEBUGFIELDITEM_TUTORIAL,
+    DEBUGFIELDITEM_UNOWN,
     DEBUGFIELDITEM_FLAG,
     DEBUGFIELDITEM_EXIT,
 };
@@ -80,6 +83,16 @@ static void DebugShowCatchTutorial(void){
     hram->hMenuReturn = HMENURETURN_SCRIPT;
 }
 
+static void DebugUnownPrinter(void){
+    uint8_t temp[sizeof(wram->wUnownDex)];
+    CopyBytes_Conv2(temp, wram->wUnownDex, sizeof(wram->wUnownDex));
+    for(uint8_t i = 0; i < NUM_UNOWN; ++i){
+        wram->wUnownDex[i] = UNOWN_A + i;
+    }
+    UnownPrinter();
+    CopyBytes_Conv2(wram->wUnownDex, temp, sizeof(wram->wUnownDex));
+}
+
 static void DebugFlagMenu(void) {
     LoadStandardMenuHeader_Conv();
     Textbox_Conv2(coord(0, 0, wram->wTilemap), 6, 12);
@@ -134,6 +147,7 @@ const struct MenuHeader MenuHeader = {
                 "TELEPORT@",
                 "PHONE@",
                 "TUTORIAL@",
+                "UNOWN@",
                 "FLAG@",
                 "EXIT@",
             },
@@ -183,6 +197,9 @@ loop:
         case DEBUGFIELDITEM_TUTORIAL:
             DebugShowCatchTutorial();
             break;
+        case DEBUGFIELDITEM_UNOWN:
+            DebugUnownPrinter();
+            goto loop;
         case DEBUGFIELDITEM_EXIT:
             break;
         }

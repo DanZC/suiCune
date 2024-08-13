@@ -3,6 +3,7 @@
 #include "pokecenter_pc.h"
 #include "name_rater.h"
 #include "diploma.h"
+#include "print_unown.h"
 #include "bug_contest/judging.h"
 #include "pokerus/check_pokerus.h"
 #include "../menus/naming_screen.h"
@@ -202,11 +203,13 @@ void OverworldTownMap(void){
 }
 
 void UnownPrinter(void){
-    CALL(aFadeToMenu);
-    FARCALL(av_UnownPrinter);
-    CALL(aExitAllMenus);
-    RET;
-
+    // CALL(aFadeToMenu);
+    FadeToMenu_Conv();
+    // FARCALL(av_UnownPrinter);
+    v_UnownPrinter();
+    // CALL(aExitAllMenus);
+    ExitAllMenus_Conv();
+    // RET;
 }
 
 void DisplayLinkRecord(void){

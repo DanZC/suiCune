@@ -28,6 +28,7 @@ skip_files = [
     'engine/battle/battlestart_copytilemapatonce.asm',
     'engine/battle/getgen1trainerclassname.asm',
     'engine/debug/debug_room.asm',
+    'engine/debug/color_picker.asm',
     'engine/games/memory_game.asm',
     'engine/gfx/load_push_oam.asm',
     'engine/gfx/sgb_layouts.asm',
@@ -124,6 +125,8 @@ converted_total = 0
 file_total = 0
 
 for k, v in counts.items():
+    if v[1] == 0:
+        continue
     converted_total += v[0]
     file_total += v[1]
     print(f'{k}: {v[0]:02}/{v[1]:02} converted ({(v[0] / v[1]) * 100:.2f}%)')

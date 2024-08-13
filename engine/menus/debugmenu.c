@@ -52,7 +52,6 @@ void Handler_Script(void);
 void Handler_TradeAnim(void);
 void Handler_BattleAnim(void);
 void Handler_Credits(void);
-void Handler_TradeTest(void);
 void Handler_MysteryGift(void);
 
 static DebugMenuOption debugMenuOptions[] = {
@@ -71,7 +70,6 @@ static DebugMenuOption debugMenuOptions[] = {
     {"TRADE@", Handler_TradeAnim},
     {"BANIMS@", Handler_BattleAnim},
     {"CREDITS@", Handler_Credits},
-    {"TRD TEST@", Handler_TradeTest},
     {"MYSTRY G@", Handler_MysteryGift},
 };
 
@@ -225,8 +223,7 @@ void Handler_Anime(void) {
 
 void Handler_Graphics(void) {
     // TODO: Implement this function
-    // DebugMenu_GFXTest();
-    ShowTestText();
+    DebugMenu_GFXTest();
     PlayMusic_Conv(DEBUG_MENU_MUSIC);
 }
 
@@ -267,11 +264,6 @@ void Handler_BattleAnim(void) {
 
 void Handler_Credits(void) {
     DebugMenu_Credits();
-    PlayMusic_Conv(DEBUG_MENU_MUSIC);
-}
-
-void Handler_TradeTest(void) {
-    DebugMenu_TradeTest();
     PlayMusic_Conv(DEBUG_MENU_MUSIC);
 }
 
@@ -640,7 +632,7 @@ void DebugMenu_GFXTest(void) {
 }
 
 void DebugMenu_Stats(void) {
-    LoadStandardMenuHeader_Conv();
+    DebugMenu_SaveAttrmap();
     Utf8ToCrystalBuffer(wram->wPlayerName, NAME_LENGTH, "PLAYER@");
 
     wram->wCurPartySpecies = CHARIZARD;
@@ -655,15 +647,17 @@ void DebugMenu_Stats(void) {
 
     wram->wCurPartyMon = 0;
 
-    SAFECALL(aStatsScreenInit);
+    StatsScreenInit();
 
-    ExitMenu_Conv2();
+    DebugMenu_RestoreAttrmap();
+    ClearScreen_Conv2();
     v_LoadFontsExtra1_Conv();
     v_LoadFontsExtra2_Conv();
     v_LoadStandardFont_Conv();
-    TextboxPalette_Conv2(wram->wTilemap, SCREEN_WIDTH, SCREEN_HEIGHT);
-    WaitBGMap_Conv();
-    DelayFrame();
+    SetPalettes_Conv();
+    // TextboxPalette_Conv2(wram->wTilemap, SCREEN_WIDTH, SCREEN_HEIGHT);
+    WaitBGMap2_Conv();
+    // DelayFrame();
 }
 
 void DebugMenu_Pics_PlaceStrings(species_t* sp) {
@@ -751,8 +745,9 @@ void DebugMenu_Pics(void) {
     v_LoadFontsExtra2_Conv();
     v_LoadStandardFont_Conv();
     TextboxPalette_Conv2(wram->wTilemap, SCREEN_WIDTH, SCREEN_HEIGHT);
-    WaitBGMap_Conv();
-    DelayFrame();
+    ClearScreen_Conv2();
+    WaitBGMap2_Conv();
+    // DelayFrame();
 }
 
 static const txt_cmd_s DebugMenu_TestText[] = {
@@ -819,7 +814,8 @@ const txt_cmd_s Text_LANTestFail[] = {
 };
 
 void DebugMenu_Link(void) {
-    LoadStandardMenuHeader_Conv();
+    DebugMenu_SaveTilemap();
+    DebugMenu_SaveAttrmap();
     ClearScreen_Conv2();
     v_LoadFontsExtra1_Conv();
     v_LoadFontsExtra2_Conv();
@@ -848,10 +844,18 @@ void DebugMenu_Link(void) {
     CloseWindow_Conv2();
 
     NetworkCloseConnection();
-    ExitMenu_Conv2();
+    ClearScreen_Conv2();
+    DelayFrames_Conv(4);
+    DebugMenu_RestoreTilemap();
+    DebugMenu_RestoreAttrmap();
+    v_LoadFontsExtra1_Conv();
+    v_LoadFontsExtra2_Conv();
+    v_LoadStandardFont_Conv();
 }
 
 void DebugMenu_TradeAnim(void) {
+    DebugMenu_SaveTilemap();
+    DebugMenu_SaveAttrmap();
     ClearScreen_Conv2();
     wram->wPlayerTrademon.species = BULBASAUR;
     wram->wOTTrademon.species = CHARMANDER;
@@ -864,6 +868,11 @@ void DebugMenu_TradeAnim(void) {
     U82CA(wram->wPlayerTrademon.nickname, "A@");
     U82CA(wram->wOTTrademon.nickname, "A@");
     TradeAnimation();
+    DebugMenu_RestoreTilemap();
+    DebugMenu_RestoreAttrmap();
+    v_LoadFontsExtra1_Conv();
+    v_LoadFontsExtra2_Conv();
+    v_LoadStandardFont_Conv();
 }
 
 static void DebugMenu_BattleAnim_PlaceText(uint16_t move) {

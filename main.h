@@ -82,7 +82,7 @@
 //#include "data/items/marts.h"
 #include "engine/events/mom.h"
 #include "engine/events/daycare.h"
-//#include "engine/events/print_unown.h"
+#include "engine/events/print_unown.h"
 #include "engine/events/print_photo.h"
 #include "engine/pokemon/breeding.h"
 
@@ -427,7 +427,7 @@
 
 // SECTION "bank38", ROMX
 
-//#include "engine/events/print_unown_2.h"
+#include "engine/events/print_unown_2.h"
 #include "engine/games/card_flip.h"
 #include "engine/games/unown_puzzle.h"
 //#include "engine/games/memory_game.h"

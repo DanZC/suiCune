@@ -93,7 +93,7 @@ void (*const SpecialsPointers[])(void) = {
     add_special(NameRival),
     add_special(SetDayOfWeek),
     add_special(OverworldTownMap),
-    // add_special(UnownPrinter),
+    add_special(UnownPrinter),
     add_special(MapRadio),
     add_special(UnownPuzzle),
     add_special(SlotMachine),
