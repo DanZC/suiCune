@@ -9,47 +9,48 @@ void SaveMenu_CopyTilemapAtOnce(void) {
     // JP_Z(mWaitBGMap);
     if(hram->hCGB == 0)
         return WaitBGMap_Conv();
+    return v_CopyTilemapAtOnce_Conv();
 
     //  The following is a modified version of _CopyTilemapAtOnce
     //  that waits for [rLY] to be $60 instead of $80 - 1.
-    LDH_A_addr(hBGMapMode);
-    PUSH_AF;
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
+    // LDH_A_addr(hBGMapMode);
+    // PUSH_AF;
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
 
-    LDH_A_addr(hMapAnims);
-    PUSH_AF;
-    XOR_A_A;
-    LDH_addr_A(hMapAnims);
+    // LDH_A_addr(hMapAnims);
+    // PUSH_AF;
+    // XOR_A_A;
+    // LDH_addr_A(hMapAnims);
 
-wait:
+// wait:
 
-    LDH_A_addr(rLY);
-    CP_A(0x60);
+    // LDH_A_addr(rLY);
+    // CP_A(0x60);
     // IF_C goto wait;
 
-    NOP;
-    LD_A(MBANK(avBGMap2));
-    LDH_addr_A(rVBK);
-    hlcoord(0, 0, wAttrmap);
-    CALL(aSaveMenu_CopyTilemapAtOnce_CopyBGMapViaStack);
-    LD_A(MBANK(avBGMap0));
-    LDH_addr_A(rVBK);
-    hlcoord(0, 0, wTilemap);
-    CALL(aSaveMenu_CopyTilemapAtOnce_CopyBGMapViaStack);
+    // NOP;
+    // LD_A(MBANK(avBGMap2));
+    // LDH_addr_A(rVBK);
+    // hlcoord(0, 0, wAttrmap);
+    // CALL(aSaveMenu_CopyTilemapAtOnce_CopyBGMapViaStack);
+    // LD_A(MBANK(avBGMap0));
+    // LDH_addr_A(rVBK);
+    // hlcoord(0, 0, wTilemap);
+    // CALL(aSaveMenu_CopyTilemapAtOnce_CopyBGMapViaStack);
 
-wait2:
+// wait2:
 
-    LDH_A_addr(rLY);
-    CP_A(0x60);
-    // IF_C goto wait2;
-    NOP;
+    // LDH_A_addr(rLY);
+    // CP_A(0x60);
+    // // IF_C goto wait2;
+    // NOP;
 
-    POP_AF;
-    LDH_addr_A(hMapAnims);
-    POP_AF;
-    LDH_addr_A(hBGMapMode);
-    RET;
+    // POP_AF;
+    // LDH_addr_A(hMapAnims);
+    // POP_AF;
+    // LDH_addr_A(hBGMapMode);
+    // RET;
 }
 
 void SaveMenu_CopyTilemapAtOnce_CopyBGMapViaStack(void) {

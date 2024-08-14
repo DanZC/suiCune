@@ -1239,7 +1239,7 @@ struct wram_s
                         uint8_t wcd39[1];
                         uint8_t wcd3a[1];
                         uint8_t wcd3b[1];
-                        uint8_t wBattleTowerRoomMenu2JumptableIndex[1];
+                        uint8_t wBattleTowerRoomMenu2JumptableIndex;
                         uint8_t wcd3d[1];
                         uint8_t wcd3e[1];
                         uint8_t wcd3f[1];
@@ -1254,13 +1254,13 @@ struct wram_s
                         // secs
                         uint8_t wMobileInactivityTimerFrames;
                         // frames
-                        uint8_t wcd47[1];
+                        uint8_t wcd47;
                         uint8_t skip_45[1];
                         union {
                             uint8_t wBTTempOTSprite;
                             uint8_t wcd49;
                         };
-                        uint8_t wcd4a[1];
+                        uint8_t wcd4a;
                         uint8_t wcd4b[1];
                         union {
                             uint8_t wEZChatCursorXCoord;
@@ -1271,8 +1271,8 @@ struct wram_s
                             uint8_t wcd4d;
                         };
                         uint8_t wcd4e[1];
-                        uint8_t wcd4f[1];
-                        uint8_t wcd50[1];
+                        uint8_t wcd4f;
+                        uint8_t wcd50;
                         uint8_t wcd51[1];
                         uint8_t wcd52[1];
                         // ds 12

@@ -1,9 +1,17 @@
 #include "../constants.h"
 #include "mobile_40.h"
+#include "mobile_41.h"
 #include "../home/delay.h"
+#include "../home/copy.h"
+#include "../home/sram.h"
+#include "../home/menu.h"
+#include "../home/text.h"
+#include "../home/joypad.h"
 #include "../home/serial.h"
 #include "../engine/battle/core.h"
 #include "../engine/link/place_waiting_text.h"
+#include "../engine/events/battle_tower/rules.h"
+#include "../data/text/common.h"
 
 void Function100000(void){
 //  d: 1 or 2
@@ -1342,18 +1350,22 @@ void MobileBattleResetTimer(void){
 }
 
 void MobileBattleFixTimer(void){
-    LD_A(BANK(sMobileBattleTimer));
-    LD_HL(sMobileBattleTimer);
-    CALL(aOpenSRAM);
-    XOR_A_A;  // MOBILE_BATTLE_ALLOWED_SECONDS
-    LD_hli_A;
-    LD_A(MOBILE_BATTLE_ALLOWED_MINUTES);
-    LD_hli_A;
-    XOR_A_A;
-    LD_hli_A;
-    CALL(aCloseSRAM);
-    RET;
-
+    // LD_A(BANK(sMobileBattleTimer));
+    // LD_HL(sMobileBattleTimer);
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asMobileBattleTimer));
+    // XOR_A_A;  // MOBILE_BATTLE_ALLOWED_SECONDS
+    // LD_hli_A;
+    gb_write(sMobileBattleTimer, MOBILE_BATTLE_ALLOWED_SECONDS);
+    // LD_A(MOBILE_BATTLE_ALLOWED_MINUTES);
+    // LD_hli_A;
+    gb_write(sMobileBattleTimer + 1, MOBILE_BATTLE_ALLOWED_MINUTES);
+    // XOR_A_A;
+    // LD_hli_A;
+    gb_write(sMobileBattleTimer + 2, 0);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
 }
 
 void Function100720(void){
@@ -1601,49 +1613,65 @@ void String_10088e(void){
 
 void String_10089f(void){
     //db ['"\u3000むせいげん@"'];
-
-    return MobileBattleGetRemainingTime();
 }
 
-void MobileBattleGetRemainingTime(void){
 //  Calculates the difference between 10 minutes and sMobileBattleTimer
 //  Returns minutes in c and seconds in b
-    LD_A(BANK(sMobileBattleTimer));
-    LD_HL(sMobileBattleTimer);
-    CALL(aOpenSRAM);
-    LD_A_hli;
-    LD_addr_A(wStringBuffer2);
-    LD_A_hli;
-    LD_addr_A(wStringBuffer2 + 1);
-    LD_A_hli;
-    LD_addr_A(wStringBuffer2 + 2);
-    CALL(aCloseSRAM);
-    LD_A_addr(wStringBuffer2 + 2);
-    LD_B_A;
-    LD_A(MOBILE_BATTLE_ALLOWED_SECONDS);
-    SUB_A_B;
-    IF_NC goto no_carry_seconds;
-    ADD_A(60);
+u8_pair_s MobileBattleGetRemainingTime(void){
+    // LD_A(BANK(sMobileBattleTimer));
+    // LD_HL(sMobileBattleTimer);
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asMobileBattleTimer));
+    // LD_A_hli;
+    // LD_addr_A(wStringBuffer2);
+    // LD_A_hli;
+    // LD_addr_A(wStringBuffer2 + 1);
+    // LD_A_hli;
+    // LD_addr_A(wStringBuffer2 + 2);
+    CopyBytes_Conv2(wram->wStringBuffer2, GBToRAMAddr(sMobileBattleTimer), 3);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // LD_A_addr(wStringBuffer2 + 2);
+    // LD_B_A;
+    uint8_t b = wram->wStringBuffer2[2];
+    uint8_t carry = 0;
+    // LD_A(MOBILE_BATTLE_ALLOWED_SECONDS);
+    // SUB_A_B;
+    // IF_NC goto no_carry_seconds;
+    if(MOBILE_BATTLE_ALLOWED_SECONDS < b){
+        // ADD_A(60);
+        b = (MOBILE_BATTLE_ALLOWED_SECONDS - b) + 60;
+        carry = 1;
+    }
+    else {
+        b = MOBILE_BATTLE_ALLOWED_SECONDS - b;
+    }
+// no_carry_seconds:
+    // LD_B_A;
+    // LD_A_addr(wStringBuffer2 + 1);
+    // LD_C_A;
+    uint8_t c = wram->wStringBuffer2[1];
+    // LD_A(MOBILE_BATTLE_ALLOWED_MINUTES);
+    // SBC_A_C;
+    // LD_C_A;
+    // IF_C goto fail;
+    if(MOBILE_BATTLE_ALLOWED_MINUTES - carry >= c){
+        c = MOBILE_BATTLE_ALLOWED_MINUTES - carry - c;
+        // LD_A_addr(wStringBuffer2);
+        // AND_A_A;
+        // IF_NZ goto fail;
+        if(wram->wStringBuffer2[0] == 0){
+            // RET;
+            return u8_pair(b, c);
+        }
+    }
 
-no_carry_seconds:
-    LD_B_A;
-    LD_A_addr(wStringBuffer2 + 1);
-    LD_C_A;
-    LD_A(MOBILE_BATTLE_ALLOWED_MINUTES);
-    SBC_A_C;
-    LD_C_A;
-    IF_C goto fail;
-    LD_A_addr(wStringBuffer2);
-    AND_A_A;
-    IF_NZ goto fail;
-    RET;
-
-
-fail:
-    CALL(aMobileBattleFixTimer);
-    LD_C(0);
-    RET;
-
+// fail:
+    // CALL(aMobileBattleFixTimer);
+    MobileBattleFixTimer();
+    // LD_C(0);
+    // RET;
+    return u8_pair(b, 0);
 }
 
 void Function1008e0(void){
@@ -8771,59 +8799,66 @@ void Unknown_103608(void){
     //db ['0x12', '0x04', '0x0b'];
     //dw ['.this'];
 
-this:
+// this:
     //db ['2', '2', '3'];
-
-    return AskMobileOrCable();
 }
 
 void AskMobileOrCable(void){
-    LD_HL(mMenuHeader_103640);
-    CALL(aLoadMenuHeader);
-    LD_A_addr(wMobileOrCable_LastSelection);
-    AND_A(0x0f);
-    IF_Z goto skip_load;
-    LD_addr_A(wMenuCursorPosition);
+    // LD_HL(mMenuHeader_103640);
+    // CALL(aLoadMenuHeader);
+    LoadMenuHeader_Conv2(&MenuHeader_103640);
+    // LD_A_addr(wMobileOrCable_LastSelection);
+    // AND_A(0x0f);
+    // IF_Z goto skip_load;
+    if((wram->wMobileOrCable_LastSelection & 0x0f) != 0){
+        // LD_addr_A(wMenuCursorPosition);
+        wram->wMenuCursorPosition = wram->wMobileOrCable_LastSelection & 0x0f;
+    }
 
-
-skip_load:
-    CALL(aVerticalMenu);
-    CALL(aCloseWindow);
-    IF_C goto pressed_b;
-    LD_A_addr(wMenuCursorY);
-    LD_addr_A(wScriptVar);
-    LD_C_A;
-    LD_A_addr(wMobileOrCable_LastSelection);
-    AND_A(0xf0);
-    OR_A_C;
-    LD_addr_A(wMobileOrCable_LastSelection);
-    RET;
-
-
-pressed_b:
-    XOR_A_A;
-    LD_addr_A(wScriptVar);
-    RET;
-
+// skip_load:
+    // CALL(aVerticalMenu);
+    bool cancel = !VerticalMenu_Conv();
+    // CALL(aCloseWindow);
+    CloseWindow_Conv2();
+    // IF_C goto pressed_b;
+    if(cancel){
+    // pressed_b:
+        // XOR_A_A;
+        // LD_addr_A(wScriptVar);
+        wram->wScriptVar = 0x0;
+        // RET;
+        return;
+    }
+    // LD_A_addr(wMenuCursorY);
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = wram->wMenuCursorY;
+    // LD_C_A;
+    // LD_A_addr(wMobileOrCable_LastSelection);
+    // AND_A(0xf0);
+    // OR_A_C;
+    // LD_addr_A(wMobileOrCable_LastSelection);
+    wram->wMobileOrCable_LastSelection = (wram->wMobileOrCable_LastSelection & 0xf0) | wram->wMenuCursorY;
+    // RET;
 }
 
-void MenuHeader_103640(void){
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['13', '6', 'SCREEN_WIDTH - 1', 'TEXTBOX_Y - 1'];
+const struct MenuData MenuData_103648 = {
+    .flags = STATICMENU_CURSOR,  // flags
+    .verticalMenu = {
+        .count = 2,
+        .options = (const char*[]){
+            "NETWORK", //db ['"モバイル@"'];
+            "LAN", //db ['"ケーブル@"'];
+        },
+    },
+};
+
+const struct MenuHeader MenuHeader_103640 = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(13, 6, SCREEN_WIDTH - 1, TEXTBOX_Y - 1),
     //dw ['MenuData_103648'];
-    //db ['1'];  // default option
-
-    return MenuData_103648();
-}
-
-void MenuData_103648(void){
-    //db ['STATICMENU_CURSOR'];  // flags
-    //db ['2'];
-    //db ['"モバイル@"'];
-    //db ['"ケーブル@"'];
-
-    return Function103654();
-}
+    .data = &MenuData_103648,
+    .defaultOption = 1,  // default option
+};
 
 void Function103654(void){
     FARCALL(aMobile_AlwaysReturnNotCarry);
@@ -8844,212 +8879,248 @@ asm_103666:
 }
 
 void Mobile_SelectThreeMons(void){
-    FARCALL(aMobile_AlwaysReturnNotCarry);
-    BIT_C(7);
-    IF_Z goto asm_10369b;
-    LD_HL(mMobileBattleMustPickThreeMonText);
-    CALL(aPrintText);
-    CALL(aYesNoBox);
-    IF_C goto asm_103696;
-    FARCALL(aCheckForMobileBattleRules);
-    IF_NC goto asm_103690;
-    CALL(aJoyWaitAorB);
-    goto asm_103696;
+    // FARCALL(aMobile_AlwaysReturnNotCarry);
+    u8_flag_s res = Mobile_AlwaysReturnNotCarry();
+    // BIT_C(7);
+    // IF_Z goto asm_10369b;
+    if(bit_test(res.a, 7)){
+        // LD_HL(mMobileBattleMustPickThreeMonText);
+        // CALL(aPrintText);
+        PrintText_Conv2(MobileBattleMustPickThreeMonText);
+        // CALL(aYesNoBox);
+        // IF_C goto asm_103696;
+        if(YesNoBox_Conv()){
+            // FARCALL(aCheckForMobileBattleRules);
+            // IF_NC goto asm_103690;
+            if(!CheckForMobileBattleRules()){
+            // asm_103690:
+                // LD_A(0x01);
+                // LD_addr_A(wScriptVar);
+                wram->wScriptVar = 0x01;
+                // RET;
+                return;
+            }
+            // CALL(aJoyWaitAorB);
+            // goto asm_103696;
+            JoyWaitAorB_Conv();
+        }
 
+    // asm_103696:
+        // XOR_A_A;
+        // LD_addr_A(wScriptVar);
+        wram->wScriptVar = 0x00;
+        // RET;
+        return;
+    }
+    else {
+    // asm_10369b:
+        // LD_HL(wMobileOrCable_LastSelection);
+        // BIT_hl(7);
+        bool test = bit_test(wram->wMobileOrCable_LastSelection, 7) != 0;
+        // SET_hl(7);
+        bit_set(wram->wMobileOrCable_LastSelection, 7);
+        // IF_NZ goto asm_1036b5;
+        if(!test){
+            // LD_HL(mMobileBattleMoreInfoText);
+            // CALL(aPrintText);
+            PrintText_Conv2(MobileBattleMoreInfoText);
+            // CALL(aYesNoBox);
+            // IF_C goto asm_1036b5;
+            if(YesNoBox_Conv()){
+                // CALL(aFunction1036f9);
+                Function1036f9();
+                // CALL(aJoyWaitAorB);
+                JoyWaitAorB_Conv();
+            }
+        }
 
-asm_103690:
-    LD_A(0x01);
-    LD_addr_A(wScriptVar);
-    RET;
+        while(!Function103700()){
+        // asm_1036b5:
+            // CALL(aFunction103700);
+            // IF_C goto asm_1036f4;
+            // LD_HL(mMenuHeader_103747);
+            // CALL(aLoadMenuHeader);
+            LoadMenuHeader_Conv2(&MenuHeader_103747);
+            // CALL(aVerticalMenu);
+            bool quit = !VerticalMenu_Conv();
+            // CALL(aExitMenu);
+            ExitMenu_Conv2();
+            // IF_C goto asm_1036f4;
+            if(quit)
+                break;
+            // LD_A_addr(wMenuCursorY);
+            // CP_A(0x01);
+            // IF_Z goto asm_1036d9;
+            if(wram->wMenuCursorY == 0x01){
+            // asm_1036d9:
+                // FARCALL(aCheckForMobileBattleRules);
+                // IF_NC goto asm_1036e6;
+                if(!CheckForMobileBattleRules()){
+                // asm_1036e6:
+                    // LD_A(0x01);
+                    // LD_addr_A(wScriptVar);
+                    wram->wScriptVar = TRUE;
+                    // RET;
+                    return;
+                }
+                // CALL(aJoyWaitAorB);
+                JoyWaitAorB_Conv();
+                // goto asm_1036f4;
+                break;
+            }
+            // CP_A(0x02);
+            // IF_Z goto asm_1036f4;
+            else if(wram->wMenuCursorY == 0x02)
+                break;
+            // CP_A(0x03);
+            // IF_Z goto asm_1036ec;
+            else if(wram->wMenuCursorY == 0x03){
+            // asm_1036ec:
+                // CALL(aFunction1036f9);
+                Function1036f9();
+                // CALL(aJoyWaitAorB);
+                JoyWaitAorB_Conv();
+                // goto asm_1036b5;
+                continue;
+            }
+            // goto asm_1036b5;
+        }
 
-
-asm_103696:
-    XOR_A_A;
-    LD_addr_A(wScriptVar);
-    RET;
-
-
-asm_10369b:
-    LD_HL(wMobileOrCable_LastSelection);
-    BIT_hl(7);
-    SET_hl(7);
-    IF_NZ goto asm_1036b5;
-    LD_HL(mMobileBattleMoreInfoText);
-    CALL(aPrintText);
-    CALL(aYesNoBox);
-    IF_C goto asm_1036b5;
-    CALL(aFunction1036f9);
-    CALL(aJoyWaitAorB);
-
-
-asm_1036b5:
-    CALL(aFunction103700);
-    IF_C goto asm_1036f4;
-    LD_HL(mMenuHeader_103747);
-    CALL(aLoadMenuHeader);
-    CALL(aVerticalMenu);
-    CALL(aExitMenu);
-    IF_C goto asm_1036f4;
-    LD_A_addr(wMenuCursorY);
-    CP_A(0x01);
-    IF_Z goto asm_1036d9;
-    CP_A(0x02);
-    IF_Z goto asm_1036f4;
-    CP_A(0x03);
-    IF_Z goto asm_1036ec;
-    goto asm_1036b5;
-
-
-asm_1036d9:
-    FARCALL(aCheckForMobileBattleRules);
-    IF_NC goto asm_1036e6;
-    CALL(aJoyWaitAorB);
-    goto asm_1036f4;
-
-
-asm_1036e6:
-    LD_A(0x01);
-    LD_addr_A(wScriptVar);
-    RET;
-
-
-asm_1036ec:
-    CALL(aFunction1036f9);
-    CALL(aJoyWaitAorB);
-    goto asm_1036b5;
-
-
-asm_1036f4:
-    XOR_A_A;
-    LD_addr_A(wScriptVar);
-    RET;
-
+    // asm_1036f4:
+        // XOR_A_A;
+        // LD_addr_A(wScriptVar);
+        wram->wScriptVar = FALSE;
+        // RET;
+        return;
+    }
 }
 
+// Mobile_PrintBattleRules
 void Function1036f9(void){
-    LD_HL(mMobileBattleRulesText);
-    CALL(aPrintText);
-    RET;
-
+    // LD_HL(mMobileBattleRulesText);
+    // CALL(aPrintText);
+    PrintText_Conv2(MobileBattleRulesText);
+    // RET;
 }
 
-void Function103700(void){
-    LD_C(10);
-    LD_HL(wSwarmFlags);
-    BIT_hl(SWARMFLAGS_MOBILE_4_F);
-    IF_Z goto asm_10370f;
-    FARCALL(aMobileBattleGetRemainingTime);
+// Mobile_CheckRemainingTime
+bool Function103700(void){
+    // LD_C(10);
+    uint8_t c = 10;
+    // LD_HL(wSwarmFlags);
+    // BIT_hl(SWARMFLAGS_MOBILE_4_F);
+    // IF_Z goto asm_10370f;
+    if(bit_test(wram->wSwarmFlags, SWARMFLAGS_MOBILE_4_F)){
+        // FARCALL(aMobileBattleGetRemainingTime);
+        c = MobileBattleGetRemainingTime().b;
+    }
 
-asm_10370f:
-    LD_A_C;
-    LD_addr_A(wStringBuffer2);
-    LD_A_addr(wStringBuffer2);
-    CP_A(5);
-    IF_NC goto five_or_more_mins;
-    CP_A(2);
-    IF_NC goto two_to_five_mins;
-    CP_A(1);
-    IF_NC goto one_min;
-    goto times_up;
-
-
-five_or_more_mins:
-    LD_HL(mWouldYouLikeToMobileBattleText);
-    CALL(aPrintText);
-    AND_A_A;
-    RET;
-
-
-two_to_five_mins:
-    LD_HL(mWantAQuickMobileBattleText);
-    CALL(aPrintText);
-    AND_A_A;
-    RET;
-
-
-one_min:
-    LD_HL(mWantToRushThroughAMobileBattleText);
-    CALL(aPrintText);
-    AND_A_A;
-    RET;
-
-
-times_up:
-    LD_HL(mPleaseTryAgainTomorrowText);
-    CALL(aPrintText);
-    CALL(aJoyWaitAorB);
-    SCF;
-    RET;
-
+// asm_10370f:
+    // LD_A_C;
+    // LD_addr_A(wStringBuffer2);
+    wram->wStringBuffer2[0] = c;
+    // LD_A_addr(wStringBuffer2);
+    // CP_A(5);
+    // IF_NC goto five_or_more_mins;
+    if(c >= 5){
+    // five_or_more_mins:
+        // LD_HL(mWouldYouLikeToMobileBattleText);
+        // CALL(aPrintText);
+        PrintText_Conv2(WouldYouLikeToMobileBattleText);
+        // AND_A_A;
+        // RET;
+        return false;
+    }
+    // CP_A(2);
+    // IF_NC goto two_to_five_mins;
+    else if(c >= 2){
+    // two_to_five_mins:
+        // LD_HL(mWantAQuickMobileBattleText);
+        // CALL(aPrintText);
+        PrintText_Conv2(WantAQuickMobileBattleText);
+        // AND_A_A;
+        // RET;
+        return false;
+    }
+    // CP_A(1);
+    // IF_NC goto one_min;
+    else if(c >= 1){
+    // one_min:
+        // LD_HL(mWantToRushThroughAMobileBattleText);
+        // CALL(aPrintText);
+        PrintText_Conv2(WantToRushThroughAMobileBattleText);
+        // AND_A_A;
+        // RET;
+        return false;
+    }
+    // goto times_up;
+    else {
+    // times_up:
+        // LD_HL(mPleaseTryAgainTomorrowText);
+        // CALL(aPrintText);
+        PrintText_Conv2(PleaseTryAgainTomorrowText);
+        // CALL(aJoyWaitAorB);
+        JoyWaitAorB_Conv();
+        // SCF;
+        // RET;
+        return true;
+    }
 }
 
-void MenuHeader_103747(void){
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['13', '5', 'SCREEN_WIDTH - 1', 'TEXTBOX_Y - 1'];
+const struct MenuData MenuData_10374f = {
+    .flags = STATICMENU_CURSOR | STATICMENU_NO_TOP_SPACING,  // flags
+    .verticalMenu = {
+        .count = 3,
+        .options = (const char*[]){
+            "YES",  // "はい@"
+            "NO",   // "やめる@"
+            "INFO", // "せつめい@"
+        },
+    },
+};
+
+const struct MenuHeader MenuHeader_103747 = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(13, 5, SCREEN_WIDTH - 1, TEXTBOX_Y - 1),
     //dw ['MenuData_10374f'];
-    //db ['1'];  // default option
+    .data = &MenuData_10374f,
+    .defaultOption = 1,  // default option
+};
 
-    return MenuData_10374f();
-}
+const txt_cmd_s MobileBattleMustPickThreeMonText[] = {
+    text_far(v_MobileBattleMustPickThreeMonText)
+    text_end
+};
 
-void MenuData_10374f(void){
-    //db ['STATICMENU_CURSOR | STATICMENU_NO_TOP_SPACING'];  // flags
-    //db ['3'];
-    //db ['"はい@"'];
-    //db ['"やめる@"'];
-    //db ['"せつめい@"'];
+const txt_cmd_s MobileBattleMoreInfoText[] = {
+    text_far(v_MobileBattleMoreInfoText)
+    text_end
+};
 
-    return MobileBattleMustPickThreeMonText();
-}
+const txt_cmd_s MobileBattleRulesText[] = {
+    text_far(v_MobileBattleRulesText)
+    text_end
+};
 
-void MobileBattleMustPickThreeMonText(void){
-    //text_far ['_MobileBattleMustPickThreeMonText']
-    //text_end ['?']
+const txt_cmd_s WouldYouLikeToMobileBattleText[] = {
+    text_far(v_WouldYouLikeToMobileBattleText)
+    text_end
+};
 
-    return MobileBattleMoreInfoText();
-}
+const txt_cmd_s WantAQuickMobileBattleText[] = {
+    text_far(v_WantAQuickMobileBattleText)
+    text_end
+};
 
-void MobileBattleMoreInfoText(void){
-    //text_far ['_MobileBattleMoreInfoText']
-    //text_end ['?']
+const txt_cmd_s WantToRushThroughAMobileBattleText[] = {
+    text_far(v_WantToRushThroughAMobileBattleText)
+    text_end
+};
 
-    return MobileBattleRulesText();
-}
-
-void MobileBattleRulesText(void){
-    //text_far ['_MobileBattleRulesText']
-    //text_end ['?']
-
-    return WouldYouLikeToMobileBattleText();
-}
-
-void WouldYouLikeToMobileBattleText(void){
-    //text_far ['_WouldYouLikeToMobileBattleText']
-    //text_end ['?']
-
-    return WantAQuickMobileBattleText();
-}
-
-void WantAQuickMobileBattleText(void){
-    //text_far ['_WantAQuickMobileBattleText']
-    //text_end ['?']
-
-    return WantToRushThroughAMobileBattleText();
-}
-
-void WantToRushThroughAMobileBattleText(void){
-    //text_far ['_WantToRushThroughAMobileBattleText']
-    //text_end ['?']
-
-    return PleaseTryAgainTomorrowText();
-}
-
-void PleaseTryAgainTomorrowText(void){
-    //text_far ['_PleaseTryAgainTomorrowText']
-    //text_end ['?']
-
-    return Function103780();
-}
+const txt_cmd_s PleaseTryAgainTomorrowText[] = {
+    text_far(v_PleaseTryAgainTomorrowText)
+    text_end
+};
 
 void Function103780(void){
     LD_A_addr(wChosenCableClubRoom);

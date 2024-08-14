@@ -1,7 +1,9 @@
 #include "../../constants.h"
 #include "happiness_egg.h"
 #include "haircut.h"
+#include "../pokemon/breeding.h"
 #include "../../home/names.h"
+#include "../../home/random.h"
 
 void GetFirstPokemonHappiness(void){
     // LD_HL(wPartyMon1Happiness);
@@ -285,87 +287,119 @@ void StepHappiness(void){
     // RET;
 }
 
-void DayCareStep(void){
+static void IncBreedMonExp(uint8_t* exp){
+    if(++exp[2] != 0)
+        return;
+    if(++exp[1] != 0)
+        return;
+    uint8_t hi = ++exp[0];
+    if(hi > HIGH(MAX_DAY_CARE_EXP >> 8))
+        exp[0] = HIGH(MAX_DAY_CARE_EXP >> 8);
+}
+
 //  Raise the experience of Day-Care Pokémon every step cycle.
+void DayCareStep(void){
+    // LD_A_addr(wDayCareMan);
+    // BIT_A(DAYCAREMAN_HAS_MON_F);
+    // IF_Z goto day_care_lady;
+    if(bit_test(wram->wDayCareMan, DAYCAREMAN_HAS_MON_F)){
+        // LD_A_addr(wBreedMon1Level);  // level
+        // CP_A(MAX_LEVEL);
+        // IF_NC goto day_care_lady;
+        if(wram->wBreedMon1.level < MAX_LEVEL){
+            // LD_HL(wBreedMon1Exp + 2);  // exp
+            // INC_hl;
+            // IF_NZ goto day_care_lady;
+            // DEC_HL;
+            // INC_hl;
+            // IF_NZ goto day_care_lady;
+            // DEC_HL;
+            // INC_hl;
+            // LD_A_hl;
+            // CP_A(HIGH(MAX_DAY_CARE_EXP >> 8));
+            // IF_C goto day_care_lady;
+            // LD_A(HIGH(MAX_DAY_CARE_EXP >> 8));
+            // LD_hl_A;
+            IncBreedMonExp(wram->wBreedMon1.exp);
+        }
+    }
 
-    LD_A_addr(wDayCareMan);
-    BIT_A(DAYCAREMAN_HAS_MON_F);
-    IF_Z goto day_care_lady;
+// day_care_lady:
+    // LD_A_addr(wDayCareLady);
+    // BIT_A(DAYCARELADY_HAS_MON_F);
+    // IF_Z goto check_egg;
+    if(bit_test(wram->wDayCareLady, DAYCARELADY_HAS_MON_F)){
+        // LD_A_addr(wBreedMon2Level);  // level
+        // CP_A(MAX_LEVEL);
+        // IF_NC goto check_egg;
+        if(wram->wBreedMon2.level < MAX_LEVEL){
+            // LD_HL(wBreedMon2Exp + 2);  // exp
+            // INC_hl;
+            // IF_NZ goto check_egg;
+            // DEC_HL;
+            // INC_hl;
+            // IF_NZ goto check_egg;
+            // DEC_HL;
+            // INC_hl;
+            // LD_A_hl;
+            // CP_A(HIGH(MAX_DAY_CARE_EXP >> 8));
+            // IF_C goto check_egg;
+            // LD_A(HIGH(MAX_DAY_CARE_EXP >> 8));
+            // LD_hl_A;
+            IncBreedMonExp(wram->wBreedMon2.exp);
+        }
+    }
 
-    LD_A_addr(wBreedMon1Level);  // level
-    CP_A(MAX_LEVEL);
-    IF_NC goto day_care_lady;
-    LD_HL(wBreedMon1Exp + 2);  // exp
-    INC_hl;
-    IF_NZ goto day_care_lady;
-    DEC_HL;
-    INC_hl;
-    IF_NZ goto day_care_lady;
-    DEC_HL;
-    INC_hl;
-    LD_A_hl;
-    CP_A(HIGH(MAX_DAY_CARE_EXP >> 8));
-    IF_C goto day_care_lady;
-    LD_A(HIGH(MAX_DAY_CARE_EXP >> 8));
-    LD_hl_A;
+// check_egg:
+    // LD_HL(wDayCareMan);
+    // BIT_hl(DAYCAREMAN_MONS_COMPATIBLE_F);
+    // RET_Z ;
+    if(!bit_test(wram->wDayCareMan, DAYCAREMAN_MONS_COMPATIBLE_F))
+        return;
+    // LD_HL(wStepsToEgg);
+    // DEC_hl;
+    // RET_NZ ;
+    if(--wram->wStepsToEgg != 0)
+        return;
 
+    // CALL(aRandom);
+    // LD_hl_A;
+    wram->wStepsToEgg = Random_Conv();
+    // CALLFAR(aCheckBreedmonCompatibility);
+    // LD_A_addr(wBreedingCompatibility);
+    uint8_t b;
+    uint8_t compat = CheckBreedmonCompatibility_Conv();
+    // CP_A(230);
+    // LD_B(31 percent + 1);
+    // IF_NC goto okay;
+    if(compat >= 230)
+        b = 31 percent + 1;
+    // LD_A_addr(wBreedingCompatibility);
+    // CP_A(170);
+    // LD_B(16 percent);
+    // IF_NC goto okay;
+    else if(compat >= 170)
+        b = 16 percent;
+    // LD_A_addr(wBreedingCompatibility);
+    // CP_A(110);
+    // LD_B(12 percent);
+    // IF_NC goto okay;
+    else if(compat >= 110)
+        b = 12 percent;
+    // LD_B(4 percent);
+    else
+        b = 4 percent;
 
-day_care_lady:
-    LD_A_addr(wDayCareLady);
-    BIT_A(DAYCARELADY_HAS_MON_F);
-    IF_Z goto check_egg;
-
-    LD_A_addr(wBreedMon2Level);  // level
-    CP_A(MAX_LEVEL);
-    IF_NC goto check_egg;
-    LD_HL(wBreedMon2Exp + 2);  // exp
-    INC_hl;
-    IF_NZ goto check_egg;
-    DEC_HL;
-    INC_hl;
-    IF_NZ goto check_egg;
-    DEC_HL;
-    INC_hl;
-    LD_A_hl;
-    CP_A(HIGH(MAX_DAY_CARE_EXP >> 8));
-    IF_C goto check_egg;
-    LD_A(HIGH(MAX_DAY_CARE_EXP >> 8));
-    LD_hl_A;
-
-
-check_egg:
-    LD_HL(wDayCareMan);
-    BIT_hl(DAYCAREMAN_MONS_COMPATIBLE_F);
-    RET_Z ;
-    LD_HL(wStepsToEgg);
-    DEC_hl;
-    RET_NZ ;
-
-    CALL(aRandom);
-    LD_hl_A;
-    CALLFAR(aCheckBreedmonCompatibility);
-    LD_A_addr(wBreedingCompatibility);
-    CP_A(230);
-    LD_B(31 percent + 1);
-    IF_NC goto okay;
-    LD_A_addr(wBreedingCompatibility);
-    CP_A(170);
-    LD_B(16 percent);
-    IF_NC goto okay;
-    LD_A_addr(wBreedingCompatibility);
-    CP_A(110);
-    LD_B(12 percent);
-    IF_NC goto okay;
-    LD_B(4 percent);
-
-
-okay:
-    CALL(aRandom);
-    CP_A_B;
-    RET_NC ;
-    LD_HL(wDayCareMan);
-    RES_hl(DAYCAREMAN_MONS_COMPATIBLE_F);
-    SET_hl(DAYCAREMAN_HAS_EGG_F);
-    RET;
-
+// okay:
+    // CALL(aRandom);
+    // CP_A_B;
+    // RET_NC ;
+    if(Random_Conv() < b){
+        // LD_HL(wDayCareMan);
+        // RES_hl(DAYCAREMAN_MONS_COMPATIBLE_F);
+        bit_reset(wram->wDayCareMan, DAYCAREMAN_MONS_COMPATIBLE_F);
+        // SET_hl(DAYCAREMAN_HAS_EGG_F);
+        bit_set(wram->wDayCareMan, DAYCAREMAN_HAS_EGG_F);
+        // RET;
+    }
 }

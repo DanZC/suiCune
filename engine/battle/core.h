@@ -173,7 +173,7 @@ void HandleHealingItems(void);
 void HandleHPHealingItem(void);
 void UseOpponentItem(void);
 void ItemRecoveryAnim(void);
-void UseHeldStatusHealingItem(void);
+bool UseHeldStatusHealingItem(void);
 void UseConfusionHealingItem(void);
 void HandleStatBoostingHeldItems(void);
 void GetPartymonItem(void);

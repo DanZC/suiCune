@@ -381,6 +381,8 @@ const uint8_t MovementData_BattleTower1FWalkToElevator[] = {
     step(UP),
     step(UP),
     step(UP),
+    step(UP),
+    movement_step_end,
 };
 const uint8_t MovementData_BattleTowerHallwayPlayerEntersBattleRoom[] = {
     step(UP),
@@ -393,6 +395,12 @@ const uint8_t MovementData_BattleTowerElevatorExitElevator[] = {
 const uint8_t MovementData_BattleTowerHallwayWalkTo1020Room[] = {
     step(RIGHT),
     step(RIGHT),
+    step(RIGHT),
+    step(RIGHT),
+    step(UP),
+    step(RIGHT),
+    turn_head(LEFT),
+    movement_step_end,
 };
 const uint8_t MovementData_BattleTowerHallwayWalkTo3040Room[] = {
     step(RIGHT),
@@ -405,10 +413,24 @@ const uint8_t MovementData_BattleTowerHallwayWalkTo3040Room[] = {
 const uint8_t MovementData_BattleTowerHallwayWalkTo90100Room[] = {
     step(LEFT),
     step(LEFT),
+    step(LEFT),
+    step(LEFT),
+    step(LEFT),
+    step(LEFT),
+    step(UP),
+    step(LEFT),
+    turn_head(RIGHT),
+    movement_step_end,
 };
 const uint8_t MovementData_BattleTowerHallwayWalkTo7080Room[] = {
     step(LEFT),
     step(LEFT),
+    step(LEFT),
+    step(LEFT),
+    step(UP),
+    step(LEFT),
+    turn_head(RIGHT),
+    movement_step_end,
 };
 const uint8_t MovementData_BattleTowerHallwayWalkTo5060Room[] = {
     step(LEFT),

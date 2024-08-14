@@ -24,6 +24,7 @@ skip_files = [
     'data/text/mail_input_chars.asm',
     'data/trainers/party_pointers.asm',
     'data/wild/swarm_water.asm',
+    'data/predef_pointers.asm',
     'data/sgb_ctrl_packets.asm',
     'data/text_buffers.asm',
     'engine/battle/battlestart_copytilemapatonce.asm',

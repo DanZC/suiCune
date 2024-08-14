@@ -103,7 +103,7 @@ static void RefreshSprites_Refresh(void) {
     // CALL(aAddMapSprites);
     AddMapSprites_Conv();
     // CALL(aLoadAndSortSprites);
-    SafeCallGBAuto(aLoadAndSortSprites);
+    LoadAndSortSprites_Conv();
     // RET;
 }
 
@@ -762,10 +762,11 @@ void LoadAndSortSprites(void){
 void LoadAndSortSprites_Conv(void){
     // CALL(aLoadSpriteGFX);
     LoadSpriteGFX_Conv();
-    CALL(aSortUsedSprites);
-    CALL(aArrangeUsedSprites);
-    RET;
-
+    // CALL(aSortUsedSprites);
+    SortUsedSprites_Conv();
+    // CALL(aArrangeUsedSprites);
+    ArrangeUsedSprites_Conv();
+    // RET;
 }
 
 void AddSpriteGFX(void){
@@ -1010,6 +1011,107 @@ quit:
 
 }
 
+//  Bubble-sort sprites by type.
+void SortUsedSprites_Conv(void){
+//  Run backwards through wUsedSprites to find the last one.
+    // LD_C(SPRITE_GFX_LIST_CAPACITY);
+    uint8_t c = SPRITE_GFX_LIST_CAPACITY;
+    // LD_DE(wUsedSprites + (SPRITE_GFX_LIST_CAPACITY - 1) * 2);
+    uint8_t* de = wram->wUsedSprites + (SPRITE_GFX_LIST_CAPACITY - 1) * 2;
+
+    do {
+    // FindLastSprite:
+        // LD_A_de;
+        // AND_A_A;
+        // IF_NZ goto FoundLastSprite;
+        if(*de != 0)
+            break;
+        // DEC_DE;
+        // DEC_DE;
+        de -= 2;
+        // DEC_C;
+        // IF_NZ goto FindLastSprite;
+    } while(--c != 0);
+
+// FoundLastSprite:
+    // DEC_C;
+    // IF_Z goto quit;
+    if(--c == 0)
+        return;
+
+//  If the length of the current sprite is
+//  higher than a later one, swap them.
+
+    // INC_DE;
+    de++;
+    // LD_HL(wUsedSprites + 1);
+    uint8_t* hl = wram->wUsedSprites + 1;
+
+    do {
+    // CheckSprite:
+        // PUSH_BC;
+        uint8_t c2 = c;
+        // PUSH_DE;
+        uint8_t* de2 = de;
+        // PUSH_HL;
+        uint8_t* hl2 = hl;
+
+        do {
+        // CheckFollowing:
+            // LD_A_de;
+            // CP_A_hl;
+            // IF_NC goto loop;
+
+        //  Swap the two sprites.
+            if(*de2 < *hl2){
+                // LD_B_A;
+                uint8_t temp = *hl2;
+                // LD_A_hl;
+                // LD_hl_B;
+                *hl2 = *de2;
+                // LD_de_A;
+                *de2 = temp;
+                // DEC_DE;
+                --de2;
+                // DEC_HL;
+                --hl2;
+                // LD_A_de;
+                // LD_B_A;
+                // LD_A_hl;
+                temp = *hl2;
+                // LD_hl_B;
+                *hl2 = *de2;
+                // LD_de_A;
+                *de2 = temp;
+                // INC_DE;
+                ++de2;
+                // INC_HL;
+                ++hl2;
+            }
+        //  Keep doing this until everything's in order.
+
+        // loop:
+            // DEC_DE;
+            // DEC_DE;
+            de2 -= 2;
+            // DEC_C;
+            // IF_NZ goto CheckFollowing;
+        } while(--c2 != 0);
+
+        // POP_HL;
+        // INC_HL;
+        // INC_HL;
+        hl += 2;
+        // POP_DE;
+        // POP_BC;
+        // DEC_C;
+        // IF_NZ goto CheckSprite;
+    } while(--c != 0);
+
+// quit:
+    // RET;
+}
+
 void ArrangeUsedSprites(void){
 //  Get the length of each sprite and space them out in VRAM.
 //  Crystal introduces a second table in VRAM bank 0.
@@ -1073,6 +1175,95 @@ SecondTableLength:
 quit:
     RET;
 
+}
+
+//  Get the length of each sprite and space them out in VRAM.
+//  Crystal introduces a second table in VRAM bank 0.
+void ArrangeUsedSprites_Conv(void){
+    // LD_HL(wUsedSprites);
+    uint8_t* hl = wram->wUsedSprites;
+    // LD_C(SPRITE_GFX_LIST_CAPACITY);
+    uint8_t c = SPRITE_GFX_LIST_CAPACITY;
+    // LD_B(0);
+    uint8_t b = 0;
+
+    do {
+    // FirstTableLength:
+    //  Keep going until the end of the list.
+        // LD_A_hli;
+        // AND_A_A;
+        // IF_Z goto quit;
+        if(*hl == 0)
+            return;
+
+        hl++;
+        // LD_A_hl;
+        // CALL(aGetSpriteLength);
+        uint8_t a = GetSpriteLength_Conv(*hl);
+
+    //  Spill over into the second table after $80 tiles.
+        // ADD_A_B;
+        // CP_A(0x80);
+        // IF_Z goto loop;
+        // IF_NC goto SecondTable;
+        if(a + b > 0x80)
+            break;
+
+        // printf("1: %d, %d, %d\n", *hl, a, b);
+    // loop:
+        // LD_hl_B;
+        *hl = b;
+        // INC_HL;
+        hl++;
+        // LD_B_A;
+        b += a;
+
+    //  Assumes the next table will be reached before c hits 0.
+        // DEC_C;
+        // IF_NZ goto FirstTableLength;
+    } while(--c != 0);
+
+// SecondTable:
+//  The second tile table starts at tile $80.
+    // LD_B(0x80);
+    b = 0x80;
+    // DEC_HL;
+    --hl;
+
+    do {
+    // SecondTableLength:
+    //  Keep going until the end of the list.
+        // LD_A_hli;
+        // AND_A_A;
+        // IF_Z goto quit;
+        if(*hl == 0)
+            return;
+
+        hl++;
+        // LD_A_hl;
+        // CALL(aGetSpriteLength);
+        uint8_t a = GetSpriteLength_Conv(*hl);
+
+    //  There are only two tables, so don't go any further than that.
+        // ADD_A_B;
+        // IF_C goto quit;
+        if(a + b > 255)
+            return;
+
+        // printf("2: %d, %d, %d\n", *hl, a, b);
+        // LD_hl_B;
+        *hl = b;
+        // LD_B_A;
+        b += a;
+        // INC_HL;
+        hl++;
+
+        // DEC_C;
+        // IF_NZ goto SecondTableLength;
+    } while(--c != 0);
+
+// quit:
+    // RET;
 }
 
 void GetSpriteLength(void){

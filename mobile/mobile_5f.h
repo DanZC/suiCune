@@ -18,10 +18,10 @@ bool CheckStringContainsLessThanBNextCharacters_Conv(const uint8_t* de, uint8_t 
 void Function17d1f1(void);
 void Menu_ChallengeExplanationCancel(void);
 void Function17d246(void);
-void MenuHeader_17d26a(void);
-void MenuData_17d272(void);
-void MenuHeader_ChallengeExplanationCancel(void);
-void MenuData_ChallengeExplanationCancel(void);
+extern const struct MenuHeader MenuHeader_17d26a;
+extern const struct MenuData MenuData_17d272;
+extern const struct MenuHeader MenuHeader_ChallengeExplanationCancel;
+extern const struct MenuData MenuData_ChallengeExplanationCancel;
 void Function17d2b6(void);
 void Function17d2c0(void);
 void Function17d2ce(void);

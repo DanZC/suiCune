@@ -1,6 +1,7 @@
 #include "../constants.h"
 #include "mobile_5f.h"
 #include "../charmap.h"
+#include "../home/menu.h"
 
 void Function17c000(void){
     CALL(aDisableLCD);
@@ -626,6 +627,7 @@ void Function17d1f1(void){
 
 asm_17d223:
     RET;
+}
 
 //
 //  Parameter: [wScriptVar] = 0..1
@@ -636,101 +638,113 @@ asm_17d223:
 //  if [wScriptVar] == TRUE
 //     Show BattleTower-Menu with 3 options in english language
 //     - Challenge - Explanation - Cancel
-    return Menu_ChallengeExplanationCancel();
-}
-
 void Menu_ChallengeExplanationCancel(void){
-    LD_A_addr(wScriptVar);
-    AND_A_A;
-    IF_NZ goto English;
-    LD_A(0x4);
-    LD_addr_A(wScriptVar);
-    LD_HL(mMenuHeader_17d26a);  // Japanese Menu, where you can choose 'News' as an option
-    goto Load_Interpret;
+    // LD_A_addr(wScriptVar);
+    // AND_A_A;
+    // IF_NZ goto English;
+    if(wram->wScriptVar == 0x0){
+        // LD_A(0x4);
+        // LD_addr_A(wScriptVar);
+        wram->wScriptVar = 0x4;
+        // LD_HL(mMenuHeader_17d26a);  // Japanese Menu, where you can choose 'News' as an option
+        LoadMenuHeader_Conv2(&MenuHeader_17d26a);
+        // goto Load_Interpret;
+    }
+    else {
+    // English:
+        // LD_A(0x4);
+        // LD_addr_A(wScriptVar);
+        wram->wScriptVar = 0x4;
+        // LD_HL(mMenuHeader_ChallengeExplanationCancel);  // English Menu
+        LoadMenuHeader_Conv2(&MenuHeader_ChallengeExplanationCancel);
+    }
 
-
-English:
-    LD_A(0x4);
-    LD_addr_A(wScriptVar);
-    LD_HL(mMenuHeader_ChallengeExplanationCancel);  // English Menu
-
-
-Load_Interpret:
-    CALL(aLoadMenuHeader);
-    CALL(aFunction17d246);
-    CALL(aCloseWindow);
-    RET;
-
+// Load_Interpret:
+    // CALL(aLoadMenuHeader);
+    // CALL(aFunction17d246);
+    Function17d246();
+    // CALL(aCloseWindow);
+    CloseWindow_Conv2();
+    // RET;
 }
 
+// Mobile_RunChallengeExplanationMenu
 void Function17d246(void){
-    CALL(aVerticalMenu);
-    IF_C goto Exit;
-    LD_A_addr(wScriptVar);
-    CP_A(0x5);
-    IF_NZ goto UsewMenuCursorY;
-    LD_A_addr(wMenuCursorY);
-    CP_A(0x3);
-    RET_Z ;
-    IF_C goto UsewMenuCursorY;
-    DEC_A;
-    goto LoadToScriptVar;
+    // CALL(aVerticalMenu);
+    // IF_C goto Exit;
+    if(!VerticalMenu_Conv()){
+    // Exit:
+        // LD_A(0x4);
+        // LD_addr_A(wScriptVar);
+        wram->wScriptVar = 0x4;
+        // RET;
+        return;
+    }
+    // LD_A_addr(wScriptVar);
+    // CP_A(0x5);
+    // IF_NZ goto UsewMenuCursorY;
+    if(wram->wScriptVar == 0x5){
+        // LD_A_addr(wMenuCursorY);
+        // CP_A(0x3);
+        // RET_Z ;
+        if(wram->wMenuCursorY == 0x3)
+            return;
+        // IF_C goto UsewMenuCursorY;
+        if(wram->wMenuCursorY > 0x3){
+            // DEC_A;
+            // goto LoadToScriptVar;
+            wram->wScriptVar = wram->wMenuCursorY - 1;
+            return;
+        }
+    }
 
+// UsewMenuCursorY:
+    // LD_A_addr(wMenuCursorY);
 
-UsewMenuCursorY:
-    LD_A_addr(wMenuCursorY);
-
-
-LoadToScriptVar:
-    LD_addr_A(wScriptVar);
-    RET;
-
-
-Exit:
-    LD_A(0x4);
-    LD_addr_A(wScriptVar);
-    RET;
-
+// LoadToScriptVar:
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = wram->wMenuCursorY;
+    // RET;
 }
 
-void MenuHeader_17d26a(void){
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['0', '0', '14', '9'];
-    //dw ['MenuData_17d272'];
-    //db ['1'];  // default option
+const struct MenuHeader MenuHeader_17d26a = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(0, 0, 14, 9),
+    .data = &MenuData_17d272,
+    .defaultOption = 1,  // default option
+};
 
-    return MenuData_17d272();
-}
+const struct MenuData MenuData_17d272 = {
+    .flags = STATICMENU_CURSOR | STATICMENU_WRAP,  // flags
+    .verticalMenu = {
+        .count = 4,
+        .options = (const char*[]){
+            "NEWS", //db ['"ニュース¯よみこむ@"'];
+            "NEWS", //db ['"ニュース¯みる@"'];
+            "INFO", //db ['"せつめい@"'];
+            "CANCEL", //db ['"やめる@"'];
+        },
+    },
+};
 
-void MenuData_17d272(void){
-    //db ['STATICMENU_CURSOR | STATICMENU_WRAP'];  // flags
-    //db ['4'];
-    //db ['"ニュース¯よみこむ@"'];
-    //db ['"ニュース¯みる@"'];
-    //db ['"せつめい@"'];
-    //db ['"やめる@"'];
+const struct MenuHeader MenuHeader_ChallengeExplanationCancel = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(0, 0, 14, 7),
+    .data = &MenuData_ChallengeExplanationCancel,
+    .defaultOption = 1,  // default option
+};
 
-    return MenuHeader_ChallengeExplanationCancel();
-}
-
-void MenuHeader_ChallengeExplanationCancel(void){
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['0', '0', '14', '7'];
-    //dw ['MenuData_ChallengeExplanationCancel'];
-    //db ['1'];  // default option
-
-    return MenuData_ChallengeExplanationCancel();
-}
-
-void MenuData_ChallengeExplanationCancel(void){
-    //db ['STATICMENU_CURSOR | STATICMENU_WRAP'];  // flags
-    //db ['3'];
-    //db ['"Challenge@"'];
-    //db ['"Explanation@"'];
-    //db ['"Cancel@"'];
-
-    return Function17d2b6();
-}
+const struct MenuData MenuData_ChallengeExplanationCancel = {
+    .flags = STATICMENU_CURSOR | STATICMENU_WRAP,  // flags
+    .verticalMenu = {
+        .count = 3,
+        .options = (const char*[]){
+            "Challenge@",
+            "Explanation@",
+            "Cancel@",
+        },
+    },
+};
 
 void Function17d2b6(void){
     CALL(aFunction17d2c0);

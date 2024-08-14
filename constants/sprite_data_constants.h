@@ -10,7 +10,7 @@ enum {
 
 // sprite types
 enum {
-    WALKING_SPRITE,  // 1
+    WALKING_SPRITE = 1,  // 1
     STANDING_SPRITE, // 2
     STILL_SPRITE,    // 3
 };

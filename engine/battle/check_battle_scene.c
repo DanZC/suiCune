@@ -5,8 +5,7 @@
 
 // Returns false if battle scene is turned off.
 bool CheckBattleScene_Conv(void) {
-    uint8_t linkMode = GetFarWRAMByte_Conv(MBANK(awLinkMode), wLinkMode);
-    if(linkMode == LINK_MOBILE) {
+    if(wram->wLinkMode == LINK_MOBILE) {
         if(gb_read(wcd2f) != 0) {
             return bit_test(GetFarWRAMByte_Conv(MBANK(aw5_dc00), w5_dc00), 0);
         }

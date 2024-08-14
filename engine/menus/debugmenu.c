@@ -23,6 +23,7 @@
 #include "../pokemon/stats_screen.h"
 #include "../phone/phone.h"
 #include "../battle/core.h"
+#include "../battle_anims/anim_commands.h"
 #include "../link/link.h"
 #include "../link/link_trade.h"
 #include "../link/mystery_gift.h"
@@ -993,7 +994,7 @@ void DebugMenu_BattleAnim(void) {
             }
             wram->wNumHits = 1;
             WaitBGMap_Conv();
-            SafeCallGBAuto(aPlayBattleAnim);
+            PlayBattleAnim();
             FinishBattleAnim();
             EmptyBattleTextbox();
             DebugMenu_BattleAnim_PlaceText(anim);

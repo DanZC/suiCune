@@ -766,7 +766,7 @@ void init_function_pointers(void) {
     //REDIRECTED(GameInit);
 
     // engine/menus/savemenu_copytilemapatonce.c
-    REDIRECTED(SaveMenu_CopyTilemapAtOnce);
+    CONVERTED(SaveMenu_CopyTilemapAtOnce);
     REDIRECTED(SaveMenu_CopyTilemapAtOnce_CopyBGMapViaStack);
 
     // engine/overworld/map_objects.c

@@ -7466,24 +7466,34 @@ void InitEnemyMon(void){
 }
 
 void SwitchPlayerMon(void){
-    CALL(aClearSprites);
-    LD_A_addr(wCurBattleMon);
-    LD_addr_A(wLastPlayerMon);
-    LD_A_addr(wCurPartyMon);
-    LD_addr_A(wCurBattleMon);
-    CALL(aAddBattleParticipant);
-    CALL(aInitBattleMon);
-    CALL(aResetPlayerStatLevels);
-    CALL(aNewBattleMonStatus);
-    CALL(aBreakAttraction);
-    CALL(aSendOutPlayerMon);
-    CALL(aEmptyBattleTextbox);
-    CALL(aLoadTilemapToTempTilemap);
-    LD_HL(wEnemyMonHP);
-    LD_A_hli;
-    OR_A_hl;
-    RET;
-
+    // CALL(aClearSprites);
+    ClearSprites_Conv();
+    // LD_A_addr(wCurBattleMon);
+    // LD_addr_A(wLastPlayerMon);
+    wram->wLastPlayerMon = wram->wCurBattleMon;
+    // LD_A_addr(wCurPartyMon);
+    // LD_addr_A(wCurBattleMon);
+    wram->wCurBattleMon = wram->wCurPartyMon;
+    // CALL(aAddBattleParticipant);
+    AddBattleParticipant();
+    // CALL(aInitBattleMon);
+    InitBattleMon();
+    // CALL(aResetPlayerStatLevels);
+    ResetPlayerStatLevels();
+    // CALL(aNewBattleMonStatus);
+    NewBattleMonStatus();
+    // CALL(aBreakAttraction);
+    BreakAttraction();
+    // CALL(aSendOutPlayerMon);
+    SendOutPlayerMon();
+    // CALL(aEmptyBattleTextbox);
+    EmptyBattleTextbox();
+    // CALL(aLoadTilemapToTempTilemap);
+    LoadTilemapToTempTilemap_Conv();
+    // LD_HL(wEnemyMonHP);
+    // LD_A_hli;
+    // OR_A_hl;
+    // RET;
 }
 
 void SendOutPlayerMon(void){
@@ -8019,7 +8029,7 @@ void ItemRecoveryAnim(void){
     // RET;
 }
 
-void UseHeldStatusHealingItem(void){
+bool UseHeldStatusHealingItem(void){
     // CALLFAR(aGetOpponentItem);
     uint16_t item_effect = GetOpponentItem_Conv(NULL);
     // LD_HL(mHeldStatusHealingEffects);
@@ -8033,7 +8043,7 @@ void UseHeldStatusHealingItem(void){
         // CP_A(0xff);
         // RET_Z ;
         if(a == 0xff)
-            return;
+            return false;
         // INC_HL;
         hl++;
         // CP_A_B;
@@ -8049,7 +8059,7 @@ void UseHeldStatusHealingItem(void){
     // AND_A_B;
     // RET_Z ;
     if((*stat & b) == 0)
-        return;
+        return false;
     // XOR_A_A;
     // LD_hl_A;
     *stat = 0;
@@ -8106,7 +8116,7 @@ void UseHeldStatusHealingItem(void){
     // LD_A(0x1);
     // AND_A_A;
     // RET;
-
+    return true;
 // INCLUDE "data/battle/held_heal_status.asm"
 
 }

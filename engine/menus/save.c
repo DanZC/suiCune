@@ -1,6 +1,7 @@
 #include "../../constants.h"
 #include "save.h"
 #include "intro_menu.h"
+#include "savemenu_copytilemapatonce.h"
 #include "../../home/text.h"
 #include "../../home/delay.h"
 #include "../../home/audio.h"
@@ -54,7 +55,7 @@ bool SaveMenu(void){
     // CALL(aUpdateSprites);
     UpdateSprites_Conv();
     // FARCALL(aSaveMenu_CopyTilemapAtOnce);
-    SafeCallGBAuto(aSaveMenu_CopyTilemapAtOnce);
+    SaveMenu_CopyTilemapAtOnce();
     // LD_HL(mWouldYouLikeToSaveTheGameText);
     // CALL(aSaveTheGame_yesorno);
     // IF_NZ goto refused;
@@ -81,7 +82,7 @@ bool SaveMenu(void){
     ExitMenu_Conv2();
     // CALL(aGSReloadPalettes);
     // FARCALL(aSaveMenu_CopyTilemapAtOnce);
-    SafeCallGBAuto(aSaveMenu_CopyTilemapAtOnce);
+    SaveMenu_CopyTilemapAtOnce();
     // SCF;
     // RET;
     return false;

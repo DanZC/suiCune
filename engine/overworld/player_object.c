@@ -1532,14 +1532,14 @@ static u8_flag_s QueueFollowerFirstStep_QueueFirstStep(void) {
         // LD_A_E;
         // CP_A_hl;
         // IF_Z goto same_xy;
-        if(e == follower->nextMapX) {
+        if(e == follower->nextMapY) {
         // same_xy:
             // SCF;
             // RET;
             return u8_flag(e, true);
         }
         // IF_C goto up;
-        else if(e < follower->nextMapX) {
+        else if(e < follower->nextMapY) {
         // up:
             // AND_A_A;
             // LD_A(movement_step + UP);

@@ -2100,7 +2100,7 @@ u8_flag_s CountStep_Conv(void){
 // skip_egg:
 // Increase the EXP of (both) DayCare Pokemon by 1.
     // FARCALL(aDayCareStep);
-    SafeCallGBAuto(aDayCareStep);
+    DayCareStep();
 
 // Every 4 steps, deal damage to all poisoned Pokemon.
     // LD_HL(wPoisonStepCount);

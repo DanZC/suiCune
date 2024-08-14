@@ -5941,10 +5941,9 @@ void BattleCommand_SleepTarget(void){
     StdBattleTextbox_Conv2(FellAsleepText);
 
     // FARCALL(aUseHeldStatusHealingItem);
-    struct cpu_registers_s regs = SafeCallGBAutoRet(aUseHeldStatusHealingItem);
 
     // JP_Z (mOpponentCantMove);
-    if(regs.f_bits.z)
+    if(!UseHeldStatusHealingItem())
         return OpponentCantMove();
     // RET;
     return;
@@ -6005,7 +6004,7 @@ void BattleCommand_PoisonTarget(void){
     StdBattleTextbox_Conv2(WasPoisonedText);
 
     // FARCALL(aUseHeldStatusHealingItem);
-    SafeCallGBAuto(aUseHeldStatusHealingItem);
+    UseHeldStatusHealingItem();
     // RET;
 }
 
@@ -6186,7 +6185,7 @@ void BattleCommand_Poison(void){
 
 // finished:
     // FARCALL(aUseHeldStatusHealingItem);
-    SafeCallGBAuto(aUseHeldStatusHealingItem);
+    UseHeldStatusHealingItem();
     // RET;
     return;
 
@@ -6467,7 +6466,7 @@ void BattleCommand_BurnTarget(void){
     StdBattleTextbox_Conv2(WasBurnedText);
 
     // FARCALL(aUseHeldStatusHealingItem);
-    SafeCallGBAuto(aUseHeldStatusHealingItem);
+    UseHeldStatusHealingItem();
     // RET;
 }
 
@@ -6597,8 +6596,7 @@ void BattleCommand_FreezeTarget(void){
 
     // FARCALL(aUseHeldStatusHealingItem);
     // RET_NZ ;
-    struct cpu_registers_s regs = SafeCallGBAutoRet(aUseHeldStatusHealingItem);
-    if(!regs.f_bits.z)
+    if(UseHeldStatusHealingItem())
         return;
 
     // CALL(aOpponentCantMove);
@@ -6674,7 +6672,7 @@ void BattleCommand_ParalyzeTarget(void){
     PrintParalyze();
     // LD_HL(mUseHeldStatusHealingItem);
     // JP(mCallBattleCore);
-    SafeCallGBAuto(aUseHeldStatusHealingItem);
+    UseHeldStatusHealingItem();
 }
 
 void BattleCommand_AttackUp(void){
@@ -8592,7 +8590,8 @@ void BattleCommand_ForceSwitch(void){
             wram->wCurPartyMon = a;
             // LD_HL(mSwitchPlayerMon);
             // CALL(aCallBattleCore);
-            SafeCallGBAuto(aSwitchPlayerMon);
+            // SafeCallGBAuto(aSwitchPlayerMon);
+            SwitchPlayerMon();
 
             // LD_HL(mDraggedOutText);
             // CALL(aStdBattleTextbox);
@@ -11283,7 +11282,7 @@ void PlayUserBattleAnim_Conv(void){
     // PUSH_DE;
     // PUSH_BC;
     // CALLFAR(aPlayBattleAnim);
-    SafeCallGBAuto(aPlayBattleAnim);
+    PlayBattleAnim();
     // POP_BC;
     // POP_DE;
     // POP_HL;
@@ -11330,7 +11329,7 @@ void PlayOpponentBattleAnim_Conv(uint16_t de){
     BattleCommand_SwitchTurn();
 
     // CALLFAR(aPlayBattleAnim);
-    SafeCallGBAuto(aPlayBattleAnim);
+    PlayBattleAnim();
 
     // CALL(aBattleCommand_SwitchTurn);
     BattleCommand_SwitchTurn();

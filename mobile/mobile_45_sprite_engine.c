@@ -464,19 +464,19 @@ void Function11619d(void){
     // RET;
 }
 
+// Mobile connection animation?
 void Function1161b8(void){
     //jumptable ['.Jumptable', 'wc319']
-
-
-Jumptable:
-    //dw ['Function1161d5'];
-    //dw ['Function116294'];
-    //dw ['Function1162cb'];
-    //dw ['Function1162f2'];
-    //dw ['Function1163c0'];
-    //dw ['Function11636e'];
-    //dw ['Function116441'];
-
+    switch(wram->wc319){
+    // Jumptable:
+        //dw ['Function1161d5'];
+        //dw ['Function116294'];
+        //dw ['Function1162cb'];
+        //dw ['Function1162f2'];
+        //dw ['Function1163c0'];
+        //dw ['Function11636e'];
+        //dw ['Function116441'];
+    }
     return Function1161d5();
 }
 

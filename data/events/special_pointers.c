@@ -46,8 +46,10 @@
 #include "../../engine/pokemon/search.h"
 #include "../../home/time_palettes.h"
 #include "../../home/audio.h"
+#include "../../mobile/mobile_40.h"
 #include "../../mobile/mobile_41.h"
 #include "../../mobile/mobile_45_stadium.h"
+#include "../../mobile/mobile_5f.h"
 
 #define add_special(_n) [SP_##_n] = _n
 
@@ -172,7 +174,7 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(Function11b879),
     // add_special(Function11b920),
     // add_special(Function11b93b),
-    // add_special(BattleTowerRoomMenu),
+    add_special(BattleTowerRoomMenu),
     // add_special(Function1700ba),
     // add_special(Function170114),
     add_special(BattleTowerBattle),
@@ -192,11 +194,11 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(Function11c1ab),
     add_special(BattleTowerAction),
     add_special(DisplayUnownWords),
-    // add_special(Menu_ChallengeExplanationCancel),
+    add_special(Menu_ChallengeExplanationCancel),
     // add_special(Function17d2b6),
     // add_special(Function17d2ce),
     // add_special(BattleTowerMobileError),
-    // add_special(AskMobileOrCable),
+    add_special(AskMobileOrCable),
     add_special(HoOhChamber),
     // add_special(Function102142),
     add_special(CelebiShrineEvent),
@@ -210,7 +212,7 @@ void (*const SpecialsPointers[])(void) = {
     add_special(MonCheck),
     add_special(SetPlayerPalette),
     // add_special(UnusedBattleTowerDummySpecial2),
-    // add_special(Mobile_SelectThreeMons),
+    add_special(Mobile_SelectThreeMons),
     // add_special(Function1037eb),
     // add_special(Function10383c),
     add_special(StubbedTrainerRankings_Healings),

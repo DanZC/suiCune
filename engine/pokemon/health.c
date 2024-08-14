@@ -262,7 +262,6 @@ void AnimateHPBar_Conv(tile_t* hl, uint8_t which){
     // CALL(aWaitBGMap);
     WaitBGMap_Conv();
     // CALL(av_AnimateHPBar);
-    // SafeCallGB(av_AnimateHPBar, &regs);
     v_AnimateHPBar(hl);
     // CALL(aWaitBGMap);
     WaitBGMap_Conv();
