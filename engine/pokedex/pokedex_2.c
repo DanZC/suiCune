@@ -2,6 +2,7 @@
 #include "pokedex_2.h"
 #include "../../home/text.h"
 #include "../../home/copy.h"
+#include "../../home/delay.h"
 #include "../../home/names.h"
 #include "../../home/pokemon.h"
 #include "../../home/print_text.h"
@@ -10,90 +11,109 @@
 #include "../../charmap.h"
 
 void AnimateDexSearchSlowpoke(void){
-    LD_HL(mAnimateDexSearchSlowpoke_FrameIDs);
-    LD_B(25);
+    static const uint8_t FrameIDs[] = {
+    // frame ID, duration
+        0, 7,
+        1, 7,
+        2, 7,
+        3, 7,
+        4, 7,
+        (uint8_t)-2,
+    };
+    // LD_HL(mAnimateDexSearchSlowpoke_FrameIDs);
+    const uint8_t* hl = FrameIDs;
+    // LD_B(25);
+    uint8_t b = 25;
 
-loop:
-    LD_A_hli;
+    do {
+    // loop:
+        // LD_A_hli;
+        uint8_t a = *(hl++);
 
-// Wrap around
-    CP_A(0xfe);
-    IF_NZ goto ok;
-    LD_HL(mAnimateDexSearchSlowpoke_FrameIDs);
-    LD_A_hli;
-
-ok:
-
-    LD_addr_A(wDexSearchSlowpokeFrame);
-    LD_A_hli;
-    LD_C_A;
-    PUSH_BC;
-    PUSH_HL;
-    CALL(aDoDexSearchSlowpokeFrame);
-    POP_HL;
-    POP_BC;
-    CALL(aDelayFrames);
-    DEC_B;
-    IF_NZ goto loop;
-    XOR_A_A;
-    LD_addr_A(wDexSearchSlowpokeFrame);
-    CALL(aDoDexSearchSlowpokeFrame);
-    LD_C(32);
-    CALL(aDelayFrames);
-    RET;
-
-
-FrameIDs:
-// frame ID, duration
-    //db ['0', '7'];
-    //db ['1', '7'];
-    //db ['2', '7'];
-    //db ['3', '7'];
-    //db ['4', '7'];
-    //db ['-2'];
-
-    return DoDexSearchSlowpokeFrame();
+    // Wrap around
+        // CP_A(0xfe);
+        // IF_NZ goto ok;
+        if(a == (uint8_t)-2){
+            // LD_HL(mAnimateDexSearchSlowpoke_FrameIDs);
+            hl = FrameIDs;
+            // LD_A_hli;
+            a = *(hl++);
+        }
+    // ok:
+        // LD_addr_A(wDexSearchSlowpokeFrame);
+        wram->wDexSearchSlowpokeFrame = a;
+        // LD_A_hli;
+        // LD_C_A;
+        uint8_t c = *(hl++);
+        // PUSH_BC;
+        // PUSH_HL;
+        // CALL(aDoDexSearchSlowpokeFrame);
+        DoDexSearchSlowpokeFrame();
+        // POP_HL;
+        // POP_BC;
+        // CALL(aDelayFrames);
+        DelayFrames_Conv(c);
+        // DEC_B;
+        // IF_NZ goto loop;
+    } while(--b != 0);
+    // XOR_A_A;
+    // LD_addr_A(wDexSearchSlowpokeFrame);
+    wram->wDexSearchSlowpokeFrame = 0;
+    // CALL(aDoDexSearchSlowpokeFrame);
+    DoDexSearchSlowpokeFrame();
+    // LD_C(32);
+    // CALL(aDelayFrames);
+    DelayFrames_Conv(32);
+    // RET;
 }
 
 void DoDexSearchSlowpokeFrame(void){
-    LD_A_addr(wDexSearchSlowpokeFrame);
-    LD_HL(mDoDexSearchSlowpokeFrame_SlowpokeSpriteData);
-    LD_DE(wVirtualOAMSprite00);
+    static const uint8_t SlowpokeSpriteData[] = {
+        dbsprite( 9, 11, 0, 0, 0x00, 0),
+        dbsprite(10, 11, 0, 0, 0x01, 0),
+        dbsprite(11, 11, 0, 0, 0x02, 0),
+        dbsprite( 9, 12, 0, 0, 0x10, 0),
+        dbsprite(10, 12, 0, 0, 0x11, 0),
+        dbsprite(11, 12, 0, 0, 0x12, 0),
+        dbsprite( 9, 13, 0, 0, 0x20, 0),
+        dbsprite(10, 13, 0, 0, 0x21, 0),
+        dbsprite(11, 13, 0, 0, 0x22, 0),
+        (uint8_t)-1,
+    };
+    // LD_A_addr(wDexSearchSlowpokeFrame);
+    // LD_HL(mDoDexSearchSlowpokeFrame_SlowpokeSpriteData);
+    const uint8_t* hl = SlowpokeSpriteData;
+    // LD_DE(wVirtualOAMSprite00);
+    struct SpriteOAM* de = wram->wVirtualOAMSprite;
 
-loop:
-    LD_A_hli;
-    CP_A(-1);
-    RET_Z ;
-    LD_de_A;  // y
-    INC_DE;
-    LD_A_hli;
-    LD_de_A;  // x
-    INC_DE;
-    LD_A_addr(wDexSearchSlowpokeFrame);
-    LD_B_A;
-    ADD_A_A;
-    ADD_A_B;
-    ADD_A_hl;
-    INC_HL;
-    LD_de_A;  // tile id
-    INC_DE;
-    LD_A_hli;
-    LD_de_A;  // attributes
-    INC_DE;
-    goto loop;
-
-
-// SlowpokeSpriteData:
-    //dbsprite ['9', '11', '0', '0', '0x00', '0']
-    //dbsprite ['10', '11', '0', '0', '0x01', '0']
-    //dbsprite ['11', '11', '0', '0', '0x02', '0']
-    //dbsprite ['9', '12', '0', '0', '0x10', '0']
-    //dbsprite ['10', '12', '0', '0', '0x11', '0']
-    //dbsprite ['11', '12', '0', '0', '0x12', '0']
-    //dbsprite ['9', '13', '0', '0', '0x20', '0']
-    //dbsprite ['10', '13', '0', '0', '0x21', '0']
-    //dbsprite ['11', '13', '0', '0', '0x22', '0']
-    //db ['-1'];
+    while(*hl != (uint8_t)-1){
+    // loop:
+        // LD_A_hli;
+        // CP_A(-1);
+        // RET_Z ;
+        // LD_de_A;  // y
+        // INC_DE;
+        de->yCoord = *(hl++);
+        // LD_A_hli;
+        // LD_de_A;  // x
+        // INC_DE;
+        de->xCoord = *(hl++);
+        // LD_A_addr(wDexSearchSlowpokeFrame);
+        // LD_B_A;
+        // ADD_A_A;
+        // ADD_A_B;
+        // ADD_A_hl;
+        // INC_HL;
+        // LD_de_A;  // tile id
+        // INC_DE;
+        de->tileID = (wram->wDexSearchSlowpokeFrame * 3) + *(hl++);
+        // LD_A_hli;
+        // LD_de_A;  // attributes
+        // INC_DE;
+        de->attributes = *(hl++);
+        // goto loop;
+        de++;
+    }
 }
 
 void DisplayDexEntry(species_t a){

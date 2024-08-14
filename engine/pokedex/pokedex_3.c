@@ -95,57 +95,67 @@ void DrawPokedexListWindow(void){
 }
 
 void DrawPokedexSearchResultsWindow(void){
-    LD_A(0x34);
-    hlcoord(0, 0, wTilemap);
-    LD_BC(11);
-    CALL(aByteFill);
-    LD_A(0x39);
-    hlcoord(0, 10, wTilemap);
-    LD_BC(11);
-    CALL(aByteFill);
-    hlcoord(5, 0, wTilemap);
-    LD_hl(0x3f);
-    hlcoord(5, 10, wTilemap);
-    LD_hl(0x40);
-    hlcoord(11, 0, wTilemap);
-    LD_hl(0x66);
-    LD_A(0x67);
-    hlcoord(11, 1, wTilemap);
-    LD_B(SCREEN_HEIGHT / 2);
-    CALL(aPokedex_FillColumn2);
-    LD_hl(0x68);
-    LD_A(0x34);
-    hlcoord(0, 11, wTilemap);
-    LD_BC(11);
-    CALL(aByteFill);
-    LD_A(0x39);
-    hlcoord(0, 17, wTilemap);
-    LD_BC(11);
-    CALL(aByteFill);
-    hlcoord(11, 11, wTilemap);
-    LD_hl(0x66);
-    LD_A(0x67);
-    hlcoord(11, 12, wTilemap);
-    LD_B(5);
-    CALL(aPokedex_FillColumn2);
-    LD_hl(0x68);
-    hlcoord(0, 12, wTilemap);
-    LD_BC((5 << 8) | 11);
-    CALL(aClearBox);
-    LD_DE(mDrawPokedexSearchResultsWindow_esults_D);
-    hlcoord(0, 12, wTilemap);
-    CALL(aPlaceString);
-    RET;
-
-
-esults_D:
-//  (SEARCH R)
-    //db ['"ESULTS"'];
-    //next ['""']
-//  (### FOUN)
-    //next ['"D!@"']
-
-    return DrawDexEntryScreenRightEdge();
+    static const char esults_D[] = 
+    //  (SEARCH R)
+        "ESULTS"
+        t_next ""
+    //  (### FOUN)
+        t_next "D!";
+    // LD_A(0x34);
+    // hlcoord(0, 0, wTilemap);
+    // LD_BC(11);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(0, 0, wram->wTilemap), 11, 0x34);
+    // LD_A(0x39);
+    // hlcoord(0, 10, wTilemap);
+    // LD_BC(11);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(0, 10, wram->wTilemap), 11, 0x39);
+    // hlcoord(5, 0, wTilemap);
+    // LD_hl(0x3f);
+    *coord(5, 0, wram->wTilemap) = 0x3f;
+    // hlcoord(5, 10, wTilemap);
+    // LD_hl(0x40);
+    *coord(5, 10, wram->wTilemap) = 0x40;
+    // hlcoord(11, 0, wTilemap);
+    // LD_hl(0x66);
+    *coord(11, 0, wram->wTilemap) = 0x66;
+    // LD_A(0x67);
+    // hlcoord(11, 1, wTilemap);
+    // LD_B(SCREEN_HEIGHT / 2);
+    // CALL(aPokedex_FillColumn2);
+    tile_t* hl = Pokedex_FillColumn2(coord(11, 1, wram->wTilemap), 0x67, SCREEN_HEIGHT / 2);
+    // LD_hl(0x68);
+    *hl = 0x68;
+    // LD_A(0x34);
+    // hlcoord(0, 11, wTilemap);
+    // LD_BC(11);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(0, 11, wram->wTilemap), 11, 0x34);
+    // LD_A(0x39);
+    // hlcoord(0, 17, wTilemap);
+    // LD_BC(11);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(0, 17, wram->wTilemap), 11, 0x39);
+    // hlcoord(11, 11, wTilemap);
+    // LD_hl(0x66);
+    *coord(11, 11, wram->wTilemap) = 0x66;
+    // LD_A(0x67);
+    // hlcoord(11, 12, wTilemap);
+    // LD_B(5);
+    // CALL(aPokedex_FillColumn2);
+    hl = Pokedex_FillColumn2(coord(11, 12, wram->wTilemap), 0x67, 5);
+    // LD_hl(0x68);
+    *hl = 0x68;
+    // hlcoord(0, 12, wTilemap);
+    // LD_BC((5 << 8) | 11);
+    // CALL(aClearBox);
+    ClearBox_Conv2(coord(0, 12, wram->wTilemap), 11, 5);
+    // LD_DE(mDrawPokedexSearchResultsWindow_esults_D);
+    // hlcoord(0, 12, wTilemap);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(esults_D), coord(0, 12, wram->wTilemap));
+    // RET;
 }
 
 void DrawDexEntryScreenRightEdge(void){

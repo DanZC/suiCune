@@ -116,7 +116,12 @@ static const struct {
     CHARMAP_ENTRY("☎", CHAR_PHONE_ICON),
     
     CHARMAP_ENTRY("⁂", CHAR_SHINY_ICON),
+    CHARMAP_ENTRY("<3b>", 0x3b),
+    CHARMAP_ENTRY("<3c>", 0x3c),
+    CHARMAP_ENTRY("<3d>", 0x3d),
+    CHARMAP_ENTRY("<3e>", 0x3e),
     CHARMAP_ENTRY("<3f>", 0x3f),
+    CHARMAP_ENTRY("<ff>", 0xff),
 };
 
 // Converts UTF-8 encoded string to Crystal encoding.

@@ -1131,16 +1131,22 @@ void v_CGB_BetaPikachuMinigame(void){
 }
 
 void v_CGB_PokedexSearchOption(void){
-    LD_DE(wBGPals1);
-    LD_A(PREDEFPAL_POKEDEX);
-    CALL(aGetPredefPal);
-    CALL(aLoadHLPaletteIntoDE);
-    CALL(aWipeAttrmap);
-    CALL(aApplyAttrmap);
-    CALL(aApplyPals);
-    LD_A(TRUE);
-    LDH_addr_A(hCGBPalUpdate);
-    RET;
+    // LD_DE(wBGPals1);
+    // LD_A(PREDEFPAL_POKEDEX);
+    // CALL(aGetPredefPal);
+    const uint16_t* hl = GetPredefPal_Conv(PREDEFPAL_POKEDEX);
+    // CALL(aLoadHLPaletteIntoDE);
+    LoadHLPaletteIntoDE_Conv(wram->wBGPals1, hl);
+    // CALL(aWipeAttrmap);
+    WipeAttrmap();
+    // CALL(aApplyAttrmap);
+    ApplyAttrmap_Conv();
+    // CALL(aApplyPals);
+    ApplyPals_Conv();
+    // LD_A(TRUE);
+    // LDH_addr_A(hCGBPalUpdate);
+    hram->hCGBPalUpdate = TRUE;
+    // RET;
 
 }
 
