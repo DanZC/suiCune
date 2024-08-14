@@ -1,5 +1,6 @@
 #include "../../constants.h"
 #include "unown_dex.h"
+#include "../../home/copy.h"
 
 void UpdateUnownDex(void){
     LD_A_addr(wUnownLetter);
@@ -55,35 +56,116 @@ void UpdateUnownDex_Conv(unown_letter_t letter){
     // RET;
 }
 
+// unownword: MACRO
+// for n, CHARLEN(\1)
+// 	db CHARSUB(\1, n + 1) - "A" + FIRST_UNOWN_CHAR
+// endr
+// 	db -1
+// ENDM
+static const uint8_t* StringToUnownWord(uint8_t* dest, const char* str){
+    uint32_t i = 0;
+    for(; str[i] != 0; ++i){
+        dest[i] = (str[i] - 'A') + FIRST_UNOWN_CHAR;
+    }
+    dest[i] = 0xff;
+    return dest;
+}
+
+static const char UnownWordA[] = "ANGRY";
+static const char UnownWordB[] = "BEAR";
+static const char UnownWordC[] = "CHASE";
+static const char UnownWordD[] = "DIRECT";
+static const char UnownWordE[] = "ENGAGE";
+static const char UnownWordF[] = "FIND";
+static const char UnownWordG[] = "GIVE";
+static const char UnownWordH[] = "HELP";
+static const char UnownWordI[] = "INCREASE";
+static const char UnownWordJ[] = "JOIN";
+static const char UnownWordK[] = "KEEP";
+static const char UnownWordL[] = "LAUGH";
+static const char UnownWordM[] = "MAKE";
+static const char UnownWordN[] = "NUZZLE";
+static const char UnownWordO[] = "OBSERVE";
+static const char UnownWordP[] = "PERFORM";
+static const char UnownWordQ[] = "QUICKEN";
+static const char UnownWordR[] = "REASSURE";
+static const char UnownWordS[] = "SEARCH";
+static const char UnownWordT[] = "TELL";
+static const char UnownWordU[] = "UNDO";
+static const char UnownWordV[] = "VANISH";
+static const char UnownWordW[] = "WANT";
+static const char UnownWordX[] = "XXXXX";
+static const char UnownWordY[] = "YIELD";
+static const char UnownWordZ[] = "ZOOM";
+
+static const char *const UnownWords[] = {
+// entries correspond to UNOWN_* form constants
+	// table_width 2, UnownWords
+    UnownWordA, // unused
+    UnownWordA,
+    UnownWordB,
+    UnownWordC,
+    UnownWordD,
+    UnownWordE,
+    UnownWordF,
+    UnownWordG,
+    UnownWordH,
+    UnownWordI,
+    UnownWordJ,
+    UnownWordK,
+    UnownWordL,
+    UnownWordM,
+    UnownWordN,
+    UnownWordO,
+    UnownWordP,
+    UnownWordQ,
+    UnownWordR,
+    UnownWordS,
+    UnownWordT,
+    UnownWordU,
+    UnownWordV,
+    UnownWordW,
+    UnownWordX,
+    UnownWordY,
+    UnownWordZ,
+};
+static_assert(lengthof(UnownWords) == NUM_UNOWN + 1, "");
+
 void PrintUnownWord(void){
-    hlcoord(4, 15, wTilemap);
-    LD_BC(12);
-    LD_A(0x7f);
-    CALL(aByteFill);
-    LD_A_addr(wDexCurUnownIndex);
-    LD_E_A;
-    LD_D(0);
-    LD_HL(wUnownDex);
-    ADD_HL_DE;
-    LD_A_hl;
-    LD_E_A;
-    LD_D(0);
-    LD_HL(mUnownWords);
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_E_A;
-    LD_D_hl;
-    hlcoord(4, 15, wTilemap);
+    uint8_t buf[16];
+    // hlcoord(4, 15, wTilemap);
+    // LD_BC(12);
+    // LD_A(0x7f);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(4, 15, wram->wTilemap), 12, 0x7f);
+    // LD_A_addr(wDexCurUnownIndex);
+    // LD_E_A;
+    // LD_D(0);
+    // LD_HL(wUnownDex);
+    // ADD_HL_DE;
+    // LD_A_hl;
+    // LD_E_A;
+    // LD_D(0);
+    // LD_HL(mUnownWords);
+    // ADD_HL_DE;
+    // ADD_HL_DE;
+    // LD_A_hli;
+    // LD_E_A;
+    // LD_D_hl;
+    const uint8_t* de = StringToUnownWord(buf, UnownWords[wram->wUnownDex[wram->wDexCurUnownIndex]]);
+    // hlcoord(4, 15, wTilemap);
+    tile_t* hl = coord(4, 15, wram->wTilemap);
 
-loop:
-    LD_A_de;
-    CP_A(-1);
-    RET_Z ;
-    INC_DE;
-    LD_hli_A;
-    goto loop;
-
+    while(*de != 0xff){
+    // loop:
+        // LD_A_de;
+        // CP_A(-1);
+        // RET_Z ;
+        // INC_DE;
+        // LD_hli_A;
+        *(hl++) = *(de++);
+        // goto loop;
+    }
 // INCLUDE "data/pokemon/unown_words.asm"
 
 }

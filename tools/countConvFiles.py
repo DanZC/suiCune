@@ -18,6 +18,7 @@ skip_files = [
     'data/pokemon/dex_entry_pointers.asm',
     'data/pokemon/gen1_base_special.asm',
     'data/pokemon/gen1_order.asm',
+    'data/pokemon/unown_words.asm',
     'data/sprite_anims/unused_gfx.asm',
     'data/text/common.asm',
     'data/text/mail_input_chars.asm',
