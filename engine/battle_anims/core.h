@@ -11,6 +11,7 @@ void InitBattleAnimBuffer_Conv(struct BattleAnim* bc);
 void GetBattleAnimTileOffset(void);
 uint8_t GetBattleAnimTileOffset_Conv(uint8_t a);
 void v_ExecuteBGEffects(void);
+void v_ExecuteBGEffects_Conv(void);
 void v_QueueBGEffect(void);
 bool v_QueueBGEffect_Conv(void);
 //#include "data/battle_anims/objects.h"

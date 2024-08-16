@@ -4,6 +4,7 @@
 #include "helpers.h"
 #include "functions.h"
 #include "pokeball_wobble.h"
+#include "bg_effects.h"
 #include "../battle/core.h"
 #include "../battle/check_battle_scene.h"
 #include "../gfx/load_pics.h"
@@ -183,7 +184,8 @@ void RunBattleAnimScript(void){
         // CALL(aRunBattleAnimCommand);
         RunBattleAnimCommand();
         // CALL(av_ExecuteBGEffects);
-        SafeCallGBAuto(av_ExecuteBGEffects);
+        // SafeCallGBAuto(av_ExecuteBGEffects);
+        v_ExecuteBGEffects_Conv();
         // CALL(aBattleAnim_UpdateOAM_All);
         BattleAnim_UpdateOAM_All();
         // CALL(aPushLYOverrides);

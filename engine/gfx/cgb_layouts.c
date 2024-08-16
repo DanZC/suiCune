@@ -140,6 +140,8 @@ void v_CGB_BattleGrayscale(void){
 
 void v_CGB_BattleColors(void){
     uint16_t palbuf[6 * NUM_PAL_COLORS];
+    uint16_t palbuf2[6 * NUM_PAL_COLORS];
+    uint16_t palbuf3[6 * NUM_PAL_COLORS];
     // LD_DE(wBGPals1);
     // CALL(aGetBattlemonBackpicPalettePointer);
     uint16_t* de = (uint16_t*)((uint8_t*)wram + offsetof(struct wram_s, wBGPals1)); // Won't let me take pointer of packed wBGPals1, so I'm doing this ugly shit instead.
@@ -150,7 +152,7 @@ void v_CGB_BattleColors(void){
     de = LoadPalette_White_Col1_Col2_Black_Conv(de, hl);
     // CALL(aGetEnemyFrontpicPalettePointer);
     // PUSH_HL;
-    uint16_t* hl2 = GetEnemyFrontpicPalettePointer_Conv(palbuf);
+    uint16_t* hl2 = GetEnemyFrontpicPalettePointer_Conv(palbuf2);
     // CALL(aLoadPalette_White_Col1_Col2_Black);  // PAL_BATTLE_BG_ENEMY
     de = LoadPalette_White_Col1_Col2_Black_Conv(de, hl2);
     // LD_A_addr(wEnemyHPPal);
@@ -174,9 +176,9 @@ void v_CGB_BattleColors(void){
     // CALL(aLoadPalette_White_Col1_Col2_Black);  // PAL_BATTLE_BG_PLAYER_HP
     de = LoadPalette_White_Col1_Col2_Black_Conv(de, &HPBarPals[wram->wPlayerHPPal * 2]);
     // LD_HL(mExpBarPalette);
-    LoadPaletteAssetColorsToArray(palbuf, ExpBarPalette, 0, 2);
+    LoadPaletteAssetColorsToArray(palbuf3, ExpBarPalette, 0, 2);
     // CALL(aLoadPalette_White_Col1_Col2_Black);  // PAL_BATTLE_BG_EXP
-    de = LoadPalette_White_Col1_Col2_Black_Conv(de, palbuf);
+    de = LoadPalette_White_Col1_Col2_Black_Conv(de, palbuf3);
     // LD_DE(wOBPals1);
     de = (uint16_t*)((uint8_t*)wram + offsetof(struct wram_s, wOBPals1)); // Won't let me take pointer of packed wBGPals1, so I'm doing this ugly shit instead.
                                                                           // Look what you made me do clang... Shame on you.

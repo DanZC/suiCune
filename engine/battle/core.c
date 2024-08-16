@@ -8112,7 +8112,7 @@ bool UseHeldStatusHealingItem(void){
     // CALL(aItemRecoveryAnim);
     ItemRecoveryAnim();
     // CALL(aUseOpponentItem);
-    SafeCallGBAuto(aUseOpponentItem);
+    UseOpponentItem();
     // LD_A(0x1);
     // AND_A_A;
     // RET;

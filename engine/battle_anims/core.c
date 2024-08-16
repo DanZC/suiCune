@@ -773,6 +773,12 @@ void v_ExecuteBGEffects(void){
 
 }
 
+void v_ExecuteBGEffects_Conv(void){
+    // CALLFAR(aExecuteBGEffects);
+    // RET;
+    ExecuteBGEffects_Conv();
+}
+
 void v_QueueBGEffect(void){
     CALLFAR(aQueueBGEffect);
     RET;

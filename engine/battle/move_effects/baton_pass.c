@@ -146,7 +146,7 @@ void BatonPass_LinkPlayerSwitch(void){
     // LD_HL(mLinkBattleSendReceiveAction);
     // CALL(aCallBattleCore);
 // TODO: Convert LinkBattleSendReceiveAction
-    SafeCallGBAuto(aLinkBattleSendReceiveAction);
+    LinkBattleSendReceiveAction();
     // CALL(aCloseWindow);
     CloseWindow_Conv2();
 
@@ -167,7 +167,7 @@ void BatonPass_LinkEnemySwitch(void){
     LoadStandardMenuHeader_Conv();
     // LD_HL(mLinkBattleSendReceiveAction);
     // CALL(aCallBattleCore);
-    SafeCallGBAuto(aLinkBattleSendReceiveAction);
+    LinkBattleSendReceiveAction();
 
     // LD_A_addr(wOTPartyCount);
     // ADD_A(BATTLEACTION_SWITCH1);
