@@ -943,6 +943,24 @@ void TerminateExpBarSound(void) {
     RET;                     // ret
 }
 
+void TerminateExpBarSound_Conv(void) {
+    // XOR_A_A;  // xor a
+    chan[CHAN5]->flags[0] = 0;
+    // LD_addr_A(wPitchSweep);  // ld [wPitchSweep], a
+    wram->wPitchSweep = 0;
+    // LDH_addr_A(rNR10);       // ldh [rNR10], a
+    gb_write(rNR10, 0x0);
+    // LDH_addr_A(rNR11);       // ldh [rNR11], a
+    gb_write(rNR11, 0x0);
+    // LDH_addr_A(rNR12);       // ldh [rNR12], a
+    gb_write(rNR12, 0x0);
+    // LDH_addr_A(rNR13);       // ldh [rNR13], a
+    gb_write(rNR13, 0x0);
+    // LDH_addr_A(rNR14);       // ldh [rNR14], a
+    gb_write(rNR14, 0x0);
+    // RET;                     // ret
+}
+
 void ChannelsOff(void) {
     // Quickly turn off music channels
     chan[CHAN1]->channelOn = 0;

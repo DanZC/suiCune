@@ -42,8 +42,9 @@ uint8_t Sprites_Cosine_Conv(uint8_t a, uint8_t d);
 void Sprites_Sine(void);
 uint8_t Sprites_Sine_Conv(uint8_t a, uint8_t d);
 void AnimateEndOfExpBar(void);
-void EndOfExpBarGFX(void);
-void SGBEndOfExpBarGFX(void);
+void AnimateEndOfExpBar_Conv(void);
+extern const char EndOfExpBarGFX[];
+extern const char SGBEndOfExpBarGFX[];
 void ClearSpriteAnims2(void);
 void ClearSpriteAnims2_Conv(void);
 //#include "data/sprite_anims/sequences.h"

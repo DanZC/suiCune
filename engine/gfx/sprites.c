@@ -2,6 +2,7 @@
 #include "sprites.h"
 #include "../math/sine.h"
 #include "../../home/delay.h"
+#include "../../home/clear_sprites.h"
 #include "../../data/sprite_anims/framesets.h"
 #include "../../data/sprite_anims/oam.h"
 #include "../../data/sprite_anims/sequences.h"
@@ -1458,20 +1459,97 @@ anim_loop:
     LD_A(PAL_BATTLE_OB_BLUE);
     LD_hli_A;  // attributes
     goto anim_loop;
-
-    return EndOfExpBarGFX();
 }
 
-void EndOfExpBarGFX(void){
-// INCBIN "gfx/battle/expbarend.2bpp"
-    return SGBEndOfExpBarGFX();
+static void AnimateEndOfExpBar_AnimateFrame(uint8_t d){
+    // LD_HL(wVirtualOAMSprite00);
+    struct SpriteOAM* hl = wram->wVirtualOAMSprite;
+    // LD_C(8);  // number of animated circles
+    uint8_t c = 8;
+
+    while(c != 0){
+    // anim_loop:
+        // LD_A_C;
+        // AND_A_A;
+        // RET_Z ;
+        // DEC_C;
+        // LD_A_C;
+        uint8_t a = --c;
+    //  multiply by 8
+        // SLA_A;
+        // SLA_A;
+        // SLA_A;
+        // PUSH_AF;
+        a <<= 3;
+
+        // PUSH_DE;
+        // PUSH_HL;
+        // CALL(aSprites_Sine);
+        // POP_HL;
+        // POP_DE;
+        // ADD_A(13 * TILE_WIDTH);
+        // LD_hli_A;  // y
+        hl->yCoord = Sprites_Sine_Conv(a, d) + (13 * TILE_WIDTH);
+
+        // POP_AF;
+        // PUSH_DE;
+        // PUSH_HL;
+        // CALL(aSprites_Cosine);
+        // POP_HL;
+        // POP_DE;
+        // ADD_A(10 * TILE_WIDTH + 4);
+        // LD_hli_A;  // x
+        hl->xCoord = Sprites_Cosine_Conv(a, d) + (10 * TILE_WIDTH + 4);
+
+        // LD_A(0x0);
+        // LD_hli_A;  // tile id
+        hl->tileID = 0x0;
+        // LD_A(PAL_BATTLE_OB_BLUE);
+        // LD_hli_A;  // attributes
+        hl->attributes = PAL_BATTLE_OB_BLUE;
+        // goto anim_loop;
+    }
 }
 
-void SGBEndOfExpBarGFX(void){
-// INCBIN "gfx/battle/expbarend_sgb.2bpp"
+void AnimateEndOfExpBar_Conv(void){
+    // LDH_A_addr(hSGB);
+    // LD_DE(mEndOfExpBarGFX);
+    // AND_A_A;
+    // IF_Z goto load;
+    // LD_DE(mSGBEndOfExpBarGFX);
+    const char* de = (hram->hSGB == 0)? EndOfExpBarGFX: SGBEndOfExpBarGFX;
 
-    return ClearSpriteAnims2();
+// load:
+    // LD_HL(vTiles0 + LEN_2BPP_TILE * 0x00);
+    // LD_BC((BANK(aEndOfExpBarGFX) << 8) | 1);
+    // CALL(aRequest2bpp);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles0 + LEN_2BPP_TILE * 0x00, de, 0, 1);
+    // LD_C(8);
+    uint8_t c = 8;
+    // LD_D(0);
+    uint8_t d = 0;
+
+    do {
+    // loop:
+        // PUSH_BC;
+        // CALL(aAnimateEndOfExpBar_AnimateFrame);
+        AnimateEndOfExpBar_AnimateFrame(d);
+        // CALL(aDelayFrame);
+        DelayFrame();
+        // POP_BC;
+        // INC_D;
+        // INC_D;
+        d += 2;
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(--c != 0);
+    // CALL(aClearSprites);
+    ClearSprites_Conv();
+    // RET;
 }
+
+const char EndOfExpBarGFX[] = "gfx/battle/expbarend.png";
+const char SGBEndOfExpBarGFX[] = "gfx/battle/expbarend_sgb.png";
 
 void ClearSpriteAnims2(void){
     PUSH_HL;

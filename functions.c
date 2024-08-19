@@ -1645,7 +1645,7 @@ void init_function_pointers(void) {
     // REDIRECTED(v_BattleRandom);
     // REDIRECTED(ForcePickSwitchMonInBattle);
     // REDIRECTED(HandleWrap);
-    // REDIRECTED(GiveExperiencePoints);
+    CONVERTED(GiveExperiencePoints);
     // REDIRECTED(CheckPlayerHasUsableMoves);
     // REDIRECTED(Call_PlayBattleAnim);
     // REDIRECTED(LostBattle);

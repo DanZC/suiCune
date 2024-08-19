@@ -40,6 +40,7 @@
 #include "../../data/trainers/leaders.h"
 #include "../pokemon/experience.h"
 #include "../pokemon/health.h"
+#include "../pokemon/level_up_happiness.h"
 #include "../gfx/pic_animation.h"
 #include "../gfx/load_font.h"
 #include "../gfx/load_pics.h"
@@ -47,6 +48,7 @@
 #include "../gfx/player_gfx.h"
 #include "../gfx/place_graphic.h"
 #include "../gfx/mon_icons.h"
+#include "../gfx/sprites.h"
 #include "../../gfx/misc.h"
 #include "../smallflag.h"
 #include "../pokemon/bills_pc_top.h"
@@ -4713,8 +4715,6 @@ void IsGymLeaderCommon(void){
     RET;
 
 // INCLUDE "data/trainers/leaders.asm"
-
-    return HandlePlayerMonFaint();
 }
 
 void HandlePlayerMonFaint(void){
@@ -4776,7 +4776,7 @@ void HandlePlayerMonFaint(void){
 
 // switch_:
     // CALL(aForcePlayerMonChoice);
-    ForcePlayerMonChoice();
+    uint8_t c = ForcePlayerMonChoice();
     // CALL(aCheckMobileBattleError);
     // JP_C (mWildFled_EnemyFled_LinkBattleCanceled);
     if(CheckMobileBattleError_Conv())
@@ -4784,6 +4784,8 @@ void HandlePlayerMonFaint(void){
     // LD_A_C;
     // AND_A_A;
     // RET_NZ ;
+    if(c != 0x0)
+        return;
     // LD_A(BATTLEPLAYERACTION_USEITEM);
     // LD_addr_A(wBattlePlayerAction);
     wram->wBattlePlayerAction = BATTLEPLAYERACTION_USEITEM;
@@ -4923,7 +4925,7 @@ bool AskUseNextPokemon_Conv(void){
     return TryToRunAwayFromBattle_Conv(&wram->wBattleMon, &wram->wEnemyMon);
 }
 
-void ForcePlayerMonChoice(void){
+uint8_t ForcePlayerMonChoice(void){
     // CALL(aEmptyBattleTextbox);
     EmptyBattleTextbox();
     // CALL(aLoadStandardMenuHeader);
@@ -4974,7 +4976,7 @@ void ForcePlayerMonChoice(void){
         // XOR_A_A;
         // LD_C_A;
         // RET;
-        return;
+        return 0x0;
     }
 
 // send_out_pokemon:
@@ -5024,6 +5026,7 @@ void ForcePlayerMonChoice(void){
     // AND_A_A;
     // LD_C_A;
     // RET;
+    return 0x1;
 }
 
 void PlayerPartyMonEntrance(void){
@@ -12636,438 +12639,578 @@ void FinishBattleAnim(void){
     // RET;
 }
 
+static void GiveExperiencePoints_EvenlyDivideExpAmongParticipants(void){
+//  count number of battle participants
+    // LD_A_addr(wBattleParticipantsNotFainted);
+    // LD_B_A;
+    uint8_t b = wram->wBattleParticipantsNotFainted;
+    // LD_C(PARTY_LENGTH);
+    uint8_t c = PARTY_LENGTH;
+    // LD_D(0);
+    uint8_t d = 0;
+
+    do {
+    // count_loop:
+        // XOR_A_A;
+        uint8_t cy = b & 1;
+        // SRL_B;
+        b >>= 1;
+        // ADC_A_D;
+        // LD_D_A;
+        d += cy;
+        // DEC_C;
+        // IF_NZ goto count_loop;
+    } while(--c != 0);
+    // CP_A(2);
+    // RET_C ;
+    if(d < 2)
+        return;
+
+    // LD_addr_A(wTempByteValue);
+    // LD_HL(wEnemyMonBaseStats);
+    uint8_t* hl = wram->wEnemyMonBaseStats;
+    // LD_C(wEnemyMonEnd - wEnemyMonBaseStats);
+    c = wEnemyMonEnd - wEnemyMonBaseStats;
+
+    do {
+    // base_stat_division_loop:
+        // XOR_A_A;
+        // LDH_addr_A(hDividend + 0);
+        // LD_A_hl;
+        // LDH_addr_A(hDividend + 1);
+        // LD_A_addr(wTempByteValue);
+        // LDH_addr_A(hDivisor);
+        // LD_B(2);
+        // CALL(aDivide);
+        // LDH_A_addr(hQuotient + 3);
+        // LD_hli_A;
+        *(hl++) /= d;
+        // DEC_C;
+        // IF_NZ goto base_stat_division_loop;
+    } while(--c != 0);
+    // RET;
+}
+
 //  Give experience.
 //  Don't give experience if linked or in the Battle Tower.
 void GiveExperiencePoints(void){
-    LD_A_addr(wLinkMode);
-    AND_A_A;
-    RET_NZ ;
+    // LD_A_addr(wLinkMode);
+    // AND_A_A;
+    // RET_NZ ;
+    if(wram->wLinkMode != 0)
+        return;
 
-    LD_A_addr(wInBattleTowerBattle);
-    BIT_A(0);
-    RET_NZ ;
+    // LD_A_addr(wInBattleTowerBattle);
+    // BIT_A(0);
+    // RET_NZ ;
+    if(bit_test(wram->wInBattleTowerBattle, 0))
+        return;
 
-    CALL(aGiveExperiencePoints_EvenlyDivideExpAmongParticipants);
-    XOR_A_A;
-    LD_addr_A(wCurPartyMon);
-    LD_BC(wPartyMon1Species);
+    // CALL(aGiveExperiencePoints_EvenlyDivideExpAmongParticipants);
+    GiveExperiencePoints_EvenlyDivideExpAmongParticipants();
+    // XOR_A_A;
+    // LD_addr_A(wCurPartyMon);
+    wram->wCurPartyMon = 0x0;
+    // LD_BC(wPartyMon1Species);
+    struct PartyMon* bc = wram->wPartyMon;
 
+    while(1){
+    // loop:
+        // LD_HL(MON_HP);
+        // ADD_HL_BC;
+        // LD_A_hli;
+        // OR_A_hl;
+        // JP_Z (mGiveExperiencePoints_next_mon);  // fainted
+        if(bc->HP == 0)
+            goto next_mon;
 
-loop:
-    LD_HL(MON_HP);
-    ADD_HL_BC;
-    LD_A_hli;
-    OR_A_hl;
-    JP_Z (mGiveExperiencePoints_next_mon);  // fainted
+        // PUSH_BC;
+        // LD_HL(wBattleParticipantsNotFainted);
+        // LD_A_addr(wCurPartyMon);
+        // LD_C_A;
+        // LD_B(CHECK_FLAG);
+        // LD_D(0);
+        // PREDEF(pSmallFarFlagAction);
+        // LD_A_C;
+        // AND_A_A;
+        // POP_BC;
+        // JP_Z (mGiveExperiencePoints_next_mon);
+        if(SmallFarFlagAction_Conv(&wram->wBattleParticipantsNotFainted, wram->wCurPartyMon, CHECK_FLAG) == 0)
+            goto next_mon;
 
-    PUSH_BC;
-    LD_HL(wBattleParticipantsNotFainted);
-    LD_A_addr(wCurPartyMon);
-    LD_C_A;
-    LD_B(CHECK_FLAG);
-    LD_D(0);
-    PREDEF(pSmallFarFlagAction);
-    LD_A_C;
-    AND_A_A;
-    POP_BC;
-    JP_Z (mGiveExperiencePoints_next_mon);
+    //  give stat exp
+        // LD_HL(MON_STAT_EXP + 1);
+        // ADD_HL_BC;
+        // LD_D_H;
+        // LD_E_L;
+        // LD_HL(wEnemyMonBaseStats - 1);
+        uint8_t* baseStats = wram->wEnemyMonBaseStats;
+        // PUSH_BC;
+        // LD_C(NUM_EXP_STATS);
+        uint8_t c = NUM_EXP_STATS;
+        uint8_t b;
+        uint8_t i = 0;
 
-//  give stat exp
-    LD_HL(MON_STAT_EXP + 1);
-    ADD_HL_BC;
-    LD_D_H;
-    LD_E_L;
-    LD_HL(wEnemyMonBaseStats - 1);
-    PUSH_BC;
-    LD_C(NUM_EXP_STATS);
+        do {
+        // stat_exp_loop:
+            // INC_HL;
+            // LD_A_de;
+            // ADD_A_hl;
+            // LD_de_A;
+            uint16_t xp = BigEndianToNative16(bc->mon.statExp[i]);
+            // IF_NC goto no_carry_stat_exp;
+            // DEC_DE;
+            // LD_A_de;
+            // INC_A;
+            // IF_Z goto stat_exp_maxed_out;
+            if(xp + baseStats[i] > 0xffff)
+                goto stat_exp_maxed_out;
+            // LD_de_A;
+            // INC_DE;
+            xp += baseStats[i];
 
-stat_exp_loop:
-    INC_HL;
-    LD_A_de;
-    ADD_A_hl;
-    LD_de_A;
-    IF_NC goto no_carry_stat_exp;
-    DEC_DE;
-    LD_A_de;
-    INC_A;
-    IF_Z goto stat_exp_maxed_out;
-    LD_de_A;
-    INC_DE;
+        // no_carry_stat_exp:
+            // PUSH_HL;
+            // PUSH_BC;
+            // LD_A(MON_POKERUS);
+            // CALL(aGetPartyParamLocation);
+            // LD_A_hl;
+            // AND_A_A;
+            // POP_BC;
+            // POP_HL;
+            // IF_Z goto stat_exp_awarded;
+            if(bc->mon.pokerusStatus != 0){
+                // LD_A_de;
+                // ADD_A_hl;
+                // LD_de_A;
+                // IF_NC goto stat_exp_awarded;
+                // DEC_DE;
+                // LD_A_de;
+                // INC_A;
+                // IF_Z goto stat_exp_maxed_out;
+                // LD_de_A;
+                // INC_DE;
+                // goto stat_exp_awarded;
+                if(xp + baseStats[i] > 0xffff){
+                stat_exp_maxed_out:
+                    // LD_A(0xff);
+                    // LD_de_A;
+                    // INC_DE;
+                    // LD_de_A;
+                    xp = 0xffff;
+                }
+                else {
+                    xp += baseStats[i];
+                }
+            }
 
-
-no_carry_stat_exp:
-    PUSH_HL;
-    PUSH_BC;
-    LD_A(MON_POKERUS);
-    CALL(aGetPartyParamLocation);
-    LD_A_hl;
-    AND_A_A;
-    POP_BC;
-    POP_HL;
-    IF_Z goto stat_exp_awarded;
-    LD_A_de;
-    ADD_A_hl;
-    LD_de_A;
-    IF_NC goto stat_exp_awarded;
-    DEC_DE;
-    LD_A_de;
-    INC_A;
-    IF_Z goto stat_exp_maxed_out;
-    LD_de_A;
-    INC_DE;
-    goto stat_exp_awarded;
-
-
-stat_exp_maxed_out:
-    LD_A(0xff);
-    LD_de_A;
-    INC_DE;
-    LD_de_A;
-
-
-stat_exp_awarded:
-    INC_DE;
-    INC_DE;
-    DEC_C;
-    IF_NZ goto stat_exp_loop;
-    XOR_A_A;
-    LDH_addr_A(hMultiplicand + 0);
-    LDH_addr_A(hMultiplicand + 1);
-    LD_A_addr(wEnemyMonBaseExp);
-    LDH_addr_A(hMultiplicand + 2);
-    LD_A_addr(wEnemyMonLevel);
-    LDH_addr_A(hMultiplier);
-    CALL(aMultiply);
-    LD_A(7);
-    LDH_addr_A(hDivisor);
-    LD_B(4);
-    CALL(aDivide);
-//  Boost Experience for traded Pokemon
-    POP_BC;
-    LD_HL(MON_ID);
-    ADD_HL_BC;
-    LD_A_addr(wPlayerID);
-    CP_A_hl;
-    IF_NZ goto boosted;
-    INC_HL;
-    LD_A_addr(wPlayerID + 1);
-    CP_A_hl;
-    LD_A(0);
-    IF_Z goto no_boost;
+            bc->mon.statExp[i] = NativeToBigEndian16(xp);
+            // goto stat_exp_awarded;
 
 
-boosted:
-    CALL(aBoostExp);
-    LD_A(1);
+        // stat_exp_awarded:
+            // INC_DE;
+            // INC_DE;
+            i++;
+            // DEC_C;
+            // IF_NZ goto stat_exp_loop;
+        } while(--c != 0);
+        // XOR_A_A;
+        // LDH_addr_A(hMultiplicand + 0);
+        // LDH_addr_A(hMultiplicand + 1);
+        // LD_A_addr(wEnemyMonBaseExp);
+        // LDH_addr_A(hMultiplicand + 2);
+        // LD_A_addr(wEnemyMonLevel);
+        // LDH_addr_A(hMultiplier);
+        // CALL(aMultiply);
+        // LD_A(7);
+        // LDH_addr_A(hDivisor);
+        // LD_B(4);
+        // CALL(aDivide);
+        uint16_t bExp = (wram->wEnemyMonBaseExp * wram->wEnemyMon.level) / 7;
+    //  Boost Experience for traded Pokemon
+        // POP_BC;
+        // LD_HL(MON_ID);
+        // ADD_HL_BC;
+        // LD_A_addr(wPlayerID);
+        // CP_A_hl;
+        // IF_NZ goto boosted;
+        // INC_HL;
+        // LD_A_addr(wPlayerID + 1);
+        // CP_A_hl;
+        // LD_A(0);
+        uint8_t a = 0;
+        // IF_Z goto no_boost;
+        if(bc->mon.id != wram->wPlayerID){
+        // boosted:
+            // CALL(aBoostExp);
+            bExp = BoostExp_Conv(bExp);
+            // LD_A(1);
+            a = 1;
+        }
 
+    // no_boost:
+    //  Boost experience for a Trainer Battle
+        // LD_addr_A(wStringBuffer2 + 2);
+        wram->wStringBuffer2[2] = a;
+        // LD_A_addr(wBattleMode);
+        // DEC_A;
+        // CALL_NZ (aBoostExp);
+        if(wram->wBattleMode != WILD_BATTLE)
+            bExp = BoostExp_Conv(bExp);
+    //  Boost experience for Lucky Egg
+        // PUSH_BC;
+        // LD_A(MON_ITEM);
+        // CALL(aGetPartyParamLocation);
+        // LD_A_hl;
+        // CP_A(LUCKY_EGG);
+        // CALL_Z (aBoostExp);
+        if(bc->mon.item == LUCKY_EGG)
+            bExp = BoostExp_Conv(bExp);
+        // LDH_A_addr(hQuotient + 3);
+        // LD_addr_A(wStringBuffer2 + 1);
+        wram->wStringBuffer2[1] = LOW(bExp);
+        // LDH_A_addr(hQuotient + 2);
+        // LD_addr_A(wStringBuffer2);
+        wram->wStringBuffer2[0] = HIGH(bExp);
+        // LD_A_addr(wCurPartyMon);
+        // LD_HL(wPartyMonNicknames);
+        // CALL(aGetNickname);
+        GetNickname_Conv2(wram->wPartyMonNickname[0], wram->wCurPartyMon);
+        // LD_HL(mText_MonGainedExpPoint);
+        // CALL(aBattleTextbox);
+        BattleTextbox_Conv2(Text_MonGainedExpPoint);
+        // LD_A_addr(wStringBuffer2 + 1);
+        // LDH_addr_A(hQuotient + 3);
+        // LD_A_addr(wStringBuffer2);
+        // LDH_addr_A(hQuotient + 2);
+        // POP_BC;
+        // CALL(aAnimateExpBar);
+        AnimateExpBar(bExp);
+        // PUSH_BC;
+        // CALL(aLoadTilemapToTempTilemap);
+        LoadTilemapToTempTilemap_Conv();
+        // POP_BC;
+        // LD_HL(MON_EXP + 2);
+        uint32_t bcExp = (bc->mon.exp[0] << 16) | (bc->mon.exp[1] << 8) | bc->mon.exp[2];
+        // ADD_HL_BC;
+        // LD_D_hl;
+        // LDH_A_addr(hQuotient + 3);
+        // ADD_A_D;
+        // LD_hld_A;
+        // LD_D_hl;
+        // LDH_A_addr(hQuotient + 2);
+        // ADC_A_D;
+        // LD_hl_A;
+        if(bcExp + bExp > 0xffffff){
+            // IF_NC goto no_exp_overflow;
+            // DEC_HL;
+            // INC_hl;
+            // IF_NZ goto no_exp_overflow;
+            // LD_A(0xff);
+            bcExp = 0xffffff;
+            // LD_hli_A;
+            // LD_hli_A;
+            // LD_hl_A;
+        }
+        else {
+            bcExp += bExp;
+        }
 
-no_boost:
-//  Boost experience for a Trainer Battle
-    LD_addr_A(wStringBuffer2 + 2);
-    LD_A_addr(wBattleMode);
-    DEC_A;
-    CALL_NZ (aBoostExp);
-//  Boost experience for Lucky Egg
-    PUSH_BC;
-    LD_A(MON_ITEM);
-    CALL(aGetPartyParamLocation);
-    LD_A_hl;
-    CP_A(LUCKY_EGG);
-    CALL_Z (aBoostExp);
-    LDH_A_addr(hQuotient + 3);
-    LD_addr_A(wStringBuffer2 + 1);
-    LDH_A_addr(hQuotient + 2);
-    LD_addr_A(wStringBuffer2);
-    LD_A_addr(wCurPartyMon);
-    LD_HL(wPartyMonNicknames);
-    CALL(aGetNickname);
-    LD_HL(mText_MonGainedExpPoint);
-    CALL(aBattleTextbox);
-    LD_A_addr(wStringBuffer2 + 1);
-    LDH_addr_A(hQuotient + 3);
-    LD_A_addr(wStringBuffer2);
-    LDH_addr_A(hQuotient + 2);
-    POP_BC;
-    CALL(aAnimateExpBar);
-    PUSH_BC;
-    CALL(aLoadTilemapToTempTilemap);
-    POP_BC;
-    LD_HL(MON_EXP + 2);
-    ADD_HL_BC;
-    LD_D_hl;
-    LDH_A_addr(hQuotient + 3);
-    ADD_A_D;
-    LD_hld_A;
-    LD_D_hl;
-    LDH_A_addr(hQuotient + 2);
-    ADC_A_D;
-    LD_hl_A;
-    IF_NC goto no_exp_overflow;
-    DEC_HL;
-    INC_hl;
-    IF_NZ goto no_exp_overflow;
-    LD_A(0xff);
-    LD_hli_A;
-    LD_hli_A;
-    LD_hl_A;
+        bc->mon.exp[2] = LOW(bcExp);
+        bc->mon.exp[1] = HIGH(bcExp);
+        bc->mon.exp[0] = HIGH(bcExp >> 8);
 
+    // no_exp_overflow:
+        // LD_A_addr(wCurPartyMon);
+        // LD_E_A;
+        // LD_D(0);
+        // LD_HL(wPartySpecies);
+        // ADD_HL_DE;
+        // LD_A_hl;
+        // LD_addr_A(wCurSpecies);
+        wram->wCurSpecies = wram->wPartySpecies[wram->wCurPartyMon];
+        // CALL(aGetBaseData);
+        GetBaseData_Conv2(wram->wCurSpecies);
+        // PUSH_BC;
+        // LD_D(MAX_LEVEL);
+        // CALLFAR(aCalcExpAtLevel);
+        uint32_t maxExp = CalcExpAtLevel_Conv(MAX_LEVEL);
+        // POP_BC;
+        // LD_HL(MON_EXP + 2);
+        // ADD_HL_BC;
+        // PUSH_BC;
+        // LDH_A_addr(hQuotient + 1);
+        // LD_B_A;
+        // LDH_A_addr(hQuotient + 2);
+        // LD_C_A;
+        // LDH_A_addr(hQuotient + 3);
+        // LD_D_A;
+        // LD_A_hld;
+        // SUB_A_D;
+        // LD_A_hld;
+        // SBC_A_C;
+        // LD_A_hl;
+        // SBC_A_B;
+        // IF_C goto not_max_exp;
+        if(bcExp > maxExp){
+            // LD_A_B;
+            // LD_hli_A;
+            // LD_A_C;
+            // LD_hli_A;
+            // LD_A_D;
+            // LD_hld_A;
+            bcExp = maxExp;
+            bc->mon.exp[2] = LOW(bcExp);
+            bc->mon.exp[1] = HIGH(bcExp);
+            bc->mon.exp[0] = HIGH(bcExp >> 8);
+        }
 
-no_exp_overflow:
-    LD_A_addr(wCurPartyMon);
-    LD_E_A;
-    LD_D(0);
-    LD_HL(wPartySpecies);
-    ADD_HL_DE;
-    LD_A_hl;
-    LD_addr_A(wCurSpecies);
-    CALL(aGetBaseData);
-    PUSH_BC;
-    LD_D(MAX_LEVEL);
-    CALLFAR(aCalcExpAtLevel);
-    POP_BC;
-    LD_HL(MON_EXP + 2);
-    ADD_HL_BC;
-    PUSH_BC;
-    LDH_A_addr(hQuotient + 1);
-    LD_B_A;
-    LDH_A_addr(hQuotient + 2);
-    LD_C_A;
-    LDH_A_addr(hQuotient + 3);
-    LD_D_A;
-    LD_A_hld;
-    SUB_A_D;
-    LD_A_hld;
-    SBC_A_C;
-    LD_A_hl;
-    SBC_A_B;
-    IF_C goto not_max_exp;
-    LD_A_B;
-    LD_hli_A;
-    LD_A_C;
-    LD_hli_A;
-    LD_A_D;
-    LD_hld_A;
+    // not_max_exp:
+    //  Check if the mon leveled up
+        // XOR_A_A;  // PARTYMON
+        // LD_addr_A(wMonType);
+        wram->wMonType = PARTYMON;
+        // PREDEF(pCopyMonToTempMon);
+        CopyMonToTempMon_Conv();
+        // CALLFAR(aCalcLevel);
+        uint8_t d = CalcLevel_Conv(&wram->wTempMon);
+        // POP_BC;
+        // LD_HL(MON_LEVEL);
+        // ADD_HL_BC;
+        // LD_A_hl;
+        // CP_A(MAX_LEVEL);
+        // JP_NC (mGiveExperiencePoints_next_mon);
+        // CP_A_D;
+        // JP_Z (mGiveExperiencePoints_next_mon);
+        if(bc->mon.level < MAX_LEVEL && bc->mon.level != d){
+        //  <NICKNAME> grew to level ##!
+            // LD_addr_A(wTempLevel);
+            wram->wTempLevel = bc->mon.level;
+            // LD_A_addr(wCurPartyLevel);
+            // PUSH_AF;
+            uint8_t lvl = wram->wCurPartyLevel;
+            // LD_A_D;
+            // LD_addr_A(wCurPartyLevel);
+            wram->wCurPartyLevel = d;
+            // LD_hl_A;
+            bc->mon.level = d;
+            // LD_HL(MON_SPECIES);
+            // ADD_HL_BC;
+            // LD_A_hl;
+            // LD_addr_A(wCurSpecies);
+            wram->wCurSpecies = bc->mon.species;
+            // LD_addr_A(wTempSpecies);  // unused?
+            // CALL(aGetBaseData);
+            GetBaseData_Conv2(wram->wCurSpecies);
+            // LD_HL(MON_MAXHP + 1);
+            // ADD_HL_BC;
+            // LD_A_hld;
+            // LD_E_A;
+            // LD_D_hl;
+            // PUSH_DE;
+            uint16_t maxHP = BigEndianToNative16(bc->maxHP);
+            // LD_HL(MON_MAXHP);
+            // ADD_HL_BC;
+            // LD_D_H;
+            // LD_E_L;
+            // LD_HL(MON_STAT_EXP - 1);
+            // ADD_HL_BC;
+            // PUSH_BC;
+            // LD_B(TRUE);
+            // PREDEF(pCalcMonStats);
+#if !defined(_MSC_VER)
+            // MSVC doesn't like this
+            const uint16_t* statxp = (uint16_t*)((uint8_t*)bc + offsetof(struct BoxMon, statExp));
+            uint16_t* stats = (uint16_t*)((uint8_t*)bc + offsetof(struct PartyMon, maxHP));
+#else
+            // GCC doesn't like this
+            const uint16_t* statxp = ((const struct BoxMon*)bc)->statExp;
+            uint16_t* stats = ((const struct PartyMon*)bc)->maxHP;
+#endif
+            CalcMonStats_Conv(stats, statxp, bc->mon.DVs, TRUE);
+            // POP_BC;
+            // POP_DE;
+            // LD_HL(MON_MAXHP + 1);
+            // ADD_HL_BC;
+            // LD_A_hld;
+            // SUB_A_E;
+            // LD_E_A;
+            // LD_A_hl;
+            // SBC_A_D;
+            // LD_D_A;
+            maxHP = BigEndianToNative16(bc->maxHP) - maxHP;
+            // DEC_HL;
+            // LD_A_hl;
+            // ADD_A_E;
+            // LD_hld_A;
+            // LD_A_hl;
+            // ADC_A_D;
+            // LD_hl_A;
+            bc->HP = NativeToBigEndian16(BigEndianToNative16(bc->HP) + maxHP);
+            // LD_A_addr(wCurBattleMon);
+            // LD_D_A;
+            // LD_A_addr(wCurPartyMon);
+            // CP_A_D;
+            // IF_NZ goto skip_active_mon_update;
+            if(wram->wCurPartyMon == wram->wCurBattleMon){
+                // LD_DE(wBattleMonHP);
+                // LD_A_hli;
+                // LD_de_A;
+                // INC_DE;
+                // LD_A_hli;
+                // LD_de_A;
+                wram->wBattleMon.hp = bc->HP;
+                // LD_DE(wBattleMonMaxHP);
+                // PUSH_BC;
+                // LD_BC(PARTYMON_STRUCT_LENGTH - MON_MAXHP);
+                // CALL(aCopyBytes);
+                CopyBytes_Conv2(wram->wBattleMon.stats, bc->stats, PARTYMON_STRUCT_LENGTH - MON_MAXHP);
+                // POP_BC;
+                // LD_HL(MON_LEVEL);
+                // ADD_HL_BC;
+                // LD_A_hl;
+                // LD_addr_A(wBattleMonLevel);
+                wram->wBattleMon.level = bc->mon.level;
+                // LD_A_addr(wPlayerSubStatus5);
+                // BIT_A(SUBSTATUS_TRANSFORMED);
+                // IF_NZ goto transformed;
+                if(!bit_test(wram->wPlayerSubStatus5, SUBSTATUS_TRANSFORMED)){
+                    // LD_HL(MON_ATK);
+                    // ADD_HL_BC;
+                    // LD_DE(wPlayerStats);
+                    // LD_BC(PARTYMON_STRUCT_LENGTH - MON_ATK);
+                    // CALL(aCopyBytes);
+                    CopyBytes_Conv2(wram->wPlayerStats, bc->stats, PARTYMON_STRUCT_LENGTH - MON_ATK);
+                }
 
+            // transformed:
+                // XOR_A_A;  // FALSE
+                // LD_addr_A(wApplyStatLevelMultipliersToEnemy);
+                wram->wApplyStatLevelMultipliersToEnemy = FALSE;
+                // CALL(aApplyStatLevelMultiplierOnAllStats);
+                ApplyStatLevelMultiplierOnAllStats();
+                // CALLFAR(aApplyStatusEffectOnPlayerStats);
+                ApplyStatusEffectOnPlayerStats();
+                // CALLFAR(aBadgeStatBoosts);
+                BadgeStatBoosts();
+                // CALLFAR(aUpdatePlayerHUD);
+                UpdatePlayerHUD();
+                // CALL(aEmptyBattleTextbox);
+                EmptyBattleTextbox();
+                // CALL(aLoadTilemapToTempTilemap);
+                LoadTilemapToTempTilemap_Conv();
+                // LD_A(0x1);
+                // LDH_addr_A(hBGMapMode);
+                hram->hBGMapMode = 0x1;
+            }
 
-not_max_exp:
-//  Check if the mon leveled up
-    XOR_A_A;  // PARTYMON
-    LD_addr_A(wMonType);
-    PREDEF(pCopyMonToTempMon);
-    CALLFAR(aCalcLevel);
-    POP_BC;
-    LD_HL(MON_LEVEL);
-    ADD_HL_BC;
-    LD_A_hl;
-    CP_A(MAX_LEVEL);
-    JP_NC (mGiveExperiencePoints_next_mon);
-    CP_A_D;
-    JP_Z (mGiveExperiencePoints_next_mon);
-//  <NICKNAME> grew to level ##!
-    LD_addr_A(wTempLevel);
-    LD_A_addr(wCurPartyLevel);
-    PUSH_AF;
-    LD_A_D;
-    LD_addr_A(wCurPartyLevel);
-    LD_hl_A;
-    LD_HL(MON_SPECIES);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_addr_A(wCurSpecies);
-    LD_addr_A(wTempSpecies);  // unused?
-    CALL(aGetBaseData);
-    LD_HL(MON_MAXHP + 1);
-    ADD_HL_BC;
-    LD_A_hld;
-    LD_E_A;
-    LD_D_hl;
-    PUSH_DE;
-    LD_HL(MON_MAXHP);
-    ADD_HL_BC;
-    LD_D_H;
-    LD_E_L;
-    LD_HL(MON_STAT_EXP - 1);
-    ADD_HL_BC;
-    PUSH_BC;
-    LD_B(TRUE);
-    PREDEF(pCalcMonStats);
-    POP_BC;
-    POP_DE;
-    LD_HL(MON_MAXHP + 1);
-    ADD_HL_BC;
-    LD_A_hld;
-    SUB_A_E;
-    LD_E_A;
-    LD_A_hl;
-    SBC_A_D;
-    LD_D_A;
-    DEC_HL;
-    LD_A_hl;
-    ADD_A_E;
-    LD_hld_A;
-    LD_A_hl;
-    ADC_A_D;
-    LD_hl_A;
-    LD_A_addr(wCurBattleMon);
-    LD_D_A;
-    LD_A_addr(wCurPartyMon);
-    CP_A_D;
-    IF_NZ goto skip_active_mon_update;
-    LD_DE(wBattleMonHP);
-    LD_A_hli;
-    LD_de_A;
-    INC_DE;
-    LD_A_hli;
-    LD_de_A;
-    LD_DE(wBattleMonMaxHP);
-    PUSH_BC;
-    LD_BC(PARTYMON_STRUCT_LENGTH - MON_MAXHP);
-    CALL(aCopyBytes);
-    POP_BC;
-    LD_HL(MON_LEVEL);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_addr_A(wBattleMonLevel);
-    LD_A_addr(wPlayerSubStatus5);
-    BIT_A(SUBSTATUS_TRANSFORMED);
-    IF_NZ goto transformed;
-    LD_HL(MON_ATK);
-    ADD_HL_BC;
-    LD_DE(wPlayerStats);
-    LD_BC(PARTYMON_STRUCT_LENGTH - MON_ATK);
-    CALL(aCopyBytes);
+        // skip_active_mon_update:
+            // FARCALL(aLevelUpHappinessMod);
+            LevelUpHappinessMod();
+            // LD_A_addr(wCurBattleMon);
+            // LD_B_A;
+            // LD_A_addr(wCurPartyMon);
+            // CP_A_B;
+            // IF_Z goto skip_exp_bar_animation;
+            if(wram->wCurPartyMon != wram->wCurBattleMon){
+                // LD_DE(SFX_HIT_END_OF_EXP_BAR);
+                // CALL(aPlaySFX);
+                PlaySFX_Conv(SFX_HIT_END_OF_EXP_BAR);
+                // CALL(aWaitSFX);
+                WaitSFX_Conv();
+                // LD_HL(mBattleText_StringBuffer1GrewToLevel);
+                // CALL(aStdBattleTextbox);
+                StdBattleTextbox_Conv2(BattleText_StringBuffer1GrewToLevel);
+                // CALL(aLoadTilemapToTempTilemap);
+                LoadTilemapToTempTilemap_Conv();
+            }
 
+        // skip_exp_bar_animation:
+            // XOR_A_A;  // PARTYMON
+            // LD_addr_A(wMonType);
+            wram->wMonType = PARTYMON;
+            // PREDEF(pCopyMonToTempMon);
+            CopyMonToTempMon_Conv();
+            // hlcoord(9, 0, wTilemap);
+            // LD_B(10);
+            // LD_C(9);
+            // CALL(aTextbox);
+            Textbox_Conv2(coord(9, 0, wram->wTilemap), 10, 9);
+            // hlcoord(11, 1, wTilemap);
+            // LD_BC(4);
+            // PREDEF(pPrintTempMonStats);
+            PrintTempMonStats_Conv(coord(11, 1, wram->wTilemap), 4);
+            // LD_C(30);
+            // CALL(aDelayFrames);
+            DelayFrames_Conv(30);
+            // CALL(aWaitPressAorB_BlinkCursor);
+            WaitPressAorB_BlinkCursor_Conv();
+            // CALL(aSafeLoadTempTilemapToTilemap);
+            SafeLoadTempTilemapToTilemap_Conv();
+            // XOR_A_A;  // PARTYMON
+            // LD_addr_A(wMonType);
+            wram->wMonType = PARTYMON;
+            // LD_A_addr(wCurSpecies);
+            // LD_addr_A(wTempSpecies);  // unused?
+            // LD_A_addr(wCurPartyLevel);
+            // PUSH_AF;
+            // LD_C_A;
+            c = wram->wCurPartyLevel;
+            // LD_A_addr(wTempLevel);
+            // LD_B_A;
+            b = wram->wTempLevel;
 
-transformed:
-    XOR_A_A;  // FALSE
-    LD_addr_A(wApplyStatLevelMultipliersToEnemy);
-    CALL(aApplyStatLevelMultiplierOnAllStats);
-    CALLFAR(aApplyStatusEffectOnPlayerStats);
-    CALLFAR(aBadgeStatBoosts);
-    CALLFAR(aUpdatePlayerHUD);
-    CALL(aEmptyBattleTextbox);
-    CALL(aLoadTilemapToTempTilemap);
-    LD_A(0x1);
-    LDH_addr_A(hBGMapMode);
+            do {
+            // level_loop:
+                // INC_B;
+                // LD_A_B;
+                // LD_addr_A(wCurPartyLevel);
+                wram->wCurPartyLevel = ++b;
+                // PUSH_BC;
+                // PREDEF(pLearnLevelMoves);
+                LearnLevelMoves_Conv(bc, wram->wCurPartyLevel, wram->wCurPartySpecies);
+                // POP_BC;
+                // LD_A_B;
+                // CP_A_C;
+                // IF_NZ goto level_loop;
+            } while(b != c);
+            // POP_AF;
+            // LD_addr_A(wCurPartyLevel);
+            wram->wCurPartyLevel = c;
+            // LD_HL(wEvolvableFlags);
+            // LD_A_addr(wCurPartyMon);
+            // LD_C_A;
+            // LD_B(SET_FLAG);
+            // PREDEF(pSmallFarFlagAction);
+            SmallFarFlagAction_Conv(wram->wEvolvableFlags, wram->wCurPartyMon, SET_FLAG);
+            // POP_AF;
+            // LD_addr_A(wCurPartyLevel);
+            wram->wCurPartyLevel = lvl;
+        }
 
-
-skip_active_mon_update:
-    FARCALL(aLevelUpHappinessMod);
-    LD_A_addr(wCurBattleMon);
-    LD_B_A;
-    LD_A_addr(wCurPartyMon);
-    CP_A_B;
-    IF_Z goto skip_exp_bar_animation;
-    LD_DE(SFX_HIT_END_OF_EXP_BAR);
-    CALL(aPlaySFX);
-    CALL(aWaitSFX);
-    LD_HL(mBattleText_StringBuffer1GrewToLevel);
-    CALL(aStdBattleTextbox);
-    CALL(aLoadTilemapToTempTilemap);
-
-
-skip_exp_bar_animation:
-    XOR_A_A;  // PARTYMON
-    LD_addr_A(wMonType);
-    PREDEF(pCopyMonToTempMon);
-    hlcoord(9, 0, wTilemap);
-    LD_B(10);
-    LD_C(9);
-    CALL(aTextbox);
-    hlcoord(11, 1, wTilemap);
-    LD_BC(4);
-    PREDEF(pPrintTempMonStats);
-    LD_C(30);
-    CALL(aDelayFrames);
-    CALL(aWaitPressAorB_BlinkCursor);
-    CALL(aSafeLoadTempTilemapToTilemap);
-    XOR_A_A;  // PARTYMON
-    LD_addr_A(wMonType);
-    LD_A_addr(wCurSpecies);
-    LD_addr_A(wTempSpecies);  // unused?
-    LD_A_addr(wCurPartyLevel);
-    PUSH_AF;
-    LD_C_A;
-    LD_A_addr(wTempLevel);
-    LD_B_A;
-
-
-level_loop:
-    INC_B;
-    LD_A_B;
-    LD_addr_A(wCurPartyLevel);
-    PUSH_BC;
-    PREDEF(pLearnLevelMoves);
-    POP_BC;
-    LD_A_B;
-    CP_A_C;
-    IF_NZ goto level_loop;
-    POP_AF;
-    LD_addr_A(wCurPartyLevel);
-    LD_HL(wEvolvableFlags);
-    LD_A_addr(wCurPartyMon);
-    LD_C_A;
-    LD_B(SET_FLAG);
-    PREDEF(pSmallFarFlagAction);
-    POP_AF;
-    LD_addr_A(wCurPartyLevel);
-
-
-next_mon:
-    LD_A_addr(wPartyCount);
-    LD_B_A;
-    LD_A_addr(wCurPartyMon);
-    INC_A;
-    CP_A_B;
-    IF_Z goto done;
-    LD_addr_A(wCurPartyMon);
-    LD_A(MON_SPECIES);
-    CALL(aGetPartyParamLocation);
-    LD_B_H;
-    LD_C_L;
-    JP(mGiveExperiencePoints_loop);
-
+    next_mon:
+        // LD_A_addr(wPartyCount);
+        // LD_B_A;
+        // LD_A_addr(wCurPartyMon);
+        // INC_A;
+        // CP_A_B;
+        // IF_Z goto done;
+        if(wram->wCurPartyMon + 1 == wram->wPartyCount)
+            break;
+        // LD_addr_A(wCurPartyMon);
+        wram->wCurPartyMon++;
+        // LD_A(MON_SPECIES);
+        // CALL(aGetPartyParamLocation);
+        // LD_B_H;
+        // LD_C_L;
+        bc = wram->wPartyMon + wram->wCurPartyMon;
+        // JP(mGiveExperiencePoints_loop);
+    }
 
 done:
-    JP(mResetBattleParticipants);
-
-
-EvenlyDivideExpAmongParticipants:
-//  count number of battle participants
-    LD_A_addr(wBattleParticipantsNotFainted);
-    LD_B_A;
-    LD_C(PARTY_LENGTH);
-    LD_D(0);
-
-count_loop:
-    XOR_A_A;
-    SRL_B;
-    ADC_A_D;
-    LD_D_A;
-    DEC_C;
-    IF_NZ goto count_loop;
-    CP_A(2);
-    RET_C ;
-
-    LD_addr_A(wTempByteValue);
-    LD_HL(wEnemyMonBaseStats);
-    LD_C(wEnemyMonEnd - wEnemyMonBaseStats);
-
-base_stat_division_loop:
-    XOR_A_A;
-    LDH_addr_A(hDividend + 0);
-    LD_A_hl;
-    LDH_addr_A(hDividend + 1);
-    LD_A_addr(wTempByteValue);
-    LDH_addr_A(hDivisor);
-    LD_B(2);
-    CALL(aDivide);
-    LDH_A_addr(hQuotient + 3);
-    LD_hli_A;
-    DEC_C;
-    IF_NZ goto base_stat_division_loop;
-    RET;
-
+    // JP(mResetBattleParticipants);
+    return ResetBattleParticipants();
 }
 
 void BoostExp(void){
@@ -13092,229 +13235,317 @@ void BoostExp(void){
 
 }
 
-void Text_MonGainedExpPoint(void){
-    //text_far ['Text_Gained']
-    //text_asm ['?']
-    LD_HL(mExpPointsText);
-    LD_A_addr(wStringBuffer2 + 2);  // IsTradedMon
-    AND_A_A;
-    RET_Z ;
-
-    LD_HL(mBoostedExpPointsText);
-    RET;
-
+uint16_t BoostExp_Conv(uint16_t exp){
+//  Multiply experience by 1.5x
+    // PUSH_BC;
+//  load experience value
+    // LDH_A_addr(hProduct + 2);
+    // LD_B_A;
+    // LDH_A_addr(hProduct + 3);
+    // LD_C_A;
+//  halve it
+    // SRL_B;
+    // RR_C;
+//  add it back to the whole exp value
+    // ADD_A_C;
+    // LDH_addr_A(hProduct + 3);
+    // LDH_A_addr(hProduct + 2);
+    // ADC_A_B;
+    // LDH_addr_A(hProduct + 2);
+    // POP_BC;
+    // RET;
+    return exp + (exp / 2);
 }
 
-void BoostedExpPointsText(void){
-    //text_far ['_BoostedExpPointsText']
-    //text_end ['?']
+static void Text_MonGainedExpPoint_Func(struct TextCmdState* state){
+    // LD_HL(mExpPointsText);
+    // LD_A_addr(wStringBuffer2 + 2);  // IsTradedMon
+    // AND_A_A;
+    // RET_Z ;
 
-    return ExpPointsText();
+    // LD_HL(mBoostedExpPointsText);
+    // RET;
+    state->hl = (wram->wStringBuffer2[2] == 0)? ExpPointsText: BoostedExpPointsText;
 }
 
-void ExpPointsText(void){
-    //text_far ['_ExpPointsText']
-    //text_end ['?']
+const txt_cmd_s Text_MonGainedExpPoint[] = {
+    text_far(v_Text_Gained)
+    text_asm(Text_MonGainedExpPoint_Func)
+};
 
-    return AnimateExpBar();
+const txt_cmd_s BoostedExpPointsText[] = {
+    text_far(v_BoostedExpPointsText)
+    text_end
+};
+
+const txt_cmd_s ExpPointsText[] = {
+    text_far(v_ExpPointsText)
+    text_end
+};
+
+static void AnimateExpBar_PlayExpBarSound(void){
+    // PUSH_BC;
+    // CALL(aWaitSFX);
+    WaitSFX_Conv();
+    // LD_DE(SFX_EXP_BAR);
+    // CALL(aPlaySFX);
+    PlaySFX_Conv(SFX_EXP_BAR);
+    // LD_C(10);
+    // CALL(aDelayFrames);
+    DelayFrames_Conv(10);
+    // POP_BC;
+    // RET;
 }
 
-void AnimateExpBar(void){
-    PUSH_BC;
+static void AnimateExpBar_LoopBarAnimation(uint8_t b, uint8_t c){
+    // LD_D(3);
+    uint8_t d = 3;
+    // DEC_B;
+    --b;
 
-    LD_HL(wCurPartyMon);
-    LD_A_addr(wCurBattleMon);
-    CP_A_hl;
-    JP_NZ (mAnimateExpBar_finish);
+    do {
+    // anim_loop:
+        // INC_B;
+        ++b;
+        // PUSH_BC;
+        // PUSH_DE;
+        // hlcoord(17, 11, wTilemap);
+        // CALL(aPlaceExpBar);
+        PlaceExpBar_Conv(coord(17, 11, wram->wTilemap), b);
+        // POP_DE;
+        // LD_A(0x1);
+        // LDH_addr_A(hBGMapMode);
+        hram->hBGMapMode = 0x1;
+        // LD_C_D;
+        // CALL(aDelayFrames);
+        DelayFrames_Conv(d);
+        // XOR_A_A;
+        // LDH_addr_A(hBGMapMode);
+        hram->hBGMapMode = 0x0;
+        // POP_BC;
+        // LD_A_C;
+        // CP_A_B;
+        // IF_Z goto end_animation;
+        if(c == b)
+            break;
+        // INC_B;
+        ++b;
+        // PUSH_BC;
+        // PUSH_DE;
+        // hlcoord(17, 11, wTilemap);
+        // CALL(aPlaceExpBar);
+        PlaceExpBar_Conv(coord(17, 11, wram->wTilemap), b);
+        // POP_DE;
+        // LD_A(0x1);
+        // LDH_addr_A(hBGMapMode);
+        hram->hBGMapMode = 0x1;
+        // LD_C_D;
+        // CALL(aDelayFrames);
+        DelayFrames_Conv(d);
+        // XOR_A_A;
+        // LDH_addr_A(hBGMapMode);
+        hram->hBGMapMode = 0x0;
+        // DEC_D;
+        // IF_NZ goto min_number_of_frames;
+        // LD_D(1);
+        if(--d == 0)
+            d = 1;
 
-    LD_A_addr(wBattleMonLevel);
-    CP_A(MAX_LEVEL);
-    JP_NC (mAnimateExpBar_finish);
+    // min_number_of_frames:
+        // POP_BC;
+        // LD_A_C;
+        // CP_A_B;
+        // IF_NZ goto anim_loop;
+    } while(c != b);
 
-    LDH_A_addr(hProduct + 3);
-    LD_addr_A(wExperienceGained + 2);
-    PUSH_AF;
-    LDH_A_addr(hProduct + 2);
-    LD_addr_A(wExperienceGained + 1);
-    PUSH_AF;
-    XOR_A_A;
-    LD_addr_A(wExperienceGained);
-    XOR_A_A;  // PARTYMON
-    LD_addr_A(wMonType);
-    PREDEF(pCopyMonToTempMon);
-    LD_A_addr(wTempMonLevel);
-    LD_B_A;
-    LD_E_A;
-    PUSH_DE;
-    LD_DE(wTempMonExp + 2);
-    CALL(aCalcExpBar);
-    PUSH_BC;
-    LD_HL(wTempMonExp + 2);
-    LD_A_addr(wExperienceGained + 2);
-    ADD_A_hl;
-    LD_hld_A;
-    LD_A_addr(wExperienceGained + 1);
-    ADC_A_hl;
-    LD_hld_A;
-    IF_NC goto NoOverflow;
-    INC_hl;
-    IF_NZ goto NoOverflow;
-    LD_A(0xff);
-    LD_hli_A;
-    LD_hli_A;
-    LD_hl_A;
+// end_animation:
+    // LD_A(0x1);
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0x1;
+    // RET;
+}
 
+void AnimateExpBar(uint16_t exp){
+    // PUSH_BC;
 
-NoOverflow:
-    LD_D(MAX_LEVEL);
-    CALLFAR(aCalcExpAtLevel);
-    LDH_A_addr(hProduct + 1);
-    LD_B_A;
-    LDH_A_addr(hProduct + 2);
-    LD_C_A;
-    LDH_A_addr(hProduct + 3);
-    LD_D_A;
-    LD_HL(wTempMonExp + 2);
-    LD_A_hld;
-    SUB_A_D;
-    LD_A_hld;
-    SBC_A_C;
-    LD_A_hl;
-    SBC_A_B;
-    IF_C goto AlreadyAtMaxExp;
-    LD_A_B;
-    LD_hli_A;
-    LD_A_C;
-    LD_hli_A;
-    LD_A_D;
-    LD_hld_A;
+    // LD_HL(wCurPartyMon);
+    // LD_A_addr(wCurBattleMon);
+    // CP_A_hl;
+    // JP_NZ (mAnimateExpBar_finish);
+    if(wram->wCurPartyMon != wram->wCurBattleMon)
+        return;
 
+    // LD_A_addr(wBattleMonLevel);
+    // CP_A(MAX_LEVEL);
+    // JP_NC (mAnimateExpBar_finish);
+    if(wram->wBattleMon.level >= MAX_LEVEL)
+        return;
 
-AlreadyAtMaxExp:
-    CALLFAR(aCalcLevel);
-    LD_A_D;
-    POP_BC;
-    POP_DE;
-    LD_D_A;
-    CP_A_E;
-    IF_NC goto LoopLevels;
-    LD_A_E;
-    LD_D_A;
+    // LDH_A_addr(hProduct + 3);
+    // LD_addr_A(wExperienceGained + 2);
+    // PUSH_AF;
+    // LDH_A_addr(hProduct + 2);
+    // LD_addr_A(wExperienceGained + 1);
+    // PUSH_AF;
+    // XOR_A_A;
+    // LD_addr_A(wExperienceGained);
+    // XOR_A_A;  // PARTYMON
+    // LD_addr_A(wMonType);
+    wram->wMonType = PARTYMON;
+    // PREDEF(pCopyMonToTempMon);
+    CopyMonToTempMon_Conv();
+    // LD_A_addr(wTempMonLevel);
+    // LD_B_A;
+    // LD_E_A;
+    uint8_t e = wram->wTempMon.mon.level;
+    // PUSH_DE;
+    // LD_DE(wTempMonExp + 2);
+    // CALL(aCalcExpBar);
+    uint8_t b = CalcExpBar_Conv(wram->wTempMon.mon.level, wram->wTempMon.mon.exp + 2);
+    // PUSH_BC;
+    uint32_t bExp = (wram->wTempMon.mon.exp[0] << 16) | (wram->wTempMon.mon.exp[1] << 8) | (wram->wTempMon.mon.exp[2]);
+    // LD_HL(wTempMonExp + 2);
+    // LD_A_addr(wExperienceGained + 2);
+    // ADD_A_hl;
+    // LD_hld_A;
+    // LD_A_addr(wExperienceGained + 1);
+    // ADC_A_hl;
+    // LD_hld_A;
+    // IF_NC goto NoOverflow;
+    // INC_hl;
+    // IF_NZ goto NoOverflow;
+    if(bExp + exp > 0xffffff){
+        // LD_A(0xff);
+        // LD_hli_A;
+        // LD_hli_A;
+        // LD_hl_A;
+        bExp = 0xffffff;
+    }
+    else {
+        bExp += exp;
+    }
 
+    wram->wTempMon.mon.exp[2] = LOW(bExp);
+    wram->wTempMon.mon.exp[1] = HIGH(bExp);
+    wram->wTempMon.mon.exp[0] = HIGH(bExp >> 8);
 
-LoopLevels:
-    LD_A_E;
-    CP_A(MAX_LEVEL);
-    IF_NC goto FinishExpBar;
-    CP_A_D;
-    IF_Z goto FinishExpBar;
-    INC_A;
-    LD_addr_A(wTempMonLevel);
-    LD_addr_A(wCurPartyLevel);
-    LD_addr_A(wBattleMonLevel);
-    PUSH_DE;
-    CALL(aAnimateExpBar_PlayExpBarSound);
-    LD_C(0x40);
-    CALL(aAnimateExpBar_LoopBarAnimation);
-    CALL(aPrintPlayerHUD);
-    LD_HL(wBattleMonNickname);
-    LD_DE(wStringBuffer1);
-    LD_BC(MON_NAME_LENGTH);
-    CALL(aCopyBytes);
-    CALL(aTerminateExpBarSound);
-    LD_DE(SFX_HIT_END_OF_EXP_BAR);
-    CALL(aPlaySFX);
-    FARCALL(aAnimateEndOfExpBar);
-    CALL(aWaitSFX);
-    LD_HL(mBattleText_StringBuffer1GrewToLevel);
-    CALL(aStdBattleTextbox);
-    POP_DE;
-    INC_E;
-    LD_B(0x0);
-    goto LoopLevels;
+// NoOverflow:
+    // LD_D(MAX_LEVEL);
+    // CALLFAR(aCalcExpAtLevel);
+    uint32_t maxExp = CalcExpAtLevel_Conv(MAX_LEVEL);
+    // LDH_A_addr(hProduct + 1);
+    // LD_B_A;
+    // LDH_A_addr(hProduct + 2);
+    // LD_C_A;
+    // LDH_A_addr(hProduct + 3);
+    // LD_D_A;
+    // LD_HL(wTempMonExp + 2);
+    // LD_A_hld;
+    // SUB_A_D;
+    // LD_A_hld;
+    // SBC_A_C;
+    // LD_A_hl;
+    // SBC_A_B;
+    // IF_C goto AlreadyAtMaxExp;
+    if(bExp > maxExp){
+        // LD_A_B;
+        // LD_hli_A;
+        // LD_A_C;
+        // LD_hli_A;
+        // LD_A_D;
+        // LD_hld_A;
+        bExp = maxExp; 
+    }
 
+    wram->wTempMon.mon.exp[2] = LOW(bExp);
+    wram->wTempMon.mon.exp[1] = HIGH(bExp);
+    wram->wTempMon.mon.exp[0] = HIGH(bExp >> 8);
 
-FinishExpBar:
-    PUSH_BC;
-    LD_B_D;
-    LD_DE(wTempMonExp + 2);
-    CALL(aCalcExpBar);
-    LD_A_B;
-    POP_BC;
-    LD_C_A;
-    CALL(aAnimateExpBar_PlayExpBarSound);
-    CALL(aAnimateExpBar_LoopBarAnimation);
-    CALL(aTerminateExpBarSound);
-    POP_AF;
-    LDH_addr_A(hProduct + 2);
-    POP_AF;
-    LDH_addr_A(hProduct + 3);
+// AlreadyAtMaxExp:
+    // CALLFAR(aCalcLevel);
+    // LD_A_D;
+    uint8_t d = CalcLevel_Conv(&wram->wTempMon);
+    // POP_BC;
+    // POP_DE;
+    // LD_D_A;
+    // CP_A_E;
+    // IF_NC goto LoopLevels;
+    if(d < e){
+        // LD_A_E;
+        // LD_D_A;
+        d = e;
+    }
 
+    while(e < MAX_LEVEL && e != d){
+    // LoopLevels:
+        // LD_A_E;
+        // CP_A(MAX_LEVEL);
+        // IF_NC goto FinishExpBar;
+        // CP_A_D;
+        // IF_Z goto FinishExpBar;
+        // INC_A;
+        // LD_addr_A(wTempMonLevel);
+        wram->wTempMon.mon.level = e + 1;
+        // LD_addr_A(wCurPartyLevel);
+        wram->wCurPartyLevel = e + 1;
+        // LD_addr_A(wBattleMonLevel);
+        wram->wBattleMon.level = e + 1;
+        // PUSH_DE;
+        // CALL(aAnimateExpBar_PlayExpBarSound);
+        AnimateExpBar_PlayExpBarSound();
+        // LD_C(0x40);
+        // CALL(aAnimateExpBar_LoopBarAnimation);
+        AnimateExpBar_LoopBarAnimation(b, 0x40);
+        // CALL(aPrintPlayerHUD);
+        PrintPlayerHUD();
+        // LD_HL(wBattleMonNickname);
+        // LD_DE(wStringBuffer1);
+        // LD_BC(MON_NAME_LENGTH);
+        // CALL(aCopyBytes);
+        CopyBytes_Conv2(wram->wStringBuffer1, wram->wBattleMonNickname, MON_NAME_LENGTH);
+        // CALL(aTerminateExpBarSound);
+        TerminateExpBarSound_Conv();
+        // LD_DE(SFX_HIT_END_OF_EXP_BAR);
+        // CALL(aPlaySFX);
+        PlaySFX_Conv(SFX_HIT_END_OF_EXP_BAR);
+        // FARCALL(aAnimateEndOfExpBar);
+        AnimateEndOfExpBar_Conv();
+        // CALL(aWaitSFX);
+        WaitSFX_Conv();
+        // LD_HL(mBattleText_StringBuffer1GrewToLevel);
+        // CALL(aStdBattleTextbox);
+        StdBattleTextbox_Conv2(BattleText_StringBuffer1GrewToLevel);
+        // POP_DE;
+        // INC_E;
+        e++;
+        // LD_B(0x0);
+        b = 0x0;
+        // goto LoopLevels;
+    }
 
-finish:
-    POP_BC;
-    RET;
+// FinishExpBar:
+    // PUSH_BC;
+    // LD_B_D;
+    // LD_DE(wTempMonExp + 2);
+    // CALL(aCalcExpBar);
+    uint8_t c = CalcExpBar_Conv(d, wram->wTempMon.mon.exp + 2);
+    // LD_A_B;
+    // POP_BC;
+    // LD_C_A;
+    // CALL(aAnimateExpBar_PlayExpBarSound);
+    AnimateExpBar_PlayExpBarSound();
+    // CALL(aAnimateExpBar_LoopBarAnimation);
+    AnimateExpBar_LoopBarAnimation(b, c);
+    // CALL(aTerminateExpBarSound);
+    TerminateExpBarSound_Conv();
+    // POP_AF;
+    // LDH_addr_A(hProduct + 2);
+    // POP_AF;
+    // LDH_addr_A(hProduct + 3);
 
-
-PlayExpBarSound:
-    PUSH_BC;
-    CALL(aWaitSFX);
-    LD_DE(SFX_EXP_BAR);
-    CALL(aPlaySFX);
-    LD_C(10);
-    CALL(aDelayFrames);
-    POP_BC;
-    RET;
-
-
-LoopBarAnimation:
-    LD_D(3);
-    DEC_B;
-
-anim_loop:
-    INC_B;
-    PUSH_BC;
-    PUSH_DE;
-    hlcoord(17, 11, wTilemap);
-    CALL(aPlaceExpBar);
-    POP_DE;
-    LD_A(0x1);
-    LDH_addr_A(hBGMapMode);
-    LD_C_D;
-    CALL(aDelayFrames);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    POP_BC;
-    LD_A_C;
-    CP_A_B;
-    IF_Z goto end_animation;
-    INC_B;
-    PUSH_BC;
-    PUSH_DE;
-    hlcoord(17, 11, wTilemap);
-    CALL(aPlaceExpBar);
-    POP_DE;
-    LD_A(0x1);
-    LDH_addr_A(hBGMapMode);
-    LD_C_D;
-    CALL(aDelayFrames);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    DEC_D;
-    IF_NZ goto min_number_of_frames;
-    LD_D(1);
-
-min_number_of_frames:
-    POP_BC;
-    LD_A_C;
-    CP_A_B;
-    IF_NZ goto anim_loop;
-
-end_animation:
-    LD_A(0x1);
-    LDH_addr_A(hBGMapMode);
-    RET;
-
+// finish:
+    // POP_BC;
+    // RET;
 }
 
 void SendOutMonText(void){
@@ -15218,225 +15449,304 @@ species_t* GetRoamMonSpecies_Conv(species_t a){
     return &wram->wRoamMon3.species;
 }
 
+static bool AddLastLinkBattleToLinkRecord_CheckOverflow(uint8_t* hl){
+    // DEC_HL;
+    // LD_A_hl;
+    // INC_HL;
+    // CP_A(HIGH(MAX_LINK_RECORD));
+    // RET_C ;
+    // LD_A_hl;
+    // CP_A(LOW(MAX_LINK_RECORD));
+    uint16_t record = (hl[0] << 8) | hl[1];
+    // RET;
+    return record >= MAX_LINK_RECORD;
+}
+
+static void AddLastLinkBattleToLinkRecord_StoreResult(uint8_t* hl){
+    uint16_t bc;
+    // LD_A_addr(wBattleResult);
+    // AND_A(0xf);
+    uint8_t result = wram->wBattleResult & 0xf;
+    // CP_A(LOSE);
+    // LD_BC((sLinkBattleRecord1Wins - sLinkBattleRecord1) + 1);
+    // IF_C goto okay;  // WIN
+    if(result < LOSE)
+        bc = (sLinkBattleRecord1Wins - sLinkBattleRecord1);
+    // LD_BC((sLinkBattleRecord1Losses - sLinkBattleRecord1) + 1);
+    // IF_Z goto okay;  // LOSE
+    else if(result == LOSE)
+        bc = (sLinkBattleRecord1Losses - sLinkBattleRecord1);
+// DRAW
+    // LD_BC((sLinkBattleRecord1Draws - sLinkBattleRecord1) + 1);
+    else
+        bc = (sLinkBattleRecord1Draws - sLinkBattleRecord1);
+
+// okay:
+    // ADD_HL_BC;
+    hl += bc;
+    // CALL(aAddLastLinkBattleToLinkRecord_CheckOverflow);
+    // RET_NC ;
+    if(AddLastLinkBattleToLinkRecord_CheckOverflow(hl))
+        return;
+    uint16_t record = (hl[0] << 8) | hl[1];
+    // INC_hl;
+    ++record;
+    // RET_NZ ;
+    hl[1] = LOW(record);
+    // DEC_HL;
+    // INC_hl;
+    hl[0] = HIGH(record);
+    // RET;
+}
+
+struct LinkRecordPtrResult {
+    uint16_t bc;
+    uint8_t e;
+};
+
+static struct LinkRecordPtrResult AddLastLinkBattleToLinkRecord_LoadPointer(uint8_t* hl){
+    // LD_E(0x0);
+    uint8_t e = 0x0;
+    // LD_A_hld;
+    // LD_C_A;
+    // LD_A_hld;
+    // LD_B_A;
+    uint16_t bc = hl[0] | (hl[-1] << 8);
+    uint16_t bc2 = hl[-2] | (hl[-3] << 8);
+    // LD_A_hld;
+    // ADD_A_C;
+    // LD_C_A;
+    // LD_A_hld;
+    // ADC_A_B;
+    // LD_B_A;
+    // IF_NC goto okay2;
+    // INC_E;
+    if(bc + bc2 > 0xffff)
+        e++;
+    bc += bc2;
+
+// okay2:
+    uint16_t bc3 = hl[-4] | (hl[-5] << 8);
+    // LD_A_hld;
+    // ADD_A_C;
+    // LD_C_A;
+    // LD_A_hl;
+    // ADC_A_B;
+    // LD_B_A;
+    // RET_NC ;
+    if(bc + bc3 > 0xffff)
+        e++;
+    // INC_E;
+    // RET;
+    return (struct LinkRecordPtrResult){.bc = bc + bc3, .e = e};
+}
+
+static void AddLastLinkBattleToLinkRecord_FindOpponentAndAppendRecord(void){
+    // LD_B(NUM_LINK_BATTLE_RECORDS);
+    uint8_t b = NUM_LINK_BATTLE_RECORDS;
+    // LD_HL(sLinkBattleRecord1End - 1);
+    uint8_t* hl = GBToRAMAddr(sLinkBattleRecord1End - 1);
+    // LD_DE(wLinkBattleRecordBuffer);
+    uint8_t* de = wram->wLinkBattleRecordName;
+
+    do {
+    // loop3:
+        // PUSH_BC;
+        // PUSH_DE;
+        // PUSH_HL;
+        // CALL(aAddLastLinkBattleToLinkRecord_LoadPointer);
+        struct LinkRecordPtrResult res = AddLastLinkBattleToLinkRecord_LoadPointer(hl);
+        // POP_HL;
+        // LD_A_E;
+        // POP_DE;
+        // LD_de_A;
+        *de = res.e;
+        // INC_DE;
+        de++;
+        // LD_A_B;
+        // LD_de_A;
+        *(de++) = HIGH(res.bc);
+        // INC_DE;
+        // LD_A_C;
+        // LD_de_A;
+        *(de++) = LOW(res.bc);
+        // INC_DE;
+        // LD_BC(LINK_BATTLE_RECORD_LENGTH);
+        // ADD_HL_BC;
+        // POP_BC;
+        hl += LINK_BATTLE_RECORD_LENGTH;
+        // DEC_B;
+        // IF_NZ goto loop3;
+    } while(--b != 0);
+    // LD_B(0x0);
+    b = 0x0;
+    // LD_C(0x1);
+    uint8_t c = 0x1;
+
+    do {
+        do {
+        // loop4:
+            // LD_A_B;
+            // ADD_A_B;
+            // ADD_A_B;
+            // LD_E_A;
+            // LD_D(0);
+            // LD_HL(wLinkBattleRecordBuffer);
+            // ADD_HL_DE;
+            uint8_t* hl = wram->wLinkBattleRecordName + (b * 3);
+            // PUSH_HL;
+            // LD_A_C;
+            // ADD_A_C;
+            // ADD_A_C;
+            // LD_E_A;
+            // LD_D(0);
+            // LD_HL(wLinkBattleRecordBuffer);
+            // ADD_HL_DE;
+            // LD_D_H;
+            // LD_E_L;
+            uint8_t* de = wram->wLinkBattleRecordName + (c * 3);
+            // POP_HL;
+            // PUSH_BC;
+            // LD_C(3);
+            // CALL(aCompareBytes);
+            int cmp = CompareBytes_Conv2(de, hl, 3);
+            // POP_BC;
+            // IF_Z goto equal;
+            // IF_NC goto done2;
+            if(cmp > 0){
+            // done2:
+                // PUSH_BC;
+                // LD_A_B;
+                // LD_BC(LINK_BATTLE_RECORD_LENGTH);
+                // LD_HL(sLinkBattleRecord);
+                // CALL(aAddNTimes);
+                // PUSH_HL;
+                uint8_t* hl = GBToRAMAddr(sLinkBattleRecord + LINK_BATTLE_RECORD_LENGTH * b);
+                // LD_DE(wLinkBattleRecordBuffer);
+                // LD_BC(LINK_BATTLE_RECORD_LENGTH);
+                // CALL(aCopyBytes);
+                CopyBytes_Conv2(wram->wLinkBattleRecordName, hl, LINK_BATTLE_RECORD_LENGTH);
+                // POP_HL;
+                // POP_BC;
+                // PUSH_HL;
+                // LD_A_C;
+                // LD_BC(LINK_BATTLE_RECORD_LENGTH);
+                // LD_HL(sLinkBattleRecord);
+                // CALL(aAddNTimes);
+                // POP_DE;
+                // PUSH_HL;
+                // LD_BC(LINK_BATTLE_RECORD_LENGTH);
+                // CALL(aCopyBytes);
+                uint8_t* de = GBToRAMAddr(sLinkBattleRecord + LINK_BATTLE_RECORD_LENGTH * c);
+                // LD_HL(wLinkBattleRecordBuffer);
+                // LD_BC(LINK_BATTLE_RECORD_LENGTH);
+                // POP_DE;
+                // CALL(aCopyBytes);
+                CopyBytes_Conv2(de, wram->wLinkBattleRecordName, LINK_BATTLE_RECORD_LENGTH);
+                // RET;
+                return;
+            }
+
+        // equal:
+            // INC_C;
+            // LD_A_C;
+            // CP_A(0x5);
+            // IF_NZ goto loop4;
+        } while(++c != 0x5);
+        // INC_B;
+        c = ++b;
+        // LD_C_B;
+        // INC_C;
+        c++;
+        // LD_A_B;
+        // CP_A(0x4);
+        // IF_NZ goto loop4;
+    } while(b != 0x4);
+    // RET;
+}
+
 void AddLastLinkBattleToLinkRecord(void){
-    LD_HL(wOTPlayerID);
-    LD_DE(wStringBuffer1);
-    LD_BC(2);
-    CALL(aCopyBytes);
-    LD_HL(wOTPlayerName);
-    LD_BC(NAME_LENGTH - 1);
-    CALL(aCopyBytes);
-    LD_HL(sLinkBattleStats - (LINK_BATTLE_RECORD_LENGTH - 6));
-    CALL(aAddLastLinkBattleToLinkRecord_StoreResult);
-    LD_HL(sLinkBattleRecord);
-    LD_D(NUM_LINK_BATTLE_RECORDS);
+    // LD_HL(wOTPlayerID);
+    // LD_DE(wStringBuffer1);
+    // LD_BC(2);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wStringBuffer1, &wram->wOTPlayerID, 2);
+    // LD_HL(wOTPlayerName);
+    // LD_BC(NAME_LENGTH - 1);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wStringBuffer1 + 2, wram->wOTPlayerName, NAME_LENGTH - 1);
+    // LD_HL(sLinkBattleStats - (LINK_BATTLE_RECORD_LENGTH - 6));
+    // CALL(aAddLastLinkBattleToLinkRecord_StoreResult);
+    AddLastLinkBattleToLinkRecord_StoreResult(GBToRAMAddr(sLinkBattleStats - (LINK_BATTLE_RECORD_LENGTH - 6)));
+    // LD_HL(sLinkBattleRecord);
+    uint8_t* hl = GBToRAMAddr(sLinkBattleStats - (LINK_BATTLE_RECORD_LENGTH - 6));
+    // LD_D(NUM_LINK_BATTLE_RECORDS);
+    uint8_t d = NUM_LINK_BATTLE_RECORDS;
 
-loop:
-    PUSH_HL;
-    INC_HL;
-    INC_HL;
-    LD_A_hl;
-    DEC_HL;
-    DEC_HL;
-    AND_A_A;
-    IF_Z goto copy;
-    PUSH_DE;
-    LD_BC(LINK_BATTLE_RECORD_LENGTH - 6);
-    LD_DE(wStringBuffer1);
-    CALL(aCompareBytesLong);
-    POP_DE;
-    POP_HL;
-    IF_C goto done;
-    LD_BC(LINK_BATTLE_RECORD_LENGTH);
-    ADD_HL_BC;
-    DEC_D;
-    IF_NZ goto loop;
-    LD_BC(-LINK_BATTLE_RECORD_LENGTH);
-    ADD_HL_BC;
-    PUSH_HL;
-
+    do {
+    // loop:
+        // PUSH_HL;
+        // INC_HL;
+        // INC_HL;
+        // LD_A_hl;
+        uint8_t a = hl[2];
+        // DEC_HL;
+        // DEC_HL;
+        // AND_A_A;
+        // IF_Z goto copy;
+        if(a == 0)
+            goto copy;
+        // PUSH_DE;
+        // LD_BC(LINK_BATTLE_RECORD_LENGTH - 6);
+        // LD_DE(wStringBuffer1);
+        // CALL(aCompareBytesLong);
+        int cmp = CompareBytes_Conv2(wram->wStringBuffer1, hl, LINK_BATTLE_RECORD_LENGTH - 6);
+        // POP_DE;
+        // POP_HL;
+        // IF_C goto done;
+        if(cmp < 0)
+            goto done;
+        // LD_BC(LINK_BATTLE_RECORD_LENGTH);
+        // ADD_HL_BC;
+        hl += LINK_BATTLE_RECORD_LENGTH;
+        // DEC_D;
+        // IF_NZ goto loop;
+    } while(--d != 0);
+    // LD_BC(-LINK_BATTLE_RECORD_LENGTH);
+    // ADD_HL_BC;
+    // PUSH_HL;
+    hl -= LINK_BATTLE_RECORD_LENGTH;
+    uint8_t* de;
 
 copy:
-    LD_D_H;
-    LD_E_L;
-    LD_HL(wStringBuffer1);
-    LD_BC(LINK_BATTLE_RECORD_LENGTH - 6);
-    CALL(aCopyBytes);
-    LD_B(6);
-    XOR_A_A;
+    // LD_D_H;
+    // LD_E_L;
+    de = hl;
+    // LD_HL(wStringBuffer1);
+    // LD_BC(LINK_BATTLE_RECORD_LENGTH - 6);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(de, wram->wStringBuffer1, LINK_BATTLE_RECORD_LENGTH - 6);
+    // LD_B(6);
+    uint8_t b = 6;
+    // XOR_A_A;
 
-loop2:
-    LD_de_A;
-    INC_DE;
-    DEC_B;
-    IF_NZ goto loop2;
-    POP_HL;
-
+    do {
+    // loop2:
+        // LD_de_A;
+        *de = 0;
+        // INC_DE;
+        de++;
+        // DEC_B;
+        // IF_NZ goto loop2;
+    } while(--b != 0);
+    // POP_HL;
 
 done:
-    CALL(aAddLastLinkBattleToLinkRecord_StoreResult);
-    CALL(aAddLastLinkBattleToLinkRecord_FindOpponentAndAppendRecord);
-    RET;
-
-
-StoreResult:
-    LD_A_addr(wBattleResult);
-    AND_A(0xf);
-    CP_A(LOSE);
-    LD_BC((sLinkBattleRecord1Wins - sLinkBattleRecord1) + 1);
-    IF_C goto okay;  // WIN
-    LD_BC((sLinkBattleRecord1Losses - sLinkBattleRecord1) + 1);
-    IF_Z goto okay;  // LOSE
-// DRAW
-    LD_BC((sLinkBattleRecord1Draws - sLinkBattleRecord1) + 1);
-
-okay:
-    ADD_HL_BC;
-    CALL(aAddLastLinkBattleToLinkRecord_CheckOverflow);
-    RET_NC ;
-    INC_hl;
-    RET_NZ ;
-    DEC_HL;
-    INC_hl;
-    RET;
-
-
-CheckOverflow:
-    DEC_HL;
-    LD_A_hl;
-    INC_HL;
-    CP_A(HIGH(MAX_LINK_RECORD));
-    RET_C ;
-    LD_A_hl;
-    CP_A(LOW(MAX_LINK_RECORD));
-    RET;
-
-
-FindOpponentAndAppendRecord:
-    LD_B(NUM_LINK_BATTLE_RECORDS);
-    LD_HL(sLinkBattleRecord1End - 1);
-    LD_DE(wLinkBattleRecordBuffer);
-
-loop3:
-    PUSH_BC;
-    PUSH_DE;
-    PUSH_HL;
-    CALL(aAddLastLinkBattleToLinkRecord_LoadPointer);
-    POP_HL;
-    LD_A_E;
-    POP_DE;
-    LD_de_A;
-    INC_DE;
-    LD_A_B;
-    LD_de_A;
-    INC_DE;
-    LD_A_C;
-    LD_de_A;
-    INC_DE;
-    LD_BC(LINK_BATTLE_RECORD_LENGTH);
-    ADD_HL_BC;
-    POP_BC;
-    DEC_B;
-    IF_NZ goto loop3;
-    LD_B(0x0);
-    LD_C(0x1);
-
-loop4:
-    LD_A_B;
-    ADD_A_B;
-    ADD_A_B;
-    LD_E_A;
-    LD_D(0);
-    LD_HL(wLinkBattleRecordBuffer);
-    ADD_HL_DE;
-    PUSH_HL;
-    LD_A_C;
-    ADD_A_C;
-    ADD_A_C;
-    LD_E_A;
-    LD_D(0);
-    LD_HL(wLinkBattleRecordBuffer);
-    ADD_HL_DE;
-    LD_D_H;
-    LD_E_L;
-    POP_HL;
-    PUSH_BC;
-    LD_C(3);
-    CALL(aCompareBytes);
-    POP_BC;
-    IF_Z goto equal;
-    IF_NC goto done2;
-
-
-equal:
-    INC_C;
-    LD_A_C;
-    CP_A(0x5);
-    IF_NZ goto loop4;
-    INC_B;
-    LD_C_B;
-    INC_C;
-    LD_A_B;
-    CP_A(0x4);
-    IF_NZ goto loop4;
-    RET;
-
-
-done2:
-    PUSH_BC;
-    LD_A_B;
-    LD_BC(LINK_BATTLE_RECORD_LENGTH);
-    LD_HL(sLinkBattleRecord);
-    CALL(aAddNTimes);
-    PUSH_HL;
-    LD_DE(wLinkBattleRecordBuffer);
-    LD_BC(LINK_BATTLE_RECORD_LENGTH);
-    CALL(aCopyBytes);
-    POP_HL;
-    POP_BC;
-    PUSH_HL;
-    LD_A_C;
-    LD_BC(LINK_BATTLE_RECORD_LENGTH);
-    LD_HL(sLinkBattleRecord);
-    CALL(aAddNTimes);
-    POP_DE;
-    PUSH_HL;
-    LD_BC(LINK_BATTLE_RECORD_LENGTH);
-    CALL(aCopyBytes);
-    LD_HL(wLinkBattleRecordBuffer);
-    LD_BC(LINK_BATTLE_RECORD_LENGTH);
-    POP_DE;
-    CALL(aCopyBytes);
-    RET;
-
-
-LoadPointer:
-    LD_E(0x0);
-    LD_A_hld;
-    LD_C_A;
-    LD_A_hld;
-    LD_B_A;
-    LD_A_hld;
-    ADD_A_C;
-    LD_C_A;
-    LD_A_hld;
-    ADC_A_B;
-    LD_B_A;
-    IF_NC goto okay2;
-    INC_E;
-
-
-okay2:
-    LD_A_hld;
-    ADD_A_C;
-    LD_C_A;
-    LD_A_hl;
-    ADC_A_B;
-    LD_B_A;
-    RET_NC ;
-    INC_E;
-    RET;
-
+    // CALL(aAddLastLinkBattleToLinkRecord_StoreResult);
+    AddLastLinkBattleToLinkRecord_StoreResult(hl);
+    // CALL(aAddLastLinkBattleToLinkRecord_FindOpponentAndAppendRecord);
+    AddLastLinkBattleToLinkRecord_FindOpponentAndAppendRecord();
+    // RET;
 }
 
 static void InitBattleDisplay_InitBackPic(void) {

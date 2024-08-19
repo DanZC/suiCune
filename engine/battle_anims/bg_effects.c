@@ -7325,7 +7325,7 @@ void BGEffect_DisplaceLYOverridesBackup_Conv(uint8_t a) {
     do {
     // loop2:
         // LD_hli_A;
-        wram->wLYOverridesBackup[l++] = 0x90 ^ 0xff;
+        wram->wLYOverridesBackup[l++] = a ^ 0xff;
         // DEC_D;
         // IF_NZ goto loop2;
     } while(--d != 0);
