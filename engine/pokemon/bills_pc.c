@@ -4105,7 +4105,7 @@ const struct MenuHeader v_ChangeBox_MenuHeader = {
         .scrollingMenu = {
             .rows = 4, .cols = 0,  // rows, columns
             .format = SCROLLINGMENU_ITEMS_NORMAL,  // item format
-            .list = v_ChangeBox_MenuHeader_Boxes,
+            .list = (uint8_t*)v_ChangeBox_MenuHeader_Boxes,
             //dba ['.PrintBoxNames']
             .func1 = v_ChangeBox_MenuHeader_PrintBoxNames,
             //dba ['NULL']

@@ -8478,7 +8478,7 @@ void BattleCommand_ForceSwitch(void){
         // LD_A_addr(wBattleMode);
         // DEC_A;
         // IF_NZ goto vs_trainer;
-        if(wram->wBattleMode == TRAINER_BATTLE) {
+        if(wram->wBattleMode == WILD_BATTLE) {
             // LD_A_addr(wBattleMonLevel);
             // LD_B_A;
             uint8_t b = wram->wBattleMon.level;
@@ -8526,7 +8526,7 @@ void BattleCommand_ForceSwitch(void){
             // goto succeed;
         }
         else {
-        vs_trainer:
+        // vs_trainer:
             // CALL(aCheckPlayerHasMonToSwitchTo);
             // IF_C goto fail;
             if(!CheckPlayerHasMonToSwitchTo_Conv())

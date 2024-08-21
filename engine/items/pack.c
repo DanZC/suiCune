@@ -2,6 +2,7 @@
 #include "pack.h"
 #include "pack_kris.h"
 #include "update_item_description.h"
+#include "switch_items.h"
 #include "../menus/menu_2.h"
 #include "../events/catch_tutorial_input.h"
 #include "../../home/audio.h"
@@ -1815,7 +1816,8 @@ bool Pack_InterpretJoypad_Conv(uint8_t b, uint8_t c){
         if(wram->wMenuJoypad & (A_BUTTON | SELECT)) {
         // place_insert:
             // FARCALL(aSwitchItemsInBag);
-            SafeCallGBAuto(aSwitchItemsInBag);
+            // SafeCallGBAuto(aSwitchItemsInBag);
+            SwitchItemsInBag();
             // LD_DE(SFX_SWITCH_POKEMON);
             // CALL(aWaitPlaySFX);
             WaitPlaySFX_Conv(SFX_SWITCH_POKEMON);
@@ -1906,7 +1908,8 @@ bool Pack_InterpretJoypad_Conv(uint8_t b, uint8_t c){
     if(wram->wMenuJoypad & SELECT) {
     // select:
         // FARCALL(aSwitchItemsInBag);
-        SafeCallGBAuto(aSwitchItemsInBag);
+        // SafeCallGBAuto(aSwitchItemsInBag);
+        SwitchItemsInBag();
         // LD_HL(mAskItemMoveText);
         // CALL(aPack_PrintTextNoScroll);
         Pack_PrintTextNoScroll(AskItemMoveText);

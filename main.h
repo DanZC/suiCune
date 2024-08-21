@@ -102,7 +102,7 @@
 #include "engine/events/pokepic.h"
 #include "engine/overworld/map_objects_2.h"
 #include "engine/menus/scrolling_menu.h"
-//#include "engine/items/switch_items.h"
+#include "engine/items/switch_items.h"
 #include "engine/menus/menu_2.h"
 #include "engine/pokemon/mon_submenu.h"
 #include "engine/battle/menu.h"

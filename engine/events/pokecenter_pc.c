@@ -19,6 +19,7 @@
 #include "../items/items.h"
 #include "../items/pack.h"
 #include "../items/buy_sell_toss.h"
+#include "../items/switch_items.h"
 #include "../pokemon/bills_pc_top.h"
 #include "../pokemon/mon_menu.h"
 #include "../overworld/select_menu.h"
@@ -1014,7 +1015,7 @@ bool PCItemsJoypad(void){
 
     select_1:
         // FARCALL(aSwitchItemsInBag);
-        SafeCallGBAuto(aSwitchItemsInBag);
+        SwitchItemsInBag();
 
     // next:
         // JP(mPCItemsJoypad_loop);

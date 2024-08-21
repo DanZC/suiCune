@@ -10034,4 +10034,14 @@ CONVERTED(v_AnimateTileset);
     // engine/events/print_unown_2.c
     // CONVERTED(RotateUnownFrontpic);
     // CONVERTED(UnownPrinter_GBPrinterRectangle);
+
+    // engine/items/switch_items.c
+    // REDIRECTED(ItemSwitch_CopyBufferToItem);
+    // REDIRECTED(ItemSwitch_GetItemFormatSize);
+    // REDIRECTED(ItemSwitch_CopyItemToBuffer);
+    // REDIRECTED(ItemSwitch_GetItemQuantity);
+    // REDIRECTED(ItemSwitch_GetItemOffset);
+    // REDIRECTED(ItemSwitch_GetNthItem);
+    // REDIRECTED(ItemSwitch_BackwardsCopyBytes);
+    CONVERTED(SwitchItemsInBag);
 }
