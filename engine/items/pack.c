@@ -2,9 +2,13 @@
 #include "pack.h"
 #include "pack_kris.h"
 #include "update_item_description.h"
+#include "items.h"
 #include "switch_items.h"
+#include "buy_sell_toss.h"
+#include "tmhm.h"
 #include "../menus/menu_2.h"
 #include "../events/catch_tutorial_input.h"
+#include "../pokemon/party_menu.h"
 #include "../../home/audio.h"
 #include "../../home/copy.h"
 #include "../../home/joypad.h"
@@ -15,6 +19,8 @@
 #include "../../home/lcd.h"
 #include "../../home/menu.h"
 #include "../../home/scrolling_menu.h"
+#include "../../home/pokemon.h"
+#include "../../home/item.h"
 #include "../../data/text/common.h"
 
 //  Pack.Jumptable and BattlePack.Jumptable indexes
@@ -66,6 +72,43 @@ void Pack(void){
     // RET;
     return;
 }
+
+static void Pack_ItemBallsKey_LoadSubmenu(void);
+
+static const struct MenuHeader Pack_MenuHeader1 = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(13, 7, SCREEN_WIDTH - 1, TEXTBOX_Y - 1),
+    .data = &(struct MenuData) {
+    // MenuData_1:
+        .flags = STATICMENU_CURSOR | STATICMENU_NO_TOP_SPACING,  // flags
+        .verticalMenu = {
+            .count = 2,  // items
+            .options = (const char*[]){
+                "USE",
+                "QUIT",
+            },
+        },
+    }, //dw ['.MenuData_1'];
+    .defaultOption = 1,  // default option
+};
+
+static const struct MenuHeader Pack_MenuHeader2 = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(13, 5, SCREEN_WIDTH - 1, TEXTBOX_Y - 1),
+    .data = &(struct MenuData) {
+    // MenuData_2:
+        .flags = STATICMENU_CURSOR | STATICMENU_NO_TOP_SPACING,  // flags
+        .verticalMenu = {
+            .count = 3,  // items
+            .options = (const char*[]){
+                "USE",
+                "GIVE",
+                "QUIT",
+            },
+        },
+    }, //dw ['.MenuData_2'];
+    .defaultOption = 1,  // default option
+};
 
 void Pack_RunJumptable(void) {
     // LD_A_addr(wJumptableIndex);
@@ -134,7 +177,8 @@ void Pack_RunJumptable(void) {
             if(Pack_InterpretJoypad_Conv(PACKSTATE_INITTMHMPOCKET, PACKSTATE_INITBALLSPOCKET))
                 return;
             // CALL(aPack_ItemBallsKey_LoadSubmenu);
-            SafeCallGBAuto(aPack_ItemBallsKey_LoadSubmenu);
+            // SafeCallGBAuto(aPack_ItemBallsKey_LoadSubmenu);
+            Pack_ItemBallsKey_LoadSubmenu();
             // RET;
             return;
         //dw ['.InitBallsPocket'];  //  3
@@ -180,7 +224,8 @@ void Pack_RunJumptable(void) {
             if(Pack_InterpretJoypad_Conv(PACKSTATE_INITITEMSPOCKET, PACKSTATE_INITKEYITEMSPOCKET))
                 return;
             // CALL(aPack_ItemBallsKey_LoadSubmenu);
-            SafeCallGBAuto(aPack_ItemBallsKey_LoadSubmenu);
+            // SafeCallGBAuto(aPack_ItemBallsKey_LoadSubmenu);
+            Pack_ItemBallsKey_LoadSubmenu();
             // RET;
             return;
         //dw ['.InitKeyItemsPocket'];  //  5
@@ -226,7 +271,8 @@ void Pack_RunJumptable(void) {
             if(Pack_InterpretJoypad_Conv(PACKSTATE_INITBALLSPOCKET, PACKSTATE_INITTMHMPOCKET))
                 return;
             // CALL(aPack_ItemBallsKey_LoadSubmenu);
-            SafeCallGBAuto(aPack_ItemBallsKey_LoadSubmenu);
+            // SafeCallGBAuto(aPack_ItemBallsKey_LoadSubmenu);
+            Pack_ItemBallsKey_LoadSubmenu();
             // RET;
             return;
         //dw ['.InitTMHMPocket'];  //  7
@@ -249,9 +295,99 @@ void Pack_RunJumptable(void) {
             // RET;
             return;
         //dw ['.TMHMPocketMenu'];  //  8
-        case PACKSTATE_TMHMPOCKETMENU:
-            SafeCallGBAuto(aPack_TMHMPocketMenu);
+        case PACKSTATE_TMHMPOCKETMENU: {
+        // TMHMPocketMenu:
+            // FARCALL(aTMHMPocket);
+            TMHMPocket();
+            // LD_B(PACKSTATE_INITKEYITEMSPOCKET);  // left
+            // LD_C(PACKSTATE_INITITEMSPOCKET);  // right
+            // CALL(aPack_InterpretJoypad);
+            // RET_C ;
+            if(Pack_InterpretJoypad_Conv(PACKSTATE_INITKEYITEMSPOCKET, PACKSTATE_INITITEMSPOCKET))
+                return;
+            // FARCALL(av_CheckTossableItem);
+            bool tossable = v_CheckTossableItem_Conv(wram->wCurItem);
+            // LD_A_addr(wItemAttributeValue);
+            // AND_A_A;
+            // IF_NZ goto use_quit;
+
+        // use_quit:
+            // LD_HL(mPack_MenuHeader1);
+            // LD_DE(mPack_Jumptable1);
+
+            // LD_HL(mPack_MenuHeader2);
+            // LD_DE(mPack_Jumptable2);
+            // goto load_jump;
+            const struct MenuHeader* hl = (tossable)? &Pack_MenuHeader2: &Pack_MenuHeader1;
+
+        // load_jump:
+            // PUSH_DE;
+            // CALL(aLoadMenuHeader);
+            LoadMenuHeader_Conv2(hl);
+            // CALL(aVerticalMenu);
+            bool quit = !VerticalMenu_Conv();
+            // CALL(aExitMenu);
+            ExitMenu_Conv2();
+            // POP_HL;
+            // RET_C ;
+            if(quit)
+                return;
+            // LD_A_addr(wMenuCursorY);
+            // DEC_A;
+            // CALL(aPack_GetJumptablePointer);
+            // JP_hl;
+            if(tossable){
+                switch(wram->wMenuCursorY - 1){
+                // Jumptable2:
+                    case 0: goto UseItem;               //dw ['.UseItem'];
+                    case 1: return GiveItem();          //dw ['GiveItem'];
+                    case 2: return QuitItemSubmenu();   //dw ['QuitItemSubmenu'];
+                }
+            }
+            else {
+                switch(wram->wMenuCursorY - 1){
+                // Jumptable1:
+                    case 0: goto UseItem;               //dw ['.UseItem'];
+                    case 1: return QuitItemSubmenu();   //dw ['QuitItemSubmenu'];
+                }
+            }
             return;
+
+            UseItem: {
+                // FARCALL(aAskTeachTMHM);
+                // RET_C ;
+                if(AskTeachTMHM())
+                    return;
+                // FARCALL(aChooseMonToLearnTMHM);
+                u8_flag_s res = ChooseMonToLearnTMHM();
+                // IF_C goto declined;
+                if(!res.flag){
+                    // LD_HL(wOptions);
+                    // LD_A_hl;
+                    uint8_t options = wram->wOptions;
+                    // PUSH_AF;
+                    // RES_hl(NO_TEXT_SCROLL);
+                    bit_reset(wram->wOptions, NO_TEXT_SCROLL);
+                    // FARCALL(aTeachTMHM);
+                    TeachTMHM();
+                    // POP_AF;
+                    // LD_addr_A(wOptions);
+                    wram->wOptions = options;
+                }
+
+            // declined:
+                // XOR_A_A;
+                // LDH_addr_A(hBGMapMode);
+                hram->hBGMapMode = 0x0;
+                // CALL(aPack_InitGFX);
+                Pack_InitGFX();
+                // CALL(aWaitBGMap_DrawPackGFX);
+                WaitBGMap_DrawPackGFX();
+                // CALL(aPack_InitColors);
+                Pack_InitColors();
+                // RET;
+            }
+        } return;
         //dw ['Pack_QuitNoScript'];  //  9
         case PACKSTATE_QUITNOSCRIPT:
             return Pack_QuitNoScript();
@@ -259,422 +395,372 @@ void Pack_RunJumptable(void) {
         case PACKSTATE_QUITRUNSCRIPT:
             return Pack_QuitRunScript();
     }
-
-TMHMPocketMenu:
-    FARCALL(aTMHMPocket);
-    LD_B(PACKSTATE_INITKEYITEMSPOCKET);  // left
-    LD_C(PACKSTATE_INITITEMSPOCKET);  // right
-    CALL(aPack_InterpretJoypad);
-    RET_C ;
-    FARCALL(av_CheckTossableItem);
-    LD_A_addr(wItemAttributeValue);
-    AND_A_A;
-    IF_NZ goto use_quit;
-    LD_HL(mPack_MenuHeader2);
-    LD_DE(mPack_Jumptable2);
-    goto load_jump;
-
-
-use_quit:
-    LD_HL(mPack_MenuHeader1);
-    LD_DE(mPack_Jumptable1);
-
-load_jump:
-    PUSH_DE;
-    CALL(aLoadMenuHeader);
-    CALL(aVerticalMenu);
-    CALL(aExitMenu);
-    POP_HL;
-    RET_C ;
-    LD_A_addr(wMenuCursorY);
-    DEC_A;
-    CALL(aPack_GetJumptablePointer);
-    JP_hl;
-
-
-MenuHeader1:
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['13', '7', 'SCREEN_WIDTH - 1', 'TEXTBOX_Y - 1'];
-    //dw ['.MenuData_1'];
-    //db ['1'];  // default option
-
-
-MenuData_1:
-    //db ['STATICMENU_CURSOR | STATICMENU_NO_TOP_SPACING'];  // flags
-    //db ['2'];  // items
-    //db ['"USE@"'];
-    //db ['"QUIT@"'];
-
-
-Jumptable1:
-    //dw ['.UseItem'];
-    //dw ['QuitItemSubmenu'];
-
-
-MenuHeader2:
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['13', '5', 'SCREEN_WIDTH - 1', 'TEXTBOX_Y - 1'];
-    //dw ['.MenuData_2'];
-    //db ['1'];  // default option
-
-
-MenuData_2:
-    //db ['STATICMENU_CURSOR | STATICMENU_NO_TOP_SPACING'];  // flags
-    //db ['3'];  // items
-    //db ['"USE@"'];
-    //db ['"GIVE@"'];
-    //db ['"QUIT@"'];
-
-
-Jumptable2:
-    //dw ['.UseItem'];
-    //dw ['GiveItem'];
-    //dw ['QuitItemSubmenu'];
-
-
-UseItem:
-    FARCALL(aAskTeachTMHM);
-    RET_C ;
-    FARCALL(aChooseMonToLearnTMHM);
-    IF_C goto declined;
-    LD_HL(wOptions);
-    LD_A_hl;
-    PUSH_AF;
-    RES_hl(NO_TEXT_SCROLL);
-    FARCALL(aTeachTMHM);
-    POP_AF;
-    LD_addr_A(wOptions);
-
-declined:
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    CALL(aPack_InitGFX);
-    CALL(aWaitBGMap_DrawPackGFX);
-    CALL(aPack_InitColors);
-    RET;
-
-
-ItemBallsKey_LoadSubmenu:
-    FARCALL(av_CheckTossableItem);
-    LD_A_addr(wItemAttributeValue);
-    AND_A_A;
-    IF_NZ goto tossable;
-    FARCALL(aCheckSelectableItem);
-    LD_A_addr(wItemAttributeValue);
-    AND_A_A;
-    IF_NZ goto selectable;
-    FARCALL(aCheckItemMenu);
-    LD_A_addr(wItemAttributeValue);
-    AND_A_A;
-    IF_NZ goto usable;
-    goto unusable;
-
-
-selectable:
-    FARCALL(aCheckItemMenu);
-    LD_A_addr(wItemAttributeValue);
-    AND_A_A;
-    IF_NZ goto selectable_usable;
-    goto selectable_unusable;
-
-
-tossable:
-    FARCALL(aCheckSelectableItem);
-    LD_A_addr(wItemAttributeValue);
-    AND_A_A;
-    IF_NZ goto tossable_selectable;
-    goto tossable_unselectable;
-
-
-usable:
-    LD_HL(mMenuHeader_UsableKeyItem);
-    LD_DE(mJumptable_UseGiveTossRegisterQuit);
-    goto build_menu;
-
-
-selectable_usable:
-    LD_HL(mMenuHeader_UsableItem);
-    LD_DE(mJumptable_UseGiveTossQuit);
-    goto build_menu;
-
-
-tossable_selectable:
-    LD_HL(mMenuHeader_UnusableItem);
-    LD_DE(mJumptable_UseQuit);
-    goto build_menu;
-
-
-tossable_unselectable:
-    LD_HL(mMenuHeader_UnusableKeyItem);
-    LD_DE(mJumptable_UseRegisterQuit);
-    goto build_menu;
-
-
-unusable:
-    LD_HL(mMenuHeader_HoldableKeyItem);
-    LD_DE(mJumptable_GiveTossRegisterQuit);
-    goto build_menu;
-
-
-selectable_unusable:
-    LD_HL(mMenuHeader_HoldableItem);
-    LD_DE(mJumptable_GiveTossQuit);
-
-build_menu:
-    PUSH_DE;
-    CALL(aLoadMenuHeader);
-    CALL(aVerticalMenu);
-    CALL(aExitMenu);
-    POP_HL;
-    RET_C ;
-    LD_A_addr(wMenuCursorY);
-    DEC_A;
-    CALL(aPack_GetJumptablePointer);
-    JP_hl;
 }
 
-void MenuHeader_UsableKeyItem(void){
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['13', '1', 'SCREEN_WIDTH - 1', 'TEXTBOX_Y - 1'];
-    //dw ['.MenuData'];
-    //db ['1'];  // default option
+static void Pack_ItemBallsKey_LoadSubmenu(void){
+    const struct MenuHeader* hl;
+    void (*const *de)(void);
+    // FARCALL(av_CheckTossableItem);
+    // LD_A_addr(wItemAttributeValue);
+    // AND_A_A;
+    // IF_NZ goto tossable;
+    if(!v_CheckTossableItem_Conv(wram->wCurItem)){
+    // tossable:
+        // FARCALL(aCheckSelectableItem);
+        // LD_A_addr(wItemAttributeValue);
+        // AND_A_A;
+        // IF_NZ goto tossable_selectable;
+        if(!CheckSelectableItem_Conv(wram->wCurItem)){
+        // tossable_selectable:
+            // LD_HL(mMenuHeader_UnusableItem);
+            hl = &MenuHeader_UnusableItem;
+            // LD_DE(mJumptable_UseQuit);
+            de = Jumptable_UseQuit;
+            // goto build_menu;
+        }
+        else {
+            // goto tossable_unselectable;
+        // tossable_unselectable:
+            // LD_HL(mMenuHeader_UnusableKeyItem);
+            hl = &MenuHeader_UnusableKeyItem;
+            // LD_DE(mJumptable_UseRegisterQuit);
+            de = Jumptable_UseRegisterQuit;
+            // goto build_menu;
+        }
+    }
+    // FARCALL(aCheckSelectableItem);
+    // LD_A_addr(wItemAttributeValue);
+    // AND_A_A;
+    // IF_NZ goto selectable;
+    else if(!CheckSelectableItem_Conv(wram->wCurItem)){
+    // selectable:
+        // FARCALL(aCheckItemMenu);
+        // LD_A_addr(wItemAttributeValue);
+        // AND_A_A;
+        // IF_NZ goto selectable_usable;
+        if(CheckItemMenu_Conv(wram->wCurItem) != 0){
+        // selectable_usable:
+            // LD_HL(mMenuHeader_UsableItem);
+            hl = &MenuHeader_UsableItem;
+            // LD_DE(mJumptable_UseGiveTossQuit);
+            de = Jumptable_UseGiveTossQuit;
+            // goto build_menu;
+        }
+        // goto selectable_unusable;
+        else {
+        // selectable_unusable:
+            // LD_HL(mMenuHeader_HoldableItem);
+            hl = &MenuHeader_HoldableItem;
+            // LD_DE(mJumptable_GiveTossQuit);
+            de = Jumptable_UseGiveTossQuit;
+        }
+    }
+    // FARCALL(aCheckItemMenu);
+    // LD_A_addr(wItemAttributeValue);
+    // AND_A_A;
+    // IF_NZ goto usable;
+    else if(CheckItemMenu_Conv(wram->wCurItem) != 0){
+    // usable:
+        // LD_HL(mMenuHeader_UsableKeyItem);
+        hl = &MenuHeader_UsableKeyItem;
+        // LD_DE(mJumptable_UseGiveTossRegisterQuit);
+        de = Jumptable_UseGiveTossRegisterQuit;
+        // goto build_menu;
+    }
+    // goto unusable;
+    else {
+    // unusable:
+        // LD_HL(mMenuHeader_HoldableKeyItem);
+        hl = &MenuHeader_HoldableKeyItem;
+        // LD_DE(mJumptable_GiveTossRegisterQuit);
+        de = Jumptable_GiveTossRegisterQuit;
+        // goto build_menu;
+    }
 
-
-MenuData:
-    //db ['STATICMENU_CURSOR | STATICMENU_NO_TOP_SPACING'];  // flags
-    //db ['5'];  // items
-    //db ['"USE@"'];
-    //db ['"GIVE@"'];
-    //db ['"TOSS@"'];
-    //db ['"SEL@"'];
-    //db ['"QUIT@"'];
-
-    return Jumptable_UseGiveTossRegisterQuit();
+// build_menu:
+    // PUSH_DE;
+    // CALL(aLoadMenuHeader);
+    LoadMenuHeader_Conv2(hl);
+    // CALL(aVerticalMenu);
+    bool quit = !VerticalMenu_Conv();
+    // CALL(aExitMenu);
+    ExitMenu_Conv2();
+    // POP_HL;
+    // RET_C ;
+    if(quit)
+        return;
+    // LD_A_addr(wMenuCursorY);
+    // DEC_A;
+    // CALL(aPack_GetJumptablePointer);
+    // JP_hl;
+    return de[wram->wMenuCursorY - 1]();
 }
 
-void Jumptable_UseGiveTossRegisterQuit(void){
-    //dw ['UseItem'];
-    //dw ['GiveItem'];
-    //dw ['TossMenu'];
-    //dw ['RegisterItem'];
-    //dw ['QuitItemSubmenu'];
+const struct MenuHeader MenuHeader_UsableKeyItem = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(13, 1, SCREEN_WIDTH - 1, TEXTBOX_Y - 1),
+    .data = &(struct MenuData){
+    // MenuData:
+        .flags = STATICMENU_CURSOR | STATICMENU_NO_TOP_SPACING,  // flags
+        .verticalMenu = {
+            .count = 5,  // items
+            .options = (const char*[]){
+                "USE",
+                "GIVE",
+                "TOSS",
+                "SEL",
+                "QUIT",
+            },
+        },
+    }, //dw ['.MenuData'];
+    .defaultOption = 1,  // default option
+};
 
-    return MenuHeader_UsableItem();
-}
+void (*const Jumptable_UseGiveTossRegisterQuit[])(void) = {
+    UseItem,
+    GiveItem,
+    TossMenu,
+    RegisterItem,
+    QuitItemSubmenu,
+};
 
-void MenuHeader_UsableItem(void){
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['13', '3', 'SCREEN_WIDTH - 1', 'TEXTBOX_Y - 1'];
-    //dw ['.MenuData'];
-    //db ['1'];  // default option
+const struct MenuHeader MenuHeader_UsableItem = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(13, 3, SCREEN_WIDTH - 1, TEXTBOX_Y - 1),
+    .data = &(struct MenuData) {
+    // MenuData:
+        .flags = STATICMENU_CURSOR | STATICMENU_NO_TOP_SPACING,  // flags
+        .verticalMenu = {
+            .count = 4,  // items
+            .options = (const char*[]){
+                "USE",
+                "GIVE",
+                "TOSS",
+                "QUIT",
+            },
+        },
+    }, //dw ['.MenuData'];
+    .defaultOption = 1,  // default option
+};
 
+void (*const Jumptable_UseGiveTossQuit[])(void) = {
+    UseItem,
+    GiveItem,
+    TossMenu,
+    QuitItemSubmenu,
+};
 
-MenuData:
-    //db ['STATICMENU_CURSOR | STATICMENU_NO_TOP_SPACING'];  // flags
-    //db ['4'];  // items
-    //db ['"USE@"'];
-    //db ['"GIVE@"'];
-    //db ['"TOSS@"'];
-    //db ['"QUIT@"'];
+const struct MenuHeader MenuHeader_UnusableItem = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(13, 7, SCREEN_WIDTH - 1, TEXTBOX_Y - 1),
+    .data = &(struct MenuData) {
+    // MenuData:
+        .flags = STATICMENU_CURSOR | STATICMENU_NO_TOP_SPACING,  // flags
+        .verticalMenu = {
+            .count = 2,  // items
+            .options = (const char*[]){
+                "USE",
+                "QUIT",
+            },
+        },
+    }, //dw ['.MenuData'];
+    .defaultOption = 1,  // default option
+};
 
-    return Jumptable_UseGiveTossQuit();
-}
+void (*const Jumptable_UseQuit[])(void) = {
+    UseItem,
+    QuitItemSubmenu,
+};
 
-void Jumptable_UseGiveTossQuit(void){
-    //dw ['UseItem'];
-    //dw ['GiveItem'];
-    //dw ['TossMenu'];
-    //dw ['QuitItemSubmenu'];
+const struct MenuHeader MenuHeader_UnusableKeyItem = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(13, 5, SCREEN_WIDTH - 1, TEXTBOX_Y - 1),
+    .data = &(struct MenuData) {
+    // MenuData:
+        .flags = STATICMENU_CURSOR | STATICMENU_NO_TOP_SPACING,  // flags
+        .verticalMenu = {
+            .count = 3,  // items
+            .options = (const char*[]){
+                "USE",
+                "SEL",
+                "QUIT",
+            },
+        },
+    }, //dw ['.MenuData'];
+    .defaultOption = 1,  // default option
+};
 
-    return MenuHeader_UnusableItem();
-}
+void (*const Jumptable_UseRegisterQuit[])(void) = {
+    UseItem,
+    RegisterItem,
+    QuitItemSubmenu,
+};
 
-void MenuHeader_UnusableItem(void){
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['13', '7', 'SCREEN_WIDTH - 1', 'TEXTBOX_Y - 1'];
-    //dw ['.MenuData'];
-    //db ['1'];  // default option
+const struct MenuHeader MenuHeader_HoldableKeyItem = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(13, 3, SCREEN_WIDTH - 1, TEXTBOX_Y - 1),
+    .data =  &(struct MenuData){
+    // MenuData:
+        .flags = STATICMENU_CURSOR | STATICMENU_NO_TOP_SPACING,  // flags
+        .verticalMenu = {
+            .count = 4,  // items
+            .options = (const char*[]){
+                "GIVE",
+                "TOSS",
+                "SEL",
+                "QUIT",
+            },
+        },
+    }, //dw ['.MenuData'];
+    .defaultOption = 1,  // default option
+};
 
+void (*const Jumptable_GiveTossRegisterQuit[])(void) = {
+    GiveItem,
+    TossMenu,
+    RegisterItem,
+    QuitItemSubmenu,
+};
 
-MenuData:
-    //db ['STATICMENU_CURSOR | STATICMENU_NO_TOP_SPACING'];  // flags
-    //db ['2'];  // items
-    //db ['"USE@"'];
-    //db ['"QUIT@"'];
+const struct MenuHeader MenuHeader_HoldableItem = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(13, 5, SCREEN_WIDTH - 1, TEXTBOX_Y - 1),
+    .data =  &(struct MenuData){
+    // MenuData:
+        .flags = STATICMENU_CURSOR | STATICMENU_NO_TOP_SPACING,  // flags
+        .verticalMenu = {
+            .count = 3,  // items
+            .options = (const char*[]){
+                "GIVE@",
+                "TOSS@",
+                "QUIT@",
+            },
+        },
+    },//dw ['.MenuData'];
+    .defaultOption = 1,  // default option
+};
 
-    return Jumptable_UseQuit();
-}
-
-void Jumptable_UseQuit(void){
-    //dw ['UseItem'];
-    //dw ['QuitItemSubmenu'];
-
-    return MenuHeader_UnusableKeyItem();
-}
-
-void MenuHeader_UnusableKeyItem(void){
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['13', '5', 'SCREEN_WIDTH - 1', 'TEXTBOX_Y - 1'];
-    //dw ['.MenuData'];
-    //db ['1'];  // default option
-
-
-MenuData:
-    //db ['STATICMENU_CURSOR | STATICMENU_NO_TOP_SPACING'];  // flags
-    //db ['3'];  // items
-    //db ['"USE@"'];
-    //db ['"SEL@"'];
-    //db ['"QUIT@"'];
-
-    return Jumptable_UseRegisterQuit();
-}
-
-void Jumptable_UseRegisterQuit(void){
-    //dw ['UseItem'];
-    //dw ['RegisterItem'];
-    //dw ['QuitItemSubmenu'];
-
-    return MenuHeader_HoldableKeyItem();
-}
-
-void MenuHeader_HoldableKeyItem(void){
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['13', '3', 'SCREEN_WIDTH - 1', 'TEXTBOX_Y - 1'];
-    //dw ['.MenuData'];
-    //db ['1'];  // default option
-
-
-MenuData:
-    //db ['STATICMENU_CURSOR | STATICMENU_NO_TOP_SPACING'];  // flags
-    //db ['4'];  // items
-    //db ['"GIVE@"'];
-    //db ['"TOSS@"'];
-    //db ['"SEL@"'];
-    //db ['"QUIT@"'];
-
-    return Jumptable_GiveTossRegisterQuit();
-}
-
-void Jumptable_GiveTossRegisterQuit(void){
-    //dw ['GiveItem'];
-    //dw ['TossMenu'];
-    //dw ['RegisterItem'];
-    //dw ['QuitItemSubmenu'];
-
-    return MenuHeader_HoldableItem();
-}
-
-void MenuHeader_HoldableItem(void){
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['13', '5', 'SCREEN_WIDTH - 1', 'TEXTBOX_Y - 1'];
-    //dw ['.MenuData'];
-    //db ['1'];  // default option
-
-
-MenuData:
-    //db ['STATICMENU_CURSOR | STATICMENU_NO_TOP_SPACING'];  // flags
-    //db ['3'];  // items
-    //db ['"GIVE@"'];
-    //db ['"TOSS@"'];
-    //db ['"QUIT@"'];
-
-    return Jumptable_GiveTossQuit();
-}
-
-void Jumptable_GiveTossQuit(void){
-    //dw ['GiveItem'];
-    //dw ['TossMenu'];
-    //dw ['QuitItemSubmenu'];
-
-    return UseItem();
-}
+void (*const Jumptable_GiveTossQuit[])(void) = {
+    GiveItem,
+    TossMenu,
+    QuitItemSubmenu,
+};
 
 void UseItem(void){
-    FARCALL(aCheckItemMenu);
-    LD_A_addr(wItemAttributeValue);
-    LD_HL(mUseItem_dw);
-    RST(aJumpTable);
-    RET;
-
-
-dw:
-//  entries correspond to ITEMMENU_* constants
-    //dw ['.Oak'];  // ITEMMENU_NOUSE
-    //dw ['.Oak'];
-    //dw ['.Oak'];
-    //dw ['.Oak'];
-    //dw ['.Current'];  // ITEMMENU_CURRENT
-    //dw ['.Party'];  // ITEMMENU_PARTY
-    //dw ['.Field'];  // ITEMMENU_CLOSE
-
-
-Oak:
-    LD_HL(mOakThisIsntTheTimeText);
-    CALL(aPack_PrintTextNoScroll);
-    RET;
-
-
-Current:
-    CALL(aDoItemEffect);
-    RET;
-
-
-Party:
-    LD_A_addr(wPartyCount);
-    AND_A_A;
-    IF_Z goto NoPokemon;
-    CALL(aDoItemEffect);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    CALL(aPack_InitGFX);
-    CALL(aWaitBGMap_DrawPackGFX);
-    CALL(aPack_InitColors);
-    RET;
-
-
-NoPokemon:
-    LD_HL(mYouDontHaveAMonText);
-    CALL(aPack_PrintTextNoScroll);
-    RET;
-
-
-Field:
-    CALL(aDoItemEffect);
-    LD_A_addr(wItemEffectSucceeded);
-    AND_A_A;
-    IF_Z goto Oak;
-    LD_A(PACKSTATE_QUITRUNSCRIPT);
-    LD_addr_A(wJumptableIndex);
-    RET;
-
+    // FARCALL(aCheckItemMenu);
+    // LD_A_addr(wItemAttributeValue);
+    // LD_HL(mUseItem_dw);
+    // RST(aJumpTable);
+    // RET;
+// dw:
+    switch(CheckItemMenu_Conv(wram->wCurItem)){
+    //  entries correspond to ITEMMENU_* constants
+        //dw ['.Field'];  // ITEMMENU_CLOSE
+        case ITEMMENU_CLOSE:
+        // Field:
+            // CALL(aDoItemEffect);
+            DoItemEffect();
+            // LD_A_addr(wItemEffectSucceeded);
+            // AND_A_A;
+            // IF_Z goto Oak;
+            if(wram->wItemEffectSucceeded){
+                // LD_A(PACKSTATE_QUITRUNSCRIPT);
+                // LD_addr_A(wJumptableIndex);
+                wram->wJumptableIndex = PACKSTATE_QUITRUNSCRIPT;
+                // RET;
+                return;
+            }
+            fallthrough;
+        //dw ['.Oak'];  // ITEMMENU_NOUSE
+        //dw ['.Oak'];
+        //dw ['.Oak'];
+        //dw ['.Oak'];
+        case ITEMMENU_NOUSE:
+        case 1:
+        case 2:
+        case 3:
+        // Oak:
+            // LD_HL(mOakThisIsntTheTimeText);
+            // CALL(aPack_PrintTextNoScroll);
+            Pack_PrintTextNoScroll(OakThisIsntTheTimeText);
+            // RET;
+            return;
+        //dw ['.Current'];  // ITEMMENU_CURRENT
+        case ITEMMENU_CURRENT:
+        // Current:
+            // CALL(aDoItemEffect);
+            DoItemEffect();
+            // RET;
+            return;
+        //dw ['.Party'];  // ITEMMENU_PARTY
+        case ITEMMENU_PARTY:
+        // Party:
+            // LD_A_addr(wPartyCount);
+            // AND_A_A;
+            // IF_Z goto NoPokemon;
+            if(wram->wPartyCount == 0){
+            // NoPokemon:
+                // LD_HL(mYouDontHaveAMonText);
+                // CALL(aPack_PrintTextNoScroll);
+                Pack_PrintTextNoScroll(YouDontHaveAMonText);
+                // RET;
+                return;
+            }
+            // CALL(aDoItemEffect);
+            DoItemEffect();
+            // XOR_A_A;
+            // LDH_addr_A(hBGMapMode);
+            hram->hBGMapMode = 0x0;
+            // CALL(aPack_InitGFX);
+            Pack_InitGFX();
+            // CALL(aWaitBGMap_DrawPackGFX);
+            WaitBGMap_DrawPackGFX();
+            // CALL(aPack_InitColors);
+            Pack_InitColors();
+            // RET;
+            return;
+    }
 }
 
 void TossMenu(void){
-    LD_HL(mAskThrowAwayText);
-    CALL(aPack_PrintTextNoScroll);
-    FARCALL(aSelectQuantityToToss);
-    PUSH_AF;
-    CALL(aExitMenu);
-    POP_AF;
-    IF_C goto finish;
-    CALL(aPack_GetItemName);
-    LD_HL(mAskQuantityThrowAwayText);
-    CALL(aMenuTextbox);
-    CALL(aYesNoBox);
-    PUSH_AF;
-    CALL(aExitMenu);
-    POP_AF;
-    IF_C goto finish;
-    LD_HL(wNumItems);
-    LD_A_addr(wCurItemQuantity);
-    CALL(aTossItem);
-    CALL(aPack_GetItemName);
-    LD_HL(mThrewAwayText);
-    CALL(aPack_PrintTextNoScroll);
+    // LD_HL(mAskThrowAwayText);
+    // CALL(aPack_PrintTextNoScroll);
+    Pack_PrintTextNoScroll(AskThrowAwayText);
+    // FARCALL(aSelectQuantityToToss);
+    bool quit = SelectQuantityToToss();
+    // PUSH_AF;
+    // CALL(aExitMenu);
+    ExitMenu_Conv2();
+    // POP_AF;
+    // IF_C goto finish;
+    if(!quit){
+        // CALL(aPack_GetItemName);
+        Pack_GetItemName();
+        // LD_HL(mAskQuantityThrowAwayText);
+        // CALL(aMenuTextbox);
+        MenuTextbox_Conv(AskQuantityThrowAwayText);
+        // CALL(aYesNoBox);
+        bool yes = YesNoBox_Conv();
+        // PUSH_AF;
+        // CALL(aExitMenu);
+        ExitMenu_Conv2();
+        // POP_AF;
+        // IF_C goto finish;
+        if(yes){
+            // LD_HL(wNumItems);
+            // LD_A_addr(wCurItemQuantity);
+            // CALL(aTossItem);
+            TossItem_Conv((item_pocket_s*)&wram->wNumItems, wram->wCurItemQuantity);
+            // CALL(aPack_GetItemName);
+            Pack_GetItemName();
+            // LD_HL(mThrewAwayText);
+            // CALL(aPack_PrintTextNoScroll);
+            Pack_PrintTextNoScroll(ThrewAwayText);
+        }
+    }
 
-finish:
-    RET;
-
+// finish:
+    // RET;
 }
 
 void ResetPocketCursorPositions(void){
@@ -712,110 +798,146 @@ key:
 }
 
 void RegisterItem(void){
-    FARCALL(aCheckSelectableItem);
-    LD_A_addr(wItemAttributeValue);
-    AND_A_A;
-    IF_NZ goto cant_register;
-    LD_A_addr(wCurPocket);
-    RRCA;
-    RRCA;
-    AND_A(REGISTERED_POCKET);
-    LD_B_A;
-    LD_A_addr(wCurItemQuantity);
-    INC_A;
-    AND_A(REGISTERED_NUMBER);
-    OR_A_B;
-    LD_addr_A(wWhichRegisteredItem);
-    LD_A_addr(wCurItem);
-    LD_addr_A(wRegisteredItem);
-    CALL(aPack_GetItemName);
-    LD_DE(SFX_FULL_HEAL);
-    CALL(aWaitPlaySFX);
-    LD_HL(mRegisteredItemText);
-    CALL(aPack_PrintTextNoScroll);
-    RET;
-
-
-cant_register:
-    LD_HL(mCantRegisterText);
-    CALL(aPack_PrintTextNoScroll);
-    RET;
-
+    // FARCALL(aCheckSelectableItem);
+    // LD_A_addr(wItemAttributeValue);
+    // AND_A_A;
+    // IF_NZ goto cant_register;
+    if(!CheckSelectableItem_Conv(wram->wCurItem)){
+    // cant_register:
+        // LD_HL(mCantRegisterText);
+        // CALL(aPack_PrintTextNoScroll);
+        Pack_PrintTextNoScroll(CantRegisterText);
+        // RET;
+        return;
+    }
+    // LD_A_addr(wCurPocket);
+    // RRCA;
+    // RRCA;
+    // AND_A(REGISTERED_POCKET);
+    // LD_B_A;
+    // LD_A_addr(wCurItemQuantity);
+    // INC_A;
+    // AND_A(REGISTERED_NUMBER);
+    // OR_A_B;
+    // LD_addr_A(wWhichRegisteredItem);
+    wram->wWhichRegisteredItem = ((wram->wCurItemQuantity + 1) & REGISTERED_NUMBER) | ((wram->wCurPocket << 6) & REGISTERED_POCKET);
+    // LD_A_addr(wCurItem);
+    // LD_addr_A(wRegisteredItem);
+    wram->wRegisteredItem = wram->wCurItem;
+    // CALL(aPack_GetItemName);
+    Pack_GetItemName();
+    // LD_DE(SFX_FULL_HEAL);
+    // CALL(aWaitPlaySFX);
+    WaitPlaySFX_Conv(SFX_FULL_HEAL);
+    // LD_HL(mRegisteredItemText);
+    // CALL(aPack_PrintTextNoScroll);
+    Pack_PrintTextNoScroll(RegisteredItemText);
+    // RET;
 }
 
 void GiveItem(void){
-    LD_A_addr(wPartyCount);
-    AND_A_A;
-    JP_Z (mGiveItem_NoPokemon);
-    LD_A_addr(wOptions);
-    PUSH_AF;
-    RES_A(NO_TEXT_SCROLL);
-    LD_addr_A(wOptions);
-    LD_A(PARTYMENUACTION_GIVE_ITEM);
-    LD_addr_A(wPartyMenuActionText);
-    CALL(aClearBGPalettes);
-    FARCALL(aLoadPartyMenuGFX);
-    FARCALL(aInitPartyMenuWithCancel);
-    FARCALL(aInitPartyMenuGFX);
+    static txt_cmd_s AnEggCantHoldAnItemText[] = {
+        text_far(v_AnEggCantHoldAnItemText)
+        text_end
+    };
 
-loop:
-    FARCALL(aWritePartyMenuTilemap);
-    FARCALL(aPrintPartyMenuText);
-    CALL(aWaitBGMap);
-    CALL(aSetPalettes);
-    CALL(aDelayFrame);
-    FARCALL(aPartyMenuSelect);
-    IF_C goto finish;
-    LD_A_addr(wCurPartySpecies);
-    CP_A(EGG);
-    IF_NZ goto give;
-    LD_HL(mGiveItem_AnEggCantHoldAnItemText);
-    CALL(aPrintText);
-    goto loop;
+    // LD_A_addr(wPartyCount);
+    // AND_A_A;
+    // JP_Z (mGiveItem_NoPokemon);
+    if(wram->wPartyCount == 0){
+    // NoPokemon:
+        // LD_HL(mYouDontHaveAMonText);
+        // CALL(aPack_PrintTextNoScroll);
+        Pack_PrintTextNoScroll(YouDontHaveAMonText);
+        // RET;
+        return;
+    }
+    // LD_A_addr(wOptions);
+    // PUSH_AF;
+    uint8_t options = wram->wOptions;
+    // RES_A(NO_TEXT_SCROLL);
+    // LD_addr_A(wOptions);
+    bit_reset(wram->wOptions, NO_TEXT_SCROLL);
+    // LD_A(PARTYMENUACTION_GIVE_ITEM);
+    // LD_addr_A(wPartyMenuActionText);
+    wram->wPartyMenuActionText = PARTYMENUACTION_GIVE_ITEM;
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
+    // FARCALL(aLoadPartyMenuGFX);
+    LoadPartyMenuGFX();
+    // FARCALL(aInitPartyMenuWithCancel);
+    InitPartyMenuWithCancel();
+    // FARCALL(aInitPartyMenuGFX);
+    InitPartyMenuGFX();
 
+    while(1){
+    // loop:
+        // FARCALL(aWritePartyMenuTilemap);
+        WritePartyMenuTilemap();
+        // FARCALL(aPrintPartyMenuText);
+        PrintPartyMenuText();
+        // CALL(aWaitBGMap);
+        WaitBGMap_Conv();
+        // CALL(aSetPalettes);
+        SetPalettes_Conv();
+        // CALL(aDelayFrame);
+        DelayFrame();
+        // FARCALL(aPartyMenuSelect);
+        u8_flag_s sel = PartyMenuSelect();
+        // IF_C goto finish;
+        if(sel.flag)
+            break;
+        // LD_A_addr(wCurPartySpecies);
+        // CP_A(EGG);
+        // IF_NZ goto give;
+        if(wram->wCurPartySpecies != EGG){
+        // give:
+            // LD_A_addr(wJumptableIndex);
+            // PUSH_AF;
+            uint8_t jumptableIndex = wram->wJumptableIndex;
+            // LD_A_addr(wPackJumptableIndex);
+            // PUSH_AF;
+            uint8_t packJumptableIndex = wram->wPackJumptableIndex;
+            // CALL(aGetCurNickname);
+            // LD_HL(wStringBuffer1);
+            // LD_DE(wMonOrItemNameBuffer);
+            // LD_BC(MON_NAME_LENGTH);
+            // CALL(aCopyBytes);
+            CopyBytes_Conv2(wram->wMonOrItemNameBuffer, GetCurNickname_Conv2(), MON_NAME_LENGTH);
+            // CALL(aTryGiveItemToPartymon);
+            SafeCallGBAuto(aTryGiveItemToPartymon);
+            // POP_AF;
+            // LD_addr_A(wPackJumptableIndex);
+            wram->wPackJumptableIndex = packJumptableIndex;
+            // POP_AF;
+            // LD_addr_A(wJumptableIndex);
+            wram->wJumptableIndex = jumptableIndex;
+            break;
+        }
+        // LD_HL(mGiveItem_AnEggCantHoldAnItemText);
+        // CALL(aPrintText);
+        PrintText_Conv2(AnEggCantHoldAnItemText);
+        // goto loop;
+    }
 
-give:
-    LD_A_addr(wJumptableIndex);
-    PUSH_AF;
-    LD_A_addr(wPackJumptableIndex);
-    PUSH_AF;
-    CALL(aGetCurNickname);
-    LD_HL(wStringBuffer1);
-    LD_DE(wMonOrItemNameBuffer);
-    LD_BC(MON_NAME_LENGTH);
-    CALL(aCopyBytes);
-    CALL(aTryGiveItemToPartymon);
-    POP_AF;
-    LD_addr_A(wPackJumptableIndex);
-    POP_AF;
-    LD_addr_A(wJumptableIndex);
-
-finish:
-    POP_AF;
-    LD_addr_A(wOptions);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    CALL(aPack_InitGFX);
-    CALL(aWaitBGMap_DrawPackGFX);
-    CALL(aPack_InitColors);
-    RET;
-
-
-NoPokemon:
-    LD_HL(mYouDontHaveAMonText);
-    CALL(aPack_PrintTextNoScroll);
-    RET;
-
-AnEggCantHoldAnItemText:
-    //text_far ['_AnEggCantHoldAnItemText']
-    //text_end ['?']
-
-    return QuitItemSubmenu();
+// finish:
+    // POP_AF;
+    // LD_addr_A(wOptions);
+    wram->wOptions = options;
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0x0;
+    // CALL(aPack_InitGFX);
+    Pack_InitGFX();
+    // CALL(aWaitBGMap_DrawPackGFX);
+    WaitBGMap_DrawPackGFX();
+    // CALL(aPack_InitColors);
+    Pack_InitColors();
+    // RET;
 }
 
 void QuitItemSubmenu(void){
-    RET;
-
+    // RET;
 }
 
 static void BattlePack_RunJumptable(void) {
@@ -885,7 +1007,7 @@ static void BattlePack_RunJumptable(void) {
             if(Pack_InterpretJoypad_Conv(PACKSTATE_INITTMHMPOCKET, PACKSTATE_INITBALLSPOCKET))
                 return;
             // CALL(aItemSubmenu);
-            SafeCallGBAuto(aItemSubmenu);
+            ItemSubmenu();
             // RET;
             return;
         //dw ['.InitBallsPocket'];  //  3
@@ -931,7 +1053,7 @@ static void BattlePack_RunJumptable(void) {
             if(Pack_InterpretJoypad_Conv(PACKSTATE_INITITEMSPOCKET, PACKSTATE_INITKEYITEMSPOCKET))
                 return;
             // CALL(aItemSubmenu);
-            SafeCallGBAuto(aItemSubmenu);
+            ItemSubmenu();
             // RET;
             return;
         //dw ['.InitKeyItemsPocket'];  //  5
@@ -977,7 +1099,7 @@ static void BattlePack_RunJumptable(void) {
             if(Pack_InterpretJoypad_Conv(PACKSTATE_INITBALLSPOCKET, PACKSTATE_INITTMHMPOCKET))
                 return;
             // CALL(aItemSubmenu);
-            SafeCallGBAuto(aItemSubmenu);
+            ItemSubmenu();
             // RET;
             return;
         //dw ['.InitTMHMPocket'];  //  7
@@ -1015,7 +1137,7 @@ static void BattlePack_RunJumptable(void) {
                 return;
             // XOR_A_A;
             // CALL(aTMHMSubmenu);
-            SafeCallGB(aTMHMSubmenu, &(struct cpu_registers_s){.a = 0});
+            TMHMSubmenu(0);
             // RET;
             return;
         //dw ['Pack_QuitNoScript'];  //  9
@@ -1063,145 +1185,189 @@ void BattlePack(void){
 }
 
 void ItemSubmenu(void){
-    FARCALL(aCheckItemContext);
-    LD_A_addr(wItemAttributeValue);
-    return TMHMSubmenu();
+    PEEK("");
+    // FARCALL(aCheckItemContext);
+    // LD_A_addr(wItemAttributeValue);
+    return TMHMSubmenu(CheckItemContext_Conv(wram->wCurItem));
 }
 
-void TMHMSubmenu(void){
-    AND_A_A;
-    IF_Z goto NoUse;
-    LD_HL(mTMHMSubmenu_UsableMenuHeader);
-    LD_DE(mTMHMSubmenu_UsableJumptable);
-    goto proceed;
+static const struct MenuHeader UsableMenuHeader = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(13, 7, SCREEN_WIDTH - 1, TEXTBOX_Y - 1),
+    .data = &(struct MenuData) {
+    // UsableMenuData:
+        .flags = STATICMENU_CURSOR | STATICMENU_NO_TOP_SPACING,  // flags
+        .verticalMenu = {
+            .count = 2,  // items
+            .options = (const char*[]){
+                "USE",
+                "QUIT",
+            },
+        },
+    },//dw ['.UsableMenuData'];
+    .defaultOption = 1,  // default option
+};
 
+static const struct MenuHeader UnusableMenuHeader = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(13, 9, SCREEN_WIDTH - 1, TEXTBOX_Y - 1),
+    .data = &(struct MenuData){
+    // UnusableMenuData:
+        .flags = STATICMENU_CURSOR | STATICMENU_NO_TOP_SPACING,  // flags
+        .verticalMenu = {
+            .count = 1,  // items
+            .options = (const char*[]){
+                "QUIT",
+            },
+        },
+    }, //dw ['.UnusableMenuData'];
+    .defaultOption = 1,  // default option
+};
 
-NoUse:
-    LD_HL(mTMHMSubmenu_UnusableMenuHeader);
-    LD_DE(mTMHMSubmenu_UnusableJumptable);
+void TMHMSubmenu(uint8_t a){
+    // AND_A_A;
+    // IF_Z goto NoUse;
+    if(a != 0){
+        // LD_HL(mTMHMSubmenu_UsableMenuHeader);
+        // LD_DE(mTMHMSubmenu_UsableJumptable);
+        // goto proceed;
+    // proceed:
+        // PUSH_DE;
+        // CALL(aLoadMenuHeader);
+        LoadMenuHeader_Conv2(&UsableMenuHeader);
+        // CALL(aVerticalMenu);
+        bool quit = !VerticalMenu_Conv();
+        // CALL(aExitMenu);
+        ExitMenu_Conv2();
+        // POP_HL;
+        // RET_C ;
+        if(quit)
+            return;
+        // LD_A_addr(wMenuCursorY);
+        // DEC_A;
+        // CALL(aPack_GetJumptablePointer);
+        // JP_hl;
+    // UsableJumptable:
+        switch(wram->wMenuCursorY - 1){
+            case 0: //dw ['.Use'];
+            // Use:
+                // FARCALL(aCheckItemContext);
+                // LD_A_addr(wItemAttributeValue);
+                // LD_HL(mTMHMSubmenu_ItemFunctionJumptable);
+                // RST(aJumpTable);
+                // RET;
 
-proceed:
-    PUSH_DE;
-    CALL(aLoadMenuHeader);
-    CALL(aVerticalMenu);
-    CALL(aExitMenu);
-    POP_HL;
-    RET_C ;
-    LD_A_addr(wMenuCursorY);
-    DEC_A;
-    CALL(aPack_GetJumptablePointer);
-    JP_hl;
+            // ItemFunctionJumptable:
+                switch(CheckItemContext_Conv(wram->wCurItem)){
+                //  entries correspond to ITEMMENU_* constants
+                    default:
+                    case ITEMMENU_NOUSE:    //dw ['.Oak'];  // ITEMMENU_NOUSE
+                    case 1:                 //dw ['.Oak'];
+                    case 2:                 //dw ['.Oak'];
+                    case 3:                 //dw ['.Oak'];
+                    Oak:
+                        // LD_HL(mOakThisIsntTheTimeText);
+                        // CALL(aPack_PrintTextNoScroll);
+                        Pack_PrintTextNoScroll(OakThisIsntTheTimeText);
+                        // RET;
+                        return;
+                    case ITEMMENU_CURRENT:  //dw ['.Unused'];  // ITEMMENU_CURRENT
+                    // Unused:
+                        // CALL(aDoItemEffect);
+                        DoItemEffect();
+                        // LD_A_addr(wItemEffectSucceeded);
+                        // AND_A_A;
+                        // IF_NZ goto ReturnToBattle;
+                        if(wram->wItemEffectSucceeded != 0){
+                        // ReturnToBattle:
+                            // CALL(aClearBGPalettes);
+                            ClearBGPalettes_Conv();
+                            break;
+                        }
+                        // RET;
+                        return;
+                    case ITEMMENU_PARTY:    //dw ['.BattleField'];  // ITEMMENU_PARTY
+                    // BattleField:
+                        // CALL(aDoItemEffect);
+                        DoItemEffect();
+                        // LD_A_addr(wItemEffectSucceeded);
+                        // AND_A_A;
+                        // IF_NZ goto quit_run_script;
+                        if(wram->wItemEffectSucceeded != 0)
+                            break;
+                        // XOR_A_A;
+                        // LDH_addr_A(hBGMapMode);
+                        hram->hBGMapMode = 0x0;
+                        // CALL(aPack_InitGFX);
+                        Pack_InitGFX();
+                        // CALL(aWaitBGMap_DrawPackGFX);
+                        WaitBGMap_DrawPackGFX();
+                        // CALL(aPack_InitColors);
+                        Pack_InitColors();
+                        // RET;
+                        return;
+                    case ITEMMENU_CLOSE:    //dw ['.BattleOnly'];  // ITEMMENU_CLOSE
+                    // BattleOnly:
+                        // CALL(aDoItemEffect);
+                        DoItemEffect();
+                        // LD_A_addr(wItemEffectSucceeded);
+                        // AND_A_A;
+                        // IF_Z goto Oak;
+                        if(wram->wItemEffectSucceeded == 0)
+                            goto Oak;
+                        // CP_A(0x2);
+                        // IF_Z goto didnt_use_item;
+                        if(wram->wItemEffectSucceeded == 0x2){
+                        // didnt_use_item:
+                            // XOR_A_A;
+                            // LD_addr_A(wItemEffectSucceeded);
+                            wram->wItemEffectSucceeded = 0x0;
+                            // RET;
+                            return;
+                        }
+                        break;
+                }
 
+            // quit_run_script:
+                // LD_A(PACKSTATE_QUITRUNSCRIPT);
+                // LD_addr_A(wJumptableIndex);
+                wram->wJumptableIndex = PACKSTATE_QUITRUNSCRIPT;
+                // RET;
+                return;
+            case 1: //dw ['.Quit'];
+                return;
+        }
+    }
+    else {
+    // NoUse:
+        // LD_HL(mTMHMSubmenu_UnusableMenuHeader);
+        // LD_DE(mTMHMSubmenu_UnusableJumptable);
+    // proceed:
+        // PUSH_DE;
+        // CALL(aLoadMenuHeader);
+        LoadMenuHeader_Conv2(&UnusableMenuHeader);
+        // CALL(aVerticalMenu);
+        bool quit = !VerticalMenu_Conv();
+        // CALL(aExitMenu);
+        ExitMenu_Conv2();
+        // POP_HL;
+        // RET_C ;
+        if(quit)
+            return;
+        // LD_A_addr(wMenuCursorY);
+        // DEC_A;
+        // CALL(aPack_GetJumptablePointer);
+        // JP_hl;
+        switch(wram->wMenuCursorY - 1){
+            case 0: return; //dw ['.Quit'];
+        }
+    }
 
-UsableMenuHeader:
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['13', '7', 'SCREEN_WIDTH - 1', 'TEXTBOX_Y - 1'];
-    //dw ['.UsableMenuData'];
-    //db ['1'];  // default option
+// UnusableJumptable:
+    // dw ['.Quit'];
 
-
-UsableMenuData:
-    //db ['STATICMENU_CURSOR | STATICMENU_NO_TOP_SPACING'];  // flags
-    //db ['2'];  // items
-    //db ['"USE@"'];
-    //db ['"QUIT@"'];
-
-
-UsableJumptable:
-    //dw ['.Use'];
-    //dw ['.Quit'];
-
-
-UnusableMenuHeader:
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['13', '9', 'SCREEN_WIDTH - 1', 'TEXTBOX_Y - 1'];
-    //dw ['.UnusableMenuData'];
-    //db ['1'];  // default option
-
-
-UnusableMenuData:
-    //db ['STATICMENU_CURSOR | STATICMENU_NO_TOP_SPACING'];  // flags
-    //db ['1'];  // items
-    //db ['"QUIT@"'];
-
-
-UnusableJumptable:
-    //dw ['.Quit'];
-
-
-Use:
-    FARCALL(aCheckItemContext);
-    LD_A_addr(wItemAttributeValue);
-    LD_HL(mTMHMSubmenu_ItemFunctionJumptable);
-    RST(aJumpTable);
-    RET;
-
-
-ItemFunctionJumptable:
-//  entries correspond to ITEMMENU_* constants
-    //dw ['.Oak'];  // ITEMMENU_NOUSE
-    //dw ['.Oak'];
-    //dw ['.Oak'];
-    //dw ['.Oak'];
-    //dw ['.Unused'];  // ITEMMENU_CURRENT
-    //dw ['.BattleField'];  // ITEMMENU_PARTY
-    //dw ['.BattleOnly'];  // ITEMMENU_CLOSE
-
-
-Oak:
-    LD_HL(mOakThisIsntTheTimeText);
-    CALL(aPack_PrintTextNoScroll);
-    RET;
-
-
-Unused:
-    CALL(aDoItemEffect);
-    LD_A_addr(wItemEffectSucceeded);
-    AND_A_A;
-    IF_NZ goto ReturnToBattle;
-    RET;
-
-
-BattleField:
-    CALL(aDoItemEffect);
-    LD_A_addr(wItemEffectSucceeded);
-    AND_A_A;
-    IF_NZ goto quit_run_script;
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    CALL(aPack_InitGFX);
-    CALL(aWaitBGMap_DrawPackGFX);
-    CALL(aPack_InitColors);
-    RET;
-
-
-ReturnToBattle:
-    CALL(aClearBGPalettes);
-    goto quit_run_script;
-
-
-BattleOnly:
-    CALL(aDoItemEffect);
-    LD_A_addr(wItemEffectSucceeded);
-    AND_A_A;
-    IF_Z goto Oak;
-    CP_A(0x2);
-    IF_Z goto didnt_use_item;
-
-quit_run_script:
-    LD_A(PACKSTATE_QUITRUNSCRIPT);
-    LD_addr_A(wJumptableIndex);
-    RET;
-
-
-didnt_use_item:
-    XOR_A_A;
-    LD_addr_A(wItemEffectSucceeded);
-    RET;
-
-Quit:
-    RET;
-
+// Quit:
+    // RET;
 }
 
 void InitPackBuffers(void){

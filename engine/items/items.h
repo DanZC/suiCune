@@ -33,6 +33,7 @@ item_t GetNumberedTMHM_Conv(uint8_t tmhm);
 void v_CheckTossableItem(void);
 bool v_CheckTossableItem_Conv(item_t item);
 void CheckSelectableItem(void);
+bool CheckSelectableItem_Conv(item_t item);
 void CheckItemPocket(void);
 uint8_t CheckItemPocket_Conv(item_t item);
 void CheckItemContext(void);

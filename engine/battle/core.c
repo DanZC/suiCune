@@ -3917,7 +3917,7 @@ void UpdateBattleStateAndExperienceAfterEnemyFaint(void){
     // LD_addr_A(wGivingExperienceToExpShareHolders);
     wram->wGivingExperienceToExpShareHolders = FALSE;
     // CALL(aGiveExperiencePoints);
-    SafeCallGBAuto(aGiveExperiencePoints);
+    GiveExperiencePoints();
     // CALL(aIsAnyMonHoldingExpShare);
     // RET_Z ;
     if(!d)
@@ -3938,7 +3938,7 @@ void UpdateBattleStateAndExperienceAfterEnemyFaint(void){
     // LD_addr_A(wGivingExperienceToExpShareHolders);
     wram->wGivingExperienceToExpShareHolders = TRUE;
     // CALL(aGiveExperiencePoints);
-    SafeCallGBAuto(aGiveExperiencePoints);
+    GiveExperiencePoints();
     // POP_AF;
     // LD_addr_A(wBattleParticipantsNotFainted);
     wram->wBattleParticipantsNotFainted = notFainted;

@@ -3873,13 +3873,16 @@ void AI_Smart_PriorityHit_Conv(uint8_t* hl){
     hram->hBattleTurn = 1;
     // PUSH_HL;
     {
-        struct cpu_registers_s reg = gb.cpu_reg;
+        // struct cpu_registers_s reg = gb.cpu_reg;
         // CALLFAR(aEnemyAttackDamage);
-        SafeCallGB(aEnemyAttackDamage, &reg);
+        // SafeCallGB(aEnemyAttackDamage, &reg);
+        EnemyAttackDamage(&gBattleCmdState);
         // CALLFAR(aBattleCommand_DamageCalc);
-        SafeCallGB(aBattleCommand_DamageCalc, &reg);
+        // SafeCallGB(aBattleCommand_DamageCalc, &reg);
+        BattleCommand_DamageCalc();
         // CALLFAR(aBattleCommand_Stab);
-        SafeCallGB(aBattleCommand_Stab, &reg);
+        // SafeCallGB(aBattleCommand_Stab, &reg);
+        BattleCommand_Stab();
     }
     // POP_HL;
     // LD_A_addr(wCurDamage + 1);
@@ -6998,7 +7001,8 @@ void AI_Aggressive(void){
             // goto checkmove;
             continue;
         }
-        CALL(aAIDamageCalc);
+        // CALL(aAIDamageCalc);
+        AIDamageCalc();
         // POP_BC;
         // POP_DE;
         // POP_HL;
@@ -7107,18 +7111,21 @@ void AIDamageCalc(void){
     if(IsInU8Array(ConstantDamageEffects, wram->wEnemyMoveStruct.effect)) {
         // CALLFAR(aBattleCommand_ConstantDamage);
         BattleCommand_ConstantDamage();
-        RET;
+        // RET;
     }
     else {
     // notconstant:
-        struct cpu_registers_s regs = gb.cpu_reg;
+        // struct cpu_registers_s regs = gb.cpu_reg;
         // CALLFAR(aEnemyAttackDamage);
-        SafeCallGB(aEnemyAttackDamage, &regs);
+        // SafeCallGB(aEnemyAttackDamage, &regs);
+        EnemyAttackDamage(&gBattleCmdState);
         // CALLFAR(aBattleCommand_DamageCalc);
-        SafeCallGB(aBattleCommand_DamageCalc, &regs);
+        // SafeCallGB(aBattleCommand_DamageCalc, &regs);
+        BattleCommand_DamageCalc();
         // CALLFAR(aBattleCommand_Stab);
-        SafeCallGB(aBattleCommand_Stab, &regs);
-        RET;
+        // SafeCallGB(aBattleCommand_Stab, &regs);
+        BattleCommand_Stab();
+        // RET;
     }
 // INCLUDE "data/battle/ai/constant_damage_effects.asm"
 }
@@ -7325,7 +7332,7 @@ void AI_Risky(void){
 
     // checkko:
         // CALL(aAIDamageCalc);
-        SafeCallGBAuto(aAIDamageCalc);
+        AIDamageCalc();
 
         // LD_A_addr(wCurDamage + 1);
         // LD_E_A;

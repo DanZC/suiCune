@@ -7010,7 +7010,7 @@ void init_function_pointers(void) {
     // REDIRECTED(MenuHeader_HoldableKeyItem);
     // REDIRECTED(BallsPocketMenuHeader);
     // REDIRECTED(Jumptable_GiveTossQuit);
-    // REDIRECTED(UseItem);
+    CONVERTED(UseItem);
     // REDIRECTED(Jumptable_UseQuit);
     // REDIRECTED(MenuHeader_UnusableItem);
     // REDIRECTED(TMHMSubmenu);
@@ -7056,7 +7056,7 @@ void init_function_pointers(void) {
 
     // engine/items/tmhm.c
     // REDIRECTED(Tutorial_TMHMPocket);
-    // REDIRECTED(TMHMPocket);
+    CONVERTED(TMHMPocket);
     // REDIRECTED(TMHM_ExitPack);
     // REDIRECTED(TMHM_ExitPocket);
     // REDIRECTED(BootedHMText);
