@@ -418,30 +418,39 @@ done:
 
 }
 
-void ApplyMonOrTrainerPals(void){
-    CALL(aCheckCGB);
-    RET_Z ;
-    LD_A_E;
-    AND_A_A;
-    IF_Z goto get_trainer;
-    LD_A_addr(wCurPartySpecies);
-    CALL(aGetMonPalettePointer);
-    goto load_palettes;
+void ApplyMonOrTrainerPals(uint8_t e){
+    uint16_t buffer[NUM_PAL_COLORS];
+    // CALL(aCheckCGB);
+    // RET_Z ;
+    if(!CheckCGB_Conv())
+        return;
+    // LD_A_E;
+    // AND_A_A;
+    // IF_Z goto get_trainer;
+    if(e == 0) {
+    // get_trainer:
+        // LD_A_addr(wTrainerClass);
+        // CALL(aGetTrainerPalettePointer);
+        GetTrainerPalettePointer_Conv(buffer, wram->wTrainerClass);
+    }
+    else {
+        // LD_A_addr(wCurPartySpecies);
+        // CALL(aGetMonPalettePointer);
+        GetMonPalettePointer_Conv(buffer, wram->wCurPartySpecies);
+        // goto load_palettes;
+    }
 
-
-get_trainer:
-    LD_A_addr(wTrainerClass);
-    CALL(aGetTrainerPalettePointer);
-
-
-load_palettes:
-    LD_DE(wBGPals1);
-    CALL(aLoadPalette_White_Col1_Col2_Black);
-    CALL(aWipeAttrmap);
-    CALL(aApplyAttrmap);
-    CALL(aApplyPals);
-    RET;
-
+// load_palettes:
+    // LD_DE(wBGPals1);
+    // CALL(aLoadPalette_White_Col1_Col2_Black);
+    LoadPalette_White_Col1_Col2_Black_Conv((uint16_t*)wram_ptr(wBGPals1), buffer);
+    // CALL(aWipeAttrmap);
+    WipeAttrmap();
+    // CALL(aApplyAttrmap);
+    ApplyAttrmap_Conv();
+    // CALL(aApplyPals);
+    ApplyPals_Conv();
+    // RET;
 }
 
 void ApplyHPBarPals(uint8_t c){
@@ -1304,6 +1313,18 @@ void GetMonPalettePointer(void){
     CALL(av_GetMonPalettePointer);
     RET;
 
+}
+
+uint16_t* GetMonPalettePointer_Conv(uint16_t* dest, uint8_t a){
+    // CALL(av_GetMonPalettePointer);
+    // RET;
+    ExtractPaletteFromPNGAssetToBuffer(dest, v_GetMonPalettePointer_Conv(a));
+
+    // First palette color should be ignored 
+    dest[0] = dest[1];
+    dest[1] = dest[2];
+
+    return dest;
 }
 
 void CGBCopyBattleObjectPals(void){

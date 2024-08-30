@@ -14,7 +14,7 @@ void LoadTrainerClassPaletteAsNthBGPal(void);
 void LoadMonPaletteAsNthBGPal(void);
 void LoadNthMiddleBGPal(void);
 void LoadBetaPokerPalettes(void);
-void ApplyMonOrTrainerPals(void);
+void ApplyMonOrTrainerPals(uint8_t e);
 void ApplyHPBarPals(uint8_t c);
 void LoadStatsScreenPals(void);
 bool LoadStatsScreenPals_Conv(uint8_t c);
@@ -52,6 +52,7 @@ uint16_t* GetFrontpicPalettePointer_Conv(uint16_t* dest, uint8_t a, uint16_t bc)
 void GetTrainerPalettePointer(void);
 uint16_t* GetTrainerPalettePointer_Conv(uint16_t* dest, uint8_t a);
 void GetMonPalettePointer(void);
+uint16_t* GetMonPalettePointer_Conv(uint16_t* dest, uint8_t a);
 void CGBCopyBattleObjectPals(void);
 extern const uint16_t BattleObjectPals[];
 void CGBCopyTwoPredefObjectPals(void);

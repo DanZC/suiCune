@@ -1,4 +1,4 @@
 // void RestartClock_GetWraparoundTime(void);
-void RestartClock(void);
+uint8_t RestartClock(void);
 void JPHourString(void);
 void JPMinuteString(void);

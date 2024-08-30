@@ -11,8 +11,9 @@ void MainMenu_PrintCurrentTimeAndDay(void);
 void MainMenu_PrintCurrentTimeAndDay_Conv(void);
 void ClearTilemapEtc(void);
 void ClearTilemapEtc_Conv(void);
-void MainMenu_NewGame(void);
-void MainMenu_Option(void);
-void MainMenu_Continue(void);
-void MainMenu_MysteryGift(void);
+bool MainMenu_NewGame(void);
+bool MainMenu_Option(void);
+bool MainMenu_Continue(void);
+bool MainMenu_DebugRoom(void);
+bool MainMenu_MysteryGift(void);
 //#include "gfx/mobile/mobile_menu.2bpp"

@@ -90,10 +90,12 @@ VBlanks:
 
 void VBlank_Conv(void)
 {
-    PUSH_AF;
-    PUSH_BC;
-    PUSH_DE;
-    PUSH_HL;
+    SET_PC(aVBlank);
+    // PUSH_AF;
+    // PUSH_BC;
+    // PUSH_DE;
+    // PUSH_HL;
+    struct cpu_registers_s reg = gb.cpu_reg;
 
     switch(hram->hVBlank & 7)
     {
@@ -109,10 +111,11 @@ void VBlank_Conv(void)
 
     GameTimer_Conv();
 
-    POP_HL;
-    POP_DE;
-    POP_BC;
-    POP_AF;
+    // POP_HL;
+    // POP_DE;
+    // POP_BC;
+    // POP_AF;
+    gb.cpu_reg = reg;
 }
 
 void VBlank0(void) {
@@ -303,9 +306,9 @@ void VBlank0_Conv(void) {
         // These have their own timing checks.
 
         // CALL(aServe2bppRequest);
-        SafeCallGBAuto(aServe2bppRequest);
+        Serve2bppRequest();
         // CALL(aServe1bppRequest);
-        SafeCallGBAuto(aServe1bppRequest);
+        Serve1bppRequest();
         // CALL(aAnimateTileset);
         AnimateTileset();
     } while(0);
@@ -384,7 +387,8 @@ void VBlank2(void) {
 void VBlank2_Conv(void) {
     hram->hROMBankBackup = hram->hROMBank;
     Bankswitch_Conv(BANK(av_UpdateSound));
-    CALL(av_UpdateSound);
+    // CALL(av_UpdateSound);
+    SafeCallGBAuto(av_UpdateSound);
     Bankswitch_Conv(hram->hROMBankBackup);
     wram->wVBlankOccurred = 0;
     // CALL(aVBlank2);
@@ -482,7 +486,8 @@ void VBlank1_Conv(void) {
 
         // CALL(aUpdateBGMap);
         UpdateBGMap_Conv();
-        CALL(aServe2bppRequest_VBlank);
+        // CALL(aServe2bppRequest_VBlank);
+        Serve2bppRequest_VBlank();
 
         TransferVirtualOAM();
     }
@@ -516,7 +521,8 @@ void VBlank1_Conv(void) {
     // LD_A(BANK(av_UpdateSound));
     // RST(mBankswitch);
     Bankswitch_Conv(BANK(av_UpdateSound));
-    CALL(av_UpdateSound);
+    // CALL(av_UpdateSound);
+    SafeCallGBAuto(av_UpdateSound);
     // LDH_A_addr(hROMBankBackup);
     // RST(mBankswitch);
     Bankswitch_Conv(hram->hROMBankBackup);
@@ -664,8 +670,10 @@ void VBlank3_Conv(void) {
     // IF_C goto done;
     if(hram->hCGBPalUpdate == 0 || !ForceUpdateCGBPals_Conv()) {
 
-        CALL(aUpdateBGMap);
-        CALL(aServe2bppRequest_VBlank);
+        // CALL(aUpdateBGMap);
+        UpdateBGMap_Conv();
+        // CALL(aServe2bppRequest_VBlank);
+        Serve2bppRequest_VBlank();
 
         TransferVirtualOAM();
     }
@@ -691,7 +699,8 @@ void VBlank3_Conv(void) {
     // LD_A(BANK(av_UpdateSound));
     // RST(mBankswitch);
     Bankswitch_Conv(BANK(av_UpdateSound));
-    CALL(av_UpdateSound);
+    // CALL(av_UpdateSound);
+    SafeCallGBAuto(av_UpdateSound);
     // LDH_A_addr(hROMBankBackup);
     // RST(mBankswitch);
     Bankswitch_Conv(hram->hROMBankBackup);
@@ -764,9 +773,10 @@ void VBlank4_Conv(void) {
     // LDH_addr_A(hROMBankBackup);
     hram->hROMBankBackup = hram->hROMBank;
 
-    CALL(aUpdateBGMap);
-    // UpdateBGMap_Conv();
-    CALL(aServe2bppRequest);
+    // CALL(aUpdateBGMap);
+    UpdateBGMap_Conv();
+    // CALL(aServe2bppRequest);
+    Serve2bppRequest();
 
     TransferVirtualOAM();  // TransferVirtualOAM
 
@@ -777,13 +787,14 @@ void VBlank4_Conv(void) {
     // LD_addr_A(wVBlankOccurred);
     wram->wVBlankOccurred = 0;
 
-    CALL(aAskSerial);
+    // CALL(aAskSerial);
 
     // LD_A(BANK(av_UpdateSound));
     // RST(mBankswitch);
     // CALL(av_UpdateSound);
     Bankswitch_Conv(BANK(av_UpdateSound));
-    CALL(av_UpdateSound);
+    // CALL(av_UpdateSound);
+    SafeCallGBAuto(av_UpdateSound);
 
     // LDH_A_addr(hROMBankBackup);
     // RST(mBankswitch);
@@ -792,7 +803,7 @@ void VBlank4_Conv(void) {
 }
 
 void VBlank5(void) {
-        //  scx
+    //  scx
     //  palettes
     //  bg map
     //  tiles
@@ -841,12 +852,70 @@ done:
     RET;
 }
 
+//  scx
+//  palettes
+//  bg map
+//  tiles
+//  joypad
+//
 void VBlank5_Conv(void) {
-    CALL(aVBlank5);
+    // LDH_A_addr(hROMBank);
+    // LDH_addr_A(hROMBankBackup);
+    hram->hROMBankBackup = hram->hROMBank;
+
+    // LDH_A_addr(hSCX);
+    // LDH_addr_A(rSCX);
+    gb_write(rSCX, hram->hSCX);
+
+    // CALL(aUpdatePalsIfCGB);
+    // IF_C goto done;
+    if(!UpdatePalsIfCGB_Conv()){
+        // CALL(aUpdateBGMap);
+        UpdateBGMap_Conv();
+        // CALL(aServe2bppRequest);
+        Serve2bppRequest();
+    }
+
+// done:    
+    // XOR_A_A;
+    // LD_addr_A(wVBlankOccurred);
+    wram->wVBlankOccurred = FALSE;
+
+    // CALL(aUpdateJoypad);
+    UpdateJoypad_Conv();
+
+    // XOR_A_A;
+    // LDH_addr_A(rIF);
+    gb_write(rIF, 0x0);
+    // LD_A(1 << LCD_STAT);
+    // LDH_addr_A(rIE);
+    gb_write(rIE, 1 << LCD_STAT);
+    // request lcd stat
+    // LDH_addr_A(rIF);
+    gb_write(rIF, 1 << LCD_STAT);
+
+    // NOP;
+    // LD_A(BANK(av_UpdateSound));
+    // RST(mBankswitch);
+    // CALL(av_UpdateSound);
+    SafeCallGBAuto(av_UpdateSound);
+    // LDH_A_addr(hROMBankBackup);
+    // RST(mBankswitch);
+    Bankswitch_Conv(hram->hROMBankBackup);
+    // NOP;
+
+    // XOR_A_A;
+    // LDH_addr_A(rIF);
+    gb_write(rIF, 0x0);
+    // enable ints besides joypad
+    // LD_A(IE_DEFAULT);
+    // LDH_addr_A(rIE);
+    gb_write(rIE, IE_DEFAULT);
+    // RET;
 }
 
 void VBlank6(void) {
-        //  palettes
+    //  palettes
     //  tiles
     //  dma transfer
     //  sound
@@ -879,6 +948,43 @@ done:
     RET;
 }
 
+//  palettes
+//  tiles
+//  dma transfer
+//  sound
 void VBlank6_Conv(void) {
-    CALL(aVBlank6);
+    // LDH_A_addr(hROMBank);
+    // LDH_addr_A(hROMBankBackup);
+    hram->hROMBankBackup = hram->hROMBank;
+
+    // inc frame counter
+    // LD_HL(hVBlankCounter);
+    // INC_hl;
+    hram->hVBlankCounter++;
+
+    // CALL(aUpdateCGBPals);
+    // IF_C goto done;
+    if(!UpdateCGBPals_Conv()){
+        // CALL(aServe2bppRequest);
+        Serve2bppRequest();
+        // CALL(aServe1bppRequest);
+        Serve1bppRequest();
+        // CALL(aDMATransfer);
+        DMATransfer_Conv();
+    }
+
+// done:
+    // XOR_A_A;
+    // LD_addr_A(wVBlankOccurred);
+    wram->wVBlankOccurred = 0x0;
+
+    // LD_A(BANK(av_UpdateSound));
+    // RST(mBankswitch);
+    // CALL(av_UpdateSound);
+    SafeCallGBAuto(av_UpdateSound);
+
+    // LDH_A_addr(hROMBankBackup);
+    // RST(mBankswitch);
+    Bankswitch_Conv(hram->hROMBankBackup);
+    // RET;
 }

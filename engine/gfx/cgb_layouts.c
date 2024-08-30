@@ -135,7 +135,7 @@ void v_CGB_BattleGrayscale(void){
     uint16_t* de2 = (uint16_t*)((uint8_t*)wram + offsetof(struct wram_s, wOBPals1)); // Won't let me take pointer of packed wOBPals1, so I'm doing this ugly shit instead.
     CopyPalettes_Conv(de2, (const uint8_t*)PalPacket_BattleGrayscale.colors, 4);
     // JR(mv_CGB_FinishBattleScreenLayout);
-
+    return v_CGB_FinishBattleScreenLayout();
 }
 
 void v_CGB_BattleColors(void){

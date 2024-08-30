@@ -1,6 +1,11 @@
 #include "../../constants.h"
 #include "intro_menu.h"
 #include "options_menu.h"
+#include "naming_screen.h"
+#include "init_gender.h"
+#include "delete_save.h"
+#include "main_menu.h"
+#include "save.h"
 #include <stdio.h>
 #include <string.h>
 #include "../../home/audio.h"
@@ -13,20 +18,41 @@
 #include "../../home/text.h"
 #include "../../home/pokemon.h"
 #include "../../home/joypad.h"
+#include "../../home/tilemap.h"
+#include "../../home/palettes.h"
+#include "../../home/time.h"
+#include "../../home/time_palettes.h"
+#include "../../home/clear_sprites.h"
+#include "../../home/game_time.h"
 #include "../../home/menu.h"
 #include "../../home/sram.h"
 #include "../../home/random.h"
 #include "../../home/pokedex_flags.h"
 #include "../../home/print_text.h"
 #include "../../home/map_objects.h"
+#include "../../mobile/mobile_41.h"
 #include "../../gfx/misc.h"
 #include "../../data/text/common.h"
 #include "../../charmap.h"
 #include "../gfx/place_graphic.h"
 #include "../gfx/player_gfx.h"
+#include "../gfx/load_pics.h"
+#include "../gfx/color.h"
+#include "../overworld/player_object.h"
+#include "../overworld/time.h"
+#include "../overworld/events.h"
+#include "../overworld/wildmons.h"
+#include "../overworld/decorations.h"
+#include "../link/mystery_gift.h"
+#include "../rtc/timeset.h"
+#include "../rtc/reset_password.h"
+#include "../rtc/rtc.h"
+#include "../rtc/restart_clock.h"
+#include "../pokemon/mail.h"
 #include "../movie/splash.h"
 #include "../movie/intro.h"
 #include "../movie/title.h"
+#include "../../util/intro_jumptable.h"
 
 void Intro_MainMenu() {
     PlayMusic_Conv(MUSIC_NONE);
@@ -36,8 +62,9 @@ void Intro_MainMenu() {
     // LD_addr_A(wMapMusic);
     wram->wMapMusic = MUSIC_NONE;
     PlayMusic_Conv(MUSIC_MAIN_MENU);
-    FARCALL(aMainMenu);
-    JP(mStartTitleScreen);
+    // FARCALL(aMainMenu);
+    MainMenu();
+    // JP(mStartTitleScreen);
 }
 
 void PrintDayOfWeek(void) {
@@ -93,22 +120,29 @@ void PrintDayOfWeek_Conv(tile_t* de, uint8_t b) {
 }
 
 void NewGame_ClearTilemapEtc(void) {
-    XOR_A_A;
-    LDH_addr_A(hMapAnims);
-    CALL(aClearTilemap);
-    CALL(aLoadFontsExtra);
-    CALL(aLoadStandardFont);
-    CALL(aClearWindowData);
-    RET;
+    // XOR_A_A;
+    // LDH_addr_A(hMapAnims);
+    hram->hMapAnims = 0x0;
+    // CALL(aClearTilemap);
+    ClearTilemap_Conv2();
+    // CALL(aLoadFontsExtra);
+    LoadFontsExtra_Conv();
+    // CALL(aLoadStandardFont);
+    LoadStandardFont_Conv();
+    // CALL(aClearWindowData);
+    ClearWindowData_Conv2();
+    // RET;
 
 }
 
 void MysteryGift(void) {
-    CALL(aUpdateTime);
-    FARCALL(aDoMysteryGiftIfDayHasPassed);
-    FARCALL(aDoMysteryGift);
-    RET;
-
+    // CALL(aUpdateTime);
+    UpdateTime_Conv();
+    // FARCALL(aDoMysteryGiftIfDayHasPassed);
+    DoMysteryGiftIfDayHasPassed();
+    // FARCALL(aDoMysteryGift);
+    DoMysteryGift();
+    // RET;
 }
 
 void Option(void) {
@@ -127,36 +161,49 @@ void NewGame(void) {
     // XOR_A_A;
     // LD_addr_A(wDebugFlags);
     wram->wDebugFlags = 0;
-    CALL(aResetWRAM);
-    CALL(aNewGame_ClearTilemapEtc);
-    CALL(aAreYouABoyOrAreYouAGirl);
-    CALL(aOakSpeech);
-    CALL(aInitializeWorld);
+    // CALL(aResetWRAM);
+    ResetWRAM();
+    // CALL(aNewGame_ClearTilemapEtc);
+    NewGame_ClearTilemapEtc();
+    // CALL(aAreYouABoyOrAreYouAGirl);
+    AreYouABoyOrAreYouAGirl();
+    // CALL(aOakSpeech);
+    OakSpeech();
+    // CALL(aInitializeWorld);
+    InitializeWorld();
 
-    LD_A(LANDMARK_NEW_BARK_TOWN);
-    LD_addr_A(wPrevLandmark);
+    // LD_A(LANDMARK_NEW_BARK_TOWN);
+    // LD_addr_A(wPrevLandmark);
+    wram->wPrevLandmark = LANDMARK_NEW_BARK_TOWN;
 
-    LD_A(SPAWN_HOME);
-    LD_addr_A(wDefaultSpawnpoint);
+    // LD_A(SPAWN_HOME);
+    // LD_addr_A(wDefaultSpawnpoint);
+    wram->wDefaultSpawnpoint = SPAWN_HOME;
 
-    LD_A(MAPSETUP_WARP);
-    LDH_addr_A(hMapEntryMethod);
-    JP(mFinishContinueFunction);
-
+    // LD_A(MAPSETUP_WARP);
+    // LDH_addr_A(hMapEntryMethod);
+    hram->hMapEntryMethod = MAPSETUP_WARP;
+    // JP(mFinishContinueFunction);
+    return Intro_SetJumptableIndex(INTRO_CONTINUE);
 }
 
 void AreYouABoyOrAreYouAGirl(void) {
-    FARCALL(aMobile_AlwaysReturnNotCarry);  // mobile
-    IF_C goto ok;
-    FARCALL(aInitGender);
-    RET;
+    // FARCALL(aMobile_AlwaysReturnNotCarry);  // mobile
+    u8_flag_s res = Mobile_AlwaysReturnNotCarry();
+    // IF_C goto ok;
+    if(!res.flag){
+        // FARCALL(aInitGender);
+        InitGender();
+        // RET;
+        return;
+    }
 
-
-ok:
-    LD_C(0);
-    FARCALL(aInitMobileProfile);  // mobile
-    RET;
-
+// ok:
+    // LD_C(0);
+    struct cpu_registers_s reg = {.c = 0};
+    // FARCALL(aInitMobileProfile);  // mobile
+    SafeCallGB(aInitMobileProfile, &reg);
+    // RET;
 }
 
 void DebugRoom(void) {
@@ -168,222 +215,300 @@ void ResetWRAM(void) {
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = 0;
-    CALL(av_ResetWRAM);
+    // CALL(av_ResetWRAM);
+    v_ResetWRAM();
+    // RET;
+}
+
+//  Loads 0 in the count and -1 in the first mon slot.
+static void v_ResetWRAM_InitMonList(uint8_t* hl, species_t* sp){
+    // XOR_A_A;
+    // LD_hli_A;
+    *hl = 0;
+    // DEC_A;
+    // LD_hl_A;
+    *sp = (species_t)-1;
+    // RET;
+}
+
+//  Loads 0 in the count and -1 in the first item slot.
+static void v_ResetWRAM_InitItemList(item_pocket_s* hl){
+    // XOR_A_A;
+    // LD_hli_A;
+    hl->count = 0;
+    // DEC_A;
+    // LD_hl_A;
+    hl->pocket[0].item = (item_t)-1;
     // RET;
 }
 
 void v_ResetWRAM(void) {
-    LD_HL(wVirtualOAM);
-    LD_BC(wOptions - wVirtualOAM);
-    XOR_A_A;
-    CALL(aByteFill);
+    // LD_HL(wVirtualOAM);
+    // LD_BC(wOptions - wVirtualOAM);
+    // XOR_A_A;
+    // CALL(aByteFill);
+    ByteFill_Conv(wVirtualOAM, wOptions - wVirtualOAM, 0);
 
-    LD_HL(WRAM1_Begin);
-    LD_BC(wGameData - WRAM1_Begin);
-    XOR_A_A;
-    CALL(aByteFill);
+    // LD_HL(WRAM1_Begin);
+    // LD_BC(wGameData - WRAM1_Begin);
+    // XOR_A_A;
+    // CALL(aByteFill);
+    ByteFill_Conv(WRAM1_Begin, wGameData - WRAM1_Begin, 0);
 
-    LD_HL(wGameData);
-    LD_BC(wGameDataEnd - wGameData);
-    XOR_A_A;
-    CALL(aByteFill);
+    // LD_HL(wGameData);
+    // LD_BC(wGameDataEnd - wGameData);
+    // XOR_A_A;
+    // CALL(aByteFill);
+    ByteFill_Conv(wGameData, wGameDataEnd - wGameData, 0);
 
-    LDH_A_addr(rLY);
-    LDH_addr_A(hUnusedBackup);
-    CALL(aDelayFrame);
-    LDH_A_addr(hRandomSub);
-    LD_addr_A(wPlayerID);
+    // LDH_A_addr(rLY);
+    // LDH_addr_A(hUnusedBackup);
+    // CALL(aDelayFrame);
+    DelayFrame();
+    // LDH_A_addr(hRandomSub);
+    // LD_addr_A(wPlayerID);
+    uint8_t pid_lo = hram->hRandomSub;
 
-    LDH_A_addr(rLY);
-    LDH_addr_A(hUnusedBackup);
-    CALL(aDelayFrame);
-    LDH_A_addr(hRandomAdd);
-    LD_addr_A(wPlayerID + 1);
+    // LDH_A_addr(rLY);
+    // LDH_addr_A(hUnusedBackup);
+    // CALL(aDelayFrame);
+    DelayFrame();
+    // LDH_A_addr(hRandomAdd);
+    // LD_addr_A(wPlayerID + 1);
+    uint8_t pid_hi = hram->hRandomAdd;
+    wram->wPlayerID = (pid_hi << 8) | pid_lo;
 
-    CALL(aRandom);
-    LD_addr_A(wSecretID);
-    CALL(aDelayFrame);
-    CALL(aRandom);
-    LD_addr_A(wSecretID + 1);
+    // CALL(aRandom);
+    // LD_addr_A(wSecretID);
+    // CALL(aDelayFrame);
+    // CALL(aRandom);
+    // LD_addr_A(wSecretID + 1);
+    uint8_t sid_lo = Random_Conv();
+    DelayFrame();
+    uint8_t sid_hi = Random_Conv();
+    wram->wSecretID = (sid_hi << 8) | sid_lo;
 
-    LD_HL(wPartyCount);
-    CALL(av_ResetWRAM_InitList);
+    // LD_HL(wPartyCount);
+    // CALL(av_ResetWRAM_InitList);
+    v_ResetWRAM_InitMonList(&wram->wPartyCount, wram->wPartySpecies);
 
-    XOR_A_A;
-    LD_addr_A(wCurBox);
-    LD_addr_A(wSavedAtLeastOnce);
+    // XOR_A_A;
+    // LD_addr_A(wCurBox);
+    wram->wCurBox = 0;
+    // LD_addr_A(wSavedAtLeastOnce);
+    wram->wSavedAtLeastOnce = FALSE;
 
-    CALL(aSetDefaultBoxNames);
+    // CALL(aSetDefaultBoxNames);
+    SetDefaultBoxNames();
 
-    LD_A(MBANK(asBoxCount));
-    CALL(aOpenSRAM);
-    LD_HL(sBoxCount);
-    CALL(av_ResetWRAM_InitList);
-    CALL(aCloseSRAM);
+    // LD_A(MBANK(asBoxCount));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asBoxCount));
+    // LD_HL(sBoxCount);
+    // CALL(av_ResetWRAM_InitList);
+    v_ResetWRAM_InitMonList((uint8_t*)GBToRAMAddr(sBoxCount), (species_t*)GBToRAMAddr(sBoxSpecies));
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
 
-    LD_HL(wNumItems);
-    CALL(av_ResetWRAM_InitList);
+    // LD_HL(wNumItems);
+    // CALL(av_ResetWRAM_InitList);
+    v_ResetWRAM_InitItemList((item_pocket_s*)&wram->wNumItems);
 
-    LD_HL(wNumKeyItems);
-    CALL(av_ResetWRAM_InitList);
+    // LD_HL(wNumKeyItems);
+    // CALL(av_ResetWRAM_InitList);
+    v_ResetWRAM_InitItemList((item_pocket_s*)&wram->wNumKeyItems);
 
-    LD_HL(wNumBalls);
-    CALL(av_ResetWRAM_InitList);
+    // LD_HL(wNumBalls);
+    // CALL(av_ResetWRAM_InitList);
+    v_ResetWRAM_InitItemList((item_pocket_s*)&wram->wNumBalls);
 
-    LD_HL(wNumPCItems);
-    CALL(av_ResetWRAM_InitList);
+    // LD_HL(wNumPCItems);
+    // CALL(av_ResetWRAM_InitList);
+    v_ResetWRAM_InitItemList((item_pocket_s*)&wram->wNumPCItems);
 
-    XOR_A_A;
-    LD_addr_A(wRoamMon1Species);
-    LD_addr_A(wRoamMon2Species);
-    LD_addr_A(wRoamMon3Species);
-    LD_A(-1);
-    LD_addr_A(wRoamMon1MapGroup);
-    LD_addr_A(wRoamMon2MapGroup);
-    LD_addr_A(wRoamMon3MapGroup);
-    LD_addr_A(wRoamMon1MapNumber);
-    LD_addr_A(wRoamMon2MapNumber);
-    LD_addr_A(wRoamMon3MapNumber);
+    // XOR_A_A;
+    // LD_addr_A(wRoamMon1Species);
+    wram->wRoamMon1.species = 0;
+    // LD_addr_A(wRoamMon2Species);
+    wram->wRoamMon2.species = 0;
+    // LD_addr_A(wRoamMon3Species);
+    wram->wRoamMon3.species = 0;
+    // LD_A(-1);
+    // LD_addr_A(wRoamMon1MapGroup);
+    // LD_addr_A(wRoamMon2MapGroup);
+    // LD_addr_A(wRoamMon3MapGroup);
+    // LD_addr_A(wRoamMon1MapNumber);
+    // LD_addr_A(wRoamMon2MapNumber);
+    // LD_addr_A(wRoamMon3MapNumber);
+    wram->wRoamMon1.mapId = (struct MapId){0xff, 0xff};
+    wram->wRoamMon2.mapId = (struct MapId){0xff, 0xff};
+    wram->wRoamMon3.mapId = (struct MapId){0xff, 0xff};
 
-    LD_A(MBANK(asMysteryGiftItem));  // aka BANK(sMysteryGiftUnlocked)
-    CALL(aOpenSRAM);
-    LD_HL(sMysteryGiftItem);
-    XOR_A_A;
-    LD_hli_A;
+    // LD_A(MBANK(asMysteryGiftItem));  // aka BANK(sMysteryGiftUnlocked)
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asMysteryGiftItem));
+    // LD_HL(sMysteryGiftItem);
+    uint8_t* hl = GBToRAMAddr(sMysteryGiftItem);
+    // XOR_A_A;
+    // LD_hli_A;
+    hl[0] = NO_ITEM;
     //assert ['sMysteryGiftItem + 1 == sMysteryGiftUnlocked'];
-    DEC_A;  // -1
-    LD_hl_A;
-    CALL(aCloseSRAM);
+    // DEC_A;  // -1
+    // LD_hl_A;
+    hl[1] = (uint8_t)-1;
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
 
-    CALL(aLoadOrRegenerateLuckyIDNumber);
-    CALL(aInitializeMagikarpHouse);
+    // CALL(aLoadOrRegenerateLuckyIDNumber);
+    LoadOrRegenerateLuckyIDNumber();
+    // CALL(aInitializeMagikarpHouse);
+    InitializeMagikarpHouse();
 
-    XOR_A_A;
-    LD_addr_A(wMonType);
+    // XOR_A_A;
+    // LD_addr_A(wMonType);
+    wram->wMonType = 0x0;
 
-    LD_addr_A(wJohtoBadges);
-    LD_addr_A(wKantoBadges);
+    // LD_addr_A(wJohtoBadges);
+    wram->wJohtoBadges[0] = 0;
+    // LD_addr_A(wKantoBadges);
+    wram->wKantoBadges[0] = 0;
 
-    LD_addr_A(wCoins);
-    LD_addr_A(wCoins + 1);
+    // LD_addr_A(wCoins);
+    // LD_addr_A(wCoins + 1);
+    wram->wCoins = NativeToBigEndian16(0);
 
-    if (START_MONEY >= 10000)
-        LD_A(HIGH(START_MONEY >> 8));
-    else
-        LD_addr_A(wMoney);
-    LD_A(HIGH(START_MONEY));  // mid
-    LD_addr_A(wMoney + 1);
-    LD_A(LOW(START_MONEY));
-    LD_addr_A(wMoney + 2);
+    // if (START_MONEY >= 10000)
+    //     LD_A(HIGH(START_MONEY >> 8));
+    // else
+    //     LD_addr_A(wMoney);
+    wram->wMoney[0] = (START_MONEY >= 10000)? HIGH(START_MONEY >> 8): 0x0;
+    // LD_A(HIGH(START_MONEY));  // mid
+    // LD_addr_A(wMoney + 1);
+    wram->wMoney[1] = HIGH(START_MONEY);
+    // LD_A(LOW(START_MONEY));
+    // LD_addr_A(wMoney + 2);
+    wram->wMoney[2] = LOW(START_MONEY);
 
-    XOR_A_A;
-    LD_addr_A(wWhichMomItem);
+    // XOR_A_A;
+    // LD_addr_A(wWhichMomItem);
+    wram->wWhichMomItem = NO_ITEM;
 
-    LD_HL(wMomItemTriggerBalance);
-    LD_hl(HIGH(MOM_MONEY >> 8));
-    INC_HL;
-    LD_hl(HIGH(MOM_MONEY));  // mid
-    INC_HL;
-    LD_hl(LOW(MOM_MONEY));
+    // LD_HL(wMomItemTriggerBalance);
+    // LD_hl(HIGH(MOM_MONEY >> 8));
+    wram->wMomItemTriggerBalance[0] = HIGH(MOM_MONEY >> 8);
+    // INC_HL;
+    // LD_hl(HIGH(MOM_MONEY));  // mid
+    wram->wMomItemTriggerBalance[1] = HIGH(MOM_MONEY);
+    // INC_HL;
+    // LD_hl(LOW(MOM_MONEY));
+    wram->wMomItemTriggerBalance[2] = LOW(MOM_MONEY);
 
-    CALL(aInitializeNPCNames);
+    // CALL(aInitializeNPCNames);
+    InitializeNPCNames();
 
-    FARCALL(aInitDecorations);
+    // FARCALL(aInitDecorations);
+    InitDecorations();
 
-    FARCALL(aDeletePartyMonMail);
+    // FARCALL(aDeletePartyMonMail);
+    DeletePartyMonMail();
 
-    FARCALL(aDeleteMobileEventIndex);
+    // FARCALL(aDeleteMobileEventIndex);
+    DeleteMobileEventIndex();
 
-    CALL(aResetGameTime);
-    RET;
-
-
-InitList:
-    //  Loads 0 in the count and -1 in the first item or mon slot.
-    XOR_A_A;
-    LD_hli_A;
-    DEC_A;
-    LD_hl_A;
-    RET;
-
+    // CALL(aResetGameTime);
+    ResetGameTime_Conv();
+    // RET;
 }
 
 void SetDefaultBoxNames(void) {
-    LD_HL(wBoxNames);
-    LD_C(0);
+    // LD_HL(wBoxNames);
+    uint8_t* hl = wram->wBoxNames;
+    // LD_C(0);
 
-loop:
-    PUSH_HL;
-    LD_DE(mSetDefaultBoxNames_Box);
-    CALL(aCopyName2);
-    DEC_HL;
-    LD_A_C;
-    INC_A;
-    CP_A(10);
-    IF_C goto less;
-    SUB_A(10);
-    LD_hl(0xf7);
-    INC_HL;
+    for(uint8_t c = 0; c < NUM_BOXES; c++){
+    // loop:
+        // PUSH_HL;
+        uint8_t* hl2 = hl;
+        // LD_DE(mSetDefaultBoxNames_Box);
+        // CALL(aCopyName2);
+        hl2 = CopyName2_Conv2(hl2, U82C("BOX@"));
+        // DEC_HL;
+        --hl2;
+        // LD_A_C;
+        // INC_A;
+        uint8_t a = c + 1;
+        // CP_A(10);
+        // IF_C goto less;
+        if(a >= 10){
+            // SUB_A(10);
+            a -= 10;
+            // LD_hl(0xf7);
+            // INC_HL;
+            *(hl2++) = 0xf7;
+        }
 
+    // less:
+        // ADD_A(0xf6);
+        // LD_hli_A;
+        *(hl2++) = 0xf6 + a;
+        // LD_hl(0x50);
+        *hl2 = 0x50;
+        // POP_HL;
+        // LD_DE(9);
+        // ADD_HL_DE;
+        hl += 9;
+        // INC_C;
+        // LD_A_C;
+        // CP_A(NUM_BOXES);
+        // IF_C goto loop;
+    }
+    // RET;
 
-less:
-    ADD_A(0xf6);
-    LD_hli_A;
-    LD_hl(0x50);
-    POP_HL;
-    LD_DE(9);
-    ADD_HL_DE;
-    INC_C;
-    LD_A_C;
-    CP_A(NUM_BOXES);
-    IF_C goto loop;
-    RET;
-
-
-Box:
+// Box:
     //db ['"BOX@"'];
-
-    return InitializeMagikarpHouse();
 }
 
 void InitializeMagikarpHouse(void) {
-    LD_HL(wBestMagikarpLengthFeet);
-    LD_A(0x3);
-    LD_hli_A;
-    LD_A(0x6);
-    LD_hli_A;
-    LD_DE(mInitializeMagikarpHouse_Ralph);
-    CALL(aCopyName2);
-    RET;
+    // LD_HL(wBestMagikarpLengthFeet);
+    // LD_A(0x3);
+    // LD_hli_A;
+    wram->wBestMagikarpLengthFeet = 0x3;
+    // LD_A(0x6);
+    // LD_hli_A;
+    wram->wBestMagikarpLengthInches = 0x6;
+    // LD_DE(mInitializeMagikarpHouse_Ralph);
+    // CALL(aCopyName2);
+    CopyName2_Conv2(wram->wMagikarpRecordHoldersName, U82C("RALPH@"));
+    // RET;
 
-
-Ralph:
+// Ralph:
     //db ['"RALPH@"'];
-
-    return InitializeNPCNames();
 }
 
 void InitializeNPCNames(void) {
-    LD_HL(mInitializeNPCNames_Rival);
-    LD_DE(wRivalName);
-    CALL(aInitializeNPCNames_Copy);
+    // LD_HL(mInitializeNPCNames_Rival);
+    // LD_DE(wRivalName);
+    // CALL(aInitializeNPCNames_Copy);
+    U82CB(wram->wRivalName, NAME_LENGTH, "???@");
 
-    LD_HL(mInitializeNPCNames_Mom);
-    LD_DE(wMomsName);
-    CALL(aInitializeNPCNames_Copy);
+    // LD_HL(mInitializeNPCNames_Mom);
+    // LD_DE(wMomsName);
+    // CALL(aInitializeNPCNames_Copy);
+    U82CB(wram->wMomsName, NAME_LENGTH, "MOM@");
 
-    LD_HL(mInitializeNPCNames_Red);
-    LD_DE(wRedsName);
-    CALL(aInitializeNPCNames_Copy);
+    // LD_HL(mInitializeNPCNames_Red);
+    // LD_DE(wRedsName);
+    // CALL(aInitializeNPCNames_Copy);
+    U82CB(wram->wRedsName, NAME_LENGTH, "RED@");
 
-    LD_HL(mInitializeNPCNames_Green);
-    LD_DE(wGreensName);
+    // LD_HL(mInitializeNPCNames_Green);
+    // LD_DE(wGreensName);
+    U82CB(wram->wGreensName, NAME_LENGTH, "GREEN@");
 
-
-Copy:
-    LD_BC(NAME_LENGTH);
-    CALL(aCopyBytes);
-    RET;
+// Copy:
+    // LD_BC(NAME_LENGTH);
+    // CALL(aCopyBytes);
+    // RET;
 
 
 //Rival:
@@ -401,11 +526,13 @@ Copy:
 }
 
 void InitializeWorld(void) {
-    CALL(aShrinkPlayer);
-    FARCALL(aSpawnPlayer);
-    FARCALL(av_InitializeStartDay);
-    RET;
-
+    // CALL(aShrinkPlayer);
+    ShrinkPlayer();
+    // FARCALL(aSpawnPlayer);
+    SpawnPlayer();
+    // FARCALL(av_InitializeStartDay);
+    v_InitializeStartDay();
+    // RET;
 }
 
 void LoadOrRegenerateLuckyIDNumber(void) {
@@ -449,68 +576,89 @@ void LoadOrRegenerateLuckyIDNumber(void) {
     return CloseSRAM_Conv();
 }
 
-void Continue(void) {
-    FARCALL(aTryLoadSaveFile);
-    IF_C goto FailToLoad;
-    FARCALL(av_LoadData);
-    // CALL(aLoadStandardMenuHeader);
-    LoadStandardMenuHeader_Conv();
-    CALL(aDisplaySaveInfoOnContinue);
-    // LD_A(0x1);
-    // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
-    // LD_C(20);
-    // CALL(aDelayFrames);
-    DelayFrames_Conv(20);
-    // CALL(aConfirmContinue);
-    // IF_NC goto Check1Pass;
-    if(ConfirmContinue_Conv())
-        goto Check1Pass;
-    CALL(aCloseWindow);
-    goto FailToLoad;
+bool Continue(void) {
+    // FARCALL(aTryLoadSaveFile);
+    // IF_C goto FailToLoad;
+    if(TryLoadSaveFile()) {
+        // FARCALL(av_LoadData);
+        v_LoadData();
+        // CALL(aLoadStandardMenuHeader);
+        LoadStandardMenuHeader_Conv();
+        // CALL(aDisplaySaveInfoOnContinue);
+        DisplaySaveInfoOnContinue_Conv();
+        // LD_A(0x1);
+        // LDH_addr_A(hBGMapMode);
+        hram->hBGMapMode = 0x1;
+        // LD_C(20);
+        // CALL(aDelayFrames);
+        DelayFrames_Conv(20);
+        // CALL(aConfirmContinue);
+        // IF_NC goto Check1Pass;
+        if(ConfirmContinue_Conv() && !Continue_CheckRTC_RestartClock()) {
+        // Check1Pass:
+            // CALL(aContinue_CheckRTC_RestartClock);
+            // IF_NC goto Check2Pass;
+            // CALL(aCloseWindow);
+            // goto FailToLoad;
 
+        // Check2Pass:
+            // LD_A(0x8);
+            // LD_addr_A(wMusicFade);
+            wram->wMusicFade = 0x8;
+            // LD_A(LOW(MUSIC_NONE));
+            // LD_addr_A(wMusicFadeID);
+            // LD_A(HIGH(MUSIC_NONE));
+            // LD_addr_A(wMusicFadeID + 1);
+            wram->wMusicFadeID = MUSIC_NONE;
+            // CALL(aClearBGPalettes);
+            ClearBGPalettes_Conv();
+            // CALL(aContinue_MobileAdapterMenu);
+            Continue_MobileAdapterMenu();
+            // CALL(aCloseWindow);
+            CloseWindow_Conv2();
+            // CALL(aClearTilemap);
+            ClearTilemap_Conv2();
+            // LD_C(20);
+            // CALL(aDelayFrames);
+            DelayFrames_Conv(20);
+            // FARCALL(aJumpRoamMons);
+            JumpRoamMons();
+            // FARCALL(aCopyMysteryGiftReceivedDecorationsToPC);
+            CopyMysteryGiftReceivedDecorationsToPC();
+            // FARCALL(aClockContinue);
+            ClockContinue_Conv();
+            // LD_A_addr(wSpawnAfterChampion);
+            // CP_A(SPAWN_LANCE);
+            // IF_Z goto SpawnAfterE4;
+            if(wram->wSpawnAfterChampion != SPAWN_LANCE){
+                // LD_A(MAPSETUP_CONTINUE);
+                // LDH_addr_A(hMapEntryMethod);
+                hram->hMapEntryMethod = MAPSETUP_CONTINUE;
+                // JP(mFinishContinueFunction);
+                Intro_SetJumptableIndex(INTRO_CONTINUE);
+                return true;
 
-Check1Pass:
-    CALL(aContinue_CheckRTC_RestartClock);
-    IF_NC goto Check2Pass;
-    CALL(aCloseWindow);
-    goto FailToLoad;
+            // FailToLoad:
+                // RET;
+            }
+            else {
+            // SpawnAfterE4:
+                // LD_A(SPAWN_NEW_BARK);
+                // LD_addr_A(wDefaultSpawnpoint);
+                wram->wDefaultSpawnpoint = SPAWN_NEW_BARK;
+                // CALL(aPostCreditsSpawn);
+                PostCreditsSpawn();
+                // JP(mFinishContinueFunction);
+                Intro_SetJumptableIndex(INTRO_CONTINUE);
+                return true;
+            }
+        }
+        // CALL(aCloseWindow);
+        CloseWindow_Conv2();
+        // goto FailToLoad;
+    }
 
-
-Check2Pass:
-    LD_A(0x8);
-    LD_addr_A(wMusicFade);
-    LD_A(LOW(MUSIC_NONE));
-    LD_addr_A(wMusicFadeID);
-    LD_A(HIGH(MUSIC_NONE));
-    LD_addr_A(wMusicFadeID + 1);
-    CALL(aClearBGPalettes);
-    CALL(aContinue_MobileAdapterMenu);
-    CALL(aCloseWindow);
-    CALL(aClearTilemap);
-    LD_C(20);
-    CALL(aDelayFrames);
-    FARCALL(aJumpRoamMons);
-    FARCALL(aCopyMysteryGiftReceivedDecorationsToPC);
-    FARCALL(aClockContinue);
-    LD_A_addr(wSpawnAfterChampion);
-    CP_A(SPAWN_LANCE);
-    IF_Z goto SpawnAfterE4;
-    LD_A(MAPSETUP_CONTINUE);
-    LDH_addr_A(hMapEntryMethod);
-    JP(mFinishContinueFunction);
-
-
-FailToLoad:
-    RET;
-
-
-SpawnAfterE4:
-    LD_A(SPAWN_NEW_BARK);
-    LD_addr_A(wDefaultSpawnpoint);
-    CALL(aPostCreditsSpawn);
-    JP(mFinishContinueFunction);
-
+    return false;
 }
 
 void SpawnAfterRed(void) {
@@ -528,39 +676,51 @@ void PostCreditsSpawn(void) {
     // LD_A(MAPSETUP_WARP);
     // LDH_addr_A(hMapEntryMethod);
     hram->hMapEntryMethod = MAPSETUP_WARP;
-    RET;
+    // RET;
 }
 
 void Continue_MobileAdapterMenu(void) {
-    FARCALL(aMobile_AlwaysReturnNotCarry);  // mobile check
-    RET_NC;
+    // FARCALL(aMobile_AlwaysReturnNotCarry);  // mobile check
+    u8_flag_s res = Mobile_AlwaysReturnNotCarry();
+    // RET_NC;
+    if(!res.flag)
+        return;
 
     //  the rest of this stuff is never reached because
     //  the previous function returns with carry not set
-    LD_HL(wd479);
-    BIT_hl(1);
-    RET_NZ;
-    LD_A(5);
-    LD_addr_A(wMusicFade);
-    LD_A(LOW(MUSIC_MOBILE_ADAPTER_MENU));
-    LD_addr_A(wMusicFadeID);
-    LD_A(HIGH(MUSIC_MOBILE_ADAPTER_MENU));
-    LD_addr_A(wMusicFadeID + 1);
-    LD_C(20);
-    CALL(aDelayFrames);
-    LD_C(0x1);
-    FARCALL(aInitMobileProfile);  // mobile
-    FARCALL(av_SaveData);
-    LD_A(8);
-    LD_addr_A(wMusicFade);
-    LD_A(LOW(MUSIC_NONE));
-    LD_addr_A(wMusicFadeID);
-    LD_A(HIGH(MUSIC_NONE));
-    LD_addr_A(wMusicFadeID + 1);
-    LD_C(35);
-    CALL(aDelayFrames);
-    RET;
-
+    // LD_HL(wd479);
+    // BIT_hl(1);
+    // RET_NZ;
+    if(bit_test(wram->wd479[0], 1))
+        return;
+    // LD_A(5);
+    // LD_addr_A(wMusicFade);
+    wram->wMusicFade = 5;
+    // LD_A(LOW(MUSIC_MOBILE_ADAPTER_MENU));
+    // LD_addr_A(wMusicFadeID);
+    // LD_A(HIGH(MUSIC_MOBILE_ADAPTER_MENU));
+    // LD_addr_A(wMusicFadeID + 1);
+    wram->wMusicFadeID = MUSIC_MOBILE_ADAPTER_MENU;
+    // LD_C(20);
+    // CALL(aDelayFrames);
+    DelayFrames_Conv(20);
+    // LD_C(0x1);
+    // FARCALL(aInitMobileProfile);  // mobile
+    SafeCallGB(aInitMobileProfile, &(struct cpu_registers_s){.c = 0x1});
+    // FARCALL(av_SaveData);
+    v_SaveData();
+    // LD_A(8);
+    // LD_addr_A(wMusicFade);
+    wram->wMusicFade = 8;
+    // LD_A(LOW(MUSIC_NONE));
+    // LD_addr_A(wMusicFadeID);
+    // LD_A(HIGH(MUSIC_NONE));
+    // LD_addr_A(wMusicFadeID + 1);
+    wram->wMusicFadeID = MUSIC_NONE;
+    // LD_C(35);
+    // CALL(aDelayFrames);
+    DelayFrames_Conv(35);
+    // RET;
 }
 
 void ConfirmContinue(void) {
@@ -608,45 +768,60 @@ bool ConfirmContinue_Conv(void) {
     // RET;
 }
 
-void Continue_CheckRTC_RestartClock(void) {
-    CALL(aCheckRTCStatus);
-    AND_A(0b10000000);  // Day count exceeded 16383
-    IF_Z goto pass;
-    FARCALL(aRestartClock);
-    LD_A_C;
-    AND_A_A;
-    IF_Z goto pass;
-    SCF;
-    RET;
+bool Continue_CheckRTC_RestartClock(void) {
+    // CALL(aCheckRTCStatus);
+    // AND_A(0b10000000);  // Day count exceeded 16383
+    // IF_Z goto pass;
+    if((CheckRTCStatus_Conv() & 0b10000000) != 0) {
+        // FARCALL(aRestartClock);
+        uint8_t c = RestartClock();
+        // LD_A_C;
+        // AND_A_A;
+        // IF_Z goto pass;
+        if(c != FALSE){
+            // SCF;
+            // RET;
+            return true;
+        }
+    }
 
-
-pass:
-    XOR_A_A;
-    RET;
-
+// pass:
+    // XOR_A_A;
+    // RET;
+    return false;
 }
 
 void FinishContinueFunction(void) {
+    while(1){
+    // loop:
+        // XOR_A_A;
+        // LD_addr_A(wDontPlayMapMusicOnReload);
+        wram->wDontPlayMapMusicOnReload = 0x0;
+        // LD_addr_A(wLinkMode);
+        wram->wLinkMode = 0x0;
+        // LD_HL(wGameTimerPaused);
+        // SET_hl(GAME_TIMER_PAUSED_F);
+        bit_set(wram->wGameTimerPaused, GAME_TIMER_PAUSED_F);
+        // RES_hl(GAME_TIMER_MOBILE_F);
+        bit_reset(wram->wGameTimerPaused, GAME_TIMER_MOBILE_F);
+        // LD_HL(wEnteredMapFromContinue);
+        // SET_hl(1);
+        bit_set(wram->wEnteredMapFromContinue, 1);
+        // FARCALL(aOverworldLoop);
+        OverworldLoop();
+        // LD_A_addr(wSpawnAfterChampion);
+        // CP_A(SPAWN_RED);
+        // IF_Z goto AfterRed;
+        if(wram->wSpawnAfterChampion != SPAWN_RED){
+            // JP(mReset);
+            return Intro_SetJumptableIndex(INTRO_SOFT_RESET);
+        }
 
-loop:
-    XOR_A_A;
-    LD_addr_A(wDontPlayMapMusicOnReload);
-    LD_addr_A(wLinkMode);
-    LD_HL(wGameTimerPaused);
-    SET_hl(GAME_TIMER_PAUSED_F);
-    RES_hl(GAME_TIMER_MOBILE_F);
-    LD_HL(wEnteredMapFromContinue);
-    SET_hl(1);
-    FARCALL(aOverworldLoop);
-    LD_A_addr(wSpawnAfterChampion);
-    CP_A(SPAWN_RED);
-    IF_Z goto AfterRed;
-    JP(mReset);
-
-
-AfterRed:
-    CALL(aSpawnAfterRed);
-    goto loop;
+    // AfterRed:
+        // CALL(aSpawnAfterRed);
+        SpawnAfterRed();
+        // goto loop;
+    }
 }
 
 void DisplaySaveInfoOnContinue(void) {
@@ -663,6 +838,25 @@ clock_ok:
     CALL(aDisplayNormalContinueData);
     RET;
 
+}
+
+void DisplaySaveInfoOnContinue_Conv(void) {
+    // CALL(aCheckRTCStatus);
+    // AND_A(0b10000000);
+    // IF_Z goto clock_ok;
+    if((CheckRTCStatus_Conv() & 0b10000000) != 0) {
+        // LD_DE((4 << 8) | 8);
+        // CALL(aDisplayContinueDataWithRTCError);
+        // RET;
+        return DisplayContinueDataWithRTCError_Conv(4, 8);
+    }
+    else {
+    // clock_ok:
+        // LD_DE((4 << 8) | 8);
+        // CALL(aDisplayNormalContinueData);
+        // RET;
+        return DisplayNormalContinueData_Conv(4, 8);
+    }
 }
 
 void DisplaySaveInfoOnSave(void) {
@@ -709,6 +903,20 @@ void DisplayContinueDataWithRTCError(void) {
     CALL(aUpdateSprites);
     RET;
 
+}
+
+void DisplayContinueDataWithRTCError_Conv(uint8_t d, uint8_t e) {
+    // CALL(aContinue_LoadMenuHeader);
+    Continue_LoadMenuHeader_Conv(d, e);
+    // CALL(aContinue_DisplayBadgesDexPlayerName);
+    tile_t* hl = Continue_DisplayBadgesDexPlayerName_Conv();
+    // CALL(aContinue_UnknownGameTime);
+    Continue_UnknownGameTime(hl);
+    // CALL(aLoadFontsExtra);
+    LoadFontsExtra_Conv();
+    // CALL(aUpdateSprites);
+    UpdateSprites_Conv();
+    // RET;
 }
 
 void Continue_LoadMenuHeader(void) {
@@ -909,18 +1117,16 @@ void Continue_PrintGameTime_Conv(tile_t* hl) {
     // RET;
 }
 
-void Continue_UnknownGameTime(void) {
-    decoord(9, 8, 0);
-    ADD_HL_DE;
-    LD_DE(mContinue_UnknownGameTime_three_question_marks);
-    CALL(aPlaceString);
-    RET;
+void Continue_UnknownGameTime(tile_t* hl) {
+    // decoord(9, 8, 0);
+    // ADD_HL_DE;
+    // LD_DE(mContinue_UnknownGameTime_three_question_marks);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(" ???@"), coord(9, 8, hl));
+    // RET;
 
-
-three_question_marks:
+// three_question_marks:
     //db ['" ???@"'];
-
-    return Continue_DisplayBadgeCount();
 }
 
 void Continue_DisplayBadgeCount(void) {
@@ -1014,83 +1220,122 @@ void Continue_DisplayGameTime_Conv(tile_t* hl) {
 }
 
 void OakSpeech(void) {
-    FARCALL(aInitClock);
-    CALL(aRotateFourPalettesLeft);
-    CALL(aClearTilemap);
+    // FARCALL(aInitClock);
+    InitClock();
+    // CALL(aRotateFourPalettesLeft);
+    RotateFourPalettesLeft_Conv();
+    // CALL(aClearTilemap);
+    ClearTilemap_Conv2();
 
-    LD_DE(MUSIC_ROUTE_30);
-    CALL(aPlayMusic);
+    // LD_DE(MUSIC_ROUTE_30);
+    // CALL(aPlayMusic);
+    PlayMusic_Conv(MUSIC_ROUTE_30);
 
-    CALL(aRotateFourPalettesRight);
-    CALL(aRotateThreePalettesRight);
-    XOR_A_A;
-    LD_addr_A(wCurPartySpecies);
-    LD_A(POKEMON_PROF);
-    LD_addr_A(wTrainerClass);
-    CALL(aIntro_PrepTrainerPic);
+    // CALL(aRotateFourPalettesRight);
+    RotateFourPalettesRight_Conv();
+    // CALL(aRotateThreePalettesRight);
+    RotateThreePalettesRight_Conv();
+    // XOR_A_A;
+    // LD_addr_A(wCurPartySpecies);
+    wram->wCurPartySpecies = 0x0;
+    // LD_A(POKEMON_PROF);
+    // LD_addr_A(wTrainerClass);
+    wram->wTrainerClass = POKEMON_PROF;
+    // CALL(aIntro_PrepTrainerPic);
+    Intro_PrepTrainerPic(POKEMON_PROF);
 
-    LD_B(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
-    CALL(aGetSGBLayout);
-    CALL(aIntro_RotatePalettesLeftFrontpic);
+    // LD_B(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
+    // CALL(aGetSGBLayout);
+    GetSGBLayout_Conv(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
+    // CALL(aIntro_RotatePalettesLeftFrontpic);
+    Intro_RotatePalettesLeftFrontpic();
 
-    LD_HL(mOakText1);
-    CALL(aPrintText);
-    CALL(aRotateThreePalettesRight);
-    CALL(aClearTilemap);
+    // LD_HL(mOakText1);
+    // CALL(aPrintText);
+    PrintText_Conv2(OakText1);
+    // CALL(aRotateThreePalettesRight);
+    RotateThreePalettesRight_Conv();
+    // CALL(aClearTilemap);
+    ClearTilemap_Conv2();
 
-    LD_A(WOOPER);
-    LD_addr_A(wCurSpecies);
-    LD_addr_A(wCurPartySpecies);
-    CALL(aGetBaseData);
+    // LD_A(WOOPER);
+    // LD_addr_A(wCurSpecies);
+    wram->wCurSpecies = WOOPER;
+    // LD_addr_A(wCurPartySpecies);
+    wram->wCurPartySpecies = WOOPER;
+    // CALL(aGetBaseData);
+    GetBaseData_Conv2(WOOPER);
 
-    hlcoord(6, 4, wTilemap);
-    CALL(aPrepMonFrontpic);
+    // hlcoord(6, 4, wTilemap);
+    // CALL(aPrepMonFrontpic);
+    PrepMonFrontpic_Conv(coord(6, 4, wram->wTilemap));
 
-    XOR_A_A;
-    LD_addr_A(wTempMonDVs);
-    LD_addr_A(wTempMonDVs + 1);
+    // XOR_A_A;
+    // LD_addr_A(wTempMonDVs);
+    // LD_addr_A(wTempMonDVs + 1);
+    wram->wTempMon.mon.DVs = 0;
 
-    LD_B(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
-    CALL(aGetSGBLayout);
-    CALL(aIntro_WipeInFrontpic);
+    // LD_B(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
+    // CALL(aGetSGBLayout);
+    GetSGBLayout_Conv(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
+    // CALL(aIntro_WipeInFrontpic);
+    Intro_WipeInFrontpic();
 
-    LD_HL(mOakText2);
-    CALL(aPrintText);
-    LD_HL(mOakText4);
-    CALL(aPrintText);
-    CALL(aRotateThreePalettesRight);
-    CALL(aClearTilemap);
+    // LD_HL(mOakText2);
+    // CALL(aPrintText);
+    PrintText_Conv2(OakText2);
+    // LD_HL(mOakText4);
+    // CALL(aPrintText);
+    PrintText_Conv2(OakText4);
+    // CALL(aRotateThreePalettesRight);
+    RotateThreePalettesRight_Conv();
+    // CALL(aClearTilemap);
+    ClearTilemap_Conv2();
 
-    XOR_A_A;
-    LD_addr_A(wCurPartySpecies);
-    LD_A(POKEMON_PROF);
-    LD_addr_A(wTrainerClass);
-    CALL(aIntro_PrepTrainerPic);
+    // XOR_A_A;
+    // LD_addr_A(wCurPartySpecies);
+    wram->wCurPartySpecies = 0x0;
+    // LD_A(POKEMON_PROF);
+    // LD_addr_A(wTrainerClass);
+    wram->wTrainerClass = POKEMON_PROF;
+    // CALL(aIntro_PrepTrainerPic);
+    Intro_PrepTrainerPic(POKEMON_PROF);
 
-    LD_B(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
-    CALL(aGetSGBLayout);
-    CALL(aIntro_RotatePalettesLeftFrontpic);
+    // LD_B(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
+    // CALL(aGetSGBLayout);
+    GetSGBLayout_Conv(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
+    // CALL(aIntro_RotatePalettesLeftFrontpic);
+    Intro_RotatePalettesLeftFrontpic();
 
-    LD_HL(mOakText5);
-    CALL(aPrintText);
-    CALL(aRotateThreePalettesRight);
-    CALL(aClearTilemap);
+    // LD_HL(mOakText5);
+    // CALL(aPrintText);
+    PrintText_Conv2(OakText5);
+    // CALL(aRotateThreePalettesRight);
+    RotateThreePalettesRight_Conv();
+    // CALL(aClearTilemap);
+    ClearTilemap_Conv2();
 
-    XOR_A_A;
-    LD_addr_A(wCurPartySpecies);
-    FARCALL(aDrawIntroPlayerPic);
+    // XOR_A_A;
+    // LD_addr_A(wCurPartySpecies);
+    wram->wCurPartySpecies = 0x0;
+    // FARCALL(aDrawIntroPlayerPic);
+    DrawIntroPlayerPic_Conv();
 
-    LD_B(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
-    CALL(aGetSGBLayout);
-    CALL(aIntro_RotatePalettesLeftFrontpic);
+    // LD_B(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
+    // CALL(aGetSGBLayout);
+    GetSGBLayout_Conv(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
+    // CALL(aIntro_RotatePalettesLeftFrontpic);
+    Intro_RotatePalettesLeftFrontpic();
 
-    LD_HL(mOakText6);
-    CALL(aPrintText);
-    CALL(aNamePlayer);
-    LD_HL(mOakText7);
-    CALL(aPrintText);
-    RET;
-
+    // LD_HL(mOakText6);
+    // CALL(aPrintText);
+    PrintText_Conv2(OakText6);
+    // CALL(aNamePlayer);
+    NamePlayer();
+    // LD_HL(mOakText7);
+    // CALL(aPrintText);
+    PrintText_Conv2(OakText7);
+    // RET;
 }
 
 const txt_cmd_s OakText1[] = {
@@ -1150,53 +1395,69 @@ void NamePlayer(void) {
     //db ['"KRIS@@@@@@@"'];
     static const char Kris[] = "KRIS@@@@@@@";
 
-    FARCALL(aMovePlayerPicRight);
-    FARCALL(aShowPlayerNamingChoices);
-    LD_A_addr(wMenuCursorY);
-    DEC_A;
-    IF_Z goto NewName;
-    CALL(aStorePlayerName);
-    FARCALL(aApplyMonOrTrainerPals);
-    FARCALL(aMovePlayerPicLeft);
-    RET;
-
-
-NewName:
-    LD_B(NAME_PLAYER);
-    LD_DE(wPlayerName);
-    FARCALL(aNamingScreen);
-
-    CALL(aRotateThreePalettesRight);
-    CALL(aClearTilemap);
-
-    CALL(aLoadFontsExtra);
-    CALL(aWaitBGMap);
-
-    XOR_A_A;
-    LD_addr_A(wCurPartySpecies);
-    FARCALL(aDrawIntroPlayerPic);
-
-    LD_B(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
-    CALL(aGetSGBLayout);
-    CALL(aRotateThreePalettesLeft);
-
-    // LD_HL(wPlayerName);
-    // LD_DE(mNamePlayer_Chris);
-    // LD_A_addr(wPlayerGender);
-    // BIT_A(PLAYERGENDER_FEMALE_F);
-    // IF_Z goto Male;
-    if(bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F)) {
-        InitName_Conv2(wram->wPlayerName, U82C(Kris));
+    // FARCALL(aMovePlayerPicRight);
+    MovePlayerPicRight_Conv();
+    // FARCALL(aShowPlayerNamingChoices);
+    ShowPlayerNamingChoices();
+    // LD_A_addr(wMenuCursorY);
+    // DEC_A;
+    // IF_Z goto NewName;
+    if(wram->wMenuCursorY - 1 != 0){
+        // CALL(aStorePlayerName);
+        StorePlayerName();
+        // FARCALL(aApplyMonOrTrainerPals);
+        ApplyMonOrTrainerPals(0);
+        // FARCALL(aMovePlayerPicLeft);
+        MovePlayerPicLeft_Conv();
+        // RET;
+        return;
     }
-    // LD_DE(mNamePlayer_Kris);
-
-// Male:
-    // CALL(aInitName);
     else {
-        InitName_Conv2(wram->wPlayerName, U82C(Chris));
-    }
-    RET;
+    // NewName:
+        // LD_B(NAME_PLAYER);
+        // LD_DE(wPlayerName);
+        // FARCALL(aNamingScreen);
+        NamingScreen_Conv(wram->wPlayerName, NAME_PLAYER);
 
+        // CALL(aRotateThreePalettesRight);
+        RotateThreePalettesRight_Conv();
+        // CALL(aClearTilemap);
+        ClearTilemap_Conv2();
+
+        // CALL(aLoadFontsExtra);
+        LoadFontsExtra_Conv();
+        // CALL(aWaitBGMap);
+        WaitBGMap_Conv();
+
+        // XOR_A_A;
+        // LD_addr_A(wCurPartySpecies);
+        wram->wCurPartySpecies = 0x0;
+        // FARCALL(aDrawIntroPlayerPic);
+        DrawIntroPlayerPic_Conv();
+
+        // LD_B(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
+        // CALL(aGetSGBLayout);
+        GetSGBLayout_Conv(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
+        // CALL(aRotateThreePalettesLeft);
+        RotateThreePalettesLeft_Conv();
+
+        // LD_HL(wPlayerName);
+        // LD_DE(mNamePlayer_Chris);
+        // LD_A_addr(wPlayerGender);
+        // BIT_A(PLAYERGENDER_FEMALE_F);
+        // IF_Z goto Male;
+        if(bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F)) {
+            InitName_Conv2(wram->wPlayerName, U82C(Kris));
+        }
+        // LD_DE(mNamePlayer_Kris);
+
+    // Male:
+        // CALL(aInitName);
+        else {
+            InitName_Conv2(wram->wPlayerName, U82C(Chris));
+        }
+        // RET;
+    }
     // return GSShowPlayerNamingChoices();
 }
 
@@ -1222,7 +1483,7 @@ void StorePlayerName(void) {
     // LD_DE(wStringBuffer2);
     // CALL(aCopyName2);
     CopyName2_Conv2(wram->wPlayerName, wram->wStringBuffer2);
-    RET;
+    // RET;
 }
 
 void ShrinkPlayer(void) {
@@ -1291,66 +1552,76 @@ void ShrinkPlayer(void) {
     RotateThreePalettesRight_Conv();
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
-    RET;
+    // RET;
 }
+
+#define dc(a, b, c, d) ((a & 0x3) << 6) | ((b & 0x3) << 4) | ((c & 0x3) << 2) | (d & 0x3)
 
 void Intro_RotatePalettesLeftFrontpic(void) {
-    LD_HL(mIntroFadePalettes);
+    static const uint8_t IntroFadePalettes[] = {
+        dc(1, 1, 1, 0),
+        dc(2, 2, 2, 0),
+        dc(3, 3, 3, 0),
+        dc(3, 3, 2, 0),
+        dc(3, 3, 1, 0),
+        dc(3, 2, 1, 0),
+    };
+    // LD_HL(mIntroFadePalettes);
+    const uint8_t* hl = IntroFadePalettes;
     //LD_B(IntroFadePalettes.End - mIntroFadePalettes);
+    uint8_t b = sizeof(IntroFadePalettes);
 
-loop:
-    LD_A_hli;
-    CALL(aDmgToCgbBGPals);
-    LD_C(10);
-    CALL(aDelayFrames);
-    DEC_B;
-    IF_NZ goto loop;
-    RET;
-
-}
-
-void IntroFadePalettes(void) {
-    //dc ['1', '1', '1', '0']
-    //dc ['2', '2', '2', '0']
-    //dc ['3', '3', '3', '0']
-    //dc ['3', '3', '2', '0']
-    //dc ['3', '3', '1', '0']
-    //dc ['3', '2', '1', '0']
-
-End:
-
-    return Intro_WipeInFrontpic();
+    do {
+    // loop:
+        // LD_A_hli;
+        // CALL(aDmgToCgbBGPals);
+        DmgToCgbBGPals_Conv(*(hl++));
+        // LD_C(10);
+        // CALL(aDelayFrames);
+        DelayFrames_Conv(10);
+        // DEC_B;
+        // IF_NZ goto loop;
+    } while(--b != 0);
+    // RET;
 }
 
 void Intro_WipeInFrontpic(void) {
-    LD_A(0x77);
-    LDH_addr_A(hWX);
-    CALL(aDelayFrame);
-    LD_A(0b11100100);
-    CALL(aDmgToCgbBGPals);
+    // LD_A(0x77);
+    // LDH_addr_A(hWX);
+    // CALL(aDelayFrame);
+    DelayFrame();
+    // LD_A(0b11100100);
+    // CALL(aDmgToCgbBGPals);
+    DmgToCgbBGPals_Conv(0b11100100);
 
-loop:
-    CALL(aDelayFrame);
-    LDH_A_addr(hWX);
-    SUB_A(0x8);
-    CP_A(-1);
-    RET_Z;
-    LDH_addr_A(hWX);
-    goto loop;
-
-    return Intro_PrepTrainerPic();
+    while(1) {
+    // loop:
+        // CALL(aDelayFrame);
+        DelayFrame();
+        // LDH_A_addr(hWX);
+        // SUB_A(0x8);
+        // CP_A(-1);
+        // RET_Z;
+        if(hram->hWX - 0x8 == 0xff)
+            return;
+        // LDH_addr_A(hWX);
+        hram->hWX -= 0x8;
+        // goto loop;
+    }
 }
 
-void Intro_PrepTrainerPic(void) {
-    LD_DE(vTiles2);
-    FARCALL(aGetTrainerPic);
-    XOR_A_A;
-    LDH_addr_A(hGraphicStartTile);
-    hlcoord(6, 4, wTilemap);
-    LD_BC((7 << 8) | 7);
-    PREDEF(pPlaceGraphic);
-    RET;
-
+void Intro_PrepTrainerPic(uint8_t tclass) {
+    // LD_DE(vTiles2);
+    // FARCALL(aGetTrainerPic);
+    GetTrainerPic_Conv(vram->vTiles2, tclass);
+    // XOR_A_A;
+    // LDH_addr_A(hGraphicStartTile);
+    hram->hGraphicStartTile = 0x0;
+    // hlcoord(6, 4, wTilemap);
+    // LD_BC((7 << 8) | 7);
+    // PREDEF(pPlaceGraphic);
+    PlaceGraphicYStagger_Conv(coord(6, 4, wram->wTilemap), 7, 7);
+    // RET;
 }
 
 void ShrinkFrame(void) {
@@ -1506,50 +1777,72 @@ void IntroSequence(void){
     // CALLFAR(aSplashScreen);
     bool skip = SplashScreen();
     // JR_C (mStartTitleScreen);
-    if(!skip) SafeCallGBAuto(aCrystalIntro);
+    if(!skip)
+        CrystalIntro();
 // Comment the line below to remove the intro movie.
         // FARCALL(aCrystalIntro);
 
 // fallthrough
+    return Intro_SetJumptableIndex(INTRO_TITLE);
+}
 
-    return StartTitleScreen();
+static void StartTitleScreen_TitleScreen(void){
+    // FARCALL(av_TitleScreen);
+    v_TitleScreen();
+    // RET;
 }
 
 void StartTitleScreen(void){
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(MBANK(awLYOverrides));
-    LDH_addr_A(rSVBK);
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(MBANK(awLYOverrides));
+    // LDH_addr_A(rSVBK);
 
-    CALL(aStartTitleScreen_TitleScreen);
-    CALL(aDelayFrame);
+    // CALL(aStartTitleScreen_TitleScreen);
+    StartTitleScreen_TitleScreen();
+    // CALL(aDelayFrame);
+    DelayFrame();
 
-loop:
-    CALL(aRunTitleScreen);
-    IF_NC goto loop;
+    do {
+    // loop:
+        // CALL(aRunTitleScreen);
+        // IF_NC goto loop;
+    } while(!RunTitleScreen_Conv());
 
-    CALL(aClearSprites);
-    CALL(aClearBGPalettes);
+    // CALL(aClearSprites);
+    ClearSprites_Conv();
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
 
-    POP_AF;
-    LDH_addr_A(rSVBK);
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
 
-    LD_HL(rLCDC);
-    RES_hl(rLCDC_SPRITE_SIZE);  // 8x8
-    CALL(aClearScreen);
-    CALL(aWaitBGMap2);
-    XOR_A_A;
-    LDH_addr_A(hLCDCPointer);
-    LDH_addr_A(hSCX);
-    LDH_addr_A(hSCY);
-    LD_A(0x7);
-    LDH_addr_A(hWX);
-    LD_A(0x90);
-    LDH_addr_A(hWY);
-    LD_B(SCGB_DIPLOMA);
-    CALL(aGetSGBLayout);
-    CALL(aUpdateTimePals);
-    LD_A_addr(wTitleScreenSelectedOption);
+    // LD_HL(rLCDC);
+    // RES_hl(rLCDC_SPRITE_SIZE);  // 8x8
+    gb_write(rLCDC, gb_read(rLCDC) & ~(1 << rLCDC_SPRITE_SIZE));
+    // CALL(aClearScreen);
+    ClearScreen_Conv2();
+    // CALL(aWaitBGMap2);
+    WaitBGMap2_Conv();
+    // XOR_A_A;
+    // LDH_addr_A(hLCDCPointer);
+    hram->hLCDCPointer = 0x0;
+    // LDH_addr_A(hSCX);
+    hram->hSCX = 0x0;
+    // LDH_addr_A(hSCY);
+    hram->hSCY = 0x0;
+    // LD_A(0x7);
+    // LDH_addr_A(hWX);
+    hram->hWX = 0x7;
+    // LD_A(0x90);
+    // LDH_addr_A(hWY);
+    hram->hWY = 0x90;
+    // LD_B(SCGB_DIPLOMA);
+    // CALL(aGetSGBLayout);
+    GetSGBLayout_Conv(SCGB_DIPLOMA);
+    // CALL(aUpdateTimePals);
+    UpdateTimePals();
+    // LD_A_addr(wTitleScreenSelectedOption);
     //CP_A(NUM_TITLESCREENOPTIONS);
     // IF_C goto ok;
     // XOR_A_A;
@@ -1564,28 +1857,22 @@ loop:
     // LD_H_hl;
     // LD_L_A;
     // JP_hl;
-    switch(REG_A) {
+    switch(wram->wTitleScreenSelectedOption) {
         default:
-        case TITLESCREENOPTION_MAIN_MENU:           JP(aIntro_MainMenu);
+        case TITLESCREENOPTION_MAIN_MENU:           return Intro_MainMenu();
         case TITLESCREENOPTION_DELETE_SAVE_DATA:    return DeleteSaveData();
-        case TITLESCREENOPTION_RESTART:             return IntroSequence();
-        case TITLESCREENOPTION_UNUSED:              return IntroSequence();
+        case TITLESCREENOPTION_RESTART:             return Intro_SetJumptableIndex(INTRO_INTRO_SEQUENCE);
+        case TITLESCREENOPTION_UNUSED:              return Intro_SetJumptableIndex(INTRO_INTRO_SEQUENCE);
         case TITLESCREENOPTION_RESET_CLOCK:         return ResetClock();
     }
 
 
-dw:
+// dw:
     //dw ['Intro_MainMenu'];
     //dw ['DeleteSaveData'];
     //dw ['IntroSequence'];
     //dw ['IntroSequence'];
     //dw ['ResetClock'];
-
-
-TitleScreen:
-    FARCALL(av_TitleScreen);
-    RET;
-
 }
 
 void RunTitleScreen(void){
@@ -2129,15 +2416,17 @@ void TitleScreenEnd_Conv(void) {
 }
 
 void DeleteSaveData(void) {
-    FARCALL(av_DeleteSaveData);
-    JP(mInit);
-
+    // FARCALL(av_DeleteSaveData);
+    v_DeleteSaveData();
+    // JP(mInit);
+    return Intro_SetJumptableIndex(INTRO_HARD_RESET);
 }
 
 void ResetClock(void) {
-    FARCALL(av_ResetClock);
-    JP(mInit);
-
+    // FARCALL(av_ResetClock);
+    v_ResetClock();
+    // JP(mInit);
+    return Intro_SetJumptableIndex(INTRO_HARD_RESET);
 }
 
 //#ifdef _DEBUG
@@ -2237,20 +2526,30 @@ uint8_t CopyrightString[] = {
 };
 
 void GameInit(void) {
-    FARCALL(aTryLoadSaveData);
-    CALL(aClearWindowData);
-    CALL(aClearBGPalettes);
-    CALL(aClearTilemap);
-    LD_A(HIGH(vBGMap0));
-    LDH_addr_A(hBGMapAddress + 1);
-    XOR_A_A;  // LOW(vBGMap0)
-    LDH_addr_A(hBGMapAddress);
-    LDH_addr_A(hJoyDown);
-    LDH_addr_A(hSCX);
-    LDH_addr_A(hSCY);
-    LD_A(0x90);
-    LDH_addr_A(hWY);
-    CALL(aWaitBGMap);
-    JP(mIntroSequence);
-
+    // FARCALL(aTryLoadSaveData);
+    TryLoadSaveData();
+    // CALL(aClearWindowData);
+    ClearWindowData_Conv2();
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
+    // CALL(aClearTilemap);
+    ClearTilemap_Conv2();
+    // LD_A(HIGH(vBGMap0));
+    // LDH_addr_A(hBGMapAddress + 1);
+    // XOR_A_A;  // LOW(vBGMap0)
+    // LDH_addr_A(hBGMapAddress);
+    hram->hBGMapAddress = vBGMap0;
+    // LDH_addr_A(hJoyDown);
+    hram->hJoyDown = 0x0;
+    // LDH_addr_A(hSCX);
+    hram->hSCX = 0x0;
+    // LDH_addr_A(hSCY);
+    hram->hSCY = 0x0;
+    // LD_A(0x90);
+    // LDH_addr_A(hWY);
+    hram->hWY = 0x90;
+    // CALL(aWaitBGMap);
+    WaitBGMap_Conv();
+    // JP(mIntroSequence);
+    return Intro_SetJumptableIndex(INTRO_INTRO_SEQUENCE);
 }

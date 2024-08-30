@@ -31,6 +31,7 @@
 #include "../../util/record.h"
 #include "../../util/network.h"
 #include "../../util/soft_reset.h"
+#include "../../util/intro_jumptable.h"
 #include <stdbool.h>
 #include "../../home/serial.h"
 
@@ -3435,7 +3436,7 @@ void get_input(void) {
                         break;
 
                     case SDLK_r:
-                        SoftReset(1);
+                        SoftReset(RESET_TYPE_RESET);
                         break;
                 }
 
@@ -3935,19 +3936,30 @@ int main(int argc, char* argv[]) {
 
     SDL_RenderPresent(dbg_renderer);
 #endif
-    if(setjmp(reset_point)) {
+    int reset_type = setjmp(reset_point);
+    if(reset_type == RESET_TYPE_RESET) {
         gb_reset();
         gb.cpu_reg.pc = 0x0150;
+        Game_WarmStart();
+    }
+    else if(reset_type == RESET_TYPE_INIT) {
+        gb.cpu_reg.pc = mInit;
+        Init_Conv();
     }
     else {
         gb.cpu_reg.pc = 0x0100;
+        Game_ColdStart();
     }
+    DBG_CALL(mGameInit);
+    gb.cpu_reg.pc = mGameInit;
+    Intro_SetJumptableIndex(INTRO_INIT);
     Bankswitch_Conv(0);
     gb.cpu_reg.sp = 0xFFFE;
 
     while (SDL_QuitRequested() == SDL_FALSE) {
         /* Execute CPU cycles until the screen has to be redrawn. */
-        gb_run_frame();
+        // gb_run_frame();
+        Intro_Jumptable();
     }
 
 quit:

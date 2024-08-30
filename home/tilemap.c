@@ -22,6 +22,7 @@ void ClearBGPalettes_Conv(void) {
 
 void WaitBGMap(void) {
     SET_PC(aWaitBGMap);
+    return WaitBGMap_Conv();
     //  Tell VBlank to update BG Map
     LD_A(1);  // BG Map 0 tiles
     LDH_addr_A(hBGMapMode);

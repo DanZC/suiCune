@@ -357,8 +357,7 @@ void v_TitleScreen(void){
     // CALL(aPlaySFX);
     PlaySFX_Conv(SFX_TITLE_SCREEN_ENTRANCE);
 
-    RET;
-
+    // RET;
 }
 
 void SuicuneFrameIterator(void){

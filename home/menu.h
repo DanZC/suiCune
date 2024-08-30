@@ -71,6 +71,7 @@ bool VerticalMenu_Conv(void);
 void GetMenu2(void);
 u8_flag_s GetMenu2_Conv(const struct MenuHeader* hl);
 void CopyNameFromMenu(void);
+void CopyNameFromMenu_Conv(uint8_t a);
 void YesNoBox(void);
 bool YesNoBox_Conv(void);
 void PlaceYesNoBox(void);

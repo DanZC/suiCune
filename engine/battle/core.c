@@ -388,9 +388,9 @@ void BattleTurn(void){
         //         goto quit;
         // }
         if(CheckPlayerLockedIn_Conv())
-            goto quit;
+            goto skip_iteration;
 
-        struct cpu_registers_s loop_ret = gb.cpu_reg;
+        // struct cpu_registers_s loop_ret = gb.cpu_reg;
         do {
         // loop1:
             {
@@ -411,9 +411,9 @@ void BattleTurn(void){
 
         skip_iteration:
             // CALL(aParsePlayerAction);
-            SafeCallGB(aParsePlayerAction, &loop_ret);
+            // SafeCallGB(aParsePlayerAction, &loop_ret);
             // IF_NZ goto loop1;
-        } while(!loop_ret.f_bits.z);
+        } while(!ParsePlayerAction_Conv());
 
         {
             // CALL(aEnemyTriesToFlee);
@@ -8761,6 +8761,7 @@ draw_bar:
 }
 
 static uint8_t DrawEnemyHUD_draw_bar(uint8_t c, uint8_t e, uint8_t d) {
+    printf("%d tiles, %d pixels\n", d, e);
     // XOR_A_A;
     // LD_addr_A(wWhichHPBar);
     wram->wWhichHPBar = 0;
@@ -8872,7 +8873,7 @@ uint8_t DrawEnemyHUD_Conv(void){
     // LDH_addr_A(hMultiplicand + 2);
     // OR_A_hl;
     // IF_NZ goto not_fainted;
-    if(wram->wEnemyMon.hp == 0) {
+    if(wram->wEnemyMon.hp == 0 || wram->wEnemyMon.maxHP == 0) {
         // LD_C_A;
         // LD_E_A;
         // LD_D(HP_BAR_LENGTH);
@@ -8881,14 +8882,15 @@ uint8_t DrawEnemyHUD_Conv(void){
     }
 
 // not_fainted:
-    uint16_t HP = ReverseEndian16(wram->wEnemyMon.hp);
-    uint16_t maxHP = ReverseEndian16(wram->wEnemyMon.maxHP);
+    uint16_t HP = BigEndianToNative16(wram->wEnemyMon.hp);
+    uint16_t maxHP = BigEndianToNative16(wram->wEnemyMon.maxHP);
+    printf("%d HP / %d maxHP\n", HP, maxHP);
     // XOR_A_A;
     // LDH_addr_A(hMultiplicand + 0);
     // LD_A(HP_BAR_LENGTH_PX);
     // LDH_addr_A(hMultiplier);
     // CALL(aMultiply);
-    uint16_t m1 = HP * HP_BAR_LENGTH_PX;
+    uint32_t m1 = (uint32_t)HP * HP_BAR_LENGTH_PX;
     // LD_HL(wEnemyMonMaxHP);
     // LD_A_hli;
     // LD_B_A;
@@ -9945,7 +9947,7 @@ static void MoveSelectionScreen_swap(void* hl, size_t size) {
 }
 
 bool MoveSelectionScreen(void){
-    static const char empty_string[] = "";
+    static const char empty_string[] = "@";
 MoveSelectionScreen:
     // CALL(aIsMobileBattle);
     // IF_NZ goto not_mobile;
@@ -9987,7 +9989,7 @@ MoveSelectionScreen:
     // LD_DE(wListMoves_MoveIndicesBuffer);
     // LD_BC(NUM_MOVES);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wListMoves_MoveIndicesBuffer, moves, sizeof(*moves));
+    CopyBytes_Conv2(wram->wListMoves_MoveIndicesBuffer, moves, sizeof(*moves) * NUM_MOVES);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = 0x0;
@@ -10059,7 +10061,7 @@ MoveSelectionScreen:
     if(wram->wMoveSelectionMenuType != 0x1) {
         // LD_A_addr(wCurMoveNum);
         // INC_A;
-        wram->wMenuCursorY = wram->wCurMoveNum - 1;
+        wram->wMenuCursorY = wram->wCurMoveNum + 1;
     }
     else {
         wram->wMenuCursorY = 0x1;
@@ -10333,7 +10335,7 @@ MoveSelectionScreen:
         // DEC_A;
         // CP_A_C;
         // IF_Z goto move_disabled;
-        if(((wram->wPlayerDisableCount >> 4) & 0xf) == wram->wMenuCursorY) {
+        if((((wram->wPlayerDisableCount >> 4) & 0xf) - 1) == wram->wMenuCursorY) {
         // move_disabled:
             // LD_HL(mBattleText_TheMoveIsDisabled);
             // goto place_textbox_start_over;

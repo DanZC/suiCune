@@ -305,7 +305,7 @@ static bool RestartClock_SetClock(void) {
     return false;
 }
 
-void RestartClock(void){
+uint8_t RestartClock(void){
     static const txt_cmd_s ClockTimeMayBeWrongText[] = {
         text_far(v_ClockTimeMayBeWrongText)
         text_end
@@ -342,8 +342,9 @@ void RestartClock(void){
     // LD_hl_B;
     wram->wOptions = options;
     // LD_C_A;
-    REG_C = cancel? TRUE: FALSE;
-    RET;
+    // REG_C = cancel? TRUE: FALSE;
+    // RET;
+    return cancel? TRUE: FALSE;
 }
 
 void JPHourString(void){

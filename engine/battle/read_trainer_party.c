@@ -3,6 +3,7 @@
 #include "../../home/sram.h"
 #include "../../home/copy.h"
 #include "../../data/trainers/parties.h"
+#include "../pokemon/move_mon.h"
 
 void ReadTrainerParty(void){
     PEEK("");
@@ -193,7 +194,8 @@ void TrainerType1_Conv(const struct TrainerParty* de){
         // LD_addr_A(wMonType);
         wram->wMonType = OTPARTYMON;
         // PUSH_HL;
-        PREDEF(pTryAddMonToParty);
+        // PREDEF(pTryAddMonToParty);
+        TryAddMonToParty_Conv(de->pmoves[i].species, de->pmoves[i].level);
         // POP_HL;
         // goto loop;
     }
@@ -305,7 +307,8 @@ void TrainerType2_Conv(const struct TrainerParty* de){
         wram->wMonType = OTPARTYMON;
 
         // PUSH_HL;
-        PREDEF(pTryAddMonToParty);
+        // PREDEF(pTryAddMonToParty);
+        TryAddMonToParty_Conv(de->pmoves[i].species, de->pmoves[i].level);
         // LD_A_addr(wOTPartyCount);
         // DEC_A;
         // LD_HL(wOTPartyMon1Moves);
@@ -431,7 +434,8 @@ void TrainerType3_Conv(const struct TrainerParty* de){
         // LD_addr_A(wMonType);
         wram->wMonType = OTPARTYMON;
         // PUSH_HL;
-        PREDEF(pTryAddMonToParty);
+        // PREDEF(pTryAddMonToParty);
+        TryAddMonToParty_Conv(de->pmoves[i].species, de->pmoves[i].level);
         // LD_A_addr(wOTPartyCount);
         // DEC_A;
         // LD_HL(wOTPartyMon1Item);
@@ -569,7 +573,8 @@ void TrainerType4_Conv(const struct TrainerParty* de){
         wram->wMonType = OTPARTYMON;
 
         // PUSH_HL;
-        PREDEF(pTryAddMonToParty);
+        // PREDEF(pTryAddMonToParty);
+        TryAddMonToParty_Conv(de->pmoves[i].species, de->pmoves[i].level);
         // LD_A_addr(wOTPartyCount);
         // DEC_A;
         // LD_HL(wOTPartyMon1Item);

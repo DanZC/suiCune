@@ -207,7 +207,7 @@ uint8_t* Utf8ToCrystalBuffer(uint8_t* dest, size_t dest_size, const char* src)
         src++;
     nextchar:;
     }
-    if( i - 1 >= dest_size) {
+    if(i - 1 >= dest_size) {
         printf("Truncated string of size %llu+ to size %llu.\n", i, dest_size);
     }
     dest[i] = CHAR_TERM;

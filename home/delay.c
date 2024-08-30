@@ -50,6 +50,8 @@ void DelayFrames_Conv(uint8_t count) {
     do {
         //  Wait for one frame
         VBlank_Conv();
+        gb.display.WY = gb.gb_reg.WY;
+        gb.display.window_clear = 0;
         gb_finish_frame();
     } while(--count > 0);
 }

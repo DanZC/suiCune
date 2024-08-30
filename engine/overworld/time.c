@@ -8,9 +8,9 @@
 #include "../events/pokerus/apply_pokerus_tick.h"
 
 void v_InitializeStartDay(void){
-    CALL(aInitializeStartDay);
-    RET;
-
+    // CALL(aInitializeStartDay);
+    InitializeStartDay();
+    // RET;
 }
 
 void ClearDailyTimers(void){
@@ -457,11 +457,12 @@ bool CheckBugContestTimer_Conv(void){
 }
 
 void InitializeStartDay(void){
-    CALL(aUpdateTime);
-    LD_HL(wTimerEventStartDay);
-    CALL(aCopyDayToHL);
-    RET;
-
+    // CALL(aUpdateTime);
+    UpdateTime_Conv();
+    // LD_HL(wTimerEventStartDay);
+    // CALL(aCopyDayToHL);
+    CopyDayToHL_Conv(&wram->wTimerEventStartDay);
+    // RET;
 }
 
 void CheckPokerusTick(void){
@@ -985,6 +986,13 @@ void CopyDayToHL(void){
     LD_hl_A;
     RET;
 
+}
+
+void CopyDayToHL_Conv(uint8_t* hl){
+    // LD_A_addr(wCurDay);
+    // LD_hl_A;
+    hl[0] = wram->wCurDay;
+    // RET;
 }
 
 void CopyDayHourToHL(void){

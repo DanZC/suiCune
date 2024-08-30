@@ -969,9 +969,10 @@ uint8_t* GetMoveName_Conv2(move_t move){
 
     // CALL(aGetName);
     ByteFill_Conv2(wram->wStringBuffer1, sizeof(wram->wStringBuffer1), CHAR_TERM);
-    return U82CA(wram->wStringBuffer1, MoveNames[move - 1]);
+    if(move >= 1)
+        return U82CA(wram->wStringBuffer1, MoveNames[move - 1]);
     // LD_DE(wStringBuffer1);
-
+    return wram->wStringBuffer1;
     // POP_HL;
     // RET;
 }

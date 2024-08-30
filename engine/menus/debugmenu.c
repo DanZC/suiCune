@@ -21,6 +21,7 @@
 #include "../gfx/dma_transfer.h"
 #include "../gfx/color.h"
 #include "../pokemon/stats_screen.h"
+#include "../pokemon/move_mon.h"
 #include "../phone/phone.h"
 #include "../battle/core.h"
 #include "../battle_anims/anim_commands.h"
@@ -144,6 +145,7 @@ static void DebugMenu_MenuBox(void) {
 }
 
 void DebugMenu(void) {
+    PEEK("");
     uint8_t inMenu = hram->hInMenu;
     hram->hInMenu = 1;
 
@@ -448,11 +450,12 @@ static void DebugMenu_BattleTest_StartBattle(uint8_t tclass, uint8_t tid) {
     wram->wCurPartyLevel = 100;
     wram->wPartyCount = 0;
     wram->wMonType = PARTYMON;
-    {
-        wbank_push(MBANK(awPartyMon1));
-        PREDEF(pTryAddMonToParty);
-        wbank_pop;
-    }
+    // {
+    //     wbank_push(MBANK(awPartyMon1));
+    //     PREDEF(pTryAddMonToParty);
+    //     wbank_pop;
+    // }
+    TryAddMonToParty_Conv(DRAGONITE, 100);
     wbank_push(MBANK(awInBattleTowerBattle));
     SafeCallGBAuto(aStartBattle);
 
@@ -640,11 +643,12 @@ void DebugMenu_Stats(void) {
     wram->wCurPartyLevel = 100;
     wram->wPartyCount = 0;
     wram->wMonType = PARTYMON;
-    {
-        wbank_push(MBANK(awPartyMon1));
-        PREDEF(pTryAddMonToParty);
-        wbank_pop;
-    }
+    // {
+    //     wbank_push(MBANK(awPartyMon1));
+    //     PREDEF(pTryAddMonToParty);
+    //     wbank_pop;
+    // }
+    TryAddMonToParty_Conv(CHARIZARD, 100);
 
     wram->wCurPartyMon = 0;
 
@@ -900,22 +904,24 @@ void DebugMenu_BattleAnim(void) {
     wram->wCurPartyLevel = 50;
     wram->wPartyCount = 0;
     wram->wMonType = PARTYMON;
-    {
-        wbank_push(MBANK(awPartyMon1));
-        PREDEF(pTryAddMonToParty);
-        wbank_pop;
-    }
+    // {
+    //     wbank_push(MBANK(awPartyMon1));
+    //     PREDEF(pTryAddMonToParty);
+    //     wbank_pop;
+    // }
+    TryAddMonToParty_Conv(PIKACHU, 50);
     U82CA(wram->wBattleMonNickname, "PIKACHU@");
 
     wram->wCurPartySpecies = CHARIZARD;
     wram->wCurPartyLevel = 50;
     wram->wPartyCount = 0;
     wram->wMonType = OTPARTYMON;
-    {
-        wbank_push(MBANK(awOTPartyMon1));
-        PREDEF(pTryAddMonToParty);
-        wbank_pop;
-    }
+    // {
+    //     wbank_push(MBANK(awOTPartyMon1));
+    //     PREDEF(pTryAddMonToParty);
+    //     wbank_pop;
+    // }
+    TryAddMonToParty_Conv(CHARIZARD, 50);
     U82CA(wram->wEnemyMonNickname, "CHARIZARD@");
 
     wram->wCurPartyMon = 0;

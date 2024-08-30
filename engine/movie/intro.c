@@ -59,7 +59,7 @@ static void Intro_ColoredSuicuneFrameSwap(void);
 static void Intro_RustleGrass_Conv(void);
 static void Intro_SetCGBPalUpdate(void);
 static void Intro_ClearBGPals_Conv(void);
-static void Intro_DecompressRequest2bpp_128Tiles_Conv(uint16_t hl, uint16_t de);
+// static void Intro_DecompressRequest2bpp_128Tiles_Conv(uint16_t hl, uint16_t de);
 // static void Intro_DecompressRequest2bpp_255Tiles_Conv(uint16_t hl, uint16_t de);
 // static void Intro_DecompressRequest2bpp_64Tiles_Conv(uint16_t hl, uint16_t de);
 static void Intro_ResetLYOverrides_Conv(void);
@@ -1105,7 +1105,7 @@ static void IntroScene11(void){
     // LD_HL(mIntroUnownsGFX);
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
     // CALL(aIntro_DecompressRequest2bpp_128Tiles);
-    Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroUnownsGFX, vTiles2 + LEN_2BPP_TILE * 0x00);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x00, IntroUnownsGFX, 0, 128);
     // LD_HL(mIntroUnownsTilemap);
     // debgcoord(0, 0, vBGMap0);
     // CALL(aIntro_DecompressRequest2bpp_64Tiles);
@@ -1313,20 +1313,20 @@ static void IntroScene13(void){
     // PUSH_AF;
     // LD_A(MBANK(awBGPals1));
     // LDH_addr_A(rSVBK);
-    wbank_push(MBANK(awBGPals1));
     // LD_HL(mIntroBackgroundPalette);
     // LD_DE(wBGPals1);
     // LD_BC(16 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv(wBGPals1, mIntroBackgroundPalette, 16 * PALETTE_SIZE);
+    // CopyBytes_Conv(wBGPals1, mIntroBackgroundPalette, 16 * PALETTE_SIZE);
+    LoadPaletteAssetToArray(wram->wBGPals1, IntroBackgroundPalette, 16);
     // LD_HL(mIntroBackgroundPalette);
     // LD_DE(wBGPals2);
     // LD_BC(16 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv(wBGPals2, mIntroBackgroundPalette, 16 * PALETTE_SIZE);
+    // CopyBytes_Conv(wBGPals2, mIntroBackgroundPalette, 16 * PALETTE_SIZE);
+    LoadPaletteAssetToArray(wram->wBGPals2, IntroBackgroundPalette, 16);
     // POP_AF;
     // LDH_addr_A(rSVBK);
-    wbank_pop;
     // XOR_A_A;
     // LDH_addr_A(hSCX);
     // LDH_addr_A(hSCY);
@@ -1768,6 +1768,8 @@ static void IntroScene19(void){
 
 //  Spawn the palette for the nth Unown
 static void Intro_Scene20_AppearUnown_Conv(uint8_t pal){
+    static const char pal1[] = "gfx/intro/unown_1.pal";
+    static const char pal2[] = "gfx/intro/unown_2.pal";
     // AND_A_A;
     // IF_NZ goto load_pal_2;
 
@@ -1778,10 +1780,10 @@ static void Intro_Scene20_AppearUnown_Conv(uint8_t pal){
 // load_pal_2:
     // LD_HL(mIntro_Scene20_AppearUnown_pal2);
 
-    uint16_t hl;
+    const char* hl;
     switch(pal) {
-        case 0: hl = mIntro_Scene20_AppearUnown_pal1; break;
-        default: hl = mIntro_Scene20_AppearUnown_pal2; break;
+        case 0: hl = pal1; break;
+        default: hl = pal2; break;
     }
 
 // got_pointer:
@@ -1796,7 +1798,6 @@ static void Intro_Scene20_AppearUnown_Conv(uint8_t pal){
     // PUSH_AF;
     // LD_A(MBANK(awBGPals2));
     // LDH_addr_A(rSVBK);
-    wbank_push(MBANK(awBGPals2));
 
     // PUSH_BC;
     // LD_DE(wBGPals2);
@@ -1810,10 +1811,9 @@ static void Intro_Scene20_AppearUnown_Conv(uint8_t pal){
 
     // LD_BC(1 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv(wBGPals2 + c, hl, 1 * PALETTE_SIZE);
+    // CopyBytes_Conv(wBGPals2 + c, hl, 1 * PALETTE_SIZE);
+    LoadPaletteAssetColorsToBuffer(wram->wBGPals2 + c, sizeof(wram->wBGPals2) - c, hl, 0, NUM_PAL_COLORS);
     // POP_BC;
-
-    hl += 1 * PALETTE_SIZE;
 
     // LD_DE(wBGPals1);
     // LD_A_C;
@@ -1825,23 +1825,15 @@ static void Intro_Scene20_AppearUnown_Conv(uint8_t pal){
 
     // LD_BC(1 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv(wBGPals1 + c, hl, 1 * PALETTE_SIZE);
+    // CopyBytes_Conv(wBGPals1 + c, hl, 1 * PALETTE_SIZE);
+    LoadPaletteAssetColorsToBuffer(wram->wBGPals1 + c, sizeof(wram->wBGPals2) - c, hl, 1 * NUM_PAL_COLORS, NUM_PAL_COLORS);
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
-    wbank_pop;
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
     hram->hCGBPalUpdate = TRUE;
     // RET;
-
-
-// pal1:
-// INCLUDE "gfx/intro/unown_1.pal"
-
-
-// pal2:
-// INCLUDE "gfx/intro/unown_2.pal"
 
     // return Intro_FadeUnownWordPals();
 }
@@ -1964,21 +1956,63 @@ static void IntroScene23(void){
 
 //  load the (a)th palette from .FadePals to all wBGPals2
 static void Intro_Scene24_ApplyPaletteFade_Conv(uint8_t a){
+    // Fade to white.
+    static const uint16_t FadePals[] = {
+        rgb(24, 12,  9),
+        rgb(31, 31, 31),
+        rgb(12,  0, 31),
+        rgb( 0,  0,  0),
+
+        rgb(31, 19,  5),
+        rgb(31, 31, 31),
+        rgb(15,  5, 31),
+        rgb( 7,  7,  7),
+
+        rgb(31, 21,  9),
+        rgb(31, 31, 31),
+        rgb(18,  9, 31),
+        rgb(11, 11, 11),
+
+        rgb(31, 23, 13),
+        rgb(31, 31, 31),
+        rgb(21, 13, 31),
+        rgb(15, 15, 15),
+
+        rgb(31, 25, 17),
+        rgb(31, 31, 31),
+        rgb(25, 17, 31),
+        rgb(19, 19, 19),
+
+        rgb(31, 27, 21),
+        rgb(31, 31, 31),
+        rgb(27, 21, 31),
+        rgb(23, 23, 23),
+
+        rgb(31, 29, 25),
+        rgb(31, 31, 31),
+        rgb(29, 26, 31),
+        rgb(27, 27, 27),
+
+        rgb(31, 31, 31),
+        rgb(31, 31, 31),
+        rgb(31, 31, 31),
+        rgb(31, 31, 31),
+    };
     // LD_HL(mIntro_Scene24_ApplyPaletteFade_FadePals);
     // ADD_A_L;
     // LD_L_A;
     // LD_A(0x0);
     // ADC_A_H;
     // LD_H_A;
-    uint16_t hl = mIntro_Scene24_ApplyPaletteFade_FadePals + a;
+    // uint16_t hl = mIntro_Scene24_ApplyPaletteFade_FadePals + a;
+    const uint16_t* hl = FadePals + (a >> 1);
 
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(MBANK(awBGPals2));
     // LDH_addr_A(rSVBK);
-    wbank_push(MBANK(awBGPals2));
     // LD_DE(wBGPals2);
-    uint16_t de = wBGPals2;
+    uint16_t* de = (uint16_t*)wram_ptr(wBGPals2);
     // LD_B(8);  // number of BG pals
     uint8_t b = 8;  // number of BG pals
 
@@ -1987,12 +2021,12 @@ static void Intro_Scene24_ApplyPaletteFade_Conv(uint8_t a){
         // PUSH_HL;
         // LD_C(1 * PALETTE_SIZE);
 
-        for(uint8_t c = 0; c < PALETTE_SIZE; ++c) {
+        for(uint8_t c = 0; c < NUM_PAL_COLORS; ++c) {
         // loop2:
             // LD_A_hli;
             // LD_de_A;
             // INC_DE;
-            gb_write(de++, gb_read(hl + c));
+            de[(8-b)*NUM_PAL_COLORS + c] = hl[c];
             // DEC_C;
             // IF_NZ goto loop2;
         }
@@ -2002,7 +2036,6 @@ static void Intro_Scene24_ApplyPaletteFade_Conv(uint8_t a){
     } while(--b != 0);
     // POP_AF;
     // LDH_addr_A(rSVBK);
-    wbank_pop;
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
     hram->hCGBPalUpdate = TRUE;
@@ -2082,7 +2115,8 @@ static void IntroScene26(void){
     // debgcoord(0, 0, vBGMap0);
     // CALL(aIntro_DecompressRequest2bpp_64Tiles);
     // Intro_DecompressRequest2bpp_64Tiles_Conv(mIntroCrystalUnownsAttrmap, bgcoord(0, 0, vBGMap0));
-    Load2bppBinaryAssetToBuffer(bgcoord(0, 0, vram->vBGMap2), sizeof(vram->vBGMap2), IntroCrystalUnownsAttrmap, 0, 64);
+    // Load2bppBinaryAssetToBuffer(bgcoord(0, 0, vram->vBGMap2), sizeof(vram->vBGMap2), IntroCrystalUnownsAttrmap, 0, 64);
+    LoadAssetToBuffer(bgcoord(0, 0, vram->vBGMap2), sizeof(vram->vBGMap2), IntroCrystalUnownsAttrmap);
     // LD_A(0x0);
     // LDH_addr_A(rVBK);
     // gb_write(rVBK, 0x0);
@@ -2095,7 +2129,8 @@ static void IntroScene26(void){
     // debgcoord(0, 0, vBGMap0);
     // CALL(aIntro_DecompressRequest2bpp_64Tiles);
     // Intro_DecompressRequest2bpp_64Tiles_Conv(mIntroCrystalUnownsTilemap, bgcoord(0, 0, vBGMap0));
-    Load2bppBinaryAssetToBuffer(bgcoord(0, 0, vram->vBGMap0), sizeof(vram->vBGMap0), IntroCrystalUnownsTilemap, 0, 64);
+    // Load2bppBinaryAssetToBuffer(bgcoord(0, 0, vram->vBGMap0), sizeof(vram->vBGMap0), IntroCrystalUnownsTilemap, 0, 64);
+    LoadAssetToBuffer(bgcoord(0, 0, vram->vBGMap0), sizeof(vram->vBGMap0), IntroCrystalUnownsTilemap);
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(MBANK(awBGPals1));
@@ -3114,13 +3149,13 @@ void Intro_DecompressRequest2bpp_128Tiles(void){
 
 }
 
-static void Intro_DecompressRequest2bpp_128Tiles_Conv(uint16_t hl, uint16_t de) {
-    uint8_t svbk = gb_read(rSVBK);
-    gb_write(rSVBK, MBANK(awDecompressScratch));
-    Decompress_Conv(wDecompressScratch, hl);
-    Request2bpp_Conv(0x01, wDecompressScratch, de, 128);
-    gb_write(rSVBK, svbk);
-}
+// static void Intro_DecompressRequest2bpp_128Tiles_Conv(uint16_t hl, uint16_t de) {
+//     uint8_t svbk = gb_read(rSVBK);
+//     gb_write(rSVBK, MBANK(awDecompressScratch));
+//     Decompress_Conv(wDecompressScratch, hl);
+//     Request2bpp_Conv(0x01, wDecompressScratch, de, 128);
+//     gb_write(rSVBK, svbk);
+// }
 
 void Intro_DecompressRequest2bpp_255Tiles(void){
     LDH_A_addr(rSVBK);

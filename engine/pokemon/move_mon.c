@@ -745,7 +745,7 @@ bool GeneratePartyMonStats_Conv(struct PartyMon* hl, species_t species, uint8_t 
     // LDH_A_addr(hProduct + 3);
     // LD_de_A;
     // INC_DE;
-    hl->HP = CalcMonStatC_Conv(statxp, hl->mon.DVs, FALSE, 1);
+    hl->HP = NativeToBigEndian16(CalcMonStatC_Conv(statxp, hl->mon.DVs, FALSE, 1));
     goto initstats;
 
 
@@ -3422,13 +3422,14 @@ void CalcMonStats_Conv(uint16_t* stats, const uint16_t* statExp, uint16_t dvs, u
         // INC_C;
         // CALL(aCalcMonStatC);
         uint16_t stat = NativeToBigEndian16(CalcMonStatC_Conv(statExp, dvs, b, c));
+        printf("Stat[%d]: %d\n", c - STAT_HP, ReverseEndian16(stat));
         // LDH_A_addr(hMultiplicand + 1);
         // LD_de_A;
         // INC_DE;
         // LDH_A_addr(hMultiplicand + 2);
         // LD_de_A;
         // INC_DE;
-        stats[c - STAT_HP - 1] = stat;
+        stats[c - STAT_HP] = stat;
         // LD_A_C;
         // CP_A(STAT_SDEF);  // last stat
         // IF_NZ goto loop;
@@ -3791,26 +3792,26 @@ uint16_t CalcMonStatC_Conv(const uint16_t* statExp, uint16_t dvs, uint8_t b, uin
     // LD_D(0);
     // ADD_A_E;
     // LD_E_A;
-    uint8_t carry = 0;
-    e = AddCarry8(dv, e, 0, &carry);
+    // uint8_t carry = 0;
+    // e = AddCarry8(dv, e, 0, &carry);
     // IF_NC goto no_overflow_1;
     // INC_D;
-    d = (carry)? 1: 0;
+    // d = (carry)? 1: 0;
 
 // no_overflow_1:
     // SLA_E;
-    carry = (e >> 7);
-    e <<= 1;
+    // carry = (e >> 7);
+    // e <<= 1;
     // RL_D;
-    d = RotateLeft8(d, carry, &carry);
+    // d = RotateLeft8(d, carry, &carry);
     // SRL_B;
     // SRL_B;
     // LD_A_B;
     // ADD_A_E;
-    dv = AddCarry8(b >> 2, e, 0, &carry);
+    // dv = AddCarry8(b >> 2, e, 0, &carry);
     // IF_NC goto no_overflow_2;
     // INC_D;
-    d += (carry)? 1: 0;
+    // d += (carry)? 1: 0;
 
 // no_overflow_2:
     // LDH_addr_A(hMultiplicand + 2);
@@ -3818,7 +3819,8 @@ uint16_t CalcMonStatC_Conv(const uint16_t* statExp, uint16_t dvs, uint8_t b, uin
     // LDH_addr_A(hMultiplicand + 1);
     // XOR_A_A;
     // LDH_addr_A(hMultiplicand + 0);
-    uint32_t mul = (dv | (d << 8));
+    // uint32_t mul = (dv | (d << 8));
+    uint32_t mul = (((uint32_t)dv + e) + (b / 4)) * 2;
     // LD_A_addr(wCurPartyLevel);
     // LDH_addr_A(hMultiplier);
     // CALL(aMultiply);
@@ -3874,15 +3876,16 @@ uint16_t CalcMonStatC_Conv(const uint16_t* statExp, uint16_t dvs, uint8_t b, uin
     // LDH_A_addr(hQuotient + 2);
     // CP_A(HIGH(MAX_STAT_VALUE + 1) + 1);
     // IF_NC goto max_stat;
-    if(HIGH(quot) < HIGH(MAX_STAT_VALUE + 1) + 1) {
+    if(quot < MAX_STAT_VALUE + 1) {
         // CP_A(HIGH(MAX_STAT_VALUE + 1));
         // IF_C goto stat_value_okay;
         // LDH_A_addr(hQuotient + 3);
         // CP_A(LOW(MAX_STAT_VALUE + 1));
         // IF_C goto stat_value_okay;
-        if(HIGH(quot) < HIGH(MAX_STAT_VALUE + 1) || LOW(quot) < LOW(MAX_STAT_VALUE + 1)) {
-            return quot;
-        }
+        // if(HIGH(quot) < HIGH(MAX_STAT_VALUE + 1) || LOW(quot) < LOW(MAX_STAT_VALUE + 1)) {
+        //     return quot;
+        // }
+        return quot;
     }
 
 // max_stat:

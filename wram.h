@@ -2661,16 +2661,21 @@ struct wram_s
                 uint8_t skip_103[2];
                 uint8_t wMapStatusEnd[2];
                 //union wCrystalData
-                // bit 0:
-                //	0 male
-                //	1 female
-                uint8_t wPlayerGender;
-                uint8_t wd473[1];
-                uint8_t wd474[1];
-                uint8_t wd475[1];
-                uint8_t wd476[1];
-                uint8_t wd477[1];
-                uint8_t wd478[1];
+                union {
+                    struct {
+                        // bit 0:
+                        //	0 male
+                        //	1 female
+                        uint8_t wPlayerGender;
+                        uint8_t wd473[1];
+                        uint8_t wd474[1];
+                        uint8_t wd475[1];
+                        uint8_t wd476[1];
+                        uint8_t wd477[1];
+                        uint8_t wd478[1];
+                    };
+                    uint8_t wCrystalData[wCrystalDataEnd - wCrystalData];
+                };
                 //union wCrystalDataEnd
                 uint8_t wd479[2];
                 //union wGameData

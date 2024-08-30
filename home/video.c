@@ -644,9 +644,11 @@ void UpdateBGMap_Conv(void) {
 void Serve1bppRequest(void) {
     //  Only call during the first fifth of VBlank
 
-    LD_A_addr(wRequested1bppSize);
-    AND_A_A;
-    RET_Z;
+    // LD_A_addr(wRequested1bppSize);
+    // AND_A_A;
+    // RET_Z;
+    if(wram->wRequested1bppSize == 0)
+        return;
 
     //  Back out if we're too far into VBlank
     //  lol nope
@@ -658,75 +660,96 @@ void Serve1bppRequest(void) {
 
     //  Copy [wRequested1bppSize] 1bpp tiles from [wRequested1bppSource] to [wRequested1bppDest]
 
-    LD_addr_SP(hSPBuffer);
+    // LD_addr_SP(hSPBuffer);
 
     //  Source
-    LD_HL(wRequested1bppSource);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    LD_SP_HL;
+    // LD_HL(wRequested1bppSource);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // LD_SP_HL;
+    const uint8_t* sp = GBToRAMAddr(wram->wRequested1bppSource);
+    const uint8_t* sp2 = sp;
 
     //  Destination
-    LD_HL(wRequested1bppDest);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
+    // LD_HL(wRequested1bppDest);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    uint8_t* hl = GBToRAMAddr(wram->wRequested1bppDest);
+    uint8_t* hl2 = hl;
 
     //  # tiles to copy
-    LD_A_addr(wRequested1bppSize);
-    LD_B_A;
+    // LD_A_addr(wRequested1bppSize);
+    // LD_B_A;
+    uint8_t b = wram->wRequested1bppSize;
 
-    XOR_A_A;
-    LD_addr_A(wRequested1bppSize);
+    // XOR_A_A;
+    // LD_addr_A(wRequested1bppSize);
+    wram->wRequested1bppSize = 0x0;
 
-next:
+    do {
+    // next:
+        for (int rept = 0; rept < 3; rept++) {
+            // POP_DE;
+            uint8_t e = *(sp++);
+            uint8_t d = *(sp++);
+            // LD_hl_E;
+            // INC_L;
+            *(hl++) = e;
+            // LD_hl_E;
+            // INC_L;
+            *(hl++) = e;
+            // LD_hl_D;
+            // INC_L;
+            *(hl++) = d;
+            // LD_hl_D;
+            // INC_L;
+            *(hl++) = d;
+        }
+        // POP_DE;
+        uint8_t e = *(sp++);
+        uint8_t d = *(sp++);
+        // LD_hl_E;
+        // INC_L;
+        *(hl++) = e;
+        // LD_hl_E;
+        // INC_L;
+        *(hl++) = e;
+        // LD_hl_D;
+        // INC_L;
+        *(hl++) = d;
+        // LD_hl_D;
+        *(hl++) = d;
 
-    for (int rept = 0; rept < 3; rept++) {
-        POP_DE;
-        LD_hl_E;
-        INC_L;
-        LD_hl_E;
-        INC_L;
-        LD_hl_D;
-        INC_L;
-        LD_hl_D;
-        INC_L;
-    }
-    POP_DE;
-    LD_hl_E;
-    INC_L;
-    LD_hl_E;
-    INC_L;
-    LD_hl_D;
-    INC_L;
-    LD_hl_D;
+        // INC_HL;
+        // DEC_B;
+        // IF_NZ goto next;
+    } while(--b != 0);
 
-    INC_HL;
-    DEC_B;
-    IF_NZ goto next;
+    // LD_A_L;
+    // LD_addr_A(wRequested1bppDest);
+    // LD_A_H;
+    // LD_addr_A(wRequested1bppDest + 1);
+    wram->wRequested1bppDest = wram->wRequested1bppDest + (hl - hl2);
 
-    LD_A_L;
-    LD_addr_A(wRequested1bppDest);
-    LD_A_H;
-    LD_addr_A(wRequested1bppDest + 1);
+    // LD_addr_SP(wRequested1bppSource);
+    wram->wRequested1bppSource = wram->wRequested1bppSource + (sp - sp2);
 
-    LD_addr_SP(wRequested1bppSource);
-
-    LDH_A_addr(hSPBuffer);
-    LD_L_A;
-    LDH_A_addr(hSPBuffer + 1);
-    LD_H_A;
-    LD_SP_HL;
-    RET;
+    // LDH_A_addr(hSPBuffer);
+    // LD_L_A;
+    // LDH_A_addr(hSPBuffer + 1);
+    // LD_H_A;
+    // LD_SP_HL;
+    // RET;
 }
 
 void Serve2bppRequest(void) {
     //  Only call during the first fifth of VBlank
 
-    LD_A_addr(wRequested2bppSize);
-    AND_A_A;
-    RET_Z;
+    // LD_A_addr(wRequested2bppSize);
+    // AND_A_A;
+    // RET_Z;
 
     //  Back out if we're too far into VBlank
     //  lol nope
@@ -736,13 +759,15 @@ void Serve2bppRequest(void) {
     // CP_A(LY_VBLANK + 2);
     // RET_NC;
     // JR(mv_Serve2bppRequest);
-    return v_Serve2bppRequest();
+    return Serve2bppRequest_VBlank();
 }
 
 void Serve2bppRequest_VBlank(void) {
-    LD_A_addr(wRequested2bppSize);
-    AND_A_A;
-    RET_Z;
+    // LD_A_addr(wRequested2bppSize);
+    // AND_A_A;
+    // RET_Z;
+    if(wram->wRequested2bppSize == 0)
+        return;
 
     return v_Serve2bppRequest();
 }
@@ -750,59 +775,72 @@ void Serve2bppRequest_VBlank(void) {
 void v_Serve2bppRequest(void) {
     //  Copy [wRequested2bppSize] 2bpp tiles from [wRequested2bppSource] to [wRequested2bppDest]
 
-    LD_addr_SP(hSPBuffer);
+    // LD_addr_SP(hSPBuffer);
 
     //  Source
-    LD_HL(wRequested2bppSource);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    LD_SP_HL;
+    // LD_HL(wRequested2bppSource);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // LD_SP_HL;
+    const uint8_t* sp = GBToRAMAddr(wram->wRequested2bppSource);
+    const uint8_t* sp2 = sp;
 
     //  Destination
-    LD_HL(wRequested2bppDest);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
+    // LD_HL(wRequested2bppDest);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    uint8_t* hl = GBToRAMAddr(wram->wRequested2bppDest);
+    uint8_t* hl2 = hl;
 
     //  # tiles to copy
-    LD_A_addr(wRequested2bppSize);
-    LD_B_A;
+    // LD_A_addr(wRequested2bppSize);
+    // LD_B_A;
+    uint8_t b = wram->wRequested2bppSize;
 
-    XOR_A_A;
-    LD_addr_A(wRequested2bppSize);
+    // XOR_A_A;
+    // LD_addr_A(wRequested2bppSize);
+    wram->wRequested2bppSize = 0x0;
 
-next:
+    do {
+    // next:
+        for (int rept = 0; rept < 7; rept++) {
+            // POP_DE;
+            // LD_hl_E;
+            *(hl++) = *(sp++);
+            // INC_L;
+            // LD_hl_D;
+            // INC_L;
+            *(hl++) = *(sp++);
+        }
+        // POP_DE;
+        // LD_hl_E;
+        *(hl++) = *(sp++);
+        // INC_L;
+        // LD_hl_D;
+        *(hl++) = *(sp++);
 
-    for (int rept = 0; rept < 7; rept++) {
-        POP_DE;
-        LD_hl_E;
-        INC_L;
-        LD_hl_D;
-        INC_L;
-    }
-    POP_DE;
-    LD_hl_E;
-    INC_L;
-    LD_hl_D;
+        // INC_HL;
+        // DEC_B;
+        // IF_NZ goto next;
+    } while(--b != 0);
 
-    INC_HL;
-    DEC_B;
-    IF_NZ goto next;
+    // LD_A_L;
+    // LD_addr_A(wRequested2bppDest);
+    // LD_A_H;
+    // LD_addr_A(wRequested2bppDest + 1);
+    wram->wRequested2bppDest = wram->wRequested2bppDest + (hl - hl2);
 
-    LD_A_L;
-    LD_addr_A(wRequested2bppDest);
-    LD_A_H;
-    LD_addr_A(wRequested2bppDest + 1);
+    // LD_addr_SP(wRequested2bppSource);
+    wram->wRequested2bppSource = wram->wRequested2bppSource + (sp - sp2);
 
-    LD_addr_SP(wRequested2bppSource);
-
-    LDH_A_addr(hSPBuffer);
-    LD_L_A;
-    LDH_A_addr(hSPBuffer + 1);
-    LD_H_A;
-    LD_SP_HL;
-    RET;
+    // LDH_A_addr(hSPBuffer);
+    // LD_L_A;
+    // LDH_A_addr(hSPBuffer + 1);
+    // LD_H_A;
+    // LD_SP_HL;
+    // RET;
 }
 
 void AnimateTileset(void) {

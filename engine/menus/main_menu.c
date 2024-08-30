@@ -1,5 +1,6 @@
 #include "../../constants.h"
 #include "main_menu.h"
+#include "intro_menu.h"
 #include "../rtc/timeset.h"
 #include "../../home/text.h"
 #include "../../home/gfx.h"
@@ -9,8 +10,10 @@
 #include "../../home/pokedex_flags.h"
 #include "../../home/sram.h"
 #include "../../home/print_text.h"
+#include "../../util/intro_jumptable.h"
 #include "../../charmap.h"
 
+#define SHOW_DEBUG_MENU 1
 void DebugMenu(void);
 
 // MainMenuItems indexes
@@ -40,7 +43,7 @@ enum {
 const char MobileMenuGFX[] = "gfx/mobile/mobile_menu.png";
 
 void MainMenu(void){
-    static void (*const Jumptable[])(void) = {
+    static bool (*const Jumptable[])(void) = {
     //  entries correspond to MAINMENUITEM_* constants
         [MAINMENUITEM_CONTINUE]       = MainMenu_Continue,
         [MAINMENUITEM_NEW_GAME]       = MainMenu_NewGame,
@@ -48,8 +51,8 @@ void MainMenu(void){
         [MAINMENUITEM_MYSTERY_GIFT]   = MainMenu_MysteryGift,
         // [MAINMENUITEM_MOBILE]         = MainMenu_Mobile,
         // [MAINMENUITEM_MOBILE_STUDIUM] = MainMenu_MobileStudium,
-    #if _DEBUG
-        //[MAINMENUITEM_DEBUG_ROOM]     = MainMenu_DebugRoom,
+    #if SHOW_DEBUG_MENU
+        [MAINMENUITEM_DEBUG_ROOM]     = MainMenu_DebugRoom,
     #endif
     };
 
@@ -61,7 +64,7 @@ void MainMenu(void){
         [MAINMENUITEM_MYSTERY_GIFT]     = "MYSTERY GIFT@",
         [MAINMENUITEM_MOBILE]           = "MOBILE@",
         [MAINMENUITEM_MOBILE_STUDIUM]   = "MOBILE STUDIUM@",
-    #if _DEBUG
+    #if SHOW_DEBUG_MENU
         [MAINMENUITEM_DEBUG_ROOM]       = "DEBUG ROOM@",
     #endif
     };
@@ -117,14 +120,16 @@ void MainMenu(void){
         // CALL(aCloseWindow);
         CloseWindow_Conv2();
         // IF_C goto quit;
-        if(q)
+        if(!q)
             return;
         // CALL(aClearTilemap);
         ClearTilemap_Conv2();
         // LD_A_addr(wMenuSelection);
         // LD_HL(mMainMenu_Jumptable);
         // RST(aJumpTable);
-        Jumptable[wram->wMenuSelection]();
+        printf("wMenuSelection = %d\n", wram->wMenuSelection);
+        if(Jumptable[wram->wMenuSelection]())
+            return;
         // goto loop;
     }
 
@@ -148,7 +153,7 @@ const uint8_t* MainMenuItems[] = {
 // MAINMENU_CONTINUE
     [MAINMENU_CONTINUE] = (const uint8_t[]){
     //db ['3 + DEF(_DEBUG)'];
-#if _DEBUG
+#if SHOW_DEBUG_MENU
         4,
 #else
         3,
@@ -156,7 +161,7 @@ const uint8_t* MainMenuItems[] = {
         MAINMENUITEM_CONTINUE,
         MAINMENUITEM_NEW_GAME,
         MAINMENUITEM_OPTION,
-#if _DEBUG
+#if SHOW_DEBUG_MENU
         MAINMENUITEM_DEBUG_ROOM,
 #endif
         0xff,
@@ -165,7 +170,7 @@ const uint8_t* MainMenuItems[] = {
 // MAINMENU_MOBILE_MYSTERY
     [MAINMENU_MOBILE_MYSTERY] = (const uint8_t[]){
     //db ['5 + DEF(_DEBUG)'];
-#if _DEBUG
+#if SHOW_DEBUG_MENU
         6,
 #else
         5,
@@ -175,7 +180,7 @@ const uint8_t* MainMenuItems[] = {
         MAINMENUITEM_OPTION,
         MAINMENUITEM_MYSTERY_GIFT,
         MAINMENUITEM_MOBILE,
-#if _DEBUG
+#if SHOW_DEBUG_MENU
         MAINMENUITEM_DEBUG_ROOM,
 #endif
         0xff,
@@ -184,7 +189,7 @@ const uint8_t* MainMenuItems[] = {
 // MAINMENU_MOBILE
     [MAINMENU_MOBILE] = (const uint8_t[]){
     //db ['4 + DEF(_DEBUG)'];
-#if _DEBUG
+#if SHOW_DEBUG_MENU
         5,
 #else
         4,
@@ -193,70 +198,100 @@ const uint8_t* MainMenuItems[] = {
         MAINMENUITEM_NEW_GAME,
         MAINMENUITEM_OPTION,
         MAINMENUITEM_MOBILE,
-#if _DEBUG
+#if SHOW_DEBUG_MENU
         MAINMENUITEM_DEBUG_ROOM,
 #endif
         0xff,
     },
 
 // MAINMENU_MOBILE_STUDIUM
-    //db ['5 + DEF(_DEBUG)'];
-    //db ['MAINMENUITEM_CONTINUE'];
-    //db ['MAINMENUITEM_NEW_GAME'];
-    //db ['MAINMENUITEM_OPTION'];
-    //db ['MAINMENUITEM_MOBILE'];
-    //db ['MAINMENUITEM_MOBILE_STUDIUM'];
-#if _DEBUG
-    //db ['MAINMENUITEM_DEBUG_ROOM'];
+    [MAINMENU_MOBILE_STUDIUM] = (const uint8_t[]){
+#if SHOW_DEBUG_MENU
+        6,
+#else
+        5,
 #endif
-    //db ['-1'];
+        MAINMENUITEM_CONTINUE,
+        MAINMENUITEM_NEW_GAME,
+        MAINMENUITEM_OPTION,
+        MAINMENUITEM_MOBILE,
+        MAINMENUITEM_MOBILE_STUDIUM,
+#if SHOW_DEBUG_MENU
+        MAINMENUITEM_DEBUG_ROOM,
+#endif
+        0xff,
+    },
 
 // MAINMENU_MYSTERY_MOBILE_STUDIUM
-    //db ['6 + DEF(_DEBUG)'];
-    //db ['MAINMENUITEM_CONTINUE'];
-    //db ['MAINMENUITEM_NEW_GAME'];
-    //db ['MAINMENUITEM_OPTION'];
-    //db ['MAINMENUITEM_MYSTERY_GIFT'];
-    //db ['MAINMENUITEM_MOBILE'];
-    //db ['MAINMENUITEM_MOBILE_STUDIUM'];
-#if _DEBUG
-    //db ['MAINMENUITEM_DEBUG_ROOM'];
+    [MAINMENU_MYSTERY_MOBILE_STUDIUM] = (const uint8_t[]){
+#if SHOW_DEBUG_MENU
+        7,
+#else
+        6,
 #endif
-    //db ['-1'];
+        MAINMENUITEM_CONTINUE,
+        MAINMENUITEM_NEW_GAME,
+        MAINMENUITEM_OPTION,
+        MAINMENUITEM_MYSTERY_GIFT,
+        MAINMENUITEM_MOBILE,
+        MAINMENUITEM_MOBILE_STUDIUM,
+#if SHOW_DEBUG_MENU
+        MAINMENUITEM_DEBUG_ROOM,
+#endif
+        0xff,
+    },
 
 // MAINMENU_MYSTERY
-    //db ['4 + DEF(_DEBUG)'];
-    //db ['MAINMENUITEM_CONTINUE'];
-    //db ['MAINMENUITEM_NEW_GAME'];
-    //db ['MAINMENUITEM_OPTION'];
-    //db ['MAINMENUITEM_MYSTERY_GIFT'];
-#if _DEBUG
-    //db ['MAINMENUITEM_DEBUG_ROOM'];
+    [MAINMENU_MYSTERY] = (const uint8_t[]){
+#if SHOW_DEBUG_MENU
+        5,
+#else
+        4,
 #endif
-    //db ['-1'];
+        MAINMENUITEM_CONTINUE,
+        MAINMENUITEM_NEW_GAME,
+        MAINMENUITEM_OPTION,
+        MAINMENUITEM_MYSTERY_GIFT,
+#if SHOW_DEBUG_MENU
+        MAINMENUITEM_DEBUG_ROOM,
+#endif
+        0xff,
+    },
 
 // MAINMENU_MYSTERY_STUDIUM
-    //db ['5 + DEF(_DEBUG)'];
-    //db ['MAINMENUITEM_CONTINUE'];
-    //db ['MAINMENUITEM_NEW_GAME'];
-    //db ['MAINMENUITEM_OPTION'];
-    //db ['MAINMENUITEM_MYSTERY_GIFT'];
-    //db ['MAINMENUITEM_MOBILE_STUDIUM'];
-#if _DEBUG
-    //db ['MAINMENUITEM_DEBUG_ROOM'];
+    [MAINMENU_MYSTERY_STUDIUM] = (const uint8_t[]){
+#if SHOW_DEBUG_MENU
+        6,
+#else
+        5,
 #endif
-    //db ['-1'];
+        MAINMENUITEM_CONTINUE,
+        MAINMENUITEM_NEW_GAME,
+        MAINMENUITEM_OPTION,
+        MAINMENUITEM_MYSTERY_GIFT,
+        MAINMENUITEM_MOBILE_STUDIUM,
+#if SHOW_DEBUG_MENU
+        MAINMENUITEM_DEBUG_ROOM,
+#endif
+        0xff,
+    },
 
 // MAINMENU_STUDIUM
-    //db ['4 + DEF(_DEBUG)'];
-    //db ['MAINMENUITEM_CONTINUE'];
-    //db ['MAINMENUITEM_NEW_GAME'];
-    //db ['MAINMENUITEM_OPTION'];
-    //db ['MAINMENUITEM_MOBILE_STUDIUM'];
-#if _DEBUG
-    //db ['MAINMENUITEM_DEBUG_ROOM'];
+    [MAINMENU_STUDIUM] = (const uint8_t[]){
+#if SHOW_DEBUG_MENU
+        5,
+#else
+        4,
 #endif
-    //db ['-1'];
+        MAINMENUITEM_CONTINUE,
+        MAINMENUITEM_NEW_GAME,
+        MAINMENUITEM_OPTION,
+        MAINMENUITEM_MOBILE_STUDIUM,
+#if SHOW_DEBUG_MENU
+        MAINMENUITEM_DEBUG_ROOM,
+#endif
+        0xff,
+    },
 };
 
 void MainMenu_GetWhichMenu(void){
@@ -432,7 +467,7 @@ bool MainMenuJoypadLoop_Conv(void){
         // LD_addr_A(w2DMenuFlags1);
         bit_set(wram->w2DMenuFlags1, 5);
         // CALL(aGetScrollingMenuJoypad);
-        GetScrollingMenuJoypad_Conv();
+        GetScrollingMenuJoypad_Conv2();
         // LD_A_addr(wMenuJoypad);
         // CP_A(B_BUTTON);
         // IF_Z goto b_button;
@@ -747,27 +782,36 @@ void ClearTilemapEtc_Conv(void){
     // RET;
 }
 
-void MainMenu_NewGame(void){
-    FARCALL(aNewGame);
-    RET;
-
+bool MainMenu_NewGame(void){
+    // FARCALL(aNewGame);
+    NewGame();
+    // RET;
+    return true;
 }
 
-void MainMenu_Option(void){
-    FARCALL(aOption);
-    RET;
-
+bool MainMenu_Option(void){
+    // FARCALL(aOption);
+    Option_Conv();
+    // RET;
+    return false;
 }
 
-void MainMenu_Continue(void){
-    FARCALL(aContinue);
-    RET;
-
+bool MainMenu_Continue(void){
+    // FARCALL(aContinue);
+    // RET;
+    return Continue();
 }
 
-void MainMenu_MysteryGift(void){
-    // FARCALL(aMysteryGift);
+bool MainMenu_DebugRoom(void){
+    // farcall _DebugRoom
     DebugMenu();
-    RET;
+    // ret
+    return false;
+}
 
+bool MainMenu_MysteryGift(void){
+    // FARCALL(aMysteryGift);
+    MysteryGift();
+    // RET;
+    return false;
 }

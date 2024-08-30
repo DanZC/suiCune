@@ -1275,7 +1275,7 @@ void v_SaveData(void){
     // LD_DE(sCrystalData);
     // LD_BC(wCrystalDataEnd - wCrystalData);
     // CALL(aCopyBytes);
-    CopyBytes_Conv(sCrystalData, wCrystalData, wCrystalDataEnd - wCrystalData);
+    CopyBytes_Conv2(GBToRAMAddr(sCrystalData), wram->wCrystalData, wCrystalDataEnd - wCrystalData);
 
 // This block originally had some mobile functionality, but since we're still in
 // BANK(sCrystalData), it instead overwrites the sixteen wEventFlags starting at 1:s4_a60e with
@@ -1300,7 +1300,7 @@ void v_LoadData(void){
     // LD_DE(wCrystalData);
     // LD_BC(wCrystalDataEnd - wCrystalData);
     // CALL(aCopyBytes);
-    CopyBytes_Conv(wCrystalData, sCrystalData, wCrystalDataEnd - wCrystalData);
+    CopyBytes_Conv2(wram->wCrystalData, GBToRAMAddr(sCrystalData), sizeof(wram->wCrystalData));
 
 // This block originally had some mobile functionality to mirror _SaveData above, but instead it
 // (harmlessly) writes the aforementioned wEventFlags to the unused wd479.

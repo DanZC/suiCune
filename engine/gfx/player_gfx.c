@@ -4,8 +4,10 @@
 #include "../../home/delay.h"
 #include "../../home/tilemap.h"
 #include "../../home/text.h"
+#include "../../home/menu.h"
 #include "../../gfx/sprites.h"
 #include "../../gfx/misc.h"
+#include "../../data/player_names.h"
 
 // void ChrisPic(void){
 // INCBIN "gfx/player/chris.2bpp"
@@ -162,24 +164,27 @@ void MovePlayerPic_Conv(uint8_t* hl, uint16_t de){
 }
 
 void ShowPlayerNamingChoices(void){
-    LD_HL(mChrisNameMenuHeader);
-    LD_A_addr(wPlayerGender);
-    BIT_A(PLAYERGENDER_FEMALE_F);
-    IF_Z goto got_header;
-    LD_HL(mKrisNameMenuHeader);
+    // LD_HL(mChrisNameMenuHeader);
+    // LD_A_addr(wPlayerGender);
+    // BIT_A(PLAYERGENDER_FEMALE_F);
+    // IF_Z goto got_header;
+    // LD_HL(mKrisNameMenuHeader);
 
-got_header:
-    CALL(aLoadMenuHeader);
-    CALL(aVerticalMenu);
-    LD_A_addr(wMenuCursorY);
-    DEC_A;
-    CALL(aCopyNameFromMenu);
-    CALL(aCloseWindow);
-    RET;
+// got_header:
+    const struct MenuHeader *hdr = (bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))? &KrisNameMenuHeader: &ChrisNameMenuHeader;
+    // CALL(aLoadMenuHeader);
+    LoadMenuHeader_Conv2(hdr);
+    // CALL(aVerticalMenu);
+    VerticalMenu_Conv();
+    // LD_A_addr(wMenuCursorY);
+    // DEC_A;
+    // CALL(aCopyNameFromMenu);
+    CopyNameFromMenu_Conv(wram->wMenuCursorY - 1);
+    // CALL(aCloseWindow);
+    CloseWindow_Conv2();
+    // RET;
 
 // INCLUDE "data/player_names.asm"
-
-    return GetPlayerNameArray();
 }
 
 void GetPlayerNameArray(void){

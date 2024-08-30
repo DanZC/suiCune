@@ -668,7 +668,7 @@ void init_function_pointers(void) {
     // home/tilemap.c
     REDIRECTED(IsCGB);
     REDIRECTED(SetHPPal);
-    REDIRECTED(WaitBGMap);
+    CONVERTED(WaitBGMap);
     REDIRECTED(CGBOnly_CopyTilemapAtOnce);
     REDIRECTED(v_CopyTilemapAtOnce);
     REDIRECTED(v_CopyTilemapAtOnce_CopyBGMapViaStack);
@@ -695,9 +695,9 @@ void init_function_pointers(void) {
     //REDIRECTED(DebugRoom);
     //REDIRECTED(ResetWRAM);
     //REDIRECTED(_ResetWRAM);
-    //REDIRECTED(SetDefaultBoxNames);
-    //REDIRECTED(InitializeNPCNames);
-    //REDIRECTED(InitializeWorld);
+    CONVERTED(SetDefaultBoxNames);
+    CONVERTED(InitializeNPCNames);
+    CONVERTED(InitializeWorld);
     //REDIRECTED(LoadOrRegenerateLuckyIDNumber);
     //REDIRECTED(Continue);
     CONVERTED(SpawnAfterRed);
@@ -734,10 +734,10 @@ void init_function_pointers(void) {
     //REDIRECTED(Intro_PrepTrainerPic);
     //REDIRECTED(Intro_WipeInFrontpic);
     //REDIRECTED(OakText1);
-    //REDIRECTED(NamePlayer);
+    CONVERTED(NamePlayer);
     //REDIRECTED(ShrinkFrame);
     //REDIRECTED(OakText7);
-    //REDIRECTED(OakSpeech);
+    CONVERTED(OakSpeech);
     //REDIRECTED(IntroFadePalettes);
     //REDIRECTED(Intro_RotatePalettesLeftFrontpic);
     CONVERTED(TitleScreenScene);
@@ -749,7 +749,7 @@ void init_function_pointers(void) {
     //REDIRECTED(TitleScreenEntrance);
     //REDIRECTED(StartTitleScreen);
     CONVERTED(IntroSequence);
-    //REDIRECTED(GameInit);
+    CONVERTED(GameInit);
     //REDIRECTED(Copyright);
     //REDIRECTED(ResetClock);
     //REDIRECTED(UpdateTitleTrailSprite);
@@ -2033,7 +2033,7 @@ void init_function_pointers(void) {
     // REDIRECTED(ClearTilemapEtc);
     // REDIRECTED(MainMenu_Continue);
     // REDIRECTED(MainMenu_Option);
-    REDIRECTED(MainMenu_MysteryGift);
+    // REDIRECTED(MainMenu_MysteryGift);
     // REDIRECTED(MainMenuJoypadLoop);
     CONVERTED(MainMenu_PrintCurrentTimeAndDay);
     // REDIRECTED(MobileMenuGFX);
@@ -2165,7 +2165,7 @@ void init_function_pointers(void) {
     // engine/gfx/player_gfx.c
     // REDIRECTED(GetPlayerBackpic);
     // REDIRECTED(TrainerCardGFX);
-    // REDIRECTED(ShowPlayerNamingChoices);
+    CONVERTED(ShowPlayerNamingChoices);
     CONVERTED(GetChrisBackpic);
     // REDIRECTED(MovePlayerPic);
     // REDIRECTED(KrisCardPic);
@@ -4040,7 +4040,7 @@ void init_function_pointers(void) {
     // REDIRECTED(CheckReceiveCallDelay);
     // REDIRECTED(GetMinutesSinceIfLessThan60);
     // REDIRECTED(CopyDayHourMinToHL);
-    // REDIRECTED(v_InitializeStartDay);
+    CONVERTED(v_InitializeStartDay);
     // REDIRECTED(CalcHoursDaysSince);
     // REDIRECTED(GetHoursSinceIfLessThan24);
     CONVERTED(ClearDailyTimers);
@@ -4049,7 +4049,7 @@ void init_function_pointers(void) {
     // REDIRECTED(UnusedSetSwarmFlag);
     // REDIRECTED(GetTimeElapsed_ExceedsUnitLimit);
     // REDIRECTED(v_CalcMinsHoursDaysSince);
-    // REDIRECTED(InitializeStartDay);
+    CONVERTED(InitializeStartDay);
     // REDIRECTED(CheckPokerusTick);
     // REDIRECTED(RestartLuckyNumberCountdown);
     // REDIRECTED(v_CheckLuckyNumberShowFlag);
@@ -4214,7 +4214,7 @@ void init_function_pointers(void) {
 
     // engine/rtc/restart_clock.c
     // REDIRECTED(JPMinuteString);
-    CONVERTED(RestartClock);
+    // CONVERTED(RestartClock);
     // REDIRECTED(RestartClock_GetWraparoundTime);
     // REDIRECTED(JPHourString);
 

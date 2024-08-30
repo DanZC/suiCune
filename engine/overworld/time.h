@@ -60,6 +60,7 @@ void v_CalcDaysSince_Conv(uint8_t* hl, uint8_t carry);
 void CopyDayHourMinSecToHL(void);
 void CopyDayHourMinSecToHL_Conv(uint8_t* hl);
 void CopyDayToHL(void);
+void CopyDayToHL_Conv(uint8_t* hl);
 void CopyDayHourToHL(void);
 void CopyDayHourMinToHL(void);
 void CopyDayHourMinToHL_Conv(uint8_t* hl);

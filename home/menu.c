@@ -2,6 +2,7 @@
 #include "menu.h"
 #include "delay.h"
 #include "copy.h"
+#include "copy_name.h"
 #include "text.h"
 #include "map_objects.h"
 #include "audio.h"
@@ -1165,6 +1166,28 @@ void CopyNameFromMenu(void) {
     POP_BC;
     POP_HL;
     RET;
+}
+
+void CopyNameFromMenu_Conv(uint8_t a) {
+    // PUSH_HL;
+    // PUSH_BC;
+    // PUSH_AF;
+    // LD_HL(wMenuDataPointer);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    const struct MenuData* data = GetMenuData();
+    // INC_HL;
+    // INC_HL;
+    // POP_AF;
+    // CALL(aGetNthString);
+    // LD_D_H;
+    // LD_E_L;
+    // CALL(aCopyName1);
+    CopyName1_Conv2(U82C(data->verticalMenu.options[a]));
+    // POP_BC;
+    // POP_HL;
+    // RET;
 }
 
 void YesNoBox(void) {
