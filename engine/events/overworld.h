@@ -61,6 +61,7 @@ void TryStrengthOW(void);
 void WhirlpoolFunction(void);
 extern const txt_cmd_s UseWhirlpoolText[];
 void TryWhirlpoolMenu(void);
+bool TryWhirlpoolMenu_Conv(void);
 bool Script_WhirlpoolFromMenu(script_s*);
 bool Script_UsedWhirlpool(script_s*);
 void DisappearWhirlpool(void);

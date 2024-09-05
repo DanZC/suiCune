@@ -6,6 +6,7 @@
 #include "../gfx/crystal_layouts.h"
 #include "../events/poke_seer.h"
 #include "../pokemon/move_mon.h"
+#include "../pokemon/evolve.h"
 #include "../menus/save.h"
 #include "../battle/core.h"
 #include "../../home/map.h"
@@ -3340,13 +3341,15 @@ void LinkTrade(void){
             wram->wOTPartyMon + otmon,
             PARTYMON_STRUCT_LENGTH);
         // PREDEF(pAddTempmonToParty);
-        SafeCallGBAuto(aAddTempmonToParty);
+        // SafeCallGBAuto(aAddTempmonToParty);
+        AddTempmonToParty_Conv();
         // LD_A_addr(wPartyCount);
         // DEC_A;
         // LD_addr_A(wCurPartyMon);
         wram->wCurPartyMon = wram->wPartyCount - 1;
         // CALLFAR(aEvolvePokemon);
-        SafeCallGBAuto(aEvolvePokemon);
+        // SafeCallGBAuto(aEvolvePokemon);
+        EvolvePokemon();
         // CALL(aClearScreen);
         ClearScreen_Conv2();
         // CALL(aLoadTradeScreenBorderGFX);

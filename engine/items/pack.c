@@ -177,7 +177,6 @@ void Pack_RunJumptable(void) {
             if(Pack_InterpretJoypad_Conv(PACKSTATE_INITTMHMPOCKET, PACKSTATE_INITBALLSPOCKET))
                 return;
             // CALL(aPack_ItemBallsKey_LoadSubmenu);
-            // SafeCallGBAuto(aPack_ItemBallsKey_LoadSubmenu);
             Pack_ItemBallsKey_LoadSubmenu();
             // RET;
             return;
@@ -224,7 +223,6 @@ void Pack_RunJumptable(void) {
             if(Pack_InterpretJoypad_Conv(PACKSTATE_INITITEMSPOCKET, PACKSTATE_INITKEYITEMSPOCKET))
                 return;
             // CALL(aPack_ItemBallsKey_LoadSubmenu);
-            // SafeCallGBAuto(aPack_ItemBallsKey_LoadSubmenu);
             Pack_ItemBallsKey_LoadSubmenu();
             // RET;
             return;
@@ -271,7 +269,6 @@ void Pack_RunJumptable(void) {
             if(Pack_InterpretJoypad_Conv(PACKSTATE_INITBALLSPOCKET, PACKSTATE_INITTMHMPOCKET))
                 return;
             // CALL(aPack_ItemBallsKey_LoadSubmenu);
-            // SafeCallGBAuto(aPack_ItemBallsKey_LoadSubmenu);
             Pack_ItemBallsKey_LoadSubmenu();
             // RET;
             return;
@@ -1128,7 +1125,8 @@ static void BattlePack_RunJumptable(void) {
         case PACKSTATE_TMHMPOCKETMENU:
         // TMHMPocketMenu:
             // FARCALL(aTMHMPocket);
-            SafeCallGBAuto(aTMHMPocket);
+            // SafeCallGBAuto(aTMHMPocket);
+            TMHMPocket();
             // LD_B(PACKSTATE_INITKEYITEMSPOCKET);  // left
             // LD_C(PACKSTATE_INITITEMSPOCKET);  // right
             // CALL(aPack_InterpretJoypad);
@@ -1506,7 +1504,8 @@ static void DepositSellPack_RunJumptable(void){
             // CALL(aWaitBGMap_DrawPackGFX);
             WaitBGMap_DrawPackGFX();
             // FARCALL(aTMHMPocket);
-            SafeCallGBAuto(aTMHMPocket);
+            // SafeCallGBAuto(aTMHMPocket);
+            TMHMPocket();
             // LD_A_addr(wCurItem);
             // LD_addr_A(wCurItem);
             // RET;
@@ -1725,7 +1724,8 @@ static void TutorialPack_RunJumptable(void) {
             // CALL(aWaitBGMap_DrawPackGFX);
             WaitBGMap_DrawPackGFX();
             // FARCALL(aTMHMPocket);
-            SafeCallGBAuto(aTMHMPocket);
+            // SafeCallGBAuto(aTMHMPocket);
+            TMHMPocket();
             // LD_A_addr(wCurItem);
             // LD_addr_A(wCurItem);
             // RET;
@@ -1982,7 +1982,6 @@ bool Pack_InterpretJoypad_Conv(uint8_t b, uint8_t c){
         if(wram->wMenuJoypad & (A_BUTTON | SELECT)) {
         // place_insert:
             // FARCALL(aSwitchItemsInBag);
-            // SafeCallGBAuto(aSwitchItemsInBag);
             SwitchItemsInBag();
             // LD_DE(SFX_SWITCH_POKEMON);
             // CALL(aWaitPlaySFX);
@@ -2074,7 +2073,6 @@ bool Pack_InterpretJoypad_Conv(uint8_t b, uint8_t c){
     if(wram->wMenuJoypad & SELECT) {
     // select:
         // FARCALL(aSwitchItemsInBag);
-        // SafeCallGBAuto(aSwitchItemsInBag);
         SwitchItemsInBag();
         // LD_HL(mAskItemMoveText);
         // CALL(aPack_PrintTextNoScroll);

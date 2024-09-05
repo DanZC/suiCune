@@ -1,9 +1,13 @@
 #include "../../constants.h"
 #include "mon_menu.h"
+#include "mon_submenu.h"
 #include "tempmon.h"
 #include "mon_stats.h"
 #include "types.h"
+#include "party_menu.h"
 #include "print_move_description.h"
+#include "stats_screen.h"
+#include "switchpartymons.h"
 #include "../../home/names.h"
 #include "../../home/copy_name.h"
 #include "../../home/menu.h"
@@ -15,13 +19,19 @@
 #include "../../home/text.h"
 #include "../../home/print_text.h"
 #include "../../home/pokemon.h"
+#include "../../home/audio.h"
+#include "../../home/delay.h"
 #include "../gfx/load_font.h"
 #include "../gfx/sprites.h"
 #include "../gfx/mon_icons.h"
 #include "../items/items.h"
 #include "../items/buy_sell_toss.h"
+#include "../items/item_effects.h"
+#include "../events/overworld.h"
+#include "../events/sweet_scent.h"
 #include "../../data/text/common.h"
 #include "../../data/moves/moves.h"
+#include "../../mobile/mobile_41.h"
 
 void HasNoItems(void){
     LD_A_addr(wNumItems);
@@ -287,114 +297,137 @@ void PartyMonItemName_Conv(item_t item){
     // RET;
 }
 
-void CancelPokemonAction(void){
-    FARCALL(aInitPartyMenuWithCancel);
-    FARCALL(aUnfreezeMonIcons);
-    LD_A(1);
-    RET;
-
+u8_pair_s CancelPokemonAction(void){
+    // FARCALL(aInitPartyMenuWithCancel);
+    InitPartyMenuWithCancel();
+    // FARCALL(aUnfreezeMonIcons);
+    UnfreezeMonIcons_Conv();
+    // LD_A(1);
+    // RET;
+    return u8_pair(0x1, 0x0);
 }
 
-void PokemonActionSubmenu(void){
-    hlcoord(1, 15, wTilemap);
-    LD_BC((2 << 8) | 18);
-    CALL(aClearBox);
-    FARCALL(aMonSubmenu);
-    CALL(aGetCurNickname);
-    LD_A_addr(wMenuSelection);
-    LD_HL(mPokemonActionSubmenu_Actions);
-    LD_DE(3);
-    CALL(aIsInArray);
-    IF_NC goto nothing;
+u8_pair_s PokemonActionSubmenu(void){
+    // hlcoord(1, 15, wTilemap);
+    // LD_BC((2 << 8) | 18);
+    // CALL(aClearBox);
+    ClearBox_Conv2(coord(1, 15, wram->wTilemap), 18, 2);
+    // FARCALL(aMonSubmenu);
+    MonSubmenu();
+    // CALL(aGetCurNickname);
+    GetCurNickname_Conv2();
+    // LD_A_addr(wMenuSelection);
+    // LD_HL(mPokemonActionSubmenu_Actions);
+    // LD_DE(3);
+    // CALL(aIsInArray);
+    // IF_NC goto nothing;
 
-    INC_HL;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    JP_hl;
+// Actions:
+    switch(wram->wMenuSelection) {
+        case MONMENUITEM_CUT:       return MonMenu_Cut();
+        case MONMENUITEM_FLY:       return MonMenu_Fly();
+        case MONMENUITEM_SURF:      return MonMenu_Surf();
+        case MONMENUITEM_STRENGTH:  return MonMenu_Strength();
+        case MONMENUITEM_FLASH:     return MonMenu_Flash();
+        case MONMENUITEM_WHIRLPOOL: return MonMenu_Whirlpool();
+        case MONMENUITEM_DIG:       return MonMenu_Dig();
+        case MONMENUITEM_TELEPORT:  return MonMenu_Teleport();
+        case MONMENUITEM_SOFTBOILED:return MonMenu_Softboiled_MilkDrink();
+        case MONMENUITEM_MILKDRINK: return MonMenu_Softboiled_MilkDrink();
+        case MONMENUITEM_HEADBUTT:  return MonMenu_Headbutt();
+        case MONMENUITEM_WATERFALL: return MonMenu_Waterfall();
+        case MONMENUITEM_ROCKSMASH: return MonMenu_RockSmash();
+        case MONMENUITEM_SWEETSCENT:return MonMenu_SweetScent();
+        case MONMENUITEM_STATS:     return OpenPartyStats();
+        case MONMENUITEM_SWITCH:    return SwitchPartyMons();
+        //case MONMENUITEM_ITEM:  return GiveTakePartyMonItem();
+        case MONMENUITEM_CANCEL:    return CancelPokemonAction();
+        //case MONMENUITEM_MOVE:  return ManagePokemonMoves();
+        //case MONMENUITEM_MAIL:  return MonMailAction();
+        default:
+        // nothing:
+            // LD_A(0);
+            // RET;
+            return u8_pair(0, 0);
+    }
 
-
-nothing:
-    LD_A(0);
-    RET;
-
-
-Actions:
-    //dbw ['MONMENUITEM_CUT', 'MonMenu_Cut']
-    //dbw ['MONMENUITEM_FLY', 'MonMenu_Fly']
-    //dbw ['MONMENUITEM_SURF', 'MonMenu_Surf']
-    //dbw ['MONMENUITEM_STRENGTH', 'MonMenu_Strength']
-    //dbw ['MONMENUITEM_FLASH', 'MonMenu_Flash']
-    //dbw ['MONMENUITEM_WHIRLPOOL', 'MonMenu_Whirlpool']
-    //dbw ['MONMENUITEM_DIG', 'MonMenu_Dig']
-    //dbw ['MONMENUITEM_TELEPORT', 'MonMenu_Teleport']
-    //dbw ['MONMENUITEM_SOFTBOILED', 'MonMenu_Softboiled_MilkDrink']
-    //dbw ['MONMENUITEM_MILKDRINK', 'MonMenu_Softboiled_MilkDrink']
-    //dbw ['MONMENUITEM_HEADBUTT', 'MonMenu_Headbutt']
-    //dbw ['MONMENUITEM_WATERFALL', 'MonMenu_Waterfall']
-    //dbw ['MONMENUITEM_ROCKSMASH', 'MonMenu_RockSmash']
-    //dbw ['MONMENUITEM_SWEETSCENT', 'MonMenu_SweetScent']
-    //dbw ['MONMENUITEM_STATS', 'OpenPartyStats']
-    //dbw ['MONMENUITEM_SWITCH', 'SwitchPartyMons']
-    //dbw ['MONMENUITEM_ITEM', 'GiveTakePartyMonItem']
-    //dbw ['MONMENUITEM_CANCEL', 'CancelPokemonAction']
-    //dbw ['MONMENUITEM_MOVE', 'ManagePokemonMoves']
-    //dbw ['MONMENUITEM_MAIL', 'MonMailAction']
-
-    return SwitchPartyMons();
+    // INC_HL;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // JP_hl;
 }
 
-void SwitchPartyMons(void){
 //  Don't try if there's nothing to switch!
-    LD_A_addr(wPartyCount);
-    CP_A(2);
-    IF_C goto DontSwitch;
+u8_pair_s SwitchPartyMons(void){
+    // LD_A_addr(wPartyCount);
+    // CP_A(2);
+    // IF_C goto DontSwitch;
+    if(wram->wPartyCount >= 2) {
+        // LD_A_addr(wCurPartyMon);
+        // INC_A;
+        // LD_addr_A(wSwitchMon);
+        wram->wSwitchMon = wram->wCurPartyMon + 1;
 
-    LD_A_addr(wCurPartyMon);
-    INC_A;
-    LD_addr_A(wSwitchMon);
+        // FARCALL(aHoldSwitchmonIcon);
+        HoldSwitchmonIcon_Conv();
+        // FARCALL(aInitPartyMenuNoCancel);
+        InitPartyMenuNoCancel();
 
-    FARCALL(aHoldSwitchmonIcon);
-    FARCALL(aInitPartyMenuNoCancel);
+        // LD_A(PARTYMENUACTION_MOVE);
+        // LD_addr_A(wPartyMenuActionText);
+        wram->wPartyMenuActionText = PARTYMENUACTION_MOVE;
+        // FARCALL(aWritePartyMenuTilemap);
+        WritePartyMenuTilemap();
+        // FARCALL(aPrintPartyMenuText);
+        PrintPartyMenuText();
 
-    LD_A(PARTYMENUACTION_MOVE);
-    LD_addr_A(wPartyMenuActionText);
-    FARCALL(aWritePartyMenuTilemap);
-    FARCALL(aPrintPartyMenuText);
+        // hlcoord(0, 1, wTilemap);
+        // LD_BC(SCREEN_WIDTH * 2);
+        // LD_A_addr(wSwitchMon);
+        // DEC_A;
+        // CALL(aAddNTimes);
+        // LD_hl(0xec);
+        coord(0, 1, wram->wTilemap)[SCREEN_WIDTH * 2 * (wram->wSwitchMon - 1)] = 0xec;
+        // CALL(aWaitBGMap);
+        WaitBGMap_Conv();
+        // CALL(aSetPalettes);
+        SetPalettes_Conv();
+        // CALL(aDelayFrame);
+        DelayFrame();
 
-    hlcoord(0, 1, wTilemap);
-    LD_BC(SCREEN_WIDTH * 2);
-    LD_A_addr(wSwitchMon);
-    DEC_A;
-    CALL(aAddNTimes);
-    LD_hl(0xec);
-    CALL(aWaitBGMap);
-    CALL(aSetPalettes);
-    CALL(aDelayFrame);
+        // FARCALL(aPartyMenuSelect);
+        u8_flag_s res = PartyMenuSelect();
+        // BIT_B(1);
+        // IF_C goto DontSwitch;
+        if(!res.flag){
+            // FARCALL(av_SwitchPartyMons);
+            v_SwitchPartyMons();
 
-    FARCALL(aPartyMenuSelect);
-    BIT_B(1);
-    IF_C goto DontSwitch;
+            // XOR_A_A;
+            // LD_addr_A(wPartyMenuActionText);
+            wram->wPartyMenuActionText = 0x0;
 
-    FARCALL(av_SwitchPartyMons);
+            // FARCALL(aLoadPartyMenuGFX);
+            LoadPartyMenuGFX();
+            // FARCALL(aInitPartyMenuWithCancel);
+            InitPartyMenuWithCancel();
+            // FARCALL(aInitPartyMenuGFX);
+            InitPartyMenuGFX();
 
-    XOR_A_A;
-    LD_addr_A(wPartyMenuActionText);
+            // LD_A(1);
+            // RET;
+            return u8_pair(1, 0);
+        }
+    }
 
-    FARCALL(aLoadPartyMenuGFX);
-    FARCALL(aInitPartyMenuWithCancel);
-    FARCALL(aInitPartyMenuGFX);
-
-    LD_A(1);
-    RET;
-
-
-DontSwitch:
-    XOR_A_A;
-    LD_addr_A(wPartyMenuActionText);
-    CALL(aCancelPokemonAction);
-    RET;
-
+// DontSwitch:
+    // XOR_A_A;
+    // LD_addr_A(wPartyMenuActionText);
+    wram->wPartyMenuActionText = 0x0;
+    // CALL(aCancelPokemonAction);
+    // RET;
+    return CancelPokemonAction();
 }
 
 void GiveTakePartyMonItem(void){
@@ -820,14 +853,14 @@ done:
     RET;
 
 
-MenuHeader:
+// MenuHeader:
     //db ['MENU_BACKUP_TILES'];  // flags
     //menu_coords ['12', '10', 'SCREEN_WIDTH - 1', 'SCREEN_HEIGHT - 1'];
     //dw ['.MenuData'];
     //db ['1'];  // default option
 
 
-MenuData:
+// MenuData:
     //db ['STATICMENU_CURSOR'];  // flags
     //db ['3'];  // items
     //db ['"READ@"'];
@@ -835,296 +868,340 @@ MenuData:
     //db ['"QUIT@"'];
 
 
-MailLoseMessageText:
+// MailLoseMessageText:
     //text_far ['_MailLoseMessageText']
     //text_end ['?']
 
 
-MailDetachedText:
+// MailDetachedText:
     //text_far ['_MailDetachedText']
     //text_end ['?']
 
 
-MailNoSpaceText:
+// MailNoSpaceText:
     //text_far ['_MailNoSpaceText']
     //text_end ['?']
 
 
-MailAskSendToPCText:
+// MailAskSendToPCText:
     //text_far ['_MailAskSendToPCText']
     //text_end ['?']
 
 
-MailboxFullText:
+// MailboxFullText:
     //text_far ['_MailboxFullText']
     //text_end ['?']
 
 
-MailSentToPCText:
+// MailSentToPCText:
     //text_far ['_MailSentToPCText']
     //text_end ['?']
-
-    return OpenPartyStats();
 }
 
-void OpenPartyStats(void){
-    CALL(aLoadStandardMenuHeader);
-    CALL(aClearSprites);
+u8_pair_s OpenPartyStats(void){
+    // CALL(aLoadStandardMenuHeader);
+    LoadStandardMenuHeader_Conv();
+    // CALL(aClearSprites);
+    ClearSprites_Conv();
 //  PartyMon
-    XOR_A_A;
-    LD_addr_A(wMonType);
-    CALL(aLowVolume);
-    PREDEF(pStatsScreenInit);
-    CALL(aMaxVolume);
-    CALL(aCall_ExitMenu);
-    LD_A(0);
-    RET;
-
+    // XOR_A_A;
+    // LD_addr_A(wMonType);
+    wram->wMonType = PARTYMON;
+    // CALL(aLowVolume);
+    LowVolume_Conv();
+    // PREDEF(pStatsScreenInit);
+    StatsScreenInit();
+    // CALL(aMaxVolume);
+    MaxVolume_Conv();
+    // CALL(aCall_ExitMenu);
+    ExitMenu_Conv2();
+    // LD_A(0);
+    // RET;
+    return u8_pair(0, 0);
 }
 
-void MonMenu_Cut(void){
-    FARCALL(aCutFunction);
-    LD_A_addr(wFieldMoveSucceeded);
-    CP_A(0x1);
-    IF_NZ goto Fail;
-    LD_B(0x4);
-    LD_A(0x2);
-    RET;
+u8_pair_s MonMenu_Cut(void){
+    // FARCALL(aCutFunction);
+    CutFunction();
+    // LD_A_addr(wFieldMoveSucceeded);
+    // CP_A(0x1);
+    // IF_NZ goto Fail;
+    if(wram->wFieldMoveSucceeded == 0x1){
+        // LD_B(0x4);
+        // LD_A(0x2);
+        // RET;
+        return u8_pair(0x2, 0x4);
+    }
 
-
-Fail:
-    LD_A(0x3);
-    RET;
-
+// Fail:
+    // LD_A(0x3);
+    // RET;
+    return u8_pair(0x3, 0x0);
 }
 
-void MonMenu_Fly(void){
-    FARCALL(aFlyFunction);
-    LD_A_addr(wFieldMoveSucceeded);
-    CP_A(0x2);
-    IF_Z goto Fail;
-    CP_A(0x0);
-    IF_Z goto Error;
-    FARCALL(aStubbedTrainerRankings_Fly);
-    LD_B(0x4);
-    LD_A(0x2);
-    RET;
+u8_pair_s MonMenu_Fly(void){
+    // FARCALL(aFlyFunction);
+    FlyFunction();
+    // LD_A_addr(wFieldMoveSucceeded);
+    // CP_A(0x2);
+    // IF_Z goto Fail;
+    if(wram->wFieldMoveSucceeded == 0x2) {
+    // Fail:
+        // LD_A(0x3);
+        // RET;
+        return u8_pair(0x3, 0x0);
+    }
+    // CP_A(0x0);
+    // IF_Z goto Error;
+    if(wram->wFieldMoveSucceeded == 0x0) {
+    // Error:
+        // LD_A(0x0);
+        // RET;
+        return u8_pair(0x0, 0x0);
+    }
+    // FARCALL(aStubbedTrainerRankings_Fly);
+    StubbedTrainerRankings_Fly();
+    // LD_B(0x4);
+    // LD_A(0x2);
+    // RET;
+    return u8_pair(0x2, 0x4);
 
-
-Fail:
-    LD_A(0x3);
-    RET;
-
-
-Error:
-    LD_A(0x0);
-    RET;
-
-
-NoReload:
+// NoReload:
 //   //  unreferenced
-    LD_A(0x1);
-    RET;
-
+    // LD_A(0x1);
+    // RET;
 }
 
-void MonMenu_Flash(void){
-    FARCALL(aFlashFunction);
-    LD_A_addr(wFieldMoveSucceeded);
-    CP_A(0x1);
-    IF_NZ goto Fail;
-    LD_B(0x4);
-    LD_A(0x2);
-    RET;
+u8_pair_s MonMenu_Flash(void){
+    // FARCALL(aFlashFunction);
+    FlashFunction();
+    // LD_A_addr(wFieldMoveSucceeded);
+    // CP_A(0x1);
+    // IF_NZ goto Fail;
+    if(wram->wFieldMoveSucceeded == 0x1) {
+        // LD_B(0x4);
+        // LD_A(0x2);
+        // RET;
+        return u8_pair(0x2, 0x4);
+    }
 
-
-Fail:
-    LD_A(0x3);
-    RET;
-
+// Fail:
+    // LD_A(0x3);
+    // RET;
+    return u8_pair(0x3, 0x0);
 }
 
-void MonMenu_Strength(void){
-    FARCALL(aStrengthFunction);
-    LD_A_addr(wFieldMoveSucceeded);
-    CP_A(0x1);
-    IF_NZ goto Fail;
-    LD_B(0x4);
-    LD_A(0x2);
-    RET;
+u8_pair_s MonMenu_Strength(void){
+    // FARCALL(aStrengthFunction);
+    StrengthFunction();
+    // LD_A_addr(wFieldMoveSucceeded);
+    // CP_A(0x1);
+    // IF_NZ goto Fail;
+    if(wram->wFieldMoveSucceeded == 0x1) {
+        // LD_B(0x4);
+        // LD_A(0x2);
+        // RET;
+        return u8_pair(0x2, 0x4);
+    }
 
-
-Fail:
-    LD_A(0x3);
-    RET;
-
+// Fail:
+    // LD_A(0x3);
+    // RET;
+    return u8_pair(0x3, 0x0);
 }
 
-void MonMenu_Whirlpool(void){
-    FARCALL(aWhirlpoolFunction);
-    LD_A_addr(wFieldMoveSucceeded);
-    CP_A(0x1);
-    IF_NZ goto Fail;
-    LD_B(0x4);
-    LD_A(0x2);
-    RET;
+u8_pair_s MonMenu_Whirlpool(void){
+    // FARCALL(aWhirlpoolFunction);
+    WhirlpoolFunction();
+    // LD_A_addr(wFieldMoveSucceeded);
+    // CP_A(0x1);
+    // IF_NZ goto Fail;
+    if(wram->wFieldMoveSucceeded == 0x1) {
+        // LD_B(0x4);
+        // LD_A(0x2);
+        // RET;
+        return u8_pair(0x2, 0x4);
+    }
 
-
-Fail:
-    LD_A(0x3);
-    RET;
-
+// Fail:
+    // LD_A(0x3);
+    // RET;
+    return u8_pair(0x3, 0x0);
 }
 
-void MonMenu_Waterfall(void){
-    FARCALL(aWaterfallFunction);
-    LD_A_addr(wFieldMoveSucceeded);
-    CP_A(0x1);
-    IF_NZ goto Fail;
-    LD_B(0x4);
-    LD_A(0x2);
-    RET;
+u8_pair_s MonMenu_Waterfall(void){
+    // FARCALL(aWaterfallFunction);
+    WaterfallFunction();
+    // LD_A_addr(wFieldMoveSucceeded);
+    // CP_A(0x1);
+    // IF_NZ goto Fail;
+    if(wram->wFieldMoveSucceeded == 0x1) {
+        // LD_B(0x4);
+        // LD_A(0x2);
+        // RET;
+        return u8_pair(0x2, 0x4);
+    }
 
-
-Fail:
-    LD_A(0x3);
-    RET;
-
+// Fail:
+    // LD_A(0x3);
+    // RET;
+    return u8_pair(0x3, 0x0);
 }
 
-void MonMenu_Teleport(void){
-    FARCALL(aTeleportFunction);
-    LD_A_addr(wFieldMoveSucceeded);
-    AND_A_A;
-    IF_Z goto Fail;
-    LD_B(0x4);
-    LD_A(0x2);
-    RET;
+u8_pair_s MonMenu_Teleport(void){
+    // FARCALL(aTeleportFunction);
+    TeleportFunction();
+    // LD_A_addr(wFieldMoveSucceeded);
+    // AND_A_A;
+    // IF_Z goto Fail;
+    if(wram->wFieldMoveSucceeded != 0x0) {
+        // LD_B(0x4);
+        // LD_A(0x2);
+        // RET;
+        return u8_pair(0x2, 0x4);
+    }
 
-
-Fail:
-    LD_A(0x3);
-    RET;
-
+// Fail:
+    // LD_A(0x3);
+    // RET;
+    return u8_pair(0x3, 0x0);
 }
 
-void MonMenu_Surf(void){
-    FARCALL(aSurfFunction);
-    LD_A_addr(wFieldMoveSucceeded);
-    AND_A_A;
-    IF_Z goto Fail;
-    LD_B(0x4);
-    LD_A(0x2);
-    RET;
+u8_pair_s MonMenu_Surf(void){
+    // FARCALL(aSurfFunction);
+    SurfFunction();
+    // LD_A_addr(wFieldMoveSucceeded);
+    // AND_A_A;
+    // IF_Z goto Fail;
+    if(wram->wFieldMoveSucceeded != 0x0) {
+        // LD_B(0x4);
+        // LD_A(0x2);
+        // RET;
+        return u8_pair(0x2, 0x4);
+    }
 
-
-Fail:
-    LD_A(0x3);
-    RET;
-
+// Fail:
+    // LD_A(0x3);
+    // RET;
+    return u8_pair(0x3, 0x0);
 }
 
-void MonMenu_Dig(void){
-    FARCALL(aDigFunction);
-    LD_A_addr(wFieldMoveSucceeded);
-    CP_A(0x1);
-    IF_NZ goto Fail;
-    LD_B(0x4);
-    LD_A(0x2);
-    RET;
+u8_pair_s MonMenu_Dig(void){
+    // FARCALL(aDigFunction);
+    DigFunction();
+    // LD_A_addr(wFieldMoveSucceeded);
+    // CP_A(0x1);
+    // IF_NZ goto Fail;
+    if(wram->wFieldMoveSucceeded == 0x1) {
+        // LD_B(0x4);
+        // LD_A(0x2);
+        // RET;
+        return u8_pair(0x2, 0x4);
+    }
 
-
-Fail:
-    LD_A(0x3);
-    RET;
-
+// Fail:
+    // LD_A(0x3);
+    // RET;
+    return u8_pair(0x3, 0x0);
 }
 
-void MonMenu_Softboiled_MilkDrink(void){
-    CALL(aMonMenu_Softboiled_MilkDrink_CheckMonHasEnoughHP);
-    IF_NC goto NotEnoughHP;
-    FARCALL(aSoftboiled_MilkDrinkFunction);
-    goto finish;
-
-
-NotEnoughHP:
-    LD_HL(mMonMenu_Softboiled_MilkDrink_PokemonNotEnoughHPText);
-    CALL(aPrintText);
-
-
-finish:
-    XOR_A_A;
-    LD_addr_A(wPartyMenuActionText);
-    LD_A(0x3);
-    RET;
-
-
-PokemonNotEnoughHPText:
-    //text_far ['_PokemonNotEnoughHPText']
-    //text_end ['?']
-
-
-CheckMonHasEnoughHP:
+static bool MonMenu_Softboiled_MilkDrink_CheckMonHasEnoughHP(void){
 //  Need to have at least (MaxHP / 5) HP left.
-    LD_A(MON_MAXHP);
-    CALL(aGetPartyParamLocation);
-    LD_A_hli;
-    LDH_addr_A(hDividend + 0);
-    LD_A_hl;
-    LDH_addr_A(hDividend + 1);
-    LD_A(5);
-    LDH_addr_A(hDivisor);
-    LD_B(2);
-    CALL(aDivide);
-    LD_A(MON_HP + 1);
-    CALL(aGetPartyParamLocation);
-    LDH_A_addr(hQuotient + 3);
-    SUB_A_hl;
-    DEC_HL;
-    LDH_A_addr(hQuotient + 2);
-    SBC_A_hl;
-    RET;
-
+    // LD_A(MON_MAXHP);
+    // CALL(aGetPartyParamLocation);
+    // LD_A_hli;
+    // LDH_addr_A(hDividend + 0);
+    // LD_A_hl;
+    // LDH_addr_A(hDividend + 1);
+    // LD_A(5);
+    // LDH_addr_A(hDivisor);
+    // LD_B(2);
+    // CALL(aDivide);
+    uint16_t amt = BigEndianToNative16(wram->wPartyMon[wram->wCurPartyMon].maxHP) / 5;
+    // LD_A(MON_HP + 1);
+    // CALL(aGetPartyParamLocation);
+    // LDH_A_addr(hQuotient + 3);
+    // SUB_A_hl;
+    // DEC_HL;
+    // LDH_A_addr(hQuotient + 2);
+    // SBC_A_hl;
+    // RET;
+    return BigEndianToNative16(wram->wPartyMon[wram->wCurPartyMon].HP) >= amt;
 }
 
-void MonMenu_Headbutt(void){
-    FARCALL(aHeadbuttFunction);
-    LD_A_addr(wFieldMoveSucceeded);
-    CP_A(0x1);
-    IF_NZ goto Fail;
-    LD_B(0x4);
-    LD_A(0x2);
-    RET;
+u8_pair_s MonMenu_Softboiled_MilkDrink(void){
+    static const txt_cmd_s PokemonNotEnoughHPText[] = {
+        text_far(v_PokemonNotEnoughHPText)
+        text_end
+    };
+    // CALL(aMonMenu_Softboiled_MilkDrink_CheckMonHasEnoughHP);
+    // IF_NC goto NotEnoughHP;
+    if(MonMenu_Softboiled_MilkDrink_CheckMonHasEnoughHP()) {
+        // FARCALL(aSoftboiled_MilkDrinkFunction);
+        Softboiled_MilkDrinkFunction();
+        // goto finish;
+    }
+    else {
+    // NotEnoughHP:
+        // LD_HL(mMonMenu_Softboiled_MilkDrink_PokemonNotEnoughHPText);
+        // CALL(aPrintText);
+        PrintText_Conv2(PokemonNotEnoughHPText);
+    }
 
-
-Fail:
-    LD_A(0x3);
-    RET;
-
+// finish:
+    // XOR_A_A;
+    // LD_addr_A(wPartyMenuActionText);
+    wram->wPartyMenuActionText = 0x0;
+    // LD_A(0x3);
+    // RET;
+    return u8_pair(0x3, 0x0);
 }
 
-void MonMenu_RockSmash(void){
-    FARCALL(aRockSmashFunction);
-    LD_A_addr(wFieldMoveSucceeded);
-    CP_A(0x1);
-    IF_NZ goto Fail;
-    LD_B(0x4);
-    LD_A(0x2);
-    RET;
+u8_pair_s MonMenu_Headbutt(void){
+    // FARCALL(aHeadbuttFunction);
+    HeadbuttFunction();
+    // LD_A_addr(wFieldMoveSucceeded);
+    // CP_A(0x1);
+    // IF_NZ goto Fail;
+    if(wram->wFieldMoveSucceeded == 0x1) {
+        // LD_B(0x4);
+        // LD_A(0x2);
+        // RET;
+        return u8_pair(0x2, 0x4);
+    }
 
-
-Fail:
-    LD_A(0x3);
-    RET;
-
+// Fail:
+    // LD_A(0x3);
+    // RET;
+    return u8_pair(0x3, 0x0);
 }
 
-void MonMenu_SweetScent(void){
-    FARCALL(aSweetScentFromMenu);
-    LD_B(0x4);
-    LD_A(0x2);
-    RET;
+u8_pair_s MonMenu_RockSmash(void){
+    // FARCALL(aRockSmashFunction);
+    RockSmashFunction();
+    // LD_A_addr(wFieldMoveSucceeded);
+    // CP_A(0x1);
+    // IF_NZ goto Fail;
+    if(wram->wFieldMoveSucceeded == 0x1) {
+        // LD_B(0x4);
+        // LD_A(0x2);
+        // RET;
+        return u8_pair(0x2, 0x4);
+    }
 
+// Fail:
+    // LD_A(0x3);
+    // RET;
+    return u8_pair(0x3, 0x0);
+}
+
+u8_pair_s MonMenu_SweetScent(void){
+    // FARCALL(aSweetScentFromMenu);
+    SweetScentFromMenu();
+    // LD_B(0x4);
+    // LD_A(0x2);
+    // RET;
+    return u8_pair(0x2, 0x4);
 }
 
 void ChooseMoveToDelete(void){

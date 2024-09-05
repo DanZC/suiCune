@@ -928,27 +928,36 @@ void InitPartyMenuWithCancel(void){
 
 void InitPartyMenuNoCancel(void){
 //  no cancel
-    LD_DE(mPartyMenu2DMenuData);
-    CALL(aLoad2DMenuData);
-    LD_A_addr(wPartyCount);
-    LD_addr_A(w2DMenuNumRows);  // list length
-    LD_B_A;
-    LD_A_addr(wPartyMenuCursor);
-    AND_A_A;
-    IF_Z goto skip;
-    INC_B;
-    CP_A_B;
-    IF_C goto done;
+    // LD_DE(mPartyMenu2DMenuData);
+    // CALL(aLoad2DMenuData);
+    Load2DMenuData_Conv(PartyMenu2DMenuData);
+    // LD_A_addr(wPartyCount);
+    // LD_addr_A(w2DMenuNumRows);  // list length
+    wram->w2DMenuNumRows = wram->wPartyCount;
+    // LD_B_A;
+    uint8_t b = wram->wPartyCount;
+    // LD_A_addr(wPartyMenuCursor);
+    uint8_t a = wram->wPartyMenuCursor;
+    // AND_A_A;
+    // IF_Z goto skip;
+    // INC_B;
+    // CP_A_B;
+    // IF_C goto done;
+    if(a != 0 && a < b + 1) {
+        wram->wMenuCursorY = a;
+    }
+    else {
+    // skip:
+        // LD_A(1);
+        wram->wMenuCursorY = 1;
+    }
 
-skip:
-    LD_A(1);
-
-done:
-    LD_addr_A(wMenuCursorY);
-    LD_A(A_BUTTON | B_BUTTON);
-    LD_addr_A(wMenuJoypadFilter);
-    RET;
-
+// done:
+    // LD_addr_A(wMenuCursorY);
+    // LD_A(A_BUTTON | B_BUTTON);
+    // LD_addr_A(wMenuJoypadFilter);
+    wram->wMenuJoypadFilter = A_BUTTON | B_BUTTON;
+    // RET;
 }
 
 const uint8_t PartyMenu2DMenuData[] = {

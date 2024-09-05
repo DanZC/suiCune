@@ -2938,6 +2938,34 @@ okay:
 
 }
 
+void RemoveHP_Conv(struct PartyMon* bc, uint16_t amount){
+    // LD_A(MON_HP + 1);
+    // CALL(aGetPartyParamLocation);
+    uint16_t hp = BigEndianToNative16(bc->HP);
+    // LD_A_hl;
+    // SUB_A_E;
+    // LD_hld_A;
+    // LD_A_hl;
+    // SBC_A_D;
+    // LD_hl_A;
+    // IF_NC goto okay;
+    if(hp < amount) {
+        // XOR_A_A;
+        // LD_hld_A;
+        // LD_hl_A;
+        wram->wHPBuffer3 = 0;
+        bc->HP = 0;
+    }
+    else {
+        wram->wHPBuffer3 = hp - amount;
+        bc->HP = NativeToBigEndian16(hp - amount);
+    }
+
+// okay:
+    // CALL(aLoadCurHPIntoBuffer3);
+    // RET;
+}
+
 bool IsMonFainted(struct PartyMon* bc){
     // PUSH_DE;
     // CALL(aLoadMaxHPIntoBuffer1);
@@ -3061,6 +3089,27 @@ void GetOneFifthMaxHP(void){
 
 }
 
+uint16_t GetOneFifthMaxHP_Conv(struct PartyMon* bc){
+    // PUSH_BC;
+    // LD_A(MON_MAXHP);
+    // CALL(aGetPartyParamLocation);
+    // LD_A_hli;
+    // LDH_addr_A(hDividend + 0);
+    // LD_A_hl;
+    // LDH_addr_A(hDividend + 1);
+    // LD_A(5);
+    // LDH_addr_A(hDivisor);
+    // LD_B(2);
+    // CALL(aDivide);
+    // LDH_A_addr(hQuotient + 2);
+    // LD_D_A;
+    // LDH_A_addr(hQuotient + 3);
+    // LD_E_A;
+    // POP_BC;
+    // RET;
+    return BigEndianToNative16(bc->maxHP) / 5;
+}
+
 uint16_t GetHealingItemAmount(item_t item){
     // PUSH_HL;
     // LD_A_addr(wCurItem);
@@ -3100,79 +3149,103 @@ uint16_t GetHealingItemAmount(item_t item){
     return 0;
 }
 
+static u8_flag_s Softboiled_MilkDrinkFunction_SelectMilkDrinkRecipient(uint8_t b){
+    static const txt_cmd_s ItemCantUseOnMonText[] = {
+        text_far(v_ItemCantUseOnMonText)
+        text_end
+    };
+    while(1){
+    // loop:
+        // PUSH_BC;
+        // LD_A(PARTYMENUACTION_HEALING_ITEM);
+        // LD_addr_A(wPartyMenuActionText);
+        wram->wPartyMenuActionText = PARTYMENUACTION_HEALING_ITEM;
+        // CALL(aChooseMonToUseItemOn);
+        u8_flag_s res = ChooseMonToUseItemOn();
+        // POP_BC;
+        // IF_C goto set_carry;
+        if(res.flag)
+            return u8_flag(b, true);
+        // LD_A_addr(wPartyMenuCursor);
+        // DEC_A;
+        // LD_C_A;
+        uint8_t c = res.a - 1;
+        // LD_A_B;
+        // CP_A_C;
+        // IF_Z goto cant_use;  // chose the same mon as user
+        // LD_A_C;
+        // LD_addr_A(wCurPartyMon);
+        // CALL(aIsMonFainted);
+        // IF_Z goto cant_use;
+        // CALL(aIsMonAtFullHealth);
+        // IF_NC goto cant_use;
+        if(c != b && !IsMonFainted(wram->wPartyMon + c) && !IsMonAtFullHealth(wram->wPartyMon + c)) {
+            // XOR_A_A;
+            // RET;
+            return u8_flag(c, false);
+        }
+
+    // set_carry:
+        // SCF;
+        // RET;
+
+    // cant_use:
+        // PUSH_BC;
+        // LD_HL(mSoftboiled_MilkDrinkFunction_ItemCantUseOnMonText);
+        // CALL(aMenuTextboxBackup);
+        MenuTextboxBackup_Conv(ItemCantUseOnMonText);
+        // POP_BC;
+        // goto loop;
+    }
+}
+
 void Softboiled_MilkDrinkFunction(void){
 //  Softboiled/Milk Drink in the field
-    LD_A_addr(wPartyMenuCursor);
-    DEC_A;
-    LD_B_A;
-    CALL(aSoftboiled_MilkDrinkFunction_SelectMilkDrinkRecipient);  // select pokemon
-    IF_C goto skip;
-    LD_A_B;
-    LD_addr_A(wCurPartyMon);
-    CALL(aIsMonFainted);
-    CALL(aGetOneFifthMaxHP);
-    CALL(aRemoveHP);
-    PUSH_BC;
-    CALL(aHealHP_SFX_GFX);
-    POP_BC;
-    CALL(aGetOneFifthMaxHP);
-    LD_A_C;
-    LD_addr_A(wCurPartyMon);
-    CALL(aIsMonFainted);
-    CALL(aRestoreHealth);
-    CALL(aHealHP_SFX_GFX);
-    LD_A(PARTYMENUTEXT_HEAL_HP);
-    CALL(aItemActionText);
-    CALL(aJoyWaitAorB);
+    // LD_A_addr(wPartyMenuCursor);
+    // DEC_A;
+    // LD_B_A;
+    uint8_t b = wram->wPartyMenuCursor - 1;
+    // CALL(aSoftboiled_MilkDrinkFunction_SelectMilkDrinkRecipient);  // select pokemon
+    u8_flag_s res = Softboiled_MilkDrinkFunction_SelectMilkDrinkRecipient(b);
+    // IF_C goto skip;
+    if(!res.flag){
+        // LD_A_B;
+        // LD_addr_A(wCurPartyMon);
+        struct PartyMon* user = wram->wPartyMon + b;
+        // CALL(aIsMonFainted);
+        IsMonFainted(user);
+        // CALL(aGetOneFifthMaxHP);
+        uint16_t amt = GetOneFifthMaxHP_Conv(user);
+        // CALL(aRemoveHP);
+        RemoveHP_Conv(user, amt);
+        // PUSH_BC;
+        // CALL(aHealHP_SFX_GFX);
+        HealHP_SFX_GFX();
+        // POP_BC;
+        // CALL(aGetOneFifthMaxHP);
+        amt = GetOneFifthMaxHP_Conv(user);
+        // LD_A_C;
+        // LD_addr_A(wCurPartyMon);
+        struct PartyMon* recipient = wram->wPartyMon + res.a;
+        // CALL(aIsMonFainted);
+        IsMonFainted(recipient);
+        // CALL(aRestoreHealth);
+        RestoreHealth_Conv(recipient, amt);
+        // CALL(aHealHP_SFX_GFX);
+        HealHP_SFX_GFX();
+        // LD_A(PARTYMENUTEXT_HEAL_HP);
+        // CALL(aItemActionText);
+        ItemActionText(PARTYMENUTEXT_HEAL_HP);
+        // CALL(aJoyWaitAorB);
+        JoyWaitAorB_Conv();
+    }
 
-skip:
-    LD_A_B;
-    INC_A;
-    LD_addr_A(wPartyMenuCursor);
-    RET;
-
-
-SelectMilkDrinkRecipient:
-
-loop:
-    PUSH_BC;
-    LD_A(PARTYMENUACTION_HEALING_ITEM);
-    LD_addr_A(wPartyMenuActionText);
-    CALL(aChooseMonToUseItemOn);
-    POP_BC;
-    IF_C goto set_carry;
-    LD_A_addr(wPartyMenuCursor);
-    DEC_A;
-    LD_C_A;
-    LD_A_B;
-    CP_A_C;
-    IF_Z goto cant_use;  // chose the same mon as user
-    LD_A_C;
-    LD_addr_A(wCurPartyMon);
-    CALL(aIsMonFainted);
-    IF_Z goto cant_use;
-    CALL(aIsMonAtFullHealth);
-    IF_NC goto cant_use;
-    XOR_A_A;
-    RET;
-
-
-set_carry:
-    SCF;
-    RET;
-
-
-cant_use:
-    PUSH_BC;
-    LD_HL(mSoftboiled_MilkDrinkFunction_ItemCantUseOnMonText);
-    CALL(aMenuTextboxBackup);
-    POP_BC;
-    goto loop;
-
-
-// ItemCantUseOnMonText:
-    //text_far ['_ItemCantUseOnMonText']
-    //text_end ['?']
+// skip:
+    // LD_A_B;
+    // INC_A;
+    // LD_addr_A(wPartyMenuCursor);
+    wram->wPartyMenuCursor = b + 1;
+    // RET;
 }
 
 void EscapeRopeEffect(void){

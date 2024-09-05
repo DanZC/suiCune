@@ -184,7 +184,6 @@ void RunBattleAnimScript(void){
         // CALL(aRunBattleAnimCommand);
         RunBattleAnimCommand();
         // CALL(av_ExecuteBGEffects);
-        // SafeCallGBAuto(av_ExecuteBGEffects);
         v_ExecuteBGEffects_Conv();
         // CALL(aBattleAnim_UpdateOAM_All);
         BattleAnim_UpdateOAM_All();

@@ -3872,18 +3872,12 @@ void AI_Smart_PriorityHit_Conv(uint8_t* hl){
     // LDH_addr_A(hBattleTurn);
     hram->hBattleTurn = 1;
     // PUSH_HL;
-    {
-        // struct cpu_registers_s reg = gb.cpu_reg;
-        // CALLFAR(aEnemyAttackDamage);
-        // SafeCallGB(aEnemyAttackDamage, &reg);
-        EnemyAttackDamage(&gBattleCmdState);
-        // CALLFAR(aBattleCommand_DamageCalc);
-        // SafeCallGB(aBattleCommand_DamageCalc, &reg);
-        BattleCommand_DamageCalc();
-        // CALLFAR(aBattleCommand_Stab);
-        // SafeCallGB(aBattleCommand_Stab, &reg);
-        BattleCommand_Stab();
-    }
+    // CALLFAR(aEnemyAttackDamage);
+    EnemyAttackDamage(&gBattleCmdState);
+    // CALLFAR(aBattleCommand_DamageCalc);
+    BattleCommand_DamageCalc();
+    // CALLFAR(aBattleCommand_Stab);
+    BattleCommand_Stab();
     // POP_HL;
     // LD_A_addr(wCurDamage + 1);
     // LD_C_A;
@@ -7115,15 +7109,11 @@ void AIDamageCalc(void){
     }
     else {
     // notconstant:
-        // struct cpu_registers_s regs = gb.cpu_reg;
         // CALLFAR(aEnemyAttackDamage);
-        // SafeCallGB(aEnemyAttackDamage, &regs);
         EnemyAttackDamage(&gBattleCmdState);
         // CALLFAR(aBattleCommand_DamageCalc);
-        // SafeCallGB(aBattleCommand_DamageCalc, &regs);
         BattleCommand_DamageCalc();
         // CALLFAR(aBattleCommand_Stab);
-        // SafeCallGB(aBattleCommand_Stab, &regs);
         BattleCommand_Stab();
         // RET;
     }

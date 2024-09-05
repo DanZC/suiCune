@@ -270,7 +270,8 @@ void DoBattle(void){
 
 // not_linked_2:
     // CALL(aBattleTurn);
-    SafeCallGBAuto(aBattleTurn);
+    // SafeCallGBAuto(aBattleTurn);
+    BattleTurn();
     // RET;
 
 
@@ -342,7 +343,7 @@ void WildFled_EnemyFled_LinkBattleCanceled(void){
 void BattleTurn(void){
     do {
     // loop:
-        SET_PC(aBattleTurn);
+        // SET_PC(aBattleTurn);
         // CALL(aStubbed_Increments5_a89a);
         // CALL(aCheckContestBattleOver);
         // JP_C (mBattleTurn_quit);
@@ -374,33 +375,28 @@ void BattleTurn(void){
         // CALL(aIsMobileBattle);
         // IF_NZ goto not_disconnected;
         if(IsMobileBattle_Conv()) {
-            FARCALL(aFunction100da5);
-            FARCALL(aStartMobileInactivityTimer);
-            FARCALL(aFunction100dd8);
-            JP_C (mBattleTurn_quit);
+            // FARCALL(aFunction100da5);
+            Function100da5();
+            // FARCALL(aStartMobileInactivityTimer);
+            StartMobileInactivityTimer();
+            // FARCALL(aFunction100dd8);
+            // JP_C (mBattleTurn_quit);
+            if(SafeCallGBAutoRet(aFunction100dd8).f_bits.c)
+                goto quit;
         }
 
     // not_disconnected:
-        // {
-        //     // CALL(aCheckPlayerLockedIn);
-        //     struct cpu_registers_s regs = SafeCallGBAutoRet(aCheckPlayerLockedIn);
-        //     // IF_C goto skip_iteration;
-        //     if(regs.f_bits.c)
-        //         goto quit;
-        // }
+        // CALL(aCheckPlayerLockedIn);
+        // IF_C goto skip_iteration;
         if(CheckPlayerLockedIn_Conv())
             goto skip_iteration;
 
-        // struct cpu_registers_s loop_ret = gb.cpu_reg;
         do {
         // loop1:
-            {
-                // CALL(aBattleMenu);
-                // struct cpu_registers_s regs = SafeCallGBAutoRet(aBattleMenu);
-                // IF_C goto quit;
-                if(BattleMenu())
-                    goto quit;
-            }
+            // CALL(aBattleMenu);
+            // IF_C goto quit;
+            if(BattleMenu())
+                goto quit;
             // LD_A_addr(wBattleEnded);
             // AND_A_A;
             // IF_NZ goto quit;
@@ -412,33 +408,26 @@ void BattleTurn(void){
 
         skip_iteration:
             // CALL(aParsePlayerAction);
-            // SafeCallGB(aParsePlayerAction, &loop_ret);
             // IF_NZ goto loop1;
         } while(!ParsePlayerAction_Conv());
 
-        {
-            // CALL(aEnemyTriesToFlee);
-            // IF_C goto quit;
-            if(EnemyTriesToFlee())
-                goto quit;
-        }
+        // CALL(aEnemyTriesToFlee);
+        // IF_C goto quit;
+        if(EnemyTriesToFlee())
+            goto quit;
 
-        {
-            // CALL(aDetermineMoveOrder);
-            bool playerFirst = DetermineMoveOrder();
-            // IF_C goto _false;
-            if(playerFirst) {
-            // _false:
-                // CALL(aBattle_PlayerFirst);
-                // SafeCallGBAuto(aBattle_PlayerFirst);
-                Battle_PlayerFirst();
-            }
-            else {
-                // CALL(aBattle_EnemyFirst);
-                // SafeCallGBAuto(aBattle_EnemyFirst);
-                Battle_EnemyFirst();
-                // goto proceed;
-            }
+        // CALL(aDetermineMoveOrder);
+        bool playerFirst = DetermineMoveOrder();
+        // IF_C goto _false;
+        if(playerFirst) {
+        // _false:
+            // CALL(aBattle_PlayerFirst);
+            Battle_PlayerFirst();
+        }
+        else {
+            // CALL(aBattle_EnemyFirst);
+            Battle_EnemyFirst();
+            // goto proceed;
         }
 
     // proceed:
@@ -456,7 +445,6 @@ void BattleTurn(void){
             goto quit;
 
         // CALL(aHandleBetweenTurnEffects);
-        // SafeCallGBAuto(aHandleBetweenTurnEffects);
         HandleBetweenTurnEffects();
         // LD_A_addr(wBattleEnded);
         // AND_A_A;
@@ -465,7 +453,7 @@ void BattleTurn(void){
     } while(wram->wBattleEnded == 0);
 
 quit:
-    RET;
+    // RET;
 }
 
 void Stubbed_Increments5_a89a(void){
@@ -1244,9 +1232,7 @@ not_encored:
     // LD_addr_A(wFXAnimID);
     wram->wFXAnimID = POUND;
 
-    // struct cpu_registers_s regs = gb.cpu_reg;
     // CALL(aMoveSelectionScreen);
-    // SafeCallGB(aMoveSelectionScreen, &regs);
     bool selected = MoveSelectionScreen();
     // PUSH_AF;
     // CALL(aSafeLoadTempTilemapToTilemap);
@@ -1337,7 +1323,6 @@ locked_in:
 
 continue_protect:
     // CALL(aParseEnemyAction);
-    // SafeCallGBAuto(aParseEnemyAction);
     ParseEnemyAction();
     // XOR_A_A;
     // RET;
@@ -5711,10 +5696,7 @@ void EnemySwitch(void){
     u8_flag_s res = CheckWhetherSwitchmonIsPredetermined_Conv();
     // IF_C goto skip;
     if(!res.flag) {
-        // struct cpu_registers_s regs = gb.cpu_reg;
         // CALL(aFindMonInOTPartyToSwitchIntoBattle);
-        // SafeCallGB(aFindMonInOTPartyToSwitchIntoBattle, &regs);
-        // res.a = regs.b;
         res.a = FindMonInOTPartyToSwitchIntoBattle();
     }
 
@@ -5760,14 +5742,8 @@ void EnemySwitch_SetMode(void){
     // IF_C goto skip;
     u8_flag_s res = CheckWhetherSwitchmonIsPredetermined_Conv();
     if(!res.flag) {
-        // struct cpu_registers_s regs = gb.cpu_reg;
-        // SAVE_REGS;
         // CALL(aFindMonInOTPartyToSwitchIntoBattle);
-        // SafeCallGB(aFindMonInOTPartyToSwitchIntoBattle, &regs);
-        // res.a = REG_B;
-        // res.a = regs.b;
         res.a = FindMonInOTPartyToSwitchIntoBattle();
-        // RESTORE_REGS;
     }
 
 // skip:
@@ -14483,7 +14459,7 @@ bool StartBattle_Conv(void){
     // CALL(aDoBattle);
     SafeCallGBAuto(aDoBattle);
     // CALL(aExitBattle);
-    SafeCallGBAuto(aExitBattle);
+    ExitBattle();
     // POP_AF;
     // LD_addr_A(wTimeOfDayPal);
     wram->wTimeOfDayPal = pal;

@@ -114,7 +114,7 @@ void MobileBattleMonMenu(void);
 void Function100d67(void);
 void Function100da5(void);
 void Function100db0(void);
-void Function100dc0(void);
+bool Function100dc0(void);
 void Mobile_SetOverworldDelay(void);
 void Function100dd8(void);
 void MobileComms_CheckInactivityTimer(void);

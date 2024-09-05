@@ -620,9 +620,6 @@ void StartMenu_Exit(void){
 
 //  Exit the menu.
 uint8_t StartMenu_Exit_Conv(void) {
-    // struct cpu_registers_s regs = {};
-    // SafeCallGB(aStartMenu_Exit, &regs);
-    // return regs.a;
     return STARTMENURET_EXIT;
 }
 
@@ -690,10 +687,6 @@ saved:
 
 //  Save the game.
 uint8_t StartMenu_Save_Conv(void) {
-    // struct cpu_registers_s regs = {};
-    // SafeCallGB(aStartMenu_Save, &regs);
-    // return regs.a;
-
     // CALL(aBufferScreen);
     BufferScreen_Conv();
     // FARCALL(aSaveMenu);
@@ -743,9 +736,6 @@ void StartMenu_Status(void){
 
 //  Player status.
 uint8_t StartMenu_Status_Conv(void) {
-    // struct cpu_registers_s regs = {};
-    // SafeCallGB(aStartMenu_Status, &regs);
-    // return regs.a;
     // CALL(aFadeToMenu);
     FadeToMenu_Conv();
     // FARCALL(aTrainerCard);
@@ -824,9 +814,6 @@ used_item:
 }
 
 uint8_t StartMenu_Pack_Conv(void) {
-    // struct cpu_registers_s regs = {};
-    // SafeCallGB(aStartMenu_Pack, &regs);
-    // return regs.a;
     // CALL(aFadeToMenu);
     FadeToMenu_Conv();
     // FARCALL(aPack);
@@ -906,11 +893,8 @@ quit:
 }
 
 uint8_t StartMenu_Pokemon_Conv(void) {
-    // struct cpu_registers_s regs = {};
-    // SafeCallGB(aStartMenu_Pokemon, &regs);
-    // return regs.a;
     u8_flag_s res;
-    struct cpu_registers_s regs;
+    u8_pair_s submenu_res;
     // LD_A_addr(wPartyCount);
     // AND_A_A;
     // IF_Z goto l_return;
@@ -954,19 +938,20 @@ menunoreload:
     if(res.flag) goto l_return;
 
     // CALL(aPokemonActionSubmenu);
-    regs = SafeCallGBAutoRet(aPokemonActionSubmenu);
+    // regs = SafeCallGBAutoRet(aPokemonActionSubmenu);
+    submenu_res = PokemonActionSubmenu();
     // CP_A(3);
     // IF_Z goto menu;
-    if(regs.a == 3) goto menu;
+    if(submenu_res.a == 3) goto menu;
     // CP_A(0);
     // IF_Z goto choosemenu;
-    if(regs.a == 0) goto choosemenu;
+    if(submenu_res.a == 0) goto choosemenu;
     // CP_A(1);
     // IF_Z goto menunoreload;
-    if(regs.a == 1) goto menunoreload;
+    if(submenu_res.a == 1) goto menunoreload;
     // CP_A(2);
     // IF_Z goto quit;
-    if(regs.a == 2) goto quit;
+    if(submenu_res.a == 2) goto quit;
 
 
 l_return:
@@ -984,5 +969,5 @@ quit:
     ExitAllMenus_Conv();
     // POP_AF;
     // RET;
-    return regs.a;
+    return submenu_res.b;
 }

@@ -11,6 +11,7 @@
 #include "../overworld/map_objects.h"
 #include "../overworld/npc_movement.h"
 #include "../overworld/tile_events.h"
+#include "../overworld/spawn_points.h"
 #include "../gfx/load_overworld_font.h"
 #include "../../home/audio.h"
 #include "../../home/copy.h"
@@ -1224,32 +1225,38 @@ void FlyFunction(void){
     return;
 }
 
-void WaterfallFunction(void){
-    CALL(aWaterfallFunction_TryWaterfall);
-    AND_A(0x7f);
-    LD_addr_A(wFieldMoveSucceeded);
-    RET;
-
-
-TryWaterfall:
 //  Waterfall
-    LD_DE(ENGINE_RISINGBADGE);
-    FARCALL(aCheckBadge);
-    LD_A(0x80);
-    RET_C ;
-    CALL(aCheckMapCanWaterfall);
-    IF_C goto failed;
-    LD_HL(mScript_WaterfallFromMenu);
-    CALL(aQueueScript);
-    LD_A(0x81);
-    RET;
+static uint8_t WaterfallFunction_TryWaterfall(void){
+    // LD_DE(ENGINE_RISINGBADGE);
+    // FARCALL(aCheckBadge);
+    // LD_A(0x80);
+    // RET_C ;
+    if(CheckBadge_Conv(ENGINE_RISINGBADGE))
+        return 0x80;
+    // CALL(aCheckMapCanWaterfall);
+    // IF_C goto failed;
+    if(!CheckMapCanWaterfall_Conv()) {
+    // failed:
+        // CALL(aFieldMoveFailed);
+        FieldMoveFailed();
+        // LD_A(0x80);
+        // RET;
+        return 0x80;
+    }
+    // LD_HL(mScript_WaterfallFromMenu);
+    // CALL(aQueueScript);
+    QueueScript_Conv2(Script_WaterfallFromMenu);
+    // LD_A(0x81);
+    // RET;
+    return 0x81;
+}
 
-
-failed:
-    CALL(aFieldMoveFailed);
-    LD_A(0x80);
-    RET;
-
+void WaterfallFunction(void){
+    // CALL(aWaterfallFunction_TryWaterfall);
+    // AND_A(0x7f);
+    // LD_addr_A(wFieldMoveSucceeded);
+    wram->wFieldMoveSucceeded = WaterfallFunction_TryWaterfall() & 0x7f;
+    // RET;
 }
 
 void CheckMapCanWaterfall(void){
@@ -1612,143 +1619,156 @@ void EscapeRopeOrDig(uint8_t escapeType){
     //dw ['.FailDig'];
 }
 
-void TeleportFunction(void){
-    CALL(aFieldMoveJumptableReset);
+static uint8_t TeleportFunction_TryTeleport(void){
+    // CALL(aGetMapEnvironment);
+    uint8_t env = GetMapEnvironment_Conv2();
+    // CALL(aCheckOutdoorMap);
+    // IF_Z goto CheckIfSpawnPoint;
+    // goto nope;
+    if(CheckOutdoorMap_Conv(env)){
+    // CheckIfSpawnPoint:
+        // LD_A_addr(wLastSpawnMapGroup);
+        // LD_D_A;
+        // LD_A_addr(wLastSpawnMapNumber);
+        // LD_E_A;
+        // FARCALL(aIsSpawnPoint);
+        u8_flag_s res = IsSpawnPoint_Conv(wram->wLastSpawnMapGroup, wram->wLastSpawnMapNumber);
+        // IF_NC goto nope;
+        if(res.flag) {
+            // LD_A_C;
+            // LD_addr_A(wDefaultSpawnpoint);
+            wram->wDefaultSpawnpoint = res.a;
+            // LD_A(0x1);
+            // RET;
+            return 0x1;
+        }
+    }
 
-loop:
-    LD_HL(mTeleportFunction_Jumptable);
-    CALL(aFieldMoveJumptable);
-    IF_NC goto loop;
-    AND_A(0x7f);
-    LD_addr_A(wFieldMoveSucceeded);
-    RET;
-
-
-Jumptable:
-    //dw ['.TryTeleport'];
-    //dw ['.DoTeleport'];
-    //dw ['.FailTeleport'];
-
-
-TryTeleport:
-    CALL(aGetMapEnvironment);
-    CALL(aCheckOutdoorMap);
-    IF_Z goto CheckIfSpawnPoint;
-    goto nope;
-
-
-CheckIfSpawnPoint:
-    LD_A_addr(wLastSpawnMapGroup);
-    LD_D_A;
-    LD_A_addr(wLastSpawnMapNumber);
-    LD_E_A;
-    FARCALL(aIsSpawnPoint);
-    IF_NC goto nope;
-    LD_A_C;
-    LD_addr_A(wDefaultSpawnpoint);
-    LD_A(0x1);
-    RET;
-
-
-nope:
-    LD_A(0x2);
-    RET;
-
-
-DoTeleport:
-    CALL(aGetPartyNickname);
-    LD_HL(mTeleportFunction_TeleportScript);
-    CALL(aQueueScript);
-    LD_A(0x81);
-    RET;
-
-
-FailTeleport:
-    LD_HL(mTeleportFunction_CantUseTeleportText);
-    CALL(aMenuTextboxBackup);
-    LD_A(0x80);
-    RET;
-
-
-TeleportReturnText:
-    //text_far ['_TeleportReturnText']
-    //text_end ['?']
-
-
-CantUseTeleportText:
-    //text_far ['_CantUseTeleportText']
-    //text_end ['?']
-
-
-TeleportScript:
-    //reloadmappart ['?']
-    //special ['UpdateTimePals']
-    //writetext ['.TeleportReturnText']
-    //pause ['60']
-    //reloadmappart ['?']
-    //closetext ['?']
-    //playsound ['SFX_WARP_TO']
-    //applymovement ['PLAYER', '.TeleportFrom']
-    //farscall ['Script_AbortBugContest']
-    //special ['WarpToSpawnPoint']
-    //loadvar ['VAR_MOVEMENT', 'PLAYER_NORMAL']
-    //newloadmap ['MAPSETUP_TELEPORT']
-    //playsound ['SFX_WARP_FROM']
-    //applymovement ['PLAYER', '.TeleportTo']
-    //end ['?']
-
-
-TeleportFrom:
-    //teleport_from ['?']
-    //step_end ['?']
-
-
-TeleportTo:
-    //teleport_to ['?']
-    //step_end ['?']
-
-    return StrengthFunction();
+// nope:
+    // LD_A(0x2);
+    // RET;
+    return 0x2;
 }
 
-void StrengthFunction(void){
-    CALL(aStrengthFunction_TryStrength);
-    AND_A(0x7f);
-    LD_addr_A(wFieldMoveSucceeded);
-    RET;
+static bool TeleportFunction_TeleportScript(script_s* s){
+    static const txt_cmd_s TeleportReturnText[] = {
+        text_far(v_TeleportReturnText)
+        text_end
+    };
+    static const uint8_t TeleportFrom[] = {
+        movement_teleport_from,
+        movement_step_end
+    };
+    static const uint8_t TeleportTo[] = {
+        movement_teleport_to,
+        movement_step_end
+    };
+    SCRIPT_BEGIN
+    reloadmappart
+    special(UpdateTimePals)
+    writetext(TeleportReturnText)
+    pause(60)
+    reloadmappart
+    closetext
+    playsound(SFX_WARP_TO)
+    applymovement(PLAYER, TeleportFrom)
+    scall(Script_AbortBugContest)
+    special(WarpToSpawnPoint)
+    loadvar(VAR_MOVEMENT, PLAYER_NORMAL)
+    newloadmap(MAPSETUP_TELEPORT)
+    playsound(SFX_WARP_FROM)
+    applymovement(PLAYER, TeleportTo)
+    s_end
+    SCRIPT_END
+}
 
+static uint8_t TeleportFunction_DoTeleport(void){
+    // CALL(aGetPartyNickname);
+    GetPartyNickname();
+    // LD_HL(mTeleportFunction_TeleportScript);
+    // CALL(aQueueScript);
+    QueueScript_Conv2(TeleportFunction_TeleportScript);
+    // LD_A(0x81);
+    // RET;
+    return 0x81;
+}
 
-TryStrength:
+static uint8_t TeleportFunction_FailTeleport(void){
+    static const txt_cmd_s CantUseTeleportText[] = {
+        text_far(v_CantUseTeleportText)
+        text_end
+    };
+    // LD_HL(mTeleportFunction_CantUseTeleportText);
+    // CALL(aMenuTextboxBackup);
+    MenuTextboxBackup_Conv(CantUseTeleportText);
+    // LD_A(0x80);
+    // RET;
+    return 0x80;
+}
+
+void TeleportFunction(void){
+    static const field_move_fn_t Jumptable[] = {
+        TeleportFunction_TryTeleport,
+        TeleportFunction_DoTeleport,
+        TeleportFunction_FailTeleport
+    };
+    // CALL(aFieldMoveJumptableReset);
+    FieldMoveJumptableReset();
+
+    u8_flag_s res;
+    do {
+    // loop:
+        // LD_HL(mTeleportFunction_Jumptable);
+        // CALL(aFieldMoveJumptable);
+        res = FieldMoveJumptable_Conv(Jumptable);
+        // IF_NC goto loop;
+    } while(!res.flag);
+    // AND_A(0x7f);
+    // LD_addr_A(wFieldMoveSucceeded);
+    wram->wFieldMoveSucceeded = res.a & 0x7f;
+    // RET;
+}
+
 //  Strength
-    LD_DE(ENGINE_PLAINBADGE);
-    CALL(aCheckBadge);
-    IF_C goto Failed;
-    goto UseStrength;
+static uint8_t StrengthFunction_TryStrength(void){
+    // LD_DE(ENGINE_PLAINBADGE);
+    // CALL(aCheckBadge);
+    // IF_C goto Failed;
+    if(CheckBadge_Conv(ENGINE_PLAINBADGE)) {
+    // Failed:
+        // LD_A(0x80);
+        // RET;
+        return 0x80;
+    }
+    // goto UseStrength;
 
 
-AlreadyUsingStrength:
+// AlreadyUsingStrength:
 //   //  unreferenced
-    LD_HL(mStrengthFunction_AlreadyUsingStrengthText);
-    CALL(aMenuTextboxBackup);
-    LD_A(0x80);
-    RET;
+    // LD_HL(mStrengthFunction_AlreadyUsingStrengthText);
+    // CALL(aMenuTextboxBackup);
+    // LD_A(0x80);
+    // RET;
 
-
-AlreadyUsingStrengthText:
+// AlreadyUsingStrengthText:
     //text_far ['_AlreadyUsingStrengthText']
     //text_end ['?']
 
+// UseStrength:
+    // LD_HL(mScript_StrengthFromMenu);
+    // CALL(aQueueScript);
+    QueueScript_Conv2(Script_StrengthFromMenu);
+    // LD_A(0x81);
+    // RET;
+    return 0x81;
+}
 
-Failed:
-    LD_A(0x80);
-    RET;
-
-
-UseStrength:
-    LD_HL(mScript_StrengthFromMenu);
-    CALL(aQueueScript);
-    LD_A(0x81);
-    RET;
-
+void StrengthFunction(void){
+    // CALL(aStrengthFunction_TryStrength);
+    // AND_A(0x7f);
+    // LD_addr_A(wFieldMoveSucceeded);
+    wram->wFieldMoveSucceeded = StrengthFunction_TryStrength() & 0x7f;
+    // RET;
 }
 
 void SetStrengthFlag(void){
@@ -1880,56 +1900,68 @@ void TryStrengthOW(void){
     // RET;
 }
 
+static uint8_t WhirlpoolFunction_TryWhirlpool(void){
+    // LD_DE(ENGINE_GLACIERBADGE);
+    // CALL(aCheckBadge);
+    // IF_C goto noglacierbadge;
+    if(CheckBadge_Conv(ENGINE_GLACIERBADGE)) {
+    // noglacierbadge:
+        // LD_A(0x80);
+        // RET;
+        return 0x80;
+    }
+    // CALL(aTryWhirlpoolMenu);
+    // IF_C goto failed;
+    if(!TryWhirlpoolMenu_Conv()) {
+    // failed:
+        // LD_A(0x2);
+        // RET;
+        return 0x2;
+    }
+    // LD_A(0x1);
+    // RET;
+    return 0x1;
+}
+
+static uint8_t WhirlpoolFunction_DoWhirlpool(void){
+    // LD_HL(mScript_WhirlpoolFromMenu);
+    // CALL(aQueueScript);
+    QueueScript_Conv2(Script_WhirlpoolFromMenu);
+    // LD_A(0x81);
+    // RET;
+    return 0x81;
+}
+
+static uint8_t WhirlpoolFunction_FailWhirlpool(void){
+    // CALL(aFieldMoveFailed);
+    FieldMoveFailed();
+    // LD_A(0x80);
+    // RET;
+    return 0x80;
+}
+
 void WhirlpoolFunction(void){
-    CALL(aFieldMoveJumptableReset);
+    static const field_move_fn_t Jumptable[] = {
+        WhirlpoolFunction_TryWhirlpool,
+        WhirlpoolFunction_DoWhirlpool,
+        WhirlpoolFunction_FailWhirlpool,
+    };
+    // CALL(aFieldMoveJumptableReset);
+    FieldMoveJumptableReset();
 
-loop:
-    LD_HL(mWhirlpoolFunction_Jumptable);
-    CALL(aFieldMoveJumptable);
-    IF_NC goto loop;
-    AND_A(0x7f);
-    LD_addr_A(wFieldMoveSucceeded);
-    RET;
-
-
-Jumptable:
-    //dw ['.TryWhirlpool'];
-    //dw ['.DoWhirlpool'];
-    //dw ['.FailWhirlpool'];
-
-
-TryWhirlpool:
-    LD_DE(ENGINE_GLACIERBADGE);
-    CALL(aCheckBadge);
-    IF_C goto noglacierbadge;
-    CALL(aTryWhirlpoolMenu);
-    IF_C goto failed;
-    LD_A(0x1);
-    RET;
-
-
-failed:
-    LD_A(0x2);
-    RET;
-
-
-noglacierbadge:
-    LD_A(0x80);
-    RET;
-
-
-DoWhirlpool:
-    LD_HL(mScript_WhirlpoolFromMenu);
-    CALL(aQueueScript);
-    LD_A(0x81);
-    RET;
-
-
-FailWhirlpool:
-    CALL(aFieldMoveFailed);
-    LD_A(0x80);
-    RET;
-
+    u8_flag_s res;
+    do {
+    // loop:
+        // LD_HL(mWhirlpoolFunction_Jumptable);
+        // CALL(aFieldMoveJumptable);
+        res = FieldMoveJumptable_Conv(Jumptable);
+        // IF_NC goto loop;
+    } while(!res.flag);
+    // AND_A(0x7f);
+    // LD_addr_A(wFieldMoveSucceeded);
+    wram->wFieldMoveSucceeded = res.a & 0x7f;
+    // RET;
+    return;
 }
 
 const txt_cmd_s UseWhirlpoolText[] = {

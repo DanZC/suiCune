@@ -5,6 +5,7 @@ bool GeneratePartyMonStats_Conv(struct PartyMon* hl, species_t species, uint8_t 
 void FillPP(void);
 void FillPP_Conv(uint8_t* de, const move_t* hl);
 void AddTempmonToParty(void);
+bool AddTempmonToParty_Conv(void);
 void SendGetMonIntoFromBox(void);
 bool SendGetMonIntoFromBox_Conv(uint8_t param);
 bool CloseSRAM_And_SetCarryFlag(void);

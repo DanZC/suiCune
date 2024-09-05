@@ -1531,7 +1531,7 @@ void init_function_pointers(void) {
     // REDIRECTED(ResidualDamage);
     CONVERTED(BattleStartMessage);
     // CONVERTED(EnemySwitch);
-    REDIRECTED(BattleTurn);
+    CONVERTED(BattleTurn);
     CONVERTED(EnemyTurn_EndOpponentProtectEndureDestinyBond);
     // REDIRECTED(GetSixteenthMaxHP);
     // REDIRECTED(GetMaxHP);

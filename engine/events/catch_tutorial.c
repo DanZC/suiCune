@@ -2,6 +2,7 @@
 #include "catch_tutorial.h"
 #include "../../home/copy.h"
 #include "../../home/joypad.h"
+#include "../battle/core.h"
 
 void CatchTutorial(void){
     // LD_A_addr(wBattleType);
@@ -96,7 +97,8 @@ void CatchTutorial(void){
             // CALL(aStartAutoInput);
             StartAutoInput_Conv2(AutoInput);
             // CALLFAR(aStartBattle);
-            SafeCallGBAuto(aStartBattle);
+            // SafeCallGBAuto(aStartBattle);
+            StartBattle_Conv();
             // CALL(aStopAutoInput);
             StopAutoInput_Conv2();
             // POP_AF;

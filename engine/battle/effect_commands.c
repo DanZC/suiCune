@@ -5370,7 +5370,6 @@ void PlayFXAnimID_Conv(uint16_t de){
     // CALL(aDelayFrames);
     DelayFrames_Conv(3);
     // CALLFAR(aPlayBattleAnim);
-    // SafeCallGBAuto(aPlayBattleAnim);
     PlayBattleAnim();
     // RET;
 }
@@ -8590,7 +8589,6 @@ void BattleCommand_ForceSwitch(void){
             wram->wCurPartyMon = a;
             // LD_HL(mSwitchPlayerMon);
             // CALL(aCallBattleCore);
-            // SafeCallGBAuto(aSwitchPlayerMon);
             SwitchPlayerMon();
 
             // LD_HL(mDraggedOutText);

@@ -1162,12 +1162,14 @@ timed_out:
 }
 
 void StartMobileInactivityTimer(void){
-    XOR_A_A;
-    LD_addr_A(wMobileInactivityTimerMinutes);
-    LD_addr_A(wMobileInactivityTimerSeconds);
-    LD_addr_A(wMobileInactivityTimerFrames);
-    RET;
-
+    // XOR_A_A;
+    // LD_addr_A(wMobileInactivityTimerMinutes);
+    wram->wMobileInactivityTimerMinutes = 0;
+    // LD_addr_A(wMobileInactivityTimerSeconds);
+    wram->wMobileInactivityTimerSeconds = 0;
+    // LD_addr_A(wMobileInactivityTimerFrames);
+    wram->wMobileInactivityTimerFrames = 0;
+    // RET;
 }
 
 void IncrementMobileInactivityTimerBy1Frame(void){
@@ -2456,21 +2458,23 @@ asm_100dbe:
 
 }
 
-void Function100dc0(void){
-    LD_A_addr(wLinkMode);
-    CP_A(LINK_MOBILE);
-    IF_NZ goto mobile;
-    LD_HL(wcd2a);
-    BIT_hl(3);
-    IF_Z goto mobile;
-    SCF;
-    RET;
+bool Function100dc0(void){
+    // LD_A_addr(wLinkMode);
+    // CP_A(LINK_MOBILE);
+    // IF_NZ goto mobile;
+    // LD_HL(wcd2a);
+    // BIT_hl(3);
+    // IF_Z goto mobile;
+    if(wram->wLinkMode == LINK_MOBILE && bit_test(wram->wcd2a, 3)) {
+        // SCF;
+        // RET;
+        return true;
+    }
 
-
-mobile:
-    XOR_A_A;
-    RET;
-
+// mobile:
+    // XOR_A_A;
+    // RET;
+    return false;
 }
 
 void Mobile_SetOverworldDelay(void){

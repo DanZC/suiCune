@@ -1027,6 +1027,111 @@ done:
 
 }
 
+bool AddTempmonToParty_Conv(void){
+    // LD_HL(wPartyCount);
+    // LD_A_hl;
+    // CP_A(PARTY_LENGTH);
+    // SCF;
+    // RET_Z ;
+    if(wram->wPartyCount == PARTY_LENGTH)
+        return true;
+
+    // INC_A;
+    // LD_hl_A;
+    // LD_C_A;
+    uint8_t c = ++wram->wPartyCount;
+    // LD_B(0);
+    // ADD_HL_BC;
+    // LD_A_addr(wCurPartySpecies);
+    // LD_hli_A;
+    wram->wPartySpecies[c-1] = wram->wCurPartySpecies;
+    // LD_hl(0xff);
+    wram->wPartySpecies[c] = (species_t)-1;
+
+    // LD_HL(wPartyMon1Species);
+    // LD_A_addr(wPartyCount);
+    // DEC_A;
+    // LD_BC(PARTYMON_STRUCT_LENGTH);
+    // CALL(aAddNTimes);
+    // LD_E_L;
+    // LD_D_H;
+    // LD_HL(wTempMonSpecies);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wPartyMon + (c - 1), &wram->wTempMon, PARTYMON_STRUCT_LENGTH);
+
+    // LD_HL(wPartyMonOTs);
+    // LD_A_addr(wPartyCount);
+    // DEC_A;
+    // CALL(aSkipNames);
+    // LD_D_H;
+    // LD_E_L;
+    // LD_HL(wOTPartyMonOTs);
+    // LD_A_addr(wCurPartyMon);
+    // CALL(aSkipNames);
+    // LD_BC(NAME_LENGTH);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wPartyMonOT[c - 1], wram->wOTPartyMonOT[wram->wCurPartyMon], NAME_LENGTH);
+
+    // LD_HL(wPartyMonNicknames);
+    // LD_A_addr(wPartyCount);
+    // DEC_A;
+    // CALL(aSkipNames);
+    // LD_D_H;
+    // LD_E_L;
+    // LD_HL(wOTPartyMonNicknames);
+    // LD_A_addr(wCurPartyMon);
+    // CALL(aSkipNames);
+    // LD_BC(MON_NAME_LENGTH);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wPartyMonNickname[c - 1], wram->wOTPartyMonNickname[wram->wCurPartyMon], MON_NAME_LENGTH);
+
+    // LD_A_addr(wCurPartySpecies);
+    // LD_addr_A(wNamedObjectIndex);
+    // CP_A(EGG);
+    // IF_Z goto egg;
+    if(wram->wCurPartySpecies != EGG) {
+        // DEC_A;
+        // CALL(aSetSeenAndCaughtMon);
+        SetSeenAndCaughtMon_Conv(wram->wCurPartySpecies - 1);
+        // LD_HL(wPartyMon1Happiness);
+        // LD_A_addr(wPartyCount);
+        // DEC_A;
+        // LD_BC(PARTYMON_STRUCT_LENGTH);
+        // CALL(aAddNTimes);
+        // LD_hl(BASE_HAPPINESS);
+        wram->wPartyMon[c - 1].mon.happiness = BASE_HAPPINESS;
+    }
+
+// egg:
+    // LD_A_addr(wCurPartySpecies);
+    // CP_A(UNOWN);
+    // IF_NZ goto done;
+    if(wram->wCurPartySpecies == UNOWN){
+        // LD_HL(wPartyMon1DVs);
+        // LD_A_addr(wPartyCount);
+        // DEC_A;
+        // LD_BC(PARTYMON_STRUCT_LENGTH);
+        // CALL(aAddNTimes);
+        // PREDEF(pGetUnownLetter);
+        unown_letter_t letter = GetUnownLetter_Conv(wram->wPartyMon[c - 1].mon.DVs);
+        // CALLFAR(aUpdateUnownDex);
+        UpdateUnownDex_Conv(letter);
+        // LD_A_addr(wFirstUnownSeen);
+        // AND_A_A;
+        // IF_NZ goto done;
+        if(wram->wFirstUnownSeen == 0) {
+            // LD_A_addr(wUnownLetter);
+            // LD_addr_A(wFirstUnownSeen);
+            wram->wFirstUnownSeen = letter;
+        }
+    }
+
+// done:
+    // AND_A_A;
+    // RET;
+    return false;
+}
+
 void SendGetMonIntoFromBox(void){
 //  Sents/Gets mon into/from Box depending on Parameter
 //  wPokemonWithdrawDepositParameter == 0: get mon into Party
@@ -2677,7 +2782,8 @@ bool GiveEgg_Conv(void){
     // PUSH_BC;
 
     // CALL(aTryAddMonToParty);
-    SafeCallGBAuto(aTryAddMonToParty);
+    // SafeCallGBAuto(aTryAddMonToParty);
+    TryAddMonToParty_Conv(wram->wCurPartySpecies, wram->wCurPartyLevel);
 
 //  If we haven't caught this Pokemon before receiving
 //  the Egg, reset the flag that was just set by
@@ -4107,11 +4213,12 @@ uint8_t GivePoke_Conv(uint8_t b, const char* nickname, const char* otName){
     // LD_addr_A(wMonType);
     wram->wMonType = PARTYMON;
     // CALL(aTryAddMonToParty);
-    struct cpu_registers_s regs = SafeCallGBAutoRet(aTryAddMonToParty);
+    // struct cpu_registers_s regs = SafeCallGBAutoRet(aTryAddMonToParty);
+    bool cy = TryAddMonToParty_Conv(wram->wCurPartySpecies, wram->wCurPartyLevel);
     // IF_NC goto failed;
     uint8_t* de;
     uint8_t a;
-    if(!regs.f_bits.c) {
+    if(!cy) {
     // failed:
         // LD_A_addr(wCurPartySpecies);
         // LD_addr_A(wTempEnemyMonSpecies);
