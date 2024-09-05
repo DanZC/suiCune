@@ -436,7 +436,7 @@ static void DebugMenu_BattleTest_StartBattle(uint8_t tclass, uint8_t tid) {
 
     wram->wBattleScriptFlags = (1 << 7) | 1;
     wram->wOtherTrainerClass = tclass;
-    wram->wOtherTrainerID = tid + 1;
+    wram->wOtherTrainerID = tid;
 
     // wram->wMapScriptsBank = BANK(aRedWinLossText);
     // wram->wLossTextPointer = 0;
@@ -457,7 +457,8 @@ static void DebugMenu_BattleTest_StartBattle(uint8_t tclass, uint8_t tid) {
     // }
     TryAddMonToParty_Conv(DRAGONITE, 100);
     wbank_push(MBANK(awInBattleTowerBattle));
-    SafeCallGBAuto(aStartBattle);
+    // SafeCallGBAuto(aStartBattle);
+    StartBattle_Conv();
 
     bit_reset(wram->wDebugFlags, DEBUG_BATTLE_F);
 
@@ -471,11 +472,11 @@ static void DebugMenu_BattleTest_StartBattle(uint8_t tclass, uint8_t tid) {
 }
 
 static void DebugMenu_BattleTest_GetNextTrainer(uint8_t* tclass, uint8_t* tid) {
-    if(++(*tid) < TrainerGroups[*tclass - 1].count) {
+    if(++(*tid) <= TrainerGroups[*tclass - 1].count) {
         return;
     }
     else if(++(*tclass) <= MYSTICALMAN) {
-        *tid = 0;
+        *tid = 1;
         return;
     }
     *tclass = FALKNER;
@@ -485,56 +486,64 @@ static void DebugMenu_BattleTest_GetNextTrainer(uint8_t* tclass, uint8_t* tid) {
 static void DebugMenu_BattleTest_GetNextTrainerClass(uint8_t* tclass, uint8_t* tid) {
     if(++(*tclass) > MYSTICALMAN) {
         *tclass = FALKNER;
-        *tid = 0;
+        *tid = FALKNER1;
         return;
     }
     while(TrainerGroups[*tclass - 1].count == 0) {
         if(++(*tclass) > MYSTICALMAN) {
             *tclass = FALKNER;
-            *tid = 0;
+            *tid = FALKNER1;
             return;
         }
     }
-    *tid = 0;
+    *tid = 1;
 }
 
 static void DebugMenu_BattleTest_GetPrevTrainer(uint8_t* tclass, uint8_t* tid) {
-    if(*tid == 0) {
+    if(*tid == 1) {
         if(*tclass == FALKNER) {
             *tclass = MYSTICALMAN;
+            *tid = 1;
             return;
         }
-        --(*tclass);
-        *tid = TrainerGroups[*tclass - 1].count - 1;
+        do {
+            --(*tclass);
+            if(*tclass == FALKNER) {
+                *tclass = MYSTICALMAN;
+                *tid = 1;
+                return;
+            }
+        } while(TrainerGroups[*tclass - 1].count == 0);
+        *tid = TrainerGroups[*tclass - 1].count;
         return;
     }
     --(*tid);
 }
 
 static void DebugMenu_BattleTest_GetPrevTrainerClass(uint8_t* tclass, uint8_t* tid) {
-    if((*tclass)-- == 0) {
+    if(--(*tclass) == 0) {
         *tclass = MYSTICALMAN;
-        *tid = 0;
+        *tid = 1;
         return;
     }
     while(TrainerGroups[*tclass - 1].count == 0) {
         if((*tclass)-- == 0) {
             *tclass = MYSTICALMAN;
-            *tid = 0;
+            *tid = 1;
             return;
         }
     }
-    *tid = 0;
+    *tid = 1;
 }
 
 void DebugMenu_BattleTest_PlaceTrainerName(uint8_t tclass, uint8_t tid) {
     char buffer[32];
     sprintf(buffer, "CLASS- %s", TrainerClassNames[tclass - 1]);
-    PlaceStringSimple(U82C(buffer), wram->wTilemap + coordidx(2, 2));
+    PlaceStringSimple(U82C(buffer), wram->wTilemap + coordidx(0, 2));
     sprintf(buffer, "   ID- %02d:%02d", tclass, tid);
-    PlaceStringSimple(U82C(buffer), wram->wTilemap + coordidx(2, 4));
-    sprintf(buffer, " NAME- %s", TrainerGroups[tclass - 1].parties[tid].name);
-    PlaceStringSimple(U82C(buffer), wram->wTilemap + coordidx(2, 6));
+    PlaceStringSimple(U82C(buffer), wram->wTilemap + coordidx(0, 4));
+    sprintf(buffer, " NAME- %s", TrainerGroups[tclass - 1].parties[tid - 1].name);
+    PlaceStringSimple(U82C(buffer), wram->wTilemap + coordidx(0, 6));
 }
 
 void DebugMenu_BattleTest(void) {

@@ -1240,6 +1240,7 @@ linkbattle:
 }
 
 void PlaceEnemysName_Conv(struct TextPrintState* state) {
+    uint8_t buffer[8];
     // PUSH_DE;
 
     // LD_A_addr(wLinkMode);
@@ -1275,7 +1276,7 @@ void PlaceEnemysName_Conv(struct TextPrintState* state) {
     state->hl = state->bc;
     // LD_DE(mString_Space);
     // CALL(aPlaceString);
-    temp.de = GBToRAMAddr(mString_Space);
+    temp.de = U82CA(buffer, " ");
     PlaceString_Conv(&temp, state->hl);
     // PUSH_BC;
     // CALLFAR(aBattle_GetTrainerName);

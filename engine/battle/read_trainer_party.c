@@ -3,6 +3,7 @@
 #include "../../home/sram.h"
 #include "../../home/copy.h"
 #include "../../data/trainers/parties.h"
+#include "../../data/moves/moves.h"
 #include "../pokemon/move_mon.h"
 
 void ReadTrainerParty(void){
@@ -195,7 +196,7 @@ void TrainerType1_Conv(const struct TrainerParty* de){
         wram->wMonType = OTPARTYMON;
         // PUSH_HL;
         // PREDEF(pTryAddMonToParty);
-        TryAddMonToParty_Conv(de->pmoves[i].species, de->pmoves[i].level);
+        TryAddMonToParty_Conv(de->pnormal[i].species, de->pnormal[i].level);
         // POP_HL;
         // goto loop;
     }
@@ -357,7 +358,7 @@ void TrainerType2_Conv(const struct TrainerParty* de){
             // PUSH_HL;
             // PUSH_BC;
             // DEC_A;
-            uint8_t a = de->pmoves[i].moves[j] - 1;
+            move_t a = de->pmoves[i].moves[j];
             // LD_HL(mMoves + MOVE_PP);
             // LD_BC(MOVE_LENGTH);
             // CALL(aAddNTimes);
@@ -370,7 +371,7 @@ void TrainerType2_Conv(const struct TrainerParty* de){
             // INC_DE;
             // DEC_B;
             // IF_NZ goto copy_pp;
-            wram->wOTPartyMon[wram->wOTPartyCount - 1].mon.PP[j] = GetFarByte_Conv(BANK(aMoves), (mMoves + MOVE_PP) + MOVE_LENGTH*a);
+            wram->wOTPartyMon[wram->wOTPartyCount - 1].mon.PP[j] = Moves[a].pp;
             j++;
         }
 
@@ -435,7 +436,7 @@ void TrainerType3_Conv(const struct TrainerParty* de){
         wram->wMonType = OTPARTYMON;
         // PUSH_HL;
         // PREDEF(pTryAddMonToParty);
-        TryAddMonToParty_Conv(de->pmoves[i].species, de->pmoves[i].level);
+        TryAddMonToParty_Conv(de->pitem[i].species, de->pitem[i].level);
         // LD_A_addr(wOTPartyCount);
         // DEC_A;
         // LD_HL(wOTPartyMon1Item);
@@ -574,7 +575,7 @@ void TrainerType4_Conv(const struct TrainerParty* de){
 
         // PUSH_HL;
         // PREDEF(pTryAddMonToParty);
-        TryAddMonToParty_Conv(de->pmoves[i].species, de->pmoves[i].level);
+        TryAddMonToParty_Conv(de->pitemmoves[i].species, de->pitemmoves[i].level);
         // LD_A_addr(wOTPartyCount);
         // DEC_A;
         // LD_HL(wOTPartyMon1Item);
@@ -639,7 +640,7 @@ void TrainerType4_Conv(const struct TrainerParty* de){
             // PUSH_HL;
             // PUSH_BC;
             // DEC_A;
-            uint8_t a = de->pitemmoves[i].moves[j] - 1;
+            move_t a = de->pitemmoves[i].moves[j];
             // LD_HL(mMoves + MOVE_PP);
             // LD_BC(MOVE_LENGTH);
             // CALL(aAddNTimes);
@@ -652,7 +653,7 @@ void TrainerType4_Conv(const struct TrainerParty* de){
             // INC_DE;
             // DEC_B;
             // IF_NZ goto copy_pp;
-            wram->wOTPartyMon[wram->wOTPartyCount - 1].mon.PP[j] = GetFarByte_Conv(BANK(aMoves), (mMoves + MOVE_PP) + MOVE_LENGTH*a);
+            wram->wOTPartyMon[wram->wOTPartyCount - 1].mon.PP[j] = Moves[a].pp;
             j++;
         }
 

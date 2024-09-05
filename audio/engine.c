@@ -4,6 +4,7 @@
 #include "drumkits.h"
 #include "notes.h"
 #include "wave_samples.h"
+#include "music_pointers.h"
 #include "../home/audio.h"
 #include "../home/delay.h"
 #include "../data/trainers/encounter_music.h"
@@ -875,13 +876,16 @@ void v_PlayMusic(uint16_t songId) {
     //  load music
     MusicOff();
     gb_write16(wMusicID, songId);
-    LD_HL(mMusic);                  // ld hl, Music
-    REG_HL += songId * 3;           // 3-byte pointer
-    LD_A_hli;                       // ld a, [hli]
-    LD_addr_A(wMusicBank);          // ld [wMusicBank], a
-    LD_E_hl;                        // ld e, [hl]
-    INC_HL;                         // inc hl
-    LD_D_hl;                        // ld d, [hl] ; music header address
+    // LD_HL(mMusic);                  // ld hl, Music
+    // REG_HL += songId * 3;           // 3-byte pointer
+    struct BankAddr mus = Music[songId];
+    // LD_A_hli;                       // ld a, [hli]
+    // LD_addr_A(wMusicBank);          // ld [wMusicBank], a
+    wram->wMusicBank = mus.bank;
+    // LD_E_hl;                        // ld e, [hl]
+    // INC_HL;                         // inc hl
+    // LD_D_hl;                        // ld d, [hl] ; music header address
+    REG_DE = mus.addr;
     REG_A = LoadMusicByte(REG_DE);  // store first byte of music header in a
     RLCA;                           // rlca
     RLCA;                           // rlca

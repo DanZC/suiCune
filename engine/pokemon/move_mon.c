@@ -566,6 +566,7 @@ bool GeneratePartyMonStats_Conv(struct PartyMon* hl, species_t species, uint8_t 
         // LD_hl_A;
         ByteFill_Conv2(hl->mon.moves, sizeof(hl->mon.moves), 0);
         // LD_addr_A(wSkipMovesBeforeLevelUp);
+        wram->wSkipMovesBeforeLevelUp = FALSE;
         // PREDEF(pFillMoves);
         FillMoves_Conv(hl->mon.moves, hl->mon.PP, species, level);
     }
