@@ -938,7 +938,6 @@ menunoreload:
     if(res.flag) goto l_return;
 
     // CALL(aPokemonActionSubmenu);
-    // regs = SafeCallGBAutoRet(aPokemonActionSubmenu);
     submenu_res = PokemonActionSubmenu();
     // CP_A(3);
     // IF_Z goto menu;

@@ -3,6 +3,8 @@
 #include "mon_submenu.h"
 #include "tempmon.h"
 #include "mon_stats.h"
+#include "mail.h"
+#include "mail_2.h"
 #include "types.h"
 #include "party_menu.h"
 #include "print_move_description.h"
@@ -27,6 +29,7 @@
 #include "../items/items.h"
 #include "../items/buy_sell_toss.h"
 #include "../items/item_effects.h"
+#include "../items/pack.h"
 #include "../events/overworld.h"
 #include "../events/sweet_scent.h"
 #include "../../data/text/common.h"
@@ -340,10 +343,10 @@ u8_pair_s PokemonActionSubmenu(void){
         case MONMENUITEM_SWEETSCENT:return MonMenu_SweetScent();
         case MONMENUITEM_STATS:     return OpenPartyStats();
         case MONMENUITEM_SWITCH:    return SwitchPartyMons();
-        //case MONMENUITEM_ITEM:  return GiveTakePartyMonItem();
+        case MONMENUITEM_ITEM:      return GiveTakePartyMonItem();
         case MONMENUITEM_CANCEL:    return CancelPokemonAction();
         //case MONMENUITEM_MOVE:  return ManagePokemonMoves();
-        //case MONMENUITEM_MAIL:  return MonMailAction();
+        case MONMENUITEM_MAIL:      return MonMailAction();
         default:
         // nothing:
             // LD_A(0);
@@ -430,300 +433,336 @@ u8_pair_s SwitchPartyMons(void){
     return CancelPokemonAction();
 }
 
-void GiveTakePartyMonItem(void){
+static void GiveTakePartyMonItem_GiveItem(void){
+    // FARCALL(aDepositSellInitPackBuffers);
+    DepositSellInitPackBuffers();
+
+    while(1) {
+    // loop:
+        // FARCALL(aDepositSellPack);
+        DepositSellPack();
+
+        // LD_A_addr(wPackUsedItem);
+        // AND_A_A;
+        // IF_Z goto quit;
+        if(wram->wPackUsedItem == NO_ITEM)
+            break;
+
+        // LD_A_addr(wCurPocket);
+        // CP_A(KEY_ITEM_POCKET);
+        // IF_Z goto next;
+        if(wram->wCurPocket != KEY_ITEM_POCKET) {
+            // CALL(aCheckTossableItem);
+            // LD_A_addr(wItemAttributeValue);
+            // AND_A_A;
+            // IF_NZ goto next;
+            if(CheckTossableItem_Conv(wram->wCurItem)) {
+                // CALL(aTryGiveItemToPartymon);
+                TryGiveItemToPartymon();
+                // goto quit;
+                break;
+            }
+        }
+
+    // next:
+        // LD_HL(mItemCantHeldText);
+        // CALL(aMenuTextboxBackup);
+        MenuTextboxBackup_Conv(ItemCantHeldText);
+        // goto loop;
+    }
+
+// quit:
+    // RET;
+}
+
+u8_pair_s GiveTakePartyMonItem(void){
 //  Eggs can't hold items!
-    LD_A_addr(wCurPartySpecies);
-    CP_A(EGG);
-    IF_Z goto cancel;
+    // LD_A_addr(wCurPartySpecies);
+    // CP_A(EGG);
+    // IF_Z goto cancel;
+    if(wram->wCurPartySpecies == EGG)
+        goto cancel;
 
-    LD_HL(mGiveTakeItemMenuData);
-    CALL(aLoadMenuHeader);
-    CALL(aVerticalMenu);
-    CALL(aExitMenu);
-    IF_C goto cancel;
+    // LD_HL(mGiveTakeItemMenuData);
+    // CALL(aLoadMenuHeader);
+    LoadMenuHeader_Conv2(&GiveTakeItemMenuData);
+    // CALL(aVerticalMenu);
+    bool quit = !VerticalMenu_Conv();
+    // CALL(aExitMenu);
+    ExitMenu_Conv2();
+    // IF_C goto cancel;
+    if(quit)
+        goto cancel;
 
-    CALL(aGetCurNickname);
-    LD_HL(wStringBuffer1);
-    LD_DE(wMonOrItemNameBuffer);
-    LD_BC(MON_NAME_LENGTH);
-    CALL(aCopyBytes);
-    LD_A_addr(wMenuCursorY);
-    CP_A(1);
-    IF_NZ goto take;
-
-    CALL(aLoadStandardMenuHeader);
-    CALL(aClearPalettes);
-    CALL(aGiveTakePartyMonItem_GiveItem);
-    CALL(aClearPalettes);
-    CALL(aLoadFontsBattleExtra);
-    CALL(aExitMenu);
-    LD_A(0);
-    RET;
-
-
-take:
-    CALL(aTakePartyItem);
-    LD_A(3);
-    RET;
-
+    // CALL(aGetCurNickname);
+    // LD_HL(wStringBuffer1);
+    // LD_DE(wMonOrItemNameBuffer);
+    // LD_BC(MON_NAME_LENGTH);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wMonOrItemNameBuffer, GetCurNickname_Conv2(), MON_NAME_LENGTH);
+    // LD_A_addr(wMenuCursorY);
+    // CP_A(1);
+    // IF_NZ goto take;
+    if(wram->wMenuCursorY == 1) {
+        // CALL(aLoadStandardMenuHeader);
+        LoadStandardMenuHeader_Conv();
+        // CALL(aClearPalettes);
+        ClearPalettes_Conv();
+        // CALL(aGiveTakePartyMonItem_GiveItem);
+        GiveTakePartyMonItem_GiveItem();
+        // CALL(aClearPalettes);
+        ClearPalettes_Conv();
+        // CALL(aLoadFontsBattleExtra);
+        LoadFontsBattleExtra_Conv();
+        // CALL(aExitMenu);
+        ExitMenu_Conv2();
+        // LD_A(0);
+        // RET;
+        return u8_pair(0, 0);
+    }
+    else {
+    // take:
+        // CALL(aTakePartyItem);
+        TakePartyItem();
+        // LD_A(3);
+        // RET;
+        return u8_pair(3, 0);
+    }
 
 cancel:
-    LD_A(3);
-    RET;
-
-
-GiveItem:
-    FARCALL(aDepositSellInitPackBuffers);
-
-
-loop:
-    FARCALL(aDepositSellPack);
-
-    LD_A_addr(wPackUsedItem);
-    AND_A_A;
-    IF_Z goto quit;
-
-    LD_A_addr(wCurPocket);
-    CP_A(KEY_ITEM_POCKET);
-    IF_Z goto next;
-
-    CALL(aCheckTossableItem);
-    LD_A_addr(wItemAttributeValue);
-    AND_A_A;
-    IF_NZ goto next;
-
-    CALL(aTryGiveItemToPartymon);
-    goto quit;
-
-
-next:
-    LD_HL(mItemCantHeldText);
-    CALL(aMenuTextboxBackup);
-    goto loop;
-
-
-quit:
-    RET;
-
+    // LD_A(3);
+    // RET;
+    return u8_pair(3, 0);
 }
 
 void TryGiveItemToPartymon(void){
-    CALL(aSpeechTextbox);
-    CALL(aPartyMonItemName);
-    CALL(aGetPartyItemLocation);
-    LD_A_hl;
-    AND_A_A;
-    IF_Z goto give_item_to_mon;
+    // CALL(aSpeechTextbox);
+    SpeechTextbox_Conv2();
+    // CALL(aPartyMonItemName);
+    PartyMonItemName_Conv(wram->wCurItem);
+    // CALL(aGetPartyItemLocation);
+    item_t* itm = GetPartyItemLocation();
+    // LD_A_hl;
+    // AND_A_A;
+    // IF_Z goto give_item_to_mon;
+    if(*itm == NO_ITEM) {
+    // give_item_to_mon:
+        // CALL(aGiveItemToPokemon);
+        GiveItemToPokemon(wram->wCurItem);
+        // LD_HL(mPokemonHoldItemText);
+        // CALL(aMenuTextboxBackup);
+        MenuTextboxBackup_Conv(PokemonHoldItemText);
+        // CALL(aGivePartyItem);
+        GivePartyItem(wram->wCurItem);
+        // RET;
+        return;
+    }
+    // PUSH_HL;
+    // LD_D_A;
+    // FARCALL(aItemIsMail);
+    // POP_HL;
+    // IF_C goto please_remove_mail;
+    else if(ItemIsMail_Conv(*itm)) {
+    // please_remove_mail:
+        // LD_HL(mPokemonRemoveMailText);
+        // CALL(aMenuTextboxBackup);
+        MenuTextbox_Conv(PokemonRemoveMailText);
+        // RET;
+        return;
+    }
+    // LD_A_hl;
+    // goto already_holding_item;
 
-    PUSH_HL;
-    LD_D_A;
-    FARCALL(aItemIsMail);
-    POP_HL;
-    IF_C goto please_remove_mail;
-    LD_A_hl;
-    goto already_holding_item;
+// already_holding_item:
+    // LD_addr_A(wNamedObjectIndex);
+    // CALL(aGetItemName);
+    GetItemName_Conv2(*itm);
+    // LD_HL(mPokemonAskSwapItemText);
+    // CALL(aStartMenuYesNo);
+    // IF_C goto abort;
+    if(StartMenuYesNo_Conv(PokemonAskSwapItemText)) {
+        // CALL(aGiveItemToPokemon);
+        GiveItemToPokemon(wram->wCurItem);
+        // LD_A_addr(wNamedObjectIndex);
+        // PUSH_AF;
+        // LD_A_addr(wCurItem);
+        // LD_addr_A(wNamedObjectIndex);
+        // POP_AF;
+        // LD_addr_A(wCurItem);
+        // CALL(aReceiveItemFromPokemon);
+        // IF_NC goto bag_full;
+        if(ReceiveItemFromPokemon(*itm)) {
+            // LD_HL(mPokemonSwapItemText);
+            // CALL(aMenuTextboxBackup);
+            MenuTextboxBackup_Conv(PokemonSwapItemText);
+            // LD_A_addr(wNamedObjectIndex);
+            // LD_addr_A(wCurItem);
+            // CALL(aGivePartyItem);
+            GivePartyItem(wram->wCurItem);
+            // RET;
+            return;
+        }
 
+    // bag_full:
+        // LD_A_addr(wNamedObjectIndex);
+        // LD_addr_A(wCurItem);
+        // CALL(aReceiveItemFromPokemon);
+        ReceiveItemFromPokemon(wram->wCurItem);
+        // LD_HL(mItemStorageFullText);
+        // CALL(aMenuTextboxBackup);
+        MenuTextboxBackup_Conv(ItemStorageFullText);
+    }
 
-give_item_to_mon:
-    CALL(aGiveItemToPokemon);
-    LD_HL(mPokemonHoldItemText);
-    CALL(aMenuTextboxBackup);
-    CALL(aGivePartyItem);
-    RET;
-
-
-please_remove_mail:
-    LD_HL(mPokemonRemoveMailText);
-    CALL(aMenuTextboxBackup);
-    RET;
-
-
-already_holding_item:
-    LD_addr_A(wNamedObjectIndex);
-    CALL(aGetItemName);
-    LD_HL(mPokemonAskSwapItemText);
-    CALL(aStartMenuYesNo);
-    IF_C goto abort;
-
-    CALL(aGiveItemToPokemon);
-    LD_A_addr(wNamedObjectIndex);
-    PUSH_AF;
-    LD_A_addr(wCurItem);
-    LD_addr_A(wNamedObjectIndex);
-    POP_AF;
-    LD_addr_A(wCurItem);
-    CALL(aReceiveItemFromPokemon);
-    IF_NC goto bag_full;
-
-    LD_HL(mPokemonSwapItemText);
-    CALL(aMenuTextboxBackup);
-    LD_A_addr(wNamedObjectIndex);
-    LD_addr_A(wCurItem);
-    CALL(aGivePartyItem);
-    RET;
-
-
-bag_full:
-    LD_A_addr(wNamedObjectIndex);
-    LD_addr_A(wCurItem);
-    CALL(aReceiveItemFromPokemon);
-    LD_HL(mItemStorageFullText);
-    CALL(aMenuTextboxBackup);
-
-
-abort:
-    RET;
-
+// abort:
+    // RET;
 }
 
-void GivePartyItem(void){
-    CALL(aGetPartyItemLocation);
-    LD_A_addr(wCurItem);
-    LD_hl_A;
-    LD_D_A;
-    FARCALL(aItemIsMail);
-    IF_NC goto done;
-    CALL(aComposeMailMessage);
+void GivePartyItem(item_t item){
+    // CALL(aGetPartyItemLocation);
+    // LD_A_addr(wCurItem);
+    // LD_hl_A;
+    *GetPartyItemLocation() = item;
+    // LD_D_A;
+    // FARCALL(aItemIsMail);
+    // IF_NC goto done;
+    if(ItemIsMail_Conv(item)) {
+        // CALL(aComposeMailMessage);
+        SafeCallGBAuto(aComposeMailMessage);
+    }
 
-
-done:
-    RET;
-
+// done:
+    // RET;
 }
 
 void TakePartyItem(void){
-    CALL(aSpeechTextbox);
-    CALL(aGetPartyItemLocation);
-    LD_A_hl;
-    AND_A_A;
-    IF_Z goto not_holding_item;
+    // CALL(aSpeechTextbox);
+    SpeechTextbox_Conv2();
+    // CALL(aGetPartyItemLocation);
+    item_t* itm = GetPartyItemLocation();
+    // LD_A_hl;
+    // AND_A_A;
+    // IF_Z goto not_holding_item;
+    if(*itm != NO_ITEM) {
+        // LD_addr_A(wCurItem);
+        // CALL(aReceiveItemFromPokemon);
+        // IF_NC goto item_storage_full;
+        if(ReceiveItemFromPokemon(*itm)) {
+            // FARCALL(aItemIsMail);
+            // CALL(aGetPartyItemLocation);
+            // LD_A_hl;
+            item_t item = *itm;
+            // LD_addr_A(wNamedObjectIndex);
+            // LD_hl(NO_ITEM);
+            *itm = NO_ITEM;
+            // CALL(aGetItemName);
+            GetItemName_Conv2(item);
+            // LD_HL(mPokemonTookItemText);
+            // CALL(aMenuTextboxBackup);
+            MenuTextboxBackup_Conv(PokemonTookItemText);
+            // goto done;
+        }
+        else {
+        // item_storage_full:
+            // LD_HL(mItemStorageFullText);
+            // CALL(aMenuTextboxBackup);
+            MenuTextboxBackup_Conv(ItemStorageFullText);
+        }
+    }
+    else {
+    // not_holding_item:
+        // LD_HL(mPokemonNotHoldingText);
+        // CALL(aMenuTextboxBackup);
+        MenuTextboxBackup_Conv(PokemonNotHoldingText);
+        // goto done;
+    }
 
-    LD_addr_A(wCurItem);
-    CALL(aReceiveItemFromPokemon);
-    IF_NC goto item_storage_full;
 
-    FARCALL(aItemIsMail);
-    CALL(aGetPartyItemLocation);
-    LD_A_hl;
-    LD_addr_A(wNamedObjectIndex);
-    LD_hl(NO_ITEM);
-    CALL(aGetItemName);
-    LD_HL(mPokemonTookItemText);
-    CALL(aMenuTextboxBackup);
-    goto done;
-
-
-not_holding_item:
-    LD_HL(mPokemonNotHoldingText);
-    CALL(aMenuTextboxBackup);
-    goto done;
-
-
-item_storage_full:
-    LD_HL(mItemStorageFullText);
-    CALL(aMenuTextboxBackup);
-
-
-done:
-    RET;
-
+// done:
+    // RET;
 }
 
-void GiveTakeItemMenuData(void){
-    //db ['MENU_SPRITE_ANIMS | MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['12', '12', 'SCREEN_WIDTH - 1', 'SCREEN_HEIGHT - 1'];
+const struct MenuHeader GiveTakeItemMenuData = {
+    .flags = MENU_SPRITE_ANIMS | MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(12, 12, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1),
     //dw ['.Items'];
-    //db ['1'];  // default option
+    .data = &(struct MenuData) {
+    // Items:
+        .flags = STATICMENU_CURSOR,  // flags
+        .verticalMenu = {
+            .count = 2,  // # items
+            .options = (const char*[]) {
+                "GIVE@",
+                "TAKE@",
+            },
+        },
+    },
+    .defaultOption = 1,  // default option
+};
 
+const txt_cmd_s PokemonSwapItemText[] = {
+    text_far(v_PokemonSwapItemText)
+    text_end
+};
 
-Items:
-    //db ['STATICMENU_CURSOR'];  // flags
-    //db ['2'];  // # items
-    //db ['"GIVE@"'];
-    //db ['"TAKE@"'];
+const txt_cmd_s PokemonHoldItemText[] = {
+    text_far(v_PokemonHoldItemText)
+    text_end
+};
 
-    return PokemonSwapItemText();
+const txt_cmd_s PokemonRemoveMailText[] = {
+    text_far(v_PokemonRemoveMailText)
+    text_end
+};
+
+const txt_cmd_s PokemonNotHoldingText[] = {
+    text_far(v_PokemonNotHoldingText)
+    text_end
+};
+
+const txt_cmd_s ItemStorageFullText[] = {
+    text_far(v_ItemStorageFullText)
+    text_end
+};
+
+const txt_cmd_s PokemonTookItemText[] = {
+    text_far(v_PokemonTookItemText)
+    text_end
+};
+
+const txt_cmd_s PokemonAskSwapItemText[] = {
+    text_far(v_PokemonAskSwapItemText)
+    text_end
+};
+
+const txt_cmd_s ItemCantHeldText[] = {
+    text_far(v_ItemCantHeldText)
+    text_end
+};
+
+item_t* GetPartyItemLocation(void){
+    // PUSH_AF;
+    // LD_A(MON_ITEM);
+    // CALL(aGetPartyParamLocation);
+    // POP_AF;
+    // RET;
+    return &wram->wPartyMon[wram->wCurPartyMon].mon.item;
 }
 
-void PokemonSwapItemText(void){
-    //text_far ['_PokemonSwapItemText']
-    //text_end ['?']
-
-    return PokemonHoldItemText();
+bool ReceiveItemFromPokemon(item_t item){
+    // LD_A(1);
+    // LD_addr_A(wItemQuantityChange);
+    // LD_HL(wNumItems);
+    // JP(mReceiveItem);
+    return ReceiveItem_Conv((item_pocket_s*)&wram->wNumItems, item, 1);
 }
 
-void PokemonHoldItemText(void){
-    //text_far ['_PokemonHoldItemText']
-    //text_end ['?']
-
-    return PokemonRemoveMailText();
-}
-
-void PokemonRemoveMailText(void){
-    //text_far ['_PokemonRemoveMailText']
-    //text_end ['?']
-
-    return PokemonNotHoldingText();
-}
-
-void PokemonNotHoldingText(void){
-    //text_far ['_PokemonNotHoldingText']
-    //text_end ['?']
-
-    return ItemStorageFullText();
-}
-
-void ItemStorageFullText(void){
-    //text_far ['_ItemStorageFullText']
-    //text_end ['?']
-
-    return PokemonTookItemText();
-}
-
-void PokemonTookItemText(void){
-    //text_far ['_PokemonTookItemText']
-    //text_end ['?']
-
-    return PokemonAskSwapItemText();
-}
-
-void PokemonAskSwapItemText(void){
-    //text_far ['_PokemonAskSwapItemText']
-    //text_end ['?']
-
-    return ItemCantHeldText();
-}
-
-void ItemCantHeldText(void){
-    //text_far ['_ItemCantHeldText']
-    //text_end ['?']
-
-    return GetPartyItemLocation();
-}
-
-void GetPartyItemLocation(void){
-    PUSH_AF;
-    LD_A(MON_ITEM);
-    CALL(aGetPartyParamLocation);
-    POP_AF;
-    RET;
-
-}
-
-void ReceiveItemFromPokemon(void){
-    LD_A(1);
-    LD_addr_A(wItemQuantityChange);
-    LD_HL(wNumItems);
-    JP(mReceiveItem);
-
-}
-
-void GiveItemToPokemon(void){
-    LD_A(1);
-    LD_addr_A(wItemQuantityChange);
-    LD_HL(wNumItems);
-    JP(mTossItem);
-
+void GiveItemToPokemon(item_t item){
+    // LD_A(1);
+    // LD_addr_A(wItemQuantityChange);
+    wram->wItemQuantityChange = 1;
+    // LD_HL(wNumItems);
+    // JP(mTossItem);
+    TossItem_Conv((item_pocket_s*)&wram->wNumItems, item);
 }
 
 void StartMenuYesNo(void){
@@ -774,128 +813,161 @@ void ComposeMailMessage(void){
 
 }
 
-void MonMailAction(void){
+static const struct MenuHeader MonMailAction_MenuHeader = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(12, 10, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1),
+    //dw ['.MenuData'];
+    .data = &(struct MenuData) {
+    // MenuData:
+        .flags = STATICMENU_CURSOR,  // flags
+        .verticalMenu = {
+            .count = 3,  // items
+            .options = (const char*[]){
+                "READ@",
+                "TAKE@",
+                "QUIT@",
+            },
+        },
+    },
+    .defaultOption = 1,  // default option
+};
+
+static u8_pair_s MonMailAction_read(void) {
+// read:
+    // FARCALL(aReadPartyMonMail);
+    ReadPartyMonMail();
+    // LD_A(0x0);
+    // RET;
+    return u8_pair(0x0, 0x0);
+}
+
+u8_pair_s MonMailAction(void){
+    static const txt_cmd_s MailLoseMessageText[] = {
+        text_far(v_MailLoseMessageText)
+        text_end
+    };
+
+    static const txt_cmd_s MailDetachedText[] = {
+        text_far(v_MailDetachedText)
+        text_end
+    };
+
+    static const txt_cmd_s MailNoSpaceText[] = {
+        text_far(v_MailNoSpaceText)
+        text_end
+    };
+
+    static const txt_cmd_s MailAskSendToPCText[] = {
+        text_far(v_MailAskSendToPCText)
+        text_end
+    };
+
+    static const txt_cmd_s MailboxFullText[] = {
+        text_far(v_MailboxFullText)
+        text_end
+    };
+
+    static const txt_cmd_s MailSentToPCText[] = {
+        text_far(v_MailSentToPCText)
+        text_end
+    };
 //  If in the time capsule or trade center,
 //  selecting the mail only allows you to
 //  read the mail.
-    LD_A_addr(wLinkMode);
-    CP_A(LINK_TIMECAPSULE);
-    IF_Z goto read;
-    CP_A(LINK_TRADECENTER);
-    IF_Z goto read;
+    // LD_A_addr(wLinkMode);
+    // CP_A(LINK_TIMECAPSULE);
+    // IF_Z goto read;
+    // CP_A(LINK_TRADECENTER);
+    // IF_Z goto read;
+    if(wram->wLinkMode == LINK_TIMECAPSULE || wram->wLinkMode == LINK_TRADECENTER)
+        return MonMailAction_read();
 
 //  Show the READ/TAKE/QUIT menu.
-    LD_HL(mMonMailAction_MenuHeader);
-    CALL(aLoadMenuHeader);
-    CALL(aVerticalMenu);
-    CALL(aExitMenu);
+    // LD_HL(mMonMailAction_MenuHeader);
+    // CALL(aLoadMenuHeader);
+    LoadMenuHeader_Conv2(&MonMailAction_MenuHeader);
+    // CALL(aVerticalMenu);
+    bool cancel = !VerticalMenu_Conv();
+    // CALL(aExitMenu);
+    ExitMenu_Conv2();
 
 //  Interpret the menu.
-    JP_C (mMonMailAction_done);
-    LD_A_addr(wMenuCursorY);
-    CP_A(0x1);
-    IF_Z goto read;
-    CP_A(0x2);
-    IF_Z goto take;
-    JP(mMonMailAction_done);
+    // JP_C (mMonMailAction_done);
+    if(!cancel) {
+        // LD_A_addr(wMenuCursorY);
+        // CP_A(0x1);
+        // IF_Z goto read;
+        // CP_A(0x2);
+        // IF_Z goto take;
+        // JP(mMonMailAction_done);
+        switch(wram->wMenuCursorY){
+        case 0x1:
+            return MonMailAction_read();
 
+        case 0x2:
+        // take:
+            // LD_HL(mMonMailAction_MailAskSendToPCText);
+            // CALL(aStartMenuYesNo);
+            // IF_C goto RemoveMailToBag;
+            if(!StartMenuYesNo_Conv(MailAskSendToPCText)) {
+            // RemoveMailToBag:
+                // LD_HL(mMonMailAction_MailLoseMessageText);
+                // CALL(aStartMenuYesNo);
+                // IF_C goto done;
+                if(StartMenuYesNo_Conv(MailLoseMessageText)) {
+                    // CALL(aGetPartyItemLocation);
+                    // LD_A_hl;
+                    // LD_addr_A(wCurItem);
+                    // CALL(aReceiveItemFromPokemon);
+                    // IF_NC goto BagIsFull;
+                    if(ReceiveItemFromPokemon(*GetPartyItemLocation())) {
+                        // CALL(aGetPartyItemLocation);
+                        // LD_hl(0x0);
+                        *GetPartyItemLocation() = NO_ITEM;
+                        // CALL(aGetCurNickname);
+                        GetCurNickname_Conv2();
+                        // LD_HL(mMonMailAction_MailDetachedText);
+                        // CALL(aMenuTextboxBackup);
+                        MenuTextboxBackup_Conv(MailDetachedText);
+                        // goto done;
+                    }
+                    else {
+                    // BagIsFull:
+                        // LD_HL(mMonMailAction_MailNoSpaceText);
+                        // CALL(aMenuTextboxBackup);
+                        MenuTextboxBackup_Conv(MailNoSpaceText);
+                        // goto done;
+                    }
+                }
+            }
+            else {
+                // LD_A_addr(wCurPartyMon);
+                // LD_B_A;
+                // FARCALL(aSendMailToPC);
+                bool full = SendMailToPC(wram->wCurPartyMon);
+                // IF_C goto MailboxFull;
+                if(full) {
+                // MailboxFull:
+                    // LD_HL(mMonMailAction_MailboxFullText);
+                    // CALL(aMenuTextboxBackup);
+                    MenuTextboxBackup_Conv(MailboxFullText);
+                    // goto done;
+                }
+                else {
+                    // LD_HL(mMonMailAction_MailSentToPCText);
+                    // CALL(aMenuTextboxBackup);
+                    MenuTextboxBackup_Conv(MailSentToPCText);
+                    // goto done;
+                }
+            }
+            break;
+        }
+    }
 
-read:
-    FARCALL(aReadPartyMonMail);
-    LD_A(0x0);
-    RET;
-
-
-take:
-    LD_HL(mMonMailAction_MailAskSendToPCText);
-    CALL(aStartMenuYesNo);
-    IF_C goto RemoveMailToBag;
-    LD_A_addr(wCurPartyMon);
-    LD_B_A;
-    FARCALL(aSendMailToPC);
-    IF_C goto MailboxFull;
-    LD_HL(mMonMailAction_MailSentToPCText);
-    CALL(aMenuTextboxBackup);
-    goto done;
-
-
-MailboxFull:
-    LD_HL(mMonMailAction_MailboxFullText);
-    CALL(aMenuTextboxBackup);
-    goto done;
-
-
-RemoveMailToBag:
-    LD_HL(mMonMailAction_MailLoseMessageText);
-    CALL(aStartMenuYesNo);
-    IF_C goto done;
-    CALL(aGetPartyItemLocation);
-    LD_A_hl;
-    LD_addr_A(wCurItem);
-    CALL(aReceiveItemFromPokemon);
-    IF_NC goto BagIsFull;
-    CALL(aGetPartyItemLocation);
-    LD_hl(0x0);
-    CALL(aGetCurNickname);
-    LD_HL(mMonMailAction_MailDetachedText);
-    CALL(aMenuTextboxBackup);
-    goto done;
-
-
-BagIsFull:
-    LD_HL(mMonMailAction_MailNoSpaceText);
-    CALL(aMenuTextboxBackup);
-    goto done;
-
-
-done:
-    LD_A(0x3);
-    RET;
-
-
-// MenuHeader:
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['12', '10', 'SCREEN_WIDTH - 1', 'SCREEN_HEIGHT - 1'];
-    //dw ['.MenuData'];
-    //db ['1'];  // default option
-
-
-// MenuData:
-    //db ['STATICMENU_CURSOR'];  // flags
-    //db ['3'];  // items
-    //db ['"READ@"'];
-    //db ['"TAKE@"'];
-    //db ['"QUIT@"'];
-
-
-// MailLoseMessageText:
-    //text_far ['_MailLoseMessageText']
-    //text_end ['?']
-
-
-// MailDetachedText:
-    //text_far ['_MailDetachedText']
-    //text_end ['?']
-
-
-// MailNoSpaceText:
-    //text_far ['_MailNoSpaceText']
-    //text_end ['?']
-
-
-// MailAskSendToPCText:
-    //text_far ['_MailAskSendToPCText']
-    //text_end ['?']
-
-
-// MailboxFullText:
-    //text_far ['_MailboxFullText']
-    //text_end ['?']
-
-
-// MailSentToPCText:
-    //text_far ['_MailSentToPCText']
-    //text_end ['?']
+// done:
+    // LD_A(0x3);
+    // RET;
+    return u8_pair(0x3, 0x0);
 }
 
 u8_pair_s OpenPartyStats(void){

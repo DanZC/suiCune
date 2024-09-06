@@ -248,7 +248,6 @@ void v_CGB_FinishBattleScreenLayout(void){
 
 void InitPartyMenuBGPal7(void){
     // FARCALL(aFunction100dc0);
-    // struct cpu_registers_s res = SafeCallGBAutoRet(aFunction100dc0);
     return Mobile_InitPartyMenuBGPal7(Function100dc0());
 }
 
@@ -276,7 +275,6 @@ void Mobile_InitPartyMenuBGPal7(bool isMobile){
 void InitPartyMenuBGPal0(void){
     uint16_t palbuf[NUM_PAL_COLORS];
     // FARCALL(aFunction100dc0);
-    // struct cpu_registers_s regs = SafeCallGBAutoRet(aFunction100dc0);
     // LD_HL(mPartyMenuBGPalette);
     // IF_NC goto not_mobile;
     // LD_HL(mPartyMenuBGMobilePalette);

@@ -104,31 +104,31 @@ void GetClock_Conv(void){
     LatchClock_Conv();
     //LD_HL(MBC3SRamBank);
     //LD_DE(MBC3RTC);
-    const uint16_t hl = MBC3SRamBank;
-    const uint16_t de = MBC3RTC;
 
-    gb_write(hl, RTC_S);
-    REG_A = gb_read(de);
-    maskbits(60, 0);
-    gb_write(hRTCSeconds, REG_A);
+    gb_write(MBC3SRamBank, RTC_S);
+    // REG_A = gb_read(de);
+    // maskbits(60, 0);
+    hram->hRTCSeconds = gb_read(MBC3RTC) & 0x3f;
 
-    gb_write(hl, RTC_M);
-    REG_A = gb_read(de);
-    maskbits(60, 0);
-    gb_write(hRTCMinutes, REG_A);
+    gb_write(MBC3SRamBank, RTC_M);
+    // REG_A = gb_read(de);
+    // maskbits(60, 0);
+    // gb_write(hRTCMinutes, REG_A);
+    hram->hRTCMinutes = gb_read(MBC3RTC) & 0x3f;
 
-    gb_write(hl, RTC_H);
-    REG_A = gb_read(de);
-    maskbits(24, 0);
-    gb_write(hRTCHours, REG_A);
+    gb_write(MBC3SRamBank, RTC_H);
+    // REG_A = gb_read(de);
+    // maskbits(24, 0);
+    // gb_write(hRTCHours, REG_A);
+    hram->hRTCHours = gb_read(MBC3RTC) & 0x1f;
 
-    gb_write(hl, RTC_DL);
-    REG_A = gb_read(de);
-    gb_write(hRTCDayLo, REG_A);
+    gb_write(MBC3SRamBank, RTC_DL);
+    // REG_A = gb_read(de);
+    hram->hRTCDayLo = gb_read(MBC3RTC);
 
-    gb_write(hl, RTC_DH);
-    REG_A = gb_read(de);
-    gb_write(hRTCDayHi, REG_A);
+    gb_write(MBC3SRamBank, RTC_DH);
+    // REG_A = gb_read(de);
+    hram->hRTCDayHi = gb_read(MBC3RTC);
 
 //  unlatch clock / disable clock r/w
     CloseSRAM_Conv();

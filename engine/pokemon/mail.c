@@ -6,47 +6,61 @@
 #include "../../home/menu.h"
 #include "../../data/text/common.h"
 
-void SendMailToPC(void){
-    LD_A(MON_ITEM);
-    CALL(aGetPartyParamLocation);
-    LD_D_hl;
-    FARCALL(aItemIsMail);
-    IF_NC goto full;
-    CALL(aGetMailboxCount);
-    CP_A(MAILBOX_CAPACITY);
-    IF_NC goto full;
-    LD_BC(MAIL_STRUCT_LENGTH);
-    LD_HL(sMailboxes);
-    CALL(aAddNTimes);
-    LD_D_H;
-    LD_E_L;
-    LD_A_addr(wCurPartyMon);
-    LD_BC(MAIL_STRUCT_LENGTH);
-    LD_HL(sPartyMail);
-    CALL(aAddNTimes);
-    PUSH_HL;
-    LD_A(BANK(sMailboxCount));
-    CALL(aOpenSRAM);
-    LD_BC(MAIL_STRUCT_LENGTH);
-    CALL(aCopyBytes);
-    POP_HL;
-    XOR_A_A;
-    LD_BC(MAIL_STRUCT_LENGTH);
-    CALL(aByteFill);
-    LD_A(MON_ITEM);
-    CALL(aGetPartyParamLocation);
-    LD_hl(0);
-    LD_HL(sMailboxCount);
-    INC_hl;
-    CALL(aCloseSRAM);
-    XOR_A_A;
-    RET;
+bool SendMailToPC(uint8_t b){
+    // LD_A(MON_ITEM);
+    // CALL(aGetPartyParamLocation);
+    // LD_D_hl;
+    item_t itm = wram->wPartyMon[b].mon.item;
+    // FARCALL(aItemIsMail);
+    // IF_NC goto full;
+    if(ItemIsMail_Conv(itm)) {
+        // CALL(aGetMailboxCount);
+        uint8_t count = GetMailboxCount();
+        // CP_A(MAILBOX_CAPACITY);
+        // IF_NC goto full;
+        if(count < MAILBOX_CAPACITY) {
+            // LD_BC(MAIL_STRUCT_LENGTH);
+            // LD_HL(sMailboxes);
+            // CALL(aAddNTimes);
+            uint16_t dest = sMailboxes + MAIL_STRUCT_LENGTH * count;
+            // LD_D_H;
+            // LD_E_L;
+            // LD_A_addr(wCurPartyMon);
+            // LD_BC(MAIL_STRUCT_LENGTH);
+            // LD_HL(sPartyMail);
+            // CALL(aAddNTimes);
+            // PUSH_HL;
+            uint16_t source = sPartyMail + MAIL_STRUCT_LENGTH * b;
+            // LD_A(BANK(sMailboxCount));
+            // CALL(aOpenSRAM);
+            OpenSRAM_Conv(MBANK(asMailboxCount));
+            // LD_BC(MAIL_STRUCT_LENGTH);
+            // CALL(aCopyBytes);
+            CopyBytes_Conv2(GBToRAMAddr(dest), GBToRAMAddr(source), MAIL_STRUCT_LENGTH);
+            // POP_HL;
+            // XOR_A_A;
+            // LD_BC(MAIL_STRUCT_LENGTH);
+            // CALL(aByteFill);
+            ByteFill_Conv2(GBToRAMAddr(source), MAIL_STRUCT_LENGTH, 0);
+            // LD_A(MON_ITEM);
+            // CALL(aGetPartyParamLocation);
+            // LD_hl(0);
+            wram->wPartyMon[b].mon.item = NO_ITEM;
+            // LD_HL(sMailboxCount);
+            // INC_hl;
+            gb_write(sMailboxCount, gb_read(sMailboxCount) + 1);
+            // CALL(aCloseSRAM);
+            CloseSRAM_Conv();
+            // XOR_A_A;
+            // RET;
+            return false;
+        }
+    }
 
-
-full:
-    SCF;
-    RET;
-
+// full:
+    // SCF;
+    // RET;
+    return true;
 }
 
 void DeleteMailFromPC(void){
@@ -132,13 +146,16 @@ void MoveMailFromPCToParty(void){
 
 }
 
-void GetMailboxCount(void){
-    LD_A(BANK(sMailboxCount));
-    CALL(aOpenSRAM);
-    LD_A_addr(sMailboxCount);
-    LD_C_A;
-    JP(mCloseSRAM);
-
+uint8_t GetMailboxCount(void){
+    // LD_A(BANK(sMailboxCount));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asMailboxCount));
+    // LD_A_addr(sMailboxCount);
+    // LD_C_A;
+    uint8_t c = gb_read(sMailboxCount);
+    // JP(mCloseSRAM);
+    CloseSRAM_Conv();
+    return c;
 }
 
 void CheckPokeMail(void){

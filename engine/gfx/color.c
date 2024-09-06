@@ -583,56 +583,74 @@ bool LoadStatsScreenPals_Conv(uint8_t c){
     return true;
 }
 
-void LoadMailPalettes(void){
-    LD_L_E;
-    LD_H(0);
-    ADD_HL_HL;
-    ADD_HL_HL;
-    ADD_HL_HL;
-    LD_DE(mLoadMailPalettes_MailPals);
-    ADD_HL_DE;
-    CALL(aCheckCGB);
-    IF_NZ goto cgb;
-    PUSH_HL;
-    LD_HL(mPalPacket_Pal01);
-    LD_DE(wSGBPals);
-    LD_BC(PALPACKET_LENGTH);
-    CALL(aCopyBytes);
-    POP_HL;
-    INC_HL;
-    INC_HL;
-    LD_A_hli;
-    LD_addr_A(wSGBPals + 3);
-    LD_A_hli;
-    LD_addr_A(wSGBPals + 4);
-    LD_A_hli;
-    LD_addr_A(wSGBPals + 5);
-    LD_A_hli;
-    LD_addr_A(wSGBPals + 6);
-    LD_HL(wSGBPals);
-    CALL(aPushSGBPals);
-    LD_HL(mBlkPacket_AllPal0);
-    CALL(aPushSGBPals);
-    RET;
+void LoadMailPalettes(uint8_t e){
+    static const uint16_t MailPals[] = {
+    	rgb(20,31,11), rgb(31,19,00), rgb(31,10, 9), rgb(00,00,00), // FLOWER_MAIL
+	    rgb(15,20,31), rgb(30,26,00), rgb(31,12, 0), rgb(00,00,00), // SURF_MAIL
+	    rgb(24,17,31), rgb(30,26,00), rgb( 8,11,31), rgb(00,00,00), // LITEBLUEMAIL
+	    rgb(31,25,17), rgb(31,18,04), rgb(28,12,05), rgb(00,00,00), // PORTRAITMAIL
+	    rgb(19,26,31), rgb(31, 5, 8), rgb(31, 9,31), rgb(00,00,00), // LOVELY_MAIL
+	    rgb(31,19,28), rgb(31,21,00), rgb(12,22,00), rgb(00,00,00), // EON_MAIL
+	    rgb(19,17,23), rgb(30,26,00), rgb(31,12,00), rgb(00,00,00), // MORPH_MAIL
+	    rgb(07,26,31), rgb(26,26,27), rgb(31,11,11), rgb(00,00,00), // BLUESKY_MAIL
+	    rgb(21,31,21), rgb(30,26,00), rgb(31,12,00), rgb(00,00,00), // MUSIC_MAIL
+	    rgb(07,26,31), rgb(31,31,00), rgb(00,21,00), rgb(00,00,00), // MIRAGE_MAIL
+    };
+    // LD_L_E;
+    // LD_H(0);
+    // ADD_HL_HL;
+    // ADD_HL_HL;
+    // ADD_HL_HL;
+    // LD_DE(mLoadMailPalettes_MailPals);
+    // ADD_HL_DE;
+    const uint16_t* hl = MailPals + (e * 4);
+    // CALL(aCheckCGB);
+    // IF_NZ goto cgb;
+    if(CheckCGB_Conv()) {
+    // cgb:
+        // LD_DE(wBGPals1);
+        // LD_BC(1 * PALETTE_SIZE);
+        // LD_A(BANK(wBGPals1));
+        // CALL(aFarCopyWRAM);
+        CopyBytes_Conv2(wram->wBGPals1, hl, 1 * PALETTE_SIZE);
+        // CALL(aApplyPals);
+        ApplyPals_Conv();
+        // CALL(aWipeAttrmap);
+        WipeAttrmap();
+        // CALL(aApplyAttrmap);
+        ApplyAttrmap_Conv();
+        // RET;
+        return;
+    }
+    // PUSH_HL;
+    // LD_HL(mPalPacket_Pal01);
+    // LD_DE(wSGBPals);
+    // LD_BC(PALPACKET_LENGTH);
+    // CALL(aCopyBytes);
+    // POP_HL;
+    // INC_HL;
+    // INC_HL;
+    // LD_A_hli;
+    // LD_addr_A(wSGBPals + 3);
+    // LD_A_hli;
+    // LD_addr_A(wSGBPals + 4);
+    // LD_A_hli;
+    // LD_addr_A(wSGBPals + 5);
+    // LD_A_hli;
+    // LD_addr_A(wSGBPals + 6);
+    // LD_HL(wSGBPals);
+    // CALL(aPushSGBPals);
+    // LD_HL(mBlkPacket_AllPal0);
+    // CALL(aPushSGBPals);
+    // RET;
 
 
-cgb:
-    LD_DE(wBGPals1);
-    LD_BC(1 * PALETTE_SIZE);
-    LD_A(BANK(wBGPals1));
-    CALL(aFarCopyWRAM);
-    CALL(aApplyPals);
-    CALL(aWipeAttrmap);
-    CALL(aApplyAttrmap);
-    RET;
-
-
-MailPals:
+// MailPals:
 // INCLUDE "gfx/mail/mail.pal"
 
 // INCLUDE "engine/gfx/cgb_layouts.asm"
 
-    return CopyFourPalettes();
+    // return CopyFourPalettes();
 }
 
 void CopyFourPalettes(void){

@@ -18,7 +18,7 @@ void ApplyMonOrTrainerPals(uint8_t e);
 void ApplyHPBarPals(uint8_t c);
 void LoadStatsScreenPals(void);
 bool LoadStatsScreenPals_Conv(uint8_t c);
-void LoadMailPalettes(void);
+void LoadMailPalettes(uint8_t e);
 void CopyFourPalettes(void);
 void CopyFourPalettes_Conv(const uint8_t* pal);
 void CopyPalettes(void);

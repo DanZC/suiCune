@@ -334,10 +334,10 @@ void Credits_LYOverride(void){
     wram->wCreditsLYOverride = override;
     // LD_HL(wLYOverrides + 0x1f);
     // CALL(aCredits_LYOverride_Fill);
-    Credits_LYOverride_Fill(wram->wLYOverrides + 0x1f, override);
+    Credits_LYOverride_Fill(wram->wLYOverrides + 0x20, override);
     // LD_HL(wLYOverrides + 0x87);
     // CALL(aCredits_LYOverride_Fill);
-    Credits_LYOverride_Fill(wram->wLYOverrides + 0x87, override);
+    Credits_LYOverride_Fill(wram->wLYOverrides + 0x88, override);
     // JP(mCredits_Next);
     return Credits_Next();
 }

@@ -270,7 +270,6 @@ void DoBattle(void){
 
 // not_linked_2:
     // CALL(aBattleTurn);
-    // SafeCallGBAuto(aBattleTurn);
     BattleTurn();
     // RET;
 

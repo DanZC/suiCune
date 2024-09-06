@@ -457,7 +457,6 @@ static void DebugMenu_BattleTest_StartBattle(uint8_t tclass, uint8_t tid) {
     // }
     TryAddMonToParty_Conv(DRAGONITE, 100);
     wbank_push(MBANK(awInBattleTowerBattle));
-    // SafeCallGBAuto(aStartBattle);
     StartBattle_Conv();
 
     bit_reset(wram->wDebugFlags, DEBUG_BATTLE_F);

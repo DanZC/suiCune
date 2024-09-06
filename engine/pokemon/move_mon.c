@@ -2782,7 +2782,6 @@ bool GiveEgg_Conv(void){
     // PUSH_BC;
 
     // CALL(aTryAddMonToParty);
-    // SafeCallGBAuto(aTryAddMonToParty);
     TryAddMonToParty_Conv(wram->wCurPartySpecies, wram->wCurPartyLevel);
 
 //  If we haven't caught this Pokemon before receiving

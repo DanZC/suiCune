@@ -1,8 +1,8 @@
-void SendMailToPC(void);
+bool SendMailToPC(uint8_t b);
 void DeleteMailFromPC(void);
 void ReadMailMessage(void);
 void MoveMailFromPCToParty(void);
-void GetMailboxCount(void);
+uint8_t GetMailboxCount(void);
 void CheckPokeMail(void);
 void GivePokeMail(void);
 void GivePokeMail_Conv(const struct Pokemail* mail);

@@ -281,7 +281,6 @@ void DoNPCTrade(void){
     // CALLFAR(aRemoveMonFromPartyOrBox);
     RemoveMonFromPartyOrBox_Conv(REMOVE_PARTY);
     // PREDEF(pTryAddMonToParty);
-    // SafeCallGBAuto(aTryAddMonToParty);
     TryAddMonToParty_Conv(wram->wOTTrademon.species, wram->wCurPartyLevel);
 
     // LD_E(NPCTRADE_DIALOG);
