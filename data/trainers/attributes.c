@@ -103,6 +103,12 @@ const struct TrainerClassAttr TrainerClassAttributes[] = {
         .aiMoveWeights=(AI_BASIC | AI_SETUP | AI_SMART | AI_AGGRESSIVE | AI_CAUTIOUS | AI_STATUS | AI_RISKY),
         .aiItemSwitch=(CONTEXT_USE | SWITCH_SOMETIMES)
     },
+    [LT_SURGE] = {
+        .items={ HYPER_POTION, NO_ITEM },
+        .baseMoney=25,
+        .aiMoveWeights=(AI_BASIC | AI_SETUP | AI_SMART | AI_AGGRESSIVE | AI_CAUTIOUS | AI_STATUS | AI_RISKY),
+        .aiItemSwitch=(CONTEXT_USE | SWITCH_SOMETIMES)
+    },
     [SCIENTIST] = {
         .items={ NO_ITEM, NO_ITEM },
         .baseMoney=25,
@@ -126,6 +132,12 @@ const struct TrainerClassAttr TrainerClassAttributes[] = {
         .baseMoney=8,
         .aiMoveWeights=(AI_BASIC | AI_SETUP | AI_TYPES | AI_OPPORTUNIST | AI_CAUTIOUS | AI_STATUS),
         .aiItemSwitch=(CONTEXT_USE | SWITCH_OFTEN)
+    },
+    [BIRD_KEEPER] = {
+        .items={ NO_ITEM, NO_ITEM },
+        .baseMoney=6,
+        .aiMoveWeights=(AI_BASIC | AI_TYPES | AI_OFFENSIVE | AI_OPPORTUNIST | AI_STATUS),
+        .aiItemSwitch=(CONTEXT_USE | SWITCH_SOMETIMES)
     },
     [LASS] = {
         .items={ NO_ITEM, NO_ITEM },
@@ -193,6 +205,12 @@ const struct TrainerClassAttr TrainerClassAttributes[] = {
         .aiMoveWeights=(AI_BASIC | AI_SETUP | AI_SMART | AI_AGGRESSIVE | AI_CAUTIOUS | AI_STATUS | AI_RISKY),
         .aiItemSwitch=(CONTEXT_USE | SWITCH_SOMETIMES)
     },
+    [BUG_CATCHER] = {
+	    .items={ NO_ITEM, NO_ITEM },
+	    .baseMoney=4,
+	    .aiMoveWeights=(AI_BASIC | AI_SETUP | AI_STATUS),
+	    .aiItemSwitch=(CONTEXT_USE | SWITCH_SOMETIMES)
+    },
     [FISHER] = {
         .items={ NO_ITEM, NO_ITEM },
         .baseMoney=10,
@@ -215,6 +233,12 @@ const struct TrainerClassAttr TrainerClassAttributes[] = {
         .items={ NO_ITEM, NO_ITEM },
         .baseMoney=10,
         .aiMoveWeights=(AI_BASIC | AI_OFFENSIVE | AI_OPPORTUNIST | AI_STATUS),
+        .aiItemSwitch=(CONTEXT_USE | SWITCH_SOMETIMES)
+    },
+    [SUPER_NERD] = {
+        .items={ NO_ITEM, NO_ITEM },
+        .baseMoney=8,
+        .aiMoveWeights=(AI_BASIC | AI_TYPES | AI_SMART | AI_STATUS),
         .aiItemSwitch=(CONTEXT_USE | SWITCH_SOMETIMES)
     },
     [RIVAL2] = {
@@ -265,10 +289,22 @@ const struct TrainerClassAttr TrainerClassAttributes[] = {
         .aiMoveWeights=(AI_BASIC | AI_TYPES | AI_SMART | AI_STATUS),
         .aiItemSwitch=(CONTEXT_USE | SWITCH_SOMETIMES)
     },
+    [BLACKBELT_T] = {
+        .items={ NO_ITEM, NO_ITEM },
+        .baseMoney=6,
+        .aiMoveWeights=(AI_BASIC | AI_OFFENSIVE | AI_STATUS | AI_RISKY),
+        .aiItemSwitch=(CONTEXT_USE | SWITCH_SOMETIMES)
+    },
     [EXECUTIVEM] = {
         .items={ NO_ITEM, NO_ITEM },
         .baseMoney=18,
         .aiMoveWeights=(AI_BASIC | AI_SETUP | AI_TYPES | AI_SMART | AI_OPPORTUNIST | AI_CAUTIOUS | AI_STATUS | AI_RISKY),
+        .aiItemSwitch=(CONTEXT_USE | SWITCH_SOMETIMES)
+    },
+    [PSYCHIC_T] = {
+        .items={ NO_ITEM, NO_ITEM },
+        .baseMoney=8,
+        .aiMoveWeights=(AI_BASIC | AI_TYPES | AI_OPPORTUNIST | AI_CAUTIOUS | AI_STATUS),
         .aiItemSwitch=(CONTEXT_USE | SWITCH_SOMETIMES)
     },
     [PICNICKER] = {
@@ -311,6 +347,12 @@ const struct TrainerClassAttr TrainerClassAttributes[] = {
         .items={ NO_ITEM, NO_ITEM },
         .baseMoney=20,
         .aiMoveWeights=(AI_BASIC | AI_TYPES | AI_SMART | AI_STATUS),
+        .aiItemSwitch=(CONTEXT_USE | SWITCH_SOMETIMES)
+    },
+    [KIMONO_GIRL] = {
+        .items={ NO_ITEM, NO_ITEM },
+        .baseMoney=18,
+        .aiMoveWeights=(AI_BASIC | AI_TYPES | AI_OPPORTUNIST | AI_CAUTIOUS | AI_STATUS),
         .aiItemSwitch=(CONTEXT_USE | SWITCH_SOMETIMES)
     },
     [TWINS] = {

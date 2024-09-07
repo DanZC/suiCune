@@ -120,15 +120,7 @@ void ReadTrainerParty(void){
     }
 done:
     // JP(mComputeTrainerReward);
-    PUSH_AF;
-    PUSH_BC;
-    PUSH_DE;
-    PUSH_HL;
     ComputeTrainerReward();
-    POP_HL;
-    POP_DE;
-    POP_BC;
-    POP_AF;
     return;
 }
 
@@ -667,23 +659,28 @@ void TrainerType4_Conv(const struct TrainerParty* de){
 }
 
 void ComputeTrainerReward(void){
-    LD_HL(hProduct);
-    XOR_A_A;
-    LD_hli_A;
-    LD_hli_A;  // hMultiplicand + 0
-    LD_hli_A;  // hMultiplicand + 1
-    LD_A_addr(wEnemyTrainerBaseReward);
-    LD_hli_A;  // hMultiplicand + 2
-    LD_A_addr(wCurPartyLevel);
-    LD_hl_A;  // hMultiplier
-    CALL(aMultiply);
-    LD_HL(wBattleReward);
-    XOR_A_A;
-    LD_hli_A;
-    LDH_A_addr(hProduct + 2);
-    LD_hli_A;
-    LDH_A_addr(hProduct + 3);
-    LD_hl_A;
+    printf("Trainer reward: base %d, level %d\n", wram->wEnemyTrainerBaseReward, wram->wCurPartyLevel);
+    // LD_HL(hProduct);
+    // XOR_A_A;
+    // LD_hli_A;
+    // LD_hli_A;  // hMultiplicand + 0
+    // LD_hli_A;  // hMultiplicand + 1
+    // LD_A_addr(wEnemyTrainerBaseReward);
+    // LD_hli_A;  // hMultiplicand + 2
+    // LD_A_addr(wCurPartyLevel);
+    // LD_hl_A;  // hMultiplier
+    // CALL(aMultiply);
+    uint32_t reward = wram->wEnemyTrainerBaseReward * wram->wCurPartyLevel;
+    // LD_HL(wBattleReward);
+    // XOR_A_A;
+    // LD_hli_A;
+    wram->wBattleReward[0] = HIGH(reward >> 8);
+    // LDH_A_addr(hProduct + 2);
+    // LD_hli_A;
+    wram->wBattleReward[1] = HIGH(reward);
+    // LDH_A_addr(hProduct + 3);
+    // LD_hl_A;
+    wram->wBattleReward[2] = LOW(reward);
     // RET;
 
 }

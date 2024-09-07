@@ -4468,6 +4468,8 @@ void WinTrainerBattle(void){
 
 // give_money:
     PEEK("give_money");
+    
+    printf("reward %d\n", (wram->wBattleReward[0] << 16) | (wram->wBattleReward[1] << 8) | wram->wBattleReward[2]);
     // LD_A_addr(wAmuletCoin);
     // AND_A_A;
     // CALL_NZ (aWinTrainerBattle_DoubleReward);
