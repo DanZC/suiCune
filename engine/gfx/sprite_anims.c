@@ -1659,7 +1659,7 @@ static void AnimSeq_FlyFrom_Conv(struct SpriteAnim* bc){
     // INC_hl;
     // CP_A(0x40);
     // RET_C ;
-    if(bc->var2++ >= 0x40)
+    if(bc->var2++ < 0x40)
         return;
 
     // LD_HL(SPRITEANIMSTRUCT_YCOORD);
@@ -1733,7 +1733,7 @@ static void AnimSeq_FlyLeaf_Conv(struct SpriteAnim* bc){
     // LD_A_hl;
     // CP_A(-9 * 8);
     // IF_NC goto delete_leaf;
-    if((int8_t)bc->xCoord >= -9 * 8) {
+    if(bc->xCoord >= (uint8_t)(-9 * 8)) {
     // delete_leaf:
         // CALL(aDeinitializeSprite);
         // RET;

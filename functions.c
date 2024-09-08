@@ -9265,7 +9265,7 @@ CONVERTED(v_AnimateTileset);
     // CONVERTED(Printer_PrepareTilemapForPrint);
     CONVERTED(Printer_ExitPrinter);
     // REDIRECTED(PrintPCBox_Page3);
-    // REDIRECTED(PrintMailAndExit);
+    // CONVERTED(PrintMailAndExit);
     CONVERTED(Printer_CopyTilemapToBuffer);
     // REDIRECTED(PrinterStatusStringPointers);
     // CONVERTED(SendScreenToPrinter);

@@ -13,6 +13,7 @@
 #include "../overworld/tile_events.h"
 #include "../overworld/spawn_points.h"
 #include "../gfx/load_overworld_font.h"
+#include "../pokegear/pokegear.h"
 #include "../../home/audio.h"
 #include "../../home/copy.h"
 #include "../../home/copy_name.h"
@@ -1102,7 +1103,7 @@ static uint8_t FlyFunction_TryFly(void) {
     // LD_DE(ENGINE_STORMBADGE);
     // CALL(aCheckBadge);
     // IF_C goto nostormbadge;
-    if(CheckBadge_Conv(ENGINE_STORMBADGE)) {
+    if(!CheckBadge_Conv(ENGINE_STORMBADGE)) {
     // nostormbadge:
         // LD_A(0x82);
         // RET;
@@ -1121,13 +1122,14 @@ static uint8_t FlyFunction_TryFly(void) {
         // CALL(aClearSprites);
         ClearSprites_Conv();
         // FARCALL(av_FlyMap);
-        struct cpu_registers_s regs = SafeCallGBAutoRet(av_FlyMap);
+        // struct cpu_registers_s regs = SafeCallGBAutoRet(av_FlyMap);
+        uint8_t e = v_FlyMap();
         // LD_A_E;
         // CP_A(-1);
         // IF_Z goto illegal;
         // CP_A(NUM_SPAWNS);
         // IF_NC goto illegal;
-        if(regs.e == 0xff || regs.e >= NUM_SPAWNS) {
+        if(e == 0xff || e >= NUM_SPAWNS) {
         // illegal:
             // CALL(aCloseWindow);
             CloseWindow_Conv2();
@@ -1139,7 +1141,7 @@ static uint8_t FlyFunction_TryFly(void) {
         }
 
         // LD_addr_A(wDefaultSpawnpoint);
-        wram->wDefaultSpawnpoint = regs.e;
+        wram->wDefaultSpawnpoint = e;
         // CALL(aCloseWindow);
         CloseWindow_Conv2();
         // LD_A(0x1);

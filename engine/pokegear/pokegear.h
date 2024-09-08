@@ -131,7 +131,7 @@ void LoadStation_PokemonChannel(void);
 const char* LoadStation_PokemonChannel_Conv(void);
 void PokegearMap(void);
 void PokegearMap_Conv(uint8_t e);
-void v_FlyMap(void);
+uint8_t v_FlyMap(void);
 void TownMapBubble(void);
 void GetMapCursorCoordinates(void);
 bool CheckIfVisitedFlypoint(uint8_t fp);
@@ -158,7 +158,7 @@ void LoadTownMapGFX_Conv(void);
 extern const char JohtoMap[];
 extern const char KantoMap[];
 extern const char PokedexNestIconGFX[];
-// void FlyMapLabelBorderGFX(void);
+extern const char FlyMapLabelBorderGFX[];
 uint8_t EntireFlyMap(void);
 //#include "gfx/pokegear/fast_ship.2bpp"
 //#include "gfx/pokegear/pokegear_sprites.2bpp.lz"

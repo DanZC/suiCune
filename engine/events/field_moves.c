@@ -720,7 +720,7 @@ static void FlyFunction_FrameTimer_SpawnLeaf(void) {
     // INC_hl;
     // AND_A(0x7);
     // RET_NZ ;
-    if((wram->wFrameCounter2++ & 0x7) != 0)
+    if((wram->wFrameCounter2++ & 0xf) != 0) // was every seven frames, but that spawned too many leaves.
         return;
     // LD_A_hl;
     // AND_A((6 * 8) >> 1);

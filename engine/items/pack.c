@@ -9,6 +9,7 @@
 #include "../menus/menu_2.h"
 #include "../events/catch_tutorial_input.h"
 #include "../pokemon/party_menu.h"
+#include "../pokemon/mon_menu.h"
 #include "../../home/audio.h"
 #include "../../home/copy.h"
 #include "../../home/joypad.h"
@@ -902,7 +903,8 @@ void GiveItem(void){
             // CALL(aCopyBytes);
             CopyBytes_Conv2(wram->wMonOrItemNameBuffer, GetCurNickname_Conv2(), MON_NAME_LENGTH);
             // CALL(aTryGiveItemToPartymon);
-            SafeCallGBAuto(aTryGiveItemToPartymon);
+            // SafeCallGBAuto(aTryGiveItemToPartymon);
+            TryGiveItemToPartymon();
             // POP_AF;
             // LD_addr_A(wPackJumptableIndex);
             wram->wPackJumptableIndex = packJumptableIndex;

@@ -4422,126 +4422,178 @@ void PokegearMap_Conv(uint8_t e){
     }
 }
 
-void v_FlyMap(void){
-    CALL(aClearBGPalettes);
-    CALL(aClearTilemap);
-    CALL(aClearSprites);
-    LD_HL(hInMenu);
-    LD_A_hl;
-    PUSH_AF;
-    LD_hl(0x1);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    FARCALL(aClearSpriteAnims);
-    CALL(aLoadTownMapGFX);
-    LD_DE(mFlyMapLabelBorderGFX);
-    LD_HL(vTiles2 + LEN_2BPP_TILE * 0x30);
-    LD_BC((BANK(aFlyMapLabelBorderGFX) << 8) | 6);
-    CALL(aRequest1bpp);
-    CALL(aFlyMap);
-    CALL(aPokegear_DummyFunction);
-    LD_B(SCGB_POKEGEAR_PALS);
-    CALL(aGetSGBLayout);
-    CALL(aSetPalettes);
+static void v_FlyMap_HandleDPad(void){
+    // LD_A_addr(wStartFlypoint);
+    // LD_E_A;
+    uint8_t e = wram->wStartFlypoint;
+    // LD_A_addr(wEndFlypoint);
+    // LD_D_A;
+    uint8_t d = wram->wEndFlypoint;
+    // LD_HL(hJoyLast);
+    // LD_A_hl;
+    // AND_A(D_UP);
+    // IF_NZ goto ScrollNext;
+    if(hram->hJoyLast & D_UP) {
+        do {
+        // ScrollNext:
+            // LD_HL(wTownMapPlayerIconLandmark);
+            // LD_A_hl;
+            // CP_A_D;
+            // IF_NZ goto NotAtEndYet;
+            if(wram->wTownMapPlayerIconLandmark == d) {
+                // LD_A_E;
+                // DEC_A;
+                // LD_hl_A;
+                wram->wTownMapPlayerIconLandmark = e;
+            }
+            else {
+                wram->wTownMapPlayerIconLandmark++;
+            }
 
-loop:
-    CALL(aJoyTextDelay);
-    LD_HL(hJoyPressed);
-    LD_A_hl;
-    AND_A(B_BUTTON);
-    IF_NZ goto pressedB;
-    LD_A_hl;
-    AND_A(A_BUTTON);
-    IF_NZ goto pressedA;
-    CALL(av_FlyMap_HandleDPad);
-    CALL(aGetMapCursorCoordinates);
-    FARCALL(aPlaySpriteAnimations);
-    CALL(aDelayFrame);
-    goto loop;
+        // NotAtEndYet:
+            // INC_hl;
+            // CALL(aCheckIfVisitedFlypoint);
+            // IF_Z goto ScrollNext;
+        } while(!CheckIfVisitedFlypoint(wram->wTownMapPlayerIconLandmark));
+        // goto Finally;
+    }
+    // LD_A_hl;
+    // AND_A(D_DOWN);
+    // IF_NZ goto ScrollPrev;
+    else if(hram->hJoyLast & D_DOWN) {
+        do {
+        // ScrollPrev:
+            // LD_HL(wTownMapPlayerIconLandmark);
+            // LD_A_hl;
+            // CP_A_E;
+            // IF_NZ goto NotAtStartYet;
+            if(wram->wTownMapPlayerIconLandmark == e) {
+                // LD_A_D;
+                // INC_A;
+                // LD_hl_A;
+                wram->wTownMapPlayerIconLandmark = d;
+            }
+            else {
+            // NotAtStartYet:
+                // DEC_hl;
+                wram->wTownMapPlayerIconLandmark--;
+            }
+            // CALL(aCheckIfVisitedFlypoint);
+            // IF_Z goto ScrollPrev;
+        } while(!CheckIfVisitedFlypoint(wram->wTownMapPlayerIconLandmark));
+    }
+    else {
+        // RET;
+        return;
+    }
 
+// Finally:
+    // CALL(aTownMapBubble);
+    TownMapBubble();
+    // CALL(aWaitBGMap);
+    WaitBGMap_Conv();
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0x0;
+    // RET;
+}
 
-pressedB:
-    LD_A(-1);
-    goto exit;
+uint8_t v_FlyMap(void){
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
+    // CALL(aClearTilemap);
+    ClearTilemap_Conv2();
+    // CALL(aClearSprites);
+    ClearSprites_Conv();
+    // LD_HL(hInMenu);
+    // LD_A_hl;
+    // PUSH_AF;
+    uint8_t inMenu = hram->hInMenu;
+    // LD_hl(0x1);
+    hram->hInMenu = 0x1;
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0x0;
+    // FARCALL(aClearSpriteAnims);
+    ClearSpriteAnims_Conv();
+    // CALL(aLoadTownMapGFX);
+    LoadTownMapGFX_Conv();
+    // LD_DE(mFlyMapLabelBorderGFX);
+    // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x30);
+    // LD_BC((BANK(aFlyMapLabelBorderGFX) << 8) | 6);
+    // CALL(aRequest1bpp);
+    LoadPNG1bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x30, FlyMapLabelBorderGFX, 0, 6);
+    // CALL(aFlyMap);
+    FlyMap();
+    // CALL(aPokegear_DummyFunction);
+    // LD_B(SCGB_POKEGEAR_PALS);
+    // CALL(aGetSGBLayout);
+    GetSGBLayout_Conv(SCGB_POKEGEAR_PALS);
+    // CALL(aSetPalettes);
+    SetPalettes_Conv();
 
+    uint8_t a;
+    while(1) {
+    // loop:
+        // CALL(aJoyTextDelay);
+        JoyTextDelay_Conv();
+        // LD_HL(hJoyPressed);
+        // LD_A_hl;
+        // AND_A(B_BUTTON);
+        // IF_NZ goto pressedB;
+        if(hram->hJoyPressed & B_BUTTON) {
+        // pressedB:
+            // LD_A(-1);
+            a = 0xff;
+            // goto exit;
+            break;
+        }
+        // LD_A_hl;
+        // AND_A(A_BUTTON);
+        // IF_NZ goto pressedA;
+        else if(hram->hJoyPressed & A_BUTTON) {
+        // pressedA:
+            // LD_A_addr(wTownMapPlayerIconLandmark);
+            // LD_L_A;
+            // LD_H(0);
+            // ADD_HL_HL;
+            // LD_DE(mFlypoints + 1);
+            // ADD_HL_DE;
+            // LD_A_hl;
+            a = Flypoints[wram->wTownMapPlayerIconLandmark].spawn;
+            break;
+        }
+        // CALL(av_FlyMap_HandleDPad);
+        v_FlyMap_HandleDPad();
+        // CALL(aGetMapCursorCoordinates);
+        GetMapCursorCoordinates();
+        // FARCALL(aPlaySpriteAnimations);
+        PlaySpriteAnimations_Conv();
+        // CALL(aDelayFrame);
+        DelayFrame();
+        // goto loop;
+    }
 
-pressedA:
-    LD_A_addr(wTownMapPlayerIconLandmark);
-    LD_L_A;
-    LD_H(0);
-    ADD_HL_HL;
-    LD_DE(mFlypoints + 1);
-    ADD_HL_DE;
-    LD_A_hl;
-
-exit:
-    LD_addr_A(wTownMapPlayerIconLandmark);
-    POP_AF;
-    LDH_addr_A(hInMenu);
-    CALL(aClearBGPalettes);
-    LD_A(SCREEN_HEIGHT_PX);
-    LDH_addr_A(hWY);
-    XOR_A_A;  // LOW(vBGMap0)
-    LDH_addr_A(hBGMapAddress);
-    LD_A(HIGH(vBGMap0));
-    LDH_addr_A(hBGMapAddress + 1);
-    LD_A_addr(wTownMapPlayerIconLandmark);
-    LD_E_A;
-    RET;
-
-
-HandleDPad:
-    LD_A_addr(wStartFlypoint);
-    LD_E_A;
-    LD_A_addr(wEndFlypoint);
-    LD_D_A;
-    LD_HL(hJoyLast);
-    LD_A_hl;
-    AND_A(D_UP);
-    IF_NZ goto ScrollNext;
-    LD_A_hl;
-    AND_A(D_DOWN);
-    IF_NZ goto ScrollPrev;
-    RET;
-
-
-ScrollNext:
-    LD_HL(wTownMapPlayerIconLandmark);
-    LD_A_hl;
-    CP_A_D;
-    IF_NZ goto NotAtEndYet;
-    LD_A_E;
-    DEC_A;
-    LD_hl_A;
-
-NotAtEndYet:
-    INC_hl;
-    CALL(aCheckIfVisitedFlypoint);
-    IF_Z goto ScrollNext;
-    goto Finally;
-
-
-ScrollPrev:
-    LD_HL(wTownMapPlayerIconLandmark);
-    LD_A_hl;
-    CP_A_E;
-    IF_NZ goto NotAtStartYet;
-    LD_A_D;
-    INC_A;
-    LD_hl_A;
-
-NotAtStartYet:
-    DEC_hl;
-    CALL(aCheckIfVisitedFlypoint);
-    IF_Z goto ScrollPrev;
-
-Finally:
-    CALL(aTownMapBubble);
-    CALL(aWaitBGMap);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    RET;
-
+// exit:
+    // LD_addr_A(wTownMapPlayerIconLandmark);
+    wram->wTownMapPlayerIconLandmark = a;
+    // POP_AF;
+    // LDH_addr_A(hInMenu);
+    hram->hInMenu = inMenu;
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
+    // LD_A(SCREEN_HEIGHT_PX);
+    // LDH_addr_A(hWY);
+    hram->hWY = SCREEN_HEIGHT_PX;
+    // XOR_A_A;  // LOW(vBGMap0)
+    // LDH_addr_A(hBGMapAddress);
+    // LD_A(HIGH(vBGMap0));
+    // LDH_addr_A(hBGMapAddress + 1);
+    hram->hBGMapAddress = vBGMap0;
+    // LD_A_addr(wTownMapPlayerIconLandmark);
+    // LD_E_A;
+    // RET;
+    return wram->wTownMapPlayerIconLandmark;
 }
 
 static void TownMapBubble_Name(void) {
@@ -4684,92 +4736,124 @@ void Pokegear_DummyFunction(void){
 
 }
 
+static void FlyMap_MapHud(void){
+    // CALL(aTownMapBubble);
+    TownMapBubble();
+    // CALL(aTownMapPals);
+    TownMapPals_Conv();
+    // hlbgcoord(0, 0, vBGMap0);  // BG Map 0
+    // CALL(aTownMapBGUpdate);
+    TownMapBGUpdate_Conv(bgcoord(0, 0, vBGMap0));
+    // CALL(aTownMapMon);
+    struct SpriteAnim* bc = TownMapMon_Conv();
+    // LD_A_C;
+    // LD_addr_A(wTownMapCursorCoordinates);
+    // LD_A_B;
+    // LD_addr_A(wTownMapCursorCoordinates + 1);
+    gTownMapCursorCoordinates = bc;
+    // RET;
+}
+
 void FlyMap(void){
-    LD_A_addr(wMapGroup);
-    LD_B_A;
-    LD_A_addr(wMapNumber);
-    LD_C_A;
-    CALL(aGetWorldMapLocation);
+    // LD_A_addr(wMapGroup);
+    // LD_B_A;
+    // LD_A_addr(wMapNumber);
+    // LD_C_A;
+    // CALL(aGetWorldMapLocation);
+    uint8_t loc = GetWorldMapLocation_Conv2(wram->wMapGroup, wram->wMapNumber);
 //  If we're not in a valid location, i.e. Pokecenter floor 2F,
 //  the backup map information is used.
-    CP_A(LANDMARK_SPECIAL);
-    IF_NZ goto CheckRegion;
-    LD_A_addr(wBackupMapGroup);
-    LD_B_A;
-    LD_A_addr(wBackupMapNumber);
-    LD_C_A;
-    CALL(aGetWorldMapLocation);
+    // CP_A(LANDMARK_SPECIAL);
+    // IF_NZ goto CheckRegion;
+    if(loc == LANDMARK_SPECIAL) {
+        // LD_A_addr(wBackupMapGroup);
+        // LD_B_A;
+        // LD_A_addr(wBackupMapNumber);
+        // LD_C_A;
+        // CALL(aGetWorldMapLocation);
+        loc = GetWorldMapLocation_Conv2(wram->wBackupMapGroup, wram->wBackupMapNumber);
+    }
 
-CheckRegion:
+// CheckRegion:
 //  The first 46 locations are part of Johto. The rest are in Kanto.
-    CP_A(KANTO_LANDMARK);
-    IF_NC goto KantoFlyMap;
-//  Johto fly map
-//  Note that .NoKanto should be modified in tandem with this branch
-    PUSH_AF;
-    LD_A(JOHTO_FLYPOINT);  // first Johto flypoint
-    LD_addr_A(wTownMapPlayerIconLandmark);  // first one is default (New Bark Town)
-    LD_addr_A(wStartFlypoint);
-    LD_A(KANTO_FLYPOINT - 1);  // last Johto flypoint
-    LD_addr_A(wEndFlypoint);
-//  Fill out the map
-    CALL(aFillJohtoMap);
-    CALL(aFlyMap_MapHud);
-    POP_AF;
-    CALL(aTownMapPlayerIcon);
-    RET;
-
-
-KantoFlyMap:
-//  The event that there are no flypoints enabled in a map is not
-//  accounted for. As a result, if you attempt to select a flypoint
-//  when there are none enabled, the game will crash. Additionally,
-//  the flypoint selection has a default starting point that
-//  can be flown to even if none are enabled.
-//  To prevent both of these things from happening when the player
-//  enters Kanto, fly access is restricted until Indigo Plateau is
-//  visited and its flypoint enabled.
-    PUSH_AF;
-    LD_C(SPAWN_INDIGO);
-    CALL(aHasVisitedSpawn);
-    AND_A_A;
-    IF_Z goto NoKanto;
-//  Kanto's map is only loaded if we've visited Indigo Plateau
-    LD_A(KANTO_FLYPOINT);  // first Kanto flypoint
-    LD_addr_A(wStartFlypoint);
-    LD_A(NUM_FLYPOINTS - 1);  // last Kanto flypoint
-    LD_addr_A(wEndFlypoint);
-    LD_addr_A(wTownMapPlayerIconLandmark);  // last one is default (Indigo Plateau)
-//  Fill out the map
-    CALL(aFillKantoMap);
-    CALL(aFlyMap_MapHud);
-    POP_AF;
-    CALL(aTownMapPlayerIcon);
-    RET;
-
-
-NoKanto:
-//  If Indigo Plateau hasn't been visited, we use Johto's map instead
-    LD_A(JOHTO_FLYPOINT);  // first Johto flypoint
-    LD_addr_A(wTownMapPlayerIconLandmark);  // first one is default (New Bark Town)
-    LD_addr_A(wStartFlypoint);
-    LD_A(KANTO_FLYPOINT - 1);  // last Johto flypoint
-    LD_addr_A(wEndFlypoint);
-    CALL(aFillJohtoMap);
-    POP_AF;
-
-MapHud:
-    CALL(aTownMapBubble);
-    CALL(aTownMapPals);
-    hlbgcoord(0, 0, vBGMap0);  // BG Map 0
-    CALL(aTownMapBGUpdate);
-    CALL(aTownMapMon);
-    LD_A_C;
-    LD_addr_A(wTownMapCursorCoordinates);
-    LD_A_B;
-    LD_addr_A(wTownMapCursorCoordinates + 1);
-    RET;
-
+    // CP_A(KANTO_LANDMARK);
+    // IF_NC goto KantoFlyMap;
+    if(loc < KANTO_LANDMARK) {
+    //  Johto fly map
+    //  Note that .NoKanto should be modified in tandem with this branch
+        // PUSH_AF;
+        // LD_A(JOHTO_FLYPOINT);  // first Johto flypoint
+        // LD_addr_A(wTownMapPlayerIconLandmark);  // first one is default (New Bark Town)
+        wram->wTownMapPlayerIconLandmark = JOHTO_FLYPOINT;
+        // LD_addr_A(wStartFlypoint);
+        wram->wStartFlypoint = JOHTO_FLYPOINT;
+        // LD_A(KANTO_FLYPOINT - 1);  // last Johto flypoint
+        // LD_addr_A(wEndFlypoint);
+        wram->wEndFlypoint = KANTO_FLYPOINT - 1;
+    //  Fill out the map
+        // CALL(aFillJohtoMap);
+        FillJohtoMap_Conv();
+        // CALL(aFlyMap_MapHud);
+        FlyMap_MapHud();
+        // POP_AF;
+        // CALL(aTownMapPlayerIcon);
+        TownMapPlayerIcon_Conv(loc);
+        // RET;
+        return;
+    }
+    else {
+    // KantoFlyMap:
+    //  The event that there are no flypoints enabled in a map is not
+    //  accounted for. As a result, if you attempt to select a flypoint
+    //  when there are none enabled, the game will crash. Additionally,
+    //  the flypoint selection has a default starting point that
+    //  can be flown to even if none are enabled.
+    //  To prevent both of these things from happening when the player
+    //  enters Kanto, fly access is restricted until Indigo Plateau is
+    //  visited and its flypoint enabled.
+        // PUSH_AF;
+        // LD_C(SPAWN_INDIGO);
+        // CALL(aHasVisitedSpawn);
+        // AND_A_A;
+        // IF_Z goto NoKanto;
+        if(HasVisitedSpawn(SPAWN_INDIGO) != 0) {
+        //  Kanto's map is only loaded if we've visited Indigo Plateau
+            // LD_A(KANTO_FLYPOINT);  // first Kanto flypoint
+            // LD_addr_A(wStartFlypoint);
+            wram->wStartFlypoint = KANTO_FLYPOINT;
+            // LD_A(NUM_FLYPOINTS - 1);  // last Kanto flypoint
+            // LD_addr_A(wEndFlypoint);
+            wram->wEndFlypoint = NUM_FLYPOINTS - 1;
+            // LD_addr_A(wTownMapPlayerIconLandmark);  // last one is default (Indigo Plateau)
+            wram->wTownMapPlayerIconLandmark = NUM_FLYPOINTS - 1;
+        //  Fill out the map
+            // CALL(aFillKantoMap);
+            FillKantoMap_Conv();
+            // CALL(aFlyMap_MapHud);
+            FlyMap_MapHud();
+            // POP_AF;
+            // CALL(aTownMapPlayerIcon);
+            TownMapPlayerIcon_Conv(loc);
+            // RET;
+            return;
+        }
+        else {
+        // NoKanto:
+        //  If Indigo Plateau hasn't been visited, we use Johto's map instead
+            // LD_A(JOHTO_FLYPOINT);  // first Johto flypoint
+            // LD_addr_A(wTownMapPlayerIconLandmark);  // first one is default (New Bark Town)
+            wram->wTownMapPlayerIconLandmark = JOHTO_FLYPOINT;
+            // LD_addr_A(wStartFlypoint);
+            wram->wStartFlypoint = JOHTO_FLYPOINT;
+            // LD_A(KANTO_FLYPOINT - 1);  // last Johto flypoint
+            // LD_addr_A(wEndFlypoint);
+            wram->wEndFlypoint = KANTO_FLYPOINT - 1;
+            // CALL(aFillJohtoMap);
+            FillJohtoMap_Conv();
+            // POP_AF;
+            return FlyMap_MapHud();
+        }
+    }
 }
 
 static const char* GetPlayerOrFastShipIcon(void){
@@ -5648,7 +5732,7 @@ const char KantoMap[] = "gfx/pokegear/kanto.bin";
 
 const char PokedexNestIconGFX[] = "gfx/pokegear/dexmap_nest_icon.png";
 
-static const char FlyMapLabelBorderGFX[] = "gfx/pokegear/flymap_label_border.png";
+const char FlyMapLabelBorderGFX[] = "gfx/pokegear/flymap_label_border.png";
 
 static void EntireFlyMap_HandleDPad(void){
     // LD_HL(hJoyLast);

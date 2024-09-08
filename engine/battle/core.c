@@ -4324,6 +4324,9 @@ static void WinTrainerBattle_DoubleReward(void){
         // LD_hl_A;
         reward = 0xffffff;
     }
+    else {
+        reward *= 2;
+    }
     wram->wBattleReward[0] = HIGH(reward >> 8);
     wram->wBattleReward[1] = HIGH(reward);
     wram->wBattleReward[2] = LOW(reward);

@@ -15,6 +15,7 @@
 #include "../../home/joypad.h"
 #include "../../data/items/mail_items.h"
 #include "../../gfx/mail.h"
+#include "../printer/printer.h"
 
 //  MailGFXPointers indexes
 //  LoadMailPalettes.MailPals indexes (see gfx/mail/mail.pal)
@@ -269,7 +270,8 @@ static void ReadAnyMail_loop(void){
         // PUSH_AF;
         uint8_t jumptableIndex = wram->wJumptableIndex;
         // CALLFAR(aPrintMailAndExit);  // printer
-        SafeCallGBAuto(aPrintMailAndExit);
+        // SafeCallGBAuto(aPrintMailAndExit);
+        PrintMailAndExit();
         // POP_AF;
         // LD_addr_A(wJumptableIndex);
         wram->wJumptableIndex = jumptableIndex;

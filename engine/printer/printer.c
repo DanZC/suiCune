@@ -424,54 +424,66 @@ void PrintUnownStamp(void){
 }
 
 void PrintMailAndExit(void){
-    CALL(aPrintMail);
-    CALL(aPrinter_ExitPrinter);
-    RET;
-
+    // CALL(aPrintMail);
+    PrintMail();
+    // CALL(aPrinter_ExitPrinter);
+    Printer_ExitPrinter();
+    // RET;
 }
 
 void PrintMail(void){
-    LD_A_addr(wPrinterQueueLength);
-    PUSH_AF;
-    XOR_A_A;
-    LDH_addr_A(hPrinter);
-    CALL(aPrinter_PlayMusic);
+    // LD_A_addr(wPrinterQueueLength);
+    // PUSH_AF;
+    uint8_t queueLength = wram->wPrinterQueueLength;
+    // XOR_A_A;
+    // LDH_addr_A(hPrinter);
+    hram->hPrinter = 0x0;
+    // CALL(aPrinter_PlayMusic);
+    Printer_PlayMusic();
 
-    LDH_A_addr(rIE);
-    PUSH_AF;
-    XOR_A_A;
-    LDH_addr_A(rIF);
-    LD_A((1 << SERIAL) | (1 << VBLANK));
-    LDH_addr_A(rIE);
+    // LDH_A_addr(rIE);
+    // PUSH_AF;
+    // XOR_A_A;
+    // LDH_addr_A(rIF);
+    // LD_A((1 << SERIAL) | (1 << VBLANK));
+    // LDH_addr_A(rIE);
+    Printer_Begin();
 
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0x0;
 
-    LD_A((1 << 4) | 3);  // to be loaded to wPrinterMargins
-    CALL(aPrinter_PrepareTilemapForPrint);
-    LD_HL(hVBlank);
-    LD_A_hl;
-    PUSH_AF;
-    LD_hl(4);  // vblank mode that calls AskSerial
+    // LD_A((1 << 4) | 3);  // to be loaded to wPrinterMargins
+    // CALL(aPrinter_PrepareTilemapForPrint);
+    Printer_PrepareTilemapForPrint((1 << 4) | 3);
+    // LD_HL(hVBlank);
+    // LD_A_hl;
+    // PUSH_AF;
+    // LD_hl(4);  // vblank mode that calls AskSerial
 
-    LD_A(18 / 2);
-    LD_addr_A(wPrinterQueueLength);
-    CALL(aSendScreenToPrinter);
+    // LD_A(18 / 2);
+    // LD_addr_A(wPrinterQueueLength);
+    wram->wPrinterQueueLength = 18 / 2;
+    // CALL(aSendScreenToPrinter);
+    SendScreenToPrinter();
 
-    POP_AF;
-    LDH_addr_A(hVBlank);
-    CALL(aPrinter_CleanUpAfterSend);
-    CALL(aPrinter_CopyBufferToTilemap);
+    // POP_AF;
+    // LDH_addr_A(hVBlank);
+    // CALL(aPrinter_CleanUpAfterSend);
+    Printer_CleanUpAfterSend();
+    // CALL(aPrinter_CopyBufferToTilemap);
+    Printer_CopyBufferToTilemap();
+    Printer_CleanUp();
 
-    XOR_A_A;
-    LDH_addr_A(rIF);
-    POP_AF;
-    LDH_addr_A(rIE);
+    // XOR_A_A;
+    // LDH_addr_A(rIF);
+    // POP_AF;
+    // LDH_addr_A(rIE);
 
-    POP_AF;
-    LD_addr_A(wPrinterQueueLength);
-    RET;
-
+    // POP_AF;
+    // LD_addr_A(wPrinterQueueLength);
+    wram->wPrinterQueueLength = queueLength;
+    // RET;
 }
 
 void PrintPartymon(void){

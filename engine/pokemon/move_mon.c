@@ -4225,9 +4225,10 @@ uint8_t GivePoke_Conv(uint8_t b, const char* nickname, const char* otName){
         // CALLFAR(aLoadEnemyMon);
         LoadEnemyMon();
         // CALL(aSendMonIntoBox);
-        struct cpu_registers_s regs2 = SafeCallGBAutoRet(aSendMonIntoBox);
+        // struct cpu_registers_s regs2 = SafeCallGBAutoRet(aSendMonIntoBox);
         // JP_NC (mGivePoke_FailedToGiveMon);
-        if(!regs2.f_bits.c)
+        // if(!regs2.f_bits.c)
+        if(!SendMonIntoBox_Conv())
             return 0x2;
         // LD_A(BOXMON);
         // LD_addr_A(wMonType);
