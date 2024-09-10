@@ -23,6 +23,7 @@
 #include "../../home/pokemon.h"
 #include "../../home/audio.h"
 #include "../../home/delay.h"
+#include "../../home/sram.h"
 #include "../gfx/load_font.h"
 #include "../gfx/sprites.h"
 #include "../gfx/mon_icons.h"
@@ -32,6 +33,7 @@
 #include "../items/pack.h"
 #include "../events/overworld.h"
 #include "../events/sweet_scent.h"
+#include "../menus/naming_screen.h"
 #include "../../data/text/common.h"
 #include "../../data/moves/moves.h"
 #include "../../mobile/mobile_41.h"
@@ -627,7 +629,8 @@ void GivePartyItem(item_t item){
     // IF_NC goto done;
     if(ItemIsMail_Conv(item)) {
         // CALL(aComposeMailMessage);
-        SafeCallGBAuto(aComposeMailMessage);
+        // SafeCallGBAuto(aComposeMailMessage);
+        ComposeMailMessage();
     }
 
 // done:
@@ -783,34 +786,42 @@ bool StartMenuYesNo_Conv(const struct TextCmd* hl){
 }
 
 void ComposeMailMessage(void){
-    LD_DE(wTempMailMessage);
-    FARCALL(av_ComposeMailMessage);
-    LD_HL(wPlayerName);
-    LD_DE(wTempMailAuthor);
-    LD_BC(NAME_LENGTH - 1);
-    CALL(aCopyBytes);
-    LD_HL(wPlayerID);
-    LD_BC(2);
-    CALL(aCopyBytes);
-    LD_A_addr(wCurPartySpecies);
-    LD_de_A;
-    INC_DE;
-    LD_A_addr(wCurItem);
-    LD_de_A;
-    LD_A_addr(wCurPartyMon);
-    LD_HL(sPartyMail);
-    LD_BC(MAIL_STRUCT_LENGTH);
-    CALL(aAddNTimes);
-    LD_D_H;
-    LD_E_L;
-    LD_HL(wTempMail);
-    LD_BC(MAIL_STRUCT_LENGTH);
-    LD_A(BANK(sPartyMail));
-    CALL(aOpenSRAM);
-    CALL(aCopyBytes);
-    CALL(aCloseSRAM);
-    RET;
-
+    // LD_DE(wTempMailMessage);
+    // FARCALL(av_ComposeMailMessage);
+    v_ComposeMailMessage(wram->wTempMail.message);
+    // LD_HL(wPlayerName);
+    // LD_DE(wTempMailAuthor);
+    // LD_BC(NAME_LENGTH - 1);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wTempMail.author, wram->wPlayerName, NAME_LENGTH - 1);
+    // LD_HL(wPlayerID);
+    // LD_BC(2);
+    // CALL(aCopyBytes);
+    wram->wTempMail.authorID = wram->wPlayerID;
+    // LD_A_addr(wCurPartySpecies);
+    // LD_de_A;
+    wram->wTempMail.species = wram->wCurPartySpecies;
+    // INC_DE;
+    // LD_A_addr(wCurItem);
+    // LD_de_A;
+    wram->wTempMail.type = wram->wCurItem;
+    // LD_A_addr(wCurPartyMon);
+    // LD_HL(sPartyMail);
+    // LD_BC(MAIL_STRUCT_LENGTH);
+    // CALL(aAddNTimes);
+    // LD_D_H;
+    // LD_E_L;
+    OpenSRAM_Conv(MBANK(asPartyMail));
+    struct MailMsg* de = ((struct MailMsg*)GBToRAMAddr(sPartyMail)) + wram->wCurPartyMon;
+    // LD_HL(wTempMail);
+    // LD_BC(MAIL_STRUCT_LENGTH);
+    // LD_A(BANK(sPartyMail));
+    // CALL(aOpenSRAM);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(de, &wram->wTempMail, sizeof(*de));
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
 }
 
 static const struct MenuHeader MonMailAction_MenuHeader = {

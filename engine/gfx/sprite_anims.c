@@ -590,8 +590,9 @@ void AnimSeq_MailCursor(void){
 }
 
 static void AnimSeq_MailCursor_Conv(struct SpriteAnim* bc){
-    REG_BC = (bc - wram->wSpriteAnim) * SPRITEANIMSTRUCT_LENGTH + wSpriteAnimationStructs;
-    CALLFAR(aComposeMail_AnimateCursor);
+    // REG_BC = (bc - wram->wSpriteAnim) * SPRITEANIMSTRUCT_LENGTH + wSpriteAnimationStructs;
+    // CALLFAR(aComposeMail_AnimateCursor);
+    return ComposeMail_AnimateCursor(bc);
 }
 
 void AnimSeq_GameFreakLogo(void){

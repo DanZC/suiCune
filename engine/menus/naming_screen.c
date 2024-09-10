@@ -13,12 +13,14 @@
 #include "../../home/sprite_anims.h"
 #include "../../home/sprite_updates.h"
 #include "../../home/map.h"
+#include "../../home/palettes.h"
 #include "../pokemon/mon_stats.h"
 #include "../gfx/sprites.h"
 #include "../gfx/mon_icons.h"
 #include "../gfx/player_gfx.h"
 #include "../../gfx/sprites.h"
 #include "../../data/text/name_input_chars.h"
+#include "../../data/text/mail_input_chars.h"
 
 #define NAMINGSCREEN_CURSOR     (0x7e)
 
@@ -1721,541 +1723,674 @@ const char NamingScreenGFX_MiddleLine[] = "gfx/naming_screen/middle_line.png";
 
 const char NamingScreenGFX_UnderLine[] = "gfx/naming_screen/underline.png";
 
-void v_ComposeMailMessage(void){
-    LD_HL(wNamingScreenDestinationPointer);
-    LD_hl_E;
-    INC_HL;
-    LD_hl_D;
-    LDH_A_addr(hMapAnims);
-    PUSH_AF;
-    XOR_A_A;
-    LDH_addr_A(hMapAnims);
-    LDH_A_addr(hInMenu);
-    PUSH_AF;
-    LD_A(0x1);
-    LDH_addr_A(hInMenu);
-    CALL(av_ComposeMailMessage_InitBlankMail);
-    CALL(aDelayFrame);
+static void v_ComposeMailMessage_PlaceMailCharset(uint8_t* de){
+    // hlcoord(1, 7, wTilemap);
+    tile_t* hl = coord(1, 7, wram->wTilemap);
+    // LD_B(6);
+    uint8_t b = 6;
 
+    do {
+    // next:
+        // LD_C(SCREEN_WIDTH - 1);
+        uint8_t c = SCREEN_WIDTH - 1;
 
-loop:
-    CALL(av_ComposeMailMessage_DoMailEntry);
-    IF_NC goto loop;
+        do {
+        // loop_:
+            // LD_A_de;
+            // LD_hli_A;
+            *(hl++) = *(de++);
+            // INC_DE;
+            // DEC_C;
+            // IF_NZ goto loop_;
+        } while(--c != 0);
+        // PUSH_DE;
+        // LD_DE(SCREEN_WIDTH + 1);
+        // ADD_HL_DE;
+        hl += SCREEN_WIDTH + 1;
+        // POP_DE;
+        // DEC_B;
+        // IF_NZ goto next;
+    } while(--b != 0);
+    // RET;
+}
 
-    POP_AF;
-    LDH_addr_A(hInMenu);
-    POP_AF;
-    LDH_addr_A(hMapAnims);
-    RET;
+static void v_ComposeMailMessage_InitCharset(void){
+    // CALL(aWaitTop);
+    WaitTop_Conv();
+    // hlcoord(0, 0, wTilemap);
+    // LD_BC(6 * SCREEN_WIDTH);
+    // LD_A(NAMINGSCREEN_BORDER);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(0, 0, wram->wTilemap), 6 * SCREEN_WIDTH, NAMINGSCREEN_BORDER);
+    // hlcoord(0, 6, wTilemap);
+    // LD_BC(12 * SCREEN_WIDTH);
+    // LD_A(0x7f);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(0, 6, wram->wTilemap), 12 * SCREEN_WIDTH, 0x7f);
+    // hlcoord(1, 1, wTilemap);
+    // LD_BC((4 << 8) | (SCREEN_WIDTH - 2));
+    // CALL(aClearBox);
+    ClearBox_Conv2(coord(1, 1, wram->wTilemap), SCREEN_WIDTH - 2, 4);
+    // LD_DE(mMailEntry_Uppercase);
+    return v_ComposeMailMessage_PlaceMailCharset(U82C(MailEntry_Uppercase));
+}
 
-
-InitBlankMail:
-    CALL(aClearBGPalettes);
-    CALL(aDisableLCD);
-    CALL(aLoadNamingScreenGFX);
-    LD_DE(vTiles0 + LEN_2BPP_TILE * 0x00);
-    LD_HL(mv_ComposeMailMessage_MailIcon);
-    LD_BC(8 * LEN_2BPP_TILE);
-    LD_A(BANK(av_ComposeMailMessage_MailIcon));
-    CALL(aFarCopyBytes);
-    XOR_A_A;  // SPRITE_ANIM_DICT_DEFAULT and tile offset $00
-    LD_HL(wSpriteAnimDict);
-    LD_hli_A;
-    LD_hl_A;
+static void v_ComposeMailMessage_InitBlankMail(void) {
+    static const char MailIcon[] = "gfx/icons/mail_big.png";
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
+    // CALL(aDisableLCD);
+    DisableLCD_Conv();
+    // CALL(aLoadNamingScreenGFX);
+    LoadNamingScreenGFX();
+    // LD_DE(vTiles0 + LEN_2BPP_TILE * 0x00);
+    // LD_HL(mv_ComposeMailMessage_MailIcon);
+    // LD_BC(8 * LEN_2BPP_TILE);
+    // LD_A(BANK(av_ComposeMailMessage_MailIcon));
+    // CALL(aFarCopyBytes);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles0 + LEN_2BPP_TILE * 0x00, MailIcon, 0, 8);
+    // XOR_A_A;  // SPRITE_ANIM_DICT_DEFAULT and tile offset $00
+    // LD_HL(wSpriteAnimDict);
+    // LD_hli_A;
+    wram->wSpriteAnimDict[0] = SPRITE_ANIM_DICT_DEFAULT;
+    // LD_hl_A;
+    wram->wSpriteAnimDict[1] = 0;
 
 // init mail icon
-    depixel2(3, 2);
-    LD_A(SPRITE_ANIM_INDEX_PARTY_MON);
-    CALL(aInitSpriteAnimStruct);
+    // depixel2(3, 2);
+    // LD_A(SPRITE_ANIM_INDEX_PARTY_MON);
+    // CALL(aInitSpriteAnimStruct);
+    struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_PARTY_MON, pixel2(3, 2));
 
-    LD_HL(SPRITEANIMSTRUCT_ANIM_SEQ_ID);
-    ADD_HL_BC;
-    LD_hl(0x0);
-    CALL(av_ComposeMailMessage_InitCharset);
-    LD_A(LCDC_DEFAULT);
-    LDH_addr_A(rLCDC);
-    CALL(av_ComposeMailMessage_initwNamingScreenMaxNameLength);
-    LD_B(SCGB_DIPLOMA);
-    CALL(aGetSGBLayout);
-    CALL(aWaitBGMap);
-    CALL(aWaitTop);
-    LD_A(0b11100100);
-    CALL(aDmgToCgbBGPals);
-    LD_A(0b11100100);
-    CALL(aDmgToCgbObjPal0);
-    CALL(aNamingScreen_InitNameEntry);
-    LD_HL(wNamingScreenDestinationPointer);
-    LD_E_hl;
-    INC_HL;
-    LD_D_hl;
-    LD_HL(MAIL_LINE_LENGTH);
-    ADD_HL_DE;
-    LD_hl(0x4e);
-    RET;
+    // LD_HL(SPRITEANIMSTRUCT_ANIM_SEQ_ID);
+    // ADD_HL_BC;
+    // LD_hl(0x0);
+    bc->animSeqID = 0x0;
+    // CALL(av_ComposeMailMessage_InitCharset);
+    v_ComposeMailMessage_InitCharset();
+    // LD_A(LCDC_DEFAULT);
+    // LDH_addr_A(rLCDC);
+    gb_write(rLCDC, LCDC_DEFAULT);
+    // CALL(av_ComposeMailMessage_initwNamingScreenMaxNameLength);
+    {
+    // initwNamingScreenMaxNameLength:
+        // LD_A(MAIL_MSG_LENGTH + 1);
+        // LD_addr_A(wNamingScreenMaxNameLength);
+        wram->wNamingScreenMaxNameLength = MAIL_MSG_LENGTH + 1;
+        // RET;
+    }
+    // LD_B(SCGB_DIPLOMA);
+    // CALL(aGetSGBLayout);
+    GetSGBLayout_Conv(SCGB_DIPLOMA);
+    // CALL(aWaitBGMap);
+    WaitBGMap_Conv();
+    // CALL(aWaitTop);
+    WaitTop_Conv();
+    // LD_A(0b11100100);
+    // CALL(aDmgToCgbBGPals);
+    DmgToCgbBGPals_Conv(0b11100100);
+    // LD_A(0b11100100);
+    // CALL(aDmgToCgbObjPal0);
+    DmgToCgbObjPal0_Conv(0b11100100);
+    // CALL(aNamingScreen_InitNameEntry);
+    NamingScreen_InitNameEntry();
+    // LD_HL(wNamingScreenDestinationPointer);
+    // LD_E_hl;
+    // INC_HL;
+    // LD_D_hl;
+    // LD_HL(MAIL_LINE_LENGTH);
+    // ADD_HL_DE;
+    // LD_hl(0x4e);
+    gNamingScreenDestinationPointer[MAIL_LINE_LENGTH] = 0x4e;
+    // RET;
 
-
-MailIcon:
-// INCBIN "gfx/icons/mail_big.2bpp"
-
-
-initwNamingScreenMaxNameLength:
-    LD_A(MAIL_MSG_LENGTH + 1);
-    LD_addr_A(wNamingScreenMaxNameLength);
-    RET;
-
-
-PleaseWriteAMailString:
+// PleaseWriteAMailString:
 //   //  unreferenced
     //db ['"メールを\u3000かいてね@"'];
+}
 
+static void v_ComposeMailMessage_Update(void){
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0x0;
+    // hlcoord(1, 1, wTilemap);
+    // LD_BC((4 << 8) | 18);
+    // CALL(aClearBox);
+    ClearBox_Conv2(coord(1, 1, wram->wTilemap), 18, 4);
+    // LD_HL(wNamingScreenDestinationPointer);
+    // LD_E_hl;
+    // INC_HL;
+    // LD_D_hl;
+    // hlcoord(2, 2, wTilemap);
+    // CALL(aPlaceString);
+    PlaceStringSimple(gNamingScreenDestinationPointer, coord(2, 2, wram->wTilemap));
+    // LD_A(0x1);
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0x1;
+    // RET;
+}
 
-InitCharset:
-    CALL(aWaitTop);
-    hlcoord(0, 0, wTilemap);
-    LD_BC(6 * SCREEN_WIDTH);
-    LD_A(NAMINGSCREEN_BORDER);
-    CALL(aByteFill);
-    hlcoord(0, 6, wTilemap);
-    LD_BC(12 * SCREEN_WIDTH);
-    LD_A(0x7f);
-    CALL(aByteFill);
-    hlcoord(1, 1, wTilemap);
-    LD_BC((4 << 8) | (SCREEN_WIDTH - 2));
-    CALL(aClearBox);
-    LD_DE(mMailEntry_Uppercase);
-
-
-PlaceMailCharset:
-    hlcoord(1, 7, wTilemap);
-    LD_B(6);
-
-next:
-    LD_C(SCREEN_WIDTH - 1);
-
-loop_:
-    LD_A_de;
-    LD_hli_A;
-    INC_DE;
-    DEC_C;
-    IF_NZ goto loop_;
-    PUSH_DE;
-    LD_DE(SCREEN_WIDTH + 1);
-    ADD_HL_DE;
-    POP_DE;
-    DEC_B;
-    IF_NZ goto next;
-    RET;
-
-
-DoMailEntry:
-    CALL(aJoyTextDelay);
-    LD_A_addr(wJumptableIndex);
-    BIT_A(7);
-    IF_NZ goto exit_mail;
-    CALL(av_ComposeMailMessage_DoJumptable);
-    FARCALL(aPlaySpriteAnimationsAndDelayFrame);
-    CALL(av_ComposeMailMessage_Update);
-    CALL(aDelayFrame);
-    AND_A_A;
-    RET;
-
-
-exit_mail:
-    CALLFAR(aClearSpriteAnims);
-    CALL(aClearSprites);
-    XOR_A_A;
-    LDH_addr_A(hSCX);
-    LDH_addr_A(hSCY);
-    SCF;
-    RET;
-
-
-Update:
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    hlcoord(1, 1, wTilemap);
-    LD_BC((4 << 8) | 18);
-    CALL(aClearBox);
-    LD_HL(wNamingScreenDestinationPointer);
-    LD_E_hl;
-    INC_HL;
-    LD_D_hl;
-    hlcoord(2, 2, wTilemap);
-    CALL(aPlaceString);
-    LD_A(0x1);
-    LDH_addr_A(hBGMapMode);
-    RET;
-
-
-DoJumptable:
+static void v_ComposeMailMessage_DoJumptable(void){
     //jumptable ['.Jumptable', 'wJumptableIndex']
 
+    switch(wram->wJumptableIndex) {
+    // Jumptable:
+        //dw ['.init_blinking_cursor'];
+        case 0: {
+        // init_blinking_cursor:
+            // depixel2(9, 2);
+            // LD_A(SPRITE_ANIM_INDEX_COMPOSE_MAIL_CURSOR);
+            // CALL(aInitSpriteAnimStruct);
+            struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_COMPOSE_MAIL_CURSOR, pixel2(9, 2));
+            // LD_A_C;
+            // LD_addr_A(wNamingScreenCursorObjectPointer);
+            // LD_A_B;
+            // LD_addr_A(wNamingScreenCursorObjectPointer + 1);
+            gNamingScreenCursorObjectPointer = bc;
+            // LD_HL(SPRITEANIMSTRUCT_FRAMESET_ID);
+            // ADD_HL_BC;
+            // LD_A_hl;
+            // LD_HL(SPRITEANIMSTRUCT_VAR3);
+            // ADD_HL_BC;
+            // LD_hl_A;
+            bc->var3 = bc->framesetID;
+            // LD_HL(wJumptableIndex);
+            // INC_hl;
+            wram->wJumptableIndex++;
+            // RET;
+        } return;
+        //dw ['.process_joypad'];
+        case 1:
+        // process_joypad:
+            // LD_HL(hJoyPressed);
+            // LD_A_hl;
+            // AND_A(A_BUTTON);
+            // IF_NZ goto a;
+            if(hram->hJoyPressed & A_BUTTON) {
+            // a:
+                // CALL(aNamingScreen_PressedA_GetCursorCommand);
+                uint8_t a = NamingScreen_PressedA_GetCursorCommand();
+                // CP_A(0x1);
+                // IF_Z goto select;
+                if(a == 0x1) goto select;
+                // CP_A(0x2);
+                // IF_Z goto b;
+                if(a == 0x2) goto b;
+                // CP_A(0x3);
+                // IF_Z goto finished;
+                if(a == 0x3) break;
+                // CALL(aNamingScreen_GetLastCharacter);
+                NamingScreen_GetLastCharacter();
+                // CALL(aMailComposition_TryAddLastCharacter);
+                // IF_C goto start;
+                if(MailComposition_TryAddLastCharacter())
+                    goto start;
+                // LD_HL(wNamingScreenCurNameLength);
+                // LD_A_hl;
+                // CP_A(MAIL_LINE_LENGTH);
+                // RET_NZ ;
+                if(wram->wNamingScreenCurNameLength != MAIL_LINE_LENGTH)
+                    return;
+                // INC_hl;
+                wram->wNamingScreenCurNameLength++;
+                // CALL(aNamingScreen_GetTextCursorPosition);
+                uint8_t* hl = NamingScreen_GetTextCursorPosition();
+                // LD_hl(NAMINGSCREEN_UNDERLINE);
+                hl[0] = NAMINGSCREEN_UNDERLINE;
+                // DEC_HL;
+                // LD_hl(0x4e);
+                hl[1] = 0x4e;
+                // RET;
+                return;
+            }
+            // LD_A_hl;
+            // AND_A(B_BUTTON);
+            // IF_NZ goto b;
+            else if(hram->hJoyPressed & B_BUTTON) {
+            b:
+                // CALL(aNamingScreen_DeleteCharacter);
+                NamingScreen_DeleteCharacter();
+                // LD_HL(wNamingScreenCurNameLength);
+                // LD_A_hl;
+                // CP_A(MAIL_LINE_LENGTH);
+                // RET_NZ ;
+                if(wram->wNamingScreenCurNameLength != MAIL_LINE_LENGTH)
+                    return;
+                // DEC_hl;
+                wram->wNamingScreenCurNameLength--;
+                // CALL(aNamingScreen_GetTextCursorPosition);
+                uint8_t* hl = NamingScreen_GetTextCursorPosition();
+                // LD_hl(NAMINGSCREEN_UNDERLINE);
+                hl[0] = NAMINGSCREEN_UNDERLINE;
+                // INC_HL;
+                // LD_hl(0x4e);
+                hl[1] = 0x4e;
+                // RET;
+                return;
+            }
+            // LD_A_hl;
+            // AND_A(START);
+            // IF_NZ goto start;
+            else if(hram->hJoyPressed & START) {
+            start:
+                // LD_HL(wNamingScreenCursorObjectPointer);
+                // LD_C_hl;
+                // INC_HL;
+                // LD_B_hl;
+                struct SpriteAnim* bc = gNamingScreenCursorObjectPointer;
+                // LD_HL(SPRITEANIMSTRUCT_VAR1);
+                // ADD_HL_BC;
+                // LD_hl(0x9);
+                bc->var1 = 0x9;
+                // LD_HL(SPRITEANIMSTRUCT_VAR2);
+                // ADD_HL_BC;
+                // LD_hl(0x5);
+                bc->var2 = 0x5;
+                // RET;
+                return;
+            }
+            // LD_A_hl;
+            // AND_A(SELECT);
+            // IF_NZ goto select;
+            else if(hram->hJoyPressed & SELECT) {
+            select:
+                // LD_HL(wNamingScreenLetterCase);
+                // LD_A_hl;
+                // XOR_A(1);
+                // LD_hl_A;
+                wram->wNamingScreenLetterCase ^= 1;
+                // IF_NZ goto switch_to_lowercase;
+                if(wram->wNamingScreenLetterCase == 0) {
+                    // LD_DE(mMailEntry_Uppercase);
+                    // CALL(av_ComposeMailMessage_PlaceMailCharset);
+                    v_ComposeMailMessage_PlaceMailCharset(U82C(MailEntry_Uppercase));
+                    // RET;
+                    return;
+                }
+                else {
+                // switch_to_lowercase:
+                    // LD_DE(mMailEntry_Lowercase);
+                    // CALL(av_ComposeMailMessage_PlaceMailCharset);
+                    v_ComposeMailMessage_PlaceMailCharset(U82C(MailEntry_Lowercase));
+                    // RET;
+                    return;
+                }
+            }
+            // RET;
+            return;
+    }
 
-Jumptable:
-    //dw ['.init_blinking_cursor'];
-    //dw ['.process_joypad'];
+// finished:
+    // CALL(aNamingScreen_StoreEntry);
+    NamingScreen_StoreEntry();
+    // LD_HL(wJumptableIndex);
+    // SET_hl(7);
+    bit_set(wram->wJumptableIndex, 7);
+    // RET;
+}
 
+static bool v_ComposeMailMessage_DoMailEntry(void){
+    // CALL(aJoyTextDelay);
+    JoyTextDelay_Conv();
+    // LD_A_addr(wJumptableIndex);
+    // BIT_A(7);
+    // IF_NZ goto exit_mail;
+    if(!bit_test(wram->wJumptableIndex, 7)){
+        // CALL(av_ComposeMailMessage_DoJumptable);
+        v_ComposeMailMessage_DoJumptable();
+        // FARCALL(aPlaySpriteAnimationsAndDelayFrame);
+        PlaySpriteAnimationsAndDelayFrame_Conv();
+        // CALL(av_ComposeMailMessage_Update);
+        v_ComposeMailMessage_Update();
+        // CALL(aDelayFrame);
+        DelayFrame();
+        // AND_A_A;
+        // RET;
+        return false;
+    }
 
-init_blinking_cursor:
-    depixel2(9, 2);
-    LD_A(SPRITE_ANIM_INDEX_COMPOSE_MAIL_CURSOR);
-    CALL(aInitSpriteAnimStruct);
-    LD_A_C;
-    LD_addr_A(wNamingScreenCursorObjectPointer);
-    LD_A_B;
-    LD_addr_A(wNamingScreenCursorObjectPointer + 1);
-    LD_HL(SPRITEANIMSTRUCT_FRAMESET_ID);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_HL(SPRITEANIMSTRUCT_VAR3);
-    ADD_HL_BC;
-    LD_hl_A;
-    LD_HL(wJumptableIndex);
-    INC_hl;
-    RET;
+// exit_mail:
+    // CALLFAR(aClearSpriteAnims);
+    ClearSpriteAnims_Conv();
+    // CALL(aClearSprites);
+    ClearSprites_Conv();
+    // XOR_A_A;
+    // LDH_addr_A(hSCX);
+    hram->hSCX = 0x0;
+    // LDH_addr_A(hSCY);
+    hram->hSCY = 0x0;
+    // SCF;
+    // RET;
+    return true;
+}
 
+void v_ComposeMailMessage(uint8_t* dest){
+    // LD_HL(wNamingScreenDestinationPointer);
+    // LD_hl_E;
+    // INC_HL;
+    // LD_hl_D;
+    gNamingScreenDestinationPointer = dest;
+    // LDH_A_addr(hMapAnims);
+    // PUSH_AF;
+    uint8_t mapAnims = hram->hMapAnims;
+    // XOR_A_A;
+    // LDH_addr_A(hMapAnims);
+    hram->hMapAnims = 0x0;
+    // LDH_A_addr(hInMenu);
+    // PUSH_AF;
+    uint8_t inMenu = hram->hInMenu;
+    // LD_A(0x1);
+    // LDH_addr_A(hInMenu);
+    hram->hInMenu = 0x1;
+    // CALL(av_ComposeMailMessage_InitBlankMail);
+    v_ComposeMailMessage_InitBlankMail();
+    // CALL(aDelayFrame);
+    DelayFrame();
 
-process_joypad:
-    LD_HL(hJoyPressed);
-    LD_A_hl;
-    AND_A(A_BUTTON);
-    IF_NZ goto a;
-    LD_A_hl;
-    AND_A(B_BUTTON);
-    IF_NZ goto b;
-    LD_A_hl;
-    AND_A(START);
-    IF_NZ goto start;
-    LD_A_hl;
-    AND_A(SELECT);
-    IF_NZ goto select;
-    RET;
+    do {
+    // loop:
+        // CALL(av_ComposeMailMessage_DoMailEntry);
+        // IF_NC goto loop;
+    } while(!v_ComposeMailMessage_DoMailEntry());
 
-
-a:
-    CALL(aNamingScreen_PressedA_GetCursorCommand);
-    CP_A(0x1);
-    IF_Z goto select;
-    CP_A(0x2);
-    IF_Z goto b;
-    CP_A(0x3);
-    IF_Z goto finished;
-    CALL(aNamingScreen_GetLastCharacter);
-    CALL(aMailComposition_TryAddLastCharacter);
-    IF_C goto start;
-    LD_HL(wNamingScreenCurNameLength);
-    LD_A_hl;
-    CP_A(MAIL_LINE_LENGTH);
-    RET_NZ ;
-    INC_hl;
-    CALL(aNamingScreen_GetTextCursorPosition);
-    LD_hl(NAMINGSCREEN_UNDERLINE);
-    DEC_HL;
-    LD_hl(0x4e);
-    RET;
-
-
-start:
-    LD_HL(wNamingScreenCursorObjectPointer);
-    LD_C_hl;
-    INC_HL;
-    LD_B_hl;
-    LD_HL(SPRITEANIMSTRUCT_VAR1);
-    ADD_HL_BC;
-    LD_hl(0x9);
-    LD_HL(SPRITEANIMSTRUCT_VAR2);
-    ADD_HL_BC;
-    LD_hl(0x5);
-    RET;
-
-
-b:
-    CALL(aNamingScreen_DeleteCharacter);
-    LD_HL(wNamingScreenCurNameLength);
-    LD_A_hl;
-    CP_A(MAIL_LINE_LENGTH);
-    RET_NZ ;
-    DEC_hl;
-    CALL(aNamingScreen_GetTextCursorPosition);
-    LD_hl(NAMINGSCREEN_UNDERLINE);
-    INC_HL;
-    LD_hl(0x4e);
-    RET;
-
-
-finished:
-    CALL(aNamingScreen_StoreEntry);
-    LD_HL(wJumptableIndex);
-    SET_hl(7);
-    RET;
-
-
-select:
-    LD_HL(wNamingScreenLetterCase);
-    LD_A_hl;
-    XOR_A(1);
-    LD_hl_A;
-    IF_NZ goto switch_to_lowercase;
-    LD_DE(mMailEntry_Uppercase);
-    CALL(av_ComposeMailMessage_PlaceMailCharset);
-    RET;
-
-
-switch_to_lowercase:
-    LD_DE(mMailEntry_Lowercase);
-    CALL(av_ComposeMailMessage_PlaceMailCharset);
-    RET;
+    // POP_AF;
+    // LDH_addr_A(hInMenu);
+    hram->hInMenu = inMenu;
+    // POP_AF;
+    // LDH_addr_A(hMapAnims);
+    hram->hMapAnims = mapAnims;
+    // RET;
+    return;
 
 //  called from engine/gfx/sprite_anims.asm
-
-    return ComposeMail_AnimateCursor();
 }
 
-void ComposeMail_AnimateCursor(void){
-    CALL(aComposeMail_AnimateCursor_GetDPad);
-    LD_HL(SPRITEANIMSTRUCT_VAR2);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_E_A;
-    SWAP_E;
-    LD_HL(SPRITEANIMSTRUCT_YOFFSET);
-    ADD_HL_BC;
-    LD_hl_E;
-    CP_A(0x5);
-    LD_DE(mComposeMail_AnimateCursor_LetterEntries);
-    LD_A(0);
-    IF_NZ goto got_pointer;
-    LD_DE(mComposeMail_AnimateCursor_CaseDelEnd);
-    LD_A(1);
+static void ComposeMail_AnimateCursor_GetDPad(struct SpriteAnim* bc){
+    // LD_HL(hJoyLast);
+    // LD_A_hl;
+    // AND_A(D_UP);
+    // IF_NZ goto up;
+    if(hram->hJoyLast & D_UP) {
+    // up:
+        // LD_HL(SPRITEANIMSTRUCT_VAR2);
+        // ADD_HL_BC;
+        // LD_A_hl;
+        // AND_A_A;
+        // IF_Z goto wrap_around_up;
+        if(bc->var2 == 0) {
+        // wrap_around_up:
+            // LD_hl(0x5);
+            bc->var2 = 0x5;
+            // RET;
+            return;
+        }
+        // DEC_hl;
+        bc->var2--;
+        // RET;
+        return;
+    }
+    // LD_A_hl;
+    // AND_A(D_DOWN);
+    // IF_NZ goto down;
+    else if(hram->hJoyLast & D_DOWN) {
+    // down:
+        // LD_HL(SPRITEANIMSTRUCT_VAR2);
+        // ADD_HL_BC;
+        // LD_A_hl;
+        // CP_A(0x5);
+        // IF_NC goto wrap_around_down;
+        if(bc->var2 >= 0x5) {
+        // wrap_around_down:
+            // LD_hl(0x0);
+            bc->var2 = 0x0;
+            // RET;
+            return;
+        }
+        // INC_hl;
+        bc->var2++;
+        // RET;
+        return;
+    }
+    // LD_A_hl;
+    // AND_A(D_LEFT);
+    // IF_NZ goto left;
+    else if(hram->hJoyLast & D_LEFT){
+    // left:
+        // CALL(aComposeMail_GetCursorPosition);
+        uint8_t pos = ComposeMail_GetCursorPosition(bc);
+        // AND_A_A;
+        // IF_NZ goto caps_del_done_left;
+        if(pos != 0) {
+        // caps_del_done_left:
+            // CP_A(0x1);
+            // IF_NZ goto wrap_around_command_left;
+            // LD_A(0x4);
+            if(pos == 0x1)
+                pos = 0x4;
 
-got_pointer:
-    LD_HL(SPRITEANIMSTRUCT_VAR3);
-    ADD_HL_BC;
-    ADD_A_hl;
-    LD_HL(SPRITEANIMSTRUCT_FRAMESET_ID);
-    ADD_HL_BC;
-    LD_hl_A;
-    LD_HL(SPRITEANIMSTRUCT_VAR1);
-    ADD_HL_BC;
-    LD_L_hl;
-    LD_H(0);
-    ADD_HL_DE;
-    LD_A_hl;
-    LD_HL(SPRITEANIMSTRUCT_XOFFSET);
-    ADD_HL_BC;
-    LD_hl_A;
-    RET;
+        // wrap_around_command_left:
+            // DEC_A;
+            // DEC_A;
+            pos -= 2;
+            // LD_E_A;
+            // ADD_A_A;
+            // ADD_A_E;
+            // LD_HL(SPRITEANIMSTRUCT_VAR1);
+            // ADD_HL_BC;
+            // LD_hl_A;
+            bc->var1 = (pos << 1) + pos;
+            // RET;
+            return;
+        }
+        // LD_HL(SPRITEANIMSTRUCT_VAR1);
+        // ADD_HL_BC;
+        // LD_A_hl;
+        // AND_A_A;
+        // IF_Z goto wrap_around_letter_left;
+        if(bc->var1 == 0) {
+        // wrap_around_letter_left:
+            // LD_hl(0x9);
+            bc->var1 = 0x9;
+            // RET;
+            return;
+        }
+        // DEC_hl;
+        bc->var1--;
+        // RET;
+        return;
+    }
+    // LD_A_hl;
+    // AND_A(D_RIGHT);
+    // IF_NZ goto right;
+    else if(hram->hJoyLast & D_RIGHT){
+    // right:
+        // CALL(aComposeMail_GetCursorPosition);
+        uint8_t pos = ComposeMail_GetCursorPosition(bc);
+        // AND_A_A;
+        // IF_NZ goto case_del_done_right;
+        if(pos != 0) {
+        // case_del_done_right:
+            // CP_A(0x3);
+            // IF_NZ goto wrap_around_command_right;
+            // XOR_A_A;
+            if(pos == 0x3)
+                pos = 0x0;
 
-
-LetterEntries:
-    //db ['0x00', '0x10', '0x20', '0x30', '0x40', '0x50', '0x60', '0x70', '0x80', '0x90'];
-
-
-CaseDelEnd:
-    //db ['0x00', '0x00', '0x00', '0x30', '0x30', '0x30', '0x60', '0x60', '0x60', '0x60'];
-
-
-GetDPad:
-    LD_HL(hJoyLast);
-    LD_A_hl;
-    AND_A(D_UP);
-    IF_NZ goto up;
-    LD_A_hl;
-    AND_A(D_DOWN);
-    IF_NZ goto down;
-    LD_A_hl;
-    AND_A(D_LEFT);
-    IF_NZ goto left;
-    LD_A_hl;
-    AND_A(D_RIGHT);
-    IF_NZ goto right;
-    RET;
-
-
-right:
-    CALL(aComposeMail_GetCursorPosition);
-    AND_A_A;
-    IF_NZ goto case_del_done_right;
-    LD_HL(SPRITEANIMSTRUCT_VAR1);
-    ADD_HL_BC;
-    LD_A_hl;
-    CP_A(0x9);
-    IF_NC goto wrap_around_letter_right;
-    INC_hl;
-    RET;
-
-
-wrap_around_letter_right:
-    LD_hl(0x0);
-    RET;
-
-
-case_del_done_right:
-    CP_A(0x3);
-    IF_NZ goto wrap_around_command_right;
-    XOR_A_A;
-
-wrap_around_command_right:
-    LD_E_A;
-    ADD_A_A;
-    ADD_A_E;
-    LD_HL(SPRITEANIMSTRUCT_VAR1);
-    ADD_HL_BC;
-    LD_hl_A;
-    RET;
-
-
-left:
-    CALL(aComposeMail_GetCursorPosition);
-    AND_A_A;
-    IF_NZ goto caps_del_done_left;
-    LD_HL(SPRITEANIMSTRUCT_VAR1);
-    ADD_HL_BC;
-    LD_A_hl;
-    AND_A_A;
-    IF_Z goto wrap_around_letter_left;
-    DEC_hl;
-    RET;
-
-
-wrap_around_letter_left:
-    LD_hl(0x9);
-    RET;
-
-
-caps_del_done_left:
-    CP_A(0x1);
-    IF_NZ goto wrap_around_command_left;
-    LD_A(0x4);
-
-wrap_around_command_left:
-    DEC_A;
-    DEC_A;
-    LD_E_A;
-    ADD_A_A;
-    ADD_A_E;
-    LD_HL(SPRITEANIMSTRUCT_VAR1);
-    ADD_HL_BC;
-    LD_hl_A;
-    RET;
-
-
-down:
-    LD_HL(SPRITEANIMSTRUCT_VAR2);
-    ADD_HL_BC;
-    LD_A_hl;
-    CP_A(0x5);
-    IF_NC goto wrap_around_down;
-    INC_hl;
-    RET;
-
-
-wrap_around_down:
-    LD_hl(0x0);
-    RET;
-
-
-up:
-    LD_HL(SPRITEANIMSTRUCT_VAR2);
-    ADD_HL_BC;
-    LD_A_hl;
-    AND_A_A;
-    IF_Z goto wrap_around_up;
-    DEC_hl;
-    RET;
-
-
-wrap_around_up:
-    LD_hl(0x5);
-    RET;
-
+        // wrap_around_command_right:
+            // LD_E_A;
+            // ADD_A_A;
+            // ADD_A_E;
+            // LD_HL(SPRITEANIMSTRUCT_VAR1);
+            // ADD_HL_BC;
+            // LD_hl_A;
+            bc->var1 = (pos << 1) + pos;
+            // RET;
+            return;
+        }
+        // LD_HL(SPRITEANIMSTRUCT_VAR1);
+        // ADD_HL_BC;
+        // LD_A_hl;
+        // CP_A(0x9);
+        // IF_NC goto wrap_around_letter_right;
+        if(bc->var1 >= 0x9){
+        // wrap_around_letter_right:
+            // LD_hl(0x0);
+            bc->var1 = 0x0;
+            // RET;
+            return;
+        }
+        // INC_hl;
+        bc->var1++;
+        // RET;
+        return;
+    }
+    // RET;
 }
 
-void NamingScreen_PressedA_GetCursorCommand(void){
-    LD_HL(wNamingScreenCursorObjectPointer);
-    LD_C_hl;
-    INC_HL;
-    LD_B_hl;
+void ComposeMail_AnimateCursor(struct SpriteAnim* bc){
+static const uint8_t LetterEntries[] = {0x00, 0x10, 0x20, 0x30, 0x40, 0x50, 0x60, 0x70, 0x80, 0x90};
+static const uint8_t CaseDelEnd[] = {0x00, 0x00, 0x00, 0x30, 0x30, 0x30, 0x60, 0x60, 0x60, 0x60};
+    // CALL(aComposeMail_AnimateCursor_GetDPad);
+    ComposeMail_AnimateCursor_GetDPad(bc);
+    // LD_HL(SPRITEANIMSTRUCT_VAR2);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // LD_E_A;
+    // SWAP_E;
+    // LD_HL(SPRITEANIMSTRUCT_YOFFSET);
+    // ADD_HL_BC;
+    // LD_hl_E;
+    bc->yOffset = (bc->var2 << 4) | (bc->var2 >> 4);
+    // CP_A(0x5);
+    uint8_t a;
+    const uint8_t* de;
+    if(bc->var2 != 0x5) {
+        // LD_DE(mComposeMail_AnimateCursor_LetterEntries);
+        de = LetterEntries;
+        // LD_A(0);
+        a = 0;
+        // IF_NZ goto got_pointer;
+    }
+    else {
+        // LD_DE(mComposeMail_AnimateCursor_CaseDelEnd);
+        de = CaseDelEnd;
+        // LD_A(1);
+        a = 1;
+    }
 
-    return ComposeMail_GetCursorPosition();
-}
-
-void ComposeMail_GetCursorPosition(void){
-    LD_HL(SPRITEANIMSTRUCT_VAR2);
-    ADD_HL_BC;
-    LD_A_hl;
-    CP_A(0x5);
-    IF_NZ goto letter;
-    LD_HL(SPRITEANIMSTRUCT_VAR1);
-    ADD_HL_BC;
-    LD_A_hl;
-    CP_A(0x3);
-    IF_C goto case_;
-    CP_A(0x6);
-    IF_C goto del;
-    LD_A(0x3);
-    RET;
-
-
-case_:
-    LD_A(0x1);
-    RET;
-
-
-del:
-    LD_A(0x2);
-    RET;
-
-
-letter:
-    XOR_A_A;
-    RET;
+// got_pointer:
+    // LD_HL(SPRITEANIMSTRUCT_VAR3);
+    // ADD_HL_BC;
+    // ADD_A_hl;
+    // LD_HL(SPRITEANIMSTRUCT_FRAMESET_ID);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    bc->framesetID = bc->var3 + a;
+    // LD_HL(SPRITEANIMSTRUCT_VAR1);
+    // ADD_HL_BC;
+    // LD_L_hl;
+    // LD_H(0);
+    // ADD_HL_DE;
+    // LD_A_hl;
+    // LD_HL(SPRITEANIMSTRUCT_XOFFSET);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    bc->xOffset = de[bc->var1];
+    // RET;
 
 }
 
-void MailComposition_TryAddLastCharacter(void){
-    LD_A_addr(wNamingScreenLastCharacter);
-    JP(mMailComposition_TryAddCharacter);
+uint8_t NamingScreen_PressedA_GetCursorCommand(void){
+    // LD_HL(wNamingScreenCursorObjectPointer);
+    // LD_C_hl;
+    // INC_HL;
+    // LD_B_hl;
+
+    return ComposeMail_GetCursorPosition(gNamingScreenCursorObjectPointer);
+}
+
+uint8_t ComposeMail_GetCursorPosition(struct SpriteAnim* bc){
+    // LD_HL(SPRITEANIMSTRUCT_VAR2);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // CP_A(0x5);
+    // IF_NZ goto letter;
+    if(bc->var2 != 0x5) {
+    // letter:
+        // XOR_A_A;
+        // RET;
+        return 0x0;
+    }
+    // LD_HL(SPRITEANIMSTRUCT_VAR1);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // CP_A(0x3);
+    // IF_C goto case_;
+    else if(bc->var1 < 0x3) {
+    // case_:
+        // LD_A(0x1);
+        // RET;
+        return 0x1;
+    }
+    // CP_A(0x6);
+    // IF_C goto del;
+    else if(bc->var1 < 0x6) {
+    // del:
+        // LD_A(0x2);
+        // RET;
+        return 0x2;
+    }
+    else {
+        // LD_A(0x3);
+        // RET;
+        return 0x3;
+    }
+}
+
+bool MailComposition_TryAddLastCharacter(void){
+    // LD_A_addr(wNamingScreenLastCharacter);
+    // JP(mMailComposition_TryAddCharacter);
+    return MailComposition_TryAddCharacter();
 
 
-add_dakuten:
+// add_dakuten:
 //   //  unreferenced
-    LD_A_addr(wNamingScreenCurNameLength);
-    AND_A_A;
-    RET_Z ;
-    CP_A(0x11);
-    IF_NZ goto one_back;
-    PUSH_HL;
-    LD_HL(wNamingScreenCurNameLength);
-    DEC_hl;
-    DEC_hl;
-    goto continue_;
+    // LD_A_addr(wNamingScreenCurNameLength);
+    // AND_A_A;
+    // RET_Z ;
+    // CP_A(0x11);
+    // IF_NZ goto one_back;
+    // PUSH_HL;
+    // LD_HL(wNamingScreenCurNameLength);
+    // DEC_hl;
+    // DEC_hl;
+    // goto continue_;
 
 
-one_back:
-    PUSH_HL;
-    LD_HL(wNamingScreenCurNameLength);
-    DEC_hl;
+// one_back:
+    // PUSH_HL;
+    // LD_HL(wNamingScreenCurNameLength);
+    // DEC_hl;
 
 
-continue_:
-    CALL(aNamingScreen_GetTextCursorPosition);
-    LD_C_hl;
-    POP_HL;
+// continue_:
+    // CALL(aNamingScreen_GetTextCursorPosition);
+    // LD_C_hl;
+    // POP_HL;
 
-loop:
-    LD_A_hli;
-    CP_A(-1);  // end?
-    JP_Z (mNamingScreen_AdvanceCursor_CheckEndOfString);
-    CP_A_C;
-    IF_Z goto done;
-    INC_HL;
-    goto loop;
+// loop:
+    // LD_A_hli;
+    // CP_A(-1);  // end?
+    // JP_Z (mNamingScreen_AdvanceCursor_CheckEndOfString);
+    // CP_A_C;
+    // IF_Z goto done;
+    // INC_HL;
+    // goto loop;
 
 
-done:
-    LD_A_hl;
-    JP(mNamingScreen_LoadNextCharacter);
+// done:
+    // LD_A_hl;
+    // JP(mNamingScreen_LoadNextCharacter);
 
 // INCLUDE "data/text/mail_input_chars.asm"
 

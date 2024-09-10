@@ -25,11 +25,11 @@ extern const char NamingScreenGFX_Cursor[];
 void NamingScreenGFX_End(void);
 extern const char NamingScreenGFX_MiddleLine[];
 extern const char NamingScreenGFX_UnderLine[];
-void v_ComposeMailMessage(void);
-void ComposeMail_AnimateCursor(void);
-void NamingScreen_PressedA_GetCursorCommand(void);
-void ComposeMail_GetCursorPosition(void);
-void MailComposition_TryAddLastCharacter(void);
+void v_ComposeMailMessage(uint8_t* dest);
+void ComposeMail_AnimateCursor(struct SpriteAnim* bc);
+uint8_t NamingScreen_PressedA_GetCursorCommand(void);
+uint8_t ComposeMail_GetCursorPosition(struct SpriteAnim* bc);
+bool MailComposition_TryAddLastCharacter(void);
 //#include "data/text/unused_dakutens.h"
 //#include "gfx/naming_screen/border.2bpp"
 //#include "gfx/naming_screen/cursor.2bpp"
