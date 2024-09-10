@@ -1588,6 +1588,7 @@ void Intro_RotatePalettesLeftFrontpic(void) {
 void Intro_WipeInFrontpic(void) {
     // LD_A(0x77);
     // LDH_addr_A(hWX);
+    hram->hWX = 0x77;
     // CALL(aDelayFrame);
     DelayFrame();
     // LD_A(0b11100100);
@@ -1602,7 +1603,7 @@ void Intro_WipeInFrontpic(void) {
         // SUB_A(0x8);
         // CP_A(-1);
         // RET_Z;
-        if(hram->hWX - 0x8 == 0xff)
+        if(hram->hWX == 0x7) // hWX - 8 == -1/0xff
             return;
         // LDH_addr_A(hWX);
         hram->hWX -= 0x8;

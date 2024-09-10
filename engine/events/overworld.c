@@ -1122,7 +1122,6 @@ static uint8_t FlyFunction_TryFly(void) {
         // CALL(aClearSprites);
         ClearSprites_Conv();
         // FARCALL(av_FlyMap);
-        // struct cpu_registers_s regs = SafeCallGBAutoRet(av_FlyMap);
         uint8_t e = v_FlyMap();
         // LD_A_E;
         // CP_A(-1);

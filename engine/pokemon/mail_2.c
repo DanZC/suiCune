@@ -270,7 +270,6 @@ static void ReadAnyMail_loop(void){
         // PUSH_AF;
         uint8_t jumptableIndex = wram->wJumptableIndex;
         // CALLFAR(aPrintMailAndExit);  // printer
-        // SafeCallGBAuto(aPrintMailAndExit);
         PrintMailAndExit();
         // POP_AF;
         // LD_addr_A(wJumptableIndex);

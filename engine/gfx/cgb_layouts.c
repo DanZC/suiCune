@@ -777,7 +777,8 @@ void v_CGB_Diploma(void){
     // LD_BC(16 * PALETTE_SIZE);
     // LD_A(MBANK(awBGPals1));
     // CALL(aFarCopyWRAM);
-    LoadPaletteAssetColorsToArray(wram->wBGPals1, DiplomaPalettes, 0, 16 * NUM_PAL_COLORS);
+    LoadPaletteAssetColorsToArray(wram->wBGPals1, DiplomaPalettes, 0, 8 * NUM_PAL_COLORS);
+    LoadPaletteAssetColorsToArray(wram->wOBPals1, PartyMenuOBPals, 0, 8 * NUM_PAL_COLORS);
 
     // LD_HL(mPalPacket_Diploma + 1);
     // CALL(aCopyFourPalettes);

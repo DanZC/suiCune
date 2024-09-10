@@ -22,6 +22,7 @@
 #include "../items/switch_items.h"
 #include "../pokemon/bills_pc_top.h"
 #include "../pokemon/mon_menu.h"
+#include "../pokemon/mail.h"
 #include "../overworld/select_menu.h"
 #include "../../data/text/common.h"
 
@@ -885,7 +886,7 @@ u8_flag_s PlayerDepositItemMenu(void){
 
 u8_flag_s PlayerMailBoxMenu(void){
     // FARCALL(av_PlayerMailBoxMenu);
-    SafeCallGBAuto(av_PlayerMailBoxMenu);
+    v_PlayerMailBoxMenu();
     // XOR_A_A;
     // RET;
     return u8_flag(0, false);

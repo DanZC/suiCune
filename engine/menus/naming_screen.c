@@ -331,7 +331,7 @@ void NamingScreen_Conv(uint8_t* de, uint8_t b){
     // PUSH_AF;
     uint8_t options = wram->wOptions;
     // SET_hl(NO_TEXT_SCROLL);
-    bit_set(options, NO_TEXT_SCROLL);
+    bit_set(wram->wOptions, NO_TEXT_SCROLL);
     // LDH_A_addr(hMapAnims);
     // PUSH_AF;
     uint8_t mapAnims = hram->hMapAnims;

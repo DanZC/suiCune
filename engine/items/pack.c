@@ -903,7 +903,6 @@ void GiveItem(void){
             // CALL(aCopyBytes);
             CopyBytes_Conv2(wram->wMonOrItemNameBuffer, GetCurNickname_Conv2(), MON_NAME_LENGTH);
             // CALL(aTryGiveItemToPartymon);
-            // SafeCallGBAuto(aTryGiveItemToPartymon);
             TryGiveItemToPartymon();
             // POP_AF;
             // LD_addr_A(wPackJumptableIndex);
@@ -1127,7 +1126,6 @@ static void BattlePack_RunJumptable(void) {
         case PACKSTATE_TMHMPOCKETMENU:
         // TMHMPocketMenu:
             // FARCALL(aTMHMPocket);
-            // SafeCallGBAuto(aTMHMPocket);
             TMHMPocket();
             // LD_B(PACKSTATE_INITKEYITEMSPOCKET);  // left
             // LD_C(PACKSTATE_INITITEMSPOCKET);  // right
@@ -1506,7 +1504,6 @@ static void DepositSellPack_RunJumptable(void){
             // CALL(aWaitBGMap_DrawPackGFX);
             WaitBGMap_DrawPackGFX();
             // FARCALL(aTMHMPocket);
-            // SafeCallGBAuto(aTMHMPocket);
             TMHMPocket();
             // LD_A_addr(wCurItem);
             // LD_addr_A(wCurItem);
@@ -1726,7 +1723,6 @@ static void TutorialPack_RunJumptable(void) {
             // CALL(aWaitBGMap_DrawPackGFX);
             WaitBGMap_DrawPackGFX();
             // FARCALL(aTMHMPocket);
-            // SafeCallGBAuto(aTMHMPocket);
             TMHMPocket();
             // LD_A_addr(wCurItem);
             // LD_addr_A(wCurItem);

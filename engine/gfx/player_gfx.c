@@ -72,7 +72,7 @@ void MovePlayerPicLeft_Conv(void){
     // LD_DE(-1);
 // fallthrough
 
-    return MovePlayerPic_Conv(wram->wTilemap + coordidx(13, 4), 0xffff);
+    return MovePlayerPic_Conv(wram->wTilemap + coordidx(13, 4), -1);
 }
 
 //  Move player pic at hl by de * 7 tiles.
@@ -115,7 +115,7 @@ loop:
 }
 
 //  Move player pic at hl by de * 7 tiles.
-void MovePlayerPic_Conv(uint8_t* hl, uint16_t de){
+void MovePlayerPic_Conv(uint8_t* hl, int16_t de){
     // LD_C(0x8);
     uint8_t c = 0x8;
 
@@ -129,7 +129,7 @@ void MovePlayerPic_Conv(uint8_t* hl, uint16_t de){
         hram->hBGMapMode = 0;
         // LD_BC((7 << 8) | 7);
         // PREDEF(pPlaceGraphic);
-        PlaceGraphic_Conv(hl, 7, 7);
+        PlaceGraphicYStagger_Conv(hl, 7, 7);
         // XOR_A_A;
         // LDH_addr_A(hBGMapThird);
         hram->hBGMapThird = 0;
@@ -403,7 +403,7 @@ void DrawIntroPlayerPic_Conv(void){
     // hlcoord(6, 4, wTilemap);
     // LD_BC((7 << 8) | 7);
     // PREDEF(pPlaceGraphic);
-    PlaceGraphic_Conv(coord(6, 4, wram->wTilemap), 7, 7);
+    PlaceGraphicYStagger_Conv(coord(6, 4, wram->wTilemap), 7, 7);
     // RET;
 }
 

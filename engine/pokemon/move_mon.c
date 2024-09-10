@@ -4212,7 +4212,6 @@ uint8_t GivePoke_Conv(uint8_t b, const char* nickname, const char* otName){
     // LD_addr_A(wMonType);
     wram->wMonType = PARTYMON;
     // CALL(aTryAddMonToParty);
-    // struct cpu_registers_s regs = SafeCallGBAutoRet(aTryAddMonToParty);
     bool cy = TryAddMonToParty_Conv(wram->wCurPartySpecies, wram->wCurPartyLevel);
     // IF_NC goto failed;
     uint8_t* de;
@@ -4225,9 +4224,7 @@ uint8_t GivePoke_Conv(uint8_t b, const char* nickname, const char* otName){
         // CALLFAR(aLoadEnemyMon);
         LoadEnemyMon();
         // CALL(aSendMonIntoBox);
-        // struct cpu_registers_s regs2 = SafeCallGBAutoRet(aSendMonIntoBox);
         // JP_NC (mGivePoke_FailedToGiveMon);
-        // if(!regs2.f_bits.c)
         if(!SendMonIntoBox_Conv())
             return 0x2;
         // LD_A(BOXMON);

@@ -62,7 +62,7 @@ void SetUpTheDecoText(void);
 void PutAwayAndSetUpText(void);
 void AlreadySetUpText(void);
 void GetDecorationName_c_de(void);
-void DecorationFlagAction_c(void);
+uint8_t DecorationFlagAction_c(uint8_t c, uint8_t b);
 uint8_t* GetDecorationName_c(uint8_t c);
 void SetSpecificDecorationFlag(void);
 void SetSpecificDecorationFlag_Conv(uint8_t c);

@@ -77,13 +77,10 @@ bool PlayersHouse2F_MapScripts_InitializeRoom(script_s* s) {
     special(ToggleDecorationsVisibility)
     setevent(EVENT_TEMPORARY_UNTIL_MAP_RELOAD_8)
     checkevent(EVENT_INITIALIZED_EVENTS)
-    iftrue_jump(PlayersHouse2F_MapScripts_SkipInitialization)
+    iftrue(SkipInitialization)
     jumpstd(InitializeEventsScript)
     s_endcallback
-    SCRIPT_END
-}
-bool PlayersHouse2F_MapScripts_SkipInitialization(script_s* s) {
-    SCRIPT_BEGIN
+SkipInitialization:
     s_endcallback
     SCRIPT_END
 }

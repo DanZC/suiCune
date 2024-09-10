@@ -7,7 +7,6 @@ extern const struct MapEvents PlayersHouse2F_MapEvents;
 
 bool PlayersHouse2F_MapScripts_DummyScene(script_s* s);
 bool PlayersHouse2F_MapScripts_InitializeRoom(script_s* s);
-bool PlayersHouse2F_MapScripts_SkipInitialization(script_s* s);
 bool PlayersHouse2F_MapScripts_SetUpTileDecorations(script_s* s);
 bool PlayersHouseDoll1Script(script_s* s);
 bool PlayersHouseDoll2Script(script_s* s);

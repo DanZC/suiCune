@@ -1,9 +1,17 @@
 #include "../../constants.h"
 #include "mail.h"
 #include "mail_2.h"
+#include "party_menu.h"
 #include "../../home/sram.h"
 #include "../../home/copy.h"
 #include "../../home/menu.h"
+#include "../../home/scrolling_menu.h"
+#include "../../home/map_objects.h"
+#include "../../home/map.h"
+#include "../../home/item.h"
+#include "../../home/tilemap.h"
+#include "../../home/delay.h"
+#include "../../home/text.h"
 #include "../../data/text/common.h"
 
 bool SendMailToPC(uint8_t b){
@@ -63,87 +71,105 @@ bool SendMailToPC(uint8_t b){
     return true;
 }
 
-void DeleteMailFromPC(void){
 //  Shift all mail messages in the mailbox
-    LD_A(BANK(sMailboxCount));
-    CALL(aOpenSRAM);
-    LD_A_B;
-    PUSH_BC;
-    LD_HL(sMailboxes);
-    LD_BC(MAIL_STRUCT_LENGTH);
-    CALL(aAddNTimes);
-    PUSH_HL;
-    ADD_HL_BC;
-    POP_DE;
-    POP_BC;
+void DeleteMailFromPC(uint8_t b){
+    // LD_A(BANK(sMailboxCount));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asMailboxCount));
+    // LD_A_B;
+    // PUSH_BC;
+    // LD_HL(sMailboxes);
+    // LD_BC(MAIL_STRUCT_LENGTH);
+    // CALL(aAddNTimes);
+    // PUSH_HL;
+    struct MailMsg* de = ((struct MailMsg*)GBToRAMAddr(sMailboxes)) + b;
+    // ADD_HL_BC;
+    const struct MailMsg* hl = de + 1;
+    // POP_DE;
+    // POP_BC;
 
-loop:
-    LD_A_B;
-    CP_A(MAILBOX_CAPACITY - 1);
-    IF_Z goto done;
-    PUSH_BC;
-    LD_BC(MAIL_STRUCT_LENGTH);
-    CALL(aCopyBytes);
-    POP_BC;
-    INC_B;
-    goto loop;
+    while(b != MAILBOX_CAPACITY - 1) {
+    // loop:
+        // LD_A_B;
+        // CP_A(MAILBOX_CAPACITY - 1);
+        // IF_Z goto done;
+        // PUSH_BC;
+        // LD_BC(MAIL_STRUCT_LENGTH);
+        // CALL(aCopyBytes);
+        CopyBytes_Conv2(de, hl, sizeof(*de));
+        de++, hl++;
+        // POP_BC;
+        // INC_B;
+        b++;
+        // goto loop;
+    }
 
-done:
-    LD_H_D;
-    LD_L_E;
-    XOR_A_A;
-    LD_BC(MAIL_STRUCT_LENGTH);
-    CALL(aByteFill);
-    LD_HL(sMailboxCount);
-    DEC_hl;
-    JP(mCloseSRAM);
-
+// done:
+    // LD_H_D;
+    // LD_L_E;
+    // XOR_A_A;
+    // LD_BC(MAIL_STRUCT_LENGTH);
+    // CALL(aByteFill);
+    ByteFill_Conv2(de, sizeof(*de), 0x0);
+    // LD_HL(sMailboxCount);
+    // DEC_hl;
+    gb_write(sMailboxCount, gb_read(sMailboxCount) - 1);
+    // JP(mCloseSRAM);
+    CloseSRAM_Conv();
 }
 
-void ReadMailMessage(void){
-    LD_A_B;
-    LD_HL(sMailboxes);
-    LD_BC(MAIL_STRUCT_LENGTH);
-    CALL(aAddNTimes);
-    LD_D_H;
-    LD_E_L;
-    FARCALL(aReadAnyMail);
-    RET;
-
+void ReadMailMessage(uint8_t b){
+    OpenSRAM_Conv(MBANK(asMailboxes));
+    // LD_A_B;
+    // LD_HL(sMailboxes);
+    // LD_BC(MAIL_STRUCT_LENGTH);
+    // CALL(aAddNTimes);
+    // LD_D_H;
+    // LD_E_L;
+    // FARCALL(aReadAnyMail);
+    ReadAnyMail_Conv(GBToRAMAddr(sMailboxes + MAIL_STRUCT_LENGTH * b));
+    // RET;
+    CloseSRAM_Conv();
 }
 
-void MoveMailFromPCToParty(void){
-    LD_A(BANK(sMailboxCount));
-    CALL(aOpenSRAM);
-    PUSH_BC;
-    LD_A_B;
-    LD_BC(MAIL_STRUCT_LENGTH);
-    LD_HL(sMailboxes);
-    CALL(aAddNTimes);
-    PUSH_HL;
-    LD_A_addr(wCurPartyMon);
-    LD_BC(MAIL_STRUCT_LENGTH);
-    LD_HL(sPartyMail);
-    CALL(aAddNTimes);
-    LD_D_H;
-    LD_E_L;
-    POP_HL;
-    PUSH_HL;
-    LD_BC(MAIL_STRUCT_LENGTH);
-    CALL(aCopyBytes);
-    POP_HL;
-    LD_DE(PARTYMON_STRUCT_LENGTH - MON_MOVES);
-    ADD_HL_DE;
-    LD_D_hl;
-    LD_A_addr(wCurPartyMon);
-    LD_HL(wPartyMon1Item);
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    CALL(aAddNTimes);
-    LD_hl_D;
-    CALL(aCloseSRAM);
-    POP_BC;
-    JP(mDeleteMailFromPC);
-
+void MoveMailFromPCToParty(uint8_t b){
+    // LD_A(BANK(sMailboxCount));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asMailboxCount));
+    // PUSH_BC;
+    // LD_A_B;
+    // LD_BC(MAIL_STRUCT_LENGTH);
+    // LD_HL(sMailboxes);
+    // CALL(aAddNTimes);
+    // PUSH_HL;
+    struct MailMsg* hl = ((struct MailMsg*)GBToRAMAddr(sMailboxes)) + b;
+    // LD_A_addr(wCurPartyMon);
+    // LD_BC(MAIL_STRUCT_LENGTH);
+    // LD_HL(sPartyMail);
+    // CALL(aAddNTimes);
+    // LD_D_H;
+    // LD_E_L;
+    struct MailMsg* de = ((struct MailMsg*)GBToRAMAddr(sPartyMail)) + wram->wCurPartyMon;
+    // POP_HL;
+    // PUSH_HL;
+    // LD_BC(MAIL_STRUCT_LENGTH);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(de, hl, sizeof(*de));
+    // POP_HL;
+    // LD_DE(PARTYMON_STRUCT_LENGTH - MON_MOVES);
+    // ADD_HL_DE;
+    // LD_D_hl;
+    // LD_A_addr(wCurPartyMon);
+    // LD_HL(wPartyMon1Item);
+    // LD_BC(PARTYMON_STRUCT_LENGTH);
+    // CALL(aAddNTimes);
+    // LD_hl_D;
+    wram->wPartyMon[wram->wCurPartyMon].mon.item = hl->type;
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // POP_BC;
+    // JP(mDeleteMailFromPC);
+    return DeleteMailFromPC(b);
 }
 
 uint8_t GetMailboxCount(void){
@@ -474,7 +500,8 @@ void v_PlayerMailBoxMenu(void){
     }
     // CALL(aLoadStandardMenuHeader);
     LoadStandardMenuHeader_Conv();
-    CALL(aMailboxPC);
+    // CALL(aMailboxPC);
+    MailboxPC();
     // JP(mCloseWindow);
     CloseWindow_Conv2();
 }
@@ -558,256 +585,320 @@ bool InitMail_Conv(void){
     return wram->wMailboxCount != 0;
 }
 
-void MailboxPC_GetMailAuthor(void){
-    DEC_A;
-    LD_HL(sMailbox1Author);
-    LD_BC(MAIL_STRUCT_LENGTH);
-    CALL(aAddNTimes);
-    LD_A(BANK(sMailboxCount));
-    CALL(aOpenSRAM);
-    LD_DE(wStringBuffer2);
-    PUSH_DE;
-    LD_BC(NAME_LENGTH - 1);
-    CALL(aCopyBytes);
-    LD_A(0x50);
-    LD_de_A;
-    CALL(aCloseSRAM);
-    POP_DE;
-    RET;
-
+uint8_t* MailboxPC_GetMailAuthor(uint8_t a){
+    // DEC_A;
+    // LD_HL(sMailbox1Author);
+    // LD_BC(MAIL_STRUCT_LENGTH);
+    // CALL(aAddNTimes);
+    // LD_A(BANK(sMailboxCount));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asMailboxCount));
+    struct MailMsg* hl = ((struct MailMsg*)GBToRAMAddr(sMailbox1)) + (a - 1);
+    // LD_DE(wStringBuffer2);
+    // PUSH_DE;
+    // LD_BC(NAME_LENGTH - 1);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wStringBuffer1, hl->author, NAME_LENGTH - 1);
+    // LD_A(0x50);
+    // LD_de_A;
+    wram->wStringBuffer1[NAME_LENGTH - 1] = 0x50;
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // POP_DE;
+    // RET;
+    return wram->wStringBuffer1;
 }
 
-void MailboxPC_PrintMailAuthor(void){
-    PUSH_DE;
-    LD_A_addr(wMenuSelection);
-    CALL(aMailboxPC_GetMailAuthor);
-    POP_HL;
-    JP(mPlaceString);
+void MailboxPC_PrintMailAuthor(const struct MenuData* data, tile_t* tile){
+    (void)data;
+    // PUSH_DE;
+    // LD_A_addr(wMenuSelection);
+    // CALL(aMailboxPC_GetMailAuthor);
+    // POP_HL;
+    // JP(mPlaceString);
+    PlaceStringSimple(MailboxPC_GetMailAuthor(wram->wMenuSelection), tile);
+}
 
+static const struct MenuHeader MailboxPC_TopMenuHeader = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(8, 1, SCREEN_WIDTH - 2, 10),
+    .data = &(struct MenuData){ //dw ['.TopMenuData'];
+    //TopMenuData:
+        .flags = SCROLLINGMENU_DISPLAY_ARROWS,  // flags
+        .scrollingMenu = {
+            .rows = 4, .cols = 0,  // rows, columns
+            .format = SCROLLINGMENU_ITEMS_NORMAL,  // item format
+            //dbw ['0', 'wMailboxCount']
+            .list = wram_ptr(wMailboxCount),
+            .func1 = MailboxPC_PrintMailAuthor,
+            .func2 = NULL,
+            .func3 = NULL,
+        },
+    },
+    .defaultOption = 1,  // default option
+};
+
+static const struct MenuHeader MailboxPC_SubMenuHeader = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(0, 0, 13, 9),
+    .data = &(struct MenuData) { //dw ['.SubMenuData'];
+    //SubMenuData:
+        .flags = STATICMENU_CURSOR,  // flags
+        .verticalMenu = {
+            .count = 4,  // items
+            .options = (const char*[]) {
+                "READ MAIL@",
+                "PUT IN PACK@",
+                "ATTACH MAIL@",
+                "CANCEL@",
+            },
+        },
+    },
+    .defaultOption = 1,  // default option
+};
+
+static item_t MailboxPC_GetMailType(uint8_t sel) {
+    // PUSH_AF;
+    // LD_A(BANK(sMailboxCount));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asMailboxCount));
+    // POP_AF;
+    // LD_HL(sMailbox1Type);
+    // LD_BC(MAIL_STRUCT_LENGTH);
+    // CALL(aAddNTimes);
+    // LD_A_hl;
+    // LD_addr_A(wCurItem);
+    wram->wCurItem = gb_read(sMailbox1Type + MAIL_STRUCT_LENGTH * sel);
+    // JP(mCloseSRAM);
+    CloseSRAM_Conv();
+    return wram->wCurItem;
+}
+
+static void MailboxPC_Submenu(void){
+    static const txt_cmd_s MailMessageLostText[] = {
+        text_far(v_MailMessageLostText)
+        text_end
+    };
+    static const txt_cmd_s MailPackFullText[] = {
+        text_far(v_MailPackFullText)
+        text_end
+    };
+    static const txt_cmd_s MailClearedPutAwayText[] = {
+        text_far(v_MailClearedPutAwayText)
+        text_end
+    };
+    static const txt_cmd_s MailAlreadyHoldingItemText[] = {
+        text_far(v_MailAlreadyHoldingItemText)
+        text_end
+    };
+    static const txt_cmd_s MailEggText[] = {
+        text_far(v_MailEggText)
+        text_end
+    };
+    static const txt_cmd_s MailMovedFromBoxText[] = {
+        text_far(v_MailMovedFromBoxText)
+        text_end
+    };
+    // LD_HL(mMailboxPC_SubMenuHeader);
+    // CALL(aLoadMenuHeader);
+    LoadMenuHeader_Conv2(&MailboxPC_SubMenuHeader);
+    // CALL(aVerticalMenu);
+    bool cancel = VerticalMenu_Conv();
+    // CALL(aExitMenu);
+    ExitMenu_Conv2();
+    // IF_C goto subexit;
+    if(!cancel) {
+        // LD_A_addr(wMenuCursorY);
+        // DEC_A;
+        // LD_HL(mMailboxPC_Jumptable);
+        // RST(aJumpTable);
+        switch(wram->wMenuCursorY - 1) {
+        // Jumptable:
+            //dw ['.ReadMail'];
+            case 0: 
+            // ReadMail:
+                // CALL(aFadeToMenu);
+                FadeToMenu_Conv();
+                // LD_A_addr(wMenuSelection);
+                // DEC_A;
+                // LD_B_A;
+                // CALL(aReadMailMessage);
+                ReadMailMessage(wram->wMenuSelection - 1);
+                // JP(mCloseSubmenu);
+                return CloseSubmenu_Conv();
+            //dw ['.PutInPack'];
+            case 1: {
+            // PutInPack:
+                // LD_HL(mMailboxPC_MailMessageLostText);
+                // CALL(aMenuTextbox);
+                MenuTextbox_Conv(MailMessageLostText);
+                // CALL(aYesNoBox);
+                bool cancel = !YesNoBox_Conv();
+                // CALL(aExitMenu);
+                ExitMenu_Conv2();
+                // RET_C ;
+                if(cancel)
+                    return;
+                // LD_A_addr(wMenuSelection);
+                // DEC_A;
+                // CALL(aMailboxPC_GetMailType);
+                item_t item = MailboxPC_GetMailType(wram->wMenuSelection - 1);
+                // LD_A(1);
+                // LD_addr_A(wItemQuantityChange);
+                wram->wItemQuantityChange = 1;
+                // LD_HL(wNumItems);
+                // CALL(aReceiveItem);
+                // IF_C goto put_in_bag;
+                if(!ReceiveItem_Conv((item_pocket_s*)&wram->wNumItems, item, 1)) {
+                    // LD_HL(mMailboxPC_MailPackFullText);
+                    // JP(mMenuTextboxBackup);
+                    return MenuTextboxBackup_Conv(MailPackFullText);
+                }
+
+            // put_in_bag:
+                // LD_A_addr(wMenuSelection);
+                // DEC_A;
+                // LD_B_A;
+                // CALL(aDeleteMailFromPC);
+                DeleteMailFromPC(wram->wMenuSelection - 1);
+                // LD_HL(mMailboxPC_MailClearedPutAwayText);
+                // JP(mMenuTextboxBackup);
+                return MenuTextboxBackup_Conv(MailClearedPutAwayText);
+            }
+            //dw ['.AttachMail'];
+            case 2: {
+            // AttachMail:
+                // CALL(aFadeToMenu);
+                FadeToMenu_Conv();
+                // XOR_A_A;
+                // LD_addr_A(wPartyMenuActionText);
+                wram->wPartyMenuActionText = 0x0;
+                // CALL(aClearBGPalettes);
+                ClearBGPalettes_Conv();
+
+                while(1) {
+                // try_again:
+                    // FARCALL(aLoadPartyMenuGFX);
+                    LoadPartyMenuGFX();
+                    // FARCALL(aInitPartyMenuWithCancel);
+                    InitPartyMenuWithCancel();
+                    // FARCALL(aInitPartyMenuGFX);
+                    InitPartyMenuGFX();
+                    // FARCALL(aWritePartyMenuTilemap);
+                    WritePartyMenuTilemap();
+                    // FARCALL(aPrintPartyMenuText);
+                    PrintPartyMenuText();
+                    // CALL(aWaitBGMap);
+                    WaitBGMap_Conv();
+                    // CALL(aSetPalettes);
+                    SetPalettes_Conv();
+                    // CALL(aDelayFrame);
+                    DelayFrame();
+                    // FARCALL(aPartyMenuSelect);
+                    u8_flag_s res = PartyMenuSelect();
+                    // IF_C goto exit2;
+                    if(res.flag)
+                        return CloseSubmenu_Conv();
+                    // LD_A_addr(wCurPartySpecies);
+                    // CP_A(EGG);
+                    // IF_Z goto egg;
+                    if(wram->wCurPartySpecies == EGG) {
+                    // egg:
+                        // LD_HL(mMailboxPC_MailEggText);
+                        // CALL(aPrintText);
+                        PrintText_Conv2(MailEggText);
+                        // goto try_again;
+                        continue;
+                    }
+                    // LD_A(MON_ITEM);
+                    // CALL(aGetPartyParamLocation);
+                    // LD_A_hl;
+                    // AND_A_A;
+                    // IF_Z goto attach_mail;
+                    if(wram->wPartyMon[wram->wCurPartyMon].mon.item == NO_ITEM)
+                        break;
+                    // LD_HL(mMailboxPC_MailAlreadyHoldingItemText);
+                    // CALL(aPrintText);
+                    PrintText_Conv2(MailAlreadyHoldingItemText);
+                    // goto try_again;
+                }
+
+            // attach_mail:
+                // LD_A_addr(wMenuSelection);
+                // DEC_A;
+                // LD_B_A;
+                // CALL(aMoveMailFromPCToParty);
+                MoveMailFromPCToParty(wram->wMenuSelection - 1);
+                // LD_HL(mMailboxPC_MailMovedFromBoxText);
+                // CALL(aPrintText);
+                PrintText_Conv2(MailMovedFromBoxText);
+
+            // exit2:
+                // JP(mCloseSubmenu);
+                return CloseSubmenu_Conv();
+            }
+            //dw ['.Cancel'];
+            default:
+            // Cancel:
+                // RET;
+                return;
+        }
+    }
+
+// subexit:
+    // RET;
 }
 
 void MailboxPC(void){
-    XOR_A_A;
-    LD_addr_A(wCurMessageScrollPosition);
-    LD_A(1);
-    LD_addr_A(wCurMessageIndex);
+    // XOR_A_A;
+    // LD_addr_A(wCurMessageScrollPosition);
+    wram->wCurMessageScrollPosition = 0;
+    // LD_A(1);
+    // LD_addr_A(wCurMessageIndex);
+    wram->wCurMessageIndex = 1;
 
-loop:
-    CALL(aInitMail);
-    LD_HL(mMailboxPC_TopMenuHeader);
-    CALL(aCopyMenuHeader);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    CALL(aInitScrollingMenu);
-    CALL(aUpdateSprites);
+    while(1) {
+    // loop:
+        // CALL(aInitMail);
+        InitMail_Conv();
+        // LD_HL(mMailboxPC_TopMenuHeader);
+        // CALL(aCopyMenuHeader);
+        CopyMenuHeader_Conv2(&MailboxPC_TopMenuHeader);
+        // XOR_A_A;
+        // LDH_addr_A(hBGMapMode);
+        hram->hBGMapMode = 0x0;
+        // CALL(aInitScrollingMenu);
+        InitScrollingMenu_Conv();
+        // CALL(aUpdateSprites);
+        UpdateSprites_Conv();
 
-    LD_A_addr(wCurMessageIndex);
-    LD_addr_A(wMenuCursorPosition);
-    LD_A_addr(wCurMessageScrollPosition);
-    LD_addr_A(wMenuScrollPosition);
-    CALL(aScrollingMenu);
-    LD_A_addr(wMenuScrollPosition);
-    LD_addr_A(wCurMessageScrollPosition);
-    LD_A_addr(wMenuCursorY);
-    LD_addr_A(wCurMessageIndex);
+        // LD_A_addr(wCurMessageIndex);
+        // LD_addr_A(wMenuCursorPosition);
+        wram->wMenuCursorPosition = wram->wCurMessageIndex;
+        // LD_A_addr(wCurMessageScrollPosition);
+        // LD_addr_A(wMenuScrollPosition);
+        wram->wMenuScrollPosition = wram->wCurMessageScrollPosition;
+        // CALL(aScrollingMenu);
+        ScrollingMenu_Conv();
+        // LD_A_addr(wMenuScrollPosition);
+        // LD_addr_A(wCurMessageScrollPosition);
+        wram->wCurMessageScrollPosition = wram->wMenuScrollPosition;
+        // LD_A_addr(wMenuCursorY);
+        // LD_addr_A(wCurMessageIndex);
+        wram->wCurMessageIndex = wram->wMenuCursorY;
 
-    LD_A_addr(wMenuJoypad);
-    CP_A(B_BUTTON);
-    IF_Z goto exit;
-    CALL(aMailboxPC_Submenu);
-    goto loop;
+        // LD_A_addr(wMenuJoypad);
+        // CP_A(B_BUTTON);
+        // IF_Z goto exit;
+        if(wram->wMenuJoypad == B_BUTTON)
+            break;
+        // CALL(aMailboxPC_Submenu);
+        MailboxPC_Submenu();
+        // goto loop;
+    }
 
-
-exit:
-    XOR_A_A;
-    RET;
-
-
-Submenu:
-    LD_HL(mMailboxPC_SubMenuHeader);
-    CALL(aLoadMenuHeader);
-    CALL(aVerticalMenu);
-    CALL(aExitMenu);
-    IF_C goto subexit;
-    LD_A_addr(wMenuCursorY);
-    DEC_A;
-    LD_HL(mMailboxPC_Jumptable);
-    RST(aJumpTable);
-
-
-subexit:
-    RET;
-
-
-Jumptable:
-    //dw ['.ReadMail'];
-    //dw ['.PutInPack'];
-    //dw ['.AttachMail'];
-    //dw ['.Cancel'];
-
-
-ReadMail:
-    CALL(aFadeToMenu);
-    LD_A_addr(wMenuSelection);
-    DEC_A;
-    LD_B_A;
-    CALL(aReadMailMessage);
-    JP(mCloseSubmenu);
-
-
-PutInPack:
-    LD_HL(mMailboxPC_MailMessageLostText);
-    CALL(aMenuTextbox);
-    CALL(aYesNoBox);
-    CALL(aExitMenu);
-    RET_C ;
-    LD_A_addr(wMenuSelection);
-    DEC_A;
-    CALL(aMailboxPC_GetMailType);
-    LD_A(1);
-    LD_addr_A(wItemQuantityChange);
-    LD_HL(wNumItems);
-    CALL(aReceiveItem);
-    IF_C goto put_in_bag;
-    LD_HL(mMailboxPC_MailPackFullText);
-    JP(mMenuTextboxBackup);
-
-
-put_in_bag:
-    LD_A_addr(wMenuSelection);
-    DEC_A;
-    LD_B_A;
-    CALL(aDeleteMailFromPC);
-    LD_HL(mMailboxPC_MailClearedPutAwayText);
-    JP(mMenuTextboxBackup);
-
-
-MailClearedPutAwayText:
-    //text_far ['_MailClearedPutAwayText']
-    //text_end ['?']
-
-
-MailPackFullText:
-    //text_far ['_MailPackFullText']
-    //text_end ['?']
-
-
-MailMessageLostText:
-    //text_far ['_MailMessageLostText']
-    //text_end ['?']
-
-
-GetMailType:
-    PUSH_AF;
-    LD_A(BANK(sMailboxCount));
-    CALL(aOpenSRAM);
-    POP_AF;
-    LD_HL(sMailbox1Type);
-    LD_BC(MAIL_STRUCT_LENGTH);
-    CALL(aAddNTimes);
-    LD_A_hl;
-    LD_addr_A(wCurItem);
-    JP(mCloseSRAM);
-
-
-AttachMail:
-    CALL(aFadeToMenu);
-    XOR_A_A;
-    LD_addr_A(wPartyMenuActionText);
-    CALL(aClearBGPalettes);
-
-try_again:
-    FARCALL(aLoadPartyMenuGFX);
-    FARCALL(aInitPartyMenuWithCancel);
-    FARCALL(aInitPartyMenuGFX);
-    FARCALL(aWritePartyMenuTilemap);
-    FARCALL(aPrintPartyMenuText);
-    CALL(aWaitBGMap);
-    CALL(aSetPalettes);
-    CALL(aDelayFrame);
-    FARCALL(aPartyMenuSelect);
-    IF_C goto exit2;
-    LD_A_addr(wCurPartySpecies);
-    CP_A(EGG);
-    IF_Z goto egg;
-    LD_A(MON_ITEM);
-    CALL(aGetPartyParamLocation);
-    LD_A_hl;
-    AND_A_A;
-    IF_Z goto attach_mail;
-    LD_HL(mMailboxPC_MailAlreadyHoldingItemText);
-    CALL(aPrintText);
-    goto try_again;
-
-
-egg:
-    LD_HL(mMailboxPC_MailEggText);
-    CALL(aPrintText);
-    goto try_again;
-
-
-attach_mail:
-    LD_A_addr(wMenuSelection);
-    DEC_A;
-    LD_B_A;
-    CALL(aMoveMailFromPCToParty);
-    LD_HL(mMailboxPC_MailMovedFromBoxText);
-    CALL(aPrintText);
-
-
-exit2:
-    JP(mCloseSubmenu);
-
-
-MailAlreadyHoldingItemText:
-    //text_far ['_MailAlreadyHoldingItemText']
-    //text_end ['?']
-
-
-MailEggText:
-    //text_far ['_MailEggText']
-    //text_end ['?']
-
-
-MailMovedFromBoxText:
-    //text_far ['_MailMovedFromBoxText']
-    //text_end ['?']
-
-
-Cancel:
-    RET;
-
-
-//TopMenuHeader:
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['8', '1', 'SCREEN_WIDTH - 2', '10'];
-    //dw ['.TopMenuData'];
-    //db ['1'];  // default option
-
-
-//TopMenuData:
-    //db ['SCROLLINGMENU_DISPLAY_ARROWS'];  // flags
-    //db ['4', '0'];  // rows, columns
-    //db ['SCROLLINGMENU_ITEMS_NORMAL'];  // item format
-    //dbw ['0', 'wMailboxCount']
-    //dba ['MailboxPC_PrintMailAuthor']
-    //dba ['NULL']
-    //dba ['NULL']
-
-
-//SubMenuHeader:
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['0', '0', '13', '9'];
-    //dw ['.SubMenuData'];
-    //db ['1'];  // default option
-
-
-//SubMenuData:
-    //db ['STATICMENU_CURSOR'];  // flags
-    //db ['4'];  // items
-    //db ['"READ MAIL@"'];
-    //db ['"PUT IN PACK@"'];
-    //db ['"ATTACH MAIL@"'];
-    //db ['"CANCEL@"'];
-
+// exit:
+    // XOR_A_A;
+    // RET;
+    return;
 }

@@ -1322,10 +1322,10 @@ void GetDecorationName_c_de_Conv(uint8_t* de, uint8_t c){
     return GetDecorationName_Conv(de, c);
 }
 
-void DecorationFlagAction_c(void){
-    LD_A_C;
-    JP(mDecorationFlagAction);
-
+uint8_t DecorationFlagAction_c(uint8_t c, uint8_t b){
+    // LD_A_C;
+    // JP(mDecorationFlagAction);
+    return DecorationFlagAction(c, b);
 }
 
 uint8_t* GetDecorationName_c(uint8_t c){

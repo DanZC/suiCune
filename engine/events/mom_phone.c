@@ -2,6 +2,7 @@
 #include "mom_phone.h"
 #include "money.h"
 #include "../overworld/events.h"
+#include "../overworld/decorations.h"
 #include "../../home/item.h"
 #include "../../home/random.h"
 #include "../../home/map.h"
@@ -336,8 +337,8 @@ bool Mom_GiveItemOrDoll_Conv(void){
         // LD_A_hl;
         // LD_C_A;
         // LD_B(1);
-        //  TODO: Convert DecorationFlagAction_c
         // FARCALL(aDecorationFlagAction_c);
+        DecorationFlagAction_c(item->item, 1);
         // SCF;
         // RET;
         return true;

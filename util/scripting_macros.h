@@ -67,7 +67,7 @@
 #define faceplayer                  SCRIPT_EVCMD(Script_faceplayer_Conv)
 #define faceobject(_e, _d)          SCRIPT_EVCMD(Script_faceobject_Conv, _e, _d)
 #define turnobject(_e, _d)          SCRIPT_EVCMD(Script_turnobject_Conv, _e, _d)
-#define variablesprite(_i, _s)      SCRIPT_EVCMD(Script_variablesprite_Conv, _i, _s)
+#define variablesprite(_i, _s)      SCRIPT_EVCMD(Script_variablesprite_Conv, (_i) - SPRITE_VARS, _s)
 #define appear(_o)                  SCRIPT_EVCMD(Script_appear_Conv, _o)
 #define disappear(_o)               SCRIPT_EVCMD(Script_disappear_Conv, _o)
 #define follow(_l, _f)              SCRIPT_EVCMD(Script_follow_Conv, _l, _f)

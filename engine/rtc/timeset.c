@@ -221,7 +221,7 @@ void InitClock(void){
     // POP_AF;
     // LDH_addr_A(hInMenu);
     hram->hInMenu = inMenu;
-    RET;
+    // RET;
 }
 
 void SetHour(void){

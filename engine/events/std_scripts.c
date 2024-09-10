@@ -718,6 +718,7 @@ bool InitializeEventsScript(script_s* s) {
     setevent(EVENT_BATTLE_TOWER_OUTSIDE_SAILOR)
     setflag(ENGINE_ROCKET_SIGNAL_ON_CH20)
     setflag(ENGINE_ROCKETS_IN_MAHOGANY)
+
     variablesprite(SPRITE_WEIRD_TREE, SPRITE_SUDOWOODO)
     variablesprite(SPRITE_OLIVINE_RIVAL, SPRITE_SILVER)
     variablesprite(SPRITE_AZALEA_ROCKET, SPRITE_ROCKET)
@@ -727,6 +728,7 @@ bool InitializeEventsScript(script_s* s) {
     variablesprite(SPRITE_FUCHSIA_GYM_4, SPRITE_JANINE)
     variablesprite(SPRITE_COPYCAT, SPRITE_LASS)
     variablesprite(SPRITE_JANINE_IMPERSONATOR, SPRITE_LASS)
+
     setevent(EVENT_FOUND_MACHINE_PART_IN_CERULEAN_GYM)
     setevent(EVENT_CERULEAN_GYM_ROCKET)
     setevent(EVENT_ROUTE_24_ROCKET)
