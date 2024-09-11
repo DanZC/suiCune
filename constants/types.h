@@ -25,6 +25,11 @@ typedef struct { uint32_t a; bool flag; }  u32_flag_s;
 typedef struct { int a; bool flag; }  int_flag_s;
 #define int_flag(_a, _flag) (int_flag_s){.a = _a, .flag = _flag}
 
+typedef struct U8PtrPair {
+    uint8_t* hl;
+    uint8_t* de;
+} u8_ptr_pair_s;
+
 struct ByteWord 
 {
     uint8_t byte;
@@ -1498,7 +1503,10 @@ struct MenuData {
                     uint8_t rows;
                 };
             };
-            const uint8_t** itemList;
+            union {
+                const uint8_t** itemList;
+                const uint8_t* itemArr;
+            };
             void (*displayFunction)(const char**, uint8_t*, uint8_t);
             union {
                 const char ** stringsList;
