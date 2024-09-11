@@ -24,6 +24,7 @@
 #include "../pokemon/mon_menu.h"
 #include "../pokemon/mail.h"
 #include "../overworld/select_menu.h"
+#include "../overworld/decorations.h"
 #include "../../data/text/common.h"
 
 // PokemonCenterPC.WhichPC indexes
@@ -673,15 +674,15 @@ u8_flag_s PlayerTossItemMenu(void){
 
 u8_flag_s PlayerDecorationMenu(void){
     // FARCALL(av_PlayerDecorationMenu);
-    struct cpu_registers_s reg = SafeCallGBAutoRet(av_PlayerDecorationMenu);
+    uint8_t c = v_PlayerDecorationMenu();
     // LD_A_C;
     // AND_A_A;
     // RET_Z ;
-    if(reg.c == 0)
+    if(c == 0)
         return u8_flag(0, false);
     // SCF;
     // RET;
-    return u8_flag(reg.c, true);
+    return u8_flag(c, true);
 }
 
 u8_flag_s PlayerLogOffMenu(void){

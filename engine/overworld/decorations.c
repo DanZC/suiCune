@@ -4,6 +4,10 @@
 #include "../../home/copy_name.h"
 #include "../../home/map.h"
 #include "../../home/flag.h"
+#include "../../home/menu.h"
+#include "../../home/copy.h"
+#include "../../home/scrolling_menu.h"
+#include "../../home/text.h"
 #include "../../data/decorations/attributes.h"
 #include "../../data/decorations/decorations.h"
 #include "../../data/decorations/names.h"
@@ -20,518 +24,566 @@ void InitDecorations(void){
     // RET;
 }
 
-void v_PlayerDecorationMenu(void){
-    LD_A_addr(wWhichIndexSet);
-    PUSH_AF;
-    LD_HL(mv_PlayerDecorationMenu_MenuHeader);
-    CALL(aLoadMenuHeader);
-    XOR_A_A;  // FALSE
-    LD_addr_A(wChangedDecorations);
-    LD_A(0x1);  // bed
-    LD_addr_A(wCurDecorationCategory);
+static void DecorationMenuFunction2(const struct MenuData* data, tile_t* de);
 
-top_loop:
-    LD_A_addr(wCurDecorationCategory);
-    LD_addr_A(wMenuCursorPosition);
-    CALL(av_PlayerDecorationMenu_FindCategoriesWithOwnedDecos);
-    CALL(aDoNthMenu);
-    LD_A_addr(wMenuCursorY);
-    LD_addr_A(wCurDecorationCategory);
-    IF_C goto exit_menu;
-    LD_A_addr(wMenuSelection);
-    LD_HL(mv_PlayerDecorationMenu_category_pointers);
-    CALL(aMenuJumptable);
-    IF_NC goto top_loop;
-
-
-exit_menu:
-    CALL(aExitMenu);
-    POP_AF;
-    LD_addr_A(wWhichIndexSet);
-    LD_A_addr(wChangedDecorations);
-    LD_C_A;
-    RET;
-
-
-MenuHeader:
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['5', '0', 'SCREEN_WIDTH - 1', 'SCREEN_HEIGHT - 1'];
-    //dw ['.MenuData'];
-    //db ['1'];  // default option
-
-
-MenuData:
-    //db ['STATICMENU_CURSOR | STATICMENU_WRAP'];  // flags
-    //db ['0'];  // items
-    //dw ['wNumOwnedDecoCategories'];
-    //dw ['PlaceNthMenuStrings'];
-    //dw ['.category_pointers'];
-
-
-category_pointers:
+static const struct LabeledMenuItem v_PlayerDecorationMenu_category_pointers[] = {
     //table_width ['2 + 2', '_PlayerDecorationMenu.category_pointers']
-    //dw ['DecoBedMenu', '.bed'];
-    //dw ['DecoCarpetMenu', '.carpet'];
-    //dw ['DecoPlantMenu', '.plant'];
-    //dw ['DecoPosterMenu', '.poster'];
-    //dw ['DecoConsoleMenu', '.game'];
-    //dw ['DecoOrnamentMenu', '.ornament'];
-    //dw ['DecoBigDollMenu', '.big_doll'];
-    //dw ['DecoExitMenu', '.exit'];
-    //assert_table_length ['NUM_DECO_CATEGORIES + 1']
+    {DecoBedMenu, "BED"},
+    {DecoCarpetMenu, "CARPET"},
+    {DecoPlantMenu, "PLANT"},
+    {DecoPosterMenu, "POSTER"},
+    {DecoConsoleMenu, "GAME CONSOLE"},
+    {DecoOrnamentMenu, "ORNAMENT"},
+    {DecoBigDollMenu, "BIG DOLL"},
+    {DecoExitMenu, "EXIT"},
+};
+static_assert(lengthof(v_PlayerDecorationMenu_category_pointers) == NUM_DECO_CATEGORIES + 1, "");
 
+static const struct MenuHeader v_PlayerDecorationMenu_MenuHeader = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(5, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1),
+    //dw ['.MenuData'];
+    .data = &(struct MenuData) {
+    // MenuData:
+        .flags = STATICMENU_CURSOR | STATICMENU_WRAP,  // flags
+        .setupMenu = {
+            .count = 0,  // items
+            .itemArr = wram_ptr(wNumOwnedDecoCategories),
+            .displayFunction = PlaceNthMenuStrings_Conv,
+            .labelList = v_PlayerDecorationMenu_category_pointers,
+        },
+    },
+    .defaultOption = 1,  // default option
+};
 
-bed:
-//      db "BED@"
+struct OwnedPointer {
+    bool (*function)(void);
+    uint8_t n;
+};
 
-carpet:
-//   db "CARPET@"
+static void v_PlayerDecorationMenu_ClearStringBuffer2(void){
+    // LD_HL(wStringBuffer2);
+    // XOR_A_A;
+    // LD_hli_A;
+    wram->wStringBuffer2[0] = 0;
+    // LD_BC(ITEM_NAME_LENGTH - 1);
+    // LD_A(-1);
+    // CALL(aByteFill);
+    ByteFill_Conv2(wram->wStringBuffer2 + 1, ITEM_NAME_LENGTH - 1, 0xff);
+    // RET;
+}
 
-plant:
-//    db "PLANT@"
+static void v_PlayerDecorationMenu_AppendToStringBuffer2(uint8_t a){
+    // LD_HL(wStringBuffer2);
+    // INC_hl;
+    uint8_t l = ++wram->wStringBuffer2[0];
+    // LD_E_hl;
+    // LD_D(0);
+    // ADD_HL_DE;
+    // LD_hl_A;
+    wram->wStringBuffer2[l] = a;
+    // RET;
+}
 
-poster:
-//   db "POSTER@"
+static void v_PlayerDecorationMenu_FindOwnedDecos(void){
+    static const struct OwnedPointer owned_pointers[] = {
+        //table_width ['3', '_PlayerDecorationMenu.owned_pointers']
+        {FindOwnedBeds, 0},  // bed
+        {FindOwnedCarpets, 1},  // carpet
+        {FindOwnedPlants, 2},  // plant
+        {FindOwnedPosters, 3},  // poster
+        {FindOwnedConsoles, 4},  // game console
+        {FindOwnedOrnaments, 5},  // ornament
+        {FindOwnedBigDolls, 6},  // big doll
+        //dw ['0'];  // end
+        {0},
+    };
+    static_assert(lengthof(owned_pointers) == NUM_DECO_CATEGORIES + 1, "");
+    // LD_HL(mv_PlayerDecorationMenu_owned_pointers);
+    const struct OwnedPointer* hl = owned_pointers;
 
-game:
-//     db "GAME CONSOLE@"
+    while(hl->function != NULL) {
+    // loop:
+        // LD_A_hli;
+        // LD_E_A;
+        // LD_A_hli;
+        // LD_D_A;
+        // OR_A_E;
+        // IF_Z goto done;
+        // PUSH_HL;
+        // CALL(av_de_);
+        // POP_HL;
+        // IF_NC goto next;
+        if(hl->function()) {
+            // LD_A_hl;
+            // PUSH_HL;
+            // CALL(av_PlayerDecorationMenu_AppendToStringBuffer2);
+            v_PlayerDecorationMenu_AppendToStringBuffer2(hl->n);
+            // POP_HL;
+        }
 
-ornament:
-// db "ORNAMENT@"
+    // next:
+        // INC_HL;
+        hl++;
+        // goto loop;
+    }
 
-big_doll:
-// db "BIG DOLL@"
+// done:
+    // RET;
+}
 
-exit:
-//     db "EXIT@"
+static void v_PlayerDecorationMenu_FindCategoriesWithOwnedDecos(void){
+    // XOR_A_A;
+    // LD_addr_A(wWhichIndexSet);
+    wram->wWhichIndexSet = 0;
+    // CALL(av_PlayerDecorationMenu_ClearStringBuffer2);
+    v_PlayerDecorationMenu_ClearStringBuffer2();
+    // CALL(av_PlayerDecorationMenu_FindOwnedDecos);
+    v_PlayerDecorationMenu_FindOwnedDecos();
+    // LD_A(7);
+    // CALL(av_PlayerDecorationMenu_AppendToStringBuffer2);
+    v_PlayerDecorationMenu_AppendToStringBuffer2(7);
+    // LD_HL(wStringBuffer2);
+    // LD_DE(wDecoNameBuffer);
+    // LD_BC(ITEM_NAME_LENGTH);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wDecoNameBuffer, wram->wStringBuffer2, ITEM_NAME_LENGTH);
+    // RET;
+}
 
+uint8_t v_PlayerDecorationMenu(void){
+    // LD_A_addr(wWhichIndexSet);
+    // PUSH_AF;
+    uint8_t index = wram->wWhichIndexSet;
+    // LD_HL(mv_PlayerDecorationMenu_MenuHeader);
+    // CALL(aLoadMenuHeader);
+    LoadMenuHeader_Conv2(&v_PlayerDecorationMenu_MenuHeader);
+    // XOR_A_A;  // FALSE
+    // LD_addr_A(wChangedDecorations);
+    wram->wChangedDecorations = FALSE;
+    // LD_A(0x1);  // bed
+    // LD_addr_A(wCurDecorationCategory);
+    wram->wCurDecorationCategory = 0x1;
 
-FindCategoriesWithOwnedDecos:
-    XOR_A_A;
-    LD_addr_A(wWhichIndexSet);
-    CALL(av_PlayerDecorationMenu_ClearStringBuffer2);
-    CALL(av_PlayerDecorationMenu_FindOwnedDecos);
-    LD_A(7);
-    CALL(av_PlayerDecorationMenu_AppendToStringBuffer2);
-    LD_HL(wStringBuffer2);
-    LD_DE(wDecoNameBuffer);
-    LD_BC(ITEM_NAME_LENGTH);
-    CALL(aCopyBytes);
-    RET;
+    u8_flag_s res;
+    do {
+    // top_loop:
+        // LD_A_addr(wCurDecorationCategory);
+        // LD_addr_A(wMenuCursorPosition);
+        wram->wMenuCursorPosition = wram->wCurDecorationCategory;
+        // CALL(av_PlayerDecorationMenu_FindCategoriesWithOwnedDecos);
+        v_PlayerDecorationMenu_FindCategoriesWithOwnedDecos();
+        // CALL(aDoNthMenu);
+        res = DoNthMenu_Conv();
+        // LD_A_addr(wMenuCursorY);
+        // LD_addr_A(wCurDecorationCategory);
+        wram->wCurDecorationCategory = wram->wMenuCursorY;
+        // IF_C goto exit_menu;
+        if(res.flag)
+            break;
+        // LD_A_addr(wMenuSelection);
+        // LD_HL(mv_PlayerDecorationMenu_category_pointers);
+        // CALL(aMenuJumptable);
+        res = MenuJumptable_Conv();
+        // IF_NC goto top_loop;
+    } while(!res.flag);
 
-
-ClearStringBuffer2:
-    LD_HL(wStringBuffer2);
-    XOR_A_A;
-    LD_hli_A;
-    LD_BC(ITEM_NAME_LENGTH - 1);
-    LD_A(-1);
-    CALL(aByteFill);
-    RET;
-
-
-AppendToStringBuffer2:
-    LD_HL(wStringBuffer2);
-    INC_hl;
-    LD_E_hl;
-    LD_D(0);
-    ADD_HL_DE;
-    LD_hl_A;
-    RET;
-
-
-FindOwnedDecos:
-    LD_HL(mv_PlayerDecorationMenu_owned_pointers);
-
-loop:
-    LD_A_hli;
-    LD_E_A;
-    LD_A_hli;
-    LD_D_A;
-    OR_A_E;
-    IF_Z goto done;
-    PUSH_HL;
-    CALL(av_de_);
-    POP_HL;
-    IF_NC goto next;
-    LD_A_hl;
-    PUSH_HL;
-    CALL(av_PlayerDecorationMenu_AppendToStringBuffer2);
-    POP_HL;
-
-next:
-    INC_HL;
-    goto loop;
-
-done:
-    RET;
-
-
-owned_pointers:
-    //table_width ['3', '_PlayerDecorationMenu.owned_pointers']
-    //dwb ['FindOwnedBeds', '0']  // bed
-    //dwb ['FindOwnedCarpets', '1']  // carpet
-    //dwb ['FindOwnedPlants', '2']  // plant
-    //dwb ['FindOwnedPosters', '3']  // poster
-    //dwb ['FindOwnedConsoles', '4']  // game console
-    //dwb ['FindOwnedOrnaments', '5']  // ornament
-    //dwb ['FindOwnedBigDolls', '6']  // big doll
-    //assert_table_length ['NUM_DECO_CATEGORIES']
-    //dw ['0'];  // end
-
-    return Deco_FillTempWithMinusOne();
+// exit_menu:
+    // CALL(aExitMenu);
+    ExitMenu_Conv2();
+    // POP_AF;
+    // LD_addr_A(wWhichIndexSet);
+    wram->wWhichIndexSet = index;
+    // LD_A_addr(wChangedDecorations);
+    // LD_C_A;
+    // RET;
+    return wram->wChangedDecorations;
 }
 
 void Deco_FillTempWithMinusOne(void){
-    XOR_A_A;
-    LD_HL(wNumOwnedDecoCategories);
-    LD_hli_A;
+    // XOR_A_A;
+    // LD_HL(wNumOwnedDecoCategories);
+    // LD_hli_A;
+    wram->wNumOwnedDecoCategories = 0x0;
     //assert ['wNumOwnedDecoCategories + 1 == wOwnedDecoCategories'];
-    LD_A(-1);
-    LD_BC(16);
-    CALL(aByteFill);
-    RET;
-
+    // LD_A(-1);
+    // LD_BC(16);
+    // CALL(aByteFill);
+    ByteFill_Conv2(wram->wOwnedDecoCategories, sizeof(wram->wOwnedDecoCategories), 0xff);
+    // RET;
 }
 
-void CheckAllDecorationFlags(void){
+void CheckAllDecorationFlags(const uint8_t* hl){
+    while(1) {
+    // loop:
+        // LD_A_hli;
+        uint8_t a = *(hl++);
+        // CP_A(-1);
+        // IF_Z goto done;
+        if(a == 0xff)
+            break;
+        // PUSH_HL;
+        // PUSH_AF;
+        // LD_B(CHECK_FLAG);
+        // CALL(aDecorationFlagAction);
+        uint8_t c = DecorationFlagAction(a, CHECK_FLAG);
+        // LD_A_C;
+        // AND_A_A;
+        // POP_BC;
+        // LD_A_B;
+        // CALL_NZ (aAppendDecoIndex);
+        if(c != 0) {
+            AppendDecoIndex(a);
+        }
+        // POP_HL;
+        // goto loop;
+    }
 
-loop:
-    LD_A_hli;
-    CP_A(-1);
-    IF_Z goto done;
-    PUSH_HL;
-    PUSH_AF;
-    LD_B(CHECK_FLAG);
-    CALL(aDecorationFlagAction);
-    LD_A_C;
-    AND_A_A;
-    POP_BC;
-    LD_A_B;
-    CALL_NZ (aAppendDecoIndex);
-    POP_HL;
-    goto loop;
-
-
-done:
-    RET;
-
+// done:
+    // RET;
 }
 
-void AppendDecoIndex(void){
-    LD_HL(wNumOwnedDecoCategories);
-    INC_hl;
+void AppendDecoIndex(uint8_t a){
+    // LD_HL(wNumOwnedDecoCategories);
+    // INC_hl;
+    uint8_t l = wram->wNumOwnedDecoCategories++;
     //assert ['wNumOwnedDecoCategories + 1 == wOwnedDecoCategories'];
-    LD_E_hl;
-    LD_D(0);
-    ADD_HL_DE;
-    LD_hl_A;
-    RET;
-
+    // LD_E_hl;
+    // LD_D(0);
+    // ADD_HL_DE;
+    // LD_hl_A;
+    wram->wOwnedDecoCategories[l] = a;
+    // RET;
 }
 
-void FindOwnedDecosInCategory(void){
-    PUSH_BC;
-    PUSH_HL;
-    CALL(aDeco_FillTempWithMinusOne);
-    POP_HL;
-    CALL(aCheckAllDecorationFlags);
-    POP_BC;
-    LD_A_addr(wNumOwnedDecoCategories);
-    AND_A_A;
-    RET_Z ;
+bool FindOwnedDecosInCategory(const uint8_t* hl, uint8_t c){
+    // PUSH_BC;
+    // PUSH_HL;
+    // CALL(aDeco_FillTempWithMinusOne);
+    Deco_FillTempWithMinusOne();
+    // POP_HL;
+    // CALL(aCheckAllDecorationFlags);
+    CheckAllDecorationFlags(hl);
+    // POP_BC;
+    // LD_A_addr(wNumOwnedDecoCategories);
+    // AND_A_A;
+    // RET_Z ;
+    if(wram->wNumOwnedDecoCategories == 0)
+        return false;
 
-    LD_A_C;
-    CALL(aAppendDecoIndex);
-    LD_A(0);
-    CALL(aAppendDecoIndex);
-    SCF;
-    RET;
-
+    // LD_A_C;
+    // CALL(aAppendDecoIndex);
+    AppendDecoIndex(c);
+    // LD_A(0);
+    // CALL(aAppendDecoIndex);
+    AppendDecoIndex(0);
+    // SCF;
+    // RET;
+    return true;
 }
 
-void DecoBedMenu(void){
-    CALL(aFindOwnedBeds);
-    CALL(aPopulateDecoCategoryMenu);
-    XOR_A_A;
-    RET;
-
+u8_flag_s DecoBedMenu(void){
+    // CALL(aFindOwnedBeds);
+    FindOwnedBeds();
+    // CALL(aPopulateDecoCategoryMenu);
+    PopulateDecoCategoryMenu();
+    // XOR_A_A;
+    // RET;
+    return u8_flag(0, false);
 }
 
-void FindOwnedBeds(void){
-    LD_HL(mFindOwnedBeds_beds);
-    LD_C(BEDS);
-    JP(mFindOwnedDecosInCategory);
-
-
-beds:
-    //db ['DECO_FEATHERY_BED'];  // 2
-    //db ['DECO_PINK_BED'];  // 3
-    //db ['DECO_POLKADOT_BED'];  // 4
-    //db ['DECO_PIKACHU_BED'];  // 5
-    //db ['-1'];
-
-    return DecoCarpetMenu();
+bool FindOwnedBeds(void){
+    static const uint8_t beds[] = {
+        DECO_FEATHERY_BED,  // 2
+        DECO_PINK_BED,  // 3
+        DECO_POLKADOT_BED,  // 4
+        DECO_PIKACHU_BED,  // 5
+        -1,
+    };
+    // LD_HL(mFindOwnedBeds_beds);
+    // LD_C(BEDS);
+    // JP(mFindOwnedDecosInCategory);
+    return FindOwnedDecosInCategory(beds, BEDS);
 }
 
-void DecoCarpetMenu(void){
-    CALL(aFindOwnedCarpets);
-    CALL(aPopulateDecoCategoryMenu);
-    XOR_A_A;
-    RET;
-
+u8_flag_s DecoCarpetMenu(void){
+    // CALL(aFindOwnedCarpets);
+    FindOwnedCarpets();
+    // CALL(aPopulateDecoCategoryMenu);
+    PopulateDecoCategoryMenu();
+    // XOR_A_A;
+    // RET;
+    return u8_flag(0, false);
 }
 
-void FindOwnedCarpets(void){
-    LD_HL(mFindOwnedCarpets_carpets);
-    LD_C(CARPETS);
-    JP(mFindOwnedDecosInCategory);
-
-
-carpets:
-    //db ['DECO_RED_CARPET'];  // 7
-    //db ['DECO_BLUE_CARPET'];  // 8
-    //db ['DECO_YELLOW_CARPET'];  // 9
-    //db ['DECO_GREEN_CARPET'];  // a
-    //db ['-1'];
-
-    return DecoPlantMenu();
+bool FindOwnedCarpets(void){
+    static const uint8_t carpets[] = {
+        DECO_RED_CARPET,  // 7
+        DECO_BLUE_CARPET,  // 8
+        DECO_YELLOW_CARPET,  // 9
+        DECO_GREEN_CARPET,  // a
+        -1,
+    };
+    // LD_HL(mFindOwnedCarpets_carpets);
+    // LD_C(CARPETS);
+    // JP(mFindOwnedDecosInCategory);
+    return FindOwnedDecosInCategory(carpets, CARPETS);
 }
 
-void DecoPlantMenu(void){
-    CALL(aFindOwnedPlants);
-    CALL(aPopulateDecoCategoryMenu);
-    XOR_A_A;
-    RET;
-
+u8_flag_s DecoPlantMenu(void){
+    // CALL(aFindOwnedPlants);
+    FindOwnedPlants();
+    // CALL(aPopulateDecoCategoryMenu);
+    PopulateDecoCategoryMenu();
+    // XOR_A_A;
+    // RET;
+    return u8_flag(0, false);
 }
 
-void FindOwnedPlants(void){
-    LD_HL(mFindOwnedPlants_plants);
-    LD_C(PLANTS);
-    JP(mFindOwnedDecosInCategory);
-
-
-plants:
-    //db ['DECO_MAGNAPLANT'];  // c
-    //db ['DECO_TROPICPLANT'];  // d
-    //db ['DECO_JUMBOPLANT'];  // e
-    //db ['-1'];
-
-    return DecoPosterMenu();
+bool FindOwnedPlants(void){
+    static const uint8_t plants[] = {
+        DECO_MAGNAPLANT,  // c
+        DECO_TROPICPLANT,  // d
+        DECO_JUMBOPLANT,  // e
+        -1,
+    };
+    // LD_HL(mFindOwnedPlants_plants);
+    // LD_C(PLANTS);
+    // JP(mFindOwnedDecosInCategory);
+    return FindOwnedDecosInCategory(plants, PLANTS);
 }
 
-void DecoPosterMenu(void){
-    CALL(aFindOwnedPosters);
-    CALL(aPopulateDecoCategoryMenu);
-    XOR_A_A;
-    RET;
-
+u8_flag_s DecoPosterMenu(void){
+    // CALL(aFindOwnedPosters);
+    FindOwnedPosters();
+    // CALL(aPopulateDecoCategoryMenu);
+    PopulateDecoCategoryMenu();
+    // XOR_A_A;
+    // RET;
+    return u8_flag(0, false);
 }
 
-void FindOwnedPosters(void){
-    LD_HL(mFindOwnedPosters_posters);
-    LD_C(POSTERS);
-    JP(mFindOwnedDecosInCategory);
-
-
-posters:
-    //db ['DECO_TOWN_MAP'];  // 10
-    //db ['DECO_PIKACHU_POSTER'];  // 11
-    //db ['DECO_CLEFAIRY_POSTER'];  // 12
-    //db ['DECO_JIGGLYPUFF_POSTER'];  // 13
-    //db ['-1'];
-
-    return DecoConsoleMenu();
+bool FindOwnedPosters(void){
+    static const uint8_t posters[] = {
+        DECO_TOWN_MAP,  // 10
+        DECO_PIKACHU_POSTER,  // 11
+        DECO_CLEFAIRY_POSTER,  // 12
+        DECO_JIGGLYPUFF_POSTER,  // 13
+        -1,
+    };
+    // LD_HL(mFindOwnedPosters_posters);
+    // LD_C(POSTERS);
+    // JP(mFindOwnedDecosInCategory);
+    return FindOwnedDecosInCategory(posters, POSTERS);
 }
 
-void DecoConsoleMenu(void){
-    CALL(aFindOwnedConsoles);
-    CALL(aPopulateDecoCategoryMenu);
-    XOR_A_A;
-    RET;
-
+u8_flag_s DecoConsoleMenu(void){
+    // CALL(aFindOwnedConsoles);
+    FindOwnedConsoles();
+    // CALL(aPopulateDecoCategoryMenu);
+    PopulateDecoCategoryMenu();
+    // XOR_A_A;
+    // RET;
+    return u8_flag(0, false);
 }
 
-void FindOwnedConsoles(void){
-    LD_HL(mFindOwnedConsoles_consoles);
-    LD_C(CONSOLES);
-    JP(mFindOwnedDecosInCategory);
-
-
-consoles:
-    //db ['DECO_FAMICOM'];  // 15
-    //db ['DECO_SNES'];  // 16
-    //db ['DECO_N64'];  // 17
-    //db ['DECO_VIRTUAL_BOY'];  // 18
-    //db ['-1'];
-
-    return DecoOrnamentMenu();
+bool FindOwnedConsoles(void){
+    static const uint8_t consoles[] = {
+        DECO_FAMICOM,  // 15
+        DECO_SNES,  // 16
+        DECO_N64,  // 17
+        DECO_VIRTUAL_BOY,  // 18
+        -1,
+    };
+    // LD_HL(mFindOwnedConsoles_consoles);
+    // LD_C(CONSOLES);
+    // JP(mFindOwnedDecosInCategory);
+    return FindOwnedDecosInCategory(consoles, CONSOLES);
 }
 
-void DecoOrnamentMenu(void){
-    CALL(aFindOwnedOrnaments);
-    CALL(aPopulateDecoCategoryMenu);
-    XOR_A_A;
-    RET;
-
+u8_flag_s DecoOrnamentMenu(void){
+    // CALL(aFindOwnedOrnaments);
+    FindOwnedOrnaments();
+    // CALL(aPopulateDecoCategoryMenu);
+    PopulateDecoCategoryMenu();
+    // XOR_A_A;
+    // RET;
+    return u8_flag(0, false);
 }
 
-void FindOwnedOrnaments(void){
-    LD_HL(mFindOwnedOrnaments_ornaments);
-    LD_C(DOLLS);
-    JP(mFindOwnedDecosInCategory);
-
-
-ornaments:
-    //db ['DECO_PIKACHU_DOLL'];  // 1e
-    //db ['DECO_SURF_PIKACHU_DOLL'];  // 1f
-    //db ['DECO_CLEFAIRY_DOLL'];  // 20
-    //db ['DECO_JIGGLYPUFF_DOLL'];  // 21
-    //db ['DECO_BULBASAUR_DOLL'];  // 22
-    //db ['DECO_CHARMANDER_DOLL'];  // 23
-    //db ['DECO_SQUIRTLE_DOLL'];  // 24
-    //db ['DECO_POLIWAG_DOLL'];  // 25
-    //db ['DECO_DIGLETT_DOLL'];  // 26
-    //db ['DECO_STARMIE_DOLL'];  // 27
-    //db ['DECO_MAGIKARP_DOLL'];  // 28
-    //db ['DECO_ODDISH_DOLL'];  // 29
-    //db ['DECO_GENGAR_DOLL'];  // 2a
-    //db ['DECO_SHELLDER_DOLL'];  // 2b
-    //db ['DECO_GRIMER_DOLL'];  // 2c
-    //db ['DECO_VOLTORB_DOLL'];  // 2d
-    //db ['DECO_WEEDLE_DOLL'];  // 2e
-    //db ['DECO_UNOWN_DOLL'];  // 2f
-    //db ['DECO_GEODUDE_DOLL'];  // 30
-    //db ['DECO_MACHOP_DOLL'];  // 31
-    //db ['DECO_TENTACOOL_DOLL'];  // 32
-    //db ['DECO_GOLD_TROPHY_DOLL'];  // 33
-    //db ['DECO_SILVER_TROPHY_DOLL'];  // 34
-    //db ['-1'];
-
-    return DecoBigDollMenu();
+bool FindOwnedOrnaments(void){
+    static const uint8_t ornaments[] = {
+        DECO_PIKACHU_DOLL,  // 1e
+        DECO_SURF_PIKACHU_DOLL,  // 1f
+        DECO_CLEFAIRY_DOLL,  // 20
+        DECO_JIGGLYPUFF_DOLL,  // 21
+        DECO_BULBASAUR_DOLL,  // 22
+        DECO_CHARMANDER_DOLL,  // 23
+        DECO_SQUIRTLE_DOLL,  // 24
+        DECO_POLIWAG_DOLL,  // 25
+        DECO_DIGLETT_DOLL,  // 26
+        DECO_STARMIE_DOLL,  // 27
+        DECO_MAGIKARP_DOLL,  // 28
+        DECO_ODDISH_DOLL,  // 29
+        DECO_GENGAR_DOLL,  // 2a
+        DECO_SHELLDER_DOLL,  // 2b
+        DECO_GRIMER_DOLL,  // 2c
+        DECO_VOLTORB_DOLL,  // 2d
+        DECO_WEEDLE_DOLL,  // 2e
+        DECO_UNOWN_DOLL,  // 2f
+        DECO_GEODUDE_DOLL,  // 30
+        DECO_MACHOP_DOLL,  // 31
+        DECO_TENTACOOL_DOLL,  // 32
+        DECO_GOLD_TROPHY_DOLL,  // 33
+        DECO_SILVER_TROPHY_DOLL,  // 34
+        -1,
+    };
+    // LD_HL(mFindOwnedOrnaments_ornaments);
+    // LD_C(DOLLS);
+    // JP(mFindOwnedDecosInCategory);
+    return FindOwnedDecosInCategory(ornaments, DOLLS);
 }
 
-void DecoBigDollMenu(void){
-    CALL(aFindOwnedBigDolls);
-    CALL(aPopulateDecoCategoryMenu);
-    XOR_A_A;
-    RET;
-
+u8_flag_s DecoBigDollMenu(void){
+    // CALL(aFindOwnedBigDolls);
+    FindOwnedBigDolls();
+    // CALL(aPopulateDecoCategoryMenu);
+    PopulateDecoCategoryMenu();
+    // XOR_A_A;
+    // RET;
+    return u8_flag(0, false);
 }
 
-void FindOwnedBigDolls(void){
-    LD_HL(mFindOwnedBigDolls_big_dolls);
-    LD_C(BIG_DOLLS);
-    JP(mFindOwnedDecosInCategory);
-
-
-big_dolls:
-    //db ['DECO_BIG_SNORLAX_DOLL'];  // 1a
-    //db ['DECO_BIG_ONIX_DOLL'];  // 1b
-    //db ['DECO_BIG_LAPRAS_DOLL'];  // 1c
-    //db ['-1'];
-
-    return DecoExitMenu();
+bool FindOwnedBigDolls(void){
+    static const uint8_t big_dolls[] = {
+        DECO_BIG_SNORLAX_DOLL,  // 1a
+        DECO_BIG_ONIX_DOLL,  // 1b
+        DECO_BIG_LAPRAS_DOLL,  // 1c
+        -1,
+    };
+    // LD_HL(mFindOwnedBigDolls_big_dolls);
+    // LD_C(BIG_DOLLS);
+    // JP(mFindOwnedDecosInCategory);
+    return FindOwnedDecosInCategory(big_dolls, BIG_DOLLS);
 }
 
-void DecoExitMenu(void){
-    SCF;
-    RET;
-
+u8_flag_s DecoExitMenu(void){
+    // SCF;
+    // RET;
+    return u8_flag(0, true);
 }
+
+static const struct MenuHeader NonscrollingMenuHeader = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(0, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1),
+    .data = &(struct MenuData){ //dw ['.NonscrollingMenuData'];
+    // NonscrollingMenuData:
+        .flags = STATICMENU_CURSOR | STATICMENU_WRAP,  // flags
+        .setupMenu = {
+            .count = 0,  // items
+            .itemList = (const uint8_t**)wram_ptr(wDecoNameBuffer),
+            .displayFunction = DecorationMenuFunction,
+            //dw ['DecorationAttributes'];
+        },
+    },
+    .defaultOption = 1,  // default option
+};
+
+static const struct MenuHeader ScrollingMenuHeader = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(1, 1, SCREEN_WIDTH - 2, SCREEN_HEIGHT - 2),
+    //dw ['.ScrollingMenuData'];
+    .data = &(struct MenuData) {
+    // ScrollingMenuData:
+        .flags = SCROLLINGMENU_DISPLAY_ARROWS,  // flags
+        .scrollingMenu = {
+            .rows = 8, .cols = 0,  // rows, columns
+            .format = SCROLLINGMENU_ITEMS_NORMAL,  // item format
+            .list = wram_ptr(wNumOwnedDecoCategories),
+            .func1 = DecorationMenuFunction2,
+            .func2 = NULL,
+            .func3 = NULL,
+        },
+    },
+    .defaultOption = 1,  // default option
+};
 
 void PopulateDecoCategoryMenu(void){
-    LD_A_addr(wNumOwnedDecoCategories);
-    AND_A_A;
-    IF_Z goto empty;
-    CP_A(8);
-    IF_NC goto beyond_eight;
-    XOR_A_A;
-    LD_addr_A(wWhichIndexSet);
-    LD_HL(mPopulateDecoCategoryMenu_NonscrollingMenuHeader);
-    CALL(aLoadMenuHeader);
-    CALL(aDoNthMenu);
-    IF_C goto no_action_1;
-    CALL(aDoDecorationAction2);
+    static const txt_cmd_s NothingToChooseText[] = {
+        text_far(v_NothingToChooseText)
+        text_end
+    };
+    // LD_A_addr(wNumOwnedDecoCategories);
+    // AND_A_A;
+    // IF_Z goto empty;
+    if(wram->wNumOwnedDecoCategories == 0) {
+    // empty:
+        // LD_HL(mPopulateDecoCategoryMenu_NothingToChooseText);
+        // CALL(aMenuTextboxBackup);
+        MenuTextboxBackup_Conv(NothingToChooseText);
+        // RET;
+        return;
+    }
+    // CP_A(8);
+    // IF_NC goto beyond_eight;
+    else if(wram->wNumOwnedDecoCategories < 8) {
+        // XOR_A_A;
+        // LD_addr_A(wWhichIndexSet);
+        wram->wWhichIndexSet = 0x0;
+        // LD_HL(mPopulateDecoCategoryMenu_NonscrollingMenuHeader);
+        // CALL(aLoadMenuHeader);
+        LoadMenuHeader_Conv2(&NonscrollingMenuHeader);
+        // CALL(aDoNthMenu);
+        u8_flag_s res = DoNthMenu_Conv();
+        // IF_C goto no_action_1;
+        if(!res.flag) {
+            // CALL(aDoDecorationAction2);
+            DoDecorationAction2();
+        }
 
+    // no_action_1:
+        // CALL(aExitMenu);
+        ExitMenu_Conv2();
+        // RET;
+        return;
+    }
 
-no_action_1:
-    CALL(aExitMenu);
-    RET;
-
-
-beyond_eight:
-    LD_HL(wNumOwnedDecoCategories);
-    LD_E_hl;
-    DEC_hl;
+// beyond_eight:
+    // LD_HL(wNumOwnedDecoCategories);
+    // LD_E_hl;
+    // DEC_hl;
+    uint8_t e = --wram->wNumOwnedDecoCategories;
     //assert ['wNumOwnedDecoCategories + 1 == wOwnedDecoCategories'];
-    LD_D(0);
-    ADD_HL_DE;
-    LD_hl(-1);
-    CALL(aLoadStandardMenuHeader);
-    LD_HL(mPopulateDecoCategoryMenu_ScrollingMenuHeader);
-    CALL(aCopyMenuHeader);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    CALL(aInitScrollingMenu);
-    XOR_A_A;
-    LD_addr_A(wMenuScrollPosition);
-    CALL(aScrollingMenu);
-    LD_A_addr(wMenuJoypad);
-    CP_A(2);
-    IF_Z goto no_action_2;
-    CALL(aDoDecorationAction2);
+    // LD_D(0);
+    // ADD_HL_DE;
+    // LD_hl(-1);
+    wram->wOwnedDecoCategories[e] = 0xff;
+    // CALL(aLoadStandardMenuHeader);
+    // LD_HL(mPopulateDecoCategoryMenu_ScrollingMenuHeader);
+    // CALL(aCopyMenuHeader);
+    CopyMenuHeader_Conv2(&ScrollingMenuHeader);
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0x0;
+    // CALL(aInitScrollingMenu);
+    InitScrollingMenu_Conv();
+    // XOR_A_A;
+    // LD_addr_A(wMenuScrollPosition);
+    wram->wMenuScrollPosition = 0x0;
+    // CALL(aScrollingMenu);
+    ScrollingMenu_Conv();
+    // LD_A_addr(wMenuJoypad);
+    // CP_A(2);
+    // IF_Z goto no_action_2;
+    if(wram->wMenuJoypad != 2) {
+        // CALL(aDoDecorationAction2);
+        DoDecorationAction2();
+    }
 
-
-no_action_2:
-    CALL(aExitMenu);
-    RET;
-
-
-empty:
-    LD_HL(mPopulateDecoCategoryMenu_NothingToChooseText);
-    CALL(aMenuTextboxBackup);
-    RET;
-
-
-NothingToChooseText:
-    //text_far ['_NothingToChooseText']
-    //text_end ['?']
-
-
-NonscrollingMenuHeader:
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['0', '0', 'SCREEN_WIDTH - 1', 'SCREEN_HEIGHT - 1'];
-    //dw ['.NonscrollingMenuData'];
-    //db ['1'];  // default option
-
-
-NonscrollingMenuData:
-    //db ['STATICMENU_CURSOR | STATICMENU_WRAP'];  // flags
-    //db ['0'];  // items
-    //dw ['wDecoNameBuffer'];
-    //dw ['DecorationMenuFunction'];
-    //dw ['DecorationAttributes'];
-
-
-ScrollingMenuHeader:
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['1', '1', 'SCREEN_WIDTH - 2', 'SCREEN_HEIGHT - 2'];
-    //dw ['.ScrollingMenuData'];
-    //db ['1'];  // default option
-
-
-ScrollingMenuData:
-    //db ['SCROLLINGMENU_DISPLAY_ARROWS'];  // flags
-    //db ['8', '0'];  // rows, columns
-    //db ['SCROLLINGMENU_ITEMS_NORMAL'];  // item format
-    //dbw ['0', 'wNumOwnedDecoCategories']
-    //dba ['DecorationMenuFunction']
-    //dbw ['0', 'NULL']
-    //dbw ['0', 'NULL']
-
-    return GetDecorationData();
+// no_action_2:
+    // CALL(aExitMenu);
+    ExitMenu_Conv2();
+    // RET;
 }
 
 void GetDecorationData(void){
@@ -572,44 +624,58 @@ void GetDecorationName_Conv(uint8_t* hl, uint8_t a){
     // RET;
 }
 
-void DecorationMenuFunction(void){
-    LD_A_addr(wMenuSelection);
-    PUSH_DE;
-    CALL(aGetDecorationData);
-    CALL(aGetDecoName);
-    POP_HL;
-    CALL(aPlaceString);
-    RET;
+void DecorationMenuFunction(const char** str, uint8_t* de, uint8_t a){
+    (void)str;
+    // LD_A_addr(wMenuSelection);
+    // PUSH_DE;
+    // CALL(aGetDecorationData);
+    const struct Decoration* deco = GetDecorationData_Conv(a);
+    // CALL(aGetDecoName);
+    uint8_t* s = (uint8_t*)GetDecoName_Conv(deco);
+    // POP_HL;
+    // CALL(aPlaceString);
+    // RET;
+    PlaceStringSimple(s, de);
+}
 
+static void DecorationMenuFunction2(const struct MenuData* data, tile_t* de){
+    (void)data;
+    const struct Decoration* deco = GetDecorationData_Conv(wram->wMenuSelection);
+    uint8_t* s = (uint8_t*)GetDecoName_Conv(deco);
+    PlaceStringSimple(s, de);
 }
 
 void DoDecorationAction2(void){
-    LD_A_addr(wMenuSelection);
-    CALL(aGetDecorationData);
-    LD_DE(DECOATTR_ACTION);
-    ADD_HL_DE;
-    LD_A_hl;
-    LD_HL(mDoDecorationAction2_DecoActions);
-    RST(aJumpTable);
-    RET;
+    // LD_A_addr(wMenuSelection);
+    // CALL(aGetDecorationData);
+    const struct Decoration* deco = GetDecorationData_Conv(wram->wMenuSelection);
+    // LD_DE(DECOATTR_ACTION);
+    // ADD_HL_DE;
+    // LD_A_hl;
+    uint8_t action = deco->action;
+    // LD_HL(mDoDecorationAction2_DecoActions);
+    // RST(aJumpTable);
+    // RET;
 
 // DecoActions:
     //table_width ['2', 'DoDecorationAction2.DecoActions']
-    //dw ['DecoAction_nothing'];
-    //dw ['DecoAction_setupbed'];
-    //dw ['DecoAction_putawaybed'];
-    //dw ['DecoAction_setupcarpet'];
-    //dw ['DecoAction_putawaycarpet'];
-    //dw ['DecoAction_setupplant'];
-    //dw ['DecoAction_putawayplant'];
-    //dw ['DecoAction_setupposter'];
-    //dw ['DecoAction_putawayposter'];
-    //dw ['DecoAction_setupconsole'];
-    //dw ['DecoAction_putawayconsole'];
-    //dw ['DecoAction_setupbigdoll'];
-    //dw ['DecoAction_putawaybigdoll'];
-    //dw ['DecoAction_setupornament'];
-    //dw ['DecoAction_putawayornament'];
+    switch(action) {
+        case 0:                 return DecoAction_nothing();
+        case SET_UP_BED:        return DecoAction_setupbed();
+        case PUT_AWAY_BED:      return DecoAction_putawaybed();
+        case SET_UP_CARPET:     return DecoAction_setupcarpet();
+        case PUT_AWAY_CARPET:   return DecoAction_putawaycarpet();
+        case SET_UP_PLANT:      return DecoAction_setupplant();
+        case PUT_AWAY_PLANT:    return DecoAction_putawayplant();
+        case SET_UP_POSTER:     return DecoAction_setupposter();
+        case PUT_AWAY_POSTER:   return DecoAction_putawayposter();
+        case SET_UP_CONSOLE:    return DecoAction_setupconsole();
+        case PUT_AWAY_CONSOLE:  return DecoAction_putawayconsole();
+        case SET_UP_BIG_DOLL:   return DecoAction_setupbigdoll();
+        case PUT_AWAY_BIG_DOLL: return DecoAction_putawaybigdoll();
+        case SET_UP_DOLL:       return DecoAction_setupornament();
+        case PUT_AWAY_DOLL:     return DecoAction_putawayornament();
+    }
     //assert_table_length ['NUM_DECO_ACTIONS + 1']
 }
 
@@ -906,403 +972,460 @@ const uint8_t* GetDecoName_Conv(const struct Decoration* hl){
 }
 
 void DecoAction_nothing(void){
-    SCF;
-    RET;
-
+    // SCF;
+    // RET;
+    return;
 }
 
 void DecoAction_setupbed(void){
-    LD_HL(wDecoBed);
-    JP(mDecoAction_TrySetItUp);
+    // LD_HL(wDecoBed);
+    // JP(mDecoAction_TrySetItUp);
+    DecoAction_TrySetItUp(&wram->wDecoBed);
 
 }
 
 void DecoAction_putawaybed(void){
-    LD_HL(wDecoBed);
-    JP(mDecoAction_TryPutItAway);
-
+    // LD_HL(wDecoBed);
+    // JP(mDecoAction_TryPutItAway);
+    DecoAction_TryPutItAway(&wram->wDecoBed);
 }
 
 void DecoAction_setupcarpet(void){
-    LD_HL(wDecoCarpet);
-    JP(mDecoAction_TrySetItUp);
+    // LD_HL(wDecoCarpet);
+    // JP(mDecoAction_TrySetItUp);
+    DecoAction_TrySetItUp(&wram->wDecoCarpet);
 
 }
 
 void DecoAction_putawaycarpet(void){
-    LD_HL(wDecoCarpet);
-    JP(mDecoAction_TryPutItAway);
+    // LD_HL(wDecoCarpet);
+    // JP(mDecoAction_TryPutItAway);
+    DecoAction_TryPutItAway(&wram->wDecoCarpet);
 
 }
 
 void DecoAction_setupplant(void){
-    LD_HL(wDecoPlant);
-    JP(mDecoAction_TrySetItUp);
+    // LD_HL(wDecoPlant);
+    // JP(mDecoAction_TrySetItUp);
+    DecoAction_TrySetItUp(&wram->wDecoPlant);
 
 }
 
 void DecoAction_putawayplant(void){
-    LD_HL(wDecoPlant);
-    JP(mDecoAction_TryPutItAway);
-
+    // LD_HL(wDecoPlant);
+    // JP(mDecoAction_TryPutItAway);
+    DecoAction_TryPutItAway(&wram->wDecoPlant);
 }
 
 void DecoAction_setupposter(void){
-    LD_HL(wDecoPoster);
-    JP(mDecoAction_TrySetItUp);
+    // LD_HL(wDecoPoster);
+    // JP(mDecoAction_TrySetItUp);
+    DecoAction_TrySetItUp(&wram->wDecoPoster);
 
 }
 
 void DecoAction_putawayposter(void){
-    LD_HL(wDecoPoster);
-    JP(mDecoAction_TryPutItAway);
-
+    // LD_HL(wDecoPoster);
+    // JP(mDecoAction_TryPutItAway);
+    DecoAction_TryPutItAway(&wram->wDecoPoster);
 }
 
 void DecoAction_setupconsole(void){
-    LD_HL(wDecoConsole);
-    JP(mDecoAction_TrySetItUp);
-
+    // LD_HL(wDecoConsole);
+    // JP(mDecoAction_TrySetItUp);
+    DecoAction_TrySetItUp(&wram->wDecoConsole);
 }
 
 void DecoAction_putawayconsole(void){
-    LD_HL(wDecoConsole);
-    JP(mDecoAction_TryPutItAway);
+    // LD_HL(wDecoConsole);
+    // JP(mDecoAction_TryPutItAway);
+    DecoAction_TryPutItAway(&wram->wDecoConsole);
 
 }
 
 void DecoAction_setupbigdoll(void){
-    LD_HL(wDecoBigDoll);
-    JP(mDecoAction_TrySetItUp);
-
+    // LD_HL(wDecoBigDoll);
+    // JP(mDecoAction_TrySetItUp);
+    DecoAction_TrySetItUp(&wram->wDecoBigDoll);
 }
 
 void DecoAction_putawaybigdoll(void){
-    LD_HL(wDecoBigDoll);
-    JP(mDecoAction_TryPutItAway);
+    // LD_HL(wDecoBigDoll);
+    // JP(mDecoAction_TryPutItAway);
+    DecoAction_TryPutItAway(&wram->wDecoBigDoll);
 
 }
 
-void DecoAction_TrySetItUp(void){
-    LD_A_hl;
-    LD_addr_A(wCurDecoration);
-    PUSH_HL;
-    CALL(aDecoAction_SetItUp);
-    IF_C goto failed;
-    LD_A(TRUE);
-    LD_addr_A(wChangedDecorations);
-    POP_HL;
-    LD_A_addr(wMenuSelection);
-    LD_hl_A;
-    XOR_A_A;
-    RET;
-
-
-failed:
-    POP_HL;
-    XOR_A_A;
-    RET;
-
+bool DecoAction_TrySetItUp(uint8_t* hl){
+    // LD_A_hl;
+    // LD_addr_A(wCurDecoration);
+    wram->wCurDecoration = *hl;
+    // PUSH_HL;
+    // CALL(aDecoAction_SetItUp);
+    bool fail = DecoAction_SetItUp();
+    // IF_C goto failed;
+    if(fail) {
+    // failed:
+        // POP_HL;
+        // XOR_A_A;
+        // RET;
+        return false;
+    }
+    // LD_A(TRUE);
+    // LD_addr_A(wChangedDecorations);
+    wram->wChangedDecorations = TRUE;
+    // POP_HL;
+    // LD_A_addr(wMenuSelection);
+    // LD_hl_A;
+    *hl = wram->wMenuSelection;
+    // XOR_A_A;
+    // RET;
+    return false;
 }
 
-void DecoAction_SetItUp(void){
+bool DecoAction_SetItUp(void){
 //  See if there's anything of the same type already out
-    LD_A_addr(wCurDecoration);
-    AND_A_A;
-    IF_Z goto nothingthere;
+    // LD_A_addr(wCurDecoration);
+    // AND_A_A;
+    // IF_Z goto nothingthere;
+    if(wram->wCurDecoration == 0) {
+    // nothingthere:
+        // LD_A_addr(wMenuSelection);
+        // LD_HL(wStringBuffer3);
+        // CALL(aGetDecorationName);
+        GetDecorationName_Conv(wram->wStringBuffer3, wram->wMenuSelection);
+        // LD_HL(mSetUpTheDecoText);
+        // CALL(aMenuTextboxBackup);
+        MenuTextboxBackup_Conv(SetUpTheDecoText);
+        // XOR_A_A;
+        // RET;
+        return false;
+    }
 //  See if that item is already out
-    LD_B_A;
-    LD_A_addr(wMenuSelection);
-    CP_A_B;
-    IF_Z goto alreadythere;
+    // LD_B_A;
+    // LD_A_addr(wMenuSelection);
+    // CP_A_B;
+    // IF_Z goto alreadythere;
+    if(wram->wCurDecoration == wram->wMenuSelection) {
+    // alreadythere:
+        // LD_HL(mAlreadySetUpText);
+        // CALL(aMenuTextboxBackup);
+        MenuTextboxBackup_Conv(AlreadySetUpText);
+        // SCF;
+        // RET;
+        return true;
+    }
 //  Put away the item that's already out, and set up the new one
-    LD_A_addr(wMenuSelection);
-    LD_HL(wStringBuffer4);
-    CALL(aGetDecorationName);
-    LD_A_addr(wCurDecoration);
-    LD_HL(wStringBuffer3);
-    CALL(aGetDecorationName);
-    LD_HL(mPutAwayAndSetUpText);
-    CALL(aMenuTextboxBackup);
-    XOR_A_A;
-    RET;
-
-
-nothingthere:
-    LD_A_addr(wMenuSelection);
-    LD_HL(wStringBuffer3);
-    CALL(aGetDecorationName);
-    LD_HL(mSetUpTheDecoText);
-    CALL(aMenuTextboxBackup);
-    XOR_A_A;
-    RET;
-
-
-alreadythere:
-    LD_HL(mAlreadySetUpText);
-    CALL(aMenuTextboxBackup);
-    SCF;
-    RET;
-
+    // LD_A_addr(wMenuSelection);
+    // LD_HL(wStringBuffer4);
+    // CALL(aGetDecorationName);
+    GetDecorationName_Conv(wram->wStringBuffer4, wram->wMenuSelection);
+    // LD_A_addr(wCurDecoration);
+    // LD_HL(wStringBuffer3);
+    // CALL(aGetDecorationName);
+    GetDecorationName_Conv(wram->wStringBuffer3, wram->wCurDecoration);
+    // LD_HL(mPutAwayAndSetUpText);
+    // CALL(aMenuTextboxBackup);
+    MenuTextboxBackup_Conv(PutAwayAndSetUpText);
+    // XOR_A_A;
+    // RET;
+    return false;
 }
 
-void DecoAction_TryPutItAway(void){
+bool DecoAction_TryPutItAway(uint8_t* hl){
 //  If there is no item of that type already set, there is nothing to put away.
-    LD_A_hl;
-    LD_addr_A(wCurDecoration);
-    XOR_A_A;
-    LD_hl_A;
-    LD_A_addr(wCurDecoration);
-    AND_A_A;
-    IF_Z goto nothingthere;
+    // LD_A_hl;
+    // LD_addr_A(wCurDecoration);
+    wram->wCurDecoration = *hl;
+    // XOR_A_A;
+    // LD_hl_A;
+    *hl = 0x0;
+    // LD_A_addr(wCurDecoration);
+    // AND_A_A;
+    // IF_Z goto nothingthere;
+    if(wram->wCurDecoration == 0) {
+    // nothingthere:
+        // LD_HL(mNothingToPutAwayText);
+        // CALL(aMenuTextboxBackup);
+        MenuTextboxBackup_Conv(NothingToPutAwayText);
+        // XOR_A_A;
+        // RET;
+        return false;
+    }
 //  Put it away.
-    LD_A(TRUE);
-    LD_addr_A(wChangedDecorations);
-    LD_A_addr(wCurDecoration);
-    LD_addr_A(wMenuSelection);
-    LD_HL(wStringBuffer3);
-    CALL(aGetDecorationName);
-    LD_HL(mPutAwayTheDecoText);
-    CALL(aMenuTextboxBackup);
-    XOR_A_A;
-    RET;
-
-
-nothingthere:
-    LD_HL(mNothingToPutAwayText);
-    CALL(aMenuTextboxBackup);
-    XOR_A_A;
-    RET;
-
+    // LD_A(TRUE);
+    // LD_addr_A(wChangedDecorations);
+    wram->wChangedDecorations = TRUE;
+    // LD_A_addr(wCurDecoration);
+    // LD_addr_A(wMenuSelection);
+    wram->wMenuSelection = wram->wCurDecoration;
+    // LD_HL(wStringBuffer3);
+    // CALL(aGetDecorationName);
+    GetDecorationName_Conv(wram->wStringBuffer3, wram->wCurDecoration);
+    // LD_HL(mPutAwayTheDecoText);
+    // CALL(aMenuTextboxBackup);
+    MenuTextboxBackup_Conv(PutAwayTheDecoText);
+    // XOR_A_A;
+    // RET;
+    return false;
 }
 
 void DecoAction_setupornament(void){
-    LD_HL(mWhichSidePutOnText);
-    CALL(aDecoAction_AskWhichSide);
-    IF_C goto cancel;
-    CALL(aDecoAction_SetItUp_Ornament);
-    IF_C goto cancel;
-    LD_A(TRUE);
-    LD_addr_A(wChangedDecorations);
-    JR(mDecoAction_FinishUp_Ornament);
-
-
-cancel:
-    XOR_A_A;
-    RET;
-
+    // LD_HL(mWhichSidePutOnText);
+    // CALL(aDecoAction_AskWhichSide);
+    // IF_C goto cancel;
+    // CALL(aDecoAction_SetItUp_Ornament);
+    // IF_C goto cancel;
+    if(DecoAction_AskWhichSide(WhichSidePutOnText) || DecoAction_SetItUp_Ornament()) {
+    // cancel:
+        // XOR_A_A;
+        // RET;
+        return;
+    }
+    // LD_A(TRUE);
+    // LD_addr_A(wChangedDecorations);
+    wram->wChangedDecorations = TRUE;
+    // JR(mDecoAction_FinishUp_Ornament);
+    DecoAction_FinishUp_Ornament();
 }
 
 void DecoAction_putawayornament(void){
-    LD_HL(mWhichSidePutAwayText);
-    CALL(aDecoAction_AskWhichSide);
-    IF_NC goto incave;
-    XOR_A_A;
-    RET;
+    // LD_HL(mWhichSidePutAwayText);
+    // CALL(aDecoAction_AskWhichSide);
+    // IF_NC goto incave;
+    if(DecoAction_AskWhichSide(WhichSidePutAwayText)) {
+        // XOR_A_A;
+        // RET;
+        return;
+    }
 
+// incave:
+    // CALL(aDecoAction_PutItAway_Ornament);
+    DecoAction_PutItAway_Ornament();
 
-incave:
-    CALL(aDecoAction_PutItAway_Ornament);
-
-    return DecoAction_FinishUp_Ornament();
+    DecoAction_FinishUp_Ornament();
 }
 
-void DecoAction_FinishUp_Ornament(void){
-    CALL(aQueryWhichSide);
-    LD_A_addr(wSelectedDecoration);
-    LD_hl_A;
-    LD_A_addr(wOtherDecoration);
-    LD_de_A;
-    XOR_A_A;
-    RET;
-
+bool DecoAction_FinishUp_Ornament(void){
+    // CALL(aQueryWhichSide);
+    u8_ptr_pair_s pair = QueryWhichSide();
+    // LD_A_addr(wSelectedDecoration);
+    // LD_hl_A;
+    *pair.hl = wram->wSelectedDecoration;
+    // LD_A_addr(wOtherDecoration);
+    // LD_de_A;
+    *pair.de = wram->wOtherDecoration;
+    // XOR_A_A;
+    // RET;
+    return false;
 }
 
-void DecoAction_SetItUp_Ornament(void){
-    LD_A_addr(wSelectedDecoration);
-    AND_A_A;
-    IF_Z goto nothingthere;
-    LD_B_A;
-    LD_A_addr(wMenuSelection);
-    CP_A_B;
-    IF_Z goto failed;
-    LD_A_B;
-    LD_HL(wStringBuffer3);
-    CALL(aGetDecorationName);
-    LD_A_addr(wMenuSelection);
-    LD_HL(wStringBuffer4);
-    CALL(aGetDecorationName);
-    LD_A_addr(wMenuSelection);
-    LD_addr_A(wSelectedDecoration);
-    CALL(aDecoAction_SetItUp_Ornament_getwhichside);
-    LD_HL(mPutAwayAndSetUpText);
-    CALL(aMenuTextboxBackup);
-    XOR_A_A;
-    RET;
-
-
-nothingthere:
-    LD_A_addr(wMenuSelection);
-    LD_addr_A(wSelectedDecoration);
-    CALL(aDecoAction_SetItUp_Ornament_getwhichside);
-    LD_A_addr(wMenuSelection);
-    LD_HL(wStringBuffer3);
-    CALL(aGetDecorationName);
-    LD_HL(mSetUpTheDecoText);
-    CALL(aMenuTextboxBackup);
-    XOR_A_A;
-    RET;
-
-
-failed:
-    LD_HL(mAlreadySetUpText);
-    CALL(aMenuTextboxBackup);
-    SCF;
-    RET;
-
-
-getwhichside:
-    LD_A_addr(wMenuSelection);
-    LD_B_A;
-    LD_A_addr(wOtherDecoration);
-    CP_A_B;
-    RET_NZ ;
-    XOR_A_A;
-    LD_addr_A(wOtherDecoration);
-    RET;
-
+static void DecoAction_SetItUp_Ornament_getwhichside(void) {
+    // LD_A_addr(wMenuSelection);
+    // LD_B_A;
+    // LD_A_addr(wOtherDecoration);
+    // CP_A_B;
+    // RET_NZ ;
+    if(wram->wMenuSelection == wram->wOtherDecoration) {
+        // XOR_A_A;
+        // LD_addr_A(wOtherDecoration);
+        wram->wOtherDecoration = 0;
+        // RET;
+    }
 }
 
-void WhichSidePutOnText(void){
-    //text_far ['_WhichSidePutOnText']
-    //text_end ['?']
-
-    return DecoAction_PutItAway_Ornament();
+bool DecoAction_SetItUp_Ornament(void){
+    // LD_A_addr(wSelectedDecoration);
+    // AND_A_A;
+    // IF_Z goto nothingthere;
+    if(wram->wSelectedDecoration == 0) {
+    // nothingthere:
+        // LD_A_addr(wMenuSelection);
+        // LD_addr_A(wSelectedDecoration);
+        wram->wSelectedDecoration = wram->wMenuSelection;
+        // CALL(aDecoAction_SetItUp_Ornament_getwhichside);
+        DecoAction_SetItUp_Ornament_getwhichside();
+        // LD_A_addr(wMenuSelection);
+        // LD_HL(wStringBuffer3);
+        // CALL(aGetDecorationName);
+        GetDecorationName_Conv(wram->wStringBuffer3, wram->wMenuSelection);
+        // LD_HL(mSetUpTheDecoText);
+        // CALL(aMenuTextboxBackup);
+        MenuTextboxBackup_Conv(SetUpTheDecoText);
+        // XOR_A_A;
+        // RET;
+        return false;
+    }
+    // LD_B_A;
+    // LD_A_addr(wMenuSelection);
+    // CP_A_B;
+    // IF_Z goto failed;
+    if(wram->wSelectedDecoration == wram->wMenuSelection) {
+    // failed:
+        // LD_HL(mAlreadySetUpText);
+        // CALL(aMenuTextboxBackup);
+        MenuTextboxBackup_Conv(AlreadySetUpText);
+        // SCF;
+        // RET;
+        return true;
+    }
+    // LD_A_B;
+    // LD_HL(wStringBuffer3);
+    // CALL(aGetDecorationName);
+    GetDecorationName_Conv(wram->wStringBuffer3, wram->wSelectedDecoration);
+    // LD_A_addr(wMenuSelection);
+    // LD_HL(wStringBuffer4);
+    // CALL(aGetDecorationName);
+    GetDecorationName_Conv(wram->wStringBuffer4, wram->wMenuSelection);
+    // LD_A_addr(wMenuSelection);
+    // LD_addr_A(wSelectedDecoration);
+    wram->wSelectedDecoration = wram->wMenuSelection;
+    // CALL(aDecoAction_SetItUp_Ornament_getwhichside);
+    DecoAction_SetItUp_Ornament_getwhichside();
+    // LD_HL(mPutAwayAndSetUpText);
+    // CALL(aMenuTextboxBackup);
+    MenuTextboxBackup_Conv(PutAwayAndSetUpText);
+    // XOR_A_A;
+    // RET;
+    return false;
 }
 
-void DecoAction_PutItAway_Ornament(void){
-    LD_A_addr(wSelectedDecoration);
-    AND_A_A;
-    IF_Z goto nothingthere;
-    LD_HL(wStringBuffer3);
-    CALL(aGetDecorationName);
-    LD_A(TRUE);
-    LD_addr_A(wChangedDecorations);
-    XOR_A_A;
-    LD_addr_A(wSelectedDecoration);
-    LD_HL(mPutAwayTheDecoText);
-    CALL(aMenuTextboxBackup);
-    XOR_A_A;
-    RET;
+const txt_cmd_s WhichSidePutOnText[] = {
+    text_far(v_WhichSidePutOnText)
+    text_end
+};
 
-
-nothingthere:
-    LD_HL(mNothingToPutAwayText);
-    CALL(aMenuTextboxBackup);
-    XOR_A_A;
-    RET;
-
+bool DecoAction_PutItAway_Ornament(void){
+    // LD_A_addr(wSelectedDecoration);
+    // AND_A_A;
+    // IF_Z goto nothingthere;
+    if(wram->wSelectedDecoration == 0) {
+    // nothingthere:
+        // LD_HL(mNothingToPutAwayText);
+        // CALL(aMenuTextboxBackup);
+        MenuTextboxBackup_Conv(NothingToPutAwayText);
+        // XOR_A_A;
+        // RET;
+        return false;
+    }
+    // LD_HL(wStringBuffer3);
+    // CALL(aGetDecorationName);
+    GetDecorationName_Conv(wram->wStringBuffer3, wram->wSelectedDecoration);
+    // LD_A(TRUE);
+    // LD_addr_A(wChangedDecorations);
+    wram->wChangedDecorations = TRUE;
+    // XOR_A_A;
+    // LD_addr_A(wSelectedDecoration);
+    wram->wSelectedDecoration = 0;
+    // LD_HL(mPutAwayTheDecoText);
+    // CALL(aMenuTextboxBackup);
+    MenuTextboxBackup_Conv(PutAwayTheDecoText);
+    // XOR_A_A;
+    // RET;
+    return false;
 }
 
-void WhichSidePutAwayText(void){
-    //text_far ['_WhichSidePutAwayText']
-    //text_end ['?']
+const txt_cmd_s WhichSidePutAwayText[] = {
+    text_far(v_WhichSidePutAwayText)
+    text_end
+};
 
-    return DecoAction_AskWhichSide();
+bool DecoAction_AskWhichSide(const txt_cmd_s* hl){
+    // CALL(aMenuTextbox);
+    MenuTextbox_Conv(hl);
+    // LD_HL(mDecoSideMenuHeader);
+    // CALL(aGetMenu2);
+    u8_flag_s res = GetMenu2_Conv(&DecoSideMenuHeader);
+    // CALL(aExitMenu);
+    ExitMenu_Conv2();
+    // CALL(aCopyMenuData);
+    // IF_C goto nope;
+    // LD_A_addr(wMenuCursorY);
+    // CP_A(3);  // cancel
+    // IF_Z goto nope;
+    if(res.flag || wram->wMenuCursorY == 3) {
+    // nope:
+        // SCF;
+        // RET;
+        return true;
+    }
+    // LD_addr_A(wSelectedDecorationSide);
+    wram->wSelectedDecorationSide = wram->wMenuCursorY;
+    // CALL(aQueryWhichSide);
+    u8_ptr_pair_s pair = QueryWhichSide();
+    // LD_A_hl;
+    // LD_addr_A(wSelectedDecoration);
+    wram->wSelectedDecoration = *pair.hl;
+    // LD_A_de;
+    // LD_addr_A(wOtherDecoration);
+    wram->wOtherDecoration = *pair.de;
+    // XOR_A_A;
+    // RET;
+    return false;
 }
 
-void DecoAction_AskWhichSide(void){
-    CALL(aMenuTextbox);
-    LD_HL(mDecoSideMenuHeader);
-    CALL(aGetMenu2);
-    CALL(aExitMenu);
-    CALL(aCopyMenuData);
-    IF_C goto nope;
-    LD_A_addr(wMenuCursorY);
-    CP_A(3);  // cancel
-    IF_Z goto nope;
-    LD_addr_A(wSelectedDecorationSide);
-    CALL(aQueryWhichSide);
-    LD_A_hl;
-    LD_addr_A(wSelectedDecoration);
-    LD_A_de;
-    LD_addr_A(wOtherDecoration);
-    XOR_A_A;
-    RET;
-
-
-nope:
-    SCF;
-    RET;
-
-}
-
-void QueryWhichSide(void){
-    LD_HL(wDecoRightOrnament);
-    LD_DE(wDecoLeftOrnament);
-    LD_A_addr(wSelectedDecorationSide);
-    CP_A(1);  // right side
-    RET_Z ;
+u8_ptr_pair_s QueryWhichSide(void){
+    // LD_HL(wDecoRightOrnament);
+    uint8_t* hl = &wram->wDecoRightOrnament;
+    // LD_DE(wDecoLeftOrnament);
+    uint8_t* de = &wram->wDecoLeftOrnament;
+    // LD_A_addr(wSelectedDecorationSide);
+    // CP_A(1);  // right side
+    // RET_Z ;
+    if(wram->wSelectedDecorationSide == 1)
+        return (u8_ptr_pair_s){.hl = hl, .de = de};
 // left side, swap hl and de
-    PUSH_HL;
-    LD_H_D;
-    LD_L_E;
-    POP_DE;
-    RET;
-
+    // PUSH_HL;
+    // LD_H_D;
+    // LD_L_E;
+    // POP_DE;
+    // RET;
+    return (u8_ptr_pair_s){.hl = de, .de = hl};
 }
 
-void DecoSideMenuHeader(void){
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['0', '0', '13', '7'];
+const struct MenuHeader DecoSideMenuHeader = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(0, 0, 13, 7),
     //dw ['.MenuData'];
-    //db ['1'];  // default option
+    .data = &(struct MenuData) {
+    // MenuData:
+        .flags = STATICMENU_CURSOR,  // flags
+        .verticalMenu = {
+            .count = 3,  // items
+            .options = (const char*[]) {
+                "RIGHT SIDE",
+                "LEFT SIDE",
+                "CANCEL",
+            },
+        },
+    },
+    .defaultOption = 1,  // default option
+};
 
+const txt_cmd_s PutAwayTheDecoText[] = {
+    text_far(v_PutAwayTheDecoText)
+    text_end
+};
 
-MenuData:
-    //db ['STATICMENU_CURSOR'];  // flags
-    //db ['3'];  // items
-    //db ['"RIGHT SIDE@"'];
-    //db ['"LEFT SIDE@"'];
-    //db ['"CANCEL@"'];
+const txt_cmd_s NothingToPutAwayText[] = {
+    text_far(v_NothingToPutAwayText)
+    text_end
+};
 
-    return PutAwayTheDecoText();
-}
+const txt_cmd_s SetUpTheDecoText[] = {
+    text_far(v_SetUpTheDecoText)
+    text_end
+};
 
-void PutAwayTheDecoText(void){
-    //text_far ['_PutAwayTheDecoText']
-    //text_end ['?']
+const txt_cmd_s PutAwayAndSetUpText[] = {
+    text_far(v_PutAwayAndSetUpText)
+    text_end
+};
 
-    return NothingToPutAwayText();
-}
-
-void NothingToPutAwayText(void){
-    //text_far ['_NothingToPutAwayText']
-    //text_end ['?']
-
-    return SetUpTheDecoText();
-}
-
-void SetUpTheDecoText(void){
-    //text_far ['_SetUpTheDecoText']
-    //text_end ['?']
-
-    return PutAwayAndSetUpText();
-}
-
-void PutAwayAndSetUpText(void){
-    //text_far ['_PutAwayAndSetUpText']
-    //text_end ['?']
-
-    return AlreadySetUpText();
-}
-
-void AlreadySetUpText(void){
-    //text_far ['_AlreadySetUpText']
-    //text_end ['?']
-
-    return GetDecorationName_c_de();
-}
+const txt_cmd_s AlreadySetUpText[] = {
+    text_far(v_AlreadySetUpText)
+    text_end
+};
 
 void GetDecorationName_c_de(void){
     LD_A_C;

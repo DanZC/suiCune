@@ -629,7 +629,6 @@ void GivePartyItem(item_t item){
     // IF_NC goto done;
     if(ItemIsMail_Conv(item)) {
         // CALL(aComposeMailMessage);
-        // SafeCallGBAuto(aComposeMailMessage);
         ComposeMailMessage();
     }
 

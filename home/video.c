@@ -1,6 +1,7 @@
 #include "../constants.h"
 #include "video.h"
 #include "delay.h"
+#include "../engine/tilesets/tileset_anims.h"
 
 //  Functions dealing with VRAM.
 
@@ -880,7 +881,7 @@ void AnimateTileset(void) {
 
     // CALL(av_AnimateTileset);  //temporarily commented out to fix crashes
     //                           //Might be okay now?
-    SafeCallGBAuto(av_AnimateTileset);
+    v_AnimateTileset();
 
     // POP_AF;
     // LDH_addr_A(rVBK);
