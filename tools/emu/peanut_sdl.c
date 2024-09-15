@@ -32,6 +32,7 @@
 #include "../../util/network.h"
 #include "../../util/soft_reset.h"
 #include "../../util/intro_jumptable.h"
+#include "../../audio/load.h"
 #include <stdbool.h>
 #include "../../home/serial.h"
 
@@ -3845,6 +3846,8 @@ int main(int argc, char* argv[]) {
         SDL_PauseAudioDevice(dev, 0);
     }
     gb_init_lcd(&lcd_draw_line);
+
+    LoadAudioData();
 
     /* Allow the joystick input even if game is in background. */
     SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");

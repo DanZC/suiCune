@@ -2,6 +2,7 @@
 #include "play_slow_cry.h"
 #include "../../home/pokemon.h"
 #include "../../home/audio.h"
+#include "../../audio/engine.h"
 
 void PlaySlowCry(void){
     // LD_A_addr(wScriptVar);
@@ -34,7 +35,8 @@ void PlaySlowCry(void){
     // LD_addr_A(wCryLength + 1);
     wram->wCryLength += 0x60;
     // FARCALL(av_PlayCry);
-    SafeCallGBAuto(av_PlayCry);
+    // SafeCallGBAuto(av_PlayCry);
+    v_PlayCry(cry->index);
     // CALL(aWaitSFX);
     WaitSFX_Conv();
 

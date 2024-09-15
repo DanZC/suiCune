@@ -1080,9 +1080,8 @@ void PrintPartyMenuText(void){
     // PUSH_AF;
     uint8_t options = wram->wOptions;
     // SET_A(NO_TEXT_SCROLL);
-    bit_set(options, NO_TEXT_SCROLL);
     // LD_addr_A(wOptions);
-    wram->wOptions = options;
+    bit_set(wram->wOptions, NO_TEXT_SCROLL);
     // hlcoord(1, 16, wTilemap);  // Coord
     // CALL(aPlaceString);
     PlaceStringSimple(U82CA(buf, de), coord(1, 16, wram->wTilemap));

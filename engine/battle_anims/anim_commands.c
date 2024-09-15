@@ -20,6 +20,7 @@
 #include "../../home/pokemon.h"
 #include "../../data/moves/animations.h"
 #include "../../gfx/sprites.h"
+#include "../../audio/engine.h"
 #include <stdarg.h>
 
 static battleanim_s sBattleAnim;
@@ -2640,7 +2641,8 @@ void BattleAnimCmd_Sound_Conv(uint8_t duration, uint8_t tracks, uint16_t sfx){
     // LD_E_A;
     // LD_D(0);
     // CALLFAR(aPlayStereoSFX);
-    SafeCallGB(aPlayStereoSFX, &(struct cpu_registers_s){.de = sfx});
+    // SafeCallGB(aPlayStereoSFX, &(struct cpu_registers_s){.de = sfx});
+    PlayStereoSFX(sfx);
 
     // RET;
 
@@ -2835,8 +2837,9 @@ void BattleAnimCmd_Cry_Conv(uint8_t cry){
         wram->wStereoPanningMask = 1;
 
         // CALLFAR(av_PlayCry);
-        struct cpu_registers_s reg = {.de = cryData->index};
-        SafeCallGB(av_PlayCry, &reg);
+        // struct cpu_registers_s reg = {.de = cryData->index};
+        // SafeCallGB(av_PlayCry, &reg);
+        v_PlayCry(cryData->index);
     }
 
 // done:

@@ -1206,13 +1206,13 @@ void init_function_pointers(void) {
     CONVERTED(StartChannel);
     CONVERTED(SetLRTracks);
     // CONVERTED(v_PlayMusic);
-    CONVERTED(v_PlayCry);
-    CONVERTED(v_PlaySFX);
-    CONVERTED(PlayStereoSFX);
+    // CONVERTED(v_PlayCry);
+    // CONVERTED(v_PlaySFX);
+    // CONVERTED(PlayStereoSFX);
     // CONVERTED(LoadChannel);
     // CONVERTED(ChannelInit);
     // CONVERTED(LoadMusicByte);
-    CONVERTED(GetLRTracks);
+    // CONVERTED(GetLRTracks);
     CONVERTED(ClearChannels);
     // CONVERTED(ClearChannel);
     REDIRECTED(PlayTrainerEncounterMusic);

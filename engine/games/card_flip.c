@@ -132,7 +132,7 @@ void v_CardFlip(void){
     ClearBGPalettes_Conv();
     // LD_HL(wOptions);
     // RES_hl(4);
-    bit_reset(wram->wOptions, 4);
+    bit_reset(wram->wOptions, NO_TEXT_SCROLL);
     // RET;
 }
 

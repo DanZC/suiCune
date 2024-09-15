@@ -4,6 +4,7 @@
 #include "delay.h"
 #include "map.h"
 #include "vblank.h"
+#include "../data/pokemon/cries.h"
 
 extern struct Channel *chan[8];
 
@@ -221,7 +222,7 @@ void PlayCry(void) {
     LDH_addr_A(hROMBank);    // ldh [hROMBank], a
     LD_addr_A(MBC3RomBank);  // ld [MBC3RomBank], a
 
-    v_PlayCry();  // call _PlayCry
+    v_PlayCry(REG_DE);  // call _PlayCry
 
     POP_AF;                  // pop af
     LDH_addr_A(hROMBank);    // ldh [hROMBank], a
@@ -232,6 +233,61 @@ void PlayCry(void) {
     POP_DE;  // pop de
     POP_HL;  // pop hl
     RET;     // ret
+}
+
+void PlayCry_Conv(uint16_t de) {
+    //  Play cry de.
+
+    // PUSH_HL;  // push hl
+    // PUSH_DE;  // push de
+    // PUSH_BC;  // push bc
+    // PUSH_AF;  // push af
+
+    // LDH_A_addr(hROMBank);  // ldh a, [hROMBank]
+    // PUSH_AF;               // push af
+
+    // ; Cries are stuck in one bank.
+    // LD_A(BANK(aPokemonCries));  // ld a, BANK(PokemonCries)
+    // LDH_addr_A(hROMBank);       // ldh [hROMBank], a
+    // LD_addr_A(MBC3RomBank);     // ld [MBC3RomBank], a
+
+    // LD_HL(mPokemonCries);  // ld hl, PokemonCries
+    // for (int rept = 0; rept < MON_CRY_LENGTH; rept++) {
+    //     ADD_HL_DE;  // add hl, de
+    // }
+
+    // LD_E_hl;  // ld e, [hl]
+    // INC_HL;   // inc hl
+    // LD_D_hl;  // ld d, [hl]
+    // INC_HL;   // inc hl
+    const struct PokemonCry* cry = PokemonCries + de;
+
+    // LD_A_hli;                   // ld a, [hli]
+    // LD_addr_A(wCryPitch);       // ld [wCryPitch], a
+    // LD_A_hli;                   // ld a, [hli]
+    // LD_addr_A(wCryPitch + 1);   // ld [wCryPitch + 1], a
+    wram->wCryPitch = cry->pitch;
+    // LD_A_hli;                   // ld a, [hli]
+    // LD_addr_A(wCryLength);      // ld [wCryLength], a
+    // LD_A_hl;                    // ld a, [hl]
+    // LD_addr_A(wCryLength + 1);  // ld [wCryLength + 1], a
+    wram->wCryLength = cry->length;
+
+    // LD_A(BANK(av_PlayCry));  // ld a, BANK(_PlayCry)
+    // LDH_addr_A(hROMBank);    // ldh [hROMBank], a
+    // LD_addr_A(MBC3RomBank);  // ld [MBC3RomBank], a
+
+    v_PlayCry(de);  // call _PlayCry
+
+    // POP_AF;                  // pop af
+    // LDH_addr_A(hROMBank);    // ldh [hROMBank], a
+    // LD_addr_A(MBC3RomBank);  // ld [MBC3RomBank], a
+
+    // POP_AF;  // pop af
+    // POP_BC;  // pop bc
+    // POP_DE;  // pop de
+    // POP_HL;  // pop hl
+    // RET;     // ret
 }
 
 void PlaySFX(void) {
@@ -261,7 +317,7 @@ play:
 
     LD_A_E;              // ld a, e
     LD_addr_A(wCurSFX);  // ld [wCurSFX], a
-    v_PlaySFX();         // call _PlaySFX
+    v_PlaySFX(REG_DE);   // call _PlaySFX
 
     POP_AF;                  // pop af
     LDH_addr_A(hROMBank);    // ldh [hROMBank], a
@@ -278,10 +334,10 @@ done:
 //  Play sound effect de.
 //  Sound effects are ordered by priority (highest to lowest)
 void PlaySFX_Conv(uint16_t de) {
-    PUSH_HL;  // push hl
-    PUSH_DE;  // push de
-    PUSH_BC;  // push bc
-    PUSH_AF;  // push af
+    // PUSH_HL;  // push hl
+    // PUSH_DE;  // push de
+    // PUSH_BC;  // push bc
+    // PUSH_AF;  // push af
 
     // ; Is something already playing?
     // CALL(aCheckSFX);  // call CheckSFX
@@ -303,8 +359,8 @@ void PlaySFX_Conv(uint16_t de) {
         // LD_A_E;              // ld a, e
         // LD_addr_A(wCurSFX);  // ld [wCurSFX], a
         wram->wCurSFX = LOW(de);
-        REG_DE = de;
-        v_PlaySFX();         // call _PlaySFX
+        // REG_DE = de;
+        v_PlaySFX(de);         // call _PlaySFX
 
         // POP_AF;                  // pop af
         // LDH_addr_A(hROMBank);    // ldh [hROMBank], a
@@ -313,10 +369,10 @@ void PlaySFX_Conv(uint16_t de) {
         gb_write(MBC3RomBank, oldbank);
     }
 
-    POP_AF;  // pop af
-    POP_BC;  // pop bc
-    POP_DE;  // pop de
-    POP_HL;  // pop hl
+    // POP_AF;  // pop af
+    // POP_BC;  // pop bc
+    // POP_DE;  // pop de
+    // POP_HL;  // pop hl
     // RET;     // ret
 }
 
