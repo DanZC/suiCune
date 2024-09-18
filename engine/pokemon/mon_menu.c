@@ -347,7 +347,7 @@ u8_pair_s PokemonActionSubmenu(void){
         case MONMENUITEM_SWITCH:    return SwitchPartyMons();
         case MONMENUITEM_ITEM:      return GiveTakePartyMonItem();
         case MONMENUITEM_CANCEL:    return CancelPokemonAction();
-        //case MONMENUITEM_MOVE:  return ManagePokemonMoves();
+        case MONMENUITEM_MOVE:      return ManagePokemonMoves();
         case MONMENUITEM_MAIL:      return MonMailAction();
         default:
         // nothing:
@@ -1440,263 +1440,375 @@ const uint8_t DeleteMoveScreen2DMenuData[] = {
     D_UP | D_DOWN | A_BUTTON | B_BUTTON,  // accepted buttons
 };
 
-void ManagePokemonMoves(void){
-    LD_A_addr(wCurPartySpecies);
-    CP_A(EGG);
-    IF_Z goto egg;
-    LD_HL(wOptions);
-    LD_A_hl;
-    PUSH_AF;
-    SET_hl(NO_TEXT_SCROLL);
-    CALL(aMoveScreenLoop);
-    POP_AF;
-    LD_addr_A(wOptions);
-    CALL(aClearBGPalettes);
+u8_pair_s ManagePokemonMoves(void){
+    // LD_A_addr(wCurPartySpecies);
+    // CP_A(EGG);
+    // IF_Z goto egg;
+    if(wram->wCurPartySpecies != EGG) {
+        // LD_HL(wOptions);
+        // LD_A_hl;
+        // PUSH_AF;
+        uint8_t options = wram->wOptions;
+        // SET_hl(NO_TEXT_SCROLL);
+        bit_set(wram->wOptions, NO_TEXT_SCROLL);
+        // CALL(aMoveScreenLoop);
+        MoveScreenLoop();
+        // POP_AF;
+        // LD_addr_A(wOptions);
+        wram->wOptions = options;
+        // CALL(aClearBGPalettes);
+        ClearBGPalettes_Conv();
+    }
 
-
-egg:
-    LD_A(0x0);
-    RET;
-
+// egg:
+    // LD_A(0x0);
+    // RET;
+    return u8_pair(0x0, 0x0);
 }
 
+static void MoveScreenLoop_copy_move(move_t* hl){
+    // PUSH_HL;
+    // LD_A_addr(wMenuCursorY);
+    // DEC_A;
+    // LD_C_A;
+    // LD_B(0);
+    // ADD_HL_BC;
+    // LD_D_H;
+    // LD_E_L;
+    move_t* de = hl + (wram->wMenuCursorY - 1);
+    // POP_HL;
+    // LD_A_addr(wSwappingMove);
+    // DEC_A;
+    // LD_C_A;
+    // LD_B(0);
+    // ADD_HL_BC;
+    hl = hl + (wram->wSwappingMove - 1);
+    // LD_A_de;
+    move_t a = *de;
+    // LD_B_hl;
+    move_t b = *hl;
+    // LD_hl_A;
+    *hl = a;
+    // LD_A_B;
+    // LD_de_A;
+    *de = b;
+    // RET;
+}
+
+static void MoveScreenLoop_copy_pp(uint8_t* hl){
+    // PUSH_HL;
+    // LD_A_addr(wMenuCursorY);
+    // DEC_A;
+    // LD_C_A;
+    // LD_B(0);
+    // ADD_HL_BC;
+    // LD_D_H;
+    // LD_E_L;
+    uint8_t* de = hl + (wram->wMenuCursorY - 1);
+    // POP_HL;
+    // LD_A_addr(wSwappingMove);
+    // DEC_A;
+    // LD_C_A;
+    // LD_B(0);
+    // ADD_HL_BC;
+    hl = hl + (wram->wSwappingMove - 1);
+    // LD_A_de;
+    uint8_t a = *de;
+    // LD_B_hl;
+    uint8_t b = *hl;
+    // LD_hl_A;
+    *hl = a;
+    // LD_A_B;
+    // LD_de_A;
+    *de = b;
+    // RET;
+}
+
+static void MoveScreenLoop_cycle(int dir) {
+    uint8_t c;
+    switch(dir) {
+    case 0:
+    cycle_right:
+        // LD_A_addr(wCurPartyMon);
+        // INC_A;
+        // LD_addr_A(wCurPartyMon);
+        c = ++wram->wCurPartyMon;
+        // LD_C_A;
+        // LD_B(0);
+        // LD_HL(wPartySpecies);
+        // ADD_HL_BC;
+        // LD_A_hl;
+        // CP_A(-1);
+        // IF_Z goto cycle_left;
+        if(wram->wPartySpecies[c] == (species_t)-1)
+            goto cycle_left;
+        // CP_A(EGG);
+        // RET_NZ ;
+        if(wram->wPartySpecies[c] != EGG)
+            return;
+        goto cycle_right;
+
+    case 1:
+    cycle_left:
+        // LD_A_addr(wCurPartyMon);
+        // AND_A_A;
+        // RET_Z ;
+        if(wram->wCurPartyMon == 0)
+            return;
+
+    cycle_left_loop:
+        // LD_A_addr(wCurPartyMon);
+        // DEC_A;
+        // LD_addr_A(wCurPartyMon);
+        // LD_C_A;
+        c = --wram->wCurPartyMon;
+        // LD_B(0);
+        // LD_HL(wPartySpecies);
+        // ADD_HL_BC;
+        // LD_A_hl;
+        // CP_A(EGG);
+        // RET_NZ ;
+        if(wram->wPartySpecies[c] != EGG)
+            return;
+        // LD_A_addr(wCurPartyMon);
+        // AND_A_A;
+        // IF_Z goto cycle_right;
+        if(wram->wCurPartyMon == 0)
+            goto cycle_right;
+        goto cycle_left_loop;
+    }
+}
+
+// TODO: Fix gotos in this function and all subfunctions
 void MoveScreenLoop(void){
-    LD_A_addr(wCurPartyMon);
-    INC_A;
-    LD_addr_A(wPartyMenuCursor);
-    CALL(aSetUpMoveScreenBG);
-    CALL(aPlaceMoveScreenArrows);
-    LD_DE(mMoveScreen2DMenuData);
-    CALL(aLoad2DMenuData);
+    uint8_t a;
+Loop:
+    // LD_A_addr(wCurPartyMon);
+    // INC_A;
+    // LD_addr_A(wPartyMenuCursor);
+    wram->wPartyMenuCursor = wram->wCurPartyMon + 1;
+    // CALL(aSetUpMoveScreenBG);
+    SetUpMoveScreenBG();
+    // CALL(aPlaceMoveScreenArrows);
+    PlaceMoveScreenArrows();
+    // LD_DE(mMoveScreen2DMenuData);
+    // CALL(aLoad2DMenuData);
+    Load2DMenuData_Conv(MoveScreen2DMenuData);
 
 loop:
-    CALL(aSetUpMoveList);
-    LD_HL(w2DMenuFlags1);
-    SET_hl(6);
+    // CALL(aSetUpMoveList);
+    SetUpMoveList();
+    // LD_HL(w2DMenuFlags1);
+    // SET_hl(6);
+    bit_set(wram->w2DMenuFlags1, 6);
     goto skip_joy;
 
 
 joy_loop:
-    CALL(aScrollingMenuJoypad);
-    BIT_A(1);
-    JP_NZ (mMoveScreenLoop_b_button);
-    BIT_A(0);
-    JP_NZ (mMoveScreenLoop_a_button);
-    BIT_A(4);
-    JP_NZ (mMoveScreenLoop_d_right);
-    BIT_A(5);
-    JP_NZ (mMoveScreenLoop_d_left);
+    // CALL(aScrollingMenuJoypad);
+    a = ScrollingMenuJoypad_Conv();
+    // BIT_A(1);
+    // JP_NZ (mMoveScreenLoop_b_button);
+    if(bit_test(a, B_BUTTON_F)) {
+    // b_button:
+        // CALL(aPlayClickSFX);
+        PlayClickSFX_Conv();
+        // CALL(aWaitSFX);
+        WaitSFX_Conv();
+        // LD_A_addr(wSwappingMove);
+        // AND_A_A;
+        // JP_Z (mMoveScreenLoop_exit);
+        if(wram->wSwappingMove == 0)
+            goto exit;
 
+        // LD_A_addr(wSwappingMove);
+        // LD_addr_A(wMenuCursorY);
+        wram->wMenuCursorY = wram->wSwappingMove;
+        // XOR_A_A;
+        // LD_addr_A(wSwappingMove);
+        wram->wSwappingMove = 0;
+        // hlcoord(1, 2, wTilemap);
+        // LD_BC((8 << 8) | (SCREEN_WIDTH - 2));
+        // CALL(aClearBox);
+        ClearBox_Conv2(coord(1, 2, wram->wTilemap), SCREEN_WIDTH - 2, 8);
+        // JP(mMoveScreenLoop_loop);
+        goto loop;
+    }
+    // BIT_A(0);
+    // JP_NZ (mMoveScreenLoop_a_button);
+    if(bit_test(a, A_BUTTON_F)) {
+    // a_button:
+        // CALL(aPlayClickSFX);
+        PlayClickSFX_Conv();
+        // CALL(aWaitSFX);
+        // LD_A_addr(wSwappingMove);
+        // AND_A_A;
+        // IF_NZ goto place_move;
+        if(wram->wSwappingMove == 0) {
+            // LD_A_addr(wMenuCursorY);
+            // LD_addr_A(wSwappingMove);
+            wram->wSwappingMove = wram->wMenuCursorY;
+            // CALL(aPlaceHollowCursor);
+            PlaceHollowCursor_Conv();
+            // JP(mMoveScreenLoop_moving_move);
+            goto moving_move;
+        }
+
+    // place_move:
+        // LD_HL(wPartyMon1Moves);
+        // LD_BC(PARTYMON_STRUCT_LENGTH);
+        // LD_A_addr(wCurPartyMon);
+        // CALL(aAddNTimes);
+        struct PartyMon* mon = wram->wPartyMon + wram->wCurPartyMon;
+        // PUSH_HL;
+        // CALL(aMoveScreenLoop_copy_move);
+        MoveScreenLoop_copy_move(mon->mon.moves);
+        // POP_HL;
+        // LD_BC(wPartyMon1PP - wPartyMon1Moves);
+        // ADD_HL_BC;
+        // CALL(aMoveScreenLoop_copy_move);
+        MoveScreenLoop_copy_pp(mon->mon.PP);
+        // LD_A_addr(wBattleMode);
+        // IF_Z goto swap_moves;
+        if(wram->wBattleMode != 0) {
+            // LD_HL(wBattleMonMoves);
+            // LD_BC(wBattleMonStructEnd - wBattleMon);
+            // LD_A_addr(wCurPartyMon);
+            // CALL(aAddNTimes);
+            // PUSH_HL;
+            // CALL(aMoveScreenLoop_copy_move);
+            MoveScreenLoop_copy_move(wram->wBattleMon.moves);
+            // POP_HL;
+            // LD_BC(wBattleMonPP - wBattleMonMoves);
+            // ADD_HL_BC;
+            // CALL(aMoveScreenLoop_copy_move);
+            MoveScreenLoop_copy_pp(wram->wBattleMon.pp);
+        }
+
+    // swap_moves:
+        // LD_DE(SFX_SWITCH_POKEMON);
+        // CALL(aPlaySFX);
+        PlaySFX_Conv(SFX_SWITCH_POKEMON);
+        // CALL(aWaitSFX);
+        WaitSFX_Conv();
+        // LD_DE(SFX_SWITCH_POKEMON);
+        // CALL(aPlaySFX);
+        PlaySFX_Conv(SFX_SWITCH_POKEMON);
+        // CALL(aWaitSFX);
+        WaitSFX_Conv();
+        // hlcoord(1, 2, wTilemap);
+        // LD_BC((8 << 8) | 18);
+        // CALL(aClearBox);
+        ClearBox_Conv2(coord(1, 2, wram->wTilemap), 18, 8);
+        // hlcoord(10, 10, wTilemap);
+        // LD_BC((1 << 8) | 9);
+        // CALL(aClearBox);
+        ClearBox_Conv2(coord(10, 10, wram->wTilemap), 9, 1);
+        // JP(mMoveScreenLoop_loop);
+        goto loop;
+    }
+    // BIT_A(4);
+    // JP_NZ (mMoveScreenLoop_d_right);
+    if(bit_test(a, D_RIGHT_F)) {
+    // d_right:
+        // LD_A_addr(wSwappingMove);
+        // AND_A_A;
+        // JP_NZ (mMoveScreenLoop_joy_loop);
+        if(wram->wSwappingMove != 0)
+            goto joy_loop;
+
+        // LD_A_addr(wCurPartyMon);
+        // LD_B_A;
+        uint8_t b = wram->wCurPartyMon;
+        // PUSH_BC;
+        // CALL(aMoveScreenLoop_cycle_right);
+        MoveScreenLoop_cycle(0);
+        // POP_BC;
+        // LD_A_addr(wCurPartyMon);
+        // CP_A_B;
+        // JP_Z (mMoveScreenLoop_joy_loop);
+        if(wram->wCurPartyMon == b)
+            goto joy_loop;
+        // JP(mMoveScreenLoop);
+        goto Loop;
+    }
+    // BIT_A(5);
+    // JP_NZ (mMoveScreenLoop_d_left);
+    if(bit_test(a, D_LEFT_F)) {
+    // d_left:
+        // LD_A_addr(wSwappingMove);
+        // AND_A_A;
+        // JP_NZ (mMoveScreenLoop_joy_loop);
+        if(wram->wSwappingMove != 0)
+            goto joy_loop;
+        // LD_A_addr(wCurPartyMon);
+        // LD_B_A;
+        uint8_t b = wram->wCurPartyMon;
+        // PUSH_BC;
+        // CALL(aMoveScreenLoop_cycle_left);
+        MoveScreenLoop_cycle(1);
+        // POP_BC;
+        // LD_A_addr(wCurPartyMon);
+        // CP_A_B;
+        // JP_Z (mMoveScreenLoop_joy_loop);
+        if(wram->wCurPartyMon == b)
+            goto joy_loop;
+        // JP(mMoveScreenLoop);
+        goto Loop;
+    }
 
 skip_joy:
-    CALL(aPrepareToPlaceMoveData);
-    LD_A_addr(wSwappingMove);
-    AND_A_A;
-    IF_NZ goto moving_move;
-    CALL(aPlaceMoveData);
-    JP(mMoveScreenLoop_joy_loop);
-
+    // CALL(aPrepareToPlaceMoveData);
+    PrepareToPlaceMoveData();
+    // LD_A_addr(wSwappingMove);
+    // AND_A_A;
+    // IF_NZ goto moving_move;
+    if(wram->wSwappingMove == 0) {
+        // CALL(aPlaceMoveData);
+        PlaceMoveData();
+        // JP(mMoveScreenLoop_joy_loop);
+        goto joy_loop;
+    }
 
 moving_move:
-    LD_A(0x7f);
-    hlcoord(1, 11, wTilemap);
-    LD_BC(5);
-    CALL(aByteFill);
-    hlcoord(1, 12, wTilemap);
-    LD_BC((5 << 8) | (SCREEN_WIDTH - 2));
-    CALL(aClearBox);
-    hlcoord(1, 12, wTilemap);
-    LD_DE(mString_MoveWhere);
-    CALL(aPlaceString);
-    JP(mMoveScreenLoop_joy_loop);
-
-b_button:
-    CALL(aPlayClickSFX);
-    CALL(aWaitSFX);
-    LD_A_addr(wSwappingMove);
-    AND_A_A;
-    JP_Z (mMoveScreenLoop_exit);
-
-    LD_A_addr(wSwappingMove);
-    LD_addr_A(wMenuCursorY);
-    XOR_A_A;
-    LD_addr_A(wSwappingMove);
-    hlcoord(1, 2, wTilemap);
-    LD_BC((8 << 8) | (SCREEN_WIDTH - 2));
-    CALL(aClearBox);
-    JP(mMoveScreenLoop_loop);
-
-
-d_right:
-    LD_A_addr(wSwappingMove);
-    AND_A_A;
-    JP_NZ (mMoveScreenLoop_joy_loop);
-
-    LD_A_addr(wCurPartyMon);
-    LD_B_A;
-    PUSH_BC;
-    CALL(aMoveScreenLoop_cycle_right);
-    POP_BC;
-    LD_A_addr(wCurPartyMon);
-    CP_A_B;
-    JP_Z (mMoveScreenLoop_joy_loop);
-    JP(mMoveScreenLoop);
-
-
-d_left:
-    LD_A_addr(wSwappingMove);
-    AND_A_A;
-    JP_NZ (mMoveScreenLoop_joy_loop);
-    LD_A_addr(wCurPartyMon);
-    LD_B_A;
-    PUSH_BC;
-    CALL(aMoveScreenLoop_cycle_left);
-    POP_BC;
-    LD_A_addr(wCurPartyMon);
-    CP_A_B;
-    JP_Z (mMoveScreenLoop_joy_loop);
-    JP(mMoveScreenLoop);
-
-
-cycle_right:
-    LD_A_addr(wCurPartyMon);
-    INC_A;
-    LD_addr_A(wCurPartyMon);
-    LD_C_A;
-    LD_B(0);
-    LD_HL(wPartySpecies);
-    ADD_HL_BC;
-    LD_A_hl;
-    CP_A(-1);
-    IF_Z goto cycle_left;
-    CP_A(EGG);
-    RET_NZ ;
-    goto cycle_right;
-
-
-cycle_left:
-    LD_A_addr(wCurPartyMon);
-    AND_A_A;
-    RET_Z ;
-
-cycle_left_loop:
-    LD_A_addr(wCurPartyMon);
-    DEC_A;
-    LD_addr_A(wCurPartyMon);
-    LD_C_A;
-    LD_B(0);
-    LD_HL(wPartySpecies);
-    ADD_HL_BC;
-    LD_A_hl;
-    CP_A(EGG);
-    RET_NZ ;
-    LD_A_addr(wCurPartyMon);
-    AND_A_A;
-    IF_Z goto cycle_right;
-    goto cycle_left_loop;
-
-
-a_button:
-    CALL(aPlayClickSFX);
-    CALL(aWaitSFX);
-    LD_A_addr(wSwappingMove);
-    AND_A_A;
-    IF_NZ goto place_move;
-    LD_A_addr(wMenuCursorY);
-    LD_addr_A(wSwappingMove);
-    CALL(aPlaceHollowCursor);
-    JP(mMoveScreenLoop_moving_move);
-
-
-place_move:
-    LD_HL(wPartyMon1Moves);
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    LD_A_addr(wCurPartyMon);
-    CALL(aAddNTimes);
-    PUSH_HL;
-    CALL(aMoveScreenLoop_copy_move);
-    POP_HL;
-    LD_BC(wPartyMon1PP - wPartyMon1Moves);
-    ADD_HL_BC;
-    CALL(aMoveScreenLoop_copy_move);
-    LD_A_addr(wBattleMode);
-    IF_Z goto swap_moves;
-    LD_HL(wBattleMonMoves);
-    LD_BC(wBattleMonStructEnd - wBattleMon);
-    LD_A_addr(wCurPartyMon);
-    CALL(aAddNTimes);
-    PUSH_HL;
-    CALL(aMoveScreenLoop_copy_move);
-    POP_HL;
-    LD_BC(wBattleMonPP - wBattleMonMoves);
-    ADD_HL_BC;
-    CALL(aMoveScreenLoop_copy_move);
-
-
-swap_moves:
-    LD_DE(SFX_SWITCH_POKEMON);
-    CALL(aPlaySFX);
-    CALL(aWaitSFX);
-    LD_DE(SFX_SWITCH_POKEMON);
-    CALL(aPlaySFX);
-    CALL(aWaitSFX);
-    hlcoord(1, 2, wTilemap);
-    LD_BC((8 << 8) | 18);
-    CALL(aClearBox);
-    hlcoord(10, 10, wTilemap);
-    LD_BC((1 << 8) | 9);
-    CALL(aClearBox);
-    JP(mMoveScreenLoop_loop);
-
-
-copy_move:
-    PUSH_HL;
-    LD_A_addr(wMenuCursorY);
-    DEC_A;
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    LD_D_H;
-    LD_E_L;
-    POP_HL;
-    LD_A_addr(wSwappingMove);
-    DEC_A;
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    LD_A_de;
-    LD_B_hl;
-    LD_hl_A;
-    LD_A_B;
-    LD_de_A;
-    RET;
-
+    // LD_A(0x7f);
+    // hlcoord(1, 11, wTilemap);
+    // LD_BC(5);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(1, 11, wram->wTilemap), 5, 0x7f);
+    // hlcoord(1, 12, wTilemap);
+    // LD_BC((5 << 8) | (SCREEN_WIDTH - 2));
+    // CALL(aClearBox);
+    ClearBox_Conv2(coord(1, 12, wram->wTilemap), SCREEN_WIDTH - 2, 5);
+    // hlcoord(1, 12, wTilemap);
+    // LD_DE(mString_MoveWhere);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(String_MoveWhere), coord(1, 12, wram->wTilemap));
+    // JP(mMoveScreenLoop_joy_loop);
+    goto joy_loop;
 
 exit:
-    XOR_A_A;
-    LD_addr_A(wSwappingMove);
-    LD_HL(w2DMenuFlags1);
-    RES_hl(6);
-    CALL(aClearSprites);
-    JP(mClearTilemap);
-
+    // XOR_A_A;
+    // LD_addr_A(wSwappingMove);
+    wram->wSwappingMove = 0x0;
+    // LD_HL(w2DMenuFlags1);
+    // RES_hl(6);
+    bit_reset(wram->w2DMenuFlags1, 6);
+    // CALL(aClearSprites);
+    ClearSprites_Conv();
+    // JP(mClearTilemap);
+    ClearTilemap_Conv2();
 }
 
-void MoveScreen2DMenuData(void){
-    //db ['3', '1'];  // cursor start y, x
-    //db ['3', '1'];  // rows, columns
-    //db ['0x40', '0x00'];  // flags
-    //dn ['2', '0'];  // cursor offsets
-    //db ['D_UP | D_DOWN | D_LEFT | D_RIGHT | A_BUTTON | B_BUTTON'];  // accepted buttons
+const uint8_t MoveScreen2DMenuData[] = {
+    3, 1,  // cursor start y, x
+    3, 1,  // rows, columns
+    0x40, 0x00,  // flags
+    (2 << 4) | 0,  // cursor offsets
+    D_UP | D_DOWN | D_LEFT | D_RIGHT | A_BUTTON | B_BUTTON,  // accepted buttons
+};
 
-    return String_MoveWhere();
-}
-
-void String_MoveWhere(void){
-    //db ['"Where?@"'];
-
-    return SetUpMoveScreenBG();
-}
+const char String_MoveWhere[] = "Where?@";
 
 void SetUpMoveScreenBG(void){
     // CALL(aClearBGPalettes);
@@ -1777,6 +1889,7 @@ void SetUpMoveList(void){
     // LD_addr_A(wMonType);
     wram->wMonType = 0;
     // PREDEF(pCopyMonToTempMon);
+    CopyMonToTempMon_Conv();
     // LD_HL(wTempMonMoves);
     // LD_DE(wListMoves_MoveIndicesBuffer);
     // LD_BC(NUM_MOVES);
@@ -1888,78 +2001,94 @@ const char String_MoveAtk[]         =  "ATK/";
 const char String_MoveNoPower[]     =  "---";
 
 void PlaceMoveScreenArrows(void){
-    CALL(aPlaceMoveScreenLeftArrow);
-    CALL(aPlaceMoveScreenRightArrow);
-    RET;
-
+    // CALL(aPlaceMoveScreenLeftArrow);
+    PlaceMoveScreenLeftArrow();
+    // CALL(aPlaceMoveScreenRightArrow);
+    PlaceMoveScreenRightArrow();
+    // RET;
 }
 
 void PlaceMoveScreenLeftArrow(void){
-    LD_A_addr(wCurPartyMon);
-    AND_A_A;
-    RET_Z ;
-    LD_C_A;
-    LD_E_A;
-    LD_D(0);
-    LD_HL(wPartyCount);
-    ADD_HL_DE;
+    // LD_A_addr(wCurPartyMon);
+    // AND_A_A;
+    // RET_Z ;
+    if(wram->wCurPartyMon == 0)
+        return;
+    // LD_C_A;
+    uint8_t c = wram->wCurPartyMon;
+    // LD_E_A;
+    // LD_D(0);
+    // LD_HL(wPartyCount);
+    // ADD_HL_DE;
+    species_t* species = wram->wPartySpecies + c - 1;
 
-loop:
-    LD_A_hl;
-    AND_A_A;
-    IF_Z goto prev;
-    CP_A(EGG);
-    IF_Z goto prev;
-    CP_A(NUM_POKEMON + 1);
-    IF_C goto legal;
+    do {
+    // loop:
+        // LD_A_hl;
+        // AND_A_A;
+        // IF_Z goto prev;
+        // CP_A(EGG);
+        // IF_Z goto prev;
+        // CP_A(NUM_POKEMON + 1);
+        // IF_C goto legal;
+        if(*species != 0 && *species != EGG && *species < NUM_POKEMON + 1) {
+        // legal:
+            // hlcoord(16, 0, wTilemap);
+            // LD_hl(0x71);
+            *coord(16, 0, wram->wTilemap) = 0x71;
+            // RET;
+            return;
+        }
 
-
-prev:
-    DEC_HL;
-    DEC_C;
-    IF_NZ goto loop;
-    RET;
-
-
-legal:
-    hlcoord(16, 0, wTilemap);
-    LD_hl(0x71);
-    RET;
-
+    // prev:
+        // DEC_HL;
+        --species;
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(--c != 0);
+    // RET;
 }
 
 void PlaceMoveScreenRightArrow(void){
-    LD_A_addr(wCurPartyMon);
-    INC_A;
-    LD_C_A;
-    LD_A_addr(wPartyCount);
-    CP_A_C;
-    RET_Z ;
-    LD_E_C;
-    LD_D(0);
-    LD_HL(wPartySpecies);
-    ADD_HL_DE;
+    // LD_A_addr(wCurPartyMon);
+    // INC_A;
+    // LD_C_A;
+    uint8_t c = wram->wCurPartyMon + 1;
+    // LD_A_addr(wPartyCount);
+    // CP_A_C;
+    // RET_Z ;
+    if(c == wram->wPartyCount)
+        return;
+    // LD_E_C;
+    // LD_D(0);
+    // LD_HL(wPartySpecies);
+    // ADD_HL_DE;
+    species_t* hl = wram->wPartySpecies + c;
 
-loop:
-    LD_A_hl;
-    CP_A(-1);
-    RET_Z ;
-    AND_A_A;
-    IF_Z goto next;
-    CP_A(EGG);
-    IF_Z goto next;
-    CP_A(NUM_POKEMON + 1);
-    IF_C goto legal;
+    while(*hl != (species_t)-1) {
+    // loop:
+        // LD_A_hl;
+        // CP_A(-1);
+        // RET_Z ;
+        // AND_A_A;
+        // IF_Z goto next;
+        // CP_A(EGG);
+        // IF_Z goto next;
+        // CP_A(NUM_POKEMON + 1);
+        // IF_C goto legal;
+        if(*hl != 0 && *hl != EGG && *hl <= NUM_POKEMON) {
+        // legal:
+            // hlcoord(18, 0, wTilemap);
+            // LD_hl(0xed);
+            *coord(18, 0, wram->wTilemap) = 0xed;
+            // RET;
+            return;
+        }
 
-
-next:
-    INC_HL;
-    goto loop;
-
-
-legal:
-    hlcoord(18, 0, wTilemap);
-    LD_hl(0xed);
-    RET;
+    // next:
+        // INC_HL;
+        hl++;
+        // goto loop;
+    }
 
 }
