@@ -16,28 +16,28 @@ void InitSound(void) {
 }
 
 void UpdateSound(void) {
-    PUSH_HL;  // push hl
-    PUSH_DE;  // push de
-    PUSH_BC;  // push bc
-    PUSH_AF;  // push af
+    // PUSH_HL;  // push hl
+    // PUSH_DE;  // push de
+    // PUSH_BC;  // push bc
+    // PUSH_AF;  // push af
 
-    LDH_A_addr(hROMBank);        // ldh a, [hROMBank]
-    PUSH_AF;                     // push af
-    LD_A(BANK(av_UpdateSound));  // ld a, BANK(_UpdateSound)
-    LDH_addr_A(hROMBank);        // ldh [hROMBank], a
-    LD_addr_A(MBC3RomBank);      // ld [MBC3RomBank], a
+    // LDH_A_addr(hROMBank);        // ldh a, [hROMBank]
+    // PUSH_AF;                     // push af
+    // LD_A(BANK(av_UpdateSound));  // ld a, BANK(_UpdateSound)
+    // LDH_addr_A(hROMBank);        // ldh [hROMBank], a
+    // LD_addr_A(MBC3RomBank);      // ld [MBC3RomBank], a
 
     v_UpdateSound();  // call _UpdateSound
 
-    POP_AF;                  // pop af
-    LDH_addr_A(hROMBank);    // ldh [hROMBank], a
-    LD_addr_A(MBC3RomBank);  // ld [MBC3RomBank], a
+    // POP_AF;                  // pop af
+    // LDH_addr_A(hROMBank);    // ldh [hROMBank], a
+    // LD_addr_A(MBC3RomBank);  // ld [MBC3RomBank], a
 
-    POP_AF;  // pop af
-    POP_BC;  // pop bc
-    POP_DE;  // pop de
-    POP_HL;  // pop hl
-    RET;     // ret
+    // POP_AF;  // pop af
+    // POP_BC;  // pop bc
+    // POP_DE;  // pop de
+    // POP_HL;  // pop hl
+    // RET;     // ret
 }
 
 void PlayMusic(void) {
@@ -76,10 +76,10 @@ end:
 }
 
 void PlayMusic_Conv(uint16_t music) {
-    PUSH_HL;  // push hl
-    PUSH_DE;  // push de
-    PUSH_BC;  // push bc
-    PUSH_AF;  // push af
+    // PUSH_HL;  // push hl
+    // PUSH_DE;  // push de
+    // PUSH_BC;  // push bc
+    // PUSH_AF;  // push af
 
     // LDH_A_addr(hROMBank);      // ldh a, [hROMBank]
     // PUSH_AF;                   // push af
@@ -107,10 +107,10 @@ void PlayMusic_Conv(uint16_t music) {
     gb_write(hROMBank, oldbank);
     // LD_addr_A(MBC3RomBank);  // ld [MBC3RomBank], a
     gb_write(MBC3RomBank, oldbank);
-    POP_AF;                  // pop af
-    POP_BC;                  // pop bc
-    POP_DE;                  // pop de
-    POP_HL;                  // pop hl
+    // POP_AF;                  // pop af
+    // POP_BC;                  // pop bc
+    // POP_DE;                  // pop de
+    // POP_HL;                  // pop hl
     // RET;                     // ret
 }
 
@@ -521,7 +521,8 @@ void SkipMusic_Conv(uint8_t a) {
         // RET_Z;               // ret z
         // DEC_A;               // dec a
         --a;
-        CALL(aUpdateSound);  // call UpdateSound
+        // CALL(aUpdateSound);  // call UpdateSound
+        UpdateSound();
         // goto loop;           // jr .loop
     }
 }

@@ -12,11 +12,14 @@ volume_envelope_cmd = 0xdc
 pitch_sweep_cmd = 0xdd
 duty_cycle_pattern_cmd = 0xde
 toggle_sfx_cmd = 0xdf
+pitch_slide_cmd = 0xe0
 vibrato_cmd = 0xe1
+toggle_noise_cmd = 0xe3
 volume_cmd = 0xe5
 pitch_offset_cmd = 0xe6
 sfx_priority_on_cmd = 0xec
 sfx_priority_off_cmd = 0xed
+stereo_panning_cmd = 0xef
 sfx_toggle_noise_cmd = 0xf0
 sound_jump_cmd = 0xfc
 sound_loop_cmd = 0xfd
@@ -35,6 +38,8 @@ constants = {
     'A_': 10,
     'A#': 11,
     'B_': 12,
+    'TRUE': 1,
+    'FALSE': 0,
     'sound_loop_cmd': sound_loop_cmd
 }
 offset = 0
@@ -235,6 +240,28 @@ class toggle_sfx:
     def size(self):
         return 1
 
+# 	const pitch_slide_cmd
+# .macro pitch_slide
+# 	.byte pitch_slide_cmd
+# 	.byte \1 - 1
+# 	dn 8 - \2, \3 % 12
+# .endm
+class pitch_slide:
+    def __init__(self, duration, octave, pitch):
+        self.duration = duration
+        self.octave = octave
+        self.pitch = pitch
+
+    def generate(self, offset):
+        out = bytearray([pitch_slide_cmd])
+        out.append(self.duration - 1)
+        out.append(((8 - self.octave) << 4) | (self.pitch % 12))
+        assert self.size() == len(out)
+        return out
+
+    def size(self):
+        return 3
+
 class tempo:
     def __init__(self, t):
         self.tempo = t
@@ -326,6 +353,22 @@ class vibrato:
 
     def size(self):
         return 3
+
+class toggle_noise:
+    def __init__(self, kit=None) -> None:
+        self.kit = kit
+    
+    def generate(self, offset):
+        out = bytearray([toggle_noise_cmd])
+        if self.kit is not None:
+            out.append(self.kit)
+        assert self.size() == len(out)
+        return out
+
+    def size(self):
+        if self.kit is not None:
+            return 2
+        return 1
     
 class volume:
     def __init__(self, left, right=None) -> None:
@@ -376,6 +419,20 @@ class sfx_priority_off:
 
     def size(self):
         return 1
+    
+class stereo_panning:
+    def __init__(self, left, right) -> None:
+        self.left = left
+        self.right = right
+    
+    def generate(self, offset):
+        out = bytearray([stereo_panning_cmd])
+        out.extend([((0b1111 * (0 if self.left == 0 else 1)) << 4) | (0b1111 * (0 if self.right == 0 else 1))])
+        assert self.size() == len(out)
+        return out
+
+    def size(self):
+        return 2
     
 class sfx_toggle_noise:
     def __init__(self, kit=None) -> None:
@@ -430,8 +487,8 @@ class sound_loop:
     def generate(self, offset):
         out = bytearray([0xfd])
         out.append(self.count)
+        # print(f'{self.address} = {symbol_name(self.address, offset)}')
         addr = symbols[symbol_name(self.address, offset)]
-        # print(f'{symbol_name(self.address, offset)} = 0x{addr:02x}')
         out.extend([addr & 0xff, (addr >> 8) & 0xff])
         assert self.size() == len(out)
         return out
@@ -487,7 +544,14 @@ class db:
         self.byte = byte
     
     def generate(self, offset):
-        print(f'    db ${self.byte:02x}')
+        if isinstance(self.byte, str):
+            if self.byte.startswith('$'):
+                self.byte = int(self.byte[1:], 16)
+                print(f'    db ${self.byte:02x}')
+            else:
+                print(f'    db "{self.byte}"')
+        else:
+            print(f'    db ${self.byte:02x}')
         return bytearray([self.byte])
 
     def size(self):
@@ -518,6 +582,7 @@ cmd_table = {
     'drum_speed': drum_speed,
     'transpose': transpose,
     'sound_ret': sound_ret,
+    'pitch_slide': pitch_slide,
     'tempo': tempo,
     'duty_cycle': duty_cycle,
     'volume_envelope': volume_envelope,
@@ -525,10 +590,12 @@ cmd_table = {
     'toggle_sfx': toggle_sfx,
     'duty_cycle_pattern': duty_cycle_pattern,
     'vibrato': vibrato,
+    'toggle_noise': toggle_noise,
     'volume': volume,
     'pitch_offset': pitch_offset,
     'sfx_priority_on': sfx_priority_on,
     'sfx_priority_off': sfx_priority_off,
+    'stereo_panning': stereo_panning,
     'sfx_toggle_noise': sfx_toggle_noise,
     'sound_jump': sound_jump,
     'sound_loop': sound_loop,
@@ -538,6 +605,23 @@ cmd_table = {
 
 cmds = []
 log = ''
+
+def expand_includes(lines: list):
+    out_lines = []
+    for line in lines:
+        if line.startswith('.include'):
+            path = line.split(' ')[1][1:-1]
+            print(path)
+            try:
+                with open(path, 'r') as f:
+                    out_lines.extend(f.read().splitlines())
+            except FileNotFoundError as r:
+                print(r)
+        else:
+            out_lines.append(line)
+    return out_lines
+
+lines = expand_includes(lines)
 
 for line in lines:
     if line == '':

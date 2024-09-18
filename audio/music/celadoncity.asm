@@ -107,7 +107,7 @@ Music_CeladonCity_Ch1:
 	sound_ret
 
 .sub2:
-.sub2loop1
+.sub2loop1:
 	octave 2
 	note G_, 2
 	note B_, 1

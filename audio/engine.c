@@ -4,9 +4,9 @@
 #include "drumkits.h"
 #include "notes.h"
 #include "wave_samples.h"
-#include "music_pointers.h"
 #include "cry_pointers.h"
 #include "sfx_pointers.h"
+#include "music_pointers.h"
 #include "../home/audio.h"
 #include "../home/delay.h"
 #include "../home/copy.h"
@@ -894,21 +894,24 @@ void v_PlayMusic(uint16_t songId) {
     // LD_E_hl;                        // ld e, [hl]
     // INC_HL;                         // inc hl
     // LD_D_hl;                        // ld d, [hl] ; music header address
-    REG_DE = mus.addr;
-    REG_A = LoadMusicByte(REG_DE);  // store first byte of music header in a
-    RLCA;                           // rlca
-    RLCA;                           // rlca
-    maskbits(NUM_MUSIC_CHANS, 0);   // maskbits NUM_MUSIC_CHANS
-    INC_A;                          // inc a
+    uint16_t addr = mus.addr;
+    // REG_A = LoadMusicByte(REG_DE);  // store first byte of music header in a
+    // RLCA;                           // rlca
+    // RLCA;                           // rlca
+    // maskbits(NUM_MUSIC_CHANS, 0);   // maskbits NUM_MUSIC_CHANS
+    // INC_A;                          // inc a
+    uint8_t a = ((LoadMusicByte(addr) >> 6) & 3) + 1;
 
-loop:
-    //  start playing channels
-    PUSH_AF;  // push af
-    REG_DE = LoadChannel(REG_DE);
-    StartChannel();
-    POP_AF;           // pop af
-    DEC_A;            // dec a
-    IF_NZ goto loop;  // jr nz, .loop
+    do {
+    // loop:
+        //  start playing channels
+        // PUSH_AF;  // push af
+        addr = LoadChannel(addr);
+        StartChannel();
+        // POP_AF;           // pop af
+        // DEC_A;            // dec a
+        // IF_NZ goto loop;  // jr nz, .loop
+    } while(--a != 0);
     for (int i = 0; i < NUM_MUSIC_CHANS; i++) channelJumpCondition[i] = 0;
     noiseSampleAddress = NULL;
     gb_write(wNoiseSampleDelay, 0);

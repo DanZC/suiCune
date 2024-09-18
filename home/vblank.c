@@ -5,6 +5,7 @@
 #include "palettes.h"
 #include "video.h"
 #include "copy.h"
+#include "../audio/engine.h"
 
 //  VBlank is the interrupt responsible for updating VRAM.
 
@@ -388,7 +389,7 @@ void VBlank2_Conv(void) {
     hram->hROMBankBackup = hram->hROMBank;
     Bankswitch_Conv(BANK(av_UpdateSound));
     // CALL(av_UpdateSound);
-    SafeCallGBAuto(av_UpdateSound);
+    v_UpdateSound();
     Bankswitch_Conv(hram->hROMBankBackup);
     wram->wVBlankOccurred = 0;
     // CALL(aVBlank2);
@@ -522,7 +523,7 @@ void VBlank1_Conv(void) {
     // RST(mBankswitch);
     Bankswitch_Conv(BANK(av_UpdateSound));
     // CALL(av_UpdateSound);
-    SafeCallGBAuto(av_UpdateSound);
+    v_UpdateSound();
     // LDH_A_addr(hROMBankBackup);
     // RST(mBankswitch);
     Bankswitch_Conv(hram->hROMBankBackup);
@@ -700,7 +701,7 @@ void VBlank3_Conv(void) {
     // RST(mBankswitch);
     Bankswitch_Conv(BANK(av_UpdateSound));
     // CALL(av_UpdateSound);
-    SafeCallGBAuto(av_UpdateSound);
+    v_UpdateSound();
     // LDH_A_addr(hROMBankBackup);
     // RST(mBankswitch);
     Bankswitch_Conv(hram->hROMBankBackup);
@@ -794,7 +795,7 @@ void VBlank4_Conv(void) {
     // CALL(av_UpdateSound);
     Bankswitch_Conv(BANK(av_UpdateSound));
     // CALL(av_UpdateSound);
-    SafeCallGBAuto(av_UpdateSound);
+    v_UpdateSound();
 
     // LDH_A_addr(hROMBankBackup);
     // RST(mBankswitch);
@@ -898,7 +899,7 @@ void VBlank5_Conv(void) {
     // LD_A(BANK(av_UpdateSound));
     // RST(mBankswitch);
     // CALL(av_UpdateSound);
-    SafeCallGBAuto(av_UpdateSound);
+    v_UpdateSound();
     // LDH_A_addr(hROMBankBackup);
     // RST(mBankswitch);
     Bankswitch_Conv(hram->hROMBankBackup);
@@ -981,7 +982,7 @@ void VBlank6_Conv(void) {
     // LD_A(BANK(av_UpdateSound));
     // RST(mBankswitch);
     // CALL(av_UpdateSound);
-    SafeCallGBAuto(av_UpdateSound);
+    v_UpdateSound();
 
     // LDH_A_addr(hROMBankBackup);
     // RST(mBankswitch);

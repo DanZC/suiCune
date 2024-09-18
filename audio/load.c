@@ -11,6 +11,10 @@ static const char* SoundDataPaths[] = {
     [AUDIO_BANK_SFX]            = "audio/sfx.bin",
     [AUDIO_BANK_SFX_CRYSTAL]    = "audio/sfx_crystal.bin",
     [AUDIO_BANK_CRY]            = "audio/cries.bin",
+    [AUDIO_BANK_MUSIC_1]        = "audio/music_1.bin",
+    [AUDIO_BANK_MUSIC_2]        = "audio/music_2.bin",
+    [AUDIO_BANK_MUSIC_3]        = "audio/music_3.bin",
+    [AUDIO_BANK_MUSIC_4]        = "audio/music_4.bin",
 };
 static_assert(lengthof(SoundDataPaths) == NUM_AUDIO_BANKS, "");
 

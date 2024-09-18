@@ -14,7 +14,7 @@ Music_RocketHideout_Ch1:
 	note_type 12, 11, 3
 	stereo_panning TRUE, FALSE
 .mainloop:
-.loop1
+.loop1:
 	rest 16
 	sound_loop 4, .loop1
 .loop2:

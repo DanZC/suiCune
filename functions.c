@@ -16,7 +16,7 @@ void init_function_pointers(void) {
     REDIRECTED(MinVolume);
     // CONVERTED(RestartMapMusic);
     REDIRECTED(IsSFXPlaying);
-    REDIRECTED(UpdateSound);
+    CONVERTED(UpdateSound);
     REDIRECTED(FadeOutToMusic);
     REDIRECTED(SpecialMapMusic);
     REDIRECTED(GetMapMusic_MaybeSpecial);

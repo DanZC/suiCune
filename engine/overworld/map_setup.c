@@ -311,7 +311,7 @@ ok:
 void FadeOutMapMusic(void){
     // LD_A(6);
     // CALL(aSkipMusic);
-    SkipMusic_Conv(6);
+    SkipMusic_Conv(3);
     // RET;
 
 }

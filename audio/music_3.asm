@@ -1,0 +1,21 @@
+.include "audio/music/violetcity.asm"
+.include "audio/music/route29.asm"
+.include "audio/music/halloffame.asm"
+.include "audio/music/healpokemon.asm"
+.include "audio/music/evolution.asm"
+.include "audio/music/printer.asm"
+
+.include "audio/music/mobileadaptermenu.asm"
+.include "audio/music/buenaspassword.asm"
+.include "audio/music/lookmysticalman.asm"
+.include "audio/music/crystalopening.asm"
+.include "audio/music/battletowertheme.asm"
+.include "audio/music/suicunebattle.asm"
+.include "audio/music/battletowerlobby.asm"
+.include "audio/music/mobilecenter.asm"
+
+.include "audio/music/credits.asm"
+.include "audio/music/clair.asm"
+.include "audio/music/mobileadapter.asm"
+
+.include "audio/music/postcredits.asm"
