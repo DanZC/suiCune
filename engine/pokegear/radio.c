@@ -1699,9 +1699,9 @@ void PeoplePlaces4(void){
             // maskbits(NUM_TRAINER_CLASSES, 0);
             a = (Random_Conv() & 0x7f) + 1;
             // INC_A;
-            // CP_A(NUM_TRAINER_CLASSES);  // exclude MYSTICALMAN
+            // CP_A(NUM_TRAINER_CLASSES);  // exclude MYSTICALMAN and JODI
             // JR_NC (mPeoplePlaces4);
-        } while(a >= NUM_TRAINER_CLASSES);
+        } while(a >= MYSTICALMAN);
         // PUSH_AF;
         // LD_HL(mPnP_HiddenPeople);
         // LD_A_addr(wStatusFlags);

@@ -832,4 +832,11 @@ enum {
     EUSINE = 1,
 };
 
-#define NUM_TRAINER_CLASSES MYSTICALMAN
+#define JODI 0x44
+enum {
+    JODI1 = 1,  // unused
+    JODI2,
+    JODI3,
+};
+
+#define NUM_TRAINER_CLASSES JODI

@@ -2609,6 +2609,7 @@ const struct TrainerGroup TrainerGroups[] = {
     TRAINERGROUP(OfficerGroup),
     TRAINERGROUP(GruntFGroup),
     TRAINERGROUP(MysticalmanGroup),
+    TRAINERGROUP(PKMNTrainerGroup), // Uses same trainer data as CAL
 };
 
 static_assert(lengthof(TrainerGroups) == NUM_TRAINER_CLASSES, "");

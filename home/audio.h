@@ -5,6 +5,7 @@ void PlayMusic_Conv(uint16_t);
 void PlayMusic2(void);
 void PlayMusic2_Conv(uint16_t de);
 void PlayCry(void);
+void PlayCry_Conv(uint16_t de);
 void PlaySFX(void);
 void PlaySFX_Conv(uint16_t de);
 void WaitPlaySFX(void);

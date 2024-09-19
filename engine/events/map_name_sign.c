@@ -192,7 +192,7 @@ void InitMapNameSign_Conv(void){
     // LD_A_addr(wMapNumber);
     // LD_C_A;
     // CALL(aGetWorldMapLocation);
-    uint8_t loc = GetWorldMapLocation_Conv(wram->wMapGroup, wram->wMapNumber);
+    uint8_t loc = GetWorldMapLocation_Conv2(wram->wMapGroup, wram->wMapNumber);
 
     // LD_addr_A(wCurLandmark);
     wram->wCurLandmark = loc;
@@ -202,7 +202,7 @@ void InitMapNameSign_Conv(void){
     // CALL(aGetMapEnvironment);
     // CP_A(GATE);
     // IF_NZ goto not_gate;
-    if(InitMapNameSign_CheckNationalParkGate() || GetMapEnvironment_Conv() == GATE) {
+    if(InitMapNameSign_CheckNationalParkGate() || GetMapEnvironment_Conv2() == GATE) {
     // gate:
         // LD_A(-1);
         // LD_addr_A(wCurLandmark);

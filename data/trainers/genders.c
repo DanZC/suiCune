@@ -71,5 +71,7 @@ const uint8_t BTTrainerClassGenders[] = {
     [BLUE-1] = MALE,
     [OFFICER-1] = MALE,
     [GRUNTF-1] = FEMALE,
+    [MYSTICALMAN-1] = MALE,
+    [JODI-1] = FEMALE,
 };
-static_assert(lengthof(BTTrainerClassGenders) == NUM_TRAINER_CLASSES - 1, "");  // exclude MYSTICALMAN
+static_assert(lengthof(BTTrainerClassGenders) == NUM_TRAINER_CLASSES, "");

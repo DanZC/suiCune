@@ -402,7 +402,7 @@ void LoadMiscTiles_Conv(void){
     // LD_C(EMOTE_GRASS_RUSTLE);
     // IF_Z goto outdoor;
     // LD_C(EMOTE_BOULDER_DUST);
-    uint8_t c = CheckOutdoorMap_Conv(GetMapEnvironment_Conv())? EMOTE_GRASS_RUSTLE: EMOTE_BOULDER_DUST;
+    uint8_t c = CheckOutdoorMap_Conv(GetMapEnvironment_Conv2())? EMOTE_GRASS_RUSTLE: EMOTE_BOULDER_DUST;
 
 // outdoor:
     // FARCALL(aLoadEmote);

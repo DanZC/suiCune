@@ -69,5 +69,7 @@ const uint8_t BTTrainerClassSprites[] = {
     [BLUE-1]            = SPRITE_BLUE,
     [OFFICER-1]         = SPRITE_OFFICER,
     [GRUNTF-1]          = SPRITE_ROCKET_GIRL,
+    [MYSTICALMAN-1]     = SPRITE_SUPER_NERD,
+    [JODI-1]            = SPRITE_KRIS,
 };
-static_assert(lengthof(BTTrainerClassSprites) == NUM_TRAINER_CLASSES - 1, ""); // exclude MYSTICALMAN
+static_assert(lengthof(BTTrainerClassSprites) == NUM_TRAINER_CLASSES, ""); // exclude MYSTICALMAN

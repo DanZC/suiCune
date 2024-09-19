@@ -319,7 +319,7 @@ void SetBoxmonOrEggmonCaughtData_Conv(struct BoxMon* boxmon, uint8_t level){
 // NotPokecenter2F:
     // CALL(aGetWorldMapLocation);
     // LD_B_A;
-    uint8_t loc = GetWorldMapLocation_Conv(b, c);
+    uint8_t loc = GetWorldMapLocation_Conv2(b, c);
     // LD_A_addr(wPlayerGender);
     // RRCA;  // shift bit 0 (PLAYERGENDER_FEMALE_F) to bit 7 (CAUGHT_GENDER_MASK)
     uint8_t gender = (wram->wPlayerGender << 7);

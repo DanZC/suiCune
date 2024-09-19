@@ -71,6 +71,7 @@ const char *TrainerPicPointers[] = {
 	[OFFICER-1] = OfficerPic,
 	[GRUNTF-1] = GruntfPic,
 	[MYSTICALMAN-1] = MysticalmanPic,
+	[JODI-1] = "gfx/player/kris.png",
 };
 
 static_assert(lengthof(TrainerPicPointers) == NUM_TRAINER_CLASSES, "");

@@ -14461,7 +14461,7 @@ bool StartBattle_Conv(void){
     // CALL(aBattleIntro);
     BattleIntro();
     // CALL(aDoBattle);
-    SafeCallGBAuto(aDoBattle);
+    DoBattle();
     // CALL(aExitBattle);
     ExitBattle();
     // POP_AF;

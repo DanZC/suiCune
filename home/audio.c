@@ -149,10 +149,10 @@ void PlayMusic2(void) {
 //  Stop playing music, then play music de.
 void PlayMusic2_Conv(uint16_t de) {
     // SET_PC(0x3DB9U);
-    PUSH_HL;  // push hl
-    PUSH_DE;  // push de
-    PUSH_BC;  // push bc
-    PUSH_AF;  // push af
+    // PUSH_HL;  // push hl
+    // PUSH_DE;  // push de
+    // PUSH_BC;  // push bc
+    // PUSH_AF;  // push af
 
     // LDH_A_addr(hROMBank);      // ldh a, [hROMBank]
     // PUSH_AF;                   // push af
@@ -176,10 +176,10 @@ void PlayMusic2_Conv(uint16_t de) {
     // LD_addr_A(MBC3RomBank);  // ld [MBC3RomBank], a
     gb_write(MBC3RomBank, oldbank);
 
-    POP_AF;  // pop af
-    POP_BC;  // pop bc
-    POP_DE;  // pop de
-    POP_HL;  // pop hl
+    // POP_AF;  // pop af
+    // POP_BC;  // pop bc
+    // POP_DE;  // pop de
+    // POP_HL;  // pop hl
     // RET;     // ret
 }
 
@@ -277,7 +277,7 @@ void PlayCry_Conv(uint16_t de) {
     // LDH_addr_A(hROMBank);    // ldh [hROMBank], a
     // LD_addr_A(MBC3RomBank);  // ld [MBC3RomBank], a
 
-    v_PlayCry(de);  // call _PlayCry
+    v_PlayCry(cry->index);  // call _PlayCry
 
     // POP_AF;                  // pop af
     // LDH_addr_A(hROMBank);    // ldh [hROMBank], a

@@ -3157,6 +3157,7 @@ void gb_init_lcd(
  */
 uint8_t gb_rom_read(const uint_fast32_t addr) {
     const struct priv_t *const p = gb.direct.priv;
+    printf("gb_rom_read[$%08x] -> %02x\n", addr, p->rom[addr]);
     return p->rom[addr];
 }
 

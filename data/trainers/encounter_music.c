@@ -69,6 +69,7 @@ const uint8_t TrainerEncounterMusic[] = {
     [OFFICER]      = MUSIC_HIKER_ENCOUNTER, // officer
     [GRUNTF]       = MUSIC_ROCKET_ENCOUNTER, // gruntf
     [MYSTICALMAN]  = MUSIC_HIKER_ENCOUNTER, // mysticalman
+    [JODI]         = MUSIC_LASS_ENCOUNTER, // jodi
 };
 
 static_assert(lengthof(TrainerEncounterMusic) == NUM_TRAINER_CLASSES + 1, "");

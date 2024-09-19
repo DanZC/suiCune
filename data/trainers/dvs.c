@@ -71,6 +71,7 @@ const struct DVSet TrainerClassDVs[] = {
 	[OFFICER-1]         = { 9,  8,  8,  8 }, // OFFICER
 	[GRUNTF-1]          = { 7, 14, 10,  8 }, // GRUNTF
 	[MYSTICALMAN-1]     = { 9,  8,  8,  8 }, // MYSTICALMAN
+	[JODI-1]            = {13, 12, 13, 13 }, // JODI
 };
 
 static_assert(lengthof(TrainerClassDVs) == NUM_TRAINER_CLASSES, "");

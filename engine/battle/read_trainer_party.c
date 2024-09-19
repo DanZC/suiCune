@@ -44,7 +44,7 @@ void ReadTrainerParty(void){
     // LD_A_addr(wOtherTrainerClass);
     printf("tclass %d, tid %d\n", wram->wOtherTrainerClass, wram->wOtherTrainerID);
     uint8_t tclass = wram->wOtherTrainerClass;
-    if(tclass == CAL && wram->wOtherTrainerID == CAL2) {
+    if((tclass == CAL || tclass == JODI) && wram->wOtherTrainerID == CAL2) {
         // IF_Z goto cal2;
     // cal2:
         // LD_A(MBANK(asMysteryGiftTrainer));
@@ -52,8 +52,10 @@ void ReadTrainerParty(void){
         OpenSRAM_Conv(MBANK(asMysteryGiftTrainer));
         // LD_DE(sMysteryGiftTrainer);
         // CALL(aTrainerType2);
-        REG_DE = sMysteryGiftTrainer;
-        TrainerType2();
+        // REG_DE = sMysteryGiftTrainer;
+        // TrainerType2();
+        struct TrainerParty p = {.pmoves = GBToRAMAddr(sMysteryGiftTrainer)};
+        TrainerType2_Conv(&p);
         // CALL(aCloseSRAM);
         CloseSRAM_Conv();
         // goto done;
@@ -769,8 +771,7 @@ uint8_t* GetTrainerName_Conv(uint8_t tid, uint8_t tclass){
     // LD_A_C;
     // CP_A(CAL);
     // IF_NZ goto not_cal2;
-    if(tclass == CAL) {
-
+    if(tclass == CAL || tclass == JODI) {
         // LD_A(MBANK(asMysteryGiftTrainerHouseFlag));
         // CALL(aOpenSRAM);
         OpenSRAM_Conv(MBANK(asMysteryGiftTrainerHouseFlag));
@@ -781,7 +782,6 @@ uint8_t* GetTrainerName_Conv(uint8_t tid, uint8_t tclass){
         CloseSRAM_Conv();
         // IF_Z goto not_cal2;
         if(flag != 0) {
-
             // LD_A(BANK(asMysteryGiftPartnerName));
             // CALL(aOpenSRAM);
             OpenSRAM_Conv(MBANK(asMysteryGiftPartnerName));

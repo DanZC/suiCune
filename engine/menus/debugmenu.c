@@ -474,7 +474,7 @@ static void DebugMenu_BattleTest_GetNextTrainer(uint8_t* tclass, uint8_t* tid) {
     if(++(*tid) <= TrainerGroups[*tclass - 1].count) {
         return;
     }
-    else if(++(*tclass) <= MYSTICALMAN) {
+    else if(++(*tclass) <= NUM_TRAINER_CLASSES) {
         *tid = 1;
         return;
     }
@@ -483,13 +483,13 @@ static void DebugMenu_BattleTest_GetNextTrainer(uint8_t* tclass, uint8_t* tid) {
 }
 
 static void DebugMenu_BattleTest_GetNextTrainerClass(uint8_t* tclass, uint8_t* tid) {
-    if(++(*tclass) > MYSTICALMAN) {
+    if(++(*tclass) > NUM_TRAINER_CLASSES) {
         *tclass = FALKNER;
         *tid = FALKNER1;
         return;
     }
     while(TrainerGroups[*tclass - 1].count == 0) {
-        if(++(*tclass) > MYSTICALMAN) {
+        if(++(*tclass) > NUM_TRAINER_CLASSES) {
             *tclass = FALKNER;
             *tid = FALKNER1;
             return;
@@ -501,14 +501,14 @@ static void DebugMenu_BattleTest_GetNextTrainerClass(uint8_t* tclass, uint8_t* t
 static void DebugMenu_BattleTest_GetPrevTrainer(uint8_t* tclass, uint8_t* tid) {
     if(*tid == 1) {
         if(*tclass == FALKNER) {
-            *tclass = MYSTICALMAN;
+            *tclass = NUM_TRAINER_CLASSES;
             *tid = 1;
             return;
         }
         do {
             --(*tclass);
             if(*tclass == FALKNER) {
-                *tclass = MYSTICALMAN;
+                *tclass = NUM_TRAINER_CLASSES;
                 *tid = 1;
                 return;
             }
@@ -521,13 +521,13 @@ static void DebugMenu_BattleTest_GetPrevTrainer(uint8_t* tclass, uint8_t* tid) {
 
 static void DebugMenu_BattleTest_GetPrevTrainerClass(uint8_t* tclass, uint8_t* tid) {
     if(--(*tclass) == 0) {
-        *tclass = MYSTICALMAN;
+        *tclass = NUM_TRAINER_CLASSES;
         *tid = 1;
         return;
     }
     while(TrainerGroups[*tclass - 1].count == 0) {
         if((*tclass)-- == 0) {
-            *tclass = MYSTICALMAN;
+            *tclass = NUM_TRAINER_CLASSES;
             *tid = 1;
             return;
         }

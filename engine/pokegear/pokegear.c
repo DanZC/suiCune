@@ -538,7 +538,7 @@ void TownMap_InitCursorAndPlayerIconPositions_Conv(void){
     //LD_A_addr(wMapNumber);
     //LD_C_A;
     //CALL(aGetWorldMapLocation);
-    uint8_t landmark = GetWorldMapLocation_Conv(gb_read(wMapGroup), gb_read(wMapNumber));
+    uint8_t landmark = GetWorldMapLocation_Conv2(gb_read(wMapGroup), gb_read(wMapNumber));
 
     //CP_A(LANDMARK_FAST_SHIP);
     //IF_Z goto FastShip;
@@ -556,7 +556,7 @@ void TownMap_InitCursorAndPlayerIconPositions_Conv(void){
     //IF_NZ goto LoadLandmark;
     if(landmark == LANDMARK_SPECIAL)
     {
-        landmark = GetWorldMapLocation_Conv(gb_read(wBackupMapGroup), gb_read(wBackupMapNumber));
+        landmark = GetWorldMapLocation_Conv2(wram->wBackupMapGroup, wram->wBackupMapNumber);
     }
 
     //LD_addr_A(wPokegearMapPlayerIconLandmark);

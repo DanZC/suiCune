@@ -385,7 +385,7 @@ void v_PlayMonCry_Conv(species_t species){
     // CALL(aGetCryIndex);
     // IF_C goto done;
 
-    int16_t idx = GetCryIndex_Conv(species);
+    int16_t idx = GetCryIndex_Conv2(species);
     if(idx == -1)
         return;
 
@@ -393,10 +393,10 @@ void v_PlayMonCry_Conv(species_t species){
     // LD_D_B;
     // CALL(aPlayCry);
 
-    PUSH_DE;
-    REG_DE = (uint16_t)idx;
-    PlayCry();
-    POP_DE;
+    // PUSH_DE;
+    // REG_DE = (uint16_t)idx;
+    PlayCry_Conv((uint16_t)idx);
+    // POP_DE;
 
 
 // done:

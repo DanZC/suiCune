@@ -76,6 +76,7 @@ const char *TrainerPalettes[] = {
     [OFFICER] = "gfx/trainers/officer.png",
     [GRUNTF] = "gfx/trainers/grunt_f.png",
     [MYSTICALMAN] = "gfx/trainers/mysticalman.png",
+    [JODI] = "gfx/trainers/falkner.png",
 };
 
 static_assert(lengthof(TrainerPalettes) == NUM_TRAINER_CLASSES + 1, "");

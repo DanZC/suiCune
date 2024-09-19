@@ -3868,7 +3868,7 @@ void Script_getcurlandmarkname_Conv(script_s* s, uint8_t b){
     // LD_C_A;
     // CALL(aGetWorldMapLocation);
     (void)s;
-    uint8_t loc = GetWorldMapLocation_Conv(wram->wMapGroup, wram->wMapNumber);
+    uint8_t loc = GetWorldMapLocation_Conv2(wram->wMapGroup, wram->wMapNumber);
 
     return ConvertLandmarkToText_Conv(loc, b);
 }

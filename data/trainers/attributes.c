@@ -397,6 +397,12 @@ const struct TrainerClassAttr TrainerClassAttributes[] = {
         .aiMoveWeights=(AI_BASIC | AI_SETUP | AI_SMART | AI_AGGRESSIVE | AI_CAUTIOUS | AI_STATUS | AI_RISKY),
         .aiItemSwitch=(CONTEXT_USE | SWITCH_SOMETIMES)
     },
+    [JODI] = {
+        .items={ NO_ITEM, NO_ITEM },
+        .baseMoney=25,
+        .aiMoveWeights=(AI_BASIC | AI_SETUP | AI_SMART | AI_AGGRESSIVE | AI_CAUTIOUS | AI_STATUS | AI_RISKY),
+        .aiItemSwitch=(CONTEXT_USE | SWITCH_SOMETIMES)
+    },
 };
 
 static_assert(lengthof(TrainerClassAttributes) == NUM_TRAINER_CLASSES + 1, "");

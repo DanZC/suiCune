@@ -70,6 +70,7 @@ const char TrainerClassNames[][20] = {
     "OFFICER@",
     "ROCKET@",
     "MYSTICALMAN@",
+    "<PKMN> TRAINER@",
 };
 
 static_assert(lengthof(TrainerClassNames) == NUM_TRAINER_CLASSES, "");

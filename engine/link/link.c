@@ -613,7 +613,7 @@ void Gen2ToGen2LinkComms(void){
     if(wram->wLinkMode == LINK_COLOSSEUM) {
         // LD_A(CAL);
         // LD_addr_A(wOtherTrainerClass);
-        wram->wOtherTrainerClass = CAL;
+        wram->wOtherTrainerClass = (bit_test(gOtherPlayerGender, PLAYERGENDER_FEMALE_F))? JODI: CAL;
         // CALL(aClearScreen);
         ClearScreen_Conv2();
         // FARCALL(aLink_WaitBGMap);
