@@ -236,9 +236,20 @@ void PopulateMapScriptTable(void) {
 
     entry(ROUTE_5, 0, Route5PokefanMScript);
 
+    entry(ROUTE_5_UNDERGROUND_PATH_ENTRANCE, 0, Route5UndergroundPathEntranceTeacherScript);
+
+    entry(ROUTE_5_CLEANSE_TAG_HOUSE, 0, Route5CleanseTagHouseGrannyScript);
+    entry(ROUTE_5_CLEANSE_TAG_HOUSE, 1, Route5CleanseTagHouseTeacherScript);
+
+    entry(ROUTE_5_SAFFRON_GATE, 0, Route5SaffronGateOfficerScript);
+
     entry(ROUTE_6, 0, Route6PokefanMScript);
     entry(ROUTE_6, 1, TrainerPokefanmRex);
     entry(ROUTE_6, 2, TrainerPokefanmAllan);
+
+    entry(ROUTE_6_SAFFRON_GATE, 0, Route6SaffronGuardScript);
+
+    entry(ROUTE_7_SAFFRON_GATE, 0, Route7SaffronGuardScript);
 
     entry(ROUTE_8, 0, TrainerBikerDwayne);
     entry(ROUTE_8, 1, TrainerBikerHarris);
@@ -246,6 +257,8 @@ void PopulateMapScriptTable(void) {
     entry(ROUTE_8, 3, TrainerSupernerdSam);
     entry(ROUTE_8, 4, TrainerSupernerdTom);
     entry(ROUTE_8, 5, Route8FruitTree);
+
+    entry(ROUTE_8_SAFFRON_GATE, 0, Route8SaffronGateOfficerScript);
 
     entry(ROUTE_9, 0, TrainerCamperDean);
     entry(ROUTE_9, 1, TrainerPicnickerHeidi);
@@ -256,6 +269,11 @@ void PopulateMapScriptTable(void) {
 
     entry(ROUTE_10_SOUTH, 0, TrainerHikerJim);
     entry(ROUTE_10_SOUTH, 1, TrainerPokefanmRobert);
+
+    entry(ROUTE_10_POKECENTER_1F, 0, Route10Pokecenter1FNurseScript);
+    entry(ROUTE_10_POKECENTER_1F, 1, Route10Pokecenter1FGentlemanScript);
+    entry(ROUTE_10_POKECENTER_1F, 2, Route10Pokecenter1FGymGuideScript);
+    entry(ROUTE_10_POKECENTER_1F, 3, Route10Pokecenter1FCooltrainerFScript);
 
     entry(ROUTE_11, 0, TrainerYoungsterOwen);
     entry(ROUTE_11, 1, TrainerYoungsterJason);
@@ -269,6 +287,8 @@ void PopulateMapScriptTable(void) {
     entry(ROUTE_12, 3, TrainerFisherKyle);
     entry(ROUTE_12, 4, Route12Calcium);
     entry(ROUTE_12, 5, Route12Nugget);
+
+    entry(ROUTE_12_SUPER_ROD_HOUSE, 0, Route12SuperRodHouseFishingGuruScript);
 
     entry(ROUTE_13, 0, TrainerBirdKeeperPerry);
     entry(ROUTE_13, 1, TrainerBirdKeeperBret);
@@ -289,10 +309,18 @@ void PopulateMapScriptTable(void) {
     entry(ROUTE_15, 5, TrainerTeacherHillary);
     entry(ROUTE_15, 6, Route15PPUp);
 
+    entry(ROUTE_15_FUCHSIA_GATE, 0, Route15FuchsiaGateOfficerScript);
+
+    entry(ROUTE_16_GATE, 0, Route16GateOfficerScript);
+
+    entry(ROUTE_16_FUCHSIA_SPEECH_HOUSE, 0, Route16FuchsiaSpeechHouseSuperNerdScript);
+
     entry(ROUTE_17, 0, TrainerBikerRiley);
     entry(ROUTE_17, 1, TrainerBikerJoel);
     entry(ROUTE_17, 2, TrainerBikerGlenn);
     entry(ROUTE_17, 3, TrainerBikerCharles);
+
+    entry(ROUTE_17_ROUTE_18_GATE, 0, Route17Route18GateOfficerScript);
 
     entry(ROUTE_18, 0, TrainerBirdKeeperBoris);
     entry(ROUTE_18, 1, TrainerBirdKeeperBob);
@@ -303,6 +331,8 @@ void PopulateMapScriptTable(void) {
     entry(ROUTE_19, 3, TrainerSwimmermTucker);
     entry(ROUTE_19, 4, Route19Fisher1Script);
     entry(ROUTE_19, 5, Route19Fisher2Script);
+
+    entry(ROUTE_19_FUCHSIA_GATE, 0, Route19FuchsiaGateOfficerScript);
 
     entry(ROUTE_20, 0, TrainerSwimmerfNicole);
     entry(ROUTE_20, 1, TrainerSwimmerfLori);
@@ -1061,6 +1091,15 @@ void PopulateMapScriptTable(void) {
 
     entry(HALL_OF_FAME, 0, ObjectEvent);
 
+    entry(REDS_HOUSE_1F, 0, RedsMom);
+
+    entry(BLUES_HOUSE, 0, DaisyScript);
+
+    entry(OAKS_LAB, 0, Oak);
+    entry(OAKS_LAB, 1, OaksAssistant1Script);
+    entry(OAKS_LAB, 2, OaksAssistant2Script);
+    entry(OAKS_LAB, 3, OaksAssistant3Script);
+
     entry(VIRIDIAN_GYM, 0, ViridianGymBlueScript);
     entry(VIRIDIAN_GYM, 1, ViridianGymGuideScript);
 
@@ -1087,10 +1126,242 @@ void PopulateMapScriptTable(void) {
     entry(TRAINER_HOUSE_B1F, 0, ObjectEvent);
     entry(TRAINER_HOUSE_B1F, 1, ObjectEvent);
 
+    entry(PEWTER_GYM, 0, PewterGymBrockScript);
+    entry(PEWTER_GYM, 1, TrainerCamperJerry);
+    entry(PEWTER_GYM, 2, PewterGymGuideScript);
+
+    entry(PEWTER_MART, 0, PewterMartClerkScript);
+    entry(PEWTER_MART, 1, PewterMartYoungsterScript);
+    entry(PEWTER_MART, 2, PewterMartSuperNerdScript);
+
+    entry(PEWTER_NIDORAN_SPEECH_HOUSE, 0, PewterNidoranSpeechHouseSuperNerdScript);
+    entry(PEWTER_NIDORAN_SPEECH_HOUSE, 1, PewterNidoran);
+
+    entry(PEWTER_POKECENTER_1F, 0, PewterPokecenter1FNurseScript);
+    entry(PEWTER_POKECENTER_1F, 1, PewterPokecenter1FTeacherScript);
+    entry(PEWTER_POKECENTER_1F, 2, PewterJigglypuff);
+    entry(PEWTER_POKECENTER_1F, 3, PewterPokecenter1FBugCatcherScript);
+    entry(PEWTER_POKECENTER_1F, 4, Chris);
+
+    entry(PEWTER_SNOOZE_SPEECH_HOUSE, 0, PewterSnoozeSpeechHouseGrampsScript);
+
+    entry(CERULEAN_GYM, 0, ObjectEvent);
+    entry(CERULEAN_GYM, 1, CeruleanGymMistyScript);
+    entry(CERULEAN_GYM, 2, TrainerSwimmerfDiana);
+    entry(CERULEAN_GYM, 3, TrainerSwimmerfBriana);
+    entry(CERULEAN_GYM, 4, TrainerSwimmermParker);
+    entry(CERULEAN_GYM, 5, CeruleanGymGuideScript);
+
+    entry(CERULEAN_GYM_BADGE_SPEECH_HOUSE, 0, CeruleanGymBadgeSpeechHousePokefanMScript);
+
+    entry(CERULEAN_MART, 0, CeruleanMart_Clerk);
+    entry(CERULEAN_MART, 1, CeruleanMart_CooltrainerM);
+    entry(CERULEAN_MART, 2, CeruleanMart_CooltrainerF);
+
+    entry(CERULEAN_POKECENTER_1F, 0, CeruleanPokecenter1FNurseScript);
+    entry(CERULEAN_POKECENTER_1F, 1, CeruleanPokecenter1FSuperNerdScript);
+    entry(CERULEAN_POKECENTER_1F, 2, CeruleanPokecenter1FGymGuideScript);
+
+    entry(CERULEAN_POLICE_STATION, 0, CeruleanPoliceStationFishingGuruScript);
+    entry(CERULEAN_POLICE_STATION, 1, CeruleanPoliceStationPokefanFScript);
+    entry(CERULEAN_POLICE_STATION, 2, CeruleanDiglett);
+
+    entry(CERULEAN_TRADE_SPEECH_HOUSE, 0, CeruleanTradeSpeechHouseGrannyScript);
+    entry(CERULEAN_TRADE_SPEECH_HOUSE, 1, CeruleanTradeSpeechHouseGrampsScript);
+    entry(CERULEAN_TRADE_SPEECH_HOUSE, 2, CeruleanTradeSpeechHouseRhydonScript);
+    entry(CERULEAN_TRADE_SPEECH_HOUSE, 3, CeruleanTradeSpeechHouseZubatScript);
+
+    entry(VERMILION_DIGLETTS_CAVE_SPEECH_HOUSE, 0, VermilionDiglettsCaveSpeechHouseGentlemanScript);
+
+    entry(VERMILION_FISHING_SPEECH_HOUSE, 0, FishingDude);
+
+    entry(VERMILION_GYM, 0, VermilionGymSurgeScript);
+    entry(VERMILION_GYM, 1, TrainerGentlemanGregory);
+    entry(VERMILION_GYM, 2, TrainerGuitaristVincent);
+    entry(VERMILION_GYM, 3, TrainerJugglerHorton);
+    entry(VERMILION_GYM, 4, VermilionGymGuideScript);
+
+    entry(VERMILION_MAGNET_TRAIN_SPEECH_HOUSE, 0, VermilionMagnetTrainSpeechHousePokefanFScript);
+    entry(VERMILION_MAGNET_TRAIN_SPEECH_HOUSE, 1, VermilionMagnetTrainSpeechHouseYoungsterScript);
+
+    entry(VERMILION_MART, 0, VermilionMartClerkScript);
+    entry(VERMILION_MART, 1, VermilionMartSuperNerdScript);
+    entry(VERMILION_MART, 2, VermilionMartBeautyScript);
+
+    entry(VERMILION_POKECENTER_1F, 0, VermilionPokecenter1FNurseScript);
+    entry(VERMILION_POKECENTER_1F, 1, VermilionPokecenter1FFishingGuruScript);
+    entry(VERMILION_POKECENTER_1F, 2, VermilionPokecenter1FSailorScript);
+    entry(VERMILION_POKECENTER_1F, 3, VermilionPokecenter1FBugCatcherScript);
+
+    entry(POKEMON_FAN_CLUB, 0, PokemonFanClubChairmanScript);
+    entry(POKEMON_FAN_CLUB, 1, PokemonFanClubReceptionistScript);
+    entry(POKEMON_FAN_CLUB, 2, PokemonFanClubClefairyGuyScript);
+    entry(POKEMON_FAN_CLUB, 3, PokemonFanClubTeacherScript);
+    entry(POKEMON_FAN_CLUB, 4, PokemonFanClubClefairyDollScript);
+    entry(POKEMON_FAN_CLUB, 5, PokemonFanClubBayleefScript);
+
+    entry(LAVENDER_MART, 0, LavenderMartClerkScript);
+    entry(LAVENDER_MART, 1, LavenderMartPokefanMScript);
+    entry(LAVENDER_MART, 2, LavenderMartRockerScript);
+
+    entry(LAVENDER_NAME_RATER, 0, LavenderNameRater);
+
+    entry(LAVENDER_POKECENTER_1F, 0, LavenderPokecenter1FNurseScript);
+    entry(LAVENDER_POKECENTER_1F, 1, LavenderPokecenter1FGentlemanScript);
+    entry(LAVENDER_POKECENTER_1F, 2, LavenderPokecenter1FTeacherScript);
+    entry(LAVENDER_POKECENTER_1F, 3, LavenderPokecenter1FYoungsterScript);
+
+    entry(LAVENDER_SPEECH_HOUSE, 0, LavenderSpeechHousePokefanFScript);
+
+    entry(LAV_RADIO_TOWER_1F, 0, LavRadioTower1FReceptionistScript);
+    entry(LAV_RADIO_TOWER_1F, 1, LavRadioTower1FOfficerScript);
+    entry(LAV_RADIO_TOWER_1F, 2, LavRadioTower1FSuperNerd1Script);
+    entry(LAV_RADIO_TOWER_1F, 3, LavRadioTower1FGentlemanScript);
+    entry(LAV_RADIO_TOWER_1F, 4, LavRadioTower1FSuperNerd2Script);
+
+    entry(SOUL_HOUSE, 0, MrFuji);
+    entry(SOUL_HOUSE, 1, SoulHouseTeacherScript);
+    entry(SOUL_HOUSE, 2, SoulHouseLassScript);
+    entry(SOUL_HOUSE, 3, SoulHouseGrannyScript);
+
+    entry(CELADON_CAFE, 0, CeladonCafeChef);
+    entry(CELADON_CAFE, 1, CeladonCafeFisher1);
+    entry(CELADON_CAFE, 2, CeladonCafeFisher2);
+    entry(CELADON_CAFE, 3, CeladonCafeFisher3);
+    entry(CELADON_CAFE, 4, CeladonCafeTeacher);
+
+    entry(CELADON_DEPT_STORE_1F, 0, CeladonDeptStore1FReceptionistScript);
+    entry(CELADON_DEPT_STORE_1F, 1, CeladonDeptStore1FGentlemanScript);
+    entry(CELADON_DEPT_STORE_1F, 2, CeladonDeptStore1FTeacherScript);
+
+    entry(CELADON_DEPT_STORE_2F, 0, CeladonDeptStore2FClerk1Script);
+    entry(CELADON_DEPT_STORE_2F, 1, CeladonDeptStore2FClerk2Script);
+    entry(CELADON_DEPT_STORE_2F, 2, CeladonDeptStore2FPokefanMScript);
+    entry(CELADON_DEPT_STORE_2F, 3, CeladonDeptStore2FYoungsterScript);
+
+    entry(CELADON_DEPT_STORE_3F, 0, CeladonDeptStore3FClerkScript);
+    entry(CELADON_DEPT_STORE_3F, 1, CeladonDeptStore3FYoungsterScript);
+    entry(CELADON_DEPT_STORE_3F, 2, CeladonDeptStore3FGameboyKid1Script);
+    entry(CELADON_DEPT_STORE_3F, 3, CeladonDeptStore3FGameboyKid2Script);
+    entry(CELADON_DEPT_STORE_3F, 4, CeladonDeptStore3FSuperNerdScript);
+
+    entry(CELADON_DEPT_STORE_4F, 0, CeladonDeptStore4FClerkScript);
+    entry(CELADON_DEPT_STORE_4F, 1, CeladonDeptStore4FSuperNerdScript);
+    entry(CELADON_DEPT_STORE_4F, 2, CeladonDeptStore4FYoungsterScript);
+
+    entry(CELADON_DEPT_STORE_5F, 0, CeladonDeptStore5FClerk1Script);
+    entry(CELADON_DEPT_STORE_5F, 1, CeladonDeptStore5FClerk2Script);
+    entry(CELADON_DEPT_STORE_5F, 2, CeladonDeptStore5FGentlemanScript);
+    entry(CELADON_DEPT_STORE_5F, 3, CeladonDeptStore5FSailorScript);
+    entry(CELADON_DEPT_STORE_5F, 4, CeladonDeptStore5FTeacherScript);
+
+    entry(CELADON_DEPT_STORE_6F, 0, CeladonDeptStore6FSuperNerdScript);
+    entry(CELADON_DEPT_STORE_6F, 1, CeladonDeptStore6FYoungsterScript);
+
+    entry(CELADON_GAME_CORNER, 0, CeladonGameCornerClerkScript);
+    entry(CELADON_GAME_CORNER, 1, CeladonGameCornerReceptionistScript);
+    entry(CELADON_GAME_CORNER, 2, CeladonGameCornerPokefanMScript);
+    entry(CELADON_GAME_CORNER, 3, CeladonGameCornerTeacherScript);
+    entry(CELADON_GAME_CORNER, 4, CeladonGameCornerFishingGuruScript);
+    entry(CELADON_GAME_CORNER, 5, CeladonGameCornerFisherScript);
+    entry(CELADON_GAME_CORNER, 6, CeladonGameCornerFisherScript);
+    entry(CELADON_GAME_CORNER, 7, CeladonGymGuideScript);
+    entry(CELADON_GAME_CORNER, 8, CeladonGameCornerGrampsScript);
+
+    entry(CELADON_GAME_CORNER_PRIZE_ROOM, 0, CeladonGameCornerPrizeRoomGentlemanScript);
+    entry(CELADON_GAME_CORNER_PRIZE_ROOM, 1, CeladonGameCornerPrizeRoomPharmacistScript);
+
+    entry(CELADON_GYM, 0, CeladonGymErikaScript);
+    entry(CELADON_GYM, 1, TrainerLassMichelle);
+    entry(CELADON_GYM, 2, TrainerPicnickerTanya);
+    entry(CELADON_GYM, 3, TrainerBeautyJulia);
+    entry(CELADON_GYM, 4, TrainerTwinsJoAndZoe1);
+    entry(CELADON_GYM, 5, TrainerTwinsJoAndZoe2);
+
+    entry(CELADON_MANSION_1F, 0, CeladonMansionManager);
+    entry(CELADON_MANSION_1F, 1, CeladonMansion1FMeowth);
+    entry(CELADON_MANSION_1F, 2, CeladonMansion1FClefairy);
+    entry(CELADON_MANSION_1F, 3, CeladonMansion1FNidoranF);
+
+    entry(CELADON_MANSION_3F, 0, GameFreakGameDesignerScript);
+    entry(CELADON_MANSION_3F, 1, GameFreakGraphicArtistScript);
+    entry(CELADON_MANSION_3F, 2, GameFreakProgrammerScript);
+    entry(CELADON_MANSION_3F, 3, GameFreakCharacterDesignerScript);
+
+    entry(CELADON_MANSION_ROOF, 0, CeladonMansionRoofFisherScript);
+
+    entry(CELADON_MANSION_ROOF_HOUSE, 0, CeladonMansionRoofHousePharmacistScript);
+
+    entry(CELADON_POKECENTER_1F, 0, CeladonPokecenter1FNurseScript);
+    entry(CELADON_POKECENTER_1F, 1, CeladonPokecenter1FGentlemanScript);
+    entry(CELADON_POKECENTER_1F, 2, CeladonPokecenter1FPharmacistScript);
+    entry(CELADON_POKECENTER_1F, 3, CeladonPokecenter1FCooltrainerFScript);
+    entry(CELADON_POKECENTER_1F, 4, CeladonEusine);
+
     entry(SAFFRON_MAGNET_TRAIN_STATION, 0, SaffronMagnetTrainStationOfficerScript);
     entry(SAFFRON_MAGNET_TRAIN_STATION, 1, SaffronMagnetTrainStationGymGuideScript);
     entry(SAFFRON_MAGNET_TRAIN_STATION, 2, SaffronMagnetTrainStationTeacherScript);
     entry(SAFFRON_MAGNET_TRAIN_STATION, 3, SaffronMagnetTrainStationLassScript);
+
+    entry(MR_PSYCHICS_HOUSE, 0, MrPsychic);
+
+    entry(COPYCATS_HOUSE_1F, 0, CopycatsHouse1FPokefanMScript);
+    entry(COPYCATS_HOUSE_1F, 1, CopycatsHouse1FPokefanFScript);
+    entry(COPYCATS_HOUSE_1F, 2, CopycatsHouse1FBlisseyScript);
+
+    entry(COPYCATS_HOUSE_2F, 0, Copycat);
+    entry(COPYCATS_HOUSE_2F, 1, CopycatsDodrio);
+    entry(COPYCATS_HOUSE_2F, 2, CopycatsHouse2FDoll);
+    entry(COPYCATS_HOUSE_2F, 3, CopycatsHouse2FDoll);
+    entry(COPYCATS_HOUSE_2F, 4, CopycatsHouse2FDoll);
+    entry(COPYCATS_HOUSE_2F, 5, Copycat);
+
+    entry(FIGHTING_DOJO, 0, FightingDojoBlackBelt);
+    entry(FIGHTING_DOJO, 1, FightingDojoFocusBand);
+
+    entry(SILPH_CO_1F, 0, SilphCoReceptionistScript);
+    entry(SILPH_CO_1F, 1, SilphCoOfficerScript);
+
+    entry(SAFFRON_GYM, 0, SaffronGymSabrinaScript);
+    entry(SAFFRON_GYM, 1, TrainerMediumRebecca);
+    entry(SAFFRON_GYM, 2, TrainerPsychicFranklin);
+    entry(SAFFRON_GYM, 3, TrainerMediumDoris);
+    entry(SAFFRON_GYM, 4, TrainerPsychicJared);
+    entry(SAFFRON_GYM, 5, SaffronGymGuideScript);
+
+    entry(SAFFRON_MART, 0, SaffronMartClerkScript);
+    entry(SAFFRON_MART, 1, SaffronMartCooltrainerMScript);
+    entry(SAFFRON_MART, 2, SaffronMartCooltrainerFScript);
+
+    entry(SAFFRON_POKECENTER_1F, 0, SaffronPokecenter1FNurseScript);
+    entry(SAFFRON_POKECENTER_1F, 1, SaffronPokecenter1FTeacherScript);
+    entry(SAFFRON_POKECENTER_1F, 2, SaffronPokecenter1FFisherScript);
+    entry(SAFFRON_POKECENTER_1F, 3, SaffronPokecenter1FYoungsterScript);
+
+    entry(FUCHSIA_GYM, 0, FuchsiaGymJanineScript);
+    entry(FUCHSIA_GYM, 1, LassAliceScript);
+    entry(FUCHSIA_GYM, 2, LassLindaScript);
+    entry(FUCHSIA_GYM, 3, PicnickerCindyScript);
+    entry(FUCHSIA_GYM, 4, CamperBarryScript);
+    entry(FUCHSIA_GYM, 5, FuchsiaGymGuideScript);
+
+    entry(FUCHSIA_MART, 0, FuchsiaMartClerkScript);
+    entry(FUCHSIA_MART, 1, FuchsiaMartFisherScript);
+    entry(FUCHSIA_MART, 2, FuchsiaMartCooltrainerFScript);
+
+    entry(FUCHSIA_POKECENTER_1F, 0, FuchsiaPokecenter1FNurseScript);
+    entry(FUCHSIA_POKECENTER_1F, 1, FuchsiaPokecenter1FCooltrainerMScript);
+    entry(FUCHSIA_POKECENTER_1F, 2, FuchsiaPokecenter1FCooltrainerFScript);
+    entry(FUCHSIA_POKECENTER_1F, 3, FuchsiaPokecenter1FJanineImpersonatorScript);
+
+    entry(SAFARI_ZONE_WARDENS_HOME, 0, WardensGranddaughter);
+
+    entry(BILLS_BROTHERS_HOUSE, 0, BillsBrotherScript);
+    entry(BILLS_BROTHERS_HOUSE, 1, BillsBrothersHouseYoungsterScript);
+
+    entry(CINNABAR_POKECENTER_1F, 0, CinnabarPokecenter1FNurseScript);
+    entry(CINNABAR_POKECENTER_1F, 1, CinnabarPokecenter1FCooltrainerFScript);
+    entry(CINNABAR_POKECENTER_1F, 2, CinnabarPokecenter1FFisherScript);
 
     entry(SILVER_CAVE_POKECENTER_1F, 0, SilverCavePokecenter1FNurseScript);
     entry(SILVER_CAVE_POKECENTER_1F, 1, SilverCavePokecenter1FGrannyScript);
@@ -1534,6 +1805,39 @@ void PopulateMapScriptTable(void) {
     entry(VERMILION_PORT, 2, VermilionPortSuperNerdScript);
 
     entry(VERMILION_PORT_PASSAGE, 0, VermilionPortPassageTeacherScript);
+
+    entry(DIGLETTS_CAVE, 0, DiglettsCavePokefanMScript);
+
+    entry(BILLS_HOUSE, 0, BillsGrandpa);
+
+    entry(MOUNT_MOON, 0, ObjectEvent);
+    
+    entry(MOUNT_MOON_SQUARE, 0, ObjectEvent);
+    entry(MOUNT_MOON_SQUARE, 1, ObjectEvent);
+    entry(MOUNT_MOON_SQUARE, 2, MtMoonSquareRock);
+    
+    entry(MOUNT_MOON_GIFT_SHOP, 0, MountMoonGiftShopClerkScript);
+    entry(MOUNT_MOON_GIFT_SHOP, 1, MountMoonGiftShopClerkScript);
+    entry(MOUNT_MOON_GIFT_SHOP, 2, MountMoonGiftShopLassScript);
+    entry(MOUNT_MOON_GIFT_SHOP, 3, MountMoonGiftShopLassScript);
+    
+    entry(ROCK_TUNNEL_1F, 0, RockTunnel1FElixer);
+    entry(ROCK_TUNNEL_1F, 1, RockTunnel1FTMSteelWing);
+
+    entry(ROCK_TUNNEL_B1F, 0, RockTunnelB1FIron);
+    entry(ROCK_TUNNEL_B1F, 1, RockTunnelB1FPPUp);
+    entry(ROCK_TUNNEL_B1F, 2, RockTunnelB1FRevive);
+
+    entry(SEAFOAM_GYM, 0, SeafoamGymBlaineScript);
+    entry(SEAFOAM_GYM, 1, SeafoamGymGuideScript);
+
+    entry(POWER_PLANT, 0, PowerPlantOfficerScript);
+    entry(POWER_PLANT, 1, PowerPlantGymGuide1Script);
+    entry(POWER_PLANT, 2, PowerPlantGymGuide2Script);
+    entry(POWER_PLANT, 3, PowerPlantOfficer2Script);
+    entry(POWER_PLANT, 4, PowerPlantGymGuide4Script);
+    entry(POWER_PLANT, 5, PowerPlantManager);
+    entry(POWER_PLANT, 6, Forest);
 }
 
 const void* GetRealScriptPointer(uint8_t group, uint8_t map, uint8_t index) {

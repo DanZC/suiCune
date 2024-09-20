@@ -5367,6 +5367,51 @@ void init_function_pointers(void) {
     // maps/Route2NuggetHouse.c
     CONVERTED_SCRIPT(Route2NuggetHouseFisherScript);
 
+    // maps/Route5UndergroundPathEntrance.c
+    CONVERTED_SCRIPT(Route5UndergroundPathEntranceTeacherScript);
+
+    // maps/Route5CleanseTagHouse.c
+    CONVERTED_SCRIPT(Route5CleanseTagHouseGrannyScript);
+    CONVERTED_SCRIPT(Route5CleanseTagHouseTeacherScript);
+
+    // maps/Route5SaffronGate.c
+    CONVERTED_SCRIPT(Route5SaffronGateOfficerScript);
+
+    // maps/Route6UndergroundPathEntrance.c
+
+    // maps/Route6SaffronGate.c
+    CONVERTED_SCRIPT(Route6SaffronGuardScript);
+
+    // maps/Route7SaffronGate.c
+    CONVERTED_SCRIPT(Route7SaffronGuardScript);
+
+    // maps/Route8SaffronGate.c
+    CONVERTED_SCRIPT(Route8SaffronGateOfficerScript);
+
+    // maps/Route10Pokecenter1F.c
+    CONVERTED_SCRIPT(Route10Pokecenter1FNurseScript);
+    CONVERTED_SCRIPT(Route10Pokecenter1FGentlemanScript);
+    CONVERTED_SCRIPT(Route10Pokecenter1FGymGuideScript);
+    CONVERTED_SCRIPT(Route10Pokecenter1FCooltrainerFScript);
+
+    // maps/Route12SuperRodHouse.c
+    CONVERTED_SCRIPT(Route12SuperRodHouseFishingGuruScript);
+
+    // maps/Route15FuchsiaGate.c
+    CONVERTED_SCRIPT(Route15FuchsiaGateOfficerScript);
+
+    // maps/Route16Gate.c
+    CONVERTED_SCRIPT(Route16GateOfficerScript);
+
+    // maps/Route16FuchsiaSpeechHouse.c
+    CONVERTED_SCRIPT(Route16FuchsiaSpeechHouseSuperNerdScript);
+
+    // maps/Route17Route18Gate.c
+    CONVERTED_SCRIPT(Route17Route18GateOfficerScript);
+
+    // maps/Route19FuchsiaGate.c
+    CONVERTED_SCRIPT(Route19FuchsiaGateOfficerScript);
+
     // maps/Route26HealHouse.c
     CONVERTED_SCRIPT(Route26HealHouseTeacherScript);
 
@@ -5988,6 +6033,18 @@ void init_function_pointers(void) {
     // maps/HallOfFame.c
     // CONVERTED_SCRIPT(ObjectEvent);
 
+    // maps/RedsHouse1F.c
+    CONVERTED_SCRIPT(RedsMom);
+
+    // maps/BluesHouse.c
+    CONVERTED_SCRIPT(DaisyScript);
+
+    // maps/OaksLab.c
+    CONVERTED_SCRIPT(Oak);
+    CONVERTED_SCRIPT(OaksAssistant1Script);
+    CONVERTED_SCRIPT(OaksAssistant2Script);
+    CONVERTED_SCRIPT(OaksAssistant3Script);
+
     // maps/ViridianGym.c
     CONVERTED_SCRIPT(ViridianGymBlueScript);
     CONVERTED_SCRIPT(ViridianGymGuideScript);
@@ -6020,11 +6077,302 @@ void init_function_pointers(void) {
     // CONVERTED_SCRIPT(ObjectEvent);
     // CONVERTED_SCRIPT(ObjectEvent);
 
+    // maps/PewterGym.c
+    CONVERTED_SCRIPT(PewterGymBrockScript);
+    CONVERTED_SCRIPT(TrainerCamperJerry);
+    CONVERTED_SCRIPT(PewterGymGuideScript);
+
+    // maps/PewterMart.c
+    CONVERTED_SCRIPT(PewterMartClerkScript);
+    CONVERTED_SCRIPT(PewterMartYoungsterScript);
+    CONVERTED_SCRIPT(PewterMartSuperNerdScript);
+
+    // maps/PewterNidoranSpeechHouse.c
+    CONVERTED_SCRIPT(PewterNidoranSpeechHouseSuperNerdScript);
+    CONVERTED_SCRIPT(PewterNidoran);
+
+    // maps/PewterPokecenter1F.c
+    CONVERTED_SCRIPT(PewterPokecenter1FNurseScript);
+    CONVERTED_SCRIPT(PewterPokecenter1FTeacherScript);
+    CONVERTED_SCRIPT(PewterJigglypuff);
+    CONVERTED_SCRIPT(PewterPokecenter1FBugCatcherScript);
+    CONVERTED_SCRIPT(Chris);
+
+    // maps/PewterSnoozeSpeechHouse.c
+    CONVERTED_SCRIPT(PewterSnoozeSpeechHouseGrampsScript);
+
+    // maps/CeruleanGym.c
+    // CONVERTED_SCRIPT(ObjectEvent);
+    CONVERTED_SCRIPT(CeruleanGymMistyScript);
+    CONVERTED_SCRIPT(TrainerSwimmerfDiana);
+    CONVERTED_SCRIPT(TrainerSwimmerfBriana);
+    CONVERTED_SCRIPT(TrainerSwimmermParker);
+    CONVERTED_SCRIPT(CeruleanGymGuideScript);
+
+    // maps/CeruleanGymBadgeSpeechHouse.c
+    CONVERTED_SCRIPT(CeruleanGymBadgeSpeechHousePokefanMScript);
+
+    // maps/CeruleanMart.c
+    CONVERTED_SCRIPT(CeruleanMart_Clerk);
+    CONVERTED_SCRIPT(CeruleanMart_CooltrainerM);
+    CONVERTED_SCRIPT(CeruleanMart_CooltrainerF);
+
+    // maps/CeruleanPokecenter1F.c
+    CONVERTED_SCRIPT(CeruleanPokecenter1FNurseScript);
+    CONVERTED_SCRIPT(CeruleanPokecenter1FSuperNerdScript);
+    CONVERTED_SCRIPT(CeruleanPokecenter1FGymGuideScript);
+
+    // maps/CeruleanPoliceStation.c
+    CONVERTED_SCRIPT(CeruleanPoliceStationFishingGuruScript);
+    CONVERTED_SCRIPT(CeruleanPoliceStationPokefanFScript);
+    CONVERTED_SCRIPT(CeruleanDiglett);
+
+    // maps/CeruleanTradeSpeechHouse.c
+    CONVERTED_SCRIPT(CeruleanTradeSpeechHouseGrannyScript);
+    CONVERTED_SCRIPT(CeruleanTradeSpeechHouseGrampsScript);
+    CONVERTED_SCRIPT(CeruleanTradeSpeechHouseRhydonScript);
+    CONVERTED_SCRIPT(CeruleanTradeSpeechHouseZubatScript);
+
+    // maps/VermilionDiglettsCaveSpeechHouse.c
+    CONVERTED_SCRIPT(VermilionDiglettsCaveSpeechHouseGentlemanScript);
+
+    // maps/VermilionFishingSpeechHouse.c
+    CONVERTED_SCRIPT(FishingDude);
+
+    // maps/VermilionGym.c
+    CONVERTED_SCRIPT(VermilionGymSurgeScript);
+    CONVERTED_SCRIPT(TrainerGentlemanGregory);
+    CONVERTED_SCRIPT(TrainerGuitaristVincent);
+    CONVERTED_SCRIPT(TrainerJugglerHorton);
+    CONVERTED_SCRIPT(VermilionGymGuideScript);
+
+    // maps/VermilionMagnetTrainSpeechHouse.c
+    CONVERTED_SCRIPT(VermilionMagnetTrainSpeechHousePokefanFScript);
+    CONVERTED_SCRIPT(VermilionMagnetTrainSpeechHouseYoungsterScript);
+
+    // maps/VermilionMart.c
+    CONVERTED_SCRIPT(VermilionMartClerkScript);
+    CONVERTED_SCRIPT(VermilionMartSuperNerdScript);
+    CONVERTED_SCRIPT(VermilionMartBeautyScript);
+
+    // maps/VermilionPokecenter1F.c
+    CONVERTED_SCRIPT(VermilionPokecenter1FNurseScript);
+    CONVERTED_SCRIPT(VermilionPokecenter1FFishingGuruScript);
+    CONVERTED_SCRIPT(VermilionPokecenter1FSailorScript);
+    CONVERTED_SCRIPT(VermilionPokecenter1FBugCatcherScript);
+
+    // maps/PokemonFanClub.c
+    CONVERTED_SCRIPT(PokemonFanClubChairmanScript);
+    CONVERTED_SCRIPT(PokemonFanClubReceptionistScript);
+    CONVERTED_SCRIPT(PokemonFanClubClefairyGuyScript);
+    CONVERTED_SCRIPT(PokemonFanClubTeacherScript);
+    CONVERTED_SCRIPT(PokemonFanClubClefairyDollScript);
+    CONVERTED_SCRIPT(PokemonFanClubBayleefScript);
+
+    // maps/LavenderMart.c
+    CONVERTED_SCRIPT(LavenderMartClerkScript);
+    CONVERTED_SCRIPT(LavenderMartPokefanMScript);
+    CONVERTED_SCRIPT(LavenderMartRockerScript);
+
+    // maps/LavenderNameRater.c
+    CONVERTED_SCRIPT(LavenderNameRater);
+
+    // maps/LavenderPokecenter1F.c
+    CONVERTED_SCRIPT(LavenderPokecenter1FNurseScript);
+    CONVERTED_SCRIPT(LavenderPokecenter1FGentlemanScript);
+    CONVERTED_SCRIPT(LavenderPokecenter1FTeacherScript);
+    CONVERTED_SCRIPT(LavenderPokecenter1FYoungsterScript);
+
+    // maps/LavenderSpeechHouse.c
+    CONVERTED_SCRIPT(LavenderSpeechHousePokefanFScript);
+
+    // maps/LavRadioTower1F.c
+    CONVERTED_SCRIPT(LavRadioTower1FReceptionistScript);
+    CONVERTED_SCRIPT(LavRadioTower1FOfficerScript);
+    CONVERTED_SCRIPT(LavRadioTower1FSuperNerd1Script);
+    CONVERTED_SCRIPT(LavRadioTower1FGentlemanScript);
+    CONVERTED_SCRIPT(LavRadioTower1FSuperNerd2Script);
+
+    // maps/SoulHouse.c
+    CONVERTED_SCRIPT(MrFuji);
+    CONVERTED_SCRIPT(SoulHouseTeacherScript);
+    CONVERTED_SCRIPT(SoulHouseLassScript);
+    CONVERTED_SCRIPT(SoulHouseGrannyScript);
+
+    // maps/CeladonCafe.c
+    CONVERTED_SCRIPT(CeladonCafeChef);
+    CONVERTED_SCRIPT(CeladonCafeFisher1);
+    CONVERTED_SCRIPT(CeladonCafeFisher2);
+    CONVERTED_SCRIPT(CeladonCafeFisher3);
+    CONVERTED_SCRIPT(CeladonCafeTeacher);
+
+    // maps/CeladonDeptStore1F.c
+    CONVERTED_SCRIPT(CeladonDeptStore1FReceptionistScript);
+    CONVERTED_SCRIPT(CeladonDeptStore1FGentlemanScript);
+    CONVERTED_SCRIPT(CeladonDeptStore1FTeacherScript);
+
+    // maps/CeladonDeptStore2F.c
+    CONVERTED_SCRIPT(CeladonDeptStore2FClerk1Script);
+    CONVERTED_SCRIPT(CeladonDeptStore2FClerk2Script);
+    CONVERTED_SCRIPT(CeladonDeptStore2FPokefanMScript);
+    CONVERTED_SCRIPT(CeladonDeptStore2FYoungsterScript);
+
+    // maps/CeladonDeptStore3F.c
+    CONVERTED_SCRIPT(CeladonDeptStore3FClerkScript);
+    CONVERTED_SCRIPT(CeladonDeptStore3FYoungsterScript);
+    CONVERTED_SCRIPT(CeladonDeptStore3FGameboyKid1Script);
+    CONVERTED_SCRIPT(CeladonDeptStore3FGameboyKid2Script);
+    CONVERTED_SCRIPT(CeladonDeptStore3FSuperNerdScript);
+
+    // maps/CeladonDeptStore4F.c
+    CONVERTED_SCRIPT(CeladonDeptStore4FClerkScript);
+    CONVERTED_SCRIPT(CeladonDeptStore4FSuperNerdScript);
+    CONVERTED_SCRIPT(CeladonDeptStore4FYoungsterScript);
+
+    // maps/CeladonDeptStore5F.c
+    CONVERTED_SCRIPT(CeladonDeptStore5FClerk1Script);
+    CONVERTED_SCRIPT(CeladonDeptStore5FClerk2Script);
+    CONVERTED_SCRIPT(CeladonDeptStore5FGentlemanScript);
+    CONVERTED_SCRIPT(CeladonDeptStore5FSailorScript);
+    CONVERTED_SCRIPT(CeladonDeptStore5FTeacherScript);
+
+    // maps/CeladonDeptStore6F.c
+    CONVERTED_SCRIPT(CeladonDeptStore6FSuperNerdScript);
+    CONVERTED_SCRIPT(CeladonDeptStore6FYoungsterScript);
+
+    // maps/CeladonDeptStoreElevator.c
+
+    // maps/CeladonGameCorner.c
+    CONVERTED_SCRIPT(CeladonGameCornerClerkScript);
+    CONVERTED_SCRIPT(CeladonGameCornerReceptionistScript);
+    CONVERTED_SCRIPT(CeladonGameCornerPokefanMScript);
+    CONVERTED_SCRIPT(CeladonGameCornerTeacherScript);
+    CONVERTED_SCRIPT(CeladonGameCornerFishingGuruScript);
+    CONVERTED_SCRIPT(CeladonGameCornerFisherScript);
+    CONVERTED_SCRIPT(CeladonGameCornerFisherScript);
+    CONVERTED_SCRIPT(CeladonGymGuideScript);
+    CONVERTED_SCRIPT(CeladonGameCornerGrampsScript);
+
+    // maps/CeladonGameCornerPrizeRoom.c
+    CONVERTED_SCRIPT(CeladonGameCornerPrizeRoomGentlemanScript);
+    CONVERTED_SCRIPT(CeladonGameCornerPrizeRoomPharmacistScript);
+
+    // maps/CeladonGym.c
+    CONVERTED_SCRIPT(CeladonGymErikaScript);
+    CONVERTED_SCRIPT(TrainerLassMichelle);
+    CONVERTED_SCRIPT(TrainerPicnickerTanya);
+    CONVERTED_SCRIPT(TrainerBeautyJulia);
+    CONVERTED_SCRIPT(TrainerTwinsJoAndZoe1);
+    CONVERTED_SCRIPT(TrainerTwinsJoAndZoe2);
+
+    // maps/CeladonMansion1F.c
+    CONVERTED_SCRIPT(CeladonMansionManager);
+    CONVERTED_SCRIPT(CeladonMansion1FMeowth);
+    CONVERTED_SCRIPT(CeladonMansion1FClefairy);
+    CONVERTED_SCRIPT(CeladonMansion1FNidoranF);
+
+    // maps/CeladonMansion2F.c
+
+    // maps/CeladonMansion3F.c
+    CONVERTED_SCRIPT(GameFreakGameDesignerScript);
+    CONVERTED_SCRIPT(GameFreakGraphicArtistScript);
+    CONVERTED_SCRIPT(GameFreakProgrammerScript);
+    CONVERTED_SCRIPT(GameFreakCharacterDesignerScript);
+
+    // maps/CeladonMansionRoof.c
+    CONVERTED_SCRIPT(CeladonMansionRoofFisherScript);
+
+    // maps/CeladonMansionRoofHouse.c
+    CONVERTED_SCRIPT(CeladonMansionRoofHousePharmacistScript);
+
+    // maps/CeladonPokecenter1F.c
+    CONVERTED_SCRIPT(CeladonPokecenter1FNurseScript);
+    CONVERTED_SCRIPT(CeladonPokecenter1FGentlemanScript);
+    CONVERTED_SCRIPT(CeladonPokecenter1FPharmacistScript);
+    CONVERTED_SCRIPT(CeladonPokecenter1FCooltrainerFScript);
+    CONVERTED_SCRIPT(CeladonEusine);
+
     // maps/SaffronMagnetTrainStation.c
     CONVERTED_SCRIPT(SaffronMagnetTrainStationOfficerScript);
     CONVERTED_SCRIPT(SaffronMagnetTrainStationGymGuideScript);
     CONVERTED_SCRIPT(SaffronMagnetTrainStationTeacherScript);
     CONVERTED_SCRIPT(SaffronMagnetTrainStationLassScript);
+
+    // maps/MrPsychicsHouse.c
+    CONVERTED_SCRIPT(MrPsychic);
+
+    // maps/CopycatsHouse1F.c
+    CONVERTED_SCRIPT(CopycatsHouse1FPokefanMScript);
+    CONVERTED_SCRIPT(CopycatsHouse1FPokefanFScript);
+    CONVERTED_SCRIPT(CopycatsHouse1FBlisseyScript);
+
+    // maps/CopycatsHouse2F.c
+    CONVERTED_SCRIPT(Copycat);
+    CONVERTED_SCRIPT(CopycatsDodrio);
+    CONVERTED_SCRIPT(CopycatsHouse2FDoll);
+    CONVERTED_SCRIPT(CopycatsHouse2FDoll);
+    CONVERTED_SCRIPT(CopycatsHouse2FDoll);
+    CONVERTED_SCRIPT(Copycat);
+
+    // maps/FightingDojo.c
+    CONVERTED_SCRIPT(FightingDojoBlackBelt);
+    CONVERTED_SCRIPT(FightingDojoFocusBand);
+
+    // maps/SilphCo1F.c
+    CONVERTED_SCRIPT(SilphCoReceptionistScript);
+    CONVERTED_SCRIPT(SilphCoOfficerScript);
+
+    // maps/SaffronGym.c
+    CONVERTED_SCRIPT(SaffronGymSabrinaScript);
+    CONVERTED_SCRIPT(TrainerMediumRebecca);
+    CONVERTED_SCRIPT(TrainerPsychicFranklin);
+    CONVERTED_SCRIPT(TrainerMediumDoris);
+    CONVERTED_SCRIPT(TrainerPsychicJared);
+    CONVERTED_SCRIPT(SaffronGymGuideScript);
+
+    // maps/SaffronMart.c
+    CONVERTED_SCRIPT(SaffronMartClerkScript);
+    CONVERTED_SCRIPT(SaffronMartCooltrainerMScript);
+    CONVERTED_SCRIPT(SaffronMartCooltrainerFScript);
+
+    // maps/SaffronPokecenter1F.c
+    CONVERTED_SCRIPT(SaffronPokecenter1FNurseScript);
+    CONVERTED_SCRIPT(SaffronPokecenter1FTeacherScript);
+    CONVERTED_SCRIPT(SaffronPokecenter1FFisherScript);
+    CONVERTED_SCRIPT(SaffronPokecenter1FYoungsterScript);
+
+    // maps/FuchsiaGym.c
+    CONVERTED_SCRIPT(FuchsiaGymJanineScript);
+    CONVERTED_SCRIPT(LassAliceScript);
+    CONVERTED_SCRIPT(LassLindaScript);
+    CONVERTED_SCRIPT(PicnickerCindyScript);
+    CONVERTED_SCRIPT(CamperBarryScript);
+    CONVERTED_SCRIPT(FuchsiaGymGuideScript);
+
+    // maps/FuchsiaMart.c
+    CONVERTED_SCRIPT(FuchsiaMartClerkScript);
+    CONVERTED_SCRIPT(FuchsiaMartFisherScript);
+    CONVERTED_SCRIPT(FuchsiaMartCooltrainerFScript);
+
+    // maps/FuchsiaPokecenter1F.c
+    CONVERTED_SCRIPT(FuchsiaPokecenter1FNurseScript);
+    CONVERTED_SCRIPT(FuchsiaPokecenter1FCooltrainerMScript);
+    CONVERTED_SCRIPT(FuchsiaPokecenter1FCooltrainerFScript);
+    CONVERTED_SCRIPT(FuchsiaPokecenter1FJanineImpersonatorScript);
+
+    // maps/SafariZoneMainOffice.c
+
+    // maps/SafariZoneWardensHome.c
+    CONVERTED_SCRIPT(WardensGranddaughter);
+
+    // maps/BillsBrothersHouse.c
+    CONVERTED_SCRIPT(BillsBrotherScript);
+    CONVERTED_SCRIPT(BillsBrothersHouseYoungsterScript);
+
+    // maps/CinnabarPokecenter1F.c
+    CONVERTED_SCRIPT(CinnabarPokecenter1FNurseScript);
+    CONVERTED_SCRIPT(CinnabarPokecenter1FCooltrainerFScript);
+    CONVERTED_SCRIPT(CinnabarPokecenter1FFisherScript);
 
     // maps/SilverCavePokecenter1F.c
     CONVERTED_SCRIPT(SilverCavePokecenter1FNurseScript);
@@ -6538,6 +6886,48 @@ void init_function_pointers(void) {
 
     // maps/VermilionPortPassage.c
     CONVERTED_SCRIPT(VermilionPortPassageTeacherScript);
+
+    // maps/DiglettsCave.c
+    CONVERTED_SCRIPT(DiglettsCavePokefanMScript);
+
+    // maps/BillsHouse.c
+    CONVERTED_SCRIPT(BillsGrandpa);
+
+    // maps/MountMoon.c
+    CONVERTED_SCRIPT(ObjectEvent);
+    
+    // maps/MountMoonSquare.c
+    CONVERTED_SCRIPT(ObjectEvent);
+    CONVERTED_SCRIPT(ObjectEvent);
+    CONVERTED_SCRIPT(MtMoonSquareRock);
+    
+    // maps/MountMoonGiftShop.c
+    CONVERTED_SCRIPT(MountMoonGiftShopClerkScript);
+    CONVERTED_SCRIPT(MountMoonGiftShopClerkScript);
+    CONVERTED_SCRIPT(MountMoonGiftShopLassScript);
+    CONVERTED_SCRIPT(MountMoonGiftShopLassScript);
+    
+    // maps/RockTunnel1F.c
+    CONVERTED_SCRIPT(RockTunnel1FElixer);
+    CONVERTED_SCRIPT(RockTunnel1FTMSteelWing);
+
+    // maps/RockTunnelB1F.c
+    CONVERTED_SCRIPT(RockTunnelB1FIron);
+    CONVERTED_SCRIPT(RockTunnelB1FPPUp);
+    CONVERTED_SCRIPT(RockTunnelB1FRevive);
+
+    // maps/SeafoamGym.c
+    CONVERTED_SCRIPT(SeafoamGymBlaineScript);
+    CONVERTED_SCRIPT(SeafoamGymGuideScript);
+
+    // maps/PowerPlant.c
+    CONVERTED_SCRIPT(PowerPlantOfficerScript);
+    CONVERTED_SCRIPT(PowerPlantGymGuide1Script);
+    CONVERTED_SCRIPT(PowerPlantGymGuide2Script);
+    CONVERTED_SCRIPT(PowerPlantOfficer2Script);
+    CONVERTED_SCRIPT(PowerPlantGymGuide4Script);
+    CONVERTED_SCRIPT(PowerPlantManager);
+    CONVERTED_SCRIPT(Forest);
 
     // engine/events/overworld.c
     // REDIRECTED(Script_WaterfallFromMenu);
