@@ -183,7 +183,7 @@ const struct MailGFX MailGFXPointers[] = {
     //db ['-1'];  // end
     {(uint8_t)-1,   NULL},
 };
-static_assert(lengthof(MailGFXPointers) == NUM_MAIL + 1);
+static_assert(lengthof(MailGFXPointers) == NUM_MAIL + 1, "");
 
 static void ReadAnyMail_LoadGFX(const struct MailMsg* de){
     // LD_H_D;
@@ -1445,7 +1445,7 @@ tile_t Mail_Draw3x2Graphic(tile_t* hl, tile_t a){
 }
 
 uint8_t* LoadMailGFX_Color1(uint8_t* hl, const char* de, uint8_t start, uint8_t c){
-    uint8_t buffer[c * 2];
+    uint8_t* buffer = malloc(c * 2);
     LoadPNG1bppAssetSectionToVRAM_SkipEmptyTiles(buffer, de, start / LEN_1BPP_TILE, c / LEN_1BPP_TILE);
     const uint8_t* de_ = buffer;
     do {
@@ -1462,11 +1462,12 @@ uint8_t* LoadMailGFX_Color1(uint8_t* hl, const char* de, uint8_t start, uint8_t 
         // IF_NZ goto loop;
     } while(--c != 0);
     // RET;
+    free(buffer);
     return hl;
 }
 
 uint8_t* LoadMailGFX_Color2(uint8_t* hl, const char* de, uint8_t start, uint8_t c){
-    uint8_t buffer[c * 2];
+    uint8_t* buffer = malloc(c * 2);
     LoadPNG1bppAssetSectionToVRAM_SkipEmptyTiles(buffer, de, start / LEN_1BPP_TILE, c / LEN_1BPP_TILE);
     const uint8_t* de_ = buffer;
     do {
@@ -1483,11 +1484,12 @@ uint8_t* LoadMailGFX_Color2(uint8_t* hl, const char* de, uint8_t start, uint8_t 
         // IF_NZ goto loop;
     } while(--c != 0);
     // RET;
+    free(buffer);
     return hl;
 }
 
 uint8_t* LoadMailGFX_Color3(uint8_t* hl, const char* de, uint8_t start, uint8_t c){
-    uint8_t buffer[c * 2];
+    uint8_t* buffer = malloc(c * 2);
     LoadPNG1bppAssetSectionToVRAM_SkipEmptyTiles(buffer, de, start / LEN_1BPP_TILE, c / LEN_1BPP_TILE);
     const uint8_t* de_ = buffer;
     do {
@@ -1504,6 +1506,7 @@ uint8_t* LoadMailGFX_Color3(uint8_t* hl, const char* de, uint8_t start, uint8_t 
         // IF_NZ goto loop;
     } while(--c != 0);
     // RET;
+    free(buffer);
     return hl;
 
 // INCLUDE "gfx/mail.asm"
