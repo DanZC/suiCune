@@ -405,7 +405,7 @@ void BattleTurn(void){
             if(wram->wBattleEnded || wram->wForcedSwitch)
                 goto quit;
 
-        skip_iteration:
+        skip_iteration:;
             // CALL(aParsePlayerAction);
             // IF_NZ goto loop1;
         } while(!ParsePlayerAction_Conv());
@@ -452,6 +452,7 @@ void BattleTurn(void){
     } while(wram->wBattleEnded == 0);
 
 quit:
+    return;
     // RET;
 }
 
