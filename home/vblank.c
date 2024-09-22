@@ -744,7 +744,8 @@ void VBlank4(void) {
     CALL(aUpdateBGMap);
     CALL(aServe2bppRequest);
 
-    CALL(0xff80);  // TransferVirtualOAM
+    // CALL(0xff80);  // TransferVirtualOAM
+    TransferVirtualOAM();
 
     CALL(aUpdateJoypad);
 

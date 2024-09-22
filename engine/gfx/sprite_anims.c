@@ -1037,8 +1037,9 @@ void AnimSeq_PokegearArrow(void){
 }
 
 static void AnimSeq_PokegearArrow_Conv(struct SpriteAnim* bc){
-    REG_BC = (bc - wram->wSpriteAnim) * SPRITEANIMSTRUCT_LENGTH + wSpriteAnimationStructs;
-    CALLFAR(aAnimatePokegearModeIndicatorArrow);
+    // REG_BC = (bc - wram->wSpriteAnim) * SPRITEANIMSTRUCT_LENGTH + wSpriteAnimationStructs;
+    // CALLFAR(aAnimatePokegearModeIndicatorArrow);
+    AnimatePokegearModeIndicatorArrow_Conv(bc);
 }
 
 void AnimSeq_MemoryGameCursor(void){

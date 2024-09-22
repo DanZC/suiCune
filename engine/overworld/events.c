@@ -1174,7 +1174,7 @@ void PlayTalkObject_Conv(void){
 
 static u8_flag_s ObjectEventTypeArray_script(struct MapObject* bc) {
     PEEK("");
-    printf("script=%d\n", bc->objectScript);
+    printf("script=$%04x\n", bc->objectScript);
     // LD_HL(MAPOBJECT_SCRIPT_POINTER);
     // ADD_HL_BC;
     // LD_A_hli;
@@ -1188,9 +1188,10 @@ static u8_flag_s ObjectEventTypeArray_script(struct MapObject* bc) {
         return u8_flag(CallScript_Conv2(hl), true);
     }
     else {
-        if(!redirectFunc[(GetMapScriptsBank_Conv() << 14) | bc->objectScript])
+        printf("script_gb=$%08x\n", (GetMapScriptsBank_Conv() << 14) | (bc->objectScript & 0x3fff));
+        if(!redirectFunc[(GetMapScriptsBank_Conv() << 14) | (bc->objectScript & 0x3fff)])
             return u8_flag(CallScript_Conv2(ObjectEvent), true);
-        Script_fn_t script = (Script_fn_t)redirectFunc[(GetMapScriptsBank_Conv() << 14) | bc->objectScript];
+        Script_fn_t script = (Script_fn_t)redirectFunc[(GetMapScriptsBank_Conv() << 14) | (bc->objectScript & 0x3fff)];
         return u8_flag(CallScript_Conv2(script), true);
     }
 }

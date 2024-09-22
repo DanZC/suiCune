@@ -28,6 +28,8 @@
 #include "../util/scripting.h"
 #include "../data/text/common.h"
 #include "../data/tilesets.h"
+#include "../data/gb_tilesets.h"
+#include "../data/gb_map_pointers.h"
 
 const struct MapAttr* gMapAttrPointer;
 const uint8_t* gCurMapSceneScriptPointer;
@@ -1154,22 +1156,31 @@ void CopyMapAttributes_Conv(const struct MapAttr* attr){
     wram->wMapWidth = attr->width;
     // wMapWidth:: db
     // wMapBlocksBank:: db
-    wram->wMapBlocksBank = *(uint8_t*)AbsGBROMBankAddrToRAMAddr(wram->wMapAttributesBank, wram->wMapAttributesPointer + 3);
+    // wram->wMapBlocksBank = *(uint8_t*)AbsGBROMBankAddrToRAMAddr(wram->wMapAttributesBank, wram->wMapAttributesPointer + 3);
+    uint32_t blocks_ptr = GetGBMapBlocksPointer(wram->wMapGroup, wram->wMapNumber);
+    wram->wMapBlocksBank = BANK(blocks_ptr);
     // wMapBlocksPointer:: dw
-    wram->wMapBlocksPointer = *(uint16_t*)AbsGBROMBankAddrToRAMAddr(wram->wMapAttributesBank, wram->wMapAttributesPointer + 4);
+    // wram->wMapBlocksPointer = *(uint16_t*)AbsGBROMBankAddrToRAMAddr(wram->wMapAttributesBank, wram->wMapAttributesPointer + 4);
+    wram->wMapBlocksPointer = (blocks_ptr < 0x4000)? blocks_ptr: (blocks_ptr & 0x3fff) | 0x4000;
     gMapBlocksPath = attr->blocksPath;
     if(gMapBlocks.ptr != NULL) {
         FreeAsset(gMapBlocks);
     }
     gMapBlocks = LoadAsset(gMapBlocksPath);
     // wMapScriptsBank:: db
-    wram->wMapScriptsBank = *(uint8_t*)AbsGBROMBankAddrToRAMAddr(wram->wMapAttributesBank, wram->wMapAttributesPointer + 6);
+    uint32_t scripts_ptr = GetGBMapScriptsPointer(wram->wMapGroup, wram->wMapNumber);
+    // wram->wMapScriptsBank = *(uint8_t*)AbsGBROMBankAddrToRAMAddr(wram->wMapAttributesBank, wram->wMapAttributesPointer + 6);
+    wram->wMapScriptsBank = BANK(scripts_ptr);
+    printf("scripts_ptr=%08x bank=%d\n", scripts_ptr, wram->wMapScriptsBank);
     // wMapScriptsPointer:: dw
     gMapScriptsPointer = attr->scripts;
-    wram->wMapScriptsPointer = *(uint16_t*)AbsGBROMBankAddrToRAMAddr(wram->wMapAttributesBank, wram->wMapAttributesPointer + 7);
+    // wram->wMapScriptsPointer = *(uint16_t*)AbsGBROMBankAddrToRAMAddr(wram->wMapAttributesBank, wram->wMapAttributesPointer + 7);
+    wram->wMapScriptsPointer = (scripts_ptr < 0x4000)? scripts_ptr: (scripts_ptr & 0x3fff) | 0x4000;
     // wMapEventsPointer:: dw
+    uint32_t events_ptr = GetGBMapEventsPointer(wram->wMapGroup, wram->wMapNumber);
     gMapEventsPointer = attr->events;
-    wram->wMapEventsPointer = *(uint16_t*)AbsGBROMBankAddrToRAMAddr(wram->wMapAttributesBank, wram->wMapAttributesPointer + 9);
+    // wram->wMapEventsPointer = *(uint16_t*)AbsGBROMBankAddrToRAMAddr(wram->wMapAttributesBank, wram->wMapAttributesPointer + 9);
+    wram->wMapEventsPointer = (events_ptr < 0x4000)? events_ptr: (events_ptr & 0x3fff) | 0x4000;
     gCurMapObjectEventCount = attr->events->obj_event_count;
     gCurMapObjectEventsPointer = attr->events->obj_events;
     gCurMapBGEventCount = attr->events->bg_event_count;
@@ -1240,6 +1251,18 @@ no_east:
 
 }
 
+static void CopyGBMapConnection(struct MapConnection* dest, const struct MapConnectionData* src, uint16_t blocksPtr) {
+    dest->connectedMapGroup = src->connectedMapGroup;
+    dest->connectedMapNumber = src->connectedMapNumber;
+    dest->connectedMapWidth = src->connectedMapWidth;
+    dest->connectionStripLength = src->connectionStripLength;
+    dest->connectionStripLocation = wOverworldMapBlocks + (src->connectionStripLocation - wram->wOverworldMapBlocks);
+    dest->connectionStripPointer = blocksPtr + src->connectionStripOffset;
+    dest->connectionStripXOffset = src->connectionStripXOffset;
+    dest->connectionStripYOffset = src->connectionStripYOffset;
+    dest->connectionWindow = wOverworldMapBlocks + (src->connectionWindow - wram->wOverworldMapBlocks);
+}
+
 void GetMapConnections_Conv(const struct MapAttr* attr){
     // LD_A(0xff);
     // LD_addr_A(wNorthConnectedMapGroup);
@@ -1249,7 +1272,7 @@ void GetMapConnections_Conv(const struct MapAttr* attr){
 
     // LD_A_addr(wMapConnections);
     // LD_B_A;
-    uint8_t *_hl = AbsGBROMBankAddrToRAMAddr(wram->wMapAttributesBank, wram->wMapAttributesPointer + 12);
+    // uint8_t *_hl = AbsGBROMBankAddrToRAMAddr(wram->wMapAttributesBank, wram->wMapAttributesPointer + 12);
 
     // BIT_B(NORTH_F);
     // IF_Z goto no_north;
@@ -1258,8 +1281,11 @@ void GetMapConnections_Conv(const struct MapAttr* attr){
         // CALL(aGetMapConnection);
         GetMapConnection_Conv(gMapConnections + NORTH_F, attr->connections[NORTH_F]);
         printf("North connection loaded.\n");
-        CopyBytes_Conv2(wram_ptr(wNorthMapConnection), _hl, wSouthMapConnection - wNorthMapConnection);
-        _hl += wSouthMapConnection - wNorthMapConnection;
+        // CopyBytes_Conv2(wram_ptr(wNorthMapConnection), _hl, wSouthMapConnection - wNorthMapConnection);
+        // _hl += wSouthMapConnection - wNorthMapConnection;
+        uint32_t blocks_ptr = GetGBMapBlocksPointer(gMapConnections[NORTH_F].connectedMapGroup, gMapConnections[NORTH_F].connectedMapNumber);
+        CopyGBMapConnection((struct MapConnection*)wram_ptr(wNorthMapConnection), gMapConnections + NORTH_F, 
+            (blocks_ptr < 0x4000)? blocks_ptr: (blocks_ptr & 0x3fff) | 0x4000);
     }
     else {
         gMapConnections[NORTH_F].connectedMapGroup = 0xff;
@@ -1276,8 +1302,11 @@ void GetMapConnections_Conv(const struct MapAttr* attr){
         // CALL(aGetMapConnection);
         GetMapConnection_Conv(gMapConnections + SOUTH_F, attr->connections[SOUTH_F]);
         printf("South connection loaded.\n");
-        CopyBytes_Conv2(wram_ptr(wSouthMapConnection), _hl, wSouthMapConnection - wNorthMapConnection);
-        _hl += wSouthMapConnection - wNorthMapConnection;
+        // CopyBytes_Conv2(wram_ptr(wSouthMapConnection), _hl, wSouthMapConnection - wNorthMapConnection);
+        // _hl += wSouthMapConnection - wNorthMapConnection;
+        uint32_t blocks_ptr = GetGBMapBlocksPointer(gMapConnections[SOUTH_F].connectedMapGroup, gMapConnections[SOUTH_F].connectedMapNumber);
+        CopyGBMapConnection((struct MapConnection*)wram_ptr(wSouthMapConnection), gMapConnections + SOUTH_F, 
+            (blocks_ptr < 0x4000)? blocks_ptr: (blocks_ptr & 0x3fff) | 0x4000);
     }
     else {
         gMapConnections[SOUTH_F].connectedMapGroup = 0xff;
@@ -1294,8 +1323,11 @@ void GetMapConnections_Conv(const struct MapAttr* attr){
         // CALL(aGetMapConnection);
         GetMapConnection_Conv(gMapConnections + WEST_F, attr->connections[WEST_F]);
         printf("West connection loaded.\n");
-        CopyBytes_Conv2(wram_ptr(wWestMapConnection), _hl, wSouthMapConnection - wNorthMapConnection);
-        _hl += wSouthMapConnection - wNorthMapConnection;
+        // CopyBytes_Conv2(wram_ptr(wWestMapConnection), _hl, wSouthMapConnection - wNorthMapConnection);
+        // _hl += wSouthMapConnection - wNorthMapConnection;
+        uint32_t blocks_ptr = GetGBMapBlocksPointer(gMapConnections[WEST_F].connectedMapGroup, gMapConnections[WEST_F].connectedMapNumber);
+        CopyGBMapConnection((struct MapConnection*)wram_ptr(wWestMapConnection), gMapConnections + WEST_F, 
+            (blocks_ptr < 0x4000)? blocks_ptr: (blocks_ptr & 0x3fff) | 0x4000);
     }
     else {
         gMapConnections[WEST_F].connectedMapGroup = 0xff;
@@ -1312,8 +1344,11 @@ void GetMapConnections_Conv(const struct MapAttr* attr){
         // CALL(aGetMapConnection);
         GetMapConnection_Conv(gMapConnections + EAST_F, attr->connections[EAST_F]);
         printf("East connection loaded.\n");
-        CopyBytes_Conv2(wram_ptr(wEastMapConnection), _hl, wSouthMapConnection - wNorthMapConnection);
-        _hl += wSouthMapConnection - wNorthMapConnection;
+        // CopyBytes_Conv2(wram_ptr(wEastMapConnection), _hl, wSouthMapConnection - wNorthMapConnection);
+        // _hl += wSouthMapConnection - wNorthMapConnection;
+        uint32_t blocks_ptr = GetGBMapBlocksPointer(gMapConnections[EAST_F].connectedMapGroup, gMapConnections[EAST_F].connectedMapNumber);
+        CopyGBMapConnection((struct MapConnection*)wram_ptr(wEastMapConnection), gMapConnections + EAST_F, 
+            (blocks_ptr < 0x4000)? blocks_ptr: (blocks_ptr & 0x3fff) | 0x4000);
     }
     else {
         gMapConnections[EAST_F].connectedMapGroup = 0xff;
@@ -1445,12 +1480,13 @@ void ReadWarps(void){
 }
 
 void ReadWarps_Conv(const struct MapEvents* hl){
-    uint8_t* _hl = AbsGBROMBankAddrToRAMAddr(wram->wMapScriptsBank, wram->wMapEventsPointer);
+    // uint8_t* _hl = AbsGBROMBankAddrToRAMAddr(wram->wMapScriptsBank, wram->wMapEventsPointer);
     // LD_A_hli;
     // LD_C_A;
     // LD_addr_A(wCurMapWarpCount);
     gCurMapWarpCount = hl->warp_event_count;
-    wram->wCurMapWarpCount = _hl[2];
+    // wram->wCurMapWarpCount = _hl[2];
+    wram->wCurMapWarpCount = hl->warp_event_count;
     // LD_A_L;
     // LD_addr_A(wCurMapWarpsPointer);
     // LD_A_H;
@@ -1486,12 +1522,13 @@ void ReadCoordEvents(void){
 }
 
 void ReadCoordEvents_Conv(const struct MapEvents* hl){
-    uint8_t* _hl = AbsGBROMBankAddrToRAMAddr(wram->wMapScriptsBank, wram->wMapEventsPointer);
+    // uint8_t* _hl = AbsGBROMBankAddrToRAMAddr(wram->wMapScriptsBank, wram->wMapEventsPointer);
     // LD_A_hli;
     // LD_C_A;
     // LD_addr_A(wCurMapCoordEventCount);
     gCurMapCoordEventCount = hl->coord_event_count;
-    wram->wCurMapCoordEventCount = _hl[2 + 1 + (wram->wCurMapWarpCount * WARP_EVENT_SIZE)];
+    // wram->wCurMapCoordEventCount = _hl[2 + 1 + (wram->wCurMapWarpCount * WARP_EVENT_SIZE)];
+    wram->wCurMapCoordEventCount = hl->coord_event_count;
     // LD_A_L;
     // LD_addr_A(wCurMapCoordEventsPointer);
     // LD_A_H;
@@ -1530,12 +1567,13 @@ void ReadBGEvents(void){
 }
 
 void ReadBGEvents_Conv(const struct MapEvents* hl){
-    uint8_t* _hl = AbsGBROMBankAddrToRAMAddr(wram->wMapScriptsBank, wram->wMapEventsPointer);
+    // uint8_t* _hl = AbsGBROMBankAddrToRAMAddr(wram->wMapScriptsBank, wram->wMapEventsPointer);
     // LD_A_hli;
     // LD_C_A;
     // LD_addr_A(wCurMapBGEventCount);
     gCurMapBGEventCount = hl->bg_event_count;
-    wram->wCurMapBGEventCount = _hl[2 + 1 + (wram->wCurMapWarpCount * WARP_EVENT_SIZE) + 1 + (wram->wCurMapCoordEventCount * COORD_EVENT_SIZE)];
+    // wram->wCurMapBGEventCount = _hl[2 + 1 + (wram->wCurMapWarpCount * WARP_EVENT_SIZE) + 1 + (wram->wCurMapCoordEventCount * COORD_EVENT_SIZE)];
+    wram->wCurMapBGEventCount = hl->bg_event_count;
     // LD_A_L;
     // LD_addr_A(wCurMapBGEventsPointer);
     // LD_A_H;
@@ -1605,13 +1643,14 @@ void ReadObjectEvents_Conv(const struct MapEvents* hl){
     // CALL(aClearObjectStructs);
     ClearObjectStructs_Conv();
     // POP_DE;
-    uint8_t* _hl = AbsGBROMBankAddrToRAMAddr(wram->wMapScriptsBank, wram->wMapEventsPointer);
+    // uint8_t* _hl = AbsGBROMBankAddrToRAMAddr(wram->wMapScriptsBank, wram->wMapEventsPointer);
     // LD_HL(wMap1Object);
     // LD_A_de;
     // INC_DE;
     // LD_addr_A(wCurMapObjectEventCount);
     gCurMapObjectEventCount = hl->obj_event_count;
-    wram->wCurMapObjectEventCount = _hl[2 + 1 + (wram->wCurMapWarpCount * WARP_EVENT_SIZE) + 1 + (wram->wCurMapCoordEventCount * COORD_EVENT_SIZE) + 1 + (wram->wCurMapBGEventCount * BG_EVENT_SIZE)];
+    // wram->wCurMapObjectEventCount = _hl[2 + 1 + (wram->wCurMapWarpCount * WARP_EVENT_SIZE) + 1 + (wram->wCurMapCoordEventCount * COORD_EVENT_SIZE) + 1 + (wram->wCurMapBGEventCount * BG_EVENT_SIZE)];
+    wram->wCurMapObjectEventCount = hl->obj_event_count;
     // LD_A_E;
     // LD_addr_A(wCurMapObjectEventsPointer);
     // LD_A_D;
@@ -1718,13 +1757,13 @@ uint8_t CopyMapObjectEvents_Conv(struct MapObject* hl, const struct ObjEvent* de
         hl[i].objectTimeOfDay = de[i].h2;
         hl[i].objectColor = (de[i].color << 4) | (de[i].function & 0xf);
         hl[i].objectRange = de[i].sightRange;
-        hl[i].objectScript = GetGBScriptPointer(wram->wMapGroup, wram->wMapNumber, i);
+        hl[i].objectScript = 0x4000 | (GetGBScriptPointer(wram->wMapGroup, wram->wMapNumber, i) & 0x3fff);
         hl[i].objectEventFlag = (uint16_t)de[i].eventFlag;
         if(hl[i].objectEventFlag != 0xffff)
-            printf("%02d: x=%d, y=%d, script=%d, eventFlag=%d (%c)\n", i, hl[i].objectXCoord, hl[i].objectYCoord, i, (uint16_t)de[i].eventFlag,
+            printf("%02d: x=%d, y=%d, script=$%04x, eventFlag=%d (%c)\n", i, hl[i].objectXCoord, hl[i].objectYCoord, hl[i].objectScript, (uint16_t)de[i].eventFlag,
                 (EventFlagAction_Conv2(hl[i].objectEventFlag, CHECK_FLAG))? '1': '0');
         else {
-            printf("%02d: x=%d, y=%d, script=%d\n", i, hl[i].objectXCoord, hl[i].objectYCoord, i);
+            printf("%02d: x=%d, y=%d, script=$%04x\n", i, hl[i].objectXCoord, hl[i].objectYCoord, hl[i].objectScript);
         }
     // loop2:
         // LD_A_de;
@@ -4723,10 +4762,10 @@ void CopyMapPartial_Conv2(void){
     wram->wMapTileset = mp->tileset;
     wram->wEnvironment = mp->environment;
     gMapAttrPointer = mp->attr;
-    bank_push(BANK(aMapGroupPointers));
-    wram->wMapAttributesBank = gb_read(GetMapPointer_Conv());
-    wram->wMapAttributesPointer = gb_read16(GetMapPointer_Conv() + 3);
-    bank_pop;
+// This is for GB Save compatability.
+    uint32_t gb_attr_ptr = GetGBMapAttributePointer(wram->wMapGroup, wram->wMapNumber);
+    wram->wMapAttributesBank = BANK(gb_attr_ptr);
+    wram->wMapAttributesPointer = (gb_attr_ptr < 0x4000)? gb_attr_ptr : (gb_attr_ptr & 0x3fff) | 0x4000;
 }
 
 void SwitchToMapScriptsBank(void){
@@ -5105,7 +5144,15 @@ void LoadMapTileset(void){
 
 void LoadMapTileset_Conv(void){
     // uint16_t hl = AddNTimes_Conv(mTilesets, TILESET_LENGTH, wram->wMapTileset);
-    FarCopyBytes_Conv(wTilesetBank, BANK(aTilesets), mTilesets + (wram->wMapTileset * TILESET_LENGTH), TILESET_LENGTH);
+    // FarCopyBytes_Conv(wTilesetBank, BANK(aTilesets), mTilesets + (wram->wMapTileset * TILESET_LENGTH), TILESET_LENGTH);
+    wram->wTilesetBank = BANK(GBTilesets[wram->wMapTileset].gfx_ptr);
+    wram->wTilesetAddress = (GBTilesets[wram->wMapTileset].gfx_ptr & 0x3fff) | 0x4000;
+    wram->wTilesetBlocksBank = BANK(GBTilesets[wram->wMapTileset].meta_ptr);
+    wram->wTilesetBlocksAddress = (GBTilesets[wram->wMapTileset].meta_ptr & 0x3fff) | 0x4000;
+    wram->wTilesetCollisionBank = BANK(GBTilesets[wram->wMapTileset].coll_ptr);
+    wram->wTilesetCollisionAddress = (GBTilesets[wram->wMapTileset].coll_ptr & 0x3fff) | 0x4000;
+    wram->wTilesetAnim = (GBTilesets[wram->wMapTileset].anim_ptr & 0x3fff) | 0x4000;
+    wram->wTilesetPalettes = (GBTilesets[wram->wMapTileset].pal_ptr & 0x3fff) | 0x4000;
 }
 
 void LoadMapTileset_Conv2(void){

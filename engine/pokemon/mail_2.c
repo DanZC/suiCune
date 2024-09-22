@@ -16,6 +16,7 @@
 #include "../../data/items/mail_items.h"
 #include "../../gfx/mail.h"
 #include "../printer/printer.h"
+#include <stdlib.h>
 
 //  MailGFXPointers indexes
 //  LoadMailPalettes.MailPals indexes (see gfx/mail/mail.pal)

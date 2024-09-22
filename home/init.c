@@ -329,10 +329,10 @@ void Init_Conv(void) {
 
     // LD_A(BANK(aWriteOAMDMACodeToHRAM));  // aka BANK(GameInit)
     // RST(aBankswitch);
-    Bankswitch_Conv(BANK(aWriteOAMDMACodeToHRAM));
+    // Bankswitch_Conv(BANK(aWriteOAMDMACodeToHRAM));
 
     // CALL(aWriteOAMDMACodeToHRAM);
-    SafeCallGBAuto(aWriteOAMDMACodeToHRAM);
+    // SafeCallGBAuto(aWriteOAMDMACodeToHRAM);
 
     // XOR_A_A;
     // LDH_addr_A(hMapAnims);

@@ -1124,6 +1124,7 @@ void gb_draw_line(void) {
 #include "macros.h"
 #include "../../functions.h"
 #include "../../data/constant_strings.h"
+#include "../../data/gb_map_pointers.h"
 #include "../../data/script_pointers.h"
 #include "../../data/json_load.h"
 
@@ -3820,6 +3821,7 @@ int main(int argc, char* argv[]) {
     }
 
     PopulateConstantsHashtable();
+    PopulateMapPointerTable();
     PopulateMapScriptTable();
     JSONLoadTables();
 
