@@ -11,6 +11,7 @@
 #include "../../home/copy.h"
 #include "../../home/gfx.h"
 #include "../../home/sram.h"
+#include "../../home/map.h"
 #include "../../charmap.h"
 #include "../../data/trainers/class_names.h"
 #include "../../data/trainers/parties.h"
@@ -425,6 +426,8 @@ static void DebugMenu_BattleTest_StartBattle(uint8_t tclass, uint8_t tid) {
     ClearTilemap_Conv2();
     WaitBGMap_Conv();
     DelayFrames_Conv(10);
+    wram->wMapTileset = TILESET_JOHTO;
+    LoadMapTileset_Conv2();
 
     // Rival name and Player name are null by default. 
     U82CB(wram->wRivalName, NAME_LENGTH, "???@");
@@ -757,7 +760,7 @@ void DebugMenu_Pics(void) {
     v_LoadFontsExtra1_Conv();
     v_LoadFontsExtra2_Conv();
     v_LoadStandardFont_Conv();
-    TextboxPalette_Conv2(wram->wTilemap, SCREEN_WIDTH, SCREEN_HEIGHT);
+    TextboxPalette_Conv2(wram->wTilemap, SCREEN_WIDTH - 2, SCREEN_HEIGHT - 2);
     ClearScreen_Conv2();
     WaitBGMap2_Conv();
     // DelayFrame();
@@ -807,7 +810,7 @@ void DebugMenu_Scripting(void) {
     v_LoadFontsExtra1_Conv();
     v_LoadFontsExtra2_Conv();
     v_LoadStandardFont_Conv();
-    TextboxPalette_Conv2(wram->wTilemap, SCREEN_WIDTH, SCREEN_HEIGHT);
+    TextboxPalette_Conv2(wram->wTilemap, SCREEN_WIDTH - 2, SCREEN_HEIGHT - 2);
     WaitBGMap_Conv();
     DelayFrame();
 }

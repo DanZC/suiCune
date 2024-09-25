@@ -445,6 +445,9 @@ void LoadMetatiles_Conv(void){
     // LD_A_addr(wOverworldMapAnchor + 1);
     // LD_D_A;
     uint8_t* de = AbsGBBankAddrToRAMAddr(MBANK(awOverworldMapBlocks), wram->wOverworldMapAnchor);
+    if(!de) {
+        de = wram->wSurroundingTiles;
+    }
     // LD_HL(wSurroundingTiles);
     uint8_t* hl = wram->wSurroundingTiles;
     // LD_B(SCREEN_META_HEIGHT);
