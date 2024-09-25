@@ -2,7 +2,7 @@
 
 This is an attempt at a PC port of Pokemon Crystal. It currently runs, but is not recommended to be used for any projects until completed. Additionally, it may be prone to crashes/buggy behavior. The maintainer is not to be held liable for any mishaps.
 
-The goal is to get assets to load from outside files, and to be able to rewrite parts of the game in C. The game currently relies on a base rom (Not provided). Eventually, this requirement should be phased out. A good example to look at is audio/engine.c
+The goal is to get assets to load from outside files, and to be able to rewrite parts of the game in C. A good example to look at is audio/engine.c.
 
 
 **Overview**
@@ -15,12 +15,19 @@ The project starts off with a modified version of pokecrystal, with no reliance 
 
 **Setup**
 
-Copy a rom of pokemon crystal US to the root directory, and name it "baserom.gbc"
-in the root folder, run
+***For MSYS2***
 
-    make clean && make
+Install SDL2, SDL2_net, and PhysFS using pacman. The UCRT repositories are recommended.
+
+Then run
+
+    make clean; make
 
 Then run suiCune to launch
+
+***For Linux***
+
+*TODO: Add Linux build instructions...*
 
 ***For Visual Studio***
 
@@ -92,6 +99,7 @@ After a function is converted, it can be rewritten. Keep in mind that if a funct
 **Closing**
 
 - This project is for educational purposes, and should not be used for any commercial or profitable causes
+- Follow development of this port on **[Discord](https://discord.gg/29ay2SFRHm)**
 
 
 ## See also
@@ -115,7 +123,3 @@ Other disassembly projects:
 [pokeruby]: https://github.com/pret/pokeruby
 [pokefirered]: https://github.com/pret/pokefirered
 [pokeemerald]: https://github.com/pret/pokeemerald
-[discord]: https://discord.gg/d5dubZ3
-[irc]: https://web.libera.chat/?#pret
-[ci]: https://github.com/pret/pokecrystal/actions
-[ci-badge]: https://github.com/pret/pokecrystal/actions/workflows/main.yml/badge.svg
