@@ -1,5 +1,6 @@
 #include "../../constants.h"
 #include "map_palettes.h"
+#include "../../home/map.h"
 
 void v_SwapTextboxPalettes(void){
     hlcoord(0, 0, wTilemap);
@@ -83,7 +84,8 @@ void v_SwapTextboxPalettes_Conv(void){
                 // LD_H_A;
                 // LD_A_hl;
                 // AND_A(0xf);
-                *de = (*(uint8_t*)AbsGBROMBankAddrToRAMAddr(BANK(av_SwapTextboxPalettes), wram->wTilesetPalettes + (a >> 1))) & 0xf;
+                // *de = (*(uint8_t*)AbsGBROMBankAddrToRAMAddr(BANK(av_SwapTextboxPalettes), wram->wTilesetPalettes + (a >> 1))) & 0xf;
+                *de = gTilesetPointer->palMap[a >> 1] & 0xf;
                 // goto next;
             }
             else {
@@ -97,7 +99,8 @@ void v_SwapTextboxPalettes_Conv(void){
                 // LD_A_hl;
                 // SWAP_A;
                 // AND_A(0xf);
-                *de = ((*(uint8_t*)AbsGBROMBankAddrToRAMAddr(BANK(av_SwapTextboxPalettes), wram->wTilesetPalettes + (a >> 1))) & 0xf0) >> 4;
+                // *de = ((*(uint8_t*)AbsGBROMBankAddrToRAMAddr(BANK(av_SwapTextboxPalettes), wram->wTilesetPalettes + (a >> 1))) & 0xf0) >> 4;
+                *de = (gTilesetPointer->palMap[a >> 1] & 0xf0) >> 4;
             }
         // next:
             // POP_HL;
@@ -188,7 +191,8 @@ void v_ScrollBGMapPalettes_Conv(uint8_t c){
             // LD_H_A;
             // LD_A_hl;
             // AND_A(0xf);
-            *de = (*(uint8_t*)AbsGBROMBankAddrToRAMAddr(BANK(av_SwapTextboxPalettes), wram->wTilesetPalettes + (a >> 1))) & 0xf;
+            // *de = (*(uint8_t*)AbsGBROMBankAddrToRAMAddr(BANK(av_SwapTextboxPalettes), wram->wTilesetPalettes + (a >> 1))) & 0xf;
+            *de = gTilesetPointer->palMap[a >> 1] & 0xf;
             // goto next;
         }
         else {
@@ -202,7 +206,8 @@ void v_ScrollBGMapPalettes_Conv(uint8_t c){
             // LD_A_hl;
             // SWAP_A;
             // AND_A(0xf);
-            *de = ((*(uint8_t*)AbsGBROMBankAddrToRAMAddr(BANK(av_SwapTextboxPalettes), wram->wTilesetPalettes + (a >> 1))) & 0xf0) >> 4;
+            // *de = ((*(uint8_t*)AbsGBROMBankAddrToRAMAddr(BANK(av_SwapTextboxPalettes), wram->wTilesetPalettes + (a >> 1))) & 0xf0) >> 4;
+            *de = (gTilesetPointer->palMap[a >> 1] & 0xf0) >> 4;
         }
 
     // next:

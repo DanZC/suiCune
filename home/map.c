@@ -3339,58 +3339,71 @@ void BufferScreen_Conv(void){
 }
 
 void SaveScreen(void){
-    LD_HL(wOverworldMapAnchor);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    LD_DE(wScreenSave);
-    LD_A_addr(wMapWidth);
-    ADD_A(6);
-    LDH_addr_A(hMapObjectIndex);
-    LD_A_addr(wPlayerStepDirection);
-    AND_A_A;
-    IF_Z goto down;
-    CP_A(UP);
-    IF_Z goto up;
-    CP_A(LEFT);
-    IF_Z goto left;
-    CP_A(RIGHT);
-    IF_Z goto right;
-    RET;
+    // LD_HL(wOverworldMapAnchor);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    tile_t* hl = GBToRAMAddr(wram->wOverworldMapAnchor);
+    // LD_DE(wScreenSave);
+    // LD_A_addr(wMapWidth);
+    // ADD_A(6);
+    // LDH_addr_A(hMapObjectIndex);
+    hram->hMapObjectIndex = wram->wMapWidth + 6;
+    // LD_A_addr(wPlayerStepDirection);
+    // AND_A_A;
+    tile_t* de;
+    switch(wram->wPlayerStepDirection) {
+        // IF_Z goto down;
+        case DOWN: {
+        // down:
+            // LD_DE(wScreenSave);
+            de = wram->wScreenSave;
+            goto vertical;
 
+        vertical:
+            // LD_B(SCREEN_META_WIDTH);
+            // LD_C(SCREEN_META_HEIGHT - 1);
+            // JR(mSaveScreen_LoadConnection);
+            return SaveScreen_LoadConnection_Conv(hl, de, SCREEN_META_WIDTH, SCREEN_META_HEIGHT - 1);
+        }
+        // CP_A(UP);
+        // IF_Z goto up;
+        case UP: {
+        // up:
+            // LD_DE(wScreenSave + SCREEN_META_WIDTH);
+            de = wram->wScreenSave + SCREEN_META_WIDTH;
+            // LDH_A_addr(hMapObjectIndex);
+            // LD_C_A;
+            // LD_B(0);
+            // ADD_HL_BC;
+            hl += hram->hMapObjectIndex;
+            goto vertical;
+        }
+        // CP_A(LEFT);
+        // IF_Z goto left;
+        case LEFT: {
+        // left:
+            // LD_DE(wScreenSave + 1);
+            de = wram->wScreenSave + 1;
+            // INC_HL;
+            goto horizontal;
 
-up:
-    LD_DE(wScreenSave + SCREEN_META_WIDTH);
-    LDH_A_addr(hMapObjectIndex);
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    goto vertical;
-
-
-down:
-    LD_DE(wScreenSave);
-
-vertical:
-    LD_B(SCREEN_META_WIDTH);
-    LD_C(SCREEN_META_HEIGHT - 1);
-    JR(mSaveScreen_LoadConnection);
-
-
-left:
-    LD_DE(wScreenSave + 1);
-    INC_HL;
-    goto horizontal;
-
-
-right:
-    LD_DE(wScreenSave);
-
-horizontal:
-    LD_B(SCREEN_META_WIDTH - 1);
-    LD_C(SCREEN_META_HEIGHT);
-    JR(mSaveScreen_LoadConnection);
-
+        horizontal:
+            // LD_B(SCREEN_META_WIDTH - 1);
+            // LD_C(SCREEN_META_HEIGHT);
+            // JR(mSaveScreen_LoadConnection);
+            return SaveScreen_LoadConnection_Conv(hl, de, SCREEN_META_WIDTH - 1, SCREEN_META_HEIGHT);
+        }
+        // CP_A(RIGHT);
+        // IF_Z goto right;
+        case RIGHT: {
+        // right:
+            // LD_DE(wScreenSave);
+            de = wram->wScreenSave;
+            goto horizontal;
+        }
+    }
+    // RET;
 }
 
 void LoadConnectionBlockData(void){
@@ -3841,7 +3854,7 @@ nope:
 //  Get the collision byte for tile d, e
 uint8_t GetCoordTile_Conv(uint8_t d, uint8_t e){
     // CALL(aGetBlockLocation);
-    uint8_t* hl = GetBlockLocation_Conv(d, e);
+    const uint8_t* hl = GetBlockLocation_Conv(d, e);
     // LD_A_hl;
     uint8_t a = *hl;
     // AND_A_A;
@@ -3857,7 +3870,8 @@ uint8_t GetCoordTile_Conv(uint8_t d, uint8_t e){
     // LD_A_addr(wTilesetCollisionAddress + 1);
     // LD_B_A;
     // ADD_HL_BC;
-    hl = AbsGBBankAddrToRAMAddr(wram->wTilesetCollisionBank, wram->wTilesetCollisionAddress + (a << 2));
+    // hl = AbsGBBankAddrToRAMAddr(wram->wTilesetCollisionBank, wram->wTilesetCollisionAddress + (a << 2));
+    hl = gTilesetPointer->coll + (a << 2);
     // RR_D;
     // IF_NC goto nocarry;
     // INC_HL;

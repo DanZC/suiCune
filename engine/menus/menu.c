@@ -1271,7 +1271,7 @@ void Move2DMenuCursor_Conv(void){
     // LD_L_A;
     // LD_A_hl;
     // CP_A(0xed);
-    if(*hl == CHAR_RIGHT_CURSOR) {
+    if(wram->wCursorCurrentTile != 0 && *hl == CHAR_RIGHT_CURSOR) {
         // JR_NZ (mPlace2DMenuCursor);
         // LD_A_addr(wCursorOffCharacter);
         // LD_hl_A;

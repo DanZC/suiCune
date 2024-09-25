@@ -204,6 +204,7 @@ extern uint8_t gCurMapObjectEventCount;
 extern const struct ObjEvent* gCurMapObjectEventsPointer;
 
 extern const struct TileAnimFrame* gTilesetAnim;
+extern const struct Tileset* gTilesetPointer;
 
 extern struct BGEvent gCurBGEvent;
 extern struct MapConnectionData gMapConnections[4];

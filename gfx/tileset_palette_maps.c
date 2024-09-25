@@ -14,16 +14,16 @@
 // endr
 // ENDM
 #define tilepal_bank_(_b) (_b << OAM_TILE_BANK)
-#define tilepal_value_(_b, _x) (tilepal_bank_(_b) | PAL_BG_##_x)
+#define tilepal_value_(_b, _x, _y) (((tilepal_bank_(_b) | PAL_BG_##_y) << 4) | (tilepal_bank_(_b) | PAL_BG_##_x))
 #define tilepal(_0, ...) CPPX_INVOKE( CPPX_CONCAT ( tilepal_value_, PP_NARG(__VA_ARGS__) ) , (_0, __VA_ARGS__) )
-#define tilepal_value_1(_b, _0) tilepal_value_(_b, _0)
-#define tilepal_value_2(_b, _0, _1) tilepal_value_(_b, _0), tilepal_value_(_b, _1)
-#define tilepal_value_3(_b, _0, _1, _2) tilepal_value_2(_b, _0, _1), tilepal_value_(_b, _2)
-#define tilepal_value_4(_b, _0, _1, _2, _3) tilepal_value_3(_b, _0, _1, _2), tilepal_value_(_b, _3)
-#define tilepal_value_5(_b, _0, _1, _2, _3, _4) tilepal_value_4(_b, _0, _1, _2, _3), tilepal_value_(_b, _4)
-#define tilepal_value_6(_b, _0, _1, _2, _3, _4, _5) tilepal_value_5(_b, _0, _1, _2, _3, _4), tilepal_value_(_b, _5)
-#define tilepal_value_7(_b, _0, _1, _2, _3, _4, _5, _6) tilepal_value_6(_b, _0, _1, _2, _3, _4, _5), tilepal_value_(_b, _6)
-#define tilepal_value_8(_b, _0, _1, _2, _3, _4, _5, _6, _7) tilepal_value_7(_b, _0, _1, _2, _3, _4, _5, _6), tilepal_value_(_b, _7)
+// #define tilepal_value_1(_b, _0) tilepal_value_(_b, _0)
+// #define tilepal_value_2(_b, _0, _1) tilepal_value_(_b, _0), tilepal_value_(_b, _1)
+// #define tilepal_value_3(_b, _0, _1, _2) tilepal_value_2(_b, _0, _1), tilepal_value_(_b, _2)
+// #define tilepal_value_4(_b, _0, _1, _2, _3) tilepal_value_3(_b, _0, _1, _2), tilepal_value_(_b, _3)
+// #define tilepal_value_5(_b, _0, _1, _2, _3, _4) tilepal_value_4(_b, _0, _1, _2, _3), tilepal_value_(_b, _4)
+// #define tilepal_value_6(_b, _0, _1, _2, _3, _4, _5) tilepal_value_5(_b, _0, _1, _2, _3, _4), tilepal_value_(_b, _5)
+// #define tilepal_value_7(_b, _0, _1, _2, _3, _4, _5, _6) tilepal_value_6(_b, _0, _1, _2, _3, _4, _5), tilepal_value_(_b, _6)
+#define tilepal_value_8(_b, _0, _1, _2, _3, _4, _5, _6, _7) tilepal_value_(_b, _0, _1), tilepal_value_(_b, _2, _3), tilepal_value_(_b, _4, _5), tilepal_value_(_b, _6, _7)
 
 const uint8_t TilesetKantoPalMap[] = {
 #include "tilesets/kanto_palette_map.h"

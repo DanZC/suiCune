@@ -14,6 +14,7 @@
 
 #define NO_PHYSFS
 // #define DEBUG_WINDOW
+#define USE_ROM_FILE 0
 #ifdef _MSC_VER
 #include <SDL.h>
 #else
@@ -35,6 +36,7 @@
 #include "../../audio/load.h"
 #include <stdbool.h>
 #include "../../home/serial.h"
+#include <setjmp.h>
 
 extern jmp_buf reset_point;
 
@@ -2889,16 +2891,21 @@ void gb_finish_frame(void) {
     sdl_loop();
 }
 
+#define POKEMON_CRYSTAL_SAVE_SIZE 0x8000
 /**
  * Gets the size of the save file required for the ROM.
  */
 uint_fast32_t gb_get_save_size(void) {
+    #if USE_ROM_FILE
     const uint_fast16_t ram_size_location = 0x0149;
     const uint_fast32_t ram_sizes[] =
         {
             0x00, 0x800, 0x2000, 0x8000, 0x20000, 0x10000};
     uint8_t ram_size = gb.gb_rom_read(ram_size_location);
     return ram_sizes[ram_size];
+    #else
+    return POKEMON_CRYSTAL_SAVE_SIZE; // Hardcoded save size
+    #endif
 }
 
 /**
@@ -3022,6 +3029,11 @@ void gb_reset(void) {
     gb.nestedCalls = 0;
 }
 
+#define POKEMON_CRYSTAL_CGB_FLAG 192
+#define POKEMON_CRYSTAL_MBC 16
+#define POKEMON_CRYSTAL_BANK_COUNT 6
+#define POKEMON_CRYSTAL_RAM_SIZE 3
+
 /**
  * Initialise the emulator context. gb_reset() is also called to initialise
  * the CPU.
@@ -3032,10 +3044,12 @@ enum gb_init_error_e gb_init(
     void (*gb_cart_ram_write)(const uint_fast32_t, const uint8_t),
     void (*gb_error)(const enum gb_error_e, const uint16_t),
     void *priv) {
+    #if USE_ROM_FILE
     const uint16_t cgb_flag = 0x0143;
     const uint16_t mbc_location = 0x0147;
     const uint16_t bank_count_location = 0x0148;
     const uint16_t ram_size_location = 0x0149;
+    #endif
     /**
      * Table for cartridge type (MBC). -1 if invalid.
      * TODO: MMM01 is untested.
@@ -3076,6 +3090,7 @@ enum gb_init_error_e gb_init(
     gb.gb_serial_tx = NULL;
     gb.gb_serial_rx = NULL;
 
+    #if USE_ROM_FILE
     /* Check valid ROM using checksum value. */
     {
         uint8_t x = 0;
@@ -3096,10 +3111,19 @@ enum gb_init_error_e gb_init(
             (gb.mbc = cart_mbc[mbc_value]) == 255u)
             return GB_INIT_CARTRIDGE_UNSUPPORTED;
     }
-
+    #else
+    gb.cgb.cgbMode = (POKEMON_CRYSTAL_CGB_FLAG & 0x80) >> 7;
+    gb.mbc = cart_mbc[POKEMON_CRYSTAL_MBC];
+    #endif
+    #if USE_ROM_FILE
     gb.cart_ram = cart_ram[gb.gb_rom_read(mbc_location)];
     gb.num_rom_banks_mask = num_rom_banks_mask[gb.gb_rom_read(bank_count_location)] - 1;
     gb.num_ram_banks = num_ram_banks[gb.gb_rom_read(ram_size_location)];
+    #else
+    gb.cart_ram = cart_ram[POKEMON_CRYSTAL_MBC];
+    gb.num_rom_banks_mask = num_rom_banks_mask[POKEMON_CRYSTAL_BANK_COUNT] - 1;
+    gb.num_ram_banks = num_ram_banks[POKEMON_CRYSTAL_RAM_SIZE];
+    #endif
 
     gb.lcd_blank = 0;
     gb.display.lcd_draw_line = NULL;
@@ -3682,12 +3706,14 @@ int main(int argc, char* argv[]) {
 #endif
 
     /* Copy input ROM file to allocated memory. */
+    #if USE_ROM_FILE
     if ((priv.rom = read_rom_to_ram(rom_file_name)) == NULL) {
         printf("%d: %s\n", __LINE__, strerror(errno));
         ret = EXIT_FAILURE;
         goto out;
     }
     patch_rom(priv.rom);
+    #endif
     /* If no save file is specified, copy save file (with specific name) to
      * allocated memory. */
     if (save_file_name == NULL) {
@@ -3984,7 +4010,7 @@ quit:
     write_cart_ram_file(save_file_name, save_file2_name, &priv.cart_ram, gb_get_save_size());
 
 out:
-    free(priv.rom);
+    if(priv.rom) free(priv.rom);
     free(priv.cart_ram);
 
     /* If the save file name was automatically generated (which required memory

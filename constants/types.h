@@ -1450,6 +1450,14 @@ struct ElevatorData
     const struct ElevatorFloorData* floorData;
 };
 
+struct Tileset {
+    const char* const gfxPath;
+    const char* const metaPath;
+    const uint8_t* const coll;
+    const struct TileAnimFrame* const anim;
+    const uint8_t* const palMap;
+};
+
 struct StartMenuItem {
     uint8_t (*function)(void);
     const char* label;
