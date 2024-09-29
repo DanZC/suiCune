@@ -3,6 +3,13 @@
 #include "../../home/copy.h"
 #include "color.h"
 
+static const uint16_t Palette_TextBG7[] = {
+    rgb(31, 31, 31),
+    rgb( 8, 19, 28),
+    rgb( 5,  5, 16),
+    rgb( 0,  0,  0),
+};
+
 void GetCrystalCGBLayout(void){
     LD_A_B;
     CP_A(SCGB_DEFAULT);
@@ -59,7 +66,7 @@ col:
 }
 
 //  This is a copy of FillBoxCGB.
-void Crystal_FillBoxCGB_Conv(uint8_t* hl, uint8_t b, uint8_t c, uint8_t a){
+tile_t* Crystal_FillBoxCGB_Conv(tile_t* hl, uint8_t b, uint8_t c, uint8_t a){
 
 // row:
     // PUSH_BC;
@@ -81,90 +88,93 @@ void Crystal_FillBoxCGB_Conv(uint8_t* hl, uint8_t b, uint8_t c, uint8_t a){
 
 void Crystal_WipeAttrmap(void){
 //  This is a copy of WipeAttrmap.
-    hlcoord(0, 0, wAttrmap);
-    LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
-    XOR_A_A;
-    CALL(aByteFill);
-    RET;
-
+    // hlcoord(0, 0, wAttrmap);
+    // LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
+    // XOR_A_A;
+    // CALL(aByteFill);
+    // RET;
+    return ByteFill_Conv2(coord(0, 0, wram->wAttrmap), SCREEN_HEIGHT * SCREEN_WIDTH, 0);
 }
 
 void MG_Mobile_Layout_LoadPals(void){
-    LD_DE(wBGPals1);
-    LD_HL(mPalette_MysteryGiftMobile);
-    LD_BC(5 * PALETTE_SIZE);
-    LD_A(MBANK(awBGPals1));
-    CALL(aFarCopyWRAM);
-    LD_DE(wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT);
-    LD_HL(mPalette_TextBG7);
-    LD_BC(1 * PALETTE_SIZE);
-    LD_A(MBANK(awBGPals1));
-    CALL(aFarCopyWRAM);
-    RET;
-
+    // LD_DE(wBGPals1);
+    // LD_HL(mPalette_MysteryGiftMobile);
+    // LD_BC(5 * PALETTE_SIZE);
+    // LD_A(MBANK(awBGPals1));
+    // CALL(aFarCopyWRAM);
+    LoadPaletteAssetColorsToArray(wram->wBGPals1, Palette_MysteryGiftMobile, 0, 5 * NUM_PAL_COLORS);
+    // LD_DE(wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT);
+    // LD_HL(mPalette_TextBG7);
+    // LD_BC(1 * PALETTE_SIZE);
+    // LD_A(MBANK(awBGPals1));
+    // CALL(aFarCopyWRAM);
+    CopyBytes_Conv2(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT, Palette_TextBG7, sizeof(Palette_TextBG7));
+    // RET;
 }
 
 void v_CrystalCGB_MobileLayout0(void){
-    CALL(aMG_Mobile_Layout_LoadPals);
-    CALL(aCrystal_WipeAttrmap);
-    CALL(aMG_Mobile_Layout_CreatePalBoxes);
-    FARCALL(aApplyAttrmap);
-    FARCALL(aApplyPals);
-    RET;
-
+    // CALL(aMG_Mobile_Layout_LoadPals);
+    MG_Mobile_Layout_LoadPals();
+    // CALL(aCrystal_WipeAttrmap);
+    Crystal_WipeAttrmap();
+    // CALL(aMG_Mobile_Layout_CreatePalBoxes);
+    MG_Mobile_Layout_CreatePalBoxes();
+    // FARCALL(aApplyAttrmap);
+    ApplyAttrmap_Conv();
+    // FARCALL(aApplyPals);
+    ApplyPals_Conv();
+    // RET;
 }
 
 void MG_Mobile_Layout_CreatePalBoxes(void){
-    hlcoord(0, 0, wAttrmap);
-    LD_BC((4 << 8) | 1);
-    LD_A(0x1);
-    CALL(aCrystal_FillBoxCGB);
-    LD_BC((2 << 8) | 1);
-    LD_A(0x2);
-    CALL(aCrystal_FillBoxCGB);
-    LD_BC((6 << 8) | 1);
-    LD_A(0x3);
-    CALL(aCrystal_FillBoxCGB);
-    hlcoord(1, 0, wAttrmap);
-    LD_A(0x1);
-    LD_BC((3 << 8) | 18);
-    CALL(aCrystal_FillBoxCGB);
-    LD_BC((2 << 8) | 18);
-    LD_A(0x2);
-    CALL(aCrystal_FillBoxCGB);
-    LD_BC((12 << 8) | 18);
-    LD_A(0x3);
-    CALL(aCrystal_FillBoxCGB);
-    hlcoord(19, 0, wAttrmap);
-    LD_BC((4 << 8) | 1);
-    LD_A(0x1);
-    CALL(aCrystal_FillBoxCGB);
-    LD_BC((2 << 8) | 1);
-    LD_A(0x2);
-    CALL(aCrystal_FillBoxCGB);
-    LD_BC((6 << 8) | 1);
-    LD_A(0x3);
-    CALL(aCrystal_FillBoxCGB);
-    hlcoord(0, 12, wAttrmap);
-    LD_BC(6 * SCREEN_WIDTH);
-    LD_A(0x7);
-    CALL(aByteFill);
-    RET;
-
+    // hlcoord(0, 0, wAttrmap);
+    // LD_BC((4 << 8) | 1);
+    // LD_A(0x1);
+    // CALL(aCrystal_FillBoxCGB);
+    tile_t* hl = Crystal_FillBoxCGB_Conv(coord(0, 0, wram->wAttrmap), 4, 1, 0x1);
+    // LD_BC((2 << 8) | 1);
+    // LD_A(0x2);
+    // CALL(aCrystal_FillBoxCGB);
+    hl = Crystal_FillBoxCGB_Conv(hl, 2, 1, 0x2);
+    // LD_BC((6 << 8) | 1);
+    // LD_A(0x3);
+    // CALL(aCrystal_FillBoxCGB);
+    hl = Crystal_FillBoxCGB_Conv(hl, 6, 8, 0x3);
+    // hlcoord(1, 0, wAttrmap);
+    // LD_A(0x1);
+    // LD_BC((3 << 8) | 18);
+    // CALL(aCrystal_FillBoxCGB);
+    hl = Crystal_FillBoxCGB_Conv(coord(1, 0, wram->wAttrmap), 3, 18, 0x1);
+    // LD_BC((2 << 8) | 18);
+    // LD_A(0x2);
+    // CALL(aCrystal_FillBoxCGB);
+    hl = Crystal_FillBoxCGB_Conv(hl, 2, 18, 0x2);
+    // LD_BC((12 << 8) | 18);
+    // LD_A(0x3);
+    // CALL(aCrystal_FillBoxCGB);
+    hl = Crystal_FillBoxCGB_Conv(hl, 12, 18, 0x3);
+    // hlcoord(19, 0, wAttrmap);
+    // LD_BC((4 << 8) | 1);
+    // LD_A(0x1);
+    // CALL(aCrystal_FillBoxCGB);
+    hl = Crystal_FillBoxCGB_Conv(coord(19, 0, wram->wAttrmap), 4, 1, 0x1);
+    // LD_BC((2 << 8) | 1);
+    // LD_A(0x2);
+    // CALL(aCrystal_FillBoxCGB);
+    hl = Crystal_FillBoxCGB_Conv(hl, 2, 1, 0x2);
+    // LD_BC((6 << 8) | 1);
+    // LD_A(0x3);
+    // CALL(aCrystal_FillBoxCGB);
+    hl = Crystal_FillBoxCGB_Conv(hl, 6, 1, 0x3);
+    // hlcoord(0, 12, wAttrmap);
+    // LD_BC(6 * SCREEN_WIDTH);
+    // LD_A(0x7);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(0, 12, wram->wAttrmap), 6 * SCREEN_WIDTH, 0x7);
+    // RET;
 }
 
-void Palette_MysteryGiftMobile(void){
-// INCLUDE "gfx/mystery_gift/mg_mobile.pal"
-
-    return LoadOW_BGPal7();
-}
-
-static const uint16_t Palette_TextBG7[] = {
-    rgb(31, 31, 31),
-    rgb( 8, 19, 28),
-    rgb( 5,  5, 16),
-    rgb( 0,  0,  0),
-};
+const char Palette_MysteryGiftMobile[] = "gfx/mystery_gift/mg_mobile.pal";
 
 void LoadOW_BGPal7(void){
     // LD_HL(mPalette_TextBG7);

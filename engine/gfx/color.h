@@ -30,7 +30,7 @@ void LoadHLPaletteIntoDE_Conv(void* de, const uint16_t* hl);
 void LoadPalette_White_Col1_Col2_Black(void);
 uint16_t* LoadPalette_White_Col1_Col2_Black_Conv(uint16_t* de, const uint16_t* hl);
 void FillBoxCGB(void);
-void FillBoxCGB_Conv(uint8_t* hl, uint8_t b, uint8_t c, uint8_t a);
+tile_t* FillBoxCGB_Conv(tile_t* hl, uint8_t b, uint8_t c, uint8_t a);
 void ResetBGPals(void);
 void ResetBGPals_Conv(void);
 void WipeAttrmap(void);

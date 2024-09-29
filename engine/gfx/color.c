@@ -867,7 +867,7 @@ col:
 
 }
 
-void FillBoxCGB_Conv(uint8_t* hl, uint8_t b, uint8_t c, uint8_t a){
+tile_t* FillBoxCGB_Conv(tile_t* hl, uint8_t b, uint8_t c, uint8_t a){
 
     for(uint8_t y = 0; y < b; y++) {
     // row:
@@ -889,6 +889,7 @@ void FillBoxCGB_Conv(uint8_t* hl, uint8_t b, uint8_t c, uint8_t a){
         // IF_NZ goto row;
     }
     // RET;
+    return hl + (SCREEN_WIDTH * b);
 }
 
 void ResetBGPals(void){

@@ -352,6 +352,42 @@ Function:
     RET;
 }
 
+// Transfer wAttrmap and Tilemap to BGMap
+// Fill vBGAttrs with $00
+// Fill vBGTiles with $ff
+static void Mobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Function(void){
+    // decoord(0, 0, wAttrmap);
+    // LD_HL(wScratchAttrmap);
+    // CALL(mPadAttrmapForHDMATransfer);
+    PadAttrmapForHDMATransfer_Conv2(wram->wScratchAttrmap, coord(0, 0, wram->wAttrmap));
+    // LD_C(0xff);
+    // decoord(0, 0, wTilemap);
+    // LD_HL(wScratchTilemap);
+    // CALL(mPadMapForHDMATransfer);
+    PadMapForHDMATransfer_Conv2(wram->wScratchTilemap, coord(0, 0, wram->wTilemap), 0xff);
+
+    // LD_A(0x1);
+    // LDH_addr_A(rVBK);
+    gb_write(rVBK, 0x1);
+    // LD_HL(wScratchAttrmap);
+    // CALL(mHDMATransfer_Wait127Scanlines_toBGMap);
+    HDMATransfer_Wait127Scanlines_toBGMap_Conv(wScratchAttrmap);
+    // LD_A(0x0);
+    // LDH_addr_A(rVBK);
+    gb_write(rVBK, 0x0);
+    // LD_HL(wScratchTilemap);
+    // CALL(mHDMATransfer_Wait127Scanlines_toBGMap);
+    HDMATransfer_Wait127Scanlines_toBGMap_Conv(wScratchTilemap);
+    // RET;
+}
+
+void Mobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv(void) {
+    // LD_HL(mMobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Function);
+    Mobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Function();
+    // JP(mCallInSafeGFXMode);
+    CallInSafeGFXMode_Conv(Mobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Function);
+}
+
 void CallInSafeGFXMode(void) {
     LDH_A_addr(hBGMapMode);
     PUSH_AF;
@@ -461,6 +497,19 @@ void HDMATransfer_Wait127Scanlines_toBGMap(void) {
     LD_E_A;
     LD_C(2 * SCREEN_HEIGHT);
     JR(mHDMATransfer_Wait127Scanlines);
+}
+
+//  HDMA transfer from hl to [hBGMapAddress]
+//  hBGMapAddress -> de
+//  2 * SCREEN_HEIGHT -> c
+void HDMATransfer_Wait127Scanlines_toBGMap_Conv(uint16_t hl) {
+    // LDH_A_addr(hBGMapAddress + 1);
+    // LD_D_A;
+    // LDH_A_addr(hBGMapAddress);
+    // LD_E_A;
+    // LD_C(2 * SCREEN_HEIGHT);
+    // JR(mHDMATransfer_Wait127Scanlines);
+    return HDMATransfer_Wait127Scanlines_Conv(hl, hram->hBGMapAddress, 2 * SCREEN_HEIGHT);
 }
 
 void HDMATransfer_Wait123Scanlines_toBGMap(void) {

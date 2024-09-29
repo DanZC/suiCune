@@ -4,7 +4,7 @@ void Crystal_WipeAttrmap(void);
 void MG_Mobile_Layout_LoadPals(void);
 void v_CrystalCGB_MobileLayout0(void);
 void MG_Mobile_Layout_CreatePalBoxes(void);
-void Palette_MysteryGiftMobile(void);
+extern const char Palette_MysteryGiftMobile[];
 void LoadOW_BGPal7(void);
 // void Palette_TextBG7(void);
 void Function49420(void);

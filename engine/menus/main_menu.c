@@ -11,6 +11,7 @@
 #include "../../home/sram.h"
 #include "../../home/print_text.h"
 #include "../../util/intro_jumptable.h"
+#include "../../mobile/mobile_menu.h"
 #include "../../charmap.h"
 
 #define SHOW_DEBUG_MENU 1
@@ -49,8 +50,8 @@ void MainMenu(void){
         [MAINMENUITEM_NEW_GAME]       = MainMenu_NewGame,
         [MAINMENUITEM_OPTION]         = MainMenu_Option,
         [MAINMENUITEM_MYSTERY_GIFT]   = MainMenu_MysteryGift,
-        // [MAINMENUITEM_MOBILE]         = MainMenu_Mobile,
-        // [MAINMENUITEM_MOBILE_STUDIUM] = MainMenu_MobileStudium,
+        [MAINMENUITEM_MOBILE]         = MainMenu_Mobile,
+        [MAINMENUITEM_MOBILE_STUDIUM] = MainMenu_MobileStudium,
     #if SHOW_DEBUG_MENU
         [MAINMENUITEM_DEBUG_ROOM]     = MainMenu_DebugRoom,
     #endif
@@ -409,7 +410,7 @@ uint8_t MainMenu_GetWhichMenu_Conv(void){
         // IF_Z goto ok;
         // goto ok;
         if(bit_test(wram->wStatusFlags, STATUSFLAGS_MAIN_MENU_MOBILE_CHOICES_F)) {
-            return MAINMENU_MOBILE_MYSTERY;
+            return MAINMENU_MOBILE;
         }
 
 
@@ -420,7 +421,7 @@ uint8_t MainMenu_GetWhichMenu_Conv(void){
     // ok2:
         // LD_A(MAINMENU_MYSTERY); // MAINMENU_CONTINUE
         // RET;
-        return MAINMENU_MYSTERY;
+        return MAINMENU_CONTINUE;
     }
 }
 
