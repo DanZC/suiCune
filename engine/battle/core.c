@@ -327,7 +327,8 @@ void WildFled_EnemyFled_LinkBattleCanceled(void){
     if(!CheckMobileBattleError_Conv()) {
         // LD_DE(SFX_RUN);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_RUN);
+        //PlaySFX_Conv(SFX_RUN);
+        WaitPlaySFX_Conv(SFX_RUN);
     }
 
 // skip_sfx:
