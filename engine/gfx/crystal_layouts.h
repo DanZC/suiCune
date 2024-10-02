@@ -1,4 +1,4 @@
-void GetCrystalCGBLayout(void);
+void GetCrystalCGBLayout(uint8_t b);
 void Crystal_FillBoxCGB(void);
 void Crystal_WipeAttrmap(void);
 void MG_Mobile_Layout_LoadPals(void);

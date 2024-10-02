@@ -10,38 +10,42 @@ static const uint16_t Palette_TextBG7[] = {
     rgb( 0,  0,  0),
 };
 
-void GetCrystalCGBLayout(void){
-    LD_A_B;
-    CP_A(SCGB_DEFAULT);
-    IF_NZ goto not_default;
-    LD_A_addr(wDefaultSGBLayout);
+void GetCrystalCGBLayout(uint8_t b){
+    // LD_A_B;
+    // CP_A(SCGB_DEFAULT);
+    // IF_NZ goto not_default;
+    // LD_A_addr(wDefaultSGBLayout);
+    if(b == SCGB_DEFAULT) {
+        b = wram->wDefaultSGBLayout;
+    }
 
-not_default:
-    PUSH_AF;
-    FARCALL(aResetBGPals);
-    POP_AF;
-    LD_L_A;
-    LD_H(0);
-    ADD_HL_HL;
-    LD_DE(mGetCrystalCGBLayout_Jumptable);
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    LD_DE(mGetCrystalCGBLayout_done);
-    PUSH_DE;
-    JP_hl;
+// not_default:
+    // PUSH_AF;
+    // FARCALL(aResetBGPals);
+    ResetBGPals_Conv();
+    // POP_AF;
+    // LD_L_A;
+    // LD_H(0);
+    // ADD_HL_HL;
+    // LD_DE(mGetCrystalCGBLayout_Jumptable);
+    // ADD_HL_DE;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // LD_DE(mGetCrystalCGBLayout_done);
+    // PUSH_DE;
+    // JP_hl;
 
-done:
-    RET;
+// done:
+    // RET;
 
 
-Jumptable:
-    //dw ['_CrystalCGB_MobileLayout0'];
-    //dw ['_CrystalCGB_MobileLayout1'];
-    //dw ['_CrystalCGB_NameCard'];
-
-    return Crystal_FillBoxCGB();
+// Jumptable:
+    switch(b) {
+        case CRYSTAL_CGB_MOBILE_0:  return v_CrystalCGB_MobileLayout0(); //dw ['_CrystalCGB_MobileLayout0'];
+        case CRYSTAL_CGB_MOBILE_1:  return v_CrystalCGB_MobileLayout1(); //dw ['_CrystalCGB_MobileLayout1'];
+        case CRYSTAL_CGB_NAME_CARD: return v_CrystalCGB_NameCard(); //dw ['_CrystalCGB_NameCard'];
+    }
 }
 
 void Crystal_FillBoxCGB(void){
@@ -202,99 +206,109 @@ void Function49420(void){
 
 }
 
+static void Function49480(void) {
+    // hlcoord(0, 0, wAttrmap);
+    // LD_BC((4 << 8) | SCREEN_WIDTH);
+    // LD_A(0x7);
+    // CALL(aCrystal_FillBoxCGB);
+    Crystal_FillBoxCGB_Conv(coord(0, 0, wram->wAttrmap), 4, SCREEN_WIDTH, 0x7);
+    // hlcoord(0, 2, wAttrmap);
+    // LD_A(0x4);
+    // LD_hl_A;
+    *coord(0, 2, wram->wAttrmap) = 0x4;
+    // hlcoord(19, 2, wAttrmap);
+    // LD_hl_A;
+    *coord(19, 2, wram->wAttrmap) = 0x4;
+    // RET;
+}
+
+static void Function49496(void) {
+    // hlcoord(0, 0, wAttrmap);
+    // LD_BC((2 << 8) | SCREEN_WIDTH);
+    // LD_A(0x7);
+    // CALL(aCrystal_FillBoxCGB);
+    Crystal_FillBoxCGB_Conv(coord(0, 0, wram->wAttrmap), 2, SCREEN_WIDTH, 0x7);
+    // hlcoord(0, 1, wAttrmap);
+    // LD_A(0x4);
+    // LD_hl_A;
+    *coord(0, 1, wram->wAttrmap) = 0x4;
+    // hlcoord(19, 1, wAttrmap);
+    // LD_hl_A;
+    *coord(19, 1, wram->wAttrmap) = 0x4;
+    // RET;
+}
+
 void v_CrystalCGB_MobileLayout1(void){
-    CALL(aMG_Mobile_Layout_LoadPals);
-    LD_DE(wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT);
-    LD_HL(mv_CrystalCGB_MobileLayout1_TextPalette);
-    LD_BC(1 * PALETTE_SIZE);
-    LD_A(BANK(wBGPals1));
-    CALL(aFarCopyWRAM);
-    CALL(aCrystal_WipeAttrmap);
-    hlcoord(0, 0, wAttrmap);
-    LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
-    XOR_A_A;
-    CALL(aByteFill);
-    hlcoord(0, 14, wAttrmap);
-    LD_BC(4 * SCREEN_WIDTH);
-    LD_A(0x7);
-    CALL(aByteFill);
-    LD_A_addr(wd002);
-    BIT_A(6);
-    IF_Z goto asm_49464;
-    CALL(av_CrystalCGB_MobileLayout1_Function49480);
-    goto done;
+    static const char TextPalette[] = "gfx/mystery_gift/mobile_text.pal";
+    // CALL(aMG_Mobile_Layout_LoadPals);
+    MG_Mobile_Layout_LoadPals();
+    // LD_DE(wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT);
+    // LD_HL(mv_CrystalCGB_MobileLayout1_TextPalette);
+    // LD_BC(1 * PALETTE_SIZE);
+    // LD_A(BANK(wBGPals1));
+    // CALL(aFarCopyWRAM);
+    LoadPaletteAssetToBuffer(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT, 1 * PALETTE_SIZE, TextPalette, 1 * PAL_COLOR_SIZE);
+    // CALL(aCrystal_WipeAttrmap);
+    Crystal_WipeAttrmap();
+    // hlcoord(0, 0, wAttrmap);
+    // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
+    // XOR_A_A;
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(0, 0, wram->wAttrmap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x0);
+    // hlcoord(0, 14, wAttrmap);
+    // LD_BC(4 * SCREEN_WIDTH);
+    // LD_A(0x7);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(0, 14, wram->wAttrmap), SCREEN_WIDTH * 4, 0x7);
+    // LD_A_addr(wd002);
+    // BIT_A(6);
+    // IF_Z goto asm_49464;
+    if(bit_test(wram->wd002, 6)) {
+        // CALL(av_CrystalCGB_MobileLayout1_Function49480);
+        Function49480();
+        // goto done;
+    }
+    else {
+    // asm_49464:
+        // CALL(av_CrystalCGB_MobileLayout1_Function49496);
+        Function49496();
+    }
 
-
-asm_49464:
-    CALL(av_CrystalCGB_MobileLayout1_Function49496);
-
-done:
-    FARCALL(aApplyAttrmap);
-    FARCALL(aApplyPals);
-    LD_A(TRUE);
-    LDH_addr_A(hCGBPalUpdate);
-    RET;
-
-
-TextPalette:
-// INCLUDE "gfx/mystery_gift/mobile_text.pal"
-
-
-Function49480:
-    hlcoord(0, 0, wAttrmap);
-    LD_BC((4 << 8) | SCREEN_WIDTH);
-    LD_A(0x7);
-    CALL(aCrystal_FillBoxCGB);
-    hlcoord(0, 2, wAttrmap);
-    LD_A(0x4);
-    LD_hl_A;
-    hlcoord(19, 2, wAttrmap);
-    LD_hl_A;
-    RET;
-
-
-Function49496:
-    hlcoord(0, 0, wAttrmap);
-    LD_BC((2 << 8) | SCREEN_WIDTH);
-    LD_A(0x7);
-    CALL(aCrystal_FillBoxCGB);
-    hlcoord(0, 1, wAttrmap);
-    LD_A(0x4);
-    LD_hl_A;
-    hlcoord(19, 1, wAttrmap);
-    LD_hl_A;
-    RET;
+// done:
+    // FARCALL(aApplyAttrmap);
+    ApplyAttrmap_Conv();
+    // FARCALL(aApplyPals);
+    ApplyPals_Conv();
+    // LD_A(TRUE);
+    // LDH_addr_A(hCGBPalUpdate);
+    hram->hCGBPalUpdate = TRUE;
+    // RET;
 
 // INCLUDE "engine/tilesets/tileset_palettes.asm"
-
-    return v_CrystalCGB_NameCard();
 }
 
 void v_CrystalCGB_NameCard(void){
-    LD_HL(mv_CrystalCGB_NameCard_BGPalette);
-    LD_DE(wBGPals1);
-    LD_BC(1 * PALETTE_SIZE);
-    LD_A(BANK(wBGPals1));
-    CALL(aFarCopyWRAM);
-    FARCALL(aApplyPals);
-    CALL(aCrystal_WipeAttrmap);
-    FARCALL(aApplyAttrmap);
-    LD_HL(mv_CrystalCGB_NameCard_OBPalette);
-    LD_DE(wOBPals1);
-    LD_BC(1 * PALETTE_SIZE);
-    LD_A(BANK(wOBPals1));
-    CALL(aFarCopyWRAM);
-    RET;
-
-
-BGPalette:
-// INCLUDE "gfx/mystery_gift/name_card_bg.pal"
-
-
-OBPalette:
-// INCLUDE "gfx/mystery_gift/name_card_ob.pal"
-
-    return Function49742();
+static const char BGPalette[] = "gfx/mystery_gift/name_card_bg.pal";
+static const char OBPalette[] = "gfx/mystery_gift/name_card_ob.pal";
+    // LD_HL(mv_CrystalCGB_NameCard_BGPalette);
+    // LD_DE(wBGPals1);
+    // LD_BC(1 * PALETTE_SIZE);
+    // LD_A(BANK(wBGPals1));
+    // CALL(aFarCopyWRAM);
+    LoadPaletteAssetToBuffer(wram->wBGPals1, 1 * PALETTE_SIZE, BGPalette, 1 * PAL_COLOR_SIZE);
+    // FARCALL(aApplyPals);
+    ApplyPals_Conv();
+    // CALL(aCrystal_WipeAttrmap);
+    Crystal_WipeAttrmap();
+    // FARCALL(aApplyAttrmap);
+    ApplyAttrmap_Conv();
+    // LD_HL(mv_CrystalCGB_NameCard_OBPalette);
+    // LD_DE(wOBPals1);
+    // LD_BC(1 * PALETTE_SIZE);
+    // LD_A(BANK(wOBPals1));
+    // CALL(aFarCopyWRAM);
+    LoadPaletteAssetToBuffer(wram->wOBPals1, 1 * PALETTE_SIZE, OBPalette, 1 * PAL_COLOR_SIZE);
+    // RET;
 }
 
 void Function49742(void){

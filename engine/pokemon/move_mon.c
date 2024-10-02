@@ -1673,7 +1673,7 @@ breedmon:
         // PUSH_BC;
         // LD_B(TRUE);
         // CALL(aCalcMonStats);
-        uint16_t* stats = (uint16_t*)(((uint8_t*)pmon) + offsetof(struct PartyMon, stats));
+        uint16_t* stats = (uint16_t*)(((uint8_t*)pmon) + offsetof(struct PartyMon, maxHP));
         uint16_t* statExp = (uint16_t*)(((uint8_t*)&pmon->mon) + offsetof(struct BoxMon, statExp));
         CalcMonStats_Conv(stats, statExp, pmon->mon.DVs, TRUE);
         // POP_BC;
@@ -3472,7 +3472,7 @@ void ComputeNPCTrademonStats_Conv(uint8_t curPartyMon){
     uint16_t max_hp = bc->maxHP;
     // LD_A(MON_STAT_EXP - 1);
     // CALL(aGetPartyParamLocation);
-    uint16_t* stats = (uint16_t*)(((uint8_t*)bc) + offsetof(struct PartyMon, stats));
+    uint16_t* stats = (uint16_t*)(((uint8_t*)bc) + offsetof(struct PartyMon, maxHP));
     uint16_t* statExp = (uint16_t*)(((uint8_t*)bc) + offsetof(struct BoxMon, statExp));
     // LD_B(TRUE);
     // CALL(aCalcMonStats);

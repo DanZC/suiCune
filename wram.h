@@ -1928,8 +1928,8 @@ struct wram_s
                     struct {
                         // WRAMX
                         // mobile?
-                        uint8_t wd002[1];
-                        uint8_t wd003[1];
+                        uint8_t wd002;
+                        uint8_t wd003;
                         uint8_t wd004[1];
                         uint8_t skip_70[3];
                         uint8_t wd008[2];
@@ -2670,7 +2670,7 @@ struct wram_s
                         uint8_t wd473[1];
                         uint8_t wd474[1];
                         uint8_t wd475[1];
-                        uint8_t wd476[1];
+                        uint8_t wd476;
                         uint8_t wd477[1];
                         uint8_t wd478[1];
                     };

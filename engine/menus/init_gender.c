@@ -21,15 +21,15 @@ void InitCrystalData(void){
     // LD_addr_A(wd475);
     wram->wd475[0] = 0;
     // LD_addr_A(wd476);
-    wram->wd476[0] = 0;
+    wram->wd476 = 0;
     // LD_addr_A(wd477);
     wram->wd477[0] = 0;
     // LD_addr_A(wd478);
     wram->wd478[0] = 0;
     // LD_addr_A(wd002);
-    wram->wd002[0] = 0;
+    wram->wd002 = 0;
     // LD_addr_A(wd003);
-    wram->wd003[0] = 0;
+    wram->wd003 = 0;
     // LD_A_addr(wd479);
     // RES_A(0);  // ???
     // LD_addr_A(wd479);

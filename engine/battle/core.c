@@ -1220,7 +1220,7 @@ not_encored:
     // AND_A_A;
     // IF_NZ goto reset_bide;
     if(wram->wBattlePlayerAction != 0)
-        goto reset_rage;
+        goto reset_bide;
     // LD_A_addr(wPlayerSubStatus3);
     // AND_A(1 << SUBSTATUS_BIDE);
     // IF_NZ goto locked_in;

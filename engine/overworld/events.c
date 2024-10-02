@@ -1213,8 +1213,8 @@ static u8_flag_s ObjectEventTypeArray_itemball(struct MapObject* bc) {
         wram->wItemBallQuantity = ball->quantity;
     }
     else {
-        if(redirectFunc[(GetMapScriptsBank_Conv() << 14) | bc->objectScript]) {
-            const struct ItemBall* ball = (const struct ItemBall*)redirectFunc[(GetMapScriptsBank_Conv() << 14) | bc->objectScript];
+        if(redirectFunc[(GetMapScriptsBank_Conv() << 14) | (bc->objectScript & 0x3fff)]) {
+            const struct ItemBall* ball = (const struct ItemBall*)redirectFunc[(GetMapScriptsBank_Conv() << 14) | (bc->objectScript & 0x3fff)];
             wram->wItemBallItemID = ball->item;
             wram->wItemBallQuantity = ball->quantity;
         }

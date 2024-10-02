@@ -31,6 +31,9 @@ static struct OptionRes GetTextSpeed_Conv(void);
 static struct OptionRes GetPrinterSetting_Conv(void);
 
 void v_Option(void){
+#if BUGFIX_OPTIONS_MENU_JOYPAD
+    ClearJoypad_Conv();
+#endif
     // LD_HL(hInMenu);
     // LD_A_hl;
     // PUSH_AF;
