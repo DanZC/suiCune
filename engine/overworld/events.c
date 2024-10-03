@@ -2048,7 +2048,7 @@ u8_flag_s CountStep_Conv(void){
     // LD_A_addr(wLinkMode);
     // AND_A_A;
     // IF_NZ goto done;
-    if(wram->wLinkMode != 0)
+    if(wram->wLinkMode != LINK_NULL)
         goto done;
 
 // If there is a special phone call, don't count the step.

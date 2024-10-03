@@ -3189,7 +3189,7 @@ void RemoveMonFromPartyOrBox_Conv(uint8_t param){
         // LD_A_addr(wLinkMode);
         // AND_A_A;
         // RET_NZ ;
-        if(wram->wLinkMode != 0)
+        if(wram->wLinkMode != LINK_NULL)
             return;
     // Shift mail
         // LD_A(BANK(sPartyMail));

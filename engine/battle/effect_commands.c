@@ -55,7 +55,7 @@ void DoEnemyTurn(void){
     // LD_A_addr(wLinkMode);
     // AND_A_A;
     // JR_Z (mDoTurn);
-    if(wram->wLinkMode == 0)
+    if(wram->wLinkMode == LINK_NULL)
         return DoTurn();
 
     // LD_A_addr(wBattleAction);
@@ -958,7 +958,7 @@ void BattleCommand_CheckObedience(void){
     // LD_A_addr(wLinkMode);
     // AND_A_A;
     // RET_NZ ;
-    if(wram->wLinkMode != 0)
+    if(wram->wLinkMode != LINK_NULL)
         return;
 
     // LD_A_addr(wInBattleTowerBattle);
@@ -9928,7 +9928,7 @@ void BattleCommand_Paralyze(void){
     // IF_NZ goto dont_sample_failure;
 
     if(hram->hBattleTurn != 0
-    && wram->wLinkMode == 0
+    && wram->wLinkMode == LINK_NULL
     && wram->wInBattleTowerBattle == 0
     && !bit_test(wram->wPlayerSubStatus5, SUBSTATUS_LOCK_ON)) {
         // CALL(aBattleRandom);
@@ -10893,7 +10893,7 @@ void BattleCommand_TimeBasedHealContinue(uint8_t b){
     // LD_A_addr(wLinkMode);
     // AND_A_A;
     // IF_NZ goto Weather;
-    if(wram->wLinkMode == 0) {
+    if(wram->wLinkMode == LINK_NULL) {
         // LD_A_addr(wTimeOfDay);
         // CP_A_B;
         // IF_Z goto Weather;

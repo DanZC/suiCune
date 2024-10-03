@@ -1247,7 +1247,7 @@ void PlaceEnemysName_Conv(struct TextPrintState* state) {
     // AND_A_A;
     // IF_NZ goto linkbattle;
 
-    if(wram->wLinkMode != 0) {
+    if(wram->wLinkMode != LINK_NULL) {
     // linkbattle:
         // LD_DE(wOTClassName);
         // JR(mPlaceCommandCharacter);
@@ -1678,7 +1678,7 @@ void v_ContText_Conv(struct TextPrintState* state) {
     // OR_A_A;
     // IF_NZ goto communication;
     // CALL(aLoadBlinkingCursor);
-    if(wram->wLinkMode == 0)
+    if(wram->wLinkMode == LINK_NULL)
         LoadBlinkingCursor_Conv();
 
 // communication:
@@ -1693,7 +1693,7 @@ void v_ContText_Conv(struct TextPrintState* state) {
     // LD_A_addr(wLinkMode);
     // OR_A_A;
     // CALL_Z(aUnloadBlinkingCursor);
-    if(wram->wLinkMode == 0)
+    if(wram->wLinkMode == LINK_NULL)
         UnloadBlinkingCursor_Conv();
     // fallthrough
 

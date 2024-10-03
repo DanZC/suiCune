@@ -1006,7 +1006,7 @@ void MakePhoneCallFromPokegear_Conv(uint8_t caller){
     // LD_A_addr(wLinkMode);
     // AND_A_A;
     // IF_NZ goto OutOfArea;
-    if(wram->wLinkMode != 0 || GetMapPhoneService_Conv() != 0) {
+    if(wram->wLinkMode != LINK_NULL || GetMapPhoneService_Conv() != 0) {
     OutOfArea:
         // LD_B(BANK(aLoadOutOfAreaScript));
         // LD_DE(mLoadOutOfAreaScript);

@@ -213,7 +213,7 @@ void (*const SpecialsPointers[])(void) = {
     add_special(SetPlayerPalette),
     // add_special(UnusedBattleTowerDummySpecial2),
     add_special(Mobile_SelectThreeMons),
-    // add_special(Function1037eb),
+    add_special(Function1037eb),
     // add_special(Function10383c),
     add_special(StubbedTrainerRankings_Healings),
     add_special(RefreshSprites),

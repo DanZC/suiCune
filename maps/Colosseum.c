@@ -1,10 +1,13 @@
 #include "../constants.h"
 #include "../util/scripting.h"
 #include "Colosseum.h"
+#include "../engine/link/link.h"
 //// EVENTS
 enum {
     COLOSSEUM_CHRIS1 = 2,
     COLOSSEUM_CHRIS2,
+    COLOSSEUM_KRIS1,
+    COLOSSEUM_KRIS2,
 };
 
 const Script_fn_t Colosseum_SceneScripts[] = {
@@ -43,6 +46,8 @@ static const struct WarpEventData Colosseum_WarpEvents[] = {
 static const struct ObjEvent Colosseum_ObjectEvents[] = {
     object_event(3, 4, SPRITE_CHRIS, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, -1, 0, OBJECTTYPE_SCRIPT, 0, &CableClubFriendScript, EVENT_TEMPORARY_UNTIL_MAP_RELOAD_1),
     object_event(6, 4, SPRITE_CHRIS, SPRITEMOVEDATA_STANDING_LEFT, 0, 0, -1, -1, 0, OBJECTTYPE_SCRIPT, 0, &CableClubFriendScript, EVENT_TEMPORARY_UNTIL_MAP_RELOAD_2),
+    object_event(3, 4, SPRITE_KRIS, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, -1, 0, OBJECTTYPE_SCRIPT, 0, &CableClubFriendScript, EVENT_TEMPORARY_UNTIL_MAP_RELOAD_3),
+    object_event(6, 4, SPRITE_KRIS, SPRITEMOVEDATA_STANDING_LEFT, 0, 0, -1, -1, 0, OBJECTTYPE_SCRIPT, 0, &CableClubFriendScript, EVENT_TEMPORARY_UNTIL_MAP_RELOAD_4),
 };
 
 const struct MapEvents Colosseum_MapEvents = {
@@ -60,9 +65,6 @@ const struct MapEvents Colosseum_MapEvents = {
 };
 
 //// CODE
-#include "../constants.h"
-#include "../util/scripting.h"
-#include "Colosseum.h"
 
 bool Colosseum_MapScripts_InitializeColosseum(script_s* s) {
     SCRIPT_BEGIN
@@ -80,17 +82,38 @@ bool Colosseum_MapScripts_DummyScene2(script_s* s) {
     s_end
     SCRIPT_END
 }
-bool Colosseum_MapScripts_SetWhichChris(script_s* s) {
+bool Colosseum_MapScripts_SetupOtherPlayer(script_s* s) {
     SCRIPT_BEGIN
-    special(CableClubCheckWhichChris)
-    iffalse_jump(Colosseum_MapScripts_Chris2)
+    CableClubCheckOtherPlayerGender();
+    iffalse_jump(Colosseum_MapScripts_SetWhichChris)
+    sjump(Colosseum_MapScripts_SetWhichKris)
+    SCRIPT_END
+}
+bool Colosseum_MapScripts_SetWhichKris(script_s* s) {
+    SCRIPT_BEGIN
+    disappear(COLOSSEUM_CHRIS1)
     disappear(COLOSSEUM_CHRIS2)
-    appear(COLOSSEUM_CHRIS1)
+    special(CableClubCheckWhichChris)
+    iffalse(Kris2)
+    disappear(COLOSSEUM_KRIS2)
+    appear(COLOSSEUM_KRIS1)
+    s_endcallback
+Kris2:
+    disappear(COLOSSEUM_KRIS1)
+    appear(COLOSSEUM_KRIS2)
     s_endcallback
     SCRIPT_END
 }
-bool Colosseum_MapScripts_Chris2(script_s* s) {
+bool Colosseum_MapScripts_SetWhichChris(script_s* s) {
     SCRIPT_BEGIN
+    disappear(COLOSSEUM_KRIS1)
+    disappear(COLOSSEUM_KRIS2)
+    special(CableClubCheckWhichChris)
+    iffalse(Chris2)
+    disappear(COLOSSEUM_CHRIS2)
+    appear(COLOSSEUM_CHRIS1)
+    s_endcallback
+Chris2:
     disappear(COLOSSEUM_CHRIS1)
     appear(COLOSSEUM_CHRIS2)
     s_endcallback

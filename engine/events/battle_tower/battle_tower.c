@@ -283,7 +283,7 @@ void RunBattleTowerTrainer(void){
 
     // XOR_A_A;
     // LD_addr_A(wLinkMode);
-    wram->wLinkMode = 0;
+    wram->wLinkMode = LINK_NULL;
     // FARCALL(aStubbedTrainerRankings_Healings);
     StubbedTrainerRankings_Healings();
     // FARCALL(aHealParty);

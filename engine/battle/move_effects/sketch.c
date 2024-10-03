@@ -15,7 +15,7 @@ void BattleCommand_Sketch(void){
     // LD_A_addr(wLinkMode);
     // AND_A_A;
     // IF_Z goto not_linked;
-    if(wram->wLinkMode != 0) {
+    if(wram->wLinkMode != LINK_NULL) {
         // CALL(aAnimateFailedMove);
         AnimateFailedMove();
         // JP(mPrintNothingHappened);

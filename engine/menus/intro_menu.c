@@ -798,7 +798,7 @@ void FinishContinueFunction(void) {
         // LD_addr_A(wDontPlayMapMusicOnReload);
         wram->wDontPlayMapMusicOnReload = 0x0;
         // LD_addr_A(wLinkMode);
-        wram->wLinkMode = 0x0;
+        wram->wLinkMode = LINK_NULL;
         // LD_HL(wGameTimerPaused);
         // SET_hl(GAME_TIMER_PAUSED_F);
         bit_set(wram->wGameTimerPaused, GAME_TIMER_PAUSED_F);

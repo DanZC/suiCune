@@ -3698,7 +3698,7 @@ void WaitForOtherPlayerToExit(void){
     // LDH_addr_A(hVBlank);
     hram->hVBlank = 0;
     // LD_addr_A(wLinkMode);
-    wram->wLinkMode = 0;
+    wram->wLinkMode = LINK_NULL;
     NetworkCloseConnection();
     // RET;
 }

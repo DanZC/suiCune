@@ -88,7 +88,7 @@ void GetOTName_Conv(uint8_t c){
     // LD_A_addr(wLinkMode);
     // AND_A_A;
     // IF_NZ goto ok;
-    if(wram->wLinkMode != 0) {
+    if(wram->wLinkMode != LINK_NULL) {
         hl = wram->wOTPlayerName;
     }
     else if(c == RIVAL1) {

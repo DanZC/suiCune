@@ -33,7 +33,7 @@ void ShowLinkBattleParticipants_Conv(void){
     // LD_A_addr(wLinkMode);
     // AND_A_A;
     // RET_Z ;
-    if(wram->wLinkMode == 0)
+    if(wram->wLinkMode == LINK_NULL)
         return;
 
     // FARCALL(av_ShowLinkBattleParticipants);
@@ -311,7 +311,7 @@ void PlayBattleMusic_Conv(void){
         // LD_A_addr(wLinkMode);
         // AND_A_A;
         // IF_NZ goto johtotrainer;
-        else if(wram->wLinkMode != 0) {
+        else if(wram->wLinkMode != LINK_NULL) {
             de = MUSIC_JOHTO_TRAINER_BATTLE;
         }
 

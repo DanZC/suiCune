@@ -6929,6 +6929,9 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(PowerPlantManager);
     CONVERTED_SCRIPT(Forest);
 
+    // CableClubFriendScript
+    CONVERTED_SCRIPT(CableClubFriendScript);
+
     // engine/events/overworld.c
     // REDIRECTED(Script_WaterfallFromMenu);
     // REDIRECTED(UseFlash);

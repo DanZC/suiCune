@@ -185,7 +185,7 @@ void BattleCommand_BeatUp(void){
         // LD_A_addr(wInBattleTowerBattle);
         // AND_A_A;
         // IF_NZ goto link_or_tower;
-        if(wram->wLinkMode != 0 || wram->wInBattleTowerBattle != 0) {
+        if(wram->wLinkMode != LINK_NULL || wram->wInBattleTowerBattle != 0) {
         // link_or_tower:
             // LD_A_addr(wCurBeatUpPartyMon);
             // LD_HL(wOTPartyMonNicknames);

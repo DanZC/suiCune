@@ -82,7 +82,7 @@ void BattleCommand_Thief(void){
         // LD_A_addr(wLinkMode);
         // AND_A_A;
         // IF_Z goto stealenemyitem;
-        if(wram->wLinkMode != 0) {
+        if(wram->wLinkMode != LINK_NULL) {
 
             // LD_A_addr(wBattleMode);
             // DEC_A;

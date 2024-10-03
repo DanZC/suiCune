@@ -29,7 +29,7 @@ bool AI_SwitchOrTryItem(void){
 
     // FARCALL(aCheckEnemyLockedIn);
     // RET_NZ ;
-    if(wram->wLinkMode != 0 || CheckEnemyLockedIn_Conv())
+    if(wram->wLinkMode != LINK_NULL || CheckEnemyLockedIn_Conv())
         return false;
 
     // LD_A_addr(wPlayerSubStatus5);
@@ -1077,7 +1077,7 @@ bool AI_Switch(void){
     // LD_A_addr(wLinkMode);
     // AND_A_A;
     // RET_NZ ;
-    if(wram->wLinkMode != 0)
+    if(wram->wLinkMode != LINK_NULL)
         return false;
     // SCF;
     // RET;

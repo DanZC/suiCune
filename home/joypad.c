@@ -1078,7 +1078,7 @@ void PromptButton_Conv(void) {
     // LD_A_addr(wLinkMode);
     // AND_A_A;
     // IF_NZ goto link;
-    if(wram->wLinkMode != 0)
+    if(wram->wLinkMode != LINK_NULL)
     {
         // LD_C(65);
         // JP(mDelayFrames);

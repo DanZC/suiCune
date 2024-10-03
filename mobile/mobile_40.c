@@ -2478,10 +2478,10 @@ bool Function100dc0(void){
 }
 
 void Mobile_SetOverworldDelay(void){
-    LD_A(30);
-    LD_addr_A(wOverworldDelay);
-    RET;
-
+    // LD_A(30);
+    // LD_addr_A(wOverworldDelay);
+    wram->wOverworldDelay = 30;
+    // RET;
 }
 
 void Function100dd8(void){
@@ -3212,13 +3212,15 @@ skip:
 
 }
 
+// Mobile_EndLinkMode?
 void Function101220(void){
-    XOR_A_A;
-    LD_addr_A(wLinkMode);
-    RET;
-
+    // XOR_A_A;
+    // LD_addr_A(wLinkMode);
+    wram->wLinkMode = LINK_NULL;
+    // RET;
 }
 
+// Mobile_DoConnectionForMobileBattle
 void Function101225(void){
     LD_D(1);
     LD_E(BANK(aJumptable_101297));
@@ -3228,6 +3230,7 @@ void Function101225(void){
 
 }
 
+// Mobile_DoConnectionForMobileTrade
 void Function101231(void){
     LD_D(2);
     LD_E(BANK(aJumptable_101297));
@@ -9202,70 +9205,86 @@ void TryAgainUsingSameSettingsText(void){
     return Function1037eb();
 }
 
+// CheckAbleToMobileBattle
+//  wScriptVar == 0x0 -> Don't connect
+//  wScriptVar == 0x1 -> Can connect
+//  wScriptVar == 0x2 -> Already connected
 void Function1037eb(void){
-    CALL(aMobileCheckRemainingBattleTime);
-    IF_NC goto asm_103807;
-    LD_HL(mMobileBattleLessThanOneMinuteLeftText);
-    CALL(aPrintText);
-    CALL(aJoyWaitAorB);
-    LD_HL(mMobileBattleNoTimeLeftForLinkingText);
-    CALL(aPrintText);
-    CALL(aJoyWaitAorB);
-    XOR_A_A;
-    LD_addr_A(wScriptVar);
-    RET;
+    // CALL(aMobileCheckRemainingBattleTime);
+    // IF_NC goto asm_103807;
+    if(MobileCheckRemainingBattleTime()) {
+        // LD_HL(mMobileBattleLessThanOneMinuteLeftText);
+        // CALL(aPrintText);
+        PrintText_Conv2(MobileBattleLessThanOneMinuteLeftText);
+        // CALL(aJoyWaitAorB);
+        JoyWaitAorB_Conv();
+        // LD_HL(mMobileBattleNoTimeLeftForLinkingText);
+        // CALL(aPrintText);
+        PrintText_Conv2(MobileBattleNoTimeLeftForLinkingText);
+        // CALL(aJoyWaitAorB);
+        JoyWaitAorB_Conv();
+        // XOR_A_A;
+        // LD_addr_A(wScriptVar);
+        wram->wScriptVar = 0x0;
+        // RET;
+        return;
+    }
 
-
-asm_103807:
-    LD_A_addr(wdc60);
-    AND_A_A;
-    IF_NZ goto asm_103813;
-    LD_A(0x01);
-    LD_addr_A(wScriptVar);
-    RET;
-
-
-asm_103813:
-    LD_A(0x02);
-    LD_addr_A(wScriptVar);
-    RET;
-
+// asm_103807:
+    // LD_A_addr(wdc60);
+    // AND_A_A;
+    // IF_NZ goto asm_103813;
+    else if(wram->wdc60 == 0) {
+        // LD_A(0x01);
+        // LD_addr_A(wScriptVar);
+        wram->wScriptVar = 0x1;
+        // RET;
+        return;
+    }
+    else {
+    // asm_103813:
+        // LD_A(0x02);
+        // LD_addr_A(wScriptVar);
+        wram->wScriptVar = 0x2;
+        // RET;
+        return;
+    }
 }
 
-void MobileBattleLessThanOneMinuteLeftText(void){
-    //text_far ['_MobileBattleLessThanOneMinuteLeftText']
-    //text_end ['?']
+const txt_cmd_s MobileBattleLessThanOneMinuteLeftText[] = {
+    text_far(v_MobileBattleLessThanOneMinuteLeftText)
+    text_end
+};
 
-    return MobileBattleNoTimeLeftForLinkingText();
-}
+const txt_cmd_s MobileBattleNoTimeLeftForLinkingText[] = {
+    text_far(v_MobileBattleNoTimeLeftForLinkingText)
+    text_end
+};
 
-void MobileBattleNoTimeLeftForLinkingText(void){
-    //text_far ['_MobileBattleNoTimeLeftForLinkingText']
-    //text_end ['?']
-
-    return MobileCheckRemainingBattleTime();
-}
-
-void MobileCheckRemainingBattleTime(void){
 //  Returns carry if less than one minute remains
-    FARCALL(aMobile_AlwaysReturnNotCarry);
-    BIT_C(7);
-    IF_NZ goto ok;
-    FARCALL(aMobileBattleGetRemainingTime);
-    LD_A_C;
-    CP_A(1);
-    IF_C goto fail;
+bool MobileCheckRemainingBattleTime(void){
+    // FARCALL(aMobile_AlwaysReturnNotCarry);
+    u8_flag_s res = Mobile_AlwaysReturnNotCarry();
+    // BIT_C(7);
+    // IF_NZ goto ok;
+    if(bit_test(res.a, 7))
+        return false;
+    // FARCALL(aMobileBattleGetRemainingTime);
+    u8_pair_s time = MobileBattleGetRemainingTime();
+    // LD_A_C;
+    // CP_A(1);
+    // IF_C goto fail;
+    if(time.a < 1)
+        return true;
 
+// ok:
+    // XOR_A_A;
+    // RET;
+    return false;
 
-ok:
-    XOR_A_A;
-    RET;
-
-
-fail:
-    SCF;
-    RET;
-
+// fail:
+    // SCF;
+    // RET;
 }
 
 void Function10383c(void){

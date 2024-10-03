@@ -111,7 +111,7 @@ static void StartMenu_SetUpMenuItems(void) {
     // IF_NZ goto no_pack;
     // LD_A(STARTMENUITEM_PACK);
     // CALL(aStartMenu_AppendMenuList);
-    if(wram->wLinkMode == 0 && !bit_test(wram->wStatusFlags2, STATUSFLAGS2_BUG_CONTEST_TIMER_F)) {
+    if(wram->wLinkMode == LINK_NULL && !bit_test(wram->wStatusFlags2, STATUSFLAGS2_BUG_CONTEST_TIMER_F)) {
         de = StartMenu_AppendMenuList(de, STARTMENUITEM_PACK);
     }
 
@@ -133,7 +133,7 @@ static void StartMenu_SetUpMenuItems(void) {
     // LD_A_addr(wLinkMode);
     // AND_A_A;
     // IF_NZ goto no_save;
-    if(wram->wLinkMode == 0) {
+    if(wram->wLinkMode == LINK_NULL) {
         // LD_HL(wStatusFlags2);
         // BIT_hl(STATUSFLAGS2_BUG_CONTEST_TIMER_F);
         // LD_A(STARTMENUITEM_QUIT);

@@ -72,7 +72,7 @@ MasterLoop:
         // LD_A_addr(wLinkMode);
         // AND_A_A;
         // RET_NZ ;
-        if(wram->wLinkMode != 0)
+        if(wram->wLinkMode != LINK_NULL)
             return;
         // LD_A_addr(wBattleMode);
         // AND_A_A;
@@ -143,7 +143,7 @@ MasterLoop:
 
             // CALL(aIsMonHoldingEverstone);
             // JP_Z (mEvolveAfterBattle_MasterLoop_dont_evolve_2);
-            if(wram->wLinkMode == 0 || IsMonHoldingEverstone())
+            if(wram->wLinkMode == LINK_NULL || IsMonHoldingEverstone())
                 goto dont_evolve_2;
 
             // LD_A_hli;
@@ -172,7 +172,7 @@ MasterLoop:
         // LD_A_addr(wLinkMode);
         // AND_A_A;
         // JP_NZ (mEvolveAfterBattle_MasterLoop_dont_evolve_2);
-        else if(wram->wLinkMode != 0) {
+        else if(wram->wLinkMode != LINK_NULL) {
             goto dont_evolve_2;
         }
 
@@ -196,7 +196,7 @@ MasterLoop:
             // LD_A_addr(wLinkMode);
             // AND_A_A;
             // JP_NZ (mEvolveAfterBattle_MasterLoop_dont_evolve_3);
-            if(wram->wForceEvolution == 0 || wram->wLinkMode != 0)
+            if(wram->wForceEvolution == 0 || wram->wLinkMode != LINK_NULL)
                 goto dont_evolve_3;
             // goto proceed;
         }

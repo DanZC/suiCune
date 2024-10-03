@@ -1838,6 +1838,16 @@ void PopulateMapScriptTable(void) {
     entry(POWER_PLANT, 4, PowerPlantGymGuide4Script);
     entry(POWER_PLANT, 5, PowerPlantManager);
     entry(POWER_PLANT, 6, Forest);
+
+    entry(COLOSSEUM, 0, CableClubFriendScript);
+    entry(COLOSSEUM, 1, CableClubFriendScript);
+    entry(COLOSSEUM, 2, CableClubFriendScript);
+    entry(COLOSSEUM, 3, CableClubFriendScript);
+
+    entry(TRADE_CENTER, 0, CableClubFriendScript);
+    entry(TRADE_CENTER, 1, CableClubFriendScript);
+    entry(TRADE_CENTER, 2, CableClubFriendScript);
+    entry(TRADE_CENTER, 3, CableClubFriendScript);
 }
 
 const void* GetRealScriptPointer(uint8_t group, uint8_t map, uint8_t index) {

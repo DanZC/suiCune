@@ -40,7 +40,7 @@ void AIChooseMove(void){
     // LD_A_addr(wLinkMode);
     // AND_A_A;
     // RET_NZ ;
-    if(wram->wLinkMode != 0)
+    if(wram->wLinkMode != LINK_NULL)
         return;
 
 //  No use picking a move if there's no choice.

@@ -133,7 +133,7 @@ void DoBattle(void){
     // LDH_A_addr(hSerialConnectionStatus);
     // CP_A(USING_INTERNAL_CLOCK);
     // IF_Z goto player_2;
-    if(wram->wLinkMode == 0 || hram->hSerialConnectionStatus != USING_INTERNAL_CLOCK) {
+    if(wram->wLinkMode == LINK_NULL || hram->hSerialConnectionStatus != USING_INTERNAL_CLOCK) {
     // not_linked:
         // LD_A_addr(wBattleMode);
         printf("wBattleMode = %s\n", (wram->wBattleMode == TRAINER_BATTLE)? "trainer": "wild");
@@ -250,7 +250,7 @@ void DoBattle(void){
     // LDH_A_addr(hSerialConnectionStatus);
     // CP_A(USING_INTERNAL_CLOCK);
     // IF_NZ goto not_linked_2;
-    if(wram->wLinkMode != 0 && hram->hSerialConnectionStatus == USING_INTERNAL_CLOCK) {
+    if(wram->wLinkMode != LINK_NULL && hram->hSerialConnectionStatus == USING_INTERNAL_CLOCK) {
         // XOR_A_A;
         // LD_addr_A(wEnemySwitchMonIndex);
         wram->wEnemySwitchMonIndex = 0;

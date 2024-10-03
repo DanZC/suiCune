@@ -1024,7 +1024,7 @@ asm_10630d:
 }
 
 // Special to check mobile adapater status.
-// Determines whether the mobile adapater has been activated.
+// Determines whether the mobile adapter has been activated.
 // Has the following effects in JP Crystal:
 // - Activates the Pokemon Communication Center and changes the map's music to MUSIC_MOBILE_CENTER
 // - Adds option to battle or trade with mobile adapter in Pokemon Cable Club.
