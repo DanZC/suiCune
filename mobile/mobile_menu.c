@@ -273,7 +273,7 @@ void Function4a0b9(void){
 
 // MobileMenu_Profile
 void Function4a0c2(void){
-    return asm_4a111(); // Dummied out
+    // return asm_4a111(); // Dummied out
     // LD_A(2);
     // CALL(aMenuClickSound);
     MenuClickSound_Conv(2);
@@ -293,16 +293,15 @@ void Function4a0c2(void){
     // CALL(aDelayFrames);
     DelayFrames_Conv(2);
     // LD_C(0x1);
-    struct cpu_registers_s reg = {.c = 0x1};
     // CALL(aInitMobileProfile);
-    SafeCallGB(aInitMobileProfile, &reg);
+    uint8_t a = InitMobileProfile(0x1);
     // PUSH_AF;
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // POP_AF;
     // AND_A_A;
     // IF_NZ goto skip_save;
-    if(reg.a == 0) {
+    if(a == 0) {
         // FARCALL(av_SaveData);
         v_SaveData();
     }

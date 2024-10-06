@@ -2667,12 +2667,12 @@ struct wram_s
                         //	0 male
                         //	1 female
                         uint8_t wPlayerGender;
-                        uint8_t wd473[1];
-                        uint8_t wd474[1];
-                        uint8_t wd475[1];
-                        uint8_t wd476;
-                        uint8_t wd477[1];
-                        uint8_t wd478[1];
+                        uint8_t wd473; // wCurrentMobileProfileSelection
+                        uint8_t wd474; // wMobileProfilePrefecture
+                        uint8_t wd475; // wMobileProfileZipCode0
+                        uint8_t wd476; // wMobileProfileZipCode1
+                        uint8_t wd477; // wMobileProfileZipCode2
+                        uint8_t wd478; // wMobileProfileZipCode3
                     };
                     uint8_t wCrystalData[wCrystalDataEnd - wCrystalData];
                 };

@@ -200,9 +200,8 @@ void AreYouABoyOrAreYouAGirl(void) {
 
 // ok:
     // LD_C(0);
-    struct cpu_registers_s reg = {.c = 0};
     // FARCALL(aInitMobileProfile);  // mobile
-    SafeCallGB(aInitMobileProfile, &reg);
+    InitMobileProfile(0);
     // RET;
 }
 
@@ -706,7 +705,7 @@ void Continue_MobileAdapterMenu(void) {
     DelayFrames_Conv(20);
     // LD_C(0x1);
     // FARCALL(aInitMobileProfile);  // mobile
-    SafeCallGB(aInitMobileProfile, &(struct cpu_registers_s){.c = 0x1});
+    InitMobileProfile(0x1);
     // FARCALL(av_SaveData);
     v_SaveData();
     // LD_A(8);
