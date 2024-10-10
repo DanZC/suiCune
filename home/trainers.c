@@ -218,11 +218,11 @@ bool v_CheckTrainerBattle_Conv(void){
         uint16_t eventFlag;
         if(de->objectScript <= NUM_OBJECTS)
             eventFlag = gCurMapObjectEventsPointer[de->objectScript].trainer->event_flag;
-        else if(convertedFunc[(GetMapScriptsBank_Conv() << 14) | de->objectScript]){
-            eventFlag = ((struct TrainerObj*)convertedFunc[(GetMapScriptsBank_Conv() << 14) | de->objectScript])->event_flag;
+        else if(convertedFunc[(GetMapScriptsBank_Conv() << 14) | (de->objectScript & 0x3fff)]){
+            eventFlag = ((struct TrainerObj*)convertedFunc[(GetMapScriptsBank_Conv() << 14) | (de->objectScript & 0x3fff)])->event_flag;
         }
         else {
-            eventFlag = *(uint16_t*)AbsGBROMToRAMAddr((GetMapScriptsBank_Conv() << 14) | de->objectScript);
+            eventFlag = *(uint16_t*)AbsGBROMToRAMAddr((GetMapScriptsBank_Conv() << 14) | (de->objectScript & 0x3fff));
         }
         // LD_A_C;
         // POP_DE;
@@ -327,8 +327,8 @@ bool LoadTrainer_continue_Conv(void){
         gScriptAfterPointer = hl->script;
     }
     else {
-        if(convertedFunc[(GetMapScriptsBank_Conv() << 14) | bc->objectScript]) {
-            const struct TrainerObj* hl = (const struct TrainerObj*)convertedFunc[(GetMapScriptsBank_Conv() << 14) | bc->objectScript];
+        if(convertedFunc[(GetMapScriptsBank_Conv() << 14) | (bc->objectScript & 0x3fff)]) {
+            const struct TrainerObj* hl = (const struct TrainerObj*)convertedFunc[(GetMapScriptsBank_Conv() << 14) | (bc->objectScript & 0x3fff)];
             wram->wTempTrainerEventFlag = hl->event_flag;
             wram->wTempTrainerClass = hl->tclass;
             wram->wTempTrainerID = hl->tid;

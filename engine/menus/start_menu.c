@@ -341,7 +341,7 @@ static void StartMenu_Clear(void) {
     // CALL(aCall_ExitMenu);
     ExitMenu_Conv2();
     // CALL(aReloadTilesetAndPalettes);
-    ReloadTilesetAndPalettes();
+    ReloadTilesetAndPalettes_Conv();
     // CALL(aStartMenu_DrawMenuAccount);
     StartMenu_DrawMenuAccount();
     // CALL(aDrawVariableLengthMenuBox);

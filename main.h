@@ -489,7 +489,7 @@
 
 //#include "mobile/mobile_45.h"
 #include "mobile/mobile_45_sprite_engine.h"
-//#include "mobile/mobile_45_2.h"
+#include "mobile/mobile_45_2.h"
 #include "mobile/mobile_45_stadium.h"
 
 // SECTION "mobile46", ROMX

@@ -202,7 +202,7 @@ struct wram_s
                         uint8_t wc312;
                         uint8_t wc313;
                         uint8_t wc314[5];
-                        uint8_t wc319;
+                        uint8_t wc319;   // Mobile animation jumptable index
                         uint8_t wc31a;
                         uint8_t wc31b;
                         uint8_t wc31c;

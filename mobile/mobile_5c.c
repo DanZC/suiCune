@@ -1,6 +1,15 @@
 #include "../constants.h"
 #include "mobile_5c.h"
+#include "mobile_46.h"
 #include "../home/sram.h"
+#include "../home/lcd.h"
+#include "../home/copy.h"
+#include "../home/text.h"
+#include "../home/tilemap.h"
+#include "../home/joypad.h"
+#include "../home/clear_sprites.h"
+#include "../engine/gfx/dma_transfer.h"
+#include "../engine/gfx/sprites.h"
 
 void Function170000(void){
     LD_A_addr(0xc62b);
@@ -354,65 +363,56 @@ void CheckBTMonMovesForErrors_Conv(void){
     // RET;
 }
 
+// LoadPichuAnimatedMobileGFX
 void Function170cc6(void){
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(BANK(wDecompressScratch));
-    LDH_addr_A(rSVBK);
-    LD_HL(mPichuAnimatedMobileGFX);
-    LD_DE(wDecompressScratch);
-    CALL(aDecompress);
-    LD_A(1);
-    LDH_addr_A(rVBK);
-    LD_DE(wDecompressScratch);
-    LD_HL(vTiles0);
-    LD_BC((BANK(wDecompressScratch) << 8) | 193);
-    CALL(aGet2bpp);
-    XOR_A_A;
-    LDH_addr_A(rVBK);
-    LD_HL(mElectroBallMobileGFX);
-    LD_DE(wDecompressScratch);
-    CALL(aDecompress);
-    LD_DE(wBGPals1);
-    LD_HL(vTiles0);
-    LD_BC((BANK(wDecompressScratch) << 8) | 83);
-    CALL(aGet2bpp);
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    RET;
-
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(BANK(wDecompressScratch));
+    // LDH_addr_A(rSVBK);
+    // LD_HL(mPichuAnimatedMobileGFX);
+    // LD_DE(wDecompressScratch);
+    // CALL(aDecompress);
+    LoadPNG2bppAssetToVRAM(wram->wDecompressScratch, PichuAnimatedMobileGFX);
+    // LD_A(1);
+    // LDH_addr_A(rVBK);
+    // LD_DE(wDecompressScratch);
+    // LD_HL(vTiles0);
+    // LD_BC((BANK(wDecompressScratch) << 8) | 193);
+    // CALL(aGet2bpp);
+    CopyBytes_Conv2(vram->vTiles3, wram->wDecompressScratch, 193 * LEN_2BPP_TILE);
+    // XOR_A_A;
+    // LDH_addr_A(rVBK);
+    // LD_HL(mElectroBallMobileGFX);
+    // LD_DE(wDecompressScratch);
+    // CALL(aDecompress);
+    LoadPNG2bppAssetToVRAM(wram->wDecompressScratch, ElectroBallMobileGFX);
+    // LD_DE(wBGPals1);
+    // LD_HL(vTiles0);
+    // LD_BC((BANK(wDecompressScratch) << 8) | 83);
+    // CALL(aGet2bpp);
+    CopyBytes_Conv2(vram->vTiles0, wram->wDecompressScratch, 83 * LEN_2BPP_TILE);
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // RET;
 }
 
+// LoadPichuBorderMobileGFX
 void Function170d02(void){
-    LD_A(0x1);
-    LDH_addr_A(rVBK);
-    LD_DE(mPichuBorderMobileGFX);
-    LD_HL(vTiles0 + LEN_2BPP_TILE * 0xc1);
-    LD_BC((BANK(aPichuBorderMobileGFX) << 8) | 24);
-    CALL(aGet2bpp);
-    XOR_A_A;
-    LDH_addr_A(rVBK);
-    RET;
-
+    // LD_A(0x1);
+    // LDH_addr_A(rVBK);
+    // LD_DE(mPichuBorderMobileGFX);
+    // LD_HL(vTiles0 + LEN_2BPP_TILE * 0xc1);
+    // LD_BC((BANK(aPichuBorderMobileGFX) << 8) | 24);
+    // CALL(aGet2bpp);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles3 + LEN_2BPP_TILE * 0xc1, PichuBorderMobileGFX, 0, 24);
+    // XOR_A_A;
+    // LDH_addr_A(rVBK);
+    // RET;
 }
 
-void PichuAnimatedMobileGFX(void){
-// INCBIN "gfx/mobile/pichu_animated.2bpp.lz"
-
-    return ElectroBallMobileGFX();
-}
-
-void ElectroBallMobileGFX(void){
-// INCBIN "gfx/mobile/electro_ball.2bpp.lz"
-
-    return PichuBorderMobileGFX();
-}
-
-void PichuBorderMobileGFX(void){
-// INCBIN "gfx/mobile/pichu_border.2bpp"
-
-    return Function1719c8();
-}
+const char PichuAnimatedMobileGFX[] = "gfx/mobile/pichu_animated.png";
+const char ElectroBallMobileGFX[] = "gfx/mobile/electro_ball.png";
+const char PichuBorderMobileGFX[] = "gfx/mobile/pichu_border.png";
 
 void Function1719c8(void){
     // LDH_A_addr(hInMenu);
@@ -429,51 +429,69 @@ void Function1719c8(void){
 }
 
 void Function1719d6(void){
-    FARCALL(aBattleTowerRoomMenu_InitRAM);
-    CALL(aFunction1719ed);
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(0x5);
-    LDH_addr_A(rSVBK);
-    CALL(aFunction171a11);
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    RET;
-
+    // FARCALL(aBattleTowerRoomMenu_InitRAM);
+    BattleTowerRoomMenu_InitRAM();
+    // CALL(aFunction1719ed);
+    Function1719ed();
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(0x5);
+    // LDH_addr_A(rSVBK);
+    // CALL(aFunction171a11);
+    Function171a11();
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // RET;
 }
 
 void Function1719ed(void){
-    XOR_A_A;
-    LD_addr_A(wcd49);
-    LD_addr_A(wcd4a);
-    DEC_A;
-    LD_addr_A(wcd4b);
-    CALL(aClearBGPalettes);
-    CALL(aClearSprites);
-    FARCALL(aFunction171d2b);
-    FARCALL(aReloadMapPart);
-    FARCALL(aClearSpriteAnims);
-    RET;
-
+    // XOR_A_A;
+    // LD_addr_A(wcd49);
+    wram->wcd49 = 0x0;
+    // LD_addr_A(wcd4a);
+    wram->wcd4a = 0x0;
+    // DEC_A;
+    // LD_addr_A(wcd4b);
+    wram->wcd4b[0] = 0xff;
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
+    // CALL(aClearSprites);
+    ClearSprites_Conv();
+    // FARCALL(aFunction171d2b);
+    Function171d2b();
+    // FARCALL(aReloadMapPart);
+    ReloadMapPart_Conv();
+    // FARCALL(aClearSpriteAnims);
+    ClearSpriteAnims_Conv();
+    // RET;
 }
 
 void Function171a11(void){
 
-loop:
-    CALL(aJoyTextDelay);
-    LD_A_addr(wcd49);
-    BIT_A(7);
-    IF_NZ goto done;
-    CALL(aFunction171a36);
-    FARCALL(aPlaySpriteAnimations);
-    FARCALL(aReloadMapPart);
-    goto loop;
+    while(1) {
+    // loop:
+        // CALL(aJoyTextDelay);
+        JoyTextDelay_Conv();
+        // LD_A_addr(wcd49);
+        // BIT_A(7);
+        // IF_NZ goto done;
+        if(bit_test(wram->wcd49, 7))
+            break;
+        // CALL(aFunction171a36);
+        Function171a36();
+        // FARCALL(aPlaySpriteAnimations);
+        PlaySpriteAnimations_Conv();
+        // FARCALL(aReloadMapPart);
+        ReloadMapPart_Conv();
+        // goto loop;
+    }
 
-done:
-    FARCALL(aClearSpriteAnims);
-    CALL(aClearSprites);
-    RET;
-
+// done:
+    // FARCALL(aClearSpriteAnims);
+    ClearSpriteAnims_Conv();
+    // CALL(aClearSprites);
+    ClearSprites_Conv();
+    // RET;
 }
 
 void Function171a36(void){
@@ -540,14 +558,11 @@ void Function171a95(void){
 
 }
 
-void String_171aa7(void){
-    //db ['"モバイルアダプタに"'];
-    //next ['"せつぞく\u3000しています"']
-    //next ['"しばらく\u3000おまちください"']
-    //db ['"@"'];
-
-    return Function171ac9();
-}
+const char String_171aa7[] = 
+           "Connecting to"      //db ['"モバイルアダプタに"'];
+    t_next "MOBILE ADAPTER…";   //next ['"せつぞく\u3000しています"']
+                                //next ['"しばらく\u3000おまちください"']
+                                //db ['"@"'];
 
 void Function171ac9(void){
     LD_DE(wcd81);
@@ -923,44 +938,45 @@ shifted:
 }
 
 void Function171d2b(void){
-    CALL(aDisableLCD);
-    LD_HL(mAsciiFontGFX);
-    LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
-    LD_BC(0x6e0);
-    CALL(aCopyBytes);
-    LD_HL(mPasswordSlowpokeLZ);
-    LD_DE(vTiles0 + LEN_2BPP_TILE * 0x00);
-    CALL(aDecompress);
-    CALL(aEnableLCD);
-    LD_HL(mChooseMobileCenterTilemap);
-    decoord(0, 0, wTilemap);
-    LD_BC(0x168);
-    CALL(aCopyBytes);
-    LD_HL(mChooseMobileCenterAttrmap);
-    decoord(0, 0, wAttrmap);
-    LD_BC(0x168);
-    CALL(aCopyBytes);
-    hlcoord(2, 2, wTilemap);
-    LD_DE(mString_172e5d);
-    CALL(aPlaceString);
-    hlcoord(14, 16, wTilemap);
-    LD_DE(mString_172e58);
-    CALL(aPlaceString);
-    RET;
-
+    // CALL(aDisableLCD);
+    DisableLCD_Conv();
+    // LD_HL(mAsciiFontGFX);
+    // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
+    // LD_BC(0x6e0);
+    // CALL(aCopyBytes);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x00, AsciiFontGFX, 0, 110); // 0x6e0 / LEN_2BPP_TILE
+    // LD_HL(mPasswordSlowpokeLZ);
+    // LD_DE(vTiles0 + LEN_2BPP_TILE * 0x00);
+    // CALL(aDecompress);
+    LoadPNG2bppAssetToVRAM(vram->vTiles0 + LEN_2BPP_TILE * 0x00, PasswordSlowpokeLZ);
+    // CALL(aEnableLCD);
+    EnableLCD_Conv();
+    // LD_HL(mChooseMobileCenterTilemap);
+    // decoord(0, 0, wTilemap);
+    // LD_BC(0x168);
+    // CALL(aCopyBytes);
+    LoadAssetToBuffer(coord(0, 0, wram->wTilemap), 0x168, ChooseMobileCenterTilemap);
+    // LD_HL(mChooseMobileCenterAttrmap);
+    // decoord(0, 0, wAttrmap);
+    // LD_BC(0x168);
+    // CALL(aCopyBytes);
+    LoadAssetToBuffer(coord(0, 0, wram->wAttrmap), 0x168, ChooseMobileCenterAttrmap);
+    // hlcoord(2, 2, wTilemap);
+    // LD_DE(mString_172e5d);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(String_172e5d), coord(2, 2, wram->wTilemap));
+    // hlcoord(14, 16, wTilemap);
+    // LD_DE(mString_172e58);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(String_172e58), coord(14, 16, wram->wTilemap));
+    // RET;
 }
 
 void MobilePasswordPalettes(void){
 // INCLUDE "gfx/mobile/mobile_password.pal"
-
-    return AsciiFontGFX();
 }
 
-void AsciiFontGFX(void){
-// INCBIN "gfx/mobile/ascii_font.2bpp"
-
-    return PasswordTopTilemap();
-}
+const char AsciiFontGFX[] = "gfx/mobile/ascii_font.png";
 
 void PasswordTopTilemap(void){
 // INCBIN "gfx/mobile/password_top.tilemap"
@@ -976,60 +992,21 @@ void PasswordBottomTilemap(void){
 
 void PasswordShiftTilemap(void){
 // INCBIN "gfx/mobile/password_shift.tilemap"
-
-    return ChooseMobileCenterTilemap();
 }
 
-void ChooseMobileCenterTilemap(void){
-// INCBIN "gfx/mobile/mobile_center.tilemap"
+const char ChooseMobileCenterTilemap[] = "gfx/mobile/mobile_center.tilemap";
+const char MobilePasswordAttrmap[] = "gfx/mobile/password.attrmap";
+const char ChooseMobileCenterAttrmap[] = "gfx/mobile/mobile_center.attrmap";
 
-    return MobilePasswordAttrmap();
-}
+const char PasswordSlowpokeLZ[] = "gfx/pokedex/slowpoke.png";
 
-void MobilePasswordAttrmap(void){
-// INCBIN "gfx/mobile/password.attrmap"
-
-    return ChooseMobileCenterAttrmap();
-}
-
-void ChooseMobileCenterAttrmap(void){
-// INCBIN "gfx/mobile/mobile_center.attrmap"
-
-    return PasswordSlowpokeLZ();
-}
-
-void PasswordSlowpokeLZ(void){
-// INCBIN "gfx/pokedex/slowpoke.2bpp.lz"
-
-    return String_172e31();
-}
-
-void String_172e31(void){
-    //db ['"パスワード<WO>いれてください@"'];
-    return String_172e3f();
-}
-
-void String_172e3f(void){
-    //db ['"きりかえ\u3000やめる\u3000\u3000けってい@"'];
-    return String_172e4e();
-}
-
-void String_172e4e(void){
-    //db ['"きりかえ\u3000やめる\u3000\u3000"'];
-    return String_172e58();
-}
-
-void String_172e58(void){
-    //db ['"けってい@"'];
-    return String_172e5d();
-}
-
-void String_172e5d(void){
-    //db ['"せつぞくする\u3000モバイルセンターを"'];
-    //next ['"えらんで\u3000ください@"']
-
-    return Function172e78();
-}
+const char String_172e31[] = "Enter PASSWORD@"; // "パスワード<WO>いれてください@"
+const char String_172e3f[] = " SWAP QUIT  OK @"; // "きりかえ\u3000やめる\u3000\u3000けってい@"
+const char String_172e4e[] = " SWAP QUIT  OK @"; // "きりかえ\u3000やめる\u3000\u3000"
+const char String_172e58[] = "OK"; // "けってい@"
+const char String_172e5d[] = 
+            "Connect to a" // "せつぞくする\u3000モバイルセンターを"
+    t_next  "MOBILE CENTER@"; // "えらんで\u3000ください@"
 
 void Function172e78(void){
     LD_A(0x7f);

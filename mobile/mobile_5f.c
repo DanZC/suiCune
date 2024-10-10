@@ -2,6 +2,12 @@
 #include "mobile_5f.h"
 #include "../charmap.h"
 #include "../home/menu.h"
+#include "../home/lcd.h"
+#include "../home/copy.h"
+#include "../home/tilemap.h"
+#include "../home/text.h"
+#include "../home/clear_sprites.h"
+#include "../engine/gfx/dma_transfer.h"
 
 void Function17c000(void){
     CALL(aDisableLCD);
@@ -911,50 +917,61 @@ void Function17d370(void){
 }
 
 void Function17d3f6(void){
-    CALL(aClearBGPalettes);
-    CALL(aClearSprites);
-    CALL(aClearScreen);
-    FARCALL(aReloadMapPart);
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
+    // CALL(aClearSprites);
+    ClearSprites_Conv();
+    // CALL(aClearScreen);
+    ClearScreen_Conv2();
+    // FARCALL(aReloadMapPart);
+    ReloadMapPart_Conv();
 
     return Function17d405();
 }
 
 void Function17d405(void){
-    CALL(aDisableLCD);
-    LD_HL(vTiles0 + LEN_2BPP_TILE * 0xee);
-    LD_DE(wc608);
-    LD_BC(1 * LEN_2BPP_TILE);
-    CALL(aCopyBytes);
-    LD_A(0x1);
-    LDH_addr_A(rVBK);
-    LD_HL(mPokemonNewsGFX);
-    LD_DE(vTiles1);
-    LD_BC(0x48 * LEN_2BPP_TILE);
-    CALL(aCopyBytes);
-    XOR_A_A;
-    LD_HL(vTiles2 + LEN_2BPP_TILE * 0x7f);
-    LD_BC(1 * LEN_2BPP_TILE);
-    CALL(aByteFill);
-    LD_HL(wc608);
-    LD_DE(vTiles0 + LEN_2BPP_TILE * 0xee);
-    LD_BC(1 * LEN_2BPP_TILE);
-    CALL(aCopyBytes);
-    XOR_A_A;
-    LDH_addr_A(rVBK);
-    CALL(aEnableLCD);
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(0x5);
-    LDH_addr_A(rSVBK);
-    LD_HL(mPokemonNewsPalettes);
-    LD_DE(wBGPals1);
-    LD_BC(8 * PALETTE_SIZE);
-    CALL(aCopyBytes);
-    CALL(aSetPalettes);
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    RET;
-
+    // CALL(aDisableLCD);
+    DisableLCD_Conv();
+    // LD_HL(vTiles0 + LEN_2BPP_TILE * 0xee);
+    // LD_DE(wc608);
+    // LD_BC(1 * LEN_2BPP_TILE);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wc608, vram->vTiles0 + LEN_2BPP_TILE * 0xee, 1 * LEN_2BPP_TILE);
+    // LD_A(0x1);
+    // LDH_addr_A(rVBK);
+    // LD_HL(mPokemonNewsGFX);
+    // LD_DE(vTiles1);
+    // LD_BC(0x48 * LEN_2BPP_TILE);
+    // CALL(aCopyBytes);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles4, PokemonNewsGFX, 0, 0x48);
+    // XOR_A_A;
+    // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x7f);
+    // LD_BC(1 * LEN_2BPP_TILE);
+    // CALL(aByteFill);
+    ByteFill_Conv2(vram->vTiles2 + LEN_2BPP_TILE * 0x7f, 1 * LEN_2BPP_TILE, 0x0);
+    // LD_HL(wc608);
+    // LD_DE(vTiles0 + LEN_2BPP_TILE * 0xee);
+    // LD_BC(1 * LEN_2BPP_TILE);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(vram->vTiles3 + LEN_2BPP_TILE * 0xee, wram->wc608, 1 * LEN_2BPP_TILE);
+    // XOR_A_A;
+    // LDH_addr_A(rVBK);
+    // CALL(aEnableLCD);
+    EnableLCD_Conv();
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(0x5);
+    // LDH_addr_A(rSVBK);
+    // LD_HL(mPokemonNewsPalettes);
+    // LD_DE(wBGPals1);
+    // LD_BC(8 * PALETTE_SIZE);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wBGPals1, PokemonNewsPalettes, 8 * PALETTE_SIZE);
+    // CALL(aSetPalettes);
+    SetPalettes_Conv();
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // RET;
 }
 
 void Function17d45a(void){
@@ -4147,29 +4164,10 @@ asm_17e6f1:
 
 }
 
-void PokemonNewsGFX(void){
-// INCBIN "gfx/mobile/pokemon_news.2bpp"
-
-    return PostalMarkGFX();
-}
-
-void PostalMarkGFX(void){
-// INCBIN "gfx/font/postal_mark.2bpp"
-
-    return PokemonNewsTileAttrmap();
-}
-
-void PokemonNewsTileAttrmap(void){
-// INCBIN "gfx/mobile/pokemon_news.bin"
-
-    return PokemonNewsPalettes();
-}
-
-void PokemonNewsPalettes(void){
-// INCLUDE "gfx/mobile/pokemon_news.pal"
-
-    return RunMobileScript();
-}
+const char PokemonNewsGFX[] = "gfx/mobile/pokemon_news.png";
+const char PostalMarkGFX[] = "gfx/font/postal_mark.2bpp";
+const char PokemonNewsTileAttrmap[] = "gfx/mobile/pokemon_news.bin";
+const char PokemonNewsPalettes[] = "gfx/mobile/pokemon_news.pal";
 
 void RunMobileScript(void){
     LD_A(0x6);

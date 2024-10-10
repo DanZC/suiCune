@@ -46,29 +46,38 @@ void v_UpdatePlayerSprite_Conv(void){
 
 void v_RefreshSprites(void){
 //  //  mobile
-    LD_HL(wSpriteFlags);
-    LD_A_hl;
-    PUSH_AF;
-    RES_hl(7);
-    SET_hl(6);
-    CALL(aLoadUsedSpritesGFX);
-    POP_AF;
-    LD_addr_A(wSpriteFlags);
-    RET;
-
+    // LD_HL(wSpriteFlags);
+    // LD_A_hl;
+    // PUSH_AF;
+    uint8_t spriteFlags = wram->wSpriteFlags;
+    // RES_hl(7);
+    bit_reset(wram->wSpriteFlags, 7);
+    // SET_hl(6);
+    bit_set(wram->wSpriteFlags, 6);
+    // CALL(aLoadUsedSpritesGFX);
+    LoadUsedSpritesGFX_Conv();
+    // POP_AF;
+    // LD_addr_A(wSpriteFlags);
+    wram->wSpriteFlags = spriteFlags;
+    // RET;
 }
 
 void v_ClearSprites(void){
 //  //  mobile
-    LD_HL(wSpriteFlags);
-    LD_A_hl;
-    PUSH_AF;
-    SET_hl(7);
-    RES_hl(6);
-    CALL(aLoadUsedSpritesGFX);
-    POP_AF;
-    LD_addr_A(wSpriteFlags);
-    RET;
+    // LD_HL(wSpriteFlags);
+    // LD_A_hl;
+    // PUSH_AF;
+    uint8_t spriteFlags = wram->wSpriteFlags;
+    // SET_hl(7);
+    bit_set(wram->wSpriteFlags, 7);
+    // RES_hl(6);
+    bit_reset(wram->wSpriteFlags, 6);
+    // CALL(aLoadUsedSpritesGFX);
+    LoadUsedSpritesGFX_Conv();
+    // POP_AF;
+    // LD_addr_A(wSpriteFlags);
+    wram->wSpriteFlags = spriteFlags;
+    // RET;
 
 }
 

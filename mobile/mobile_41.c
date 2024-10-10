@@ -1326,6 +1326,7 @@ void Stubbed_Function106462(void){
 
 }
 
+// Mobile_LoadDialingGFX
 void Function106464(void){
     // LD_DE(mFontsExtra_SolidBlackGFX);
     // LD_HL(vTiles2 + LEN_2BPP_TILE * "■");  // $60

@@ -8,6 +8,7 @@
 #include "../home/text.h"
 #include "../home/joypad.h"
 #include "../home/serial.h"
+#include "../home/map.h"
 #include "../engine/battle/core.h"
 #include "../engine/link/place_waiting_text.h"
 #include "../engine/events/battle_tower/rules.h"
@@ -64,71 +65,89 @@ void Function100022(void){
 }
 
 void Function100057(void){
-    CALL(aDisableMobile);
-    CALL(aReturnToMapFromSubmenu);
-    LD_HL(wVramState);
-    RES_hl(1);
-    RET;
+    // CALL(aDisableMobile);
+    DisableMobile();
+    // CALL(aReturnToMapFromSubmenu);
+    ReturnToMapFromSubmenu();
+    // LD_HL(wVramState);
+    // RES_hl(1);
+    bit_reset(wram->wVramState, 1);
+    // RET;
 
 }
 
 void SetRAMStateForMobile(void){
-    XOR_A_A;
-    LD_HL(wBGMapBuffer);
-    LD_BC(0x65);
-    CALL(aByteFill);
-    XOR_A_A;
-    LD_HL(wMobileWRAM);
-    LD_BC(wMobileWRAMEnd - wMobileWRAM);
-    CALL(aByteFill);
-    LDH_A_addr(rIE);
-    LD_addr_A(wBGMapBuffer);
-    XOR_A_A;
-    LDH_addr_A(hMapAnims);
-    LDH_addr_A(hLCDCPointer);
-    RET;
+    // XOR_A_A;
+    // LD_HL(wBGMapBuffer);
+    // LD_BC(0x65);
+    // CALL(aByteFill);
+    ByteFill_Conv2(wram->wBGMapBuffer, 0x65, 0x0);
+    // XOR_A_A;
+    // LD_HL(wMobileWRAM);
+    // LD_BC(wMobileWRAMEnd - wMobileWRAM);
+    // CALL(aByteFill);
+    ByteFill_Conv2(wram->wMobileErrorCodeBuffer, wMobileWRAMEnd - wMobileWRAM, 0x0);
+    // LDH_A_addr(rIE);
+    // LD_addr_A(wBGMapBuffer);
+    wram->wBGMapBuffer[0] = gb_read(rIE);
+    // XOR_A_A;
+    // LDH_addr_A(hMapAnims);
+    hram->hMapAnims = 0x0;
+    // LDH_addr_A(hLCDCPointer);
+    hram->hLCDCPointer = 0x0;
+    // RET;
 
 }
 
 void EnableMobile(void){
-    XOR_A_A;
-    LD_HL(wOverworldMapBlocks);
-    LD_BC(wOverworldMapBlocksEnd - wOverworldMapBlocks);
-    CALL(aByteFill);
+    // XOR_A_A;
+    // LD_HL(wOverworldMapBlocks);
+    // LD_BC(wOverworldMapBlocksEnd - wOverworldMapBlocks);
+    // CALL(aByteFill);
+    ByteFill_Conv2(wram->wOverworldMapBlocks, sizeof(wram->wOverworldMapBlocks), 0x0);
 
-    NOP;
-    CALL(aDoubleSpeed);
-    XOR_A_A;
-    LDH_addr_A(rIF);
-    LD_A(IE_DEFAULT);
-    LDH_addr_A(rIE);
-    XOR_A_A;
-    LDH_addr_A(hMapAnims);
-    LDH_addr_A(hLCDCPointer);
-    LD_A(0x01);
-    LDH_addr_A(hMobileReceive);
-    LDH_addr_A(hMobile);
-    NOP;
+    // NOP;
+    // CALL(aDoubleSpeed);
+    // XOR_A_A;
+    // LDH_addr_A(rIF);
+    gb_write(rIF, 0x0);
+    // LD_A(IE_DEFAULT);
+    // LDH_addr_A(rIE);
+    gb_write(rIE, IE_DEFAULT);
+    // XOR_A_A;
+    // LDH_addr_A(hMapAnims);
+    hram->hMapAnims = 0x0;
+    // LDH_addr_A(hLCDCPointer);
+    hram->hLCDCPointer = 0x0;
+    // LD_A(0x01);
+    // LDH_addr_A(hMobileReceive);
+    hram->hMobileReceive = 0x01;
+    // LDH_addr_A(hMobile);
+    hram->hMobile = 0x01;
+    // NOP;
 
-    RET;
-
+    // RET;
 }
 
 void DisableMobile(void){
-    NOP;
-    XOR_A_A;
-    LDH_addr_A(hMobileReceive);
-    LDH_addr_A(hMobile);
-    XOR_A_A;
-    LDH_addr_A(hVBlank);
-    CALL(aNormalSpeed);
-    XOR_A_A;
-    LDH_addr_A(rIF);
-    LD_A_addr(wBGMapBuffer);
-    LDH_addr_A(rIE);
-    NOP;
-    RET;
-
+    // NOP;
+    // XOR_A_A;
+    // LDH_addr_A(hMobileReceive);
+    hram->hMobileReceive = 0x0;
+    // LDH_addr_A(hMobile);
+    hram->hMobile = 0x0;
+    // XOR_A_A;
+    // LDH_addr_A(hVBlank);
+    hram->hVBlank = 0x0;
+    // CALL(aNormalSpeed);
+    // XOR_A_A;
+    // LDH_addr_A(rIF);
+    gb_write(rIF, 0x0);
+    // LD_A_addr(wBGMapBuffer);
+    // LDH_addr_A(rIE);
+    gb_write(rIE, wram->wBGMapBuffer[0]);
+    // NOP;
+    // RET;
 }
 
 void Function1000ba(void){
