@@ -185,8 +185,8 @@ void (*const SpecialsPointers[])(void) = {
     add_special(CheckForBattleTowerRules),
     add_special(GiveOddEgg),
     // add_special(Reset), // bank 0
-    // add_special(Function1011f1),
-    // add_special(Function101220),
+    add_special(Function1011f1),
+    add_special(Function101220),
     // add_special(Function101225),
     // add_special(Function101231),
     add_special(MoveTutor),

@@ -118,13 +118,15 @@ void Function115dd3(void){
 
 }
 
-void Function115e18(void){
-    LD_A_C;
-    LD_addr_A(wc30a);
-    XOR_A_A;
-    LD_addr_A(wc30b);
-    JR(mFunction115e2b);
-
+void Function115e18(uint8_t c){
+    // LD_A_C;
+    // LD_addr_A(wc30a);
+    wram->wc30a = c;
+    // XOR_A_A;
+    // LD_addr_A(wc30b);
+    wram->wc30b = 0;
+    // JR(mFunction115e2b);
+    return Function115e2b();
 }
 
 void Function115e22(void){

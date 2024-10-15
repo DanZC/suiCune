@@ -154,21 +154,23 @@ void Function3ed7(void){
 
 }
 
-void Function3eea(void){
-        PUSH_HL;
-    PUSH_BC;
-    LD_DE(wAttrmap - wTilemap);
-    ADD_HL_DE;
-    INC_B;
-    INC_B;
-    INC_C;
-    INC_C;
-    CALL(aFunction3f35);
-    POP_BC;
-    POP_HL;
-    CALL(aMobileHome_PlaceBox);
-    RET;
-
+tile_t* Function3eea(tile_t* hl, uint8_t b, uint8_t c){
+    // PUSH_HL;
+    // PUSH_BC;
+    // LD_DE(wAttrmap - wTilemap);
+    // ADD_HL_DE;
+    uint8_t* attr = ((uint8_t*)hl) + (wAttrmap - wTilemap);
+    // INC_B;
+    // INC_B;
+    // INC_C;
+    // INC_C;
+    // CALL(aFunction3f35);
+    Function3f35(attr, b + 1, c + 1);
+    // POP_BC;
+    // POP_HL;
+    // CALL(aMobileHome_PlaceBox);
+    // RET;
+    return MobileHome_PlaceBox(hl, b, c);
 }
 
 void Function3efd(void){
@@ -213,77 +215,98 @@ void Function3f20(void){
 
 }
 
-void Function3f35(void){
-        LD_A(6);
-    LD_DE(SCREEN_WIDTH);
+void Function3f35(uint8_t* hl, uint8_t b, uint8_t c){
+    // LD_A(6);
+    // LD_DE(SCREEN_WIDTH);
 
-row:
-        PUSH_BC;
-    PUSH_HL;
+    do {
+    // row:
+        // PUSH_BC;
+        uint8_t c2 = c;
+        // PUSH_HL;
+        uint8_t* hl2 = hl;
 
-col:
-        LD_hli_A;
-    DEC_C;
-    IF_NZ goto col;
-    POP_HL;
-    ADD_HL_DE;
-    POP_BC;
-    DEC_B;
-    IF_NZ goto row;
-    RET;
-
+        do {
+        // col:
+            // LD_hli_A;
+            *(hl2++) = 6;
+            // DEC_C;
+            // IF_NZ goto col;
+        } while(--c2 != 0);
+        // POP_HL;
+        // ADD_HL_DE;
+        hl += SCREEN_WIDTH;
+        // POP_BC;
+        // DEC_B;
+        // IF_NZ goto row;
+    } while(--b != 0);
+    // RET;
 }
 
-void MobileHome_PlaceBox(void){
-        PUSH_BC;
-    CALL(aMobileHome_PlaceBox_FillTop);
-    POP_BC;
+static tile_t* MobileHome_PlaceBox_FillRow(tile_t* hl, uint8_t c, uint8_t a, uint8_t d, uint8_t e) {
+    // PUSH_HL;
+    tile_t* hl2 = hl;
+    // LD_hl_D;
+    *hl2 = d;
+    // INC_HL;
+    hl2++;
+    do {
+    // FillLoop:
+        // LD_hli_A;
+        *(hl2++) = a;
+        // DEC_C;
+        // IF_NZ goto FillLoop;
+    } while(--c != 0);
+    // LD_hl_E;
+    *hl2 = e;
+    // POP_HL;
+    // LD_DE(SCREEN_WIDTH);
+    // ADD_HL_DE;
+    // RET;
+    return hl + SCREEN_WIDTH;
+}
 
-RowLoop:
-        PUSH_BC;
-    CALL(aMobileHome_PlaceBox_FillMiddle);
-    POP_BC;
-    DEC_B;
-    IF_NZ goto RowLoop;
-    CALL(aMobileHome_PlaceBox_FillBottom);
-    RET;
+static tile_t* MobileHome_PlaceBox_FillTop(tile_t* hl, uint8_t c){
+    // LD_A(0x63);
+    // LD_D(0x62);
+    // LD_E(0x64);
+    // goto FillRow;
+    return MobileHome_PlaceBox_FillRow(hl, c, 0x63, 0x62, 0x64);
+}
 
+static tile_t* MobileHome_PlaceBox_FillBottom(tile_t* hl, uint8_t c){
+    // LD_A(0x68);
+    // LD_D(0x67);
+    // LD_E(0x69);
+    // goto FillRow;
+    return MobileHome_PlaceBox_FillRow(hl, c, 0x68, 0x67, 0x69);
+}
 
-FillTop:
-        LD_A(0x63);
-    LD_D(0x62);
-    LD_E(0x64);
-    goto FillRow;
+static tile_t* MobileHome_PlaceBox_FillMiddle(tile_t* hl, uint8_t c){
+    // LD_A(0x7f);
+    // LD_D(0x65);
+    // LD_E(0x66);
+    return MobileHome_PlaceBox_FillRow(hl, c, 0x7f, 0x65, 0x66);
+}
 
+tile_t* MobileHome_PlaceBox(tile_t* hl, uint8_t b, uint8_t c){
+    // PUSH_BC;
+    // CALL(aMobileHome_PlaceBox_FillTop);
+    hl = MobileHome_PlaceBox_FillTop(hl, c);
+    // POP_BC;
 
-FillBottom:
-        LD_A(0x68);
-    LD_D(0x67);
-    LD_E(0x69);
-    goto FillRow;
-
-
-FillMiddle:
-        LD_A(0x7f);
-    LD_D(0x65);
-    LD_E(0x66);
-
-
-FillRow:
-        PUSH_HL;
-    LD_hl_D;
-    INC_HL;
-
-FillLoop:
-        LD_hli_A;
-    DEC_C;
-    IF_NZ goto FillLoop;
-    LD_hl_E;
-    POP_HL;
-    LD_DE(SCREEN_WIDTH);
-    ADD_HL_DE;
-    RET;
-
+    do {
+    // RowLoop:
+        // PUSH_BC;
+        // CALL(aMobileHome_PlaceBox_FillMiddle);
+        hl = MobileHome_PlaceBox_FillMiddle(hl, c);
+        // POP_BC;
+        // DEC_B;
+        // IF_NZ goto RowLoop;
+    } while(--b != 0);
+    // CALL(aMobileHome_PlaceBox_FillBottom);
+    // RET;
+    return MobileHome_PlaceBox_FillBottom(hl, c);
 }
 
 void Function3f7c(void){

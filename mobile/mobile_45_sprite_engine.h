@@ -1,7 +1,7 @@
 void Function115d99(void);
 void Function115dc3(void);
 void Function115dd3(void);
-void Function115e18(void);
+void Function115e18(uint8_t c);
 void Function115e22(void);
 void Function115e2b(void);
 extern const uint8_t* Unknown_115e59[];

@@ -1203,8 +1203,8 @@ struct wram_s
                         uint8_t wcd23[1];
                         uint8_t wcd24[1];
                         uint8_t wMobileCommsJumptableIndex;
-                        uint8_t wcd26[1];
-                        uint8_t wcd27[1];
+                        uint8_t wcd26;
+                        uint8_t wcd27;
                         uint8_t wcd28[1];
                         uint8_t wcd29;
                         union {
@@ -1230,12 +1230,9 @@ struct wram_s
                             };
                         };
                         // current time for link/mobile?
-                        uint8_t wcd36;
-                        // hours
-                        uint8_t wcd37;
-                        // mins
-                        uint8_t wcd38;
-                        // secs
+                        uint8_t wcd36; // hours
+                        uint8_t wcd37; // mins
+                        uint8_t wcd38; // secs
                         uint8_t wcd39[1];
                         uint8_t wcd3a[1];
                         uint8_t wcd3b[1];
@@ -1245,7 +1242,7 @@ struct wram_s
                         uint8_t wcd3f[1];
                         uint8_t wcd40[1];
                         uint8_t wcd41[1];
-                        uint8_t wcd42[1];
+                        uint8_t wcd42;
                         uint8_t wcd43[1];
                         // some sort of timer in link battles
                         uint8_t wMobileInactivityTimerMinutes;
@@ -1255,7 +1252,7 @@ struct wram_s
                         uint8_t wMobileInactivityTimerFrames;
                         // frames
                         uint8_t wcd47;
-                        uint8_t skip_45[1];
+                        uint8_t wcd48;
                         union {
                             uint8_t wBTTempOTSprite;
                             uint8_t wcd49;
@@ -2971,7 +2968,7 @@ struct wram_s
                 uint8_t wUnusedTwoDayTimerStartDate;
                 uint8_t skip_126[4];
                 uint8_t wMobileOrCable_LastSelection;
-                uint8_t wdc41[1];
+                uint8_t wdc41;
                 uint8_t wdc42[8];
                 uint8_t wBuenasPassword;
                 uint8_t wBlueCardBalance;

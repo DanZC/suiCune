@@ -5382,21 +5382,19 @@ asm_17f684:
 
 }
 
-void Table_17f699(void){
-    //dw ['MobileErrorCode_101_000_Text'];
-    //dw ['MobileErrorCode_101_001_Text'];
-    //dw ['MobileErrorCode_101_002_Text'];
-    //dw ['MobileErrorCode_101_003_Text'];
-    //dw ['MobileErrorCode_101_004_Text'];
-    //dw ['MobileErrorCode_101_005_Text'];
-    //dw ['MobileErrorCode_101_006_Text'];
-    //dw ['MobileErrorCode_101_007_Text'];
-    //dw ['MobileErrorCode_101_008_Text'];
-    //dw ['MobileErrorCode_101_009_Text'];
-    //dw ['MobileErrorCode_101_009_Text'];
-
-    return Palette_17f6af();
-}
+const char* const Table_17f699[] = {
+    MobileErrorCode_101_000_Text,
+    MobileErrorCode_101_001_Text,
+    MobileErrorCode_101_002_Text,
+    MobileErrorCode_101_003_Text,
+    MobileErrorCode_101_004_Text,
+    MobileErrorCode_101_005_Text,
+    MobileErrorCode_101_006_Text,
+    MobileErrorCode_101_007_Text,
+    MobileErrorCode_101_008_Text,
+    MobileErrorCode_101_009_Text,
+    MobileErrorCode_101_009_Text,
+};
 
 void Palette_17f6af(void){
 //  //  unreferenced
@@ -5436,11 +5434,7 @@ bcd_digit:
 
 }
 
-void MobileCommunicationErrorText(void){
-    //db ['"つうしんエラー\u3000\u3000\u3000ー@"'];
-
-    return String_17f6e8();
-}
+const char MobileCommunicationErrorText[] = "ERROR:    -@";//db ['"つうしんエラー\u3000\u3000\u3000ー@"'];
 
 void String_17f6e8(void){
 //  //  unreferenced
@@ -6013,89 +6007,69 @@ void MobileErrorCode_33_203_Text(void){
 }
 
 void MobileErrorCode_33_206_Text(void){
-    return MobileErrorCode_101_004_Text();
 }
 
-void MobileErrorCode_101_004_Text(void){
 //  Cannot read data.
 //  For details, please see the instruction manual.
-    //db ['"データの\u3000よみこみが\u3000できません"'];
-    //next ['"くわしくは\u3000とりあつかい"']
-    //next ['"せつめいしょを\u3000ごらんください"']
-    //db ['"@"'];
+const char MobileErrorCode_101_004_Text[] = 
+           "Unable to read"     //db ['"データの\u3000よみこみが\u3000できません"'];
+    t_next "the data."          //next ['"くわしくは\u3000とりあつかい"']
+    t_next "Please check the"   //next ['"せつめいしょを\u3000ごらんください"']
+    t_next "manual for"         //db ['"@"'];
+    t_next "details.";
 
-    return MobileErrorCode_101_006_Text();
-}
-
-void MobileErrorCode_101_006_Text(void){
 //  Call ended because more than 3 minutes elapsed with no input.
-    //db ['"３ぷん\u3000いじょう\u3000なにも"'];
-    //next ['"にゅうりょく\u3000しなかったので"']
-    //next ['"でんわが\u3000きれました"']
-    //db ['"@"'];
+const char MobileErrorCode_101_006_Text[] =
+           "The call was"   // "３ぷん\u3000いじょう\u3000なにも"
+    t_next "ended due to"   // "にゅうりょく\u3000しなかったので"
+    t_next "no input being" // "でんわが\u3000きれました"
+    t_next "received for "  // "@"
+    t_next "three minutes.";
 
-    return MobileErrorCode_101_001_Text();
-}
-
-void MobileErrorCode_101_001_Text(void){
-    return MobileErrorCode_101_002_Text();
-}
-
-void MobileErrorCode_101_002_Text(void){
 //  Could not connect properly.
 //  Please try again from the beginning (of the process).
-    //db ['"つうしんが\u3000うまく"'];
-    //next ['"できませんでした"']
-    //next ['"もういちど\u3000はじめから"']
-    //next ['"やりなおしてください"']
-    //db ['"@"'];
+const char MobileErrorCode_101_002_Text[] = 
+           "Communication"  // "つうしんが\u3000うまく"
+    t_next "failed."        // "できませんでした"
+    t_next "Please start"   // "もういちど\u3000はじめから"
+    t_next "over and try"   // "やりなおしてください"
+    t_next "again.";        // "@"
 
-    return MobileErrorCode_101_003_Text();
-}
+// void MobileErrorCode_101_003_Text(void){
+//     return MobileErrorCode_101_008_Text();
+// }
 
-void MobileErrorCode_101_003_Text(void){
-    return MobileErrorCode_101_008_Text();
-}
+// void MobileErrorCode_101_008_Text(void){
+//     return MobileErrorCode_101_009_Text();
+// }
 
-void MobileErrorCode_101_008_Text(void){
-    return MobileErrorCode_101_009_Text();
-}
-
-void MobileErrorCode_101_009_Text(void){
 //  Cannot read data.
 //  Please wait a moment, then try again.
 //  If the issue persists, please contact the Mobile Support Center.
-    //db ['"データの\u3000よみこみが\u3000できません"'];
-    //next ['"しばらくまって"']
-    //next ['"かけなおして\u3000ください"']
-    //next ['"なおらない\u3000ときは"']
-    //next ['"モバイルサポートセンターへ"']
-    //next ['"おといあわせください"']
-    //db ['"@"'];
+const char MobileErrorCode_101_009_Text[] =
+           "Unable to read"     //db ['"データの\u3000よみこみが\u3000できません"'];
+    t_next "the data."          //next ['"しばらくまって"']
+    t_next "Please try again."  //next ['"かけなおして\u3000ください"']
+    t_next "If the problem"     //next ['"なおらない\u3000ときは"']
+    t_next "persists, please"   //next ['"モバイルサポートセンターへ"']
+    t_next "contact support."   //next ['"おといあわせください"']
+           "";                  //db ['"@"'];
 
-    return MobileErrorCode_101_007_Text();
-}
-
-void MobileErrorCode_101_007_Text(void){
 //  Call ended due to long waiting time.
-    //db ['"まちじかんが\u3000ながいので"'];
-    //next ['"でんわが\u3000きれました"']
-    //db ['"@"'];
+const char MobileErrorCode_101_007_Text[] =
+           "The call was"    //db ['"まちじかんが\u3000ながいので"'];
+    t_next "ended because"   //next ['"でんわが\u3000きれました"']
+    t_next "of inactivity."; //db ['"@"'];
 
-    return MobileErrorCode_101_005_Text();
-}
-
-void MobileErrorCode_101_005_Text(void){
 //  (Your adapter's) type differs from the other user’s Mobile Adapter.
 //  For details, please see the instruction manual.
-    //db ['"あいての\u3000モバイルアダプタと"'];
-    //next ['"タイプが\u3000ちがいます"']
-    //next ['"くわしくは\u3000とりあつかい"']
-    //next ['"せつめいしょを\u3000ごらんください"']
-    //db ['"@"'];
-
-    return String_17fe9a();
-}
+const char MobileErrorCode_101_005_Text[] = 
+           "Your friend is"     // "あいての\u3000モバイルアダプタと"'
+    t_next "using a different"  // "タイプが\u3000ちがいます"
+    t_next "kind of"            // "くわしくは\u3000とりあつかい"
+    t_next "Mobile Adapter."    // "せつめいしょを\u3000ごらんください"
+    t_next "Check the manual"   // "@"
+    t_next "for details.";
 
 void String_17fe9a(void){
 //  //  unreferenced
@@ -6107,22 +6081,17 @@ void String_17fe9a(void){
     //next ['"あたらしい\u3000ポケモンニュースの"']
     //next ['"よみこみを\u3000さきに\u3000してください"']
     //db ['"@"'];
-
-    return MobileErrorCode_101_000_Text();
 }
 
-void MobileErrorCode_101_000_Text(void){
+const char MobileErrorCode_101_000_Text[] = 
 //  Either bad communication status, or the other user called was the incorrect user.
 //  Please confirm and try again.
-    //db ['"つうしんの\u3000じょうきょうが"'];
-    //next ['"よくないか\u3000かけるあいてが"']
-    //next ['"まちがっています"']
-    //next ['"もういちど\u3000かくにんをして"']
-    //next ['"でんわを\u3000かけなおして\u3000ください"']
+        "The signal is poor"    // "つうしんの\u3000じょうきょうが"
+    t_next "or the number is"   // "よくないか\u3000かけるあいてが"
+    t_next "incorrect."         // "まちがっています"
+    t_next "Please try again"   // "もういちど\u3000かくにんをして"
+    t_next "later.";            // "でんわを\u3000かけなおして\u3000ください"
     //db ['"@"'];
-
-    return Function17ff23();
-}
 
 void Function17ff23(void){
     LDH_A_addr(hJoyPressed);

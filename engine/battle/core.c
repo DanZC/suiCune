@@ -14868,7 +14868,7 @@ static void ExitBattle_HandleEndOfBattle(void){
     // LD_A_addr(wLinkMode);
     // AND_A_A;
     // IF_Z goto not_linked;
-    if(wram->wLinkMode != 0) {
+    if(wram->wLinkMode != LINK_NULL) {
         // CALL(aShowLinkBattleParticipantsAfterEnd);
         ShowLinkBattleParticipantsAfterEnd();
         // LD_C(150);
