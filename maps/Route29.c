@@ -304,7 +304,7 @@ bool Route29Sign2(script_s* s) {
 }
 bool Route29FruitTree(script_s* s) {
     SCRIPT_BEGIN
-    //fruittree(FRUITTREE_ROUTE_29)
+    fruittree(FRUITTREE_ROUTE_29)
     SCRIPT_END
 }
 const struct ItemBall Route29Potion = {POTION, 1};

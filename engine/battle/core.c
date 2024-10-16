@@ -10810,14 +10810,14 @@ void ParseEnemyAction(void){
                 move_t b;
                 uint8_t c;
                 do {
-                    const move_t* moves = wram->wEnemyMon.moves;
+                    const move_t* moves2 = wram->wEnemyMon.moves;
                     do {
                     // loop2:
                         // LD_HL(wEnemyMonMoves);
                         // CALL(aBattleRandom);
                         // maskbits(NUM_MOVES, 0);
                         // LD_C_A;
-                        c = BattleRandom_Conv();
+                        c = BattleRandom_Conv() & 3;
                         // LD_B(0);
                         // ADD_HL_BC;
                         // LD_A_addr(wEnemyDisableCount);
@@ -10829,11 +10829,11 @@ void ParseEnemyAction(void){
                         // LD_A_hl;
                         // AND_A_A;
                         // IF_Z goto loop2;
-                    } while(((wram->wEnemyDisableCount >> 4) & 0xf) - 1 == c || moves[c] == NO_MOVE);
+                    } while(((wram->wEnemyDisableCount >> 4) & 0xf) - 1 == c || moves2[c] == NO_MOVE);
                     // LD_HL(wEnemyMonPP);
                     // ADD_HL_BC;
                     // LD_B_A;
-                    b = moves[c];
+                    b = moves2[c];
                     // LD_A_hl;
                     // AND_A(PP_MASK);
                     // IF_Z goto loop2;
@@ -10869,6 +10869,7 @@ void ParseEnemyAction(void){
 finish:
     // LD_addr_A(wCurEnemyMove);
     wram->wCurEnemyMove = curMove;
+    printf("Chosen move %02X (moves[%d])\n", curMove, wram->wCurEnemyMoveNum);
 
 skip_load:
     // CALL(aSetEnemyTurn);

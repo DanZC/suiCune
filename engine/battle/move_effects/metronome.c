@@ -5,13 +5,13 @@
 #include "../../../home/battle_vars.h"
 #include "../../../data/moves/metronome_exception_moves.h"
 
-static inline bool IsInMoveArray(const move_t* array, move_t a) {
-    for(int i = 0; array[i] != (move_t)-1; ++i) {
-        if(array[i] == a)
-            return true;
-    }
-    return false;
-}
+// static inline bool IsInMoveArray(const move_t* array, move_t a) {
+//     for(int i = 0; array[i] != (move_t)-1; ++i) {
+//         if(array[i] == a)
+//             return true;
+//     }
+//     return false;
+// }
 
 void BattleCommand_Metronome(void){
 //  metronome

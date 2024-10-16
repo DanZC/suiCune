@@ -901,13 +901,13 @@ uint8_t* GetTMHMName_Conv2(item_t a){
     // LD_A_B;
     // LD_de_A;
     // INC_DE;
-    wram->wStringBuffer1[2] = CHAR_0 + (a / 10);
+    wram->wStringBuffer1[2] = CHAR_0 + (c / 10);
     // POP_AF;
 
     // LD_B(0xf6);
     // ADD_A_B;
     // LD_de_A;
-    wram->wStringBuffer1[3] = CHAR_0 + (a % 10);
+    wram->wStringBuffer1[3] = CHAR_0 + (c % 10);
 
 //  End the string
     // INC_DE;

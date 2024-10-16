@@ -65,6 +65,13 @@ startproject "suiCune"
 			".\\**.c",
 			".\\**.h",
 		}
+
+		removefiles {
+			".\\test\\**.c",
+			".\\test\\**.h",
+			".\\engine\\battle\\move_effects\\**.c",
+			".\\engine\\battle\\move_effects\\**.h",
+		}
 		
 		flags
 		{

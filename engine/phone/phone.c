@@ -262,7 +262,7 @@ uint16_t Phone_FindOpenSlot_Conv(uint8_t c){
 uint8_t* Phone_FindOpenSlot_Conv2(uint8_t c){
     // CALL(aGetRemainingSpaceInPhoneList);
     // LD_B_A;
-    uint8_t b = GetRemainingSpaceInPhoneList_Conv(c);
+    uint8_t b = GetRemainingSpaceInPhoneList_Conv2(c);
     
     // LD_HL(wPhoneList);
     uint8_t* hl = wram->wPhoneList;

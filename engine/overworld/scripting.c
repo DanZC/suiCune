@@ -3845,10 +3845,9 @@ void Script_getitemname_Conv(script_s* s, item_t item, uint8_t buf){
 // ok:
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetItemName);
-    GetItemName_Conv2(item);
     // LD_DE(wStringBuffer1);
     // JR(mGetStringBuffer);
-    return GetStringBuffer_Conv(buf, wram->wStringBuffer1);
+    return GetStringBuffer_Conv(buf, GetItemName_Conv2(item));
 }
 
 void Script_getcurlandmarkname(void){

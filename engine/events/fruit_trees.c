@@ -53,7 +53,7 @@ void GetCurTreeFruit(void){
     // CALL(aGetFruitTreeItem);
     // LD_addr_A(wCurFruit);
     // RET;
-    wram->wCurFruit = GetFruitTreeItem_Conv(wram->wCurFruitTree - 1);
+    wram->wCurFruit = GetFruitTreeItem_Conv(wram->wCurFruitTree);
 }
 
 void TryResetFruitTrees(void){

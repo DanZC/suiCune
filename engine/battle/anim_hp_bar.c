@@ -550,7 +550,7 @@ void ShortHPBar_CalcPixelFrame(void){
         return;
     }
     // CALL(aAddNTimes);
-    uint16_t hl = c * c;
+    uint16_t hl = c * wram->wCurHPBarPixels;
 
     // LD_B(0);
     uint8_t b = 0;
