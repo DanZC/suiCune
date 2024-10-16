@@ -69,6 +69,7 @@ SRCS   := tools/emu/peanut_sdl.c tools/emu/minigb_apu/minigb_apu.c \
 	$(wildcard gfx/pokemon/*.c) \
 	$(wildcard gfx/sgb/*.c) \
 	$(wildcard input_system/*.c) \
+	$(wildcard lib/mobile/*.c) \
 	$(wildcard maps/*.c) \
 	$(wildcard mobile/*.c) \
 	$(wildcard util/*.c) \
@@ -91,8 +92,12 @@ CFLAGS += $(EXTRA_CFLAGS)
 
 OBJS := $(SRCS:.c=.$(OBJEXT))
 
+ifeq ($(OS),Windows_NT)
+	OBJS += icon.o
+endif
+
 all: $(TARGET)
-$(TARGET): $(OBJS) icon.o
+$(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) $(EXEOUT)$@ $^ $(LDFLAGS) $(LDLIBS) 
 
 %.obj: %.c
@@ -158,6 +163,7 @@ clean:
 	$(wildcard gfx/pokemon/*.o) \
 	$(wildcard gfx/sgb/*.o) \
 	$(wildcard input_system/*.o) \
+	$(wildcard lib/mobile/*.o) \
 	$(wildcard maps/*.o) \
 	$(wildcard mobile/*.o) \
 	$(wildcard util/*.o)

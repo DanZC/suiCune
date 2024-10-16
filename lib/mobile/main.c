@@ -26,6 +26,77 @@
 #define MOBILE_COMMAND_DNS_QUERY (0x28)
 #define MOBILE_COMMAND_ERROR (0x6e)
 
+const uint8_t MobilePacket_Idle[] = {
+    0x4b
+};
+
+const uint8_t MobilePacket_BeginSession[] = {
+    0x99, 0x66, MOBILE_COMMAND_BEGIN_SESSION, 0x00, 0x00, 0x08, 
+    'N', 'I', 'N', 'T', 'E', 'N', 'D', 'O', // "NINTENDO", 
+    0x02, 0x77, 0x80, 0x00
+};
+
+const uint8_t MobilePacket_EndSession[] = {
+    0x99, 0x66, MOBILE_COMMAND_END_SESSION, 0x00, 0x00, 0x00, 0x00, 0x11, 0x80, 0x00
+};
+
+const uint8_t MobilePacket_DialTelephone[] = {
+    0x99, 0x66, MOBILE_COMMAND_DIAL_TELEPHONE, 0x00, 0x00, 0x00
+};
+
+const uint8_t MobilePacket_HangUpTelephone[] = {
+    0x99, 0x66, MOBILE_COMMAND_HANG_UP_TELEPHONE, 0x00, 0x00, 0x00, 0x00, 0x13, 0x80, 0x00
+};
+
+const uint8_t MobilePacket_TelephoneStatus[] = {
+    0x99, 0x66, MOBILE_COMMAND_TELEPHONE_STATUS, 0x00, 0x00, 0x00, 0x00, 0x17, 0x80, 0x00
+};
+
+const uint8_t MobilePacket_ISPLogin[] = {
+    0x99, 0x66, MOBILE_COMMAND_ISP_LOGIN, 0x00, 0x00
+};
+
+const uint8_t MobilePacket_ISPLogout[] = {
+    0x99, 0x66, MOBILE_COMMAND_ISP_LOGOUT, 0x00, 0x00, 0x00, 0x00, 0x22, 0x80, 0x00
+};
+
+const uint8_t MobilePacket_ReadConfigurationDataPart1[] = {
+    0x99, 0x66, MOBILE_COMMAND_READ_CONFIGURATION_DATA, 0x00, 0x00, 0x02, 0x00, 0x60, 0x00, 0x7b, 0x80, 0x00
+};
+
+const uint8_t MobilePacket_ReadConfigurationDataPart2[] = {
+    //db ['0x99', '0x66', 'MOBILE_COMMAND_READ_CONFIGURATION_DATA', '0x00', '0x00', '0x02', '0x60', '0x60', '0x00', '0xdb', '0x80', '0x00'];
+};
+
+const uint8_t MobilePacket_WriteConfigurationData[] = {
+    0x99, 0x66, MOBILE_COMMAND_WRITE_CONFIGURATION_DATA, 0x00, 0x00
+};
+
+const uint8_t MobilePacket_DNSQuery[] = {
+    0x99, 0x66, MOBILE_COMMAND_DNS_QUERY, 0x00, 0x00
+};
+
+const uint8_t MobilePacket_WaitForTelephoneCall[] = {
+    0x99, 0x66, MOBILE_COMMAND_WAIT_FOR_TELEPHONE_CALL, 0x00, 0x00, 0x00, 0x00, 0x14, 0x80, 0x00
+};
+
+const uint8_t MobilePacket_TransferData[] = {
+    0x99, 0x66, MOBILE_COMMAND_TRANSFER_DATA, 0x00, 0x00, 0x01, 0xff, 0x01, 0x15, 0x80, 0x00
+};
+
+const uint8_t MobilePacket_OpenTCPConnection[] = {
+    0x99, 0x66, MOBILE_COMMAND_OPEN_TCP_CONNECTION, 0x00, 0x00, 0x06
+};
+
+const uint8_t MobilePacket_CloseTCPConnection[] = {
+    0x99, 0x66, MOBILE_COMMAND_CLOSE_TCP_CONNECTION, 0x00, 0x00, 0x01
+};
+
+const char URIPrefix[] = "http://";
+const char HTTPDownloadURL[] = "gameboy.datacenter.ne.jp/cgb/download";
+const char HTTPUploadURL[] = "gameboy.datacenter.ne.jp/cgb/upload";
+const char HTTPUtilityURL[] = "gameboy.datacenter.ne.jp/cgb/utility";
+const char HTTPRankingURL[] = "gameboy.datacenter.ne.jp/cgb/ranking";
 
 // SECTION "Mobile Adapter SDK", ROMX
 
@@ -2355,7 +2426,7 @@ asm_110e4a:
     PUSH_DE;
     PUSH_BC;
     PUSH_HL;
-    LD_B(lengthof(URIPrefix));
+    LD_B(sizeof(URIPrefix));
     LD_DE(mURIPrefix);
 
 asm_110e53:
@@ -2405,7 +2476,7 @@ asm_110e79:
 asm_110e86:
     POP_HL;
     PUSH_HL;
-    LD_B(lengthof(HTTPUtilityURL));
+    LD_B(sizeof(HTTPUtilityURL));
     LD_C(0x0);
     LD_DE(mHTTPUtilityURL);
 
@@ -2426,7 +2497,7 @@ asm_110e8f:
 
 asm_110ea2:
     POP_HL;
-    LD_B(lengthof(HTTPDownloadURL));
+    LD_B(sizeof(HTTPDownloadURL));
     LD_C(0x0);
     LD_DE(mHTTPDownloadURL);
 
@@ -2593,12 +2664,6 @@ asm_110f95:
     JP(mFunction110432);
 
 }
-
-const char URIPrefix[] = "http://";
-const char HTTPDownloadURL[] = "gameboy.datacenter.ne.jp/cgb/download";
-const char HTTPUploadURL[] = "gameboy.datacenter.ne.jp/cgb/upload";
-const char HTTPUtilityURL[] = "gameboy.datacenter.ne.jp/cgb/utility";
-const char HTTPRankingURL[] = "gameboy.datacenter.ne.jp/cgb/ranking";
 
 void Function111044(void){
     LD_HL(wc827);
@@ -4878,7 +4943,7 @@ void Function111d23(void){
 void ParseResponse_BeginSession(void){
     LD_DE(wMobileSDK_ReceivePacketBuffer + 3);
     LD_HL(mMobilePacket_BeginSession + 5);
-    LD_B(1 + STRLEN("NINTENDO"));
+    LD_B(1 + sizeof("NINTENDO") - 1);
 
 check_loop:
     LD_A_de;
@@ -5382,72 +5447,6 @@ asm_111fe9:
     //ds ['14']
 
 }
-
-const uint8_t MobilePacket_Idle[] = {
-    0x4b
-};
-
-const uint8_t MobilePacket_BeginSession[] = {
-    0x99, 0x66, MOBILE_COMMAND_BEGIN_SESSION, 0x00, 0x00, 0x08, 
-    'N', 'I', 'N', 'T', 'E', 'N', 'D', 'O', // "NINTENDO", 
-    0x02, 0x77, 0x80, 0x00
-};
-
-const uint8_t MobilePacket_EndSession[] = {
-    0x99, 0x66, MOBILE_COMMAND_END_SESSION, 0x00, 0x00, 0x00, 0x00, 0x11, 0x80, 0x00
-};
-
-const uint8_t MobilePacket_DialTelephone[] = {
-    0x99, 0x66, MOBILE_COMMAND_DIAL_TELEPHONE, 0x00, 0x00, 0x00
-};
-
-const uint8_t MobilePacket_HangUpTelephone[] = {
-    0x99, 0x66, MOBILE_COMMAND_HANG_UP_TELEPHONE, 0x00, 0x00, 0x00, 0x00, 0x13, 0x80, 0x00
-};
-
-const uint8_t MobilePacket_TelephoneStatus[] = {
-    0x99, 0x66, MOBILE_COMMAND_TELEPHONE_STATUS, 0x00, 0x00, 0x00, 0x00, 0x17, 0x80, 0x00
-};
-
-const uint8_t MobilePacket_ISPLogin[] = {
-    0x99, 0x66, MOBILE_COMMAND_ISP_LOGIN, 0x00, 0x00
-};
-
-const uint8_t MobilePacket_ISPLogout[] = {
-    0x99, 0x66, MOBILE_COMMAND_ISP_LOGOUT, 0x00, 0x00, 0x00, 0x00, 0x22, 0x80, 0x00
-};
-
-const uint8_t MobilePacket_ReadConfigurationDataPart1[] = {
-    0x99, 0x66, MOBILE_COMMAND_READ_CONFIGURATION_DATA, 0x00, 0x00, 0x02, 0x00, 0x60, 0x00, 0x7b, 0x80, 0x00
-};
-
-const uint8_t MobilePacket_ReadConfigurationDataPart2[] = {
-    //db ['0x99', '0x66', 'MOBILE_COMMAND_READ_CONFIGURATION_DATA', '0x00', '0x00', '0x02', '0x60', '0x60', '0x00', '0xdb', '0x80', '0x00'];
-};
-
-const uint8_t MobilePacket_WriteConfigurationData[] = {
-    0x99, 0x66, MOBILE_COMMAND_WRITE_CONFIGURATION_DATA, 0x00, 0x00
-};
-
-const uint8_t MobilePacket_DNSQuery[] = {
-    0x99, 0x66, MOBILE_COMMAND_DNS_QUERY, 0x00, 0x00
-};
-
-void MobilePacket_WaitForTelephoneCall(void){
-    //db ['0x99', '0x66', 'MOBILE_COMMAND_WAIT_FOR_TELEPHONE_CALL', '0x00', '0x00', '0x00', '0x00', '0x14', '0x80', '0x00'];
-}
-
-const uint8_t MobilePacket_TransferData[] = {
-    0x99, 0x66, MOBILE_COMMAND_TRANSFER_DATA, 0x00, 0x00, 0x01, 0xff, 0x01, 0x15, 0x80, 0x00
-};
-
-const uint8_t MobilePacket_OpenTCPConnection[] = {
-    0x99, 0x66, MOBILE_COMMAND_OPEN_TCP_CONNECTION, 0x00, 0x00, 0x06
-};
-
-const uint8_t MobilePacket_CloseTCPConnection[] = {
-    0x99, 0x66, MOBILE_COMMAND_CLOSE_TCP_CONNECTION, 0x00, 0x00, 0x01
-};
 
 void Unknown_112089(void){
     //db ['-20', '0x14', '0xc9'];
