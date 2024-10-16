@@ -1,7 +1,7 @@
 workspace "suiCune"
 startproject "suiCune"
 
-	outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}-%{cfg.startproject}"
+	outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 	
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-obj/" .. outputdir .. "/%{prj.name}")
@@ -13,7 +13,6 @@ startproject "suiCune"
 
 	systemversion "latest"
 	characterset "unicode"
-	architecture "x86"
 	warnings "extra"
 
 	syslibdirs {
@@ -29,6 +28,7 @@ startproject "suiCune"
 
 	platforms {
 		"x86",
+		"x86_64",
 	}
 
 	configurations {
@@ -48,8 +48,25 @@ startproject "suiCune"
 		runtime "debug"
 		symbols "on"
 
+	filter "platforms:x86"
+		architecture "x86"
+
+	filter "platforms:x86_64"
+		architecture "x86_64"
+
+	project "maps"
+		targetname "maps"
+		language "c"
+		kind "StaticLib"
+
+		files {
+			".\\maps\\**.c",
+			".\\maps\\**.h",
+		}
+
 	project "suiCune"
 		targetname "suiCune"
+		targetdir (".")
 		language "c"
 		kind "windowedapp"
 		warnings "off"
@@ -59,6 +76,7 @@ startproject "suiCune"
             "SDL2",
             "SDL2main",
             "SDL2_net",
+			"maps",
 		}
 		
 		files {
@@ -67,12 +85,28 @@ startproject "suiCune"
 		}
 
 		removefiles {
+			".\\maps\\**.c",
+			".\\maps\\**.h",
 			".\\test\\**.c",
 			".\\test\\**.h",
 			".\\engine\\battle\\move_effects\\**.c",
 			".\\engine\\battle\\move_effects\\**.h",
 		}
 		
+		filter "system:Windows"
+			files { "icon.rc" }
+
+		filter {"system:Windows", "files:icon.rc" }
+			buildcommands {
+				"windres -i %{file.basename}.rc -o %{cfg.objdir}/%{file.basename}.o"
+			}
+
+			buildoutputs { 
+				'%{cfg.objdir}/%{file.basename}.o'
+			}
+		
+		filter {}
+
 		flags
 		{
 			"NoRuntimeChecks",
