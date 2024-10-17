@@ -693,7 +693,6 @@ void DexEntryScreen_MenuActionJumptable(uint8_t a){
         return Pokedex_Page();
     case 1:
     // Area:
-    //  TODO: Implement and convert Pokedex Area thing.
         // CALL(aPokedex_BlackOutBG);
         Pokedex_BlackOutBG();
         // XOR_A_A;

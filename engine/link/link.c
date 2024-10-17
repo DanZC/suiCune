@@ -7,6 +7,7 @@
 #include "../events/poke_seer.h"
 #include "../pokemon/move_mon.h"
 #include "../pokemon/evolve.h"
+#include "../pokemon/european_mail.h"
 #include "../menus/save.h"
 #include "../battle/core.h"
 #include "../../home/map.h"
@@ -427,8 +428,7 @@ void Gen2ToGen2LinkComms(void){
     // LD_A_addr(wLinkMode);
     // CP_A(LINK_TRADECENTER);
     // JP_NZ (mGen2ToGen2LinkComms_skip_mail);
-// TODO: Finish converting this section. For now, mail will not be copyed.
-#if 0
+
     if(wram->wLinkMode == LINK_TRADECENTER) {
         hl = wram->wLinkOTMailMessages;
         // LD_HL(wLinkOTMail);
@@ -478,92 +478,127 @@ void Gen2ToGen2LinkComms(void){
             // OR_A_C;
             // IF_NZ goto loop4;
         } while(hl++, --bc != 0);
-        LD_DE(wOTPlayerMailPatchSet);
+        // LD_DE(wOTPlayerMailPatchSet);
+        uint8_t* de = wram->wOTPlayerMailPatchSet;
 
-    loop5:
-        LD_A_de;
-        INC_DE;
-        CP_A(SERIAL_PATCH_LIST_PART_TERMINATOR);
-        IF_Z goto start_copying_mail;
-        LD_HL(wLinkOTMailMetadata);
-        DEC_A;
-        LD_B(0);
-        LD_C_A;
-        ADD_HL_BC;
-        LD_hl(SERIAL_NO_DATA_BYTE);
-        goto loop5;
+        while(1) {
+        // loop5:
+            // LD_A_de;
+            // INC_DE;
+            // CP_A(SERIAL_PATCH_LIST_PART_TERMINATOR);
+            uint8_t a = *(de++);
+            // IF_Z goto start_copying_mail;
+            if(a == SERIAL_PATCH_LIST_PART_TERMINATOR)
+                break;
+            // LD_HL(wLinkOTMailMetadata);
+            // DEC_A;
+            // LD_B(0);
+            // LD_C_A;
+            // ADD_HL_BC;
+            // LD_hl(SERIAL_NO_DATA_BYTE);
+            wram->wLinkOTMailMetadata[a - 1] = SERIAL_NO_DATA_BYTE;
+            // goto loop5;
+        }
 
+    // start_copying_mail:
+        // LD_HL(wLinkOTMail);
+        hl = wram->wLinkOTMailMessages;
+        // LD_DE(wLinkReceivedMail);
+        de = wram->wLinkReceivedMail;
+        // LD_B(PARTY_LENGTH);
+        uint8_t b = PARTY_LENGTH;
 
-    start_copying_mail:
-        LD_HL(wLinkOTMail);
-        LD_DE(wLinkReceivedMail);
-        LD_B(PARTY_LENGTH);
+        do {
+        // copy_mail_loop:
+            // PUSH_BC;
+            // LD_BC(MAIL_MSG_LENGTH + 1);
+            // CALL(aCopyBytes);
+            CopyBytes_Conv2(de, hl, MAIL_MSG_LENGTH + 1);
+            // LD_A(LOW(MAIL_STRUCT_LENGTH - (MAIL_MSG_LENGTH + 1)));
+            // ADD_A_E;
+            // LD_E_A;
+            // LD_A(HIGH(MAIL_STRUCT_LENGTH - (MAIL_MSG_LENGTH + 1)));
+            // ADC_A_D;
+            // LD_D_A;
+            de += MAIL_STRUCT_LENGTH;
+            hl += MAIL_MSG_LENGTH + 1;
+            // POP_BC;
+            // DEC_B;
+            // IF_NZ goto copy_mail_loop;
+        } while(--b != 0);
+        // LD_DE(wLinkReceivedMail);
+        de = wram->wLinkReceivedMail;
+        // LD_B(PARTY_LENGTH);
+        b = PARTY_LENGTH;
 
-    copy_mail_loop:
-        PUSH_BC;
-        LD_BC(MAIL_MSG_LENGTH + 1);
-        CALL(aCopyBytes);
-        LD_A(LOW(MAIL_STRUCT_LENGTH - (MAIL_MSG_LENGTH + 1)));
-        ADD_A_E;
-        LD_E_A;
-        LD_A(HIGH(MAIL_STRUCT_LENGTH - (MAIL_MSG_LENGTH + 1)));
-        ADC_A_D;
-        LD_D_A;
-        POP_BC;
-        DEC_B;
-        IF_NZ goto copy_mail_loop;
-        LD_DE(wLinkReceivedMail);
-        LD_B(PARTY_LENGTH);
+        do {
+        // copy_author_loop:
+            // PUSH_BC;
+            // LD_A(LOW(MAIL_MSG_LENGTH + 1));
+            // ADD_A_E;
+            // LD_E_A;
+            // LD_A(HIGH(MAIL_MSG_LENGTH + 1));
+            // ADC_A_D;
+            // LD_D_A;
+            de += MAIL_MSG_LENGTH + 1;
+            // LD_BC(MAIL_STRUCT_LENGTH - (MAIL_MSG_LENGTH + 1));
+            // CALL(aCopyBytes);
+            CopyBytes_Conv2(de, hl, MAIL_STRUCT_LENGTH - (MAIL_MSG_LENGTH + 1));
+            de += MAIL_STRUCT_LENGTH - (MAIL_MSG_LENGTH + 1);
+            hl += MAIL_STRUCT_LENGTH - (MAIL_MSG_LENGTH + 1);
+            // POP_BC;
+            // DEC_B;
+            // IF_NZ goto copy_author_loop;
+        } while(--b != 0);
+        // LD_B(PARTY_LENGTH);
+        b = PARTY_LENGTH;
+        // LD_DE(wLinkReceivedMail);
+        de = wram->wLinkReceivedMail;
 
-    copy_author_loop:
-        PUSH_BC;
-        LD_A(LOW(MAIL_MSG_LENGTH + 1));
-        ADD_A_E;
-        LD_E_A;
-        LD_A(HIGH(MAIL_MSG_LENGTH + 1));
-        ADC_A_D;
-        LD_D_A;
-        LD_BC(MAIL_STRUCT_LENGTH - (MAIL_MSG_LENGTH + 1));
-        CALL(aCopyBytes);
-        POP_BC;
-        DEC_B;
-        IF_NZ goto copy_author_loop;
-        LD_B(PARTY_LENGTH);
-        LD_DE(wLinkReceivedMail);
+        do {
+        // fix_mail_loop:
+            // PUSH_BC;
+            // PUSH_DE;
+            struct MailMsg* de2 = (struct MailMsg*)de;
+            // FARCALL(aIsMailEuropean);
+            // LD_A_C;
+            uint8_t c = IsMailEuropean_Conv(de2);
+            // OR_A_A;
+            // IF_Z goto next;
+            if(c != 0) {
+                // SUB_A(0x3);
+                // IF_NC goto skip;
+                if(c < 0x3) {
+                    // FARCALL(aConvertEnglishMailToFrenchGerman);
+                    ConvertEnglishMailToFrenchGerman(de2);
+                    // goto next;
+                }
+                else if(c - 0x3 < 0x2) {
+                // skip:
+                    // CP_A(0x2);
+                    // IF_NC goto next;
+                    // FARCALL(aConvertEnglishMailToSpanishItalian);
+                    ConvertEnglishMailToSpanishItalian(de2);
+                }
+            }
 
-    fix_mail_loop:
-        PUSH_BC;
-        PUSH_DE;
-        FARCALL(aIsMailEuropean);
-        LD_A_C;
-        OR_A_A;
-        IF_Z goto next;
-        SUB_A(0x3);
-        IF_NC goto skip;
-        FARCALL(aConvertEnglishMailToFrenchGerman);
-        goto next;
-
-
-    skip:
-        CP_A(0x2);
-        IF_NC goto next;
-        FARCALL(aConvertEnglishMailToSpanishItalian);
-
-
-    next:
-        POP_DE;
-        LD_HL(MAIL_STRUCT_LENGTH);
-        ADD_HL_DE;
-        LD_D_H;
-        LD_E_L;
-        POP_BC;
-        DEC_B;
-        IF_NZ goto fix_mail_loop;
-        LD_DE(wLinkReceivedMailEnd);
-        XOR_A_A;
-        LD_de_A;
+        // next:
+            // POP_DE;
+            // LD_HL(MAIL_STRUCT_LENGTH);
+            // ADD_HL_DE;
+            // LD_D_H;
+            // LD_E_L;
+            de += MAIL_STRUCT_LENGTH;
+            // POP_BC;
+            // DEC_B;
+            // IF_NZ goto fix_mail_loop;
+        } while(--b != 0);
+        // LD_DE(wLinkReceivedMailEnd);
+        // XOR_A_A;
+        // LD_de_A;
+        wram->wLinkReceivedMail[0] = 0;
     }
-#endif
+
 // skip_mail:
     // LD_HL(wLinkPlayerName);
     hl = wram->wLinkPlayerName;
@@ -1282,46 +1317,60 @@ void Link_PrepPartyData_Gen2(void){
         // IF_NZ goto loop3;
     } while(--b != 0);
     // LD_B(PARTY_LENGTH);
+    b = PARTY_LENGTH;
     // LD_DE(sPartyMail);
+    struct MailMsg* de2 = (struct MailMsg*)GBToRAMAddr(sPartyMail);
     // LD_HL(wLinkPlayerMailMessages);
+    uint8_t* hl2 = wram->wLinkPlayerMailMessages;
 
-// loop4:
-    // PUSH_BC;
-    // PUSH_HL;
-    // PUSH_DE;
-    // PUSH_HL;
-    // FARCALL(aIsMailEuropean);
-    // POP_DE;
-    // LD_A_C;
-    // OR_A_A;
-    // IF_Z goto next;
-    // SUB_A(0x3);
-    // IF_NC goto italian_spanish;
-    // FARCALL(aConvertFrenchGermanMailToEnglish);
-    // goto next;
+    do {
+    // loop4:
+        // PUSH_BC;
+        // PUSH_HL;
+        // PUSH_DE;
+        // PUSH_HL;
+        // FARCALL(aIsMailEuropean);
+        uint8_t c = IsMailEuropean_Conv(de2);
+        // POP_DE;
+        // LD_A_C;
+        // OR_A_A;
+        // IF_Z goto next;
+        if(c != 0) {
+            // SUB_A(0x3);
+            // IF_NC goto italian_spanish;
+            // FARCALL(aConvertFrenchGermanMailToEnglish);
+            if(c < 0x3)
+                ConvertFrenchGermanMailToEnglish(de2);
+            // goto next;
 
-// italian_spanish:
-    // CP_A(0x2);
-    // IF_NC goto next;
-    // FARCALL(aConvertSpanishItalianMailToEnglish);
+        // italian_spanish:
+            // CP_A(0x2);
+            // IF_NC goto next;
+            else if(c - 0x3 < 0x2)
+                ConvertSpanishItalianMailToEnglish(de2);
+            // FARCALL(aConvertSpanishItalianMailToEnglish);
+        }
 
-// next:
-    // POP_DE;
-    // LD_HL(MAIL_STRUCT_LENGTH);
-    // ADD_HL_DE;
-    // LD_D_H;
-    // LD_E_L;
-    // POP_HL;
-    // LD_BC(MAIL_MSG_LENGTH + 1);
-    // ADD_HL_BC;
-    // POP_BC;
-    // DEC_B;
-    // IF_NZ goto loop4;
+    // next:
+        // POP_DE;
+        // LD_HL(MAIL_STRUCT_LENGTH);
+        // ADD_HL_DE;
+        de2++;
+        // LD_D_H;
+        // LD_E_L;
+        // POP_HL;
+        // LD_BC(MAIL_MSG_LENGTH + 1);
+        // ADD_HL_BC;
+        hl2 += MAIL_MSG_LENGTH + 1;
+        // POP_BC;
+        // DEC_B;
+        // IF_NZ goto loop4;
+    } while(--b != 0);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
 
     // LD_HL(wLinkPlayerMailMessages);
-    uint8_t* hl2 = wram->wLinkPlayerMailMessages;
+    hl2 = wram->wLinkPlayerMailMessages;
     // LD_BC((MAIL_MSG_LENGTH + 1) * PARTY_LENGTH);
     uint16_t bc = sizeof(wram->wLinkPlayerMailMessages);
 
@@ -1669,7 +1718,7 @@ void Link_CopyRandomNumbers(void){
         return;
     // LD_HL(wEnemyMonSpecies);
     // CALL(aLink_FindFirstNonControlCharacter_AllowZero);
-    uint8_t* hl = (uint8_t*)Link_FindFirstNonControlCharacter_AllowZero(&wram->wEnemyMon);
+    const uint8_t* hl = (const uint8_t*)Link_FindFirstNonControlCharacter_AllowZero(&wram->wEnemyMon);
     // LD_DE(wLinkBattleRNs);
     uint8_t* de = wram->wLinkBattleRNs;
     // LD_C(10);

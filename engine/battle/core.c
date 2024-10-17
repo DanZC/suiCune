@@ -6417,7 +6417,6 @@ bool OfferSwitch_Conv(void){
     // DEC_A;
     // IF_NZ goto said_no;
 
-    // TODO: Come back and implement switching.
     if(wram->wMenuCursorY == 1) {
         // CALL(aSetUpBattlePartyMenu);
         SetUpBattlePartyMenu();
@@ -14498,7 +14497,7 @@ void BattleIntro(void){
     // FARCALL(aPlayBattleMusic);
     PlayBattleMusic_Conv();
     // FARCALL(aShowLinkBattleParticipants);
-    ShowLinkBattleParticipants();
+    ShowLinkBattleParticipants_Conv();
     // FARCALL(aFindFirstAliveMonAndStartBattle);
     FindFirstAliveMonAndStartBattle();
     // CALL(aDisableSpriteUpdates);
@@ -15119,7 +15118,7 @@ void DisplayLinkBattleResult(void){
 
     // CALL(aAddLastLinkBattleToLinkRecord);
     //  TODO: Convert AddLastLinkBattleToLinkRecord
-    // AddLastLinkBattleToLinkRecord();
+    AddLastLinkBattleToLinkRecord();
     // CALL(aReadAndPrintLinkBattleRecord);
     ReadAndPrintLinkBattleRecord();
 
@@ -15655,8 +15654,8 @@ static struct LinkRecordPtrResult AddLastLinkBattleToLinkRecord_LoadPointer(uint
     // LD_C_A;
     // LD_A_hld;
     // LD_B_A;
-    uint16_t bc = hl[0] | (hl[-1] << 8);
-    uint16_t bc2 = hl[-2] | (hl[-3] << 8);
+    uint16_t bc = hl[5] | (hl[4] << 8);
+    uint16_t bc2 = hl[3] | (hl[2] << 8);
     // LD_A_hld;
     // ADD_A_C;
     // LD_C_A;
@@ -15670,7 +15669,7 @@ static struct LinkRecordPtrResult AddLastLinkBattleToLinkRecord_LoadPointer(uint
     bc += bc2;
 
 // okay2:
-    uint16_t bc3 = hl[-4] | (hl[-5] << 8);
+    uint16_t bc3 = hl[1] | (hl[0] << 8);
     // LD_A_hld;
     // ADD_A_C;
     // LD_C_A;
@@ -15689,7 +15688,7 @@ static void AddLastLinkBattleToLinkRecord_FindOpponentAndAppendRecord(void){
     // LD_B(NUM_LINK_BATTLE_RECORDS);
     uint8_t b = NUM_LINK_BATTLE_RECORDS;
     // LD_HL(sLinkBattleRecord1End - 1);
-    uint8_t* hl = GBToRAMAddr(sLinkBattleRecord1End - 1);
+    uint8_t* hl = GBToRAMAddr(sLinkBattleRecord1End - 6);
     // LD_DE(wLinkBattleRecordBuffer);
     uint8_t* de = wram->wLinkBattleRecordName;
 

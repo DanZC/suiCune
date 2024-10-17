@@ -67,7 +67,7 @@ void LANConnection_Join(void);
 void LANConnection(void) {
     NetworkClearLANCache();
     LoadStandardMenuHeader_Conv();
-    MapTextbox_Conv(Text_AskHostOrJoin);
+    PrintText_Conv2(Text_AskHostOrJoin);
     LoadMenuHeader_Conv2(&Menu_HostOrJoin);
     bool noCancel = VerticalMenu_Conv();
     CloseWindow_Conv2();
@@ -118,7 +118,7 @@ void LANConnection_Host(void) {
 
     if(!NetworkBroadcastLAN(wram->wPlayerName, wram->wPlayerID, wram->wPlayerGender)) {
         CloseWindow_Conv2();
-        MapTextbox_Conv(Text_Cancelled);
+        PrintText_Conv2(Text_Cancelled);
         CloseWindow_Conv2();
         wram->wScriptVar = FALSE;
         return;
@@ -132,7 +132,7 @@ void LANConnection_Host(void) {
         uint8_t pad = hram->hJoyPressed;
         if(pad & B_BUTTON) {
             CloseWindow_Conv2();
-            MapTextbox_Conv(Text_Cancelled);
+            PrintText_Conv2(Text_Cancelled);
             CloseWindow_Conv2();
             NetworkCloseConnection();
             wram->wScriptVar = FALSE;
@@ -143,7 +143,7 @@ void LANConnection_Host(void) {
             const LANClient* candidate = NetworkGetLANCandidate(0);
             CopyBytes_Conv2(wram->wStringBuffer1, candidate->name, sizeof(candidate->name) - 1);
             wram->wStringBuffer1[11] = CHAR_TERM;
-            MapTextbox_Conv(Text_WillYouAccept);
+            PrintText_Conv2(Text_WillYouAccept);
             bool yes = YesNoBox_Conv();
             CloseWindow_Conv2();
             if(yes) {
@@ -172,7 +172,7 @@ void LANConnection_Host(void) {
         if((frameCount & 0x7f) == 0x7f) {
             if(!NetworkBroadcastLAN(wram->wPlayerName, wram->wPlayerID, wram->wPlayerGender)) {
                 CloseWindow_Conv2();
-                MapTextbox_Conv(Text_Cancelled);
+                PrintText_Conv2(Text_Cancelled);
                 CloseWindow_Conv2();
                 NetworkCloseConnection();
                 wram->wScriptVar = FALSE;
@@ -180,7 +180,7 @@ void LANConnection_Host(void) {
             }
         }
     }
-    MapTextbox_Conv(Text_CouldntFindAny);
+    PrintText_Conv2(Text_CouldntFindAny);
     CloseWindow_Conv2();
     CloseWindow_Conv2();
     wram->wScriptVar = FALSE;
@@ -222,7 +222,7 @@ void LANConnection_Join(void) {
     int frameCount = 0;
     for(;;++frameCount) {
         if(frameCount >= 8 * 60 && NetworkGetLANCandidateCount() == 0) {
-            MapTextbox_Conv(Text_CouldntFindAny);
+            PrintText_Conv2(Text_CouldntFindAny);
             CloseWindow_Conv2();
             wram->wScriptVar = FALSE;
             CloseWindow_Conv2();
@@ -254,7 +254,7 @@ void LANConnection_Join(void) {
             CloseWindow_Conv2();
             if(selection >= candidateCount) {
                 wram->wScriptVar = FALSE;
-                MapTextbox_Conv(Text_Cancelled);
+                PrintText_Conv2(Text_Cancelled);
                 NetworkCloseConnection();
                 CloseWindow_Conv2();
                 return;
@@ -263,7 +263,7 @@ void LANConnection_Join(void) {
             const LANClient* candidate = NetworkGetLANCandidate(selection);
             CopyBytes_Conv2(wram->wStringBuffer1, candidate->name, sizeof(candidate->name) - 1);
             wram->wStringBuffer1[11] = CHAR_TERM;
-            MapTextbox_Conv(Text_WillYouConnect);
+            PrintText_Conv2(Text_WillYouConnect);
             bool yes = YesNoBox_Conv();
             CloseWindow_Conv2();
             if(yes) {
