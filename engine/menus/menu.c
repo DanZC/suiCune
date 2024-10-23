@@ -697,6 +697,32 @@ skip_joypad:
 
 }
 
+uint8_t MobileMenuJoypad_Conv(void){
+    // LD_HL(w2DMenuFlags2);
+    // RES_hl(7);
+    bit_reset(wram->w2DMenuFlags2, 7);
+    // LDH_A_addr(hBGMapMode);
+    // PUSH_AF;
+    uint8_t bgMapMode = hram->hBGMapMode;
+    // CALL(aMove2DMenuCursor);
+    Move2DMenuCursor_Conv();
+    // CALL(aDo2DMenuRTCJoypad);
+    // IF_NC goto skip_joypad;
+    if(Do2DMenuRTCJoypad_Conv()) {
+        // CALL(av_2DMenuInterpretJoypad);
+        v_2DMenuInterpretJoypad_Conv();
+    }
+
+// skip_joypad:
+    // POP_AF;
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = bgMapMode;
+    // CALL(aGetMenuJoypad);
+    // LD_C_A;
+    // RET;
+    return GetMenuJoypad_Conv();
+}
+
 void Function241d5(void){
 //  //  unreferenced
     CALL(aPlace2DMenuCursor);

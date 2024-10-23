@@ -1,4 +1,5 @@
 void HDMATransferAttrmapAndTilemapToWRAMBank3(void);
+void HDMATransferAttrmapAndTilemapToWRAMBank3_Conv(void);
 void HDMATransferTilemapToWRAMBank3(void);
 void HDMATransferTilemapToWRAMBank3_Conv(void);
 void HDMATransferAttrmapToWRAMBank3(void);
@@ -6,6 +7,7 @@ void HDMATransferAttrmapToWRAMBank3_Conv(void);
 void ReloadMapPart(void);
 void ReloadMapPart_Conv(void);
 void Mobile_ReloadMapPart(void);
+void Mobile_ReloadMapPart_Conv(void);
 void Function1040d4(void);
 void Function1040fb(void);
 void OpenAndCloseMenu_HDMATransferTilemapAndAttrmap(void);

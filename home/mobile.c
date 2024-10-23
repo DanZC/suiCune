@@ -1,5 +1,6 @@
 #include "../constants.h"
 #include "mobile.h"
+#include "menu.h"
 
 void MobileAPI(void){
     //  Mobile
@@ -154,6 +155,7 @@ void Function3ed7(void){
 
 }
 
+// MobileHome_DrawBox?
 tile_t* Function3eea(tile_t* hl, uint8_t b, uint8_t c){
     // PUSH_HL;
     // PUSH_BC;
@@ -203,18 +205,20 @@ fill_attr:
 }
 
 void Function3f20(void){
-        hlcoord(0, 0, wAttrmap);
-    LD_B(6);
-    LD_C(20);
-    CALL(aFunction3f35);
-    hlcoord(0, 0, wTilemap);
-    LD_B(4);
-    LD_C(18);
-    CALL(aMobileHome_PlaceBox);
-    RET;
-
+    // hlcoord(0, 0, wAttrmap);
+    // LD_B(6);
+    // LD_C(20);
+    // CALL(aFunction3f35);
+    Function3f35(coord(0, 0, wram->wAttrmap), 6, 20);
+    // hlcoord(0, 0, wTilemap);
+    // LD_B(4);
+    // LD_C(18);
+    // CALL(aMobileHome_PlaceBox);
+    MobileHome_PlaceBox(coord(0, 0, wram->wTilemap), 4, 18);
+    // RET;
 }
 
+// MobileHome_SetTextboxPalette?
 void Function3f35(uint8_t* hl, uint8_t b, uint8_t c){
     // LD_A(6);
     // LD_DE(SCREEN_WIDTH);
@@ -309,14 +313,18 @@ tile_t* MobileHome_PlaceBox(tile_t* hl, uint8_t b, uint8_t c){
     return MobileHome_PlaceBox_FillBottom(hl, c);
 }
 
+// MobileHome_DrawMenuBox?
 void Function3f7c(void){
-        CALL(aMenuBoxCoord2Tile);
-    CALL(aGetMenuBoxDims);
-    DEC_B;
-    DEC_C;
-    CALL(aFunction3eea);
-    RET;
-
+    // CALL(aMenuBoxCoord2Tile);
+    uint8_t* hl = MenuBoxCoord2Tile_Conv();
+    uint8_t c, b;
+    // CALL(aGetMenuBoxDims);
+    GetMenuBoxDims_Conv(&c, &b);
+    // DEC_B;
+    // DEC_C;
+    // CALL(aFunction3eea);
+    Function3eea(hl, b - 1, c - 1);
+    // RET;
 }
 
 void Function3f88(void){

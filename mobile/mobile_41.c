@@ -1201,35 +1201,42 @@ asm_1063bf:
 }
 
 void Function1063cc(void){
-    LD_A(0x78);
-    LD_addr_A(wcd42);
-    LD_A_addr(wMobileCommsJumptableIndex);
-    INC_A;
-    LD_addr_A(wMobileCommsJumptableIndex);
+    // LD_A(0x78);
+    // LD_addr_A(wcd42);
+    wram->wcd42 = 0x78;
+    // LD_A_addr(wMobileCommsJumptableIndex);
+    // INC_A;
+    // LD_addr_A(wMobileCommsJumptableIndex);
+    wram->wMobileCommsJumptableIndex++;
 
     return Function1063d8();
 }
 
 void Function1063d8(void){
-    LD_HL(wcd42);
-    DEC_hl;
-    RET_NZ ;
-    LD_A_addr(wMobileCommsJumptableIndex);
-    INC_A;
-    LD_addr_A(wMobileCommsJumptableIndex);
-    RET;
+    // LD_HL(wcd42);
+    // DEC_hl;
+    // RET_NZ ;
+    if(--wram->wcd42 != 0)
+        return;
+    // LD_A_addr(wMobileCommsJumptableIndex);
+    // INC_A;
+    // LD_addr_A(wMobileCommsJumptableIndex);
+    wram->wMobileCommsJumptableIndex++;
+    // RET;
 
 }
 
 void Function1063e5(void){
-    LD_A_addr(wcf64);
-    CP_A(0x3);
-    RET_NZ ;
-    LD_A_addr(wMobileCommsJumptableIndex);
-    INC_A;
-    LD_addr_A(wMobileCommsJumptableIndex);
-    RET;
-
+    // LD_A_addr(wcf64);
+    // CP_A(0x3);
+    // RET_NZ ;
+    if(wram->wcf64 != 0x3)
+        return;
+    // LD_A_addr(wMobileCommsJumptableIndex);
+    // INC_A;
+    // LD_addr_A(wMobileCommsJumptableIndex);
+    wram->wMobileCommsJumptableIndex++;
+    // RET;
 }
 
 void Function1063f3(void){
@@ -1321,9 +1328,8 @@ void Function106453(void){
 }
 
 void Stubbed_Function106462(void){
-    RET;
-    RET;
-
+    // RET;
+    // RET;
 }
 
 // Mobile_LoadDialingGFX

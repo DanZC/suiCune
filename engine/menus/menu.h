@@ -24,6 +24,7 @@ void v_StaticMenuJoypad_Conv(void);
 void v_ScrollingMenuJoypad(void);
 void v_ScrollingMenuJoypad_Conv(void);
 void MobileMenuJoypad(void);
+uint8_t MobileMenuJoypad_Conv(void);
 void Function241d5(void);
 void MenuJoypadLoop(void);
 void MenuJoypadLoop_Conv(void);

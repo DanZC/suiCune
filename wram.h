@@ -1117,7 +1117,7 @@ struct wram_s
                         uint8_t wcc64[1];
                         uint8_t wcc65[57];
                         uint8_t skip_44[22];
-                        uint8_t wccb4[1];
+                        uint8_t wccb4;    // buffer size?
                         uint8_t wccb5[3];
                         uint8_t wccb8[1];
                         uint8_t wccb9[1];
@@ -1203,9 +1203,9 @@ struct wram_s
                         uint8_t wcd23[1];
                         uint8_t wcd24[1];
                         uint8_t wMobileCommsJumptableIndex;
-                        uint8_t wcd26;
+                        uint8_t wcd26; // wMobileCommsMenuJumptableIndex
                         uint8_t wcd27;
-                        uint8_t wcd28[1];
+                        uint8_t wcd28; // wMobileCommsBackupJumptableIndex
                         uint8_t wcd29;
                         union {
                             uint8_t wMobileMonSpecies;
@@ -1296,17 +1296,17 @@ struct wram_s
                         uint8_t wcd67;
                         uint8_t wcd68;
                         uint8_t wcd69[1];
-                        uint8_t wcd6a[1];
-                        uint8_t wcd6b[1];
-                        uint8_t wcd6c[1];
-                        uint8_t wcd6d[1];
-                        uint8_t wcd6e[1];
+                        uint8_t wcd6a;
+                        uint8_t wcd6b; // wMobileTimerMinsBackup
+                        uint8_t wcd6c; // wMobileTimerSecs
+                        uint8_t wcd6d; // wMobileTimerMins
+                        uint8_t wcd6e; // wMobileTimerHours
                         uint8_t wcd6f[1];
                         uint8_t wcd70[1];
                         uint8_t wcd71[1];
-                        uint8_t wcd72[1];
-                        uint8_t wcd73[1];
-                        uint8_t wcd74[1];
+                        uint8_t wcd72; // wMobileHoursBackup
+                        uint8_t wcd73; // wMobileMinsBackup
+                        uint8_t wcd74; // wMobileSecsBackup
                         uint8_t wOTMonSelection[2];
                         // ds BATTLETOWER_PARTY_LENGTH
                         uint8_t wcd77[1];

@@ -26,6 +26,36 @@ Function:
     RET;
 }
 
+static void HDMATransferAttrmapAndTilemapToWRAMBank3_Function(void){
+    // decoord(0, 0, wAttrmap);
+    // LD_HL(wScratchAttrmap);
+    // CALL(mPadAttrmapForHDMATransfer);
+    PadAttrmapForHDMATransfer_Conv2(wram->wScratchAttrmap, coord(0, 0, wram->wAttrmap));
+    // decoord(0, 0, wTilemap);
+    // LD_HL(wScratchTilemap);
+    // CALL(mPadTilemapForHDMATransfer);
+    PadTilemapForHDMATransfer_Conv2(wram->wScratchTilemap, wram->wTilemap);
+    // LD_A(0x0);
+    // LDH_addr_A(rVBK);
+    gb_write(rVBK, 0x0);
+    // LD_HL(wScratchTilemap);
+    // CALL(mHDMATransferToWRAMBank3);
+    HDMATransferToWRAMBank3_Conv(wram->wScratchTilemap);
+    // LD_A(0x1);
+    // LDH_addr_A(rVBK);
+    gb_write(rVBK, 0x1);
+    // LD_HL(wScratchAttrmap);
+    // CALL(mHDMATransferToWRAMBank3);
+    HDMATransferToWRAMBank3_Conv(wram->wScratchAttrmap);
+    // RET;
+}
+
+void HDMATransferAttrmapAndTilemapToWRAMBank3_Conv(void) {
+    // LD_HL(mHDMATransferAttrmapAndTilemapToWRAMBank3_Function);
+    // JP(mCallInSafeGFXMode);
+    return CallInSafeGFXMode_Conv(HDMATransferAttrmapAndTilemapToWRAMBank3_Function);
+}
+
 void HDMATransferTilemapToWRAMBank3(void) {
     LD_HL(mHDMATransferTilemapToWRAMBank3_Function);
     JP(mCallInSafeGFXMode);
@@ -202,6 +232,49 @@ Function:
     NOP;
 
     RET;
+}
+
+static void Mobile_ReloadMapPart_Function(void){
+    // decoord(0, 0, wAttrmap);
+    // LD_HL(wScratchAttrmap);
+    // CALL(mPadAttrmapForHDMATransfer);
+    PadAttrmapForHDMATransfer_Conv2(wram->wScratchAttrmap, coord(0, 0, wram->wAttrmap));
+    // decoord(0, 0, wTilemap);
+    // LD_HL(wScratchTilemap);
+    // CALL(mPadTilemapForHDMATransfer);
+    PadAttrmapForHDMATransfer_Conv2(wram->wScratchTilemap, coord(0, 0, wram->wTilemap));
+    // CALL(mDelayFrame);
+    DelayFrame();
+
+    // NOP;
+    // LDH_A_addr(rVBK);
+    // PUSH_AF;
+    uint8_t vbk = gb_read(rVBK);
+    // LD_A(0x1);
+    // LDH_addr_A(rVBK);
+    gb_write(rVBK, 0x1);
+    // LD_HL(wScratchAttrmap);
+    // CALL(mHDMATransfer_NoDI);
+    CopyBytes_Conv2(GBToRAMAddr(0x8000 + (hram->hBGMapAddress & 0x1fff)), wram->wScratchAttrmap, sizeof(wram->wScratchAttrmap));
+    // LD_A(0x0);
+    // LDH_addr_A(rVBK);
+    gb_write(rVBK, 0x0);
+    // LD_HL(wScratchTilemap);
+    // CALL(mHDMATransfer_NoDI);
+    CopyBytes_Conv2(GBToRAMAddr(0x8000 + (hram->hBGMapAddress & 0x1fff)), wram->wScratchTilemap, sizeof(wram->wScratchTilemap));
+    // POP_AF;
+    // LDH_addr_A(rVBK);
+    gb_write(rVBK, vbk);
+    // NOP;
+
+    // RET;
+}
+
+void Mobile_ReloadMapPart_Conv(void) {
+    // LD_HL(mReloadMapPart);  // useless
+    // LD_HL(mMobile_ReloadMapPart_Function);
+    // JP(mCallInSafeGFXMode);
+    CallInSafeGFXMode_Conv(Mobile_ReloadMapPart_Function);
 }
 
 void Function1040d4(void) {
