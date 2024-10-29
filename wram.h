@@ -1230,18 +1230,23 @@ struct wram_s
                             };
                         };
                         // current time for link/mobile?
-                        uint8_t wcd36; // hours
-                        uint8_t wcd37; // mins
-                        uint8_t wcd38; // secs
-                        uint8_t wcd39[1];
-                        uint8_t wcd3a[1];
-                        uint8_t wcd3b[1];
-                        uint8_t wBattleTowerRoomMenu2JumptableIndex;
-                        uint8_t wcd3d[1];
-                        uint8_t wcd3e[1];
-                        uint8_t wcd3f[1];
-                        uint8_t wcd40[1];
-                        uint8_t wcd41[1];
+                        union {
+                            uint8_t wMobileTimeDataBuffer[12];
+                            struct {
+                                uint8_t wcd36; // hours
+                                uint8_t wcd37; // mins
+                                uint8_t wcd38; // secs
+                                uint8_t wcd39[1];
+                                uint8_t wcd3a[1];
+                                uint8_t wcd3b[1];
+                                uint8_t wBattleTowerRoomMenu2JumptableIndex;
+                                uint8_t wcd3d[1];
+                                uint8_t wcd3e[1];
+                                uint8_t wcd3f[1];
+                                uint8_t wcd40[1];
+                                uint8_t wcd41[1];
+                            };
+                        };
                         uint8_t wcd42;
                         uint8_t wcd43[1];
                         // some sort of timer in link battles
@@ -1274,18 +1279,23 @@ struct wram_s
                         uint8_t wcd52[1];
                         // ds 12
                         //union wMobileOpponentBattleMessage
-                        uint8_t wcd53[1];
-                        uint8_t wcd54[1];
-                        uint8_t wcd55[1];
-                        uint8_t wcd56[1];
-                        uint8_t wcd57[1];
-                        uint8_t wcd58[1];
-                        uint8_t wcd59[1];
-                        uint8_t wcd5a[1];
-                        uint8_t wcd5b[1];
-                        uint8_t wcd5c[1];
-                        uint8_t wcd5d[1];
-                        uint8_t wcd5e[1];
+                        union {
+                            uint8_t wMobileOpponentBattleMessage[12];
+                            struct {
+                                uint8_t wcd53;
+                                uint8_t wcd54;
+                                uint8_t wcd55;
+                                uint8_t wcd56;
+                                uint8_t wcd57;
+                                uint8_t wcd58;
+                                uint8_t wcd59;
+                                uint8_t wcd5a;
+                                uint8_t wcd5b;
+                                uint8_t wcd5c;
+                                uint8_t wcd5d;
+                                uint8_t wcd5e;
+                            };
+                        };
                         uint8_t wcd5f[1];
                         uint8_t wcd60[2];
                         uint8_t wcd62[1];
@@ -1309,7 +1319,7 @@ struct wram_s
                         uint8_t wcd74; // wMobileSecsBackup
                         uint8_t wOTMonSelection[2];
                         // ds BATTLETOWER_PARTY_LENGTH
-                        uint8_t wcd77[1];
+                        uint8_t wcd77;
                         uint16_t wMobileCrashCheckPointer;
                         uint8_t wcd7a[2];
                         uint8_t wcd7c[3];

@@ -1,5 +1,6 @@
 #include "../constants.h"
 #include "mobile_5f.h"
+#include "mobile_41.h"
 #include "../charmap.h"
 #include "../home/menu.h"
 #include "../home/lcd.h"
@@ -7,7 +8,12 @@
 #include "../home/tilemap.h"
 #include "../home/text.h"
 #include "../home/clear_sprites.h"
+#include "../home/delay.h"
+#include "../home/joypad.h"
 #include "../engine/gfx/dma_transfer.h"
+#include "../engine/menus/save.h"
+
+uint8_t* sMobileCrashCheckPointer;
 
 void Function17c000(void){
     CALL(aDisableLCD);
@@ -3516,72 +3522,80 @@ void Function17e349(void){
 
 }
 
+#define inc_crash_check_pointer_farcall(_body) do { IncCrashCheckPointer(); uint8_t svbk = gb_read(rSVBK); gb_write(rSVBK, 0x1); do _body while(0); gb_write(rSVBK, svbk); } while(0)
+
 void IncCrashCheckPointer_SaveGameData(void){
     //inc_crash_check_pointer_farcall ['_SaveGameData']
-
-    return IncCrashCheckPointer_SaveAfterLinkTrade();
+    inc_crash_check_pointer_farcall({ v_SaveGameData(); });
 }
 
 void IncCrashCheckPointer_SaveAfterLinkTrade(void){
     //inc_crash_check_pointer_farcall ['SaveAfterLinkTrade']
-
-    return IncCrashCheckPointer_SaveBox();
+    inc_crash_check_pointer_farcall({ SaveAfterLinkTrade(); });
 }
 
 void IncCrashCheckPointer_SaveBox(void){
     //inc_crash_check_pointer_farcall ['SaveBox']
-
-    return IncCrashCheckPointer_SaveChecksum();
+    inc_crash_check_pointer_farcall({ SaveBox(); });
 }
 
 void IncCrashCheckPointer_SaveChecksum(void){
     //inc_crash_check_pointer_farcall ['SaveChecksum']
-
-    return IncCrashCheckPointer_SaveTrainerRankingsChecksum();
+    inc_crash_check_pointer_farcall({ SaveChecksum(); });
 }
 
 void IncCrashCheckPointer_SaveTrainerRankingsChecksum(void){
     //inc_crash_check_pointer_farcall ['UpdateTrainerRankingsChecksum2', 'BackupMobileEventIndex']
-
-    return Function17e3e0();
+    inc_crash_check_pointer_farcall({ UpdateTrainerRankingsChecksum2(); BackupMobileEventIndex(); });
 }
 
 void Function17e3e0(void){
-    CALL(aIncCrashCheckPointer);
-    LD_A_hli;
-    LD_C_A;
-    CALL(aHlToCrashCheckPointer);
-    LD_A(0x1);
-    LDH_addr_A(hBGMapMode);
-    CALL(aDelayFrames);
-    RET;
-
+    // CALL(aIncCrashCheckPointer);
+    uint8_t* hl = IncCrashCheckPointer();
+    // LD_A_hli;
+    // LD_C_A;
+    uint8_t c = *(hl++);
+    // CALL(aHlToCrashCheckPointer);
+    HlToCrashCheckPointer(hl);
+    // LD_A(0x1);
+    // LDH_addr_A(hBGMapMode);
+    hram->hBGMapMode = 0x1;
+    // CALL(aDelayFrames);
+    DelayFrames_Conv(c);
+    // RET;
 }
 
+// MobileError_WaitAorB
 void Function17e3f0(void){
-    CALL(aIncCrashCheckPointer);
-    CALL(aHlToCrashCheckPointer);
+    // CALL(aIncCrashCheckPointer);
+    IncCrashCheckPointer();
+    // CALL(aHlToCrashCheckPointer);
 
-asm_17e3f6:
-    CALL(aJoyTextDelay);
-    LD_HL(hJoyPressed);
-    LD_A_hl;
-    AND_A(0x1);
-    RET_NZ ;
-    LD_A_hl;
-    AND_A(0x2);
-    RET_NZ ;
-    CALL(aWaitBGMap);
-    goto asm_17e3f6;
-
-    return Function17e409();
+    while(1) {
+    // asm_17e3f6:
+        // CALL(aJoyTextDelay);
+        JoyTextDelay_Conv();
+        // LD_HL(hJoyPressed);
+        // LD_A_hl;
+        // AND_A(0x1);
+        // RET_NZ ;
+        // LD_A_hl;
+        // AND_A(0x2);
+        // RET_NZ ;
+        if((hram->hJoyPressed & A_BUTTON) || (hram->hJoyPressed & B_BUTTON))
+            return;
+        // CALL(aWaitBGMap);
+        WaitBGMap_Conv();
+        // goto asm_17e3f6;
+    }
 }
 
+// SetCD77Bit7
 void Function17e409(void){
-    LD_HL(wcd77);
-    SET_hl(7);
-    RET;
-
+    // LD_HL(wcd77);
+    // SET_hl(7);
+    bit_set(wram->wcd77, 7);
+    // RET;
 }
 
 void Function17e40f(void){
@@ -3591,23 +3605,24 @@ void Function17e40f(void){
 
 }
 
-void IncCrashCheckPointer(void){
-    LD_A_addr(wMobileCrashCheckPointer);
-    LD_L_A;
-    LD_A_addr(wMobileCrashCheckPointer + 1);
-    LD_H_A;
-    INC_HL;
+uint8_t* IncCrashCheckPointer(void){
+    // LD_A_addr(wMobileCrashCheckPointer);
+    // LD_L_A;
+    // LD_A_addr(wMobileCrashCheckPointer + 1);
+    // LD_H_A;
+    // INC_HL;
 
-    return HlToCrashCheckPointer();
+    return HlToCrashCheckPointer(sMobileCrashCheckPointer + 1);
 }
 
-void HlToCrashCheckPointer(void){
-    LD_A_L;
-    LD_addr_A(wMobileCrashCheckPointer);
-    LD_A_H;
-    LD_addr_A(wMobileCrashCheckPointer + 1);
-    RET;
-
+uint8_t* HlToCrashCheckPointer(uint8_t* hl){
+    // LD_A_L;
+    // LD_addr_A(wMobileCrashCheckPointer);
+    // LD_A_H;
+    // LD_addr_A(wMobileCrashCheckPointer + 1);
+    sMobileCrashCheckPointer = hl;
+    // RET;
+    return hl;
 }
 
 void Function17e427(void){

@@ -66,6 +66,7 @@
 #include "../overworld/wildmons.h"
 #include "../../mobile/mobile_40.h"
 #include "../../mobile/mobile_41.h"
+#include "../../mobile/print_opp_message.h"
 #include "../../data/text/battle.h"
 #include "../../data/text/common.h"
 #include "../../data/wild/treemons_asleep.h"
@@ -4402,6 +4403,7 @@ void WinTrainerBattle(void){
         //  TODO: Convert Mobile_PrintOpponentBattleMessage
         // LD_C(0x4);  // win
         // FARCALL(aMobile_PrintOpponentBattleMessage);
+        Mobile_PrintOpponentBattleMessage(0x4);
         // RET;
         return;
     }
@@ -5365,6 +5367,7 @@ void LostBattle(void){
                 //  TODO: Print Mobile battle text
                 // LD_C(0x3);  // lost
                 // FARCALL(aMobile_PrintOpponentBattleMessage);
+                Mobile_PrintOpponentBattleMessage(0x3);
                 // SCF;
                 // RET;
                 return;
@@ -16235,6 +16238,7 @@ void BattleStartMessage(void){
 
     // LD_C(0x2);  // start
     // FARCALL(aMobile_PrintOpponentBattleMessage);
+    Mobile_PrintOpponentBattleMessage(0x2);
 
     // RET;
 }

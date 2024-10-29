@@ -643,13 +643,15 @@ void StubbedTrainerRankings_Increment(uint16_t v, uint16_t bc){
 
 //  Used when SRAM bank 5 isn’t already loaded — what’s the point of this?
 void UpdateTrainerRankingsChecksum2(void){
-    RET;
-    LD_A(BANK(sTrainerRankings));
-    CALL(aOpenSRAM);
-    CALL(aUpdateTrainerRankingsChecksum);
-    CALL(aCloseSRAM);
-    RET;
-
+    // RET;
+    // LD_A(BANK(sTrainerRankings));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asTrainerRankings));
+    // CALL(aUpdateTrainerRankingsChecksum);
+    UpdateTrainerRankingsChecksum();
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
 }
 
 void UpdateTrainerRankingsChecksum(void){
