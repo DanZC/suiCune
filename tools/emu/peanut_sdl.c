@@ -3182,7 +3182,7 @@ void gb_init_lcd(
  */
 uint8_t gb_rom_read(const uint_fast32_t addr) {
     const struct priv_t *const p = gb.direct.priv;
-    printf("gb_rom_read[$%08x] -> %02x\n", addr, p->rom[addr]);
+    printf("gb_rom_read[$%08x] -> %02x\n", (unsigned int)addr, p->rom[addr]);
     return p->rom[addr];
 }
 
@@ -3641,7 +3641,7 @@ void cleanup(void) {
      * allocated on the help), then free it here. */
     free(save_file_name);
     free(save_file2_name);
-#ifndef _WIN32  //Crashes, not sure about other plats
+#if 0  //Crashes on all plats
     free(rom_file_name);
 #endif
 }
@@ -4018,7 +4018,7 @@ out:
     free(save_file_name);
     free(save_file2_name);
 
-#ifndef _WIN32  //Crashes
+#if 0  //Crashes
     free(rom_file_name);
 #endif
 

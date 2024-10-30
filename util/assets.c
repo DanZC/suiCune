@@ -55,10 +55,10 @@ asset_s LoadAsset(const char* filename) {
         fprintf(stderr, "LoadAsset Error: Bad malloc.");
         return (asset_s){NULL, 0};
     }
-    fread(buf, (size_t)size, 1, file);
+    size_t read = fread(buf, 1, (size_t)size, file);
     fclose(file);
     #endif
-    return (asset_s){buf, (size_t)size};
+    return (asset_s){buf, read};
 }
 
 // Loads asset file from archive to a user-provided buffer of size buf_size.
@@ -98,10 +98,10 @@ asset_s LoadAssetToBuffer(void* buffer, size_t buf_size, const char* filename) {
     //     return (asset_s){NULL, 0};
     // }
     size_t rsize = ((size_t)size > buf_size)? buf_size: (size_t)size;
-    fread(buffer, rsize, 1, file);
+    size_t read = fread(buffer, 1, rsize, file);
     fclose(file);
 #endif
-    return (asset_s){buffer, rsize};
+    return (asset_s){buffer, read};
 }
 
 // Loads text asset file from archive to a heap-allocated buffer.
@@ -609,8 +609,8 @@ static void ParsePalFromText(uint16_t* dest, size_t dest_size, const char* text,
             if(*s == ' ' || *s == '\t') { s++; continue; }
             if(memcmp(s, "RGB ", 4) == 0) {
                 s += 4;
-                sscanf_s(s, " ");
-                sscanf_s(s, "%d, %d, %d", &r, &g, &b);
+                sscanf(s, " ");
+                sscanf(s, "%d, %d, %d", &r, &g, &b);
                 // printf("%llu: %02d, %02d, %02d\n", written, r, g, b);
                 if(passed++ < start)
                     goto nextline;
@@ -737,12 +737,13 @@ asset_s LoadAssetSegmentsToBuffer(void* buffer, size_t buf_size, const char* fil
     size_t asize = (size_t)size - (segment_size * start);
     size_t scount = (count > asize / segment_size)? asize / segment_size: count;
     scount = (scount > buf_size / segment_size)? buf_size / segment_size: scount;
+    size_t read = 0;
     if(scount != 0) {
-        fread(buffer, segment_size * scount, 1, file);
+        read = fread(buffer, 1, segment_size * scount, file);
     }
     fclose(file);
 #endif
-    return (asset_s){buffer, scount * segment_size};
+    return (asset_s){buffer, read};
 }
 
 void* Load2bppBinaryAssetToBuffer(void* buffer, size_t buf_size, const char* filename, size_t start, size_t count) {

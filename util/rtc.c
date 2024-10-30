@@ -100,7 +100,7 @@ void SetStartTimeToSystemTime(void) {
     gb_write(wTimeOfDayPal + 3, buffer[6]);
     gb_write(wTimeOfDayPal + 4, buffer[7]);
     wbank_pop;
-    printf("start = %lld\n", *(time_t*)buffer);
+    printf("start = %lld\n", (long long)*(time_t*)buffer);
 }
 
 static char tempTimeBuffer[32];
@@ -128,18 +128,18 @@ void LoadRTCStartTime(void) {
                     | ((uint64_t)(uint8_t)buffer[6] << 48ull)
                     | ((uint64_t)(uint8_t)buffer[7] << 56ull);
     if(!(time_t)value || (time_t)value == -1) {
-        printf("No RTC data found. Start timestamp is %lld. Loading day at 0.\n", (time_t)value);
+        printf("No RTC data found. Start timestamp is %lld. Loading day at 0.\n", (long long)(time_t)value);
         CloseSRAM_Conv();
         sStartTimestamp = 0;
         return;
     }
     sStartTimestamp = (time_t)value;
     strftime(tempTimeBuffer, sizeof(tempTimeBuffer), "%a %Y-%m-%d %H:%M:%S", localtime(&sStartTimestamp));
-    printf("Start timestamp is %lld (%s).\n", sStartTimestamp, tempTimeBuffer);
+    printf("Start timestamp is %lld (%s).\n", (long long)sStartTimestamp, tempTimeBuffer);
     sLastTimestamp = time(NULL);
     if(sLastTimestamp != (time_t)-1) {
         strftime(tempTimeBuffer, sizeof(tempTimeBuffer), "%a %Y-%m-%d %H:%M:%S", localtime(&sLastTimestamp));
-        printf("Current timestamp is %lld (%s).\n", sLastTimestamp, tempTimeBuffer);
+        printf("Current timestamp is %lld (%s).\n", (long long)sLastTimestamp, tempTimeBuffer);
     }
     CloseSRAM_Conv();
 }

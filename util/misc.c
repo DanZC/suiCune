@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stddef.h>
 #include "misc.h"
 
 // Reverses the bits in a.

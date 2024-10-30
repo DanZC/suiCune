@@ -77,6 +77,7 @@ SRCS   := tools/emu/peanut_sdl.c tools/emu/minigb_apu/minigb_apu.c \
 #	$(wildcard ../*/*/*/*.c)
 CFLAGS += $(shell sdl2-config --cflags)
 
+ifeq ($(OS),Windows_NT)
 ifeq ($(STATIC),yes)
 	CFLAGS += -static
 	LDLIBS += -lSDL2_net -lmingw32 -lSDL2main -lSDL2 -lws2_32 -liphlpapi -ldinput8 -lshell32 -lsetupapi -ladvapi32 -luuid -lversion -loleaut32 -lole32 -limm32 -lwinmm -lgdi32 -luser32 -lm -lphysfs -Wl,--no-undefined 
@@ -84,6 +85,13 @@ ifeq ($(STATIC),yes)
 else
 	LDLIBS += -lSDL2main -lmingw32 -lSDL2 -mconsole -ldinput8 -lshell32 -lsetupapi -ladvapi32 -luuid -lversion -loleaut32 -lole32 -limm32 -lwinmm -lgdi32 -luser32 -lm -lphysfs -Wl,--no-undefined 
 #	LDLIBS += $(shell sdl2-config --libs)
+endif
+else
+ifeq ($(STATIC),yes)
+	LDLIBS += $(shell sdl2-config --static-libs) -lSDL2_net
+else
+	LDLIBS += $(shell sdl2-config --libs) -lSDL2_net
+endif
 endif
 
 LDLIBS += -lm

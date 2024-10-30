@@ -54,6 +54,9 @@
 #include "../../data/pokemon/evos_attacks_pointers.h"
 #include "../../data/pokemon/dex_entries.h"
 #include "../../data/wild/flee_mons.h"
+#if !defined(_MSC_VER)
+#include <stddef.h>
+#endif
 
 void v_DoItemEffect(void){
     LD_A_addr(wCurItem);

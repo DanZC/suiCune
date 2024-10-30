@@ -20,6 +20,7 @@
 #include "../../data/text/common.h"
 #include "../../data/pokemon/evos_attacks_pointers.h"
 #include "../../data/moves/moves.h"
+#include <stddef.h>
 
 void EvolvePokemon(void){
     // LD_HL(wEvolvableFlags);

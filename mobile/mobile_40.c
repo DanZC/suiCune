@@ -5926,7 +5926,7 @@ void Function10204c(void){
     // LD_C(0x10);
     uint8_t c = 0x10;
     // LD_DE(wcd53);
-    uint8_t* de = wram->wcd53;
+    uint8_t* de = wram->wMobileOpponentBattleMessage;
 
     do {
     // asm_102054:
@@ -5954,7 +5954,7 @@ void Function10204c(void){
 
 void Function102068(const uint8_t* de){
     // LD_HL(wcd53);
-    uint8_t* hl = wram->wcd53;
+    uint8_t* hl = wram->wMobileOpponentBattleMessage;
     // LD_C(0x08);
     uint8_t c = 0x08;
 

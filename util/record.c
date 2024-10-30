@@ -5,13 +5,17 @@
 #include "record.h"
 #include <memory.h>
 
-#define FFMPEG_PROG "D:/ffmpeg/bin/ffmpeg.exe"
+#define FFMPEG_PROG "/path/to/ffmpeg" // Replace with path to ffmpeg.
 
 #define MAX_FRAMES (60 * 60) // 60 seconds of video
 
+#ifndef _WIN32
+#include <linux/limits.h>
+#else
 #ifdef _MSC_VER
 #ifndef PATH_MAX
 #define PATH_MAX 260
+#endif
 #endif
 #endif
 
@@ -38,9 +42,8 @@ void TakeScreenshot(const char* path) {
     }
     if(path == NULL) {
         time_t now = time(NULL);
-        struct tm nowt;
-        localtime_s(&nowt, &now);
-        strftime(name, sizeof(name), "./screenshot%Y_%m_%d_T%H_%M_%S.bmp", &nowt);
+        struct tm *nowt = localtime(&now);
+        strftime(name, sizeof(name), "./screenshot%Y_%m_%d_T%H_%M_%S.bmp", nowt);
         SDL_SaveBMP(surf, name);
         path = name;
     }
@@ -69,14 +72,26 @@ static void DeleteDir(const char* in_dir) {
     char cmd[PATH_MAX + 21];
     snprintf(cmd, sizeof(cmd), "rm -rf %s", in_dir);
     printf("%s\n", cmd);
-    system(cmd);
+    int error = system(cmd);
+    if(error == EXIT_SUCCESS) {
+        printf("Deleted directory \"%s\"\n", in_dir);
+    }
+    else {
+        fprintf(stderr, "cmd error: %d\n", error);
+    }
 }
 
 static void CreateDir(const char* in_dir) {
     char cmd[PATH_MAX + 21];
     snprintf(cmd, sizeof(cmd), "mkdir \"%s\"", in_dir);
     printf("%s\n", cmd);
-    system(cmd);
+    int error = system(cmd);
+    if(error == EXIT_SUCCESS) {
+        printf("Created directory \"%s\"\n", in_dir);
+    }
+    else {
+        fprintf(stderr, "cmd error: %d\n", error);
+    }
 }
 
 struct VideoBuffer {
@@ -104,9 +119,8 @@ void StartRecording(const char* dest, const char* dir) {
     gRecording.recording = true;
     if(dest == NULL) {
         time_t now = time(NULL);
-        struct tm nowt;
-        localtime_s(&nowt, &now);
-        strftime(gRecording.dest, sizeof(gRecording.dest), "./recording%Y_%m_%d_T%H_%M_%S.mp4", &nowt);
+        struct tm *nowt = localtime(&now);
+        strftime(gRecording.dest, sizeof(gRecording.dest), "./recording%Y_%m_%d_T%H_%M_%S.mp4", nowt);
     } else {
         strcpy(gRecording.dest, dest);
     }
@@ -130,7 +144,7 @@ void RecordFrame(void) {
         return StopAndSaveRecording();
     }
     if(gRecording.buffer.frame_count == gRecording.buffer.capacity) {
-        printf("Resizing buffer to %lld frames...\n", ((gRecording.buffer.capacity * 3) / 2));
+        printf("Resizing buffer to %zu frames...\n", ((gRecording.buffer.capacity * 3) / 2));
         void* new_buf = realloc(gRecording.buffer.frames, sizeof(gRecording.buffer.frames[0]) * ((gRecording.buffer.capacity * 3) / 2));
         if(new_buf) {
             gRecording.buffer.capacity = (gRecording.buffer.capacity * 3) / 2;
@@ -151,7 +165,7 @@ void StopAndSaveRecording(void) {
     printf("Stopping recording...\n");
     for(size_t i = 0; i < gRecording.buffer.frame_count; i++) {
         char dest[FILENAME_MAX * 2];
-        sprintf(dest, "%s/frame%08lld.bmp", gRecording.dir, i);
+        sprintf(dest, "%s/frame%08zu.bmp", gRecording.dir, i);
         SDL_Surface* surf = SDL_CreateRGBSurfaceWithFormatFrom(gRecording.buffer.frames[i], LCD_WIDTH, LCD_HEIGHT, 16, LCD_WIDTH * 2, SDL_PIXELFORMAT_RGB555);
         SDL_SaveBMP(surf, dest);
         SDL_FreeSurface(surf);

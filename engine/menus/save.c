@@ -23,8 +23,9 @@ struct BoxAddress {
     uint32_t addressEnd;
 };
 
-// Sneaking a static assert inside an expression.
-#define box_address(_start, _end) {((sizeof(struct {static_assert(MBANK(_start) == MBANK(_end)); int dummy;})) * 0) + _start, _end}
+// #define box_address(_start, _end) {((sizeof(struct {static_assert(MBANK(_start) == MBANK(_end), ""); int dummy;})) * 0) + _start, _end}
+// Previous definition was too problematic for many compilers.
+#define box_address(_start, _end) {_start, _end}
 
 static const struct BoxAddress BoxAddresses[] = {
     //table_width ['5', 'BoxAddresses']
