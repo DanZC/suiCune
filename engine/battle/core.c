@@ -902,7 +902,7 @@ bool DetermineMoveOrder(void){
         // LD_HL(wEnemyMonSpeed);
         // LD_C(2);
         // CALL(aCompareBytes);
-        int cmp_speed = CompareBytes_Conv2(wram->wBattleMon.speed, wram->wEnemyMon.speed, 2);
+        int cmp_speed = CompareBytes(wram->wBattleMon.speed, wram->wEnemyMon.speed, 2);
         // IF_Z goto speed_tie;
         if(cmp_speed != 0) {
             // JP_NC (mDetermineMoveOrder_player_first);
@@ -15755,7 +15755,7 @@ static void AddLastLinkBattleToLinkRecord_FindOpponentAndAppendRecord(void){
             // PUSH_BC;
             // LD_C(3);
             // CALL(aCompareBytes);
-            int cmp = CompareBytes_Conv2(de, hl, 3);
+            int cmp = CompareBytes(de, hl, 3);
             // POP_BC;
             // IF_Z goto equal;
             // IF_NC goto done2;
@@ -15846,7 +15846,7 @@ void AddLastLinkBattleToLinkRecord(void){
         // LD_BC(LINK_BATTLE_RECORD_LENGTH - 6);
         // LD_DE(wStringBuffer1);
         // CALL(aCompareBytesLong);
-        int cmp = CompareBytes_Conv2(wram->wStringBuffer1, hl, LINK_BATTLE_RECORD_LENGTH - 6);
+        int cmp = CompareBytes(wram->wStringBuffer1, hl, LINK_BATTLE_RECORD_LENGTH - 6);
         // POP_DE;
         // POP_HL;
         // IF_C goto done;

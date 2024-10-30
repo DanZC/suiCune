@@ -80,8 +80,8 @@ void init_function_pointers(void) {
     REDIRECTED(ClearSprites);
 
     // home/compare.c
-    REDIRECTED(CompareBytesLong);
-    REDIRECTED(CompareBytes);
+    // CONVERTED(CompareBytesLong);
+    // CONVERTED(CompareBytes);
 
     // home/copy.c
     REDIRECTED(GetFarWRAMWord);

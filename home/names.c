@@ -169,7 +169,7 @@ void GetName_Conv(void){
 }
 
 //  Return name index from name list type in wStringBuffer1.
-uint8_t* GetName_Conv2(uint8_t type, uint8_t index){
+uint8_t* GetName_Conv2(uint8_t type, uint16_t index){
 
     // LDH_A_addr(hROMBank);
     // PUSH_AF;
@@ -186,8 +186,7 @@ uint8_t* GetName_Conv2(uint8_t type, uint8_t index){
         // LD_addr_A(wNamedObjectIndex);
 
         // CALL(aGetPokemonName);
-        wram->wNamedObjectIndex = wram->wCurSpecies;
-        GetPokemonName_Conv();
+        GetPokemonName_Conv2(index);
         
         // LD_HL(MON_NAME_LENGTH);
         // ADD_HL_DE;

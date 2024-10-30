@@ -988,17 +988,17 @@ static void IntroScene9(void){
     // LD_BC(12 * SCREEN_WIDTH);
     // LD_A(0x1);
     // CALL(aByteFill);
-    ByteFill_Conv(coord(0, 0, wAttrmap), 12 * SCREEN_WIDTH, 0x1);
+    ByteFill_Conv2(coord(0, 0, wram->wAttrmap), 12 * SCREEN_WIDTH, 0x1);
 // middle 3 rows have palette 2
     // LD_BC(3 * SCREEN_WIDTH);
     // LD_A(0x2);
     // CALL(aByteFill);
-    ByteFill_Conv(coord(0, 12, wAttrmap), 3 * SCREEN_WIDTH, 0x2);
+    ByteFill_Conv2(coord(0, 12, wram->wAttrmap), 3 * SCREEN_WIDTH, 0x2);
 // last three rows have palette 3
     // LD_BC(3 * SCREEN_WIDTH);
     // LD_A(0x3);
     // CALL(aByteFill);
-    ByteFill_Conv(coord(0, 15, wAttrmap), 3 * SCREEN_WIDTH, 0x3);
+    ByteFill_Conv2(coord(0, 15, wram->wAttrmap), 3 * SCREEN_WIDTH, 0x3);
     // LD_A(0x2);
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = 0x2;

@@ -2,7 +2,7 @@
 extern const char (*const NamesPointers[])[20];
 void GetName(void);
 void GetName_Conv(void);
-uint8_t* GetName_Conv2(uint8_t type, uint8_t index);
+uint8_t* GetName_Conv2(uint8_t type, uint16_t index);
 void GetNthString(void);
 uint16_t GetNthString_Conv(uint16_t hl, uint8_t a);
 void GetBasePokemonName(void);

@@ -355,9 +355,9 @@ done:
 
     // LD_A(BANK(av_UpdateSound));
     // RST(mBankswitch);
-    // Bankswitch_Conv(BANK(av_UpdateSound));
+    Bankswitch_Conv(BANK(av_UpdateSound));
     // CALL(av_UpdateSound);
-    SafeCallGBAuto(av_UpdateSound);
+    v_UpdateSound();
     // LDH_A_addr(hROMBankBackup);
     // RST(mBankswitch);
     Bankswitch_Conv(hram->hROMBankBackup);

@@ -193,3 +193,33 @@ void DrawGBCOnlyGraphic(uint8_t* hl, uint8_t b, uint8_t c, uint8_t a){
     } while(--c != 0);
     // RET;
 }
+
+
+static void DrawErrorScreen(const char* text){
+    DrawGBCOnlyBorder();
+
+// Pokemon
+    DrawGBCOnlyGraphic(coord(3, 2, wram->wTilemap), 14, 4, 0x8);
+
+// Crystal
+    DrawGBCOnlyGraphic(coord(5, 6, wram->wTilemap), 10, 2, 0x40);
+
+    PlaceStringSimple(U82C(text), coord(1, 10, wram->wTilemap));
+}
+
+void ErrorScreen(const char* text){
+    PlayMusic_Conv(MUSIC_NONE);
+    ClearTilemap_Conv2();
+    GetSGBLayout_Conv(SCGB_1E);
+    SetPalettes_Conv();
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2, GBCOnlyGFX, 0, 84);
+    LoadPNG1bppAssetSectionToVRAM(vram->vTiles1, Font, 0, 0x80);
+    DrawErrorScreen(text);
+    WaitBGMap_Conv();
+
+//  better luck next time
+
+    while(1) {
+        DelayFrame();
+    }
+}

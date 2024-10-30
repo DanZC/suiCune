@@ -142,18 +142,6 @@ HandleLoop:
 
 }
 
-void ByteFill_Conv_Old(void){
-    //  fill bc bytes with the value of a, starting at hl
-    REG_B++;  // we bail the moment b hits 0, so include the last run
-    REG_C++;  // same thing// include last byte
-
-    while(--REG_C != 0 || --REG_B != 0)
-    {
-        gb_write(REG_HL++, REG_A);
-    }
-    return;
-}
-
 //  fill bc bytes with the value of a, starting at hl
 void ByteFill_Conv(uint16_t ptr, uint16_t len, uint8_t value){
     len++;  // we bail the moment b hits 0, so include the last run
@@ -195,23 +183,6 @@ void GetFarByte(void){
     LDH_A_addr(hFarByte);
     RET;
 
-}
-
-void GetFarByte_Conv_Old(void){
-    //  retrieve a single byte from a:hl, and return it in a.
-    // bankswitch to new bank
-    uint8_t temp = gb_read(hROMBank);
-    RST(aBankswitch);
-
-    // get byte from new bank
-    uint8_t farbyte = gb_read(REG_HL);
-
-    // bankswitch to previous bank
-    REG_A = temp;
-    RST(aBankswitch);
-
-    // return retrieved value in a
-    REG_A = farbyte;
 }
 
 //  retrieve a single byte from a:hl, and return it in a.
