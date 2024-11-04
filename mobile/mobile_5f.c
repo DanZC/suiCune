@@ -10,6 +10,10 @@
 #include "../home/clear_sprites.h"
 #include "../home/delay.h"
 #include "../home/joypad.h"
+#include "../home/map.h"
+#include "../home/mobile.h"
+#include "../home/print_text.h"
+#include "../home/sram.h"
 #include "../engine/gfx/dma_transfer.h"
 #include "../engine/menus/save.h"
 
@@ -5160,243 +5164,291 @@ asm_17f536:
 asm_17f53a:
     SCF;
     goto asm_17f536;
-
-    return BattleTowerMobileError();
 }
 
 void BattleTowerMobileError(void){
-    CALL(aFadeToMenu);
-    XOR_A_A;
-    LD_addr_A(wc303);
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(0x1);
-    LDH_addr_A(rSVBK);
+    // CALL(aFadeToMenu);
+    FadeToMenu_Conv();
+    // XOR_A_A;
+    // LD_addr_A(wc303);
+    wram->wc303 = 0x0;
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(0x1);
+    // LDH_addr_A(rSVBK);
 
-    CALL(aDisplayMobileError);
+    // CALL(aDisplayMobileError);
+    DisplayMobileError();
 
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    CALL(aExitAllMenus);
-    RET;
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // CALL(aExitAllMenus);
+    ExitAllMenus_Conv();
+    // RET;
 
+}
+
+static void DisplayMobileError_RunJumptable(void) {
+    //jumptable ['.Jumptable', 'wc303']
+    switch(wram->wc303) {
+    // Jumptable:
+        default:
+        case 0: Function17f5c3(); break;
+        case 1: Function17ff23(); break;
+        case 2: Function17f5d2(); break;
+    }
+}
+
+static void DisplayMobileError_deinit(void){
+    // LD_A_addr(wMobileErrorCodeBuffer);
+    uint8_t error0 = wram->wMobileErrorCodeBuffer[0];
+    // CP_A(0x22);
+    // IF_Z goto asm_17f597;
+    if(error0 == 0x22) {
+    // asm_17f597:
+        // LD_A_addr(wMobileErrorCodeBuffer + 1);
+        // AND_A_A;
+        // RET_NZ ;
+        // LD_A_addr(wMobileErrorCodeBuffer + 2);
+        // AND_A_A;
+        // RET_NZ ;
+        if(wram->wMobileErrorCodeBuffer[1] != 0 || wram->wMobileErrorCodeBuffer[2] != 0)
+            return;
+    }
+    // CP_A(0x31);
+    // IF_Z goto asm_17f58a;
+    else if(error0 == 0x31) {
+    // asm_17f58a:
+        // LD_A_addr(wMobileErrorCodeBuffer + 1);
+        // CP_A(0x3);
+        // RET_NZ ;
+        // LD_A_addr(wMobileErrorCodeBuffer + 2);
+        // AND_A_A;
+        // RET_NZ ;
+        if(wram->wMobileErrorCodeBuffer[1] != 0x3 || wram->wMobileErrorCodeBuffer[2] != 0)
+            return;
+        // goto asm_17f5a1;
+    }
+    else {
+        // CP_A(0x33);
+        // RET_NZ ;
+        // LD_A_addr(wMobileErrorCodeBuffer + 1);
+        // CP_A(0x1);
+        // RET_NZ ;
+        // LD_A_addr(wMobileErrorCodeBuffer + 2);
+        // CP_A(0x2);
+        // RET_NZ ;
+        if(error0 != 0x33 || wram->wMobileErrorCodeBuffer[1] != 0x1 || wram->wMobileErrorCodeBuffer[2] != 0x2)
+            return;
+        // goto asm_17f5a1;
+    }
+
+// asm_17f5a1:
+    // LD_A(BANK(sMobileLoginPassword));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asMobileLoginPassword));
+    // XOR_A_A;
+    // LD_addr_A(sMobileLoginPassword);
+    gb_write(sMobileLoginPassword, 0x0);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
 }
 
 void DisplayMobileError(void){
+    while(1) {
+    // loop:
+        // CALL(aJoyTextDelay);
+        JoyTextDelay_Conv();
+        // CALL(aDisplayMobileError_RunJumptable);
+        DisplayMobileError_RunJumptable();
+        // LD_A_addr(wc303);
+        // BIT_A(7);
+        // IF_NZ goto quit;
+        if(bit_test(wram->wc303, 7))
+            break;
+        // FARCALL(aHDMATransferAttrmapAndTilemapToWRAMBank3);
+        HDMATransferAttrmapAndTilemapToWRAMBank3_Conv();
+        // goto loop;
+    }
 
-loop:
-    CALL(aJoyTextDelay);
-    CALL(aDisplayMobileError_RunJumptable);
-    LD_A_addr(wc303);
-    BIT_A(7);
-    IF_NZ goto quit;
-    FARCALL(aHDMATransferAttrmapAndTilemapToWRAMBank3);
-    goto loop;
-
-
-quit:
-    CALL(aDisplayMobileError_deinit);
-    RET;
-
-
-deinit:
-    LD_A_addr(wMobileErrorCodeBuffer);
-    CP_A(0x22);
-    IF_Z goto asm_17f597;
-    CP_A(0x31);
-    IF_Z goto asm_17f58a;
-    CP_A(0x33);
-    RET_NZ ;
-    LD_A_addr(wMobileErrorCodeBuffer + 1);
-    CP_A(0x1);
-    RET_NZ ;
-    LD_A_addr(wMobileErrorCodeBuffer + 2);
-    CP_A(0x2);
-    RET_NZ ;
-    goto asm_17f5a1;
-
-
-asm_17f58a:
-    LD_A_addr(wMobileErrorCodeBuffer + 1);
-    CP_A(0x3);
-    RET_NZ ;
-    LD_A_addr(wMobileErrorCodeBuffer + 2);
-    AND_A_A;
-    RET_NZ ;
-    goto asm_17f5a1;
-
-
-asm_17f597:
-    LD_A_addr(wMobileErrorCodeBuffer + 1);
-    AND_A_A;
-    RET_NZ ;
-    LD_A_addr(wMobileErrorCodeBuffer + 2);
-    AND_A_A;
-    RET_NZ ;
-
-
-asm_17f5a1:
-    LD_A(BANK(sMobileLoginPassword));
-    CALL(aOpenSRAM);
-    XOR_A_A;
-    LD_addr_A(sMobileLoginPassword);
-    CALL(aCloseSRAM);
-    RET;
-
-
-RunJumptable:
-    //jumptable ['.Jumptable', 'wc303']
-
-
-Jumptable:
-    //dw ['Function17f5c3'];
-    //dw ['Function17ff23'];
-    //dw ['Function17f5d2'];
-
-    return Function17f5c3();
+// quit:
+    // CALL(aDisplayMobileError_deinit);
+    DisplayMobileError_deinit();
+    // RET;
 }
 
 void Function17f5c3(void){
-    CALL(aFunction17f5e4);
-    FARCALL(aFinishExitMenu);
-    LD_A(0x1);
-    LD_addr_A(wc303);
-    RET;
-
+    // CALL(aFunction17f5e4);
+    Function17f5e4();
+    // FARCALL(aFinishExitMenu);
+    FinishExitMenu_Conv();
+    // LD_A(0x1);
+    // LD_addr_A(wc303);
+    wram->wc303 = 0x1;
+    // RET;
 }
 
 void Function17f5d2(void){
-    CALL(aFunction17f5e4);
-    FARCALL(aHDMATransferAttrmapAndTilemapToWRAMBank3);
-    CALL(aSetPalettes);
-    LD_A(0x1);
-    LD_addr_A(wc303);
-    RET;
+    // CALL(aFunction17f5e4);
+    Function17f5e4();
+    // FARCALL(aHDMATransferAttrmapAndTilemapToWRAMBank3);
+    HDMATransferAttrmapAndTilemapToWRAMBank3_Conv();
+    // CALL(aSetPalettes);
+    SetPalettes_Conv();
+    // LD_A(0x1);
+    // LD_addr_A(wc303);
+    wram->wc303 = 0x1;
+    // RET;
 
 }
 
+// Mobile_PrintErrorMessage?
 void Function17f5e4(void){
-    LD_A(0x8);
-    LD_addr_A(wMusicFade);
-    LD_DE(MUSIC_NONE);
-    LD_A_E;
-    LD_addr_A(wMusicFadeID);
-    LD_A_D;
-    LD_addr_A(wMusicFadeID + 1);
-    LD_A(0x7f);
-    hlcoord(0, 0, wTilemap);
-    LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
-    CALL(aByteFill);
-    LD_A(0x6);
-    hlcoord(0, 0, wAttrmap);
-    LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
-    CALL(aByteFill);
-    hlcoord(2, 1, wTilemap);
-    LD_B(0x1);
-    LD_C(0xe);
-    CALL(aFunction3eea);
-    hlcoord(1, 4, wTilemap);
-    LD_B(0xc);
-    LD_C(0x10);
-    CALL(aFunction3eea);
-    hlcoord(3, 2, wTilemap);
-    LD_DE(mMobileCommunicationErrorText);
-    CALL(aPlaceString);
-    CALL(aFunction17ff3c);
-    IF_NC goto asm_17f632;
-    hlcoord(11, 2, wTilemap);
-    CALL(aFunction17f6b7);
+    // LD_A(0x8);
+    // LD_addr_A(wMusicFade);
+    wram->wMusicFade = 0x8;
+    // LD_DE(MUSIC_NONE);
+    // LD_A_E;
+    // LD_addr_A(wMusicFadeID);
+    // LD_A_D;
+    // LD_addr_A(wMusicFadeID + 1);
+    wram->wMusicFadeID = MUSIC_NONE;
+    // LD_A(0x7f);
+    // hlcoord(0, 0, wTilemap);
+    // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, CHAR_SPACE);
+    // LD_A(0x6);
+    // hlcoord(0, 0, wAttrmap);
+    // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(0, 0, wram->wAttrmap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x6);
+    // hlcoord(2, 1, wTilemap);
+    // LD_B(0x1);
+    // LD_C(0xe);
+    // CALL(aFunction3eea);
+    Function3eea(coord(2, 1, wram->wTilemap), 0x1, 0xe);
+    // hlcoord(1, 4, wTilemap);
+    // LD_B(0xc);
+    // LD_C(0x10);
+    // CALL(aFunction3eea);
+    Function3eea(coord(1, 4, wram->wTilemap), 0xc, 0x10);
+    // hlcoord(3, 2, wTilemap);
+    // LD_DE(mMobileCommunicationErrorText);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(MobileCommunicationErrorText), coord(3, 2, wram->wTilemap));
+    // CALL(aFunction17ff3c);
+    // IF_NC goto asm_17f632;
+    if(Function17ff3c()) {
+        // hlcoord(11, 2, wTilemap);
+        // CALL(aFunction17f6b7);
+        Function17f6b7(coord(11, 2, wram->wTilemap));
+    }
+
+// asm_17f632:
+    // LD_A_addr(wMobileErrorCodeBuffer);
+    uint8_t error = wram->wMobileErrorCodeBuffer[0];
+    // CP_A(0xd0);
+    // IF_NC goto asm_17f684;
+    if(error < 0xd0) {
+        // CP_A(0x10);
+        // IF_C goto asm_17f679;
+        // SUB_A(0x10);
+        // CP_A(0x24);
+        // IF_NC goto asm_17f679;
+        if(error < 0x10 || error - 0x10 >= 0x24)
+            goto asm_17f679;
+        // LD_E_A;
+        // LD_D(0);
+        // LD_HL(mMobileErrorCodeTable);
+        // ADD_HL_DE;
+        // ADD_HL_DE;
+        const errcodes_s* codes = MobileErrorCodeTable[error - 0x10];
+        // LD_A_addr(wMobileErrorCodeBuffer + 1);
+        // LD_E_A;
+        // LD_A_addr(wMobileErrorCodeBuffer + 2);
+        // LD_D_A;
+        uint16_t target = (wram->wMobileErrorCodeBuffer[2]) | (wram->wMobileErrorCodeBuffer[1] << 8);
+        // LD_A_hli;
+        // LD_C_A;
+        // LD_A_hl;
+        // LD_H_A;
+        // LD_L_C;
+        // LD_A_hli;
+        // AND_A_A;
+        // IF_Z goto asm_17f679;
+        if(codes->count == 0)
+            goto asm_17f679;
+        // LD_C_A;
+        uint8_t c = codes->count;
+        const errcode_s* hl = codes->codes;
+
+        do {
+        // asm_17f65d:
+            // LD_A_hli;
+            // LD_B_A;
+            // LD_A_hli;
+            // CP_A(0xff);
+            // IF_NZ goto asm_17f667;
+            // CP_A_B;
+            // IF_Z goto asm_17f66e;
+
+        // asm_17f667:
+            // XOR_A_D;
+            // IF_NZ goto asm_17f674;
+            // LD_A_B;
+            // XOR_A_E;
+            // IF_NZ goto asm_17f674;
+
+            if(hl->code == (uint16_t)-1 || hl->code == target) {
+            // asm_17f66e:
+                // LD_A_hli;
+                // LD_E_A;
+                // LD_A_hl;
+                // LD_D_A;
+                // goto asm_17f67d;
+            // asm_17f67d:
+                // hlcoord(2, 6, wTilemap);
+                // CALL(aPlaceString);
+                PlaceStringSimple(U82C(hl->text), coord(2, 6, wram->wTilemap));
+                // RET;
+                return;
+            }
 
 
-asm_17f632:
-    LD_A_addr(wMobileErrorCodeBuffer);
-    CP_A(0xd0);
-    IF_NC goto asm_17f684;
-    CP_A(0x10);
-    IF_C goto asm_17f679;
-    SUB_A(0x10);
-    CP_A(0x24);
-    IF_NC goto asm_17f679;
-    LD_E_A;
-    LD_D(0);
-    LD_HL(mMobileErrorCodeTable);
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_A_addr(wMobileErrorCodeBuffer + 1);
-    LD_E_A;
-    LD_A_addr(wMobileErrorCodeBuffer + 2);
-    LD_D_A;
-    LD_A_hli;
-    LD_C_A;
-    LD_A_hl;
-    LD_H_A;
-    LD_L_C;
-    LD_A_hli;
-    AND_A_A;
-    IF_Z goto asm_17f679;
-    LD_C_A;
+        // asm_17f674:
+            // INC_HL;
+            // INC_HL;
+            hl++;
+            // DEC_C;
+            // IF_NZ goto asm_17f65d;
+        } while(--c != 0);
 
-asm_17f65d:
-    LD_A_hli;
-    LD_B_A;
-    LD_A_hli;
-    CP_A(0xff);
-    IF_NZ goto asm_17f667;
-    CP_A_B;
-    IF_Z goto asm_17f66e;
+    asm_17f679:
+        // LD_A(0xd9);
+        error = 0xd9;
+        // goto asm_17f684;
+    }
 
-
-asm_17f667:
-    XOR_A_D;
-    IF_NZ goto asm_17f674;
-    LD_A_B;
-    XOR_A_E;
-    IF_NZ goto asm_17f674;
-
-
-asm_17f66e:
-    LD_A_hli;
-    LD_E_A;
-    LD_A_hl;
-    LD_D_A;
-    goto asm_17f67d;
-
-
-asm_17f674:
-    INC_HL;
-    INC_HL;
-    DEC_C;
-    IF_NZ goto asm_17f65d;
-
-
-asm_17f679:
-    LD_A(0xd9);
-    goto asm_17f684;
-
-
-asm_17f67d:
-    hlcoord(2, 6, wTilemap);
-    CALL(aPlaceString);
-    RET;
-
-
-asm_17f684:
-    SUB_A(0xd0);
-    LD_E_A;
-    LD_D(0);
-    LD_HL(mTable_17f699);
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_E_A;
-    LD_A_hl;
-    LD_D_A;
-    hlcoord(2, 6, wTilemap);
-    CALL(aPlaceString);
-    RET;
-
+// asm_17f684:
+    // SUB_A(0xd0);
+    // LD_E_A;
+    // LD_D(0);
+    // LD_HL(mTable_17f699);
+    // ADD_HL_DE;
+    // ADD_HL_DE;
+    // LD_A_hli;
+    // LD_E_A;
+    // LD_A_hl;
+    // LD_D_A;
+    // hlcoord(2, 6, wTilemap);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(Table_17f699[error - 0xd0]), coord(2, 6, wram->wTilemap));
+    // RET;
 }
 
+// MobileErrorCode_101_Table
 const char* const Table_17f699[] = {
     MobileErrorCode_101_000_Text,
     MobileErrorCode_101_001_Text,
@@ -5417,36 +5469,41 @@ void Palette_17f6af(void){
     //rgb ['8', '19', '28']
     //rgb ['0', '0', '0']
     //rgb ['31', '31', '31']
-
-    return Function17f6b7();
 }
 
-void Function17f6b7(void){
-    LD_A_addr(wMobileErrorCodeBuffer);
-    CALL(aFunction17f6b7_bcd_two_digits);
-    INC_HL;
-    LD_A_addr(wMobileErrorCodeBuffer + 2);
-    AND_A(0xf);
-    CALL(aFunction17f6b7_bcd_digit);
-    LD_A_addr(wMobileErrorCodeBuffer + 1);
-    CALL(aFunction17f6b7_bcd_two_digits);
-    RET;
+static tile_t* Function17f6b7_bcd_digit(tile_t* hl, uint8_t a) {
+    // ADD_A(0xf6);
+    // LD_hli_A;
+    *(hl++) = a + CHAR_0;
+    // RET;
+    return hl;
+}
 
+static tile_t* Function17f6b7_bcd_two_digits(tile_t* hl, uint8_t a) {
+    // LD_C_A;
+    // AND_A(0xf0);
+    // SWAP_A;
+    // CALL(aFunction17f6b7_bcd_digit);
+    hl = Function17f6b7_bcd_digit(hl, (a & 0xf0) >> 4);
+    // LD_A_C;
+    // AND_A(0xf);
+    return Function17f6b7_bcd_digit(hl, a & 0xf);
+}
 
-bcd_two_digits:
-    LD_C_A;
-    AND_A(0xf0);
-    SWAP_A;
-    CALL(aFunction17f6b7_bcd_digit);
-    LD_A_C;
-    AND_A(0xf);
-
-
-bcd_digit:
-    ADD_A(0xf6);
-    LD_hli_A;
-    RET;
-
+void Function17f6b7(tile_t* hl){
+    // LD_A_addr(wMobileErrorCodeBuffer);
+    // CALL(aFunction17f6b7_bcd_two_digits);
+    hl = Function17f6b7_bcd_two_digits(hl, wram->wMobileErrorCodeBuffer[0]);
+    // INC_HL;
+    hl++;
+    // LD_A_addr(wMobileErrorCodeBuffer + 2);
+    // AND_A(0xf);
+    // CALL(aFunction17f6b7_bcd_digit);
+    hl = Function17f6b7_bcd_digit(hl, wram->wMobileErrorCodeBuffer[2] & 0xf);
+    // LD_A_addr(wMobileErrorCodeBuffer + 1);
+    // CALL(aFunction17f6b7_bcd_two_digits);
+    Function17f6b7_bcd_two_digits(hl, wram->wMobileErrorCodeBuffer[1]);
+    // RET;
 }
 
 const char MobileCommunicationErrorText[] = "ERROR:    -@";//db ['"つうしんエラー\u3000\u3000\u3000ー@"'];
@@ -5457,493 +5514,462 @@ void String_17f6e8(void){
     //next ['"プログラム<WO>"']
     //next ['"かくにん\u3000してください"']
     //db ['"@"'];
-
-    return MobileErrorCodeTable();
 }
 
-void MobileErrorCodeTable(void){
-    //dw ['MobileErrorCodes_10'];
-    //dw ['MobileErrorCodes_11'];
-    //dw ['MobileErrorCodes_12'];
-    //dw ['MobileErrorCodes_13'];
-    //dw ['MobileErrorCodes_14'];
-    //dw ['MobileErrorCodes_15'];
-    //dw ['MobileErrorCodes_16'];
-    //dw ['MobileErrorCodes_17'];
-    //dw ['MobileErrorCodes_20'];
-    //dw ['MobileErrorCodes_20'];
-    //dw ['MobileErrorCodes_20'];
-    //dw ['MobileErrorCodes_20'];
-    //dw ['MobileErrorCodes_20'];
-    //dw ['MobileErrorCodes_20'];
-    //dw ['MobileErrorCodes_20'];
-    //dw ['MobileErrorCodes_20'];
-    //dw ['MobileErrorCodes_20'];
-    //dw ['MobileErrorCodes_21'];
-    //dw ['MobileErrorCodes_22'];
-    //dw ['MobileErrorCodes_23'];
-    //dw ['MobileErrorCodes_24'];
-    //dw ['MobileErrorCodes_25'];
-    //dw ['MobileErrorCodes_26'];
-    //dw ['MobileErrorCodes_30'];
-    //dw ['MobileErrorCodes_30'];
-    //dw ['MobileErrorCodes_30'];
-    //dw ['MobileErrorCodes_30'];
-    //dw ['MobileErrorCodes_30'];
-    //dw ['MobileErrorCodes_30'];
-    //dw ['MobileErrorCodes_30'];
-    //dw ['MobileErrorCodes_30'];
-    //dw ['MobileErrorCodes_30'];
-    //dw ['MobileErrorCodes_30'];
-    //dw ['MobileErrorCodes_31'];
-    //dw ['MobileErrorCodes_32'];
-    //dw ['MobileErrorCodes_33'];
+const errcodes_s* MobileErrorCodeTable[] = {
+    &MobileErrorCodes_10,
+    &MobileErrorCodes_11,
+    &MobileErrorCodes_12,
+    &MobileErrorCodes_13,
+    &MobileErrorCodes_14,
+    &MobileErrorCodes_15,
+    &MobileErrorCodes_16,
+    &MobileErrorCodes_17,
+    &MobileErrorCodes_20,
+    &MobileErrorCodes_20,
+    &MobileErrorCodes_20,
+    &MobileErrorCodes_20,
+    &MobileErrorCodes_20,
+    &MobileErrorCodes_20,
+    &MobileErrorCodes_20,
+    &MobileErrorCodes_20,
+    &MobileErrorCodes_20,
+    &MobileErrorCodes_21,
+    &MobileErrorCodes_22,
+    &MobileErrorCodes_23,
+    &MobileErrorCodes_24,
+    &MobileErrorCodes_25,
+    &MobileErrorCodes_26,
+    &MobileErrorCodes_30,
+    &MobileErrorCodes_30,
+    &MobileErrorCodes_30,
+    &MobileErrorCodes_30,
+    &MobileErrorCodes_30,
+    &MobileErrorCodes_30,
+    &MobileErrorCodes_30,
+    &MobileErrorCodes_30,
+    &MobileErrorCodes_30,
+    &MobileErrorCodes_30,
+    &MobileErrorCodes_31,
+    &MobileErrorCodes_32,
+    &MobileErrorCodes_33,
+};
 
-    return MobileErrorCodes_10();
-}
-
-void MobileErrorCodes_10(void){
+const errcodes_s MobileErrorCodes_10 = {
 //db 1
-    //dw ['0x000', 'MobileErrorCode_10_000_Text'];
+    .count = 1,
+    .codes = {
+        {0x000, MobileErrorCode_10_000_Text},
+    },
+};
 
-    return MobileErrorCodes_11();
-}
-
-void MobileErrorCodes_11(void){
+const errcodes_s MobileErrorCodes_11 = {
 //db 1
-    //dw ['0x000', 'MobileErrorCode_11_000_Text'];
+    .count = 1,
+    .codes = {
+        {0x000, MobileErrorCode_11_000_Text},
+    },
+};
 
-    return MobileErrorCodes_12();
-}
-
-void MobileErrorCodes_12(void){
+const errcodes_s MobileErrorCodes_12 = {
 //db 1
-    //dw ['0x000', 'MobileErrorCode_12_000_Text'];
+    .count = 1,
+    .codes = {
+        {0x000, MobileErrorCode_12_000_Text},
+    },
+};
 
-    return MobileErrorCodes_13();
-}
-
-void MobileErrorCodes_13(void){
+const errcodes_s MobileErrorCodes_13 = {
 //db 1
-    //dw ['0x000', 'MobileErrorCode_13_000_Text'];
+    .count = 1,
+    .codes = {
+        {0x000, MobileErrorCode_13_000_Text},
+    },
+};
 
-    return MobileErrorCodes_14();
-}
-
-void MobileErrorCodes_14(void){
+const errcodes_s MobileErrorCodes_14 = {
 //db 1
-    //dw ['0x000', 'MobileErrorCode_14_000_Text'];
+    .count = 1,
+    .codes = {
+        {0x000, MobileErrorCode_14_000_Text},
+    },
+};
 
-    return MobileErrorCodes_15();
-}
-
-void MobileErrorCodes_15(void){
+const errcodes_s MobileErrorCodes_15 = {
 //db 4
-    //dw ['0x000', 'MobileErrorCode_15_000_Text'];
-    //dw ['0x001', 'MobileErrorCode_15_001_Text'];
-    //dw ['0x002', 'MobileErrorCode_15_002_Text'];
-    //dw ['0x003', 'MobileErrorCode_15_003_Text'];
+    .count = 4,
+    .codes = {
+        {0x000, MobileErrorCode_15_000_Text},
+        {0x001, MobileErrorCode_15_001_Text},
+        {0x002, MobileErrorCode_15_002_Text},
+        {0x003, MobileErrorCode_15_003_Text},
+    },
+};
 
-    return MobileErrorCodes_16();
-}
-
-void MobileErrorCodes_16(void){
+const errcodes_s MobileErrorCodes_16 = {
 //db 1
-    //dw ['0x000', 'MobileErrorCode_CommuncationErrorText'];
+    .count = 1,
+    .codes = {
+        {0x000, MobileErrorCode_CommuncationErrorText},
+    },
+};
 
-    return MobileErrorCodes_17();
-}
-
-void MobileErrorCodes_17(void){
+const errcodes_s MobileErrorCodes_17 = {
 //db 1
-    //dw ['0x000', 'MobileErrorCode_CommuncationErrorText'];
+    .count = 1,
+    .codes = {
+        {0x000, MobileErrorCode_CommuncationErrorText},
+    },
+};
 
-    return MobileErrorCodes_20();
-}
-
-void MobileErrorCodes_20(void){
+const errcodes_s MobileErrorCodes_20 = {
 //db 1
-    //dw ['0x000', 'MobileErrorCode_CommuncationErrorText'];
+    .count = 1,
+    .codes = {
+        {0x000, MobileErrorCode_CommuncationErrorText},
+    },
+};
 
-    return MobileErrorCodes_21();
-}
-
-void MobileErrorCodes_21(void){
+const errcodes_s MobileErrorCodes_21 = {
 //db 1
-    //dw ['0x000', 'MobileErrorCode_CommuncationErrorText'];
+    .count = 1,
+    .codes = {
+        {0x000, MobileErrorCode_CommuncationErrorText},
+    },
+};
 
-    return MobileErrorCodes_22();
-}
-
-void MobileErrorCodes_22(void){
+const errcodes_s MobileErrorCodes_22 = {
 //db 1
-    //dw ['0x000', 'MobileErrorCode_22_000_Text'];
+    .count = 1,
+    .codes = {
+        {0x000, MobileErrorCode_22_000_Text},
+    },
+};
 
-    return MobileErrorCodes_23();
-}
-
-void MobileErrorCodes_23(void){
+const errcodes_s MobileErrorCodes_23 = {
 //db 1
-    //dw ['0x000', 'MobileErrorCode_23_000_Text'];
+    .count = 1,
+    .codes = {
+        {0x000, MobileErrorCode_23_000_Text},
+    },
+};
 
-    return MobileErrorCodes_24();
-}
-
-void MobileErrorCodes_24(void){
+const errcodes_s MobileErrorCodes_24 = {
 //db 1
-    //dw ['0x000', 'MobileErrorCode_ServerConnectionFailedText'];
+    .count = 1,
+    .codes = {
+        {0x000, MobileErrorCode_ServerConnectionFailedText},
+    },
+};
 
-    return MobileErrorCodes_25();
-}
-
-void MobileErrorCodes_25(void){
+const errcodes_s MobileErrorCodes_25 = {
 //db 1
-    //dw ['0x000', 'MobileErrorCode_25_000_Text'];
+    .count = 1,
+    .codes = {
+        {0x000, MobileErrorCode_25_000_Text},
+    },
+};
 
-    return MobileErrorCodes_26();
-}
-
-void MobileErrorCodes_26(void){
+const errcodes_s MobileErrorCodes_26 = {
 //db 1
-    //dw ['0x000', 'MobileErrorCode_26_000_Text'];
+    .count = 1,
+    .codes = {
+        {0x000, MobileErrorCode_26_000_Text},
+    },
+};
 
-    return MobileErrorCodes_30();
-}
-
-void MobileErrorCodes_30(void){
+const errcodes_s MobileErrorCodes_30 = {
 //db 17
-    //dw ['0x000', 'MobileErrorCode_CommuncationErrorText'];
-    //dw ['0x221', 'MobileErrorCode_ServerConnectionFailedText'];
-    //dw ['0x421', 'MobileErrorCode_ServerConnectionFailedText'];
-    //dw ['0x450', 'MobileErrorCode_30_450_Text'];
-    //dw ['0x451', 'MobileErrorCode_ServerConnectionFailedText'];
-    //dw ['0x452', 'MobileErrorCode_ServerConnectionFailedText'];
-    //dw ['0x500', 'MobileErrorCode_CommuncationErrorText'];
-    //dw ['0x501', 'MobileErrorCode_CommuncationErrorText'];
-    //dw ['0x502', 'MobileErrorCode_CommuncationErrorText'];
-    //dw ['0x503', 'MobileErrorCode_CommuncationErrorText'];
-    //dw ['0x504', 'MobileErrorCode_CommuncationErrorText'];
-    //dw ['0x550', 'MobileErrorCode_30_550_Text'];
-    //dw ['0x551', 'MobileErrorCode_30_551_Text'];
-    //dw ['0x552', 'MobileErrorCode_ServerConnectionFailedText'];
-    //dw ['0x553', 'MobileErrorCode_30_553_Text'];
-    //dw ['0x554', 'MobileErrorCode_ServerConnectionFailedText'];
-    //dw ['-1', 'MobileErrorCode_ServerConnectionFailedText'];
+    .count = 17,
+    .codes = {
+        {0x000,         MobileErrorCode_CommuncationErrorText},
+        {0x221,         MobileErrorCode_ServerConnectionFailedText},
+        {0x421,         MobileErrorCode_ServerConnectionFailedText},
+        {0x450,         MobileErrorCode_30_450_Text},
+        {0x451,         MobileErrorCode_ServerConnectionFailedText},
+        {0x452,         MobileErrorCode_ServerConnectionFailedText},
+        {0x500,         MobileErrorCode_CommuncationErrorText},
+        {0x501,         MobileErrorCode_CommuncationErrorText},
+        {0x502,         MobileErrorCode_CommuncationErrorText},
+        {0x503,         MobileErrorCode_CommuncationErrorText},
+        {0x504,         MobileErrorCode_CommuncationErrorText},
+        {0x550,         MobileErrorCode_30_550_Text},
+        {0x551,         MobileErrorCode_30_551_Text},
+        {0x552,         MobileErrorCode_ServerConnectionFailedText},
+        {0x553,         MobileErrorCode_30_553_Text},
+        {0x554,         MobileErrorCode_ServerConnectionFailedText},
+        {(uint16_t)-1,  MobileErrorCode_ServerConnectionFailedText},
+    },
+};
 
-    return MobileErrorCodes_31();
-}
-
-void MobileErrorCodes_31(void){
+const errcodes_s MobileErrorCodes_31 = {
 //db 5
-    //dw ['0x000', 'MobileErrorCode_CommuncationErrorText'];
-    //dw ['0x002', 'MobileErrorCode_31_002_Text'];
-    //dw ['0x003', 'MobileErrorCode_31_003_Text'];
-    //dw ['0x004', 'MobileErrorCode_CommuncationErrorText'];
-    //dw ['-1', 'MobileErrorCode_ServerConnectionFailedText'];
+    .count = 5,
+    .codes = {
+        {0x000,         MobileErrorCode_CommuncationErrorText},
+        {0x002,         MobileErrorCode_31_002_Text},
+        {0x003,         MobileErrorCode_31_003_Text},
+        {0x004,         MobileErrorCode_CommuncationErrorText},
+        {(uint16_t)-1,  MobileErrorCode_ServerConnectionFailedText},
+    },
+};
 
-    return MobileErrorCodes_32();
-}
-
-void MobileErrorCodes_32(void){
+const errcodes_s MobileErrorCodes_32 = {
 //db 17
-    //dw ['0x000', 'MobileErrorCode_CommuncationErrorText'];
-    //dw ['0x301', 'MobileErrorCode_CommuncationErrorText'];
-    //dw ['0x302', 'MobileErrorCode_CommuncationErrorText'];
-    //dw ['0x400', 'MobileErrorCode_CommuncationErrorText'];
-    //dw ['0x401', 'MobileErrorCode_CommuncationErrorText'];
-    //dw ['0x403', 'MobileErrorCode_32_403_Text'];
-    //dw ['0x404', 'MobileErrorCode_32_404_Text'];
-    //dw ['0x405', 'MobileErrorCode_CommuncationErrorText'];
-    //dw ['0x406', 'MobileErrorCode_CommuncationErrorText'];
-    //dw ['0x407', 'MobileErrorCode_CommuncationErrorText'];
-    //dw ['0x408', 'MobileErrorCode_32_408_Text'];
-    //dw ['0x500', 'MobileErrorCode_ServerErrorText'];
-    //dw ['0x501', 'MobileErrorCode_CommuncationErrorText'];
-    //dw ['0x502', 'MobileErrorCode_ServerErrorText'];
-    //dw ['0x503', 'MobileErrorCode_32_503_Text'];
-    //dw ['0x504', 'MobileErrorCode_ServerErrorText'];
-    //dw ['-1', 'MobileErrorCode_ServerErrorText'];
+    .count = 17,
+    .codes = {
+        {0x000,         MobileErrorCode_CommuncationErrorText},
+        {0x301,         MobileErrorCode_CommuncationErrorText},
+        {0x302,         MobileErrorCode_CommuncationErrorText},
+        {0x400,         MobileErrorCode_CommuncationErrorText},
+        {0x401,         MobileErrorCode_CommuncationErrorText},
+        {0x403,         MobileErrorCode_ReadDataErrorText},
+        {0x404,         MobileErrorCode_ReadDataErrorText},
+        {0x405,         MobileErrorCode_CommuncationErrorText},
+        {0x406,         MobileErrorCode_CommuncationErrorText},
+        {0x407,         MobileErrorCode_CommuncationErrorText},
+        {0x408,         MobileErrorCode_32_408_Text},
+        {0x500,         MobileErrorCode_ServerErrorText},
+        {0x501,         MobileErrorCode_CommuncationErrorText},
+        {0x502,         MobileErrorCode_ServerErrorText},
+        {0x503,         MobileErrorCode_32_503_Text},
+        {0x504,         MobileErrorCode_ServerErrorText},
+        {(uint8_t)-1,   MobileErrorCode_ServerErrorText},
+    },
+};
 
-    return MobileErrorCodes_33();
-}
-
-void MobileErrorCodes_33(void){
+const errcodes_s MobileErrorCodes_33 = {
 //db 19
-    //dw ['0x101', 'MobileErrorCode_33_101_Text'];
-    //dw ['0x102', 'MobileErrorCode_33_102_Text'];
-    //dw ['0x103', 'MobileErrorCode_33_103_Text'];
-    //dw ['0x104', 'MobileErrorCode_33_104_Text'];
-    //dw ['0x105', 'MobileErrorCode_33_105_Text'];
-    //dw ['0x106', 'MobileErrorCode_33_106_Text'];
-    //dw ['0x201', 'MobileErrorCode_33_201_Text'];
-    //dw ['0x202', 'MobileErrorCode_CommuncationErrorText'];
-    //dw ['0x203', 'MobileErrorCode_33_203_Text'];
-    //dw ['0x204', 'MobileErrorCode_CommuncationErrorText'];
-    //dw ['0x205', 'MobileErrorCode_ServerErrorText'];
-    //dw ['0x206', 'MobileErrorCode_33_206_Text'];
-    //dw ['0x299', 'MobileErrorCode_33_299_Text'];
-    //dw ['0x301', 'MobileErrorCode_ServerErrorText'];
-    //dw ['0x401', 'MobileErrorCode_ServerErrorText'];
-    //dw ['0x402', 'MobileErrorCode_ServerErrorText'];
-    //dw ['0x403', 'MobileErrorCode_ServerErrorText'];
-    //dw ['0x404', 'MobileErrorCode_ServerErrorText'];
-    //dw ['-1', 'MobileErrorCode_ServerErrorText'];
+    .count = 19,
+    .codes = {
+        {0x101,         MobileErrorCode_33_101_Text},
+        {0x102,         MobileErrorCode_33_102_Text},
+        {0x103,         MobileErrorCode_33_103_Text},
+        {0x104,         MobileErrorCode_33_104_Text},
+        {0x105,         MobileErrorCode_33_105_Text},
+        {0x106,         MobileErrorCode_33_106_Text},
+        {0x201,         MobileErrorCode_33_201_Text},
+        {0x202,         MobileErrorCode_CommuncationErrorText},
+        {0x203,         MobileErrorCode_33_203_Text},
+        {0x204,         MobileErrorCode_CommuncationErrorText},
+        {0x205,         MobileErrorCode_ServerErrorText},
+        {0x206,         MobileErrorCode_33_206_Text},
+        {0x299,         MobileErrorCode_33_299_Text},
+        {0x301,         MobileErrorCode_ServerErrorText},
+        {0x401,         MobileErrorCode_ServerErrorText},
+        {0x402,         MobileErrorCode_ServerErrorText},
+        {0x403,         MobileErrorCode_ServerErrorText},
+        {0x404,         MobileErrorCode_ServerErrorText},
+        {(uint8_t)-1,   MobileErrorCode_ServerErrorText},
+    },
+};
 
-    return MobileErrorCode_10_000_Text();
-}
-
-void MobileErrorCode_10_000_Text(void){
 //  The Mobile Adapter is not properly plugged in.
 //  Ensure you have taken a good look at and properly followed the instructions.
-    //db ['"モバイルアダプタが\u3000ただしく"'];
-    //next ['"さしこまれていません"']
-    //next ['"とりあつかいせつめいしょを"']
-    //next ['"ごらんのうえ\u3000しっかりと"']
-    //next ['"さしこんで\u3000ください"']
+const char MobileErrorCode_10_000_Text[] = 
+            "The Mobile Adapter"    //db ['"モバイルアダプタが\u3000ただしく"'];
+    t_next  "is not connected"      //next ['"さしこまれていません"']
+    t_next  "properly."             //next ['"とりあつかいせつめいしょを"']
+    t_next  "Please check the"      //next ['"ごらんのうえ\u3000しっかりと"']
+    t_next  "manual.@";             //next ['"さしこんで\u3000ください"']
     //db ['"@"'];
 
-    return MobileErrorCode_11_000_Text();
-}
+// void MobileErrorCode_11_000_Text(void){
+//     return MobileErrorCode_13_000_Text();
+// }
 
-void MobileErrorCode_11_000_Text(void){
-    return MobileErrorCode_13_000_Text();
-}
-
-void MobileErrorCode_13_000_Text(void){
 //  Could not connect because either the phone cannot make the call, or the telephone line is busy.
 //  Please wait for a while and call again.
-    //db ['"でんわが\u3000うまく\u3000かけられないか"'];
-    //next ['"でんわかいせんが\u3000こんでいるので"']
-    //next ['"つうしん\u3000できません"']
-    //next ['"しばらく\u3000まって"']
-    //next ['"かけなおして\u3000ください"']
+const char MobileErrorCode_13_000_Text[] = 
+            "Could not connect"     //db ['"でんわが\u3000うまく\u3000かけられないか"'];
+    t_next  "because the line"      //next ['"でんわかいせんが\u3000こんでいるので"']
+    t_next  "is busy."              //next ['"つうしん\u3000できません"']
+    t_next  "Please try again"      //next ['"しばらく\u3000まって"']
+    t_next  "later.@";              //next ['"かけなおして\u3000ください"']
     //db ['"@"'];
 
-    return MobileErrorCode_12_000_Text();
-}
-
-void MobileErrorCode_12_000_Text(void){
 //  As the telephone line is busy, the phone was not able to gather enough information (?)
 //  Please wait for a while and call again.
-    //db ['"でんわかいせんが\u3000こんでいるため"'];
-    //next ['"でんわが\u3000かけられません"']
-    //next ['"しばらく\u3000まって"']
-    //next ['"かけなおして\u3000ください"']
-    //db ['"@"'];
+const char MobileErrorCode_12_000_Text[] =
+            "Could not connect"     //db ['"でんわかいせんが\u3000こんでいるため"'];
+    t_next  "due to a high"         //next ['"でんわが\u3000かけられません"']
+    t_next  "volume of calls."      //next ['"しばらく\u3000まって"']
+    t_next  "Please try again"      //next ['"かけなおして\u3000ください"']
+    t_next  "later.";               //db ['"@"'];
 
-    return MobileErrorCode_15_000_Text();
-}
+// void MobileErrorCode_15_000_Text(void){
+//     return MobileErrorCode_15_001_Text();
+// }
 
-void MobileErrorCode_15_000_Text(void){
-    return MobileErrorCode_15_001_Text();
-}
+// void MobileErrorCode_15_001_Text(void){
+//     return MobileErrorCode_15_002_Text();
+// }
 
-void MobileErrorCode_15_001_Text(void){
-    return MobileErrorCode_15_002_Text();
-}
+// void MobileErrorCode_15_002_Text(void){
+//     return MobileErrorCode_15_003_Text();
+// }
 
-void MobileErrorCode_15_002_Text(void){
-    return MobileErrorCode_15_003_Text();
-}
-
-void MobileErrorCode_15_003_Text(void){
 //  There is an error with the Mobile Adapter.
 //  Please wait for a little while before calling again.
 //  If the problem persists, please contact the Mobile Support Center.
-    //db ['"モバイルアダプタの\u3000エラーです"'];
-    //next ['"しばらく\u3000まって"']
-    //next ['"かけなおして\u3000ください"']
-    //next ['"なおらない\u3000ときは"']
-    //next ['"モバイルサポートセンターへ"']
-    //next ['"おといあわせください"']
-    //db ['"@"'];
+const char MobileErrorCode_15_003_Text[] = 
+            "Mobile Adapter"        // "モバイルアダプタの　エラーです"
+    t_next  "error."                // "しばらく　まって"
+    t_next  "Please try again."     // "かけなおして　ください"
+    t_next  "If the problem"        // "なおらない　ときは"
+    t_next  "persists, please"      // "モバイルサポートセンターへ"
+    t_next  "contact support.@";    // "おといあわせください"
 
-    return MobileErrorCode_CommuncationErrorText();
-}
-
-void MobileErrorCode_CommuncationErrorText(void){
 //  Communication error.
 //  Please wait a moment, and then try again.
 //  If the issue persists, please contact the Mobile Support Center.
-    //db ['"つうしんエラーです"'];
-    //next ['"しばらく\u3000まって"']
-    //next ['"かけなおして\u3000ください"']
-    //next ['"なおらない\u3000ときは"']
-    //next ['"モバイルサポートセンターへ"']
-    //next ['"おといあわせください"']
-    //db ['"@"'];
+const char MobileErrorCode_CommuncationErrorText[] = 
+            "Communication"         // "つうしんエラーです"
+    t_next  "error."                // "しばらく　まって"
+    t_next  "Please try again."     // "かけなおして　ください"
+    t_next  "If the problem"        // "なおらない　ときは"
+    t_next  "persists, please"      // "モバイルサポートセンターへ"
+    t_next  "contact support.@";    // "おといあわせください"
 
-    return MobileErrorCode_22_000_Text();
-}
-
-void MobileErrorCode_22_000_Text(void){
 //  There is a mistake either with the login password, or the login ID.
 //  Please confirm the password, wait for a while, and try again.
-    //db ['"ログインパスワードか"'];
-    //next ['"ログイン\u3000アイディーに"']
-    //next ['"まちがいがあります"']
-    //next ['"パスワードを\u3000かくにんして"']
-    //next ['"しばらく\u3000まって"']
-    //next ['"かけなおして\u3000ください"']
-    //db ['"@"'];
+const char MobileErrorCode_22_000_Text[] =
+            "Invalid Log-in"    // "ログインパスワードか"
+    t_next  "ID or Password."   // "ログイン　アイディーに"
+    t_next  "Please confirm"    // "まちがいがあります"
+    t_next  "your Log-in"       // "パスワードを　かくにんして"
+    t_next  "information"       // "しばらく　まって"
+    t_next  "and try again.@";  // "かけなおして　ください"
 
-    return MobileErrorCode_23_000_Text();
-}
-
-void MobileErrorCode_23_000_Text(void){
 //  The call was ended.
 //  Please see the instruction manual, wait a moment, and try again.
-    //db ['"でんわが\u3000きれました"'];
-    //next ['"とりあつかいせつめいしょを"']
-    //next ['"ごらんのうえ"']
-    //next ['"しばらく\u3000まって"']
-    //next ['"かけなおして\u3000ください"']
-    //db ['"@"'];
+const char MobileErrorCode_23_000_Text[] =
+            "The phone was"     // "でんわが　きれました"
+    t_next  "disconnected."     // "とりあつかいせつめいしょを"
+    t_next  "Please check the"  // "ごらんのうえ"
+    t_next  "manual and try"    // "しばらく　まって"
+    t_next  "again later.@";    // "かけなおして　ください"
 
-    return MobileErrorCode_ServerErrorText();
-}
-
-void MobileErrorCode_ServerErrorText(void){
 //  There was a communication error with the mobile center.
 //  Please wait a moment and then try again.
-    //db ['"モバイルセンターの"'];
-    //next ['"つうしんエラーです"']
-    //next ['"しばらくまって"']
-    //next ['"かけなおして\u3000ください"']
-    //db ['"@"'];
+const char MobileErrorCode_ServerErrorText[] =
+            "Error connecting"  // "モバイルセンターの"
+    t_next  "to the"            // "つうしんエラーです"
+    t_next  "Mobile Center."    // "しばらくまって"
+    t_next  "Please try again"  // "かけなおして　ください"
+    t_next  "later.@";
 
-    return MobileErrorCode_14_000_Text();
-}
+// void MobileErrorCode_14_000_Text(void){
+//     return MobileErrorCode_25_000_Text();
+// }
 
-void MobileErrorCode_14_000_Text(void){
-    return MobileErrorCode_25_000_Text();
-}
-
-void MobileErrorCode_25_000_Text(void){
 //  The Mobile Adapter's details have expired and the information is not correct.
 //  Please use the Mobile Trainer to repeat the initial registration (process).
-    //db ['"モバイルアダプタに"'];
-    //next ['"とうろくされた\u3000じょうほうが"']
-    //next ['"ただしく\u3000ありません"']
-    //next ['"モバイルトレーナーで"']
-    //next ['"しょきとうろくを\u3000してください"']
-    //db ['"@"'];
+const char MobileErrorCode_25_000_Text[] =
+            "The Mobile Adapter"    // "モバイルアダプタに"
+    t_next  "is not configured"     // "とうろくされた　じょうほうが"
+    t_next  "properly."             // "ただしく　ありません"
+    t_next  "Please register"       // "モバイルトレーナーで"
+    t_next  "your information"      // "しょきとうろくを　してください"
+    t_next  "in Mobile Trainer.@";
 
-    return MobileErrorCode_32_503_Text();
-}
 
-void MobileErrorCode_32_503_Text(void){
 //  Could not connect because the Mobile Center is busy.
 //  Please wait a moment and try again.
 //  For details, please see the instruction manual.
-    //db ['"モバイルセンターが"'];
-    //next ['"こんでいて\u3000つながりません"']
-    //next ['"しばらくまって"']
-    //next ['"かけなおして\u3000ください"']
-    //next ['"くわしくは\u3000とりあつかい"']
-    //next ['"せつめいしょを\u3000ごらんください"']
-    //db ['"@"'];
+const char MobileErrorCode_32_503_Text[] =
+            "The Mobile Center" // "モバイルセンターが"
+    t_next  "is busy."          // "こんでいて　つながりません"
+    t_next  "Please check the"  // "しばらくまって"
+    t_next  "manual and try"    // "かけなおして　ください"
+    t_next  "calling again"     // "くわしくは　とりあつかい"
+    t_next  "later.@";          // "せつめいしょを　ごらんください"
 
-    return MobileErrorCode_30_450_Text();
-}
+// void MobileErrorCode_30_450_Text(void){
+//     return MobileErrorCode_30_550_Text();
+// }
 
-void MobileErrorCode_30_450_Text(void){
-    return MobileErrorCode_30_550_Text();
-}
+// void MobileErrorCode_30_550_Text(void){
+//     return MobileErrorCode_30_551_Text();
+// }
 
-void MobileErrorCode_30_550_Text(void){
-    return MobileErrorCode_30_551_Text();
-}
+// void MobileErrorCode_30_551_Text(void){
+//     return MobileErrorCode_30_553_Text();
+// }
 
-void MobileErrorCode_30_551_Text(void){
-    return MobileErrorCode_30_553_Text();
-}
-
-void MobileErrorCode_30_553_Text(void){
 //  There is a mistake with the email address of the addressee.
 //  Please replace with a / the correct email address.
-    //db ['"あてさき\u3000メールアドレスに"'];
-    //next ['"まちがいがあります"']
-    //next ['"ただしい\u3000メールアドレスを"']
-    //next ['"いれなおしてください"']
-    //db ['"@"'];
+const char MobileErrorCode_30_553_Text[] =
+            "The email address" // "あてさき　メールアドレスに"
+    t_next  "is incorrect."     // "まちがいがあります"
+    t_next  "Please re-enter"   // "ただしい　メールアドレスを"
+    t_next  "the email"         // "いれなおしてください"
+    t_next  "address.@";
 
-    return MobileErrorCode_31_002_Text();
-}
-
-void MobileErrorCode_31_002_Text(void){
 //  There is a mistake with the email address.
 //  Please see the instruction manual, and use the Mobile Trainer to repeat the initial registration (process).
-    //db ['"メールアドレスに"'];
-    //next ['"まちがいが\u3000あります"']
-    //next ['"とりあつかいせつめいしょを"']
-    //next ['"ごらんのうえ"']
-    //next ['"モバイルトレーナーで"']
-    //next ['"しょきとうろくを\u3000してください"']
-    //db ['"@"'];
+const char MobileErrorCode_31_002_Text[] =
+	        "Your email address"    // "メールアドレスに"
+	t_next  "is incorrect."         // "まちがいが　あります"
+	t_next  "Please check the"      // "とりあつかいせつめいしょを"
+	t_next  "manual and"            // "ごらんのうえ"
+	t_next  "register using"        // "モバイルトレーナーで"
+	t_next  "Mobile Trainer.@";     // "しょきとうろくを　してください"
 
-    return MobileErrorCode_31_003_Text();
-}
+// void MobileErrorCode_31_003_Text(void){
+//     return MobileErrorCode_33_201_Text();
+// }
 
-void MobileErrorCode_31_003_Text(void){
-    return MobileErrorCode_33_201_Text();
-}
-
-void MobileErrorCode_33_201_Text(void){
 //  There is either an error with the login password, or an error with the Mobile Center.
 //  Please confirm the password, wait a moment, and then try again.
-    //db ['"ログインパスワードに"'];
-    //next ['"まちがいが\u3000あるか"']
-    //next ['"モバイルセンターの\u3000エラーです"']
-    //next ['"パスワードを\u3000かくにんして"']
-    //next ['"しばらく\u3000まって"']
-    //next ['"かけなおして\u3000ください"']
-    //db ['"@"'];
+const char MobileErrorCode_33_201_Text[] =
+            "Incorrect Log-in"  // "ログインパスワードに"
+    t_next  "Password or"       // "まちがいが　あるか"
+    t_next  "Mobile Center"     // "モバイルセンターの　エラーです"
+    t_next  "error."            // "パスワードを　かくにんして"
+    t_next  "Please try again"  // "しばらく　まって"
+    t_next  "later.@";          // "かけなおして　ください"
 
-    return MobileErrorCode_32_403_Text();
-}
+// void MobileErrorCode_32_403_Text(void){
+//     return MobileErrorCode_32_404_Text();
+// }
 
-void MobileErrorCode_32_403_Text(void){
-    return MobileErrorCode_32_404_Text();
-}
-
-void MobileErrorCode_32_404_Text(void){
 //  Cannot read data.
 //  Please wait a moment, and then try again.
 //  If the issue persists, please contact the Mobile Support Center.
-    //db ['"データの\u3000よみこみが\u3000できません"'];
-    //next ['"しばらくまって"']
-    //next ['"かけなおして\u3000ください"']
-    //next ['"なおらない\u3000ときは"']
-    //next ['"モバイルサポートセンターへ"']
-    //next ['"おといあわせください"']
-    //db ['"@"'];
+//  MobileErrorCode_32_404_Text
+const char MobileErrorCode_ReadDataErrorText[] = 
+            "Unable to read"        // "データの　よみこみが　できません"
+    t_next  "the data."             // "しばらくまって"
+    t_next  "Please try again."     // "かけなおして　ください"
+    t_next  "If the problem"        // "なおらない　ときは"
+    t_next  "persists, please"      // "モバイルサポートセンターへ"
+    t_next  "contact support.@";    // "おといあわせください"
 
-    return MobileErrorCode_26_000_Text();
-}
+// void MobileErrorCode_26_000_Text(void){
+//     return MobileErrorCode_32_408_Text();
+// }
 
-void MobileErrorCode_26_000_Text(void){
-    return MobileErrorCode_32_408_Text();
-}
-
-void MobileErrorCode_32_408_Text(void){
 //  Out of time.
 //  The call was ended.
 //  Please try again.
 //  For details, please see the instruction manual.
-    //db ['"じかんぎれです"'];
-    //next ['"でんわが\u3000きれました"']
-    //next ['"でんわを\u3000かけなおしてください"']
-    //next ['"くわしくは\u3000とりあつかい"']
-    //next ['"せつめいしょを\u3000ごらんください"']
-    //db ['"@"'];
+const char MobileErrorCode_32_408_Text[] = 
+            "Time's up!"        // "じかんぎれです"
+    t_next  "The call has"      // "でんわが　きれました"
+    t_next  "ended."            // "でんわを　かけなおしてください"
+    t_next  "Please check the"  // "くわしくは　とりあつかい"
+    t_next  "manual and try"    // "せつめいしょを　ごらんください"
+    t_next  "again later.";
 
-    return MobileErrorCode_33_101_Text();
-}
-
-void MobileErrorCode_33_101_Text(void){
 //  The service cannot be used if payments for usage fees are late.
 //  For details, please see the instruction manual.
+const char MobileErrorCode_33_101_Text[] =
+            "The service is"        // "おきゃくさまの　ごつごうにより"
+    t_next  "unavailable due to"    // "ごりようできません"
+    t_next  "a missed payment."     // "ごりようが　できなくなります"
+    t_next  "Please check the"      // "くわしくは　とりあつかい"
+    t_next  "manual.@";             // "せつめいしょを　ごらんください"
     //db ['"ごりよう\u3000りょうきんの\u3000"'];
     //next ['"おしはらいが\u3000おくれたばあいには"']
     //next ['"ごりようが\u3000できなくなります"']
@@ -5951,78 +5977,61 @@ void MobileErrorCode_33_101_Text(void){
     //next ['"せつめいしょを\u3000ごらんください"']
     //db ['"@"'];
 
-    return MobileErrorCode_33_102_Text();
-}
+// void MobileErrorCode_33_102_Text(void){
+//     return MobileErrorCode_33_299_Text();
+// }
 
-void MobileErrorCode_33_102_Text(void){
-    return MobileErrorCode_33_299_Text();
-}
-
-void MobileErrorCode_33_299_Text(void){
 //  Your access to this service has been restricted. Service cannot be used.
 //  For details, please see the instruction manual.
-    //db ['"おきゃくさまの\u3000ごつごうにより"'];
-    //next ['"ごりようできません"']
-    //next ['"くわしくは\u3000とりあつかい"']
-    //next ['"せつめいしょを\u3000ごらんください"']
-    //db ['"@"'];
+const char MobileErrorCode_33_299_Text[] =
+            "The service is"        // "おきゃくさまの　ごつごうにより"
+    t_next  "unavailable at"        // "ごりようできません"
+    t_next  "this time."            // "くわしくは　とりあつかい"
+    t_next  "Please check the"      // "せつめいしょを　ごらんください"
+    t_next  "manual.@";
 
-    return MobileErrorCode_ServerConnectionFailedText();
-}
-
-void MobileErrorCode_ServerConnectionFailedText(void){
 //  The telephone line is busy. Due to this error, the Mobile Center cannot communicate.
 //  Please wait for a little while and call again.
-    //db ['"でんわかいせんが\u3000こんでいるか"'];
-    //next ['"モバイルセンターの\u3000エラーで"']
-    //next ['"つうしんが\u3000できません"']
-    //next ['"しばらく\u3000まって"']
-    //next ['"かけなおして\u3000ください"']
-    //db ['"@"'];
+const char MobileErrorCode_ServerConnectionFailedText[] =
+            "There was an error"    // "でんわかいせんが　こんでいるか"
+    t_next  "with the phone or"     // "モバイルセンターの　エラーで"
+    t_next  "the Mobile Center."    // "つうしんが　できません"
+    t_next  "Please try again"      // "しばらく　まって"
+    t_next  "later.@";              // "かけなおして　ください"
 
-    return MobileErrorCode_33_103_Text();
-}
-
-void MobileErrorCode_33_103_Text(void){
 //  Service cannot be used this month because usage fees have exceeded conditions.
 //  For details, please see the instruction manual.
-    //db ['"ごりよう\u3000りょうきんが"'];
-    //next ['"じょうげんを\u3000こえているため"']
-    //next ['"こんげつは\u3000ごりようできません"']
-    //next ['"くわしくは\u3000とりあつかい"']
-    //next ['"せつめいしょを\u3000ごらんください"']
-    //db ['"@"'];
+const char MobileErrorCode_33_103_Text[] =
+            "You have reached"  // "ごりよう　りょうきんが"
+    t_next  "the monthly"       // "じょうげんを　こえているため"
+    t_next  "spending limit."   // "こんげつは　ごりようできません"
+    t_next  "Please check the"  // "くわしくは　とりあつかい"
+    t_next  "manual for"        // "せつめいしょを　ごらんください"
+    t_next  "details.@";
 
-    return MobileErrorCode_33_106_Text();
-}
-
-void MobileErrorCode_33_106_Text(void){
 //  Cannot communicate because the Mobile Center is currently undergoing maintenance.
 //  Please wait a moment, then try again.
-    //db ['"げんざい\u3000モバイルセンターの"'];
-    //next ['"てんけんを\u3000しているので"']
-    //next ['"つうしんが\u3000できません"']
-    //next ['"しばらく\u3000まって"']
-    //next ['"かけなおして\u3000ください"']
-    //db ['"@"'];
+const char MobileErrorCode_33_106_Text[] =
+            "The Mobile Center" // "げんざい　モバイルセンターの"
+    t_next  "is undergoing"     // "てんけんを　しているので"
+    t_next  "maintenance."      // "つうしんが　できません"
+    t_next  "Please try again"  // "しばらく　まって"
+    t_next  "later.@";          // "かけなおして　ください"
 
-    return MobileErrorCode_33_104_Text();
-}
+// void MobileErrorCode_33_104_Text(void){
+//     return MobileErrorCode_33_105_Text();
+// }
 
-void MobileErrorCode_33_104_Text(void){
-    return MobileErrorCode_33_105_Text();
-}
+// void MobileErrorCode_33_105_Text(void){
+//     return MobileErrorCode_33_203_Text();
+// }
 
-void MobileErrorCode_33_105_Text(void){
-    return MobileErrorCode_33_203_Text();
-}
+// void MobileErrorCode_33_203_Text(void){
+//     return MobileErrorCode_33_206_Text();
+// }
 
-void MobileErrorCode_33_203_Text(void){
-    return MobileErrorCode_33_206_Text();
-}
-
-void MobileErrorCode_33_206_Text(void){
-}
+// void MobileErrorCode_33_206_Text(void){
+// }
 
 //  Cannot read data.
 //  For details, please see the instruction manual.
@@ -6031,7 +6040,7 @@ const char MobileErrorCode_101_004_Text[] =
     t_next "the data."          //next ['"くわしくは\u3000とりあつかい"']
     t_next "Please check the"   //next ['"せつめいしょを\u3000ごらんください"']
     t_next "manual for"         //db ['"@"'];
-    t_next "details.";
+    t_next "details.@";
 
 //  Call ended because more than 3 minutes elapsed with no input.
 const char MobileErrorCode_101_006_Text[] =
@@ -6039,7 +6048,7 @@ const char MobileErrorCode_101_006_Text[] =
     t_next "ended due to"   // "にゅうりょく\u3000しなかったので"
     t_next "no input being" // "でんわが\u3000きれました"
     t_next "received for "  // "@"
-    t_next "three minutes.";
+    t_next "three minutes.@";
 
 //  Could not connect properly.
 //  Please try again from the beginning (of the process).
@@ -6109,46 +6118,54 @@ const char MobileErrorCode_101_000_Text[] =
     //db ['"@"'];
 
 void Function17ff23(void){
-    LDH_A_addr(hJoyPressed);
-    AND_A_A;
-    RET_Z ;
-    LD_A(0x8);
-    LD_addr_A(wMusicFade);
-    LD_A_addr(wMapMusic);
-    LD_addr_A(wMusicFadeID);
-    XOR_A_A;
-    LD_addr_A(wMusicFadeID + 1);
-    LD_HL(wc303);
-    SET_hl(7);
-    RET;
-
+    // LDH_A_addr(hJoyPressed);
+    // AND_A_A;
+    // RET_Z ;
+    if(hram->hJoyPressed == 0)
+        return;
+    // LD_A(0x8);
+    // LD_addr_A(wMusicFade);
+    wram->wMusicFade = 0x8;
+    // LD_A_addr(wMapMusic);
+    // LD_addr_A(wMusicFadeID);
+    wram->wMusicFadeID = wram->wMapMusic;
+    // XOR_A_A;
+    // LD_addr_A(wMusicFadeID + 1);
+    // LD_HL(wc303);
+    // SET_hl(7);
+    bit_set(wram->wc303, 7);
+    // RET;
 }
 
-void Function17ff3c(void){
-    NOP;
-    LD_A_addr(wMobileErrorCodeBuffer);
-    CP_A(0xd0);
-    RET_C ;
-    hlcoord(10, 2, wTilemap);
-    LD_DE(mString_17ff68);
-    CALL(aPlaceString);
-    LD_A_addr(wMobileErrorCodeBuffer);
-    PUSH_AF;
-    SUB_A(0xd0);
-    INC_A;
-    LD_addr_A(wMobileErrorCodeBuffer);
-    hlcoord(14, 2, wTilemap);
-    LD_DE(wMobileErrorCodeBuffer);
-    LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 3);
-    CALL(aPrintNum);
-    POP_AF;
-    LD_addr_A(wMobileErrorCodeBuffer);
-    AND_A_A;
-    RET;
-
+bool Function17ff3c(void){
+    // NOP;
+    // LD_A_addr(wMobileErrorCodeBuffer);
+    // CP_A(0xd0);
+    // RET_C ;
+    if(wram->wMobileErrorCodeBuffer[0] < 0xd0)
+        return true;
+    // hlcoord(10, 2, wTilemap);
+    // LD_DE(mString_17ff68);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(String_17ff68), coord(10, 2, wram->wTilemap));
+    // LD_A_addr(wMobileErrorCodeBuffer);
+    // PUSH_AF;
+    uint8_t temp = wram->wMobileErrorCodeBuffer[0];
+    // SUB_A(0xd0);
+    // INC_A;
+    // LD_addr_A(wMobileErrorCodeBuffer);
+    wram->wMobileErrorCodeBuffer[0] -= 0xd0;
+    // hlcoord(14, 2, wTilemap);
+    // LD_DE(wMobileErrorCodeBuffer);
+    // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 3);
+    // CALL(aPrintNum);
+    PrintNum_Conv2(coord(14, 2, wram->wTilemap), wram->wMobileErrorCodeBuffer, PRINTNUM_LEADINGZEROS | 1, 3);
+    // POP_AF;
+    // LD_addr_A(wMobileErrorCodeBuffer);
+    wram->wMobileErrorCodeBuffer[0] = temp;
+    // AND_A_A;
+    // RET;
+    return false;
 }
 
-void String_17ff68(void){
-    //db ['"１０１@"'];
-
-}
+const char String_17ff68[] = "101@"; // "１０１@"

@@ -197,7 +197,7 @@ void (*const SpecialsPointers[])(void) = {
     add_special(Menu_ChallengeExplanationCancel),
     // add_special(Function17d2b6),
     // add_special(Function17d2ce),
-    // add_special(BattleTowerMobileError),
+    add_special(BattleTowerMobileError),
     add_special(AskMobileOrCable),
     add_special(HoOhChamber),
     // add_special(Function102142),

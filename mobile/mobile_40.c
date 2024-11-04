@@ -4795,7 +4795,7 @@ void Function101913(void){
     // LDH_addr_A(hWY);
     hram->hWY = 0x90;
     // LD_A_addr(wcd21);
-    switch(wram->wcd21[0]) {
+    switch(wram->wcd21) {
     // CP_A(0x01);
     // IF_Z goto asm_10193f;
     case 0x01:

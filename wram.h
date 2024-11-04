@@ -185,7 +185,8 @@ struct wram_s
                         // mobile data
                         //union wMobileWRAM
                         uint8_t wMobileErrorCodeBuffer[3];
-                        uint8_t wc303[2];
+                        uint8_t wc303; // wMobileErrorJumptableIndex
+                        uint8_t wc304; // Unused?
                         uint8_t wc305;
                         uint8_t wc306;
                         uint8_t wc307;
@@ -1197,11 +1198,11 @@ struct wram_s
                     };
                     struct {
                         // more mobile data
-                        uint8_t wcd20[1];
-                        uint8_t wcd21[1];
-                        uint8_t wcd22[1];
-                        uint8_t wcd23[1];
-                        uint8_t wcd24[1];
+                        uint8_t wcd20;
+                        uint8_t wcd21;
+                        uint8_t wcd22;
+                        uint8_t wcd23;
+                        uint8_t wcd24;
                         uint8_t wMobileCommsJumptableIndex;
                         uint8_t wcd26; // wMobileCommsMenuJumptableIndex
                         uint8_t wcd27;

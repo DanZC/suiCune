@@ -1,3 +1,11 @@
+typedef struct ErrCode {
+    uint16_t code;
+    const char* text;
+} errcode_s;
+typedef struct ErrCodes {
+    uint8_t count;
+    errcode_s codes[];
+} errcodes_s;
 void Function17c000(void);
 void HaveWantGFX(void);
 void MobileSelectGFX(void);
@@ -150,65 +158,64 @@ void Function17f5d2(void);
 void Function17f5e4(void);
 extern const char* const Table_17f699[];
 void Palette_17f6af(void);
-void Function17f6b7(void);
+void Function17f6b7(tile_t* hl);
 extern const char MobileCommunicationErrorText[];
 void String_17f6e8(void);
-void MobileErrorCodeTable(void);
-void MobileErrorCodes_10(void);
-void MobileErrorCodes_11(void);
-void MobileErrorCodes_12(void);
-void MobileErrorCodes_13(void);
-void MobileErrorCodes_14(void);
-void MobileErrorCodes_15(void);
-void MobileErrorCodes_16(void);
-void MobileErrorCodes_17(void);
-void MobileErrorCodes_20(void);
-void MobileErrorCodes_21(void);
-void MobileErrorCodes_22(void);
-void MobileErrorCodes_23(void);
-void MobileErrorCodes_24(void);
-void MobileErrorCodes_25(void);
-void MobileErrorCodes_26(void);
-void MobileErrorCodes_30(void);
-void MobileErrorCodes_31(void);
-void MobileErrorCodes_32(void);
-void MobileErrorCodes_33(void);
-void MobileErrorCode_10_000_Text(void);
-void MobileErrorCode_11_000_Text(void);
-void MobileErrorCode_13_000_Text(void);
-void MobileErrorCode_12_000_Text(void);
-void MobileErrorCode_15_000_Text(void);
-void MobileErrorCode_15_001_Text(void);
-void MobileErrorCode_15_002_Text(void);
-void MobileErrorCode_15_003_Text(void);
-void MobileErrorCode_CommuncationErrorText(void);
-void MobileErrorCode_22_000_Text(void);
-void MobileErrorCode_23_000_Text(void);
-void MobileErrorCode_ServerErrorText(void);
-void MobileErrorCode_14_000_Text(void);
-void MobileErrorCode_25_000_Text(void);
-void MobileErrorCode_32_503_Text(void);
-void MobileErrorCode_30_450_Text(void);
-void MobileErrorCode_30_550_Text(void);
-void MobileErrorCode_30_551_Text(void);
-void MobileErrorCode_30_553_Text(void);
-void MobileErrorCode_31_002_Text(void);
-void MobileErrorCode_31_003_Text(void);
-void MobileErrorCode_33_201_Text(void);
-void MobileErrorCode_32_403_Text(void);
-void MobileErrorCode_32_404_Text(void);
-void MobileErrorCode_26_000_Text(void);
-void MobileErrorCode_32_408_Text(void);
-void MobileErrorCode_33_101_Text(void);
-void MobileErrorCode_33_102_Text(void);
-void MobileErrorCode_33_299_Text(void);
-void MobileErrorCode_ServerConnectionFailedText(void);
-void MobileErrorCode_33_103_Text(void);
-void MobileErrorCode_33_106_Text(void);
-void MobileErrorCode_33_104_Text(void);
-void MobileErrorCode_33_105_Text(void);
-void MobileErrorCode_33_203_Text(void);
-void MobileErrorCode_33_206_Text(void);
+extern const errcodes_s* MobileErrorCodeTable[];
+extern const errcodes_s MobileErrorCodes_10;
+extern const errcodes_s MobileErrorCodes_11;
+extern const errcodes_s MobileErrorCodes_12;
+extern const errcodes_s MobileErrorCodes_13;
+extern const errcodes_s MobileErrorCodes_14;
+extern const errcodes_s MobileErrorCodes_15;
+extern const errcodes_s MobileErrorCodes_16;
+extern const errcodes_s MobileErrorCodes_17;
+extern const errcodes_s MobileErrorCodes_20;
+extern const errcodes_s MobileErrorCodes_21;
+extern const errcodes_s MobileErrorCodes_22;
+extern const errcodes_s MobileErrorCodes_23;
+extern const errcodes_s MobileErrorCodes_24;
+extern const errcodes_s MobileErrorCodes_25;
+extern const errcodes_s MobileErrorCodes_26;
+extern const errcodes_s MobileErrorCodes_30;
+extern const errcodes_s MobileErrorCodes_31;
+extern const errcodes_s MobileErrorCodes_32;
+extern const errcodes_s MobileErrorCodes_33;
+extern const char MobileErrorCode_10_000_Text[];
+#define MobileErrorCode_11_000_Text MobileErrorCode_13_000_Text
+extern const char MobileErrorCode_13_000_Text[];
+extern const char MobileErrorCode_12_000_Text[];
+#define MobileErrorCode_15_000_Text MobileErrorCode_15_003_Text
+#define MobileErrorCode_15_001_Text MobileErrorCode_15_003_Text
+#define MobileErrorCode_15_002_Text MobileErrorCode_15_003_Text
+extern const char MobileErrorCode_15_003_Text[];
+extern const char MobileErrorCode_CommuncationErrorText[];
+extern const char MobileErrorCode_22_000_Text[];
+extern const char MobileErrorCode_23_000_Text[];
+extern const char MobileErrorCode_ServerErrorText[];
+#define MobileErrorCode_14_000_Text MobileErrorCode_25_000_Text
+extern const char MobileErrorCode_25_000_Text[];
+extern const char MobileErrorCode_32_503_Text[];
+#define MobileErrorCode_30_450_Text MobileErrorCode_30_553_Text
+#define MobileErrorCode_30_550_Text MobileErrorCode_30_553_Text
+#define MobileErrorCode_30_551_Text MobileErrorCode_30_553_Text
+extern const char MobileErrorCode_30_553_Text[];
+extern const char MobileErrorCode_31_002_Text[];
+#define MobileErrorCode_31_003_Text MobileErrorCode_33_201_Text
+extern const char MobileErrorCode_33_201_Text[];
+extern const char MobileErrorCode_ReadDataErrorText[];
+#define MobileErrorCode_26_000_Text MobileErrorCode_32_408_Text
+extern const char MobileErrorCode_32_408_Text[];
+extern const char MobileErrorCode_33_101_Text[];
+#define MobileErrorCode_33_102_Text MobileErrorCode_33_299_Text
+extern const char MobileErrorCode_33_299_Text[];
+extern const char MobileErrorCode_ServerConnectionFailedText[];
+extern const char MobileErrorCode_33_103_Text[];
+extern const char MobileErrorCode_33_106_Text[];
+#define MobileErrorCode_33_104_Text MobileErrorCode_101_004_Text
+#define MobileErrorCode_33_105_Text MobileErrorCode_101_004_Text
+#define MobileErrorCode_33_203_Text MobileErrorCode_101_004_Text
+#define MobileErrorCode_33_206_Text MobileErrorCode_101_004_Text
 extern const char MobileErrorCode_101_004_Text[];
 extern const char MobileErrorCode_101_006_Text[];
 #define MobileErrorCode_101_001_Text MobileErrorCode_101_002_Text
@@ -221,8 +228,8 @@ extern const char MobileErrorCode_101_005_Text[];
 void String_17fe9a(void);
 extern const char MobileErrorCode_101_000_Text[];
 void Function17ff23(void);
-void Function17ff3c(void);
-void String_17ff68(void);
+bool Function17ff3c(void);
+extern const char String_17ff68[];
 //#include "gfx/mobile/havewant.2bpp"
 //#include "gfx/mobile/select.2bpp"
 //#include "gfx/mobile/havewant_map.bin"
