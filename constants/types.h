@@ -1605,6 +1605,15 @@ struct U8Item {
     item_t item;
 };
 
+typedef struct MobileAPIData
+{
+    uint8_t a;
+    uint8_t l;
+    uint8_t h;
+    uint16_t bc;
+    void* hl;
+} mobile_api_data_s;
+
 struct CoordsTileId
 {
     int8_t x;

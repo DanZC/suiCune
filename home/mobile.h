@@ -1,5 +1,5 @@
-void MobileAPI(void);
-void ReturnMobileAPI(void);
+void MobileAPI(uint8_t a, mobile_api_data_s *api);
+void ReturnMobileAPI(mobile_api_data_s *api);
 void MobileReceive(void);
 void MobileTimer(void);
 void Function3ed7(void);

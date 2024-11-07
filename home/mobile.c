@@ -1,62 +1,76 @@
 #include "../constants.h"
 #include "mobile.h"
 #include "menu.h"
+#include "../lib/mobile/main.h"
 
-void MobileAPI(void){
-    //  Mobile
-    CP_A(0x2);
-    LD_addr_A(wMobileAPIIndex);
-    LD_A_L;
-    LD_addr_A(wc986);
-    LD_A_H;
-    LD_addr_A(wc987);
-    IF_NZ goto okay;
+//  Mobile
+void MobileAPI(uint8_t a, mobile_api_data_s *api){
+    // CP_A(0x2);
+    // LD_addr_A(wMobileAPIIndex);
+    wram->wMobileAPIIndex = a;
+    // LD_A_L;
+    // LD_addr_A(wc986);
+    wram->wc986 = api->l;
+    // LD_A_H;
+    // LD_addr_A(wc987);
+    wram->wc987 = api->h;
+    // IF_NZ goto okay;
+    if(wram->wMobileAPIIndex == 0x2) {
+        // LD_addr_A(wc982);
+        wram->wc982 = api->h;
+        // LD_A_L;
+        // LD_addr_A(wc981);
+        wram->wc981 = api->l;
+        // LD_HL(wc983);
+        // LD_A_C;
+        // LD_hli_A;
+        // LD_A_B;
+        // LD_hl_A;
+        wram->wc983 = api->bc;
+    }
 
-    LD_addr_A(wc982);
-    LD_A_L;
-    LD_addr_A(wc981);
-    LD_HL(wc983);
-    LD_A_C;
-    LD_hli_A;
-    LD_A_B;
-    LD_hl_A;
+// okay:
+    // LD_HL(wc822);
+    // SET_hl(6);
+    bit_set(wram->wc822, 6);
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+    // LD_A(BANK(av_MobileAPI));
+    // LD_addr_A(wc981);
+    // RST(aBankswitch);
 
-
-okay:
-        LD_HL(wc822);
-    SET_hl(6);
-    LDH_A_addr(hROMBank);
-    PUSH_AF;
-    LD_A(BANK(av_MobileAPI));
-    LD_addr_A(wc981);
-    RST(aBankswitch);
-
-    JP(mv_MobileAPI);
-
+    // JP(mv_MobileAPI);
+    return v_MobileAPI(api);
 }
 
-void ReturnMobileAPI(void){
+void ReturnMobileAPI(mobile_api_data_s *api){
     //  Return from _MobileAPI
-    LD_addr_A(wc986);
-    LD_A_L;
-    LD_addr_A(wc987);
-    LD_A_H;
-    LD_addr_A(wMobileAPIIndex);
+    // LD_addr_A(wc986);
+    wram->wc986 = api->a;
+    // LD_A_L;
+    // LD_addr_A(wc987);
+    wram->wc987 = api->l;
+    // LD_A_H;
+    // LD_addr_A(wMobileAPIIndex);
+    wram->wMobileAPIIndex = api->h;
 
-    POP_BC;
-    LD_A_B;
-    LD_addr_A(wc981);
-    RST(aBankswitch);
+    // POP_BC;
+    // LD_A_B;
+    // LD_addr_A(wc981);
+    // RST(aBankswitch);
 
-    LD_HL(wc822);
-    RES_hl(6);
-    LD_HL(wc987);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    LD_A_addr(wc986);
-    RET;
-
+    // LD_HL(wc822);
+    // RES_hl(6);
+    bit_reset(wram->wc822, 6);
+    // LD_HL(wc987);
+    // LD_A_hli;
+    // LD_H_hl;
+    api->h = wram->wMobileAPIIndex;
+    // LD_L_A;
+    api->l = wram->wc987;
+    // LD_A_addr(wc986);
+    // RET;
+    api->a = wram->wc986;
 }
 
 void MobileReceive(void){
@@ -204,6 +218,7 @@ fill_attr:
 
 }
 
+// MobileHome_MobileTextbox
 void Function3f20(void){
     // hlcoord(0, 0, wAttrmap);
     // LD_B(6);

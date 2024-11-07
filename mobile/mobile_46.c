@@ -13,6 +13,7 @@
 #include "../home/delay.h"
 #include "../home/names.h"
 #include "../engine/gfx/dma_transfer.h"
+#include "../engine/pokemon/bills_pc_top.h"
 
 static uint8_t gMobileMessageBuffer[256];
 
@@ -9088,12 +9089,16 @@ void AddMobileMonToParty(const species_t* species, const struct PartyMon* mobile
     // RET;
 }
 
+// Mobile_CheckCurPartyMonFainted
 void Function11ba38(void){
-    FARCALL(aCheckCurPartyMonFainted);
-    RET_C ;
-    XOR_A_A;
-    LD_addr_A(wScriptVar);
-    RET;
+    // FARCALL(aCheckCurPartyMonFainted);
+    // RET_C ;
+    if(CheckCurPartyMonFainted_Conv())
+        return;
+    // XOR_A_A;
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = 0x0;
+    // RET;
 
 }
 

@@ -1075,12 +1075,12 @@ struct wram_s
                         uint8_t wc97a[5];
                         uint8_t wc97f;
                         uint8_t wc980;
-                        uint8_t wc981;
-                        uint8_t wc982;
-                        uint16_t wc983;
+                        uint8_t wc981;  // l
+                        uint8_t wc982;  // h
+                        uint16_t wc983; // bc
                         uint8_t wc985;
-                        uint8_t wc986;
-                        uint8_t wc987;
+                        uint8_t wc986;  // l
+                        uint8_t wc987;  // h
                         uint8_t wMobileAPIIndex;
                         uint8_t wc989;
                         uint8_t wc98a;

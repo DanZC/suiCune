@@ -49,6 +49,7 @@
 #include "../../mobile/mobile_40.h"
 #include "../../mobile/mobile_41.h"
 #include "../../mobile/mobile_45_stadium.h"
+#include "../../mobile/mobile_46.h"
 #include "../../mobile/mobile_5f.h"
 
 #define add_special(_n) [SP_##_n] = _n
@@ -181,7 +182,7 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(Function1704e1),
     // add_special(UnusedBattleTowerDummySpecial1),
     add_special(LoadOpponentTrainerAndPokemonWithOTSprite),
-    // add_special(Function11ba38),
+    add_special(Function11ba38),
     add_special(CheckForBattleTowerRules),
     add_special(GiveOddEgg),
     // add_special(Reset), // bank 0
