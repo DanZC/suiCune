@@ -1,23 +1,24 @@
 #include "../constants.h"
 #include "time.h"
 #include "sram.h"
+#include "mobile.h"
 #include "../engine/rtc/rtc.h"
 
 //  Functions relating to the timer interrupt and the real-time-clock.
 
 void Timer(void){
-    //  //  unreferenced
-    PUSH_AF;
-    LDH_A_addr(hMobile);
-    AND_A_A;
-    IF_Z goto not_mobile;
-    CALL(aMobileTimer);
+    // PUSH_AF;
+    // LDH_A_addr(hMobile);
+    // AND_A_A;
+    // IF_Z goto not_mobile;
+    if(hram->hMobile) {
+        // CALL(aMobileTimer);
+        MobileTimer();
+    }
 
-
-not_mobile:
-        POP_AF;
-    RET;
-
+// not_mobile:
+    // POP_AF;
+    // RET;
 }
 
 void LatchClock(void){

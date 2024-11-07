@@ -91,64 +91,70 @@ void MobileReceive(void){
 }
 
 void MobileTimer(void){
-        PUSH_AF;
-    PUSH_BC;
-    PUSH_DE;
-    PUSH_HL;
+    // PUSH_AF;
+    // PUSH_BC;
+    // PUSH_DE;
+    // PUSH_HL;
 
-    LDH_A_addr(hMobile);
-    AND_A_A;
-    IF_Z goto pop_ret;
+    // LDH_A_addr(hMobile);
+    // AND_A_A;
+    // IF_Z goto pop_ret;
+    if(hram->hMobile) {
+        // XOR_A_A;
+        // LDH_addr_A(rTAC);
+        gb_write(rTAC, 0x0);
 
-    XOR_A_A;
-    LDH_addr_A(rTAC);
+    //  Turn off timer interrupt
+        // LDH_A_addr(rIF);
+        // AND_A(1 << VBLANK | 1 << LCD_STAT | 1 << SERIAL | 1 << JOYPAD);
+        // LDH_addr_A(rIF);
+        gb_write(rIF, gb_read(rIF) & ((1 << VBLANK) | (1 << LCD_STAT) | (1 << SERIAL) | (1 << JOYPAD)));
 
-//  Turn off timer interrupt
-    LDH_A_addr(rIF);
-    AND_A(1 << VBLANK | 1 << LCD_STAT | 1 << SERIAL | 1 << JOYPAD);
-    LDH_addr_A(rIF);
+        // LD_A_addr(wc86a);
+        // OR_A_A;
+        // IF_Z goto pop_ret;
+        if(wram->wc86a != 0x0) {
+            // LD_A_addr(wc822);
+            // BIT_A(1);
+            // IF_NZ goto skip_timer;
 
-    LD_A_addr(wc86a);
-    OR_A_A;
-    IF_Z goto pop_ret;
+            // LDH_A_addr(rSC);
+            // AND_A(1 << rSC_ON);
+            // IF_NZ goto skip_timer;
+            if(!bit_test(wram->wc822, 1) && (gb_read(rSC) & (1 << rSC_ON)) == 0) {
+                // LDH_A_addr(hROMBank);
+                // PUSH_AF;
+                // LD_A(BANK(av_Timer));
+                // LD_addr_A(wc981);
+                // RST(aBankswitch);
 
-    LD_A_addr(wc822);
-    BIT_A(1);
-    IF_NZ goto skip_timer;
+                // CALL(av_Timer);
+                // v_Timer();
+                // TODO: Convert v_Timer
 
-    LDH_A_addr(rSC);
-    AND_A(1 << rSC_ON);
-    IF_NZ goto skip_timer;
+                // POP_BC;
+                // LD_A_B;
+                // LD_addr_A(wc981);
+                // RST(aBankswitch);
+            }
 
-    LDH_A_addr(hROMBank);
-    PUSH_AF;
-    LD_A(BANK(av_Timer));
-    LD_addr_A(wc981);
-    RST(aBankswitch);
+        // skip_timer:
+            // LDH_A_addr(rTMA);
+            // LDH_addr_A(rTIMA);
+            gb_write(rTIMA, gb_read(rTMA));
 
-    CALL(av_Timer);
+            // LD_A(1 << rTAC_ON | rTAC_65536_HZ);
+            // LDH_addr_A(rTAC);
+            gb_write(rTAC, (1 << rTAC_ON) | rTAC_65536_HZ);
+        }
+    }
 
-    POP_BC;
-    LD_A_B;
-    LD_addr_A(wc981);
-    RST(aBankswitch);
-
-
-skip_timer:
-        LDH_A_addr(rTMA);
-    LDH_addr_A(rTIMA);
-
-    LD_A(1 << rTAC_ON | rTAC_65536_HZ);
-    LDH_addr_A(rTAC);
-
-
-pop_ret:
-        POP_HL;
-    POP_DE;
-    POP_BC;
-    POP_AF;
-    RET;
-
+// pop_ret:
+    // POP_HL;
+    // POP_DE;
+    // POP_BC;
+    // POP_AF;
+    // RET;
 }
 
 void Function3ed7(void){

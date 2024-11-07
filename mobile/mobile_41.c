@@ -2,6 +2,7 @@
 #include "mobile_41.h"
 #include "../home/copy.h"
 #include "../home/sram.h"
+#include "../home/mobile.h"
 #include "../engine/gfx/load_font.h"
 #include "../gfx/font.h"
 
@@ -1126,80 +1127,95 @@ u8_flag_s CheckMobileAdapterStatus(void){
     return u8_flag(0, false);
 }
 
+// Mobile_DoMobileCommsLoop
 void Function10635c(void){
-    LD_A_addr(wMobileCommsJumptableIndex);
-    BIT_A(7);
-    RET_NZ ;
-    LD_A_addr(wMobileCommsJumptableIndex);
-    LD_HL(mFunction10635c_Jumptable);
-    RST(aJumpTable);
-    RET;
-
-
-Jumptable:
-    //dw ['.init'];
-    //dw ['Function106392'];
-    //dw ['Function1063cc'];
-    //dw ['Function1063d8'];
-    //dw ['Function1063e5'];
-    //dw ['Function1063f3'];
-    //dw ['Function106403'];
-    //dw ['Function106442'];
-    //dw ['Function106453'];
-
-
-init:
-    LD_DE(wcd30);
-    LD_HL(0x41);
-    LD_BC(0x41);
-    LD_A(MOBILEAPI_20);
-    CALL(aMobileAPI);
-    LD_A_addr(wMobileCommsJumptableIndex);
-    INC_A;
-    LD_addr_A(wMobileCommsJumptableIndex);
-    RET;
-
+    // LD_A_addr(wMobileCommsJumptableIndex);
+    // BIT_A(7);
+    // RET_NZ ;
+    if(bit_test(wram->wMobileCommsJumptableIndex, 7))
+        return;
+    // LD_A_addr(wMobileCommsJumptableIndex);
+    // LD_HL(mFunction10635c_Jumptable);
+    // RST(aJumpTable);
+    // RET;
+    switch(wram->wMobileCommsJumptableIndex) {
+    // Jumptable:
+        case 0:
+        // init:
+            // LD_DE(wcd30);
+            // LD_HL(0x41);
+            // LD_BC(0x41);
+            // LD_A(MOBILEAPI_20);
+            // CALL(aMobileAPI);
+            MobileAPI(MOBILEAPI_20, &(mobile_api_data_s){.bc = 0x41, .l = 0x41, .de = &wram->wcd30});
+            // LD_A_addr(wMobileCommsJumptableIndex);
+            // INC_A;
+            // LD_addr_A(wMobileCommsJumptableIndex);
+            wram->wMobileCommsJumptableIndex++;
+            // RET;
+            return;
+        case 1: return Function106392();
+        case 2: return Function1063cc();
+        case 3: return Function1063d8();
+        case 4: return Function1063e5();
+        case 5: return Function1063f3();
+        case 6: return Function106403();
+        case 7: return Function106442();
+        case 8: return Function106453();
+    }
 }
 
 void Function106392(void){
-    XOR_A_A;
-    LD_addr_A(wcf64);
-    LD_A_addr(wc821);
-    BIT_A(1);
-    IF_NZ goto asm_1063a2;
-    BIT_A(0);
-    IF_Z goto asm_1063bf;
-    RET;
-
-
-asm_1063a2:
-    CALL(aMobile_AlwaysReturnNotCarry);
-    LD_A_C;
-    AND_A_A;
-    IF_NZ goto asm_1063b4;
-    LD_A(0xb);
-    LD_addr_A(wcf64);
-    LD_A(0x7);
-    LD_addr_A(wMobileCommsJumptableIndex);
-    RET;
-
-
-asm_1063b4:
-    LD_A(0x7);
-    LD_addr_A(wcf64);
-    LD_A(0x7);
-    LD_addr_A(wMobileCommsJumptableIndex);
-    RET;
-
-
-asm_1063bf:
-    LD_A(0x1);
-    LD_addr_A(wcf64);
-    LD_A_addr(wMobileCommsJumptableIndex);
-    INC_A;
-    LD_addr_A(wMobileCommsJumptableIndex);
-    RET;
-
+    // XOR_A_A;
+    // LD_addr_A(wcf64);
+    wram->wcf64 = 0x0;
+    // LD_A_addr(wc821);
+    // BIT_A(1);
+    // IF_NZ goto asm_1063a2;
+    if(bit_test(wram->wc821, 1)) {
+    // asm_1063a2:
+        // CALL(aMobile_AlwaysReturnNotCarry);
+        u8_flag_s res = Mobile_AlwaysReturnNotCarry();
+        // LD_A_C;
+        // AND_A_A;
+        // IF_NZ goto asm_1063b4;
+        if(res.a == 0x0) {
+            // LD_A(0xb);
+            // LD_addr_A(wcf64);
+            wram->wcf64 = 0xb;
+            // LD_A(0x7);
+            // LD_addr_A(wMobileCommsJumptableIndex);
+            wram->wMobileCommsJumptableIndex = 0x7;
+            // RET;
+            return;
+        }
+        else {
+        // asm_1063b4:
+            // LD_A(0x7);
+            // LD_addr_A(wcf64);
+            wram->wcf64 = 0x7;
+            // LD_A(0x7);
+            // LD_addr_A(wMobileCommsJumptableIndex);
+            wram->wMobileCommsJumptableIndex = 0x7;
+            // RET;
+            return;
+        }
+    }
+    // BIT_A(0);
+    // IF_Z goto asm_1063bf;
+    else if(!bit_test(wram->wc821, 0)) {
+    // asm_1063bf:
+        // LD_A(0x1);
+        // LD_addr_A(wcf64);
+        wram->wcf64 = 0x1;
+        // LD_A_addr(wMobileCommsJumptableIndex);
+        // INC_A;
+        // LD_addr_A(wMobileCommsJumptableIndex);
+        wram->wMobileCommsJumptableIndex++;
+        // RET;
+        return;
+    }
+    // RET;
 }
 
 void Function1063cc(void){
@@ -1242,14 +1258,15 @@ void Function1063e5(void){
 }
 
 void Function1063f3(void){
-    LD_DE(wcd31);
-    LD_A(MOBILEAPI_19);
-    CALL(aMobileAPI);
-    LD_A_addr(wMobileCommsJumptableIndex);
-    INC_A;
-    LD_addr_A(wMobileCommsJumptableIndex);
-    RET;
-
+    // LD_DE(wcd31);
+    // LD_A(MOBILEAPI_19);
+    // CALL(aMobileAPI);
+    MobileAPI(MOBILEAPI_19, &(mobile_api_data_s){.de = &wram->wcd31});
+    // LD_A_addr(wMobileCommsJumptableIndex);
+    // INC_A;
+    // LD_addr_A(wMobileCommsJumptableIndex);
+    wram->wMobileCommsJumptableIndex++;
+    // RET;
 }
 
 void Function106403(void){
@@ -1306,27 +1323,32 @@ void Function106403(void){
 }
 
 void Function106442(void){
-    LD_A(MOBILEAPI_1B);
-    CALL(aMobileAPI);
-    XOR_A_A;
-    LDH_addr_A(hMobile);
-    LDH_addr_A(hMobileReceive);
-    LD_A_addr(wMobileCommsJumptableIndex);
-    INC_A;
-    LD_addr_A(wMobileCommsJumptableIndex);
+    // LD_A(MOBILEAPI_1B);
+    // CALL(aMobileAPI);
+    MobileAPI(MOBILEAPI_1B, &(mobile_api_data_s){0});
+    // XOR_A_A;
+    // LDH_addr_A(hMobile);
+    hram->hMobile = 0x0;
+    // LDH_addr_A(hMobileReceive);
+    hram->hMobileReceive = 0x0;
+    // LD_A_addr(wMobileCommsJumptableIndex);
+    // INC_A;
+    // LD_addr_A(wMobileCommsJumptableIndex);
+    wram->wMobileCommsJumptableIndex++;
 
     return Function106453();
 }
 
 void Function106453(void){
-    LD_A_addr(wMobileCommsJumptableIndex);
-    SET_A(7);
-    LD_addr_A(wMobileCommsJumptableIndex);
-    NOP;
-    LD_A(0x4);
-    LD_addr_A(wcf64);
-    RET;
-
+    // LD_A_addr(wMobileCommsJumptableIndex);
+    // SET_A(7);
+    // LD_addr_A(wMobileCommsJumptableIndex);
+    bit_set(wram->wMobileCommsJumptableIndex, 7);
+    // NOP;
+    // LD_A(0x4);
+    // LD_addr_A(wcf64);
+    wram->wcf64 = 0x4;
+    // RET;
 }
 
 void Stubbed_Function106462(void){

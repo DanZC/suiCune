@@ -21,6 +21,7 @@
 #include "../home/audio.h"
 #include "../home/window.h"
 #include "../home/clear_sprites.h"
+#include "../home/double_speed.h"
 #include "../engine/tilesets/timeofday_pals.h"
 #include "../engine/gfx/dma_transfer.h"
 #include "../engine/gfx/color.h"
@@ -147,6 +148,7 @@ void EnableMobile(void){
 
     // NOP;
     // CALL(aDoubleSpeed);
+    DoubleSpeed();
     // XOR_A_A;
     // LDH_addr_A(rIF);
     gb_write(rIF, 0x0);
@@ -1929,7 +1931,7 @@ const char String_10088e[] =
 const char String_10089f[] = "UNLIMITED@"; // "\u3000むせいげん@"
 
 //  Calculates the difference between 10 minutes and sMobileBattleTimer
-//  Returns minutes in c and seconds in b
+//  Returns minutes in c (b) and seconds in b (a)
 u8_pair_s MobileBattleGetRemainingTime(void){
     // LD_A(BANK(sMobileBattleTimer));
     // LD_HL(sMobileBattleTimer);
@@ -9664,81 +9666,108 @@ const txt_cmd_s PleaseTryAgainTomorrowText[] = {
     text_end
 };
 
+// Mobile_SaveGameAndSetBattleTimerSpecial
 void Function103780(void){
-    LD_A_addr(wChosenCableClubRoom);
-    PUSH_AF;
-    CALL(aFunction10378c);
-    POP_AF;
-    LD_addr_A(wChosenCableClubRoom);
-    RET;
-
+    // LD_A_addr(wChosenCableClubRoom);
+    // PUSH_AF;
+    uint8_t cableRoom = wram->wChosenCableClubRoom;
+    // CALL(aFunction10378c);
+    Function10378c();
+    // POP_AF;
+    // LD_addr_A(wChosenCableClubRoom);
+    wram->wChosenCableClubRoom = cableRoom;
+    // RET;
 }
 
+// Mobile_SaveGameAndSetBattleTimer
+// Asks to save the game and starts the mobile battle timer if saved.
 void Function10378c(void){
-    LD_C(0);
-    LD_HL(wSwarmFlags);
-    BIT_hl(SWARMFLAGS_MOBILE_4_F);
-    IF_NZ goto already_set;
-    LD_C(1);
-    LD_HL(wSwarmFlags);
-    SET_hl(SWARMFLAGS_MOBILE_4_F);
+    // LD_C(0);
+    uint8_t c = 0;
+    // LD_HL(wSwarmFlags);
+    // BIT_hl(SWARMFLAGS_MOBILE_4_F);
+    // IF_NZ goto already_set;
+    if(!bit_test(wram->wSwarmFlags, SWARMFLAGS_MOBILE_4_F)) {
+        // LD_C(1);
+        c = 1;
+        // LD_HL(wSwarmFlags);
+        // SET_hl(SWARMFLAGS_MOBILE_4_F);
+        bit_set(wram->wSwarmFlags, SWARMFLAGS_MOBILE_4_F);
+    }
 
-
-already_set:
-    PUSH_BC;
-    FARCALL(aLink_SaveGame);
-    POP_BC;
-    IF_C goto failed_to_save;
-    LD_A(1);
-    LD_addr_A(wScriptVar);
-    LD_A_C;
-    AND_A_A;
-    RET_Z ;
-    FARCALL(aMobileBattleResetTimer);
-    RET;
-
-
-failed_to_save:
-    XOR_A_A;
-    LD_addr_A(wScriptVar);
-    LD_A_C;
-    AND_A_A;
-    RET_Z ;
-    LD_HL(wSwarmFlags);
-    RES_hl(SWARMFLAGS_MOBILE_4_F);
-    RET;
-
+// already_set:
+    // PUSH_BC;
+    // FARCALL(aLink_SaveGame);
+    bool saved = Link_SaveGame();
+    // POP_BC;
+    // IF_C goto failed_to_save;
+    if(saved) {
+        // LD_A(1);
+        // LD_addr_A(wScriptVar);
+        wram->wScriptVar = 1;
+        // LD_A_C;
+        // AND_A_A;
+        // RET_Z ;
+        if(c != 0) {
+            // FARCALL(aMobileBattleResetTimer);
+            MobileBattleResetTimer();
+        }
+        // RET;
+        return;
+    }
+    else {
+    // failed_to_save:
+        // XOR_A_A;
+        // LD_addr_A(wScriptVar);
+        wram->wScriptVar = 0;
+        // LD_A_C;
+        // AND_A_A;
+        // RET_Z ;
+        if(c != 0) {
+            // LD_HL(wSwarmFlags);
+            // RES_hl(SWARMFLAGS_MOBILE_4_F);
+            bit_reset(wram->wSwarmFlags, SWARMFLAGS_MOBILE_4_F);
+        }
+        // RET;
+    }
 }
 
+// Mobile_CheckRemainingTimeAndAskAgainSpecial?
 void Function1037c2(void){
-    CALL(aMobileCheckRemainingBattleTime);
-    IF_C goto nope;
-    LD_A_addr(wdc5f);
-    AND_A_A;
-    IF_Z goto nope;
-    LD_HL(mTryAgainUsingSameSettingsText);
-    CALL(aPrintText);
-    CALL(aYesNoBox);
-    IF_C goto nope;
-    LD_A(0x01);
-    LD_addr_A(wScriptVar);
-    RET;
-
-
-nope:
-    XOR_A_A;
-    LD_addr_A(wdc5f);
-    LD_addr_A(wScriptVar);
-    RET;
-
+    // CALL(aMobileCheckRemainingBattleTime);
+    bool enough_time = !MobileCheckRemainingBattleTime();
+    // IF_C goto nope;
+    // LD_A_addr(wdc5f);
+    // AND_A_A;
+    // IF_Z goto nope;
+    if(enough_time && wram->wdc5f != 0) {
+        // LD_HL(mTryAgainUsingSameSettingsText);
+        // CALL(aPrintText);
+        PrintText_Conv2(TryAgainUsingSameSettingsText);
+        // CALL(aYesNoBox);
+        bool yes = YesNoBox_Conv();
+        // IF_C goto nope;
+        if(yes) {
+            // LD_A(0x01);
+            // LD_addr_A(wScriptVar);
+            wram->wScriptVar = 0x01;
+            // RET;
+            return;
+        }
+    }
+// nope:
+    // XOR_A_A;
+    // LD_addr_A(wdc5f);
+    wram->wdc5f = 0x0;
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = 0x0;
+    // RET;
 }
 
-void TryAgainUsingSameSettingsText(void){
-    //text_far ['_TryAgainUsingSameSettingsText']
-    //text_end ['?']
-
-    return Function1037eb();
-}
+const txt_cmd_s TryAgainUsingSameSettingsText[] = {
+    text_far(v_TryAgainUsingSameSettingsText)
+    text_end
+};
 
 // CheckAbleToMobileBattle
 //  wScriptVar == 0x0 -> Don't connect
@@ -9809,7 +9838,7 @@ bool MobileCheckRemainingBattleTime(void){
     // LD_A_C;
     // CP_A(1);
     // IF_C goto fail;
-    if(time.a < 1)
+    if(time.b < 1)
         return true;
 
 // ok:
@@ -9858,22 +9887,26 @@ const txt_cmd_s PickThreeMonForMobileBattleText[] = {
     text_end
 };
 
+// PrintBattleRemainingTimeText
 void Function10387b(void){
-    FARCALL(aMobile_AlwaysReturnNotCarry);
-    BIT_C(7);
-    RET_NZ ;
-    FARCALL(aMobileBattleGetRemainingTime);
-    LD_A_C;
-    LD_addr_A(wStringBuffer2);
-    LD_HL(mMobileBattleRemainingTimeText);
-    CALL(aPrintText);
-    CALL(aJoyWaitAorB);
-    RET;
-
+    // FARCALL(aMobile_AlwaysReturnNotCarry);
+    // BIT_C(7);
+    // RET_NZ ;
+    if(bit_test(Mobile_AlwaysReturnNotCarry().a, 7))
+        return;
+    // FARCALL(aMobileBattleGetRemainingTime);
+    // LD_A_C;
+    // LD_addr_A(wStringBuffer2);
+    wram->wStringBuffer2[0] = MobileBattleGetRemainingTime().b;
+    // LD_HL(mMobileBattleRemainingTimeText);
+    // CALL(aPrintText);
+    PrintText_Conv2(MobileBattleRemainingTimeText);
+    // CALL(aJoyWaitAorB);
+    JoyWaitAorB_Conv();
+    // RET;
 }
 
-void MobileBattleRemainingTimeText(void){
-    //text_far ['_MobileBattleRemainingTimeText']
-    //text_end ['?']
-
-}
+const txt_cmd_s MobileBattleRemainingTimeText[] = {
+    text_far(v_MobileBattleRemainingTimeText)
+    text_end
+};

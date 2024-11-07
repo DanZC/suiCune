@@ -31,6 +31,7 @@
 #include "../../home/print_text.h"
 #include "../../home/map_objects.h"
 #include "../../mobile/mobile_41.h"
+#include "../../mobile/mobile_5b.h"
 #include "../../gfx/misc.h"
 #include "../../data/text/common.h"
 #include "../../charmap.h"
@@ -2550,6 +2551,11 @@ void GameInit(void) {
     hram->hWY = 0x90;
     // CALL(aWaitBGMap);
     WaitBGMap_Conv();
+
+#if !PM_HIDDEN_NETWORK
+    // MobileAdapterCheck(); // TODO: Fix MobileAdapterCheck softlock by finishing implementation of mobile adapter.
+#endif
+
     // JP(mIntroSequence);
     return Intro_SetJumptableIndex(INTRO_INTRO_SEQUENCE);
 }

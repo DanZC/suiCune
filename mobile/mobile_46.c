@@ -12,6 +12,7 @@
 #include "../home/tilemap.h"
 #include "../home/delay.h"
 #include "../home/names.h"
+#include "../home/double_speed.h"
 #include "../engine/gfx/dma_transfer.h"
 #include "../engine/pokemon/bills_pc_top.h"
 
@@ -558,6 +559,7 @@ void BattleTowerRoomMenu_InitRAM(void){
     // LD_addr_A(wcd32);
     wram->wcd32 = gb_read(rIE);
     // CALL(aDoubleSpeed);
+    DoubleSpeed();
     // XOR_A_A;
     // LDH_addr_A(rIF);
     gb_write(rIF, 0);

@@ -1612,6 +1612,7 @@ typedef struct MobileAPIData
     uint8_t h;
     uint16_t bc;
     void* hl;
+    void* de;
 } mobile_api_data_s;
 
 struct CoordsTileId

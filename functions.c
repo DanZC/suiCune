@@ -11098,4 +11098,50 @@ CONVERTED(v_AnimateTileset);
 
     // mobile/print_opp_message.c
     // CONVERTED(Mobile_PrintOpponentBattleMessage);
+
+    // mobile/mobile_5b.c
+    // CONVERTED(Function16cc73);
+    // CONVERTED(Unknown_16cfa9);
+    // CONVERTED(Function16c0a8);
+    // CONVERTED(Function16cbba);
+    // CONVERTED(Function16cb40);
+    // CONVERTED(Function16c089);
+    // CONVERTED(Function16cc49);
+    // CONVERTED(Function16c0dc);
+    // CONVERTED(Function16c0ec);
+    // CONVERTED(Function16cc6e);
+    // CONVERTED(Function16cae8);
+    // CONVERTED(Unknown_16cbfb);
+    // CONVERTED(Function16cc90);
+    // CONVERTED(Function16cb08);
+    // CONVERTED(Function16cb2e);
+    // CONVERTED(Function16cad8);
+    // CONVERTED(Function16cbd1);
+    // CONVERTED(Function16cc62);
+    // CONVERTED(Function16cbae);
+    // CONVERTED(Function16ca11);
+    // CONVERTED(MobileAdapterCheckGFX);
+    // CONVERTED(Function16cb5d);
+    // CONVERTED(Function16c000);
+    // CONVERTED(Unknown_16cb86);
+    // CONVERTED(Function16cba3);
+    // CONVERTED(Function16cabb);
+    // CONVERTED(Function16c0fa);
+    // CONVERTED(Function16c0ca);
+    // CONVERTED(Function16cc02);
+    // CONVERTED(MobileSystemSplashScreen_InitGFX);
+    // CONVERTED(Function16c943);
+    // CONVERTED(Function16c0ba);
+    // CONVERTED(Function16cc18);
+    // CONVERTED(Function16cc5a);
+    // CONVERTED(Function16cb0f);
+    // CONVERTED(Function16c09e);
+    // CONVERTED(Function16cab6);
+    // CONVERTED(Function16cadc);
+    // CONVERTED(Function16cc25);
+    // CONVERTED(MobileSplashScreenPalettes);
+    // CONVERTED(Unknown_16cfb9);
+    // CONVERTED(Function16cac4);
+    // CONVERTED(Unknown_16cfb1);
+    // CONVERTED(Unknown_16cfa3);
 }

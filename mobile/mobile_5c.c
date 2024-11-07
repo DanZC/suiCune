@@ -836,10 +836,10 @@ void asm_171c60(void){
 }
 
 void Function171c66(void){
-    LD_HL(wcd49);
-    INC_hl;
-    RET;
-
+    // LD_HL(wcd49);
+    // INC_hl;
+    wram->wcd49++;
+    // RET;
 }
 
 void MenuHeader_171c6b(void){
@@ -858,32 +858,40 @@ void String_171c73(void){
     return Function171c87();
 }
 
+// LoadEnterPasswordGFX
 void Function171c87(void){
-    CALL(aDisableLCD);
-    LD_HL(mAsciiFontGFX);
-    LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
-    LD_BC(0x6e0);
-    CALL(aCopyBytes);
-    LD_HL(mPasswordSlowpokeLZ);
-    LD_DE(vTiles0 + LEN_2BPP_TILE * 0x00);
-    CALL(aDecompress);
-    CALL(aEnableLCD);
-    LD_HL(mPasswordTopTilemap);
-    decoord(0, 0, wTilemap);
-    LD_BC(0x168);
-    CALL(aCopyBytes);
-    LD_HL(mMobilePasswordAttrmap);
-    decoord(0, 0, wAttrmap);
-    LD_BC(0x168);
-    CALL(aCopyBytes);
-    hlcoord(3, 2, wTilemap);
-    LD_DE(mString_172e31);
-    CALL(aPlaceString);
-    hlcoord(3, 16, wTilemap);
-    LD_DE(mString_172e3f);
-    CALL(aPlaceString);
-    RET;
-
+    // CALL(aDisableLCD);
+    DisableLCD_Conv();
+    // LD_HL(mAsciiFontGFX);
+    // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
+    // LD_BC(0x6e0);
+    // CALL(aCopyBytes);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x00, AsciiFontGFX, 0x0, 0x6e0 / LEN_2BPP_TILE);
+    // LD_HL(mPasswordSlowpokeLZ);
+    // LD_DE(vTiles0 + LEN_2BPP_TILE * 0x00);
+    // CALL(aDecompress);
+    LoadPNG2bppAssetToVRAM(vram->vTiles0 + LEN_2BPP_TILE * 0x00, PasswordSlowpokeLZ);
+    // CALL(aEnableLCD);
+    EnableLCD_Conv();
+    // LD_HL(mPasswordTopTilemap);
+    // decoord(0, 0, wTilemap);
+    // LD_BC(0x168);
+    // CALL(aCopyBytes);
+    LoadAssetToBuffer(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, PasswordTopTilemap);
+    // LD_HL(mMobilePasswordAttrmap);
+    // decoord(0, 0, wAttrmap);
+    // LD_BC(0x168);
+    // CALL(aCopyBytes);
+    LoadAssetToBuffer(coord(0, 0, wram->wAttrmap), SCREEN_WIDTH * SCREEN_HEIGHT, MobilePasswordAttrmap);
+    // hlcoord(3, 2, wTilemap);
+    // LD_DE(mString_172e31);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(String_172e31), coord(3, 2, wram->wTilemap));
+    // hlcoord(3, 16, wTilemap);
+    // LD_DE(mString_172e3f);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(String_172e3f), coord(3, 16, wram->wTilemap));
+    // RET;
 }
 
 void Function171ccd(void){
@@ -978,21 +986,9 @@ void MobilePasswordPalettes(void){
 
 const char AsciiFontGFX[] = "gfx/mobile/ascii_font.png";
 
-void PasswordTopTilemap(void){
-// INCBIN "gfx/mobile/password_top.tilemap"
-
-    return PasswordBottomTilemap();
-}
-
-void PasswordBottomTilemap(void){
-// INCBIN "gfx/mobile/password_bottom.tilemap"
-
-    return PasswordShiftTilemap();
-}
-
-void PasswordShiftTilemap(void){
-// INCBIN "gfx/mobile/password_shift.tilemap"
-}
+const char PasswordTopTilemap[] = "gfx/mobile/password_top.tilemap";
+const char PasswordBottomTilemap[] = "gfx/mobile/password_bottom.tilemap";
+const char PasswordShiftTilemap[] = "gfx/mobile/password_shift.tilemap";
 
 const char ChooseMobileCenterTilemap[] = "gfx/mobile/mobile_center.tilemap";
 const char MobilePasswordAttrmap[] = "gfx/mobile/password.attrmap";
@@ -1008,109 +1004,106 @@ const char String_172e5d[] =
             "Connect to a" // "せつぞくする\u3000モバイルセンターを"
     t_next  "MOBILE CENTER@"; // "えらんで\u3000ください@"
 
+// LoadMobileStadiumGFX
 void Function172e78(void){
-    LD_A(0x7f);
-    hlcoord(0, 0, wTilemap);
-    LD_BC(0x168);
-    CALL(aByteFill);
-    LD_A(0x7);
-    hlcoord(0, 0, wAttrmap);
-    LD_BC(0x168);
-    CALL(aByteFill);
-    CALL(aDisableLCD);
-    LD_HL(mStadium2N64GFX);
-    LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
-    LD_BC(0x610);
-    CALL(aCopyBytes);
-    CALL(aEnableLCD);
-    LD_HL(mStadium2N64Tilemap);
-    decoord(0, 0, wTilemap);
-    LD_BC(0x168);
-    CALL(aCopyBytes);
-    LD_HL(mStadium2N64Attrmap);
-    decoord(0, 0, wAttrmap);
-    LD_BC(0x168);
-    CALL(aCopyBytes);
-    RET;
-
+    // LD_A(0x7f);
+    // hlcoord(0, 0, wTilemap);
+    // LD_BC(0x168);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
+    // LD_A(0x7);
+    // hlcoord(0, 0, wAttrmap);
+    // LD_BC(0x168);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(0, 0, wram->wAttrmap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7);
+    // CALL(aDisableLCD);
+    DisableLCD_Conv();
+    // LD_HL(mStadium2N64GFX);
+    // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
+    // LD_BC(0x610);
+    // CALL(aCopyBytes);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x00, Stadium2N64GFX, 0x0, 0x610 / LEN_2BPP_TILE);
+    // CALL(aEnableLCD);
+    EnableLCD_Conv();
+    // LD_HL(mStadium2N64Tilemap);
+    // decoord(0, 0, wTilemap);
+    // LD_BC(0x168);
+    // CALL(aCopyBytes);
+    LoadAssetToBuffer(coord(0, 0, wram->wTilemap), 0x168, Stadium2N64Tilemap);
+    // LD_HL(mStadium2N64Attrmap);
+    // decoord(0, 0, wAttrmap);
+    // LD_BC(0x168);
+    // CALL(aCopyBytes);
+    LoadAssetToBuffer(coord(0, 0, wram->wAttrmap), 0x168, Stadium2N64Attrmap);
+    // RET;
 }
 
 void Function172eb9(void){
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(0x5);
-    LDH_addr_A(rSVBK);
-    LD_HL(mPalette_172edf);
-    LD_DE(wBGPals1);
-    LD_BC(8 * PALETTE_SIZE);
-    CALL(aCopyBytes);
-    LD_HL(mPalette_172edf);
-    LD_DE(wBGPals2);
-    LD_BC(8 * PALETTE_SIZE);
-    CALL(aCopyBytes);
-    CALL(aSetPalettes);
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    RET;
-
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(0x5);
+    // LDH_addr_A(rSVBK);
+    // LD_HL(mPalette_172edf);
+    // LD_DE(wBGPals1);
+    // LD_BC(8 * PALETTE_SIZE);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wBGPals1, Palette_172edf, 8 * PALETTE_SIZE);
+    // LD_HL(mPalette_172edf);
+    // LD_DE(wBGPals2);
+    // LD_BC(8 * PALETTE_SIZE);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wBGPals2, Palette_172edf, 8 * PALETTE_SIZE);
+    // CALL(aSetPalettes);
+    SetPalettes_Conv();
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // RET;
 }
 
-void Palette_172edf(void){
-    //rgb ['5', '12', '17']
-    //rgb ['31', '31', '31']
-    //rgb ['18', '25', '28']
-    //rgb ['10', '17', '21']
-    //rgb ['6', '13', '18']
-    //rgb ['31', '31', '31']
-    //rgb ['20', '26', '28']
-    //rgb ['12', '19', '23']
-    //rgb ['3', '10', '16']
-    //rgb ['31', '31', '31']
-    //rgb ['6', '13', '18']
-    //rgb ['20', '26', '28']
-    //rgb ['0', '0', '0']
-    //rgb ['0', '0', '0']
-    //rgb ['0', '0', '0']
-    //rgb ['0', '0', '0']
-    //rgb ['0', '0', '0']
-    //rgb ['0', '0', '0']
-    //rgb ['0', '0', '0']
-    //rgb ['0', '0', '0']
-    //rgb ['0', '0', '0']
-    //rgb ['0', '0', '0']
-    //rgb ['0', '0', '0']
-    //rgb ['0', '0', '0']
-    //rgb ['5', '5', '16']
-    //rgb ['8', '19', '28']
-    //rgb ['0', '0', '0']
-    //rgb ['31', '31', '31']
-    //rgb ['31', '31', '31']
-    //rgb ['0', '0', '0']
-    //rgb ['0', '0', '0']
-    //rgb ['0', '0', '0']
+const uint16_t Palette_172edf[] = {
+    rgb(5, 12, 17),
+    rgb(31, 31, 31),
+    rgb(18, 25, 28),
+    rgb(10, 17, 21),
+    rgb(6, 13, 18),
+    rgb(31, 31, 31),
+    rgb(20, 26, 28),
+    rgb(12, 19, 23),
+    rgb(3, 10, 16),
+    rgb(31, 31, 31),
+    rgb(6, 13, 18),
+    rgb(20, 26, 28),
+    rgb(0, 0, 0),
+    rgb(0, 0, 0),
+    rgb(0, 0, 0),
+    rgb(0, 0, 0),
+    rgb(0, 0, 0),
+    rgb(0, 0, 0),
+    rgb(0, 0, 0),
+    rgb(0, 0, 0),
+    rgb(0, 0, 0),
+    rgb(0, 0, 0),
+    rgb(0, 0, 0),
+    rgb(0, 0, 0),
+    rgb(5, 5, 16),
+    rgb(8, 19, 28),
+    rgb(0, 0, 0),
+    rgb(31, 31, 31),
+    rgb(31, 31, 31),
+    rgb(0, 0, 0),
+    rgb(0, 0, 0),
+    rgb(0, 0, 0),
+};
 
-    return Stadium2N64GFX();
-}
+const char Stadium2N64GFX[] = "gfx/mobile/stadium2_n64.2bpp";
 
-void Stadium2N64GFX(void){
-// INCBIN "gfx/mobile/stadium2_n64.2bpp"
-
-    return Stadium2N64Tilemap();
-}
-
-void Stadium2N64Tilemap(void){
+const char Stadium2N64Tilemap[] =
 #if defined(_CRYSTAL11)
 //  Crystal 1.1 corrupted this tilemap by treating $0a bytes as Unix newlines,
 //  and converting them to $0d $0a Windows newlines.
-// INCBIN "gfx/mobile/stadium2_n64_corrupt.tilemap"
+    "gfx/mobile/stadium2_n64_corrupt.tilemap";
 #else
-// INCBIN "gfx/mobile/stadium2_n64.tilemap"
+    "gfx/mobile/stadium2_n64.tilemap";
 #endif
 
-    return Stadium2N64Attrmap();
-}
-
-void Stadium2N64Attrmap(void){
-// INCBIN "gfx/mobile/stadium2_n64.attrmap"
-
-}
+const char Stadium2N64Attrmap[] = "gfx/mobile/stadium2_n64.attrmap";

@@ -2888,6 +2888,10 @@ void gb_finish_frame(void) {
         gb.gb_reg.IF &= ~SERIAL_INTR;
         Serial();
     }
+    if(gb.gb_reg.IF & TIMER_INTR) {
+        gb.gb_reg.IF &= ~TIMER_INTR;
+        Timer();
+    }
     sdl_loop();
 }
 

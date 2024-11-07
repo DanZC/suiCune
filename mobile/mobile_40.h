@@ -534,7 +534,7 @@ extern const txt_cmd_s PleaseTryAgainTomorrowText[];
 void Function103780(void);
 void Function10378c(void);
 void Function1037c2(void);
-void TryAgainUsingSameSettingsText(void);
+extern const txt_cmd_s TryAgainUsingSameSettingsText[];
 void Function1037eb(void);
 extern const txt_cmd_s MobileBattleLessThanOneMinuteLeftText[];
 extern const txt_cmd_s MobileBattleNoTimeLeftForLinkingText[];
@@ -542,6 +542,6 @@ bool MobileCheckRemainingBattleTime(void);
 void Function10383c(void);
 extern const txt_cmd_s PickThreeMonForMobileBattleText[];
 void Function10387b(void);
-void MobileBattleRemainingTimeText(void);
+extern const txt_cmd_s MobileBattleRemainingTimeText[];
 //#include "gfx/mobile/mobile_trade_lights.2bpp"
 //#include "gfx/mobile/mobile_trade_lights.pal"

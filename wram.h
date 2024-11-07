@@ -1936,7 +1936,7 @@ struct wram_s
                     struct {
                         // WRAMX
                         // mobile?
-                        uint8_t wd002;
+                        uint8_t wd002; // wMobileAdapterCheckJumptableIndex
                         uint8_t wd003;
                         uint8_t wd004[1];
                         uint8_t skip_70[3];
@@ -2421,16 +2421,16 @@ struct wram_s
                     };
                     struct {
                         // mobile
-                        uint8_t wd1ea[1];
-                        uint8_t wd1eb[1];
-                        uint8_t wd1ec[1];
-                        uint8_t wd1ed[1];
-                        uint8_t wd1ee[1];
-                        uint8_t wd1ef[1];
-                        uint8_t wd1f0[1];
-                        uint8_t wd1f1[1];
-                        uint8_t wd1f2[1];
-                        uint8_t wd1f3[1];
+                        uint8_t wd1ea;
+                        uint8_t wd1eb;
+                        uint8_t wd1ec; // mobile OAM timer?
+                        uint8_t wd1ed; // mobile OAM X Offset
+                        uint8_t wd1ee; // mobile OAM Y Offset
+                        uint8_t wd1ef; // mobile OAM tile ID
+                        uint8_t wd1f0; // mobile OAM attributes
+                        uint8_t wd1f1;
+                        uint8_t wd1f2;
+                        uint8_t wd1f3;
                         uint8_t skip_89[6];
                     };
                     struct {

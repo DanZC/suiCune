@@ -46,9 +46,9 @@ void Function171cf0(void);
 void Function171d2b(void);
 void MobilePasswordPalettes(void);
 extern const char AsciiFontGFX[];
-void PasswordTopTilemap(void);
-void PasswordBottomTilemap(void);
-void PasswordShiftTilemap(void);
+extern const char PasswordTopTilemap[];
+extern const char PasswordBottomTilemap[];
+extern const char PasswordShiftTilemap[];
 extern const char ChooseMobileCenterTilemap[];
 extern const char MobilePasswordAttrmap[];
 extern const char ChooseMobileCenterAttrmap[];
@@ -60,10 +60,10 @@ extern const char String_172e58[];
 extern const char String_172e5d[];
 void Function172e78(void);
 void Function172eb9(void);
-void Palette_172edf(void);
-void Stadium2N64GFX(void);
-void Stadium2N64Tilemap(void);
-void Stadium2N64Attrmap(void);
+extern const uint16_t Palette_172edf[];
+extern const char Stadium2N64GFX[];
+extern const char Stadium2N64Tilemap[];
+extern const char Stadium2N64Attrmap[];
 //#include "engine/events/battle_tower/battle_tower.h"
 //#include "gfx/mobile/pichu_animated.2bpp.lz"
 //#include "gfx/mobile/electro_ball.2bpp.lz"
