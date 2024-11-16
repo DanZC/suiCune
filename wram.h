@@ -1016,8 +1016,8 @@ struct wram_s
                         uint8_t wc822;
                         uint8_t wc823[4];
                         uint16_t wc827;
-                        uint8_t wc829;
-                        uint8_t wc82a;
+                        uint8_t wc829; // MobileReceiveBuffer_DestinationLo
+                        uint8_t wc82a; // MobileReceiveBuffer_DestinationHi
                         uint8_t wc82b;
                         uint8_t wc82c;
                         uint8_t wc82d;
@@ -1103,7 +1103,8 @@ struct wram_s
                         uint8_t wc9ae;
                         uint16_t wc9af;
                         uint8_t wc9b1;
-                        uint8_t wc9b2[3];
+                        uint8_t wc9b2;
+                        uint8_t wc9b3[2];
                         uint8_t wc9b5;
                         uint8_t wc9b6[121];
                         uint8_t wMobileSDK_ReceivePacketBufferAlt[11];
