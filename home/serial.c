@@ -1,6 +1,7 @@
 #include "../constants.h"
 #include "serial.h"
 #include "delay.h"
+#include "mobile.h"
 #include "../engine/link/place_waiting_text.h"
 #include "copy_tilemap.h"
 #include "../util/network.h"
@@ -121,6 +122,7 @@ void Serial_Conv(void){
     if(hram->hMobileReceive != FALSE) {
     // mobile:
         // CALL(aMobileReceive);
+        MobileReceive();
     // TODO: Convert MobileReceive
         // goto end;
         return;

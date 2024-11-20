@@ -1,10 +1,10 @@
 void StubbedTrainerRankings_HallOfFame2(void);
 void StubbedTrainerRankings_MagikarpLength(void);
-void StubbedTrainerRankings_BugContestScore(void);
+void StubbedTrainerRankings_BugContestScore(uint16_t score);
 void StubbedTrainerRankings_AddToSlotsWinStreak(void);
 void StubbedTrainerRankings_EndSlotsWinStreak(void);
 void StubbedTrainerRankings_AddToSlotsPayouts(void);
-void StubbedTrainerRankings_AddToBattlePayouts(void);
+void StubbedTrainerRankings_AddToBattlePayouts(const uint8_t* bc);
 void StubbedTrainerRankings_StepCount(void);
 void StubbedTrainerRankings_BattleTowerWins(void);
 void StubbedTrainerRankings_TMsHMsTaught(void);

@@ -132,38 +132,42 @@ done:
 
 }
 
-void StubbedTrainerRankings_BugContestScore(void){
-    RET;
-    LD_A(BANK(sTrainerRankingBugContestScore));
-    CALL(aOpenSRAM);
-    LDH_A_addr(hProduct);
-    LD_HL(sTrainerRankingBugContestScore);
-    CP_A_hl;
-    IF_Z goto isLowByteHigher;
-    IF_NC goto newHighScore;
-    goto done;
+void StubbedTrainerRankings_BugContestScore(uint16_t new_score){
+    // RET;
+    // LD_A(BANK(sTrainerRankingBugContestScore));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(sTrainerRankingBugContestScore));
+    // LDH_A_addr(hProduct);
+    // LD_HL(sTrainerRankingBugContestScore);
+    uint16_t saved_score = (gb_read(sTrainerRankingBugContestScore) << 8) | gb_read(sTrainerRankingBugContestScore + 1);
+    // CP_A_hl;
+    // IF_Z goto isLowByteHigher;
+    // IF_NC goto newHighScore;
+    // goto done;
 
+// isLowByteHigher:
+    // INC_HL;
+    // LDH_A_addr(hMultiplicand);
+    // CP_A_hl;
+    // IF_C goto done;
+    // DEC_HL;
+    
+    if(new_score > saved_score) {
+    // newHighScore:
+        // LDH_A_addr(hProduct);
+        // LD_hli_A;
+        gb_write(sTrainerRankingBugContestScore, HIGH(new_score));
+        // LDH_A_addr(hMultiplicand);
+        // LD_hl_A;
+        gb_write(sTrainerRankingBugContestScore + 1, LOW(new_score));
+    }
 
-isLowByteHigher:
-    INC_HL;
-    LDH_A_addr(hMultiplicand);
-    CP_A_hl;
-    IF_C goto done;
-    DEC_HL;
-
-
-newHighScore:
-    LDH_A_addr(hProduct);
-    LD_hli_A;
-    LDH_A_addr(hMultiplicand);
-    LD_hl_A;
-
-
-done:
-    CALL(aUpdateTrainerRankingsChecksum);
-    CALL(aCloseSRAM);
-    RET;
-
+// done:
+    // CALL(aUpdateTrainerRankingsChecksum);
+    UpdateTrainerRankingsChecksum();
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
 }
 
 void StubbedTrainerRankings_AddToSlotsWinStreak(void){
@@ -257,37 +261,53 @@ done:
 
 }
 
-void StubbedTrainerRankings_AddToBattlePayouts(void){
-    RET;
-    LD_A(BANK(sTrainerRankingTotalBattlePayouts));
-    CALL(aOpenSRAM);
-    LD_HL(sTrainerRankingTotalBattlePayouts + 3);
-    LD_A_bc;
-    DEC_BC;
-    ADD_A_hl;
-    LD_hld_A;
-    LD_A_bc;
-    DEC_BC;
-    ADC_A_hl;
-    LD_hld_A;
-    LD_A_bc;
-    ADC_A_hl;
-    LD_hld_A;
-    IF_NC goto done;
-    INC_hl;
-    IF_NZ goto done;
-    LD_A(0xff);
-    LD_hli_A;
-    LD_hli_A;
-    LD_hli_A;
-    LD_hl_A;
+void StubbedTrainerRankings_AddToBattlePayouts(const uint8_t* bc){
+    // RET;
+    // LD_A(BANK(sTrainerRankingTotalBattlePayouts));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asTrainerRankingTotalBattlePayouts));
+    // LD_HL(sTrainerRankingTotalBattlePayouts + 3);
+    uint8_t* hl = GBToRAMAddr(sTrainerRankingTotalBattlePayouts);
+    // LD_A_bc;
+    // DEC_BC;
+    // ADD_A_hl;
+    uint16_t temp = bc[2] + hl[3];
+    // LD_hld_A;
+    hl[3] = (temp & 0xff);
+    // LD_A_bc;
+    // DEC_BC;
+    // ADC_A_hl;
+    temp = bc[1] + hl[2] + ((temp & 0xff00) > 0)? 1: 0;
+    // LD_hld_A;
+    hl[2] = (temp & 0xff);
+    // LD_A_bc;
+    // ADC_A_hl;
+    temp = bc[0] + hl[1] + ((temp & 0xff00) > 0)? 1: 0;
+    // LD_hld_A;
+    hl[1] = (temp & 0xff);
+    // IF_NC goto done;
+    if((temp & 0xff00) > 0) {
+        // INC_hl;
+        // IF_NZ goto done;
+        if(++hl[0] == 0) {
+            // LD_A(0xff);
+            // LD_hli_A;
+            hl[0] = 0xff;
+            // LD_hli_A;
+            hl[1] = 0xff;
+            // LD_hli_A;
+            hl[2] = 0xff;
+            // LD_hl_A;
+            hl[3] = 0xff;
+        }
+    }
 
-
-done:
-    CALL(aUpdateTrainerRankingsChecksum);
-    CALL(aCloseSRAM);
-    RET;
-
+// done:
+    // CALL(aUpdateTrainerRankingsChecksum);
+    UpdateTrainerRankingsChecksum();
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
 }
 
 void StubbedTrainerRankings_StepCount(void){

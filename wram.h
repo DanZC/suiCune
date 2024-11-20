@@ -991,10 +991,16 @@ struct wram_s
                         uint8_t wc805;
                         uint8_t wc806;
                         uint8_t wc807;
-                        uint16_t wc808;
+                        union {
+                            uint16_t wc808;
+                            uint8_t wc808_arr[2];
+                        };
                         uint8_t wc80a;
                         uint8_t wc80b;
-                        uint16_t wc80c;
+                        union {
+                            uint16_t wc80c;
+                            uint8_t wc80c_arr[2];
+                        };
                         uint8_t wc80e;
                         uint8_t wc80f;
                         uint8_t wc810;
@@ -1002,7 +1008,8 @@ struct wram_s
                         uint16_t wMobileSDK_PacketChecksum;
                         uint8_t wc814;
                         uint8_t wc815;
-                        uint16_t wc816;
+                        uint8_t wc816;
+                        uint8_t wc817;
                         uint8_t wMobileSDK_AdapterType;
                         uint8_t wc819;
                         uint8_t wc81a;
@@ -1937,9 +1944,14 @@ struct wram_s
                     struct {
                         // WRAMX
                         // mobile?
-                        uint8_t wd002; // wMobileAdapterCheckJumptableIndex
-                        uint8_t wd003;
-                        uint8_t wd004[1];
+                        union {
+                            struct {
+                                uint8_t wd002; // wMobileAdapterCheckJumptableIndex
+                                uint8_t wd003;
+                                uint8_t wd004[1];
+                            };
+                            uint8_t wMobileAdapterPlayerSelectionBuffer[3];
+                        };
                         uint8_t skip_70[3];
                         uint8_t wd008[2];
                         uint8_t skip_71[6];
@@ -1950,8 +1962,8 @@ struct wram_s
                         uint8_t wd014[2];
                         uint8_t skip_72[1];
                         uint8_t wd017[1];
-                        uint8_t wd018[1];
-                        uint8_t wd019[1];
+                        uint8_t wd018;
+                        uint8_t wd019;
                         uint8_t skip_73[19];
                         uint8_t wd02d[1];
                         uint8_t wd02e[1];

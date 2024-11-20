@@ -74,20 +74,20 @@ void ReturnMobileAPI(mobile_api_data_s *api){
 }
 
 void MobileReceive(void){
-    LDH_A_addr(hROMBank);
-    PUSH_AF;
-    LD_A(BANK(av_MobileReceive));
-    LD_addr_A(wc981);
-    RST(aBankswitch);
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+    // LD_A(BANK(av_MobileReceive));
+    // LD_addr_A(wc981);
+    // RST(aBankswitch);
 
-    CALL(av_MobileReceive);
-    POP_BC;
-    LD_A_B;
-    LD_addr_A(wc981);
-    RST(aBankswitch);
+    // CALL(av_MobileReceive);
+    v_MobileReceive();
+    // POP_BC;
+    // LD_A_B;
+    // LD_addr_A(wc981);
+    // RST(aBankswitch);
 
-    RET;
-
+    // RET;
 }
 
 void MobileTimer(void){
@@ -129,7 +129,7 @@ void MobileTimer(void){
                 // RST(aBankswitch);
 
                 // CALL(av_Timer);
-                // v_Timer();
+                v_Timer();
                 // TODO: Convert v_Timer
 
                 // POP_BC;

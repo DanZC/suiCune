@@ -1,4 +1,8 @@
 #include "../../constants.h"
+extern uint8_t gMobileParticipant1Nickname[MON_NAME_LENGTH];
+extern uint8_t gMobileParticipant2Nickname[MON_NAME_LENGTH];
+extern uint8_t gMobileParticipant3Nickname[MON_NAME_LENGTH];
+
 const txt_cmd_s v_OakText6[] = {
     text_start("Now, what did you"
         t_line "say your name was?"
@@ -1006,15 +1010,15 @@ const txt_cmd_s v_MobilePickThreeMonForBattleText[] = {
 };
 
 const txt_cmd_s v_MobileUseTheseThreeMonText[] = {
-    text_ram(wram_ptr(wMobileParticipant1Nickname))
+    text_ram(gMobileParticipant1Nickname)
     text_start(","
         t_line "@"
         )
-    text_ram(wram_ptr(wMobileParticipant2Nickname))
+    text_ram(gMobileParticipant2Nickname)
     text_start(" and"
         t_cont "@"
         )
-    text_ram(wram_ptr(wMobileParticipant3Nickname))
+    text_ram(gMobileParticipant3Nickname)
     text_start("."
 
         t_para "Use these three?"

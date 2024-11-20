@@ -1,6 +1,7 @@
 #include "../../../constants.h"
 #include "judging.h"
 #include "contest_2.h"
+#include "../../../mobile/mobile_41.h"
 #include "../../battle/read_trainer_attributes.h"
 #include "../../battle/read_trainer_party.h"
 #include "../../../home/audio.h"
@@ -16,6 +17,7 @@ uint8_t v_BugContestJudging(void){
     // CALL(aContestScore);
     uint16_t score = ContestScore();
     // FARCALL(aStubbedTrainerRankings_BugContestScore);
+    StubbedTrainerRankings_BugContestScore(score);
     // CALL(aBugContest_JudgeContestants);
     BugContest_JudgeContestants(score);
     // LD_A_addr(wBugContestThirdPlaceWinnerID);

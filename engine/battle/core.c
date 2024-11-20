@@ -4579,6 +4579,7 @@ void AddBattleMoneyToAccount(uint8_t* de, const uint8_t* hl){
     // LD_B_H;
     // LD_C_L;
     // FARCALL(aStubbedTrainerRankings_AddToBattlePayouts);
+    StubbedTrainerRankings_AddToBattlePayouts(hl);
     // POP_BC;
     // POP_HL;
     uint8_t c = 3;

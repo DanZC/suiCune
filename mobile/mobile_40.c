@@ -1,6 +1,7 @@
 #include "../constants.h"
 #include "mobile_40.h"
 #include "mobile_41.h"
+#include "mobile_12_2.h"
 #include "mobile_45_sprite_engine.h"
 #include "mobile_5f.h"
 #include "../home/delay.h"
@@ -9853,33 +9854,43 @@ bool MobileCheckRemainingBattleTime(void){
 
 // Mobile_SelectThreeMons2
 void Function10383c(void){
-    LD_A(0x01);
-    LD_addr_A(wdc60);
-    XOR_A_A;
-    LD_HL(wPlayerMonSelection);
-    LD_hli_A;
-    LD_hli_A;
-    LD_hl_A;
-    LD_HL(mPickThreeMonForMobileBattleText);
-    CALL(aPrintText);
-    CALL(aJoyWaitAorB);
-    FARCALL(aScript_reloadmappart);
-    FARCALL(aFunction4a94e);
-    IF_C goto asm_103870;
-    LD_HL(wd002);
-    LD_DE(wPlayerMonSelection);
-    LD_BC(3);
-    CALL(aCopyBytes);
-    XOR_A_A;
-    LD_addr_A(wScriptVar);
-    RET;
-
-
-asm_103870:
-    LD_A(0x01);
-    LD_addr_A(wScriptVar);
-    RET;
-
+    // LD_A(0x01);
+    // LD_addr_A(wdc60);
+    wram->wdc60 = 0x01;
+    // XOR_A_A;
+    // LD_HL(wPlayerMonSelection);
+    // LD_hli_A;
+    wram->wPlayerMonSelection[0] = 0x0;
+    // LD_hli_A;
+    wram->wPlayerMonSelection[1] = 0x0;
+    // LD_hl_A;
+    wram->wPlayerMonSelection[2] = 0x0;
+    // LD_HL(mPickThreeMonForMobileBattleText);
+    // CALL(aPrintText);
+    PrintText_Conv2(PickThreeMonForMobileBattleText);
+    // CALL(aJoyWaitAorB);
+    JoyWaitAorB_Conv();
+    // FARCALL(aScript_reloadmappart);
+    Script_reloadmappart_Conv(&gCurScript);
+    // FARCALL(aFunction4a94e);
+    // IF_C goto asm_103870;
+    if(Function4a94e()) {
+    // asm_103870:
+        // LD_A(0x01);
+        // LD_addr_A(wScriptVar);
+        wram->wScriptVar = 0x01;
+        // RET;
+        return;
+    }
+    // LD_HL(wd002);
+    // LD_DE(wPlayerMonSelection);
+    // LD_BC(3);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wPlayerMonSelection, wram->wMobileAdapterPlayerSelectionBuffer, 3);
+    // XOR_A_A;
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = 0x0;
+    // RET;
 }
 
 const txt_cmd_s PickThreeMonForMobileBattleText[] = {
