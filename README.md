@@ -15,6 +15,16 @@ The project starts off with a modified version of pokecrystal, with no reliance 
 
 **Setup**
 
+Clone the repository using
+
+    git clone --recursive https://github.com/DanZC/suiCune.git
+
+If you already have the repository cloned, but are missing the libmobile library, run
+
+    git pull
+    git submodule init
+    git submodule update
+
 ***For MSYS2***
 
 Install SDL2, SDL2_net, and PhysFS using pacman. The UCRT repositories are recommended.

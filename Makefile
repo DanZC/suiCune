@@ -6,7 +6,7 @@ CC	:= cc
 OBJEXT	:= o
 RM	:= rm -f
 EXEOUT	:= -o
-EXTRA_CFLAGS := -std=c99 -Wall -Wextra -Werror -Wno-unused-label -Og -g3
+EXTRA_CFLAGS := -std=c99 -Wall -Wextra -Werror -Wno-unused-label -Og -g# -Og -g3
 EXE	:= $(NAME)
 
 # File extension ".exe" is automatically appended on MinGW and MSVC builds, even
@@ -105,7 +105,7 @@ ifeq ($(OS),Windows_NT)
 endif
 
 all: $(TARGET)
-$(TARGET): $(OBJS)
+$(TARGET): $(OBJS) lib/libmobile.a
 	$(CC) $(CFLAGS) $(EXEOUT)$@ $^ $(LDFLAGS) $(LDLIBS) 
 
 %.obj: %.c
@@ -117,6 +117,10 @@ $(TARGET): $(OBJS)
 # 		/DNAME="$(NAME)" /DICON_FILE="$(ICON_FILE)" $^
 %.o: %.rc
 	windres -i $^ -o $@
+
+LIBMOBILE_SRCS := $(wildcard lib/libmobile/*.c)
+lib/libmobile.a: $(LIBMOBILE_SRCS:.c=.o)
+	$(AR) rcs $@ $^
 
 clean:
 	$(RM) $(SRCS:.c=.$(OBJEXT)) $(TARGET) icon.o \

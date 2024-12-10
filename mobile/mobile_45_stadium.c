@@ -1,6 +1,8 @@
 #include "../constants.h"
 #include "mobile_45_stadium.h"
+#include "../home/text.h"
 #include "../engine/events/odd_egg.h"
+#include "../data/text/common.h"
 
 void GiveOddEgg(void){
     // FARCALL(av_GiveOddEgg);
@@ -522,23 +524,19 @@ void Function1179a7(void){
 
 }
 
-void MenuHeader_1179b5(void){
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['0', '12', 'SCREEN_WIDTH - 1', 'SCREEN_HEIGHT - 1'];
-    //dw ['NULL'];
-    //db ['0'];  // default option
+const struct MenuHeader MenuHeader_1179b5 = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(0, 12, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1),
+    .data = NULL,
+    .defaultOption = 0,  // default option
+};
 
-    return MenuHeader_1179bd();
-}
-
-void MenuHeader_1179bd(void){
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['14', '7', 'SCREEN_WIDTH - 1', 'TEXTBOX_Y - 1'];
-    //dw ['NULL'];
-    //db ['0'];  // default option
-
-    return YessNoString_1179c5();
-}
+const struct MenuHeader MenuHeader_1179bd = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(14, 7, SCREEN_WIDTH - 1, TEXTBOX_Y - 1),
+    .data = NULL,
+    .defaultOption = 0,  // default option
+};
 
 void YessNoString_1179c5(void){
     //db ['"はい"'];
@@ -564,18 +562,17 @@ void NotAPokemonPasswordString(void){
 void SavedPasswordString(void){
     //db ['"ログインパスワード¯ほぞん"'];
     //line ['"しました@"']
-
-    return MobilePassword_IncrementJumptable();
 }
 
 void MobilePassword_IncrementJumptable(void){
-    LD_HL(wcd49);
-    INC_hl;
-    RET;
+    // LD_HL(wcd49);
+    // INC_hl;
+    wram->wcd49++;
+    // RET;
+}
 
 // pushc
 // setcharmap ascii
-}
 
 const char Unknown_117a0f[][29] = {
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ  ",
@@ -692,10 +689,11 @@ void Function117b14(void){
 }
 
 void Function117b28(void){
-    LD_HL(mMobileStadiumEntryText);
-    CALL(aPrintText);
-    JP(mMobileStudium_JumptableIncrement);
-
+    // LD_HL(mMobileStadiumEntryText);
+    // CALL(aPrintText);
+    PrintText_Conv2(MobileStadiumEntryText);
+    // JP(mMobileStudium_JumptableIncrement);
+    return MobileStudium_JumptableIncrement();
 }
 
 void Function117b31(void){
@@ -926,48 +924,38 @@ asm_117c97:
 
 }
 
-void MenuHeader_117cbc(void){
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['0', '12', 'SCREEN_WIDTH - 1', 'SCREEN_HEIGHT - 1'];
-    //dw ['NULL'];
-    //db ['0'];  // default option
+const struct MenuHeader MenuHeader_117cbc = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(0, 12, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1),
+    .data = NULL,
+    .defaultOption = 0,  // default option
+};
 
-    return MenuHeader_117cc4();
-}
-
-void MenuHeader_117cc4(void){
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['14', '7', 'SCREEN_WIDTH - 1', 'TEXTBOX_Y - 1'];
-    //dw ['NULL'];
-    //db ['0'];  // default item
-
-    return YesNo117ccc();
-}
+const struct MenuHeader MenuHeader_117cc4 = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(14, 7, SCREEN_WIDTH - 1, TEXTBOX_Y - 1),
+    .data = NULL,
+    .defaultOption = 0,  // default item
+};
 
 void YesNo117ccc(void){
     //db ['"はい"'];
     //next ['"いいえ@"']
-
-    return MobileStadiumEntryText();
 }
 
-void MobileStadiumEntryText(void){
-    //text_far ['_MobileStadiumEntryText']
-    //text_end ['?']
+const txt_cmd_s MobileStadiumEntryText[] = {
+    text_far(v_MobileStadiumEntryText)
+    text_end
+};
 
-    return MobileStadiumSuccessText();
-}
-
-void MobileStadiumSuccessText(void){
-    //text_far ['_MobileStadiumSuccessText']
-    //text_end ['?']
-
-    return MobileStudium_JumptableIncrement();
-}
+const txt_cmd_s MobileStadiumSuccessText[] = {
+    text_far(v_MobileStadiumSuccessText)
+    text_end
+};
 
 void MobileStudium_JumptableIncrement(void){
-    LD_HL(wJumptableIndex);
-    INC_hl;
-    RET;
-
+    // LD_HL(wJumptableIndex);
+    // INC_hl;
+    wram->wJumptableIndex++;
+    // RET;
 }

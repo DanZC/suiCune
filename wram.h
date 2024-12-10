@@ -1007,8 +1007,8 @@ struct wram_s
                         uint8_t wc811;
                         uint16_t wMobileSDK_PacketChecksum;
                         uint8_t wc814;
-                        uint8_t wc815;
-                        uint8_t wc816;
+                        uint8_t wc815; // MobileSDK_TimerCtrLow
+                        uint8_t wc816; // MobileSDK_TimerCtrHigh
                         uint8_t wc817;
                         uint8_t wMobileSDK_AdapterType;
                         uint8_t wc819;
@@ -1017,8 +1017,8 @@ struct wram_s
                         uint8_t wc81c;
                         uint8_t wc81d;
                         uint8_t wMobileSDK_SendCommandID;
-                        uint8_t wc81f;
-                        uint8_t wc820;
+                        uint8_t wc81f; // MobileSDK_TimerLatchHigh
+                        uint8_t wc820; // MobileSDK_TimerLatchLow
                         uint8_t wc821;
                         uint8_t wc822;
                         uint8_t wc823[4];
@@ -1046,9 +1046,14 @@ struct wram_s
                         uint8_t wc86f;
                         uint8_t wc870;
                         uint8_t wc871;
-                        uint8_t wc872;
-                        uint8_t wc873;
-                        uint8_t wc874;
+                        union {
+                            struct {
+                                uint8_t wc872;
+                                uint8_t wc873;
+                                uint8_t wc874;
+                            };
+                            char wc872_digit_buffer[3];
+                        };
                         uint8_t wc875;
                         uint8_t wc876;
                         uint8_t wc877;
@@ -1059,13 +1064,18 @@ struct wram_s
                         uint8_t wc87d;
                         uint8_t wc87e;
                         uint8_t wc87f;
-                        uint8_t wc880;
-                        uint8_t wc881;
-                        uint8_t wc882;
-                        uint8_t wc883;
-                        uint8_t wc884[8];
-                        uint8_t wc88c[32];
-                        uint8_t wc8ac[26];
+                        union {
+                            struct {
+                                uint8_t wc880;
+                                uint8_t wc881;
+                                uint8_t wc882;
+                                uint8_t wc883;
+                                uint8_t wc884[8];
+                                uint8_t wc88c[32];
+                                uint8_t wc8ac[26];
+                            };
+                            char wc880_str[70];
+                        };
                         uint8_t wc8c6;
                         uint8_t wc8c7;
                         uint8_t wc8c8;
@@ -1100,7 +1110,7 @@ struct wram_s
                         uint8_t wc991;
                         uint8_t wc992;
                         uint8_t wc993;
-                        uint8_t wc994;
+                        uint8_t wc994; // wMobileHTTPMethod 0x0: GET, 0x1: POST
                         uint8_t wc995[16];
                         uint8_t wc9a5[5];
                         uint8_t wc9aa;
@@ -1269,7 +1279,7 @@ struct wram_s
                         uint8_t wcd48;
                         union {
                             uint8_t wBTTempOTSprite;
-                            uint8_t wcd49;
+                            uint8_t wcd49; // wMobilePassword_JumptableIndex
                         };
                         uint8_t wcd4a;
                         uint8_t wcd4b[1];

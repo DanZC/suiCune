@@ -17,7 +17,8 @@ startproject "suiCune"
 
 	syslibdirs {
         ".\\deps\\SDL2\\lib\\x86\\",
-        ".\\deps\\physfs\\lib\\x86\\"
+        ".\\deps\\physfs\\lib\\x86\\",
+		".\\lib\\libmobile\\"
 	}
 
 	includedirs {
@@ -54,6 +55,16 @@ startproject "suiCune"
 	filter "platforms:x86_64"
 		architecture "x86_64"
 
+	project "libmobile"
+		targetname "libmobile"
+		language "c"
+		kind "StaticLib"
+
+		files {
+			".\\lib\\libmobile\\**.c",
+			".\\lib\\libmobile\\**.h",
+		}
+	
 	project "maps"
 		targetname "maps"
 		language "c"
@@ -77,6 +88,7 @@ startproject "suiCune"
             "SDL2main",
             "SDL2_net",
 			"maps",
+			"libmobile",
 		}
 		
 		files {
@@ -85,6 +97,8 @@ startproject "suiCune"
 		}
 
 		removefiles {
+			".\\lib\\libmobile\\**.c",
+			".\\lib\\libmobile\\**.h",
 			".\\maps\\**.c",
 			".\\maps\\**.h",
 			".\\test\\**.c",

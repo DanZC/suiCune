@@ -83,6 +83,10 @@ char *rom_file_name = "baserom.gbc";
 char *save_file_name = NULL;
 char *save_file2_name = NULL;
 
+
+void Timer(void);
+void Serial(void);
+
 /**
  * Tick the internal RTC by one second.
  * This was taken from SameBoy, which is released under MIT Licence.
@@ -688,7 +692,7 @@ void finish_gb_cycle(void) {
     /* DIV register timing */
     gb.counter.div_count += inst_cycles;
 
-    if (gb.counter.div_count >= DIV_CYCLES) {
+    while (gb.counter.div_count >= DIV_CYCLES) {
         gb.gb_reg.DIV++;
         gb.counter.div_count -= DIV_CYCLES;
     }
@@ -702,7 +706,7 @@ void finish_gb_cycle(void) {
         gb.counter.serial_count += inst_cycles;
 
         /* If it's time to receive byte, call RX function. */
-        if (gb.counter.serial_count >= SERIAL_CYCLES) {
+        while (gb.counter.serial_count >= SERIAL_CYCLES) {
             /* If RX can be done, do it. */
             /* If RX failed, do not change SB if using external
              * clock, or set to 0xFF if using internal clock. */
@@ -716,6 +720,8 @@ void finish_gb_cycle(void) {
                 /* Inform game of serial TX/RX completion. */
                 gb.gb_reg.SC &= 0x01;
                 gb.gb_reg.IF |= SERIAL_INTR;
+                Serial();
+                gb.gb_reg.IF &= ~SERIAL_INTR;
             } else if (gb.gb_reg.SC & SERIAL_SC_CLOCK_SRC) {
                 /* If using internal clock, and console is not
                  * attached to any external peripheral, shifted
@@ -725,13 +731,15 @@ void finish_gb_cycle(void) {
                 /* Inform game of serial TX/RX completion. */
                 gb.gb_reg.SC &= 0x01;
                 gb.gb_reg.IF |= SERIAL_INTR;
+                Serial();
+                gb.gb_reg.IF &= ~SERIAL_INTR;
             } else {
                 /* If using external clock, and console is not
                  * attached to any external peripheral, bits are
                  * not shifted, so SB is not modified. */
             }
 
-            gb.counter.serial_count = 0;
+            gb.counter.serial_count -= SERIAL_CYCLES;
         }
     }
 
@@ -740,16 +748,20 @@ void finish_gb_cycle(void) {
     if (gb.gb_reg.tac_enable) {
         static const uint_fast16_t TAC_CYCLES[4] = {1024, 16, 64, 256};
 
-        gb.counter.tima_count += inst_cycles;
+        gb.counter.tima_count += inst_cycles * 512;
 
+        // printf("Timer (%d, %d, %d, %d)\n", gb.counter.tima_count, gb.gb_reg.TIMA, TAC_CYCLES[gb.gb_reg.tac_rate], inst_cycles * 5);
         while (gb.counter.tima_count >= TAC_CYCLES[gb.gb_reg.tac_rate]) {
             gb.counter.tima_count -= TAC_CYCLES[gb.gb_reg.tac_rate];
 
             if (++gb.gb_reg.TIMA == 0) {
                 gb.gb_reg.IF |= TIMER_INTR;
+                Timer();
+                gb.gb_reg.IF &= ~TIMER_INTR;
                 /* On overflow, set TMA to TIMA. */
                 gb.gb_reg.TIMA = gb.gb_reg.TMA;
             }
+            // printf("Timer (%d, %d, %d, %d)\n", gb.counter.tima_count, gb.gb_reg.TIMA, TAC_CYCLES[gb.gb_reg.tac_rate], inst_cycles * 8);
         }
     }
 
@@ -831,7 +843,9 @@ void finish_gb_cycle(void) {
 }
 
 void gb_draw_line(void) {
-    finish_gb_cycle();
+    for(int i = 0; i < 64; ++i) {
+        finish_gb_cycle();
+    }
     uint8_t pixels[160] = {0};
 
     /* If LCD not initialised by front-end, don't render anything. */
@@ -2884,14 +2898,6 @@ void gb_finish_frame(void) {
         LCD();
         gb_draw_line();
     }
-    if(gb.gb_reg.IF & SERIAL_INTR) {
-        gb.gb_reg.IF &= ~SERIAL_INTR;
-        Serial();
-    }
-    if(gb.gb_reg.IF & TIMER_INTR) {
-        gb.gb_reg.IF &= ~TIMER_INTR;
-        Timer();
-    }
     sdl_loop();
 }
 
@@ -3540,6 +3546,9 @@ void sdl_loop(void) {
     // If we're recording, copy the framebuffer to video buffer and keep going.
     RecordFrame();
 
+    // Update mobile adapter
+    MobileUpdate();
+
     /* Copy frame buffer to SDL screen. */
     SDL_UpdateTexture(texture, NULL, &priv.fb, LCD_WIDTH * sizeof(uint16_t));
     SDL_RenderClear(renderer);
@@ -3628,6 +3637,8 @@ void sdl_loop(void) {
 }
 
 void cleanup(void) {
+    MobileQuit();
+    NetworkDeinit();
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
 #if defined(DEBUG_WINDOW)
@@ -3948,6 +3959,7 @@ int main(int argc, char* argv[]) {
     }
 
     NetworkInit();
+    MobileInit();
 
 #if defined(DEBUG_WINDOW)
     dbg_renderer = SDL_CreateRenderer(dbg_window, -1, SDL_RENDERER_ACCELERATED);
@@ -3999,6 +4011,7 @@ int main(int argc, char* argv[]) {
     }
 
 quit:
+    MobileQuit();
     NetworkDeinit();
 #if defined(DEBUG_WINDOW)
     SDL_DestroyRenderer(dbg_renderer);

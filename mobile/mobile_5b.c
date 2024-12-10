@@ -244,7 +244,7 @@ static void MobileSystemSplashScreen_InitGFX_LoadPals(void) {
     // LD_HL(mMobileSplashScreenPalettes);
     // LD_BC(8);
     // LD_A(0x5);
-    LoadAssetToBuffer(wram->wBGPals1, 8, MobileSplashScreenPalettes);
+    LoadPaletteAssetToBuffer(wram->wBGPals1, sizeof(wram->wBGPals1) / sizeof(uint16_t), MobileSplashScreenPalettes, 4);
     // CALL(aFarCopyWRAM);
     // FARCALL(aApplyPals);
     ApplyPals_Conv();
@@ -289,7 +289,14 @@ void MobileSystemSplashScreen_InitGFX(void){
     // LD_DE(mMobileSystemSplashScreen_InitGFX_Tiles);
     // LD_BC((BANK(aMobileSystemSplashScreen_InitGFX_Tiles) << 8) | 104);
     // CALL(aGet2bpp);
-    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2, Tiles, 0, 104);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 +  0 * LEN_2BPP_TILE, Tiles, 0x00, 9);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 +  9 * LEN_2BPP_TILE, Tiles, 0x0E, 12);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + 20 * LEN_2BPP_TILE, Tiles, 0x1C, 11);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + 31 * LEN_2BPP_TILE, Tiles, 0x2A, 12);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + 43 * LEN_2BPP_TILE, Tiles, 0x39, 7);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + 50 * LEN_2BPP_TILE, Tiles, 0x43, 2);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + 52 * LEN_2BPP_TILE, Tiles, 0x47, 12);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + 64 * LEN_2BPP_TILE, Tiles, 0x55, 12);
     // CALL(aMobileSystemSplashScreen_InitGFX_LoadPals);
     MobileSystemSplashScreen_InitGFX_LoadPals();
     // CALL(aMobileSystemSplashScreen_InitGFX_LoadTilemap);
@@ -870,7 +877,7 @@ void Function16cbae(void){
     // LD_A_addr(wd1f1);
     // AND_A_A;
     // RET_Z ;
-    if(wram->wd1f1 != 0)
+    if(wram->wd1f1 == 0)
         return;
     // CALL(aFunction16cbba);
     Function16cbba();
@@ -883,10 +890,9 @@ void Function16cbba(void){
     // LD_HL(wd1f2);
     // INC_hl;
     // LD_A_hl;
-    uint8_t a = ++wram->wd1f2;
     // CP_A(0xc);
     // RET_C ;
-    if(a < 0xc)
+    if(++wram->wd1f2 < 0xc)
         return;
     // XOR_A_A;
     // LD_hl_A;

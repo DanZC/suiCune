@@ -10,6 +10,14 @@ void Cosine(void){
     return Sine();
 }
 
+uint8_t Cosine_Conv(uint8_t a, uint8_t d){
+    //  //  unreferenced
+//  a = d * cos(a * pi/32)
+    // ADD_A(0b010000);  // cos(x) = sin(x + pi/2)
+// fallthrough
+    return Sine_Conv(a + 0b010000, d);
+}
+
 void Sine(void){
     //  a = d * sin(a * pi/32)
     // LD_E_A;

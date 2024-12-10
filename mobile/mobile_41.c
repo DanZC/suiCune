@@ -1108,7 +1108,7 @@ u8_flag_s CheckMobileAdapterStatus(void){
     // LD_A_addr(s4_b000);
     // CPL;
     // LD_B_A;
-    uint8_t b = (gb_read(s4_b000) ^ 0xff) + 1;
+    uint8_t b = ~gb_read(s4_b000);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // LD_A(BANK(s7_a800));
@@ -1167,7 +1167,7 @@ void Function10635c(void){
             // LD_BC(0x41);
             // LD_A(MOBILEAPI_20);
             // CALL(aMobileAPI);
-            MobileAPI(MOBILEAPI_20, &(mobile_api_data_s){.bc = 0x41, .l = 0x41, .de = &wram->wcd30});
+            MobileAPI(MOBILEAPI_20, &(mobile_api_data_s){.bc = 0x41, .h = 0x0, .l = 0x41, .de = &wram->wcd30});
             // LD_A_addr(wMobileCommsJumptableIndex);
             // INC_A;
             // LD_addr_A(wMobileCommsJumptableIndex);
