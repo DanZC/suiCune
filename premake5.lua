@@ -107,8 +107,11 @@ startproject "suiCune"
 			".\\engine\\battle\\move_effects\\**.h",
 		}
 		
+		cdialect "gnu99"
+		
 		filter "system:Windows"
 			files { "icon.rc" }
+			cdialect "c99"
 
 		filter {"system:Windows", "files:icon.rc" }
 			buildcommands {

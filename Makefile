@@ -6,7 +6,7 @@ CC	:= cc
 OBJEXT	:= o
 RM	:= rm -f
 EXEOUT	:= -o
-EXTRA_CFLAGS := -std=c99 -Wall -Wextra -Werror -Wno-unused-label -Og -g# -Og -g3
+EXTRA_CFLAGS := -Wall -Wextra -Werror -Wno-unused-label -Og -g# -Og -g3
 EXE	:= $(NAME)
 
 # File extension ".exe" is automatically appended on MinGW and MSVC builds, even
@@ -14,6 +14,9 @@ EXE	:= $(NAME)
 ifeq ($(OS),Windows_NT)
 	STATIC := yes
 	EXE := $(NAME).exe
+	EXTRA_CFLAGS += -std=c99
+else
+	EXTRA_CFLAGS += -std=gnu99
 endif
 
 TARGET := $(NAME)
@@ -87,7 +90,6 @@ else
 #	LDLIBS += $(shell sdl2-config --libs)
 endif
 else
-	CFLAGS += -D_GNU_SOURCE
 ifeq ($(STATIC),yes)
 	LDLIBS += $(shell sdl2-config --static-libs) -lSDL2_net
 else
