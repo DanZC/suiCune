@@ -1075,7 +1075,7 @@ void SetMobileAdapterStatus(uint8_t c){
     // LD_A_C;
     // CPL;
     // LD_addr_A(s4_b000);
-    gb_write(s4_b000, (c ^ 0xff) + 1);
+    gb_write(s4_b000, ~c);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // LD_A(BANK(s7_a800));

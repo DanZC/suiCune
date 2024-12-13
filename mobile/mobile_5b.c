@@ -244,7 +244,7 @@ static void MobileSystemSplashScreen_InitGFX_LoadPals(void) {
     // LD_HL(mMobileSplashScreenPalettes);
     // LD_BC(8);
     // LD_A(0x5);
-    LoadPaletteAssetToBuffer(wram->wBGPals1, sizeof(wram->wBGPals1) / sizeof(uint16_t), MobileSplashScreenPalettes, 4);
+    LoadPaletteAssetToBuffer(wram->wBGPals1, sizeof(wram->wBGPals1) / sizeof(uint16_t), MobileSplashScreenPalettes, 2);
     // CALL(aFarCopyWRAM);
     // FARCALL(aApplyPals);
     ApplyPals_Conv();
@@ -319,6 +319,7 @@ void MobileSystemSplashScreen_InitGFX(void){
 const char MobileSplashScreenPalettes[] = "gfx/mobile/mobile_splash.pal";
 
 bool Function16c943(void){
+    uint8_t buffer[128];
     // LD_A_addr(wd003);
     // AND_A_A;
     // IF_NZ goto asm_16c95e;
@@ -345,7 +346,7 @@ bool Function16c943(void){
     uint8_t e = 0x0;
     // LD_A(0x0);
     uint8_t a = 0x0;
-    const asset_s pals_asset = LoadAsset(MobileSplashScreenPalettes);
+    LoadPaletteAssetToArray(buffer, MobileSplashScreenPalettes, 8);
 
     do {
     // asm_16c969:
@@ -353,7 +354,7 @@ bool Function16c943(void){
         // CALL(aFunction16cab6);
         // CALL(aFunction16cabb);
         // LD_D_A;
-        uint8_t d = Function16cabb(Function16cab6(pals_asset.ptr, e));
+        uint8_t d = Function16cabb(Function16cab6(buffer, e));
         // LD_HL(wBGPals1);
         // CALL(aFunction16cab6);
         // CALL(aFunction16cabb);
@@ -387,7 +388,7 @@ bool Function16c943(void){
         // CALL(aFunction16cab6);
         // CALL(aFunction16cad8);
         // LD_D_A;
-        d = Function16cad8(Function16cab6(pals_asset.ptr, e));
+        d = Function16cad8(Function16cab6(buffer, e));
         // LD_HL(wBGPals1);
         // CALL(aFunction16cab6);
         // CALL(aFunction16cad8);
@@ -421,7 +422,7 @@ bool Function16c943(void){
         // CALL(aFunction16cab6);
         // CALL(aFunction16cac4);
         // LD_D_A;
-        d = Function16cac4(Function16cab6(pals_asset.ptr, e));
+        d = Function16cac4(Function16cab6(buffer, e));
         // LD_HL(wBGPals1);
         // CALL(aFunction16cab6);
         // CALL(aFunction16cac4);
@@ -462,7 +463,6 @@ bool Function16c943(void){
     ApplyPals_Conv();
     // CALL(aSetPalettes);
     SetPalettes_Conv();
-    FreeAsset(pals_asset);
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(0x1);

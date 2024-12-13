@@ -87,6 +87,7 @@ else
 #	LDLIBS += $(shell sdl2-config --libs)
 endif
 else
+	CFLAGS += -D_GNU_SOURCE
 ifeq ($(STATIC),yes)
 	LDLIBS += $(shell sdl2-config --static-libs) -lSDL2_net
 else

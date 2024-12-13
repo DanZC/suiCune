@@ -291,6 +291,7 @@ static void CopyPNG2bppColorTileToGB(uint8_t* dest, const uint8_t* src, int stri
                 pixel = 0x0;
             } else {
                 fprintf(stderr, "%s: Pixel error #%06X.\n", __func__, pixel);
+                fprintf(stderr, "Colors available: #%06X, #%06X, #%06X, #%06X.\n", pal[0], pal[1], pal[2], pal[3]);
                 pixel = 0x0;
             }
             dest[yy * 2 + 0] |= ((pixel & 0b01)? (1 << (7 - xx)): 0);
@@ -522,7 +523,7 @@ void LoadPNG2bppAssetSectionToVRAM(void* dest, const char* filename, int start_t
         // Hack to make palette conversion work.
         const uint32_t* palette = (uint32_t*)&stbi_g_png_palette[0];
         // for(int i = 0; i < 4; ++i) {
-        //     printf("Color %d: r=%d, g=%d, b=%d\n", i, palette[i] & 0xff, (palette[i] & 0xff00) >> 8, (palette[i] & 0xff0000) >> 16);
+        //     printf("Color %d: %06X, r=%d, g=%d, b=%d\n", i, palette[i], palette[i] & 0xff, (palette[i] & 0xff00) >> 8, (palette[i] & 0xff0000) >> 16);
         // }
         for(int i = 0; i < numTiles; ++i) {
             CopyPNG2bppColorTileToGB(&d[i * LEN_2BPP_TILE], &pix[((((start_tile+i)/tilesPerRow)*8*n)*x) + (((start_tile+i)%tilesPerRow)*8*n)], x, n, palette);
