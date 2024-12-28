@@ -3706,6 +3706,23 @@ int main(int argc, char* argv[]) {
         goto out;
     }
 
+    // Sets the icon for the window. This does not need to be done on Windows due to embedded icon file.
+#if !defined(_WIN32)
+    {
+        int w, h;
+        uint8_t* pixels = LoadPixelsFromPNG("icon.png", &w, &h);
+        if(pixels) {
+            SDL_Surface* surf = SDL_CreateRGBSurfaceFrom(pixels, w, h, 32, w*4, 0x0000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
+            if(surf) {
+                SDL_SetWindowIcon(window, surf);
+                printf("Window icon set to icon.png\n");
+                SDL_FreeSurface(surf);
+            }
+            free(pixels);
+        }
+    }
+#endif
+
 #if defined(DEBUG_WINDOW)
     dbg_window = SDL_CreateWindow("Debug",
                               SDL_WINDOWPOS_UNDEFINED,
@@ -3721,14 +3738,14 @@ int main(int argc, char* argv[]) {
 #endif
 
     /* Copy input ROM file to allocated memory. */
-    #if USE_ROM_FILE
+#if USE_ROM_FILE
     if ((priv.rom = read_rom_to_ram(rom_file_name)) == NULL) {
         printf("%d: %s\n", __LINE__, strerror(errno));
         ret = EXIT_FAILURE;
         goto out;
     }
     patch_rom(priv.rom);
-    #endif
+#endif
     /* If no save file is specified, copy save file (with specific name) to
      * allocated memory. */
     if (save_file_name == NULL) {

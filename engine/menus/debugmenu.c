@@ -29,7 +29,6 @@
 #include "../link/link.h"
 #include "../link/link_trade.h"
 #include "../link/mystery_gift.h"
-#include "../../util/scripting.h"
 #include "../movie/trade_animation.h"
 #include "../movie/init_hof_credits.h"
 #include "../movie/credits.h"

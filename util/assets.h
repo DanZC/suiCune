@@ -31,3 +31,5 @@ void LoadPaletteAssetColorsToBuffer(void* dest, size_t dest_size, const char* fi
 void ExtractPaletteFromPNGAssetToBuffer(void* dest, const char* filename);
 
 void* Load2bppBinaryAssetToBuffer(void* buffer, size_t buf_size, const char* filename, size_t start, size_t count);
+
+void* LoadPixelsFromPNG(const char* filename, int* w, int* h);

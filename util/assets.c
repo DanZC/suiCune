@@ -750,3 +750,20 @@ asset_s LoadAssetSegmentsToBuffer(void* buffer, size_t buf_size, const char* fil
 void* Load2bppBinaryAssetToBuffer(void* buffer, size_t buf_size, const char* filename, size_t start, size_t count) {
     return LoadAssetSegmentsToBuffer(buffer, buf_size, filename, LEN_2BPP_TILE, start, count).ptr;
 }
+
+void* LoadPixelsFromPNG(const char* filename, int* w, int* h) {
+    asset_s a = LoadAsset(filename);
+    // printf("Loaded asset %s (%lld bytes)\n", filename, a.size);
+    if(!a.ptr) {
+        return NULL;
+    }
+    int n;
+    uint8_t* pix = stbi_load_from_memory(a.ptr, (int)a.size, w, h, &n, 0);
+    if(!pix) {
+        fprintf(stderr, "%s: Load error on image %s. Reason: %s\n", __func__, filename, stbi_failure_reason());
+        return NULL;
+    }
+    // printf("2bpp %d-channel %dx%d image (%s)\n", n, x, y, filename);
+    FreeAsset(a);
+    return pix;
+}
