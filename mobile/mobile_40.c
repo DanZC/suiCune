@@ -3579,7 +3579,7 @@ void Function101225(void){
     // LD_E(BANK(aJumptable_101297));
     // LD_BC(mJumptable_101297);
     // CALL(aFunction100000);
-    uint8_t c = Function100000(2, BANK(aJumptable_101297), Jumptable_101297);
+    uint8_t c = Function100000(1, BANK(aJumptable_101297), Jumptable_101297);
     // JR(mFunction10123d);
     return Function10123d(c);
 }

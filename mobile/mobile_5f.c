@@ -1,6 +1,7 @@
 #include "../constants.h"
 #include "mobile_5f.h"
 #include "mobile_41.h"
+#include "mobile_46.h"
 #include "../charmap.h"
 #include "../home/menu.h"
 #include "../home/lcd.h"
@@ -735,8 +736,8 @@ const struct MenuData MenuData_17d272 = {
     .verticalMenu = {
         .count = 4,
         .options = (const char*[]){
-            "NEWS", //db ['"ニュース¯よみこむ@"'];
-            "NEWS", //db ['"ニュース¯みる@"'];
+            "RECEIVE NEWS", //db ['"ニュース¯よみこむ@"'];
+            "VIEW NEWS", //db ['"ニュース¯みる@"'];
             "INFO", //db ['"せつめい@"'];
             "CANCEL", //db ['"やめる@"'];
         },
@@ -762,23 +763,30 @@ const struct MenuData MenuData_ChallengeExplanationCancel = {
     },
 };
 
+// Mobile_DownloadNewsSpecial
 void Function17d2b6(void){
-    CALL(aFunction17d2c0);
-    FARCALL(aFunction1181da);
-    RET;
-
+    // CALL(aFunction17d2c0);
+    Function17d2c0();
+    // FARCALL(aFunction1181da);
+    Function1181da();
+    // RET;
 }
 
+// Mobile_ResetMenuJumptableIndexes
 void Function17d2c0(void){
-    XOR_A_A;
-    LD_addr_A(wJumptableIndex);
-    LD_addr_A(wcf64);
-    LD_addr_A(wcf65);
-    LD_addr_A(wcf66);
-    RET;
-
+    // XOR_A_A;
+    // LD_addr_A(wJumptableIndex);
+    wram->wJumptableIndex = 0x0;
+    // LD_addr_A(wcf64);
+    wram->wcf64 = 0x0;
+    // LD_addr_A(wcf65);
+    wram->wcf65 = 0x0;
+    // LD_addr_A(wcf66);
+    wram->wcf66 = 0x0;
+    // RET;
 }
 
+// Mobile_ViewDownloadedNewsSpecial
 void Function17d2ce(void){
     LD_A(BANK(s5_aa72));
     CALL(aOpenSRAM);

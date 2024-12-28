@@ -93,9 +93,6 @@ const struct MapEvents PokecomCenter_MapEvents = {
 };
 
 //// CODE
-#include "../constants.h"
-#include "../util/scripting.h"
-#include "PokecomCenter.h"
 
 bool PokecomCenter_MapScripts_Scene0(script_s* s) {
     SCRIPT_BEGIN
@@ -410,9 +407,9 @@ mobileError:
 }
 bool GoldenrodPokecenter1F_GSBallSceneLeft(script_s* s) {
     SCRIPT_BEGIN
-    // setval(BATTLETOWERACTION_CHECKMOBILEEVENT)
-    // special(BattleTowerAction)
-    // ifequal(MOBILE_EVENT_OBJECT_GS_BALL, gsball)
+    setval(BATTLETOWERACTION_CHECKMOBILEEVENT)
+    special(BattleTowerAction)
+    ifequal(MOBILE_EVENT_OBJECT_GS_BALL, gsball)
     s_end
 gsball:
     checkevent(EVENT_GOT_GS_BALL_FROM_POKECOM_CENTER)
@@ -443,9 +440,9 @@ cancel:
 }
 bool GoldenrodPokecenter1F_GSBallSceneRight(script_s* s) {
     SCRIPT_BEGIN
-    // setval(BATTLETOWERACTION_CHECKMOBILEEVENT)
-    // special(BattleTowerAction)
-    // ifequal(MOBILE_EVENT_OBJECT_GS_BALL, gsball)
+    setval(BATTLETOWERACTION_CHECKMOBILEEVENT)
+    special(BattleTowerAction)
+    ifequal(MOBILE_EVENT_OBJECT_GS_BALL, gsball)
     s_end
 gsball:
     checkevent(EVENT_GOT_GS_BALL_FROM_POKECOM_CENTER)

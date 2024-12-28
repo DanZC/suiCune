@@ -1,7 +1,15 @@
 #include "../constants.h"
 #include "mobile_45_stadium.h"
+#include "mobile_5c.h"
+#include "../home/clear_sprites.h"
+#include "../home/copy.h"
+#include "../home/joypad.h"
+#include "../home/sram.h"
 #include "../home/text.h"
+#include "../home/tilemap.h"
 #include "../engine/events/odd_egg.h"
+#include "../engine/gfx/dma_transfer.h"
+#include "../engine/gfx/sprites.h"
 #include "../data/text/common.h"
 
 void GiveOddEgg(void){
@@ -10,98 +18,129 @@ void GiveOddEgg(void){
     return v_GiveOddEgg();
 }
 
+// MobilePassword?
 void Function11765d(void){
-    LDH_A_addr(hInMenu);
-    PUSH_AF;
-    LD_A(0x1);
-    LDH_addr_A(hInMenu);
-    CALL(aFunction11766b);
-    POP_AF;
-    LDH_addr_A(hInMenu);
-    RET;
-
+    // LDH_A_addr(hInMenu);
+    // PUSH_AF;
+    uint8_t inMenu = hram->hInMenu;
+    // LD_A(0x1);
+    // LDH_addr_A(hInMenu);
+    hram->hInMenu = 0x1;
+    // CALL(aFunction11766b);
+    // POP_AF;
+    // LDH_addr_A(hInMenu);
+    hram->hInMenu = inMenu;
+    // RET;
 }
 
 void Function11766b(void){
-    CALL(aFunction117699);
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(0x5);
-    LDH_addr_A(rSVBK);
-    CALL(aFunction1176ee);
-    LD_A(0x5);
-    CALL(aOpenSRAM);
-    LD_HL(0xb1f3);
-    LD_DE(wcd49);
-    LD_BC(0x8);
-    CALL(aCopyBytes);
-    LD_DE(0xc708);
-    LD_BC(0x11);
-    CALL(aCopyBytes);
-    CALL(aCloseSRAM);
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    RET;
-
+    // CALL(aFunction117699);
+    Function117699();
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(0x5);
+    // LDH_addr_A(rSVBK);
+    // CALL(aFunction1176ee);
+    Function1176ee();
+    // LD_A(0x5);
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(as5_b1d3));
+    // LD_HL(0xb1f3);
+    // LD_DE(wcd49);
+    // LD_BC(0x8);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(&wram->wcd49, GBToRAMAddr(s5_b1d3 + 0x20), 0x8);
+    // LD_DE(0xc708);
+    // LD_BC(0x11);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(&wram->wc708, GBToRAMAddr(s5_b1d3 + 0x28), 0x11);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // RET;
 }
 
 void Function117699(void){
-    LD_A(0x5);
-    CALL(aOpenSRAM);
-    LD_HL(wcd49);
-    LD_DE(0xb1f3);
-    LD_BC(0x8);
-    CALL(aCopyBytes);
-    LD_HL(0xc708);
-    LD_BC(0x11);
-    CALL(aCopyBytes);
-    CALL(aCloseSRAM);
-    XOR_A_A;
-    LD_addr_A(wcd49);
-    LD_addr_A(wcd4a);
-    LD_addr_A(wcd4b);
-    LD_addr_A(wcd4c);
-    LD_addr_A(wcd4d);
-    LD_addr_A(wcd4e);
-    LD_addr_A(wcd4f);
-    LD_HL(0xc708);
-    LD_BC(0x11);
-    CALL(aByteFill);
-    CALL(aClearBGPalettes);
-    CALL(aClearSprites);
-    FARCALL(aFunction171c87);
-    FARCALL(aReloadMapPart);
-    FARCALL(aClearSpriteAnims);
-    RET;
-
+    // LD_A(0x5);
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(as5_b1d3));
+    // LD_HL(wcd49);
+    // LD_DE(0xb1f3);
+    // LD_BC(0x8);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(GBToRAMAddr(s5_b1d3 + 0x20), &wram->wcd49, 0x8);
+    // LD_HL(0xc708);
+    // LD_BC(0x11);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(GBToRAMAddr(s5_b1d3 + 0x28), &wram->wc708, 0x11);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // XOR_A_A;
+    // LD_addr_A(wcd49);
+    wram->wcd49 = 0;
+    // LD_addr_A(wcd4a);
+    wram->wcd4a = 0;
+    // LD_addr_A(wcd4b);
+    wram->wcd4b = 0;
+    // LD_addr_A(wcd4c);
+    wram->wcd4c = 0;
+    // LD_addr_A(wcd4d);
+    wram->wcd4d = 0;
+    // LD_addr_A(wcd4e);
+    wram->wcd4e = 0;
+    // LD_addr_A(wcd4f);
+    wram->wcd4f = 0;
+    // LD_HL(0xc708);
+    // LD_BC(0x11);
+    // CALL(aByteFill);
+    ByteFill_Conv2(&wram->wc708, 0x11, 0x0);
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
+    // CALL(aClearSprites);
+    ClearSprites_Conv();
+    // FARCALL(aFunction171c87);
+    Function171c87();
+    // FARCALL(aReloadMapPart);
+    ReloadMapPart_Conv();
+    // FARCALL(aClearSpriteAnims);
+    ClearSpriteAnims_Conv();
+    // RET;
 }
 
 void Function1176ee(void){
+    while(1) {
+    // loop:
+        // CALL(aJoyTextDelay);
+        JoyTextDelay_Conv();
+        // LD_A_addr(wcd49);
+        // BIT_A(7);
+        // IF_NZ goto quit;
+        if(bit_test(wram->wcd49, 7))
+            break;
+        // CALL(aFunction117719);
+        Function117719();
+        // FARCALL(aPlaySpriteAnimations);
+        PlaySpriteAnimations_Conv();
+        // FARCALL(aReloadMapPart);
+        ReloadMapPart_Conv();
+        // goto loop;
+    }
 
-loop:
-    CALL(aJoyTextDelay);
-    LD_A_addr(wcd49);
-    BIT_A(7);
-    IF_NZ goto quit;
-    CALL(aFunction117719);
-    FARCALL(aPlaySpriteAnimations);
-    FARCALL(aReloadMapPart);
-    goto loop;
-
-
-quit:
-    FARCALL(aClearSpriteAnims);
-    CALL(aClearBGPalettes);
-    CALL(aClearScreen);
-    CALL(aClearSprites);
-    RET;
-
+// quit:
+    // FARCALL(aClearSpriteAnims);
+    ClearSpriteAnims_Conv();
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
+    // CALL(aClearScreen);
+    ClearScreen_Conv2();
+    // CALL(aClearSprites);
+    ClearSprites_Conv();
+    // RET;
 }
 
 void Function117719(void){
     //jumptable ['Jumptable_117728', 'wcd49']
-
-    return Jumptable_117728();
 }
 
 void Jumptable_117728(void){

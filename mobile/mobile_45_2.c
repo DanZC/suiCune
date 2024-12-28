@@ -56,6 +56,8 @@ void Function11659d(void){
     // LD_A_addr(wc314);
     // CP_A(0x12);
     // RET_NC ;
+    if(wram->wc314[0] >= 0x12)
+        return;
     // LD_E_A;
     // LD_D(0);
     // LD_HL(mJumptable_1165af);
@@ -90,8 +92,6 @@ void Jumptable_1165af(void){
         case 17: Function1166d6(); break;
         case 18: Function1166d6(); break;
     }
-
-    return Function1165d5();
 }
 
 void Function1165d5(void){
@@ -244,10 +244,10 @@ void Function11665c(void){
     // LD_A(0x1);
     // XOR_A_hl;
     // LD_hl_A;
-    wram->wc314[0] ^= 0x1;
+    wram->wc314[3] ^= 0x1;
     // ADD_A(0x4);
     // LD_C_A;
-    uint8_t c = wram->wc314[0] + 0x4;
+    uint8_t c = wram->wc314[3] + 0x4;
     // CALL(aFunction11679c);
     Function11679c(c);
     // LD_A_addr(wc314 + 3);
@@ -495,7 +495,7 @@ void Function116758(void){
     // CP_A(0x40);
     // IF_C goto asm_116778;
     // IF_Z goto asm_116778;
-    else if(wram->wc30f <= 0x38) {
+    else if(wram->wc30f <= 0x40) {
     // asm_116778:
         // LD_A(0x4);
         a = 0x4;

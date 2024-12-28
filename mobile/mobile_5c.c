@@ -452,7 +452,7 @@ void Function1719ed(void){
     wram->wcd4a = 0x0;
     // DEC_A;
     // LD_addr_A(wcd4b);
-    wram->wcd4b[0] = 0xff;
+    wram->wcd4b = 0xff;
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // CALL(aClearSprites);

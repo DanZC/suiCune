@@ -1282,7 +1282,7 @@ struct wram_s
                             uint8_t wcd49; // wMobilePassword_JumptableIndex
                         };
                         uint8_t wcd4a;
-                        uint8_t wcd4b[1];
+                        uint8_t wcd4b;
                         union {
                             uint8_t wEZChatCursorXCoord;
                             uint8_t wcd4c;
@@ -1291,11 +1291,11 @@ struct wram_s
                             uint8_t wEZChatCursorYCoord;
                             uint8_t wcd4d;
                         };
-                        uint8_t wcd4e[1];
+                        uint8_t wcd4e;
                         uint8_t wcd4f;
                         uint8_t wcd50;
-                        uint8_t wcd51[1];
-                        uint8_t wcd52[1];
+                        uint8_t wcd51;
+                        uint8_t wcd52;
                         // ds 12
                         //union wMobileOpponentBattleMessage
                         union {
@@ -1315,8 +1315,9 @@ struct wram_s
                                 uint8_t wcd5e;
                             };
                         };
-                        uint8_t wcd5f[1];
-                        uint8_t wcd60[2];
+                        uint8_t wcd5f;
+                        uint8_t wcd60;
+                        uint8_t wcd61[1];
                         uint8_t wcd62[1];
                         uint8_t wcd63[1];
                         uint8_t wcd64[1];
@@ -3187,8 +3188,13 @@ struct wram_s
                 uint8_t w3_d081[0xf];
                 uint8_t w3_d090[0x70];
                 //union w3_d100
-                struct BattleTowerData wBT_OTTrainer;
-                uint8_t skip_135[0x20];
+                union {
+                    struct {
+                        struct BattleTowerData wBT_OTTrainer;
+                        uint8_t skip_135[0x20];
+                    };
+                    uint8_t w3_d100[0x100];
+                };
                 uint8_t wBT_TrainerTextIndex;
                 uint8_t skip_136[1];
                 struct BattleTowerData w3_d202;

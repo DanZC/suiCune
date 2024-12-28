@@ -2,6 +2,7 @@
 #include "mobile_46.h"
 #include "mobile_41.h"
 #include "mobile_45_sprite_engine.h"
+#include "mobile_45_stadium.h"
 #include "mobile_5f.h"
 #include "../home/copy.h"
 #include "../home/sram.h"
@@ -13,6 +14,9 @@
 #include "../home/delay.h"
 #include "../home/names.h"
 #include "../home/double_speed.h"
+#include "../home/mobile.h"
+#include "../home/map_objects.h"
+#include "../home/print_text.h"
 #include "../engine/gfx/dma_transfer.h"
 #include "../engine/pokemon/bills_pc_top.h"
 
@@ -309,47 +313,65 @@ void Function118180(void){
     // RET;
 }
 
+// Mobile_DownloadNews
 void Function1181da(void){
-    CALL(aBattleTowerRoomMenu_InitRAM);
-    LD_A(0x2);
-    LD_addr_A(wcd38);
-    LD_A(0x21);
-    LD_addr_A(wcd33);
-    LD_A(0x22);
-    LD_addr_A(wcd34);
-    LD_A(0x4);
-    LD_addr_A(wc3f0);
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(0x3);
-    LDH_addr_A(rSVBK);
+    // CALL(aBattleTowerRoomMenu_InitRAM);
+    BattleTowerRoomMenu_InitRAM();
+    // LD_A(0x2);
+    // LD_addr_A(wcd38);
+    wram->wcd38 = 0x2;
+    // LD_A(0x21);
+    // LD_addr_A(wcd33);
+    wram->wcd33 = 0x21;
+    // LD_A(0x22);
+    // LD_addr_A(wcd34);
+    wram->wcd34 = 0x22;
+    // LD_A(0x4);
+    // LD_addr_A(wc3f0);
+    wram->wc3f0 = 0x4;
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(0x3);
+    // LDH_addr_A(rSVBK);
 
-asm_1181f8:
-    CALL(aJoyTextDelay);
-    CALL(aFunction118473);
-    LD_A_addr(wBattleTowerRoomMenuJumptableIndex);
-    CP_A(0x28);
-    IF_C goto asm_11820b;
-    LD_A_addr(wcd34);
-    LD_addr_A(wBattleTowerRoomMenuJumptableIndex);
+    do {
+    // asm_1181f8:
+        // CALL(aJoyTextDelay);
+        JoyTextDelay_Conv();
+        // CALL(aFunction118473);
+        Function118473();
+        // LD_A_addr(wBattleTowerRoomMenuJumptableIndex);
+        // CP_A(0x28);
+        // IF_C goto asm_11820b;
+        if(wram->wBattleTowerRoomMenuJumptableIndex >= 0x28) {
+            // LD_A_addr(wcd34);
+            // LD_addr_A(wBattleTowerRoomMenuJumptableIndex);
+            wram->wBattleTowerRoomMenuJumptableIndex = wram->wcd34;
+        }
 
-
-asm_11820b:
-    CALL(aFunction1185c3);
-    CALL(aBattleTowerRoomMenu_WriteMessage);
-    FARCALL(aFunction115dd3);
-    FARCALL(aFunction11619d);
-    CALL(aDelayFrame);
-    LD_A_addr(wBattleTowerRoomMenuJumptableIndex);
-    LD_HL(wcd33);
-    CP_A_hl;
-    IF_NZ goto asm_1181f8;
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    CALL(aBattleTowerRoomMenu_Cleanup);
-    CALL(aReturnToMapFromSubmenu);
-    RET;
-
+    // asm_11820b:
+        // CALL(aFunction1185c3);
+        Function1185c3();
+        // CALL(aBattleTowerRoomMenu_WriteMessage);
+        BattleTowerRoomMenu_WriteMessage();
+        // FARCALL(aFunction115dd3);
+        Function115dd3();
+        // FARCALL(aFunction11619d);
+        Function11619d();
+        // CALL(aDelayFrame);
+        DelayFrame();
+        // LD_A_addr(wBattleTowerRoomMenuJumptableIndex);
+        // LD_HL(wcd33);
+        // CP_A_hl;
+        // IF_NZ goto asm_1181f8;
+    } while(wram->wBattleTowerRoomMenuJumptableIndex != wram->wcd33);
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // CALL(aBattleTowerRoomMenu_Cleanup);
+    BattleTowerRoomMenu_Cleanup();
+    // CALL(aReturnToMapFromSubmenu);
+    ReturnToMapFromSubmenu();
+    // RET;
 }
 
 void Function118233(void){
@@ -629,17 +651,20 @@ void BattleTowerRoomMenu_InitRAM(void){
     // RET;
 }
 
+// IncrementS5bfff
 void Function118440(void){
-    PUSH_AF;
-    LD_A(BANK(s5_bfff));
-    CALL(aOpenSRAM);
-    LD_A_addr(s5_bfff);
-    INC_A;
-    LD_addr_A(s5_bfff);
-    CALL(aCloseSRAM);
-    POP_AF;
-    RET;
-
+    // PUSH_AF;
+    // LD_A(BANK(s5_bfff));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(as5_bfff));
+    // LD_A_addr(s5_bfff);
+    // INC_A;
+    // LD_addr_A(s5_bfff);
+    gb_write(s5_bfff, gb_read(s5_bfff) + 1);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // POP_AF;
+    // RET;
 }
 
 void BattleTowerRoomMenu_Cleanup(void){
@@ -830,8 +855,10 @@ void BattleTowerRoomMenu_Jumptable(void){
         //dw ['BattleTowerRoomMenu_DelayRestartMenu'];
         case 12: return BattleTowerRoomMenu_DelayRestartMenu();
         //dw ['Function118e76'];  // mobile
+        case 13: return Function118e76();
         //dw ['BattleTowerRoomMenu_CallRoomMenu2'];  // mobile
         //dw ['Function118e76'];  // mobile
+        case 15: return Function118e76();
     }
 }
 
@@ -872,54 +899,54 @@ Jumptable:
     return Function1185c3();
 }
 
+// Mobile_DownloadNewsJumptable?
 void Function1185c3(void){
     //jumptable ['.Jumptable', 'wBattleTowerRoomMenuJumptableIndex']
-
-
-Jumptable:
-    //dw ['Function11886e'];
-    //dw ['Function118880'];
-    //dw ['Function11878d'];
-    //dw ['Function1188b0'];
-    //dw ['Function11878d'];
-    //dw ['Function1188b8'];
-    //dw ['Function11878d'];
-    //dw ['Function1188c0'];
-    //dw ['Function11878d'];
-    //dw ['Function1188c8'];
-    //dw ['Function11878d'];
-    //dw ['Function118903'];
-    //dw ['Function118aa4'];
-    //dw ['Function11878d'];
-    //dw ['Function118e92'];
-    //dw ['Function11878d'];
-    //dw ['Function118eb0'];
-    //dw ['Function118ec6'];
-    //dw ['Function118f0d'];
-    //dw ['Function118f14'];
-    //dw ['Function118f5e'];
-    //dw ['Function11878d'];
-    //dw ['Function118fc0'];
-    //dw ['Function11878d'];
-    //dw ['Function119054'];
-    //dw ['Function1190d0'];
-    //dw ['Function11878d'];
-    //dw ['Function1190ec'];
-    //dw ['Function118e6d'];
-    //dw ['Function11878d'];
-    //dw ['Function118e76'];
-    //dw ['Function118e7e'];
-    //dw ['Function11878d'];
-    //dw ['BattleTowerRoomMenu_DoNothing'];
-    //dw ['Function118e76'];
-    //dw ['BattleTowerRoomMenu_CallRoomMenu2'];
-    //dw ['BattleTowerRoomMenu_QuitMessage'];
-    //dw ['BattleTowerRoomMenu_PlaceYesNoMenu'];
-    //dw ['BattleTowerRoomMenu_UpdateYesNoMenu'];
-    //dw ['Function11914e'];
-    //dw ['Function118e76'];
-
-    return Function118624();
+    printf("Download News Jumptable 0x%02x\n", wram->wBattleTowerRoomMenuJumptableIndex);
+    switch(wram->wBattleTowerRoomMenuJumptableIndex) {
+    // Jumptable:
+        case 0x00: return Function11886e(); //dw ['Function11886e'];
+        case 0x01: return Function118880(); //dw ['Function118880'];
+        case 0x02: return Function11878d(); //dw ['Function11878d'];
+        case 0x03: return Function1188b0(); //dw ['Function1188b0'];
+        case 0x04: return Function11878d(); //dw ['Function11878d'];
+        case 0x05: return Function1188b8(); //dw ['Function1188b8'];
+        case 0x06: return Function11878d(); //dw ['Function11878d'];
+        case 0x07: return Function1188c0(); //dw ['Function1188c0'];
+        case 0x08: return Function11878d(); //dw ['Function11878d'];
+        case 0x09: return Function1188c8(); //dw ['Function1188c8'];
+        case 0x0A: return Function11878d(); //dw ['Function11878d'];
+        case 0x0B: return Function118903(); //dw ['Function118903'];
+        //dw ['Function118aa4'];
+        case 0x0D: return Function11878d(); //dw ['Function11878d'];
+        //dw ['Function118e92'];
+        case 0x0F: return Function11878d(); //dw ['Function11878d'];
+        //dw ['Function118eb0'];
+        //dw ['Function118ec6'];
+        //dw ['Function118f0d'];
+        //dw ['Function118f14'];
+        //dw ['Function118f5e'];
+        case 0x15: return Function11878d(); //dw ['Function11878d'];
+        //dw ['Function118fc0'];
+        case 0x17: return Function11878d(); //dw ['Function11878d'];
+        //dw ['Function119054'];
+        //dw ['Function1190d0'];
+        case 0x1a: return Function11878d(); //dw ['Function11878d'];
+        //dw ['Function1190ec'];
+        //dw ['Function118e6d'];
+        case 0x1d: return Function11878d(); //dw ['Function11878d'];
+        case 0x1e: return Function118e76(); //dw ['Function118e76'];
+        case 0x1f: return Function118e7e(); //dw ['Function118e7e'];
+        case 0x20: return Function11878d(); //dw ['Function11878d'];
+        //dw ['BattleTowerRoomMenu_DoNothing'];
+        case 0x22: return Function118e76(); //dw ['Function118e76'];
+        case 0x23: return BattleTowerRoomMenu_CallRoomMenu2(); //dw ['BattleTowerRoomMenu_CallRoomMenu2'];
+        //dw ['BattleTowerRoomMenu_QuitMessage'];
+        //dw ['BattleTowerRoomMenu_PlaceYesNoMenu'];
+        //dw ['BattleTowerRoomMenu_UpdateYesNoMenu'];
+        //dw ['Function11914e'];
+        case 0x28: return Function118e76(); //dw ['Function118e76'];
+    }
 }
 
 void Function118624(void){
@@ -1111,122 +1138,167 @@ Jumptable:
 }
 
 void Function11878d(void){
-    LD_A_addr(wc821);
-    BIT_A(1);
-    IF_NZ goto asm_1187af;
-    BIT_A(2);
-    IF_NZ goto asm_1187d1;
-    BIT_A(0);
-    IF_NZ goto asm_1187aa;
-    LD_A_addr(wcd89);
-    AND_A(0x1);
-    IF_Z goto asm_1187a7;
-    LD_A(0x3);
-    LDH_addr_A(rSVBK);
+    // LD_A_addr(wc821);
+    // BIT_A(1);
+    // IF_NZ goto asm_1187af;
+    if(bit_test(wram->wc821, 1)) {
+    // asm_1187af:
+        mobile_api_data_s data = {};
+        // LD_A(MOBILEAPI_00);
+        // CALL(aMobileAPI);
+        MobileAPI(MOBILEAPI_00, &data);
+        // LD_addr_A(wMobileErrorCodeBuffer);
+        wram->wMobileErrorCodeBuffer[0] = data.a;
+        // LD_A_L;
+        // LD_addr_A(wMobileErrorCodeBuffer + 1);
+        wram->wMobileErrorCodeBuffer[1] = data.l;
+        // LD_A_H;
+        // LD_addr_A(wMobileErrorCodeBuffer + 2);
+        wram->wMobileErrorCodeBuffer[2] = data.h;
+        // LD_A(MOBILEAPI_05);
+        // CALL(aMobileAPI);
+        MobileAPI(MOBILEAPI_05, &data);
+        // LD_A_addr(wc3f0);
+        // LD_addr_A(wc319);
+        wram->wc319 = wram->wc3f0;
+        // LD_A_addr(wcd34);
+        // LD_addr_A(wBattleTowerRoomMenuJumptableIndex);
+        wram->wBattleTowerRoomMenuJumptableIndex = wram->wcd34;
+        // RET;
+        return;
+    }
+    // BIT_A(2);
+    // IF_NZ goto asm_1187d1;
+    if(bit_test(wram->wc821, 2)) {
+    // asm_1187d1:
+        // LD_HL(wcd89);
+        // BIT_hl(0);
+        // IF_NZ goto asm_118803;
+        if(bit_test(wram->wcd89, 0)) {
+        // asm_118803:
+            // LD_A(0xd3);
 
-asm_1187a7:
-    JP(mBattleTowerRoomMenu_IncrementJumptable);
+            return SetMobileErrorCode(0xd3);
+        }
+        // SET_hl(0);
+        bit_set(wram->wcd89, 0);
+        // LD_A(BANK(w6_d000));
+        // LDH_addr_A(rSVBK);
+        // LD_DE(w6_d000);
+        // LD_BC(0x1000);
+        mobile_api_data_s data = {.de = &wram->w6_d000, .bc = 0x1000};
+        uint8_t a;
+        // LD_A_hl;
+        // SLA_A;
+        // IF_C goto asm_1187f9;
+        if((wram->wcd89 & 0x80) != 0) {
+        // asm_1187f9:
+            // LD_A(MOBILEAPI_15);
+            a = MOBILEAPI_15;
+            // goto asm_1187ff;
+        }
+        // SLA_A;
+        // IF_C goto asm_1187fd;
+        else if((wram->wcd89 & 0x40) != 0) {
+        // asm_1187fd:
+            // LD_A(MOBILEAPI_16);
+            a = MOBILEAPI_16;
+        }
+        // SLA_A;
+        // IF_C goto asm_1187f5;
+        else if((wram->wcd89 & 0x20) != 0) {
+        // asm_1187f5:
+            // LD_A(MOBILEAPI_14);
+            a = MOBILEAPI_14;
+            // goto asm_1187ff;
+        }
+        else {
+            // LD_A(MOBILEAPI_12);
+            a = MOBILEAPI_12;
+            // goto asm_1187ff;
+        }
 
-asm_1187aa:
-    CALL(aFunction118821);
-    RET_C ;
-    RET;
+    // asm_1187ff:
+        // CALL(aMobileAPI);
+        MobileAPI(a, &data);
+        // RET;
+        return;
+    }
+    // BIT_A(0);
+    // IF_NZ goto asm_1187aa;
+    if(bit_test(wram->wc821, 0)) {
+    // asm_1187aa:
+        // CALL(aFunction118821);
+        // RET_C ;
+        if(Function118821())
+            return;
+        // RET;
+        return;
+    }
+    // LD_A_addr(wcd89);
+    // AND_A(0x1);
+    // IF_Z goto asm_1187a7;
+    if((wram->wcd89 & 0x1) != 0) {
+        // LD_A(0x3);
+        // LDH_addr_A(rSVBK);
+    }
 
-asm_1187af:
-    LD_A(MOBILEAPI_00);
-    CALL(aMobileAPI);
-    LD_addr_A(wMobileErrorCodeBuffer);
-    LD_A_L;
-    LD_addr_A(wMobileErrorCodeBuffer + 1);
-    LD_A_H;
-    LD_addr_A(wMobileErrorCodeBuffer + 2);
-    LD_A(MOBILEAPI_05);
-    CALL(aMobileAPI);
-    LD_A_addr(wc3f0);
-    LD_addr_A(wc319);
-    LD_A_addr(wcd34);
-    LD_addr_A(wBattleTowerRoomMenuJumptableIndex);
-    RET;
-
-asm_1187d1:
-    LD_HL(wcd89);
-    BIT_hl(0);
-    IF_NZ goto asm_118803;
-    SET_hl(0);
-    LD_A(BANK(w6_d000));
-    LDH_addr_A(rSVBK);
-    LD_DE(w6_d000);
-    LD_BC(0x1000);
-    LD_A_hl;
-    SLA_A;
-    IF_C goto asm_1187f9;
-    SLA_A;
-    IF_C goto asm_1187fd;
-    SLA_A;
-    IF_C goto asm_1187f5;
-    LD_A(MOBILEAPI_12);
-    goto asm_1187ff;
-
-asm_1187f5:
-    LD_A(MOBILEAPI_14);
-    goto asm_1187ff;
-
-asm_1187f9:
-    LD_A(MOBILEAPI_15);
-    goto asm_1187ff;
-
-asm_1187fd:
-    LD_A(MOBILEAPI_16);
-
-asm_1187ff:
-    CALL(aMobileAPI);
-    RET;
-
-asm_118803:
-    LD_A(0xd3);
-
-    return SetMobileErrorCode();
+// asm_1187a7:
+    // JP(mBattleTowerRoomMenu_IncrementJumptable);
+    return BattleTowerRoomMenu_IncrementJumptable();
 }
 
-void SetMobileErrorCode(void){
-    LD_addr_A(wMobileErrorCodeBuffer);
-    XOR_A_A;
-    LD_addr_A(wMobileErrorCodeBuffer + 1);
-    LD_addr_A(wMobileErrorCodeBuffer + 2);
-    LD_A(MOBILEAPI_05);
-    CALL(aMobileAPI);
-    LD_A_addr(wc3f0);
-    LD_addr_A(wc319);
-    LD_A_addr(wcd34);
-    LD_addr_A(wBattleTowerRoomMenuJumptableIndex);
-    RET;
-
+void SetMobileErrorCode(uint8_t code){
+    // LD_addr_A(wMobileErrorCodeBuffer);
+    wram->wMobileErrorCodeBuffer[0] = code;
+    // XOR_A_A;
+    // LD_addr_A(wMobileErrorCodeBuffer + 1);
+    wram->wMobileErrorCodeBuffer[1] = 0x0;
+    // LD_addr_A(wMobileErrorCodeBuffer + 2);
+    wram->wMobileErrorCodeBuffer[2] = 0x0;
+    // LD_A(MOBILEAPI_05);
+    // CALL(aMobileAPI);
+    MobileAPI(MOBILEAPI_05, &(mobile_api_data_s){});
+    // LD_A_addr(wc3f0);
+    // LD_addr_A(wc319);
+    wram->wc319 = wram->wc3f0;
+    // LD_A_addr(wcd34);
+    // LD_addr_A(wBattleTowerRoomMenuJumptableIndex);
+    wram->wBattleTowerRoomMenuJumptableIndex = wram->wcd34;
+    // RET;
 }
 
-void Function118821(void){
-    LD_A_addr(wc319);
-    CP_A(0x3);
-    IF_C goto asm_11884a;
-    CP_A(0x4);
-    IF_Z goto asm_11884a;
-    LDH_A_addr(hJoyDown);
-    CP_A(0x5);
-    IF_NZ goto asm_11884a;
-    LD_A(MOBILEAPI_05);
-    CALL(aMobileAPI);
-    LD_A(0xa);
-    LD_addr_A(wMobileErrorCodeBuffer);
-    LD_A_addr(wc3f0);
-    LD_addr_A(wc319);
-    LD_A_addr(wcd34);
-    LD_addr_A(wBattleTowerRoomMenuJumptableIndex);
-    SCF;
-    RET;
-
-asm_11884a:
-    AND_A_A;
-    RET;
-
+bool Function118821(void){
+    // LD_A_addr(wc319);
+    // CP_A(0x3);
+    // IF_C goto asm_11884a;
+    // CP_A(0x4);
+    // IF_Z goto asm_11884a;
+    // LDH_A_addr(hJoyDown);
+    // CP_A(0x5);
+    // IF_NZ goto asm_11884a;
+    if(wram->wc319 < 0x3 || wram->wc319 == 0x4 || hram->hJoyDown != (A_BUTTON | SELECT)) {
+    // asm_11884a:
+        // AND_A_A;
+        // RET;
+        return false;
+    }
+    mobile_api_data_s data = {};
+    // LD_A(MOBILEAPI_05);
+    // CALL(aMobileAPI);
+    MobileAPI(MOBILEAPI_05, &data);
+    // LD_A(0xa);
+    // LD_addr_A(wMobileErrorCodeBuffer);
+    wram->wMobileErrorCodeBuffer[0] = 0xa;
+    // LD_A_addr(wc3f0);
+    // LD_addr_A(wc319);
+    wram->wc319 = wram->wc3f0;
+    // LD_A_addr(wcd34);
+    // LD_addr_A(wBattleTowerRoomMenuJumptableIndex);
+    wram->wBattleTowerRoomMenuJumptableIndex = wram->wcd34;
+    // SCF;
+    // RET;
+    return true;
 }
 
 void Function11884c(void){
@@ -1250,45 +1322,53 @@ asm_118864:
 }
 
 void Function118866(void){
-    LD_A(2);
-    JR(masm_11886f);
-
+    // LD_A(2);
+    // JR(masm_11886f);
+    return asm_11886f(2);
 }
 
 void Function11886a(void){
-    LD_A(1);
-    JR(masm_11886f);
-
+    // LD_A(1);
+    // JR(masm_11886f);
+    return asm_11886f(1);
 }
 
 void Function11886e(void){
-    XOR_A_A;
+    // XOR_A_A;
 
-    return asm_11886f();
+    return asm_11886f(0);
 }
 
-void asm_11886f(void){
-    LD_addr_A(wBGMapPalBuffer);
-    LD_A(0x0);
-    LD_addr_A(wBattleTowerRoomMenu2JumptableIndex);
-    CALL(aBattleTowerRoomMenu_IncrementJumptable);
-    LD_A_addr(wcd33);
-    LD_addr_A(wMobileInactivityTimerSeconds);
+void asm_11886f(uint8_t a){
+    // LD_addr_A(wBGMapPalBuffer);
+    wram->wBGMapPalBuffer[0] = a;
+    // LD_A(0x0);
+    // LD_addr_A(wBattleTowerRoomMenu2JumptableIndex);
+    wram->wBattleTowerRoomMenu2JumptableIndex = 0x0;
+    // CALL(aBattleTowerRoomMenu_IncrementJumptable);
+    BattleTowerRoomMenu_IncrementJumptable();
+    // LD_A_addr(wcd33);
+    // LD_addr_A(wMobileInactivityTimerSeconds);
+    wram->wMobileInactivityTimerSeconds = wram->wcd33;
 
     return Function118880();
 }
 
 void Function118880(void){
-    CALL(aBattleTowerRoomMenu2);
-    RET_C ;
-    XOR_A_A;
-    LD_addr_A(wcf64);
-    LD_addr_A(wc807);
-    LD_DE(wcd81);
-    LD_HL(0x46);
-    LD_A(MOBILEAPI_01);
-    JP(mFunction119e2b);
-
+    // CALL(aBattleTowerRoomMenu2);
+    // RET_C ;
+    if(BattleTowerRoomMenu2())
+        return;
+    // XOR_A_A;
+    // LD_addr_A(wcf64);
+    wram->wcf64 = 0x0;
+    // LD_addr_A(wc807);
+    wram->wc807 = 0x0;
+    // LD_DE(wcd81);
+    // LD_HL(0x46);
+    // LD_A(MOBILEAPI_01);
+    // JP(mFunction119e2b);
+    Function119e2b(MOBILEAPI_01, &(mobile_api_data_s){.de = &wram->wcd81, .l = 0x46});
 }
 
 void Function118896(void){
@@ -1314,83 +1394,111 @@ asm_1188aa:
 }
 
 void Function1188b0(void){
-    LD_DE(wc346);
-    LD_A(MOBILEAPI_06);
-    JP(mFunction119e2b);
-
+    // LD_DE(wc346);
+    // LD_A(MOBILEAPI_06);
+    // JP(mFunction119e2b);
+    return Function119e2b(MOBILEAPI_06, &(mobile_api_data_s){.de = wram->wc346});
 }
 
 void Function1188b8(void){
-    LD_DE(wc3ac);
-    LD_A(MOBILEAPI_07);
-    JP(mFunction119e2b);
-
+    // LD_DE(wc3ac);
+    // LD_A(MOBILEAPI_07);
+    // JP(mFunction119e2b);
+    return Function119e2b(MOBILEAPI_07, &(mobile_api_data_s){.de = wram->wc3ac});
 }
 
 void Function1188c0(void){
-    LD_DE(wc3cd);
-    LD_A(MOBILEAPI_08);
-    JP(mFunction119e2b);
-
+    // LD_DE(wc3cd);
+    // LD_A(MOBILEAPI_08);
+    // JP(mFunction119e2b);
+    return Function119e2b(MOBILEAPI_08, &(mobile_api_data_s){.de = wram->wc3cd});
 }
 
 void Function1188c8(void){
-    LD_A(0x1);
-    LD_addr_A(wcd65);
-    CALL(aFunction1188e7);
-    LD_HL(wc708);
+    // LD_A(0x1);
+    // LD_addr_A(wcd65);
+    wram->wcd65 = 0x1;
+    // CALL(aFunction1188e7);
+    const uint8_t* de = Function1188e7();
+    // LD_HL(wc708);
+    uint8_t* hl = &wram->wc708;
+    uint8_t a;
 
-asm_1188d3:
-    LD_A_de;
-    INC_DE;
-    LD_hli_A;
-    AND_A_A;
-    IF_NZ goto asm_1188d3;
-    CALL(aFunction119eb4);
-    CALL(aFunction119ec2);
-    LD_HL(wc708);
-    LD_A(MOBILEAPI_03);
-    JP(mFunction119e2b);
-
+    do {
+    // asm_1188d3:
+        // LD_A_de;
+        // INC_DE;
+        a = *(de++);
+        // LD_hli_A;
+        *(hl++) = a;
+        // AND_A_A;
+        // IF_NZ goto asm_1188d3;
+    } while(a != 0);
+    // CALL(aFunction119eb4);
+    hl = Function119eb4(hl);
+    // CALL(aFunction119ec2);
+    Function119ec2(hl);
+    // LD_HL(wc708);
+    // LD_A(MOBILEAPI_03);
+    // JP(mFunction119e2b);
+    Function119e2b(MOBILEAPI_03, &(mobile_api_data_s){.hl = &wram->wc708});
 }
 
-void Function1188e7(void){
-    LD_DE(wc346);
-    LD_A(BANK(s5_aa4a));
-    CALL(aOpenSRAM);
-    LD_A_addr(s5_aa4a);
-    CALL(aCloseSRAM);
-    AND_A_A;
-    RET_Z ;
-    SLA_A;
-    LD_C_A;
+uint8_t* Function1188e7(void){
+    // LD_DE(wc346);
+    uint8_t* de = wram->wc346;
+    // LD_A(BANK(s5_aa4a));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(as5_aa4a));
+    // LD_A_addr(s5_aa4a);
+    uint8_t aa4a = gb_read(s5_aa4a);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // AND_A_A;
+    // RET_Z ;
+    if(aa4a == 0)
+        return de;
+    // SLA_A;
+    // LD_C_A;
+    uint8_t c = aa4a << 1;
+    uint8_t a;
 
-asm_1188fa:
-    LD_A_de;
-    INC_DE;
-    AND_A_A;
-    IF_NZ goto asm_1188fa;
-    DEC_C;
-    IF_NZ goto asm_1188fa;
-    RET;
-
+    do {
+    // asm_1188fa:
+        // LD_A_de;
+        a = *(de++);
+        // INC_DE;
+        // AND_A_A;
+        // IF_NZ goto asm_1188fa;
+        // DEC_C;
+        // IF_NZ goto asm_1188fa;
+    } while(a != 0 && --c != 0);
+    // RET;
+    return de;
 }
 
 void Function118903(void){
-    LD_A_addr(wc3f0);
-    LD_addr_A(wc319);
-    LD_C(0x1);
-    FARCALL(aFunction115e18);
-    LD_A(0x8);
-    LD_addr_A(wBattleTowerRoomMenu2JumptableIndex);
-    CALL(aBattleTowerRoomMenu2);
-    JP(mBattleTowerRoomMenu_IncrementJumptable);
+    // LD_A_addr(wc3f0);
+    // LD_addr_A(wc319);
+    wram->wc319 = wram->wc3f0;
+    // LD_C(0x1);
+    // FARCALL(aFunction115e18);
+    Function115e18(0x1);
+    // LD_A(0x8);
+    // LD_addr_A(wBattleTowerRoomMenu2JumptableIndex);
+    wram->wBattleTowerRoomMenu2JumptableIndex = 0x8;
+    // CALL(aBattleTowerRoomMenu2);
+    BattleTowerRoomMenu2();
+    // JP(mBattleTowerRoomMenu_IncrementJumptable);
+    BattleTowerRoomMenu_IncrementJumptable();
 
 }
 
 void Function11891c(void){
-    CALL(aFunction118b42);
-    JP(mBattleTowerRoomMenu_IncrementJumptable);
+    // CALL(aFunction118b42);
+    Function118b42();
+    // JP(mBattleTowerRoomMenu_IncrementJumptable);
+    BattleTowerRoomMenu_IncrementJumptable();
 
 }
 
@@ -1680,38 +1788,41 @@ void Function118a65(void){
 }
 
 void Function118a7a(void){
-    LD_HL(mBattleDownloadURL);
-    LD_DE(wcc60);
-    LD_BC(0x80);
-    CALL(aCopyBytes);
-    LD_DE(w3_d000);
-    LD_BC(0x1000);
-    JP(mFunction118b10);
-
+    // LD_HL(mBattleDownloadURL);
+    // LD_DE(wcc60);
+    // LD_BC(0x80);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wcc60, BattleDownloadURL, 0x80);
+    // LD_DE(w3_d000);
+    // LD_BC(0x1000);
+    // JP(mFunction118b10);
+    Function118b10(wram->w3_d000, 0x1000);
 }
 
 void Function118a8f(void){
-    LD_HL(mExchangeDownloadURL);
-    LD_DE(wcc60);
-    LD_BC(0x80);
-    CALL(aCopyBytes);
-    LD_DE(w3_d000);
-    LD_BC(0x1000);
-    JP(mFunction118b10);
-
+    // LD_HL(mExchangeDownloadURL);
+    // LD_DE(wcc60);
+    // LD_BC(0x80);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wcc60, ExchangeDownloadURL, 0x80);
+    // LD_DE(w3_d000);
+    // LD_BC(0x1000);
+    // JP(mFunction118b10);
+    Function118b10(wram->w3_d000, 0x1000);
 }
 
 void Function118aa4(void){
-    LD_HL(mNewsDownloadURL);
-    LD_DE(wcc60);
-    LD_BC(0x80);
-    CALL(aCopyBytes);
-    LD_A(0x5);
-    LDH_addr_A(rSVBK);
-    LD_DE(w3_d100);
-    LD_BC(0xe00);
-    JR(mFunction118b10);
-
+    // LD_HL(mNewsDownloadURL);
+    // LD_DE(wcc60);
+    // LD_BC(0x80);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wcc60, NewsDownloadURL, 0x80);
+    // LD_A(0x5);
+    // LDH_addr_A(rSVBK);
+    // LD_DE(w3_d100);
+    // LD_BC(0xe00);
+    // JR(mFunction118b10);
+    Function118b10(wram->w3_d100, 0xe00);
 }
 
 void Function118abc(void){
@@ -1770,122 +1881,148 @@ asm_118b06:
 
 }
 
-void Function118b10(void){
-    PUSH_DE;
-    PUSH_BC;
-    LD_A(0x8);
-    LD_addr_A(wBattleTowerRoomMenu2JumptableIndex);
-    CALL(aBattleTowerRoomMenu2);
-    CALL(aFunction118b24);
-    POP_BC;
-    POP_DE;
-    LD_A(MOBILEAPI_15);
-    JP(mFunction119e2b);
-
+void Function118b10(void* de, uint16_t bc){
+    // PUSH_DE;
+    // PUSH_BC;
+    // LD_A(0x8);
+    // LD_addr_A(wBattleTowerRoomMenu2JumptableIndex);
+    wram->wBattleTowerRoomMenu2JumptableIndex = 0x8;
+    // CALL(aBattleTowerRoomMenu2);
+    BattleTowerRoomMenu2();
+    // CALL(aFunction118b24);
+    uint8_t* hl = Function118b24();
+    // POP_BC;
+    // POP_DE;
+    // LD_A(MOBILEAPI_15);
+    // JP(mFunction119e2b);
+    Function119e2b(MOBILEAPI_15, &(mobile_api_data_s){.bc = bc, .de = de, .hl = hl});
 }
 
-void Function118b24(void){
-    LD_HL(wc346);
-    LD_A(0x8);
-    LD_hli_A;
-    LD_A(0xc7);
-    LD_hli_A;
-    LD_A(0x60);
-    LD_hli_A;
-    LD_A(0xcc);
-    LD_hli_A;
-    CALL(aFunction119eb4);
-    CALL(aFunction119ec2);
-    LD_A(0x80);
-    LD_addr_A(wcd89);
-    LD_HL(wc346);
-    RET;
-
+uint8_t* Function118b24(void){
+    // LD_HL(wc346);
+    // LD_A(0x8);
+    // LD_hli_A;
+    wram->wc346[0] = 0x8;
+    // LD_A(0xc7);
+    // LD_hli_A;
+    wram->wc346[1] = 0xc7;
+    // LD_A(0x60);
+    // LD_hli_A;
+    wram->wc346[2] = 0x60;
+    // LD_A(0xcc);
+    // LD_hli_A;
+    wram->wc346[3] = 0xcc;
+    // CALL(aFunction119eb4);
+    // CALL(aFunction119ec2);
+    Function119ec2(Function119eb4(wram->wc346 + 4));
+    // LD_A(0x80);
+    // LD_addr_A(wcd89);
+    wram->wcd89 = 0x80;
+    // LD_HL(wc346);
+    // RET;
+    return wram->wc346;
 }
 
 void Function118b42(void){
-    LD_HL(wd002);
-    LD_A_L;
-    LD_addr_A(wcd51);
-    LD_A_H;
-    LD_addr_A(wcd52);
-    CALL(aFunction118b8c);
-    LD_A_L;
-    LD_addr_A(wcd55);
-    LD_addr_A(wcd59);
-    LD_A_H;
-    LD_addr_A(wcd56);
-    LD_addr_A(wcd5a);
-    CALL(aFunction118b8c);
-    LD_A_L;
-    LD_addr_A(wcd53);
-    LD_addr_A(wcd5d);
-    LD_A_H;
-    LD_addr_A(wcd54);
-    LD_addr_A(wcd5e);
-    CALL(aFunction118b8c);
-    LD_A_L;
-    LD_addr_A(wcd57);
-    LD_addr_A(wcd5b);
-    LD_A_H;
-    LD_addr_A(wcd58);
-    LD_addr_A(wcd5c);
-    CALL(aFunction118b8c);
-    LD_A_L;
-    LD_addr_A(wcd5f);
-    LD_A_H;
-    LD_addr_A(wcd60);
-    RET;
-
+    // LD_HL(wd002);
+    uint16_t hl = 0x0002;
+    // LD_A_L;
+    // LD_addr_A(wcd51);
+    wram->wcd51 = LOW(hl);
+    // LD_A_H;
+    // LD_addr_A(wcd52);
+    wram->wcd52 = HIGH(hl);
+    // CALL(aFunction118b8c);
+    hl = Function118b8c(hl);
+    // LD_A_L;
+    // LD_addr_A(wcd55);
+    wram->wcd55 = LOW(hl);
+    // LD_addr_A(wcd59);
+    wram->wcd59 = LOW(hl);
+    // LD_A_H;
+    // LD_addr_A(wcd56);
+    wram->wcd56 = HIGH(hl);
+    // LD_addr_A(wcd5a);
+    wram->wcd5a = HIGH(hl);
+    // CALL(aFunction118b8c);
+    hl = Function118b8c(hl);
+    // LD_A_L;
+    // LD_addr_A(wcd53);
+    wram->wcd53 = LOW(hl);
+    // LD_addr_A(wcd5d);
+    wram->wcd5d = LOW(hl);
+    // LD_A_H;
+    // LD_addr_A(wcd54);
+    wram->wcd54 = HIGH(hl);
+    // LD_addr_A(wcd5e);
+    wram->wcd5e = HIGH(hl);
+    // CALL(aFunction118b8c);
+    hl = Function118b8c(hl);
+    // LD_A_L;
+    // LD_addr_A(wcd57);
+    wram->wcd57 = LOW(hl);
+    // LD_addr_A(wcd5b);
+    wram->wcd5b = LOW(hl);
+    // LD_A_H;
+    // LD_addr_A(wcd58);
+    wram->wcd58 = HIGH(hl);
+    // LD_addr_A(wcd5c);
+    wram->wcd5c = HIGH(hl);
+    // CALL(aFunction118b8c);
+    hl = Function118b8c(hl);
+    // LD_A_L;
+    // LD_addr_A(wcd5f);
+    wram->wcd5f = LOW(hl);
+    // LD_A_H;
+    // LD_addr_A(wcd60);
+    wram->wcd60 = HIGH(hl);
+    // RET;
 }
 
-void Function118b8c(void){
-
-asm_118b8c:
-    CALL(aFunction118b9a);
-    RET_NC ;
-    LD_A_hli;
-    CP_A(0xd);
-    IF_NZ goto asm_118b8c;
-    DEC_HL;
-    XOR_A_A;
-    LD_hli_A;
-    LD_hli_A;
-    RET;
-
+uint16_t Function118b8c(uint16_t hl){
+    uint8_t a;
+    do {
+    // asm_118b8c:
+        // CALL(aFunction118b9a);
+        // RET_NC ;
+        if(Function118b9a(hl))
+            return hl;
+        // LD_A_hli;
+        a = wram->wram1[hl++];
+        // CP_A(0xd);
+        // IF_NZ goto asm_118b8c;
+    } while(a != '\r');
+    // DEC_HL;
+    --hl;
+    // XOR_A_A;
+    // LD_hli_A;
+    wram->wram1[hl++] = 0x0;
+    // LD_hli_A;
+    wram->wram1[hl++] = 0x0;
+    // RET;
+    return hl;
 }
 
-void Function118b9a(void){
-    LD_A_H;
-    CP_A(0xe0);
-    RET_C ;
-    LD_A(0xd3);
-    CALL(aSetMobileErrorCode);
-    AND_A_A;
-    RET;
-
+bool Function118b9a(uint16_t hl){
+    // LD_A_H;
+    // CP_A(0xe0);
+    // RET_C ;
+    if(hl < 0x1000)
+        return true;
+    // LD_A(0xd3);
+    // CALL(aSetMobileErrorCode);
+    SetMobileErrorCode(0xd3);
+    // AND_A_A;
+    // RET;
+    return false;
 //pushc
 //setcharmap ascii
 }
 
 const char ExchangeDownloadURL[] = "http://gameboy.datacenter.ne.jp/cgb/download?name=/01/CGB-BXTJ/exchange/index.txt";
-
-void BattleDownloadURL(void){
-    //db ['"http://gameboy.datacenter.ne.jp/cgb/download?name=/01/CGB-BXTJ/battle/index.txt"', '0'];
-
-    return NewsDownloadURL();
-}
-
-void NewsDownloadURL(void){
-    //db ['"http://gameboy.datacenter.ne.jp/cgb/download?name=/01/CGB-BXTJ/news/index.txt"', '0'];
-
-    return MenuDownloadURL();
-}
-
-void MenuDownloadURL(void){
-    //db ['"http://gameboy.datacenter.ne.jp/cgb/download?name=/01/CGB-BXTJ/POKESTA/menu.cgb"', '0'];
-}
-
+const char BattleDownloadURL[] = "http://gameboy.datacenter.ne.jp/cgb/download?name=/01/CGB-BXTJ/battle/index.txt";
+const char NewsDownloadURL[] = "http://gameboy.datacenter.ne.jp/cgb/download?name=/01/CGB-BXTJ/news/index.txt";
+const char MenuDownloadURL[] = "http://gameboy.datacenter.ne.jp/cgb/download?name=/01/CGB-BXTJ/POKESTA/menu.cgb";
 const char IndexDownloadURL[] = "http://gameboy.datacenter.ne.jp/cgb/download?name=/01/CGB-BXTJ/tamago/index.txt";
 
 // popc
@@ -2126,27 +2263,32 @@ void Function118e6d(void){
 
 void Function118e76(void){
 // Call $c in BattleTowerRoomMenu2
-    LD_A(0xc);
-    LD_addr_A(wBattleTowerRoomMenu2JumptableIndex);
-    JP(mBattleTowerRoomMenu_IncrementJumptable);
-
+    // LD_A(0xc);
+    // LD_addr_A(wBattleTowerRoomMenu2JumptableIndex);
+    wram->wBattleTowerRoomMenu2JumptableIndex = 0xc;
+    // JP(mBattleTowerRoomMenu_IncrementJumptable);
+    return BattleTowerRoomMenu_IncrementJumptable();
 }
 
 void Function118e7e(void){
-    CALL(aBattleTowerRoomMenu2);
-    RET_C ;
-    LD_A(MOBILEAPI_1B);
-    JP(mFunction119e2b);
-
+    // CALL(aBattleTowerRoomMenu2);
+    // RET_C ;
+    if(BattleTowerRoomMenu2())
+        return;
+    // LD_A(MOBILEAPI_1B);
+    // JP(mFunction119e2b);
+    return Function119e2b(MOBILEAPI_1B, &(mobile_api_data_s){});
 }
 
 void BattleTowerRoomMenu_CallRoomMenu2(void){
-    CALL(aBattleTowerRoomMenu2);
-    RET_C ;
-    LD_A_addr(wcd33);
-    LD_addr_A(wBattleTowerRoomMenuJumptableIndex);
-    RET;
-
+    // CALL(aBattleTowerRoomMenu2);
+    // RET_C ;
+    if(BattleTowerRoomMenu2())
+        return;
+    // LD_A_addr(wcd33);
+    // LD_addr_A(wBattleTowerRoomMenuJumptableIndex);
+    wram->wBattleTowerRoomMenuJumptableIndex = wram->wcd33;
+    // RET;
 }
 
 void Function118e92(void){
@@ -4772,8 +4914,10 @@ bool BattleTower_UbersCheck(void){
     return false;
 }
 
-void Function119e2b(void){
-    CALL(aMobileAPI);
+// CallMobileAPIAndIncrementBattleTowerRoomMenuJumptable
+void Function119e2b(uint8_t a, mobile_api_data_s* data){
+    // CALL(aMobileAPI);
+    MobileAPI(a, data);
 
     return BattleTowerRoomMenu_IncrementJumptable();
 }
@@ -4905,37 +5049,53 @@ loop:
 
 }
 
-void Function119eb4(void){
-    XOR_A_A;
-    LD_addr_A(wc3cc);
-    LD_DE(wc3ac);
+uint8_t* Function119eb4(uint8_t* hl){
+    // XOR_A_A;
+    // LD_addr_A(wc3cc);
+    wram->wc3cc[0] = 0x0;
+    // LD_DE(wc3ac);
+    uint8_t* de = wram->wc3ac;
+    uint8_t a;
 
-loop:
-    LD_A_de;
-    INC_DE;
-    LD_hli_A;
-    AND_A_A;
-    IF_NZ goto loop;
-    RET;
-
+    do {
+    // loop:
+        // LD_A_de;
+        // INC_DE;
+        a = *(de++);
+        // LD_hli_A;
+        *(hl++) = a;
+        // AND_A_A;
+        // IF_NZ goto loop;
+    } while(a != 0);
+    // RET;
+    return hl;
 }
 
-void Function119ec2(void){
-    LD_A(BANK(sMobileLoginPassword));
-    CALL(aOpenSRAM);
-    XOR_A_A;
-    LD_addr_A(sMobileLoginPassword + MOBILE_LOGIN_PASSWORD_LENGTH);
-    LD_DE(sMobileLoginPassword + 1);
+uint8_t* Function119ec2(uint8_t* hl){
+    // LD_A(BANK(sMobileLoginPassword));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asMobileLoginPassword));
+    // XOR_A_A;
+    // LD_addr_A(sMobileLoginPassword + MOBILE_LOGIN_PASSWORD_LENGTH);
+    gb_write(sMobileLoginPassword + MOBILE_LOGIN_PASSWORD_LENGTH, 0x0);
+    // LD_DE(sMobileLoginPassword + 1);
+    uint8_t* de = GBToRAMAddr(sMobileLoginPassword + 1);
+    uint8_t a;
 
-loop:
-    LD_A_de;
-    INC_DE;
-    LD_hli_A;
-    AND_A_A;
-    IF_NZ goto loop;
-    CALL(aCloseSRAM);
-    RET;
-
+    do {
+    // loop:
+        // LD_A_de;
+        a = *(de++);
+        // INC_DE;
+        // LD_hli_A;
+        *(hl++) = a;
+        // AND_A_A;
+        // IF_NZ goto loop;
+    } while(a != 0);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
+    return hl;
 }
 
 bool BattleTowerRoomMenu2(void){
@@ -4946,16 +5106,17 @@ bool BattleTowerRoomMenu2(void){
 
     bool result = false;
     // CALL(aBattleTowerRoomMenu2_RunJumptable);
+    printf("Battle Tower Room Menu 2 (%02x)", wram->wBattleTowerRoomMenu2JumptableIndex);
     switch(wram->wBattleTowerRoomMenu2JumptableIndex){
     // RunJumptable:
         //jumptable ['.Jumptable', 'wBattleTowerRoomMenu2JumptableIndex']
 
     // Jumptable:
-        //dw ['Function119f3f'];
-        //dw ['Function119f45'];
-        //dw ['Function119f56'];
-        //dw ['Function119f76'];
-        //dw ['Function119f98'];
+        case 0x00: result = Function119f3f(); break; //dw ['Function119f3f'];
+        case 0x01: result = Function119f45(); break; //dw ['Function119f45'];
+        case 0x02: result = Function119f56(); break; //dw ['Function119f56'];
+        case 0x03: result = Function119f76(); break; //dw ['Function119f76'];
+        case 0x04: result = Function119f98(); break; //dw ['Function119f98'];
         //dw ['Function11a113'];
         //dw ['Function11a129'];
         //dw ['Function11a131'];
@@ -4963,9 +5124,9 @@ bool BattleTowerRoomMenu2(void){
         //dw ['Function11a14b'];
         //dw ['Function11a16d'];
         //dw ['Function11a192'];
-        //dw ['Function11a2e6'];
-        //dw ['Function11a302'];
-        //dw ['Function11a33a'];
+        case 0x0c: result = Function11a2e6(); break; //dw ['Function11a2e6'];
+        case 0x0d: result = Function11a302(); break; //dw ['Function11a302'];
+        case 0x0e: result = Function11a33a(); break; //dw ['Function11a33a'];
         //dw ['BattleTowerRoomMenu2_PlaceYesNoMenu'];
         case 0x0f: 
             result = BattleTowerRoomMenu2_PlaceYesNoMenu(); break;
@@ -4998,194 +5159,254 @@ bool BattleTowerRoomMenu2(void){
     return result;
 }
 
-void Function119f3f(void){
-    CALL(aFunction11a5b9);
-    JP(mBattleTowerRoomMenu2_IncrementJumptable);
+bool Function119f3f(void){
+    // CALL(aFunction11a5b9);
+    Function11a5b9();
+    // JP(mBattleTowerRoomMenu2_IncrementJumptable);
+    return BattleTowerRoomMenu2_IncrementJumptable();
 
 }
 
-void Function119f45(void){
-    hlcoord(4, 2, wTilemap);
-    LD_DE(mString_11a661);
-    CALL(aPlaceString);
-    LD_A(0x80);
-    LD_addr_A(wMobileInactivityTimerMinutes);
-    JP(mBattleTowerRoomMenu2_IncrementJumptable);
+bool Function119f45(void){
+    // hlcoord(4, 2, wTilemap);
+    // LD_DE(mString_11a661);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(String_11a661), coord(4, 2, wram->wTilemap)); // "Dialing the MOBILE CENTER..."
+    // LD_A(0x80);
+    // LD_addr_A(wMobileInactivityTimerMinutes);
+    wram->wMobileInactivityTimerMinutes = 0x80;
+    // JP(mBattleTowerRoomMenu2_IncrementJumptable);
+    return BattleTowerRoomMenu2_IncrementJumptable();
 
 }
 
-void Function119f56(void){
-    LD_A_addr(wMobileInactivityTimerMinutes);
-    AND_A_A;
-    IF_Z goto asm_119f62;
-    DEC_A;
-    LD_addr_A(wMobileInactivityTimerMinutes);
-    SCF;
-    RET;
+bool Function119f56(void){
+    // LD_A_addr(wMobileInactivityTimerMinutes);
+    // AND_A_A;
+    // IF_Z goto asm_119f62;
+    // DEC_A;
+    // LD_addr_A(wMobileInactivityTimerMinutes);
+    // SCF;
+    // RET;
+    if(wram->wMobileInactivityTimerMinutes == 0) {
+    // asm_119f62:
+        // CALL(aFunction11a63c);
+        Function11a63c();
+        // hlcoord(4, 2, wTilemap);
+        // LD_DE(mString_11a6aa);
+        // CALL(aPlaceString);
+        PlaceStringSimple(U82C(String_11a6aa), coord(4, 2, wram->wTilemap)); // Charges will apply
+        // LD_A(0x80);
+        // LD_addr_A(wMobileInactivityTimerMinutes);
+        wram->wMobileInactivityTimerMinutes = 0x80;
+        // JP(mBattleTowerRoomMenu2_IncrementJumptable);
+        return BattleTowerRoomMenu2_IncrementJumptable();
+    }
 
-
-asm_119f62:
-    CALL(aFunction11a63c);
-    hlcoord(4, 2, wTilemap);
-    LD_DE(mString_11a6aa);
-    CALL(aPlaceString);
-    LD_A(0x80);
-    LD_addr_A(wMobileInactivityTimerMinutes);
-    JP(mBattleTowerRoomMenu2_IncrementJumptable);
-
+    --wram->wMobileInactivityTimerMinutes;
+    return true;
 }
 
-void Function119f76(void){
-    LD_A_addr(wMobileInactivityTimerMinutes);
-    AND_A_A;
-    IF_Z goto asm_119f82;
-    DEC_A;
-    LD_addr_A(wMobileInactivityTimerMinutes);
-    SCF;
-    RET;
-
-
-asm_119f82:
-    CALL(aFunction11a63c);
-    hlcoord(4, 2, wTilemap);
-    LD_DE(mString_11a679);
-    CALL(aPlaceString);
-    CALL(aFunction11a5f5);
-    XOR_A_A;
-    LD_addr_A(wMobileInactivityTimerMinutes);
-    JP(mBattleTowerRoomMenu2_IncrementJumptable);
-
+bool Function119f76(void){
+    // LD_A_addr(wMobileInactivityTimerMinutes);
+    // AND_A_A;
+    // IF_Z goto asm_119f82;
+    if(wram->wMobileInactivityTimerMinutes == 0) {
+    // asm_119f82:
+        // CALL(aFunction11a63c);
+        Function11a63c();
+        // hlcoord(4, 2, wTilemap);
+        // LD_DE(mString_11a679);
+        // CALL(aPlaceString);
+        PlaceStringSimple(U82C(String_11a679), coord(4, 2, wram->wTilemap));
+        // CALL(aFunction11a5f5);
+        Function11a5f5();
+        // XOR_A_A;
+        // LD_addr_A(wMobileInactivityTimerMinutes);
+        // JP(mBattleTowerRoomMenu2_IncrementJumptable);
+        return BattleTowerRoomMenu2_IncrementJumptable();
+    }
+    // DEC_A;
+    // LD_addr_A(wMobileInactivityTimerMinutes);
+    wram->wMobileInactivityTimerMinutes--;
+    // SCF;
+    // RET;
+    return true;
 }
 
-void Function119f98(void){
-    CALL(aFunction11a536);
-    RET_C ;
-    CALL(aPlayClickSFX);
-    LD_A_addr(wMobileInactivityTimerMinutes);
-    AND_A_A;
-    IF_NZ goto asm_119fef;
-    CALL(aExitMenu);
-    CALL(aFunction11a63c);
-    XOR_A_A;
-    LD_addr_A(wScriptVar);
-    CALL(aFunction11a00e);
-    LD_A_addr(wScriptVar);
-    AND_A_A;
-    IF_Z goto asm_119fd4;
-    CALL(aExitMenu);
-    FARCALL(aReloadMapPart);
-    FARCALL(aFunction115dc3);
-    LD_A_addr(wcd33);
-    LD_addr_A(wcf66);
-    LD_A(0xa);
-    LD_addr_A(wMobileErrorCodeBuffer);
-    SCF;
-    RET;
+bool Function119f98(void){
+    // CALL(aFunction11a536);
+    // RET_C ;
+    if(Function11a536())
+        return true;
+    // CALL(aPlayClickSFX);
+    // LD_A_addr(wMobileInactivityTimerMinutes);
+    // AND_A_A;
+    // IF_NZ goto asm_119fef;
+    if(wram->wMobileInactivityTimerMinutes != 0) {
+    // asm_119fef:
+        // CALL(aExitMenu);
+        ExitMenu_Conv2();
+        // CALL(aExitMenu);
+        ExitMenu_Conv2();
+        // FARCALL(aReloadMapPart);
+        ReloadMapPart_Conv();
+        // LD_A_addr(wMobileInactivityTimerSeconds);
+        // LD_addr_A(wcf66);
+        wram->wcf66 = wram->wMobileInactivityTimerSeconds;
+        // FARCALL(aFunction115dc3);
+        Function115dc3();
+        // LD_A(0xa);
+        // LD_addr_A(wMobileErrorCodeBuffer);
+        wram->wMobileErrorCodeBuffer[0] = 0xa;
+        // SCF;
+        // RET;
+        return true;
+    }
+    // CALL(aExitMenu);
+    ExitMenu_Conv2();
+    // CALL(aFunction11a63c);
+    Function11a63c();
+    // XOR_A_A;
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = 0x0;
+    // CALL(aFunction11a00e);
+    Function11a00e();
+    // LD_A_addr(wScriptVar);
+    // AND_A_A;
+    // IF_Z goto asm_119fd4;
+    if(wram->wScriptVar != 0) {
+        // CALL(aExitMenu);
+        ExitMenu_Conv2();
+        // FARCALL(aReloadMapPart);
+        ReloadMapPart_Conv();
+        // FARCALL(aFunction115dc3);
+        Function115dc3();
+        // LD_A_addr(wcd33);
+        // LD_addr_A(wcf66);
+        wram->wcf66 = wram->wcd33;
+        // LD_A(0xa);
+        // LD_addr_A(wMobileErrorCodeBuffer);
+        wram->wMobileErrorCodeBuffer[0] = 0xa;
+        // SCF;
+        // RET;
+        return true;
+    }
 
-
-asm_119fd4:
-    hlcoord(4, 2, wTilemap);
-    LD_DE(mString_11a692);
-    CALL(aPlaceString);
-    LD_A(0x1);
-    LD_addr_A(wc30d);
-    LD_A(0x1);
-    LD_addr_A(wc314);
-    FARCALL(aReloadMapPart);
-    AND_A_A;
-    RET;
-
-
-asm_119fef:
-    CALL(aExitMenu);
-    CALL(aExitMenu);
-    FARCALL(aReloadMapPart);
-    LD_A_addr(wMobileInactivityTimerSeconds);
-    LD_addr_A(wcf66);
-    FARCALL(aFunction115dc3);
-    LD_A(0xa);
-    LD_addr_A(wMobileErrorCodeBuffer);
-    SCF;
-    RET;
-
+// asm_119fd4:
+    // hlcoord(4, 2, wTilemap);
+    // LD_DE(mString_11a692);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(String_11a692), coord(4, 2, wram->wTilemap));
+    // LD_A(0x1);
+    // LD_addr_A(wc30d);
+    wram->wc30d = 0x1;
+    // LD_A(0x1);
+    // LD_addr_A(wc314);
+    wram->wc314[0] = 0x1;
+    // FARCALL(aReloadMapPart);
+    ReloadMapPart_Conv();
+    // AND_A_A;
+    // RET;
+    return false;
 }
 
 void Function11a00e(void){
-    LD_A(BANK(sMobileLoginPassword));
-    CALL(aOpenSRAM);
-    LD_A_addr(sMobileLoginPassword);
-    AND_A_A;
-    IF_Z goto asm_11a02a;
-    LD_A_addr(sMobileLoginPassword + 1);
-    CALL(aCloseSRAM);
-    AND_A_A;
-    RET_NZ ;
-    LD_A(BANK(sMobileLoginPassword));
-    CALL(aOpenSRAM);
-    XOR_A_A;
-    LD_addr_A(sMobileLoginPassword);
+// Completely bypass password system for now
+    return;
+//
+    // LD_A(BANK(sMobileLoginPassword));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asMobileLoginPassword));
+    // LD_A_addr(sMobileLoginPassword);
+    // AND_A_A;
+    // IF_Z goto asm_11a02a;
+    if(gb_read(sMobileLoginPassword) != 0) {
+        // LD_A_addr(sMobileLoginPassword + 1);
+        // CALL(aCloseSRAM);
+        // AND_A_A;
+        // RET_NZ ;
+        if(gb_read(sMobileLoginPassword + 1) != 0) {
+            CloseSRAM_Conv();
+            return;
+        }
+        // LD_A(BANK(sMobileLoginPassword));
+        // CALL(aOpenSRAM);
+        // XOR_A_A;
+        // LD_addr_A(sMobileLoginPassword);
+        gb_write(sMobileLoginPassword, 0x0);
+    }
 
-
-asm_11a02a:
-    CALL(aCloseSRAM);
-    LD_A_addr(wBGMapPalBuffer);
-    AND_A_A;
-    IF_Z goto asm_11a039;
-    DEC_A;
-    IF_Z goto asm_11a081;
-    JP(mFunction11a0ca);
-
-
-asm_11a039:
-    LD_A(BANK(w3_d800));
-    LDH_addr_A(rSVBK);
-    LD_HL(wc608);
-    LD_DE(w3_d800);
-    LD_BC(246);
-    CALL(aCopyBytes);
-    LD_A(0x1);
-    LDH_addr_A(rSVBK);
-    CALL(aFadeToMenu);
-    FARCALL(aFunction11765d);
-    CALL(aFunction11a9ce);
-    LD_A(BANK(w3_d800));
-    LDH_addr_A(rSVBK);
-    LD_HL(w3_d800);
-    LD_DE(wc608);
-    LD_BC(246);
-    CALL(aCopyBytes);
-    LD_A(0x1);
-    LDH_addr_A(rSVBK);
-    FARCALL(aFunction115d99);
-    LD_C(0x0);
-    FARCALL(aFunction115e18);
-    LD_A(0x1);
-    LD_addr_A(wc305);
-    RET;
-
-
-asm_11a081:
-    XOR_A_A;
-    LD_addr_A(wMenuBorderLeftCoord);
-    LD_addr_A(wMenuBorderTopCoord);
-    LD_A(0x13);
-    LD_addr_A(wMenuBorderRightCoord);
-    LD_A(0x5);
-    LD_addr_A(wMenuBorderBottomCoord);
-    CALL(aPushWindow);
-    FARCALL(aFunction11765d);
-    FARCALL(aFunction117ab4);
-    FARCALL(aStubbed_Function106462);
-    FARCALL(aFunction106464);
-    CALL(aExitMenu);
-    FARCALL(aReloadMapPart);
-    FARCALL(aFunction115d99);
-    LD_C(0x0);
-    FARCALL(aFunction115e18);
-    LD_A(0x1);
-    LD_addr_A(wc305);
-    RET;
-
+// asm_11a02a:
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // LD_A_addr(wBGMapPalBuffer);
+    // AND_A_A;
+    // IF_Z goto asm_11a039;
+    if(wram->wBGMapPalBuffer[0] == 0) {
+    // asm_11a039:
+        // LD_A(BANK(w3_d800));
+        // LDH_addr_A(rSVBK);
+        // LD_HL(wc608);
+        // LD_DE(w3_d800);
+        // LD_BC(246);
+        // CALL(aCopyBytes);
+        CopyBytes_Conv2(wram->w3_d800, wram->wc608, 246);
+        // LD_A(0x1);
+        // LDH_addr_A(rSVBK);
+        // CALL(aFadeToMenu);
+        FadeToMenu_Conv();
+        // FARCALL(aFunction11765d);
+        Function11765d();
+        // CALL(aFunction11a9ce);
+        Function11a9ce();
+        // LD_A(BANK(w3_d800));
+        // LDH_addr_A(rSVBK);
+        // LD_HL(w3_d800);
+        // LD_DE(wc608);
+        // LD_BC(246);
+        // CALL(aCopyBytes);
+        CopyBytes_Conv2(wram->wc608, wram->w3_d800, 246);
+        // LD_A(0x1);
+        // LDH_addr_A(rSVBK);
+        // FARCALL(aFunction115d99);
+        Function115d99();
+        // LD_C(0x0);
+        // FARCALL(aFunction115e18);
+        Function115e18(0x0);
+        // LD_A(0x1);
+        // LD_addr_A(wc305);
+        wram->wc305 = 0x1;
+        // RET;
+        return;
+    }
+    // DEC_A;
+    // IF_Z goto asm_11a081;
+    else if(wram->wBGMapPalBuffer[0] == 1) {
+    // asm_11a081:
+        // XOR_A_A;
+        // LD_addr_A(wMenuBorderLeftCoord);
+        // LD_addr_A(wMenuBorderTopCoord);
+        // LD_A(0x13);
+        // LD_addr_A(wMenuBorderRightCoord);
+        // LD_A(0x5);
+        // LD_addr_A(wMenuBorderBottomCoord);
+        // CALL(aPushWindow);
+        // FARCALL(aFunction11765d);
+        // FARCALL(aFunction117ab4);
+        // FARCALL(aStubbed_Function106462);
+        // FARCALL(aFunction106464);
+        // CALL(aExitMenu);
+        // FARCALL(aReloadMapPart);
+        // FARCALL(aFunction115d99);
+        // LD_C(0x0);
+        // FARCALL(aFunction115e18);
+        // LD_A(0x1);
+        // LD_addr_A(wc305);
+        // RET;
+    }
+    // JP(mFunction11a0ca);
+    return Function11a0ca();
 }
 
 void Function11a0ca(void){
@@ -5541,65 +5762,80 @@ const struct MenuHeader MenuHeader_11a2de = {
     .defaultOption = 0,  // default option
 };
 
-void Function11a2e6(void){
-    CALL(aFunction11a63c);
-    LD_C(0x2);
-    FARCALL(aFunction115e18);
-    hlcoord(4, 2, wTilemap);
-    LD_DE(mString_11a71e);
-    CALL(aPlaceString);
-    LD_A(0x80);
-    LD_addr_A(wMobileInactivityTimerMinutes);
-    JP(mBattleTowerRoomMenu2_IncrementJumptable);
-
+bool Function11a2e6(void){
+    // CALL(aFunction11a63c);
+    Function11a63c();
+    // LD_C(0x2);
+    // FARCALL(aFunction115e18);
+    Function115e18(0x2);
+    // hlcoord(4, 2, wTilemap);
+    // LD_DE(mString_11a71e);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(String_11a71e), coord(4, 2, wram->wTilemap));
+    // LD_A(0x80);
+    // LD_addr_A(wMobileInactivityTimerMinutes);
+    wram->wMobileInactivityTimerMinutes = 0x80;
+    // JP(mBattleTowerRoomMenu2_IncrementJumptable);
+    return BattleTowerRoomMenu2_IncrementJumptable();
 }
 
-void Function11a302(void){
-    LD_A_addr(wMobileInactivityTimerMinutes);
-    AND_A_A;
-    IF_Z goto asm_11a30e;
-    DEC_A;
-    LD_addr_A(wMobileInactivityTimerMinutes);
-    SCF;
-    RET;
-
-
-asm_11a30e:
-    CALL(aFunction11a63c);
-    hlcoord(4, 2, wTilemap);
-    LD_DE(mString_11a72a);
-    CALL(aPlaceString);
-    hlcoord(9, 4, wTilemap);
-    LD_DE(wcd68);
-    LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
-    CALL(aPrintNum);
-    hlcoord(14, 4, wTilemap);
-    LD_DE(wcd67);
-    LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
-    CALL(aPrintNum);
-    LD_A(0x80);
-    LD_addr_A(wMobileInactivityTimerMinutes);
-    JP(mBattleTowerRoomMenu2_IncrementJumptable);
-
+bool Function11a302(void){
+    // LD_A_addr(wMobileInactivityTimerMinutes);
+    // AND_A_A;
+    // IF_Z goto asm_11a30e;
+    if(wram->wMobileInactivityTimerMinutes == 0) {
+    // asm_11a30e:
+        // CALL(aFunction11a63c);
+        // hlcoord(4, 2, wTilemap);
+        // LD_DE(mString_11a72a);
+        // CALL(aPlaceString);
+        PlaceStringSimple(U82C(String_11a72a), coord(4, 2, wram->wTilemap));
+        // hlcoord(9, 4, wTilemap);
+        // LD_DE(wcd68);
+        // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
+        // CALL(aPrintNum);
+        PrintNum_Conv2(coord(9, 4, wram->wTilemap), &wram->wcd68, PRINTNUM_LEADINGZEROS | 1, 2);
+        // hlcoord(14, 4, wTilemap);
+        // LD_DE(wcd67);
+        // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
+        // CALL(aPrintNum);
+        PrintNum_Conv2(coord(14, 4, wram->wTilemap), &wram->wcd67, PRINTNUM_LEADINGZEROS | 1, 2);
+        // LD_A(0x80);
+        // LD_addr_A(wMobileInactivityTimerMinutes);
+        wram->wMobileInactivityTimerMinutes = 0x80;
+        // JP(mBattleTowerRoomMenu2_IncrementJumptable);
+        return BattleTowerRoomMenu2_IncrementJumptable();
+    }
+    // DEC_A;
+    // LD_addr_A(wMobileInactivityTimerMinutes);
+    wram->wMobileInactivityTimerMinutes--;
+    // SCF;
+    // RET;
+    return true;
 }
 
-void Function11a33a(void){
-    LD_A_addr(wMobileInactivityTimerMinutes);
-    AND_A_A;
-    IF_Z goto asm_11a346;
-    DEC_A;
-    LD_addr_A(wMobileInactivityTimerMinutes);
-    SCF;
-    RET;
-
-
-asm_11a346:
-    CALL(aExitMenu);
-    FARCALL(aReloadMapPart);
-    FARCALL(aFunction115dc3);
-    AND_A_A;
-    RET;
-
+bool Function11a33a(void){
+    // LD_A_addr(wMobileInactivityTimerMinutes);
+    // AND_A_A;
+    // IF_Z goto asm_11a346;
+    if(wram->wMobileInactivityTimerMinutes == 0) {
+    // asm_11a346:
+        // CALL(aExitMenu);
+        ExitMenu_Conv2();
+        // FARCALL(aReloadMapPart);
+        ReloadMapPart_Conv();
+        // FARCALL(aFunction115dc3);
+        Function115dc3();
+        // AND_A_A;
+        // RET;
+        return false;
+    }
+    // DEC_A;
+    // LD_addr_A(wMobileInactivityTimerMinutes);
+    wram->wMobileInactivityTimerMinutes--;
+    // SCF;
+    // RET;
+    return true;
 }
 
 void Function11a357(void){
@@ -5874,83 +6110,106 @@ asm_11a522:
 
 }
 
-void Function11a536(void){
-    LD_HL(hJoyPressed);
-    LD_A_hl;
-    AND_A(A_BUTTON);
-    IF_NZ goto asm_11a5a7;
-    LD_A_hl;
-    AND_A(B_BUTTON);
-    IF_NZ goto asm_11a5a2;
-    LD_A_hl;
-    AND_A(D_UP);
-    IF_NZ goto asm_11a564;
-    LD_A_hl;
-    AND_A(D_DOWN);
-    IF_NZ goto asm_11a583;
+bool Function11a536(void){
+    // LD_HL(hJoyPressed);
+    // LD_A_hl;
+    // AND_A(A_BUTTON);
+    // IF_NZ goto asm_11a5a7;
+    if(hram->hJoyPressed & A_BUTTON) {
+    asm_11a5a7:
+        // XOR_A_A;
+        // LD_addr_A(wcd8a);
+        wram->wcd8a = 0x0;
+        // LD_addr_A(wcd8b);
+        wram->wcd8b = 0x0;
+        // AND_A_A;
+        // RET;
+        return false;
+    }
+    // LD_A_hl;
+    // AND_A(B_BUTTON);
+    // IF_NZ goto asm_11a5a2;
+    else if(hram->hJoyPressed & B_BUTTON) {
+    // asm_11a5a2:
+        // LD_A(0x1);
+        // LD_addr_A(wMobileInactivityTimerMinutes);
+        wram->wMobileInactivityTimerMinutes = 0x1;
+        goto asm_11a5a7;
+    }
+    // LD_A_hl;
+    // AND_A(D_UP);
+    // IF_NZ goto asm_11a564;
+    else if(hram->hJoyPressed & D_UP) {
+    // asm_11a564:
+        // XOR_A_A;
+        // LD_addr_A(wcd8a);
+        // LD_addr_A(wcd8b);
+        // LD_A_addr(wMobileInactivityTimerMinutes);
+        // AND_A_A;
+        // IF_Z goto asm_11a54d;
+        if(wram->wMobileInactivityTimerMinutes != 0) {
+            // XOR_A_A;
+            // LD_addr_A(wMobileInactivityTimerMinutes);
+            wram->wMobileInactivityTimerMinutes = 0;
+            // hlcoord(15, 7, wTilemap);
+            // LD_A(0xed);
+            // LD_hl_A;
+            *coord(15, 7, wram->wTilemap) = 0xed;
+            // hlcoord(15, 9, wTilemap);
+            // LD_A(0x7f);
+            // LD_hl_A;
+            *coord(15, 9, wram->wTilemap) = 0x7f;
+        }
+        // goto asm_11a54d;
+    }
+    // LD_A_hl;
+    // AND_A(D_DOWN);
+    // IF_NZ goto asm_11a583;
+    else if(hram->hJoyPressed & D_DOWN) {
+    // asm_11a583:
+        // XOR_A_A;
+        // LD_addr_A(wcd8a);
+        // LD_addr_A(wcd8b);
+        wram->wcd8a = 0x0;
+        wram->wcd8b = 0x0;
+        // LD_A_addr(wMobileInactivityTimerMinutes);
+        // AND_A_A;
+        // IF_NZ goto asm_11a54d;
+        if(wram->wMobileInactivityTimerMinutes == 0) {
+            // INC_A;
+            // LD_addr_A(wMobileInactivityTimerMinutes);
+            wram->wMobileInactivityTimerMinutes++;
+            // hlcoord(15, 7, wTilemap);
+            // LD_A(0x7f);
+            // LD_hl_A;
+            *coord(15, 7, wram->wTilemap) = 0x7f;
+            // hlcoord(15, 9, wTilemap);
+            // LD_A(0xed);
+            // LD_hl_A;
+            *coord(15, 9, wram->wTilemap) = 0xed;
+        }
+        // goto asm_11a54d;
+    }
 
-asm_11a54d:
-    LD_A_addr(wBattleTowerRoomMenu2JumptableIndex);
-    CP_A(0x4);
-    IF_Z goto asm_11a562;
-    CALL(aFunction11a9f0);
-    IF_NZ goto asm_11a562;
-    CALL(aExitMenu);
-    FARCALL(aReloadMapPart);
+// asm_11a54d:
+    // LD_A_addr(wBattleTowerRoomMenu2JumptableIndex);
+    // CP_A(0x4);
+    // IF_Z goto asm_11a562;
+    if(wram->wBattleTowerRoomMenu2JumptableIndex != 0x4) {
+        // CALL(aFunction11a9f0);
+        // IF_NZ goto asm_11a562;
+        if(Function11a9f0() == 0) {
+            // CALL(aExitMenu);
+            ExitMenu_Conv2();
+            // FARCALL(aReloadMapPart);
+            ReloadMapPart_Conv();
+        }
+    }
 
-
-asm_11a562:
-    SCF;
-    RET;
-
-
-asm_11a564:
-    XOR_A_A;
-    LD_addr_A(wcd8a);
-    LD_addr_A(wcd8b);
-    LD_A_addr(wMobileInactivityTimerMinutes);
-    AND_A_A;
-    IF_Z goto asm_11a54d;
-    XOR_A_A;
-    LD_addr_A(wMobileInactivityTimerMinutes);
-    hlcoord(15, 7, wTilemap);
-    LD_A(0xed);
-    LD_hl_A;
-    hlcoord(15, 9, wTilemap);
-    LD_A(0x7f);
-    LD_hl_A;
-    goto asm_11a54d;
-
-
-asm_11a583:
-    XOR_A_A;
-    LD_addr_A(wcd8a);
-    LD_addr_A(wcd8b);
-    LD_A_addr(wMobileInactivityTimerMinutes);
-    AND_A_A;
-    IF_NZ goto asm_11a54d;
-    INC_A;
-    LD_addr_A(wMobileInactivityTimerMinutes);
-    hlcoord(15, 7, wTilemap);
-    LD_A(0x7f);
-    LD_hl_A;
-    hlcoord(15, 9, wTilemap);
-    LD_A(0xed);
-    LD_hl_A;
-    goto asm_11a54d;
-
-
-asm_11a5a2:
-    LD_A(0x1);
-    LD_addr_A(wMobileInactivityTimerMinutes);
-
-
-asm_11a5a7:
-    XOR_A_A;
-    LD_addr_A(wcd8a);
-    LD_addr_A(wcd8b);
-    AND_A_A;
-    RET;
+// asm_11a562:
+    // SCF;
+    // RET;
+    return true;
 
 }
 
@@ -5965,106 +6224,116 @@ bool BattleTowerRoomMenu2_IncrementJumptable(void){
 }
 
 void Function11a5b9(void){
-    XOR_A_A;
-    LD_addr_A(wMenuBorderLeftCoord);
-    LD_addr_A(wMenuBorderTopCoord);
-    LD_A(0x13);
-    LD_addr_A(wMenuBorderRightCoord);
-    LD_A(0x5);
-    LD_addr_A(wMenuBorderBottomCoord);
-    CALL(aPushWindow);
-    hlcoord(0, 0, wAttrmap);
-    LD_B(0x6);
-    LD_C(0x14);
-    hlcoord(0, 0, wTilemap);
-    LD_B(0x4);
-    LD_C(0x12);
-    CALL(aFunction3eea);
-    FARCALL(aReloadMapPart);
-    CALL(aUpdateSprites);
-    LD_C(0x0);
-    FARCALL(aFunction115e18);
-    LD_A(0x1);
-    LD_addr_A(wc305);
-    RET;
-
+    // XOR_A_A;
+    // LD_addr_A(wMenuBorderLeftCoord);
+    wram->wMenuBorderLeftCoord = 0x0;
+    // LD_addr_A(wMenuBorderTopCoord);
+    wram->wMenuBorderTopCoord = 0x0;
+    // LD_A(0x13);
+    // LD_addr_A(wMenuBorderRightCoord);
+    wram->wMenuBorderRightCoord = 0x13;
+    // LD_A(0x5);
+    // LD_addr_A(wMenuBorderBottomCoord);
+    wram->wMenuBorderRightCoord = 0x5;
+    // CALL(aPushWindow);
+    PushWindow_Conv();
+    // hlcoord(0, 0, wAttrmap);
+    // LD_B(0x6);
+    // LD_C(0x14); // Why?
+    // hlcoord(0, 0, wTilemap);
+    // LD_B(0x4);
+    // LD_C(0x12);
+    // CALL(aFunction3eea);
+    Function3eea(coord(0, 0, wram->wTilemap), 0x4, 0x12);
+    // FARCALL(aReloadMapPart);
+    ReloadMapPart_Conv();
+    // CALL(aUpdateSprites);
+    UpdateSprites_Conv();
+    // LD_C(0x0);
+    // FARCALL(aFunction115e18);
+    Function115e18(0x0);
+    // LD_A(0x1);
+    // LD_addr_A(wc305);
+    wram->wc305 = 0x1;
+    // RET;
 }
 
 void Function11a5f5(void){
-    LD_A(0xe);
-    LD_addr_A(wMenuBorderLeftCoord);
-    LD_A(0x13);
-    LD_addr_A(wMenuBorderRightCoord);
-    LD_A(0x6);
-    LD_addr_A(wMenuBorderTopCoord);
-    LD_A(0xa);
-    LD_addr_A(wMenuBorderBottomCoord);
-    CALL(aPushWindow);
-    hlcoord(14, 6, wAttrmap);
-    LD_B(0x5);
-    LD_C(0x6);
-    hlcoord(14, 6, wTilemap);
-    LD_B(0x3);
-    LD_C(0x4);
-    CALL(aFunction3eea);
-    hlcoord(16, 7, wTilemap);
-    LD_DE(mString_11a2cf);
-    CALL(aPlaceString);
-    hlcoord(16, 9, wTilemap);
-    LD_DE(mString_11a2d3);
-    CALL(aPlaceString);
-    hlcoord(15, 7, wTilemap);
-    LD_A(0xed);
-    LD_hl_A;
-    FARCALL(aReloadMapPart);
-    RET;
-
+    // LD_A(0xe);
+    // LD_addr_A(wMenuBorderLeftCoord);
+    wram->wMenuBorderLeftCoord = 0xe;
+    // LD_A(0x13);
+    // LD_addr_A(wMenuBorderRightCoord);
+    wram->wMenuBorderRightCoord = 0x13;
+    // LD_A(0x6);
+    // LD_addr_A(wMenuBorderTopCoord);
+    wram->wMenuBorderTopCoord = 0x6;
+    // LD_A(0xa);
+    // LD_addr_A(wMenuBorderBottomCoord);
+    wram->wMenuBorderBottomCoord = 0xa;
+    // CALL(aPushWindow);
+    PushWindow_Conv();
+    // hlcoord(14, 6, wAttrmap);
+    // LD_B(0x5);
+    // LD_C(0x6);
+    // hlcoord(14, 6, wTilemap);
+    // LD_B(0x3);
+    // LD_C(0x4);
+    // CALL(aFunction3eea);
+    Function3eea(coord(14, 6, wram->wTilemap), 0x3, 0x4);
+    // hlcoord(16, 7, wTilemap);
+    // LD_DE(mString_11a2cf);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(String_11a2cf), coord(16, 7, wram->wTilemap));
+    // hlcoord(16, 9, wTilemap);
+    // LD_DE(mString_11a2d3);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(String_11a2d3), coord(16, 9, wram->wTilemap));
+    // hlcoord(15, 7, wTilemap);
+    // LD_A(0xed);
+    // LD_hl_A;
+    *coord(15, 7, wram->wTilemap) = 0xed;
+    // FARCALL(aReloadMapPart);
+    ReloadMapPart_Conv();
+    // RET;
 }
 
+// Clear first four lines of text
 void Function11a63c(void){
-    hlcoord(4, 1, wTilemap);
-    LD_DE(mString_11a7f4);
-    CALL(aPlaceString);
-    hlcoord(4, 2, wTilemap);
-    LD_DE(mString_11a7f4);
-    CALL(aPlaceString);
-    hlcoord(4, 3, wTilemap);
-    LD_DE(mString_11a7f4);
-    CALL(aPlaceString);
-    hlcoord(4, 4, wTilemap);
-    LD_DE(mString_11a7f4);
-    CALL(aPlaceString);
-    RET;
-
+    // hlcoord(4, 1, wTilemap);
+    // LD_DE(mString_11a7f4);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(String_11a7f4), coord(4, 1, wram->wTilemap));
+    // hlcoord(4, 2, wTilemap);
+    // LD_DE(mString_11a7f4);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(String_11a7f4), coord(4, 2, wram->wTilemap));
+    // hlcoord(4, 3, wTilemap);
+    // LD_DE(mString_11a7f4);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(String_11a7f4), coord(4, 3, wram->wTilemap));
+    // hlcoord(4, 4, wTilemap);
+    // LD_DE(mString_11a7f4);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(String_11a7f4), coord(4, 4, wram->wTilemap));
+    // RET;
 }
 
-void String_11a661(void){
-    //db ['"これから\u3000モバイルセンターに"'];
-    //next ['"でんわ<WO>かけます@"']
+const char String_11a661[] = 
+            "Dialing the"      //db ['"これから\u3000モバイルセンターに"'];
+	t_next  "MOBILE CENTER…@"; //next ['"でんわ<WO>かけます@"']
 
-    return String_11a679();
-}
+const char String_11a679[] = 
+            "Is the MOBILE"     //db ['"モバイルアダプタ<NO>じゅんびは"'];
+	t_next  "ADAPTER ready?@";  //next ['"できて\u3000いますか？@"']
 
-void String_11a679(void){
-    //db ['"モバイルアダプタ<NO>じゅんびは"'];
-    //next ['"できて\u3000いますか？@"']
+const char String_11a692[] =
+            "Please wait"       //db ['"でんわ<WO>かけています"'];
+    t_next  "a moment…@";       //next ['"しばらく\u3000おまちください@"']
 
-    return String_11a692();
-}
-
-void String_11a692(void){
-    //db ['"でんわ<WO>かけています"'];
-    //next ['"しばらく\u3000おまちください@"']
-
-    return String_11a6aa();
-}
-
-void String_11a6aa(void){
-    //db ['"でんわをかけると\u3000つうわりょう"'];
-    //next ['"せつぞくりょう<GA>かかります@"']
-
-    return String_11a6c8();
-}
+const char String_11a6aa[] = 
+            "Charges will"  //db ['"でんわをかけると\u3000つうわりょう"'];
+    t_next  "apply.@";      //next ['"せつぞくりょう<GA>かかります@"']
 
 void String_11a6c8(void){
     //db ['"せつぞく\u3000しました@"'];
@@ -6101,22 +6370,15 @@ void String_11a706(void){
 void String_11a70b(void){
     //db ['"えん"'];
     //next ['"かかります\u3000よろしい\u3000ですか？@"']
-
-    return String_11a71e();
 }
 
-void String_11a71e(void){
-    //db ['"つうしん\u3000しゅうりょう@"'];
+const char String_11a71e[] = 
+            "Communication" //db ['"つうしん\u3000しゅうりょう@"'];
+    t_next  "ended.@";
 
-    return String_11a72a();
-}
-
-void String_11a72a(void){
-    //db ['"つないだ\u3000じかん"'];
-    //next ['"\u3000\u3000やく\u3000\u3000\u3000ふん\u3000\u3000\u3000びょう@"']
-
-    return String_11a743();
-}
+const char String_11a72a[] = 
+            "CALL TIME"         //db ['"つないだ\u3000じかん"'];
+    t_next  "   min.    sec.@"; //next ['"\u3000\u3000やく\u3000\u3000\u3000ふん\u3000\u3000\u3000びょう@"']
 
 void String_11a743(void){
     //db ['"もっていない\u3000データが"'];
@@ -6169,15 +6431,9 @@ void String_11a7c1(void){
 void String_11a7d7(void){
     //db ['"あたらしいニュース<GA>あります"'];
     //next ['"ニュース<WO>よみこみますか？@"']
-
-    return String_11a7f4();
 }
 
-void String_11a7f4(void){
-    //db ['"\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000@"'];
-
-    return MenuHeader_11a804();
-}
+const char String_11a7f4[] = "               @"; //db ['"\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000\u3000@"'];
 
 void MenuHeader_11a804(void){
 //  //  unreferenced
@@ -6486,23 +6742,29 @@ void BattleTowerRoomMenu_SetMessage(const txt_cmd_s* hl){
 }
 
 void Function11a9ce(void){
-    CALL(aClearBGPalettes);
-    CALL(aReloadTilesetAndPalettes);
-    CALL(aCall_ExitMenu);
-    FARCALL(aStubbed_Function106462);
-    FARCALL(aFunction106464);
-    CALL(aGSReloadPalettes);
-    FARCALL(aFinishExitMenu);
-    CALL(aUpdateSprites);
-    RET;
-
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
+    // CALL(aReloadTilesetAndPalettes);
+    ReloadTilesetAndPalettes_Conv();
+    // CALL(aCall_ExitMenu);
+    ExitMenu_Conv2();
+    // FARCALL(aStubbed_Function106462);
+    Stubbed_Function106462();
+    // FARCALL(aFunction106464);
+    Function106464();
+    // CALL(aGSReloadPalettes);
+    // FARCALL(aFinishExitMenu);
+    FinishExitMenu_Conv();
+    // CALL(aUpdateSprites);
+    UpdateSprites_Conv();
+    // RET;
 }
 
-void Function11a9f0(void){
-    LD_A(0x1);
-    AND_A_A;
-    RET;
-
+uint8_t Function11a9f0(void){
+    // LD_A(0x1);
+    // AND_A_A;
+    // RET;
+    return 0x1;
 }
 
 void Function11a9f4(void){
