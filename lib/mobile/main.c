@@ -953,7 +953,7 @@ void Function110393(void){
     // RET;
 }
 
-bool Function11039a(const uint8_t* hl, uint8_t c){
+bool Function11039a(char** hl, uint8_t c){
     // LD_B(0x0);
     uint8_t b = 0x0;
 
@@ -966,7 +966,7 @@ bool Function11039a(const uint8_t* hl, uint8_t c){
         // LD_A_hli;
         // OR_A_A;
         // IF_NZ goto asm_11039c;
-    } while(*(hl++) != 0x0);
+    } while(*((*hl)++) != 0x0);
 
 // asm_1103a3:
     // LD_A_B;
@@ -986,76 +986,106 @@ bool Function11039a(const uint8_t* hl, uint8_t c){
 
 // MobileAPI03
 void Function1103ac(mobile_api_data_s* data){
-    (void)data;
-    LD_A_addr(wc821);
-    BIT_A(0);
-    JP_NZ (mFunction110226);
-    LD_A_addr(wc86a);
-    CP_A(0x1);
-    JP_NZ (mFunction110226);
-    PUSH_HL;
-    LD_C(0x15);
-    CALL(aFunction11039a);
-    IF_C goto asm_1103d2;
-    LD_C(0x22);
-    CALL(aFunction11039a);
-    IF_C goto asm_1103d2;
-    LD_C(0x12);
-    CALL(aFunction11039a);
-    IF_NC goto asm_1103d6;
+    // LD_A_addr(wc821);
+    // BIT_A(0);
+    // JP_NZ (mFunction110226);
+    // LD_A_addr(wc86a);
+    // CP_A(0x1);
+    // JP_NZ (mFunction110226);
+    if(bit_test(wram->wc821, 0) || wram->wc86a != 0x1)
+        return Function110226();
+    // PUSH_HL;
+    char* hl = data->hl;
+    printf("MOBILE API \"%s\"\n", hl);
+    // LD_C(0x15);
+    // CALL(aFunction11039a);
+    // IF_C goto asm_1103d2;
+    // LD_C(0x22);
+    // CALL(aFunction11039a);
+    // IF_C goto asm_1103d2;
+    // LD_C(0x12);
+    // CALL(aFunction11039a);
+    // IF_NC goto asm_1103d6;
+    if(Function11039a(&hl, 0x15) 
+    || Function11039a(&hl, 0x22)
+    || Function11039a(&hl, 0x12)) {
+    // asm_1103d2:
+        // POP_HL;
+        // JP(mFunction110231);
+        return Function110231();
+    }
 
-
-asm_1103d2:
-    POP_HL;
-    JP(mFunction110231);
-
-
-asm_1103d6:
-    XOR_A_A;
-    LDH_addr_A(rTAC);
-    LD_addr_A(wc86d);
-    LD_addr_A(wc97a);
-    LD_A_addr(wc870);
-    LD_C_A;
-    CALL(aMobileAPI_SetTimer);
-    LD_HL(wc829);
-    LD_A(0x80);
-    LD_hli_A;
-    LD_A(0xc8);
-    LD_hl_A;
-    CALL(aFunction110485);
-    PUSH_HL;
-    LD_B_A;
-    CALL(aFunction111f63);
-    LD_B(lengthof(MobilePacket_ISPLogin));
-    LD_HL(mMobilePacket_ISPLogin);
-    LD_DE(wMobileSDK_PacketBuffer + 45);
-    CALL(aMobileSDK_CopyBytes);
-    INC_DE;
-    INC_DE;
-    POP_HL;
-    LD_BC(0);
-    CALL(aMobileSDK_CopyString);
-    LD_A_C;
-    LD_addr_A(wMobileSDK_PacketBuffer + 51);
-    LD_addr_A(wc86b);
-    PUSH_DE;
-    INC_DE;
-    LD_BC(0);
-    LD_A(0x20);
-    CALL(aMobileSDK_CopyStringLen);
-    LD_L_E;
-    LD_H_D;
-    POP_DE;
-    LD_A_C;
-    LD_de_A;
-    LD_A_addr(wc86b);
-    ADD_A_C;
-    ADD_A(0xa);
-    LD_addr_A(wMobileSDK_PacketBuffer + 50);
-    CALL(aFunction1104b0);
-    LD_A(0xb);
-    LD_addr_A(wc86a);
+// asm_1103d6:
+    hl = data->hl;
+    // XOR_A_A;
+    // LDH_addr_A(rTAC);
+    gb_write(rTAC, 0x0);
+    // LD_addr_A(wc86d);
+    wram->wc86d = 0x0;
+    // LD_addr_A(wc97a);
+    wram->wc97a[0] = 0x0;
+    // LD_A_addr(wc870);
+    // LD_C_A;
+    data->bc = (data->bc & 0xff00) | wram->wc870;
+    // CALL(aMobileAPI_SetTimer);
+    MobileAPI_SetTimer(data);
+    // LD_HL(wc829);
+    // LD_A(0x80);
+    // LD_hli_A;
+    // LD_A(0xc8);
+    // LD_hl_A;
+    gMobile_wc829_wc82a = (uint8_t*)wram->wc880_str;
+    // CALL(aFunction110485);
+    uint8_t b;
+    // PUSH_HL;
+    char* str = Function110485(hl, &b);
+    hl += b;
+    // LD_B_A;
+    // CALL(aFunction111f63);
+    Function111f63(str, b);
+    // LD_B(lengthof(MobilePacket_ISPLogin));
+    // LD_HL(mMobilePacket_ISPLogin);
+    // LD_DE(wMobileSDK_PacketBuffer + 45);
+    // CALL(aMobileSDK_CopyBytes);
+    char* de = MobileSDK_CopyBytes(wram->wMobileSDK_PacketBuffer + 45, MobilePacket_ISPLogin, sizeof(MobilePacket_ISPLogin));
+    // INC_DE;
+    // INC_DE;
+    de += 2;
+    // POP_HL;
+    // LD_BC(0);
+    uint16_t bc = 0;
+    // CALL(aMobileSDK_CopyString);
+    de = MobileSDK_CopyString(de, hl, &bc);
+    hl += bc;
+    // LD_A_C;
+    // LD_addr_A(wMobileSDK_PacketBuffer + 51);
+    wram->wMobileSDK_PacketBuffer[51] = LOW(bc);
+    // LD_addr_A(wc86b);
+    wram->wc86b = LOW(bc);
+    // PUSH_DE;
+    char* de2 = de + 1;
+    // INC_DE;
+    // LD_BC(0);
+    bc = 0;
+    // LD_A(0x20);
+    // CALL(aMobileSDK_CopyStringLen);
+    hl = MobileSDK_CopyStringLen(de2, hl, &bc, 0x20);
+    // LD_L_E;
+    // LD_H_D;
+    // POP_DE;
+    // LD_A_C;
+    // LD_de_A;
+    *de = LOW(bc);
+    // LD_A_addr(wc86b);
+    // ADD_A_C;
+    // ADD_A(0xa);
+    // LD_addr_A(wMobileSDK_PacketBuffer + 50);
+    wram->wMobileSDK_PacketBuffer[50] = wram->wc86b + LOW(bc) + 0xa;
+    // CALL(aFunction1104b0);
+    Function1104b0();
+    // LD_A(0xb);
+    // LD_addr_A(wc86a);
+    wram->wc86a = 0xb;
 
     return Function110432();
 }
@@ -1114,35 +1144,39 @@ asm_110454:
 
 }
 
-void Function110485(void){
-    LD_DE(wMobileSDK_PacketBuffer);
-    LD_HL(mMobilePacket_DialTelephone);
-    LD_B(lengthof(MobilePacket_DialTelephone));
-    CALL(aMobileSDK_CopyBytes);
-    POP_BC;
-    POP_HL;
-    PUSH_BC;
-    LD_A_addr(wMobileSDK_AdapterType);
-    CP_A(0x8c);
-    IF_C goto asm_11049e;
-    LD_A(0x3);
-    goto asm_1104a1;
+char* Function110485(const char* hl, uint8_t* a){
+    // LD_DE(wMobileSDK_PacketBuffer);
+    // LD_HL(mMobilePacket_DialTelephone);
+    // LD_B(lengthof(MobilePacket_DialTelephone));
+    // CALL(aMobileSDK_CopyBytes);
+    char* de = MobileSDK_CopyBytes(wram->wMobileSDK_PacketBuffer, MobilePacket_DialTelephone, sizeof(MobilePacket_DialTelephone));
+    // POP_BC;
+    // POP_HL;
+    // PUSH_BC;
+    // LD_A_addr(wMobileSDK_AdapterType);
+    // CP_A(0x8c);
+    // IF_C goto asm_11049e;
+    // LD_A(0x3);
+    // goto asm_1104a1;
 
+// asm_11049e:
+    // LD_A_addr(wc871);
 
-asm_11049e:
-    LD_A_addr(wc871);
-
-
-asm_1104a1:
-    LD_de_A;
-    INC_DE;
-    LD_BC(0x0001);
-    LD_A(MOBILE_PHONE_NUMBER_LENGTH);
-    CALL(aMobileSDK_CopyStringLen);
-    LD_A_C;
-    LD_addr_A(wMobileSDK_PacketBuffer + 5);
-    RET;
-
+// asm_1104a1:
+    // LD_de_A;
+    // INC_DE;
+    *(de++) = (wram->wMobileSDK_AdapterType < 0x8c)? wram->wc871: 0x3;
+    // LD_BC(0x0001);
+    uint16_t bc = 0x0001;
+    // LD_A(MOBILE_PHONE_NUMBER_LENGTH);
+    // CALL(aMobileSDK_CopyStringLen);
+    de = MobileSDK_CopyStringLen(de, hl, &bc, MOBILE_PHONE_NUMBER_LENGTH);
+    // LD_A_C;
+    // LD_addr_A(wMobileSDK_PacketBuffer + 5);
+    wram->wMobileSDK_PacketBuffer[5] = LOW(bc);
+    *a = LOW(bc);
+    // RET;
+    return de;
 }
 
 // MobileSDK_SendIdle
@@ -4786,16 +4820,16 @@ void Function111892(void){
     // LD_A(0x2);
     // CP_A_hl;
     // IF_C goto asm_1118b4;
-    if(++wram->wc80a < 0x2) {
+    if(++wram->wc80a <= 0x2) {
         // LD_A_addr(wc80a);
         // ADD_A(0x11);
         // LD_E_A;
-        uint8_t e = wram->wc802 + 0x11;
+        uint8_t e = wram->wc80a;
         // LD_D(0xc8);
         // LD_A_de;
         // CP_A_C;
         // JR_Z (mFunction1118bc);
-        if((&wram->wc800)[e] == c)
+        if((&wram->wc811)[e] == c)
             return Function1118bc();
         // LD_A(0x1);
         // LD_addr_A(wc814);
@@ -5465,7 +5499,7 @@ void Function111b3c(void){
                 // LD_B_A;
                 // INC_HL;
                 // CALL(aMobileSDK_CopyBytes);
-                MobileSDK_CopyBytes(gMobileReceiveBuffer_Destination, wram->wMobileSDK_ReceivePacketBuffer + 4, wram->wMobileSDK_ReceivePacketBuffer[3] - 1);
+                MobileSDK_CopyBytes(gMobile_wc829_wc82a, wram->wMobileSDK_ReceivePacketBuffer + 5, wram->wMobileSDK_ReceivePacketBuffer[3] - 1);
                 // LD_A(0x2);
                 // LD_addr_A(wc807);
                 wram->wc807 = 0x2;
@@ -6869,7 +6903,7 @@ void Function112271(uint8_t* hl, uint8_t a){
         if((wram->wc821 & 0xe0) == 0x0) {
             // LD_B(0x92);
             // JR(mFunction11234b);
-            Function11234b(0x92);
+            Function11234b(MOBILE_COMMAND_DIAL_TELEPHONE | 0x80);
             return;
         }
 
@@ -6901,7 +6935,7 @@ void Function112271(uint8_t* hl, uint8_t a){
         // LD_HL(wMobileSDK_PacketBuffer + 45);
         // LD_A(0xa1);
         // JP(mFunction111f02);
-        Function111f02(wram->wMobileSDK_PacketBuffer + 45, de, 0xa1);
+        Function111f02(wram->wMobileSDK_PacketBuffer + 45, de, MOBILE_COMMAND_ISP_LOGIN | 0x80);
         return;
     }
     // DEC_A;
@@ -6936,6 +6970,7 @@ void Function112271(uint8_t* hl, uint8_t a){
     }
 }
 
+// MobileSDK_SendPacketCommandDynamic
 void Function11234b(uint8_t b){
     // LD_A_addr(wMobileSDK_PacketBuffer + 5);
     // ADD_A(0xa);
@@ -6960,12 +6995,12 @@ void Function11235a(void){
     PacketSendEmptyBody(MobilePacket_TelephoneStatus, MOBILE_COMMAND_TELEPHONE_STATUS | 0x80);
 }
 
-// MobileSDK_SendCommand153Packet
+// MobileSDK_ReadConfigurationData
 bool Function11236b(const uint8_t* hl){
     // LD_A(0x99);
     // LD_DE(0x000c);
     // JP(mFunction111f02);
-    return Function111f02(hl, 0x000c, 0x99);
+    return Function111f02(hl, 0x000c, MOBILE_COMMAND_READ_CONFIGURATION_DATA | 0x80);
 }
 
 void Function112373(uint8_t* hl, uint8_t a){
@@ -10687,7 +10722,7 @@ void Function113519(uint8_t* hl, uint8_t a){
         // LD_A_hld;
         // CP_A(0x41);
         // IF_NZ goto asm_113586;
-        if(wram->wc880_str[0] == 0x4d && wram->wc880_str[1] == 0x41) {
+        if(wram->wc880_str[0] == 'M' && wram->wc880_str[1] == 'A') {
             // LD_B(0xbe);
             uint8_t b = 0xbe;
             // LD_DE(0);

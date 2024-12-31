@@ -187,7 +187,7 @@ tile_t* Function3eea(tile_t* hl, uint8_t b, uint8_t c){
     // INC_C;
     // INC_C;
     // CALL(aFunction3f35);
-    Function3f35(attr, b + 1, c + 1);
+    Function3f35(attr, b + 2, c + 2);
     // POP_BC;
     // POP_HL;
     // CALL(aMobileHome_PlaceBox);

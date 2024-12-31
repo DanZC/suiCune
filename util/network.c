@@ -1092,14 +1092,46 @@ bool MobileTimeCheckMs(void* user, unsigned int timer, unsigned int ms) {
     return (SDL_GetTicks() - udata->timers[timer]) >= ms;
 }
 
+struct mobile_config {
+    char hdr[2];
+    uint8_t status;
+    uint8_t fld_03;
+    uint8_t primary_dns[4];
+    uint8_t secondary_dns[4];
+    char loginName[10];
+    uint8_t fld_16[0x2C - 0x16];
+    char emailName[0x44 - 0x2C];
+    uint8_t fld_45[0x4A - 0x44];
+    char smtpServer[0x5E - 0x4A];
+    char popServer[0x71 - 0x5E];
+};
+
+void MobileConfigCreateDefault(FILE* f) {
+    uint8_t buffer[MOBILE_CONFIG_SIZE];
+    memset(buffer, 0x0, sizeof(buffer));
+    struct mobile_config* cfg = (struct mobile_config*)buffer;
+    cfg->hdr[0] = 'M';
+    cfg->hdr[1] = 'A';
+    memcpy(cfg->loginName, "gXXXXXXXXX", sizeof(cfg->loginName));
+    memcpy(cfg->emailName, "XXXXXXXX@YYYY.dion.ne.jp", sizeof(cfg->emailName));
+    memcpy(cfg->smtpServer, "mail.XXXX.dion.ne.jp", sizeof(cfg->smtpServer));
+    memcpy(cfg->popServer, "pop.XXXX.dion.ne.jp", sizeof(cfg->popServer));
+    uint16_t checksum = 0;
+    for(int i = 0; i < 0xc0 - 2; ++i) {
+        checksum += buffer[i];
+    }
+    buffer[0xc0 - 2] = (checksum >> 8);
+    buffer[0xc0 - 1] = (checksum & 0xff);
+    fwrite(buffer, 1, sizeof(buffer), f);
+}
+
 bool MobileConfigRead(void* user, void* dest, uintptr_t offset, size_t size) {
     struct mobile_user_data* udata = user;
     FILE* f = fopen("mobile.bin", "rb");
     if(f == NULL) {
+        printf("Couldn't load mobile.bin. Creating default mobile.bin.\n");
         FILE* temp = fopen("mobile.bin", "wb");
-        for(int i = 0; i < MOBILE_CONFIG_SIZE; i++) {
-            fputc(0, temp);
-        }
+        MobileConfigCreateDefault(temp);
         fclose(temp);
         f = fopen("mobile.bin", "rb");
     }
@@ -1109,9 +1141,19 @@ bool MobileConfigRead(void* user, void* dest, uintptr_t offset, size_t size) {
     return true;
 }
 
+static void MobileConfigUpdateChecksum(struct mobile_user_data* udata) {
+    uint16_t checksum = 0;
+    for(int i = 0; i < 0xc0 - 2; ++i) {
+        checksum += udata->config[i];
+    }
+    udata->config[0xc0 - 2] = (checksum >> 8);
+    udata->config[0xc0 - 1] = (checksum & 0xff);
+}
+
 bool MobileConfigWrite(void* user, const void* src, uintptr_t offset, size_t size) {
     struct mobile_user_data* udata = user;
     memcpy(udata->config + offset, src, size);
+    MobileConfigUpdateChecksum(udata);
     FILE* f = fopen("mobile.bin", "wb");
     fwrite(udata->config, 1, MOBILE_CONFIG_SIZE, f);
     fclose(f);

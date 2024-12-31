@@ -171,63 +171,72 @@ void StubbedTrainerRankings_BugContestScore(uint16_t new_score){
 }
 
 void StubbedTrainerRankings_AddToSlotsWinStreak(void){
-    RET;
-    LD_A(BANK(sTrainerRankingCurrentSlotsStreak));
-    CALL(aOpenSRAM);
+    // RET;
+    // LD_A(BANK(sTrainerRankingCurrentSlotsStreak));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asTrainerRankingCurrentSlotsStreak));
+    uint16_t streak = gb_read(sTrainerRankingCurrentSlotsStreak + 1) | (gb_read(sTrainerRankingCurrentSlotsStreak) << 8);
 
 // Increment the current streak
-    LD_HL(sTrainerRankingCurrentSlotsStreak + 1);
-    INC_hl;
-    IF_NZ goto noCarry;
-    DEC_HL;
-    INC_hl;
-    INC_HL;
+    streak++;
+    // LD_HL(sTrainerRankingCurrentSlotsStreak + 1);
+    // INC_hl;
+    // IF_NZ goto noCarry;
+    // DEC_HL;
+    // INC_hl;
+    // INC_HL;
+    gb_write(sTrainerRankingCurrentSlotsStreak, HIGH(streak));
+    gb_write(sTrainerRankingCurrentSlotsStreak + 1, LOW(streak));
 
-
-noCarry:
-    DEC_HL;
+// noCarry:
+    // DEC_HL;
 // Now check if this is a new record for longest streak
-    LD_A_addr(sTrainerRankingLongestSlotsStreak);
-    CP_A_hl;
-    IF_Z goto isLowByteHigher;
-    IF_C goto newRecordStreak;
-    goto done;
+    uint16_t longestStreak = gb_read(sTrainerRankingLongestSlotsStreak + 1) | (gb_read(sTrainerRankingLongestSlotsStreak) << 8);
+    // LD_A_addr(sTrainerRankingLongestSlotsStreak);
+    // CP_A_hl;
+    // IF_Z goto isLowByteHigher;
+    // IF_C goto newRecordStreak;
+    // goto done;
 
+// isLowByteHigher:
+    // INC_HL;
+    // LD_A_addr(sTrainerRankingLongestSlotsStreak + 1);
+    // CP_A_hl;
+    // IF_NC goto done;
+    // DEC_HL;
+    if(longestStreak < streak) {
+    // newRecordStreak:
+        // LD_A_hli;
+        // LD_addr_A(sTrainerRankingLongestSlotsStreak);
+        // LD_A_hl;
+        // LD_addr_A(sTrainerRankingLongestSlotsStreak + 1);
+        gb_write(sTrainerRankingLongestSlotsStreak, HIGH(streak));
+        gb_write(sTrainerRankingLongestSlotsStreak + 1, LOW(streak));
+    }
 
-isLowByteHigher:
-    INC_HL;
-    LD_A_addr(sTrainerRankingLongestSlotsStreak + 1);
-    CP_A_hl;
-    IF_NC goto done;
-    DEC_HL;
-
-
-newRecordStreak:
-    LD_A_hli;
-    LD_addr_A(sTrainerRankingLongestSlotsStreak);
-    LD_A_hl;
-    LD_addr_A(sTrainerRankingLongestSlotsStreak + 1);
-
-
-done:
-    CALL(aUpdateTrainerRankingsChecksum);
-    CALL(aCloseSRAM);
-    RET;
-
+// done:
+    // CALL(aUpdateTrainerRankingsChecksum);
+    UpdateTrainerRankingsChecksum();
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
 }
 
 void StubbedTrainerRankings_EndSlotsWinStreak(void){
-    RET;
-    LD_A(BANK(sTrainerRankingCurrentSlotsStreak));
-    CALL(aOpenSRAM);
-    LD_HL(sTrainerRankingCurrentSlotsStreak);
-    XOR_A_A;
-    LD_hli_A;
-    LD_hl_A;
-    CALL(aUpdateTrainerRankingsChecksum);
-    CALL(aCloseSRAM);
-    RET;
-
+    // RET;
+    // LD_A(BANK(sTrainerRankingCurrentSlotsStreak));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asTrainerRankingCurrentSlotsStreak));
+    // LD_HL(sTrainerRankingCurrentSlotsStreak);
+    // XOR_A_A;
+    // LD_hli_A;
+    // LD_hl_A;
+    gb_write16(sTrainerRankingCurrentSlotsStreak, 0);
+    // CALL(aUpdateTrainerRankingsChecksum);
+    UpdateTrainerRankingsChecksum();
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
 }
 
 void StubbedTrainerRankings_AddToSlotsPayouts(void){

@@ -2853,6 +2853,7 @@ void Slots_PayoutText(void){
         // CALL(aPrintText);
         PrintText_Conv2(Slots_PayoutText_SlotsDarnText);
         // FARCALL(aStubbedTrainerRankings_EndSlotsWinStreak);
+        StubbedTrainerRankings_EndSlotsWinStreak();
         // RET;
         return;
     }
@@ -2882,6 +2883,7 @@ void Slots_PayoutText(void){
     // CALL(aPrintText);
     PrintText_Conv2(Slots_PayoutText_Text_PrintPayout);
     // FARCALL(aStubbedTrainerRankings_AddToSlotsWinStreak);
+    StubbedTrainerRankings_AddToSlotsWinStreak();
     // RET;
 }
 

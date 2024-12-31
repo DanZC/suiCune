@@ -84,3 +84,6 @@ bin/
 *.pdb
 
 *.a
+
+# Mobile config file (should be generated automatically)
+mobile.bin
