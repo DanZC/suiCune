@@ -901,7 +901,7 @@ void GiveItem(void){
             // LD_DE(wMonOrItemNameBuffer);
             // LD_BC(MON_NAME_LENGTH);
             // CALL(aCopyBytes);
-            CopyBytes_Conv2(wram->wMonOrItemNameBuffer, GetCurNickname_Conv2(), MON_NAME_LENGTH);
+            CopyBytes_Conv2(wram->wMonOrItemNameBuffer, GetCurNickname_Conv(), MON_NAME_LENGTH);
             // CALL(aTryGiveItemToPartymon);
             TryGiveItemToPartymon();
             // POP_AF;

@@ -320,7 +320,7 @@ u8_pair_s PokemonActionSubmenu(void){
     // FARCALL(aMonSubmenu);
     MonSubmenu();
     // CALL(aGetCurNickname);
-    GetCurNickname_Conv2();
+    GetCurNickname_Conv();
     // LD_A_addr(wMenuSelection);
     // LD_HL(mPokemonActionSubmenu_Actions);
     // LD_DE(3);
@@ -501,7 +501,7 @@ u8_pair_s GiveTakePartyMonItem(void){
     // LD_DE(wMonOrItemNameBuffer);
     // LD_BC(MON_NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wMonOrItemNameBuffer, GetCurNickname_Conv2(), MON_NAME_LENGTH);
+    CopyBytes_Conv2(wram->wMonOrItemNameBuffer, GetCurNickname_Conv(), MON_NAME_LENGTH);
     // LD_A_addr(wMenuCursorY);
     // CP_A(1);
     // IF_NZ goto take;
@@ -935,7 +935,7 @@ u8_pair_s MonMailAction(void){
                         // LD_hl(0x0);
                         *GetPartyItemLocation() = NO_ITEM;
                         // CALL(aGetCurNickname);
-                        GetCurNickname_Conv2();
+                        GetCurNickname_Conv();
                         // LD_HL(mMonMailAction_MailDetachedText);
                         // CALL(aMenuTextboxBackup);
                         MenuTextboxBackup_Conv(MailDetachedText);

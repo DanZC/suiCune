@@ -857,6 +857,7 @@ void BattleTowerRoomMenu_Jumptable(void){
         //dw ['Function118e76'];  // mobile
         case 13: return Function118e76();
         //dw ['BattleTowerRoomMenu_CallRoomMenu2'];  // mobile
+        case 14: return BattleTowerRoomMenu_CallRoomMenu2();
         //dw ['Function118e76'];  // mobile
         case 15: return Function118e76();
     }
@@ -917,7 +918,7 @@ void Function1185c3(void){
         case 0x09: return Function1188c8(); //dw ['Function1188c8'];
         case 0x0A: return Function11878d(); //dw ['Function11878d'];
         case 0x0B: return Function118903(); //dw ['Function118903'];
-        //dw ['Function118aa4'];
+        case 0x0C: return Function118aa4(); //dw ['Function118aa4'];
         case 0x0D: return Function11878d(); //dw ['Function11878d'];
         //dw ['Function118e92'];
         case 0x0F: return Function11878d(); //dw ['Function11878d'];
@@ -941,12 +942,13 @@ void Function1185c3(void){
         //dw ['BattleTowerRoomMenu_DoNothing'];
         case 0x22: return Function118e76(); //dw ['Function118e76'];
         case 0x23: return BattleTowerRoomMenu_CallRoomMenu2(); //dw ['BattleTowerRoomMenu_CallRoomMenu2'];
-        //dw ['BattleTowerRoomMenu_QuitMessage'];
-        //dw ['BattleTowerRoomMenu_PlaceYesNoMenu'];
-        //dw ['BattleTowerRoomMenu_UpdateYesNoMenu'];
-        //dw ['Function11914e'];
+        case 0x24: return BattleTowerRoomMenu_QuitMessage(); //dw ['BattleTowerRoomMenu_QuitMessage'];
+        case 0x25: return BattleTowerRoomMenu_PlaceYesNoMenu(); //dw ['BattleTowerRoomMenu_PlaceYesNoMenu'];
+        case 0x26: return BattleTowerRoomMenu_UpdateYesNoMenu(); //dw ['BattleTowerRoomMenu_UpdateYesNoMenu'];
+        case 0x27: return Function11914e(); //dw ['Function11914e'];
         case 0x28: return Function118e76(); //dw ['Function118e76'];
     }
+    *(char*)0 = 0;
 }
 
 void Function118624(void){
@@ -1792,7 +1794,7 @@ void Function118a7a(void){
     // LD_DE(wcc60);
     // LD_BC(0x80);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wcc60, BattleDownloadURL, 0x80);
+    CopyBytes_Conv2(wram->wcc60_str, BattleDownloadURL, 0x80);
     // LD_DE(w3_d000);
     // LD_BC(0x1000);
     // JP(mFunction118b10);
@@ -1804,7 +1806,7 @@ void Function118a8f(void){
     // LD_DE(wcc60);
     // LD_BC(0x80);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wcc60, ExchangeDownloadURL, 0x80);
+    CopyBytes_Conv2(wram->wcc60_str, ExchangeDownloadURL, 0x80);
     // LD_DE(w3_d000);
     // LD_BC(0x1000);
     // JP(mFunction118b10);
@@ -1816,7 +1818,7 @@ void Function118aa4(void){
     // LD_DE(wcc60);
     // LD_BC(0x80);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wcc60, NewsDownloadURL, 0x80);
+    CopyBytes_Conv2(wram->wcc60_str, NewsDownloadURL, 0x80);
     // LD_A(0x5);
     // LDH_addr_A(rSVBK);
     // LD_DE(w3_d100);
@@ -2292,7 +2294,8 @@ void BattleTowerRoomMenu_CallRoomMenu2(void){
 }
 
 void Function118e92(void){
-    CALL(aFunction118440);
+    // CALL(aFunction118440);
+    Function118440();
     CALL(aFunction1191d3);
     LD_A_addr(wcd53);
     LD_L_A;
@@ -2581,10 +2584,11 @@ asm_11908a:
     CALL(aCopyBytes);
     LDH_A_addr(rSVBK);
     PUSH_AF;
-    LD_A(BANK(wd474));  // aka BANK(wd475)
-    LDH_addr_A(rSVBK);
-    LD_A_addr(wd474);
-    LD_addr_A(s5_b2f3);
+    // LD_A(BANK(wd474));  // aka BANK(wd475)
+    // LDH_addr_A(rSVBK);
+    // LD_A_addr(wd474);
+    // LD_addr_A(s5_b2f3);
+    gb_write(s5_b2f3, wram->wPrefecture);
     LD_HL(wd475);
     LD_DE(s5_b2f4);
     LD_BC(4);
@@ -2660,14 +2664,17 @@ asm_11913e:
 }
 
 void Function11914e(void){
-    CALL(aBattleTowerRoomMenu2);
-    RET_C ;
-    LD_A(0x1c);
-    LD_addr_A(wBattleTowerRoomMenuJumptableIndex);
-    LD_A(0xa);
-    LD_addr_A(wMobileErrorCodeBuffer);
-    RET;
-
+    // CALL(aBattleTowerRoomMenu2);
+    // RET_C ;
+    if(BattleTowerRoomMenu2())
+        return;
+    // LD_A(0x1c);
+    // LD_addr_A(wBattleTowerRoomMenuJumptableIndex);
+    wram->wBattleTowerRoomMenuJumptableIndex = 0x1c;
+    // LD_A(0xa);
+    // LD_addr_A(wMobileErrorCodeBuffer);
+    wram->wMobileErrorCodeBuffer[0] = 0xa;
+    // RET;
 }
 
 void Function11915d(void){

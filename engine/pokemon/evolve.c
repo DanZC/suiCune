@@ -322,7 +322,7 @@ MasterLoop:
         // LD_HL(wPartyMonNicknames);
         // CALL(aGetNickname);
         // CALL(aCopyName1);
-        CopyName1_Conv2(GetCurNickname_Conv2());
+        CopyName1_Conv2(GetCurNickname_Conv());
         // LD_HL(mEvolvingText);
         // CALL(aPrintText);
         PrintText_Conv2(EvolvingText);

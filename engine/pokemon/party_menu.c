@@ -1170,7 +1170,7 @@ void PrintPartyMenuActionText(void){
     // LD_A_addr(wCurPartyMon);
     // LD_HL(wPartyMonNicknames);
     // CALL(aGetNickname);
-    GetCurNickname_Conv2();
+    GetCurNickname_Conv();
     // LD_A_addr(wPartyMenuActionText);
     // AND_A(0xf);
     // LD_HL(mPrintPartyMenuActionText_MenuActionTexts);

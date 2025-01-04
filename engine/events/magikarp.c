@@ -1,91 +1,112 @@
 #include "../../constants.h"
 #include "../../charmap.h"
 #include "magikarp.h"
+#include "../pokemon/party_menu.h"
+#include "../../home/compare.h"
+#include "../../home/copy.h"
 #include "../../home/print_text.h"
 #include "../../home/text.h"
 #include "../../data/events/magikarp_lengths.h"
 #include "../../data/text/common.h"
+#include "../../mobile/mobile_41.h"
 
-void CheckMagikarpLength(void){
 // Returns 3 if you select a Magikarp that beats the previous record.
 // Returns 2 if you select a Magikarp, but the current record is longer.
 // Returns 1 if you press B in the Pokemon selection menu.
 // Returns 0 if the Pokemon you select is not a Magikarp.
+void CheckMagikarpLength(void){
+static const txt_cmd_s MagikarpGuruMeasureText[] = {
+    text_far(v_MagikarpGuruMeasureText)
+    text_end
+};
 
 // Let's start by selecting a Magikarp.
-    FARCALL(aSelectMonFromParty);
-    IF_C goto declined;
-    LD_A_addr(wCurPartySpecies);
-    CP_A(MAGIKARP);
-    IF_NZ goto not_magikarp;
+    // FARCALL(aSelectMonFromParty);
+    u8_flag_s res = SelectMonFromParty();
+    // IF_C goto declined;
+    if(res.flag) {
+    // declined:
+        // LD_A(MAGIKARPLENGTH_REFUSED);
+        // LD_addr_A(wScriptVar);
+        wram->wScriptVar = MAGIKARPLENGTH_REFUSED;
+        // RET;
+        return;
+    }
+    // LD_A_addr(wCurPartySpecies);
+    // CP_A(MAGIKARP);
+    // IF_NZ goto not_magikarp;
+    if(wram->wCurPartySpecies != MAGIKARP) {
+    // not_magikarp:
+        // XOR_A_A;  // MAGIKARPLENGTH_NOT_MAGIKARP
+        // LD_addr_A(wScriptVar);
+        wram->wScriptVar = MAGIKARPLENGTH_NOT_MAGIKARP;
+        // RET;
+        return;
+    }
 
 // Now let's compute its length based on its DVs and ID.
-    LD_A_addr(wCurPartyMon);
-    LD_HL(wPartyMon1Species);
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    CALL(aAddNTimes);
-    PUSH_HL;
-    LD_BC(MON_DVS);
-    ADD_HL_BC;
-    LD_D_H;
-    LD_E_L;
-    POP_HL;
-    LD_BC(MON_ID);
-    ADD_HL_BC;
-    LD_B_H;
-    LD_C_L;
-    CALL(aCalcMagikarpLength);
-    CALL(aPrintMagikarpLength);
-    FARCALL(aStubbedTrainerRankings_MagikarpLength);
-    LD_HL(mCheckMagikarpLength_MagikarpGuruMeasureText);
-    CALL(aPrintText);
+    // LD_A_addr(wCurPartyMon);
+    // LD_HL(wPartyMon1Species);
+    // LD_BC(PARTYMON_STRUCT_LENGTH);
+    // CALL(aAddNTimes);
+    // PUSH_HL;
+    // LD_BC(MON_DVS);
+    // ADD_HL_BC;
+    // LD_D_H;
+    // LD_E_L;
+    // POP_HL;
+    struct PartyMon* mon = wram->wPartyMon + res.a;
+    // LD_BC(MON_ID);
+    // ADD_HL_BC;
+    // LD_B_H;
+    // LD_C_L;
+    // CALL(aCalcMagikarpLength);
+    CalcMagikarpLength_Conv(mon->mon.DVs, mon->mon.id);
+    // CALL(aPrintMagikarpLength);
+    PrintMagikarpLength();
+    // FARCALL(aStubbedTrainerRankings_MagikarpLength);
+    StubbedTrainerRankings_MagikarpLength();
+    // LD_HL(mCheckMagikarpLength_MagikarpGuruMeasureText);
+    // CALL(aPrintText);
+    PrintText_Conv2(MagikarpGuruMeasureText);
 
 // Did we beat the record?
-    LD_HL(wMagikarpLength);
-    LD_DE(wBestMagikarpLengthFeet);
-    LD_C(2);
-    CALL(aCompareBytes);
-    IF_NC goto not_long_enough;
+    // LD_HL(wMagikarpLength);
+    // LD_DE(wBestMagikarpLengthFeet);
+    uint16_t bestLength = (wram->wBestMagikarpLengthFeet << 8) | (wram->wBestMagikarpLengthInches);
+    // LD_C(2);
+    // CALL(aCompareBytes);
+    // IF_NC goto not_long_enough;
+    if(BigEndianToNative16(wram->wMagikarpLength) >= bestLength) {
+    // NEW RECORD!!! Let's save that.
+        // LD_HL(wMagikarpLength);
+        // LD_DE(wBestMagikarpLengthFeet);
+        // LD_A_hli;
+        // LD_de_A;
+        wram->wBestMagikarpLengthFeet = LOW(wram->wMagikarpLength);
+        // INC_DE;
+        // LD_A_hl;
+        // LD_de_A;
+        // INC_DE;
+        wram->wBestMagikarpLengthInches = HIGH(wram->wMagikarpLength);
+        // LD_A_addr(wCurPartyMon);
+        // LD_HL(wPartyMonOTs);
+        // CALL(aSkipNames);
+        // CALL(aCopyBytes);
+        CopyBytes_Conv2(wram->wMagikarpRecordHoldersName, wram->wPartyMonOT[res.a], NAME_LENGTH);
+        // LD_A(MAGIKARPLENGTH_BEAT_RECORD);
+        // LD_addr_A(wScriptVar);
+        wram->wScriptVar = MAGIKARPLENGTH_BEAT_RECORD;
+        // RET;
+        return;
+    }
 
-// NEW RECORD!!! Let's save that.
-    LD_HL(wMagikarpLength);
-    LD_DE(wBestMagikarpLengthFeet);
-    LD_A_hli;
-    LD_de_A;
-    INC_DE;
-    LD_A_hl;
-    LD_de_A;
-    INC_DE;
-    LD_A_addr(wCurPartyMon);
-    LD_HL(wPartyMonOTs);
-    CALL(aSkipNames);
-    CALL(aCopyBytes);
-    LD_A(MAGIKARPLENGTH_BEAT_RECORD);
-    LD_addr_A(wScriptVar);
-    RET;
-
-
-not_long_enough:
-    LD_A(MAGIKARPLENGTH_TOO_SHORT);
-    LD_addr_A(wScriptVar);
-    RET;
-
-
-declined:
-    LD_A(MAGIKARPLENGTH_REFUSED);
-    LD_addr_A(wScriptVar);
-    RET;
-
-
-not_magikarp:
-    XOR_A_A;  // MAGIKARPLENGTH_NOT_MAGIKARP
-    LD_addr_A(wScriptVar);
-    RET;
-
-
-//MagikarpGuruMeasureText:
-    //text_far ['_MagikarpGuruMeasureText']
-    //text_end ['?']
+// not_long_enough:
+    // LD_A(MAGIKARPLENGTH_TOO_SHORT);
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = MAGIKARPLENGTH_TOO_SHORT;
+    // RET;
+    return;
 }
 
 void Magikarp_LoadFeetInchesChars(void){

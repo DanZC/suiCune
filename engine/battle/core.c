@@ -13009,7 +13009,7 @@ void GiveExperiencePoints(void){
         // LD_A_addr(wCurPartyMon);
         // LD_HL(wPartyMonNicknames);
         // CALL(aGetNickname);
-        GetNickname_Conv2(wram->wPartyMonNickname[0], wram->wCurPartyMon);
+        GetNickname_Conv(wram->wPartyMonNickname[0], wram->wCurPartyMon);
         // LD_HL(mText_MonGainedExpPoint);
         // CALL(aBattleTextbox);
         BattleTextbox_Conv2(Text_MonGainedExpPoint);

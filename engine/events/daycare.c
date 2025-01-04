@@ -268,7 +268,7 @@ u8_flag_s DayCareAskDepositPokemon(void){
     // LD_HL(wPartyMonNicknames);
     // LD_A_addr(wCurPartyMon);
     // CALL(aGetNickname);
-    GetNickname_Conv2(wram->wPartyMonNickname[0], res.a);
+    GetNickname_Conv(wram->wPartyMonNickname[0], res.a);
     // AND_A_A;
     // RET;
     return u8_flag(res.a, false);

@@ -216,7 +216,7 @@ void TeachTMHM(void){
     // LD_A_addr(wCurPartyMon);
     // LD_HL(wPartyMonNicknames);
     // CALL(aGetNickname);
-    GetNickname_Conv2(wram->wPartyMonNickname[0], wram->wCurPartyMon);
+    GetNickname_Conv(wram->wPartyMonNickname[0], wram->wCurPartyMon);
     // POP_BC;
 
     // LD_A_C;

@@ -85,7 +85,7 @@ void v_NameRater(void){
     }
 //  ... or a Pokemon you got from a trade.
     // CALL(aGetCurNickname);
-    GetCurNickname_Conv2();
+    GetCurNickname_Conv();
     // CALL(aCheckIfMonIsYourOT);
     // IF_C goto traded;
     if(!CheckIfMonIsYourOT_Conv(wram->wCurPartyMon))
@@ -143,7 +143,7 @@ void v_NameRater(void){
 // samename:
     // PUSH_HL;
     // CALL(aGetCurNickname);
-    GetCurNickname_Conv2();
+    GetCurNickname_Conv();
     // LD_HL(mNameRaterNamedText);
     // CALL(aPrintText);
     PrintText_Conv2(NameRaterNamedText);

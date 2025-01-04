@@ -813,7 +813,7 @@ uint8_t Function10038a(void){
 
 void Function100393(void){
     // LD_HL(wcc60);
-    mobile_api_data_s out = {.hl = wram->wcc60};
+    mobile_api_data_s out = {.hl = wram->wcc60_str};
     // LD_A(MOBILEAPI_1D);
     // CALL(aMobileAPI);
     MobileAPI(MOBILEAPI_1D, &out);
@@ -826,7 +826,7 @@ void Function10039c(void){
     // LD_BC(0x54);
     // LD_A(0x03);
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->w3_d000, wram->wcc60, 0x54);
+    CopyBytes_Conv2(wram->w3_d000, wram->wcc60_str, 0x54);
     // RET;
 }
 
@@ -894,7 +894,7 @@ void Function1003f5(void){
     // LD_A_addr(wcc60);
     // SUB_A(0x03);
     // LD_addr_A(wcc60);
-    wram->wcc60[0] -= 0x03;
+    wram->wcc60 -= 0x03;
     // LD_A_addr(wccb4);
     // SUB_A(0x03);
     // LD_addr_A(wccb4);
@@ -907,7 +907,7 @@ bool Function100406(void){
     // SUB_A(0x02);
     // LD_C_A;
     // LD_B(0);
-    uint16_t bc = wram->wcc60[0] - 2;
+    uint16_t bc = wram->wcc60 - 2;
     // LD_HL(wcc61);
     // CALL(aFunction10043a);
     uint16_t de = Function10043a(wram->wcc61, bc);

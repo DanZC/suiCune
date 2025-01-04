@@ -57,79 +57,84 @@ void StubbedTrainerRankings_HallOfFame2(void){
 }
 
 void StubbedTrainerRankings_MagikarpLength(void){
-    RET;
-    LD_A(BANK(sTrainerRankingLongestMagikarp));
-    CALL(aOpenSRAM);
-    LD_DE(wMagikarpLength);
-    LD_HL(sTrainerRankingLongestMagikarp);
+    // RET;
+    // LD_A(BANK(sTrainerRankingLongestMagikarp));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asTrainerRankingLongestMagikarp));
+    // LD_DE(wMagikarpLength);
+    uint16_t curLength = BigEndianToNative16(wram->wMagikarpLength);
+    // LD_HL(sTrainerRankingLongestMagikarp);
+    uint16_t longestLength = gb_read(sTrainerRankingLongestMagikarp + 1) | (gb_read(sTrainerRankingLongestMagikarp) << 8);
 
 // Is this Magikarp the longest measured?
-    LD_A_de;
-    CP_A_hl;
-    IF_Z goto isLowByteHigher;
-    IF_NC goto newRecordLongest;
-    goto checkShortest;
+    // LD_A_de;
+    // CP_A_hl;
+    // IF_Z goto isLowByteHigher;
+    // IF_NC goto newRecordLongest;
+    // goto checkShortest;
 
+// isLowByteHigher:
+    // INC_HL;
+    // INC_DE;
+    // LD_A_de;
+    // CP_A_hl;
+    // DEC_HL;
+    // DEC_DE;
+    // IF_C goto checkShortest;
+    if(curLength >= longestLength) {
+    // newRecordLongest:
+        // LD_A_de;
+        // INC_DE;
+        // LD_hli_A;
+        // LD_A_de;
+        // DEC_DE;
+        // LD_hl_A;
+        gb_write16(sTrainerRankingLongestMagikarp, NativeToBigEndian16(curLength));
+    }
 
-isLowByteHigher:
-    INC_HL;
-    INC_DE;
-    LD_A_de;
-    CP_A_hl;
-    DEC_HL;
-    DEC_DE;
-    IF_C goto checkShortest;
-
-
-newRecordLongest:
-    LD_A_de;
-    INC_DE;
-    LD_hli_A;
-    LD_A_de;
-    DEC_DE;
-    LD_hl_A;
-
-
-checkShortest:
+// checkShortest:
+    uint16_t shortestLength = gb_read(sTrainerRankingShortestMagikarp + 1) | (gb_read(sTrainerRankingShortestMagikarp) << 8);
 // First, check if the record for shortest Magikarp is 0.
 // This seems unnecessary, because the value is initialized to 100.0 cm.
-    LD_HL(sTrainerRankingShortestMagikarp);
-    LD_A_hli;
-    OR_A_hl;
-    DEC_HL;
-    IF_Z goto newRecordShortest;
+    // LD_HL(sTrainerRankingShortestMagikarp);
+    // LD_A_hli;
+    // OR_A_hl;
+    // DEC_HL;
+    // IF_Z goto newRecordShortest;
 
 // Now check if this Magikarp is the shortest
-    LD_A_de;
-    CP_A_hl;
-    IF_Z goto isLowByteLower;
-    IF_C goto newRecordShortest;
-    goto done;
+    // LD_A_de;
+    // CP_A_hl;
+    // IF_Z goto isLowByteLower;
+    // IF_C goto newRecordShortest;
+    // goto done;
 
 
-isLowByteLower:
-    INC_HL;
-    INC_DE;
-    LD_A_de;
-    CP_A_hl;
-    IF_NC goto done;
-    DEC_HL;
-    DEC_DE;
+// isLowByteLower:
+    // INC_HL;
+    // INC_DE;
+    // LD_A_de;
+    // CP_A_hl;
+    // IF_NC goto done;
+    // DEC_HL;
+    // DEC_DE;
 
+    if(curLength < shortestLength) {
+    // newRecordShortest:
+        // LD_A_de;
+        // INC_DE;
+        // LD_hli_A;
+        // LD_A_de;
+        // LD_hl_A;
+        gb_write16(sTrainerRankingShortestMagikarp, NativeToBigEndian16(curLength));
+    }
 
-newRecordShortest:
-    LD_A_de;
-    INC_DE;
-    LD_hli_A;
-    LD_A_de;
-    LD_hl_A;
-
-
-done:
-    CALL(aUpdateTrainerRankingsChecksum);
-    CALL(aCloseSRAM);
-    RET;
-
+// done:
+    // CALL(aUpdateTrainerRankingsChecksum);
+    UpdateTrainerRankingsChecksum();
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
 }
 
 void StubbedTrainerRankings_BugContestScore(uint16_t new_score){

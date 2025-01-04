@@ -33,6 +33,7 @@ SRCS   := tools/emu/peanut_sdl.c tools/emu/minigb_apu/minigb_apu.c \
 	$(wildcard data/events/*.c) \
 	$(wildcard data/items/*.c) \
 	$(wildcard data/maps/*.c) \
+	$(wildcard data/mobile/*.c) \
 	$(wildcard data/moves/*.c) \
 	$(wildcard data/phone/*.c) \
 	$(wildcard data/phone/text/*.c) \
@@ -139,6 +140,7 @@ clean:
 	$(wildcard data/events/*.o) \
 	$(wildcard data/items/*.o) \
 	$(wildcard data/maps/*.o) \
+	$(wildcard data/mobile/*.o) \
 	$(wildcard data/moves/*.o) \
 	$(wildcard data/phone/*.o) \
 	$(wildcard data/phone/text/*.o) \

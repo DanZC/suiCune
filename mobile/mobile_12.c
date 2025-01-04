@@ -14,6 +14,194 @@
 #include "../home/scrolling_menu.h"
 #include "../engine/gfx/crystal_layouts.h"
 #include "../engine/gfx/dma_transfer.h"
+#include "../data/mobile/charmaps.h"
+#include "../data/mobile/postcode_formats.h"
+#include "../data/mobile/postcode_to_country_pairs.h"
+#include "../util/variadic_macros.h"
+
+const char* Prefectures[] = {
+// Quick and dirty solution for the margin offset. In this list, strings must be left-aligned.
+#if defined(_CRYSTAL_AU)
+    "AU-ACT@",      // Australian Capital Territory
+    "AU-NSW@",      // New South Wales
+    "AU-NT @",      // Northern Territory
+    "AU-QLD@",      // Queensland
+    "AU-SA @",      // South Australia
+    "AU-TAS@",      // Tasmania
+    "AU-VIC@",      // Victoria
+    "AU-WA @",      // Western Australia
+    "NZ-AUK@",      // Auckland
+    "NZ-BOP@",      // Bay of Plenty
+    "NZ-CAN@",      // Canterbury
+    "NZ-CIT@",      // Chatham Islands Territory
+    "NZ-GIS@",      // Gisborne
+    "NZ-WGN@",      // Wellington	
+    "NZ-HKB@",      // Hawke's Bay
+    "NZ-MWT@",      // Manawatu-Wanganui	
+    "NZ-MBH@",      // Marlborough
+    "NZ-NSN@",      // Nelson
+    "NZ-NTL@",      // Northland
+    "NZ-OTA@",      // Otago
+    "NZ-STL@",      // Southland
+    "NZ-TKI@",      // Taranaki	
+    "NZ-TAS@",      // Tasman
+    "NZ-WKO@",      // Waikato
+    "NZ-WTC@",      // West Coast
+#elif defined(_CRYSTAL_EU)
+    "EU-AD@",       // Andorra
+    "EU-AL@",       // Albania
+    "EU-AT@",       // Austria
+    "EU-BA@",       // Bosnia and Herzegovina
+    "EU-BE@",       // Belgium
+    "EU-BG@",       // Bulgaria
+    "EU-BY@",       // Belarus
+    "EU-CH@",       // Switzerland
+    "EU-CZ@",       // Czech Republic
+    "EU-DE@",       // Germany
+    "EU-DK@",       // Denmark
+    "EU-EE@",       // Estonia
+    "EU-ES@",       // Spain
+    "EU-FI@",       // Finland
+    "EU-FR@",       // France
+    "EU-GB@",       // United Kingdom
+    "EU-GR@",       // Greece
+    "EU-HR@",       // Croatia
+    "EU-HU@",       // Hungary
+    "EU-IE@",       // Ireland
+    "EU-IS@",       // Iceland
+    "EU-IT@",       // Italy
+    "EU-LI@",       // Liechtenstein
+    "EU-LT@",       // Lithuania
+    "EU-LU@",       // Luxembourg
+    "EU-LV@",       // Latvia
+    "EU-MD@",       // Moldova
+    "EU-MT@",       // Malta
+    "EU-NL@",       // Netherlands
+    "EU-NO@",       // Norway
+    "EU-PL@",       // Poland
+    "EU-PT@",       // Portugal
+    "EU-RO@",       // Romania
+    "EU-RS@",       // Serbia
+    "EU-RU@",       // Russian Federation
+    "EU-SE@",       // Sweden
+    "EU-SI@",       // Slovenia
+    "EU-SK@",       // Slovakia
+    "EU-SM@",       // San Marino
+    "EU-UA@",       // Ukraine
+#elif defined(_CRYSTAL_JP)
+    "あいちけん@"     //  Aichi
+    "あおもりけん@"   //  Aomori
+    "あきたけん@"     //  Akita
+    "いしかわけん@"   //  Ishikawa
+    "いばらきけん@"   //  Ibaraki
+    "いわてけん@"     //  Iwate
+    "えひめけん@"     //  Ehime
+    "おおいたけん@"   //  Oita
+    "おおさかふ@"     //  Osakafu
+    "おかやまけん@"   //  Okayama
+    "おきなわけん@"   //  Okinawa
+    "かがわけん@"     //  Kagawa
+    "かごしまけん@"   //  Kagoshima
+    "かながわけん@"   //  Kanagawa
+    "ぎふけん@"       //  Gifu
+    "きょうとふ@"     //  Kyotofu
+    "くまもとけん@"   //  Kumamoto
+    "ぐんまけん@"     //  Gunma
+    "こうちけん@"     //  Kochi
+    "さいたまけん@"   //  Saitama
+    "さがけん@"       //  Saga
+    "しがけん@"       //  Shiga
+    "しずおかけん@"   //  Shizuoka
+    "しまねけん@"     //  Shimane
+    "ちばけん@"       //  Chiba
+    "とうきょうと@"   //  Tokyo
+    "とくしまけん@"   //  Tokushima
+    "とちぎけん@"     //  Tochigi
+    "とっとりけん@"   //  Tottori
+    "とやまけん@"     //  Toyama
+    "ながさきけん@"   //  Nagasaki
+    "ながのけん@"     //  Nagano
+    "ならけん@"       //  Naraken
+    "にいがたけん@"   //  Niigata
+    "ひょうごけん@"   //  Hyogo
+    "ひろしまけん@"   //  Hiroshima
+    "ふくいけん@"     //  Fukui
+    "ふくおかけん@"   //  Fukuoka
+    "ふくしまけん@"   //  Fukushima
+    "ほっかいどう@"   //  Hokkaido
+    "みえけん@"       //  Mie
+    "みやぎけん@"     //  Miyagi
+    "みやざきけん@"   //  Miyazaki
+    "やまがたけん@"   //  Yamagata
+    "やまぐちけん@"   //  Yamaguchi
+    "やまなしけん@"   //  Yamanashi
+    "わかやまけん@"   //  Wakayama
+#else
+    "US-AL@",       // Alabama
+    "US-AK@",       // Alaska
+    "US-AZ@",       // Arizona
+    "US-AR@",       // Arkansas
+    "US-CA@",       // California
+    "US-CO@",       // Colorado
+    "US-CT@",       // Connecticut
+    "US-DE@",       // Delaware
+    "US-FL@",       // Florida
+    "US-GA@",       // Georgia
+    "US-HI@",       // Hawaii
+    "US-ID@",       // Idaho
+    "US-IL@",       // Illinois
+    "US-IN@",       // Indiana
+    "US-IA@",       // Iowa
+    "US-KS@",       // Kansas
+    "US-KY@",       // Kentucky
+    "US-LA@",       // Louisiana
+    "US-ME@",       // Maine
+    "US-MD@",       // Maryland
+    "US-MA@",       // Massachusetts
+    "US-MI@",       // Michigan
+    "US-MN@",       // Minnesota
+    "US-MS@",       // Mississippi
+    "US-MO@",       // Missouri
+    "US-MT@",       // Montana
+    "US-NE@",       // Nebraska
+    "US-NV@",       // Nevada
+    "US-NH@",       // New_Hampshire
+    "US-NJ@",       // New_Jersey
+    "US-NM@",       // New_Mexico
+    "US-NY@",       // New_York
+    "US-NC@",       // North_Carolina
+    "US-ND@",       // North_Dakota
+    "US-OH@",       // Ohio
+    "US-OK@",       // Oklahoma
+    "US-OR@",       // Oregon
+    "US-PA@",       // Pennsylvania
+    "US-RI@",       // Rhode_Island
+    "US-SC@",       // South_Carolina
+    "US-SD@",       // South_Dakota
+    "US-TN@",       // Tennessee
+    "US-TX@",       // Texas
+    "US-UT@",       // Utah
+    "US-VT@",       // Vermont
+    "US-VA@",       // Virginia
+    "US-WA@",       // Washington
+    "US-WV@",       // West_Virginia
+    "US-WI@",       // Wisconsin
+    "US-WY@",       // Wyoming
+    "CA-AB@",       // Alberta
+    "CA-BC@",       // British Columbia
+    "CA-MB@",       // Manitoba
+    "CA-NB@",       // New Brunswick
+    "CA-NL@",       // Newfoundland and Labrador
+    "CA-NT@",       // Northwest Territories
+    "CA-NS@",       // Nova Scotia
+    "CA-NU@",       // Nunavut
+    "CA-ON@",       // Ontario
+    "CA-PE@",       // Prince Edward Island
+    "CA-QC@",       // Quebec
+    "CA-SK@",       // Saskatchewan
+    "CA-YT@",       // Yukon
+#endif
+};
 
 uint8_t InitMobileProfile(uint8_t c){
     // XOR_A_A;
@@ -163,7 +351,7 @@ uint8_t InitMobileProfile(uint8_t c){
     // LD_E_L;
     // hlcoord(11, 8, wTilemap);
     // CALL(aPlaceString);
-    //  TODO: Figure out the best way to adapt Prefectures.
+    PlaceStringSimple(U82C(Prefectures[wram->wPrefecture]), coord(11, 8, wram->wTilemap));
     // hlcoord(11, 10, wTilemap);
     // CALL(aFunction489ea);
     Function489ea(coord(11, 10, wram->wTilemap));
@@ -431,7 +619,7 @@ uint8_t Function4820d(void){
         case 0x2: Function4876f(); return 0xff;
         // CP_A(0x3);
         // JP_Z (mFunction48304);
-        case 0x3: break; // TODO: Finish converting Function48304. // Function48304(); break;
+        case 0x3: Function48304(); return 0xff; // TODO: Finish converting Function48304. // Function48304(); break;
         // CP_A(0x4);
         // JP_Z (mFunction488d3);
         case 0x4: Function488d3(); return 0xff;
@@ -586,7 +774,7 @@ void Function48304(void){
     LoadMenuHeader_Conv2(&MenuHeader_0x48504);
     // LD_HL(mMenuHeader_0x48513);
     // CALL(aLoadMenuHeader);
-    // LoadMenuHeader_Conv2(&MenuHeader_0x48513);
+    LoadMenuHeader_Conv2(&MenuHeader_0x48513);
     // hlcoord(10, 0, wTilemap);
     // LD_B(0xc);
     // LD_C(0x8);
@@ -594,14 +782,14 @@ void Function48304(void){
     Function48cdc(coord(10, 0, wram->wTilemap), 0xc, 0x8);
     // LD_A_addr(wMenuCursorPosition);
     // LD_B_A;
-    // uint8_t cursorPos = wram->wMenuCursorPosition;
+    uint8_t cursorPos = wram->wMenuCursorPosition;
     // LD_A_addr(wMenuScrollPosition);
     // LD_C_A;
-    // uint8_t scrollPos = wram->wMenuScrollPosition;
+    uint8_t scrollPos = wram->wMenuScrollPosition;
     // PUSH_BC;
     // LD_A_addr(wd474);
     // DEC_A;
-    uint8_t a = wram->wd474 - 1;
+    uint8_t a = wram->wPrefecture - 1;
     // CP_A(0x29);
     // IF_C goto asm_4833f;
     if(a >= 0x29) {
@@ -619,149 +807,185 @@ void Function48304(void){
     // FARCALL(aMobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
     Mobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv();
 
+    bool cont = true;
     do {
     // asm_48348:
         // CALL(aScrollingMenu);
-        ScrollingMenu_Conv();
-        LD_DE(0x629);
-        CALL(aFunction48383);
+        uint8_t a = ScrollingMenu_Conv();
+        // LD_DE(0x629);
+        // CALL(aFunction48383);
+        cont = Function48383(a, 0x629);
         // IF_C goto asm_48348;
-    } while(0);
-    LD_D_A;
-    POP_BC;
-    LD_A_B;
-    LD_addr_A(wMenuCursorPosition);
-    LD_A_C;
-    LD_addr_A(wMenuScrollPosition);
-    LD_A_D;
-    PUSH_AF;
-    CALL(aExitMenu);
-    CALL(aExitMenu);
-    POP_AF;
-    LDH_A_addr(hJoyPressed);
-    BIT_A(0);
-    IF_Z goto asm_48377;
-    CALL(aFunction483bb);
-    LD_A_addr(wd003);
-    SET_A(2);
-    LD_addr_A(wd003);
+    } while(cont);
+    // LD_D_A;
+    // POP_BC;
+    // LD_A_B;
+    // LD_addr_A(wMenuCursorPosition);
+    wram->wMenuCursorPosition = cursorPos;
+    // LD_A_C;
+    // LD_addr_A(wMenuScrollPosition);
+    wram->wMenuScrollPosition = scrollPos;
+    // LD_A_D;
+    // PUSH_AF;
+    // CALL(aExitMenu);
+    // CALL(aExitMenu);
+    ExitMenu_Conv2();
+    ExitMenu_Conv2();
+    // POP_AF;
+    // LDH_A_addr(hJoyPressed);
+    // BIT_A(0);
+    // IF_Z goto asm_48377;
+    if(bit_test(hram->hJoyPressed, A_BUTTON_F)) {
+        // CALL(aFunction483bb);
+        Function483bb();
+        // LD_A_addr(wd003);
+        // SET_A(2);
+        // LD_addr_A(wd003);
+        bit_set(wram->wd003, 2);
+    }
 
-asm_48377:
-    CALL(aFunction48187);
-    FARCALL(aMobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
-    JP(mFunction4840c);
-
+// asm_48377:
+    // CALL(aFunction48187);
+    Function48187();
+    // FARCALL(aMobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
+    Mobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv();
+    // JP(mFunction4840c);
 }
 
-void Function48383(void){
-    PUSH_BC;
-    PUSH_AF;
-    BIT_A(5);
-    IF_NZ goto asm_48390;
-    BIT_A(4);
-    IF_NZ goto asm_4839f;
-    AND_A_A;
-    goto asm_483b7;
+bool Function48383(uint8_t a, uint16_t de){
+    // PUSH_BC;
+    // PUSH_AF;
+    // BIT_A(5);
+    // IF_NZ goto asm_48390;
+    if(bit_test(a, 5)) {
+    // asm_48390:
+        // LD_A_addr(wMenuScrollPosition);
+        // SUB_A_D;
+        // LD_addr_A(wMenuScrollPosition);
+        // IF_NC goto asm_483af;
+        // XOR_A_A;
+        // LD_addr_A(wMenuScrollPosition);
+        // goto asm_483af;
+        if(wram->wMenuScrollPosition < HIGH(de)) {
+            wram->wMenuScrollPosition = 0;
+        } else {
+            wram->wMenuScrollPosition -= HIGH(de);
+        }
+    }
+    // BIT_A(4);
+    // IF_NZ goto asm_4839f;
+    else if(bit_test(a, 4)) {
+    // asm_4839f:
+        // LD_A_addr(wMenuScrollPosition);
+        // ADD_A_D;
+        // LD_addr_A(wMenuScrollPosition);
+        // CP_A_E;
+        // IF_C goto asm_483af;
+        // LD_A_E;
+        // LD_addr_A(wMenuScrollPosition);
+        // goto asm_483af;
+        if(wram->wMenuScrollPosition + HIGH(de) > LOW(de)) {
+            wram->wMenuScrollPosition = LOW(de);
+        } else {
+            wram->wMenuScrollPosition += HIGH(de);
+        }
+    }
+    else {
+        // AND_A_A;
+        // goto asm_483b7;
+        return false;
+    }
 
-asm_48390:
-    LD_A_addr(wMenuScrollPosition);
-    SUB_A_D;
-    LD_addr_A(wMenuScrollPosition);
-    IF_NC goto asm_483af;
-    XOR_A_A;
-    LD_addr_A(wMenuScrollPosition);
-    goto asm_483af;
+// asm_483af:
+    // LD_HL(wMenuCursorY);
+    // LD_A_hl;
+    // LD_addr_A(wMenuCursorPosition);
+    wram->wMenuCursorPosition = wram->wMenuCursorY;
+    // SCF;
 
-asm_4839f:
-    LD_A_addr(wMenuScrollPosition);
-    ADD_A_D;
-    LD_addr_A(wMenuScrollPosition);
-    CP_A_E;
-    IF_C goto asm_483af;
-    LD_A_E;
-    LD_addr_A(wMenuScrollPosition);
-    goto asm_483af;
-
-asm_483af:
-    LD_HL(wMenuCursorY);
-    LD_A_hl;
-    LD_addr_A(wMenuCursorPosition);
-    SCF;
-
-asm_483b7:
-    POP_BC;
-    LD_A_B;
-    POP_BC;
-    RET;
-
+// asm_483b7:
+    // POP_BC;
+    // LD_A_B;
+    // POP_BC;
+    // RET;
+    return true;
 }
 
 void Function483bb(void){
-    LD_HL(wScrollingMenuCursorPosition);
-    LD_A_hl;
-    INC_A;
-    LD_addr_A(wd474);
-    DEC_A;
-    LD_B_A;
-    LD_HL(mPrefectures);
+    // LD_HL(wScrollingMenuCursorPosition);
+    // LD_A_hl;
+    // INC_A;
+    // LD_addr_A(wd474);
+    wram->wPrefecture = wram->wScrollingMenuCursorPosition + 1;
+    // DEC_A;
+    // LD_B_A;
+    uint8_t b = wram->wScrollingMenuCursorPosition;
+    // LD_HL(mPrefectures);
 
-asm_483c8:
-    AND_A_A;
-    IF_Z goto asm_483d5;
+// asm_483c8:
+    // AND_A_A;
+    // IF_Z goto asm_483d5;
 
-asm_483cb:
-    LD_A_hli;
-    CP_A(0x50);
-    IF_NZ goto asm_483cb;
-    LD_A_B;
-    DEC_A;
-    LD_B_A;
-    goto asm_483c8;
+// asm_483cb:
+    // LD_A_hli;
+    // CP_A(0x50);
+    // IF_NZ goto asm_483cb;
+    // LD_A_B;
+    // DEC_A;
+    // LD_B_A;
+    // goto asm_483c8;
+    const char* pref = (b < lengthof(Prefectures))? Prefectures[b]: "";
 
-asm_483d5:
-    LD_D_H;
-    LD_E_L;
-    LD_B(0x2);
-    LD_C(0x8);
-    hlcoord(11, 7, wTilemap);
-    CALL(aClearBox);
-    hlcoord(11, 8, wTilemap);
-    CALL(aPlaceString);
-    RET;
-
+// asm_483d5:
+    // LD_D_H;
+    // LD_E_L;
+    // LD_B(0x2);
+    // LD_C(0x8);
+    // hlcoord(11, 7, wTilemap);
+    // CALL(aClearBox);
+    ClearBox_Conv2(coord(11, 7, wram->wTilemap), 0x8, 0x2);
+    // hlcoord(11, 8, wTilemap);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(pref), coord(11, 8, wram->wTilemap));
+    // RET;
 }
 
-void Function483e8(void){
-    PUSH_DE;
-    LD_HL(mPrefectures);
-    LD_A_addr(wMenuSelection);
-    CP_A(0xff);
-    IF_NZ goto asm_483f8;
-    LD_HL(mWakayama);  // last string
-    goto asm_48405;
+void Function483e8(const struct MenuData* data, tile_t* de){
+    (void)data;
+    // PUSH_DE;
+    // LD_HL(mPrefectures);
+    // LD_A_addr(wMenuSelection);
+    // CP_A(0xff);
+    // IF_NZ goto asm_483f8;
+    const char* hl;
+    if(wram->wMenuSelection == 0xff || wram->wMenuSelection > lengthof(Prefectures) - 1) {
+        // LD_HL(mWakayama);  // last string
+        hl = Prefectures[lengthof(Prefectures) - 1];
+        // goto asm_48405;
+    }
+    else {
+    // asm_483f8:
+        // LD_D_A;
+        // AND_A_A;
+        // IF_Z goto asm_48405;
 
+    // asm_483fc:
+        // LD_A_hli;
+        // CP_A(0x50);
+        // IF_NZ goto asm_483fc;
+        // LD_A_D;
+        // DEC_A;
+        // goto asm_483f8;
+        hl = Prefectures[wram->wMenuSelection];
+    }
 
-asm_483f8:
-    LD_D_A;
-    AND_A_A;
-    IF_Z goto asm_48405;
-
-asm_483fc:
-    LD_A_hli;
-    CP_A(0x50);
-    IF_NZ goto asm_483fc;
-    LD_A_D;
-    DEC_A;
-    goto asm_483f8;
-
-
-asm_48405:
-    LD_D_H;
-    LD_E_L;
-    POP_HL;
-    CALL(aPlaceString);
-    RET;
-
+// asm_48405:
+    // LD_D_H;
+    // LD_E_L;
+    // POP_HL;
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(hl), de);
+    // RET;
 }
 
 void Function4840c(void){
@@ -882,269 +1106,40 @@ const struct MenuHeader MenuHeader_0x4850e = {
     .coord = menu_coords(10, 9, SCREEN_WIDTH - 1, TEXTBOX_Y - 1),
 };
 
-void MenuHeader_0x48513(void){
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['11', '1', '18', '12'];
-    //dw ['MenuData_0x4851b'];
-    //db ['1'];  // default option
-
-    return MenuData_0x4851b();
-}
-
-void MenuData_0x4851b(void){
-    //db ['SCROLLINGMENU_DISPLAY_ARROWS | SCROLLINGMENU_ENABLE_RIGHT | SCROLLINGMENU_ENABLE_LEFT | SCROLLINGMENU_CALL_FUNCTION1_CANCEL'];  // flags
-    //db ['6', '0'];  // rows, columns
-    //db ['SCROLLINGMENU_ITEMS_NORMAL'];  // item format
-    //dba ['.Items']
-    //dba ['Function483e8']
-    //dba ['NULL']
-    //dba ['NULL']
-
-
-// Items:
-    //db ['46'];
-    for(int x = 0; x < 46; x++){
-    //db ['x'];
-    }
-    //db ['-1'];
-}
-
-const char* Prefectures[] = { // Replace with countries or regions?
+const struct MenuHeader MenuHeader_0x48513 = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(11, 1, SCREEN_WIDTH - 2, TEXTBOX_Y), // 18, 12
+    .data = &MenuData_0x4851b,
+    .defaultOption = 1,  // default option
 };
 
-void Aichi(void){
-//    db "あいちけん@"     //  Aichi
-    return Aomori();
-}
-
-void Aomori(void){
-//   db "あおもりけん@"   //  Aomori
-    return Akita();
-}
-
-void Akita(void){
-//    db "あきたけん@"     //  Akita
-    return Ishikawa();
-}
-
-void Ishikawa(void){
-// db "いしかわけん@"   //  Ishikawa
-    return Ibaraki();
-}
-
-void Ibaraki(void){
-//  db "いばらきけん@"   //  Ibaraki
-    return Iwate();
-}
-
-void Iwate(void){
-//    db "いわてけん@"     //  Iwate
-    return Ehime();
-}
-
-void Ehime(void){
-//    db "えひめけん@"     //  Ehime
-    return Oita();
-}
-
-void Oita(void){
-//     db "おおいたけん@"   //  Oita
-    return Osakafu();
-}
-
-void Osakafu(void){
-//  db "おおさかふ@"     //  Osakafu
-    return Okayama();
-}
-
-void Okayama(void){
-//  db "おかやまけん@"   //  Okayama
-    return Okinawa();
-}
-
-void Okinawa(void){
-//  db "おきなわけん@"   //  Okinawa
-    return Kagawa();
-}
-
-void Kagawa(void){
-//   db "かがわけん@"     //  Kagawa
-    return Kagoshima();
-}
-
-void Kagoshima(void){
-//db "かごしまけん@"   //  Kagoshima
-    return Kanagawa();
-}
-
-void Kanagawa(void){
-// db "かながわけん@"   //  Kanagawa
-    return Gifu();
-}
-
-void Gifu(void){
-//     db "ぎふけん@"       //  Gifu
-    return Kyotofu();
-}
-
-void Kyotofu(void){
-//  db "きょうとふ@"     //  Kyotofu
-    return Kumamoto();
-}
-
-void Kumamoto(void){
-// db "くまもとけん@"   //  Kumamoto
-    return Gunma();
-}
-
-void Gunma(void){
-//    db "ぐんまけん@"     //  Gunma
-    return Kochi();
-}
-
-void Kochi(void){
-//    db "こうちけん@"     //  Kochi
-    return Saitama();
-}
-
-void Saitama(void){
-//  db "さいたまけん@"   //  Saitama
-    return Saga();
-}
-
-void Saga(void){
-//     db "さがけん@"       //  Saga
-    return Shiga();
-}
-
-void Shiga(void){
-//    db "しがけん@"       //  Shiga
-    return Shizuoka();
-}
-
-void Shizuoka(void){
-// db "しずおかけん@"   //  Shizuoka
-    return Shimane();
-}
-
-void Shimane(void){
-//  db "しまねけん@"     //  Shimane
-    return Chiba();
-}
-
-void Chiba(void){
-//    db "ちばけん@"       //  Chiba
-    return Tokyo();
-}
-
-void Tokyo(void){
-//    db "とうきょうと@"   //  Tokyo
-    return Tokushima();
-}
-
-void Tokushima(void){
-//db "とくしまけん@"   //  Tokushima
-    return Tochigi();
-}
-
-void Tochigi(void){
-//  db "とちぎけん@"     //  Tochigi
-    return Tottori();
-}
-
-void Tottori(void){
-//  db "とっとりけん@"   //  Tottori
-    return Toyama();
-}
-
-void Toyama(void){
-//   db "とやまけん@"     //  Toyama
-    return Nagasaki();
-}
-
-void Nagasaki(void){
-// db "ながさきけん@"   //  Nagasaki
-    return Nagano();
-}
-
-void Nagano(void){
-//   db "ながのけん@"     //  Nagano
-    return Naraken();
-}
-
-void Naraken(void){
-//  db "ならけん@"       //  Naraken
-    return Niigata();
-}
-
-void Niigata(void){
-//  db "にいがたけん@"   //  Niigata
-    return Hyogo();
-}
-
-void Hyogo(void){
-//    db "ひょうごけん@"   //  Hyogo
-    return Hiroshima();
-}
-
-void Hiroshima(void){
-//db "ひろしまけん@"   //  Hiroshima
-    return Fukui();
-}
-
-void Fukui(void){
-//    db "ふくいけん@"     //  Fukui
-    return Fukuoka();
-}
-
-void Fukuoka(void){
-//  db "ふくおかけん@"   //  Fukuoka
-    return Fukushima();
-}
-
-void Fukushima(void){
-//db "ふくしまけん@"   //  Fukushima
-    return Hokkaido();
-}
-
-void Hokkaido(void){
-// db "ほっかいどう@"   //  Hokkaido
-    return Mie();
-}
-
-void Mie(void){
-//      db "みえけん@"       //  Mie
-    return Miyagi();
-}
-
-void Miyagi(void){
-//   db "みやぎけん@"     //  Miyagi
-    return Miyazaki();
-}
-
-void Miyazaki(void){
-// db "みやざきけん@"   //  Miyazaki
-    return Yamagata();
-}
-
-void Yamagata(void){
-// db "やまがたけん@"   //  Yamagata
-    return Yamaguchi();
-}
-
-void Yamaguchi(void){
-//db "やまぐちけん@"   //  Yamaguchi
-    return Yamanashi();
-}
-
-void Yamanashi(void){
-//db "やまなしけん@"   //  Yamanashi
-    return Wakayama();
-}
-
-void Wakayama(void){
-// db "わかやまけん@"   //  Wakayama
-}
+const struct MenuData MenuData_0x4851b = {
+    .flags = SCROLLINGMENU_DISPLAY_ARROWS | SCROLLINGMENU_ENABLE_RIGHT | SCROLLINGMENU_ENABLE_LEFT | SCROLLINGMENU_CALL_FUNCTION1_CANCEL,  // flags
+    .scrollingMenu = {
+        .rows = 6, .cols = 0,  // rows, columns
+        .format = SCROLLINGMENU_ITEMS_NORMAL,  // item format
+        .list = (uint8_t[]) {
+        // Items:
+            lengthof(Prefectures),
+            // for(int x = 0; x < 46; x++){
+            //db ['x'];
+            // In the future, replace this with a macro that automatically does this.
+             0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+            10,11,12,13,14,15,16,17,18,19,
+            20,21,22,23,24,25,26,27,28,29,
+            30,31,32,33,34,35,36,37,38,39,
+            40,41,42,43,44,45,46,47,48,49,
+            50,51,52,53,54,55,56,57,58,59,
+            60,61,62,
+            // }
+            //db ['-1'];
+            -1,
+        },
+        .func1 = Function483e8,
+        .func2 = NULL,
+        .func3 = NULL,
+    },
+};
 
 void Function48689(void){
     // LD_C(7);
@@ -1401,7 +1396,7 @@ void Function4876f(void){
     // LD_A_addr(wd473);
     // AND_A_A;
     // IF_Z goto asm_487ab;
-    if(wram->wd473 == 0) {
+    if(wram->wAge == 0) {
     // asm_487ab:
         // hlcoord(12, 5, wTilemap);
         // LD_hl(0x10);
@@ -1410,7 +1405,7 @@ void Function4876f(void){
     }
     // CP_A(0x64);
     // IF_Z goto asm_487b2;
-    else if(wram->wd473 == 0x64) {
+    else if(wram->wAge == 0x64) {
     // asm_487b2:
         // hlcoord(12, 7, wTilemap);
         // LD_hl(0x11);
@@ -1435,7 +1430,7 @@ void Function4876f(void){
     DelayFrames_Conv(10);
     // LD_A_addr(wd473);
     // PUSH_AF;
-    uint8_t d473 = wram->wd473;
+    uint8_t d473 = wram->wAge;
 
     u8_flag_s res;
     do {
@@ -1455,7 +1450,7 @@ void Function4876f(void){
     if(res.a == 0) {
         // LD_A_B;
         // LD_addr_A(wd473);
-        wram->wd473 = d473;
+        wram->wAge = d473;
     }
 
 // asm_487da:
@@ -1476,7 +1471,7 @@ void Function487ec(tile_t* hl){
     // PUSH_HL;
     // LD_DE(wd473);
     // CALL(aFunction487ff);
-    Function487ff(hl, &wram->wd473);
+    Function487ff(hl, &wram->wAge);
     // POP_HL;
     // for(int rept = 0; rept < 4; rept++){
     // INC_HL;
@@ -1526,9 +1521,9 @@ u8_flag_s Function4880e(void){
         // LD_A_hl;
         // CP_A(0x64);
         // IF_NC goto asm_4884c;
-        if(wram->wd473 < 0x64) {
+        if(wram->wAge < 0x64) {
             // INC_A;
-            wram->wd473++;
+            wram->wAge++;
         }
 
     // asm_4884c:
@@ -1544,9 +1539,9 @@ u8_flag_s Function4880e(void){
         // LD_A_hl;
         // AND_A_A;
         // IF_Z goto asm_48840;
-        if(wram->wd473 != 0x0) {
+        if(wram->wAge != 0x0) {
             // DEC_A;
-            wram->wd473--;
+            wram->wAge--;
         }
 
     // asm_48840:
@@ -1561,15 +1556,15 @@ u8_flag_s Function4880e(void){
         // LD_A_addr(wd473);
         // CP_A(0x5b);
         // IF_C goto asm_48858;
-        if(wram->wd473 > (0x64 - 0xa)) {
+        if(wram->wAge > (0x64 - 0xa)) {
             // LD_A(0x5a);
-            wram->wd473 = (0x64 - 0xa);
+            wram->wAge = (0x64 - 0xa);
         }
 
     // asm_48858:
         // ADD_A(0xa);
         // LD_addr_A(wd473);
-        wram->wd473 += 0xa;
+        wram->wAge += 0xa;
         // goto asm_4886f;
     }
     // LD_A_hl;
@@ -1580,15 +1575,15 @@ u8_flag_s Function4880e(void){
         // LD_A_addr(wd473);
         // CP_A(0xa);
         // IF_NC goto asm_48868;
-        if(wram->wd473 < 0xa) {
+        if(wram->wAge < 0xa) {
             // LD_A(0xa);
-            wram->wd473 = 0xa;
+            wram->wAge = 0xa;
         }
 
     // asm_48868:
         // SUB_A(0xa);
         // LD_addr_A(wd473);
-        wram->wd473 -= 0xa;
+        wram->wAge -= 0xa;
         // goto asm_4886f;
     }
     else {
@@ -1602,7 +1597,7 @@ u8_flag_s Function4880e(void){
     // LD_A_addr(wd473);
     // AND_A_A;
     // IF_Z goto asm_48887;
-    if(wram->wd473 == 0) {
+    if(wram->wAge == 0) {
     // asm_48887:
         // hlcoord(10, 5, wTilemap);
         // LD_B(0x1);
@@ -1617,7 +1612,7 @@ u8_flag_s Function4880e(void){
     // CP_A(0x64);
     // IF_Z goto asm_48898;
     // IF_Z goto asm_488a7; // Dummied out destination?
-    else if(wram->wd473 == 0x64) {
+    else if(wram->wAge == 0x64) {
     // asm_48898:
         // hlcoord(10, 5, wTilemap);
         // LD_B(0x1);
@@ -1778,7 +1773,7 @@ void asm_48922(uint16_t bc, uint16_t de, uint8_t b, uint8_t d, uint8_t inMenu){
         }
         // JR(masm_48972); // inlined
         // CALL(aFunction48ab5);
-        res = Function48ab5(d);
+        res = Function48ab5(&d);
         // PUSH_AF;
         // CP_A(0xf0);
         // IF_Z goto asm_48994;
@@ -2070,7 +2065,7 @@ bool Function48a3a(void){
     // POP_AF;
     // BIT_A(1);
     // JP_NZ (mFunction48a9a);
-    if(bit_test(joypad, 1))
+    if(bit_test(joypad, B_BUTTON_F))
         return true;
     // LD_A_addr(wMenuCursorY);
     // CP_A(0x1);
@@ -2107,14 +2102,14 @@ bool Function48a3a(void){
 
 const struct MenuHeader MenuHeader_0x48a9c = {
     .flags = MENU_BACKUP_TILES,  // flags
-    .coord = menu_coords(10, 8, SCREEN_WIDTH - 1, 13),
+    .coord = menu_coords(8, 8, SCREEN_WIDTH - 1, 13),
 };
 
 const char String_48aa1[] =
             "Tell Now"
     t_next  "Tell Later@";
 
-u8_flag_s Function48ab5(uint8_t d){
+u8_flag_s Function48ab5(uint8_t* d){
     // LDH_A_addr(hJoyPressed);
     // AND_A(A_BUTTON);
     // JP_NZ (mFunction48c0f);
@@ -2129,7 +2124,7 @@ u8_flag_s Function48ab5(uint8_t d){
     // AND_A_A;
     uint8_t* hl;
     uint8_t a;
-    switch(d) {
+    switch(*d) {
     // IF_Z goto asm_48adf;
     case 0x0:
     // asm_48adf:
@@ -2219,7 +2214,7 @@ u8_flag_s Function48ab5(uint8_t d){
     uint8_t e = 0x0;
     // hlcoord(11, 10, wTilemap);
     // LD_A_D;
-    uint8_t a2 = d;
+    uint8_t a2 = *d;
 
     while(a2) {
     // asm_48b25:
@@ -2248,12 +2243,13 @@ u8_flag_s Function48ab5(uint8_t d){
         if((a & 0xf) >= 0x9) {
             // AND_A(0xf0);
             // ADD_A(0xff);
-            a = (a & 0xf0) - 1;
+            a = a & 0xf0;
         }
-
-    // asm_48b9a:
-        // INC_A;
-        a++;
+        else {
+        // asm_48b9a:
+            // INC_A;
+            a++;
+        }
         goto asm_48b62;
     }
     // LD_A_hl;
@@ -2282,7 +2278,7 @@ u8_flag_s Function48ab5(uint8_t d){
     // AND_A(D_LEFT);
     // JP_NZ (mFunction48bd7);
     else if(hram->hJoyLast & D_LEFT) {
-        return Function48bd7();
+        return Function48bd7(d);
     }
     // LD_A_hl;
     // AND_A(D_RIGHT);
@@ -2299,9 +2295,9 @@ u8_flag_s Function48ab5(uint8_t d){
         // LD_A_D;
         // CP_A(0x6);
         // IF_NC goto asm_48baf;
-        if(d < 0x6) {
+        if(*d < 0x6) {
             // INC_D;
-            d++;
+            (*d)++;
         }
 
     // asm_48baf:
@@ -2314,7 +2310,7 @@ u8_flag_s Function48ab5(uint8_t d){
         // IF_Z goto asm_48bc4;
         // BIT_A(7);
         // IF_NZ goto asm_48bc4;
-        if(d != 0x6 && !bit_test(a, 7)) {
+        if(*d != 0x6 && !bit_test(a, 7)) {
             // INC_HL;
             // LD_A_hl;
             // SWAP_A;
@@ -2404,7 +2400,7 @@ u8_flag_s asm_48bc7(void){
     return Function48c00(0xf);
 }
 
-u8_flag_s Function48bd7(void){
+u8_flag_s Function48bd7(uint8_t* d){
     // PUSH_DE;
     // hlcoord(10, 9, wTilemap);
     // LD_B(0x1);
@@ -2423,6 +2419,9 @@ u8_flag_s Function48bd7(void){
     // IF_Z goto asm_48bf3;
     // BIT_A(7);
     // IF_Z goto asm_48bf8;
+    if(*d == 0 || (*d != 0 && !bit_test(*d, 7))) {
+        (*d)--;
+    }
     // DEC_D;
     // DEC_HL;
 

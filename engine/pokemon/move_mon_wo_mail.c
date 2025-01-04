@@ -28,7 +28,7 @@ void InsertPokemonIntoBox(void){
     // LD_BC(NAME_LENGTH);
     // LD_DE(wBufferMonOT);
     // CALL(aInsertDataIntoBoxOrParty);
-    InsertDataIntoBoxOrParty_Conv(GBToRAMAddr(sBoxMonOTs), wram->wBufferMonOT, MON_NAME_LENGTH);
+    InsertDataIntoBoxOrParty_Conv(GBToRAMAddr(sBoxMonOTs), wram->wBufferMonOT, NAME_LENGTH);
     // LD_A_addr(sBoxCount);
     // DEC_A;
     // LD_addr_A(wNextBoxOrPartyIndex);
@@ -37,7 +37,7 @@ void InsertPokemonIntoBox(void){
     // LD_BC(BOXMON_STRUCT_LENGTH);
     // LD_DE(wBufferMon);
     // CALL(aInsertDataIntoBoxOrParty);
-    InsertDataIntoBoxOrParty_Conv(GBToRAMAddr(sBoxMons), (uint8_t*)&wram->wBufferMon.mon, BOXMON_STRUCT_LENGTH);
+    InsertDataIntoBoxOrParty_Conv(GBToRAMAddr(sBoxMons), (const uint8_t*)&wram->wBufferMon.mon, BOXMON_STRUCT_LENGTH);
     // LD_HL(wBufferMonMoves);
     // LD_DE(wTempMonMoves);
     // LD_BC(NUM_MOVES);

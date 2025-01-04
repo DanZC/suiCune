@@ -1130,17 +1130,22 @@ struct wram_s
                         uint8_t wcb36;
                         uint8_t skip_43[16];
                         uint8_t wMobileSDK_PacketBuffer[281];
-                        uint8_t wcc60[1];
-                        uint8_t wcc61[1];
-                        uint8_t wcc62[2];
-                        uint8_t wcc64[1];
-                        uint8_t wcc65[57];
-                        uint8_t skip_44[22];
-                        uint8_t wccb4;    // buffer size?
-                        uint8_t wccb5[3];
-                        uint8_t wccb8[1];
-                        uint8_t wccb9[1];
-                        uint8_t wccba[90];
+                        union {
+                            struct {
+                                uint8_t wcc60;
+                                uint8_t wcc61[1];
+                                uint8_t wcc62[2];
+                                uint8_t wcc64[1];
+                                uint8_t wcc65[57];
+                                uint8_t skip_44[22];
+                                uint8_t wccb4;    // buffer size?
+                                uint8_t wccb5[3];
+                                uint8_t wccb8[1];
+                                uint8_t wccb9[1];
+                                uint8_t wccba[90];
+                            };
+                            char wcc60_str[180];
+                        };
                         // if
                         // DEF
                         // (
@@ -2699,12 +2704,17 @@ struct wram_s
                         //	0 male
                         //	1 female
                         uint8_t wPlayerGender;
-                        uint8_t wd473; // wCurrentMobileProfileSelection
-                        uint8_t wd474; // wMobileProfilePrefecture
-                        uint8_t wd475; // wMobileProfileZipCode0
-                        uint8_t wd476; // wMobileProfileZipCode1
-                        uint8_t wd477; // wMobileProfileZipCode2
-                        uint8_t wd478; // wMobileProfileZipCode3
+                        uint8_t wAge; // wd473
+                        uint8_t wPrefecture; // wd474
+                        union {
+                            struct {
+                                uint8_t wd475; // wMobileProfileZipCode0
+                                uint8_t wd476; // wMobileProfileZipCode1
+                                uint8_t wd477; // wMobileProfileZipCode2
+                                uint8_t wd478; // wMobileProfileZipCode3
+                            };
+                            uint8_t wZipCode[4];
+                        };
                     };
                     uint8_t wCrystalData[wCrystalDataEnd - wCrystalData];
                 };

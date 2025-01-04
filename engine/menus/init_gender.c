@@ -12,10 +12,10 @@
 void InitCrystalData(void){
     // LD_A(0x1);
     // LD_addr_A(wd474);
-    wram->wd474 = 0x1;
+    wram->wPrefecture = 0x1;
     // XOR_A_A;
     // LD_addr_A(wd473);
-    wram->wd473 = 0;
+    wram->wAge = 0;
     // LD_addr_A(wPlayerGender);
     wram->wPlayerGender = 0;
     // LD_addr_A(wd475);

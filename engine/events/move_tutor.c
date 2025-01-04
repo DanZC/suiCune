@@ -118,7 +118,7 @@ bool CheckCanLearnMoveTutorMove(uint8_t curMon, move_t move){
     // LD_A_addr(wCurPartyMon);
     // LD_HL(wPartyMonNicknames);
     // CALL(aGetNickname);
-    GetNickname_Conv2(wram->wPartyMonNickname[0], curMon);
+    GetNickname_Conv(wram->wPartyMonNickname[0], curMon);
     // POP_BC;
 
     // LD_A_C;

@@ -3246,7 +3246,7 @@ bool DepositPokemon_Conv(void){
     // LD_HL(wPartyMonNicknames);
     // LD_A_addr(wCurPartyMon);
     // CALL(aGetNickname);
-    GetNickname_Conv2(wram->wPartyMonNickname[0], wram->wCurPartyMon);
+    GetNickname_Conv(wram->wPartyMonNickname[0], wram->wCurPartyMon);
     // LD_A(PC_DEPOSIT);
     // LD_addr_A(wPokemonWithdrawDepositParameter);
     // PREDEF(pSendGetMonIntoFromBox);
@@ -3382,7 +3382,7 @@ bool TryWithdrawPokemon_Conv(void){
     // LD_A_addr(wCurPartyMon);
     // LD_HL(sBoxMonNicknames);
     // CALL(aGetNickname);
-    GetNickname_Conv2((const uint8_t*)GBToRAMAddr(sBoxMonNicknames), wram->wCurPartyMon);
+    GetNickname_Conv((const uint8_t*)GBToRAMAddr(sBoxMonNicknames), wram->wCurPartyMon);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // XOR_A_A;

@@ -2046,7 +2046,7 @@ void RareCandy_StatBooster_GetParameters(void){
     // LD_A_addr(wCurPartyMon);
     // LD_HL(wPartyMonNicknames);
     // CALL(aGetNickname);
-    GetCurNickname_Conv2();
+    GetCurNickname_Conv();
     // RET;
 }
 

@@ -1106,12 +1106,19 @@ struct mobile_config {
     char popServer[0x71 - 0x5E];
 };
 
+enum {
+    MOBILE_CONFIG_STATUS_NONE,
+    MOBILE_CONFIG_STATUS_CONFIGURING = 0x1,
+    MOBILE_CONFIG_STATUS_CONFIGURED = 0x81,
+};
+
 void MobileConfigCreateDefault(FILE* f) {
     uint8_t buffer[MOBILE_CONFIG_SIZE];
     memset(buffer, 0x0, sizeof(buffer));
     struct mobile_config* cfg = (struct mobile_config*)buffer;
     cfg->hdr[0] = 'M';
     cfg->hdr[1] = 'A';
+    cfg->status = MOBILE_CONFIG_STATUS_CONFIGURED;
     memcpy(cfg->loginName, "gXXXXXXXXX", sizeof(cfg->loginName));
     memcpy(cfg->emailName, "XXXXXXXX@YYYY.dion.ne.jp", sizeof(cfg->emailName));
     memcpy(cfg->smtpServer, "mail.XXXX.dion.ne.jp", sizeof(cfg->smtpServer));

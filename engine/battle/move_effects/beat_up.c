@@ -50,7 +50,7 @@ void BattleCommand_BeatUp(void){
         // LD_A_addr(wCurBeatUpPartyMon);
         // LD_HL(wPartyMonNicknames);
         // CALL(aGetNickname);
-        GetNickname_Conv2(wram->wPartyMonNickname[0], wram->wCurBeatUpPartyMon);
+        GetNickname_Conv(wram->wPartyMonNickname[0], wram->wCurBeatUpPartyMon);
         // LD_A(MON_HP);
         // CALL(aGetBeatupMonLocation);
         struct PartyMon* mon = GetBeatupMonLocation();

@@ -786,32 +786,7 @@ void GetNickname(void){
 }
 
 //  Get nickname a from list hl.
-void GetNickname_Conv(uint16_t hl, uint8_t a){
-    // PUSH_HL;
-    // PUSH_BC;
-
-    // CALL(aSkipNames);
-    hl = SkipNames_Conv(hl, a);
-
-    // LD_DE(wStringBuffer1);
-
-    CopyBytes_Conv(wStringBuffer1, hl, MON_NAME_LENGTH);
-
-    //PUSH_DE;
-    //LD_BC(MON_NAME_LENGTH);
-    //CALL(aCopyBytes);
-    //POP_DE;
-
-    CALLFAR(aCorrectNickErrors);
-
-    // POP_BC;
-    // POP_HL;
-    // RET;
-
-}
-
-//  Get nickname a from list hl.
-void GetNickname_Conv2(const uint8_t* hl, uint8_t a){
+void GetNickname_Conv(const uint8_t* hl, uint8_t a){
     // PUSH_HL;
     // PUSH_BC;
 
@@ -835,11 +810,7 @@ void GetNickname_Conv2(const uint8_t* hl, uint8_t a){
     // RET;
 }
 
-void GetCurNickname_Conv(void){
-    return GetNickname_Conv(wPartyMonNicknames, gb_read(wCurPartyMon));
-}
-
-uint8_t* GetCurNickname_Conv2(void){
+uint8_t* GetCurNickname_Conv(void){
     CopyBytes_Conv2(wram->wStringBuffer1, wram->wPartyMonNickname[wram->wCurPartyMon], MON_NAME_LENGTH);
     CorrectNickErrors_Conv(wram->wStringBuffer1);
     return wram->wStringBuffer1;
