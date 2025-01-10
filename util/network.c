@@ -1104,6 +1104,11 @@ struct mobile_config {
     uint8_t fld_45[0x4A - 0x44];
     char smtpServer[0x5E - 0x4A];
     char popServer[0x71 - 0x5E];
+    uint8_t fld_71[0x76 - 0x71];
+    struct config_slot {
+        uint8_t number[8];
+        char id[16]; 
+    } config_slot[3];
 };
 
 enum {
@@ -1111,6 +1116,39 @@ enum {
     MOBILE_CONFIG_STATUS_CONFIGURING = 0x1,
     MOBILE_CONFIG_STATUS_CONFIGURED = 0x81,
 };
+
+void MobileNumberStore(uint8_t* dst, size_t size, const char* src) {
+    size_t max_digits = size * 2;
+    uint8_t nextNum = 0;
+    size_t i = 0;
+    while(i < max_digits) {
+        char c = src[i];
+        uint8_t val = 0;
+        if(c >= '0' && c <= '9') {
+            val = c - '0';
+        }
+        else if(c == '#') {
+            val = 0xA;
+        }
+        else if(c == '*') {
+            val = 0xB;
+        }
+        else if(c == '\0') {
+            val = 0xF;
+        }
+        if((i & 1) == 1) {
+            nextNum |= val & 0xf;
+            dst[i / 2] = nextNum;
+        } else {
+            nextNum = (val << 4);
+            dst[i / 2] = nextNum;
+        }
+        i++;
+        if(c == '\0') {
+            return;
+        }
+    }
+}
 
 void MobileConfigCreateDefault(FILE* f) {
     uint8_t buffer[MOBILE_CONFIG_SIZE];
@@ -1123,6 +1161,8 @@ void MobileConfigCreateDefault(FILE* f) {
     memcpy(cfg->emailName, "XXXXXXXX@YYYY.dion.ne.jp", sizeof(cfg->emailName));
     memcpy(cfg->smtpServer, "mail.XXXX.dion.ne.jp", sizeof(cfg->smtpServer));
     memcpy(cfg->popServer, "pop.XXXX.dion.ne.jp", sizeof(cfg->popServer));
+    MobileNumberStore(cfg->config_slot[0].number, sizeof(cfg->config_slot[0].number), "0077487751");
+    memcpy(cfg->config_slot[0].id, "DION DDI-POCKET", sizeof(cfg->config_slot[0].id));
     uint16_t checksum = 0;
     for(int i = 0; i < 0xc0 - 2; ++i) {
         checksum += buffer[i];

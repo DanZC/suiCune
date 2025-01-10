@@ -5341,7 +5341,7 @@ void Function17f5e4(void){
     // LD_B(0xc);
     // LD_C(0x10);
     // CALL(aFunction3eea);
-    Function3eea(coord(1, 4, wram->wTilemap), 0xc, 0x10);
+    Function3eea(coord(0, 4, wram->wTilemap), 0xc, 0x12);
     // hlcoord(3, 2, wTilemap);
     // LD_DE(mMobileCommunicationErrorText);
     // CALL(aPlaceString);
@@ -5419,7 +5419,7 @@ void Function17f5e4(void){
             // asm_17f67d:
                 // hlcoord(2, 6, wTilemap);
                 // CALL(aPlaceString);
-                PlaceStringSimple(U82C(hl->text), coord(2, 6, wram->wTilemap));
+                PlaceStringSimple(U82C(hl->text), coord(1, 6, wram->wTilemap));
                 // RET;
                 return;
             }
@@ -5452,7 +5452,7 @@ void Function17f5e4(void){
     // LD_D_A;
     // hlcoord(2, 6, wTilemap);
     // CALL(aPlaceString);
-    PlaceStringSimple(U82C(Table_17f699[error - 0xd0]), coord(2, 6, wram->wTilemap));
+    PlaceStringSimple(U82C(Table_17f699[error - 0xd0]), coord(1, 6, wram->wTilemap));
     // RET;
 }
 
@@ -5498,6 +5498,7 @@ static tile_t* Function17f6b7_bcd_two_digits(tile_t* hl, uint8_t a) {
     return Function17f6b7_bcd_digit(hl, a & 0xf);
 }
 
+// Mobile_PrintErrorCodeDigits
 void Function17f6b7(tile_t* hl){
     // LD_A_addr(wMobileErrorCodeBuffer);
     // CALL(aFunction17f6b7_bcd_two_digits);
