@@ -8,6 +8,7 @@
 #include "../menus/naming_screen.h"
 #include "../games/slot_machine.h"
 #include "../events/celebi.h"
+#include "../../mobile/fixed_words.h"
 
 static void AnimSeq_Null_Conv(struct SpriteAnim* bc);
 static void AnimSeq_PartyMon_Conv(struct SpriteAnim* bc);
@@ -2086,8 +2087,9 @@ void AnimSeq_EZChatCursor(void){
 }
 
 static void AnimSeq_EZChatCursor_Conv(struct SpriteAnim* bc){
-    REG_BC = (bc - wram->wSpriteAnim) * SPRITEANIMSTRUCT_LENGTH + wSpriteAnimationStructs;
-    FARCALL(aAnimateEZChatCursor);
+    // REG_BC = (bc - wram->wSpriteAnim) * SPRITEANIMSTRUCT_LENGTH + wSpriteAnimationStructs;
+    // FARCALL(aAnimateEZChatCursor);
+    AnimateEZChatCursor(bc);
 }
 
 void AnimSeq_Celebi(void){

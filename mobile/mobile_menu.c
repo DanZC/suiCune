@@ -2,6 +2,7 @@
 #include "mobile_menu.h"
 #include "mobile_12.h"
 #include "mobile_5c.h"
+#include "fixed_words.h"
 #include "../engine/menus/main_menu.h"
 #include "../engine/menus/save.h"
 #include "../engine/gfx/crystal_layouts.h"
@@ -1345,6 +1346,7 @@ void Function4a6ab(void){
     // CALL(aGetSGBLayout);
     GetSGBLayout_Conv(SCGB_DIPLOMA);
     // FARCALL(aFunction11c1ab); //  TODO: Convert EZ Chat stuff
+    Function11c1ab();
     // POP_BC;
     // CALL(aLoadFontsExtra);
     LoadFontsExtra_Conv();

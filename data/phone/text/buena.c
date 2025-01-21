@@ -346,25 +346,35 @@ const txt_cmd_s BuenaPhoneGoingShoppingText[] = {
         t_done )
 };
 const txt_cmd_s BuenaPhoneFavoriteSlotMachineAnswerText[] = {
+#if defined(_CRYSTAL_AU)
     text_start("I'm thinking of"
         t_line "going to the GAME"
         t_para "CORNER tomorrow."
         t_line "It's been a while."
-    //#if defined(_CRYSTAL_AU)
-        //t_para "Some machines pays"
-        //t_line "out a lot."
-    //#else
-        t_para "You see, I have my"
-        t_line "favorite machine…"
-        t_para "It pays out a lot,"
-        t_line "I kid you not!"
-    //#endif
+        t_para "Some machines pays"
+        t_line "out a lot."
         t_para "Huh? Nuh-uh, it's"
         t_line "my secret!"
         t_para "You have to find"
         t_line "it yourself!"
         t_para "Catch you later!"
         t_done )
+#else
+    text_start("I'm thinking of"
+        t_line "going to the GAME"
+        t_para "CORNER tomorrow."
+        t_line "It's been a while."
+        t_para "You see, I have my"
+        t_line "favorite machine…"
+        t_para "It pays out a lot,"
+        t_line "I kid you not!"
+        t_para "Huh? Nuh-uh, it's"
+        t_line "my secret!"
+        t_para "You have to find"
+        t_line "it yourself!"
+        t_para "Catch you later!"
+        t_done )
+#endif
 };
 const txt_cmd_s BuenaPhonePokegearAnswerText[] = {
     text_start("Hey, <PLAY_G>. You"

@@ -516,7 +516,7 @@ const txt_cmd_s GoldenrodGameCornerPrizeVendorNoCoinCaseText[] = {
         t_done )
 };
 const txt_cmd_s GoldenrodGameCornerPharmacistText[] = {
-#ifdef _CRYSTAL_AU
+#if defined(_CRYSTAL_AU)
     text_start("This machine looks"
         t_line "the same as the"
         t_cont "others."
@@ -530,7 +530,7 @@ const txt_cmd_s GoldenrodGameCornerPharmacistText[] = {
 #endif
 };
 const txt_cmd_s GoldenrodGameCornerPokefanM1Text[] = {
-#ifdef _CRYSTAL_AU
+#if defined(_CRYSTAL_AU)
     text_start("These machines"
         t_line "seem different"
         t_para "from the ones at"
@@ -546,7 +546,7 @@ const txt_cmd_s GoldenrodGameCornerPokefanM1Text[] = {
 #endif
 };
 const txt_cmd_s GoldenrodGameCornerCooltrainerMText[] = {
-#ifdef _CRYSTAL_AU
+#if defined(_CRYSTAL_AU)
     text_start("Nothing is certain"
         t_line "in this area."
         t_done )
@@ -558,7 +558,7 @@ const txt_cmd_s GoldenrodGameCornerCooltrainerMText[] = {
 #endif
 };
 const txt_cmd_s GoldenrodGameCornerPokefanFText[] = {
-#ifdef _CRYSTAL_AU
+#if defined(_CRYSTAL_AU)
     text_start("Card flip…"
         t_para "Different from the"
         t_line "other machines."
@@ -589,7 +589,7 @@ const txt_cmd_s GoldenrodGameCornerGentlemanText[] = {
         t_done )
 };
 const txt_cmd_s GoldenrodGameCornerPokefanM2Text[] = {
-#ifdef _CRYSTAL_AU
+#if defined(_CRYSTAL_AU)
     text_start("COIN CASE? I threw"
         t_line "it away in the"
         t_cont "UNDERGROUND."

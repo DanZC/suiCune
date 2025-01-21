@@ -280,7 +280,7 @@ const txt_cmd_s CeladonGameCornerPokefanMText[] = {
         t_done )
 };
 const txt_cmd_s CeladonGameCornerTeacherText[] = {
-#if _CRYSTAL_AU
+#if defined(_CRYSTAL_AU)
     text_start("The weather"
         t_line "outside is very"
         t_cont "nice."
@@ -296,7 +296,7 @@ const txt_cmd_s CeladonGameCornerTeacherText[] = {
 #endif
 };
 const txt_cmd_s CeladonGameCornerFishingGuruText[] = {
-#if _CRYSTAL_AU
+#if defined(_CRYSTAL_AU)
     text_start("This machine looks"
         t_line "the same as the"
         t_cont "others."
@@ -311,7 +311,7 @@ const txt_cmd_s CeladonGameCornerFishingGuruText[] = {
 #endif
 };
 const txt_cmd_s CeladonGameCornerFisherText1[] = {
-#if _CRYSTAL_AU
+#if defined(_CRYSTAL_AU)
     text_start("Whoa!"
         t_para "What? You want to"
         t_line "play this machine?"
@@ -346,7 +346,7 @@ const txt_cmd_s CeladonGameCornerFisherNoCoinCaseText[] = {
         t_done )
 };
 const txt_cmd_s CeladonGameCornerFisherFullCoinCaseText[] = {
-#if _CRYSTAL_AU
+#if defined(_CRYSTAL_AU)
     text_start("Your COIN CASE is"
         t_line "full."
         t_done )
@@ -360,7 +360,7 @@ const txt_cmd_s CeladonGameCornerFisherFullCoinCaseText[] = {
 #endif
 };
 const txt_cmd_s CeladonGymGuideText[] = {
-#if _CRYSTAL_AU
+#if defined(_CRYSTAL_AU)
     text_start("Hey! CHAMP in"
         t_line "making!"
         t_para "Are you playing"
@@ -385,7 +385,7 @@ const txt_cmd_s CeladonGymGuideText[] = {
 #endif
 };
 const txt_cmd_s CeladonGameCornerGrampsText[] = {
-#if _CRYSTAL_AU
+#if defined(_CRYSTAL_AU)
     text_start("Is there any"
         t_line "difference between"
         t_cont "these lines?"

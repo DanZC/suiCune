@@ -7,6 +7,9 @@
 #include "../home/lcd.h"
 #include "../home/tilemap.h"
 #include "../home/clear_sprites.h"
+#include "../home/joypad.h"
+#include "../home/sprite_anims.h"
+#include "../home/menu.h"
 #include "../engine/gfx/dma_transfer.h"
 #include "../engine/gfx/sprites.h"
 #include "../engine/menus/save.h"
@@ -18,6 +21,18 @@ const txt_cmd_s EZChatTextBuffer[] = {
     text_ram(gEZChatTextStringBuffer)
     text_end
 };
+
+#define EZCHAT_WORD_COUNT           EASY_CHAT_MESSAGE_WORD_COUNT
+#define EZCHAT_WORD_LENGTH          8
+#define EZCHAT_WORDS_PER_ROW        2
+#define EZCHAT_WORDS_PER_COL        4
+#define EZCHAT_WORDS_IN_MENU        EZCHAT_WORDS_PER_ROW * EZCHAT_WORDS_PER_COL
+#define EZCHAT_CUSTOM_BOX_BIG_SIZE  9
+#define EZCHAT_CUSTOM_BOX_BIG_START 4
+#define EZCHAT_CUSTOM_BOX_START_X   5
+#define EZCHAT_CUSTOM_BOX_START_Y   0x1B
+#define EZCHAT_CHARS_PER_LINE       18
+#define EZCHAT_BLANK_SIZE           5
 
 enum {
 	EZCHAT_SORTED_A,
@@ -530,7 +545,7 @@ static void EZChat_EditMenu_InitKanaMode(void){
     // CALL(aEZChat_GetCategoryWordsByKana);
     EZChat_GetCategoryWordsByKana();
     // CALL(aEZChat_GetSeenPokemonByKana);
-    EZChat_GetSeenPokemonByKana();
+    // EZChat_GetSeenPokemonByKana(); // TODO: Convert this function.
     // RET;
 }
 
@@ -543,6 +558,7 @@ void Function11c1b9(void){
     // LD_A(0x5);
     // LDH_addr_A(rSVBK);
     // CALL(aEZChat_MasterLoop);
+    EZChat_MasterLoop();
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // RET;
@@ -609,122 +625,150 @@ enum {
     EZCHAT_MENU_SORT_BY_CHARACTER, // 16
 };
 
+static void EZChat_MasterLoop_DoJumptableFunction(void);
+
 void EZChat_MasterLoop(void){
 
-loop:
-    CALL(aJoyTextDelay);
-    LDH_A_addr(hJoyPressed);
-    LDH_addr_A(hJoypadPressed);
-    LD_A_addr(wJumptableIndex);
-    BIT_A(7);
-    IF_NZ goto exit;
-    CALL(aEZChat_MasterLoop_DoJumptableFunction);
-    FARCALL(aPlaySpriteAnimations);
-    FARCALL(aReloadMapPart);
-    goto loop;
+    while(1) {
+    // loop:
+        // CALL(aJoyTextDelay);
+        JoyTextDelay_Conv();
+        // LDH_A_addr(hJoyPressed);
+        // LDH_addr_A(hJoypadPressed);
+        hram->hJoypadPressed = hram->hJoyPressed;
+        // LD_A_addr(wJumptableIndex);
+        // BIT_A(7);
+        // IF_NZ goto exit;
+        if(bit_test(wram->wJumptableIndex, 7))
+            break;
+        // CALL(aEZChat_MasterLoop_DoJumptableFunction);
+        EZChat_MasterLoop_DoJumptableFunction();
+        // FARCALL(aPlaySpriteAnimations);
+        PlaySpriteAnimations_Conv();
+        // FARCALL(aReloadMapPart);
+        ReloadMapPart_Conv();
+        // goto loop;
+    }
 
-
-exit:
-    FARCALL(aClearSpriteAnims);
-    CALL(aClearSprites);
-    RET;
-
-
-DoJumptableFunction:
-    //jumptable ['.Jumptable', 'wJumptableIndex']
-
-
-Jumptable:
-    //dw ['.SpawnObjects'];  // 00
-    //dw ['.InitRAM'];  // 01
-    //dw ['Function11c35f'];  // 02
-    //dw ['Function11c373'];  // 03
-    //dw ['Function11c3c2'];  // 04
-    //dw ['Function11c3ed'];  // 05
-    //dw ['Function11c52c'];  // 06
-    //dw ['Function11c53d'];  // 07
-    //dw ['Function11c658'];  // 08
-    //dw ['Function11c675'];  // 09
-    //dw ['Function11c9bd'];  // 0a
-    //dw ['Function11c9c3'];  // 0b
-    //dw ['Function11caad'];  // 0c
-    //dw ['Function11cab3'];  // 0d
-    //dw ['Function11cb52'];  // 0e
-    //dw ['Function11cb66'];  // 0f
-    //dw ['Function11cbf5'];  // 10
-    //dw ['Function11ccef'];  // 11
-    //dw ['Function11cd04'];  // 12
-    //dw ['Function11cd20'];  // 13
-    //dw ['Function11cd54'];  // 14
-    //dw ['Function11ce0b'];  // 15
-    //dw ['Function11ce2b'];  // 16
-
-
-SpawnObjects:
-    depixel4(3, 1, 2, 5);
-    LD_A(SPRITE_ANIM_INDEX_EZCHAT_CURSOR);
-    CALL(aInitSpriteAnimStruct);
-    depixel4(8, 1, 2, 5);
-
-    LD_A(SPRITE_ANIM_INDEX_EZCHAT_CURSOR);
-    CALL(aInitSpriteAnimStruct);
-    LD_HL(SPRITEANIMSTRUCT_VAR1);
-    ADD_HL_BC;
-    LD_A(0x1);
-    LD_hl_A;
-
-    depixel4(9, 2, 2, 0);
-    LD_A(SPRITE_ANIM_INDEX_EZCHAT_CURSOR);
-    CALL(aInitSpriteAnimStruct);
-    LD_HL(SPRITEANIMSTRUCT_VAR1);
-    ADD_HL_BC;
-    LD_A(0x3);
-    LD_hl_A;
-
-    depixel2(10, 16);
-    LD_A(SPRITE_ANIM_INDEX_EZCHAT_CURSOR);
-    CALL(aInitSpriteAnimStruct);
-    LD_HL(SPRITEANIMSTRUCT_VAR1);
-    ADD_HL_BC;
-    LD_A(0x4);
-    LD_hl_A;
-
-    depixel2(10, 4);
-    LD_A(SPRITE_ANIM_INDEX_EZCHAT_CURSOR);
-    CALL(aInitSpriteAnimStruct);
-    LD_HL(SPRITEANIMSTRUCT_VAR1);
-    ADD_HL_BC;
-    LD_A(0x5);
-    LD_hl_A;
-
-    depixel2(10, 2);
-    LD_A(SPRITE_ANIM_INDEX_EZCHAT_CURSOR);
-    CALL(aInitSpriteAnimStruct);
-    LD_HL(SPRITEANIMSTRUCT_VAR1);
-    ADD_HL_BC;
-    LD_A(0x2);
-    LD_hl_A;
-
-    LD_HL(wcd23);
-    SET_hl(1);
-    SET_hl(2);
-    JP(mFunction11cfb5);
-
-
-InitRAM:
-    LD_A(0x9);
-    LD_addr_A(wcd2d);
-    LD_A(0x2);
-    LD_addr_A(wcd2e);
-    LD_addr_A(wcd2f);
-    LD_addr_A(wcd30);
-    LD_DE(wcd2d);
-    CALL(aFunction11cfce);
-    JP(mFunction11cfb5);
-
+// exit:
+    // FARCALL(aClearSpriteAnims);
+    ClearSpriteAnims_Conv();
+    // CALL(aClearSprites);
+    ClearSprites_Conv();
+    // RET;
+    return;
 }
 
-void Function11c35f(uint8_t a){
+static void EZChat_MasterLoop_DoJumptableFunction(void){
+    //jumptable ['.Jumptable', 'wJumptableIndex']
+
+    switch(wram->wJumptableIndex) {
+    // Jumptable:
+        case EZCHAT_SPAWN_OBJECTS: { //dw ['.SpawnObjects'];  // 00
+        // SpawnObjects:
+            // depixel4(3, 1, 2, 5);
+            // LD_A(SPRITE_ANIM_INDEX_EZCHAT_CURSOR);
+            // CALL(aInitSpriteAnimStruct);
+            InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_EZCHAT_CURSOR, pixel4(3, 1, 2, 5));
+            // depixel4(8, 1, 2, 5);
+
+            // LD_A(SPRITE_ANIM_INDEX_EZCHAT_CURSOR);
+            // CALL(aInitSpriteAnimStruct);
+            struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_EZCHAT_CURSOR, pixel4(8, 1, 2, 5));
+            // LD_HL(SPRITEANIMSTRUCT_VAR1);
+            // ADD_HL_BC;
+            // LD_A(0x1);
+            // LD_hl_A;
+            bc->var1 = 0x1;
+
+            // depixel4(9, 2, 2, 0);
+            // LD_A(SPRITE_ANIM_INDEX_EZCHAT_CURSOR);
+            // CALL(aInitSpriteAnimStruct);
+            bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_EZCHAT_CURSOR, pixel4(9, 2, 2, 0));
+            // LD_HL(SPRITEANIMSTRUCT_VAR1);
+            // ADD_HL_BC;
+            // LD_A(0x3);
+            // LD_hl_A;
+            bc->var1 = 0x3;
+
+            // depixel2(10, 16);
+            // LD_A(SPRITE_ANIM_INDEX_EZCHAT_CURSOR);
+            // CALL(aInitSpriteAnimStruct);
+            bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_EZCHAT_CURSOR, pixel2(10, 16));
+            // LD_HL(SPRITEANIMSTRUCT_VAR1);
+            // ADD_HL_BC;
+            // LD_A(0x4);
+            // LD_hl_A;
+            bc->var1 = 0x4;
+
+            // depixel2(10, 4);
+            // LD_A(SPRITE_ANIM_INDEX_EZCHAT_CURSOR);
+            // CALL(aInitSpriteAnimStruct);
+            bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_EZCHAT_CURSOR, pixel2(10, 4));
+            // LD_HL(SPRITEANIMSTRUCT_VAR1);
+            // ADD_HL_BC;
+            // LD_A(0x5);
+            // LD_hl_A;
+            bc->var1 = 0x5;
+
+            // depixel2(10, 2);
+            // LD_A(SPRITE_ANIM_INDEX_EZCHAT_CURSOR);
+            // CALL(aInitSpriteAnimStruct);
+            bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_EZCHAT_CURSOR, pixel2(10, 2));
+            // LD_HL(SPRITEANIMSTRUCT_VAR1);
+            // ADD_HL_BC;
+            // LD_A(0x2);
+            // LD_hl_A;
+            bc->var1 = 0x2;
+
+            // LD_HL(wcd23);
+            // SET_hl(1);
+            // SET_hl(2);
+            wram->wcd23 |= (1 << 1) | (1 << 2);
+            // JP(mFunction11cfb5);
+        } return Function11cfb5();
+        case EZCHAT_INIT_RAM: { //dw ['.InitRAM'];  // 01
+        // InitRAM:
+            // LD_A(0x9);
+            // LD_addr_A(wcd2d);
+            wram->wcd2d = 0x9;
+            // LD_A(0x2);
+            // LD_addr_A(wcd2e);
+            wram->wcd2e = 0x2;
+            // LD_addr_A(wcd2f);
+            wram->wcd2f = 0x2;
+            // LD_addr_A(wcd30);
+            wram->wcd30 = 0x2;
+            // LD_DE(wcd2d);
+            // CALL(aFunction11cfce);
+            Function11cfce(&wram->wcd2d);
+            // JP(mFunction11cfb5);
+        } return Function11cfb5();
+        case EZCHAT_02: return Function11c35f(); //dw ['Function11c35f'];  // 02
+        case EZCHAT_03: return Function11c373(); //dw ['Function11c373'];  // 03
+        case EZCHAT_DRAW_CHAT_WORDS: return Function11c3c2(); //dw ['Function11c3c2'];  // 04
+        case EZCHAT_MENU_CHAT_WORDS: return Function11c3ed(); //dw ['Function11c3ed'];  // 05
+        case EZCHAT_DRAW_CATEGORY_MENU: return Function11c52c(); //dw ['Function11c52c'];  // 06
+        case EZCHAT_MENU_CATEGORY_MENU: return Function11c53d(); //dw ['Function11c53d'];  // 07
+        //dw ['Function11c658'];  // 08
+        //dw ['Function11c675'];  // 09
+        //dw ['Function11c9bd'];  // 0a
+        //dw ['Function11c9c3'];  // 0b
+        //dw ['Function11caad'];  // 0c
+        //dw ['Function11cab3'];  // 0d
+        //dw ['Function11cb52'];  // 0e
+        //dw ['Function11cb66'];  // 0f
+        //dw ['Function11cbf5'];  // 10
+        case EZCHAT_MENU_WARN_EMPTY_MESSAGE: return Function11ccef(); //dw ['Function11ccef'];  // 11
+        case EZCHAT_12: return Function11cd04(); //dw ['Function11cd04'];  // 12
+        //dw ['Function11cd20'];  // 13
+        //dw ['Function11cd54'];  // 14
+        //dw ['Function11ce0b'];  // 15
+        //dw ['Function11ce2b'];  // 16
+    }
+}
+
+void Function11c35f(void){
     // LD_HL(wcd2f);
     // INC_hl;
     // INC_hl;
@@ -732,11 +776,11 @@ void Function11c35f(uint8_t a){
     // DEC_HL;
     // DEC_HL;
     // DEC_hl;
-    wram->wcd2d--;
+    uint8_t a = --wram->wcd2d;
     // PUSH_AF;
     // LD_DE(wcd2d);
     // CALL(aFunction11cfce);
-    Function11cfce();
+    Function11cfce(&wram->wcd2d);
     // POP_AF;
     // RET_NZ ;
     if(a != 0)
@@ -746,224 +790,344 @@ void Function11c35f(uint8_t a){
 }
 
 void Function11c373(void){
-    LD_HL(wcd30);
-    INC_hl;
-    INC_hl;
-    DEC_HL;
-    DEC_HL;
-    DEC_hl;
-    PUSH_AF;
-    LD_DE(wcd2d);
-    CALL(aFunction11cfce);
-    POP_AF;
-    RET_NZ ;
-    CALL(aFunction11c38a);
-    JP(mFunction11cfb5);
-
+    // LD_HL(wcd30);
+    // INC_hl;
+    wram->wcd30 += 2;
+    // INC_hl;
+    // DEC_HL;
+    // DEC_HL;
+    // DEC_hl;
+    uint8_t a = --wram->wcd2e;
+    // PUSH_AF;
+    // LD_DE(wcd2d);
+    // CALL(aFunction11cfce);
+    Function11cfce(&wram->wcd2d);
+    // POP_AF;
+    // RET_NZ ;
+    if(a != 0)
+        return;
+    // CALL(aFunction11c38a);
+    Function11c38a();
+    // JP(mFunction11cfb5);
+    return Function11cfb5();
 }
 
 void Function11c38a(void){
-    LD_HL(mUnknown_11c986);
-    LD_BC(wcd36);
-    LD_A(0x6);
+    // LD_HL(mUnknown_11c986);
+    const uint16_t* hl = Unknown_11c986;
+    // LD_BC(wcd36);
+    uint8_t* bc = &wram->wcd36;
+    // LD_A(0x6);
+    uint8_t a = 0x6;
 
-asm_11c392:
-    PUSH_AF;
-    LD_A_hli;
-    LD_E_A;
-    LD_A_hli;
-    LD_D_A;
-    PUSH_HL;
-    PUSH_DE;
-    POP_HL;
-    LD_A_bc;
-    INC_BC;
-    LD_E_A;
-    LD_A_bc;
-    INC_BC;
-    LD_D_A;
-    PUSH_BC;
-    OR_A_E;
-    IF_Z goto asm_11c3af;
-    LD_A_E;
-    AND_A_D;
-    CP_A(0xff);
-    IF_Z goto asm_11c3af;
-    CALL(aFunction11c05d);
-    goto asm_11c3b5;
+    do {
+    // asm_11c392:
+        // PUSH_AF;
+        // LD_A_hli;
+        // LD_E_A;
+        // LD_A_hli;
+        // LD_D_A;
+        uint8_t* de = (*(hl++)) + wram->wTilemap;
+        // PUSH_HL;
+        // PUSH_DE;
+        // POP_HL;
+        // LD_A_bc;
+        // INC_BC;
+        // LD_E_A;
+        // LD_A_bc;
+        // INC_BC;
+        // LD_D_A;
+        uint16_t de2 = bc[0] | (bc[1] << 8);
+        bc += 2;
+        // PUSH_BC;
+        // OR_A_E;
+        // IF_Z goto asm_11c3af;
+        // LD_A_E;
+        // AND_A_D;
+        // CP_A(0xff);
+        // IF_Z goto asm_11c3af;
+        if(de2 != 0 && de2 != 0xffff) {
+            struct TextPrintState st = {.hl = de, .bc = de};
+            // CALL(aFunction11c05d);
+            Function11c05d(&st, HIGH(de2), LOW(de2));
+            // goto asm_11c3b5;
+        }
+        else {
+        // asm_11c3af:
+            // LD_DE(mString_11c3bc);
+            // CALL(aPlaceString);
+            PlaceStringSimple(U82C(String_11c3bc), de);
+        }
 
-asm_11c3af:
-    LD_DE(mString_11c3bc);
-    CALL(aPlaceString);
-
-asm_11c3b5:
-    POP_BC;
-    POP_HL;
-    POP_AF;
-    DEC_A;
-    IF_NZ goto asm_11c392;
-    RET;
-
+    // asm_11c3b5:
+        // POP_BC;
+        // POP_HL;
+        // POP_AF;
+        // DEC_A;
+        // IF_NZ goto asm_11c392;
+    } while(--a != 0);
+    // RET;
 }
 
-void String_11c3bc(void){
-    //db ['"ーーーーー@"'];
+const char String_11c3bc[] = "-----@"; //db ['"ーーーーー@"'];
 
-    return Function11c3c2();
-}
+// ezchat main options
+enum {
+    EZCHAT_MAIN_WORD1,
+    EZCHAT_MAIN_WORD2,
+    EZCHAT_MAIN_WORD3,
+    EZCHAT_MAIN_WORD4,
+    // EZCHAT_MAIN_WORD5,
+    // EZCHAT_MAIN_WORD6,
+    
+    EZCHAT_MAIN_RESET,
+    EZCHAT_MAIN_QUIT,
+    EZCHAT_MAIN_OK,
+};
 
+// EZChatDraw_ChatWords
 void Function11c3c2(void){
-    CALL(aEZChat_ClearBottom12Rows);
-    LD_DE(mUnknown_11cfbe);
-    CALL(aFunction11d035);
-    hlcoord(1, 7, wTilemap);
-    LD_DE(mString_11c4db);
-    CALL(aPlaceString);
-    hlcoord(1, 16, wTilemap);
-    LD_DE(mString_11c51b);
-    CALL(aPlaceString);
-    CALL(aFunction11c4be);
-    LD_HL(wcd23);
-    SET_hl(0);
-    LD_HL(wcd24);
-    RES_hl(0);
-    CALL(aFunction11cfb5);
+    // CALL(aEZChat_ClearBottom12Rows);
+    EZChat_ClearBottom12Rows();
+    // LD_DE(mUnknown_11cfbe);
+    // CALL(aFunction11d035);
+    Function11d035(Unknown_11cfbe);
+    // hlcoord(1, 7, wTilemap);
+    // LD_DE(mString_11c4db);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(String_11c4db), coord(1, 7, wram->wTilemap));
+    // hlcoord(1, 16, wTilemap);
+    // LD_DE(mString_11c51b);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(String_11c51b), coord(1, 16, wram->wTilemap));
+    // CALL(aFunction11c4be);
+    Function11c4be();
+    // LD_HL(wcd23);
+    // SET_hl(0);
+    bit_set(wram->wcd23, 0);
+    // LD_HL(wcd24);
+    // RES_hl(0);
+    bit_reset(wram->wcd24, 0);
+    // CALL(aFunction11cfb5);
+    Function11cfb5();
 
     return Function11c3ed();
 }
 
+// EZChatMenu_ChatWords
 void Function11c3ed(void){
-    LD_HL(wcd20);
-    LD_DE(hJoypadPressed);
-    LD_A_de;
-    AND_A(0x8);
-    IF_NZ goto asm_11c426;
-    LD_A_de;
-    AND_A(0x2);
-    IF_NZ goto asm_11c41a;
-    LD_A_de;
-    AND_A(0x1);
-    IF_NZ goto asm_11c42c;
-    LD_DE(hJoyLast);
-    LD_A_de;
-    AND_A(0x40);
-    IF_NZ goto asm_11c47c;
-    LD_A_de;
-    AND_A(0x80);
-    IF_NZ goto asm_11c484;
-    LD_A_de;
-    AND_A(0x20);
-    IF_NZ goto asm_11c48c;
-    LD_A_de;
-    AND_A(0x10);
-    IF_NZ goto asm_11c498;
-    RET;
+    // LD_HL(wcd20);
+    uint8_t a;
+    // LD_DE(hJoypadPressed);
+    // LD_A_de;
+    // AND_A(0x8);
+    // IF_NZ goto asm_11c426;
+    if(hram->hJoypadPressed & START) {
+    // asm_11c426:
+        // LD_A(0x8);
+        // LD_addr_A(wcd20);
+        wram->wcd20 = EZCHAT_MAIN_OK;
+        // RET;
+        return;
+    }
+    // LD_A_de;
+    // AND_A(0x2);
+    // IF_NZ goto asm_11c41a;
+    else if(hram->hJoypadPressed & B_BUTTON) {
+    // asm_11c41a:
+        // CALL(aPlayClickSFX);
+        PlayClickSFX_Conv();
 
+    asm_11c41d:
+        // LD_HL(wcd24);
+        // SET_hl(0);
+        bit_set(wram->wcd24, 0);
+        // LD_A(0xc);
+        a = EZCHAT_DRAW_EXIT_SUBMENU;
+        // goto asm_11c475;
+    }
+    // LD_A_de;
+    // AND_A(0x1);
+    // IF_NZ goto asm_11c42c;
+    else if(hram->hJoypadPressed & A_BUTTON) {
+    // asm_11c42c:
+        // LD_A_addr(wcd20);
+        // CP_A(0x6);
+        // IF_C goto asm_11c472;
+        if(wram->wcd20 < EZCHAT_MAIN_RESET) {
+        // asm_11c472:
+            // CALL(aFunction11c4a5);
+            a = Function11c4a5();
+            // goto asm_11c475;
+        }
+        // SUB_A(0x6);
+        // IF_Z goto asm_11c469;
+        else if(wram->wcd20 == EZCHAT_MAIN_RESET) {
+        // asm_11c469:
+            // LD_HL(wcd24);
+            // SET_hl(0);
+            bit_set(wram->wcd24, 0);
+            // LD_A(0xa);
+            a = EZCHAT_DRAW_ERASE_SUBMENU;
+            // goto asm_11c475;
+        }
+        // DEC_A;
+        // IF_Z goto asm_11c41d;
+        else if(wram->wcd20 == EZCHAT_MAIN_QUIT)
+            goto asm_11c41d;
+        else {
+            // LD_HL(wcd36);
+            const uint8_t* hl = &wram->wcd36;
+            // LD_C(0xc);
+            uint8_t c = 12;
+            // XOR_A_A;
+            a = 0;
+            do {
+            // asm_11c440:
+                // OR_A_hl;
+                a |= *hl;
+                // INC_HL;
+                hl++;
+                // DEC_C;
+                // IF_NZ goto asm_11c440;
+            } while(--c != 0);
+            // AND_A_A;
+            // IF_Z goto asm_11c460;
+            if(a != 0) {
+                // LD_DE(mUnknown_11cfba);
+                // CALL(aFunction11cfce);
+                Function11cfce(Unknown_11cfba);
+                // decoord(1, 2, wTilemap);
+                // LD_BC(wcd36);
+                // CALL(aFunction11c08f);
+                Function11c08f(coord(1, 2, wram->wTilemap), &wram->wcd36);
+                // LD_HL(wcd24);
+                // SET_hl(0);
+                bit_set(wram->wcd24, 0);
+                // LD_A(0xe);
+                a = EZCHAT_DRAW_MESSAGE_TYPE_MENU;
+                // goto asm_11c475;
+            }
+            else {
+            // asm_11c460:
+                // LD_HL(wcd24);
+                // SET_hl(0);
+                bit_set(wram->wcd24, 0);
+                // LD_A(0x11);
+                a = EZCHAT_MENU_WARN_EMPTY_MESSAGE;
+                // goto asm_11c475;
+            }
+        }
+    }
+    // LD_DE(hJoyLast);
+    // LD_A_de;
+    // AND_A(0x40);
+    // IF_NZ goto asm_11c47c;
+    else if(hram->hJoyLast & D_UP) {
+    // asm_11c47c:
+        // LD_A_hl;
+        // CP_A(0x3);
+        // RET_C ;
+        if(wram->wcd20 < EZCHAT_MAIN_WORD3)
+            return;
+        // SUB_A(0x3);
+        a = wram->wcd20 - 2;
+        // cp EZCHAT_MAIN_WORD4
+        // jr nz, .keep_checking_up
+        if(a == EZCHAT_MAIN_WORD4) {
+            // dec a
+            --a;
+        }
+    // .keep_checking_up
+        // cp EZCHAT_MAIN_RESET
+        // jr nz, .finish_dpad
+        if(a == EZCHAT_MAIN_RESET) {
+            // dec a
+            --a;
+        }
+    // .finish_dpad
+        // ld [hl], a
+        wram->wcd20 = a;
+        // ret
+        // goto asm_11c4a3;
+        return;
+    }
+    // LD_A_de;
+    // AND_A(0x80);
+    // IF_NZ goto asm_11c484;
+    else if(hram->hJoyLast & D_DOWN) {
+    // asm_11c484:
+        // LD_A_hl;
+        // CP_A(0x6);
+        // RET_NC ;
+        if(wram->wcd20 >= 4)
+            return;
+        // ADD_A(0x3);
+        // goto asm_11c4a3;
+        wram->wcd20 += 2;
+        return;
+    }
+    // LD_A_de;
+    // AND_A(0x20);
+    // IF_NZ goto asm_11c48c;
+    else if(hram->hJoyLast & D_LEFT) {
+    // asm_11c48c:
+        // LD_A_hl;
+        // AND_A_A;
+        // RET_Z ;
+        if(wram->wcd20 == 0)
+            return;
+        // CP_A(0x3);
+        // RET_Z ;
+        if(wram->wcd20 == 2)
+            return;
+        // CP_A(0x6);
+        // RET_Z ;
+        if(wram->wcd20 == EZCHAT_MAIN_RESET)
+            return;
+        // DEC_A;
+        // goto asm_11c4a3;
+        wram->wcd20--;
+        return;
+    }
+    // LD_A_de;
+    // AND_A(0x10);
+    // IF_NZ goto asm_11c498;
+    else if(hram->hJoyLast & D_RIGHT) {
+    // asm_11c498:
+        // LD_A_hl;
+        // CP_A(0x2);
+        // RET_Z ;
+        if(wram->wcd20 == 1)
+            return;
+        // CP_A(0x5);
+        // RET_Z ;
+        if(wram->wcd20 == 3)
+            return;
+        // CP_A(0x8);
+        // RET_Z ;
+        if(wram->wcd20 == EZCHAT_MAIN_OK)
+            return;
+        // INC_A;
 
-asm_11c41a:
-    CALL(aPlayClickSFX);
+    // asm_11c4a3:
+        // LD_hl_A;
+        wram->wcd20++;
+        // RET;
+        return;
+    }
+    else {
+        // RET;
+        return;
+    }
 
-asm_11c41d:
-    LD_HL(wcd24);
-    SET_hl(0);
-    LD_A(0xc);
-    goto asm_11c475;
-
-asm_11c426:
-    LD_A(0x8);
-    LD_addr_A(wcd20);
-    RET;
-
-
-asm_11c42c:
-    LD_A_addr(wcd20);
-    CP_A(0x6);
-    IF_C goto asm_11c472;
-    SUB_A(0x6);
-    IF_Z goto asm_11c469;
-    DEC_A;
-    IF_Z goto asm_11c41d;
-    LD_HL(wcd36);
-    LD_C(0xc);
-    XOR_A_A;
-
-asm_11c440:
-    OR_A_hl;
-    INC_HL;
-    DEC_C;
-    IF_NZ goto asm_11c440;
-    AND_A_A;
-    IF_Z goto asm_11c460;
-    LD_DE(mUnknown_11cfba);
-    CALL(aFunction11cfce);
-    decoord(1, 2, wTilemap);
-    LD_BC(wcd36);
-    CALL(aFunction11c08f);
-    LD_HL(wcd24);
-    SET_hl(0);
-    LD_A(0xe);
-    goto asm_11c475;
-
-asm_11c460:
-    LD_HL(wcd24);
-    SET_hl(0);
-    LD_A(0x11);
-    goto asm_11c475;
-
-asm_11c469:
-    LD_HL(wcd24);
-    SET_hl(0);
-    LD_A(0xa);
-    goto asm_11c475;
-
-asm_11c472:
-    CALL(aFunction11c4a5);
-
-asm_11c475:
-    LD_addr_A(wJumptableIndex);
-    CALL(aPlayClickSFX);
-    RET;
-
-
-asm_11c47c:
-    LD_A_hl;
-    CP_A(0x3);
-    RET_C ;
-    SUB_A(0x3);
-    goto asm_11c4a3;
-
-asm_11c484:
-    LD_A_hl;
-    CP_A(0x6);
-    RET_NC ;
-    ADD_A(0x3);
-    goto asm_11c4a3;
-
-asm_11c48c:
-    LD_A_hl;
-    AND_A_A;
-    RET_Z ;
-    CP_A(0x3);
-    RET_Z ;
-    CP_A(0x6);
-    RET_Z ;
-    DEC_A;
-    goto asm_11c4a3;
-
-asm_11c498:
-    LD_A_hl;
-    CP_A(0x2);
-    RET_Z ;
-    CP_A(0x5);
-    RET_Z ;
-    CP_A(0x8);
-    RET_Z ;
-    INC_A;
-
-asm_11c4a3:
-    LD_hl_A;
-    RET;
-
+// asm_11c475:
+    // LD_addr_A(wJumptableIndex);
+    wram->wJumptableIndex = a;
+    // CALL(aPlayClickSFX);
+    PlayClickSFX_Conv();
+    // RET;
+    return;
 }
 
 void EZChat_CheckCategorySelectionConsistency(void) {
@@ -978,6 +1142,7 @@ void EZChat_CheckCategorySelectionConsistency(void) {
     // ret
 }
 
+// EZChat_MoveToCategoryOrSortMenu
 uint8_t Function11c4a5(void){
     EZChat_CheckCategorySelectionConsistency();
     // LD_HL(wcd23);
@@ -993,14 +1158,14 @@ uint8_t Function11c4a5(void){
         wram->wcd22 = 0x0;
         // LD_A(0x15);
         // RET;
-        return EZCHAT_DRAW_CATEGORY_MENU; // 0x15 
+        return EZCHAT_DRAW_SORT_BY_CHARACTER; // 0x15 
     }
     // XOR_A_A;
     // LD_addr_A(wcd21);
     wram->wcd21 = 0x0;
     // LD_A(0x6);
     // RET;
-    return EZCHAT_DRAW_SORT_BY_CHARACTER; // 0x6
+    return EZCHAT_DRAW_CATEGORY_MENU; // 0x6
 }
 
 // EZChatDrawBKG_ChatWords
@@ -1029,6 +1194,21 @@ const char String_11c4db[] =
 
 const char String_11c51b[] = "RESET QUIT   OK@"; // "ぜんぶけす\u3000やめる\u3000\u3000\u3000けってい@"
 
+
+// ezchat categories defines
+#define EZCHAT_CATEGORIES_ROWS      5
+#define EZCHAT_CATEGORIES_COLUMNS   2
+#define EZCHAT_DISPLAYED_CATEGORIES (EZCHAT_CATEGORIES_ROWS * EZCHAT_CATEGORIES_COLUMNS)
+#define EZCHAT_NUM_CATEGORIES       15
+#define EZCHAT_NUM_EXTRA_ROWS       ((EZCHAT_NUM_CATEGORIES + 1 - EZCHAT_DISPLAYED_CATEGORIES) / 2)
+#define EZCHAT_EMPTY_VALUE          ((EZCHAT_NUM_EXTRA_ROWS << 5) | (EZCHAT_DISPLAYED_CATEGORIES - 1))
+
+enum {
+	EZCHAT_CATEGORY_CANC = EZCHAT_DISPLAYED_CATEGORIES,
+	EZCHAT_CATEGORY_MODE,
+	EZCHAT_CATEGORY_OK,
+};
+
 // EZChatDraw_CategoryMenu
 void Function11c52c(void){
     // CALL(aEZChat_ClearBottom12Rows);
@@ -1046,157 +1226,318 @@ void Function11c52c(void){
     return Function11c53d();
 }
 
+// EZChatMenu_CategoryMenu
 void Function11c53d(void){
-    LD_HL(wcd21);
-    LD_DE(hJoypadPressed);
+    // LD_HL(wcd21);
+    uint8_t* hl = &wram->wcd21;
+    uint8_t a;
+    // LD_DE(hJoypadPressed);
 
-    LD_A_de;
-    AND_A(START);
-    IF_NZ goto start;
+    // LD_A_de;
+    // AND_A(START);
+    // IF_NZ goto start;
+    if(hram->hJoypadPressed & START) {
+    // start:
+        // LD_HL(wcd24);
+        // SET_hl(0);
+        bit_set(wram->wcd24, 0);
+        // LD_A(0x8);
+        // LD_addr_A(wcd20);
+        wram->wcd20 = EZCHAT_MAIN_OK;
+        goto b;
+    }
 
-    LD_A_de;
-    AND_A(SELECT);
-    IF_NZ goto select;
+    // LD_A_de;
+    // AND_A(SELECT);
+    // IF_NZ goto select;
+    else if(hram->hJoypadPressed & SELECT) {
+    // select:
+        // LD_A_addr(wcd2b);
+        // XOR_A(0x1);
+        // LD_addr_A(wcd2b);
+        wram->wcd2b ^= (1 << 0) | (1 << 7);
+        // LD_A(0x15);
+        a = EZCHAT_DRAW_SORT_BY_CHARACTER;
+        // goto go_to_function;
+    }
 
-    LD_A_de;
-    AND_A(B_BUTTON);
-    IF_NZ goto b;
+    // LD_A_de;
+    // AND_A(B_BUTTON);
+    // IF_NZ goto b;
+    else if(hram->hJoypadPressed & B_BUTTON) {
+    b:
+        // LD_A(0x4);
+        a = EZCHAT_DRAW_CHAT_WORDS;
+        // goto go_to_function;
+    }
 
-    LD_A_de;
-    AND_A(A_BUTTON);
-    IF_NZ goto a;
+    // LD_A_de;
+    // AND_A(A_BUTTON);
+    // IF_NZ goto a;
+    else if(hram->hJoypadPressed & A_BUTTON) {
+    // a:
+        // LD_A_addr(wcd21);
+        // CP_A(15);
+        // IF_C goto got_category;
+        if(wram->wcd21 < EZCHAT_CATEGORY_CANC) {
+        // got_category:
+            // LD_A(0x8);
+            a = EZCHAT_DRAW_WORD_SUBMENU;
+            // goto go_to_function;
+        }
+        // SUB_A(0xf);
+        // IF_Z goto done;
+        else if(wram->wcd21 == EZCHAT_CATEGORY_CANC) {
+        // done:
+            // LD_A_addr(wcd20);
+            // CALL(aFunction11ca6a);
+            Function11ca6a(wram->wcd20);
+            // CALL(aPlayClickSFX);
+            PlayClickSFX_Conv();
+            // RET;
+            return;
+        }
+        // DEC_A;
+        // IF_Z goto mode;
+        else if(wram->wcd21 == EZCHAT_CATEGORY_MODE) {
+        // mode:
+            // LD_A(0x13);
+            a = EZCHAT_DRAW_SORT_BY_MENU;
+            // goto go_to_function;
+        }
+        else {
+            goto b;
+        }
+    }
 
-    LD_DE(hJoyLast);
+    // LD_DE(hJoyLast);
 
-    LD_A_de;
-    AND_A(D_UP);
-    IF_NZ goto up;
+    // LD_A_de;
+    // AND_A(D_UP);
+    // IF_NZ goto up;
+    else if(hram->hJoyLast & D_UP) {
+    // up:
+        // LD_A_hl;
+        // CP_A(0x3);
+        // RET_C ;
+        if(*hl < EZCHAT_CATEGORIES_COLUMNS)
+            return;
+        // SUB_A(0x3);
+        // ld e, a
+        uint8_t e = *hl & 0xf;
+        // and $f0
+        // ld d, a
+        uint8_t d = *hl & 0xf0;
+        // ld a, e
+        // and $0f
+        // cp EZCHAT_CATEGORIES_COLUMNS
+        // jr nc, .normal_up
+        if(e >= EZCHAT_CATEGORIES_COLUMNS) {
+        // .normal_up
+            // ld a, e
+            // and $0f
+            a = e;
+            // cp EZCHAT_CATEGORY_MODE
+            // jr c, .continue_normal_up
+            if(a > EZCHAT_CATEGORY_CANC) {
+                // ld a, EZCHAT_CATEGORY_CANC
+                a = EZCHAT_CATEGORY_CANC;
+            }
+        // .continue_normal_up
+            // sub EZCHAT_CATEGORIES_COLUMNS
+            a -= EZCHAT_CATEGORIES_COLUMNS;
+        // .up_end
+            // or d
+            // jr .finish_dpad
+            a |= d;
+            // goto finish_dpad;
+            *hl = a;
+            return;
+        }
+        // ld a, e
+        // sub EZCHAT_CATEGORIES_COLUMNS << 4
+        // ld [hl], a
+        *hl -= (EZCHAT_CATEGORIES_COLUMNS << 4);
+        // ld a, EZCHAT_DRAW_CATEGORY_MENU
+        a = EZCHAT_DRAW_CATEGORY_MENU;
+        // jr .go_to_function
+        // goto go_to_function;
+        // goto finish_dpad;
+    }
 
-    LD_A_de;
-    AND_A(D_DOWN);
-    IF_NZ goto down;
+    // LD_A_de;
+    // AND_A(D_DOWN);
+    // IF_NZ goto down;
+    else if(hram->hJoyLast & D_DOWN) {
+    // down:
+        // LD_A_hl;
+        // CP_A(0xf);
+        // RET_NC ;
+        // ADD_A(0x3);
+    // .down
+        // ld a, [hl]
+        a = *hl;
+        // cp EZCHAT_EMPTY_VALUE - EZCHAT_CATEGORIES_COLUMNS
+        // jr nz, .continue_down
+        if(a == EZCHAT_EMPTY_VALUE - EZCHAT_CATEGORIES_COLUMNS) {
+            // dec a
+            --a;
+        }
+    // .continue_down
+        // ld e, a
+        uint8_t e = a & 0x0f;
+        // and $f0
+        // ld d, a
+        uint8_t d = a & 0xf0;
+        // ld a, e
+        // and $0f
+        // cp EZCHAT_CATEGORY_CANC
+        // ret nc
+        if(e >= EZCHAT_CATEGORY_CANC)
+            return;
+        // cp EZCHAT_DISPLAYED_CATEGORIES - EZCHAT_CATEGORIES_COLUMNS
+        // jr c, .normal_down
+        if(e < EZCHAT_DISPLAYED_CATEGORIES - EZCHAT_CATEGORIES_COLUMNS) {
+        // .normal_down
+            // add EZCHAT_CATEGORIES_COLUMNS
+        // .down_end
+            // or d
+            *hl = (e + EZCHAT_CATEGORIES_COLUMNS) | d;
+            // jr .finish_dpad
+            return;
+        }
+        // ld a, d
+        // cp EZCHAT_NUM_EXTRA_ROWS << 5
+        // jr nz, .print_down
+        if(d == EZCHAT_NUM_EXTRA_ROWS << 5) {
+            // ld a, EZCHAT_CATEGORY_CANC
+            // jr .down_end
+            *hl = EZCHAT_CATEGORY_CANC | d;
+            // goto finish_dpad;
+            return;
+        }
+    // .print_down
+        // ld a, e
+        // add EZCHAT_CATEGORIES_COLUMNS << 4
+        a = e + (EZCHAT_CATEGORIES_COLUMNS << 4);
+        // cp EZCHAT_EMPTY_VALUE
+        // jr nz, .continue_print_down
+        if(a == EZCHAT_EMPTY_VALUE) {
+            // dec a
+            --a;
+        }
+    // .continue_print_down
+        // ld [hl], a
+        *hl = a;
+        // ld a, EZCHAT_DRAW_CATEGORY_MENU
+        a = EZCHAT_DRAW_CATEGORY_MENU;
+        // jr .go_to_function
+        // goto go_to_function;
+    }
 
-    LD_A_de;
-    AND_A(D_LEFT);
-    IF_NZ goto left;
+    // LD_A_de;
+    // AND_A(D_LEFT);
+    // IF_NZ goto left;
+    else if(hram->hJoyLast & D_LEFT) {
+    // .left
+        // ld a, [hl]
+        a = *hl;
+        // and $0f
+        // cp EZCHAT_CATEGORY_OK
+        // jr z, .left_okay
+        // bit 0, a
+        // ret z
+        if((a & 0xf) != 0 && !bit_test(a, 0))
+            return;
+    // .left_okay
+        // ld a, [hl]
+        // dec a
+        (*hl)--;
+        // jr .finish_dpad
+        return;
+    }
 
-    LD_A_de;
-    AND_A(D_RIGHT);
-    IF_NZ goto right;
+    // LD_A_de;
+    // AND_A(D_RIGHT);
+    // IF_NZ goto right;
+    else if(hram->hJoyLast & D_RIGHT) {
+    // .right
+        // ld a, [hl]
+        a = *hl;
+        // cp EZCHAT_EMPTY_VALUE - 1
+        // ret z
+        if(a == EZCHAT_EMPTY_VALUE - 1)
+            return;
+        // and $0f
+        a &= 0xf;
+        // cp EZCHAT_CATEGORY_MODE
+        // jr z, .right_okay
+        // bit 0, a
+        // ret nz
+        // cp EZCHAT_CATEGORY_OK
+        // ret z
+        if(a != EZCHAT_CATEGORY_MODE && (bit_test(a, 0) || a == EZCHAT_CATEGORY_OK))
+            return;
+    // .right_okay
+        // ld a, [hl]
+        // inc a
+        (*hl)++;
+        return;
+    }
+    else {
+        // RET;
+        return;
+    }
 
-    RET;
+// go_to_function:
+    // LD_HL(wcd24);
+    // SET_hl(1);
+    bit_set(wram->wcd24, 1);
+    // LD_addr_A(wJumptableIndex);
+    wram->wJumptableIndex = a;
+    // CALL(aPlayClickSFX);
+    PlayClickSFX_Conv();
+    // RET;
+    return;
 
-
-a:
-    LD_A_addr(wcd21);
-    CP_A(15);
-    IF_C goto got_category;
-    SUB_A(0xf);
-    IF_Z goto done;
-    DEC_A;
-    IF_Z goto mode;
-    goto b;
-
-
-start:
-    LD_HL(wcd24);
-    SET_hl(0);
-    LD_A(0x8);
-    LD_addr_A(wcd20);
-
-
-b:
-    LD_A(0x4);
-    goto go_to_function;
-
-
-select:
-    LD_A_addr(wcd2b);
-    XOR_A(0x1);
-    LD_addr_A(wcd2b);
-    LD_A(0x15);
-    goto go_to_function;
-
-
-mode:
-    LD_A(0x13);
-    goto go_to_function;
-
-
-got_category:
-    LD_A(0x8);
-
-
-go_to_function:
-    LD_HL(wcd24);
-    SET_hl(1);
-    LD_addr_A(wJumptableIndex);
-    CALL(aPlayClickSFX);
-    RET;
-
-
-done:
-    LD_A_addr(wcd20);
-    CALL(aFunction11ca6a);
-    CALL(aPlayClickSFX);
-    RET;
-
-
-up:
-    LD_A_hl;
-    CP_A(0x3);
-    RET_C ;
-    SUB_A(0x3);
-    goto finish_dpad;
-
-
-down:
-    LD_A_hl;
-    CP_A(0xf);
-    RET_NC ;
-    ADD_A(0x3);
-    goto finish_dpad;
-
-
-left:
-    LD_A_hl;
-    AND_A_A;
-    RET_Z ;
-    CP_A(0x3);
-    RET_Z ;
-    CP_A(0x6);
-    RET_Z ;
-    CP_A(0x9);
-    RET_Z ;
-    CP_A(0xc);
-    RET_Z ;
-    CP_A(0xf);
-    RET_Z ;
-    DEC_A;
-    goto finish_dpad;
+// left:
+    // LD_A_hl;
+    // AND_A_A;
+    // RET_Z ;
+    // CP_A(0x3);
+    // RET_Z ;
+    // CP_A(0x6);
+    // RET_Z ;
+    // CP_A(0x9);
+    // RET_Z ;
+    // CP_A(0xc);
+    // RET_Z ;
+    // CP_A(0xf);
+    // RET_Z ;
+    // DEC_A;
+    // goto finish_dpad;
 
 
-right:
-    LD_A_hl;
-    CP_A(0x2);
-    RET_Z ;
-    CP_A(0x5);
-    RET_Z ;
-    CP_A(0x8);
-    RET_Z ;
-    CP_A(0xb);
-    RET_Z ;
-    CP_A(0xe);
-    RET_Z ;
-    CP_A(0x11);
-    RET_Z ;
-    INC_A;
+// right:
+    // LD_A_hl;
+    // CP_A(0x2);
+    // RET_Z ;
+    // CP_A(0x5);
+    // RET_Z ;
+    // CP_A(0x8);
+    // RET_Z ;
+    // CP_A(0xb);
+    // RET_Z ;
+    // CP_A(0xe);
+    // RET_Z ;
+    // CP_A(0x11);
+    // RET_Z ;
+    // INC_A;
 
 
-finish_dpad:
-    LD_hl_A;
-    RET;
-
+// finish_dpad:
+    // LD_hl_A;
+    // RET;
 }
 
 void EZChat_PlaceCategoryNames(void){
@@ -1912,16 +2253,14 @@ asm_11c980:
 
 }
 
-void Unknown_11c986(void){
-    //dwcoord ['1', '2'];
-    //dwcoord ['7', '2'];
-    //dwcoord ['13', '2'];
-    //dwcoord ['1', '4'];
-    //dwcoord ['7', '4'];
-    //dwcoord ['13', '4'];
-
-    return Function11c992();
-}
+const uint16_t Unknown_11c986[] = {
+    coord(1, 2, 0),
+    coord(7, 2, 0),
+    coord(13, 2, 0),
+    coord(1, 4, 0),
+    coord(7, 4, 0),
+    coord(13, 4, 0),
+};
 
 void Function11c992(void){
     LD_A(0x8);
@@ -2013,96 +2352,120 @@ asm_11c9fc:
 }
 
 void Function11ca01(void){
-    hlcoord(14, 7, wAttrmap);
-    LD_DE(0x14);
-    LD_A(0x5);
-    LD_C_A;
+    // hlcoord(14, 7, wAttrmap);
+    uint8_t* hl = coord(14, 7, wram->wAttrmap);
+    // LD_DE(0x14);
+    // LD_A(0x5);
+    // LD_C_A;
+    uint8_t c = 0x5;
 
-asm_11ca0a:
-    PUSH_HL;
-    LD_A(0x6);
-    LD_B_A;
-    LD_A(0x7);
-
-asm_11ca10:
-    LD_hli_A;
-    DEC_B;
-    IF_NZ goto asm_11ca10;
-    POP_HL;
-    ADD_HL_DE;
-    DEC_C;
-    IF_NZ goto asm_11ca0a;
+    do {
+    // asm_11ca0a:
+        // PUSH_HL;
+        uint8_t* hl2 = hl;
+        // LD_A(0x6);
+        // LD_B_A;
+        uint8_t b = 0x6;
+        // LD_A(0x7);
+        do {
+        // asm_11ca10:
+            // LD_hli_A;
+            *(hl2++) = 0x7;
+            // DEC_B;
+            // IF_NZ goto asm_11ca10;
+        } while(--b != 0);
+        // POP_HL;
+        // ADD_HL_DE;
+        hl += SCREEN_WIDTH;
+        // DEC_C;
+        // IF_NZ goto asm_11ca0a;
+    } while(--c != 0);
 
     return Function11ca19();
 }
 
 void Function11ca19(void){
-    hlcoord(0, 12, wAttrmap);
-    LD_DE(0x14);
-    LD_A(0x6);
-    LD_C_A;
+    // hlcoord(0, 12, wAttrmap);
+    uint8_t* hl = coord(0, 12, wram->wAttrmap);
+    // LD_DE(0x14);
+    // LD_A(0x6);
+    // LD_C_A;
+    uint8_t c = 0x6;
 
-asm_11ca22:
-    PUSH_HL;
-    LD_A(0x14);
-    LD_B_A;
-    LD_A(0x7);
+    do {
+    // asm_11ca22:
+        // PUSH_HL;
+        uint8_t* hl2 = hl;
+        // LD_A(0x14);
+        // LD_B_A;
+        uint8_t b = SCREEN_WIDTH;
+        // LD_A(0x7);
 
-asm_11ca28:
-    LD_hli_A;
-    DEC_B;
-    IF_NZ goto asm_11ca28;
-    POP_HL;
-    ADD_HL_DE;
-    DEC_C;
-    IF_NZ goto asm_11ca22;
-    FARCALL(aReloadMapPart);
-    RET;
-
+        do {
+        // asm_11ca28:
+            // LD_hli_A;
+            *(hl2++) = 0x7;
+            // DEC_B;
+            // IF_NZ goto asm_11ca28;
+        } while(--b != 0);
+        // POP_HL;
+        // ADD_HL_DE;
+        hl += SCREEN_WIDTH;
+        // DEC_C;
+        // IF_NZ goto asm_11ca22;
+    } while(--c != 0);
+    // FARCALL(aReloadMapPart);
+    ReloadMapPart_Conv();
+    // RET;
 }
 
-void String_11ca38(void){
-    //db ['"とうろくちゅう<NO>あいさつ¯ぜんぶ"'];
-    //next ['"けしても\u3000よろしいですか？@"']
+// EZChatString_EraseMenu
+const char String_11ca38[] =
+            "All words will"    //db ['"とうろくちゅう<NO>あいさつ¯ぜんぶ"'];
+    t_next  "be erased. OK?@";  //next ['"けしても\u3000よろしいですか？@"']
 
-    return String_11ca57();
-}
+// EZChatString_EraseConfirmation
+const char String_11ca57[] =
+           "YES"   //db ['"はい"'];
+    t_next "NO@";  //next ['"いいえ@"']
 
-void String_11ca57(void){
-    //db ['"はい"'];
-    //next ['"いいえ@"']
-
-    return Function11ca5e();
-}
-
+// EZChatMenu_EraseWordsAccept
 void Function11ca5e(void){
-    XOR_A_A;
+    // XOR_A_A;
+    uint8_t a = 0x0;
 
-loop:
-    PUSH_AF;
-    CALL(aFunction11ca6a);
-    POP_AF;
-    INC_A;
-    CP_A(0x6);
-    IF_NZ goto loop;
-    RET;
-
+    do {
+    // loop:
+        // PUSH_AF;
+        // CALL(aFunction11ca6a);
+        Function11ca6a(a);
+        // POP_AF;
+        // INC_A;
+        // CP_A(0x6);
+        // IF_NZ goto loop;
+    } while(++a != EZCHAT_WORD_COUNT);
+    // RET;
 }
 
-void Function11ca6a(void){
-    LD_HL(wcd36);
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    ADD_HL_BC;
-    LD_hl_B;
-    INC_HL;
-    LD_hl_B;
-    CALL(aFunction11c95d);
-    LD_DE(mString_11c3bc);
-    CALL(aPlaceString);
-    RET;
-
+// EZChatDraw_EraseWordsLoop
+void Function11ca6a(uint8_t a){
+    // LD_HL(wcd36);
+    uint8_t* hl = &wram->wcd36;
+    // LD_C_A;
+    // LD_B(0);
+    // ADD_HL_BC;
+    // ADD_HL_BC;
+    hl += a * 2;
+    // LD_hl_B;
+    hl[0] = 0;
+    // INC_HL;
+    // LD_hl_B;
+    hl[1] = 0;
+    // CALL(aFunction11c95d); // TODO: Convert Function11c95d
+    // LD_DE(mString_11c3bc);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(String_11c3bc), coord(0, 0, wram->wTilemap));
+    // RET;
 }
 
 void Function11ca7f(void){
@@ -2361,42 +2724,32 @@ void Function11cbf5(void){
 
 }
 
-void Unknown_11cc01(void){
-    //dw ['String_11cc09'];
-    //dw ['String_11cc23'];
-    //dw ['String_11cc42'];
-    //dw ['String_11cc60'];
+// EZChatString_MessageDescription
+const char* const Unknown_11cc01[] = {
+    String_11cc09,
+    String_11cc23,
+    String_11cc42,
+    String_11cc60,
+};
 
-    return String_11cc09();
-}
+// EZChatString_MessageIntroDescription
+const char String_11cc09[] =
+            "Shown as an"         //db ['"じこしょうかい\u3000は"'];
+    t_next  "introduction. OK?@"; //next ['"この\u3000あいさつで\u3000いいですか？@"']
 
-void String_11cc09(void){
-    //db ['"じこしょうかい\u3000は"'];
-    //next ['"この\u3000あいさつで\u3000いいですか？@"']
+// EZChatString_MessageBattleStartDescription
+const char String_11cc23[] =
+            "Shown when a"          //db ['"たいせん\u3000<GA>はじまるとき\u3000は"'];
+    t_next  "battle starts. OK?@";  //next ['"この\u3000あいさつで\u3000いいですか？@"']
 
-    return String_11cc23();
-}
+// EZChatString_MessageBattleWinDescription
+const char String_11cc42[] = 
+	        "Shown if you"        // "たいせん　<NI>かったとき　は"
+	t_next  "win a battle. OK?@"; // "この　あいさつで　いいですか？@"
 
-void String_11cc23(void){
-    //db ['"たいせん\u3000<GA>はじまるとき\u3000は"'];
-    //next ['"この\u3000あいさつで\u3000いいですか？@"']
-
-    return String_11cc42();
-}
-
-void String_11cc42(void){
-    //db ['"たいせん\u3000<NI>かったとき\u3000は"'];
-    //next ['"この\u3000あいさつで\u3000いいですか？@"']
-
-    return String_11cc60();
-}
-
-void String_11cc60(void){
-    //db ['"たいせん\u3000<NI>まけたとき\u3000は"'];
-    //next ['"この\u3000あいさつで\u3000いいですか？@"']
-
-    return Unknown_11cc7e();
-}
+const char String_11cc60[] =
+	        "Shown if you"          // "たいせん　<NI>まけたとき　は"
+	t_next  "lose a battle. OK?@";  // "この　あいさつで　いいですか？@"
 
 void Unknown_11cc7e(void){
     //dw ['String_11cc86'];
@@ -2435,34 +2788,40 @@ void String_11ccd4(void){
     return Function11ccef();
 }
 
+// EZChatMenu_WarnEmptyMessage
 void Function11ccef(void){
-    LD_DE(mUnknown_11cfc6);
-    CALL(aFunction11cfce);
-    hlcoord(1, 14, wTilemap);
-    LD_DE(mString_11cd10);
-    CALL(aPlaceString);
-    CALL(aFunction11ca19);
-    CALL(aFunction11cfb5);
+    // LD_DE(mUnknown_11cfc6);
+    // CALL(aFunction11cfce);
+    Function11cfce(Unknown_11cfc6);
+    // hlcoord(1, 14, wTilemap);
+    // LD_DE(mString_11cd10);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(String_11cd10), coord(1, 14, wram->wTilemap));
+    // CALL(aFunction11ca19);
+    Function11ca19();
+    // CALL(aFunction11cfb5);
+    Function11cfb5();
 
     return Function11cd04();
 }
 
 void Function11cd04(void){
-    LD_DE(hJoypadPressed);
-    LD_A_de;
-    AND_A_A;
-    RET_Z ;
-    LD_A(0x4);
-    LD_addr_A(wJumptableIndex);
-    RET;
-
+    // LD_DE(hJoypadPressed);
+    // LD_A_de;
+    // AND_A_A;
+    // RET_Z ;
+    if(hram->hJoypadPressed == 0)
+        return;
+    // LD_A(0x4);
+    // LD_addr_A(wJumptableIndex);
+    wram->wJumptableIndex = EZCHAT_DRAW_CHAT_WORDS;
+    // RET;
 }
 
-void String_11cd10(void){
-    //db ['"なにか\u3000ことば¯いれてください@"'];
-
-    return Function11cd20();
-}
+// EZChatString_EnterSomeWords
+const char String_11cd10[] =
+           "Please enter a"     //db ['"なにか\u3000ことば¯いれてください@"'];
+    t_next "phrase or word.@";
 
 void Function11cd20(void){
     CALL(aEZChat_ClearBottom12Rows);
@@ -2837,6 +3196,7 @@ void String_11cf79(void){
     return Function11cfb5();
 }
 
+// IncrementJumptableIndex
 void Function11cfb5(void){
     // LD_HL(wJumptableIndex);
     // INC_hl;
@@ -2844,685 +3204,814 @@ void Function11cfb5(void){
     // RET;
 }
 
-void Unknown_11cfba(void){
-    //db ['0', '0'];  // start coords
-    //db ['20', '6'];  // end coords
+const uint8_t Unknown_11cfba[] = {
+    0, 0,  // start coords
+    20, 6,  // end coords
+};
 
-    return Unknown_11cfbe();
+const uint8_t Unknown_11cfbe[] = {
+    0, 14,  // start coords
+    20, 4,  // end coords
+};
+
+const uint8_t Unknown_11cfc2[] = {
+    0, 6,  // start coords
+    20, 10,  // end coords
+};
+
+const uint8_t Unknown_11cfc6[] = {
+    0, 12,  // start coords
+    20, 6,  // end coords
+};
+
+const uint8_t Unknown_11cfca[] = {
+    14, 7,  // start coords
+    6, 5,  // end coords
+};
+
+// EZChat_Textbox
+void Function11cfce(const uint8_t* de){
+    // hlcoord(0, 0, wTilemap);
+    tile_t* hl = coord(0, 0, wram->wTilemap);
+    // LD_BC(SCREEN_WIDTH);
+    // LD_A_de;
+    // INC_DE;
+    // PUSH_AF;
+    uint8_t x = *(de++);
+    // LD_A_de;
+    // INC_DE;
+    // AND_A_A;
+    uint8_t y = *(de++);
+
+// add_n_times:
+    // IF_Z goto done_add_n_times;
+    // ADD_HL_BC;
+    // DEC_A;
+    // goto add_n_times;
+    hl += SCREEN_WIDTH * y;
+
+// done_add_n_times:
+    // POP_AF;
+    // LD_C_A;
+    // LD_B(0);
+    // ADD_HL_BC;
+    hl += x;
+    // PUSH_HL;
+    tile_t* hl2 = hl;
+    // LD_A(0x79);
+    // LD_hli_A;
+    *(hl2++) = 0x79;
+    // LD_A_de;
+    // INC_DE;
+    uint8_t a = *(de++);
+    // DEC_A;
+    // DEC_A;
+    // IF_Z goto skip_fill;
+    if(a - 2 != 0) {
+        // LD_C_A;
+        uint8_t c = a - 2;
+        // LD_A(0x7a);
+
+        do {
+        // fill_loop:
+            // LD_hli_A;
+            *(hl2++) = 0x7a;
+            // DEC_C;
+            // IF_NZ goto fill_loop;
+        } while(--c != 0);
+    }
+
+// skip_fill:
+    // LD_A(0x7b);
+    // LD_hl_A;
+    *hl2 = 0x7b;
+    // POP_HL;
+    // LD_BC(SCREEN_WIDTH);
+    // ADD_HL_BC;
+    hl += SCREEN_WIDTH;
+    // LD_A_de;
+    // DEC_DE;
+    a = *(de--);
+    // DEC_A;
+    // DEC_A;
+    // IF_Z goto skip_section;
+    if(a - 2 != 0) {
+        // LD_B_A;
+        uint8_t b = a - 2;
+
+        do {
+        // loop:
+            // PUSH_HL;
+            hl2 = hl;
+            // LD_A(0x7c);
+            // LD_hli_A;
+            *(hl2++) = 0x7c;
+            // LD_A_de;
+            a = *de;
+            // DEC_A;
+            // DEC_A;
+            // IF_Z goto skip_row;
+            if(a - 2 != 0) {
+                // LD_C_A;
+                uint8_t c = a - 2;
+                // LD_A(0x7f);
+
+                do {
+                // row_loop:
+                    // LD_hli_A;
+                    *(hl2++) = 0x7f;
+                    // DEC_C;
+                    // IF_NZ goto row_loop;
+                } while(--c != 0);
+            }
+
+        // skip_row:
+            // LD_A(0x7c);
+            // LD_hl_A;
+            *hl2 = 0x7c;
+            // POP_HL;
+            // PUSH_BC;
+            // LD_BC(SCREEN_WIDTH);
+            // ADD_HL_BC;
+            hl += SCREEN_WIDTH;
+            // POP_BC;
+            // DEC_B;
+            // IF_NZ goto loop;
+        } while(--b != 0);
+    }
+
+// skip_section:
+    // LD_A(0x7d);
+    // LD_hli_A;
+    *(hl++) = 0x7d;
+    // LD_A_de;
+    a = *de;
+    // DEC_A;
+    // DEC_A;
+    // IF_Z goto skip_remainder;
+    if(a - 2 != 0) {
+        // LD_C_A;
+        uint8_t c = a - 2;
+        // LD_A(0x7a);
+
+        do {
+        // final_loop:
+            // LD_hli_A;
+            *(hl++) = 0x7a;
+            // DEC_C;
+            // IF_NZ goto final_loop;
+        } while(--c != 0);
+    }
+
+// skip_remainder:
+    // LD_A(0x7e);
+    // LD_hl_A;
+    *hl = 0x7e;
+    // RET;
 }
 
-void Unknown_11cfbe(void){
-    //db ['0', '14'];  // start coords
-    //db ['20', '4'];  // end coords
+// static void Function11d035_AddNMinusOneTimes(tile_t** hl, uint8_t a) {
+    // LD_A_de;
+    // DEC_A;
+    // LD_BC(SCREEN_WIDTH);
+    // do {
+    // add_n_minus_one_times:
+        // ADD_HL_BC;
+        // (*hl) += SCREEN_WIDTH;
+        // DEC_A;
+        // IF_NZ goto add_n_minus_one_times;
+    // } while(--a != 0);
+    // RET;
+// }
 
-    return Unknown_11cfc2();
+void Function11d035(const uint8_t* de){
+    // hlcoord(0, 0, wTilemap);
+    tile_t* hl = coord(0, 0, wram->wTilemap);
+    // LD_BC(SCREEN_WIDTH);
+    // LD_A_de;
+    // INC_DE;
+    uint8_t x1 = *(de++);
+    // PUSH_AF;
+    // LD_A_de;
+    // INC_DE;
+    uint8_t y1 = *(de++);
+    // AND_A_A;
+
+// add_n_times:
+    // IF_Z goto done_add_n_times;
+    // ADD_HL_BC;
+    // DEC_A;
+    // goto add_n_times;
+
+// done_add_n_times:
+    // POP_AF;
+    // LD_C_A;
+    // LD_B(0);
+    // ADD_HL_BC;
+    hl += (SCREEN_WIDTH * y1) + x1;
+    // PUSH_HL;
+    tile_t* hl2 = hl;
+    // LD_A(0x79);
+    // LD_hl_A;
+    *hl2 = 0x79;
+    // POP_HL;
+    // PUSH_HL;
+    // LD_A_de;
+    // DEC_A;
+    // INC_DE;
+    uint8_t x2 = *(de++) - 1;
+    uint8_t y2 = *de - 1;
+    // LD_C_A;
+    // ADD_HL_BC;
+    hl2 += x2;
+    // LD_A(0x7b);
+    // LD_hl_A;
+    *hl2 = 0x7b;
+    // CALL(aFunction11d035_AddNMinusOneTimes);
+    hl2 += y2 * SCREEN_WIDTH;
+    // LD_A(0x7e);
+    // LD_hl_A;
+    *hl2 = 0x7e;
+    // POP_HL;
+    // PUSH_HL;
+    hl2 = hl;
+    // CALL(aFunction11d035_AddNMinusOneTimes);
+    hl2 += y2 * SCREEN_WIDTH;
+    // LD_A(0x7d);
+    // LD_hl_A;
+    *hl2 = 0x7d;
+    // POP_HL;
+    // PUSH_HL;
+    hl2 = hl;
+    // INC_HL;
+    // PUSH_HL;
+    tile_t* bc = hl2 + 1;
+    // CALL(aFunction11d035_AddNMinusOneTimes);
+    hl2 += y2 * SCREEN_WIDTH;
+    // POP_BC;
+    // DEC_DE;
+    --de;
+    // LD_A_de;
+    uint8_t a = *de;
+    // CP_A(0x2);
+    // IF_Z goto skip;
+    if(a != 0x2) {
+        // DEC_A;
+        // DEC_A;
+        a -= 2;
+
+        do {
+        // loop:
+            // PUSH_AF;
+            // LD_A(0x7a);
+            // LD_hli_A;
+            *(hl2++) = 0x7a;
+            // LD_bc_A;
+            *(bc++) = 0x7a;
+            // INC_BC;
+            // POP_AF;
+            // DEC_A;
+            // IF_NZ goto loop;
+        } while(--a != 0);
+    }
+
+// skip:
+    // POP_HL;
+    // LD_BC(0x14);
+    // ADD_HL_BC;
+    hl += SCREEN_WIDTH;
+    // PUSH_HL;
+    hl2 = hl;
+    // LD_A_de;
+    // DEC_A;
+    // LD_C_A;
+    // LD_B(0);
+    // ADD_HL_BC;
+    hl2 += (*de - 1);
+    // POP_BC;
+    // INC_DE;
+    de++;
+    // LD_A_de;
+    // CP_A(0x2);
+    // RET_Z ;
+    if(*de == 0x2)
+        return;
+    // PUSH_BC;
+    // DEC_A;
+    // DEC_A;
+    // LD_C_A;
+    uint8_t c = (*de - 2);
+    // LD_B_A;
+    uint8_t b = (*de - 2);
+    // LD_DE(0x14);
+
+    do {
+    // loop2:
+        // LD_A(0x7c);
+        // LD_hl_A;
+        *hl2 = 0x7c;
+        // ADD_HL_DE;
+        hl2 += SCREEN_WIDTH;
+        // DEC_C;
+        // IF_NZ goto loop2;
+    } while(--c != 0);
+    // POP_HL;
+    do {
+    // loop3:
+        // LD_A(0x7c);
+        // LD_hl_A;
+        *hl = 0x7c;
+        // ADD_HL_DE;
+        hl += SCREEN_WIDTH;
+        // DEC_B;
+        // IF_NZ goto loop3;
+    } while(--b != 0);
+    // RET;
 }
 
-void Unknown_11cfc2(void){
-    //db ['0', '6'];  // start coords
-    //db ['20', '10'];  // end coords
+static void AnimateEZChatCursor_UpdateObjectFlags(struct SpriteAnim* bc, uint8_t a, uint8_t e);
+void AnimateEZChatCursor(struct SpriteAnim* bc){
+static const uint8_t Coords_Zero[] = {
+    dbpixel4(1, 3, 5, 2),
+    dbpixel4(7, 3, 5, 2),
+    dbpixel4(13, 3, 5, 2),
+    dbpixel4(1, 5, 5, 2),
+    dbpixel4(7, 5, 5, 2),
+    dbpixel4(13, 5, 5, 2),
+    dbpixel4(1, 17, 5, 2),
+    dbpixel4(7, 17, 5, 2),
+    dbpixel4(13, 17, 5, 2),
+};
 
-    return Unknown_11cfc6();
-}
+static const uint8_t Coords_One[] = {
+    dbpixel4(1, 8, 5, 2),
+    dbpixel4(7, 8, 5, 2),
+    dbpixel4(13, 8, 5, 2),
+    dbpixel4(1, 10, 5, 2),
+    dbpixel4(7, 10, 5, 2),
+    dbpixel4(13, 10, 5, 2),
+    dbpixel4(1, 12, 5, 2),
+    dbpixel4(7, 12, 5, 2),
+    dbpixel4(13, 12, 5, 2),
+    dbpixel4(1, 14, 5, 2),
+    dbpixel4(7, 14, 5, 2),
+    dbpixel4(13, 14, 5, 2),
+    dbpixel4(1, 16, 5, 2),
+    dbpixel4(7, 16, 5, 2),
+    dbpixel4(13, 16, 5, 2),
+    dbpixel4(1, 18, 5, 2),
+    dbpixel4(7, 18, 5, 2),
+    dbpixel4(13, 18, 5, 2),
+};
 
-void Unknown_11cfc6(void){
-    //db ['0', '12'];  // start coords
-    //db ['20', '6'];  // end coords
+static const uint8_t Coords_Two[] = {
+    dbpixel2(2, 9),  // 00
+    dbpixel2(3, 9),  // 01
+    dbpixel2(4, 9),  // 02
+    dbpixel2(5, 9),  // 03
+    dbpixel2(6, 9),  // 04
+    dbpixel2(2, 11),  // 05
+    dbpixel2(3, 11),  // 06
+    dbpixel2(4, 11),  // 07
+    dbpixel2(5, 11),  // 08
+    dbpixel2(6, 11),  // 09
+    dbpixel2(2, 13),  // 0a
+    dbpixel2(3, 13),  // 0b
+    dbpixel2(4, 13),  // 0c
+    dbpixel2(5, 13),  // 0d
+    dbpixel2(6, 13),  // 0e
+    dbpixel2(2, 15),  // 0f
+    dbpixel2(3, 15),  // 10
+    dbpixel2(4, 15),  // 11
+    dbpixel2(5, 15),  // 12
+    dbpixel2(6, 15),  // 13
+    dbpixel2(8, 9),  // 14
+    dbpixel2(9, 9),  // 15
+    dbpixel2(10, 9),  // 16
+    dbpixel2(11, 9),  // 17
+    dbpixel2(12, 9),  // 18
+    dbpixel2(8, 11),  // 19
+    dbpixel2(9, 11),  // 1a
+    dbpixel2(10, 11),  // 1b
+    dbpixel2(11, 11),  // 1c
+    dbpixel2(12, 11),  // 1d
+    dbpixel2(8, 13),  // 1e
+    dbpixel2(9, 13),  // 1f
+    dbpixel2(10, 13),  // 20
+    dbpixel2(11, 13),  // 21
+    dbpixel2(12, 13),  // 22
+    dbpixel2(14, 9),  // 23
+    dbpixel2(16, 9),  // 24
+    dbpixel2(18, 9),  // 25
+    dbpixel2(8, 15),  // 26
+    dbpixel2(9, 15),  // 27
+    dbpixel2(10, 15),  // 28
+    dbpixel2(11, 15),  // 29
+    dbpixel2(12, 15),  // 2a
+    dbpixel2(14, 11),  // 2b
+    dbpixel2(14, 13),  // 2c
+    dbpixel4(1, 18, 5, 2),  // 2d
+    dbpixel4(7, 18, 5, 2),  // 2e
+    dbpixel4(13, 18, 5, 2),  // 2f
+};
 
-    return Unknown_11cfca();
-}
+static const uint8_t Coords_Three[] = {
+    dbpixel2(2, 10),
+    dbpixel2(8, 10),
+    dbpixel2(14, 10),
+    dbpixel2(2, 12),
+    dbpixel2(8, 12),
+    dbpixel2(14, 12),
+    dbpixel2(2, 14),
+    dbpixel2(8, 14),
+    dbpixel2(14, 14),
+    dbpixel2(2, 16),
+    dbpixel2(8, 16),
+    dbpixel2(14, 16),
+};
 
-void Unknown_11cfca(void){
-    //db ['14', '7'];  // start coords
-    //db ['6', '5'];  // end coords
+static const uint8_t Coords_Four[] = {
+    dbpixel2(16, 10),
+    dbpixel2(16, 12),
+};
 
-    return Function11cfce();
-}
+static const uint8_t Coords_Five[] = {
+    dbpixel2(4, 10),
+    dbpixel2(4, 12),
+};
 
-void Function11cfce(void){
-    hlcoord(0, 0, wTilemap);
-    LD_BC(SCREEN_WIDTH);
-    LD_A_de;
-    INC_DE;
-    PUSH_AF;
-    LD_A_de;
-    INC_DE;
-    AND_A_A;
-
-add_n_times:
-    IF_Z goto done_add_n_times;
-    ADD_HL_BC;
-    DEC_A;
-    goto add_n_times;
-
-done_add_n_times:
-    POP_AF;
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    PUSH_HL;
-    LD_A(0x79);
-    LD_hli_A;
-    LD_A_de;
-    INC_DE;
-    DEC_A;
-    DEC_A;
-    IF_Z goto skip_fill;
-    LD_C_A;
-    LD_A(0x7a);
-
-fill_loop:
-    LD_hli_A;
-    DEC_C;
-    IF_NZ goto fill_loop;
-
-skip_fill:
-    LD_A(0x7b);
-    LD_hl_A;
-    POP_HL;
-    LD_BC(SCREEN_WIDTH);
-    ADD_HL_BC;
-    LD_A_de;
-    DEC_DE;
-    DEC_A;
-    DEC_A;
-    IF_Z goto skip_section;
-    LD_B_A;
-
-loop:
-    PUSH_HL;
-    LD_A(0x7c);
-    LD_hli_A;
-    LD_A_de;
-    DEC_A;
-    DEC_A;
-    IF_Z goto skip_row;
-    LD_C_A;
-    LD_A(0x7f);
-
-row_loop:
-    LD_hli_A;
-    DEC_C;
-    IF_NZ goto row_loop;
-
-skip_row:
-    LD_A(0x7c);
-    LD_hl_A;
-    POP_HL;
-    PUSH_BC;
-    LD_BC(SCREEN_WIDTH);
-    ADD_HL_BC;
-    POP_BC;
-    DEC_B;
-    IF_NZ goto loop;
-
-skip_section:
-    LD_A(0x7d);
-    LD_hli_A;
-    LD_A_de;
-    DEC_A;
-    DEC_A;
-    IF_Z goto skip_remainder;
-    LD_C_A;
-    LD_A(0x7a);
-
-final_loop:
-    LD_hli_A;
-    DEC_C;
-    IF_NZ goto final_loop;
-
-skip_remainder:
-    LD_A(0x7e);
-    LD_hl_A;
-    RET;
-
-}
-
-void Function11d035(void){
-    hlcoord(0, 0, wTilemap);
-    LD_BC(SCREEN_WIDTH);
-    LD_A_de;
-    INC_DE;
-    PUSH_AF;
-    LD_A_de;
-    INC_DE;
-    AND_A_A;
-
-add_n_times:
-    IF_Z goto done_add_n_times;
-    ADD_HL_BC;
-    DEC_A;
-    goto add_n_times;
-
-done_add_n_times:
-    POP_AF;
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    PUSH_HL;
-    LD_A(0x79);
-    LD_hl_A;
-    POP_HL;
-    PUSH_HL;
-    LD_A_de;
-    DEC_A;
-    INC_DE;
-    LD_C_A;
-    ADD_HL_BC;
-    LD_A(0x7b);
-    LD_hl_A;
-    CALL(aFunction11d035_AddNMinusOneTimes);
-    LD_A(0x7e);
-    LD_hl_A;
-    POP_HL;
-    PUSH_HL;
-    CALL(aFunction11d035_AddNMinusOneTimes);
-    LD_A(0x7d);
-    LD_hl_A;
-    POP_HL;
-    PUSH_HL;
-    INC_HL;
-    PUSH_HL;
-    CALL(aFunction11d035_AddNMinusOneTimes);
-    POP_BC;
-    DEC_DE;
-    LD_A_de;
-    CP_A(0x2);
-    IF_Z goto skip;
-    DEC_A;
-    DEC_A;
-
-loop:
-    PUSH_AF;
-    LD_A(0x7a);
-    LD_hli_A;
-    LD_bc_A;
-    INC_BC;
-    POP_AF;
-    DEC_A;
-    IF_NZ goto loop;
-
-skip:
-    POP_HL;
-    LD_BC(0x14);
-    ADD_HL_BC;
-    PUSH_HL;
-    LD_A_de;
-    DEC_A;
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    POP_BC;
-    INC_DE;
-    LD_A_de;
-    CP_A(0x2);
-    RET_Z ;
-    PUSH_BC;
-    DEC_A;
-    DEC_A;
-    LD_C_A;
-    LD_B_A;
-    LD_DE(0x14);
-
-loop2:
-    LD_A(0x7c);
-    LD_hl_A;
-    ADD_HL_DE;
-    DEC_C;
-    IF_NZ goto loop2;
-    POP_HL;
-
-loop3:
-    LD_A(0x7c);
-    LD_hl_A;
-    ADD_HL_DE;
-    DEC_B;
-    IF_NZ goto loop3;
-    RET;
-
-
-AddNMinusOneTimes:
-    LD_A_de;
-    DEC_A;
-    LD_BC(SCREEN_WIDTH);
-
-add_n_minus_one_times:
-    ADD_HL_BC;
-    DEC_A;
-    IF_NZ goto add_n_minus_one_times;
-    RET;
-
-}
-
-void AnimateEZChatCursor(void){
-    LD_HL(SPRITEANIMSTRUCT_VAR1);
-    ADD_HL_BC;
+static const uint8_t FramesetsIDs_Two[] = {
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 00
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 01
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 02
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 03
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 04
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 05
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 06
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 07
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 08
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 09
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 0a
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 0b
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 0c
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 0d
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 0e
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 0f
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 10
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 11
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 12
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 13
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 14
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 15
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 16
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 17
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 18
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 19
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 1a
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 1b
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 1c
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 1d
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 1e
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 1f
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 20
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 21
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 22
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 23
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 24
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 25
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 26
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 27
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 28
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 29
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 2a
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3,  // 2b
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_4,  // 2c
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_1,  // 2d
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_1,  // 2e
+    SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_1,  // 2f
+};
+    // LD_HL(SPRITEANIMSTRUCT_VAR1);
+    // ADD_HL_BC;
+    uint8_t a = 0, e = 0, d;
+    const uint8_t* coords = NULL;
+    switch(bc->var1) {
     //jumptable ['.Jumptable', 'hl']
+    // Jumptable:
+        case 0x0: //dw ['.zero'];
+        // zero:
+            // LD_A_addr(wcd20);
+            // SLA_A;
+            a = wram->wcd20 * 2;
+            // LD_HL(mAnimateEZChatCursor_Coords_Zero);
+            coords = Coords_Zero;
+            // LD_E(0x1);
+            e = 0x1;
+            // goto load;
+            break;
+        case 0x1: //dw ['.one'];
+        // one:
+            // LD_A_addr(wcd21);
+            // SLA_A;
+            a = wram->wcd21 * 2;
+            // LD_HL(mAnimateEZChatCursor_Coords_One);
+            coords = Coords_One;
+            // LD_E(0x2);
+            e = 0x2;
+            // goto load;
+            break;
+        case 0x2: //dw ['.two'];
+        // two:
+            // LD_HL(mAnimateEZChatCursor_FramesetsIDs_Two);
+            // LD_A_addr(wcd22);
+            // LD_E_A;
+            // LD_D(0);
+            // ADD_HL_DE;
+            // LD_A_hl;
+            // CALL(aReinitSpriteAnimFrame);
+            ReinitSpriteAnimFrame_Conv(bc, FramesetsIDs_Two[wram->wcd22]);
 
+            // LD_A_addr(wcd22);
+            // SLA_A;
+            a = wram->wcd22 * 2;
+            // LD_HL(mAnimateEZChatCursor_Coords_Two);
+            coords = Coords_Two;
+            // LD_E(0x4);
+            e = 0x4;
+            // goto load;
+            break;
+        case 0x3: //dw ['.three'];
+        // three:
+            // LD_A(SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_2);
+            // CALL(aReinitSpriteAnimFrame);
+            ReinitSpriteAnimFrame_Conv(bc, SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_2);
+            // LD_A_addr(wMobileCommsJumptableIndex);
+            // SLA_A;
+            a = wram->wMobileCommsJumptableIndex * 2;
+            // LD_HL(mAnimateEZChatCursor_Coords_Three);
+            coords = Coords_Three;
+            // LD_E(0x8);
+            e = 0x8;
+            break;
+        case 0x4: //dw ['.four'];
+        // four:
+            // LD_A(SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_2);
+            // CALL(aReinitSpriteAnimFrame);
+            ReinitSpriteAnimFrame_Conv(bc, SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_2);
+            // LD_A_addr(wcd2a);
+            // SLA_A;
+            a = wram->wcd2a * 2;
+            // LD_HL(mAnimateEZChatCursor_Coords_Four);
+            coords = Coords_Four;
+            // LD_E(0x10);
+            e = 0x10;
+            // goto load;
+            break;
+        case 0x5: //dw ['.five'];
+        // five:
+            // LD_A(SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_2);
+            // CALL(aReinitSpriteAnimFrame);
+            ReinitSpriteAnimFrame_Conv(bc, SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_2);
+            // LD_A_addr(wcd2c);
+            // SLA_A;
+            a = wram->wcd2c * 2;
+            // LD_HL(mAnimateEZChatCursor_Coords_Five);
+            coords = Coords_Five;
+            // LD_E(0x20);
+            e = 0x20;
+            // goto load;
+            break;
+        case 0x6: //dw ['.six'];
+        // six:
+            // LD_A(SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_5);
+            // CALL(aReinitSpriteAnimFrame);
+            ReinitSpriteAnimFrame_Conv(bc, SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_5);
+        // X = [wcd4a] * 8 + 24
+            // LD_A_addr(wcd4a);
+            // SLA_A;
+            // SLA_A;
+            // SLA_A;
+            // ADD_A(0x18);
+            // LD_HL(SPRITEANIMSTRUCT_XCOORD);
+            // ADD_HL_BC;
+            // LD_hli_A;
+            bc->xCoord = (wram->wcd4a * 8) + 24;
+        // Y = 48
+            // LD_A(0x30);
+            // LD_hl_A;
+            bc->yCoord = 48;
 
-Jumptable:
-    //dw ['.zero'];
-    //dw ['.one'];
-    //dw ['.two'];
-    //dw ['.three'];
-    //dw ['.four'];
-    //dw ['.five'];
-    //dw ['.six'];
-    //dw ['.seven'];
-    //dw ['.eight'];
-    //dw ['.nine'];
-    //dw ['.ten'];
+            // LD_A(0x1);
+            // LD_E_A;
+            // CALL(aAnimateEZChatCursor_UpdateObjectFlags);
+            AnimateEZChatCursor_UpdateObjectFlags(bc, 0x1, 0x1);
+            // RET;
+            return;
+        case 0x7: { //dw ['.seven'];
+        // seven:
+            // LD_A_addr(wEZChatCursorYCoord);
+            // CP_A(0x4);
+            // IF_Z goto cursor0;
+            // LD_A(SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3);
+            // goto got_frameset;
 
+        // cursor0:
+            // LD_A(SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_1);
+            uint8_t frameset = (wram->wEZChatCursorYCoord == 0x4)
+                ? SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_1
+                : SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3;
 
-zero:
-    LD_A_addr(wcd20);
-    SLA_A;
-    LD_HL(mAnimateEZChatCursor_Coords_Zero);
-    LD_E(0x1);
-    goto load;
+        // got_frameset:
+            // CALL(aReinitSpriteAnimFrame);
+            ReinitSpriteAnimFrame_Conv(bc, frameset);
+            // LD_A_addr(wEZChatCursorYCoord);
+            // CP_A(0x4);
+            // IF_Z goto asm_11d1b1;
+            if(wram->wEZChatCursorYCoord != 0x4) {
+            // X = [wEZChatCursorXCoord] * 8 + 32
+                // LD_A_addr(wEZChatCursorXCoord);
+                // SLA_A;
+                // SLA_A;
+                // SLA_A;
+                // ADD_A(0x20);
+                // LD_HL(SPRITEANIMSTRUCT_XCOORD);
+                // ADD_HL_BC;
+                // LD_hli_A;
+                bc->xCoord = wram->wEZChatCursorXCoord * 8 + 32;
+            // Y = [wEZChatCursorYCoord] * 16 + 72
+                // LD_A_addr(wEZChatCursorYCoord);
+                // SLA_A;
+                // SLA_A;
+                // SLA_A;
+                // SLA_A;
+                // ADD_A(0x48);
+                // LD_hl_A;
+                bc->yCoord = wram->wEZChatCursorYCoord * 16 + 72;
+                // LD_A(0x2);
+                // LD_E_A;
+                // CALL(aAnimateEZChatCursor_UpdateObjectFlags);
+                AnimateEZChatCursor_UpdateObjectFlags(bc, 0x2, 0x2);
+                // RET;
+                return;
+            }
+            else {
+            // asm_11d1b1:
+            // X = [wEZChatCursorXCoord] * 40 + 24
+                // LD_A_addr(wEZChatCursorXCoord);
+                // SLA_A;
+                // SLA_A;
+                // SLA_A;
+                // LD_E_A;
+                // SLA_A;
+                // SLA_A;
+                // ADD_A_E;
+                // ADD_A(0x18);uint16_t
+                // LD_HL(SPRITEANIMSTRUCT_XCOORD);
+                // ADD_HL_BC;
+                // LD_hli_A;
+                bc->xCoord = wram->wEZChatCursorXCoord * 40 + 24;
+            // Y = 138
+                // LD_A(0x8a);
+                // LD_hl_A;
+                bc->yCoord = 138;
+                // LD_A(0x2);
+                // LD_E_A;
+                // CALL(aAnimateEZChatCursor_UpdateObjectFlags);
+                AnimateEZChatCursor_UpdateObjectFlags(bc, 0x2, 0x2);
+                // RET;
+                return;
+            }
+        } break;
+        case 0x8: //dw ['.eight'];
+        // eight:
+            // LD_D(2 * 8);
+            d = 2 * 8;
+            // LD_A(SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_6);
+            a = SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_6;
+            goto eight_nine_load;
+        case 0x9: //dw ['.nine'];
+        // nine:
+            // LD_D(-13 * 8);
+            d = -13 * 8;
+            // LD_A(SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_7);
+            a = SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_7;
+            goto eight_nine_load;
+        case 0xA: //dw ['.ten'];
+        // ten:
+            // LD_A(SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_1);
+            // CALL(aReinitSpriteAnimFrame);
+            ReinitSpriteAnimFrame_Conv(bc, SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_1);
+            // LD_A(0x8);
+            // LD_E_A;
+            // CALL(aAnimateEZChatCursor_UpdateObjectFlags);
+            AnimateEZChatCursor_UpdateObjectFlags(bc, 0x8, 0x8);
+            // RET;
+            return;
+    }
 
-
-one:
-    LD_A_addr(wcd21);
-    SLA_A;
-    LD_HL(mAnimateEZChatCursor_Coords_One);
-    LD_E(0x2);
-    goto load;
-
-
-two:
-    LD_HL(mAnimateEZChatCursor_FramesetsIDs_Two);
-    LD_A_addr(wcd22);
-    LD_E_A;
-    LD_D(0);
-    ADD_HL_DE;
-    LD_A_hl;
-    CALL(aReinitSpriteAnimFrame);
-
-    LD_A_addr(wcd22);
-    SLA_A;
-    LD_HL(mAnimateEZChatCursor_Coords_Two);
-    LD_E(0x4);
-    goto load;
-
-
-three:
-    LD_A(SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_2);
-    CALL(aReinitSpriteAnimFrame);
-    LD_A_addr(wMobileCommsJumptableIndex);
-    SLA_A;
-    LD_HL(mAnimateEZChatCursor_Coords_Three);
-    LD_E(0x8);
-
-load:
-    PUSH_DE;
-    LD_E_A;
-    LD_D(0);
-    ADD_HL_DE;
-    PUSH_HL;
-    POP_DE;
-    LD_HL(SPRITEANIMSTRUCT_XCOORD);
-    ADD_HL_BC;
-    LD_A_de;
-    INC_DE;
-    LD_hli_A;
-    LD_A_de;
-    LD_hl_A;
-    POP_DE;
-    LD_A_E;
-    CALL(aAnimateEZChatCursor_UpdateObjectFlags);
-    RET;
-
-
-four:
-    LD_A(SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_2);
-    CALL(aReinitSpriteAnimFrame);
-    LD_A_addr(wcd2a);
-    SLA_A;
-    LD_HL(mAnimateEZChatCursor_Coords_Four);
-    LD_E(0x10);
-    goto load;
-
-
-five:
-    LD_A(SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_2);
-    CALL(aReinitSpriteAnimFrame);
-    LD_A_addr(wcd2c);
-    SLA_A;
-    LD_HL(mAnimateEZChatCursor_Coords_Five);
-    LD_E(0x20);
-    goto load;
-
-
-six:
-    LD_A(SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_5);
-    CALL(aReinitSpriteAnimFrame);
-// X = [wcd4a] * 8 + 24
-    LD_A_addr(wcd4a);
-    SLA_A;
-    SLA_A;
-    SLA_A;
-    ADD_A(0x18);
-    LD_HL(SPRITEANIMSTRUCT_XCOORD);
-    ADD_HL_BC;
-    LD_hli_A;
-// Y = 48
-    LD_A(0x30);
-    LD_hl_A;
-
-    LD_A(0x1);
-    LD_E_A;
-    CALL(aAnimateEZChatCursor_UpdateObjectFlags);
-    RET;
-
-
-seven:
-    LD_A_addr(wEZChatCursorYCoord);
-    CP_A(0x4);
-    IF_Z goto cursor0;
-    LD_A(SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3);
-    goto got_frameset;
-
-
-cursor0:
-    LD_A(SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_1);
-
-got_frameset:
-    CALL(aReinitSpriteAnimFrame);
-    LD_A_addr(wEZChatCursorYCoord);
-    CP_A(0x4);
-    IF_Z goto asm_11d1b1;
-// X = [wEZChatCursorXCoord] * 8 + 32
-    LD_A_addr(wEZChatCursorXCoord);
-    SLA_A;
-    SLA_A;
-    SLA_A;
-    ADD_A(0x20);
-    LD_HL(SPRITEANIMSTRUCT_XCOORD);
-    ADD_HL_BC;
-    LD_hli_A;
-// Y = [wEZChatCursorYCoord] * 16 + 72
-    LD_A_addr(wEZChatCursorYCoord);
-    SLA_A;
-    SLA_A;
-    SLA_A;
-    SLA_A;
-    ADD_A(0x48);
-    LD_hl_A;
-    LD_A(0x2);
-    LD_E_A;
-    CALL(aAnimateEZChatCursor_UpdateObjectFlags);
-    RET;
-
-
-asm_11d1b1:
-// X = [wEZChatCursorXCoord] * 40 + 24
-    LD_A_addr(wEZChatCursorXCoord);
-    SLA_A;
-    SLA_A;
-    SLA_A;
-    LD_E_A;
-    SLA_A;
-    SLA_A;
-    ADD_A_E;
-    ADD_A(0x18);
-    LD_HL(SPRITEANIMSTRUCT_XCOORD);
-    ADD_HL_BC;
-    LD_hli_A;
-// Y = 138
-    LD_A(0x8a);
-    LD_hl_A;
-    LD_A(0x2);
-    LD_E_A;
-    CALL(aAnimateEZChatCursor_UpdateObjectFlags);
-    RET;
-
-
-nine:
-    LD_D(-13 * 8);
-    LD_A(SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_7);
-    goto eight_nine_load;
-
-
-eight:
-    LD_D(2 * 8);
-    LD_A(SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_6);
+// load:
+    // PUSH_DE;
+    // LD_E_A;
+    // LD_D(0);
+    // ADD_HL_DE;
+    // PUSH_HL;
+    // POP_DE;
+    // LD_HL(SPRITEANIMSTRUCT_XCOORD);
+    // ADD_HL_BC;
+    // LD_A_de;
+    // INC_DE;
+    // LD_hli_A;
+    bc->xCoord = coords[a + 0];
+    // LD_A_de;
+    // LD_hl_A;
+    bc->yCoord = coords[a + 1];
+    // POP_DE;
+    // LD_A_E;
+    // CALL(aAnimateEZChatCursor_UpdateObjectFlags);
+    AnimateEZChatCursor_UpdateObjectFlags(bc, e, e);
+    // RET;
+    return;
 
 eight_nine_load:
-    PUSH_DE;
-    CALL(aReinitSpriteAnimFrame);
-    LD_A_addr(wcd4a);
-    SLA_A;
-    SLA_A;
-    SLA_A;
-    LD_E_A;
-    SLA_A;
-    ADD_A_E;
-    ADD_A(8 * 8);
-    LD_HL(SPRITEANIMSTRUCT_YCOORD);
-    ADD_HL_BC;
-    LD_hld_A;
-    POP_AF;
-    LD_hl_A;
-    LD_A(0x4);
-    LD_E_A;
-    CALL(aAnimateEZChatCursor_UpdateObjectFlags);
-    RET;
+    // PUSH_DE;
+    // CALL(aReinitSpriteAnimFrame);
+    ReinitSpriteAnimFrame_Conv(bc, a);
+    // LD_A_addr(wcd4a);
+    // SLA_A;
+    // SLA_A;
+    // SLA_A;
+    // LD_E_A;
+    // SLA_A;
+    // ADD_A_E;
+    // ADD_A(8 * 8);
+    // LD_HL(SPRITEANIMSTRUCT_YCOORD);
+    // ADD_HL_BC;
+    // LD_hld_A;
+    bc->yCoord = (wram->wcd4a * 24) + 64;
+    // POP_AF;
+    // LD_hl_A;
+    bc->xCoord = d;
+    // LD_A(0x4);
+    // LD_E_A;
+    // CALL(aAnimateEZChatCursor_UpdateObjectFlags);
+    AnimateEZChatCursor_UpdateObjectFlags(bc, 0x4, 0x4);
+    // RET;
+}
 
+static void AnimateEZChatCursor_UpdateObjectFlags(struct SpriteAnim* bc, uint8_t a, uint8_t e){
+    // LD_HL(wcd24);
+    // AND_A_hl;
+    // IF_NZ goto update_y_offset;
+    if((wram->wcd24 & a) == 0) {
+        // LD_A_E;
+        // LD_HL(wcd23);
+        // AND_A_hl;
+        // IF_Z goto reset_y_offset;
+        if((e & wram->wcd23) == 0)
+            goto reset_y_offset;
+        // LD_HL(SPRITEANIMSTRUCT_VAR3);
+        // ADD_HL_BC;
+        // LD_A_hl;
+        // AND_A_A;
+        // IF_Z goto flip_bit_0;
+        if(bc->var3 != 0) {
+            // DEC_hl;
+            bc->var3--;
+            // RET;
+            return;
+        }
 
-ten:
-    LD_A(SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_1);
-    CALL(aReinitSpriteAnimFrame);
-    LD_A(0x8);
-    LD_E_A;
-    CALL(aAnimateEZChatCursor_UpdateObjectFlags);
-    RET;
+    // flip_bit_0:
+        // LD_A(0x0);
+        // LD_hld_A;
+        bc->var3 = 0x0;
+        // LD_A(0x1);
+        // XOR_A_hl;
+        // LD_hl_A;
+        bc->var2 ^= 0x1;
+        // AND_A_A;
+        // IF_NZ goto update_y_offset;
+        if(bc->var2 == 0) {
+        reset_y_offset:
+            // LD_HL(SPRITEANIMSTRUCT_YOFFSET);
+            // ADD_HL_BC;
+            // XOR_A_A;
+            // LD_hl_A;
+            bc->yOffset = 0x0;
+            // RET;
+            return;
+        }
+    }
 
-
-Coords_Zero:
-    //dbpixel ['1', '3', '5', '2']
-    //dbpixel ['7', '3', '5', '2']
-    //dbpixel ['13', '3', '5', '2']
-    //dbpixel ['1', '5', '5', '2']
-    //dbpixel ['7', '5', '5', '2']
-    //dbpixel ['13', '5', '5', '2']
-    //dbpixel ['1', '17', '5', '2']
-    //dbpixel ['7', '17', '5', '2']
-    //dbpixel ['13', '17', '5', '2']
-
-
-Coords_One:
-    //dbpixel ['1', '8', '5', '2']
-    //dbpixel ['7', '8', '5', '2']
-    //dbpixel ['13', '8', '5', '2']
-    //dbpixel ['1', '10', '5', '2']
-    //dbpixel ['7', '10', '5', '2']
-    //dbpixel ['13', '10', '5', '2']
-    //dbpixel ['1', '12', '5', '2']
-    //dbpixel ['7', '12', '5', '2']
-    //dbpixel ['13', '12', '5', '2']
-    //dbpixel ['1', '14', '5', '2']
-    //dbpixel ['7', '14', '5', '2']
-    //dbpixel ['13', '14', '5', '2']
-    //dbpixel ['1', '16', '5', '2']
-    //dbpixel ['7', '16', '5', '2']
-    //dbpixel ['13', '16', '5', '2']
-    //dbpixel ['1', '18', '5', '2']
-    //dbpixel ['7', '18', '5', '2']
-    //dbpixel ['13', '18', '5', '2']
-
-
-Coords_Two:
-    //dbpixel ['2', '9']  // 00
-    //dbpixel ['3', '9']  // 01
-    //dbpixel ['4', '9']  // 02
-    //dbpixel ['5', '9']  // 03
-    //dbpixel ['6', '9']  // 04
-    //dbpixel ['2', '11']  // 05
-    //dbpixel ['3', '11']  // 06
-    //dbpixel ['4', '11']  // 07
-    //dbpixel ['5', '11']  // 08
-    //dbpixel ['6', '11']  // 09
-    //dbpixel ['2', '13']  // 0a
-    //dbpixel ['3', '13']  // 0b
-    //dbpixel ['4', '13']  // 0c
-    //dbpixel ['5', '13']  // 0d
-    //dbpixel ['6', '13']  // 0e
-    //dbpixel ['2', '15']  // 0f
-    //dbpixel ['3', '15']  // 10
-    //dbpixel ['4', '15']  // 11
-    //dbpixel ['5', '15']  // 12
-    //dbpixel ['6', '15']  // 13
-    //dbpixel ['8', '9']  // 14
-    //dbpixel ['9', '9']  // 15
-    //dbpixel ['10', '9']  // 16
-    //dbpixel ['11', '9']  // 17
-    //dbpixel ['12', '9']  // 18
-    //dbpixel ['8', '11']  // 19
-    //dbpixel ['9', '11']  // 1a
-    //dbpixel ['10', '11']  // 1b
-    //dbpixel ['11', '11']  // 1c
-    //dbpixel ['12', '11']  // 1d
-    //dbpixel ['8', '13']  // 1e
-    //dbpixel ['9', '13']  // 1f
-    //dbpixel ['10', '13']  // 20
-    //dbpixel ['11', '13']  // 21
-    //dbpixel ['12', '13']  // 22
-    //dbpixel ['14', '9']  // 23
-    //dbpixel ['16', '9']  // 24
-    //dbpixel ['18', '9']  // 25
-    //dbpixel ['8', '15']  // 26
-    //dbpixel ['9', '15']  // 27
-    //dbpixel ['10', '15']  // 28
-    //dbpixel ['11', '15']  // 29
-    //dbpixel ['12', '15']  // 2a
-    //dbpixel ['14', '11']  // 2b
-    //dbpixel ['14', '13']  // 2c
-    //dbpixel ['1', '18', '5', '2']  // 2d
-    //dbpixel ['7', '18', '5', '2']  // 2e
-    //dbpixel ['13', '18', '5', '2']  // 2f
-
-
-Coords_Three:
-    //dbpixel ['2', '10']
-    //dbpixel ['8', '10']
-    //dbpixel ['14', '10']
-    //dbpixel ['2', '12']
-    //dbpixel ['8', '12']
-    //dbpixel ['14', '12']
-    //dbpixel ['2', '14']
-    //dbpixel ['8', '14']
-    //dbpixel ['14', '14']
-    //dbpixel ['2', '16']
-    //dbpixel ['8', '16']
-    //dbpixel ['14', '16']
-
-
-Coords_Four:
-    //dbpixel ['16', '10']
-    //dbpixel ['16', '12']
-
-
-Coords_Five:
-    //dbpixel ['4', '10']
-    //dbpixel ['4', '12']
-
-
-FramesetsIDs_Two:
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 00
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 01
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 02
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 03
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 04
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 05
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 06
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 07
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 08
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 09
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 0a
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 0b
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 0c
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 0d
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 0e
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 0f
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 10
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 11
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 12
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 13
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 14
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 15
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 16
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 17
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 18
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 19
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 1a
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 1b
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 1c
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 1d
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 1e
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 1f
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 20
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 21
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 22
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 23
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 24
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 25
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 26
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 27
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 28
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 29
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 2a
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_3'];  // 2b
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_4'];  // 2c
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_1'];  // 2d
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_1'];  // 2e
-    //db ['SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_1'];  // 2f
-
-
-UpdateObjectFlags:
-    LD_HL(wcd24);
-    AND_A_hl;
-    IF_NZ goto update_y_offset;
-    LD_A_E;
-    LD_HL(wcd23);
-    AND_A_hl;
-    IF_Z goto reset_y_offset;
-    LD_HL(SPRITEANIMSTRUCT_VAR3);
-    ADD_HL_BC;
-    LD_A_hl;
-    AND_A_A;
-    IF_Z goto flip_bit_0;
-    DEC_hl;
-    RET;
-
-
-flip_bit_0:
-    LD_A(0x0);
-    LD_hld_A;
-    LD_A(0x1);
-    XOR_A_hl;
-    LD_hl_A;
-    AND_A_A;
-    IF_NZ goto update_y_offset;
-
-reset_y_offset:
-    LD_HL(SPRITEANIMSTRUCT_YOFFSET);
-    ADD_HL_BC;
-    XOR_A_A;
-    LD_hl_A;
-    RET;
-
-
-update_y_offset:
-    LD_HL(SPRITEANIMSTRUCT_YCOORD);
-    ADD_HL_BC;
-    LD_A(0xb0);
-    SUB_A_hl;
-    LD_HL(SPRITEANIMSTRUCT_YOFFSET);
-    ADD_HL_BC;
-    LD_hl_A;
-    RET;
-
+// update_y_offset:
+    // LD_HL(SPRITEANIMSTRUCT_YCOORD);
+    // ADD_HL_BC;
+    // LD_A(0xb0);
+    // SUB_A_hl;
+    // LD_HL(SPRITEANIMSTRUCT_YOFFSET);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    bc->yOffset = 0xb0 - bc->yCoord;
+    // RET;
 }
 
 // EZChat_LoadPalette
@@ -3920,7 +4409,6 @@ void EZChat_GetCategoryWordsByKana(void){
         wram->wcd2e++;
         // POP_BC;
         // POP_HL;
-        hl++;
         // POP_AF;
         // DEC_A;
         // IF_NZ goto loop1;

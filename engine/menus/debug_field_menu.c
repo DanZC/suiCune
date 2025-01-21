@@ -27,7 +27,9 @@ enum {
     DEBUGFIELDITEM_TUTORIAL,
     DEBUGFIELDITEM_UNOWN,
     DEBUGFIELDITEM_FLAG,
+    DEBUGFIELDITEM_WILD_BATTLE,
     DEBUGFIELDITEM_EXIT,
+    DEBUGFIELDITEM_COUNT,
 };
 
 static bool DebugTeleportScript(script_s* s) {
@@ -93,6 +95,20 @@ static void DebugUnownPrinter(void){
     CopyBytes_Conv2(wram->wUnownDex, temp, sizeof(wram->wUnownDex));
 }
 
+static bool DebugWildBattleScript(script_s* s){
+    SCRIPT_BEGIN
+    startbattle
+    reloadmapafterbattle
+    s_end
+    SCRIPT_END
+}
+
+static void DebugWildBattle(species_t species, uint8_t level){
+    Script_loadwildmon_Conv(&gCurScript, species, level);
+    gQueuedScriptAddr = DebugWildBattleScript;
+    hram->hMenuReturn = HMENURETURN_SCRIPT;
+}
+
 static void DebugFlagMenu(void) {
     LoadStandardMenuHeader_Conv();
     Textbox_Conv2(coord(0, 0, wram->wTilemap), 6, 12);
@@ -142,13 +158,14 @@ const struct MenuHeader MenuHeader = {
     // MenuData:
         .flags = STATICMENU_CURSOR | STATICMENU_WRAP,  // flags
         .verticalMenu = {
-            .count = 5,  // items
+            .count = DEBUGFIELDITEM_COUNT,  // items
             .options = (const char*[]) {
                 "TELEPORT@",
                 "PHONE@",
                 "TUTORIAL@",
                 "UNOWN@",
                 "FLAG@",
+                "WILD@",
                 "EXIT@",
             },
         },
@@ -200,6 +217,9 @@ loop:
         case DEBUGFIELDITEM_UNOWN:
             DebugUnownPrinter();
             goto loop;
+        case DEBUGFIELDITEM_WILD_BATTLE:
+            DebugWildBattle(CHARIZARD, 45);
+            break;
         case DEBUGFIELDITEM_EXIT:
             break;
         }

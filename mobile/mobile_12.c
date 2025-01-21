@@ -2694,7 +2694,7 @@ void Function48cdc(tile_t* hl, uint8_t b, uint8_t c){
         // POP_HL;
         // LD_DE(0x14);
         // ADD_HL_DE;
-        hl += 0x14;
+        hl += SCREEN_WIDTH;
         // POP_BC;
         // DEC_B;
         // IF_NZ goto asm_48ced;
@@ -2717,7 +2717,7 @@ void Function48cfd(tile_t* hl, uint8_t b, uint8_t c){
     // POP_HL;
     // LD_DE(0x14);
     // ADD_HL_DE;
-    hl += 0x14;
+    hl += SCREEN_WIDTH;
 
     do {
     // asm_48d0c:
@@ -2734,7 +2734,7 @@ void Function48cfd(tile_t* hl, uint8_t b, uint8_t c){
         // POP_HL;
         // LD_DE(0x14);
         // ADD_HL_DE;
-        hl += 0x14;
+        hl += SCREEN_WIDTH;
         // DEC_B;
         // IF_NZ goto asm_48d0c;
     } while(--b != 0);

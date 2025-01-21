@@ -23,6 +23,7 @@
 #include "../home/window.h"
 #include "../home/clear_sprites.h"
 #include "../home/double_speed.h"
+#include "../home/print_text.h"
 #include "../engine/tilesets/timeofday_pals.h"
 #include "../engine/gfx/dma_transfer.h"
 #include "../engine/gfx/color.h"
@@ -1517,54 +1518,69 @@ void Function100675(void){
     // RET;
 }
 
-void Function100681(void){
-    PUSH_HL;
-    LD_HL(wcd2a);
-    BIT_hl(2);
-    LD_HL(wcd2a);
-    SET_hl(2);
-    POP_HL;
-    IF_NZ goto asm_100694;
-    PUSH_HL;
-    CALL(aFunction1006d3);
-    POP_HL;
+void Function100681(tile_t* hl){
+    // PUSH_HL;
+    // LD_HL(wcd2a);
+    // BIT_hl(2);
+    bool bt = bit_test(wram->wcd2a, 2);
+    // LD_HL(wcd2a);
+    // SET_hl(2);
+    bit_set(wram->wcd2a, 2);
+    // POP_HL;
+    // IF_NZ goto asm_100694;
+    if(!bt) {
+        // PUSH_HL;
+        // CALL(aFunction1006d3);
+        Function1006d3();
+        // POP_HL;
+    }
 
-asm_100694:
-    LD_DE(wcd32);
+// asm_100694:
+    // LD_DE(wcd32);
+    uint8_t* de = &wram->wcd32;
 
-    return Function100697();
+    return Function100697(hl, de);
 }
 
-void Function100697(void){
-    LD_A_de;
-    AND_A_A;
-    IF_NZ goto asm_1006bb;
-    INC_DE;
-    PUSH_DE;
-    CALL(aFunction100697_asm_1006b4);
-    LD_DE(mString1006c2);
-    CALL(aPlaceString);
-    LD_H_B;
-    LD_L_C;
-    POP_DE;
-    INC_DE;
-    CALL(aFunction100697_asm_1006b4);
-    LD_DE(mString1006c6);
-    CALL(aPlaceString);
-    RET;
+static tile_t* Function100697_asm_1006b4(tile_t* hl, uint8_t* de) {
+    // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
+    // CALL(aPrintNum);
+    // RET;
+    return PrintNum_Conv2(hl, de, PRINTNUM_LEADINGZEROS | 1, 2);
+}
 
-
-asm_1006b4:
-    LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
-    CALL(aPrintNum);
-    RET;
-
-
-asm_1006bb:
-    LD_DE(mString1006ca);
-    CALL(aPlaceString);
-    RET;
-
+void Function100697(tile_t* hl, uint8_t* de){
+    // LD_A_de;
+    // AND_A_A;
+    // IF_NZ goto asm_1006bb;
+    if(*de != 0) {
+    // asm_1006bb:
+        // LD_DE(mString1006ca);
+        // CALL(aPlaceString);
+        PlaceStringSimple(U82C(String1006ca), hl);
+        // RET;
+        return;
+    }
+    // INC_DE;
+    de++;
+    // PUSH_DE;
+    // CALL(aFunction100697_asm_1006b4);
+    hl = Function100697_asm_1006b4(hl, de);
+    // LD_DE(mString1006c2);
+    struct TextPrintState st = {.de = U82C(String1006c2), .hl = hl};
+    // CALL(aPlaceString);
+    PlaceString_Conv(&st, st.hl);
+    // LD_H_B;
+    // LD_L_C;
+    // POP_DE;
+    // INC_DE;
+    de++;
+    // CALL(aFunction100697_asm_1006b4);
+    hl = Function100697_asm_1006b4(st.bc, de);
+    // LD_DE(mString1006c6);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(String1006c6), hl);
+    // RET;
 }
 
 const char String1006c2[] = " min. @";          // "ふん\u3000@"
@@ -6054,8 +6070,7 @@ void Function10202c(void){
     Function101ee4(0x0d); // CALL TIME
     // hlcoord(4, 4, wTilemap);
     // CALL(aFunction100681);
-    //  TODO: Convert Function100681
-    // Function100681();
+    Function100681(coord(4, 4, wram->wTilemap));
     // RET;
 }
 

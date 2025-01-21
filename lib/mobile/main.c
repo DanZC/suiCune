@@ -1524,7 +1524,7 @@ void Function110615(uint8_t a){
         // LD_L_A;
         // LD_DE(0x0007);
         // ADD_HL_DE;
-        hl = gMobile_wc876 + 0x0007;
+        hl = gMobile_wc876;
         // LD_DE(wc8ff);
         uint8_t* de = wram->wc8ff;
 
@@ -1536,7 +1536,7 @@ void Function110615(uint8_t a){
             *de = a;
             // CP_A(0x2f);
             // IF_Z goto asm_1106da;
-            if(a == 0x2f)
+            if(a == '/')
                 break;
             // INC_DE;
             de++;
@@ -1561,6 +1561,7 @@ void Function110615(uint8_t a){
         // LD_B(0x40);
         b = 0x40;
         // JP(mFunction110615_asm_110631);
+        printf("DNS Query: %s %s\n", (const char*)wram->wc8ff, (const char*)gMobile_wc876 + 0x0007);
     }
     else {
         // RET;
@@ -1601,7 +1602,7 @@ void Function110615(uint8_t a){
     // PUSH_DE;
     char* de2 = de;
     // INC_DE;
-    de++;
+    de2++;
     // LD_A_B;
     // LD_BC(0);
     uint16_t bc = 0;
@@ -3199,7 +3200,7 @@ void Function110f07(void){
     if(hl != NULL) {
         // XOR_A_A;
         // LD_hl_A;
-        gMobile_wc833_wc834 = NULL;
+        *hl = 0;
     }
 
 // asm_110f12:
@@ -3223,7 +3224,7 @@ void Function110f07(void){
         return Function110615(0x2);
     }
 
-asm_110f28:
+// asm_110f28:
     // LD_A(0x2);
     // LD_addr_A(wc86e);
     wram->wc86e = 0x2;

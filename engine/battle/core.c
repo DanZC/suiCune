@@ -4400,7 +4400,6 @@ void WinTrainerBattle(void){
         // LD_C(40);
         // CALL(aDelayFrames);
         DelayFrames_Conv(40);
-        //  TODO: Convert Mobile_PrintOpponentBattleMessage
         // LD_C(0x4);  // win
         // FARCALL(aMobile_PrintOpponentBattleMessage);
         Mobile_PrintOpponentBattleMessage(0x4);
@@ -5365,7 +5364,6 @@ void LostBattle(void){
                 // CALL(aDelayFrames);
                 DelayFrames_Conv(40);
 
-                //  TODO: Print Mobile battle text
                 // LD_C(0x3);  // lost
                 // FARCALL(aMobile_PrintOpponentBattleMessage);
                 Mobile_PrintOpponentBattleMessage(0x3);

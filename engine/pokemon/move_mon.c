@@ -4323,7 +4323,7 @@ uint8_t GivePoke_Conv(uint8_t b, const char* nickname, const char* otName){
         // IF_C goto skip_nickname;
         if(GiveANickname_YesNo()) {
             // CALL(aInitNickname);
-            InitNickname_Conv(wram->wStringBuffer1);
+            InitNickname_Conv(de);
         }
     }
     else {

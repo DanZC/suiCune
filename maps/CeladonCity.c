@@ -190,7 +190,7 @@ const txt_cmd_s CeladonCityPoliwrathText[] = {
         t_done )
 };
 const txt_cmd_s CeladonCityTeacher1Text[] = {
-#ifdef _CRYSTAL_AU
+#if defined(_CRYSTAL_AU)
     text_start("I lost at the"
         t_line "machines."
         t_done )
@@ -299,7 +299,7 @@ const txt_cmd_s CeladonCityMansionSignText[] = {
         t_done )
 };
 const txt_cmd_s CeladonCityGameCornerSignText[] = {
-#ifdef _CRYSTAL_AU
+#if defined(_CRYSTAL_AU)
     text_start("The Game Area for"
         t_line "Grown-ups--CELADON"
         t_cont "GAME CORNER"
