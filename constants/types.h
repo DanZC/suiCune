@@ -19,11 +19,17 @@ typedef struct { uint8_t a; uint8_t b; } u8_pair_s;
 
 #define u8_pair(_a, _b) (u8_pair_s){.a = _a, .b = _b}
 
+typedef struct { uint8_t a; uint8_t b; bool flag; } u8_pair_flag_s;
+#define u8_pair_flag(_a, _b, _flag) (u8_pair_flag_s){.a = _a, .b = _b, .flag = _flag}
+
 typedef struct { uint32_t a; bool flag; }  u32_flag_s;
 #define u32_flag(_a, _flag) (u32_flag_s){.a = _a, .flag = _flag}
 
 typedef struct { int a; bool flag; }  int_flag_s;
 #define int_flag(_a, _flag) (int_flag_s){.a = _a, .flag = _flag}
+
+typedef struct { uint16_t a; uint16_t b; } u16_pair_s;
+#define u16_pair(_a, _b) (u16_pair_s){.a = _a, .b = _b}
 
 typedef struct U8PtrPair {
     uint8_t* hl;

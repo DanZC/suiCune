@@ -926,6 +926,26 @@ struct wram_s
                         uint8_t wLinkReceivedMailEnd;
                     };
                     struct {
+                        // ds 242
+                        uint8_t skip_37_2[242];
+                        // buffer for the EZChat word selection menu containing the steps to scroll up
+                        uint8_t wEZChatScrollBufferIndex;
+                        uint8_t wEZChatScrollBufferUsed;
+                        uint8_t wEZChatScrollBuffer[0x100];
+                        // union wEZChatScrollBufferEnd::
+
+                        // sprite buffer for mobile word selection
+                        // max is a box for 9 characters, with a byte for the size and (9 - 1 + 2) oam entries below and above it
+                        // 10 characters is a special case, since there is a limit to how many sprites can be shown per scanline
+                        // union wMobileBoxSpriteBuffer::
+                        uint8_t wMobileBoxSpriteBufferSize;
+                        uint8_t wMobileBoxSpriteBufferData[((9 - 1 + 2) * 2) * 4];
+                        uint8_t wMobileBoxSpritePositionDataTotal;
+                        uint8_t wMobileBoxSpritePositionData[2 * EASY_CHAT_MESSAGE_WORD_COUNT];
+                        uint8_t wMobileBoxSpriteLoadedIndex;
+                        // union wMobileBoxSpriteBufferEnd::
+                    };
+                    struct {
                         // WRAM0
                         // mystery gift data
                         uint8_t wMysteryGiftStaging[80];
@@ -1221,16 +1241,42 @@ struct wram_s
                     };
                     struct {
                         // more mobile data
-                        uint8_t wcd20;
-                        uint8_t wcd21;
-                        uint8_t wcd22;
-                        uint8_t wcd23;
-                        uint8_t wcd24;
-                        uint8_t wMobileCommsJumptableIndex;
-                        uint8_t wcd26; // wMobileCommsMenuJumptableIndex
+                        union {
+                            uint8_t wcd20;
+                            uint8_t wEZChatSelection;
+                        };
+                        union {
+                            uint8_t wcd21;
+                            uint8_t wEZChatCategorySelection;
+                        };
+                        union {
+                            uint8_t wcd22;
+                            uint8_t wEZChatSortedSelection;
+                        };
+                        union {
+                            uint8_t wcd23;
+                            uint8_t wEZChatBlinkingMask;
+                        };
+                        union {
+                            uint8_t wcd24;
+                            uint8_t wEZChatSpritesMask;
+                        };
+                        union {
+                            uint8_t wMobileCommsJumptableIndex;
+                            uint8_t wEZChatWordSelection;
+                        };
+                        union {
+                            uint8_t wcd26; // wMobileCommsMenuJumptableIndex
+                            uint8_t wEZChatPageOffset;
+                        };
                         uint8_t wcd27;
-                        uint8_t wcd28; // wMobileCommsBackupJumptableIndex
-                        uint8_t wcd29;
+                        union {
+                            struct {
+                                uint8_t wcd28; // wMobileCommsBackupJumptableIndex
+                                uint8_t wcd29;
+                            };
+                            uint8_t wEZChatLoadedItems[2];
+                        };
                         union {
                             uint8_t wMobileMonSpecies;
                             uint8_t wcd2a;
@@ -1238,6 +1284,9 @@ struct wram_s
                         union {
                             struct {
                                 uint8_t wTempOddEggNickname[MON_NAME_LENGTH];
+                            };
+                            struct {
+                                uint8_t wEZChatCategoryMode;
                             };
                             struct {
                                 uint8_t wcd2b;
@@ -1269,6 +1318,20 @@ struct wram_s
                                 uint8_t wcd3f[1];
                                 uint8_t wcd40[1];
                                 uint8_t wcd41[1];
+                            };
+                            // format:
+                            //	db WHICH_WORD
+                            //	db CATEGORY
+                            union {
+                                struct {
+                                    u8_pair_s wEZChatWord1;
+                                    u8_pair_s wEZChatWord2;
+                                    u8_pair_s wEZChatWord3;
+                                    u8_pair_s wEZChatWord4;
+                                    u8_pair_s wEZChatWord5;
+                                    u8_pair_s wEZChatWord6;
+                                };
+                                u8_pair_s wEZChatWord[6];
                             };
                         };
                         uint8_t wcd42;

@@ -649,6 +649,61 @@ static const uint8_t OAMData_EZChatCursor7[] = {
     dbsprite(  0,  1,  0,  0, 0x35, 0),
 };
 
+// wider cursor in the menu screen
+static const uint8_t OAMData_EZChatCursor8[] = {
+    12,
+    dbsprite(  0,  0,  0,  0, 0x30, 0),
+    dbsprite(  0,  0,  1,  0, 0x31, 0),
+    dbsprite(  0,  0,  2,  0, 0x31, 0),
+    //dbsprite(  0,  0,  3,  0, 0x31, 0),
+    //dbsprite(  0,  0,  4,  0, 0x31, 0),
+    //dbsprite(  0,  0,  5,  0, 0x31, 0),
+    dbsprite(  0,  0,  6,  0, 0x31, 0),
+    dbsprite(  0,  0,  7,  0, 0x31, 0),
+    dbsprite(  0,  0,  8,  0, 0x32, 0),
+    dbsprite(  1,  0,  0,  0, 0x33, 0),
+    dbsprite(  1,  0,  1,  0, 0x34, 0),
+    dbsprite(  1,  0,  2,  0, 0x34, 0),
+    //dbsprite(  1,  0,  3,  0, 0x34, 0),
+    //dbsprite(  1,  0,  4,  0, 0x34, 0),
+    //dbsprite(  1,  0,  5,  0, 0x34, 0),
+    dbsprite(  1,  0,  6,  0, 0x34, 0),
+    dbsprite(  1,  0,  7,  0, 0x34, 0),
+    dbsprite(  1,  0,  8,  0, 0x35, 0),
+};
+
+// slightly shorter cursor
+static const uint8_t OAMData_EZChatCursor9[] = {
+    9,
+    dbsprite(  0,  0,  0,  0, 0x30, 0),
+    dbsprite(  0,  0,  1,  0, 0x31, 0),
+    dbsprite(  0,  0,  2,  0, 0x31, 0),
+    dbsprite(  0,  0,  3,  0, 0x31, 0),
+    dbsprite(  0,  0,  4,  0, 0x32, 0),
+    dbsprite(  1,  0,  0,  0, 0x33, 0),
+    dbsprite(  1,  0,  1,  0, 0x34, 0),
+//  dbsprite(  1,  0,  2,  0, 0x34, 0),
+    dbsprite(  1,  0,  3,  0, 0x34, 0),
+    dbsprite(  1,  0,  4,  0, 0x35, 0),
+};
+
+// cursor for 'other'
+static const uint8_t OAMData_EZChatCursor10[] = {
+    12,
+    dbsprite( -1,  7,  0,  0, 0x30, 0),
+    dbsprite( -1,  0,  1,  0, 0x34, 0),
+    dbsprite( -1,  0,  2,  0, 0x34, 0),
+    dbsprite( -1,  0,  3,  0, 0x34, 0),
+    dbsprite( -1,  0,  4,  0, 0x34, 0),
+    dbsprite( -1,  7,  5,  0, 0x32, 0),
+    dbsprite(  0,  0,  0,  0, 0x33, 0),
+    dbsprite(  0,  7,  1,  0, 0x31, 0),
+    dbsprite(  0,  7,  2,  0, 0x31, 0),
+    dbsprite(  0,  7,  3,  0, 0x31, 0),
+    dbsprite(  0,  7,  4,  0, 0x31, 0),
+    dbsprite(  0,  0,  5,  0, 0x35, 0),
+};
+
 static const uint8_t OAMData_BlueWalk[] = {
     4,
     dbsprite( -1, -1,  0,  0, 0x00, PAL_OW_BLUE),
@@ -1204,5 +1259,9 @@ const struct OAMData SpriteAnimOAMData[] = {
     [SPRITE_ANIM_OAMSET_GAMEFREAK_LOGO_9]           = {0x08, OAMData_GameFreakLogo4_11       }, // SPRITE_ANIM_OAMSET_GAMEFREAK_LOGO_9
     [SPRITE_ANIM_OAMSET_GAMEFREAK_LOGO_10]          = {0x04, OAMData_GameFreakLogo4_11       }, // SPRITE_ANIM_OAMSET_GAMEFREAK_LOGO_10
     [SPRITE_ANIM_OAMSET_GAMEFREAK_LOGO_11]          = {0x00, OAMData_GameFreakLogo4_11       }, // SPRITE_ANIM_OAMSET_GAMEFREAK_LOGO_11
+    [SPRITE_ANIM_OAMSET_EZCHAT_CURSOR_8]            = {0x00, OAMData_EZChatCursor8           }, // SPRITE_ANIM_OAMSET_EZCHAT_CURSOR_8
+    [SPRITE_ANIM_OAMSET_EZCHAT_CURSOR_9]            = {0x00, OAMData_EZChatCursor9           }, // SPRITE_ANIM_OAMSET_EZCHAT_CURSOR_9
+    [SPRITE_ANIM_OAMSET_EZCHAT_CURSOR_10]           = {0x00, OAMData_EZChatCursor10          }, // SPRITE_ANIM_OAMSET_EZCHAT_CURSOR_10
+    [SPRITE_ANIM_OAMSET_EZCHAT_CURSOR_CUSTOM_BOX]   = {0x00, wram_ptr(wLinkData) + 500       }, // SPRITE_ANIM_OAMSET_EZCHAT_CURSOR_CUSTOM_BOX
 };
 static_assert(lengthof(SpriteAnimOAMData) == NUM_SPRITE_ANIM_OAMSETS, "");

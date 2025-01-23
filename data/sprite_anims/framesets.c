@@ -368,6 +368,26 @@ static const uint8_t Frameset_EZChatCursor7[] = {
     endanim
 };
 
+static const uint8_t Frameset_EZChatCursor8[] = {
+	frame(SPRITE_ANIM_OAMSET_EZCHAT_CURSOR_8,  2),
+	endanim
+};
+
+static const uint8_t Frameset_EZChatCursor9[] = {
+	frame(SPRITE_ANIM_OAMSET_EZCHAT_CURSOR_9,  2),
+	endanim
+};
+
+static const uint8_t Frameset_EZChatCursor10[] = {
+	frame(SPRITE_ANIM_OAMSET_EZCHAT_CURSOR_10,  2),
+	endanim
+};
+
+static const uint8_t Frameset_EZChatCursorCustomBox[] = {
+	frame(SPRITE_ANIM_OAMSET_EZCHAT_CURSOR_CUSTOM_BOX,  2),
+	endanim
+};
+
 static const uint8_t Frameset_MobileTradeSentBall[] = {
     frame(SPRITE_ANIM_OAMSET_TRADE_POOF_1,  3),
     frame(SPRITE_ANIM_OAMSET_TRADE_POOF_2,  3),
@@ -583,5 +603,9 @@ const uint8_t* const SpriteAnimFrameData[] = {
     [SPRITE_ANIM_FRAMESET_INTRO_UNOWN_F]                = Frameset_IntroUnownF,
     [SPRITE_ANIM_FRAMESET_CELEBI_LEFT]                  = Frameset_CelebiLeft,
     [SPRITE_ANIM_FRAMESET_CELEBI_RIGHT]                 = Frameset_CelebiRight,
+    [SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_8]              = Frameset_EZChatCursor8,
+    [SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_9]              = Frameset_EZChatCursor9,
+    [SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_10]             = Frameset_EZChatCursor10,
+    [SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_CUSTOM_BOX]     = Frameset_EZChatCursorCustomBox,
 };
 static_assert(lengthof(SpriteAnimFrameData) == NUM_SPRITE_ANIM_FRAMESETS, "");
