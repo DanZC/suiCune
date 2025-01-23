@@ -678,6 +678,7 @@ void BattleTowerRoomMenu_Cleanup(void){
     // LDH_addr_A(hVBlank);
     hram->hVBlank = 0;
     // CALL(aNormalSpeed);
+    NormalSpeed();
     // XOR_A_A;
     // LDH_addr_A(rIF);
     gb_write(rIF, 0x0);
