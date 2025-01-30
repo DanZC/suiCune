@@ -2,6 +2,8 @@
 #include "mail.h"
 #include "mail_2.h"
 #include "party_menu.h"
+#include "bills_pc_top.h"
+#include "move_mon.h"
 #include "../../home/sram.h"
 #include "../../home/copy.h"
 #include "../../home/menu.h"
@@ -257,6 +259,109 @@ l_return:
     LD_addr_A(wScriptVar);
     RET;
 
+}
+
+void CheckPokeMail_Conv(const char* message){
+    // PUSH_BC;
+    // PUSH_DE;
+    // FARCALL(aSelectMonFromParty);
+    u8_flag_s res = SelectMonFromParty();
+    // LD_A(POKEMAIL_REFUSED);
+    // IF_C goto pop_return;
+    if(res.flag) {
+        wram->wScriptVar = POKEMAIL_REFUSED;
+        return;
+    }
+
+    // LD_A_addr(wCurPartyMon);
+    // LD_HL(wPartyMon1Item);
+    // LD_BC(PARTYMON_STRUCT_LENGTH);
+    // CALL(aAddNTimes);
+    // LD_D_hl;
+    // FARCALL(aItemIsMail);
+    // LD_A(POKEMAIL_NO_MAIL);
+    // IF_NC goto pop_return;
+    if(!ItemIsMail_Conv(wram->wPartyMon[wram->wCurPartyMon].mon.item)) {
+        wram->wScriptVar = POKEMAIL_NO_MAIL;
+        return;
+    }
+
+    // LD_A(BANK(sPartyMail));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asPartyMail));
+    // LD_A_addr(wCurPartyMon);
+    // LD_HL(sPartyMail);
+    // LD_BC(MAIL_STRUCT_LENGTH);
+    // CALL(aAddNTimes);
+    struct MailMsg* de = (struct MailMsg*)GBToRAMAddr(sPartyMail + MAIL_STRUCT_LENGTH * wram->wCurPartyMon);
+    // LD_D_H;
+    // LD_E_L;
+    uint8_t* tmsg = U82C(message);
+    uint8_t* smsg = de->message;
+    // POP_HL;
+    // POP_BC;
+
+//  Compare the mail message, byte for byte, with the expected message.
+    // LD_A(MAIL_MSG_LENGTH);
+    // LD_addr_A(wTempByteValue);
+    uint8_t a = MAIL_MSG_LENGTH;
+
+    do {
+    // loop:
+        // LD_A_de;
+        // LD_C_A;
+        uint8_t c = *tmsg;
+        // LD_A_B;
+        // CALL(aGetFarByte);
+        uint8_t b = *smsg;
+        // CP_A(0x50);
+        // IF_Z goto done;
+        if(b == 0x50)
+            break;
+        // CP_A_C;
+        // LD_A(POKEMAIL_WRONG_MAIL);
+        // IF_NZ goto close_sram_return;
+        if(b != c) {
+            CloseSRAM_Conv();
+            wram->wScriptVar = POKEMAIL_WRONG_MAIL;
+            return;
+        }
+        // INC_HL;
+        // INC_DE;
+        tmsg++, smsg++;
+        // LD_A_addr(wTempByteValue);
+        // DEC_A;
+        // LD_addr_A(wTempByteValue);
+        // IF_NZ goto loop;
+    } while(--a != 0);
+
+// done:
+    // FARCALL(aCheckCurPartyMonFainted);
+    // LD_A(POKEMAIL_LAST_MON);
+    // IF_C goto close_sram_return;
+    if(CheckCurPartyMonFainted_Conv()) {
+        CloseSRAM_Conv();
+        wram->wScriptVar = POKEMAIL_LAST_MON;
+        return;
+    }
+    // XOR_A_A;  // REMOVE_PARTY
+    // LD_addr_A(wPokemonWithdrawDepositParameter);
+    // FARCALL(aRemoveMonFromPartyOrBox);
+    RemoveMonFromPartyOrBox_Conv(REMOVE_PARTY);
+    // LD_A(POKEMAIL_CORRECT);
+
+// close_sram_return:
+    // CALL(aCloseSRAM);
+    // goto l_return;
+
+// pop_return:
+    // POP_DE;
+    // POP_BC;
+
+// l_return:
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = POKEMAIL_CORRECT;
+    // RET;
 }
 
 void GivePokeMail(void){

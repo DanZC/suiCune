@@ -4,6 +4,7 @@ void ReadMailMessage(uint8_t b);
 void MoveMailFromPCToParty(uint8_t b);
 uint8_t GetMailboxCount(void);
 void CheckPokeMail(void);
+void CheckPokeMail_Conv(const char* message);
 void GivePokeMail(void);
 void GivePokeMail_Conv(const struct Pokemail* mail);
 void BackupPartyMonMail(void);

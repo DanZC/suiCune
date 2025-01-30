@@ -1263,12 +1263,22 @@ void MobileInit(void) {
     mobile_def_sock_close(gMobileAdapter, socket_impl_close);
     mobile_def_sock_connect(gMobileAdapter, socket_impl_connect);
     mobile_def_sock_listen(gMobileAdapter, socket_impl_listen);
+    mobile_def_sock_accept(gMobileAdapter, socket_impl_accept);
+    mobile_def_sock_send(gMobileAdapter, socket_impl_send);
     mobile_def_sock_recv(gMobileAdapter, socket_impl_recv);
     mobile_def_time_latch(gMobileAdapter, MobileTimeLatch);
     mobile_def_time_check_ms(gMobileAdapter, MobileTimeCheckMs);
 
     mobile_config_load(gMobileAdapter);
     mobile_config_set_device(gMobileAdapter, MOBILE_ADAPTER_BLUE, true);
+    struct mobile_addr dns = {.type = MOBILE_ADDRTYPE_IPV4};
+    dns._addr4.type = MOBILE_ADDRTYPE_IPV4;
+    dns._addr4.host[0] = 127;
+    dns._addr4.host[1] = 0;
+    dns._addr4.host[2] = 0;
+    dns._addr4.host[3] = 1;
+    dns._addr4.port = MOBILE_DNS_PORT;
+    mobile_config_set_dns(gMobileAdapter, &dns, MOBILE_DNS1);
     mobile_config_set_p2p_port(gMobileAdapter, MOBILE_PORT);
     mobile_config_save(gMobileAdapter);
 

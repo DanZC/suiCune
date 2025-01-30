@@ -382,7 +382,7 @@ void BattleTurn(void){
             StartMobileInactivityTimer();
             // FARCALL(aFunction100dd8);
             // JP_C (mBattleTurn_quit);
-            if(SafeCallGBAutoRet(aFunction100dd8).f_bits.c)
+            if(Function100dd8())
                 goto quit;
         }
 

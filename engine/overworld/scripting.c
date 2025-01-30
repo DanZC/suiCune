@@ -4131,6 +4131,7 @@ void Script_checkpokemail(void){
 }
 
 void Script_checkpokemail_Conv(script_s* s, const char* text){
+    (void)s;
     // CALL(aGetScriptByte);
     // LD_E_A;
     // CALL(aGetScriptByte);
@@ -4138,9 +4139,8 @@ void Script_checkpokemail_Conv(script_s* s, const char* text){
     // LD_A_addr(wScriptBank);
     // LD_B_A;
     // FARCALL(aCheckPokeMail);
-    (void)s, (void)text;
+    CheckPokeMail_Conv(text);
     // RET;
-    assert(0 && "TODO: Implement checkpokemail.");
 }
 
 void Script_giveitem(void){
