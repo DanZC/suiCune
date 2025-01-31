@@ -1445,7 +1445,7 @@ struct wram_s
                 union {
                     struct {
                         // addresses dealing with serial comms
-                        uint8_t skip_47[1];
+                        uint8_t skip_47[1]; // wAttrmapEnd
                         uint8_t wcf42;
                         uint8_t skip_48[1];
                         uint8_t wcf44;
@@ -1453,6 +1453,9 @@ struct wram_s
                     };
                     struct {
                         uint8_t wTileAnimBuffer[1 * LEN_2BPP_TILE];
+                    };
+                    struct {
+                        uint8_t wAttrmapEnd;
                     };
                 };
                 // link data

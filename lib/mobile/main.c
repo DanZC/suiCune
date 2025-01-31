@@ -3670,7 +3670,7 @@ uint16_t Function1111d7(const char* hl){
 
 // asm_1111ee:
     // LD_BC(-1);
-    uint16_t bc = 0;
+    uint16_t bc = -1;
     uint8_t a;
 
     do {
@@ -5896,17 +5896,19 @@ void Function111c17(void){
     // LD_A_hli;
     // LD_E_A;
     // LD_D_hl;
+    uint16_t de = (wram->wc82b) | (wram->wc82c << 8);
     // LD_A_addr(wMobileSDK_ReceivePacketBuffer + 3);
     // DEC_A;
     // JP_Z (mFunction111d07);
     if(wram->wMobileSDK_ReceivePacketBuffer[3] - 1 == 0)
         return Function111d07();
     // LD_C_A;
+    uint8_t c = wram->wMobileSDK_ReceivePacketBuffer[3] - 1;
     // LD_A_addr(wc822);
     // BIT_A(4);
     // JP_Z (mFunction111cc2);
     if(!bit_test(wram->wc822, 4))
-        return Function111cc2();
+        return Function111cc2(&wram->wc82b, de, c);
     // LD_A_addr(wc992);
     // OR_A_A;
     // IF_NZ goto asm_111c89;
@@ -6028,56 +6030,72 @@ void Function111c17(void){
 
 }
 
-void Function111cc2(void){
-    XOR_A_A;
-    CP_A_D;
-    IF_NZ goto asm_111cda;
-    LD_A_C;
-    CP_A_E;
-    IF_C goto asm_111cda;
-    IF_Z goto asm_111cda;
-    LD_A_addr(wc821);
-    SET_A(2);
-    LD_addr_A(wc821);
-    LD_A_C;
-    SUB_A_E;
-    LD_C_E;
-    LD_E_A;
-    goto asm_111ce1;
+void Function111cc2(uint8_t* hl, uint16_t de, uint8_t c){
+    // XOR_A_A;
+    // CP_A_D;
+    // IF_NZ goto asm_111cda;
+    // LD_A_C;
+    // CP_A_E;
+    // IF_C goto asm_111cda;
+    // IF_Z goto asm_111cda;
+    if(c > de) {
+        // LD_A_addr(wc821);
+        // SET_A(2);
+        // LD_addr_A(wc821);
+        bit_set(wram->wc821, 2);
+        // LD_A_C;
+        // SUB_A_E;
+        // LD_C_E;
+        c = LOW(de);
+        // LD_E_A;
+        de = (c - de);
+        // goto asm_111ce1;
+    }
+    else {
+    // asm_111cda:
+        // LD_A_E;
+        // SUB_A_C;
+        // LD_E_A;
+        // LD_A_D;
+        // SBC_A(0x0);
+        // LD_D_A;
+        de -= c;
+    }
 
-asm_111cda:
-    LD_A_E;
-    SUB_A_C;
-    LD_E_A;
-    LD_A_D;
-    SBC_A(0x0);
-    LD_D_A;
-
-asm_111ce1:
-    LD_A_D;
-    LD_hld_A;
-    LD_hl_E;
-    LD_A_addr(wc829);
-    LD_E_A;
-    LD_A_addr(wc82a);
-    LD_D_A;
-    LD_HL(wMobileSDK_ReceivePacketBuffer + 5);
-    LD_A_C;
-    OR_A_A;
-    JR_Z (mFunction111d07);
-    LD_B_A;
-    CALL(aMobileSDK_CopyBytes);
-    LD_HL(wc829);
-    LD_A_E;
-    LD_hli_A;
-    LD_hl_D;
-    LD_DE(0x3);
-    ADD_HL_DE;
-    LD_A_hl;
-    ADD_A_C;
-    LD_hli_A;
-    JR_NC (mFunction111d07);
-    INC_hl;
+// asm_111ce1:
+    // LD_A_D;
+    // LD_hld_A;
+    hl[1] = HIGH(de);
+    // LD_hl_E;
+    hl[0] = LOW(de);
+    // LD_A_addr(wc829);
+    // LD_E_A;
+    // LD_A_addr(wc82a);
+    // LD_D_A;
+    // LD_HL(wMobileSDK_ReceivePacketBuffer + 5);
+    // LD_A_C;
+    // OR_A_A;
+    // JR_Z (mFunction111d07);
+    if(c != 0) {
+        // LD_B_A;
+        // CALL(aMobileSDK_CopyBytes);
+        // LD_HL(wc829);
+        // LD_A_E;
+        // LD_hli_A;
+        // LD_hl_D;
+        gMobileReceiveBuffer_Destination = MobileSDK_CopyBytes(gMobileReceiveBuffer_Destination, wram->wMobileSDK_ReceivePacketBuffer + 5, c);
+        // LD_DE(0x3);
+        // ADD_HL_DE;
+        uint16_t de3 = wram->wc82d | (wram->wc82e << 8);
+        // LD_A_hl;
+        // ADD_A_C;
+        // LD_hli_A;
+        de3 += c;
+        wram->wc82d = LOW(de);
+        wram->wc82e = HIGH(de);
+        // JR_NC (mFunction111d07);
+        // INC_hl;
+    }
 
     return Function111d07();
 }
@@ -6644,6 +6662,10 @@ bool PacketSendBytes(const uint8_t* bytes, uint16_t size, uint8_t b){
     return false;
 }
 
+// Calculates the checksum of b bytes backwards starting at de.
+// Stores the calculated checksum at de and de + 1 and the
+// footer at de + 2 and de + 3.
+// Returns the total size of the data plus the checksum and footer.
 uint16_t Function111f63(void* de_, uint8_t b){
     // PUSH_DE;
     uint8_t* de = de_;
@@ -9350,7 +9372,8 @@ void Function112d33(uint8_t* hl, uint8_t a){
     if(a == 0x1) {
     // asm_112d87:
         // CALL(aFunction113482);
-        Function113482();
+        if(Function113482())
+            return;
         // LD_DE(wMobileSDK_PacketBuffer);
         // LD_HL(mMobilePacket_TransferData);
         // LD_B(0x6);
@@ -10780,7 +10803,8 @@ const char Unknown_113372[] = "Content-Length: 0\r\n"; //db ['"Content-Length: 0
 
 void Function113386(void){
     // CALL(aFunction113482);
-    Function113482();
+    if(Function113482())
+        return;
     // LD_A(0x1);
     // LD_addr_A(wc86b);
     wram->wc86b = 0x1;
@@ -10985,7 +11009,7 @@ void Function1133fe(void){
     // RET;
 }
 
-void Function113482(void){
+bool Function113482(void){
     // LD_HL(wc87f);
     // LD_A_hld;
     // LD_B_A;
@@ -10996,7 +11020,7 @@ void Function113482(void){
     // OR_A_C;
     // RET_Z ;
     if(bc == 0)
-        return;
+        return false;
     // POP_HL;
     // LD_HL(rSC);
     // ADD_HL_BC;
@@ -11049,6 +11073,7 @@ void Function113482(void){
     // LD_A(0x95);
     // JP(mFunction111f02);
     Function111f02(wram->wMobileSDK_PacketBuffer, size, MOBILE_COMMAND_TRANSFER_DATA | 0x80);
+    return true;
 }
 
 void Function1134cb(uint8_t* hl, uint8_t a){

@@ -687,8 +687,8 @@ void advance_div(uint8_t cycles) {
 }
 
 void finish_gb_cycle(void) {
-    uint8_t inst_cycles;
-    inst_cycles = 4;  // make this static to remove a dependancy on it
+    uint16_t inst_cycles;
+    inst_cycles = 2048;  // make this static to remove a dependancy on it
     /* DIV register timing */
     gb.counter.div_count += inst_cycles;
 
@@ -720,6 +720,7 @@ void finish_gb_cycle(void) {
                 /* Inform game of serial TX/RX completion. */
                 gb.gb_reg.SC &= 0x01;
                 gb.gb_reg.IF |= SERIAL_INTR;
+                MobileUpdate();
                 Serial();
                 gb.gb_reg.IF &= ~SERIAL_INTR;
             } else if (gb.gb_reg.SC & SERIAL_SC_CLOCK_SRC) {
@@ -748,7 +749,7 @@ void finish_gb_cycle(void) {
     if (gb.gb_reg.tac_enable) {
         static const uint_fast16_t TAC_CYCLES[4] = {1024, 16, 64, 256};
 
-        gb.counter.tima_count += inst_cycles * 512;
+        gb.counter.tima_count += inst_cycles / 32;
 
         // printf("Timer (%d, %d, %d, %d)\n", gb.counter.tima_count, gb.gb_reg.TIMA, TAC_CYCLES[gb.gb_reg.tac_rate], inst_cycles * 5);
         while (gb.counter.tima_count >= TAC_CYCLES[gb.gb_reg.tac_rate]) {
@@ -843,7 +844,7 @@ void finish_gb_cycle(void) {
 }
 
 void gb_draw_line(void) {
-    for(int i = 0; i < 64; ++i) {
+    for(int i = 0; i < 32; ++i) {
         finish_gb_cycle();
     }
     uint8_t pixels[160] = {0};
