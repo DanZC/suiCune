@@ -61,7 +61,7 @@ void Function115dd3(void){
     // LD_HL(wVirtualOAMSprite31);
     // LD_BC(8 * SPRITEOAMSTRUCT_LENGTH);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wVirtualOAMSprite, 8 * SPRITEOAMSTRUCT_LENGTH, 0xa0);
+    ByteFill_Conv2(wram->wVirtualOAMSprite + 31, 8 * SPRITEOAMSTRUCT_LENGTH, 0xa0);
     // CALL(aFunction115e22);
     Function115e22();
     // LD_A_addr(wc309);

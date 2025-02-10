@@ -251,7 +251,7 @@ void v_MobileAPI(mobile_api_data_s *api){
         [MOBILEAPI_13] = Function110c3c,
         [MOBILEAPI_14] = Function110c9e,
         [MOBILEAPI_15] = Function110ddd,
-        // [MOBILEAPI_16] = Function1111fe,
+        [MOBILEAPI_16] = Function1111fe,
         [MOBILEAPI_17] = Function1113fe,
         [MOBILEAPI_SETTIMER] = MobileAPI_SetTimer,
         [MOBILEAPI_19] = Function111541,
@@ -3075,6 +3075,7 @@ asm_110e86:
         if(*de != *hl3) {
         // asm_110ea2:
             // POP_HL;
+            hl3 = hl2;
             // LD_B(sizeof(HTTPDownloadURL));
             b = sizeof(HTTPDownloadURL) - 1;
             // LD_C(0x0);
@@ -3088,10 +3089,10 @@ asm_110e86:
                 // INC_DE;
                 // CP_A_hl;
                 // IF_NZ goto asm_110ecb;
-                if(*de != *hl2)
+                if(*de != *hl3)
                     goto asm_110ecb;
                 // INC_HL;
-                hl2++, de++;
+                hl3++, de++;
                 // DEC_B;
                 // IF_NZ goto asm_110eaa;
             } while(--b != 0);
@@ -3138,7 +3139,7 @@ asm_110ecb:
     wram->wMobileSDK_ReceivePacketBuffer[128] = c;
     // POP_HL;
     // CALL(aFunction1111d7);
-    uint16_t bc = Function1111d7(hl3);
+    uint16_t bc = Function1111d7(hl2);
     // LD_A_B;
     // CP_A(0x4);
     // IF_C goto asm_110ee3;
@@ -3268,7 +3269,7 @@ void Function110f07(void){
         // IF_NZ goto asm_110f8a;
         if(wram->wc995[0] == 0x99
         && wram->wc995[1] == 0x66
-        && wram->wc995[2] == 0x23) {
+        && wram->wc995[2] == MOBILE_COMMAND_OPEN_TCP_CONNECTION) {
             // LD_A(0x2);
             // LD_addr_A(wc86e);
             wram->wc86e = 0x2;
@@ -3693,384 +3694,531 @@ uint16_t Function1111d7(const char* hl){
     return bc;
 }
 
-void Function1111fe(void){
-    LD_A_addr(wc821);
-    BIT_A(2);
-    LD_A_addr(wc86a);
-    JP_NZ (mFunction1113ea);
-    CP_A(0x2);
-    JP_NZ (mFunction110226);
-    LD_A_addr(wc821);
-    BIT_A(0);
-    JP_NZ (mFunction110226);
-    LD_A_addr(wc86d);
-    OR_A_A;
-    JP_NZ (mFunction110226);
-    XOR_A_A;
-    LD_addr_A(wc989);
-    LD_addr_A(wc98a);
-    LD_addr_A(wc993);
-    PUSH_HL;
-    PUSH_DE;
-    PUSH_BC;
-    PUSH_HL;
-    for(int rept = 0; rept < 4; rept++){
-    INC_HL;
-    }
-    LD_A_hli;
-    LD_addr_A(wc833);
-    LD_A_hli;
-    LD_addr_A(wc834);
-    INC_HL;
-    INC_HL;
-    LD_A_L;
-    LD_addr_A(wc97f);
-    LD_A_H;
-    LD_addr_A(wc980);
-    DEC_HL;
-    DEC_HL;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    LD_A(0x80);
-    CP_A_L;
-    IF_NZ goto asm_111251;
-    LD_A(0xc8);
-    CP_A_H;
-    JP_Z (mFunction1113f7);
+// MobileAPI_16
+void Function1111fe(mobile_api_data_s* data){
+    // LD_A_addr(wc821);
+    // BIT_A(2);
+    // LD_A_addr(wc86a);
+    // JP_NZ (mFunction1113ea);
+    if(bit_test(wram->wc821, 2))
+        return Function1113ea(data, wram->wc86a);
+    // CP_A(0x2);
+    // JP_NZ (mFunction110226);
+    // LD_A_addr(wc821);
+    // BIT_A(0);
+    // JP_NZ (mFunction110226);
+    // LD_A_addr(wc86d);
+    // OR_A_A;
+    // JP_NZ (mFunction110226);
+    if(wram->wc86a != 0x2 || bit_test(wram->wc821, 0) || wram->wc86d != 0)
+        return Function110226();
+    // XOR_A_A;
+    // LD_addr_A(wc989);
+    wram->wc989 = 0;
+    // LD_addr_A(wc98a);
+    wram->wc98a = 0;
+    // LD_addr_A(wc993);
+    wram->wc993 = 0;
+    // PUSH_HL;
+    char* hl = data->hl;
+    // PUSH_DE;
+    // PUSH_BC;
+    // PUSH_HL;
+    char* hl2 = hl;
+    // for(int rept = 0; rept < 4; rept++){
+    // INC_HL;
+    // }
+    hl2 += 4;
+    // LD_A_hli;
+    // LD_addr_A(wc833);
+    // LD_A_hli;
+    // LD_addr_A(wc834);
+    gMobile_wc833_wc834 = GBToRAMAddr(hl2[0] | (hl2[1] << 8));
+    hl2 += 2;
+    // INC_HL;
+    // INC_HL;
+    hl2 += 2;
+    // LD_A_L;
+    // LD_addr_A(wc97f);
+    // LD_A_H;
+    // LD_addr_A(wc980);
+    gMobile_wc97f_wc980 = (uint8_t*)hl2;
+    // DEC_HL;
+    // DEC_HL;
+    hl2 -= 2;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    hl2 = GBToRAMAddr(hl2[0] | (hl2[1] << 8));
+    // LD_A(0x80);
+    // CP_A_L;
+    // IF_NZ goto asm_111251;
+    // LD_A(0xc8);
+    // CP_A_H;
+    // JP_Z (mFunction1113f7);
+    if(hl2 == wram->wc880_str)
+        return Function1113f7();
 
+// asm_111251:
+    // LD_B(lengthof(URIPrefix));
+    uint8_t b = lengthof(URIPrefix) - 1;
+    // LD_DE(mURIPrefix);
+    const char* de2 = URIPrefix;
 
-asm_111251:
-    LD_B(lengthof(URIPrefix));
-    LD_DE(mURIPrefix);
+    do {
+    // asm_111256:
+        // LD_A_de;
+        // INC_DE;
+        char ch = *(de2++);
+        // CP_A_hl;
+        // JP_NZ (mFunction1113f7);
+        if(ch != *hl2)
+            return Function1113f7();
+        // INC_HL;
+        hl2++;
+        // DEC_B;
+        // IF_NZ goto asm_111256;
+    } while(--b != 0);
+    // PUSH_HL;
+    char* hl3 = hl2;
+    // LD_B(lengthof(HTTPDownloadURL));
+    b = lengthof(HTTPDownloadURL) - 1;
+    // LD_C(0x0);
+    uint8_t c = 0x0;
+    // LD_DE(mHTTPDownloadURL);
+    de2 = HTTPDownloadURL;
 
-asm_111256:
-    LD_A_de;
-    INC_DE;
-    CP_A_hl;
-    JP_NZ (mFunction1113f7);
-    INC_HL;
-    DEC_B;
-    IF_NZ goto asm_111256;
-    PUSH_HL;
-    LD_B(lengthof(HTTPDownloadURL));
-    LD_C(0x0);
-    LD_DE(mHTTPDownloadURL);
-
-asm_111268:
-    LD_A_de;
-    INC_DE;
-    CP_A_hl;
-    IF_NZ goto asm_111275;
-    INC_HL;
-    DEC_B;
-    IF_NZ goto asm_111268;
-    POP_HL;
-    JP(mFunction1113f7);
-
+    do {
+    // asm_111268:
+        // LD_A_de;
+        // INC_DE;
+        char ch = *(de2++);
+        // CP_A_hl;
+        // IF_NZ goto asm_111275;
+        if(ch != *hl3)
+            goto asm_111275;
+        // INC_HL;
+        hl3++;
+        // DEC_B;
+        // IF_NZ goto asm_111268;
+    } while(--b != 0);
+    // POP_HL;
+    // JP(mFunction1113f7);
+    return Function1113f7();
 
 asm_111275:
-    POP_HL;
-    PUSH_HL;
-    LD_B(lengthof(HTTPRankingURL));
-    LD_C(0x0);
-    LD_DE(mHTTPRankingURL);
+    // POP_HL;
+    // PUSH_HL;
+    hl3 = hl2;
+    // LD_B(lengthof(HTTPRankingURL));
+    b = lengthof(HTTPRankingURL) - 1;
+    // LD_C(0x0);
+    c = 0x0;
+    // LD_DE(mHTTPRankingURL);
+    de2 = HTTPRankingURL;
 
-asm_11127e:
-    LD_A_de;
-    INC_DE;
-    CP_A_hl;
-    IF_NZ goto asm_11128f;
-    INC_HL;
-    DEC_B;
-    IF_NZ goto asm_11127e;
-    LD_A(0x2);
-    LD_addr_A(wc98a);
-    POP_HL;
-    goto asm_1112a0;
+    do {
+    // asm_11127e:
+        // LD_A_de;
+        // INC_DE;
+        char ch = *(de2++);
+        // CP_A_hl;
+        // IF_NZ goto asm_11128f;
+        if(ch != *hl3) {
+        // asm_11128f:
+            // POP_HL;
+            // LD_B(lengthof(HTTPUploadURL));
+            b = lengthof(HTTPUploadURL) - 1;
+            // LD_C(0x0);
+            c = 0x0;
+            // LD_DE(mHTTPUploadURL);
+            de2 = HTTPUploadURL;
 
-
-asm_11128f:
-    POP_HL;
-    LD_B(lengthof(HTTPUploadURL));
-    LD_C(0x0);
-    LD_DE(mHTTPUploadURL);
-
-asm_111297:
-    LD_A_de;
-    INC_DE;
-    CP_A_hl;
-    IF_NZ goto asm_1112cc;
-    INC_HL;
-    DEC_B;
-    IF_NZ goto asm_111297;
-
+            do {
+            // asm_111297:
+                // LD_A_de;
+                // INC_DE;
+                char ch = *(de2++);
+                // CP_A_hl;
+                // IF_NZ goto asm_1112cc;
+                if(ch != *hl2)
+                    goto asm_1112cc;
+                // INC_HL;
+                hl2++;
+                // DEC_B;
+                // IF_NZ goto asm_111297;
+            } while(--b != 0);
+            goto asm_1112a0;
+        }
+        // INC_HL;
+        hl3++;
+        // DEC_B;
+        // IF_NZ goto asm_11127e;
+    } while(--b != 0);
+    // LD_A(0x2);
+    // LD_addr_A(wc98a);
+    wram->wc98a = 0x2;
+    // POP_HL;
+    // goto asm_1112a0;
 
 asm_1112a0:
-    LD_A_hli;
-    OR_A_A;
-    IF_NZ goto asm_1112a0;
+    do {
+        // LD_A_hli;
+        // OR_A_A;
+        // IF_NZ goto asm_1112a0;
+    } while(*(hl2++) != 0);
 
-asm_1112a4:
-    LD_A_hld;
-    CP_A(0x2f);
-    IF_NZ goto asm_1112a4;
-    INC_HL;
-    INC_HL;
-    LD_A_hl;
-    CP_A(0x30);
-    IF_C goto asm_1112cc;
-    CP_A(0x3a);
-    IF_NC goto asm_1112cc;
-    LD_HL(wc97f);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    LD_C(0x12);
-    CALL(aFunction11039a);
-    JP_C (mFunction1113f7);
-    LD_C(0x12);
-    CALL(aFunction11039a);
-    JP_C (mFunction1113f7);
-    LD_C(0x1);
-
+    do {
+    // asm_1112a4:
+        // LD_A_hld;
+        // CP_A(0x2f);
+        // IF_NZ goto asm_1112a4;
+    } while(*(hl2--) != '/');
+    // INC_HL;
+    // INC_HL;
+    hl2 += 2;
+    // LD_A_hl;
+    // CP_A(0x30);
+    // IF_C goto asm_1112cc;
+    // CP_A(0x3a);
+    // IF_NC goto asm_1112cc;
+    if(hl2[0] >= '0' && hl2[0] <= '9') {
+        // LD_HL(wc97f);
+        // LD_A_hli;
+        // LD_H_hl;
+        // LD_L_A;
+        hl2 = (char*)gMobile_wc97f_wc980;
+        // LD_C(0x12);
+        // CALL(aFunction11039a);
+        // JP_C (mFunction1113f7);
+        if(Function11039a(&hl2, 0x12))
+            return Function1113f7();
+        // LD_C(0x12);
+        // CALL(aFunction11039a);
+        // JP_C (mFunction1113f7);
+        if(Function11039a(&hl2, 0x12))
+            return Function1113f7();
+        // LD_C(0x1);
+        c = 0x1;
+    }
 
 asm_1112cc:
-    LD_A_C;
-    LD_addr_A(wc98f);
-    LD_addr_A(wMobileSDK_ReceivePacketBuffer + 128);
-    POP_HL;
-    LD_DE(0x0006);
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    CALL(aFunction1111d7);
-    LD_A_B;
-    CP_A(0x4);
-    IF_C goto asm_1112eb;
-    JP_NZ (mFunction1113f8);
-    XOR_A_A;
-    OR_A_C;
-    JP_NZ (mFunction1113f8);
+    // LD_A_C;
+    // LD_addr_A(wc98f);
+    wram->wc98f = c;
+    // LD_addr_A(wMobileSDK_ReceivePacketBuffer + 128);
+    wram->wMobileSDK_ReceivePacketBuffer[128] = c;
+    // POP_HL;
+    // LD_DE(0x0006);
+    // ADD_HL_DE;
+    hl += 0x0006;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    hl2 = GBToRAMAddr(hl[0] | (hl[1] << 8));
+    // CALL(aFunction1111d7);
+    uint16_t bc2 = Function1111d7(hl2);
+    // LD_A_B;
+    // CP_A(0x4);
+    // IF_C goto asm_1112eb;
+    // JP_NZ (mFunction1113f8);
+    // XOR_A_A;
+    // OR_A_C;
+    // JP_NZ (mFunction1113f8);
+    if(bc2 > 0x400)
+        return Function1113f8();
 
-
-asm_1112eb:
-    POP_BC;
-    POP_DE;
-    POP_HL;
-    LD_A_L;
-    LD_addr_A(wc876);
-    LD_A_H;
-    LD_addr_A(wc877);
-    LD_HL(wc872);
-    LD_A_C;
-    LD_hli_A;
-    LD_A_B;
-    LD_hli_A;
-    LD_A_E;
-    LD_hli_A;
-    LD_A_D;
-    LD_hli_A;
-    INC_HL;
-    INC_HL;
-    LD_A_E;
-    LD_hli_A;
-    LD_A_D;
-    LD_hl_A;
-    CALL(aFunction111335);
-    LD_HL(wc876);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    LD_A_hli;
-    LD_addr_A(wc9aa);
-    LD_A_hli;
-    LD_addr_A(wc9ab);
-    LD_A_hli;
-    LD_addr_A(wc9ac);
-    LD_A_hli;
-    LD_addr_A(wc9ad);
-    INC_HL;
-    INC_HL;
-    LD_A_hli;
-    LD_addr_A(wc876);
-    LD_A_hl;
-    LD_addr_A(wc877);
-    LD_A_addr(wc98f);
-    XOR_A(0x1);
-    LD_addr_A(wc994);
-    JP(mFunction110f07);
-
+// asm_1112eb:
+    // POP_BC;
+    // POP_DE;
+    // POP_HL;
+    // LD_A_L;
+    // LD_addr_A(wc876);
+    // LD_A_H;
+    // LD_addr_A(wc877);
+    gMobile_wc876 = data->hl;
+    // LD_HL(wc872);
+    // LD_A_C;
+    // LD_hli_A;
+    wram->wc872 = LOW(data->bc);
+    // LD_A_B;
+    // LD_hli_A;
+    wram->wc873 = HIGH(data->bc);
+    // LD_A_E;
+    // LD_hli_A;
+    // LD_A_D;
+    // LD_hli_A;
+    gMobile_wc874_wc875 = data->de;
+    // INC_HL;
+    // INC_HL;
+    // LD_A_E;
+    // LD_hli_A;
+    // LD_A_D;
+    // LD_hl_A;
+    gMobile_wc878 = data->de;
+    // CALL(aFunction111335);
+    Function111335();
+    // LD_HL(wc876);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    uint8_t* hl4 = gMobile_wc876;
+    // LD_A_hli;
+    // LD_addr_A(wc9aa);
+    wram->wc9aa = hl4[0];
+    // LD_A_hli;
+    // LD_addr_A(wc9ab);
+    wram->wc9ab = hl4[1];
+    // LD_A_hli;
+    // LD_addr_A(wc9ac);
+    wram->wc9ac = hl4[2];
+    // LD_A_hli;
+    // LD_addr_A(wc9ad);
+    wram->wc9ad = hl4[3];
+    // INC_HL;
+    // INC_HL;
+    // LD_A_hli;
+    // LD_addr_A(wc876);
+    // LD_A_hl;
+    // LD_addr_A(wc877);
+    gMobile_wc876 = GBToRAMAddr(hl4[6] | (hl4[7] << 8));
+    // LD_A_addr(wc98f);
+    // XOR_A(0x1);
+    // LD_addr_A(wc994);
+    wram->wc994 = wram->wc98f ^ 0x1;
+    // JP(mFunction110f07);
+    return Function110f07();
 }
 
 void Function111335(void){
-    LD_HL(wc876);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    INC_HL;
-    INC_HL;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    XOR_A_A;
-    LD_addr_A(wc8c9);
+    // LD_HL(wc876);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    uint8_t* hl2 = gMobile_wc876;
+    // INC_HL;
+    // INC_HL;
+    hl2 += 2;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    uint16_t hl = hl2[0] | (hl2[1] << 8);
+    // XOR_A_A;
+    uint8_t a = 0;
+    // LD_addr_A(wc8c9);
+    wram->wc8c9 = a;
 
-asm_111344:
-    LD_DE(0x8ad0);
-    ADD_HL_DE;
-    IF_NC goto asm_11134e;
-    ADD_A(0x3);
-    goto asm_111344;
+    while(hl + 0x8ad0 < 0x10000) {
+    // asm_111344:
+        // LD_DE(0x8ad0);
+        // ADD_HL_DE;
+        // IF_NC goto asm_11134e;
+        hl += 0x8ad0;
+        // ADD_A(0x3);
+        a += 0x3;
+        // goto asm_111344;
+    }
 
+    hl += 0x8ad0;
 
-asm_11134e:
-    LD_DE(0x7530);
-    ADD_HL_DE;
+// asm_11134e:
+    // LD_DE(0x7530);
+    // ADD_HL_DE;
+    hl += 0x7530;
 
-asm_111352:
-    LD_DE(0xd8f0);
-    ADD_HL_DE;
-    IF_NC goto asm_11135b;
-    INC_A;
-    goto asm_111352;
+    while(hl + 0xd8f0 < 0x10000) {
+    // asm_111352:
+        // LD_DE(0xd8f0);
+        // ADD_HL_DE;
+        // IF_NC goto asm_11135b;
+        hl += 0xd8f0;
+        // INC_A;
+        a++;
+        // goto asm_111352;
+    }
+    hl += 0xd8f0;
 
+// asm_11135b:
+    // LD_DE(0x2710);
+    // ADD_HL_DE;
+    hl += 0x2710;
+    // LD_addr_A(wc8c6);
+    wram->wc8c6 = a;
+    // XOR_A_A;
+    a = 0;
 
-asm_11135b:
-    LD_DE(0x2710);
-    ADD_HL_DE;
-    LD_addr_A(wc8c6);
-    XOR_A_A;
+    while(hl + 0xf448 < 0x10000) {
+    // asm_111363:
+        // LD_DE(0xf448);
+        // ADD_HL_DE;
+        hl += 0xf448;
+        // IF_NC goto asm_11136d;
+        // ADD_A(0x30);
+        a += 0x30;
+        // goto asm_111363;
+    }
+    hl += 0xf448;
 
-asm_111363:
-    LD_DE(0xf448);
-    ADD_HL_DE;
-    IF_NC goto asm_11136d;
-    ADD_A(0x30);
-    goto asm_111363;
+// asm_11136d:
+    // LD_DE(0x0bb8);
+    // ADD_HL_DE;
+    hl += 0x0bb8;
 
+    while(hl + 0xfc18 < 0x10000) {
+    // asm_111371:
+        // LD_DE(0xfc18);
+        // ADD_HL_DE;
+        // IF_NC goto asm_11137b;
+        hl += 0xfc18;
+        // ADD_A(0x10);
+        a += 0x10;
+        // goto asm_111371;
+    }
+    hl += 0xfc18;
 
-asm_11136d:
-    LD_DE(0x0bb8);
-    ADD_HL_DE;
+// asm_11137b:
+    // LD_DE(0x03e8);
+    // ADD_HL_DE;
+    hl += 0x03e8;
 
-asm_111371:
-    LD_DE(0xfc18);
-    ADD_HL_DE;
-    IF_NC goto asm_11137b;
-    ADD_A(0x10);
-    goto asm_111371;
+    while(hl + 0xfed4 < 0x10000) {
+    // asm_11137f:
+        // LD_DE(0xfed4);
+        // ADD_HL_DE;
+        // IF_NC goto asm_111389;
+        hl += 0xfed4;
+        // ADD_A(0x3);
+        a += 0x3;
+        // goto asm_11137f;
+    }
+    hl += 0xfed4;
 
+// asm_111389:
+    // LD_DE(0x012c);
+    // ADD_HL_DE;
+    hl += 0x012c;
 
-asm_11137b:
-    LD_DE(0x03e8);
-    ADD_HL_DE;
+    while(hl + 0xff9c < 0x10000) {
+    // asm_11138d:
+        // LD_DE(0xff9c);
+        // ADD_HL_DE;
+        // IF_NC goto asm_111396;
+        hl += 0xff9c;
+        // INC_A;
+        a++;
+        // goto asm_11138d;
+    }
+    hl += 0xff9c;
 
-asm_11137f:
-    LD_DE(0xfed4);
-    ADD_HL_DE;
-    IF_NC goto asm_111389;
-    ADD_A(0x3);
-    goto asm_11137f;
+// asm_111396:
+    // LD_DE(0x0064);
+    // ADD_HL_DE;
+    hl += 0x0064;
+    // LD_addr_A(wc8c7);
+    wram->wc8c7 = a;
+    // XOR_A_A;
+    a = 0;
 
+    while(hl + 0xffe2 < 0x10000) {
+    // asm_11139e:
+        // LD_DE(0xffe2);
+        // ADD_HL_DE;
+        // IF_NC goto asm_1113a8;
+        hl += 0xffe2;
+        // ADD_A(0x30);
+        a += 0x30;
+        // goto asm_11139e;
+    }
+    hl += 0xffe2;
 
-asm_111389:
-    LD_DE(0x012c);
-    ADD_HL_DE;
+// asm_1113a8:
+    // LD_DE(0x001e);
+    // ADD_HL_DE;
+    hl += 0x001e;
 
-asm_11138d:
-    LD_DE(0xff9c);
-    ADD_HL_DE;
-    IF_NC goto asm_111396;
-    INC_A;
-    goto asm_11138d;
+    while(hl + 0xfff6 < 0x10000) {
+    // asm_1113ac:
+        // LD_DE(0xfff6);
+        // ADD_HL_DE;
+        hl += 0xfff6;
+        // IF_NC goto asm_1113b6;
+        // ADD_A(0x10);
+        a += 0x10;
+        // goto asm_1113ac;
+    }
+    hl += 0xfff6;
 
-
-asm_111396:
-    LD_DE(0x0064);
-    ADD_HL_DE;
-    LD_addr_A(wc8c7);
-    XOR_A_A;
-
-asm_11139e:
-    LD_DE(0xffe2);
-    ADD_HL_DE;
-    IF_NC goto asm_1113a8;
-    ADD_A(0x30);
-    goto asm_11139e;
-
-
-asm_1113a8:
-    LD_DE(0x001e);
-    ADD_HL_DE;
-
-asm_1113ac:
-    LD_DE(0xfff6);
-    ADD_HL_DE;
-    IF_NC goto asm_1113b6;
-    ADD_A(0x10);
-    goto asm_1113ac;
-
-
-asm_1113b6:
-    LD_DE(0x000a);
-    ADD_HL_DE;
-    ADD_A_L;
-    LD_addr_A(wc8c8);
-    LD_DE(wc9a5);
-    LD_HL(wc8c6);
-    LD_A_hli;
-    OR_A(0x30);
-    LD_de_A;
-    INC_DE;
-    LD_A_hl;
-    SWAP_A;
-    AND_A(0xf);
-    OR_A(0x30);
-    LD_de_A;
-    INC_DE;
-    LD_A_hli;
-    AND_A(0xf);
-    OR_A(0x30);
-    LD_de_A;
-    INC_DE;
-    LD_A_hl;
-    SWAP_A;
-    AND_A(0xf);
-    OR_A(0x30);
-    LD_de_A;
-    INC_DE;
-    LD_A_hl;
-    AND_A(0xf);
-    OR_A(0x30);
-    LD_de_A;
-    INC_DE;
-    RET;
+// asm_1113b6:
+    // LD_DE(0x000a);
+    // ADD_HL_DE;
+    hl += 0x000a;
+    // ADD_A_L;
+    // LD_addr_A(wc8c8);
+    wram->wc8c8 = LOW(hl) + a;
+    // LD_DE(wc9a5);
+    uint8_t* de = wram->wc9a5;
+    // LD_HL(wc8c6);
+    hl2 = &wram->wc8c6;
+    // LD_A_hli;
+    // OR_A(0x30);
+    // LD_de_A;
+    // INC_DE;
+    *(de++) = *(hl2++) | 0x30;
+    // LD_A_hl;
+    a = *(hl2++);
+    // SWAP_A;
+    // AND_A(0xf);
+    // OR_A(0x30);
+    // LD_de_A;
+    // INC_DE;
+    *(de++) = ((a >> 4) & 0xf) | 0x30;
+    // LD_A_hli;
+    // AND_A(0xf);
+    // OR_A(0x30);
+    // LD_de_A;
+    // INC_DE;
+    *(de++) = (a & 0xf) | 0x30;
+    // LD_A_hl;
+    a = *(hl2++);
+    // SWAP_A;
+    // AND_A(0xf);
+    // OR_A(0x30);
+    // LD_de_A;
+    // INC_DE;
+    *(de++) = ((a >> 4) & 0xf) | 0x30;
+    // LD_A_hl;
+    // AND_A(0xf);
+    // OR_A(0x30);
+    // LD_de_A;
+    // INC_DE;
+    *(de++) = (a & 0xf) | 0x30;
+    // RET;
 
 }
 
-void Function1113ea(void){
-    CP_A(0x14);
-    JP_Z (mFunction111044);
-    CP_A(0x24);
-    JP_Z (mFunction111044);
-    JP(mFunction110226);
-
+void Function1113ea(mobile_api_data_s* data, uint8_t a){
+    // CP_A(0x14);
+    // JP_Z (mFunction111044);
+    // CP_A(0x24);
+    // JP_Z (mFunction111044);
+    if(a == 0x14 || a == 0x24)
+        return Function111044(data);
+    // JP(mFunction110226);
+    return Function110226();
 }
 
 void Function1113f7(void){
-    POP_HL;
+    // POP_HL;
 
     return Function1113f8();
 }
 
 void Function1113f8(void){
-    POP_HL;
-    POP_HL;
-    POP_HL;
-    JP(mFunction110231);
-
+    // POP_HL;
+    // POP_HL;
+    // POP_HL;
+    // JP(mFunction110231);
+    Function110231();
 }
 
 // MobileAPI17
@@ -6044,11 +6192,12 @@ void Function111cc2(uint8_t* hl, uint16_t de, uint8_t c){
         // LD_addr_A(wc821);
         bit_set(wram->wc821, 2);
         // LD_A_C;
+        uint8_t temp = LOW(de);
         // SUB_A_E;
-        // LD_C_E;
-        c = LOW(de);
-        // LD_E_A;
         de = (c - de);
+        // LD_C_E;
+        c = temp;
+        // LD_E_A;
         // goto asm_111ce1;
     }
     else {
@@ -6091,8 +6240,8 @@ void Function111cc2(uint8_t* hl, uint16_t de, uint8_t c){
         // ADD_A_C;
         // LD_hli_A;
         de3 += c;
-        wram->wc82d = LOW(de);
-        wram->wc82e = HIGH(de);
+        wram->wc82d = LOW(de3);
+        wram->wc82e = HIGH(de3);
         // JR_NC (mFunction111d07);
         // INC_hl;
     }
@@ -7561,7 +7710,7 @@ void Function112451(uint8_t* hl, uint8_t a){
         // CP_A(0x23);
         // IF_Z goto asm_11248b;
         if(wram->wc86e + 1 == 0x3 && wram->wMobileSDK_ReceivePacketBuffer[128] != 0
-        && !(wram->wc995[0] == 0x99 && wram->wc995[1] == 0x66 && wram->wc995[2] == MOBILE_COMMAND_OPEN_TCP_CONNECTION)) {
+        && (wram->wc995[0] != 0x99 || wram->wc995[1] != 0x66 || wram->wc995[2] != MOBILE_COMMAND_OPEN_TCP_CONNECTION)) {
         // asm_112480:
             // LD_HL(wMobileSDK_PacketBuffer + 80);
             // LD_DE(wc995);
@@ -8039,7 +8188,7 @@ char* Function1126b0(char* de, uint16_t* bc){
     return MobileSDK_CopyString(de, Unknown_112115, bc);
 }
 
-const char CrystalManufactureCode[] = { 'B', 'Y', 'T', 'E' };
+const char CrystalManufactureCode[] = { 'B', 'X', 'T', 'E' };
 static_assert(sizeof(CrystalManufactureCode) == 0x4, "");
 const uint8_t CrystalVersion = 0x00;
 
@@ -9209,11 +9358,14 @@ void Function112bec(uint8_t* hl, uint8_t a){
             wram->wMobileSDK_ReceivePacketBuffer[1] = c;
             // LD_A_addr(wMobileSDK_ReceivePacketBuffer + 3);
             // SUB_A_C;
+            uint8_t sub = wram->wMobileSDK_ReceivePacketBuffer[3] - c;
             // POP_HL;
             // LD_C_L;
+            c = LOW(hl2);
             // POP_HL;
             // PUSH_AF;
             // CALL(aMobileSDK_CopyBytes);
+            de = MobileSDK_CopyBytes(de, hl, b);
             // POP_AF;
             // PUSH_DE;
             // LD_HL(wMobileSDK_ReceivePacketBuffer + 4);
@@ -9223,9 +9375,11 @@ void Function112bec(uint8_t* hl, uint8_t a){
             // POP_DE;
             // LD_B_C;
             // CALL(aMobileSDK_CopyBytes);
+            de = MobileSDK_CopyBytes(de, wram->wMobileSDK_ReceivePacketBuffer + 4 + sub, c);
             // LD_A_addr(wMobileSDK_ReceivePacketBuffer + 1);
             // SUB_A_C;
             // LD_addr_A(wc994);
+            wram->wc994 = wram->wMobileSDK_ReceivePacketBuffer[1] - c;
             // LD_HL(wc827);
             // LD_A_hli;
             // LD_H_hl;
@@ -9242,8 +9396,8 @@ void Function112bec(uint8_t* hl, uint8_t a){
 
     // asm_112c9f:
         // LD_addr_A(wc994);
-        wram->wc994 = HIGH((hl2 - b));
-        hl2 -= b;
+        wram->wc994 = HIGH((hl2 - c));
+        hl2 -= c;
         // LD_A_L;
         // LD_addr_A(wc82b);
         wram->wc82b = LOW(hl2);
@@ -9253,9 +9407,10 @@ void Function112bec(uint8_t* hl, uint8_t a){
         // POP_HL;
         // POP_HL;
         // CALL(aMobileSDK_CopyBytes);
-        MobileSDK_CopyBytes(de, hl, b);
+        de = MobileSDK_CopyBytes(de, hl, b);
         // LD_A_addr(wMobileSDK_ReceivePacketBuffer + 3);
         // SUB_A_C;
+        uint8_t sub = wram->wMobileSDK_ReceivePacketBuffer[3] - c;
         // PUSH_DE;
         // LD_HL(wMobileSDK_ReceivePacketBuffer + 4);
         // LD_E_A;
@@ -9264,17 +9419,23 @@ void Function112bec(uint8_t* hl, uint8_t a){
         // POP_DE;
         // LD_B_C;
         // CALL(aMobileSDK_CopyBytes);
+        de = MobileSDK_CopyBytes(de, wram->wMobileSDK_ReceivePacketBuffer + 4 + sub, c);
+        uint16_t de3 = wram->wc82d | (wram->wc82e << 8);
         // LD_A_addr(wc82d);
         // ADD_A_C;
+        de3 += c;
         // LD_addr_A(wc82d);
+        wram->wc82d = LOW(de3);
         // LD_A_addr(wc82e);
         // ADC_A(0);
         // LD_addr_A(wc82e);
+        wram->wc82e = HIGH(de3);
         // LD_HL(wc829);
         // LD_A_E;
         // LD_hli_A;
         // LD_A_D;
         // LD_hl_A;
+        gMobileReceiveBuffer_Destination = de;
         // LD_HL(wc821);
         // RES_hl(2);
         bit_reset(wram->wc821, 2);
@@ -9420,7 +9581,6 @@ void Function112d33(uint8_t* hl, uint8_t a){
         }
 
     // asm_112dc1:
-        uint8_t a;
         // LD_A_addr(wc989);
         // CP_A(0x2);
         // IF_NC goto asm_112df2;
@@ -9444,6 +9604,7 @@ void Function112d33(uint8_t* hl, uint8_t a){
             // LD_DE(wc98b);
             uint8_t* de = &wram->wc98b;
             // LD_A(0x24);
+            a = 0x24;
             goto asm_112e95;
 
 
@@ -9504,10 +9665,11 @@ void Function112d33(uint8_t* hl, uint8_t a){
                 // INC_DE;
                 de = (wram->wc990 == 0x1)? &wram->wc98b: &wram->wc98b + 2;
                 // INC_A;
+                a = (wram->wc990 == 0x1)? 0x32: 0x33;
 
             asm_112e95:
                 // LD_addr_A(wc80f);
-                wram->wc80f = (wram->wc990 == 0x1)? 0x32: 0x33;
+                wram->wc80f = a;
                 // LD_HL(wc810);
                 // LD_A_de;
                 // INC_DE;
@@ -9640,7 +9802,7 @@ void Function112d33(uint8_t* hl, uint8_t a){
             // LD_A_addr(wc993);
             // CP_A(0x1);
             // IF_NZ goto asm_112f52;
-            if(wram->wc993 == 0x1) {
+            if(wram->wc993 != 0x1) {
             // asm_112f52:
                 // LD_A(0x2);
                 // LD_addr_A(wc86a);
@@ -9825,7 +9987,7 @@ void Function112d33(uint8_t* hl, uint8_t a){
     // RET;
 }
 
-// SendEmailHeader?
+// Mobile_ParseHTTPResponseHeader
 uint8_t Function112f61(void){
     // LD_HL(wc989);
     // LD_A_hl;
@@ -9837,7 +9999,7 @@ uint8_t Function112f61(void){
         // LD_HL(wc880);
         // LD_DE(0x0008);
         // ADD_HL_DE;
-        const char* hl = (const char*)wram->wc884 + 0x4;
+        const char* hl = (const char*)wram->wc884 + 0x4; // Grab response code string.
 
         char a = 0;
         do {
@@ -9855,7 +10017,7 @@ uint8_t Function112f61(void){
         // INC_D;
 
     // asm_112f7d:
-        uint8_t d = (a == '2')? 0x0: 0x1;
+        uint8_t d = (a == '2')? 0x0: 0x1; // Checks for 2XX response code.
         // LD_A_D;
         // LD_addr_A(wc990);
         wram->wc990 = d;
@@ -9892,23 +10054,26 @@ uint8_t Function112f61(void){
     }
 
     bool do_set = false;
+    uint8_t* de = NULL;
 
+// parse the response header
     do {
     // asm_112fa1:
         // CALL(aFunction112fd5);
-        hl = Function112fd5(hl);
+        hl = Function112fd5(hl); // date
         // CALL(aFunction113008);
-        hl = Function113008(hl);
+        hl = Function113008(hl); // Gb-Status
         // CALL(aFunction113026);
-        hl = Function113026(hl);
+        hl = Function113026(hl); // Gb-Auth-ID
         // CALL(aFunction113054);
-        hl = Function113054(hl);
+        hl = Function113054(hl); // WWW-Authenticate
         // CALL(aFunction113167);
-        hl = Function113167(hl);
+        hl = Function113167(hl); // URI-header
         // CALL(aFunction113180);
-        hl = Function113180(hl);
+        hl = Function113180(hl); // Location
+        de = (uint8_t*)hl;
         // CALL(aFunction113268);
-        u8_flag_s res = Function113268(&hl, b);
+        u8_flag_s res = Function113268(&hl, &b); // consume line?
         // IF_C goto asm_112fc9;
         if(!res.flag) {
         // asm_112fc9:
@@ -9939,12 +10104,13 @@ uint8_t Function112f61(void){
 
 // asm_112fce:
     // CALL(aFunction11306b);
-    Function11306b();
+    Function11306b(de);
     // LD_A_addr(wc990);
     // RET;
     return wram->wc990;
 }
 
+// MobileSDK_ParseHTTPResponseHeaderDate
 char* Function112fd5(char* hl){
     // LD_DE(mUnknown_113001);
     // PUSH_HL;
@@ -9999,6 +10165,7 @@ char* Function112fd5(char* hl){
 
 const char Unknown_113001[] = "date: "; // ['"date: "', '0'];
 
+// MobileSDK_ParseGBStatusField
 char* Function113008(char* hl){
     // LD_DE(mUnknown_1132a6);
     // PUSH_HL;
@@ -10031,6 +10198,7 @@ char* Function113008(char* hl){
     return hl;
 }
 
+// MobileSDK_ParseHTTPResponseHeaderGBAuth
 char* Function113026(char* hl){
     // LD_DE(mUnknown_1132b2);
     // PUSH_HL;
@@ -10043,7 +10211,7 @@ char* Function113026(char* hl){
     // asm_113031:
         // POP_HL;
         char* de = hl;
-        hl = hl2;
+        hl2 = hl;
         // PUSH_BC;
         // PUSH_HL;
         // PUSH_HL;
@@ -10080,6 +10248,7 @@ char* Function113026(char* hl){
     return hl;
 }
 
+// MobileSDK_ParseHTTPResponseHeaderWWWAuth
 char* Function113054(char* hl){
     // LD_DE(mUnknown_1132bf);
     // PUSH_HL;
@@ -10094,8 +10263,9 @@ char* Function113054(char* hl){
         // LD_DE(wc9b5);
         // LD_B(0x30);
         // CALL(aFunction1136c1);
-        // Function1136c1();
+        Function1136c1(hl2, &wram->wc9b5, 0x30);
         //  TODO: Convert Function1136c1
+        printf("Challenge=%s\nResponse:%s\n", hl2, &wram->wc9b5);
         // POP_BC;
         // POP_HL;
         // RET;
@@ -10103,18 +10273,18 @@ char* Function113054(char* hl){
     return hl;
 }
 
-void Function11306b(void){
+void Function11306b(uint8_t* de){
     // LD_HL(wc880);
     // LD_A_addr(wc82d);
     // LD_B_A;
 
-    return Function113072(wram->wc880_str, wram->wc82d);
+    return Function113072(wram->wc880_str, de, wram->wc82d);
 }
 
-void Function113072(char* hl, uint8_t b){
+void Function113072(char* hl, uint8_t* de, uint8_t b){
     while(1) {
         // CALL(aFunction113268);
-        u8_flag_s res = Function113268(&hl, b);
+        u8_flag_s res = Function113268(&hl, &b);
         // JP_NC (mFunction113089);
         if(res.flag) { // Inlined
             // LD_A_hl;
@@ -10124,7 +10294,7 @@ void Function113072(char* hl, uint8_t b){
                 // CP_A(0xa);
                 // JR_Z (mFunction113095);
                 if(*hl == '\n')
-                    return Function113095(hl, res.a);
+                    return Function113095(hl, de, res.a);
                 // JR(mFunction113072);
                 continue;
             }
@@ -10133,7 +10303,7 @@ void Function113072(char* hl, uint8_t b){
             // INC_HL;
             hl++;
 
-            return Function113095(hl, res.a);
+            return Function113095(hl, de, res.a);
         }
         // LD_A_addr(wMobileSDK_ReceivePacketBuffer);
         // CP_A(0x9f);
@@ -10146,7 +10316,7 @@ void Function113072(char* hl, uint8_t b){
         bit_reset(wram->wc990, 2);
         // POP_HL;
         // JR(mFunction113095);
-        return Function113095(hl, res.a);
+        return Function113095(hl, de, res.a);
     }
 }
 
@@ -10170,7 +10340,7 @@ void Function113072(char* hl, uint8_t b){
 //     return Function113095(hl, bc);
 // }
 
-void Function113095(char* hl, uint8_t b){
+void Function113095(char* hl, uint8_t* de, uint8_t b){
     // INC_HL;
     hl++;
     // PUSH_BC;
@@ -10232,7 +10402,6 @@ void Function113095(char* hl, uint8_t b){
     // LD_A_B;
     // LD_addr_A(wc82d);
     wram->wc82d = b;
-    uint8_t* de = NULL;
     // IF_Z goto asm_11310d;
     if(b != 0) {
         // LD_A_addr(wc873);
@@ -10250,7 +10419,7 @@ void Function113095(char* hl, uint8_t b){
         // CP_A_B;
         // JP_C (mFunction113206);
         if(de2 < b)
-            return Function113206();
+            return Function113206(hl, b, c, LOW(de2));
 
     // asm_1130f5:
         // LD_A_E;
@@ -10271,6 +10440,7 @@ void Function113095(char* hl, uint8_t b){
         de = gMobile_wc874_wc875 + 2;
         // CALL(aMobileSDK_CopyBytes);
         de = MobileSDK_CopyBytes(de, hl, b);
+        hl += b;
     }
 
 // asm_11310d:
@@ -10289,7 +10459,7 @@ void Function113095(char* hl, uint8_t b){
         // LD_A_L;
         // LD_HL(wMobileSDK_ReceivePacketBuffer + 4);
         // ADD_HL_BC;
-        uint8_t* hl2 = wram->wMobileSDK_ReceivePacketBuffer + 4 + l;
+        uint8_t* hl2 = wram->wMobileSDK_ReceivePacketBuffer + 4 + c;
         // LD_B_A;
         b = l;
         // PUSH_DE;
@@ -10324,7 +10494,7 @@ void Function113095(char* hl, uint8_t b){
         // LD_C_B;
         // POP_HL;
         // CALL(aMobileSDK_CopyBytes);
-        de = MobileSDK_CopyBytes(de, hl, b);
+        de = MobileSDK_CopyBytes(de, hl2, b);
         // LD_HL(wc82b);
         hl3 = wram->wc82b | (wram->wc82c << 8);
         // LD_A_hl;
@@ -10357,7 +10527,7 @@ void Function113095(char* hl, uint8_t b){
     // RET;
 }
 
-// WriteURIHeader?
+// MobileSDK_ParseHTTPResponseHeaderURIHeader
 char* Function113167(char* hl){
     // LD_DE(mUnknown_1132ff);
     // PUSH_HL;
@@ -10366,7 +10536,7 @@ char* Function113167(char* hl){
     // IF_NC goto asm_113172;
     // POP_HL;
     // RET;
-    if(Function113273(&hl2, Unknown_1132ff)) {
+    if(!Function113273(&hl2, Unknown_1132ff)) {
     // asm_113172:
         // POP_DE;
         char* de = hl;
@@ -10388,12 +10558,13 @@ char* Function113167(char* hl){
             // IF_NZ goto asm_113178;
         } while(a != '\n');
         // JR(mFunction113197);
-        Function113197(de, b);
+        Function113197(hl, b);
+        hl = de;
     }
     return hl;
 }
 
-// WriteLocation?
+// MobileSDK_ParseHTTPResponseHeaderLocation
 char* Function113180(char* hl){
     // LD_DE(mUnknown_11330c);
     // PUSH_HL;
@@ -10402,7 +10573,7 @@ char* Function113180(char* hl){
     // IF_NC goto asm_11318b;
     // POP_HL;
     // RET;
-    if(Function113273(&hl2, Unknown_11330c)) {
+    if(!Function113273(&hl2, Unknown_11330c)) {
     // asm_11318b:
         // POP_DE;
         char* de = hl;
@@ -10423,7 +10594,8 @@ char* Function113180(char* hl){
             // CP_A(0xa);
             // IF_NZ goto asm_113191;
         } while(a != 0xa);
-        Function113197(de, b);
+        Function113197(hl, b);
+        hl = de;
     }
     return hl;
 }
@@ -10539,44 +10711,55 @@ void Function1131a9(void){
     // return 0x4;
 }
 
-void Function113206(void){
-    LD_A_B;
-    SUB_A_E;
-    LD_addr_A(wc991);
-    LD_A_addr(wc821);
-    BIT_A(2);
-    LD_A_C;
-    IF_NZ goto asm_113214;
-    XOR_A_A;
+void Function113206(const char* hl, uint8_t b, uint8_t c, uint8_t e){
+    // LD_A_B;
+    // SUB_A_E;
+    // LD_addr_A(wc991);
+    wram->wc991 = b - e;
+    // LD_A_addr(wc821);
+    // BIT_A(2);
+    // LD_A_C;
+    // IF_NZ goto asm_113214;
+    // XOR_A_A;
 
-
-asm_113214:
-    LD_addr_A(wc992);
-    LD_B_E;
-    LD_C_E;
-    LD_A_addr(wc874);
-    LD_E_A;
-    LD_A_addr(wc875);
-    LD_D_A;
-    INC_DE;
-    INC_DE;
-    CALL(aMobileSDK_CopyBytes);
-    LD_A_addr(wc991);
-    LD_addr_A(wc993);
-    LD_B_A;
-    LD_DE(wc880);
-    CALL(aMobileSDK_CopyBytes);
-    LD_HL(wc82d);
-    LD_A_C;
-    LD_hli_A;
-    XOR_A_A;
-    LD_hl_A;
-    LD_HL(wc821);
-    SET_hl(2);
-    LD_A(0x3);
-    LD_addr_A(wc86b);
-    RET;
-
+// asm_113214:
+    // LD_addr_A(wc992);
+    wram->wc992 = (bit_test(wram->wc821, 2))? c: 0;
+    // LD_B_E;
+    b = e;
+    // LD_C_E;
+    c = e;
+    // LD_A_addr(wc874);
+    // LD_E_A;
+    // LD_A_addr(wc875);
+    // LD_D_A;
+    // INC_DE;
+    // INC_DE;
+    uint8_t* de = gMobile_wc874_wc875 + 2;
+    // CALL(aMobileSDK_CopyBytes);
+    MobileSDK_CopyBytes(de, hl, b);
+    hl += b;
+    // LD_A_addr(wc991);
+    // LD_addr_A(wc993);
+    wram->wc993 = wram->wc991;
+    // LD_B_A;
+    // LD_DE(wc880);
+    // CALL(aMobileSDK_CopyBytes);
+    MobileSDK_CopyBytes(wram->wc880_str, hl, wram->wc991);
+    // LD_HL(wc82d);
+    // LD_A_C;
+    // LD_hli_A;
+    wram->wc82d = c;
+    // XOR_A_A;
+    // LD_hl_A;
+    wram->wc82e = 0x0;
+    // LD_HL(wc821);
+    // SET_hl(2);
+    bit_set(wram->wc821, 2);
+    // LD_A(0x3);
+    // LD_addr_A(wc86b);
+    wram->wc86b = 0x3;
+    // RET;
 }
 
 void Function113245(uint8_t* de, const uint8_t* hl, uint8_t b, uint8_t e){
@@ -10613,24 +10796,24 @@ void Function113245(uint8_t* de, const uint8_t* hl, uint8_t b, uint8_t e){
 }
 
 // ContainsNewLineCharacter?
-u8_flag_s Function113268(char** hl, uint8_t b){
+u8_flag_s Function113268(char** hl, uint8_t* b){
     do {
     // asm_113268:
         // DEC_B;
-        --b;
+        --(*b);
         // LD_A_hli;
         char a = *((*hl)++);
         // CP_A(0xa);
         // RET_Z ;
         if(a == '\n')
-            return u8_flag(b, true);
+            return u8_flag(*b, true);
         // XOR_A_A;
         // OR_A_B;
         // IF_NZ goto asm_113268;
-    } while(b != 0);
+    } while(*b != 0);
     // SCF;
     // RET;
-    return u8_flag(b, false);
+    return u8_flag(*b, false);
 }
 
 // StringCompare?
@@ -10661,6 +10844,7 @@ bool Function113273(char** hl, const char* de){
     return true;
 }
 
+// CaseInsensitiveStringCompare?
 bool Function113281(char** hl, const char* de){
     // LD_C(0x0);
     uint8_t c = 0x0;
@@ -10705,6 +10889,7 @@ bool Function113281(char** hl, const char* de){
     return result;
 }
 
+// ToLower?
 uint8_t Function11329d(uint8_t a){
     // CP_A(0x41);
     // RET_C ;
@@ -10730,7 +10915,7 @@ void Function113317(void){
     // LD_addr_A(wc86b);
     wram->wc86b = 0x1;
     // LD_DE(wMobileSDK_PacketBuffer + 18);
-    char* de = (char*)wram->wMobileSDK_PacketBuffer;
+    char* de = (char*)wram->wMobileSDK_PacketBuffer + 18;
     // LD_A_addr(wc86c);
     // LD_de_A;
     // INC_DE;
@@ -11009,6 +11194,7 @@ void Function1133fe(void){
     // RET;
 }
 
+// Mobile_CopyHTTPRequestURL
 bool Function113482(void){
     // LD_HL(wc87f);
     // LD_A_hld;
@@ -11563,1086 +11749,1392 @@ asm_1136be:
 
 }
 
-void Function1136c1(void){
-    XOR_A_A;
-    LD_addr_A(wMobileSDK_PacketBuffer + 225);
-    LD_A_L;
-    LD_addr_A(wMobileSDK_PacketBuffer + 192);
-    LD_A_H;
-    LD_addr_A(wMobileSDK_PacketBuffer + 193);
-    LD_HL(wMobileSDK_PacketBuffer + 194);
-    LD_A_E;
-    LD_hli_A;
-    LD_A_D;
-    LD_hli_A;
-    LD_A_B;
-    LD_hli_A;
-    LD_HL(wMobileSDK_PacketBuffer + 192);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    LD_DE(wMobileSDK_PacketBuffer + 32);
-    LD_B(0x30);
-    LD_C_B;
-    CALL(aMobileSDK_CopyBytes);
-    LD_HL(wc97f);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
+void Function1136c1(char* hl, uint8_t* de, uint8_t b){
+    // XOR_A_A;
+    // LD_addr_A(wMobileSDK_PacketBuffer + 225);
+    wram->wMobileSDK_PacketBuffer[225] = 0;
+    // LD_A_L;
+    // LD_addr_A(wMobileSDK_PacketBuffer + 192);
+    // LD_A_H;
+    // LD_addr_A(wMobileSDK_PacketBuffer + 193);
+    // LD_HL(wMobileSDK_PacketBuffer + 194);
+    // LD_A_E;
+    // LD_hli_A;
+    // LD_A_D;
+    // LD_hli_A;
+    uint8_t* de_saved = de;
+    // LD_A_B;
+    // LD_hli_A;
+    wram->wMobileSDK_PacketBuffer[196] = b;
+    // LD_HL(wMobileSDK_PacketBuffer + 192);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // LD_DE(wMobileSDK_PacketBuffer + 32);
+    // LD_B(0x30);
+    // LD_C_B;
+    // CALL(aMobileSDK_CopyBytes);
+    de = MobileSDK_CopyBytes(wram->wMobileSDK_PacketBuffer + 32, hl, 0x30);
+    // LD_HL(wc97f);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    uint8_t* hl2 = gMobile_wc97f_wc980;
 
-asm_1136eb:
-    LD_A_hli;
-    OR_A_A;
-    IF_NZ goto asm_1136eb;
-    CALL(aMobileSDK_CopyString);
-    LD_A(0x37);
-    CP_A_C;
-    INC_A;
-    IF_NC goto asm_1136ff;
-    LD_A(0x2);
-    LD_addr_A(wMobileSDK_PacketBuffer + 225);
-    LD_A(0x78);
-
-
-asm_1136ff:
-    SUB_A_C;
-    LD_B_A;
-    LD_A(0x80);
-    LD_de_A;
-    INC_DE;
-    XOR_A_A;
-
-asm_113706:
-    DEC_B;
-    IF_Z goto asm_11370d;
-    LD_de_A;
-    INC_DE;
-    goto asm_113706;
-
-
-asm_11370d:
-    OR_A_A;
-    SLA_C;
-    RL_B;
-    SLA_C;
-    RL_B;
-    SLA_C;
-    RL_B;
-    LD_A_C;
-    LD_de_A;
-    INC_DE;
-    LD_A_B;
-    LD_de_A;
-    INC_DE;
-    LD_L_E;
-    LD_H_D;
-    LD_B(0x6);
-    XOR_A_A;
-
-asm_113725:
-    LD_hli_A;
-    DEC_B;
-    IF_NZ goto asm_113725;
-    LD_DE(wMobileSDK_PacketBuffer + 160);
-    LD_HL(mUnknown_113b7e);
-    LD_B(0x10);
-    CALL(aMobileSDK_CopyBytes);
-
-
-asm_113734:
-    LD_HL(wMobileSDK_PacketBuffer + 197);
-    LD_A(LOW(aMD5_K_Table));
-    LD_hli_A;
-    LD_A(HIGH(aMD5_K_Table));
-    LD_hl_A;
-    LD_HL(wMobileSDK_PacketBuffer + 199);
-    LD_A(LOW(aUnknown_113a70));
-    LD_hli_A;
-    LD_A(HIGH(aUnknown_113a70));
-    LD_hl_A;
-    LD_HL(wMobileSDK_PacketBuffer + 160);
-    LD_DE(wMobileSDK_PacketBuffer + 209);
-    LD_B(0x10);
-    CALL(aMobileSDK_CopyBytes);
-
-
-asm_113751:
-    LD_HL(wMobileSDK_PacketBuffer + 199);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    LD_A_hli;
-    LD_C_A;
-    PUSH_HL;
-    CALL(aFunction113909);
-    LD_HL(wMobileSDK_PacketBuffer + 176);
-    LD_A_hli;
-    LD_D_hl;
-    LD_E_A;
-    LD_HL(wMobileSDK_PacketBuffer + 184);
-    CALL(aFunction113a32);
-    POP_HL;
-    LD_A_hli;
-    LD_D_hl;
-    INC_HL;
-    LD_E_A;
-    PUSH_HL;
-    LD_A_addr(wMobileSDK_PacketBuffer + 225);
-    BIT_A(0);
-    IF_Z goto asm_11377c;
-    LD_HL(0x0040);
-    ADD_HL_DE;
-    LD_E_L;
-    LD_D_H;
-
-
-asm_11377c:
-    LD_HL(wMobileSDK_PacketBuffer + 32);
-    ADD_HL_DE;
-    LD_E_L;
-    LD_D_H;
-    LD_HL(wMobileSDK_PacketBuffer + 184);
-    CALL(aFunction113a32);
-    LD_HL(wMobileSDK_PacketBuffer + 197);
-    LD_A_hli;
-    LD_D_hl;
-    LD_E_A;
-    LD_HL(wMobileSDK_PacketBuffer + 184);
-    CALL(aFunction113a32);
-    POP_HL;
-    LD_A_hli;
-    LD_B_A;
-    LD_A_L;
-    LD_addr_A(wMobileSDK_PacketBuffer + 199);
-    LD_A_H;
-    LD_addr_A(wMobileSDK_PacketBuffer + 200);
-    LD_HL(wMobileSDK_PacketBuffer + 184);
-    CALL(aFunction113a40);
-    LD_HL(wMobileSDK_PacketBuffer + 178);
-    LD_A_hli;
-    LD_D_hl;
-    LD_E_A;
-    LD_HL(wMobileSDK_PacketBuffer + 184);
-    CALL(aFunction113a32);
-    LD_HL(wMobileSDK_PacketBuffer + 176);
-    LD_A_hli;
-    LD_D_hl;
-    LD_E_A;
-    LD_HL(wMobileSDK_PacketBuffer + 184);
-    LD_B(0x4);
-    CALL(aMobileSDK_CopyBytes);
-    LD_HL(wMobileSDK_PacketBuffer + 197);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    for(int rept = 0; rept < 4; rept++){
-    INC_HL;
+    do {
+    // asm_1136eb:
+        // LD_A_hli;
+        // OR_A_A;
+        // IF_NZ goto asm_1136eb;
+    } while(*(hl2++) != 0);
+    // CALL(aMobileSDK_CopyString);
+    uint16_t bc = 0x30;
+    char* de_str = MobileSDK_CopyString((char*)de, (char*)hl2, &bc);
+    // LD_A(0x37);
+    // CP_A_C;
+    uint8_t a = 0x38;
+    // INC_A;
+    // IF_NC goto asm_1136ff;
+    if(0x37 < LOW(bc)) {
+        // LD_A(0x2);
+        // LD_addr_A(wMobileSDK_PacketBuffer + 225);
+        wram->wMobileSDK_PacketBuffer[225] = 0x2;
+        // LD_A(0x78);
+        a = 0x78;
     }
-    LD_A_H;
-    LD_addr_A(wMobileSDK_PacketBuffer + 198);
-    LD_A_L;
-    LD_addr_A(wMobileSDK_PacketBuffer + 197);
-    CP_A(0x8e);  // LOW(MD5_K_Table + $100) ???
-    JP_NZ (mFunction1136c1_asm_113751);
-    LD_DE(wMobileSDK_PacketBuffer + 209);
-    LD_HL(wMobileSDK_PacketBuffer + 160);
-    CALL(aFunction113a32);
-    LD_DE(wMobileSDK_PacketBuffer + 213);
-    CALL(aFunction113a32);
-    LD_DE(wMobileSDK_PacketBuffer + 217);
-    CALL(aFunction113a32);
-    LD_DE(wMobileSDK_PacketBuffer + 221);
-    CALL(aFunction113a32);
-    LD_HL(wMobileSDK_PacketBuffer + 225);
-    BIT_hl(1);
-    IF_Z goto asm_1137fc;
-    DEC_hl;
-    JP(mFunction1136c1_asm_113734);
 
+// asm_1136ff:
+    // SUB_A_C;
+    // LD_B_A;
+    b = a - LOW(bc);
+    // LD_A(0x80);
+    // LD_de_A;
+    // INC_DE;
+    *(de_str++) = 0x80;
+    // XOR_A_A;
 
-asm_1137fc:
-    LD_HL(wMobileSDK_PacketBuffer + 32);
-    LD_DE(wMobileSDK_PacketBuffer + 80);
-    LD_BC(0x0030);
-    CALL(aFunction113d66);
-    LD_HL(wMobileSDK_PacketBuffer + 194);
-    LD_A_hli;
-    LD_D_hl;
-    LD_E_A;
-    LD_HL(mUnknown_113a55);
-    CALL(aMobileSDK_CopyString);
-    LD_HL(wMobileSDK_PacketBuffer + 80);
-    LD_BC(0x0020);
-    CALL(aFunction113c8e);
-    LD_A_L;
-    LD_addr_A(wMobileSDK_PacketBuffer + 194);
-    LD_A_H;
-    LD_addr_A(wMobileSDK_PacketBuffer + 195);
-    LD_B(0x12);
-    LD_HL(wMobileSDK_PacketBuffer + 80);
-    LD_DE(wMobileSDK_PacketBuffer + 32);
+    while(--b != 0) {
+    // asm_113706:
+        // DEC_B;
+        // IF_Z goto asm_11370d;
+        // LD_de_A;
+        // INC_DE;
+        *(de_str++) = 0;
+        // goto asm_113706;
+    }
 
-asm_11382d:
-    LD_A(0x40);
-    AND_A_hl;
-    RLCA;
-    LD_C_A;
-    LD_A_hli;
-    BIT_A(4);
-    IF_Z goto asm_113839;
-    SET_C(6);
+// asm_11370d:
+    bc = LOW(bc);
+    // OR_A_A;
+    // SLA_C;
+    // RL_B;
+    // SLA_C;
+    // RL_B;
+    // SLA_C;
+    // RL_B;
+    bc <<= 3;
+    // LD_A_C;
+    // LD_de_A;
+    // INC_DE;
+    *(de_str++) = LOW(bc);
+    // LD_A_B;
+    // LD_de_A;
+    // INC_DE;
+    *(de_str++) = HIGH(bc);
+    // LD_L_E;
+    // LD_H_D;
+    // LD_B(0x6);
+    b = 0x6;
+    // XOR_A_A;
 
+    do {
+    // asm_113725:
+        // LD_hli_A;
+        *(de_str++) = 0;
+        // DEC_B;
+        // IF_NZ goto asm_113725;
+    } while(--b != 0);
+    // LD_DE(wMobileSDK_PacketBuffer + 160);
+    // LD_HL(mUnknown_113b7e);
+    // LD_B(0x10);
+    // CALL(aMobileSDK_CopyBytes);
+    MobileSDK_CopyBytes(wram->wMobileSDK_PacketBuffer + 160, Unknown_113b7e, 0x10);
 
-asm_113839:
-    BIT_A(2);
-    IF_Z goto asm_11383f;
-    SET_C(5);
+    while(1) {
+    // asm_113734:
+        // LD_HL(wMobileSDK_PacketBuffer + 197);
+        // LD_A(LOW(aMD5_K_Table));
+        // LD_hli_A;
+        // LD_A(HIGH(aMD5_K_Table));
+        // LD_hl_A;
+        const uint32_t* table = MD5_K_Table;
+        // LD_HL(wMobileSDK_PacketBuffer + 199);
+        // LD_A(LOW(aUnknown_113a70));
+        // LD_hli_A;
+        // LD_A(HIGH(aUnknown_113a70));
+        // LD_hl_A;
+        const uint8_t* table2 = Unknown_113a70;
+        // LD_HL(wMobileSDK_PacketBuffer + 160);
+        // LD_DE(wMobileSDK_PacketBuffer + 209);
+        // LD_B(0x10);
+        // CALL(aMobileSDK_CopyBytes);
+        MobileSDK_CopyBytes(wram->wMobileSDK_PacketBuffer + 209, wram->wMobileSDK_PacketBuffer + 160, 0x10);
 
+        do {
+        // asm_113751:
+            // LD_HL(wMobileSDK_PacketBuffer + 199);
+            // LD_A_hli;
+            // LD_H_hl;
+            // LD_L_A;
+            const uint8_t* hl = table2;
+            // LD_A_hli;
+            // LD_C_A;
+            uint8_t c = *(hl++);
+            // PUSH_HL;
+            // CALL(aFunction113909);
+            Function113909(c, c);
+            // LD_HL(wMobileSDK_PacketBuffer + 176);
+            // LD_A_hli;
+            // LD_D_hl;
+            // LD_E_A;
+            uint8_t* de = wram->wMobileSDK_PacketBuffer + (wram->wMobileSDK_PacketBuffer[176] | (wram->wMobileSDK_PacketBuffer[177] << 8));
+            // LD_HL(wMobileSDK_PacketBuffer + 184);
+            // CALL(aFunction113a32);
+            Function113a32(wram->wMobileSDK_PacketBuffer + 184, de);
+            // POP_HL;
+            // LD_A_hli;
+            // LD_D_hl;
+            // INC_HL;
+            // LD_E_A;
+            // PUSH_HL;
+            uint16_t de2 = hl[0] | (hl[1] << 8);
+            hl += 2;
+            // LD_A_addr(wMobileSDK_PacketBuffer + 225);
+            // BIT_A(0);
+            // IF_Z goto asm_11377c;
+            if(bit_test(wram->wMobileSDK_PacketBuffer[225], 0)) {
+                // LD_HL(0x0040);
+                // ADD_HL_DE;
+                // LD_E_L;
+                // LD_D_H;
+                de2 += 0x0040;
+            }
 
-asm_11383f:
-    BIT_A(0);
-    IF_Z goto asm_113845;
-    SET_C(4);
+        // asm_11377c:
+            // LD_HL(wMobileSDK_PacketBuffer + 32);
+            // ADD_HL_DE;
+            // LD_E_L;
+            // LD_D_H;
+            // LD_HL(wMobileSDK_PacketBuffer + 184);
+            // CALL(aFunction113a32);
+            Function113a32(wram->wMobileSDK_PacketBuffer + 184, wram->wMobileSDK_PacketBuffer + 32 + de2);
+            // LD_HL(wMobileSDK_PacketBuffer + 197);
+            // LD_A_hli;
+            // LD_D_hl;
+            // LD_E_A;
+            // LD_HL(wMobileSDK_PacketBuffer + 184);
+            // CALL(aFunction113a32);
+            Function113a32(wram->wMobileSDK_PacketBuffer + 184, (const uint8_t*)table);
+            // POP_HL;
+            // LD_A_hli;
+            // LD_B_A;
+            uint8_t b = *(hl++);
+            // LD_A_L;
+            // LD_addr_A(wMobileSDK_PacketBuffer + 199);
+            // LD_A_H;
+            // LD_addr_A(wMobileSDK_PacketBuffer + 200);
+            table2 = hl;
+            // LD_HL(wMobileSDK_PacketBuffer + 184);
+            // CALL(aFunction113a40);
+            Function113a40((uint32_t*)(wram->wMobileSDK_PacketBuffer + 184), b);
+            // LD_HL(wMobileSDK_PacketBuffer + 178);
+            // LD_A_hli;
+            // LD_D_hl;
+            // LD_E_A;
+            de = wram->wMobileSDK_PacketBuffer + (wram->wMobileSDK_PacketBuffer[178] | (wram->wMobileSDK_PacketBuffer[179] << 8));
+            // LD_HL(wMobileSDK_PacketBuffer + 184);
+            // CALL(aFunction113a32);
+            Function113a32(wram->wMobileSDK_PacketBuffer + 184, de);
+            // LD_HL(wMobileSDK_PacketBuffer + 176);
+            // LD_A_hli;
+            // LD_D_hl;
+            // LD_E_A;
+            de = wram->wMobileSDK_PacketBuffer + (wram->wMobileSDK_PacketBuffer[176] | (wram->wMobileSDK_PacketBuffer[177] << 8));
+            // LD_HL(wMobileSDK_PacketBuffer + 184);
+            // LD_B(0x4);
+            // CALL(aMobileSDK_CopyBytes);
+            MobileSDK_CopyBytes(wram->wMobileSDK_PacketBuffer + 184, de, 0x4);
+            // LD_HL(wMobileSDK_PacketBuffer + 197);
+            // LD_A_hli;
+            // LD_H_hl;
+            // LD_L_A;
+            // for(int rept = 0; rept < 4; rept++){
+            // INC_HL;
+            // }
+            table++;
+            // LD_A_H;
+            // LD_addr_A(wMobileSDK_PacketBuffer + 198);
+            // LD_A_L;
+            // LD_addr_A(wMobileSDK_PacketBuffer + 197);
+            // CP_A(0x8e);  // LOW(MD5_K_Table + $100) ???
+            // JP_NZ (mFunction1136c1_asm_113751);
+        } while(table - MD5_K_Table != 0x100 / 4);
+        // LD_DE(wMobileSDK_PacketBuffer + 209);
+        // LD_HL(wMobileSDK_PacketBuffer + 160);
+        // CALL(aFunction113a32);
+        Function113a32(wram->wMobileSDK_PacketBuffer + 160, wram->wMobileSDK_PacketBuffer + 209);
+        // LD_DE(wMobileSDK_PacketBuffer + 213);
+        // CALL(aFunction113a32);
+        Function113a32(wram->wMobileSDK_PacketBuffer + 164, wram->wMobileSDK_PacketBuffer + 213);
+        // LD_DE(wMobileSDK_PacketBuffer + 217);
+        // CALL(aFunction113a32);
+        Function113a32(wram->wMobileSDK_PacketBuffer + 168, wram->wMobileSDK_PacketBuffer + 217);
+        // LD_DE(wMobileSDK_PacketBuffer + 221);
+        // CALL(aFunction113a32);
+        Function113a32(wram->wMobileSDK_PacketBuffer + 172, wram->wMobileSDK_PacketBuffer + 221);
+        // LD_HL(wMobileSDK_PacketBuffer + 225);
+        // BIT_hl(1);
+        // IF_Z goto asm_1137fc;
+        if(!bit_test(wram->wMobileSDK_PacketBuffer[225], 1))
+            break;
+        // DEC_hl;
+        wram->wMobileSDK_PacketBuffer[225]--;
+        // JP(mFunction1136c1_asm_113734);
+    }
 
+// asm_1137fc:
+    // LD_HL(wMobileSDK_PacketBuffer + 32);
+    // LD_DE(wMobileSDK_PacketBuffer + 80);
+    // LD_BC(0x0030);
+    // CALL(aFunction113d66);
+    Function113d66(wram->wMobileSDK_PacketBuffer + 80, wram->wMobileSDK_PacketBuffer + 32, 0x0030);
+    // LD_HL(wMobileSDK_PacketBuffer + 194);
+    // LD_A_hli;
+    // LD_D_hl;
+    // LD_E_A;
+    de_str = (char*)de_saved;
+    // LD_HL(mUnknown_113a55);
+    // CALL(aMobileSDK_CopyString);
+    de_str = MobileSDK_CopyString(de_str, Unknown_113a55, &bc); // Copy "Authorization: GB00 name="
+    // LD_HL(wMobileSDK_PacketBuffer + 80);
+    // LD_BC(0x0020);
+    // CALL(aFunction113c8e);
+    de_saved = Function113c8e((uint8_t*)de_str, wram->wMobileSDK_PacketBuffer + 80, 0x0020);
+    // LD_A_L;
+    // LD_addr_A(wMobileSDK_PacketBuffer + 194);
+    // LD_A_H;
+    // LD_addr_A(wMobileSDK_PacketBuffer + 195);
+    // LD_B(0x12);
+    b = 0x12;
+    // LD_HL(wMobileSDK_PacketBuffer + 80);
+    hl2 = wram->wMobileSDK_PacketBuffer + 80;
+    // LD_DE(wMobileSDK_PacketBuffer + 32);
+    uint8_t* de2 = wram->wMobileSDK_PacketBuffer + 32;
 
-asm_113845:
-    LD_A_hli;
-    BIT_A(6);
-    IF_Z goto asm_11384c;
-    SET_C(3);
+    do {
+    // asm_11382d:
+        // LD_A(0x40);
+        // AND_A_hl;
+        // RLCA;
+        // LD_C_A;
+        uint8_t c = ((*hl2 & 0x40) << 1);
+        // LD_A_hli;
+        uint8_t a = *(hl2++);
+        // BIT_A(4);
+        // IF_Z goto asm_113839;
+        if(bit_test(a, 4)) {
+            // SET_C(6);
+            bit_set(c, 6);
+        }
 
+    // asm_113839:
+        // BIT_A(2);
+        // IF_Z goto asm_11383f;
+        if(bit_test(a, 2)) {
+            // SET_C(5);
+            bit_set(c, 5);
+        }
 
-asm_11384c:
-    BIT_A(4);
-    IF_Z goto asm_113852;
-    SET_C(2);
+    // asm_11383f:
+        // BIT_A(0);
+        // IF_Z goto asm_113845;
+        if(bit_test(a, 0)) {
+            // SET_C(4);
+            bit_set(c, 4);
+        }
 
+    // asm_113845:
+        // LD_A_hli;
+        a = *(hl2++);
+        // BIT_A(6);
+        // IF_Z goto asm_11384c;
+        if(bit_test(a, 6)) {
+            // SET_C(3);
+            bit_set(c, 3);
+        }
 
-asm_113852:
-    BIT_A(2);
-    IF_Z goto asm_113858;
-    SET_C(1);
+    // asm_11384c:
+        // BIT_A(4);
+        // IF_Z goto asm_113852;
+        if(bit_test(a, 4)) {
+            // SET_C(2);
+            bit_set(c, 2);
+        }
 
+    // asm_113852:
+        // BIT_A(2);
+        // IF_Z goto asm_113858;
+        if(bit_test(a, 2)) {
+            // SET_C(1);
+            bit_set(c, 1);
+        }
 
-asm_113858:
-    BIT_A(0);
-    IF_Z goto asm_11385e;
-    SET_C(0);
+    // asm_113858:
+        // BIT_A(0);
+        // IF_Z goto asm_11385e;
+        if(bit_test(a, 0)) {
+            // SET_C(0);
+            bit_set(c, 0);
+        }
 
+    // asm_11385e:
+        // LD_A_C;
+        // LD_de_A;
+        // INC_DE;
+        *(de2++) = c;
+        // DEC_B;
+        // IF_NZ goto asm_11382d;
+    } while(--b != 0);
+    // LD_B(0x12);
+    b = 0x12;
+    // LD_HL(wMobileSDK_PacketBuffer + 115);
+    hl2 = wram->wMobileSDK_PacketBuffer + 115;
+    // LD_DE(wMobileSDK_PacketBuffer + 67);
+    de2 = wram->wMobileSDK_PacketBuffer + 67;
 
-asm_11385e:
-    LD_A_C;
-    LD_de_A;
-    INC_DE;
-    DEC_B;
-    IF_NZ goto asm_11382d;
-    LD_B(0x12);
-    LD_HL(wMobileSDK_PacketBuffer + 115);
-    LD_DE(wMobileSDK_PacketBuffer + 67);
+    do {
+    // asm_11386c:
+        // LD_A(0x2);
+        // AND_A_hl;
+        // RRCA;
+        // LD_C_A;
+        uint8_t c = ((*hl2 & 0x2) >> 1);
+        // LD_A_hld;
+        uint8_t a = *(hl2--);
+        // BIT_A(3);
+        // IF_Z goto asm_113878;
+        if(bit_test(a, 3)) {
+            // SET_C(1);
+            bit_set(c, 1);
+        }
 
-asm_11386c:
-    LD_A(0x2);
-    AND_A_hl;
-    RRCA;
-    LD_C_A;
-    LD_A_hld;
-    BIT_A(3);
-    IF_Z goto asm_113878;
-    SET_C(1);
+    // asm_113878:
+        // BIT_A(5);
+        // IF_Z goto asm_11387e;
+        if(bit_test(a, 5)) {
+            // SET_C(2);
+            bit_set(c, 2);
+        }
 
+    // asm_11387e:
+        // BIT_A(7);
+        // IF_Z goto asm_113884;
+        if(bit_test(a, 7)) {
+            // SET_C(3);
+            bit_set(c, 3);
+        }
 
-asm_113878:
-    BIT_A(5);
-    IF_Z goto asm_11387e;
-    SET_C(2);
+    // asm_113884:
+        // LD_A_hld;
+        a = *(hl2--);
+        // BIT_A(1);
+        // IF_Z goto asm_11388b;
+        if(bit_test(a, 1)) {
+            // SET_C(4);
+            bit_set(c, 4);
+        }
 
+    // asm_11388b:
+        // BIT_A(3);
+        // IF_Z goto asm_113891;
+        if(bit_test(a, 3)) {
+            // SET_C(5);
+            bit_set(c, 5);
+        }
 
-asm_11387e:
-    BIT_A(7);
-    IF_Z goto asm_113884;
-    SET_C(3);
+    // asm_113891:
+        // BIT_A(5);
+        // IF_Z goto asm_113897;
+        if(bit_test(a, 5)) {
+            // SET_C(6);
+            bit_set(c, 6);
+        }
 
+    // asm_113897:
+        // BIT_A(7);
+        // IF_Z goto asm_11389d;
+        if(bit_test(a, 7)) {
+            // SET_C(7);
+            bit_set(c, 7);
+        }
 
-asm_113884:
-    LD_A_hld;
-    BIT_A(1);
-    IF_Z goto asm_11388b;
-    SET_C(4);
+    // asm_11389d:
+        // LD_A_C;
+        // LD_de_A;
+        // DEC_DE;
+        *(de2--) = c;
+        // DEC_B;
+        // IF_NZ goto asm_11386c;
+    } while(--b != 0);
+    // LD_B(0x10);
+    // LD_DE(wMobileSDK_PacketBuffer + 80);
+    // LD_HL(wMobileSDK_PacketBuffer + 160);
+    // CALL(aMobileSDK_CopyBytes);
+    de2 = MobileSDK_CopyBytes(wram->wMobileSDK_PacketBuffer + 80, wram->wMobileSDK_PacketBuffer + 160, 0x10);
+    // LD_BC(0x0010);
+    bc = 0x10;
+    // LD_HL(wc97f);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // CALL(aMobileSDK_CopyString);
+    de2 = (uint8_t*)MobileSDK_CopyString((char*)de2, (char*)gMobile_wc97f_wc980, &bc);
+    // LD_A(0x24);
+    // SUB_A_C;
+    // LD_B_A;
+    b = 0x24 - LOW(bc);
+    // LD_L_E;
+    // LD_H_D;
+    hl2 = de2;
+    // LD_A(0xff);
 
+    do {
+    // asm_1138c2:
+        // LD_hli_A;
+        *(de2++) = 0xff;
+        // DEC_B;
+        // IF_NZ goto asm_1138c2;
+    } while(--b != 0);
+    // XOR_A_A;
+    // LD_hl_A;
+    *de2 = 0;
+    // LD_B(0x24);
+    b = 0x24;
+    // LD_HL(wMobileSDK_PacketBuffer + 32);
+    hl2 = wram->wMobileSDK_PacketBuffer + 32;
+    // LD_DE(wMobileSDK_PacketBuffer + 80);
+    de2 = wram->wMobileSDK_PacketBuffer + 80;
 
-asm_11388b:
-    BIT_A(3);
-    IF_Z goto asm_113891;
-    SET_C(5);
+    do {
+    // asm_1138d0:
+        // LD_A_de;
+        // INC_DE;
+        // XOR_A_hl;
+        uint8_t a = *de2 ^ *hl2;
+        // LD_C(0x0);
+        uint8_t c = 0x0;
+        // BIT_A(0);
+        // IF_Z goto asm_1138db;
+        if(bit_test(a, 0)) {
+            // SET_C(3);
+            bit_set(c, 3);
+        }
 
+    // asm_1138db:
+        // BIT_A(3);
+        // IF_Z goto asm_1138e1;
+        if(bit_test(a, 3)) {
+            // SET_C(6);
+            bit_set(c, 6);
+        }
 
-asm_113891:
-    BIT_A(5);
-    IF_Z goto asm_113897;
-    SET_C(6);
+    // asm_1138e1:
+        // BIT_A(6);
+        // IF_Z goto asm_1138e7;
+        if(bit_test(a, 6)) {
+            // SET_C(0);
+            bit_set(c, 0);
+        }
 
-
-asm_113897:
-    BIT_A(7);
-    IF_Z goto asm_11389d;
-    SET_C(7);
-
-
-asm_11389d:
-    LD_A_C;
-    LD_de_A;
-    DEC_DE;
-    DEC_B;
-    IF_NZ goto asm_11386c;
-    LD_B(0x10);
-    LD_DE(wMobileSDK_PacketBuffer + 80);
-    LD_HL(wMobileSDK_PacketBuffer + 160);
-    CALL(aMobileSDK_CopyBytes);
-    LD_BC(0x0010);
-    LD_HL(wc97f);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    CALL(aMobileSDK_CopyString);
-    LD_A(0x24);
-    SUB_A_C;
-    LD_B_A;
-    LD_L_E;
-    LD_H_D;
-    LD_A(0xff);
-
-asm_1138c2:
-    LD_hli_A;
-    DEC_B;
-    IF_NZ goto asm_1138c2;
-    XOR_A_A;
-    LD_hl_A;
-    LD_B(0x24);
-    LD_HL(wMobileSDK_PacketBuffer + 32);
-    LD_DE(wMobileSDK_PacketBuffer + 80);
-
-asm_1138d0:
-    LD_A_de;
-    INC_DE;
-    XOR_A_hl;
-    LD_C(0x0);
-    BIT_A(0);
-    IF_Z goto asm_1138db;
-    SET_C(3);
-
-
-asm_1138db:
-    BIT_A(3);
-    IF_Z goto asm_1138e1;
-    SET_C(6);
-
-
-asm_1138e1:
-    BIT_A(6);
-    IF_Z goto asm_1138e7;
-    SET_C(0);
-
-
-asm_1138e7:
-    AND_A(0xb6);
-    OR_A_C;
-    LD_hli_A;
-    DEC_B;
-    IF_NZ goto asm_1138d0;
-    LD_HL(wMobileSDK_PacketBuffer + 194);
-    LD_A_hli;
-    LD_D_hl;
-    LD_E_A;
-    LD_HL(wMobileSDK_PacketBuffer + 32);
-    LD_BC(0x0024);
-    CALL(aFunction113c8e);
-    LD_A(0x22);
-    LD_hli_A;
-    LD_A(0xd);
-    LD_hli_A;
-    LD_A(0xa);
-    LD_hli_A;
-    XOR_A_A;
-    LD_hl_A;
-    RET;
-
+    // asm_1138e7:
+        // AND_A(0xb6);
+        // OR_A_C;
+        // LD_hli_A;
+        *hl2 = (a & 0xb6) | c;
+        hl2++, de2++;
+        // DEC_B;
+        // IF_NZ goto asm_1138d0;
+    } while(--b != 0);
+    // LD_HL(wMobileSDK_PacketBuffer + 194);
+    // LD_A_hli;
+    // LD_D_hl;
+    // LD_E_A;
+    // LD_HL(wMobileSDK_PacketBuffer + 32);
+    // LD_BC(0x0024);
+    // CALL(aFunction113c8e);
+    hl2 = Function113c8e(de_saved, wram->wMobileSDK_PacketBuffer + 32, 0x0024);
+    // LD_A(0x22);
+    // LD_hli_A;
+    *(hl2++) = '"';
+    // LD_A(0xd);
+    // LD_hli_A;
+    *(hl2++) = '\r';
+    // LD_A(0xa);
+    // LD_hli_A;
+    *(hl2++) = '\n';
+    // XOR_A_A;
+    // LD_hl_A;
+    *hl2 = 0;
+    // RET;
 }
 
-void Function113909(void){
-    CALL(aFunction11391e);
-    LD_A_C;
-    AND_A(0xf0);
-    SWAP_A;
-    OR_A_A;
-    JR_Z (mFunction11392f);
-    DEC_A;
-    JR_Z (mFunction113973);
-    DEC_A;
-    JP_Z (mFunction1139b7);
-    JP(mFunction1139de);
-
+void Function113909(uint8_t a, uint8_t c){
+    // CALL(aFunction11391e);
+    Function11391e(a);
+    // LD_A_C;
+    // AND_A(0xf0);
+    // SWAP_A;
+    a = (c >> 4) & 0xf;
+    switch(a) {
+        // OR_A_A;
+        // JR_Z (mFunction11392f);
+        case 0: 
+            return Function11392f();
+        // DEC_A;
+        // JR_Z (mFunction113973);
+        case 1: 
+            return Function113973();
+        // DEC_A;
+        // JP_Z (mFunction1139b7);
+        case 2: 
+            return Function1139b7();
+        // JP(mFunction1139de);
+        default: 
+            return Function1139de();
+    }
 }
 
-void Function11391e(void){
-    AND_A(0xf);
-    LD_E_A;
-    LD_D(0);
-    LD_HL(mUnknown_113b70);
-    ADD_HL_DE;
-    LD_DE(wMobileSDK_PacketBuffer + 176);
-    LD_B(0x8);
-    JP(mMobileSDK_CopyBytes);
-
+void Function11391e(uint8_t a){
+    // AND_A(0xf);
+    // LD_E_A;
+    // LD_D(0);
+    // LD_HL(mUnknown_113b70);
+    // ADD_HL_DE;
+    // LD_DE(wMobileSDK_PacketBuffer + 176);
+    // LD_B(0x8);
+    // JP(mMobileSDK_CopyBytes);
+    MobileSDK_CopyBytes(wram->wMobileSDK_PacketBuffer + 176, &Unknown_113b70[(a & 0xf) / 2], 0x8);
 }
 
 void Function11392f(void){
-    LD_HL(wMobileSDK_PacketBuffer + 178);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    LD_DE(wMobileSDK_PacketBuffer + 184);
-    LD_B(0x4);
-    CALL(aMobileSDK_CopyBytes);
-    LD_HL(wMobileSDK_PacketBuffer + 180);
-    LD_A_hli;
-    LD_D_hl;
-    LD_E_A;
-    LD_HL(wMobileSDK_PacketBuffer + 184);
-    CALL(aFunction113a0b);
-    LD_HL(wMobileSDK_PacketBuffer + 178);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    LD_DE(wMobileSDK_PacketBuffer + 188);
-    LD_B(0x4);
-    CALL(aMobileSDK_CopyBytes);
-    LD_HL(wMobileSDK_PacketBuffer + 188);
-    CALL(aFunction113a1f);
-    LD_HL(wMobileSDK_PacketBuffer + 182);
-    LD_A_hli;
-    LD_D_hl;
-    LD_E_A;
-    LD_HL(wMobileSDK_PacketBuffer + 188);
-    CALL(aFunction113a0b);
-    LD_HL(wMobileSDK_PacketBuffer + 184);
-    LD_DE(wMobileSDK_PacketBuffer + 188);
-    CALL(aFunction113a15);
-    RET;
-
+    // LD_HL(wMobileSDK_PacketBuffer + 178);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    uint8_t* hl = wram->wMobileSDK_PacketBuffer + (wram->wMobileSDK_PacketBuffer[178] | (wram->wMobileSDK_PacketBuffer[179] << 8));
+    // LD_DE(wMobileSDK_PacketBuffer + 184);
+    // LD_B(0x4);
+    // CALL(aMobileSDK_CopyBytes);
+    MobileSDK_CopyBytes(wram->wMobileSDK_PacketBuffer + 184, hl, 0x4);
+    // LD_HL(wMobileSDK_PacketBuffer + 180);
+    // LD_A_hli;
+    // LD_D_hl;
+    // LD_E_A;
+    uint8_t* de = wram->wMobileSDK_PacketBuffer + (wram->wMobileSDK_PacketBuffer[180] | (wram->wMobileSDK_PacketBuffer[181] << 8));
+    // LD_HL(wMobileSDK_PacketBuffer + 184);
+    // CALL(aFunction113a0b);
+    Function113a0b(wram->wMobileSDK_PacketBuffer + 184, de);
+    // LD_HL(wMobileSDK_PacketBuffer + 178);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    hl = wram->wMobileSDK_PacketBuffer + (wram->wMobileSDK_PacketBuffer[178] | (wram->wMobileSDK_PacketBuffer[179] << 8));
+    // LD_DE(wMobileSDK_PacketBuffer + 188);
+    // LD_B(0x4);
+    // CALL(aMobileSDK_CopyBytes);
+    MobileSDK_CopyBytes(wram->wMobileSDK_PacketBuffer + 188, hl, 0x4);
+    // LD_HL(wMobileSDK_PacketBuffer + 188);
+    // CALL(aFunction113a1f);
+    Function113a1f(wram->wMobileSDK_PacketBuffer + 188);
+    // LD_HL(wMobileSDK_PacketBuffer + 182);
+    // LD_A_hli;
+    // LD_D_hl;
+    // LD_E_A;
+    de = wram->wMobileSDK_PacketBuffer + (wram->wMobileSDK_PacketBuffer[182] | (wram->wMobileSDK_PacketBuffer[183] << 8));
+    // LD_HL(wMobileSDK_PacketBuffer + 188);
+    // CALL(aFunction113a0b);
+    Function113a0b(wram->wMobileSDK_PacketBuffer + 188, de);
+    // LD_HL(wMobileSDK_PacketBuffer + 184);
+    // LD_DE(wMobileSDK_PacketBuffer + 188);
+    // CALL(aFunction113a15);
+    Function113a15(wram->wMobileSDK_PacketBuffer + 184, wram->wMobileSDK_PacketBuffer + 188);
+    // RET;
 }
 
 void Function113973(void){
-    LD_HL(wMobileSDK_PacketBuffer + 178);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    LD_DE(wMobileSDK_PacketBuffer + 184);
-    LD_B(0x4);
-    CALL(aMobileSDK_CopyBytes);
-    LD_HL(wMobileSDK_PacketBuffer + 182);
-    LD_A_hli;
-    LD_D_hl;
-    LD_E_A;
-    LD_HL(wMobileSDK_PacketBuffer + 184);
-    CALL(aFunction113a0b);
-    LD_HL(wMobileSDK_PacketBuffer + 182);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    LD_DE(wMobileSDK_PacketBuffer + 188);
-    LD_B(0x4);
-    CALL(aMobileSDK_CopyBytes);
-    LD_HL(wMobileSDK_PacketBuffer + 188);
-    CALL(aFunction113a1f);
-    LD_HL(wMobileSDK_PacketBuffer + 180);
-    LD_A_hli;
-    LD_D_hl;
-    LD_E_A;
-    LD_HL(wMobileSDK_PacketBuffer + 188);
-    CALL(aFunction113a0b);
-    LD_HL(wMobileSDK_PacketBuffer + 184);
-    LD_DE(wMobileSDK_PacketBuffer + 188);
-    CALL(aFunction113a15);
-    RET;
-
+    // LD_HL(wMobileSDK_PacketBuffer + 178);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    uint8_t* hl = wram->wMobileSDK_PacketBuffer + (wram->wMobileSDK_PacketBuffer[178] | (wram->wMobileSDK_PacketBuffer[179] << 8));
+    // LD_DE(wMobileSDK_PacketBuffer + 184);
+    // LD_B(0x4);
+    // CALL(aMobileSDK_CopyBytes);
+    MobileSDK_CopyBytes(wram->wMobileSDK_PacketBuffer + 184, hl, 0x4);
+    // LD_HL(wMobileSDK_PacketBuffer + 182);
+    // LD_A_hli;
+    // LD_D_hl;
+    // LD_E_A;
+    uint8_t* de = wram->wMobileSDK_PacketBuffer + (wram->wMobileSDK_PacketBuffer[182] | (wram->wMobileSDK_PacketBuffer[183] << 8));
+    // LD_HL(wMobileSDK_PacketBuffer + 184);
+    // CALL(aFunction113a0b);
+    Function113a0b(wram->wMobileSDK_PacketBuffer + 184, de);
+    // LD_HL(wMobileSDK_PacketBuffer + 182);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    hl = wram->wMobileSDK_PacketBuffer + (wram->wMobileSDK_PacketBuffer[182] | (wram->wMobileSDK_PacketBuffer[183] << 8));
+    // LD_DE(wMobileSDK_PacketBuffer + 188);
+    // LD_B(0x4);
+    // CALL(aMobileSDK_CopyBytes);
+    MobileSDK_CopyBytes(wram->wMobileSDK_PacketBuffer + 188, hl, 0x4);
+    // LD_HL(wMobileSDK_PacketBuffer + 188);
+    // CALL(aFunction113a1f);
+    Function113a1f(wram->wMobileSDK_PacketBuffer + 188);
+    // LD_HL(wMobileSDK_PacketBuffer + 180);
+    // LD_A_hli;
+    // LD_D_hl;
+    // LD_E_A;
+    de = wram->wMobileSDK_PacketBuffer + (wram->wMobileSDK_PacketBuffer[180] | (wram->wMobileSDK_PacketBuffer[181] << 8));
+    // LD_HL(wMobileSDK_PacketBuffer + 188);
+    // CALL(aFunction113a0b);
+    Function113a0b(wram->wMobileSDK_PacketBuffer + 188, de);
+    // LD_HL(wMobileSDK_PacketBuffer + 184);
+    // LD_DE(wMobileSDK_PacketBuffer + 188);
+    // CALL(aFunction113a15);
+    Function113a15(wram->wMobileSDK_PacketBuffer + 184, wram->wMobileSDK_PacketBuffer + 188);
+    // RET;
 }
 
 void Function1139b7(void){
-    LD_HL(wMobileSDK_PacketBuffer + 178);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    LD_DE(wMobileSDK_PacketBuffer + 184);
-    LD_B(0x4);
-    CALL(aMobileSDK_CopyBytes);
-    LD_HL(wMobileSDK_PacketBuffer + 180);
-    LD_A_hli;
-    LD_D_hl;
-    LD_E_A;
-    LD_HL(wMobileSDK_PacketBuffer + 184);
-    CALL(aFunction113a28);
-    LD_HL(wMobileSDK_PacketBuffer + 182);
-    LD_A_hli;
-    LD_D_hl;
-    LD_E_A;
-    LD_HL(wMobileSDK_PacketBuffer + 184);
-    CALL(aFunction113a28);
-    RET;
-
+    // LD_HL(wMobileSDK_PacketBuffer + 178);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    uint8_t* hl = wram->wMobileSDK_PacketBuffer + (wram->wMobileSDK_PacketBuffer[178] | (wram->wMobileSDK_PacketBuffer[179] << 8));
+    // LD_DE(wMobileSDK_PacketBuffer + 184);
+    // LD_B(0x4);
+    // CALL(aMobileSDK_CopyBytes);
+    MobileSDK_CopyBytes(wram->wMobileSDK_PacketBuffer + 184, hl, 0x4);
+    // LD_HL(wMobileSDK_PacketBuffer + 180);
+    // LD_A_hli;
+    // LD_D_hl;
+    // LD_E_A;
+    uint8_t* de = wram->wMobileSDK_PacketBuffer + (wram->wMobileSDK_PacketBuffer[180] | (wram->wMobileSDK_PacketBuffer[181] << 8));
+    // LD_HL(wMobileSDK_PacketBuffer + 184);
+    // CALL(aFunction113a28);
+    Function113a28(wram->wMobileSDK_PacketBuffer + 184, de);
+    // LD_HL(wMobileSDK_PacketBuffer + 182);
+    // LD_A_hli;
+    // LD_D_hl;
+    // LD_E_A;
+    de = wram->wMobileSDK_PacketBuffer + (wram->wMobileSDK_PacketBuffer[182] | (wram->wMobileSDK_PacketBuffer[183] << 8));
+    // LD_HL(wMobileSDK_PacketBuffer + 184);
+    // CALL(aFunction113a28);
+    Function113a28(wram->wMobileSDK_PacketBuffer + 184, de);
+    // RET;
 }
 
 void Function1139de(void){
-    LD_HL(wMobileSDK_PacketBuffer + 182);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    LD_DE(wMobileSDK_PacketBuffer + 184);
-    LD_B(0x4);
-    CALL(aMobileSDK_CopyBytes);
-    LD_HL(wMobileSDK_PacketBuffer + 184);
-    CALL(aFunction113a1f);
-    LD_HL(wMobileSDK_PacketBuffer + 178);
-    LD_A_hli;
-    LD_D_hl;
-    LD_E_A;
-    LD_HL(wMobileSDK_PacketBuffer + 184);
-    CALL(aFunction113a15);
-    LD_HL(wMobileSDK_PacketBuffer + 180);
-    LD_A_hli;
-    LD_D_hl;
-    LD_E_A;
-    LD_HL(wMobileSDK_PacketBuffer + 184);
-    CALL(aFunction113a28);
-    RET;
-
+    // LD_HL(wMobileSDK_PacketBuffer + 182);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    uint8_t* hl = wram->wMobileSDK_PacketBuffer + (wram->wMobileSDK_PacketBuffer[182] | (wram->wMobileSDK_PacketBuffer[183] << 8));
+    // LD_DE(wMobileSDK_PacketBuffer + 184);
+    // LD_B(0x4);
+    // CALL(aMobileSDK_CopyBytes);
+    MobileSDK_CopyBytes(wram->wMobileSDK_PacketBuffer + 184, hl, 0x4);
+    // LD_HL(wMobileSDK_PacketBuffer + 184);
+    // CALL(aFunction113a1f);
+    Function113a1f(wram->wMobileSDK_PacketBuffer + 184);
+    // LD_HL(wMobileSDK_PacketBuffer + 178);
+    // LD_A_hli;
+    // LD_D_hl;
+    // LD_E_A;
+    uint8_t* de = wram->wMobileSDK_PacketBuffer + (wram->wMobileSDK_PacketBuffer[178] | (wram->wMobileSDK_PacketBuffer[179] << 8));
+    // LD_HL(wMobileSDK_PacketBuffer + 184);
+    // CALL(aFunction113a15);
+    Function113a15(wram->wMobileSDK_PacketBuffer + 184, de);
+    // LD_HL(wMobileSDK_PacketBuffer + 180);
+    // LD_A_hli;
+    // LD_D_hl;
+    // LD_E_A;
+    de = wram->wMobileSDK_PacketBuffer + (wram->wMobileSDK_PacketBuffer[180] | (wram->wMobileSDK_PacketBuffer[181] << 8));
+    // LD_HL(wMobileSDK_PacketBuffer + 184);
+    // CALL(aFunction113a28);
+    Function113a28(wram->wMobileSDK_PacketBuffer + 184, de);
+    // RET;
 }
 
-void Function113a0b(void){
-    LD_B(0x4);
+void Function113a0b(uint8_t* hl, const uint8_t* de){
+    // LD_B(0x4);
+    uint8_t b = 0x4;
 
-asm_113a0d:
-    LD_A_de;
-    INC_DE;
-    AND_A_hl;
-    LD_hli_A;
-    DEC_B;
-    IF_NZ goto asm_113a0d;
-    RET;
-
+    do {
+    // asm_113a0d:
+        // LD_A_de;
+        // INC_DE;
+        // AND_A_hl;
+        // LD_hli_A;
+        *(hl++) &= *(de++);
+        // DEC_B;
+        // IF_NZ goto asm_113a0d;
+    } while(--b != 0);
+    // RET;
 }
 
-void Function113a15(void){
-    LD_B(0x4);
+void Function113a15(uint8_t* hl, const uint8_t* de){
+    // LD_B(0x4);
+    uint8_t b = 0x4;
 
-asm_113a17:
-    LD_A_de;
-    INC_DE;
-    OR_A_hl;
-    LD_hli_A;
-    DEC_B;
-    IF_NZ goto asm_113a17;
-    RET;
-
+    do {
+    // asm_113a17:
+        // LD_A_de;
+        // INC_DE;
+        // OR_A_hl;
+        // LD_hli_A;
+        *(hl++) |= *(de++);
+        // DEC_B;
+        // IF_NZ goto asm_113a17;
+    } while(--b != 0);
+    // RET;
 }
 
-void Function113a1f(void){
-    LD_B(0x4);
+void Function113a1f(uint8_t* hl){
+    // LD_B(0x4);
+    uint8_t b = 0x4;
 
-asm_113a21:
-    LD_A_hl;
-    CPL;
-    LD_hli_A;
-    DEC_B;
-    IF_NZ goto asm_113a21;
-    RET;
-
+    do {
+    // asm_113a21:
+        // LD_A_hl;
+        // CPL;
+        // LD_hli_A;
+        *hl = (*hl ^ 0xff);
+        hl++;
+        // DEC_B;
+        // IF_NZ goto asm_113a21;
+    } while(--b != 0);
+    // RET;
 }
 
-void Function113a28(void){
-    LD_B(0x4);
+void Function113a28(uint8_t* hl, const uint8_t* de){
+    // LD_B(0x4);
+    uint8_t b = 0x4;
 
-asm_113a2a:
-    LD_A_de;
-    INC_DE;
-    XOR_A_hl;
-    LD_hli_A;
-    DEC_B;
-    IF_NZ goto asm_113a2a;
-    RET;
-
+    do {
+    // asm_113a2a:
+        // LD_A_de;
+        // INC_DE;
+        // XOR_A_hl;
+        // LD_hli_A;
+        *(hl++) ^= *(de++);
+        // DEC_B;
+        // IF_NZ goto asm_113a2a;
+    } while(--b != 0);
+    // RET;
 }
 
-void Function113a32(void){
-    LD_A_de;
-    INC_DE;
-    ADD_A_hl;
-    LD_hli_A;
-    LD_B(0x3);
+void Function113a32(uint8_t* hl, const uint8_t* de){
+    uint8_t cy = 0;
+    // LD_A_de;
+    // INC_DE;
+    // ADD_A_hl;
+    // LD_hli_A;
+    *hl = AddCarry8(*hl, *de, 0, &cy);
+    hl++, de++;
+    // LD_B(0x3);
+    uint8_t b = 0x3;
 
-asm_113a38:
-    LD_A_de;
-    INC_DE;
-    ADC_A_hl;
-    LD_hli_A;
-    DEC_B;
-    IF_NZ goto asm_113a38;
-    RET;
-
+    do {
+    // asm_113a38:
+        // LD_A_de;
+        // INC_DE;
+        // ADC_A_hl;
+        // LD_hli_A;
+        *hl = AddCarry8(*hl, *de, cy, &cy);
+        hl++, de++;
+        // DEC_B;
+        // IF_NZ goto asm_113a38;
+    } while(--b != 0);
+    // RET;
 }
 
-void Function113a40(void){
-
-asm_113a40:
-    OR_A_A;
-    PUSH_HL;
-    LD_A_hli;
-    RLA;
-    LD_A_hl;
-    RLA;
-    LD_hli_A;
-    LD_A_hl;
-    RLA;
-    LD_hli_A;
-    LD_A_hl;
-    RLA;
-    LD_hl_A;
-    POP_HL;
-    LD_A_hl;
-    RLA;
-    LD_hl_A;
-    DEC_B;
-    IF_NZ goto asm_113a40;
-    RET;
-
+void Function113a40(uint32_t* hl, uint8_t b){
+    do {
+    // asm_113a40:
+        // OR_A_A;
+        // PUSH_HL;
+        // LD_A_hli;
+        // RLA;
+        // LD_A_hl;
+        // RLA;
+        // LD_hli_A;
+        // LD_A_hl;
+        // RLA;
+        // LD_hli_A;
+        // LD_A_hl;
+        // RLA;
+        // LD_hl_A;
+        // POP_HL;
+        // LD_A_hl;
+        // RLA;
+        // LD_hl_A;
+        // DEC_B;
+        *hl = (*hl << 1) | (*hl >> 31);
+        // IF_NZ goto asm_113a40;
+    } while(--b != 0);
+    // RET;
 }
 
-void Unknown_113a55(void){
-    //db ['"Authorization: GB00 name="', '0x22', '0'];
+const char Unknown_113a55[] = "Authorization: GB00 name=\""; //db ['"Authorization: GB00 name="', '0x22', '0'];
 
-    return Unknown_113a70();
-}
+const uint8_t Unknown_113a70[] = {
+    0x00, 0x00, 0x00, 0x07, 0x06, 0x04, 0x00, 0x0c, 0x04, 0x08, 0x00, 0x11, 0x02, 0x0c, 0x00, 0x16,
+    0x00, 0x10, 0x00, 0x07, 0x06, 0x14, 0x00, 0x0c, 0x04, 0x18, 0x00, 0x11, 0x02, 0x1c, 0x00, 0x16,
+    0x00, 0x20, 0x00, 0x07, 0x06, 0x24, 0x00, 0x0c, 0x04, 0x28, 0x00, 0x11, 0x02, 0x2c, 0x00, 0x16,
+    0x00, 0x30, 0x00, 0x07, 0x06, 0x34, 0x00, 0x0c, 0x04, 0x38, 0x00, 0x11, 0x02, 0x3c, 0x00, 0x16,
+    0x10, 0x04, 0x00, 0x05, 0x16, 0x18, 0x00, 0x09, 0x14, 0x2c, 0x00, 0x0e, 0x12, 0x00, 0x00, 0x14,
+    0x10, 0x14, 0x00, 0x05, 0x16, 0x28, 0x00, 0x09, 0x14, 0x3c, 0x00, 0x0e, 0x12, 0x10, 0x00, 0x14,
+    0x10, 0x24, 0x00, 0x05, 0x16, 0x38, 0x00, 0x09, 0x14, 0x0c, 0x00, 0x0e, 0x12, 0x20, 0x00, 0x14,
+    0x10, 0x34, 0x00, 0x05, 0x16, 0x08, 0x00, 0x09, 0x14, 0x1c, 0x00, 0x0e, 0x12, 0x30, 0x00, 0x14,
+    0x20, 0x14, 0x00, 0x04, 0x26, 0x20, 0x00, 0x0b, 0x24, 0x2c, 0x00, 0x10, 0x22, 0x38, 0x00, 0x17,
+    0x20, 0x04, 0x00, 0x04, 0x26, 0x10, 0x00, 0x0b, 0x24, 0x1c, 0x00, 0x10, 0x22, 0x28, 0x00, 0x17,
+    0x20, 0x34, 0x00, 0x04, 0x26, 0x00, 0x00, 0x0b, 0x24, 0x0c, 0x00, 0x10, 0x22, 0x18, 0x00, 0x17,
+    0x20, 0x24, 0x00, 0x04, 0x26, 0x30, 0x00, 0x0b, 0x24, 0x3c, 0x00, 0x10, 0x22, 0x08, 0x00, 0x17,
+    0x30, 0x00, 0x00, 0x06, 0x36, 0x1c, 0x00, 0x0a, 0x34, 0x38, 0x00, 0x0f, 0x32, 0x14, 0x00, 0x15,
+    0x30, 0x30, 0x00, 0x06, 0x36, 0x0c, 0x00, 0x0a, 0x34, 0x28, 0x00, 0x0f, 0x32, 0x04, 0x00, 0x15,
+    0x30, 0x20, 0x00, 0x06, 0x36, 0x3c, 0x00, 0x0a, 0x34, 0x18, 0x00, 0x0f, 0x32, 0x34, 0x00, 0x15,
+    0x30, 0x10, 0x00, 0x06, 0x36, 0x2c, 0x00, 0x0a, 0x34, 0x08, 0x00, 0x0f, 0x32, 0x24, 0x00, 0x15,
+};
 
-void Unknown_113a70(void){
-    //db ['0x00', '0x00', '0x00', '0x07', '0x06', '0x04', '0x00', '0x0c', '0x04', '0x08', '0x00', '0x11', '0x02', '0x0c', '0x00', '0x16'];
-    //db ['0x00', '0x10', '0x00', '0x07', '0x06', '0x14', '0x00', '0x0c', '0x04', '0x18', '0x00', '0x11', '0x02', '0x1c', '0x00', '0x16'];
-    //db ['0x00', '0x20', '0x00', '0x07', '0x06', '0x24', '0x00', '0x0c', '0x04', '0x28', '0x00', '0x11', '0x02', '0x2c', '0x00', '0x16'];
-    //db ['0x00', '0x30', '0x00', '0x07', '0x06', '0x34', '0x00', '0x0c', '0x04', '0x38', '0x00', '0x11', '0x02', '0x3c', '0x00', '0x16'];
-    //db ['0x10', '0x04', '0x00', '0x05', '0x16', '0x18', '0x00', '0x09', '0x14', '0x2c', '0x00', '0x0e', '0x12', '0x00', '0x00', '0x14'];
-    //db ['0x10', '0x14', '0x00', '0x05', '0x16', '0x28', '0x00', '0x09', '0x14', '0x3c', '0x00', '0x0e', '0x12', '0x10', '0x00', '0x14'];
-    //db ['0x10', '0x24', '0x00', '0x05', '0x16', '0x38', '0x00', '0x09', '0x14', '0x0c', '0x00', '0x0e', '0x12', '0x20', '0x00', '0x14'];
-    //db ['0x10', '0x34', '0x00', '0x05', '0x16', '0x08', '0x00', '0x09', '0x14', '0x1c', '0x00', '0x0e', '0x12', '0x30', '0x00', '0x14'];
-    //db ['0x20', '0x14', '0x00', '0x04', '0x26', '0x20', '0x00', '0x0b', '0x24', '0x2c', '0x00', '0x10', '0x22', '0x38', '0x00', '0x17'];
-    //db ['0x20', '0x04', '0x00', '0x04', '0x26', '0x10', '0x00', '0x0b', '0x24', '0x1c', '0x00', '0x10', '0x22', '0x28', '0x00', '0x17'];
-    //db ['0x20', '0x34', '0x00', '0x04', '0x26', '0x00', '0x00', '0x0b', '0x24', '0x0c', '0x00', '0x10', '0x22', '0x18', '0x00', '0x17'];
-    //db ['0x20', '0x24', '0x00', '0x04', '0x26', '0x30', '0x00', '0x0b', '0x24', '0x3c', '0x00', '0x10', '0x22', '0x08', '0x00', '0x17'];
-    //db ['0x30', '0x00', '0x00', '0x06', '0x36', '0x1c', '0x00', '0x0a', '0x34', '0x38', '0x00', '0x0f', '0x32', '0x14', '0x00', '0x15'];
-    //db ['0x30', '0x30', '0x00', '0x06', '0x36', '0x0c', '0x00', '0x0a', '0x34', '0x28', '0x00', '0x0f', '0x32', '0x04', '0x00', '0x15'];
-    //db ['0x30', '0x20', '0x00', '0x06', '0x36', '0x3c', '0x00', '0x0a', '0x34', '0x18', '0x00', '0x0f', '0x32', '0x34', '0x00', '0x15'];
-    //db ['0x30', '0x10', '0x00', '0x06', '0x36', '0x2c', '0x00', '0x0a', '0x34', '0x08', '0x00', '0x0f', '0x32', '0x24', '0x00', '0x15'];
+const uint16_t Unknown_113b70[] =  {
+    160, // wMobileSDK_PacketBuffer + 160
+    164, // wMobileSDK_PacketBuffer + 164
+    168, // wMobileSDK_PacketBuffer + 168
+    172, // wMobileSDK_PacketBuffer + 172
+    160, // wMobileSDK_PacketBuffer + 160
+    164, // wMobileSDK_PacketBuffer + 164
+    168, // wMobileSDK_PacketBuffer + 168
+};
 
-    return Unknown_113b70();
-}
+const uint8_t Unknown_113b7e[] = {
+    0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
+    0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10,
+};
 
-void Unknown_113b70(void){
-    //dw ['wMobileSDK_PacketBuffer + 160'];
-    //dw ['wMobileSDK_PacketBuffer + 164'];
-    //dw ['wMobileSDK_PacketBuffer + 168'];
-    //dw ['wMobileSDK_PacketBuffer + 172'];
-    //dw ['wMobileSDK_PacketBuffer + 160'];
-    //dw ['wMobileSDK_PacketBuffer + 164'];
-    //dw ['wMobileSDK_PacketBuffer + 168'];
+const uint32_t MD5_K_Table[] = {
+    0xd76aa478, 0xe8c7b756, 0x242070db, 0xc1bdceee,
+    0xf57c0faf, 0x4787c62a, 0xa8304613, 0xfd469501,
+    0x698098d8, 0x8b44f7af, 0xffff5bb1, 0x895cd7be,
+    0x6b901122, 0xfd987193, 0xa679438e, 0x49b40821,
+    0xf61e2562, 0xc040b340, 0x265e5a51, 0xe9b6c7aa,
+    0xd62f105d, 0x02441453, 0xd8a1e681, 0xe7d3fbc8,
+    0x21e1cde6, 0xc33707d6, 0xf4d50d87, 0x455a14ed,
+    0xa9e3e905, 0xfcefa3f8, 0x676f02d9, 0x8d2a4c8a,
+    0xfffa3942, 0x8771f681, 0x6d9d6122, 0xfde5380c,
+    0xa4beea44, 0x4bdecfa9, 0xf6bb4b60, 0xbebfbc70,
+    0x289b7ec6, 0xeaa127fa, 0xd4ef3085, 0x04881d05,
+    0xd9d4d039, 0xe6db99e5, 0x1fa27cf8, 0xc4ac5665,
+    0xf4292244, 0x432aff97, 0xab9423a7, 0xfc93a039,
+    0x655b59c3, 0x8f0ccc92, 0xffeff47d, 0x85845dd1,
+    0x6fa87e4f, 0xfe2ce6e0, 0xa3014314, 0x4e0811a1,
+    0xf7537e82, 0xbd3af235, 0x2ad7d2bb, 0xeb86d391,
+};
 
-    return Unknown_113b7e();
-}
+uint8_t* Function113c8e(uint8_t* de, const uint8_t* hl, uint16_t bc){
+    // LD_A_C;
+    // LD_addr_A(wMobileSDK_PacketBuffer + 201);
+    // LD_A_B;
+    // LD_addr_A(wMobileSDK_PacketBuffer + 202);
+    // LD_C_E;
+    // LD_B_D;
+    // LD_E_L;
+    // LD_D_H;
+    const uint8_t* de2 = hl;
+    // LD_L_C;
+    // LD_H_B;
+    uint8_t* hl2 = de;
+    // XOR_A_A;
+    // LD_addr_A(wMobileSDK_PacketBuffer + 207);
+    wram->wMobileSDK_PacketBuffer[207] = 0;
 
-void Unknown_113b7e(void){
-    //db ['0x01', '0x23', '0x45', '0x67', '0x89', '0xab', '0xcd', '0xef'];
-    //db ['0xfe', '0xdc', '0xba', '0x98', '0x76', '0x54', '0x32', '0x10'];
+    do {
+    // asm_113ca0:
+        // LD_B(0x3);
+        uint8_t b = 0x3;
+        // PUSH_HL;
+        // LD_HL(wMobileSDK_PacketBuffer + 203);
+        uint8_t* hl3 = wram->wMobileSDK_PacketBuffer + 203;
 
-    return MD5_K_Table();
-}
+        do {
+        // asm_113ca6:
+            // LD_A_de;
+            // INC_DE;
+            // LD_hli_A;
+            *(hl3++) = *(de2++);
+            // DEC_B;
+            // IF_NZ goto asm_113ca6;
+        } while(--b != 0);
+        // LD_A_addr(wMobileSDK_PacketBuffer + 201);
+        // LD_C_A;
+        // LD_A_addr(wMobileSDK_PacketBuffer + 202);
+        // LD_B_A;
+        // XOR_A_A;
+        // OR_A_B;
+        // IF_NZ goto asm_113ccf;
+        // LD_A(0x2);
+        // CP_A_C;
+        // IF_C goto asm_113ccf;
+        if(bc <= 0x2) {
+            // PUSH_HL;
+            // DEC_HL;
+            uint8_t* hl4 = hl3;
+            // LD_A_C;
+            // LD_addr_A(wMobileSDK_PacketBuffer + 207);
+            wram->wMobileSDK_PacketBuffer[207] = LOW(bc);
+            uint8_t c = LOW(bc);
 
-void MD5_K_Table(void){
-    //dl ['0xd76aa478', '0xe8c7b756', '0x242070db', '0xc1bdceee']
-    //dl ['0xf57c0faf', '0x4787c62a', '0xa8304613', '0xfd469501']
-    //dl ['0x698098d8', '0x8b44f7af', '0xffff5bb1', '0x895cd7be']
-    //dl ['0x6b901122', '0xfd987193', '0xa679438e', '0x49b40821']
-    //dl ['0xf61e2562', '0xc040b340', '0x265e5a51', '0xe9b6c7aa']
-    //dl ['0xd62f105d', '0x02441453', '0xd8a1e681', '0xe7d3fbc8']
-    //dl ['0x21e1cde6', '0xc33707d6', '0xf4d50d87', '0x455a14ed']
-    //dl ['0xa9e3e905', '0xfcefa3f8', '0x676f02d9', '0x8d2a4c8a']
-    //dl ['0xfffa3942', '0x8771f681', '0x6d9d6122', '0xfde5380c']
-    //dl ['0xa4beea44', '0x4bdecfa9', '0xf6bb4b60', '0xbebfbc70']
-    //dl ['0x289b7ec6', '0xeaa127fa', '0xd4ef3085', '0x04881d05']
-    //dl ['0xd9d4d039', '0xe6db99e5', '0x1fa27cf8', '0xc4ac5665']
-    //dl ['0xf4292244', '0x432aff97', '0xab9423a7', '0xfc93a039']
-    //dl ['0x655b59c3', '0x8f0ccc92', '0xffeff47d', '0x85845dd1']
-    //dl ['0x6fa87e4f', '0xfe2ce6e0', '0xa3014314', '0x4e0811a1']
-    //dl ['0xf7537e82', '0xbd3af235', '0x2ad7d2bb', '0xeb86d391']
+            do {
+            // asm_113cc3:
+                // XOR_A_A;
+                // LD_hld_A;
+                *(hl4--) = 0;
+                // INC_C;
+                c++;
+                // LD_A(0x3);
+                // CP_A_C;
+                // IF_NZ goto asm_113cc3;
+            } while(c != 0x3);
+            // POP_HL;
+            // LD_BC(0x0003);
+            bc = 0x3;
+        }
 
-    return Function113c8e();
-}
+    // asm_113ccf:
+        // DEC_BC;
+        // DEC_BC;
+        // DEC_BC;
+        bc -= 3;
+        // LD_A_C;
+        // LD_addr_A(wMobileSDK_PacketBuffer + 201);
+        // LD_A_B;
+        // LD_addr_A(wMobileSDK_PacketBuffer + 202);
+        // PUSH_DE;
+        // DEC_HL;
+        --hl3;
+        // LD_C_hl;
+        uint8_t c = *hl3;
+        // DEC_HL;
+        --hl3;
+        // LD_B_hl;
+        b = *hl3;
+        // DEC_HL;
+        --hl3;
+        // LD_A_hl;
+        // LD_D_A;
+        uint8_t d = *hl3;
+        // SRL_A;
+        // SRL_A;
+        // LD_hli_A;
+        *(hl3++) = d >> 2;
+        // LD_A(0x3);
+        // AND_A_D;
+        // LD_D_A;
+        // LD_A(0xf0);
+        // AND_A_B;
+        // OR_A_D;
+        uint8_t a = (d & 0x3) | (b & 0xf0);
+        // SWAP_A;
+        // LD_hli_A;
+        *(hl3++) = (a << 4) | (a >> 4);
+        // LD_A(0xf);
+        // AND_A_B;
+        // LD_D_A;
+        // LD_A_C;
+        // AND_A(0xc0);
+        // OR_A_D;
+        a = (b & 0xf) | (c & 0xc0);
+        // RLCA;
+        // RLCA;
+        // LD_hli_A;
+        *(hl3++) = (a << 2) | (a >> 6);
+        // LD_A(0x3f);
+        // AND_A_C;
+        // LD_hld_A;
+        *(hl3--) = c & 0x3f;
+        // DEC_HL;
+        // DEC_HL;
+        hl3 -= 2;
+        // POP_DE;
+        // LD_B_H;
+        // LD_C_L;
+        uint8_t* bc2 = hl3;
+        // POP_HL;
+        // LD_A_bc;
+        // INC_BC;
+        // CALL(aFunction113d47);
+        // LD_hli_A;
+        *(hl2++) = Function113d47(*(bc2++));
+        // LD_A_bc;
+        // INC_BC;
+        // CALL(aFunction113d47);
+        // LD_hli_A;
+        *(hl2++) = Function113d47(*(bc2++));
+        // LD_A_bc;
+        // INC_BC;
+        // CALL(aFunction113d47);
+        // LD_hli_A;
+        *(hl2++) = Function113d47(*(bc2++));
+        // LD_A_bc;
+        // INC_BC;
+        // CALL(aFunction113d47);
+        // LD_hli_A;
+        *(hl2++) = Function113d47(*(bc2++));
+        // LD_A_addr(wMobileSDK_PacketBuffer + 201);
+        // CP_A(0x0);
+        // JP_NZ (mFunction113c8e_asm_113ca0);
+        // LD_A_addr(wMobileSDK_PacketBuffer + 202);
+        // CP_A(0x0);
+        // JP_NZ (mFunction113c8e_asm_113ca0);
+    } while(bc != 0);
+    // LD_A_addr(wMobileSDK_PacketBuffer + 207);
+    // CP_A(0x0);
+    // IF_Z goto asm_113d43;
+    if(wram->wMobileSDK_PacketBuffer[207] != 0) {
+        // PUSH_HL;
+        // DEC_HL;
+        uint8_t* hl3 = hl2 - 1;
+        // LD_B_A;
+        uint8_t b = wram->wMobileSDK_PacketBuffer[207];
 
-void Function113c8e(void){
-    LD_A_C;
-    LD_addr_A(wMobileSDK_PacketBuffer + 201);
-    LD_A_B;
-    LD_addr_A(wMobileSDK_PacketBuffer + 202);
-    LD_C_E;
-    LD_B_D;
-    LD_E_L;
-    LD_D_H;
-    LD_L_C;
-    LD_H_B;
-    XOR_A_A;
-    LD_addr_A(wMobileSDK_PacketBuffer + 207);
-
-
-asm_113ca0:
-    LD_B(0x3);
-    PUSH_HL;
-    LD_HL(wMobileSDK_PacketBuffer + 203);
-
-asm_113ca6:
-    LD_A_de;
-    INC_DE;
-    LD_hli_A;
-    DEC_B;
-    IF_NZ goto asm_113ca6;
-    LD_A_addr(wMobileSDK_PacketBuffer + 201);
-    LD_C_A;
-    LD_A_addr(wMobileSDK_PacketBuffer + 202);
-    LD_B_A;
-    XOR_A_A;
-    OR_A_B;
-    IF_NZ goto asm_113ccf;
-    LD_A(0x2);
-    CP_A_C;
-    IF_C goto asm_113ccf;
-    PUSH_HL;
-    DEC_HL;
-    LD_A_C;
-    LD_addr_A(wMobileSDK_PacketBuffer + 207);
-
-asm_113cc3:
-    XOR_A_A;
-    LD_hld_A;
-    INC_C;
-    LD_A(0x3);
-    CP_A_C;
-    IF_NZ goto asm_113cc3;
-    POP_HL;
-    LD_BC(0x0003);
-
-
-asm_113ccf:
-    DEC_BC;
-    DEC_BC;
-    DEC_BC;
-    LD_A_C;
-    LD_addr_A(wMobileSDK_PacketBuffer + 201);
-    LD_A_B;
-    LD_addr_A(wMobileSDK_PacketBuffer + 202);
-    PUSH_DE;
-    DEC_HL;
-    LD_C_hl;
-    DEC_HL;
-    LD_B_hl;
-    DEC_HL;
-    LD_A_hl;
-    LD_D_A;
-    SRL_A;
-    SRL_A;
-    LD_hli_A;
-    LD_A(0x3);
-    AND_A_D;
-    LD_D_A;
-    LD_A(0xf0);
-    AND_A_B;
-    OR_A_D;
-    SWAP_A;
-    LD_hli_A;
-    LD_A(0xf);
-    AND_A_B;
-    LD_D_A;
-    LD_A_C;
-    AND_A(0xc0);
-    OR_A_D;
-    RLCA;
-    RLCA;
-    LD_hli_A;
-    LD_A(0x3f);
-    AND_A_C;
-    LD_hld_A;
-    DEC_HL;
-    DEC_HL;
-    POP_DE;
-    LD_B_H;
-    LD_C_L;
-    POP_HL;
-    LD_A_bc;
-    INC_BC;
-    CALL(aFunction113d47);
-    LD_hli_A;
-    LD_A_bc;
-    INC_BC;
-    CALL(aFunction113d47);
-    LD_hli_A;
-    LD_A_bc;
-    INC_BC;
-    CALL(aFunction113d47);
-    LD_hli_A;
-    LD_A_bc;
-    INC_BC;
-    CALL(aFunction113d47);
-    LD_hli_A;
-    LD_A_addr(wMobileSDK_PacketBuffer + 201);
-    CP_A(0x0);
-    JP_NZ (mFunction113c8e_asm_113ca0);
-    LD_A_addr(wMobileSDK_PacketBuffer + 202);
-    CP_A(0x0);
-    JP_NZ (mFunction113c8e_asm_113ca0);
-    LD_A_addr(wMobileSDK_PacketBuffer + 207);
-    CP_A(0x0);
-    IF_Z goto asm_113d43;
-    PUSH_HL;
-    DEC_HL;
-    LD_B_A;
-
-asm_113d39:
-    LD_A(0x3d);
-    LD_hld_A;
-    INC_B;
-    LD_A(0x3);
-    CP_A_B;
-    IF_NZ goto asm_113d39;
-    POP_HL;
-
-
-asm_113d43:
-    LD_A(0x0);
-    LD_hl_A;
-    RET;
-
-}
-
-void Function113d47(void){
-    CP_A(0x1a);
-    IF_C goto asm_113d5a;
-    CP_A(0x34);
-    IF_C goto asm_113d5d;
-    CP_A(0x3e);
-    IF_C goto asm_113d60;
-    CP_A(0x3e);
-    IF_Z goto asm_113d63;
-    LD_A(0x2f);
-    RET;
-
-
-asm_113d5a:
-    ADD_A(0x41);
-    RET;
-
-
-asm_113d5d:
-    ADD_A(0x47);
-    RET;
-
-
-asm_113d60:
-    SUB_A(0x4);
-    RET;
-
-
-asm_113d63:
-    LD_A(0x2b);
-    RET;
-
-}
-
-void Function113d66(void){
-    LD_A_C;
-    LD_addr_A(wMobileSDK_PacketBuffer + 201);
-    LD_A_B;
-    LD_addr_A(wMobileSDK_PacketBuffer + 202);
-    LD_C_E;
-    LD_B_D;
-    LD_E_L;
-    LD_D_H;
-    LD_L_C;
-    LD_H_B;
-
-asm_113d74:
-    LD_A_addr(wMobileSDK_PacketBuffer + 202);
-    OR_A_A;
-    IF_NZ goto asm_113d82;
-    LD_A_addr(wMobileSDK_PacketBuffer + 201);
-    CP_A(0x4);
-    JP_C (mFunction113d66_asm_113e26);
-
-
-asm_113d82:
-    LD_B(0x4);
-    PUSH_HL;
-    LD_HL(wMobileSDK_PacketBuffer + 203);
-
-asm_113d88:
-    LD_A_de;
-    INC_DE;
-    CALL(aFunction113d66_Function113dfa);
-    LD_hli_A;
-    DEC_B;
-    IF_NZ goto asm_113d88;
-    LD_A_addr(wMobileSDK_PacketBuffer + 201);
-    LD_C_A;
-    LD_A_addr(wMobileSDK_PacketBuffer + 202);
-    LD_B_A;
-    for(int rept = 0; rept < 4; rept++){
-    DEC_BC;
+        do {
+        // asm_113d39:
+            // LD_A(0x3d);
+            // LD_hld_A;
+            *(hl3--) = 0x3d;
+            // INC_B;
+            // LD_A(0x3);
+            // CP_A_B;
+            // IF_NZ goto asm_113d39;
+        } while(++b != 0x3);
+        // POP_HL;
     }
-    LD_A_B;
-    OR_A_C;
-    IF_Z goto asm_113dae;
 
-asm_113da1:
-    LD_A_de;
-    CP_A(0xd);
-    IF_Z goto asm_113daa;
-    CP_A(0xa);
-    IF_NZ goto asm_113dae;
+// asm_113d43:
+    // LD_A(0x0);
+    // LD_hl_A;
+    *hl2 = 0;
+    // RET;
+    return hl2;
+}
 
+uint8_t Function113d47(uint8_t a){
+    // CP_A(0x1a);
+    // IF_C goto asm_113d5a;
+    if(a < 0x1a)
+        return a + 0x41;
+    // CP_A(0x34);
+    // IF_C goto asm_113d5d;
+    if(a < 0x34)
+        return a + 0x47;
+    // CP_A(0x3e);
+    // IF_C goto asm_113d60;
+    if(a < 0x3e)
+        return a - 0x4;
+    // CP_A(0x3e);
+    // IF_Z goto asm_113d63;
+    if(a == 0x3e)
+        return 0x2b;
+    // LD_A(0x2f);
+    // RET;
+    return 0x2f;
 
-asm_113daa:
-    INC_DE;
-    DEC_BC;
-    goto asm_113da1;
+// asm_113d5a:
+    // ADD_A(0x41);
+    // RET;
 
+// asm_113d5d:
+    // ADD_A(0x47);
+    // RET;
 
-asm_113dae:
-    LD_A_C;
-    LD_addr_A(wMobileSDK_PacketBuffer + 201);
-    LD_A_B;
-    LD_addr_A(wMobileSDK_PacketBuffer + 202);
-    PUSH_DE;
-    DEC_HL;
-    LD_D_hl;
-    DEC_HL;
-    LD_C_hl;
-    DEC_HL;
-    LD_B_hl;
-    DEC_HL;
-    LD_A_hl;
-    SLA_B;
-    SLA_B;
-    SLA_B;
-    RLA;
-    SLA_B;
-    RLA;
-    LD_hli_A;
-    LD_hl_B;
-    INC_HL;
-    RRC_C;
-    RRC_C;
-    LD_hl_C;
-    DEC_HL;
-    LD_A(0xf);
-    AND_A_C;
-    OR_A_hl;
-    LD_hli_A;
-    LD_A_hli;
-    AND_A(0xc0);
-    OR_A_hl;
-    DEC_HL;
-    LD_hld_A;
-    DEC_HL;
-    POP_DE;
-    LD_B_H;
-    LD_C_L;
-    POP_HL;
-    LD_A_bc;
-    LD_hli_A;
-    INC_BC;
-    LD_A_bc;
-    LD_hli_A;
-    INC_BC;
-    LD_A_bc;
-    LD_hli_A;
-    LD_A_addr(wMobileSDK_PacketBuffer + 201);
-    OR_A_A;
-    IF_NZ goto asm_113d74;
-    LD_A_addr(wMobileSDK_PacketBuffer + 202);
-    OR_A_A;
-    JP_NZ (mFunction113d66_asm_113d74);
-    XOR_A_A;
-    LD_hl_A;
-    RET;
+// asm_113d60:
+    // SUB_A(0x4);
+    // RET;
 
+// asm_113d63:
+    // LD_A(0x2b);
+    // RET;
+}
 
-Function113dfa:
-    CP_A(0x2b);
-    IF_C goto asm_113e24;
-    IF_Z goto asm_113e31;
-    CP_A(0x2f);
-    IF_C goto asm_113e24;
-    IF_Z goto asm_113e34;
-    CP_A(0x30);
-    IF_C goto asm_113e24;
-    CP_A(0x3a);
-    IF_C goto asm_113e37;
-    CP_A(0x3d);
-    IF_C goto asm_113e24;
-    IF_Z goto asm_113e3a;
-    CP_A(0x41);
-    IF_C goto asm_113e24;
-    CP_A(0x5b);
-    IF_C goto asm_113e3c;
-    CP_A(0x61);
-    IF_C goto asm_113e24;
-    CP_A(0x7b);
-    IF_C goto asm_113e3f;
+static u8_flag_s asm_113e26(void) {
+    // LD_HL(wc821);
+    // SET_hl(1);
+    bit_set(wram->wc821, 1);
+    // LD_A(0x20);
+    // LD_addr_A(wc80f);
+    wram->wc80f = 0x20;
+    // RET;
+    return u8_flag(0x20, true);
+}
 
+u8_flag_s Function113dfa(uint8_t a){
+    // CP_A(0x2b);
+    // IF_C goto asm_113e24;
+    if(a < 0x2b)
+        return asm_113e26();
+    // IF_Z goto asm_113e31;
+    if(a == 0x2b)
+        return u8_flag(0x3e, false);
+    // CP_A(0x2f);
+    // IF_C goto asm_113e24;
+    if(a < 0x2f)
+        return asm_113e26();
+    // IF_Z goto asm_113e34;
+    if(a == 0x2f)
+        return u8_flag(0x3f, false);
+    // CP_A(0x30);
+    // IF_C goto asm_113e24;
+    if(a < 0x30)
+        return asm_113e26();
+    // CP_A(0x3a);
+    // IF_C goto asm_113e37;
+    if(a < 0x3a)
+        return u8_flag(a + 0x4, false);
+    // CP_A(0x3d);
+    // IF_C goto asm_113e24;
+    if(a < 0x3d)
+        return asm_113e26();
+    // IF_Z goto asm_113e3a;
+    if(a == 0x3d)
+        return u8_flag(0x0, false);
+    // CP_A(0x41);
+    // IF_C goto asm_113e24;
+    if(a < 0x41)
+        return asm_113e26();
+    // CP_A(0x5b);
+    // IF_C goto asm_113e3c;
+    if(a < 0x5b)
+        return u8_flag(a - 0x41, false);
+    // CP_A(0x61);
+    // IF_C goto asm_113e24;
+    if(a < 0x61)
+        return asm_113e26();
+    // CP_A(0x7b);
+    // IF_C goto asm_113e3f;
+    if(a < 0x7b)
+        return u8_flag(a - 0x47, false);
 
-asm_113e24:
-    POP_HL;
-    POP_HL;
-
-asm_113e26:
-    LD_HL(wc821);
-    SET_hl(1);
-    LD_A(0x20);
-    LD_addr_A(wc80f);
-    RET;
+    return asm_113e26();
 
 
-asm_113e31:
-    LD_A(0x3e);
-    RET;
+// asm_113e24:
+    // POP_HL;
+    // POP_HL;
 
+// asm_113e26:
+    // LD_HL(wc821);
+    // SET_hl(1);
+    // LD_A(0x20);
+    // LD_addr_A(wc80f);
+    // RET;
 
-asm_113e34:
-    LD_A(0x3f);
-    RET;
+// asm_113e31:
+    // LD_A(0x3e);
+    // RET;
 
+// asm_113e34:
+    // LD_A(0x3f);
+    // RET;
 
-asm_113e37:
-    ADD_A(0x4);
-    RET;
+// asm_113e37:
+    // ADD_A(0x4);
+    // RET;
 
+// asm_113e3a:
+    // XOR_A_A;
+    // RET;
 
-asm_113e3a:
-    XOR_A_A;
-    RET;
+// asm_113e3c:
+    // SUB_A(0x41);
+    // RET;
 
+// asm_113e3f:
+    // SUB_A(0x47);
+    // RET;
+}
 
-asm_113e3c:
-    SUB_A(0x41);
-    RET;
+void Function113d66(uint8_t* de, const uint8_t* hl, uint16_t bc){
+    // LD_A_C;
+    // LD_addr_A(wMobileSDK_PacketBuffer + 201);
+    // LD_A_B;
+    // LD_addr_A(wMobileSDK_PacketBuffer + 202);
+    // LD_C_E;
+    // LD_B_D;
+    // LD_E_L;
+    // LD_D_H;
+    const uint8_t* de2 = hl;
+    // LD_L_C;
+    // LD_H_B;
+    uint8_t* hl2 = de;
 
+    do {
+    // asm_113d74:
+        // LD_A_addr(wMobileSDK_PacketBuffer + 202);
+        // OR_A_A;
+        // IF_NZ goto asm_113d82;
+        // LD_A_addr(wMobileSDK_PacketBuffer + 201);
+        // CP_A(0x4);
+        // JP_C (mFunction113d66_asm_113e26);
+        if(bc < 0x4) {
+            asm_113e26();
+            return;
+        }
 
-asm_113e3f:
-    SUB_A(0x47);
-    RET;
+    // asm_113d82:
+        // LD_B(0x4);
+        uint8_t b = 0x4;
+        // PUSH_HL;
+        // LD_HL(wMobileSDK_PacketBuffer + 203);
+        uint8_t* hl3 = wram->wMobileSDK_PacketBuffer + 203;
 
+        do {
+        // asm_113d88:
+            // LD_A_de;
+            // INC_DE;
+            // CALL(aFunction113d66_Function113dfa);
+            u8_flag_s res = Function113dfa(*(de2++));
+            if(res.flag)
+                return;
+            // LD_hli_A;
+            *(hl3++) = res.a;
+            // DEC_B;
+            // IF_NZ goto asm_113d88;
+        } while(--b != 0);
+        // LD_A_addr(wMobileSDK_PacketBuffer + 201);
+        // LD_C_A;
+        // LD_A_addr(wMobileSDK_PacketBuffer + 202);
+        // LD_B_A;
+        // for(int rept = 0; rept < 4; rept++){
+        // DEC_BC;
+        // }
+        bc -= 4;
+        // LD_A_B;
+        // OR_A_C;
+        // IF_Z goto asm_113dae;
+        if(bc != 0) {
+            while(*de == '\r' || *de == '\n') {
+            // asm_113da1:
+                // LD_A_de;
+                // CP_A(0xd);
+                // IF_Z goto asm_113daa;
+                // CP_A(0xa);
+                // IF_NZ goto asm_113dae;
+            // asm_113daa:
+                // INC_DE;
+                de++;
+                // DEC_BC;
+                --bc;
+                // goto asm_113da1;
+            }
+        }
+
+    // asm_113dae:
+        // LD_A_C;
+        // LD_addr_A(wMobileSDK_PacketBuffer + 201);
+        // LD_A_B;
+        // LD_addr_A(wMobileSDK_PacketBuffer + 202);
+        // PUSH_DE;
+        // DEC_HL;
+        --hl3;
+        // LD_D_hl;
+        // uint8_t d = *hl3;
+        // DEC_HL;
+        --hl3;
+        // LD_C_hl;
+        uint8_t c = *hl3;
+        // DEC_HL;
+        --hl3;
+        // LD_B_hl;
+        b = *hl3;
+        // DEC_HL;
+        --hl3;
+        // LD_A_hl;
+        uint8_t a = *hl3;
+        // SLA_B;
+        // SLA_B;
+        // SLA_B;
+        // RLA;
+        // SLA_B;
+        // RLA;
+        uint16_t ab = ((a << 10) | LOW(b << 2));
+        // LD_hli_A;
+        *(hl3++) = HIGH(ab);
+        // LD_hl_B;
+        // INC_HL;
+        *(hl3++) = LOW(ab);
+        // RRC_C;
+        // RRC_C;
+        c = (c << 6) | (c >> 2);
+        // LD_hl_C;
+        *hl3 = c;
+        // DEC_HL;
+        --hl3;
+        // LD_A(0xf);
+        // AND_A_C;
+        // OR_A_hl;
+        // LD_hli_A;
+        *hl3 |= (0xf & c);
+        hl3++;
+        // LD_A_hli;
+        a = *(hl3++);
+        // AND_A(0xc0);
+        // OR_A_hl;
+        a = (a & 0xc0) | *hl3;
+        // DEC_HL;
+        --hl3;
+        // LD_hld_A;
+        *(hl3--) = a;
+        // DEC_HL;
+        --hl3;
+        // POP_DE;
+        // LD_B_H;
+        // LD_C_L;
+        uint8_t* bc2 = hl3;
+        // POP_HL;
+        // LD_A_bc;
+        // LD_hli_A;
+        // INC_BC;
+        *(hl2++) = *(bc2++);
+        // LD_A_bc;
+        // LD_hli_A;
+        // INC_BC;
+        *(hl2++) = *(bc2++);
+        // LD_A_bc;
+        // LD_hli_A;
+        *(hl2++) = *bc2;
+        // LD_A_addr(wMobileSDK_PacketBuffer + 201);
+        // OR_A_A;
+        // IF_NZ goto asm_113d74;
+        // LD_A_addr(wMobileSDK_PacketBuffer + 202);
+        // OR_A_A;
+        // JP_NZ (mFunction113d66_asm_113d74);
+    } while(bc != 0);
+    // XOR_A_A;
+    // LD_hl_A;
+    *hl2 = 0;
+    // RET;
+    return;
 }
 
 void Function113e42(void){
