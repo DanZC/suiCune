@@ -141,7 +141,7 @@ void StubbedTrainerRankings_BugContestScore(uint16_t new_score){
     // RET;
     // LD_A(BANK(sTrainerRankingBugContestScore));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(sTrainerRankingBugContestScore));
+    OpenSRAM_Conv(MBANK(asTrainerRankingBugContestScore));
     // LDH_A_addr(hProduct);
     // LD_HL(sTrainerRankingBugContestScore);
     uint16_t saved_score = (gb_read(sTrainerRankingBugContestScore) << 8) | gb_read(sTrainerRankingBugContestScore + 1);

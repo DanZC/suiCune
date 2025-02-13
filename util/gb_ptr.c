@@ -110,7 +110,7 @@ uint16_t RAMAddrToGB(void* addr) {
     if((p - wram->wram0) >= 0 && (p - wram->wram0) < 0x1000)
         return WRAM0_Begin + (p - wram->wram0);
     if((p - wram->wram1) >= 0 && (p - wram->wram1) < 0x6000)
-        return WRAM1_Begin + (p - wram->wram1);
+        return WRAM1_Begin + ((p - wram->wram1) % 0x1000);
     if((p - (uint8_t*)hram) >= 0 && (p - (uint8_t*)hram) < (long long)sizeof(*hram))
         return HRAM_Begin + (p - (uint8_t*)hram);
     if((p - (uint8_t*)vram) >= 0 && (p - (uint8_t*)vram) < (long long)sizeof(*vram))

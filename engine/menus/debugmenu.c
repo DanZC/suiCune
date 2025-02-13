@@ -15,6 +15,7 @@
 #include "../../charmap.h"
 #include "../../data/trainers/class_names.h"
 #include "../../data/trainers/parties.h"
+#include "../../mobile/mobile_5f.h"
 #include "../gfx/load_font.h"
 #include "../gfx/place_graphic.h"
 #include "../gfx/load_pics.h"
@@ -55,6 +56,7 @@ void Handler_TradeAnim(void);
 void Handler_BattleAnim(void);
 void Handler_Credits(void);
 void Handler_MysteryGift(void);
+void Handler_News(void);
 
 static DebugMenuOption debugMenuOptions[] = {
     {"FIGHT@", Handler_Fight},
@@ -73,6 +75,7 @@ static DebugMenuOption debugMenuOptions[] = {
     {"BANIMS@", Handler_BattleAnim},
     {"CREDITS@", Handler_Credits},
     {"MYSTRY G@", Handler_MysteryGift},
+    {"NEWS@", Handler_News},
 };
 
 #define MAX_OPTIONS_PER_PAGE 7
@@ -272,6 +275,11 @@ void Handler_Credits(void) {
 
 void Handler_MysteryGift(void) {
     DebugMenu_MysteryGift();
+    PlayMusic_Conv(DEBUG_MENU_MUSIC);
+}
+
+void Handler_News(void) {
+    DebugMenu_News();
     PlayMusic_Conv(DEBUG_MENU_MUSIC);
 }
 
@@ -1073,4 +1081,95 @@ void DebugMenu_MysteryGift(void) {
     v_LoadFontsExtra1_Conv();
     v_LoadFontsExtra2_Conv();
     v_LoadStandardFont_Conv();
+}
+
+const txt_cmd_s Text_NewsMenuTop[] = {
+    text_start("What would you"
+        t_line "like to do?"
+        t_done )
+};
+
+const txt_cmd_s Text_NewsDeleteConfirm[] = {
+    text_start("Delete the news?"
+        t_done )
+};
+
+const txt_cmd_s Text_NewsDeleted[] = {
+    text_start("News deleted."
+        t_prompt )
+};
+
+const txt_cmd_s Text_NewsIsCorrupt[] = {
+    text_start("News is corrupt."
+        t_prompt )
+};
+
+const txt_cmd_s Text_NewsIsOk[] = {
+    text_start("News is OK."
+        t_prompt )
+};
+
+static const struct MenuHeader Menu_NewsMenu = {
+    .flags = MENU_BACKUP_TILES, // flags
+    .coord = menu_coords(0, 4, 15, TEXTBOX_Y - 1), 
+    .data = &(struct MenuData){
+    // .MenuData:
+        .flags=STATICMENU_CURSOR, // flags
+        .verticalMenu = {
+            .count=3, // items
+            .options = (const char* []) {
+                "DELETE NEWS",
+                "CHECK NEWS",
+                "BACK"
+            }
+        },
+    },
+	.defaultOption=1 // default option
+};
+
+static void DebugMenu_News_DeleteNews(void) {
+    OpenSRAM_Conv(MBANK(as5_aa72));
+    gb_write(s5_aa72, 0);
+    ByteFill_Conv2(GBToRAMAddr(s5_aa73), 0xc, 0x0);
+    CloseSRAM_Conv();
+}
+
+void DebugMenu_News(void) {
+    DebugMenu_SaveTilemap();
+    DebugMenu_SaveAttrmap();
+
+loop:
+    PrintText_Conv2(Text_NewsMenuTop);
+    LoadMenuHeader_Conv2(&Menu_NewsMenu);
+
+    bool cancel = !VerticalMenu_Conv();
+    ExitMenu_Conv2();
+    if(!cancel) {
+        switch(wram->wMenuCursorY) {
+            case 1:
+                PrintText_Conv2(Text_NewsDeleteConfirm);
+
+                if(YesNoBox_Conv()) {
+                    DebugMenu_News_DeleteNews();
+                    PrintText_Conv2(Text_NewsDeleted);
+                }
+                goto loop;
+            case 2: {
+                if(Function17d314()) {
+                    PrintText_Conv2(Text_NewsIsCorrupt);
+                }
+                else {
+                    PrintText_Conv2(Text_NewsIsOk);
+                }
+            } goto loop;
+            case 3:break;
+        }
+    }
+
+    DebugMenu_RestoreTilemap();
+    DebugMenu_RestoreAttrmap();
+    v_LoadFontsExtra1_Conv();
+    v_LoadFontsExtra2_Conv();
+    v_LoadStandardFont_Conv();
+    DelayFrames_Conv(4);
 }

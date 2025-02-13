@@ -1252,10 +1252,12 @@ struct wram_s
                         union {
                             uint8_t wcd22;
                             uint8_t wEZChatSortedSelection;
+                            uint8_t wNewsCursorX;
                         };
                         union {
                             uint8_t wcd23;
                             uint8_t wEZChatBlinkingMask;
+                            uint8_t wNewsCursorY;
                         };
                         union {
                             uint8_t wcd24;

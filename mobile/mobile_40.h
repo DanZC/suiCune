@@ -323,7 +323,7 @@ void Function102142(void);
 void Function102180(void);
 void Function10218d(void);
 void Function10219f(void);
-void Function1021b8(void);
+bool Function1021b8(void);
 extern const txt_cmd_s NewCardArrivedText[];
 extern const txt_cmd_s PutCardInCardFolderText[];
 extern const txt_cmd_s CardWasListedText[];

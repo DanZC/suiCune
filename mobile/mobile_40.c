@@ -6476,32 +6476,46 @@ uint8_t Function102112(void){
 }
 
 void Function102142(void){
-    CALL(aFunction10218d);
-    CALL(aFunction102180);
-    LD_HL(mNewCardArrivedText);
-    CALL(aMenuTextbox);
-    LD_DE(SFX_LEVEL_UP);
-    CALL(aPlaySFX);
-    CALL(aJoyWaitAorB);
-    CALL(aExitMenu);
-    CALL(aFunction10219f);
-    LD_HL(mPutCardInCardFolderText);
-    CALL(aMenuTextbox);
-    CALL(aYesNoBox);
-    CALL(aExitMenu);
-    IF_C goto asm_10217c;
-    CALL(aFunction1021b8);
-    IF_C goto asm_10217c;
-    CALL(aFunction10218d);
-    CALL(aFunction102180);
-    LD_HL(mCardWasListedText);
-    CALL(aPrintText);
+    // CALL(aFunction10218d);
+    Function10218d();
+    // CALL(aFunction102180);
+    Function102180();
+    // LD_HL(mNewCardArrivedText);
+    // CALL(aMenuTextbox);
+    MenuTextbox_Conv(NewCardArrivedText);
+    // LD_DE(SFX_LEVEL_UP);
+    // CALL(aPlaySFX);
+    PlaySFX_Conv(SFX_LEVEL_UP);
+    // CALL(aJoyWaitAorB);
+    JoyWaitAorB_Conv();
+    // CALL(aExitMenu);
+    ExitMenu_Conv2();
+    // CALL(aFunction10219f);
+    Function10219f();
+    // LD_HL(mPutCardInCardFolderText);
+    // CALL(aMenuTextbox);
+    MenuTextbox_Conv(PutCardInCardFolderText);
+    // CALL(aYesNoBox);
+    bool cancel = !YesNoBox_Conv();
+    // CALL(aExitMenu);
+    ExitMenu_Conv2();
+    // IF_C goto asm_10217c;
+    // CALL(aFunction1021b8);
+    // IF_C goto asm_10217c;
+    if(!cancel && !Function1021b8()) {
+        // CALL(aFunction10218d);
+        Function10218d();
+        // CALL(aFunction102180);
+        Function102180();
+        // LD_HL(mCardWasListedText);
+        // CALL(aPrintText);
+        PrintText_Conv2(CardWasListedText);
+    }
 
-
-asm_10217c:
-    CALL(aFunction1013d6);
-    RET;
-
+// asm_10217c:
+    // CALL(aFunction1013d6);
+    Function1013d6();
+    // RET;
 }
 
 void Function102180(void){
@@ -6525,29 +6539,38 @@ void Function10218d(void){
 }
 
 void Function10219f(void){
-    CALL(aFadeToMenu);
-    CALL(aFunction10218d);
-    LD_DE(wc608 + 1);
-    FARCALL(aFunction8ac4e);
-    CALL(aJoyWaitAorB);
-    CALL(aPlayClickSFX);
-    CALL(aFunction1013aa);
-    RET;
-
+    // CALL(aFadeToMenu);
+    FadeToMenu_Conv();
+    // CALL(aFunction10218d);
+    Function10218d();
+    // LD_DE(wc608 + 1);
+    // FARCALL(aFunction8ac4e);
+    //  TODO: Convert Function8ac4e
+    // CALL(aJoyWaitAorB);
+    JoyWaitAorB_Conv();
+    // CALL(aPlayClickSFX);
+    PlayClickSFX_Conv();
+    // CALL(aFunction1013aa);
+    Function1013aa();
+    // RET;
 }
 
-void Function1021b8(void){
-    CALL(aFadeToMenu);
-    CALL(aFunction10218d);
-    LD_DE(wPlayerMoveStruct);
-    FARCALL(aFunction8ac70);
-    LD_A_C;
-    LD_addr_A(wStringBuffer1);
-    PUSH_AF;
-    CALL(aFunction1013aa);
-    POP_AF;
-    RET;
-
+bool Function1021b8(void){
+    // CALL(aFadeToMenu);
+    FadeToMenu_Conv();
+    // CALL(aFunction10218d);
+    Function10218d();
+    // LD_DE(wPlayerMoveStruct);
+    // FARCALL(aFunction8ac70);
+    //  TODO: Convert Function8ac70
+    // LD_A_C;
+    // LD_addr_A(wStringBuffer1);
+    // PUSH_AF;
+    // CALL(aFunction1013aa);
+    Function1013aa();
+    // POP_AF;
+    // RET;
+    return true;
 }
 
 const txt_cmd_s NewCardArrivedText[] = {

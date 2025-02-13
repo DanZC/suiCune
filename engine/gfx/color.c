@@ -337,49 +337,57 @@ cgb:
 
 }
 
-void LoadTrainerClassPaletteAsNthBGPal(void){
-    LD_A_addr(wTrainerClass);
-    CALL(aGetTrainerPalettePointer);
-    LD_A_E;
-    JR(mLoadNthMiddleBGPal);
-
+void LoadTrainerClassPaletteAsNthBGPal(uint8_t e){
+    uint16_t buffer[NUM_PAL_COLORS];
+    // LD_A_addr(wTrainerClass);
+    // CALL(aGetTrainerPalettePointer);
+    GetTrainerPalettePointer_Conv(buffer, wram->wTrainerClass);
+    // LD_A_E;
+    // JR(mLoadNthMiddleBGPal);
+    LoadNthMiddleBGPal(buffer, e);
 }
 
-void LoadMonPaletteAsNthBGPal(void){
-    LD_A_addr(wCurPartySpecies);
-    CALL(av_GetMonPalettePointer);
-    LD_A_E;
-    BIT_A(7);
-    JR_Z (mLoadNthMiddleBGPal);
-    AND_A(0x7f);
-    INC_HL;
-    INC_HL;
-    INC_HL;
-    INC_HL;
+void LoadMonPaletteAsNthBGPal(uint8_t e){
+    uint16_t buffer[NUM_PAL_COLORS];
+    // LD_A_addr(wCurPartySpecies);
+    // CALL(av_GetMonPalettePointer);
+    GetMonPalettePointer_Conv(buffer, wram->wCurPartySpecies);
+    // LD_A_E;
+    // BIT_A(7);
+    // JR_Z (mLoadNthMiddleBGPal);
+    if(bit_test(e, 7)) {
+        // AND_A(0x7f);
+        e &= 0x7f;
+        // INC_HL;
+        // INC_HL;
+        // INC_HL;
+        // INC_HL;
+        return LoadNthMiddleBGPal(buffer + 2, e);
+    }
 
-    return LoadNthMiddleBGPal();
+    return LoadNthMiddleBGPal(buffer, e);
 }
 
-void LoadNthMiddleBGPal(void){
-    PUSH_HL;
-    LD_HL(wBGPals1);
-    LD_DE(1 * PALETTE_SIZE);
+void LoadNthMiddleBGPal(uint16_t* hl, uint8_t a){
+    // PUSH_HL;
+    // LD_HL(wBGPals1);
+    // LD_DE(1 * PALETTE_SIZE);
 
-loop:
-    AND_A_A;
-    IF_Z goto got_addr;
-    ADD_HL_DE;
-    DEC_A;
-    goto loop;
+// loop:
+    // AND_A_A;
+    // IF_Z goto got_addr;
+    // ADD_HL_DE;
+    // DEC_A;
+    // goto loop;
 
-
-got_addr:
-    LD_E_L;
-    LD_D_H;
-    POP_HL;
-    CALL(aLoadPalette_White_Col1_Col2_Black);
-    RET;
-
+// got_addr:
+    // LD_E_L;
+    // LD_D_H;
+    uint8_t* de = wram->wBGPals1 + (PALETTE_SIZE * a);
+    // POP_HL;
+    // CALL(aLoadPalette_White_Col1_Col2_Black);
+    LoadPalette_White_Col1_Col2_Black_Conv((uint16_t*)de, hl);
+    // RET;
 }
 
 void LoadBetaPokerPalettes(void){

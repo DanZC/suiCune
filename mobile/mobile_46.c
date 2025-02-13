@@ -332,8 +332,10 @@ void Function1181da(void){
     wram->wc3f0 = 0x4;
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
+    uint8_t svbk = gb_read(rSVBK);
     // LD_A(0x3);
     // LDH_addr_A(rSVBK);
+    gb_write(rSVBK, 0x3);
 
     do {
     // asm_1181f8:
@@ -368,6 +370,7 @@ void Function1181da(void){
     } while(wram->wBattleTowerRoomMenuJumptableIndex != wram->wcd33);
     // POP_AF;
     // LDH_addr_A(rSVBK);
+    gb_write(rSVBK, svbk);
     // CALL(aBattleTowerRoomMenu_Cleanup);
     BattleTowerRoomMenu_Cleanup();
     // CALL(aReturnToMapFromSubmenu);
@@ -1189,7 +1192,7 @@ void Function11878d(void){
         // LDH_addr_A(rSVBK);
         // LD_DE(w6_d000);
         // LD_BC(0x1000);
-        mobile_api_data_s data = {.de = &wram->w6_d000, .bc = 0x1000};
+        mobile_api_data_s data = {.de = wram->w6_d000, .bc = 0x1000};
         uint8_t a;
         // LD_A_hl;
         // SLA_A;
@@ -2346,7 +2349,7 @@ void Function118eb0(void){
     // LD_DE(wBGMapBuffer);
     // LD_BC(0x000c);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wBGMapBuffer, wram->w3_d802, sizeof(wram->w3_d802));
+    CopyBytes_Conv2(&wram->wcd20, wram->w3_d802, sizeof(wram->w3_d802));
     // CALL(aFunction1192cc);
     // RET_C ;
     if(Function1192cc())
@@ -2654,7 +2657,7 @@ void Function119054(void){
     uint8_t svbk = gb_read(rSVBK);
     // LD_A(0x6);
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(s6_a000));
+    OpenSRAM_Conv(MBANK(as6_a000));
     // LD_HL(wd002);
     // LD_A_addr(wcd4f);
     // LD_E_A;
@@ -2669,7 +2672,7 @@ void Function119054(void){
     uint16_t bc = (wram->w3_d000[0] | (wram->w3_d001[0] << 8));
     // CALL(aFunction119192);
     // RET_C ;
-    if(Function119192(de, wram->wMobileAdapterPlayerSelectionBuffer, bc)) {
+    if(Function119192(de, wram->w3_d000 + 2, bc)) {
         gb_write(rSVBK, svbk);
         return;
     }
@@ -2685,10 +2688,12 @@ void Function119054(void){
         // LD_C_A;
         // LD_A_addr(w3_d000 + 1);
         // LD_B_A;
-        bc = (wram->w3_d000[0] | (wram->w3_d001[0] << 8));
+    // TODO: Verify that this is correct. It should read from WRAM bank 6 based on the original assembly, but
+    // when doing so, it reads garbage data.
+        uint16_t bc2 = (wram->w3_d000[0] | (wram->w3_d000[1] << 8));
         // CALL(aFunction119192);
         // RET_C ;
-        if(Function119192(de, wram->wMobileAdapterPlayerSelectionBuffer, bc)) {
+        if(Function119192(de + bc, wram->w3_d000 + 2, bc2)) {
             gb_write(rSVBK, svbk);
             return;
         }
@@ -2701,7 +2706,7 @@ void Function119054(void){
     // LDH_addr_A(rSVBK);
     // LD_A(BANK(s5_b1b3));  // aka BANK(s5_b1b4) and BANK(s5_aa7f) and BANK(s5_b2f3) and BANK(s5_b2f4)
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(s5_b1b3));
+    OpenSRAM_Conv(MBANK(as5_b1b3));
     // LD_A_addr(wcd4f);
     // LD_addr_A(s5_b1b3);
     gb_write(s5_b1b3, wram->wcd4f);
@@ -2744,7 +2749,7 @@ void Function1190d0(void){
     // LD_DE(wcc60);
     // CALL(aFunction1191ad);
     // RET_C ;
-    if(Function1191ad(wram->wcc60_str, (const char*)wram->wram5 + (wram->wcd57 | (wram->wcd58 << 8))))
+    if(Function1191ad(wram->wcc60_str, (const char*)wram->wram3 + (wram->wcd57 | (wram->wcd58 << 8))))
         return;
     // LD_DE(w3_d000);
     // LD_BC(0x1000);
@@ -2761,7 +2766,7 @@ void Function1190ec(void){
     // LD_DE(s5_aa73);
     // LD_BC(12);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(GBToRAMAddr(s5_aa73), wram->wBGMapBuffer, 12);
+    CopyBytes_Conv2(GBToRAMAddr(s5_aa73), &wram->wcd20, 12);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // LD_A(BANK(s5_aa72));
@@ -2784,7 +2789,7 @@ void Function1190ec(void){
     // LD_DE(s6_a000);
     // CALL(aFunction119192);
     // RET_C ;
-    if(Function119192(s6_a000, &wram->wd002, bc))
+    if(Function119192(s6_a000, wram->w3_d002, bc))
         return;
     // LD_A_addr(wcd89);
     // AND_A(0x1);
@@ -2802,6 +2807,15 @@ void Function1190ec(void){
         // RET_C ;
         if(Function119192(s6_a000 + bc, wram->w6_d000 + 2, bc2))
             return;
+
+        // Dumb hack to make news saving work. For some reason,
+        // offsets 0FFE-10ED are shifted by one byte. So we
+        // manually move the bytes back by 1.
+        // TODO: Please remove this hack and actually
+        // download everything properly!
+        // uint8_t* hl = GBToRAMAddr(s6_a000 + 0xffe);
+        // CopyBytes_Conv2(hl, hl + 1, 0xf0);
+        // hl[0xf0] = 0x1;
     }
 
 // asm_11913e:
@@ -3238,7 +3252,8 @@ void Function119300(void){
     // XOR_A_A;
     // LD_addr_A(wcd4b);
     // LD_addr_A(wcd4c);
-    *gMobileStringList = NULL;
+    wram->wcd4b = 0;
+    wram->wcd4c = 0;
     // LD_A_addr(wcd4d);
     // LD_E_A;
     // LD_A_addr(wcd4e);

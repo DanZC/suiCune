@@ -703,7 +703,7 @@ void finish_gb_cycle(void) {
         if (gb.counter.serial_count == 0 && gb.gb_serial_tx != NULL)
             (gb.gb_serial_tx)(gb.gb_reg.SB);
 
-        gb.counter.serial_count += inst_cycles;
+        gb.counter.serial_count += inst_cycles / 2;
 
         /* If it's time to receive byte, call RX function. */
         while (gb.counter.serial_count >= SERIAL_CYCLES) {
@@ -3043,7 +3043,7 @@ void gb_reset(void) {
 #define POKEMON_CRYSTAL_CGB_FLAG 192
 #define POKEMON_CRYSTAL_MBC 16
 #define POKEMON_CRYSTAL_BANK_COUNT 6
-#define POKEMON_CRYSTAL_RAM_SIZE 3
+#define POKEMON_CRYSTAL_RAM_SIZE 5
 
 /**
  * Initialise the emulator context. gb_reset() is also called to initialise

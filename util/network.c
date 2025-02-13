@@ -1157,10 +1157,10 @@ void MobileConfigCreateDefault(FILE* f) {
     cfg->hdr[0] = 'M';
     cfg->hdr[1] = 'A';
     cfg->status = MOBILE_CONFIG_STATUS_CONFIGURED;
-    memcpy(cfg->loginName, "gXXXXXXXXX", sizeof(cfg->loginName));
-    memcpy(cfg->emailName, "XXXXXXXX@YYYY.dion.ne.jp", sizeof(cfg->emailName));
-    memcpy(cfg->smtpServer, "mail.XXXX.dion.ne.jp", sizeof(cfg->smtpServer));
-    memcpy(cfg->popServer, "pop.XXXX.dion.ne.jp", sizeof(cfg->popServer));
+    memcpy(cfg->loginName, "g000000000", sizeof(cfg->loginName));
+    memcpy(cfg->emailName, "admin000@pkmn.dion.ne.jp", sizeof(cfg->emailName));
+    memcpy(cfg->smtpServer, "mail.pkmn.dion.ne.jp", sizeof(cfg->smtpServer));
+    memcpy(cfg->popServer, "pop.pkmn.dion.ne.jp", sizeof(cfg->popServer));
     MobileNumberStore(cfg->config_slot[0].number, sizeof(cfg->config_slot[0].number), "0077487751");
     memcpy(cfg->config_slot[0].id, "DION DDI-POCKET", sizeof(cfg->config_slot[0].id));
     uint16_t checksum = 0;

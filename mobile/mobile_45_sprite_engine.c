@@ -670,7 +670,7 @@ void Function1162cb(void){
     // LD_DE(wOBPals1 + 2 * PALETTE_SIZE);
     // LD_BC(6 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wOBPals1 + 2 * PALETTE_SIZE, PichuBorderMobileOBPalettes, 6 * PALETTE_SIZE);
+    LoadPaletteAssetToBuffer(wram->wOBPals1 + 2 * PALETTE_SIZE, 6 * PALETTE_SIZE, PichuBorderMobileOBPalettes, 6 * NUM_PAL_COLORS);
     // CALL(aSetPalettes);
     SetPalettes_Conv();
     // POP_AF;
@@ -727,7 +727,7 @@ void Function1162f2(void){
         // LD_A_hli;
         // ADD_A_C;
         // LD_de_A;  // x
-        de->yCoord = *(list++) + c;
+        de->xCoord = *(list++) + c;
         // INC_DE;
         // LD_A_hli;
         // LD_de_A;  // tile id
