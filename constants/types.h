@@ -29,7 +29,11 @@ typedef struct { int a; bool flag; }  int_flag_s;
 #define int_flag(_a, _flag) (int_flag_s){.a = _a, .flag = _flag}
 
 typedef struct { uint16_t a; uint16_t b; } u16_pair_s;
+#ifdef _MSC_VER
+#define u16_pair(_a, _b) { _a, _b }
+#else
 #define u16_pair(_a, _b) (u16_pair_s){.a = _a, .b = _b}
+#endif
 
 typedef struct U8PtrPair {
     uint8_t* hl;

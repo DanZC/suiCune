@@ -20,6 +20,17 @@ extern struct gb_s gb;
 #define static_assert _Static_assert
 #endif
 
+#ifdef _MSC_VER
+#ifndef _SSIZE_T_DEFINED
+#ifdef _WIN64
+typedef __int64 ssize_t;
+#else
+typedef int ssize_t;
+#endif
+#define _SSIZE_T_DEFINED
+#endif
+#endif
+
 #define UDP_PORT 22600
 #define TCP_PORT 22601
 #define MOBILE_PORT 22602
