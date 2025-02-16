@@ -2544,45 +2544,59 @@ void Function48c5a(uint8_t* hl, uint8_t a){
     *hl = ((*hl & 0xf0) | a);
 }
 
-void Function48c63(void){
-    LD_A(0x50);
-    LD_de_A;
-    LD_A_C;
-    CP_A(0x30);
-    IF_NC goto asm_48c8c;
-    AND_A_A;
-    IF_Z goto asm_48c8c;
-    DEC_C;
-    PUSH_DE;
-    LD_H_D;
-    LD_L_E;
-    LD_A(0x50);
-    LD_B(7);
+// Mobile_CopyPrefectureNameString
+bool Function48c63(uint8_t* de, uint8_t c){
+    uint8_t buffer[0x20];
+    // LD_A(0x50);
+    // LD_de_A;
+    *de = c;
+    // LD_A_C;
+    // CP_A(0x30);
+    // IF_NC goto asm_48c8c;
+    // AND_A_A;
+    // IF_Z goto asm_48c8c;
+    if(c >= lengthof(Prefectures) || c == 0) {
+    // asm_48c8c:
+        // SCF;
+        // RET;
+        return true;
+    }
+    // DEC_C;
+    --c;
+    // PUSH_DE;
+    // LD_H_D;
+    // LD_L_E;
+    uint8_t* hl = de;
+    // LD_A(0x50);
+    // LD_B(7);
+    uint8_t b = 7;
 
-asm_48c76:
-    LD_hli_A;
-    DEC_B;
-    IF_NZ goto asm_48c76;
-    LD_HL(mPrefectures);
-    LD_A_C;
-    CALL(aGetNthString);
+    do {
+    // asm_48c76:
+        // LD_hli_A;
+        *(hl++) = 0x50;
+        // DEC_B;
+        // IF_NZ goto asm_48c76;
+    } while(--b != 0);
+    // LD_HL(mPrefectures);
+    // LD_A_C;
+    // CALL(aGetNthString);
+    hl = U82CA(buffer, Prefectures[c]);
 
-asm_48c81:
-    LD_A_hli;
-    LD_de_A;
-    INC_DE;
-    LD_A_hl;
-    CP_A(0x50);
-    IF_NZ goto asm_48c81;
-    AND_A_A;
-    POP_DE;
-    RET;
-
-
-asm_48c8c:
-    SCF;
-    RET;
-
+    do {
+    // asm_48c81:
+        // LD_A_hli;
+        // LD_de_A;
+        // INC_DE;
+        *(de++) = *(hl++);
+        // LD_A_hl;
+        // CP_A(0x50);
+        // IF_NZ goto asm_48c81;
+    } while(*hl != 0x50);
+    // AND_A_A;
+    // POP_DE;
+    // RET;
+    return false;
 }
 
 void Function48c8e(void){

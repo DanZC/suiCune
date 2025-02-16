@@ -821,244 +821,301 @@ void InitializeTrainerRankings(void){
 
 }
 
-void v_MobilePrintNum(void){
+static void v_MobilePrintNum_Function1062b2(uint8_t* hl, uint32_t num) {
+// Function1062b2:
+    // LD_C(0x0);
+    uint8_t c = 0;
+    uint8_t cy = 0;
+
+    while(1) {
+    // asm_1062b4:
+        // LD_A_de;
+        // DEC_DE;
+        // LD_B_A;
+        uint8_t b = num & 0xff;
+        // LDH_A_addr(hPrintNumBuffer + 3);
+        // SUB_A_B;
+        // LDH_addr_A(hPrintNumBuffer + 7);
+        hram->hPrintNumBuffer[7] = SubCarry8(hram->hPrintNumBuffer[3], b, cy, &cy);
+        // LD_A_de;
+        // DEC_DE;
+        // LD_B_A;
+        b = (num >> 8) & 0xff;
+        // LDH_A_addr(hPrintNumBuffer + 2);
+        // SBC_A_B;
+        // LDH_addr_A(hPrintNumBuffer + 6);
+        hram->hPrintNumBuffer[6] = SubCarry8(hram->hPrintNumBuffer[2], b, cy, &cy);
+        // LD_A_de;
+        // DEC_DE;
+        // LD_B_A;
+        b = (num >> 16) & 0xff;
+        // LDH_A_addr(hPrintNumBuffer + 1);
+        // SBC_A_B;
+        // LDH_addr_A(hPrintNumBuffer + 5);
+        hram->hPrintNumBuffer[5] = SubCarry8(hram->hPrintNumBuffer[1], b, cy, &cy);
+        // LD_A_de;
+        b = (num >> 24) & 0xff;
+        // INC_DE;
+        // INC_DE;
+        // INC_DE;
+        // LD_B_A;
+        // LDH_A_addr(hPrintNumBuffer + 0);
+        // SBC_A_B;
+        // LDH_addr_A(hPrintNumBuffer + 4);
+        hram->hPrintNumBuffer[4] = SubCarry8(hram->hPrintNumBuffer[0], b, cy, &cy);
+        // IF_C goto asm_1062eb;
+        if(cy)
+            break;
+        // LDH_A_addr(hPrintNumBuffer + 4);
+        // LDH_addr_A(hPrintNumBuffer + 0);
+        // LDH_A_addr(hPrintNumBuffer + 5);
+        // LDH_addr_A(hPrintNumBuffer + 1);
+        // LDH_A_addr(hPrintNumBuffer + 6);
+        // LDH_addr_A(hPrintNumBuffer + 2);
+        // LDH_A_addr(hPrintNumBuffer + 7);
+        // LDH_addr_A(hPrintNumBuffer + 3);
+        CopyBytes_Conv2(hram->hPrintNumBuffer, hram->hPrintNumBuffer + 4, 4);
+        // INC_C;
+        c++;
+        // goto asm_1062b4;
+    }
+
+// asm_1062eb:
+    // LDH_A_addr(hPrintNumBuffer + 8);
+    // OR_A_C;
+    // IF_Z goto LoadMinusTenIfNegative;
+    if((hram->hPrintNumBuffer[8] | c) == 0) {
+    // LoadMinusTenIfNegative:
+        // LDH_A_addr(hPrintNumBuffer + 9);
+        // BIT_A(7);
+        // RET_Z ;
+        if(!bit_test(hram->hPrintNumBuffer[9], 7))
+            return;
+        // LD_hl(-10);
+        *hl = 0xf6;
+        // RET;
+        return;
+    }
+    else {
+        // LD_A(-10);
+        // ADD_A_C;
+        // LD_hl_A;
+        // LDH_addr_A(hPrintNumBuffer + 8);
+        hram->hPrintNumBuffer[8] = *hl = 0xf6 + c;
+        // RET;
+        return;
+    }
+}
+
+static uint8_t* v_MobilePrintNum_Function1062ff(uint8_t* hl) {
+    // LDH_A_addr(hPrintNumBuffer + 9);
+    // BIT_A(7);
+    // IF_NZ goto asm_10630d;
+    // BIT_A(6);
+    // IF_Z goto asm_10630d;
+    // LDH_A_addr(hPrintNumBuffer + 8);
+    // AND_A_A;
+    // RET_Z ;
+    if(!bit_test(hram->hPrintNumBuffer[9], 7)
+    && bit_test(hram->hPrintNumBuffer[9], 6)
+    && hram->hPrintNumBuffer[8] == 0)
+        return hl;
+
+// asm_10630d:
+    // INC_HL;
+    // RET;
+    return hl + 1;
+}
+
 //  Supports signed 31-bit integers (up to 10 digits)
 //  b: Bits 0-4 = # bytes
 //     Bit 7 = set if negative
 //  c: Number of digits
 //  de: highest byte of number to convert
 //  hl: where to print the converted string
-    PUSH_BC;
-    XOR_A_A;
-    LDH_addr_A(hPrintNumBuffer + 0);
-    LDH_addr_A(hPrintNumBuffer + 1);
-    LDH_addr_A(hPrintNumBuffer + 2);
-    LD_A_B;
-    AND_A(0xf);
-    CP_A(0x1);
-    IF_Z goto one_byte;
-    CP_A(0x2);
-    IF_Z goto two_bytes;
-    CP_A(0x3);
-    IF_Z goto three_bytes;
-//  four bytes
-    LD_A_de;
-    LDH_addr_A(hPrintNumBuffer + 0);
-    INC_DE;
+uint8_t* v_MobilePrintNum(uint8_t* hl, const void* de_, uint8_t b, uint8_t c){
+    static const uint32_t PowerOfTen[] = {
+        1,
+        10,
+        100,
+        1000,
+        10000,
+        100000,
+        1000000,
+        10000000,
+        100000000,
+        1000000000
+    };
+    const uint8_t* de = de_;
+    // PUSH_BC;
+    // XOR_A_A;
+    // LDH_addr_A(hPrintNumBuffer + 0);
+    // LDH_addr_A(hPrintNumBuffer + 1);
+    // LDH_addr_A(hPrintNumBuffer + 2);
+    hram->hPrintNumBuffer[0] = 0;
+    hram->hPrintNumBuffer[1] = 0;
+    hram->hPrintNumBuffer[2] = 0;
+    // LD_A_B;
+    // AND_A(0xf);
+    // CP_A(0x1);
+    // IF_Z goto one_byte;
+    // CP_A(0x2);
+    // IF_Z goto two_bytes;
+    // CP_A(0x3);
+    // IF_Z goto three_bytes;
+    switch(b & 0xf) {
+    //  four bytes
+    default:
+        // LD_A_de;
+        // LDH_addr_A(hPrintNumBuffer + 0);
+        hram->hPrintNumBuffer[0] = *(de++);
+        // INC_DE;
+        fallthrough;
 
+    case 3:
+    // three_bytes:
+        // LD_A_de;
+        // LDH_addr_A(hPrintNumBuffer + 1);
+        hram->hPrintNumBuffer[1] = *(de++);
+        // INC_DE;
+        fallthrough;
 
-three_bytes:
-    LD_A_de;
-    LDH_addr_A(hPrintNumBuffer + 1);
-    INC_DE;
+    case 2:
+    // two_bytes:
+        // LD_A_de;
+        // LDH_addr_A(hPrintNumBuffer + 2);
+        hram->hPrintNumBuffer[2] = *(de++);
+        // INC_DE;
+        fallthrough;
 
+    case 1:
+    // one_byte:
+        // LD_A_de;
+        // LDH_addr_A(hPrintNumBuffer + 3);
+        hram->hPrintNumBuffer[3] = *(de++);
+        // INC_DE;
+        break;
 
-two_bytes:
-    LD_A_de;
-    LDH_addr_A(hPrintNumBuffer + 2);
-    INC_DE;
-
-
-one_byte:
-    LD_A_de;
-    LDH_addr_A(hPrintNumBuffer + 3);
-    INC_DE;
-
-    PUSH_DE;
-    XOR_A_A;
-    LDH_addr_A(hPrintNumBuffer + 8);
-    LD_A_B;
-    LDH_addr_A(hPrintNumBuffer + 9);
-    LD_A_C;
-    CP_A(2);
-    IF_Z goto two_digits;
-    LD_DE(mv_MobilePrintNum__2);
-    CP_A(3);
-    IF_Z goto three_to_nine_digits;
-    LD_DE(mv_MobilePrintNum__3);
-    CP_A(4);
-    IF_Z goto three_to_nine_digits;
-    LD_DE(mv_MobilePrintNum__4);
-    CP_A(5);
-    IF_Z goto three_to_nine_digits;
-    LD_DE(mv_MobilePrintNum__5);
-    CP_A(6);
-    IF_Z goto three_to_nine_digits;
-    LD_DE(mv_MobilePrintNum__6);
-    CP_A(7);
-    IF_Z goto three_to_nine_digits;
-    LD_DE(mv_MobilePrintNum__7);
-    CP_A(8);
-    IF_Z goto three_to_nine_digits;
-    LD_DE(mv_MobilePrintNum__8);
-    CP_A(9);
-    IF_Z goto three_to_nine_digits;
-    LD_DE(mv_MobilePrintNum__9);
-
-
-three_to_nine_digits:
-    INC_DE;
-    INC_DE;
-    INC_DE;
-    DEC_A;
-    DEC_A;
-
-
-digit_loop:
-    PUSH_AF;
-    CALL(av_MobilePrintNum_Function1062b2);
-    CALL(av_MobilePrintNum_Function1062ff);
-    for(int rept = 0; rept < 4; rept++){
-    INC_DE;
+    case 0: 
+        return hl;
     }
-    POP_AF;
-    DEC_A;
-    IF_NZ goto digit_loop;
 
+    // PUSH_DE;
+    // XOR_A_A;
+    // LDH_addr_A(hPrintNumBuffer + 8);
+    hram->hPrintNumBuffer[8] = 0;
+    // LD_A_B;
+    // LDH_addr_A(hPrintNumBuffer + 9);
+    hram->hPrintNumBuffer[9] = b;
+    // LD_A_C;
+    uint8_t a = c;
+    // CP_A(2);
+    // IF_Z goto two_digits;
+    const uint32_t* digit_ptr;
+    if(a != 2) {
+        // LD_DE(mv_MobilePrintNum__2);
+        // CP_A(3);
+        // IF_Z goto three_to_nine_digits;
+        // LD_DE(mv_MobilePrintNum__3);
+        // CP_A(4);
+        // IF_Z goto three_to_nine_digits;
+        // LD_DE(mv_MobilePrintNum__4);
+        // CP_A(5);
+        // IF_Z goto three_to_nine_digits;
+        // LD_DE(mv_MobilePrintNum__5);
+        // CP_A(6);
+        // IF_Z goto three_to_nine_digits;
+        // LD_DE(mv_MobilePrintNum__6);
+        // CP_A(7);
+        // IF_Z goto three_to_nine_digits;
+        // LD_DE(mv_MobilePrintNum__7);
+        // CP_A(8);
+        // IF_Z goto three_to_nine_digits;
+        // LD_DE(mv_MobilePrintNum__8);
+        // CP_A(9);
+        // IF_Z goto three_to_nine_digits;
+        // LD_DE(mv_MobilePrintNum__9);
+        digit_ptr = PowerOfTen + (a - 1);
 
-two_digits:
-    LD_C(0);
-    LDH_A_addr(hPrintNumBuffer + 3);
+    // three_to_nine_digits:
+        // INC_DE;
+        // INC_DE;
+        // INC_DE;
+        // DEC_A;
+        // DEC_A;
+        a -= 2;
 
-mod_ten_loop:
-    CP_A(10);
-    IF_C goto simple_divide_done;
-    SUB_A(10);
-    INC_C;
-    goto mod_ten_loop;
+        do {
+        // digit_loop:
+            // PUSH_AF;
+            // CALL(av_MobilePrintNum_Function1062b2);
+            v_MobilePrintNum_Function1062b2(hl, *digit_ptr);
+            // CALL(av_MobilePrintNum_Function1062ff);
+            hl = v_MobilePrintNum_Function1062ff(hl);
+            // for(int rept = 0; rept < 4; rept++){
+            // INC_DE;
+            // }
+            --digit_ptr;
+            // POP_AF;
+            // DEC_A;
+            // IF_NZ goto digit_loop;
+        } while(--a != 0);
+    }
 
+// two_digits:
+    // LD_C(0);
+    // LDH_A_addr(hPrintNumBuffer + 3);
 
-simple_divide_done:
-    LD_B_A;
-    LDH_A_addr(hPrintNumBuffer + 8);
-    OR_A_C;
-    LDH_addr_A(hPrintNumBuffer + 8);
-    IF_NZ goto create_digit;
-    CALL(av_MobilePrintNum_LoadMinusTenIfNegative);
-    goto done;
+// mod_ten_loop:
+    // CP_A(10);
+    // IF_C goto simple_divide_done;
+    // SUB_A(10);
+    // INC_C;
+    // goto mod_ten_loop;
+    uint8_t quot = hram->hPrintNumBuffer[3] / 10;
+    uint8_t rem = hram->hPrintNumBuffer[3] % 10;
 
+// simple_divide_done:
+    // LD_B_A;
+    // LDH_A_addr(hPrintNumBuffer + 8);
+    // OR_A_C;
+    // LDH_addr_A(hPrintNumBuffer + 8);
+    // IF_NZ goto create_digit;
+    if((hram->hPrintNumBuffer[8] | quot) == 0) {
+        // CALL(av_MobilePrintNum_LoadMinusTenIfNegative);
+    // inlined
+        // LDH_A_addr(hPrintNumBuffer + 9);
+        // BIT_A(7);
+        // RET_Z ;
+        if(bit_test(hram->hPrintNumBuffer[9], 7)) {
+            // LD_hl(-10);
+            *hl = 0xf6;
+            // RET;
+        }
+        // goto done;
+    }
+    else {
+    // create_digit:
+        // LD_A(0xf6);
+        // ADD_A_C;
+        // LD_hl_A;
+        *hl = 0xf6 + quot;
+    }
 
-create_digit:
-    LD_A(0xf6);
-    ADD_A_C;
-    LD_hl_A;
-
-
-done:
-    CALL(av_MobilePrintNum_Function1062ff);
-    LD_A(0xf6);
-    ADD_A_B;
-    LD_hli_A;
-    POP_DE;
-    POP_BC;
-    RET;
-
-
-// _9    dd:
-// 1000000000
-
-// _8    dd:
-// 100000000
-
-// _7    dd:
-// 10000000
-
-// _6    dd:
-// 1000000
-
-// _5    dd:
-// 100000
-
-// _4    dd:
-// 10000
-
-// _3    dd:
-// 1000
-
-// _2    dd:
-// 100
-
-
-Function1062b2:
-    LD_C(0x0);
-
-asm_1062b4:
-    LD_A_de;
-    DEC_DE;
-    LD_B_A;
-    LDH_A_addr(hPrintNumBuffer + 3);
-    SUB_A_B;
-    LDH_addr_A(hPrintNumBuffer + 7);
-    LD_A_de;
-    DEC_DE;
-    LD_B_A;
-    LDH_A_addr(hPrintNumBuffer + 2);
-    SBC_A_B;
-    LDH_addr_A(hPrintNumBuffer + 6);
-    LD_A_de;
-    DEC_DE;
-    LD_B_A;
-    LDH_A_addr(hPrintNumBuffer + 1);
-    SBC_A_B;
-    LDH_addr_A(hPrintNumBuffer + 5);
-    LD_A_de;
-    INC_DE;
-    INC_DE;
-    INC_DE;
-    LD_B_A;
-    LDH_A_addr(hPrintNumBuffer + 0);
-    SBC_A_B;
-    LDH_addr_A(hPrintNumBuffer + 4);
-    IF_C goto asm_1062eb;
-    LDH_A_addr(hPrintNumBuffer + 4);
-    LDH_addr_A(hPrintNumBuffer + 0);
-    LDH_A_addr(hPrintNumBuffer + 5);
-    LDH_addr_A(hPrintNumBuffer + 1);
-    LDH_A_addr(hPrintNumBuffer + 6);
-    LDH_addr_A(hPrintNumBuffer + 2);
-    LDH_A_addr(hPrintNumBuffer + 7);
-    LDH_addr_A(hPrintNumBuffer + 3);
-    INC_C;
-    goto asm_1062b4;
-
-
-asm_1062eb:
-    LDH_A_addr(hPrintNumBuffer + 8);
-    OR_A_C;
-    IF_Z goto LoadMinusTenIfNegative;
-    LD_A(-10);
-    ADD_A_C;
-    LD_hl_A;
-    LDH_addr_A(hPrintNumBuffer + 8);
-    RET;
-
-
-LoadMinusTenIfNegative:
-    LDH_A_addr(hPrintNumBuffer + 9);
-    BIT_A(7);
-    RET_Z ;
-
-    LD_hl(-10);
-    RET;
-
-
-Function1062ff:
-    LDH_A_addr(hPrintNumBuffer + 9);
-    BIT_A(7);
-    IF_NZ goto asm_10630d;
-    BIT_A(6);
-    IF_Z goto asm_10630d;
-    LDH_A_addr(hPrintNumBuffer + 8);
-    AND_A_A;
-    RET_Z ;
-
-
-asm_10630d:
-    INC_HL;
-    RET;
+// done:
+    // CALL(av_MobilePrintNum_Function1062ff);
+    hl = v_MobilePrintNum_Function1062ff(hl);
+    // LD_A(0xf6);
+    // ADD_A_B;
+    // LD_hli_A;
+    *(hl++) = 0xf6 + rem;
+    // POP_DE;
+    // POP_BC;
+    // RET;
+    return hl;
+}
 
 //  functions related to the cable club and various NPC scripts referencing communications
-}
 
 // Special to check mobile adapater status.
 // Determines whether the mobile adapter has been activated.

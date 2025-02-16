@@ -49,7 +49,7 @@ void RestoreMobileEventIndex(void);
 void VerifyTrainerRankingsChecksum(void);
 void DeleteMobileEventIndex(void);
 void InitializeTrainerRankings(void);
-void v_MobilePrintNum(void);
+uint8_t* v_MobilePrintNum(uint8_t* hl, const void* de_, uint8_t b, uint8_t c);
 void Mobile_DummyReturnFalse(void);
 void SetMobileAdapterStatus(uint8_t c); // Stubbed_Function106314
 u8_flag_s Mobile_AlwaysReturnNotCarry(void);

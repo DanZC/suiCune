@@ -10,6 +10,7 @@
 #include "print_bcd.h"
 #include "map_objects.h"
 #include "../engine/battle/read_trainer_party.h"
+#include "../mobile/mobile_5f.h"
 #include "../charmap.h"
 
 // If you encounter text problems, set the value below to 0.
@@ -930,8 +931,9 @@ void MobileScriptChar_Conv(struct TextPrintState* state) {
     (void)state;
     // LD_C_L;
     // LD_B_H;
-    // REG_BC = state->hl;
+    state->bc = state->hl;
     // FARCALL(aRunMobileScript);
+    RunMobileScript(state);
     // JP(mPlaceNextChar);
 }
 
@@ -1877,6 +1879,7 @@ void NullChar_Conv(struct TextPrintState* state) {
     // CALL(aPrintLetterDelay);
     PrintLetterDelay_Conv();
     // JP(mNextChar);
+    NextChar_Conv(state);
 }
 
 void TextScroll(void) {

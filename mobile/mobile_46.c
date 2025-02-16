@@ -378,44 +378,64 @@ void Function1181da(void){
     // RET;
 }
 
+// Mobile_UpdateNewsRankings?
 void Function118233(void){
-    CALL(aBattleTowerRoomMenu_InitRAM);
-    LD_A(0x1b);
-    LD_addr_A(wcd33);
-    LD_A(0x1c);
-    LD_addr_A(wcd34);
-    LD_A(0x6);
-    LD_addr_A(wc3f0);
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(0x3);
-    LDH_addr_A(rSVBK);
+    // CALL(aBattleTowerRoomMenu_InitRAM);
+    BattleTowerRoomMenu_InitRAM();
+    wram->wBattleTowerRoomMenuJumptableIndex = 0x0;
+    // LD_A(0x1b);
+    // LD_addr_A(wcd33);
+    wram->wcd33 = 0x1b;
+    // LD_A(0x1c);
+    // LD_addr_A(wcd34);
+    wram->wcd34 = 0x1c;
+    // LD_A(0x6);
+    // LD_addr_A(wc3f0);
+    wram->wc3f0 = 0x6;
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    uint8_t svbk = gb_read(rSVBK);
+    // LD_A(0x3);
+    // LDH_addr_A(rSVBK);
+    gb_write(rSVBK, 0x3);
 
-asm_11824c:
-    CALL(aJoyTextDelay);
-    CALL(aFunction118473);
-    LD_A_addr(wBattleTowerRoomMenuJumptableIndex);
-    CP_A(0x1e);
-    IF_C goto asm_11825f;
-    LD_A_addr(wcd34);
-    LD_addr_A(wBattleTowerRoomMenuJumptableIndex);
+    do {
+    // asm_11824c:
+        // CALL(aJoyTextDelay);
+        JoyTextDelay_Conv();
+        // CALL(aFunction118473);
+        Function118473();
+        // LD_A_addr(wBattleTowerRoomMenuJumptableIndex);
+        // CP_A(0x1e);
+        // IF_C goto asm_11825f;
+        if(wram->wBattleTowerRoomMenuJumptableIndex >= 0x1e) {
+            // LD_A_addr(wcd34);
+            // LD_addr_A(wBattleTowerRoomMenuJumptableIndex);
+            wram->wBattleTowerRoomMenuJumptableIndex = wram->wcd34;
+        }
 
-
-asm_11825f:
-    CALL(aFunction118624);
-    CALL(aBattleTowerRoomMenu_WriteMessage);
-    FARCALL(aFunction115dd3);
-    FARCALL(aFunction11619d);
-    CALL(aDelayFrame);
-    LD_A_addr(wBattleTowerRoomMenuJumptableIndex);
-    LD_HL(wcd33);
-    CP_A_hl;
-    IF_NZ goto asm_11824c;
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    CALL(aBattleTowerRoomMenu_Cleanup);
-    RET;
-
+    // asm_11825f:
+        // CALL(aFunction118624);
+        Function118624();
+        // CALL(aBattleTowerRoomMenu_WriteMessage);
+        BattleTowerRoomMenu_WriteMessage();
+        // FARCALL(aFunction115dd3);
+        Function115dd3();
+        // FARCALL(aFunction11619d);
+        Function11619d();
+        // CALL(aDelayFrame);
+        DelayFrame();
+        // LD_A_addr(wBattleTowerRoomMenuJumptableIndex);
+        // LD_HL(wcd33);
+        // CP_A_hl;
+        // IF_NZ goto asm_11824c;
+    } while(wram->wBattleTowerRoomMenuJumptableIndex != wram->wcd33);
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    gb_write(rSVBK, svbk);
+    // CALL(aBattleTowerRoomMenu_Cleanup);
+    BattleTowerRoomMenu_Cleanup();
+    // RET;
 }
 
 void Function118284(void){
@@ -955,44 +975,44 @@ void Function1185c3(void){
     }
 }
 
+// Mobile_UpdateNewsRankingsJumptable?
 void Function118624(void){
     //jumptable ['.Jumptable', 'wBattleTowerRoomMenuJumptableIndex']
-
-
-Jumptable:
-    //dw ['Function118866'];
-    //dw ['Function118880'];
-    //dw ['Function11878d'];
-    //dw ['Function1188b0'];
-    //dw ['Function11878d'];
-    //dw ['Function1188b8'];
-    //dw ['Function11878d'];
-    //dw ['Function1188c0'];
-    //dw ['Function11878d'];
-    //dw ['Function1188c8'];
-    //dw ['Function11878d'];
-    //dw ['Function118903'];
-    //dw ['Function118aa4'];
-    //dw ['Function11878d'];
-    //dw ['Function118e92'];
-    //dw ['Function11878d'];
-    //dw ['Function11915d'];
-    //dw ['Function118f68'];
-    //dw ['Function11878d'];
-    //dw ['Function119009'];
-    //dw ['Function11878d'];
-    //dw ['Function119054'];
-    //dw ['Function118e6d'];
-    //dw ['Function11878d'];
-    //dw ['Function118e76'];
-    //dw ['Function118e7e'];
-    //dw ['Function11878d'];
-    //dw ['BattleTowerRoomMenu_DoNothing'];
-    //dw ['Function118e76'];
-    //dw ['BattleTowerRoomMenu_CallRoomMenu2'];
-    //dw ['Function118e76'];
-
-    return Function118671();
+    printf("Update News Rankings Jumptable 0x%02x\n", wram->wBattleTowerRoomMenuJumptableIndex);
+    switch(wram->wBattleTowerRoomMenuJumptableIndex) {
+    // Jumptable:
+        case 0x00: return Function118866(); //dw ['Function118866'];
+        case 0x01: return Function118880(); //dw ['Function118880'];
+        case 0x02: return Function11878d(); //dw ['Function11878d'];
+        case 0x03: return Function1188b0(); //dw ['Function1188b0'];
+        case 0x04: return Function11878d(); //dw ['Function11878d'];
+        case 0x05: return Function1188b8(); //dw ['Function1188b8'];
+        case 0x06: return Function11878d(); //dw ['Function11878d'];
+        case 0x07: return Function1188c0(); //dw ['Function1188c0'];
+        case 0x08: return Function11878d(); //dw ['Function11878d'];
+        case 0x09: return Function1188c8(); //dw ['Function1188c8'];
+        case 0x0a: return Function11878d(); //dw ['Function11878d'];
+        case 0x0b: return Function118903(); //dw ['Function118903'];
+        case 0x0c: return Function118aa4(); //dw ['Function118aa4'];
+        case 0x0d: return Function11878d(); //dw ['Function11878d'];
+        case 0x0e: return Function118e92(); //dw ['Function118e92'];
+        case 0x0f: return Function11878d(); //dw ['Function11878d'];
+        case 0x10: return Function11915d(); //dw ['Function11915d'];
+        case 0x11: return Function118f68(); //dw ['Function118f68'];
+        case 0x12: return Function11878d(); //dw ['Function11878d'];
+        case 0x13: return Function119009(); //dw ['Function119009'];
+        case 0x14: return Function11878d(); //dw ['Function11878d'];
+        case 0x15: return Function119054(); //dw ['Function119054'];
+        case 0x16: return Function118e6d(); //dw ['Function118e6d'];
+        case 0x17: return Function11878d(); //dw ['Function11878d'];
+        case 0x18: return Function118e76(); //dw ['Function118e76'];
+        case 0x19: return Function118e7e(); //dw ['Function118e7e'];
+        case 0x1a: return Function11878d(); //dw ['Function11878d'];
+        case 0x1b: return BattleTowerRoomMenu_DoNothing(); //dw ['BattleTowerRoomMenu_DoNothing'];
+        case 0x1c: return Function118e76(); //dw ['Function118e76'];
+        case 0x1d: return BattleTowerRoomMenu_CallRoomMenu2(); //dw ['BattleTowerRoomMenu_CallRoomMenu2'];
+        case 0x1e: return Function118e76(); //dw ['Function118e76'];
+    }
 }
 
 void Function118671(void){
@@ -2845,39 +2865,49 @@ void Function11914e(void){
 }
 
 void Function11915d(void){
-    LD_HL(w3_d802);
-    LD_DE(wcd20);
-    LD_BC(12);
-    CALL(aCopyBytes);
-    LD_A(BANK(s5_aa7f));
-    CALL(aOpenSRAM);
-    LD_HL(wBGMapBuffer);
-    LD_DE(s5_aa7f);
-    LD_C(12);
+    // LD_HL(w3_d802);
+    // LD_DE(wcd20);
+    // LD_BC(12);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(&wram->wcd20, wram->w3_d802, 12);
+    // LD_A(BANK(s5_aa7f));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(as5_aa7f));
+    // LD_HL(wBGMapBuffer);
+    const uint8_t* hl = &wram->wcd20;
+    // LD_DE(s5_aa7f);
+    const uint8_t* de = GBToRAMAddr(s5_aa7f);
+    // LD_C(12);
+    uint8_t c = 12;
 
-asm_119176:
-    LD_A_de;
-    INC_DE;
-    CP_A_hl;
-    IF_NZ goto asm_119184;
-    INC_HL;
-    DEC_C;
-    IF_NZ goto asm_119176;
-    CALL(aBattleTowerRoomMenu_IncrementJumptable);
-    goto asm_11918e;
-
-
-asm_119184:
-    LD_A(0x16);
-    LD_addr_A(wBattleTowerRoomMenuJumptableIndex);
-    LD_A(0xb);
-    LD_addr_A(wMobileErrorCodeBuffer);
-
+    do {
+    // asm_119176:
+        // LD_A_de;
+        // INC_DE;
+        // CP_A_hl;
+        // IF_NZ goto asm_119184;
+        if(*(de++) != *(hl++)) {
+        // asm_119184:
+            // LD_A(0x16);
+            // LD_addr_A(wBattleTowerRoomMenuJumptableIndex);
+            wram->wBattleTowerRoomMenuJumptableIndex = 0x16;
+            // LD_A(0xb);
+            // LD_addr_A(wMobileErrorCodeBuffer);
+            wram->wMobileErrorCodeBuffer[0] = 0xb;
+            goto asm_11918e;
+        }
+        // INC_HL;
+        // DEC_C;
+        // IF_NZ goto asm_119176;
+    } while(--c != 0);
+    // CALL(aBattleTowerRoomMenu_IncrementJumptable);
+    BattleTowerRoomMenu_IncrementJumptable();
+    // goto asm_11918e;
 
 asm_11918e:
-    CALL(aCloseSRAM);
-    RET;
-
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
 }
 
 bool Function119192(uint16_t de, const void* hl_, uint16_t bc){

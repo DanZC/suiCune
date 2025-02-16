@@ -115,7 +115,7 @@ u8_flag_s Function48c0f(uint8_t a);
 void Function48c11(tile_t* hl, uint8_t b, uint8_t d);
 void Function48c4d(uint8_t* hl, uint8_t a);
 void Function48c5a(uint8_t* hl, uint8_t a);
-void Function48c63(void);
+bool Function48c63(uint8_t* de, uint8_t c);
 void Function48c8e(void);
 void Function48ca3(void);
 void Function48cda(tile_t* de, uint8_t b, uint8_t c);

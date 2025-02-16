@@ -1,5 +1,6 @@
 #include "../constants.h"
 #include "mobile_5f.h"
+#include "mobile_12.h"
 #include "mobile_41.h"
 #include "mobile_46.h"
 #include "fixed_words.h"
@@ -30,6 +31,7 @@ uint8_t* gMobile_wcd20_wcd21;
 uint8_t* gMobile_wcd49_wcd4a;
 uint8_t* gMobile_wcd4b_wcd4c;
 uint8_t* gMobile_wcd4d_wcd4e;
+uint8_t* gMobile_wcd52_wcd53;
 
 void Function17c000(void){
     CALL(aDisableLCD);
@@ -830,14 +832,17 @@ void Function17d2ce(void){
     FadeToMenu_Conv();
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
+    uint8_t svbk = gb_read(rSVBK);
     // LD_A(0x4);
     // LDH_addr_A(rSVBK);
+    gb_write(rSVBK, 0x4);
     // CALL(aFunction17d370);
     Function17d370();
     // CALL(aFunction17d45a);
     Function17d45a();
     // POP_AF;
     // LDH_addr_A(rSVBK);
+    gb_write(rSVBK, svbk);
     // LD_DE(MUSIC_MOBILE_CENTER);
     // LD_A_E;
     // LD_addr_A(wMapMusic);
@@ -1675,40 +1680,65 @@ void Function17d6fd(void){
 
 typedef void (*Jumptable17d72a_t)(void);
 enum {
-    NEWS_COMMAND_PLAY_MUSIC = 2,
+    NEWS_COMMAND_NOP,
+    NEWS_COMMAND_LOAD_SCREEN,
+    NEWS_COMMAND_PLAY_MUSIC,
     NEWS_COMMAND_PLAY_SFX,
     NEWS_COMMAND_PLAY_CRY,
+    NEWS_COMMAND_05,
+    NEWS_COMMAND_06,
+    NEWS_COMMAND_07,
+    NEWS_COMMAND_08,
+    NEWS_COMMAND_09,
+    NEWS_COMMAND_POKE_PIC,
+    NEWS_COMMAND_TRAINER_PIC,
+    NEWS_COMMAND_0C,
+    NEWS_COMMAND_0D,
+    NEWS_COMMAND_MENU_UP,
+    NEWS_COMMAND_MENU_DOWN,
+    NEWS_COMMAND_MENU_LEFT,
+    NEWS_COMMAND_MENU_RIGHT,
+    NEWS_COMMAND_12,
+    NEWS_COMMAND_13,
+    NEWS_COMMAND_14,
+    NEWS_COMMAND_ROTATE_PALS_LEFT,
+    NEWS_COMMAND_ROTATE_PALS_RIGHT,
+    NEWS_COMMAND_CALL_SUB,
+    NEWS_COMMAND_PLACE_TEXT,
+    NEWS_COMMAND_CLEAR_TEXT,
+    NEWS_COMMAND_1A,
+    NEWS_COMMAND_EXIT = 48,
 };
 // TODO:  Finish news command table. Right now, program will crash when trying to run a command
 //        which is undefined.
 static const Jumptable17d72a_t Jumptable17d72a[] = {
-    [0] = Function17d78c,
-    [1] = Function17d78d,
-    [NEWS_COMMAND_PLAY_MUSIC] = Function17d7b4,
-    [NEWS_COMMAND_PLAY_SFX]   = Function17d7c2,
-    [NEWS_COMMAND_PLAY_CRY]   = Function17d7d3,
-    [5] = Function17d7e5,
-    [6] = Function17d818,
-    // [7] = Function17d833,
+    [NEWS_COMMAND_NOP]          = Function17d78c,
+    [NEWS_COMMAND_LOAD_SCREEN]  = Function17d78d,
+    [NEWS_COMMAND_PLAY_MUSIC]   = Function17d7b4,
+    [NEWS_COMMAND_PLAY_SFX]     = Function17d7c2,
+    [NEWS_COMMAND_PLAY_CRY]     = Function17d7d3,
+    [NEWS_COMMAND_05] = Function17d7e5,
+    [NEWS_COMMAND_06] = Function17d818,
+    [NEWS_COMMAND_07] = Function17d833,
     // [8] = Function17d85d,
     // [9] = Function17d902,
-    [10] = Function17d93a,
-    [11] = Function17d98b,
+    [NEWS_COMMAND_POKE_PIC] = Function17d93a,
+    [NEWS_COMMAND_TRAINER_PIC] = Function17d98b,
     // [12] = Function17d9e3,
     // [13] = Function17da31,
-    [14] = Function17da9c,
-    [15] = Function17dadc,
-    [16] = Function17db2d,
-    [17] = Function17db56,
+    [NEWS_COMMAND_MENU_UP] = Function17da9c,
+    [NEWS_COMMAND_MENU_DOWN] = Function17dadc,
+    [NEWS_COMMAND_MENU_LEFT] = Function17db2d,
+    [NEWS_COMMAND_MENU_RIGHT] = Function17db56,
     // [18] = Function17db77,
     // [19] = Function17dbe9,
     // [20] = Function17dc1f,
-    [21] = Function17dc9f,
-    [22] = Function17dca9,
+    [NEWS_COMMAND_ROTATE_PALS_LEFT] = Function17dc9f,
+    [NEWS_COMMAND_ROTATE_PALS_RIGHT] = Function17dca9,
     [23] = Function17dccf,
-    [24] = Function17dd13,
-    [25] = Function17dd30,
-    // [26] = Function17dd49,
+    [NEWS_COMMAND_PLACE_TEXT] = Function17dd13,
+    [NEWS_COMMAND_CLEAR_TEXT] = Function17dd30,
+    [26] = Function17dd49,
     // [27] = Function17ddcd,
     // [28] = Function17de32,
     // [29] = Function17de91,
@@ -1716,13 +1746,13 @@ static const Jumptable17d72a_t Jumptable17d72a[] = {
     // [31] = Function17e0fd,
     // [32] = Function17e133,
     // [33] = Function17e165,
-    // [34] = Function17e1a1,
+    [34] = Function17e1a1,
     [35] = Function17e254,
     [36] = Function17e261,
     [37] = Function17e270,
-    // [38] = Function17e27f,
-    // [39] = Function17e293,
-    // [40] = Function17e2a7,
+    [38] = Function17e27f,
+    [39] = Function17e293,
+    [40] = Function17e2a7,
     [41] = IncCrashCheckPointer_SaveGameData,
     [42] = IncCrashCheckPointer_SaveAfterLinkTrade,
     [43] = IncCrashCheckPointer_SaveBox,
@@ -1730,7 +1760,7 @@ static const Jumptable17d72a_t Jumptable17d72a[] = {
     [45] = IncCrashCheckPointer_SaveTrainerRankingsChecksum,
     [46] = Function17e3e0,
     [47] = Function17e3f0,
-    [48] = Function17e409,
+    [NEWS_COMMAND_EXIT] = Function17e409,
 };
 
 // Mobile_RunNewsCommand
@@ -1749,6 +1779,7 @@ void Function17d711(uint8_t a){
     // LD_H_hl;
     // LD_L_A;
     // JP_hl;
+    printf("RunNewsCommand(%d)\n", a);
     return Jumptable17d72a[a]();
 }
 
@@ -1767,6 +1798,7 @@ void Function17d78c(void){
 
 }
 
+// NewsCommand_LoadScreen
 void Function17d78d(void){
     // CALL(aIncCrashCheckPointer);
     uint8_t* hl = IncCrashCheckPointer();
@@ -2445,7 +2477,7 @@ void Function17dadc(void){
     IncCrashCheckPointer();
 }
 
-// NewsCommand_MoveCursorDown?
+// NewsCommand_MoveCursorLeft?
 void Function17db2d(void){
     // LD_A_addr(wcd30);
     // LD_HL(wcd24);
@@ -2478,7 +2510,7 @@ void Function17db2d(void){
     IncCrashCheckPointer();
 }
 
-// NewsCommand_MoveCursorUp?
+// NewsCommand_MoveCursorRight?
 void Function17db56(void){
     // LD_A_addr(wcd30);
     // CP_A(0x1);
@@ -2743,6 +2775,7 @@ void Function17dcaf(void){
     // RET;
 }
 
+// NewCommand_CallSubroutine?
 void Function17dccf(void){
     // CALL(aIncCrashCheckPointer);
     uint8_t* hl = IncCrashCheckPointer();
@@ -2837,7 +2870,7 @@ void Function17dd13(void){
     // RET;
 }
 
-// NewsCommand_ClearBox
+// NewsCommand_ClearText
 void Function17dd30(void){
     // CALL(aIncCrashCheckPointer);
     uint8_t* hl = IncCrashCheckPointer();
@@ -2854,103 +2887,123 @@ void Function17dd30(void){
     // PUSH_AF;
     uint8_t a = hl[3];
     // CALL(aHlToCrashCheckPointer);
+    HlToCrashCheckPointer(hl + 4);
     // POP_AF;
     // hlcoord(0, 0, wTilemap);
     // ADD_HL_DE;
     // CALL(aFunction17e600);
-    Function17e600(hl + de, bc, a);
+    Function17e600(coord(0, 0, wram->wTilemap) + de, bc, a);
     // RET;
 }
 
 void Function17dd49(void){
-    CALL(aIncCrashCheckPointer);
-    LD_DE(wc708);
-    LD_BC(0xa);
-    CALL(aCopyBytes);
-    LD_A_addr(wc711);
-    LD_C_A;
-    LD_B(0);
-    CALL(aCopyBytes);
-    LD_A_addr(wc70a);
-    CP_A(0xc0);
-    IF_C goto sram;
-    LD_A_addr(wc708);
-    LDH_addr_A(rSVBK);
-    goto got_bank;
+    uint8_t svbk = gb_read(rSVBK);
+    // CALL(aIncCrashCheckPointer);
+    uint8_t* hl = IncCrashCheckPointer();
+    // LD_DE(wc708);
+    // LD_BC(0xa);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(&wram->wc708, hl, 0xa);
+    // LD_A_addr(wc711);
+    // LD_C_A;
+    // LD_B(0);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wc712, hl + 0xa, wram->wc711);
+    // LD_A_addr(wc70a);
+    // CP_A(0xc0);
+    // IF_C goto sram;
+    if(wram->wc70a < 0xc0) {
+    // sram:
+        // LD_A_addr(wc708);
+        // CALL(aOpenSRAM);
+        OpenSRAM_Conv(wram->wc708);
+    }
+    else {
+        // LD_A_addr(wc708);
+        // LDH_addr_A(rSVBK);
+        gb_write(rSVBK, wram->wc708);
+        // goto got_bank;
+    }
 
+// got_bank:
+    // LD_A_addr(wc709);
+    // LD_L_A;
+    // LD_A_addr(wc70a);
+    // LD_H_A;
+    // LD_DE(wc688);
+    // LD_A_addr(wc711);
+    // LD_C_A;
+    // LD_B(0);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wc688, GBToRAMAddr(wram->wc709 | (wram->wc70a << 8)), wram->wc711);
+    // LD_A_addr(wc70a);
+    // CP_A(0xc0);
+    // IF_C goto close_sram;
+    if(wram->wc70a < 0xc0) {
+    // close_sram:
+        // CALL(aCloseSRAM);
+        CloseSRAM_Conv();
+    }
+    else {
+        // LD_A(0x4);
+        // LDH_addr_A(rSVBK);
+        gb_write(rSVBK, svbk);
+        // goto exited_bank;
+    }
 
-sram:
-    LD_A_addr(wc708);
-    CALL(aOpenSRAM);
+// exited_bank:
+    // LD_A_addr(wc711);
+    // LD_C_A;
+    uint8_t c = wram->wc711;
+    // LD_HL(wc712);
+    // LD_DE(wc688);
+    uint16_t ptr;
+    hl = wram->wc712;
+    const uint8_t* de = wram->wc688;
 
+    do {
+    // loop:
+        // LD_A_de;
+        // INC_DE;
+        // CP_A_hl;
+        // INC_HL;
+        // IF_Z goto next;
+        // IF_C goto load;
+        if(*de < *hl) {
+        // load:
+            // LD_A_addr(wc70b);
+            // LD_L_A;
+            // LD_A_addr(wc70c);
+            // LD_H_A;
+            ptr = wram->wc70b | (wram->wc70c << 8);
+            goto done;
+        }
+        // goto load2;
+        else if(*de > *hl) {
+        // load2:
+            // LD_A_addr(wc70f);
+            // LD_L_A;
+            // LD_A_addr(wc710);
+            // LD_H_A;
+            ptr = wram->wc70f | (wram->wc710 << 8);
+            goto done;
+        }
 
-got_bank:
-    LD_A_addr(wc709);
-    LD_L_A;
-    LD_A_addr(wc70a);
-    LD_H_A;
-    LD_DE(wc688);
-    LD_A_addr(wc711);
-    LD_C_A;
-    LD_B(0);
-    CALL(aCopyBytes);
-    LD_A_addr(wc70a);
-    CP_A(0xc0);
-    IF_C goto close_sram;
-    LD_A(0x4);
-    LDH_addr_A(rSVBK);
-    goto exited_bank;
-
-
-close_sram:
-    CALL(aCloseSRAM);
-
-
-exited_bank:
-    LD_A_addr(wc711);
-    LD_C_A;
-    LD_HL(wc712);
-    LD_DE(wc688);
-
-loop:
-    LD_A_de;
-    INC_DE;
-    CP_A_hl;
-    INC_HL;
-    IF_Z goto next;
-    IF_C goto load;
-    goto load2;
-
-
-next:
-    DEC_C;
-    IF_NZ goto loop;
-    LD_A_addr(wc70d);
-    LD_L_A;
-    LD_A_addr(wc70e);
-    LD_H_A;
-    goto done;
-
-
-load2:
-    LD_A_addr(wc70f);
-    LD_L_A;
-    LD_A_addr(wc710);
-    LD_H_A;
-    goto done;
-
-
-load:
-    LD_A_addr(wc70b);
-    LD_L_A;
-    LD_A_addr(wc70c);
-    LD_H_A;
-
+    // next:
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(--c != 0);
+    // LD_A_addr(wc70d);
+    // LD_L_A;
+    // LD_A_addr(wc70e);
+    // LD_H_A;
+    ptr = wram->wc70d | (wram->wc70e << 8);
+    // goto done;
 
 done:
-    CALL(aFunction17e40f);
-    RET;
-
+    // CALL(aFunction17e40f);
+    Function17e40f(ptr);
+    // RET;
 }
 
 void Function17ddcd(void){
@@ -3609,130 +3662,157 @@ asm_17e195:
 
 }
 
+// NewsCommand_MemoryCompare?
 void Function17e1a1(void){
-    CALL(aIncCrashCheckPointer);
-    LD_DE(wc708);
-    LD_BC(0xd);
-    CALL(aCopyBytes);
-    LD_A_addr(wc70a);
-    CP_A(0xc0);
-    IF_C goto asm_17e1bb;
-    LD_A_addr(wc708);
-    LDH_addr_A(rSVBK);
-    goto asm_17e1c1;
+    uint8_t svbk = gb_read(rSVBK);
+    // CALL(aIncCrashCheckPointer);
+    uint8_t* hl = IncCrashCheckPointer();
+    // LD_DE(wc708);
+    // LD_BC(0xd);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(&wram->wc708, hl, 0xd);
+    // LD_A_addr(wc70a);
+    // CP_A(0xc0);
+    // IF_C goto asm_17e1bb;
+    if(wram->wc70a < 0xc0) {
+    // asm_17e1bb:
+        // LD_A_addr(wc708);
+        // CALL(aOpenSRAM);
+        OpenSRAM_Conv(wram->wc708);
+    }
+    else {
+        // LD_A_addr(wc708);
+        // LDH_addr_A(rSVBK);
+        gb_write(rSVBK, wram->wc708);
+        // goto asm_17e1c1;
+    }
 
+// asm_17e1c1:
+    // LD_A_addr(wc709);
+    // LD_L_A;
+    // LD_A_addr(wc70a);
+    // LD_H_A;
+    const uint8_t* src0 = GBToRAMAddr(wram->wc709 | (wram->wc70a << 8));
+    // LD_DE(wc608);
+    // LD_A_addr(wc70b);
+    // LD_C_A;
+    // LD_B(0);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wc608, src0, wram->wc70b);
+    // LD_A_addr(wc70a);
+    // CP_A(0xc0);
+    // IF_C goto asm_17e1e2;
+    if(wram->wc70a < 0xc0) {
+    // asm_17e1e2:
+        // CALL(aCloseSRAM);
+        CloseSRAM_Conv();
+    }
+    else {
+        // LD_A(0x4);
+        // LDH_addr_A(rSVBK);
+        gb_write(rSVBK, svbk);
+        // goto asm_17e1e5;
+    }
 
-asm_17e1bb:
-    LD_A_addr(wc708);
-    CALL(aOpenSRAM);
+// asm_17e1e5:
+    // LD_A_addr(wc70e);
+    // CP_A(0xc0);
+    // IF_C goto asm_17e1f3;
+    if(wram->wc70e < 0xc0) {
+    // asm_17e1f3:
+        // LD_A_addr(wc70c);
+        // CALL(aOpenSRAM);
+        OpenSRAM_Conv(wram->wc70c);
+    }
+    else {
+        // LD_A_addr(wc70c);
+        // LDH_addr_A(rSVBK);
+        gb_write(rSVBK, wram->wc70c);
+        // goto asm_17e1f9;
+    }
 
+// asm_17e1f9:
+    // LD_A_addr(wc70d);
+    // LD_L_A;
+    // LD_A_addr(wc70e);
+    // LD_H_A;
+    const uint8_t* src1 = GBToRAMAddr(wram->wc70d | (wram->wc70e << 8));
+    // LD_DE(wc688);
+    // LD_A_addr(wc70b);
+    // LD_C_A;
+    // LD_B(0);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wc688, src1, wram->wc70b);
+    // LD_A_addr(wc70e);
+    // CP_A(0xc0);
+    // IF_C goto asm_17e21a;
+    if(wram->wc70e < 0xc0) {
+    // asm_17e21a:
+        // CALL(aCloseSRAM);
+        CloseSRAM_Conv();
+    }
+    else {
+        // LD_A(0x4);
+        // LDH_addr_A(rSVBK);
+        gb_write(rSVBK, svbk);
+        // goto asm_17e21d;
+    }
 
-asm_17e1c1:
-    LD_A_addr(wc709);
-    LD_L_A;
-    LD_A_addr(wc70a);
-    LD_H_A;
-    LD_DE(wc608);
-    LD_A_addr(wc70b);
-    LD_C_A;
-    LD_B(0);
-    CALL(aCopyBytes);
-    LD_A_addr(wc70a);
-    CP_A(0xc0);
-    IF_C goto asm_17e1e2;
-    LD_A(0x4);
-    LDH_addr_A(rSVBK);
-    goto asm_17e1e5;
+// asm_17e21d:
+    // LD_A_addr(wc70b);
+    // LD_C_A;
+    uint8_t c = wram->wc70b;
+    // LD_HL(wc688);
+    hl = wram->wc688;
+    // LD_DE(wc608);
+    uint8_t* de = wram->wc608;
 
+    do {
+    // asm_17e227:
+        // LD_A_de;
+        // INC_DE;
+        uint8_t a = *(de++);
+        // CP_A_hl;
+        // INC_HL;
+        uint8_t b = *(hl++);
+        // IF_Z goto asm_17e231;
+        // IF_C goto asm_17e23e;
+        if(a < b) {
+        // asm_17e23e:
+            // LD_A_addr(wc70f);
+            // LD_L_A;
+            // LD_A_addr(wc710);
+            // LD_H_A;
+            // goto asm_17e250;
+            return Function17e40f(wram->wc70f | (wram->wc710 << 8));
+        }
+        // goto asm_17e248;
+        else if(a > b) {
+        // asm_17e248:
+            // LD_A_addr(wc712 + 1);
+            // LD_L_A;
+            // LD_A_addr(wc712 + 2);
+            // LD_H_A;
+            return Function17e40f(wram->wc712[1] | (wram->wc712[2] << 8));
+        }
 
-asm_17e1e2:
-    CALL(aCloseSRAM);
+    // asm_17e231:
+        // DEC_C;
+        // IF_NZ goto asm_17e227;
+    } while(--c != 0);
+    // LD_A_addr(wc711);
+    // LD_L_A;
+    // LD_A_addr(wc712);
+    // LD_H_A;
+    // goto asm_17e250;
 
-
-asm_17e1e5:
-    LD_A_addr(wc70e);
-    CP_A(0xc0);
-    IF_C goto asm_17e1f3;
-    LD_A_addr(wc70c);
-    LDH_addr_A(rSVBK);
-    goto asm_17e1f9;
-
-
-asm_17e1f3:
-    LD_A_addr(wc70c);
-    CALL(aOpenSRAM);
-
-
-asm_17e1f9:
-    LD_A_addr(wc70d);
-    LD_L_A;
-    LD_A_addr(wc70e);
-    LD_H_A;
-    LD_DE(wc688);
-    LD_A_addr(wc70b);
-    LD_C_A;
-    LD_B(0);
-    CALL(aCopyBytes);
-    LD_A_addr(wc70e);
-    CP_A(0xc0);
-    IF_C goto asm_17e21a;
-    LD_A(0x4);
-    LDH_addr_A(rSVBK);
-    goto asm_17e21d;
-
-
-asm_17e21a:
-    CALL(aCloseSRAM);
-
-
-asm_17e21d:
-    LD_A_addr(wc70b);
-    LD_C_A;
-    LD_HL(wc688);
-    LD_DE(wc608);
-
-asm_17e227:
-    LD_A_de;
-    INC_DE;
-    CP_A_hl;
-    INC_HL;
-    IF_Z goto asm_17e231;
-    IF_C goto asm_17e23e;
-    goto asm_17e248;
-
-
-asm_17e231:
-    DEC_C;
-    IF_NZ goto asm_17e227;
-    LD_A_addr(wc711);
-    LD_L_A;
-    LD_A_addr(wc712);
-    LD_H_A;
-    goto asm_17e250;
-
-
-asm_17e23e:
-    LD_A_addr(wc70f);
-    LD_L_A;
-    LD_A_addr(wc710);
-    LD_H_A;
-    goto asm_17e250;
-
-
-asm_17e248:
-    LD_A_addr(wc712 + 1);
-    LD_L_A;
-    LD_A_addr(wc712 + 2);
-    LD_H_A;
-
-
-asm_17e250:
-    CALL(aFunction17e40f);
-    RET;
-
+// asm_17e250:
+    // CALL(aFunction17e40f);
+    // RET;
+    return Function17e40f(wram->wc711 | (wram->wc712[0] << 8));
 }
 
-// NewsCommand_WriteMemory
+// NewsCommand_SetVal
 void Function17e254(void){
     // CALL(aIncCrashCheckPointer);
     uint8_t* hl = IncCrashCheckPointer();
@@ -3749,7 +3829,7 @@ void Function17e254(void){
     // RET;
 }
 
-// NewsCommand_AddMemory
+// NewsCommand_AddVal
 void Function17e261(void){
     // CALL(aIncCrashCheckPointer);
     uint8_t* hl = IncCrashCheckPointer();
@@ -3768,7 +3848,7 @@ void Function17e261(void){
     // RET;
 }
 
-// NewsCommand_SubMemory
+// NewsCommand_SubVal
 void Function17e270(void){
     // CALL(aIncCrashCheckPointer);
     uint8_t* hl = IncCrashCheckPointer();
@@ -3787,96 +3867,123 @@ void Function17e270(void){
     // RET;
 }
 
+// NewsCommand_AddMem
 void Function17e27f(void){
-    CALL(aIncCrashCheckPointer);
-    LD_A_hli;
-    LD_E_A;
-    LD_A_hli;
-    LD_D_A;
-    LD_A_hli;
-    LD_C_A;
-    LD_A_hli;
-    LD_B_A;
-    CALL(aHlToCrashCheckPointer);
-    LD_L_C;
-    LD_H_B;
-    LD_A_de;
-    ADD_A_hl;
-    LD_de_A;
-    RET;
-
+    // CALL(aIncCrashCheckPointer);
+    uint8_t* hl = IncCrashCheckPointer();
+    // LD_A_hli;
+    // LD_E_A;
+    // LD_A_hli;
+    // LD_D_A;
+    uint8_t* de = GBToRAMAddr(hl[0] | (hl[1] << 8));
+    // LD_A_hli;
+    // LD_C_A;
+    // LD_A_hli;
+    // LD_B_A;
+    uint8_t* bc = GBToRAMAddr(hl[2] | (hl[3] << 8));
+    // CALL(aHlToCrashCheckPointer);
+    HlToCrashCheckPointer(hl + 4);
+    // LD_L_C;
+    // LD_H_B;
+    // LD_A_de;
+    // ADD_A_hl;
+    // LD_de_A;
+    *de += *bc;
+    // RET;
 }
 
+// NewsCommand_SubMem
 void Function17e293(void){
-    CALL(aIncCrashCheckPointer);
-    LD_A_hli;
-    LD_E_A;
-    LD_A_hli;
-    LD_D_A;
-    LD_A_hli;
-    LD_C_A;
-    LD_A_hli;
-    LD_B_A;
-    CALL(aHlToCrashCheckPointer);
-    LD_L_C;
-    LD_H_B;
-    LD_A_de;
-    SUB_A_hl;
-    LD_de_A;
-    RET;
-
+    // CALL(aIncCrashCheckPointer);
+    uint8_t* hl = IncCrashCheckPointer();
+    // LD_A_hli;
+    // LD_E_A;
+    // LD_A_hli;
+    // LD_D_A;
+    uint8_t* de = GBToRAMAddr(hl[0] | (hl[1] << 8));
+    // LD_A_hli;
+    // LD_C_A;
+    // LD_A_hli;
+    // LD_B_A;
+    uint8_t* bc = GBToRAMAddr(hl[2] | (hl[3] << 8));
+    // CALL(aHlToCrashCheckPointer);
+    HlToCrashCheckPointer(hl + 4);
+    // LD_L_C;
+    // LD_H_B;
+    // LD_A_de;
+    // SUB_A_hl;
+    // LD_de_A;
+    *de -= *bc;
+    // RET;
 }
 
 void Function17e2a7(void){
-    CALL(aIncCrashCheckPointer);
-    CALL(aHlToCrashCheckPointer);
-    CALL(aFunction17e32b);
-    XOR_A_A;
-    LD_addr_A(wcf66);
-    FARCALL(aFunction118233);
-    LD_DE(mPostalMarkGFX);
-    LD_HL(vTiles2 + LEN_2BPP_TILE * 0x60);
-    LD_BC((BANK(aPostalMarkGFX) << 8) | 1);
-    CALL(aGet2bpp);
-    LD_A_addr(wMobileErrorCodeBuffer);
-    AND_A_A;
-    IF_Z goto asm_17e2d8;
-    CP_A(0xa);
-    IF_Z goto asm_17e2f7;
-    CP_A(0xb);
-    IF_Z goto asm_17e300;
-    CALL(aFunction17e309);
-    RET;
-
-
-asm_17e2d8:
-    CALL(aFunction17d60b);
-    CALL(aFunction17e349);
-    XOR_A_A;
-    LD_addr_A(wcd7a);
-    LD_A(0x5);
-    CALL(aOpenSRAM);
-    LD_HL(0xaa73);
-    LD_DE(0xaa7f);
-    LD_BC(0xc);
-    CALL(aCopyBytes);
-    CALL(aCloseSRAM);
-    RET;
-
-
-asm_17e2f7:
-    CALL(aFunction17e349);
-    LD_A(0x1);
-    LD_addr_A(wcd7a);
-    RET;
-
-
-asm_17e300:
-    CALL(aFunction17e349);
-    LD_A(0x2);
-    LD_addr_A(wcd7a);
-    RET;
-
+    // CALL(aIncCrashCheckPointer);
+    // CALL(aHlToCrashCheckPointer);
+    HlToCrashCheckPointer(IncCrashCheckPointer());
+    // CALL(aFunction17e32b);
+    Function17e32b();
+    // XOR_A_A;
+    // LD_addr_A(wcf66);
+    // FARCALL(aFunction118233);
+    Function118233();
+    // LD_DE(mPostalMarkGFX);
+    // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x60);
+    // LD_BC((BANK(aPostalMarkGFX) << 8) | 1);
+    // CALL(aGet2bpp);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x60, PostalMarkGFX, 0, 1);
+    // LD_A_addr(wMobileErrorCodeBuffer);
+    // AND_A_A;
+    // IF_Z goto asm_17e2d8;
+    if(wram->wMobileErrorCodeBuffer[0] == 0) {
+    // asm_17e2d8:
+        // CALL(aFunction17d60b);
+        Function17d60b();
+        // CALL(aFunction17e349);
+        Function17e349();
+        // XOR_A_A;
+        // LD_addr_A(wcd7a);
+        // LD_A(0x5);
+        // CALL(aOpenSRAM);
+        OpenSRAM_Conv(MBANK(as5_aa7f));
+        // LD_HL(0xaa73);
+        // LD_DE(0xaa7f);
+        // LD_BC(0xc);
+        // CALL(aCopyBytes);
+        CopyBytes_Conv2(GBToRAMAddr(s5_aa7f), GBToRAMAddr(s5_aa73), 0xc);
+        // CALL(aCloseSRAM);
+        CloseSRAM_Conv();
+        // RET;
+        return;
+    }
+    // CP_A(0xa);
+    // IF_Z goto asm_17e2f7;
+    else if(wram->wMobileErrorCodeBuffer[0] == 0xa) {
+    // asm_17e2f7:
+        // CALL(aFunction17e349);
+        Function17e349();
+        // LD_A(0x1);
+        // LD_addr_A(wcd7a);
+        wram->wcd7a[0] = 0x1;
+        // RET;
+        return;
+    }
+    // CP_A(0xb);
+    // IF_Z goto asm_17e300;
+    else if(wram->wMobileErrorCodeBuffer[0] == 0xb) {
+    // asm_17e300:
+        // CALL(aFunction17e349);
+        Function17e349();
+        // LD_A(0x2);
+        // LD_addr_A(wcd7a);
+        wram->wcd7a[0] = 0x2;
+        // RET;    
+        return;
+    }
+    // CALL(aFunction17e309);
+    Function17e309();
+    // RET;
+    return;
 }
 
 // News_ShowError
@@ -4002,7 +4109,7 @@ void Function17e3e0(void){
     // RET;
 }
 
-// MobileError_WaitAorB
+// NewsCommand_WaitAOrB
 void Function17e3f0(void){
     // CALL(aIncCrashCheckPointer);
     IncCrashCheckPointer();
@@ -4027,7 +4134,7 @@ void Function17e3f0(void){
     }
 }
 
-// SetCD77Bit7
+// NewsCommand_Exit
 void Function17e409(void){
     // LD_HL(wcd77);
     // SET_hl(7);
@@ -4035,11 +4142,11 @@ void Function17e409(void){
     // RET;
 }
 
-void Function17e40f(void){
-    LD_DE(wBGPals1);
-    ADD_HL_DE;
-    JR(mHlToCrashCheckPointer);
-
+void Function17e40f(uint16_t hl){
+    // LD_DE(wBGPals1);
+    // ADD_HL_DE;
+    // JR(mHlToCrashCheckPointer);
+    HlToCrashCheckPointer(wram->wram4 + hl);
 }
 
 uint8_t* IncCrashCheckPointer(void){
@@ -4176,7 +4283,8 @@ void Function17e451(void){
             // POP_DE;
             // POP_HL;
             // CALL(aPlaceString);
-            PlaceStringSimple(gMobile_wcd20_wcd21 + de2, hl2);
+            struct TextPrintState st = {.de = gMobile_wcd20_wcd21 + de2, .hl = hl2, .bc = bc};
+            PlaceString_Conv(&st, st.hl);
             // POP_BC;
             // POP_HL;
             // LD_A_addr(wcd26);
@@ -4731,324 +4839,420 @@ const char PostalMarkGFX[] = "gfx/font/postal_mark.png";
 const char PokemonNewsTileAttrmap[] = "gfx/mobile/pokemon_news.bin";
 const char PokemonNewsPalettes[] = "gfx/mobile/pokemon_news.pal";
 
-void RunMobileScript(void){
-    LD_A(0x6);
-    CALL(aOpenSRAM);
-    INC_DE;
+void RunMobileScript(struct TextPrintState* state){
+    // LD_A(0x6);
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(as6_a000));
+    // INC_DE;
+    state->de++;
 
-loop:
-    CALL(av_RunMobileScript);
-    IF_C goto finished;
-    goto loop;
+    bool done = false;
+    do {
+    // loop:
+        // CALL(av_RunMobileScript);
+        done = v_RunMobileScript(state);
+        // IF_C goto finished;
+        // goto loop;
+    } while(!done);
 
-
-finished:
-    CALL(aCloseSRAM);
-    RET;
-
+// finished:
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
 }
 
-void v_RunMobileScript(void){
-    LD_A_de;
-    INC_DE;
-    CP_A(0x50);
-    IF_Z goto finished;
-    CP_A(0x10);  // jumptable size
-    IF_NC goto finished;
-    DEC_A;
-    PUSH_DE;
-    LD_E_A;
-    LD_D(0);
-    LD_HL(mv_RunMobileScript_Jumptable);
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    JP_hl;
+bool v_RunMobileScript(struct TextPrintState* state){
+    // LD_A_de;
+    // INC_DE;
+    uint8_t ch = *(state->de++);
+    // CP_A(0x50);
+    // IF_Z goto finished;
+    // CP_A(0x10);  // jumptable size
+    // IF_NC goto finished;
+    if(ch != 0x50 && ch < 0x10) {
+        // DEC_A;
+        // PUSH_DE;
+        // LD_E_A;
+        // LD_D(0);
+        // LD_HL(mv_RunMobileScript_Jumptable);
+        // ADD_HL_DE;
+        // ADD_HL_DE;
+        // LD_A_hli;
+        // LD_H_hl;
+        // LD_L_A;
+        // JP_hl;
+        printf("RunMobileCommand(%d)\n", ch - 1);
+        switch(ch - 1) {
+        // Jumptable:
+            case 0x0: return Function17f081(state, state->de);  // 0
+            case 0x1: return Function17f0f8(state, state->de);  // 1
+            case 0x2: return Function17f154(state, state->de);  // 2
+            case 0x3: return Function17f181(state, state->de);  // 3
+            case 0x4: //dw ['Function17f1d0'];  // 4
+            case 0x5: return Function17f220(state, state->de);  // 5
+            case 0x6: //dw ['Function17f27b'];  // 6
+            case 0x7: return Function17f2cb(state, state->de);  // 7
+            case 0x8: return MobileScript_PlayerName(state, state->de);  // 8
+            case 0x9: return MobileScript_Prefecture(state, state->de);  // 9
+            case 0xa: return Function17f382(state, state->de);  // a
+            case 0xb: return Function17f3c9(state, state->de);  // b
+            case 0xc: return Function17f3f0(state, state->de);  // c
+            case 0xd: //dw ['Function17f41d'];  // d
+            case 0xe: return Function17f44f(state, state->de);  // e
+            case 0xf: return Function17f44f(state, state->de);  // f
+        }
+        return false;
+    }
 
-
-finished:
-    SCF;
-    RET;
-
-
-Jumptable:
-    //dw ['Function17f081'];  // 0
-    //dw ['Function17f0f8'];  // 1
-    //dw ['Function17f154'];  // 2
-    //dw ['Function17f181'];  // 3
-    //dw ['Function17f1d0'];  // 4
-    //dw ['Function17f220'];  // 5
-    //dw ['Function17f27b'];  // 6
-    //dw ['Function17f2cb'];  // 7
-    //dw ['MobileScript_PlayerName'];  // 8
-    //dw ['MobileScript_Prefecture'];  // 9
-    //dw ['Function17f382'];  // a
-    //dw ['Function17f3c9'];  // b
-    //dw ['Function17f3f0'];  // c
-    //dw ['Function17f41d'];  // d
-    //dw ['Function17f44f'];  // e
-    //dw ['Function17f44f'];  // f
-
-    return Function17f081();
+// finished:
+    // SCF;
+    // RET;
+    return true;
 }
 
-void Function17f081(void){
-    POP_HL;
-    CALL(aFunction17f524);
-    IF_C goto asm_17f09f;
-    LD_DE(4);
-    ADD_HL_DE;
-    LD_A_hli;
-    INC_HL;
-    INC_HL;
-    LD_E_L;
-    LD_D_H;
-    LD_L_C;
-    LD_H_B;
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    LD_A_de;
-    CP_A(0x50);
-    IF_Z goto asm_17f09d;
-    AND_A_A;
-    RET;
+bool Function17f081(struct TextPrintState* state, uint8_t* saved){
+    // POP_HL;
+    state->hl = saved;
+    // CALL(aFunction17f524);
+    // IF_C goto asm_17f09f;
+    if(Function17f524()) {
+    // asm_17f09f:
+        // PUSH_BC;
+        // LD_DE(wcd54);
+        // LD_BC(7);
+        // CALL(aCopyBytes);
+        CopyBytes_Conv2(&wram->wcd54, state->hl, 7);
+        // POP_BC;
+        // PUSH_HL;
+        uint8_t* hl = state->hl + 7;
+        // PUSH_BC;
+        uint8_t* bc = state->bc;
+        // CALL(aFunction17f4f6);
+        // POP_BC;
+        // LD_A_addr(wcd54);
+        // LD_E_A;
+        // LD_A_addr(wcd55);
+        // LD_D_A;
+        // ADD_HL_DE;
+        // LD_E_L;
+        // LD_D_H;
+        uint16_t de2 = Function17f4f6() + (wram->wcd54 | (wram->wcd55 << 8));
+        // LD_L_C;
+        // LD_H_B;
+        // PUSH_HL;
+        state->hl = bc;
+        // LD_A_addr(wcd56);
+        // LD_B_A;
+        // LD_A_addr(wcd57);
+        // LD_C_A;
+        // CALL(aMobilePrintNum);
+        state->hl = MobilePrintNum(state->hl, GBToRAMAddr(de2), wram->wcd56, wram->wcd57);
+        // LD_A_L;
+        // LD_addr_A(wcd52);
+        // LD_A_H;
+        // LD_addr_A(wcd53);
+        gMobile_wcd52_wcd53 = state->hl;
+        // LD_A_addr(wcd59);
+        // AND_A_A;
+        // IF_Z goto asm_17f0ee;
+        if(wram->wcd59 != 0) {
+            // LD_C_A;
+            uint8_t c = wram->wcd59;
+            // LD_A_addr(wcd57);
+            // INC_A;
+            // LD_B_A;
+            uint8_t b = wram->wcd57 + 1;
+            // LD_E_L;
+            // LD_D_H;
+            // DEC_DE;
+            uint8_t* de = state->hl - 1;
+        
+            while(c != b) {
+            // asm_17f0e0:
+                // LD_A_C;
+                // CP_A_B;
+                // IF_Z goto asm_17f0ea;
+                // LD_A_de;
+                // DEC_DE;
+                // LD_hld_A;
+                *(state->hl--) = *(de--);
+                // DEC_B;
+                --b;
+                // goto asm_17f0e0;
+            }
+        
+        
+        // asm_17f0ea:
+            // LD_A_addr(wcd5a);
+            // LD_hl_A;
+            *state->hl = wram->wcd5a;
+        }
+    
+    // asm_17f0ee:
+        // POP_HL;
+        state->hl = bc;
+        // LD_A_addr(wcd58);
+        // CALL(aFunction17f50f);
+        Function17f50f(state, wram->wcd58);
+        // POP_DE;
+        state->de = hl;
+        // AND_A_A;
+        // RET;    
+        return false;
+    }
+    else {
+        // LD_DE(4);
+        // ADD_HL_DE;
+        state->hl += 4;
+        // LD_A_hli;
+        uint8_t a = *(state->hl++);
+        // INC_HL;
+        // INC_HL;
+        state->hl += 2;
+        // LD_E_L;
+        // LD_D_H;
+        state->de = state->hl;
+        // LD_L_C;
+        // LD_H_B;
+        // LD_C_A;
+        // LD_B(0);
+        // ADD_HL_BC;
+        state->hl = state->bc + a;
+        // LD_A_de;
+        // CP_A(0x50);
+        // IF_Z goto asm_17f09d;
+        if(*state->de == 0x50)
+            return true;
+        // AND_A_A;
+        // RET;
 
-
-asm_17f09d:
-    SCF;
-    RET;
-
-
-asm_17f09f:
-    PUSH_BC;
-    LD_DE(wcd54);
-    LD_BC(7);
-    CALL(aCopyBytes);
-    POP_BC;
-    PUSH_HL;
-    PUSH_BC;
-    CALL(aFunction17f4f6);
-    POP_BC;
-    LD_A_addr(wcd54);
-    LD_E_A;
-    LD_A_addr(wcd55);
-    LD_D_A;
-    ADD_HL_DE;
-    LD_E_L;
-    LD_D_H;
-    LD_L_C;
-    LD_H_B;
-    PUSH_HL;
-    LD_A_addr(wcd56);
-    LD_B_A;
-    LD_A_addr(wcd57);
-    LD_C_A;
-    CALL(aMobilePrintNum);
-    LD_A_L;
-    LD_addr_A(wcd52);
-    LD_A_H;
-    LD_addr_A(wcd53);
-    LD_A_addr(wcd59);
-    AND_A_A;
-    IF_Z goto asm_17f0ee;
-    LD_C_A;
-    LD_A_addr(wcd57);
-    INC_A;
-    LD_B_A;
-    LD_E_L;
-    LD_D_H;
-    DEC_DE;
-
-asm_17f0e0:
-    LD_A_C;
-    CP_A_B;
-    IF_Z goto asm_17f0ea;
-    LD_A_de;
-    DEC_DE;
-    LD_hld_A;
-    DEC_B;
-    goto asm_17f0e0;
-
-
-asm_17f0ea:
-    LD_A_addr(wcd5a);
-    LD_hl_A;
-
-
-asm_17f0ee:
-    POP_HL;
-    LD_A_addr(wcd58);
-    CALL(aFunction17f50f);
-    POP_DE;
-    AND_A_A;
-    RET;
-
+    // asm_17f09d:
+        // SCF;
+        // RET;
+        return false;
+    }
 }
 
-void Function17f0f8(void){
-    POP_HL;
-    CALL(aFunction17f524);
-    IF_C goto asm_17f114;
-    LD_DE(0x3);
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_E_L;
-    LD_D_H;
-    LD_L_C;
-    LD_H_B;
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    LD_A_de;
-    CP_A(0x50);
-    IF_Z goto asm_17f112;
-    AND_A_A;
-    RET;
-
-
-asm_17f112:
-    SCF;
-    RET;
-
-
-asm_17f114:
-    PUSH_BC;
-    LD_DE(wcd54);
-    LD_BC(0x4);
-    CALL(aCopyBytes);
-    POP_BC;
-    PUSH_HL;
-    PUSH_BC;
-    CALL(aFunction17f4f6);
-    LD_A_addr(wcd54);
-    LD_E_A;
-    LD_A_addr(wcd55);
-    LD_D_A;
-    ADD_HL_DE;
-    LD_DE(wc608);
-    LD_A_addr(wcd56);
-    LD_C_A;
-    LD_B(0);
-    CALL(aCopyBytes);
-    LD_A(0x50);
-    LD_de_A;
-    POP_HL;
-    LD_DE(wc608);
-    CALL(aPlaceString);
-    LD_A_C;
-    LD_addr_A(wcd52);
-    LD_A_B;
-    LD_addr_A(wcd53);
-    LD_A_addr(wcd57);
-    CALL(aFunction17f50f);
-    POP_DE;
-    AND_A_A;
-    RET;
-
+bool Function17f0f8(struct TextPrintState* state, uint8_t* saved){
+    // POP_HL;
+    state->hl = saved;
+    // CALL(aFunction17f524);
+    // IF_C goto asm_17f114;
+    if(Function17f524()) {
+    // asm_17f114:
+        // PUSH_BC;
+        // LD_DE(wcd54);
+        // LD_BC(0x4);
+        // CALL(aCopyBytes);
+        CopyBytes_Conv2(&wram->wcd54, state->hl, 0x4);
+        state->hl += 0x4;
+        // POP_BC;
+        // PUSH_HL;
+        uint8_t* hl = state->hl;
+        // PUSH_BC;
+        uint8_t* bc = state->bc;
+        // CALL(aFunction17f4f6);
+        // LD_A_addr(wcd54);
+        // LD_E_A;
+        // LD_A_addr(wcd55);
+        // LD_D_A;
+        // ADD_HL_DE;
+        // LD_DE(wc608);
+        // LD_A_addr(wcd56);
+        // LD_C_A;
+        // LD_B(0);
+        // CALL(aCopyBytes);
+        CopyBytes_Conv2(wram->wc608, GBToRAMAddr(Function17f4f6() + (wram->wcd54 | (wram->wcd55 << 8))), wram->wcd56);
+        // LD_A(0x50);
+        // LD_de_A;
+        wram->wc608[wram->wcd56] = 0x50;
+        // POP_HL;
+        state->hl = bc;
+        // LD_DE(wc608);
+        state->de = wram->wc608;
+        // CALL(aPlaceString);
+        PlaceString_Conv(state, state->hl);
+        // LD_A_C;
+        // LD_addr_A(wcd52);
+        // LD_A_B;
+        // LD_addr_A(wcd53);
+        gMobile_wcd52_wcd53 = state->bc;
+        // LD_A_addr(wcd57);
+        // CALL(aFunction17f50f);
+        Function17f50f(state, wram->wcd57);
+        // POP_DE;
+        state->de = hl;
+        // AND_A_A;
+        // RET;
+        return false;
+    }
+    else {
+        // LD_DE(0x3);
+        // ADD_HL_DE;
+        state->hl += 0x3;
+        // LD_A_hli;
+        uint8_t a = *(state->hl++);
+        // LD_E_L;
+        // LD_D_H;
+        state->de = state->hl;
+        // LD_L_C;
+        // LD_H_B;
+        // LD_C_A;
+        // LD_B(0);
+        // ADD_HL_BC;
+        state->hl = state->bc + a;
+        // LD_A_de;
+        // CP_A(0x50);
+        // IF_Z goto asm_17f112;
+        if(*state->de == 0x50) {
+        // asm_17f112:
+            // SCF;
+            // RET;
+            return true;
+        }
+        // AND_A_A;
+        // RET;
+        return false;
+    }
 }
 
-void Function17f154(void){
-    POP_HL;
-    CALL(aFunction17f524);
-    IF_C goto asm_17f167;
-    INC_HL;
-    INC_HL;
-    LD_E_L;
-    LD_D_H;
-    LD_A_de;
-    CP_A(0x50);
-    IF_Z goto asm_17f165;
-    AND_A_A;
-    RET;
-
-
-asm_17f165:
-    SCF;
-    RET;
-
-
-asm_17f167:
-    PUSH_BC;
-    LD_A_hli;
-    LD_E_A;
-    LD_A_hli;
-    LD_D_A;
-    POP_BC;
-    PUSH_HL;
-    PUSH_BC;
-    CALL(aFunction17f4f6);
-    ADD_HL_DE;
-    LD_C_L;
-    LD_B_H;
-    POP_DE;
-    FARCALL(aFunction11c08f);
-    LD_C_L;
-    LD_B_H;
-    POP_DE;
-    AND_A_A;
-    RET;
-
+bool Function17f154(struct TextPrintState* state, uint8_t* saved){
+    // POP_HL;
+    state->hl = saved;
+    // CALL(aFunction17f524);
+    // IF_C goto asm_17f167;
+    if(Function17f524()) {
+    // asm_17f167:
+        // PUSH_BC;
+        uint8_t* bc = state->bc;
+        // LD_A_hli;
+        // LD_E_A;
+        // LD_A_hli;
+        // LD_D_A;
+        uint16_t de = state->hl[0] | (state->hl[1] << 8);
+        state->hl += 2;
+        // POP_BC;
+        // PUSH_HL;
+        uint8_t* hl = state->hl;
+        // PUSH_BC;
+        // CALL(aFunction17f4f6);
+        uint16_t hl2 = Function17f4f6();
+        // ADD_HL_DE;
+        // LD_C_L;
+        // LD_B_H;
+        // POP_DE;
+        // FARCALL(aFunction11c08f);
+        EZChat_RenderWords(bc, GBToRAMAddr(hl2 + de));
+        // LD_C_L;
+        // LD_B_H;
+        // POP_DE;
+        state->de = hl;
+        // AND_A_A;
+        // RET;
+        return false;
+    }
+    else {
+        // INC_HL;
+        // INC_HL;
+        state->hl += 2;
+        // LD_E_L;
+        // LD_D_H;
+        state->de = state->hl;
+        // LD_A_de;
+        // CP_A(0x50);
+        // IF_Z goto asm_17f165;
+        if(*state->de != 0x50) {
+            // AND_A_A;
+            // RET;
+            return false;
+        }
+        else {
+        // asm_17f165:
+            // SCF;
+            // RET;
+            return true;
+        }
+    }
 }
 
-void Function17f181(void){
-    POP_HL;
-    CALL(aFunction17f524);
-    IF_C goto asm_17f19d;
-    LD_DE(0x2);
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_E_L;
-    LD_D_H;
-    LD_L_C;
-    LD_H_B;
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    LD_A_de;
-    CP_A(0x50);
-    IF_Z goto asm_17f19b;
-    AND_A_A;
-    RET;
-
-
-asm_17f19b:
-    SCF;
-    RET;
-
-
-asm_17f19d:
-    PUSH_BC;
-    LD_A_hli;
-    LD_E_A;
-    LD_A_hli;
-    LD_D_A;
-    LD_A_hli;
-    LD_addr_A(wcd54);
-    POP_BC;
-    PUSH_HL;
-    PUSH_BC;
-    CALL(aFunction17f4f6);
-    ADD_HL_DE;
-    LD_A_hl;
-    LD_C_A;
-    LD_DE(wc608);
-    FARCALL(aFunction48c63);
-    POP_HL;
-    LD_DE(wc608);
-    CALL(aPlaceString);
-    LD_A_C;
-    LD_addr_A(wcd52);
-    LD_A_B;
-    LD_addr_A(wcd53);
-    LD_A_addr(wcd54);
-    CALL(aFunction17f50f);
-    POP_DE;
-    AND_A_A;
-    RET;
-
+bool Function17f181(struct TextPrintState* state, uint8_t* saved){
+    // POP_HL;
+    state->hl = saved;
+    // CALL(aFunction17f524);
+    // IF_C goto asm_17f19d;
+    if(Function17f524()) {
+    // asm_17f19d:
+        // PUSH_BC;
+        // LD_A_hli;
+        // LD_E_A;
+        // LD_A_hli;
+        // LD_D_A;
+        uint16_t de2 = state->hl[0] | (state->hl[1] << 8);
+        // LD_A_hli;
+        // LD_addr_A(wcd54);
+        wram->wcd54 = state->hl[2];
+        state->hl += 3;
+        // POP_BC;
+        // PUSH_HL;
+        uint8_t* hl = state->hl;
+        // PUSH_BC;
+        uint8_t* bc = state->bc;
+        // CALL(aFunction17f4f6);
+        // ADD_HL_DE;
+        uint8_t* hl2 = GBToRAMAddr(Function17f4f6() + de2);
+        // LD_A_hl;
+        // LD_C_A;
+        // LD_DE(wc608);
+        // FARCALL(aFunction48c63);
+        Function48c63(wram->wc608, *hl2);
+        // POP_HL;
+        state->hl = bc;
+        // LD_DE(wc608);
+        state->de = wram->wc608;
+        // CALL(aPlaceString);
+        PlaceString_Conv(state, state->hl);
+        // LD_A_C;
+        // LD_addr_A(wcd52);
+        // LD_A_B;
+        // LD_addr_A(wcd53);
+        gMobile_wcd52_wcd53 = state->bc;
+        // LD_A_addr(wcd54);
+        // CALL(aFunction17f50f);
+        Function17f50f(state, wram->wcd54);
+        // POP_DE;
+        state->de = hl;
+        // AND_A_A;
+        // RET;    
+        return false;
+    }
+    else {
+        // LD_DE(0x2);
+        // ADD_HL_DE;
+        state->hl += 2;
+        // LD_A_hli;
+        uint8_t a = *(state->hl++);
+        // LD_E_L;
+        // LD_D_H;
+        state->de = state->hl;
+        // LD_L_C;
+        // LD_H_B;
+        // LD_C_A;
+        // LD_B(0);
+        // ADD_HL_BC;
+        state->hl = state->bc + a;
+        // LD_A_de;
+        // CP_A(0x50);
+        // IF_Z goto asm_17f19b;
+        if(*state->de == 0x50) {
+        // asm_17f19b:
+            // SCF;
+            // RET;
+            return true;
+        }
+        // AND_A_A;
+        // RET;
+        return false;
+    }
 }
 
 void Function17f1d0(void){
@@ -5111,78 +5315,96 @@ asm_17f1ec:
 
 }
 
-void Function17f220(void){
-    POP_HL;
-    CALL(aFunction17f524);
-    IF_C goto asm_17f23c;
-    LD_DE(0x2);
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_E_L;
-    LD_D_H;
-    LD_L_C;
-    LD_H_B;
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    LD_A_de;
-    CP_A(0x50);
-    IF_Z goto asm_17f23a;
-    AND_A_A;
-    RET;
-
-
-asm_17f23a:
-    SCF;
-    RET;
-
-
-asm_17f23c:
-    PUSH_BC;
-    LD_A_hli;
-    LD_E_A;
-    LD_A_hli;
-    LD_D_A;
-    LD_A_hli;
-    LD_addr_A(wcd54);
-    POP_BC;
-    PUSH_HL;
-    PUSH_BC;
-    CALL(aFunction17f4f6);
-    ADD_HL_DE;
-    LD_A_hl;
-    LD_E_A;
-    LD_D(0);
-    LD_HL(mFunction17f220_Genders);
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_E_A;
-    LD_A_hl;
-    LD_D_A;
-    POP_HL;
-    CALL(aPlaceString);
-    LD_A_C;
-    LD_addr_A(wcd52);
-    LD_A_B;
-    LD_addr_A(wcd53);
-    LD_A_addr(wcd54);
-    CALL(aFunction17f50f);
-    POP_DE;
-    AND_A_A;
-    RET;
-
-
-Genders:
-// dw .Boy, .Girl
-
-Boy:
-//     db "Boy@"
-
-Girl:
-//    db "Girl@"
-
-    return Function17f27b();
+bool Function17f220(struct TextPrintState* state, uint8_t* saved){
+    static const char *const Genders[] = {
+    // dw .Boy, .Girl  
+    // Boy:
+        "Boy@",
+    // Girl:
+        "Girl@"
+    };
+    uint8_t buffer[0x10];
+    // POP_HL;
+    state->hl = saved;
+    // CALL(aFunction17f524);
+    // IF_C goto asm_17f23c;
+    if(Function17f524()) {
+    // asm_17f23c:
+        // PUSH_BC;
+        // LD_A_hli;
+        // LD_E_A;
+        // LD_A_hli;
+        // LD_D_A;
+        uint16_t de = state->hl[0] | (state->hl[1] << 8);
+        // LD_A_hli;
+        // LD_addr_A(wcd54);
+        wram->wcd54 = state->hl[2];
+        state->hl += 3;
+        // POP_BC;
+        // PUSH_HL;
+        uint8_t* hl = state->hl;
+        // PUSH_BC;
+        uint8_t* bc = state->bc;
+        // CALL(aFunction17f4f6);
+        // ADD_HL_DE;
+        // LD_A_hl;
+        uint8_t* gender = GBToRAMAddr(Function17f4f6() + de);
+        // LD_E_A;
+        // LD_D(0);
+        // LD_HL(mFunction17f220_Genders);
+        // ADD_HL_DE;
+        // ADD_HL_DE;
+        // LD_A_hli;
+        // LD_E_A;
+        // LD_A_hl;
+        // LD_D_A;
+        state->de = U82CA(buffer, Genders[*gender & 0x1]);
+        // POP_HL;
+        state->hl = bc;
+        // CALL(aPlaceString);
+        PlaceString_Conv(state, state->hl);
+        // LD_A_C;
+        // LD_addr_A(wcd52);
+        // LD_A_B;
+        // LD_addr_A(wcd53);
+        gMobile_wcd52_wcd53 = state->bc;
+        // LD_A_addr(wcd54);
+        // CALL(aFunction17f50f);
+        Function17f50f(state, wram->wcd54);
+        // POP_DE;
+        state->de = hl;
+        // AND_A_A;
+        // RET;
+        return false;
+    }
+    else {
+        // LD_DE(0x2);
+        // ADD_HL_DE;
+        state->hl += 0x2;
+        // LD_A_hli;
+        uint8_t a = *(state->hl++);
+        // LD_E_L;
+        // LD_D_H;
+        state->de = state->hl;
+        // LD_L_C;
+        // LD_H_B;
+        // LD_C_A;
+        // LD_B(0);
+        // ADD_HL_BC;
+        state->hl = state->bc + a;
+        // LD_A_de;
+        // CP_A(0x50);
+        // IF_Z goto asm_17f23a;
+        if(*state->de == 0x50) {
+        // asm_17f23a:
+            // SCF;
+            // RET;
+            return true;
+        }
+        // AND_A_A;
+        // RET;
+        return false;
+    }
 }
 
 void Function17f27b(void){
@@ -5245,226 +5467,314 @@ asm_17f297:
 
 }
 
-void Function17f2cb(void){
-    POP_HL;
-    PUSH_BC;
-    LD_A_hli;
-    LD_addr_A(wcd54);
-    LD_A_hli;
-    LD_addr_A(wcd55);
-    LD_A_addr(wcd2e);
-    INC_A;
-    LD_addr_A(wcd56);
-    POP_BC;
-    PUSH_HL;
-    LD_L_C;
-    LD_H_B;
-    PUSH_HL;
-    LD_DE(wcd56);
-    LD_B(0x1);
-    LD_A_addr(wcd54);
-    LD_C_A;
-    CALL(aMobilePrintNum);
-    LD_A_L;
-    LD_addr_A(wcd52);
-    LD_A_H;
-    LD_addr_A(wcd53);
-    POP_HL;
-    LD_A_addr(wcd55);
-    CALL(aFunction17f50f);
-    POP_DE;
-    AND_A_A;
-    RET;
+bool Function17f2cb(struct TextPrintState* state, uint8_t* saved){
+    // POP_HL;
+    state->hl = saved;
+    // PUSH_BC;
+    uint8_t* bc = state->bc;
+    // LD_A_hli;
+    // LD_addr_A(wcd54);
+    wram->wcd54 = state->hl[0];
+    // LD_A_hli;
+    // LD_addr_A(wcd55);
+    wram->wcd55 = state->hl[1];
+    state->hl += 2;
+    // LD_A_addr(wcd2e);
+    // INC_A;
+    // LD_addr_A(wcd56);
+    wram->wcd56 = wram->wcd2e + 1;
+    // POP_BC;
+    // PUSH_HL;
+    uint8_t* hl = state->hl;
+    // LD_L_C;
+    // LD_H_B;
+    // PUSH_HL;
+    uint8_t* hl2 = bc;
+    // LD_DE(wcd56);
+    // LD_B(0x1);
+    // LD_A_addr(wcd54);
+    // LD_C_A;
+    // CALL(aMobilePrintNum);
+    hl2 = MobilePrintNum(hl2, &wram->wcd56, 0x1, wram->wcd54);
+    // LD_A_L;
+    // LD_addr_A(wcd52);
+    // LD_A_H;
+    // LD_addr_A(wcd53);
+    gMobile_wcd52_wcd53 = hl2;
+    // POP_HL;
+    state->hl = bc;
+    // LD_A_addr(wcd55);
+    // CALL(aFunction17f50f);
+    Function17f50f(state, wram->wcd55);
+    // POP_DE;
+    state->de = hl;
+    // AND_A_A;
+    // RET;
+    return false;
+}
+
+bool MobileScript_PlayerName(struct TextPrintState* state, uint8_t* saved){
+    // POP_HL;
+    state->hl = saved;
+    // PUSH_BC;
+    // LD_A_hli;
+    // LD_addr_A(wcd54);
+    wram->wcd54 = *(state->hl++);
+    // POP_BC;
+    // PUSH_HL;
+    saved = state->hl;
+    // PUSH_BC;
+    // LD_A(0x1);
+    // LDH_addr_A(rSVBK);
+    // LD_HL(wPlayerName);
+    // LD_DE(wc608);
+    // LD_BC(NAME_LENGTH_JAPANESE);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wc608, wram->wPlayerName, NAME_LENGTH);
+    // LD_A(0x4);
+    // LDH_addr_A(rSVBK);
+    // POP_HL;
+    state->hl = state->bc;
+    // LD_DE(wc608);
+    state->de = wram->wc608;
+    // CALL(aPlaceString);
+    PlaceString_Conv(state, state->hl);
+    // LD_A_C;
+    // LD_addr_A(wcd52);
+    // LD_A_B;
+    // LD_addr_A(wcd53);
+    gMobile_wcd52_wcd53 = state->bc;
+    // LD_A_addr(wcd54);
+    // CALL(aFunction17f50f);
+    Function17f50f(state, wram->wcd54);
+    // POP_DE;
+    state->de = saved;
+    // AND_A_A;
+    // RET;
+    return false;
+}
+
+bool MobileScript_Prefecture(struct TextPrintState* state, uint8_t* saved){
+    // POP_HL;
+    state->hl = saved;
+    // PUSH_BC;
+    // LD_A_hli;
+    // LD_addr_A(wcd55);
+    wram->wcd55 = *(state->hl++);
+    // AND_A(0xf);
+    // LD_addr_A(wcd54);
+    wram->wcd54 = wram->wcd55 & 0xf;
+    // POP_BC;
+    // PUSH_HL;
+    saved = state->hl;
+    // LD_L_C;
+    // LD_H_B;
+    // PUSH_HL;
+    state->hl = state->bc;
+    // LD_A_addr(wcd55);
+    // BIT_A(7);
+    // IF_NZ goto asm_17f355;
+    uint8_t c;
+    if(bit_test(wram->wcd55, 7)) {
+    // asm_17f355:
+        // LD_A(BANK(s5_b2f3));
+        // CALL(aOpenSRAM);
+        OpenSRAM_Conv(MBANK(as5_b2f3));
+        // LD_A_addr(s5_b2f3);
+        c = gb_read(s5_b2f3);
+    }
+    else {
+        // LD_A(BANK(sCrystalData));
+        // CALL(aOpenSRAM);
+        OpenSRAM_Conv(MBANK(asCrystalData));
+        // LD_A_addr(sCrystalData + 2);
+        // goto asm_17f35d;
+        c = gb_read(sCrystalData + 2);
+    }
+
+// asm_17f35d:
+    // LD_C_A;
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // LD_DE(wc608);
+    // FARCALL(aFunction48c63);
+    Function48c63(wram->wc608, c);
+    // POP_HL;
+    // LD_DE(wc608);
+    state->de = wram->wc608;
+    // CALL(aPlaceString);
+    PlaceString_Conv(state, state->hl);
+    // LD_A_C;
+    // LD_addr_A(wcd52);
+    // LD_A_B;
+    // LD_addr_A(wcd53);
+    gMobile_wcd52_wcd53 = state->bc;
+    // LD_A_addr(wcd54);
+    // CALL(aFunction17f50f);
+    Function17f50f(state, wram->wcd54);
+    // POP_DE;
+    state->de = saved;
+    // AND_A_A;
+    // RET;
+    return false;
 
 }
 
-void MobileScript_PlayerName(void){
-    POP_HL;
-    PUSH_BC;
-    LD_A_hli;
-    LD_addr_A(wcd54);
-    POP_BC;
-    PUSH_HL;
-    PUSH_BC;
-    LD_A(0x1);
-    LDH_addr_A(rSVBK);
-    LD_HL(wPlayerName);
-    LD_DE(wc608);
-    LD_BC(NAME_LENGTH_JAPANESE);
-    CALL(aCopyBytes);
-    LD_A(0x4);
-    LDH_addr_A(rSVBK);
-    POP_HL;
-    LD_DE(wc608);
-    CALL(aPlaceString);
-    LD_A_C;
-    LD_addr_A(wcd52);
-    LD_A_B;
-    LD_addr_A(wcd53);
-    LD_A_addr(wcd54);
-    CALL(aFunction17f50f);
-    POP_DE;
-    AND_A_A;
-    RET;
+bool Function17f382(struct TextPrintState* state, uint8_t* saved){
+    // POP_HL;
+    state->hl = saved;
+    // PUSH_BC;
+    uint8_t* bc = state->bc;
+    // LD_A_hli;
+    // LD_addr_A(wcd55);
+    wram->wcd55 = *(state->hl++);
+    // AND_A(0xf);
+    // LD_addr_A(wcd54);
+    wram->wcd54 = wram->wcd55 & 0xf;
+    // POP_BC;
+    // PUSH_HL;
+    // PUSH_BC;
+    uint8_t* hl2 = state->hl;
+    // LD_L_C;
+    // LD_H_B;
+    uint8_t* hl = state->bc;
+    // LD_A_addr(wcd55);
+    // BIT_A(7);
+    // IF_NZ goto asm_17f3a3;
+    uint8_t* de;
+    if(!bit_test(wram->wcd55, 7)) {
+        // LD_A(BANK(sCrystalData));
+        // CALL(aOpenSRAM);
+        OpenSRAM_Conv(MBANK(asCrystalData));
+        // LD_DE(sCrystalData + 3);
+        de = GBToRAMAddr(sCrystalData + 3);
+        // goto asm_17f3ab;
+    }
+    else {
+    // asm_17f3a3:
+        // LD_A(BANK(s5_b2f4));
+        // CALL(aOpenSRAM);
+        OpenSRAM_Conv(MBANK(s5_b2f4));
+        // LD_DE(s5_b2f4);
+        de = GBToRAMAddr(s5_b2f4);
+    }
 
+// asm_17f3ab:
+    // LD_A(PRINTNUM_LEADINGZEROS | 2);
+    // LD_B_A;
+    // LD_A(3);
+    // LD_C_A;
+    // CALL(aPrintNum);
+    printf("PrintNum(%d)\n", *(uint16_t*)de);
+    hl = PrintNum_Conv2(hl, de, PRINTNUM_LEADINGZEROS | 2, 3);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // LD_A_L;
+    // LD_addr_A(wcd52);
+    // LD_A_H;
+    // LD_addr_A(wcd53);
+    gMobile_wcd52_wcd53 = hl;
+    // POP_HL;
+    state->hl = bc;
+    // LD_A_addr(wcd54);
+    // CALL(aFunction17f50f);
+    Function17f50f(state, wram->wcd54);
+    // POP_DE;
+    state->de = hl2;
+    // AND_A_A;
+    // RET;
+    return false;
 }
 
-void MobileScript_Prefecture(void){
-    POP_HL;
-    PUSH_BC;
-    LD_A_hli;
-    LD_addr_A(wcd55);
-    AND_A(0xf);
-    LD_addr_A(wcd54);
-    POP_BC;
-    PUSH_HL;
-    LD_L_C;
-    LD_H_B;
-    PUSH_HL;
-    LD_A_addr(wcd55);
-    BIT_A(7);
-    IF_NZ goto asm_17f355;
-    LD_A(BANK(sCrystalData));
-    CALL(aOpenSRAM);
-    LD_A_addr(sCrystalData + 2);
-    goto asm_17f35d;
-
-
-asm_17f355:
-    LD_A(BANK(s5_b2f3));
-    CALL(aOpenSRAM);
-    LD_A_addr(s5_b2f3);
-
-
-asm_17f35d:
-    LD_C_A;
-    CALL(aCloseSRAM);
-    LD_DE(wc608);
-    FARCALL(aFunction48c63);
-    POP_HL;
-    LD_DE(wc608);
-    CALL(aPlaceString);
-    LD_A_C;
-    LD_addr_A(wcd52);
-    LD_A_B;
-    LD_addr_A(wcd53);
-    LD_A_addr(wcd54);
-    CALL(aFunction17f50f);
-    POP_DE;
-    AND_A_A;
-    RET;
-
+bool Function17f3c9(struct TextPrintState* state, uint8_t* saved){
+    // PUSH_BC;
+    uint8_t* bc = state->bc;
+    // LD_HL(wcd36);
+    // LD_DE(wc708);
+    // LD_BC(12);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(&wram->wc708, &wram->wcd36, 12);
+    // POP_DE;
+    // LD_C(0x0);
+    // FARCALL(aFunction11c075);
+    Function11c075(bc, 0x0);
+    // PUSH_HL;
+    uint8_t* hl = bc + 4 * SCREEN_WIDTH;
+    // LD_HL(wc708);
+    // LD_DE(wcd36);
+    // LD_BC(12);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(&wram->wcd36, &wram->wc708, 12);
+    // POP_BC;
+    state->bc = hl;
+    // POP_DE;
+    state->de = saved;
+    // AND_A_A;
+    // RET;
+    return false;
 }
 
-void Function17f382(void){
-    POP_HL;
-    PUSH_BC;
-    LD_A_hli;
-    LD_addr_A(wcd55);
-    AND_A(0xf);
-    LD_addr_A(wcd54);
-    POP_BC;
-    PUSH_HL;
-    PUSH_BC;
-    LD_L_C;
-    LD_H_B;
-    LD_A_addr(wcd55);
-    BIT_A(7);
-    IF_NZ goto asm_17f3a3;
-    LD_A(BANK(sCrystalData));
-    CALL(aOpenSRAM);
-    LD_DE(sCrystalData + 3);
-    goto asm_17f3ab;
-
-
-asm_17f3a3:
-    LD_A(BANK(s5_b2f4));
-    CALL(aOpenSRAM);
-    LD_DE(s5_b2f4);
-
-
-asm_17f3ab:
-    LD_A(PRINTNUM_LEADINGZEROS | 2);
-    LD_B_A;
-    LD_A(3);
-    LD_C_A;
-    CALL(aPrintNum);
-    CALL(aCloseSRAM);
-    LD_A_L;
-    LD_addr_A(wcd52);
-    LD_A_H;
-    LD_addr_A(wcd53);
-    POP_HL;
-    LD_A_addr(wcd54);
-    CALL(aFunction17f50f);
-    POP_DE;
-    AND_A_A;
-    RET;
-
-}
-
-void Function17f3c9(void){
-    PUSH_BC;
-    LD_HL(wcd36);
-    LD_DE(wc708);
-    LD_BC(12);
-    CALL(aCopyBytes);
-    POP_DE;
-    LD_C(0x0);
-    FARCALL(aFunction11c075);
-    PUSH_HL;
-    LD_HL(wc708);
-    LD_DE(wcd36);
-    LD_BC(12);
-    CALL(aCopyBytes);
-    POP_BC;
-    POP_DE;
-    AND_A_A;
-    RET;
-
-}
-
-void Function17f3f0(void){
-    POP_HL;
-    PUSH_HL;
-    LD_A_hli;
-    PUSH_AF;
-    PUSH_BC;
-    LD_A_hli;
-    LD_E_A;
-    LD_A_hli;
-    LD_D_A;
-    LD_A_de;
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    ADD_HL_BC;
-    LD_A_hli;
-    LD_E_A;
-    LD_A_hli;
-    LD_D_A;
-    LD_HL(wBGPals1);
-    ADD_HL_DE;
-    LD_E_L;
-    LD_D_H;
-    POP_HL;
-    CALL(aPlaceString);
-    POP_AF;
-    LD_E_A;
-    LD_D(0);
-    POP_HL;
-    ADD_HL_DE;
-    ADD_HL_DE;
-    INC_HL;
-    INC_HL;
-    INC_HL;
-    LD_E_L;
-    LD_D_H;
-    LD_L_C;
-    LD_H_B;
-    SCF;
-    RET;
-
+bool Function17f3f0(struct TextPrintState* state, uint8_t* saved){
+    // POP_HL;
+    // PUSH_HL;
+    state->hl = saved;
+    printf("[%02x %02x%02x %02x%02x %02x%02x %02x%02x]",
+        state->hl[0], state->hl[1], state->hl[2], state->hl[3],
+        state->hl[4], state->hl[5], state->hl[6], state->hl[7],
+        state->hl[8]);
+    // LD_A_hli;
+    // PUSH_AF;
+    uint8_t a = *(state->hl++);
+    printf("news_text_switch %d", a);
+    // PUSH_BC;
+    uint8_t* hl = state->bc;
+    // LD_A_hli;
+    // LD_E_A;
+    // LD_A_hli;
+    // LD_D_A;
+    uint8_t* de = GBToRAMAddr(state->hl[0] | (state->hl[1] << 8));
+    printf(", 0x%x", state->hl[0] | (state->hl[1] << 8));
+    state->hl += 2;
+    // LD_A_de;
+    // LD_C_A;
+    uint8_t c = *de;
+    printf(" (%d)", c);
+    // LD_B(0);
+    // ADD_HL_BC;
+    // ADD_HL_BC;
+    state->hl += 2 * c;
+    // LD_A_hli;
+    // LD_E_A;
+    // LD_A_hli;
+    // LD_D_A;
+    // LD_HL(wBGPals1);
+    // ADD_HL_DE;
+    // LD_E_L;
+    // LD_D_H;
+    state->de = wram->wram4 + (state->hl[0] | (state->hl[1] << 8));
+    printf(", 0x%x\n", state->hl[0] | (state->hl[1] << 8));
+    // POP_HL;
+    state->hl = hl;
+    // CALL(aPlaceString);
+    PlaceString_Conv(state, state->hl);
+    // POP_AF;
+    // LD_E_A;
+    // LD_D(0);
+    // POP_HL;
+    // ADD_HL_DE;
+    // ADD_HL_DE;
+    // INC_HL;
+    // INC_HL;
+    // INC_HL;
+    // LD_E_L;
+    // LD_D_H;
+    state->de = saved + 2*a + 3;
+    // LD_L_C;
+    // LD_H_B;
+    state->hl = state->bc;
+    // SCF;
+    // RET;
+    return true;
 }
 
 void Function17f41d(void){
@@ -5518,195 +5828,237 @@ asm_17f447:
 
 }
 
-void Function17f44f(void){
-    POP_HL;
-    CALL(aFunction17f524);
-    IF_C goto asm_17f46d;
-    LD_DE(0x5);
-    ADD_HL_DE;
-    LD_A_hli;
-    INC_HL;
-    INC_HL;
-    LD_E_L;
-    LD_D_H;
-    LD_L_C;
-    LD_H_B;
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    LD_A_de;
-    CP_A(0x50);
-    IF_Z goto asm_17f46b;
-    AND_A_A;
-    RET;
-
-
-asm_17f46b:
-    SCF;
-    RET;
-
-
-asm_17f46d:
-    PUSH_BC;
-    LD_DE(wcd54);
-    LD_BC(0x8);
-    CALL(aCopyBytes);
-    POP_BC;
-    PUSH_HL;
-    PUSH_BC;
-    LD_A_addr(wcd56);
-    CP_A(0xc0);
-    IF_C goto asm_17f488;
-    LD_A_addr(wcd54);
-    LDH_addr_A(rSVBK);
-    goto asm_17f48e;
-
-
-asm_17f488:
-    LD_A_addr(wcd54);
-    CALL(aOpenSRAM);
-
-
-asm_17f48e:
-    LD_A_addr(wcd55);
-    LD_L_A;
-    LD_A_addr(wcd56);
-    LD_H_A;
-    LD_DE(wc608);
-    LD_A_addr(wcd57);
-    LD_C_A;
-    LD_B(0);
-    CALL(aCopyBytes);
-    LD_A_addr(wcd56);
-    CP_A(0xc0);
-    IF_C goto asm_17f4af;
-    LD_A(0x4);
-    LDH_addr_A(rSVBK);
-    goto asm_17f4b7;
-
-
-asm_17f4af:
-    CALL(aCloseSRAM);
-    LD_A(0x6);
-    CALL(aOpenSRAM);
-
-
-asm_17f4b7:
-    LD_DE(wc608);
-    POP_HL;
-    PUSH_HL;
-    LD_A_addr(wcd57);
-    LD_B_A;
-    LD_A_addr(wcd58);
-    LD_C_A;
-    CALL(aMobilePrintNum);
-    LD_A_L;
-    LD_addr_A(wcd52);
-    LD_A_H;
-    LD_addr_A(wcd53);
-    LD_A_addr(wcd5a);
-    AND_A_A;
-    IF_Z goto asm_17f4ec;
-    LD_C_A;
-    LD_A_addr(wcd58);
-    INC_A;
-    LD_B_A;
-    LD_E_L;
-    LD_D_H;
-    DEC_DE;
-
-asm_17f4de:
-    LD_A_C;
-    CP_A_B;
-    IF_Z goto asm_17f4e8;
-    LD_A_de;
-    DEC_DE;
-    LD_hld_A;
-    DEC_B;
-    goto asm_17f4de;
-
-
-asm_17f4e8:
-    LD_A_addr(wcd5b);
-    LD_hl_A;
-
-
-asm_17f4ec:
-    POP_HL;
-    LD_A_addr(wcd59);
-    CALL(aFunction17f50f);
-    POP_DE;
-    AND_A_A;
-    RET;
-
+bool Function17f44f(struct TextPrintState* state, uint8_t* saved){
+    uint8_t svbk = gb_read(rSVBK);
+    // POP_HL;
+    state->hl = saved;
+    // CALL(aFunction17f524);
+    // IF_C goto asm_17f46d;
+    if(Function17f524()) {
+    // asm_17f46d:
+        // PUSH_BC;
+        // LD_DE(wcd54);
+        // LD_BC(0x8);
+        // CALL(aCopyBytes);
+        CopyBytes_Conv2(&wram->wcd54, state->hl, 0x8);
+        // POP_BC;
+        // PUSH_HL;
+        uint8_t* hl = state->hl + 0x8;
+        // PUSH_BC;
+        uint8_t* bc = state->bc;
+        // LD_A_addr(wcd56);
+        // CP_A(0xc0);
+        // IF_C goto asm_17f488;
+        if(wram->wcd56 < 0xc0) {
+        // asm_17f488:
+            // LD_A_addr(wcd54);
+            // CALL(aOpenSRAM);
+            OpenSRAM_Conv(wram->wcd54);
+        }
+        else {
+            // LD_A_addr(wcd54);
+            // LDH_addr_A(rSVBK);
+            gb_write(rSVBK, wram->wcd54);
+            // goto asm_17f48e;
+        }
+    
+    // asm_17f48e:
+        // LD_A_addr(wcd55);
+        // LD_L_A;
+        // LD_A_addr(wcd56);
+        // LD_H_A;
+        // LD_DE(wc608);
+        // LD_A_addr(wcd57);
+        // LD_C_A;
+        // LD_B(0);
+        // CALL(aCopyBytes);
+        CopyBytes_Conv2(wram->wc608, GBToRAMAddr(wram->wcd55 | (wram->wcd56 << 8)), wram->wcd57);
+        // LD_A_addr(wcd56);
+        // CP_A(0xc0);
+        // IF_C goto asm_17f4af;
+        if(wram->wcd56 < 0xc0) {
+            // LD_A(0x4);
+            // LDH_addr_A(rSVBK);
+            gb_write(rSVBK, svbk);
+            // goto asm_17f4b7;
+        }
+        else {
+        // asm_17f4af:
+            // CALL(aCloseSRAM);
+            CloseSRAM_Conv();
+            // LD_A(0x6);
+            // CALL(aOpenSRAM);
+            OpenSRAM_Conv(MBANK(as6_a000));
+        }
+    
+    // asm_17f4b7:
+        // LD_DE(wc608);
+        // POP_HL;
+        // PUSH_HL;
+        // LD_A_addr(wcd57);
+        // LD_B_A;
+        // LD_A_addr(wcd58);
+        // LD_C_A;
+        // CALL(aMobilePrintNum);
+        uint8_t* hl2 = MobilePrintNum(bc, wram->wc608, wram->wcd57, wram->wcd58);
+        // LD_A_L;
+        // LD_addr_A(wcd52);
+        // LD_A_H;
+        // LD_addr_A(wcd53);
+        gMobile_wcd52_wcd53 = hl2;
+        // LD_A_addr(wcd5a);
+        // AND_A_A;
+        // IF_Z goto asm_17f4ec;
+        if(wram->wcd5a != 0) {
+            // LD_C_A;
+            uint8_t c = wram->wcd5a;
+            // LD_A_addr(wcd58);
+            // INC_A;
+            // LD_B_A;
+            uint8_t b = wram->wcd58 + 1;
+            // LD_E_L;
+            // LD_D_H;
+            // DEC_DE;
+            uint8_t* de = hl2 - 1;
+        
+            while(c != b) {
+            // asm_17f4de:
+                // LD_A_C;
+                // CP_A_B;
+                // IF_Z goto asm_17f4e8;
+                // LD_A_de;
+                // DEC_DE;
+                // LD_hld_A;
+                *(hl2--) = *(de--);
+                // DEC_B;
+                --b;
+                // goto asm_17f4de;
+            }
+        
+        // asm_17f4e8:
+            // LD_A_addr(wcd5b);
+            // LD_hl_A;
+            *hl2 = wram->wcd5b;
+        }
+    
+    // asm_17f4ec:
+        // POP_HL;
+        state->hl = bc;
+        // LD_A_addr(wcd59);
+        // CALL(aFunction17f50f);
+        Function17f50f(state, wram->wcd59);
+        // POP_DE;
+        state->de = hl;
+        // AND_A_A;
+        // RET;
+        return false;
+    }
+    else {
+        // LD_DE(0x5);
+        // ADD_HL_DE;
+        state->hl += 0x5;
+        // LD_A_hli;
+        uint8_t a = *(state->hl++);
+        // INC_HL;
+        // INC_HL;
+        // LD_E_L;
+        // LD_D_H;
+        state->de = state->hl + 2;
+        // LD_L_C;
+        // LD_H_B;
+        // LD_C_A;
+        // LD_B(0);
+        // ADD_HL_BC;
+        state->hl = state->bc + a;
+        // LD_A_de;
+        // CP_A(0x50);
+        // IF_Z goto asm_17f46b;
+        if(*state->de == 0x50) {
+        // asm_17f46b:
+            // SCF;
+            // RET;
+            return true;
+        }
+        // AND_A_A;
+        // RET;
+        return false;
+    }
 }
 
-void Function17f4f6(void){
-    LD_A_addr(wcd6a);
-    LD_L_A;
-    LD_A_addr(wcd6b);
-    LD_H_A;
-    LD_A_addr(wcd47);
-    LD_C_A;
-    LD_A_addr(wBGMapPalBuffer);
-    LD_B_A;
-    LD_A_addr(wcd2e);
+uint16_t Function17f4f6(void){
+    // LD_A_addr(wcd6a);
+    // LD_L_A;
+    // LD_A_addr(wcd6b);
+    // LD_H_A;
+    uint16_t hl = wram->wcd6a | (wram->wcd6b << 8);
+    // LD_A_addr(wcd47);
+    // LD_C_A;
+    // LD_A_addr(wBGMapPalBuffer);
+    // LD_B_A;
+    uint16_t bc = wram->wcd47 | (wram->wcd48 << 8);
+    // LD_A_addr(wcd2e);
 
-asm_17f509:
-    AND_A_A;
-    RET_Z ;
-    DEC_A;
-    ADD_HL_BC;
-    goto asm_17f509;
-
-    return Function17f50f();
+// asm_17f509:
+    // AND_A_A;
+    // RET_Z ;
+    // DEC_A;
+    // ADD_HL_BC;
+    hl += bc * wram->wcd2e;
+    // goto asm_17f509;
+    return hl;
 }
 
-void Function17f50f(void){
-    AND_A_A;
-    IF_Z goto asm_17f519;
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    LD_C_L;
-    LD_B_H;
-    RET;
-
-
-asm_17f519:
-    LD_A_addr(wcd52);
-    LD_C_A;
-    LD_L_A;
-    LD_A_addr(wcd53);
-    LD_B_A;
-    LD_H_A;
-    RET;
-
+void Function17f50f(struct TextPrintState* state, uint8_t a){
+    // AND_A_A;
+    // IF_Z goto asm_17f519;
+    if(a != 0) {
+        // LD_C_A;
+        // LD_B(0);
+        // ADD_HL_BC;
+        state->hl += a;
+        // LD_C_L;
+        // LD_B_H;
+        state->bc = state->hl;
+        // RET;
+    }
+    else {
+    // asm_17f519:
+        // LD_A_addr(wcd52);
+        // LD_C_A;
+        // LD_L_A;
+        // LD_A_addr(wcd53);
+        // LD_B_A;
+        // LD_H_A;
+        state->hl = state->bc = gMobile_wcd52_wcd53;
+        // RET;
+    }
 }
 
-void Function17f524(void){
-    PUSH_HL;
-    PUSH_BC;
-    PUSH_DE;
-    LD_A_addr(wcd42);
-    DEC_A;
-    LD_B_A;
-    LD_A_addr(wcd2e);
-    CP_A_B;
-    IF_Z goto asm_17f53a;
-    LD_HL(wcd68);
-    CP_A_hl;
+bool Function17f524(void){
+    // PUSH_HL;
+    // PUSH_BC;
+    // PUSH_DE;
+    // LD_A_addr(wcd42);
+    // DEC_A;
+    // LD_B_A;
+    // LD_A_addr(wcd2e);
+    // CP_A_B;
+    // IF_Z goto asm_17f53a;
+    if(wram->wcd2e == wram->wcd42 - 1) {
+    // asm_17f53a:
+        // SCF;
+        // goto asm_17f536;
+        return true;
+    }
+    // LD_HL(wcd68);
+    // CP_A_hl;
 
-asm_17f536:
-    POP_DE;
-    POP_BC;
-    POP_HL;
-    RET;
-
-
-asm_17f53a:
-    SCF;
-    goto asm_17f536;
+// asm_17f536:
+    // POP_DE;
+    // POP_BC;
+    // POP_HL;
+    // RET;
+    return wram->wcd2e < wram->wcd68;
 }
 
 void BattleTowerMobileError(void){
