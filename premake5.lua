@@ -48,6 +48,7 @@ startproject "suiCune"
 		optimize "debug"
 		runtime "debug"
 		symbols "on"
+		disablewarnings { "4201,4102,4152,4200" }
 
 	filter "platforms:x86"
 		architecture "x86"
@@ -112,6 +113,7 @@ startproject "suiCune"
 		filter "system:Windows"
 			files { "icon.rc" }
 			cdialect "c99"
+			links { "ws2_32" }
 
 		filter {"system:Windows", "files:icon.rc" }
 			buildcommands {
