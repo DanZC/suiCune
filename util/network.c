@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <assert.h>
 #include "network.h"
+#include "../lib/libmobile/mobile.h"
 #include "../home/delay.h"
 
 #if defined(NETWORKING_SUPPORT)
@@ -12,12 +13,22 @@
 #include <SDL2/SDL_net.h>
 #endif
 #include "../tools/emu/peanut_gb.h"
-#include "../lib/libmobile/mobile.h"
 #include "socket.h"
 extern struct gb_s gb;
 
 #if !(defined(__cplusplus) || defined(_MSC_VER))
 #define static_assert _Static_assert
+#endif
+
+#ifdef _MSC_VER
+#ifndef _SSIZE_T_DEFINED
+#ifdef _WIN64
+typedef __int64 ssize_t;
+#else
+typedef int ssize_t;
+#endif
+#define _SSIZE_T_DEFINED
+#endif
 #endif
 
 #define UDP_PORT 22600
@@ -40,6 +51,7 @@ static LANClient gLANClientCandidates[16];
 static uint32_t gLANClientCandidateCount;
 
 uint8_t gOtherPlayerGender;
+
 
 // A networking interface for suiCune. Supports both LAN (local) connections, emulating
 // the standard link cable connection, and internet (remote) connections, emulating
@@ -127,28 +139,42 @@ static uint16_t HostToNet16(uint16_t x) {
     union {
         int a;
         char b[sizeof(int)];
-    } test = {.a=1};
-    if(test.b[0] == 1) {
-        // little-endian
+    } test;
+#ifdef _MSC_VER
+    test.a = 1;
+#else
+    test = (typeof(test)){ .a = 1 };
+#endif
+
+    if (test.b[0] == 1) {
+        // little-endian: swap the bytes
         return (x >> 8) | (x << 8);
     }
     return x;
 }
 
+
 static uint32_t HostToNet32(uint32_t x) {
     union {
         int a;
         char b[sizeof(int)];
-    } test = {.a=1};
-    if(test.b[0] == 1) {
-        // little-endian
+    } test;
+#ifdef _MSC_VER
+    test.a = 1;
+#else
+    test = (typeof(test)){ .a = 1 };
+#endif
+
+    if (test.b[0] == 1) {
+        // little-endian: swap the bytes
         return ((x >> 24) & 0x000000ff)
-            | ((x >> 8)  & 0x0000ff00)
-            | ((x << 8)  & 0x00ff0000)
+            | ((x >> 8) & 0x0000ff00)
+            | ((x << 8) & 0x00ff0000)
             | ((x << 24) & 0xff000000);
     }
     return x;
 }
+
 
 #define MAX_TRIES_DETECT_PACKET_SENT 32
 
@@ -387,24 +413,32 @@ static void NetworkSetLinkSocket(TCPsocket socket) {
 }
 
 bool NetworkLANDirectConnect(uint32_t which) {
-    serial = SDLNet_TCP_Open(&(IPaddress){.host = INADDR_ANY, .port = HostToNet16(TCP_PORT)});
+#ifdef _MSC_VER
+    IPaddress ipaddress;
+    ipaddress.host = INADDR_ANY;
+    ipaddress.port = HostToNet16(TCP_PORT);
+    serial = SDLNet_TCP_Open(&ipaddress);
+#else
+    serial = SDLNet_TCP_Open(&(IPaddress) { .host = INADDR_ANY, .port = HostToNet16(TCP_PORT) });
+#endif
+
     packet->address.host = gLANClientCandidates[which].address;
     CmdPacket_s* cmd = (CmdPacket_s*)packet->data;
     cmd->type = CMD_ACCEPT_JOIN_LAN;
     cmd->uid = HostToNet32(hostUniqueId);
     SDLNet_UDP_Send(host, -1, packet);
     uint32_t timeout = 60 * 8;
-    while(!(cserial = SDLNet_TCP_Accept(serial))) {
+    while (!(cserial = SDLNet_TCP_Accept(serial))) {
         DelayFrame();
-        if(--timeout == 0) {
+        if (--timeout == 0) {
             printf("Connection timed out...\n");
             SDLNet_TCP_Close(serial);
             serial = NULL;
             return false;
         }
     }
-    printf("Hosting %d.%d.%d.%d!\n", 
-        packet->address.host & 0xff, 
+    printf("Hosting %d.%d.%d.%d!\n",
+        packet->address.host & 0xff,
         (packet->address.host >> 8) & 0xff,
         (packet->address.host >> 16) & 0xff,
         (packet->address.host >> 24) & 0xff);
@@ -416,12 +450,20 @@ bool NetworkLANDirectConnect(uint32_t which) {
 }
 
 bool NetworkAcceptLANConnection(void) {
-    serial = SDLNet_TCP_Open(&(IPaddress){.host = packet->address.host, .port = HostToNet16(TCP_PORT)});
-    if(serial != NULL) {
+#ifdef _MSC_VER
+    IPaddress ipaddr;
+    ipaddr.host = packet->address.host;
+    ipaddr.port = HostToNet16(TCP_PORT);
+    serial = SDLNet_TCP_Open(&ipaddr);
+#else
+    serial = SDLNet_TCP_Open(&(IPaddress) { .host = packet->address.host, .port = HostToNet16(TCP_PORT) });
+#endif
+
+    if (serial != NULL) {
         NetworkSetLinkSocket(serial);
         gNetworkState = NETSTATE_LAN_CLIENT;
         printf("Connected to %d.%d.%d.%d!\n",
-            packet->address.host & 0xff, 
+            packet->address.host & 0xff,
             (packet->address.host >> 8) & 0xff,
             (packet->address.host >> 16) & 0xff,
             (packet->address.host >> 24) & 0xff);
@@ -430,7 +472,7 @@ bool NetworkAcceptLANConnection(void) {
         return true;
     }
     printf("SDLNet: Error trying to connect to %d.%d.%d.%d\n %s\n",
-        packet->address.host & 0xff, 
+        packet->address.host & 0xff,
         (packet->address.host >> 8) & 0xff,
         (packet->address.host >> 16) & 0xff,
         (packet->address.host >> 24) & 0xff,
@@ -726,16 +768,18 @@ static enum gb_serial_rx_ret_e gb_serial_rx_test(uint8_t* x) {
 // }
 
 void MobileDebugLog(void* user, const char* line) {
-    struct mobile_user_data* udata = user;
-    if(udata->logpath) {
+    struct mobile_user_data* udata = (struct mobile_user_data*)user;
+    if (udata->logpath) {
         FILE* f = fopen(udata->logpath, "ab");
-        fprintf(f, "%s\n", line);
-        fclose(f);
+        if (f) {
+            fprintf(f, "%s\n", line);
+            fclose(f);
+        }
     }
     else {
-    // #if DEBUG
+#ifdef DEBUG
         printf("mobile: %s\n", line);
-    // #endif
+#endif
     }
 }
 
@@ -793,23 +837,23 @@ static struct sockaddr *convert_sockaddr(socklen_t *addrlen, union u_sockaddr *u
     }
 }
 
-bool socket_impl_open(void *data, unsigned conn, enum mobile_socktype type, enum mobile_addrtype addrtype, unsigned bindport)
+bool socket_impl_open(void* data, unsigned conn, enum mobile_socktype type, enum mobile_addrtype addrtype, unsigned bindport)
 {
-    struct mobile_user_data *state = data;
+    struct mobile_user_data* state = (struct mobile_user_data*)data;
     assert(state->sockets[conn] == INVALID_SOCKET);
 
     int sock_type;
     switch (type) {
-        case MOBILE_SOCKTYPE_TCP: sock_type = SOCK_STREAM; break;
-        case MOBILE_SOCKTYPE_UDP: sock_type = SOCK_DGRAM; break;
-        default: assert(false); return false;
+    case MOBILE_SOCKTYPE_TCP: sock_type = SOCK_STREAM; break;
+    case MOBILE_SOCKTYPE_UDP: sock_type = SOCK_DGRAM; break;
+    default: assert(false); return false;
     }
 
     int sock_addrtype;
     switch (addrtype) {
-        case MOBILE_ADDRTYPE_IPV4: sock_addrtype = AF_INET; break;
-        case MOBILE_ADDRTYPE_IPV6: sock_addrtype = AF_INET6; break;
-        default: assert(false); return false;
+    case MOBILE_ADDRTYPE_IPV4: sock_addrtype = AF_INET; break;
+    case MOBILE_ADDRTYPE_IPV6: sock_addrtype = AF_INET6; break;
+    default: assert(false); return false;
     }
 
     SOCKET sock = socket(sock_addrtype, sock_type, 0);
@@ -822,37 +866,78 @@ bool socket_impl_open(void *data, unsigned conn, enum mobile_socktype type, enum
         return false;
     }
 
-    // Set SO_REUSEADDR so that we can bind to the same port again after
+#ifdef _MSC_VER
+    {
+        int reuseaddr = 1;
+        if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR,
+            (char*)&reuseaddr, sizeof(reuseaddr)) == SOCKET_ERROR) {
+            socket_perror("setsockopt");
+            socket_close(sock);
+            return false;
+        }
+    }
+#else
     if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR,
-            (char *)&(int){1}, sizeof(int)) == SOCKET_ERROR) {
+        (char*)&(int) { 1 }, sizeof(int)) == SOCKET_ERROR) {
         socket_perror("setsockopt");
         socket_close(sock);
         return false;
     }
+#endif
 
-    // Set TCP_NODELAY to aid sending packets inmediately, reducing latency
+#ifdef _MSC_VER
+    if (type == MOBILE_SOCKTYPE_TCP) {
+        int nodelay = 1;
+        if (setsockopt(sock, IPPROTO_TCP, TCP_NODELAY,
+            (char*)&nodelay, sizeof(nodelay)) == SOCKET_ERROR) {
+            socket_perror("setsockopt");
+            socket_close(sock);
+            return false;
+        }
+    }
+#else
     if (type == MOBILE_SOCKTYPE_TCP &&
-            setsockopt(sock, IPPROTO_TCP, TCP_NODELAY,
-                (char *)&(int){1}, sizeof(int)) == SOCKET_ERROR) {
+        setsockopt(sock, IPPROTO_TCP, TCP_NODELAY,
+            (char*)&(int) { 1 }, sizeof(int)) == SOCKET_ERROR) {
         socket_perror("setsockopt");
         socket_close(sock);
         return false;
     }
+#endif
 
     int rc;
+#ifdef _MSC_VER
+    if (addrtype == MOBILE_ADDRTYPE_IPV4) {
+        struct sockaddr_in addr;
+        memset(&addr, 0, sizeof(addr));
+        addr.sin_family = AF_INET;
+        addr.sin_port = htons(bindport);
+        rc = bind(sock, (struct sockaddr*)&addr, sizeof(addr));
+    }
+    else {
+        struct sockaddr_in6 addr;
+        memset(&addr, 0, sizeof(addr));
+        addr.sin6_family = AF_INET6;
+        addr.sin6_port = htons(bindport);
+        rc = bind(sock, (struct sockaddr*)&addr, sizeof(addr));
+    }
+#else
     if (addrtype == MOBILE_ADDRTYPE_IPV4) {
         struct sockaddr_in addr = {
             .sin_family = AF_INET,
             .sin_port = htons(bindport),
         };
-        rc = bind(sock, (struct sockaddr *)&addr, sizeof(addr));
-    } else {
+        rc = bind(sock, (struct sockaddr*)&addr, sizeof(addr));
+    }
+    else {
         struct sockaddr_in6 addr = {
             .sin6_family = AF_INET6,
             .sin6_port = htons(bindport),
         };
-        rc = bind(sock, (struct sockaddr *)&addr, sizeof(addr));
+        rc = bind(sock, (struct sockaddr*)&addr, sizeof(addr));
     }
+#endif
+
     if (rc == SOCKET_ERROR) {
         socket_perror("bind");
         socket_close(sock);
@@ -865,7 +950,7 @@ bool socket_impl_open(void *data, unsigned conn, enum mobile_socktype type, enum
 
 void socket_impl_close(void *data, unsigned conn)
 {
-    struct mobile_user_data *state = data;
+    struct mobile_user_data *state = (struct mobile_user_data*)data;
     assert(state->sockets[conn] != INVALID_SOCKET);
     socket_close(state->sockets[conn]);
     state->sockets[conn] = INVALID_SOCKET;
@@ -873,7 +958,7 @@ void socket_impl_close(void *data, unsigned conn)
 
 int socket_impl_connect(void *data, unsigned conn, const struct mobile_addr *addr)
 {
-    struct mobile_user_data *state = data;
+    struct mobile_user_data *state = (struct mobile_user_data*)data;
     SOCKET sock = state->sockets[conn];
     assert(sock != INVALID_SOCKET);
 
@@ -905,7 +990,7 @@ int socket_impl_connect(void *data, unsigned conn, const struct mobile_addr *add
 
 bool socket_impl_listen(void *data, unsigned conn)
 {
-    struct mobile_user_data *state = data;
+    struct mobile_user_data *state = (struct mobile_user_data*)data;
     SOCKET sock = state->sockets[conn];
     assert(sock != INVALID_SOCKET);
 
@@ -919,7 +1004,7 @@ bool socket_impl_listen(void *data, unsigned conn)
 
 bool socket_impl_accept(void *data, unsigned conn)
 {
-    struct mobile_user_data *state = data;
+    struct mobile_user_data *state = (struct mobile_user_data*)data;
     SOCKET sock = state->sockets[conn];
     assert(sock != INVALID_SOCKET);
 
@@ -938,7 +1023,7 @@ bool socket_impl_accept(void *data, unsigned conn)
 
 int socket_impl_send(void *udata, unsigned conn, const void *data, const unsigned size, const struct mobile_addr *addr)
 {
-    struct mobile_user_data *state = udata;
+    struct mobile_user_data *state = (struct mobile_user_data*)udata;
     SOCKET sock = state->sockets[conn];
     assert(sock != INVALID_SOCKET);
 
@@ -946,7 +1031,7 @@ int socket_impl_send(void *udata, unsigned conn, const void *data, const unsigne
     socklen_t sock_addrlen;
     struct sockaddr *sock_addr = convert_sockaddr(&sock_addrlen, &u_addr, addr);
 
-    ssize_t len = sendto(sock, data, size, 0, sock_addr, sock_addrlen);
+    ssize_t len = sendto(sock, (const char*)data, size, 0, sock_addr, sock_addrlen);
     if (len == SOCKET_ERROR) {
         // If the socket is blocking, we just haven't sent anything
         int err = socket_geterror();
@@ -960,7 +1045,7 @@ int socket_impl_send(void *udata, unsigned conn, const void *data, const unsigne
 
 int socket_impl_recv(void *udata, unsigned conn, void *data, unsigned size, struct mobile_addr *addr)
 {
-    struct mobile_user_data *state = udata;
+    struct mobile_user_data *state = (struct mobile_user_data*)udata;
     SOCKET sock = state->sockets[conn];
     assert(sock != INVALID_SOCKET);
 
@@ -974,7 +1059,7 @@ int socket_impl_recv(void *udata, unsigned conn, void *data, unsigned size, stru
     ssize_t len;
     if (data) {
         // Retrieve at least 1 byte from the buffer
-        len = recvfrom(sock, data, size, 0, sock_addr, &sock_addrlen);
+        len = recvfrom(sock, (char*)data, size, 0, sock_addr, &sock_addrlen);
     } else {
         // Check if at least 1 byte is available in buffer
         char c;
@@ -1035,7 +1120,7 @@ int socket_impl_recv(void *udata, unsigned conn, void *data, unsigned size, stru
 // This information is also relevant for hardware implementations, which must
 // configure their hardware to receive bursts of 32 bits of data.
 void MobileSerialEnable(void* user, bool mode_32bit) {
-    struct mobile_user_data* udata = user;
+    struct mobile_user_data* udata = (struct mobile_user_data*)user;
     udata->flags |= MOBILE_USER_ENABLED | ((mode_32bit)? MOBILE_USER_32BIT: 0);
 }
 
@@ -1048,7 +1133,7 @@ void MobileSerialEnable(void* user, bool mode_32bit) {
 // separate threads, a mutex-like locking mechanism may be used to accomplish
 // this.
 void MobileSerialDisable(void* user) {
-    struct mobile_user_data* udata = user;
+    struct mobile_user_data* udata = (struct mobile_user_data*)user;
     udata->flags &= ~(MOBILE_USER_ENABLED | MOBILE_USER_32BIT);
 }
 
@@ -1070,7 +1155,7 @@ void MobileSerialDisable(void* user) {
 // Parameters:
 // - timer: timer that should be latched
 void MobileTimeLatch(void* user, unsigned int timer) {
-    struct mobile_user_data* udata = user;
+    struct mobile_user_data* udata = (struct mobile_user_data*)user;
     udata->timers[timer] = SDL_GetTicks();
 }
 
@@ -1088,7 +1173,7 @@ void MobileTimeLatch(void* user, unsigned int timer) {
 // - timer: timer that should be compared against
 // - ms: amount of milliseconds that should be compared with
 bool MobileTimeCheckMs(void* user, unsigned int timer, unsigned int ms) {
-    struct mobile_user_data* udata = user;
+    struct mobile_user_data* udata = (struct mobile_user_data*)user;
     return (SDL_GetTicks() - udata->timers[timer]) >= ms;
 }
 
@@ -1173,7 +1258,7 @@ void MobileConfigCreateDefault(FILE* f) {
 }
 
 bool MobileConfigRead(void* user, void* dest, uintptr_t offset, size_t size) {
-    struct mobile_user_data* udata = user;
+    struct mobile_user_data* udata = (struct mobile_user_data*)user;
     FILE* f = fopen("mobile.bin", "rb");
     if(f == NULL) {
         printf("Couldn't load mobile.bin. Creating default mobile.bin.\n");
@@ -1198,7 +1283,7 @@ static void MobileConfigUpdateChecksum(struct mobile_user_data* udata) {
 }
 
 bool MobileConfigWrite(void* user, const void* src, uintptr_t offset, size_t size) {
-    struct mobile_user_data* udata = user;
+    struct mobile_user_data* udata = (struct mobile_user_data*)user;
     memcpy(udata->config + offset, src, size);
     MobileConfigUpdateChecksum(udata);
     FILE* f = fopen("mobile.bin", "wb");
@@ -1271,7 +1356,12 @@ void MobileInit(void) {
 
     mobile_config_load(gMobileAdapter);
     mobile_config_set_device(gMobileAdapter, MOBILE_ADAPTER_BLUE, true);
-    struct mobile_addr dns = {.type = MOBILE_ADDRTYPE_IPV4};
+#ifdef _MSC_VER
+    struct mobile_addr dns;
+    dns.type = MOBILE_ADDRTYPE_IPV4;
+#else
+    struct mobile_addr dns = { .type = MOBILE_ADDRTYPE_IPV4 };
+#endif
     dns._addr4.type = MOBILE_ADDRTYPE_IPV4;
     dns._addr4.host[0] = 127;
     dns._addr4.host[1] = 0;
