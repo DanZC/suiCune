@@ -1,0 +1,930 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{56809A7C-42B7-9B0D-EBA3-8110D7B9170F}</ProjectGuid>
+    <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>maps</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>bin\Release-windows-x86\maps\</OutDir>
+    <IntDir>bin-obj\Release-windows-x86\maps\</IntDir>
+    <TargetName>maps</TargetName>
+    <TargetExt>.lib</TargetExt>
+    <LibraryPath>deps\SDL2\lib\x86;deps\physfs\lib\x86;lib\libmobile;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>bin\Release-windows-x86_64\maps\</OutDir>
+    <IntDir>bin-obj\Release-windows-x86_64\maps\</IntDir>
+    <TargetName>maps</TargetName>
+    <TargetExt>.lib</TargetExt>
+    <LibraryPath>deps\SDL2\lib\x86;deps\physfs\lib\x86;lib\libmobile;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>bin\Debug-windows-x86\maps\</OutDir>
+    <IntDir>bin-obj\Debug-windows-x86\maps\</IntDir>
+    <TargetName>maps</TargetName>
+    <TargetExt>.lib</TargetExt>
+    <LibraryPath>deps\SDL2\lib\x86;deps\physfs\lib\x86;lib\libmobile;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>bin\Debug-windows-x86_64\maps\</OutDir>
+    <IntDir>bin-obj\Debug-windows-x86_64\maps\</IntDir>
+    <TargetName>maps</TargetName>
+    <TargetExt>.lib</TargetExt>
+    <LibraryPath>deps\SDL2\lib\x86;deps\physfs\lib\x86;lib\libmobile;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;deps\SDL2\include;deps\physfs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <ExternalWarningLevel>Level3</ExternalWarningLevel>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <BuildLog>
+      <Path>bin-obj\Release-windows-x86$(ProjectName).log</Path>
+    </BuildLog>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;deps\SDL2\include;deps\physfs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <ExternalWarningLevel>Level3</ExternalWarningLevel>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <BuildLog>
+      <Path>bin-obj\Release-windows-x86_64$(ProjectName).log</Path>
+    </BuildLog>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <DisableSpecificWarnings>;4201;4102;4152;4200;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <PreprocessorDefinitions>DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;deps\SDL2\include;deps\physfs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <ExternalWarningLevel>Level3</ExternalWarningLevel>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <BuildLog>
+      <Path>bin-obj\Debug-windows-x86$(ProjectName).log</Path>
+    </BuildLog>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <DisableSpecificWarnings>;4201;4102;4152;4200;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <PreprocessorDefinitions>DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;deps\SDL2\include;deps\physfs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <ExternalWarningLevel>Level3</ExternalWarningLevel>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <BuildLog>
+      <Path>bin-obj\Debug-windows-x86_64$(ProjectName).log</Path>
+    </BuildLog>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="maps\AzaleaGym.h" />
+    <ClInclude Include="maps\AzaleaMart.h" />
+    <ClInclude Include="maps\AzaleaPokecenter1F.h" />
+    <ClInclude Include="maps\AzaleaTown.h" />
+    <ClInclude Include="maps\BattleTower1F.h" />
+    <ClInclude Include="maps\BattleTowerBattleRoom.h" />
+    <ClInclude Include="maps\BattleTowerElevator.h" />
+    <ClInclude Include="maps\BattleTowerHallway.h" />
+    <ClInclude Include="maps\BattleTowerOutside.h" />
+    <ClInclude Include="maps\BillsBrothersHouse.h" />
+    <ClInclude Include="maps\BillsFamilysHouse.h" />
+    <ClInclude Include="maps\BillsHouse.h" />
+    <ClInclude Include="maps\BlackthornCity.h" />
+    <ClInclude Include="maps\BlackthornDragonSpeechHouse.h" />
+    <ClInclude Include="maps\BlackthornEmysHouse.h" />
+    <ClInclude Include="maps\BlackthornGym1F.h" />
+    <ClInclude Include="maps\BlackthornGym2F.h" />
+    <ClInclude Include="maps\BlackthornMart.h" />
+    <ClInclude Include="maps\BlackthornPokecenter1F.h" />
+    <ClInclude Include="maps\BluesHouse.h" />
+    <ClInclude Include="maps\BrunosRoom.h" />
+    <ClInclude Include="maps\BurnedTower1F.h" />
+    <ClInclude Include="maps\BurnedTowerB1F.h" />
+    <ClInclude Include="maps\CeladonCafe.h" />
+    <ClInclude Include="maps\CeladonCity.h" />
+    <ClInclude Include="maps\CeladonDeptStore1F.h" />
+    <ClInclude Include="maps\CeladonDeptStore2F.h" />
+    <ClInclude Include="maps\CeladonDeptStore3F.h" />
+    <ClInclude Include="maps\CeladonDeptStore4F.h" />
+    <ClInclude Include="maps\CeladonDeptStore5F.h" />
+    <ClInclude Include="maps\CeladonDeptStore6F.h" />
+    <ClInclude Include="maps\CeladonDeptStoreElevator.h" />
+    <ClInclude Include="maps\CeladonGameCorner.h" />
+    <ClInclude Include="maps\CeladonGameCornerPrizeRoom.h" />
+    <ClInclude Include="maps\CeladonGym.h" />
+    <ClInclude Include="maps\CeladonMansion1F.h" />
+    <ClInclude Include="maps\CeladonMansion2F.h" />
+    <ClInclude Include="maps\CeladonMansion3F.h" />
+    <ClInclude Include="maps\CeladonMansionRoof.h" />
+    <ClInclude Include="maps\CeladonMansionRoofHouse.h" />
+    <ClInclude Include="maps\CeladonPokecenter1F.h" />
+    <ClInclude Include="maps\CeruleanCity.h" />
+    <ClInclude Include="maps\CeruleanGym.h" />
+    <ClInclude Include="maps\CeruleanGymBadgeSpeechHouse.h" />
+    <ClInclude Include="maps\CeruleanMart.h" />
+    <ClInclude Include="maps\CeruleanPokecenter1F.h" />
+    <ClInclude Include="maps\CeruleanPoliceStation.h" />
+    <ClInclude Include="maps\CeruleanTradeSpeechHouse.h" />
+    <ClInclude Include="maps\CharcoalKiln.h" />
+    <ClInclude Include="maps\CherrygroveCity.h" />
+    <ClInclude Include="maps\CherrygroveEvolutionSpeechHouse.h" />
+    <ClInclude Include="maps\CherrygroveGymSpeechHouse.h" />
+    <ClInclude Include="maps\CherrygroveMart.h" />
+    <ClInclude Include="maps\CherrygrovePokecenter1F.h" />
+    <ClInclude Include="maps\CianwoodCity.h" />
+    <ClInclude Include="maps\CianwoodGym.h" />
+    <ClInclude Include="maps\CianwoodLugiaSpeechHouse.h" />
+    <ClInclude Include="maps\CianwoodPharmacy.h" />
+    <ClInclude Include="maps\CianwoodPhotoStudio.h" />
+    <ClInclude Include="maps\CianwoodPokecenter1F.h" />
+    <ClInclude Include="maps\CinnabarIsland.h" />
+    <ClInclude Include="maps\CinnabarPokecenter1F.h" />
+    <ClInclude Include="maps\Colosseum.h" />
+    <ClInclude Include="maps\CopycatsHouse1F.h" />
+    <ClInclude Include="maps\CopycatsHouse2F.h" />
+    <ClInclude Include="maps\DanceTheatre.h" />
+    <ClInclude Include="maps\DarkCaveBlackthornEntrance.h" />
+    <ClInclude Include="maps\DarkCaveVioletEntrance.h" />
+    <ClInclude Include="maps\DayCare.h" />
+    <ClInclude Include="maps\DayOfWeekSiblingsHouse.h" />
+    <ClInclude Include="maps\DiglettsCave.h" />
+    <ClInclude Include="maps\DragonShrine.h" />
+    <ClInclude Include="maps\DragonsDen1F.h" />
+    <ClInclude Include="maps\DragonsDenB1F.h" />
+    <ClInclude Include="maps\EarlsPokemonAcademy.h" />
+    <ClInclude Include="maps\EcruteakCity.h" />
+    <ClInclude Include="maps\EcruteakGym.h" />
+    <ClInclude Include="maps\EcruteakItemfinderHouse.h" />
+    <ClInclude Include="maps\EcruteakLugiaSpeechHouse.h" />
+    <ClInclude Include="maps\EcruteakMart.h" />
+    <ClInclude Include="maps\EcruteakPokecenter1F.h" />
+    <ClInclude Include="maps\EcruteakTinTowerEntrance.h" />
+    <ClInclude Include="maps\ElmsHouse.h" />
+    <ClInclude Include="maps\ElmsLab.h" />
+    <ClInclude Include="maps\FastShip1F.h" />
+    <ClInclude Include="maps\FastShipB1F.h" />
+    <ClInclude Include="maps\FastShipCabins_NNW_NNE_NE.h" />
+    <ClInclude Include="maps\FastShipCabins_SE_SSE_CaptainsCabin.h" />
+    <ClInclude Include="maps\FastShipCabins_SW_SSW_NW.h" />
+    <ClInclude Include="maps\FightingDojo.h" />
+    <ClInclude Include="maps\FuchsiaCity.h" />
+    <ClInclude Include="maps\FuchsiaGym.h" />
+    <ClInclude Include="maps\FuchsiaMart.h" />
+    <ClInclude Include="maps\FuchsiaPokecenter1F.h" />
+    <ClInclude Include="maps\GoldenrodBikeShop.h" />
+    <ClInclude Include="maps\GoldenrodCity.h" />
+    <ClInclude Include="maps\GoldenrodDeptStore1F.h" />
+    <ClInclude Include="maps\GoldenrodDeptStore2F.h" />
+    <ClInclude Include="maps\GoldenrodDeptStore3F.h" />
+    <ClInclude Include="maps\GoldenrodDeptStore4F.h" />
+    <ClInclude Include="maps\GoldenrodDeptStore5F.h" />
+    <ClInclude Include="maps\GoldenrodDeptStore6F.h" />
+    <ClInclude Include="maps\GoldenrodDeptStoreB1F.h" />
+    <ClInclude Include="maps\GoldenrodDeptStoreElevator.h" />
+    <ClInclude Include="maps\GoldenrodDeptStoreRoof.h" />
+    <ClInclude Include="maps\GoldenrodFlowerShop.h" />
+    <ClInclude Include="maps\GoldenrodGameCorner.h" />
+    <ClInclude Include="maps\GoldenrodGym.h" />
+    <ClInclude Include="maps\GoldenrodHappinessRater.h" />
+    <ClInclude Include="maps\GoldenrodMagnetTrainStation.h" />
+    <ClInclude Include="maps\GoldenrodNameRater.h" />
+    <ClInclude Include="maps\GoldenrodPPSpeechHouse.h" />
+    <ClInclude Include="maps\GoldenrodUnderground.h" />
+    <ClInclude Include="maps\GoldenrodUndergroundSwitchRoomEntrances.h" />
+    <ClInclude Include="maps\GoldenrodUndergroundWarehouse.h" />
+    <ClInclude Include="maps\GuideGentsHouse.h" />
+    <ClInclude Include="maps\HallOfFame.h" />
+    <ClInclude Include="maps\IcePath1F.h" />
+    <ClInclude Include="maps\IcePathB1F.h" />
+    <ClInclude Include="maps\IcePathB2FBlackthornSide.h" />
+    <ClInclude Include="maps\IcePathB2FMahoganySide.h" />
+    <ClInclude Include="maps\IcePathB3F.h" />
+    <ClInclude Include="maps\IlexForest.h" />
+    <ClInclude Include="maps\IlexForestAzaleaGate.h" />
+    <ClInclude Include="maps\IndigoPlateauPokecenter1F.h" />
+    <ClInclude Include="maps\KarensRoom.h" />
+    <ClInclude Include="maps\KogasRoom.h" />
+    <ClInclude Include="maps\KurtsHouse.h" />
+    <ClInclude Include="maps\LakeOfRage.h" />
+    <ClInclude Include="maps\LakeOfRageHiddenPowerHouse.h" />
+    <ClInclude Include="maps\LakeOfRageMagikarpHouse.h" />
+    <ClInclude Include="maps\LancesRoom.h" />
+    <ClInclude Include="maps\LavRadioTower1F.h" />
+    <ClInclude Include="maps\LavenderMart.h" />
+    <ClInclude Include="maps\LavenderNameRater.h" />
+    <ClInclude Include="maps\LavenderPokecenter1F.h" />
+    <ClInclude Include="maps\LavenderSpeechHouse.h" />
+    <ClInclude Include="maps\LavenderTown.h" />
+    <ClInclude Include="maps\MahoganyGym.h" />
+    <ClInclude Include="maps\MahoganyMart1F.h" />
+    <ClInclude Include="maps\MahoganyPokecenter1F.h" />
+    <ClInclude Include="maps\MahoganyRedGyaradosSpeechHouse.h" />
+    <ClInclude Include="maps\MahoganyTown.h" />
+    <ClInclude Include="maps\ManiasHouse.h" />
+    <ClInclude Include="maps\MobileBattleRoom.h" />
+    <ClInclude Include="maps\MobileTradeRoom.h" />
+    <ClInclude Include="maps\MountMoon.h" />
+    <ClInclude Include="maps\MountMoonGiftShop.h" />
+    <ClInclude Include="maps\MountMoonSquare.h" />
+    <ClInclude Include="maps\MountMortar1FInside.h" />
+    <ClInclude Include="maps\MountMortar1FOutside.h" />
+    <ClInclude Include="maps\MountMortar2FInside.h" />
+    <ClInclude Include="maps\MountMortarB1F.h" />
+    <ClInclude Include="maps\MoveDeletersHouse.h" />
+    <ClInclude Include="maps\MrFujisHouse.h" />
+    <ClInclude Include="maps\MrPokemonsHouse.h" />
+    <ClInclude Include="maps\MrPsychicsHouse.h" />
+    <ClInclude Include="maps\NationalPark.h" />
+    <ClInclude Include="maps\NationalParkBugContest.h" />
+    <ClInclude Include="maps\NewBarkTown.h" />
+    <ClInclude Include="maps\OaksLab.h" />
+    <ClInclude Include="maps\OlivineCafe.h" />
+    <ClInclude Include="maps\OlivineCity.h" />
+    <ClInclude Include="maps\OlivineGoodRodHouse.h" />
+    <ClInclude Include="maps\OlivineGym.h" />
+    <ClInclude Include="maps\OlivineLighthouse1F.h" />
+    <ClInclude Include="maps\OlivineLighthouse2F.h" />
+    <ClInclude Include="maps\OlivineLighthouse3F.h" />
+    <ClInclude Include="maps\OlivineLighthouse4F.h" />
+    <ClInclude Include="maps\OlivineLighthouse5F.h" />
+    <ClInclude Include="maps\OlivineLighthouse6F.h" />
+    <ClInclude Include="maps\OlivineMart.h" />
+    <ClInclude Include="maps\OlivinePokecenter1F.h" />
+    <ClInclude Include="maps\OlivinePort.h" />
+    <ClInclude Include="maps\OlivinePortPassage.h" />
+    <ClInclude Include="maps\OlivinePunishmentSpeechHouse.h" />
+    <ClInclude Include="maps\OlivineTimsHouse.h" />
+    <ClInclude Include="maps\PalletTown.h" />
+    <ClInclude Include="maps\PewterCity.h" />
+    <ClInclude Include="maps\PewterGym.h" />
+    <ClInclude Include="maps\PewterMart.h" />
+    <ClInclude Include="maps\PewterNidoranSpeechHouse.h" />
+    <ClInclude Include="maps\PewterPokecenter1F.h" />
+    <ClInclude Include="maps\PewterSnoozeSpeechHouse.h" />
+    <ClInclude Include="maps\PlayersHouse1F.h" />
+    <ClInclude Include="maps\PlayersHouse2F.h" />
+    <ClInclude Include="maps\PlayersNeighborsHouse.h" />
+    <ClInclude Include="maps\PokeSeersHouse.h" />
+    <ClInclude Include="maps\Pokecenter2F.h" />
+    <ClInclude Include="maps\PokecomCenter.h" />
+    <ClInclude Include="maps\PokecomCenterAdminOfficeMobile.h" />
+    <ClInclude Include="maps\PokemonFanClub.h" />
+    <ClInclude Include="maps\PowerPlant.h" />
+    <ClInclude Include="maps\RadioTower1F.h" />
+    <ClInclude Include="maps\RadioTower2F.h" />
+    <ClInclude Include="maps\RadioTower3F.h" />
+    <ClInclude Include="maps\RadioTower4F.h" />
+    <ClInclude Include="maps\RadioTower5F.h" />
+    <ClInclude Include="maps\RedsHouse1F.h" />
+    <ClInclude Include="maps\RedsHouse2F.h" />
+    <ClInclude Include="maps\RockTunnel1F.h" />
+    <ClInclude Include="maps\RockTunnelB1F.h" />
+    <ClInclude Include="maps\Route1.h" />
+    <ClInclude Include="maps\Route10North.h" />
+    <ClInclude Include="maps\Route10Pokecenter1F.h" />
+    <ClInclude Include="maps\Route10South.h" />
+    <ClInclude Include="maps\Route11.h" />
+    <ClInclude Include="maps\Route12.h" />
+    <ClInclude Include="maps\Route12SuperRodHouse.h" />
+    <ClInclude Include="maps\Route13.h" />
+    <ClInclude Include="maps\Route14.h" />
+    <ClInclude Include="maps\Route15.h" />
+    <ClInclude Include="maps\Route15FuchsiaGate.h" />
+    <ClInclude Include="maps\Route16.h" />
+    <ClInclude Include="maps\Route16FuchsiaSpeechHouse.h" />
+    <ClInclude Include="maps\Route16Gate.h" />
+    <ClInclude Include="maps\Route17.h" />
+    <ClInclude Include="maps\Route17Route18Gate.h" />
+    <ClInclude Include="maps\Route18.h" />
+    <ClInclude Include="maps\Route19.h" />
+    <ClInclude Include="maps\Route19FuchsiaGate.h" />
+    <ClInclude Include="maps\Route2.h" />
+    <ClInclude Include="maps\Route20.h" />
+    <ClInclude Include="maps\Route21.h" />
+    <ClInclude Include="maps\Route22.h" />
+    <ClInclude Include="maps\Route23.h" />
+    <ClInclude Include="maps\Route24.h" />
+    <ClInclude Include="maps\Route25.h" />
+    <ClInclude Include="maps\Route26.h" />
+    <ClInclude Include="maps\Route26HealHouse.h" />
+    <ClInclude Include="maps\Route27.h" />
+    <ClInclude Include="maps\Route27SandstormHouse.h" />
+    <ClInclude Include="maps\Route28.h" />
+    <ClInclude Include="maps\Route28SteelWingHouse.h" />
+    <ClInclude Include="maps\Route29.h" />
+    <ClInclude Include="maps\Route29Route46Gate.h" />
+    <ClInclude Include="maps\Route2Gate.h" />
+    <ClInclude Include="maps\Route2NuggetHouse.h" />
+    <ClInclude Include="maps\Route3.h" />
+    <ClInclude Include="maps\Route30.h" />
+    <ClInclude Include="maps\Route30BerryHouse.h" />
+    <ClInclude Include="maps\Route31.h" />
+    <ClInclude Include="maps\Route31VioletGate.h" />
+    <ClInclude Include="maps\Route32.h" />
+    <ClInclude Include="maps\Route32Pokecenter1F.h" />
+    <ClInclude Include="maps\Route32RuinsOfAlphGate.h" />
+    <ClInclude Include="maps\Route33.h" />
+    <ClInclude Include="maps\Route34.h" />
+    <ClInclude Include="maps\Route34IlexForestGate.h" />
+    <ClInclude Include="maps\Route35.h" />
+    <ClInclude Include="maps\Route35GoldenrodGate.h" />
+    <ClInclude Include="maps\Route35NationalParkGate.h" />
+    <ClInclude Include="maps\Route36.h" />
+    <ClInclude Include="maps\Route36NationalParkGate.h" />
+    <ClInclude Include="maps\Route36RuinsOfAlphGate.h" />
+    <ClInclude Include="maps\Route37.h" />
+    <ClInclude Include="maps\Route38.h" />
+    <ClInclude Include="maps\Route38EcruteakGate.h" />
+    <ClInclude Include="maps\Route39.h" />
+    <ClInclude Include="maps\Route39Barn.h" />
+    <ClInclude Include="maps\Route39Farmhouse.h" />
+    <ClInclude Include="maps\Route4.h" />
+    <ClInclude Include="maps\Route40.h" />
+    <ClInclude Include="maps\Route40BattleTowerGate.h" />
+    <ClInclude Include="maps\Route41.h" />
+    <ClInclude Include="maps\Route42.h" />
+    <ClInclude Include="maps\Route42EcruteakGate.h" />
+    <ClInclude Include="maps\Route43.h" />
+    <ClInclude Include="maps\Route43Gate.h" />
+    <ClInclude Include="maps\Route43MahoganyGate.h" />
+    <ClInclude Include="maps\Route44.h" />
+    <ClInclude Include="maps\Route45.h" />
+    <ClInclude Include="maps\Route46.h" />
+    <ClInclude Include="maps\Route5.h" />
+    <ClInclude Include="maps\Route5CleanseTagHouse.h" />
+    <ClInclude Include="maps\Route5SaffronGate.h" />
+    <ClInclude Include="maps\Route5UndergroundPathEntrance.h" />
+    <ClInclude Include="maps\Route6.h" />
+    <ClInclude Include="maps\Route6SaffronGate.h" />
+    <ClInclude Include="maps\Route6UndergroundPathEntrance.h" />
+    <ClInclude Include="maps\Route7.h" />
+    <ClInclude Include="maps\Route7SaffronGate.h" />
+    <ClInclude Include="maps\Route8.h" />
+    <ClInclude Include="maps\Route8SaffronGate.h" />
+    <ClInclude Include="maps\Route9.h" />
+    <ClInclude Include="maps\RuinsOfAlphAerodactylChamber.h" />
+    <ClInclude Include="maps\RuinsOfAlphAerodactylItemRoom.h" />
+    <ClInclude Include="maps\RuinsOfAlphAerodactylWordRoom.h" />
+    <ClInclude Include="maps\RuinsOfAlphHoOhChamber.h" />
+    <ClInclude Include="maps\RuinsOfAlphHoOhItemRoom.h" />
+    <ClInclude Include="maps\RuinsOfAlphHoOhWordRoom.h" />
+    <ClInclude Include="maps\RuinsOfAlphInnerChamber.h" />
+    <ClInclude Include="maps\RuinsOfAlphKabutoChamber.h" />
+    <ClInclude Include="maps\RuinsOfAlphKabutoItemRoom.h" />
+    <ClInclude Include="maps\RuinsOfAlphKabutoWordRoom.h" />
+    <ClInclude Include="maps\RuinsOfAlphOmanyteChamber.h" />
+    <ClInclude Include="maps\RuinsOfAlphOmanyteItemRoom.h" />
+    <ClInclude Include="maps\RuinsOfAlphOmanyteWordRoom.h" />
+    <ClInclude Include="maps\RuinsOfAlphOutside.h" />
+    <ClInclude Include="maps\RuinsOfAlphResearchCenter.h" />
+    <ClInclude Include="maps\SafariZoneMainOffice.h" />
+    <ClInclude Include="maps\SafariZoneWardensHome.h" />
+    <ClInclude Include="maps\SaffronCity.h" />
+    <ClInclude Include="maps\SaffronGym.h" />
+    <ClInclude Include="maps\SaffronMagnetTrainStation.h" />
+    <ClInclude Include="maps\SaffronMart.h" />
+    <ClInclude Include="maps\SaffronPokecenter1F.h" />
+    <ClInclude Include="maps\SeafoamGym.h" />
+    <ClInclude Include="maps\SilphCo1F.h" />
+    <ClInclude Include="maps\SilverCaveItemRooms.h" />
+    <ClInclude Include="maps\SilverCaveOutside.h" />
+    <ClInclude Include="maps\SilverCavePokecenter1F.h" />
+    <ClInclude Include="maps\SilverCaveRoom1.h" />
+    <ClInclude Include="maps\SilverCaveRoom2.h" />
+    <ClInclude Include="maps\SilverCaveRoom3.h" />
+    <ClInclude Include="maps\SlowpokeWellB1F.h" />
+    <ClInclude Include="maps\SlowpokeWellB2F.h" />
+    <ClInclude Include="maps\SoulHouse.h" />
+    <ClInclude Include="maps\SproutTower1F.h" />
+    <ClInclude Include="maps\SproutTower2F.h" />
+    <ClInclude Include="maps\SproutTower3F.h" />
+    <ClInclude Include="maps\TeamRocketBaseB1F.h" />
+    <ClInclude Include="maps\TeamRocketBaseB2F.h" />
+    <ClInclude Include="maps\TeamRocketBaseB3F.h" />
+    <ClInclude Include="maps\TinTower1F.h" />
+    <ClInclude Include="maps\TinTower2F.h" />
+    <ClInclude Include="maps\TinTower3F.h" />
+    <ClInclude Include="maps\TinTower4F.h" />
+    <ClInclude Include="maps\TinTower5F.h" />
+    <ClInclude Include="maps\TinTower6F.h" />
+    <ClInclude Include="maps\TinTower7F.h" />
+    <ClInclude Include="maps\TinTower8F.h" />
+    <ClInclude Include="maps\TinTower9F.h" />
+    <ClInclude Include="maps\TinTowerRoof.h" />
+    <ClInclude Include="maps\TohjoFalls.h" />
+    <ClInclude Include="maps\TradeCenter.h" />
+    <ClInclude Include="maps\TrainerHouse1F.h" />
+    <ClInclude Include="maps\TrainerHouseB1F.h" />
+    <ClInclude Include="maps\UndergroundPath.h" />
+    <ClInclude Include="maps\UnionCave1F.h" />
+    <ClInclude Include="maps\UnionCaveB1F.h" />
+    <ClInclude Include="maps\UnionCaveB2F.h" />
+    <ClInclude Include="maps\VermilionCity.h" />
+    <ClInclude Include="maps\VermilionDiglettsCaveSpeechHouse.h" />
+    <ClInclude Include="maps\VermilionFishingSpeechHouse.h" />
+    <ClInclude Include="maps\VermilionGym.h" />
+    <ClInclude Include="maps\VermilionMagnetTrainSpeechHouse.h" />
+    <ClInclude Include="maps\VermilionMart.h" />
+    <ClInclude Include="maps\VermilionPokecenter1F.h" />
+    <ClInclude Include="maps\VermilionPort.h" />
+    <ClInclude Include="maps\VermilionPortPassage.h" />
+    <ClInclude Include="maps\VictoryRoad.h" />
+    <ClInclude Include="maps\VictoryRoadGate.h" />
+    <ClInclude Include="maps\VioletCity.h" />
+    <ClInclude Include="maps\VioletGym.h" />
+    <ClInclude Include="maps\VioletKylesHouse.h" />
+    <ClInclude Include="maps\VioletMart.h" />
+    <ClInclude Include="maps\VioletNicknameSpeechHouse.h" />
+    <ClInclude Include="maps\VioletPokecenter1F.h" />
+    <ClInclude Include="maps\ViridianCity.h" />
+    <ClInclude Include="maps\ViridianGym.h" />
+    <ClInclude Include="maps\ViridianMart.h" />
+    <ClInclude Include="maps\ViridianNicknameSpeechHouse.h" />
+    <ClInclude Include="maps\ViridianPokecenter1F.h" />
+    <ClInclude Include="maps\WhirlIslandB1F.h" />
+    <ClInclude Include="maps\WhirlIslandB2F.h" />
+    <ClInclude Include="maps\WhirlIslandCave.h" />
+    <ClInclude Include="maps\WhirlIslandLugiaChamber.h" />
+    <ClInclude Include="maps\WhirlIslandNE.h" />
+    <ClInclude Include="maps\WhirlIslandNW.h" />
+    <ClInclude Include="maps\WhirlIslandSE.h" />
+    <ClInclude Include="maps\WhirlIslandSW.h" />
+    <ClInclude Include="maps\WillsRoom.h" />
+    <ClInclude Include="maps\WiseTriosRoom.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="maps\AzaleaGym.c" />
+    <ClCompile Include="maps\AzaleaMart.c" />
+    <ClCompile Include="maps\AzaleaPokecenter1F.c" />
+    <ClCompile Include="maps\AzaleaTown.c" />
+    <ClCompile Include="maps\BattleTower1F.c" />
+    <ClCompile Include="maps\BattleTowerBattleRoom.c" />
+    <ClCompile Include="maps\BattleTowerElevator.c" />
+    <ClCompile Include="maps\BattleTowerHallway.c" />
+    <ClCompile Include="maps\BattleTowerOutside.c" />
+    <ClCompile Include="maps\BillsBrothersHouse.c" />
+    <ClCompile Include="maps\BillsFamilysHouse.c" />
+    <ClCompile Include="maps\BillsHouse.c" />
+    <ClCompile Include="maps\BlackthornCity.c" />
+    <ClCompile Include="maps\BlackthornDragonSpeechHouse.c" />
+    <ClCompile Include="maps\BlackthornEmysHouse.c" />
+    <ClCompile Include="maps\BlackthornGym1F.c" />
+    <ClCompile Include="maps\BlackthornGym2F.c" />
+    <ClCompile Include="maps\BlackthornMart.c" />
+    <ClCompile Include="maps\BlackthornPokecenter1F.c" />
+    <ClCompile Include="maps\BluesHouse.c" />
+    <ClCompile Include="maps\BrunosRoom.c" />
+    <ClCompile Include="maps\BurnedTower1F.c" />
+    <ClCompile Include="maps\BurnedTowerB1F.c" />
+    <ClCompile Include="maps\CeladonCafe.c" />
+    <ClCompile Include="maps\CeladonCity.c" />
+    <ClCompile Include="maps\CeladonDeptStore1F.c" />
+    <ClCompile Include="maps\CeladonDeptStore2F.c" />
+    <ClCompile Include="maps\CeladonDeptStore3F.c" />
+    <ClCompile Include="maps\CeladonDeptStore4F.c" />
+    <ClCompile Include="maps\CeladonDeptStore5F.c" />
+    <ClCompile Include="maps\CeladonDeptStore6F.c" />
+    <ClCompile Include="maps\CeladonDeptStoreElevator.c" />
+    <ClCompile Include="maps\CeladonGameCorner.c" />
+    <ClCompile Include="maps\CeladonGameCornerPrizeRoom.c" />
+    <ClCompile Include="maps\CeladonGym.c" />
+    <ClCompile Include="maps\CeladonMansion1F.c" />
+    <ClCompile Include="maps\CeladonMansion2F.c" />
+    <ClCompile Include="maps\CeladonMansion3F.c" />
+    <ClCompile Include="maps\CeladonMansionRoof.c" />
+    <ClCompile Include="maps\CeladonMansionRoofHouse.c" />
+    <ClCompile Include="maps\CeladonPokecenter1F.c" />
+    <ClCompile Include="maps\CeruleanCity.c" />
+    <ClCompile Include="maps\CeruleanGym.c" />
+    <ClCompile Include="maps\CeruleanGymBadgeSpeechHouse.c" />
+    <ClCompile Include="maps\CeruleanMart.c" />
+    <ClCompile Include="maps\CeruleanPokecenter1F.c" />
+    <ClCompile Include="maps\CeruleanPoliceStation.c" />
+    <ClCompile Include="maps\CeruleanTradeSpeechHouse.c" />
+    <ClCompile Include="maps\CharcoalKiln.c" />
+    <ClCompile Include="maps\CherrygroveCity.c" />
+    <ClCompile Include="maps\CherrygroveEvolutionSpeechHouse.c" />
+    <ClCompile Include="maps\CherrygroveGymSpeechHouse.c" />
+    <ClCompile Include="maps\CherrygroveMart.c" />
+    <ClCompile Include="maps\CherrygrovePokecenter1F.c" />
+    <ClCompile Include="maps\CianwoodCity.c" />
+    <ClCompile Include="maps\CianwoodGym.c" />
+    <ClCompile Include="maps\CianwoodLugiaSpeechHouse.c" />
+    <ClCompile Include="maps\CianwoodPharmacy.c" />
+    <ClCompile Include="maps\CianwoodPhotoStudio.c" />
+    <ClCompile Include="maps\CianwoodPokecenter1F.c" />
+    <ClCompile Include="maps\CinnabarIsland.c" />
+    <ClCompile Include="maps\CinnabarPokecenter1F.c" />
+    <ClCompile Include="maps\Colosseum.c" />
+    <ClCompile Include="maps\CopycatsHouse1F.c" />
+    <ClCompile Include="maps\CopycatsHouse2F.c" />
+    <ClCompile Include="maps\DanceTheatre.c" />
+    <ClCompile Include="maps\DarkCaveBlackthornEntrance.c" />
+    <ClCompile Include="maps\DarkCaveVioletEntrance.c" />
+    <ClCompile Include="maps\DayCare.c" />
+    <ClCompile Include="maps\DayOfWeekSiblingsHouse.c" />
+    <ClCompile Include="maps\DiglettsCave.c" />
+    <ClCompile Include="maps\DragonShrine.c" />
+    <ClCompile Include="maps\DragonsDen1F.c" />
+    <ClCompile Include="maps\DragonsDenB1F.c" />
+    <ClCompile Include="maps\EarlsPokemonAcademy.c" />
+    <ClCompile Include="maps\EcruteakCity.c" />
+    <ClCompile Include="maps\EcruteakGym.c" />
+    <ClCompile Include="maps\EcruteakItemfinderHouse.c" />
+    <ClCompile Include="maps\EcruteakLugiaSpeechHouse.c" />
+    <ClCompile Include="maps\EcruteakMart.c" />
+    <ClCompile Include="maps\EcruteakPokecenter1F.c" />
+    <ClCompile Include="maps\EcruteakTinTowerEntrance.c" />
+    <ClCompile Include="maps\ElmsHouse.c" />
+    <ClCompile Include="maps\ElmsLab.c" />
+    <ClCompile Include="maps\FastShip1F.c" />
+    <ClCompile Include="maps\FastShipB1F.c" />
+    <ClCompile Include="maps\FastShipCabins_NNW_NNE_NE.c" />
+    <ClCompile Include="maps\FastShipCabins_SE_SSE_CaptainsCabin.c" />
+    <ClCompile Include="maps\FastShipCabins_SW_SSW_NW.c" />
+    <ClCompile Include="maps\FightingDojo.c" />
+    <ClCompile Include="maps\FuchsiaCity.c" />
+    <ClCompile Include="maps\FuchsiaGym.c" />
+    <ClCompile Include="maps\FuchsiaMart.c" />
+    <ClCompile Include="maps\FuchsiaPokecenter1F.c" />
+    <ClCompile Include="maps\GoldenrodBikeShop.c" />
+    <ClCompile Include="maps\GoldenrodCity.c" />
+    <ClCompile Include="maps\GoldenrodDeptStore1F.c" />
+    <ClCompile Include="maps\GoldenrodDeptStore2F.c" />
+    <ClCompile Include="maps\GoldenrodDeptStore3F.c" />
+    <ClCompile Include="maps\GoldenrodDeptStore4F.c" />
+    <ClCompile Include="maps\GoldenrodDeptStore5F.c" />
+    <ClCompile Include="maps\GoldenrodDeptStore6F.c" />
+    <ClCompile Include="maps\GoldenrodDeptStoreB1F.c" />
+    <ClCompile Include="maps\GoldenrodDeptStoreElevator.c" />
+    <ClCompile Include="maps\GoldenrodDeptStoreRoof.c" />
+    <ClCompile Include="maps\GoldenrodFlowerShop.c" />
+    <ClCompile Include="maps\GoldenrodGameCorner.c" />
+    <ClCompile Include="maps\GoldenrodGym.c" />
+    <ClCompile Include="maps\GoldenrodHappinessRater.c" />
+    <ClCompile Include="maps\GoldenrodMagnetTrainStation.c" />
+    <ClCompile Include="maps\GoldenrodNameRater.c" />
+    <ClCompile Include="maps\GoldenrodPPSpeechHouse.c" />
+    <ClCompile Include="maps\GoldenrodUnderground.c" />
+    <ClCompile Include="maps\GoldenrodUndergroundSwitchRoomEntrances.c" />
+    <ClCompile Include="maps\GoldenrodUndergroundWarehouse.c" />
+    <ClCompile Include="maps\GuideGentsHouse.c" />
+    <ClCompile Include="maps\HallOfFame.c" />
+    <ClCompile Include="maps\IcePath1F.c" />
+    <ClCompile Include="maps\IcePathB1F.c" />
+    <ClCompile Include="maps\IcePathB2FBlackthornSide.c" />
+    <ClCompile Include="maps\IcePathB2FMahoganySide.c" />
+    <ClCompile Include="maps\IcePathB3F.c" />
+    <ClCompile Include="maps\IlexForest.c" />
+    <ClCompile Include="maps\IlexForestAzaleaGate.c" />
+    <ClCompile Include="maps\IndigoPlateauPokecenter1F.c" />
+    <ClCompile Include="maps\KarensRoom.c" />
+    <ClCompile Include="maps\KogasRoom.c" />
+    <ClCompile Include="maps\KurtsHouse.c" />
+    <ClCompile Include="maps\LakeOfRage.c" />
+    <ClCompile Include="maps\LakeOfRageHiddenPowerHouse.c" />
+    <ClCompile Include="maps\LakeOfRageMagikarpHouse.c" />
+    <ClCompile Include="maps\LancesRoom.c" />
+    <ClCompile Include="maps\LavRadioTower1F.c" />
+    <ClCompile Include="maps\LavenderMart.c" />
+    <ClCompile Include="maps\LavenderNameRater.c" />
+    <ClCompile Include="maps\LavenderPokecenter1F.c" />
+    <ClCompile Include="maps\LavenderSpeechHouse.c" />
+    <ClCompile Include="maps\LavenderTown.c" />
+    <ClCompile Include="maps\MahoganyGym.c" />
+    <ClCompile Include="maps\MahoganyMart1F.c" />
+    <ClCompile Include="maps\MahoganyPokecenter1F.c" />
+    <ClCompile Include="maps\MahoganyRedGyaradosSpeechHouse.c" />
+    <ClCompile Include="maps\MahoganyTown.c" />
+    <ClCompile Include="maps\ManiasHouse.c" />
+    <ClCompile Include="maps\MobileBattleRoom.c" />
+    <ClCompile Include="maps\MobileTradeRoom.c" />
+    <ClCompile Include="maps\MountMoon.c" />
+    <ClCompile Include="maps\MountMoonGiftShop.c" />
+    <ClCompile Include="maps\MountMoonSquare.c" />
+    <ClCompile Include="maps\MountMortar1FInside.c" />
+    <ClCompile Include="maps\MountMortar1FOutside.c" />
+    <ClCompile Include="maps\MountMortar2FInside.c" />
+    <ClCompile Include="maps\MountMortarB1F.c" />
+    <ClCompile Include="maps\MoveDeletersHouse.c" />
+    <ClCompile Include="maps\MrFujisHouse.c" />
+    <ClCompile Include="maps\MrPokemonsHouse.c" />
+    <ClCompile Include="maps\MrPsychicsHouse.c" />
+    <ClCompile Include="maps\NationalPark.c" />
+    <ClCompile Include="maps\NationalParkBugContest.c" />
+    <ClCompile Include="maps\NewBarkTown.c" />
+    <ClCompile Include="maps\OaksLab.c" />
+    <ClCompile Include="maps\OlivineCafe.c" />
+    <ClCompile Include="maps\OlivineCity.c" />
+    <ClCompile Include="maps\OlivineGoodRodHouse.c" />
+    <ClCompile Include="maps\OlivineGym.c" />
+    <ClCompile Include="maps\OlivineLighthouse1F.c" />
+    <ClCompile Include="maps\OlivineLighthouse2F.c" />
+    <ClCompile Include="maps\OlivineLighthouse3F.c" />
+    <ClCompile Include="maps\OlivineLighthouse4F.c" />
+    <ClCompile Include="maps\OlivineLighthouse5F.c" />
+    <ClCompile Include="maps\OlivineLighthouse6F.c" />
+    <ClCompile Include="maps\OlivineMart.c" />
+    <ClCompile Include="maps\OlivinePokecenter1F.c" />
+    <ClCompile Include="maps\OlivinePort.c" />
+    <ClCompile Include="maps\OlivinePortPassage.c" />
+    <ClCompile Include="maps\OlivinePunishmentSpeechHouse.c" />
+    <ClCompile Include="maps\OlivineTimsHouse.c" />
+    <ClCompile Include="maps\PalletTown.c" />
+    <ClCompile Include="maps\PewterCity.c" />
+    <ClCompile Include="maps\PewterGym.c" />
+    <ClCompile Include="maps\PewterMart.c" />
+    <ClCompile Include="maps\PewterNidoranSpeechHouse.c" />
+    <ClCompile Include="maps\PewterPokecenter1F.c" />
+    <ClCompile Include="maps\PewterSnoozeSpeechHouse.c" />
+    <ClCompile Include="maps\PlayersHouse1F.c" />
+    <ClCompile Include="maps\PlayersHouse2F.c" />
+    <ClCompile Include="maps\PlayersNeighborsHouse.c" />
+    <ClCompile Include="maps\PokeSeersHouse.c" />
+    <ClCompile Include="maps\Pokecenter2F.c" />
+    <ClCompile Include="maps\PokecomCenter.c" />
+    <ClCompile Include="maps\PokecomCenterAdminOfficeMobile.c" />
+    <ClCompile Include="maps\PokemonFanClub.c" />
+    <ClCompile Include="maps\PowerPlant.c" />
+    <ClCompile Include="maps\RadioTower1F.c" />
+    <ClCompile Include="maps\RadioTower2F.c" />
+    <ClCompile Include="maps\RadioTower3F.c" />
+    <ClCompile Include="maps\RadioTower4F.c" />
+    <ClCompile Include="maps\RadioTower5F.c" />
+    <ClCompile Include="maps\RedsHouse1F.c" />
+    <ClCompile Include="maps\RedsHouse2F.c" />
+    <ClCompile Include="maps\RockTunnel1F.c" />
+    <ClCompile Include="maps\RockTunnelB1F.c" />
+    <ClCompile Include="maps\Route1.c" />
+    <ClCompile Include="maps\Route10North.c" />
+    <ClCompile Include="maps\Route10Pokecenter1F.c" />
+    <ClCompile Include="maps\Route10South.c" />
+    <ClCompile Include="maps\Route11.c" />
+    <ClCompile Include="maps\Route12.c" />
+    <ClCompile Include="maps\Route12SuperRodHouse.c" />
+    <ClCompile Include="maps\Route13.c" />
+    <ClCompile Include="maps\Route14.c" />
+    <ClCompile Include="maps\Route15.c" />
+    <ClCompile Include="maps\Route15FuchsiaGate.c" />
+    <ClCompile Include="maps\Route16.c" />
+    <ClCompile Include="maps\Route16FuchsiaSpeechHouse.c" />
+    <ClCompile Include="maps\Route16Gate.c" />
+    <ClCompile Include="maps\Route17.c" />
+    <ClCompile Include="maps\Route17Route18Gate.c" />
+    <ClCompile Include="maps\Route18.c" />
+    <ClCompile Include="maps\Route19.c" />
+    <ClCompile Include="maps\Route19FuchsiaGate.c" />
+    <ClCompile Include="maps\Route2.c" />
+    <ClCompile Include="maps\Route20.c" />
+    <ClCompile Include="maps\Route21.c" />
+    <ClCompile Include="maps\Route22.c" />
+    <ClCompile Include="maps\Route23.c" />
+    <ClCompile Include="maps\Route24.c" />
+    <ClCompile Include="maps\Route25.c" />
+    <ClCompile Include="maps\Route26.c" />
+    <ClCompile Include="maps\Route26HealHouse.c" />
+    <ClCompile Include="maps\Route27.c" />
+    <ClCompile Include="maps\Route27SandstormHouse.c" />
+    <ClCompile Include="maps\Route28.c" />
+    <ClCompile Include="maps\Route28SteelWingHouse.c" />
+    <ClCompile Include="maps\Route29.c" />
+    <ClCompile Include="maps\Route29Route46Gate.c" />
+    <ClCompile Include="maps\Route2Gate.c" />
+    <ClCompile Include="maps\Route2NuggetHouse.c" />
+    <ClCompile Include="maps\Route3.c" />
+    <ClCompile Include="maps\Route30.c" />
+    <ClCompile Include="maps\Route30BerryHouse.c" />
+    <ClCompile Include="maps\Route31.c" />
+    <ClCompile Include="maps\Route31VioletGate.c" />
+    <ClCompile Include="maps\Route32.c" />
+    <ClCompile Include="maps\Route32Pokecenter1F.c" />
+    <ClCompile Include="maps\Route32RuinsOfAlphGate.c" />
+    <ClCompile Include="maps\Route33.c" />
+    <ClCompile Include="maps\Route34.c" />
+    <ClCompile Include="maps\Route34IlexForestGate.c" />
+    <ClCompile Include="maps\Route35.c" />
+    <ClCompile Include="maps\Route35GoldenrodGate.c" />
+    <ClCompile Include="maps\Route35NationalParkGate.c" />
+    <ClCompile Include="maps\Route36.c" />
+    <ClCompile Include="maps\Route36NationalParkGate.c" />
+    <ClCompile Include="maps\Route36RuinsOfAlphGate.c" />
+    <ClCompile Include="maps\Route37.c" />
+    <ClCompile Include="maps\Route38.c" />
+    <ClCompile Include="maps\Route38EcruteakGate.c" />
+    <ClCompile Include="maps\Route39.c" />
+    <ClCompile Include="maps\Route39Barn.c" />
+    <ClCompile Include="maps\Route39Farmhouse.c" />
+    <ClCompile Include="maps\Route4.c" />
+    <ClCompile Include="maps\Route40.c" />
+    <ClCompile Include="maps\Route40BattleTowerGate.c" />
+    <ClCompile Include="maps\Route41.c" />
+    <ClCompile Include="maps\Route42.c" />
+    <ClCompile Include="maps\Route42EcruteakGate.c" />
+    <ClCompile Include="maps\Route43.c" />
+    <ClCompile Include="maps\Route43Gate.c" />
+    <ClCompile Include="maps\Route43MahoganyGate.c" />
+    <ClCompile Include="maps\Route44.c" />
+    <ClCompile Include="maps\Route45.c" />
+    <ClCompile Include="maps\Route46.c" />
+    <ClCompile Include="maps\Route5.c" />
+    <ClCompile Include="maps\Route5CleanseTagHouse.c" />
+    <ClCompile Include="maps\Route5SaffronGate.c" />
+    <ClCompile Include="maps\Route5UndergroundPathEntrance.c" />
+    <ClCompile Include="maps\Route6.c" />
+    <ClCompile Include="maps\Route6SaffronGate.c" />
+    <ClCompile Include="maps\Route6UndergroundPathEntrance.c" />
+    <ClCompile Include="maps\Route7.c" />
+    <ClCompile Include="maps\Route7SaffronGate.c" />
+    <ClCompile Include="maps\Route8.c" />
+    <ClCompile Include="maps\Route8SaffronGate.c" />
+    <ClCompile Include="maps\Route9.c" />
+    <ClCompile Include="maps\RuinsOfAlphAerodactylChamber.c" />
+    <ClCompile Include="maps\RuinsOfAlphAerodactylItemRoom.c" />
+    <ClCompile Include="maps\RuinsOfAlphAerodactylWordRoom.c" />
+    <ClCompile Include="maps\RuinsOfAlphHoOhChamber.c" />
+    <ClCompile Include="maps\RuinsOfAlphHoOhItemRoom.c" />
+    <ClCompile Include="maps\RuinsOfAlphHoOhWordRoom.c" />
+    <ClCompile Include="maps\RuinsOfAlphInnerChamber.c" />
+    <ClCompile Include="maps\RuinsOfAlphKabutoChamber.c" />
+    <ClCompile Include="maps\RuinsOfAlphKabutoItemRoom.c" />
+    <ClCompile Include="maps\RuinsOfAlphKabutoWordRoom.c" />
+    <ClCompile Include="maps\RuinsOfAlphOmanyteChamber.c" />
+    <ClCompile Include="maps\RuinsOfAlphOmanyteItemRoom.c" />
+    <ClCompile Include="maps\RuinsOfAlphOmanyteWordRoom.c" />
+    <ClCompile Include="maps\RuinsOfAlphOutside.c" />
+    <ClCompile Include="maps\RuinsOfAlphResearchCenter.c" />
+    <ClCompile Include="maps\SafariZoneMainOffice.c" />
+    <ClCompile Include="maps\SafariZoneWardensHome.c" />
+    <ClCompile Include="maps\SaffronCity.c" />
+    <ClCompile Include="maps\SaffronGym.c" />
+    <ClCompile Include="maps\SaffronMagnetTrainStation.c" />
+    <ClCompile Include="maps\SaffronMart.c" />
+    <ClCompile Include="maps\SaffronPokecenter1F.c" />
+    <ClCompile Include="maps\SeafoamGym.c" />
+    <ClCompile Include="maps\SilphCo1F.c" />
+    <ClCompile Include="maps\SilverCaveItemRooms.c" />
+    <ClCompile Include="maps\SilverCaveOutside.c" />
+    <ClCompile Include="maps\SilverCavePokecenter1F.c" />
+    <ClCompile Include="maps\SilverCaveRoom1.c" />
+    <ClCompile Include="maps\SilverCaveRoom2.c" />
+    <ClCompile Include="maps\SilverCaveRoom3.c" />
+    <ClCompile Include="maps\SlowpokeWellB1F.c" />
+    <ClCompile Include="maps\SlowpokeWellB2F.c" />
+    <ClCompile Include="maps\SoulHouse.c" />
+    <ClCompile Include="maps\SproutTower1F.c" />
+    <ClCompile Include="maps\SproutTower2F.c" />
+    <ClCompile Include="maps\SproutTower3F.c" />
+    <ClCompile Include="maps\TeamRocketBaseB1F.c" />
+    <ClCompile Include="maps\TeamRocketBaseB2F.c" />
+    <ClCompile Include="maps\TeamRocketBaseB3F.c" />
+    <ClCompile Include="maps\TinTower1F.c" />
+    <ClCompile Include="maps\TinTower2F.c" />
+    <ClCompile Include="maps\TinTower3F.c" />
+    <ClCompile Include="maps\TinTower4F.c" />
+    <ClCompile Include="maps\TinTower5F.c" />
+    <ClCompile Include="maps\TinTower6F.c" />
+    <ClCompile Include="maps\TinTower7F.c" />
+    <ClCompile Include="maps\TinTower8F.c" />
+    <ClCompile Include="maps\TinTower9F.c" />
+    <ClCompile Include="maps\TinTowerRoof.c" />
+    <ClCompile Include="maps\TohjoFalls.c" />
+    <ClCompile Include="maps\TradeCenter.c" />
+    <ClCompile Include="maps\TrainerHouse1F.c" />
+    <ClCompile Include="maps\TrainerHouseB1F.c" />
+    <ClCompile Include="maps\UndergroundPath.c" />
+    <ClCompile Include="maps\UnionCave1F.c" />
+    <ClCompile Include="maps\UnionCaveB1F.c" />
+    <ClCompile Include="maps\UnionCaveB2F.c" />
+    <ClCompile Include="maps\VermilionCity.c" />
+    <ClCompile Include="maps\VermilionDiglettsCaveSpeechHouse.c" />
+    <ClCompile Include="maps\VermilionFishingSpeechHouse.c" />
+    <ClCompile Include="maps\VermilionGym.c" />
+    <ClCompile Include="maps\VermilionMagnetTrainSpeechHouse.c" />
+    <ClCompile Include="maps\VermilionMart.c" />
+    <ClCompile Include="maps\VermilionPokecenter1F.c" />
+    <ClCompile Include="maps\VermilionPort.c" />
+    <ClCompile Include="maps\VermilionPortPassage.c" />
+    <ClCompile Include="maps\VictoryRoad.c" />
+    <ClCompile Include="maps\VictoryRoadGate.c" />
+    <ClCompile Include="maps\VioletCity.c" />
+    <ClCompile Include="maps\VioletGym.c" />
+    <ClCompile Include="maps\VioletKylesHouse.c" />
+    <ClCompile Include="maps\VioletMart.c" />
+    <ClCompile Include="maps\VioletNicknameSpeechHouse.c" />
+    <ClCompile Include="maps\VioletPokecenter1F.c" />
+    <ClCompile Include="maps\ViridianCity.c" />
+    <ClCompile Include="maps\ViridianGym.c" />
+    <ClCompile Include="maps\ViridianMart.c" />
+    <ClCompile Include="maps\ViridianNicknameSpeechHouse.c" />
+    <ClCompile Include="maps\ViridianPokecenter1F.c" />
+    <ClCompile Include="maps\WhirlIslandB1F.c" />
+    <ClCompile Include="maps\WhirlIslandB2F.c" />
+    <ClCompile Include="maps\WhirlIslandCave.c" />
+    <ClCompile Include="maps\WhirlIslandLugiaChamber.c" />
+    <ClCompile Include="maps\WhirlIslandNE.c" />
+    <ClCompile Include="maps\WhirlIslandNW.c" />
+    <ClCompile Include="maps\WhirlIslandSE.c" />
+    <ClCompile Include="maps\WhirlIslandSW.c" />
+    <ClCompile Include="maps\WillsRoom.c" />
+    <ClCompile Include="maps\WiseTriosRoom.c" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

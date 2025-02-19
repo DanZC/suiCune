@@ -48,7 +48,7 @@ startproject "suiCune"
 		optimize "debug"
 		runtime "debug"
 		symbols "on"
-		disablewarnings { "4201,4102,4152,4200" }
+		disablewarnings { ";4201;4102;4152;4200" }
 
 	filter "platforms:x86"
 		architecture "x86"
