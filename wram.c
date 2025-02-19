@@ -16,8 +16,8 @@ struct wram_s* wram;
 check_wram0_field(wStackBottom);
 check_wram0_field(wStackTop);
 // section Audio RAM
-check_wram0_field(wMusicPlaying);
-check_wram0_field_mapped(wChannel, wChannel1);
+//check_wram0_field(wMusicPlaying);
+//check_wram0_field_mapped(wChannel, wChannel1);
 check_wram0_field(wCurTrackDuty);
 check_wram0_field(wCurTrackVolumeEnvelope);
 check_wram0_field(wCurTrackFrequency);
@@ -52,7 +52,7 @@ check_wram0_field(wCryTracks);
 check_wram0_field(wSFXDuration);
 check_wram0_field(wCurSFX);
 check_wram0_field(wMapMusic);
-check_wram0_field(wDontPlayMapMusicOnReload);
+//check_wram0_field(wDontPlayMapMusicOnReload);
 // section WRAM
 check_wram0_field(wLZAddress);
 check_wram0_field(wLZBank);

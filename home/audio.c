@@ -695,48 +695,16 @@ play:
 }
 
 void PlayMapMusicBike_Conv(void) {
-    // SET_PC(0x3EC1U);
-    //  If the player's on a bike, play the bike music instead of the map music
-    // PUSH_HL;  // push hl
-    // PUSH_DE;  // push de
-    // PUSH_BC;  // push bc
-    // PUSH_AF;  // push af
-
-    // XOR_A_A;                               // xor a
-    // LD_addr_A(wDontPlayMapMusicOnReload);  // ld [wDontPlayMapMusicOnReload], a
-    wram->wDontPlayMapMusicOnReload = FALSE;
-    // LD_DE(MUSIC_BICYCLE);                  // ld de, MUSIC_BICYCLE
-    // LD_A_addr(wPlayerState);               // ld a, [wPlayerState]
-    // CP_A(PLAYER_BIKE);                     // cp PLAYER_BIKE
-    // IF_Z goto play;                        // jr z, .play
-    // CALL(aGetMapMusic_MaybeSpecial);       // call GetMapMusic_MaybeSpecial
+    wDontPlayMapMusicOnReload = FALSE;
     uint16_t music;
     if(wram->wPlayerState == PLAYER_BIKE)
         music = MUSIC_BICYCLE;
     else
         music = GetMapMusic_MaybeSpecial_Conv();
-
-// play:
-    // SET_PC(0x3ED6U);
-    // PUSH_DE;            // push de
-    // LD_DE(MUSIC_NONE);  // ld de, MUSIC_NONE
-    // CALL(aPlayMusic);   // call PlayMusic
     PlayMusic_Conv(MUSIC_NONE);
-    // CALL(aDelayFrame);  // call DelayFrame
     DelayFrame();
-    // POP_DE;             // pop de
-
-    // LD_A_E;                // ld a, e
-    // LD_addr_A(wMapMusic);  // ld [wMapMusic], a
     wram->wMapMusic = (uint8_t)(music & 0xff);
-    // CALL(aPlayMusic);      // call PlayMusic
     PlayMusic_Conv(music);
-
-    // POP_AF;  // pop af
-    // POP_BC;  // pop bc
-    // POP_DE;  // pop de
-    // POP_HL;  // pop hl
-    // RET;     // ret
 }
 
 void TryRestartMapMusic(void) {
@@ -759,7 +727,7 @@ void TryRestartMapMusic_Conv(void) {
     // LD_A_addr(wDontPlayMapMusicOnReload);  // ld a, [wDontPlayMapMusicOnReload]
     // AND_A_A;                               // and a
     // JR_Z(mRestartMapMusic);                // jr z, RestartMapMusic
-    if(!wram->wDontPlayMapMusicOnReload)
+    if(!wDontPlayMapMusicOnReload)
         return RestartMapMusic_Conv();
     // XOR_A_A;                               // xor a
     // LD_addr_A(wMapMusic);                  // ld [wMapMusic], a
@@ -771,7 +739,7 @@ void TryRestartMapMusic_Conv(void) {
     DelayFrame();
     // XOR_A_A;                               // xor a
     // LD_addr_A(wDontPlayMapMusicOnReload);  // ld [wDontPlayMapMusicOnReload], a
-    wram->wDontPlayMapMusicOnReload = FALSE;
+    wDontPlayMapMusicOnReload = FALSE;
     // RET;                                   // ret
 }
 

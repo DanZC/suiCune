@@ -53,15 +53,15 @@ void MusicFadeRestart(void) {  //  restart but keep the music id to fade in to
 }
 
 void MusicOn(void) {
-    gb_write(wMusicPlaying, 1);
+    wMusicPlaying = TRUE;
 }
 
 void MusicOff(void) {
-    gb_write(wMusicPlaying, 0);
+    wMusicPlaying = FALSE;
 }
 
 void v_UpdateSound(void) {  // called once per frame
-    if (!gb_read(wMusicPlaying))
+    if (!wMusicPlaying)
         return;  // no use updating audio if it's not playing
     gb_write(wSoundOutput, 0);
     for (curChannel = 0; curChannel < NUM_CHANNELS; curChannel++) {

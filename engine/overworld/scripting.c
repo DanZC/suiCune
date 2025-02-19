@@ -5189,10 +5189,7 @@ void Script_dontrestartmapmusic(void){
 
 void Script_dontrestartmapmusic_Conv(script_s* s){
     (void)s;
-    // LD_A(TRUE);
-    // LD_addr_A(wDontPlayMapMusicOnReload);
-    wram->wDontPlayMapMusicOnReload = TRUE;
-    // RET;
+    wDontPlayMapMusicOnReload = TRUE;
 }
 
 void Script_writecmdqueue(void){
