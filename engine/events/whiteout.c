@@ -7,6 +7,7 @@
 #include "../../home/clear_sprites.h"
 #include "../../home/fade.h"
 #include "../../util/scripting.h"
+#include "../../mobile/mobile_41.h"
 #include "../../data/text/common.h"
 #include "misc_scripts.h"
 
@@ -76,6 +77,7 @@ void BattleBGMap(void){
 
 void HalveMoney(void){
     // FARCALL(aStubbedTrainerRankings_WhiteOuts);
+    StubbedTrainerRankings_WhiteOuts();
 
 //  Halve the player's money.
     // LD_HL(wMoney);

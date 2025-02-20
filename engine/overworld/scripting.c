@@ -2965,7 +2965,7 @@ void Script_reloadmapafterbattle_Conv(script_s* s){
         // LD_B(BANK(aScript_BattleWhiteout));
         // LD_HL(mScript_BattleWhiteout);
         // JP(mScriptJump);
-        Script_Goto(s, Script_BattleWhiteout);
+        return Script_Goto(s, Script_BattleWhiteout);
     }
 
 // notblackedout:
