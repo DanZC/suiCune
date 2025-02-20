@@ -2,6 +2,7 @@
 #include "mobile_40.h"
 #include "mobile_41.h"
 #include "mobile_12_2.h"
+#include "mobile_22.h"
 #include "mobile_45_sprite_engine.h"
 #include "mobile_5f.h"
 #include "../home/delay.h"
@@ -4096,7 +4097,7 @@ const mobile_comm_fn_t Jumptable_101297[] = {
 
 uint8_t Function10138b(void){
     // FARCALL(aFunction8adcc); // TODO: Convert Function8adcc
-    bool carry = false;
+    bool carry = Function8adcc();
     // LD_C(0);
     uint8_t c = 0;
     // IF_C goto asm_101396;
@@ -5068,29 +5069,39 @@ void Function1017f1(void){
 }
 
 void Function1017f5(void){
-    LD_B(0);
-    LD_C(0x01);
-    FARCALL(aFunction10079c);
-    RET_C ;
-    LD_C(0x01);
-    LD_B(0x03);
-    FARCALL(aAdvanceMobileInactivityTimerAndCheckExpired);
-    RET_C ;
-    FARCALL(aFunction100382);
-    LD_A_addr(wcd27);
-    BIT_A(7);
-    IF_NZ goto next;
-    LD_HL(wcd29);
-    SET_hl(6);
-    RET;
-
-
-next:
-    LD_A_addr(wMobileCommsJumptableIndex);
-    INC_A;
-    LD_addr_A(wMobileCommsJumptableIndex);
-    RET;
-
+    // LD_B(0);
+    // LD_C(0x01);
+    // FARCALL(aFunction10079c);
+    // RET_C ;
+    if(Function10079c(0, 0x01))
+        return;
+    // LD_C(0x01);
+    // LD_B(0x03);
+    // FARCALL(aAdvanceMobileInactivityTimerAndCheckExpired);
+    // RET_C ;
+    if(AdvanceMobileInactivityTimerAndCheckExpired(0x01, 0x03))
+        return;
+    // FARCALL(aFunction100382);
+    Function100382();
+    // LD_A_addr(wcd27);
+    // BIT_A(7);
+    // IF_NZ goto next;
+    if(bit_test(wram->wcd27, 7)) {
+    // next:
+        // LD_A_addr(wMobileCommsJumptableIndex);
+        // INC_A;
+        // LD_addr_A(wMobileCommsJumptableIndex);
+        wram->wMobileCommsJumptableIndex++;
+        // RET;
+        return;
+    }
+    else {
+        // LD_HL(wcd29);
+        // SET_hl(6);
+        bit_set(wram->wcd29, 6);
+        // RET;
+        return;
+    }
 }
 
 void Function101826(void){
@@ -6267,24 +6278,31 @@ void Function101e4f(void){
 }
 
 void Function101e64(void){
-    CALL(aFunction101ecc);
-    CALL(aFunction1020a8);
-    PUSH_AF;
-    CALL(aFunction101ed3);
-    POP_AF;
-    IF_C goto asm_101e77;
-    LD_A(0x24);
-    LD_addr_A(wMobileCommsJumptableIndex);
-    RET;
+    // CALL(aFunction101ecc);
+    Function101ecc();
+    // CALL(aFunction1020a8);
+    bool carry = Function1020a8();
+    // PUSH_AF;
+    // CALL(aFunction101ed3);
+    Function101ed3();
+    // POP_AF;
+    // IF_C goto asm_101e77;
+    if(!carry) {
+        // LD_A(0x24);
+        // LD_addr_A(wMobileCommsJumptableIndex);
+        wram->wMobileCommsJumptableIndex = 0x24;
+        // RET;
+        return;
+    }
 
-
-asm_101e77:
-    LD_HL(wcd29);
-    SET_hl(5);
-    LD_A(0x02);
-    LD_addr_A(wcd2b);
-    RET;
-
+// asm_101e77:
+    // LD_HL(wcd29);
+    // SET_hl(5);
+    bit_set(wram->wcd29, 5);
+    // LD_A(0x02);
+    // LD_addr_A(wcd2b);
+    wram->wcd2b = 0x02;
+    // RET;
 }
 
 void Function101e82(void){
@@ -6308,15 +6326,19 @@ void Function101e8d(void){
 }
 
 void Function101e98(void){
-    CALL(aClearSprites);
-    FARCALL(aFunction8adb3);
-    RET_C ;
-    LD_HL(wGameTimerPaused);
-    SET_hl(GAME_TIMER_MOBILE_F);
-    LD_HL(wdc41);
-    SET_hl(4);
-    RET;
-
+    // CALL(aClearSprites);
+    ClearSprites_Conv();
+    // FARCALL(aFunction8adb3); // TODO: Convert Function8adb3
+    // RET_C ;
+    if(Function8adb3())
+        return;
+    // LD_HL(wGameTimerPaused);
+    // SET_hl(GAME_TIMER_MOBILE_F);
+    bit_set(wram->wGameTimerPaused, GAME_TIMER_MOBILE_F);
+    // LD_HL(wdc41);
+    // SET_hl(4);
+    bit_set(wram->wdc41, 4);
+    // RET;
 }
 
 bool Function101ead(void){
@@ -6601,17 +6623,20 @@ void Function10209c(void){
     // RET;
 }
 
-void Function1020a8(void){
-    CALL(aFunction10209c);
-    LD_C(0x01);
-    LD_DE(wdc42);
-    FARCALL(aFunction17a68f);
-    RET_C ;
-    CALL(aFunction10208e);
-    CALL(aFunction102068);
-    XOR_A_A;
-    RET;
-
+bool Function1020a8(void){
+    // CALL(aFunction10209c);
+    Function10209c();
+    // LD_C(0x01);
+    // LD_DE(wdc42);
+    // FARCALL(aFunction17a68f); // TODO: Convert Function17a68f
+    // RET_C ;
+    // CALL(aFunction10208e);
+    Function10208e(wram->wdc42);
+    // CALL(aFunction102068);
+    Function102068(wram->wdc42);
+    // XOR_A_A;
+    // RET;
+    return false;
 }
 
 void Function1020bf(void){
@@ -9960,7 +9985,7 @@ void Function10343c(void){
         // LD_C(0x12);
         // LD_B(0x01);
         // CALL(aFunction1034e0);
-        Function1034e0(Function1034f7(1), 0x12, 0x01);
+        Function1034e0(Function1034f7(1), 0x01, 0x12);
         // goto asm_10345f;
     }
     else {
@@ -9970,7 +9995,7 @@ void Function10343c(void){
         // LD_C(0x12);
         // LD_B(0x02);
         // CALL(aFunction1034e0);
-        Function1034e0(Function1034f7(-19), 0x12, 0x02);
+        Function1034e0(Function1034f7(-19), 0x02, 0x12);
     }
 
 // asm_10345f:

@@ -341,7 +341,7 @@ void Function102068(const uint8_t* de);
 bool Function102080(uint8_t a, uint8_t* hl);
 void Function10208e(const void* de);
 void Function10209c(void);
-void Function1020a8(void);
+bool Function1020a8(void);
 void Function1020bf(void);
 bool Function1020ea(void);
 uint8_t Function102112(void);
