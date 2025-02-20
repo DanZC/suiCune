@@ -1311,15 +1311,15 @@ struct wram_s
                                 uint8_t wcd36; // hours
                                 uint8_t wcd37; // mins
                                 uint8_t wcd38; // secs
-                                uint8_t wcd39[1];
-                                uint8_t wcd3a[1];
+                                uint8_t wcd39;
+                                uint8_t wcd3a;
                                 uint8_t wcd3b[1];
                                 uint8_t wBattleTowerRoomMenu2JumptableIndex;
                                 uint8_t wcd3d[1];
                                 uint8_t wcd3e[1];
                                 uint8_t wcd3f[1];
-                                uint8_t wcd40[1];
-                                uint8_t wcd41[1];
+                                uint8_t wcd40;
+                                uint8_t wcd41;
                             };
                             // format:
                             //	db WHICH_WORD
