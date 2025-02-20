@@ -564,7 +564,7 @@ void Function4aad3(void){
     uint8_t c = wram->wPartyCount;
     // XOR_A_A;
     // LDH_addr_A(hObjectStructIndex);
-    hram->hObjectStructIndex = 0x0;
+    hObjectStructIndex = 0x0;
 
     do {
     // loop:
@@ -576,7 +576,7 @@ void Function4aad3(void){
         // LDH_A_addr(hObjectStructIndex);
         // INC_A;
         // LDH_addr_A(hObjectStructIndex);
-        hram->hObjectStructIndex++;
+        hObjectStructIndex++;
         // POP_HL;
         // POP_BC;
         // DEC_C;
@@ -927,7 +927,7 @@ void Function4ac58(void){
 // asm_4ac96:
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hBGMapMode = 0x1;
     // CALL(aFunction4acaa);
     Function4acaa();
     // CALL(aExitMenu);
@@ -992,7 +992,7 @@ void Function4acaa(void){
         // LDH_A_addr(hJoyPressed);
         // BIT_A(0);
         // IF_NZ goto asm_4acf4;
-        if(bit_test(hram->hJoyPressed, A_BUTTON_F)) {
+        if(bit_test(hJoyPressed, A_BUTTON_F)) {
         // asm_4acf4:
             // LD_A_addr(wd019);
             // BIT_A(1);
@@ -1025,7 +1025,7 @@ void Function4acaa(void){
         }
         // BIT_A(1);
         // IF_NZ goto asm_4acf3;
-        else if(bit_test(hram->hJoyPressed, B_BUTTON_F))
+        else if(bit_test(hJoyPressed, B_BUTTON_F))
             break;
         // goto asm_4acaa;
     }

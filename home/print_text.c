@@ -120,12 +120,12 @@ void PrintLetterDelay_Conv(void) {
     // LD_HL(hOAMUpdate);
     // LD_A_hl;
     // PUSH_AF;
-    uint8_t tempOAM = hram->hOAMUpdate;
+    uint8_t tempOAM = hOAMUpdate;
 
     //  orginally turned oam update off...
     //     ld a, 1
     // LD_hl_A;
-    hram->hOAMUpdate = tempOAM; // Remove this?
+    hOAMUpdate = tempOAM; // Remove this?
 
     //  force fast scroll?
     // LD_A_addr(wTextboxFlags);
@@ -171,7 +171,7 @@ void PrintLetterDelay_Conv(void) {
         // end:
             // POP_AF;
             // LDH_addr_A(hOAMUpdate);
-            hram->hOAMUpdate = tempOAM;
+            hOAMUpdate = tempOAM;
 
             // POP_BC;
             // POP_DE;
@@ -184,12 +184,12 @@ void PrintLetterDelay_Conv(void) {
         // LDH_A_addr(hJoyDown);
         // BIT_A(A_BUTTON_F);
         // IF_Z goto checkb;
-        else if(!bit_test(hram->hJoyDown, A_BUTTON_F))
+        else if(!bit_test(hJoyDown, A_BUTTON_F))
         {
         // checkb:
             // BIT_A(B_BUTTON_F);
             // IF_Z goto wait;
-            if(!bit_test(hram->hJoyDown, B_BUTTON_F))
+            if(!bit_test(hJoyDown, B_BUTTON_F))
             {
             // wait:
                 // LD_A_addr(wTextDelayFrames);
@@ -202,7 +202,7 @@ void PrintLetterDelay_Conv(void) {
             // end:
                 // POP_AF;
                 // LDH_addr_A(hOAMUpdate);
-                hram->hOAMUpdate = tempOAM;
+                hOAMUpdate = tempOAM;
 
                 // POP_BC;
                 // POP_DE;
@@ -217,7 +217,7 @@ void PrintLetterDelay_Conv(void) {
         // end:
             // POP_AF;
             // LDH_addr_A(hOAMUpdate);
-            hram->hOAMUpdate = tempOAM;
+            hOAMUpdate = tempOAM;
 
             // POP_BC;
             // POP_DE;
@@ -234,7 +234,7 @@ void PrintLetterDelay_Conv(void) {
     // end:
         // POP_AF;
         // LDH_addr_A(hOAMUpdate);
-        hram->hOAMUpdate = tempOAM;
+        hOAMUpdate = tempOAM;
 
         // POP_BC;
         // POP_DE;
@@ -261,7 +261,7 @@ void PrintLetterDelay_Conv(void) {
 // end:
 //     // POP_AF;
 //     // LDH_addr_A(hOAMUpdate);
-//     gb_write(hOAMUpdate, tempOAM);
+//     (hOAMUpdate, tempOAM);
 
 //     // POP_BC;
 //     // POP_DE;

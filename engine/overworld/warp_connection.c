@@ -472,9 +472,9 @@ static void LoadMapTimeOfDay_ClearBGMap(void) {
     // LD_addr_A(wBGMapAnchor);
     wram->wBGMapAnchor = vBGMap0;
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0;
+    hSCY = 0;
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0;
+    hSCX = 0;
     // FARCALL(aApplyBGMapAnchorToObjects);
     ApplyBGMapAnchorToObjects_Conv();
 
@@ -541,7 +541,7 @@ static void LoadMapTimeOfDay_PushAttrmap(void) {
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // RET_Z ;
-    if(hram->hCGB == 0)
+    if(hCGB == 0)
         return;
 
     // decoord(0, 0, wAttrmap);
@@ -577,10 +577,10 @@ void LoadMapGraphics(void){
     LoadTilesetGFX_Conv();
     // XOR_A_A;
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = 0;
+    hMapAnims = 0;
     // XOR_A_A;
     // LDH_addr_A(hTileAnimFrame);
-    hram->hTileAnimFrame = 0;
+    hTileAnimFrame = 0;
     // FARCALL(aRefreshSprites);
     RefreshSprites_Conv();
     // CALL(aLoadFontsExtra);

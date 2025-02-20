@@ -564,7 +564,7 @@ void PopulateDecoCategoryMenu(void){
     CopyMenuHeader_Conv2(&ScrollingMenuHeader);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hBGMapMode = 0x0;
     // CALL(aInitScrollingMenu);
     InitScrollingMenu_Conv();
     // XOR_A_A;

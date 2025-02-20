@@ -46,7 +46,7 @@ static bool BattleCommand_SleepTalk_check_has_usable_move(struct BattleMon* mon)
     // IF_Z goto got_move_2;
 
     // LD_A_addr(wEnemyDisabledMove);
-    move_t disabledMove = (hram->hBattleTurn == 0)? wram->wDisabledMove: wram->wEnemyDisabledMove;
+    move_t disabledMove = (hBattleTurn == 0)? wram->wDisabledMove: wram->wEnemyDisabledMove;
 
 // got_move_2:
     // LD_B_A;
@@ -114,8 +114,8 @@ void BattleCommand_SleepTalk(void){
     // LD_HL(wEnemyMonMoves + 1);
     // LD_A_addr(wEnemyDisabledMove);
     // LD_D_A;
-    struct BattleMon* mon = (hram->hBattleTurn == 0)? &wram->wBattleMon: &wram->wEnemyMon;
-    move_t d = (hram->hBattleTurn == 0)? wram->wDisabledMove: wram->wEnemyDisabledMove;
+    struct BattleMon* mon = (hBattleTurn == 0)? &wram->wBattleMon: &wram->wEnemyMon;
+    move_t d = (hBattleTurn == 0)? wram->wDisabledMove: wram->wEnemyDisabledMove;
 
 // got_moves:
     // LD_A(BATTLE_VARS_STATUS);

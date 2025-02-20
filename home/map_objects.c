@@ -526,7 +526,7 @@ not_visible:
 struct Object* CheckObjectVisibility_Conv(uint8_t a){
     // LDH_addr_A(hMapObjectIndex);
     // CALL(aGetMapObject);
-    hram->hMapObjectIndex = a;
+    hMapObjectIndex = a;
     struct MapObject* mobj = GetMapObject_Conv(a);
     // LD_HL(MAPOBJECT_OBJECT_STRUCT_ID);
     // ADD_HL_BC;
@@ -536,7 +536,7 @@ struct Object* CheckObjectVisibility_Conv(uint8_t a){
     if(mobj->structId == 0xff) 
         return NULL;
     // LDH_addr_A(hObjectStructIndex);
-    hram->hObjectStructIndex = mobj->structId;
+    hObjectStructIndex = mobj->structId;
     // CALL(aGetObjectStruct);
     // AND_A_A;
     // RET;
@@ -695,12 +695,12 @@ bool CheckObjectTime_Conv(struct MapObject* bc){
             // LD_A_E;
             // CP_A_hl;
             // IF_C goto no;
-            if(e < hram->hHours)
+            if(e < hHours)
                 return true;
             // LD_A_hl;
             // CP_A_D;
             // IF_NC goto yes;
-            if(hram->hHours >= d)
+            if(hHours >= d)
                 return false;
             // goto no;
             return true;
@@ -709,12 +709,12 @@ bool CheckObjectTime_Conv(struct MapObject* bc){
             // LD_A_hl;
             // CP_A_D;
             // IF_NC goto yes;
-            if(hram->hHours >= d)
+            if(hHours >= d)
                 return false;
             // CP_A_E;
             // IF_C goto yes;
             // IF_Z goto yes;
-            if(hram->hHours <= e)
+            if(hHours <= e)
                 return false;
             // goto no;
             return true;
@@ -822,7 +822,7 @@ static void ApplyDeletionToMapObject_CheckStopFollow(uint8_t a) {
 
 void ApplyDeletionToMapObject_Conv(uint8_t mapObjIdx){
     // LDH_addr_A(hMapObjectIndex);
-    hram->hMapObjectIndex = mapObjIdx;
+    hMapObjectIndex = mapObjIdx;
     // CALL(aGetMapObject);
     struct MapObject* bc = GetMapObject_Conv(mapObjIdx);
     // LD_HL(MAPOBJECT_OBJECT_STRUCT_ID);
@@ -959,7 +959,7 @@ void LoadMovementDataPointer_Conv(uint8_t a, uint16_t hl, uint16_t bc){
     wram->wMovementObject = a;
     // LDH_A_addr(hROMBank);
     // LD_addr_A(wMovementDataBank);
-    wram->wMovementDataBank = hram->hROMBank;
+    wram->wMovementDataBank = hROMBank;
     // LD_A_L;
     // LD_addr_A(wMovementDataAddress);
     // LD_A_H;
@@ -994,7 +994,7 @@ bool LoadMovementDataPointer_Conv2(uint8_t a, const uint8_t* hl){
     wram->wMovementObject = a;
     // LDH_A_addr(hROMBank);
     // LD_addr_A(wMovementDataBank);
-    wram->wMovementDataBank = hram->hROMBank;
+    wram->wMovementDataBank = hROMBank;
     // LD_A_L;
     // LD_addr_A(wMovementDataAddress);
     // LD_A_H;

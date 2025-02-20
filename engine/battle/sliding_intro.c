@@ -140,7 +140,7 @@ static void BattleIntroSlidingPics_subfunction1(void) {
     ByteFill_Conv2(wram->wLYOverrides, SCREEN_HEIGHT_PX, 0x90);
     // LD_A(0x90);
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0x90;
+    hSCX = 0x90;
     // LD_A(0b11100100);
     // CALL(aDmgToCgbBGPals);
     DmgToCgbBGPals_Conv(0b11100100);
@@ -222,7 +222,7 @@ static void BattleIntroSlidingPics_subfunction2(void) {
         // NOP;
         // LD_A_D;
         // LDH_addr_A(hSCX);
-        hram->hSCX = d;
+        hSCX = d;
         // CALL(aBattleIntroSlidingPics_subfunction5);
         BattleIntroSlidingPics_subfunction5(d, e);
         // INC_E;
@@ -264,12 +264,12 @@ void BattleIntroSlidingPics(void){
     BattleIntroSlidingPics_subfunction1();
     // LD_A(LOW(rSCX));
     // LDH_addr_A(hLCDCPointer);
-    hram->hLCDCPointer = LOW(rSCX);
+    hLCDCPointer = LOW(rSCX);
     // CALL(aBattleIntroSlidingPics_subfunction2);
     BattleIntroSlidingPics_subfunction2();
     // XOR_A_A;
     // LDH_addr_A(hLCDCPointer);
-    hram->hLCDCPointer = 0;
+    hLCDCPointer = 0;
     // POP_AF;
     // LDH_addr_A(rSVBK);
     gb_write(rSVBK, tempVBK);

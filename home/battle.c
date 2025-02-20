@@ -98,7 +98,7 @@ uint16_t UserPartyAttr_Conv(uint8_t a){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto ot;
-    if(hram->hBattleTurn != 0)
+    if(hBattleTurn != 0)
     {
         // JR(mOTPartyAttr);
         return OTPartyAttr_Conv(a);
@@ -112,7 +112,7 @@ struct PartyMon* UserPartyMon_Conv(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto ot;
-    if(hram->hBattleTurn != 0)
+    if(hBattleTurn != 0)
     {
         // JR(mOTPartyAttr);
         return wram->wOTPartyMon + wram->wCurOTMon;
@@ -140,7 +140,7 @@ uint16_t OpponentPartyAttr_Conv(uint8_t a){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto ot;
-    if(hram->hBattleTurn == 0)
+    if(hBattleTurn == 0)
     {
         // JR(mOTPartyAttr);
         return OTPartyAttr_Conv(a);
@@ -154,7 +154,7 @@ struct PartyMon* OpponentPartyMon_Conv(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto ot;
-    if(hram->hBattleTurn == 0)
+    if(hBattleTurn == 0)
     {
         // JR(mOTPartyAttr);
         return wram->wOTPartyMon + wram->wCurOTMon;
@@ -249,7 +249,7 @@ void SetPlayerTurn(void){
 void SetPlayerTurn_Conv(void){
     // XOR_A_A;
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = 0; // Player's turn
+    hBattleTurn = 0; // Player's turn
 }
 
 void SetEnemyTurn(void){
@@ -262,7 +262,7 @@ void SetEnemyTurn(void){
 void SetEnemyTurn_Conv(void){
     // LD_A(1);
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = 1; // Enemy's turn
+    hBattleTurn = 1; // Enemy's turn
 }
 
 void UpdateOpponentInParty(void){
@@ -285,7 +285,7 @@ void UpdateOpponentInParty_Conv(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // JR_Z (mUpdateEnemyMonInParty);
-    if(hram->hBattleTurn == 0)
+    if(hBattleTurn == 0)
         return UpdateEnemyMonInParty_Conv();
 
     // JR(mUpdateBattleMonInParty);
@@ -296,7 +296,7 @@ void UpdateUserInParty_Conv(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // JR_Z (mUpdateBattleMonInParty);
-    if(hram->hBattleTurn == 0)
+    if(hBattleTurn == 0)
         return UpdateBattleMonInParty_Conv();
     
     // JR(mUpdateEnemyMonInParty);
@@ -711,7 +711,7 @@ void PushLYOverrides_Conv(void){
     // LDH_A_addr(hLCDCPointer);
     // AND_A_A;
     // RET_Z ;
-    if(hram->hLCDCPointer == 0)
+    if(hLCDCPointer == 0)
         return;
 
     // LD_A(LOW(wLYOverridesBackup));

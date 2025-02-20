@@ -15,7 +15,7 @@ void QueueScript(void){
 void QueueScript_Conv(uint16_t hl){
     // LDH_A_addr(hROMBank);
 
-    return FarQueueScript_Conv(hram->hROMBank, hl);
+    return FarQueueScript_Conv(hROMBank, hl);
 }
 
 void FarQueueScript(void){

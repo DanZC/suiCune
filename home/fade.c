@@ -72,7 +72,7 @@ void RotateFourPalettesRight_Conv(void){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // IF_Z goto dmg;
-    if(hram->hCGB) {
+    if(hCGB) {
         // LD_HL(mIncGradGBPalTable_00);
         // LD_B(4);
         // JR(mRotatePalettesRight);
@@ -103,7 +103,7 @@ void RotateThreePalettesRight_Conv(void){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // IF_Z goto dmg;
-    if(hram->hCGB) {
+    if(hCGB) {
         // LD_HL(mIncGradGBPalTable_05);
         // LD_B(3);
         // JR(mRotatePalettesRight);
@@ -181,7 +181,7 @@ void RotateFourPalettesLeft_Conv(void){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // IF_Z goto dmg;
-    if(hram->hCGB) {
+    if(hCGB) {
         // LD_HL(mIncGradGBPalTable_04 - 1);
         // LD_B(4);
         // JR(mRotatePalettesLeft);
@@ -213,7 +213,7 @@ void RotateThreePalettesLeft_Conv(void){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // IF_Z goto dmg;
-    if(hram->hCGB) {
+    if(hCGB) {
         // LD_HL(mIncGradGBPalTable_07 - 1);
         // LD_B(3);
         // JR(mRotatePalettesLeft);

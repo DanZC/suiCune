@@ -42,7 +42,7 @@ void BattleCommand_Thief(void){
     item_t* hl;
     item_t* de;
     item_t itm;
-    if(hram->hBattleTurn == 0) {
+    if(hBattleTurn == 0) {
     //  The player needs to be able to steal an item.
 
         // CALL(aBattleCommand_Thief_playeritem);

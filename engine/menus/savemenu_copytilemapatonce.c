@@ -7,7 +7,7 @@ void SaveMenu_CopyTilemapAtOnce(void) {
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // JP_Z(mWaitBGMap);
-    if(hram->hCGB == 0)
+    if(hCGB == 0)
         return WaitBGMap_Conv();
     return v_CopyTilemapAtOnce_Conv();
 

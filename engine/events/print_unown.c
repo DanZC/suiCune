@@ -28,10 +28,10 @@ void v_UnownPrinter(void){
 
     // LDH_A_addr(hInMenu);
     // PUSH_AF;
-    uint8_t inMenu = hram->hInMenu;
+    uint8_t inMenu = hInMenu;
     // LD_A(0x1);
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = 0x1;
+    hInMenu = 0x1;
     // LD_A_addr(wOptions);
     // PUSH_AF;
     uint8_t options = wram->wOptions;
@@ -115,13 +115,13 @@ void v_UnownPrinter(void){
         // LDH_A_addr(hJoyPressed);
         // AND_A(B_BUTTON);
         // IF_NZ goto pressed_b;
-        if(hram->hJoyPressed & B_BUTTON)
+        if(hJoyPressed & B_BUTTON)
             break;
 
         // LDH_A_addr(hJoyPressed);
         // AND_A(A_BUTTON);
         // IF_NZ goto pressed_a;
-        if(hram->hJoyPressed & A_BUTTON){
+        if(hJoyPressed & A_BUTTON){
         // pressed_a:
             // LD_A_addr(wJumptableIndex);
             // PUSH_AF;
@@ -150,7 +150,7 @@ void v_UnownPrinter(void){
     wram->wOptions = options;
     // POP_AF;
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = inMenu;
+    hInMenu = inMenu;
     // CALL(aReturnToMapFromSubmenu);
     ReturnToMapFromSubmenu();
     // RET;
@@ -234,7 +234,7 @@ static void v_UnownPrinter_UpdateUnownFrontpic(void){
     // hlcoord(1, 6, wTilemap);
     // XOR_A_A;
     // LDH_addr_A(hGraphicStartTile);
-    hram->hGraphicStartTile = 0x0;
+    hGraphicStartTile = 0x0;
     // LD_BC((7 << 8) | 7);
     // PREDEF(pPlaceGraphic);
     PlaceGraphicYStagger_Conv(coord(1, 6, wram->wTilemap), 7, 7);
@@ -248,7 +248,7 @@ static void v_UnownPrinter_LeftRight(void){
     // LDH_A_addr(hJoyLast);
     // AND_A(D_RIGHT);
     // IF_NZ goto press_right;
-    if(hram->hJoyLast & D_RIGHT){
+    if(hJoyLast & D_RIGHT){
     // press_right:
         // LD_HL(wJumptableIndex);
         // LD_A_hl;
@@ -266,7 +266,7 @@ static void v_UnownPrinter_LeftRight(void){
     // LDH_A_addr(hJoyLast);
     // AND_A(D_LEFT);
     // IF_NZ goto press_left;
-    else if(hram->hJoyLast & D_LEFT){
+    else if(hJoyLast & D_LEFT){
     // press_left:
         // LD_HL(wJumptableIndex);
         // LD_A_hl;
@@ -316,7 +316,7 @@ void PlaceUnownPrinterFrontpic(void){
     // hlcoord(7, 11, wTilemap);
     // LD_A(0x31);
     // LDH_addr_A(hGraphicStartTile);
-    hram->hGraphicStartTile = 0x31;
+    hGraphicStartTile = 0x31;
     // LD_BC((7 << 8) | 7);
     // PREDEF(pPlaceGraphic);
     PlaceGraphicYStagger_Conv(coord(7, 11, wram->wTilemap), 7, 7);

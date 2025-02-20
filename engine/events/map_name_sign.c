@@ -180,7 +180,7 @@ static bool InitMapNameSign_CheckSpecialMap(uint8_t a) {
 void InitMapNameSign_Conv(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // FARCALL(aInitMapNameSign_inefficient_farcall);  // this is a waste of 6 ROM bytes and 6 stack bytes
     // RET;
 
@@ -251,11 +251,11 @@ void InitMapNameSign_Conv(void){
     // LDH_addr_A(rWY);
     gb_write(rWY, 0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hWY = 0x90;
     // XOR_A_A;
     // LDH_addr_A(hLCDCPointer);
     // RET;
-    hram->hLCDCPointer = 0;
+    hLCDCPointer = 0;
 }
 
 void PlaceMapNameSign(void){
@@ -320,7 +320,7 @@ void PlaceMapNameSign_Conv(void){
         // LDH_addr_A(rWY);
         gb_write(rWY, 0x70);
         // LDH_addr_A(hWY);
-        hram->hWY = 0x70;
+        hWY = 0x70;
         // RET;
         return;
     }
@@ -330,10 +330,10 @@ void PlaceMapNameSign_Conv(void){
     // LDH_addr_A(rWY);
     gb_write(rWY, 0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hWY = 0x90;
     // XOR_A_A;
     // LDH_addr_A(hLCDCPointer);
-    hram->hLCDCPointer = 0;
+    hLCDCPointer = 0;
     // RET;
 }
 

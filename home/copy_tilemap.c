@@ -50,13 +50,13 @@ void SafeLoadTempTilemapToTilemap(void){
 void SafeLoadTempTilemapToTilemap_Conv(void){
     //     XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // CALL(aLoadTempTilemapToTilemap);
     LoadTempTilemapToTilemap_Conv();
     // LD_A(1);
     // LDH_addr_A(hBGMapMode);
     // RET;
-    hram->hBGMapMode = 1;
+    hBGMapMode = 1;
 }
 
 void LoadTempTilemapToTilemap(void){

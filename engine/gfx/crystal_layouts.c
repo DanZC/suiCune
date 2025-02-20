@@ -281,7 +281,7 @@ void v_CrystalCGB_MobileLayout1(void){
     ApplyPals_Conv();
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hCGBPalUpdate = TRUE;
     // RET;
 
 // INCLUDE "engine/tilesets/tileset_palettes.asm"

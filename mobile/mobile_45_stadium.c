@@ -22,14 +22,14 @@ void GiveOddEgg(void){
 void Function11765d(void){
     // LDH_A_addr(hInMenu);
     // PUSH_AF;
-    uint8_t inMenu = hram->hInMenu;
+    uint8_t inMenu = hInMenu;
     // LD_A(0x1);
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = 0x1;
+    hInMenu = 0x1;
     // CALL(aFunction11766b);
     // POP_AF;
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = inMenu;
+    hInMenu = inMenu;
     // RET;
 }
 

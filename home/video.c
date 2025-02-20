@@ -28,7 +28,7 @@ bool DMATransfer_Conv(void) {
     // LDH_A_addr(hDMATransfer);
     // AND_A_A;
     // RET_Z;
-    uint8_t value = hram->hDMATransfer;
+    uint8_t value = hDMATransfer;
     if(value == 0) 
         return false;
 
@@ -40,7 +40,7 @@ bool DMATransfer_Conv(void) {
 
     // XOR_A_A;
     // LDH_addr_A(hDMATransfer);
-    hram->hDMATransfer = 0;
+    hDMATransfer = 0;
     // SCF;
     // RET;
     return true;
@@ -135,7 +135,7 @@ bool UpdateBGMapBuffer_Conv(void) {
     // LDH_A_addr(hBGMapUpdate);
     // AND_A_A;
     // RET_Z;
-    if(gb_read(hBGMapUpdate) == 0)
+    if(hBGMapUpdate == 0)
         return false;
 
     // LDH_A_addr(rVBK);
@@ -209,8 +209,8 @@ bool UpdateBGMapBuffer_Conv(void) {
         // DEC_A;
         // DEC_A;
         // LDH_addr_A(hBGMapTileCount);
-        tc = gb_read(hBGMapTileCount) - 2;
-        gb_write(hBGMapTileCount, tc);
+        tc = (hBGMapTileCount) - 2;
+        (hBGMapTileCount= tc);
 
     // IF_NZ goto next;
     } while(tc != 0);
@@ -228,7 +228,7 @@ bool UpdateBGMapBuffer_Conv(void) {
 
     // XOR_A_A;
     // LDH_addr_A(hBGMapUpdate);
-    gb_write(hBGMapUpdate, 0);
+    (hBGMapUpdate= 0);
 
     // SCF;
     // RET;
@@ -263,13 +263,13 @@ void WaitTop_Conv(void) {
         // LDH_A_addr(hBGMapMode);
         // AND_A_A;
         // RET_Z;
-        if(hram->hBGMapMode == 0)
+        if(hBGMapMode == 0)
             return;
 
         // LDH_A_addr(hBGMapThird);
         // AND_A_A;
         // IF_Z goto done;
-        if(hram->hBGMapThird == 0)
+        if(hBGMapThird == 0)
             break;
 
         // CALL(aDelayFrame);
@@ -280,7 +280,7 @@ void WaitTop_Conv(void) {
 // done:
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // RET;
 }
 
@@ -445,7 +445,7 @@ static void UpdateBGMap_update(uint8_t* dst, const uint8_t* hl) {
     // DEC_A;  // 1
     // IF_Z goto middle;
     // 2
-    const uint8_t map_third = hram->hBGMapThird;
+    const uint8_t map_third = hBGMapThird;
     switch(map_third) {
 
 #define THIRD_HEIGHT (SCREEN_HEIGHT / 3)
@@ -469,7 +469,7 @@ static void UpdateBGMap_update(uint8_t* dst, const uint8_t* hl) {
 
         //  Next time: top third
         // XOR_A_A;
-        hram->hBGMapThird = 0;
+        hBGMapThird = 0;
         // goto start;
         break;
 
@@ -491,7 +491,7 @@ static void UpdateBGMap_update(uint8_t* dst, const uint8_t* hl) {
 
         //  Next time: bottom third
         // LD_A(2);
-        hram->hBGMapThird = 2;
+        hBGMapThird = 2;
         // goto start;
         break;
     
@@ -507,7 +507,7 @@ static void UpdateBGMap_update(uint8_t* dst, const uint8_t* hl) {
 
         //  Next time: middle third
         // LD_A(1);
-        hram->hBGMapThird = 1;
+        hBGMapThird = 1;
         break;
     }
 
@@ -578,18 +578,18 @@ void UpdateBGMap_Conv(void) {
     // LDH_A_addr(hBGMapMode);
     // AND_A_A;  // 0
     // RET_Z;
-    if(hram->hBGMapMode == 0)
+    if(hBGMapMode == 0)
         return;
 
     //  BG Map 0
     // DEC_A;  // 1
     // IF_Z goto Tiles;
-    if(hram->hBGMapMode == 1)
-        return UpdateBGMap_Tiles(GBToRAMAddr(hram->hBGMapAddress));
+    if(hBGMapMode == 1)
+        return UpdateBGMap_Tiles(GBToRAMAddr(hBGMapAddress));
     // DEC_A;  // 2
     // IF_Z goto Attr;
-    if(hram->hBGMapMode == 2)
-        return UpdateBGMap_Attr((uint8_t*)GBToRAMAddr(hram->hBGMapAddress) + VRAM_BANK_SIZE);
+    if(hBGMapMode == 2)
+        return UpdateBGMap_Attr((uint8_t*)GBToRAMAddr(hBGMapAddress) + VRAM_BANK_SIZE);
 
     //  BG Map 1
     // DEC_A;  // useless
@@ -607,7 +607,7 @@ void UpdateBGMap_Conv(void) {
 
     // LDH_A_addr(hBGMapMode);
     // PUSH_AF;
-    uint8_t bgmapmode = hram->hBGMapMode;
+    uint8_t bgmapmode = hBGMapMode;
     // CP_A(3);
     // CALL_Z(aUpdateBGMap_Tiles);
     if(bgmapmode == 3) {
@@ -850,7 +850,7 @@ void AnimateTileset(void) {
     // LDH_A_addr(hMapAnims);
     // AND_A_A;
     // RET_Z;
-    if(hram->hMapAnims == 0)
+    if(hMapAnims == 0)
         return;
 
     //  Back out if we're too far into VBlank

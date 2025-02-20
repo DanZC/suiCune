@@ -17,7 +17,7 @@ void BattleCommand_BeatUp(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // JP_NZ (mBattleCommand_BeatUp_enemy_beats_up);
-    if(hram->hBattleTurn == 0) {
+    if(hBattleTurn == 0) {
 
         // LD_A_addr(wPlayerSubStatus3);
         // BIT_A(SUBSTATUS_IN_LOOP);
@@ -323,7 +323,7 @@ struct PartyMon* GetBeatupMonLocation(void) {
     // LD_HL(wPartyMon1Species);
     // IF_Z goto got_species;
     // LD_HL(wOTPartyMon1Species);
-    struct PartyMon* mon = (hram->hBattleTurn == 0)? wram->wPartyMon: wram->wOTPartyMon;
+    struct PartyMon* mon = (hBattleTurn == 0)? wram->wPartyMon: wram->wOTPartyMon;
 
 // got_species:
     // LD_A_addr(wCurBeatUpPartyMon);

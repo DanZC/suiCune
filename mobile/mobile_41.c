@@ -522,7 +522,7 @@ void StubbedTrainerRankings_Splash(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // RET_NZ ;
-    if(hram->hBattleTurn != 0)
+    if(hBattleTurn != 0)
         return;
     // LD_HL(sTrainerRankingSplash);
     // JR(mStubbedTrainerRankings_Increment3Byte);
@@ -575,7 +575,7 @@ void StubbedTrainerRankings_Selfdestruct(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // RET_NZ ;
-    if(hram->hBattleTurn != 0)
+    if(hBattleTurn != 0)
         return;
     // LD_HL(sTrainerRankingSelfdestruct);
     // JR(mStubbedTrainerRankings_Increment3Byte);
@@ -1362,9 +1362,9 @@ void Function106442(void){
     MobileAPI(MOBILEAPI_1B, &(mobile_api_data_s){0});
     // XOR_A_A;
     // LDH_addr_A(hMobile);
-    hram->hMobile = 0x0;
+    hMobile = 0x0;
     // LDH_addr_A(hMobileReceive);
-    hram->hMobileReceive = 0x0;
+    hMobileReceive = 0x0;
     // LD_A_addr(wMobileCommsJumptableIndex);
     // INC_A;
     // LD_addr_A(wMobileCommsJumptableIndex);

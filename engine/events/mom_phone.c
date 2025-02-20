@@ -199,7 +199,7 @@ static void CheckBalance_MomItem2_AddMoney(void) {
     // LD_BC(hMoneyTemp);
     // FARCALL(aAddMoney);
     // RET;
-    return AddMoney_Conv(wram->wMomItemTriggerBalance, hram->hMoneyTemp);
+    return AddMoney_Conv(wram->wMomItemTriggerBalance, hMoneyTemp);
 }
 
 bool CheckBalance_MomItem2_Conv(void){
@@ -211,17 +211,17 @@ bool CheckBalance_MomItem2_Conv(void){
         const struct MomPhoneItem* item = GetItemFromMom_Conv();
         // LD_A_hli;
         // LDH_addr_A(hMoneyTemp);
-        hram->hMoneyTemp[0] = HIGH(item->cost >> 8);
+        hMoneyTemp[0] = HIGH(item->cost >> 8);
         // LD_A_hli;
         // LDH_addr_A(hMoneyTemp + 1);
-        hram->hMoneyTemp[1] = HIGH(item->cost);
+        hMoneyTemp[1] = HIGH(item->cost);
         // LD_A_hli;
         // LDH_addr_A(hMoneyTemp + 2);
-        hram->hMoneyTemp[2] = LOW(item->cost);
+        hMoneyTemp[2] = LOW(item->cost);
         // LD_DE(wMomsMoney);
         // LD_BC(hMoneyTemp);
         // FARCALL(aCompareMoney);
-        u8_flag_s res = CompareMoney_Conv(hram->hMoneyTemp, wram->wMomsMoney);
+        u8_flag_s res = CompareMoney_Conv(hMoneyTemp, wram->wMomsMoney);
         // IF_NC goto have_enough_money;
         if(!res.flag) {
         // have_enough_money:
@@ -237,13 +237,13 @@ bool CheckBalance_MomItem2_Conv(void){
 // check_have_2300:
     // LD_HL(hMoneyTemp);
     // LD_hl(HIGH(MOM_MONEY >> 8));
-    hram->hMoneyTemp[0] = HIGH(MOM_MONEY >> 8);
+    hMoneyTemp[0] = HIGH(MOM_MONEY >> 8);
     // INC_HL;
     // LD_hl(HIGH(MOM_MONEY));  // mid
-    hram->hMoneyTemp[1] = HIGH(MOM_MONEY);
+    hMoneyTemp[1] = HIGH(MOM_MONEY);
     // INC_HL;
     // LD_hl(LOW(MOM_MONEY));
-    hram->hMoneyTemp[2] = LOW(MOM_MONEY);
+    hMoneyTemp[2] = LOW(MOM_MONEY);
 
     while(1) {
     // loop:
@@ -285,17 +285,17 @@ void MomBuysItem_DeductFunds(void){
     // ADD_HL_DE;
     // LD_A_hli;
     // LDH_addr_A(hMoneyTemp);
-    hram->hMoneyTemp[0] = HIGH(item->cost >> 8);
+    hMoneyTemp[0] = HIGH(item->cost >> 8);
     // LD_A_hli;
     // LDH_addr_A(hMoneyTemp + 1);
-    hram->hMoneyTemp[1] = HIGH(item->cost);
+    hMoneyTemp[1] = HIGH(item->cost);
     // LD_A_hli;
     // LDH_addr_A(hMoneyTemp + 2);
-    hram->hMoneyTemp[2] = LOW(item->cost);
+    hMoneyTemp[2] = LOW(item->cost);
     // LD_DE(wMomsMoney);
     // LD_BC(hMoneyTemp);
     // FARCALL(aTakeMoney);
-    TakeMoney_Conv(wram->wMomsMoney, hram->hMoneyTemp);
+    TakeMoney_Conv(wram->wMomsMoney, hMoneyTemp);
     // RET;
 }
 

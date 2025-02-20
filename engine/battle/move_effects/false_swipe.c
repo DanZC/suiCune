@@ -14,7 +14,7 @@ bool CheckFalseSwipe(void) {
     // AND_A_A;
     // IF_Z goto got_hp;
     // LD_HL(wBattleMonHP);
-    uint16_t hp = ReverseEndian16((hram->hBattleTurn == 0)? wram->wEnemyMon.hp: wram->wBattleMon.hp);
+    uint16_t hp = ReverseEndian16((hBattleTurn == 0)? wram->wEnemyMon.hp: wram->wBattleMon.hp);
 
 // got_hp:
     // LD_DE(wCurDamage);

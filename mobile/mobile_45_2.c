@@ -266,7 +266,7 @@ void Function11665c(void){
     Random_Conv();
     // LDH_A_addr(hRandomAdd);
     // AND_A(0x7);
-    uint8_t a = hram->hRandomAdd & 0x7;
+    uint8_t a = hRandomAdd & 0x7;
     // SLA_A;
     // SLA_A;
     // SLA_A;
@@ -394,7 +394,7 @@ void Function1166f4(uint8_t a, uint8_t b, uint8_t c){
         Random_Conv();
         // LDH_A_addr(hRandomAdd);
         // AND_A(0x7);
-        a2 = hram->hRandomAdd & 0x7;
+        a2 = hRandomAdd & 0x7;
         // IF_Z goto asm_11670c;
         if(a2 != 0) {
             // DEC_A;
@@ -439,7 +439,7 @@ void Function11671f(uint8_t a, uint8_t b, uint8_t c){
         Random_Conv();
         // LDH_A_addr(hRandomAdd);
         // AND_A(0x7);
-        a2 = hram->hRandomAdd & 0x7;
+        a2 = hRandomAdd & 0x7;
         // SLA_A;
         // SLA_A;
         // SLA_A;

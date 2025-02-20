@@ -119,7 +119,7 @@ void WritePartyMenuTilemap(void){
     bit_set(wram->wOptions, NO_TEXT_SCROLL);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // hlcoord(0, 0, wTilemap);
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // LD_A(0x7f);
@@ -860,7 +860,7 @@ void InitPartyMenuGFX(void){
     uint8_t c = wram->wPartyCount;
     // XOR_A_A;
     // LDH_addr_A(hObjectStructIndex);
-    hram->hObjectStructIndex = 0;
+    hObjectStructIndex = 0;
 
     do {
     // loop:
@@ -874,7 +874,7 @@ void InitPartyMenuGFX(void){
         // LDH_A_addr(hObjectStructIndex);
         // INC_A;
         // LDH_addr_A(hObjectStructIndex);
-        hram->hObjectStructIndex++;
+        hObjectStructIndex++;
         // POP_HL;
         // POP_BC;
         // DEC_C;
@@ -988,7 +988,7 @@ u8_flag_s PartyMenuSelect(void){
         // LD_B_A;
         // BIT_B(B_BUTTON_F);
         // IF_NZ goto exitmenu;  // B button
-        if(!bit_test(hram->hJoyLast, B_BUTTON_F)) {
+        if(!bit_test(hJoyLast, B_BUTTON_F)) {
             // LD_A_addr(wMenuCursorY);
             // DEC_A;
             // LD_addr_A(wCurPartyMon);

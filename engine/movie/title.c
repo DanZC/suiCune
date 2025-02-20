@@ -107,7 +107,7 @@ void v_TitleScreen(void){
 //  Turn BG Map update off
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
 
 //  Reset timing variables
     // LD_HL(wJumptableIndex);
@@ -308,7 +308,7 @@ void v_TitleScreen(void){
 //  Let LCD Stat know we're messing around with SCX
     // LD_A(LOW(rSCX));
     // LDH_addr_A(hLCDCPointer);
-    hram->hLCDCPointer = LOW(rSCX);
+    hLCDCPointer = LOW(rSCX);
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
@@ -327,24 +327,24 @@ void v_TitleScreen(void){
 
     // LD_A(+112);
     // LDH_addr_A(hSCX);
-    hram->hSCX = +112;
+    hSCX = +112;
     // LD_A(8);
     // LDH_addr_A(hSCY);
-    hram->hSCY = 8;
+    hSCY = 8;
     // LD_A(7);
     // LDH_addr_A(hWX);
-    hram->hWX = 7;
+    hWX = 7;
     // LD_A(-112);
     // LDH_addr_A(hWY);
-    hram->hWY = -112;
+    hWY = -112;
 
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hCGBPalUpdate = TRUE;
 
 //  Update BG Map 0 (bank 0)
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 1;
+    hBGMapMode = 1;
 
     // XOR_A_A;
     // LD_addr_A(wSuicuneFrame);
@@ -429,15 +429,15 @@ void SuicuneFrameIterator_Conv(void){
     uint8_t d = Frames[((a & 0b11000) << 1) >> 4];
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // CALL(aLoadSuicuneFrame);
     LoadSuicuneFrame_Conv(d);
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hBGMapMode = 0x1;
     // LD_A(0x3);
     // LDH_addr_A(hBGMapThird);
-    hram->hBGMapThird = 0x3;
+    hBGMapThird = 0x3;
     // RET;
 }
 

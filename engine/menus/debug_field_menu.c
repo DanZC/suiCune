@@ -68,7 +68,7 @@ static bool DebugSpecialPhoneCall(script_s* s){
 static void DebugPhoneCall(void){
     LoadCallerScript_Conv(0x00);
     gQueuedScriptAddr = DebugSpecialPhoneCall;
-    hram->hMenuReturn = HMENURETURN_SCRIPT;
+    hMenuReturn = HMENURETURN_SCRIPT;
     wram->wSpecialPhoneCallID = SPECIALCALL_BIKESHOP;
 }
 
@@ -82,7 +82,7 @@ static bool DebugShowCatchTutorialScript(script_s* s){
 
 static void DebugShowCatchTutorial(void){
     gQueuedScriptAddr = DebugShowCatchTutorialScript;
-    hram->hMenuReturn = HMENURETURN_SCRIPT;
+    hMenuReturn = HMENURETURN_SCRIPT;
 }
 
 static void DebugUnownPrinter(void){
@@ -106,7 +106,7 @@ static bool DebugWildBattleScript(script_s* s){
 static void DebugWildBattle(species_t species, uint8_t level){
     Script_loadwildmon_Conv(&gCurScript, species, level);
     gQueuedScriptAddr = DebugWildBattleScript;
-    hram->hMenuReturn = HMENURETURN_SCRIPT;
+    hMenuReturn = HMENURETURN_SCRIPT;
 }
 
 static void DebugFlagMenu(void) {
@@ -116,19 +116,19 @@ static void DebugFlagMenu(void) {
     uint16_t flag = EVENT_TEMPORARY_UNTIL_MAP_RELOAD_1;
     while(1) {
         GetJoypad_Conv2();
-        if(hram->hJoyPressed & (B_BUTTON))
+        if(hJoyPressed & (B_BUTTON))
             break;
 
-        if(hram->hJoyPressed & (D_DOWN)) {
+        if(hJoyPressed & (D_DOWN)) {
             if(flag == 0) flag = EVENT_BATTLE_TOWER_OUTSIDE_SAILOR;
             else flag--;
         }
-        if(hram->hJoyPressed & (D_UP)) {
+        if(hJoyPressed & (D_UP)) {
             if(flag == EVENT_BATTLE_TOWER_OUTSIDE_SAILOR) flag = 0;
             else flag++;
         }
 
-        if(hram->hJoyPressed & (A_BUTTON)) {
+        if(hJoyPressed & (A_BUTTON)) {
             PlayClickSFX_Conv();
             if(EventFlagAction_Conv2(flag, CHECK_FLAG))
                 EventFlagAction_Conv2(flag, RESET_FLAG);
@@ -189,7 +189,7 @@ loop:
         switch(wram->wMenuCursorY - 1) {
         case DEBUGFIELDITEM_TELEPORT: {
             FadeToMenu_Conv();
-            hram->hMapAnims = 0;
+            hMapAnims = 0;
             ClearSprites_Conv();
             LoadStandardMenuHeader_Conv();
             uint8_t spawn = EntireFlyMap();
@@ -202,7 +202,7 @@ loop:
             gQueuedScriptAddr = DebugTeleportScript;
             wram->wDefaultSpawnpoint = spawn;
             CloseWindow_Conv2();
-            hram->hMenuReturn = HMENURETURN_SCRIPT;
+            hMenuReturn = HMENURETURN_SCRIPT;
             ExitAllMenus_Conv();
         } break;
         case DEBUGFIELDITEM_FLAG:
@@ -224,11 +224,11 @@ loop:
             break;
         }
     }
-    uint8_t oamUpdate = hram->hOAMUpdate;
-    hram->hOAMUpdate = 1;
+    uint8_t oamUpdate = hOAMUpdate;
+    hOAMUpdate = 1;
     LoadFontsExtra_Conv();
-    hram->hOAMUpdate = oamUpdate;
+    hOAMUpdate = oamUpdate;
     CloseWindow_Conv2();
     v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv();
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
 }

@@ -210,7 +210,7 @@ void StartMap(void){
     // LD_BC(wMapStatusEnd - wMapStatus);
     // CALL(aByteFill);
     ByteFill_Conv2(&wram->wMapStatus, wMapStatusEnd - wMapStatus, 0);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // FARCALL(aInitCallReceiveDelay);
     InitCallReceiveDelay();
     // CALL(aClearJoypad);
@@ -233,7 +233,7 @@ void EnterMap(void){
     // LDH_A_addr(hMapEntryMethod);
     // CP_A(MAPSETUP_CONNECTION);
     // IF_NZ goto dont_enable;
-    if(hram->hMapEntryMethod == MAPSETUP_CONNECTION) {
+    if(hMapEntryMethod == MAPSETUP_CONNECTION) {
         // CALL(aEnableEvents);
         EnableEvents();
     }
@@ -243,7 +243,7 @@ void EnterMap(void){
     // LDH_A_addr(hMapEntryMethod);
     // CP_A(MAPSETUP_RELOADMAP);
     // IF_NZ goto dontresetpoison;
-    if(hram->hMapEntryMethod == MAPSETUP_RELOADMAP) {
+    if(hMapEntryMethod == MAPSETUP_RELOADMAP) {
         // XOR_A_A;
         // LD_addr_A(wPoisonStepCount);
         wram->wPoisonStepCount = 0;
@@ -253,7 +253,7 @@ void EnterMap(void){
 
     // XOR_A_A;  // end map entry
     // LDH_addr_A(hMapEntryMethod);
-    hram->hMapEntryMethod = 0;
+    hMapEntryMethod = 0;
     // LD_A(MAPSTATUS_HANDLE);
     // LD_addr_A(wMapStatus);
     wram->wMapStatus = MAPSTATUS_HANDLE;
@@ -1133,7 +1133,7 @@ u8_flag_s CheckAPressOW_Conv(void){
     // LDH_A_addr(hJoyPressed);
     // AND_A(A_BUTTON);
     // RET_Z ;
-    if(!(hram->hJoyPressed & (A_BUTTON)))
+    if(!(hJoyPressed & (A_BUTTON)))
         return u8_flag(0, false);
     
     u8_flag_s res;
@@ -1343,11 +1343,11 @@ u8_flag_s TryObjectEvent_Conv(void){
     // ADD_HL_BC;
     // LD_A_hl;
     // LDH_addr_A(hLastTalked);
-    hram->hLastTalked = bc->mapObjectIndex;
+    hLastTalked = bc->mapObjectIndex;
 
     // LDH_A_addr(hLastTalked);
     // CALL(aGetMapObject);
-    struct MapObject* mobj = GetMapObject_Conv(hram->hLastTalked);
+    struct MapObject* mobj = GetMapObject_Conv(hLastTalked);
     // LD_HL(MAPOBJECT_COLOR);
     // ADD_HL_BC;
     // LD_A_hl;
@@ -1878,13 +1878,13 @@ Select:
 u8_flag_s CheckMenuOW_Conv(void){
     // XOR_A_A;
     // LDH_addr_A(hMenuReturn);
-    hram->hMenuReturn = 0;
+    hMenuReturn = 0;
     // LDH_addr_A(hUnusedByte);
-    hram->hUnusedByte = 0;
+    hUnusedByte = 0;
     // LDH_A_addr(hJoyPressed);
-    uint8_t a = hram->hJoyPressed;
+    uint8_t a = hJoyPressed;
 
-    if(bit_test(a, SELECT_F) && bit_test(hram->hJoyDown, B_BUTTON_F)) {
+    if(bit_test(a, SELECT_F) && bit_test(hJoyDown, B_BUTTON_F)) {
         return u8_flag(CallScript_Conv2(DebugFieldMenuScript), true);
     }
     // BIT_A(SELECT_F);
@@ -1947,7 +1947,7 @@ bool StartMenuCallback(script_s* s){
 
 bool SelectMenuCallback(script_s* s){
     SCRIPT_BEGIN
-    readmem(hram_ptr(hMenuReturn))
+    readmem(&hMenuReturn)
     ifequal(HMENURETURN_SCRIPT, Script)
     ifequal(HMENURETURN_ASM, Asm)
     s_end
@@ -2846,7 +2846,7 @@ void ChooseWildEncounter_BugContest_Conv(void){
         // LDH_A_addr(hRandomAdd);
         // CALL(aSimpleDivide);
         // ADD_A_D;
-        a = SimpleDivide_Conv(hram->hRandomAdd, a + 1).rem + d;
+        a = SimpleDivide_Conv(hRandomAdd, a + 1).rem + d;
     }
 
 // GotLevel:
@@ -2899,7 +2899,7 @@ bool TryWildEncounter_BugContest_Conv(void){
     // LDH_A_addr(hRandomAdd);
     // CP_A_B;
     // RET_C ;
-    if(hram->hRandomAdd < b)
+    if(hRandomAdd < b)
         return true;
     // LD_A(1);
     // AND_A_A;

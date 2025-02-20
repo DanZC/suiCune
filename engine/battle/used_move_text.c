@@ -23,7 +23,7 @@ void UsedMoveText_Function(struct TextCmdState* state) {
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_NZ goto start;
-    if(hram->hBattleTurn == 0) {
+    if(hBattleTurn == 0) {
         // LD_A_addr(wPlayerMoveStruct + MOVE_ANIM);
         // CALL(aUpdateUsedMoves);
         UpdateUsedMoves_Conv(wram->wPlayerMoveStruct.animation);

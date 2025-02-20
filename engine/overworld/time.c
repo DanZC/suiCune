@@ -819,7 +819,7 @@ void CalcSecsMinsHoursDaysSince_Conv(uint8_t* hl){
     // LDH_A_addr(hSeconds);
     // LD_C_A;
     // SUB_A_hl;
-    uint16_t temp = hram->hSeconds - *hl;
+    uint16_t temp = hSeconds - *hl;
     uint8_t a = (temp & 0xff);
     uint8_t carry = (temp & 0xff00)? 1: 0;
     // IF_NC goto skip;
@@ -830,7 +830,7 @@ void CalcSecsMinsHoursDaysSince_Conv(uint8_t* hl){
 
 // skip:
     // LD_hl_C;  // current seconds
-    *hl = hram->hSeconds;
+    *hl = hSeconds;
     // DEC_HL;
     hl--;
     // LD_addr_A(wSecondsSince);  // seconds since
@@ -858,7 +858,7 @@ void v_CalcMinsHoursDaysSince_Conv(uint8_t* hl, uint8_t carry){
     // LDH_A_addr(hMinutes);
     // LD_C_A;
     // SBC_A_hl;
-    uint16_t temp = hram->hMinutes - *hl - carry;
+    uint16_t temp = hMinutes - *hl - carry;
     uint8_t a = (temp & 0xff);
     carry = (temp & 0xff00)? 1: 0;
     // IF_NC goto skip;
@@ -869,7 +869,7 @@ void v_CalcMinsHoursDaysSince_Conv(uint8_t* hl, uint8_t carry){
 
 // skip:
     // LD_hl_C;  // current minutes
-    *hl = hram->hMinutes;
+    *hl = hMinutes;
     // DEC_HL;
     --hl;
     // LD_addr_A(wMinutesSince);  // minutes since
@@ -897,7 +897,7 @@ void v_CalcHoursDaysSince_Conv(uint8_t* hl, uint8_t carry){
     // LDH_A_addr(hHours);
     // LD_C_A;
     // SBC_A_hl;
-    uint16_t temp = hram->hHours - *hl - carry;
+    uint16_t temp = hHours - *hl - carry;
     uint8_t a = (temp & 0xff);
     carry = (temp & 0xff00)? 1: 0;
     // IF_NC goto skip;
@@ -908,7 +908,7 @@ void v_CalcHoursDaysSince_Conv(uint8_t* hl, uint8_t carry){
 
 // skip:
     // LD_hl_C;  // current hours
-    *hl = hram->hHours;
+    *hl = hHours;
     // DEC_HL;
     hl--;
     // LD_addr_A(wHoursSince);  // hours since
@@ -971,13 +971,13 @@ void CopyDayHourMinSecToHL_Conv(uint8_t* hl){
     hl[0] = wram->wCurDay;
     // LDH_A_addr(hHours);
     // LD_hli_A;
-    hl[1] = hram->hHours;
+    hl[1] = hHours;
     // LDH_A_addr(hMinutes);
     // LD_hli_A;
-    hl[2] = hram->hMinutes;
+    hl[2] = hMinutes;
     // LDH_A_addr(hSeconds);
     // LD_hli_A;
-    hl[3] = hram->hSeconds;
+    hl[3] = hSeconds;
     // RET;
 }
 
@@ -1022,9 +1022,9 @@ void CopyDayHourMinToHL_Conv(uint8_t* hl){
     hl[0] = wram->wCurDay;
     // LDH_A_addr(hHours);
     // LD_hli_A;
-    hl[1] = hram->hHours;
+    hl[1] = hHours;
     // LDH_A_addr(hMinutes);
     // LD_hli_A;
-    hl[2] = hram->hMinutes;
+    hl[2] = hMinutes;
     // RET;
 }

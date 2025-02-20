@@ -2781,7 +2781,7 @@
     } while(0)
 
 #define bank_push(bank) \
-    uint8_t oldBank = gb_read(hROMBank);\
+    uint8_t oldBank = (hROMBank);\
     Bankswitch_Conv(bank);
 
 #define bank_pop Bankswitch_Conv(oldBank);
@@ -2794,7 +2794,7 @@
 
 #define farcall(_x, ...) \
     do {                                                     \
-        uint8_t oldBank = gb_read(hROMBank);                 \
+        uint8_t oldBank = (hROMBank);                 \
         Bankswitch_Conv(BANK(a##_x));                        \
         _x##_Conv(__VA_ARGS__);                              \
         Bankswitch_Conv(oldBank);                            \
@@ -2841,7 +2841,7 @@
 #define SAFECALL(_x)                                \
     do {                                            \
         SAVE_REGS;                                  \
-        uint8_t oldBank = gb_read(hROMBank);        \
+        uint8_t oldBank = (hROMBank);        \
         Bankswitch_Conv(BANK(_x));                  \
         CALL(_x);                                   \
         Bankswitch_Conv(oldBank);                   \

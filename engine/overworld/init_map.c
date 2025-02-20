@@ -78,18 +78,18 @@ static void ReanchorBGMap_NoOAMUpdate_LoadBGMapAddrIntoHRAM(uint8_t a) {
     // XOR_A_A;
     // LDH_addr_A(hBGMapAddress);
     // RET;
-    hram->hBGMapAddress = (a << 8);
+    hBGMapAddress = (a << 8);
 }
 
 static void ReanchorBGMap_NoOAMUpdate_ReanchorBGMap(void) {
     // XOR_A_A;
     // LDH_addr_A(hLCDCPointer);
     // LDH_addr_A(hBGMapMode);
-    hram->hLCDCPointer = 0;
-    hram->hBGMapMode = 0;
+    hLCDCPointer = 0;
+    hBGMapMode = 0;
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hWY = 0x90;
     // CALL(aOverworldTextModeSwitch);
     OverworldTextModeSwitch_Conv();
     // LD_A(HIGH(vBGMap1));
@@ -103,12 +103,12 @@ static void ReanchorBGMap_NoOAMUpdate_ReanchorBGMap(void) {
     ApplyPals_Conv();
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hCGBPalUpdate = TRUE;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // LDH_addr_A(hWY);
-    hram->hWY = 0;
+    hWY = 0;
     // FARCALL(aHDMATransfer_FillBGMap0WithBlack);  // no need to farcall
     HDMATransfer_FillBGMap0WithBlack_Conv();
     // LD_A(HIGH(vBGMap0));
@@ -121,9 +121,9 @@ static void ReanchorBGMap_NoOAMUpdate_ReanchorBGMap(void) {
     wram->wBGMapAnchor = vBGMap0;
     // XOR_A_A;
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0;
+    hSCX = 0;
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0;
+    hSCY = 0;
     // CALL(aApplyBGMapAnchorToObjects);
     ApplyBGMapAnchorToObjects_Conv();
     // RET;
@@ -134,27 +134,27 @@ void ReanchorBGMap_NoOAMUpdate_Conv(void){
     DelayFrame();
     // LDH_A_addr(hOAMUpdate);
     // PUSH_AF;
-    uint8_t oam = hram->hOAMUpdate;
+    uint8_t oam = hOAMUpdate;
 
     // LD_A(0x1);
     // LDH_addr_A(hOAMUpdate);
-    hram->hOAMUpdate = 0x1;
+    hOAMUpdate = 0x1;
     // LDH_A_addr(hBGMapMode);
     // PUSH_AF;
-    uint8_t bg = hram->hBGMapMode;
+    uint8_t bg = hBGMapMode;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = bg;
+    hBGMapMode = bg;
 
     // CALL(aReanchorBGMap_NoOAMUpdate_ReanchorBGMap);
     ReanchorBGMap_NoOAMUpdate_ReanchorBGMap();
 
     // POP_AF;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = bg;
+    hBGMapMode = bg;
     // POP_AF;
     // LDH_addr_A(hOAMUpdate);
-    hram->hOAMUpdate = oam;
+    hOAMUpdate = oam;
 
     // LD_HL(wVramState);
     // SET_hl(6);
@@ -191,7 +191,7 @@ static void LoadFonts_NoOAMUpdate_LoadGFX(void) {
     LoadFontsExtra_Conv();
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hWY = 0x90;
     // CALL(aSafeUpdateSprites);
     SafeUpdateSprites_Conv();
     // CALL(aLoadStandardFont);
@@ -202,10 +202,10 @@ static void LoadFonts_NoOAMUpdate_LoadGFX(void) {
 void LoadFonts_NoOAMUpdate_Conv(void){
     // LDH_A_addr(hOAMUpdate);
     // PUSH_AF;
-    uint8_t temp = hram->hOAMUpdate;
+    uint8_t temp = hOAMUpdate;
     // LD_A(0x1);
     // LDH_addr_A(hOAMUpdate);
-    hram->hOAMUpdate = 0x1;
+    hOAMUpdate = 0x1;
 
     // CALL(aLoadFonts_NoOAMUpdate_LoadGFX);
     LoadFonts_NoOAMUpdate_LoadGFX();
@@ -213,7 +213,7 @@ void LoadFonts_NoOAMUpdate_Conv(void){
     // POP_AF;
     // LDH_addr_A(hOAMUpdate);
     // RET;
-    hram->hOAMUpdate = temp;
+    hOAMUpdate = temp;
 }
 
 void HDMATransfer_FillBGMap0WithBlack(void){
@@ -270,7 +270,7 @@ void HDMATransfer_FillBGMap0WithBlack_Conv(void){
     // gb_write(rHDMA4, LOW(vBGMap0 - VRAM_Begin));
     // LD_A(0x3f);
     // LDH_addr_A(hDMATransfer);
-    // hram->hDMATransfer = 0x3f;
+    // hDMATransfer = 0x3f;
     // CALL(aDelayFrame);
     CopyBytes_Conv2(vram->vBGMap0, wram->wDecompressScratch, wScratchAttrmap - wDecompressScratch);
     DelayFrame();

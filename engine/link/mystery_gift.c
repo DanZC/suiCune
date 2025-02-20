@@ -469,7 +469,7 @@ uint8_t ExchangeMysteryGiftData(void){
         // LDH_A_addr(hMGStatusFlags);
         // CP_A(MG_CANCELED);
         // JP_Z (mEndOrContinueMysteryGiftIRCommunication);
-        if(res == NETWORK_XCHG_NO_CONNECTION || bit_test(hram->hJoyPressed, B_BUTTON_F)) {
+        if(res == NETWORK_XCHG_NO_CONNECTION || bit_test(hJoyPressed, B_BUTTON_F)) {
             LANCloseConnection();
             return MG_CANCELED;
         }
@@ -489,7 +489,7 @@ uint8_t ExchangeMysteryGiftData(void){
         // LDH_A_addr(hMGStatusFlags);
         // CP_A(MG_CANCELED);
         // JP_Z (mEndOrContinueMysteryGiftIRCommunication);
-        if(res == NETWORK_XCHG_NO_CONNECTION || bit_test(hram->hJoyPressed, B_BUTTON_F)) {
+        if(res == NETWORK_XCHG_NO_CONNECTION || bit_test(hJoyPressed, B_BUTTON_F)) {
             LANCloseConnection();
             return MG_CANCELED;
         }

@@ -95,7 +95,7 @@ void GetName_Conv(void){
     // PUSH_HL;
     // PUSH_BC;
     // PUSH_DE;
-    uint8_t tempBank = gb_read(hROMBank);
+    uint8_t tempBank = (hROMBank);
     uint16_t de;
 
     // LD_A_addr(wNamedObjectType);
@@ -339,7 +339,7 @@ void GetBasePokemonName_Conv(void){
         if(a == 0xef || a == 0xf5)
         {
             // LD_hl(0x50);
-            gb_write(hl, 0x50);
+            (hl, 0x50);
             break;
         }
 
@@ -438,7 +438,7 @@ void GetPokemonName_Conv(void){
     // LDH_A_addr(hROMBank);
     // PUSH_AF;
     // PUSH_HL;
-    uint8_t tempBank = gb_read(hROMBank);
+    uint8_t tempBank = (hROMBank);
 
     // LD_A(BANK(aPokemonNames));
     // RST(aBankswitch);

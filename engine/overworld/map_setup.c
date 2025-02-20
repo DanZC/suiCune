@@ -28,7 +28,7 @@ void RunMapSetupScript(void){
 
 // INCLUDE "data/maps/setup_scripts.asm"
 
-    return ReadMapSetupScript_Conv(MapSetupScripts[(hram->hMapEntryMethod & 0xf) - 1]);
+    return ReadMapSetupScript_Conv(MapSetupScripts[(hMapEntryMethod & 0xf) - 1]);
 }
 
 void ReadMapSetupScript(void){
@@ -145,14 +145,14 @@ void EnableTextAcceleration(void){
 void ActivateMapAnims(void){
     // LD_A(TRUE);
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = TRUE;
+    hMapAnims = TRUE;
     // RET;
 }
 
 void SuspendMapAnims(void){
     // XOR_A_A;  // FALSE
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = FALSE;
+    hMapAnims = FALSE;
     // RET;
 }
 

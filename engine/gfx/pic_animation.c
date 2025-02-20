@@ -824,7 +824,7 @@ DoRepeat:
 void PokeAnim_DoAnimScript_Conv(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
 
     while(1) {
     // loop:
@@ -1620,7 +1620,7 @@ void PokeAnim_SetVBank1_Conv(void){
     // LDH_addr_A(rSVBK);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // CALL(aPokeAnim_SetVBank1_SetFlag);
     PokeAnim_SetVBank1_SetFlag();
 

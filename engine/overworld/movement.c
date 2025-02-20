@@ -393,7 +393,7 @@ void Movement_remove_object(struct Object* bc){
     // LDH_A_addr(hMapObjectIndex);
     // CP_A_hl;
     // IF_NZ goto not_leading;
-    if(hram->hMapObjectIndex != wram->wObjectFollow_Leader) {
+    if(hMapObjectIndex != wram->wObjectFollow_Leader) {
         // LD_hl(-1);
         wram->wObjectFollow_Leader = 0xff;
     }
@@ -1028,7 +1028,7 @@ void NormalStep(struct Object* bc, uint8_t a){
     // LDH_A_addr(hMapObjectIndex);
     // CP_A_hl;
     // IF_Z goto player;
-    if(wram->wCenteredObject != hram->hMapObjectIndex) {
+    if(wram->wCenteredObject != hMapObjectIndex) {
         // LD_HL(OBJECT_STEP_TYPE);
         // ADD_HL_BC;
         // LD_hl(STEP_TYPE_NPC_WALK);
@@ -1062,7 +1062,7 @@ void TurningStep(struct Object* bc, uint8_t a){
     // LDH_A_addr(hMapObjectIndex);
     // CP_A_hl;
     // IF_Z goto player;
-    if(wram->wCenteredObject != hram->hMapObjectIndex) {
+    if(wram->wCenteredObject != hMapObjectIndex) {
         // LD_HL(OBJECT_STEP_TYPE);
         // ADD_HL_BC;
         // LD_hl(STEP_TYPE_NPC_WALK);
@@ -1095,7 +1095,7 @@ void SlideStep(struct Object* bc, uint8_t a){
     // LDH_A_addr(hMapObjectIndex);
     // CP_A_hl;
     // IF_Z goto player;
-    if(wram->wCenteredObject != hram->hMapObjectIndex) {
+    if(wram->wCenteredObject != hMapObjectIndex) {
         // LD_HL(OBJECT_STEP_TYPE);
         // ADD_HL_BC;
         // LD_hl(STEP_TYPE_NPC_WALK);
@@ -1139,7 +1139,7 @@ void JumpStep(struct Object* bc, uint8_t a){
     // LDH_A_addr(hMapObjectIndex);
     // CP_A_hl;
     // IF_Z goto player;
-    if(wram->wCenteredObject != hram->hMapObjectIndex) {
+    if(wram->wCenteredObject != hMapObjectIndex) {
         // LD_HL(OBJECT_STEP_TYPE);
         // ADD_HL_BC;
         // LD_hl(STEP_TYPE_NPC_JUMP);

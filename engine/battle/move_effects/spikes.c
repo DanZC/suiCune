@@ -13,7 +13,7 @@ void BattleCommand_Spikes(void){
     // AND_A_A;
     // IF_Z goto got_screens;
     // LD_HL(wPlayerScreens);
-    uint8_t* hl = (hram->hBattleTurn == 0)? &wram->wEnemyScreens: &wram->wPlayerScreens;
+    uint8_t* hl = (hBattleTurn == 0)? &wram->wEnemyScreens: &wram->wPlayerScreens;
 
 // got_screens:
 

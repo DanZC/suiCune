@@ -54,7 +54,7 @@ void BattleCommand_Transform(void){
     struct BattleMon* hl;
     struct BattleMon* de;
 
-    if(hram->hBattleTurn != 0) {
+    if(hBattleTurn != 0) {
         // LD_HL(wBattleMonSpecies);
         hl = &wram->wBattleMon;
         // LD_DE(wEnemyMonSpecies);
@@ -87,7 +87,7 @@ void BattleCommand_Transform(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto mimic_enemy_backup;
-    if(hram->hBattleTurn != 0) {
+    if(hBattleTurn != 0) {
         // LD_A_de;
         // LD_addr_A(wEnemyBackupDVs);
         // INC_DE;
@@ -177,7 +177,7 @@ void BattleCommand_Transform(void){
         // LD_A_addr(wEnemyMinimized);
 
     // got_byte:
-        uint8_t minimized = (hram->hBattleTurn == 0)? wram->wPlayerMinimized: wram->wEnemyMinimized;
+        uint8_t minimized = (hBattleTurn == 0)? wram->wPlayerMinimized: wram->wEnemyMinimized;
         // AND_A_A;
         // IF_NZ goto mimic_anims;
         if(minimized)
@@ -218,7 +218,7 @@ void BattleSideCopy(void* hl, void* de, uint16_t bc){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto copy;
-    if(hram->hBattleTurn != 0) {
+    if(hBattleTurn != 0) {
     //  Swap hl and de
         // PUSH_HL;
         // LD_H_D;

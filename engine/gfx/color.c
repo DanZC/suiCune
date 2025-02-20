@@ -496,7 +496,7 @@ void ApplyHPBarPals(uint8_t c){
         CopyBytes_Conv2(de, HPBarPals + (c * 2), 4);
         // LD_A(TRUE);
         // LDH_addr_A(hCGBPalUpdate);
-        hram->hCGBPalUpdate = TRUE;
+        hCGBPalUpdate = TRUE;
         // RET;
         return;
 
@@ -558,7 +558,7 @@ void LoadStatsScreenPals(void){
 bool LoadStatsScreenPals_Conv(uint8_t c){
     // CALL(aCheckCGB);
     // RET_Z ;
-    if(hram->hCGB == 0)
+    if(hCGB == 0)
         return false;
 
     uint16_t pal_buf[3];

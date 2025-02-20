@@ -634,7 +634,7 @@ void InitBattleAnimBuffer_Conv(struct BattleAnim* bc){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // RET_Z ;
-    if(hram->hBattleTurn == 0)
+    if(hBattleTurn == 0)
         return;
 
     // LD_HL(BATTLEANIMSTRUCT_OAMFLAGS);

@@ -563,12 +563,12 @@ void LoadMetatiles_Conv(void){
 void ReturnToMapFromSubmenu(void){
     // LD_A(MAPSETUP_SUBMENU);
     // LDH_addr_A(hMapEntryMethod);
-    hram->hMapEntryMethod = MAPSETUP_SUBMENU;
+    hMapEntryMethod = MAPSETUP_SUBMENU;
     // FARCALL(aRunMapSetupScript);
     RunMapSetupScript();
     // XOR_A_A;
     // LDH_addr_A(hMapEntryMethod);
-    hram->hMapEntryMethod = 0;
+    hMapEntryMethod = 0;
     // RET;
 }
 
@@ -798,7 +798,7 @@ u8_flag_s GetDestinationWarpNumber_Conv(void){
 
     // LDH_A_addr(hROMBank);
     // PUSH_AF;
-    uint8_t bank = hram->hROMBank;
+    uint8_t bank = hROMBank;
 
     // CALL(aSwitchToMapScriptsBank);
     SwitchToMapScriptsBank_Conv();
@@ -928,7 +928,7 @@ static void CopyWarpData_Function(uint8_t c) {
 void CopyWarpData_Conv(uint8_t c){
     // LDH_A_addr(hROMBank);
     // PUSH_AF;
-    uint8_t bank = hram->hROMBank;
+    uint8_t bank = hROMBank;
 
     // CALL(aSwitchToMapScriptsBank);
     SwitchToMapScriptsBank_Conv();
@@ -1948,16 +1948,16 @@ void ChangeMap(void){
     uint8_t* hl = wram->wOverworldMapBlocks;
     // LD_A_addr(wMapWidth);
     // LDH_addr_A(hConnectedMapWidth);
-    hram->hConnectedMapWidth = wram->wMapWidth;
+    hConnectedMapWidth = wram->wMapWidth;
     // ADD_A(0x6);
     // LDH_addr_A(hConnectionStripLength);
-    hram->hConnectionStripLength = wram->wMapWidth + 0x6;
+    hConnectionStripLength = wram->wMapWidth + 0x6;
     // LD_C_A;
     // LD_B(0);
     // ADD_HL_BC;
     // ADD_HL_BC;
     // ADD_HL_BC;
-    hl += hram->hConnectionStripLength * 3;
+    hl += hConnectionStripLength * 3;
     // LD_C(3);
     // ADD_HL_BC;
     hl += 3;
@@ -1979,7 +1979,7 @@ void ChangeMap(void){
         uint8_t* hl2 = hl;
         // LDH_A_addr(hConnectedMapWidth);
         // LD_C_A;
-        uint8_t c = hram->hConnectedMapWidth;
+        uint8_t c = hConnectedMapWidth;
 
         do {
         // col:
@@ -1998,7 +1998,7 @@ void ChangeMap(void){
         // INC_H;
 
     // okay:
-        hl = hl2 + hram->hConnectionStripLength;
+        hl = hl2 + hConnectionStripLength;
         // DEC_B;
         // IF_NZ goto row;
     } while(--b != 0);
@@ -2032,10 +2032,10 @@ void FillMapConnections(void){
         uint8_t* de = gMapConnections[NORTH_F].connectionStripLocation;
         // LD_A_addr(wNorthConnectionStripLength);
         // LDH_addr_A(hConnectionStripLength);
-        hram->hConnectionStripLength = gMapConnections[NORTH_F].connectionStripLength;
+        hConnectionStripLength = gMapConnections[NORTH_F].connectionStripLength;
         // LD_A_addr(wNorthConnectedMapWidth);
         // LDH_addr_A(hConnectedMapWidth);
-        hram->hConnectedMapWidth = gMapConnections[NORTH_F].connectedMapWidth;
+        hConnectedMapWidth = gMapConnections[NORTH_F].connectedMapWidth;
         // CALL(aFillNorthConnectionStrip);
         FillNorthConnectionStrip(de, hl);
         FreeAsset(a);
@@ -2064,10 +2064,10 @@ void FillMapConnections(void){
         uint8_t* de = gMapConnections[SOUTH_F].connectionStripLocation;
         // LD_A_addr(wSouthConnectionStripLength);
         // LDH_addr_A(hConnectionStripLength);
-        hram->hConnectionStripLength = gMapConnections[SOUTH_F].connectionStripLength;
+        hConnectionStripLength = gMapConnections[SOUTH_F].connectionStripLength;
         // LD_A_addr(wSouthConnectedMapWidth);
         // LDH_addr_A(hConnectedMapWidth);
-        hram->hConnectedMapWidth = gMapConnections[SOUTH_F].connectedMapWidth;
+        hConnectedMapWidth = gMapConnections[SOUTH_F].connectedMapWidth;
         // CALL(aFillSouthConnectionStrip);
         FillSouthConnectionStrip(de, hl);
         FreeAsset(a);
@@ -2099,7 +2099,7 @@ void FillMapConnections(void){
         uint8_t b = gMapConnections[WEST_F].connectionStripLength;
         // LD_A_addr(wWestConnectedMapWidth);
         // LDH_addr_A(hConnectionStripLength);
-        hram->hConnectionStripLength = gMapConnections[WEST_F].connectedMapWidth;
+        hConnectionStripLength = gMapConnections[WEST_F].connectedMapWidth;
         // CALL(aFillWestConnectionStrip);
         FillWestConnectionStrip(de, hl, b);
         FreeAsset(a);
@@ -2131,7 +2131,7 @@ void FillMapConnections(void){
         uint8_t b = gMapConnections[EAST_F].connectionStripLength;
         // LD_A_addr(wEastConnectedMapWidth);
         // LDH_addr_A(hConnectionStripLength);
-        hram->hConnectionStripLength = gMapConnections[EAST_F].connectedMapWidth;
+        hConnectionStripLength = gMapConnections[EAST_F].connectedMapWidth;
         // CALL(aFillEastConnectionStrip);
         FillEastConnectionStrip(de, hl, b);
         FreeAsset(a);
@@ -2159,7 +2159,7 @@ void FillSouthConnectionStrip(uint8_t* de, const uint8_t* hl){
         const uint8_t* hl2 = hl;
         // LDH_A_addr(hConnectionStripLength);
         // LD_B_A;
-        uint8_t b = hram->hConnectionStripLength;
+        uint8_t b = hConnectionStripLength;
 
         do {
         // x:
@@ -2177,7 +2177,7 @@ void FillSouthConnectionStrip(uint8_t* de, const uint8_t* hl){
         // LD_D(0);
         // ADD_HL_DE;
         // POP_DE;
-        hl = hl2 + hram->hConnectedMapWidth;
+        hl = hl2 + hConnectedMapWidth;
 
         // LD_A_addr(wMapWidth);
         // ADD_A(6);
@@ -2201,7 +2201,7 @@ void FillWestConnectionStrip(uint8_t* de, const uint8_t* hl, uint8_t b){
 void FillEastConnectionStrip(uint8_t* de, const uint8_t* hl, uint8_t b){
 
     // Moved this out of the loop lol.
-    hram->hConnectedMapWidth = wram->wMapWidth + 6;
+    hConnectedMapWidth = wram->wMapWidth + 6;
     do {
     // loop:
         // LD_A_addr(wMapWidth);
@@ -2232,14 +2232,14 @@ void FillEastConnectionStrip(uint8_t* de, const uint8_t* hl, uint8_t b){
         // LD_D(0);
         // ADD_HL_DE;
         // POP_DE;
-        hl = hl2 + hram->hConnectionStripLength;
+        hl = hl2 + hConnectionStripLength;
 
         // LDH_A_addr(hConnectedMapWidth);
         // ADD_A_E;
         // LD_E_A;
         // IF_NC goto okay;
         // INC_D;
-        de = de2 + hram->hConnectedMapWidth;
+        de = de2 + hConnectedMapWidth;
 
     // okay:
         // DEC_B;
@@ -2457,7 +2457,7 @@ void RunMapCallback_Conv(uint8_t a){
     // LD_B_A;
     // LDH_A_addr(hROMBank);
     // PUSH_AF;
-    uint8_t bank = hram->hROMBank;
+    uint8_t bank = hROMBank;
     // CALL(aSwitchToMapScriptsBank);
     SwitchToMapScriptsBank_Conv();
     // CALL(aRunMapCallback_FindCallback);
@@ -2562,7 +2562,7 @@ void MapTextbox_Conv(const struct TextCmd* text){
     SafeUpdateSprites_Conv();
     // LD_A(1);
     // LDH_addr_A(hOAMUpdate);
-    hram->hOAMUpdate = 1;
+    hOAMUpdate = 1;
     // CALL(aApplyTilemap);
     ApplyTilemap_Conv();
     // POP_HL;
@@ -2570,7 +2570,7 @@ void MapTextbox_Conv(const struct TextCmd* text){
     PrintTextboxText_Conv2(text);
     // XOR_A_A;
     // LDH_addr_A(hOAMUpdate);
-    hram->hOAMUpdate = 0;
+    hOAMUpdate = 0;
 
     // POP_AF;
     // RST(aBankswitch);
@@ -2812,7 +2812,7 @@ void ScrollMapUp(void){
     UpdateBGMapRow_Conv(wram->wBGMapAnchor);
     // LD_A(0x1);
     // LDH_addr_A(hBGMapUpdate);
-    hram->hBGMapUpdate = 0x1;
+    hBGMapUpdate = 0x1;
     // RET;
 }
 
@@ -2843,7 +2843,7 @@ void ScrollMapDown(void){
     UpdateBGMapRow_Conv(de);
     // LD_A(0x1);
     // LDH_addr_A(hBGMapUpdate);
-    hram->hBGMapUpdate = 0x1;
+    hBGMapUpdate = 0x1;
     // RET;
 }
 
@@ -2863,7 +2863,7 @@ void ScrollMapLeft(void){
     UpdateBGMapColumn_Conv(wram->wBGMapAnchor);
     // LD_A(0x1);
     // LDH_addr_A(hBGMapUpdate);
-    hram->hBGMapUpdate = 0x1;
+    hBGMapUpdate = 0x1;
     // RET;
 }
 
@@ -2892,7 +2892,7 @@ void ScrollMapRight(void){
     UpdateBGMapColumn_Conv(de);
     // LD_A(0x1);
     // LDH_addr_A(hBGMapUpdate);
-    hram->hBGMapUpdate = 0x1;
+    hBGMapUpdate = 0x1;
     // RET;
 }
 
@@ -3040,7 +3040,7 @@ static uint8_t* UpdateBGMapRow_iteration(uint8_t* hl, uint16_t de) {
     } while(--c != 0);
     // LD_A(SCREEN_WIDTH);
     // LDH_addr_A(hBGMapTileCount);
-    hram->hBGMapTileCount = SCREEN_WIDTH;
+    hBGMapTileCount = SCREEN_WIDTH;
     // RET;
     return hl;
 }
@@ -3122,7 +3122,7 @@ void UpdateBGMapColumn_Conv(uint16_t de){
     } while(--c != 0);
     // LD_A(SCREEN_HEIGHT);
     // LDH_addr_A(hBGMapTileCount);
-    hram->hBGMapTileCount = SCREEN_HEIGHT;
+    hBGMapTileCount = SCREEN_HEIGHT;
     // RET;
 }
 
@@ -3264,7 +3264,7 @@ void LoadTilesetGFX_Conv(void){
     // XOR_A_A;
     // LDH_addr_A(hTileAnimFrame);
     // RET;
-    hram->hTileAnimFrame = 0;
+    hTileAnimFrame = 0;
 }
 
 void BufferScreen(void){
@@ -3351,7 +3351,7 @@ void SaveScreen(void){
     // LD_A_addr(wMapWidth);
     // ADD_A(6);
     // LDH_addr_A(hMapObjectIndex);
-    hram->hMapObjectIndex = wram->wMapWidth + 6;
+    hMapObjectIndex = wram->wMapWidth + 6;
     // LD_A_addr(wPlayerStepDirection);
     // AND_A_A;
     tile_t* de;
@@ -3379,7 +3379,7 @@ void SaveScreen(void){
             // LD_C_A;
             // LD_B(0);
             // ADD_HL_BC;
-            hl += hram->hMapObjectIndex;
+            hl += hMapObjectIndex;
             goto vertical;
         }
         // CP_A(LEFT);
@@ -3418,7 +3418,7 @@ void LoadConnectionBlockData(void){
     // LD_A_addr(wMapWidth);
     // ADD_A(6);
     // LDH_addr_A(hConnectionStripLength);
-    hram->hConnectionStripLength = wram->wMapWidth + 6;
+    hConnectionStripLength = wram->wMapWidth + 6;
     // LD_DE(wScreenSave);
     // LD_B(SCREEN_META_WIDTH);
     // LD_C(SCREEN_META_HEIGHT);
@@ -3492,7 +3492,7 @@ void SaveScreen_LoadConnection_Conv(uint8_t* hl, const uint8_t* de, uint8_t b, u
         // LD_C_A;
         // LD_B(0);
         // ADD_HL_BC;
-        hl = hl2 + hram->hConnectionStripLength;
+        hl = hl2 + hConnectionStripLength;
         // POP_BC;
         // DEC_C;
         // IF_NZ goto row;
@@ -4322,7 +4322,7 @@ void FadeToMenu(void){
 void FadeToMenu_Conv(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // CALL(aLoadStandardMenuHeader);
     LoadStandardMenuHeader_Conv();
     // FARCALL(aFadeOutPalettes);
@@ -4467,7 +4467,7 @@ void ReturnToMapWithSpeechTextbox_Conv(void){
     DelayFrame();
     // LD_A(0x1);
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = 0x1;
+    hMapAnims = 0x1;
     // POP_AF;
     // RET;
 }

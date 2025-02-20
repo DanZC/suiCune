@@ -257,11 +257,11 @@ static void ReadAnyMail_loop(void){
         // LDH_A_addr(hJoyPressed);
         // AND_A(A_BUTTON | B_BUTTON | START);
         // IF_Z goto loop;
-        if((hram->hJoyPressed & (A_BUTTON | B_BUTTON | START)) == 0)
+        if((hJoyPressed & (A_BUTTON | B_BUTTON | START)) == 0)
             continue;
         // AND_A(START);
         // IF_NZ goto pressed_start;
-        if((hram->hJoyPressed & START) == 0) {
+        if((hJoyPressed & START) == 0) {
             // RET;
             return;
         }
@@ -337,7 +337,7 @@ void ReadAnyMail_Conv(const struct MailMsg* de){
     SetPalettes_Conv();
     // XOR_A_A;
     // LDH_addr_A(hJoyPressed);
-    hram->hJoyPressed = 0x0;
+    hJoyPressed = 0x0;
     // CALL(aReadAnyMail_loop);
     ReadAnyMail_loop();
     // CALL(aClearBGPalettes);

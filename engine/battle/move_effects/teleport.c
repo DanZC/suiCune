@@ -34,7 +34,7 @@ void BattleCommand_Teleport(void){
         // LDH_A_addr(hBattleTurn);
         // AND_A_A;
         // IF_NZ goto enemy_turn;
-        if(hram->hBattleTurn == 0) {
+        if(hBattleTurn == 0) {
         // Can't teleport from a trainer battle
             // LD_A_addr(wBattleMode);
             // DEC_A;

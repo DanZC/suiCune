@@ -259,7 +259,7 @@ void AI_Types(void){
         // PUSH_DE;
         // LD_A(1);
         // LDH_addr_A(hBattleTurn);
-        hram->hBattleTurn = 1;
+        hBattleTurn = 1;
         // CALLFAR(aBattleCheckTypeMatchup);
         uint8_t matchup = BattleCheckTypeMatchup_Conv();
         // POP_DE;
@@ -726,7 +726,7 @@ void AI_Smart_LeechHit_Conv(uint8_t* hl){
     // PUSH_HL;
     // LD_A(1);
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = 1;
+    hBattleTurn = 1;
     // CALLFAR(aBattleCheckTypeMatchup);
     uint8_t matchup = BattleCheckTypeMatchup_Conv();
     // POP_HL;
@@ -1002,7 +1002,7 @@ void AI_Smart_LockOn_Conv(uint8_t* hl){
 
         // LD_A(1);
         // LDH_addr_A(hBattleTurn);
-        hram->hBattleTurn = 1;
+        hBattleTurn = 1;
 
         // PUSH_HL;
         // PUSH_BC;
@@ -3033,7 +3033,7 @@ void AI_Smart_Mimic_Conv(uint8_t* hl){
 
     // LD_A(1);
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = 1;
+    hBattleTurn = 1;
     // CALLFAR(aBattleCheckTypeMatchup);
     uint8_t matchup = BattleCheckTypeMatchup_Conv();
 
@@ -3870,7 +3870,7 @@ void AI_Smart_PriorityHit_Conv(uint8_t* hl){
 //  Greatly encourage this move if it will KO the player.
     // LD_A(1);
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = 1;
+    hBattleTurn = 1;
     // PUSH_HL;
     // CALLFAR(aEnemyAttackDamage);
     EnemyAttackDamage(&gBattleCmdState);
@@ -3998,7 +3998,7 @@ void AI_Smart_Conversion2_Conv(uint8_t* hl){
 
     // XOR_A_A;
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = 0;
+    hBattleTurn = 0;
 
     // CALLFAR(aBattleCheckTypeMatchup);
     uint8_t matchup = BattleCheckTypeMatchup_Conv();
@@ -5546,7 +5546,7 @@ void AI_Smart_HiddenPower_Conv(uint8_t* hl){
     // PUSH_HL;
     // LD_A(1);
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = 1;
+    hBattleTurn = 1;
 
 //  Calculate Hidden Power's type and base power based on enemy's DVs.
     // CALLFAR(aHiddenPowerDamage);
@@ -7096,7 +7096,7 @@ void AI_Aggressive(void){
 void AIDamageCalc(void){
     // LD_A(1);
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = 1;
+    hBattleTurn = 1;
     // LD_A_addr(wEnemyMoveStruct + MOVE_EFFECT);
     // LD_DE(1);
     // LD_HL(mConstantDamageEffects);
@@ -7243,7 +7243,7 @@ void AI_Status(void){
         // PUSH_DE;
         // LD_A(1);
         // LDH_addr_A(hBattleTurn);
-        hram->hBattleTurn = 1;
+        hBattleTurn = 1;
         // CALLFAR(aBattleCheckTypeMatchup);
         uint8_t matchup = BattleCheckTypeMatchup_Conv();
         // POP_DE;

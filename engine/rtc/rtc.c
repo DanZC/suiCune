@@ -96,14 +96,14 @@ void GetTimeOfDay_Conv(void){
         {0xff, MORN_F}
     };
 
-    uint8_t hour = hram->hHours;  // hour
+    uint8_t hour = hHours;  // hour
     // uint16_t hl = mTimesOfDay;
     uint8_t i = 0;
 
     do {
     //  if we're within the given time period,
     //  get the corresponding time of day
-        // if(hour < gb_read(hl)) break;
+        // if(hour < (hl)) break;
         if(hour < TimesOfDay[i][0]) break;
     //  else, get the next entry
         // hl+=2;
@@ -161,13 +161,13 @@ void StageRTCTimeForSave_Conv(void){
     wram->wRTC[0] = wram->wCurDay;
     // LDH_A_addr(hHours);
     // LD_hli_A;
-    wram->wRTC[1] = hram->hHours;
+    wram->wRTC[1] = hHours;
     // LDH_A_addr(hMinutes);
     // LD_hli_A;
-    wram->wRTC[2] = hram->hMinutes;
+    wram->wRTC[2] = hMinutes;
     // LDH_A_addr(hSeconds);
     // LD_hli_A;
-    wram->wRTC[3] = hram->hSeconds;
+    wram->wRTC[3] = hSeconds;
 }
 
 void SaveRTC(void){
@@ -273,7 +273,7 @@ set_bit_7:
 
 uint8_t v_FixDays_Conv(void){
     // LD_HL(hRTCDayHi);
-    uint8_t hi = hram->hRTCDayHi;
+    uint8_t hi = hRTCDayHi;
 
     // BIT_hl(7);
     // IF_NZ goto set_bit_7;
@@ -458,7 +458,7 @@ void v_InitTime_Conv(uint8_t days, uint8_t hours, uint8_t mins, uint8_t secs){
     // LD_A_addr(wStringBuffer2 + 3);
     // SUB_A_hl;
     // DEC_HL;
-    wram->wStartSecond = SubCarry8(secs, hram->hRTCSeconds, carry, &carry);
+    wram->wStartSecond = SubCarry8(secs, hRTCSeconds, carry, &carry);
 
     // IF_NC goto okay_secs;
     if(carry)
@@ -473,7 +473,7 @@ void v_InitTime_Conv(uint8_t days, uint8_t hours, uint8_t mins, uint8_t secs){
     // LD_A_addr(wStringBuffer2 + 2);
     // SBC_A_hl;
     // DEC_HL;
-    wram->wStartMinute = SubCarry8(mins, hram->hRTCMinutes, carry, &carry);
+    wram->wStartMinute = SubCarry8(mins, hRTCMinutes, carry, &carry);
 
     // IF_NC goto okay_mins;
     if(carry)
@@ -489,7 +489,7 @@ void v_InitTime_Conv(uint8_t days, uint8_t hours, uint8_t mins, uint8_t secs){
 
     // SBC_A_hl;
     // DEC_HL;
-    wram->wStartHour = SubCarry8(hours, hram->hRTCHours, carry, &carry);
+    wram->wStartHour = SubCarry8(hours, hRTCHours, carry, &carry);
 
     // IF_NC goto okay_hrs;
     if(carry)
@@ -505,7 +505,7 @@ void v_InitTime_Conv(uint8_t days, uint8_t hours, uint8_t mins, uint8_t secs){
 
     // SBC_A_hl;
     // DEC_HL;
-    wram->wStartDay = SubCarry8(days, hram->hRTCDayLo, carry, &carry);
+    wram->wStartDay = SubCarry8(days, hRTCDayLo, carry, &carry);
 
     // IF_NC goto okay_days;
     if(carry)

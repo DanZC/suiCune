@@ -292,7 +292,7 @@ dec:
 void FarCopyBytesDouble_Conv(uint16_t de, uint8_t a, uint16_t hl, uint16_t bc) {
     // LDH_addr_A(hTempBank);
     // LDH_A_addr(hROMBank);
-    uint8_t temp = hram->hROMBank;
+    uint8_t temp = hROMBank;
     // PUSH_AF;
     // LDH_A_addr(hTempBank);
     // RST(aBankswitch);

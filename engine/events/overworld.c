@@ -510,7 +510,7 @@ void CutDownTreeOrGrass(void){
     *sFieldMoveData.cutWhirlpoolOverworldBlockAddr = sFieldMoveData.cutWhirlpoolReplacementBlock;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // CALL(aOverworldTextModeSwitch);
     OverworldTextModeSwitch_Conv();
     // CALL(aUpdateSprites);
@@ -1116,7 +1116,7 @@ static uint8_t FlyFunction_TryFly(void) {
     // outdoors:
         // XOR_A_A;
         // LDH_addr_A(hMapAnims);
-        hram->hMapAnims = 0;
+        hMapAnims = 0;
         // CALL(aLoadStandardMenuHeader);
         LoadStandardMenuHeader_Conv();
         // CALL(aClearSprites);
@@ -2074,7 +2074,7 @@ void DisappearWhirlpool(void){
     *sFieldMoveData.cutWhirlpoolOverworldBlockAddr = sFieldMoveData.cutWhirlpoolReplacementBlock;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // CALL(aOverworldTextModeSwitch);
     OverworldTextModeSwitch_Conv();
     // LD_A_addr(wCutWhirlpoolAnimationType);
@@ -2407,7 +2407,7 @@ u8_flag_s GetFacingObject_Conv(void){
     // ADD_HL_BC;
     // LD_A_hl;
     // LDH_addr_A(hLastTalked);
-    hram->hLastTalked = bc->mapObjectIndex;
+    hLastTalked = bc->mapObjectIndex;
     // CALL(aGetMapObject);
     // LD_HL(MAPOBJECT_MOVEMENT);
     // ADD_HL_BC;
@@ -2745,7 +2745,7 @@ void Fishing_CheckFacingUp(void){
 bool Script_FishCastRod(script_s* s){
     SCRIPT_BEGIN
     reloadmappart
-    loadmem(hram_ptr(hBGMapMode), 0x0)
+    loadmem(&hBGMapMode, 0x0)
     special(UpdateTimePals)
     loademote(EMOTE_ROD)
     LoadFishingGFX();
@@ -2764,7 +2764,7 @@ const uint8_t MovementData_CastRod[] = {
 void PutTheRodAway(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // LD_A(0x1);
     // LD_addr_A(wPlayerAction);
     wram->wPlayerStruct.action = 0x1;

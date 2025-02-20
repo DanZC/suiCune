@@ -90,8 +90,8 @@ void CloseText_Conv(void){
     // PUSH_AF;
     // LD_A(0x1);
     // LDH_addr_A(hOAMUpdate);
-    uint8_t oldoamupdate = hram->hOAMUpdate;
-    hram->hOAMUpdate = 0x1;
+    uint8_t oldoamupdate = hOAMUpdate;
+    hOAMUpdate = 0x1;
 
     // CALL(aCloseText_CloseText);
 // CloseText:
@@ -99,19 +99,19 @@ void CloseText_Conv(void){
     ClearWindowData_Conv2();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // CALL(aOverworldTextModeSwitch);
     OverworldTextModeSwitch_Conv();
     // CALL(av_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
     v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // CALL(aSafeUpdateSprites);
     SafeUpdateSprites_Conv();
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hWY = 0x90;
     // CALL(aUpdatePlayerSprite);
     UpdatePlayerSprite_Conv();
     // FARCALL(aInitMapNameSign);
@@ -122,7 +122,7 @@ void CloseText_Conv(void){
 
     // POP_AF;
     // LDH_addr_A(hOAMUpdate);
-    hram->hOAMUpdate = oldoamupdate;
+    hOAMUpdate = oldoamupdate;
     // LD_HL(wVramState);
     // RES_hl(6);
     // RET;
@@ -191,8 +191,8 @@ void v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv(void){
     // PUSH_AF;
     // LD_A(0x1);
     // LDH_addr_A(hOAMUpdate);
-    uint8_t oldoamupdate = hram->hOAMUpdate;
-    hram->hOAMUpdate = 0x1;
+    uint8_t oldoamupdate = hOAMUpdate;
+    hOAMUpdate = 0x1;
 
     // FARCALL(aOpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
     OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv();
@@ -200,7 +200,7 @@ void v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv(void){
     // POP_AF;
     // LDH_addr_A(hOAMUpdate);
     // RET;
-    hram->hOAMUpdate = oldoamupdate;
+    hOAMUpdate = oldoamupdate;
 }
 
 void SafeUpdateSprites(void){
@@ -229,31 +229,31 @@ void SafeUpdateSprites(void){
 void SafeUpdateSprites_Conv(void){
     // LDH_A_addr(hOAMUpdate);
     // PUSH_AF;
-    uint8_t oamupdate = hram->hOAMUpdate;
+    uint8_t oamupdate = hOAMUpdate;
     // LDH_A_addr(hBGMapMode);
     // PUSH_AF;
-    uint8_t bgmapmode = hram->hBGMapMode;
+    uint8_t bgmapmode = hBGMapMode;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // LD_A(0x1);
     // LDH_addr_A(hOAMUpdate);
-    hram->hOAMUpdate = 0x1;
+    hOAMUpdate = 0x1;
 
     // CALL(aUpdateSprites);
     UpdateSprites_Conv();
 
     // XOR_A_A;
     // LDH_addr_A(hOAMUpdate);
-    hram->hOAMUpdate = 0x0;
+    hOAMUpdate = 0x0;
     // CALL(aDelayFrame);
     DelayFrame();
     // POP_AF;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = bgmapmode;
+    hBGMapMode = bgmapmode;
     // POP_AF;
     // LDH_addr_A(hOAMUpdate);
-    hram->hOAMUpdate = oamupdate;
+    hOAMUpdate = oamupdate;
     // RET;
 }
 

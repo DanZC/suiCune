@@ -69,23 +69,23 @@ void AskRememberPassword(void){
 void Buena_ExitMenu(void){
     // LDH_A_addr(hOAMUpdate);
     // PUSH_AF;
-    uint8_t oamUpdate = hram->hOAMUpdate;
+    uint8_t oamUpdate = hOAMUpdate;
     // CALL(aExitMenu);
     ExitMenu_Conv2();
     // CALL(aUpdateSprites);
     UpdateSprites_Conv();
     // XOR_A_A;
     // LDH_addr_A(hOAMUpdate);
-    hram->hOAMUpdate = 0;
+    hOAMUpdate = 0;
     // CALL(aDelayFrame);
     DelayFrame();
     // LD_A(0x1);
     // LDH_addr_A(hOAMUpdate);
-    hram->hOAMUpdate = 0x1;
+    hOAMUpdate = 0x1;
     // CALL(aApplyTilemap);
     ApplyTilemap_Conv();
     // POP_AF;
     // LDH_addr_A(hOAMUpdate);
-    hram->hOAMUpdate = oamUpdate;
+    hOAMUpdate = oamUpdate;
     // RET;
 }

@@ -66,7 +66,7 @@ static void EvolutionAnimation_ReplaceFrontpic(void){
     // PUSH_BC;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hBGMapMode = 0x0;
     // hlcoord(7, 2, wTilemap);
     tile_t* hl = coord(7, 2, wram->wTilemap);
     // LD_BC((7 << 8) | 7);
@@ -98,7 +98,7 @@ static void EvolutionAnimation_ReplaceFrontpic(void){
     } while(--b != 0);
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hBGMapMode = 0x1;
     // CALL(aWaitBGMap);
     WaitBGMap_Conv();
     // POP_BC;
@@ -134,7 +134,7 @@ static bool EvolutionAnimation_WaitFrames_CheckPressedB(uint8_t c){
         // POP_BC;
         // AND_A(B_BUTTON);
         // IF_NZ goto pressed_b;
-        if(hram->hJoyDown & B_BUTTON) {
+        if(hJoyDown & B_BUTTON) {
         // pressed_b:
             // LD_A_addr(wForceEvolution);
             // AND_A_A;
@@ -255,7 +255,7 @@ static void EvolutionAnimation_AnimateBallsOfLight(void){
     // INC_A;
     // AND_A(0x7);
     // LD_B_A;
-    uint8_t b = ((hram->hVBlankCounter + 4) / 2) & 7;
+    uint8_t b = ((hVBlankCounter + 4) / 2) & 7;
     // LD_HL(wVirtualOAMSprite00Attributes);
     struct SpriteOAM* hl = wram->wVirtualOAMSprite;
     // LD_C(NUM_SPRITE_OAM_STRUCTS);
@@ -350,7 +350,7 @@ static void EvolutionAnimation_EvolutionAnimation(void){
     WaitBGMap_Conv();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hBGMapMode = 0x0;
 
     // LD_A_addr(wEvolutionOldSpecies);
     // LD_addr_A(wPlayerHPPal);
@@ -392,7 +392,7 @@ static void EvolutionAnimation_EvolutionAnimation(void){
 
     // LD_A(1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 1;
+    hBGMapMode = 1;
 
     // CALL(aEvolutionAnimation_check_statused);
     // IF_C goto skip_cry;

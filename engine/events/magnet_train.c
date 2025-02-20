@@ -70,18 +70,18 @@ void MagnetTrain(void){
 
     // LDH_A_addr(hSCX);
     // PUSH_AF;
-    uint8_t scx = hram->hSCX;
+    uint8_t scx = hSCX;
     // LDH_A_addr(hSCY);
     // PUSH_AF;
-    uint8_t scy = hram->hSCX;
+    uint8_t scy = hSCX;
     // CALL(aMagnetTrain_LoadGFX_PlayMusic);
     MagnetTrain_LoadGFX_PlayMusic();
     // LD_HL(hVBlank);
     // LD_A_hl;
-    uint8_t vblank = hram->hVBlank;
+    uint8_t vblank = hVBlank;
     // PUSH_AF;
     // LD_hl(1);
-    hram->hVBlank = 1;
+    hVBlank = 1;
 
     while(!bit_test(wram->wJumptableIndex, 7)) {
     // loop:
@@ -113,18 +113,18 @@ void MagnetTrain(void){
 // done:
     // POP_AF;
     // LDH_addr_A(hVBlank);
-    hram->hVBlank = vblank;
+    hVBlank = vblank;
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // XOR_A_A;
     // LDH_addr_A(hLCDCPointer);
-    hram->hLCDCPointer = 0x0;
+    hLCDCPointer = 0x0;
     // LDH_addr_A(hLYOverrideStart);
-    hram->hLYOverrideStart = 0x0;
+    hLYOverrideStart = 0x0;
     // LDH_addr_A(hLYOverrideEnd);
-    hram->hLYOverrideEnd = 0x0;
+    hLYOverrideEnd = 0x0;
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0x0;
+    hSCX = 0x0;
     // LD_addr_A(wRequested2bppSource);
     // LD_addr_A(wRequested2bppSource + 1);
     // LD_addr_A(wRequested2bppDest);
@@ -135,13 +135,13 @@ void MagnetTrain(void){
 
     // POP_AF;
     // LDH_addr_A(hSCY);
-    hram->hSCY = scy;
+    hSCY = scy;
     // POP_AF;
     // LDH_addr_A(hSCX);
-    hram->hSCX = scx;
+    hSCX = scx;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hBGMapMode = 0x0;
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
@@ -166,7 +166,7 @@ void MagnetTrain_UpdateLYOverrides(void){
     // LD_A_addr(wMagnetTrainOffset);
     // ADD_A_A;
     // LDH_addr_A(hSCX);
-    hram->hSCX = wram->wMagnetTrainOffset << 1;
+    hSCX = wram->wMagnetTrainOffset << 1;
     // CALL(aMagnetTrain_UpdateLYOverrides_loadloop);
     hl = MagnetTrain_UpdateLYOverrides_loadloop(hl, 6 * TILE_WIDTH - 1, wram->wMagnetTrainOffset << 1);
     // LD_C(6 * TILE_WIDTH);
@@ -205,16 +205,16 @@ void MagnetTrain_LoadGFX_PlayMusic(void){
     DrawMagnetTrain();
     // LD_A(SCREEN_HEIGHT_PX);
     // LDH_addr_A(hWY);
-    hram->hWY = SCREEN_HEIGHT_PX;
+    hWY = SCREEN_HEIGHT_PX;
     // CALL(aEnableLCD);
     EnableLCD_Conv();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hBGMapMode = 0x0;
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0x0;
+    hSCX = 0x0;
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0x0;
+    hSCY = 0x0;
 
 // Load the player sprite's standing frames
     // LDH_A_addr(rSVBK);
@@ -375,7 +375,7 @@ void MagnetTrain_InitLYOverrides(void){
     ByteFill_Conv2(wram->wLYOverridesBackup, sizeof(wram->wLYOverridesBackup), wram->wMagnetTrainInitPosition);
     // LD_A(LOW(rSCX));
     // LDH_addr_A(hLCDCPointer);
-    hram->hLCDCPointer = LOW(rSCX);
+    hLCDCPointer = LOW(rSCX);
     // RET;
 
 }

@@ -123,7 +123,7 @@ uint8_t* PrintHoursMins_Conv(uint8_t* de, uint8_t b, uint8_t c){
     uint8_t* hl = de;
     // de = REG_SP + 1;
     // LD_hl(0x7f);
-    // gb_write(hl, 0x7f);
+    // (hl, 0x7f);
     // LD_BC((1 << 8) | 2);
     // REG_HL = hl;
     // REG_DE = de;

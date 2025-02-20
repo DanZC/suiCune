@@ -51,7 +51,7 @@ void ShowLinkBattleParticipants_Conv(void){
 void FindFirstAliveMonAndStartBattle(void){
     // XOR_A_A;
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = 0;
+    hMapAnims = 0;
     // CALL(aDelayFrame);
     DelayFrame();
     // LD_B(PARTY_LENGTH);
@@ -86,20 +86,20 @@ void FindFirstAliveMonAndStartBattle(void){
     v_LoadBattleFontsHPBar();
     // LD_A(1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 1;
+    hBGMapMode = 1;
     // CALL(aClearSprites);
     ClearSprites_Conv();
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hBGMapMode = 0x0;
     // LDH_addr_A(hWY);
-    hram->hWY = 0x0;
+    hWY = 0x0;
     // LDH_addr_A(rWY);
     gb_write(rWY, 0x0);
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = FALSE;
+    hMapAnims = FALSE;
     // RET;
 }
 
@@ -494,7 +494,7 @@ void ClearBattleRAM_Conv(void){
     // XOR_A_A;  // LOW(vBGMap0)
     // LD_hli_A;
     // LD_hl(HIGH(vBGMap0));
-    hram->hBGMapAddress = vBGMap0;
+    hBGMapAddress = vBGMap0;
     // RET;
 
 }

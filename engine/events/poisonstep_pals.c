@@ -8,7 +8,7 @@ static void LoadPoisonBGPals_LoadPals(void) {
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // IF_NZ goto cgb;
-    if(hram->hCGB) {
+    if(hCGB) {
     // cgb:
         // LDH_A_addr(rSVBK);
         // PUSH_AF;
@@ -33,7 +33,7 @@ static void LoadPoisonBGPals_LoadPals(void) {
         // LDH_addr_A(rSVBK);
         // LD_A(TRUE);
         // LDH_addr_A(hCGBPalUpdate);
-        hram->hCGBPalUpdate = TRUE;
+        hCGBPalUpdate = TRUE;
         // LD_C(4);
         // CALL(aDelayFrames);
         DelayFrames_Conv(4);

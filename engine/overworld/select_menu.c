@@ -256,7 +256,7 @@ SwitchTo:
         // SCF;
         // LD_A(HMENURETURN_SCRIPT);
         // LDH_addr_A(hMenuReturn);
-        hram->hMenuReturn = HMENURETURN_SCRIPT;
+        hMenuReturn = HMENURETURN_SCRIPT;
         // RET;
         return true;
     }

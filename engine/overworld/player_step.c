@@ -60,11 +60,11 @@ void ScrollScreen(void){
     // LDH_A_addr(hSCX);
     // ADD_A_D;
     // LDH_addr_A(hSCX);
-    hram->hSCX += wram->wPlayerStepVectorX;
+    hSCX += wram->wPlayerStepVectorX;
     // LDH_A_addr(hSCY);
     // ADD_A_E;
     // LDH_addr_A(hSCY);
-    hram->hSCY += wram->wPlayerStepVectorY;
+    hSCY += wram->wPlayerStepVectorY;
     // RET;
 }
 

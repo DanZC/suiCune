@@ -223,7 +223,7 @@ void BattleCommand_CheckTurn(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // JP_NZ (mCheckEnemyTurn);
-    if(hram->hBattleTurn != 0)
+    if(hBattleTurn != 0)
         return CheckEnemyTurn();
 
 //  check player turn
@@ -297,7 +297,7 @@ void BattleCommand_CheckTurn(void){
             UpdatePlayerHUD();
             // LD_A(0x1);
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = 0x1;
+            hBGMapMode = 0x1;
             // LD_HL(wPlayerSubStatus1);
             // RES_hl(SUBSTATUS_NIGHTMARE);
             bit_reset(wram->wPlayerSubStatus1, SUBSTATUS_NIGHTMARE);
@@ -591,7 +591,7 @@ void CheckEnemyTurn(void){
             // CALL(aCallBattleCore);
             // LD_A(0x1);
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = 0x1;
+            hBGMapMode = 0x1;
             // LD_HL(wEnemySubStatus1);
             // RES_hl(SUBSTATUS_NIGHTMARE);
             bit_reset(wram->wEnemySubStatus1, SUBSTATUS_NIGHTMARE);
@@ -918,7 +918,7 @@ void HitConfusion(void){
     UpdatePlayerHUD();
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hBGMapMode = 0x1;
     // LD_C(TRUE);
     // CALL(aDoPlayerDamage);
     DoPlayerDamage_Conv(true);
@@ -934,7 +934,7 @@ void BattleCommand_CheckObedience(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // RET_NZ ;
-    if(hram->hBattleTurn != 0)
+    if(hBattleTurn != 0)
         return;
 
     // CALL(aCheckUserIsCharging);
@@ -1426,7 +1426,7 @@ bool CheckUserIsCharging_Conv(void){
     // AND_A_A;
     // LD_A_addr(wPlayerCharging);  // player
     // IF_Z goto end;
-    if(hram->hBattleTurn == 0) {
+    if(hBattleTurn == 0) {
         return wram->wPlayerCharging != 0;
     }
     // LD_A_addr(wEnemyCharging);  // enemy
@@ -1455,7 +1455,7 @@ static uint8_t BattleCommand_DoTurn_consume_pp(uint8_t* hl) {
     // LD_A_addr(wCurMoveNum);
     // IF_Z goto okay;
     // LD_A_addr(wCurEnemyMoveNum);
-    uint8_t move = (hram->hBattleTurn == 0)? wram->wCurMoveNum: wram->wCurEnemyMoveNum;
+    uint8_t move = (hBattleTurn == 0)? wram->wCurMoveNum: wram->wCurEnemyMoveNum;
 
 // okay:
     // LD_C_A;
@@ -1510,7 +1510,7 @@ void BattleCommand_DoTurn(void){
         return;
 
     uint8_t *bc, *de, *hl;
-    if(hram->hBattleTurn == 0) {
+    if(hBattleTurn == 0) {
         // LD_HL(wBattleMonPP);
         hl = wram->wBattleMon.pp;
         // LD_DE(wPlayerSubStatus3);
@@ -1573,7 +1573,7 @@ void BattleCommand_DoTurn(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
 
-    if(hram->hBattleTurn == 0) {
+    if(hBattleTurn == 0) {
         // LD_HL(wPartyMon1PP);
         hl = wram->wPartyMon[wram->wCurBattleMon].mon.PP;
         // LD_A_addr(wCurBattleMon);
@@ -1692,7 +1692,7 @@ bool CheckMimicUsed_Conv(void){
     // LD_A_addr(wCurMoveNum);
     // IF_Z goto player;
     // LD_A_addr(wCurEnemyMoveNum);
-    uint8_t move = (hram->hBattleTurn == 0)? wram->wCurMoveNum: wram->wCurEnemyMoveNum;
+    uint8_t move = (hBattleTurn == 0)? wram->wCurMoveNum: wram->wCurEnemyMoveNum;
 
 // player:
     // LD_C_A;
@@ -1746,8 +1746,8 @@ void BattleCommand_Critical(void){
     // IF_NZ goto Item;
     // LD_HL(wBattleMonItem);
     // LD_A_addr(wBattleMonSpecies);
-    item_t item = (hram->hBattleTurn != 0)? wram->wEnemyMon.item: wram->wBattleMon.item;
-    species_t species = (hram->hBattleTurn != 0)? wram->wEnemyMon.species: wram->wBattleMon.species;
+    item_t item = (hBattleTurn != 0)? wram->wEnemyMon.item: wram->wBattleMon.item;
+    species_t species = (hBattleTurn != 0)? wram->wEnemyMon.species: wram->wBattleMon.species;
 
     uint8_t c = 0;
 // Item:
@@ -1860,7 +1860,7 @@ void BattleCommand_Stab(void){
         return;
 
     uint8_t b, c, d, e;
-    if(hram->hBattleTurn == 0) {
+    if(hBattleTurn == 0) {
         // LD_HL(wBattleMonType1);
         // LD_A_hli;
         // LD_B_A;
@@ -2103,7 +2103,7 @@ uint8_t BattleCheckTypeMatchup_Conv(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // JR_Z (mCheckTypeMatchup);
-    if(hram->hBattleTurn == 0)
+    if(hBattleTurn == 0)
         return CheckTypeMatchup_Conv(GetBattleVar_Conv(BATTLE_VARS_MOVE_TYPE), wram->wEnemyMon.types);
     // LD_HL(wBattleMonType1);
     // return CheckTypeMatchup();
@@ -2589,7 +2589,7 @@ static void BattleCommand_CheckHit_StatModifiers(void) {
 // load the user's accuracy into b and the opponent's evasion into c.
     uint8_t* acc;
     uint8_t b, c;
-    if(hram->hBattleTurn == 0) {
+    if(hBattleTurn == 0) {
         // LD_HL(wPlayerMoveStruct + MOVE_ACC);
         acc = &wram->wPlayerMoveStruct.accuracy;
         // LD_A_addr(wPlayerAccLevel);
@@ -2762,7 +2762,7 @@ void BattleCommand_CheckHit(void){
     // IF_Z goto BrightPowder;
     // LD_A_addr(wEnemyMoveStruct + MOVE_ACC);
     // LD_B_A;
-    uint8_t b = (hram->hBattleTurn == 0)? wram->wPlayerMoveStruct.accuracy: wram->wEnemyMoveStruct.accuracy;
+    uint8_t b = (hBattleTurn == 0)? wram->wPlayerMoveStruct.accuracy: wram->wEnemyMoveStruct.accuracy;
 
 
 // BrightPowder:
@@ -2840,7 +2840,7 @@ void BattleCommand_EffectChance(void){
     // AND_A_A;
     // IF_Z goto got_move_chance;
     // LD_HL(wEnemyMoveStruct + MOVE_CHANCE);
-    uint8_t chance = (hram->hBattleTurn == 0)? wram->wPlayerMoveStruct.effectChance: wram->wEnemyMoveStruct.effectChance;
+    uint8_t chance = (hBattleTurn == 0)? wram->wPlayerMoveStruct.effectChance: wram->wEnemyMoveStruct.effectChance;
 
 // got_move_chance:
 
@@ -3014,11 +3014,11 @@ void BattleCommand_MoveAnimNoSub(void){
     // IF_Z goto got_rollout_count;
     // LD_DE(wEnemyRolloutCount);
     // LD_A(BATTLEANIM_PLAYER_DAMAGE);
-    uint8_t*  de = (hram->hBattleTurn == 0)? &wram->wPlayerRolloutCount: &wram->wEnemyRolloutCount;
+    uint8_t*  de = (hBattleTurn == 0)? &wram->wPlayerRolloutCount: &wram->wEnemyRolloutCount;
 
 // got_rollout_count:
     // LD_addr_A(wNumHits);
-    wram->wNumHits = (hram->hBattleTurn == 0)? BATTLEANIM_ENEMY_DAMAGE: BATTLEANIM_PLAYER_DAMAGE;
+    wram->wNumHits = (hBattleTurn == 0)? BATTLEANIM_ENEMY_DAMAGE: BATTLEANIM_PLAYER_DAMAGE;
     // LD_A(BATTLE_VARS_MOVE_EFFECT);
     // CALL(aGetBattleVar);
     uint8_t effect = GetBattleVar_Conv(BATTLE_VARS_MOVE_EFFECT);
@@ -3119,7 +3119,7 @@ void BattleCommand_StatDownAnim(void){
     // AND_A_A;
     // LD_A(BATTLEANIM_ENEMY_STAT_DOWN);
     // JR_Z (mBattleCommand_StatUpDownAnim);
-    if(hram->hBattleTurn == 0)
+    if(hBattleTurn == 0)
         return BattleCommand_StatUpDownAnim(BATTLEANIM_ENEMY_STAT_DOWN);
     // LD_A(BATTLEANIM_WOBBLE);
     else
@@ -3150,7 +3150,7 @@ void BattleCommand_SwitchTurn(void){
     // LDH_A_addr(hBattleTurn);
     // XOR_A(1);
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn ^= 1;
+    hBattleTurn ^= 1;
     // RET;
 }
 
@@ -3259,7 +3259,7 @@ static void BattleCommand_ApplyDamage_update_damage_taken(void) {
     // AND_A_A;
     // IF_NZ goto got_damage_taken;
     // LD_DE(wEnemyDamageTaken + 1);
-    uint16_t* taken = (uint16_t*)((hram->hBattleTurn != 0)? wram_ptr(wPlayerDamageTaken): wram_ptr(wEnemyDamageTaken));
+    uint16_t* taken = (uint16_t*)((hBattleTurn != 0)? wram_ptr(wPlayerDamageTaken): wram_ptr(wEnemyDamageTaken));
     uint16_t dmg = ReverseEndian16(wram->wCurDamage);
 
 // got_damage_taken:
@@ -3349,7 +3349,7 @@ void BattleCommand_ApplyDamage(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_NZ goto damage_player;
-    if(hram->hBattleTurn != 0)  {
+    if(hBattleTurn != 0)  {
     // damage_player:
         // CALL(aDoPlayerDamage);
         DoPlayerDamage_Conv(false);
@@ -3473,7 +3473,7 @@ void GetFailureResultText(void){
         // LDH_A_addr(hBattleTurn);
         // AND_A_A;
         // JP_NZ (mDoEnemyDamage);
-        if(hram->hBattleTurn != 0)
+        if(hBattleTurn != 0)
             return DoEnemyDamage_Conv(true);
         // JP(mDoPlayerDamage);
         return DoPlayerDamage_Conv(true);
@@ -3572,7 +3572,7 @@ void BattleCommand_StartLoop(void){
     // AND_A_A;
     // IF_Z goto ok;
     // LD_HL(wEnemyRolloutCount);
-    uint8_t* hl = (hram->hBattleTurn == 0)? &wram->wPlayerRolloutCount: &wram->wEnemyRolloutCount;
+    uint8_t* hl = (hBattleTurn == 0)? &wram->wPlayerRolloutCount: &wram->wEnemyRolloutCount;
 
 // ok:
     // XOR_A_A;
@@ -3632,7 +3632,7 @@ void BattleCommand_CheckFaint(void){
     // AND_A_A;
     // IF_Z goto got_hp;
     // LD_HL(wBattleMonHP);
-    uint16_t hp = (hram->hBattleTurn == 0)? wram->wEnemyMon.hp: wram->wBattleMon.hp;
+    uint16_t hp = (hBattleTurn == 0)? wram->wEnemyMon.hp: wram->wBattleMon.hp;
 
 
 // got_hp:
@@ -3657,7 +3657,7 @@ void BattleCommand_CheckFaint(void){
         uint8_t whichHPBar;
         // LDH_A_addr(hBattleTurn);
         // AND_A_A;
-        if(hram->hBattleTurn == 0) {
+        if(hBattleTurn == 0) {
             // LD_HL(wEnemyMonMaxHP + 1);
             maxHP = (uint16_t*)(((uint8_t*)&wram->wEnemyMon) + offsetof(struct BattleMon, maxHP));
             HP = (uint16_t*)(((uint8_t*)&wram->wEnemyMon) + offsetof(struct BattleMon, hp));
@@ -3783,7 +3783,7 @@ void BattleCommand_BuildOpponentRage(void){
     // AND_A_A;
     // IF_Z goto player;
     // LD_DE(wPlayerRageCounter);
-    uint8_t* de = (hram->hBattleTurn == 0)? &wram->wEnemyRageCounter: &wram->wPlayerRageCounter;
+    uint8_t* de = (hBattleTurn == 0)? &wram->wEnemyRageCounter: &wram->wPlayerRageCounter;
 
 // player:
     // LD_A_de;
@@ -3819,7 +3819,7 @@ void BattleCommand_RageDamage(void){
     // LD_A_addr(wPlayerRageCounter);
     // IF_Z goto rage_loop;
     // LD_A_addr(wEnemyRageCounter);
-    uint8_t a = (hram->hBattleTurn == 0)? wram->wPlayerRageCounter: wram->wEnemyRageCounter;
+    uint8_t a = (hBattleTurn == 0)? wram->wPlayerRageCounter: wram->wEnemyRageCounter;
 
     while(a != 0) {
     // rage_loop:
@@ -3915,7 +3915,7 @@ void DittoMetalPowder_Conv(uint8_t* b, uint8_t* c){
     // LD_A_hl;
     // IF_NZ goto got_species;
     // LD_A_addr(wTempEnemyMonSpecies);
-    species_t species = (hram->hBattleTurn == 0)? wram->wPartyMon[wram->wCurPartyMon].mon.species: wram->wTempEnemyMonSpecies;
+    species_t species = (hBattleTurn == 0)? wram->wPartyMon[wram->wCurPartyMon].mon.species: wram->wTempEnemyMonSpecies;
 
 
 // got_species:
@@ -3965,7 +3965,7 @@ void BattleCommand_DamageStats(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // JP_NZ (mEnemyAttackDamage);
-    if(hram->hBattleTurn != 0)
+    if(hBattleTurn != 0)
         return EnemyAttackDamage(&gBattleCmdState);
 
 // fallthrough
@@ -4277,7 +4277,7 @@ bool CheckDamageStatsCritical_Conv(void){
     // IF_NZ goto enemy;
 
     uint8_t a, b;
-    if(hram->hBattleTurn == 0) {
+    if(hBattleTurn == 0) {
         // LD_A_addr(wPlayerMoveStructType);
         // CP_A(SPECIAL);
     //  special
@@ -4459,7 +4459,7 @@ uint16_t SpeciesItemBoost_Conv(uint16_t hl, species_t b, species_t c, item_t d){
     // LD_A_hl;
     // IF_Z goto CompareSpecies;
     // LD_A_addr(wTempEnemyMonSpecies);
-    species_t a = (hram->hBattleTurn == 0)? mon->mon.species: wram->wTempEnemyMonSpecies;
+    species_t a = (hBattleTurn == 0)? mon->mon.species: wram->wTempEnemyMonSpecies;
 
 // CompareSpecies:
     // POP_HL;
@@ -4667,9 +4667,9 @@ void HitSelfInConfusion_Conv(struct BattleCmdState* state){
     // IF_Z goto got_it;
 
     // LD_HL(wEnemyMonDefense);
-    struct BattleMon* hl = (hram->hBattleTurn == 0)? &wram->wBattleMon: &wram->wEnemyMon;
+    struct BattleMon* hl = (hBattleTurn == 0)? &wram->wBattleMon: &wram->wEnemyMon;
     // LD_DE(wEnemyScreens);
-    uint8_t* de = (hram->hBattleTurn == 0)? &wram->wPlayerScreens: &wram->wEnemyScreens;
+    uint8_t* de = (hBattleTurn == 0)? &wram->wPlayerScreens: &wram->wEnemyScreens;
     // LD_A_addr(wEnemyMonLevel);
 
 // got_it:
@@ -5019,7 +5019,7 @@ void BattleCommand_ConstantDamage(void){
     // AND_A_A;
     // IF_Z goto got_turn;
     // LD_HL(wEnemyMonLevel);
-    uint8_t b = (hram->hBattleTurn == 0)? wram->wBattleMon.level: wram->wEnemyMon.level;
+    uint8_t b = (hBattleTurn == 0)? wram->wBattleMon.level: wram->wEnemyMon.level;
     uint8_t a = 0;
 
 
@@ -5084,7 +5084,7 @@ void BattleCommand_ConstantDamage(void){
             // AND_A_A;
             // IF_Z goto got_hp;
             // LD_HL(wBattleMonHP);
-            uint16_t hp = (hram->hBattleTurn == 0)
+            uint16_t hp = (hBattleTurn == 0)
                 ? ReverseEndian16(wram->wEnemyMon.hp)
                 : ReverseEndian16(wram->wBattleMon.hp);
 
@@ -5125,10 +5125,10 @@ void BattleCommand_ConstantDamage(void){
             // AND_A_A;
             // IF_Z goto reversal_got_hp;
             // LD_HL(wEnemyMonHP);
-            uint16_t hp = (hram->hBattleTurn == 0)
+            uint16_t hp = (hBattleTurn == 0)
                 ? ReverseEndian16(wram->wBattleMon.hp)
                 : ReverseEndian16(wram->wEnemyMon.hp);
-            uint16_t maxHP = (hram->hBattleTurn == 0)
+            uint16_t maxHP = (hBattleTurn == 0)
                 ? ReverseEndian16(wram->wBattleMon.maxHP)
                 : ReverseEndian16(wram->wEnemyMon.maxHP);
 
@@ -5201,7 +5201,7 @@ void BattleCommand_ConstantDamage(void){
 
             a = *hl;
             uint8_t* hl2;
-            if(hram->hBattleTurn == 0) {
+            if(hBattleTurn == 0) {
                 // LD_HL(wPlayerMoveStructPower);
                 hl2 = &wram->wPlayerMoveStruct.power;
                 // LD_hl_A;
@@ -5709,7 +5709,7 @@ void DoSubstituteDamage(void){
     // AND_A_A;
     // IF_Z goto got_hp;
     // LD_DE(wPlayerSubstituteHP);
-    uint8_t* hp = (hram->hBattleTurn == 0)? &wram->wEnemySubstituteHP: &wram->wPlayerSubstituteHP;
+    uint8_t* hp = (hBattleTurn == 0)? &wram->wEnemySubstituteHP: &wram->wPlayerSubstituteHP;
 
 // got_hp:
 
@@ -5834,7 +5834,7 @@ static bool BattleCommand_SleepTarget_CheckAIRandomFail(void) {
     // CALL(aBattleRandom);
     // CP_A(25 percent + 1);  // 25% chance AI fails
     // RET_C ;
-    if(hram->hBattleTurn != 0
+    if(hBattleTurn != 0
     && wram->wLinkMode == 0
     && wram->wInBattleTowerBattle == 0
     && !bit_test(wram->wPlayerSubStatus5, SUBSTATUS_LOCK_ON)
@@ -6016,7 +6016,7 @@ static bool BattleCommand_Poison_check_toxic(uint8_t** hl, uint8_t** de) {
     // LD_DE(wEnemyToxicCount);
     // IF_Z goto ok;
     // LD_DE(wPlayerToxicCount);
-    *de = (hram->hBattleTurn == 0)? &wram->wEnemyToxicCount: &wram->wPlayerToxicCount;
+    *de = (hBattleTurn == 0)? &wram->wEnemyToxicCount: &wram->wPlayerToxicCount;
 
 // ok:
     // LD_A(BATTLE_VARS_MOVE_EFFECT);
@@ -6128,7 +6128,7 @@ void BattleCommand_Poison(void){
     // CP_A(25 percent + 1);  // 25% chance AI fails
     // IF_C goto failed;
 
-    if(hram->hBattleTurn != 0
+    if(hBattleTurn != 0
     && wram->wLinkMode == 0
     && wram->wInBattleTowerBattle == 0
     && !bit_test(wram->wPlayerSubStatus5, SUBSTATUS_LOCK_ON)
@@ -6214,7 +6214,7 @@ ok:
 }
 
 bool CheckIfTargetIsPoisonType_Conv(void){
-    if(hram->hBattleTurn != 0) {
+    if(hBattleTurn != 0) {
     // ok:
         // LD_A_de;
         // INC_DE;
@@ -6311,8 +6311,8 @@ void SapHealth(void){
     // IF_Z goto battlemonhp;
     // LD_HL(wEnemyMonHP);
     // LD_DE(wEnemyMonMaxHP);
-    uint16_t* maxhp = (uint16_t*)((hram->hBattleTurn != 0)? wram_ptr(wEnemyMonMaxHP): wram_ptr(wBattleMonMaxHP));
-    uint16_t*    hp = (uint16_t*)((hram->hBattleTurn != 0)? wram_ptr(wEnemyMonHP): wram_ptr(wBattleMonHP));
+    uint16_t* maxhp = (uint16_t*)((hBattleTurn != 0)? wram_ptr(wEnemyMonMaxHP): wram_ptr(wBattleMonMaxHP));
+    uint16_t*    hp = (uint16_t*)((hBattleTurn != 0)? wram_ptr(wEnemyMonHP): wram_ptr(wBattleMonHP));
 
 // battlemonhp:
 
@@ -6383,7 +6383,7 @@ void SapHealth(void){
 finish:;
     tile_t* hl;
     uint8_t which;
-    if(hram->hBattleTurn == 0) {
+    if(hBattleTurn == 0) {
         // LDH_A_addr(hBattleTurn);
         // AND_A_A;
         // hlcoord(10, 9, wTilemap);
@@ -6453,7 +6453,7 @@ void BattleCommand_BurnTarget(void){
     UpdateOpponentInParty();
     // LD_HL(mApplyBrnEffectOnAttack);
     // CALL(aCallBattleCore);
-    ApplyBrnEffectOnAttack_Conv(hram->hBattleTurn);
+    ApplyBrnEffectOnAttack_Conv(hBattleTurn);
     // LD_DE(ANIM_BRN);
     // CALL(aPlayOpponentBattleAnim);
     PlayOpponentBattleAnim_Conv(ANIM_BRN);
@@ -6515,7 +6515,7 @@ void Defrost_Conv(uint8_t* status){
     // IF_Z goto ok;
     // LD_HL(wPartyMon1Status);
     // LD_A_addr(wCurBattleMon);
-    struct PartyMon* mon = (hram->hBattleTurn == 0)
+    struct PartyMon* mon = (hBattleTurn == 0)
         ? wram->wOTPartyMon + wram->wCurOTMon
         : wram->wPartyMon   + wram->wCurBattleMon;
 
@@ -6606,7 +6606,7 @@ void BattleCommand_FreezeTarget(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto finish;
-    if(hram->hBattleTurn == 0) {
+    if(hBattleTurn == 0) {
         wram->wEnemyJustGotFrozen = 0x1;
     }
     else {
@@ -6928,7 +6928,7 @@ void RaiseStat_Conv(uint8_t b){
     // AND_A_A;
     // IF_Z goto got_stat_levels;
     // LD_HL(wEnemyStatLevels);
-    uint8_t* hl = (hram->hBattleTurn == 0)? wram->wPlayerStatLevels: wram->wEnemyStatLevels;
+    uint8_t* hl = (hBattleTurn == 0)? wram->wPlayerStatLevels: wram->wEnemyStatLevels;
 
 // got_stat_levels:
     // LD_A_addr(wAttackMissed);
@@ -6982,9 +6982,9 @@ void RaiseStat_Conv(uint8_t b){
         // IF_NC goto done_calcing_stats;
         if(c < 0x5) {
             // LD_HL(wBattleMonStats + 1);
-            uint8_t (*hl2)[2] = (hram->hBattleTurn == 0)? wram->wBattleMon.stats: wram->wEnemyMon.stats;
+            uint8_t (*hl2)[2] = (hBattleTurn == 0)? wram->wBattleMon.stats: wram->wEnemyMon.stats;
             // LD_DE(wPlayerStats);
-            // uint16_t* de = (hram->hBattleTurn == 0)? wram->wPlayerStats: wram->wEnemyStats;
+            // uint16_t* de = (hBattleTurn == 0)? wram->wPlayerStats: wram->wEnemyStats;
             // LDH_A_addr(hBattleTurn);
             // AND_A_A;
             // IF_Z goto got_stats_pointer;
@@ -7020,7 +7020,7 @@ void RaiseStat_Conv(uint8_t b){
             // LDH_A_addr(hBattleTurn);
             // AND_A_A;
             // IF_Z goto calc_player_stats;
-            if(hram->hBattleTurn == 0)
+            if(hBattleTurn == 0)
                 CalcPlayerStats();
             else
                 // CALL(aCalcEnemyStats);
@@ -7064,7 +7064,7 @@ void MinimizeDropSub(void){
 
     uint8_t* bc;
     void (*hl)(void);
-    if(hram->hBattleTurn == 0) {
+    if(hBattleTurn == 0) {
         // LD_BC(wPlayerMinimized);
         bc = &wram->wPlayerMinimized;
         // LD_HL(mDropPlayerSub);
@@ -7098,7 +7098,7 @@ void MinimizeDropSub(void){
 
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // CALL(aCallBattleCore);
     hl();
     // CALL(aWaitBGMap);
@@ -7258,7 +7258,7 @@ void BattleCommand_StatDown(void){
     // AND_A_A;
     // IF_Z goto GetStatLevel;
     // LD_HL(wPlayerStatLevels);
-    uint8_t* statLevels = (hram->hBattleTurn == 0)? wram->wEnemyStatLevels: wram->wPlayerStatLevels;
+    uint8_t* statLevels = (hBattleTurn == 0)? wram->wEnemyStatLevels: wram->wPlayerStatLevels;
 
 // GetStatLevel:
 //  Attempt to lower the stat.
@@ -7330,7 +7330,7 @@ void BattleCommand_StatDown(void){
 
     // CALL(aCheckHiddenOpponent);
     // IF_NZ goto Failed;
-    if((   hram->hBattleTurn != 0
+    if((   hBattleTurn != 0
         && wram->wLinkMode == 0
         && wram->wInBattleTowerBattle == 0
         && !bit_test(wram->wPlayerSubStatus5, SUBSTATUS_LOCK_ON)
@@ -7365,7 +7365,7 @@ void BattleCommand_StatDown(void){
         // IF_Z goto do_enemy;
         // LD_HL(wBattleMonAttack + 1);
         // LD_DE(wPlayerStats);
-        uint16_t *hl = (uint16_t*)((hram->hBattleTurn == 0)? wram_ptr(wEnemyMonAttack): wram_ptr(wBattleMonAttack));
+        uint16_t *hl = (uint16_t*)((hBattleTurn == 0)? wram_ptr(wEnemyMonAttack): wram_ptr(wBattleMonAttack));
 
     // do_enemy:
         // CALL(aTryLowerStat);
@@ -7645,7 +7645,7 @@ bool TryLowerStat_Conv(uint8_t c, uint16_t* hl){
     // AND_A_A;
     // IF_Z goto Player;
 
-    if(hram->hBattleTurn != 0) {
+    if(hBattleTurn != 0) {
         // CALL(aBattleCommand_SwitchTurn);
         BattleCommand_SwitchTurn();
         // CALL(aCalcPlayerStats);
@@ -7933,7 +7933,7 @@ void LowerStat_Conv(uint8_t a){
     // AND_A_A;
     // IF_Z goto got_target;
     // LD_HL(wEnemyStatLevels);
-    uint8_t* hl = (hram->hBattleTurn == 0)? wram->wPlayerStatLevels: wram->wEnemyStatLevels;
+    uint8_t* hl = (hBattleTurn == 0)? wram->wPlayerStatLevels: wram->wEnemyStatLevels;
 
 // got_target:
     // LD_A_addr(wLoweredStat);
@@ -7980,8 +7980,8 @@ void LowerStat_Conv(uint8_t a){
         // IF_Z goto got_target_2;
         // LD_HL(wEnemyMonStats + 1);
         // LD_DE(wEnemyStats);
-        uint16_t *hl2 = (uint16_t*)((hram->hBattleTurn == 0)? wram_ptr(wEnemyMonAttack): wram_ptr(wBattleMonAttack));
-        // uint16_t *de = (uint16_t*)((hram->hBattleTurn == 0)? wram_ptr(wEnemyStats): wram_ptr(wPlayerStats));
+        uint16_t *hl2 = (uint16_t*)((hBattleTurn == 0)? wram_ptr(wEnemyMonAttack): wram_ptr(wBattleMonAttack));
+        // uint16_t *de = (uint16_t*)((hBattleTurn == 0)? wram_ptr(wEnemyStats): wram_ptr(wPlayerStats));
 
     // got_target_2:
         // CALL(aTryLowerStat);
@@ -8006,7 +8006,7 @@ void LowerStat_Conv(uint8_t a){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto player;
-    if(hram->hBattleTurn != 0) {
+    if(hBattleTurn != 0) {
         // CALL(aCalcEnemyStats);
         CalcEnemyStats();
         // goto finish;
@@ -8079,9 +8079,9 @@ void BattleCommand_RaiseSubNoAnim(void){
 // PlayerTurn:
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // CALL(aCallBattleCore);
-    if(hram->hBattleTurn == 0)
+    if(hBattleTurn == 0)
         GetBattleMonBackpic();
     else
         GetEnemyMonFrontpic();
@@ -8100,9 +8100,9 @@ void BattleCommand_LowerSubNoAnim(void){
 // PlayerTurn:
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // CALL(aCallBattleCore);
-    if(hram->hBattleTurn == 0)
+    if(hBattleTurn == 0)
         DropPlayerSub();
     else
         DropEnemySub();
@@ -8128,11 +8128,11 @@ void CalcPlayerStats(void){
 
     // LD_HL(mApplyPrzEffectOnSpeed);
     // CALL(aCallBattleCore);
-    ApplyPrzEffectOnSpeed_Conv(hram->hBattleTurn);
+    ApplyPrzEffectOnSpeed_Conv(hBattleTurn);
 
     // LD_HL(mApplyBrnEffectOnAttack);
     // CALL(aCallBattleCore);
-    ApplyBrnEffectOnAttack_Conv(hram->hBattleTurn);
+    ApplyBrnEffectOnAttack_Conv(hBattleTurn);
 
     // JP(mBattleCommand_SwitchTurn);
     BattleCommand_SwitchTurn();
@@ -8152,11 +8152,11 @@ void CalcEnemyStats(void){
 
     // LD_HL(mApplyPrzEffectOnSpeed);
     // CALL(aCallBattleCore);
-    ApplyPrzEffectOnSpeed_Conv(hram->hBattleTurn);
+    ApplyPrzEffectOnSpeed_Conv(hBattleTurn);
 
     // LD_HL(mApplyBrnEffectOnAttack);
     // CALL(aCallBattleCore);
-    ApplyBrnEffectOnAttack_Conv(hram->hBattleTurn);
+    ApplyBrnEffectOnAttack_Conv(hBattleTurn);
 
     // JP(mBattleCommand_SwitchTurn);
     BattleCommand_SwitchTurn();
@@ -8337,8 +8337,8 @@ void BattleCommand_CheckRampage(void){
     // AND_A_A;
     // IF_Z goto player;
     // LD_DE(wEnemyRolloutCount);
-    uint8_t* de =  (hram->hBattleTurn == 0)? &wram->wPlayerRolloutCount: &wram->wEnemyRolloutCount;
-    uint8_t* de2 = (hram->hBattleTurn == 0)? &wram->wPlayerConfuseCount: &wram->wEnemyConfuseCount;
+    uint8_t* de =  (hBattleTurn == 0)? &wram->wPlayerRolloutCount: &wram->wEnemyRolloutCount;
+    uint8_t* de2 = (hBattleTurn == 0)? &wram->wPlayerConfuseCount: &wram->wEnemyConfuseCount;
 
 // player:
     // LD_A(BATTLE_VARS_SUBSTATUS3);
@@ -8402,7 +8402,7 @@ void BattleCommand_Rampage(void){
     // AND_A_A;
     // IF_Z goto ok;
     // LD_DE(wEnemyRolloutCount);
-    uint8_t* de = (hram->hBattleTurn == 0)? &wram->wPlayerRolloutCount: &wram->wEnemyRolloutCount;
+    uint8_t* de = (hBattleTurn == 0)? &wram->wPlayerRolloutCount: &wram->wEnemyRolloutCount;
 
 // ok:
     // LD_A(BATTLE_VARS_SUBSTATUS3);
@@ -8466,7 +8466,7 @@ void BattleCommand_ForceSwitch(void){
     // AND_A_A;
     // JP_NZ (mBattleCommand_ForceSwitch_force_player_switch);
     uint8_t anim;
-    if(hram->hBattleTurn != 0) {
+    if(hBattleTurn != 0) {
     // force_player_switch:
         // LD_A_addr(wAttackMissed);
         // AND_A_A;
@@ -8843,7 +8843,7 @@ void BattleCommand_EndLoop(void){
 // TODO: fix the gotos here.
     uint8_t* bc;
     uint8_t* de;
-    if(hram->hBattleTurn == 0) { 
+    if(hBattleTurn == 0) { 
         // LD_DE(wPlayerRolloutCount);
         de = &wram->wPlayerRolloutCount;
         // LD_BC(wPlayerDamageTaken);
@@ -8905,7 +8905,7 @@ void BattleCommand_EndLoop(void){
             // LDH_A_addr(hBattleTurn);
             // AND_A_A;
             // IF_NZ goto check_ot_beat_up;
-            if(hram->hBattleTurn != 0) {
+            if(hBattleTurn != 0) {
             // check_ot_beat_up:
                 // LD_A_addr(wBattleMode);
                 // CP_A(WILD_BATTLE);
@@ -8992,7 +8992,7 @@ done_loop:
     bit_reset(*GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS3), SUBSTATUS_IN_LOOP);
 
     const struct TextCmd* text;
-    if(hram->hBattleTurn == 0) {
+    if(hBattleTurn == 0) {
         // LD_HL(mPlayerHitTimesText);
         text = PlayerHitTimesText;
         // LDH_A_addr(hBattleTurn);
@@ -9142,7 +9142,7 @@ bool CheckOpponentWentFirst_Conv(void){
     // LD_B_A;
     // LDH_A_addr(hBattleTurn);  // 0 if it's the player's turn
     // XOR_A_B;  // 1 if opponent went first
-    return (wram->wEnemyGoesFirst ^ hram->hBattleTurn) != 0;
+    return (wram->wEnemyGoesFirst ^ hBattleTurn) != 0;
     // POP_BC;
     // RET;
 
@@ -9199,11 +9199,11 @@ void BattleCommand_OHKO(void){
     if((wram->wTypeModifier & 0x7f) == 0)
         goto no_effect;
     // LD_HL(wEnemyMonLevel);
-    uint8_t* hl = (hram->hBattleTurn == 0)? &wram->wEnemyMon.level: &wram->wBattleMon.level;
+    uint8_t* hl = (hBattleTurn == 0)? &wram->wEnemyMon.level: &wram->wBattleMon.level;
     // LD_DE(wBattleMonLevel);
-    uint8_t* de = (hram->hBattleTurn == 0)? &wram->wBattleMon.level: &wram->wEnemyMon.level;
+    uint8_t* de = (hBattleTurn == 0)? &wram->wBattleMon.level: &wram->wEnemyMon.level;
     // LD_BC(wPlayerMoveStruct + MOVE_ACC);
-    uint8_t* bc = (hram->hBattleTurn == 0)? &wram->wPlayerMoveStruct.accuracy: &wram->wEnemyMoveStruct.accuracy;
+    uint8_t* bc = (hBattleTurn == 0)? &wram->wPlayerMoveStruct.accuracy: &wram->wEnemyMoveStruct.accuracy;
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto got_move_accuracy;
@@ -9500,7 +9500,7 @@ void BattleCommand_TrapTarget(void){
         return;
     uint8_t* hl;
     move_t* de;
-    if(hram->hBattleTurn == 0) {
+    if(hBattleTurn == 0) {
         // LD_HL(wEnemyWrapCount);
         hl = &wram->wEnemyWrapCount;
         // LD_DE(wEnemyTrappingMove);
@@ -9578,8 +9578,8 @@ void BattleCommand_Recoil(void){
     // AND_A_A;
     // IF_Z goto got_hp;
     // LD_HL(wEnemyMonMaxHP);
-    uint16_t* hp = (hram->hBattleTurn == 0)? (uint16_t*)wram_ptr(wBattleMonHP): (uint16_t*)wram_ptr(wEnemyMonHP);
-    uint16_t* maxHP = (hram->hBattleTurn == 0)? (uint16_t*)wram_ptr(wBattleMonMaxHP): (uint16_t*)wram_ptr(wEnemyMonMaxHP);
+    uint16_t* hp = (hBattleTurn == 0)? (uint16_t*)wram_ptr(wBattleMonHP): (uint16_t*)wram_ptr(wEnemyMonHP);
+    uint16_t* maxHP = (hBattleTurn == 0)? (uint16_t*)wram_ptr(wBattleMonMaxHP): (uint16_t*)wram_ptr(wEnemyMonMaxHP);
 
 // got_hp:
     // LD_A(BATTLE_VARS_MOVE_ANIM);
@@ -9643,7 +9643,7 @@ void BattleCommand_Recoil(void){
 // dont_ko:
     tile_t* hl;
     uint8_t which;
-    if(hram->hBattleTurn == 0) {
+    if(hBattleTurn == 0) {
         // hlcoord(10, 9, wTilemap);
         hl = coord(10, 9, wram->wTilemap);
         // LDH_A_addr(hBattleTurn);
@@ -9799,7 +9799,7 @@ void BattleCommand_FinishConfusingTarget_Conv(uint8_t* hl){
     // AND_A_A;
     // IF_Z goto got_confuse_count;
     // LD_BC(wPlayerConfuseCount);
-    uint8_t* bc = (hram->hBattleTurn == 0)? &wram->wEnemyConfuseCount: &wram->wPlayerConfuseCount;
+    uint8_t* bc = (hBattleTurn == 0)? &wram->wEnemyConfuseCount: &wram->wPlayerConfuseCount;
 
 // got_confuse_count:
     // SET_hl(SUBSTATUS_CONFUSED);
@@ -9927,7 +9927,7 @@ void BattleCommand_Paralyze(void){
     // BIT_A(SUBSTATUS_LOCK_ON);
     // IF_NZ goto dont_sample_failure;
 
-    if(hram->hBattleTurn != 0
+    if(hBattleTurn != 0
     && wram->wLinkMode == LINK_NULL
     && wram->wInBattleTowerBattle == 0
     && !bit_test(wram->wPlayerSubStatus5, SUBSTATUS_LOCK_ON)) {
@@ -9959,7 +9959,7 @@ void BattleCommand_Paralyze(void){
         AnimateCurrentMove();
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x1;
+        hBGMapMode = 0x1;
         // LD_A(BATTLE_VARS_STATUS_OPP);
         // CALL(aGetBattleVarAddr);
         // SET_hl(PAR);
@@ -10038,7 +10038,7 @@ bool CheckMoveTypeMatchesTarget_Conv(void){
     // AND_A_A;
     // IF_Z goto ok;
     // LD_HL(wBattleMonType1);
-    uint8_t* mon_types = (hram->hBattleTurn == 0)? wram->wEnemyMon.types: wram->wBattleMon.types;
+    uint8_t* mon_types = (hBattleTurn == 0)? wram->wEnemyMon.types: wram->wBattleMon.types;
 
 // ok:
 
@@ -10183,7 +10183,7 @@ void BattleCommand_ResetStats(void){
 
     // LDH_A_addr(hBattleTurn);
     // PUSH_AF;
-    uint8_t turn = hram->hBattleTurn;
+    uint8_t turn = hBattleTurn;
 
     // CALL(aSetPlayerTurn);
     SetPlayerTurn_Conv();
@@ -10196,7 +10196,7 @@ void BattleCommand_ResetStats(void){
 
     // POP_AF;
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = turn;
+    hBattleTurn = turn;
 
     // CALL(aAnimateCurrentMove);
     AnimateCurrentMove();
@@ -10216,8 +10216,8 @@ void BattleCommand_Heal(void){
     // IF_Z goto got_hp;
     // LD_DE(wEnemyMonHP);
     // LD_HL(wEnemyMonMaxHP);
-    uint16_t hp = ReverseEndian16((hram->hBattleTurn == 0)? wram->wBattleMon.hp: wram->wEnemyMon.hp);
-    uint16_t maxhp = ReverseEndian16((hram->hBattleTurn == 0)? wram->wBattleMon.maxHP: wram->wEnemyMon.maxHP);
+    uint16_t hp = ReverseEndian16((hBattleTurn == 0)? wram->wBattleMon.hp: wram->wEnemyMon.hp);
+    uint16_t maxhp = ReverseEndian16((hBattleTurn == 0)? wram->wBattleMon.maxHP: wram->wEnemyMon.maxHP);
 
 // got_hp:
     // LD_A(BATTLE_VARS_MOVE_ANIM);
@@ -10280,7 +10280,7 @@ void BattleCommand_Heal(void){
         // LDH_A_addr(hBattleTurn);
         // AND_A_A;
         // IF_NZ goto calc_enemy_stats;
-        if(hram->hBattleTurn == 0) {
+        if(hBattleTurn == 0) {
             // CALL(aCalcPlayerStats);
             CalcPlayerStats();
             // goto got_stats;
@@ -10359,7 +10359,7 @@ void ResetActorDisable(void){
     // AND_A_A;
     // IF_Z goto player;
 
-    if(hram->hBattleTurn != 0) {
+    if(hBattleTurn != 0) {
         // XOR_A_A;
         // LD_addr_A(wEnemyDisableCount);
         wram->wEnemyDisableCount = 0;
@@ -10387,10 +10387,10 @@ void BattleCommand_Screen(void){
     // AND_A_A;
     // IF_Z goto got_screens_pointer;
     // LD_HL(wEnemyScreens);
-    uint8_t* hl = (hram->hBattleTurn == 0)? &wram->wPlayerScreens: &wram->wEnemyScreens;
+    uint8_t* hl = (hBattleTurn == 0)? &wram->wPlayerScreens: &wram->wEnemyScreens;
     // LD_BC(wEnemyLightScreenCount);
-    uint8_t* ls_cnt = (hram->hBattleTurn == 0)? &wram->wPlayerLightScreenCount: &wram->wEnemyLightScreenCount;
-    uint8_t* rf_cnt = (hram->hBattleTurn == 0)? &wram->wPlayerReflectCount: &wram->wEnemyReflectCount;
+    uint8_t* ls_cnt = (hBattleTurn == 0)? &wram->wPlayerLightScreenCount: &wram->wEnemyLightScreenCount;
+    uint8_t* rf_cnt = (hBattleTurn == 0)? &wram->wPlayerReflectCount: &wram->wEnemyReflectCount;
 
 
 // got_screens_pointer:
@@ -10588,7 +10588,7 @@ bool CheckUserMove_Conv(move_t a){
     // AND_A_A;
     // IF_Z goto ok;
     // LD_DE(wEnemyMonMoves);
-    const move_t* de = (hram->hBattleTurn == 0)? wram->wBattleMon.moves: wram->wEnemyMon.moves;
+    const move_t* de = (hBattleTurn == 0)? wram->wBattleMon.moves: wram->wEnemyMon.moves;
 
 // ok:
 
@@ -10619,7 +10619,7 @@ void ResetTurn(void){
     // AND_A_A;
     // IF_Z goto player;
     // LD_HL(wEnemyCharging);
-    uint8_t* hl = (hram->hBattleTurn == 0)? &wram->wPlayerCharging: &wram->wEnemyCharging;
+    uint8_t* hl = (hBattleTurn == 0)? &wram->wPlayerCharging: &wram->wEnemyCharging;
 
 
 // player:
@@ -10696,7 +10696,7 @@ void BattleCommand_Defrost(void){
     // LD_A_addr(wBattleMode);
     // DEC_A;
     // IF_Z goto done;
-    if(hram->hBattleTurn == 0 || wram->wBattleMode != WILD_BATTLE) {
+    if(hBattleTurn == 0 || wram->wBattleMode != WILD_BATTLE) {
     // party:
         // LD_A(MON_STATUS);
         // CALL(aUserPartyAttr);
@@ -10771,7 +10771,7 @@ bool SafeCheckSafeguard_Conv(void){
     // IF_Z goto got_turn;
     // LD_HL(wPlayerScreens);
 
-    if(hram->hBattleTurn == 0) {
+    if(hBattleTurn == 0) {
         return bit_test(wram->wEnemyScreens, SCREENS_SAFEGUARD);
     }
     else {
@@ -10791,7 +10791,7 @@ void BattleCommand_CheckSafeguard(void){
     // AND_A_A;
     // IF_Z goto got_turn;
     // LD_HL(wPlayerScreens);
-    uint8_t screens = (hram->hBattleTurn == 0)? wram->wEnemyScreens: wram->wPlayerScreens;
+    uint8_t screens = (hBattleTurn == 0)? wram->wEnemyScreens: wram->wPlayerScreens;
 
 // got_turn:
     // BIT_hl(SCREENS_SAFEGUARD);
@@ -10863,8 +10863,8 @@ void BattleCommand_TimeBasedHealContinue(uint8_t b){
     // IF_Z goto start;
     // LD_HL(wEnemyMonMaxHP);
     // LD_DE(wEnemyMonHP);
-    uint16_t maxHP = ReverseEndian16((hram->hBattleTurn == 0)? wram->wBattleMon.maxHP: wram->wEnemyMon.maxHP);
-    uint16_t hp = ReverseEndian16((hram->hBattleTurn == 0)? wram->wBattleMon.hp: wram->wEnemyMon.hp);
+    uint16_t maxHP = ReverseEndian16((hBattleTurn == 0)? wram->wBattleMon.maxHP: wram->wEnemyMon.maxHP);
+    uint16_t hp = ReverseEndian16((hBattleTurn == 0)? wram->wBattleMon.hp: wram->wEnemyMon.hp);
 
 
 // start:
@@ -10974,7 +10974,7 @@ void BattleCommand_DoubleMinimizeDamage(void){
     // AND_A_A;
     // IF_Z goto ok;
     // LD_HL(wPlayerMinimized);
-    uint8_t minimized = (hram->hBattleTurn == 0)? wram->wEnemyMinimized: wram->wPlayerMinimized;
+    uint8_t minimized = (hBattleTurn == 0)? wram->wEnemyMinimized: wram->wPlayerMinimized;
 
 // ok:
     // LD_A_hl;
@@ -11063,7 +11063,7 @@ uint16_t GetUserItem_Conv(item_t* hl){
     if(hl == NULL)
         hl = &itm;
     
-    *hl = (hram->hBattleTurn == 0)? wram->wBattleMon.item: wram->wEnemyMon.item;
+    *hl = (hBattleTurn == 0)? wram->wBattleMon.item: wram->wEnemyMon.item;
 
 // go:
     // LD_B_hl;
@@ -11096,7 +11096,7 @@ uint16_t GetOpponentItem_Conv(item_t* hl){
     if(hl == NULL)
         hl = &item;
 
-    *hl = (hram->hBattleTurn == 0)? wram->wEnemyMon.item: wram->wBattleMon.item;
+    *hl = (hBattleTurn == 0)? wram->wEnemyMon.item: wram->wBattleMon.item;
 
 // go:
     // LD_B_hl;
@@ -11220,7 +11220,7 @@ void PlayDamageAnim(void){
 
 // player:
     // LD_addr_A(wNumHits);
-    wram->wNumHits = (hram->hBattleTurn == 0)? BATTLEANIM_ENEMY_DAMAGE: BATTLEANIM_PLAYER_DAMAGE;
+    wram->wNumHits = (hBattleTurn == 0)? BATTLEANIM_ENEMY_DAMAGE: BATTLEANIM_PLAYER_DAMAGE;
 
     // JP(mPlayUserBattleAnim);
     return PlayUserBattleAnim_Conv();

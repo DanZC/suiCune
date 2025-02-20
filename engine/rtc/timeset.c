@@ -32,7 +32,7 @@ static const char String_min[] = "min.@";
 static void InitClock_ClearScreen(void) {
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // hlcoord(0, 0, wTilemap);
     // LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
     // XOR_A_A;
@@ -40,7 +40,7 @@ static void InitClock_ClearScreen(void) {
     ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_HEIGHT * SCREEN_WIDTH, 0);
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hBGMapMode = 0x1;
     // RET;
 }
 
@@ -48,10 +48,10 @@ static void InitClock_ClearScreen(void) {
 void InitClock(void){
     // LDH_A_addr(hInMenu);
     // PUSH_AF;
-    uint8_t inMenu = hram->hInMenu;
+    uint8_t inMenu = hInMenu;
     // LD_A(0x1);
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = 0x1;
+    hInMenu = 0x1;
 
     // LD_A(0x0);
     // LD_addr_A(wSpriteUpdatesEnabled);
@@ -78,7 +78,7 @@ void InitClock(void){
     GetSGBLayout_Conv(SCGB_DIPLOMA);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // CALL(aLoadStandardFont);
     LoadStandardFont_Conv();
     // LD_DE(mTimeSetBackgroundGFX);
@@ -112,7 +112,7 @@ void InitClock(void){
     ByteFill_Conv2(wram->wTimeSetBuffer, sizeof(wram->wTimeSetBuffer), 0);
     // LD_A(10);  // default hour = 10 AM
     // LD_addr_A(wInitHourBuffer);
-    wram->wInitHourBuffer = hram->hRTCHours;
+    wram->wInitHourBuffer = hRTCHours;
 
     while(1) {
     // loop:
@@ -161,7 +161,7 @@ void InitClock(void){
         // goto loop;
     }
 
-    wram->wInitMinuteBuffer = hram->hRTCMinutes;
+    wram->wInitMinuteBuffer = hRTCMinutes;
 
     while(1) {
     // HourIsSet:
@@ -220,7 +220,7 @@ void InitClock(void){
     WaitPressAorB_BlinkCursor_Conv();
     // POP_AF;
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = inMenu;
+    hInMenu = inMenu;
     // RET;
 }
 
@@ -288,14 +288,14 @@ bool SetHour_Conv(void){
     // LDH_A_addr(hJoyPressed);
     // AND_A(A_BUTTON);
     // IF_NZ goto Confirm;
-    if(hram->hJoyPressed & A_BUTTON)
+    if(hJoyPressed & A_BUTTON)
         return true;
 
     // LD_HL(hJoyLast);
     // LD_A_hl;
     // AND_A(D_UP);
     // IF_NZ goto up;
-    if(hram->hJoyLast & D_UP) {
+    if(hJoyLast & D_UP) {
     // up:
         // LD_HL(wInitHourBuffer);
         // LD_A_hl;
@@ -315,7 +315,7 @@ bool SetHour_Conv(void){
     // LD_A_hl;
     // AND_A(D_DOWN);
     // IF_NZ goto down;
-    else if(hram->hJoyLast & D_DOWN) {
+    else if(hJoyLast & D_DOWN) {
     // down:
         // LD_HL(wInitHourBuffer);
         // LD_A_hl;
@@ -485,14 +485,14 @@ bool SetMinutes_Conv(void){
     // LDH_A_addr(hJoyPressed);
     // AND_A(A_BUTTON);
     // IF_NZ goto a_button;
-    if(hram->hJoyPressed & A_BUTTON) {
+    if(hJoyPressed & A_BUTTON) {
         return true;
     }
     // LD_HL(hJoyLast);
     // LD_A_hl;
     // AND_A(D_UP);
     // IF_NZ goto d_up;
-    if(hram->hJoyLast & D_UP) {
+    if(hJoyLast & D_UP) {
     // d_up:
         // LD_HL(wInitMinuteBuffer);
         // LD_A_hl;
@@ -511,7 +511,7 @@ bool SetMinutes_Conv(void){
     // LD_A_hl;
     // AND_A(D_DOWN);
     // IF_NZ goto d_down;
-    else if(hram->hJoyLast & D_DOWN) {
+    else if(hJoyLast & D_DOWN) {
     // d_down:
         // LD_HL(wInitMinuteBuffer);
         // LD_A_hl;
@@ -792,7 +792,7 @@ static bool SetDayOfWeek_GetJoypadAction(void) {
     // IF_Z goto not_A;
     // SCF;
     // RET;
-    if(hram->hJoyPressed & A_BUTTON)
+    if(hJoyPressed & A_BUTTON)
         return true;
 
 // not_A:
@@ -800,7 +800,7 @@ static bool SetDayOfWeek_GetJoypadAction(void) {
     // LD_A_hl;
     // AND_A(D_UP);
     // IF_NZ goto d_up;
-    if(hram->hJoyLast & D_UP) {
+    if(hJoyLast & D_UP) {
     // d_up:
         // LD_HL(wTempDayOfWeek);
         // LD_A_hl;
@@ -820,7 +820,7 @@ static bool SetDayOfWeek_GetJoypadAction(void) {
     // LD_A_hl;
     // AND_A(D_DOWN);
     // IF_NZ goto d_down;
-    else if(hram->hJoyLast & D_DOWN) {
+    else if(hJoyLast & D_DOWN) {
     // d_down:
         // LD_HL(wTempDayOfWeek);
         // LD_A_hl;
@@ -850,7 +850,7 @@ static bool SetDayOfWeek_GetJoypadAction(void) {
 // finish_dpad:
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // hlcoord(10, 4, wTilemap);
     // LD_B(2);
     // LD_C(9);
@@ -869,10 +869,10 @@ static bool SetDayOfWeek_GetJoypadAction(void) {
 void SetDayOfWeek(void){
     // LDH_A_addr(hInMenu);
     // PUSH_AF;
-    uint8_t inMenu = hram->hInMenu;
+    uint8_t inMenu = hInMenu;
     // LD_A(0x1);
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = 0x1;
+    hInMenu = 0x1;
     // LD_DE(mTimeSetUpArrowGFX);
     // LD_HL(vTiles0 + LEN_2BPP_TILE * TIMESET_UP_ARROW);
     // LD_BC((BANK(aTimeSetUpArrowGFX) << 8) | 1);
@@ -943,7 +943,7 @@ void SetDayOfWeek(void){
     LoadStandardFont_Conv();
     // POP_AF;
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = inMenu;
+    hInMenu = inMenu;
     // RET;
 }
 
@@ -960,7 +960,7 @@ static void InitialSetDSTFlag_Text(struct TextCmdState* state) {
     // LD_C_A;
     // decoord(1, 14, wTilemap);
     // FARCALL(aPrintHoursMins);
-    state->bc = PrintHoursMins_Conv(coord(1, 14, wram->wTilemap), hram->hHours, hram->hMinutes);
+    state->bc = PrintHoursMins_Conv(coord(1, 14, wram->wTilemap), hHours, hMinutes);
     // LD_HL(mInitialSetDSTFlag_DSTIsThatOKText);
     state->hl = DSTIsThatOKText;
     // RET;
@@ -998,7 +998,7 @@ static void InitialClearDSTFlag_Text(struct TextCmdState* state) {
     // LD_C_A;
     // decoord(1, 14, wTilemap);
     // FARCALL(aPrintHoursMins);
-    state->bc = PrintHoursMins_Conv(coord(1, 14, wram->wTilemap), hram->hHours, hram->hMinutes);
+    state->bc = PrintHoursMins_Conv(coord(1, 14, wram->wTilemap), hHours, hMinutes);
     // LD_HL(mInitialClearDSTFlag_TimeAskOkayText);
     state->hl = TimeAskOkayText;
     // RET;
@@ -1068,7 +1068,7 @@ static void MrChrono_Text(struct TextCmdState* state) {
 
     // LD_DE(hRTCDayLo);
     // CALL(aMrChrono_PrintTime);
-    MrChrono_PrintTime(coord(4, 14, wram->wTilemap), &hram->hRTCDayLo);
+    MrChrono_PrintTime(coord(4, 14, wram->wTilemap), &hRTCDayLo);
 
     // hlcoord(1, 16, wTilemap);
     // LD_hl(0x83);

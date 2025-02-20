@@ -36,7 +36,7 @@ void WaitBGMap_Conv(void) {
     //  Tell VBlank to update BG Map
     // LD_A(1);  // BG Map 0 tiles
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 1;  // BG Map 0 tiles 
+    hBGMapMode = 1;  // BG Map 0 tiles 
 
     //  Wait for it to do its magic
     // LD_C(4);
@@ -69,10 +69,10 @@ void WaitBGMap2_Conv(void) {
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // IF_Z goto bg0;
-    if(hram->hCGB != 0) {
+    if(hCGB != 0) {
         // LD_A(2);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 2;
+        hBGMapMode = 2;
         // LD_C(4);
         // CALL(aDelayFrames);
         DelayFrames_Conv(4);
@@ -80,7 +80,7 @@ void WaitBGMap2_Conv(void) {
 // bg0:
     // LD_A(1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 1;
+    hBGMapMode = 1;
     // LD_C(4);
     // CALL(aDelayFrames);
     DelayFrames_Conv(4);
@@ -95,7 +95,7 @@ void IsCGB(void) {
 }
 
 bool IsCGB_Conv(void){
-    return gb_read(hCGB) == 1;
+    return (hCGB) == 1;
 }
 
 void ApplyTilemap(void) {
@@ -123,15 +123,15 @@ dmg:
 }
 
 void ApplyTilemap_Conv(void) {
-    if(hram->hCGB == 0 || wram->wSpriteUpdatesEnabled == 0) {
+    if(hCGB == 0 || wram->wSpriteUpdatesEnabled == 0) {
         //  WaitBGMap
-        hram->hBGMapMode = 1;
+        hBGMapMode = 1;
         // LD_C(4);
         // CALL(aDelayFrames);
         return DelayFrames_Conv(4);
     }
     else {
-        hram->hBGMapMode = 1;
+        hBGMapMode = 1;
         // JR(mCopyTilemapAtOnce);
         return CopyTilemapAtOnce_Conv();
     }
@@ -142,7 +142,7 @@ void CGBOnly_CopyTilemapAtOnce(void) {
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // JR_Z(mWaitBGMap);
-    if(hram->hCGB == 0)
+    if(hCGB == 0)
         return WaitBGMap_Conv();
 
     return CopyTilemapAtOnce_Conv();
@@ -207,11 +207,11 @@ wait2:
 }
 
 void v_CopyTilemapAtOnce_Conv(void) {
-    uint8_t bg_map_mode = hram->hBGMapMode;
-    hram->hBGMapMode = 0;
+    uint8_t bg_map_mode = hBGMapMode;
+    hBGMapMode = 0;
 
-    uint8_t map_anims = hram->hMapAnims;
-    hram->hMapAnims = 0;
+    uint8_t map_anims = hMapAnims;
+    hMapAnims = 0;
 
     // In C we don't wait.
     // wait:
@@ -231,8 +231,8 @@ void v_CopyTilemapAtOnce_Conv(void) {
     // CP_A(0x80 - 1);
     // IF_C goto wait2;
 
-    hram->hMapAnims = map_anims;
-    hram->hBGMapMode = bg_map_mode;
+    hMapAnims = map_anims;
+    hBGMapMode = bg_map_mode;
 }
 
 void v_CopyTilemapAtOnce_CopyBGMapViaStack(void) {
@@ -280,8 +280,8 @@ loop:
 void v_CopyTilemapAtOnce_CopyBGMapViaStack_Conv(uint16_t hl) {
     //  Copy all tiles to vBGMap
     uint16_t sp = hl;
-    hl = hram->hBGMapAddress & 0x1fff;
-    hram->hTilesPerCycle = SCREEN_HEIGHT;
+    hl = hBGMapAddress & 0x1fff;
+    hTilesPerCycle = SCREEN_HEIGHT;
     // uint8_t b = 1 << 1;
     // uint8_t c = LOW(rSTAT);
     uint8_t a = SCREEN_HEIGHT;
@@ -300,13 +300,13 @@ void v_CopyTilemapAtOnce_CopyBGMapViaStack_Conv(uint16_t hl) {
         }
         hl += (BG_MAP_WIDTH - SCREEN_WIDTH);
     } while(--a != 0);
-    gb_write(hTilesPerCycle, 0);
+    (hTilesPerCycle= 0);
 }
 
 void v_CopyTilemapAtOnce_CopyBGMapViaStack_Conv2(const tile_t* sp) {
     //  Copy all tiles to vBGMap
-    tile_t* hl = GBToRAMAddr(hram->hBGMapAddress & 0xff00);
-    hram->hTilesPerCycle = SCREEN_HEIGHT;
+    tile_t* hl = GBToRAMAddr(hBGMapAddress & 0xff00);
+    hTilesPerCycle = SCREEN_HEIGHT;
     // uint8_t b = 1 << 1;
     // uint8_t c = LOW(rSTAT);
     uint8_t a = SCREEN_HEIGHT;
@@ -325,7 +325,7 @@ void v_CopyTilemapAtOnce_CopyBGMapViaStack_Conv2(const tile_t* sp) {
         }
         hl += (BG_MAP_WIDTH - SCREEN_WIDTH);
     } while(--a != 0);
-    hram->hTilesPerCycle = 0;
+    hTilesPerCycle = 0;
 }
 
 void SetPalettes(void) {
@@ -359,7 +359,7 @@ void SetPalettes_Conv(void) {
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // IF_NZ goto SetPalettesForGameBoyColor;
-    if(hram->hCGB != 0)
+    if(hCGB != 0)
     {
         // PUSH_DE;
         // LD_A(0b11100100);
@@ -430,7 +430,7 @@ void ClearPalettes_Conv(void) {
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // IF_NZ goto cgb;
-    if(hram->hCGB != 0)
+    if(hCGB != 0)
     {
         // LDH_A_addr(rSVBK);
         // PUSH_AF;
@@ -454,7 +454,7 @@ void ClearPalettes_Conv(void) {
         //  Request palette update
         // LD_A(TRUE);
         // LDH_addr_A(hCGBPalUpdate);
-        hram->hCGBPalUpdate = TRUE;
+        hCGBPalUpdate = TRUE;
 
         // RET;
         return;
@@ -506,7 +506,7 @@ void GetSGBLayout_Conv(uint8_t b) {
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // IF_NZ goto sgb;
-    if(hram->hCGB != 0) {
+    if(hCGB != 0) {
         // PREDEF_JUMP(pLoadSGBLayout);
         LoadSGBLayoutCGB_Conv(b);
         return;
@@ -515,7 +515,7 @@ void GetSGBLayout_Conv(uint8_t b) {
     // LDH_A_addr(hSGB);
     // AND_A_A;
     // RET_Z;
-    if(gb_read(hSGB) == 0)
+    if((hSGB) == 0)
         return;
 
     PREDEF_JUMP(pLoadSGBLayout);

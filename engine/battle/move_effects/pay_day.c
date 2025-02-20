@@ -17,7 +17,7 @@ void BattleCommand_PayDay(void){
     // LD_A_addr(wBattleMonLevel);
     // IF_Z goto ok;
     // LD_A_addr(wEnemyMonLevel);
-    uint8_t level = (hram->hBattleTurn == 0)? wram->wBattleMon.level: wram->wEnemyMon.level;
+    uint8_t level = (hBattleTurn == 0)? wram->wBattleMon.level: wram->wEnemyMon.level;
 
 // ok:
 

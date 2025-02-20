@@ -11,7 +11,7 @@ static void PhoneRing_CopyTilemapAtOnce_CopyBGMapViaStack(tile_t* hl, const tile
     // LD_L(0);
     // LD_A(SCREEN_HEIGHT);
     // LDH_addr_A(hTilesPerCycle);
-    hram->hTilesPerCycle = SCREEN_HEIGHT;
+    hTilesPerCycle = SCREEN_HEIGHT;
     // LD_B(1 << 1);  // not in v/hblank
     // LD_C(LOW(rSTAT));
 
@@ -43,7 +43,7 @@ static void PhoneRing_CopyTilemapAtOnce_CopyBGMapViaStack(tile_t* hl, const tile
         // DEC_A;
         // LDH_addr_A(hTilesPerCycle);
         // IF_NZ goto loop;
-    } while(--hram->hTilesPerCycle != 0);
+    } while(--hTilesPerCycle != 0);
 
     // LDH_A_addr(hSPBuffer);
     // LD_L_A;
@@ -57,7 +57,7 @@ void PhoneRing_CopyTilemapAtOnce_Conv(void){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // JP_Z (mWaitBGMap);
-    if(hram->hCGB == 0)
+    if(hCGB == 0)
         return WaitBGMap_Conv();
     
     // LD_A_addr(wSpriteUpdatesEnabled);
@@ -72,15 +72,15 @@ void PhoneRing_CopyTilemapAtOnce_Conv(void){
     // PUSH_AF;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    uint8_t mode_temp = hram->hBGMapMode;
-    hram->hBGMapMode = 0;
+    uint8_t mode_temp = hBGMapMode;
+    hBGMapMode = 0;
 
     // LDH_A_addr(hMapAnims);
     // PUSH_AF;
     // XOR_A_A;
     // LDH_addr_A(hMapAnims);
-    uint8_t anims_temp = hram->hMapAnims;
-    hram->hMapAnims = 0;
+    uint8_t anims_temp = hMapAnims;
+    hMapAnims = 0;
 
 
 // wait:
@@ -97,13 +97,13 @@ void PhoneRing_CopyTilemapAtOnce_Conv(void){
     // hlcoord(0, 0, wAttrmap);
     // CALL(aPhoneRing_CopyTilemapAtOnce_CopyBGMapViaStack);
     //  Uncommenting the line below causes weird color issues.
-    PhoneRing_CopyTilemapAtOnce_CopyBGMapViaStack(GBToRAMAddr(hram->hBGMapAddress & 0xff00), coord(0, 0, wram->wAttrmap));
+    PhoneRing_CopyTilemapAtOnce_CopyBGMapViaStack(GBToRAMAddr(hBGMapAddress & 0xff00), coord(0, 0, wram->wAttrmap));
     // LD_A(MBANK(avBGMap0));
     // LDH_addr_A(rVBK);
     gb_write(rVBK, MBANK(avBGMap0));
     // hlcoord(0, 0, wTilemap);
     // CALL(aPhoneRing_CopyTilemapAtOnce_CopyBGMapViaStack);
-    PhoneRing_CopyTilemapAtOnce_CopyBGMapViaStack(GBToRAMAddr(hram->hBGMapAddress & 0xff00), coord(0, 0, wram->wTilemap));
+    PhoneRing_CopyTilemapAtOnce_CopyBGMapViaStack(GBToRAMAddr(hBGMapAddress & 0xff00), coord(0, 0, wram->wTilemap));
 
 
 // wait2:
@@ -115,10 +115,10 @@ void PhoneRing_CopyTilemapAtOnce_Conv(void){
 
     // POP_AF;
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = anims_temp;
+    hMapAnims = anims_temp;
     // POP_AF;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = mode_temp;
+    hBGMapMode = mode_temp;
     // RET;
 
 

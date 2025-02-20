@@ -139,15 +139,15 @@ uint8_t JoyTextDelay_ForcehJoyDown_Conv(void){
 
     // LDH_A_addr(hInMenu);
     // PUSH_AF;
-    uint8_t inMenu = hram->hInMenu;
+    uint8_t inMenu = hInMenu;
     // LD_A(0x1);
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = TRUE;
+    hInMenu = TRUE;
     // CALL(aJoyTextDelay);
     JoyTextDelay_Conv();
     // POP_AF;
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = inMenu;
+    hInMenu = inMenu;
 
     // LDH_A_addr(hJoyLast);
     // AND_A(D_RIGHT + D_LEFT + D_UP + D_DOWN);
@@ -157,5 +157,5 @@ uint8_t JoyTextDelay_ForcehJoyDown_Conv(void){
     // OR_A_C;
     // LD_C_A;
     // RET;
-    return (hram->hJoyLast & (D_RIGHT + D_LEFT + D_UP + D_DOWN)) | (hram->hJoyPressed & (A_BUTTON + B_BUTTON + SELECT + START));
+    return (hJoyLast & (D_RIGHT + D_LEFT + D_UP + D_DOWN)) | (hJoyPressed & (A_BUTTON + B_BUTTON + SELECT + START));
 }

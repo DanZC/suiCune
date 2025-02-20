@@ -560,13 +560,13 @@ void SavingDontTurnOffThePower(void){
 // Prevent joypad interrupts
     // XOR_A_A;
     // LDH_addr_A(hJoypadReleased);
-    hram->hJoypadReleased = 0;
+    hJoypadReleased = 0;
     // LDH_addr_A(hJoypadPressed);
-    hram->hJoypadPressed = 0;
+    hJoypadPressed = 0;
     // LDH_addr_A(hJoypadSum);
-    hram->hJoypadSum = 0;
+    hJoypadSum = 0;
     // LDH_addr_A(hJoypadDown);
-    hram->hJoypadDown = 0;
+    hJoypadDown = 0;
 // Save the text speed setting to the stack
     // LD_A_addr(wOptions);
     // PUSH_AF;

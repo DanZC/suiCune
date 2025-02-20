@@ -13,7 +13,7 @@ void BlankScreen(void){
     DisableSpriteUpdates_Conv();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // CALL(aClearSprites);
@@ -184,7 +184,7 @@ void WriteObjectXY_Conv(uint8_t b){
     // LDH_A_addr(hMapObjectIndex);
     // LD_B_A;
     // CALL(aCopyDECoordsToMapObject);
-    CopyDECoordsToMapObject_Conv(bc->nextMapX, bc->nextMapY, hram->hMapObjectIndex);
+    CopyDECoordsToMapObject_Conv(bc->nextMapX, bc->nextMapY, hMapObjectIndex);
     // AND_A_A;
     // RET;
 }
@@ -469,7 +469,7 @@ void InitializeVisibleSprites(void){
     do {
     // loop:
         // LDH_addr_A(hMapObjectIndex);
-        hram->hMapObjectIndex = a;
+        hMapObjectIndex = a;
         // LD_HL(MAPOBJECT_SPRITE);
         // ADD_HL_BC;
         // LD_A_hl;
@@ -584,7 +584,7 @@ void CheckObjectEnteringVisibleRange(void){
         do {
         // loop_v:
             // LDH_addr_A(hMapObjectIndex);
-            hram->hMapObjectIndex = a;
+            hMapObjectIndex = a;
             // LD_HL(MAPOBJECT_SPRITE);
             // ADD_HL_BC;
             // LD_A_hl;
@@ -660,7 +660,7 @@ void CheckObjectEnteringVisibleRange(void){
         do {
         // loop_h:
             // LDH_addr_A(hMapObjectIndex);
-            hram->hMapObjectIndex = a;
+            hMapObjectIndex = a;
             // LD_HL(MAPOBJECT_SPRITE);
             // ADD_HL_BC;
             // LD_A_hl;
@@ -1013,7 +1013,7 @@ static void TrainerWalkToPlayer_GetPathToPlayer(uint8_t b, uint8_t c, uint8_t d)
 void TrainerWalkToPlayer(void){
     // LDH_A_addr(hLastTalked);
     // CALL(aInitMovementBuffer);
-    InitMovementBuffer_Conv(hram->hLastTalked);
+    InitMovementBuffer_Conv(hLastTalked);
     // LD_A(movement_step_sleep);
     // CALL(aAppendToMovementBuffer);
     AppendToMovementBuffer_Conv(movement_step_sleep);
@@ -1026,7 +1026,7 @@ void TrainerWalkToPlayer(void){
         // LD_C(PLAYER);
         // LD_D(1);
         // CALL(aTrainerWalkToPlayer_GetPathToPlayer);
-        TrainerWalkToPlayer_GetPathToPlayer(hram->hLastTalked, PLAYER, 1);
+        TrainerWalkToPlayer_GetPathToPlayer(hLastTalked, PLAYER, 1);
         // CALL(aDecrementMovementBufferCount);
         DecrementMovementBufferCount_Conv();
     }

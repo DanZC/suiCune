@@ -31,7 +31,7 @@ void HandleCmdQueue(void){
     for(uint32_t c = 0; c < CMDQUEUE_CAPACITY; ++c) {
     // loop:
         // LDH_addr_A(hMapObjectIndex);
-        hram->hMapObjectIndex = c;
+        hMapObjectIndex = c;
         // LD_A_hl;
         // AND_A_A;
         // IF_Z goto skip;
@@ -426,7 +426,7 @@ void CmdQueue_Type4_Conv(uint8_t* bc){
         // LD_HL(CMDQUEUE_04);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc[CMDQUEUE_04] = hram->hSCY;
+        bc[CMDQUEUE_04] = hSCY;
         // CALL(aCmdQueues_IncAnonJumptableIndex);
         CmdQueues_IncAnonJumptableIndex_Conv(bc);
         fallthrough;
@@ -445,7 +445,7 @@ void CmdQueue_Type4_Conv(uint8_t* bc){
             // ADD_HL_BC;
             // LD_A_hl;
             // LDH_addr_A(hSCY);
-            hram->hSCY = bc[CMDQUEUE_04];
+            hSCY = bc[CMDQUEUE_04];
             // CALL(av_DelCmdQueue);
             // v_DelCmdQueue_Conv(bc);
             // RET;
@@ -460,7 +460,7 @@ void CmdQueue_Type4_Conv(uint8_t* bc){
             // LDH_A_addr(hSCY);
             // ADD_A_hl;
             // LDH_addr_A(hSCY);
-            hram->hSCY += bc[CMDQUEUE_02];
+            hSCY += bc[CMDQUEUE_02];
             // RET;
             return;
         }
@@ -469,7 +469,7 @@ void CmdQueue_Type4_Conv(uint8_t* bc){
         // LDH_A_addr(hSCY);
         // SUB_A_hl;
         // LDH_addr_A(hSCY);
-        hram->hSCY -= bc[CMDQUEUE_02];
+        hSCY -= bc[CMDQUEUE_02];
         // RET;
         return;
     }

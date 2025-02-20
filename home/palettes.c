@@ -28,7 +28,7 @@ bool UpdatePalsIfCGB_Conv(void){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // RET_Z ;
-    if(gb_read(hCGB) == 0)
+    if((hCGB) == 0)
         return false;
 
     return UpdateCGBPals_Conv();
@@ -52,7 +52,7 @@ bool UpdateCGBPals_Conv(void){
     // LDH_A_addr(hCGBPalUpdate);
     // AND_A_A;
     // RET_Z ;
-    if(hram->hCGBPalUpdate == 0)
+    if(hCGBPalUpdate == 0)
         return false;
 // fallthrough
 
@@ -173,7 +173,7 @@ bool ForceUpdateCGBPals_Conv(void){
 //  clear pal update queue
     // XOR_A_A;
     // LDH_addr_A(hCGBPalUpdate);
-    gb_write(hCGBPalUpdate, FALSE);
+    (hCGBPalUpdate= FALSE);
     return true;
 }
 
@@ -237,7 +237,7 @@ void DmgToCgbBGPals_Conv(uint8_t a){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // IF_Z goto end;
-    if(gb_read(hCGB) == 0)
+    if((hCGB) == 0)
         return;
 
     // LDH_A_addr(rSVBK);
@@ -261,7 +261,7 @@ void DmgToCgbBGPals_Conv(uint8_t a){
 //  request pal update
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hCGBPalUpdate = TRUE;
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
@@ -333,7 +333,7 @@ void DmgToCgbObjPals_Conv(uint8_t d, uint8_t e){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // RET_Z ;
-    if(gb_read(hCGB) == 0)
+    if((hCGB) == 0)
         return;
     
     // LDH_A_addr(rSVBK);
@@ -357,7 +357,7 @@ void DmgToCgbObjPals_Conv(uint8_t d, uint8_t e){
 //  request pal update
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    gb_write(hCGBPalUpdate, TRUE);
+    (hCGBPalUpdate= TRUE);
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
@@ -414,7 +414,7 @@ void DmgToCgbObjPal0_Conv(uint8_t a){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // IF_Z goto dmg;
-    if(hram->hCGB == 0) {
+    if(hCGB == 0) {
     // dmg:
         // POP_AF;
         // RET;
@@ -440,7 +440,7 @@ void DmgToCgbObjPal0_Conv(uint8_t a){
     CopyPals_Conv(wOBPals2 + PALETTE_SIZE * 0, wOBPals1 + PALETTE_SIZE * 0, gb_read(rOBP0), 1);
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hCGBPalUpdate = TRUE;
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
@@ -499,7 +499,7 @@ void DmgToCgbObjPal1_Conv(uint8_t a){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // IF_Z goto dmg;
-    if(hram->hCGB == 0) {
+    if(hCGB == 0) {
     // dmg:
         // POP_AF;
         // RET;
@@ -525,7 +525,7 @@ void DmgToCgbObjPal1_Conv(uint8_t a){
     CopyPals_Conv(wOBPals2 + PALETTE_SIZE * 1, wOBPals1 + PALETTE_SIZE * 1, gb_read(rOBP1), 1);
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hCGBPalUpdate = TRUE;
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
@@ -753,7 +753,7 @@ void ClearVBank1(void){
 }
 
 void ClearVBank1_Conv(void){
-    if(hram->hCGB == 0) 
+    if(hCGB == 0) 
         return;
 
     gb_write(rVBK, 1);
@@ -772,7 +772,7 @@ void ReloadSpritesNoPalettes(void){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // RET_Z ;
-    if(hram->hCGB == 0)
+    if(hCGB == 0)
         return;
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
@@ -787,7 +787,7 @@ void ReloadSpritesNoPalettes(void){
     // LDH_addr_A(rSVBK);
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hCGBPalUpdate = TRUE;
     // CALL(aDelayFrame);
     DelayFrame();
     // RET;

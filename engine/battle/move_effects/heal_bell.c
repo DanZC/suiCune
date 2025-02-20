@@ -17,7 +17,7 @@ void BattleCommand_HealBell(void){
     // AND_A_A;
     // IF_Z goto got_status;
     // LD_DE(wOTPartyMon1Status);
-    struct PartyMon* mon = (hram->hBattleTurn == 0)? wram->wPartyMon: wram->wOTPartyMon;
+    struct PartyMon* mon = (hBattleTurn == 0)? wram->wPartyMon: wram->wOTPartyMon;
 
 // got_status:
     // LD_A(BATTLE_VARS_STATUS);
@@ -48,7 +48,7 @@ void BattleCommand_HealBell(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // JP_Z (mCalcPlayerStats);
-    if(hram->hBattleTurn == 0)
+    if(hBattleTurn == 0)
         return CalcPlayerStats();
     // JP(mCalcEnemyStats);
     return CalcEnemyStats();

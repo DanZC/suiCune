@@ -83,13 +83,13 @@ void MobileAdapterCheck(void){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // RET_Z ;
-    if(hram->hCGB == 0)
+    if(hCGB == 0)
         return;
 // Only do this once per boot cycle
     // LDH_A_addr(hSystemBooted);
     // AND_A_A;
     // RET_Z ;
-    if(hram->hSystemBooted == 0)
+    if(hSystemBooted == 0)
         return;
 // Disable the joypad during mobile setup
     // LD_A_addr(wJoypadDisable);
@@ -113,7 +113,7 @@ void MobileAdapterCheck(void){
 // until the next time the system is turned on
     // XOR_A_A;
     // LDH_addr_A(hSystemBooted);
-    hram->hSystemBooted = 0x0;
+    hSystemBooted = 0x0;
 // Restore the flag state
     // POP_AF;
     // LD_addr_A(wJoypadDisable);
@@ -129,7 +129,7 @@ void Function16c089(void){
     wram->wd1f1 = 0x1;
     // XOR_A_A;
     // LDH_addr_A(hWY);
-    hram->hWY = 0x0;
+    hWY = 0x0;
     // CALL(aFunction16c0fa);
     Function16c0fa();
     // LD_A_addr(wd002);
@@ -159,7 +159,7 @@ void Function16c0a8(void){
     ClearSprites_Conv();
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hWY = 0x90;
     // CALL(aFunction16c0fa);
     Function16c0fa();
     // RET;
@@ -310,7 +310,7 @@ void MobileSystemSplashScreen_InitGFX(void){
     Function16cc02();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hBGMapMode = 0x0;
     // CALL(aEnableLCD);
     EnableLCD_Conv();
     // RET;
@@ -930,7 +930,7 @@ void Function16cbd1(void){
     ApplyPals_Conv();
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hCGBPalUpdate = TRUE;
     // RET;
 }
 

@@ -21,7 +21,7 @@ void BattleCommand_StoreEnergy(void){
     // AND_A_A;
     // IF_Z goto check_still_storing_energy;
     // LD_HL(wEnemyRolloutCount);
-    uint8_t* rc = (hram->hBattleTurn == 0)? &wram->wPlayerRolloutCount: &wram->wEnemyRolloutCount;
+    uint8_t* rc = (hBattleTurn == 0)? &wram->wPlayerRolloutCount: &wram->wEnemyRolloutCount;
 
 // check_still_storing_energy:
     // DEC_hl;
@@ -56,8 +56,8 @@ void BattleCommand_StoreEnergy(void){
     // IF_Z goto player;
     // LD_HL(wEnemyDamageTaken + 1);
     // LD_DE(wEnemyCharging);  // enemy
-    uint16_t* hl = (uint16_t*)((hram->hBattleTurn == 0)? wram_ptr(wPlayerDamageTaken): wram_ptr(wEnemyDamageTaken));
-    uint8_t* de = (hram->hBattleTurn == 0)? &wram->wPlayerCharging: &wram->wEnemyCharging;
+    uint16_t* hl = (uint16_t*)((hBattleTurn == 0)? wram_ptr(wPlayerDamageTaken): wram_ptr(wEnemyDamageTaken));
+    uint8_t* de = (hBattleTurn == 0)? &wram->wPlayerCharging: &wram->wEnemyCharging;
 
 // player:
     // LD_A_hld;
@@ -117,8 +117,8 @@ void BattleCommand_UnleashEnergy(void){
     // IF_Z goto got_damage;
     // LD_DE(wEnemyDamageTaken);
     // LD_BC(wEnemyRolloutCount);
-    uint16_t* de = (uint16_t*)((hram->hBattleTurn == 0)? wram_ptr(wPlayerDamageTaken): wram_ptr(wEnemyDamageTaken));
-    uint8_t* bc = (hram->hBattleTurn == 0)? &wram->wPlayerRolloutCount: &wram->wEnemyRolloutCount;
+    uint16_t* de = (uint16_t*)((hBattleTurn == 0)? wram_ptr(wPlayerDamageTaken): wram_ptr(wEnemyDamageTaken));
+    uint8_t* bc = (hBattleTurn == 0)? &wram->wPlayerRolloutCount: &wram->wEnemyRolloutCount;
 
 // got_damage:
     // LD_A(BATTLE_VARS_SUBSTATUS3);

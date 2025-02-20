@@ -31,7 +31,7 @@ void CheckTrainerBattle(void){
 bool CheckTrainerBattle_Conv(void){
     // LDH_A_addr(hROMBank);
     // PUSH_AF;
-    uint8_t oldBank = hram->hROMBank;
+    uint8_t oldBank = hROMBank;
 
     // CALL(aSwitchToMapScriptsBank);
     SwitchToMapScriptsBank_Conv();
@@ -234,7 +234,7 @@ bool v_CheckTrainerBattle_Conv(void){
             // POP_DE;
             // POP_AF;
             // LDH_addr_A(hLastTalked);
-            hram->hLastTalked = a;
+            hLastTalked = a;
             // LD_A_B;
             // LD_addr_A(wSeenTrainerDistance);
             wram->wSeenTrainerDistance = fdist.dist;
@@ -312,7 +312,7 @@ bool LoadTrainer_continue_Conv(void){
 
     // LDH_A_addr(hLastTalked);
     // CALL(aGetMapObject);
-    struct MapObject* bc = GetMapObject_Conv(hram->hLastTalked);
+    struct MapObject* bc = GetMapObject_Conv(hLastTalked);
 
     // LD_HL(MAPOBJECT_SCRIPT_POINTER);
     // ADD_HL_BC;

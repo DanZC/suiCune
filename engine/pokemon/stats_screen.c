@@ -105,10 +105,10 @@ void StatsScreenInit_gotaddress(void){
 void StatsScreenInit_Common(void (*hl)(void)){
     // LDH_A_addr(hMapAnims);
     // PUSH_AF;
-    uint8_t mapanims = hram->hMapAnims;
+    uint8_t mapanims = hMapAnims;
     // XOR_A_A;
     // LDH_addr_A(hMapAnims);  // disable overworld tile animations
-    hram->hMapAnims = 0;  // disable overworld tile animations
+    hMapAnims = 0;  // disable overworld tile animations
     // LD_A_addr(wBoxAlignment);  // whether sprite is to be mirrorred
     // PUSH_AF;
     uint8_t box_align = wram->wBoxAlignment;
@@ -150,7 +150,7 @@ void StatsScreenInit_Common(void (*hl)(void)){
     wram->wBoxAlignment = box_align;
     // POP_AF;
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = mapanims;
+    hMapAnims = mapanims;
     // RET;
 }
 
@@ -576,7 +576,7 @@ bool StatsScreen_GetJoypad_Conv(uint8_t* a){
     if(wram->wMonType != TEMPMON) {
     // not_tempmon:
         // LDH_A_addr(hJoyPressed);
-        *a = hram->hJoyPressed;
+        *a = hJoyPressed;
     }
     else {
         // PUSH_HL;
@@ -902,7 +902,7 @@ void StatsScreen_InitUpperHalf(void){
     StatsScreen_PlaceHPBar();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // LD_A_addr(wBaseDexNo);
     // LD_addr_A(wTextDecimalByte);
     wram->wTextDecimalByte = wram->wBaseDexNo;
@@ -1069,7 +1069,7 @@ void StatsScreen_LoadGFX(void){
     wram->wCurSpecies = wram->wBaseDexNo;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // CALL(aStatsScreen_LoadGFX_ClearBox);
     StatsScreen_LoadGFX_ClearBox();
     // CALL(aStatsScreen_LoadGFX_PageTilemap);
@@ -1813,7 +1813,7 @@ void StatsScreenSpaceGFX(void){
 void EggStatsScreen(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // LD_HL(wCurHPPal);
     // CALL(aSetHPPal);
     SetHPPal_Conv(&wram->wCurHPPal, wram->wStatsScreenFlags);

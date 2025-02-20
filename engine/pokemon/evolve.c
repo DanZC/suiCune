@@ -340,7 +340,7 @@ MasterLoop:
 
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x1;
+        hBGMapMode = 0x1;
         // CALL(aClearSprites);
         ClearSprites_Conv();
 

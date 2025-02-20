@@ -58,16 +58,16 @@ bool SplashScreen(void){
     // LDH_addr_A(hBGMapAddress + 1);
     // XOR_A_A;  // LOW(vBGMap0)
     // LDH_addr_A(hBGMapAddress);
-    hram->hBGMapAddress = vBGMap0;
+    hBGMapAddress = vBGMap0;
     // LDH_addr_A(hJoyDown);
-    hram->hJoyDown = 0;
+    hJoyDown = 0;
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0;
+    hSCX = 0;
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0;
+    hSCY = 0;
     // LD_A(SCREEN_HEIGHT_PX);
     // LDH_addr_A(hWY);
-    hram->hWY = SCREEN_HEIGHT_PX;
+    hWY = SCREEN_HEIGHT_PX;
     // CALL(aWaitBGMap);
     WaitBGMap_Conv();
     // LD_B(SCGB_GAMEFREAK_LOGO);
@@ -105,7 +105,7 @@ bool SplashScreen(void){
         // LDH_A_addr(hJoyLast);
         // AND_A(BUTTONS);
         // IF_NZ goto pressed_button;
-        if(hram->hJoyLast & (BUTTONS)) {
+        if(hJoyLast & (BUTTONS)) {
         // pressed_button:
             // CALL(aGameFreakPresentsEnd);
             GameFreakPresentsEnd();
@@ -198,15 +198,15 @@ void GameFreakPresentsInit(void){
     // LD_addr_A(wIntroSceneTimer);
     wram->wIntroSceneTimer = 0;
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0;
+    hSCX = 0;
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0;
+    hSCY = 0;
     // LD_A(1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 1;
+    hBGMapMode = 1;
     // LD_A(144);
     // LDH_addr_A(hWY);
-    hram->hWY = SCREEN_HEIGHT_PX;
+    hWY = SCREEN_HEIGHT_PX;
     // LD_DE((0b11100100 << 8) | 0b11100100);
     // CALL(aDmgToCgbObjPals);
     DmgToCgbObjPals_Conv(0b11100100, 0b11100100);
@@ -534,7 +534,7 @@ void GameFreakLogo_Transform(struct SpriteAnim* bc){
     // LDH_addr_A(rSVBK);
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hCGBPalUpdate = TRUE;
     // RET;
     return;
 }

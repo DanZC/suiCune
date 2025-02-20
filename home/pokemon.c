@@ -449,7 +449,7 @@ uint16_t LoadCry_Conv(species_t a){
     if(index < 0) return 0;
     uint16_t i = (uint16_t)index;
 
-    uint8_t oldBank = gb_read(hROMBank);
+    uint8_t oldBank = (hROMBank);
     Bankswitch_Conv(BANK(aPokemonCries));
 
     uint16_t hl = mPokemonCries + (MON_CRY_LENGTH * i);

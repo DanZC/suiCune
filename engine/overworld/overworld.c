@@ -35,10 +35,10 @@ void v_UpdatePlayerSprite_Conv(void){
     GetPlayerSprite_Conv();
     // LD_A_addr(wUsedSprites);
     // LDH_addr_A(hUsedSpriteIndex);
-    hram->hUsedSpriteIndex = wram->wUsedSprites[0];
+    hUsedSpriteIndex = wram->wUsedSprites[0];
     // LD_A_addr(wUsedSprites + 1);
     // LDH_addr_A(hUsedSpriteTile);
-    hram->hUsedSpriteTile = wram->wUsedSprites[1];
+    hUsedSpriteTile = wram->wUsedSprites[1];
     // CALL(aGetUsedSprite);
     GetUsedSprite_Conv();
     // RET;
@@ -1388,12 +1388,12 @@ void GetUsedSprites_Conv(void){
         if(a == 0)
             break;
         // LDH_addr_A(hUsedSpriteIndex);
-        hram->hUsedSpriteIndex = a;
+        hUsedSpriteIndex = a;
 
         // LD_A_hli;
         a = *(hl++);
         // LDH_addr_A(hUsedSpriteTile);
-        hram->hUsedSpriteTile = a;
+        hUsedSpriteTile = a;
 
         // BIT_A(7);
         // IF_Z goto dont_set;
@@ -1545,10 +1545,10 @@ void GetUsedSprite_CopyToVram(struct SpriteLoadData* sd, uint8_t* hl, uint16_t s
 void GetUsedSprite_Conv(void){
     // LDH_A_addr(hUsedSpriteIndex);
     // CALL(aSafeGetSprite);
-    struct SpriteLoadData sd = SafeGetSprite_Conv(hram->hUsedSpriteIndex);
+    struct SpriteLoadData sd = SafeGetSprite_Conv(hUsedSpriteIndex);
     // LDH_A_addr(hUsedSpriteTile);
     // CALL(aGetUsedSprite_GetTileAddr);
-    uint8_t* hl = GetUsedSprite_GetTileAddr(hram->hUsedSpriteTile);
+    uint8_t* hl = GetUsedSprite_GetTileAddr(hUsedSpriteTile);
     // PUSH_HL;
     // PUSH_DE;
     // PUSH_BC;
@@ -1584,7 +1584,7 @@ void GetUsedSprite_Conv(void){
     // CALL(av_DoesSpriteHaveFacings);
     // IF_C goto done;
     if(!(wram->wSpriteFlags & ((1 << 6) | (1 << 5)))
-    && v_DoesSpriteHaveFacings_Conv(hram->hUsedSpriteIndex)) {
+    && v_DoesSpriteHaveFacings_Conv(hUsedSpriteIndex)) {
         // LD_A_H;
         // ADD_A(HIGH(vTiles1 - vTiles0));
         // LD_H_A;

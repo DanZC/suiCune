@@ -43,10 +43,10 @@ static void NewPokedexEntry_ReturnFromDexRegistration(void) {
 void NewPokedexEntry(void){
     // LDH_A_addr(hMapAnims);
     // PUSH_AF;
-    uint8_t mapAnims = hram->hMapAnims;
+    uint8_t mapAnims = hMapAnims;
     // XOR_A_A;
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = 0;
+    hMapAnims = 0;
     // CALL(aLowVolume);
     LowVolume_Conv();
     // CALL(aClearBGPalettes);
@@ -63,7 +63,7 @@ void NewPokedexEntry(void){
     // LDH_A_addr(hSCX);
     // ADD_A(POKEDEX_SCX);
     // LDH_addr_A(hSCX);
-    hram->hSCX += POKEDEX_SCX;
+    hSCX += POKEDEX_SCX;
     // XOR_A_A;
     // LD_addr_A(wPokedexStatus);
     wram->wPokedexStatus = 0;
@@ -88,12 +88,12 @@ void NewPokedexEntry(void){
     // LDH_A_addr(hSCX);
     // ADD_A(-POKEDEX_SCX);
     // LDH_addr_A(hSCX);
-    hram->hSCX -= POKEDEX_SCX;
+    hSCX -= POKEDEX_SCX;
     // CALL(aNewPokedexEntry_ReturnFromDexRegistration);
     NewPokedexEntry_ReturnFromDexRegistration();
     // POP_AF;
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = mapAnims;
+    hMapAnims = mapAnims;
     // RET;
     return;
 

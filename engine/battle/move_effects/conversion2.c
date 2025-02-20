@@ -20,7 +20,7 @@ void BattleCommand_Conversion2(void){
     // AND_A_A;
     // IF_Z goto got_type;
     // LD_HL(wEnemyMonType1);
-    struct BattleMon* mon = (hram->hBattleTurn == 0)? &wram->wBattleMon: &wram->wEnemyMon;
+    struct BattleMon* mon = (hBattleTurn == 0)? &wram->wBattleMon: &wram->wEnemyMon;
 
 // got_type:
     // LD_A(BATTLE_VARS_LAST_COUNTER_MOVE_OPP);

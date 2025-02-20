@@ -1949,10 +1949,10 @@ void LoadOpponentTrainerAndPokemonWithOTSprite(void){
     // LD_hli_A;
     wram->wUsedSprites[a << 1] = wram->wBTTempOTSprite;
     // LDH_addr_A(hUsedSpriteIndex);
-    hram->hUsedSpriteIndex = wram->wBTTempOTSprite;
+    hUsedSpriteIndex = wram->wBTTempOTSprite;
     // LD_A_hl;
     // LDH_addr_A(hUsedSpriteTile);
-    hram->hUsedSpriteTile = wram->wUsedSprites[(a << 1) + 1];
+    hUsedSpriteTile = wram->wUsedSprites[(a << 1) + 1];
     // FARCALL(aGetUsedSprite);
     GetUsedSprite_Conv();
     // RET;

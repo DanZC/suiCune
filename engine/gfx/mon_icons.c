@@ -316,7 +316,7 @@ static void PartyMenu_InitAnimatedMonIcon_SpawnItemIcon_Conv(struct SpriteAnim* 
     // LD_A_hl;
     // AND_A_A;
     // RET_Z ;
-    if(!wram->wPartyMon[hram->hObjectStructIndex].mon.item)
+    if(!wram->wPartyMon[hObjectStructIndex].mon.item)
         return;
     // PUSH_HL;
     // PUSH_BC;
@@ -325,7 +325,7 @@ static void PartyMenu_InitAnimatedMonIcon_SpawnItemIcon_Conv(struct SpriteAnim* 
     // POP_BC;
     // POP_HL;
     // IF_C goto mail;
-    if(ItemIsMail_Conv(wram->wPartyMon[hram->hObjectStructIndex].mon.item)) {
+    if(ItemIsMail_Conv(wram->wPartyMon[hObjectStructIndex].mon.item)) {
         bc->framesetID = SPRITE_ANIM_FRAMESET_PARTY_MON_WITH_MAIL;
     }
     else {
@@ -397,7 +397,7 @@ struct SpriteAnim* InitPartyMenuIcon_Conv(void){
     // LD_D(0);
     // ADD_HL_DE;
     // LD_A_hl;
-    species_t a = wram->wPartySpecies[hram->hObjectStructIndex];
+    species_t a = wram->wPartySpecies[hObjectStructIndex];
     // CALL(aReadMonMenuIcon);
     // LD_addr_A(wCurIcon);
     wram->wCurIcon = ReadMonMenuIcon_Conv(a);
@@ -411,7 +411,7 @@ struct SpriteAnim* InitPartyMenuIcon_Conv(void){
     // ADD_A_A;
     // ADD_A(0x1c);
     // LD_D_A;
-    uint8_t y = (hram->hObjectStructIndex << 4) + 0x1c;
+    uint8_t y = (hObjectStructIndex << 4) + 0x1c;
 //  x coord
     // LD_E(0x10);
     uint8_t x = 0x10;
@@ -479,7 +479,7 @@ void SetPartyMonIconAnimSpeed_Conv(struct SpriteAnim* bc){
     {
     // getspeed:
         // FARCALL(aPlacePartymonHPBar);
-        uint8_t e = PlacePartymonHPBar_Conv(hram->hObjectStructIndex);
+        uint8_t e = PlacePartymonHPBar_Conv(hObjectStructIndex);
         // CALL(aGetHPPal);
         // LD_E_D;
         // LD_D(0);

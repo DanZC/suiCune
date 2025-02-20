@@ -16,7 +16,7 @@ void CheckCGB(void){
 }
 
 bool CheckCGB_Conv(void) {
-    return hram->hCGB != 0;
+    return hCGB != 0;
 }
 
 void LoadSGBLayoutCGB(void){
@@ -319,7 +319,7 @@ void v_CGB_PokegearPals(void){
     ApplyPals_Conv();
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hCGBPalUpdate = TRUE;
     // RET;
 }
 
@@ -394,7 +394,7 @@ void v_CGB_StatsScreenHPPals(void){
     ApplyPals_Conv();
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hCGBPalUpdate = TRUE;
     // RET;
 }
 
@@ -467,7 +467,7 @@ void v_CGB_Pokedex(void){
     ApplyPals_Conv();
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hCGBPalUpdate = TRUE;
     // RET;
 }
 
@@ -530,7 +530,7 @@ void v_CGB_BillsPC(void){
     ApplyPals_Conv();
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hCGBPalUpdate = TRUE;
     // RET;
 
 }
@@ -600,7 +600,7 @@ void v_CGB_PokedexUnownMode(void){
     ApplyPals_Conv();
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hCGBPalUpdate = TRUE;
     // RET;
 
 }
@@ -670,7 +670,7 @@ void v_CGB_SlotMachine(void){
     ApplyPals_Conv();
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hCGBPalUpdate = TRUE;
     // RET;
 }
 
@@ -859,7 +859,7 @@ void v_CGB_Evolution(void){
     ApplyPals_Conv();
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hCGBPalUpdate = TRUE;
     // RET;
 
 }
@@ -884,7 +884,7 @@ void v_CGB_Evolution2(void){
     ApplyPals_Conv();
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hCGBPalUpdate = TRUE;
     // RET;
 
 }
@@ -1081,7 +1081,7 @@ void v_CGB_TrainerCard(void){
     ApplyPals_Conv();
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hCGBPalUpdate = TRUE;
     // RET;
 }
 
@@ -1115,7 +1115,7 @@ void v_CGB_MoveList(void){
     ApplyPals_Conv();
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hCGBPalUpdate = TRUE;
     // RET;
 
 }
@@ -1147,7 +1147,7 @@ void v_CGB_PokedexSearchOption(void){
     ApplyPals_Conv();
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hCGBPalUpdate = TRUE;
     // RET;
 
 }
@@ -1280,7 +1280,7 @@ static const uint16_t KrisPackPals[] = {
     ApplyPals_Conv();
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hCGBPalUpdate = TRUE;
     // RET;
 }
 

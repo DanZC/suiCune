@@ -46,15 +46,15 @@ uint8_t Random_Conv(void) {
     uint8_t f = REG_F;
 
     uint16_t temp;
-    temp = (gb_read(rDIV) + hram->hRandomAdd + REG_F_C);
+    temp = (gb_read(rDIV) + hRandomAdd + REG_F_C);
     advance_div(128);
     REG_F_C = (temp & 0xFF00)? 1 : 0;
-    hram->hRandomAdd = (uint8_t)temp;
+    hRandomAdd = (uint8_t)temp;
 
-    temp = (gb_read(rDIV) - hram->hRandomSub - REG_F_C);
+    temp = (gb_read(rDIV) - hRandomSub - REG_F_C);
     REG_F_C = (temp & 0xFF00)? 1 : 0;
     advance_div(128);
-    hram->hRandomSub = (uint8_t)temp;
+    hRandomSub = (uint8_t)temp;
 
     REG_F = f;
 
@@ -147,7 +147,7 @@ uint8_t RandomRange_Conv(uint8_t a){
     uint8_t value;
     do {
         Random_Conv();
-        value = gb_read(hRandomAdd);
+        value = (hRandomAdd);
     } while(value > 0xFF - b);
 
     return SimpleDivide_Conv(value, a).rem;

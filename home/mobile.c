@@ -99,7 +99,7 @@ void MobileTimer(void){
     // LDH_A_addr(hMobile);
     // AND_A_A;
     // IF_Z goto pop_ret;
-    if(hram->hMobile) {
+    if(hMobile) {
         // XOR_A_A;
         // LDH_addr_A(rTAC);
         gb_write(rTAC, 0x0);

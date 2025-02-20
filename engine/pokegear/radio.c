@@ -2142,17 +2142,17 @@ void BuenasPassword1(void){
         StartRadioStation_Conv();
         // LDH_A_addr(hBGMapMode);
         // PUSH_AF;
-        uint8_t bgMapMode = hram->hBGMapMode;
+        uint8_t bgMapMode = hBGMapMode;
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0;
+        hBGMapMode = 0;
         // LD_DE(mBuenasPasswordChannelName);
         // hlcoord(2, 9, wTilemap);
         // CALL(aPlaceString);
         PlaceStringSimple(U82C(BuenasPasswordChannelName), coord(2, 9, wram->wTilemap));
         // POP_AF;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = bgMapMode;
+        hBGMapMode = bgMapMode;
         // LD_HL(mBuenaRadioText1);
         // LD_A(BUENAS_PASSWORD_2);
         // JP(mNextRadioLine);
@@ -2582,14 +2582,14 @@ void BuenasPassword19(void){
 void BuenasPassword20(void){
     // LDH_A_addr(hBGMapMode);
     // PUSH_AF;
-    uint8_t bgMapMode = hram->hBGMapMode;
+    uint8_t bgMapMode = hBGMapMode;
     // FARCALL(aNoRadioMusic);
     NoRadioMusic_Conv();
     // FARCALL(aNoRadioName);
     NoRadioName_Conv();
     // POP_AF;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = bgMapMode;
+    hBGMapMode = bgMapMode;
     // LD_HL(wDailyFlags2);
     // RES_hl(DAILYFLAGS2_BUENAS_PASSWORD_F);
     bit_reset(wram->wDailyFlags2, DAILYFLAGS2_BUENAS_PASSWORD_F);
@@ -2628,7 +2628,7 @@ bool BuenasPasswordCheckTime(void){
     // LDH_A_addr(hHours);
     // CP_A(NITE_HOUR);
     // RET;
-    return hram->hHours < NITE_HOUR;
+    return hHours < NITE_HOUR;
 }
 
 const char BuenasPasswordChannelName[] = "BUENA\'S PASSWORD@";

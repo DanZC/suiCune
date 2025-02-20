@@ -93,7 +93,7 @@ void RedCredits(void){
     // LD_addr_A(wVramState);
     wram->wVramState = 0x0;
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = FALSE;
+    hMapAnims = FALSE;
     // FARCALL(aInitDisplayForRedCredits);
     InitDisplayForRedCredits();
     // LD_C(8);
@@ -126,7 +126,7 @@ void HallOfFame_FadeOutMusic(void){
     // LD_addr_A(wVramState);
     wram->wVramState = 0x0;
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = 0x0;
+    hMapAnims = 0x0;
     // FARCALL(aInitDisplayForHallOfFame);
     InitDisplayForHallOfFame();
     // LD_C(100);
@@ -370,22 +370,22 @@ void AnimateHOFMonEntrance(struct HOFMon* mon){
     GetMonBackpic_Conv(vram->vTiles2 + LEN_2BPP_TILE * 0x31, mon->species);
     // LD_A(0x31);
     // LDH_addr_A(hGraphicStartTile);
-    hram->hGraphicStartTile = 0x31;
+    hGraphicStartTile = 0x31;
     // hlcoord(6, 6, wTilemap);
     // LD_BC((6 << 8) | 6);
     // PREDEF(pPlaceGraphic);
     PlaceGraphicYStagger_Conv(coord(6, 6, wram->wTilemap), 6, 6);
     // LD_A(0xd0);
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0xd0;
+    hSCY = 0xd0;
     // LD_A(0x90);
     // LDH_addr_A(hSCX);
-    hram->hSCY = 0x90;
+    hSCY = 0x90;
     // CALL(aWaitBGMap);
     WaitBGMap_Conv();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hBGMapMode = 0x0;
     // LD_B(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
     // CALL(aGetSGBLayout);
     GetSGBLayout_Conv(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
@@ -408,9 +408,9 @@ void AnimateHOFMonEntrance(struct HOFMon* mon){
     WaitBGMap_Conv();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hBGMapMode = 0x0;
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0x0;
+    hSCY = 0x0;
     // CALL(aHOF_SlideFrontpic);
     HOF_SlideFrontpic();
     // RET;
@@ -418,14 +418,14 @@ void AnimateHOFMonEntrance(struct HOFMon* mon){
 }
 
 void HOF_SlideBackpic(void){
-    while(hram->hSCX != 0x70) {
+    while(hSCX != 0x70) {
     // backpicloop:
         // LDH_A_addr(hSCX);
         // CP_A(0x70);
         // RET_Z ;
         // ADD_A(4);
         // LDH_addr_A(hSCX);
-        hram->hSCX += 4;
+        hSCX += 4;
         // CALL(aDelayFrame);
         DelayFrame();
         // goto backpicloop;
@@ -433,7 +433,7 @@ void HOF_SlideBackpic(void){
 }
 
 void HOF_SlideFrontpic(void){
-    while(hram->hSCX != 0x0) {
+    while(hSCX != 0x0) {
     // frontpicloop:
         // LDH_A_addr(hSCX);
         // AND_A_A;
@@ -441,7 +441,7 @@ void HOF_SlideFrontpic(void){
         // DEC_A;
         // DEC_A;
         // LDH_addr_A(hSCX);
-        hram->hSCX -= 2;
+        hSCX -= 2;
         // CALL(aDelayFrame);
         DelayFrame();
         // goto frontpicloop;
@@ -554,7 +554,7 @@ static bool v_HallOfFamePC_DisplayTeam(void){
             // LD_A_hl;
             // AND_A(B_BUTTON);
             // IF_NZ goto b_button;
-            if(hram->hJoyLast & B_BUTTON){
+            if(hJoyLast & B_BUTTON){
             // b_button:
                 // SCF;
                 // RET;
@@ -563,7 +563,7 @@ static bool v_HallOfFamePC_DisplayTeam(void){
             // LD_A_hl;
             // AND_A(A_BUTTON);
             // IF_NZ goto a_button;
-            if(hram->hJoyLast & A_BUTTON){
+            if(hJoyLast & A_BUTTON){
             // a_button:
                 // LD_HL(wHallOfFameMonCounter);
                 // INC_hl;
@@ -574,7 +574,7 @@ static bool v_HallOfFamePC_DisplayTeam(void){
             // LD_A_hl;
             // AND_A(START);
             // IF_NZ goto start_button;
-            if(hram->hJoyLast & START){
+            if(hJoyLast & START){
             // start_button:
                 // AND_A_A;
                 // RET;
@@ -653,7 +653,7 @@ bool LoadHOFTeam(void){
 void DisplayHOFMon(const struct HOFMon* mon){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hBGMapMode = 0x0;
     // LD_A_hli;
     // LD_addr_A(wTempMonSpecies);
     wram->wTempMon.mon.species = mon->species;
@@ -791,22 +791,22 @@ void HOF_AnimatePlayerPic(void){
     GetPlayerBackpic();
     // LD_A(0x31);
     // LDH_addr_A(hGraphicStartTile);
-    hram->hGraphicStartTile = 0x31;
+    hGraphicStartTile = 0x31;
     // hlcoord(6, 6, wTilemap);
     // LD_BC((6 << 8) | 6);
     // PREDEF(pPlaceGraphic);
     PlaceGraphicYStagger_Conv(coord(6, 6, wram->wTilemap), 6, 6);
     // LD_A(0xd0);
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0xd0;
+    hSCY = 0xd0;
     // LD_A(0x90);
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0x90;
+    hSCX = 0x90;
     // CALL(aWaitBGMap);
     WaitBGMap_Conv();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hBGMapMode = 0x0;
     // LD_addr_A(wCurPartySpecies);
     wram->wCurPartySpecies = 0x0;
     // LD_B(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
@@ -828,26 +828,26 @@ void HOF_AnimatePlayerPic(void){
     HOF_LoadTrainerFrontpic();
     // XOR_A_A;
     // LDH_addr_A(hGraphicStartTile);
-    hram->hGraphicStartTile = 0x0;
+    hGraphicStartTile = 0x0;
     // hlcoord(12, 5, wTilemap);
     // LD_BC((7 << 8) | 7);
     // PREDEF(pPlaceGraphic);
     PlaceGraphicYStagger_Conv(coord(12, 5, wram->wTilemap), 7, 7);
     // LD_A(0xc0);
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0xc0;
+    hSCX = 0xc0;
     // CALL(aWaitBGMap);
     WaitBGMap_Conv();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hBGMapMode = 0x0;
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0x0;
+    hSCY = 0x0;
     // CALL(aHOF_SlideFrontpic);
     HOF_SlideFrontpic();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hBGMapMode = 0x0;
     // hlcoord(0, 2, wTilemap);
     // LD_BC((8 << 8) | 9);
     // CALL(aTextbox);

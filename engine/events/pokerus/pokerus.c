@@ -136,12 +136,12 @@ void GivePokerusAndConvertBerries(void){
     // LDH_A_addr(hRandomAdd);
     // AND_A_A;
     // RET_NZ ;
-    if(hram->hRandomAdd != 0)
+    if(hRandomAdd != 0)
         return;
     // LDH_A_addr(hRandomSub);
     // CP_A(3);
     // RET_NC ;  // 3/65536 chance (00 00, 00 01 or 00 02)
-    if(hram->hRandomSub >= 3)
+    if(hRandomSub >= 3)
         return;
     // LD_A_addr(wPartyCount);
     // LD_B_A;

@@ -129,7 +129,7 @@ uint8_t* GetBattleVarAddr_Conv(uint8_t a){
     // LD_A_hl;
     // LD_C_A;
     // LD_B(0);
-    uint8_t id = BattleVarPairs[a][(hram->hBattleTurn == 0)? 0: 1];
+    uint8_t id = BattleVarPairs[a][(hBattleTurn == 0)? 0: 1];
 
     // LD_HL(mBattleVarLocations);
     // ADD_HL_BC;

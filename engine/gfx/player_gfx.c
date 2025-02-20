@@ -126,13 +126,13 @@ void MovePlayerPic_Conv(uint8_t* hl, int16_t de){
         // PUSH_DE;
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0;
+        hBGMapMode = 0;
         // LD_BC((7 << 8) | 7);
         // PREDEF(pPlaceGraphic);
         PlaceGraphicYStagger_Conv(hl, 7, 7);
         // XOR_A_A;
         // LDH_addr_A(hBGMapThird);
-        hram->hBGMapThird = 0;
+        hBGMapThird = 0;
         // CALL(aWaitBGMap);
         WaitBGMap_Conv();
         // CALL(aDelayFrame);
@@ -293,7 +293,7 @@ void HOF_LoadTrainerFrontpic(void){
     WaitBGMap_Conv();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hBGMapMode = 0x0;
 
 //  Get class
     // LD_E(CHRIS);
@@ -326,7 +326,7 @@ void HOF_LoadTrainerFrontpic(void){
     WaitBGMap_Conv();
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hBGMapMode = 0x1;
     // RET;
 }
 
@@ -399,7 +399,7 @@ void DrawIntroPlayerPic_Conv(void){
 //  Draw
     // XOR_A_A;
     // LDH_addr_A(hGraphicStartTile);
-    hram->hGraphicStartTile = 0;
+    hGraphicStartTile = 0;
     // hlcoord(6, 4, wTilemap);
     // LD_BC((7 << 8) | 7);
     // PREDEF(pPlaceGraphic);

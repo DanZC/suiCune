@@ -336,16 +336,16 @@ void NamingScreen_Conv(uint8_t* de, uint8_t b){
     bit_set(wram->wOptions, NO_TEXT_SCROLL);
     // LDH_A_addr(hMapAnims);
     // PUSH_AF;
-    uint8_t mapAnims = hram->hMapAnims;
+    uint8_t mapAnims = hMapAnims;
     // XOR_A_A;
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = 0;
+    hMapAnims = 0;
     // LDH_A_addr(hInMenu);
     // PUSH_AF;
-    uint8_t inMenu = hram->hInMenu;
+    uint8_t inMenu = hInMenu;
     // LD_A(0x1);
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = TRUE;
+    hInMenu = TRUE;
     // CALL(aNamingScreen_SetUpNamingScreen);
     NamingScreen_SetUpNamingScreen();
     // CALL(aDelayFrame);
@@ -358,10 +358,10 @@ void NamingScreen_Conv(uint8_t* de, uint8_t b){
     } while(!NamingScreenJoypadLoop());
     // POP_AF;
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = inMenu;
+    hInMenu = inMenu;
     // POP_AF;
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = mapAnims;
+    hMapAnims = mapAnims;
     // POP_AF;
     // LD_addr_A(wOptions);
     wram->wOptions = options;
@@ -792,7 +792,7 @@ static void NamingScreenJoypadLoop_Jumptable(void) {
     // ReadButtons:
         // LD_HL(hJoyPressed);
         // LD_A_hl;
-        uint8_t pressed = hram->hJoyPressed;
+        uint8_t pressed = hJoyPressed;
         // AND_A(A_BUTTON);
         // IF_NZ goto a;
         if(pressed & A_BUTTON) {
@@ -922,9 +922,9 @@ bool NamingScreenJoypadLoop(void){
     ClearSprites_Conv();
     // XOR_A_A;
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0;
+    hSCX = 0;
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0;
+    hSCY = 0;
     // SCF;
     // RET;
     return true;
@@ -937,7 +937,7 @@ bool NamingScreenJoypadLoop(void){
 static void NamingScreenJoypadLoop_UpdateStringEntry(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // hlcoord(1, 5, wTilemap);
     // CALL(aNamingScreen_IsTargetBox);
     // IF_NZ goto got_coords;
@@ -960,7 +960,7 @@ static void NamingScreenJoypadLoop_UpdateStringEntry(void){
     PlaceStringSimple(gNamingScreenDestinationPointer, gNamingScreenStringEntryCoord);
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hBGMapMode = 0x1;
     // RET;
 }
 
@@ -1023,7 +1023,7 @@ uint8_t NamingScreen_GetCursorPosition(struct SpriteAnim* bc){
 static void NamingScreen_AnimateCursor_GetDPad(struct SpriteAnim* bc){
     // LD_HL(hJoyLast);
     // LD_A_hl;
-    uint8_t joy = hram->hJoyLast;
+    uint8_t joy = hJoyLast;
     // AND_A(D_UP);
     // IF_NZ goto up;
     if(joy & D_UP) {
@@ -1686,11 +1686,11 @@ void LoadNamingScreenGFX(void){
     hl[1] = NAMINGSCREEN_CURSOR;
     // XOR_A_A;
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0;
+    hSCY = 0;
     // LD_addr_A(wGlobalAnimYOffset);
     wram->wGlobalAnimYOffset = 0;
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0;
+    hSCX = 0;
     // LD_addr_A(wGlobalAnimXOffset);
     wram->wGlobalAnimXOffset = 0;
     // LD_addr_A(wJumptableIndex);
@@ -1698,12 +1698,12 @@ void LoadNamingScreenGFX(void){
     // LD_addr_A(wNamingScreenLetterCase);
     wram->wNamingScreenLetterCase = 0;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // LD_addr_A(wNamingScreenCurNameLength);
     wram->wNamingScreenCurNameLength = 0;
     // LD_A(0x7);
     // LDH_addr_A(hWX);
-    hram->hWX = 0x7;
+    hWX = 0x7;
     // RET;
 }
 
@@ -1852,7 +1852,7 @@ static void v_ComposeMailMessage_InitBlankMail(void) {
 static void v_ComposeMailMessage_Update(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hBGMapMode = 0x0;
     // hlcoord(1, 1, wTilemap);
     // LD_BC((4 << 8) | 18);
     // CALL(aClearBox);
@@ -1866,7 +1866,7 @@ static void v_ComposeMailMessage_Update(void){
     PlaceStringSimple(gNamingScreenDestinationPointer, coord(2, 2, wram->wTilemap));
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hBGMapMode = 0x1;
     // RET;
 }
 
@@ -1906,7 +1906,7 @@ static void v_ComposeMailMessage_DoJumptable(void){
             // LD_A_hl;
             // AND_A(A_BUTTON);
             // IF_NZ goto a;
-            if(hram->hJoyPressed & A_BUTTON) {
+            if(hJoyPressed & A_BUTTON) {
             // a:
                 // CALL(aNamingScreen_PressedA_GetCursorCommand);
                 uint8_t a = NamingScreen_PressedA_GetCursorCommand();
@@ -1946,7 +1946,7 @@ static void v_ComposeMailMessage_DoJumptable(void){
             // LD_A_hl;
             // AND_A(B_BUTTON);
             // IF_NZ goto b;
-            else if(hram->hJoyPressed & B_BUTTON) {
+            else if(hJoyPressed & B_BUTTON) {
             b:
                 // CALL(aNamingScreen_DeleteCharacter);
                 NamingScreen_DeleteCharacter();
@@ -1971,7 +1971,7 @@ static void v_ComposeMailMessage_DoJumptable(void){
             // LD_A_hl;
             // AND_A(START);
             // IF_NZ goto start;
-            else if(hram->hJoyPressed & START) {
+            else if(hJoyPressed & START) {
             start:
                 // LD_HL(wNamingScreenCursorObjectPointer);
                 // LD_C_hl;
@@ -1992,7 +1992,7 @@ static void v_ComposeMailMessage_DoJumptable(void){
             // LD_A_hl;
             // AND_A(SELECT);
             // IF_NZ goto select;
-            else if(hram->hJoyPressed & SELECT) {
+            else if(hJoyPressed & SELECT) {
             select:
                 // LD_HL(wNamingScreenLetterCase);
                 // LD_A_hl;
@@ -2056,9 +2056,9 @@ static bool v_ComposeMailMessage_DoMailEntry(void){
     ClearSprites_Conv();
     // XOR_A_A;
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0x0;
+    hSCX = 0x0;
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0x0;
+    hSCY = 0x0;
     // SCF;
     // RET;
     return true;
@@ -2072,16 +2072,16 @@ void v_ComposeMailMessage(uint8_t* dest){
     gNamingScreenDestinationPointer = dest;
     // LDH_A_addr(hMapAnims);
     // PUSH_AF;
-    uint8_t mapAnims = hram->hMapAnims;
+    uint8_t mapAnims = hMapAnims;
     // XOR_A_A;
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = 0x0;
+    hMapAnims = 0x0;
     // LDH_A_addr(hInMenu);
     // PUSH_AF;
-    uint8_t inMenu = hram->hInMenu;
+    uint8_t inMenu = hInMenu;
     // LD_A(0x1);
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = 0x1;
+    hInMenu = 0x1;
     // CALL(av_ComposeMailMessage_InitBlankMail);
     v_ComposeMailMessage_InitBlankMail();
     // CALL(aDelayFrame);
@@ -2095,10 +2095,10 @@ void v_ComposeMailMessage(uint8_t* dest){
 
     // POP_AF;
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = inMenu;
+    hInMenu = inMenu;
     // POP_AF;
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = mapAnims;
+    hMapAnims = mapAnims;
     // RET;
     return;
 
@@ -2110,7 +2110,7 @@ static void ComposeMail_AnimateCursor_GetDPad(struct SpriteAnim* bc){
     // LD_A_hl;
     // AND_A(D_UP);
     // IF_NZ goto up;
-    if(hram->hJoyLast & D_UP) {
+    if(hJoyLast & D_UP) {
     // up:
         // LD_HL(SPRITEANIMSTRUCT_VAR2);
         // ADD_HL_BC;
@@ -2132,7 +2132,7 @@ static void ComposeMail_AnimateCursor_GetDPad(struct SpriteAnim* bc){
     // LD_A_hl;
     // AND_A(D_DOWN);
     // IF_NZ goto down;
-    else if(hram->hJoyLast & D_DOWN) {
+    else if(hJoyLast & D_DOWN) {
     // down:
         // LD_HL(SPRITEANIMSTRUCT_VAR2);
         // ADD_HL_BC;
@@ -2154,7 +2154,7 @@ static void ComposeMail_AnimateCursor_GetDPad(struct SpriteAnim* bc){
     // LD_A_hl;
     // AND_A(D_LEFT);
     // IF_NZ goto left;
-    else if(hram->hJoyLast & D_LEFT){
+    else if(hJoyLast & D_LEFT){
     // left:
         // CALL(aComposeMail_GetCursorPosition);
         uint8_t pos = ComposeMail_GetCursorPosition(bc);
@@ -2202,7 +2202,7 @@ static void ComposeMail_AnimateCursor_GetDPad(struct SpriteAnim* bc){
     // LD_A_hl;
     // AND_A(D_RIGHT);
     // IF_NZ goto right;
-    else if(hram->hJoyLast & D_RIGHT){
+    else if(hJoyLast & D_RIGHT){
     // right:
         // CALL(aComposeMail_GetCursorPosition);
         uint8_t pos = ComposeMail_GetCursorPosition(bc);

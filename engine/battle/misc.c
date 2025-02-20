@@ -24,12 +24,12 @@ static struct PicCoords GetPlayerBackpicCoords_Conv(void){
 void v_DisappearUser(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto player;
     struct PicCoords ccoords;
-    if(hram->hBattleTurn != 0) {
+    if(hBattleTurn != 0) {
         // CALL(aGetEnemyFrontpicCoords);
         // goto okay;
         ccoords = GetEnemyFrontpicCoords_Conv();
@@ -64,13 +64,13 @@ void v_AppearUserLowerSub(void){
 void AppearUser(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto player;
     struct PicCoords ccoords;
     uint8_t a;
-    if(hram->hBattleTurn != 0) {
+    if(hBattleTurn != 0) {
         // CALL(aGetEnemyFrontpicCoords);
         ccoords = GetEnemyFrontpicCoords_Conv();
         // XOR_A_A;
@@ -86,7 +86,7 @@ void AppearUser(void){
     }
 // okay:
     // LDH_addr_A(hGraphicStartTile);
-    hram->hGraphicStartTile = a;
+    hGraphicStartTile = a;
     // PREDEF(pPlaceGraphic);
     PlaceGraphicYStagger_Conv(ccoords.hl, ccoords.b, ccoords.c);
     return FinishAppearDisappearUser();
@@ -95,7 +95,7 @@ void AppearUser(void){
 void FinishAppearDisappearUser(void){
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hBGMapMode = 0x1;
     // RET;
 }
 
@@ -313,7 +313,7 @@ void DoBadgeTypeBoosts(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // RET_NZ ;
-    if(hram->hBattleTurn != 0)
+    if(hBattleTurn != 0)
         return;
 
     // PUSH_DE;

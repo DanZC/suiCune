@@ -1414,10 +1414,10 @@ void Hatch_UpdateFrontpicBGMapCenter(tile_t* hl, uint8_t b, uint8_t c, uint8_t a
     // POP_HL;
     // LD_A_B;
     // LDH_addr_A(hBGMapAddress + 1);
-    hram->hBGMapAddress = (b << 8) | (hram->hBGMapAddress & 0xff);
+    hBGMapAddress = (b << 8) | (hBGMapAddress & 0xff);
     // LD_A_C;
     // LDH_addr_A(hGraphicStartTile);
-    hram->hGraphicStartTile = c;
+    hGraphicStartTile = c;
     // LD_BC((7 << 8) | 7);
     // PREDEF(pPlaceGraphic);
     PlaceGraphicYStagger_Conv(hl, 7, 7);
@@ -1515,7 +1515,7 @@ void EggHatch_AnimationSequence(void){
         //  wobble e times
             // LD_A(2);
             // LDH_addr_A(hSCX);
-            hram->hSCX = 2;
+            hSCX = 2;
             // LD_A(-2);
             // LD_addr_A(wGlobalAnimXOffset);
             wram->wGlobalAnimXOffset = (uint8_t)-2;
@@ -1526,7 +1526,7 @@ void EggHatch_AnimationSequence(void){
             DelayFrames_Conv(2);
             // LD_A(-2);
             // LDH_addr_A(hSCX);
-            hram->hSCX = (uint8_t)-2;
+            hSCX = (uint8_t)-2;
             // LD_A(2);
             // LD_addr_A(wGlobalAnimXOffset);
             wram->wGlobalAnimXOffset = 2;
@@ -1552,7 +1552,7 @@ void EggHatch_AnimationSequence(void){
     PlaySFX_Conv(SFX_EGG_HATCH);
     // XOR_A_A;
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0;
+    hSCX = 0;
     // LD_addr_A(wGlobalAnimXOffset);
     wram->wGlobalAnimXOffset = 0;
     // CALL(aClearSprites);

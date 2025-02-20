@@ -130,7 +130,7 @@ void Draw2DMenu(void){
 void Draw2DMenu_Conv(const struct MenuData* data){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // CALL(aMenuBox);
     MenuBox_Conv();
     // CALL(aPlace2DMenuItemStrings);
@@ -669,12 +669,12 @@ void v_ScrollingMenuJoypad_Conv(void){
     bit_reset(wram->w2DMenuFlags2, 7);
     // LDH_A_addr(hBGMapMode);
     // PUSH_AF;
-    uint8_t temp = hram->hBGMapMode;
+    uint8_t temp = hBGMapMode;
     // CALL(aMenuJoypadLoop);
     MenuJoypadLoop_Conv();
     // POP_AF;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = temp;
+    hBGMapMode = temp;
     // RET;
 }
 
@@ -703,7 +703,7 @@ uint8_t MobileMenuJoypad_Conv(void){
     bit_reset(wram->w2DMenuFlags2, 7);
     // LDH_A_addr(hBGMapMode);
     // PUSH_AF;
-    uint8_t bgMapMode = hram->hBGMapMode;
+    uint8_t bgMapMode = hBGMapMode;
     // CALL(aMove2DMenuCursor);
     Move2DMenuCursor_Conv();
     // CALL(aDo2DMenuRTCJoypad);
@@ -716,7 +716,7 @@ uint8_t MobileMenuJoypad_Conv(void){
 // skip_joypad:
     // POP_AF;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = bgMapMode;
+    hBGMapMode = bgMapMode;
     // CALL(aGetMenuJoypad);
     // LD_C_A;
     // RET;
@@ -806,18 +806,18 @@ static void MenuJoypadLoop_BGMap_OAM(void) {
 // BGMap_OAM:
     // LDH_A_addr(hOAMUpdate);
     // PUSH_AF;
-    uint8_t temp = hram->hOAMUpdate;
+    uint8_t temp = hOAMUpdate;
     // LD_A(0x1);
     // LDH_addr_A(hOAMUpdate);
-    hram->hOAMUpdate = 0x1;
+    hOAMUpdate = 0x1;
     // CALL(aWaitBGMap);
     WaitBGMap_Conv();
     // POP_AF;
     // LDH_addr_A(hOAMUpdate);
-    hram->hOAMUpdate = temp;
+    hOAMUpdate = temp;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // RET;
 }
 
@@ -1724,7 +1724,7 @@ done:
 void v_ExitMenu_Conv(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
 
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
@@ -1785,7 +1785,7 @@ void v_ExitMenu_Conv2(void){
     printf("gWindowStackPointer = %d\n", gWindowStackPointer - 1);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
 
     // LDH_A_addr(rSVBK);
     // PUSH_AF;

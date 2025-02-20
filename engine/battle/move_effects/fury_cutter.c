@@ -9,7 +9,7 @@ void BattleCommand_FuryCutter(void){
     // AND_A_A;
     // IF_Z goto go;
     // LD_HL(wEnemyFuryCutterCount);
-    uint8_t* hl = (hram->hBattleTurn == 0)? &wram->wPlayerFuryCutterCount: &wram->wEnemyFuryCutterCount;
+    uint8_t* hl = (hBattleTurn == 0)? &wram->wPlayerFuryCutterCount: &wram->wEnemyFuryCutterCount;
 
 
 // go:
@@ -70,7 +70,7 @@ void ResetFuryCutterCount(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto reset;
-    if(hram->hBattleTurn == 0) {
+    if(hBattleTurn == 0) {
         wram->wPlayerFuryCutterCount = 0;
     }
     // LD_HL(wEnemyFuryCutterCount);

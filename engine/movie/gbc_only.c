@@ -17,7 +17,7 @@ void GBCOnlyScreen(void){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // RET_NZ ;
-    if(hram->hCGB != 0)
+    if(hCGB != 0)
         return;
 
     // LD_DE(MUSIC_NONE);

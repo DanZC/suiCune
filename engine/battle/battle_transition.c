@@ -49,12 +49,12 @@ static void DoBattleTransition_InitGFX(void) {
 // resume:
     // LD_A(SCREEN_HEIGHT_PX);
     // LDH_addr_A(hWY);
-    hram->hWY = SCREEN_HEIGHT_PX;
+    hWY = SCREEN_HEIGHT_PX;
     // CALL(aDelayFrame);
     DelayFrame();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // LD_HL(wJumptableIndex);
     // XOR_A_A;
     // LD_hli_A;
@@ -93,9 +93,9 @@ void DoBattleTransition(void){
     // LD_HL(hVBlank);
     // LD_A_hl;
     // PUSH_AF;
-    uint8_t vblank = hram->hVBlank;
+    uint8_t vblank = hVBlank;
     // LD_hl(0x1);
-    hram->hVBlank = 0x1;
+    hVBlank = 0x1;
 
     while(1) {
     // loop:
@@ -136,19 +136,19 @@ void DoBattleTransition(void){
     DelayFrame();
     // XOR_A_A;
     // LDH_addr_A(hLCDCPointer);
-    hram->hLCDCPointer = 0;
+    hLCDCPointer = 0;
     // LDH_addr_A(hLYOverrideStart);
-    hram->hLYOverrideStart = 0;
+    hLYOverrideStart = 0;
     // LDH_addr_A(hLYOverrideEnd);
-    hram->hLYOverrideStart = 0;
+    hLYOverrideStart = 0;
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0;
+    hSCY = 0;
 
     // LD_A(0x1);  // unnecessary bankswitch?
     // LDH_addr_A(rSVBK);
     // POP_AF;
     // LDH_addr_A(hVBlank);
-    hram->hVBlank = vblank;
+    hVBlank = vblank;
     // CALL(aDelayFrame);
     DelayFrame();
     // PEEK("end");
@@ -409,7 +409,7 @@ void StartTrainerBattle_SetUpBGMap(void){
     // LD_addr_A(wBattleTransitionCounter);
     wram->wBattleTransitionCounter = 0;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // RET;
 
 }
@@ -499,13 +499,13 @@ void StartTrainerBattle_SetUpForWavyOutro(void){
 
     // LD_A(LOW(rSCX));
     // LDH_addr_A(hLCDCPointer);
-    hram->hLCDCPointer = LOW(rSCX);
+    hLCDCPointer = LOW(rSCX);
     // XOR_A_A;
     // LDH_addr_A(hLYOverrideStart);
-    hram->hLYOverrideStart = 0;
+    hLYOverrideStart = 0;
     // LD_A(0x90);
     // LDH_addr_A(hLYOverrideEnd);
-    hram->hLYOverrideEnd = 0x90;
+    hLYOverrideEnd = 0x90;
     // XOR_A_A;
     // LD_addr_A(wBattleTransitionCounter);
     wram->wBattleTransitionCounter = 0;
@@ -642,7 +642,7 @@ static const int8_t wedge5[] = {4, 0, 3, 0, 3, 0, 2, 0, 2, 0, 1, 0, 1, 0, 1, -1}
 
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // LD_A_addr(wBattleTransitionCounter);
     // LD_E_A;
     // LD_D(0);
@@ -742,7 +742,7 @@ static const int8_t wedge5[] = {4, 0, 3, 0, 3, 0, 2, 0, 2, 0, 1, 0, 1, 0, 1, -1}
         }
         // LD_A(1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 1;
+        hBGMapMode = 1;
         // CALL(aDelayFrame);
         // CALL(aDelayFrame);
         DelayFrame();
@@ -756,7 +756,7 @@ static const int8_t wedge5[] = {4, 0, 3, 0, 3, 0, 2, 0, 2, 0, 1, 0, 1, 0, 1, -1}
 // end:
     // LD_A(1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 1;
+    hBGMapMode = 1;
     // CALL(aDelayFrame);
     // CALL(aDelayFrame);
     // CALL(aDelayFrame);
@@ -765,7 +765,7 @@ static const int8_t wedge5[] = {4, 0, 3, 0, 3, 0, 2, 0, 2, 0, 1, 0, 1, 0, 1, -1}
     DelayFrame();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // LD_A(BATTLETRANSITION_FINISH);
     // LD_addr_A(wJumptableIndex);
     wram->wJumptableIndex = BATTLETRANSITION_FINISH;
@@ -784,7 +784,7 @@ void StartTrainerBattle_SetUpForRandomScatterOutro(void){
     wram->wBattleTransitionCounter = 0x10;
     // LD_A(1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 1;
+    hBGMapMode = 1;
     // RET;
 }
 
@@ -845,7 +845,7 @@ void StartTrainerBattle_SpeckleToBlack(void){
     // done:
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x1;
+        hBGMapMode = 0x1;
         // CALL(aDelayFrame);
         DelayFrame();
         // CALL(aDelayFrame);
@@ -854,7 +854,7 @@ void StartTrainerBattle_SpeckleToBlack(void){
         DelayFrame();
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0;
+        hBGMapMode = 0;
         // LD_A(BATTLETRANSITION_FINISH);
         // LD_addr_A(wJumptableIndex);
         wram->wJumptableIndex = BATTLETRANSITION_FINISH;
@@ -959,7 +959,7 @@ void StartTrainerBattle_LoadPokeBallGraphics(void){
 
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
 
     // hlcoord(0, 0, wAttrmap);
     uint8_t* hl = wram->wAttrmap;
@@ -1053,10 +1053,10 @@ void StartTrainerBattle_LoadPokeBallGraphics(void){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // IF_NZ goto cgb;
-    if(hram->hCGB == 0) {
+    if(hCGB == 0) {
         // LD_A(1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 1;
+        hBGMapMode = 1;
         // CALL(aDelayFrame);
         // CALL(aDelayFrame);
         DelayFrame();
@@ -1099,7 +1099,7 @@ void StartTrainerBattle_LoadPokeBallGraphics(void){
         // LDH_addr_A(rSVBK);
         // LD_A(TRUE);
         // LDH_addr_A(hCGBPalUpdate);
-        hram->hCGBPalUpdate = TRUE;
+        hCGBPalUpdate = TRUE;
         // CALL(aDelayFrame);
         DelayFrame();
         // CALL(aBattleStart_CopyTilemapAtOnce);
@@ -1264,7 +1264,7 @@ void StartTrainerBattle_ZoomToBlack(void){
         // LD_H_A;
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0;
+        hBGMapMode = 0;
         // CALL(aStartTrainerBattle_ZoomToBlack_Copy);
         StartTrainerBattle_ZoomToBlack_Copy(boxes[i].start, boxes[i].w, boxes[i].h);
         // CALL(aWaitBGMap);

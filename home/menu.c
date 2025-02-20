@@ -100,8 +100,8 @@ void GetMenuJoypad(void) {
 }
 
 uint8_t GetMenuJoypad_Conv(void) {
-    uint8_t pad_last = (hram->hJoyLast & (D_PAD));
-    uint8_t button_last = (hram->hJoyPressed & (BUTTONS));
+    uint8_t pad_last = (hJoyLast & (D_PAD));
+    uint8_t button_last = (hJoyPressed & (BUTTONS));
     return (pad_last | button_last);
 }
 
@@ -934,7 +934,7 @@ void CopyMenuHeader_Conv(uint16_t hl) {
 
     // LDH_A_addr(hROMBank);
     // LD_addr_A(wMenuDataBank);
-    gb_write(wMenuDataBank, gb_read(hROMBank));
+    gb_write(wMenuDataBank, (hROMBank));
 }
 
 void CopyMenuHeader_Conv2(const struct MenuHeader* hl) {
@@ -1065,7 +1065,7 @@ void Call_ExitMenu(void) {
 void VerticalMenu(void) {
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     CALL(aMenuBox);
     CALL(aUpdateSprites);
     CALL(aPlaceVerticalMenuItems);
@@ -1093,7 +1093,7 @@ okay:
 bool VerticalMenu_Conv(void) {
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // CALL(aMenuBox);
     MenuBox_Conv();
     // CALL(aUpdateSprites);
@@ -1515,7 +1515,7 @@ void MenuWriteText(void) {
 void MenuWriteText_Conv(void) {
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     const struct MenuData* data = GetMenuData();
     // CALL(aGetMenuIndexSet);              // sort out the text
     const uint8_t* idxSet = GetMenuIndexSet_Conv2(data);
@@ -1525,15 +1525,15 @@ void MenuWriteText_Conv(void) {
     SafeUpdateSprites_Conv();
     // LDH_A_addr(hOAMUpdate);
     // PUSH_AF;
-    uint8_t oam = hram->hOAMUpdate;
+    uint8_t oam = hOAMUpdate;
     // LD_A(0x1);
     // LDH_addr_A(hOAMUpdate);
-    hram->hOAMUpdate = 0x1;
+    hOAMUpdate = 0x1;
     // CALL(aApplyTilemap);
     ApplyTilemap_Conv();
     // POP_AF;
     // LDH_addr_A(hOAMUpdate);
-    hram->hOAMUpdate = oam;
+    hOAMUpdate = oam;
     // RET;
 }
 

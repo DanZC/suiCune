@@ -83,20 +83,20 @@ void v_PlayBattleAnim(void){
     // LD_HL(hVBlank);
     // LD_A_hl;
     // PUSH_AF;
-    uint8_t vblank = hram->hVBlank;
+    uint8_t vblank = hVBlank;
 
     // LD_hl_C;
-    hram->hVBlank = c;
+    hVBlank = c;
     // CALL(aBattleAnimRunScript);
     BattleAnimRunScript();
 
     // POP_AF;
     // LDH_addr_A(hVBlank);
-    hram->hVBlank = vblank;
+    hVBlank = vblank;
 
     // LD_A(1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 1;
+    hBGMapMode = 1;
 
     // CALL(aBattleAnimDelayFrame);
     // CALL(aBattleAnimDelayFrame);
@@ -129,9 +129,9 @@ void BattleAnimRunScript(void){
 
             // XOR_A_A;
             // LDH_addr_A(hSCX);
-            hram->hSCX = 0;
+            hSCX = 0;
             // LDH_addr_A(hSCY);
-            hram->hSCY = 0;
+            hSCY = 0;
             // CALL(aBattleAnimDelayFrame);
             BattleAnimDelayFrame();
             // CALL(aBattleAnimRestoreHuds);
@@ -247,7 +247,7 @@ void BattleAnimClearHud(void){
     ClearActorHud();
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hBGMapMode = 0x1;
     // CALL(aBattleAnimDelayFrame);
     // CALL(aBattleAnimDelayFrame);
     // CALL(aBattleAnimDelayFrame);
@@ -281,7 +281,7 @@ void BattleAnimRestoreHuds(void){
 
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hBGMapMode = 0x1;
     // CALL(aBattleAnimDelayFrame);
     // CALL(aBattleAnimDelayFrame);
     // CALL(aBattleAnimDelayFrame);
@@ -297,7 +297,7 @@ void BattleAnimRequestPals(void){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // RET_Z ;
-    if(hram->hCGB == 0)
+    if(hCGB == 0)
         return;
 
     // LDH_A_addr(rBGP);
@@ -336,7 +336,7 @@ void ClearActorHud(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto player;
-    if(hram->hBattleTurn == 0) {
+    if(hBattleTurn == 0) {
     // player:
         // hlcoord(9, 7, wTilemap);
         // LD_BC((5 << 8) | 11);
@@ -1321,7 +1321,7 @@ void BattleAnimCmd_ResetObp0_Conv(void){
 
 // not_sgb:
     // LD_addr_A(wOBP0);
-    wram->wOBP0 = (hram->hSGB == 0)? 0xe0: 0xf0;
+    wram->wOBP0 = (hSGB == 0)? 0xe0: 0xf0;
     // RET;
 }
 
@@ -2016,7 +2016,7 @@ void BattleAnimCmd_Transform_Conv(void){
     // AND_A_A;
     // IF_Z goto player;
 
-    if(hram->hBattleTurn != 0) {
+    if(hBattleTurn != 0) {
         // LD_A_addr(wTempBattleMonSpecies);
         // LD_addr_A(wCurPartySpecies);
         wram->wCurPartySpecies = wram->wTempBattleMonSpecies;
@@ -2090,7 +2090,7 @@ void BattleAnimCmd_UpdateActorPic_Conv(void){
     // LD_B(0);
     // LD_C(6 * 6);
     // CALL(aRequest2bpp);
-    CopyBytes_Conv2((hram->hBattleTurn == 0)
+    CopyBytes_Conv2((hBattleTurn == 0)
             ? vram->vTiles2 + LEN_2BPP_TILE * 0x31
             : vram->vTiles2 + LEN_2BPP_TILE * 0x00,
             vram->vTiles0 + LEN_2BPP_TILE * 0x00,
@@ -2152,7 +2152,7 @@ void GetSubstitutePic(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto player;
-    if(hram->hBattleTurn != 0) {
+    if(hBattleTurn != 0) {
         // LD_HL(mMonsterSpriteGFX + 0 * LEN_2BPP_TILE);
         // LD_DE(sScratch + (2 * 7 + 5) * LEN_2BPP_TILE);
         // CALL(aGetSubstitutePic_CopyTile);
@@ -2273,7 +2273,7 @@ struct MinimizePic GetMinimizePic(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto player;
-    if(hram->hBattleTurn != 0) {
+    if(hBattleTurn != 0) {
         // LD_DE(sScratch + (3 * 7 + 5) * LEN_2BPP_TILE);
         // CALL(aCopyMinimizePic);
         CopyMinimizePic_Conv(GBToRAMAddr(sScratch + (3 * 7 + 5) * LEN_2BPP_TILE));
@@ -2401,7 +2401,7 @@ void BattleAnimCmd_DropSub_Conv(void){
     // AND_A_A;
     // IF_Z goto player;
 
-    if(hram->hBattleTurn != 0) {
+    if(hBattleTurn != 0) {
         // CALLFAR(aDropEnemySub);
         DropEnemySub();
         // goto done;
@@ -2481,7 +2481,7 @@ void BattleAnimCmd_BeatUp_Conv(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto player;
-    if(hram->hBattleTurn != 0) {
+    if(hBattleTurn != 0) {
         // LD_HL(wBattleMonDVs);
         // PREDEF(pGetUnownLetter);
         GetUnownLetter_Conv(wram->wBattleMon.dvs);
@@ -2523,7 +2523,7 @@ void BattleAnimCmd_OAMOn(void){
 void BattleAnimCmd_OAMOn_Conv(void){
     // XOR_A_A;
     // LDH_addr_A(hOAMUpdate);
-    hram->hOAMUpdate = 0x0;
+    hOAMUpdate = 0x0;
     // RET;
 }
 
@@ -2537,7 +2537,7 @@ void BattleAnimCmd_OAMOff(void){
 void BattleAnimCmd_OAMOff_Conv(void){
     // LD_A(0x1);
     // LDH_addr_A(hOAMUpdate);
-    hram->hOAMUpdate = 0x1;
+    hOAMUpdate = 0x1;
     // RET;
 }
 
@@ -2627,7 +2627,7 @@ void BattleAnimCmd_Sound_Conv(uint8_t duration, uint8_t tracks, uint16_t sfx){
     // CALL(aBattleAnimCmd_Sound_GetCryTrack);
     // maskbits(NUM_NOISE_CHANS, 0);
     // LD_addr_A(wCryTracks);
-    wram->wCryTracks = (tracks ^ ((hram->hBattleTurn == 0)? 0: 1)) & 3;
+    wram->wCryTracks = (tracks ^ ((hBattleTurn == 0)? 0: 1)) & 3;
 
     // LD_E_A;
     // LD_D(0);
@@ -2776,7 +2776,7 @@ void BattleAnimCmd_Cry_Conv(uint8_t cry){
     // IF_NZ goto enemy;
 
     species_t species;
-    if(hram->hBattleTurn == 0) {
+    if(hBattleTurn == 0) {
         // LD_A(0xf0);
         // LD_addr_A(wCryTracks);
         wram->wCryTracks = 0xf0;
@@ -2889,7 +2889,7 @@ void BattleAnimAssignPals(void){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // IF_NZ goto cgb;
-    if(hram->hCGB != 0) {
+    if(hCGB != 0) {
     // cgb:
         // LD_A(0b11100100);
         // LD_addr_A(wBGP);
@@ -2914,7 +2914,7 @@ void BattleAnimAssignPals(void){
 
 // sgb:
     // LD_addr_A(wOBP0);
-    wram->wOBP0 = (hram->hSGB != 0)? 0b11110000: 0b11100000;
+    wram->wOBP0 = (hSGB != 0)? 0b11110000: 0b11100000;
     // LD_A(0b11100100);
     // LD_addr_A(wBGP);
     wram->wBGP = 0b11100100;
@@ -2975,14 +2975,14 @@ void BattleAnim_RevertPals(void){
     DmgToCgbObjPals_Conv(0b11100100, 0b11100100);
     // XOR_A_A;
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0;
+    hSCX = 0;
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0;
+    hSCY = 0;
     // CALL(aBattleAnimDelayFrame);
     BattleAnimDelayFrame();
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hBGMapMode = 0x1;
     // RET;
 }
 
@@ -2992,7 +2992,7 @@ void BattleAnim_SetBGPals(uint8_t bgp){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // RET_Z ;
-    if(hram->hCGB == 0)
+    if(hCGB == 0)
         return;
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
@@ -3016,7 +3016,7 @@ void BattleAnim_SetBGPals(uint8_t bgp){
     // LDH_addr_A(rSVBK);
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hCGBPalUpdate = TRUE;
     // RET;
 }
 
@@ -3026,7 +3026,7 @@ void BattleAnim_SetOBPals(uint8_t obp0){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // RET_Z ;
-    if(hram->hCGB == 0)
+    if(hCGB == 0)
         return;
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
@@ -3043,7 +3043,7 @@ void BattleAnim_SetOBPals(uint8_t obp0){
     // LDH_addr_A(rSVBK);
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hCGBPalUpdate = TRUE;
     // RET;
 }
 

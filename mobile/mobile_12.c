@@ -835,7 +835,7 @@ void Function48304(void){
     // LDH_A_addr(hJoyPressed);
     // BIT_A(0);
     // IF_Z goto asm_48377;
-    if(bit_test(hram->hJoyPressed, A_BUTTON_F)) {
+    if(bit_test(hJoyPressed, A_BUTTON_F)) {
         // CALL(aFunction483bb);
         Function483bb();
         // LD_A_addr(wd003);
@@ -1382,10 +1382,10 @@ void Function4876f(void){
     LoadMenuHeader_Conv2(&MenuHeader_0x48509);
     // LDH_A_addr(hInMenu);
     // PUSH_AF;
-    uint8_t inMenu = hram->hInMenu;
+    uint8_t inMenu = hInMenu;
     // LD_A(0x1);
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = 0x1;
+    hInMenu = 0x1;
     // hlcoord(10, 5, wTilemap);
     // LD_B(0x1);
     // LD_C(0x8);
@@ -1462,7 +1462,7 @@ void Function4876f(void){
     Function487ec(coord(11, 6, wram->wTilemap));
     // POP_AF;
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = inMenu;
+    hInMenu = inMenu;
     // JP(mFunction4840c);
 }
 
@@ -1504,18 +1504,18 @@ u8_flag_s Function4880e(void){
     // LDH_A_addr(hJoyPressed);
     // AND_A(A_BUTTON);
     // JP_NZ (mFunction488b9);
-    if(hram->hJoyPressed & A_BUTTON)
+    if(hJoyPressed & A_BUTTON)
         return Function488b9();
     // LDH_A_addr(hJoyPressed);
     // AND_A(B_BUTTON);
     // JP_NZ (mFunction488b4);
-    if(hram->hJoyPressed & B_BUTTON)
+    if(hJoyPressed & B_BUTTON)
         return Function488b4();
     // LD_HL(hJoyLast);
     // LD_A_hl;
     // AND_A(D_UP);
     // IF_NZ goto asm_48843;
-    if(hram->hJoyLast & D_UP) {
+    if(hJoyLast & D_UP) {
     // asm_48843:
         // LD_HL(wd473);
         // LD_A_hl;
@@ -1533,7 +1533,7 @@ u8_flag_s Function4880e(void){
     // LD_A_hl;
     // AND_A(D_DOWN);
     // IF_NZ goto asm_48838;
-    else if(hram->hJoyLast & D_DOWN) {
+    else if(hJoyLast & D_DOWN) {
     // asm_48838:
         // LD_HL(wd473);
         // LD_A_hl;
@@ -1551,7 +1551,7 @@ u8_flag_s Function4880e(void){
     // LD_A_hl;
     // AND_A(D_LEFT);
     // IF_NZ goto asm_4884f;
-    else if(hram->hJoyLast & D_LEFT) {
+    else if(hJoyLast & D_LEFT) {
     // asm_4884f:
         // LD_A_addr(wd473);
         // CP_A(0x5b);
@@ -1570,7 +1570,7 @@ u8_flag_s Function4880e(void){
     // LD_A_hl;
     // AND_A(D_RIGHT);
     // IF_NZ goto asm_4885f;
-    else if(hram->hJoyLast & D_RIGHT) {
+    else if(hJoyLast & D_RIGHT) {
     // asm_4885f:
         // LD_A_addr(wd473);
         // CP_A(0xa);
@@ -1683,10 +1683,10 @@ void Function488d3(void){
     LoadMenuHeader_Conv2(&MenuHeader_0x4850e);
     // LDH_A_addr(hInMenu);
     // PUSH_AF;
-    uint8_t inMenu = hram->hInMenu;
+    uint8_t inMenu = hInMenu;
     // LD_A(0x1);
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = 0x1;
+    hInMenu = 0x1;
     // hlcoord(10, 9, wTilemap);
     // LD_B(0x1);
     // LD_C(0x8);
@@ -1735,7 +1735,7 @@ void asm_48922(uint16_t bc, uint16_t de, uint8_t b, uint8_t d, uint8_t inMenu){
         // JP_NZ (mFunction4896e);
         // BIT_A(1);
         // JP_NZ (mFunction4896e);
-        if(hram->hJoyDown == 0 || bit_test(hram->hJoyDown, A_BUTTON_F) || bit_test(hram->hJoyDown, B_BUTTON_F)) {
+        if(hJoyDown == 0 || bit_test(hJoyDown, A_BUTTON_F) || bit_test(hJoyDown, B_BUTTON_F)) {
             // return Function4896e(bc, de, d); // inlined
             b = 0;
         }
@@ -1862,7 +1862,7 @@ void asm_48922(uint16_t bc, uint16_t de, uint8_t b, uint8_t d, uint8_t inMenu){
     ClearBox_Conv2(coord(11, 9, wram->wTilemap), 8, 1);
     // POP_AF;
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = inMenu;
+    hInMenu = inMenu;
     // JP(mFunction4840c);
 }
 
@@ -2113,12 +2113,12 @@ u8_flag_s Function48ab5(uint8_t* d){
     // LDH_A_addr(hJoyPressed);
     // AND_A(A_BUTTON);
     // JP_NZ (mFunction48c0f);
-    if(hram->hJoyPressed & A_BUTTON)
-        return Function48c0f(hram->hJoyPressed & A_BUTTON);
+    if(hJoyPressed & A_BUTTON)
+        return Function48c0f(hJoyPressed & A_BUTTON);
     // LDH_A_addr(hJoyPressed);
     // AND_A(B_BUTTON);
     // JP_NZ (mFunction48c0d);
-    if(hram->hJoyPressed & B_BUTTON)
+    if(hJoyPressed & B_BUTTON)
         return Function48c0d();
     // LD_A_D;
     // AND_A_A;
@@ -2232,7 +2232,7 @@ u8_flag_s Function48ab5(uint8_t* d){
     // LD_A_hl;
     // AND_A(D_UP);
     // IF_NZ goto asm_48b8d;
-    if(hram->hJoyLast & D_UP) {
+    if(hJoyLast & D_UP) {
     // asm_48b8d:
         // POP_AF;
         // LD_B_A;
@@ -2255,7 +2255,7 @@ u8_flag_s Function48ab5(uint8_t* d){
     // LD_A_hl;
     // AND_A(D_DOWN);
     // IF_NZ goto asm_48b55;
-    else if(hram->hJoyLast & D_DOWN) {
+    else if(hJoyLast & D_DOWN) {
     // asm_48b55:
         // POP_AF;
         // LD_B_A;
@@ -2277,13 +2277,13 @@ u8_flag_s Function48ab5(uint8_t* d){
     // LD_A_hl;
     // AND_A(D_LEFT);
     // JP_NZ (mFunction48bd7);
-    else if(hram->hJoyLast & D_LEFT) {
+    else if(hJoyLast & D_LEFT) {
         return Function48bd7(d);
     }
     // LD_A_hl;
     // AND_A(D_RIGHT);
     // IF_NZ goto asm_48b9d;
-    else if(hram->hJoyLast & D_RIGHT) {
+    else if(hJoyLast & D_RIGHT) {
     // asm_48b9d:
         // PUSH_DE;
         // hlcoord(10, 9, wTilemap);

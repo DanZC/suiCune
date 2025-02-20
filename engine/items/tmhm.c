@@ -37,12 +37,12 @@ void TMHMPocket(void){
 bool TMHMPocket_Conv(void){
     // LD_A(0x1);
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = 0x1;
+    hInMenu = 0x1;
     // CALL(aTMHM_PocketLoop);
     bool exit = TMHM_PocketLoop_Conv();
     // LD_A(0x0);
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = 0x0;
+    hInMenu = 0x0;
     // RET_NC ;
     if(!exit)
         return false;
@@ -302,7 +302,7 @@ const txt_cmd_s TMHMNotCompatibleText[] = {
 void TMHM_PocketLoop(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hBGMapMode = 0x0;
     // CALL(aTMHM_DisplayPocketItems);
     uint8_t d = TMHM_DisplayPocketItems();
     // LD_A(2);
@@ -356,7 +356,7 @@ void TMHM_PocketLoop(void){
 bool TMHM_PocketLoop_Conv(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hBGMapMode = 0x0;
     // CALL(aTMHM_DisplayPocketItems);
     uint8_t d = TMHM_DisplayPocketItems();
     // LD_A(2);
@@ -443,7 +443,7 @@ bool TMHM_PocketLoop_Conv(void){
         printf("wTMHMPocketCursor: %d\n", wram->wTMHMPocketCursor);
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x0;
+        hBGMapMode = 0x0;
         // LD_A_addr(w2DMenuFlags2);
         // BIT_A(7);
         // JP_NZ (mTMHM_ScrollPocket);

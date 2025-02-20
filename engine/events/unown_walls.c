@@ -219,7 +219,7 @@ void DisplayUnownWords(void){
     LoadMenuHeader_Conv2(hdr);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // CALL(aMenuBox);
     MenuBox_Conv();
     // CALL(aUpdateSprites);

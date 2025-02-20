@@ -1517,7 +1517,7 @@ void AnimateEndOfExpBar_Conv(void){
     // AND_A_A;
     // IF_Z goto load;
     // LD_DE(mSGBEndOfExpBarGFX);
-    const char* de = (hram->hSGB == 0)? EndOfExpBarGFX: SGBEndOfExpBarGFX;
+    const char* de = (hSGB == 0)? EndOfExpBarGFX: SGBEndOfExpBarGFX;
 
 // load:
     // LD_HL(vTiles0 + LEN_2BPP_TILE * 0x00);

@@ -34,7 +34,7 @@ static void DoPlayerMovement_GetOutOfWater(void);
 static void DoPlayerMovement_GetDPad(void) {
     // LDH_A_addr(hJoyDown);
     // LD_addr_A(wCurInput);
-    wram->wCurInput = hram->hJoyDown;
+    wram->wCurInput = hJoyDown;
 
 //  Standing downhill instead moves down.
 
@@ -388,7 +388,7 @@ static u8_flag_s DoPlayerMovement_TryStep(void) {
         return DoPlayerMovement_TrySurf();
     
     // Athletic, wall phasing, blazing speed, running shoes.
-    if(hram->hJoyDown & B_BUTTON) {
+    if(hJoyDown & B_BUTTON) {
         uint8_t npc = DoPlayerMovement_CheckNPC();
         if(npc == 0 || npc == 2)
             return (u8_flag_s) {.a = 0, .flag = false};
@@ -534,7 +534,7 @@ static u8_flag_s DoPlayerMovement_ExitWater(void) {
 static uint8_t DoPlayerMovement_CheckNPC(void) {
     // LD_A(0);
     // LDH_addr_A(hMapObjectIndex);
-    hram->hMapObjectIndex = 0;
+    hMapObjectIndex = 0;
 //  Load the next X coordinate into d
     // LD_A_addr(wPlayerStandingMapX);
     // LD_D_A;

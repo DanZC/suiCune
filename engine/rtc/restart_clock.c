@@ -244,10 +244,10 @@ static bool RestartClock_SetClock(void) {
     wram->wRestartClockDay = GetWeekday_Conv();
     // LDH_A_addr(hHours);
     // LD_addr_A(wRestartClockHour);
-    wram->wRestartClockHour = hram->hHours;
+    wram->wRestartClockHour = hHours;
     // LDH_A_addr(hMinutes);
     // LD_addr_A(wRestartClockMin);
-    wram->wRestartClockMin = hram->hMinutes;
+    wram->wRestartClockMin = hMinutes;
 
     u8_flag_s res;
     do {

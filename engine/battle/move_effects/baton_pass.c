@@ -15,7 +15,7 @@ void BattleCommand_BatonPass(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // JP_NZ (mBattleCommand_BatonPass_Enemy);
-    if(hram->hBattleTurn == 0) {
+    if(hBattleTurn == 0) {
 
     //  Need something to switch to
         // CALL(aCheckAnyOtherAlivePartyMons);

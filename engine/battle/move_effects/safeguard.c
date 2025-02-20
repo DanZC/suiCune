@@ -14,8 +14,8 @@ void BattleCommand_Safeguard(void){
     // IF_Z goto ok;
     // LD_HL(wEnemyScreens);
     // LD_DE(wEnemySafeguardCount);
-    uint8_t* screens = (hram->hBattleTurn == 0)? &wram->wPlayerScreens: &wram->wEnemyScreens;
-    uint8_t* safeguard_cnt = (hram->hBattleTurn == 0)? &wram->wPlayerSafeguardCount: &wram->wEnemySafeguardCount;
+    uint8_t* screens = (hBattleTurn == 0)? &wram->wPlayerScreens: &wram->wEnemyScreens;
+    uint8_t* safeguard_cnt = (hBattleTurn == 0)? &wram->wPlayerSafeguardCount: &wram->wEnemySafeguardCount;
 
 // ok:
     // BIT_hl(SCREENS_SAFEGUARD);

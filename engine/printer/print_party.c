@@ -211,7 +211,7 @@ void PrintPartyMonPage1(void){
     ClearSprites_Conv();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hBGMapMode = 0x0;
     // CALL(aLoadFontsBattleExtra);
     LoadFontsBattleExtra_Conv();
 
@@ -355,7 +355,7 @@ void PrintPartyMonPage2(void){
     ClearSprites_Conv();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hBGMapMode = 0x0;
     // CALL(aLoadFontsBattleExtra);
     LoadFontsBattleExtra_Conv();
     // XOR_A_A;

@@ -879,10 +879,10 @@ void Script_promptbutton_Conv(script_s* s){
     (void)s;
     // LDH_A_addr(hOAMUpdate);
     // PUSH_AF;
-    uint8_t oamupdate = hram->hOAMUpdate;
+    uint8_t oamupdate = hOAMUpdate;
     // LD_A(0x1);
     // LDH_addr_A(hOAMUpdate);
-    hram->hOAMUpdate = 0x1;
+    hOAMUpdate = 0x1;
     // CALL(aWaitBGMap);
     WaitBGMap_Conv();
     // CALL(aPromptButton);
@@ -890,7 +890,7 @@ void Script_promptbutton_Conv(script_s* s){
     // POP_AF;
     // LDH_addr_A(hOAMUpdate);
     // RET;
-    hram->hOAMUpdate = oamupdate;
+    hOAMUpdate = oamupdate;
 }
 
 void Script_yesorno(void){
@@ -1993,7 +1993,7 @@ void Script_setlasttalked_Conv(script_s* s, uint8_t a){
     // CALL(aGetScriptByte);
     // CALL(aGetScriptObject);
     // LDH_addr_A(hLastTalked);
-    hram->hLastTalked = GetScriptObject_Conv(a);
+    hLastTalked = GetScriptObject_Conv(a);
     // RET;
 }
 
@@ -2093,7 +2093,7 @@ void Script_applymovementlasttalked_Conv(script_s* s, const uint8_t* hl){
     // LDH_A_addr(hLastTalked);
     // LD_C_A;
     // JP(mApplyMovement);
-    return ApplyMovement_Conv(hram->hLastTalked, hl);
+    return ApplyMovement_Conv(hLastTalked, hl);
 }
 
 void Script_faceplayer(void){
@@ -2120,13 +2120,13 @@ void Script_faceplayer_Conv(script_s* s){
     // LDH_A_addr(hLastTalked);
     // AND_A_A;
     // RET_Z ;
-    if(hram->hLastTalked == 0)
+    if(hLastTalked == 0)
         return;
     // LD_D(0x0);
     // LDH_A_addr(hLastTalked);
     // LD_E_A;
     // FARCALL(aGetRelativeFacing);
-    uint8_t d = GetRelativeFacing_Conv(hram->hLastTalked, 0);
+    uint8_t d = GetRelativeFacing_Conv(hLastTalked, 0);
     // LD_A_D;
     // ADD_A_A;
     // ADD_A_A;
@@ -2134,7 +2134,7 @@ void Script_faceplayer_Conv(script_s* s){
     // LDH_A_addr(hLastTalked);
     // LD_D_A;
     // CALL(aApplyObjectFacing);
-    ApplyObjectFacing_Conv(hram->hLastTalked, d << 2);
+    ApplyObjectFacing_Conv(hLastTalked, d << 2);
     // RET;
 
 }
@@ -2179,7 +2179,7 @@ void Script_faceobject_Conv(script_s* s, uint8_t e, uint8_t d){
     // IF_C goto ok;
     // LDH_A_addr(hLastTalked);
     if(obje == (uint8_t)LAST_TALKED)
-        obje = hram->hLastTalked;
+        obje = hLastTalked;
 
 // ok:
     // LD_E_A;
@@ -2190,7 +2190,7 @@ void Script_faceobject_Conv(script_s* s, uint8_t e, uint8_t d){
     // IF_NZ goto ok2;
     // LDH_A_addr(hLastTalked);
     if(objd == (uint8_t)LAST_TALKED)
-        objd = hram->hLastTalked;
+        objd = hLastTalked;
 
 // ok2:
     // LD_D_A;
@@ -2238,7 +2238,7 @@ void Script_turnobject_Conv(script_s* s, uint8_t obj, uint8_t dir){
     // IF_NZ goto ok;
     // LDH_A_addr(hLastTalked);
     if(a == (uint8_t)LAST_TALKED)
-        a = hram->hLastTalked;
+        a = hLastTalked;
 
 // ok:
     // LD_D_A;
@@ -2449,7 +2449,7 @@ void Script_disappear_Conv(script_s* s, uint8_t a){
     // IF_NZ goto ok;
     // LDH_A_addr(hLastTalked);
     if(obj == (uint8_t)LAST_TALKED)
-        obj = hram->hLastTalked;
+        obj = hLastTalked;
 
 // ok:
     // CALL(aDeleteObjectStruct);
@@ -2606,7 +2606,7 @@ void Script_writeobjectxy_Conv(script_s* s, uint8_t obj){
     // IF_NZ goto ok;
     // LDH_A_addr(hLastTalked);
     if(a == (uint8_t)LAST_TALKED)
-        a = hram->hLastTalked;
+        a = hLastTalked;
 
 // ok:
     // LD_B_A;
@@ -2686,7 +2686,7 @@ void Script_showemote_Conv(script_s* s, uint8_t emote, uint8_t obj, uint8_t fram
     // IF_Z goto ok;
     // LDH_addr_A(hLastTalked);
     if(a != (uint8_t)LAST_TALKED)
-        hram->hLastTalked = a;
+        hLastTalked = a;
 
 // ok:
     // CALL(aGetScriptByte);
@@ -3013,7 +3013,7 @@ void Script_reloadmap_Conv(script_s* s){
     wram->wBattleScriptFlags = 0;
     // LD_A(MAPSETUP_RELOADMAP);
     // LDH_addr_A(hMapEntryMethod);
-    hram->hMapEntryMethod = MAPSETUP_RELOADMAP;
+    hMapEntryMethod = MAPSETUP_RELOADMAP;
     // LD_A(MAPSTATUS_ENTER);
     // CALL(aLoadMapStatus);
     LoadMapStatus_Conv(MAPSTATUS_ENTER);
@@ -3627,7 +3627,7 @@ void Script_random_Conv(script_s* s, uint8_t a){
         // POP_BC;
         Random_Conv();
         // LDH_A_addr(hRandomAdd);
-        a = hram->hRandomAdd;
+        a = hRandomAdd;
     }
     else {
         // LD_B_A;
@@ -3643,7 +3643,7 @@ void Script_random_Conv(script_s* s, uint8_t a){
             Random_Conv();
             // POP_BC;
             // LDH_A_addr(hRandomAdd);
-            a = hram->hRandomAdd;
+            a = hRandomAdd;
             // CP_A_B;
             // IF_NC goto loop;
         } while(a >= b);
@@ -4415,18 +4415,18 @@ uint8_t* LoadMoneyAmountToMem_Conv(uint32_t amount){
     // PUSH_BC;
     // CALL(aGetScriptByte);
     // LD_bc_A;
-    hram->hMoneyTemp[0] = (uint8_t)((amount >> 16) & 0xff);
+    hMoneyTemp[0] = (uint8_t)((amount >> 16) & 0xff);
     // INC_BC;
     // CALL(aGetScriptByte);
     // LD_bc_A;
-    hram->hMoneyTemp[1] = (uint8_t)((amount >> 8) & 0xff);
+    hMoneyTemp[1] = (uint8_t)((amount >> 8) & 0xff);
     // INC_BC;
     // CALL(aGetScriptByte);
     // LD_bc_A;
-    hram->hMoneyTemp[2] = (uint8_t)(amount & 0xff);
+    hMoneyTemp[2] = (uint8_t)(amount & 0xff);
     // POP_BC;
     // RET;
-    return hram->hMoneyTemp;
+    return hMoneyTemp;
 }
 
 void Script_givecoins(void){
@@ -4489,13 +4489,13 @@ void LoadCoinAmountToMem(void){
 uint8_t* LoadCoinAmountToMem_Conv(uint16_t amount){
     // CALL(aGetScriptByte);
     // LDH_addr_A(hMoneyTemp + 1);
-    hram->hMoneyTemp[1] = LOW(amount);
+    hMoneyTemp[1] = LOW(amount);
     // CALL(aGetScriptByte);
     // LDH_addr_A(hMoneyTemp);
-    hram->hMoneyTemp[0] = HIGH(amount);
+    hMoneyTemp[0] = HIGH(amount);
     // LD_BC(hMoneyTemp);
     // RET;
-    return hram->hMoneyTemp;
+    return hMoneyTemp;
 }
 
 void Script_checktime(void){
@@ -5101,7 +5101,7 @@ void Script_warp_Conv(script_s* s, uint8_t group, uint8_t num, uint8_t x, uint8_
         wram->wDefaultSpawnpoint = SPAWN_N_A;
         // LD_A(MAPSETUP_BADWARP);
         // LDH_addr_A(hMapEntryMethod);
-        hram->hMapEntryMethod = MAPSETUP_BADWARP;
+        hMapEntryMethod = MAPSETUP_BADWARP;
         // LD_A(MAPSTATUS_ENTER);
         // CALL(aLoadMapStatus);
         LoadMapStatus_Conv(MAPSTATUS_ENTER);
@@ -5126,7 +5126,7 @@ void Script_warp_Conv(script_s* s, uint8_t group, uint8_t num, uint8_t x, uint8_
     wram->wDefaultSpawnpoint = SPAWN_N_A;
     // LD_A(MAPSETUP_WARP);
     // LDH_addr_A(hMapEntryMethod);
-    hram->hMapEntryMethod = MAPSETUP_WARP;
+    hMapEntryMethod = MAPSETUP_WARP;
     // LD_A(MAPSTATUS_ENTER);
     // CALL(aLoadMapStatus);
     LoadMapStatus_Conv(MAPSTATUS_ENTER);
@@ -5307,7 +5307,7 @@ void Script_reloadmappart_Conv(script_s* s){
     (void)s;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hBGMapMode = 0;
     // CALL(aOverworldTextModeSwitch);
     OverworldTextModeSwitch_Conv();
     // CALL(aGetMovementPermissions);
@@ -5359,7 +5359,7 @@ void Script_newloadmap_Conv(script_s* s, uint8_t method){
     (void)s;
     // CALL(aGetScriptByte);
     // LDH_addr_A(hMapEntryMethod);
-    hram->hMapEntryMethod = method;
+    hMapEntryMethod = method;
     // LD_A(MAPSTATUS_ENTER);
     // CALL(aLoadMapStatus);
     LoadMapStatus_Conv(MAPSTATUS_ENTER);

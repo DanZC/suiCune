@@ -773,7 +773,7 @@ void PokeBallEffect(void){
     wram->wFXAnimID = ANIM_THROW_POKE_BALL;
     // XOR_A_A;
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = 0;
+    hBattleTurn = 0;
     // LD_addr_A(wThrownBallWobbleCount);
     wram->wThrownBallWobbleCount = 0;
     // LD_addr_A(wNumHits);
@@ -2759,7 +2759,7 @@ void ItemActionText(uint8_t text){
 void ItemActionTextWaitButton(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hBGMapMode = 0x0;
     // hlcoord(0, 0, wTilemap);
     // LD_BC(wTilemapEnd - wTilemap);
     // LD_A(0x7f);
@@ -2770,7 +2770,7 @@ void ItemActionTextWaitButton(void){
     ItemActionText(wram->wPartyMenuActionText);
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hBGMapMode = 0x1;
     // LD_C(50);
     // CALL(aDelayFrames);
     DelayFrames_Conv(50);
@@ -3387,7 +3387,7 @@ void XItemEffect(void){
     // LD_B_hl;
     // XOR_A_A;
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = 0x0;
+    hBattleTurn = 0x0;
     // LD_addr_A(wAttackMissed);
     wram->wAttackMissed = FALSE;
     // LD_addr_A(wEffectFailed);
@@ -4066,7 +4066,7 @@ void UseBallInTrainerBattle(void){
     // LD_addr_A(wBattleAnimParam);
     wram->wBattleAnimParam = 0;
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = 0;
+    hBattleTurn = 0;
     // LD_addr_A(wNumHits);
     wram->wNumHits = 0;
     // PREDEF(pPlayBattleAnim);

@@ -188,7 +188,7 @@ void GetFarByte(void){
 //  retrieve a single byte from a:hl, and return it in a.
 uint8_t GetFarByte_Conv(uint8_t a, uint16_t hl){
     // bankswitch to new bank
-    uint8_t temp = gb_read(hROMBank);
+    uint8_t temp = (hROMBank);
     Bankswitch_Conv(a);
 
     // get byte from new bank
@@ -225,7 +225,7 @@ void GetFarWord(void){
 //  retrieve a word from a:hl, and return it in hl.
 uint16_t GetFarWord_Conv(uint8_t a, uint16_t hl){
     // bankswitch to new bank
-    uint8_t temp = gb_read(hROMBank);
+    uint8_t temp = (hROMBank);
     Bankswitch_Conv(a);
 
 // get word from new bank, put it in hl
@@ -294,13 +294,13 @@ uint8_t GetFarWRAMByte_Conv(uint8_t bank, uint16_t address){
     gb_write(rSVBK, bank);
     // LD_A_hl;
     // LDH_addr_A(hFarByte);
-    gb_write(hFarByte, gb_read(address));
+    (hFarByte= gb_read(address));
     // POP_AF;
     // LDH_addr_A(rSVBK);
     gb_write(rSVBK, svbk);
     // LDH_A_addr(hFarByte);
     // RET;
-    return gb_read(hFarByte);
+    return (hFarByte);
 }
 
 

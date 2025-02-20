@@ -632,9 +632,9 @@ void BattleTowerRoomMenu_InitRAM(void){
     gb_write(rIE, (1 << SERIAL) | (1 << TIMER) | (1 << LCD_STAT) | (1 << VBLANK));
     // LD_A(0x1);
     // LDH_addr_A(hMobileReceive);
-    hram->hMobileReceive = 0x1;
+    hMobileReceive = 0x1;
     // LDH_addr_A(hMobile);
-    hram->hMobile = 0x1;
+    hMobile = 0x1;
     // NOP;
     // FARCALL(aStubbed_Function106462);
     Stubbed_Function106462();
@@ -675,11 +675,11 @@ void BattleTowerRoomMenu_Cleanup(void){
     // NOP;
     // XOR_A_A;
     // LDH_addr_A(hMobileReceive);
-    hram->hMobileReceive = 0;
+    hMobileReceive = 0;
     // LDH_addr_A(hMobile);
-    hram->hMobile = 0;
+    hMobile = 0;
     // LDH_addr_A(hVBlank);
-    hram->hVBlank = 0;
+    hVBlank = 0;
     // CALL(aNormalSpeed);
     NormalSpeed();
     // XOR_A_A;
@@ -1283,7 +1283,7 @@ bool Function118821(void){
     // LDH_A_addr(hJoyDown);
     // CP_A(0x5);
     // IF_NZ goto asm_11884a;
-    if(wram->wc319 < 0x3 || wram->wc319 == 0x4 || hram->hJoyDown != (A_BUTTON | SELECT)) {
+    if(wram->wc319 < 0x3 || wram->wc319 == 0x4 || hJoyDown != (A_BUTTON | SELECT)) {
     // asm_11884a:
         // AND_A_A;
         // RET;
@@ -1658,7 +1658,7 @@ void BattleTowerRoomMenu_UpdatePickLevelMenu(void){
     // LD_A_hl;
     // AND_A(B_BUTTON);
     // IF_NZ goto b_button;
-    if(hram->hJoyPressed & B_BUTTON){
+    if(hJoyPressed & B_BUTTON){
     // b_button:
         // CALL(aPlayClickSFX);
         PlayClickSFX_Conv();
@@ -1667,7 +1667,7 @@ void BattleTowerRoomMenu_UpdatePickLevelMenu(void){
     // LD_A_hl;
     // AND_A(A_BUTTON);
     // IF_NZ goto a_button;
-    else if(hram->hJoyPressed & A_BUTTON){
+    else if(hJoyPressed & A_BUTTON){
     // a_button:
         // CALL(aPlayClickSFX);
         PlayClickSFX_Conv();
@@ -1714,7 +1714,7 @@ void BattleTowerRoomMenu_UpdatePickLevelMenu(void){
     // LD_A_hl;
     // AND_A(D_DOWN);
     // IF_NZ goto d_down;
-    else if(hram->hJoyPressed & D_DOWN){
+    else if(hJoyPressed & D_DOWN){
     // d_down:
         // LD_HL(wcd4f);
         // DEC_hl;
@@ -1730,7 +1730,7 @@ void BattleTowerRoomMenu_UpdatePickLevelMenu(void){
     // LD_A_hl;
     // AND_A(D_UP);
     // IF_NZ goto d_up;
-    else if(hram->hJoyPressed & D_UP){
+    else if(hJoyPressed & D_UP){
     // d_up:
         // LD_A_addr(wcd4a);
         // LD_HL(wcd4f);
@@ -5469,7 +5469,7 @@ bool BattleTowerRoomMenu2(void){
     // LDH_addr_A(rSVBK);
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hBGMapMode = 0x1;
     // RET;
     return result;
 }
@@ -5990,7 +5990,7 @@ bool BattleTowerRoomMenu2_UpdateYesNoMenu(void){
     // LD_A_hl;
     // AND_A(A_BUTTON);
     // IF_NZ goto a_button;
-    if(hram->hJoyPressed & A_BUTTON){
+    if(hJoyPressed & A_BUTTON){
     // a_button:
         // XOR_A_A;
         // LD_addr_A(wcd8a);
@@ -6030,7 +6030,7 @@ bool BattleTowerRoomMenu2_UpdateYesNoMenu(void){
     // LD_A_hl;
     // AND_A(B_BUTTON);
     // IF_NZ goto b_button;
-    else if(hram->hJoyPressed & B_BUTTON){
+    else if(hJoyPressed & B_BUTTON){
     // b_button:
         // CALL(aPlayClickSFX);
         PlayClickSFX_Conv();
@@ -6047,7 +6047,7 @@ bool BattleTowerRoomMenu2_UpdateYesNoMenu(void){
     // LD_A_hl;
     // AND_A(D_UP);
     // IF_NZ goto d_up;
-    else if(hram->hJoyPressed & D_UP){
+    else if(hJoyPressed & D_UP){
     // d_up:
         // XOR_A_A;
         // LD_addr_A(wcd8a);
@@ -6075,7 +6075,7 @@ bool BattleTowerRoomMenu2_UpdateYesNoMenu(void){
     // LD_A_hl;
     // AND_A(D_DOWN);
     // IF_NZ goto d_down;
-    else if(hram->hJoyPressed & D_DOWN){
+    else if(hJoyPressed & D_DOWN){
     // d_down:
         // XOR_A_A;
         // LD_addr_A(wcd8a);
@@ -6505,7 +6505,7 @@ bool Function11a536(void){
     // LD_A_hl;
     // AND_A(A_BUTTON);
     // IF_NZ goto asm_11a5a7;
-    if(hram->hJoyPressed & A_BUTTON) {
+    if(hJoyPressed & A_BUTTON) {
     asm_11a5a7:
         // XOR_A_A;
         // LD_addr_A(wcd8a);
@@ -6519,7 +6519,7 @@ bool Function11a536(void){
     // LD_A_hl;
     // AND_A(B_BUTTON);
     // IF_NZ goto asm_11a5a2;
-    else if(hram->hJoyPressed & B_BUTTON) {
+    else if(hJoyPressed & B_BUTTON) {
     // asm_11a5a2:
         // LD_A(0x1);
         // LD_addr_A(wMobileInactivityTimerMinutes);
@@ -6529,7 +6529,7 @@ bool Function11a536(void){
     // LD_A_hl;
     // AND_A(D_UP);
     // IF_NZ goto asm_11a564;
-    else if(hram->hJoyPressed & D_UP) {
+    else if(hJoyPressed & D_UP) {
     // asm_11a564:
         // XOR_A_A;
         // LD_addr_A(wcd8a);
@@ -6555,7 +6555,7 @@ bool Function11a536(void){
     // LD_A_hl;
     // AND_A(D_DOWN);
     // IF_NZ goto asm_11a583;
-    else if(hram->hJoyPressed & D_DOWN) {
+    else if(hJoyPressed & D_DOWN) {
     // asm_11a583:
         // XOR_A_A;
         // LD_addr_A(wcd8a);
@@ -7036,7 +7036,7 @@ void Function11a971(void){
     // LD_A_hl;
     // AND_A_A;
     // IF_Z goto asm_11a97f;
-    if(hram->hJoyDown != 0 || wram->wc31f == 0) {
+    if(hJoyDown != 0 || wram->wc31f == 0) {
     // asm_11a97f:
         // LD_A_addr(wOptions);
         // AND_A(0x7);

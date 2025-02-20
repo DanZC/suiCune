@@ -16,8 +16,8 @@ void BattleCommand_Curse(void){
     // IF_Z goto go;
     // LD_DE(wEnemyMonType1);
     // LD_BC(wEnemyStatLevels);
-    const uint8_t* types = (hram->hBattleTurn == 0)? wram->wBattleMon.types: wram->wEnemyMon.types;
-    uint8_t* statLevels = (hram->hBattleTurn == 0)? wram->wPlayerStatLevels: wram->wEnemyStatLevels;
+    const uint8_t* types = (hBattleTurn == 0)? wram->wBattleMon.types: wram->wEnemyMon.types;
+    uint8_t* statLevels = (hBattleTurn == 0)? wram->wPlayerStatLevels: wram->wEnemyStatLevels;
 
 // go:
 
