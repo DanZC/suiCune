@@ -51,19 +51,25 @@ void NextCallReceiveDelay(void){
     // LD_A_hl;
     a = ReceiveCallDelays[a];
 #if defined(_DEBUG) && !defined(_MSC_VER)
-    LD_H_A;
-    LD_A(BANK(sDebugTimeCyclesSinceLastCall));
-    CALL(aOpenSRAM);
-    LD_A_addr(sDebugTimeCyclesSinceLastCall);
-    CALL(aCloseSRAM);
-    DEC_A;
-    CP_A(2);
-    IF_NC goto debug_ok;
-    XOR_A(1);
-    LD_H_A;
+    // LD_H_A;
+    // LD_A(BANK(sDebugTimeCyclesSinceLastCall));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asDebugTimeCyclesSinceLastCall));
+    // LD_A_addr(sDebugTimeCyclesSinceLastCall);
+    uint8_t a2 = gb_read(sDebugTimeCyclesSinceLastCall);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // DEC_A;
+    // CP_A(2);
+    // IF_NC goto debug_ok;
+    if(a2 < 2) {
+        // XOR_A(1);
+        // LD_H_A;
+        a = a2 ^ 1;
+    }
 
-debug_ok:
-    LD_A_H;
+// debug_ok:
+    // LD_A_H;
 #endif
     // JP(mRestartReceiveCallDelay);
     RestartReceiveCallDelay_Conv(a);
@@ -790,7 +796,7 @@ void CalcMinsHoursDaysSince_Conv(uint8_t* hl){
     // INC_HL;
     // XOR_A_A;
     // JR(mv_CalcMinsHoursDaysSince);
-    return v_CalcMinsHoursDaysSince_Conv(hl, 0);
+    return v_CalcMinsHoursDaysSince_Conv(hl + 2, 0);
 }
 
 void CalcSecsMinsHoursDaysSince(void){

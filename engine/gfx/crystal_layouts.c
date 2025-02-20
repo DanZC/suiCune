@@ -312,19 +312,57 @@ static const char OBPalette[] = "gfx/mystery_gift/name_card_ob.pal";
 }
 
 void Function49742(void){
-    LD_HL(mFunction49742_MobileBorderPalettes);
-    LD_DE(wBGPals1);
-    LD_BC(8 * PALETTE_SIZE);
-    LD_A(BANK(wBGPals1));
-    CALL(aFarCopyWRAM);
-    FARCALL(aApplyPals);
-    RET;
-
-
-MobileBorderPalettes:
-// INCLUDE "gfx/trade/mobile_border.pal"
-
-    return v_InitMG_Mobile_LinkTradePalMap();
+    static const uint16_t MobileBorderPalettes[] = {
+    // INCLUDE "gfx/trade/mobile_border.pal"
+        0xffff, // RGB 31, 31, 63
+        rgb( 0,  0,  0),
+        rgb( 0,  0,  0),
+        rgb( 0,  0,  0),
+    
+        0xffff, // RGB 31, 31, 63
+        rgb( 0,  0,  0),
+        rgb( 0,  0,  0),
+        rgb( 0,  0,  0),
+    
+        rgb( 4,  2, 15),
+        rgb(21,  0, 21),
+        rgb(31,  0,  0),
+        rgb(31, 31, 31),
+    
+        rgb( 4,  2, 15),
+        rgb(21,  0, 21),
+        rgb(30, 16, 26),
+        rgb(31, 31, 31),
+    
+        rgb( 4,  2, 15),
+        rgb(21,  0, 21),
+        rgb(16, 16, 16),
+        rgb(31, 31, 31),
+    
+        rgb( 4,  2, 15),
+        rgb(21,  0, 21),
+        rgb(31, 12, 12),
+        rgb(31, 31, 31),
+    
+        rgb( 4,  2, 15),
+        rgb(21,  0, 21),
+        rgb( 7,  8, 31),
+        rgb(31, 31, 31),
+    
+        rgb( 4,  2, 15),
+        rgb(21,  0, 21),
+        rgb(29, 28,  9),
+        rgb(31, 31, 31),
+    };
+    // LD_HL(mFunction49742_MobileBorderPalettes);
+    // LD_DE(wBGPals1);
+    // LD_BC(8 * PALETTE_SIZE);
+    // LD_A(BANK(wBGPals1));
+    // CALL(aFarCopyWRAM);
+    CopyBytes_Conv2(wram->wBGPals1, MobileBorderPalettes, 8 * PALETTE_SIZE);
+    // FARCALL(aApplyPals);
+    ApplyPals_Conv();
+    // RET;
 }
 
 void v_InitMG_Mobile_LinkTradePalMap(void){

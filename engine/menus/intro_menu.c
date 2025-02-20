@@ -2553,7 +2553,7 @@ void GameInit(void) {
     WaitBGMap_Conv();
 
 #if !PM_HIDDEN_NETWORK
-    MobileAdapterCheck(); // TODO: Fix MobileAdapterCheck softlock by finishing implementation of mobile adapter.
+    MobileAdapterCheck();
 #endif
 
     // JP(mIntroSequence);

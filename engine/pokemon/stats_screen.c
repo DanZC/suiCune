@@ -11,6 +11,7 @@
 #include "../../home/joypad.h"
 #include "../../home/sram.h"
 #include "../../home/print_text.h"
+#include "../../mobile/mobile_40.h"
 #include "../battle/core.h"
 #include "../gfx/load_font.h"
 #include "../gfx/load_pics.h"
@@ -185,32 +186,40 @@ void StatsScreenMain(void){
 }
 
 void StatsScreenMobile(void){
-    XOR_A_A;
-    LD_addr_A(wJumptableIndex);
+    // XOR_A_A;
+    // LD_addr_A(wJumptableIndex);
+    wram->wJumptableIndex = 0x0;
 //  ???
-    LD_addr_A(wStatsScreenFlags);
-    LD_A_addr(wStatsScreenFlags);
-    AND_A(~STAT_PAGE_MASK);
-    OR_A(PINK_PAGE);  // first_page
-    LD_addr_A(wStatsScreenFlags);
+    // LD_addr_A(wStatsScreenFlags);
+    wram->wStatsScreenFlags = 0;
+    // LD_A_addr(wStatsScreenFlags);
+    // AND_A(~STAT_PAGE_MASK);
+    // OR_A(PINK_PAGE);  // first_page
+    // LD_addr_A(wStatsScreenFlags);
+    wram->wStatsScreenFlags = (wram->wStatsScreenFlags & ~STAT_PAGE_MASK) | PINK_PAGE;
 
-loop:
-    FARCALL(aMobile_SetOverworldDelay);
-    LD_A_addr(wJumptableIndex);
-    AND_A(0x7f);
-    LD_HL(mStatsScreenPointerTable);
-    RST(aJumpTable);
-    CALL(aStatsScreen_WaitAnim);
-    FARCALL(aMobileComms_CheckInactivityTimer);
-    IF_C goto exit;
-    LD_A_addr(wJumptableIndex);
-    BIT_A(7);
-    IF_Z goto loop;
+    do {
+    // loop:
+        // FARCALL(aMobile_SetOverworldDelay);
+        Mobile_SetOverworldDelay();
+        // LD_A_addr(wJumptableIndex);
+        // AND_A(0x7f);
+        // LD_HL(mStatsScreenPointerTable);
+        // RST(aJumpTable);
+        StatsScreenPointerTable[wram->wJumptableIndex & 0x7f]();
+        // CALL(aStatsScreen_WaitAnim);
+        StatsScreen_WaitAnim();
+        // FARCALL(aMobileComms_CheckInactivityTimer);
+        // IF_C goto exit;
+        if(MobileComms_CheckInactivityTimer())
+            return;
+        // LD_A_addr(wJumptableIndex);
+        // BIT_A(7);
+        // IF_Z goto loop;
+    } while(!bit_test(wram->wJumptableIndex, 7));
 
-
-exit:
-    RET;
-
+// exit:
+    // RET;
 }
 
 enum {

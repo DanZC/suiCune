@@ -491,10 +491,11 @@ u8_flag_s CheckPhoneCall_Conv(void){
 // 50% chance for a call
     // CALL(aRandom);
     // LD_B_A;
+    uint8_t b = Random_Conv();
     // AND_A(0b01111111);
     // CP_A_B;
     // IF_NZ goto no_call;
-    if(Random_Conv() & 0b10000000)
+    if((b & 0b01111111) != b)
         return u8_flag(0, false);
 
     // CALL(aGetMapPhoneService);

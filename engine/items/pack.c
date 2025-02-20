@@ -259,7 +259,7 @@ void Pack_RunJumptable(void) {
             ScrollingMenu_Conv();
             // LD_A_addr(wMenuScrollPosition);
             // LD_addr_A(wKeyItemsPocketScrollPosition);
-            wram->wKeyItemsPocketScrollPosition = wram->wMenuSelection;
+            wram->wKeyItemsPocketScrollPosition = wram->wMenuScrollPosition;
             // LD_A_addr(wMenuCursorY);
             // LD_addr_A(wKeyItemsPocketCursor);
             wram->wKeyItemsPocketCursor = wram->wMenuCursorY;

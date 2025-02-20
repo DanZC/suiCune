@@ -10256,7 +10256,6 @@ char* Function113054(char* hl){
         // LD_B(0x30);
         // CALL(aFunction1136c1);
         Function1136c1(hl2, &wram->wc9b5, 0x30);
-        //  TODO: Convert Function1136c1
         printf("Challenge=%s\nResponse:%s\n", hl2, &wram->wc9b5);
         // POP_BC;
         // POP_HL;

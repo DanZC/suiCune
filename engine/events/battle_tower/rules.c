@@ -279,10 +279,10 @@ bool BattleTower_CheckPartyHasThreeMonsThatAreNotEggs(void){
         // LD_A_hli;
         // CP_A(EGG);
         // IF_Z goto egg;
-        if(*(hl++) == EGG)
-            continue;
-        // INC_B;
-        b++;
+        if(*(hl++) != EGG) {
+            // INC_B;
+            b++;
+        }
 
     // egg:
         // DEC_C;
@@ -292,11 +292,11 @@ bool BattleTower_CheckPartyHasThreeMonsThatAreNotEggs(void){
     // CP_A_B;
     // RET_Z ;
     if(wram->wPartyCount == b)
-        return true;
+        return false;
     // LD_A_B;
     // CP_A(BATTLETOWER_PARTY_LENGTH);
     // RET;
-    return b == BATTLETOWER_PARTY_LENGTH;
+    return b < BATTLETOWER_PARTY_LENGTH;
 }
 
 bool CheckBTRule_PartyCountEq3(void){

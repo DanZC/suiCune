@@ -180,7 +180,7 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(Function170114),
     add_special(BattleTowerBattle),
     // add_special(Function1704e1),
-    // add_special(UnusedBattleTowerDummySpecial1),
+    add_special(UnusedBattleTowerDummySpecial1), // Unused
     add_special(LoadOpponentTrainerAndPokemonWithOTSprite),
     add_special(Function11ba38),
     add_special(CheckForBattleTowerRules),
@@ -188,8 +188,8 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(Reset), // bank 0
     add_special(Function1011f1),
     add_special(Function101220),
-    // add_special(Function101225),
-    // add_special(Function101231),
+    add_special(Function101225),
+    add_special(Function101231),
     add_special(MoveTutor),
     add_special(OmanyteChamber),
     // add_special(Function11c1ab),

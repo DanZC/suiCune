@@ -181,7 +181,7 @@ tile_t* Function3eea(tile_t* hl, uint8_t b, uint8_t c){
     // PUSH_BC;
     // LD_DE(wAttrmap - wTilemap);
     // ADD_HL_DE;
-    uint8_t* attr = ((uint8_t*)hl) + (wAttrmap - wTilemap);
+    uint8_t* attr = wram->wAttrmap + (hl - wram->wTilemap);
     // INC_B;
     // INC_B;
     // INC_C;

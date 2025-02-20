@@ -762,7 +762,7 @@ void ListMovePP_Conv(uint8_t* hl){
         // LD_A_hl;
         // AND_A(0x3f);
         // LD_addr_A(wStringBuffer1 + 4);
-        uint8_t monpp = wram->wTempMon.mon.PP[b];
+        uint8_t monpp = wram->wTempMon.mon.PP[b] & 0x3f;
         // LD_H_D;
         // LD_L_E;
         // PUSH_HL;

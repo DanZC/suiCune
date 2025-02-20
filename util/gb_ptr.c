@@ -83,6 +83,8 @@ void* AbsGBBankAddrToRAMAddr(uint8_t bank, uint16_t addr) {
 
 // Converts a GB absolute ram address to real address.
 void* AbsGBToRAMAddr(uint32_t hl) {
+    if(hl == 0)
+        return NULL;
     if(IsROMAddr(hl))
         return AbsGBROMToRAMAddr(hl);
     struct BankAddr ba = AbsRAMAddrToBankAddr(hl);

@@ -224,7 +224,7 @@ void BattleTowerBattle(void){
 }
 
 void UnusedBattleTowerDummySpecial1(void){
-    RET;
+    // RET;
 
 }
 

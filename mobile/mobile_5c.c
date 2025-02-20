@@ -427,7 +427,7 @@ void Function1719c8(void){
     // LD_A(0x1);
     // LDH_addr_A(hInMenu);
     hram->hInMenu = 0x1;
-    // CALL(aFunction1719d6); // TODO: Convert Function1719d6
+    // CALL(aFunction1719d6);
     Function1719d6();
     // POP_AF;
     // LDH_addr_A(hInMenu);
