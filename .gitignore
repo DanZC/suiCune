@@ -88,3 +88,4 @@ bin/
 # Mobile config file (should be generated automatically)
 mobile.bin
 *.dll
+mobile.bin
