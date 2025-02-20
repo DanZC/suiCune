@@ -4010,7 +4010,7 @@ int main(int argc, char* argv[]) {
     }
     else if(reset_type == RESET_TYPE_INIT) {
         gb.cpu_reg.pc = mInit;
-        Init_Conv();
+        Init();
     }
     else {
         gb.cpu_reg.pc = 0x0100;

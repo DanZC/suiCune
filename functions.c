@@ -193,14 +193,6 @@ void init_function_pointers(void) {
     // REDIRECTED(IsHM);
     // REDIRECTED(IsHMMove);
 
-    // home/init.c
-    REDIRECTED(ClearsScratch);
-    REDIRECTED(ClearWRAM);
-    REDIRECTED(Reset);
-    REDIRECTED(ClearVRAM);
-    REDIRECTED(Init);
-    REDIRECTED(v_Start);
-
     // home/item.c
     // REDIRECTED(ReceiveItem);
     // REDIRECTED(CheckTossableItem);
