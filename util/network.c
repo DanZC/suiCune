@@ -679,6 +679,34 @@ bool Network_SafeTryRecvByte(uint8_t* dest) {
     }
 }
 
+/// WIP: Better network interface without using SDLNet.
+
+// socket implementations "borrowed" from libmobile-bgb
+union u_sockaddr {
+    struct sockaddr addr;
+    struct sockaddr_in addr4;
+    struct sockaddr_in6 addr6;
+};
+
+bool network_resolve_host(const char* hostname, const char* port, struct mobile_addr* addr) {
+    union u_sockaddr u_addr;
+    if(!resolve_host(hostname, port, &u_addr.addr)) {
+        printf("%s:%s => Error\n",
+            hostname, port);
+        return false;
+    }
+    addr->type = MOBILE_ADDRTYPE_IPV4;
+    struct mobile_addr4* addr4 = (struct mobile_addr4*)addr;
+    addr4->port = ntohs(u_addr.addr4.sin_port);
+    memcpy(addr4->host, &u_addr.addr4.sin_addr.s_addr, sizeof(addr4->host));
+    printf("%s:%s => %d.%d.%d.%d:%d\n",
+        hostname, port,
+        addr4->host[0], addr4->host[1],
+        addr4->host[2], addr4->host[3],
+        addr4->port);
+    return true;
+}
+
 /// Mobile interface
 
 enum {
@@ -749,13 +777,6 @@ void MobileDebugLog(void* user, const char* line) {
     // #endif
     }
 }
-
-// socket implementations "borrowed" from libmobile-bgb
-union u_sockaddr {
-    struct sockaddr addr;
-    struct sockaddr_in addr4;
-    struct sockaddr_in6 addr6;
-};
 
 void socket_impl_init(struct mobile_user_data *state)
 {

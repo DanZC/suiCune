@@ -2041,7 +2041,7 @@ struct wram_s
                         uint8_t skip_71[6];
                         uint8_t wd010[1];
                         uint8_t wd011[1];
-                        uint8_t wd012[1];
+                        uint8_t wd012;
                         uint8_t wd013[1];
                         uint8_t wd014[2];
                         uint8_t skip_72[1];
@@ -2049,7 +2049,7 @@ struct wram_s
                         uint8_t wd018;
                         uint8_t wd019;
                         uint8_t skip_73[19];
-                        uint8_t wd02d[1];
+                        uint8_t wd02d;
                         uint8_t wd02e[1];
                         uint8_t wd02f[1];
                         uint8_t wd030[1];

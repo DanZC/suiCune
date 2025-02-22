@@ -359,7 +359,7 @@ bool Function8b45c(uint8_t* bc){
     // LD_addr_A(wd010);
     wram->wd010[0] = 0;
     // LD_addr_A(wd012);
-    wram->wd012[0] = 0;
+    wram->wd012 = 0;
     // CALL(aFunction8b391);
     u8_flag_s res = Function8b391(bc);
     // LD_D(0x0);
@@ -684,7 +684,7 @@ bool Function8b5e7(void){
     Function8b36c(wram->wd013);
     // XOR_A_A;
     // LD_addr_A(wd012);
-    wram->wd012[0] = 0;
+    wram->wd012 = 0;
     // LD_addr_A(wd02e);
     wram->wd02e[0] = 0;
     // CALL(aFunction8b493);

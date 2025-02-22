@@ -1,6 +1,7 @@
 #include "../constants.h"
 #include "mobile_menu.h"
 #include "mobile_12.h"
+#include "mobile_22.h"
 #include "mobile_5c.h"
 #include "fixed_words.h"
 #include "../engine/menus/main_menu.h"
@@ -251,6 +252,7 @@ void Function4a098(void){
     // CALL(aLoadStandardMenuHeader);
     LoadStandardMenuHeader_Conv();
     // FARCALL(aFunction89de0); // TODO: Convert Function89de0
+    Function89de0();
     // CALL(aCall_ExitMenu);
     ExitMenu_Conv2();
     // CALL(aMG_Mobile_Layout_LoadPals);

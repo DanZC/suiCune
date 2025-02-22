@@ -3,6 +3,7 @@
 #include "mobile_22_2.h"
 #include "mobile_12.h"
 #include "mobile_menu.h"
+#include "fixed_words.h"
 #include "../home/copy.h"
 #include "../home/sram.h"
 #include "../home/tilemap.h"
@@ -11,8 +12,15 @@
 #include "../home/lcd.h"
 #include "../home/clear_sprites.h"
 #include "../home/gfx.h"
+#include "../home/delay.h"
+#include "../home/text.h"
+#include "../home/print_text.h"
+#include "../home/audio.h"
+#include "../engine/menus/menu.h"
+#include "../engine/menus/save.h"
 #include "../engine/gfx/dma_transfer.h"
 #include "../engine/gfx/crystal_layouts.h"
+#include "../engine/printer/printer.h"
 #include "../data/text/common.h"
 
 const char String_89116[] = "-----@"; //db ['"-----@"'];
@@ -26,6 +34,10 @@ const char String_89135[] =
     t_next  "this CARD?@"; //next ['"かきかえないで\u3000やめますか？@"']  // Quit anyway?
 
 const char String_89153[] = "No message.@"; //db ['"メッセージは\u3000ありません@"'];  // No message
+
+
+// NOTE: I'm unsure exactly which WRAM bank the game would expect to be used with the wd000 variables.
+// Further testing of the original game is required.
 
 void OpenSRAMBank4(void){
     // PUSH_AF;
@@ -94,23 +106,24 @@ bool Function89185(const uint8_t* hl, const uint8_t* de, uint8_t c){
     return true;
 }
 
-void Function89193(void){
 //  copy(hl, de, 4)
 //  Copies c bytes from hl to de.
 //  Preserves hl and de.
-    PUSH_DE;
-    PUSH_HL;
+void Function89193(void* de, const void* hl, uint8_t c){
+    // PUSH_DE;
+    // PUSH_HL;
 
-loop:
-    LD_A_hli;
-    LD_de_A;
-    INC_DE;
-    DEC_C;
-    IF_NZ goto loop;
-    POP_HL;
-    POP_DE;
-    RET;
-
+// loop:
+    // LD_A_hli;
+    // LD_de_A;
+    // INC_DE;
+    // DEC_C;
+    // IF_NZ goto loop;
+    // POP_HL;
+    // POP_DE;
+    CopyBytes_Conv2(de, hl, c);
+    // RET;
+    return;
 }
 
 void Function8919e(void){
@@ -141,24 +154,29 @@ void Function891ab(void){
     // RET;
 }
 
+// Mobile22_ClearScreen
 void Function891b8(void){
-    CALL(aMobile22_SetBGMapMode0);
-    hlcoord(0, 0, wTilemap);
-    LD_A(0x7f);
-    LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
-    CALL(aByteFill);
-    CALL(aDelayFrame);
-    RET;
-
+    // CALL(aMobile22_SetBGMapMode0);
+    Mobile22_SetBGMapMode0();
+    // hlcoord(0, 0, wTilemap);
+    // LD_A(0x7f);
+    // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
+    // CALL(aDelayFrame);
+    DelayFrame();
+    // RET;
 }
 
+// Mobile22_ClearScreenAndWaitBGMap
 void Function891ca(void){
-    PUSH_BC;
-    CALL(aFunction891b8);
-    CALL(aWaitBGMap);
-    POP_BC;
-    RET;
-
+    // PUSH_BC;
+    // CALL(aFunction891b8);
+    Function891b8();
+    // CALL(aWaitBGMap);
+    WaitBGMap_Conv();
+    // POP_BC;
+    // RET;
 }
 
 void Function891d3(void){
@@ -194,27 +212,28 @@ void Function891de(void){
 }
 
 void Function891fe(void){
-    PUSH_BC;
-    CALL(aFunction891de);
-    LD_C(0x10);
-    CALL(aDelayFrames);
-    POP_BC;
-    RET;
-
+    // PUSH_BC;
+    // CALL(aFunction891de);
+    Function891de();
+    // LD_C(0x10);
+    // CALL(aDelayFrames);
+    DelayFrames_Conv(0x10);
+    // POP_BC;
+    // RET;
 }
 
 void Mobile_EnableSpriteUpdates(void){
-    LD_A(1);
-    LD_addr_A(wSpriteUpdatesEnabled);
-    RET;
-
+    // LD_A(1);
+    // LD_addr_A(wSpriteUpdatesEnabled);
+    wram->wSpriteUpdatesEnabled = 1;
+    // RET;
 }
 
 void Mobile_DisableSpriteUpdates(void){
-    LD_A(0);
-    LD_addr_A(wSpriteUpdatesEnabled);
-    RET;
-
+    // LD_A(0);
+    // LD_addr_A(wSpriteUpdatesEnabled);
+    wram->wSpriteUpdatesEnabled = 0;
+    // RET;
 }
 
 void Function89215(tile_t* hl, uint8_t a){
@@ -223,7 +242,8 @@ void Function89215(tile_t* hl, uint8_t a){
     // LD_BC(wAttrmap - wTilemap);
     // ADD_HL_BC;
     // LD_hl_A;
-    hl[wAttrmap - wTilemap] = a;
+// This should continue working even if tile_t is changed to uint16_t or something
+    wram->wAttrmap[hl - wram->wTilemap] = a;
     // POP_BC;
     // POP_HL;
     // RET;
@@ -276,13 +296,19 @@ void Mobile22_SetBGMapMode1(void){
     // RET;
 }
 
-void Function89245(void){
-    FARCALL(aTryLoadSaveFile);
-    RET_C ;
-    FARCALL(av_LoadData);
-    AND_A_A;
-    RET;
-
+// Mobile22_TryLoadSaveFile
+// Returns false (c) if the file is corrupted.
+// Returns true (nc) on success.
+bool Function89245(void){
+    // FARCALL(aTryLoadSaveFile);
+    // RET_C ;
+    if(!TryLoadSaveFile())
+        return false;
+    // FARCALL(av_LoadData);
+    v_LoadData();
+    // AND_A_A;
+    // RET;
+    return true;
 }
 
 void Function89254(void){
@@ -365,92 +391,113 @@ void MenuData_0x892ab(void){
 }
 
 void Function892b4(void){
-    CALL(aFunction8931b);
+    // CALL(aFunction8931b);
+    uint8_t* bc = Function8931b();
 
-    return Function892b7();
+    return Function892b7(bc);
 }
 
-void Function892b7(void){
-    LD_D_B;
-    LD_E_C;
-    LD_HL(0);
-    ADD_HL_BC;
-    LD_A(0x50);
-    LD_BC(6);
-    CALL(aByteFill);
-    LD_B_D;
-    LD_C_E;
-    LD_HL(6);
-    ADD_HL_BC;
-    LD_A(0x50);
-    LD_BC(6);
-    CALL(aByteFill);
-    LD_B_D;
-    LD_C_E;
-    LD_HL(12);
-    ADD_HL_BC;
-    XOR_A_A;
-    LD_hli_A;
-    LD_hl_A;
-    LD_HL(14);
-    ADD_HL_BC;
-    LD_hli_A;
-    LD_hl_A;
-    LD_HL(16);
-    ADD_HL_BC;
-    LD_hl_A;
-    LD_HL(17);
-    ADD_HL_BC;
-    LD_A(-1);
-    LD_BC(8);
-    CALL(aByteFill);
-    LD_B_D;
-    LD_C_E;
-    LD_E(6);
-    LD_HL(25);
-    ADD_HL_BC;
+// This function just initializes a bunch of data at bc,
+// but does it in a weird and obtuse way.
+void Function892b7(uint8_t* bc){
+    // LD_D_B;
+    // LD_E_C;
+    // LD_HL(0);
+    // ADD_HL_BC;
+    // LD_A(0x50);
+    // LD_BC(6);
+    // CALL(aByteFill);
+    ByteFill_Conv2(bc, 6, 0x50);
+    // LD_B_D;
+    // LD_C_E;
+    // LD_HL(6);
+    // ADD_HL_BC;
+    // LD_A(0x50);
+    // LD_BC(6);
+    // CALL(aByteFill);
+    ByteFill_Conv2(bc + 6, 6, 0x50);
+    // LD_B_D;
+    // LD_C_E;
+    // LD_HL(12);
+    // ADD_HL_BC;
+    // XOR_A_A;
+    // LD_hli_A;
+    bc[12] = 0;
+    // LD_hl_A;
+    bc[13] = 0;
+    // LD_HL(14);
+    // ADD_HL_BC;
+    // LD_hli_A;
+    bc[14] = 0;
+    // LD_hl_A;
+    bc[15] = 0;
+    // LD_HL(16);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    bc[16] = 0;
+    // LD_HL(17);
+    // ADD_HL_BC;
+    // LD_A(-1);
+    // LD_BC(8);
+    // CALL(aByteFill);
+    ByteFill_Conv2(bc + 17, 8, 0xff);
+    // LD_B_D;
+    // LD_C_E;
+    // LD_E(6);
+    uint8_t e = 6;
+    // LD_HL(25);
+    // ADD_HL_BC;
+    uint8_t* hl = bc + 25;
 
-loop:
-    LD_A(-1);
-    LD_hli_A;
-    LD_A(-1);
-    LD_hli_A;
-    DEC_E;
-    IF_NZ goto loop;
-    RET;
-
+    do {
+    // loop:
+        // LD_A(-1);
+        // LD_hli_A;
+        *(hl++) = 0xff;
+        // LD_A(-1);
+        // LD_hli_A;
+        *(hl++) = 0xff;
+        // DEC_E;
+        // IF_NZ goto loop;
+    } while(--e != 0);
+    // RET;
 }
 
 void Function89305(void){
-    XOR_A_A;
-    LD_addr_A(wMenuSelection);
-    LD_C(40);
+    // XOR_A_A;
+    // LD_addr_A(wMenuSelection);
+    wram->wMenuSelection = 0;
+    // LD_C(40);
+    uint8_t c = 40;
 
-loop:
-    LD_A_addr(wMenuSelection);
-    INC_A;
-    LD_addr_A(wMenuSelection);
-    PUSH_BC;
-    CALL(aFunction892b4);
-    POP_BC;
-    DEC_C;
-    IF_NZ goto loop;
-    RET;
-
+    do {
+    // loop:
+        // LD_A_addr(wMenuSelection);
+        // INC_A;
+        // LD_addr_A(wMenuSelection);
+        wram->wMenuSelection++;
+        // PUSH_BC;
+        // CALL(aFunction892b4);
+        Function892b4();
+        // POP_BC;
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(--c != 0);
+    // RET;
 }
 
-void Function8931b(void){
-    PUSH_HL;
-    LD_HL(s4_a03b);
-    LD_A_addr(wMenuSelection);
-    DEC_A;
-    LD_BC(37);
-    CALL(aAddNTimes);
-    LD_B_H;
-    LD_C_L;
-    POP_HL;
-    RET;
-
+uint8_t* Function8931b(void){
+    // PUSH_HL;
+    // LD_HL(s4_a03b);
+    // LD_A_addr(wMenuSelection);
+    // DEC_A;
+    // LD_BC(37);
+    // CALL(aAddNTimes);
+    // LD_B_H;
+    // LD_C_L;
+    // POP_HL;
+    // RET;
+    return GBToRAMAddr(s4_a03b + 37 * (wram->wMenuSelection - 1));
 }
 
 void Function8932d(void){
@@ -492,105 +539,120 @@ done:
 
 }
 
-void Function89346(void){
-    LD_H_B;
-    LD_L_C;
-    JR(mv_incave);
-
+// StringSearchForNonWhitespace
+// Returns NULL (c) if it does not find a nonspace character
+const uint8_t* Function89346(const uint8_t* bc){
+    // LD_H_B;
+    // LD_L_C;
+    // JR(mv_incave);
+    return Function89346_incave(bc);
 }
 
 void Function8934a(void){
-    LD_HL(NAME_LENGTH_JAPANESE);
-    ADD_HL_BC;
-    return v_incave();
+    // LD_HL(NAME_LENGTH_JAPANESE);
+    // ADD_HL_BC;
+    // return v_incave();
 }
 
-void v_incave(void){
+const uint8_t* Function89346_incave(const uint8_t* hl){
 //  Scans up to 5 characters starting at hl, looking for a nonspace character up to the next terminator.  Sets carry if it does not find a nonspace character.  Returns the location of the following character in hl.
-    PUSH_BC;
-    LD_C(NAME_LENGTH_JAPANESE - 1);
+    // PUSH_BC;
+    // LD_C(NAME_LENGTH_JAPANESE - 1);
+    uint8_t c = NAME_LENGTH;
 
-loop:
-    LD_A_hli;
-    CP_A(0x50);
-    IF_Z goto terminator;
-    CP_A(0x7f);
-    IF_NZ goto nonspace;
-    DEC_C;
-    IF_NZ goto loop;
+    do {
+    // loop:
+        // LD_A_hli;
+        uint8_t a = *(hl++);
+        // CP_A(0x50);
+        // IF_Z goto terminator;
+        if(a == 0x50)
+            break;
+        // CP_A(0x7f);
+        // IF_NZ goto nonspace;
+        if(a != 0x7f)
+            return hl;
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(--c != 0);
 
+// terminator:
+    // SCF;
+    // goto done;
 
-terminator:
-    SCF;
-    goto done;
+// nonspace:
+    // AND_A_A;
 
-
-nonspace:
-    AND_A_A;
-
-
-done:
-    POP_BC;
-    RET;
-
+// done:
+    // POP_BC;
+    // RET;
+    return NULL;
 }
 
-void Function89363(void){
 //  Scans six byte pairs starting at bc to find $ff.  Sets carry if it does not find a $ff.  Returns the location of the byte after the first $ff found in hl.
-    LD_H_B;
-    LD_L_C;
-    goto _incave;
+uint8_t* Function89363(uint8_t* bc){
+    // LD_H_B;
+    // LD_L_C;
+    // goto _incave;
 
-    LD_HL(25);
-    ADD_HL_BC;
+    // LD_HL(25);
+    // ADD_HL_BC;
 
+// _incave:
+    // PUSH_DE;
+    // LD_E(NAME_LENGTH_JAPANESE);
+    uint8_t e = EASY_CHAT_MESSAGE_WORD_COUNT;
 
-_incave:
-    PUSH_DE;
-    LD_E(NAME_LENGTH_JAPANESE);
+    do {
+    // loop:
+        // LD_A_hli;
+        uint8_t a = *(bc++);
+        // CP_A(-1);
+        // IF_NZ goto ok;
+        if(a == 0xff)
+            return bc;
+        // LD_A_hli;
+        a = *(bc++);
+        // CP_A(-1);
+        // IF_NZ goto ok;
+        if(a == 0xff)
+            return bc;
+        // DEC_E;
+        // IF_NZ goto loop;
+    } while(--e != 0);
+    // SCF;
+    // goto done;
 
-loop:
-    LD_A_hli;
-    CP_A(-1);
-    IF_NZ goto ok;
-    LD_A_hli;
-    CP_A(-1);
-    IF_NZ goto ok;
-    DEC_E;
-    IF_NZ goto loop;
-    SCF;
-    goto done;
+// ok:
+    // AND_A_A;
 
-
-ok:
-    AND_A_A;
-
-
-done:
-    POP_DE;
-    RET;
-
+// done:
+    // POP_DE;
+    // RET;
+    return NULL;
 }
 
-void Function89381(void){
-    PUSH_BC;
-    PUSH_DE;
-    CALL(aFunction89b45);
-    IF_C goto ok;
-    PUSH_HL;
-    LD_A(-1);
-    LD_BC(8);
-    CALL(aByteFill);
-    POP_HL;
+void Function89381(uint8_t* de, uint8_t* hl){
+    // PUSH_BC;
+    // PUSH_DE;
+    // CALL(aFunction89b45);
+    // IF_C goto ok;
+    if(!Function89b45(&hl)) {
+        // PUSH_HL;
+        // LD_A(-1);
+        // LD_BC(8);
+        // CALL(aByteFill);
+        ByteFill_Conv2(hl, 8, 0xff);
+        // POP_HL;
+    }
 
-
-ok:
-    POP_DE;
-    LD_C(8);
-    CALL(aFunction89193);
-    POP_BC;
-    RET;
-
+// ok:
+    // POP_DE;
+    // LD_C(8);
+    // CALL(aFunction89193);
+    Function89193(de, hl, 8);
+    // POP_BC;
+    // RET;
 }
 
 void Function8939a(void){
@@ -631,15 +693,21 @@ void Function893b3(void){
 }
 
 void Function893cc(void){
-    CALL(aDisableLCD);
-    CALL(aClearSprites);
-    CALL(aLoadStandardFont);
-    CALL(aLoadFontsExtra);
-    CALL(aFunction893ef);
-    CALL(aFunction89464);
-    CALL(aEnableLCD);
-    RET;
-
+    // CALL(aDisableLCD);
+    DisableLCD_Conv();
+    // CALL(aClearSprites);
+    ClearSprites_Conv();
+    // CALL(aLoadStandardFont);
+    LoadStandardFont_Conv();
+    // CALL(aLoadFontsExtra);
+    LoadFontsExtra_Conv();
+    // CALL(aFunction893ef);
+    Function893ef();
+    // CALL(aFunction89464);
+    Function89464();
+    // CALL(aEnableLCD);
+    EnableLCD_Conv();
+    // RET;
 }
 
 void Function893e2(void){
@@ -711,6 +779,7 @@ void Function89448(void){
 }
 
 // Mobile22_LoadLargeCardSpriteAndFolderGFX
+// TODO: Convert mobile_5e for the card gfx paths.
 void Function89455(void){
     // LD_HL(mCardLargeSpriteAndFolderGFX);
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x0c);
@@ -720,19 +789,20 @@ void Function89455(void){
     // RET;
 }
 
+// Mobile22_LoadMobileCardGFX
+// TODO: Convert mobile_5e for the card gfx paths.
 void Function89464(void){
-    LD_HL(mMobileCardGFX);
-    LD_DE(vTiles2);
-    LD_BC(0x20 * LEN_2BPP_TILE);
-    LD_A(BANK(aMobileCardGFX));
-    CALL(aFarCopyBytes);
-    LD_HL(mMobileCard2GFX);
-    LD_DE(vTiles2 + LEN_2BPP_TILE * 0x20);
-    LD_BC(0x17 * LEN_2BPP_TILE);
-    LD_A(BANK(aMobileCard2GFX));
-    CALL(aFarCopyBytes);
-    RET;
-
+    // LD_HL(mMobileCardGFX);
+    // LD_DE(vTiles2);
+    // LD_BC(0x20 * LEN_2BPP_TILE);
+    // LD_A(BANK(aMobileCardGFX));
+    // CALL(aFarCopyBytes);
+    // LD_HL(mMobileCard2GFX);
+    // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x20);
+    // LD_BC(0x17 * LEN_2BPP_TILE);
+    // LD_A(BANK(aMobileCard2GFX));
+    // CALL(aFarCopyBytes);
+    // RET;
 }
 
 void Function89481(void){
@@ -794,121 +864,127 @@ void Function894bb(void){
 
 }
 
-void Function894ca(void){
-    PUSH_BC;
-    CALL(aFunction894dc);
-    CALL(aFunction895c7);
-    CALL(aFunction8949c);
-    CALL(aFunction8a60d);
-    CALL(aSetPalettes);
-    POP_BC;
-    RET;
-
+// Mobile_CardMenu_LoadAndSetPalettes
+void Function894ca(uint8_t d){
+    // PUSH_BC;
+    // CALL(aFunction894dc);
+    Function894dc(d);
+    // CALL(aFunction895c7);
+    Function895c7();
+    // CALL(aFunction8949c);
+    Function8949c();
+    // CALL(aFunction8a60d);
+    Function8a60d();
+    // CALL(aSetPalettes);
+    SetPalettes_Conv();
+    // POP_BC;
+    // RET;
 }
 
-void Function894dc(void){
-    PUSH_BC;
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(5);
-    LDH_addr_A(rSVBK);
+// Mobile_CardMenu_LoadGenderDependentPalettes
+void Function894dc(uint8_t d){
+static const uint16_t Pals012a[] = {
+    rgb(31, 31, 31),
+    rgb(10, 17, 13),
+    rgb(10,  8, 22),
+    rgb( 0,  0,  0),
 
-    LD_C_D;
-    LD_B(0);
-    LD_HL(mFunction894dc_PalettePointers);
-    ADD_HL_BC;
-    ADD_HL_BC;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    LD_DE(wBGPals1);
-    LD_BC(3 * PALETTE_SIZE);
-    CALL(aCopyBytes);
-    LD_HL(mFunction894dc_Pals345);
-    LD_DE(wBGPals1 + 3 * PALETTE_SIZE);
-    LD_BC(3 * PALETTE_SIZE);
-    CALL(aCopyBytes);
+    rgb(31, 31, 31),
+    rgb(16, 20, 31),
+    rgb(10,  8, 22),
+    rgb( 0,  0,  0),
 
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    POP_BC;
-    RET;
+    rgb(31, 31, 31),
+    rgb(16, 20, 31),
+    rgb(10, 17, 13),
+    rgb( 0,  0,  0),
+};
 
+static const uint16_t Pals012b[] = {
+    rgb(31, 31, 31),
+    rgb(30, 22, 11),
+    rgb(31,  8, 15),
+    rgb( 0,  0,  0),
 
-PalettePointers:
-    //dw ['.Pals012a'];
-    //dw ['.Pals012b'];
-    //dw ['.Pals012c'];
+    rgb(31, 31, 31),
+    rgb(16, 20, 31),
+    rgb(31,  8, 15),
+    rgb( 0,  0,  0),
 
+    rgb(31, 31, 31),
+    rgb(16, 20, 31),
+    rgb(30, 22, 11),
+    rgb( 0,  0,  0),
+};
 
-Pals012a:
-    //rgb ['31', '31', '31']
-    //rgb ['10', '17', '13']
-    //rgb ['10', '08', '22']
-    //rgb ['00', '00', '00']
+// Never used?
+static const uint16_t Pals012c[] = {
+    rgb(31, 31, 31),
+    rgb(15, 20, 26),
+    rgb(25,  7, 20),
+    rgb( 0,  0,  0),
 
-    //rgb ['31', '31', '31']
-    //rgb ['16', '20', '31']
-    //rgb ['10', '08', '22']
-    //rgb ['00', '00', '00']
+    rgb(31, 31, 31),
+    rgb(16, 20, 31),
+    rgb(25,  7, 20),
+    rgb( 0,  0,  0),
 
-    //rgb ['31', '31', '31']
-    //rgb ['16', '20', '31']
-    //rgb ['10', '17', '13']
-    //rgb ['00', '00', '00']
+    rgb(31, 31, 31),
+    rgb(16, 20, 31),
+    rgb(15, 20, 26),
+    rgb( 0,  0,  0),
+};
 
+static const uint16_t *const PalettePointers[] = {
+    Pals012a,
+    Pals012b,
+    Pals012c, // Never used?
+};
 
-Pals012b:
-    //rgb ['31', '31', '31']
-    //rgb ['30', '22', '11']
-    //rgb ['31', '08', '15']
-    //rgb ['00', '00', '00']
+static const uint16_t Pals345[] = {
+    rgb(31, 31, 31),
+    rgb(31, 31, 31),
+    rgb(31, 13,  0),
+    rgb(14,  8,  0),
 
-    //rgb ['31', '31', '31']
-    //rgb ['16', '20', '31']
-    //rgb ['31', '08', '15']
-    //rgb ['00', '00', '00']
+    rgb(31, 31, 31),
+    rgb(16, 16, 31),
+    rgb( 0,  0, 31),
+    rgb( 0,  0,  0),
 
-    //rgb ['31', '31', '31']
-    //rgb ['16', '20', '31']
-    //rgb ['30', '22', '11']
-    //rgb ['00', '00', '00']
+    rgb(19, 31, 11),
+    rgb( 0,  0,  0),
+    rgb( 0,  0,  0),
+    rgb( 0,  0,  0),
+};
+    // PUSH_BC;
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(5);
+    // LDH_addr_A(rSVBK);
 
+    // LD_C_D;
+    // LD_B(0);
+    // LD_HL(mFunction894dc_PalettePointers);
+    // ADD_HL_BC;
+    // ADD_HL_BC;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // LD_DE(wBGPals1);
+    // LD_BC(3 * PALETTE_SIZE);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wBGPals1, PalettePointers[d], 3 * PALETTE_SIZE);
+    // LD_HL(mFunction894dc_Pals345);
+    // LD_DE(wBGPals1 + 3 * PALETTE_SIZE);
+    // LD_BC(3 * PALETTE_SIZE);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wBGPals1 + 3 * PALETTE_SIZE, Pals345, 3 * PALETTE_SIZE);
 
-Pals012c:
-    //rgb ['31', '31', '31']
-    //rgb ['15', '20', '26']
-    //rgb ['25', '07', '20']
-    //rgb ['00', '00', '00']
-
-    //rgb ['31', '31', '31']
-    //rgb ['16', '20', '31']
-    //rgb ['25', '07', '20']
-    //rgb ['00', '00', '00']
-
-    //rgb ['31', '31', '31']
-    //rgb ['16', '20', '31']
-    //rgb ['15', '20', '26']
-    //rgb ['00', '00', '00']
-
-
-Pals345:
-    //rgb ['31', '31', '31']
-    //rgb ['31', '31', '31']
-    //rgb ['31', '13', '00']
-    //rgb ['14', '08', '00']
-
-    //rgb ['31', '31', '31']
-    //rgb ['16', '16', '31']
-    //rgb ['00', '00', '31']
-    //rgb ['00', '00', '00']
-
-    //rgb ['19', '31', '11']
-    //rgb ['00', '00', '00']
-    //rgb ['00', '00', '00']
-    //rgb ['00', '00', '00']
-
-    return Function8956f();
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // POP_BC;
+    // RET;
 }
 
 void Function8956f(void){
@@ -969,28 +1045,26 @@ loop:
 }
 
 void Function895c7(void){
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(5);
-    LDH_addr_A(rSVBK);
-    LD_HL(mPalette_895de);
-    LD_DE(wd030);
-    LD_BC(8);
-    CALL(aCopyBytes);
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    RET;
-
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(5);
+    // LDH_addr_A(rSVBK);
+    // LD_HL(mPalette_895de);
+    // LD_DE(wd030);
+    // LD_BC(8);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wBGPals1 + 6 * PALETTE_SIZE, Palette_895de, 1 * PALETTE_SIZE);
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // RET;
 }
 
-void Palette_895de(void){
-    //rgb ['31', '31', '31']
-    //rgb ['07', '07', '06']
-    //rgb ['07', '07', '06']
-    //rgb ['00', '00', '00']
-
-    return Function895e6();
-}
+const uint16_t Palette_895de[] = {
+    rgb(31, 31, 31),
+    rgb( 7,  7,  6),
+    rgb( 7,  7,  6),
+    rgb( 0,  0,  0),
+};
 
 void Function895e6(void){
 //  //  unreferenced
@@ -1002,19 +1076,23 @@ void Function895e6(void){
 
 }
 
+// Mobile22_ResetAttrmap
 void Function895f2(void){
-    PUSH_BC;
-    XOR_A_A;
-    hlcoord(0, 0, wAttrmap);
-    LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
-    CALL(aByteFill);
-    CALL(aFunction89605);
-    CALL(aFunction89655);
-    POP_BC;
-    RET;
-
+    // PUSH_BC;
+    // XOR_A_A;
+    // hlcoord(0, 0, wAttrmap);
+    // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(0, 0, wram->wAttrmap), SCREEN_WIDTH * SCREEN_HEIGHT, 0);
+    // CALL(aFunction89605);
+    // Function89605(); // TODO: Convert me
+    // CALL(aFunction89655);
+    Function89655();
+    // POP_BC;
+    // RET;
 }
 
+// TODO: Convert me
 void Function89605(void){
     hlcoord(19, 2, wAttrmap);
     LD_A(1);
@@ -1058,47 +1136,65 @@ loop2:
 }
 
 void Function8963d(void){
-    hlcoord(12, 3, wAttrmap);
-    LD_A(6);
-    LD_DE(SCREEN_WIDTH);
-    LD_BC((7 << 8) | 7);
+    // hlcoord(12, 3, wAttrmap);
+    uint8_t* hl = coord(12, 3, wram->wAttrmap);
+    // LD_A(6);
+    // LD_DE(SCREEN_WIDTH);
+    // LD_BC((7 << 8) | 7);
+    uint8_t b = 7;
 
-loop:
-    PUSH_HL;
-    LD_C(7);
+    do {
+    // loop:
+        // PUSH_HL;
+        uint8_t* hl2 = hl;
+        // LD_C(7);
+        uint8_t c = 7;
 
-next:
-    LD_hli_A;
-    DEC_C;
-    IF_NZ goto next;
-    POP_HL;
-    ADD_HL_DE;
-    DEC_B;
-    IF_NZ goto loop;
-    RET;
-
+        do {
+        // next:
+            // LD_hli_A;
+            *(hl2++) = 6;
+            // DEC_C;
+            // IF_NZ goto next;
+        } while(--c != 0);
+        // POP_HL;
+        // ADD_HL_DE;
+        hl += SCREEN_WIDTH;
+        // DEC_B;
+        // IF_NZ goto loop;
+    } while(--b != 0);
+    // RET;
 }
 
 void Function89655(void){
-    hlcoord(1, 12, wAttrmap);
-    LD_DE(SCREEN_WIDTH);
-    LD_A(5);
-    LD_B(4);
+    // hlcoord(1, 12, wAttrmap);
+    uint8_t* hl = coord(1, 12, wram->wAttrmap);
+    // LD_DE(SCREEN_WIDTH);
+    // LD_A(5);
+    // LD_B(4);
+    uint8_t b = 4;
 
-loop:
-    LD_C(18);
-    PUSH_HL;
+    do {
+    // loop:
+        // LD_C(18);
+        uint8_t c = 18;
+        // PUSH_HL;
+        uint8_t* hl2 = hl;
 
-next:
-    LD_hli_A;
-    DEC_C;
-    IF_NZ goto next;
-    POP_HL;
-    ADD_HL_DE;
-    DEC_B;
-    IF_NZ goto loop;
-    RET;
-
+        do {
+        // next:
+            // LD_hli_A;
+            *(hl2++) = 5;
+            // DEC_C;
+            // IF_NZ goto next;
+        } while(--c != 0);
+        // POP_HL;
+        // ADD_HL_DE;
+        hl += SCREEN_WIDTH;
+        // DEC_B;
+        // IF_NZ goto loop;
+    } while(--b != 0);
+    // RET;
 }
 
 void Function8966c(void){
@@ -1112,15 +1208,15 @@ void Function8966c(void){
 
 }
 
+// TODO: Convert me
 void Function8967a(void){
-    PUSH_BC;
-    CALL(aFunction89688);
-    hlcoord(2, 0, wTilemap);
-    LD_C(12);
-    CALL(aFunction896f5);
-    POP_BC;
-    RET;
-
+    // PUSH_BC;
+    // CALL(aFunction89688);
+    // hlcoord(2, 0, wTilemap);
+    // LD_C(12);
+    // CALL(aFunction896f5);
+    // POP_BC;
+    // RET;
 }
 
 void Function89688(void){
@@ -1316,92 +1412,119 @@ void Function89736(void){
 
 }
 
-void Function89753(void){
-    LD_A(0xc);
-    LD_hl_A;
-    XOR_A_A;
-    CALL(aFunction89215);
-    RET;
-
+void Function89753(tile_t* hl){
+    // LD_A(0xc);
+    // LD_hl_A;
+    *hl = 0xc;
+    // XOR_A_A;
+    // CALL(aFunction89215);
+    Function89215(hl, 0);
+    // RET;
 }
 
-void Function8975b(void){
-    LD_A(0x1d);
-    LD_hli_A;
-    INC_A;
-    LD_hli_A;
-    LD_A(0xd);
-    LD_hl_A;
-    DEC_HL;
-    DEC_HL;
-    LD_A(0x4);
-    LD_E(0x3);
+void Function8975b(tile_t* hl){
+    // LD_A(0x1d);
+    // LD_hli_A;
+    hl[0] = 0x1d;
+    // INC_A;
+    // LD_hli_A;
+    hl[1] = 0x1e;
+    // LD_A(0xd);
+    // LD_hl_A;
+    hl[2] = 0xd;
+    // DEC_HL;
+    // DEC_HL;
+    // LD_A(0x4);
+    // LD_E(0x3);
 
-asm_89769:
-    CALL(aFunction89215);
-    INC_HL;
-    DEC_E;
-    IF_NZ goto asm_89769;
-    RET;
-
+    for(uint8_t i = 0; i < 0x3; ++i) {
+    // asm_89769:
+        // CALL(aFunction89215);
+        Function89215(hl + i, 0x4);
+        // INC_HL;
+        // DEC_E;
+        // IF_NZ goto asm_89769;
+    }
+    // RET;
 }
 
-void Function89771(void){
-    LD_A(0x12);
-    LD_hl_A;
-    LD_A(0x3);
-    CALL(aFunction89215);
-    RET;
-
+void Function89771(tile_t* hl){
+    // LD_A(0x12);
+    // LD_hl_A;
+    *hl = 0x12;
+    // LD_A(0x3);
+    // CALL(aFunction89215);
+    Function89215(hl, 0x3);
+    // RET;
 }
 
-void Function8977a(void){
-    LD_E(0x4);
-    LD_D(0x13);
+void Function8977a(tile_t* hl){
+    // LD_E(0x4);
+    uint8_t e = 0x4;
+    // LD_D(0x13);
+    uint8_t d = 0x13;
 
-asm_8977e:
-    LD_A_D;
-    LD_hl_A;
-    LD_A(0x4);
-    CALL(aFunction89215);
-    INC_HL;
-    INC_D;
-    DEC_E;
-    IF_NZ goto asm_8977e;
-    LD_E(0xe);
+    do {
+    // asm_8977e:
+        // LD_A_D;
+        // LD_hl_A;
+        *hl = d;
+        // LD_A(0x4);
+        // CALL(aFunction89215);
+        Function89215(hl, 0x4);
+        // INC_HL;
+        hl++;
+        // INC_D;
+        d++;
+        // DEC_E;
+        // IF_NZ goto asm_8977e;
+    } while(--e != 0);
+    // LD_E(0xe);
+    e = 0xe;
 
-asm_8978c:
-    LD_A_D;
-    LD_hl_A;
-    XOR_A_A;
-    CALL(aFunction89215);
-    INC_HL;
-    DEC_E;
-    IF_NZ goto asm_8978c;
-    RET;
-
+    do {
+    // asm_8978c:
+        // LD_A_D;
+        // LD_hl_A;
+        *hl = d;
+        // XOR_A_A;
+        // CALL(aFunction89215);
+        Function89215(hl, 0);
+        // INC_HL;
+        hl++;
+        // DEC_E;
+        // IF_NZ goto asm_8978c;
+    } while(--e != 0);
+    // RET;
 }
 
-void Function89797(void){
-    PUSH_BC;
-    LD_A(0xe);
-    LD_hl_A;
-    LD_BC(SCREEN_WIDTH);
-    ADD_HL_BC;
-    LD_A(0x11);
-    LD_hli_A;
-    LD_A(0x10);
-    LD_C(0x8);
+void Function89797(tile_t* hl){
+    // PUSH_BC;
+    // LD_A(0xe);
+    // LD_hl_A;
+    *hl = 0xe;
+    // LD_BC(SCREEN_WIDTH);
+    // ADD_HL_BC;
+    hl += SCREEN_WIDTH;
+    // LD_A(0x11);
+    // LD_hli_A;
+    *(hl++) = 0x11;
+    // LD_A(0x10);
+    // LD_C(0x8);
+    uint8_t c = 0x8;
 
-asm_897a6:
-    LD_hli_A;
-    DEC_C;
-    IF_NZ goto asm_897a6;
-    LD_A(0xf);
-    LD_hl_A;
-    POP_BC;
-    RET;
-
+    do {
+    // asm_897a6:
+        // LD_hli_A;
+        *(hl++) = 0x10;
+        // DEC_C;
+        // IF_NZ goto asm_897a6;
+    } while(--c != 0);
+    // LD_A(0xf);
+    // LD_hl_A;
+    *hl = 0xf;
+    // POP_BC;
+    // RET;
 }
 
 void Function897af(void){
@@ -1463,49 +1586,66 @@ asm_897f3:
 
 }
 
+// Mobile_CardMenu_LoadPlayerSilhouetteGFX
+// TODO: Convert mobile_5e for the silhouette gfx paths.
 void Function89807(void){
-    LD_HL(mChrisSilhouetteGFX);
-    LD_A_addr(wPlayerGender);
-    BIT_A(PLAYERGENDER_FEMALE_F);
-    IF_Z goto asm_89814;
-    LD_HL(mKrisSilhouetteGFX);
+    // LD_HL(mChrisSilhouetteGFX);
+    // LD_A_addr(wPlayerGender);
+    // BIT_A(PLAYERGENDER_FEMALE_F);
+    // IF_Z goto asm_89814;
+    // LD_HL(mKrisSilhouetteGFX);
 
-asm_89814:
-    CALL(aDisableLCD);
-    LD_DE(vTiles2 + LEN_2BPP_TILE * 0x37);
-    LD_BC((5 * 7) * LEN_2BPP_TILE);
-    LD_A(BANK(aChrisSilhouetteGFX));  // aka BANK(KrisSilhouetteGFX)
-    CALL(aFarCopyBytes);
-    CALL(aEnableLCD);
-    CALL(aDelayFrame);
-    RET;
-
+// asm_89814:
+    // const char* path = (bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))? KrisSilhouetteGFX: ChrisSilhouetteGFX;
+    const char* path = "gfx/mobile/chris_silhouette.png";
+    // CALL(aDisableLCD);
+    DisableLCD_Conv();
+    // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x37);
+    // LD_BC((5 * 7) * LEN_2BPP_TILE);
+    // LD_A(BANK(aChrisSilhouetteGFX));  // aka BANK(KrisSilhouetteGFX)
+    // CALL(aFarCopyBytes);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x37, path, 0, (5 * 7));
+    // CALL(aEnableLCD);
+    EnableLCD_Conv();
+    // CALL(aDelayFrame);
+    DelayFrame(); // Is this really needed?
+    // RET;
 }
 
-void Function89829(void){
-    PUSH_BC;
-    LD_BC(0x705);
-    LD_DE(0x14);
-    LD_A(0x37);
+void Function89829(tile_t* hl){
+    // PUSH_BC;
+    // LD_BC(0x705);
+    uint8_t b = 0x7;
+    // LD_DE(0x14);
+    // LD_A(0x37);
+    uint8_t a = 0x37;
 
-asm_89832:
-    PUSH_BC;
-    PUSH_HL;
+    do {
+    // asm_89832:
+        // PUSH_BC;
+        uint8_t c = 0x5;
+        // PUSH_HL;
+        tile_t* hl2 = hl;
 
-asm_89834:
-    LD_hli_A;
-    INC_A;
-    DEC_C;
-    IF_NZ goto asm_89834;
-    POP_HL;
-    ADD_HL_DE;
-    POP_BC;
-    DEC_B;
-    IF_NZ goto asm_89832;
-    CALL(aFunction8963d);
-    POP_BC;
-    RET;
-
+        do {
+        // asm_89834:
+            // LD_hli_A;
+            // INC_A;
+            *(hl2++) = a++;
+            // DEC_C;
+            // IF_NZ goto asm_89834;
+        } while(--c != 0);
+        // POP_HL;
+        // ADD_HL_DE;
+        hl += SCREEN_WIDTH;
+        // POP_BC;
+        // DEC_B;
+        // IF_NZ goto asm_89832;
+    } while(--b != 0);
+    // CALL(aFunction8963d);
+    Function8963d();
+    // POP_BC;
+    // RET;
 }
 
 void Function89844(void){
@@ -1542,22 +1682,30 @@ void Function89856(void){
 }
 
 void Function8987f(void){
-    CALL(aFunction891b8);
-    CALL(aFunction895f2);
-    CALL(aFunction8967a);
-    CALL(aFunction899d3);
-    hlcoord(5, 1, wTilemap);
-    CALL(aFunction8999c);
-    hlcoord(13, 3, wTilemap);
-    CALL(aFunction89829);
-    CALL(aFunction899b2);
-    hlcoord(5, 5, wTilemap);
-    CALL(aFunction899c9);
-    LD_BC(wd008);
-    hlcoord(2, 10, wTilemap);
-    CALL(aFunction89975);
-    RET;
-
+    // CALL(aFunction891b8);
+    Function891b8();
+    // CALL(aFunction895f2);
+    Function895f2();
+    // CALL(aFunction8967a);
+    Function8967a();
+    // CALL(aFunction899d3);
+    Function899d3();
+    // hlcoord(5, 1, wTilemap);
+    // CALL(aFunction8999c);
+    Function8999c(coord(5, 1, wram->wTilemap));
+    // hlcoord(13, 3, wTilemap);
+    // CALL(aFunction89829);
+    Function89829(coord(13, 3, wram->wTilemap));
+    // CALL(aFunction899b2);
+    Function899b2();
+    // hlcoord(5, 5, wTilemap);
+    // CALL(aFunction899c9);
+    Function899c9(coord(5, 5, wram->wTilemap));
+    // LD_BC(wd008);
+    // hlcoord(2, 10, wTilemap);
+    // CALL(aFunction89975);
+    Function89975(wram->wd008, coord(2, 10, wram->wTilemap));
+    // RET;
 }
 
 void Function898aa(void){
@@ -1714,44 +1862,59 @@ void Function8994e(void){
 
 }
 
-void Function89962(void){
-    PUSH_BC;
-    LD_C(0x4);
-    LD_B(0x20);
+void Function89962(tile_t* hl){
+    // PUSH_BC;
+    // LD_C(0x4);
+    uint8_t c = 0x4;
+    // LD_B(0x20);
+    uint8_t b = 0x20;
 
-asm_89967:
-    LD_A_B;
-    LD_hl_A;
-    LD_A(0x4);
-    CALL(aFunction89215);
-    INC_HL;
-    INC_B;
-    DEC_C;
-    IF_NZ goto asm_89967;
-    POP_BC;
-    RET;
-
+    do {
+    // asm_89967:
+        // LD_A_B;
+        // LD_hl_A;
+        *hl = b;
+        // LD_A(0x4);
+        // CALL(aFunction89215);
+        Function89215(hl, 0x4);
+        // INC_HL;
+        hl++;
+        // INC_B;
+        b++;
+        // DEC_C;
+        // IF_NZ goto asm_89967;
+    } while(--c != 0);
+    // POP_BC;
+    // RET;
 }
 
-void Function89975(void){
-    PUSH_BC;
-    LD_E(0x8);
+void Function89975(tile_t* hl, const uint8_t* bc){
+    // PUSH_BC;
+    // LD_E(0x8);
+    uint8_t e = 0x8;
 
-asm_89978:
-    LD_A_bc;
-    LD_D_A;
-    CALL(aFunction8998b);
-    SWAP_D;
-    INC_HL;
-    LD_A_D;
-    CALL(aFunction8998b);
-    INC_BC;
-    INC_HL;
-    DEC_E;
-    IF_NZ goto asm_89978;
-    POP_BC;
-    RET;
-
+    do {
+    // asm_89978:
+        // LD_A_bc;
+        // LD_D_A;
+        uint8_t d = *bc;
+        // CALL(aFunction8998b);
+        Function8998b(hl + 0, d);
+        // SWAP_D;
+        d = (d << 4) | (d >> 4);
+        // INC_HL;
+        // LD_A_D;
+        // CALL(aFunction8998b);
+        Function8998b(hl + 1, d);
+        // INC_BC;
+        bc++;
+        // INC_HL;
+        hl += 2;
+        // DEC_E;
+        // IF_NZ goto asm_89978;
+    } while(--e != 0);
+    // POP_BC;
+    // RET;
 }
 
 void Function8998b(tile_t* hl, uint8_t a){
@@ -1777,66 +1940,73 @@ void Function8998b(tile_t* hl, uint8_t a){
     // RET;
 }
 
-void Function8999c(void){
-    LD_DE(wPlayerName);
-    CALL(aPlaceString);
-    INC_BC;
-    LD_H_B;
-    LD_L_C;
-    LD_DE(mString_899ac);
-    CALL(aPlaceString);
-    RET;
-
+void Function8999c(tile_t* hl){
+    // LD_DE(wPlayerName);
+    // CALL(aPlaceString);
+    struct TextPrintState st = {.de = wram->wPlayerName, .hl = hl};
+    PlaceString_Conv(&st, st.hl);
+    // INC_BC;
+    // LD_H_B;
+    // LD_L_C;
+    st.hl = ++st.bc;
+    // LD_DE(mString_899ac);
+    st.de = U82C(String_899ac);
+    // CALL(aPlaceString);
+    PlaceString_Conv(&st, st.hl);
+    // RET;
 }
 
-void String_899ac(void){
-    //db ['"の\u3000めいし@"'];
+const char String_899ac[] = "'S CARD@"; //db ['"の\u3000めいし@"'];
 
-    return Function899b2();
-}
-
+// Mobile_CardMenu_PrintPlayerName
 void Function899b2(void){
-    LD_BC(wPlayerName);
-    CALL(aFunction89346);
-    IF_C goto asm_899bf;
-    LD_DE(wPlayerName);
-    goto asm_899c2;
-
-asm_899bf:
-    LD_DE(mString_89116);
-
-asm_899c2:
-    hlcoord(6, 4, wTilemap);
-    CALL(aPlaceString);
-    RET;
-
+    // LD_BC(wPlayerName);
+    // CALL(aFunction89346);
+    // IF_C goto asm_899bf;
+    // LD_DE(wPlayerName);
+    // goto asm_899c2;
+    
+// asm_899bf:
+    // LD_DE(mString_89116);
+    
+// asm_899c2:
+    uint8_t* de = (Function89346(wram->wPlayerName) == NULL)? U82C(String_89116): wram->wPlayerName;
+    // hlcoord(6, 4, wTilemap);
+    // CALL(aPlaceString);
+    PlaceStringSimple(de, coord(6, 4, wram->wTilemap));
+    // RET;
 }
 
-void Function899c9(void){
-    LD_DE(wPlayerID);
-    LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 5);
-    CALL(aPrintNum);
-    RET;
-
+void Function899c9(tile_t* hl){
+    // LD_DE(wPlayerID);
+    // LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 5);
+    // CALL(aPrintNum);
+    PrintNum_Conv2(hl, &wram->wPlayerID, PRINTNUM_LEADINGZEROS | 2, 5);
+    // RET;
 }
 
 void Function899d3(void){
-    hlcoord(1, 4, wTilemap);
-    CALL(aFunction89753);
-    hlcoord(2, 5, wTilemap);
-    CALL(aFunction8975b);
-    hlcoord(1, 9, wTilemap);
-    CALL(aFunction89771);
-    hlcoord(1, 11, wTilemap);
-    CALL(aFunction8977a);
-    hlcoord(1, 5, wTilemap);
-    CALL(aFunction89797);
-    hlcoord(2, 4, wTilemap);
-    CALL(aFunction89962);
-    hlcoord(2, 9, wTilemap);
-    CALL(aFunction89915);
-    RET;
-
+    // hlcoord(1, 4, wTilemap);
+    // CALL(aFunction89753);
+    Function89753(coord(1, 4, wram->wTilemap));
+    // hlcoord(2, 5, wTilemap);
+    // CALL(aFunction8975b);
+    Function8975b(coord(2, 5, wram->wTilemap));
+    // hlcoord(1, 9, wTilemap);
+    // CALL(aFunction89771);
+    Function89771(coord(1, 9, wram->wTilemap));
+    // hlcoord(1, 11, wTilemap);
+    // CALL(aFunction8977a);
+    Function8977a(coord(1, 11, wram->wTilemap));
+    // hlcoord(1, 5, wTilemap);
+    // CALL(aFunction89797);
+    Function89797(coord(1, 5, wram->wTilemap));
+    // hlcoord(2, 4, wTilemap);
+    // CALL(aFunction89962);
+    Function89962(coord(2, 4, wram->wTilemap));
+    // hlcoord(2, 9, wTilemap);
+    // CALL(aFunction89915); // TODO: Convert Function89915
+    // RET;
 }
 
 void Function899fe(void){
@@ -1853,22 +2023,27 @@ void Function899fe(void){
 
 }
 
-void Function89a0c(void){
-    PUSH_HL;
-    CALL(aFunction89363);
-    POP_HL;
-    IF_C goto asm_89a1c;
-    LD_D_H;
-    LD_E_L;
-    FARCALL(aFunction11c08f);
-    RET;
+// Mobile_CardMenu_PrintEZChatMessage
+void Function89a0c(tile_t* hl, uint8_t* bc){
+    // PUSH_HL;
+    // CALL(aFunction89363);
+    uint8_t* hl2 = Function89363(bc);
+    // POP_HL;
+    // IF_C goto asm_89a1c;
+    if(hl2) {
+        // LD_D_H;
+        // LD_E_L;
+        // FARCALL(aFunction11c08f);
+        EZChat_RenderWords(hl, (const u8_pair_s*)bc);
+        // RET;
+        return;
+    }
 
-
-asm_89a1c:
-    LD_DE(mString_89153);
-    CALL(aPlaceString);
-    RET;
-
+// asm_89a1c:
+    // LD_DE(mString_89153);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(String_89153), hl);
+    // RET;
 }
 
 void Function89a23(void){
@@ -2089,14 +2264,19 @@ void Function89b1e(void){
 }
 
 void Function89b28(void){
-    CALL(aFunction891de);
-    CALL(aClearBGPalettes);
-    CALL(aFunction893e2);
-    CALL(aCall_ExitMenu);
-    CALL(aFunction891ab);
-    CALL(aSetPalettes);
-    RET;
-
+    // CALL(aFunction891de);
+    Function891de();
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
+    // CALL(aFunction893e2);
+    Function893e2();
+    // CALL(aCall_ExitMenu);
+    ExitMenu_Conv2();
+    // CALL(aFunction891ab);
+    Function891ab();
+    // CALL(aSetPalettes);
+    SetPalettes_Conv();
+    // RET;
 }
 
 void Function89b3b(tile_t* de, uint8_t b, uint8_t c){
@@ -2107,61 +2287,71 @@ void Function89b3b(tile_t* de, uint8_t b, uint8_t c){
     // RET;
 }
 
-void Function89b45(void){
+bool Function89b45(uint8_t** hl){
 // some sort of decoder?
 // BCD?
-    PUSH_HL;
-    PUSH_BC;
-    LD_C(0x10);
-    LD_E(0x0);
+    // PUSH_HL;
+    // PUSH_BC;
+    // LD_C(0x10);
+    uint8_t c = 0x10;
+    // LD_E(0x0);
+    uint8_t e = 0;
 
-loop:
-    LD_A_hli;
-    LD_B_A;
-    AND_A(0xf);
-    CP_A(10);
-    IF_C goto low_nybble_less_than_10;
-    LD_A_C;
-    CP_A(0xb);
-    IF_NC goto clear_carry;
-    goto set_carry;
+    do {
+    // loop:
+        // LD_A_hli;
+        // LD_B_A;
+        uint8_t b = *((*hl)++);
+        // AND_A(0xf);
+        // CP_A(10);
+        // IF_C goto low_nybble_less_than_10;
+        if((b & 0xf) >= 10) {
+            // LD_A_C;
+            // CP_A(0xb);
+            // IF_NC goto clear_carry;
+            // goto set_carry;
+            return c < 0xb;
+        }
 
+    // low_nybble_less_than_10:
+        // DEC_C;
+        --c;
+        // SWAP_B;
+        b = (b >> 4);
+        // INC_E;
+        e++;
+        // LD_A_B;
+        // AND_A(0xf);
+        // CP_A(10);
+        // IF_C goto high_nybble_less_than_10;
+        if((b & 0xf) >= 10) {
+            // LD_A_C;
+            // CP_A(0xb);
+            // IF_NC goto clear_carry;
+            // goto set_carry;
+            return c < 0xb;
+        }
 
-low_nybble_less_than_10:
-    DEC_C;
-    SWAP_B;
-    INC_E;
-    LD_A_B;
-    AND_A(0xf);
-    CP_A(10);
-    IF_C goto high_nybble_less_than_10;
-    LD_A_C;
-    CP_A(0xb);
-    IF_NC goto clear_carry;
-    goto set_carry;
+    // high_nybble_less_than_10:
+        // INC_E;
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(++e, --c != 0);
+    // DEC_E;
+    --e;
 
+// set_carry:
+    // SCF;
+    // goto finish;
+    return true;
 
-high_nybble_less_than_10:
-    INC_E;
-    DEC_C;
-    IF_NZ goto loop;
-    DEC_E;
+// clear_carry:
+    // AND_A_A;
 
-
-set_carry:
-    SCF;
-    goto finish;
-
-
-clear_carry:
-    AND_A_A;
-
-
-finish:
-    POP_BC;
-    POP_HL;
-    RET;
-
+// finish:
+    // POP_BC;
+    // POP_HL;
+    // RET;
 }
 
 void Function89b78(tile_t* hl, uint8_t e){
@@ -2309,11 +2499,11 @@ bool Function89c34(void){
     // PUSH_BC;
     // LD_A_addr(wd012);
     // LD_C_A;
-    uint8_t c = wram->wd012[0];
+    uint8_t c = wram->wd012;
     // INC_A;
     // AND_A(0xf);
     // LD_addr_A(wd012);
-    wram->wd012[0] = (c + 1) & 0xf;
+    wram->wd012 = (c + 1) & 0xf;
     // LD_A_C;
     // CP_A(0x8);
     // POP_BC;
@@ -2441,114 +2631,137 @@ got_row:
     RET;
 
 
-ScrollData0:
+// ScrollData0:
     //db ['0', '2', '0', '0'];
     //db ['1', '3', '0', '0'];
     //db ['2', '4', '0', '0'];
     //db ['3', '0', '0', '0'];
 
 
-ScrollData1:
+// ScrollData1:
     //db ['0', '0', '0', '0'];
     //db ['0', '3', '0', '0'];
     //db ['2', '4', '0', '0'];
     //db ['3', '0', '0', '0'];
-
-    return Function89cdf();
 }
 
-void Function89cdf(void){
-    LD_A(0x10);
-    ADD_A_B;
-    LD_B_A;
-    LD_A(0x8);
-    ADD_A_C;
-    LD_C_A;
-    LD_E(0x2);
-    LD_A(0x2);
-    LD_HL(wVirtualOAMSprite00);
+void Function89cdf(uint8_t b, uint8_t c){
+    // LD_A(0x10);
+    // ADD_A_B;
+    // LD_B_A;
+    b += 0x10;
+    // LD_A(0x8);
+    // ADD_A_C;
+    // LD_C_A;
+    c += 0x8;
+    // LD_E(0x2);
+    uint8_t e = 2;
+    // LD_A(0x2);
+    uint8_t a = 2;
+    // LD_HL(wVirtualOAMSprite00);
+    struct SpriteOAM* hl = wram->wVirtualOAMSprite;
 
-asm_89cee:
-    PUSH_AF;
-    PUSH_BC;
-    LD_D(0x4);
+    do {
+    // asm_89cee:
+        // PUSH_AF;
+        // PUSH_BC;
+        // LD_D(0x4);
+        uint8_t d = 4;
 
-asm_89cf2:
-    LD_A_B;
-    LD_hli_A;  // y
-    LD_A_C;
-    LD_hli_A;  // x
-    LD_A_E;
-    LD_hli_A;  // tile id
-    LD_A(0x1);
-    LD_hli_A;  // attributes
-    LD_A(0x8);
-    ADD_A_C;
-    LD_C_A;
-    INC_E;
-    DEC_D;
-    IF_NZ goto asm_89cf2;
-    POP_BC;
-    LD_A(0x8);
-    ADD_A_B;
-    LD_B_A;
-    POP_AF;
-    DEC_A;
-    IF_NZ goto asm_89cee;
-    RET;
-
+        do {
+        // asm_89cf2:
+            // LD_A_B;
+            // LD_hli_A;  // y
+            hl->yCoord = b;
+            // LD_A_C;
+            // LD_hli_A;  // x
+            hl->xCoord = c;
+            // LD_A_E;
+            // LD_hli_A;  // tile id
+            hl->tileID = e;
+            // LD_A(0x1);
+            // LD_hli_A;  // attributes
+            hl->attributes = 0x1;
+            hl++;
+            // LD_A(0x8);
+            // ADD_A_C;
+            // LD_C_A;
+            c += 0x8;
+            // INC_E;
+            // DEC_D;
+            // IF_NZ goto asm_89cf2;
+        } while(e++, --d != 0);
+        // POP_BC;
+        // LD_A(0x8);
+        // ADD_A_B;
+        // LD_B_A;
+        b += 0x8;
+        // POP_AF;
+        // DEC_A;
+        // IF_NZ goto asm_89cee;
+    } while(--a != 0);
+    // RET;
 }
 
 void Function89d0d(void){
-    CALL(aMobile22_SetBGMapMode0);
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(0x5);
-    LDH_addr_A(rSVBK);
+    static const uint16_t Palette1[] = {
+        rgb(31, 31, 31),
+        rgb(19, 19, 19),
+        rgb(15, 15, 15),
+        rgb( 0,  0,  0),
+    };
+    static const uint16_t Palette2[] = {
+        rgb(31, 31, 31),
+        rgb(19, 19, 19),
+        rgb(19, 19, 19),
+        rgb( 0,  0,  0),
+    };
+    // CALL(aMobile22_SetBGMapMode0);
+    Mobile22_SetBGMapMode0();
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(0x5);
+    // LDH_addr_A(rSVBK);
 
-    LD_C(8);
-    LD_DE(wBGPals1);
+    // LD_C(8);
+    uint8_t c = 8;
+    // LD_DE(wBGPals1);
+    uint8_t* de = wram->wBGPals1;
 
-loop:
-    PUSH_BC;
-    LD_HL(mFunction89d0d_Palette1);
-    LD_BC(1 * PALETTE_SIZE);
-    CALL(aCopyBytes);
-    POP_BC;
-    DEC_C;
-    IF_NZ goto loop;
+    do {
+    // loop:
+        // PUSH_BC;
+        // LD_HL(mFunction89d0d_Palette1);
+        // LD_BC(1 * PALETTE_SIZE);
+        // CALL(aCopyBytes);
+        CopyBytes_Conv2(de, Palette1, 1 * PALETTE_SIZE);
+        de += 1 * PALETTE_SIZE;
+        // POP_BC;
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(--c != 0);
 
-    LD_HL(mFunction89d0d_Palette2);
-    LD_DE(wBGPals1 + 2 * PALETTE_SIZE);
-    LD_BC(1 * PALETTE_SIZE);
-    CALL(aCopyBytes);
+    // LD_HL(mFunction89d0d_Palette2);
+    // LD_DE(wBGPals1 + 2 * PALETTE_SIZE);
+    // LD_BC(1 * PALETTE_SIZE);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(de, Palette2, 1 * PALETTE_SIZE);
 
-    POP_AF;
-    LDH_addr_A(rSVBK);
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
 
-    CALL(aSetPalettes);
-    FARCALL(aPrintMail);
-    CALL(aMobile22_SetBGMapMode1);
-    LD_C(24);
-    CALL(aDelayFrames);
-    CALL(aRestartMapMusic);
-    RET;
-
-
-Palette1:
-    //rgb ['31', '31', '31']
-    //rgb ['19', '19', '19']
-    //rgb ['15', '15', '15']
-    //rgb ['00', '00', '00']
-
-
-Palette2:
-    //rgb ['31', '31', '31']
-    //rgb ['19', '19', '19']
-    //rgb ['19', '19', '19']
-    //rgb ['00', '00', '00']
-
-    return Function89d5e();
+    // CALL(aSetPalettes);
+    SetPalettes_Conv();
+    // FARCALL(aPrintMail);
+    PrintMail();
+    // CALL(aMobile22_SetBGMapMode1);
+    Mobile22_SetBGMapMode1();
+    // LD_C(24);
+    // CALL(aDelayFrames);
+    DelayFrames_Conv(24);
+    // CALL(aRestartMapMusic);
+    RestartMapMusic_Conv();
+    // RET;
 }
 
 void Function89d5e(void){
@@ -2640,443 +2853,575 @@ asm_89dd9:
 
 }
 
+// Mobile_CardMenu_Top?
 void Function89de0(void){
-    CALL(aClearSprites);
-    CALL(aFunction89e0a);
-    IF_C goto asm_89e00;
-    LD_C(0x1);
+    // CALL(aClearSprites);
+    ClearSprites_Conv();
+    // CALL(aFunction89e0a);
+    // IF_C goto asm_89e00;
+    if(!Function89e0a()) {
+        // LD_C(0x1);
+        uint8_t c = 0x1;
+        uint8_t e;
 
-asm_89dea:
-    CALL(aFunction8a31c);
-    IF_Z goto asm_89dfd;
-    LD_A_addr(wMenuCursorY);
-    LD_C_A;
-    PUSH_BC;
-    LD_HL(mJumptable_89e04);
-    LD_A_E;
-    DEC_A;
-    RST(aJumpTable);
-    POP_BC;
-    goto asm_89dea;
+        while((e = Function8a31c(c), e != 0)) {
+        // asm_89dea:
+            // CALL(aFunction8a31c);
+            // IF_Z goto asm_89dfd;
+            // LD_A_addr(wMenuCursorY);
+            // LD_C_A;
+            c = wram->wMenuCursorY;
+            // PUSH_BC;
+            // LD_HL(mJumptable_89e04);
+            // LD_A_E;
+            // DEC_A;
+            // RST(aJumpTable);
+            // Jumptable_89e04(e - 1);
+            // POP_BC;
+            // goto asm_89dea;
+        }
 
-asm_89dfd:
-    CALL(aFunction891fe);
+    // asm_89dfd:
+        // CALL(aFunction891fe);
+        Function891fe();
+    }
 
-asm_89e00:
-    CALL(aFunction8917a);
-    RET;
-
+// asm_89e00:
+    // CALL(aFunction8917a);
+    Function8917a();
+    // RET;
 }
 
-void Jumptable_89e04(void){
-    //dw ['Function8a62c'];
-    //dw ['Function8a999'];
-    //dw ['Function8ab93'];
-
-    return Function89e0a();
+void Jumptable_89e04(uint8_t a){
+    switch(a) {
+        case 0: return Function8a62c();
+        case 1: return Function8a999();
+        case 2: return Function8ab93();
+    }
 }
 
-void Function89e0a(void){
-    CALL(aOpenSRAMBank4);
-    CALL(aFunction8b3b0);
-    CALL(aCloseSRAM);
-    LD_HL(mJumptable_89e18);
-    RST(aJumpTable);
-    RET;
-
+bool Function89e0a(void){
+    // CALL(aOpenSRAMBank4);
+    OpenSRAMBank4();
+    // CALL(aFunction8b3b0);
+    u8_flag_s res = Function8b3b0();
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // LD_HL(mJumptable_89e18);
+    // RST(aJumpTable);
+    // RET;
+    return Jumptable_89e18(res.a);
 }
 
-void Jumptable_89e18(void){
-    //dw ['Function89e1e'];
-    //dw ['Function8a116'];
-    //dw ['Function8a2aa'];
-
-    return Function89e1e();
+bool Jumptable_89e18(uint8_t a){
+    switch(a) {
+        default:
+        case 0: return Function89e1e();
+        //dw ['Function8a116'];
+        //dw ['Function8a2aa'];
+    }
 }
 
-void Function89e1e(void){
-    CALL(aOpenSRAMBank4);
-    LD_BC(0xa037);
-    CALL(aFunction8b36c);
-    CALL(aCloseSRAM);
-    XOR_A_A;
-    LD_addr_A(wd02d);
+bool Function89e1e(void){
+    // CALL(aOpenSRAMBank4);
+    OpenSRAMBank4();
+    // LD_BC(0xa037);
+    // CALL(aFunction8b36c);
+    Function8b36c(GBToRAMAddr(s4_a037));
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // XOR_A_A;
+    // LD_addr_A(wd02d);
+    wram->wd02d = 0;
 
     return asm_89e2e();
 }
 
-void asm_89e2e(void){
-    LD_A_addr(wd02d);
-    LD_HL(mJumptable_89e3c);
-    RST(aJumpTable);
-    RET;
-
+bool asm_89e2e(void){
+    // LD_A_addr(wd02d);
+    // LD_HL(mJumptable_89e3c);
+    // RST(aJumpTable);
+    // RET;
+    return Jumptable_89e3c();
 }
 
 void Function89e36(void){
-    LD_HL(wd02d);
-    INC_hl;
-    JR(masm_89e2e);
-
+    // LD_HL(wd02d);
+    // INC_hl;
+    wram->wd02d++;
+    // JR(masm_89e2e);
 }
 
-void Jumptable_89e3c(void){
-    //dw ['Function89e6f'];
-    //dw ['Function89fed'];
-    //dw ['Function89ff6'];
-    //dw ['Function8a03d'];
-    //dw ['Function89eb9'];
-    //dw ['Function89efd'];
-    //dw ['Function89fce'];
-    //dw ['Function8a04c'];
-    //dw ['Function8a055'];
-    //dw ['Function8a0e6'];
-    //dw ['Function8a0ec'];
-    //dw ['Function8a0f5'];
-    //dw ['Function89e58'];
-    //dw ['Function89e68'];
-
-    return Function89e58();
+bool Jumptable_89e3c(void){
+    while(1) {
+        switch(wram->wd02d) {
+            case  0: Function89e6f(); continue;
+            case  1: Function89fed(); continue;
+            case  2: Function89ff6(); continue;
+            case  3: Function8a03d(); continue;
+            case  4: Function89eb9(); continue;
+            case  5: Function89efd(); continue;
+            case  6: Function89fce(); continue;
+            case  7: Function8a04c(); continue;
+            //dw ['Function8a055'];
+            //dw ['Function8a0e6'];
+            case 10: Function8a0ec(); continue;
+            //dw ['Function8a0f5'];
+            case 12: return Function89e58();
+            case 13: return Function89e68();
+        }
+    }
 }
 
-void Function89e58(void){
-    LD_A(0x1);
-    CALL(aFunction8a2fe);
-    CALL(aFunction891fe);
-    CALL(aFunction893e2);
-    CALL(aFunction89168);
-    AND_A_A;
-    RET;
-
+bool Function89e58(void){
+    // LD_A(0x1);
+    // CALL(aFunction8a2fe);
+    Function8a2fe(0x1);
+    // CALL(aFunction891fe);
+    Function891fe();
+    // CALL(aFunction893e2);
+    Function893e2();
+    // CALL(aFunction89168);
+    Function89168();
+    // AND_A_A;
+    // RET;
+    return false;
 }
 
-void Function89e68(void){
-    CALL(aFunction891fe);
-    LD_A(0x1);
-    SCF;
-    RET;
-
+bool Function89e68(void){
+    // CALL(aFunction891fe);
+    Function891fe();
+    // LD_A(0x1);
+    // SCF;
+    // RET;
+    return true;
 }
 
 void Function89e6f(void){
-    CALL(aFunction891de);
-    CALL(aFunction89245);
-    CALL(aFunction89ee1);
-    CALL(aFunction89e9a);
-    hlcoord(7, 4, wTilemap);
-    CALL(aFunction8a58d);
-    LD_A(0x5);
-    hlcoord(7, 4, wAttrmap);
-    CALL(aFunction8a5a3);
-    LD_A(0x6);
-    hlcoord(10, 4, wAttrmap);
-    CALL(aFunction8a5a3);
-    CALL(aFunction891ab);
-    CALL(aSetPalettes);
-    JP(mFunction89e36);
-
+    // CALL(aFunction891de);
+    Function891de();
+    // CALL(aFunction89245);
+    Function89245();
+    // CALL(aFunction89ee1);
+    Function89ee1();
+    // CALL(aFunction89e9a);
+    Function89e9a();
+    // hlcoord(7, 4, wTilemap);
+    // CALL(aFunction8a58d);
+    Function8a58d(coord(7, 4, wram->wTilemap));
+    // LD_A(0x5);
+    // hlcoord(7, 4, wAttrmap);
+    // CALL(aFunction8a5a3);
+    Function8a5a3(coord(7, 4, wram->wAttrmap), 0x5);
+    // LD_A(0x6);
+    // hlcoord(10, 4, wAttrmap);
+    // CALL(aFunction8a5a3);
+    Function8a5a3(coord(10, 4, wram->wAttrmap), 0x6);
+    // CALL(aFunction891ab);
+    Function891ab();
+    // CALL(aSetPalettes);
+    SetPalettes_Conv();
+    // JP(mFunction89e36);
+    Function89e36();
 }
 
 void Function89e9a(void){
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(0x5);
-    LDH_addr_A(rSVBK);
-    LD_HL(mPalette_89eb1);
-    LD_DE(wBGPals1 + PALETTE_SIZE * 5);
-    LD_BC(1 * PALETTE_SIZE);
-    CALL(aCopyBytes);
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    RET;
-
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(0x5);
+    // LDH_addr_A(rSVBK);
+    // LD_HL(mPalette_89eb1);
+    // LD_DE(wBGPals1 + PALETTE_SIZE * 5);
+    // LD_BC(1 * PALETTE_SIZE);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wBGPals1 + PALETTE_SIZE * 5, Palette_89eb1, 1 * PALETTE_SIZE);
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // RET;
 }
 
-void Palette_89eb1(void){
-    //rgb ['31', '31', '31']
-    //rgb ['31', '31', '31']
-    //rgb ['27', '19', '00']
-    //rgb ['00', '00', '00']
-
-    return Function89eb9();
-}
+const uint16_t Palette_89eb1[] = {
+    rgb(31, 31, 31),
+    rgb(31, 31, 31),
+    rgb(27, 19,  0),
+    rgb( 0,  0,  0),
+};
 
 void Function89eb9(void){
-    CALL(aFunction891fe);
-    CALL(aFunction89ee1);
-    CALL(aFunction89e9a);
-    hlcoord(7, 4, wTilemap);
-    CALL(aFunction8a58d);
-    LD_A(0x5);
-    hlcoord(7, 4, wAttrmap);
-    CALL(aFunction8a5a3);
-    LD_A(0x6);
-    hlcoord(10, 4, wAttrmap);
-    CALL(aFunction8a5a3);
-    CALL(aFunction891ab);
-    CALL(aSetPalettes);
-    JP(mFunction89e36);
-
+    // CALL(aFunction891fe);
+    Function891fe();
+    // CALL(aFunction89ee1);
+    Function89ee1();
+    // CALL(aFunction89e9a);
+    Function89e9a();
+    // hlcoord(7, 4, wTilemap);
+    // CALL(aFunction8a58d);
+    Function8a58d(coord(7, 4, wram->wTilemap));
+    // LD_A(0x5);
+    // hlcoord(7, 4, wAttrmap);
+    // CALL(aFunction8a5a3);
+    Function8a5a3(coord(7, 4, wram->wAttrmap), 0x5);
+    // LD_A(0x6);
+    // hlcoord(10, 4, wAttrmap);
+    // CALL(aFunction8a5a3);
+    Function8a5a3(coord(10, 4, wram->wAttrmap), 0x6);
+    // CALL(aFunction891ab);
+    Function891ab();
+    // CALL(aSetPalettes);
+    SetPalettes_Conv();
+    // JP(mFunction89e36);
+    Function89e36();
 }
 
 void Function89ee1(void){
-    CALL(aClearBGPalettes);
-    CALL(aFunction893e2);
-    CALL(aMobile22_SetBGMapMode0);
-    FARCALL(aFunction4a3a7);
-    FARCALL(aMG_Mobile_Layout_CreatePalBoxes);
-    hlcoord(1, 0, wTilemap);
-    CALL(aFunction8a53d);
-    RET;
-
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
+    // CALL(aFunction893e2);
+    Function893e2();
+    // CALL(aMobile22_SetBGMapMode0);
+    Mobile22_SetBGMapMode0();
+    // FARCALL(aFunction4a3a7);
+    Function4a3a7();
+    // FARCALL(aMG_Mobile_Layout_CreatePalBoxes);
+    MG_Mobile_Layout_CreatePalBoxes();
+    // hlcoord(1, 0, wTilemap);
+    // CALL(aFunction8a53d);
+    Function8a53d(coord(1, 0, wram->wTilemap));
+    // RET;
 }
 
 void Function89efd(void){
-    LD_HL(wd012);
-    LD_A(0xff);
-    LD_hli_A;
-    XOR_A_A;
-    for(int rept = 0; rept < 4; rept++){
-    LD_hli_A;
-    }
-    LD_hl_A;
+    // LD_HL(wd012);
+    // LD_A(0xff);
+    // LD_hli_A;
+    wram->wd012 = 0xff;
+    // XOR_A_A;
+    // for(int rept = 0; rept < 4; rept++){
+    // LD_hli_A;
+    // }
+    // LD_hl_A;
+    ByteFill_Conv2(wram->wd013, 5, 0);
 
 asm_89f09:
-    LD_HL(wd012);
-    INC_hl;
-    LD_A_hli;
-    AND_A(0x3);
-    IF_NZ goto asm_89f2e;
-    LD_A_hl;
-    CP_A(0x4);
-    IF_NC goto asm_89f2e;
-    LD_B(0x32);
-    INC_hl;
-    LD_A_hl;
-    DEC_A;
-    IF_Z goto asm_89f26;
-    LD_C_A;
+    // LD_HL(wd012);
+    // INC_hl;
+    // LD_A_hli;
+    // AND_A(0x3);
+    // IF_NZ goto asm_89f2e;
+    // LD_A_hl;
+    // CP_A(0x4);
+    // IF_NC goto asm_89f2e;
+    if(wram->wd012 == 0x3 && wram->wd013[0] < 0x4) {
+        // LD_B(0x32);
+        uint8_t b = 0x32;
+        // INC_hl;
+        // LD_A_hl;
+        // DEC_A;
+        uint8_t a = (++wram->wd013[0]) - 1;
+        // IF_Z goto asm_89f26;
+        if(a != 0) {
+            // LD_C_A;
 
-asm_89f1f:
-    LD_A(0xb);
-    ADD_A_B;
-    LD_B_A;
-    DEC_C;
-    IF_NZ goto asm_89f1f;
+            // do {
+            // asm_89f1f:
+                // LD_A(0xb);
+                // ADD_A_B;
+                // LD_B_A;
+                // DEC_C;
+                // IF_NZ goto asm_89f1f;
+            // } while(--c != 0);
+            b += (0xb * a);
+        }
 
-asm_89f26:
-    LD_C(0xe8);
-    LD_A_addr(wd013);
-    CALL(aFunction89fa5);
+    // asm_89f26:
+        // LD_C(0xe8);
+        // LD_A_addr(wd013);
+        // CALL(aFunction89fa5);
+        Function89fa5(wram->wd013[0], b, 0xe8);
+    }
 
-asm_89f2e:
-    LD_A_addr(wd013);
-    AND_A_A;
-    IF_Z goto asm_89f58;
+// asm_89f2e:
+    // LD_A_addr(wd013);
+    // AND_A_A;
+    uint8_t a = wram->wd013[0];
+    // IF_Z goto asm_89f58;
+    if(a != 0) {
+        do {
+        // asm_89f34:
+            uint8_t b, c;
+            // CALL(aFunction89f6a);
+            Function89f6a(a, &b, &c);
+            // LD_E_A;
+            // LD_A_C;
+            // CP_A(0xa8);
+            // IF_NC goto asm_89f4d;
+            // CP_A(0x46);
+            // IF_C goto asm_89f4d;
+            if(c < 0xa8 && c >= 0x46) {
+                // LD_D(0x0);
+                // DEC_E;
+                // LD_HL(wd014);
+                // ADD_HL_DE;
+                // SET_hl(0);
+                bit_set(wram->wd014[a - 1], 0);
+                // INC_E;
+                // goto asm_89f51;
+            }
+            else {
+            // asm_89f4d:
+                // LD_A(0x2);
+                // ADD_A_C;
+                // LD_C_A;
+                c += 0x2;
+            }
 
-asm_89f34:
-    CALL(aFunction89f6a);
-    LD_E_A;
-    LD_A_C;
-    CP_A(0xa8);
-    IF_NC goto asm_89f4d;
-    CP_A(0x46);
-    IF_C goto asm_89f4d;
-    LD_D(0x0);
-    DEC_E;
-    LD_HL(wd014);
-    ADD_HL_DE;
-    SET_hl(0);
-    INC_E;
-    goto asm_89f51;
+        // asm_89f51:
+            // LD_A_E;
+            // CALL(aFunction89f77);
+            Function89f77(a, b, c);
+            // DEC_A;
+            // IF_NZ goto asm_89f34;
+        } while(--a != 0);
+    }
 
-asm_89f4d:
-    LD_A(0x2);
-    ADD_A_C;
-    LD_C_A;
+// asm_89f58:
+    // CALL(aDelayFrame);
+    DelayFrame();
+    // LD_HL(wd014);
+    uint8_t* hl = wram->wd014;
+    // LD_C(0x4);
+    uint8_t c = 0x4;
 
-asm_89f51:
-    LD_A_E;
-    CALL(aFunction89f77);
-    DEC_A;
-    IF_NZ goto asm_89f34;
-
-asm_89f58:
-    CALL(aDelayFrame);
-    LD_HL(wd014);
-    LD_C(0x4);
-
-asm_89f60:
-    LD_A_hli;
-    AND_A_A;
-    IF_Z goto asm_89f09;
-    DEC_C;
-    IF_NZ goto asm_89f60;
-    JP(mFunction89e36);
-
+    do {
+    // asm_89f60:
+        // LD_A_hli;
+        // AND_A_A;
+        // IF_Z goto asm_89f09;
+        if(*(hl++) == 0)
+            goto asm_89f09;
+        // DEC_C;
+        // IF_NZ goto asm_89f60;
+    } while(--c != 0);
+    // JP(mFunction89e36);
+    Function89e36();
 }
 
-void Function89f6a(void){
-    PUSH_AF;
-    LD_DE(0x10);
-    CALL(aFunction89f9a);
-    LD_A_hli;
-    LD_B_A;
-    LD_A_hl;
-    LD_C_A;
-    POP_AF;
-    RET;
-
+void Function89f6a(uint8_t a, uint8_t* b, uint8_t* c){
+    // PUSH_AF;
+    // LD_DE(0x10);
+    // CALL(aFunction89f9a);
+    struct SpriteOAM* hl = Function89f9a(a, 0x10);
+    // LD_A_hli;
+    // LD_B_A;
+    *b = hl->yCoord;
+    // LD_A_hl;
+    // LD_C_A;
+    *c = hl->xCoord;
+    // POP_AF;
+    // RET;
 }
 
-void Function89f77(void){
-    PUSH_AF;
-    LD_DE(0x10);
-    CALL(aFunction89f9a);
-    LD_D(0x2);
+void Function89f77(uint8_t a, uint8_t b, uint8_t c){
+    // PUSH_AF;
+    // LD_DE(0x10);
+    // CALL(aFunction89f9a);
+    struct SpriteOAM* hl = Function89f9a(a, 0x10);
+    // LD_D(0x2);
+    uint8_t d = 0x2;
 
-asm_89f80:
-    PUSH_BC;
-    LD_E(0x2);
+    do {
+    // asm_89f80:
+        // PUSH_BC;
+        uint8_t c2 = c;
+        // LD_E(0x2);
+        uint8_t e = 0x2;
 
-asm_89f83:
-    LD_A_B;
-    LD_hli_A;
-    LD_A_C;
-    LD_hli_A;
-    INC_HL;
-    INC_HL;
-    LD_A(0x8);
-    ADD_A_C;
-    LD_C_A;
-    DEC_E;
-    IF_NZ goto asm_89f83;
-    POP_BC;
-    LD_A(0x8);
-    ADD_A_B;
-    LD_B_A;
-    DEC_D;
-    IF_NZ goto asm_89f80;
-    POP_AF;
-    RET;
-
+        do {
+        // asm_89f83:
+            // LD_A_B;
+            // LD_hli_A;
+            hl->yCoord = b;
+            // LD_A_C;
+            // LD_hli_A;
+            hl->xCoord = c;
+            // INC_HL;
+            // INC_HL;
+            hl++;
+            // LD_A(0x8);
+            // ADD_A_C;
+            // LD_C_A;
+            c2 += 0x8;
+            // DEC_E;
+            // IF_NZ goto asm_89f83;
+        } while(--e != 0);
+        // POP_BC;
+        // LD_A(0x8);
+        // ADD_A_B;
+        // LD_B_A;
+        b += 0x8;
+        // DEC_D;
+        // IF_NZ goto asm_89f80;
+    } while(--d != 0);
+    // POP_AF;
+    // RET;
 }
 
-void Function89f9a(void){
-    DEC_A;
-    LD_HL(wVirtualOAM);
-    AND_A_A;
-    RET_Z ;
+struct SpriteOAM* Function89f9a(uint8_t a, uint16_t de){
+    // DEC_A;
+    // LD_HL(wVirtualOAM);
+    // AND_A_A;
+    // RET_Z ;
 
-asm_89fa0:
-    ADD_HL_DE;
-    DEC_A;
-    IF_NZ goto asm_89fa0;
-    RET;
-
+// asm_89fa0:
+    // ADD_HL_DE;
+    // DEC_A;
+    // IF_NZ goto asm_89fa0;
+    // RET;
+    return wram->wVirtualOAMSprite + ((a - 1) * (de / sizeof(wram->wVirtualOAMSprite[0])));
 }
 
-void Function89fa5(void){
-    LD_DE(0x10);
-    CALL(aFunction89f9a);
-    LD_E(0x2);
-    LD_D(0xa);
+void Function89fa5(uint8_t a, uint8_t b, uint8_t c){
+    // LD_DE(0x10);
+    // CALL(aFunction89f9a);
+    struct SpriteOAM* hl = Function89f9a(a, 0x10);
+    // LD_E(0x2);
+    uint8_t e = 0x2;
+    // LD_D(0xa);
+    uint8_t d = 0xa;
 
-asm_89faf:
-    PUSH_BC;
-    LD_A(0x2);
+    do {
+    // asm_89faf:
+        // PUSH_BC;
+        uint8_t c2 = c;
+        // LD_A(0x2);
+        uint8_t a2 = 0x2;
 
-asm_89fb2:
-    PUSH_AF;
-    LD_A_B;
-    LD_hli_A;
-    LD_A_C;
-    LD_hli_A;
-    LD_A_D;
-    INC_D;
-    LD_hli_A;
-    LD_A(0x1);
-    LD_hli_A;
-    LD_A(0x8);
-    ADD_A_C;
-    LD_C_A;
-    POP_AF;
-    DEC_A;
-    IF_NZ goto asm_89fb2;
-    POP_BC;
-    LD_A(0x8);
-    ADD_A_B;
-    LD_B_A;
-    DEC_E;
-    IF_NZ goto asm_89faf;
-    RET;
-
+        do {
+        // asm_89fb2:
+            // PUSH_AF;
+            // LD_A_B;
+            // LD_hli_A;
+            hl->yCoord = b;
+            // LD_A_C;
+            // LD_hli_A;
+            hl->xCoord = c2;
+            // LD_A_D;
+            // INC_D;
+            // LD_hli_A;
+            hl->tileID = d++;
+            // LD_A(0x1);
+            // LD_hli_A;
+            hl->attributes = 0x1;
+            hl++;
+            // LD_A(0x8);
+            // ADD_A_C;
+            // LD_C_A;
+            c2 += 0x8;
+            // POP_AF;
+            // DEC_A;
+            // IF_NZ goto asm_89fb2;
+        } while(--a2 != 0);
+        // POP_BC;
+        // LD_A(0x8);
+        // ADD_A_B;
+        // LD_B_A;
+        b += 0x8;
+        // DEC_E;
+        // IF_NZ goto asm_89faf;
+    } while(--e != 0);
+    // RET;
 }
 
 void Function89fce(void){
-    CALL(aFunction8a5b6);
-    LD_A(0x5);
-    hlcoord(7, 4, wAttrmap);
-    CALL(aFunction8a5a3);
-    LD_A(0x6);
-    hlcoord(10, 4, wAttrmap);
-    CALL(aFunction8a5a3);
-    CALL(aFunction89448);
-    CALL(aSetPalettes);
-    CALL(aFunction891ab);
-    JP(mFunction89e36);
-
+    // CALL(aFunction8a5b6);
+    Function8a5b6();
+    // LD_A(0x5);
+    // hlcoord(7, 4, wAttrmap);
+    // CALL(aFunction8a5a3);
+    Function8a5a3(coord(7, 4, wram->wAttrmap), 0x5);
+    // LD_A(0x6);
+    // hlcoord(10, 4, wAttrmap);
+    // CALL(aFunction8a5a3);
+    Function8a5a3(coord(10, 4, wram->wAttrmap), 0x6);
+    // CALL(aFunction89448);
+    Function89448();
+    // CALL(aSetPalettes);
+    SetPalettes_Conv();
+    // CALL(aFunction891ab);
+    Function891ab();
+    // JP(mFunction89e36);
+    Function89e36(); // Goto the next function
 }
 
 void Function89fed(void){
-    LD_HL(mMobileCardFolderIntro1Text);
-    CALL(aPrintText);
-    JP(mFunction89e36);
-
+    // LD_HL(mMobileCardFolderIntro1Text);
+    // CALL(aPrintText);
+    PrintText_Conv2(MobileCardFolderIntro1Text);
+    // JP(mFunction89e36);
+    Function89e36(); // Goto the next function
 }
 
 void Function89ff6(void){
-    CALL(aFunction891fe);
-    CALL(aClearBGPalettes);
-    CALL(aFunction893cc);
-    CALL(aFunction89807);
-    CALL(aFunction89492);
-    CALL(aFunction894ca);
-    CALL(aOpenSRAMBank4);
-    LD_HL(0xa603);
-    LD_A(-1);
-    LD_BC(8);
-    CALL(aByteFill);
-    LD_HL(0xa603);
-    LD_DE(wd008);
-    CALL(aFunction89381);
-    CALL(aCloseSRAM);
-    CALL(aFunction8987f);
-    CALL(aOpenSRAMBank4);
-    hlcoord(1, 13, wTilemap);
-    LD_BC(0xa007);
-    CALL(aFunction89a0c);
-    CALL(aCloseSRAM);
-    CALL(aFunction891ab);
-    CALL(aMobile22_PromptButton);
-    JP(mFunction89e36);
-
+    // CALL(aFunction891fe);
+    Function891fe();
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
+    // CALL(aFunction893cc);
+    Function893cc();
+    // CALL(aFunction89807);
+    Function89807();
+    // CALL(aFunction89492);
+    // CALL(aFunction894ca);
+    Function894ca(Function89492());
+    // CALL(aOpenSRAMBank4);
+    OpenSRAMBank4();
+    // LD_HL(0xa603);
+    // LD_A(-1);
+    // LD_BC(8);
+    // CALL(aByteFill);
+    ByteFill_Conv2(GBToRAMAddr(s4_a603), 8, 0xff);
+    // LD_HL(0xa603);
+    // LD_DE(wd008);
+    // CALL(aFunction89381);
+    Function89381(wram->wd008, GBToRAMAddr(s4_a603));
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // CALL(aFunction8987f);
+    Function8987f();
+    // CALL(aOpenSRAMBank4);
+    OpenSRAMBank4();
+    // hlcoord(1, 13, wTilemap);
+    // LD_BC(0xa007);
+    // CALL(aFunction89a0c);
+    Function89a0c(coord(1, 13, wram->wTilemap), GBToRAMAddr(s4_a007));
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // CALL(aFunction891ab);
+    Function891ab();
+    // CALL(aMobile22_PromptButton);
+    Mobile22_PromptButton();
+    // JP(mFunction89e36);
+    Function89e36();
 }
 
 void Function8a03d(void){
-    LD_HL(mMobileCardFolderIntro2Text);
-    CALL(aMobile_EnableSpriteUpdates);
-    CALL(aPrintText);
-    CALL(aMobile_DisableSpriteUpdates);
-    JP(mFunction89e36);
-
+    // LD_HL(mMobileCardFolderIntro2Text);
+    // CALL(aMobile_EnableSpriteUpdates);
+    Mobile_EnableSpriteUpdates();
+    // CALL(aPrintText);
+    PrintText_Conv2(MobileCardFolderIntro2Text);
+    // CALL(aMobile_DisableSpriteUpdates);
+    Mobile_DisableSpriteUpdates();
+    // JP(mFunction89e36);
+    Function89e36();
 }
 
 void Function8a04c(void){
-    LD_HL(mMobileCardFolderIntro3Text);
-    CALL(aPrintText);
-    JP(mFunction89e36);
-
+    // LD_HL(mMobileCardFolderIntro3Text);
+    // CALL(aPrintText);
+    PrintText_Conv2(MobileCardFolderIntro3Text);
+    // JP(mFunction89e36);
+    Function89e36();
 }
 
 void Function8a055(void){
@@ -3192,10 +3537,11 @@ void Function8a0e6(void){
 }
 
 void Function8a0ec(void){
-    LD_HL(mMobileCardFolderIntro4Text);
-    CALL(aPrintText);
-    JP(mFunction89e36);
-
+    // LD_HL(mMobileCardFolderIntro4Text);
+    // CALL(aPrintText);
+    PrintText_Conv2(MobileCardFolderIntro4Text);
+    // JP(mFunction89e36);
+    Function89e36();
 }
 
 void Function8a0f5(void){
@@ -3212,42 +3558,37 @@ void Function8a0ff(void){
 
 }
 
-void MobileCardFolderIntro1Text(void){
-    //text_far ['_MobileCardFolderIntro1Text']
-    //text_end ['?']
+const txt_cmd_s MobileCardFolderIntro1Text[] = {
+    text_far(v_MobileCardFolderIntro1Text)
+    text_end
+};
 
-    return MobileCardFolderIntro2Text();
-}
+const txt_cmd_s MobileCardFolderIntro2Text[] = {
+    text_far(v_MobileCardFolderIntro2Text)
+    text_end
+};
 
-void MobileCardFolderIntro2Text(void){
-    //text_far ['_MobileCardFolderIntro2Text']
-    //text_end ['?']
+const txt_cmd_s MobileCardFolderIntro3Text[] = {
+    text_far(v_MobileCardFolderIntro3Text)
+    text_end
+};
 
-    return MobileCardFolderIntro3Text();
-}
-
-void MobileCardFolderIntro3Text(void){
-    //text_far ['_MobileCardFolderIntro3Text']
-    //text_end ['?']
-
-    return MobileCardFolderIntro4Text();
-}
-
-void MobileCardFolderIntro4Text(void){
-    //text_far ['_MobileCardFolderIntro4Text']
-    //text_end ['?']
-
-    return Function8a116();
-}
+const txt_cmd_s MobileCardFolderIntro4Text[] = {
+    text_far(v_MobileCardFolderIntro4Text)
+    text_end
+};
 
 void Function8a116(void){
-    LD_A(0x1);
-    LD_addr_A(wd030);
-    LD_HL(mMenuHeader_0x8a176);
-    CALL(aLoadMenuHeader);
+    // LD_A(0x1);
+    // LD_addr_A(wd030);
+    wram->wd030[0] = 0x1;
+    // LD_HL(mMenuHeader_0x8a176);
+    // CALL(aLoadMenuHeader);
+    LoadMenuHeader_Conv2(&MenuHeader_0x8a176);
 
 asm_8a121:
-    CALL(aMobile22_SetBGMapMode0);
+    // CALL(aMobile22_SetBGMapMode0);
+    Mobile22_SetBGMapMode0();
     CALL(aFunction8a17b);
     IF_C goto asm_8a16b;
     LD_A_addr(wMenuCursorY);
@@ -3293,12 +3634,10 @@ asm_8a16b:
 
 }
 
-void MenuHeader_0x8a176(void){
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['14', '0', 'SCREEN_WIDTH - 1', '6'];
-
-    return Function8a17b();
-}
+const struct MenuHeader MenuHeader_0x8a176 = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(14, 0, SCREEN_WIDTH - 1, 6),
+};
 
 void Function8a17b(void){
     decoord(14, 0, wTilemap);
@@ -3528,333 +3867,410 @@ void MobileCardFolderAskOpenOldText(void){
 void MobileCardFolderAskDeleteOldText(void){
     //text_far ['_MobileCardFolderAskDeleteOldText']
     //text_end ['?']
-
-    return Function8a2fe();
 }
 
-void Function8a2fe(void){
-    CALL(aFunction8a313);
-    CALL(aFunction89305);
-    LD_HL(0xa603);
-    LD_BC(0x8);
-    LD_A(-1);
-    CALL(aByteFill);
-    CALL(aCloseSRAM);
-    RET;
-
+void Function8a2fe(uint8_t a){
+    // CALL(aFunction8a313);
+    Function8a313(a);
+    // CALL(aFunction89305);
+    Function89305();
+    // LD_HL(0xa603);
+    // LD_BC(0x8);
+    // LD_A(-1);
+    // CALL(aByteFill);
+    ByteFill_Conv2(GBToRAMAddr(s4_a603), 0x8, 0xff);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
 }
 
-void Function8a313(void){
-    LD_C_A;
-    CALL(aOpenSRAMBank4);
-    LD_A_C;
-    LD_addr_A(0xa60b);
-    RET;
-
+void Function8a313(uint8_t a){
+    // LD_C_A;
+    // CALL(aOpenSRAMBank4);
+    OpenSRAMBank4();
+    // LD_A_C;
+    // LD_addr_A(0xa60b);
+    gb_write(s4_a60b, a);
+    // RET;
 }
 
-void Function8a31c(void){
-    PUSH_BC;
-    CALL(aMobile22_SetBGMapMode0);
-    FARCALL(aFunction4a3a7);
-    FARCALL(aMG_Mobile_Layout_CreatePalBoxes);
-    hlcoord(1, 0, wTilemap);
-    CALL(aFunction8a53d);
-    hlcoord(12, 4, wTilemap);
-    CALL(aFunction8a58d);
-    CALL(aFunction8a3b2);
-    POP_BC;
-    LD_A_C;
-    LD_addr_A(wMenuCursorPosition);
-    LD_addr_A(wMenuSelection);
-    CALL(aPlaceVerticalMenuItems);
-    CALL(aInitVerticalMenuCursor);
-    LD_HL(w2DMenuFlags1);
-    SET_hl(7);
+uint8_t Function8a31c(uint8_t c){
+    // PUSH_BC;
+    // CALL(aMobile22_SetBGMapMode0);
+    Mobile22_SetBGMapMode0();
+    // FARCALL(aFunction4a3a7);
+    Function4a3a7();
+    // FARCALL(aMG_Mobile_Layout_CreatePalBoxes);
+    MG_Mobile_Layout_CreatePalBoxes();
+    // hlcoord(1, 0, wTilemap);
+    // CALL(aFunction8a53d);
+    Function8a53d(coord(1, 0, wram->wTilemap));
+    // hlcoord(12, 4, wTilemap);
+    // CALL(aFunction8a58d);
+    Function8a58d(coord(12, 4, wram->wTilemap));
+    // CALL(aFunction8a3b2);
+    Function8a3b2();
+    // POP_BC;
+    // LD_A_C;
+    // LD_addr_A(wMenuCursorPosition);
+    wram->wMenuCursorPosition = c;
+    // LD_addr_A(wMenuSelection);
+    wram->wMenuSelection = c;
+    // CALL(aPlaceVerticalMenuItems);
+    PlaceVerticalMenuItems_Conv2();
+    // CALL(aInitVerticalMenuCursor);
+    InitVerticalMenuCursor_Conv(GetMenuData());
+    // LD_HL(w2DMenuFlags1);
+    // SET_hl(7);
+    bit_set(wram->w2DMenuFlags1, 7);
+    u8_flag_s res;
 
-asm_8a34e:
-    CALL(aFunction8a3a2);
-    CALL(aMobile22_SetBGMapMode0);
-    CALL(aFunction8a453);
-    CALL(aFunction8a4d3);
-    CALL(aFunction8a4fc);
-    CALL(aFunction891ab);
-    CALL(aSetPalettes);
-    CALL(aFunction8a383);
-    IF_C goto asm_8a370;
-    IF_Z goto asm_8a34e;
+    do {
+    // asm_8a34e:
+        // CALL(aFunction8a3a2);
+        Function8a3a2();
+        // CALL(aMobile22_SetBGMapMode0);
+        Mobile22_SetBGMapMode0();
+        // CALL(aFunction8a453);
+        Function8a453();
+        // CALL(aFunction8a4d3);
+        Function8a4d3();
+        // CALL(aFunction8a4fc);
+        Function8a4fc();
+        // CALL(aFunction891ab);
+        Function891ab();
+        // CALL(aSetPalettes);
+        SetPalettes_Conv();
+        // CALL(aFunction8a383);
+        res = Function8a383();
+        // IF_C goto asm_8a370;
+        if(res.flag) {
+        // asm_8a370:
+            // CALL(aFunction89448);
+            Function89448();
+            // CALL(aPlaceHollowCursor);
+            PlaceHollowCursor_Conv();
+            // CALL(aFunction8a3a2);
+            Function8a3a2();
+            // LD_A_addr(wMenuSelection);
+            // CP_A(0xff);
+            // IF_Z goto asm_8a36a;
+            if(wram->wMenuSelection == 0xff)
+                break;
+            // LD_E_A;
+            // AND_A_A;
+            // RET;
+            return wram->wMenuSelection;
+        }
+        // IF_Z goto asm_8a34e;
+    } while(res.a == 0);
 
-asm_8a36a:
-    CALL(aFunction89448);
-    XOR_A_A;
-    LD_E_A;
-    RET;
-
-asm_8a370:
-    CALL(aFunction89448);
-    CALL(aPlaceHollowCursor);
-    CALL(aFunction8a3a2);
-    LD_A_addr(wMenuSelection);
-    CP_A(0xff);
-    IF_Z goto asm_8a36a;
-    LD_E_A;
-    AND_A_A;
-    RET;
-
+// asm_8a36a:
+    // CALL(aFunction89448);
+    Function89448();
+    // XOR_A_A;
+    // LD_E_A;
+    // RET;
+    return 0;
 }
 
-void Function8a383(void){
-    FARCALL(aMobileMenuJoypad);
-    LD_A_C;
-    LD_HL(wMenuJoypadFilter);
-    AND_A_hl;
-    RET_Z ;
-    BIT_A(0);
-    IF_NZ goto asm_8a399;
-    BIT_A(1);
-    IF_NZ goto asm_8a39e;
-    XOR_A_A;
-    RET;
-
-asm_8a399:
-    CALL(aPlayClickSFX);
-    SCF;
-    RET;
-
-asm_8a39e:
-    CALL(aPlayClickSFX);
-    RET;
-
+u8_flag_s Function8a383(void){
+    // FARCALL(aMobileMenuJoypad);
+    uint8_t c = MobileMenuJoypad_Conv() & wram->wMenuJoypadFilter;
+    // LD_A_C;
+    // LD_HL(wMenuJoypadFilter);
+    // AND_A_hl;
+    // RET_Z ;
+    if(c == 0)
+        return u8_flag(0, false);
+    // BIT_A(0);
+    // IF_NZ goto asm_8a399;
+    if(bit_test(c, A_BUTTON_F)) {
+    // asm_8a399:
+        // CALL(aPlayClickSFX);
+        PlayClickSFX_Conv();
+        // SCF;
+        // RET;
+        return u8_flag(1, true);
+    }
+    // BIT_A(1);
+    // IF_NZ goto asm_8a39e;
+    if(bit_test(c, B_BUTTON_F)) {
+    // asm_8a39e:
+        // CALL(aPlayClickSFX);
+        PlayClickSFX_Conv();
+        // RET;
+        return u8_flag(1, false);
+    }
+    // XOR_A_A;
+    // RET;
+    return u8_flag(0, false);
 }
 
+// Mobile22_GetCardMenuSelection
 void Function8a3a2(void){
-    LD_A_addr(wMenuCursorY);
-    DEC_A;
-    LD_HL(wd002);
-    LD_E_A;
-    LD_D(0);
-    ADD_HL_DE;
-    LD_A_hl;
-    LD_addr_A(wMenuSelection);
-    RET;
-
+    // LD_A_addr(wMenuCursorY);
+    // DEC_A;
+    // LD_HL(wd002);
+    // LD_E_A;
+    // LD_D(0);
+    // ADD_HL_DE;
+    // LD_A_hl;
+    // LD_addr_A(wMenuSelection);
+    wram->wMenuSelection = (&wram->wd002)[wram->wMenuCursorY - 1];
+    // RET;
 }
 
+// LoadCardFolderMenu
 void Function8a3b2(void){
-    LD_A(0x1);
-    LD_addr_A(wMenuSelection);
-    CALL(aFunction8a4fc);
-    CALL(aFunction8a3df);
-    IF_NC goto asm_8a3ce;
-    decoord(0, 2, wTilemap);
-    LD_B(0x6);
-    LD_C(0x9);
-    CALL(aFunction89b3b);
-    LD_HL(mMenuHeader_0x8a435);
-    goto asm_8a3db;
+    // LD_A(0x1);
+    // LD_addr_A(wMenuSelection);
+    wram->wMenuSelection = 0x1;
+    // CALL(aFunction8a4fc);
+    Function8a4fc();
+    // CALL(aFunction8a3df);
+    // IF_NC goto asm_8a3ce;
+    const struct MenuHeader* hl;
+    if(Function8a3df()) {
+        // decoord(0, 2, wTilemap);
+        // LD_B(0x6);
+        // LD_C(0x9);
+        // CALL(aFunction89b3b);
+        Function89b3b(coord(0, 2, wram->wTilemap), 0x6, 0x9);
+        // LD_HL(mMenuHeader_0x8a435);
+        hl = &MenuHeader_0x8a435;
+        // goto asm_8a3db;
+    }
+    else {
+    // asm_8a3ce:
+        // decoord(0, 2, wTilemap);
+        // LD_B(0x8);
+        // LD_C(0x9);
+        // CALL(aFunction89b3b);
+        Function89b3b(coord(0, 2, wram->wTilemap), 0x8, 0x9);
+        // LD_HL(mMenuHeader_0x8a40f);
+        hl = &MenuHeader_0x8a40f;
+    }
 
-asm_8a3ce:
-    decoord(0, 2, wTilemap);
-    LD_B(0x8);
-    LD_C(0x9);
-    CALL(aFunction89b3b);
-    LD_HL(mMenuHeader_0x8a40f);
-
-asm_8a3db:
-    CALL(aCopyMenuHeader);
-    RET;
-
+// asm_8a3db:
+    // CALL(aCopyMenuHeader);
+    CopyMenuHeader_Conv2(hl);
+    // RET;
 }
 
-void Function8a3df(void){
-    CALL(aOpenSRAMBank4);
-    LD_HL(0xa603);
-    CALL(aFunction89b45);
-    CALL(aCloseSRAM);
-    LD_HL(wd002);
-    IF_C goto asm_8a3f8;
-    LD_DE(mUnknown_8a408);
-    CALL(aFunction8a400);
-    SCF;
-    RET;
-
-asm_8a3f8:
-    LD_DE(mUnknown_8a40b);
-    CALL(aFunction8a400);
-    AND_A_A;
-    RET;
-
+bool Function8a3df(void){
+    // CALL(aOpenSRAMBank4);
+    OpenSRAMBank4();
+    // LD_HL(0xa603);
+    uint8_t* hl = GBToRAMAddr(s4_a603);
+    // CALL(aFunction89b45);
+    bool res = Function89b45(&hl);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // LD_HL(wd002);
+    // IF_C goto asm_8a3f8;
+    if(res) {
+    // asm_8a3f8:
+        // LD_DE(mUnknown_8a40b);
+        // CALL(aFunction8a400);
+        Function8a400(&wram->wd002, Unknown_8a40b);
+        // AND_A_A;
+        // RET;
+        return false;
+    }
+    else {
+        // LD_DE(mUnknown_8a408);
+        // CALL(aFunction8a400);
+        Function8a400(&wram->wd002, Unknown_8a408);
+        // SCF;
+        // RET;
+        return true;
+    }
 }
 
-void Function8a400(void){
-    LD_A_de;
-    INC_DE;
-    LD_hli_A;
-    CP_A(0xff);
-    JR_NZ (mFunction8a400);
-    RET;
-
+void Function8a400(uint8_t* hl, const uint8_t* de){
+    uint8_t a;
+    do {
+        // LD_A_de;
+        // INC_DE;
+        a = *(de++);
+        // LD_hli_A;
+        *(hl++) = a;
+        // CP_A(0xff);
+        // JR_NZ (mFunction8a400);
+    } while(a != 0xff);
+    // RET;
 }
 
-void Unknown_8a408(void){
-//db 1, 2, -1
-    return Unknown_8a40b();
-}
+const uint8_t Unknown_8a408[] = {1, 2, 0xff};
+const uint8_t Unknown_8a40b[] = {1, 2, 3, 0xff};
 
-void Unknown_8a40b(void){
-//db 1, 2, 3, -1
+// MenuHeader_CardFolderLayout
+const struct MenuHeader MenuHeader_0x8a40f = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(0, 2, 10, TEXTBOX_Y - 1),
+    .data = &MenuData_0x8a417,
+    .defaultOption = 1,  // default option
+};
 
-    return MenuHeader_0x8a40f();
-}
+const struct MenuData MenuData_0x8a417 = {
+    .flags = STATICMENU_CURSOR | STATICMENU_WRAP,  // flags
+    .verticalMenu = {
+        .count = 4,  // items
+        .options = (const char*[]) {
+            "Cards@",   //db ['"めいしりスト@"'];
+            "My Card@", //db ['"じぶんの\u3000めいし@"'];
+            "Trade@",   //db ['"めいしこうかん@"'];
+            "Cancel@"   //db ['"やめる@"'];
+        },
+    },
+};
 
-void MenuHeader_0x8a40f(void){
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['0', '2', '10', 'TEXTBOX_Y - 1'];
-    //dw ['MenuData_0x8a417'];
-    //db ['1'];  // default option
+// MenuHeader_CardFolderLayout2
+const struct MenuHeader MenuHeader_0x8a435 = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(0, 2, 10, 9),
+    .data = &MenuData_0x8a43d,
+    .defaultOption = 1,  // default option
+};
 
-    return MenuData_0x8a417();
-}
-
-void MenuData_0x8a417(void){
-    //db ['STATICMENU_CURSOR | STATICMENU_WRAP'];  // flags
-    //db ['4'];  // items
-    //db ['"めいしりスト@"'];
-    //db ['"じぶんの\u3000めいし@"'];
-    //db ['"めいしこうかん@"'];
-    //db ['"やめる@"'];
-
-    return MenuHeader_0x8a435();
-}
-
-void MenuHeader_0x8a435(void){
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['0', '2', '10', '9'];
-    //dw ['MenuData_0x8a43d'];
-    //db ['1'];  // default option
-
-    return MenuData_0x8a43d();
-}
-
-void MenuData_0x8a43d(void){
-    //db ['STATICMENU_CURSOR | STATICMENU_WRAP'];  // flags
-    //db ['3'];  // items
-    //db ['"めいしりスト@"'];
-    //db ['"じぶんの\u3000めいし@"'];
-    //db ['"やめる@"'];
-
-    return Function8a453();
-}
+const struct MenuData MenuData_0x8a43d = {
+    .flags = STATICMENU_CURSOR | STATICMENU_WRAP,  // flags
+    .verticalMenu = {
+        .count = 3,  // items
+        .options = (const char*[]) {
+            "Cards@",   //db ['"めいしりスト@"'];
+            "My Card@", //db ['"じぶんの\u3000めいし@"'];
+            "Cancel@"   //db ['"やめる@"'];
+        },
+    },
+};
 
 void Function8a453(void){
-    hlcoord(0, 12, wTilemap);
-    LD_B(0x4);
-    LD_C(0x12);
-    CALL(aTextbox);
-    hlcoord(1, 14, wTilemap);
-    LD_DE(mString_8a476);
-    LD_A_addr(wMenuSelection);
-    CP_A(0xff);
-    IF_Z goto asm_8a472;
-    LD_DE(mStrings_8a483);
-    DEC_A;
-    LD_C_A;
-    CALL(aFunction8919e);
+    // hlcoord(0, 12, wTilemap);
+    // LD_B(0x4);
+    // LD_C(0x12);
+    // CALL(aTextbox);
+    Textbox_Conv2(coord(0, 12, wram->wTilemap), 0x4, 0x12);
+    // hlcoord(1, 14, wTilemap);
+    // LD_DE(mString_8a476);
+    // LD_A_addr(wMenuSelection);
+    // CP_A(0xff);
+    // IF_Z goto asm_8a472;
+    if(wram->wMenuSelection == 0xff) {
+        PlaceStringSimple(U82C(String_8a476), coord(1, 14, wram->wTilemap));
+        return;
+    }
+    // LD_DE(mStrings_8a483);
+    // DEC_A;
+    // LD_C_A;
+    // CALL(aFunction8919e);
 
-asm_8a472:
-    CALL(aPlaceString);
-    RET;
-
+// asm_8a472:
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(Strings_8a483[wram->wMenuSelection - 1]), coord(1, 14, wram->wTilemap));
+    // RET;
 }
 
-void String_8a476(void){
-    //db ['"まえ<NO>がめん<NI>もどります@"'];
+const char String_8a476[] =
+            "Return to the"         //db ['"まえ<NO>がめん<NI>もどります@"'];
+    t_next  "previous screen.";
 
-    return Strings_8a483();
-}
+const char* const Strings_8a483[] = {
+            "Friends' CARDS"        //db ['"おともだち<NO>めいしは"'];
+    t_next  "are stored here.",    //next ['"ここ<NI>いれておきます@"']
 
-void Strings_8a483(void){
-    //db ['"おともだち<NO>めいしは"'];
-    //next ['"ここ<NI>いれておきます@"']
+            "Enter your number"     //db ['"でんわばんごう<WO>いれると"'];
+    t_next  "to trade CARDS.",     //next ['"めいしこうかん<GA>できます@"']
 
-    //db ['"でんわばんごう<WO>いれると"'];
-    //next ['"めいしこうかん<GA>できます@"']
-
-    //db ['"ともだちと\u3000じぶん<NO>めいしを"'];
-    //next ['"せきがいせんで\u3000こうかん\u3000します@"']
-
-    return Function8a4d3();
-}
+            "Trade CARDS with"      //db ['"ともだちと\u3000じぶん<NO>めいしを"'];
+    t_next  "friends via IR."      //next ['"せきがいせんで\u3000こうかん\u3000します@"']
+};
 
 void Function8a4d3(void){
-    LD_A_addr(wMenuSelection);
-    CP_A(0x1);
-    IF_NZ goto asm_8a4eb;
-    LD_A(0x5);
-    hlcoord(12, 4, wAttrmap);
-    CALL(aFunction8a5a3);
-    LD_A(0x7);
-    hlcoord(15, 4, wAttrmap);
-    CALL(aFunction8a5a3);
-    RET;
-
-asm_8a4eb:
-    LD_A(0x7);
-    hlcoord(12, 4, wAttrmap);
-    CALL(aFunction8a5a3);
-    LD_A(0x6);
-    hlcoord(15, 4, wAttrmap);
-    CALL(aFunction8a5a3);
-    RET;
-
+    // LD_A_addr(wMenuSelection);
+    // CP_A(0x1);
+    // IF_NZ goto asm_8a4eb;
+    if(wram->wMenuSelection == 0x1) {
+        // LD_A(0x5);
+        // hlcoord(12, 4, wAttrmap);
+        // CALL(aFunction8a5a3);
+        Function8a5a3(coord(12, 4, wram->wAttrmap), 0x5);
+        // LD_A(0x7);
+        // hlcoord(15, 4, wAttrmap);
+        // CALL(aFunction8a5a3);
+        Function8a5a3(coord(15, 4, wram->wAttrmap), 0x7);
+        // RET;
+    }
+    else {
+    // asm_8a4eb:
+        // LD_A(0x7);
+        // hlcoord(12, 4, wAttrmap);
+        // CALL(aFunction8a5a3);
+        Function8a5a3(coord(12, 4, wram->wAttrmap), 0x7);
+        // LD_A(0x6);
+        // hlcoord(15, 4, wAttrmap);
+        // CALL(aFunction8a5a3);
+        Function8a5a3(coord(15, 4, wram->wAttrmap), 0x6);
+        // RET;
+    }
 }
 
 void Function8a4fc(void){
-    LD_A_addr(wMenuSelection);
-    CP_A(0x3);
-    JR_NZ (masm_8a529);
-    LD_HL(wd012);
-    LD_A_hli;
-    LD_B_A;
-    LD_A_hld;
-    ADD_A_B;
-    LD_hl_A;
-    LD_B_A;
-    LD_C(0x80);
-    CALL(aFunction89cdf);
-    CALL(aFunction8a515);
-    RET;
-
+    // LD_A_addr(wMenuSelection);
+    // CP_A(0x3);
+    // JR_NZ (masm_8a529);
+    if(wram->wMenuSelection != 0x3)
+        return asm_8a529();
+    // LD_HL(wd012);
+    // LD_A_hli;
+    // LD_B_A;
+    // LD_A_hld;
+    // ADD_A_B;
+    // LD_hl_A;
+    wram->wd012 = (wram->wd012 + wram->wd013[0]);
+    // LD_B_A;
+    // LD_C(0x80);
+    // CALL(aFunction89cdf);
+    Function89cdf(wram->wd012, 0x80);
+    // CALL(aFunction8a515);
+    Function8a515();
+    // RET;
 }
 
 void Function8a515(void){
-    LD_HL(wd012);
-    LD_A_hl;
-    CP_A(0x38);
-    IF_C goto asm_8a520;
-    CP_A(0x3c);
-    RET_C ;
+    // LD_HL(wd012);
+    // LD_A_hl;
+    // CP_A(0x38);
+    // IF_C goto asm_8a520;
+    // CP_A(0x3c);
+    // RET_C ;
+    if(wram->wd012 >= 0x38 && wram->wd012 < 0x3c)
+        return;
 
-asm_8a520:
-    LD_A_addr(wd013);
-    CPL;
-    INC_A;
-    LD_addr_A(wd013);
-    RET;
-
+// asm_8a520:
+    // LD_A_addr(wd013);
+    // CPL;
+    // INC_A;
+    // LD_addr_A(wd013);
+    wram->wd013[0] = -wram->wd013[0];
+    // RET;
 }
 
 void asm_8a529(void){
-    LD_HL(wd012);
-    LD_A(0x3c);
-    LD_hli_A;
-    LD_A(0xff);
-    LD_hli_A;
-    LD_HL(wVirtualOAM);
-    XOR_A_A;
-    LD_BC(8 * SPRITEOAMSTRUCT_LENGTH);
-    CALL(aByteFill);
-    RET;
+    // LD_HL(wd012);
+    // LD_A(0x3c);
+    // LD_hli_A;
+    wram->wd012 = 0x3c;
+    // LD_A(0xff);
+    // LD_hli_A;
+    wram->wd013[0] = 0xff;
+    // LD_HL(wVirtualOAM);
+    // XOR_A_A;
+    // LD_BC(8 * SPRITEOAMSTRUCT_LENGTH);
+    // CALL(aByteFill);
+    ByteFill_Conv2(wram->wVirtualOAMSprite, 8 * SPRITEOAMSTRUCT_LENGTH, 0);
+    // RET;
 
 }
 
@@ -4060,33 +4476,34 @@ const uint16_t Palette_8a605[] = {
     rgb(31, 31, 31),
 };
 
+// Mobile22_CopyOBPPals?
 void Function8a60d(void){
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(0x5);
-    LDH_addr_A(rSVBK);
-    LD_HL(mPalette_8a624);
-    LD_DE(wOBPals1);
-    LD_BC(1 * PALETTE_SIZE);
-    CALL(aCopyBytes);
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    RET;
-
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(0x5);
+    // LDH_addr_A(rSVBK);
+    // LD_HL(mPalette_8a624);
+    // LD_DE(wOBPals1);
+    // LD_BC(1 * PALETTE_SIZE);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wOBPals1, Palette_8a624, 1 * PALETTE_SIZE);
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // RET;
 }
 
-void Palette_8a624(void){
-    //rgb ['31', '31', '31']
-    //rgb ['31', '31', '31']
-    //rgb ['31', '31', '31']
-    //rgb ['00', '00', '00']
-
-    return Function8a62c();
-}
+const uint16_t Palette_8a624[] = {
+    rgb(31, 31, 31),
+    rgb(31, 31, 31),
+    rgb(31, 31, 31),
+    rgb( 0,  0,  0),
+};
 
 void Function8a62c(void){
-    CALL(aLoadStandardMenuHeader);
-    CALL(aFunction891fe);
+    // CALL(aLoadStandardMenuHeader);
+    LoadStandardMenuHeader_Conv();
+    // CALL(aFunction891fe);
+    Function891fe();
     XOR_A_A;
     CALL(aFunction8b94a);
     CALL(aFunction8b677);
@@ -4120,10 +4537,11 @@ asm_8a639:
     goto asm_8a639;
 
 asm_8a66a:
-    CALL(aFunction891fe);
-    CALL(aFunction89b28);
-    RET;
-
+    // CALL(aFunction891fe);
+    Function891fe();
+    // CALL(aFunction89b28);
+    Function89b28();
+    // RET;
 }
 
 void Jumptable_8a671(void){
@@ -4167,26 +4585,30 @@ asm_8a6a3:
 
 }
 
-void Jumptable_8a6bc(void){
-    //dw ['Function8a6c0'];
-    //dw ['Function8a6c5'];
-
-    return Function8a6c0();
+bool Jumptable_8a6bc(uint8_t a){
+    switch(a) {
+        default:
+        case 0: return Function8a6c0();
+        case 1: return Function8a6c5();
+    }
 }
 
-void Function8a6c0(void){
-    CALL(aPlayClickSFX);
-    AND_A_A;
-    RET;
-
+bool Function8a6c0(void){
+    // CALL(aPlayClickSFX);
+    PlayClickSFX_Conv();
+    // AND_A_A;
+    // RET;
+    return false;
 }
 
-void Function8a6c5(void){
-    CALL(aPlayClickSFX);
-    CALL(aFunction89d0d);
-    SCF;
-    RET;
-
+bool Function8a6c5(void){
+    // CALL(aPlayClickSFX);
+    PlayClickSFX_Conv();
+    // CALL(aFunction89d0d);
+    Function89d0d();
+    // SCF;
+    // RET;
+    return true;
 }
 
 void Function8a6cd(void){

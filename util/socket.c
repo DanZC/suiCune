@@ -210,3 +210,27 @@ SOCKET socket_connect(const char *host, const char *port)
     if (!info) return INVALID_SOCKET;
     return sock;
 }
+
+int resolve_host(const char* host, const char* port, struct sockaddr* addr) 
+{
+    struct addrinfo hints = {
+        .ai_family = AF_UNSPEC,
+        .ai_socktype = SOCK_STREAM,
+        .ai_protocol = IPPROTO_TCP
+    };
+    struct addrinfo *result;
+    int gai_errno = getaddrinfo(host, port, &hints, &result);
+    if (gai_errno) {
+#if defined(__unix__)
+        fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(gai_errno));
+#elif defined(_WIN32)
+        fprintf(stderr, "getaddrinfo: Error %d: ", gai_errno);
+        socket_perror(NULL);
+#endif
+        return 0;
+    }
+    struct addrinfo *info = result;
+    memcpy(addr, info->ai_addr, info->ai_addrlen);
+    freeaddrinfo(result);
+    return 1;
+}

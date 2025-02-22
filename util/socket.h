@@ -48,3 +48,4 @@ int socket_isconnected(SOCKET socket);
 int socket_wait(SOCKET *sockets, unsigned count, int delay);
 int socket_setblocking(SOCKET socket, int flag);
 SOCKET socket_connect(const char *host, const char *port);
+int resolve_host(const char *hostname, const char *port, struct sockaddr* addr);
