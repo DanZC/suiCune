@@ -230,6 +230,7 @@ void v_CopyTilemapAtOnce_Conv(void) {
     // LDH_A_addr(rLY);
     // CP_A(0x80 - 1);
     // IF_C goto wait2;
+    DelayFrame();
 
     hram->hMapAnims = map_anims;
     hram->hBGMapMode = bg_map_mode;

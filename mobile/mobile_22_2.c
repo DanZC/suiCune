@@ -1,6 +1,7 @@
 #include "../constants.h"
 #include "mobile_22_2.h"
 #include "mobile_22.h"
+#include "mobile_5e.h"
 #include "../home/copy.h"
 #include "../home/text.h"
 #include "../home/sram.h"
@@ -8,6 +9,8 @@
 #include "../home/menu.h"
 #include "../home/scrolling_menu.h"
 #include "../home/delay.h"
+#include "../home/tilemap.h"
+#include "../home/lcd.h"
 #include "../data/text/common.h"
 
 void Function8b342(void){
@@ -238,6 +241,7 @@ u8_flag_s Function8b3dd(uint8_t* bc, uint8_t* e){
             return u8_flag(0x0, true);
         }
         // INC_E;
+        ++*e;
         // LD_D(0);
         // CALL(aFunction8b385);
         Function8b385(bc, 0, *e);
@@ -352,6 +356,7 @@ u8_flag_s Function8b3dd(uint8_t* bc, uint8_t* e){
     return u8_flag(0, false);
 }
 
+// MobileCardMenu_EnterPasswordPrompt
 bool Function8b45c(uint8_t* bc){
     // CALL(aFunction8b36c);
     Function8b36c(bc);
@@ -571,111 +576,140 @@ uint8_t Function8b521(void){
 }
 
 void Function8b539(void){
-    LD_BC(wd017);
-    CALL(aFunction8b36c);
-    XOR_A_A;
-    LD_addr_A(wd012);
-    LD_addr_A(wd02e);
-    CALL(aFunction8b493);
-    CALL(aFunction8b4fd);
-    LD_E(0x0);
-    CALL(aFunction89c44);
-    CALL(aCGBOnly_CopyTilemapAtOnce);
-    RET;
-
+    // LD_BC(wd017);
+    // CALL(aFunction8b36c);
+    Function8b36c(wram->wd017);
+    // XOR_A_A;
+    // LD_addr_A(wd012);
+    wram->wd012 = 0;
+    // LD_addr_A(wd02e);
+    wram->wd02e[0] = 0;
+    // CALL(aFunction8b493);
+    Function8b493(wram->wd017);
+    // CALL(aFunction8b4fd);
+    uint8_t d, b, c;
+    Function8b4fd(&d, &b, &c);
+    // LD_E(0x0);
+    // CALL(aFunction89c44);
+    Function89c44(d, 0x0, b, c);
+    // CALL(aCGBOnly_CopyTilemapAtOnce);
+    CGBOnly_CopyTilemapAtOnce();
+    // RET;
 }
 
-void Function8b555(void){
-
-loop:
-    LD_HL(mEnterNewPasscodeText);
-    CALL(aPrintText);
-    LD_BC(wd017);
-    CALL(aFunction8b45c);
-    IF_C goto asm_8b5c8;
-    CALL(aFunction89448);
-    LD_BC(wd017);
-    CALL(aFunction8b493);
-    LD_BC(wd017);
-    CALL(aFunction8b664);
-    IF_NZ goto asm_8b57c;
-    LD_HL(mFourZerosInvalidText);
-    CALL(aPrintText);
-    goto loop;
-
-
-asm_8b57c:
-    LD_HL(mConfirmPasscodeText);
-    CALL(aPrintText);
-    LD_BC(wd013);
-    CALL(aFunction8b45c);
-    IF_C goto loop;
-    LD_BC(wd017);
-    LD_HL(wd013);
-    CALL(aFunction8b3a4);
-    IF_Z goto strings_equal;
-    CALL(aFunction89448);
-    LD_BC(wd013);
-    CALL(aFunction8b493);
-    LD_HL(mPasscodesNotSameText);
-    CALL(aPrintText);
-    goto asm_8b57c;
-
-
-strings_equal:
-    CALL(aOpenSRAMBank4);
-    LD_HL(wd013);
-    LD_DE(s4_a037);
-    LD_BC(0x4);
-    CALL(aCopyBytes);
-    CALL(aCloseSRAM);
-    CALL(aFunction89448);
-    LD_BC(wd013);
-    CALL(aFunction8b493);
-    LD_HL(mPasscodeSetText);
-    CALL(aPrintText);
-    AND_A_A;
-
-asm_8b5c8:
-    PUSH_AF;
-    CALL(aFunction89448);
-    POP_AF;
-    RET;
-
+bool Function8b555(void){
+    while(1) {
+    loop:
+        // LD_HL(mEnterNewPasscodeText);
+        // CALL(aPrintText);
+        PrintText_Conv2(EnterNewPasscodeText);
+        // LD_BC(wd017);
+        // CALL(aFunction8b45c);
+        // IF_C goto asm_8b5c8;
+        if(Function8b45c(wram->wd017)) {
+        // asm_8b5c8:
+            // PUSH_AF;
+            // CALL(aFunction89448);
+            Function89448();
+            // POP_AF;
+            // RET; 
+            return true;
+        }
+        // CALL(aFunction89448);
+        Function89448();
+        // LD_BC(wd017);
+        // CALL(aFunction8b493);
+        Function8b493(wram->wd017);
+        // LD_BC(wd017);
+        // CALL(aFunction8b664);
+        // IF_NZ goto asm_8b57c;
+        if(!Function8b664(wram->wd017)) {
+            while(1) {
+            // asm_8b57c:
+                // LD_HL(mConfirmPasscodeText);
+                // CALL(aPrintText);
+                PrintText_Conv2(ConfirmPasscodeText);
+                // LD_BC(wd013);
+                // CALL(aFunction8b45c);
+                // IF_C goto loop;
+                if(Function8b45c(wram->wd013))
+                    goto loop;
+                // LD_BC(wd017);
+                // LD_HL(wd013);
+                // CALL(aFunction8b3a4);
+                // IF_Z goto strings_equal;
+                if(Function8b3a4(wram->wd013, wram->wd017))
+                    break;
+                // CALL(aFunction89448);
+                Function89448();
+                // LD_BC(wd013);
+                // CALL(aFunction8b493);
+                Function8b493(wram->wd013);
+                // LD_HL(mPasscodesNotSameText);
+                // CALL(aPrintText);
+                PrintText_Conv2(PasscodesNotSameText);
+                // goto asm_8b57c;
+            }
+        
+        // strings_equal:
+            // CALL(aOpenSRAMBank4);
+            OpenSRAMBank4();
+            // LD_HL(wd013);
+            // LD_DE(s4_a037);
+            // LD_BC(0x4);
+            // CALL(aCopyBytes);
+            CopyBytes_Conv2(GBToRAMAddr(s4_a037), wram->wd013, 0x4);
+            // CALL(aCloseSRAM);
+            CloseSRAM_Conv();
+            // CALL(aFunction89448);
+            Function89448();
+            // LD_BC(wd013);
+            // CALL(aFunction8b493);
+            Function8b493(wram->wd013);
+            // LD_HL(mPasscodeSetText);
+            // CALL(aPrintText);
+            PrintText_Conv2(PasscodeSetText);
+            // AND_A_A;
+        
+        // asm_8b5c8:
+            // PUSH_AF;
+            // CALL(aFunction89448);
+            Function89448();
+            // POP_AF;
+            // RET;        
+            return false;
+        }
+        // LD_HL(mFourZerosInvalidText);
+        // CALL(aPrintText);
+        PrintText_Conv2(FourZerosInvalidText);
+        // goto loop;
+    }
 }
 
-void EnterNewPasscodeText(void){
-    //text_far ['_EnterNewPasscodeText']
-    //text_end ['?']
+const txt_cmd_s EnterNewPasscodeText[] = {
+    text_far(v_EnterNewPasscodeText)
+    text_end
+};
 
-    return ConfirmPasscodeText();
-}
+const txt_cmd_s ConfirmPasscodeText[] = {
+    text_far(v_ConfirmPasscodeText)
+    text_end
+};
 
-void ConfirmPasscodeText(void){
-    //text_far ['_ConfirmPasscodeText']
-    //text_end ['?']
+const txt_cmd_s PasscodesNotSameText[] = {
+    text_far(v_PasscodesNotSameText)
+    text_end
+};
 
-    return PasscodesNotSameText();
-}
+const txt_cmd_s PasscodeSetText[] = {
+    text_far(v_PasscodeSetText)
+    text_end
+};
 
-void PasscodesNotSameText(void){
-    //text_far ['_PasscodesNotSameText']
-    //text_end ['?']
-
-    return PasscodeSetText();
-}
-
-void PasscodeSetText(void){
-    //text_far ['_PasscodeSetText']
-    //text_end ['?']
-
-    return FourZerosInvalidText();
-}
-
-void FourZerosInvalidText(void){
-    //text_far ['_FourZerosInvalidText']
-    //text_end ['?']
-}
+const txt_cmd_s FourZerosInvalidText[] = {
+    text_far(v_FourZerosInvalidText)
+    text_end
+};
 
 // Mobile22_CardFolderPasswordCheck
 bool Function8b5e7(void){
@@ -780,104 +814,123 @@ const txt_cmd_s UnknownText_0x8b64c[] = {
     text_asm(UnknownText_0x8b64c_Function)
 };
 
-void Function8b664(void){
-    PUSH_BC;
-    LD_DE(0x4);
+bool Function8b664(uint8_t* bc){
+    // PUSH_BC;
+    // LD_DE(0x4);
+    uint8_t e = 0x4;
+    uint8_t d = 0;
 
-asm_8b668:
-    LD_A_bc;
-    CP_A(0x0);
-    IF_NZ goto asm_8b66e;
-    INC_D;
+    do {
+    // asm_8b668:
+        // LD_A_bc;
+        uint8_t a = *bc;
+        // CP_A(0x0);
+        // IF_NZ goto asm_8b66e;
+        if(a == 0) {
+            // INC_D;
+            d++;
+        }
 
-asm_8b66e:
-    INC_BC;
-    DEC_E;
-    IF_NZ goto asm_8b668;
-    POP_BC;
-    LD_A_D;
-    CP_A(0x4);
-    RET;
-
+    // asm_8b66e:
+        // INC_BC;
+        bc++;
+        // DEC_E;
+        // IF_NZ goto asm_8b668;
+    } while(--e != 0);
+    // POP_BC;
+    // LD_A_D;
+    // CP_A(0x4);
+    // RET;
+    return d == 0x4;
 }
 
 void Function8b677(void){
-    CALL(aClearBGPalettes);
-    CALL(aDisableLCD);
-    CALL(aFunction8b690);
-    CALL(aFunction8b6bb);
-    CALL(aFunction8b6ed);
-    CALL(aEnableLCD);
-    CALL(aFunction891ab);
-    CALL(aSetPalettes);
-    RET;
-
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
+    // CALL(aDisableLCD);
+    DisableLCD_Conv();
+    // CALL(aFunction8b690);
+    Function8b690();
+    // CALL(aFunction8b6bb);
+    Function8b6bb();
+    // CALL(aFunction8b6ed);
+    Function8b6ed();
+    // CALL(aEnableLCD);
+    EnableLCD_Conv();
+    // CALL(aFunction891ab);
+    Function891ab();
+    // CALL(aSetPalettes);
+    SetPalettes_Conv();
+    // RET;
 }
 
+// MobileCardFolder_LoadMobileCardListGFX
 void Function8b690(void){
-    LD_HL(mMobileCardListGFX);
-    LD_DE(vTiles2);
-    LD_BC(0x16 * LEN_2BPP_TILE);
-    LD_A(BANK(aMobileCardListGFX));
-    CALL(aFarCopyBytes);
-    LD_HL(mMobileCardListGFX + LEN_2BPP_TILE * 0x15);
-    LD_DE(vTiles2 + LEN_2BPP_TILE * 0x61);
-    LD_BC(1 * LEN_2BPP_TILE);
-    LD_A(BANK(aMobileCardListGFX));
-    CALL(aFarCopyBytes);
-    LD_HL(mMobileCardListGFX + LEN_2BPP_TILE * 0x16);
-    LD_DE(vTiles0 + LEN_2BPP_TILE * 0xee);
-    LD_BC(1 * LEN_2BPP_TILE);
-    LD_A(BANK(aMobileCardListGFX));
-    CALL(aFarCopyBytes);
-    RET;
-
+    // LD_HL(mMobileCardListGFX);
+    // LD_DE(vTiles2);
+    // LD_BC(0x16 * LEN_2BPP_TILE);
+    // LD_A(BANK(aMobileCardListGFX));
+    // CALL(aFarCopyBytes);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2, MobileCardListGFX, 0, 0x16);
+    // LD_HL(mMobileCardListGFX + LEN_2BPP_TILE * 0x15);
+    // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x61);
+    // LD_BC(1 * LEN_2BPP_TILE);
+    // LD_A(BANK(aMobileCardListGFX));
+    // CALL(aFarCopyBytes);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x61, MobileCardListGFX, 0x15, 1);
+    // LD_HL(mMobileCardListGFX + LEN_2BPP_TILE * 0x16);
+    // LD_DE(vTiles0 + LEN_2BPP_TILE * 0xee);
+    // LD_BC(1 * LEN_2BPP_TILE);
+    // LD_A(BANK(aMobileCardListGFX));
+    // CALL(aFarCopyBytes);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles0 + LEN_2BPP_TILE * 0xee, MobileCardListGFX, 0x16, 1);
+    // RET;
 }
 
 void Function8b6bb(void){
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(0x5);
-    LDH_addr_A(rSVBK);
-    LD_HL(mPalette_8b6d5);
-    LD_DE(wBGPals1);
-    LD_BC(3 * PALETTE_SIZE);
-    CALL(aCopyBytes);
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    CALL(aFunction8949c);
-    RET;
-
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(0x5);
+    // LDH_addr_A(rSVBK);
+    // LD_HL(mPalette_8b6d5);
+    // LD_DE(wBGPals1);
+    // LD_BC(3 * PALETTE_SIZE);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(wram->wBGPals1, Palette_8b6d5, 3 * PALETTE_SIZE);
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // CALL(aFunction8949c);
+    Function8949c();
+    // RET;
 }
 
-void Palette_8b6d5(void){
-    //rgb ['31', '31', '31']
-    //rgb ['31', '21', '00']
-    //rgb ['14', '07', '03']
-    //rgb ['00', '00', '00']
-    //rgb ['31', '31', '31']
-    //rgb ['31', '21', '00']
-    //rgb ['22', '09', '17']
-    //rgb ['00', '00', '00']
-    //rgb ['31', '31', '31']
-    //rgb ['31', '21', '00']
-    //rgb ['06', '24', '08']
-    //rgb ['00', '00', '00']
-
-    return Function8b6ed();
-}
+const uint16_t Palette_8b6d5[] = {
+    rgb(31, 31, 31),
+    rgb(31, 21,  0),
+    rgb(14,  7,  3),
+    rgb( 0,  0,  0),
+    rgb(31, 31, 31),
+    rgb(31, 21,  0),
+    rgb(22,  9, 17),
+    rgb( 0,  0,  0),
+    rgb(31, 31, 31),
+    rgb(31, 21,  0),
+    rgb( 6, 24,  8),
+    rgb( 0,  0,  0),
+};
 
 void Function8b6ed(void){
-    hlcoord(0, 0, wAttrmap);
-    LD_BC(0x012c);
-    XOR_A_A;
-    CALL(aByteFill);
-    hlcoord(0, 14, wAttrmap);
-    LD_BC(0x0050);
-    LD_A(0x7);
-    CALL(aByteFill);
-    RET;
-
+    // hlcoord(0, 0, wAttrmap);
+    // LD_BC(0x012c);
+    // XOR_A_A;
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(0, 0, wram->wAttrmap), SCREEN_WIDTH * 15, 0);
+    // hlcoord(0, 14, wAttrmap);
+    // LD_BC(0x0050);
+    // LD_A(0x7);
+    // CALL(aByteFill);
+    ByteFill_Conv2(coord(0, 14, wram->wAttrmap), SCREEN_WIDTH * 4, 0x7);
+    // RET;
 }
 
 void Function8b703(void){
@@ -1298,20 +1351,24 @@ void String_8b92a(void){
 
 void String_8b938(void){
 //db "いれる　ところを　えらんでください@"   //  Please select a location.
-
-    return Function8b94a();
 }
 
-void Function8b94a(void){
-    LD_addr_A(wd033);
-    XOR_A_A;
-    LD_addr_A(wMenuScrollPosition);
-    LD_addr_A(wd032);
-    LD_addr_A(wd0e3);
-    LD_addr_A(wd031);
-    LD_A(0x1);
-    LD_addr_A(wd030);
-    RET;
+void Function8b94a(uint8_t a){
+    // LD_addr_A(wd033);
+    wram->wd033[0] = a;
+    // XOR_A_A;
+    // LD_addr_A(wMenuScrollPosition);
+    wram->wMenuScrollPosition = 0;
+    // LD_addr_A(wd032);
+    wram->wd032[0] = 0;
+    // LD_addr_A(wd0e3);
+    wram->wd0e3 = 0;
+    // LD_addr_A(wd031);
+    wram->wd031[0] = 0;
+    // LD_A(0x1);
+    // LD_addr_A(wd030);
+    wram->wd030[0] = 0x1;
+    // RET;
 
 }
 
