@@ -523,43 +523,50 @@ uint8_t* Function8931b(void){
     return GBToRAMAddr(s4_a03b + 37 * (wram->wMenuSelection - 1));
 }
 
-void Function8932d(void){
-    LD_HL(0);
-    ADD_HL_BC;
+// Mobile22_CheckEmptyOrBlankPlayerNameInBC
+uint8_t* Function8932d(uint8_t* bc){
+    // LD_HL(0);
+    // ADD_HL_BC;
 
-    return Function89331();
+    return Function89331(bc);
 }
 
-void Function89331(void){
+// Mobile22_CheckEmptyOrBlankPlayerNameInHL
+uint8_t* Function89331(uint8_t* hl){
 //  Scans up to 5 characters starting at hl, looking for a nonspace character up to the next terminator.
 //  Sets carry if it does not find a nonspace character.
 //  Returns the location of the following character in hl.
-    PUSH_BC;
-    LD_C(NAME_LENGTH_JAPANESE - 1);
+    // PUSH_BC;
+    // LD_C(NAME_LENGTH_JAPANESE - 1);
+    uint8_t c = PLAYER_NAME_LENGTH - 1;
 
-loop:
-    LD_A_hli;
-    CP_A(0x50);
-    IF_Z goto terminator;
-    CP_A(0x7f);
-    IF_NZ goto nonspace;
-    DEC_C;
-    IF_NZ goto loop;
+    do {
+    // loop:
+        // LD_A_hli;
+        uint8_t a = *(hl++);
+        // CP_A(0x50);
+        // IF_Z goto terminator;
+        if(a == 0x50)
+            return NULL;
+        // CP_A(0x7f);
+        // IF_NZ goto nonspace;
+        if(a != 0x7f)
+            return hl;
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(--c != 0);
 
+// terminator:
+    // SCF;
+    // goto done;
 
-terminator:
-    SCF;
-    goto done;
+// nonspace:
+    // AND_A_A;
 
-
-nonspace:
-    AND_A_A;
-
-
-done:
-    POP_BC;
-    RET;
-
+// done:
+    // POP_BC;
+    // RET;
+    return NULL;
 }
 
 // StringSearchForNonWhitespace
@@ -571,17 +578,18 @@ const uint8_t* Function89346(const uint8_t* bc){
     return Function89346_incave(bc);
 }
 
-void Function8934a(void){
+const uint8_t* Function8934a(const uint8_t* bc){
     // LD_HL(NAME_LENGTH_JAPANESE);
     // ADD_HL_BC;
     // return v_incave();
+    return Function89346_incave(bc + NAME_LENGTH);
 }
 
 const uint8_t* Function89346_incave(const uint8_t* hl){
 //  Scans up to 5 characters starting at hl, looking for a nonspace character up to the next terminator.  Sets carry if it does not find a nonspace character.  Returns the location of the following character in hl.
     // PUSH_BC;
     // LD_C(NAME_LENGTH_JAPANESE - 1);
-    uint8_t c = NAME_LENGTH;
+    uint8_t c = NAME_LENGTH - 1;
 
     do {
     // loop:
@@ -3026,7 +3034,7 @@ void Function89de0(void){
             // LD_A_E;
             // DEC_A;
             // RST(aJumpTable);
-            // Jumptable_89e04(e - 1);
+            Jumptable_89e04(e - 1);
             // POP_BC;
             // goto asm_89dea;
         }
@@ -3045,7 +3053,7 @@ void Function89de0(void){
 void Jumptable_89e04(uint8_t a){
     switch(a) {
         case 0: return Function8a62c();
-        case 1: return Function8a999();
+        // case 1: return Function8a999();
         case 2: return Function8ab93();
     }
 }
@@ -4728,37 +4736,54 @@ void Function8a62c(void){
     // XOR_A_A;
     // CALL(aFunction8b94a);
     Function8b94a(0);
-    CALL(aFunction8b677);
+    // CALL(aFunction8b677);
+    Function8b677();
 
-asm_8a639:
-    XOR_A_A;
-    LD_addr_A(wd033);
-    LD_addr_A(wd032);
-    LD_addr_A(wd0e3);
-    CALL(aFunction8b7bd);
-    LD_A_C;
-    AND_A_A;
-    IF_Z goto asm_8a66a;
-    LD_addr_A(wMenuSelection);
-    LD_B_A;
-    LD_A_addr(wScrollingMenuCursorPosition);
-    INC_A;
-    LD_addr_A(wd034);
-    PUSH_BC;
-    CALL(aFunction8b960);
-    LD_A_C;
-    POP_BC;
-    IF_Z goto asm_8a639;
-    LD_C_A;
-    LD_HL(mJumptable_8a671);
-    LD_A_B;
-    LD_addr_A(wMenuSelection);
-    LD_A_C;
-    DEC_A;
-    RST(aJumpTable);
-    goto asm_8a639;
+    while(1) {
+    // asm_8a639:
+        // XOR_A_A;
+        // LD_addr_A(wd033);
+        wram->wd033[0] = 0;
+        // LD_addr_A(wd032);
+        wram->wd032[0] = 0;
+        // LD_addr_A(wd0e3);
+        wram->wd0e3 = 0;
+        // CALL(aFunction8b7bd);
+        uint8_t c = Function8b7bd();
+        // LD_A_C;
+        // AND_A_A;
+        // IF_Z goto asm_8a66a;
+        if(c == 0)
+            break;
+        // LD_addr_A(wMenuSelection);
+        wram->wMenuSelection = c;
+        // LD_B_A;
+        uint8_t b = c;
+        // LD_A_addr(wScrollingMenuCursorPosition);
+        // INC_A;
+        // LD_addr_A(wd034);
+        wram->wd034[0] = wram->wScrollingMenuCursorPosition + 1;
+        // PUSH_BC;
+        // CALL(aFunction8b960);
+        // LD_A_C;
+        uint8_t a = Function8b960();
+        // POP_BC;
+        // IF_Z goto asm_8a639;
+        if(a != 0) {
+            // LD_C_A;
+            // LD_HL(mJumptable_8a671);
+            // LD_A_B;
+            // LD_addr_A(wMenuSelection);
+            wram->wMenuSelection = b;
+            // LD_A_C;
+            // DEC_A;
+            // RST(aJumpTable);
+            // Jumptable_8a671(c - 1);
+        }
+        // goto asm_8a639;
+    }
 
-asm_8a66a:
+// asm_8a66a:
     // CALL(aFunction891fe);
     Function891fe();
     // CALL(aFunction89b28);
@@ -4766,13 +4791,13 @@ asm_8a66a:
     // RET;
 }
 
-void Jumptable_8a671(void){
-    //dw ['Function8a679'];
-    //dw ['Function8a6cd'];
-    //dw ['Function8a8c3'];
-    //dw ['Function8a930'];
-
-    return Function8a679();
+void Jumptable_8a671(uint8_t c){
+    switch(c) {
+        case 0: //dw ['Function8a679'];
+        case 1: //dw ['Function8a6cd'];
+        case 2: //dw ['Function8a8c3'];
+        case 3: //dw ['Function8a930'];
+    }
 }
 
 void Function8a679(void){
@@ -5511,14 +5536,19 @@ a_b_button:
 }
 
 void Function8ab93(void){
-    CALL(aClearBGPalettes);
-    CALL(aLoadStandardMenuHeader);
-    FARCALL(aDoNameCardSwap);
-    CALL(aClearSprites);
-    CALL(aFunction891fe);
-    CALL(aFunction89b28);
-    RET;
-
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
+    // CALL(aLoadStandardMenuHeader);
+    LoadStandardMenuHeader_Conv();
+    // FARCALL(aDoNameCardSwap);
+    //  TODO: Convert DoNameCardSwap
+    // CALL(aClearSprites);
+    ClearSprites_Conv();
+    // CALL(aFunction891fe);
+    Function891fe();
+    // CALL(aFunction89b28);
+    Function89b28();
+    // RET;
 }
 
 void Function8aba9(void){
