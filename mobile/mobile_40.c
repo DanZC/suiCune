@@ -4,6 +4,7 @@
 #include "mobile_12_2.h"
 #include "mobile_22.h"
 #include "mobile_45_sprite_engine.h"
+#include "mobile_5e.h"
 #include "mobile_5f.h"
 #include "../home/delay.h"
 #include "../home/copy.h"
@@ -6628,8 +6629,10 @@ bool Function1020a8(void){
     Function10209c();
     // LD_C(0x01);
     // LD_DE(wdc42);
-    // FARCALL(aFunction17a68f); // TODO: Convert Function17a68f
+    // FARCALL(aFunction17a68f);
     // RET_C ;
+    if(Function17a68f(wram->wdc42, 0x1))
+        return true;
     // CALL(aFunction10208e);
     Function10208e(wram->wdc42);
     // CALL(aFunction102068);

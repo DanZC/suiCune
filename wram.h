@@ -2191,467 +2191,483 @@ struct wram_s
                     };
                 };
             };
-            // More WRAM 1
-            struct {
-                // WRAMX
-                uint8_t wTMHMMoveNameBackup[MOVE_NAME_LENGTH];
-                uint8_t wStringBuffer1[STRING_BUFFER_LENGTH];
-                uint8_t wStringBuffer2[STRING_BUFFER_LENGTH];
-                uint8_t wStringBuffer3[STRING_BUFFER_LENGTH];
-                uint8_t wStringBuffer4[STRING_BUFFER_LENGTH];
-                uint8_t wStringBuffer5[STRING_BUFFER_LENGTH];
-                uint8_t wBattleMenuCursorPosition;
-                uint8_t skip_81[1];
-                uint8_t wCurBattleMon;
-                uint8_t wCurMoveNum;
-                uint8_t wLastPocket;
-                uint8_t wPCItemsCursor;
-                uint8_t wPartyMenuCursor;
-                uint8_t wItemsPocketCursor;
-                uint8_t wKeyItemsPocketCursor;
-                uint8_t wBallsPocketCursor;
-                uint8_t wTMHMPocketCursor;
-                uint8_t wPCItemsScrollPosition;
-                uint8_t skip_82[1];
-                uint8_t wItemsPocketScrollPosition;
-                uint8_t wKeyItemsPocketScrollPosition;
-                uint8_t wBallsPocketScrollPosition;
-                uint8_t wTMHMPocketScrollPosition;
-                union {
-                    uint8_t wSwitchMon;
-                    uint8_t wSwitchItem;
-                    uint8_t wSwappingMove;
-                    // mobile
-                    uint8_t wd0e3;
+            // Mobile WRAM 1
+            union {
+                struct {
+                    uint8_t wd066[0x20];
+                    uint8_t wd086;
+                    uint8_t wd087;
+                    uint8_t wd088;
+                    uint8_t wd089;
+                    uint8_t wd08a;
+                    uint8_t wd08b;
+                    uint8_t wd08c;
+                    uint8_t wd08d;
+                    uint8_t wd08e;
+                    uint8_t wd08f;
                 };
-                uint8_t wMenuScrollPosition;
-                uint8_t wMenuScrollPosition_skip[3];
-                uint8_t wQueuedScriptBank;
-                uint16_t wQueuedScriptAddr;
-                uint8_t wNumMoves;
-                union {
-                    uint8_t wFieldMoveSucceeded;
-                    uint8_t wItemEffectSucceeded;
-                    // 0 - use move
-                    // 1 - use item
-                    // 2 - switch
-                    uint8_t wBattlePlayerAction;
-                    uint8_t wSolvedUnownPuzzle;
-                };
-                // bit 0: overworld sprite updating on/off
-                // bit 1: something to do with sprite updates
-                // bit 6: something to do with text
-                // bit 7: on when surf initiates
-                //        flickers when climbing waterfall
-                uint8_t wVramState;
-                // WIN, LOSE, or DRAW
-                // bit 6: caught celebi
-                // bit 7: box full
-                uint8_t wBattleResult;
-                uint8_t wUsingItemWithSelect;
-                union {
-                    struct {
-                        // mart data
-                        uint8_t wCurMartCount;
-                        uint8_t wCurMartItems[15];
-                    };
-                    struct {
-                        // elevator data
-                        uint8_t wCurElevatorCount;
-                        uint8_t wCurElevatorFloors[15];
-                    };
-                    struct {
-                        // mailbox data
-                        uint8_t wCurMessageScrollPosition;
-                        uint8_t wCurMessageIndex;
-                        uint8_t wMailboxCount;
-                        uint8_t wMailboxItems[MAILBOX_CAPACITY];
-                    };
-                };
-                uint16_t wListPointer;
-                uint16_t wUnusedNamesPointer;
-                uint16_t wItemAttributesPointer;
-                uint8_t wCurItem;
-                union {
-                    uint8_t wCurItemQuantity;
-                    uint8_t wMartItemID;
-                };
-                uint8_t wCurPartySpecies;
-                // contains which monster in a party
-                // is being dealt with at the moment
-                // 0-5
-                uint8_t wCurPartyMon;
-                // 0: Enemy
-                // 1: Player
-                // 2: Party Menu
-                uint8_t wWhichHPBar;
-                // 0: Take from PC
-                // 1: Put into PC
-                // 2: Take from Day-Care
-                // 3: Put into Day-Care
-                uint8_t wPokemonWithdrawDepositParameter;
-                uint8_t wItemQuantityChange;
-                uint8_t wItemQuantity;
-                struct PartyMon wTempMon;
-                uint8_t wSpriteFlags;
-                uint8_t wHandlePlayerStep;
-                uint8_t skip_83[1];
-                uint8_t wPartyMenuActionText;
-                uint8_t wItemAttributeValue;
-                uint8_t wCurPartyLevel;
-                uint8_t wScrollingMenuListSize;
-                uint8_t skip_84[1];
-                // used when following a map warp
-                uint8_t wNextWarp;
-                uint8_t wNextMapGroup;
-                uint8_t wNextMapNumber;
-                uint8_t wPrevWarp;
-                uint8_t wPrevMapGroup;
-                uint8_t wPrevMapNumber;
-                uint8_t wPlayerBGMapOffsetX;
-                // used in FollowNotExact; unit is pixels
-                uint8_t wPlayerBGMapOffsetY;
-                // used in FollowNotExact; unit is pixels
-                // Player movement
-                uint8_t wPlayerStepVectorX;
-                uint8_t wPlayerStepVectorY;
-                uint8_t wPlayerStepFlags;
-                uint8_t wPlayerStepDirection;
-                uint16_t wBGMapAnchor;
-                union {
-                    struct {
-                        uint8_t wUsedSprites[SPRITE_GFX_LIST_CAPACITY * 2];
-                        //void wUsedSpritesEnd
-                    };
-                    struct {
-                        uint8_t skip_85[31];
-                        uint8_t wd173;
-                        // related to command queue type 3
-                    };
-                };
-                uint16_t wOverworldMapAnchor;
-                uint8_t wMetatileStandingY;
-                uint8_t wMetatileStandingX;
-                //union wMapPartial
-                union {
-                    uint8_t wMapPartial;
-                    uint8_t wMapAttributesBank;
-                };
-                uint8_t wMapTileset;
-                uint8_t wEnvironment;
-                uint16_t wMapAttributesPointer;
-                //union wMapPartialEnd
-                //union wMapAttributes
-                uint8_t wMapBorderBlock;
-                // width/height are in blocks (2x2 walkable tiles, 4x4 graphics tiles)
-                uint8_t wMapHeight;
-                uint8_t wMapWidth;
-                uint8_t wMapBlocksBank;
-                uint16_t wMapBlocksPointer;
-                uint8_t wMapScriptsBank;
-                uint16_t wMapScriptsPointer;
-                uint16_t wMapEventsPointer;
-                // bit set
-                uint8_t wMapConnections;
-                //union wMapAttributesEnd
-                struct MapConnection wNorthMapConnection;
-                struct MapConnection wSouthMapConnection;
-                struct MapConnection wWestMapConnection;
-                struct MapConnection wEastMapConnection;
-                //union wTileset
-                uint8_t wTilesetBank;
-                uint16_t wTilesetAddress;
-                uint8_t wTilesetBlocksBank;
-                uint16_t wTilesetBlocksAddress;
-                uint8_t wTilesetCollisionBank;
-                uint16_t wTilesetCollisionAddress;
-                uint16_t wTilesetAnim;
-                // bank 3f
-                uint8_t skip_86[2];
-                // unused
-                uint16_t wTilesetPalettes;
-                // bank 3f
-                //union wTilesetEnd
-                // assert
-                // wTilesetEnd
-                // -
-                // wTileset
-                // TILESET_LENGTH
-                uint8_t wEvolvableFlags[((PARTY_LENGTH) + 7) / 8];
-                uint8_t wForceEvolution;
-                union {
-                    struct {
-                        // general-purpose HP buffers
-                        uint16_t wHPBuffer1;
-                        uint16_t wHPBuffer2;
-                        uint16_t wHPBuffer3;
-                    };
-                    struct {
-                        // HP bar animations
-                        uint16_t wCurHPAnimMaxHP;
-                        uint16_t wCurHPAnimOldHP;
-                        uint16_t wCurHPAnimNewHP;
-                        uint8_t wCurHPAnimPal;
-                        uint8_t wCurHPBarPixels;
-                        uint8_t wNewHPBarPixels;
-                        uint16_t wCurHPAnimDeltaHP;
-                        uint8_t wCurHPAnimLowHP;
-                        uint8_t wCurHPAnimHighHP;
-                    };
-                    struct {
-                        // move AI
-                        uint8_t wEnemyAIMoveScores[NUM_MOVES];
-                    };
-                    struct {
-                        // switch AI
-                        uint8_t wEnemyEffectivenessVsPlayerMons[((PARTY_LENGTH) + 7) / 8];
-                        uint8_t wPlayerEffectivenessVsEnemyMons[((PARTY_LENGTH) + 7) / 8];
-                    };
-                    struct {
-                        // battle HUD
-                        uint8_t wBattleHUDTiles[PARTY_LENGTH];
-                    };
-                    struct {
-                        // thrown ball data
-                        uint8_t wFinalCatchRate;
-                        uint8_t wThrownBallWobbleCount;
-                    };
-                    struct {
-                        // evolution data
-                        uint8_t wEvolutionOldSpecies;
-                        uint8_t wEvolutionNewSpecies;
-                        uint8_t wEvolutionPicOffset;
-                        uint8_t wEvolutionCanceled;
-                    };
-                    struct {
-                        // experience
-                        uint8_t wExpToNextLevel[3];
-                    };
-                    struct {
-                        // PP Up
-                        uint8_t wPPUpPPBuffer[NUM_MOVES];
-                    };
-                    struct {
-                        // lucky number show
-                        uint8_t wMonIDDigitsBuffer[5];
-                    };
-                    struct {
-                        // mon submenu
-                        uint8_t wMonSubmenuCount;
-                        uint8_t wMonSubmenuItems[NUM_MONMENU_ITEMS + 1];
-                    };
-                    struct {
-                        // field move data
-                        //union wFieldMoveData
-                        uint8_t wFieldMoveJumptableIndex;
-                        union {
-                            uint8_t wEscapeRopeOrDigType;
-                            uint8_t wSurfingPlayerState;
-                            uint8_t wFishingRodUsed;
-                        };
-                        uint16_t wCutWhirlpoolOverworldBlockAddr;
-                        uint8_t wCutWhirlpoolReplacementBlock;
-                        union {
-                            uint8_t wCutWhirlpoolAnimationType;
-                            uint8_t wStrengthSpecies;
-                            uint8_t wFishingResult;
-                        };
-                        uint8_t skip_87[1];
-                        //void wFieldMoveDataEnd
-                    };
-                    struct {
-                        // hidden items
-                        uint8_t wCurMapScriptBank;
-                        uint8_t wRemainingBGEventCount;
-                        uint8_t wBottomRightYCoord;
-                        uint8_t wBottomRightXCoord;
-                    };
-                    struct {
-                        // heal machine anim
-                        uint8_t wHealMachineAnimType;
-                        uint8_t wHealMachineTempOBP1;
-                        uint8_t wHealMachineAnimState;
-                    };
-                    struct {
-                        // decorations
-                        uint8_t wCurDecoration;
-                        uint8_t wSelectedDecorationSide;
-                        uint8_t wSelectedDecoration;
-                        uint8_t wOtherDecoration;
-                        uint8_t wChangedDecorations;
-                        uint8_t wCurDecorationCategory;
-                    };
-                    struct {
-                        // withdraw/deposit items
-                        uint8_t wPCItemQuantityChange;
-                        uint8_t wPCItemQuantity;
-                    };
-                    struct {
-                        // mail
-                        uint16_t wCurMailAuthorID;
-                        uint8_t wCurMailIndex;
-                    };
-                    struct {
-                        // kurt
-                        uint8_t wKurtApricornCount;
-                        uint8_t wKurtApricornItems[10];
-                    };
-                    struct {
-                        // tree mons
-                        uint8_t wTreeMonCoordScore;
-                        uint8_t wTreeMonOTIDScore;
-                    };
-                    struct {
-                        // restart clock
-                        uint8_t wRestartClockCurDivision;
-                        uint8_t wRestartClockPrevDivision;
-                        uint8_t wRestartClockUpArrowYCoord;
-                        uint8_t wRestartClockDay;
-                        uint8_t wRestartClockHour;
-                        uint8_t wRestartClockMin;
-                    };
-                    struct {
-                        // link
-                        uint8_t skip_88[9];
-                        uint8_t wLinkBattleRNPreamble[SERIAL_RN_PREAMBLE_LENGTH];
-                        uint8_t wLinkBattleRNs[SERIAL_RNS_LENGTH];
-                    };
-                    struct {
+                // More WRAM 1
+                struct {
+                    // WRAMX
+                    uint8_t wTMHMMoveNameBackup[MOVE_NAME_LENGTH];
+                    uint8_t wStringBuffer1[STRING_BUFFER_LENGTH];
+                    uint8_t wStringBuffer2[STRING_BUFFER_LENGTH];
+                    uint8_t wStringBuffer3[STRING_BUFFER_LENGTH];
+                    uint8_t wStringBuffer4[STRING_BUFFER_LENGTH];
+                    uint8_t wStringBuffer5[STRING_BUFFER_LENGTH];
+                    uint8_t wBattleMenuCursorPosition;
+                    uint8_t skip_81[1];
+                    uint8_t wCurBattleMon;
+                    uint8_t wCurMoveNum;
+                    uint8_t wLastPocket;
+                    uint8_t wPCItemsCursor;
+                    uint8_t wPartyMenuCursor;
+                    uint8_t wItemsPocketCursor;
+                    uint8_t wKeyItemsPocketCursor;
+                    uint8_t wBallsPocketCursor;
+                    uint8_t wTMHMPocketCursor;
+                    uint8_t wPCItemsScrollPosition;
+                    uint8_t skip_82[1];
+                    uint8_t wItemsPocketScrollPosition;
+                    uint8_t wKeyItemsPocketScrollPosition;
+                    uint8_t wBallsPocketScrollPosition;
+                    uint8_t wTMHMPocketScrollPosition;
+                    union {
+                        uint8_t wSwitchMon;
+                        uint8_t wSwitchItem;
+                        uint8_t wSwappingMove;
                         // mobile
-                        uint8_t wd1ea;
-                        uint8_t wd1eb;
-                        uint8_t wd1ec; // mobile OAM timer?
-                        uint8_t wd1ed; // mobile OAM X Offset
-                        uint8_t wd1ee; // mobile OAM Y Offset
-                        uint8_t wd1ef; // mobile OAM tile ID
-                        uint8_t wd1f0; // mobile OAM attributes
-                        uint8_t wd1f1;
-                        uint8_t wd1f2;
-                        uint8_t wd1f3;
-                        uint8_t skip_89[6];
+                        uint8_t wd0e3;
                     };
-                    struct {
-                        // miscellaneous bytes
-                        union {
-                            uint8_t wSkipMovesBeforeLevelUp;
-                            uint8_t wRegisteredPhoneNumbers;
-                            uint8_t wListMovesLineSpacing;
+                    uint8_t wMenuScrollPosition;
+                    uint8_t wMenuScrollPosition_skip[3];
+                    uint8_t wQueuedScriptBank;
+                    uint16_t wQueuedScriptAddr;
+                    uint8_t wNumMoves;
+                    union {
+                        uint8_t wFieldMoveSucceeded;
+                        uint8_t wItemEffectSucceeded;
+                        // 0 - use move
+                        // 1 - use item
+                        // 2 - switch
+                        uint8_t wBattlePlayerAction;
+                        uint8_t wSolvedUnownPuzzle;
+                    };
+                    // bit 0: overworld sprite updating on/off
+                    // bit 1: something to do with sprite updates
+                    // bit 6: something to do with text
+                    // bit 7: on when surf initiates
+                    //        flickers when climbing waterfall
+                    uint8_t wVramState;
+                    // WIN, LOSE, or DRAW
+                    // bit 6: caught celebi
+                    // bit 7: box full
+                    uint8_t wBattleResult;
+                    uint8_t wUsingItemWithSelect;
+                    union {
+                        struct {
+                            // mart data
+                            uint8_t wCurMartCount;
+                            uint8_t wCurMartItems[15];
                         };
-                        uint8_t wSwitchMonTo;
-                        uint8_t wSwitchMonFrom;
-                        uint8_t skip_90[4];
-                        uint8_t wCurEnemyItem;
-                    };
-                    struct {
-                        // miscellaneous words
-                        union {
-                            uint16_t wBuySellItemPrice;
-                            uint16_t wTempMysteryGiftTimer;
-                            uint16_t wMagikarpLength;
+                        struct {
+                            // elevator data
+                            uint8_t wCurElevatorCount;
+                            uint8_t wCurElevatorFloors[15];
+                        };
+                        struct {
+                            // mailbox data
+                            uint8_t wCurMessageScrollPosition;
+                            uint8_t wCurMessageIndex;
+                            uint8_t wMailboxCount;
+                            uint8_t wMailboxItems[MAILBOX_CAPACITY];
                         };
                     };
-                };
-                uint8_t wTempEnemyMonSpecies;
-                uint8_t wTempBattleMonSpecies;
-                struct BattleMon wEnemyMon;
-                uint8_t wEnemyMonBaseStats[NUM_EXP_STATS];
-                uint8_t wEnemyMonCatchRate;
-                uint8_t wEnemyMonBaseExp;
-                //union wEnemyMonEnd
-                // 0: overworld
-                // 1: wild battle
-                // 2: trainer battle
-                uint8_t wBattleMode;
-                uint8_t wTempWildMonSpecies;
-                // class (Youngster, Bug Catcher, etc.) of opposing trainer
-                // 0 if opponent is a wild Pokémon, not a trainer
-                uint8_t wOtherTrainerClass;
-                // BATTLETYPE_* values
-                uint8_t wBattleType;
-                // which trainer of the class that you're fighting
-                // (Joey, Mikey, Albert, etc.)
-                uint8_t wOtherTrainerID;
-                uint8_t wForcedSwitch;
-                uint8_t wTrainerClass;
-                uint8_t wUnownLetter;
-                uint8_t wMoveSelectionMenuType;
-                // corresponds to the data/pokemon/base_stats/*.asm contents
-                //union wCurBaseData
-                uint8_t wBaseDexNo;
-                union {
-                    uint8_t wBaseStats[6];
-                    struct {
-                        uint8_t wBaseHP;
-                        uint8_t wBaseAttack;
-                        uint8_t wBaseDefense;
-                        uint8_t wBaseSpeed;
-                        uint8_t wBaseSpecialAttack;
-                        uint8_t wBaseSpecialDefense;
+                    uint16_t wListPointer;
+                    uint16_t wUnusedNamesPointer;
+                    uint16_t wItemAttributesPointer;
+                    uint8_t wCurItem;
+                    union {
+                        uint8_t wCurItemQuantity;
+                        uint8_t wMartItemID;
                     };
-                };
-                union {
-                    uint8_t wBaseType[2];
-                    struct {
-                        uint8_t wBaseType1;
-                        uint8_t wBaseType2;
+                    uint8_t wCurPartySpecies;
+                    // contains which monster in a party
+                    // is being dealt with at the moment
+                    // 0-5
+                    uint8_t wCurPartyMon;
+                    // 0: Enemy
+                    // 1: Player
+                    // 2: Party Menu
+                    uint8_t wWhichHPBar;
+                    // 0: Take from PC
+                    // 1: Put into PC
+                    // 2: Take from Day-Care
+                    // 3: Put into Day-Care
+                    uint8_t wPokemonWithdrawDepositParameter;
+                    uint8_t wItemQuantityChange;
+                    uint8_t wItemQuantity;
+                    struct PartyMon wTempMon;
+                    uint8_t wSpriteFlags;
+                    uint8_t wHandlePlayerStep;
+                    uint8_t skip_83[1];
+                    uint8_t wPartyMenuActionText;
+                    uint8_t wItemAttributeValue;
+                    uint8_t wCurPartyLevel;
+                    uint8_t wScrollingMenuListSize;
+                    uint8_t skip_84[1];
+                    // used when following a map warp
+                    uint8_t wNextWarp;
+                    uint8_t wNextMapGroup;
+                    uint8_t wNextMapNumber;
+                    uint8_t wPrevWarp;
+                    uint8_t wPrevMapGroup;
+                    uint8_t wPrevMapNumber;
+                    uint8_t wPlayerBGMapOffsetX;
+                    // used in FollowNotExact; unit is pixels
+                    uint8_t wPlayerBGMapOffsetY;
+                    // used in FollowNotExact; unit is pixels
+                    // Player movement
+                    uint8_t wPlayerStepVectorX;
+                    uint8_t wPlayerStepVectorY;
+                    uint8_t wPlayerStepFlags;
+                    uint8_t wPlayerStepDirection;
+                    uint16_t wBGMapAnchor;
+                    union {
+                        struct {
+                            uint8_t wUsedSprites[SPRITE_GFX_LIST_CAPACITY * 2];
+                            //void wUsedSpritesEnd
+                        };
+                        struct {
+                            uint8_t skip_85[31];
+                            uint8_t wd173;
+                            // related to command queue type 3
+                        };
                     };
+                    uint16_t wOverworldMapAnchor;
+                    uint8_t wMetatileStandingY;
+                    uint8_t wMetatileStandingX;
+                    //union wMapPartial
+                    union {
+                        uint8_t wMapPartial;
+                        uint8_t wMapAttributesBank;
+                    };
+                    uint8_t wMapTileset;
+                    uint8_t wEnvironment;
+                    uint16_t wMapAttributesPointer;
+                    //union wMapPartialEnd
+                    //union wMapAttributes
+                    uint8_t wMapBorderBlock;
+                    // width/height are in blocks (2x2 walkable tiles, 4x4 graphics tiles)
+                    uint8_t wMapHeight;
+                    uint8_t wMapWidth;
+                    uint8_t wMapBlocksBank;
+                    uint16_t wMapBlocksPointer;
+                    uint8_t wMapScriptsBank;
+                    uint16_t wMapScriptsPointer;
+                    uint16_t wMapEventsPointer;
+                    // bit set
+                    uint8_t wMapConnections;
+                    //union wMapAttributesEnd
+                    struct MapConnection wNorthMapConnection;
+                    struct MapConnection wSouthMapConnection;
+                    struct MapConnection wWestMapConnection;
+                    struct MapConnection wEastMapConnection;
+                    //union wTileset
+                    uint8_t wTilesetBank;
+                    uint16_t wTilesetAddress;
+                    uint8_t wTilesetBlocksBank;
+                    uint16_t wTilesetBlocksAddress;
+                    uint8_t wTilesetCollisionBank;
+                    uint16_t wTilesetCollisionAddress;
+                    uint16_t wTilesetAnim;
+                    // bank 3f
+                    uint8_t skip_86[2];
+                    // unused
+                    uint16_t wTilesetPalettes;
+                    // bank 3f
+                    //union wTilesetEnd
+                    // assert
+                    // wTilesetEnd
+                    // -
+                    // wTileset
+                    // TILESET_LENGTH
+                    uint8_t wEvolvableFlags[((PARTY_LENGTH) + 7) / 8];
+                    uint8_t wForceEvolution;
+                    union {
+                        struct {
+                            // general-purpose HP buffers
+                            uint16_t wHPBuffer1;
+                            uint16_t wHPBuffer2;
+                            uint16_t wHPBuffer3;
+                        };
+                        struct {
+                            // HP bar animations
+                            uint16_t wCurHPAnimMaxHP;
+                            uint16_t wCurHPAnimOldHP;
+                            uint16_t wCurHPAnimNewHP;
+                            uint8_t wCurHPAnimPal;
+                            uint8_t wCurHPBarPixels;
+                            uint8_t wNewHPBarPixels;
+                            uint16_t wCurHPAnimDeltaHP;
+                            uint8_t wCurHPAnimLowHP;
+                            uint8_t wCurHPAnimHighHP;
+                        };
+                        struct {
+                            // move AI
+                            uint8_t wEnemyAIMoveScores[NUM_MOVES];
+                        };
+                        struct {
+                            // switch AI
+                            uint8_t wEnemyEffectivenessVsPlayerMons[((PARTY_LENGTH) + 7) / 8];
+                            uint8_t wPlayerEffectivenessVsEnemyMons[((PARTY_LENGTH) + 7) / 8];
+                        };
+                        struct {
+                            // battle HUD
+                            uint8_t wBattleHUDTiles[PARTY_LENGTH];
+                        };
+                        struct {
+                            // thrown ball data
+                            uint8_t wFinalCatchRate;
+                            uint8_t wThrownBallWobbleCount;
+                        };
+                        struct {
+                            // evolution data
+                            uint8_t wEvolutionOldSpecies;
+                            uint8_t wEvolutionNewSpecies;
+                            uint8_t wEvolutionPicOffset;
+                            uint8_t wEvolutionCanceled;
+                        };
+                        struct {
+                            // experience
+                            uint8_t wExpToNextLevel[3];
+                        };
+                        struct {
+                            // PP Up
+                            uint8_t wPPUpPPBuffer[NUM_MOVES];
+                        };
+                        struct {
+                            // lucky number show
+                            uint8_t wMonIDDigitsBuffer[5];
+                        };
+                        struct {
+                            // mon submenu
+                            uint8_t wMonSubmenuCount;
+                            uint8_t wMonSubmenuItems[NUM_MONMENU_ITEMS + 1];
+                        };
+                        struct {
+                            // field move data
+                            //union wFieldMoveData
+                            uint8_t wFieldMoveJumptableIndex;
+                            union {
+                                uint8_t wEscapeRopeOrDigType;
+                                uint8_t wSurfingPlayerState;
+                                uint8_t wFishingRodUsed;
+                            };
+                            uint16_t wCutWhirlpoolOverworldBlockAddr;
+                            uint8_t wCutWhirlpoolReplacementBlock;
+                            union {
+                                uint8_t wCutWhirlpoolAnimationType;
+                                uint8_t wStrengthSpecies;
+                                uint8_t wFishingResult;
+                            };
+                            uint8_t skip_87[1];
+                            //void wFieldMoveDataEnd
+                        };
+                        struct {
+                            // hidden items
+                            uint8_t wCurMapScriptBank;
+                            uint8_t wRemainingBGEventCount;
+                            uint8_t wBottomRightYCoord;
+                            uint8_t wBottomRightXCoord;
+                        };
+                        struct {
+                            // heal machine anim
+                            uint8_t wHealMachineAnimType;
+                            uint8_t wHealMachineTempOBP1;
+                            uint8_t wHealMachineAnimState;
+                        };
+                        struct {
+                            // decorations
+                            uint8_t wCurDecoration;
+                            uint8_t wSelectedDecorationSide;
+                            uint8_t wSelectedDecoration;
+                            uint8_t wOtherDecoration;
+                            uint8_t wChangedDecorations;
+                            uint8_t wCurDecorationCategory;
+                        };
+                        struct {
+                            // withdraw/deposit items
+                            uint8_t wPCItemQuantityChange;
+                            uint8_t wPCItemQuantity;
+                        };
+                        struct {
+                            // mail
+                            uint16_t wCurMailAuthorID;
+                            uint8_t wCurMailIndex;
+                        };
+                        struct {
+                            // kurt
+                            uint8_t wKurtApricornCount;
+                            uint8_t wKurtApricornItems[10];
+                        };
+                        struct {
+                            // tree mons
+                            uint8_t wTreeMonCoordScore;
+                            uint8_t wTreeMonOTIDScore;
+                        };
+                        struct {
+                            // restart clock
+                            uint8_t wRestartClockCurDivision;
+                            uint8_t wRestartClockPrevDivision;
+                            uint8_t wRestartClockUpArrowYCoord;
+                            uint8_t wRestartClockDay;
+                            uint8_t wRestartClockHour;
+                            uint8_t wRestartClockMin;
+                        };
+                        struct {
+                            // link
+                            uint8_t skip_88[9];
+                            uint8_t wLinkBattleRNPreamble[SERIAL_RN_PREAMBLE_LENGTH];
+                            uint8_t wLinkBattleRNs[SERIAL_RNS_LENGTH];
+                        };
+                        struct {
+                            // mobile
+                            uint8_t wd1ea;
+                            uint8_t wd1eb;
+                            uint8_t wd1ec; // mobile OAM timer?
+                            uint8_t wd1ed; // mobile OAM X Offset
+                            uint8_t wd1ee; // mobile OAM Y Offset
+                            uint8_t wd1ef; // mobile OAM tile ID
+                            uint8_t wd1f0; // mobile OAM attributes
+                            uint8_t wd1f1;
+                            uint8_t wd1f2;
+                            uint8_t wd1f3;
+                            uint8_t skip_89[6];
+                        };
+                        struct {
+                            // miscellaneous bytes
+                            union {
+                                uint8_t wSkipMovesBeforeLevelUp;
+                                uint8_t wRegisteredPhoneNumbers;
+                                uint8_t wListMovesLineSpacing;
+                            };
+                            uint8_t wSwitchMonTo;
+                            uint8_t wSwitchMonFrom;
+                            uint8_t skip_90[4];
+                            uint8_t wCurEnemyItem;
+                        };
+                        struct {
+                            // miscellaneous words
+                            union {
+                                uint16_t wBuySellItemPrice;
+                                uint16_t wTempMysteryGiftTimer;
+                                uint16_t wMagikarpLength;
+                            };
+                        };
+                    };
+                    uint8_t wTempEnemyMonSpecies;
+                    uint8_t wTempBattleMonSpecies;
+                    struct BattleMon wEnemyMon;
+                    uint8_t wEnemyMonBaseStats[NUM_EXP_STATS];
+                    uint8_t wEnemyMonCatchRate;
+                    uint8_t wEnemyMonBaseExp;
+                    //union wEnemyMonEnd
+                    // 0: overworld
+                    // 1: wild battle
+                    // 2: trainer battle
+                    uint8_t wBattleMode;
+                    uint8_t wTempWildMonSpecies;
+                    // class (Youngster, Bug Catcher, etc.) of opposing trainer
+                    // 0 if opponent is a wild Pokémon, not a trainer
+                    uint8_t wOtherTrainerClass;
+                    // BATTLETYPE_* values
+                    uint8_t wBattleType;
+                    // which trainer of the class that you're fighting
+                    // (Joey, Mikey, Albert, etc.)
+                    uint8_t wOtherTrainerID;
+                    uint8_t wForcedSwitch;
+                    uint8_t wTrainerClass;
+                    uint8_t wUnownLetter;
+                    uint8_t wMoveSelectionMenuType;
+                    // corresponds to the data/pokemon/base_stats/*.asm contents
+                    //union wCurBaseData
+                    uint8_t wBaseDexNo;
+                    union {
+                        uint8_t wBaseStats[6];
+                        struct {
+                            uint8_t wBaseHP;
+                            uint8_t wBaseAttack;
+                            uint8_t wBaseDefense;
+                            uint8_t wBaseSpeed;
+                            uint8_t wBaseSpecialAttack;
+                            uint8_t wBaseSpecialDefense;
+                        };
+                    };
+                    union {
+                        uint8_t wBaseType[2];
+                        struct {
+                            uint8_t wBaseType1;
+                            uint8_t wBaseType2;
+                        };
+                    };
+                    uint8_t wBaseCatchRate;
+                    uint8_t wBaseExp;
+                    //union wBaseItems
+                    uint8_t wBaseItem1;
+                    uint8_t wBaseItem2;
+                    uint8_t wBaseGender;
+                    uint8_t wBaseUnknown1;
+                    uint8_t wBaseEggSteps;
+                    uint8_t wBaseUnknown2;
+                    uint8_t wBasePicSize;
+                    uint16_t wBaseUnusedFrontpic;
+                    uint16_t wBaseUnusedBackpic;
+                    uint8_t wBaseGrowthRate;
+                    uint8_t wBaseEggGroups;
+                    uint8_t wBaseTMHM[((NUM_TM_HM_TUTOR) + 7) / 8];
+                    //union wCurBaseDataEnd
+                    // assert
+                    // wCurBaseDataEnd
+                    // -
+                    // wCurBaseData
+                    // BASE_DATA_SIZE
+                    uint16_t wCurDamage;
+                    uint8_t skip_91[2];
+                    uint8_t wMornEncounterRate;
+                    uint8_t wDayEncounterRate;
+                    uint8_t wNiteEncounterRate;
+                    uint8_t wWaterEncounterRate;
+                    uint8_t wListMoves_MoveIndicesBuffer[NUM_MOVES];
+                    uint8_t wPutativeTMHMMove;
+                    uint8_t wInitListType;
+                    uint8_t wBattleHasJustStarted;
+                    union {
+                        uint8_t wNamedObjectIndex;
+                        uint8_t wTextDecimalByte;
+                        uint8_t wTempByteValue;
+                        uint8_t wNumSetBits;
+                        uint8_t wTypeMatchup;
+                        uint8_t wCurType;
+                        uint8_t wTempSpecies;
+                        uint8_t wTempIconSpecies;
+                        uint8_t wTempTMHM;
+                        uint8_t wTempPP;
+                        uint8_t wNextBoxOrPartyIndex;
+                        uint8_t wChosenCableClubRoom;
+                        uint8_t wBreedingCompatibility;
+                        uint8_t wMoveGrammar;
+                        uint8_t wApplyStatLevelMultipliersToEnemy;
+                        uint8_t wUsePPUp;
+                        // mobile
+                        uint8_t wd265;
+                    };
+                    uint8_t wFailedToFlee;
+                    uint8_t wNumFleeAttempts;
+                    uint8_t wMonTriedToEvolve;
+                    uint8_t wTimeOfDay;
+                    uint8_t skip_92[1];
                 };
-                uint8_t wBaseCatchRate;
-                uint8_t wBaseExp;
-                //union wBaseItems
-                uint8_t wBaseItem1;
-                uint8_t wBaseItem2;
-                uint8_t wBaseGender;
-                uint8_t wBaseUnknown1;
-                uint8_t wBaseEggSteps;
-                uint8_t wBaseUnknown2;
-                uint8_t wBasePicSize;
-                uint16_t wBaseUnusedFrontpic;
-                uint16_t wBaseUnusedBackpic;
-                uint8_t wBaseGrowthRate;
-                uint8_t wBaseEggGroups;
-                uint8_t wBaseTMHM[((NUM_TM_HM_TUTOR) + 7) / 8];
-                //union wCurBaseDataEnd
-                // assert
-                // wCurBaseDataEnd
-                // -
-                // wCurBaseData
-                // BASE_DATA_SIZE
-                uint16_t wCurDamage;
-                uint8_t skip_91[2];
-                uint8_t wMornEncounterRate;
-                uint8_t wDayEncounterRate;
-                uint8_t wNiteEncounterRate;
-                uint8_t wWaterEncounterRate;
-                uint8_t wListMoves_MoveIndicesBuffer[NUM_MOVES];
-                uint8_t wPutativeTMHMMove;
-                uint8_t wInitListType;
-                uint8_t wBattleHasJustStarted;
-                union {
-                    uint8_t wNamedObjectIndex;
-                    uint8_t wTextDecimalByte;
-                    uint8_t wTempByteValue;
-                    uint8_t wNumSetBits;
-                    uint8_t wTypeMatchup;
-                    uint8_t wCurType;
-                    uint8_t wTempSpecies;
-                    uint8_t wTempIconSpecies;
-                    uint8_t wTempTMHM;
-                    uint8_t wTempPP;
-                    uint8_t wNextBoxOrPartyIndex;
-                    uint8_t wChosenCableClubRoom;
-                    uint8_t wBreedingCompatibility;
-                    uint8_t wMoveGrammar;
-                    uint8_t wApplyStatLevelMultipliersToEnemy;
-                    uint8_t wUsePPUp;
-                    // mobile
-                    uint8_t wd265;
-                };
-                uint8_t wFailedToFlee;
-                uint8_t wNumFleeAttempts;
-                uint8_t wMonTriedToEvolve;
-                uint8_t wTimeOfDay;
-                uint8_t skip_92[1];
             };
             // Enemy Party
             struct {

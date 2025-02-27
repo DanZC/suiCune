@@ -196,14 +196,15 @@ void LoadOW_BGPal7(void){
 //     return Function49420();
 // }
 
+// CopyMansionPalRoof
 void Function49420(void){
-    LD_HL(mMansionPalette1 + 8 * PALETTE_SIZE);
-    LD_DE(wBGPals1 + PALETTE_SIZE * PAL_BG_ROOF);
-    LD_BC(1 * PALETTE_SIZE);
-    LD_A(BANK(wBGPals1));
-    CALL(aFarCopyWRAM);
-    RET;
-
+    // LD_HL(mMansionPalette1 + 8 * PALETTE_SIZE);
+    // LD_DE(wBGPals1 + PALETTE_SIZE * PAL_BG_ROOF);
+    // LD_BC(1 * PALETTE_SIZE);
+    // LD_A(BANK(wBGPals1));
+    // CALL(aFarCopyWRAM);
+    CopyBytes_Conv2(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_ROOF, MansionPalette1 + 8 * NUM_PAL_COLORS, PALETTE_SIZE);
+    // RET;
 }
 
 static void Function49480(void) {
