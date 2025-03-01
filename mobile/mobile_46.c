@@ -1930,16 +1930,16 @@ uint8_t* Function118b24(void){
     // LD_HL(wc346);
     // LD_A(0x8);
     // LD_hli_A;
-    wram->wc346[0] = 0x8;
+    wram->wc346[0] = LOW(0xc708);
     // LD_A(0xc7);
     // LD_hli_A;
-    wram->wc346[1] = 0xc7;
+    wram->wc346[1] = HIGH(0xc708);
     // LD_A(0x60);
     // LD_hli_A;
-    wram->wc346[2] = 0x60;
+    wram->wc346[2] = LOW(0xcc60);
     // LD_A(0xcc);
     // LD_hli_A;
-    wram->wc346[3] = 0xcc;
+    wram->wc346[3] = HIGH(0xcc60);
     // CALL(aFunction119eb4);
     // CALL(aFunction119ec2);
     Function119ec2(Function119eb4(wram->wc346 + 4));
@@ -2047,11 +2047,16 @@ bool Function118b9a(uint16_t hl){
 //setcharmap ascii
 }
 
-const char ExchangeDownloadURL[] = "http://gameboy.datacenter.ne.jp/cgb/download?name=/01/CGB-BXTE/exchange/index.txt";
-const char BattleDownloadURL[] = "http://gameboy.datacenter.ne.jp/cgb/download?name=/01/CGB-BXTE/battle/index.txt";
-const char NewsDownloadURL[] = "http://gameboy.datacenter.ne.jp/cgb/download?name=/01/CGB-BXTE/news/index.txt";
-const char MenuDownloadURL[] = "http://gameboy.datacenter.ne.jp/cgb/download?name=/01/CGB-BXTE/POKESTA/menu.cgb";
-const char IndexDownloadURL[] = "http://gameboy.datacenter.ne.jp/cgb/download?name=/01/CGB-BXTE/tamago/index.txt";
+#if defined(_CRYSTAL_JP)
+#define REGION_CODE_STR "BXTJ"
+#else
+#define REGION_CODE_STR "BXTE"
+#endif
+const char ExchangeDownloadURL[] = "http://gameboy.datacenter.ne.jp/cgb/download?name=/01/CGB-"REGION_CODE_STR"/exchange/index.txt";
+const char BattleDownloadURL[] = "http://gameboy.datacenter.ne.jp/cgb/download?name=/01/CGB-"REGION_CODE_STR"/battle/index.txt";
+const char NewsDownloadURL[] = "http://gameboy.datacenter.ne.jp/cgb/download?name=/01/CGB-"REGION_CODE_STR"/news/index.txt";
+const char MenuDownloadURL[] = "http://gameboy.datacenter.ne.jp/cgb/download?name=/01/CGB-"REGION_CODE_STR"/POKESTA/menu.cgb";
+const char IndexDownloadURL[] = "http://gameboy.datacenter.ne.jp/cgb/download?name=/01/CGB-"REGION_CODE_STR"/tamago/index.txt";
 
 // popc
 
@@ -2439,7 +2444,7 @@ void Function118f14(void){
     // LD_L_A;
     // LD_A_addr(wcd52);
     // LD_H_A;
-    const char* hl = (const char*)wram->w3_d000 + (wram->wcd51 | (wram->wcd52 << 8));
+    const char* hl = (const char*)wram->wram3 + (wram->wcd51 | (wram->wcd52 << 8));
     // LD_DE(wcc60);
     // CALL(aFunction1191ad);
     // RET_C ;
@@ -2508,7 +2513,7 @@ void Function118f68(void){
     // LD_L_A;
     // LD_A_addr(wcd52);
     // LD_H_A;
-    const char* hl = (const char*)wram->w3_d000 + (wram->wcd51 | (wram->wcd52 << 8));
+    const char* hl = (const char*)wram->wram3 + (wram->wcd51 | (wram->wcd52 << 8));
     // LD_DE(wcc60);
     // CALL(aFunction1191ad);
     // RET_C ;
@@ -2571,7 +2576,7 @@ void Function118fc0(void){
     // LD_L_A;
     // LD_A_addr(wcd56);
     // LD_H_A;
-    const char* hl = (const char*)wram->w3_d000 + (wram->wcd55 | (wram->wcd56 << 8));
+    const char* hl = (const char*)wram->wram3 + (wram->wcd55 | (wram->wcd56 << 8));
     // LD_DE(wcc60);
     // CALL(aFunction1191ad);
     // RET_C ;
@@ -2597,7 +2602,7 @@ void Function118fc0(void){
     // LD_L_A;
     // LD_A_addr(wcd52);
     // LD_H_A;
-    hl = (const char*)wram->w3_d000 + (wram->wcd51 | (wram->wcd52 << 8));
+    hl = (const char*)wram->wram3 + (wram->wcd51 | (wram->wcd52 << 8));
     // LD_DE(wcc60);
     // CALL(aFunction1191ad);
     // RET_C ;
@@ -2628,7 +2633,7 @@ void Function119009(void){
     // LD_L_A;
     // LD_A_addr(wcd56);
     // LD_H_A;
-    const char* hl = (const char*)wram->w3_d000 + (wram->wcd55 | (wram->wcd56 << 8));
+    const char* hl = (const char*)wram->wram3 + (wram->wcd55 | (wram->wcd56 << 8));
     // LD_DE(wcc60);
     // CALL(aFunction1191ad);
     // RET_C ;
@@ -2637,10 +2642,10 @@ void Function119009(void){
     // LD_HL(wc346);
     // LD_A(0x8);
     // LD_hli_A;
-    wram->wc346[0] = 0x08;
+    wram->wc346[0] = LOW(0xc608);
     // LD_A(0xc6);
     // LD_hli_A;
-    wram->wc346[1] = 0xc6;
+    wram->wc346[1] = HIGH(0xc608);
     // LD_A_addr(wcd4b);
     // LD_hli_A;
     wram->wc346[2] = wram->wcd4b;
@@ -2649,16 +2654,16 @@ void Function119009(void){
     wram->wc346[3] = wram->wcd4c;
     // LD_A(0x8);
     // LD_hli_A;
-    wram->wc346[4] = 0x08;
+    wram->wc346[4] = LOW(0xc708);
     // LD_A(0xc7);
     // LD_hli_A;
-    wram->wc346[5] = 0xc7;
+    wram->wc346[5] = HIGH(0xc708);
     // LD_A(0x60);
     // LD_hli_A;
-    wram->wc346[6] = 0x60;
+    wram->wc346[6] = LOW(0xcc60);
     // LD_A(0xcc);
     // LD_hli_A;
-    wram->wc346[7] = 0xcc;
+    wram->wc346[7] = HIGH(0xcc60);
     // CALL(aFunction119eb4);
     // CALL(aFunction119ec2);
     Function119ec2(Function119eb4(wram->wc346 + 8));
@@ -2699,7 +2704,7 @@ void Function119054(void){
     // LD_A_addr(wcd89);
     // AND_A(0x1);
     // IF_Z goto asm_11908a;
-    if(wram->wcd89 != 0x1) {
+    if(wram->wcd89 & 0x1) {
         // LD_A(0x6);
         // LDH_addr_A(rSVBK);
         gb_write(rSVBK, 0x6);
@@ -2708,12 +2713,10 @@ void Function119054(void){
         // LD_C_A;
         // LD_A_addr(w3_d000 + 1);
         // LD_B_A;
-    // TODO: Verify that this is correct. It should read from WRAM bank 6 based on the original assembly, but
-    // when doing so, it reads garbage data.
-        uint16_t bc2 = (wram->w3_d000[0] | (wram->w3_d000[1] << 8));
+        uint16_t bc2 = (wram->w6_d000[0] | (wram->w6_d000[1] << 8));
         // CALL(aFunction119192);
         // RET_C ;
-        if(Function119192(de + bc, wram->w3_d000 + 2, bc2)) {
+        if(Function119192(de + bc, wram->w6_d000 + 2, bc2)) {
             gb_write(rSVBK, svbk);
             return;
         }
@@ -2749,7 +2752,7 @@ void Function119054(void){
     // LD_DE(s5_b2f4);
     // LD_BC(4);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(GBToRAMAddr(s5_b2f4), wram->wZipCode, 4);
+    CopyBytes_Conv2(GBToRAMAddr(s5_b2f4), wram->wZipCode_Saved, ZIPCODE_LENGTH);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // CALL(aCloseSRAM);
@@ -2827,15 +2830,6 @@ void Function1190ec(void){
         // RET_C ;
         if(Function119192(s6_a000 + bc, wram->w6_d000 + 2, bc2))
             return;
-
-        // Dumb hack to make news saving work. For some reason,
-        // offsets 0FFE-10ED are shifted by one byte. So we
-        // manually move the bytes back by 1.
-        // TODO: Please remove this hack and actually
-        // download everything properly!
-        // uint8_t* hl = GBToRAMAddr(s6_a000 + 0xffe);
-        // CopyBytes_Conv2(hl, hl + 1, 0xf0);
-        // hl[0xf0] = 0x1;
     }
 
 // asm_11913e:
@@ -4670,7 +4664,11 @@ void Function119ac9(void){
 // setcharmap ascii
 }
 
+#if defined(_CRYSTAL_JP)
+const char XGameCode[] = "CGB-BXTJ-00""\0";
+#else
 const char XGameCode[] = "CGB-BXTE-00""\0";
+#endif
 
 //  //  unreferenced
 const char XGameResult[] = "pokemon_crystal";
@@ -6133,7 +6131,7 @@ bool BattleTowerRoomMenu2_UpdateYesNoMenu(void){
 
 // asm_11a24c:
     // CALL(aFunction11a9f0);
-    // Function11a9f0(); // TODO: Convert this
+    // Function11a9f0();
     // SCF;
     // RET;
     return true;

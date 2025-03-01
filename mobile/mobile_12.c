@@ -1,5 +1,6 @@
 #include "../constants.h"
 #include "mobile_12.h"
+#include "mobile_22.h"
 #include "mobile_menu.h"
 #include "../engine/menus/init_gender.h"
 #include "../home/math.h"
@@ -11,12 +12,14 @@
 #include "../home/print_text.h"
 #include "../home/menu.h"
 #include "../home/joypad.h"
+#include "../home/sram.h"
 #include "../home/scrolling_menu.h"
 #include "../engine/gfx/crystal_layouts.h"
 #include "../engine/gfx/dma_transfer.h"
 #include "../data/mobile/charmaps.h"
 #include "../data/mobile/postcode_formats.h"
 #include "../data/mobile/postcode_to_country_pairs.h"
+#include "../data/mobile/prefecture_to_postcode_pairs.h"
 #include "../util/variadic_macros.h"
 
 const char* Prefectures[] = {
@@ -218,6 +221,8 @@ uint8_t InitMobileProfile(uint8_t c){
         InitCrystalData();
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
+    LoadZipcodeWithUniversalFormat();
+    RetrieveZipcodeInfo(wram->wPrefecture);
     // CALL(aFunction48d3d);
     Function48d3d();
     // LD_A_addr(wd479);
@@ -336,13 +341,29 @@ uint8_t InitMobileProfile(uint8_t c){
         // LD_E_L;
         // hlcoord(11, 4, wTilemap);
         // CALL(aPlaceString);
+        #if defined(_CRYSTAL_JP)
         PlaceStringSimple(U82C(Strings_484fb[wram->wPlayerGender]), coord(11, 4, wram->wTilemap));
+        #elif defined(_CRYSTAL_AU)
+        PlaceStringSimple(U82C(Strings_484fb[wram->wPlayerGender]), coord(14, 5, wram->wTilemap));
+        #elif defined(_CRYSTAL_EU)
+        PlaceStringSimple(U82C(Strings_484fb[wram->wPlayerGender]), coord(12, 5, wram->wTilemap));
+        #else
+        PlaceStringSimple(U82C(Strings_484fb[wram->wPlayerGender]), coord(12, 5, wram->wTilemap));
+        #endif
     }
 
 // asm_48113:
     // hlcoord(11, 6, wTilemap);
     // CALL(aFunction487ec);
+    #if defined(_CRYSTAL_JP)
     Function487ec(coord(11, 6, wram->wTilemap));
+    #elif defined(_CRYSTAL_AU)
+    Function487ec(coord(13, 7, wram->wTilemap));
+    #elif defined(_CRYSTAL_EU)
+    Function487ec(coord(11, 7, wram->wTilemap));
+    #else
+    Function487ec(coord(12, 7, wram->wTilemap));
+    #endif
     // LD_A_addr(wd474);
     // DEC_A;
     // LD_HL(mPrefectures);
@@ -351,10 +372,19 @@ uint8_t InitMobileProfile(uint8_t c){
     // LD_E_L;
     // hlcoord(11, 8, wTilemap);
     // CALL(aPlaceString);
-    PlaceStringSimple(U82C(Prefectures[wram->wPrefecture]), coord(11, 8, wram->wTilemap));
+    #if defined(_CRYSTAL_JP)
+    PlaceStringSimple(U82C(Prefectures[wram->wPrefecture]), coord(11, 9, wram->wTilemap));
+    #elif defined(_CRYSTAL_AU)
+    PlaceStringSimple(U82C(Prefectures[wram->wPrefecture]), coord(11, 9, wram->wTilemap));
+    #elif defined(_CRYSTAL_EU)
+    PlaceStringSimple(U82C(Prefectures[wram->wPrefecture]), coord(11, 9, wram->wTilemap));
+    #else
+    PlaceStringSimple(U82C(Prefectures[wram->wPrefecture]), coord(11, 9, wram->wTilemap));
+    #endif
     // hlcoord(11, 10, wTilemap);
     // CALL(aFunction489ea);
-    Function489ea(coord(11, 10, wram->wTilemap));
+    // Function489ea(coord(11, 10, wram->wTilemap));
+    DisplayZipCodeRightAlign();
     // hlcoord(0, 14, wTilemap);
     // LD_B(0x2);
     // LD_C(0x12);
@@ -401,7 +431,8 @@ uint8_t InitMobileProfile(uint8_t c){
             // CALL(aClearBGPalettes);
             ClearBGPalettes_Conv();
             // CALL(aFunction48d30);
-            Function48d30();
+            // Function48d30();
+            SaveZipcodeWithUniversalFormat();
             // POP_BC;
             // CALL(aClearTilemap);
             ClearTilemap_Conv2();
@@ -460,6 +491,36 @@ uint8_t InitMobileProfile(uint8_t c){
     }
 }
 
+void RetrieveZipcodeInfo(uint8_t prefecture){
+    // ld a, [wPrefecture]
+    // dec a
+
+    // Country
+    // ld hl, PrefectureToCountry
+    // ld c, a
+    // ld b, 0
+    // add hl, bc
+    // ld a, [hl]
+    // ld [wZipcodeCountry], a
+    wram->wZipcodeCountry = PrefectureToCountry[prefecture];
+
+    // Format
+    // ld hl, PrefectureZipcodeFormat
+    // add hl, bc ; HL contains the address of the format index.
+    // ld a, [hl]
+    // ld [wZipcodeFormat], a
+    wram->wZipcodeFormat = PrefectureZipcodeFormat[prefecture];
+
+    // Length
+    // ld hl, ZipcodeFormatLengths
+    // ld c, a
+    // add hl, bc
+    // ld a, [hl]
+    // ld [wZipcodeFormatLength], a
+    wram->wZipcodeFormatLength = ZipcodeFormatLengths[wram->wZipcodeFormat];
+    // ret
+}
+
 void Function48157(void){
     CALL(aScrollingMenuJoypad);
     LD_HL(wMenuCursorY);
@@ -495,6 +556,7 @@ b_button:
 
 }
 
+// Mobile12_ClearBlankUserParameters
 void Function48187(void){
 static const char String_TellLater[] = "Tell Later@";
     // LD_A_addr(wd479);
@@ -533,8 +595,16 @@ static const char String_TellLater[] = "Tell Later@";
     if(!bit_test(wram->wd002, 6) && !bit_test(d, 0)) {
         // LD_BC((1 << 8) | 8);
         // hlcoord(11, 4, wTilemap);
-        // CALL(aClearBox);
+        // CALL(aClearBox);  
+        #if defined(_CRYSTAL_JP)
         ClearBox_Conv2(coord(11, 4, wram->wTilemap), 8, 1);
+        #elif defined(_CRYSTAL_AU)
+        ClearBox_Conv2(coord(9, 5, wram->wTilemap), 8, 1);
+        #elif defined(_CRYSTAL_EU)
+        ClearBox_Conv2(coord(10, 5, wram->wTilemap), 8, 1);
+        #else
+        ClearBox_Conv2(coord(8, 5, wram->wTilemap), 8, 1);
+        #endif
     }
 
 // asm_481c1:
@@ -544,7 +614,15 @@ static const char String_TellLater[] = "Tell Later@";
         // LD_BC((1 << 8) | 8);
         // hlcoord(11, 6, wTilemap);
         // CALL(aClearBox);
+        #if defined(_CRYSTAL_JP)
         ClearBox_Conv2(coord(11, 6, wram->wTilemap), 8, 1);
+        #elif defined(_CRYSTAL_AU)
+        ClearBox_Conv2(coord(11, 7, wram->wTilemap), 8, 1);
+        #elif defined(_CRYSTAL_EU)
+        ClearBox_Conv2(coord(10, 7, wram->wTilemap), 8, 1);
+        #else
+        ClearBox_Conv2(coord(7, 7, wram->wTilemap), 8, 1);
+        #endif
     }
 
 // asm_481ce:
@@ -554,7 +632,15 @@ static const char String_TellLater[] = "Tell Later@";
         // LD_BC((2 << 8) | 8);
         // hlcoord(11, 7, wTilemap);
         // CALL(aClearBox);
+        #if defined(_CRYSTAL_JP)
         ClearBox_Conv2(coord(11, 7, wram->wTilemap), 8, 2);
+        #elif defined(_CRYSTAL_AU)
+        ClearBox_Conv2(coord(11, 9, wram->wTilemap), 8, 2);
+        #elif defined(_CRYSTAL_EU)
+        ClearBox_Conv2(coord(10, 9, wram->wTilemap), 8, 2);
+        #else
+        ClearBox_Conv2(coord(10, 9, wram->wTilemap), 8, 2);
+        #endif
     }
 
 // asm_481db:
@@ -569,7 +655,15 @@ static const char String_TellLater[] = "Tell Later@";
         // LD_BC((1 << 8) | 8);
         // hlcoord(11, 10, wTilemap);
         // CALL(aClearBox);
+        #if defined(_CRYSTAL_JP)
         ClearBox_Conv2(coord(11, 10, wram->wTilemap), 8, 1);
+        #elif defined(_CRYSTAL_AU)
+        ClearBox_Conv2(coord(9, 11, wram->wTilemap), 9, 1);
+        #elif defined(_CRYSTAL_EU)
+        ClearBox_Conv2(coord(10, 11, wram->wTilemap), 9, 1);
+        #else
+        ClearBox_Conv2(coord(10, 11, wram->wTilemap), 9, 1);
+        #endif
         // goto asm_48201;
         return;
     }
@@ -583,7 +677,11 @@ asm_481f1:
         // hlcoord(11, 10, wTilemap);
         // LD_DE(mFunction48187_String_TellLater);
         // CALL(aPlaceString);
+        #if defined(_CRYSTAL_JP)
         PlaceStringSimple(U82C(String_TellLater), coord(11, 10, wram->wTilemap));
+        #else
+        PlaceStringSimple(U82C(String_TellLater), coord(9, 11, wram->wTilemap));
+        #endif
     }
 
 // asm_48201:
@@ -591,6 +689,7 @@ asm_481f1:
     return;
 }
 
+// MobileProfileOptionPressed
 uint8_t Function4820d(void){
     // CALL(aPlaceHollowCursor);
     PlaceHollowCursor_Conv();
@@ -619,7 +718,7 @@ uint8_t Function4820d(void){
         case 0x2: Function4876f(); return 0xff;
         // CP_A(0x3);
         // JP_Z (mFunction48304);
-        case 0x3: Function48304(); return 0xff; // TODO: Finish converting Function48304. // Function48304(); break;
+        case 0x3: Function48304(); return 0xff;
         // CP_A(0x4);
         // JP_Z (mFunction488d3);
         case 0x4: Function488d3(); return 0xff;
@@ -652,7 +751,8 @@ uint8_t Function4820d(void){
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // CALL(aFunction48d30);
-    Function48d30();
+    // Function48d30();
+    SaveZipcodeWithUniversalFormat();
     // POP_BC;
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
@@ -683,6 +783,7 @@ void Function48283(void){
     // RET;
 }
 
+// MobileProfile_Gender
 void asm_4828d(void){
     // CALL(aFunction48283);
     Function48283();
@@ -695,6 +796,7 @@ void asm_4828d(void){
     LoadMenuHeader_Conv2(&MenuHeader_0x484f1);
     // CALL(aFunction4873c);
     Function4873c();
+#if defined(_CRYSTAL_JP)
     // hlcoord(11, 2, wTilemap);
     // LD_B(0x4);
     // LD_C(0x7);
@@ -708,6 +810,15 @@ void asm_4828d(void){
     // LD_DE(mString_484ff);
     // CALL(aPlaceString);
     PlaceStringSimple(U82C(Strings_484fb[1]), coord(13, 6, wram->wTilemap));
+#elif defined(_CRYSTAL_EU)
+    Function48cdc(coord(11, 2, wram->wTilemap), 0x4, 0x7);
+    PlaceStringSimple(U82C(Strings_484fb[0]), coord(13, 4, wram->wTilemap));
+    PlaceStringSimple(U82C(Strings_484fb[1]), coord(13, 6, wram->wTilemap));
+#else
+    Function48cdc(coord(12, 2, wram->wTilemap), 0x4, 0x6);
+    PlaceStringSimple(U82C(Strings_484fb[0]), coord(14, 4, wram->wTilemap));
+    PlaceStringSimple(U82C(Strings_484fb[1]), coord(14, 6, wram->wTilemap));
+#endif
     // CALL(aWaitBGMap);
     WaitBGMap_Conv();
     // LD_A_addr(wPlayerGender);
@@ -753,7 +864,15 @@ void asm_4828d(void){
         // LD_E_L;
         // hlcoord(11, 4, wTilemap);
         // CALL(aPlaceString);
+#if defined(_CRYSTAL_JP)
         PlaceStringSimple(U82C(str), coord(11, 4, wram->wTilemap));
+#elif defined(_CRYSTAL_AU)
+        PlaceStringSimple(U82C(str), coord(13, 5, wram->wTilemap));
+#elif defined(_CRYSTAL_EU)
+        PlaceStringSimple(U82C(str), coord(11, 5, wram->wTilemap));
+#else
+        PlaceStringSimple(U82C(str), coord(12, 5, wram->wTilemap));
+#endif
         // LD_A_addr(wd003);
         // SET_A(0);
         // LD_addr_A(wd003);
@@ -762,6 +881,7 @@ void asm_4828d(void){
     // JP(mFunction4840c);
 }
 
+// MobileProfile_Region
 void Function48304(void){
     // CALL(aFunction48283);
     Function48283();
@@ -779,7 +899,11 @@ void Function48304(void){
     // LD_B(0xc);
     // LD_C(0x8);
     // CALL(aFunction48cdc);
+#if defined(_CRYSTAL_JP)
     Function48cdc(coord(10, 0, wram->wTilemap), 0xc, 0x8);
+#else
+    Function48cdc(coord(16 - REGION_CODE_STRING_LENGTH, 0, wram->wTilemap), 0xc, REGION_CODE_STRING_LENGTH + 2);
+#endif
     // LD_A_addr(wMenuCursorPosition);
     // LD_B_A;
     uint8_t cursorPos = wram->wMenuCursorPosition;
@@ -792,13 +916,13 @@ void Function48304(void){
     uint8_t a = wram->wPrefecture - 1;
     // CP_A(0x29);
     // IF_C goto asm_4833f;
-    if(a >= 0x29) {
+    if(a >= NUM_REGION_CODES) {
         // SUB_A(0x29);
         // INC_A;
         // LD_addr_A(wMenuCursorPosition);
-        wram->wMenuCursorPosition = (a - 0x29) + 1;
+        wram->wMenuCursorPosition = (a - NUM_REGION_CODES) + 1;
         // LD_A(0x29);
-        a = 0x29;
+        a = NUM_REGION_CODES;
     }
 
 // asm_4833f:
@@ -911,6 +1035,7 @@ bool Function48383(uint8_t a, uint16_t de){
     return true;
 }
 
+// MobileProfile_SavePrefectureAndDisplayIt
 void Function483bb(void){
     // LD_HL(wScrollingMenuCursorPosition);
     // LD_A_hl;
@@ -939,6 +1064,7 @@ void Function483bb(void){
 // asm_483d5:
     // LD_D_H;
     // LD_E_L;
+    #if defined(_CRYSTAL_JP)
     // LD_B(0x2);
     // LD_C(0x8);
     // hlcoord(11, 7, wTilemap);
@@ -947,9 +1073,20 @@ void Function483bb(void){
     // hlcoord(11, 8, wTilemap);
     // CALL(aPlaceString);
     PlaceStringSimple(U82C(pref), coord(11, 8, wram->wTilemap));
+    #elif defined(_CRYSTAL_AU)
+    ClearBox_Conv2(coord(11, 8, wram->wTilemap), 0x8, 0x2);
+    PlaceStringSimple(U82C(pref), coord(19 - REGION_CODE_STRING_LENGTH, 9, wram->wTilemap));
+    #elif defined(_CRYSTAL_EU)
+    ClearBox_Conv2(coord(9, 8, wram->wTilemap), 0x8, 0x2);
+    PlaceStringSimple(U82C(pref), coord(16 - REGION_CODE_STRING_LENGTH, 9, wram->wTilemap));
+    #else
+    ClearBox_Conv2(coord(11, 8, wram->wTilemap), 0x8, 0x2);
+    PlaceStringSimple(U82C(pref), coord(17 - REGION_CODE_STRING_LENGTH, 9, wram->wTilemap));
+    #endif
     // RET;
 }
 
+// PrefectureScrollingMenu_Draw
 void Function483e8(const struct MenuData* data, tile_t* de){
     (void)data;
     // PUSH_DE;
@@ -1060,6 +1197,37 @@ void Mobile12_Bin2Dec(tile_t* hl, uint8_t a){
     // RET;
 }
 
+// Inputs: char pool index in D, char index (within char pool) in A, screen tile coord in HL.
+// Doesn't clobber B.
+void Mobile12_Index2CharDisplay(tile_t* hl, uint8_t d, uint8_t a){
+    // call Mobile12_Index2Char
+    // ld [hl], a
+    *hl = Mobile12_Index2Char(d, a);
+    // ret
+}
+
+// Inputs: char pool index in D, char index (within char pool) in A.
+// Doesn't clobber B.
+uint8_t Mobile12_Index2Char(uint8_t d, uint8_t a) {
+    uint8_t buffer[64];
+    // push hl
+    // push de
+
+    // push af
+    // ld a, d
+    // call GetCurCharpoolAddress
+    const uint8_t* hl = GetCurCharpoolAddress(buffer, sizeof(buffer), d);
+    // pop af
+
+    // ld e, a ; A is the char index within the current char pool, given as a parameter of this function.
+    // add hl, de
+    // pop de
+    // ld a, [hl]
+    // pop hl
+    // ret
+    return hl[a];
+}
+
 const char MobileProfileString[] = "  Mobile Profile@";
 const char MobileString_Gender[] = "Gender@";
 const char MobileString_Age[] = "Age@";
@@ -1091,6 +1259,7 @@ const char* Strings_484fb[] = {
     "Girl@",
 };
 
+#if defined(_CRYSTAL_JP)
 const struct MenuHeader MenuHeader_0x48504 = {
     .flags = MENU_BACKUP_TILES,  // flags
     .coord = menu_coords(10, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1),
@@ -1112,6 +1281,29 @@ const struct MenuHeader MenuHeader_0x48513 = {
     .data = &MenuData_0x4851b,
     .defaultOption = 1,  // default option
 };
+#else
+const struct MenuHeader MenuHeader_0x48504 = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(16 - REGION_CODE_STRING_LENGTH, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1),
+};
+
+const struct MenuHeader MenuHeader_0x48509 = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(10, 5, SCREEN_WIDTH - 1, 8),
+};
+
+const struct MenuHeader MenuHeader_0x4850e = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(18 - ZIPCODE_LENGTH, 9, SCREEN_WIDTH - 1, TEXTBOX_Y - 0),
+};
+
+const struct MenuHeader MenuHeader_0x48513 = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(17 - REGION_CODE_STRING_LENGTH, 1, SCREEN_WIDTH - 2, TEXTBOX_Y), // 18, 12
+    .data = &MenuData_0x4851b,
+    .defaultOption = 1,  // default option
+};
+#endif
 
 const struct MenuData MenuData_0x4851b = {
     .flags = SCROLLINGMENU_DISPLAY_ARROWS | SCROLLINGMENU_ENABLE_RIGHT | SCROLLINGMENU_ENABLE_LEFT | SCROLLINGMENU_CALL_FUNCTION1_CANCEL,  // flags
@@ -1390,7 +1582,15 @@ void Function4876f(void){
     // LD_B(0x1);
     // LD_C(0x8);
     // CALL(aFunction48cdc);
+    #if defined(_CRYSTAL_JP)
     Function48cdc(coord(10, 5, wram->wTilemap), 0x1, 0x8);
+    #elif defined(_CRYSTAL_AU)
+    Function48cdc(coord(12, 6, wram->wTilemap), 0x1, 0x6);
+    #elif defined(_CRYSTAL_EU)
+    Function48cdc(coord(10, 6, wram->wTilemap), 0x1, 0x8);
+    #else
+    Function48cdc(coord(11, 6, wram->wTilemap), 0x1, 0x7);
+    #endif
     // CALL(aWaitBGMap);
     WaitBGMap_Conv();
     // LD_A_addr(wd473);
@@ -1400,7 +1600,11 @@ void Function4876f(void){
     // asm_487ab:
         // hlcoord(12, 5, wTilemap);
         // LD_hl(0x10);
+        #if defined(_CRYSTAL_JP)
         *coord(12, 5, wram->wTilemap) = 0x10;
+        #else
+        *coord(13, 6, wram->wTilemap) = 0x10;
+        #endif
         // goto asm_487b7;
     }
     // CP_A(0x64);
@@ -1409,22 +1613,39 @@ void Function4876f(void){
     // asm_487b2:
         // hlcoord(12, 7, wTilemap);
         // LD_hl(0x11);
+        #if defined(_CRYSTAL_JP)
         *coord(12, 7, wram->wTilemap) = 0x11;
+        #else
+        *coord(13, 8, wram->wTilemap) = 0x11;
+        #endif
     }
     else {
+        #if defined(_CRYSTAL_JP)
         // hlcoord(12, 5, wTilemap);
         // LD_hl(0x10);
         *coord(12, 5, wram->wTilemap) = 0x10;
         // hlcoord(12, 7, wTilemap);
         // LD_hl(0x11);
         *coord(12, 7, wram->wTilemap) = 0x11;
+        #else
+        *coord(13, 6, wram->wTilemap) = 0x10;
+        *coord(13, 8, wram->wTilemap) = 0x11;
+        #endif
         // goto asm_487b7;
     }
 
 // asm_487b7:
     // hlcoord(11, 6, wTilemap);
     // CALL(aFunction487ec);
+    #if defined(_CRYSTAL_JP)
     Function487ec(coord(11, 6, wram->wTilemap));
+    #elif defined(_CRYSTAL_AU)
+    Function487ec(coord(13, 7, wram->wTilemap));
+    #elif defined(_CRYSTAL_EU)
+    Function487ec(coord(11, 7, wram->wTilemap));
+    #else
+    Function487ec(coord(12, 7, wram->wTilemap));
+    #endif
     // LD_C(10);
     // CALL(aDelayFrames);
     DelayFrames_Conv(10);
@@ -1459,7 +1680,15 @@ void Function4876f(void){
     ExitMenu_Conv2();
     // hlcoord(11, 6, wTilemap);
     // CALL(aFunction487ec);
+    #if defined(_CRYSTAL_JP)
     Function487ec(coord(11, 6, wram->wTilemap));
+    #elif defined(_CRYSTAL_AU)
+    Function487ec(coord(13, 7, wram->wTilemap));
+    #elif defined(_CRYSTAL_EU)
+    Function487ec(coord(11, 7, wram->wTilemap));
+    #else
+    Function487ec(coord(12, 7, wram->wTilemap));
+    #endif
     // POP_AF;
     // LDH_addr_A(hInMenu);
     hram->hInMenu = inMenu;
@@ -1599,6 +1828,7 @@ u8_flag_s Function4880e(void){
     // IF_Z goto asm_48887;
     if(wram->wAge == 0) {
     // asm_48887:
+        #if defined(_CRYSTAL_JP)
         // hlcoord(10, 5, wTilemap);
         // LD_B(0x1);
         // LD_C(0x8);
@@ -1607,6 +1837,16 @@ u8_flag_s Function4880e(void){
         // hlcoord(12, 5, wTilemap);
         // LD_hl(0x10);
         *coord(12, 5, wram->wTilemap) = 0x10;
+        #elif defined(_CRYSTAL_AU)
+        Function48cdc(coord(12, 6, wram->wTilemap), 0x1, 0x6);
+        *coord(14, 6, wram->wTilemap) = 0x10;
+        #elif defined(_CRYSTAL_EU)
+        Function48cdc(coord(10, 6, wram->wTilemap), 0x1, 0x8);
+        *coord(12, 6, wram->wTilemap) = 0x10;
+        #else
+        Function48cdc(coord(11, 6, wram->wTilemap), 0x1, 0x7);
+        *coord(13, 6, wram->wTilemap) = 0x10;
+        #endif
         // goto asm_488a7;
     }
     // CP_A(0x64);
@@ -1614,6 +1854,7 @@ u8_flag_s Function4880e(void){
     // IF_Z goto asm_488a7; // Dummied out destination?
     else if(wram->wAge == 0x64) {
     // asm_48898:
+        #if defined(_CRYSTAL_JP)
         // hlcoord(10, 5, wTilemap);
         // LD_B(0x1);
         // LD_C(0x8);
@@ -1622,8 +1863,19 @@ u8_flag_s Function4880e(void){
         // hlcoord(12, 7, wTilemap);
         // LD_hl(0x11);
         *coord(12, 7, wram->wTilemap) = 0x11;
+        #elif defined(_CRYSTAL_AU)
+        Function48cdc(coord(12, 6, wram->wTilemap), 0x1, 0x6);
+        *coord(14, 8, wram->wTilemap) = 0x11;
+        #elif defined(_CRYSTAL_EU)
+        Function48cdc(coord(10, 6, wram->wTilemap), 0x1, 0x8);
+        *coord(12, 8, wram->wTilemap) = 0x11;
+        #else
+        Function48cdc(coord(11, 6, wram->wTilemap), 0x1, 0x7);
+        *coord(13, 8, wram->wTilemap) = 0x11;
+        #endif
     }
     else {
+        #if defined(_CRYSTAL_JP)
         // hlcoord(12, 5, wTilemap);
         // LD_hl(0x10);
         *coord(12, 5, wram->wTilemap) = 0x10;
@@ -1631,12 +1883,30 @@ u8_flag_s Function4880e(void){
         // LD_hl(0x11);
         *coord(12, 7, wram->wTilemap) = 0x11;
         // goto asm_488a7;
+        #elif defined(_CRYSTAL_AU)
+        *coord(14, 6, wram->wTilemap) = 0x10;
+        *coord(14, 8, wram->wTilemap) = 0x11;
+        #elif defined(_CRYSTAL_EU)
+        *coord(12, 6, wram->wTilemap) = 0x10;
+        *coord(12, 8, wram->wTilemap) = 0x11;
+        #else
+        *coord(13, 6, wram->wTilemap) = 0x10;
+        *coord(13, 8, wram->wTilemap) = 0x11;
+        #endif
     }
 
 // asm_488a7:
     // hlcoord(11, 6, wTilemap);
     // CALL(aFunction487ec);
+    #if defined(_CRYSTAL_JP)
     Function487ec(coord(11, 6, wram->wTilemap));
+    #elif defined(_CRYSTAL_AU)
+    Function487ec(coord(13, 7, wram->wTilemap));
+    #elif defined(_CRYSTAL_EU)
+    Function487ec(coord(11, 7, wram->wTilemap));
+    #else
+    Function487ec(coord(12, 7, wram->wTilemap));
+    #endif
     // CALL(aWaitBGMap);
     WaitBGMap_Conv();
     // LD_A(0x1);
@@ -1678,6 +1948,9 @@ void Function488d3(void){
     // JP_C (mFunction4840c);
     if(Function48a3a())
         return;
+    #if !defined(_CRYSTAL_JP)
+    ClearBox_Conv2(coord(8, 12, wram->wTilemap), 10 - ZIPCODE_LENGTH, 1);
+    #endif
     // LD_HL(mMenuHeader_0x4850e);
     // CALL(aLoadMenuHeader);
     LoadMenuHeader_Conv2(&MenuHeader_0x4850e);
@@ -1687,6 +1960,7 @@ void Function488d3(void){
     // LD_A(0x1);
     // LDH_addr_A(hInMenu);
     hram->hInMenu = 0x1;
+    #if defined(_CRYSTAL_JP)
     // hlcoord(10, 9, wTilemap);
     // LD_B(0x1);
     // LD_C(0x8);
@@ -1698,8 +1972,19 @@ void Function488d3(void){
     // hlcoord(11, 10, wTilemap);
     // CALL(aFunction489ea);
     Function489ea(coord(11, 10, wram->wTilemap));
+    #elif defined(_CRYSTAL_AU)
+    Function48cdc(coord(16 - ZIPCODE_LENGTH, 10, wram->wTilemap), 0x1, ZIPCODE_LENGTH + 2);
+    DisplayZipCode(coord(17 - ZIPCODE_LENGTH, 11, wram->wTilemap));
+    #elif defined(_CRYSTAL_EU)
+    Function48cdc(coord(18 - ZIPCODE_LENGTH, 10, wram->wTilemap), 0x1, ZIPCODE_LENGTH);
+    DisplayZipCode(coord(19 - ZIPCODE_LENGTH, 11, wram->wTilemap));
+    #else
+    Function48cdc(coord(18 - ZIPCODE_LENGTH, 10, wram->wTilemap), 0x1, ZIPCODE_LENGTH);
+    DisplayZipCode(coord(19 - ZIPCODE_LENGTH, 11, wram->wTilemap));
+    #endif
     // CALL(aWaitBGMap);
     WaitBGMap_Conv();
+    #if defined(_CRYSTAL_JP)
     // LD_A_addr(wd475);
     // LD_B_A;
     // LD_A_addr(wd476);
@@ -1718,9 +2003,38 @@ void Function488d3(void){
     uint8_t b = 0x0;
 
     return asm_48922(bc, de, b, d, inMenu);
+    #else
+    // Backup of the zip code, in case the player cancels.
+    uint8_t saved[ZIPCODE_MAX_LENGTH];
+    CopyBytes_Conv2(saved, wram->wZipCode_Saved, sizeof(saved));
+    // We look for the starting char index. We skip all non-editable chars (those with a charpool length of 1 or 0).
+    // ld b, $0
+    uint8_t b = 0x0;
+    // ld d, -1
+    uint8_t d = 0x0;
+    uint8_t a;
+    do {
+    // .check_editable_char_loop
+        // inc d
+        // ld a, [wZipcodeFormatLength]
+        // cp d
+        // jp z, ZipCodeEditMenu ; None of the chars of this zipcode format are editable (EU-AD only), so we automatically save it and quit.
+        // jp c, ZipCodeEditMenu ; None of the chars of this zipcode format are editable (EU-AD only), so we automatically save it and quit.
+        if(wram->wZipcodeFormatLength <= d)
+            return ZipCodeEditMenu(saved, b, d, inMenu);
+
+        // call Zipcode_GetCharPoolLengthForGivenCharSlot
+        a = Zipcode_GetCharPoolLengthForGivenCharSlot(d++);
+        // cp 2
+        // jr c, .check_editable_char_loop
+    } while(a < 2);
+    d--;
+    return ZipCodeEditMenu(saved, b, d, inMenu);
+    #endif
 }
 
 // MobileProfile_ZipCodeLoop
+// TODO: Rewrite Zipcode editing menu
 void asm_48922(uint16_t bc, uint16_t de, uint8_t b, uint8_t d, uint8_t inMenu){
     u8_flag_s res;
     do {
@@ -1855,7 +2169,11 @@ void asm_48922(uint16_t bc, uint16_t de, uint8_t b, uint8_t d, uint8_t inMenu){
     ExitMenu_Conv2();
     // hlcoord(11, 10, wTilemap);
     // CALL(aFunction489ea);
+    #if defined(_CRYSTAL_JP)
     Function489ea(coord(11, 10, wram->wTilemap));
+    #else
+    Function489ea(coord(9, 11, wram->wTilemap));
+    #endif
     // hlcoord(11, 9, wTilemap);
     // LD_BC((1 << 8) | 8);
     // CALL(aClearBox);
@@ -1864,6 +2182,223 @@ void asm_48922(uint16_t bc, uint16_t de, uint8_t b, uint8_t d, uint8_t inMenu){
     // LDH_addr_A(hInMenu);
     hram->hInMenu = inMenu;
     // JP(mFunction4840c);
+}
+
+void ZipCodeEditMenu(const uint8_t* saved, uint8_t b, uint8_t d, uint8_t inMenu) {
+    u8_flag_s res;
+    do {
+        DelayFrame();
+        #if defined(_CRYSTAL_AU)	
+        // hlcoord 12 - ZIPCODE_LENGTH, 11 ; Zip Code Position in MOBILE menu
+        // ld a, ZIPCODE_LENGTH
+        // ld c, a
+        // ld b, 0
+        // ld a, " "
+        // call ByteFill ; fill bc bytes with the value of a, starting at hl
+        ByteFill_Conv2(coord(12 - ZIPCODE_LENGTH, 11, wram->wTilemap), ZIPCODE_LENGTH, 0x7f);
+        // ld b, e
+        #elif defined(_CRYSTAL_EU)
+        // hlcoord 10 - ZIPCODE_LENGTH, 11 ; Zip Code Position in MOBILE menu
+        // ld a, ZIPCODE_LENGTH
+        // ld c, a
+        // ld b, 0
+        // ld a, " "
+        // call ByteFill ; fill bc bytes with the value of a, starting at hl
+        ByteFill_Conv2(coord(10 - ZIPCODE_LENGTH, 11, wram->wTilemap), ZIPCODE_LENGTH, 0x7f);
+        // ld b, e	
+        #else
+        // hlcoord 11 - ZIPCODE_LENGTH, 11 ; Zip Code Position in MOBILE menu
+        // ld a, ZIPCODE_LENGTH
+        // ld c, a
+        // ld b, 0
+        // ld a, " "
+        // call ByteFill ; fill bc bytes with the value of a, starting at hl
+        ByteFill_Conv2(coord(11 - ZIPCODE_LENGTH, 11, wram->wTilemap), ZIPCODE_LENGTH, 0x7f);
+        // ld b, e
+        #endif
+        // push bc
+        // call JoyTextDelay
+        JoyTextDelay_Conv();
+        // ldh a, [hJoyDown]
+        // and a
+        // jp z, InputZipcodeCharacters_B0 ; If no button is pressed, jump to InputZipcodeCharacters_B0.
+
+        // bit A_BUTTON_F, a
+        // jp nz, InputZipcodeCharacters_B0 ; If button A is pressed, jump to InputZipcodeCharacters_B0.
+
+        // bit B_BUTTON_F, a
+        // jp nz, InputZipcodeCharacters_B0 ; If button B is pressed, jump to InputZipcodeCharacters_B0.
+        if(hram->hJoyDown == 0 || bit_test(hram->hJoyDown, A_BUTTON_F) || bit_test(hram->hJoyDown, B_BUTTON_F)) {
+            // return Function4896e(bc, de, d); // inlined
+        // InputZipcodeCharacters_B0:
+            // pop bc
+            // ld b, $0
+            // push bc
+            b = 0;
+        }
+        else {
+            // ld a, [wd002]
+            // and %11001111
+            // res 7, a
+            // ld [wd002], a
+            wram->wd002 = ((wram->wd002 & 0b11001111) & (uint8_t)~(1 << 7)); // wd002 & 0b01001111
+            // pop bc ; On the first loop, B contains 0 and C contains [wZipCode + 1]
+            // inc b ; Converts b from 0-index to 1-index.
+            ++b;
+            // ld a, b
+            // push bc
+            // jr asm_48972
+        }
+
+    // asm_48972:
+        // call InputZipcodeCharacters
+        res = InputZipcodeCharacters(&d);
+
+        // push af
+        // push de
+        // ld e, d
+        // ld d, $0
+        // ld b, $71; Y. Supposed to be $70 with GFX_underscore.
+        #if defined(_CRYSTAL_AU)	
+        // ld c, (20 - ZIPCODE_LENGTH + 1) * 8; X.
+        #elif defined(_CRYSTAL_EU)	
+        // ld c, (19 - ZIPCODE_LENGTH + 1) * 8; X.	
+        #else
+        // ld c, (16 - ZIPCODE_LENGTH + 1) * 8; X.
+        #endif
+        #if defined(_CRYSTAL_EU)
+        // call Mobile12_MoveAndBlinkCursor
+        #endif
+        // ;farcall Mobile22_MoveAndBlinkCursor
+        // pop de
+        // pop af
+
+        // push af
+        // cp $f0
+        // jr z, .skip_all_blinking ; Jump if last input was up or down (zip code value changed).
+        if(res.a != 0xf0) {
+            // cp $f
+            // jr nz, .regular_blinking // Jump if last input WASN'T left or right.
+            if(res.a == 0xf) {
+            // ;.reset_blinking ; We reach this line if the last input was left or right.
+                // ld a, [wd002]
+                // set 7, a
+                bit_set(wram->wd002, 7);
+                // and $cf ; %1100 1111
+                // ld [wd002], a
+                wram->wd002 &= 0xcf;
+            }
+
+        // .regular_blinking
+            #if defined(_CRYSTAL_AU)	
+            // hlcoord 17 - ZIPCODE_LENGTH, 11 ; Zip code location
+            BlinkSelectedCharacter(coord(17 - ZIPCODE_LENGTH, 11, wram->wTilemap) + d);
+            #else
+            // hlcoord 19 - ZIPCODE_LENGTH, 11 ; Zip code location
+            BlinkSelectedCharacter(coord(19 - ZIPCODE_LENGTH, 11, wram->wTilemap) + d);
+            #endif
+            // ld b, $0
+            // ld c, d
+            // add hl, bc
+            // call BlinkSelectedCharacter
+        }
+
+    // .skip_all_blinking
+        // call WaitBGMap
+        WaitBGMap_Conv();
+        // pop af
+        // pop bc
+        // jp nc, ZipCodeEditMenu ; If the player didn't validate the zipcode save (didn't press A).
+    } while(!res.flag);
+    // ; If we reach this line, it means the player saved by pressing A in the zipcode edit menu.
+    // jr nz, .confirm_save ; If nz, it means InputZipcodeCharacters returned a value (either $f or $f0) because the player pressed an arrow.
+    if(res.a == 0) {
+    // Reset zip code to previous value.
+        // pop bc
+        // ld a, b
+        // ld [wZipCode + 6], a
+
+        // pop bc
+        // ld a, b
+        // ld [wZipCode + 4], a
+        // ld a, c
+        // ld [wZipCode + 5], a
+
+        // pop bc
+        // ld a, b
+        // ld [wZipCode + 2], a
+        // ld a, c
+        // ld [wZipCode + 3], a
+
+        // pop bc
+        // ld a, b
+        // ld [wZipCode + 0], a
+        // ld a, c
+        // ld [wZipCode + 1], a
+        CopyBytes_Conv2(wram->wZipCode_Saved, saved, sizeof(wram->wZipCode_Saved));
+
+        // jr .quit_zip_code_edit_menu
+    }
+    else {
+    // .confirm_save
+        // push af
+
+        // ld a, [wd479]
+        // set 0, a
+        // ld [wd479], a
+        bit_set(wram->wd479[0], 0);
+
+        // ld a, [wMobileProfileParametersFilled]
+        // set 3, a
+        // ld [wMobileProfileParametersFilled], a
+        bit_set(wram->wd003, 3);
+
+        // pop af
+
+    // rept 4
+        // pop bc ; Flush the stack that was holding the previous value of the zip code.
+    // endr
+    }
+
+// .quit_zip_code_edit_menu
+    // push af
+    // push bc
+    // push de
+    // push hl
+    // ld a, $1
+    // call MenuClickSound ; We hear this sound when we leave the zipcode edition code.
+    MenuClickSound_Conv(0x1);
+    // farcall Mobile22_Clear24FirstOAM
+    Function89448();
+    // pop hl
+    // pop de
+    // pop bc
+    // pop af
+    // call ExitMenu
+    ExitMenu_Conv2();
+    // call DisplayZipCodeRightAlign
+    DisplayZipCodeRightAlign();
+    #if defined(_CRYSTAL_AU)
+    // hlcoord 17, 11 ; Location of a clear box to clear any excess characters if 'Tell Now' is selected, but cannot overlap the position of the zip code itself, because otherwise it will clear that too.
+    // ld a, 6 - ZIPCODE_LENGTH ; Determines the size of the clearing box
+    ClearBox_Conv2(coord(17, 11, wram->wTilemap), 6 - ZIPCODE_LENGTH + b, 1);
+    #elif defined(_CRYSTAL_EU)
+    // hlcoord 9, 11 ; Location of a clear box to clear any excess characters if 'Tell Now' is selected, but cannot overlap the position of the zip code itself, because otherwise it will clear that too.
+    // ld a, 10 - ZIPCODE_LENGTH ; Determines the size of the clearing box
+    ClearBox_Conv2(coord(9, 11, wram->wTilemap), 10 - ZIPCODE_LENGTH + b, 1);
+    #else
+    // hlcoord 9, 11 ; Location of a clear box to clear any excess characters if 'Tell Now' is selected, but cannot overlap the position of the zip code itself, because otherwise it will clear that too.
+    // ld a, 10 - ZIPCODE_LENGTH ; Determines the size of the clearing box
+    ClearBox_Conv2(coord(9, 11, wram->wTilemap), 10 - ZIPCODE_LENGTH + b, 1);
+    #endif
+    // add b ; We increase the clearbox width, in case the zipcode has been shifted to the right.
+    // ld c, a
+    // ld b, 1
+    // call ClearBox
+    // pop af
+    // ldh [hInMenu], a
+    hram->hInMenu = inMenu;
+    // jp ReturnToMobileProfileMenu
 }
 
 void Function4895a(void){
@@ -1979,6 +2514,45 @@ void Function4895a(void){
 
 // }
 
+// Input in D: char slot index.
+// Output in A: char pool length of the given char slot in input.
+uint8_t Zipcode_GetCharPoolLengthForGivenCharSlot(uint8_t d) {
+    // push hl
+    // push de
+    // push bc
+
+    // ld hl, Zipcode_CharPool_Formats
+    // ld a, [wZipcodeFormat]
+    // add a ; dw
+    // ld c, a
+    // ld b, 0
+    // add hl, bc
+
+    // ld a, [hli]
+    // ld h, [hl]
+    // ld l, a ; HL now points to the zipcode format structure.
+
+    // ld e, d
+    // ld d, 0
+    // add hl, de
+    // ld a, [hl] ; A contains the index of the used charpool.
+    uint8_t pool = Zipcode_CharPool_Formats[wram->wZipcodeFormat][d];
+
+    // ld hl, Zipcode_CharPools + 2 ; HL points to the charpool length list.
+    // ld e, a
+    // add a
+    // add e 
+    // ld e, a ; dwb
+    // add hl, de
+    // ld a, [hl] ; A contains the length of the charpool we are looking for.
+
+    // pop bc
+    // pop de
+    // pop hl
+    // ret
+    return (uint8_t)Zipcode_CharPools[pool].size;
+}
+
 // MobileProfile_PrintSelections?
 void Function489ea(tile_t* hl){
     // PUSH_DE;
@@ -2028,9 +2602,186 @@ void Function489ea(tile_t* hl){
     // RET;
 }
 
+// Input: B = left offset.
+void DisplayZipCodeRightAlign(void){
+    // xor a
+    // ldh [hInMenu], a // Bypassing the regular control of this value.
+    hram->hInMenu = 0; // Bypassing the regular control of this value.
+
+    // push de
+    // We first clear the area.
+    #if defined(_CRYSTAL_AU)
+    // hlcoord 14 - ZIPCODE_LENGTH, 11 ; Zip Code Position in MOBILE menu
+    // ld a, ZIPCODE_LENGTH
+    ByteFill_Conv2(coord(14 - ZIPCODE_LENGTH, 11, wram->wTilemap), ZIPCODE_LENGTH, 0x7f);
+    #elif defined(_CRYSTAL_EU)
+    // hlcoord 19 - ZIPCODE_LENGTH, 11 ; Zip Code Position in MOBILE menu
+    // ld a, ZIPCODE_LENGTH
+    ByteFill_Conv2(coord(19 - ZIPCODE_LENGTH, 11, wram->wTilemap), ZIPCODE_LENGTH, 0x7f);
+    #else
+    // hlcoord 19 - ZIPCODE_LENGTH, 11 ; Zip Code Position in MOBILE menu
+    // ld a, ZIPCODE_LENGTH
+    ByteFill_Conv2(coord(19 - ZIPCODE_LENGTH, 11, wram->wTilemap), ZIPCODE_LENGTH, 0x7f);
+    #endif
+    // ld c, a
+    // ld b, 0
+    // ld a, " "
+    // call ByteFill ; fill bc bytes with the value of a, starting at hl
+    // ld b, e
+
+    // Aligning to the right, based on wZipcodeFormatLength.
+    #if defined(_CRYSTAL_AU)
+    // hlcoord 17 - ZIPCODE_LENGTH, 11 ; Zip Code Position in MOBILE menu
+    tile_t* hl = coord(17 - ZIPCODE_LENGTH, 11, wram->wTilemap);
+    #elif defined(_CRYSTAL_EU)
+    // hlcoord 19 - ZIPCODE_LENGTH, 11 ; Zip Code Position in MOBILE menu
+    tile_t* hl = coord(19 - ZIPCODE_LENGTH, 11, wram->wTilemap);
+    #else
+    // hlcoord 19 - ZIPCODE_LENGTH, 11 ; Zip Code Position in MOBILE menu
+    tile_t* hl = coord(19 - ZIPCODE_LENGTH, 11, wram->wTilemap);
+    #endif
+    // ld a, [wZipcodeFormatLength]
+    // ld b, a
+    // ld a, ZIPCODE_LENGTH
+    // sub b
+
+    // ld e, a
+    // ld d, 0
+    //add hl, de // Shifting HL coord to the right, based on wZipcodeFormatLength. It's so that the zipcode stays aligned to the right.
+
+    // call CountZipcodeRightBlanks
+    uint8_t e = CountZipcodeRightBlanks();
+    // ld d, 0
+    // ld e, a
+    // add hl, de
+    // pop de
+
+    // ld b, a
+
+    // jr DisplayZipCodeWithOffset
+    return DisplayZipCodeWithOffset(hl + e, e);
+}
+
+// Input: HL contains the coords (using hlcoord) on the screen of the first char (leftmost) of the zipcode. B = left offset.
+// Output: the number of blanks on the right in B. This is the equivalent of the desired left offset.
+void DisplayZipCode(tile_t* hl){
+    // ld b, 0
+
+    return DisplayZipCodeWithOffset(hl, 0);
+}
+void DisplayZipCodeWithOffset(tile_t* hl, uint8_t b) {
+    // push de
+
+    // push hl
+    // call GB_Zipcode_Exception_Prepass
+    bool zipcodeMultipleNonConsecutiveSpace = GB_Zipcode_Exception_Prepass();
+    // pop hl
+
+    // ld de, 0
+    uint8_t e = 0;
+    // ld a, [wZipcodeFormatLength]
+    // sub b // Note that B must always be strictly smaller than ZIPCODE_LENGTH.
+    // ld c, a
+    uint8_t c = wram->wZipcodeFormatLength - b;
+
+    while(e < c) {
+    // .loop
+        // ld a, e
+        // cp c
+        // jr nc, .end_loop
+
+        // push hl
+        // ld hl, wZipCode
+        // ld d, 0
+        // add hl, de ; We get the zipcode char offset.
+        // ld a, [hl]
+        // pop hl
+
+        // ld d, e
+        // call Mobile12_Index2CharDisplay
+        Mobile12_Index2CharDisplay(hl, e, wram->wZipCode_Saved[e]);
+        // inc e
+        e++;
+
+        // ldh a, [hInMenu]
+        // and a
+        // jr nz, .inc_screen_coord // When the user is in a menu, it means they're editing the zipcode. WHen editing it, we shouldn't skip double spaces as it will break the input system.
+        if(!hram->hInMenu) {
+            // ld a, [hl]
+            // cp " "
+            // jr nz, .inc_screen_coord
+            if(*hl != 0x7f) {
+                hl++;
+                continue;
+            }
+            // ld a, [wZipcodeMultipleNonConsecutiveSpace]
+            // and a
+            // jr z, .check_for_double_spaces
+
+            if(zipcodeMultipleNonConsecutiveSpace) {
+                // wZipcodeMultipleNonConsecutiveSpace was set to TRUE.
+                // xor a
+                // ld [wZipcodeMultipleNonConsecutiveSpace], a
+                // jr .loop
+                continue;
+            }
+
+        // .check_for_double_spaces
+            // dec hl
+            // ld a, [hli]
+            // cp " "
+            // jr z, .loop // If 2 spaces are in a row, we don't increase the screen coordinate, so that the second space will be overridden by the next char on the next loop.
+            if(hl[-1] == 0x7f)
+                continue;
+        }
+
+    // .inc_screen_coord
+        // inc hl
+        hl++;
+        // jr .loop
+    }
+
+// .end_loop
+    // pop de
+    // ret
+    return;
+}
+
+bool GB_Zipcode_Exception_Prepass(void){
+    // xor a
+    // ld [wZipcodeMultipleNonConsecutiveSpace], a
+    // wram->wZipcodeMultipleNonConsecutiveSpace = 0;
+
+    // ld d, 2
+    // ld hl, wZipCode + 2
+    // ld a, [hl]
+
+    // call Mobile12_Index2Char
+    // cp " "
+    // ret nz
+    if(Mobile12_Index2Char(2, wram->wZipCode_Saved[2]) != 0x7f)
+        return false;
+
+    // ld d, 4
+    // ld hl, wZipCode + 4
+    // ld a, [hl]
+
+    // call Mobile12_Index2Char
+    // cp " "
+    // ret nz
+    if(Mobile12_Index2Char(2, wram->wZipCode_Saved[4]) != 0x7f)
+        return false;
+
+    // ld a, 1
+    // ld [wZipcodeMultipleNonConsecutiveSpace], a
+    // wram->wZipcodeMultipleNonConsecutiveSpace = 1;
+    // ret
+    return true;
+}
+
 const char String_48a38[] = "-@";
 
-// MobileProfile_ZipCodeMenu
+// MobileProfile_TellNowOrTellLater
 bool Function48a3a(void){
     // LD_HL(mMenuHeader_0x48a9c);
     // CALL(aLoadMenuHeader);
@@ -2042,7 +2793,11 @@ bool Function48a3a(void){
     wram->w2DMenuCursorInitY = 0xa;
     // LD_A(0xb);
     // LD_addr_A(w2DMenuCursorInitX);
+    #if defined(_CRYSTAL_JP)
     wram->w2DMenuCursorInitX = 0xb;
+    #else
+    wram->w2DMenuCursorInitX = 0x8;
+    #endif
     // LD_A(0x1);
     // LD_addr_A(wMenuCursorY);
     wram->wMenuCursorY = 0x1;
@@ -2050,11 +2805,19 @@ bool Function48a3a(void){
     // LD_B(0x4);
     // LD_C(0x8);
     // CALL(aFunction48cdc);
+    #if defined(_CRYSTAL_JP)
     Function48cdc(coord(10, 8, wram->wTilemap), 0x4, 0x8);
+    #else
+    Function48cdc(coord(7, 8, wram->wTilemap), 0x4, 0xb);
+    #endif
     // hlcoord(12, 10, wTilemap);
     // LD_DE(mString_48aa1);
     // CALL(aPlaceString);
+    #if defined(_CRYSTAL_JP)
     PlaceStringSimple(U82C(String_48aa1), coord(12, 10, wram->wTilemap));
+    #else
+    PlaceStringSimple(U82C(String_48aa1), coord(9, 10, wram->wTilemap));
+    #endif
     // CALL(aStaticMenuJoypad);
     // PUSH_AF;
     uint8_t joypad = StaticMenuJoypad_Conv();
@@ -2100,14 +2863,297 @@ bool Function48a3a(void){
     return true;
 }
 
+#if defined(_CRYSTAL_JP)
 const struct MenuHeader MenuHeader_0x48a9c = {
     .flags = MENU_BACKUP_TILES,  // flags
     .coord = menu_coords(8, 8, SCREEN_WIDTH - 1, 13),
 };
+#else
+const struct MenuHeader MenuHeader_0x48a9c = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(6, 8, SCREEN_WIDTH - 1, 13),
+};
+#endif
 
 const char String_48aa1[] =
             "Tell Now"
     t_next  "Tell Later@";
+
+// Function48ab5. Zip code menu controls.
+u8_flag_s InputZipcodeCharacters(uint8_t* d){
+    // ldh a, [hJoyPressed]
+    // and A_BUTTON
+    // jp nz, ExitAndSaveZipcode
+    if(hram->hJoyPressed & A_BUTTON)
+        return Function48c0f(hram->hJoyPressed & A_BUTTON);
+    // ldh a, [hJoyPressed]
+    // and B_BUTTON
+    // jp nz, ExitAndDontSaveZipcode
+    if(hram->hJoyPressed & B_BUTTON)
+        return Function48c0d();
+    // ld hl, wZipCode + 0
+    // push de
+    // ld e, d
+    // ld d, 0
+    // add hl, de
+    // pop de
+    // ld a, [hl]
+    uint8_t a = wram->wZipCode_Saved[*d];
+
+    // push hl
+    // push af ; Stores the value of the zip code char from A.
+    // ld e, d
+    // ld hl, hJoyLast
+    // ld a, [hl]
+    // and D_UP
+    // jr nz, .press_up
+    if(hram->hJoyLast & D_UP) {
+    // .press_up ; press up, zip code number menu
+        // call Zipcode_GetCharPoolLengthForGivenCharSlot
+        // ld e, a
+        uint8_t e = Zipcode_GetCharPoolLengthForGivenCharSlot(*d);
+        // pop af
+        // inc a
+        // cp e
+        // jr c, .no_underflow ; Actually means "no overflow".
+        if(a + 1 >= e) {
+            // xor a
+            a = 0;
+            // jr .no_underflow
+        }
+        else {
+            ++a;
+        }
+        goto no_underflow;
+    }
+    // ld a, [hl]
+    // and D_DOWN
+    // jr nz, .press_down
+    else if(hram->hJoyLast & D_DOWN) {
+    // .press_down ; press down, zip code number menu
+        // pop af
+        // sub 1 ; We use this because dec doesn't set the carry flag.
+        // jr nc, .no_underflow
+        if(a < 1) {
+            // We find the last char index (from the char pool) of the current char slot.
+            // call Zipcode_GetCharPoolLengthForGivenCharSlot
+            // dec a // array length - 1 = last index of the array.
+            a = Zipcode_GetCharPoolLengthForGivenCharSlot(*d) - 1;
+        }
+        else {
+            --a;
+        }
+        goto no_underflow;
+    }
+    // ld a, [hl]
+    // and D_LEFT
+    // jp nz, .press_left
+    else if(hram->hJoyLast & D_LEFT) {
+    // .press_left
+        // push de
+        #if defined(_CRYSTAL_AU)
+        // hlcoord 16 - ZIPCODE_LENGTH, 10
+        // ld b, $1 ; Zip Code Menu starting point
+        // ld c, ZIPCODE_LENGTH + 2; Zip Code Menu width
+        Function48cdc(coord(16 - ZIPCODE_LENGTH, 10, wram->wTilemap), 0x1, ZIPCODE_LENGTH + 2);
+        #elif defined(_CRYSTAL_EU)
+        // hlcoord 18 - ZIPCODE_LENGTH, 10
+        // ld b, $1 ; Zip Code Menu starting point
+        // ld c, ZIPCODE_LENGTH; Zip Code Menu width
+        Function48cdc(coord(18 - ZIPCODE_LENGTH, 10, wram->wTilemap), 0x1, ZIPCODE_LENGTH);
+        #else
+        // hlcoord 18 - ZIPCODE_LENGTH, 10
+        // ld b, $1 ; Zip Code Menu starting point
+        // ld c, ZIPCODE_LENGTH; Zip Code Menu width
+        Function48cdc(coord(18 - ZIPCODE_LENGTH, 10, wram->wTilemap), 0x1, ZIPCODE_LENGTH);
+        #endif
+        // call DisplayBlankGoldenBox
+        // pop de
+        // pop af
+        // pop hl
+        // ld b, a ; Zip code char.
+        // ld a, d
+        // and a
+        // jr z, .skip_left_decrease
+        if(*d != 0) {
+            // ;ld a, b
+            // ;bit 7, a
+            // ;jr z, .asm_48bf8
+        
+            // push de
+            uint8_t d2 = *d;
+            // push hl
+            do {
+            // .decrease_once
+                // dec hl
+                // dec d
+                // ld a, d
+                // cp -1
+                // jr z, .cancel_left_decrease
+                if(d2 == 0) {
+                // .cancel_left_decrease
+                    // pop hl
+                    // pop de
+                    // jr .skip_left_decrease
+                    goto skip_left_decrease;
+                }
+                d2--;
+            
+                // call Zipcode_GetCharPoolLengthForGivenCharSlot
+                // cp 2
+                // jr c, .decrease_once 
+            } while(Zipcode_GetCharPoolLengthForGivenCharSlot(d2) < 2);
+        
+            // ld a, d
+            // pop de
+            // pop de
+            // ld d, a
+            *d = d2;
+        }
+    
+    skip_left_decrease:
+        // ld a, [hl]
+        // and $f
+        a = wram->wZipCode_Saved[*d] & 0xf;
+        // jr .asm_48bc7
+        goto asm_48bc7;
+    // .asm_48bf8
+        // dec d
+        // ld a, [hl]
+        // swap a
+        // and $f
+        // jr .asm_48bc7
+    }
+    // ld a, [hl]
+    // and D_RIGHT
+    // jr nz, .press_right
+    else if(hram->hJoyLast & D_RIGHT) {
+    // .press_right
+        // push de
+        #if defined(_CRYSTAL_AU)
+        // hlcoord 16 - ZIPCODE_LENGTH, 10
+        // ld b, $1 ; Zip Code Menu starting point
+        // ld c, ZIPCODE_LENGTH + 2; Zip Code Menu width
+        Function48cdc(coord(16 - ZIPCODE_LENGTH, 10, wram->wTilemap), 0x1, ZIPCODE_LENGTH + 2);
+        #elif defined(_CRYSTAL_EU)
+        // hlcoord 18 - ZIPCODE_LENGTH, 10
+        // ld b, $1 ; Zip Code Menu starting point
+        // ld c, ZIPCODE_LENGTH; Zip Code Menu width
+        Function48cdc(coord(18 - ZIPCODE_LENGTH, 10, wram->wTilemap), 0x1, ZIPCODE_LENGTH);
+        #else
+        // hlcoord 18 - ZIPCODE_LENGTH, 10
+        // ld b, $1 ; Zip Code Menu starting point
+        // ld c, ZIPCODE_LENGTH; Zip Code Menu width
+        Function48cdc(coord(18 - ZIPCODE_LENGTH, 10, wram->wTilemap), 0x1, ZIPCODE_LENGTH);
+        #endif
+        // call DisplayBlankGoldenBox
+        // pop de
+        // ld a, [wZipcodeFormatLength]
+        // dec a
+        // cp d ; Limits how far you can press D_RIGHT
+        // jr c, .end_right_increase ; useless, but kept in case the memory got corrupted.
+        // jr z, .end_right_increase
+        if(wram->wZipcodeFormatLength - 1 > *d) {
+            do {
+            // .increase_once
+                // inc d
+                ++(*d);
+                // inc hl
+                // call Zipcode_GetCharPoolLengthForGivenCharSlot
+                // cp 2
+                // jr c, .increase_once 
+            } while(Zipcode_GetCharPoolLengthForGivenCharSlot(*d) < 2);
+            // dec hl
+        }
+    // .end_right_increase
+        // pop af
+        // pop hl
+        // inc hl
+        // ld a, [hl]
+    
+    asm_48bc7:
+        // hlcoord 10, 9
+        // push af
+        // ld a, d
+        // pop bc
+        // ld a, b
+        // inc hl
+        // ld a, $f ; Return value. It means the last input was left or right.
+        // jr DisplayZipCodeAfterChange
+        return DisplayZipCodeAfterChange(0xf);
+    }
+
+    // If we reach this line, it means the player didn't press any button this frame.
+    #if defined(_CRYSTAL_AU)
+    // hlcoord 17 - ZIPCODE_LENGTH, 11 ; Zip Code Location
+    DisplayZipCode(coord(17 - ZIPCODE_LENGTH, 11, wram->wTilemap));
+    #elif defined(_CRYSTAL_EU)
+    // hlcoord 19 - ZIPCODE_LENGTH, 11 ; Zip Code Location
+    DisplayZipCode(coord(19 - ZIPCODE_LENGTH, 11, wram->wTilemap));
+    #else
+    // hlcoord 19 - ZIPCODE_LENGTH, 11 ; Zip Code Location
+    DisplayZipCode(coord(19 - ZIPCODE_LENGTH, 11, wram->wTilemap));
+    #endif
+    // call DisplayZipCode
+    // ld a, [wd002]
+    // bit 7, a
+
+    // pop bc
+    // pop bc
+    // and a
+    // ret
+    return u8_flag(wram->wd002, false);
+
+no_underflow:
+    // push de
+    // push af
+    #if defined(_CRYSTAL_AU)
+    // hlcoord 16 - ZIPCODE_LENGTH, 10
+    // ld b, $1 ; Zip Code Menu starting point
+    // ld c, ZIPCODE_LENGTH + 2; Zip Code Menu width
+    Function48cdc(coord(16 - ZIPCODE_LENGTH, 10, wram->wTilemap), 0x1, ZIPCODE_LENGTH + 2);
+    #elif defined(_CRYSTAL_EU)
+    // hlcoord 18 - ZIPCODE_LENGTH, 10
+    // ld b, $1 ; Zip Code Menu starting point
+    // ld c, ZIPCODE_LENGTH; Zip Code Menu width
+    Function48cdc(coord(18 - ZIPCODE_LENGTH, 10, wram->wTilemap), 0x1, ZIPCODE_LENGTH);
+    #else
+    // hlcoord 18 - ZIPCODE_LENGTH, 10
+    // ld b, $1 ; Zip Code Menu starting point
+    // ld c, ZIPCODE_LENGTH; Zip Code Menu width
+    Function48cdc(coord(18 - ZIPCODE_LENGTH, 10, wram->wTilemap), 0x1, ZIPCODE_LENGTH);
+    #endif
+    // call DisplayBlankGoldenBox
+    // pop af
+    // pop de
+    // pop hl
+    // ld [hl], a
+    wram->wZipCode_Saved[*d] = a;
+    // ld a, $f0 ; Return value. It means the last input was up or down (zip code value changed).
+    // jp DisplayZipCodeAfterChange
+    return DisplayZipCodeAfterChange(0xf0);
+}
+
+u8_flag_s DisplayZipCodeAfterChange(uint8_t a){
+    // push af
+    #if defined(_CRYSTAL_AU)
+    // hlcoord 17 - ZIPCODE_LENGTH, 11 ; Zip code location
+    DisplayZipCode(coord(17 - ZIPCODE_LENGTH, 11, wram->wTilemap));
+    #elif defined(_CRYSTAL_EU)
+    // hlcoord 19 - ZIPCODE_LENGTH, 11 ; Zip code location
+    DisplayZipCode(coord(19 - ZIPCODE_LENGTH, 11, wram->wTilemap));
+    #else
+    // hlcoord 19 - ZIPCODE_LENGTH, 11 ; Zip code location
+    DisplayZipCode(coord(19 - ZIPCODE_LENGTH, 11, wram->wTilemap));
+    #endif
+    // call DisplayZipCode
+    // ld a, $1
+    // and a
+    // pop bc
+    // ld a, b
+    // ret
+    return u8_flag(a, false);
+}
 
 u8_flag_s Function48ab5(uint8_t* d){
     // LDH_A_addr(hJoyPressed);
@@ -2452,6 +3498,7 @@ u8_flag_s Function48c00(uint8_t a){
     return u8_flag(a, false);
 }
 
+// ExitAndDontSaveZipCode
 u8_flag_s Function48c0d(void){
     // XOR_A_A;
     // AND_A_A;
@@ -2459,6 +3506,7 @@ u8_flag_s Function48c0d(void){
     return Function48c0f(0x0);
 }
 
+// ExitAndSaveZipCode
 u8_flag_s Function48c0f(uint8_t a){
     // SCF;
     // RET;
@@ -2488,7 +3536,7 @@ void Function48c11(tile_t* hl, uint8_t b, uint8_t d){
     // SWAP_A;
     // AND_A(0x3);
     // INC_A;
-    uint8_t a = (wram->wd002 >> 4) & 0x3;
+    uint8_t a = ((wram->wd002 >> 4) & 0x3) + 1;
     // CP_A_B;
     // IF_NZ goto asm_48c40;
     if(a == b) {
@@ -2542,6 +3590,53 @@ void Function48c5a(uint8_t* hl, uint8_t a){
     // LD_hl_A;
     // RET;
     *hl = ((*hl & 0xf0) | a);
+}
+
+void BlinkSelectedCharacter(tile_t* hl){
+    // ld a, [wd002]
+    // bit 7, a
+    // jr z, .skip_blinking
+    if(bit_test(wram->wd002, 7)) {
+        // ld [hl], $7f ; Makes the selected character blink/flash. 7f is the last tile before tile "A".
+        *hl = 0x7f;
+    }
+
+// .skip_blinking
+    // ld a, [wd002]
+    // swap a
+    // and $3 ; Masking bits 4 and 5 (0011 0000) that are now bits 0 and 1 (0000 0011) after the swap.
+    // inc a
+    uint8_t a = (((wram->wd002) >> 4) & 3) + 1;
+    // cp 3
+    // jr nz, .save_counter_in_wd002 ; When the counter reaches its maximum value, we immediately save.
+    if(a == 3) {
+        // ld a, [wd002]
+        // bit 7, a
+        // jr z, .set_blinking_flag ; If bit 7 is not set (meaning the blinking just happened), then we set the blinking flag.
+
+    // ; Resets the blinking flag AND the counter.
+        // res 7, a
+        // ld [wd002], a
+        // xor a
+        // jr .save_counter_in_wd002
+
+    // .set_blinking_flag
+        // set 7, a
+        // ld [wd002], a
+        bit_toggle(wram->wd002, 7);
+        // xor a
+        a = 0;
+    }
+
+// .save_counter_in_wd002
+    // swap a
+    // ld b, a
+    // ld a, [wd002]
+    // and $cf ; and %1100 1111
+    // or b
+    // ld [wd002], a
+    wram->wd002 = (a << 4) | (wram->wd002 & 0xcf);
+    // ret
 }
 
 // Mobile_CopyPrefectureNameString
@@ -2893,4 +3988,257 @@ void Function48d94(uint8_t* hl){
     hl[0] = (res2.quot << 4) | res2.rem;
     // LD_hl_A;
     // RET;
+}
+
+// Input: BC: coords of the cursor under the first PIN char. D: contains the tile ID. E: index of the char.
+void Mobile12_MoveAndBlinkCursor(void){
+//     ld a, [wPrefecture]
+//     cp $10 ; EU-GB special case.
+//     jr nz, .hide_cursor
+
+//     ld a, e
+//     cp 2
+//     jr c, .hide_cursor
+
+//     push hl
+//     push bc
+//     ld hl, wZipCode
+//     ld b, 0
+//     ld c, a
+//     add hl, bc
+//     ld a, [hl]
+//     cp 36
+//     pop bc
+//     pop hl
+//     jr nz, .hide_cursor
+
+//     ;call Mobile22_IncCursorFrameCounter
+//     ld a, [wd002]
+//     bit 4, a
+//     jr z, .skip_cursor_hiding
+
+// .hide_cursor
+//     push de
+//     farcall Mobile22_Clear24FirstOAM
+    Function89448();
+//     pop de
+//     ret
+
+// .skip_cursor_hiding
+//     ld hl, wShadowOAMSprite00
+//     push de
+//     ld a, b
+//     ld [hli], a ; y
+//     ld d, $8
+//     ld a, e
+//     and a
+//     ld a, c
+//     jr z, .skip_offset
+
+// .offset_loop
+//     add d
+//     dec e
+//     jr nz, .offset_loop
+
+// .skip_offset
+//     pop de
+//     ld [hli], a ; x
+//     ld a, d
+//     ld [hli], a ; tile id
+//     xor a
+//     ld [hli], a ; attributes
+//     ret
+}
+
+// Input: In A, the char index in the zipcode string between 0 and ZIPCODE_LENGTH.
+// Output: Address in HL.
+// Clobbers DE.
+const uint8_t* GetCurCharpoolAddress(uint8_t* buf, size_t buf_size, uint8_t a) {
+    // push af
+    // ld a, [wZipcodeFormat]
+    // add a // dw
+    // ld e, a
+    // ld d, 0
+    // ld hl, Zipcode_CharPool_Formats
+    // add hl, de
+    const uint8_t* table = Zipcode_CharPool_Formats[wram->wZipcodeFormat];
+
+    // ld a, [hli]
+    // ld h, [hl]
+    // ld l, a
+    // pop af
+
+    // ld e, a // db
+    // add hl, de // HL shifted by the index in the charpool (from 0 to ZIPCODE_LENGTH).
+    // ld a, [hl] // A contains the index of the used char pool.
+    uint8_t pool = table[a];
+
+    // ld hl, Zipcode_CharPools
+    // ld e, a
+    // add a
+    // add e ; We multiply A by 3, as we are going through a dwb list.
+    // ld e, a
+    // add hl, de
+
+    // ld a, [hli]
+    // ld h, [hl]
+    // ld l, a ; HL points to the used charpool.
+    // ret
+    return U82CB(buf, buf_size - 1, Zipcode_CharPools[pool].addr);
+}
+
+// Output: in A: the number of blank chars at the right of the zipcode.
+uint8_t CountZipcodeRightBlanks(void) {
+    // push hl
+    // push de
+    // push bc
+
+    // ld d, 0
+    // ld a, [wZipcodeFormatLength]
+    // dec a
+    // ld e, a
+    // ; ld e, ZIPCODE_LENGTH - 1
+    // uint8_t e = wram->wZipcodeFormatLength - 1;
+
+    // ld b, 0 ; B is the counter.
+    uint8_t b = 0;
+
+// .loop
+    // ld hl, wZipCode
+    // add hl, de ; Current zipcode char.
+    // uint8_t* hl = wram->wZipCode_Saved + e;
+
+    // ld a, [hl] ; We get the index of the current char.
+    // add a ; We double the index to find its position within the array.
+    // ld c, a ; Save the index in C for future use.
+    // uint8_t c = *hl;
+
+    // ld a, e
+    // push de
+    // call GetCurCharpoolAddress
+    // const uint8_t* pool = GetCurCharpoolAddress(e);
+    // ;pop de
+    // ;push de
+    // ;add hl, de ; Get the char pool for the current zipcode char.
+    // ;ld a, [hli]
+    // ;ld h, [hl]
+    // ;ld l, a ; We have the address of the current char pool in HL.
+
+    // ld d, 0
+    // ld e, c ; We retrieve our zipcode char index (already multiplied by 2).
+    // add hl, de
+    // ld a, [hl] ; A contains the current zipcode char value.
+    // uint8_t a = pool[c];
+    // pop de
+
+    // ;dec e ; Preparing for the next (actually previous) char loop.
+    // ;inc b ; Increase the number of found blanks.
+    // ;cp " "
+    // ;jr z, .loop ; As long as we find blanks, we keep searching for some more.
+    // ;
+    // ;dec b ; We increased B on the last loop even though a blank hasn't been found. So we need to negate it by decreasing B.
+
+    // ;ld a, [wZipcodeFormatLength]
+    // ;ld e, a
+    // ;ld a, ZIPCODE_LENGTH
+    // ;sub e
+    // ;add b ; Return value goes into A.
+
+    // ld a, b ; Return value goes into A.
+    // pop bc
+    // pop de
+    // pop hl
+    // ret
+    return b;
+}
+
+void SaveZipcodeWithUniversalFormat(void){
+    uint8_t buffer[64];
+    // push de
+
+    // ld a, BANK(sZipcodeCharIndexes)
+    // call OpenSRAM
+    OpenSRAM_Conv(MBANK(as5_b2f4));
+    // ld hl, wZipCode
+    // ld de, sZipcodeCharIndexes
+    // ld bc, ZIPCODE_MAX_LENGTH
+    // call CopyBytes
+    CopyBytes_Conv2(GBToRAMAddr(s5_b2f4), wram->wZipCode_Saved, ZIPCODE_MAX_LENGTH);
+    // call CloseSRAM
+    CloseSRAM_Conv();
+    return; // For now
+
+    // ld hl, wZipCode + ZIPCODE_LENGTH
+    // ld bc, ZIPCODE_MAX_LENGTH - ZIPCODE_LENGTH
+    // ld a, "@"
+    // call ByteFill
+    ByteFill_Conv2(wram->wZipCode_Saved + ZIPCODE_LENGTH, ZIPCODE_MAX_LENGTH - ZIPCODE_LENGTH, 0x50);
+
+    // ld hl, wZipCode
+    uint8_t* hl = wram->wZipCode_Saved;
+    // ld c, 0
+    // ld d, 0
+    // xor a
+    for(uint8_t c = 0; c != ZIPCODE_LENGTH; ++c) {
+    // .loop
+        // ld e, [hl]
+        uint8_t e = *hl;
+        // push hl
+
+        // ; Input: In A, the char index in the zipcode string between 0 and ZIPCODE_LENGTH.
+        // ; Output: Address in HL.
+        // ; Clobbers DE.
+        // push de
+        // call GetCurCharpoolAddress
+        const uint8_t* pool = GetCurCharpoolAddress(buffer, sizeof(buffer), c);
+        // pop de
+
+        // add hl, de
+        // ld a, [hl]
+        // pop hl
+
+        // ld [hl], a
+        *hl = pool[e];
+
+        // inc hl
+        hl++;
+        // inc c
+        // ld a, c
+        // cp ZIPCODE_LENGTH
+        // jr nz, .loop
+    }
+
+    while(1) {
+    // .truncate_trailing_spaces
+        // dec hl
+        --hl;
+        // ld a, [hl]
+        // cp " "
+        // jr nz, .truncate_done
+        if(*hl != 0x7f)
+            break;
+
+        // ld a, "@"
+        // ld [hl], a
+        *hl = 0x50;
+        // jr .truncate_trailing_spaces
+    }
+
+// .truncate_done
+    // pop de
+    // ret
+}
+
+void LoadZipcodeWithUniversalFormat(void){
+    // ld a, BANK(sZipcodeCharIndexes)
+    // call OpenSRAM
+    OpenSRAM_Conv(MBANK(as5_b2f4));
+    // ld hl, sZipcodeCharIndexes
+    // ld de, wZipCode
+    // ld bc, ZIPCODE_MAX_LENGTH
+    // call CopyBytes
+    CopyBytes_Conv2(wram->wZipCode_Saved, GBToRAMAddr(s5_b2f4), ZIPCODE_MAX_LENGTH);
+    // call CloseSRAM
+    CloseSRAM_Conv();
+    // ret
 }

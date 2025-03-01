@@ -1709,8 +1709,7 @@ enum {
     NEWS_COMMAND_1A,
     NEWS_COMMAND_EXIT = 48,
 };
-// TODO:  Finish news command table. Right now, program will crash when trying to run a command
-//        which is undefined.
+// TODO:  Finish news command table.
 static const Jumptable17d72a_t Jumptable17d72a[] = {
     [NEWS_COMMAND_NOP]          = Function17d78c,
     [NEWS_COMMAND_LOAD_SCREEN]  = Function17d78d,
@@ -5620,6 +5619,7 @@ bool MobileScript_Prefecture(struct TextPrintState* state, uint8_t* saved){
 
 }
 
+// MobileScript_ZipCode
 bool Function17f382(struct TextPrintState* state, uint8_t* saved){
     // POP_HL;
     state->hl = saved;
@@ -5642,21 +5642,26 @@ bool Function17f382(struct TextPrintState* state, uint8_t* saved){
     // BIT_A(7);
     // IF_NZ goto asm_17f3a3;
     uint8_t* de;
+    uint8_t pref;
     if(!bit_test(wram->wcd55, 7)) {
         // LD_A(BANK(sCrystalData));
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(asCrystalData));
+        // OpenSRAM_Conv(MBANK(asCrystalData));
         // LD_DE(sCrystalData + 3);
-        de = GBToRAMAddr(sCrystalData + 3);
+        // de = GBToRAMAddr(sCrystalData + 3);
+        OpenSRAM_Conv(MBANK(as5_b2f4));
+        de = GBToRAMAddr(s5_b2f4);
+        pref = wram->wPrefecture;
         // goto asm_17f3ab;
     }
     else {
     // asm_17f3a3:
         // LD_A(BANK(s5_b2f4));
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(s5_b2f4));
+        OpenSRAM_Conv(MBANK(as5_b2f4));
         // LD_DE(s5_b2f4);
         de = GBToRAMAddr(s5_b2f4);
+        pref = gb_read(s5_b2f3);
     }
 
 // asm_17f3ab:
@@ -5665,8 +5670,36 @@ bool Function17f382(struct TextPrintState* state, uint8_t* saved){
     // LD_A(3);
     // LD_C_A;
     // CALL(aPrintNum);
-    printf("PrintNum(%d)\n", *(uint16_t*)de);
-    hl = PrintNum_Conv2(hl, de, PRINTNUM_LEADINGZEROS | 2, 3);
+// .display
+    RetrieveZipcodeInfo(pref);
+	// We can't just use PrintText, because there may be no "@" at the end of the wZipCode (because I wanted to save 1 stupid byte of WRAM...).
+	// ld b, ZIPCODE_LENGTH + 1
+    for(uint8_t b = 0; b < wram->wZipcodeFormatLength; ++b) {
+    // .display_loop
+        // dec b
+        // jr z, .display_done
+
+        // ld a, [de]
+        uint8_t a = Mobile12_Index2Char(b, *de);
+        // cp "@"
+        // jr z, .display_done
+
+        // cp -1
+        // jr nz, .no_overflow
+        // if(a == 0xff) {
+            // ld a, "0"
+            // a = 0xf6;
+        // }
+
+    // .no_overflow
+        // ld [hli], a
+        *(hl++) = a;
+        // inc de
+        de++;
+        // jr .display_loop
+    }
+
+// .display_done
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // LD_A_L;
@@ -5678,7 +5711,7 @@ bool Function17f382(struct TextPrintState* state, uint8_t* saved){
     state->hl = bc;
     // LD_A_addr(wcd54);
     // CALL(aFunction17f50f);
-    Function17f50f(state, wram->wcd54);
+    Function17f50f(state, 0);
     // POP_DE;
     state->de = hl2;
     // AND_A_A;

@@ -8178,7 +8178,11 @@ char* Function1126b0(char* de, uint16_t* bc){
     return MobileSDK_CopyString(de, Unknown_112115, bc);
 }
 
+#if defined(_CRYSTAL_JP)
+const char CrystalManufactureCode[] = { 'B', 'X', 'T', 'J' };
+#else
 const char CrystalManufactureCode[] = { 'B', 'X', 'T', 'E' };
+#endif
 static_assert(sizeof(CrystalManufactureCode) == 0x4, "");
 const uint8_t CrystalVersion = 0x00;
 

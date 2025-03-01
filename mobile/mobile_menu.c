@@ -251,7 +251,7 @@ void Function4a098(void){
     WaitBGMap_Conv();
     // CALL(aLoadStandardMenuHeader);
     LoadStandardMenuHeader_Conv();
-    // FARCALL(aFunction89de0); // TODO: Convert Function89de0
+    // FARCALL(aFunction89de0);
     Function89de0();
     // CALL(aCall_ExitMenu);
     ExitMenu_Conv2();

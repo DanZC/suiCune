@@ -2776,11 +2776,19 @@ struct wram_s
                 uint8_t wTimeCyclesSinceLastCall;
                 uint8_t wReceiveCallDelay_MinsRemaining;
                 uint8_t wReceiveCallDelay_StartTime[3];
-                uint8_t skip_102[3];
+                union {
+                    uint8_t skip_102[3];
+                    struct {
+                        uint8_t wZipcodeCountry;
+                        uint8_t wZipcodeFormat;
+                        uint8_t wZipcodeFormatLength;
+                    };
+                };
                 uint8_t wBugContestMinsRemaining;
                 uint8_t wBugContestSecsRemaining;
                 uint8_t skip_103[2];
-                uint8_t wMapStatusEnd[2];
+                uint8_t wMapStatusEnd[1];
+                uint8_t wUnusedAfterMapStatusEnd[1];
                 //union wCrystalData
                 union {
                     struct {
@@ -2845,7 +2853,8 @@ struct wram_s
                 // for n, 1, NUM_OBJECT_STRUCTS
                 struct Object wObjectStruct[(NUM_OBJECT_STRUCTS) - 1];
                 uint8_t wCmdQueue[CMDQUEUE_CAPACITY * CMDQUEUE_ENTRY_SIZE];
-                uint8_t skip_107[40];
+                uint8_t wZipCode_Saved[ZIPCODE_MAX_LENGTH];
+                uint8_t skip_107[40 - ZIPCODE_MAX_LENGTH];
                 //union wMapObjects
                 struct MapObject wPlayerObject;
                 // player is map object 0

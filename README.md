@@ -37,7 +37,13 @@ Then run suiCune to launch
 
 ***For Linux***
 
-*TODO: Add Linux build instructions...*
+Install gcc, make, SDL2, SDL2_net, and PhysFS using your distro's package manager.
+
+Then run
+
+    make clean && make
+
+Then run suiCune to launch
 
 ***For Visual Studio***
 

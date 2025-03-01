@@ -5840,106 +5840,149 @@ void Function8ab93(void){
     // RET;
 }
 
-void Function8aba9(void){
-    LD_A(0x2);
-    CALL(aFunction8b94a);
-    LD_A(0x1);
-    LD_addr_A(wd032);
+uint8_t Function8aba9(void){
+    // LD_A(0x2);
+    // CALL(aFunction8b94a);
+    Function8b94a(0x2);
+    // LD_A(0x1);
+    // LD_addr_A(wd032);
+    wram->wd032[0] = 0x1;
 
-asm_8abb3:
-    CALL(aFunction891fe);
-    CALL(aFunction8b677);
+    do {
+    // asm_8abb3:
+        // CALL(aFunction891fe);
+        Function891fe();
+        // CALL(aFunction8b677);
+        Function8b677();
 
-asm_8abb9:
-    CALL(aFunction8b7bd);
-    IF_Z goto asm_8abdf;
-    LD_A_C;
-    LD_addr_A(wMenuSelection);
-    CALL(aOpenSRAMBank4);
-    CALL(aFunction8931b);
-    LD_HL(0x0011);
-    ADD_HL_BC;
-    CALL(aFunction89b45);
-    CALL(aCloseSRAM);
-    IF_C goto asm_8abe2;
-    LD_DE(SFX_WRONG);
-    CALL(aWaitPlaySFX);
-    CALL(aCloseSRAM);
-    goto asm_8abb9;
+        while(1) {
+        // asm_8abb9:
+            // CALL(aFunction8b7bd);
+            uint8_t c = Function8b7bd();
+            // IF_Z goto asm_8abdf;
+            if(c == 0) {
+            // asm_8abdf:
+                // XOR_A_A;
+                // LD_C_A;
+                // RET;
+                return 0;
+            }
+            // LD_A_C;
+            // LD_addr_A(wMenuSelection);
+            wram->wMenuSelection = c;
+            // CALL(aOpenSRAMBank4);
+            OpenSRAMBank4();
+            // CALL(aFunction8931b);
+            uint8_t* bc = Function8931b();
+            // LD_HL(0x0011);
+            // ADD_HL_BC;
+            // CALL(aFunction89b45);
+            bool carry = Function89b45(bc + 0x11);
+            // CALL(aCloseSRAM);
+            CloseSRAM_Conv();
+            // IF_C goto asm_8abe2;
+            if(carry)
+                break;
+            // LD_DE(SFX_WRONG);
+            // CALL(aWaitPlaySFX);
+            WaitPlaySFX_Conv(SFX_WRONG);
+            // CALL(aCloseSRAM);
+            // goto asm_8abb9;
+        }
 
+    // asm_8abe2:
+        // CALL(aPlayClickSFX);
+        PlayClickSFX_Conv();
 
-asm_8abdf:
-    XOR_A_A;
-    LD_C_A;
-    RET;
+    asm_8abe5:
+        // CALL(aFunction891de);
+        Function891de();
+        // CALL(aClearBGPalettes);
+        ClearBGPalettes_Conv();
+        // CALL(aFunction893cc);
+        Function893cc();
+        // CALL(aOpenSRAMBank4);
+        OpenSRAMBank4();
+        // CALL(aFunction8931b);
+        uint8_t* bc = Function8931b();
+        // CALL(aFunction89844);
+        Function89844(bc);
+        // CALL(aCloseSRAM);
+        // CALL(aOpenSRAMBank4);
+        // CALL(aFunction8939a);
+        Function8939a(bc);
+        // CALL(aFunction89856);
+        Function89856(bc);
+        // hlcoord(1, 13, wTilemap);
+        // CALL(aFunction899fe);
+        Function899fe(coord(1, 13, wram->wTilemap), bc);
+        // CALL(aCloseSRAM);
+        CloseSRAM_Conv();
+        // CALL(aFunction891ab);
+        Function891ab();
 
-
-asm_8abe2:
-    CALL(aPlayClickSFX);
-
-asm_8abe5:
-    CALL(aFunction891de);
-    CALL(aClearBGPalettes);
-    CALL(aFunction893cc);
-    CALL(aOpenSRAMBank4);
-    CALL(aFunction8931b);
-    CALL(aFunction89844);
-    CALL(aCloseSRAM);
-    CALL(aOpenSRAMBank4);
-    CALL(aFunction8939a);
-    CALL(aFunction89856);
-    hlcoord(1, 13, wTilemap);
-    CALL(aFunction899fe);
-    CALL(aCloseSRAM);
-    CALL(aFunction891ab);
-
-asm_8ac0f:
-    CALL(aFunction89a57);
-    IF_C goto asm_8ac0f;
-    AND_A_A;
-    IF_Z goto asm_8abe5;
-    CP_A(0x2);
-    IF_Z goto asm_8ac0f;
-    hlcoord(0, 12, wTilemap);
-    LD_B(0x4);
-    LD_C(0x12);
-    CALL(aTextbox);
-    hlcoord(1, 14, wTilemap);
-    LD_DE(mString_8ac3b);
-    CALL(aPlaceString);
-    LD_A(0x1);
-    CALL(aFunction8925e);
-    JP_C (mFunction8aba9_asm_8abb3);
-    LD_A_addr(wMenuSelection);
-    LD_C_A;
-    RET;
-
+        u8_flag_s res;
+        do {
+        // asm_8ac0f:
+            // CALL(aFunction89a57);
+            res = Function89a57();
+            // IF_C goto asm_8ac0f;
+            if(res.flag)
+                continue;
+            // AND_A_A;
+            // IF_Z goto asm_8abe5;
+            if(res.a == 0)
+                goto asm_8abe5;
+            // CP_A(0x2);
+            // IF_Z goto asm_8ac0f;
+        } while(res.a == 0x2);
+        // hlcoord(0, 12, wTilemap);
+        // LD_B(0x4);
+        // LD_C(0x12);
+        // CALL(aTextbox);
+        Textbox_Conv2(coord(0, 12, wram->wTilemap), 0x4, 0x12);
+        // hlcoord(1, 14, wTilemap);
+        // LD_DE(mString_8ac3b);
+        // CALL(aPlaceString);
+        PlaceStringSimple(U82C(String_8ac3b), coord(1, 14, wram->wTilemap));
+        // LD_A(0x1);
+        // CALL(aFunction8925e);
+        // JP_C (mFunction8aba9_asm_8abb3);
+    } while(Function8925e(0x1));
+    // LD_A_addr(wMenuSelection);
+    // LD_C_A;
+    // RET;
+    return wram->wMenuSelection;
 }
 
-void String_8ac3b(void){
-    //db ['"こ<NO>ともだち<NI>でんわを"'];
-    //next ['"かけますか？@"']
+const char String_8ac3b[] =
+            "Call this" //db ['"こ<NO>ともだち<NI>でんわを"'];
+    t_next  "friend?"; //next ['"かけますか？@"']
 
-    return Function8ac4e();
-}
-
-void Function8ac4e(void){
+void Function8ac4e(uint8_t* de){
     // XOR_A_A;
     // LD_addr_A(wMenuSelection);
     wram->wMenuSelection = 0;
-    PUSH_DE;
-    CALL(aFunction891de);
-    CALL(aClearBGPalettes);
-    CALL(aFunction893cc);
-    POP_BC;
-    CALL(aFunction89844);
-    CALL(aFunction8939a);
-    CALL(aFunction89856);
-    hlcoord(1, 13, wTilemap);
-    CALL(aFunction899fe);
-    CALL(aFunction891ab);
-    RET;
-
+    // PUSH_DE;
+    // CALL(aFunction891de);
+    Function891de();
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
+    // CALL(aFunction893cc);
+    Function893cc();
+    // POP_BC;
+    // CALL(aFunction89844);
+    Function89844(de);
+    // CALL(aFunction8939a);
+    Function8939a(de);
+    // CALL(aFunction89856);
+    Function89856(de);
+    // hlcoord(1, 13, wTilemap);
+    // CALL(aFunction899fe);
+    Function899fe(coord(1, 13, wram->wTilemap), de);
+    // CALL(aFunction891ab);
+    Function891ab();
+    // RET;
 }
 
 void Function8ac70(void){

@@ -81,3 +81,24 @@ enum {
 #define PHONE_NUMBER_DIGITS_MIN_REQUIRED_QUANTITY 6
 #define NUM_CARD_FOLDER_ENTRIES 40
 #define CARD_FOLDER_ENTRY_LENGTH PLAYER_NAME_LENGTH * 2 + 2 + 2 + 1 + PHONE_NUMBER_LENGTH + EASY_CHAT_MESSAGE_LENGTH
+
+#if defined(_CRYSTAL_JP)
+#define ZIPCODE_LENGTH 7
+#define NUM_REGION_CODES 41
+#define REGION_CODE_STRING_LENGTH 6
+#elif defined(_CRYSTAL_AU)
+#define ZIPCODE_LENGTH 4
+#define NUM_REGION_CODES 25
+#define REGION_CODE_STRING_LENGTH 6
+#elif defined(_CRYSTAL_EU)
+#define ZIPCODE_LENGTH 8
+#define NUM_REGION_CODES 40
+#define REGION_CODE_STRING_LENGTH 5
+#else // US
+#define ZIPCODE_LENGTH 7
+#define NUM_REGION_CODES 63
+#define REGION_CODE_STRING_LENGTH 5
+#endif
+
+#define ZIPCODE_MAX_LENGTH 8 // This is the maximum length on a zipcode, all regions together. It is used as the fixed memory footprint for online communications.
+#define REGION_NAME_MAX_LENGTH 7
