@@ -91,3 +91,4 @@ extern const char TradeGameBoyLZ[];
 extern const char TradeLinkCableGFX[];
 extern const char TradeBallGFX[];
 extern const char TradePoofGFX[];
+extern const uint8_t* gTradeAnimAddress;
