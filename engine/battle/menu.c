@@ -18,7 +18,7 @@ void LoadBattleMenu(void){
 
 }
 
-static const struct MenuHeader BattleMenuHeader = {
+const struct MenuHeader BattleMenuHeader = {
     .flags = MENU_BACKUP_TILES,
     .coord = menu_coords(8, 12, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1),
     .data = &(struct MenuData) {

@@ -1114,6 +1114,7 @@ void Function110438(mobile_api_data_s* data){
     if(bit_test(wram->wc821, 0) || wram->wc86a != 0x1)
         return Function110226();
     // PUSH_HL;
+    const char* number = data->hl;
     // LD_C(0x15);
     // CALL(aFunction11039a);
     // IF_NC goto asm_110454;
@@ -1154,7 +1155,7 @@ void Function110438(mobile_api_data_s* data){
     wram->wc86e = 0xff;
     // CALL(aFunction110485);
     uint8_t a;
-    char* de = Function110485((const char*)wram->wc995, &a);
+    char* de = Function110485(number, &a);
     // LD_B_A;
     // CALL(aFunction111f63);
     Function111f63(de, a);
@@ -6320,6 +6321,7 @@ void ParseResponse_BeginSession(void){
 
 // done:
     // LD_addr_A(wMobileSDK_AdapterType);
+    printf("Adapter type = %d\n", wram->wMobileSDK_AdapterType);
     // LD_A(0x2);
     // LD_addr_A(wc807);
     wram->wc807 = 0x2;

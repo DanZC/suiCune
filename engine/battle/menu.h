@@ -3,6 +3,6 @@ bool LoadBattleMenu_Conv(void);
 void SafariBattleMenu(void);
 void ContestBattleMenu(void);
 void CommonBattleMenu(void);
-// void BattleMenuHeader(void);
+extern const struct MenuHeader BattleMenuHeader;
 // void SafariBattleMenuHeader(void);
 // void ContestBattleMenuHeader(void);

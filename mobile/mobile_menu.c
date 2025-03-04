@@ -19,7 +19,6 @@
 #include "../data/text/common.h"
 
 bool MainMenu_Mobile(void){
-    // return false; // Dummied out. TODO: Finishing converting Mobile menu.
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // LD_A(MUSIC_MOBILE_ADAPTER_MENU);

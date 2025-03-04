@@ -15,6 +15,7 @@
 #include "../../charmap.h"
 #include "../../data/trainers/class_names.h"
 #include "../../data/trainers/parties.h"
+#include "../../data/pokemon/base_stats.h"
 #include "../../mobile/mobile_5f.h"
 #include "../gfx/load_font.h"
 #include "../gfx/place_graphic.h"
@@ -152,6 +153,9 @@ void DebugMenu(void) {
     uint8_t inMenu = hram->hInMenu;
     hram->hInMenu = 1;
 
+    if(sDebugMenuTilemapBuffer) {
+        free(sDebugMenuTilemapBuffer); // also frees sDebugMenuAttrmapBuffer
+    }
     sDebugMenuTilemapBuffer = malloc(sizeof(wram->wTilemap) * 2);
     sDebugMenuAttrmapBuffer = sDebugMenuTilemapBuffer + sizeof(wram->wTilemap);
 
@@ -194,12 +198,13 @@ void DebugMenu(void) {
     DelayFrame();
 
     free(sDebugMenuTilemapBuffer); // also frees sDebugMenuAttrmapBuffer
+    sDebugMenuTilemapBuffer = NULL;
+    sDebugMenuAttrmapBuffer = NULL;
 
     hram->hInMenu = inMenu;
 }
 
 void Handler_Fight(void) {
-    // TODO: Implement this function
     DebugMenu_BattleTest();
     PlayMusic_Conv(DEBUG_MENU_MUSIC);
 }
@@ -661,11 +666,6 @@ void DebugMenu_Stats(void) {
     wram->wCurPartyLevel = 100;
     wram->wPartyCount = 0;
     wram->wMonType = PARTYMON;
-    // {
-    //     wbank_push(MBANK(awPartyMon1));
-    //     PREDEF(pTryAddMonToParty);
-    //     wbank_pop;
-    // }
     TryAddMonToParty_Conv(CHARIZARD, 100);
 
     wram->wCurPartyMon = 0;
@@ -687,8 +687,7 @@ void DebugMenu_Pics_PlaceStrings(species_t* sp) {
     char buf[32];
     sprintf(buf, "ID   - %03d@", *sp);
     PlaceStringSimple(U82C(buf), coord(0, 0, wram->wTilemap));
-    struct BaseData* hl = AbsGBToRAMAddr(aBaseData);
-    uint8_t size = hl[*sp - 1].picSize;
+    uint8_t size = BasePokemonData[*sp - 1].picSize;
     sprintf(buf, "SIZE - %d, %d@", size & 0xf, size >> 4);
     ClearBox_Conv2(coord(0, 2, wram->wTilemap), SCREEN_WIDTH, 1);
     PlaceStringSimple(U82C(buf), coord(0, 2, wram->wTilemap));

@@ -5152,7 +5152,7 @@ u8_flag_s SelectBattleMon(void){
     // mobile:
         // FARCALL(aMobile_PartyMenuSelect);
         // RET;
-        return u8_flag(0, false);
+        return u8_flag(0, Mobile_PartyMenuSelect());
     }
     // FARCALL(aPartyMenuSelect);
     u8_flag_s res = PartyMenuSelect();
@@ -9064,7 +9064,7 @@ static bool BattleMenu_PKMN_GetMenu(void) {
     if(IsMobileBattle_Conv()) {
     // mobile:
         // FARCALL(aMobileBattleMonMenu);
-        return SafeCallGBAutoRet(aMobileBattleMonMenu).f_bits.c != 0;
+        return MobileBattleMonMenu();
         // RET;
     }
     // FARCALL(aBattleMonMenu);
@@ -10075,7 +10075,7 @@ MoveSelectionScreen:
     // TODO: Convert Mobile_MoveSelectionScreen
         // FARCALL(aMobile_MoveSelectionScreen);
         // RET;
-        return false;
+        return Mobile_MoveSelectionScreen() != 0;
     }
 
 // not_mobile:
