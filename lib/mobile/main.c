@@ -4326,7 +4326,7 @@ void Function1113fe(mobile_api_data_s* data){
     // INC_B;
     // INC_B;
     // CALL(aFunction111f63);
-    Function111f63(de, count);
+    Function111f63(de, count + 2);
     // LD_HL(wc822);
     // SET_hl(7);
     bit_set(wram->wc822, 7);
@@ -4339,6 +4339,7 @@ void Function1113fe(mobile_api_data_s* data){
     // RET;
 }
 
+// MobileAPI1D
 void Function11148c(void){
     LD_A_addr(wc822);
     BIT_A(4);
@@ -4845,17 +4846,17 @@ void v_MobileReceive(void){
         // LD_A(0xf2);
         // CP_A_hl;
         // JP_Z (mFunction111796);
-        if(*hl == 0xf2)
+        if(*hl == 0xf2) // General failure
             return Function111796();
         // DEC_A;
         // CP_A_hl;
         // JP_Z (mFunction1117a0);
-        if(*hl == 0xf1)
+        if(*hl == 0xf1) // Checksum failure
             return Function1117a0();
         // DEC_A;
         // CP_A_hl;
         // JP_Z (mFunction1117a0);
-        if(*hl == 0xf0)
+        if(*hl == 0xf0) // Unsupported command
             return Function1117a0();
         // LD_A_addr(wc807);
         // CP_A(0x1);
