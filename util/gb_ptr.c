@@ -100,7 +100,7 @@ void* AbsGBToRAMAddr(uint32_t hl) {
     if(ba.addr >= VRAM_Begin && ba.addr < VRAM_End) {
         return (uint8_t*)vram + (VRAM_BANK_SIZE * ba.bank) + (ba.addr - VRAM_Begin);
     }
-    if(hl >= SRAM_Begin && hl < SRAM_End) {
+    if(ba.addr >= SRAM_Begin && ba.addr < SRAM_End) {
         return ((struct priv_t*)gb.direct.priv)->cart_ram + (0x2000 * ba.bank) + (ba.addr - SRAM_Begin);
     }
     return NULL;

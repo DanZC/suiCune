@@ -3440,7 +3440,7 @@ uint16_t Function100f02(uint8_t* de, const macro_100fc0_s* hl, uint8_t c){
         // LD_addr_A(wStringBuffer2 + 3);  // bank
         data.bank = hl->bank;
         if(!bit_test(data.bank, 7)) {
-            OpenSRAM_Conv(MBANK(data.bank));
+            OpenSRAM_Conv(data.bank);
         }
         // PUSH_HL;
         // INC_HL;

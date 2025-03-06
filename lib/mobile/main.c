@@ -4452,10 +4452,11 @@ void Function11148c(mobile_api_data_s* data){
     if(a == 0) {
         // LD_A_addr(wc993);
         // LD_C_A;
+        c = wram->wc993;
         // LD_B(0);
         // LD_HL(wMobileSDK_ReceivePacketBuffer + 4);
         // ADD_HL_BC;
-        hl = wram->wMobileSDK_ReceivePacketBuffer + 4 + wram->wc993;
+        hl = wram->wMobileSDK_ReceivePacketBuffer + 4 + c;
         // LD_A_hli;
         b = hl[0];
         // OR_A_A;
@@ -4473,19 +4474,21 @@ void Function11148c(mobile_api_data_s* data){
         // INC_C;
         // ADD_A_C;
         // LD_addr_A(wc993);
-        wram->wc993 += b + 1;
+        wram->wc993 += c + 1;
         // LD_A_addr(wc994);
         // DEC_A;
         // SUB_A_B;
         // LD_C_A;
         c = (wram->wc994 - 1) - b;
         // LD_addr_A(wc994);
+        wram->wc994 = c;
         // LD_A_B;
         // LD_de_A;
         // INC_DE;
         *(de++) = b;
         // CALL(aMobileSDK_CopyBytes);
         de = MobileSDK_CopyBytes(de, hl + 1, b);
+        hl += b + 1;
     }
     else {
     // asm_111507:
