@@ -3439,6 +3439,9 @@ uint16_t Function100f02(uint8_t* de, const macro_100fc0_s* hl, uint8_t c){
         // IF_Z goto done;
         // LD_addr_A(wStringBuffer2 + 3);  // bank
         data.bank = hl->bank;
+        if(!bit_test(data.bank, 7)) {
+            OpenSRAM_Conv(MBANK(data.bank));
+        }
         // PUSH_HL;
         // INC_HL;
     // addr 1
@@ -3461,6 +3464,7 @@ uint16_t Function100f02(uint8_t* de, const macro_100fc0_s* hl, uint8_t c){
         // CALL(aFunction100f3d);
         Function100f3d(&data, de2, hl2, bc);
     // next line
+        CloseSRAM_Conv();
         // POP_HL;
         // LD_DE(7);
         // ADD_HL_DE;
@@ -3568,33 +3572,25 @@ uint8_t* Function100f8d(Function100f02_Data_s* data, uint8_t* de, uint8_t* hl, u
     data->hl += bc;
     // POP_HL;
     // LD_A_addr(wStringBuffer2 + 3);
-    uint8_t bank = data->bank;
     // BIT_A(7);
     // RES_A(7);
     // IF_Z goto sram;
-    if(!bit_test(bank, 7)) {
-    // sram:
-        bit_reset(bank, 7);
-        // CALL(aOpenSRAM);
-        OpenSRAM_Conv(bank);
-        // CALL(aCopyBytes);
-        CopyBytes_Conv2(de, hl, bc);
-        // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
-        // RET;    
-        return hl + bc;
-    }
     // AND_A_A;
     // IF_NZ goto far_wram;
-    else {
-    // far_wram:
-        // AND_A(0x7f);
-        // CALL(aFarCopyWRAM);
-        CopyBytes_Conv2(de, hl, bc);
-        // RET;
-        return hl + bc;
-    }
     // CALL(aCopyBytes);
+    CopyBytes_Conv2(de, hl, bc);
+    // RET;
+    return hl + bc;
+
+// far_wram:
+    // AND_A(0x7f);
+    // CALL(aFarCopyWRAM);
+    // RET;
+
+// sram:
+    // CALL(aOpenSRAM);
+    // CALL(aCopyBytes);
+    // CALL(aCloseSRAM);
     // RET;
 }
 

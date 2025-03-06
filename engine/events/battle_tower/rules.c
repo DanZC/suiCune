@@ -262,7 +262,7 @@ bool BattleTower_CheckPartyLengthIs3(void){
     // LD_A_addr(wPartyCount);
     // CP_A(BATTLETOWER_PARTY_LENGTH);
     // RET;
-    return wram->wPartyCount == BATTLETOWER_PARTY_LENGTH;
+    return wram->wPartyCount < BATTLETOWER_PARTY_LENGTH;
 }
 
 bool BattleTower_CheckPartyHasThreeMonsThatAreNotEggs(void){
