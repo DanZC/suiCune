@@ -2012,53 +2012,61 @@ u8_pair_flag_s Function100826(uint8_t* hl){
     return u8_pair_flag(b, c, c >= 256);
 }
 
+// MobileBattle_PrintRemainingBattleTime
 void Function100846(void){
-    LD_HL(wcd2a);
-    BIT_hl(5);
-    IF_NZ goto asm_10087c;
-    LD_A_addr(wcd6e);
-    LD_C_A;
-    LD_A(0);
-    SUB_A_C;
-    IF_NC goto asm_100858;
-    ADD_A(0x3c);
+    // LD_HL(wcd2a);
+    // BIT_hl(5);
+    // IF_NZ goto asm_10087c;
+    if(bit_test(wram->wcd2a, 5)) { // Unlimited battle time
+    // asm_10087c:
+        // LD_DE(mString_10088e);
+        // hlcoord(1, 14, wTilemap);
+        struct TextPrintState st = {.de = U82C(String_10088e), .hl = coord(1, 14, wram->wTilemap)};
+        // CALL(aPlaceString);
+        PlaceString_Conv(&st, st.hl);
+        // LD_H_B;
+        // LD_L_C;
+        // LD_DE(mString_10089f);
+        // CALL(aPlaceString);
+        PlaceStringSimple(U82C(String_10089f), st.bc);
+        // RET;
+        return;
+    }
+    // LD_A_addr(wcd6e);
+    // LD_C_A;
+    // LD_A(0);
+    // SUB_A_C;
+    // IF_NC goto asm_100858;
+    // ADD_A(0x3c);
 
-
-asm_100858:
-    LD_addr_A(wStringBuffer2 + 2);
-    LD_A_addr(wcd6d);
-    LD_C_A;
-    LD_A(0x0a);
-    SBC_A_C;
-    LD_addr_A(wStringBuffer2 + 1);
-    XOR_A_A;
-    LD_addr_A(wStringBuffer2);
-    LD_DE(mString_10088e);
-    hlcoord(1, 14, wTilemap);
-    CALL(aPlaceString);
-    LD_DE(wStringBuffer2);
-    hlcoord(4, 16, wTilemap);
-    CALL(aFunction100697);
-    RET;
-
-
-asm_10087c:
-    LD_DE(mString_10088e);
-    hlcoord(1, 14, wTilemap);
-    CALL(aPlaceString);
-    LD_H_B;
-    LD_L_C;
-    LD_DE(mString_10089f);
-    CALL(aPlaceString);
-    RET;
-
+// asm_100858:
+    // LD_addr_A(wStringBuffer2 + 2);
+    wram->wStringBuffer2[2] = (wram->wcd6e > 0)? 0x3c - wram->wcd6e: 0;
+    // LD_A_addr(wcd6d);
+    // LD_C_A;
+    // LD_A(0x0a);
+    // SBC_A_C;
+    // LD_addr_A(wStringBuffer2 + 1);
+    wram->wStringBuffer2[1] = 0x0a - wram->wcd6d - (wram->wcd6e > 0);
+    // XOR_A_A;
+    // LD_addr_A(wStringBuffer2);
+    wram->wStringBuffer2[0] = 0;
+    // LD_DE(mString_10088e);
+    // hlcoord(1, 14, wTilemap);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(String_10088e), coord(1, 14, wram->wTilemap));
+    // LD_DE(wStringBuffer2);
+    // hlcoord(4, 16, wTilemap);
+    // CALL(aFunction100697);
+    Function100697(coord(4, 16, wram->wTilemap), wram->wStringBuffer2);
+    // RET;
 }
 
 const char String_10088e[] = 
             "MOBILE BATTLE TIME@";  // "モバイルたいせん\u3000できる"
                                     //next "じかん@"
 
-const char String_10089f[] = "UNLIMITED@"; // "\u3000むせいげん@"
+const char String_10089f[] = " UNLIMITED@"; // "\u3000むせいげん@"
 
 //  Calculates the difference between 10 minutes and sMobileBattleTimer
 //  Returns minutes in c (b) and seconds in b (a)
