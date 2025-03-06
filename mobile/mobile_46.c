@@ -4443,22 +4443,25 @@ asm_119962:
     AND_A_A;
     IF_NZ goto asm_119962;
     CALL(aFunction119ec2);
-    LD_HL(wc608);
-    LD_A(MOBILEAPI_0F);
-    JP(mFunction119e2b);
-
+    // LD_HL(wc608);
+    // LD_A(MOBILEAPI_0F);
+    // JP(mFunction119e2b);
+    return Function119e2b(MOBILEAPI_0F, &(mobile_api_data_s){.hl = wram->wc608});
 }
 
 void Function119973(void){
-    LD_A(0x1);
-    LD_addr_A(wcf64);
-    XOR_A_A;
-    LD_addr_A(wcf65);
-    LD_addr_A(w3_d090);
-    LD_DE(w3_d000);
-    LD_A(MOBILEAPI_10);
-    JP(mFunction119e2b);
-
+    // LD_A(0x1);
+    // LD_addr_A(wcf64);
+    wram->wcf64 = 0x1;
+    // XOR_A_A;
+    // LD_addr_A(wcf65);
+    wram->wcf65 = 0x0;
+    // LD_addr_A(w3_d090);
+    wram->w3_d090[0] = 0;
+    // LD_DE(w3_d000);
+    // LD_A(MOBILEAPI_10);
+    // JP(mFunction119e2b);
+    return Function119e2b(MOBILEAPI_10, &(mobile_api_data_s){.de = wram->w3_d000});
 }
 
 void Function119987(void){
@@ -4702,44 +4705,49 @@ asm_119b23:
 }
 
 void Function119b3b(void){
-    LD_A_addr(w3_d090 + 1);
-    LD_L_A;
-    LD_A_addr(w3_d090 + 2);
-    LD_H_A;
-    JR(masm_119b4d);
-
+    // LD_A_addr(w3_d090 + 1);
+    // LD_L_A;
+    // LD_A_addr(w3_d090 + 2);
+    // LD_H_A;
+    // JR(masm_119b4d);
+    return asm_119b4d(NULL); // TODO: Create w3_d090 pointer
 }
 
 void Function119b45(void){
-    LD_A_addr(wcf64);
-    LD_L_A;
-    LD_A_addr(wcf65);
-    LD_H_A;
+    // LD_A_addr(wcf64);
+    // LD_L_A;
+    // LD_A_addr(wcf65);
+    // LD_H_A;
 
-    return asm_119b4d();
+    return asm_119b4d(NULL); // TODO: Create wcf64 pointer
 }
 
-void asm_119b4d(void){
-    LD_A(MOBILEAPI_13);
-    JP(mFunction119e2b);
-
+void asm_119b4d(void* hl){
+    // LD_A(MOBILEAPI_13);
+    // JP(mFunction119e2b);
+    Function119e2b(MOBILEAPI_13, &(mobile_api_data_s){.hl = hl});
 }
 
 void Function119b52(void){
-    LD_A_addr(w3_d090);
-    CP_A(0x1);
-    IF_NZ goto asm_119b66;
-    LD_A(BANK(s5_a800));
-    CALL(aOpenSRAM);
-    LD_A(0x4);
-    LD_addr_A(s5_a800);
-    CALL(aCloseSRAM);
+    // LD_A_addr(w3_d090);
+    // CP_A(0x1);
+    // IF_NZ goto asm_119b66;
+    if(wram->w3_d090[0] == 0) {
+        // LD_A(BANK(s5_a800));
+        // CALL(aOpenSRAM);
+        OpenSRAM_Conv(MBANK(as5_a800));
+        // LD_A(0x4);
+        // LD_addr_A(s5_a800);
+        gb_write(s5_a800, 0x4);
+        // CALL(aCloseSRAM);
+        CloseSRAM_Conv();
+    }
 
-
-asm_119b66:
-    LD_A(MOBILEAPI_0E);
-    JP(mFunction119e2b);
-
+// asm_119b66:
+    mobile_api_data_s data = {0};
+    // LD_A(MOBILEAPI_0E);
+    // JP(mFunction119e2b);
+    return Function119e2b(MOBILEAPI_0E, &data);
 }
 
 void Function119b6b(void){

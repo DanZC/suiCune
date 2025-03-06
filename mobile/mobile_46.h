@@ -145,7 +145,7 @@ extern const char XGameResult[];
 void Function119b0d(void);
 void Function119b3b(void);
 void Function119b45(void);
-void asm_119b4d(void);
+void asm_119b4d(void* hl);
 void Function119b52(void);
 void Function119b6b(void);
 void BattleTowerRoomMenu_UberRestrictionMessage(void);
