@@ -62,8 +62,8 @@
 #include "../charmap.h"
 
 const mobile_comm_fn_t *gMobileCommsJumptable;
-uint8_t* gMobile_wcd3b;
-uint8_t* gMobile_wcd3e;
+uint8_t* gMobile_wcd3b; // ChunkedDataSource
+uint8_t* gMobile_wcd3e; // ChunkedDataDest
 const uint8_t* gMobile_wd1ec;
 
 // macro_100fc0: MACRO
@@ -737,6 +737,7 @@ u8_flag_s Function10032e(void){
     return res;
 }
 
+// MobileComms_CheckTransfer
 u8_flag_s Function100337(void){
     // CALL(aFunction10032e);
     u8_flag_s res = Function10032e();
@@ -762,6 +763,7 @@ u8_flag_s Function100337(void){
     return u8_flag(res.a, false);
 }
 
+// CheckP2PMobileTransferStatus?
 u8_flag_s Function10034d(void){
     // LD_A_addr(wc821);
     // BIT_A(1);
@@ -819,29 +821,33 @@ u8_flag_s Function10034d(void){
     }
 }
 
+// MobileComms_P2PTransferJumptable?
 void Function100382(void){
     // LD_A_addr(wcd27);
     // LD_HL(mJumptable_10044e);
     // RST(aJumpTable);
     switch(wram->wcd27) {
-        case 0: Function10046a(); break;
-        case 1: Function10047c(); break;
-        case 2: Function100493(); break;
-        case 3: Function1004ba(); break;
-        case 4: Function1004f4(); break;
-        case 5: Function1004ce(); break;
-        case 6: Function1004de(); break;
-        case 7: Function1004a4(); break;
-        case 8: Function100495(); break;
-        case 9: Function1004ce(); break;
-        case 10: Function1004de(); break;
-        case 11: Function1004e9(); break;
-        case 12: Function1004f4(); break;
-        case 13: Function1004a4(); break;
+        case 0x0: Function10046a(); break;
+        case 0x1: Function10047c(); break;
+        case 0x2: Function100493(); break;
+        case 0x3: Function1004ba(); break;
+        case 0x4: Function1004f4(); break;
+        case 0x5: Function1004ce(); break;
+        case 0x6: Function1004de(); break;
+        case 0x7: Function1004a4(); break;
+        case 0x8: Function100495(); break;
+        case 0x9: Function1004ce(); break;
+        case 0xa: Function1004de(); break;
+        case 0xb: Function1004e9(); break;
+        case 0xc: Function1004f4(); break;
+        case 0xd: Function1004a4(); break;
     }
     // RET;
 }
 
+// CopyTransferBufferToPacketBuffer
+// Returns 0xff on failure
+// Returns 0x0 on success
 uint8_t Function10038a(void){
     // LD_HL(wccb4);
     mobile_api_data_s out = {.hl = &wram->wccb4};
@@ -852,6 +858,7 @@ uint8_t Function10038a(void){
     return out.a;
 }
 
+// CopyReceivedPacketBufferToWCC60
 void Function100393(void){
     // LD_HL(wcc60);
     mobile_api_data_s out = {.hl = wram->wcc60_str};
@@ -861,6 +868,7 @@ void Function100393(void){
     // RET;
 }
 
+// CopyCC60StringToWram3
 void Function10039c(void){
     // LD_HL(wcc60);
     // LD_DE(w3_d000);
@@ -882,6 +890,7 @@ void Function1003ab(void){
 
 }
 
+// CopyTransferBufferToWram3
 void Function1003ba(void){
     // LD_HL(wccb4);
     // LD_DE(w3_d080);
@@ -892,6 +901,7 @@ void Function1003ba(void){
     // RET;
 }
 
+// CopyFromWram3ToTransferBuffer
 void Function1003c9(void){
     // LD_HL(w3_d080);
     // LD_DE(wccb4);
@@ -902,6 +912,7 @@ void Function1003c9(void){
     // RET;
 }
 
+// InitializeTransferBuffer?
 void Function1003d8(void){
     // LD_HL(wccb4);
     // LD_A_hli;
@@ -931,6 +942,7 @@ void Function1003d8(void){
     // RET;
 }
 
+// Subtract3FromCC60andCCB4
 void Function1003f5(void){
     // LD_A_addr(wcc60);
     // SUB_A(0x03);
@@ -943,6 +955,7 @@ void Function1003f5(void){
     // RET;
 }
 
+// CheckReceivedP2PPacketChecksum?
 bool Function100406(void){
     // LD_A_addr(wcc60);
     // SUB_A(0x02);
@@ -1020,6 +1033,7 @@ uint16_t Function10043a(uint8_t* hl, uint16_t bc){
     return de;
 }
 
+// MobileComms_P2PTransfer00
 void Function10046a(void){
     // LD_HL(wBGMapPalBuffer);
     // INC_hl;
@@ -1035,6 +1049,7 @@ void Function10046a(void){
     // RET;
 }
 
+// MobileComms_P2PTransfer01
 void Function10047c(void){
     // CALL(aFunction100337);
     u8_flag_s res = Function100337();
@@ -1044,7 +1059,7 @@ void Function10047c(void){
         return;
     // CP_A(0x02);
     // IF_Z goto asm_100487;
-    if(res.a == 0x02) {
+    if(res.a == 0x02) { // Check if you're sending or receiving first?
     // asm_100487:
         // LD_A(0x08);
         // LD_addr_A(wcd27);
@@ -1063,11 +1078,13 @@ void Function10047c(void){
     }
 }
 
+// MobileComms_P2PTransfer02
 void Function100493(void){
     // JR(masm_100497);
     return asm_100497();
 }
 
+// MobileComms_P2PTransfer08
 void Function100495(void){
     // JR(masm_100497);
     return asm_100497();
@@ -1087,6 +1104,7 @@ void asm_100497(void){
     // RET;
 }
 
+// MobileComms_CheckReceivedP2PPacket
 bool Function1004a4(void){
     // CALL(aFunction100406);
     // IF_C goto asm_1004b8;
@@ -1108,6 +1126,7 @@ bool Function1004a4(void){
     return false;
 }
 
+// MobileComms_P2PTransfer03
 void Function1004ba(void){
     // CALL(aFunction10038a);
     uint8_t a = Function10038a();
@@ -1128,6 +1147,7 @@ void Function1004ba(void){
     // RET;
 }
 
+// MobileComms_P2PTransfer05
 void Function1004ce(void){
     // CALL(aFunction100337);
     u8_flag_s res = Function100337();
@@ -1145,6 +1165,7 @@ void Function1004ce(void){
 
 }
 
+// MobileComms_P2PTransfer06
 void Function1004de(void){
     // CALL(aFunction100393);
     Function100393();
@@ -1155,6 +1176,7 @@ void Function1004de(void){
     // RET;
 }
 
+// MobileComms_P2PTransfer0B
 void Function1004e9(void){
     // CALL(aFunction10038a);
     Function10038a();
@@ -1165,6 +1187,7 @@ void Function1004e9(void){
     // RET;
 }
 
+// MobileComms_WaitTransferThenCopyResultToWram3
 void Function1004f4(void){
     // CALL(aFunction100337);
     u8_flag_s res = Function100337();
@@ -3387,6 +3410,7 @@ void Function100ed4(void){
 
 }
 
+// LoadStoredPartyDataForTransfer?
 uint16_t Function100edf(uint8_t* de){
     // LD_HL(mUnknown_100fc0);
     // LD_C(1);
@@ -3394,6 +3418,7 @@ uint16_t Function100edf(uint8_t* de){
     return Function100f02(de, Unknown_100fc0, 1);
 }
 
+// StoreTransferedOTData?
 uint16_t Function100ee6(uint8_t* de){
     // LD_HL(mUnknown_100fc0);
     // LD_C(2);
@@ -3401,6 +3426,7 @@ uint16_t Function100ee6(uint8_t* de){
     return Function100f02(de, Unknown_100fc0, 2);
 }
 
+// LoadStoredMailDataForTransfer?
 uint16_t Function100eed(uint8_t* de){
     // LD_HL(mUnknown_100feb);
     // LD_C(1);
@@ -3408,6 +3434,7 @@ uint16_t Function100eed(uint8_t* de){
     return Function100f02(de, Unknown_100feb, 1);
 }
 
+// LoadStoredOTDataForTransfer?
 uint16_t Function100ef4(uint8_t* de){
     // LD_HL(mUnknown_100ff3);
     // LD_C(1);
@@ -3506,6 +3533,7 @@ void Function100f3d(Function100f02_Data_s* data, uint8_t* de, uint8_t* hl, uint1
     // what was once in de gets copied to hl,
     // modified by Function100f8d, and put back
     // into this backup
+    // Copy data->de -> de
         // LD_A_addr(wStringBuffer2 + 1);
         // LD_L_A;
         // LD_A_addr(wStringBuffer2 + 2);
@@ -3524,6 +3552,7 @@ void Function100f3d(Function100f02_Data_s* data, uint8_t* de, uint8_t* hl, uint1
     // two:
     // hl gets backed up to de, then
     // do the same as in .three
+    // Copy data->de -> hl
         // LD_D_H;
         // LD_E_L;
         // LD_A_addr(wStringBuffer2 + 1);
@@ -3546,6 +3575,7 @@ void Function100f3d(Function100f02_Data_s* data, uint8_t* de, uint8_t* hl, uint1
     // load the backup into de,
     // finally run Function100f8d
     // and store the de result
+    // Copy de -> data->de
         // LD_H_D;
         // LD_L_E;
         // LD_A_addr(wStringBuffer2 + 1);
@@ -3700,6 +3730,7 @@ static void Function10107d_CopyAllFromOT(uint8_t* de, const uint8_t* hl, uint16_
     // RET;
 }
 
+// MobileComms_LoadOTData
 void Function10107d(void){
     // XOR_A_A;
     // LD_HL(wc608);
@@ -3742,6 +3773,7 @@ void Function10107d(void){
     // RET;
 }
 
+// MobileComms_Checksum
 uint16_t Function1010de(const uint8_t* hl, uint16_t bc){
     // PUSH_HL;
     // PUSH_BC;
@@ -3798,7 +3830,7 @@ static void LoadSelectedPartiesForColosseum_CopyThreeSpecies(uint8_t* de, const 
 //  Load the 3 choices to the buffer
     // PUSH_DE;
     // LD_BC(wStringBuffer2 + NAME_LENGTH_JAPANESE);
-    uint8_t* bc = wram->wStringBuffer2 + NAME_LENGTH_JAPANESE;
+    uint8_t* bc = wram->wStringBuffer2 + NAME_LENGTH;
     // XOR_A_A;
     uint8_t a = 0;
 
@@ -3823,7 +3855,7 @@ static void LoadSelectedPartiesForColosseum_CopyThreeSpecies(uint8_t* de, const 
     // LD_HL(wStringBuffer2 + NAME_LENGTH_JAPANESE);
     // LD_BC(3);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(de, wram->wStringBuffer2 + NAME_LENGTH_JAPANESE, 3);
+    CopyBytes_Conv2(de, wram->wStringBuffer2 + NAME_LENGTH, 3);
     // LD_A(0xff);
     // LD_de_A;
     de[3] = 0xff;
@@ -4768,6 +4800,7 @@ void Function10158a(void){
     // RET;
 }
 
+// MobileComms_LoadAndStagePartyDataForTransfer
 void Function10159d(void){
     // LD_DE(wc608);
     // FARCALL(aFunction100edf);
@@ -4787,6 +4820,7 @@ void Function10159d(void){
     // RET;
 }
 
+// MobileComms_LoadAndStageMailDataForTransfer
 void Function1015be(void){
     // LD_DE(wc608);
     // FARCALL(aFunction100eed);
@@ -4806,6 +4840,7 @@ void Function1015be(void){
     // RET;
 }
 
+// MobileComms_LoadAndStageOTDataForTransfer
 void Function1015df(void){
     // LD_DE(wc608);
     // FARCALL(aFunction100ef4);
@@ -4825,6 +4860,7 @@ void Function1015df(void){
     // RET;
 }
 
+// MobileComms_LoadOTDataFromTransfer
 void Function101600(void){
     // LD_HL(w5_d800);
     // LD_DE(wc608);
@@ -4842,6 +4878,7 @@ void Function101600(void){
     // RET;
 }
 
+// MobileComms_TransferFromW5D800ToW5DA00
 void Function10161f(void){
     // CALL(aFunction101649);
     Function101649();
@@ -4852,6 +4889,7 @@ void Function10161f(void){
     // RET;
 }
 
+// MobileComms_TransferFromW5D800ToW5DC00
 void Function10162a(void){
     // CALL(aFunction101663);
     Function101663();
@@ -4878,6 +4916,7 @@ void MobileCopyTransferData2(void* de){
     // RET;
 }
 
+// TransferFromW5D800ToW5DA00
 void Function101649(void){
     // LD_A(BANK(w5_d800));
     // LD_HL(w5_d800);
@@ -4898,6 +4937,7 @@ void Function10165a(void){
     // RET;
 }
 
+// TransferFromW5D800ToW5DC00
 void Function101663(void){
     // LD_A(BANK(w5_dc00));
     // LD_HL(w5_d800);
@@ -4919,6 +4959,7 @@ void Function101674(void){
 
 }
 
+// MobileComms_ResetBattleDataTransferJumptableIndex
 void Function10167d(void){
     // LD_A(0);
     // LD_addr_A(wcd26);
@@ -4930,6 +4971,7 @@ void Function10167d(void){
     // RET;
 }
 
+// MobileComms_CheckSelectAOrCheckTimeoutOrBattleDataTransfer
 void Function10168a(void){
     // CALL(aFunction101418);
     // RET_C ;
@@ -4939,6 +4981,7 @@ void Function10168a(void){
     return Function10168e();
 }
 
+// MobileComms_CheckTimeoutOrBattleDataTransfer
 void Function10168e(void){
     // LD_B(0);
     // LD_C(0x01);
@@ -4974,6 +5017,7 @@ void Function10168e(void){
     // RET;
 }
 
+// P2PBattleDataTransfer?
 void Jumptable_1016c3(uint8_t a){
     switch(a) {
         case 0: Function1016cf(); break;
@@ -4985,6 +5029,7 @@ void Jumptable_1016c3(uint8_t a){
     }
 }
 
+// P2PBattleDataTransfer_InitTransferBuffer
 void Function1016cf(void){
     // LD_HL(wcd3a);
     // INC_hl;
@@ -4998,6 +5043,7 @@ void Function1016cf(void){
     // RET;
 }
 
+// P2PBattleDataTransfer_StageTransferData
 void Function1016de(void){
     // CALL(aFunction10177b);
     // IF_NC goto asm_1016eb;
@@ -5021,6 +5067,7 @@ void Function1016de(void){
     // RET;
 }
 
+// P2PBattleDataTransfer_ResetP2PJumptableIndex
 void Function1016f8(void){
     // LD_A(0);
     // LD_addr_A(wcd27);
@@ -5032,6 +5079,7 @@ void Function1016f8(void){
     // RET;
 }
 
+// P2PBattleDataTransfer_DoP2PTransfer
 void Function101705(void){
     // FARCALL(aFunction100382);
     Function100382();
@@ -5061,7 +5109,7 @@ void Function101724(void){
     // LD_A_addr(wcd39);
     // CP_A(0xff);
     // IF_Z goto asm_101731;
-    if(wram->wcd39 == 0xff) {
+    if(wram->wcd39 == 0xff) { // No more data to transfer?
     // asm_101731:
         // LD_A_addr(wcd26);
         // SET_A(7);
@@ -5077,8 +5125,9 @@ void Function101724(void){
     }
 }
 
-const uint8_t Unknown_10173a = 0x50;
+const uint8_t P2PTransferChunkSize = 0x50; // Unknown_10173a
 
+// returns hl + (a * 80)
 uint8_t* Function10173b(uint8_t* hl, uint8_t a){
     // PUSH_BC;
     // PUSH_AF;
@@ -5092,7 +5141,7 @@ uint8_t* Function10173b(uint8_t* hl, uint8_t a){
     // CALL(aAddNTimes);
     // POP_BC;
     // RET;
-    return hl + (Unknown_10173a * a);
+    return hl + (P2PTransferChunkSize * a);
 }
 
 void Function10174c(uint8_t* de, uint8_t a, uint8_t* hl, uint16_t bc){
@@ -5122,6 +5171,7 @@ void Function10174c(uint8_t* de, uint8_t a, uint8_t* hl, uint16_t bc){
     // RET;
 }
 
+// FillTransferBufferwith0x11
 void Function10176f(void){
     // LD_HL(wccb4);
     // LD_BC(0x54);
@@ -5135,7 +5185,7 @@ bool Function10177b(void){
     // LD_A_addr(mUnknown_10173a);
     // LD_C_A;
     // LD_B(0);
-    uint16_t bc = Unknown_10173a;
+    uint16_t bc = P2PTransferChunkSize;
     // LD_A_addr(wcd3a);
     // LD_HL(0);
     // CALL(aAddNTimes);
@@ -5178,12 +5228,13 @@ bool Function10177b(void){
     // LD_C_L;
     // LD_B_H;
     // CALL(aFunction1017b0);
-    Function1017b0(bc);
+    Function1017b0(hl);
     // XOR_A_A;
     // RET;
     return false;
 }
 
+// ReadTransferChunk?
 void Function1017b0(uint16_t bc){
     // LD_A_C;
     // LD_addr_A(wccb4);
@@ -5201,6 +5252,7 @@ void Function1017b0(uint16_t bc){
     // RET;
 }
 
+// WriteTransferChunk?
 void Function1017c7(void){
     // LD_A_addr(wcc60);
     // LD_C_A;
@@ -5221,6 +5273,7 @@ void Function1017c7(void){
     // RET;
 }
 
+// MobileComms_ResetP2PJumptableIndex
 void Function1017e4(void){
     // LD_A(0);
     // LD_addr_A(wcd27);
@@ -5232,6 +5285,7 @@ void Function1017e4(void){
     // RET;
 }
 
+// MobileComms_CheckSelectAOrCheckTimeoutOrP2PTransfer
 void Function1017f1(void){
     // CALL(aFunction101418);
     // RET_C ;
@@ -5241,6 +5295,7 @@ void Function1017f1(void){
     return Function1017f5();
 }
 
+// MobileComms_CheckTimeoutOrP2PTransfer
 void Function1017f5(void){
     // LD_B(0);
     // LD_C(0x01);
@@ -5277,6 +5332,7 @@ void Function1017f5(void){
     }
 }
 
+// CopyP2PSelectedPlayerOption?
 void Function101826(void){
     // LD_A_addr(wcd21);
     // CP_A(0x02);
@@ -5361,6 +5417,7 @@ const char Unknown_101895[] =
 
 // popc
 
+// MobileComms_CheckOtherPlayersSelection
 void Function1018a8(void){
     // LD_HL(wccb5);
     // LD_DE(wcc61);
@@ -5395,6 +5452,7 @@ void Function1018a8(void){
     // RET;
 }
 
+// MobileComms_GenerateLinkBattleRNs
 void Function1018d6(void){
     // CALL(aFunction1018ec);
     Function1018ec();
@@ -5406,6 +5464,7 @@ void Function1018d6(void){
 
 }
 
+// MobileComms_CopyLinkBattleRNs
 void Function1018e1(void){
     // CALL(aFunction1018fb);
     Function1018fb();
@@ -5582,6 +5641,7 @@ static void v_StartMobileBattle_CopyOTDetails(void){
     // LD_DE(w5_dc11);
     // FARCALL(aGetMobileOTTrainerClass);
     wram->wOtherTrainerClass = GetMobileOTTrainerClass(wram->w5_dc11, wram->w5_dc0d);
+    wram->wOtherTrainerID = 1;
 
     // POP_AF;
     // LDH_addr_A(rSVBK);

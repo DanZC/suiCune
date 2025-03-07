@@ -10,6 +10,7 @@
 #include "../engine/gfx/dma_transfer.h"
 #include "../engine/overworld/overworld.h"
 
+// MobileComms_InitAndLoadGFX
 void Function115d99(void){
     // LD_DE(mMobileDialingGFX);
     // LD_HL(vTiles0 + LEN_2BPP_TILE * 0x60);
@@ -118,6 +119,7 @@ void Function115dd3(void){
 
 }
 
+// SetMobileConnectionAnimStage?
 void Function115e18(uint8_t c){
     // LD_A_C;
     // LD_addr_A(wc30a);

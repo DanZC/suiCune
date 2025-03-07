@@ -9504,6 +9504,7 @@ bool LoadBattleMenu2(void){
 // mobile:
     // FARCALL(aMobile_LoadBattleMenu);
     //  TODO: Mobile_LoadBattleMenu stuff
+    Mobile_LoadBattleMenu();
     // LD_A_addr(wcd2b);
     // AND_A_A;
     // RET_Z ;

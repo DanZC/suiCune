@@ -1295,7 +1295,7 @@ struct wram_s
                                 uint8_t wcd2c;
                                 uint8_t wcd2d;
                                 uint8_t wcd2e;
-                                uint8_t wcd2f;
+                                uint8_t wcd2f; // P2PHostState?
                                 uint8_t wcd30;
                                 uint8_t wcd31;
                                 uint8_t wcd32;

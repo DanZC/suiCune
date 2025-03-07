@@ -92,7 +92,7 @@ void* AbsGBToRAMAddr(uint32_t hl) {
         return wram->wram0 + (ba.addr - WRAM0_Begin);
     }
     if(ba.addr >= WRAM1_Begin && ba.addr < WRAM1_End) {
-        return wram->wram0 + (0x1000 * ba.bank) + (ba.addr - WRAM0_Begin);
+        return wram->wram0 + (0x1000 * ba.bank) + (ba.addr - WRAM1_Begin);
     }
     if(ba.addr >= HRAM_Begin && ba.addr < HRAM_End) {
         return (uint8_t*)hram + (ba.addr - HRAM_Begin);
