@@ -238,6 +238,8 @@ void Function1000ba(void){
     do {
     // loop:
     // call [wcd22]:([wcd23][wcd24] + [wMobileCommsJumptableIndex])
+        // HACK TO REMOVE SOFTLOCK
+        wram->wVBlankOccurred = 1;
         // LD_HL(wcd23);
         // LD_A_hli;
         // LD_H_hl;
@@ -261,6 +263,8 @@ void Function1000ba(void){
         Function100144();
         // CALL(aFunction100163);
         Function100163();
+        if(wram->wVBlankOccurred == 1) // If we haven't delayed yet.
+            DelayFrame();
         // LD_A_addr(wcd2b);
         // AND_A_A;
         // IF_Z goto loop;
@@ -1714,7 +1718,7 @@ void Function1006dc(uint8_t* de, const uint8_t* hl){
     // LD_C_A;
     c = hl[0] + cy;
     // LDH_A_addr(hHours);
-    a = hram->hMinutes;
+    a = hram->hHours;
     // SBC_A_C;
     // IF_NC goto asm_1006fb;
     if((cy = a < c)) {
@@ -1963,27 +1967,27 @@ u8_pair_flag_s Function1007f6(void){
     // LD_HL(wcd74);
     // LD_DE(wcd71);
     // CALL(aFunction1006dc);
-    Function1006dc(wram->wcd71, &wram->wcd74);
+    Function1006dc(wram->wcd6f, &wram->wcd72);
     // LD_A(0x04);
     // CALL(aOpenSRAM);
     OpenSRAM_Conv(MBANK(asMobileBattleTimer));
     // LD_HL(0xa802);
     // CALL(aFunction100826);
-    Function100826(GBToRAMAddr(sMobileBattleTimer + 2));
+    Function100826(GBToRAMAddr(sMobileBattleTimer));
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // LD_HL(wcd6e);
     // CALL(aFunction100826);
-    u8_pair_flag_s res = Function100826(&wram->wcd6e);
+    u8_pair_flag_s res = Function100826(&wram->wcd6c);
     // LDH_A_addr(hHours);
     // LD_addr_A(wcd72);
-    hram->hHours = wram->wcd72;
+    wram->wcd72 = hram->hHours;
     // LDH_A_addr(hMinutes);
     // LD_addr_A(wcd73);
-    hram->hMinutes = wram->wcd73;
+    wram->wcd73 = hram->hMinutes;
     // LDH_A_addr(hSeconds);
     // LD_addr_A(wcd74);
-    hram->hSeconds = wram->wcd74;
+    wram->wcd74 = hram->hSeconds;
     // RET;
     return res;
 }
@@ -1991,7 +1995,7 @@ u8_pair_flag_s Function1007f6(void){
 u8_pair_flag_s Function100826(uint8_t* hl){
     // LD_A_addr(wcd71);
     // ADD_A_hl;
-    uint8_t a = wram->wcd71[0] + *hl;
+    uint8_t a = wram->wcd71[0] + hl[2];
     uint8_t carry = 0;
     // SUB_A(0x3c);
     if(a >= 60) {
@@ -2003,11 +2007,11 @@ u8_pair_flag_s Function100826(uint8_t* hl){
 
 // asm_100830:
     // LD_hld_A;
-    *(hl--) = a;
+    hl[2] = a;
     // CCF;
     // LD_A_addr(wcd70);
     // ADC_A_hl;
-    a = wram->wcd70[0] + *hl + carry;
+    a = wram->wcd70[0] + hl[1] + carry;
     // SUB_A(0x3c);
     if(a >= 60) {
         // IF_NC goto asm_10083c;
@@ -2021,15 +2025,15 @@ u8_pair_flag_s Function100826(uint8_t* hl){
 
 // asm_10083c:
     // LD_hld_A;
-    *(hl--) = a;
+    hl[1] = a;
     // LD_B_A;
     uint8_t b = a;
     // CCF;
     // LD_A_addr(wcd6f);
     // ADC_A_hl;
-    uint16_t c = wram->wcd6f[0] + *hl + carry;
+    uint16_t c = wram->wcd6f[0] + hl[0] + carry;
     // LD_hl_A;
-    *hl = (uint8_t)c;
+    hl[0] = (uint8_t)c;
     // LD_C_A;
     // RET;
     return u8_pair_flag(b, c, c >= 256);
@@ -2086,10 +2090,10 @@ void Function100846(void){
 }
 
 const char String_10088e[] = 
-            "MOBILE BATTLE TIME@";  // "モバイルたいせん\u3000できる"
-                                    //next "じかん@"
+            "MOBILE BATTLE TIME"    // "モバイルたいせん\u3000できる"
+    t_next  "";                     //next "じかん@"
 
-const char String_10089f[] = " UNLIMITED@"; // "\u3000むせいげん@"
+const char String_10089f[] = "UNLIMITED"; // "\u3000むせいげん@"
 
 //  Calculates the difference between 10 minutes and sMobileBattleTimer
 //  Returns minutes in c (b) and seconds in b (a)
@@ -2568,6 +2572,7 @@ void Function100acf(void){
     // RET;
 }
 
+// CheckMobileActionString?
 void Function100ae7(void){
     // LD_DE(mUnknown_100b0a);
     const char* de = Unknown_100b0a; // "tetsuji" string
@@ -2591,7 +2596,7 @@ void Function100ae7(void){
         }
         // CP_A_hl;
         // IF_NZ goto asm_100aff;
-        else if(a == *hl) {
+        else if(a != *hl) {
         // asm_100aff:
             // LD_A(0x0f);
             // LD_addr_A(wd430);
@@ -3099,7 +3104,6 @@ void Function100d67(void){
     // CALL(aWaitBGMap);
     WaitBGMap_Conv();
     // CALL(aCopyMenuData);
-    CopyMenuData_Conv();
     // CALL(aInitVerticalMenuCursor);
     InitVerticalMenuCursor_Conv(GetMenuData());
     // LD_HL(w2DMenuFlags1);
@@ -3261,7 +3265,7 @@ bool Function100e2d(void){
     // LD_A_addr(wcd2b);
     // AND_A_A;
     // IF_NZ goto asm_100e61;
-    if(res.a == 0) {
+    if(wram->wcd2b == 0) {
         // CALL(aFunction100e63);
         Function100e63(res.a);
         // CALL(aFunction100e84);
@@ -3651,7 +3655,7 @@ const macro_100fc0_s Unknown_100fc0[] = {
 
 const macro_100fc0_s Unknown_100feb[] = {
     //macro_100fc0 ['sPartyMail', 'MAIL_STRUCT_LENGTH * PARTY_LENGTH']
-    macro_100fc0(asPartyMail, MON_NAME_LENGTH * PARTY_LENGTH, 0),
+    macro_100fc0(asPartyMail, MAIL_STRUCT_LENGTH * PARTY_LENGTH, 0),
     {(uint8_t)-1, 0, 0, 0},
     //db ['-1'];  // end
 };
@@ -3871,7 +3875,7 @@ static void LoadSelectedPartiesForColosseum_CopyPartyStruct(struct PartyMon* de,
 
     do {
         uint8_t n = *(hl++);
-        CopyBytes_Conv2(dst, de + (bc * n), bc);
+        CopyBytes_Conv2(dst, de + n, bc);
         dst += bc;
     } while(--a != 0);
 
