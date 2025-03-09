@@ -476,7 +476,7 @@ void MobileTextBorder_Conv(void){
     *coord(19, 12, wram->wTilemap) = 0x5e;  // top
     // hlcoord(19, 13, wTilemap);
     // LD_hl(0x5f);  // bottom
-    *coord(19, 12, wram->wTilemap) = 0x5f;  // bottom
+    *coord(19, 13, wram->wTilemap) = 0x5f;  // bottom
 }
 
 void BattleTextbox(void){

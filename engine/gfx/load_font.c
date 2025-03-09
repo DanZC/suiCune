@@ -285,7 +285,8 @@ void LoadHPBar_Conv(void){
     // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x5e);
     // LD_BC((BANK(aMobilePhoneTilesGFX) << 8) | 2);
     // CALL(aGet2bppViaHDMA);
-    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x5e, MobilePhoneTilesGFX, 7, 2);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x5e, MobilePhoneTilesGFX, 7, 1);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x5f, MobilePhoneTilesGFX, 9, 1);
     // RET;
 }
 
