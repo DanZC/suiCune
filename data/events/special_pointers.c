@@ -192,7 +192,7 @@ void (*const SpecialsPointers[])(void) = {
     add_special(Function101231),
     add_special(MoveTutor),
     add_special(OmanyteChamber),
-    // add_special(Function11c1ab),
+    // add_special(Function11c1ab), // Unused as a special
     add_special(BattleTowerAction),
     add_special(DisplayUnownWords),
     add_special(Menu_ChallengeExplanationCancel),

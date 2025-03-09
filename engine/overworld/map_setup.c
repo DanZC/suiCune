@@ -331,6 +331,7 @@ void FadeMapMusicAndPalettes(void){
     // LD_A(0x4);
     // LD_addr_A(wMusicFade);
     wram->wMusicFade = 0x4;
+    wram->wMapMusic = MUSIC_NONE; // Hack to make reloading map music from link connection work.
     // CALL(aRotateThreePalettesRight);
     RotateThreePalettesRight_Conv();
     // RET;

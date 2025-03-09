@@ -7396,7 +7396,6 @@ bool Function1022d0(void){
     // RET;
 }
 
-// TODO: Finish this jumptable
 void Jumptable_1022f5(uint8_t a){
     switch(a) {
         case 0x00: return Function10234b();  // 00
@@ -7429,13 +7428,13 @@ void Jumptable_1022f5(uint8_t a){
         case 0x1b: return Function1024af();  // 1b
         case 0x1c: return Function10246a();  // 1c
         case 0x1d: return Function102652();  // 1d
-    //dw ['Function10266b'];  // 1e
+        case 0x1e: return Function10266b();  // 1e
         case 0x1f: return Function1025e9();  // 1f
-    //dw ['Function1025ff'];  // 20
-    //dw ['Function102738'];  // 21
-    //dw ['Function102754'];  // 22
-    //dw ['Function1026b7'];  // 23
-    //dw ['Function1026c8'];  // 24
+        case 0x20: return Function1025ff();  // 20
+        case 0x21: return Function102738();  // 21
+        case 0x22: return Function102754();  // 22
+        case 0x23: return Function1026b7();  // 23
+        case 0x24: return Function1026c8();  // 24
         case 0x25: return Function1028bf();  // 25
         case 0x26: return Function1028c6();  // 26
         case 0x27: return Function1028d3();  // 27
@@ -7995,53 +7994,72 @@ void Function1025e9(void){
 }
 
 void Function1025ff(void){
-    LD_HL(wcd4b);
-    SET_hl(2);
-    FARCALL(aFunction1009f3);
-    RET_C ;
-    FARCALL(aMobileMenuJoypad);
-    LD_A_addr(wMenuJoypadFilter);
-    AND_A_C;
-    RET_Z ;
-    BIT_C(A_BUTTON_F);
-    IF_NZ goto a_button;
-    BIT_C(D_UP_F);
-    IF_NZ goto d_up;
-    BIT_C(D_DOWN_F);
-    IF_NZ goto d_down;
-    RET;
-
-
-a_button:
-    LD_HL(wcd4b);
-    SET_hl(3);
-    LD_A(0x27);  // Function1028d3
-    LD_addr_A(wcd49);
-    RET;
-
-
-d_up:
-    LD_A_addr(wMenuCursorY);
-    LD_B_A;
-    LD_A_addr(wOTPartyCount);
-    CP_A_B;
-    RET_NZ ;
-    CALL(aHideCursor);
-    LD_A_addr(wPartyCount);
-    LD_addr_A(wMenuCursorY);
-    LD_A(0x1d);  // Function102652
-    LD_addr_A(wcd49);
-    RET;
-
-
-d_down:
-    LD_A_addr(wMenuCursorY);
-    CP_A(0x01);
-    RET_NZ ;
-    LD_A(0x23);  // Function1026b7
-    LD_addr_A(wcd49);
-    RET;
-
+    // LD_HL(wcd4b);
+    // SET_hl(2);
+    bit_set(wram->wcd4b, 2);
+    // FARCALL(aFunction1009f3);
+    // RET_C ;
+    if(Function1009f3())
+        return;
+    // FARCALL(aMobileMenuJoypad);
+    uint8_t c = MobileMenuJoypad_Conv();
+    // LD_A_addr(wMenuJoypadFilter);
+    // AND_A_C;
+    c &= wram->wMenuJoypadFilter;
+    // RET_Z ;
+    if(c == 0)
+        return;
+    // BIT_C(A_BUTTON_F);
+    // IF_NZ goto a_button;
+    if(bit_test(c, A_BUTTON_F)) {
+    // a_button:
+        // LD_HL(wcd4b);
+        // SET_hl(3);
+        bit_set(wram->wcd4b, 3);
+        // LD_A(0x27);  // Function1028d3
+        // LD_addr_A(wcd49);
+        wram->wcd49 = 0x27;  // Function1028d3
+        // RET;
+        return;
+    }
+    // BIT_C(D_UP_F);
+    // IF_NZ goto d_up;
+    else if(bit_test(c, D_UP_F)) {
+    // d_up:
+        // LD_A_addr(wMenuCursorY);
+        // LD_B_A;
+        // LD_A_addr(wOTPartyCount);
+        // CP_A_B;
+        // RET_NZ ;
+        if(wram->wMenuCursorY != wram->wOTPartyCount)
+            return;
+        // CALL(aHideCursor);
+        HideCursor_Conv();
+        // LD_A_addr(wPartyCount);
+        // LD_addr_A(wMenuCursorY);
+        wram->wMenuCursorY = wram->wPartyCount;
+        // LD_A(0x1d);  // Function102652
+        // LD_addr_A(wcd49);
+        wram->wcd49 = 0x1d;  // Function102652
+        // RET;    
+        return;
+    }
+    // BIT_C(D_DOWN_F);
+    // IF_NZ goto d_down;
+    else if(bit_test(c, D_DOWN_F)) {
+    // d_down:
+        // LD_A_addr(wMenuCursorY);
+        // CP_A(0x01);
+        // RET_NZ ;
+        if(wram->wMenuCursorY != 0x01)
+            return;
+        // LD_A(0x23);  // Function1026b7
+        // LD_addr_A(wcd49);
+        wram->wcd49 = 0x23;  // Function1026b7
+        // RET;
+        return;
+    }
+    // RET;
 }
 
 void Function102652(void){
@@ -8065,267 +8083,335 @@ void Function102652(void){
 }
 
 void Function10266b(void){
-    LD_HL(wcd4b);
-    SET_hl(2);
-    FARCALL(aFunction1009f3);
-    RET_C ;
-    FARCALL(aMobileMenuJoypad);
-    LD_A_addr(wMenuJoypadFilter);
-    AND_A_C;
-    RET_Z ;
-    BIT_C(A_BUTTON_F);
-    IF_NZ goto a_button;
-    BIT_C(D_DOWN_F);
-    IF_NZ goto d_down;
-    BIT_C(D_UP_F);
-    IF_NZ goto d_up;
-    RET;
-
-
-a_button:
-    LD_HL(wcd4b);
-    SET_hl(3);
-    LD_A(0x21);  // Function102738
-    LD_addr_A(wcd49);
-    RET;
-
-
-d_down:
-    LD_A_addr(wMenuCursorY);
-    DEC_A;
-    RET_NZ ;
-    CALL(aHideCursor);
-    LD_A(0x1f);  // Function1025e9
-    LD_addr_A(wcd49);
-    RET;
-
-
-d_up:
-    LD_A_addr(wMenuCursorY);
-    LD_B_A;
-    LD_A_addr(wPartyCount);
-    CP_A_B;
-    RET_NZ ;
-    LD_A(0x23);  // Function1026b7
-    LD_addr_A(wcd49);
-    RET;
-
+    // LD_HL(wcd4b);
+    // SET_hl(2);
+    bit_set(wram->wcd4b, 2);
+    // FARCALL(aFunction1009f3);
+    // RET_C ;
+    if(Function1009f3())
+        return;
+    // FARCALL(aMobileMenuJoypad);
+    uint8_t c = MobileMenuJoypad_Conv();
+    // LD_A_addr(wMenuJoypadFilter);
+    c &= wram->wMenuJoypadFilter;
+    // AND_A_C;
+    // RET_Z ;
+    if(c == 0)
+        return;
+    // BIT_C(A_BUTTON_F);
+    // IF_NZ goto a_button;
+    if(bit_test(c, A_BUTTON_F)) {
+    // a_button:
+        // LD_HL(wcd4b);
+        // SET_hl(3);
+        bit_set(wram->wcd4b, 3);
+        // LD_A(0x21);  // Function102738
+        // LD_addr_A(wcd49);
+        wram->wcd49 = 0x21;  // Function102738
+        // RET;
+        return;
+    }
+    // BIT_C(D_DOWN_F);
+    // IF_NZ goto d_down;
+    else if(bit_test(c, D_DOWN_F)) {
+    // d_down:
+        // LD_A_addr(wMenuCursorY);
+        // DEC_A;
+        // RET_NZ ;
+        if(wram->wMenuCursorY - 1 != 0)
+            return;
+        // CALL(aHideCursor);
+        HideCursor_Conv();
+        // LD_A(0x1f);  // Function1025e9
+        // LD_addr_A(wcd49);
+        wram->wcd49 = 0x1f;  // Function1025e9
+        // RET;
+        return;
+    }
+    // BIT_C(D_UP_F);
+    // IF_NZ goto d_up;
+    else if(bit_test(c, D_UP_F)) {
+    // d_up:
+        // LD_A_addr(wMenuCursorY);
+        // LD_B_A;
+        // LD_A_addr(wPartyCount);
+        // CP_A_B;
+        // RET_NZ ;
+        if(wram->wMenuCursorY != wram->wPartyCount)
+            return;
+        // LD_A(0x23);  // Function1026b7
+        // LD_addr_A(wcd49);
+        wram->wcd49 = 0x23;  // Function1026b7
+        // RET;
+        return;
+    }
+    // RET;
 }
 
 void Function1026b7(void){
-    LD_HL(wcd4b);
-    SET_hl(6);
-    LD_A_addr(wcd49);
-    INC_A;
-    LD_addr_A(wcd49);
-    LD_A(0);
-    LD_addr_A(wcd4a);
+    // LD_HL(wcd4b);
+    // SET_hl(6);
+    bit_set(wram->wcd4b, 6);
+    // LD_A_addr(wcd49);
+    // INC_A;
+    // LD_addr_A(wcd49);
+    wram->wcd49++;
+    // LD_A(0);
+    // LD_addr_A(wcd4a);
+    wram->wcd4a = 0;
 
     return Function1026c8();
 }
 
 void Function1026c8(void){
-    CALL(aGetJoypad);
-    FARCALL(aFunction1009f3);
-    RET_C ;
-    LD_A_addr(wcd4a);
-    LD_HL(mJumptable_1026da);
-    RST(aJumpTable);
-    RET;
-
+    // CALL(aGetJoypad);
+    GetJoypad_Conv2();
+    // FARCALL(aFunction1009f3);
+    // RET_C ;
+    if(Function1009f3())
+        return;
+    // LD_A_addr(wcd4a);
+    // LD_HL(mJumptable_1026da);
+    Jumptable_1026da(wram->wcd4a);
+    // RST(aJumpTable);
+    // RET;
 }
 
-void Jumptable_1026da(void){
-    //dw ['Function1026de'];
-    //dw ['Function1026f3'];
-
-    return Function1026de();
+void Jumptable_1026da(uint8_t a){
+    switch(a) {
+        case 0: return Function1026de();
+        case 1: return Function1026f3();
+    }
 }
 
 void Function1026de(void){
-    CALL(aHideCursor);
-    hlcoord(9, 17, wTilemap);
-    LD_hl(0xed);
-    LD_A_addr(wcd4a);
-    INC_A;
-    LD_addr_A(wcd4a);
-    LD_HL(wcd4b);
-    SET_hl(1);
-    RET;
-
+    // CALL(aHideCursor);
+    HideCursor_Conv();
+    // hlcoord(9, 17, wTilemap);
+    // LD_hl(0xed);
+    *coord(9, 17, wram->wTilemap) = 0xed;
+    // LD_A_addr(wcd4a);
+    // INC_A;
+    // LD_addr_A(wcd4a);
+    wram->wcd4a++;
+    // LD_HL(wcd4b);
+    // SET_hl(1);
+    bit_set(wram->wcd4b, 1);
+    // RET;
 }
 
 void Function1026f3(void){
-    LDH_A_addr(hJoyPressed);
-    BIT_A(A_BUTTON_F);
-    IF_NZ goto asm_102723;
-    BIT_A(D_UP_F);
-    IF_NZ goto asm_102712;
-    BIT_A(D_DOWN_F);
-    IF_NZ goto asm_102702;
-    RET;
-
-
-asm_102702:
-    hlcoord(9, 17, wTilemap);
-    LD_hl(0x7f);
-    LD_A(0x01);
-    LD_addr_A(wMenuCursorY);
-    LD_A(0x1d);  // Function102652
-    LD_addr_A(wcd49);
-    RET;
-
-
-asm_102712:
-    hlcoord(9, 17, wTilemap);
-    LD_hl(0x7f);
-    LD_A_addr(wOTPartyCount);
-    LD_addr_A(wMenuCursorY);
-    LD_A(0x1f);  // Function1025e9
-    LD_addr_A(wcd49);
-    RET;
-
-
-asm_102723:
-    hlcoord(9, 17, wTilemap);
-    LD_hl(0xec);
-    LD_HL(wcd4b);
-    SET_hl(3);
-    LD_HL(wcd4b);
-    SET_hl(2);
-    LD_A(0x5);  // Function1025c7
-    LD_addr_A(wcd49);
-    RET;
-
+    // LDH_A_addr(hJoyPressed);
+    // BIT_A(A_BUTTON_F);
+    // IF_NZ goto asm_102723;
+    if(bit_test(hram->hJoyPressed, A_BUTTON_F)) {
+    // asm_102723:
+        // hlcoord(9, 17, wTilemap);
+        // LD_hl(0xec);
+        *coord(9, 17, wram->wTilemap) = 0xec;
+        // LD_HL(wcd4b);
+        // SET_hl(3);
+        // LD_HL(wcd4b);
+        // SET_hl(2);
+        wram->wcd4b |= ((1 << 3) | (1 << 2));
+        // LD_A(0x5);  // Function1025c7
+        // LD_addr_A(wcd49);
+        wram->wcd49 = 0x5;  // Function1025c7
+        // RET;
+        return;
+    }
+    // BIT_A(D_UP_F);
+    // IF_NZ goto asm_102712;
+    else if(bit_test(hram->hJoyPressed, D_UP_F)) {
+    // asm_102712:
+        // hlcoord(9, 17, wTilemap);
+        // LD_hl(0x7f);
+        *coord(9, 17, wram->wTilemap) = 0x7f;
+        // LD_A_addr(wOTPartyCount);
+        // LD_addr_A(wMenuCursorY);
+        wram->wMenuCursorY = wram->wOTPartyCount;
+        // LD_A(0x1f);  // Function1025e9
+        // LD_addr_A(wcd49);
+        wram->wcd49 = 0x1f;  // Function1025e9
+        // RET;
+        return;
+    }
+    // BIT_A(D_DOWN_F);
+    // IF_NZ goto asm_102702;
+    else if(bit_test(hram->hJoyPressed, D_DOWN_F)) {
+    // asm_102702:
+        // hlcoord(9, 17, wTilemap);
+        // LD_hl(0x7f);
+        *coord(9, 17, wram->wTilemap) = 0x7f;
+        // LD_A(0x01);
+        // LD_addr_A(wMenuCursorY);
+        wram->wMenuCursorY = 0x1;
+        // LD_A(0x1d);  // Function102652
+        // LD_addr_A(wcd49);
+        wram->wcd49 = 0x1d;  // Function102652
+        // RET;
+        return;
+    }
+    // RET;
 }
 
 void Function102738(void){
-    LD_HL(wcd4b);
-    SET_hl(6);
-    CALL(aPlaceHollowCursor);
-    CALL(aFunction1027eb);
-    LD_HL(wcd4b);
-    SET_hl(1);
-    LD_A_addr(wcd49);
-    INC_A;
-    LD_addr_A(wcd49);
-    LD_A(0);
-    LD_addr_A(wcd4a);
+    // LD_HL(wcd4b);
+    // SET_hl(6);
+    bit_set(wram->wcd4b, 6);
+    // CALL(aPlaceHollowCursor);
+    PlaceHollowCursor_Conv();
+    // CALL(aFunction1027eb);
+    Function1027eb();
+    // LD_HL(wcd4b);
+    // SET_hl(1);
+    bit_set(wram->wcd4b, 1);
+    // LD_A_addr(wcd49);
+    // INC_A;
+    // LD_addr_A(wcd49);
+    wram->wcd49++;
+    // LD_A(0);
+    // LD_addr_A(wcd4a);
+    wram->wcd4a = 0;
 
     return Function102754();
 }
 
 void Function102754(void){
-    CALL(aGetJoypad);
-    FARCALL(aFunction1009f3);
-    RET_C ;
-    LD_A_addr(wcd4a);
-    LD_HL(mJumptable_102766);
-    RST(aJumpTable);
-    RET;
-
+    // CALL(aGetJoypad);
+    GetJoypad_Conv2();
+    // FARCALL(aFunction1009f3);
+    // RET_C ;
+    if(Function1009f3())
+        return;
+    // LD_A_addr(wcd4a);
+    // LD_HL(mJumptable_102766);
+    Jumptable_102766(wram->wcd4a);
+    // RST(aJumpTable);
+    // RET;
 }
 
-void Jumptable_102766(void){
-    //dw ['Function102770'];
-    //dw ['Function102775'];
-    //dw ['Function10278c'];
-    //dw ['Function1027a0'];
-    //dw ['Function1027b7'];
-
-    return Function102770();
+void Jumptable_102766(uint8_t a){
+    switch(a) {
+        case 0x0: return Function102770();
+        case 0x1: return Function102775();
+        case 0x2: return Function10278c();
+        case 0x3: return Function1027a0();
+        case 0x4: return Function1027b7();
+    }
 }
 
 void Function102770(void){
-    LD_A(0x01);
-    LD_addr_A(wcd4a);
+    // LD_A(0x01);
+    // LD_addr_A(wcd4a);
+    wram->wcd4a = 0x1;
 
     return Function102775();
 }
 
 void Function102775(void){
-    hlcoord(1, 16, wTilemap);
-    LD_hl(0xed);
-    hlcoord(11, 16, wTilemap);
-    LD_hl(0x7f);
-    LD_HL(wcd4b);
-    SET_hl(2);
-    LD_A_addr(wcd4a);
-    INC_A;
-    LD_addr_A(wcd4a);
-    RET;
-
+    // hlcoord(1, 16, wTilemap);
+    // LD_hl(0xed);
+    *coord(1, 16, wram->wTilemap) = 0xed;
+    // hlcoord(11, 16, wTilemap);
+    // LD_hl(0x7f);
+    *coord(11, 16, wram->wTilemap) = 0x7f;
+    // LD_HL(wcd4b);
+    // SET_hl(2);
+    bit_set(wram->wcd4b, 2);
+    // LD_A_addr(wcd4a);
+    // INC_A;
+    // LD_addr_A(wcd4a);
+    wram->wcd4a++;
+    // RET;
 }
 
 void Function10278c(void){
-    LDH_A_addr(hJoyPressed);
-    BIT_A(A_BUTTON_F);
-    JR_NZ (masm_1027c6);
-    BIT_A(B_BUTTON_F);
-    JR_NZ (masm_1027e2);
-    BIT_A(D_RIGHT_F);
-    IF_NZ goto asm_10279b;
-    RET;
-
-
-asm_10279b:
-    LD_A(0x03);
-    LD_addr_A(wcd4a);
-    return Function1027a0();
+    // LDH_A_addr(hJoyPressed);
+    // BIT_A(A_BUTTON_F);
+    // JR_NZ (masm_1027c6);
+    if(bit_test(hram->hJoyPressed, A_BUTTON_F))
+        return asm_1027c6();
+    // BIT_A(B_BUTTON_F);
+    // JR_NZ (masm_1027e2);
+    else if(bit_test(hram->hJoyPressed, B_BUTTON_F))
+        return asm_1027e2();
+    // BIT_A(D_RIGHT_F);
+    // IF_NZ goto asm_10279b;
+    else if(bit_test(hram->hJoyPressed, D_RIGHT_F)) {
+    // asm_10279b:
+        // LD_A(0x03);
+        // LD_addr_A(wcd4a);
+        wram->wcd4a = 0x3;
+        return Function1027a0();
+    }
+    // RET;
 }
 
 void Function1027a0(void){
-    hlcoord(1, 16, wTilemap);
-    LD_hl(0x7f);
-    hlcoord(11, 16, wTilemap);
-    LD_hl(0xed);
-    LD_HL(wcd4b);
-    SET_hl(2);
-    LD_A_addr(wcd4a);
-    INC_A;
-    LD_addr_A(wcd4a);
-    RET;
-
+    // hlcoord(1, 16, wTilemap);
+    // LD_hl(0x7f);
+    *coord(1, 16, wram->wTilemap) = 0x7f;
+    // hlcoord(11, 16, wTilemap);
+    // LD_hl(0xed);
+    *coord(11, 16, wram->wTilemap) = 0xed;
+    // LD_HL(wcd4b);
+    // SET_hl(2);
+    bit_set(wram->wcd4b, 2);
+    // LD_A_addr(wcd4a);
+    // INC_A;
+    // LD_addr_A(wcd4a);
+    wram->wcd4a++;
+    // RET;
 }
 
 void Function1027b7(void){
-    LDH_A_addr(hJoyPressed);
-    BIT_A(A_BUTTON_F);
-    JR_NZ (masm_1027d1);
-    BIT_A(B_BUTTON_F);
-    JR_NZ (masm_1027e2);
-    BIT_A(D_LEFT_F);
-    JR_NZ (mFunction102770);
-    RET;
-
+    // LDH_A_addr(hJoyPressed);
+    // BIT_A(A_BUTTON_F);
+    // JR_NZ (masm_1027d1);
+    if(bit_test(hram->hJoyPressed, A_BUTTON_F))
+        return asm_1027d1();
+    // BIT_A(B_BUTTON_F);
+    // JR_NZ (masm_1027e2);
+    else if(bit_test(hram->hJoyPressed, B_BUTTON_F))
+        return asm_1027e2();
+    // BIT_A(D_LEFT_F);
+    // JR_NZ (mFunction102770);
+    else if(bit_test(hram->hJoyPressed, D_LEFT_F))
+        return Function102770();
+    // RET;
 }
 
 void asm_1027c6(void){
-    LD_HL(wcd4b);
-    SET_hl(3);
-    LD_A(0x25);  // Function1028bf
-    LD_addr_A(wcd49);
-    RET;
-
+    // LD_HL(wcd4b);
+    // SET_hl(3);
+    bit_set(wram->wcd4b, 3);
+    // LD_A(0x25);  // Function1028bf
+    // LD_addr_A(wcd49);
+    wram->wcd49 = 0x25;  // Function1028bf
+    // RET;
 }
 
 void asm_1027d1(void){
-    LD_HL(wcd4b);
-    SET_hl(3);
-    LD_A_addr(wMenuCursorY);
-    LD_addr_A(wcd4c);
-    LD_A(0x7);  // Function1024f6
-    LD_addr_A(wcd49);
-    RET;
-
+    // LD_HL(wcd4b);
+    // SET_hl(3);
+    bit_set(wram->wcd4b, 3);
+    // LD_A_addr(wMenuCursorY);
+    // LD_addr_A(wcd4c);
+    wram->wcd4c = wram->wMenuCursorY;
+    // LD_A(0x7);  // Function1024f6
+    // LD_addr_A(wcd49);
+    wram->wcd49 = 0x7;  // Function1024f6
+    // RET;
 }
 
 void asm_1027e2(void){
-    CALL(aFunction102db7);
-    LD_A(0x1d);  // Function102652
-    LD_addr_A(wcd49);
-    RET;
-
+    // CALL(aFunction102db7);
+    Function102db7();
+    // LD_A(0x1d);  // Function102652
+    // LD_addr_A(wcd49);
+    wram->wcd49 = 0x1d;  // Function102652
+    // RET;
 }
 
 void Function1027eb(void){
