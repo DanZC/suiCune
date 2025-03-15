@@ -829,6 +829,7 @@ u8_flag_s Function10034d(void){
 void Function100382(void){
     // LD_A_addr(wcd27);
     // LD_HL(mJumptable_10044e);
+    printf("P2PTransfer 0x%02x\n", wram->wcd27);
     // RST(aJumpTable);
     switch(wram->wcd27) {
         case 0x0: Function10046a(); break;
@@ -1004,6 +1005,7 @@ bool Function100406(void){
     // LD_HL(wcd7c);
     // INC_hl;
     wram->wcd7c[0]++;
+    printf("Failed packet checksum.\n");
     // POP_HL;
     // SCF;
     // RET;
@@ -9118,7 +9120,7 @@ void Function102b7b(void){
     wram->wMenuCursorY = cursorY;
     // LD_A_addr(wPartyCount);
     // LD_addr_A(w2DMenuNumRows);
-    wram->w2DMenuNumRows = wram->wOTPartyCount;
+    wram->w2DMenuNumRows = wram->wPartyCount;
     // RET;
 
 }
@@ -9180,7 +9182,7 @@ bool Function102bdc(void){
     // DEC_A;
     // LD_HL(wOTPartyMon1Species);
     // CALL(aGetPartyLocation);
-    struct PartyMon* hl = wram->wOTPartyMon + wram->wcd4d;
+    struct PartyMon* hl = wram->wOTPartyMon + (wram->wcd4d - 1);
     // PUSH_HL;
     // LD_A_addr(wcd4d);
     // LD_C_A;
