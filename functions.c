@@ -1215,7 +1215,7 @@ void init_function_pointers(void) {
     // CONVERTED(GetLRTracks);
     CONVERTED(ClearChannels);
     // CONVERTED(ClearChannel);
-    REDIRECTED(PlayTrainerEncounterMusic);
+    // CONVERTED(PlayTrainerEncounterMusic);
 
     // home/map.c
     REDIRECTED(ClearBGMapBuffer);

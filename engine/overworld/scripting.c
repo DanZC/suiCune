@@ -1798,7 +1798,7 @@ void Script_encountermusic_Conv(script_s* s){
     // LD_A_addr(wOtherTrainerClass);
     // LD_E_A;
     // FARCALL(aPlayTrainerEncounterMusic);
-    PlayTrainerEncounterMusic_Conv(wram->wOtherTrainerClass);
+    PlayTrainerEncounterMusic(wram->wOtherTrainerClass);
     // RET;
 }
 

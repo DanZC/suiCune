@@ -162,8 +162,7 @@ const uint8_t* GetLRTracks(void);
 // void ChannelPointers(void);
 void ClearChannels(void);
 void ClearChannel(uint16_t);
-void PlayTrainerEncounterMusic(void);
-void PlayTrainerEncounterMusic_Conv(uint8_t e);
+void PlayTrainerEncounterMusic(uint8_t e);
 //#include "audio/notes.h"
 //#include "audio/wave_samples.h"
 //#include "audio/drumkits.h"
