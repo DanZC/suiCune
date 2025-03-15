@@ -1692,7 +1692,7 @@ enum {
     NEWS_COMMAND_09,
     NEWS_COMMAND_POKE_PIC,
     NEWS_COMMAND_TRAINER_PIC,
-    NEWS_COMMAND_0C,
+    NEWS_COMMAND_COPYVALRAM,
     NEWS_COMMAND_0D,
     NEWS_COMMAND_MENU_UP,
     NEWS_COMMAND_MENU_DOWN,
@@ -1723,7 +1723,7 @@ static const Jumptable17d72a_t Jumptable17d72a[] = {
     // [9] = Function17d902,
     [NEWS_COMMAND_POKE_PIC] = Function17d93a,
     [NEWS_COMMAND_TRAINER_PIC] = Function17d98b,
-    // [12] = Function17d9e3,
+    [NEWS_COMMAND_COPYVALRAM] = Function17d9e3,
     // [13] = Function17da31,
     [NEWS_COMMAND_MENU_UP] = Function17da9c,
     [NEWS_COMMAND_MENU_DOWN] = Function17dadc,
@@ -2226,54 +2226,67 @@ void Function17d98b(void){
 }
 
 void Function17d9e3(void){
-    CALL(aIncCrashCheckPointer);
-    LD_DE(wc708);
-    LD_BC(0x7);
-    CALL(aCopyBytes);
-    CALL(aHlToCrashCheckPointer);
-    LD_A_addr(wc70b);
-    PUSH_AF;
-    CP_A(0xc0);
-    IF_C goto asm_17da01;
-    LD_A_addr(wc70c);
-    LDH_addr_A(rSVBK);
-    goto asm_17da07;
+    uint8_t svbk = gb_read(rSVBK);
+    // CALL(aIncCrashCheckPointer);
+    uint8_t* hl = IncCrashCheckPointer();
+    // LD_DE(wc708);
+    // LD_BC(0x7);
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(&wram->wc708, hl, 0x7);
+    // CALL(aHlToCrashCheckPointer);
+    HlToCrashCheckPointer(hl + 7);
+    // LD_A_addr(wc70b);
+    // PUSH_AF;
+    uint8_t c70b = wram->wc70b;
+    // CP_A(0xc0);
+    // IF_C goto asm_17da01;
+    // LD_A_addr(wc70c);
+    // LDH_addr_A(rSVBK);
+    // goto asm_17da07;
+    if(c70b < 0xc0) {
+    // asm_17da01:
+        // LD_A_addr(wc70c);
+        // CALL(aOpenSRAM);
+        OpenSRAM_Conv(wram->wc70c);
+    }
+    else {
+        gb_write(rSVBK, wram->wc70c);
+    }
 
+// asm_17da07:
+    // LD_A_addr(wc708);
+    // LD_L_A;
+    // LD_A_addr(wc709);
+    // LD_H_A;
+    // LD_A_addr(wc70a);
+    // LD_E_A;
+    // LD_A_addr(wc70b);
+    // LD_D_A;
+    // LD_A_addr(wc70d);
+    // LD_C_A;
+    // LD_A_addr(wc70e);
+    // LD_B_A;
+    // CALL(aCopyBytes);
+    CopyBytes_Conv2(
+        GBToRAMAddr(wram->wc70a | (wram->wc70b << 8)), 
+        GBToRAMAddr(wram->wc708 | (wram->wc709 << 8)), 
+        wram->wc70d | (wram->wc70e << 8));
+    // POP_AF;
+    // CP_A(0xc0);
+    // IF_C goto asm_17da2d;
+    // LD_A(0x4);
+    // LDH_addr_A(rSVBK);
+    // goto asm_17da30;
+    if(c70b < 0xc0) {
+    // asm_17da2d:
+        // CALL(aCloseSRAM);
+        CloseSRAM_Conv();
+    }
 
-asm_17da01:
-    LD_A_addr(wc70c);
-    CALL(aOpenSRAM);
+    gb_write(rSVBK, svbk);
 
-
-asm_17da07:
-    LD_A_addr(wc708);
-    LD_L_A;
-    LD_A_addr(wc709);
-    LD_H_A;
-    LD_A_addr(wc70a);
-    LD_E_A;
-    LD_A_addr(wc70b);
-    LD_D_A;
-    LD_A_addr(wc70d);
-    LD_C_A;
-    LD_A_addr(wc70e);
-    LD_B_A;
-    CALL(aCopyBytes);
-    POP_AF;
-    CP_A(0xc0);
-    IF_C goto asm_17da2d;
-    LD_A(0x4);
-    LDH_addr_A(rSVBK);
-    goto asm_17da30;
-
-
-asm_17da2d:
-    CALL(aCloseSRAM);
-
-
-asm_17da30:
-    RET;
-
+// asm_17da30:
+    // RET;
 }
 
 void Function17da31(void){

@@ -351,3 +351,4 @@ void AddMobileMonToParty(const species_t* species, const struct PartyMon* mobile
 void Function11ba38(void);
 void TilemapPack_11ba44(void);
 void TilemapPack_11bb7d(void);
+extern uint8_t* gMobile_wcd4d;

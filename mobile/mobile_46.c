@@ -4203,7 +4203,7 @@ asm_1197bc:
 uint8_t Function1197bf(uint8_t a){
     // CP_A(0xa);
     // IF_NC goto asm_1197c6;
-    if(a < 0xa) {
+    if(a >= 0xa) {
     // asm_1197c6:
         // ADD_A(0x57);
         // RET;
