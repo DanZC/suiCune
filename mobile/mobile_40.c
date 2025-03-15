@@ -253,6 +253,7 @@ void Function1000ba(void){
         // CALL(aGetFarWord);
         // LD_A_addr(wcd22);
         // RST(aFarCall);
+        printf("Mobile comms 0x%02X\n", wram->wMobileCommsJumptableIndex);
         gMobileCommsJumptable[wram->wMobileCommsJumptableIndex]();
 
         // CALL(aFunction1000e8);
@@ -982,6 +983,9 @@ bool Function100406(void){
         // LD_A(0xf4);
         // LD_addr_A(wcd2b);
         wram->wcd2b = 0xf4;
+        printf("Failed packet checksum! Checksums does not match! Expected %d, Got %d.\n",
+            de,
+            (wram->wcc61[bc] | (wram->wcc61[bc+1] << 8)));
         // goto asm_100432;
     }
     // DEC_HL;
@@ -993,8 +997,12 @@ bool Function100406(void){
         // LD_A(0xf3);
         // LD_addr_A(wcd2b);
         wram->wcd2b = 0xf3;
+        printf("Failed packet checksum! Command ID is incorrect! Expected %d, Got %d.\n", 
+            wram->wcd48,
+            wram->wcc61[bc-1]);
     }
     else {
+        printf("Passed packet checksum.\n");
         // XOR_A_A;
         // RET;
         return false;
@@ -1005,7 +1013,6 @@ bool Function100406(void){
     // LD_HL(wcd7c);
     // INC_hl;
     wram->wcd7c[0]++;
-    printf("Failed packet checksum.\n");
     // POP_HL;
     // SCF;
     // RET;
@@ -7870,7 +7877,7 @@ void Function10250c(void){
         }
         // FARCALL(aCheckAnyOtherAliveMonsForTrade);
         // IF_C goto asm_102568;
-        else if(CheckAnyOtherAliveMonsForTrade_Conv(wram->wCurTradePartyMon)) {
+        else if(!CheckAnyOtherAliveMonsForTrade_Conv(wram->wCurTradePartyMon)) {
         // asm_102568:
             // CALL(aFunction102ff5);
             Function102ff5();
@@ -9745,7 +9752,9 @@ static const char TradeCompleted[] = "Trade completed!@";
 }
 
 void Function102f50(void){
-    static const char PleaseWait[] = "Please wait."; //db ['"しょうしょう\u3000おまち\u3000ください@"'];
+    static const char PleaseWait[] = 
+                "Please wait a"
+        t_next  "moment..."; //db ['"しょうしょう\u3000おまち\u3000ください@"'];
     // CALL(aFunction102dc3);
     Function102dc3();
     // LD_DE(mFunction102f50_PleaseWait);
@@ -9756,15 +9765,14 @@ void Function102f50(void){
 }
 
 void Function102f6d(void){
-    CALL(aFunction102dc3);
-    LD_DE(mFunction102f6d_Finished);
-    hlcoord(1, 14, wTilemap);
-    CALL(aPlaceString);
-    RET;
-
-
-// Finished:
-    //db ['"しゅうりょう\u3000します@"'];
+    static const char Finished[] = "Finishing trade..."; //db ['"しゅうりょう\u3000します@"'];
+    // CALL(aFunction102dc3);
+    Function102dc3();
+    // LD_DE(mFunction102f6d_Finished);
+    // hlcoord(1, 14, wTilemap);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(Finished), coord(1, 14, wram->wTilemap));
+    // RET;
 }
 
 const txt_cmd_s MobileTrade_Text_YourFriendsMonIsAbnormal[] = {
