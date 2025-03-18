@@ -1161,7 +1161,7 @@ void PlaceMoveUsersName(void) {
 void PlaceMoveUsersName_Conv(struct TextPrintState* state) {
     // LDH_A_addr(hBattleTurn);
     // fallthrough
-    return PlaceBattlersName_Conv(state, hram->hBattleTurn != 0);
+    return PlaceBattlersName_Conv(state, hram->hBattleTurn != TURN_PLAYER);
 }
 
 void PlaceBattlersName(void) {
@@ -2698,7 +2698,8 @@ void TextCommand_BOX_Conv(struct TextPrintState* state) {
     // LD_E_A;
     // LD_A_hli;
     // LD_D_A;
-    uint8_t* de = wram->wTilemap + ((union Register){.lo = state->hl[0], .hi = state->hl[1]}.reg - wTilemap);
+    uint16_t offset = state->hl[0] | (state->hl[1] << 8);
+    uint8_t* de = wram->wTilemap + (offset - wTilemap);
     state->hl += 2;
 
 

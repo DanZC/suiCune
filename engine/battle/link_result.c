@@ -130,7 +130,7 @@ static uint16_t DetermineLinkBattleResult_CalcPercentHPRemaining(const struct Pa
         // ADC_A_D;
         // LD_D_A;
         // DEC_HL;
-        de += (uint16_t)(ReverseEndian16(mon->HP) / (ReverseEndian16(mon->maxHP) >> 2));
+        de += (uint16_t)(BigEndianToNative16(mon->HP) / (BigEndianToNative16(mon->maxHP) >> 2));
 
     // next:
         // PUSH_DE;
@@ -146,7 +146,7 @@ static uint16_t DetermineLinkBattleResult_CalcPercentHPRemaining(const struct Pa
 
 void DetermineLinkBattleResult(void){
     // FARCALL(aUpdateEnemyMonInParty);
-    UpdateEnemyMonInParty_Conv();
+    UpdateEnemyMonInParty();
     // LD_HL(wPartyMon1HP);
     // CALL(aDetermineLinkBattleResult_CountMonsRemaining);
     uint8_t pmons = DetermineLinkBattleResult_CountMonsRemaining(wram->wPartyMon);

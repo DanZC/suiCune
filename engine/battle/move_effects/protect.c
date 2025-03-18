@@ -16,14 +16,14 @@ void BattleCommand_Protect(void){
     // LD_A(BATTLE_VARS_SUBSTATUS1);
     // CALL(aGetBattleVarAddr);
     // SET_hl(SUBSTATUS_PROTECT);
-    bit_set(*GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS1), SUBSTATUS_PROTECT);
+    bit_set(*GetBattleVarAddr(BATTLE_VARS_SUBSTATUS1), SUBSTATUS_PROTECT);
 
     // CALL(aAnimateCurrentMove);
     AnimateCurrentMove();
 
     // LD_HL(mProtectedItselfText);
     // JP(mStdBattleTextbox);
-    return StdBattleTextbox_Conv2(ProtectedItselfText);
+    return StdBattleTextbox(ProtectedItselfText);
 
 }
 
@@ -102,7 +102,7 @@ bool ProtectChance_Conv(void){
     // AND_A_A;
     // IF_Z goto got_count;
     // LD_DE(wEnemyProtectCount);
-    uint8_t* de = (hram->hBattleTurn == 0)? &wram->wPlayerProtectCount: &wram->wEnemyProtectCount;
+    uint8_t* de = (hram->hBattleTurn == TURN_PLAYER)? &wram->wPlayerProtectCount: &wram->wEnemyProtectCount;
 
 // got_count:
     // CALL(aCheckOpponentWentFirst);
@@ -114,7 +114,7 @@ bool ProtectChance_Conv(void){
     // CALL(aGetBattleVar);
     // BIT_A(SUBSTATUS_SUBSTITUTE);
     // IF_NZ goto failed;
-    if(!CheckOpponentWentFirst_Conv() && !bit_test(GetBattleVar_Conv(BATTLE_VARS_SUBSTATUS4), SUBSTATUS_SUBSTITUTE)) {
+    if(!CheckOpponentWentFirst_Conv() && !bit_test(GetBattleVar(BATTLE_VARS_SUBSTATUS4), SUBSTATUS_SUBSTITUTE)) {
     //  Halve the chance of a successful Protect for each consecutive use.
         // LD_B(0xff);
         uint8_t b = 0xff;

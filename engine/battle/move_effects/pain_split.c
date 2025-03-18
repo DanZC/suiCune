@@ -13,13 +13,13 @@ static void BattleCommand_PainSplit_PlayerShareHP(struct BattleMon* player, stru
     // LD_addr_A(wHPBuffer1);
     // LD_A_hld;
     // LD_addr_A(wHPBuffer1 + 1);
-    wram->wHPBuffer1 = ReverseEndian16(player->maxHP);
+    wram->wHPBuffer1 = BigEndianToNative16(player->maxHP);
     // LD_A_hld;
     // LD_B_A;
     // LD_addr_A(wHPBuffer2);
     // LD_A_hl;
     // LD_addr_A(wHPBuffer2 + 1);
-    wram->wHPBuffer2 = ReverseEndian16(player->hp);
+    wram->wHPBuffer2 = BigEndianToNative16(player->hp);
     // DEC_DE;
     // DEC_DE;
     // LD_A_de;
@@ -34,7 +34,7 @@ static void BattleCommand_PainSplit_PlayerShareHP(struct BattleMon* player, stru
     // LD_A_addr(wCurDamage + 1);
     // RR_A;
     // LD_addr_A(wCurDamage + 1);
-    wram->wCurDamage = ReverseEndian16((ReverseEndian16(enemy->hp) + wram->wHPBuffer2) >> 1);
+    wram->wCurDamage = NativeToBigEndian16((BigEndianToNative16(enemy->hp) + wram->wHPBuffer2) >> 1);
     // INC_HL;
     // INC_HL;
     // INC_HL;
@@ -52,17 +52,17 @@ static void BattleCommand_PainSplit_EnemyShareHP(struct BattleMon* player) {
     // SUB_A_C;
     // LD_B_hl;
     // DEC_HL;
-    uint16_t bc = ReverseEndian16(player->maxHP);
+    uint16_t bc = BigEndianToNative16(player->maxHP);
     // LD_A_addr(wCurDamage);
     // SBC_A_B;
     // IF_NC goto skip;
 
-    if(ReverseEndian16(wram->wCurDamage) < bc) {
+    if(BigEndianToNative16(wram->wCurDamage) < bc) {
         // LD_A_addr(wCurDamage);
         // LD_B_A;
         // LD_A_addr(wCurDamage + 1);
         // LD_C_A;
-        bc = ReverseEndian16(wram->wCurDamage);
+        bc = BigEndianToNative16(wram->wCurDamage);
     }
 // skip:
     // LD_A_C;
@@ -72,7 +72,7 @@ static void BattleCommand_PainSplit_EnemyShareHP(struct BattleMon* player) {
     // LD_hli_A;
     // LD_addr_A(wHPBuffer3 + 1);
     wram->wHPBuffer3 = bc;
-    player->hp = ReverseEndian16(bc);
+    player->hp = NativeToBigEndian16(bc);
     // RET;
 }
 
@@ -105,18 +105,18 @@ void BattleCommand_PainSplit(void){
     // LD_addr_A(wHPBuffer2 + 1);
     // LD_A_hli;
     // LD_addr_A(wHPBuffer2);
-    wram->wHPBuffer2 = ReverseEndian16(wram->wEnemyMon.hp);
+    wram->wHPBuffer2 = BigEndianToNative16(wram->wEnemyMon.hp);
     // LD_A_hli;
     // LD_addr_A(wHPBuffer1 + 1);
     // LD_A_hl;
     // LD_addr_A(wHPBuffer1);
-    wram->wHPBuffer1 = ReverseEndian16(wram->wEnemyMon.maxHP);
+    wram->wHPBuffer1 = BigEndianToNative16(wram->wEnemyMon.maxHP);
     // CALL(aBattleCommand_PainSplit_EnemyShareHP);
     BattleCommand_PainSplit_EnemyShareHP(&wram->wBattleMon);
     // XOR_A_A;
     // LD_addr_A(wWhichHPBar);
     // CALL(aResetDamage);
-    ResetDamage_Conv();
+    ResetDamage();
     // hlcoord(2, 2, wTilemap);
     // PREDEF(pAnimateHPBar);
     AnimateHPBar_Conv(coord(2, 2, wram->wTilemap), 0x0);
@@ -125,6 +125,6 @@ void BattleCommand_PainSplit(void){
 
     // LD_HL(mSharedPainText);
     // JP(mStdBattleTextbox);
-    return StdBattleTextbox_Conv2(SharedPainText);
+    return StdBattleTextbox(SharedPainText);
 
 }

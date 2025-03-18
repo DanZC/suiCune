@@ -1867,8 +1867,8 @@ void SetUpMoveScreenBG(void){
     PrintLevel_Conv(st.bc, wram->wTempMon.mon.level);
     // LD_HL(wPlayerHPPal);
     // CALL(aSetHPPal);
-    uint16_t bc = ReverseEndian16(wram->wPartyMon[wram->wCurPartyMon].HP);
-    uint16_t de = ReverseEndian16(wram->wPartyMon[wram->wCurPartyMon].maxHP);
+    uint16_t bc = BigEndianToNative16(wram->wPartyMon[wram->wCurPartyMon].HP);
+    uint16_t de = BigEndianToNative16(wram->wPartyMon[wram->wCurPartyMon].maxHP);
     uint8_t e = bc * (6 * 8) / de;
     SetHPPal_Conv(&wram->wPlayerHPPal, e);
     // LD_B(SCGB_MOVE_LIST);

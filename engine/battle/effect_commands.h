@@ -56,7 +56,7 @@ void DittoMetalPowder_Conv(uint8_t* b, uint8_t* c);
 void BattleCommand_DamageStats(void);
 void PlayerAttackDamage(struct BattleCmdState* state);
 void TruncateHL_BC(void);
-union Register TruncateHL_BC_Conv(uint16_t hl, uint16_t bc);
+uint16_t TruncateHL_BC_Conv(uint16_t hl, uint16_t bc);
 void CheckDamageStatsCritical(void);
 bool CheckDamageStatsCritical_Conv(void);
 void ThickClubBoost(void);

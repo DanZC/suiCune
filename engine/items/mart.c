@@ -591,7 +591,7 @@ void GetMartPrice_Conv(item_price_s* hl, uint16_t price){
     // LD_addr_A(wStringBuffer2);
     // LD_A_E;
     // LD_addr_A(wStringBuffer2 + 1);
-    uint16_t value = ReverseEndian16(price);
+    uint16_t value = NativeToBigEndian16(price);
     // LD_HL(wStringBuffer1);
     // LD_DE(wStringBuffer2);
     // LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 6);  // 6 digits

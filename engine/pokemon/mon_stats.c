@@ -136,27 +136,25 @@ uint8_t DrawHP_Conv(uint8_t* hl, uint8_t b, uint8_t which){
 //  Any HP?
     // OR_A_B;
     // IF_NZ goto at_least_1_hp;
-    union Register bc = {.hi=LOW(wram->wTempMon.HP), .lo=HIGH(wram->wTempMon.HP)};
-    union Register de;
+    uint16_t bc = BigEndianToNative16(wram->wTempMon.HP);
+    uint16_t de;
     if(wram->wMonType != BOXMON && wram->wTempMon.HP == 0) {
         // XOR_A_A;
         // LD_C_A;
-        bc.lo = 0;
+        bc = (bc & 0xff00) | 0;
         // LD_E_A;
-        de.lo = 0;
         // LD_A(6);
         // LD_D_A;
-        de.hi = 6;
+        de = (6 << 8) | 0;
         // JP(mDrawHP_fainted);
     }
     else {
     // at_least_1_hp:
         // LD_A_addr(wTempMonMaxHP);
         // LD_D_A;
-        de.hi = LOW(wram->wTempMon.maxHP);
         // LD_A_addr(wTempMonMaxHP + 1);
         // LD_E_A;
-        de.lo = HIGH(wram->wTempMon.maxHP);
+        de = BigEndianToNative16(wram->wTempMon.maxHP);
         // LD_A_addr(wMonType);
         // CP_A(BOXMON);
         // IF_NZ goto not_boxmon;
@@ -164,17 +162,16 @@ uint8_t DrawHP_Conv(uint8_t* hl, uint8_t b, uint8_t which){
         if(wram->wMonType == BOXMON)
             // LD_B_D;
             // LD_C_E;
-            bc.reg = de.reg;
+            bc = de;
 
 
     // not_boxmon:
         // PREDEF(pComputeHPBarPixels);
-        de.lo = ComputeHPBarPixels_Conv(bc.reg, de.reg);
         // LD_A(6);
         // LD_D_A;
-        de.hi = 6;
+        de = ComputeHPBarPixels_Conv(bc, de) | (6 << 8);
         // LD_C_A;
-        bc.lo = 6;
+        bc = (bc & 0xff00) | 6;
     }
 
 
@@ -187,7 +184,7 @@ uint8_t DrawHP_Conv(uint8_t* hl, uint8_t b, uint8_t which){
     // PUSH_HL;
     // PUSH_HL;
     // CALL(aDrawBattleHPBar);
-    DrawBattleHPBar_Conv(hl, de.hi, de.lo, b, bc.lo);
+    DrawBattleHPBar_Conv(hl, HIGH(de), LOW(de), b, LOW(bc));
     // POP_HL;
 
 //  Print HP
@@ -217,7 +214,7 @@ uint8_t DrawHP_Conv(uint8_t* hl, uint8_t b, uint8_t which){
     // POP_HL;
     // POP_DE;
     // RET;
-    return de.lo;
+    return LOW(de);
 }
 
 void PrintTempMonStats(void){

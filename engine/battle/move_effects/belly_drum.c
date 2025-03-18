@@ -39,7 +39,7 @@ void BattleCommand_BellyDrum(void){
     // CALLFAR(aSubtractHPFromUser);
     SubtractHPFromUser_Conv(GetHalfMaxHP_Conv());
     // CALL(aUpdateUserInParty);
-    UpdateUserInParty_Conv();
+    UpdateUserInParty();
     // LD_A(MAX_STAT_LEVEL - BASE_STAT_LEVEL - 1);
     uint8_t a = MAX_STAT_LEVEL - BASE_STAT_LEVEL - 1;
 
@@ -55,5 +55,5 @@ void BattleCommand_BellyDrum(void){
 
     // LD_HL(mBellyDrumText);
     // JP(mStdBattleTextbox);
-    return StdBattleTextbox_Conv2(BellyDrumText);
+    return StdBattleTextbox(BellyDrumText);
 }

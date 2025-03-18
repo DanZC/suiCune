@@ -11,20 +11,20 @@ void BattleCommand_HealBell(void){
     // LD_A(BATTLE_VARS_SUBSTATUS1);
     // CALL(aGetBattleVarAddr);
     // RES_hl(SUBSTATUS_NIGHTMARE);
-    bit_reset(*GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS1), SUBSTATUS_NIGHTMARE);
+    bit_reset(*GetBattleVarAddr(BATTLE_VARS_SUBSTATUS1), SUBSTATUS_NIGHTMARE);
     // LD_DE(wPartyMon1Status);
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto got_status;
     // LD_DE(wOTPartyMon1Status);
-    struct PartyMon* mon = (hram->hBattleTurn == 0)? wram->wPartyMon: wram->wOTPartyMon;
+    struct PartyMon* mon = (hram->hBattleTurn == TURN_PLAYER)? wram->wPartyMon: wram->wOTPartyMon;
 
 // got_status:
     // LD_A(BATTLE_VARS_STATUS);
     // CALL(aGetBattleVarAddr);
     // XOR_A_A;
     // LD_hl_A;
-    *GetBattleVarAddr_Conv(BATTLE_VARS_STATUS) = 0;
+    *GetBattleVarAddr(BATTLE_VARS_STATUS) = 0;
     // LD_H_D;
     // LD_L_E;
     // LD_BC(PARTYMON_STRUCT_LENGTH);
@@ -43,7 +43,7 @@ void BattleCommand_HealBell(void){
 
     // LD_HL(mBellChimedText);
     // CALL(aStdBattleTextbox);
-    StdBattleTextbox_Conv2(BellChimedText);
+    StdBattleTextbox(BellChimedText);
 
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;

@@ -901,7 +901,7 @@ static void DebugMenu_BattleAnim_PlaceText(uint16_t move) {
     char buffer[64];
     sprintf(buffer, "MOVE - 0x%02X@", move);
     PlaceStringSimple(U82C(buffer), coord(TEXTBOX_INNERX, TEXTBOX_Y + 1, wram->wTilemap));
-    sprintf(buffer, "TURN - %d@", hram->hBattleTurn);
+    sprintf(buffer, "TURN - %s@", (hram->hBattleTurn == TURN_PLAYER)? "PLAYER": "ENEMY");
     PlaceStringSimple(U82C(buffer), coord(TEXTBOX_INNERX, TEXTBOX_Y + 2, wram->wTilemap));
     sprintf(buffer, "B - BACK@");
     PlaceStringSimple(U82C(buffer), coord(TEXTBOX_INNERX, TEXTBOX_Y + 3, wram->wTilemap));
@@ -1009,7 +1009,7 @@ void DebugMenu_BattleAnim(void) {
             }
             else if(anim == GROWL || anim == ROAR) {
                 wram->wFXAnimID = anim;
-                wram->wBattleAnimParam = (hram->hBattleTurn == 0)? wram->wBattleMon.species: wram->wEnemyMon.species;
+                wram->wBattleAnimParam = (hram->hBattleTurn == TURN_PLAYER)? wram->wBattleMon.species: wram->wEnemyMon.species;
             }
             else {
                 wram->wFXAnimID = anim;

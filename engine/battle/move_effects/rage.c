@@ -7,6 +7,6 @@ void BattleCommand_Rage(void){
     // LD_A(BATTLE_VARS_SUBSTATUS4);
     // CALL(aGetBattleVarAddr);
     // SET_hl(SUBSTATUS_RAGE);
-    bit_set(*GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS4), SUBSTATUS_RAGE);
+    bit_set(*GetBattleVarAddr(BATTLE_VARS_SUBSTATUS4), SUBSTATUS_RAGE);
     // RET;
 }

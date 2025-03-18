@@ -39,7 +39,7 @@ void BattleCommand_GetMagnitude(void){
     BattleCommand_MoveDelay();
     // LD_HL(mMagnitudeText);
     // CALL(aStdBattleTextbox);
-    StdBattleTextbox_Conv2(MagnitudeText);
+    StdBattleTextbox(MagnitudeText);
     // POP_DE;
     // POP_BC;
     // RET;

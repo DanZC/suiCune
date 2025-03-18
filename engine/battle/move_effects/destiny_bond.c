@@ -11,11 +11,11 @@ void BattleCommand_DestinyBond(void){
     // LD_A(BATTLE_VARS_SUBSTATUS5);
     // CALL(aGetBattleVarAddr);
     // SET_hl(SUBSTATUS_DESTINY_BOND);
-    bit_set(*GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS5), SUBSTATUS_DESTINY_BOND);
+    bit_set(*GetBattleVarAddr(BATTLE_VARS_SUBSTATUS5), SUBSTATUS_DESTINY_BOND);
     // CALL(aAnimateCurrentMove);
     AnimateCurrentMove();
     // LD_HL(mDestinyBondEffectText);
     // JP(mStdBattleTextbox);
-    return StdBattleTextbox_Conv2(DestinyBondEffectText);
+    return StdBattleTextbox(DestinyBondEffectText);
 
 }

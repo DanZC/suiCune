@@ -65,7 +65,7 @@ void BattleCommand_Metronome(void){
     // LD_A(BATTLE_VARS_MOVE);
     // CALL(aGetBattleVarAddr);
     // LD_hl_B;
-    *GetBattleVarAddr_Conv(BATTLE_VARS_MOVE) = b;
+    *GetBattleVarAddr(BATTLE_VARS_MOVE) = b;
     // CALL(aUpdateMoveData);
     UpdateMoveData();
     // JP(mResetTurn);

@@ -278,3 +278,9 @@ enum {
 // link_battle_record struct
 #define LINK_BATTLE_RECORD_LENGTH (2 + (NAME_LENGTH - 1) + 2 * 3)
 #define NUM_LINK_BATTLE_RECORDS 5
+
+// hBattleTurn
+enum {
+    TURN_PLAYER,
+    TURN_ENEMY,
+};

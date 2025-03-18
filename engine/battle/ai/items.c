@@ -807,7 +807,7 @@ bool AI_TryItem(void){
 
 void AIUpdateHUD(void){
     // CALL(aUpdateEnemyMonInParty);
-    UpdateEnemyMonInParty_Conv();
+    UpdateEnemyMonInParty();
     // FARCALL(aUpdateEnemyHUD);
     UpdateEnemyHUD();
     // LD_A(0x1);
@@ -871,7 +871,7 @@ void FullRestoreContinue(void){
     // LD_A_hl;
     // LD_de_A;
     // INC_DE;
-    wram->wCurHPAnimOldHP = ReverseEndian16(wram->wEnemyMon.hp);
+    wram->wCurHPAnimOldHP = BigEndianToNative16(wram->wEnemyMon.hp);
     // LD_HL(wEnemyMonMaxHP + 1);
     // LD_A_hld;
     // LD_de_A;
@@ -882,7 +882,7 @@ void FullRestoreContinue(void){
     // LD_de_A;
     // LD_addr_A(wCurHPAnimMaxHP + 1);
     // LD_addr_A(wEnemyMonHP);
-    wram->wCurHPAnimMaxHP = wram->wCurHPAnimNewHP = ReverseEndian16(wram->wEnemyMon.maxHP);
+    wram->wCurHPAnimMaxHP = wram->wCurHPAnimNewHP = BigEndianToNative16(wram->wEnemyMon.maxHP);
     wram->wEnemyMon.hp = wram->wEnemyMon.maxHP;
     // JR(mEnemyPotionFinish);
     EnemyPotionFinish();
@@ -913,7 +913,7 @@ void EnemyPotionContinue(item_t a, uint16_t hp){
     wram->wCurEnemyItem = a;
     // LD_HL(wEnemyMonHP + 1);
     // LD_A_hl;
-    uint16_t curhp = ReverseEndian16(wram->wEnemyMon.hp);
+    uint16_t curhp = BigEndianToNative16(wram->wEnemyMon.hp);
     // LD_addr_A(wCurHPAnimOldHP);
     wram->wCurHPAnimOldHP = curhp;
     // ADD_A_B;
@@ -927,7 +927,7 @@ void EnemyPotionContinue(item_t a, uint16_t hp){
     // IF_NC goto ok;
     // INC_A;
     // LD_hl_A;
-    wram->wEnemyMon.hp = ReverseEndian16(curhp);
+    wram->wEnemyMon.hp = NativeToBigEndian16(curhp);
     // LD_addr_A(wCurHPAnimNewHP + 1);
 
 // ok:
@@ -943,7 +943,7 @@ void EnemyPotionContinue(item_t a, uint16_t hp){
     // LD_B_A;
     // LD_A_de;
     // LD_addr_A(wCurHPAnimMaxHP + 1);
-    uint16_t maxhp = ReverseEndian16(wram->wEnemyMon.maxHP);
+    uint16_t maxhp = BigEndianToNative16(wram->wEnemyMon.maxHP);
     wram->wCurHPAnimMaxHP = maxhp;
     // SBC_A_B;
     // JR_NC (mEnemyPotionFinish);
@@ -958,7 +958,7 @@ void EnemyPotionContinue(item_t a, uint16_t hp){
     // LD_hl_A;
     // LD_addr_A(wCurHPAnimNewHP + 1);
     wram->wCurHPAnimNewHP = maxhp;
-    wram->wEnemyMon.hp = ReverseEndian16(maxhp);
+    wram->wEnemyMon.hp = NativeToBigEndian16(maxhp);
 
     return EnemyPotionFinish();
 }
@@ -1032,7 +1032,7 @@ bool AI_Switch(void){
     bit_reset(wram->wEnemySubStatus4, SUBSTATUS_RAGE);
     // XOR_A_A;
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = 0x0;
+    hram->hBattleTurn = TURN_PLAYER;
     // CALLFAR(aPursuitSwitch);
     bool fainted = PursuitSwitch();
 

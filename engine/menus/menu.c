@@ -70,7 +70,7 @@ bool v_InterpretBattleMenu_Conv(void){
     // CALL(aDraw2DMenu);
     Draw2DMenu_Conv(data);
     // FARCALL(aMobileTextBorder);
-    MobileTextBorder_Conv();
+    MobileTextBorder();
     // CALL(aUpdateSprites);
     UpdateSprites_Conv();
     // CALL(aApplyTilemap);

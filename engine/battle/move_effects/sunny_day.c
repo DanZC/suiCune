@@ -16,6 +16,6 @@ void BattleCommand_StartSun(void){
     AnimateCurrentMove();
     // LD_HL(mSunGotBrightText);
     // JP(mStdBattleTextbox);
-    return StdBattleTextbox_Conv2(SunGotBrightText);
+    return StdBattleTextbox(SunGotBrightText);
 
 }

@@ -46,14 +46,14 @@ static bool BattleCommand_SleepTalk_check_has_usable_move(struct BattleMon* mon)
     // IF_Z goto got_move_2;
 
     // LD_A_addr(wEnemyDisabledMove);
-    move_t disabledMove = (hram->hBattleTurn == 0)? wram->wDisabledMove: wram->wEnemyDisabledMove;
+    move_t disabledMove = (hram->hBattleTurn == TURN_PLAYER)? wram->wDisabledMove: wram->wEnemyDisabledMove;
 
 // got_move_2:
     // LD_B_A;
     // LD_A(BATTLE_VARS_MOVE);
     // CALL(aGetBattleVar);
     // LD_C_A;
-    move_t c = GetBattleVar_Conv(BATTLE_VARS_MOVE);
+    move_t c = GetBattleVar(BATTLE_VARS_MOVE);
     // DEC_HL;
     // LD_D(NUM_MOVES);
 
@@ -114,15 +114,15 @@ void BattleCommand_SleepTalk(void){
     // LD_HL(wEnemyMonMoves + 1);
     // LD_A_addr(wEnemyDisabledMove);
     // LD_D_A;
-    struct BattleMon* mon = (hram->hBattleTurn == 0)? &wram->wBattleMon: &wram->wEnemyMon;
-    move_t d = (hram->hBattleTurn == 0)? wram->wDisabledMove: wram->wEnemyDisabledMove;
+    struct BattleMon* mon = (hram->hBattleTurn == TURN_PLAYER)? &wram->wBattleMon: &wram->wEnemyMon;
+    move_t d = (hram->hBattleTurn == TURN_PLAYER)? wram->wDisabledMove: wram->wEnemyDisabledMove;
 
 // got_moves:
     // LD_A(BATTLE_VARS_STATUS);
     // CALL(aGetBattleVar);
     // AND_A(SLP);
     // IF_Z goto fail;
-    if((GetBattleVar_Conv(BATTLE_VARS_STATUS) & SLP) == 0)
+    if((GetBattleVar(BATTLE_VARS_STATUS) & SLP) == 0)
         goto fail;
     // LD_A_hl;
     // AND_A_A;
@@ -156,7 +156,7 @@ void BattleCommand_SleepTalk(void){
         // CALL(aGetBattleVar);
         // CP_A_E;
         // IF_Z goto sample_move;
-        if(GetBattleVar_Conv(BATTLE_VARS_MOVE_ANIM) == e)
+        if(GetBattleVar(BATTLE_VARS_MOVE_ANIM) == e)
             continue;
         // LD_A_E;
         // CP_A_D;
@@ -171,7 +171,7 @@ void BattleCommand_SleepTalk(void){
     }
     // LD_A(BATTLE_VARS_MOVE);
     // CALL(aGetBattleVarAddr);
-    move_t* move = GetBattleVarAddr_Conv(BATTLE_VARS_MOVE);
+    move_t* move = GetBattleVarAddr(BATTLE_VARS_MOVE);
     // LD_A_E;
     // LD_hl_A;
     *move = e;

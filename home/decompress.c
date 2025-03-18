@@ -476,7 +476,7 @@ void Decompress_Conv(uint16_t de, uint16_t hl){
         // REG_HL = hl;
         // PEEK("Loop");
         uint8_t ctrl;
-        union Register cnt;
+        uint16_t cnt;
         // LD_A_hl;
         // CP_A(LZ_END);
         // RET_Z ;
@@ -506,12 +506,12 @@ void Decompress_Conv(uint16_t de, uint16_t hl){
             // LD_B_A;
             // LD_A_hli;
             // LD_C_A;
-            cnt.hi = gb_read(hl++) & LZ_LONG_HI;
-            cnt.lo = gb_read(hl++);
+            cnt = ((gb_read(hl + 0) & LZ_LONG_HI) << 8) | gb_read(hl + 1);
+            hl += 2;
 
 
         // read at least 1 byte
-            cnt.reg++;
+            cnt++;
             // goto command;
         }
         else {
@@ -523,12 +523,11 @@ void Decompress_Conv(uint16_t de, uint16_t hl){
             // AND_A(LZ_LEN);
             // LD_C_A;
             // LD_B(0);
-            cnt.lo = gb_read(hl++) & LZ_LEN;
-            cnt.hi = 0;
+            cnt = gb_read(hl++) & LZ_LEN;
 
         // read at least 1 byte
             // INC_C;
-            cnt.lo++;
+            cnt++;
         }
 
         // Increment loop counts.
@@ -607,7 +606,7 @@ void Decompress_Conv(uint16_t de, uint16_t hl){
                 // IF_Z goto donerw;
                 // printf("Repeat (%d bytes) hl:%04x\n", cnt.reg, hl);
                 // fprintf(out, "HL=%04x DE=%04x REPEAT %d ", hl, de, cnt.reg);
-                while(cnt.reg--) {
+                while(cnt--) {
                     // LD_A_hli;
                     // LD_de_A;
                     // INC_DE;
@@ -623,7 +622,7 @@ void Decompress_Conv(uint16_t de, uint16_t hl){
                 // JP_Z (mDecompress_donerw);
                 // printf("Flipped (%d bytes) hl:%04x\n", cnt.reg, hl);
                 // fprintf(out, "HL=%04x DE=%04x FLIP %d ", hl, de, cnt.reg);
-                while(cnt.reg--) {
+                while(cnt--) {
                     // LD_A_hli;
                     // PUSH_BC;
                     // LD_BC((0 << 8) | 8);
@@ -659,7 +658,7 @@ void Decompress_Conv(uint16_t de, uint16_t hl){
                 // JP_Z (mDecompress_donerw);
                 // printf("Reversed (%d bytes) hl:%04x\n", cnt.reg, hl);
                 // fprintf(out, "HL=%04x DE=%04x REVERSE %d ", hl, de, cnt.reg);
-                while(cnt.reg--) {
+                while(cnt--) {
                     // LD_A_hld;
                     // LD_de_A;
                     // INC_DE;
@@ -697,7 +696,7 @@ void Decompress_Conv(uint16_t de, uint16_t hl){
             //     IF_NZ goto inext;
             //     DEC_B;
             //     JP_Z (mDecompress_Main);
-            while(cnt.reg--) {
+            while(cnt--) {
                 // inext:
                 // LD_de_A;
                 // INC_DE;
@@ -715,7 +714,7 @@ void Decompress_Conv(uint16_t de, uint16_t hl){
             // fprintf(out, "HL=%04x DE=%04x ALT %d ", hl, de, cnt.reg);
             const uint8_t bytes[] = {gb_read(hl), gb_read(hl + 1)};
             uint8_t alt = 0;
-            while(cnt.reg--) {
+            while(cnt--) {
                 // fputc(bytes[alt], out);
                 gb_write(de++, bytes[alt]);
                 alt ^= 1;
@@ -740,7 +739,7 @@ void Decompress_Conv(uint16_t de, uint16_t hl){
             // IF_Z continue;
             // printf("Zero (%d bytes)\n", cnt.reg);
             // fprintf(out, "ZERO ");
-            while(cnt.reg--) {
+            while(cnt--) {
             // znext:
                 // LD_de_A;
                 // INC_DE;
@@ -760,7 +759,7 @@ void Decompress_Conv(uint16_t de, uint16_t hl){
         // JP_Z (mDecompress_Main);
         // printf("Literal (%d bytes)\n", cnt.reg);
         // fprintf(out, "HL=%04x DE=%04x LITERAL %d ", hl, de, cnt.reg);
-        while(cnt.reg--) {
+        while(cnt--) {
             // LD_A_hli;
             // LD_de_A;
             // INC_DE;
@@ -830,7 +829,7 @@ void Decompress_Conv2(uint8_t* de, const uint8_t* hl){
 
     while(byte = *(hl), byte != LZ_END) {
         uint8_t ctrl;
-        union Register cnt;
+        uint16_t cnt;
         byte &= LZ_CMD;
         if(byte == LZ_LONG) {
         //  The count is now 10 bits.
@@ -839,18 +838,17 @@ void Decompress_Conv2(uint8_t* de, const uint8_t* hl){
         // %00011100 -> %11100000
         // This is our new control code.
             ctrl = (*(hl) << 3) & LZ_CMD;
-            cnt.hi = *(hl++) & LZ_LONG_HI;
-            cnt.lo = *(hl++);
+            cnt = ((hl[0] & LZ_LONG_HI) << 8) | hl[1];
+            hl += 2;
         // read at least 1 byte
-            cnt.reg++;
+            cnt++;
         }
         else {
             ctrl = byte;
-            cnt.lo = *(hl++) & LZ_LEN;
-            cnt.hi = 0;
+            cnt = *(hl++) & LZ_LEN;
 
         // read at least 1 byte
-            cnt.lo++;
+            cnt++;
         }
 
         // Increment loop counts.
@@ -879,13 +877,13 @@ void Decompress_Conv2(uint8_t* de, const uint8_t* hl){
             switch(ctrl) {
             default: // fallthrough
             case LZ_REPEAT:    //  Copy decompressed data for bc bytes.
-                while(cnt.reg--) {
+                while(cnt--) {
                     *(de++) = *(hl++);
                 }
                 break;
             case LZ_FLIP:
                 //  Copy bitflipped decompressed data for bc bytes.
-                while(cnt.reg--) {
+                while(cnt--) {
                     uint8_t data = *(hl++);
                     data = ((data & 0xaa) >> 1) | ((data & 0x55) << 1);
                     data = ((data & 0xcc) >> 2) | ((data & 0x33) << 2);
@@ -894,7 +892,7 @@ void Decompress_Conv2(uint8_t* de, const uint8_t* hl){
                 }
                 break;
             case LZ_REVERSE:    //  Copy reversed decompressed data for bc bytes.
-                while(cnt.reg--) {
+                while(cnt--) {
                     *(de++) = *(hl--);
                 }
                 break;
@@ -917,7 +915,7 @@ void Decompress_Conv2(uint8_t* de, const uint8_t* hl){
         if(ctrl == LZ_ITERATE) {
             //  Write the same byte for bc bytes.
             uint8_t same = *(hl++);
-            while(cnt.reg--) {
+            while(cnt--) {
                 *(de++) = same;
             }
             continue;
@@ -926,7 +924,7 @@ void Decompress_Conv2(uint8_t* de, const uint8_t* hl){
             //  Alternate two bytes for bc bytes.
             const uint8_t bytes[] = {*(hl), *(hl + 1)};
             uint8_t alt = 0;
-            while(cnt.reg--) {
+            while(cnt--) {
                 *(de++) = bytes[alt];
                 alt ^= 1;
             }
@@ -936,7 +934,7 @@ void Decompress_Conv2(uint8_t* de, const uint8_t* hl){
         }
         if(ctrl == LZ_ZERO) {
             //  Write 0 for bc bytes.
-            while(cnt.reg--) {
+            while(cnt--) {
                 *(de++) = 0;
             }
             continue;
@@ -944,7 +942,7 @@ void Decompress_Conv2(uint8_t* de, const uint8_t* hl){
 
         //  Literal
         //  Read literal data for bc bytes.
-        while(cnt.reg--) {
+        while(cnt--) {
             *(de++) = *(hl++);
         }
     }

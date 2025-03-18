@@ -63,13 +63,13 @@ not_shiny:
 bool CheckShininess_Conv(uint16_t bc){
     // LD_L_C;
     // LD_H_B;
-    union Register hl = {.reg = bc};
+    uint16_t hl = bc;
 
 //  Attack
     // LD_A_hl;
     // AND_A(1 << SHINY_ATK_BIT);
     // IF_Z goto not_shiny;
-    if((hl.lo & (1 << SHINY_ATK_BIT)) == 0)
+    if((LOW(hl) & (1 << SHINY_ATK_BIT)) == 0)
         return false;
 
 //  Defense
@@ -77,7 +77,7 @@ bool CheckShininess_Conv(uint16_t bc){
     // AND_A(0xf);
     // CP_A(SHINY_DEF_VAL);
     // IF_NZ goto not_shiny;
-    if((hl.lo & 0xf) != SHINY_DEF_VAL)
+    if((LOW(hl) & 0xf) != SHINY_DEF_VAL)
         return false;
 
 //  Speed
@@ -85,7 +85,7 @@ bool CheckShininess_Conv(uint16_t bc){
     // AND_A(0xf0);
     // CP_A(SHINY_SPD_VAL << 4);
     // IF_NZ goto not_shiny;
-    if(((hl.hi & 0xf0) >> 4) != SHINY_SPD_VAL)
+    if(((HIGH(hl) & 0xf0) >> 4) != SHINY_SPD_VAL)
         return false;
 
 //  Special
@@ -93,7 +93,7 @@ bool CheckShininess_Conv(uint16_t bc){
     // AND_A(0xf);
     // CP_A(SHINY_SPC_VAL);
     // IF_NZ goto not_shiny;
-    if((hl.hi & 0xf) != SHINY_SPC_VAL)
+    if((HIGH(hl) & 0xf) != SHINY_SPC_VAL)
         return false;
 
 //  shiny

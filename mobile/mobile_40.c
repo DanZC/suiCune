@@ -2704,7 +2704,7 @@ void Function100b7a(void){
     // FARCALL(aDraw2DMenu);
     Draw2DMenu_Conv(data);
     // FARCALL(aMobileTextBorder);
-    MobileTextBorder_Conv();
+    MobileTextBorder();
     // CALL(aUpdateSprites);
     UpdateSprites_Conv();
     // CALL(aApplyTilemap);
@@ -2850,7 +2850,7 @@ Top:
     
         // print_text:
             // CALL(aStdBattleTextbox);
-            StdBattleTextbox_Conv2(BattleText_TheresNoPPLeftForThisMove);
+            StdBattleTextbox(BattleText_TheresNoPPLeftForThisMove);
             // CALL(aSafeLoadTempTilemapToTilemap);
             SafeLoadTempTilemapToTilemap_Conv();
             // JP(mMobile_MoveSelectionScreen_GetMoveSelection);
@@ -2869,7 +2869,7 @@ Top:
     
         // print_text:
             // CALL(aStdBattleTextbox);
-            StdBattleTextbox_Conv2(BattleText_TheMoveIsDisabled);
+            StdBattleTextbox(BattleText_TheMoveIsDisabled);
             // CALL(aSafeLoadTempTilemapToTilemap);
             SafeLoadTempTilemapToTilemap_Conv();
             // JP(mMobile_MoveSelectionScreen_GetMoveSelection);

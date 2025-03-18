@@ -171,7 +171,7 @@ void DisplayDexEntry(species_t a){
     // INC_HL;
     // LD_A_D;
     // OR_A_E;
-    uint16_t height = ReverseEndian16(entry->height);
+    uint16_t height = NativeToBigEndian16(entry->height);
     // IF_Z goto skip_height;
     if(height != 0) {
         // PUSH_HL;
@@ -201,7 +201,7 @@ void DisplayDexEntry(species_t a){
     // CALL(aGetFarWord);
     // LD_D_L;
     // LD_E_H;
-    uint16_t weight = ReverseEndian16(entry->weight);
+    uint16_t weight = NativeToBigEndian16(entry->weight);
     // LD_A_E;
     // OR_A_D;
     // IF_Z goto skip_weight;

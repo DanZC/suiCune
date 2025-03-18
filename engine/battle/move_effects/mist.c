@@ -9,7 +9,7 @@ void BattleCommand_Mist(void){
 
     // LD_A(BATTLE_VARS_SUBSTATUS4);
     // CALL(aGetBattleVarAddr);
-    uint8_t* ss4 = GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS4);
+    uint8_t* ss4 = GetBattleVarAddr(BATTLE_VARS_SUBSTATUS4);
     // BIT_hl(SUBSTATUS_MIST);
     // IF_NZ goto already_mist;
     if(bit_test(*ss4, SUBSTATUS_MIST)) {
@@ -26,6 +26,6 @@ void BattleCommand_Mist(void){
     AnimateCurrentMove();
     // LD_HL(mMistText);
     // JP(mStdBattleTextbox);
-    return StdBattleTextbox_Conv2(MistText);
+    return StdBattleTextbox(MistText);
 
 }

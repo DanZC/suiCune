@@ -259,7 +259,7 @@ void AI_Types(void){
         // PUSH_DE;
         // LD_A(1);
         // LDH_addr_A(hBattleTurn);
-        hram->hBattleTurn = 1;
+        hram->hBattleTurn = TURN_ENEMY;
         // CALLFAR(aBattleCheckTypeMatchup);
         uint8_t matchup = BattleCheckTypeMatchup_Conv();
         // POP_DE;
@@ -726,7 +726,7 @@ void AI_Smart_LeechHit_Conv(uint8_t* hl){
     // PUSH_HL;
     // LD_A(1);
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = 1;
+    hram->hBattleTurn = TURN_ENEMY;
     // CALLFAR(aBattleCheckTypeMatchup);
     uint8_t matchup = BattleCheckTypeMatchup_Conv();
     // POP_HL;
@@ -1002,7 +1002,7 @@ void AI_Smart_LockOn_Conv(uint8_t* hl){
 
         // LD_A(1);
         // LDH_addr_A(hBattleTurn);
-        hram->hBattleTurn = 1;
+        hram->hBattleTurn = TURN_ENEMY;
 
         // PUSH_HL;
         // PUSH_BC;
@@ -3033,7 +3033,7 @@ void AI_Smart_Mimic_Conv(uint8_t* hl){
 
     // LD_A(1);
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = 1;
+    hram->hBattleTurn = TURN_ENEMY;
     // CALLFAR(aBattleCheckTypeMatchup);
     uint8_t matchup = BattleCheckTypeMatchup_Conv();
 
@@ -3413,8 +3413,8 @@ void AI_Smart_PainSplit_Conv(uint8_t* hl){
     // LD_B_hl;
     // INC_HL;
     // LD_C_hl;
-    uint16_t enmy_hp = ReverseEndian16(wram->wEnemyMon.hp);
-    uint16_t plyr_hp = ReverseEndian16(wram->wBattleMon.hp);
+    uint16_t enmy_hp = BigEndianToNative16(wram->wEnemyMon.hp);
+    uint16_t plyr_hp = BigEndianToNative16(wram->wBattleMon.hp);
     // SLA_C;
     // RL_B;
     // LD_HL(wBattleMonHP + 1);
@@ -3870,7 +3870,7 @@ void AI_Smart_PriorityHit_Conv(uint8_t* hl){
 //  Greatly encourage this move if it will KO the player.
     // LD_A(1);
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = 1;
+    hram->hBattleTurn = TURN_ENEMY;
     // PUSH_HL;
     // CALLFAR(aEnemyAttackDamage);
     EnemyAttackDamage(&gBattleCmdState);
@@ -3883,12 +3883,12 @@ void AI_Smart_PriorityHit_Conv(uint8_t* hl){
     // LD_C_A;
     // LD_A_addr(wCurDamage);
     // LD_B_A;
-    uint16_t bc = ReverseEndian16(wram->wCurDamage);
+    uint16_t bc = BigEndianToNative16(wram->wCurDamage);
     // LD_A_addr(wBattleMonHP + 1);
     // CP_A_C;
     // LD_A_addr(wBattleMonHP);
     // SBC_A_B;
-    uint16_t hp = ReverseEndian16(wram->wBattleMon.hp);
+    uint16_t hp = BigEndianToNative16(wram->wBattleMon.hp);
 
     // RET_NC ;
     if(hp < bc) {
@@ -3998,7 +3998,7 @@ void AI_Smart_Conversion2_Conv(uint8_t* hl){
 
     // XOR_A_A;
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = 0;
+    hram->hBattleTurn = TURN_PLAYER;
 
     // CALLFAR(aBattleCheckTypeMatchup);
     uint8_t matchup = BattleCheckTypeMatchup_Conv();
@@ -5546,7 +5546,7 @@ void AI_Smart_HiddenPower_Conv(uint8_t* hl){
     // PUSH_HL;
     // LD_A(1);
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = 1;
+    hram->hBattleTurn = TURN_ENEMY;
 
 //  Calculate Hidden Power's type and base power based on enemy's DVs.
     // CALLFAR(aHiddenPowerDamage);
@@ -6564,8 +6564,8 @@ bool AICheckPlayerHalfHP_Conv(void){
     // LD_B_hl;
     // INC_HL;
     // LD_C_hl;
-    uint16_t hp = ReverseEndian16(wram->wBattleMon.hp);
-    uint16_t maxHP = ReverseEndian16(wram->wBattleMon.maxHP);
+    uint16_t hp = BigEndianToNative16(wram->wBattleMon.hp);
+    uint16_t maxHP = BigEndianToNative16(wram->wBattleMon.maxHP);
     // SLA_C;
     // RL_B;
     // INC_HL;
@@ -6607,8 +6607,8 @@ bool AICheckEnemyHalfHP_Conv(void){
     // PUSH_DE;
     // PUSH_BC;
     // LD_HL(wEnemyMonHP);
-    uint16_t hp = ReverseEndian16(wram->wEnemyMon.hp);
-    uint16_t maxHP = ReverseEndian16(wram->wEnemyMon.maxHP);
+    uint16_t hp = BigEndianToNative16(wram->wEnemyMon.hp);
+    uint16_t maxHP = BigEndianToNative16(wram->wEnemyMon.maxHP);
     // LD_B_hl;
     // INC_HL;
     // LD_C_hl;
@@ -6657,8 +6657,8 @@ bool AICheckEnemyQuarterHP_Conv(void){
     // PUSH_DE;
     // PUSH_BC;
     // LD_HL(wEnemyMonHP);
-    uint16_t hp = ReverseEndian16(wram->wEnemyMon.hp);
-    uint16_t maxHP = ReverseEndian16(wram->wEnemyMon.maxHP);
+    uint16_t hp = BigEndianToNative16(wram->wEnemyMon.hp);
+    uint16_t maxHP = BigEndianToNative16(wram->wEnemyMon.maxHP);
     // LD_B_hl;
     // INC_HL;
     // LD_C_hl;
@@ -6706,8 +6706,8 @@ bool AICheckPlayerQuarterHP_Conv(void){
     // LD_B_hl;
     // INC_HL;
     // LD_C_hl;
-    uint16_t hp = ReverseEndian16(wram->wBattleMon.hp);
-    uint16_t maxHP = ReverseEndian16(wram->wBattleMon.maxHP);
+    uint16_t hp = BigEndianToNative16(wram->wBattleMon.hp);
+    uint16_t maxHP = BigEndianToNative16(wram->wBattleMon.maxHP);
     // SLA_C;
     // RL_B;
     // SLA_C;
@@ -7007,12 +7007,12 @@ void AI_Aggressive(void){
         // LD_A_addr(wCurDamage);
         // SBC_A_D;
         // IF_C goto checkmove;
-        if(ReverseEndian16(wram->wCurDamage) > de) {
+        if(BigEndianToNative16(wram->wCurDamage) > de) {
             // LD_A_addr(wCurDamage + 1);
             // LD_E_A;
             // LD_A_addr(wCurDamage);
             // LD_D_A;
-            de = ReverseEndian16(wram->wCurDamage);
+            de = BigEndianToNative16(wram->wCurDamage);
             // LD_C_B;
             c = b;
             // goto checkmove;
@@ -7096,7 +7096,7 @@ void AI_Aggressive(void){
 void AIDamageCalc(void){
     // LD_A(1);
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = 1;
+    hram->hBattleTurn = TURN_ENEMY;
     // LD_A_addr(wEnemyMoveStruct + MOVE_EFFECT);
     // LD_DE(1);
     // LD_HL(mConstantDamageEffects);
@@ -7243,7 +7243,7 @@ void AI_Status(void){
         // PUSH_DE;
         // LD_A(1);
         // LDH_addr_A(hBattleTurn);
-        hram->hBattleTurn = 1;
+        hram->hBattleTurn = TURN_ENEMY;
         // CALLFAR(aBattleCheckTypeMatchup);
         uint8_t matchup = BattleCheckTypeMatchup_Conv();
         // POP_DE;
@@ -7328,12 +7328,12 @@ void AI_Risky(void){
         // LD_E_A;
         // LD_A_addr(wCurDamage);
         // LD_D_A;
-        uint16_t de = ReverseEndian16(wram->wCurDamage);
+        uint16_t de = BigEndianToNative16(wram->wCurDamage);
         // LD_A_addr(wBattleMonHP + 1);
         // CP_A_E;
         // LD_A_addr(wBattleMonHP);
         // SBC_A_D;
-        uint16_t hp = ReverseEndian16(wram->wBattleMon.hp);
+        uint16_t hp = BigEndianToNative16(wram->wBattleMon.hp);
         // IF_NC goto nextmove;
         if(hp < de) {
             // POP_HL;

@@ -13,7 +13,7 @@ void BattleCommand_StoreEnergy(void){
     // CALL(aGetBattleVar);
     // BIT_A(SUBSTATUS_BIDE);
     // RET_Z ;
-    if(!bit_test(GetBattleVar_Conv(BATTLE_VARS_SUBSTATUS3), SUBSTATUS_BIDE))
+    if(!bit_test(GetBattleVar(BATTLE_VARS_SUBSTATUS3), SUBSTATUS_BIDE))
         return;
 
     // LD_HL(wPlayerRolloutCount);
@@ -21,7 +21,7 @@ void BattleCommand_StoreEnergy(void){
     // AND_A_A;
     // IF_Z goto check_still_storing_energy;
     // LD_HL(wEnemyRolloutCount);
-    uint8_t* rc = (hram->hBattleTurn == 0)? &wram->wPlayerRolloutCount: &wram->wEnemyRolloutCount;
+    uint8_t* rc = (hram->hBattleTurn == TURN_PLAYER)? &wram->wPlayerRolloutCount: &wram->wEnemyRolloutCount;
 
 // check_still_storing_energy:
     // DEC_hl;
@@ -30,7 +30,7 @@ void BattleCommand_StoreEnergy(void){
     // still_storing:
         // LD_HL(mStoringEnergyText);
         // CALL(aStdBattleTextbox);
-        StdBattleTextbox_Conv2(StoringEnergyText);
+        StdBattleTextbox(StoringEnergyText);
         // JP(mEndMoveEffect);
         return EndMoveEffect();
     }
@@ -38,17 +38,17 @@ void BattleCommand_StoreEnergy(void){
     // LD_A(BATTLE_VARS_SUBSTATUS3);
     // CALL(aGetBattleVarAddr);
     // RES_hl(SUBSTATUS_BIDE);
-    bit_reset(*GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS3), SUBSTATUS_BIDE);
+    bit_reset(*GetBattleVarAddr(BATTLE_VARS_SUBSTATUS3), SUBSTATUS_BIDE);
 
     // LD_HL(mUnleashedEnergyText);
     // CALL(aStdBattleTextbox);
-    StdBattleTextbox_Conv2(UnleashedEnergyText);
+    StdBattleTextbox(UnleashedEnergyText);
 
     // LD_A(BATTLE_VARS_MOVE_POWER);
     // CALL(aGetBattleVarAddr);
     // LD_A(1);
     // LD_hl_A;
-    *GetBattleVarAddr_Conv(BATTLE_VARS_MOVE_POWER) = 1;
+    *GetBattleVarAddr(BATTLE_VARS_MOVE_POWER) = 1;
     // LD_HL(wPlayerDamageTaken + 1);
     // LD_DE(wPlayerCharging);  // player
     // LDH_A_addr(hBattleTurn);
@@ -56,8 +56,8 @@ void BattleCommand_StoreEnergy(void){
     // IF_Z goto player;
     // LD_HL(wEnemyDamageTaken + 1);
     // LD_DE(wEnemyCharging);  // enemy
-    uint16_t* hl = (uint16_t*)((hram->hBattleTurn == 0)? wram_ptr(wPlayerDamageTaken): wram_ptr(wEnemyDamageTaken));
-    uint8_t* de = (hram->hBattleTurn == 0)? &wram->wPlayerCharging: &wram->wEnemyCharging;
+    uint16_t* hl = (uint16_t*)((hram->hBattleTurn == TURN_PLAYER)? wram_ptr(wPlayerDamageTaken): wram_ptr(wEnemyDamageTaken));
+    uint8_t* de = (hram->hBattleTurn == TURN_PLAYER)? &wram->wPlayerCharging: &wram->wEnemyCharging;
 
 // player:
     // LD_A_hld;
@@ -67,16 +67,16 @@ void BattleCommand_StoreEnergy(void){
     // LD_A_hl;
     // RL_A;
     // LD_addr_A(wCurDamage);
-    uint32_t temp = ReverseEndian16(*hl) << 1;
+    uint32_t temp = BigEndianToNative16(*hl) << 1;
     // IF_NC goto not_maxed;
     if(temp > 0xffff) {
         // LD_A(0xff);
         // LD_addr_A(wCurDamage);
         // LD_addr_A(wCurDamage + 1);
-        wram->wCurDamage = ReverseEndian16(0xffff);
+        wram->wCurDamage = NativeToBigEndian16(0xffff);
     }
     else {
-        wram->wCurDamage = ReverseEndian16((uint16_t)temp);
+        wram->wCurDamage = NativeToBigEndian16((uint16_t)temp);
     }
 
 // not_maxed:
@@ -100,7 +100,7 @@ void BattleCommand_StoreEnergy(void){
     // CALL(aGetBattleVarAddr);
     // LD_A(BIDE);
     // LD_hl_A;
-    *GetBattleVarAddr_Conv(BATTLE_VARS_MOVE_ANIM) = BIDE;
+    *GetBattleVarAddr(BATTLE_VARS_MOVE_ANIM) = BIDE;
 
     // LD_B(unleashenergy_command);
     // JP(mSkipToBattleCommand);
@@ -117,14 +117,14 @@ void BattleCommand_UnleashEnergy(void){
     // IF_Z goto got_damage;
     // LD_DE(wEnemyDamageTaken);
     // LD_BC(wEnemyRolloutCount);
-    uint16_t* de = (uint16_t*)((hram->hBattleTurn == 0)? wram_ptr(wPlayerDamageTaken): wram_ptr(wEnemyDamageTaken));
-    uint8_t* bc = (hram->hBattleTurn == 0)? &wram->wPlayerRolloutCount: &wram->wEnemyRolloutCount;
+    uint16_t* de = (uint16_t*)((hram->hBattleTurn == TURN_PLAYER)? wram_ptr(wPlayerDamageTaken): wram_ptr(wEnemyDamageTaken));
+    uint8_t* bc = (hram->hBattleTurn == TURN_PLAYER)? &wram->wPlayerRolloutCount: &wram->wEnemyRolloutCount;
 
 // got_damage:
     // LD_A(BATTLE_VARS_SUBSTATUS3);
     // CALL(aGetBattleVarAddr);
     // SET_hl(SUBSTATUS_BIDE);
-    bit_set(*GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS3), SUBSTATUS_BIDE);
+    bit_set(*GetBattleVarAddr(BATTLE_VARS_SUBSTATUS3), SUBSTATUS_BIDE);
     // XOR_A_A;
     // LD_de_A;
     // INC_DE;

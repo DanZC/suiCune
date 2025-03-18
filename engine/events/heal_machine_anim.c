@@ -240,9 +240,9 @@ static void HealMachineAnim_PlaceHealingMachineTile(struct SpriteOAM* hl, const 
     // CP_A(HEALMACHINE_ELMS_LAB);
     // IF_Z goto okay;
     // bcpixel2(0, 0);
-    union Register bc = {.reg = (wram->wHealMachineAnimType == HEALMACHINE_ELMS_LAB)
+    uint16_t bc = (wram->wHealMachineAnimType == HEALMACHINE_ELMS_LAB)
         ? pixel2(2, 4)
-        : pixel2(0, 0)};
+        : pixel2(0, 0);
 
 
 // okay:
@@ -250,12 +250,12 @@ static void HealMachineAnim_PlaceHealingMachineTile(struct SpriteOAM* hl, const 
     // ADD_A_C;
     // INC_DE;
     // LD_hli_A;  // y
-    hl->yCoord = de->yCoord + bc.lo;
+    hl->yCoord = de->yCoord + LOW(bc);
     // LD_A_de;
     // ADD_A_B;
     // INC_DE;
     // LD_hli_A;  // x
-    hl->xCoord = de->xCoord + bc.hi;
+    hl->xCoord = de->xCoord + HIGH(bc);
     // LD_A_de;
     // INC_DE;
     // LD_hli_A;  // tile id

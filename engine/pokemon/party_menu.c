@@ -320,12 +320,12 @@ uint8_t PlacePartymonHPBar_Conv(uint8_t b){
     // LD_B_A;
     // LD_A_hli;
     // LD_C_A;
-    uint16_t bc = ReverseEndian16(wram->wPartyMon[b].HP);
+    uint16_t bc = BigEndianToNative16(wram->wPartyMon[b].HP);
     // LD_A_hli;
     // LD_D_A;
     // LD_A_hli;
     // LD_E_A;
-    uint16_t de = ReverseEndian16(wram->wPartyMon[b].maxHP);
+    uint16_t de = BigEndianToNative16(wram->wPartyMon[b].maxHP);
     // PREDEF(pComputeHPBarPixels);
     return bc * (6 * 8) / de;
     // RET;

@@ -20,12 +20,12 @@ void BattleCommand_Conversion2(void){
     // AND_A_A;
     // IF_Z goto got_type;
     // LD_HL(wEnemyMonType1);
-    struct BattleMon* mon = (hram->hBattleTurn == 0)? &wram->wBattleMon: &wram->wEnemyMon;
+    struct BattleMon* mon = (hram->hBattleTurn == TURN_PLAYER)? &wram->wBattleMon: &wram->wEnemyMon;
 
 // got_type:
     // LD_A(BATTLE_VARS_LAST_COUNTER_MOVE_OPP);
     // CALL(aGetBattleVar);
-    move_t lastCounterMove = GetBattleVar_Conv(BATTLE_VARS_LAST_COUNTER_MOVE_OPP);
+    move_t lastCounterMove = GetBattleVar(BATTLE_VARS_LAST_COUNTER_MOVE_OPP);
     // AND_A_A;
     // IF_Z goto failed;
     if(lastCounterMove == NO_MOVE)
@@ -71,7 +71,7 @@ void BattleCommand_Conversion2(void){
         // PUSH_HL;
         // LD_A(BATTLE_VARS_MOVE_TYPE);
         // CALL(aGetBattleVarAddr);
-        uint8_t* moveType = GetBattleVarAddr_Conv(BATTLE_VARS_MOVE_TYPE);
+        uint8_t* moveType = GetBattleVarAddr(BATTLE_VARS_MOVE_TYPE);
         // PUSH_AF;
         // PUSH_HL;
         // LD_A_D;
@@ -97,7 +97,7 @@ void BattleCommand_Conversion2(void){
     GetTypeName_Conv(mon->types[0]);
     // LD_HL(mTransformedTypeText);
     // JP(mStdBattleTextbox);
-    return StdBattleTextbox_Conv2(TransformedTypeText);
+    return StdBattleTextbox(TransformedTypeText);
 
 failed:
     // JP(mFailMove);

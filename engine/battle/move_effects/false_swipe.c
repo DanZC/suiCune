@@ -14,11 +14,11 @@ bool CheckFalseSwipe(void) {
     // AND_A_A;
     // IF_Z goto got_hp;
     // LD_HL(wBattleMonHP);
-    uint16_t hp = ReverseEndian16((hram->hBattleTurn == 0)? wram->wEnemyMon.hp: wram->wBattleMon.hp);
+    uint16_t hp = BigEndianToNative16((hram->hBattleTurn == TURN_PLAYER)? wram->wEnemyMon.hp: wram->wBattleMon.hp);
 
 // got_hp:
     // LD_DE(wCurDamage);
-    uint16_t dmg = ReverseEndian16(wram->wCurDamage);
+    uint16_t dmg = BigEndianToNative16(wram->wCurDamage);
     // LD_C(2);
     // PUSH_HL;
     // PUSH_DE;
@@ -33,7 +33,7 @@ bool CheckFalseSwipe(void) {
         // LD_A_hl;
         // DEC_A;
         // LD_de_A;
-        wram->wCurDamage = ReverseEndian16(hp - 1);
+        wram->wCurDamage = NativeToBigEndian16(hp - 1);
 
         // INC_A;
         // IF_NZ goto okay;

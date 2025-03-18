@@ -9,7 +9,7 @@ void BattleCommand_FocusEnergy(void){
 
     // LD_A(BATTLE_VARS_SUBSTATUS4);
     // CALL(aGetBattleVarAddr);
-    uint8_t* hl = GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS4);
+    uint8_t* hl = GetBattleVarAddr(BATTLE_VARS_SUBSTATUS4);
     // BIT_hl(SUBSTATUS_FOCUS_ENERGY);
     // IF_NZ goto already_pumped;
     if(bit_test(*hl, SUBSTATUS_FOCUS_ENERGY)) {
@@ -26,6 +26,6 @@ void BattleCommand_FocusEnergy(void){
     AnimateCurrentMove();
     // LD_HL(mGettingPumpedText);
     // JP(mStdBattleTextbox);
-    return StdBattleTextbox_Conv2(GettingPumpedText);
+    return StdBattleTextbox(GettingPumpedText);
 
 }

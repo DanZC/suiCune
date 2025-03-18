@@ -3611,7 +3611,7 @@ void BattleAnimFunction_Sound(struct BattleAnim* bc) {
         // LDH_A_addr(hBattleTurn);
         // AND_A_A;
         // IF_Z goto got_turn;
-        if(hram->hBattleTurn != 0) {
+        if(hram->hBattleTurn != TURN_PLAYER) {
             // enemy
             // LD_HL(BATTLEANIMSTRUCT_PARAM);
             // ADD_HL_BC;

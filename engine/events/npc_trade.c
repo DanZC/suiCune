@@ -346,7 +346,7 @@ void DoNPCTrade(void){
     // CALL(aGetTradeAttr);
     // LD_DE(wOTTrademonID + 1);
     // CALL(aTrade_CopyTwoBytesReverseEndian);
-    wram->wOTTrademon.id = ReverseEndian16(GetTradeAttr()->OTID);
+    wram->wOTTrademon.id = NativeToBigEndian16(GetTradeAttr()->OTID);
 
     // LD_HL(wPartyMon1ID);
     // LD_BC(PARTYMON_STRUCT_LENGTH);

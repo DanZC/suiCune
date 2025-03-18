@@ -15,11 +15,11 @@ void BattleCommand_MirrorMove(void){
 
     // LD_A(BATTLE_VARS_MOVE);
     // CALL(aGetBattleVarAddr);
-    move_t* hl = GetBattleVarAddr_Conv(BATTLE_VARS_MOVE);
+    move_t* hl = GetBattleVarAddr(BATTLE_VARS_MOVE);
 
     // LD_A(BATTLE_VARS_LAST_COUNTER_MOVE_OPP);
     // CALL(aGetBattleVar);
-    move_t a = GetBattleVar_Conv(BATTLE_VARS_LAST_COUNTER_MOVE_OPP);
+    move_t a = GetBattleVar(BATTLE_VARS_LAST_COUNTER_MOVE_OPP);
     // AND_A_A;
     // IF_Z goto failed;
 
@@ -33,7 +33,7 @@ void BattleCommand_MirrorMove(void){
 
         // LD_HL(mMirrorMoveFailedText);
         // CALL(aStdBattleTextbox);
-        StdBattleTextbox_Conv2(MirrorMoveFailedText);
+        StdBattleTextbox(MirrorMoveFailedText);
         // JP(mEndMoveEffect);
         return EndMoveEffect();
     }
@@ -51,7 +51,7 @@ void BattleCommand_MirrorMove(void){
     // LD_D_H;
     // LD_E_L;
     // POP_AF;
-    struct Move* de = (struct Move*)GetBattleVarAddr_Conv(BATTLE_VARS_MOVE_ANIM);
+    struct Move* de = (struct Move*)GetBattleVarAddr(BATTLE_VARS_MOVE_ANIM);
 
     // DEC_A;
     // CALL(aGetMoveData);

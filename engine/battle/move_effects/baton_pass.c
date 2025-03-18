@@ -15,7 +15,7 @@ void BattleCommand_BatonPass(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // JP_NZ (mBattleCommand_BatonPass_Enemy);
-    if(hram->hBattleTurn == 0) {
+    if(hram->hBattleTurn == TURN_PLAYER) {
 
     //  Need something to switch to
         // CALL(aCheckAnyOtherAlivePartyMons);
@@ -24,7 +24,7 @@ void BattleCommand_BatonPass(void){
             return FailedBatonPass();
 
         // CALL(aUpdateBattleMonInParty);
-        UpdateBattleMonInParty_Conv();
+        UpdateBattleMonInParty();
         // CALL(aAnimateCurrentMove);
         AnimateCurrentMove();
 
@@ -92,7 +92,7 @@ void BattleCommand_BatonPass(void){
             return FailedBatonPass();
 
         // CALL(aUpdateEnemyMonInParty);
-        UpdateEnemyMonInParty_Conv();
+        UpdateEnemyMonInParty();
         // CALL(aAnimateCurrentMove);
         AnimateCurrentMove();
         // CALL(aBatonPass_LinkEnemySwitch);
@@ -207,11 +207,11 @@ void ResetBatonPassStatus(void){
     // AND_A(SLP);
     // IF_NZ goto ok;
 
-    if((GetBattleVar_Conv(BATTLE_VARS_STATUS) & SLP) == 0) {
+    if((GetBattleVar(BATTLE_VARS_STATUS) & SLP) == 0) {
         // LD_A(BATTLE_VARS_SUBSTATUS1);
         // CALL(aGetBattleVarAddr);
         // RES_hl(SUBSTATUS_NIGHTMARE);
-        bit_reset(*GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS1), SUBSTATUS_NIGHTMARE);
+        bit_reset(*GetBattleVarAddr(BATTLE_VARS_SUBSTATUS1), SUBSTATUS_NIGHTMARE);
     }
 // ok:
 
@@ -230,7 +230,7 @@ void ResetBatonPassStatus(void){
 
     // LD_A(BATTLE_VARS_SUBSTATUS5);
     // CALL(aGetBattleVarAddr);
-    uint8_t* ss5 = GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS5);
+    uint8_t* ss5 = GetBattleVarAddr(BATTLE_VARS_SUBSTATUS5);
     // RES_hl(SUBSTATUS_TRANSFORMED);
     bit_reset(*ss5, SUBSTATUS_TRANSFORMED);
     // RES_hl(SUBSTATUS_ENCORED);
@@ -240,7 +240,7 @@ void ResetBatonPassStatus(void){
     // LD_A(BATTLE_VARS_LAST_MOVE);
     // CALL(aGetBattleVarAddr);
     // LD_hl(0);
-    *GetBattleVarAddr_Conv(BATTLE_VARS_LAST_MOVE) = NO_MOVE;
+    *GetBattleVarAddr(BATTLE_VARS_LAST_MOVE) = NO_MOVE;
 
     // XOR_A_A;
     // LD_addr_A(wPlayerWrapCount);

@@ -114,7 +114,7 @@ static uint16_t v_AnimateHPBar_ComputePixels(void){
     // LD_addr_A(wCurHPAnimDeltaHP);
     // LD_A_E;
     // LD_addr_A(wCurHPAnimDeltaHP + 1);
-    wram->wCurHPAnimDeltaHP = ReverseEndian16(de);
+    wram->wCurHPAnimDeltaHP = NativeToBigEndian16(de);
     // RET;
     return bc;
 }

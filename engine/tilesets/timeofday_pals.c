@@ -220,13 +220,13 @@ bool v_TimeOfDayPals_Conv(void){
     for(uint8_t i = NUM_PAL_COLORS; i > 0; --i) {
     // pop:
         // POP_BC;
-        union Register bc = {.reg = palStack[i - 1]};
+        uint16_t bc = palStack[i - 1];
         // LD_hl_C;
         // DEC_HL;
-        *(hl--) = bc.lo;
+        *(hl--) = LOW(bc);
         // LD_hl_B;
         // DEC_HL;
-        *(hl--) = bc.hi;
+        *(hl--) = HIGH(bc);
         // DEC_E;
         // IF_NZ goto pop;
     }

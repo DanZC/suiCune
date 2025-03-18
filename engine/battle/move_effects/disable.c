@@ -23,8 +23,8 @@ void BattleCommand_Disable(void){
     // IF_Z goto got_moves;
     // LD_DE(wPlayerDisableCount);
     // LD_HL(wBattleMonMoves);
-    uint8_t* disableCount = (hram->hBattleTurn == 0)? &wram->wEnemyDisableCount: &wram->wPlayerDisableCount;
-    move_t* moves = (hram->hBattleTurn == 0)? wram->wEnemyMon.moves: wram->wBattleMon.moves;
+    uint8_t* disableCount = (hram->hBattleTurn == TURN_PLAYER)? &wram->wEnemyDisableCount: &wram->wPlayerDisableCount;
+    move_t* moves = (hram->hBattleTurn == TURN_PLAYER)? wram->wEnemyMon.moves: wram->wBattleMon.moves;
 
 // got_moves:
 
@@ -36,7 +36,7 @@ void BattleCommand_Disable(void){
 
     // LD_A(BATTLE_VARS_LAST_COUNTER_MOVE_OPP);
     // CALL(aGetBattleVar);
-    move_t lastCounterMove = GetBattleVar_Conv(BATTLE_VARS_LAST_COUNTER_MOVE_OPP);
+    move_t lastCounterMove = GetBattleVar(BATTLE_VARS_LAST_COUNTER_MOVE_OPP);
     // AND_A_A;
     // IF_Z goto failed;
     // CP_A(STRUGGLE);
@@ -61,7 +61,7 @@ void BattleCommand_Disable(void){
     // LD_HL(wEnemyMonPP);
     // IF_Z goto got_pp;
     // LD_HL(wBattleMonPP);
-    uint8_t* pp = (hram->hBattleTurn == 0)? wram->wEnemyMon.pp: wram->wBattleMon.pp;
+    uint8_t* pp = (hram->hBattleTurn == TURN_PLAYER)? wram->wEnemyMon.pp: wram->wBattleMon.pp;
 
 // got_pp:
     // LD_B(0);
@@ -94,7 +94,7 @@ void BattleCommand_Disable(void){
     // AND_A_A;
     // IF_NZ goto got_disabled_move_pointer;
     // INC_HL;
-    move_t* disabledMove = (hram->hBattleTurn == 0)? &wram->wEnemyDisabledMove: &wram->wDisabledMove;
+    move_t* disabledMove = (hram->hBattleTurn == TURN_PLAYER)? &wram->wEnemyDisabledMove: &wram->wDisabledMove;
 
 // got_disabled_move_pointer:
     // LD_A(BATTLE_VARS_LAST_COUNTER_MOVE_OPP);
@@ -106,7 +106,7 @@ void BattleCommand_Disable(void){
     GetMoveName_Conv2(lastCounterMove);
     // LD_HL(mWasDisabledText);
     // JP(mStdBattleTextbox);
-    return StdBattleTextbox_Conv2(WasDisabledText);
+    return StdBattleTextbox(WasDisabledText);
 
 failed:
     // JP(mFailMove);

@@ -9,7 +9,7 @@ void BattleCommand_FuryCutter(void){
     // AND_A_A;
     // IF_Z goto go;
     // LD_HL(wEnemyFuryCutterCount);
-    uint8_t* hl = (hram->hBattleTurn == 0)? &wram->wPlayerFuryCutterCount: &wram->wEnemyFuryCutterCount;
+    uint8_t* hl = (hram->hBattleTurn == TURN_PLAYER)? &wram->wPlayerFuryCutterCount: &wram->wEnemyFuryCutterCount;
 
 
 // go:
@@ -33,7 +33,7 @@ void BattleCommand_FuryCutter(void){
         b = 5;
     }
 
-    uint16_t dmg = ReverseEndian16(wram->wCurDamage);
+    uint16_t dmg = BigEndianToNative16(wram->wCurDamage);
     uint8_t carry = 0;
 
     do {
@@ -41,7 +41,7 @@ void BattleCommand_FuryCutter(void){
         // DEC_B;
         // RET_Z ;
         if(--b == 0) {
-            wram->wCurDamage = ReverseEndian16(dmg);
+            wram->wCurDamage = NativeToBigEndian16(dmg);
             return;
         }
 
@@ -59,7 +59,7 @@ void BattleCommand_FuryCutter(void){
     // LD_A(0xff);
     // LD_hli_A;
     // LD_hl_A;
-    wram->wCurDamage = ReverseEndian16(0xffff);
+    wram->wCurDamage = NativeToBigEndian16(0xffff);
     // RET;
 }
 
@@ -70,7 +70,7 @@ void ResetFuryCutterCount(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto reset;
-    if(hram->hBattleTurn == 0) {
+    if(hram->hBattleTurn == TURN_PLAYER) {
         wram->wPlayerFuryCutterCount = 0;
     }
     // LD_HL(wEnemyFuryCutterCount);

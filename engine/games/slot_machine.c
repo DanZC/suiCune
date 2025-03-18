@@ -791,7 +791,7 @@ void SlotsAction_PayoutAnim(void){
     // LD_D_A;
     // OR_A_hl;
     // IF_Z goto done;
-    uint16_t de = ReverseEndian16(gSlotData.payout);
+    uint16_t de = BigEndianToNative16(gSlotData.payout);
     if(de == 0) {
     // done:
         // CALL(aSlotsAction_Next);
@@ -804,12 +804,12 @@ void SlotsAction_PayoutAnim(void){
     // LD_hl_E;
     // DEC_HL;
     // LD_hl_D;
-    gSlotData.payout = ReverseEndian16(--de);
+    gSlotData.payout = NativeToBigEndian16(--de);
     // LD_HL(wCoins);
     // LD_D_hl;
     // INC_HL;
     // LD_E_hl;
-    uint16_t coins = ReverseEndian16(wram->wCoins);
+    uint16_t coins = BigEndianToNative16(wram->wCoins);
     // CALL(aSlots_CheckCoinCaseFull);
     // IF_C goto okay;
     if(!Slots_CheckCoinCaseFull(coins)) {
@@ -821,7 +821,7 @@ void SlotsAction_PayoutAnim(void){
     // LD_hl_E;
     // DEC_HL;
     // LD_hl_D;
-    wram->wCoins = ReverseEndian16(coins);
+    wram->wCoins = NativeToBigEndian16(coins);
     // LD_A_addr(wSlotsDelay);
     // AND_A(0x7);
     // RET_Z ;  // ret nz would be more appropriate
@@ -2609,7 +2609,7 @@ bool Slots_AskBet(void){
         // LD_A_hl;
         // CP_A_C;
         // IF_NC goto Start;
-        if(ReverseEndian16(wram->wCoins) >= gSlotData.slotBet)
+        if(BigEndianToNative16(wram->wCoins) >= gSlotData.slotBet)
             break;
         // LD_HL(mSlots_AskBet_SlotsNotEnoughCoinsText);
         // CALL(aPrintText);
@@ -2626,7 +2626,7 @@ bool Slots_AskBet(void){
     // DEC_hl;
 
 // ok:
-    wram->wCoins = ReverseEndian16(ReverseEndian16(wram->wCoins) - gSlotData.slotBet);
+    wram->wCoins = NativeToBigEndian16(BigEndianToNative16(wram->wCoins) - gSlotData.slotBet);
     // CALL(aWaitSFX);
     WaitSFX_Conv();
     // LD_DE(SFX_PAY_DAY);
@@ -2726,7 +2726,7 @@ uint16_t Slots_GetPayout(void){
     // LD_E_A;
     // LD_A_hl;
     // LD_addr_A(wPayout);
-    gSlotData.payout = ReverseEndian16(PayoutTable[gSlotData.slotMatched / 4]);
+    gSlotData.payout = NativeToBigEndian16(PayoutTable[gSlotData.slotMatched / 4]);
     // LD_D_A;
     // FARCALL(aStubbedTrainerRankings_AddToSlotsPayouts);
     // RET;

@@ -104,7 +104,7 @@ void MagnetTrain(void){
         // CALL(aMagnetTrain_UpdateLYOverrides);
         MagnetTrain_UpdateLYOverrides();
         // CALL(aPushLYOverrides);
-        PushLYOverrides_Conv();
+        PushLYOverrides();
         // CALL(aDelayFrame);
         DelayFrame();
         // goto loop;
@@ -577,7 +577,7 @@ void MagnetTrain_Jumptable_FirstRunThrough(void){
     // CALL(aMagnetTrain_UpdateLYOverrides);
     MagnetTrain_UpdateLYOverrides();
     // CALL(aPushLYOverrides);
-    PushLYOverrides_Conv();
+    PushLYOverrides();
     // CALL(aDelayFrame);
     DelayFrame();
 

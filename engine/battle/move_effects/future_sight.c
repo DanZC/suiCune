@@ -16,8 +16,8 @@ void BattleCommand_CheckFutureSight(void){
     // IF_Z goto ok;
     // LD_HL(wEnemyFutureSightCount);
     // LD_DE(wEnemyFutureSightDamage);
-    uint8_t* hl = (hram->hBattleTurn == 0)? &wram->wPlayerFutureSightCount: &wram->wEnemyFutureSightCount;
-    uint16_t de = (hram->hBattleTurn == 0)? wram->wPlayerFutureSightDamage: wram->wEnemyFutureSightDamage;
+    uint8_t* hl = (hram->hBattleTurn == TURN_PLAYER)? &wram->wPlayerFutureSightCount: &wram->wEnemyFutureSightCount;
+    uint16_t de = (hram->hBattleTurn == TURN_PLAYER)? wram->wPlayerFutureSightDamage: wram->wEnemyFutureSightDamage;
 
 // ok:
 
@@ -54,15 +54,15 @@ void BattleCommand_FutureSight(void){
         // LD_A(BATTLE_VARS_MOVE_ANIM);
         // CALL(aGetBattleVar);
         // LD_B_A;
-        move_t b = GetBattleVar_Conv(BATTLE_VARS_MOVE_ANIM);
+        move_t b = GetBattleVar(BATTLE_VARS_MOVE_ANIM);
         // LD_A(BATTLE_VARS_LAST_COUNTER_MOVE);
         // CALL(aGetBattleVarAddr);
         // LD_hl_B;
-        *GetBattleVarAddr_Conv(BATTLE_VARS_LAST_COUNTER_MOVE) = b;
+        *GetBattleVarAddr(BATTLE_VARS_LAST_COUNTER_MOVE) = b;
         // LD_A(BATTLE_VARS_LAST_MOVE);
         // CALL(aGetBattleVarAddr);
         // LD_hl_B;
-        *GetBattleVarAddr_Conv(BATTLE_VARS_LAST_MOVE) = b;
+        *GetBattleVarAddr(BATTLE_VARS_LAST_MOVE) = b;
     }
 
 // AlreadyChargingFutureSight:
@@ -71,7 +71,7 @@ void BattleCommand_FutureSight(void){
     // AND_A_A;
     // IF_Z goto GotFutureSightCount;
     // LD_HL(wEnemyFutureSightCount);
-    uint8_t* hl = (hram->hBattleTurn == 0)? &wram->wPlayerFutureSightCount: &wram->wEnemyFutureSightCount;
+    uint8_t* hl = (hram->hBattleTurn == TURN_PLAYER)? &wram->wPlayerFutureSightCount: &wram->wEnemyFutureSightCount;
 
 // GotFutureSightCount:
     // LD_A_hl;
@@ -81,7 +81,7 @@ void BattleCommand_FutureSight(void){
     // failed:
         // POP_BC;
         // CALL(aResetDamage);
-        ResetDamage_Conv();
+        ResetDamage();
         // CALL(aAnimateFailedMove);
         AnimateFailedMove();
         // CALL(aPrintButItFailed);
@@ -98,7 +98,7 @@ void BattleCommand_FutureSight(void){
     BattleCommand_MoveDelay();
     // LD_HL(mForesawAttackText);
     // CALL(aStdBattleTextbox);
-    StdBattleTextbox_Conv2(ForesawAttackText);
+    StdBattleTextbox(ForesawAttackText);
     // CALL(aBattleCommand_RaiseSub);
     BattleCommand_RaiseSub();
     // LD_DE(wPlayerFutureSightDamage);
@@ -106,7 +106,7 @@ void BattleCommand_FutureSight(void){
     // AND_A_A;
     // IF_Z goto StoreDamage;
     // LD_DE(wEnemyFutureSightDamage);
-    uint16_t* de = (uint16_t*)((hram->hBattleTurn == 0)? wram_ptr(wPlayerFutureSightDamage): wram_ptr(wEnemyFutureSightDamage));
+    uint16_t* de = (uint16_t*)((hram->hBattleTurn == TURN_PLAYER)? wram_ptr(wPlayerFutureSightDamage): wram_ptr(wEnemyFutureSightDamage));
 
 // StoreDamage:
     // LD_HL(wCurDamage);

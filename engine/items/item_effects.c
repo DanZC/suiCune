@@ -586,12 +586,12 @@ void PokeBallEffect(void){
             // LD_B_hl;
             // INC_HL;
             // LD_C_hl;
-            uint16_t hp = ReverseEndian16(wram->wEnemyMon.hp);
+            uint16_t hp = BigEndianToNative16(wram->wEnemyMon.hp);
             // INC_HL;
             // LD_D_hl;
             // INC_HL;
             // LD_E_hl;
-            uint16_t maxhp = ReverseEndian16(wram->wEnemyMon.maxHP);
+            uint16_t maxhp = BigEndianToNative16(wram->wEnemyMon.maxHP);
             // SLA_C;
             // RL_B;
             hp <<= 1;
@@ -773,7 +773,7 @@ void PokeBallEffect(void){
     wram->wFXAnimID = ANIM_THROW_POKE_BALL;
     // XOR_A_A;
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = 0;
+    hram->hBattleTurn = TURN_PLAYER;
     // LD_addr_A(wThrownBallWobbleCount);
     wram->wThrownBallWobbleCount = 0;
     // LD_addr_A(wNumHits);
@@ -2100,7 +2100,7 @@ void RareCandyEffect(void){
     // LD_A_hli;
     // LD_B_A;
     // LD_C_hl;
-    uint16_t maxHP = ReverseEndian16(hl->maxHP);
+    uint16_t maxHP = BigEndianToNative16(hl->maxHP);
     // PUSH_BC;
     // CALL(aUpdateStatsAfterItem);
     UpdateStatsAfterItem(hl);
@@ -2115,16 +2115,16 @@ void RareCandyEffect(void){
     // LD_A_hl;
     // SBC_A_B;
     // LD_B_A;
-    uint16_t bc = ReverseEndian16(hl->maxHP) - maxHP;
+    uint16_t bc = BigEndianToNative16(hl->maxHP) - maxHP;
     // DEC_HL;
     // LD_A_hl;
     // ADD_A_C;
     // LD_hld_A;
-    uint16_t new_hp = ReverseEndian16(hl->HP) + bc;
+    uint16_t new_hp = BigEndianToNative16(hl->HP) + bc;
     // LD_A_hl;
     // ADC_A_B;
     // LD_hl_A;
-    hl->HP = ReverseEndian16(new_hp);
+    hl->HP = NativeToBigEndian16(new_hp);
     // FARCALL(aLevelUpHappinessMod);
     LevelUpHappinessMod();
 
@@ -2294,7 +2294,7 @@ void BattlemonRestoreHealth(uint16_t hp){
     // LD_addr_A(wBattleMonHP);
     // LD_A_hld;
     // LD_addr_A(wBattleMonHP + 1);
-    wram->wBattleMon.hp = ReverseEndian16(hp);
+    wram->wBattleMon.hp = NativeToBigEndian16(hp);
     // RET;
 }
 
@@ -2554,7 +2554,7 @@ void BitterBerryEffect(void){
 
     // LD_HL(mConfusedNoMoreText);
     // CALL(aStdBattleTextbox);
-    StdBattleTextbox_Conv2(ConfusedNoMoreText);
+    StdBattleTextbox(ConfusedNoMoreText);
 
     // LD_A(0);
 
@@ -2824,12 +2824,12 @@ uint16_t ReviveHalfHP(struct PartyMon* bc){
     // SRL_D;
     // RR_E;
     // JR(mContinueRevive);
-    return ContinueRevive(bc, ReverseEndian16(bc->maxHP) / 2);
+    return ContinueRevive(bc, BigEndianToNative16(bc->maxHP) / 2);
 }
 
 uint16_t ReviveFullHP(struct PartyMon* bc){
     // CALL(aLoadHPFromBuffer1);
-    return ContinueRevive(bc, ReverseEndian16(bc->maxHP));
+    return ContinueRevive(bc, BigEndianToNative16(bc->maxHP));
 }
 
 uint16_t ContinueRevive(struct PartyMon* bc, uint16_t hp){
@@ -2839,7 +2839,7 @@ uint16_t ContinueRevive(struct PartyMon* bc, uint16_t hp){
     // INC_HL;
     // LD_hl_E;
     // JP(mLoadCurHPIntoBuffer3);
-    bc->HP = ReverseEndian16(hp);
+    bc->HP = NativeToBigEndian16(hp);
     wram->wHPBuffer3 = hp;
     return hp;
 }
@@ -2880,7 +2880,7 @@ finish:
 uint16_t RestoreHealth_Conv(struct PartyMon* bc, uint16_t amount){
     // LD_A(MON_HP + 1);
     // CALL(aGetPartyParamLocation);
-    uint16_t hp = ReverseEndian16(bc->HP);
+    uint16_t hp = BigEndianToNative16(bc->HP);
     // LD_A_hl;
     // ADD_A_E;
     // LD_hld_A;
@@ -2899,7 +2899,7 @@ uint16_t RestoreHealth_Conv(struct PartyMon* bc, uint16_t amount){
     // LD_D_H;
     // LD_E_L;
     // LD_A(MON_MAXHP + 1);
-    uint16_t maxHP = ReverseEndian16(bc->maxHP);
+    uint16_t maxHP = BigEndianToNative16(bc->maxHP);
     // CALL(aGetPartyParamLocation);
     // LD_A_de;
     // SUB_A_hl;
@@ -2915,7 +2915,7 @@ uint16_t RestoreHealth_Conv(struct PartyMon* bc, uint16_t amount){
 // full_hp:
     // CALL(aReviveFullHP);
 
-    bc->HP = ReverseEndian16(hp);
+    bc->HP = NativeToBigEndian16(hp);
 // finish:
     // RET;
     return hp;
@@ -2972,9 +2972,9 @@ void RemoveHP_Conv(struct PartyMon* bc, uint16_t amount){
 bool IsMonFainted(struct PartyMon* bc){
     // PUSH_DE;
     // CALL(aLoadMaxHPIntoBuffer1);
-    wram->wHPBuffer1 = ReverseEndian16(bc->maxHP);
+    wram->wHPBuffer1 = BigEndianToNative16(bc->maxHP);
     // CALL(aLoadCurHPIntoBuffer2);
-    wram->wHPBuffer2 = ReverseEndian16(bc->HP);
+    wram->wHPBuffer2 = BigEndianToNative16(bc->HP);
     // CALL(aLoadHPFromBuffer2);
     // LD_A_D;
     // OR_A_E;
@@ -2985,8 +2985,8 @@ bool IsMonFainted(struct PartyMon* bc){
 
 bool IsMonAtFullHealth(struct PartyMon* bc){
     // CALL(aLoadHPFromBuffer2);
-    uint16_t maxHP = ReverseEndian16(bc->maxHP);
-    uint16_t HP = ReverseEndian16(bc->HP);
+    uint16_t maxHP = BigEndianToNative16(bc->maxHP);
+    uint16_t HP = BigEndianToNative16(bc->HP);
     // LD_H_D;
     // LD_L_E;
     // CALL(aLoadHPFromBuffer1);
@@ -3387,7 +3387,7 @@ void XItemEffect(void){
     // LD_B_hl;
     // XOR_A_A;
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = 0x0;
+    hram->hBattleTurn = TURN_PLAYER;
     // LD_addr_A(wAttackMissed);
     wram->wAttackMissed = FALSE;
     // LD_addr_A(wEffectFailed);
@@ -4066,7 +4066,7 @@ void UseBallInTrainerBattle(void){
     // LD_addr_A(wBattleAnimParam);
     wram->wBattleAnimParam = 0;
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = 0;
+    hram->hBattleTurn = TURN_PLAYER;
     // LD_addr_A(wNumHits);
     wram->wNumHits = 0;
     // PREDEF(pPlayBattleAnim);

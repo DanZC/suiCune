@@ -31,7 +31,7 @@
 #include <stddef.h>
 #include "../../data/text/common.h"
 
-#define RANDY_OT_ID (01001)
+#define RANDY_OT_ID (1001)
 
 void TryAddMonToParty(void){
 //  Check if to copy wild mon or generate a new one
@@ -3528,7 +3528,7 @@ void CalcMonStats_Conv(uint16_t* stats, const uint16_t* statExp, uint16_t dvs, u
         // INC_C;
         // CALL(aCalcMonStatC);
         uint16_t stat = NativeToBigEndian16(CalcMonStatC_Conv(statExp, dvs, b, c));
-        printf("Stat[%d]: %d\n", c - STAT_HP, ReverseEndian16(stat));
+        printf("Stat[%d]: %d\n", c - STAT_HP, BigEndianToNative16(stat));
         // LDH_A_addr(hMultiplicand + 1);
         // LD_de_A;
         // INC_DE;
@@ -4423,7 +4423,7 @@ uint8_t GivePoke_Conv(uint8_t b, const char* nickname, const char* otName){
             // LD_A(HIGH(RANDY_OT_ID));
             // LD_hli_A;
             // LD_hl(LOW(RANDY_OT_ID));
-            wram->wPartyMon[wram->wCurPartyMon].mon.id = ReverseEndian16(RANDY_OT_ID);
+            wram->wPartyMon[wram->wCurPartyMon].mon.id = NativeToBigEndian16(RANDY_OT_ID);
             // POP_BC;
             // FARCALL(aSetGiftPartyMonCaughtData);
             SetGiftBoxMonCaughtData(b);

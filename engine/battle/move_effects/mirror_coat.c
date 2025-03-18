@@ -13,7 +13,7 @@ void BattleCommand_MirrorCoat(void){
 
     // LD_A(BATTLE_VARS_LAST_COUNTER_MOVE_OPP);
     // CALL(aGetBattleVar);
-    move_t b = GetBattleVar_Conv(BATTLE_VARS_LAST_COUNTER_MOVE_OPP);
+    move_t b = GetBattleVar(BATTLE_VARS_LAST_COUNTER_MOVE_OPP);
     // AND_A_A;
     // RET_Z ;
     if(b == NO_MOVE)
@@ -61,7 +61,7 @@ void BattleCommand_MirrorCoat(void){
 
 // BUG: Move should fail with all non-damaging battle actions
     // LD_HL(wCurDamage);
-    uint32_t dmg = ReverseEndian16(wram->wCurDamage);
+    uint32_t dmg = BigEndianToNative16(wram->wCurDamage);
     // LD_A_hli;
     // OR_A_hl;
     // RET_Z ;
@@ -83,7 +83,7 @@ void BattleCommand_MirrorCoat(void){
         wram->wCurDamage = 0xffff;
     }
     else {
-        wram->wCurDamage = ReverseEndian16((uint16_t)dmg);
+        wram->wCurDamage = NativeToBigEndian16((uint16_t)dmg);
     }
 // capped:
 

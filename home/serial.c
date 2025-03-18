@@ -566,18 +566,14 @@ timeout_loop:
                 goto timeout_loop;
             }
             // PUSH_HL;
-            union Register r = {.reg = wram->wLinkTimeoutFrames};
             // LD_HL(wLinkTimeoutFrames + 1);
             // LD_A_hl;
             // DEC_A;
             // LD_hld_A;
             // INC_A;
             // IF_NZ goto no_rollover;
-            if(r.hi-- == 0) {
-                r.lo--;
-            }
             // DEC_hl;
-            wram->wLinkTimeoutFrames = r.reg;
+            wram->wLinkTimeoutFrames = NativeToBigEndian16(BigEndianToNative16(wram->wLinkTimeoutFrames) - 1);
 
 
         // no_rollover:
@@ -602,16 +598,15 @@ timeout_loop:
         Serial_ExchangeByte_ShortDelay();
         // PUSH_HL;
         // LD_HL(wLinkTimeoutFrames + 1);
-        union Register r2 = {.reg = wram->wLinkTimeoutFrames};
         // INC_hl;
         // IF_NZ goto no_rollover_up;
-        if(++r2.hi == 0) {
+        // if(++r2.hi == 0) {
             // DEC_HL;
             // INC_hl;
-            r2.lo++;
-        }
+            // r2.lo++;
+        // }
 
-        wram->wLinkTimeoutFrames = r2.reg;
+        wram->wLinkTimeoutFrames = NativeToBigEndian16(BigEndianToNative16(wram->wLinkTimeoutFrames) + 1);
 
     // no_rollover_up:
         // POP_HL;

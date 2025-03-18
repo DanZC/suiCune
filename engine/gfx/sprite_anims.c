@@ -269,29 +269,29 @@ static void AnimSeq_PartyMonSwitch_Conv(struct SpriteAnim* bc){
     // LD_hl(8 * 3);
     bc->xCoord = 8 * 3;
 
-    union Register de;
+    uint8_t d, e;
     // LD_HL(SPRITEANIMSTRUCT_VAR1);
     // ADD_HL_BC;
     // LD_A_hl;
     // LD_D_A;
-    de.hi = bc->var1++;
+    d = bc->var1++;
     // INC_hl;
     // AND_A(0xf);
     // RET_NZ ;
-    if((de.hi & 0xf) != 0)
+    if((d & 0xf) != 0)
         return;
 
     // LD_HL(SPRITEANIMSTRUCT_VAR2);
     // ADD_HL_BC;
     // LD_E_hl;
-    de.lo = bc->var2;
+    e = bc->var2;
 
     // LD_HL(SPRITEANIMSTRUCT_YOFFSET);
     // ADD_HL_BC;
     // LD_A_D;
     // AND_A(0x10);  // bit 4
     // IF_Z goto load_zero;
-    if((de.hi & 0x10) == 0) {
+    if((d & 0x10) == 0) {
     // load_zero:
         // XOR_A_A;
         // LD_hl_A;
@@ -302,7 +302,7 @@ static void AnimSeq_PartyMonSwitch_Conv(struct SpriteAnim* bc){
     // LD_A_E;
     // AND_A_A;
     // IF_Z goto load_minus_two;
-    if(de.lo == 0) {
+    if(e == 0) {
     // load_minus_two:
         // LD_A(-2);
         // LD_hl_A;
@@ -312,7 +312,7 @@ static void AnimSeq_PartyMonSwitch_Conv(struct SpriteAnim* bc){
     }
     // CP_A(0x1);
     // IF_Z goto load_minus_one;
-    if(de.lo == 1) {
+    if(e == 1) {
     // load_minus_one:
         // LD_A(-1);
         // LD_hl_A;
@@ -848,7 +848,7 @@ static void AnimSeq_GSGameFreakLogoSparkle_Conv(struct SpriteAnim* bc){
     // LD_E_hl;
     // INC_HL;
     // LD_D_hl;
-    union Register de = {.lo = bc->var1, .hi = bc->var2};
+    uint16_t de = bc->var1 | (bc->var2 << 8);
 
     // LD_HL(SPRITEANIMSTRUCT_VAR3);
     // ADD_HL_BC;
@@ -858,35 +858,35 @@ static void AnimSeq_GSGameFreakLogoSparkle_Conv(struct SpriteAnim* bc){
     // ADD_HL_DE;
     // LD_E_L;
     // LD_D_H;
-    de.reg += (union Register){.lo=bc->var3,.hi=bc->var4}.reg;
+    de += (uint16_t)(bc->var3 | (bc->var4 << 8));
 
     // LD_HL(SPRITEANIMSTRUCT_VAR3);
     // ADD_HL_BC;
     // LD_hl_E;
     // INC_HL;
     // LD_hl_D;
-    bc->var3 = de.lo;
-    bc->var4 = de.hi;
+    bc->var3 = LOW(de);
+    bc->var4 = HIGH(de);
 
     // LD_HL(SPRITEANIMSTRUCT_VAR1);
     // ADD_HL_BC;
     // LD_A_hli;
     // LD_H_hl;
     // LD_L_A;
-    union Register hl = {.lo = bc->var1, .hi = bc->var2};
+    uint16_t hl = bc->var1 | (bc->var2 << 8);
     // LD_DE(-0x10);
     // ADD_HL_DE;
     // LD_E_L;
     // LD_D_H;
-    de.reg = hl.reg + -0x10;
+    de = hl + -0x10;
 
     // LD_HL(SPRITEANIMSTRUCT_VAR1);
     // ADD_HL_BC;
     // LD_hl_E;
     // INC_HL;
     // LD_hl_D;
-    bc->var1 = de.lo;
-    bc->var2 = de.hi;
+    bc->var1 = LOW(de);
+    bc->var2 = HIGH(de);
 
     // LD_HL(SPRITEANIMSTRUCT_JUMPTABLE_INDEX);
     // ADD_HL_BC;
@@ -1557,27 +1557,26 @@ void AnimSeq_CutLeaves(void){
 }
 
 static void AnimSeq_CutLeaves_Conv(struct SpriteAnim* bc){
-    union Register de;
+    uint16_t de;
     // LD_HL(SPRITEANIMSTRUCT_VAR2);
     // ADD_HL_BC;
     // LD_E_hl;
-    de.lo = bc->var2;
     // INC_HL;
     // LD_D_hl;
-    de.hi = bc->var3;
+    de = (bc->var3 << 8) | bc->var2;
     // LD_HL(0x80);
     // ADD_HL_DE;
     // LD_E_L;
     // LD_D_H;
-    de.reg += 0x80;
+    de += 0x80;
 
     // LD_HL(SPRITEANIMSTRUCT_VAR2);
     // ADD_HL_BC;
     // LD_hl_E;
-    bc->var2 = de.lo;
+    bc->var2 = LOW(de);
     // INC_HL;
     // LD_hl_D;
-    bc->var3 = de.hi;
+    bc->var3 = HIGH(de);
 
     // LD_HL(SPRITEANIMSTRUCT_VAR1);
     // ADD_HL_BC;

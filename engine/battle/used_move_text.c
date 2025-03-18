@@ -9,7 +9,7 @@
 void DisplayUsedMoveText(void){
     // LD_HL(mUsedMoveText);
     // CALL(aBattleTextbox);
-    BattleTextbox_Conv2(UsedMoveText);
+    BattleTextbox(UsedMoveText);
     // JP(mWaitBGMap);
     return WaitBGMap_Conv();
 }
@@ -23,7 +23,7 @@ void UsedMoveText_Function(struct TextCmdState* state) {
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_NZ goto start;
-    if(hram->hBattleTurn == 0) {
+    if(hram->hBattleTurn == TURN_PLAYER) {
         // LD_A_addr(wPlayerMoveStruct + MOVE_ANIM);
         // CALL(aUpdateUsedMoves);
         UpdateUsedMoves_Conv(wram->wPlayerMoveStruct.animation);
@@ -34,16 +34,16 @@ void UsedMoveText_Function(struct TextCmdState* state) {
     // CALL(aGetBattleVarAddr);
     // LD_D_H;
     // LD_E_L;
-    uint8_t* de = GetBattleVarAddr_Conv(BATTLE_VARS_LAST_MOVE);
+    uint8_t* de = GetBattleVarAddr(BATTLE_VARS_LAST_MOVE);
 
     // LD_A(BATTLE_VARS_LAST_COUNTER_MOVE);
     // CALL(aGetBattleVarAddr);
-    uint8_t* hl = GetBattleVarAddr_Conv(BATTLE_VARS_LAST_COUNTER_MOVE);
+    uint8_t* hl = GetBattleVarAddr(BATTLE_VARS_LAST_COUNTER_MOVE);
 
     // LD_A(BATTLE_VARS_MOVE_ANIM);
     // CALL(aGetBattleVar);
     // LD_addr_A(wMoveGrammar);
-    wram->wMoveGrammar = GetBattleVar_Conv(BATTLE_VARS_MOVE_ANIM);
+    wram->wMoveGrammar = GetBattleVar(BATTLE_VARS_MOVE_ANIM);
 
     // PUSH_HL;
     // FARCALL(aCheckUserIsCharging);

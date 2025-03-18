@@ -13,11 +13,11 @@ void BattleCommand_BeatUp(void){
 //  beatup
 
     // CALL(aResetDamage);
-    ResetDamage_Conv();
+    ResetDamage();
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // JP_NZ (mBattleCommand_BeatUp_enemy_beats_up);
-    if(hram->hBattleTurn == 0) {
+    if(hram->hBattleTurn == TURN_PLAYER) {
 
         // LD_A_addr(wPlayerSubStatus3);
         // BIT_A(SUBSTATUS_IN_LOOP);
@@ -97,7 +97,7 @@ void BattleCommand_BeatUp(void){
         wram->wBeatUpHitAtLeastOnce = 0x1;
         // LD_HL(mBeatUpAttackText);
         // CALL(aStdBattleTextbox);
-        StdBattleTextbox_Conv2(BeatUpAttackText);
+        StdBattleTextbox(BeatUpAttackText);
 
         // LD_A_addr(wEnemyMonSpecies);
         // LD_addr_A(wCurSpecies);
@@ -173,7 +173,7 @@ void BattleCommand_BeatUp(void){
             GetPokemonName_Conv2(wram->wEnemyMon.species);
             // LD_HL(mBeatUpAttackText);
             // CALL(aStdBattleTextbox);
-            StdBattleTextbox_Conv2(BeatUpAttackText);
+            StdBattleTextbox(BeatUpAttackText);
             // JP(mEnemyAttackDamage);
             return EnemyAttackDamage(&gBattleCmdState);
         }
@@ -249,7 +249,7 @@ void BattleCommand_BeatUp(void){
     // finish_beatup:
         // LD_HL(mBeatUpAttackText);
         // CALL(aStdBattleTextbox);
-        StdBattleTextbox_Conv2(BeatUpAttackText);
+        StdBattleTextbox(BeatUpAttackText);
 
         // LD_A_addr(wBattleMonSpecies);
         // LD_addr_A(wCurSpecies);
@@ -323,7 +323,7 @@ struct PartyMon* GetBeatupMonLocation(void) {
     // LD_HL(wPartyMon1Species);
     // IF_Z goto got_species;
     // LD_HL(wOTPartyMon1Species);
-    struct PartyMon* mon = (hram->hBattleTurn == 0)? wram->wPartyMon: wram->wOTPartyMon;
+    struct PartyMon* mon = (hram->hBattleTurn == TURN_PLAYER)? wram->wPartyMon: wram->wOTPartyMon;
 
 // got_species:
     // LD_A_addr(wCurBeatUpPartyMon);

@@ -17,13 +17,13 @@ void BattleCommand_Encore(void){
     // IF_Z goto ok;
     // LD_HL(wBattleMonMoves);
     // LD_DE(wPlayerEncoreCount);
-    struct BattleMon* mon = (hram->hBattleTurn == 0)? &wram->wEnemyMon: &wram->wBattleMon;
-    uint8_t* de = (hram->hBattleTurn == 0)? &wram->wEnemyEncoreCount: &wram->wPlayerEncoreCount;
+    struct BattleMon* mon = (hram->hBattleTurn == TURN_PLAYER)? &wram->wEnemyMon: &wram->wBattleMon;
+    uint8_t* de = (hram->hBattleTurn == TURN_PLAYER)? &wram->wEnemyEncoreCount: &wram->wPlayerEncoreCount;
 
 // ok:
     // LD_A(BATTLE_VARS_LAST_MOVE_OPP);
     // CALL(aGetBattleVar);
-    move_t b = GetBattleVar_Conv(BATTLE_VARS_LAST_MOVE_OPP);
+    move_t b = GetBattleVar(BATTLE_VARS_LAST_MOVE_OPP);
     // AND_A_A;
     // JP_Z (mBattleCommand_Encore_failed);
     // CP_A(STRUGGLE);
@@ -61,7 +61,7 @@ void BattleCommand_Encore(void){
         goto failed;
     // LD_A(BATTLE_VARS_SUBSTATUS5_OPP);
     // CALL(aGetBattleVarAddr);
-    uint8_t* ss5 = GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS5_OPP);
+    uint8_t* ss5 = GetBattleVarAddr(BATTLE_VARS_SUBSTATUS5_OPP);
     // BIT_hl(SUBSTATUS_ENCORED);
     // JP_NZ (mBattleCommand_Encore_failed);
     if(bit_test(*ss5, SUBSTATUS_ENCORED))
@@ -81,7 +81,7 @@ void BattleCommand_Encore(void){
         // LDH_A_addr(hBattleTurn);
         // AND_A_A;
         // IF_Z goto force_last_enemy_move;
-        if(hram->hBattleTurn != 0) {
+        if(hram->hBattleTurn != TURN_PLAYER) {
             // PUSH_HL;
             // LD_A_addr(wLastPlayerMove);
             // LD_B_A;
@@ -182,7 +182,7 @@ void BattleCommand_Encore(void){
     AnimateCurrentMove();
     // LD_HL(mGotAnEncoreText);
     // JP(mStdBattleTextbox);
-    return StdBattleTextbox_Conv2(GotAnEncoreText);
+    return StdBattleTextbox(GotAnEncoreText);
 
 
 failed:

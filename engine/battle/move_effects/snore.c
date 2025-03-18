@@ -10,9 +10,9 @@ void BattleCommand_Snore(void){
     // CALL(aGetBattleVar);
     // AND_A(SLP);
     // RET_NZ ;
-    if((GetBattleVar_Conv(BATTLE_VARS_STATUS) & SLP) == 0) {
+    if((GetBattleVar(BATTLE_VARS_STATUS) & SLP) == 0) {
         // CALL(aResetDamage);
-        ResetDamage_Conv();
+        ResetDamage();
         // LD_A(0x1);
         // LD_addr_A(wAttackMissed);
         wram->wAttackMissed = TRUE;

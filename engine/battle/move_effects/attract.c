@@ -20,7 +20,7 @@ void BattleCommand_Attract(void){
     && !CheckHiddenOpponent_Conv()) {
         // LD_A(BATTLE_VARS_SUBSTATUS1_OPP);
         // CALL(aGetBattleVarAddr);
-        uint8_t* hl = GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS1_OPP);
+        uint8_t* hl = GetBattleVarAddr(BATTLE_VARS_SUBSTATUS1_OPP);
         // BIT_hl(SUBSTATUS_IN_LOVE);
         // IF_NZ goto failed;
         if(!bit_test(*hl, SUBSTATUS_IN_LOVE)) {
@@ -32,7 +32,7 @@ void BattleCommand_Attract(void){
         //  'fell in love!'
             // LD_HL(mFellInLoveText);
             // JP(mStdBattleTextbox);
-            return StdBattleTextbox_Conv2(FellInLoveText);
+            return StdBattleTextbox(FellInLoveText);
         }
     }
 

@@ -11,7 +11,7 @@ uint8_t HiddenPowerDamage(void){
     // AND_A_A;
     // IF_Z goto got_dvs;
     // LD_HL(wEnemyMonDVs);
-    uint16_t dvs = (hram->hBattleTurn == 0)? wram->wBattleMon.dvs: wram->wEnemyMon.dvs;
+    uint16_t dvs = (hram->hBattleTurn == TURN_PLAYER)? wram->wBattleMon.dvs: wram->wEnemyMon.dvs;
 
 // got_dvs:
 
@@ -120,7 +120,7 @@ uint8_t HiddenPowerDamage(void){
     // CALL(aGetBattleVarAddr);
     // POP_AF;
     // LD_hl_A;
-    *GetBattleVarAddr_Conv(BATTLE_VARS_MOVE_TYPE) = a;
+    *GetBattleVarAddr(BATTLE_VARS_MOVE_TYPE) = a;
 
 //  Get the rest of the damage formula variables
 //  based on the new type, but keep base power.

@@ -112,7 +112,7 @@ static u8_flag_s DoPoisonStep_DamageMonIfPoisoned(void) {
     // LD_hl_C;
     // DEC_HL;
     // LD_hl_B;
-    wram->wPartyMon[wram->wCurPartyMon].HP = ReverseEndian16(ReverseEndian16(wram->wPartyMon[wram->wCurPartyMon].HP) - 1);
+    wram->wPartyMon[wram->wCurPartyMon].HP = NativeToBigEndian16(BigEndianToNative16(wram->wPartyMon[wram->wCurPartyMon].HP) - 1);
 
 //  check if mon has fainted as a result of poison damage
     // LD_A_B;

@@ -14,14 +14,14 @@ void BattleCommand_CheckCurl(void){
     // AND_A_A;
     // IF_Z goto ok;
     // LD_DE(wEnemyRolloutCount);
-    uint8_t* de = (hram->hBattleTurn == 0)? &wram->wPlayerRolloutCount: &wram->wEnemyRolloutCount;
+    uint8_t* de = (hram->hBattleTurn == TURN_PLAYER)? &wram->wPlayerRolloutCount: &wram->wEnemyRolloutCount;
 
 // ok:
     // LD_A(BATTLE_VARS_SUBSTATUS1);
     // CALL(aGetBattleVar);
     // BIT_A(SUBSTATUS_ROLLOUT);
     // IF_Z goto reset;
-    if(bit_test(GetBattleVar_Conv(BATTLE_VARS_SUBSTATUS1), SUBSTATUS_ROLLOUT)) {
+    if(bit_test(GetBattleVar(BATTLE_VARS_SUBSTATUS1), SUBSTATUS_ROLLOUT)) {
 
         // LD_B(doturn_command);
         // JP(mSkipToBattleCommand);
@@ -42,7 +42,7 @@ void BattleCommand_RolloutPower(void){
     // CALL(aGetBattleVar);
     // AND_A(SLP);
     // RET_NZ ;
-    if(GetBattleVar_Conv(BATTLE_VARS_STATUS) & SLP)
+    if(GetBattleVar(BATTLE_VARS_STATUS) & SLP)
         return;
 
     // LD_HL(wPlayerRolloutCount);
@@ -50,7 +50,7 @@ void BattleCommand_RolloutPower(void){
     // AND_A_A;
     // IF_Z goto got_rollout_count;
     // LD_HL(wEnemyRolloutCount);
-    uint8_t* hl = (hram->hBattleTurn == 0)? &wram->wPlayerRolloutCount: &wram->wEnemyRolloutCount;
+    uint8_t* hl = (hram->hBattleTurn == TURN_PLAYER)? &wram->wPlayerRolloutCount: &wram->wEnemyRolloutCount;
 
 // got_rollout_count:
     // LD_A_hl;
@@ -71,7 +71,7 @@ void BattleCommand_RolloutPower(void){
         // LD_A(BATTLE_VARS_SUBSTATUS1);
         // CALL(aGetBattleVarAddr);
         // RES_hl(6);
-        bit_reset(*GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS1), SUBSTATUS_ROLLOUT);
+        bit_reset(*GetBattleVarAddr(BATTLE_VARS_SUBSTATUS1), SUBSTATUS_ROLLOUT);
         // RET;
         return;
     }
@@ -88,7 +88,7 @@ void BattleCommand_RolloutPower(void){
         // LD_A(BATTLE_VARS_SUBSTATUS1);
         // CALL(aGetBattleVarAddr);
         // RES_hl(SUBSTATUS_ROLLOUT);
-        bit_reset(*GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS1), SUBSTATUS_ROLLOUT);
+        bit_reset(*GetBattleVarAddr(BATTLE_VARS_SUBSTATUS1), SUBSTATUS_ROLLOUT);
         // goto done_with_substatus_flag;
     }
     else {
@@ -96,7 +96,7 @@ void BattleCommand_RolloutPower(void){
         // LD_A(BATTLE_VARS_SUBSTATUS1);
         // CALL(aGetBattleVarAddr);
         // SET_hl(SUBSTATUS_ROLLOUT);
-        bit_set(*GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS1), SUBSTATUS_ROLLOUT);
+        bit_set(*GetBattleVarAddr(BATTLE_VARS_SUBSTATUS1), SUBSTATUS_ROLLOUT);
     }
 
 // done_with_substatus_flag:
@@ -104,13 +104,13 @@ void BattleCommand_RolloutPower(void){
     // CALL(aGetBattleVar);
     // BIT_A(SUBSTATUS_CURLED);
     // IF_Z goto not_curled;
-    if(bit_test(GetBattleVar_Conv(BATTLE_VARS_SUBSTATUS2), SUBSTATUS_CURLED)) {
+    if(bit_test(GetBattleVar(BATTLE_VARS_SUBSTATUS2), SUBSTATUS_CURLED)) {
         // INC_B;
         ++b;
     }
 
 // not_curled:
-    uint32_t dmg = ReverseEndian16(wram->wCurDamage);
+    uint32_t dmg = BigEndianToNative16(wram->wCurDamage);
 
     while(--b != 0) {
     // loop:
@@ -134,6 +134,6 @@ void BattleCommand_RolloutPower(void){
 
 
 // done_damage:
-    wram->wCurDamage = ReverseEndian16((uint16_t)dmg);
+    wram->wCurDamage = NativeToBigEndian16((uint16_t)dmg);
     // RET;
 }

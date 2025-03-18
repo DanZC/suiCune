@@ -1,16 +1,6 @@
 
 // Utility types
 
-union Register
-{
-    uint16_t reg;
-    struct
-    {
-        uint8_t lo;
-        uint8_t hi;
-    };
-};
-
 typedef struct { uint8_t a; bool flag; } u8_flag_s;
 
 #define u8_flag(_u8, _flag) (u8_flag_s){.a = _u8, .flag = _flag}

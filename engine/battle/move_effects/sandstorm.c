@@ -28,5 +28,5 @@ void BattleCommand_StartSandstorm(void){
     AnimateCurrentMove();
     // LD_HL(mSandstormBrewedText);
     // JP(mStdBattleTextbox);
-    return StdBattleTextbox_Conv2(SandstormBrewedText);
+    return StdBattleTextbox(SandstormBrewedText);
 }

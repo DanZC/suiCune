@@ -21,12 +21,12 @@ void BattleCommand_Spite(void){
     // AND_A_A;
     // IF_Z goto got_moves;
     // LD_HL(wBattleMonMoves);
-    struct BattleMon* mon = (hram->hBattleTurn == 0)? &wram->wEnemyMon: &wram->wBattleMon;
+    struct BattleMon* mon = (hram->hBattleTurn == TURN_PLAYER)? &wram->wEnemyMon: &wram->wBattleMon;
 
 // got_moves:
     // LD_A(BATTLE_VARS_LAST_COUNTER_MOVE_OPP);
     // CALL(aGetBattleVar);
-    move_t move = GetBattleVar_Conv(BATTLE_VARS_LAST_COUNTER_MOVE_OPP);
+    move_t move = GetBattleVar(BATTLE_VARS_LAST_COUNTER_MOVE_OPP);
     // AND_A_A;
     // IF_Z goto failed;
     // CP_A(STRUGGLE);
@@ -84,7 +84,7 @@ void BattleCommand_Spite(void){
     // PUSH_AF;
     // LD_A(MON_PP);
     // CALL(aOpponentPartyAttr);
-    uint8_t* pp = OpponentPartyMon_Conv()->mon.PP;
+    uint8_t* pp = OpponentPartyMon()->mon.PP;
     // LD_D_B;
     // POP_AF;
     // POP_BC;
@@ -95,14 +95,14 @@ void BattleCommand_Spite(void){
     // CALL(aGetBattleVar);
     // BIT_A(SUBSTATUS_TRANSFORMED);
     // IF_NZ goto transformed;
-    if(!bit_test(GetBattleVar_Conv(BATTLE_VARS_SUBSTATUS5_OPP), SUBSTATUS_TRANSFORMED)) {
+    if(!bit_test(GetBattleVar(BATTLE_VARS_SUBSTATUS5_OPP), SUBSTATUS_TRANSFORMED)) {
         // LDH_A_addr(hBattleTurn);
         // AND_A_A;
         // IF_NZ goto not_wildmon;
         // LD_A_addr(wBattleMode);
         // DEC_A;
         // IF_NZ goto not_wildmon;
-        if(hram->hBattleTurn == 0 && wram->wBattleMode == WILD_BATTLE) {
+        if(hram->hBattleTurn == TURN_PLAYER && wram->wBattleMode == WILD_BATTLE) {
             // LD_HL(wWildMonPP);
             // ADD_HL_BC;
             pp = wram->wWildMonPP;
@@ -123,7 +123,7 @@ void BattleCommand_Spite(void){
     wram->wTextDecimalByte = b;
     // LD_HL(mSpiteEffectText);
     // JP(mStdBattleTextbox);
-    return StdBattleTextbox_Conv2(SpiteEffectText);
+    return StdBattleTextbox(SpiteEffectText);
 
 failed:
     // JP(mPrintDidntAffect2);

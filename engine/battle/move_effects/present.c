@@ -69,7 +69,7 @@ void BattleCommand_Present(void){
             // AND_A_A;
             // IF_Z goto got_hp_fn_pointer;
             // LD_HL(mAICheckEnemyMaxHP);
-            bool (*fn)(void) = (hram->hBattleTurn == 0)? AICheckPlayerMaxHP_Conv: AICheckEnemyMaxHP_Conv;
+            bool (*fn)(void) = (hram->hBattleTurn == TURN_PLAYER)? AICheckPlayerMaxHP_Conv: AICheckEnemyMaxHP_Conv;
 
         // got_hp_fn_pointer:
             // LD_A(BANK(aAICheckPlayerMaxHP));  // aka BANK(AICheckEnemyMaxHP)
@@ -89,11 +89,11 @@ void BattleCommand_Present(void){
                 BattleCommand_SwitchTurn();
                 // LD_HL(mRegainedHealthText);
                 // CALL(aStdBattleTextbox);
-                StdBattleTextbox_Conv2(RegainedHealthText);
+                StdBattleTextbox(RegainedHealthText);
                 // CALL(aBattleCommand_SwitchTurn);
                 BattleCommand_SwitchTurn();
                 // CALL(aUpdateOpponentInParty);
-                UpdateOpponentInParty_Conv();
+                UpdateOpponentInParty();
                 // goto do_animation;
             }
             else {
@@ -107,7 +107,7 @@ void BattleCommand_Present(void){
                     AnimateFailedMove();
                     // LD_HL(mPresentFailedText);
                     // CALL(aStdBattleTextbox);
-                    StdBattleTextbox_Conv2(PresentFailedText);
+                    StdBattleTextbox(PresentFailedText);
                 }
             }
         // do_animation:

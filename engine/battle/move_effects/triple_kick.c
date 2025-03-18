@@ -13,7 +13,7 @@ void BattleCommand_TripleKick(void){
     // LD_E_A;
     // LD_A_hli;
     // LD_D_A;
-    uint16_t dmg = ReverseEndian16(wram->wCurDamage);
+    uint16_t dmg = BigEndianToNative16(wram->wCurDamage);
 
     uint32_t temp = dmg;
     do {
@@ -31,13 +31,13 @@ void BattleCommand_TripleKick(void){
         temp += dmg;
 
     //  No overflow.
-        wram->wCurDamage = ReverseEndian16((uint16_t)temp);
+        wram->wCurDamage = NativeToBigEndian16((uint16_t)temp);
         // IF_NC goto next_kick;
     } while(!(temp & 0xff00));
     // LD_A(0xff);
     // LD_hld_A;
     // LD_hl_A;
-    wram->wCurDamage = ReverseEndian16(0xffff);
+    wram->wCurDamage = NativeToBigEndian16(0xffff);
     // RET;
 
 }

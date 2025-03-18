@@ -14,8 +14,8 @@ void BattleCommand_Safeguard(void){
     // IF_Z goto ok;
     // LD_HL(wEnemyScreens);
     // LD_DE(wEnemySafeguardCount);
-    uint8_t* screens = (hram->hBattleTurn == 0)? &wram->wPlayerScreens: &wram->wEnemyScreens;
-    uint8_t* safeguard_cnt = (hram->hBattleTurn == 0)? &wram->wPlayerSafeguardCount: &wram->wEnemySafeguardCount;
+    uint8_t* screens = (hram->hBattleTurn == TURN_PLAYER)? &wram->wPlayerScreens: &wram->wEnemyScreens;
+    uint8_t* safeguard_cnt = (hram->hBattleTurn == TURN_PLAYER)? &wram->wPlayerSafeguardCount: &wram->wEnemySafeguardCount;
 
 // ok:
     // BIT_hl(SCREENS_SAFEGUARD);
@@ -37,6 +37,6 @@ void BattleCommand_Safeguard(void){
     AnimateCurrentMove();
     // LD_HL(mCoveredByVeilText);
     // JP(mStdBattleTextbox);
-    return StdBattleTextbox_Conv2(CoveredByVeilText);
+    return StdBattleTextbox(CoveredByVeilText);
 
 }

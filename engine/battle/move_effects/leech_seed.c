@@ -19,7 +19,7 @@ void BattleCommand_LeechSeed(void){
     // AND_A_A;
     // IF_Z goto ok;
     // LD_DE(wBattleMonType1);
-    uint8_t* types = (hram->hBattleTurn == 0)? wram->wEnemyMon.types: wram->wBattleMon.types;
+    uint8_t* types = (hram->hBattleTurn == TURN_PLAYER)? wram->wEnemyMon.types: wram->wBattleMon.types;
 
 // ok:
 
@@ -40,7 +40,7 @@ void BattleCommand_LeechSeed(void){
 
     // LD_A(BATTLE_VARS_SUBSTATUS4_OPP);
     // CALL(aGetBattleVarAddr);
-    uint8_t* ss4 = GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS4_OPP);
+    uint8_t* ss4 = GetBattleVarAddr(BATTLE_VARS_SUBSTATUS4_OPP);
     // BIT_hl(SUBSTATUS_LEECH_SEED);
     // IF_NZ goto evaded;
     if(bit_test(*ss4, SUBSTATUS_LEECH_SEED)) {
@@ -49,7 +49,7 @@ void BattleCommand_LeechSeed(void){
         AnimateFailedMove();
         // LD_HL(mEvadedText);
         // JP(mStdBattleTextbox);
-        return StdBattleTextbox_Conv2(EvadedText);
+        return StdBattleTextbox(EvadedText);
     }
     // SET_hl(SUBSTATUS_LEECH_SEED);
     bit_set(*ss4, SUBSTATUS_LEECH_SEED);
@@ -57,6 +57,6 @@ void BattleCommand_LeechSeed(void){
     AnimateCurrentMove();
     // LD_HL(mWasSeededText);
     // JP(mStdBattleTextbox);
-    return StdBattleTextbox_Conv2(WasSeededText);
+    return StdBattleTextbox(WasSeededText);
 
 }

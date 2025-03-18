@@ -17,8 +17,8 @@ void BattleCommand_PsychUp(void){
     // LD_H_D;
     // LD_L_E;
     // POP_DE;
-    uint8_t* hl = (hram->hBattleTurn == 0)? wram->wEnemyStatLevels: wram->wPlayerStatLevels;
-    uint8_t* de = (hram->hBattleTurn == 0)? wram->wPlayerStatLevels: wram->wEnemyStatLevels;
+    uint8_t* hl = (hram->hBattleTurn == TURN_PLAYER)? wram->wEnemyStatLevels: wram->wPlayerStatLevels;
+    uint8_t* de = (hram->hBattleTurn == TURN_PLAYER)? wram->wPlayerStatLevels: wram->wEnemyStatLevels;
 
 // pointers_correct:
     // PUSH_HL;
@@ -60,7 +60,7 @@ void BattleCommand_PsychUp(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_NZ goto calc_enemy_stats;
-    if(hram->hBattleTurn == 0) {
+    if(hram->hBattleTurn == TURN_PLAYER) {
         // CALL(aCalcPlayerStats);
         CalcPlayerStats();
         // goto merge;
@@ -76,5 +76,5 @@ void BattleCommand_PsychUp(void){
     AnimateCurrentMove();
     // LD_HL(mCopiedStatsText);
     // JP(mStdBattleTextbox);
-    return StdBattleTextbox_Conv2(CopiedStatsText);
+    return StdBattleTextbox(CopiedStatsText);
 }

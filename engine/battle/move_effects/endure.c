@@ -18,13 +18,13 @@ void BattleCommand_Endure(void){
     // LD_A(BATTLE_VARS_SUBSTATUS1);
     // CALL(aGetBattleVarAddr);
     // SET_hl(SUBSTATUS_ENDURE);
-    bit_set(*GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS1), SUBSTATUS_ENDURE);
+    bit_set(*GetBattleVarAddr(BATTLE_VARS_SUBSTATUS1), SUBSTATUS_ENDURE);
 
     // CALL(aAnimateCurrentMove);
     AnimateCurrentMove();
 
     // LD_HL(mBracedItselfText);
     // JP(mStdBattleTextbox);
-    return StdBattleTextbox_Conv2(BracedItselfText);
+    return StdBattleTextbox(BracedItselfText);
 
 }

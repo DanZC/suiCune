@@ -123,19 +123,20 @@ void Magikarp_LoadFeetInchesChars(void){
 void PrintMagikarpLength(void){
     // CALL(aMagikarp_LoadFeetInchesChars);
     Magikarp_LoadFeetInchesChars();
-    union Register de = {.reg = wram->wMagikarpLength};
+    uint8_t e = LOW(wram->wMagikarpLength);
+    uint8_t d = HIGH(wram->wMagikarpLength);
     // LD_HL(wStringBuffer1);
     // LD_DE(wMagikarpLength);
     // LD_BC((PRINTNUM_LEFTALIGN | 1 << 8) | 2);
     // CALL(aPrintNum);
-    uint8_t* hl = PrintNum_Conv2(wram->wStringBuffer1, &de.lo, PRINTNUM_LEFTALIGN | 1, 2);
+    uint8_t* hl = PrintNum_Conv2(wram->wStringBuffer1, &e, PRINTNUM_LEFTALIGN | 1, 2);
     // LD_hl(0x6e);
     // INC_HL;
     *(hl++) = CHAR_FEET;
     // LD_DE(wMagikarpLength + 1);
     // LD_BC((PRINTNUM_LEFTALIGN | 1 << 8) | 2);
     // CALL(aPrintNum);
-    hl = PrintNum_Conv2(hl, &de.hi, PRINTNUM_LEFTALIGN | 1, 2);
+    hl = PrintNum_Conv2(hl, &d, PRINTNUM_LEFTALIGN | 1, 2);
     // LD_hl(0x6f);
     // INC_HL;
     *(hl++) = CHAR_INCHES;
@@ -425,33 +426,37 @@ void CalcMagikarpLength_Conv(uint16_t de, uint16_t bc){
     // LD_A_hli;
     // LD_B_A;
     // LD_C_hl;
-    union Register id = {.reg = NativeToBigEndian16(bc)};
+    uint16_t id = NativeToBigEndian16(bc);
+    uint8_t id_hi = HIGH(id);
+    uint8_t id_lo = LOW(id);
     // RRC_B;
     // RRC_C;
     uint8_t carry;
-    id.hi = RotateRightCarry8(id.hi, &carry);
-    id.lo = RotateRightCarry8(id.lo, &carry);
+    id_hi = RotateRightCarry8(id_hi, &carry);
+    id_lo = RotateRightCarry8(id_lo, &carry);
 
 // dv
     // LD_A_de;
-    union Register dv = {.reg = NativeToBigEndian16(de)};
+    uint16_t dv = NativeToBigEndian16(de);
+    uint8_t dv_hi = HIGH(dv);
+    uint8_t dv_lo = LOW(dv);
     // INC_DE;
     // RRCA;
     // RRCA;
-    dv.hi = RotateRightC8(dv.hi);
-    dv.hi = RotateRightC8(dv.hi);
+    dv_hi = RotateRightC8(dv_hi);
+    dv_hi = RotateRightC8(dv_hi);
     // XOR_A_B;
     // LD_B_A;
-    id.hi = (dv.hi ^ id.hi);
+    id_hi = (dv_hi ^ id_hi);
 
     // LD_A_de;
     // RRCA;
     // RRCA;
-    dv.lo = RotateRightC8(dv.lo);
-    dv.lo = RotateRightC8(dv.lo);
+    dv_lo = RotateRightC8(dv_lo);
+    dv_lo = RotateRightC8(dv_lo);
     // XOR_A_C;
     // LD_C_A;
-    id.lo = (dv.lo ^ id.lo);
+    id_lo = (dv_lo ^ id_lo);
 
 // if bc < 10:
 //     de = bc + 190
@@ -463,13 +468,14 @@ void CalcMagikarpLength_Conv(uint16_t de, uint16_t bc){
     // LD_A_C;
     // CP_A(10);
     // IF_NC goto no;
-    if(id.reg < 10) {
+    id = (id_hi << 8) | id_lo;
+    if(id < 10) {
 
         // LD_HL(190);
         // ADD_HL_BC;
         // LD_D_H;
         // LD_E_L;
-        dv.reg = id.reg + 190;
+        dv = id + 190;
         // goto done;
     }
 
@@ -489,7 +495,7 @@ void CalcMagikarpLength_Conv(uint16_t de, uint16_t bc){
         // LD_D_A;
         // CALL(aCalcMagikarpLength_BCLessThanDE);
         // IF_NC goto next;
-        if(!CalcMagikarpLength_BCLessThanDE(id.reg, hl->word))
+        if(!CalcMagikarpLength_BCLessThanDE(id, hl->word))
             continue;
 
     // c = (bc - de) / [hl]
@@ -504,7 +510,7 @@ void CalcMagikarpLength_Conv(uint16_t de, uint16_t bc){
         // CALL(aDivide);
         // LDH_A_addr(hQuotient + 3);
         // LD_C_A;
-        uint8_t c = (uint8_t)(CalcMagikarpLength_BCMinusDE(id.reg, hl->word) / hl->byte);
+        uint8_t c = (uint8_t)(CalcMagikarpLength_BCMinusDE(id, hl->word) / hl->byte);
 
     // de = c + 100 × (2 + i)
         // XOR_A_A;
@@ -541,7 +547,7 @@ void CalcMagikarpLength_Conv(uint16_t de, uint16_t bc){
     // ADD_HL_BC;
     // LD_D_H;
     // LD_E_L;
-    de2 = CalcMagikarpLength_BCMinusDE(id.reg, hl->word) + 1600;
+    de2 = CalcMagikarpLength_BCMinusDE(id, hl->word) + 1600;
 
 done:
 // convert from mm to feet and inches

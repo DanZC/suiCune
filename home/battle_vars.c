@@ -41,69 +41,17 @@ static const uint8_t BattleVarPairs[][2] = {
     [BATTLE_VARS_LAST_MOVE_OPP]         = {ENEMY_LAST_MOVE,       PLAYER_LAST_MOVE},
 };
 
-void GetBattleVar(void){
-        PUSH_HL;
-    CALL(aGetBattleVarAddr);
-    POP_HL;
-    RET;
-
-}
-
-uint8_t GetBattleVar_Conv(uint8_t a){
+uint8_t GetBattleVar(uint8_t a){
     //     PUSH_HL;
     // CALL(aGetBattleVarAddr);
     // POP_HL;
     // RET;
-    return *GetBattleVarAddr_Conv(a);
-}
-
-void GetBattleVarAddr(void){
-    //  Get variable from pair a, depending on whose turn it is.
-//  There are 21 variable pairs.
-    PUSH_BC;
-
-    LD_HL(mBattleVarPairs);
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    ADD_HL_BC;
-
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-
-//  Enemy turn uses the second byte instead.
-//  This lets battle variable calls be side-neutral.
-    LDH_A_addr(hBattleTurn);
-    AND_A_A;
-    IF_Z goto getvar;
-    INC_HL;
-
-
-getvar:
-    //  var id
-    LD_A_hl;
-    LD_C_A;
-    LD_B(0);
-
-    LD_HL(mBattleVarLocations);
-    ADD_HL_BC;
-    ADD_HL_BC;
-
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-
-    LD_A_hl;
-
-    POP_BC;
-    RET;
-
+    return *GetBattleVarAddr(a);
 }
 
 //  Get variable from pair a, depending on whose turn it is.
 //  There are 21 variable pairs.
-uint8_t* GetBattleVarAddr_Conv(uint8_t a){
+uint8_t* GetBattleVarAddr(uint8_t a){
     // PUSH_BC;
 
     // LD_HL(mBattleVarPairs);
@@ -129,7 +77,7 @@ uint8_t* GetBattleVarAddr_Conv(uint8_t a){
     // LD_A_hl;
     // LD_C_A;
     // LD_B(0);
-    uint8_t id = BattleVarPairs[a][(hram->hBattleTurn == 0)? 0: 1];
+    uint8_t id = BattleVarPairs[a][(hram->hBattleTurn == TURN_PLAYER)? 0: 1];
 
     // LD_HL(mBattleVarLocations);
     // ADD_HL_BC;

@@ -36,7 +36,6 @@ uint8_t v_Sine_Conv(uint8_t e, uint8_t d){
         // ld e, [hl]
         // inc hl
         // ld d, [hl]
-        // union Register de = {.reg=gb_read16(hl)};
         // ld hl, 0
         uint16_t hl = Sinetable[a & 0b111111] * d;
         /*uint8_t carry;
@@ -83,7 +82,6 @@ uint8_t v_Sine_Conv(uint8_t e, uint8_t d){
         // ld e, [hl]
         // inc hl
         // ld d, [hl]
-        // union Register de = {.reg=gb_read16(hl)};
         // ld hl, 0
         uint16_t hl = Sinetable[a] * d;
         // uint8_t carry;

@@ -20,7 +20,7 @@ void BattleCommand_Selfdestruct(void){
     DelayFrames_Conv(3);
     // LD_A(BATTLE_VARS_STATUS);
     // CALL(aGetBattleVarAddr);
-    uint8_t* hl = GetBattleVarAddr_Conv(BATTLE_VARS_STATUS);
+    uint8_t* hl = GetBattleVarAddr(BATTLE_VARS_STATUS);
     // XOR_A_A;
     // LD_hli_A;
     hl[0] = 0;
@@ -39,11 +39,11 @@ void BattleCommand_Selfdestruct(void){
     // LD_A(BATTLE_VARS_SUBSTATUS4);
     // CALL(aGetBattleVarAddr);
     // RES_hl(SUBSTATUS_LEECH_SEED);
-    bit_reset(*GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS4), SUBSTATUS_LEECH_SEED);
+    bit_reset(*GetBattleVarAddr(BATTLE_VARS_SUBSTATUS4), SUBSTATUS_LEECH_SEED);
     // LD_A(BATTLE_VARS_SUBSTATUS5_OPP);
     // CALL(aGetBattleVarAddr);
     // RES_hl(SUBSTATUS_DESTINY_BOND);
-    bit_reset(*GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS5_OPP), SUBSTATUS_DESTINY_BOND);
+    bit_reset(*GetBattleVarAddr(BATTLE_VARS_SUBSTATUS5_OPP), SUBSTATUS_DESTINY_BOND);
     // CALL(av_CheckBattleScene);
     // RET_NC ;
     if(CheckBattleScene_Conv())
@@ -55,5 +55,5 @@ void BattleCommand_Selfdestruct(void){
     // CALL(aWaitBGMap);
     WaitBGMap_Conv();
     // JP(mRefreshBattleHuds);
-    return RefreshBattleHuds_Conv();
+    return RefreshBattleHuds();
 }

@@ -522,7 +522,7 @@ void StubbedTrainerRankings_Splash(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // RET_NZ ;
-    if(hram->hBattleTurn != 0)
+    if(hram->hBattleTurn != TURN_PLAYER)
         return;
     // LD_HL(sTrainerRankingSplash);
     // JR(mStubbedTrainerRankings_Increment3Byte);
@@ -575,7 +575,7 @@ void StubbedTrainerRankings_Selfdestruct(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // RET_NZ ;
-    if(hram->hBattleTurn != 0)
+    if(hram->hBattleTurn != TURN_PLAYER)
         return;
     // LD_HL(sTrainerRankingSelfdestruct);
     // JR(mStubbedTrainerRankings_Increment3Byte);

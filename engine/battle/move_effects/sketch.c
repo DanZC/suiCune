@@ -34,7 +34,7 @@ void BattleCommand_Sketch(void){
     // CALL(aGetBattleVarAddr);
     // BIT_hl(SUBSTATUS_TRANSFORMED);
     // JP_NZ (mBattleCommand_Sketch_fail);
-    if(bit_test(*GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS5), SUBSTATUS_TRANSFORMED))
+    if(bit_test(*GetBattleVarAddr(BATTLE_VARS_SUBSTATUS5), SUBSTATUS_TRANSFORMED))
         goto fail;
 #else
 //  If the opponent is transformed, fail.
@@ -42,7 +42,7 @@ void BattleCommand_Sketch(void){
     // CALL(aGetBattleVarAddr);
     // BIT_hl(SUBSTATUS_TRANSFORMED);
     // JP_NZ (mBattleCommand_Sketch_fail);
-    if(bit_test(*GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS5_OPP), SUBSTATUS_TRANSFORMED))
+    if(bit_test(*GetBattleVarAddr(BATTLE_VARS_SUBSTATUS5_OPP), SUBSTATUS_TRANSFORMED))
         goto fail;
 #endif
 //  Get the user's moveset in its party struct.
@@ -52,21 +52,21 @@ void BattleCommand_Sketch(void){
     // CALL(aUserPartyAttr);
     // LD_D_H;
     // LD_E_L;
-    struct PartyMon* de = UserPartyMon_Conv();
+    struct PartyMon* de = UserPartyMon();
 //  Get the battle move structs.
     // LD_HL(wBattleMonMoves);
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto get_last_move;
     // LD_HL(wEnemyMonMoves);
-    struct BattleMon* hl = (hram->hBattleTurn == 0)? &wram->wBattleMon: &wram->wEnemyMon;
+    struct BattleMon* hl = (hram->hBattleTurn == TURN_PLAYER)? &wram->wBattleMon: &wram->wEnemyMon;
 
 // get_last_move:
     // LD_A(BATTLE_VARS_LAST_COUNTER_MOVE_OPP);
     // CALL(aGetBattleVar);
     // LD_addr_A(wNamedObjectIndex);
     // LD_B_A;
-    move_t b = GetBattleVar_Conv(BATTLE_VARS_LAST_COUNTER_MOVE_OPP);
+    move_t b = GetBattleVar(BATTLE_VARS_LAST_COUNTER_MOVE_OPP);
 //  Fail if move is invalid or is Struggle.
     // AND_A_A;
     // IF_Z goto fail;
@@ -173,7 +173,7 @@ void BattleCommand_Sketch(void){
     AnimateCurrentMove();
     // LD_HL(mSketchedText);
     // JP(mStdBattleTextbox);
-    return StdBattleTextbox_Conv2(SketchedText);
+    return StdBattleTextbox(SketchedText);
 
 
 fail:

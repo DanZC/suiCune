@@ -234,7 +234,7 @@ void BugContest_JudgeContestants(uint16_t playerScore){
     // LD_hli_A;
     // LDH_A_addr(hProduct + 1);
     // LD_hl_A;
-    wram->wBugContestTemp.score = ReverseEndian16(playerScore);
+    wram->wBugContestTemp.score = NativeToBigEndian16(playerScore);
     // CALL(aDetermineContestWinners);
     DetermineContestWinners();
     // RET;
@@ -260,7 +260,7 @@ void DetermineContestWinners(void){
     // LD_C(2);
     // CALL(aCompareBytes);
     // IF_C goto not_first_place;
-    if(ReverseEndian16(wram->wBugContestTemp.score) >= ReverseEndian16(wram->wBugContestWinners[0].score)) {
+    if(BigEndianToNative16(wram->wBugContestTemp.score) >= BigEndianToNative16(wram->wBugContestWinners[0].score)) {
         // LD_HL(wBugContestSecondPlaceWinnerID);
         // LD_DE(wBugContestThirdPlaceWinnerID);
         // LD_BC(BUG_CONTESTANT_SIZE);
@@ -283,7 +283,7 @@ void DetermineContestWinners(void){
     // LD_C(2);
     // CALL(aCompareBytes);
     // IF_C goto not_second_place;
-    else if(ReverseEndian16(wram->wBugContestTemp.score) >= ReverseEndian16(wram->wBugContestWinners[1].score)) {
+    else if(BigEndianToNative16(wram->wBugContestTemp.score) >= BigEndianToNative16(wram->wBugContestWinners[1].score)) {
         // LD_HL(wBugContestSecondPlaceWinnerID);
         // LD_DE(wBugContestThirdPlaceWinnerID);
         // LD_BC(BUG_CONTESTANT_SIZE);
@@ -301,7 +301,7 @@ void DetermineContestWinners(void){
     // LD_C(2);
     // CALL(aCompareBytes);
     // IF_C goto done;
-    else if(ReverseEndian16(wram->wBugContestTemp.score) >= ReverseEndian16(wram->wBugContestWinners[2].score)) {
+    else if(BigEndianToNative16(wram->wBugContestTemp.score) >= BigEndianToNative16(wram->wBugContestWinners[2].score)) {
         // LD_HL(wBugContestThirdPlaceWinnerID);
         // CALL(aCopyTempContestant);
         CopyTempContestant(wram->wBugContestWinners + 2);
@@ -391,7 +391,7 @@ void ComputeAIContestantScores(void){
         // LD_addr_A(wBugContestTempScore);
         // LD_A_L;
         // LD_addr_A(wBugContestTempScore + 1);
-        wram->wBugContestTemp.score = ReverseEndian16(score);
+        wram->wBugContestTemp.score = NativeToBigEndian16(score);
         // PUSH_DE;
         // CALL(aDetermineContestWinners);
         DetermineContestWinners();
@@ -441,24 +441,24 @@ uint16_t ContestScore(void){
     // CALL(aContestScore_AddContestStat);
     // LD_A_addr(wContestMonMaxHP + 1);
     // CALL(aContestScore_AddContestStat);
-    score += (ReverseEndian16(wram->wContestMon.maxHP) & 0xff) * 4;
+    score += (BigEndianToNative16(wram->wContestMon.maxHP) & 0xff) * 4;
 
 // Stats
     // LD_A_addr(wContestMonAttack + 1);
     // CALL(aContestScore_AddContestStat);
-    score += ReverseEndian16(wram->wContestMon.attack) & 0xff;
+    score += BigEndianToNative16(wram->wContestMon.attack) & 0xff;
     // LD_A_addr(wContestMonDefense + 1);
     // CALL(aContestScore_AddContestStat);
-    score += ReverseEndian16(wram->wContestMon.defense) & 0xff;
+    score += BigEndianToNative16(wram->wContestMon.defense) & 0xff;
     // LD_A_addr(wContestMonSpeed + 1);
     // CALL(aContestScore_AddContestStat);
-    score += ReverseEndian16(wram->wContestMon.speed) & 0xff;
+    score += BigEndianToNative16(wram->wContestMon.speed) & 0xff;
     // LD_A_addr(wContestMonSpclAtk + 1);
     // CALL(aContestScore_AddContestStat);
-    score += ReverseEndian16(wram->wContestMon.spclAtk) & 0xff;
+    score += BigEndianToNative16(wram->wContestMon.spclAtk) & 0xff;
     // LD_A_addr(wContestMonSpclDef + 1);
     // CALL(aContestScore_AddContestStat);
-    score += ReverseEndian16(wram->wContestMon.spclDef) & 0xff;
+    score += BigEndianToNative16(wram->wContestMon.spclDef) & 0xff;
 
 // DVs
     // LD_A_addr(wContestMonDVs + 0);
@@ -500,7 +500,7 @@ uint16_t ContestScore(void){
     // SRL_A;
     // SRL_A;
     // CALL(aContestScore_AddContestStat);
-    score += (ReverseEndian16(wram->wContestMon.HP) & 0xff) >> 3;
+    score += (BigEndianToNative16(wram->wContestMon.HP) & 0xff) >> 3;
 
 // Whether it's holding an item
     // LD_A_addr(wContestMonItem);

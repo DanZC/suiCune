@@ -41,35 +41,35 @@ void init_function_pointers(void) {
 
     // home/battle.c
     CONVERTED(UpdateBattleHuds);
-    REDIRECTED(OpponentPartyAttr);
-    REDIRECTED(UpdateOpponentInParty);
-    REDIRECTED(GetPartyLocation);
-    REDIRECTED(UserPartyAttr);
-    REDIRECTED(SetPlayerTurn);
-    REDIRECTED(PushLYOverrides);
-    REDIRECTED(GetBattleAnimByte);
-    REDIRECTED(RefreshBattleHuds);
-    REDIRECTED(MobileTextBorder);
-    REDIRECTED(OTPartyAttr);
+    // CONVERTED(OpponentPartyAttr);
+    CONVERTED(UpdateOpponentInParty);
+    // CONVERTED(GetPartyLocation);
+    // CONVERTED(UserPartyAttr);
+    CONVERTED(SetPlayerTurn);
+    CONVERTED(PushLYOverrides);
+    // CONVERTED(GetBattleAnimByte);
+    CONVERTED(RefreshBattleHuds);
+    CONVERTED(MobileTextBorder);
+    // CONVERTED(OTPartyAttr);
     REDIRECTED(FarCopyRadioText);
-    REDIRECTED(BattleTextbox);
-    REDIRECTED(UpdateUserInParty);
-    REDIRECTED(GetPartyParamLocation);
-    REDIRECTED(BattlePartyAttr);
-    REDIRECTED(UpdateBattleMonInParty);
+    // CONVERTED(BattleTextbox);
+    CONVERTED(UpdateUserInParty);
+    // CONVERTED(GetPartyParamLocation);
+    // CONVERTED(BattlePartyAttr);
+    CONVERTED(UpdateBattleMonInParty);
     REDIRECTED(GetDexNumber);
-    REDIRECTED(GetBattleAnimPointer);
-    REDIRECTED(StdBattleTextbox);
-    REDIRECTED(SetEnemyTurn);
-    REDIRECTED(UpdateBattleMon);
-    REDIRECTED(UpdateEnemyMonInParty);
-    REDIRECTED(ResetDamage);
+    // CONVERTED(GetBattleAnimPointer);
+    // CONVERTED(StdBattleTextbox);
+    CONVERTED(SetEnemyTurn);
+    // CONVERTED(UpdateBattleMon);
+    CONVERTED(UpdateEnemyMonInParty);
+    CONVERTED(ResetDamage);
 
     // home/battle_vars.c
-    // REDIRECTED(BattleVarLocations);
-    // REDIRECTED(BattleVarPairs);
-    // REDIRECTED(GetBattleVar);
-    // REDIRECTED(GetBattleVarAddr);
+    // CONVERTED(BattleVarLocations);
+    // CONVERTED(BattleVarPairs);
+    // CONVERTED(GetBattleVar);
+    // CONVERTED(GetBattleVarAddr);
 
     // home/call_regs.c
     // REDIRECTED(v_hl_);

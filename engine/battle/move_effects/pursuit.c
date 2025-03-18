@@ -10,7 +10,7 @@ void BattleCommand_Pursuit(void){
     // AND_A_A;
     // IF_Z goto ok;
     // LD_HL(wPlayerIsSwitching);
-    uint8_t isSwitching = (hram->hBattleTurn == 0)? wram->wEnemyIsSwitching: wram->wPlayerIsSwitching;
+    uint8_t isSwitching = (hram->hBattleTurn == TURN_PLAYER)? wram->wEnemyIsSwitching: wram->wPlayerIsSwitching;
 
 // ok:
     // LD_A_hl;
@@ -23,16 +23,16 @@ void BattleCommand_Pursuit(void){
     // SLA_hl;
     // DEC_HL;
     // RL_hl;
-    uint32_t temp = ReverseEndian16(wram->wCurDamage) << 1;
+    uint32_t temp = BigEndianToNative16(wram->wCurDamage) << 1;
     // RET_NC ;
     if(temp > 0xffff) {
         // LD_A(0xff);
         // LD_hli_A;
         // LD_hl_A;
-        wram->wCurDamage = ReverseEndian16(0xffff);
+        wram->wCurDamage = NativeToBigEndian16(0xffff);
     }
     else {
-        wram->wCurDamage = ReverseEndian16((uint16_t)temp);
+        wram->wCurDamage = NativeToBigEndian16((uint16_t)temp);
     }
     // RET;
 }

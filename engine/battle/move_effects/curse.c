@@ -16,8 +16,8 @@ void BattleCommand_Curse(void){
     // IF_Z goto go;
     // LD_DE(wEnemyMonType1);
     // LD_BC(wEnemyStatLevels);
-    const uint8_t* types = (hram->hBattleTurn == 0)? wram->wBattleMon.types: wram->wEnemyMon.types;
-    uint8_t* statLevels = (hram->hBattleTurn == 0)? wram->wPlayerStatLevels: wram->wEnemyStatLevels;
+    const uint8_t* types = (hram->hBattleTurn == TURN_PLAYER)? wram->wBattleMon.types: wram->wEnemyMon.types;
+    uint8_t* statLevels = (hram->hBattleTurn == TURN_PLAYER)? wram->wPlayerStatLevels: wram->wEnemyStatLevels;
 
 // go:
 
@@ -43,7 +43,7 @@ void BattleCommand_Curse(void){
         // CALL(aGetBattleVarAddr);
         // BIT_hl(SUBSTATUS_CURSE);
         // IF_NZ goto failed;
-        if(CheckHiddenOpponent_Conv() || CheckSubstituteOpp_Conv() || bit_test(GetBattleVar_Conv(BATTLE_VARS_SUBSTATUS1_OPP), SUBSTATUS_CURSE)) {
+        if(CheckHiddenOpponent_Conv() || CheckSubstituteOpp_Conv() || bit_test(GetBattleVar(BATTLE_VARS_SUBSTATUS1_OPP), SUBSTATUS_CURSE)) {
         // failed:
             // CALL(aAnimateFailedMove);
             AnimateFailedMove();
@@ -52,7 +52,7 @@ void BattleCommand_Curse(void){
         }
 
         // SET_hl(SUBSTATUS_CURSE);
-        bit_set(*GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS1_OPP), SUBSTATUS_CURSE);
+        bit_set(*GetBattleVarAddr(BATTLE_VARS_SUBSTATUS1_OPP), SUBSTATUS_CURSE);
         // CALL(aAnimateCurrentMove);
         AnimateCurrentMove();
         // LD_HL(mGetHalfMaxHP);
@@ -64,7 +64,7 @@ void BattleCommand_Curse(void){
         UpdateUserInParty();
         // LD_HL(mPutACurseText);
         // JP(mStdBattleTextbox);
-        return StdBattleTextbox_Conv2(PutACurseText);
+        return StdBattleTextbox(PutACurseText);
     }
     else {
     //  If no stats can be increased, don't.
@@ -93,7 +93,7 @@ void BattleCommand_Curse(void){
                 AnimateFailedMove();
                 // LD_HL(mWontRiseAnymoreText);
                 // JP(mStdBattleTextbox);
-                return StdBattleTextbox_Conv2(WontRiseAnymoreText);
+                return StdBattleTextbox(WontRiseAnymoreText);
             }
         }
 

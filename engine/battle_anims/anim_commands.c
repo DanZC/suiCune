@@ -189,7 +189,7 @@ void RunBattleAnimScript(void){
         // CALL(aBattleAnim_UpdateOAM_All);
         BattleAnim_UpdateOAM_All();
         // CALL(aPushLYOverrides);
-        PushLYOverrides_Conv();
+        PushLYOverrides();
         // CALL(aBattleAnimRequestPals);
         BattleAnimRequestPals();
 
@@ -336,7 +336,7 @@ void ClearActorHud(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto player;
-    if(hram->hBattleTurn == 0) {
+    if(hram->hBattleTurn == TURN_PLAYER) {
     // player:
         // hlcoord(9, 7, wTilemap);
         // LD_BC((5 << 8) | 11);
@@ -2016,7 +2016,7 @@ void BattleAnimCmd_Transform_Conv(void){
     // AND_A_A;
     // IF_Z goto player;
 
-    if(hram->hBattleTurn != 0) {
+    if(hram->hBattleTurn != TURN_PLAYER) {
         // LD_A_addr(wTempBattleMonSpecies);
         // LD_addr_A(wCurPartySpecies);
         wram->wCurPartySpecies = wram->wTempBattleMonSpecies;
@@ -2090,7 +2090,7 @@ void BattleAnimCmd_UpdateActorPic_Conv(void){
     // LD_B(0);
     // LD_C(6 * 6);
     // CALL(aRequest2bpp);
-    CopyBytes_Conv2((hram->hBattleTurn == 0)
+    CopyBytes_Conv2((hram->hBattleTurn == TURN_PLAYER)
             ? vram->vTiles2 + LEN_2BPP_TILE * 0x31
             : vram->vTiles2 + LEN_2BPP_TILE * 0x00,
             vram->vTiles0 + LEN_2BPP_TILE * 0x00,
@@ -2152,7 +2152,7 @@ void GetSubstitutePic(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto player;
-    if(hram->hBattleTurn != 0) {
+    if(hram->hBattleTurn != TURN_PLAYER) {
         // LD_HL(mMonsterSpriteGFX + 0 * LEN_2BPP_TILE);
         // LD_DE(sScratch + (2 * 7 + 5) * LEN_2BPP_TILE);
         // CALL(aGetSubstitutePic_CopyTile);
@@ -2273,7 +2273,7 @@ struct MinimizePic GetMinimizePic(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto player;
-    if(hram->hBattleTurn != 0) {
+    if(hram->hBattleTurn != TURN_PLAYER) {
         // LD_DE(sScratch + (3 * 7 + 5) * LEN_2BPP_TILE);
         // CALL(aCopyMinimizePic);
         CopyMinimizePic_Conv(GBToRAMAddr(sScratch + (3 * 7 + 5) * LEN_2BPP_TILE));
@@ -2401,7 +2401,7 @@ void BattleAnimCmd_DropSub_Conv(void){
     // AND_A_A;
     // IF_Z goto player;
 
-    if(hram->hBattleTurn != 0) {
+    if(hram->hBattleTurn != TURN_PLAYER) {
         // CALLFAR(aDropEnemySub);
         DropEnemySub();
         // goto done;
@@ -2481,7 +2481,7 @@ void BattleAnimCmd_BeatUp_Conv(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto player;
-    if(hram->hBattleTurn != 0) {
+    if(hram->hBattleTurn != TURN_PLAYER) {
         // LD_HL(wBattleMonDVs);
         // PREDEF(pGetUnownLetter);
         GetUnownLetter_Conv(wram->wBattleMon.dvs);
@@ -2627,7 +2627,7 @@ void BattleAnimCmd_Sound_Conv(uint8_t duration, uint8_t tracks, uint16_t sfx){
     // CALL(aBattleAnimCmd_Sound_GetCryTrack);
     // maskbits(NUM_NOISE_CHANS, 0);
     // LD_addr_A(wCryTracks);
-    wram->wCryTracks = (tracks ^ ((hram->hBattleTurn == 0)? 0: 1)) & 3;
+    wram->wCryTracks = (tracks ^ ((hram->hBattleTurn == TURN_PLAYER)? 0: 1)) & 3;
 
     // LD_E_A;
     // LD_D(0);
@@ -2776,7 +2776,7 @@ void BattleAnimCmd_Cry_Conv(uint8_t cry){
     // IF_NZ goto enemy;
 
     species_t species;
-    if(hram->hBattleTurn == 0) {
+    if(hram->hBattleTurn == TURN_PLAYER) {
         // LD_A(0xf0);
         // LD_addr_A(wCryTracks);
         wram->wCryTracks = 0xf0;

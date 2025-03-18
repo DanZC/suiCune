@@ -1618,8 +1618,8 @@ uint8_t FindEnemyMonsWithAtLeastQuarterMaxHP_Conv(uint8_t c){
         // INC_HL;
     //  hl = MaxHP + 1
     //  bc = [CurHP] * 4
-        uint16_t maxHP = ReverseEndian16(hl->maxHP);
-        uint16_t hp = ReverseEndian16(hl->HP);
+        uint16_t maxHP = BigEndianToNative16(hl->maxHP);
+        uint16_t hp = BigEndianToNative16(hl->HP);
         // SRL_C;
         // RL_B;
         // SRL_C;

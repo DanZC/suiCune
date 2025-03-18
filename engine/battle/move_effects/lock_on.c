@@ -24,12 +24,12 @@ void BattleCommand_LockOn(void){
     // LD_A(BATTLE_VARS_SUBSTATUS5_OPP);
     // CALL(aGetBattleVarAddr);
     // SET_hl(SUBSTATUS_LOCK_ON);
-    bit_set(*GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS5_OPP), SUBSTATUS_LOCK_ON);
+    bit_set(*GetBattleVarAddr(BATTLE_VARS_SUBSTATUS5_OPP), SUBSTATUS_LOCK_ON);
     // CALL(aAnimateCurrentMove);
     AnimateCurrentMove();
 
     // LD_HL(mTookAimText);
     // JP(mStdBattleTextbox);
-    return StdBattleTextbox_Conv2(TookAimText);
+    return StdBattleTextbox(TookAimText);
 
 }

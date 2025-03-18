@@ -22,7 +22,7 @@ void BattleCommand_Foresight(void){
     // IF_NZ goto failed;
     if(wram->wAttackMissed
     || CheckHiddenOpponent_Conv()
-    || ((ss1_opp = GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS1_OPP)), bit_test(*ss1_opp, SUBSTATUS_IDENTIFIED))) {
+    || ((ss1_opp = GetBattleVarAddr(BATTLE_VARS_SUBSTATUS1_OPP)), bit_test(*ss1_opp, SUBSTATUS_IDENTIFIED))) {
     // failed:
         // JP(mFailMove);
         return FailMove();
@@ -34,5 +34,5 @@ void BattleCommand_Foresight(void){
     AnimateCurrentMove();
     // LD_HL(mIdentifiedText);
     // JP(mStdBattleTextbox);
-    return StdBattleTextbox_Conv2(IdentifiedText);
+    return StdBattleTextbox(IdentifiedText);
 }

@@ -55,7 +55,7 @@ void GiveShuckle(void){
     // LD_A(HIGH(MANIA_OT_ID));
     // LD_hli_A;
     // LD_hl(LOW(MANIA_OT_ID));
-    wram->wPartyMon[wram->wPartyCount - 1].mon.id = ReverseEndian16(MANIA_OT_ID);
+    wram->wPartyMon[wram->wPartyCount - 1].mon.id = NativeToBigEndian16(MANIA_OT_ID); // Is this correct?
 
 //  Nickname.
     // LD_A_addr(wPartyCount);
@@ -117,7 +117,7 @@ void ReturnShuckie(void){
     // LD_A_hl;
     // CP_A(LOW(MANIA_OT_ID));
     // IF_NZ goto DontReturn;
-    if(wram->wCurPartySpecies == SHUCKLE && wram->wPartyMon[wram->wCurPartyMon].mon.id == ReverseEndian16(MANIA_OT_ID)) {
+    if(wram->wCurPartySpecies == SHUCKLE && wram->wPartyMon[wram->wCurPartyMon].mon.id == NativeToBigEndian16(MANIA_OT_ID)) {
     //  OT
         // LD_A_addr(wCurPartyMon);
         // LD_HL(wPartyMonOTs);

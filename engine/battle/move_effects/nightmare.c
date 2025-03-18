@@ -24,14 +24,14 @@ void BattleCommand_Nightmare(void){
     // CALL(aGetBattleVarAddr);
     // AND_A(SLP);
     // IF_Z goto failed;
-    if(CheckHiddenOpponent_Conv() || CheckSubstituteOpp_Conv() || (GetBattleVar_Conv(BATTLE_VARS_STATUS_OPP) & SLP) == 0)
+    if(CheckHiddenOpponent_Conv() || CheckSubstituteOpp_Conv() || (GetBattleVar(BATTLE_VARS_STATUS_OPP) & SLP) == 0)
         goto failed;
 
 //  Bail if the opponent is already having a nightmare.
 
     // LD_A(BATTLE_VARS_SUBSTATUS1_OPP);
     // CALL(aGetBattleVarAddr);
-    uint8_t* ss1_opp = GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS1_OPP);
+    uint8_t* ss1_opp = GetBattleVarAddr(BATTLE_VARS_SUBSTATUS1_OPP);
     // BIT_hl(SUBSTATUS_NIGHTMARE);
     // IF_NZ goto failed;
     if(bit_test(*ss1_opp, SUBSTATUS_NIGHTMARE))
@@ -45,7 +45,7 @@ void BattleCommand_Nightmare(void){
     AnimateCurrentMove();
     // LD_HL(mStartedNightmareText);
     // JP(mStdBattleTextbox);
-    return StdBattleTextbox_Conv2(StartedNightmareText);
+    return StdBattleTextbox(StartedNightmareText);
 
 failed:
     // CALL(aAnimateFailedMove);

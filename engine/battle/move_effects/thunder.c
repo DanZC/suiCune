@@ -11,7 +11,7 @@ void BattleCommand_ThunderAccuracy(void){
     // LD_A(BATTLE_VARS_MOVE_TYPE);
     // CALL(aGetBattleVarAddr);
     // INC_HL;
-    uint8_t* hl = GetBattleVarAddr_Conv(BATTLE_VARS_MOVE_TYPE) + 1;
+    uint8_t* hl = GetBattleVarAddr(BATTLE_VARS_MOVE_TYPE) + 1;
     // LD_A_addr(wBattleWeather);
     // CP_A(WEATHER_RAIN);
     // IF_Z goto rain;

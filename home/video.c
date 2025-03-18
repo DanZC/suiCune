@@ -135,7 +135,7 @@ bool UpdateBGMapBuffer_Conv(void) {
     // LDH_A_addr(hBGMapUpdate);
     // AND_A_A;
     // RET_Z;
-    if(gb_read(hBGMapUpdate) == 0)
+    if(hram->hBGMapUpdate == 0)
         return false;
 
     // LDH_A_addr(rVBK);
@@ -154,7 +154,7 @@ bool UpdateBGMapBuffer_Conv(void) {
     // LD_DE(wBGMapBuffer);
     uint16_t hl = wBGMapPalBuffer;
     uint16_t de = wBGMapBuffer;
-    union Register bc = {.reg = 0};
+    uint16_t bc = 0;
     uint8_t tc;
 
     do {
@@ -163,8 +163,8 @@ bool UpdateBGMapBuffer_Conv(void) {
         for (int rept = 0; rept < 2; rept++) {
             //  Get our BG Map address
             // POP_BC;
-            bc.lo = gb_read(sp++);
-            bc.hi = gb_read(sp++);
+            bc = gb_read(sp + 0) | (gb_read(sp + 1) << 8);
+            sp += 2;
 
             //  Palettes
             // LD_A(1);
@@ -173,17 +173,17 @@ bool UpdateBGMapBuffer_Conv(void) {
 
             // LD_A_hli;
             // LD_bc_A;
-            gb_write(bc.reg, gb_read(hl++));
+            gb_write(bc, gb_read(hl++));
 
             // INC_C;
-            bc.lo++;
+            bc++;
 
             // LD_A_hli;
             // LD_bc_A;
-            gb_write(bc.reg, gb_read(hl++));
+            gb_write(bc, gb_read(hl++));
 
             // DEC_C;
-            bc.lo--;
+            bc--;
 
             //  Tiles
             // LD_A(0);
@@ -193,15 +193,15 @@ bool UpdateBGMapBuffer_Conv(void) {
             // LD_A_de;
             // INC_DE;
             // LD_bc_A;
-            gb_write(bc.reg, gb_read(de++));
+            gb_write(bc, gb_read(de++));
 
             // INC_C;
-            bc.lo++;
+            bc++;
 
             // LD_A_de;
             // INC_DE;
             // LD_bc_A;
-            gb_write(bc.reg, gb_read(de++));
+            gb_write(bc, gb_read(de++));
         }
 
         //  We've done 2 16x8 blocks
@@ -209,8 +209,8 @@ bool UpdateBGMapBuffer_Conv(void) {
         // DEC_A;
         // DEC_A;
         // LDH_addr_A(hBGMapTileCount);
-        tc = gb_read(hBGMapTileCount) - 2;
-        gb_write(hBGMapTileCount, tc);
+        tc = hram->hBGMapTileCount - 2;
+        hram->hBGMapTileCount = tc;
 
     // IF_NZ goto next;
     } while(tc != 0);
@@ -228,7 +228,7 @@ bool UpdateBGMapBuffer_Conv(void) {
 
     // XOR_A_A;
     // LDH_addr_A(hBGMapUpdate);
-    gb_write(hBGMapUpdate, 0);
+    hram->hBGMapUpdate = 0;
 
     // SCF;
     // RET;

@@ -10,7 +10,7 @@ void BattleCommand_FrustrationPower(void){
     // AND_A_A;
     // IF_Z goto ok;
     // LD_HL(wEnemyMonHappiness);
-    uint8_t happiness = (hram->hBattleTurn == 0)? wram->wBattleMon.happiness: wram->wEnemyMon.happiness;
+    uint8_t happiness = (hram->hBattleTurn == TURN_PLAYER)? wram->wBattleMon.happiness: wram->wEnemyMon.happiness;
 
 // ok:
     // LD_A(0xff);

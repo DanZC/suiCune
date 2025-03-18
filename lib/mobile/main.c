@@ -9194,7 +9194,7 @@ uint16_t Function112b11(const char* hl){
     // LD_HL(wc872);
     hl = wram->wc872_digit_buffer;
     // LD_DE(0);
-    union Register de2 = {.reg = 0x0};
+    uint8_t d = 0, e = 0;
     // LD_A_B;
     // OR_A_A;
     // IF_Z goto asm_112b49;
@@ -9208,7 +9208,7 @@ uint16_t Function112b11(const char* hl){
     // asm_112b49:
         // LD_A_hli;
         // LD_D_A;
-        de2.hi = *(hl++);
+        d = *(hl++);
         fallthrough;
 
     case 1:
@@ -9217,7 +9217,7 @@ uint16_t Function112b11(const char* hl){
         a = *(hl++);
         // SWAP_A;
         // LD_E_A;
-        de2.lo = (a << 4) | (a >> 4);
+        e = (a << 4) | (a >> 4);
         fallthrough;
 
     case 2:
@@ -9225,7 +9225,7 @@ uint16_t Function112b11(const char* hl){
         // LD_A_hli;
         // OR_A_E;
         // LD_E_A;
-        de2.lo |= *(hl++);
+        e |= *(hl++);
         fallthrough;
 
     default:
@@ -9241,7 +9241,7 @@ uint16_t Function112b11(const char* hl){
         // LD_addr_A(wc872);
         wram->wc872 = c872;
         // RET;
-        return de2.reg;
+        return (d << 8) | e;
     }
 }
 

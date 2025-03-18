@@ -16,6 +16,6 @@ void BattleCommand_StartRain(void){
     AnimateCurrentMove();
     // LD_HL(mDownpourText);
     // JP(mStdBattleTextbox);
-    StdBattleTextbox_Conv2(DownpourText);
+    StdBattleTextbox(DownpourText);
 
 }

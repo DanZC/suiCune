@@ -23,7 +23,7 @@ void BattleCommand_Mimic(void){
     // AND_A_A;
     // IF_Z goto player_turn;
     // LD_HL(wEnemyMonMoves);
-    struct BattleMon* mon = (hram->hBattleTurn == 0)? &wram->wBattleMon: &wram->wEnemyMon;
+    struct BattleMon* mon = (hram->hBattleTurn == TURN_PLAYER)? &wram->wBattleMon: &wram->wEnemyMon;
 
 // player_turn:
     // CALL(aCheckHiddenOpponent);
@@ -32,7 +32,7 @@ void BattleCommand_Mimic(void){
         return FailMimic();
     // LD_A(BATTLE_VARS_LAST_COUNTER_MOVE_OPP);
     // CALL(aGetBattleVar);
-    move_t b = GetBattleVar_Conv(BATTLE_VARS_LAST_COUNTER_MOVE_OPP);
+    move_t b = GetBattleVar(BATTLE_VARS_LAST_COUNTER_MOVE_OPP);
     // AND_A_A;
     // IF_Z goto fail;
     // CP_A(STRUGGLE);
@@ -65,7 +65,7 @@ void BattleCommand_Mimic(void){
     // LD_A(BATTLE_VARS_LAST_COUNTER_MOVE_OPP);
     // CALL(aGetBattleVar);
     // LD_hl_A;
-    mon->moves[c] = GetBattleVar_Conv(BATTLE_VARS_LAST_COUNTER_MOVE_OPP);
+    mon->moves[c] = GetBattleVar(BATTLE_VARS_LAST_COUNTER_MOVE_OPP);
     // LD_addr_A(wNamedObjectIndex);
     // LD_BC(wBattleMonPP - wBattleMonMoves);
     // ADD_HL_BC;
@@ -77,7 +77,7 @@ void BattleCommand_Mimic(void){
     AnimateCurrentMove();
     // LD_HL(mMimicLearnedMoveText);
     // JP(mStdBattleTextbox);
-    StdBattleTextbox_Conv2(MimicLearnedMoveText);
+    StdBattleTextbox(MimicLearnedMoveText);
 
 
 // fail:

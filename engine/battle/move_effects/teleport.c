@@ -30,11 +30,11 @@ void BattleCommand_Teleport(void){
     // CALL(aGetBattleVar);
     // BIT_A(SUBSTATUS_CANT_RUN);
     // IF_NZ goto failed;
-    if(!bit_test(GetBattleVar_Conv(BATTLE_VARS_SUBSTATUS5_OPP), SUBSTATUS_CANT_RUN)) {
+    if(!bit_test(GetBattleVar(BATTLE_VARS_SUBSTATUS5_OPP), SUBSTATUS_CANT_RUN)) {
         // LDH_A_addr(hBattleTurn);
         // AND_A_A;
         // IF_NZ goto enemy_turn;
-        if(hram->hBattleTurn == 0) {
+        if(hram->hBattleTurn == TURN_PLAYER) {
         // Can't teleport from a trainer battle
             // LD_A_addr(wBattleMode);
             // DEC_A;
@@ -122,7 +122,7 @@ void BattleCommand_Teleport(void){
 
 // run_away:
     // CALL(aUpdateBattleMonInParty);
-    UpdateBattleMonInParty_Conv();
+    UpdateBattleMonInParty();
     // XOR_A_A;
     // LD_addr_A(wNumHits);
     wram->wNumHits = 0;
@@ -145,7 +145,7 @@ void BattleCommand_Teleport(void){
 
     // LD_HL(mFledFromBattleText);
     // JP(mStdBattleTextbox);
-    return StdBattleTextbox_Conv2(FledFromBattleText);
+    return StdBattleTextbox(FledFromBattleText);
 
 failed:
     // CALL(aAnimateFailedMove);

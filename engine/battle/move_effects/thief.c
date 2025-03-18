@@ -42,7 +42,7 @@ void BattleCommand_Thief(void){
     item_t* hl;
     item_t* de;
     item_t itm;
-    if(hram->hBattleTurn == 0) {
+    if(hram->hBattleTurn == TURN_PLAYER) {
     //  The player needs to be able to steal an item.
 
         // CALL(aBattleCommand_Thief_playeritem);
@@ -174,5 +174,5 @@ void BattleCommand_Thief(void){
     GetItemName_Conv2(itm);
     // LD_HL(mStoleText);
     // JP(mStdBattleTextbox);
-    return StdBattleTextbox_Conv2(StoleText);
+    return StdBattleTextbox(StoleText);
 }

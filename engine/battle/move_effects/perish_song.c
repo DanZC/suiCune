@@ -58,6 +58,6 @@ void BattleCommand_PerishSong(void){
     AnimateCurrentMove();
     // LD_HL(mStartPerishText);
     // JP(mStdBattleTextbox);
-    return StdBattleTextbox_Conv2(StartPerishText);
+    return StdBattleTextbox(StartPerishText);
 
 }

@@ -10,7 +10,7 @@ void BattleCommand_ClearHazards(void){
 
     // LD_A(BATTLE_VARS_SUBSTATUS4);
     // CALL(aGetBattleVarAddr);
-    uint8_t* ss4 = GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS4);
+    uint8_t* ss4 = GetBattleVarAddr(BATTLE_VARS_SUBSTATUS4);
     // BIT_hl(SUBSTATUS_LEECH_SEED);
     // IF_Z goto not_leeched;
     if(bit_test(*ss4, SUBSTATUS_LEECH_SEED)) {
@@ -18,7 +18,7 @@ void BattleCommand_ClearHazards(void){
         bit_reset(*ss4, SUBSTATUS_LEECH_SEED);
         // LD_HL(mShedLeechSeedText);
         // CALL(aStdBattleTextbox);
-        StdBattleTextbox_Conv2(ShedLeechSeedText);
+        StdBattleTextbox(ShedLeechSeedText);
     }
 
 // not_leeched:
@@ -30,8 +30,8 @@ void BattleCommand_ClearHazards(void){
     // IF_Z goto got_screens_wrap;
     // LD_HL(wEnemyScreens);
     // LD_DE(wEnemyWrapCount);
-    uint8_t* screens = (hram->hBattleTurn == 0)? &wram->wPlayerScreens: &wram->wEnemyScreens;
-    uint8_t* wrap    = (hram->hBattleTurn == 0)? &wram->wPlayerWrapCount: &wram->wEnemyWrapCount;
+    uint8_t* screens = (hram->hBattleTurn == TURN_PLAYER)? &wram->wPlayerScreens: &wram->wEnemyScreens;
+    uint8_t* wrap    = (hram->hBattleTurn == TURN_PLAYER)? &wram->wPlayerWrapCount: &wram->wEnemyWrapCount;
 
 // got_screens_wrap:
     // BIT_hl(SCREENS_SPIKES);
@@ -42,7 +42,7 @@ void BattleCommand_ClearHazards(void){
         // LD_HL(mBlewSpikesText);
         // PUSH_DE;
         // CALL(aStdBattleTextbox);
-        StdBattleTextbox_Conv2(BlewSpikesText);
+        StdBattleTextbox(BlewSpikesText);
         // POP_DE;
     }
 
@@ -59,6 +59,6 @@ void BattleCommand_ClearHazards(void){
     *wrap = 0;
     // LD_HL(mReleasedByText);
     // JP(mStdBattleTextbox);
-    return StdBattleTextbox_Conv2(ReleasedByText);
+    return StdBattleTextbox(ReleasedByText);
 
 }

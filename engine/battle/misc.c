@@ -29,7 +29,7 @@ void v_DisappearUser(void){
     // AND_A_A;
     // IF_Z goto player;
     struct PicCoords ccoords;
-    if(hram->hBattleTurn != 0) {
+    if(hram->hBattleTurn != TURN_PLAYER) {
         // CALL(aGetEnemyFrontpicCoords);
         // goto okay;
         ccoords = GetEnemyFrontpicCoords_Conv();
@@ -70,7 +70,7 @@ void AppearUser(void){
     // IF_Z goto player;
     struct PicCoords ccoords;
     uint8_t a;
-    if(hram->hBattleTurn != 0) {
+    if(hram->hBattleTurn != TURN_PLAYER) {
         // CALL(aGetEnemyFrontpicCoords);
         ccoords = GetEnemyFrontpicCoords_Conv();
         // XOR_A_A;
@@ -121,7 +121,7 @@ static void DoWeatherModifiers_ApplyModifier(const uint8_t* de) {
     // LDH_addr_A(hMultiplicand + 1);
     // LD_A_hl;
     // LDH_addr_A(hMultiplicand + 2);
-    uint16_t dmg = ReverseEndian16(wram->wCurDamage);
+    uint16_t dmg = BigEndianToNative16(wram->wCurDamage);
 
     // INC_DE;
     // LD_A_de;
@@ -136,27 +136,26 @@ static void DoWeatherModifiers_ApplyModifier(const uint8_t* de) {
     // CALL(aDivide);
     n /= 10;
 
-    union Register r;
+    uint16_t r;
     if((n & 0xff0000) != 0) {
         // LDH_A_addr(hQuotient + 1);
         // AND_A_A;
         // LD_BC(-1);
         // IF_NZ goto Update;
-        r.reg = 0xffff;
+        r = 0xffff;
     }
     else if((n & 0xffff) != 0) {
         // LDH_A_addr(hQuotient + 2);
         // LD_B_A;
-        r.hi = (n & 0xff00) >> 8;
         // LDH_A_addr(hQuotient + 3);
         // LD_C_A;
-        r.lo = (n & 0xff);
+        r = (uint16_t)n;
         // OR_A_B;
         // IF_NZ goto Update;
     }
     else {
         // LD_BC(1);
-        r.reg = 1;
+        r = 1;
     }
 
 // Update:
@@ -164,7 +163,7 @@ static void DoWeatherModifiers_ApplyModifier(const uint8_t* de) {
     // LD_addr_A(wCurDamage);
     // LD_A_C;
     // LD_addr_A(wCurDamage + 1);
-    wram->wCurDamage = ReverseEndian16(r.reg);
+    wram->wCurDamage = NativeToBigEndian16(r);
 
 
 // done:
@@ -218,7 +217,7 @@ void DoWeatherModifiers(void){
     // LD_A(BATTLE_VARS_MOVE_EFFECT);
     // CALL(aGetBattleVar);
     // LD_C_A;
-    c = GetBattleVar_Conv(BATTLE_VARS_MOVE_EFFECT);
+    c = GetBattleVar(BATTLE_VARS_MOVE_EFFECT);
 
     do {
     // CheckWeatherMove:
@@ -313,7 +312,7 @@ void DoBadgeTypeBoosts(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // RET_NZ ;
-    if(hram->hBattleTurn != 0)
+    if(hram->hBattleTurn != TURN_PLAYER)
         return;
 
     // PUSH_DE;
@@ -357,7 +356,7 @@ void DoBadgeTypeBoosts(void){
             // LD_A_addr(wCurDamage + 1);
             // LD_L_A;
             // LD_E_A;
-            uint16_t dmg = ReverseEndian16(wram->wCurDamage);
+            uint16_t dmg = BigEndianToNative16(wram->wCurDamage);
 
             // SRL_D;
             // RR_E;
@@ -388,7 +387,7 @@ void DoBadgeTypeBoosts(void){
             // LD_addr_A(wCurDamage);
             // LD_A_L;
             // LD_addr_A(wCurDamage + 1);
-            wram->wCurDamage = ReverseEndian16((uint16_t)temp);
+            wram->wCurDamage = NativeToBigEndian16((uint16_t)temp);
 
         // done:
             // POP_BC;

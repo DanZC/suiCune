@@ -16,7 +16,7 @@ void BattleCommand_Transform(void){
     // CALL(aGetBattleVarAddr);
     // BIT_hl(SUBSTATUS_TRANSFORMED);
     // JP_NZ (mBattleEffect_ButItFailed);
-    if(bit_test(*GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS5_OPP), SUBSTATUS_TRANSFORMED))
+    if(bit_test(*GetBattleVarAddr(BATTLE_VARS_SUBSTATUS5_OPP), SUBSTATUS_TRANSFORMED))
         return BattleEffect_ButItFailed();
     // CALL(aCheckHiddenOpponent);
     // JP_NZ (mBattleEffect_ButItFailed);
@@ -31,7 +31,7 @@ void BattleCommand_Transform(void){
     wram->wBattleAnimParam = 0x1;
     // LD_A(BATTLE_VARS_SUBSTATUS4);
     // CALL(aGetBattleVarAddr);
-    uint8_t ss4 = *GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS4);
+    uint8_t ss4 = *GetBattleVarAddr(BATTLE_VARS_SUBSTATUS4);
     // BIT_hl(SUBSTATUS_SUBSTITUTE);
     // PUSH_AF;
     // IF_Z goto mimic_substitute;
@@ -47,14 +47,14 @@ void BattleCommand_Transform(void){
     // LD_A(BATTLE_VARS_SUBSTATUS5);
     // CALL(aGetBattleVarAddr);
     // SET_hl(SUBSTATUS_TRANSFORMED);
-    bit_set(*GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS5), SUBSTATUS_TRANSFORMED);
+    bit_set(*GetBattleVarAddr(BATTLE_VARS_SUBSTATUS5), SUBSTATUS_TRANSFORMED);
     // CALL(aResetActorDisable);
     ResetActorDisable();
     
     struct BattleMon* hl;
     struct BattleMon* de;
 
-    if(hram->hBattleTurn != 0) {
+    if(hram->hBattleTurn != TURN_PLAYER) {
         // LD_HL(wBattleMonSpecies);
         hl = &wram->wBattleMon;
         // LD_DE(wEnemyMonSpecies);
@@ -87,7 +87,7 @@ void BattleCommand_Transform(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto mimic_enemy_backup;
-    if(hram->hBattleTurn != 0) {
+    if(hram->hBattleTurn != TURN_PLAYER) {
         // LD_A_de;
         // LD_addr_A(wEnemyBackupDVs);
         // INC_DE;
@@ -209,7 +209,7 @@ void BattleCommand_Transform(void){
         LoadAnim_Conv(SUBSTITUTE);
     // LD_HL(mTransformedText);
     // JP(mStdBattleTextbox);
-    return StdBattleTextbox_Conv2(TransformedText);
+    return StdBattleTextbox(TransformedText);
 }
 
 //  Copy bc bytes from hl to de if it's the player's turn.
@@ -218,7 +218,7 @@ void BattleSideCopy(void* hl, void* de, uint16_t bc){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto copy;
-    if(hram->hBattleTurn != 0) {
+    if(hram->hBattleTurn != TURN_PLAYER) {
     //  Swap hl and de
         // PUSH_HL;
         // LD_H_D;

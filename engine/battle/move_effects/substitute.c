@@ -18,8 +18,8 @@ void BattleCommand_Substitute(void){
     // IF_Z goto got_hp;
     // LD_HL(wEnemyMonMaxHP);
     // LD_DE(wEnemySubstituteHP);
-    struct BattleMon* mon = (hram->hBattleTurn == 0)? &wram->wBattleMon: &wram->wEnemyMon;
-    uint8_t* subHP = (hram->hBattleTurn == 0)? &wram->wPlayerSubstituteHP: &wram->wEnemySubstituteHP;
+    struct BattleMon* mon = (hram->hBattleTurn == TURN_PLAYER)? &wram->wBattleMon: &wram->wEnemyMon;
+    uint8_t* subHP = (hram->hBattleTurn == TURN_PLAYER)? &wram->wPlayerSubstituteHP: &wram->wEnemySubstituteHP;
 
 // got_hp:
 
@@ -27,7 +27,7 @@ void BattleCommand_Substitute(void){
     // CALL(aGetBattleVar);
     // BIT_A(SUBSTATUS_SUBSTITUTE);
     // IF_NZ goto already_has_sub;
-    if(bit_test(GetBattleVar_Conv(BATTLE_VARS_SUBSTATUS4), SUBSTATUS_SUBSTITUTE)) {
+    if(bit_test(GetBattleVar(BATTLE_VARS_SUBSTATUS4), SUBSTATUS_SUBSTITUTE)) {
     // already_has_sub:
         // CALL(aCheckUserIsCharging);
         // CALL_NZ (aBattleCommand_RaiseSub);
@@ -35,7 +35,7 @@ void BattleCommand_Substitute(void){
             BattleCommand_RaiseSub();
         // LD_HL(mHasSubstituteText);
         // goto jp_stdbattletextbox;
-        return StdBattleTextbox_Conv2(HasSubstituteText);
+        return StdBattleTextbox(HasSubstituteText);
     }
 
     // LD_A_hli;
@@ -44,7 +44,7 @@ void BattleCommand_Substitute(void){
     // RR_B;
     // SRL_A;
     // RR_B;
-    uint8_t b = ReverseEndian16(mon->maxHP) >> 2;
+    uint8_t b = BigEndianToNative16(mon->maxHP) >> 2;
     // DEC_HL;
     // DEC_HL;
     // LD_A_B;
@@ -60,7 +60,7 @@ void BattleCommand_Substitute(void){
     // LD_A_D;
     // OR_A_E;
     // IF_Z goto too_weak_to_sub;
-    if(ReverseEndian16(mon->hp) <= b) {
+    if(BigEndianToNative16(mon->hp) <= b) {
     // too_weak_to_sub:
         // CALL(aCheckUserIsCharging);
         // CALL_NZ (aBattleCommand_RaiseSub);
@@ -70,18 +70,18 @@ void BattleCommand_Substitute(void){
 
     // jp_stdbattletextbox:
         // JP(mStdBattleTextbox);
-        return StdBattleTextbox_Conv2(TooWeakSubText);
+        return StdBattleTextbox(TooWeakSubText);
     }
 
     // LD_hl_D;
     // INC_HL;
     // LD_hl_E;
-    mon->hp = ReverseEndian16(ReverseEndian16(mon->hp) - b);
+    mon->hp = NativeToBigEndian16(BigEndianToNative16(mon->hp) - b);
 
     // LD_A(BATTLE_VARS_SUBSTATUS4);
     // CALL(aGetBattleVarAddr);
     // SET_hl(SUBSTATUS_SUBSTITUTE);
-    bit_set(*GetBattleVarAddr_Conv(BATTLE_VARS_SUBSTATUS4), SUBSTATUS_SUBSTITUTE);
+    bit_set(*GetBattleVarAddr(BATTLE_VARS_SUBSTATUS4), SUBSTATUS_SUBSTITUTE);
 
     // LD_HL(wPlayerWrapCount);
     // LD_DE(wPlayerTrappingMove);
@@ -90,8 +90,8 @@ void BattleCommand_Substitute(void){
     // IF_Z goto player;
     // LD_HL(wEnemyWrapCount);
     // LD_DE(wEnemyTrappingMove);
-    uint8_t* wrapCount = (hram->hBattleTurn == 0)? &wram->wPlayerWrapCount: &wram->wEnemyWrapCount;
-    move_t* trappingMove = (hram->hBattleTurn == 0)? &wram->wPlayerTrappingMove: &wram->wEnemyTrappingMove;
+    uint8_t* wrapCount = (hram->hBattleTurn == TURN_PLAYER)? &wram->wPlayerWrapCount: &wram->wEnemyWrapCount;
+    move_t* trappingMove = (hram->hBattleTurn == TURN_PLAYER)? &wram->wPlayerTrappingMove: &wram->wEnemyTrappingMove;
 
 // player:
 
@@ -125,7 +125,7 @@ void BattleCommand_Substitute(void){
 // finish:
     // LD_HL(mMadeSubstituteText);
     // CALL(aStdBattleTextbox);
-    StdBattleTextbox_Conv2(MadeSubstituteText);
+    StdBattleTextbox(MadeSubstituteText);
     // JP(mRefreshBattleHuds);
-    RefreshBattleHuds_Conv();
+    RefreshBattleHuds();
 }

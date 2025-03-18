@@ -278,9 +278,9 @@ MasterLoop:
 
             // PUSH_HL;
             // LD_DE(wTempMonAttack);
-            uint16_t atk = ReverseEndian16(wram->wTempMon.attack);
+            uint16_t atk = BigEndianToNative16(wram->wTempMon.attack);
             // LD_HL(wTempMonDefense);
-            uint16_t def = ReverseEndian16(wram->wTempMon.defense);
+            uint16_t def = BigEndianToNative16(wram->wTempMon.defense);
             // LD_C(2);
             // CALL(aCompareBytes);
             // LD_A(ATK_EQ_DEF);
@@ -435,7 +435,7 @@ MasterLoop:
         // LD_A_hli;
         // LD_B_A;
         // LD_C_hl;
-        uint16_t maxHP = ReverseEndian16(mon->maxHP);
+        uint16_t maxHP = BigEndianToNative16(mon->maxHP);
         // LD_HL(wTempMonMaxHP + 1);
         // LD_A_hld;
         // SUB_A_C;
@@ -443,7 +443,7 @@ MasterLoop:
         // LD_A_hl;
         // SBC_A_B;
         // LD_B_A;
-        uint16_t bc = ReverseEndian16(wram->wTempMon.maxHP) - maxHP;
+        uint16_t bc = BigEndianToNative16(wram->wTempMon.maxHP) - maxHP;
         // LD_HL(wTempMonHP + 1);
         // LD_A_hl;
         // ADD_A_C;
@@ -451,7 +451,7 @@ MasterLoop:
         // LD_A_hl;
         // ADC_A_B;
         // LD_hl_A;
-        wram->wTempMon.HP = ReverseEndian16(ReverseEndian16(wram->wTempMon.HP) + bc);
+        wram->wTempMon.HP = NativeToBigEndian16(BigEndianToNative16(wram->wTempMon.HP) + bc);
 
         // LD_HL(wTempMonSpecies);
         // LD_BC(PARTYMON_STRUCT_LENGTH);
