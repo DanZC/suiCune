@@ -1392,7 +1392,7 @@ void Place2DMenuCursor_Conv(void){
 // got_row:
     // LD_C(SCREEN_WIDTH);
     // CALL(aAddNTimes);
-    hl = AddNTimes_Conv2(hl, SCREEN_WIDTH, (b - 1) * c);
+    hl = AddNTimes(hl, SCREEN_WIDTH, (b - 1) * c);
     // LD_A_addr(w2DMenuCursorOffsets);
     // AND_A(0xf);
     // LD_C_A;

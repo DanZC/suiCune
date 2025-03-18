@@ -49,7 +49,7 @@ uint16_t GetPartyParamLocation_Conv(uint8_t a){
 uint16_t GetPartyLocation_Conv(uint16_t hl, uint8_t a){
     // LD_BC(PARTYMON_STRUCT_LENGTH);
     // JP(mAddNTimes);
-    return AddNTimes_Conv(PARTYMON_STRUCT_LENGTH, hl, a);
+    return AddNTimes_GB(PARTYMON_STRUCT_LENGTH, hl, a);
 }
 
 //  Add the length of a PartyMon struct to hl a times.

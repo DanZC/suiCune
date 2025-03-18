@@ -6,9 +6,9 @@ void init_function_pointers(void) {
     for (int i = 0; i < ROM_SIZE; i++) redirectFunc[i] = convertedFunc[i] = NULL;
 
     // home/array.c
-    REDIRECTED(AddNTimes);
-    REDIRECTED(IsInArray);
-    REDIRECTED(SkipNames);
+    // CONVERTED(AddNTimes);
+    // CONVERTED(IsInArray);
+    // CONVERTED(SkipNames);
 
     // home/audio.c
     REDIRECTED(MaxVolume);
