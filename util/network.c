@@ -206,7 +206,7 @@ static struct sockaddr *convert_sockaddr(socklen_t *addrlen, union u_sockaddr *u
     }
 }
 
-struct mobile_addr make_mobile_addr(enum mobile_addrtype addrtype, in_addr_t host, unsigned bindport) {
+struct mobile_addr make_mobile_addr(enum mobile_addrtype addrtype, uint32_t host, unsigned bindport) {
     struct mobile_addr addr;
     addr.type = addrtype;
     switch(addrtype) {

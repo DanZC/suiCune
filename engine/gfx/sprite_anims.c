@@ -9,6 +9,7 @@
 #include "../games/slot_machine.h"
 #include "../events/celebi.h"
 #include "../../mobile/fixed_words.h"
+#include "../../mobile/mobile_42.h"
 
 static void AnimSeq_Null_Conv(struct SpriteAnim* bc);
 static void AnimSeq_PartyMon_Conv(struct SpriteAnim* bc);
@@ -1849,8 +1850,9 @@ void AnimSeq_MobileTradeSentPulse(void){
 }
 
 static void AnimSeq_MobileTradeSentPulse_Conv(struct SpriteAnim* bc){
-    REG_BC = (bc - wram->wSpriteAnim) * SPRITEANIMSTRUCT_LENGTH + wSpriteAnimationStructs;
-    FARCALL(aMobileTradeAnim_AnimateSentPulse);
+    // REG_BC = (bc - wram->wSpriteAnim) * SPRITEANIMSTRUCT_LENGTH + wSpriteAnimationStructs;
+    // FARCALL(aMobileTradeAnim_AnimateSentPulse);
+    MobileTradeAnim_AnimateSentPulse(bc);
 }
 
 void AnimSeq_MobileTradeOTPulse(void){
@@ -1860,8 +1862,9 @@ void AnimSeq_MobileTradeOTPulse(void){
 }
 
 static void AnimSeq_MobileTradeOTPulse_Conv(struct SpriteAnim* bc){
-    REG_BC = (bc - wram->wSpriteAnim) * SPRITEANIMSTRUCT_LENGTH + wSpriteAnimationStructs;
-    FARCALL(aMobileTradeAnim_AnimateOTPulse);
+    // REG_BC = (bc - wram->wSpriteAnim) * SPRITEANIMSTRUCT_LENGTH + wSpriteAnimationStructs;
+    // FARCALL(aMobileTradeAnim_AnimateOTPulse);
+    MobileTradeAnim_AnimateOTPulse(bc);
 }
 
 void AnimSeq_IntroSuicune(void){

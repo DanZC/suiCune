@@ -4526,6 +4526,7 @@ void Function11148c(mobile_api_data_s* data){
         // CALL(aMobileSDK_CopyBytes);
         de = MobileSDK_CopyBytes(de, wram->wMobileSDK_ReceivePacketBuffer + 5, c);
         // PUSH_HL;
+        hl = wram->wMobileSDK_ReceivePacketBuffer + 5 + c;
         // LD_A_C;
         // INC_A;
         // LD_addr_A(wc993);
@@ -4543,7 +4544,6 @@ void Function11148c(mobile_api_data_s* data){
         // LD_hl_A;
         wram->wc992 = 0;
         // POP_HL;
-        hl = wram->wMobileSDK_ReceivePacketBuffer + 5;
         // goto asm_1114d2;
     }
 // asm_1114d2:
