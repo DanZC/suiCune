@@ -437,7 +437,7 @@ void FindNest_Conv(uint8_t e, species_t species){
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x0);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x0);
     // LD_A_E;
     // AND_A_A;
     // IF_NZ goto kanto;
@@ -530,7 +530,7 @@ static bool TryWildEncounter_EncounterRate(void) {
     // CALL(aApplyCleanseTagEffectOnEncounterRate);
     b = ApplyCleanseTagEffectOnEncounterRate_Conv(b);
     // CALL(aRandom);
-    uint8_t a = Random_Conv();
+    uint8_t a = Random();
     // CP_A_B;
     return a < b;
     // RET;
@@ -788,6 +788,8 @@ bool ChooseWildEncounter_Conv(void){
         return false;
     // CALL(aCheckEncounterRoamMon);
     // JP_C (mChooseWildEncounter_startwildbattle);
+    if(CheckEncounterRoamMon())
+        return true;
 
     // INC_HL;
     // INC_HL;
@@ -811,7 +813,7 @@ bool ChooseWildEncounter_Conv(void){
     do {
     // randomloop:
         // CALL(aRandom);
-        a = Random_Conv();
+        a = Random();
         // CP_A(100);
         // IF_NC goto randomloop;
     } while(a >= 100);
@@ -846,7 +848,7 @@ bool ChooseWildEncounter_Conv(void){
     if(CheckOnWater_Conv()) {
     //  Check if we buff the wild mon, and by how much.
         // CALL(aRandom);
-        uint8_t r = Random_Conv();
+        uint8_t r = Random();
         // CP_A(35 percent);
         // IF_C goto ok;
         if(r >= 35 percent) {
@@ -1349,54 +1351,68 @@ void InitRoamMons(void){
     // RET;
 }
 
-void CheckEncounterRoamMon(void){
-    PUSH_HL;
+bool CheckEncounterRoamMon(void){
+    // PUSH_HL;
 //  Don't trigger an encounter if we're on water.
-    CALL(aCheckOnWater);
-    IF_Z goto DontEncounterRoamMon;
+    // CALL(aCheckOnWater);
+    // IF_Z goto DontEncounterRoamMon;
+    if(CheckOnWater_Conv())
+        return false;
 //  Load the current map group and number to de
-    CALL(aCopyCurrMapDE);
+    // CALL(aCopyCurrMapDE);
+    struct MapId curMap = CopyCurrMapDE_Conv();
 //  Randomly select a beast.
-    CALL(aRandom);
-    CP_A(100);  // 25/64 chance
-    IF_NC goto DontEncounterRoamMon;
-    AND_A(0b00000011);  // Of that, a 3/4 chance.  Running total: 75/256, or around 29.3%.
-    IF_Z goto DontEncounterRoamMon;
-    DEC_A;  // 1/3 chance that it's Entei, 1/3 chance that it's Raikou
+    // CALL(aRandom);
+    uint8_t a = Random();
+    // CP_A(100);  // 25/64 chance
+    // IF_NC goto DontEncounterRoamMon;
+    if(a >= 100)  // 25/64 chance
+        return false;
+    // AND_A(0b00000011);  // Of that, a 3/4 chance.  Running total: 75/256, or around 29.3%.
+    // IF_Z goto DontEncounterRoamMon;
+    if((a & 0b00000011) == 0)  // Of that, a 3/4 chance.  Running total: 75/256, or around 29.3%.
+        return false;
+    // DEC_A;  // 1/3 chance that it's Entei, 1/3 chance that it's Raikou
+    a = (a & 0b00000011) - 1;
 //  Compare its current location with yours
-    LD_HL(wRoamMon1MapGroup);
-    LD_C_A;
-    LD_B(0);
-    LD_A(7);  // length of the roam_struct
-    CALL(aAddNTimes);
-    LD_A_D;
-    CP_A_hl;
-    IF_NZ goto DontEncounterRoamMon;
-    INC_HL;
-    LD_A_E;
-    CP_A_hl;
-    IF_NZ goto DontEncounterRoamMon;
+    // LD_HL(wRoamMon1MapGroup);
+    // LD_C_A;
+    // LD_B(0);
+    // LD_A(7);  // length of the roam_struct
+    // CALL(aAddNTimes);
+    struct Roamer* roamer = &wram->wRoamMon1 + a;
+    // LD_A_D;
+    // CP_A_hl;
+    // IF_NZ goto DontEncounterRoamMon;
+    // INC_HL;
+    // LD_A_E;
+    // CP_A_hl;
+    // IF_NZ goto DontEncounterRoamMon;
+    if(roamer->mapId.mapGroup != curMap.mapGroup || roamer->mapId.mapNumber != curMap.mapNumber)
+        return false;
 //  We've decided to take on a beast, so stage its information for battle.
-    DEC_HL;
-    DEC_HL;
-    DEC_HL;
-    LD_A_hli;
-    LD_addr_A(wTempWildMonSpecies);
-    LD_A_hl;
-    LD_addr_A(wCurPartyLevel);
-    LD_A(BATTLETYPE_ROAMING);
-    LD_addr_A(wBattleType);
+    // DEC_HL;
+    // DEC_HL;
+    // DEC_HL;
+    // LD_A_hli;
+    // LD_addr_A(wTempWildMonSpecies);
+    wram->wTempWildMonSpecies = roamer->species;
+    // LD_A_hl;
+    // LD_addr_A(wCurPartyLevel);
+    wram->wCurPartyLevel = roamer->level;
+    // LD_A(BATTLETYPE_ROAMING);
+    // LD_addr_A(wBattleType);
+    wram->wBattleType = BATTLETYPE_ROAMING;
 
-    POP_HL;
-    SCF;
-    RET;
+    // POP_HL;
+    // SCF;
+    // RET;
+    return true;
 
-
-DontEncounterRoamMon:
-    POP_HL;
-    AND_A_A;
-    RET;
-
+// DontEncounterRoamMon:
+    // POP_HL;
+    // AND_A_A;
+    // RET;
 }
 
 static struct MapId UpdateRoamMons_Update(uint8_t mapGroup, uint8_t mapNumber) {
@@ -1435,7 +1451,7 @@ static struct MapId UpdateRoamMons_Update(uint8_t mapGroup, uint8_t mapNumber) {
                 //  Choose which map to warp to.
                     // CALL(aRandom);
                     // AND_A(0b00011111);  // 1/8n chance it moves to a completely random map, where n is the number of roaming connections from the current map.
-                    a = Random_Conv() & 0b00011111;
+                    a = Random() & 0b00011111;
                     // JR_Z (mJumpRoamMon);
                     if(a == 0)
                         return JumpRoamMon_Conv();
@@ -1646,7 +1662,7 @@ struct MapId JumpRoamMon_Conv(void){
         // maskbits(NUM_ROAMMON_MAPS, 0);
         // CP_A(NUM_ROAMMON_MAPS);
         // IF_NC goto innerloop1;
-        a = Random_Conv() & 0xf;
+        a = Random() & 0xf;
         // INC_A;
         // LD_B_A;
 
@@ -1778,7 +1794,7 @@ void RandomUnseenWildMon(void){
     // randloop1:
         // CALL(aRandom);
         // AND_A(0b11);
-        a = Random_Conv() & 0b11;
+        a = Random() & 0b11;
         // IF_Z goto randloop1;
     } while(a == 0);
     // DEC_A;
@@ -1826,11 +1842,11 @@ void RandomUnseenWildMon(void){
 //  Since we haven't seen it, have the caller tell us about it.
     // LD_DE(wStringBuffer1);
     // CALL(aCopyName1);
-    CopyName1_Conv2(wram->wStringBuffer1);
+    CopyName1(wram->wStringBuffer1);
     // LD_A_C;
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetPokemonName);
-    GetPokemonName_Conv2(rare);
+    GetPokemonName(rare);
     // LD_HL(mRandomUnseenWildMon_JustSawSomeRareMonText);
     // CALL(aPrintText);
     PrintText_Conv2(JustSawSomeRareMonText);
@@ -1887,15 +1903,15 @@ void RandomPhoneWildMon(void){
     // ADD_HL_BC;
     // INC_HL;
     // LD_A_hl;
-    species_t s = mons.grassMons->mons[wram->wTimeOfDay][Random_Conv() & 0b11].species;
+    species_t s = mons.grassMons->mons[wram->wTimeOfDay][Random() & 0b11].species;
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetPokemonName);
     // LD_HL(wStringBuffer1);
     // LD_DE(wStringBuffer4);
     // LD_BC(MON_NAME_LENGTH);
     // JP(mCopyBytes);
-    return CopyBytes_Conv2(wram->wStringBuffer4,
-        GetPokemonName_Conv2(s), MON_NAME_LENGTH);
+    return CopyBytes(wram->wStringBuffer4,
+        GetPokemonName(s), MON_NAME_LENGTH);
 }
 
 //  Get a random monster owned by the trainer who's calling.
@@ -1970,7 +1986,7 @@ void RandomPhoneMon(void){
     // rand:
         // CALL(aRandom);
         // maskbits(PARTY_LENGTH, 0);
-        a = Random_Conv() & 7;
+        a = Random() & 7;
         // CP_A_E;
         // IF_NC goto rand;
     } while(a >= party->size);
@@ -2001,7 +2017,7 @@ void RandomPhoneMon(void){
     // LD_DE(wStringBuffer4);
     // LD_BC(MON_NAME_LENGTH);
     // JP(mCopyBytes);
-    CopyBytes_Conv2(wram->wStringBuffer4, GetPokemonName_Conv2(s), MON_NAME_LENGTH);
+    CopyBytes(wram->wStringBuffer4, GetPokemonName(s), MON_NAME_LENGTH);
 
 // INCLUDE "data/wild/johto_grass.asm"
 // INCLUDE "data/wild/johto_water.asm"

@@ -90,7 +90,7 @@ void ResetFruitTrees(void){
     // LD_hli_A;
     // LD_hli_A;
     // LD_hl_A;
-    ByteFill_Conv2(wram->wFruitTreeFlags, sizeof(wram->wFruitTreeFlags), 0);
+    ByteFill(wram->wFruitTreeFlags, sizeof(wram->wFruitTreeFlags), 0);
     // LD_HL(wDailyFlags1);
     // SET_hl(DAILYFLAGS1_ALL_FRUIT_TREES_F);
     bit_set(wram->wDailyFlags1, DAILYFLAGS1_ALL_FRUIT_TREES_F);

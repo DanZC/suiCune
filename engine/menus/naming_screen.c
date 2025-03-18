@@ -366,7 +366,7 @@ void NamingScreen_Conv(uint8_t* de, uint8_t b){
     // LD_addr_A(wOptions);
     wram->wOptions = options;
     // CALL(aClearJoypad);
-    ClearJoypad_Conv();
+    ClearJoypad();
     // RET;
     return;
 
@@ -379,7 +379,7 @@ static void NamingScreen_SetUpNamingScreen(void) {
     // CALL(aGetSGBLayout);
     GetSGBLayout_Conv(SCGB_DIPLOMA);
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
     // CALL(aLoadNamingScreenGFX);
     LoadNamingScreenGFX();
     // CALL(aNamingScreen_InitText);
@@ -437,7 +437,7 @@ static void NamingScreen_GetNamingScreenSetup(void) {
             // CALL(aGetPokemonName);
             // hlcoord(5, 2, wTilemap);
             // CALL(aPlaceString);
-            struct TextPrintState st = {.de = GetPokemonName_Conv2(wram->wCurPartySpecies), .hl = coord(5, 2, wram->wTilemap)};
+            struct TextPrintState st = {.de = GetPokemonName(wram->wCurPartySpecies), .hl = coord(5, 2, wram->wTilemap)};
             PlaceString_Conv(&st, st.hl);
             // LD_L_C;
             // LD_H_B;
@@ -659,7 +659,7 @@ void NamingScreen_InitText(void){
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // LD_A(NAMINGSCREEN_BORDER);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, NAMINGSCREEN_BORDER);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, NAMINGSCREEN_BORDER);
     // hlcoord(1, 1, wTilemap);
     // LD_BC((6 << 8) | 18);
     // CALL(aNamingScreen_IsTargetBox);
@@ -919,7 +919,7 @@ bool NamingScreenJoypadLoop(void){
     // CALLFAR(aClearSpriteAnims);
     ClearSpriteAnims_Conv();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // XOR_A_A;
     // LDH_addr_A(hSCX);
     hram->hSCX = 0;
@@ -1643,7 +1643,7 @@ void NamingScreen_GetLastCharacter(void){
 
 void LoadNamingScreenGFX(void){
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // CALLFAR(aClearSpriteAnims);
     ClearSpriteAnims_Conv();
     // CALL(aLoadStandardFont);
@@ -1761,12 +1761,12 @@ static void v_ComposeMailMessage_InitCharset(void){
     // LD_BC(6 * SCREEN_WIDTH);
     // LD_A(NAMINGSCREEN_BORDER);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), 6 * SCREEN_WIDTH, NAMINGSCREEN_BORDER);
+    ByteFill(coord(0, 0, wram->wTilemap), 6 * SCREEN_WIDTH, NAMINGSCREEN_BORDER);
     // hlcoord(0, 6, wTilemap);
     // LD_BC(12 * SCREEN_WIDTH);
     // LD_A(0x7f);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 6, wram->wTilemap), 12 * SCREEN_WIDTH, 0x7f);
+    ByteFill(coord(0, 6, wram->wTilemap), 12 * SCREEN_WIDTH, 0x7f);
     // hlcoord(1, 1, wTilemap);
     // LD_BC((4 << 8) | (SCREEN_WIDTH - 2));
     // CALL(aClearBox);
@@ -1780,7 +1780,7 @@ static void v_ComposeMailMessage_InitBlankMail(void) {
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
     // CALL(aLoadNamingScreenGFX);
     LoadNamingScreenGFX();
     // LD_DE(vTiles0 + LEN_2BPP_TILE * 0x00);
@@ -2053,7 +2053,7 @@ static bool v_ComposeMailMessage_DoMailEntry(void){
     // CALLFAR(aClearSpriteAnims);
     ClearSpriteAnims_Conv();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // XOR_A_A;
     // LDH_addr_A(hSCX);
     hram->hSCX = 0x0;

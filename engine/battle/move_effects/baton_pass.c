@@ -30,7 +30,7 @@ void BattleCommand_BatonPass(void){
 
         // LD_C(50);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(50);
+        DelayFrames(50);
 
     //  Transition into switchmon menu
         // CALL(aLoadStandardMenuHeader);
@@ -49,7 +49,7 @@ void BattleCommand_BatonPass(void){
         // CALL(aCloseWindow);
         CloseWindow_Conv2();
         // CALL(aClearSprites);
-        ClearSprites_Conv();
+        ClearSprites();
         // hlcoord(1, 0, wTilemap);
         // LD_BC((4 << 8) | 10);
         // CALL(aClearBox);

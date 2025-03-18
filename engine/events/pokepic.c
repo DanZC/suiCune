@@ -30,7 +30,7 @@ void Pokepic(void){
     // LD_B(SCGB_POKEPIC);
     // CALL(aGetSGBLayout);
     GetSGBLayout_Conv(SCGB_POKEPIC);
-    DelayFrames_Conv(10);
+    DelayFrames(10);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = 0;

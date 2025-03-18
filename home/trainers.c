@@ -41,7 +41,7 @@ bool CheckTrainerBattle_Conv(void){
     // POP_BC;
     // LD_A_B;
     // RST(aBankswitch);
-    Bankswitch_Conv(oldBank);
+    Bankswitch(oldBank);
     // RET;
     return b;
 }
@@ -348,7 +348,7 @@ bool LoadTrainer_continue_Conv(void){
             gWinTextPointer = NULL;
             gLossTextPointer = NULL;
             gScriptAfterPointer = NULL;
-            CopyBytes_Conv2(&wram->wTempTrainerEventFlag, AbsGBToRAMAddr((wram->wSeenTrainerBank << 14) | bc->objectScript), (&wram->wRunningTrainerBattleScript - (uint8_t*)&wram->wTempTrainerEventFlag));
+            CopyBytes(&wram->wTempTrainerEventFlag, AbsGBToRAMAddr((wram->wSeenTrainerBank << 14) | bc->objectScript), (&wram->wRunningTrainerBattleScript - (uint8_t*)&wram->wTempTrainerEventFlag));
         }
     }
     // XOR_A_A;

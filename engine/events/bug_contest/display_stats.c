@@ -18,7 +18,7 @@ void DisplayCaughtContestMonStats(void){
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // CALL(aLoadFontsBattleExtra);
     LoadFontsBattleExtra();
 
@@ -67,7 +67,7 @@ void DisplayCaughtContestMonStats(void){
     // LD_DE(wStringBuffer1);
     // hlcoord(1, 2, wTilemap);
     // CALL(aPlaceString);
-    struct TextPrintState st = {.hl = coord(1, 2, wram->wTilemap), .de = GetPokemonName_Conv2(wram->wContestMon.mon.species)};
+    struct TextPrintState st = {.hl = coord(1, 2, wram->wTilemap), .de = GetPokemonName(wram->wContestMon.mon.species)};
     PlaceString_Conv(&st, st.hl);
 
     // LD_H_B;
@@ -131,7 +131,7 @@ void DisplayAlreadyCaughtText(species_t a){
         text_end
     };
     // CALL(aGetPokemonName);
-    GetPokemonName_Conv2(a);
+    GetPokemonName(a);
     // LD_HL(mDisplayAlreadyCaughtText_ContestAlreadyCaughtText);
     // JP(mPrintText);
     PrintText_Conv2(ContestAlreadyCaughtText);

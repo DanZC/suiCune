@@ -1544,7 +1544,7 @@ void AnimateEndOfExpBar_Conv(void){
         // IF_NZ goto loop;
     } while(--c != 0);
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // RET;
 }
 

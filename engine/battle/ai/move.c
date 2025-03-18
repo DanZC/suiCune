@@ -287,7 +287,7 @@ void AIChooseMove(void){
         // CALL(aRandom);
         // maskbits(NUM_MOVES, 0);
         // LD_C_A;
-        moveIdx = Random_Conv() % NUM_MOVES;
+        moveIdx = Random() % NUM_MOVES;
         // LD_B(0);
         // ADD_HL_BC;
         // LD_A_hl;

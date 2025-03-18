@@ -631,7 +631,7 @@ void HatchEggs(void){
             // LD_addr_A(wNamedObjectIndex);
             // LD_addr_A(wCurSpecies);
             // CALL(aGetPokemonName);
-            GetPokemonName_Conv2(partySpecies);
+            GetPokemonName(partySpecies);
             // XOR_A_A;
             // LD_addr_A(wUnusedEggHatchFlag);
             wram->wUnusedEggHatchFlag = 0;
@@ -699,7 +699,7 @@ void HatchEggs(void){
             // LD_E_L;
             // LD_HL(wPlayerName);
             // CALL(aCopyBytes);
-            CopyBytes_Conv2(wram->wPartyMonOT[mon], wram->wPlayerName, NAME_LENGTH);
+            CopyBytes(wram->wPartyMonOT[mon], wram->wPlayerName, NAME_LENGTH);
             // LD_HL(mHatchEggs_Text_HatchEgg);
             // CALL(aPrintText);
             PrintText_Conv2(Text_HatchEgg);
@@ -738,7 +738,7 @@ void HatchEggs(void){
                 // LD_HL(wStringBuffer1);
                 // LD_BC(MON_NAME_LENGTH);
                 // CALL(aCopyBytes);
-                CopyBytes_Conv2(wram->wPartyMonNickname[mon], wram->wStringBuffer1, MON_NAME_LENGTH);
+                CopyBytes(wram->wPartyMonNickname[mon], wram->wStringBuffer1, MON_NAME_LENGTH);
             }
         }
 
@@ -1409,7 +1409,7 @@ void Hatch_UpdateFrontpicBGMapCenter(tile_t* hl, uint8_t b, uint8_t c, uint8_t a
     // LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
     // LD_A(0x7f);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_HEIGHT * SCREEN_WIDTH, 0x7f);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_HEIGHT * SCREEN_WIDTH, 0x7f);
     // POP_BC;
     // POP_HL;
     // LD_A_B;
@@ -1459,7 +1459,7 @@ void EggHatch_AnimationSequence(void){
     // FARCALL(aBlankScreen);
     BlankScreen();
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
     // LD_HL(mEggHatchGFX);
     // LD_DE(vTiles0 + LEN_2BPP_TILE * 0x00);
     // LD_BC(2 * LEN_2BPP_TILE);
@@ -1480,7 +1480,7 @@ void EggHatch_AnimationSequence(void){
     // CALL(aPlayMusic);
     PlayMusic_Conv(MUSIC_EVOLUTION);
     // CALL(aEnableLCD);
-    EnableLCD_Conv();
+    EnableLCD();
     // hlcoord(7, 4, wTilemap);
     // LD_B(HIGH(vBGMap0));
     // LD_C(0x31);  // Egg tiles start here
@@ -1489,7 +1489,7 @@ void EggHatch_AnimationSequence(void){
     Hatch_UpdateFrontpicBGMapCenter(coord(7, 4, wram->wTilemap), HIGH(vBGMap0), 0x31, EGG);
     // LD_C(80);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(80);
+    DelayFrames(80);
     // XOR_A_A;
     // LD_addr_A(wFrameCounter);
     wram->wFrameCounter = 0;
@@ -1523,7 +1523,7 @@ void EggHatch_AnimationSequence(void){
             EggHatch_DoAnimFrame();
             // LD_C(2);
             // CALL(aDelayFrames);
-            DelayFrames_Conv(2);
+            DelayFrames(2);
             // LD_A(-2);
             // LDH_addr_A(hSCX);
             hram->hSCX = (uint8_t)-2;
@@ -1534,13 +1534,13 @@ void EggHatch_AnimationSequence(void){
             EggHatch_DoAnimFrame();
             // LD_C(2);
             // CALL(aDelayFrames);
-            DelayFrames_Conv(2);
+            DelayFrames(2);
             // DEC_E;
             // IF_NZ goto loop;
         } while(--e != 0);
         // LD_C(16);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(16);
+        DelayFrames(16);
         // CALL(aEggHatch_CrackShell);
         EggHatch_CrackShell();
         // goto outerloop;
@@ -1556,7 +1556,7 @@ void EggHatch_AnimationSequence(void){
     // LD_addr_A(wGlobalAnimXOffset);
     wram->wGlobalAnimXOffset = 0;
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // CALL(aHatch_InitShellFragments);
     Hatch_InitShellFragments();
     // hlcoord(6, 3, wTilemap);
@@ -1853,7 +1853,7 @@ static const txt_cmd_s BreedShowsInterestText[] = {
     // LD_DE(wStringBuffer1);
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wStringBuffer1, nickname, NAME_LENGTH);
+    CopyBytes(wram->wStringBuffer1, nickname, NAME_LENGTH);
     // CALL(aCheckBreedmonCompatibility);
     uint8_t compat = CheckBreedmonCompatibility_Conv();
     // POP_BC;

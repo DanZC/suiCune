@@ -278,7 +278,7 @@ void Function118180(void){
     // LD_DE(s5_a89c);
     // LD_BC(22);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(GBToRAMAddr(s5_a89c), wram->wcd69, 22);
+    CopyBytes(GBToRAMAddr(s5_a89c), wram->wcd69, 22);
 
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
@@ -309,7 +309,7 @@ void Function118180(void){
         // LD_DE(s5_a8b2);
         // LD_BC(150);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(GBToRAMAddr(s5_a8b2), &wram->w3_d202, 150);
+        CopyBytes(GBToRAMAddr(s5_a8b2), &wram->w3_d202, 150);
     }
 
 // reset_banks:
@@ -1824,7 +1824,7 @@ void Function118a7a(void){
     // LD_DE(wcc60);
     // LD_BC(0x80);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wcc60_str, BattleDownloadURL, 0x80);
+    CopyBytes(wram->wcc60_str, BattleDownloadURL, 0x80);
     // LD_DE(w3_d000);
     // LD_BC(0x1000);
     // JP(mFunction118b10);
@@ -1836,7 +1836,7 @@ void Function118a8f(void){
     // LD_DE(wcc60);
     // LD_BC(0x80);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wcc60_str, ExchangeDownloadURL, 0x80);
+    CopyBytes(wram->wcc60_str, ExchangeDownloadURL, 0x80);
     // LD_DE(w3_d000);
     // LD_BC(0x1000);
     // JP(mFunction118b10);
@@ -1848,7 +1848,7 @@ void Function118aa4(void){
     // LD_DE(wcc60);
     // LD_BC(0x80);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wcc60_str, NewsDownloadURL, 0x80);
+    CopyBytes(wram->wcc60_str, NewsDownloadURL, 0x80);
     // LD_A(0x5);
     // LDH_addr_A(rSVBK);
     // LD_DE(w3_d100);
@@ -1861,7 +1861,7 @@ void Function118abc(void){
     // LD_HL(mMenuDownloadURL);
     // LD_DE(wcc60);
     // LD_BC(0x80);
-    CopyBytes_Conv2(wram->wcc60_str, MenuDownloadURL, 0x80);
+    CopyBytes(wram->wcc60_str, MenuDownloadURL, 0x80);
     // CALL(aCopyBytes);
     // LD_DE(w3_d000);
     // LD_BC(0x1000);
@@ -1874,7 +1874,7 @@ void Function118ad0(void){
     // LD_DE(wcc60);
     // LD_BC(0x80);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wcc60_str, IndexDownloadURL, 0x80);
+    CopyBytes(wram->wcc60_str, IndexDownloadURL, 0x80);
     // LD_DE(w3_d000);
     // LD_BC(0x1000);
     // JR(mFunction118b10);
@@ -2380,7 +2380,7 @@ void Function118eb0(void){
     // LD_DE(wBGMapBuffer);
     // LD_BC(0x000c);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(&wram->wcd20, wram->w3_d802, sizeof(wram->w3_d802));
+    CopyBytes(&wram->wcd20, wram->w3_d802, sizeof(wram->w3_d802));
     // CALL(aFunction1192cc);
     // RET_C ;
     if(Function1192cc())
@@ -2398,7 +2398,7 @@ void Function118ec6(void){
     // LD_DE(wc320);
     // LD_BC(0x0026);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wc320, &wram->w3_d80e, 0x0026);
+    CopyBytes(wram->wc320, &wram->w3_d80e, 0x0026);
     // XOR_A_A;
     // LD_addr_A(wc31f);
     // LD_A(0x20);
@@ -2746,7 +2746,7 @@ void Function119054(void){
     // LD_DE(s5_aa7f);
     // LD_BC(12);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(GBToRAMAddr(s5_aa7f), &wram->wEZChatSelection, 12);
+    CopyBytes(GBToRAMAddr(s5_aa7f), &wram->wEZChatSelection, 12);
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(BANK(wd474));  // aka BANK(wd475)
@@ -2758,7 +2758,7 @@ void Function119054(void){
     // LD_DE(s5_b2f4);
     // LD_BC(4);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(GBToRAMAddr(s5_b2f4), wram->wZipCode_Saved, ZIPCODE_LENGTH);
+    CopyBytes(GBToRAMAddr(s5_b2f4), wram->wZipCode_Saved, ZIPCODE_LENGTH);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // CALL(aCloseSRAM);
@@ -2795,7 +2795,7 @@ void Function1190ec(void){
     // LD_DE(s5_aa73);
     // LD_BC(12);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(GBToRAMAddr(s5_aa73), &wram->wcd20, 12);
+    CopyBytes(GBToRAMAddr(s5_aa73), &wram->wcd20, 12);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // LD_A(BANK(s5_aa72));
@@ -2869,7 +2869,7 @@ void Function11915d(void){
     // LD_DE(wcd20);
     // LD_BC(12);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(&wram->wcd20, wram->w3_d802, 12);
+    CopyBytes(&wram->wcd20, wram->w3_d802, 12);
     // LD_A(BANK(s5_aa7f));
     // CALL(aOpenSRAM);
     OpenSRAM_Conv(MBANK(as5_aa7f));
@@ -3072,7 +3072,7 @@ bool Function119223(void){
     // LD_DE(s5_b092);
     // LD_BC(31);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(GBToRAMAddr(s5_b092), wram->wc3cd, 31);
+    CopyBytes(GBToRAMAddr(s5_b092), wram->wc3cd, 31);
     // DEC_DE;
     // XOR_A_A;
     // LD_de_A;
@@ -3109,7 +3109,7 @@ bool Function119223(void){
     uint16_t count = ((uint16_t)b << 8) | c;
     // LD_DE(s5_b1d3);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(GBToRAMAddr(s5_b1d3), hl, count);
+    CopyBytes(GBToRAMAddr(s5_b1d3), hl, count);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // LD_E_L;
@@ -3238,7 +3238,7 @@ bool Function1192cc(void){
     // LD_DE(wc608);
     // LD_BC(12);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wc608, GBToRAMAddr(s5_aa73), 12);
+    CopyBytes(wram->wc608, GBToRAMAddr(s5_aa73), 12);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // LD_HL(wc608);
@@ -5239,7 +5239,7 @@ bool BattleTower_UbersCheck(void){
             // LD_DE(wcd49);
             // LD_BC(MON_NAME_LENGTH);
             // CALL(aCopyBytes);
-            CopyBytes_Conv2(&wram->wcd49, GetPokemonName_Conv2(*de), MON_NAME_LENGTH);
+            CopyBytes(&wram->wcd49, GetPokemonName(*de), MON_NAME_LENGTH);
             // LD_A(0xa);
             // LD_addr_A(wBattleTowerRoomMenuJumptableIndex);
             wram->wBattleTowerRoomMenuJumptableIndex = 0xa;
@@ -5708,7 +5708,7 @@ void Function11a00e(void){
         // LD_DE(w3_d800);
         // LD_BC(246);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(wram->w3_d800, wram->wc608, 246);
+        CopyBytes(wram->w3_d800, wram->wc608, 246);
         // LD_A(0x1);
         // LDH_addr_A(rSVBK);
         // CALL(aFadeToMenu);
@@ -5723,7 +5723,7 @@ void Function11a00e(void){
         // LD_DE(wc608);
         // LD_BC(246);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(wram->wc608, wram->w3_d800, 246);
+        CopyBytes(wram->wc608, wram->w3_d800, 246);
         // LD_A(0x1);
         // LDH_addr_A(rSVBK);
         // FARCALL(aFunction115d99);
@@ -7044,7 +7044,7 @@ void Function11a90f(void){
     // LD_HL(wc320);
     // LD_BC(0x008c);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wc320, 0x008c, 0x50);
+    ByteFill(wram->wc320, 0x008c, 0x50);
     // LD_A_addr(wc31b);
     // LD_L_A;
     // LD_A_addr(wc31c);
@@ -9486,7 +9486,7 @@ void Function11b7e5(void){
     // LD_DE(wOTTrademonOTName);
     // LD_BC(5);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wOTTrademon.otName, wram->wc63d, NAME_LENGTH);
+    CopyBytes(wram->wOTTrademon.otName, wram->wc63d, NAME_LENGTH);
     // LD_A(0x50);
     // LD_de_A;
     wram->wc63d[NAME_LENGTH] = 0x50;
@@ -9710,7 +9710,7 @@ void Function11b93b(void){
     // LD_DE(0xc608);
     // LD_BC(0x008f);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wc608, GBToRAMAddr(s5_a825 - 2), 0x8f);
+    CopyBytes(wram->wc608, GBToRAMAddr(s5_a825 - 2), 0x8f);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
 
@@ -9796,7 +9796,7 @@ void AddMobileMonToParty(const species_t* species, const struct PartyMon* mobile
     // LD_H_A;
     // LD_BC(PARTYMON_STRUCT_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(mon, mobilemon, PARTYMON_STRUCT_LENGTH);
+    CopyBytes(mon, mobilemon, PARTYMON_STRUCT_LENGTH);
 
     // LD_HL(wPartyMonOTs);
     // LD_BC(NAME_LENGTH);
@@ -9816,7 +9816,7 @@ void AddMobileMonToParty(const species_t* species, const struct PartyMon* mobile
     // LD_H_A;
     // LD_BC(MON_NAME_LENGTH - 1);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(ot2, ot, MON_NAME_LENGTH - 1);
+    CopyBytes(ot2, ot, MON_NAME_LENGTH - 1);
     // LD_A(0x50);
     // LD_de_A;
     ot2[MON_NAME_LENGTH - 1] = 0x50;
@@ -9839,7 +9839,7 @@ void AddMobileMonToParty(const species_t* species, const struct PartyMon* mobile
     // LD_H_A;
     // LD_BC(MON_NAME_LENGTH - 1);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(nickname2, nick, MON_NAME_LENGTH - 1);
+    CopyBytes(nickname2, nick, MON_NAME_LENGTH - 1);
     // LD_A(0x50);
     // LD_de_A;
     nickname2[MON_NAME_LENGTH - 1] = 0x50;
@@ -9865,7 +9865,7 @@ void AddMobileMonToParty(const species_t* species, const struct PartyMon* mobile
         // LD_H_A;
         // LD_BC(MAIL_STRUCT_LENGTH);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(GBToRAMAddr(sPartyMail + MAIL_STRUCT_LENGTH * e), mail, MAIL_STRUCT_LENGTH);
+        CopyBytes(GBToRAMAddr(sPartyMail + MAIL_STRUCT_LENGTH * e), mail, MAIL_STRUCT_LENGTH);
 
         // CALL(aCloseSRAM);
         CloseSRAM_Conv();

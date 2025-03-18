@@ -22,7 +22,7 @@ void Mobile_PrintOpponentBattleMessage(uint8_t c){
     // LD_BC(0xc);
     // LD_A(BANK(w5_MobileOpponentBattleMessages));
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->wMobileOpponentBattleMessage, wram->w5_MobileOpponentBattleMessages + 12 * (c - 1), 12);
+    CopyBytes(wram->wMobileOpponentBattleMessage, wram->w5_MobileOpponentBattleMessages + 12 * (c - 1), 12);
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(0x1);
@@ -38,6 +38,6 @@ void Mobile_PrintOpponentBattleMessage(uint8_t c){
 
     // LD_C(180);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(180);
+    DelayFrames(180);
     // RET;
 }

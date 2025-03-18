@@ -100,7 +100,7 @@ void v_TitleScreen(void){
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
 
@@ -121,7 +121,7 @@ void v_TitleScreen(void){
 
 //  Turn LCD off
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
 
 //  VRAM bank 1
     // LD_A(1);
@@ -138,7 +138,7 @@ void v_TitleScreen(void){
     // LD_BC(20 * BG_MAP_WIDTH);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(bgcoord(0, 0, vram->vBGMap2), 20 * BG_MAP_WIDTH, 0);
+    ByteFill(bgcoord(0, 0, vram->vBGMap2), 20 * BG_MAP_WIDTH, 0);
 
 //  Fill tile palettes:
 
@@ -149,7 +149,7 @@ void v_TitleScreen(void){
     // LD_BC(BG_MAP_WIDTH);
     // LD_A(7);  // palette
     // CALL(aByteFill);
-    ByteFill_Conv2(bgcoord(0, 0, vram->vBGMap3), BG_MAP_WIDTH, 7);
+    ByteFill(bgcoord(0, 0, vram->vBGMap3), BG_MAP_WIDTH, 7);
 
 //  BG Map 0:
 
@@ -160,45 +160,45 @@ void v_TitleScreen(void){
     // LD_BC(2 * BG_MAP_WIDTH);
     // LD_A(2);
     // CALL(aByteFill);
-    ByteFill_Conv2(bgcoord(0, 3, vram->vBGMap2), 2 * BG_MAP_WIDTH, 2);
+    ByteFill(bgcoord(0, 3, vram->vBGMap2), 2 * BG_MAP_WIDTH, 2);
 //  line 5
     // hlbgcoord(0, 5, vBGMap0);
     // LD_BC(BG_MAP_WIDTH);
     // LD_A(3);
     // CALL(aByteFill);
-    ByteFill_Conv2(bgcoord(0, 5, vram->vBGMap2), BG_MAP_WIDTH, 3);
+    ByteFill(bgcoord(0, 5, vram->vBGMap2), BG_MAP_WIDTH, 3);
 //  line 6
     // hlbgcoord(0, 6, vBGMap0);
     // LD_BC(BG_MAP_WIDTH);
     // LD_A(4);
     // CALL(aByteFill);
-    ByteFill_Conv2(bgcoord(0, 6, vram->vBGMap2), BG_MAP_WIDTH, 4);
+    ByteFill(bgcoord(0, 6, vram->vBGMap2), BG_MAP_WIDTH, 4);
 //  line 7
     // hlbgcoord(0, 7, vBGMap0);
     // LD_BC(BG_MAP_WIDTH);
     // LD_A(5);
     // CALL(aByteFill);
-    ByteFill_Conv2(bgcoord(0, 7, vram->vBGMap2), BG_MAP_WIDTH, 5);
+    ByteFill(bgcoord(0, 7, vram->vBGMap2), BG_MAP_WIDTH, 5);
 //  lines 8-9
     // hlbgcoord(0, 8, vBGMap0);
     // LD_BC(2 * BG_MAP_WIDTH);
     // LD_A(6);
     // CALL(aByteFill);
-    ByteFill_Conv2(bgcoord(0, 8, vram->vBGMap2), 2 * BG_MAP_WIDTH, 6);
+    ByteFill(bgcoord(0, 8, vram->vBGMap2), 2 * BG_MAP_WIDTH, 6);
 
 //  'CRYSTAL VERSION'
     // hlbgcoord(5, 9, vBGMap0);
     // LD_BC(11);  // length of version text
     // LD_A(1);
     // CALL(aByteFill);
-    ByteFill_Conv2(bgcoord(5, 9, vram->vBGMap2), 11, 1);
+    ByteFill(bgcoord(5, 9, vram->vBGMap2), 11, 1);
 
 //  Suicune gfx
     // hlbgcoord(0, 12, vBGMap0);
     // LD_BC(6 * BG_MAP_WIDTH);  // the rest of the screen
     // LD_A(0 | VRAM_BANK_1);
     // CALL(aByteFill);
-    ByteFill_Conv2(bgcoord(0, 12, vram->vBGMap2), 6 * BG_MAP_WIDTH, 0 | VRAM_BANK_1);
+    ByteFill(bgcoord(0, 12, vram->vBGMap2), 6 * BG_MAP_WIDTH, 0 | VRAM_BANK_1);
 
 //  Back to VRAM bank 0
     // LD_A(0);
@@ -221,7 +221,7 @@ void v_TitleScreen(void){
     // LD_BC(64 * BG_MAP_WIDTH);
     // LD_A(0x7f);
     // CALL(aByteFill);
-    ByteFill_Conv2(bgcoord(0, 0, vram->vBGMap0), 64 * BG_MAP_WIDTH, 0x7f);
+    ByteFill(bgcoord(0, 0, vram->vBGMap0), 64 * BG_MAP_WIDTH, 0x7f);
 
 //  Draw Pokemon logo
     // hlcoord(0, 3, wTilemap);
@@ -259,13 +259,13 @@ void v_TitleScreen(void){
     // LD_DE(wBGPals1);
     // LD_BC(16 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wBGPals1, TitleScreenPalettes, 16 * PALETTE_SIZE);
+    CopyBytes(wram->wBGPals1, TitleScreenPalettes, 16 * PALETTE_SIZE);
 
     // LD_HL(mTitleScreenPalettes);
     // LD_DE(wBGPals2);
     // LD_BC(16 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wBGPals2, TitleScreenPalettes, 16 * PALETTE_SIZE);
+    CopyBytes(wram->wBGPals2, TitleScreenPalettes, 16 * PALETTE_SIZE);
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
@@ -303,7 +303,7 @@ void v_TitleScreen(void){
     // XOR_A_A;
     // LD_BC(wLYOverridesEnd - (wLYOverrides + 80));
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wLYOverrides + 80, sizeof(wram->wLYOverrides) - 80, 0);
+    ByteFill(wram->wLYOverrides + 80, sizeof(wram->wLYOverrides) - 80, 0);
 
 //  Let LCD Stat know we're messing around with SCX
     // LD_A(LOW(rSCX));
@@ -315,9 +315,9 @@ void v_TitleScreen(void){
 
 //  Reset audio
     // CALL(aChannelsOff);
-    ChannelsOff_Conv();
+    ChannelsOff();
     // CALL(aEnableLCD);
-    EnableLCD_Conv();
+    EnableLCD();
 
 //  Set sprite size to 8x16
     // LDH_A_addr(rLCDC);
@@ -352,7 +352,7 @@ void v_TitleScreen(void){
 
 //  Play starting sound effect
     // CALL(aSFXChannelsOff);
-    SFXChannelsOff_Conv();
+    SFXChannelsOff();
     // LD_DE(SFX_TITLE_SCREEN_ENTRANCE);
     // CALL(aPlaySFX);
     PlaySFX_Conv(SFX_TITLE_SCREEN_ENTRANCE);

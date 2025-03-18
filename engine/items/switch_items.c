@@ -211,8 +211,8 @@ void SwitchItemsInBag(void){
         // ADD_HL_BC;
         // POP_BC;
         // CALL(aCopyBytes);
-        // CopyBytes_Conv2(de, de + ItemSwitch_GetItemFormatSize(), offset);
-        CopyBytes_Conv2(ItemSwitch_GetNthItem(wram->wSwitchItem), ItemSwitch_GetNthItem(wram->wScrollingMenuCursorPosition), ItemSwitch_GetItemFormatSize());
+        // CopyBytes(de, de + ItemSwitch_GetItemFormatSize(), offset);
+        CopyBytes(ItemSwitch_GetNthItem(wram->wSwitchItem), ItemSwitch_GetNthItem(wram->wScrollingMenuCursorPosition), ItemSwitch_GetItemFormatSize());
         // LD_A_addr(wScrollingMenuCursorPosition);
         // CALL(aItemSwitch_CopyBufferToItem);
         ItemSwitch_CopyBufferToItem(wram->wScrollingMenuCursorPosition);
@@ -266,7 +266,7 @@ void ItemSwitch_CopyItemToBuffer(uint8_t a){
     // CALL(aItemSwitch_GetItemFormatSize);
     // CALL(aCopyBytes);
     // RET;
-    CopyBytes_Conv2(wram->wSwitchItemBuffer, ItemSwitch_GetNthItem(a), ItemSwitch_GetItemFormatSize());
+    CopyBytes(wram->wSwitchItemBuffer, ItemSwitch_GetNthItem(a), ItemSwitch_GetItemFormatSize());
 }
 
 void ItemSwitch_CopyBufferToItem(uint8_t a){
@@ -276,7 +276,7 @@ void ItemSwitch_CopyBufferToItem(uint8_t a){
     // LD_HL(wSwitchItemBuffer);
     // CALL(aItemSwitch_GetItemFormatSize);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(ItemSwitch_GetNthItem(a), wram->wSwitchItemBuffer, ItemSwitch_GetItemFormatSize());
+    CopyBytes(ItemSwitch_GetNthItem(a), wram->wSwitchItemBuffer, ItemSwitch_GetItemFormatSize());
     // RET;
 }
 

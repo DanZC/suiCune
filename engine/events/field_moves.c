@@ -122,7 +122,7 @@ void ShakeHeadbuttTree(void){
     // LD_BC(wVirtualOAMEnd - wVirtualOAMSprite36);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wVirtualOAMSprite + 36, wVirtualOAMEnd - wVirtualOAMSprite36, 0);
+    ByteFill(wram->wVirtualOAMSprite + 36, wVirtualOAMEnd - wVirtualOAMSprite36, 0);
     // LD_DE(mFont);
     // LD_HL(vTiles1);
     // LD_BC((BANK(aFont) << 8) | 12);
@@ -628,7 +628,7 @@ static void FlyToAnim_RestorePlayerSprite_DespawnLeaves(void) {
     // LD_BC(wVirtualOAMEnd - wVirtualOAMSprite04);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wVirtualOAMSprite + 4, sizeof(wram->wVirtualOAMSprite) - (4 * sizeof(wram->wVirtualOAMSprite[0])), 0);
+    ByteFill(wram->wVirtualOAMSprite + 4, sizeof(wram->wVirtualOAMSprite) - (4 * sizeof(wram->wVirtualOAMSprite[0])), 0);
     // RET;
 }
 

@@ -150,7 +150,7 @@ bool WriteCmdQueue_Conv(const struct CmdQueue* hl){
     // LD_A_B;
     // LD_BC(CMDQUEUE_ENTRY_SIZE - 1);
     // CALL(aFarCopyBytes);
-    CopyBytes_Conv2(de, hl, sizeof(*de));
+    CopyBytes(de, hl, sizeof(*de));
     // XOR_A_A;
     de++;
     // LD_hl_A;

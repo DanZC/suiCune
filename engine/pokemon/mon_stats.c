@@ -536,7 +536,6 @@ u8_flag_s GetGender_Conv(uint8_t monType){
 
     // LD_A(BANK(aBaseData));
     // CALL(aGetFarByte);
-    // uint8_t a = GetFarByte_Conv(BANK(aBaseData), mBaseData + BASE_GENDER + (BASE_DATA_SIZE * wram->wCurPartySpecies));
     uint8_t a = BasePokemonData[wram->wCurPartySpecies - 1].gender;
 
 //  The higher the ratio, the more likely the monster is to be female.
@@ -1118,7 +1117,7 @@ void ListMoves_Conv(uint8_t* hl){
         // POP_HL;
         // PUSH_BC;
         // CALL(aPlaceString);
-        PlaceStringSimple(GetName_Conv2(MOVE_NAME, *de), hl);
+        PlaceStringSimple(GetName(MOVE_NAME, *de), hl);
         // POP_BC;
         // LD_A_B;
         // LD_addr_A(wNumMoves);

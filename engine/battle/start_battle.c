@@ -40,11 +40,11 @@ void ShowLinkBattleParticipants_Conv(void){
     v_ShowLinkBattleParticipants();
     // LD_C(150);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(150);
+    DelayFrames(150);
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // RET;
 }
 
@@ -88,7 +88,7 @@ void FindFirstAliveMonAndStartBattle(void){
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = 1;
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // XOR_A_A;
@@ -227,7 +227,7 @@ void PlayBattleMusic_Conv(void){
     // CALL(aDelayFrame);
     DelayFrame();
     // CALL(aMaxVolume);
-    MaxVolume_Conv();
+    MaxVolume();
 
     uint16_t de;
     // LD_A_addr(wBattleType);
@@ -482,7 +482,7 @@ void ClearBattleRAM_Conv(void){
     // LD_BC(wBattleEnd - wBattle);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(&wram->wEnemyMoveStruct.animation, wBattleEnd - wBattle, 0);
+    ByteFill(&wram->wEnemyMoveStruct.animation, wBattleEnd - wBattle, 0);
 
     // CALLFAR(aResetEnemyStatLevels);
     ResetEnemyStatLevels_Conv();

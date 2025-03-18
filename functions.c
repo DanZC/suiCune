@@ -11,20 +11,20 @@ void init_function_pointers(void) {
     // CONVERTED(SkipNames);
 
     // home/audio.c
-    REDIRECTED(MaxVolume);
+    CONVERTED(MaxVolume);
     REDIRECTED(PlayMusic2);
-    REDIRECTED(MinVolume);
+    CONVERTED(MinVolume);
     // CONVERTED(RestartMapMusic);
-    REDIRECTED(IsSFXPlaying);
+    // CONVERTED(IsSFXPlaying);
     CONVERTED(UpdateSound);
     REDIRECTED(FadeOutToMusic);
     REDIRECTED(SpecialMapMusic);
     REDIRECTED(GetMapMusic_MaybeSpecial);
     REDIRECTED(WaitPlaySFX);
     REDIRECTED(PlaceBCDNumberSprite);
-    REDIRECTED(LowVolume);
+    CONVERTED(LowVolume);
     REDIRECTED(PlaySFX);
-    REDIRECTED(TerminateExpBarSound);
+    CONVERTED(TerminateExpBarSound);
     CONVERTED(InitSound);
     REDIRECTED(TryRestartMapMusic);
     CONVERTED(FadeInToMusic);
@@ -34,10 +34,10 @@ void init_function_pointers(void) {
     REDIRECTED(PlayMusic);
     CONVERTED(FadeToMapMusic);
     REDIRECTED(PlayCry);
-    REDIRECTED(SkipMusic);
-    REDIRECTED(CheckSFX);
-    REDIRECTED(ChannelsOff);
-    REDIRECTED(SFXChannelsOff);
+    // CONVERTED(SkipMusic);
+    // CONVERTED(CheckSFX);
+    CONVERTED(ChannelsOff);
+    CONVERTED(SFXChannelsOff);
 
     // home/battle.c
     CONVERTED(UpdateBattleHuds);
@@ -76,22 +76,22 @@ void init_function_pointers(void) {
     REDIRECTED(v_de_);
 
     // home/clear_sprites.c
-    REDIRECTED(HideSprites);
-    REDIRECTED(ClearSprites);
+    CONVERTED(HideSprites);
+    CONVERTED(ClearSprites);
 
     // home/compare.c
     // CONVERTED(CompareBytesLong);
     // CONVERTED(CompareBytes);
 
     // home/copy.c
-    REDIRECTED(GetFarWRAMWord);
-    REDIRECTED(GetFarByte);
-    REDIRECTED(FarCopyWRAM);
-    REDIRECTED(CopyBytes);
-    REDIRECTED(GetFarWRAMByte);
-    REDIRECTED(ByteFill);
-    REDIRECTED(SwapBytes);
-    REDIRECTED(GetFarWord);
+    // REDIRECTED(GetFarWRAMWord);
+    // CONVERTED(GetFarByte);
+    // CONVERTED(FarCopyWRAM);
+    // CONVERTED(CopyBytes);
+    // CONVERTED(GetFarWRAMByte);
+    // CONVERTED(ByteFill);
+    // CONVERTED(SwapBytes);
+    // CONVERTED(GetFarWord);
 
     // home/copy_name.c
     // REDIRECTED(CopyName1);
@@ -108,7 +108,7 @@ void init_function_pointers(void) {
 
     // home/delay.c
     CONVERTED(DelayFrame);
-    CONVERTED(DelayFrames);
+    // CONVERTED(DelayFrames);
 
     // home/double_speed.c
     // REDIRECTED(DoubleSpeed);
@@ -194,12 +194,12 @@ void init_function_pointers(void) {
     // REDIRECTED(IsHMMove);
 
     // home/init.c
-    REDIRECTED(ClearsScratch);
-    REDIRECTED(ClearWRAM);
-    REDIRECTED(Reset);
-    REDIRECTED(ClearVRAM);
-    REDIRECTED(Init);
-    REDIRECTED(v_Start);
+    // CONVERTED(ClearsScratch);
+    // CONVERTED(ClearWRAM);
+    // CONVERTED(Reset);
+    // CONVERTED(ClearVRAM);
+    // CONVERTED(Init);
+    // CONVERTED(v_Start);
 
     // home/item.c
     // REDIRECTED(ReceiveItem);
@@ -272,8 +272,8 @@ void init_function_pointers(void) {
 
     // home/math.c
     // REDIRECTED(Divide);
-    // REDIRECTED(SimpleMultiply);
-    // REDIRECTED(SimpleDivide);
+    // CONVERTED(SimpleMultiply);
+    // CONVERTED(SimpleDivide);
     // REDIRECTED(Multiply);
     // REDIRECTED(SubtractAbsolute);
 
@@ -370,14 +370,14 @@ void init_function_pointers(void) {
     // REDIRECTED(AppendToMovementBuffer);
 
     // home/names.c
-    // REDIRECTED(GetItemName);
-    REDIRECTED(GetMoveName);
-    // REDIRECTED(GetBasePokemonName);
-    // REDIRECTED(GetPokemonName);
-    // REDIRECTED(GetName);
-    // REDIRECTED(GetTMHMName);
-    // REDIRECTED(GetNthString);
-    // REDIRECTED(NamesPointers);
+    // CONVERTED(GetItemName);
+    // CONVERTED(GetMoveName);
+    // CONVERTED(GetBasePokemonName);
+    // CONVERTED(GetPokemonName);
+    // CONVERTED(GetName);
+    // CONVERTED(GetTMHMName);
+    // CONVERTED(GetNthString);
+    // CONVERTED(NamesPointers);
 
     // home/palettes.c
     REDIRECTED(UpdatePalsIfCGB);
@@ -619,9 +619,9 @@ void init_function_pointers(void) {
     // REDIRECTED(InitTime);
 
     // home/time_palettes.c
-    // REDIRECTED(UpdateTimeAndPals);
-    // REDIRECTED(TimeOfDayPals);
-    // REDIRECTED(UpdateTimePals);
+    // CONVERTED(UpdateTimeAndPals);
+    // CONVERTED(TimeOfDayPals);
+    // CONVERTED(UpdateTimePals);
 
     // home/trainers.c
     // REDIRECTED(CheckTrainerFlag);

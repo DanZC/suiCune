@@ -37,7 +37,7 @@ static void InitClock_ClearScreen(void) {
     // LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_HEIGHT * SCREEN_WIDTH, 0);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_HEIGHT * SCREEN_WIDTH, 0);
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = 0x1;
@@ -66,13 +66,13 @@ void InitClock(void){
     wram->wMusicFadeID = MUSIC_NONE;
     // LD_C(8);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(8);
+    DelayFrames(8);
     // CALL(aRotateFourPalettesLeft);
     RotateFourPalettesLeft_Conv();
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // LD_B(SCGB_DIPLOMA);
     // CALL(aGetSGBLayout);
     GetSGBLayout_Conv(SCGB_DIPLOMA);
@@ -109,7 +109,7 @@ void InitClock(void){
     // LD_BC(wTimeSetBufferEnd - wTimeSetBuffer);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wTimeSetBuffer, sizeof(wram->wTimeSetBuffer), 0);
+    ByteFill(wram->wTimeSetBuffer, sizeof(wram->wTimeSetBuffer), 0);
     // LD_A(10);  // default hour = 10 AM
     // LD_addr_A(wInitHourBuffer);
     wram->wInitHourBuffer = hram->hRTCHours;
@@ -135,7 +135,7 @@ void InitClock(void){
         DisplayHourOClock_Conv(coord(4, 9, wram->wTilemap));
         // LD_C(10);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(10);
+        DelayFrames(10);
 
         do {
         // SetHourLoop:
@@ -183,7 +183,7 @@ void InitClock(void){
         DisplayMinutesWithMinString_Conv(coord(12, 9, wram->wTilemap));
         // LD_C(10);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(10);
+        DelayFrames(10);
 
         do {
         // SetMinutesLoop:
@@ -347,7 +347,7 @@ bool SetHour_Conv(void){
     // LD_A(0x7f);
     // LD_BC(15);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(4, 9, wram->wTilemap), 15, 0x7f);
+    ByteFill(coord(4, 9, wram->wTilemap), 15, 0x7f);
     // hlcoord(4, 9, wTilemap);
     // CALL(aDisplayHourOClock);
     DisplayHourOClock_Conv(coord(4, 9, wram->wTilemap));
@@ -542,7 +542,7 @@ bool SetMinutes_Conv(void){
     // LD_A(0x7f);
     // LD_BC(7);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(12, 9, wram->wTilemap), 7, 0x7f);
+    ByteFill(coord(12, 9, wram->wTilemap), 7, 0x7f);
     // hlcoord(12, 9, wTilemap);
     // CALL(aDisplayMinutesWithMinString);
     DisplayMinutesWithMinString_Conv(coord(12, 9, wram->wTilemap));
@@ -916,7 +916,7 @@ void SetDayOfWeek(void){
         ApplyTilemap_Conv();
         // LD_C(10);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(10);
+        DelayFrames(10);
 
         do {
         // loop2:

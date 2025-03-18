@@ -84,7 +84,7 @@ void Function8b36c(uint8_t* bc){
     // LD_BC(4);
     // LD_A(-1);
     // CALL(aByteFill);
-    ByteFill_Conv2(bc, 4, 0xff);
+    ByteFill(bc, 4, 0xff);
     // POP_BC;
     // RET;
 }
@@ -660,7 +660,7 @@ bool Function8b555(void){
             // LD_DE(s4_a037);
             // LD_BC(0x4);
             // CALL(aCopyBytes);
-            CopyBytes_Conv2(GBToRAMAddr(s4_a037), wram->wd013, 0x4);
+            CopyBytes(GBToRAMAddr(s4_a037), wram->wd013, 0x4);
             // CALL(aCloseSRAM);
             CloseSRAM_Conv();
             // CALL(aFunction89448);
@@ -805,7 +805,7 @@ static void UnknownText_0x8b64c_Function(struct TextCmdState* state) {
     WaitSFX_Conv();
     // LD_C(0x8);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(0x8);
+    DelayFrames(0x8);
     // LD_HL(mUnknownText_0x8b64c_string_8b663);
     state->hl = string_8b663;
     // RET;
@@ -850,7 +850,7 @@ void Function8b677(void){
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
     // CALL(aFunction8b690);
     Function8b690();
     // CALL(aFunction8b6bb);
@@ -858,7 +858,7 @@ void Function8b677(void){
     // CALL(aFunction8b6ed);
     Function8b6ed();
     // CALL(aEnableLCD);
-    EnableLCD_Conv();
+    EnableLCD();
     // CALL(aFunction891ab);
     Function891ab();
     // CALL(aSetPalettes);
@@ -898,7 +898,7 @@ void Function8b6bb(void){
     // LD_DE(wBGPals1);
     // LD_BC(3 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wBGPals1, Palette_8b6d5, 3 * PALETTE_SIZE);
+    CopyBytes(wram->wBGPals1, Palette_8b6d5, 3 * PALETTE_SIZE);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // CALL(aFunction8949c);
@@ -926,12 +926,12 @@ void Function8b6ed(void){
     // LD_BC(0x012c);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wAttrmap), SCREEN_WIDTH * 15, 0);
+    ByteFill(coord(0, 0, wram->wAttrmap), SCREEN_WIDTH * 15, 0);
     // hlcoord(0, 14, wAttrmap);
     // LD_BC(0x0050);
     // LD_A(0x7);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 14, wram->wAttrmap), SCREEN_WIDTH * 4, 0x7);
+    ByteFill(coord(0, 14, wram->wAttrmap), SCREEN_WIDTH * 4, 0x7);
     // RET;
 }
 
@@ -1056,7 +1056,7 @@ void Function8b75d(void){
     // LD_A(0x1);
     // LD_BC(SCREEN_WIDTH);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_WIDTH, 0x1);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_WIDTH, 0x1);
     // hlcoord(0, 1, wTilemap);
     // LD_A(0x2);
     // LD_hl_A;
@@ -1620,7 +1620,7 @@ bool Function8b9e9(void){
         uint8_t* hl = bc + 0x11;
         // CALL(aFunction89b45);
         // IF_C goto asm_8ba08;
-        if(Function89b45(&hl)) {
+        if(Function89b45(hl)) {
         // asm_8ba08:
             // LD_DE(mUnknown_8ba1f);
             de = Unknown_8ba1f;

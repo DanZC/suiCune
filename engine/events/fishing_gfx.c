@@ -37,16 +37,16 @@ void LoadFishingGFX(void){
     LoadPNG2bppAssetSectionToVRAM(buf, gfx, 0, 8);
     // LD_HL(vTiles0 + LEN_2BPP_TILE * 0x02);
     // CALL(aLoadFishingGFX_LoadGFX);
-    CopyBytes_Conv2(vram->vTiles3 + LEN_2BPP_TILE * 0x02, buf + LEN_2BPP_TILE * 0, LEN_2BPP_TILE * 2);
+    CopyBytes(vram->vTiles3 + LEN_2BPP_TILE * 0x02, buf + LEN_2BPP_TILE * 0, LEN_2BPP_TILE * 2);
     // LD_HL(vTiles0 + LEN_2BPP_TILE * 0x06);
     // CALL(aLoadFishingGFX_LoadGFX);
-    CopyBytes_Conv2(vram->vTiles3 + LEN_2BPP_TILE * 0x06, buf + LEN_2BPP_TILE * 2, LEN_2BPP_TILE * 2);
+    CopyBytes(vram->vTiles3 + LEN_2BPP_TILE * 0x06, buf + LEN_2BPP_TILE * 2, LEN_2BPP_TILE * 2);
     // LD_HL(vTiles0 + LEN_2BPP_TILE * 0x0a);
     // CALL(aLoadFishingGFX_LoadGFX);
-    CopyBytes_Conv2(vram->vTiles3 + LEN_2BPP_TILE * 0x0a, buf + LEN_2BPP_TILE * 4, LEN_2BPP_TILE * 2);
+    CopyBytes(vram->vTiles3 + LEN_2BPP_TILE * 0x0a, buf + LEN_2BPP_TILE * 4, LEN_2BPP_TILE * 2);
     // LD_HL(vTiles0 + LEN_2BPP_TILE * 0xfc);
     // CALL(aLoadFishingGFX_LoadGFX);
-    CopyBytes_Conv2(vram->vTiles3 + LEN_2BPP_TILE * 0xfc, buf + LEN_2BPP_TILE * 6, LEN_2BPP_TILE * 2);
+    CopyBytes(vram->vTiles3 + LEN_2BPP_TILE * 0xfc, buf + LEN_2BPP_TILE * 6, LEN_2BPP_TILE * 2);
 
     // POP_AF;
     // LDH_addr_A(rVBK);

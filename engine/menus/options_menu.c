@@ -32,7 +32,7 @@ static struct OptionRes GetPrinterSetting_Conv(void);
 
 void v_Option(void){
 #if BUGFIX_OPTIONS_MENU_JOYPAD
-    ClearJoypad_Conv();
+    ClearJoypad();
 #endif
     // LD_HL(hInMenu);
     // LD_A_hl;
@@ -108,7 +108,7 @@ void v_Option(void){
             Options_UpdateCursorPosition();
             // LD_C(3);
             // CALL(aDelayFrames);
-            DelayFrames_Conv(3);
+            DelayFrames(3);
             // goto joypad_loop;
             continue;
         }

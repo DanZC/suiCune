@@ -98,7 +98,7 @@ bool SwitchOften(void){
         // CP_A(50 percent + 1);
         // IF_C goto switch_;
         // JP(mDontSwitch);
-        if(Random_Conv() >= 50 percent + 1)
+        if(Random() >= 50 percent + 1)
             return DontSwitch();
     }
 
@@ -110,7 +110,7 @@ bool SwitchOften(void){
         // CP_A(79 percent - 1);
         // IF_C goto switch_;
         // JP(mDontSwitch);
-        if(Random_Conv() >= 79 percent - 1)
+        if(Random() >= 79 percent - 1)
             return DontSwitch();
     }
 
@@ -119,7 +119,7 @@ bool SwitchOften(void){
     // CALL(aRandom);
     // CP_A(4 percent);
     // JP_C (mDontSwitch);
-    else if(Random_Conv() < 4 percent)
+    else if(Random() < 4 percent)
         return DontSwitch();
 
 // switch_:
@@ -150,7 +150,7 @@ bool SwitchRarely(void){
         // CP_A(8 percent);
         // IF_C goto switch_;
         // JP(mDontSwitch);
-        if(Random_Conv() >= 8 percent)
+        if(Random() >= 8 percent)
             return DontSwitch();
     }
 
@@ -162,7 +162,7 @@ bool SwitchRarely(void){
         // CP_A(12 percent);
         // IF_C goto switch_;
         // JP(mDontSwitch);
-        if(Random_Conv() >= 12 percent)
+        if(Random() >= 12 percent)
             return DontSwitch();
     }
 
@@ -171,7 +171,7 @@ bool SwitchRarely(void){
     // CALL(aRandom);
     // CP_A(79 percent - 1);
     // JP_C (mDontSwitch);
-    else if(Random_Conv() < 79 percent - 1)
+    else if(Random() < 79 percent - 1)
         return DontSwitch();
 
 // switch_:
@@ -201,7 +201,7 @@ bool SwitchSometimes(void){
         // CP_A(20 percent - 1);
         // IF_C goto switch_;
         // JP(mDontSwitch);
-        if(Random_Conv() < 20 percent - 1)
+        if(Random() < 20 percent - 1)
             return DontSwitch();
     }
 
@@ -213,7 +213,7 @@ bool SwitchSometimes(void){
         // CP_A(50 percent + 1);
         // IF_C goto switch_;
         // JP(mDontSwitch);
-        if(Random_Conv() < 50 percent + 1)
+        if(Random() < 50 percent + 1)
             return DontSwitch();
     }
 
@@ -222,7 +222,7 @@ bool SwitchSometimes(void){
     // CALL(aRandom);
     // CP_A(20 percent - 1);
     // JP_C (mDontSwitch);
-    else if(Random_Conv() < 20 percent - 1)
+    else if(Random() < 20 percent - 1)
         return DontSwitch();
 
 // switch_:
@@ -277,7 +277,7 @@ static bool AI_Items_Status(uint8_t bc){
             // CALL(aRandom);
             // CP_A(50 percent + 1);
             // JP_C (mAI_Items_Use);
-            if(Random_Conv() < 50 percent + 1)
+            if(Random() < 50 percent + 1)
                 return AI_Items_Use();
         }
 
@@ -298,7 +298,7 @@ static bool AI_Items_Status(uint8_t bc){
     // CALL(aRandom);
     // CP_A(20 percent - 1);
     // JP_C (mAI_Items_Use);
-    if(Random_Conv() < 20 percent - 1)
+    if(Random() < 20 percent - 1)
         return AI_Items_Use();
     // JP(mAI_Items_DontUse);
     return AI_Items_DontUse();
@@ -321,7 +321,7 @@ static bool AI_Items_HealItem(uint8_t bc){
         // CALL(aRandom);
         // CP_A(20 percent - 1);
         // JP_NC (mAI_Items_DontUse);
-        if(Random_Conv() < 20 percent - 1)
+        if(Random() < 20 percent - 1)
             return AI_Items_DontUse();
 
     // UseHealItem:
@@ -344,7 +344,7 @@ static bool AI_Items_HealItem(uint8_t bc){
         // CALL(aRandom);
         // CP_A(20 percent - 1);
         // JP_C (mAI_Items_DontUse);
-        if(Random_Conv() < 20 percent - 1)
+        if(Random() < 20 percent - 1)
             return AI_Items_DontUse();
         // goto UseHealItem;
         return AI_Items_Use();
@@ -356,7 +356,7 @@ static bool AI_Items_HealItem(uint8_t bc){
     // CALL(aRandom);
     // CP_A(50 percent + 1);
     // JP_C (mAI_Items_UseHealItem);
-    if(Random_Conv() < 50 percent + 1)
+    if(Random() < 50 percent + 1)
         return AI_Items_Use();
     // JP(mAI_Items_DontUse);
     return AI_Items_DontUse();
@@ -375,7 +375,7 @@ static bool AI_Items_XItem(uint8_t bc){
         // CALL(aRandom);
         // CP_A(50 percent + 1);
         // JP_C (mAI_Items_DontUse);
-        if(Random_Conv() < 50 percent + 1)
+        if(Random() < 50 percent + 1)
             return AI_Items_DontUse();
         // LD_A_bc;
         // BIT_A(CONTEXT_USE_F);
@@ -385,7 +385,7 @@ static bool AI_Items_XItem(uint8_t bc){
         // CALL(aRandom);
         // CP_A(50 percent + 1);
         // JP_C (mAI_Items_DontUse);
-        if(Random_Conv() < 50 percent + 1)
+        if(Random() < 50 percent + 1)
             return AI_Items_DontUse();
         // JP(mAI_Items_Use);
         return AI_Items_Use();
@@ -400,7 +400,7 @@ static bool AI_Items_XItem(uint8_t bc){
         // CALL(aRandom);
         // CP_A(20 percent - 1);
         // JP_NC (mAI_Items_DontUse);
-        if(Random_Conv() >= 20 percent - 1)
+        if(Random() >= 20 percent - 1)
             return AI_Items_DontUse();
         // JP(mAI_Items_Use);
         return AI_Items_Use();
@@ -1046,7 +1046,7 @@ bool AI_Switch(void){
     // LD_HL(wEnemyMonStatus);
     // LD_BC(MON_MAXHP - MON_STATUS);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(&wram->wOTPartyMon[wram->wCurOTMon].status, wram->wEnemyMon.status, MON_MAXHP - MON_STATUS);
+    CopyBytes(&wram->wOTPartyMon[wram->wCurOTMon].status, wram->wEnemyMon.status, MON_MAXHP - MON_STATUS);
     // POP_AF;
 
     // IF_C goto skiptext;
@@ -1260,7 +1260,7 @@ void PrintText_UsedItemOn(void){
     // LD_DE(wMonOrItemNameBuffer);
     // LD_BC(ITEM_NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wMonOrItemNameBuffer, GetItemName_Conv2(wram->wCurEnemyItem), ITEM_NAME_LENGTH);
+    CopyBytes(wram->wMonOrItemNameBuffer, GetItemName(wram->wCurEnemyItem), ITEM_NAME_LENGTH);
     // LD_HL(mEnemyUsedOnText);
     // JP(mPrintText);
     return PrintText_Conv2(EnemyUsedOnText);

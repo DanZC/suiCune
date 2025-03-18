@@ -449,8 +449,8 @@ uint16_t LoadCry_Conv(species_t a){
     if(index < 0) return 0;
     uint16_t i = (uint16_t)index;
 
-    uint8_t oldBank = gb_read(hROMBank);
-    Bankswitch_Conv(BANK(aPokemonCries));
+    uint8_t oldBank = hram->hROMBank;
+    Bankswitch(BANK(aPokemonCries));
 
     uint16_t hl = mPokemonCries + (MON_CRY_LENGTH * i);
 
@@ -462,7 +462,7 @@ uint16_t LoadCry_Conv(species_t a){
     gb_write(wCryLength, gb_read(hl++));
     gb_write(wCryLength + 1, gb_read(hl));
 
-    Bankswitch_Conv(oldBank);
+    Bankswitch(oldBank);
 
     return de;
 }
@@ -686,7 +686,7 @@ void GetBaseData_Conv(void){
         static_assert(BASE_DATA_SIZE == sizeof(struct BaseData), "");
         const struct BaseData* hl = AbsGBROMToRAMAddr(aBaseData);
         
-        CopyBytes_Conv2(&wram->wBaseDexNo, hl + (species - 1), sizeof(struct BaseData));
+        CopyBytes(&wram->wBaseDexNo, hl + (species - 1), sizeof(struct BaseData));
         //LD_BC(BASE_DATA_SIZE);
         //LD_HL(mBaseData);
         //CALL(aAddNTimes);
@@ -726,7 +726,7 @@ void GetBaseData_Conv2(species_t species){
         //LD_DE(wCurBaseData);
         //LD_BC(BASE_DATA_SIZE);
         //CALL(aCopyBytes);
-        CopyBytes_Conv2(&wram->wBaseDexNo, hl, sizeof(struct BaseData));
+        CopyBytes(&wram->wBaseDexNo, hl, sizeof(struct BaseData));
         // If our pic size is 0, we haven't initialized it yet.
         if(hl->picSize == 0) {
             // We dynamically get the base pic size by loading the frontpic and counting how many tiles
@@ -795,7 +795,7 @@ void GetNickname_Conv(const uint8_t* hl, uint8_t a){
 
     // LD_DE(wStringBuffer1);
 
-    CopyBytes_Conv2(wram->wStringBuffer1, hl, MON_NAME_LENGTH);
+    CopyBytes(wram->wStringBuffer1, hl, MON_NAME_LENGTH);
 
     //PUSH_DE;
     //LD_BC(MON_NAME_LENGTH);
@@ -811,7 +811,7 @@ void GetNickname_Conv(const uint8_t* hl, uint8_t a){
 }
 
 uint8_t* GetCurNickname_Conv(void){
-    CopyBytes_Conv2(wram->wStringBuffer1, wram->wPartyMonNickname[wram->wCurPartyMon], MON_NAME_LENGTH);
+    CopyBytes(wram->wStringBuffer1, wram->wPartyMonNickname[wram->wCurPartyMon], MON_NAME_LENGTH);
     CorrectNickErrors_Conv(wram->wStringBuffer1);
     return wram->wStringBuffer1;
 }

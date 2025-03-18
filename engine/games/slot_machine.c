@@ -130,22 +130,22 @@ static struct SlotData gSlotData;
 
 static void v_SlotMachine_InitGFX_LoadSlotTiles(uint8_t* dest) {
     LoadPNG2bppAssetToVRAM(dest + LEN_2BPP_TILE * 0x00, Slots2LZ);
-    SwapBytes_Conv2(dest + LEN_2BPP_TILE * 0x01, dest + LEN_2BPP_TILE * 0x02, LEN_2BPP_TILE);
-    SwapBytes_Conv2(dest + LEN_2BPP_TILE * 0x05, dest + LEN_2BPP_TILE * 0x06, LEN_2BPP_TILE);
-    SwapBytes_Conv2(dest + LEN_2BPP_TILE * 0x09, dest + LEN_2BPP_TILE * 0x0a, LEN_2BPP_TILE);
-    SwapBytes_Conv2(dest + LEN_2BPP_TILE * 0x0d, dest + LEN_2BPP_TILE * 0x0e, LEN_2BPP_TILE);
-    SwapBytes_Conv2(dest + LEN_2BPP_TILE * 0x11, dest + LEN_2BPP_TILE * 0x12, LEN_2BPP_TILE);
-    SwapBytes_Conv2(dest + LEN_2BPP_TILE * 0x15, dest + LEN_2BPP_TILE * 0x16, LEN_2BPP_TILE);
-    SwapBytes_Conv2(dest + LEN_2BPP_TILE * 0x19, dest + LEN_2BPP_TILE * 0x1a, LEN_2BPP_TILE);
-    SwapBytes_Conv2(dest + LEN_2BPP_TILE * 0x1d, dest + LEN_2BPP_TILE * 0x1e, LEN_2BPP_TILE);
-    SwapBytes_Conv2(dest + LEN_2BPP_TILE * 0x21, dest + LEN_2BPP_TILE * 0x22, LEN_2BPP_TILE);
-    SwapBytes_Conv2(dest + LEN_2BPP_TILE * 0x25, dest + LEN_2BPP_TILE * 0x26, LEN_2BPP_TILE);
-    SwapBytes_Conv2(dest + LEN_2BPP_TILE * 0x29, dest + LEN_2BPP_TILE * 0x2a, LEN_2BPP_TILE);
-    SwapBytes_Conv2(dest + LEN_2BPP_TILE * 0x2d, dest + LEN_2BPP_TILE * 0x2e, LEN_2BPP_TILE);
-    SwapBytes_Conv2(dest + LEN_2BPP_TILE * 0x31, dest + LEN_2BPP_TILE * 0x32, LEN_2BPP_TILE);
-    SwapBytes_Conv2(dest + LEN_2BPP_TILE * 0x35, dest + LEN_2BPP_TILE * 0x36, LEN_2BPP_TILE);
-    SwapBytes_Conv2(dest + LEN_2BPP_TILE * 0x39, dest + LEN_2BPP_TILE * 0x3a, LEN_2BPP_TILE);
-    SwapBytes_Conv2(dest + LEN_2BPP_TILE * 0x3d, dest + LEN_2BPP_TILE * 0x3e, LEN_2BPP_TILE);
+    SwapBytes(dest + LEN_2BPP_TILE * 0x01, dest + LEN_2BPP_TILE * 0x02, LEN_2BPP_TILE);
+    SwapBytes(dest + LEN_2BPP_TILE * 0x05, dest + LEN_2BPP_TILE * 0x06, LEN_2BPP_TILE);
+    SwapBytes(dest + LEN_2BPP_TILE * 0x09, dest + LEN_2BPP_TILE * 0x0a, LEN_2BPP_TILE);
+    SwapBytes(dest + LEN_2BPP_TILE * 0x0d, dest + LEN_2BPP_TILE * 0x0e, LEN_2BPP_TILE);
+    SwapBytes(dest + LEN_2BPP_TILE * 0x11, dest + LEN_2BPP_TILE * 0x12, LEN_2BPP_TILE);
+    SwapBytes(dest + LEN_2BPP_TILE * 0x15, dest + LEN_2BPP_TILE * 0x16, LEN_2BPP_TILE);
+    SwapBytes(dest + LEN_2BPP_TILE * 0x19, dest + LEN_2BPP_TILE * 0x1a, LEN_2BPP_TILE);
+    SwapBytes(dest + LEN_2BPP_TILE * 0x1d, dest + LEN_2BPP_TILE * 0x1e, LEN_2BPP_TILE);
+    SwapBytes(dest + LEN_2BPP_TILE * 0x21, dest + LEN_2BPP_TILE * 0x22, LEN_2BPP_TILE);
+    SwapBytes(dest + LEN_2BPP_TILE * 0x25, dest + LEN_2BPP_TILE * 0x26, LEN_2BPP_TILE);
+    SwapBytes(dest + LEN_2BPP_TILE * 0x29, dest + LEN_2BPP_TILE * 0x2a, LEN_2BPP_TILE);
+    SwapBytes(dest + LEN_2BPP_TILE * 0x2d, dest + LEN_2BPP_TILE * 0x2e, LEN_2BPP_TILE);
+    SwapBytes(dest + LEN_2BPP_TILE * 0x31, dest + LEN_2BPP_TILE * 0x32, LEN_2BPP_TILE);
+    SwapBytes(dest + LEN_2BPP_TILE * 0x35, dest + LEN_2BPP_TILE * 0x36, LEN_2BPP_TILE);
+    SwapBytes(dest + LEN_2BPP_TILE * 0x39, dest + LEN_2BPP_TILE * 0x3a, LEN_2BPP_TILE);
+    SwapBytes(dest + LEN_2BPP_TILE * 0x3d, dest + LEN_2BPP_TILE * 0x3e, LEN_2BPP_TILE);
 }
 
 static void v_SlotMachine_InitGFX(void){
@@ -154,19 +154,19 @@ static void v_SlotMachine_InitGFX(void){
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // LD_DE(MUSIC_NONE);
     // CALL(aPlayMusic);
     PlayMusic_Conv(MUSIC_NONE);
     // CALL(aDelayFrame);
     DelayFrame();
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
     // hlbgcoord(0, 0, vBGMap0);
     // LD_BC(vBGMap1 - vBGMap0);
     // LD_A(0x7f);
     // CALL(aByteFill);
-    ByteFill_Conv2(bgcoord(0, 0, vram->vBGMap0), sizeof(vram->vBGMap0), 0x7f);
+    ByteFill(bgcoord(0, 0, vram->vBGMap0), sizeof(vram->vBGMap0), 0x7f);
     // LD_B(SCGB_SLOT_MACHINE);
     // CALL(aGetSGBLayout);
     GetSGBLayout_Conv(SCGB_SLOT_MACHINE);
@@ -176,7 +176,7 @@ static void v_SlotMachine_InitGFX(void){
     // LD_BC(wSlotsDataEnd - wSlots);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(&gSlotData, sizeof(gSlotData), 0x0);
+    ByteFill(&gSlotData, sizeof(gSlotData), 0x0);
 
     // LD_HL(mSlots2LZ);
     // LD_DE(vTiles0 + LEN_2BPP_TILE * 0x00);
@@ -268,12 +268,12 @@ static void v_SlotMachine_InitGFX(void){
     // SET_hl(rLCDC_SPRITE_SIZE);  // 8x16
     gb_write(rLCDC, gb_read(rLCDC) | (1 << rLCDC_SPRITE_SIZE));
     // CALL(aEnableLCD);
-    EnableLCD_Conv();
+    EnableLCD();
     // LD_HL(wSlots);
     // LD_BC(wSlotsEnd - wSlots);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(&gSlotData, sizeof(gSlotData), 0x0);
+    ByteFill(&gSlotData, sizeof(gSlotData), 0x0);
     // CALL(aSlots_InitReelTiles);
     Slots_InitReelTiles();
     // CALL(aSlots_GetPals);
@@ -299,7 +299,7 @@ static void v_SlotMachine_InitGFX(void){
     // CALL(aRandom);
     // AND_A(0b00101010);
     // RET_NZ ;
-    if((Random_Conv() & 0b00101010) != 0)
+    if((Random() & 0b00101010) != 0)
         return;
     // LD_A(TRUE);
     // LD_addr_A(wKeepSevenBiasChance);  // 12.5% chance
@@ -971,7 +971,7 @@ uint8_t Slots_StopReel2(void){
         // CALL(aRandom);
         // CP_A(31 percent + 1);
         // IF_NC goto dont_jump;
-        if(Slots_StopReel2_CheckReel1ForASeven() && Random_Conv() < 31 percent + 1) {
+        if(Slots_StopReel2_CheckReel1ForASeven() && Random() < 31 percent + 1) {
             // LD_A(REEL_ACTION_SET_UP_REEL2_SKIP_TO_7);
             // RET;
             return REEL_ACTION_SET_UP_REEL2_SKIP_TO_7;
@@ -1012,7 +1012,7 @@ uint8_t Slots_StopReel3(void){
     // IF_NZ goto biased;
     if(gSlotData.slotBias == 0) {
         // CALL(aRandom);
-        uint8_t a = Random_Conv();
+        uint8_t a = Random();
         // CP_A(71 percent - 1);
         // IF_NC goto stop;
         if(a >= 71 percent - 1)
@@ -1033,7 +1033,7 @@ uint8_t Slots_StopReel3(void){
     else {
     // biased:
         // CALL(aRandom);
-        uint8_t a = Random_Conv();
+        uint8_t a = Random();
         // CP_A(63 percent);
         // IF_NC goto stop;
         if(a >= 63 percent)
@@ -2382,7 +2382,7 @@ static uint8_t Slots_GetNumberOfGolems_Check7Bias(struct SlotReelData* bc){
         // not_biased_to_seven:
             // CALL(aRandom);
             // AND_A(0x7);
-            e = Random_Conv() & 0x7;
+            e = Random() & 0x7;
             // CP_A(0x8 / 2);  // 50%
             // IF_C goto not_biased_to_seven;
         } while(e < 0x8 / 2);  // 50%
@@ -2460,7 +2460,7 @@ void Slots_InitBias(void){
 // okay:
     // CALL(aRandom);
     // LD_C_A;
-    uint8_t c = Random_Conv();
+    uint8_t c = Random();
 
     while(c < *hl) {
     // loop:
@@ -2659,7 +2659,7 @@ bool Slots_AskPlayAgain(void){
         PrintText_Conv2(SlotsRanOutOfCoinsText);
         // LD_C(60);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(60);
+        DelayFrames(60);
         // goto exit_slots;
     }
     else {
@@ -2790,7 +2790,7 @@ static void Slots_PayoutText_LinedUpSevens(void){
         // CALL(aRandom);
         // AND_A(0b0010100);
         // RET_Z ;  // 25% chance to stick with seven symbol bias
-        if((Random_Conv() & 0b0010100) == 0)  // 25% chance to stick with seven symbol bias
+        if((Random() & 0b0010100) == 0)  // 25% chance to stick with seven symbol bias
             return;
         // LD_A(SLOTS_NO_BIAS);
         // LD_addr_A(wSlotBias);
@@ -2803,7 +2803,7 @@ static void Slots_PayoutText_LinedUpSevens(void){
         // CALL(aRandom);
         // AND_A(0b0011100);
         // RET_Z ;  // 12.5% chance to stick with seven symbol bias
-        if((Random_Conv() & 0b0011100) == 0)  // 12.5% chance to stick with seven symbol bias
+        if((Random() & 0b0011100) == 0)  // 12.5% chance to stick with seven symbol bias
             return;
         // LD_A(SLOTS_NO_BIAS);
         // LD_addr_A(wSlotBias);
@@ -3137,7 +3137,7 @@ void Slots_WaitSFX(void){
     // PUSH_BC;
     // LD_C(16);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(16);
+    DelayFrames(16);
     // POP_BC;
     // RET;
 }

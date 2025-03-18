@@ -194,9 +194,9 @@ void MagnetTrain_LoadGFX_PlayMusic(void){
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
     // CALLFAR(aClearSpriteAnims);
     ClearSpriteAnims_Conv();
     // CALL(aSetMagnetTrainPals);
@@ -207,7 +207,7 @@ void MagnetTrain_LoadGFX_PlayMusic(void){
     // LDH_addr_A(hWY);
     hram->hWY = SCREEN_HEIGHT_PX;
     // CALL(aEnableLCD);
-    EnableLCD_Conv();
+    EnableLCD();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = 0x0;
@@ -367,12 +367,12 @@ void MagnetTrain_InitLYOverrides(void){
     // LD_BC(wLYOverridesEnd - wLYOverrides);
     // LD_A_addr(wMagnetTrainInitPosition);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wLYOverrides, sizeof(wram->wLYOverrides), wram->wMagnetTrainInitPosition);
+    ByteFill(wram->wLYOverrides, sizeof(wram->wLYOverrides), wram->wMagnetTrainInitPosition);
     // LD_HL(wLYOverridesBackup);
     // LD_BC(wLYOverridesBackupEnd - wLYOverridesBackup);
     // LD_A_addr(wMagnetTrainInitPosition);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wLYOverridesBackup, sizeof(wram->wLYOverridesBackup), wram->wMagnetTrainInitPosition);
+    ByteFill(wram->wLYOverridesBackup, sizeof(wram->wLYOverridesBackup), wram->wMagnetTrainInitPosition);
     // LD_A(LOW(rSCX));
     // LDH_addr_A(hLCDCPointer);
     hram->hLCDCPointer = LOW(rSCX);
@@ -389,28 +389,28 @@ void SetMagnetTrainPals(void){
     // LD_BC(4 * BG_MAP_WIDTH);
     // LD_A(PAL_BG_GREEN);
     // CALL(aByteFill);
-    ByteFill_Conv2(bgcoord(0, 0, vram->vBGMap2), 4 * BG_MAP_WIDTH, PAL_BG_GREEN);
+    ByteFill(bgcoord(0, 0, vram->vBGMap2), 4 * BG_MAP_WIDTH, PAL_BG_GREEN);
 
 // train
     // hlbgcoord(0, 4, vBGMap0);
     // LD_BC(10 * BG_MAP_WIDTH);
     // XOR_A_A;  // PAL_BG_GRAY
     // CALL(aByteFill);
-    ByteFill_Conv2(bgcoord(0, 4, vram->vBGMap2), 10 * BG_MAP_WIDTH, PAL_BG_GRAY);
+    ByteFill(bgcoord(0, 4, vram->vBGMap2), 10 * BG_MAP_WIDTH, PAL_BG_GRAY);
 
 // more bushes
     // hlbgcoord(0, 14, vBGMap0);
     // LD_BC(4 * BG_MAP_WIDTH);
     // LD_A(PAL_BG_GREEN);
     // CALL(aByteFill);
-    ByteFill_Conv2(bgcoord(0, 14, vram->vBGMap2), 4 * BG_MAP_WIDTH, PAL_BG_GREEN);
+    ByteFill(bgcoord(0, 14, vram->vBGMap2), 4 * BG_MAP_WIDTH, PAL_BG_GREEN);
 
 // train window
     // hlbgcoord(7, 8, vBGMap0);
     // LD_BC(6);
     // LD_A(PAL_BG_YELLOW);
     // CALL(aByteFill);
-    ByteFill_Conv2(bgcoord(7, 8, vram->vBGMap2), 6, PAL_BG_YELLOW);
+    ByteFill(bgcoord(7, 8, vram->vBGMap2), 6, PAL_BG_YELLOW);
 
     // LD_A(0);
     // LDH_addr_A(rVBK);

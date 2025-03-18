@@ -282,7 +282,7 @@ void GetMysteryGiftItem(void){
     // LD_A_addr(wCurItem);
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetItemName);
-    GetItemName_Conv2(wram->wCurItem);
+    GetItemName(wram->wCurItem);
     // LD_HL(mGetMysteryGiftItem_ReceiveItemText);
     // CALL(aPrintText);
     PrintText_Conv2(ReceiveItemText);

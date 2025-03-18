@@ -1,5 +1,3 @@
-void UpdateTimeAndPals(void);
-void TimeOfDayPals(void);
-bool TimeOfDayPals_Conv(void);
+bool UpdateTimeAndPals(void);
+bool TimeOfDayPals(void);
 void UpdateTimePals(void);
-bool UpdateTimeAndPals_Conv(void);

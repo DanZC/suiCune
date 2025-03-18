@@ -79,7 +79,7 @@ void v_DoItemEffect_Conv(item_t item){
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetItemName);
     // CALL(aCopyName1);
-    CopyName1_Conv2(GetItemName_Conv2(item));
+    CopyName1(GetItemName(item));
     // LD_A(1);
     // LD_addr_A(wItemEffectSucceeded);
     wram->wItemEffectSucceeded = TRUE;
@@ -733,7 +733,7 @@ void PokeBallEffect(void){
         // LD_addr_A(wFinalCatchRate);
         wram->wFinalCatchRate = b;
         // CALL(aRandom);
-        uint8_t r = Random_Conv();
+        uint8_t r = Random();
 
         // CP_A_B;
         // LD_A(0);
@@ -754,7 +754,7 @@ void PokeBallEffect(void){
     // LD_addr_A(wWildMon);
     // LD_C(20);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(20);
+    DelayFrames(20);
 
     // LD_A_addr(wCurItem);
     // CP_A(POKE_BALL + 1);  // Assumes Master/Ultra/Great come before
@@ -791,7 +791,7 @@ void PokeBallEffect(void){
         // JP_Z (mPokeBallEffect_shake_and_break_free);
         if(wram->wThrownBallWobbleCount == 1) {
             PrintText_Conv2(BallBrokeFreeText);
-            ClearSprites_Conv();
+            ClearSprites();
             goto return_from_capture;
         }
         // CP_A(2);
@@ -799,7 +799,7 @@ void PokeBallEffect(void){
         // JP_Z (mPokeBallEffect_shake_and_break_free);
         else if(wram->wThrownBallWobbleCount == 2) {
             PrintText_Conv2(BallAppearedCaughtText);
-            ClearSprites_Conv();
+            ClearSprites();
             goto return_from_capture;
         }
         // CP_A(3);
@@ -807,7 +807,7 @@ void PokeBallEffect(void){
         // JP_Z (mPokeBallEffect_shake_and_break_free);
         else if(wram->wThrownBallWobbleCount == 3) {
             PrintText_Conv2(BallAlmostHadItText);
-            ClearSprites_Conv();
+            ClearSprites();
             goto return_from_capture;
         }
         // CP_A(4);
@@ -815,7 +815,7 @@ void PokeBallEffect(void){
         // JP_Z (mPokeBallEffect_shake_and_break_free);
         else if(wram->wThrownBallWobbleCount == 4) {
             PrintText_Conv2(BallSoCloseText);
-            ClearSprites_Conv();
+            ClearSprites();
             goto return_from_capture;
         }
     }
@@ -908,13 +908,13 @@ void PokeBallEffect(void){
         // LD_DE(wEnemyMonMoves);
         // LD_BC(NUM_MOVES);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(wram->wEnemyMon.moves, wram->wWildMonMoves, sizeof(wram->wEnemyMon.moves));
+        CopyBytes(wram->wEnemyMon.moves, wram->wWildMonMoves, sizeof(wram->wEnemyMon.moves));
 
         // LD_HL(wWildMonPP);
         // LD_DE(wEnemyMonPP);
         // LD_BC(NUM_MOVES);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(wram->wEnemyMon.pp, wram->wWildMonPP, sizeof(wram->wEnemyMon.pp));
+        CopyBytes(wram->wEnemyMon.pp, wram->wWildMonPP, sizeof(wram->wEnemyMon.pp));
     }
 
 // Transformed:
@@ -933,7 +933,7 @@ void PokeBallEffect(void){
         // CALL(aPrintText);
         PrintText_Conv2(Text_GotchaMonWasCaught);
         // CALL(aClearSprites);
-        ClearSprites_Conv();
+        ClearSprites();
     }
     else {
         // FARCALL(aStubbedTrainerRankings_WildMonsCaught);
@@ -944,7 +944,7 @@ void PokeBallEffect(void){
         PrintText_Conv2(Text_GotchaMonWasCaught);
 
         // CALL(aClearSprites);
-        ClearSprites_Conv();
+        ClearSprites();
 
         // LD_A_addr(wTempSpecies);
         // DEC_A;
@@ -970,7 +970,7 @@ void PokeBallEffect(void){
             PrintText_Conv2(NewDexDataText);
 
             // CALL(aClearSprites);
-            ClearSprites_Conv();
+            ClearSprites();
 
             // LD_A_addr(wEnemyMonSpecies);
             // LD_addr_A(wTempSpecies);
@@ -1007,7 +1007,7 @@ void PokeBallEffect(void){
                 // LD_addr_A(wMonType);
                 wram->wMonType = PARTYMON;
                 // CALL(aClearSprites);
-                ClearSprites_Conv();
+                ClearSprites();
 
                 // PREDEF(pTryAddMonToParty);
                 TryAddMonToParty_Conv(wram->wCurPartySpecies, wram->wCurPartyLevel);
@@ -1038,7 +1038,7 @@ void PokeBallEffect(void){
                 // LD_A_addr(wCurPartySpecies);
                 // LD_addr_A(wNamedObjectIndex);
                 // CALL(aGetPokemonName);
-                GetPokemonName_Conv2(wram->wCurPartySpecies);
+                GetPokemonName(wram->wCurPartySpecies);
 
                 // CALL(aYesNoBox);
                 // JP_C (mPokeBallEffect_return_from_capture);
@@ -1078,7 +1078,7 @@ void PokeBallEffect(void){
             else {
             // SendToPC:
                 // CALL(aClearSprites);
-                ClearSprites_Conv();
+                ClearSprites();
 
                 // PREDEF(pSendMonIntoBox);
                 SendMonIntoBox_Conv();
@@ -1121,7 +1121,7 @@ void PokeBallEffect(void){
                 // LD_A_addr(wCurPartySpecies);
                 // LD_addr_A(wNamedObjectIndex);
                 // CALL(aGetPokemonName);
-                GetPokemonName_Conv2(wram->wCurPartySpecies);
+                GetPokemonName(wram->wCurPartySpecies);
 
                 // CALL(aYesNoBox);
                 // IF_C goto SkipBoxMonNickname;
@@ -1145,7 +1145,7 @@ void PokeBallEffect(void){
                     // LD_DE(sBoxMonNicknames);
                     // LD_BC(MON_NAME_LENGTH);
                     // CALL(aCopyBytes);
-                    CopyBytes_Conv2(GBToRAMAddr(sBoxMonNicknames), wram->wMonOrItemNameBuffer, MON_NAME_LENGTH);
+                    CopyBytes(GBToRAMAddr(sBoxMonNicknames), wram->wMonOrItemNameBuffer, MON_NAME_LENGTH);
 
                     // LD_HL(sBoxMonNicknames);
                     // LD_DE(wStringBuffer1);
@@ -1165,7 +1165,7 @@ void PokeBallEffect(void){
                 // LD_DE(wMonOrItemNameBuffer);
                 // LD_BC(MON_NAME_LENGTH);
                 // CALL(aCopyBytes);
-                CopyBytes_Conv2(wram->wMonOrItemNameBuffer, GBToRAMAddr(sBoxMonNicknames), MON_NAME_LENGTH);
+                CopyBytes(wram->wMonOrItemNameBuffer, GBToRAMAddr(sBoxMonNicknames), MON_NAME_LENGTH);
 
                 // CALL(aCloseSRAM);
                 CloseSRAM_Conv();
@@ -2764,7 +2764,7 @@ void ItemActionTextWaitButton(void){
     // LD_BC(wTilemapEnd - wTilemap);
     // LD_A(0x7f);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), sizeof(wram->wTilemap), 0x7f);
+    ByteFill(coord(0, 0, wram->wTilemap), sizeof(wram->wTilemap), 0x7f);
     // LD_A_addr(wPartyMenuActionText);
     // CALL(aItemActionText);
     ItemActionText(wram->wPartyMenuActionText);
@@ -2773,7 +2773,7 @@ void ItemActionTextWaitButton(void){
     hram->hBGMapMode = 0x1;
     // LD_C(50);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(50);
+    DelayFrames(50);
     // JP(mWaitPressAorB_BlinkCursor);
     return WaitPressAorB_BlinkCursor_Conv();
 }
@@ -3630,7 +3630,7 @@ loop2:
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetMoveName);
     // CALL(aCopyName1);
-    CopyName1_Conv2(GetMoveName_Conv2(move));
+    CopyName1(GetMoveName(move));
     // POP_HL;
 
     // LD_A_addr(wTempRestorePPItem);

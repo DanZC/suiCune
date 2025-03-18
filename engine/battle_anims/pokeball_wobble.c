@@ -68,7 +68,7 @@ uint8_t GetPokeBallWobble(void){
         // LD_C(0);  // next
         // IF_C goto done;
         // LD_C(2);  // escaped
-        c = (Random_Conv() < hl[0][1])? 0: 2;
+        c = (Random() < hl[0][1])? 0: 2;
         // goto done;
     }
 

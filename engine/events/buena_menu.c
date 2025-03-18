@@ -31,7 +31,7 @@ static bool AskRememberPassword_DoMenu(void){
     // PUSH_AF;
     // LD_C(15);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(15);
+    DelayFrames(15);
     // CALL(aBuena_ExitMenu);
     Buena_ExitMenu();
     // POP_AF;

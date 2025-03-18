@@ -148,12 +148,12 @@ static void ReloadMapPart_Function(void) {
     gb_write(rVBK, 0x1);
     // LD_HL(wScratchAttrmap);
     // CALL(mHDMATransfer_Wait127Scanlines_toBGMap);
-    CopyBytes_Conv2(gb.vram + VRAM_BANK_SIZE + (hram->hBGMapAddress & 0x1ff0), wram->wScratchAttrmap, BG_MAP_WIDTH * BG_MAP_HEIGHT);
+    CopyBytes(gb.vram + VRAM_BANK_SIZE + (hram->hBGMapAddress & 0x1ff0), wram->wScratchAttrmap, BG_MAP_WIDTH * BG_MAP_HEIGHT);
     // LD_A(0x0);
     // LDH_addr_A(rVBK);
     // LD_HL(wScratchTilemap);
     // CALL(mHDMATransfer_Wait127Scanlines_toBGMap);
-    CopyBytes_Conv2(gb.vram + (hram->hBGMapAddress & 0x1ff0), wram->wScratchTilemap, BG_MAP_WIDTH * BG_MAP_HEIGHT);
+    CopyBytes(gb.vram + (hram->hBGMapAddress & 0x1ff0), wram->wScratchTilemap, BG_MAP_WIDTH * BG_MAP_HEIGHT);
     // POP_AF;
     // LDH_addr_A(rVBK);
     gb_write(rVBK, vbk);
@@ -255,13 +255,13 @@ static void Mobile_ReloadMapPart_Function(void){
     gb_write(rVBK, 0x1);
     // LD_HL(wScratchAttrmap);
     // CALL(mHDMATransfer_NoDI);
-    CopyBytes_Conv2(GBToRAMAddr(0x8000 + (hram->hBGMapAddress & 0x1fff)), wram->wScratchAttrmap, sizeof(wram->wScratchAttrmap));
+    CopyBytes(GBToRAMAddr(0x8000 + (hram->hBGMapAddress & 0x1fff)), wram->wScratchAttrmap, sizeof(wram->wScratchAttrmap));
     // LD_A(0x0);
     // LDH_addr_A(rVBK);
     gb_write(rVBK, 0x0);
     // LD_HL(wScratchTilemap);
     // CALL(mHDMATransfer_NoDI);
-    CopyBytes_Conv2(GBToRAMAddr(0x8000 + (hram->hBGMapAddress & 0x1fff)), wram->wScratchTilemap, sizeof(wram->wScratchTilemap));
+    CopyBytes(GBToRAMAddr(0x8000 + (hram->hBGMapAddress & 0x1fff)), wram->wScratchTilemap, sizeof(wram->wScratchTilemap));
     // POP_AF;
     // LDH_addr_A(rVBK);
     gb_write(rVBK, vbk);
@@ -376,14 +376,14 @@ static void OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Function(void) {
     // LD_HL(wScratchAttrmap);
     // CALL(mHDMATransfer_Wait123Scanlines_toBGMap);
     // HDMATransfer_Wait123Scanlines_toBGMap_Conv(wram->wScratchAttrmap);
-    CopyBytes_Conv2(gb.vram + VRAM_BANK_SIZE + (hram->hBGMapAddress & 0x1ff0), wram->wScratchAttrmap, sizeof(wram->wScratchAttrmap));
+    CopyBytes(gb.vram + VRAM_BANK_SIZE + (hram->hBGMapAddress & 0x1ff0), wram->wScratchAttrmap, sizeof(wram->wScratchAttrmap));
     // LD_A(0x0);
     // LDH_addr_A(rVBK);
     // gb_write(rVBK, 0x0);
     // LD_HL(wScratchTilemap);
     // CALL(mHDMATransfer_Wait123Scanlines_toBGMap);
     // HDMATransfer_Wait123Scanlines_toBGMap_Conv(wram->wScratchTilemap);
-    CopyBytes_Conv2(gb.vram + (hram->hBGMapAddress & 0x1ff0), wram->wScratchTilemap, sizeof(wram->wScratchTilemap));
+    CopyBytes(gb.vram + (hram->hBGMapAddress & 0x1ff0), wram->wScratchTilemap, sizeof(wram->wScratchTilemap));
     // POP_AF;
     // LDH_addr_A(rVBK);
     // gb_write(rVBK, vbk);
@@ -548,7 +548,7 @@ void HDMATransferToWRAMBank3_Conv(uint8_t* hl) {
     // LD_A(0x23);
     // LDH_addr_A(hDMATransfer);
     DelayFrame();
-    CopyBytes_Conv2(GBToRAMAddr(0x8000 + (hram->hBGMapAddress & 0x1ff0)), hl, 1024); // (0x23 + 1) * 10 * 2);
+    CopyBytes(GBToRAMAddr(0x8000 + (hram->hBGMapAddress & 0x1ff0)), hl, 1024); // (0x23 + 1) * 10 * 2);
 }
 
 void WaitDMATransfer(void) {
@@ -921,7 +921,6 @@ void PadMapForHDMATransfer_Conv(uint16_t hl, uint16_t de, uint8_t c) {
     //  back up the padding value in c to hMapObjectIndex
     // LDH_A_addr(hMapObjectIndex);
     // PUSH_AF;
-    // uint8_t mapobjidx = gb_read(hMapObjectIndex);
     // LD_A_C;
     // LDH_addr_A(hMapObjectIndex);
     // gb_write(hMapObjectIndex, c);
@@ -1269,14 +1268,14 @@ static void HDMATransfer_OnlyTopFourRows_Function(void) {
     // LD_HL(wScratchTilemap + 0x80);
     // debgcoord(0, 0, vBGMap1);
     // CALL(mHDMATransfer_Wait127Scanlines);
-    CopyBytes_Conv2(vram->vBGMap3, wram->wScratchTilemap + 0x80, 0x8 * LEN_2BPP_TILE);
+    CopyBytes(vram->vBGMap3, wram->wScratchTilemap + 0x80, 0x8 * LEN_2BPP_TILE);
     // LD_A(0x0);
     // LDH_addr_A(rVBK);
     // LD_C(0x8);
     // LD_HL(wScratchTilemap);
     // debgcoord(0, 0, vBGMap1);
     // CALL(mHDMATransfer_Wait127Scanlines);
-    CopyBytes_Conv2(vram->vBGMap1, wram->wScratchTilemap, 0x8 * LEN_2BPP_TILE);
+    CopyBytes(vram->vBGMap1, wram->wScratchTilemap, 0x8 * LEN_2BPP_TILE);
     // RET;
 }
 

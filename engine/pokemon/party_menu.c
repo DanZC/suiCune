@@ -124,7 +124,7 @@ void WritePartyMenuTilemap(void){
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // LD_A(0x7f);
     // CALL(aByteFill);  // blank the tilemap
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
     // CALL(aGetPartyMenuQualityIndexes);
     const uint8_t* hl = GetPartyMenuQualityIndexes();
 

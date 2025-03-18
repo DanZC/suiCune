@@ -41,7 +41,7 @@ uint8_t* GetTrainerClassName_Conv(uint8_t c){
         // CALL(aCopyBytes);
         // POP_DE;
         // RET;
-        CopyBytes_Conv2(wram->wStringBuffer1, wram->wRivalName, NAME_LENGTH);
+        CopyBytes(wram->wStringBuffer1, wram->wRivalName, NAME_LENGTH);
         return wram->wStringBuffer1;
     }
 
@@ -51,7 +51,7 @@ uint8_t* GetTrainerClassName_Conv(uint8_t c){
     // CALL(aGetName);
     // LD_DE(wStringBuffer1);
     // RET;
-    return GetName_Conv2(TRAINER_NAME, c);
+    return GetName(TRAINER_NAME, c);
 }
 
 void GetOTName(void){
@@ -104,7 +104,7 @@ void GetOTName_Conv(uint8_t c){
         // LD_addr_A(wNamedObjectType);
         // CALL(aGetName);
         // LD_HL(wStringBuffer1);
-        hl = GetName_Conv2(TRAINER_NAME, c);
+        hl = GetName(TRAINER_NAME, c);
     }
 
 
@@ -113,7 +113,7 @@ void GetOTName_Conv(uint8_t c){
     // LD_DE(wOTClassName);
     // PUSH_DE;
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wOTClassName, hl, TRAINER_CLASS_NAME_LENGTH);
+    CopyBytes(wram->wOTClassName, hl, TRAINER_CLASS_NAME_LENGTH);
     // POP_DE;
     // RET;
 

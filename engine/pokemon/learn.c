@@ -14,7 +14,7 @@
 
 uint8_t LearnMove(move_t toLearn){
     // CALL(aLoadTilemapToTempTilemap);
-    LoadTilemapToTempTilemap_Conv();
+    LoadTilemapToTempTilemap();
     // LD_A_addr(wCurPartyMon);
     // LD_HL(wPartyMonNicknames);
     // CALL(aGetNickname);
@@ -22,7 +22,7 @@ uint8_t LearnMove(move_t toLearn){
     // LD_DE(wMonOrItemNameBuffer);
     // LD_BC(MON_NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wMonOrItemNameBuffer, wram->wPartyMonNickname[wram->wCurPartyMon], MON_NAME_LENGTH);
+    CopyBytes(wram->wMonOrItemNameBuffer, wram->wPartyMonNickname[wram->wCurPartyMon], MON_NAME_LENGTH);
 
     do {
     // loop:
@@ -84,7 +84,7 @@ uint8_t LearnMove(move_t toLearn){
 
     // not_disabled:
         // CALL(aGetMoveName);
-        GetMoveName_Conv2(moves[idx]);
+        GetMoveName(moves[idx]);
         // LD_HL(mText_1_2_and_Poof);  // 1, 2 and…
         // CALL(aPrintText);
         PrintText_Conv2(Text_1_2_and_Poof);
@@ -131,13 +131,13 @@ uint8_t LearnMove(move_t toLearn){
             // LD_DE(wBattleMonMoves);
             // LD_BC(NUM_MOVES);
             // CALL(aCopyBytes);
-            CopyBytes_Conv2(wram->wBattleMon.moves, moves, sizeof(wram->wBattleMon.moves));
+            CopyBytes(wram->wBattleMon.moves, moves, sizeof(wram->wBattleMon.moves));
             // LD_BC(wPartyMon1PP - (wPartyMon1Moves + NUM_MOVES));
             // ADD_HL_BC;
             // LD_DE(wBattleMonPP);
             // LD_BC(NUM_MOVES);
             // CALL(aCopyBytes);
-            CopyBytes_Conv2(wram->wBattleMon.pp, pp, sizeof(wram->wBattleMon.moves));
+            CopyBytes(wram->wBattleMon.pp, pp, sizeof(wram->wBattleMon.moves));
         }
         // JP(mLearnMove_learned);
     // learned:
@@ -181,7 +181,7 @@ u8_flag_s ForgetMove(struct PartyMon* mon){
     // LD_DE(wListMoves_MoveIndicesBuffer);
     // LD_BC(NUM_MOVES);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wListMoves_MoveIndicesBuffer, moves, NUM_MOVES * sizeof(*moves));
+    CopyBytes(wram->wListMoves_MoveIndicesBuffer, moves, NUM_MOVES * sizeof(*moves));
     // POP_HL;
 
     while(1) {
@@ -235,7 +235,7 @@ u8_flag_s ForgetMove(struct PartyMon* mon){
         uint8_t res = StaticMenuJoypad_Conv();
         // PUSH_AF;
         // CALL(aSafeLoadTempTilemapToTilemap);
-        SafeLoadTempTilemapToTilemap_Conv();
+        SafeLoadTempTilemapToTilemap();
         // POP_AF;
         // POP_HL;
         // BIT_A(1);
@@ -253,7 +253,7 @@ u8_flag_s ForgetMove(struct PartyMon* mon){
         // PUSH_AF;
         // PUSH_BC;
         // CALL(aIsHMMove);
-        bool is_hm = IsHMMove_Conv(moves[c]);
+        bool is_hm = IsHMMove(moves[c]);
         // POP_BC;
         // POP_DE;
         // LD_A_D;

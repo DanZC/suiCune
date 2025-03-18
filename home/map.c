@@ -70,7 +70,7 @@ void ClearUnusedMapBuffer(void){
     // LD_BC(wUnusedMapBufferEnd - wUnusedMapBuffer);
     // LD_A(0);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wUnusedMapBuffer, (wUnusedMapBufferEnd - wUnusedMapBuffer), 0);
+    ByteFill(wram->wUnusedMapBuffer, (wUnusedMapBufferEnd - wUnusedMapBuffer), 0);
     // RET;
 
 }
@@ -331,7 +331,7 @@ void LoadMapPart_Conv(void){
     // hlcoord(0, 0, wTilemap);
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x60);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x60);
 
     // LD_A(BANK(av_LoadMapPart));
     // RST(aBankswitch);
@@ -808,7 +808,7 @@ u8_flag_s GetDestinationWarpNumber_Conv(void){
     // POP_DE;
     // LD_A_D;
     // RST(aBankswitch);
-    Bankswitch_Conv(bank);
+    Bankswitch(bank);
     // RET;
     return res;
 }
@@ -937,7 +937,7 @@ void CopyWarpData_Conv(uint8_t c){
 
     // POP_AF;
     // RST(aBankswitch);
-    Bankswitch_Conv(bank);
+    Bankswitch(bank);
     // SCF;
     // RET;
 }
@@ -1284,7 +1284,7 @@ void GetMapConnections_Conv(const struct MapAttr* attr){
         // CALL(aGetMapConnection);
         GetMapConnection_Conv(gMapConnections + NORTH_F, attr->connections[NORTH_F]);
         printf("North connection loaded.\n");
-        // CopyBytes_Conv2(wram_ptr(wNorthMapConnection), _hl, wSouthMapConnection - wNorthMapConnection);
+        // CopyBytes(wram_ptr(wNorthMapConnection), _hl, wSouthMapConnection - wNorthMapConnection);
         // _hl += wSouthMapConnection - wNorthMapConnection;
         uint32_t blocks_ptr = GetGBMapBlocksPointer(gMapConnections[NORTH_F].connectedMapGroup, gMapConnections[NORTH_F].connectedMapNumber);
         CopyGBMapConnection((struct MapConnection*)wram_ptr(wNorthMapConnection), gMapConnections + NORTH_F, 
@@ -1305,7 +1305,7 @@ void GetMapConnections_Conv(const struct MapAttr* attr){
         // CALL(aGetMapConnection);
         GetMapConnection_Conv(gMapConnections + SOUTH_F, attr->connections[SOUTH_F]);
         printf("South connection loaded.\n");
-        // CopyBytes_Conv2(wram_ptr(wSouthMapConnection), _hl, wSouthMapConnection - wNorthMapConnection);
+        // CopyBytes(wram_ptr(wSouthMapConnection), _hl, wSouthMapConnection - wNorthMapConnection);
         // _hl += wSouthMapConnection - wNorthMapConnection;
         uint32_t blocks_ptr = GetGBMapBlocksPointer(gMapConnections[SOUTH_F].connectedMapGroup, gMapConnections[SOUTH_F].connectedMapNumber);
         CopyGBMapConnection((struct MapConnection*)wram_ptr(wSouthMapConnection), gMapConnections + SOUTH_F, 
@@ -1326,7 +1326,7 @@ void GetMapConnections_Conv(const struct MapAttr* attr){
         // CALL(aGetMapConnection);
         GetMapConnection_Conv(gMapConnections + WEST_F, attr->connections[WEST_F]);
         printf("West connection loaded.\n");
-        // CopyBytes_Conv2(wram_ptr(wWestMapConnection), _hl, wSouthMapConnection - wNorthMapConnection);
+        // CopyBytes(wram_ptr(wWestMapConnection), _hl, wSouthMapConnection - wNorthMapConnection);
         // _hl += wSouthMapConnection - wNorthMapConnection;
         uint32_t blocks_ptr = GetGBMapBlocksPointer(gMapConnections[WEST_F].connectedMapGroup, gMapConnections[WEST_F].connectedMapNumber);
         CopyGBMapConnection((struct MapConnection*)wram_ptr(wWestMapConnection), gMapConnections + WEST_F, 
@@ -1347,7 +1347,7 @@ void GetMapConnections_Conv(const struct MapAttr* attr){
         // CALL(aGetMapConnection);
         GetMapConnection_Conv(gMapConnections + EAST_F, attr->connections[EAST_F]);
         printf("East connection loaded.\n");
-        // CopyBytes_Conv2(wram_ptr(wEastMapConnection), _hl, wSouthMapConnection - wNorthMapConnection);
+        // CopyBytes(wram_ptr(wEastMapConnection), _hl, wSouthMapConnection - wNorthMapConnection);
         // _hl += wSouthMapConnection - wNorthMapConnection;
         uint32_t blocks_ptr = GetGBMapBlocksPointer(gMapConnections[EAST_F].connectedMapGroup, gMapConnections[EAST_F].connectedMapNumber);
         CopyGBMapConnection((struct MapConnection*)wram_ptr(wEastMapConnection), gMapConnections + EAST_F, 
@@ -1387,7 +1387,7 @@ void GetMapConnection_Conv(struct MapConnectionData* de, const struct MapConnect
     // DEC_C;
     // IF_NZ goto loop;
     // RET;
-    CopyBytes_Conv2(de, hl, sizeof(*de));
+    CopyBytes(de, hl, sizeof(*de));
 }
 
 void ReadMapSceneScripts(void){
@@ -1812,7 +1812,7 @@ void ClearObjectStructs_Conv(void){
     // LD_BC(OBJECT_LENGTH * (NUM_OBJECT_STRUCTS - 1));
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wObjectStruct, sizeof(wram->wObjectStruct), 0);
+    ByteFill(wram->wObjectStruct, sizeof(wram->wObjectStruct), 0);
 
 //  Just to make sure (this is rather pointless)
     // LD_HL(wObject1Struct);
@@ -1929,7 +1929,7 @@ void LoadBlockData(void){
     // LD_BC(wOverworldMapBlocksEnd - wOverworldMapBlocks);
     // LD_A(0);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wOverworldMapBlocks, sizeof(wram->wOverworldMapBlocks), 0);
+    ByteFill(wram->wOverworldMapBlocks, sizeof(wram->wOverworldMapBlocks), 0);
     // CALL(aChangeMap);
     ChangeMap();
     // CALL(aFillMapConnections);
@@ -2306,7 +2306,7 @@ uint8_t CallScript_Conv2(Script_fn_t hl){
     // LD_addr_A(wScriptPos + 1);
     gCurScript.fn = hl;
     gCurScript.position = 0;
-    ByteFill_Conv2(gCurScript.stack, sizeof(gCurScript.stack), 0);
+    ByteFill(gCurScript.stack, sizeof(gCurScript.stack), 0);
     gCurScript.stack_ptr = 0;
 
     // LD_A(PLAYEREVENT_MAPSCRIPT);
@@ -2475,7 +2475,7 @@ void RunMapCallback_Conv(uint8_t a){
 // done:
     // POP_AF;
     // RST(aBankswitch);
-    Bankswitch_Conv(bank);
+    Bankswitch(bank);
     // RET;
 }
 
@@ -3219,7 +3219,7 @@ void LoadTilesetGFX_Conv(void){
     // LD_DE(vTiles2);
     // LD_BC(0x60 * LEN_2BPP_TILE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(vram->vTiles2, wram->wDecompressScratch, 0x60 * LEN_2BPP_TILE);
+    CopyBytes(vram->vTiles2, wram->wDecompressScratch, 0x60 * LEN_2BPP_TILE);
 
     // LDH_A_addr(rVBK);
     // PUSH_AF;
@@ -3230,7 +3230,7 @@ void LoadTilesetGFX_Conv(void){
     // LD_DE(vTiles5);
     // LD_BC(0x60 * LEN_2BPP_TILE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(vram->vTiles5, wram->wDecompressScratch + 0x60 * LEN_2BPP_TILE, 0x60 * LEN_2BPP_TILE);
+    CopyBytes(vram->vTiles5, wram->wDecompressScratch + 0x60 * LEN_2BPP_TILE, 0x60 * LEN_2BPP_TILE);
 
     // POP_AF;
     // LDH_addr_A(rVBK);
@@ -4112,7 +4112,7 @@ bool CheckIfFacingTileCoordIsBGEvent_Conv(uint8_t c, uint8_t d, uint8_t e){
             // LD_DE(wCurBGEvent);
             // LD_BC(BG_EVENT_SIZE);
             // CALL(aCopyBytes);
-            CopyBytes_Conv2(&gCurBGEvent, hl, sizeof(*hl));
+            CopyBytes(&gCurBGEvent, hl, sizeof(*hl));
             // SCF;
             // RET;
             return true;
@@ -4328,7 +4328,7 @@ void FadeToMenu_Conv(void){
     // FARCALL(aFadeOutPalettes);
     FadeOutPalettes();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // CALL(aDisableSpriteUpdates);
     DisableSpriteUpdates_Conv();
     // RET;
@@ -4442,7 +4442,7 @@ void ReturnToMapWithSpeechTextbox_Conv(void){
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // CALL(aReloadTilesetAndPalettes);
     ReloadTilesetAndPalettes_Conv();
     // hlcoord(0, 12, wTilemap);
@@ -4500,9 +4500,9 @@ void ReloadTilesetAndPalettes(void){
 
 void ReloadTilesetAndPalettes_Conv(void){
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // FARCALL(aRefreshSprites);
     RefreshSprites_Conv();
     // CALL(aLoadStandardFont);
@@ -4524,12 +4524,12 @@ void ReloadTilesetAndPalettes_Conv(void){
     LoadTilesetGFX_Conv();
     // LD_A(9);
     // CALL(aSkipMusic);
-    SkipMusic_Conv(3);
+    SkipMusic(3);
     // POP_AF;
     // RST(aBankswitch);
 
     // CALL(aEnableLCD);
-    EnableLCD_Conv();
+    EnableLCD();
     // RET;
 }
 
@@ -4767,7 +4767,7 @@ void CopyMapPartial(void){
 void CopyMapPartial_Conv(void){
     bank_push(BANK(aMapGroupPointers));
 
-    CopyBytes_Conv(wMapPartial, GetMapPointer_Conv(), (wMapPartialEnd - wMapPartial));
+    CopyBytes_GB(wMapPartial, GetMapPointer_Conv(), (wMapPartialEnd - wMapPartial));
 
     bank_pop;
 }
@@ -4793,7 +4793,7 @@ void SwitchToMapScriptsBank(void){
 }
 
 void SwitchToMapScriptsBank_Conv(void){
-    Bankswitch_Conv(wram->wMapScriptsBank);
+    Bankswitch(wram->wMapScriptsBank);
 }
 
 void GetMapScriptsBank(void){

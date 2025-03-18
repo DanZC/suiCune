@@ -1349,7 +1349,7 @@ void ChannelInit(uint8_t channel) {
     // LD_hli_A;                       // ld [hli], a
     // DEC_E;                          // dec e
     // IF_NZ goto loop;                // jr nz, .loop
-    ByteFill_Conv2(chan[channel], sizeof(*chan[channel]), 0x0);
+    ByteFill(chan[channel], sizeof(*chan[channel]), 0x0);
     chan[channel]->tempo = 0x100;   // set tempo to default ($100)
     chan[channel]->noteLength = 1;  // set note length to default ($1) (fast)
     // POP_DE;                         // pop de
@@ -1443,7 +1443,7 @@ void PlayTrainerEncounterMusic(uint8_t e) {
     DelayFrame();
                                     // play new song
     // CALL(aMaxVolume);               // call MaxVolume
-    MaxVolume_Conv();
+    MaxVolume();
     // POP_DE;                         // pop de
     // LD_D(0x00);                     // ld d, $00
     // LD_HL(mTrainerEncounterMusic);  // ld hl, TrainerEncounterMusic

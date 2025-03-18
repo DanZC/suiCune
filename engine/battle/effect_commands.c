@@ -877,7 +877,7 @@ void MoveDisabled(void){
     // CALL(aGetBattleVar);
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetMoveName);
-    GetMoveName_Conv2(GetBattleVar(BATTLE_VARS_MOVE));
+    GetMoveName(GetBattleVar(BATTLE_VARS_MOVE));
 
     // LD_HL(mDisabledMoveText);
     // JP(mStdBattleTextbox);
@@ -2423,7 +2423,7 @@ static bool BattleCommand_CheckHit_Protect(void) {
 
     // LD_C(40);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(40);
+    DelayFrames(40);
 
 //  'protecting itself!'
     // LD_HL(mProtectingItselfText);
@@ -2432,7 +2432,7 @@ static bool BattleCommand_CheckHit_Protect(void) {
 
     // LD_C(40);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(40);
+    DelayFrames(40);
 
     // LD_A(1);
     // AND_A_A;
@@ -3383,7 +3383,7 @@ void BattleCommand_ApplyDamage(void){
         // LD_A_hl;
         // LD_addr_A(wNamedObjectIndex);
         // CALL(aGetItemName);
-        GetItemName_Conv2(item);
+        GetItemName(item);
         // LD_HL(mHungOnText);
         // JP(mStdBattleTextbox);
         return StdBattleTextbox(HungOnText);
@@ -3561,7 +3561,7 @@ void BattleCommand_CriticalText(void){
 // wait:
     // LD_C(20);
     // JP(mDelayFrames);
-    return DelayFrames_Conv(20);
+    return DelayFrames(20);
 }
 
 void BattleCommand_StartLoop(void){
@@ -5368,7 +5368,7 @@ void PlayFXAnimID_Conv(uint16_t de){
 
     // LD_C(3);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(3);
+    DelayFrames(3);
     // CALLFAR(aPlayBattleAnim);
     PlayBattleAnim();
     // RET;
@@ -5806,9 +5806,9 @@ void UpdateMoveData(void){
     // CALL(aGetMoveData);
     GetMoveData_Conv(de, move);
     // CALL(aGetMoveName);
-    uint8_t* hl = GetMoveName_Conv2(move);
+    uint8_t* hl = GetMoveName(move);
     // JP(mCopyName1);
-    CopyName1_Conv2(hl);
+    CopyName1(hl);
 }
 
 static bool BattleCommand_SleepTarget_CheckAIRandomFail(void) {
@@ -5862,7 +5862,7 @@ void BattleCommand_SleepTarget(void){
         // LD_A_hl;
         // LD_addr_A(wNamedObjectIndex);
         // CALL(aGetItemName);
-        GetItemName_Conv2(item);
+        GetItemName(item);
         // LD_HL(mProtectedByText);
         // goto fail;
         AnimateFailedMove();
@@ -6080,7 +6080,7 @@ void BattleCommand_Poison(void){
         // LD_A_hl;
         // LD_addr_A(wNamedObjectIndex);
         // CALL(aGetItemName);
-        GetItemName_Conv2(item);
+        GetItemName(item);
         // LD_HL(mProtectedByText);
         // goto failed;
     // failed:
@@ -8546,14 +8546,14 @@ void BattleCommand_ForceSwitch(void){
             AnimateCurrentMove();
             // LD_C(20);
             // CALL(aDelayFrames);
-            DelayFrames_Conv(20);
+            DelayFrames(20);
             // hlcoord(9, 7, wTilemap);
             // LD_BC((5 << 8) | 11);
             // CALL(aClearBox);
             ClearBox_Conv2(coord(9, 7, wram->wTilemap), 11, 5);
             // LD_C(20);
             // CALL(aDelayFrames);
-            DelayFrames_Conv(20);
+            DelayFrames(20);
             // LD_A_addr(wPartyCount);
             // LD_B_A;
             uint8_t b = wram->wPartyCount;
@@ -8630,14 +8630,14 @@ void BattleCommand_ForceSwitch(void){
             AnimateCurrentMove();
             // LD_C(0x14);
             // CALL(aDelayFrames);
-            DelayFrames_Conv(0x14);
+            DelayFrames(0x14);
             // hlcoord(1, 0, wTilemap);
             // LD_BC((4 << 8) | 10);
             // CALL(aClearBox);
             ClearBox_Conv2(coord(1, 0, wram->wTilemap), 10, 4);
             // LD_C(20);
             // CALL(aDelayFrames);
-            DelayFrames_Conv(20);
+            DelayFrames(20);
             // LD_A_addr(wOTPartyCount);
             // LD_B_A;
             uint8_t b = wram->wOTPartyCount;
@@ -8741,7 +8741,7 @@ void BattleCommand_ForceSwitch(void){
     AnimateCurrentMove();
     // LD_C(20);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(20);
+    DelayFrames(20);
     // POP_AF;
 
     if(anim == ROAR) {
@@ -9712,7 +9712,7 @@ void BattleCommand_Confuse(void){
         // LD_A_hl;
         // LD_addr_A(wNamedObjectIndex);
         // CALL(aGetItemName);
-        GetItemName_Conv2(item);
+        GetItemName(item);
         // CALL(aAnimateFailedMove);
         AnimateFailedMove();
         // LD_HL(mProtectedByText);
@@ -9902,7 +9902,7 @@ void BattleCommand_Paralyze(void){
         // LD_A_hl;
         // LD_addr_A(wNamedObjectIndex);
         // CALL(aGetItemName);
-        GetItemName_Conv2(item);
+        GetItemName(item);
         // CALL(aAnimateFailedMove);
         AnimateFailedMove();
         // LD_HL(mProtectedByText);
@@ -9954,7 +9954,7 @@ void BattleCommand_Paralyze(void){
     && !CheckSubstituteOpp_Conv()) {
         // LD_C(30);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(30);
+        DelayFrames(30);
         // CALL(aAnimateCurrentMove);
         AnimateCurrentMove();
         // LD_A(0x1);
@@ -11359,7 +11359,7 @@ void BattleCommand_MoveDelay(void){
 //  Wait 40 frames.
     // LD_C(40);
     // JP(mDelayFrames);
-    DelayFrames_Conv(40);
+    DelayFrames(40);
 }
 
 void BattleCommand_ClearText(void){
@@ -11436,7 +11436,7 @@ void GetMoveData_Conv(struct Move* de, move_t a){
     // CALL(aAddNTimes);
     // LD_A(BANK(aMoves));
     // JP(mFarCopyBytes);
-    CopyBytes_Conv2(de, Moves + a, sizeof(*de));
+    CopyBytes(de, Moves + a, sizeof(*de));
 }
 
 void GetMoveByte(void){

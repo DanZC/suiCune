@@ -163,12 +163,12 @@ void SetRAMStateForMobile(void){
     // LD_HL(wBGMapBuffer);
     // LD_BC(0x65);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wBGMapBuffer, 0x65, 0x0);
+    ByteFill(wram->wBGMapBuffer, 0x65, 0x0);
     // XOR_A_A;
     // LD_HL(wMobileWRAM);
     // LD_BC(wMobileWRAMEnd - wMobileWRAM);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wMobileErrorCodeBuffer, wMobileWRAMEnd - wMobileWRAM, 0x0);
+    ByteFill(wram->wMobileErrorCodeBuffer, wMobileWRAMEnd - wMobileWRAM, 0x0);
     // LDH_A_addr(rIE);
     // LD_addr_A(wBGMapBuffer);
     wram->wBGMapBuffer[0] = gb_read(rIE);
@@ -186,7 +186,7 @@ void EnableMobile(void){
     // LD_HL(wOverworldMapBlocks);
     // LD_BC(wOverworldMapBlocksEnd - wOverworldMapBlocks);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wOverworldMapBlocks, sizeof(wram->wOverworldMapBlocks), 0x0);
+    ByteFill(wram->wOverworldMapBlocks, sizeof(wram->wOverworldMapBlocks), 0x0);
 
     // NOP;
     // CALL(aDoubleSpeed);
@@ -540,7 +540,7 @@ void Function10020b(void){
     // FARCALL(aFunction106464);
     Function106464();
     // CALL(aHideSprites);
-    HideSprites_Conv();
+    HideSprites();
     // CALL(aDelayFrame);
     DelayFrame();
 
@@ -881,7 +881,7 @@ void Function10039c(void){
     // LD_BC(0x54);
     // LD_A(0x03);
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->w3_d000, wram->wcc60_str, 0x54);
+    CopyBytes(wram->w3_d000, wram->wcc60_str, 0x54);
     // RET;
 }
 
@@ -903,7 +903,7 @@ void Function1003ba(void){
     // LD_BC(0x54);
     // LD_A(0x03);
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->w3_d080, &wram->wccb4, 0x54);
+    CopyBytes(wram->w3_d080, &wram->wccb4, 0x54);
     // RET;
 }
 
@@ -914,7 +914,7 @@ void Function1003c9(void){
     // LD_BC(0x54);
     // LD_A(0x03);
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(&wram->wccb4, wram->w3_d080, 0x54);
+    CopyBytes(&wram->wccb4, wram->w3_d080, 0x54);
     // RET;
 }
 
@@ -2117,7 +2117,7 @@ u8_pair_s MobileBattleGetRemainingTime(void){
     // LD_addr_A(wStringBuffer2 + 1);
     // LD_A_hli;
     // LD_addr_A(wStringBuffer2 + 2);
-    CopyBytes_Conv2(wram->wStringBuffer2, GBToRAMAddr(sMobileBattleTimer), 3);
+    CopyBytes(wram->wStringBuffer2, GBToRAMAddr(sMobileBattleTimer), 3);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // LD_A_addr(wStringBuffer2 + 2);
@@ -2227,7 +2227,7 @@ static const char string_100966[] = "   min. remaining!@"; //db ['"のこり\u30
         ReloadMapPart_Conv();
         // LD_C(0x3c);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(60);
+        DelayFrames(60);
         // RET;
         return;
     }
@@ -2244,7 +2244,7 @@ static const char string_100966[] = "   min. remaining!@"; //db ['"のこり\u30
         ReloadMapPart_Conv();
         // LD_C(120);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(120);
+        DelayFrames(120);
         // RET;
         return;
     }
@@ -2287,7 +2287,7 @@ void Function1009a5(uint8_t* de, const uint8_t* hl){
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // LD_A(0x03);
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(de, hl, SCREEN_WIDTH * SCREEN_HEIGHT);
+    CopyBytes(de, hl, SCREEN_WIDTH * SCREEN_HEIGHT);
     // RET;
 }
 
@@ -2348,7 +2348,7 @@ void Function1009d2(void){
     // debgcoord(0, 0, vBGMap0);
     // LD_BC((0x03 << 8) | 0x24);
     // CALL(aGet2bpp);
-    CopyBytes_Conv2(wram->w3_d800, bgcoord(0, 0, vram->vBGMap2), 0x24 * LEN_2BPP_TILE);
+    CopyBytes(wram->w3_d800, bgcoord(0, 0, vram->vBGMap2), 0x24 * LEN_2BPP_TILE);
 
     // POP_AF;
     // LDH_addr_A(rVBK);
@@ -2727,7 +2727,7 @@ static void Mobile_MoveSelectionScreen_ListMoves(void){
     // LD_DE(wListMoves_MoveIndicesBuffer);
     // LD_BC(NUM_MOVES);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wListMoves_MoveIndicesBuffer, wram->wBattleMon.moves, sizeof(wram->wBattleMon.moves));
+    CopyBytes(wram->wListMoves_MoveIndicesBuffer, wram->wBattleMon.moves, sizeof(wram->wBattleMon.moves));
     // LD_A(SCREEN_WIDTH * 2);
     // LD_addr_A(wListMovesLineSpacing);
     wram->wListMovesLineSpacing = SCREEN_WIDTH * 2;
@@ -2852,7 +2852,7 @@ Top:
             // CALL(aStdBattleTextbox);
             StdBattleTextbox(BattleText_TheresNoPPLeftForThisMove);
             // CALL(aSafeLoadTempTilemapToTilemap);
-            SafeLoadTempTilemapToTilemap_Conv();
+            SafeLoadTempTilemapToTilemap();
             // JP(mMobile_MoveSelectionScreen_GetMoveSelection);
             goto Top;
         }
@@ -2871,7 +2871,7 @@ Top:
             // CALL(aStdBattleTextbox);
             StdBattleTextbox(BattleText_TheMoveIsDisabled);
             // CALL(aSafeLoadTempTilemapToTilemap);
-            SafeLoadTempTilemapToTilemap_Conv();
+            SafeLoadTempTilemapToTilemap();
             // JP(mMobile_MoveSelectionScreen_GetMoveSelection);
             goto Top;
         }
@@ -3629,7 +3629,7 @@ uint8_t* Function100f8d(Function100f02_Data_s* data, uint8_t* de, uint8_t* hl, u
     // AND_A_A;
     // IF_NZ goto far_wram;
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(de, hl, bc);
+    CopyBytes(de, hl, bc);
     // RET;
     return hl + bc;
 
@@ -3724,7 +3724,7 @@ void Function101050(void){
     // LD_DE(0xa001);
     // LD_BC(wc7bd - wc608);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(GBToRAMAddr(s7_a000 + 1), wram->wc608, wc7bd - wc608);
+    CopyBytes(GBToRAMAddr(s7_a000 + 1), wram->wc608, wc7bd - wc608);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // RET;
@@ -3739,7 +3739,7 @@ static void Function10107d_CopyAllFromOT(uint8_t* de, const uint8_t* hl, uint16_
     // LD_C_L;
     // POP_HL;
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(de, hl, wram->wOTPartyCount * bc);
+    CopyBytes(de, hl, wram->wOTPartyCount * bc);
     // RET;
 }
 
@@ -3749,12 +3749,12 @@ void Function10107d(void){
     // LD_HL(wc608);
     // LD_BC(wc7bd - wc608);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wc608, wc7bd - wc608, 0x0);
+    ByteFill(wram->wc608, wc7bd - wc608, 0x0);
     // LD_HL(wOTPlayerName);
     // LD_DE(wc608);
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wc608, wram->wOTPlayerName, NAME_LENGTH);
+    CopyBytes(wram->wc608, wram->wOTPlayerName, NAME_LENGTH);
     // LD_HL(wd271);
     // LD_A_hli;
     // LD_addr_A(wc608 + 11);
@@ -3868,7 +3868,7 @@ static void LoadSelectedPartiesForColosseum_CopyThreeSpecies(uint8_t* de, const 
     // LD_HL(wStringBuffer2 + NAME_LENGTH_JAPANESE);
     // LD_BC(3);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(de, wram->wStringBuffer2 + NAME_LENGTH, 3);
+    CopyBytes(de, wram->wStringBuffer2 + NAME_LENGTH, 3);
     // LD_A(0xff);
     // LD_de_A;
     de[3] = 0xff;
@@ -3884,11 +3884,11 @@ static void LoadSelectedPartiesForColosseum_CopyPartyStruct(struct PartyMon* de,
 
     do {
         uint8_t n = *(hl++);
-        CopyBytes_Conv2(dst, de + n, bc);
+        CopyBytes(dst, de + n, bc);
         dst += bc;
     } while(--a != 0);
 
-    CopyBytes_Conv2(de, wram->wc608, bc * 3);
+    CopyBytes(de, wram->wc608, bc * 3);
 }
 
 static void LoadSelectedPartiesForColosseum_CopyName(uint8_t* de, const uint8_t* hl) {
@@ -3932,7 +3932,7 @@ static void LoadSelectedPartiesForColosseum_CopyName(uint8_t* de, const uint8_t*
         // LD_A_addr(wStringBuffer2 + 1);
         // LD_D_A;
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(dst, de + (bc * n), bc);
+        CopyBytes(dst, de + (bc * n), bc);
         // LD_A_E;
         // LD_addr_A(wStringBuffer2);
         // LD_A_D;
@@ -3954,7 +3954,7 @@ static void LoadSelectedPartiesForColosseum_CopyName(uint8_t* de, const uint8_t*
     // LD_E_L;
     // LD_HL(wc608);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(de, wram->wc608, bc * 3);
+    CopyBytes(de, wram->wc608, bc * 3);
     // RET;
 
 
@@ -3978,7 +3978,7 @@ void LoadSelectedPartiesForColosseum(void){
     // LD_HL(wStringBuffer2);
     // LD_BC(9);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wStringBuffer2, 9, 0);
+    ByteFill(wram->wStringBuffer2, 9, 0);
     // LD_HL(wPlayerMonSelection);
     // LD_DE(wPartyCount);
     // CALL(aLoadSelectedPartiesForColosseum_CopyThreeSpecies);
@@ -4880,7 +4880,7 @@ void Function101600(void){
     // LD_BC(0x1e0);
     // LD_A(0x05);
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->wc608, wram->w5_d800, 0x1e0);
+    CopyBytes(wram->wc608, wram->w5_d800, 0x1e0);
     // LD_DE(wc608);
     // FARCALL(aFunction100ee6);
     Function100ee6(wram->wc608);
@@ -4917,7 +4917,7 @@ void MobileCopyTransferData(const void* hl){
     // LD_DE(wMobileTransferData);
     // LD_BC(0x1e0);
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->wMobileTransferData, hl, 0x1e0);
+    CopyBytes(wram->wMobileTransferData, hl, 0x1e0);
     // RET;
 }
 
@@ -4925,7 +4925,7 @@ void MobileCopyTransferData2(void* de){
     // LD_HL(wMobileTransferData);
     // LD_BC(0x1e0);
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(de, wram->wMobileTransferData, 0x1e0);
+    CopyBytes(de, wram->wMobileTransferData, 0x1e0);
     // RET;
 }
 
@@ -5190,7 +5190,7 @@ void Function10176f(void){
     // LD_BC(0x54);
     // LD_A(0x11);
     // CALL(aByteFill);
-    ByteFill_Conv2(&wram->wccb4, 0x54, 0x11);
+    ByteFill(&wram->wccb4, 0x54, 0x11);
     // RET;
 }
 
@@ -5261,7 +5261,7 @@ void Function1017b0(uint16_t bc){
     // POP_BC;
     // LD_DE(wccb5);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wccb5, hl, bc);
+    CopyBytes(wram->wccb5, hl, bc);
     // RET;
 }
 
@@ -5281,7 +5281,7 @@ void Function1017c7(void){
     // LD_HL(wcc61);
     // LD_A_addr(wcd3d);
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(de, wram->wcc61, bc);
+    CopyBytes(de, wram->wcc61, bc);
     // AND_A_A;
     // RET;
 }
@@ -5503,7 +5503,7 @@ void Function1018ec(void){
     // asm_1018f3:
         // CALL(aRandom);
         // LD_hli_A;
-        *(hl++) = Random_Conv();
+        *(hl++) = Random();
         // DEC_C;
         // IF_NZ goto asm_1018f3;
     } while(--c != 0);
@@ -5527,7 +5527,7 @@ void Function1018fb(void){
     // LD_DE(wLinkBattleRNs);
     // LD_BC(10);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wLinkBattleRNs, hl, 10);
+    CopyBytes(wram->wLinkBattleRNs, hl, 10);
     // RET;
 }
 
@@ -5583,7 +5583,7 @@ void Function10194b(void){
     // CALL(aDisableSpriteUpdates);
     DisableSpriteUpdates_Conv();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // FARCALL(aFunction1021f9);
     Function1021f9();
     // LD_HL(wcd29);
@@ -5624,7 +5624,7 @@ void v_SelectMonsForMobileBattle(void){
     // LD_DE(wccb5);
     // LD_BC(3);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wccb5, wram->wPlayerMonSelection, sizeof(wram->wPlayerMonSelection));
+    CopyBytes(wram->wccb5, wram->wPlayerMonSelection, sizeof(wram->wPlayerMonSelection));
     // LD_HL(wcd6c);
     // LD_A_hli;
     // LD_addr_A(wccb8);
@@ -5666,7 +5666,7 @@ static void v_StartMobileBattle_CopyOTDetails(void){
     // LD_DE(wOTClassName);
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wOTClassName, wram->wOTPlayerName, NAME_LENGTH);
+    CopyBytes(wram->wOTClassName, wram->wOTPlayerName, NAME_LENGTH);
     // LD_A_addr(wcd2f);
     // AND_A_A;
     // LD_A(USING_INTERNAL_CLOCK);
@@ -5697,7 +5697,7 @@ void v_StartMobileBattle(void){
     Function100846();
     // LD_C(120);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(120);
+    DelayFrames(120);
     // FARCALL(aClearTilemap);
     ClearTilemap_Conv2();
     // CALL(av_StartMobileBattle_CopyOTDetails);
@@ -5780,7 +5780,7 @@ void CopyOtherPlayersBattleMonSelection(void){
     // LD_DE(wOTMonSelection);
     // LD_BC(3);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wOTMonSelection, wram->wcc61, 3);
+    CopyBytes(wram->wOTMonSelection, wram->wcc61, 3);
     // LD_DE(wcc64);
     // FARCALL(aFunction100772);
     Function100772(wram->wcc64);
@@ -6602,7 +6602,7 @@ void Function101e8d(void){
 
 bool Function101e98(void){
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // FARCALL(aFunction8adb3);
     // RET_C ;
     if(Function8adb3())
@@ -6886,7 +6886,7 @@ void Function10208e(const void* de){
     // CALL(aCopyBytes);
     // POP_DE;
     // RET;
-    CopyBytes_Conv2(wram->wdc42, de, 8);
+    CopyBytes(wram->wdc42, de, 8);
 }
 
 // ClearBufferWdc42
@@ -6895,7 +6895,7 @@ void Function10209c(void){
     // LD_HL(wdc42);
     // LD_BC(8);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wdc42, sizeof(wram->wdc42), 0xff);
+    ByteFill(wram->wdc42, sizeof(wram->wdc42), 0xff);
     // RET;
 }
 
@@ -6919,7 +6919,7 @@ bool Function1020a8(void){
 
 bool Function1020bf(void){
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // FARCALL(aFunction8aba9);
     uint8_t c = Function8aba9();
     // LD_A_C;
@@ -7093,7 +7093,7 @@ void Function102180(void){
     // LD_BC(11);
     // CALL(aCopyBytes);
     // RET;
-    CopyBytes_Conv2(wram->wStringBuffer2, wram->wc608, NAME_LENGTH);
+    CopyBytes(wram->wStringBuffer2, wram->wc608, NAME_LENGTH);
 }
 
 void Function10218d(void){
@@ -7102,7 +7102,7 @@ void Function10218d(void){
     // LD_BC(0x26);
     // LD_A(0x05);
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->wc608, wram->w5_dc00, 0x26);
+    CopyBytes(wram->wc608, wram->w5_dc00, 0x26);
     // LD_DE(wc608 + 1);  // useless
     // RET;
 }
@@ -7237,7 +7237,7 @@ void Function102233(void){
     // LD_BC(10);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(&wram->wcd49, 10, 0);
+    ByteFill(&wram->wcd49, 10, 0);
     // CALL(aFunction10304f);
     Function10304f();
     // RET;
@@ -8926,7 +8926,7 @@ void Function102a3b(void){
     // LD_DE(wPlayerTrademonSenderName);
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wPlayerTrademon.senderName, wram->wPlayerName, NAME_LENGTH);
+    CopyBytes(wram->wPlayerTrademon.senderName, wram->wPlayerName, NAME_LENGTH);
     // LD_A_addr(wcd4c);
     // DEC_A;
     // LD_C_A;
@@ -8943,7 +8943,7 @@ void Function102a3b(void){
     // LD_DE(wPlayerTrademonOTName);
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wPlayerTrademon.otName, wram->wPartyMonOT[wram->wcd4c - 1], NAME_LENGTH);
+    CopyBytes(wram->wPlayerTrademon.otName, wram->wPartyMonOT[wram->wcd4c - 1], NAME_LENGTH);
     // LD_A_addr(wcd4c);
     // DEC_A;
     // LD_HL(wPartyMon1ID);
@@ -8977,7 +8977,7 @@ void Function102a3b(void){
     // LD_DE(wOTTrademonSenderName);
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wOTTrademon.senderName, wram->wOTPlayerName, NAME_LENGTH);
+    CopyBytes(wram->wOTTrademon.senderName, wram->wOTPlayerName, NAME_LENGTH);
 
     // LD_A_addr(wcd4d);
     // DEC_A;
@@ -8995,7 +8995,7 @@ void Function102a3b(void){
     // LD_DE(wOTTrademonOTName);
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wOTTrademon.otName, wram->wOTPartyMonOT[wram->wcd4d - 1], NAME_LENGTH);
+    CopyBytes(wram->wOTTrademon.otName, wram->wOTPartyMonOT[wram->wcd4d - 1], NAME_LENGTH);
     // LD_A_addr(wcd4d);
     // DEC_A;
     // LD_HL(wOTPartyMon1ID);
@@ -9032,7 +9032,7 @@ void Function102a3b(void){
 void Function102b12(void){
     // LD_C(100);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(100);
+    DelayFrames(100);
     // CALL(aFunction102d9a);
     Function102d9a();
     // CALL(aLoadFontsBattleExtra);
@@ -9157,9 +9157,9 @@ void Function102bac(void){
     // LD_addr_A(wCurPartyMon);
     wram->wCurPartyMon = wram->wMenuCursorY - 1;
     // CALL(aLowVolume);
-    LowVolume_Conv();
+    LowVolume();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // FARCALL(av_MobileStatsScreenInit);
     v_MobileStatsScreenInit();
     // LD_A_addr(wCurPartyMon);
@@ -9173,7 +9173,7 @@ void Function102bac(void){
     // CALL(aDelayFrame);
     DelayFrame();
     // CALL(aMaxVolume);
-    MaxVolume_Conv();
+    MaxVolume();
     // CALL(aFunction102dd3);
     Function102dd3();
     // CALL(aFunction102dec);
@@ -9294,7 +9294,7 @@ void Function102c48(void){
     // LD_BC(0x1e0);
     // LD_A(0x05);
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->w5_da00, wram->wc608, 0x1e0);
+    CopyBytes(wram->w5_da00, wram->wc608, 0x1e0);
     // RET;
 }
 
@@ -9310,7 +9310,7 @@ void Function102c71(void* de, void* hl, uint16_t bc){
     // CALL(aAddNTimes);
     // POP_DE;
     // CALL(aSwapBytes);
-    SwapBytes_Conv2((uint8_t*)hl + (wram->wcd4c - 1) * bc, (uint8_t*)de + (wram->wcd4d - 1) * bc, bc);
+    SwapBytes((uint8_t*)hl + (wram->wcd4c - 1) * bc, (uint8_t*)de + (wram->wcd4d - 1) * bc, bc);
     // RET;
 }
 
@@ -9333,7 +9333,7 @@ void Function102c87(void){
     // LD_DE(wc608);
     // LD_BC(0x11a);
     // CALL(aFunction102d3e);
-    CopyBytes_Conv2(wram->wc608, GBToRAMAddr(sPartyMon1MailMessage), 0x11a);
+    CopyBytes(wram->wc608, GBToRAMAddr(sPartyMon1MailMessage), 0x11a);
     CloseSRAM_Conv();
     // CALL(aFunction102cee);
     Function102cee();
@@ -9343,7 +9343,7 @@ void Function102c87(void){
     // LD_DE(0xa600);
     // LD_BC(0x11a);
     // CALL(aFunction102d3e);
-    CopyBytes_Conv2(GBToRAMAddr(sPartyMon1MailMessage), wram->wc608, 0x11a);
+    CopyBytes(GBToRAMAddr(sPartyMon1MailMessage), wram->wc608, 0x11a);
     CloseSRAM_Conv();
     // LD_A_addr(wcd4d);
     // LD_addr_A(wJumptableIndex);
@@ -9356,7 +9356,7 @@ void Function102c87(void){
     // LD_DE(wc608);
     // LD_BC(0x11a);
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->wc608, wram->w5_da00, 0x11a);
+    CopyBytes(wram->wc608, wram->w5_da00, 0x11a);
     // CALL(aFunction102cee);
     Function102cee();
     // LD_A(0x05);
@@ -9364,7 +9364,7 @@ void Function102c87(void){
     // LD_DE(w5_da00);
     // LD_BC(0x11a);
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->w5_da00, wram->wc608, 0x11a);
+    CopyBytes(wram->w5_da00, wram->wc608, 0x11a);
     // POP_AF;
     // LD_addr_A(wcf64);
     wram->wcf64 = cf64;
@@ -9381,7 +9381,7 @@ void Function102cee(void){
     // LD_DE(wd002);
     // LD_BC(0x2f);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(&wram->wd002, Function102d34(wram->wJumptableIndex - 1), 0x2f);
+    CopyBytes(&wram->wd002, Function102d34(wram->wJumptableIndex - 1), 0x2f);
     // LD_A_addr(wJumptableIndex);
     // LD_C_A;
     // LD_A(0x06);
@@ -9404,7 +9404,7 @@ void Function102cee(void){
     // ADD_HL_DE;
     // POP_BC;
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(de, de + 0x2f, hl);
+    CopyBytes(de, de + 0x2f, hl);
     // LD_A_addr(wcf64);
     // DEC_A;
     // CALL(aFunction102d34);
@@ -9413,7 +9413,7 @@ void Function102cee(void){
     // LD_HL(wd002);
     // LD_BC(0x2f);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(Function102d34(wram->wcf64 - 1), &wram->wd002, 0x2f);
+    CopyBytes(Function102d34(wram->wcf64 - 1), &wram->wd002, 0x2f);
     // RET;
 }
 
@@ -9429,7 +9429,7 @@ uint8_t* Function102d34(uint8_t a){
     // CALL(aOpenSRAM);
     // OpenSRAM_Conv(MBANK(de));
     // CALL(aCopyBytes);
-    // CopyBytes_Conv2(GBToRAMAddr(de & 0xffff), hl, bc);
+    // CopyBytes(GBToRAMAddr(de & 0xffff), hl, bc);
     // CALL(aCloseSRAM);
     // CloseSRAM_Conv();
     // RET;
@@ -9493,12 +9493,12 @@ void Function102d9a(void){
     // hlcoord(0, 0, wTilemap);
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
     // LD_A(0x07);
     // hlcoord(0, 0, wAttrmap);
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wAttrmap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x07);
+    ByteFill(coord(0, 0, wram->wAttrmap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x07);
     // FARCALL(aHDMATransferAttrmapAndTilemapToWRAMBank3);
     HDMATransferAttrmapAndTilemapToWRAMBank3_Conv();
     // RET;
@@ -9530,7 +9530,7 @@ void Function102dc3(void){
 // MobileComms_LoadTradeLightsGFX
 void Function102dd3(void){
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
     // LD_DE(mMobileTradeLightsGFX);
     // LD_HL(vTiles0);
     // LD_BC((BANK(aMobileTradeLightsGFX) << 8) | 4);
@@ -9539,7 +9539,7 @@ void Function102dd3(void){
     // FARCALL(av__LoadTradeScreenBorderGFX);
     v__LoadTradeScreenBorderGFX();
     // CALL(aEnableLCD);
-    EnableLCD_Conv();
+    EnableLCD();
     // RET;
 }
 
@@ -9550,7 +9550,7 @@ void Function102dec(void){
     // LD_BC(4 * PALETTE_SIZE);
     // LD_A(0x05);
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->wOBPals1, MobileTradeLightsPalettes, 4 * PALETTE_SIZE);
+    CopyBytes(wram->wOBPals1, MobileTradeLightsPalettes, 4 * PALETTE_SIZE);
     // FARCALL(aFunction49742);
     Function49742();
     // CALL(aSetPalettes);
@@ -9623,7 +9623,7 @@ static void Function102e4f_PlaceSpeciesNames(tile_t* hl, const species_t* de){
         // CALL(aGetPokemonName);
         // POP_HL;
         // CALL(aPlaceString);
-        PlaceStringSimple(GetPokemonName_Conv2(*de), hl);
+        PlaceStringSimple(GetPokemonName(*de), hl);
         // POP_DE;
         // INC_DE;
         de++;
@@ -9688,7 +9688,7 @@ void Function102ea8(void){
     // LD_DE(wStringBuffer2);
     // LD_BC(11);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wStringBuffer2, GetPokemonName_Conv2(wram->wPartySpecies[wram->wcd4c - 1]), NAME_LENGTH);
+    CopyBytes(wram->wStringBuffer2, GetPokemonName(wram->wPartySpecies[wram->wcd4c - 1]), NAME_LENGTH);
     // LD_A_addr(wcd4d);
     // DEC_A;
     // LD_C_A;
@@ -9698,7 +9698,7 @@ void Function102ea8(void){
     // LD_A_hl;
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetPokemonName);
-    GetPokemonName_Conv2(wram->wOTPartySpecies[wram->wcd4d - 1]);
+    GetPokemonName(wram->wOTPartySpecies[wram->wcd4d - 1]);
     // LD_HL(mTradingMonForOTMonText);
     // CALL(aPrintTextboxText);
     PrintTextboxText_Conv2(TradingMonForOTMonText);
@@ -9789,7 +9789,7 @@ void Function102f85(void){
     // LD_A_hl;
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetPokemonName);
-    GetPokemonName_Conv2(wram->wOTPartySpecies[wram->wd003]);
+    GetPokemonName(wram->wOTPartySpecies[wram->wd003]);
     // CALL(aFunction102dc3);
     Function102dc3();
     // LD_DE(mString_102fb2);
@@ -9903,7 +9903,7 @@ void Function10306e(void){
     // LDH_addr_A(hOAMUpdate);
     hram->hOAMUpdate = 0x1;
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // LD_DE(wVirtualOAM);
     // CALL(aFunction1030cd);
     Function1030cd(wram->wVirtualOAMSprite);
@@ -10157,7 +10157,7 @@ void Function103309(void){
     // LD_BC(10);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(&wram->wd1ea, 10, 0);
+    ByteFill(&wram->wd1ea, 10, 0);
     // LD_A(BANK(s4_a60c));
     // CALL(aOpenSRAM);
     OpenSRAM_Conv(MBANK(as4_a60c));
@@ -11222,7 +11222,7 @@ void Function10383c(void){
     // LD_DE(wPlayerMonSelection);
     // LD_BC(3);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wPlayerMonSelection, wram->wMobileAdapterPlayerSelectionBuffer, 3);
+    CopyBytes(wram->wPlayerMonSelection, wram->wMobileAdapterPlayerSelectionBuffer, 3);
     // XOR_A_A;
     // LD_addr_A(wScriptVar);
     wram->wScriptVar = 0x0;

@@ -28,7 +28,7 @@ void v_UnownPuzzle(void){
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = 0;
@@ -37,7 +37,7 @@ void v_UnownPuzzle(void){
     // LD_BC(SIZEOF("Miscellaneous"));
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wSurroundingTiles, sizeof(wram->wSurroundingTiles), 0);
+    ByteFill(wram->wSurroundingTiles, sizeof(wram->wSurroundingTiles), 0);
     // LD_HL(mUnownPuzzleCursorGFX);
     // LD_DE(vTiles0 + LEN_2BPP_TILE * 0xe0);
     // LD_BC(4 * LEN_2BPP_TILE);
@@ -53,7 +53,7 @@ void v_UnownPuzzle(void){
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // LD_A(PUZZLE_BORDER);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, PUZZLE_BORDER);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, PUZZLE_BORDER);
     // hlcoord(4, 3, wTilemap);
     // LD_BC((12 << 8) | 12);
     // LD_A(PUZZLE_VOID);
@@ -126,7 +126,7 @@ void v_UnownPuzzle(void){
         else {
         // clear:
             // CALL(aClearSprites);
-            ClearSprites_Conv();
+            ClearSprites();
         }
 
     // next:
@@ -144,7 +144,7 @@ void v_UnownPuzzle(void){
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // LD_A(LCDC_DEFAULT);
     // LDH_addr_A(rLCDC);
     gb_write(rLCDC, LCDC_DEFAULT);
@@ -183,7 +183,7 @@ void InitUnownPuzzlePiecePositions(void){
             // LD_D(0);
             // ADD_HL_DE;
             // LD_E_hl;
-            e = PuzzlePieceInitialPositions[Random_Conv() & 0xf];
+            e = PuzzlePieceInitialPositions[Random() & 0xf];
             // LD_HL(wPuzzlePieces);
             // ADD_HL_DE;
             // LD_A_hl;
@@ -230,7 +230,7 @@ void PlaceStartCancelBoxBorder(void){
     // LD_BC(10);
     // LD_A(0xf1);
     // CALL(aByteFill);
-    ByteFill_Conv2(hl, 10, 0xf1);
+    ByteFill(hl, 10, 0xf1);
     // hlcoord(15, 15, wTilemap);
     // LD_A(0xf2);
     // LD_hli_A;
@@ -243,7 +243,7 @@ void PlaceStartCancelBoxBorder(void){
     // LD_BC(10);
     // LD_A(PUZZLE_VOID);
     // CALL(aByteFill);
-    ByteFill_Conv2(hl, 10, PUZZLE_VOID);
+    ByteFill(hl, 10, PUZZLE_VOID);
     // hlcoord(15, 16, wTilemap);
     // LD_A(0xf3);
     // LD_hli_A;
@@ -256,7 +256,7 @@ void PlaceStartCancelBoxBorder(void){
     // LD_BC(10);
     // LD_A(0xf1);
     // CALL(aByteFill);
-    ByteFill_Conv2(hl, 10, 0xf1);
+    ByteFill(hl, 10, 0xf1);
     // hlcoord(15, 17, wTilemap);
     // LD_A(0xf5);
     // LD_hl_A;
@@ -508,7 +508,7 @@ void UnownPuzzle_A(void){
     // CALL(aPlaceStartCancelBoxBorder);
     PlaceStartCancelBoxBorder();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // LD_DE(SFX_1ST_PLACE);
     // CALL(aPlaySFX);
     PlaySFX_Conv(SFX_1ST_PLACE);

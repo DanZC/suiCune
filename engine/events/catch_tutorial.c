@@ -39,7 +39,7 @@ void CatchTutorial(void){
             // LD_DE(wMomsName);
             // LD_BC(NAME_LENGTH);
             // CALL(aCopyBytes);
-            CopyBytes_Conv2(wram->wMomsName, wram->wPlayerName, NAME_LENGTH);
+            CopyBytes(wram->wMomsName, wram->wPlayerName, NAME_LENGTH);
         //  Copy Dude's name to your name
             // LD_HL(mCatchTutorial_Dude);
             // LD_DE(wPlayerName);
@@ -108,7 +108,7 @@ void CatchTutorial(void){
             // LD_DE(wPlayerName);
             // LD_BC(NAME_LENGTH);
             // CALL(aCopyBytes);
-            CopyBytes_Conv2(wram->wPlayerName, wram->wMomsName, NAME_LENGTH);
+            CopyBytes(wram->wPlayerName, wram->wMomsName, NAME_LENGTH);
             // RET;
             return;
 

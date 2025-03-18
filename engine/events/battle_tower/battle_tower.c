@@ -359,7 +359,7 @@ void ReadBTTrainerParty(void){
         // LD_DE(wBT_OTTempMon1Name);
         // LD_BC(MON_NAME_LENGTH);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(pmon[0].monName, GetPokemonName_Conv2(pmon[0].mon.mon.species), MON_NAME_LENGTH);
+        CopyBytes(pmon[0].monName, GetPokemonName(pmon[0].mon.mon.species), MON_NAME_LENGTH);
     }
 
 // skip_mon_1:
@@ -376,7 +376,7 @@ void ReadBTTrainerParty(void){
         // LD_DE(wBT_OTTempMon2Name);
         // LD_BC(MON_NAME_LENGTH);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(pmon[1].monName, GetPokemonName_Conv2(pmon[1].mon.mon.species), MON_NAME_LENGTH);
+        CopyBytes(pmon[1].monName, GetPokemonName(pmon[1].mon.mon.species), MON_NAME_LENGTH);
     }
 
 // skip_mon_2:
@@ -393,7 +393,7 @@ void ReadBTTrainerParty(void){
         // LD_DE(wBT_OTTempMon3Name);
         // LD_BC(MON_NAME_LENGTH);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(pmon[2].monName, GetPokemonName_Conv2(pmon[2].mon.mon.species), MON_NAME_LENGTH);
+        CopyBytes(pmon[2].monName, GetPokemonName(pmon[2].mon.mon.species), MON_NAME_LENGTH);
     }
 
 // skip_mon_3:
@@ -415,13 +415,13 @@ void ReadBTTrainerParty(void){
     // IF_NC goto trainer_name_okay;
     if(CheckStringForErrors_Conv(wram->wBT_OTTemp.name, NAME_LENGTH - 1)) {
         // LD_HL(mBT_ChrisName);
-        CopyBytes_Conv2(wram->wOTPlayerName, U82C(BT_ChrisName), NAME_LENGTH - 1);
+        CopyBytes(wram->wOTPlayerName, U82C(BT_ChrisName), NAME_LENGTH - 1);
         // goto done_trainer_name;
     }
     else {
     // trainer_name_okay:
         // LD_HL(wBT_OTTempName);
-        CopyBytes_Conv2(wram->wOTPlayerName, wram->wBT_OTTemp.name, NAME_LENGTH - 1);
+        CopyBytes(wram->wOTPlayerName, wram->wBT_OTTemp.name, NAME_LENGTH - 1);
     }
 
 // done_trainer_name:
@@ -440,9 +440,9 @@ void ReadBTTrainerParty(void){
     // LD_addr_A(wBGMapBuffer);
     // LD_A(HIGH(wOTPartyMonNicknames));
     // LD_addr_A(wBGMapBuffer + 1);
-    CopyBytes_Conv2(wram->wOTPartyMonNickname[0], wram->wBT_OTTemp.party[0].monName, NAME_LENGTH);
-    CopyBytes_Conv2(wram->wOTPartyMonNickname[1], wram->wBT_OTTemp.party[1].monName, NAME_LENGTH);
-    CopyBytes_Conv2(wram->wOTPartyMonNickname[2], wram->wBT_OTTemp.party[2].monName, NAME_LENGTH);
+    CopyBytes(wram->wOTPartyMonNickname[0], wram->wBT_OTTemp.party[0].monName, NAME_LENGTH);
+    CopyBytes(wram->wOTPartyMonNickname[1], wram->wBT_OTTemp.party[1].monName, NAME_LENGTH);
+    CopyBytes(wram->wOTPartyMonNickname[2], wram->wBT_OTTemp.party[2].monName, NAME_LENGTH);
 
 // Copy mon into Memory from the address in hl
     struct BattleTowerPartyMon* hl = wram->wBT_OTTemp.party;
@@ -465,7 +465,7 @@ void ReadBTTrainerParty(void){
         // PUSH_BC;
         // LD_BC(PARTYMON_STRUCT_LENGTH);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(de, &hl->mon, sizeof(*de));
+        CopyBytes(de, &hl->mon, sizeof(*de));
         // PUSH_DE;
         // LD_A_addr(wBGMapBuffer);
         // LD_E_A;
@@ -694,7 +694,7 @@ void CopyBTTrainer_FromBT_OT_TowBT_OTTemp(void){
     // LD_DE(wBT_OTTemp);
     // LD_BC(BATTLE_TOWER_STRUCT_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(&wram->wBT_OTTemp, &wram->wBT_OTTrainer, sizeof(wram->wBT_OTTemp));
+    CopyBytes(&wram->wBT_OTTemp, &wram->wBT_OTTrainer, sizeof(wram->wBT_OTTemp));
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
@@ -1100,7 +1100,7 @@ void ResetBattleTowerTrainersSRAM(void){
     // LD_HL(sBTTrainers);
     // LD_BC(BATTLETOWER_STREAK_LENGTH);
     // CALL(aByteFill);
-    ByteFill_Conv(sBTTrainers, BATTLETOWER_STREAK_LENGTH, 0xff);
+    ByteFill_GB(sBTTrainers, BATTLETOWER_STREAK_LENGTH, 0xff);
 
     // XOR_A_A;
     // LD_addr_A(sNrOfBeatenBattleTowerTrainers);
@@ -1481,7 +1481,7 @@ void Function1708b1(void){
     // LD_addr_A(wMusicFade);
     wram->wMusicFade = 0x0;
     // CALL(aMaxVolume);
-    MaxVolume_Conv();
+    MaxVolume();
     // RET;
 
 }
@@ -1564,7 +1564,7 @@ void Function170923(void){
     uint8_t* hl = GBToRAMAddr(s5_aa5d);
     // LD_BC(MOBILE_LOGIN_PASSWORD_LENGTH);
     // CALL(aByteFill);
-    ByteFill_Conv2(hl, MOBILE_LOGIN_PASSWORD_LENGTH, 0);
+    ByteFill(hl, MOBILE_LOGIN_PASSWORD_LENGTH, 0);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // RET;

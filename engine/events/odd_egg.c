@@ -11,7 +11,7 @@ void v_GiveOddEgg(void){
 // Compare a random word to
 // probabilities out of 0xffff.
     // CALL(aRandom);
-    Random_Conv();
+    Random();
     // LD_HL(mOddEggProbabilities);
     const uint16_t* hl = OddEggProbabilities;
     // LD_C(0);
@@ -72,8 +72,8 @@ void v_GiveOddEgg(void){
     // LD_DE(wOddEgg);
     // LD_BC(NICKNAMED_MON_STRUCT_LENGTH + NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(&wram->wOddEgg, mon, sizeof(wram->wOddEgg));
-    CopyBytes_Conv2(wram->wOddEggName, mon->nickname, sizeof(wram->wOddEggName));
+    CopyBytes(&wram->wOddEgg, mon, sizeof(wram->wOddEgg));
+    CopyBytes(wram->wOddEggName, mon->nickname, sizeof(wram->wOddEggName));
 
     // LD_A(EGG_TICKET);
     // LD_addr_A(wCurItem);
@@ -112,7 +112,7 @@ void v_GiveOddEgg(void){
     // LD_BC(MON_NAME_LENGTH);
     // CALL(aCopyBytes);
 static const char Odd[] = "ODD@@@@@@@@@";
-    CopyBytes_Conv2(wram->wTempOddEggNickname, U82C(Odd), MON_NAME_LENGTH);
+    CopyBytes(wram->wTempOddEggNickname, U82C(Odd), MON_NAME_LENGTH);
 
 // load pointer to wTempOddEggNickname in wMobileMonOTPointer
     // LD_A(LOW(wTempOddEggNickname));

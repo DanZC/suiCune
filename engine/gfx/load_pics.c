@@ -251,7 +251,7 @@ void v_GetFrontpic_Conv(uint8_t* de, uint8_t frame){
     // CALL(aGet2bpp);
     // POP_HL;
     // RET;
-    CopyBytes_Conv2(de, wram->wDecompressScratch, 7 * 7 * LEN_2BPP_TILE);
+    CopyBytes(de, wram->wDecompressScratch, 7 * 7 * LEN_2BPP_TILE);
 }
 
 void GetFrontpicPointer(void){
@@ -383,7 +383,7 @@ void GetAnimatedEnemyFrontpic_Conv(uint8_t* hl){
     // LD_B_A;
     // CALL(aGet2bpp);
     // LoadPNG2bppAssetSectionToVRAM(wram->wDecompressScratch, GetFrontpicPointer_Conv(), 0, 7 * 7);
-    CopyBytes_Conv2(hl, wram->wDecompressScratch, 7 * 7 * LEN_2BPP_TILE);
+    CopyBytes(hl, wram->wDecompressScratch, 7 * 7 * LEN_2BPP_TILE);
     // POP_HL;
     // LD_DE(7 * 7 * LEN_2BPP_TILE);
     // ADD_HL_DE;
@@ -431,7 +431,7 @@ void GetAnimatedEnemyFrontpic_Conv(uint8_t* hl){
     // LDH_A_addr(hROMBank);
     // LD_B_A;
     // CALL(aGet2bpp);
-    CopyBytes_Conv2(hl, wram->wDecompressScratch, 7 * 7 * LEN_2BPP_TILE);
+    CopyBytes(hl, wram->wDecompressScratch, 7 * 7 * LEN_2BPP_TILE);
     // XOR_A_A;
     // LDH_addr_A(rVBK);
     // gb_write(rVBK, 0);
@@ -605,7 +605,7 @@ void GetMonBackpic_Conv(uint8_t* de, species_t species){
     // LDH_A_addr(hROMBank);
     // LD_B_A;
     // CALL(aGet2bpp);
-    CopyBytes_Conv2(de, wram->wDecompressScratch, 6 * 6 * LEN_2BPP_TILE);
+    CopyBytes(de, wram->wDecompressScratch, 6 * 6 * LEN_2BPP_TILE);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // RET;

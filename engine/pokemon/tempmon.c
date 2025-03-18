@@ -79,7 +79,7 @@ void CopyMonToTempMon_Conv(void){
         // LD_DE(wTempMon);
         // LD_BC(PARTYMON_STRUCT_LENGTH);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(&wram->wTempMon, hl + wram->wCurPartyMon, sizeof(wram->wTempMon));
+        CopyBytes(&wram->wTempMon, hl + wram->wCurPartyMon, sizeof(wram->wTempMon));
     }
 // done:
     // RET;

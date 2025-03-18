@@ -209,7 +209,7 @@ void GetCaughtName(void){
     // LD_DE(wSeerNickname);
     // LD_BC(MON_NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wSeerNickname, wram->wPartyMonNickname[wram->wCurPartyMon], MON_NAME_LENGTH);
+    CopyBytes(wram->wSeerNickname, wram->wPartyMonNickname[wram->wCurPartyMon], MON_NAME_LENGTH);
     // RET;
 }
 
@@ -219,7 +219,7 @@ void GetCaughtLevel(void){
     // LD_HL(wSeerCaughtLevelString);
     // LD_BC(4);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wSeerCaughtLevelString, 4, 0x50);
+    ByteFill(wram->wSeerCaughtLevelString, 4, 0x50);
 
 // caught level
 // Limited to between 1 and 63 since it's a 6-bit quantity.
@@ -233,7 +233,7 @@ void GetCaughtLevel(void){
         // LD_HL(mGetCaughtLevel_unknown_level);
         // LD_BC(4);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(wram->wSeerCaughtLevelString, U82C(unknown_level), 4);
+        CopyBytes(wram->wSeerCaughtLevelString, U82C(unknown_level), 4);
         // RET;
         return;
     }
@@ -283,7 +283,7 @@ void GetCaughtTime(void){
     // LD_E_L;
     // LD_HL(wSeerTimeOfDay);
     // CALL(aCopyName2);
-    CopyName2_Conv2(wram->wSeerTimeOfDay, U82C(times[caughtData - 1]));
+    CopyName2(wram->wSeerTimeOfDay, U82C(times[caughtData - 1]));
     // AND_A_A;
     // RET;
 }
@@ -339,7 +339,7 @@ void GetCaughtLocation(void){
     // LD_DE(wSeerCaughtLocation);
     // LD_BC(17);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wSeerCaughtLocation, de, 17);
+    CopyBytes(wram->wSeerCaughtLocation, de, 17);
     // AND_A_A;
     // RET;
 }
@@ -352,7 +352,7 @@ void GetCaughtOT(void){
     // LD_DE(wSeerOT);
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wSeerOT, wram->wPartyMonOT[wram->wCurPartyMon], NAME_LENGTH);
+    CopyBytes(wram->wSeerOT, wram->wPartyMonOT[wram->wCurPartyMon], NAME_LENGTH);
 
 //  this routine is useless in Western localizations
     // LD_HL(mGetCaughtOT_male);

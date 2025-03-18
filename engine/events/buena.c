@@ -176,7 +176,7 @@ void BuenaPrize(void){
         // LD_A_hl;
         // LD_addr_A(wNamedObjectIndex);
         // CALL(aGetItemName);
-        GetItemName_Conv2(prize->id);
+        GetItemName(prize->id);
         // LD_HL(mBuenaPrize_BuenaIsThatRightText);
         // CALL(aBuenaPrintText);
         BuenaPrintText_Conv2(BuenaIsThatRightText);
@@ -335,7 +335,7 @@ static void Buena_PrizeMenu_PrintPrizeItem(const struct MenuData* data, tile_t* 
     // CALL(aGetItemName);
     // POP_HL;
     // CALL(aPlaceString);
-    PlaceStringSimple(GetItemName_Conv2(prize->id), de);
+    PlaceStringSimple(GetItemName(prize->id), de);
     // RET;
 }
 

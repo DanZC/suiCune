@@ -298,7 +298,7 @@ void PartyMonItemName_Conv(item_t item){
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetItemName);
     // CALL(aCopyName1);
-    CopyName1_Conv2(GetItemName_Conv2(item));
+    CopyName1(GetItemName(item));
     // RET;
 }
 
@@ -501,7 +501,7 @@ u8_pair_s GiveTakePartyMonItem(void){
     // LD_DE(wMonOrItemNameBuffer);
     // LD_BC(MON_NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wMonOrItemNameBuffer, GetCurNickname_Conv(), MON_NAME_LENGTH);
+    CopyBytes(wram->wMonOrItemNameBuffer, GetCurNickname_Conv(), MON_NAME_LENGTH);
     // LD_A_addr(wMenuCursorY);
     // CP_A(1);
     // IF_NZ goto take;
@@ -578,7 +578,7 @@ void TryGiveItemToPartymon(void){
 // already_holding_item:
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetItemName);
-    GetItemName_Conv2(*itm);
+    GetItemName(*itm);
     // LD_HL(mPokemonAskSwapItemText);
     // CALL(aStartMenuYesNo);
     // IF_C goto abort;
@@ -657,7 +657,7 @@ void TakePartyItem(void){
             // LD_hl(NO_ITEM);
             *itm = NO_ITEM;
             // CALL(aGetItemName);
-            GetItemName_Conv2(item);
+            GetItemName(item);
             // LD_HL(mPokemonTookItemText);
             // CALL(aMenuTextboxBackup);
             MenuTextboxBackup_Conv(PokemonTookItemText);
@@ -792,7 +792,7 @@ void ComposeMailMessage(void){
     // LD_DE(wTempMailAuthor);
     // LD_BC(NAME_LENGTH - 1);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wTempMail.author, wram->wPlayerName, NAME_LENGTH - 1);
+    CopyBytes(wram->wTempMail.author, wram->wPlayerName, NAME_LENGTH - 1);
     // LD_HL(wPlayerID);
     // LD_BC(2);
     // CALL(aCopyBytes);
@@ -817,7 +817,7 @@ void ComposeMailMessage(void){
     // LD_A(BANK(sPartyMail));
     // CALL(aOpenSRAM);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(de, &wram->wTempMail, sizeof(*de));
+    CopyBytes(de, &wram->wTempMail, sizeof(*de));
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // RET;
@@ -984,17 +984,17 @@ u8_pair_s OpenPartyStats(void){
     // CALL(aLoadStandardMenuHeader);
     LoadStandardMenuHeader_Conv();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
 //  PartyMon
     // XOR_A_A;
     // LD_addr_A(wMonType);
     wram->wMonType = PARTYMON;
     // CALL(aLowVolume);
-    LowVolume_Conv();
+    LowVolume();
     // PREDEF(pStatsScreenInit);
     StatsScreenInit();
     // CALL(aMaxVolume);
-    MaxVolume_Conv();
+    MaxVolume();
     // CALL(aCall_ExitMenu);
     ExitMenu_Conv2();
     // LD_A(0);
@@ -1401,7 +1401,7 @@ static bool ChooseMoveToDelete_ChooseMoveToDelete(void){
     // RES_hl(6);
     bit_reset(wram->w2DMenuFlags1, 6);
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // POP_AF;
@@ -1775,7 +1775,7 @@ moving_move:
     // hlcoord(1, 11, wTilemap);
     // LD_BC(5);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(1, 11, wram->wTilemap), 5, 0x7f);
+    ByteFill(coord(1, 11, wram->wTilemap), 5, 0x7f);
     // hlcoord(1, 12, wTilemap);
     // LD_BC((5 << 8) | (SCREEN_WIDTH - 2));
     // CALL(aClearBox);
@@ -1795,7 +1795,7 @@ exit:
     // RES_hl(6);
     bit_reset(wram->w2DMenuFlags1, 6);
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // JP(mClearTilemap);
     ClearTilemap_Conv2();
 }
@@ -1816,7 +1816,7 @@ void SetUpMoveScreenBG(void){
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = 0x0;
@@ -1894,7 +1894,7 @@ void SetUpMoveList(void){
     // LD_DE(wListMoves_MoveIndicesBuffer);
     // LD_BC(NUM_MOVES);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wListMoves_MoveIndicesBuffer, wram->wTempMon.mon.moves, sizeof(wram->wTempMon.mon.moves));
+    CopyBytes(wram->wListMoves_MoveIndicesBuffer, wram->wTempMon.mon.moves, sizeof(wram->wTempMon.mon.moves));
     // LD_A(SCREEN_WIDTH * 2);
     // LD_addr_A(wListMovesLineSpacing);
     wram->wListMovesLineSpacing = SCREEN_WIDTH * 2;

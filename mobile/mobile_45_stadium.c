@@ -49,11 +49,11 @@ void Function11766b(void){
     // LD_DE(wcd49);
     // LD_BC(0x8);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(&wram->wcd49, GBToRAMAddr(s5_b1d3 + 0x20), 0x8);
+    CopyBytes(&wram->wcd49, GBToRAMAddr(s5_b1d3 + 0x20), 0x8);
     // LD_DE(0xc708);
     // LD_BC(0x11);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(&wram->wc708, GBToRAMAddr(s5_b1d3 + 0x28), 0x11);
+    CopyBytes(&wram->wc708, GBToRAMAddr(s5_b1d3 + 0x28), 0x11);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // POP_AF;
@@ -69,11 +69,11 @@ void Function117699(void){
     // LD_DE(0xb1f3);
     // LD_BC(0x8);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(GBToRAMAddr(s5_b1d3 + 0x20), &wram->wcd49, 0x8);
+    CopyBytes(GBToRAMAddr(s5_b1d3 + 0x20), &wram->wcd49, 0x8);
     // LD_HL(0xc708);
     // LD_BC(0x11);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(GBToRAMAddr(s5_b1d3 + 0x28), &wram->wc708, 0x11);
+    CopyBytes(GBToRAMAddr(s5_b1d3 + 0x28), &wram->wc708, 0x11);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // XOR_A_A;
@@ -94,11 +94,11 @@ void Function117699(void){
     // LD_HL(0xc708);
     // LD_BC(0x11);
     // CALL(aByteFill);
-    ByteFill_Conv2(&wram->wc708, 0x11, 0x0);
+    ByteFill(&wram->wc708, 0x11, 0x0);
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // FARCALL(aFunction171c87);
     Function171c87();
     // FARCALL(aReloadMapPart);
@@ -135,7 +135,7 @@ void Function1176ee(void){
     // CALL(aClearScreen);
     ClearScreen_Conv2();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // RET;
 }
 

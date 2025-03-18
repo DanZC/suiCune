@@ -24,7 +24,7 @@ void PrintPage1(void){
     // decoord(0, 0, wPrinterTilemapBuffer);
     // LD_BC(17 * SCREEN_WIDTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(coord(0, 0, wram->wPrinterTilemapBuffer), coord(0, 0, wram->wTilemap), 17 * SCREEN_WIDTH);
+    CopyBytes(coord(0, 0, wram->wPrinterTilemapBuffer), coord(0, 0, wram->wTilemap), 17 * SCREEN_WIDTH);
     // hlcoord(17, 1, wPrinterTilemapBuffer);
     // LD_A(0x62);
     // LD_hli_A;
@@ -117,7 +117,7 @@ void PrintPage2(void){
     // LD_BC(8 * SCREEN_WIDTH);
     // LD_A(0x7f);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wPrinterTilemapBuffer), 8 * SCREEN_WIDTH, CHAR_SPACE);
+    ByteFill(coord(0, 0, wram->wPrinterTilemapBuffer), 8 * SCREEN_WIDTH, CHAR_SPACE);
     // hlcoord(0, 0, wPrinterTilemapBuffer);
     // LD_A(0x36);
     // LD_B(6);
@@ -135,14 +135,14 @@ void PrintPage2(void){
     // LD_A(0x39);
     // LD_BC(SCREEN_HEIGHT);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(1, 6, wram->wPrinterTilemapBuffer), SCREEN_HEIGHT, 0x39);
+    ByteFill(coord(1, 6, wram->wPrinterTilemapBuffer), SCREEN_HEIGHT, 0x39);
     // LD_hl(0x3a);
     *coord(19, 6, wram->wPrinterTilemapBuffer) = 0x3a;
     // hlcoord(0, 7, wPrinterTilemapBuffer);
     // LD_BC(SCREEN_WIDTH);
     // LD_A(0x32);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 7, wram->wPrinterTilemapBuffer), SCREEN_HEIGHT, 0x32);
+    ByteFill(coord(0, 7, wram->wPrinterTilemapBuffer), SCREEN_HEIGHT, 0x32);
     // LD_A_addr(wTempSpecies);
     // DEC_A;
     // CALL(aCheckCaughtMon);
@@ -208,7 +208,7 @@ void PrintPartyMonPage1(void){
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = 0x0;
@@ -270,7 +270,7 @@ void PrintPartyMonPage1(void){
     // CALL(aGetPokemonName);
     // hlcoord(10, 6, wTilemap);
     // CALL(aPlaceString);
-    PlaceStringSimple(GetPokemonName_Conv2(wram->wCurSpecies), coord(10, 6, wram->wTilemap));
+    PlaceStringSimple(GetPokemonName(wram->wCurSpecies), coord(10, 6, wram->wTilemap));
     // hlcoord(8, 0, wTilemap);
     // LD_hl(0x74);
     *coord(8, 0, wram->wTilemap) = CHAR_NO;
@@ -352,7 +352,7 @@ void PrintPartyMonPage2(void){
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = 0x0;
@@ -372,7 +372,7 @@ void PrintPartyMonPage2(void){
     // decoord(0, 0, wTilemap);
     // hlcoord(0, 1, wTilemap);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(coord(0, 0, wram->wTilemap), coord(0, 1, wram->wTilemap), SCREEN_WIDTH);
+    CopyBytes(coord(0, 0, wram->wTilemap), coord(0, 1, wram->wTilemap), SCREEN_WIDTH);
     // hlcoord(7, 0, wTilemap);
     // LD_A_addr(wTempMonMoves + 1);
     // CALL(aPlaceMoveNameString);
@@ -436,13 +436,13 @@ void PlaceMoveNameString(tile_t* hl, move_t move){
     if(move != NO_MOVE) {
         // LD_addr_A(wNamedObjectIndex);
         // CALL(aGetMoveName);
-        de = GetMoveName_Conv2(move);
+        de = GetMoveName(move);
         // goto got_string;
     }
     else {
     // no_move:
         // LD_DE(mPrintParty_NoMoveString);
-        ByteFill_Conv2(wram->wStringBuffer1, sizeof(wram->wStringBuffer1), CHAR_TERM);
+        ByteFill(wram->wStringBuffer1, sizeof(wram->wStringBuffer1), CHAR_TERM);
         de = U82CA(wram->wStringBuffer1, PrintParty_NoMoveString);
     }
 

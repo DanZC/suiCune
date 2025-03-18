@@ -27,9 +27,9 @@ void PlaceDiplomaOnScreen(void){
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
     // LD_HL(mDiplomaGFX);
     // LD_DE(vTiles2);
     // CALL(aDecompress);
@@ -56,7 +56,7 @@ void PlaceDiplomaOnScreen(void){
     // CALL(aPlaceString);
     PlaceStringSimple(U82C(Certification), coord(2, 8, wram->wTilemap));
     // CALL(aEnableLCD);
-    EnableLCD_Conv();
+    EnableLCD();
     // CALL(aWaitBGMap);
     WaitBGMap_Conv();
     // LD_B(SCGB_DIPLOMA);
@@ -74,7 +74,7 @@ void PrintDiplomaPage2(void){
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // LD_A(0x7f);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
     // LD_HL(mDiplomaPage2Tilemap);
     // decoord(0, 0, wTilemap);
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);

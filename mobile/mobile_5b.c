@@ -156,7 +156,7 @@ void Function16c0a8(void){
     // LD_addr_A(wd1f1);
     wram->wd1f1 = 0x0;
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // LD_A(0x90);
     // LDH_addr_A(hWY);
     hram->hWY = 0x90;
@@ -256,7 +256,7 @@ static void MobileSystemSplashScreen_InitGFX_LoadTilemap(const char* path) {
     // LD_BC(20);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_WIDTH, 0x0);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_WIDTH, 0x0);
     // LD_HL(mMobileSystemSplashScreen_InitGFX_Tilemap);
     // decoord(0, 1, wTilemap);
     // LD_BC(0x0154);
@@ -270,7 +270,7 @@ static void MobileSystemSplashScreen_InitGFX_LoadAttrmap(const char* path) {
     // LD_BC(SCREEN_WIDTH);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wAttrmap), SCREEN_WIDTH, 0x0);
+    ByteFill(coord(0, 0, wram->wAttrmap), SCREEN_WIDTH, 0x0);
     // LD_HL(mMobileSystemSplashScreen_InitGFX_Attrmap);
     // decoord(0, 1, wAttrmap);
     // LD_BC(17 * SCREEN_WIDTH);
@@ -284,7 +284,7 @@ void MobileSystemSplashScreen_InitGFX(void){
     static const char Tilemap[] = "gfx/mobile/mobile_splash.tilemap";
     static const char Attrmap[] = "gfx/mobile/mobile_splash.attrmap";
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
     // LD_HL(vTiles2);
     // LD_DE(mMobileSystemSplashScreen_InitGFX_Tiles);
     // LD_BC((BANK(aMobileSystemSplashScreen_InitGFX_Tiles) << 8) | 104);
@@ -312,7 +312,7 @@ void MobileSystemSplashScreen_InitGFX(void){
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = 0x0;
     // CALL(aEnableLCD);
-    EnableLCD_Conv();
+    EnableLCD();
     // RET;
 }
 
@@ -332,7 +332,7 @@ bool Function16c943(void){
         // LD_BC(1 * PALETTE_SIZE);
         // LD_HL(wBGPals1);
         // CALL(aByteFill);
-        ByteFill_Conv2(wram->wBGPals1, 1 * PALETTE_SIZE, 0xff);
+        ByteFill(wram->wBGPals1, 1 * PALETTE_SIZE, 0xff);
         // POP_AF;
         // LDH_addr_A(rSVBK);
     }
@@ -925,7 +925,7 @@ void Function16cbd1(void){
     // LD_BC(PAL_COLOR_SIZE);
     // LD_A(0x5);
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->wBGPals1 + PALETTE_SIZE * 1 + PAL_COLOR_SIZE * 2, Unknown_16cfa3 + Unknown_16cbfb[wram->wd1f3], PAL_COLOR_SIZE);
+    CopyBytes(wram->wBGPals1 + PALETTE_SIZE * 1 + PAL_COLOR_SIZE * 2, Unknown_16cfa3 + Unknown_16cbfb[wram->wd1f3], PAL_COLOR_SIZE);
     // FARCALL(aApplyPals);
     ApplyPals_Conv();
     // LD_A(TRUE);
@@ -970,15 +970,15 @@ void Function16cc25(void){
     // LD_HL(mUnknown_16cfa9);
     // LD_DE(wBGPals1 + 1 * PALETTE_SIZE);
     // CALL(aFunction16cc25_CopyPal);
-    CopyBytes_Conv2(wram->wBGPals1 + 1 * PALETTE_SIZE, Unknown_16cfa9, 1 * PALETTE_SIZE);
+    CopyBytes(wram->wBGPals1 + 1 * PALETTE_SIZE, Unknown_16cfa9, 1 * PALETTE_SIZE);
     // LD_HL(mUnknown_16cfb1);
     // LD_DE(wOBPals1);
     // CALL(aFunction16cc25_CopyPal);
-    CopyBytes_Conv2(wram->wOBPals1, Unknown_16cfb1, 1 * PALETTE_SIZE);
+    CopyBytes(wram->wOBPals1, Unknown_16cfb1, 1 * PALETTE_SIZE);
     // LD_HL(mUnknown_16cfb9);
     // LD_DE(wOBPals1 + 1 * PALETTE_SIZE);
     // CALL(aFunction16cc25_CopyPal);
-    CopyBytes_Conv2(wram->wOBPals1 + 1 * PALETTE_SIZE, Unknown_16cfb9, 1 * PALETTE_SIZE);
+    CopyBytes(wram->wOBPals1 + 1 * PALETTE_SIZE, Unknown_16cfb9, 1 * PALETTE_SIZE);
     // RET;
 
 
@@ -1024,7 +1024,7 @@ void Function16cc62(void){
     // LD_BC(0x0028);
     // LD_A(0x1);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 15, wram->wAttrmap), 0x0028, 0x1);
+    ByteFill(coord(0, 15, wram->wAttrmap), 0x0028, 0x1);
     // RET;
 }
 

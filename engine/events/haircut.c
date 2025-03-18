@@ -25,7 +25,7 @@ void BillsGrandfather(void){
     wram->wScriptVar = wram->wCurPartySpecies;
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetPokemonName);
-    GetPokemonName_Conv2(wram->wCurPartySpecies);
+    GetPokemonName(wram->wCurPartySpecies);
     // JP(mCopyPokemonName_Buffer1_Buffer3);
     return CopyPokemonName_Buffer1_Buffer3();
 }
@@ -134,7 +134,7 @@ void HaircutOrGrooming_Conv(const uint8_t (*hl)[3]){
     CopyPokemonName_Buffer1_Buffer3();
     // POP_HL;
     // CALL(aRandom);
-    uint8_t a = Random_Conv();
+    uint8_t a = Random();
 //  Bug: Subtracting $ff from $ff fails to set c.
 //  This can result in overflow into the next data array.
 //  In the case of getting a grooming from Daisy, we bleed
@@ -176,7 +176,7 @@ void CopyPokemonName_Buffer1_Buffer3(void){
     // LD_DE(wStringBuffer3);
     // LD_BC(MON_NAME_LENGTH);
     // JP(mCopyBytes);
-    return CopyBytes_Conv2(wram->wStringBuffer3, wram->wStringBuffer1, MON_NAME_LENGTH);
+    return CopyBytes(wram->wStringBuffer3, wram->wStringBuffer1, MON_NAME_LENGTH);
 }
 
 void DummyPredef1(void){

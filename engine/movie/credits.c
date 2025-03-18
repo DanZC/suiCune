@@ -35,7 +35,7 @@ void Credits(uint8_t b){
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
 
     // LD_HL(wCreditsBlankFrame2bpp);
     // LD_C((wCreditsBlankFrame2bppEnd - wCreditsBlankFrame2bpp) / 2);
@@ -87,7 +87,7 @@ void Credits(uint8_t b){
     // LD_HL(vTiles2);
     // LD_BC((BANK(aCreditsMonsGFX) << 8) | 16);
     // CALL(aRequest2bpp);
-    CopyBytes_Conv2(vram->vTiles2, Credits_LoadBorderGFX(), 16 * LEN_2BPP_TILE);
+    CopyBytes(vram->vTiles2, Credits_LoadBorderGFX(), 16 * LEN_2BPP_TILE);
 
     // CALL(aConstructCreditsTilemap);
     ConstructCreditsTilemap();
@@ -99,7 +99,7 @@ void Credits(uint8_t b){
     // LD_BC(0x100);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wLYOverrides, 0x100, 0x0);
+    ByteFill(wram->wLYOverrides, 0x100, 0x0);
 
     // LD_A(LOW(rSCX));
     // LDH_addr_A(hLCDCPointer);
@@ -292,7 +292,7 @@ void Credits_UpdateGFXRequestPath(void){
     // LD_addr_A(wRequested2bppDest);
     // LD_A(HIGH(vTiles2));
     // LD_addr_A(wRequested2bppDest + 1);
-    CopyBytes_Conv2(vram->vTiles2, hl, 16 * LEN_2BPP_TILE);
+    CopyBytes(vram->vTiles2, hl, 16 * LEN_2BPP_TILE);
     // JR(mCredits_RequestGFX);
     return Credits_RequestGFX();
 }
@@ -395,7 +395,7 @@ void ParseCredits(void){
     // LD_BC(SCREEN_WIDTH * 12);
     // LD_A(0x7f);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 5, wram->wTilemap), SCREEN_WIDTH * 12, 0x7f);
+    ByteFill(coord(0, 5, wram->wTilemap), SCREEN_WIDTH * 12, 0x7f);
 
 //  Then read the script.
 
@@ -618,13 +618,13 @@ void ConstructCreditsTilemap(void){
     // hlcoord(0, 0, wTilemap);
     // LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_HEIGHT * SCREEN_WIDTH, 0x28);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_HEIGHT * SCREEN_WIDTH, 0x28);
 
     // LD_A(0x7f);
     // hlcoord(0, 4, wTilemap);
     // LD_BC((SCREEN_HEIGHT - 4) * SCREEN_WIDTH);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 4, wram->wTilemap), (SCREEN_HEIGHT - 4) * SCREEN_WIDTH, 0x7f);
+    ByteFill(coord(0, 4, wram->wTilemap), (SCREEN_HEIGHT - 4) * SCREEN_WIDTH, 0x7f);
 
     // hlcoord(0, 4, wTilemap);
     // LD_A(0x24);
@@ -640,25 +640,25 @@ void ConstructCreditsTilemap(void){
     // LD_BC(4 * SCREEN_WIDTH);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wAttrmap), 4 * SCREEN_WIDTH, 0x0);
+    ByteFill(coord(0, 0, wram->wAttrmap), 4 * SCREEN_WIDTH, 0x0);
 
     // hlcoord(0, 4, wAttrmap);
     // LD_BC(SCREEN_WIDTH);
     // LD_A(0x1);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 4, wram->wAttrmap), SCREEN_WIDTH, 0x1);
+    ByteFill(coord(0, 4, wram->wAttrmap), SCREEN_WIDTH, 0x1);
 
     // hlcoord(0, 5, wAttrmap);
     // LD_BC(12 * SCREEN_WIDTH);
     // LD_A(0x2);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 5, wram->wAttrmap), 12 * SCREEN_WIDTH, 0x2);
+    ByteFill(coord(0, 5, wram->wAttrmap), 12 * SCREEN_WIDTH, 0x2);
 
     // hlcoord(0, 17, wAttrmap);
     // LD_BC(SCREEN_WIDTH);
     // LD_A(0x1);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 17, wram->wAttrmap), SCREEN_WIDTH, 0x1);
+    ByteFill(coord(0, 17, wram->wAttrmap), SCREEN_WIDTH, 0x1);
 
     // CALL(aWaitBGMap2);
     WaitBGMap2_Conv();
@@ -728,7 +728,7 @@ static void GetCreditsPalette_UpdatePals(const uint16_t* hl, uint8_t a) {
     // LD_D_A;
     // LD_BC(24);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wBGPals1 + a, hl, 24);
+    CopyBytes(wram->wBGPals1 + a, hl, 24);
 
     // POP_HL;
     // POP_AF;
@@ -739,7 +739,7 @@ static void GetCreditsPalette_UpdatePals(const uint16_t* hl, uint8_t a) {
     // LD_D_A;
     // LD_BC(24);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wBGPals2 + a, hl, 24);
+    CopyBytes(wram->wBGPals2 + a, hl, 24);
     // RET;
 }
 

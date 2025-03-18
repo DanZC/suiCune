@@ -83,10 +83,10 @@ void PlayMusic_Conv(uint16_t music) {
 
     // LDH_A_addr(hROMBank);      // ldh a, [hROMBank]
     // PUSH_AF;                   // push af
-    uint8_t oldbank = gb_read(hROMBank);
+    uint8_t oldbank = hram->hROMBank;
     // LD_A(BANK(av_PlayMusic));  // ld a, BANK(_PlayMusic) ; aka BANK(_InitSound)
     // LDH_addr_A(hROMBank);      // ldh [hROMBank], a
-    gb_write(hROMBank, BANK(av_PlayMusic));
+    hram->hROMBank = BANK(av_PlayMusic);
     // LD_addr_A(MBC3RomBank);    // ld [MBC3RomBank], a
     gb_write(MBC3RomBank, BANK(av_PlayMusic));
 
@@ -104,7 +104,7 @@ void PlayMusic_Conv(uint16_t music) {
 // end:
     // POP_AF;                  // pop af
     // LDH_addr_A(hROMBank);    // ldh [hROMBank], a
-    gb_write(hROMBank, oldbank);
+    hram->hROMBank = oldbank;
     // LD_addr_A(MBC3RomBank);  // ld [MBC3RomBank], a
     gb_write(MBC3RomBank, oldbank);
     // POP_AF;                  // pop af
@@ -156,7 +156,7 @@ void PlayMusic2_Conv(uint16_t de) {
 
     // LDH_A_addr(hROMBank);      // ldh a, [hROMBank]
     // PUSH_AF;                   // push af
-    uint8_t oldbank = gb_read(hROMBank);
+    uint8_t oldbank = hram->hROMBank;
     // LD_A(BANK(av_PlayMusic));  // ld a, BANK(_PlayMusic)
     // LDH_addr_A(hROMBank);      // ldh [hROMBank], a
     hram->hROMBank = BANK(av_PlayMusic);
@@ -346,7 +346,7 @@ void PlaySFX_Conv(uint16_t de) {
         // LD_A_addr(wCurSFX);  // ld a, [wCurSFX]
         // CP_A_E;              // cp e
         // IF_C goto done;      // jr c, .done
-    if(!CheckSFX_Conv() || (wram->wCurSFX >= LOW(de))) {
+    if(!CheckSFX() || (wram->wCurSFX >= LOW(de))) {
         // LDH_A_addr(hROMBank);    // ldh a, [hROMBank]
         // PUSH_AF;                 // push af
         // LD_A(BANK(av_PlaySFX));  // ld a, BANK(_PlaySFX)
@@ -424,24 +424,9 @@ void WaitSFX_Conv(void) {
     }
 }
 
-void IsSFXPlaying(void) {
-    //  Return carry if no sound effect is playing.
-    // The inverse of CheckSFX.
-    if (chan[CHAN5]->channelOn) goto playing;
-    if (chan[CHAN6]->channelOn) goto playing;
-    if (chan[CHAN7]->channelOn) goto playing;
-    if (chan[CHAN8]->channelOn) goto playing;
-    SCF;  // scf
-    RET;  // ret
-
-playing:
-    AND_A_A;  // and a
-    RET;      // ret
-}
-
 //  Return false if no sound effect is playing.
 // The inverse of CheckSFX.
-bool IsSFXPlaying_Conv(void) {
+bool IsSFXPlaying(void) {
     return (chan[CHAN5]->channelOn)
         || (chan[CHAN6]->channelOn)
         || (chan[CHAN7]->channelOn)
@@ -449,12 +434,6 @@ bool IsSFXPlaying_Conv(void) {
 }
 
 void MaxVolume(void) {
-    LD_A(MAX_VOLUME);    // ld a, MAX_VOLUME
-    LD_addr_A(wVolume);  // ld [wVolume], a
-    RET;                 // ret
-}
-
-void MaxVolume_Conv(void) {
     // LD_A(MAX_VOLUME);    // ld a, MAX_VOLUME
     // LD_addr_A(wVolume);  // ld [wVolume], a
     // RET;                 // ret
@@ -462,12 +441,6 @@ void MaxVolume_Conv(void) {
 }
 
 void LowVolume(void) {
-    LD_A(0x33);          // ld a, $33 ; 50%
-    LD_addr_A(wVolume);  // ld [wVolume], a
-    RET;                 // ret
-}
-
-void LowVolume_Conv(void) {
     // LD_A(0x33);          // ld a, $33 ; 50%
     // LD_addr_A(wVolume);  // ld [wVolume], a
     wram->wVolume = 0x33;
@@ -475,12 +448,6 @@ void LowVolume_Conv(void) {
 }
 
 void MinVolume(void) {
-    XOR_A_A;             // xor a
-    LD_addr_A(wVolume);  // ld [wVolume], a
-    RET;                 // ret
-}
-
-void MinVolume_Conv(void) {
     // XOR_A_A;             // xor a
     // LD_addr_A(wVolume);  // ld [wVolume], a
     // RET;                 // ret
@@ -501,20 +468,8 @@ void FadeInToMusic(void) {
     wram->wMusicFade = 4 | (1 << MUSIC_FADE_IN_F);
 }
 
-void SkipMusic(void) {
-    //  Skip a frames of music.
-
-loop:
-    AND_A_A;             // and a
-    RET_Z;               // ret z
-    DEC_A;               // dec a
-    CALL(aUpdateSound);  // call UpdateSound
-    goto loop;           // jr .loop
-}
-
 //  Skip a frames of music.
-void SkipMusic_Conv(uint8_t a) {
-
+void SkipMusic(uint8_t a) {
     while(a) {
     // loop:
         // AND_A_A;             // and a
@@ -965,22 +920,8 @@ max:
     RET;                                   // ret
 }
 
-void CheckSFX(void) {
-    //  Return carry if any SFX channels are active.
-    if (chan[CHAN5]->channelOn) goto playing;
-    if (chan[CHAN6]->channelOn) goto playing;
-    if (chan[CHAN7]->channelOn) goto playing;
-    if (chan[CHAN8]->channelOn) goto playing;
-    AND_A_A;
-    RET;
-
-playing:
-    SCF;
-    RET;
-}
-
 //  Return true if any SFX channels are active.
-bool CheckSFX_Conv(void) {
+bool CheckSFX(void) {
     if (chan[CHAN5]->channelOn) return true;
     if (chan[CHAN6]->channelOn) return true;
     if (chan[CHAN7]->channelOn) return true;
@@ -989,18 +930,6 @@ bool CheckSFX_Conv(void) {
 }
 
 void TerminateExpBarSound(void) {
-    XOR_A_A;  // xor a
-    chan[CHAN5]->flags[0] = 0;
-    LD_addr_A(wPitchSweep);  // ld [wPitchSweep], a
-    LDH_addr_A(rNR10);       // ldh [rNR10], a
-    LDH_addr_A(rNR11);       // ldh [rNR11], a
-    LDH_addr_A(rNR12);       // ldh [rNR12], a
-    LDH_addr_A(rNR13);       // ldh [rNR13], a
-    LDH_addr_A(rNR14);       // ldh [rNR14], a
-    RET;                     // ret
-}
-
-void TerminateExpBarSound_Conv(void) {
     // XOR_A_A;  // xor a
     chan[CHAN5]->flags[0] = 0;
     // LD_addr_A(wPitchSweep);  // ld [wPitchSweep], a
@@ -1018,42 +947,20 @@ void TerminateExpBarSound_Conv(void) {
     // RET;                     // ret
 }
 
-void ChannelsOff(void) {
-    // Quickly turn off music channels
-    chan[CHAN1]->channelOn = 0;
-    chan[CHAN2]->channelOn = 0;
-    chan[CHAN3]->channelOn = 0;
-    chan[CHAN4]->channelOn = 0;
-    gb_write(wPitchSweep, 0);
-    RET;
-};
-
 // Quickly turn off music channels
-void ChannelsOff_Conv(void) {
+void ChannelsOff(void) {
     chan[CHAN1]->channelOn = 0;
     chan[CHAN2]->channelOn = 0;
     chan[CHAN3]->channelOn = 0;
     chan[CHAN4]->channelOn = 0;
     wram->wPitchSweep = 0;
-    // RET;
-};
-
-void SFXChannelsOff(void) {
-    // Quickly turn off sound effect channels
-    chan[CHAN5]->channelOn = 0;
-    chan[CHAN6]->channelOn = 0;
-    chan[CHAN7]->channelOn = 0;
-    chan[CHAN8]->channelOn = 0;
-    gb_write(wPitchSweep, 0);
-    RET;
 }
 
 // Quickly turn off sound effect channels
-void SFXChannelsOff_Conv(void) {
+void SFXChannelsOff(void) {
     chan[CHAN5]->channelOn = 0;
     chan[CHAN6]->channelOn = 0;
     chan[CHAN7]->channelOn = 0;
     chan[CHAN8]->channelOn = 0;
     wram->wPitchSweep = 0;
-    // RET;
 }

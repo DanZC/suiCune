@@ -10,7 +10,7 @@ static void EmptyBank(uint8_t bank) {
     // LD_BC(SRAM_End - SRAM_Begin);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv(SRAM_Begin, SRAM_End - SRAM_Begin, 0x0);
+    ByteFill_GB(SRAM_Begin, SRAM_End - SRAM_Begin, 0x0);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // RET;

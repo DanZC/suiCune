@@ -77,7 +77,7 @@ bool SplashScreen(void){
     SetPalettes_Conv();
     // LD_C(10);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(10);
+    DelayFrames(10);
 
 //  Draw copyright screen
     // CALLFAR(aCopyright);
@@ -86,7 +86,7 @@ bool SplashScreen(void){
     WaitBGMap_Conv();
     // LD_C(100);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(100);
+    DelayFrames(100);
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
 
@@ -219,10 +219,10 @@ void GameFreakPresentsEnd(void){
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // LD_C(16);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(16);
+    DelayFrames(16);
     // RET;
 }
 
@@ -268,7 +268,7 @@ void GameFreakPresents_PlaceGameFreak(void){
     // decoord(5, 10, wTilemap);
     // LD_BC(mGameFreakPresents_PlaceGameFreak_end - mGameFreakPresents_PlaceGameFreak_game_freak);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(coord(5, 10, wram->wTilemap), game_freak, sizeof(game_freak) - 1);
+    CopyBytes(coord(5, 10, wram->wTilemap), game_freak, sizeof(game_freak) - 1);
     // CALL(aGameFreakPresents_NextScene);
     GameFreakPresents_NextScene();
     // LD_DE(SFX_GAME_FREAK_PRESENTS);
@@ -304,7 +304,7 @@ void GameFreakPresents_PlacePresents(void){
     // decoord(7, 11, wTilemap);
     // LD_BC(mGameFreakPresents_PlacePresents_end - mGameFreakPresents_PlacePresents_presents);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(coord(7, 11, wram->wTilemap), presents, sizeof(presents) - 1);
+    CopyBytes(coord(7, 11, wram->wTilemap), presents, sizeof(presents) - 1);
     // CALL(aGameFreakPresents_NextScene);
     GameFreakPresents_NextScene();
     // RET;

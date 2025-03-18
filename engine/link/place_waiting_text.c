@@ -29,5 +29,5 @@ void PlaceWaitingText(void){
     PlaceStringSimple(U82C("Waiting...!"), coord(4, 11, wram->wTilemap));
     // LD_C(50);
     // JP(mDelayFrames);
-    return DelayFrames_Conv(50);
+    return DelayFrames(50);
 }

@@ -4010,7 +4010,7 @@ int main(int argc, char* argv[]) {
     }
     else if(reset_type == RESET_TYPE_INIT) {
         gb.cpu_reg.pc = mInit;
-        Init_Conv();
+        Init();
     }
     else {
         gb.cpu_reg.pc = 0x0100;
@@ -4019,7 +4019,7 @@ int main(int argc, char* argv[]) {
     DBG_CALL(mGameInit);
     gb.cpu_reg.pc = mGameInit;
     Intro_SetJumptableIndex(INTRO_INIT);
-    Bankswitch_Conv(0);
+    Bankswitch(0);
     gb.cpu_reg.sp = 0xFFFE;
 
     while (SDL_QuitRequested() == SDL_FALSE) {

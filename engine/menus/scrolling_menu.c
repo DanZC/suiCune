@@ -96,7 +96,7 @@ void v_ScrollingMenu_Conv(const struct MenuData* data){
             hram->hBGMapMode = 1;
             // LD_C(3);
             // CALL(aDelayFrames);
-            DelayFrames_Conv(3);
+            DelayFrames(3);
             // XOR_A_A;
             // LDH_addr_A(hBGMapMode);
             hram->hBGMapMode = 0;

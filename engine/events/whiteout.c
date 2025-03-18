@@ -60,7 +60,7 @@ void OverworldBGMap(void){
     // CALL(aWaitBGMap2);
     WaitBGMap2_Conv();
     // CALL(aHideSprites);
-    HideSprites_Conv();
+    HideSprites();
     // CALL(aRotateThreePalettesLeft);
     RotateThreePalettesLeft_Conv();
     // RET;

@@ -69,7 +69,7 @@ static void v_PlayerDecorationMenu_ClearStringBuffer2(void){
     // LD_BC(ITEM_NAME_LENGTH - 1);
     // LD_A(-1);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wStringBuffer2 + 1, ITEM_NAME_LENGTH - 1, 0xff);
+    ByteFill(wram->wStringBuffer2 + 1, ITEM_NAME_LENGTH - 1, 0xff);
     // RET;
 }
 
@@ -147,7 +147,7 @@ static void v_PlayerDecorationMenu_FindCategoriesWithOwnedDecos(void){
     // LD_DE(wDecoNameBuffer);
     // LD_BC(ITEM_NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wDecoNameBuffer, wram->wStringBuffer2, ITEM_NAME_LENGTH);
+    CopyBytes(wram->wDecoNameBuffer, wram->wStringBuffer2, ITEM_NAME_LENGTH);
     // RET;
 }
 
@@ -209,7 +209,7 @@ void Deco_FillTempWithMinusOne(void){
     // LD_A(-1);
     // LD_BC(16);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wOwnedDecoCategories, sizeof(wram->wOwnedDecoCategories), 0xff);
+    ByteFill(wram->wOwnedDecoCategories, sizeof(wram->wOwnedDecoCategories), 0xff);
     // RET;
 }
 
@@ -620,7 +620,7 @@ void GetDecorationName_Conv(uint8_t* hl, uint8_t a){
     const uint8_t* de = GetDecoName_Conv(deco);
     // POP_HL;
     // CALL(aCopyName2);
-    CopyName2_Conv2(hl, de);
+    CopyName2(hl, de);
     // RET;
 }
 
@@ -851,7 +851,7 @@ static uint8_t* GetDecoName_copy(uint8_t* bc, const uint8_t* de) {
     // LD_H_B;
     // LD_L_C;
     // CALL(aCopyName2);
-    uint8_t* hl = CopyName2_Conv2(bc, de);
+    uint8_t* hl = CopyName2(bc, de);
     // DEC_HL;
     // LD_B_H;
     // LD_C_L;
@@ -872,7 +872,7 @@ static uint8_t* GetDecoName_getpokename(uint8_t* bc, species_t a) {
     // CALL(aGetPokemonName);
     // POP_BC;
     // goto copy;
-    return GetDecoName_copy(bc, GetPokemonName_Conv2(a));
+    return GetDecoName_copy(bc, GetPokemonName(a));
 }
 
 const uint8_t* GetDecoName_Conv(const struct Decoration* hl){

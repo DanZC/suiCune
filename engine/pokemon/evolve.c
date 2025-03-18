@@ -322,14 +322,14 @@ MasterLoop:
         // LD_HL(wPartyMonNicknames);
         // CALL(aGetNickname);
         // CALL(aCopyName1);
-        CopyName1_Conv2(GetCurNickname_Conv());
+        CopyName1(GetCurNickname_Conv());
         // LD_HL(mEvolvingText);
         // CALL(aPrintText);
         PrintText_Conv2(EvolvingText);
 
         // LD_C(50);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(50);
+        DelayFrames(50);
 
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
@@ -342,14 +342,14 @@ MasterLoop:
         // LDH_addr_A(hBGMapMode);
         hram->hBGMapMode = 0x1;
         // CALL(aClearSprites);
-        ClearSprites_Conv();
+        ClearSprites();
 
         // FARCALL(aEvolutionAnimation);
         bool cancel = EvolutionAnimation_Conv();
 
         // PUSH_AF;
         // CALL(aClearSprites);
-        ClearSprites_Conv();
+        ClearSprites();
         // POP_AF;
         // JP_C (mCancelEvolution);
         if(cancel) {
@@ -379,7 +379,7 @@ MasterLoop:
         wram->wEvolutionNewSpecies = evos->species;
         // LD_addr_A(wNamedObjectIndex);
         // CALL(aGetPokemonName);
-        GetPokemonName_Conv2(evos->species);
+        GetPokemonName(evos->species);
 
         // PUSH_HL;
         // LD_HL(mEvolvedIntoText);
@@ -399,7 +399,7 @@ MasterLoop:
 
         // LD_C(40);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(40);
+        DelayFrames(40);
 
         // CALL(aClearTilemap);
         ClearTilemap_Conv2();
@@ -456,7 +456,7 @@ MasterLoop:
         // LD_HL(wTempMonSpecies);
         // LD_BC(PARTYMON_STRUCT_LENGTH);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(mon, &wram->wTempMon, sizeof(*mon));
+        CopyBytes(mon, &wram->wTempMon, sizeof(*mon));
 
         // LD_A_addr(wCurSpecies);
         // LD_addr_A(wTempSpecies);
@@ -516,7 +516,7 @@ void UpdateSpeciesNameIfNotNicknamed(void){
     // LD_A_addr(wBaseDexNo);
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetPokemonName);
-    GetPokemonName_Conv2(wram->wBaseDexNo);
+    GetPokemonName(wram->wBaseDexNo);
     // POP_AF;
     // LD_addr_A(wCurSpecies);
     wram->wCurSpecies = curSpecies;
@@ -553,7 +553,7 @@ void UpdateSpeciesNameIfNotNicknamed(void){
     // POP_DE;
     // LD_BC(MON_NAME_LENGTH);
     // JP(mCopyBytes);
-    CopyBytes_Conv2(wram->wPartyMonNickname[wram->wCurPartyMon], GetPokemonName_Conv2(wram->wCurSpecies), MON_NAME_LENGTH);
+    CopyBytes(wram->wPartyMonNickname[wram->wCurPartyMon], GetPokemonName(wram->wCurSpecies), MON_NAME_LENGTH);
 }
 
 void CancelEvolution(void){
@@ -743,7 +743,7 @@ void LearnLevelMoves_Conv(struct PartyMon* mon, uint8_t level, species_t species
         // LD_addr_A(wNamedObjectIndex);
         // CALL(aGetMoveName);
         // CALL(aCopyName1);
-        CopyName1_Conv2(GetMoveName_Conv2(to_learn));
+        CopyName1(GetMoveName(to_learn));
         // PREDEF(pLearnMove);
         LearnMove(to_learn);
         // POP_HL;

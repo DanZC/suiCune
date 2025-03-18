@@ -331,7 +331,7 @@ static void PrintWaitingTextAndSyncAndExchangeNybble_PrintWaitingText(void) {
     WaitBGMap2_Conv();
     // LD_C(50);
     // JP(mDelayFrames);
-    DelayFrames_Conv(50);
+    DelayFrames(50);
 }
 
 void PrintWaitingTextAndSyncAndExchangeNybble(void){
@@ -390,7 +390,7 @@ static void LinkTradeMenu_UpdateBGMapAndOAM(void) {
 static bool LinkTradeMenu_loop2(void) {
     do {
         // CALL(aUpdateTimeAndPals);
-        UpdateTimeAndPals_Conv();
+        UpdateTimeAndPals();
         // CALL(aLinkTradeMenu_TryAnims);
         // RET_C ;
         if(LinkTradeMenu_TryAnims())

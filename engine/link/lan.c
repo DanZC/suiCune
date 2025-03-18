@@ -141,7 +141,7 @@ void LANConnection_Host(void) {
 
         if(NetworkCheckLAN()) {
             const LANClient* candidate = NetworkGetLANCandidate(0);
-            CopyBytes_Conv2(wram->wStringBuffer1, candidate->name, sizeof(candidate->name) - 1);
+            CopyBytes(wram->wStringBuffer1, candidate->name, sizeof(candidate->name) - 1);
             wram->wStringBuffer1[11] = CHAR_TERM;
             PrintText_Conv2(Text_WillYouAccept);
             bool yes = YesNoBox_Conv();
@@ -261,7 +261,7 @@ void LANConnection_Join(void) {
             }
 
             const LANClient* candidate = NetworkGetLANCandidate(selection);
-            CopyBytes_Conv2(wram->wStringBuffer1, candidate->name, sizeof(candidate->name) - 1);
+            CopyBytes(wram->wStringBuffer1, candidate->name, sizeof(candidate->name) - 1);
             wram->wStringBuffer1[11] = CHAR_TERM;
             PrintText_Conv2(Text_WillYouConnect);
             bool yes = YesNoBox_Conv();

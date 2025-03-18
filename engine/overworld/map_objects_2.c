@@ -9,7 +9,7 @@ void LoadObjectMasks(void){
     // XOR_A_A;
     // LD_BC(NUM_OBJECTS);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wObjectMasks, NUM_OBJECTS, 0);
+    ByteFill(wram->wObjectMasks, NUM_OBJECTS, 0);
     // NOP;
     // LD_BC(wMapObjects);
     struct MapObject* bc = (struct MapObject*)wram_ptr(wMapObjects);

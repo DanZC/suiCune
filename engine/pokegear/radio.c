@@ -427,7 +427,7 @@ void OaksPKMNTalk4(void){
     do {
         // CALL(aRandom);
         // AND_A(0b11111);
-        a = Random_Conv() & 0b11111;
+        a = Random() & 0b11111;
         // CP_A((aOaksPKMNTalkRoutes_End - aOaksPKMNTalkRoutes) / 2);
         // IF_NC goto sample;
     } while(a >= OaksPKMNTalkRoutes_Size);
@@ -492,7 +492,7 @@ void OaksPKMNTalk4(void){
     // loop2:
         // CALL(aRandom);
         // maskbits(NUM_DAYTIMES, 0);
-        tod = Random_Conv() & 3;
+        tod = Random() & 3;
         // CP_A(DARKNESS_F);
         // IF_Z goto loop2;
     } while(tod == DARKNESS_F);
@@ -506,7 +506,7 @@ void OaksPKMNTalk4(void){
     // Choose one of the middle three Pokemon.
         // CALL(aRandom);
         // maskbits(NUM_GRASSMON, 0);
-        whichMon = Random_Conv() & NUM_GRASSMON;
+        whichMon = Random() & NUM_GRASSMON;
         // CP_A(2);
         // IF_C goto loop3;
         // CP_A(5);
@@ -533,7 +533,7 @@ void OaksPKMNTalk4(void){
     // LD_DE(wMonOrItemNameBuffer);
     // LD_BC(MON_NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wMonOrItemNameBuffer, GetPokemonName_Conv2(species), MON_NAME_LENGTH);
+    CopyBytes(wram->wMonOrItemNameBuffer, GetPokemonName(species), MON_NAME_LENGTH);
 
 // Now that we've chosen our wild Pokemon,
 // let's recover the map index info and get its name.
@@ -599,7 +599,7 @@ void OaksPKMNTalk7(void){
     // LD_A_addr(wCurPartySpecies);
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetPokemonName);
-    GetPokemonName_Conv2(wram->wCurPartySpecies);
+    GetPokemonName(wram->wCurPartySpecies);
     // LD_HL(mOPT_MaryText1);
     // LD_A(OAKS_POKEMON_TALK_8);
     // JP(mNextRadioLine);
@@ -701,7 +701,7 @@ void OaksPKMNTalk8(void){
 // so no need for a retry loop
     // CALL(aRandom);
     // maskbits(NUM_OAKS_POKEMON_TALK_ADVERBS, 0);
-    uint8_t a = Random_Conv() & 0xf;
+    uint8_t a = Random() & 0xf;
     //assert_power_of_2 ['NUM_OAKS_POKEMON_TALK_ADVERBS']
     // LD_E_A;
     // LD_D(0);
@@ -815,7 +815,7 @@ void OaksPKMNTalk9(void){
     // LD_A_hli;
     // LD_H_hl;
     // LD_L_A;
-    const struct TextCmd* txt = Adjectives[Random_Conv() & 0xf];
+    const struct TextCmd* txt = Adjectives[Random() & 0xf];
     // LD_A_addr(wOaksPKMNTalkSegmentCounter);
     // DEC_A;
     // LD_addr_A(wOaksPKMNTalkSegmentCounter);
@@ -957,7 +957,7 @@ void CopyBottomLineToTopLine(void){
     // decoord(0, 13, wTilemap);
     // LD_BC(SCREEN_WIDTH * 2);
     // JP(mCopyBytes);
-    CopyBytes_Conv2(coord(0, 13, wram->wTilemap), coord(0, 15, wram->wTilemap), SCREEN_WIDTH * 2);
+    CopyBytes(coord(0, 13, wram->wTilemap), coord(0, 15, wram->wTilemap), SCREEN_WIDTH * 2);
 }
 
 void ClearBottomLine(void){
@@ -965,12 +965,12 @@ void ClearBottomLine(void){
     // LD_BC(SCREEN_WIDTH - 2);
     // LD_A(0x7f);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(1, 15, wram->wTilemap), SCREEN_WIDTH - 2, 0x7f);
+    ByteFill(coord(1, 15, wram->wTilemap), SCREEN_WIDTH - 2, 0x7f);
     // hlcoord(1, 16, wTilemap);
     // LD_BC(SCREEN_WIDTH - 2);
     // LD_A(0x7f);
     // JP(mByteFill);
-    ByteFill_Conv2(coord(1, 16, wram->wTilemap), SCREEN_WIDTH - 2, 0x7f);
+    ByteFill(coord(1, 16, wram->wTilemap), SCREEN_WIDTH - 2, 0x7f);
 }
 
 void PokedexShow_GetDexEntryBank(void){
@@ -1012,7 +1012,7 @@ void PokedexShow1(void){
         do {
         // loop:
             // CALL(aRandom);
-            a = Random_Conv();
+            a = Random();
             // CP_A(NUM_POKEMON);
             // IF_NC goto loop;
         } while(a >= NUM_POKEMON);
@@ -1029,7 +1029,7 @@ void PokedexShow1(void){
     wram->wCurPartySpecies = a + 1;
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetPokemonName);
-    GetPokemonName_Conv2(wram->wCurPartySpecies);
+    GetPokemonName(wram->wCurPartySpecies);
     // LD_HL(mPokedexShowText);
     // LD_A(POKEDEX_SHOW_2);
     // JP(mNextRadioLine);
@@ -1048,7 +1048,7 @@ void PokedexShow2(void){
     // LD_A(BANK(aPokedexDataPointerTable));
     // CALL(aGetFarWord);
     const struct DexEntry* hl = PokedexDataPointerTable[a];
-    ByteFill_Conv2(gPokedexShowTextBuffer, sizeof(gPokedexShowTextBuffer), CHAR_TERM);
+    ByteFill(gPokedexShowTextBuffer, sizeof(gPokedexShowTextBuffer), CHAR_TERM);
     gPokedexShowTextBuffer[0] = CHAR_LINE;
     U82CA(gPokedexShowDescBuffer, hl->description);
     gPokedexShowDescPtr = gPokedexShowDescBuffer;
@@ -1201,7 +1201,7 @@ uint8_t* CopyDexEntryPart1_Conv(void){
     // LD_DE(wPokedexShowPointerBank);
     // LD_BC(SCREEN_WIDTH - 1);
     // CALL(aFarCopyBytes);
-    CopyBytes_Conv2(gPokedexShowTextBuffer + 1, gPokedexShowDescPtr, SCREEN_WIDTH - 1);
+    CopyBytes(gPokedexShowTextBuffer + 1, gPokedexShowDescPtr, SCREEN_WIDTH - 1);
     // LD_HL(wPokedexShowPointerAddr);
     // LD_hl(TX_START);
     gPokedexShowText[0].cmd = TX_RAM;
@@ -1551,7 +1551,7 @@ void LuckyNumberShow13(void){
     // AND_A_A;
     // LD_A(LUCKY_CHANNEL);
     // IF_NZ goto okay;
-    if(Random_Conv() != 0) {
+    if(Random() != 0) {
         return NextRadioLine_Conv(LC_Text11, LUCKY_CHANNEL);
     }
     else { // 1/256 chance.
@@ -1663,7 +1663,7 @@ void PeoplePlaces3(void){
     // CP_A(49 percent - 1);
     // LD_A(PLACES_AND_PEOPLE_4);  // People
     // IF_C goto ok;
-    if(Random_Conv() < 49 percent - 1) {
+    if(Random() < 49 percent - 1) {
         return NextRadioLine_Conv(PnP_Text3, PLACES_AND_PEOPLE_4);
     }
     else {
@@ -1697,7 +1697,7 @@ void PeoplePlaces4(void){
         do {
             // CALL(aRandom);
             // maskbits(NUM_TRAINER_CLASSES, 0);
-            a = (Random_Conv() & 0x7f) + 1;
+            a = (Random() & 0x7f) + 1;
             // INC_A;
             // CP_A(NUM_TRAINER_CLASSES);  // exclude MYSTICALMAN and JODI
             // JR_NC (mPeoplePlaces4);
@@ -1736,7 +1736,7 @@ void PeoplePlaces4(void){
     GetTrainerClassName_Conv(a);
     // LD_DE(wStringBuffer1);
     // CALL(aCopyName1);
-    CopyName1_Conv2(wram->wStringBuffer1);
+    CopyName1(wram->wStringBuffer1);
     // POP_BC;
     // LD_B(1);
     // CALLFAR(aGetTrainerName);
@@ -1787,19 +1787,19 @@ void PeoplePlaces5(void){
     // LD_A_hli;
     // LD_H_hl;
     // LD_L_A;
-    const struct TextCmd* hl = Adjectives[Random_Conv() & 0xf];
+    const struct TextCmd* hl = Adjectives[Random() & 0xf];
     // CALL(aRandom);
     // CP_A(4 percent);
     // LD_A(PLACES_AND_PEOPLE);
     // IF_C goto ok;
-    if(Random_Conv() < 4 percent) {
+    if(Random() < 4 percent) {
         return NextRadioLine_Conv(hl, PLACES_AND_PEOPLE);
     }
     // CALL(aRandom);
     // CP_A(49 percent - 1);
     // LD_A(PLACES_AND_PEOPLE_4);  // People
     // IF_C goto ok;
-    else if(Random_Conv() < 49 percent - 1) {
+    else if(Random() < 49 percent - 1) {
         return NextRadioLine_Conv(hl, PLACES_AND_PEOPLE_4);
     }
     // LD_A(PLACES_AND_PEOPLE_6);  // Places
@@ -1896,7 +1896,7 @@ void PeoplePlaces6(void){
     uint8_t a;
     do {
         // CALL(aRandom);
-        a = Random_Conv();
+        a = Random();
         // CP_A((aPnP_Places_End - aPnP_Places) / 2);
         // JR_NC (mPeoplePlaces6);
     } while(a >= PnP_Places_Size);
@@ -1960,19 +1960,19 @@ void PeoplePlaces7(void){
     // LD_H_hl;
     // LD_L_A;
     // CALL(aCopyRadioTextToRAM);
-    CopyRadioTextToRAM_Conv(Adjectives[Random_Conv() & 0xf]);
+    CopyRadioTextToRAM_Conv(Adjectives[Random() & 0xf]);
     // CALL(aRandom);
     // CP_A(4 percent);
     // LD_A(PLACES_AND_PEOPLE);
     // IF_C goto ok;
-    if(Random_Conv() < 4 percent) {
+    if(Random() < 4 percent) {
         return PrintRadioLine_Conv(PLACES_AND_PEOPLE);
     }
     // CALL(aRandom);
     // CP_A(49 percent - 1);
     // LD_A(PLACES_AND_PEOPLE_4);  // People
     // IF_C goto ok;
-    else if(Random_Conv() < 49 percent - 1) {
+    else if(Random() < 49 percent - 1) {
         return PrintRadioLine_Conv(PLACES_AND_PEOPLE_4);
     }
     // LD_A(PLACES_AND_PEOPLE_6);  // Places
@@ -2201,7 +2201,7 @@ void BuenasPassword4(void){
         uint8_t group;
         do {
             // CALL(aRandom);
-            group = Random_Conv() & 0xf;
+            group = Random() & 0xf;
             // maskbits(NUM_PASSWORD_CATEGORIES, 0);
             // CP_A(NUM_PASSWORD_CATEGORIES);
             // IF_NC goto greater_than_11;
@@ -2215,7 +2215,7 @@ void BuenasPassword4(void){
     // greater_than_three:
         do {
             // CALL(aRandom);
-            subgroup = Random_Conv() & 3;
+            subgroup = Random() & 3;
             // maskbits(NUM_PASSWORDS_PER_CATEGORY, 0);
             // CP_A(NUM_PASSWORDS_PER_CATEGORY);
             // IF_NC goto greater_than_three;
@@ -2393,7 +2393,7 @@ uint8_t* GetBuenasPassword_Conv(uint8_t* c_){
         // Mon:
             // CALL(aGetBuenasPassword_GetTheIndex);
             // CALL(aGetPokemonName);
-            str = GetPokemonName_Conv2(pass->mon.options[c]);
+            str = GetPokemonName(pass->mon.options[c]);
             // RET;
             break;
 
@@ -2402,7 +2402,7 @@ uint8_t* GetBuenasPassword_Conv(uint8_t* c_){
         // Item:
             // CALL(aGetBuenasPassword_GetTheIndex);
             // CALL(aGetItemName);
-            str = GetItemName_Conv2(pass->item.options[c]);
+            str = GetItemName(pass->item.options[c]);
             // RET;
             break;
         //dw ['.Move'];  // BUENA_MOVE
@@ -2410,7 +2410,7 @@ uint8_t* GetBuenasPassword_Conv(uint8_t* c_){
         // Move:
             // CALL(aGetBuenasPassword_GetTheIndex);
             // CALL(aGetMoveName);
-            str = GetMoveName_Conv2(pass->item.options[c]);
+            str = GetMoveName(pass->item.options[c]);
             // RET;
             break;
         //dw ['.RawString'];  // BUENA_STRING

@@ -209,12 +209,12 @@ void StartMap(void){
     // LD_HL(wMapStatus);
     // LD_BC(wMapStatusEnd - wMapStatus);
     // CALL(aByteFill);
-    ByteFill_Conv2(&wram->wMapStatus, wMapStatusEnd - wMapStatus, 0);
+    ByteFill(&wram->wMapStatus, wMapStatusEnd - wMapStatus, 0);
     hram->hBGMapMode = 0;
     // FARCALL(aInitCallReceiveDelay);
     InitCallReceiveDelay();
     // CALL(aClearJoypad);
-    ClearJoypad_Conv();
+    ClearJoypad();
     return EnterMap();
 }
 
@@ -345,7 +345,7 @@ void NextOverworldFrame(void){
         return;
     // LD_C_A;
     // CALL(aDelayFrames);
-    DelayFrames_Conv(wram->wOverworldDelay);
+    DelayFrames(wram->wOverworldDelay);
     // RET;
 }
 
@@ -361,7 +361,7 @@ void HandleMapTimeAndJoypad(void){
     // CALL(aGetJoypad);
     GetJoypad_Conv2();
     // CALL(aTimeOfDayPals);
-    TimeOfDayPals_Conv();
+    TimeOfDayPals();
     // RET;
 }
 
@@ -2788,7 +2788,7 @@ void ChooseWildEncounter_BugContest_Conv(void){
     do {
     // loop:
         // CALL(aRandom);
-        a = Random_Conv();
+        a = Random();
         // CP_A(100 << 1);
         // IF_NC goto loop;
     } while(a >= 100 << 1);
@@ -2842,11 +2842,11 @@ void ChooseWildEncounter_BugContest_Conv(void){
         // LD_C_A;
         // INC_C;
         // CALL(aRandom);
-        Random_Conv();
+        Random();
         // LDH_A_addr(hRandomAdd);
         // CALL(aSimpleDivide);
         // ADD_A_D;
-        a = SimpleDivide_Conv(hram->hRandomAdd, a + 1).rem + d;
+        a = (hram->hRandomAdd % a + 1) + d;
     }
 
 // GotLevel:
@@ -2895,7 +2895,7 @@ bool TryWildEncounter_BugContest_Conv(void){
     // FARCALL(aApplyCleanseTagEffectOnEncounterRate);
     b = ApplyCleanseTagEffectOnEncounterRate_Conv(b);
     // CALL(aRandom);
-    Random_Conv();
+    Random();
     // LDH_A_addr(hRandomAdd);
     // CP_A_B;
     // RET_C ;

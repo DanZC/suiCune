@@ -13,17 +13,17 @@ static uint8_t StageDataForMysteryGift_RandomSample(uint8_t b, uint8_t c){
     // CALL(aRandom);
     // CP_A(10 percent);
     // IF_C goto tenpercent;
-    if(Random_Conv() < 10 percent) {
+    if(Random() < 10 percent) {
     // tenpercent:
         // CALL(aRandom);
         // CP_A(20 percent - 1);
         // IF_C goto twopercent;
-        if(Random_Conv() < 20 percent - 1) {
+        if(Random() < 20 percent - 1) {
         // twopercent:
             // CALL(aRandom);
             // CP_A(20 percent - 1);
             // IF_C goto pointfourpercent;
-            if(Random_Conv() >= 20 percent - 1) {
+            if(Random() >= 20 percent - 1) {
                 // LD_A_B;
                 // SWAP_A;
                 // AND_A(0x7);
@@ -44,7 +44,7 @@ static uint8_t StageDataForMysteryGift_RandomSample(uint8_t b, uint8_t c){
         else {
             // CALL(aRandom);
             // AND_A(0b011);
-            a = Random_Conv() & 0b011;
+            a = Random() & 0b011;
             // LD_D_A;
             // RL_D;
             uint8_t d = RotateLeftC8(a);
@@ -79,7 +79,7 @@ static uint8_t StageDataForMysteryGift_RandomSample(uint8_t b, uint8_t c){
     else {
         // CALL(aRandom);
         // AND_A(0b111);
-        a = Random_Conv() & 0b111;
+        a = Random() & 0b111;
         // LD_D_A;
         // RL_D;
         uint8_t d = RotateLeftC8(a);
@@ -142,7 +142,7 @@ void StageDataForMysteryGift(void){
     // LD_HL(sPlayerData + wPlayerName - wPlayerData);
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(de, GBToRAMAddr(sPlayerData + wPlayerName - wPlayerData), NAME_LENGTH);
+    CopyBytes(de, GBToRAMAddr(sPlayerData + wPlayerName - wPlayerData), NAME_LENGTH);
     de += NAME_LENGTH;
     // PUSH_DE;  // wMysteryGiftStaging+14
     // LD_HL(sPokemonData + wPokedexCaught - wPokemonData);
@@ -159,7 +159,7 @@ void StageDataForMysteryGift(void){
     // CALL(aRandom);
     // AND_A(1);
     // LD_de_A;
-    *(de++) = Random_Conv() & 1;
+    *(de++) = Random() & 1;
     // INC_DE;  // wMysteryGiftStaging+16
     // CALL(aStageDataForMysteryGift_RandomSample);
     // LD_de_A;
@@ -190,7 +190,7 @@ void StageDataForMysteryGift(void){
     // LD_DE(wMysteryGiftPlayerData);
     // LD_BC(wMysteryGiftPlayerDataEnd - wMysteryGiftPlayerData);
     // JP(mCopyBytes);
-    CopyBytes_Conv2(wram->wMysteryGiftPlayerData, wram->wMysteryGiftStaging, wMysteryGiftPlayerDataEnd - wMysteryGiftPlayerData);
+    CopyBytes(wram->wMysteryGiftPlayerData, wram->wMysteryGiftStaging, wMysteryGiftPlayerDataEnd - wMysteryGiftPlayerData);
 }
 
 item_t MysteryGiftGetItem(uint8_t c){

@@ -168,7 +168,7 @@ void BattleCommand_Sketch(void){
 
 // done_copy:
     // CALL(aGetMoveName);
-    GetMoveName_Conv2(b);
+    GetMoveName(b);
     // CALL(aAnimateCurrentMove);
     AnimateCurrentMove();
     // LD_HL(mSketchedText);

@@ -243,7 +243,7 @@ void FarCopyBytes_Conv(uint16_t de, uint8_t a, uint16_t hl, uint16_t bc) {
     // RST(aBankswitch);
     bank_push(a);
 
-    CopyBytes_Conv(de, hl, bc);
+    CopyBytes_GB(de, hl, bc);
 
     bank_pop;
 }
@@ -296,7 +296,7 @@ void FarCopyBytesDouble_Conv(uint16_t de, uint8_t a, uint16_t hl, uint16_t bc) {
     // PUSH_AF;
     // LDH_A_addr(hTempBank);
     // RST(aBankswitch);
-    Bankswitch_Conv(a);
+    Bankswitch(a);
 
     //  switcheroo, de <> hl
     // LD_A_H;
@@ -329,7 +329,7 @@ void FarCopyBytesDouble_Conv(uint16_t de, uint8_t a, uint16_t hl, uint16_t bc) {
     // POP_AF;
     // RST(aBankswitch);
     // RET;
-    Bankswitch_Conv(temp);
+    Bankswitch(temp);
 }
 
 void Request2bpp(void) {

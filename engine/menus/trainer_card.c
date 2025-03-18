@@ -123,11 +123,11 @@ static void TrainerCard_InitRAM(void) {
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
 
     // FARCALL(aGetCardPic);
     GetCardPic();
@@ -155,7 +155,7 @@ static void TrainerCard_InitRAM(void) {
     TrainerCard_InitBorder(coord(0, 8, wram->wTilemap), 6);
 
     // CALL(aEnableLCD);
-    EnableLCD_Conv();
+    EnableLCD();
     // CALL(aWaitBGMap);
     WaitBGMap_Conv();
     // LD_B(SCGB_TRAINER_CARD);
@@ -194,7 +194,7 @@ void TrainerCard_Quit(void){
 
 void TrainerCard_Page1_LoadGFX(void){
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // hlcoord(0, 8, wTilemap);
     // LD_D(6);
     // CALL(aTrainerCard_InitBorder);
@@ -244,7 +244,7 @@ void TrainerCard_Page1_Joypad(void){
 
 void TrainerCard_Page2_LoadGFX(void){
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // hlcoord(0, 8, wTilemap);
     // LD_D(6);
     // CALL(aTrainerCard_InitBorder);
@@ -311,7 +311,7 @@ void TrainerCard_Page2_Joypad(void){
 
 void TrainerCard_Page3_LoadGFX(void){
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // hlcoord(0, 8, wTilemap);
     // LD_D(6);
     // CALL(aTrainerCard_InitBorder);

@@ -1141,7 +1141,7 @@ void WriteTile_Conv(uint8_t* hl, const uint8_t* sp){
     // LD_L_C;
     // LD_SP_HL;
     // RET;
-    return CopyBytes_Conv2(hl, sp, LEN_2BPP_TILE);
+    return CopyBytes(hl, sp, LEN_2BPP_TILE);
 }
 
 //  Transition between color values 0-2 for color 0 in palette 3.

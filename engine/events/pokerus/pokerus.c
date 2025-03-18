@@ -29,7 +29,7 @@ void GivePokerusAndConvertBerries(void){
             // CALL(aRandom);
             // CP_A(33 percent + 1);
             // RET_NC ;  // 1/3 chance
-            if(Random_Conv() >= 33 percent + 1)
+            if(Random() >= 33 percent + 1)
                 return;
 
             // LD_A_addr(wPartyCount);
@@ -47,7 +47,7 @@ void GivePokerusAndConvertBerries(void){
             // CALL(aRandom);
             // CP_A(50 percent + 1);
             // IF_C goto checkPreviousMonsLoop;  // 1/2 chance, go backwards
-            if(b < 2 || Random_Conv() < 50 percent + 1) {
+            if(b < 2 || Random() < 50 percent + 1) {
                 while(1) {
                 // checkPreviousMonsLoop:
                     // LD_A_addr(wPartyCount);
@@ -132,7 +132,7 @@ void GivePokerusAndConvertBerries(void){
     if(!bit_test(wram->wStatusFlags2, STATUSFLAGS2_REACHED_GOLDENROD_F))
         return;
     // CALL(aRandom);
-    Random_Conv();
+    Random();
     // LDH_A_addr(hRandomAdd);
     // AND_A_A;
     // RET_NZ ;
@@ -152,7 +152,7 @@ void GivePokerusAndConvertBerries(void){
     // randomMonSelectLoop:
         // CALL(aRandom);
         // AND_A(0x7);
-        a = Random_Conv() & 0x7;
+        a = Random() & 0x7;
         // CP_A_B;
         // IF_NC goto randomMonSelectLoop;
     } while(a >= b);
@@ -169,7 +169,7 @@ void GivePokerusAndConvertBerries(void){
     // randomPokerusLoop:
     //   //  Simultaneously sample the strain and duration
         // CALL(aRandom);
-        b = Random_Conv();
+        b = Random();
         // AND_A_A;
         // IF_Z goto randomPokerusLoop;
     } while(b == 0);
@@ -205,7 +205,7 @@ void ConvertBerriesToBerryJuice(void){
     // CALL(aRandom);
     // CP_A(1 out_of 16);  // 6.25% chance
     // RET_NC ;
-    if(Random_Conv() >= 1 out_of 16)
+    if(Random() >= 1 out_of 16)
         return;
     // LD_HL(wPartyMons);
     struct PartyMon* hl = wram->wPartyMon;

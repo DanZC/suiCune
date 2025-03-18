@@ -1100,7 +1100,7 @@ static bool DoPlayerMovement_CheckWalkable(uint8_t a) {
 static bool DoPlayerMovement_BumpSound(void) {
     // CALL(aCheckSFX);
     // RET_C ;
-    if(CheckSFX_Conv())
+    if(CheckSFX())
         return false;
     // LD_DE(SFX_BUMP);
     // CALL(aPlaySFX);

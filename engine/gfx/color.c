@@ -493,7 +493,7 @@ void ApplyHPBarPals(uint8_t c){
         // LD_BC(4);
         // LD_A(MBANK(awBGPals2));
         // CALL(aFarCopyWRAM);
-        CopyBytes_Conv2(de, HPBarPals + (c * 2), 4);
+        CopyBytes(de, HPBarPals + (c * 2), 4);
         // LD_A(TRUE);
         // LDH_addr_A(hCGBPalUpdate);
         hram->hCGBPalUpdate = TRUE;
@@ -620,7 +620,7 @@ void LoadMailPalettes(uint8_t e){
         // LD_BC(1 * PALETTE_SIZE);
         // LD_A(BANK(wBGPals1));
         // CALL(aFarCopyWRAM);
-        CopyBytes_Conv2(wram->wBGPals1, hl, 1 * PALETTE_SIZE);
+        CopyBytes(wram->wBGPals1, hl, 1 * PALETTE_SIZE);
         // CALL(aApplyPals);
         ApplyPals_Conv();
         // CALL(aWipeAttrmap);
@@ -994,7 +994,7 @@ void WipeAttrmap(void){
     // XOR_A_A;
     // CALL(aByteFill);
     // RET;
-    return ByteFill_Conv2(wram->wAttrmap, SCREEN_WIDTH * SCREEN_HEIGHT, 0);
+    return ByteFill(wram->wAttrmap, SCREEN_WIDTH * SCREEN_HEIGHT, 0);
 }
 
 void ApplyPals(void){
@@ -1014,7 +1014,7 @@ void ApplyPals_Conv(void){
     // LD_A(BANK(wGBCPalettes));
     // CALL(aFarCopyWRAM);
     // RET;
-    return CopyBytes_Conv2(wram->wBGPals2, wram->wBGPals1, 16 * PALETTE_SIZE);
+    return CopyBytes(wram->wBGPals2, wram->wBGPals1, 16 * PALETTE_SIZE);
 }
 
 void ApplyAttrmap(void){
@@ -1192,7 +1192,7 @@ void InitPartyMenuOBPals(void){
     // LD_BC(2 * PALETTE_SIZE);
     // LD_A(BANK(wOBPals1));
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->wOBPals1, buf, 2 * PALETTE_SIZE);
+    CopyBytes(wram->wOBPals1, buf, 2 * PALETTE_SIZE);
     // RET;
 }
 
@@ -1489,11 +1489,11 @@ void GetMonNormalOrShinyPalettePointer(void){
 static uint16_t* GetCustomMonPalette(uint16_t* dest, species_t a, bool shiny) {
     for(size_t i = 0; i < 4; ++i) {
         if(PokemonCustomPals[i].id == a) {
-            CopyBytes_Conv2(dest, PokemonCustomPals[i].pals + (shiny * 2), 2 * sizeof(uint16_t));
+            CopyBytes(dest, PokemonCustomPals[i].pals + (shiny * 2), 2 * sizeof(uint16_t));
             return dest;
         }
     }
-    CopyBytes_Conv2(dest, PokemonCustomPals[0].pals + (shiny * 2), 2 * sizeof(uint16_t));
+    CopyBytes(dest, PokemonCustomPals[0].pals + (shiny * 2), 2 * sizeof(uint16_t));
     return dest;
 }
 
@@ -1713,7 +1713,7 @@ void InitCGBPals_Conv(void){
     // LD_BC(0x200 * LEN_2BPP_TILE);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(vram->vTiles3, 0x200 * LEN_2BPP_TILE, 0);
+    ByteFill(vram->vTiles3, 0x200 * LEN_2BPP_TILE, 0);
     // LD_A(MBANK(avTiles0));
     // LDH_addr_A(rVBK);
     // LD_A(1 << rBGPI_AUTO_INCREMENT);
@@ -2262,7 +2262,7 @@ void LoadMapPals(void){
             // LD_hli_A;
             // DEC_C;
             // IF_NZ goto inner_loop;
-            CopyBytes_Conv2(hl, colors, 1 * PALETTE_SIZE);
+            CopyBytes(hl, colors, 1 * PALETTE_SIZE);
             hl += 1 * PALETTE_SIZE;
             // POP_DE;
             // INC_DE;
@@ -2285,7 +2285,7 @@ void LoadMapPals(void){
     // LD_BC(8 * PALETTE_SIZE);
     // LD_A(BANK(wOBPals1));
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->wOBPals1, mapObjectPals, 8 * PALETTE_SIZE);
+    CopyBytes(wram->wOBPals1, mapObjectPals, 8 * PALETTE_SIZE);
 
     // LD_A_addr(wEnvironment);
     // CP_A(TOWN);
@@ -2316,7 +2316,7 @@ void LoadMapPals(void){
         // LD_BC(4);
         // LD_A(BANK(wBGPals1));
         // CALL(aFarCopyWRAM);
-        CopyBytes_Conv2(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_ROOF + PAL_COLOR_SIZE * 1, roof, 4);
+        CopyBytes(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_ROOF + PAL_COLOR_SIZE * 1, roof, 4);
         // RET;
     }
 // INCLUDE "data/maps/environment_colors.asm"

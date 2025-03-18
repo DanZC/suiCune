@@ -17,7 +17,7 @@ void BattleCommand_Selfdestruct(void){
     wram->wNumHits = BATTLEANIM_PLAYER_DAMAGE;
     // LD_C(3);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(3);
+    DelayFrames(3);
     // LD_A(BATTLE_VARS_STATUS);
     // CALL(aGetBattleVarAddr);
     uint8_t* hl = GetBattleVarAddr(BATTLE_VARS_STATUS);

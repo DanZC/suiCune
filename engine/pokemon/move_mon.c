@@ -178,7 +178,7 @@ bool TryAddMonToParty_Conv(species_t species, uint8_t level){
     // LD_HL(wPlayerName);
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(ot, wram->wPlayerName, NAME_LENGTH);
+    CopyBytes(ot, wram->wPlayerName, NAME_LENGTH);
 // Only initialize the nickname for party mon
     // LD_A_addr(wMonType);
     // AND_A_A;
@@ -196,7 +196,7 @@ bool TryAddMonToParty_Conv(species_t species, uint8_t level){
         // LD_HL(wStringBuffer1);
         // LD_BC(MON_NAME_LENGTH);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(wram->wPartyMonNickname[hram->hMoveMon - 1], GetPokemonName_Conv2(species), MON_NAME_LENGTH);
+        CopyBytes(wram->wPartyMonNickname[hram->hMoveMon - 1], GetPokemonName(species), MON_NAME_LENGTH);
     }
 
 // skipnickname:
@@ -564,7 +564,7 @@ bool GeneratePartyMonStats_Conv(struct PartyMon* hl, species_t species, uint8_t 
         // LD_hli_A;
         // }
         // LD_hl_A;
-        ByteFill_Conv2(hl->mon.moves, sizeof(hl->mon.moves), 0);
+        ByteFill(hl->mon.moves, sizeof(hl->mon.moves), 0);
         // LD_addr_A(wSkipMovesBeforeLevelUp);
         wram->wSkipMovesBeforeLevelUp = FALSE;
         // PREDEF(pFillMoves);
@@ -580,7 +580,7 @@ bool GeneratePartyMonStats_Conv(struct PartyMon* hl, species_t species, uint8_t 
         // LD_A_de;
         // LD_hl_A;
         // goto next;
-        CopyBytes_Conv2(hl->mon.moves, wram->wEnemyMon.moves, sizeof(wram->wEnemyMon.moves));
+        CopyBytes(hl->mon.moves, wram->wEnemyMon.moves, sizeof(wram->wEnemyMon.moves));
     }
 
 // next:
@@ -661,10 +661,10 @@ bool GeneratePartyMonStats_Conv(struct PartyMon* hl, species_t species, uint8_t 
 
         // CALL(aRandom);
         // LD_B_A;
-        bc = Random_Conv() << 8;
+        bc = Random() << 8;
         // CALL(aRandom);
         // LD_C_A;
-        bc |= Random_Conv();
+        bc |= Random();
     }
     else {
         // PUSH_HL;
@@ -769,7 +769,7 @@ copywildmonDVs:
     // INC_DE;
     // DEC_B;
     // IF_NZ goto wildmonpploop;
-    CopyBytes_Conv2(hl->mon.PP, wram->wEnemyMon.pp, sizeof(wram->wEnemyMon.pp));
+    CopyBytes(hl->mon.PP, wram->wEnemyMon.pp, sizeof(wram->wEnemyMon.pp));
     // POP_HL;
 
 // Initialize happiness.
@@ -827,7 +827,7 @@ initstats:
         hl->maxHP = wram->wEnemyMon.maxHP;
         // LD_BC(PARTYMON_STRUCT_LENGTH - MON_MAXHP);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(hl->stats, (uint16_t*)wram_ptr(wEnemyMonStats), sizeof(hl->stats));
+        CopyBytes(hl->stats, (uint16_t*)wram_ptr(wEnemyMonStats), sizeof(hl->stats));
         // POP_HL;
         // goto registerunowndex;
     }
@@ -1057,7 +1057,7 @@ bool AddTempmonToParty_Conv(void){
     // LD_D_H;
     // LD_HL(wTempMonSpecies);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wPartyMon + (c - 1), &wram->wTempMon, PARTYMON_STRUCT_LENGTH);
+    CopyBytes(wram->wPartyMon + (c - 1), &wram->wTempMon, PARTYMON_STRUCT_LENGTH);
 
     // LD_HL(wPartyMonOTs);
     // LD_A_addr(wPartyCount);
@@ -1070,7 +1070,7 @@ bool AddTempmonToParty_Conv(void){
     // CALL(aSkipNames);
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wPartyMonOT[c - 1], wram->wOTPartyMonOT[wram->wCurPartyMon], NAME_LENGTH);
+    CopyBytes(wram->wPartyMonOT[c - 1], wram->wOTPartyMonOT[wram->wCurPartyMon], NAME_LENGTH);
 
     // LD_HL(wPartyMonNicknames);
     // LD_A_addr(wPartyCount);
@@ -1083,7 +1083,7 @@ bool AddTempmonToParty_Conv(void){
     // CALL(aSkipNames);
     // LD_BC(MON_NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wPartyMonNickname[c - 1], wram->wOTPartyMonNickname[wram->wCurPartyMon], MON_NAME_LENGTH);
+    CopyBytes(wram->wPartyMonNickname[c - 1], wram->wOTPartyMonNickname[wram->wCurPartyMon], MON_NAME_LENGTH);
 
     // LD_A_addr(wCurPartySpecies);
     // LD_addr_A(wNamedObjectIndex);
@@ -1484,19 +1484,19 @@ breedmon:
         // LD_HL(sBoxMon1Species);
         // LD_BC(BOXMON_STRUCT_LENGTH);
         // IF_Z goto okay3;
-        CopyBytes_Conv2(&pmon->mon, (struct BoxMon*)GBToRAMAddr(sBoxMon1 + BOXMON_STRUCT_LENGTH * wram->wCurPartyMon), sizeof(pmon->mon));
+        CopyBytes(&pmon->mon, (struct BoxMon*)GBToRAMAddr(sBoxMon1 + BOXMON_STRUCT_LENGTH * wram->wCurPartyMon), sizeof(pmon->mon));
         break;
     case DAY_CARE_WITHDRAW:
         // CP_A(DAY_CARE_WITHDRAW);
         // LD_HL(wBreedMon1Species);
         // IF_Z goto okay4;
-        CopyBytes_Conv2(bmon, &wram->wBreedMon1, sizeof(*bmon));
+        CopyBytes(bmon, &wram->wBreedMon1, sizeof(*bmon));
         break;
     case DAY_CARE_DEPOSIT:
     case PC_DEPOSIT:
         // LD_HL(wPartyMon1Species);
         // LD_BC(PARTYMON_STRUCT_LENGTH);
-        CopyBytes_Conv2(bmon, &wram->wPartyMon[wram->wCurPartyMon].mon, sizeof(*bmon));
+        CopyBytes(bmon, &wram->wPartyMon[wram->wCurPartyMon].mon, sizeof(*bmon));
         break;
 
     // okay3:
@@ -1553,14 +1553,14 @@ breedmon:
     // CALL(aSkipNames);
     switch(param) {
     case PC_WITHDRAW:
-        CopyBytes_Conv2(de_ot, GBToRAMAddr(sBoxMonOTs + (wram->wCurPartyMon * NAME_LENGTH)), NAME_LENGTH);
+        CopyBytes(de_ot, GBToRAMAddr(sBoxMonOTs + (wram->wCurPartyMon * NAME_LENGTH)), NAME_LENGTH);
         break;
     case DAY_CARE_WITHDRAW:
-        CopyBytes_Conv2(de_ot, wram->wBreedMon1OT, NAME_LENGTH);
+        CopyBytes(de_ot, wram->wBreedMon1OT, NAME_LENGTH);
         break;
     case PC_DEPOSIT:
     case DAY_CARE_DEPOSIT:
-        CopyBytes_Conv2(de_ot, wram->wPartyMonOT[wram->wCurPartyMon], NAME_LENGTH);
+        CopyBytes(de_ot, wram->wPartyMonOT[wram->wCurPartyMon], NAME_LENGTH);
         break;
     }
 
@@ -1603,18 +1603,18 @@ breedmon:
     case PC_WITHDRAW:
         // AND_A_A;
         // IF_Z goto okay11;
-        CopyBytes_Conv2(de_ot, GBToRAMAddr(sBoxMonNicknames + wram->wCurPartyMon * MON_NAME_LENGTH), MON_NAME_LENGTH);
+        CopyBytes(de_ot, GBToRAMAddr(sBoxMonNicknames + wram->wCurPartyMon * MON_NAME_LENGTH), MON_NAME_LENGTH);
         break;
     case DAY_CARE_WITHDRAW:
         // LD_HL(wBreedMon1Nickname);
         // CP_A(DAY_CARE_WITHDRAW);
         // IF_Z goto okay12;
-        CopyBytes_Conv2(de_ot, wram->wBreedMon1Nickname, MON_NAME_LENGTH);
+        CopyBytes(de_ot, wram->wBreedMon1Nickname, MON_NAME_LENGTH);
         break;
     case PC_DEPOSIT:
     case DAY_CARE_DEPOSIT:
         // LD_HL(wPartyMonNicknames);
-        CopyBytes_Conv2(de_ot, wram->wPartyMonNickname[wram->wCurPartyMon], MON_NAME_LENGTH);
+        CopyBytes(de_ot, wram->wPartyMonNickname[wram->wCurPartyMon], MON_NAME_LENGTH);
         break;
     }
 
@@ -1747,7 +1747,7 @@ void RestorePPOfDepositedPokemon(uint8_t b){
     // LD_DE(wTempMonPP);
     // LD_BC(NUM_MOVES);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wTempMon.mon.PP, bc->PP, sizeof(bc->PP));
+    CopyBytes(wram->wTempMon.mon.PP, bc->PP, sizeof(bc->PP));
     // POP_BC;
     // LD_HL(MON_MOVES);
     // ADD_HL_BC;
@@ -1756,7 +1756,7 @@ void RestorePPOfDepositedPokemon(uint8_t b){
     // LD_DE(wTempMonMoves);
     // LD_BC(NUM_MOVES);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wTempMon.mon.moves, bc->moves, sizeof(bc->moves));
+    CopyBytes(wram->wTempMon.mon.moves, bc->moves, sizeof(bc->moves));
     // POP_HL;
     // POP_DE;
     uint8_t* de = bc->PP;
@@ -2055,7 +2055,7 @@ bool RetrieveBreedmon_Conv(void){
     // LD_L_E;
     // POP_DE;
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wPartyMonNickname[c], nickname, NAME_LENGTH);
+    CopyBytes(wram->wPartyMonNickname[c], nickname, NAME_LENGTH);
     // PUSH_HL;
     // LD_HL(wPartyMonOTs);
     // LD_A_addr(wPartyCount);
@@ -2065,13 +2065,13 @@ bool RetrieveBreedmon_Conv(void){
     // LD_E_L;
     // POP_HL;
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wPartyMonOT[c], ot, NAME_LENGTH);
+    CopyBytes(wram->wPartyMonOT[c], ot, NAME_LENGTH);
     // PUSH_HL;
     // CALL(aGetLastPartyMon);
     // POP_HL;
     // LD_BC(BOXMON_STRUCT_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(&wram->wPartyMon[c].mon, breedmon, BOXMON_STRUCT_LENGTH);
+    CopyBytes(&wram->wPartyMon[c].mon, breedmon, BOXMON_STRUCT_LENGTH);
     // CALL(aGetBaseData);
     GetBaseData_Conv2(wram->wCurSpecies);
     // CALL(aGetLastPartyMon);
@@ -2205,19 +2205,19 @@ void DepositBreedmon_Conv(uint8_t* nickname, uint8_t* ot, struct BoxMon* de, uin
     // LD_HL(wPartyMonNicknames);
     // CALL(aSkipNames);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(nickname, wram->wPartyMonNickname[a], NAME_LENGTH);
+    CopyBytes(nickname, wram->wPartyMonNickname[a], NAME_LENGTH);
     // LD_A_addr(wCurPartyMon);
     // LD_HL(wPartyMonOTs);
     // CALL(aSkipNames);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(ot, wram->wPartyMonOT[a], NAME_LENGTH);
+    CopyBytes(ot, wram->wPartyMonOT[a], NAME_LENGTH);
     // LD_A_addr(wCurPartyMon);
     // LD_HL(wPartyMon1Species);
     // LD_BC(PARTYMON_STRUCT_LENGTH);
     // CALL(aAddNTimes);
     // LD_BC(BOXMON_STRUCT_LENGTH);
     // JP(mCopyBytes);
-    CopyBytes_Conv2(de, wram->wPartyMon + a, BOXMON_STRUCT_LENGTH);
+    CopyBytes(de, wram->wPartyMon + a, BOXMON_STRUCT_LENGTH);
 }
 
 //  Sends the mon into one of Bills Boxes
@@ -2415,25 +2415,25 @@ bool SendMonIntoBox_Conv(void){
     // LD_DE(sBoxMonOTs);
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(GBToRAMAddr(sBoxMonOTs), wram->wPlayerName, NAME_LENGTH);
+    CopyBytes(GBToRAMAddr(sBoxMonOTs), wram->wPlayerName, NAME_LENGTH);
 
     // LD_A_addr(wCurPartySpecies);
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetPokemonName);
-    GetPokemonName_Conv2(wram->wCurPartySpecies);
+    GetPokemonName(wram->wCurPartySpecies);
 
     // LD_DE(sBoxMonNicknames);
     // LD_HL(wStringBuffer1);
     // LD_BC(MON_NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(GBToRAMAddr(sBoxMonNicknames), wram->wStringBuffer1, MON_NAME_LENGTH);
+    CopyBytes(GBToRAMAddr(sBoxMonNicknames), wram->wStringBuffer1, MON_NAME_LENGTH);
 
     // LD_HL(wEnemyMon);
     // LD_DE(sBoxMon1);
     struct BoxMon* boxmon = (struct BoxMon*)GBToRAMAddr(sBoxMon1);
     // LD_BC(1 + 1 + NUM_MOVES);  // species + item + moves
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(boxmon, &wram->wEnemyMon, sizeof(species_t) + sizeof(item_t) + sizeof(move_t) * NUM_MOVES);
+    CopyBytes(boxmon, &wram->wEnemyMon, sizeof(species_t) + sizeof(item_t) + sizeof(move_t) * NUM_MOVES);
 
     // LD_HL(wPlayerID);
     // LD_A_hli;
@@ -2485,7 +2485,7 @@ bool SendMonIntoBox_Conv(void){
     // DEC_B;
     // IF_NZ goto loop3;
     boxmon->DVs = wram->wEnemyMon.dvs;
-    CopyBytes_Conv2(boxmon->PP, wram->wEnemyMon.pp, sizeof(boxmon->PP));
+    CopyBytes(boxmon->PP, wram->wEnemyMon.pp, sizeof(boxmon->PP));
 
     // LD_A(BASE_HAPPINESS);
     // LD_de_A;
@@ -2523,13 +2523,13 @@ bool SendMonIntoBox_Conv(void){
     // LD_DE(wTempMonMoves);
     // LD_BC(NUM_MOVES);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(boxmon->moves, wram->wTempMon.mon.moves, sizeof(boxmon->moves));
+    CopyBytes(boxmon->moves, wram->wTempMon.mon.moves, sizeof(boxmon->moves));
 
     // LD_HL(sBoxMon1PP);
     // LD_DE(wTempMonPP);
     // LD_BC(NUM_MOVES);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(boxmon->PP, wram->wTempMon.mon.PP, sizeof(boxmon->PP));
+    CopyBytes(boxmon->PP, wram->wTempMon.mon.PP, sizeof(boxmon->PP));
 
     // LD_B(0);
     // CALL(aRestorePPOfDepositedPokemon);
@@ -3221,7 +3221,7 @@ void RemoveMonFromPartyOrBox_Conv(uint8_t param){
             // PUSH_HL;
             // LD_BC(MAIL_STRUCT_LENGTH);
             // CALL(aCopyBytes);
-            CopyBytes_Conv(mail, mail2, MAIL_STRUCT_LENGTH);
+            CopyBytes_GB(mail, mail2, MAIL_STRUCT_LENGTH);
             // POP_HL;
             // PUSH_HL;
             // LD_BC(MAIL_STRUCT_LENGTH);
@@ -4293,7 +4293,7 @@ uint8_t GivePoke_Conv(uint8_t b, const char* nickname, const char* otName){
     // LD_DE(wMonOrItemNameBuffer);
     // LD_BC(MON_NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wMonOrItemNameBuffer, GetPokemonName_Conv2(wram->wCurPartySpecies), MON_NAME_LENGTH);
+    CopyBytes(wram->wMonOrItemNameBuffer, GetPokemonName(wram->wCurPartySpecies), MON_NAME_LENGTH);
     // POP_AF;
     // AND_A_A;
     // JP_Z (mGivePoke_wildmon);
@@ -4337,7 +4337,7 @@ uint8_t GivePoke_Conv(uint8_t b, const char* nickname, const char* otName){
         // LD_BC(MON_NAME_LENGTH);
         // LD_A_addr(wScriptBank);
         // CALL(aFarCopyBytes);
-        CopyBytes_Conv2(de, U82C(nickname), MON_NAME_LENGTH);
+        CopyBytes(de, U82C(nickname), MON_NAME_LENGTH);
         // POP_HL;
         // INC_HL;
         // INC_HL;
@@ -4378,10 +4378,10 @@ uint8_t GivePoke_Conv(uint8_t b, const char* nickname, const char* otName){
             // LD_HL(sBoxMon1ID);
             // CALL(aRandom);
             // LD_hli_A;
-            gb_write(sBoxMon1ID, Random_Conv());
+            gb_write(sBoxMon1ID, Random());
             // CALL(aRandom);
             // LD_hl_A;
-            gb_write(sBoxMon1ID + 1, Random_Conv());
+            gb_write(sBoxMon1ID + 1, Random());
             // CALL(aCloseSRAM);
             CloseSRAM_Conv();
             // FARCALL(aSetGiftBoxMonCaughtData);
@@ -4449,7 +4449,7 @@ uint8_t GivePoke_Conv(uint8_t b, const char* nickname, const char* otName){
     // LD_DE(sBoxMonNicknames);
     // LD_BC(MON_NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv(sBoxMonNicknames, wMonOrItemNameBuffer, MON_NAME_LENGTH);
+    CopyBytes_GB(sBoxMonNicknames, wMonOrItemNameBuffer, MON_NAME_LENGTH);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // LD_B(0x1);

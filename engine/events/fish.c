@@ -145,7 +145,7 @@ static struct SpeciesLevel Fish_Fish(const struct FishGroup* hl, uint8_t rod) {
     // CALL(aRandom);
     // CP_A_hl;
     // IF_NC goto no_bite;
-    if(Random_Conv() >= hl->chance)
+    if(Random() >= hl->chance)
         return (struct SpeciesLevel){0, 0};
 
 // Get encounter data by rod:
@@ -170,7 +170,7 @@ static struct SpeciesLevel Fish_Fish(const struct FishGroup* hl, uint8_t rod) {
 
 // Compare the encounter chance to select a Pokemon.
     // CALL(aRandom);
-    uint8_t a = Random_Conv();
+    uint8_t a = Random();
 
     while(a > enc->chance) {
     // loop:

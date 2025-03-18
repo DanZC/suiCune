@@ -138,7 +138,7 @@ void PrintDexEntry(void){
         Printer_CleanUpAfterSend();
         // LD_C(12);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(12);
+        DelayFrames(12);
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
         hram->hBGMapMode = 0x0;
@@ -178,7 +178,7 @@ void PrintDexEntry(void){
     do {
     // low_volume_delay_frames:
         // CALL(aLowVolume);
-        LowVolume_Conv();
+        LowVolume();
         // CALL(aDelayFrame);
         DelayFrame();
         // DEC_C;
@@ -247,7 +247,7 @@ void PrintPCBox(uint32_t de, uint8_t c){
         Printer_CleanUpAfterSend();
         // LD_C(12);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(12);
+        DelayFrames(12);
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
         hram->hBGMapMode = 0x0;
@@ -263,7 +263,7 @@ void PrintPCBox(uint32_t de, uint8_t c){
             Printer_CleanUpAfterSend();
             // LD_C(12);
             // CALL(aDelayFrames);
-            DelayFrames_Conv(12);
+            DelayFrames(12);
 
             // XOR_A_A;
             // LDH_addr_A(hBGMapMode);
@@ -280,7 +280,7 @@ void PrintPCBox(uint32_t de, uint8_t c){
                 Printer_CleanUpAfterSend();
                 // LD_C(12);
                 // CALL(aDelayFrames);
-                DelayFrames_Conv(12);
+                DelayFrames(12);
 
                 // XOR_A_A;
                 // LDH_addr_A(hBGMapMode);
@@ -354,14 +354,14 @@ void PrintUnownStamp(void){
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = 0x0;
     // CALL(aLoadTilemapToTempTilemap);
-    LoadTilemapToTempTilemap_Conv();
+    LoadTilemapToTempTilemap();
     // FARCALL(aPlaceUnownPrinterFrontpic);
     PlaceUnownPrinterFrontpic();
     // LD_A((0 << 4) | 0);  // to be loaded to wPrinterMargins
     // CALL(aPrinter_PrepareTilemapForPrint);
     Printer_PrepareTilemapForPrint((0 << 4) | 0);
     // CALL(aSafeLoadTempTilemapToTilemap);
-    SafeLoadTempTilemapToTilemap_Conv();
+    SafeLoadTempTilemapToTilemap();
     // CALL(aPrinter_ResetJoypadRegisters);
     Printer_ResetJoypadRegisters();
 
@@ -410,7 +410,7 @@ void PrintUnownStamp(void){
     Printer_CleanUpAfterSend();
     Printer_CleanUp();
     // CALL(aSafeLoadTempTilemapToTilemap);
-    SafeLoadTempTilemapToTilemap_Conv();
+    SafeLoadTempTilemapToTilemap();
 
     // XOR_A_A;
     // LDH_addr_A(rIF);
@@ -530,7 +530,7 @@ void PrintPartymon(void){
         Printer_CleanUpAfterSend();
         // LD_C(12);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(12);
+        DelayFrames(12);
 
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
@@ -616,10 +616,10 @@ void v_PrintDiploma(void){
         Printer_CleanUpAfterSend();
         // LD_C(12);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(12);
+        DelayFrames(12);
 
         // CALL(aLoadTilemapToTempTilemap);
-        LoadTilemapToTempTilemap_Conv();
+        LoadTilemapToTempTilemap();
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
         hram->hBGMapMode = 0x0;
@@ -631,7 +631,7 @@ void v_PrintDiploma(void){
         // CALL(aPrinter_PrepareTilemapForPrint);
         Printer_PrepareTilemapForPrint((0 << 4) | 3);
         // CALL(aSafeLoadTempTilemapToTilemap);
-        SafeLoadTempTilemapToTilemap_Conv();
+        SafeLoadTempTilemapToTilemap();
         // CALL(aPrinter_ResetJoypadRegisters);
         Printer_ResetJoypadRegisters();
 
@@ -712,7 +712,7 @@ void Printer_CopyTilemapToBuffer(void){
     // LD_DE(wPrinterTilemapBuffer);
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wPrinterTilemapBuffer, coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT);
+    CopyBytes(wram->wPrinterTilemapBuffer, coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT);
     // RET;
 
 }
@@ -722,7 +722,7 @@ void Printer_CopyBufferToTilemap(void){
     // decoord(0, 0, wTilemap);
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(coord(0, 0, wram->wTilemap), wram->wPrinterTilemapBuffer, SCREEN_WIDTH * SCREEN_HEIGHT);
+    CopyBytes(coord(0, 0, wram->wTilemap), wram->wPrinterTilemapBuffer, SCREEN_WIDTH * SCREEN_HEIGHT);
     // RET;
 }
 
@@ -897,7 +897,7 @@ void PrintPCBox_Page1(void){
     // LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
     // LD_A(0x7f);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_HEIGHT * SCREEN_WIDTH, 0x7f);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_HEIGHT * SCREEN_WIDTH, 0x7f);
     // CALL(aPrinter_PlaceEmptyBoxSlotString);
     Printer_PlaceEmptyBoxSlotString();
 
@@ -905,7 +905,7 @@ void PrintPCBox_Page1(void){
     // LD_BC(9 * SCREEN_WIDTH);
     // LD_A(0x7f);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), 9 * SCREEN_WIDTH, 0x7f);
+    ByteFill(coord(0, 0, wram->wTilemap), 9 * SCREEN_WIDTH, 0x7f);
 
     // CALL(aPrinter_PlaceSideBorders);
     Printer_PlaceSideBorders();
@@ -941,7 +941,7 @@ void PrintPCBox_Page2(void){
     // LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
     // LD_A(0x7f);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_HEIGHT * SCREEN_WIDTH, 0x7f);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_HEIGHT * SCREEN_WIDTH, 0x7f);
     // CALL(aPrinter_PlaceEmptyBoxSlotString);
     Printer_PlaceEmptyBoxSlotString();
     // CALL(aPrinter_PlaceSideBorders);
@@ -967,7 +967,7 @@ void PrintPCBox_Page3(void){
     // LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
     // LD_A(0x7f);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_HEIGHT * SCREEN_WIDTH, 0x7f);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_HEIGHT * SCREEN_WIDTH, 0x7f);
     // CALL(aPrinter_PlaceEmptyBoxSlotString);
     Printer_PlaceEmptyBoxSlotString();
     // CALL(aPrinter_PlaceSideBorders);
@@ -992,7 +992,7 @@ void PrintPCBox_Page4(void){
     // LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
     // LD_A(0x7f);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_HEIGHT * SCREEN_WIDTH, 0x7f);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_HEIGHT * SCREEN_WIDTH, 0x7f);
     // CALL(aPrinter_PlaceEmptyBoxSlotString);
     Printer_PlaceEmptyBoxSlotString();
     // hlcoord(1, 15, wTilemap);
@@ -1051,7 +1051,7 @@ void Printer_PrintBoxListSegment(tile_t* hl, uint16_t de, uint8_t c){
         // LD_BC(16);
         // LD_A(0x7f);
         // CALL(aByteFill);
-        ByteFill_Conv2(hl, 16, 0x7f);
+        ByteFill(hl, 16, 0x7f);
         // POP_HL;
 
         // PUSH_HL;
@@ -1060,7 +1060,7 @@ void Printer_PrintBoxListSegment(tile_t* hl, uint16_t de, uint8_t c){
 
         // PUSH_HL;
         // CALL(aPlaceString);
-        PlaceStringSimple(GetBasePokemonName_Conv2(*boxSpecies), hl);
+        PlaceStringSimple(GetBasePokemonName(*boxSpecies), hl);
         // LD_A_addr(wCurPartySpecies);
         // CP_A(EGG);
         // POP_HL;
@@ -1082,7 +1082,7 @@ void Printer_PrintBoxListSegment(tile_t* hl, uint16_t de, uint8_t c){
             // LD_BC(14);
             // LD_A(0x7f);
             // CALL(aByteFill);
-            ByteFill_Conv2(hl2, 14, 0x7f);
+            ByteFill(hl2, 14, 0x7f);
             // POP_HL;
 
             // PUSH_HL;

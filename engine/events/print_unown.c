@@ -171,7 +171,7 @@ static void v_UnownPrinter_Load2bppToSRAM(void){
     // LD_B_A;
     // LD_C(0x31);
     // CALL(aGet2bpp);
-    CopyBytes_Conv2(GBToRAMAddr(sScratch), wram->wDecompressScratch, 0x31 * LEN_2BPP_TILE);
+    CopyBytes(GBToRAMAddr(sScratch), wram->wDecompressScratch, 0x31 * LEN_2BPP_TILE);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
 
@@ -201,19 +201,19 @@ static void v_UnownPrinter_UpdateUnownFrontpic(void){
         // LD_BC(0x31 * LEN_2BPP_TILE);
         // XOR_A_A;
         // CALL(aByteFill);
-        ByteFill_Conv2(GBToRAMAddr(sScratch), 0x31 * LEN_2BPP_TILE, 0x0);
+        ByteFill(GBToRAMAddr(sScratch), 0x31 * LEN_2BPP_TILE, 0x0);
         // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x31);
         // LD_DE(sScratch);
         // LD_C(0x31);
         // LDH_A_addr(hROMBank);
         // LD_B_A;
         // CALL(aGet2bpp);
-        CopyBytes_Conv2(vram->vTiles2 + LEN_2BPP_TILE * 0x31, GBToRAMAddr(sScratch), 0x31 * LEN_2BPP_TILE);
+        CopyBytes(vram->vTiles2 + LEN_2BPP_TILE * 0x31, GBToRAMAddr(sScratch), 0x31 * LEN_2BPP_TILE);
         // CALL(aCloseSRAM);
         CloseSRAM_Conv();
         // LD_C(20);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(20);
+        DelayFrames(20);
         // RET;
         return;
     }
@@ -312,7 +312,7 @@ void PlaceUnownPrinterFrontpic(void){
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // LD_A(0x7f);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
     // hlcoord(7, 11, wTilemap);
     // LD_A(0x31);
     // LDH_addr_A(hGraphicStartTile);

@@ -48,7 +48,7 @@ void NewPokedexEntry(void){
     // LDH_addr_A(hMapAnims);
     hram->hMapAnims = 0;
     // CALL(aLowVolume);
-    LowVolume_Conv();
+    LowVolume();
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // CALL(aClearTilemap);
@@ -56,7 +56,7 @@ void NewPokedexEntry(void){
     // CALL(aUpdateSprites);
     UpdateSprites_Conv();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // LD_A_addr(wPokedexStatus);
     // PUSH_AF;
     uint8_t pokedexStatus = wram->wPokedexStatus;
@@ -82,7 +82,7 @@ void NewPokedexEntry(void){
     // LD_addr_A(wPokedexStatus);
     wram->wPokedexStatus = pokedexStatus;
     // CALL(aMaxVolume);
-    MaxVolume_Conv();
+    MaxVolume();
     // CALL(aRotateThreePalettesRight);
     RotateThreePalettesRight_Conv();
     // LDH_A_addr(hSCX);

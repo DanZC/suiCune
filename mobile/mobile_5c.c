@@ -385,7 +385,7 @@ void Function170cc6(void){
     // LD_HL(vTiles0);
     // LD_BC((BANK(wDecompressScratch) << 8) | 193);
     // CALL(aGet2bpp);
-    CopyBytes_Conv2(vram->vTiles3, wram->wDecompressScratch, 193 * LEN_2BPP_TILE);
+    CopyBytes(vram->vTiles3, wram->wDecompressScratch, 193 * LEN_2BPP_TILE);
     // XOR_A_A;
     // LDH_addr_A(rVBK);
     // LD_HL(mElectroBallMobileGFX);
@@ -407,7 +407,7 @@ void Function170cc6(void){
     // LD_HL(vTiles0);
     // LD_BC((BANK(wDecompressScratch) << 8) | 83);
     // CALL(aGet2bpp);
-    CopyBytes_Conv2(vram->vTiles0, wram->wDecompressScratch, 83 * LEN_2BPP_TILE);
+    CopyBytes(vram->vTiles0, wram->wDecompressScratch, 83 * LEN_2BPP_TILE);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // RET;
@@ -474,7 +474,7 @@ void Function1719ed(void){
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // FARCALL(aFunction171d2b);
     Function171d2b();
     // FARCALL(aReloadMapPart);
@@ -508,7 +508,7 @@ void Function171a11(void){
     // FARCALL(aClearSpriteAnims);
     ClearSpriteAnims_Conv();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // RET;
 }
 
@@ -621,7 +621,7 @@ void Function171ad7(void){
     // LD_HL(0xc608);
     // LD_BC(0x66);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wc608, 0x66, 0x0);
+    ByteFill(wram->wc608, 0x66, 0x0);
     // LD_DE(0xc608);
     // LD_A(MOBILEAPI_06);
     MobileAPI(MOBILEAPI_06, &(mobile_api_data_s){.de = wram->wc608});
@@ -651,7 +651,7 @@ void Function171aec(void){
         // XOR_A_A;
         // LD_BC(0x10);
         // CALL(aByteFill);
-        ByteFill_Conv2(hl, SCREEN_WIDTH - 4, 0x0);
+        ByteFill(hl, SCREEN_WIDTH - 4, 0x0);
         // POP_HL;
         // LD_DE(0x14);
         // ADD_HL_DE;
@@ -969,7 +969,7 @@ const char String_171c73[] =
 // LoadEnterPasswordGFX
 void Function171c87(void){
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
     // LD_HL(mAsciiFontGFX);
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
     // LD_BC(0x6e0);
@@ -980,7 +980,7 @@ void Function171c87(void){
     // CALL(aDecompress);
     LoadPNG2bppAssetToVRAM(vram->vTiles0 + LEN_2BPP_TILE * 0x00, PasswordSlowpokeLZ);
     // CALL(aEnableLCD);
-    EnableLCD_Conv();
+    EnableLCD();
     // LD_HL(mPasswordTopTilemap);
     // decoord(0, 0, wTilemap);
     // LD_BC(0x168);
@@ -1011,7 +1011,7 @@ void Function171ccd(void){
     // LD_DE(wBGPals1);
     // LD_BC(8 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wBGPals1, MobilePasswordPalettes, 8 * PALETTE_SIZE);
+    CopyBytes(wram->wBGPals1, MobilePasswordPalettes, 8 * PALETTE_SIZE);
     // LD_HL(wOBPals1 + PALETTE_SIZE * 0 + PAL_COLOR_SIZE * 1);
     // LD_A(LOW(PALRGB_WHITE));
     // LD_hli_A;
@@ -1058,7 +1058,7 @@ shifted:
 
 void Function171d2b(void){
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
     // LD_HL(mAsciiFontGFX);
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
     // LD_BC(0x6e0);
@@ -1069,7 +1069,7 @@ void Function171d2b(void){
     // CALL(aDecompress);
     LoadPNG2bppAssetToVRAM(vram->vTiles0 + LEN_2BPP_TILE * 0x00, PasswordSlowpokeLZ);
     // CALL(aEnableLCD);
-    EnableLCD_Conv();
+    EnableLCD();
     // LD_HL(mChooseMobileCenterTilemap);
     // decoord(0, 0, wTilemap);
     // LD_BC(0x168);
@@ -1160,21 +1160,21 @@ void Function172e78(void){
     // hlcoord(0, 0, wTilemap);
     // LD_BC(0x168);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
     // LD_A(0x7);
     // hlcoord(0, 0, wAttrmap);
     // LD_BC(0x168);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wAttrmap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7);
+    ByteFill(coord(0, 0, wram->wAttrmap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7);
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
     // LD_HL(mStadium2N64GFX);
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
     // LD_BC(0x610);
     // CALL(aCopyBytes);
     LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x00, Stadium2N64GFX, 0x0, 0x610 / LEN_2BPP_TILE);
     // CALL(aEnableLCD);
-    EnableLCD_Conv();
+    EnableLCD();
     // LD_HL(mStadium2N64Tilemap);
     // decoord(0, 0, wTilemap);
     // LD_BC(0x168);
@@ -1197,12 +1197,12 @@ void Function172eb9(void){
     // LD_DE(wBGPals1);
     // LD_BC(8 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wBGPals1, Palette_172edf, 8 * PALETTE_SIZE);
+    CopyBytes(wram->wBGPals1, Palette_172edf, 8 * PALETTE_SIZE);
     // LD_HL(mPalette_172edf);
     // LD_DE(wBGPals2);
     // LD_BC(8 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wBGPals2, Palette_172edf, 8 * PALETTE_SIZE);
+    CopyBytes(wram->wBGPals2, Palette_172edf, 8 * PALETTE_SIZE);
     // CALL(aSetPalettes);
     SetPalettes_Conv();
     // POP_AF;

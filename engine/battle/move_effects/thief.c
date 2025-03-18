@@ -171,7 +171,7 @@ void BattleCommand_Thief(void){
 
 // stole:
     // CALL(aGetItemName);
-    GetItemName_Conv2(itm);
+    GetItemName(itm);
     // LD_HL(mStoleText);
     // JP(mStdBattleTextbox);
     return StdBattleTextbox(StoleText);

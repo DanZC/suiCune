@@ -15,48 +15,13 @@ void Function547(void) {
 }
 
 void LCD(void) {  // called from the rendering function, once per line
-    if (gb_read(hLCDCPointer)) {
-        gb_write(0xFF00 | gb_read(hLCDCPointer), wram->wLYOverrides[gb.gb_reg.LY]);
+    if (hram->hLCDCPointer) {
+        gb_write(0xFF00 | hram->hLCDCPointer, wram->wLYOverrides[gb.gb_reg.LY]);
     }
 }
 
-void DisableLCD(void) {
-    return DisableLCD_Conv();
-        //  Turn the LCD off
-
-    //  Don't need to do anything if the LCD is already off
-    LDH_A_addr(rLCDC);
-    BIT_A(rLCDC_ENABLE);
-    RET_Z;
-
-    XOR_A_A;
-    LDH_addr_A(rIF);
-    LDH_A_addr(rIE);
-    LD_B_A;
-
-    //  Disable VBlank
-    RES_A(VBLANK);
-    LDH_addr_A(rIE);
-
-wait:
-        //  Wait until VBlank would normally happen
-    LDH_A_addr(rLY);
-    CP_A(LY_VBLANK + 1);
-    // IF_NZ goto wait;
-
-    LDH_A_addr(rLCDC);
-    AND_A(~(1 << rLCDC_ENABLE));
-    LDH_addr_A(rLCDC);
-
-    XOR_A_A;
-    LDH_addr_A(rIF);
-    LD_A_B;
-    LDH_addr_A(rIE);
-    RET;
-}
-
 //  Turn the LCD off
-void DisableLCD_Conv(void) {
+void DisableLCD(void) {
     //  Don't need to do anything if the LCD is already off
     // LDH_A_addr(rLCDC);
     // BIT_A(rLCDC_ENABLE);
@@ -100,14 +65,6 @@ wait:
 }
 
 void EnableLCD(void) {
-    return EnableLCD_Conv();
-    // LDH_A_addr(rLCDC);
-    // SET_A(rLCDC_ENABLE);
-    // LDH_addr_A(rLCDC);
-    // RET;
-}
-
-void EnableLCD_Conv(void) {
     // LDH_A_addr(rLCDC);
     // SET_A(rLCDC_ENABLE);
     // LDH_addr_A(rLCDC);

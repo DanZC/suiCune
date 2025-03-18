@@ -3,45 +3,8 @@
 #include "time.h"
 #include "../engine/tilesets/timeofday_pals.h"
 
-void UpdateTimeAndPals(void){
-    //  update time and time-sensitive palettes
-
-//  rtc enabled?
-    LD_A_addr(wSpriteUpdatesEnabled);
-    CP_A(0);
-    RET_Z ;
-
-    CALL(aUpdateTime);
-
-//  obj update on?
-    LD_A_addr(wVramState);
-    BIT_A(0);  // obj update
-    RET_Z ;
-
-    return TimeOfDayPals();
-}
-
-void TimeOfDayPals(void){
-        CALLFAR(av_TimeOfDayPals);
-    RET;
-
-}
-
-bool TimeOfDayPals_Conv(void){
-    // CALLFAR(av_TimeOfDayPals);
-    // RET;
-    return v_TimeOfDayPals_Conv();
-}
-
-void UpdateTimePals(void){
-    // CALLFAR(av_UpdateTimePals);
-    // RET;
-    v_UpdateTimePals();
-}
-
-bool UpdateTimeAndPals_Conv(void){
-    //  update time and time-sensitive palettes
-
+//  update time and time-sensitive palettes
+bool UpdateTimeAndPals(void){
 //  rtc enabled?
     if(wram->wSpriteUpdatesEnabled == FALSE)
         return false;
@@ -53,8 +16,17 @@ bool UpdateTimeAndPals_Conv(void){
     if(!bit_test(vram_state, 0))  // obj update
         return false;
 
-    // SAVE_REGS;
+    return TimeOfDayPals();
+}
+
+bool TimeOfDayPals(void){
     // CALLFAR(av_TimeOfDayPals);
-    // RESTORE_REGS;
+    // RET;
     return v_TimeOfDayPals_Conv();
+}
+
+void UpdateTimePals(void){
+    // CALLFAR(av_UpdateTimePals);
+    // RET;
+    v_UpdateTimePals();
 }

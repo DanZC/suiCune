@@ -465,7 +465,7 @@ void DeleteMapObject_Conv(struct Object* obj) {
     // LD_BC(OBJECT_LENGTH);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(obj, OBJECT_LENGTH, 0);
+    ByteFill(obj, OBJECT_LENGTH, 0);
     // POP_AF;
     // CP_A(-1);
     // IF_Z goto ok;
@@ -1750,7 +1750,7 @@ void MovementFunction_Null(struct Object* bc) {
 void MovementFunction_RandomWalkY(struct Object* bc) {
     // SET_PC(aMovementFunction_RandomWalkY);
     // CALL(aRandom);
-    Random_Conv();
+    Random();
     // LDH_A_addr(hRandomAdd);
     // AND_A(0b00000001);
     // JP(mv_RandomWalkContinue);
@@ -1760,7 +1760,7 @@ void MovementFunction_RandomWalkY(struct Object* bc) {
 void MovementFunction_RandomWalkX(struct Object* bc) {
     // SET_PC(aMovementFunction_RandomWalkX);
     // CALL(aRandom);
-    Random_Conv();
+    Random();
     // LDH_A_addr(hRandomAdd);
     // AND_A(0b00000001);
     // OR_A(0b00000010);
@@ -1771,7 +1771,7 @@ void MovementFunction_RandomWalkX(struct Object* bc) {
 void MovementFunction_RandomWalkXY(struct Object* bc) {
     // SET_PC(aMovementFunction_RandomWalkXY);
     // CALL(aRandom);
-    Random_Conv();
+    Random();
     // LDH_A_addr(hRandomAdd);
     // AND_A(0b00000011);
     // JP(mv_RandomWalkContinue);
@@ -1781,7 +1781,7 @@ void MovementFunction_RandomWalkXY(struct Object* bc) {
 void MovementFunction_RandomSpinSlow(struct Object* bc) {
     // SET_PC(aMovementFunction_RandomSpinSlow);
     // CALL(aRandom);
-    Random_Conv();
+    Random();
     // LDH_A_addr(hRandomAdd);
     // AND_A(0b00001100);
     // LD_HL(OBJECT_FACING);
@@ -1800,7 +1800,7 @@ void MovementFunction_RandomSpinFast(struct Object* bc) {
     // AND_A(0b00001100);
     // LD_D_A;
     // CALL(aRandom);
-    Random_Conv();
+    Random();
     // LDH_A_addr(hRandomAdd);
     // AND_A(0b00001100);
     uint8_t a = hram->hRandomAdd & 0b00001100;
@@ -2520,7 +2520,7 @@ void v_RandomWalkContinue(struct Object* bc, uint8_t a) {
 void RandomStepDuration_Slow(struct Object* bc) {
     // SET_PC(aRandomStepDuration_Slow);
     // CALL(aRandom);
-    Random_Conv();
+    Random();
     // LDH_A_addr(hRandomAdd);
     // AND_A(0b01111111);
     // JR(mv_SetRandomStepDuration);
@@ -2530,7 +2530,7 @@ void RandomStepDuration_Slow(struct Object* bc) {
 void RandomStepDuration_Fast(struct Object* bc) {
     // SET_PC(aRandomStepDuration_Fast);
     // CALL(aRandom);
-    Random_Conv();
+    Random();
     // LDH_A_addr(hRandomAdd);
     // AND_A(0b00011111);
     return v_SetRandomStepDuration(bc, hram->hRandomAdd & 0b00011111);
@@ -5172,7 +5172,7 @@ void DespawnEmote_Conv(struct Object* bc) {
         // LD_BC(OBJECT_LENGTH);
         // CALL(aByteFill);
         // POP_BC;
-        ByteFill_Conv2(de, sizeof(*de), 0);
+        ByteFill(de, sizeof(*de), 0);
 
     // next:
         // LD_HL(OBJECT_LENGTH);
@@ -6909,7 +6909,7 @@ static void InitSprites_DeterminePriorities(void) {
     // LD_HL(wObjectPriorities);
     // LD_BC(NUM_OBJECT_STRUCTS);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wObjectPriorities, NUM_OBJECT_STRUCTS, 0);
+    ByteFill(wram->wObjectPriorities, NUM_OBJECT_STRUCTS, 0);
     uint8_t d = 0;
     struct Object* bc = &wram->wPlayerStruct;
     uint8_t* hl = wram->wObjectPriorities;

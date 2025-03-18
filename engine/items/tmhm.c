@@ -112,7 +112,7 @@ bool AskTeachTMHM(void){
         wram->wPutativeTMHMMove = GetTMHMItemMove_Conv(wram->wCurItem);
         // CALL(aGetMoveName);
         // CALL(aCopyName1);
-        CopyName1_Conv2(GetMoveName_Conv2(wram->wPutativeTMHMMove));
+        CopyName1(GetMoveName(wram->wPutativeTMHMMove));
         // LD_HL(mBootedTMText);  // Booted up a TM
         // LD_A_addr(wCurItem);
         // CP_A(HM01);
@@ -143,7 +143,7 @@ u8_flag_s ChooseMonToLearnTMHM(void){
     // LD_DE(wTMHMMoveNameBackup);
     // LD_BC(MOVE_NAME_LENGTH - 1);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wTMHMMoveNameBackup, wram->wStringBuffer2, MOVE_NAME_LENGTH - 1);
+    CopyBytes(wram->wTMHMMoveNameBackup, wram->wStringBuffer2, MOVE_NAME_LENGTH - 1);
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     return ChooseMonToLearnTMHM_NoRefresh();
@@ -185,7 +185,7 @@ u8_flag_s ChooseMonToLearnTMHM_NoRefresh(void){
             // LD_DE(wStringBuffer2);
             // LD_BC(MOVE_NAME_LENGTH - 1);
             // CALL(aCopyBytes);
-            CopyBytes_Conv2(wram->wStringBuffer2, wram->wTMHMMoveNameBackup, MOVE_NAME_LENGTH - 1);
+            CopyBytes(wram->wStringBuffer2, wram->wTMHMMoveNameBackup, MOVE_NAME_LENGTH - 1);
             // POP_AF;  // now contains the original contents of af
             // RET;
             return res;
@@ -254,7 +254,7 @@ void TeachTMHM(void){
     // LD_A_addr(wCurItem);
     // CALL(aIsHM);
     // RET_C ;
-    if(IsHM_Conv(wram->wCurItem))
+    if(IsHM(wram->wCurItem))
         return;
 
     // LD_C(HAPPINESS_LEARNMOVE);
@@ -763,7 +763,7 @@ uint8_t TMHM_DisplayPocketItems(void){
         lineCoord += 3;
         // PUSH_HL;
         // CALL(aPlaceString);
-        PlaceStringSimple(GetMoveName_Conv2(move), lineCoord);
+        PlaceStringSimple(GetMoveName(move), lineCoord);
         // POP_HL;
         // POP_BC;
         // LD_A_C;

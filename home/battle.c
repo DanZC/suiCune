@@ -61,7 +61,7 @@ void GetDexNumber(void){
 
 }
 
-// DEPRACATED: Use UserPartyMon and get its field instead.
+// DEPRECATED: Use UserPartyMon and get its field instead.
 uint16_t UserPartyAttr(uint8_t a){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
@@ -90,7 +90,7 @@ struct PartyMon* UserPartyMon(void){
     return wram->wPartyMon + wram->wCurPartyMon;
 }
 
-// DEPRACATED: Use OpponentPartyMon and get its field instead.
+// DEPRECATED: Use OpponentPartyMon and get its field instead.
 uint16_t OpponentPartyAttr(uint8_t a){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
@@ -120,7 +120,7 @@ struct PartyMon* OpponentPartyMon(void){
 }
 
 //  Get attribute a from the party struct of the active battle mon.
-// DEPRACATED: Do wram->wPartyMons + a and get the field instead.
+// DEPRECATED: Do wram->wPartyMons + a and get the field instead.
 uint16_t BattlePartyAttr(uint8_t a){
     // PUSH_BC;
     // LD_C_A;
@@ -137,7 +137,7 @@ uint16_t BattlePartyAttr(uint8_t a){
 }
 
 //  Get attribute a from the party struct of the active enemy mon.
-// DEPRACATED:  Do wram->wOTPartyMons + a and get the field instead.
+// DEPRECATED:  Do wram->wOTPartyMons + a and get the field instead.
 uint16_t OTPartyAttr(uint8_t a){
     // PUSH_BC;
     // LD_C_A;
@@ -247,7 +247,7 @@ void RefreshBattleHuds(void){
     UpdateBattleHuds();
     // LD_C(3);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(3);
+    DelayFrames(3);
     // JP(mWaitBGMap);
     WaitBGMap_Conv();
 }
@@ -389,7 +389,7 @@ void StdBattleTextbox(const struct TextCmd* hl){
 void GetBattleAnimPointer(uint16_t hl){
     // LD_A(BANK(aBattleAnimations));
     // RST(aBankswitch);
-    Bankswitch_Conv(BANK(aBattleAnimations));
+    Bankswitch(BANK(aBattleAnimations));
 
     // LD_A_hli;
     // LD_addr_A(wBattleAnimAddress);
@@ -400,7 +400,7 @@ void GetBattleAnimPointer(uint16_t hl){
 // ClearBattleAnims is the only function that calls this...
     // LD_A(BANK(aClearBattleAnims));
     // RST(aBankswitch);
-    Bankswitch_Conv(BANK(aClearBattleAnims));
+    Bankswitch(BANK(aClearBattleAnims));
 }
 
 // Unused
@@ -416,7 +416,7 @@ uint8_t GetBattleAnimByte(void){
 
     // LD_A(BANK(aBattleAnimations));
     // RST(aBankswitch);
-    Bankswitch_Conv(BANK(aBattleAnimations));
+    Bankswitch(BANK(aBattleAnimations));
 
     // LD_A_de;
     // LD_addr_A(wBattleAnimByte);
@@ -425,7 +425,7 @@ uint8_t GetBattleAnimByte(void){
 
     // LD_A(BANK(aBattleAnimCommands));
     // RST(aBankswitch);
-    Bankswitch_Conv(BANK(aBattleAnimCommands));
+    Bankswitch(BANK(aBattleAnimCommands));
 
     // LD_hl_D;
     // DEC_HL;
@@ -459,6 +459,6 @@ void PushLYOverrides(void){
 
     // LD_A((wLYOverridesEnd - wLYOverrides) / LEN_2BPP_TILE);
     // LD_addr_A(wRequested2bppSize);
-    CopyBytes_Conv2(wram->wLYOverrides, wram->wLYOverridesBackup, wLYOverridesEnd - wLYOverrides);
+    CopyBytes(wram->wLYOverrides, wram->wLYOverridesBackup, wLYOverridesEnd - wLYOverrides);
     // RET;
 }

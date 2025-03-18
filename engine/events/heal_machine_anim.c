@@ -214,7 +214,7 @@ static void HealMachineAnim_LoadPalettes(void) {
     // LD_BC(1 * PALETTE_SIZE);
     // LD_A(BANK(wOBPals2));
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->wOBPals2 + PALETTE_SIZE * PAL_OW_TREE, buf, PALETTE_SIZE);
+    CopyBytes(wram->wOBPals2 + PALETTE_SIZE * PAL_OW_TREE, buf, PALETTE_SIZE);
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
     hram->hCGBPalUpdate = TRUE;
@@ -284,7 +284,7 @@ static void HealMachineAnim_LoadBallsOntoMachine(struct SpriteOAM* hl, const str
         // POP_DE;
         // LD_C(30);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(25);
+        DelayFrames(25);
         // DEC_B;
         // IF_NZ goto party_loop;
     } while(--b != 0);
@@ -371,7 +371,7 @@ static void HealMachineAnim_FlashPalettes8Times(void){
         HealMachineAnim_FlashPalettes();
         // LD_C(10);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(10);
+        DelayFrames(10);
         // POP_BC;
         // DEC_C;
         // IF_NZ goto palette_loop;

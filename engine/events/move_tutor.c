@@ -60,7 +60,7 @@ void MoveTutor(void){
     wram->wPutativeTMHMMove = MoveTutor_GetMoveTutorMove();
     // CALL(aGetMoveName);
     // CALL(aCopyName1);
-    CopyName1_Conv2(GetMoveName_Conv2(wram->wPutativeTMHMMove));
+    CopyName1(GetMoveName(wram->wPutativeTMHMMove));
     // FARCALL(aChooseMonToLearnTMHM);
     // IF_C goto cancel;
     u8_flag_s res = ChooseMonToLearnTMHM();

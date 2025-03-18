@@ -18,15 +18,6 @@ void Joypad(void) {
 }
 
 void ClearJoypad(void) {
-        XOR_A_A;
-    //  Pressed this frame (delta)
-    LDH_addr_A(hJoyPressed);
-    //  Currently pressed
-    LDH_addr_A(hJoyDown);
-    RET;
-}
-
-void ClearJoypad_Conv(void) {
     //  Pressed this frame (delta)
     hram->hJoyPressed = 0;
     //  Currently pressed
@@ -178,19 +169,19 @@ void UpdateJoypad_Conv(void) {
     gb_write(rJOYP, 0x30);
 
     //  To get the delta we xor the last frame's input with the new one.
-    uint8_t last_frame = gb_read(hJoypadDown);  // last frame
+    uint8_t last_frame = hram->hJoypadDown;  // last frame
     uint8_t last_changed = last_frame ^ input;
 
     //  Released this frame:
-    gb_write(hJoypadReleased, last_changed & last_frame);
+    hram->hJoypadReleased = last_changed & last_frame;
     //  Pressed this frame:
-    gb_write(hJoypadPressed,  last_changed & input);
+    hram->hJoypadPressed =  last_changed & input;
 
     //  Add any new presses to the list of collective presses:
-    gb_write(hJoypadSum, gb_read(hJoypadSum) | (last_changed & input));
+    hram->hJoypadSum |= (last_changed & input);
 
     //  Currently pressed:
-    gb_write(hJoypadDown, input);
+    hram->hJoypadDown = input;
 
     //  Now that we have the input, we can do stuff with it.
 
@@ -364,7 +355,7 @@ void GetJoypad_Conv(void) {
         //  Read from the input stream.
         uint8_t oldBank = hram->hROMBank;
         uint8_t autoInputBank = wram->wAutoInputBank;
-        Bankswitch_Conv(autoInputBank);
+        Bankswitch(autoInputBank);
 
         uint16_t hl = gb_read16(wAutoInputAddress);
 
@@ -396,7 +387,7 @@ void GetJoypad_Conv(void) {
                     input = NO_INPUT;
                 }
             }
-            Bankswitch_Conv(oldBank);
+            Bankswitch(oldBank);
             hram->hJoyPressed = input;  // pressed
             hram->hJoyDown = input;     // input
         }
@@ -404,7 +395,7 @@ void GetJoypad_Conv(void) {
         {
             //  Until then, don't change anything.
             wram->wAutoInputLength = --len;
-            Bankswitch_Conv(oldBank);
+            Bankswitch(oldBank);
         }
         return;
     }
@@ -412,15 +403,15 @@ void GetJoypad_Conv(void) {
     {
 
         //  To get deltas, take this and last frame's input.
-        uint8_t real_input = gb_read(hJoypadDown);  // real input
-        uint8_t last_input = gb_read(hJoyDown);  // last frame mirror
+        uint8_t real_input = hram->hJoypadDown;  // real input
+        uint8_t last_input = hram->hJoyDown;  // last frame mirror
         //LDH_A_addr(hJoypadDown);  // real input
         //LD_B_A;
         //LDH_A_addr(hJoyDown);  // last frame mirror
         //LD_E_A;
 
         //  Released this frame:
-        gb_write(hJoyReleased, (real_input ^ last_input) & last_input);
+        hram->hJoyReleased = (real_input ^ last_input) & last_input;
         //XOR_A_B;
         //LD_D_A;
         //AND_A_E;
@@ -430,13 +421,13 @@ void GetJoypad_Conv(void) {
         //LD_A_D;
         //AND_A_B;
         //LDH_addr_A(hJoyPressed);
-        gb_write(hJoyPressed, (real_input ^ last_input) & real_input);
+        hram->hJoyPressed = (real_input ^ last_input) & real_input;
 
         //  It looks like the collective presses got commented out here.
         //LD_C_A;
 
         //  Currently pressed:
-        gb_write(hJoyDown, real_input);  // frame input
+        hram->hJoyDown = real_input;  // frame input
         //LD_A_B;
         //LDH_addr_A(hJoyDown);  // frame input
     }
@@ -589,9 +580,9 @@ void StartAutoInput_Conv(uint16_t hl, uint8_t a) {
     //  Start reading the stream immediately.
     gb_write(wAutoInputLength, 0);
     //  Reset input mirrors.
-    gb_write(hJoyPressed, 0);   // pressed this frame
-    gb_write(hJoyReleased, 0);  // released this frame
-    gb_write(hJoyDown, 0);      // currently pressed
+    hram->hJoyPressed = 0;   // pressed this frame
+    hram->hJoyReleased = 0;  // released this frame
+    hram->hJoyDown = 0;      // currently pressed
 
     gb_write(wInputType, AUTO_INPUT);
 }
@@ -699,7 +690,7 @@ void JoyWaitAorB_Conv(void) {
             break;
         
         // CALL(aUpdateTimeAndPals);
-        UpdateTimeAndPals_Conv();
+        UpdateTimeAndPals();
 
         // goto loop;
     } while(1);
@@ -1058,7 +1049,7 @@ void PromptButton_wait_input_Conv(void) {
         }
 
         // CALL(aUpdateTimeAndPals);
-        UpdateTimeAndPals_Conv();
+        UpdateTimeAndPals();
 
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
@@ -1082,7 +1073,7 @@ void PromptButton_Conv(void) {
     {
         // LD_C(65);
         // JP(mDelayFrames);
-        return DelayFrames_Conv(65);
+        return DelayFrames(65);
     }
     
     // CALL(aPromptButton_wait_input);

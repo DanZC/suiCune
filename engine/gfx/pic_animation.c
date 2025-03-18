@@ -662,7 +662,7 @@ void PokeAnim_InitPicAttributes_Conv(const uint8_t* bc, uint8_t* hl, uint8_t d){
     // POP_HL;
     // POP_DE;
     // POP_BC;
-    ByteFill_Conv2(pokeAnim, sizeof(*pokeAnim), 0);
+    ByteFill(pokeAnim, sizeof(*pokeAnim), 0);
 
 //  bc contains anim pointer
     // LD_A_C;
@@ -741,7 +741,7 @@ void PokeAnim_InitAnim_Conv(uint8_t b, uint8_t c){
     // LD_BC(wPokeAnimStructEnd - wPokeAnimIdleFlag);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(((uint8_t*)pokeAnim) + offsetof(struct PokeAnim, idleFlag), 
+    ByteFill(((uint8_t*)pokeAnim) + offsetof(struct PokeAnim, idleFlag), 
         (uint16_t)(((uint8_t*)(pokeAnim + 1)) - (((uint8_t*)pokeAnim) + offsetof(struct PokeAnim, idleFlag))), 
         0);
     // POP_BC;
@@ -1096,11 +1096,11 @@ uint16_t PokeAnim_GetBitmaskIndex_Conv(void) {
     // ADD_HL_BC;
     // LD_A_addr(wPokeAnimFramesBank);
     // CALL(aGetFarWord);
-    uint16_t hl = GetFarWord_Conv(pokeAnim->framesBank, pokeAnim->framesAddr + (pokeAnim->command << 1));
+    uint16_t hl = GetFarWord(pokeAnim->framesBank, pokeAnim->framesAddr + (pokeAnim->command << 1));
     // LD_A_addr(wPokeAnimFramesBank);
     // CALL(aGetFarByte);
     // LD_addr_A(wPokeAnimCurBitmask);
-    pokeAnim->curBitmask = GetFarByte_Conv(pokeAnim->framesBank, hl);
+    pokeAnim->curBitmask = GetFarByte(pokeAnim->framesBank, hl);
     // INC_HL;
     // RET;
     return ++hl;

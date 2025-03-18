@@ -82,7 +82,7 @@ void Function8917a(void){
     // XOR_A_A;
     // CALL(aByteFill);
     // RET;
-    ByteFill_Conv2(&wram->wd002, 0x32, 0);
+    ByteFill(&wram->wd002, 0x32, 0);
 }
 
 // Mobile22_MemCmp
@@ -129,7 +129,7 @@ void Function89193(void* de, const void* hl, uint8_t c){
     // IF_NZ goto loop;
     // POP_HL;
     // POP_DE;
-    CopyBytes_Conv2(de, hl, c);
+    CopyBytes(de, hl, c);
     // RET;
     return;
 }
@@ -170,7 +170,7 @@ void Function891b8(void){
     // LD_A(0x7f);
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
     // CALL(aDelayFrame);
     DelayFrame();
     // RET;
@@ -194,7 +194,7 @@ void Function891d3(void){
     Function891ca();
     // LD_C(0x10);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(0x10);
+    DelayFrames(0x10);
     // POP_BC;
     // RET;
 }
@@ -209,12 +209,12 @@ void Function891de(void){
     // LD_A(0x7);
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wAttrmap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7);
+    ByteFill(coord(0, 0, wram->wAttrmap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7);
     // hlcoord(0, 0, wTilemap);
     // LD_A(0x7f);
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
     // CALL(aFunction891ab);
     Function891ab();
     // RET;
@@ -228,7 +228,7 @@ void Function891fe(void){
     Function891de();
     // LD_C(0x10);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(0x10);
+    DelayFrames(0x10);
     // POP_BC;
     // RET;
 }
@@ -389,7 +389,7 @@ bool Function89261(uint8_t a, uint8_t b, uint8_t c){
     // PUSH_AF;
     // LD_C(0xa);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(0xa);
+    DelayFrames(0xa);
     // CALL(aCloseWindow);
     CloseWindow_Conv2();
     // CALL(aMobile_DisableSpriteUpdates);
@@ -447,7 +447,7 @@ void Function892b7(uint8_t* bc){
     // LD_A(0x50);
     // LD_BC(6);
     // CALL(aByteFill);
-    ByteFill_Conv2(bc, 6, 0x50);
+    ByteFill(bc, 6, 0x50);
     // LD_B_D;
     // LD_C_E;
     // LD_HL(6);
@@ -455,7 +455,7 @@ void Function892b7(uint8_t* bc){
     // LD_A(0x50);
     // LD_BC(6);
     // CALL(aByteFill);
-    ByteFill_Conv2(bc + 6, 6, 0x50);
+    ByteFill(bc + 6, 6, 0x50);
     // LD_B_D;
     // LD_C_E;
     // LD_HL(12);
@@ -480,7 +480,7 @@ void Function892b7(uint8_t* bc){
     // LD_A(-1);
     // LD_BC(8);
     // CALL(aByteFill);
-    ByteFill_Conv2(bc + 17, 8, 0xff);
+    ByteFill(bc + 17, 8, 0xff);
     // LD_B_D;
     // LD_C_E;
     // LD_E(6);
@@ -690,7 +690,7 @@ void Function89381(uint8_t* de, uint8_t* hl){
         // LD_A(-1);
         // LD_BC(8);
         // CALL(aByteFill);
-        ByteFill_Conv2(hl, 8, 0xff);
+        ByteFill(hl, 8, 0xff);
         // POP_HL;
     }
 
@@ -723,9 +723,9 @@ void Function8939a(uint8_t* bc){
 // Mobile22_LoadFontAndCardGFX
 void Function893b3(void){
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // CALL(aLoadStandardFont);
     LoadStandardFont_Conv();
     // CALL(aLoadFontsExtra);
@@ -737,16 +737,16 @@ void Function893b3(void){
     // CALL(aFunction89455);
     Function89455();
     // CALL(aEnableLCD);
-    EnableLCD_Conv();
+    EnableLCD();
     // RET;
 }
 
 // Mobile22_LoadEZChatAndCardGFX
 void Function893cc(void){
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // CALL(aLoadStandardFont);
     LoadStandardFont_Conv();
     // CALL(aLoadFontsExtra);
@@ -756,7 +756,7 @@ void Function893cc(void){
     // CALL(aFunction89464);
     Function89464();
     // CALL(aEnableLCD);
-    EnableLCD_Conv();
+    EnableLCD();
     // RET;
 }
 
@@ -826,7 +826,7 @@ void Function89448(void){
     // IF_NZ goto loop;
     // POP_AF;
     // RET;
-    ByteFill_Conv2(wram->wVirtualOAMSprite, 24 * SPRITEOAMSTRUCT_LENGTH, 0);
+    ByteFill(wram->wVirtualOAMSprite, 24 * SPRITEOAMSTRUCT_LENGTH, 0);
 }
 
 // Mobile22_LoadLargeCardSpriteAndFolderGFX
@@ -898,7 +898,7 @@ void Function8949c(void){
     // LD_DE(wBGPals1 + PALETTE_SIZE * 7);
     // LD_BC(1 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wBGPals1 + PALETTE_SIZE * 7, Palette_894b3, 1 * PALETTE_SIZE);
+    CopyBytes(wram->wBGPals1 + PALETTE_SIZE * 7, Palette_894b3, 1 * PALETTE_SIZE);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // RET;
@@ -1035,12 +1035,12 @@ static const uint16_t Pals345[] = {
     // LD_DE(wBGPals1);
     // LD_BC(3 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wBGPals1, PalettePointers[d], 3 * PALETTE_SIZE);
+    CopyBytes(wram->wBGPals1, PalettePointers[d], 3 * PALETTE_SIZE);
     // LD_HL(mFunction894dc_Pals345);
     // LD_DE(wBGPals1 + 3 * PALETTE_SIZE);
     // LD_BC(3 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wBGPals1 + 3 * PALETTE_SIZE, Pals345, 3 * PALETTE_SIZE);
+    CopyBytes(wram->wBGPals1 + 3 * PALETTE_SIZE, Pals345, 3 * PALETTE_SIZE);
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
@@ -1128,7 +1128,7 @@ void Function895c7(void){
     // LD_DE(wd030);
     // LD_BC(8);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wBGPals1 + 6 * PALETTE_SIZE, Palette_895de, 1 * PALETTE_SIZE);
+    CopyBytes(wram->wBGPals1 + 6 * PALETTE_SIZE, Palette_895de, 1 * PALETTE_SIZE);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // RET;
@@ -1158,7 +1158,7 @@ void Function895f2(void){
     // hlcoord(0, 0, wAttrmap);
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wAttrmap), SCREEN_WIDTH * SCREEN_HEIGHT, 0);
+    ByteFill(coord(0, 0, wram->wAttrmap), SCREEN_WIDTH * SCREEN_HEIGHT, 0);
     // CALL(aFunction89605);
     Function89605();
     // CALL(aFunction89655);
@@ -1218,11 +1218,11 @@ void Function89605(void){
     // LD_A(4);
     // LD_BC(4);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(1, 11, wram->wAttrmap), 4, 4);
+    ByteFill(coord(1, 11, wram->wAttrmap), 4, 4);
     // LD_A(5);
     // LD_BC(14);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(1, 11, wram->wAttrmap) + 4, 14, 5);
+    ByteFill(coord(1, 11, wram->wAttrmap) + 4, 14, 5);
     // RET;
 }
 
@@ -1761,14 +1761,14 @@ void Function89807(void){
 // asm_89814:
     const char* path = (bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))? KrisSilhouetteGFX: ChrisSilhouetteGFX;
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x37);
     // LD_BC((5 * 7) * LEN_2BPP_TILE);
     // LD_A(BANK(aChrisSilhouetteGFX));  // aka BANK(KrisSilhouetteGFX)
     // CALL(aFarCopyBytes);
     LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x37, path, 0, (5 * 7));
     // CALL(aEnableLCD);
-    EnableLCD_Conv();
+    EnableLCD();
     // CALL(aDelayFrame);
     DelayFrame(); // Is this really needed?
     // RET;
@@ -3003,7 +3003,7 @@ void Function89d0d(void){
         // LD_HL(mFunction89d0d_Palette1);
         // LD_BC(1 * PALETTE_SIZE);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(de, Palette1, 1 * PALETTE_SIZE);
+        CopyBytes(de, Palette1, 1 * PALETTE_SIZE);
         de += 1 * PALETTE_SIZE;
         // POP_BC;
         // DEC_C;
@@ -3014,7 +3014,7 @@ void Function89d0d(void){
     // LD_DE(wBGPals1 + 2 * PALETTE_SIZE);
     // LD_BC(1 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(de, Palette2, 1 * PALETTE_SIZE);
+    CopyBytes(de, Palette2, 1 * PALETTE_SIZE);
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
@@ -3027,7 +3027,7 @@ void Function89d0d(void){
     Mobile22_SetBGMapMode1();
     // LD_C(24);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(24);
+    DelayFrames(24);
     // CALL(aRestartMapMusic);
     RestartMapMusic_Conv();
     // RET;
@@ -3162,7 +3162,7 @@ u8_flag_s Function89dab(void){
 // Mobile_CardMenu_Top?
 void Function89de0(void){
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // CALL(aFunction89e0a);
     // IF_C goto asm_89e00;
     if(!Function89e0a()) {
@@ -3341,7 +3341,7 @@ void Function89e9a(void){
     // LD_DE(wBGPals1 + PALETTE_SIZE * 5);
     // LD_BC(1 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wBGPals1 + PALETTE_SIZE * 5, Palette_89eb1, 1 * PALETTE_SIZE);
+    CopyBytes(wram->wBGPals1 + PALETTE_SIZE * 5, Palette_89eb1, 1 * PALETTE_SIZE);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // RET;
@@ -3407,7 +3407,7 @@ void Function89efd(void){
     // LD_hli_A;
     // }
     // LD_hl_A;
-    ByteFill_Conv2(wram->wd013, 5, 0);
+    ByteFill(wram->wd013, 5, 0);
 
 asm_89f09:
     // LD_HL(wd012);
@@ -3683,7 +3683,7 @@ void Function89ff6(void){
     // LD_A(-1);
     // LD_BC(8);
     // CALL(aByteFill);
-    ByteFill_Conv2(GBToRAMAddr(s4_a603), 8, 0xff);
+    ByteFill(GBToRAMAddr(s4_a603), 8, 0xff);
     // LD_HL(0xa603);
     // LD_DE(wd008);
     // CALL(aFunction89381);
@@ -3946,7 +3946,7 @@ asm_8a121:
                 PlaySFX_Conv(SFX_TWINKLE);
                 // LD_C(0x10);
                 // CALL(aDelayFrames);
-                DelayFrames_Conv(0x10);
+                DelayFrames(0x10);
             }
             // CALL(aFunction8a241);
             // IF_C goto asm_8a121;
@@ -4273,7 +4273,7 @@ void Function8a2fe(uint8_t a){
     // LD_BC(0x8);
     // LD_A(-1);
     // CALL(aByteFill);
-    ByteFill_Conv2(GBToRAMAddr(s4_a603), 0x8, 0xff);
+    ByteFill(GBToRAMAddr(s4_a603), 0x8, 0xff);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // RET;
@@ -4664,7 +4664,7 @@ void asm_8a529(void){
     // XOR_A_A;
     // LD_BC(8 * SPRITEOAMSTRUCT_LENGTH);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wVirtualOAMSprite, 8 * SPRITEOAMSTRUCT_LENGTH, 0);
+    ByteFill(wram->wVirtualOAMSprite, 8 * SPRITEOAMSTRUCT_LENGTH, 0);
     // RET;
 
 }
@@ -4823,17 +4823,17 @@ void Function8a5b6(void){
     // LD_DE(wBGPals1 + 4 * PALETTE_SIZE);
     // LD_BC(3 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wBGPals1 + 4 * PALETTE_SIZE, Palette_8a5e5, 3 * PALETTE_SIZE);
+    CopyBytes(wram->wBGPals1 + 4 * PALETTE_SIZE, Palette_8a5e5, 3 * PALETTE_SIZE);
     // LD_HL(mPalette_8a5fd);
     // LD_DE(wOBPals1);
     // LD_BC(1 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wOBPals1, Palette_8a5fd, 1 * PALETTE_SIZE);
+    CopyBytes(wram->wOBPals1, Palette_8a5fd, 1 * PALETTE_SIZE);
     // LD_HL(mPalette_8a605);
     // LD_DE(wOBPals1 + 1 * PALETTE_SIZE);
     // LD_BC(1 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wOBPals1 + 1 * PALETTE_SIZE, Palette_8a605, 1 * PALETTE_SIZE);
+    CopyBytes(wram->wOBPals1 + 1 * PALETTE_SIZE, Palette_8a605, 1 * PALETTE_SIZE);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // RET;
@@ -4881,7 +4881,7 @@ void Function8a60d(void){
     // LD_DE(wOBPals1);
     // LD_BC(1 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wOBPals1, Palette_8a624, 1 * PALETTE_SIZE);
+    CopyBytes(wram->wOBPals1, Palette_8a624, 1 * PALETTE_SIZE);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // RET;
@@ -5631,7 +5631,7 @@ bool Function8aa73(void){
         // LD_A(0xff);
         // LD_BC(0x8);
         // CALL(aByteFill);
-        ByteFill_Conv2(wram->wd008, 0x8, 0xff);
+        ByteFill(wram->wd008, 0x8, 0xff);
         // LD_H_D;
         // LD_L_E;
         // LD_DE(wd008);
@@ -5832,7 +5832,7 @@ void Function8ab93(void){
     // FARCALL(aDoNameCardSwap);
     //  TODO: Convert DoNameCardSwap
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // CALL(aFunction891fe);
     Function891fe();
     // CALL(aFunction89b28);

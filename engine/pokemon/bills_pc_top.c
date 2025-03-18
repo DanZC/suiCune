@@ -407,12 +407,12 @@ void ClearPCItemScreen(void){
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // hlcoord(0, 0, wTilemap);
     // LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
     // LD_A(0x7f);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_HEIGHT * SCREEN_WIDTH, 0x7f);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_HEIGHT * SCREEN_WIDTH, 0x7f);
     // hlcoord(0, 0, wTilemap);
     // LD_BC((10 << 8) | 18);
     // CALL(aTextbox);
@@ -455,7 +455,7 @@ void CopyBoxmonToTempMon_Conv(void){
     // CALL(aOpenSRAM);
     OpenSRAM_Conv(MBANK(asBoxMon1Species));
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(&wram->wTempMon.mon, hl, sizeof(*hl));
+    CopyBytes(&wram->wTempMon.mon, hl, sizeof(*hl));
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // RET;

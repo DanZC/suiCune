@@ -59,7 +59,7 @@ void BattleCommand_Spite(void){
         goto failed;
     // PUSH_BC;
     // CALL(aGetMoveName);
-    GetMoveName_Conv2(move);
+    GetMoveName(move);
 // lose 2-5 PP
     // CALL(aBattleRandom);
     // AND_A(0b11);

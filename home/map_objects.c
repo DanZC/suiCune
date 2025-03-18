@@ -191,6 +191,7 @@ void CheckOnWater(void){
 
 }
 
+// Returns true (z) if the player is standing on a water tile.
 bool CheckOnWater_Conv(void){
     // LD_A_addr(wPlayerStandingTile);
     // CALL(aGetTileCollision);
@@ -888,7 +889,7 @@ void CopyPlayerObjectTemplate_Conv(const struct ObjEvent* hl, uint8_t a){
     // POP_HL;
     // LD_BC(MAPOBJECT_LENGTH - 1);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(&de->sprite, hl, MAPOBJECT_LENGTH - 1);
+    CopyBytes(&de->sprite, hl, MAPOBJECT_LENGTH - 1);
     // RET;
 }
 

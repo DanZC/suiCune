@@ -42,12 +42,12 @@ void InsertPokemonIntoBox(void){
     // LD_DE(wTempMonMoves);
     // LD_BC(NUM_MOVES);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wTempMon.mon.moves, wram->wBufferMon.mon.moves, sizeof(wram->wTempMon.mon.moves));
+    CopyBytes(wram->wTempMon.mon.moves, wram->wBufferMon.mon.moves, sizeof(wram->wTempMon.mon.moves));
     // LD_HL(wBufferMonPP);
     // LD_DE(wTempMonPP);
     // LD_BC(NUM_MOVES);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wTempMon.mon.PP, wram->wBufferMon.mon.PP, sizeof(wram->wTempMon.mon.PP));
+    CopyBytes(wram->wTempMon.mon.PP, wram->wBufferMon.mon.PP, sizeof(wram->wTempMon.mon.PP));
     // LD_A_addr(wCurPartyMon);
     // LD_B_A;
     // FARCALL(aRestorePPOfDepositedPokemon);
@@ -230,13 +230,13 @@ void InsertDataIntoBoxOrParty_Conv(uint8_t* hl, const uint8_t* de, uint16_t bc){
             // POP_HL;
             // CALL(aCopyBytes);
             // RET;
-            return CopyBytes_Conv2(hl + bc * wram->wCurPartyMon, de, bc);
+            return CopyBytes(hl + bc * wram->wCurPartyMon, de, bc);
         }
         // PUSH_HL;
         // PUSH_DE;
         // PUSH_BC;
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(de2, hl, bc);
+        CopyBytes(de2, hl, bc);
         // POP_BC;
         // POP_DE;
         // POP_HL;

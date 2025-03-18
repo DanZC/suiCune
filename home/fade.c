@@ -152,7 +152,7 @@ void RotatePalettesRight_Conv(const uint8_t* pal, uint8_t amount){
         pal += 2;
         // LD_C(8);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(8);
+        DelayFrames(8);
         // POP_DE;
         // DEC_B;
         // JR_NZ (mRotatePalettesRight);
@@ -263,7 +263,7 @@ void RotatePalettesLeft_Conv(const uint8_t* pal, uint8_t amount){
         pal--;
         // LD_C(8);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(8);
+        DelayFrames(8);
         // POP_DE;
         // DEC_B;
         // JR_NZ (mRotatePalettesLeft);

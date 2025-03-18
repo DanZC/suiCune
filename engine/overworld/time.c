@@ -341,7 +341,7 @@ void SampleKenjiBreakCountdown_Conv(void){
     // ADD_A(3);
     // LD_addr_A(wKenjiBreakTimer);
     // RET;
-    wram->wKenjiBreakTimer[0] = (Random_Conv() & 0b11) + 3;
+    wram->wKenjiBreakTimer[0] = (Random() & 0b11) + 3;
 }
 
 void StartBugContestTimer(void){

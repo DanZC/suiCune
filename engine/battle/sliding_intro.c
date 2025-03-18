@@ -131,13 +131,13 @@ static void BattleIntroSlidingPics_subfunction5(uint8_t d, uint8_t e);
 //     // LD_A(0x90);
 //     // LD_BC(SCREEN_HEIGHT_PX);
 //     // CALL(aByteFill);
-//     ByteFill_Conv(wLYOverrides, SCREEN_HEIGHT_PX, 0x90);
+//     ByteFill_GB(wLYOverrides, SCREEN_HEIGHT_PX, 0x90);
 // }
 
 static void BattleIntroSlidingPics_subfunction1(void) {
     // CALL(aBattleIntroSlidingPics_subfunction4);
     // BattleIntroSlidingPics_subfunction4();
-    ByteFill_Conv2(wram->wLYOverrides, SCREEN_HEIGHT_PX, 0x90);
+    ByteFill(wram->wLYOverrides, SCREEN_HEIGHT_PX, 0x90);
     // LD_A(0x90);
     // LDH_addr_A(hSCX);
     hram->hSCX = 0x90;

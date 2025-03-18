@@ -311,7 +311,7 @@ ok:
 void FadeOutMapMusic(void){
     // LD_A(6);
     // CALL(aSkipMusic);
-    SkipMusic_Conv(3);
+    SkipMusic(3);
     // RET;
 
 }
@@ -344,7 +344,7 @@ void ForceMapMusic(void){
     // IF_NZ goto notbiking;
     if(wram->wPlayerState == PLAYER_BIKE) {
         // CALL(aMinVolume);
-        MinVolume_Conv();
+        MinVolume();
         // LD_A(0x88);
         // LD_addr_A(wMusicFade);
         wram->wMusicFade = 0x88;

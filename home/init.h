@@ -1,14 +1,8 @@
 void Reset(void);
-void Reset_Conv(void);
 void v_Start(void);
-void v_Start_Conv(void);
 void Init(void);
-void Init_Conv(void);
 void ClearVRAM(void);
-void ClearVRAM_Conv(void);
 void ClearWRAM(void);
-void ClearWRAM_Conv(void);
 void ClearsScratch(void);
-void ClearsScratch_Conv(void);
 void Game_WarmStart(void);
 void Game_ColdStart(void);

@@ -106,7 +106,7 @@ static void RefreshSprites_Refresh(void) {
     // LD_BC(wUsedSpritesEnd - wUsedSprites);
     // LD_HL(wUsedSprites);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wUsedSprites, sizeof(wram->wUsedSprites), 0);
+    ByteFill(wram->wUsedSprites, sizeof(wram->wUsedSprites), 0);
     // CALL(aGetPlayerSprite);
     GetPlayerSprite_Conv();
     // CALL(aAddMapSprites);

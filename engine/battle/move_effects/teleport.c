@@ -139,7 +139,7 @@ void BattleCommand_Teleport(void){
     LoadMoveAnim();
     // LD_C(20);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(20);
+    DelayFrames(20);
     // CALL(aSetBattleDraw);
     SetBattleDraw();
 

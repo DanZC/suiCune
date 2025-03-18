@@ -44,14 +44,14 @@ void v_CardFlip(void){
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // LD_DE(MUSIC_NONE);
     // CALL(aPlayMusic);
     PlayMusic_Conv(MUSIC_NONE);
     // CALL(aDelayFrame);
     DelayFrame();
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
     // CALL(aLoadStandardFont);
     LoadStandardFont_Conv();
     // CALL(aLoadFontsExtra);
@@ -87,7 +87,7 @@ void v_CardFlip(void){
     // CALL(aCardFlip_InitAttrPals);
     CardFlip_InitAttrPals();
     // CALL(aEnableLCD);
-    EnableLCD_Conv();
+    EnableLCD();
     // CALL(aWaitBGMap2);
     WaitBGMap2_Conv();
     // LD_A(0b11100100);
@@ -257,7 +257,7 @@ static void v_CardFlip_CardFlip(void){
         hram->hBGMapMode = 0x1;
         // LD_C(20);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(20);
+        DelayFrames(20);
         // hlcoord(2, 0, wTilemap);
         // CALL(aPlaceCardFaceDown);
         PlaceCardFaceDown(coord(2, 0, wram->wTilemap));
@@ -266,7 +266,7 @@ static void v_CardFlip_CardFlip(void){
         hram->hBGMapMode = 0x1;
         // LD_C(20);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(20);
+        DelayFrames(20);
         // hlcoord(2, 6, wTilemap);
         // CALL(aPlaceCardFaceDown);
         PlaceCardFaceDown(coord(2, 6, wram->wTilemap));
@@ -295,7 +295,7 @@ static void v_CardFlip_CardFlip(void){
             PlaceOAMCardBorder(wram->wCardFlipWhichCard);
             // LD_C(4);
             // CALL(aDelayFrames);
-            DelayFrames_Conv(4);
+            DelayFrames(4);
             // LD_HL(wCardFlipWhichCard);
             // LD_A_hl;
             // XOR_A(0x1);
@@ -318,12 +318,12 @@ static void v_CardFlip_CardFlip(void){
             PlaceOAMCardBorder(wram->wCardFlipWhichCard);
             // LD_C(4);
             // CALL(aDelayFrames);
-            DelayFrames_Conv(4);
+            DelayFrames(4);
             // CALL(aClearSprites);
-            ClearSprites_Conv();
+            ClearSprites();
             // LD_C(4);
             // CALL(aDelayFrames);
-            DelayFrames_Conv(4);
+            DelayFrames(4);
             // POP_AF;
             // DEC_A;
             // IF_NZ goto loop2;
@@ -452,7 +452,7 @@ static void v_CardFlip_CardFlip(void){
             text_end
         };
         // CALL(aClearSprites);
-        ClearSprites_Conv();
+        ClearSprites();
         // LD_HL(mv_CardFlip_CardFlipPlayAgainText);
         // CALL(aCardFlip_UpdateCoinBalanceDisplay);
         CardFlip_UpdateCoinBalanceDisplay(CardFlipPlayAgainText);
@@ -513,7 +513,7 @@ void CardFlip_ShuffleDeck(void){
     // LD_BC(CARDFLIP_DECK_SIZE);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wDeck, sizeof(wram->wDeck), 0x0);
+    ByteFill(wram->wDeck, sizeof(wram->wDeck), 0x0);
     // LD_DE(wDeck);
     uint8_t* de = wram->wDeck;
     // LD_C(CARDFLIP_DECK_SIZE - 1);
@@ -526,7 +526,7 @@ void CardFlip_ShuffleDeck(void){
             // loop:
                 // CALL(aRandom);
                 // AND_A(0x1f);
-                a = Random_Conv() & 0x1f;
+                a = Random() & 0x1f;
                 // CP_A(CARDFLIP_DECK_SIZE);
                 // IF_NC goto loop;
             } while(a >= CARDFLIP_DECK_SIZE);
@@ -548,7 +548,7 @@ void CardFlip_ShuffleDeck(void){
     // LD_HL(wDiscardPile);
     // LD_BC(CARDFLIP_DECK_SIZE);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wDiscardPile, sizeof(wram->wDiscardPile), 0x0);
+    ByteFill(wram->wDiscardPile, sizeof(wram->wDiscardPile), 0x0);
     // RET;
 }
 
@@ -756,7 +756,7 @@ void CardFlip_InitTilemap(void){
     // LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
     // LD_A(0x29);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_HEIGHT * SCREEN_WIDTH, 0x29);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_HEIGHT * SCREEN_WIDTH, 0x29);
     // hlcoord(9, 0, wTilemap);
     // LD_DE(mCardFlipTilemap);
     asset_s tm = LoadAsset(CardFlipTilemap);
@@ -875,7 +875,7 @@ void CardFlip_ShiftDigitsUpOnePixel(void){
     // LD_HL(vTiles0 + LEN_2BPP_TILE * CHAR_0 + 2);
     // LD_BC(10 * LEN_2BPP_TILE - 2);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(vram->vTiles0 + LEN_2BPP_TILE * CHAR_0, vram->vTiles0 + LEN_2BPP_TILE * CHAR_0 + 2, 10 * LEN_2BPP_TILE - 2);
+    CopyBytes(vram->vTiles0 + LEN_2BPP_TILE * CHAR_0, vram->vTiles0 + LEN_2BPP_TILE * CHAR_0 + 2, 10 * LEN_2BPP_TILE - 2);
     // LD_HL(vTiles0 + LEN_2BPP_TILE * CHAR_9 + 1 * LEN_2BPP_TILE - 2);
     // XOR_A_A;
     // LD_hli_A;
@@ -1199,7 +1199,7 @@ static void CardFlip_CheckWinCondition_Payout(uint16_t de, uint8_t c){
         CardFlip_PrintCoinBalance();
         // LD_C(2);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(2);
+        DelayFrames(2);
         // POP_BC;
         // DEC_C;
         // IF_NZ goto loop;
@@ -2137,7 +2137,7 @@ void CardFlip_InitAttrPals(void){
     // LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wAttrmap), SCREEN_HEIGHT * SCREEN_WIDTH, 0x0);
+    ByteFill(coord(0, 0, wram->wAttrmap), SCREEN_HEIGHT * SCREEN_WIDTH, 0x0);
 
     // hlcoord(12, 1, wAttrmap);
     // LD_BC((2 << 8) | 2);

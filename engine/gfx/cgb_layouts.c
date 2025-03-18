@@ -204,7 +204,7 @@ void v_CGB_FinishBattleScreenLayout(void){
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // LD_A(PAL_BATTLE_BG_ENEMY_HP);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wAttrmap), SCREEN_WIDTH * SCREEN_HEIGHT, PAL_BATTLE_BG_ENEMY_HP);
+    ByteFill(coord(0, 0, wram->wAttrmap), SCREEN_WIDTH * SCREEN_HEIGHT, PAL_BATTLE_BG_ENEMY_HP);
     // hlcoord(0, 4, wAttrmap);
     // LD_BC((8 << 8) | 10);
     // LD_A(PAL_BATTLE_BG_PLAYER);
@@ -234,13 +234,13 @@ void v_CGB_FinishBattleScreenLayout(void){
     // LD_BC(6 * SCREEN_WIDTH);
     // LD_A(PAL_BATTLE_BG_TEXT);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 12, wram->wAttrmap), 6 * SCREEN_WIDTH, PAL_BATTLE_BG_TEXT);
+    ByteFill(coord(0, 12, wram->wAttrmap), 6 * SCREEN_WIDTH, PAL_BATTLE_BG_TEXT);
     // LD_HL(mBattleObjectPals);
     // LD_DE(wOBPals1 + PALETTE_SIZE * PAL_BATTLE_OB_GRAY);
     // LD_BC(6 * PALETTE_SIZE);
     // LD_A(MBANK(awOBPals1));
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->wOBPals1 + PALETTE_SIZE * PAL_BATTLE_OB_GRAY, BattleObjectPals, 6 * PALETTE_SIZE);
+    CopyBytes(wram->wOBPals1 + PALETTE_SIZE * PAL_BATTLE_OB_GRAY, BattleObjectPals, 6 * PALETTE_SIZE);
     // CALL(aApplyAttrmap);
     ApplyAttrmap_Conv();
     // RET;
@@ -268,7 +268,7 @@ void Mobile_InitPartyMenuBGPal7(bool isMobile){
     // LD_BC(1 * PALETTE_SIZE);
     // LD_A(MBANK(awBGPals1));
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(((uint8_t*)wram + offsetof(struct wram_s, wBGPals1) + PALETTE_SIZE * 7), palbuf, 1 * PALETTE_SIZE);
+    CopyBytes(((uint8_t*)wram + offsetof(struct wram_s, wBGPals1) + PALETTE_SIZE * 7), palbuf, 1 * PALETTE_SIZE);
     // RET;
 }
 
@@ -290,7 +290,7 @@ void InitPartyMenuBGPal0(void){
     // LD_BC(1 * PALETTE_SIZE);
     // LD_A(MBANK(awBGPals1));
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->wBGPals1 + PALETTE_SIZE * 0, palbuf, 1 * PALETTE_SIZE);
+    CopyBytes(wram->wBGPals1 + PALETTE_SIZE * 0, palbuf, 1 * PALETTE_SIZE);
     // RET;
 }
 
@@ -314,7 +314,7 @@ void v_CGB_PokegearPals(void){
     // LD_BC(6 * PALETTE_SIZE);
     // LD_A(BANK(wBGPals1));
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->wBGPals1, palbuf, 6 * PALETTE_SIZE);
+    CopyBytes(wram->wBGPals1, palbuf, 6 * PALETTE_SIZE);
     // CALL(aApplyPals);
     ApplyPals_Conv();
     // LD_A(TRUE);
@@ -354,7 +354,7 @@ void v_CGB_StatsScreenHPPals(void){
     // LD_A(BANK(wBGPals1));
     // CALL(aFarCopyWRAM);
     LoadPaletteAssetColorsToArray(palbuf, StatsScreenPagePals, 0, 3 * NUM_PAL_COLORS);
-    CopyBytes_Conv2(wram->wBGPals1 + PALETTE_SIZE * 3, palbuf, 3 * PALETTE_SIZE);
+    CopyBytes(wram->wBGPals1 + PALETTE_SIZE * 3, palbuf, 3 * PALETTE_SIZE);
     // CALL(aWipeAttrmap);
     WipeAttrmap();
 
@@ -368,7 +368,7 @@ void v_CGB_StatsScreenHPPals(void){
     // LD_BC(10);
     // LD_A(0x2);  // exp palette
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(10, 16, wram->wAttrmap), 10, 0x2);
+    ByteFill(coord(10, 16, wram->wAttrmap), 10, 0x2);
 
     // hlcoord(13, 5, wAttrmap);
     // LD_BC((2 << 8) | 2);
@@ -460,7 +460,7 @@ void v_CGB_Pokedex(void){
     // LD_A(MBANK(awOBPals1));
     // CALL(aFarCopyWRAM);
     LoadPaletteAssetColorsToArray(palbuf, PokedexCursorPalette, 0, NUM_PAL_COLORS);
-    CopyBytes_Conv2(wram->wOBPals1 + PALETTE_SIZE * 7, palbuf, 1 * PALETTE_SIZE);
+    CopyBytes(wram->wOBPals1 + PALETTE_SIZE * 7, palbuf, 1 * PALETTE_SIZE);
     // CALL(aApplyAttrmap);
     ApplyAttrmap_Conv();
     // CALL(aApplyPals);
@@ -663,7 +663,7 @@ void v_CGB_SlotMachine(void){
     // LD_BC(6 * SCREEN_WIDTH);
     // LD_A(0x7);  // text palette
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 12, wram->wAttrmap), 6 * SCREEN_WIDTH, 0x7);
+    ByteFill(coord(0, 12, wram->wAttrmap), 6 * SCREEN_WIDTH, 0x7);
     // CALL(aApplyAttrmap);
     ApplyAttrmap_Conv();
     // CALL(aApplyPals);
@@ -847,7 +847,7 @@ void v_CGB_Evolution(void){
         // LD_BC(6 * PALETTE_SIZE);
         // LD_A(MBANK(awOBPals1));
         // CALL(aFarCopyWRAM);
-        CopyBytes_Conv2(wram->wOBPals1 + PALETTE_SIZE * PAL_BATTLE_OB_GRAY, BattleObjectPals, 6 * PALETTE_SIZE);
+        CopyBytes(wram->wOBPals1 + PALETTE_SIZE * PAL_BATTLE_OB_GRAY, BattleObjectPals, 6 * PALETTE_SIZE);
     }
 
 // got_palette:
@@ -999,7 +999,7 @@ void v_CGB_TrainerCard(void){
 
 // got_gender:
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wAttrmap), SCREEN_WIDTH * SCREEN_HEIGHT, gender);
+    ByteFill(coord(0, 0, wram->wAttrmap), SCREEN_WIDTH * SCREEN_HEIGHT, gender);
 // fill trainer sprite area with same-gender palette
     // hlcoord(14, 1, wAttrmap);
     // LD_BC((7 << 8) | 5);
@@ -1246,7 +1246,7 @@ static const uint16_t KrisPackPals[] = {
     // LD_BC(8 * PALETTE_SIZE);  // 6 palettes?
     // LD_A(MBANK(awBGPals1));
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->wBGPals1, pals, 8 * PALETTE_SIZE);
+    CopyBytes(wram->wBGPals1, pals, 8 * PALETTE_SIZE);
     // CALL(aWipeAttrmap);
     WipeAttrmap();
     // hlcoord(0, 0, wAttrmap);
@@ -1413,7 +1413,7 @@ void v_CGB_TradeTube(void){
     // LD_BC(1 * PALETTE_SIZE);
     // LD_A(MBANK(awOBPals1));
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->wOBPals1, buffer, 1 * PALETTE_SIZE);
+    CopyBytes(wram->wOBPals1, buffer, 1 * PALETTE_SIZE);
     // LD_DE(wOBPals1 + PALETTE_SIZE * 7);
     // LD_A(PREDEFPAL_TRADE_TUBE);
     // CALL(aGetPredefPal);
@@ -1460,7 +1460,7 @@ void v_CGB_MysteryGift(void){
     // LD_BC(2 * PALETTE_SIZE);
     // LD_A(MBANK(awBGPals1));
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->wBGPals1, MysteryGiftPalettes, 2 * PALETTE_SIZE);
+    CopyBytes(wram->wBGPals1, MysteryGiftPalettes, 2 * PALETTE_SIZE);
     // CALL(aApplyPals);
     ApplyPals_Conv();
     // CALL(aWipeAttrmap);

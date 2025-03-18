@@ -97,7 +97,7 @@ void Crystal_WipeAttrmap(void){
     // XOR_A_A;
     // CALL(aByteFill);
     // RET;
-    return ByteFill_Conv2(coord(0, 0, wram->wAttrmap), SCREEN_HEIGHT * SCREEN_WIDTH, 0);
+    return ByteFill(coord(0, 0, wram->wAttrmap), SCREEN_HEIGHT * SCREEN_WIDTH, 0);
 }
 
 void MG_Mobile_Layout_LoadPals(void){
@@ -112,7 +112,7 @@ void MG_Mobile_Layout_LoadPals(void){
     // LD_BC(1 * PALETTE_SIZE);
     // LD_A(MBANK(awBGPals1));
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT, Palette_TextBG7, sizeof(Palette_TextBG7));
+    CopyBytes(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT, Palette_TextBG7, sizeof(Palette_TextBG7));
     // RET;
 }
 
@@ -174,7 +174,7 @@ void MG_Mobile_Layout_CreatePalBoxes(void){
     // LD_BC(6 * SCREEN_WIDTH);
     // LD_A(0x7);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 12, wram->wAttrmap), 6 * SCREEN_WIDTH, 0x7);
+    ByteFill(coord(0, 12, wram->wAttrmap), 6 * SCREEN_WIDTH, 0x7);
     // RET;
 }
 
@@ -186,7 +186,7 @@ void LoadOW_BGPal7(void){
     // LD_BC(1 * PALETTE_SIZE);
     // LD_A(BANK(wBGPals1));
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT, Palette_TextBG7, 1 * PALETTE_SIZE);
+    CopyBytes(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT, Palette_TextBG7, 1 * PALETTE_SIZE);
     // RET;
 }
 
@@ -203,7 +203,7 @@ void Function49420(void){
     // LD_BC(1 * PALETTE_SIZE);
     // LD_A(BANK(wBGPals1));
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_ROOF, MansionPalette1 + 8 * NUM_PAL_COLORS, PALETTE_SIZE);
+    CopyBytes(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_ROOF, MansionPalette1 + 8 * NUM_PAL_COLORS, PALETTE_SIZE);
     // RET;
 }
 
@@ -255,12 +255,12 @@ void v_CrystalCGB_MobileLayout1(void){
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wAttrmap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x0);
+    ByteFill(coord(0, 0, wram->wAttrmap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x0);
     // hlcoord(0, 14, wAttrmap);
     // LD_BC(4 * SCREEN_WIDTH);
     // LD_A(0x7);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 14, wram->wAttrmap), SCREEN_WIDTH * 4, 0x7);
+    ByteFill(coord(0, 14, wram->wAttrmap), SCREEN_WIDTH * 4, 0x7);
     // LD_A_addr(wd002);
     // BIT_A(6);
     // IF_Z goto asm_49464;
@@ -360,7 +360,7 @@ void Function49742(void){
     // LD_BC(8 * PALETTE_SIZE);
     // LD_A(BANK(wBGPals1));
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->wBGPals1, MobileBorderPalettes, 8 * PALETTE_SIZE);
+    CopyBytes(wram->wBGPals1, MobileBorderPalettes, 8 * PALETTE_SIZE);
     // FARCALL(aApplyPals);
     ApplyPals_Conv();
     // RET;
@@ -431,7 +431,7 @@ void v_InitMG_Mobile_LinkTradePalMap(void){
     // LD_A(0x3);
     // LD_BC(6);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(2, 17, wram->wAttrmap), 6, 0x3);
+    ByteFill(coord(2, 17, wram->wAttrmap), 6, 0x3);
     // RET;
 }
 

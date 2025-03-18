@@ -259,10 +259,10 @@ void PokeGear_InitTilemap_Conv(void) {
     ClearTilemap_Conv2();
 
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
 
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
 
     //XOR_A_A;
     //LDH_addr_A(hSCY);
@@ -282,7 +282,7 @@ void PokeGear_InitTilemap_Conv(void) {
     InitPokegearModeIndicatorArrow_Conv();
     // LD_A(8);
     // CALL(aSkipMusic);
-    SkipMusic_Conv(4);
+    SkipMusic(4);
 
     // LD_A(LCDC_DEFAULT);
     // LDH_addr_A(rLCDC);
@@ -588,7 +588,7 @@ void InitPokegearTilemap(void){
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // LD_A(0x4f);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x4f);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x4f);
     LD_A_addr(wPokegearCard);
     maskbits(NUM_POKEGEAR_CARDS, 0);
     // ADD_A_A;
@@ -758,7 +758,7 @@ PlacePhoneBars:
 
 void InitPokegearTilemap_Conv(void){
     hram->hBGMapMode = 0;
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x4F);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x4F);
     uint8_t card = wram->wPokegearCard & (NUM_POKEGEAR_CARDS - 1);
     switch(card)
     {
@@ -783,7 +783,7 @@ void InitPokegearTilemap_Conv(void){
                 PokegearMap_Conv(0);
             }
             // FARCALL(aPokegearMap);
-            ByteFill_Conv2(coord(1, 2, wram->wTilemap), (SCREEN_WIDTH - 2), 0x07);
+            ByteFill(coord(1, 2, wram->wTilemap), (SCREEN_WIDTH - 2), 0x07);
             *coord(0, 2, wram->wTilemap) = 0x06;
             *coord(19, 2, wram->wTilemap) = 0x17;
             // REG_A = gb_read(wPokegearMapCursorLandmark);
@@ -841,7 +841,7 @@ void InitPokegearTilemap_UpdateBGMap_Conv(void) {
     hram->hBGMapMode = 0x2;
     // LD_C(3);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(3);
+    DelayFrames(3);
     hram->hBGMapMode = 0x1;
 }
 
@@ -922,13 +922,13 @@ void Pokegear_FinishTilemap_Conv(void){
     // LD_BC(0x8);
     // LD_A(0x4f);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), 0x8, 0x4f);
+    ByteFill(coord(0, 0, wram->wTilemap), 0x8, 0x4f);
 
     // hlcoord(0, 1, wTilemap);
     // LD_BC(0x8);
     // LD_A(0x4f);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 1, wram->wTilemap), 0x8, 0x4f);
+    ByteFill(coord(0, 1, wram->wTilemap), 0x8, 0x4f);
 
     // LD_DE(wPokegearFlags);
     // LD_A_de;
@@ -1258,9 +1258,6 @@ void Pokegear_UpdateClock_Conv(void){
     // LD_B_A;
     // LDH_A_addr(hMinutes);
     // LD_C_A;
-    // REG_B = gb_read(hHours);
-    // REG_C = gb_read(hMinutes);
-    // REG_DE = coord(6, 8, wTilemap);
     // decoord(6, 8, wTilemap);
     // FARCALL(aPrintHoursMins);
     PrintHoursMins_Conv(wram->wTilemap + coordidx(6, 8), hram->hHours, hram->hMinutes);
@@ -2047,7 +2044,7 @@ void PokegearPhone_MakePhoneCall(void){
         MakePhoneCallFromPokegear_Conv(wram->wPokegearPhoneSelectedPerson);
         // LD_C(10);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(10);
+        DelayFrames(10);
         // LD_HL(wOptions);
         // SET_hl(NO_TEXT_SCROLL);
         bit_set(wram->wOptions, NO_TEXT_SCROLL);
@@ -2837,7 +2834,7 @@ void DeleteSpriteAnimStruct2ToEnd(void){
     // LD_BC(wSpriteAnimationStructsEnd - wSpriteAnim2);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(hl, wSpriteAnimationStructsEnd - wSpriteAnim2, 0);
+    ByteFill(hl, wSpriteAnimationStructsEnd - wSpriteAnim2, 0);
     // LD_A(2);
     // LD_addr_A(wSpriteAnimCount);
     wram->wSpriteAnimCount = 2;
@@ -4027,7 +4024,7 @@ static void v_TownMap_InitTilemap(void) {
     // LD_BC(6);
     // hlcoord(1, 0, wTilemap);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(1, 0, wram->wTilemap), 6, 0x07);
+    ByteFill(coord(1, 0, wram->wTilemap), 6, 0x07);
     // hlcoord(0, 0, wTilemap);
     // LD_hl(0x06);
     *coord(0, 0, wram->wTilemap) = 0x06;
@@ -4044,7 +4041,7 @@ static void v_TownMap_InitTilemap(void) {
     // LD_BC(NAME_LENGTH);
     // hlcoord(8, 2, wTilemap);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(8, 2, wram->wTilemap), NAME_LENGTH, 0x07);
+    ByteFill(coord(8, 2, wram->wTilemap), NAME_LENGTH, 0x07);
     // hlcoord(19, 2, wTilemap);
     // LD_hl(0x17);
     *coord(19, 2, wram->wTilemap) = 0x17;
@@ -4083,16 +4080,16 @@ void v_TownMap(void){
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
     // CALL(aPokegear_LoadGFX);
     Pokegear_LoadGFX_Conv();
     // FARCALL(aClearSpriteAnims);
     ClearSpriteAnims_Conv();
     // LD_A(8);
     // CALL(aSkipMusic);
-    SkipMusic_Conv(4);
+    SkipMusic(4);
     // LD_A(LCDC_DEFAULT);
     // LDH_addr_A(rLCDC);
     gb_write(rLCDC, LCDC_DEFAULT);
@@ -4290,7 +4287,7 @@ void PlayRadio_Conv(uint8_t e){
     PlayRadio_PlayStation(e);
     // LD_C(100);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(100);
+    DelayFrames(100);
 
     while(1) {
     // loop:
@@ -4504,7 +4501,7 @@ uint8_t v_FlyMap(void){
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // LD_HL(hInMenu);
     // LD_A_hl;
     // PUSH_AF;
@@ -4625,7 +4622,7 @@ void TownMapBubble(void){
     // LD_BC(16);
     // LD_A(0x7f);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(2, 0, wram->wTilemap), 16, 0x7f);
+    ByteFill(coord(2, 0, wram->wTilemap), 16, 0x7f);
 //  Top-right corner
     // LD_A(0x31);
     // LD_hl_A;
@@ -4636,7 +4633,7 @@ void TownMapBubble(void){
     // LD_BC(SCREEN_WIDTH - 2);
     // LD_A(0x7f);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(1, 1, wram->wTilemap), SCREEN_WIDTH - 2, 0x7f);
+    ByteFill(coord(1, 1, wram->wTilemap), SCREEN_WIDTH - 2, 0x7f);
 
 //  Bottom-left corner
     // hlcoord(1, 2, wTilemap);
@@ -4647,7 +4644,7 @@ void TownMapBubble(void){
     // LD_BC(16);
     // LD_A(0x7f);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(2, 2, wram->wTilemap), 16, 0x7f);
+    ByteFill(coord(2, 2, wram->wTilemap), 16, 0x7f);
 //  Bottom-right corner
     // LD_A(0x33);
     // LD_hl_A;
@@ -4878,7 +4875,7 @@ static void PlaceString_MonsNest(species_t species) {
     // LD_BC(SCREEN_WIDTH);
     // LD_A(0x7f);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_WIDTH, 0x7f);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_WIDTH, 0x7f);
     // hlcoord(0, 1, wTilemap);
     // LD_A(0x06);
     // LD_hli_A;
@@ -4886,11 +4883,11 @@ static void PlaceString_MonsNest(species_t species) {
     // LD_BC(SCREEN_WIDTH - 2);
     // LD_A(0x07);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(1, 1, wram->wTilemap), SCREEN_WIDTH - 2, 0x07);
+    ByteFill(coord(1, 1, wram->wTilemap), SCREEN_WIDTH - 2, 0x07);
     // LD_hl(0x17);
     *coord(SCREEN_WIDTH - 1, 1, wram->wTilemap) = 0x17;
     // CALL(aGetPokemonName);
-    uint8_t* de = GetPokemonName_Conv2(species);
+    uint8_t* de = GetPokemonName(species);
     // hlcoord(2, 0, wTilemap);
     struct TextPrintState st = {.hl = coord(2, 0, wram->wTilemap), .de = de};
     // CALL(aPlaceString);
@@ -4955,7 +4952,7 @@ static void Pokedex_GetArea_GetAndPlaceNest(uint8_t a, species_t species){
     // decoord(0, 0, wTilemap);
     // LD_BC(wVirtualOAMEnd - wVirtualOAM);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(coord(0, 0, wram->wTilemap), wram->wVirtualOAMSprite, sizeof(wram->wVirtualOAMSprite)); // ...why?
+    CopyBytes(coord(0, 0, wram->wTilemap), wram->wVirtualOAMSprite, sizeof(wram->wVirtualOAMSprite)); // ...why?
     // RET;
 }
 
@@ -4971,7 +4968,7 @@ static void Pokedex_GetArea_LeftRightInput(uint8_t joypad, species_t species){
         if(hram->hWY == SCREEN_HEIGHT_PX)
             return;
         // CALL(aClearSprites);
-        ClearSprites_Conv();
+        ClearSprites();
         // LD_A(SCREEN_HEIGHT_PX);
         // LDH_addr_A(hWY);
         hram->hWY = SCREEN_HEIGHT_PX;
@@ -4997,7 +4994,7 @@ static void Pokedex_GetArea_LeftRightInput(uint8_t joypad, species_t species){
         if(hram->hWY == 0)
             return;
         // CALL(aClearSprites);
-        ClearSprites_Conv();
+        ClearSprites();
         // XOR_A_A;
         // LDH_addr_A(hWY);
         hram->hWY = 0;
@@ -5027,13 +5024,13 @@ static void Pokedex_GetArea_BlinkNestIcons(void) {
         // LD_DE(wVirtualOAM);
         // LD_BC(wVirtualOAMEnd - wVirtualOAM);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(wram->wVirtualOAMSprite, coord(0, 0, wram->wTilemap), sizeof(wram->wVirtualOAMSprite));
+        CopyBytes(wram->wVirtualOAMSprite, coord(0, 0, wram->wTilemap), sizeof(wram->wVirtualOAMSprite));
         // RET;
         return;
     }
     else {
         // CALL(aClearSprites);
-        ClearSprites_Conv();
+        ClearSprites();
         // RET;
         return;
     }
@@ -5069,7 +5066,7 @@ static bool Pokedex_GetArea_CheckPlayerLocation(void){
         // LD_BC(wVirtualOAMEnd - wVirtualOAM);
         // XOR_A_A;
         // CALL(aByteFill);
-        ByteFill_Conv2(wram->wVirtualOAMSprite, sizeof(wram->wVirtualOAMSprite), 0);
+        ByteFill(wram->wVirtualOAMSprite, sizeof(wram->wVirtualOAMSprite), 0);
         // SCF;
         // RET;
         return false;
@@ -5148,7 +5145,7 @@ static void Pokedex_GetArea_HideNestsShowPlayer(void){
     // LD_BC(wVirtualOAMEnd - wVirtualOAMSprite04);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wVirtualOAMSprite + 4, sizeof(wram->wVirtualOAMSprite) - 4 * sizeof(wram->wVirtualOAMSprite[0]), 0x0);
+    ByteFill(wram->wVirtualOAMSprite + 4, sizeof(wram->wVirtualOAMSprite) - 4 * sizeof(wram->wVirtualOAMSprite[0]), 0x0);
     // RET;
 }
 
@@ -5164,7 +5161,7 @@ void Pokedex_GetArea(uint8_t e, species_t species){
     // LD_addr_A(wTownMapPlayerIconLandmark);
     wram->wTownMapPlayerIconLandmark = e;
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = 0;
@@ -5224,7 +5221,7 @@ void Pokedex_GetArea(uint8_t e, species_t species){
         if(hram->hJoyPressed & (A_BUTTON | B_BUTTON)) {
         // a_b:
             // CALL(aClearSprites);
-            ClearSprites_Conv();
+            ClearSprites();
             // POP_AF;
             // LD_addr_A(wTownMapCursorLandmark);
             wram->wTownMapCursorLandmark = cursorLandmark;
@@ -5309,7 +5306,7 @@ void TownMapBGUpdate_Conv(uint16_t hl){
     //  3 frames to update the whole screen's palettes.
         // LD_C(3);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(3);
+        DelayFrames(3);
     }
 // tiles:
 //  Update BG Map tiles
@@ -5831,7 +5828,7 @@ uint8_t EntireFlyMap(void){
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // LD_HL(hInMenu);
     // LD_A_hl;
     // PUSH_AF;

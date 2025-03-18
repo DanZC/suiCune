@@ -89,19 +89,19 @@ static tile_t* sDebugMenuTilemapBuffer;
 static tile_t* sDebugMenuAttrmapBuffer;
 
 void DebugMenu_SaveTilemap(void) {
-    CopyBytes_Conv2(sDebugMenuTilemapBuffer, coord(0, 0, wram->wTilemap), sizeof(wram->wTilemap));
+    CopyBytes(sDebugMenuTilemapBuffer, coord(0, 0, wram->wTilemap), sizeof(wram->wTilemap));
 }
 
 void DebugMenu_RestoreTilemap(void) {
-    CopyBytes_Conv2(coord(0, 0, wram->wTilemap), sDebugMenuTilemapBuffer, sizeof(wram->wTilemap));
+    CopyBytes(coord(0, 0, wram->wTilemap), sDebugMenuTilemapBuffer, sizeof(wram->wTilemap));
 }
 
 void DebugMenu_SaveAttrmap(void) {
-    CopyBytes_Conv2(sDebugMenuAttrmapBuffer, coord(0, 0, wram->wAttrmap), sizeof(wram->wAttrmap));
+    CopyBytes(sDebugMenuAttrmapBuffer, coord(0, 0, wram->wAttrmap), sizeof(wram->wAttrmap));
 }
 
 void DebugMenu_RestoreAttrmap(void) {
-    CopyBytes_Conv2(coord(0, 0, wram->wAttrmap), sDebugMenuAttrmapBuffer, sizeof(wram->wAttrmap));
+    CopyBytes(coord(0, 0, wram->wAttrmap), sDebugMenuAttrmapBuffer, sizeof(wram->wAttrmap));
 }
 
 void DebugMenu_PrintStrings() {
@@ -437,7 +437,7 @@ void DebugMenu_SoundTest(void) {
 static void DebugMenu_BattleTest_StartBattle(uint8_t tclass, uint8_t tid) {
     ClearTilemap_Conv2();
     WaitBGMap_Conv();
-    DelayFrames_Conv(10);
+    DelayFrames(10);
     wram->wMapTileset = TILESET_JOHTO;
     LoadMapTileset_Conv2();
 
@@ -616,9 +616,9 @@ void DebugMenu_BattleTest(void) {
 void DebugMenu_GFXTest(void) {
     hram->hBGMapMode = 0;
     ClearBox_Conv2(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, SCREEN_HEIGHT);
-    ByteFill_Conv2(vram->vTiles0, 2048, 0);
-    ByteFill_Conv2(vram->vTiles1, 2048, 0);
-    ByteFill_Conv2(vram->vTiles2, 2048, 0);
+    ByteFill(vram->vTiles0, 2048, 0);
+    ByteFill(vram->vTiles1, 2048, 0);
+    ByteFill(vram->vTiles2, 2048, 0);
     v_LoadStandardFont_Conv();
     StatsScreen_LoadFont_Conv();
     LoadPNG2bppAssetSectionToVRAM(vram->vTiles2, "gfx/pokemon/charizard/front.png", 0, 7 * 7);
@@ -649,9 +649,9 @@ void DebugMenu_GFXTest(void) {
     }
 
     ClearBox_Conv2(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, SCREEN_HEIGHT);
-    ByteFill_Conv2(vram->vTiles0, 2048, 0);
-    ByteFill_Conv2(vram->vTiles1, 2048, 0);
-    ByteFill_Conv2(vram->vTiles2, 2048, 0);
+    ByteFill(vram->vTiles0, 2048, 0);
+    ByteFill(vram->vTiles1, 2048, 0);
+    ByteFill(vram->vTiles2, 2048, 0);
     v_LoadFontsExtra1_Conv();
     v_LoadFontsExtra2_Conv();
     v_LoadStandardFont_Conv();
@@ -810,9 +810,9 @@ void DebugMenu_Scripting(void) {
     }
 
     ClearTilemap_Conv2();
-    ByteFill_Conv2(vram->vTiles0, 2048, 0);
-    ByteFill_Conv2(vram->vTiles1, 2048, 0);
-    ByteFill_Conv2(vram->vTiles2, 2048, 0);
+    ByteFill(vram->vTiles0, 2048, 0);
+    ByteFill(vram->vTiles1, 2048, 0);
+    ByteFill(vram->vTiles2, 2048, 0);
     v_LoadFontsExtra1_Conv();
     v_LoadFontsExtra2_Conv();
     v_LoadStandardFont_Conv();
@@ -845,9 +845,9 @@ void DebugMenu_Link(void) {
     WaitBGMap_Conv();
 
     OpenSRAM_Conv(MBANK(asPlayerData));
-    CopyBytes_Conv(wCrystalData, sCrystalData, wCrystalDataEnd - wCrystalData);
-    CopyBytes_Conv(wPlayerID, sPlayerData + (wPlayerID - wPlayerData), 2);
-    CopyBytes_Conv(wPlayerName, sPlayerData + (wPlayerName - wPlayerData), NAME_LENGTH);
+    CopyBytes_GB(wCrystalData, sCrystalData, wCrystalDataEnd - wCrystalData);
+    CopyBytes_GB(wPlayerID, sPlayerData + (wPlayerID - wPlayerData), 2);
+    CopyBytes_GB(wPlayerName, sPlayerData + (wPlayerName - wPlayerData), NAME_LENGTH);
     CloseSRAM_Conv();
 
     printf("NAME: "); PrintCrystalStringFromRAM(wram->wPlayerName); printf("\n");
@@ -867,7 +867,7 @@ void DebugMenu_Link(void) {
 
     NetworkCloseConnection();
     ClearScreen_Conv2();
-    DelayFrames_Conv(4);
+    DelayFrames(4);
     DebugMenu_RestoreTilemap();
     DebugMenu_RestoreAttrmap();
     v_LoadFontsExtra1_Conv();
@@ -1026,7 +1026,7 @@ void DebugMenu_BattleAnim(void) {
     }
     wram->wOptions = options;
     ClearScreen_Conv2();
-    DelayFrames_Conv(4);
+    DelayFrames(4);
     DebugMenu_RestoreTilemap();
     DebugMenu_RestoreAttrmap();
     v_LoadFontsExtra1_Conv();
@@ -1129,7 +1129,7 @@ static const struct MenuHeader Menu_NewsMenu = {
 static void DebugMenu_News_DeleteNews(void) {
     OpenSRAM_Conv(MBANK(as5_aa72));
     gb_write(s5_aa72, 0);
-    ByteFill_Conv2(GBToRAMAddr(s5_aa73), 0xc, 0x0);
+    ByteFill(GBToRAMAddr(s5_aa73), 0xc, 0x0);
     CloseSRAM_Conv();
 }
 
@@ -1170,5 +1170,5 @@ loop:
     v_LoadFontsExtra1_Conv();
     v_LoadFontsExtra2_Conv();
     v_LoadStandardFont_Conv();
-    DelayFrames_Conv(4);
+    DelayFrames(4);
 }

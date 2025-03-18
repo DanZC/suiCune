@@ -41,7 +41,7 @@ static void CelebiShrineEvent_RestorePlayerSprite_DespawnLeaves(void){
     // LD_BC(wVirtualOAMEnd - wVirtualOAMSprite04);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wVirtualOAMSprite, sizeof(wram->wVirtualOAMSprite) - 4 * sizeof(wram->wVirtualOAMSprite[0]), 0x0);
+    ByteFill(wram->wVirtualOAMSprite, sizeof(wram->wVirtualOAMSprite) - 4 * sizeof(wram->wVirtualOAMSprite[0]), 0x0);
     // RET;
 }
 
@@ -98,7 +98,7 @@ void CelebiShrineEvent(void){
         CelebiEvent_CountDown();
         // LD_C(2);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(2);
+        DelayFrames(2);
         // POP_DE;
         // POP_BC;
         // goto loop;

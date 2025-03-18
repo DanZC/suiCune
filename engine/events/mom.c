@@ -259,7 +259,7 @@ void BankOfMom(void){
                     // LD_DE(wStringBuffer2 + 3);
                     // LD_BC(3);
                     // CALL(aCopyBytes);
-                    CopyBytes_Conv2(wram->wStringBuffer2 + 3, wram->wStringBuffer2, 3);
+                    CopyBytes(wram->wStringBuffer2 + 3, wram->wStringBuffer2, 3);
                     // LD_BC(wMomsMoney);
                     // LD_DE(wStringBuffer2);
                     // FARCALL(aGiveMoney);
@@ -281,7 +281,7 @@ void BankOfMom(void){
                     // LD_DE(wMomsMoney);
                     // LD_BC(3);
                     // CALL(aCopyBytes);
-                    CopyBytes_Conv2(wram->wMomsMoney, wram->wStringBuffer2, 3);
+                    CopyBytes(wram->wMomsMoney, wram->wStringBuffer2, 3);
                     // LD_DE(SFX_TRANSACTION);
                     // CALL(aPlaySFX);
                     PlaySFX_Conv(SFX_TRANSACTION);
@@ -342,7 +342,7 @@ void BankOfMom(void){
                     // LD_DE(wStringBuffer2 + 3);
                     // LD_BC(3);
                     // CALL(aCopyBytes);
-                    CopyBytes_Conv2(wram->wStringBuffer2 + 3, wram->wStringBuffer2, 3);
+                    CopyBytes(wram->wStringBuffer2 + 3, wram->wStringBuffer2, 3);
                     // LD_DE(wMomsMoney);
                     // LD_BC(wStringBuffer2);
                     // FARCALL(aCompareMoney);
@@ -377,7 +377,7 @@ void BankOfMom(void){
                     // LD_DE(wMoney);
                     // LD_BC(3);
                     // CALL(aCopyBytes);
-                    CopyBytes_Conv2(wram->wMoney, wram->wStringBuffer2, 3);
+                    CopyBytes(wram->wMoney, wram->wStringBuffer2, 3);
                     // LD_DE(SFX_TRANSACTION);
                     // CALL(aPlaySFX);
                     PlaySFX_Conv(SFX_TRANSACTION);
@@ -706,7 +706,7 @@ void Mom_Wait10Frames(void){
     // LD_C(10);
     // CALL(aDelayFrames);
     // RET;
-    return DelayFrames_Conv(10);
+    return DelayFrames(10);
 }
 
 static void Mom_WithdrawDepositMenuJoypad_getdigitquantity(uint8_t* dest, uint8_t pos) {
@@ -853,7 +853,7 @@ bool Mom_WithdrawDepositMenuJoypad(void){
         // LD_BC(7);
         // LD_A(0x7f);
         // CALL(aByteFill);
-        ByteFill_Conv2(coord(12, 6, wram->wTilemap), 7, 0x7f);
+        ByteFill(coord(12, 6, wram->wTilemap), 7, 0x7f);
         // hlcoord(12, 6, wTilemap);
         // LD_DE(wStringBuffer2);
         // LD_BC((PRINTNUM_MONEY | PRINTNUM_LEADINGZEROS | 3 << 8) | 6);

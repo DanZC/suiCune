@@ -44,7 +44,7 @@ static bool DebugTeleportScript(script_s* s) {
     SCRIPT_BEGIN
     reloadmappart
     playsound(SFX_WARP_TO)
-    HideSprites_Conv();
+    HideSprites();
     special(UpdateTimePals)
     applymovement(PLAYER, TeleportFrom)
     special(WarpToSpawnPoint)
@@ -87,12 +87,12 @@ static void DebugShowCatchTutorial(void){
 
 static void DebugUnownPrinter(void){
     uint8_t temp[sizeof(wram->wUnownDex)];
-    CopyBytes_Conv2(temp, wram->wUnownDex, sizeof(wram->wUnownDex));
+    CopyBytes(temp, wram->wUnownDex, sizeof(wram->wUnownDex));
     for(uint8_t i = 0; i < NUM_UNOWN; ++i){
         wram->wUnownDex[i] = UNOWN_A + i;
     }
     UnownPrinter();
-    CopyBytes_Conv2(wram->wUnownDex, temp, sizeof(wram->wUnownDex));
+    CopyBytes(wram->wUnownDex, temp, sizeof(wram->wUnownDex));
 }
 
 static bool DebugWildBattleScript(script_s* s){
@@ -190,7 +190,7 @@ loop:
         case DEBUGFIELDITEM_TELEPORT: {
             FadeToMenu_Conv();
             hram->hMapAnims = 0;
-            ClearSprites_Conv();
+            ClearSprites();
             LoadStandardMenuHeader_Conv();
             uint8_t spawn = EntireFlyMap();
             if(spawn == 0xff || spawn >= NUM_SPAWNS) {

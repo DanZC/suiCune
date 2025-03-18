@@ -35,7 +35,7 @@ void BattleCommand_BeatUp(void){
         else {
             // LD_C(20);
             // CALL(aDelayFrames);
-            DelayFrames_Conv(20);
+            DelayFrames(20);
             // XOR_A_A;
             // LD_addr_A(wPlayerRolloutCount);
             wram->wPlayerRolloutCount = 0;
@@ -170,7 +170,7 @@ void BattleCommand_BeatUp(void){
             // LD_A_addr(wEnemyMonSpecies);
             // LD_addr_A(wNamedObjectIndex);
             // CALL(aGetPokemonName);
-            GetPokemonName_Conv2(wram->wEnemyMon.species);
+            GetPokemonName(wram->wEnemyMon.species);
             // LD_HL(mBeatUpAttackText);
             // CALL(aStdBattleTextbox);
             StdBattleTextbox(BeatUpAttackText);
@@ -193,7 +193,7 @@ void BattleCommand_BeatUp(void){
             // CALL(aAddNTimes);
             // LD_DE(wStringBuffer1);
             // CALL(aCopyBytes);
-            CopyBytes_Conv2(wram->wStringBuffer1, wram->wOTPartyMonNickname[wram->wCurBeatUpPartyMon], NAME_LENGTH);
+            CopyBytes(wram->wStringBuffer1, wram->wOTPartyMonNickname[wram->wCurBeatUpPartyMon], NAME_LENGTH);
         }
         else {
             // LD_A_addr(wCurBeatUpPartyMon);
@@ -204,7 +204,7 @@ void BattleCommand_BeatUp(void){
             // LD_A_hl;
             // LD_addr_A(wNamedObjectIndex);
             // CALL(aGetPokemonName);
-            GetPokemonName_Conv2(wram->wOTPartySpecies[wram->wCurBeatUpPartyMon]);
+            GetPokemonName(wram->wOTPartySpecies[wram->wCurBeatUpPartyMon]);
             // goto got_enemy_nick;
         }
 

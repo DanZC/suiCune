@@ -131,7 +131,7 @@ static void DoMysteryGift_SaveMysteryGiftTrainerName(void){
     // LD_DE(sMysteryGiftPartnerName);
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(GBToRAMAddr(sMysteryGiftPartnerName), wram->wMysteryGiftPartnerName, NAME_LENGTH);
+    CopyBytes(GBToRAMAddr(sMysteryGiftPartnerName), wram->wMysteryGiftPartnerName, NAME_LENGTH);
     //assert ['sMysteryGiftPartnerName + NAME_LENGTH == sMysteryGiftUnusedFlag'];
     // LD_A(TRUE);
     // LD_de_A;
@@ -141,7 +141,7 @@ static void DoMysteryGift_SaveMysteryGiftTrainerName(void){
     // LD_HL(wMysteryGiftTrainer);
     // LD_BC(wMysteryGiftTrainerEnd - wMysteryGiftTrainer);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(GBToRAMAddr(sMysteryGiftTrainer), wram->wMysteryGiftTrainer, sizeof(wram->wMysteryGiftTrainer));
+    CopyBytes(GBToRAMAddr(sMysteryGiftTrainer), wram->wMysteryGiftTrainer, sizeof(wram->wMysteryGiftTrainer));
     // JP(mCloseSRAM);
     CloseSRAM_Conv();
 }
@@ -183,8 +183,8 @@ void DoMysteryGift(void){
     };
     OpenSRAM_Conv(MBANK(asPlayerData));
     wram->wPlayerGender = gb_read(sCrystalData);
-    CopyBytes_Conv2(&wram->wPlayerID,  GBToRAMAddr(sPlayerData + (wPlayerID - wPlayerData)), 2);
-    CopyBytes_Conv2(wram->wPlayerName, GBToRAMAddr(sPlayerData + (wPlayerName - wPlayerData)), NAME_LENGTH);
+    CopyBytes(&wram->wPlayerID,  GBToRAMAddr(sPlayerData + (wPlayerID - wPlayerData)), 2);
+    CopyBytes(wram->wPlayerName, GBToRAMAddr(sPlayerData + (wPlayerName - wPlayerData)), NAME_LENGTH);
     CloseSRAM_Conv();
     // static const char String_PressAToLink_BToCancel[] = 
     //            "Press A to"
@@ -195,7 +195,7 @@ void DoMysteryGift(void){
         // CALL(aClearTilemap);
         ClearTilemap_Conv2();
         // CALL(aClearSprites);
-        ClearSprites_Conv();
+        ClearSprites();
         // CALL(aWaitBGMap);
         WaitBGMap_Conv();
         // CALL(aInitMysteryGiftLayout);
@@ -234,7 +234,7 @@ void DoMysteryGift(void){
         // CALL(aClearTilemap);
         ClearTilemap_Conv2();
         // CALL(aEnableLCD);
-        EnableLCD_Conv();
+        EnableLCD();
         // CALL(aWaitBGMap);
         WaitBGMap_Conv();
         // LD_B(SCGB_DIPLOMA);
@@ -402,7 +402,7 @@ void DoMysteryGift(void){
         // CALL(aCloseSRAM);
         CloseSRAM_Conv();
         // CALL(aGetItemName);
-        GetItemName_Conv2(item);
+        GetItemName(item);
         // LD_HL(mDoMysteryGift_MysteryGiftSentText);  // sent item/decoration
         // goto PrintTextAndExit;
         // CALL(aPrintText);
@@ -1812,7 +1812,7 @@ void StagePartyDataForMysteryGift(void){
             // LD_A_hl;
             // LD_de_A;
             // INC_DE;
-            CopyBytes_Conv2(de, &bc->mon.species, sizeof(bc->mon.species));
+            CopyBytes(de, &bc->mon.species, sizeof(bc->mon.species));
             de += sizeof(bc->mon.species);
         // copy moves
             // LD_HL(MON_MOVES);
@@ -1820,7 +1820,7 @@ void StagePartyDataForMysteryGift(void){
             // PUSH_BC;
             // LD_BC(NUM_MOVES);
             // CALL(aCopyBytes);
-            CopyBytes_Conv2(de, bc->mon.moves, sizeof(bc->mon.moves));
+            CopyBytes(de, bc->mon.moves, sizeof(bc->mon.moves));
             de += sizeof(bc->mon.moves);
             // POP_BC;
             // POP_HL;
@@ -1912,7 +1912,7 @@ void InitMysteryGiftLayout(void){
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
     // LD_HL(mMysteryGiftGFX);
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
     // LD_A(BANK(aMysteryGiftGFX));
@@ -1923,7 +1923,7 @@ void InitMysteryGiftLayout(void){
     // LD_A(0x42);
     // LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_HEIGHT * SCREEN_WIDTH, 0x42);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_HEIGHT * SCREEN_WIDTH, 0x42);
     // hlcoord(3, 7, wTilemap);
     // LD_BC((9 << 8) | 15);
     // CALL(aClearBox);
@@ -2025,7 +2025,7 @@ void InitMysteryGiftLayout(void){
     // LD_hl(0x41);
     *coord(17, 15, wram->wTilemap) = 0x41;
     // CALL(aEnableLCD);
-    EnableLCD_Conv();
+    EnableLCD();
     // CALL(aWaitBGMap);
     WaitBGMap_Conv();
     // LD_B(SCGB_MYSTERY_GIFT);

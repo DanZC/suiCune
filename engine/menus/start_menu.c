@@ -58,7 +58,7 @@ static uint8_t* StartMenu_FillMenuList(void) {
     // LD_A(-1);
     // LD_BC(wMenuItemsListEnd - (wMenuItemsList + 1));
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wMenuItemsList + 1, sizeof(wram->wMenuItemsList) - 1, 0xff);
+    ByteFill(wram->wMenuItemsList + 1, sizeof(wram->wMenuItemsList) - 1, 0xff);
     // LD_DE(wMenuItemsList + 1);
     // LD_C(0);
     // RET;

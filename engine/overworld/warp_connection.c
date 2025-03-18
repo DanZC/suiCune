@@ -489,7 +489,7 @@ static void LoadMapTimeOfDay_ClearBGMap(void) {
     // LD_BC(vBGMap1 - vBGMap0);
     // hlbgcoord(0, 0, vBGMap0);
     // CALL(aByteFill);
-    ByteFill_Conv2(bgcoord(0, 0, vram->vBGMap2), vBGMap1 - vBGMap0, 0);
+    ByteFill(bgcoord(0, 0, vram->vBGMap2), vBGMap1 - vBGMap0, 0);
 
     // POP_AF;
     // LDH_addr_A(rVBK);
@@ -499,7 +499,7 @@ static void LoadMapTimeOfDay_ClearBGMap(void) {
     // LD_BC(vBGMap1 - vBGMap0);
     // hlbgcoord(0, 0, vBGMap0);
     // CALL(aByteFill);
-    ByteFill_Conv2(bgcoord(0, 0, vram->vBGMap0), vBGMap1 - vBGMap0, 0);
+    ByteFill(bgcoord(0, 0, vram->vBGMap0), vBGMap1 - vBGMap0, 0);
     // RET;
 }
 
@@ -598,7 +598,7 @@ void LoadMapPalettes(void){
 
 void RefreshMapSprites(void){
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // FARCALL(aInitMapNameSign);
     InitMapNameSign();
     // CALL(aGetMovementPermissions);

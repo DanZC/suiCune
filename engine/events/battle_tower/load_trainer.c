@@ -18,7 +18,7 @@ void LoadOpponentTrainerAndPokemon(void){
     // LD_HL(wBT_OTTrainer);
     // LD_BC(BATTLE_TOWER_STRUCT_LENGTH);
     // CALL(aByteFill);
-    ByteFill_Conv2(&wram->wBT_OTTrainer, sizeof(wram->wBT_OTTrainer), 0);
+    ByteFill(&wram->wBT_OTTrainer, sizeof(wram->wBT_OTTrainer), 0);
 
 // Write $ff into the Item-Slots
     // LD_A(0xff);
@@ -43,7 +43,7 @@ void LoadOpponentTrainerAndPokemon(void){
         // resample:
         //   //  loop to find a random trainer
             // CALL(aRandom);
-            Random_Conv();
+            Random();
             // LDH_A_addr(hRandomAdd);
             // ADD_A_B;
             // LD_B_A;  // b contains the nr of the trainer
@@ -106,7 +106,7 @@ void LoadOpponentTrainerAndPokemon(void){
     // CALL(aAddNTimes);
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wBT_OTTrainer.name, U82C(BattleTowerTrainers[b].name), sizeof(wram->wBT_OTTrainer.name));
+    CopyBytes(wram->wBT_OTTrainer.name, U82C(BattleTowerTrainers[b].name), sizeof(wram->wBT_OTTrainer.name));
     wram->wBT_OTTrainer.trainerClass = BattleTowerTrainers[b].tclass;
 
     struct BattleTowerPartyMon* de = wram->wBT_OTTrainer.party;
@@ -167,7 +167,7 @@ void LoadRandomBattleTowerMon(struct BattleTowerPartyMon* de){
             do {
             // resample:
                 // CALL(aRandom);
-                Random_Conv();
+                Random();
                 // LDH_A_addr(hRandomAdd);
                 // ADD_A_B;
                 // LD_B_A;
@@ -248,8 +248,8 @@ void LoadRandomBattleTowerMon(struct BattleTowerPartyMon* de){
 
         // LD_BC(NICKNAMED_MON_STRUCT_LENGTH);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(&de->mon, &hl->pmon, sizeof(de->mon));
-        CopyBytes_Conv2(de->monName, hl->nickname, sizeof(de->monName));
+        CopyBytes(&de->mon, &hl->pmon, sizeof(de->mon));
+        CopyBytes(de->monName, hl->nickname, sizeof(de->monName));
 
         // LD_A_addr(wNamedObjectIndex);
         // PUSH_AF;
@@ -267,7 +267,7 @@ void LoadRandomBattleTowerMon(struct BattleTowerPartyMon* de){
         // POP_DE;
         // LD_BC(MON_NAME_LENGTH);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(de->monName, GetPokemonName_Conv2(de->mon.mon.species), MON_NAME_LENGTH);
+        CopyBytes(de->monName, GetPokemonName(de->mon.mon.species), MON_NAME_LENGTH);
 
         // POP_DE;
         // POP_AF;

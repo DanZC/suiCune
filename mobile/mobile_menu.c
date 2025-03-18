@@ -53,7 +53,7 @@ entry:
     MobileMenu_InitMenuBuffers();
     // LD_C(12);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(12);
+    DelayFrames(12);
     // hlcoord(4, 0, wTilemap);
     // LD_B(10);
     // LD_C(10);
@@ -286,14 +286,14 @@ void Function4a0c2(void){
     // LD_DE(wPlayerName);
     // LD_BC(NAME_LENGTH_JAPANESE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wPlayerName, GBToRAMAddr(sPlayerData + wPlayerName - wPlayerData), NAME_LENGTH);
+    CopyBytes(wram->wPlayerName, GBToRAMAddr(sPlayerData + wPlayerName - wPlayerData), NAME_LENGTH);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // FARCALL(av_LoadData);
     v_LoadData();
     // LD_C(2);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(2);
+    DelayFrames(2);
     // LD_C(0x1);
     // CALL(aInitMobileProfile);
     uint8_t a = InitMobileProfile(0x1);
@@ -311,7 +311,7 @@ void Function4a0c2(void){
 // skip_save:
     // LD_C(5);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(5);
+    DelayFrames(5);
     // JR(masm_4a111);
     return asm_4a111();
 }
@@ -389,7 +389,7 @@ void Function4a13b(void){
     Function4a373();
     // LD_C(10);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(10);
+    DelayFrames(10);
     // return Function4a149();
 }
 
@@ -707,7 +707,7 @@ bool Function4a28a(void){
                 // XOR_A_A;
                 // LD_BC(MOBILE_LOGIN_PASSWORD_LENGTH);
                 // CALL(aByteFill);
-                ByteFill_Conv2(GBToRAMAddr(sMobileLoginPassword), MOBILE_LOGIN_PASSWORD_LENGTH, 0x0);
+                ByteFill(GBToRAMAddr(sMobileLoginPassword), MOBILE_LOGIN_PASSWORD_LENGTH, 0x0);
                 // CALL(aCloseSRAM);
                 CloseSRAM_Conv();
                 // LD_HL(mDeletedTheLoginPasswordText);
@@ -1021,7 +1021,7 @@ entry:
     ClearBGPalettes_Conv();
     // LD_C(20);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(20);
+    DelayFrames(20);
     // hlcoord(2, 0, wTilemap);
     // LD_B(0xa);
     // LD_C(0xe);
@@ -1368,7 +1368,7 @@ void Function4a6c5(uint16_t de){
     wram->wMusicFadeID = de;
     // LD_C(22);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(22);
+    DelayFrames(22);
     // RET;
 }
 

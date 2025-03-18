@@ -83,7 +83,7 @@ void BattleCommand_Transform(void){
     de->species = hl->species;
     // LD_BC(NUM_MOVES);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(de->moves, hl->moves, sizeof(de->moves));
+    CopyBytes(de->moves, hl->moves, sizeof(de->moves));
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto mimic_enemy_backup;
@@ -117,8 +117,8 @@ void BattleCommand_Transform(void){
     // LD_E_L;
     // POP_HL;
     // LD_BC(wBattleMonStructEnd - wBattleMonStats);
-    CopyBytes_Conv2(de->stats, hl->stats, sizeof(de->stats));
-    CopyBytes_Conv2(de->types, hl->types, sizeof(de->types));
+    CopyBytes(de->stats, hl->stats, sizeof(de->stats));
+    CopyBytes(de->types, hl->types, sizeof(de->types));
     // CALL(aCopyBytes);
 //  init the power points
     // LD_BC(wBattleMonMoves - wBattleMonStructEnd);
@@ -156,7 +156,7 @@ void BattleCommand_Transform(void){
     // LD_A_hl;
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetPokemonName);
-    GetPokemonName_Conv2(hl->species);
+    GetPokemonName(hl->species);
     // LD_HL(wEnemyStats);
     // LD_DE(wPlayerStats);
     // LD_BC(2 * 5);
@@ -224,10 +224,10 @@ void BattleSideCopy(void* hl, void* de, uint16_t bc){
         // LD_H_D;
         // LD_L_E;
         // POP_DE;
-        return CopyBytes_Conv2(hl, de, bc);
+        return CopyBytes(hl, de, bc);
     }
 
 // copy:
     // JP(mCopyBytes);
-    return CopyBytes_Conv2(de, hl, bc);
+    return CopyBytes(de, hl, bc);
 }

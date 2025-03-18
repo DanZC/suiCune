@@ -250,7 +250,7 @@ bool CheckBalance_MomItem2_Conv(void){
         // LD_DE(wMomItemTriggerBalance);
         // LD_BC(wMomsMoney);
         // FARCALL(aCompareMoney);
-        u8_flag_s res = CompareMoney_Conv(wram->wMomItemTriggerBalance, wram->wMomsMoney);
+        u8_flag_s res = CompareMoney_Conv(wram->wMomsMoney, wram->wMomItemTriggerBalance);
         // IF_Z goto exact;
         if(res.a == 0) {
         // exact:
@@ -260,7 +260,7 @@ bool CheckBalance_MomItem2_Conv(void){
             // CALL(aRandomRange);
             // INC_A;
             // LD_addr_A(wWhichMomItemSet);
-            wram->wWhichMomItemSet = RandomRange_Conv(NUM_MOM_ITEMS_1) + 1;
+            wram->wWhichMomItemSet = RandomRange(NUM_MOM_ITEMS_1) + 1;
             // SCF;
             // RET;
             return true;

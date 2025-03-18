@@ -52,7 +52,7 @@ void AnimateDexSearchSlowpoke(void){
         // POP_HL;
         // POP_BC;
         // CALL(aDelayFrames);
-        DelayFrames_Conv(c);
+        DelayFrames(c);
         // DEC_B;
         // IF_NZ goto loop;
     } while(--b != 0);
@@ -63,7 +63,7 @@ void AnimateDexSearchSlowpoke(void){
     DoDexSearchSlowpokeFrame();
     // LD_C(32);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(32);
+    DelayFrames(32);
     // RET;
 }
 
@@ -120,7 +120,7 @@ void DisplayDexEntry(species_t a){
     // CALL(aGetPokemonName);
     // hlcoord(9, 3, wTilemap);
     // CALL(aPlaceString);  // mon species
-    PlaceStringSimple(GetPokemonName_Conv2(a), coord(9, 3, wram->wTilemap));
+    PlaceStringSimple(GetPokemonName(a), coord(9, 3, wram->wTilemap));
     // LD_A_addr(wTempSpecies);
     // LD_B_A;
     // CALL(aGetDexEntryPointer);
@@ -228,7 +228,7 @@ void DisplayDexEntry(species_t a){
     // LD_BC(SCREEN_WIDTH - 1);
     // LD_A(0x61);  // horizontal divider
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(1, 10, wram->wTilemap), SCREEN_WIDTH - 1, 0x61);
+    ByteFill(coord(1, 10, wram->wTilemap), SCREEN_WIDTH - 1, 0x61);
 // page number
     // hlcoord(1, 9, wTilemap);
     // LD_hl(0x55);
@@ -269,7 +269,7 @@ void DisplayDexEntry(species_t a){
     // LD_BC(SCREEN_WIDTH - 1);
     // LD_A(0x61);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(1, 10, wram->wTilemap), SCREEN_WIDTH - 1, 0x61);
+    ByteFill(coord(1, 10, wram->wTilemap), SCREEN_WIDTH - 1, 0x61);
 // page number
     // hlcoord(1, 9, wTilemap);
     // LD_hl(0x55);

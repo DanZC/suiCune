@@ -24,7 +24,7 @@ void TransferVirtualOAM(void) {
 // wait:
     // DEC_A;
     // IF_NZ goto wait;
-    CopyBytes_Conv2(gb.oam, wram->wVirtualOAMSprite, sizeof(gb.oam));
+    CopyBytes(gb.oam, wram->wVirtualOAMSprite, sizeof(gb.oam));
     return;
 }
 
@@ -110,7 +110,7 @@ void VBlank_Conv(void)
         case 6: VBlank6_Conv(); break;
     }
 
-    GameTimer_Conv();
+    GameTimer();
 
     // POP_HL;
     // POP_DE;
@@ -240,7 +240,6 @@ void VBlank0_Conv(void) {
     // inc frame counter
     // LD_HL(hVBlankCounter);
     // INC_hl;
-    // gb_write(hVBlankCounter, gb_read(hVBlankCounter) + 1);
     hram->hVBlankCounter++;
 
     // advance random variables
@@ -262,7 +261,6 @@ void VBlank0_Conv(void) {
     temp = gb_read(rDIV);
     carry = (temp > hram->hRandomSub)? 1: 0;
     hram->hRandomSub = (temp - hram->hRandomSub - REG_F_C) & 0xff;
-    // gb_write(hRandomSub, (temp - gb_read(hRandomSub) - REG_F_C) & 0xff);
     REG_F_C = carry;
 
     // LDH_A_addr(hROMBank);
@@ -355,12 +353,12 @@ done:
 
     // LD_A(BANK(av_UpdateSound));
     // RST(mBankswitch);
-    Bankswitch_Conv(BANK(av_UpdateSound));
+    Bankswitch(BANK(av_UpdateSound));
     // CALL(av_UpdateSound);
     v_UpdateSound();
     // LDH_A_addr(hROMBankBackup);
     // RST(mBankswitch);
-    Bankswitch_Conv(hram->hROMBankBackup);
+    Bankswitch(hram->hROMBankBackup);
 
     // LDH_A_addr(hSeconds);
     // LDH_addr_A(hUnusedBackup);
@@ -387,10 +385,10 @@ void VBlank2(void) {
 
 void VBlank2_Conv(void) {
     hram->hROMBankBackup = hram->hROMBank;
-    Bankswitch_Conv(BANK(av_UpdateSound));
+    Bankswitch(BANK(av_UpdateSound));
     // CALL(av_UpdateSound);
     v_UpdateSound();
-    Bankswitch_Conv(hram->hROMBankBackup);
+    Bankswitch(hram->hROMBankBackup);
     wram->wVBlankOccurred = 0;
     // CALL(aVBlank2);
 }
@@ -521,12 +519,12 @@ void VBlank1_Conv(void) {
     // NOP;
     // LD_A(BANK(av_UpdateSound));
     // RST(mBankswitch);
-    Bankswitch_Conv(BANK(av_UpdateSound));
+    Bankswitch(BANK(av_UpdateSound));
     // CALL(av_UpdateSound);
     v_UpdateSound();
     // LDH_A_addr(hROMBankBackup);
     // RST(mBankswitch);
-    Bankswitch_Conv(hram->hROMBankBackup);
+    Bankswitch(hram->hROMBankBackup);
     // NOP;
 
     // get requested ints
@@ -699,12 +697,10 @@ void VBlank3_Conv(void) {
     // NOP;
     // LD_A(BANK(av_UpdateSound));
     // RST(mBankswitch);
-    Bankswitch_Conv(BANK(av_UpdateSound));
     // CALL(av_UpdateSound);
     v_UpdateSound();
     // LDH_A_addr(hROMBankBackup);
     // RST(mBankswitch);
-    Bankswitch_Conv(hram->hROMBankBackup);
     // NOP;
 
     // request lcdstat
@@ -794,13 +790,10 @@ void VBlank4_Conv(void) {
     // LD_A(BANK(av_UpdateSound));
     // RST(mBankswitch);
     // CALL(av_UpdateSound);
-    Bankswitch_Conv(BANK(av_UpdateSound));
-    // CALL(av_UpdateSound);
     v_UpdateSound();
 
     // LDH_A_addr(hROMBankBackup);
     // RST(mBankswitch);
-    Bankswitch_Conv(hram->hROMBankBackup);
     // RET;
 }
 
@@ -903,7 +896,6 @@ void VBlank5_Conv(void) {
     v_UpdateSound();
     // LDH_A_addr(hROMBankBackup);
     // RST(mBankswitch);
-    Bankswitch_Conv(hram->hROMBankBackup);
     // NOP;
 
     // XOR_A_A;
@@ -987,6 +979,5 @@ void VBlank6_Conv(void) {
 
     // LDH_A_addr(hROMBankBackup);
     // RST(mBankswitch);
-    Bankswitch_Conv(hram->hROMBankBackup);
     // RET;
 }

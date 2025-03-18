@@ -46,12 +46,12 @@ bool SendMailToPC(uint8_t b){
             OpenSRAM_Conv(MBANK(asMailboxCount));
             // LD_BC(MAIL_STRUCT_LENGTH);
             // CALL(aCopyBytes);
-            CopyBytes_Conv2(GBToRAMAddr(dest), GBToRAMAddr(source), MAIL_STRUCT_LENGTH);
+            CopyBytes(GBToRAMAddr(dest), GBToRAMAddr(source), MAIL_STRUCT_LENGTH);
             // POP_HL;
             // XOR_A_A;
             // LD_BC(MAIL_STRUCT_LENGTH);
             // CALL(aByteFill);
-            ByteFill_Conv2(GBToRAMAddr(source), MAIL_STRUCT_LENGTH, 0);
+            ByteFill(GBToRAMAddr(source), MAIL_STRUCT_LENGTH, 0);
             // LD_A(MON_ITEM);
             // CALL(aGetPartyParamLocation);
             // LD_hl(0);
@@ -98,7 +98,7 @@ void DeleteMailFromPC(uint8_t b){
         // PUSH_BC;
         // LD_BC(MAIL_STRUCT_LENGTH);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(de, hl, sizeof(*de));
+        CopyBytes(de, hl, sizeof(*de));
         de++, hl++;
         // POP_BC;
         // INC_B;
@@ -112,7 +112,7 @@ void DeleteMailFromPC(uint8_t b){
     // XOR_A_A;
     // LD_BC(MAIL_STRUCT_LENGTH);
     // CALL(aByteFill);
-    ByteFill_Conv2(de, sizeof(*de), 0x0);
+    ByteFill(de, sizeof(*de), 0x0);
     // LD_HL(sMailboxCount);
     // DEC_hl;
     gb_write(sMailboxCount, gb_read(sMailboxCount) - 1);
@@ -156,7 +156,7 @@ void MoveMailFromPCToParty(uint8_t b){
     // PUSH_HL;
     // LD_BC(MAIL_STRUCT_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(de, hl, sizeof(*de));
+    CopyBytes(de, hl, sizeof(*de));
     // POP_HL;
     // LD_DE(PARTYMON_STRUCT_LENGTH - MON_MOVES);
     // ADD_HL_DE;
@@ -442,7 +442,7 @@ void GivePokeMail_Conv(const struct Pokemail* mail){
     OpenSRAM_Conv(MBANK(asPartyMail));
     // CALL(aCopyBytes);
     struct MailMsg* de = (struct MailMsg*)GBToRAMAddr(partyMail);
-    CopyBytes_Conv2(de->message, wram->wMonMailMessageBuffer, MAIL_MSG_LENGTH + 1);
+    CopyBytes(de->message, wram->wMonMailMessageBuffer, MAIL_MSG_LENGTH + 1);
     // POP_AF;
     // PUSH_AF;
     // LD_HL(wPartyMonOTs);
@@ -450,7 +450,7 @@ void GivePokeMail_Conv(const struct Pokemail* mail){
     // CALL(aAddNTimes);
     // LD_BC(NAME_LENGTH - 1);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(de->author, wram->wPartyMonOT[a], NAME_LENGTH - 1);
+    CopyBytes(de->author, wram->wPartyMonOT[a], NAME_LENGTH - 1);
     // POP_AF;
     // LD_HL(wPartyMon1ID);
     // LD_BC(PARTYMON_STRUCT_LENGTH);
@@ -482,12 +482,12 @@ void BackupPartyMonMail(void){
     // LD_DE(sPartyMailBackup);
     // LD_BC(PARTY_LENGTH * MAIL_STRUCT_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv(sPartyMailBackup, sPartyMail, PARTY_LENGTH * MAIL_STRUCT_LENGTH);
+    CopyBytes_GB(sPartyMailBackup, sPartyMail, PARTY_LENGTH * MAIL_STRUCT_LENGTH);
     // LD_HL(sMailboxCount);
     // LD_DE(sMailboxCountBackup);
     // LD_BC(1 + MAILBOX_CAPACITY * MAIL_STRUCT_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv(sMailboxCountBackup, sMailboxCount, 1 + MAILBOX_CAPACITY * MAIL_STRUCT_LENGTH);
+    CopyBytes_GB(sMailboxCountBackup, sMailboxCount, 1 + MAILBOX_CAPACITY * MAIL_STRUCT_LENGTH);
     // JP(mCloseSRAM);
     CloseSRAM_Conv();
 }
@@ -500,12 +500,12 @@ void RestorePartyMonMail(void){
     // LD_DE(sPartyMail);
     // LD_BC(PARTY_LENGTH * MAIL_STRUCT_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv(sPartyMail, sPartyMailBackup, PARTY_LENGTH * MAIL_STRUCT_LENGTH);
+    CopyBytes_GB(sPartyMail, sPartyMailBackup, PARTY_LENGTH * MAIL_STRUCT_LENGTH);
     // LD_HL(sMailboxCountBackup);
     // LD_DE(sMailboxCount);
     // LD_BC(1 + MAILBOX_CAPACITY * MAIL_STRUCT_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv(sMailboxCount, sMailboxCountBackup, 1 + MAILBOX_CAPACITY * MAIL_STRUCT_LENGTH);
+    CopyBytes_GB(sMailboxCount, sMailboxCountBackup, 1 + MAILBOX_CAPACITY * MAIL_STRUCT_LENGTH);
     // JP(mCloseSRAM);
     CloseSRAM_Conv();
 }
@@ -518,12 +518,12 @@ void DeletePartyMonMail(void){
     // LD_HL(sPartyMail);
     // LD_BC(PARTY_LENGTH * MAIL_STRUCT_LENGTH);
     // CALL(aByteFill);
-    ByteFill_Conv(sPartyMail, PARTY_LENGTH * MAIL_STRUCT_LENGTH, 0);
+    ByteFill_GB(sPartyMail, PARTY_LENGTH * MAIL_STRUCT_LENGTH, 0);
     // XOR_A_A;
     // LD_HL(sMailboxCount);
     // LD_BC(1 + MAILBOX_CAPACITY * MAIL_STRUCT_LENGTH);
     // CALL(aByteFill);
-    ByteFill_Conv(sMailboxCount, 1 + MAILBOX_CAPACITY * MAIL_STRUCT_LENGTH, 0);
+    ByteFill_GB(sMailboxCount, 1 + MAILBOX_CAPACITY * MAIL_STRUCT_LENGTH, 0);
     // JP(mCloseSRAM);
     CloseSRAM_Conv();
 }
@@ -703,7 +703,7 @@ uint8_t* MailboxPC_GetMailAuthor(uint8_t a){
     // PUSH_DE;
     // LD_BC(NAME_LENGTH - 1);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wStringBuffer1, hl->author, NAME_LENGTH - 1);
+    CopyBytes(wram->wStringBuffer1, hl->author, NAME_LENGTH - 1);
     // LD_A(0x50);
     // LD_de_A;
     wram->wStringBuffer1[NAME_LENGTH - 1] = 0x50;

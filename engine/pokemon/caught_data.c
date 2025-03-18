@@ -52,18 +52,18 @@ void CheckPartyFullAfterContest(void){
             // LD_DE(wBufferMon);
             // LD_BC(BOXMON_STRUCT_LENGTH);
             // CALL(aCopyBytes);
-            CopyBytes_Conv2(&wram->wBufferMon, &wram->wContestMon, sizeof(wram->wBufferMon));
+            CopyBytes(&wram->wBufferMon, &wram->wContestMon, sizeof(wram->wBufferMon));
             // LD_HL(wPlayerName);
             // LD_DE(wBufferMonOT);
             // LD_BC(NAME_LENGTH);
             // CALL(aCopyBytes);
-            CopyBytes_Conv2(wram->wBufferMonOT, wram->wPlayerName, NAME_LENGTH);
+            CopyBytes(wram->wBufferMonOT, wram->wPlayerName, NAME_LENGTH);
             // CALLFAR(aInsertPokemonIntoBox);
             InsertPokemonIntoBox();
             // LD_A_addr(wCurPartySpecies);
             // LD_addr_A(wNamedObjectIndex);
             // CALL(aGetPokemonName);
-            GetPokemonName_Conv2(wram->wContestMon.mon.species);
+            GetPokemonName(wram->wContestMon.mon.species);
             // CALL(aGiveANickname_YesNo);
             // LD_HL(wStringBuffer1);
             uint8_t* hl = wram->wStringBuffer1;
@@ -86,7 +86,7 @@ void CheckPartyFullAfterContest(void){
             // LD_DE(sBoxMonNicknames);
             // LD_BC(MON_NAME_LENGTH);
             // CALL(aCopyBytes);
-            CopyBytes_Conv2(GBToRAMAddr(sBoxMonNicknames), hl, MON_NAME_LENGTH);
+            CopyBytes(GBToRAMAddr(sBoxMonNicknames), hl, MON_NAME_LENGTH);
             // CALL(aCloseSRAM);
             CloseSRAM_Conv();
         }
@@ -146,7 +146,7 @@ void CheckPartyFullAfterContest(void){
     // LD_HL(wContestMon);
     // LD_BC(PARTYMON_STRUCT_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wPartyMon + i, &wram->wContestMon, sizeof(wram->wContestMon));
+    CopyBytes(wram->wPartyMon + i, &wram->wContestMon, sizeof(wram->wContestMon));
     // LD_A_addr(wPartyCount);
     // DEC_A;
     // LD_HL(wPartyMonOTs);
@@ -155,7 +155,7 @@ void CheckPartyFullAfterContest(void){
     // LD_E_L;
     // LD_HL(wPlayerName);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wPartyMonOT[i], wram->wPlayerName, NAME_LENGTH);
+    CopyBytes(wram->wPartyMonOT[i], wram->wPlayerName, NAME_LENGTH);
     // LD_A_addr(wCurPartySpecies);
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetPokemonName);
@@ -163,7 +163,7 @@ void CheckPartyFullAfterContest(void){
     // LD_DE(wMonOrItemNameBuffer);
     // LD_BC(MON_NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wMonOrItemNameBuffer, GetPokemonName_Conv2(wram->wContestMon.mon.species), MON_NAME_LENGTH);
+    CopyBytes(wram->wMonOrItemNameBuffer, GetPokemonName(wram->wContestMon.mon.species), MON_NAME_LENGTH);
     // CALL(aGiveANickname_YesNo);
     // IF_C goto Party_SkipNickname;
     if(GiveANickname_YesNo()) {
@@ -188,7 +188,7 @@ void CheckPartyFullAfterContest(void){
     // LD_E_L;
     // LD_HL(wMonOrItemNameBuffer);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wPartyMonNickname[i], wram->wMonOrItemNameBuffer, MON_NAME_LENGTH);
+    CopyBytes(wram->wPartyMonNickname[i], wram->wMonOrItemNameBuffer, MON_NAME_LENGTH);
     // LD_A_addr(wPartyCount);
     // DEC_A;
     // LD_HL(wPartyMon1Level);

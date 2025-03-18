@@ -28,7 +28,7 @@ bool UpdatePalsIfCGB_Conv(void){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // RET_Z ;
-    if(gb_read(hCGB) == 0)
+    if(hram->hCGB == 0)
         return false;
 
     return UpdateCGBPals_Conv();
@@ -173,7 +173,7 @@ bool ForceUpdateCGBPals_Conv(void){
 //  clear pal update queue
     // XOR_A_A;
     // LDH_addr_A(hCGBPalUpdate);
-    gb_write(hCGBPalUpdate, FALSE);
+    hram->hCGBPalUpdate = FALSE;
     return true;
 }
 
@@ -237,7 +237,7 @@ void DmgToCgbBGPals_Conv(uint8_t a){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // IF_Z goto end;
-    if(gb_read(hCGB) == 0)
+    if(hram->hCGB == 0)
         return;
 
     // LDH_A_addr(rSVBK);
@@ -333,7 +333,7 @@ void DmgToCgbObjPals_Conv(uint8_t d, uint8_t e){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // RET_Z ;
-    if(gb_read(hCGB) == 0)
+    if(hram->hCGB == 0)
         return;
     
     // LDH_A_addr(rSVBK);
@@ -357,7 +357,7 @@ void DmgToCgbObjPals_Conv(uint8_t d, uint8_t e){
 //  request pal update
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    gb_write(hCGBPalUpdate, TRUE);
+    hram->hCGBPalUpdate = TRUE;
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
@@ -758,7 +758,7 @@ void ClearVBank1_Conv(void){
 
     gb_write(rVBK, 1);
 
-    ByteFill_Conv(VRAM_Begin, (VRAM_End - VRAM_Begin), 0);
+    ByteFill_GB(VRAM_Begin, (VRAM_End - VRAM_Begin), 0);
 
     gb_write(rVBK, 0);
 }
@@ -782,7 +782,7 @@ void ReloadSpritesNoPalettes(void){
     // LD_BC((8 * PALETTE_SIZE) + (2 * PALETTE_SIZE));
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wBGPals2, (8 * PALETTE_SIZE) + (2 * PALETTE_SIZE), 0);
+    ByteFill(wram->wBGPals2, (8 * PALETTE_SIZE) + (2 * PALETTE_SIZE), 0);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // LD_A(TRUE);

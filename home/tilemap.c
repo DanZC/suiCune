@@ -41,7 +41,7 @@ void WaitBGMap_Conv(void) {
     //  Wait for it to do its magic
     // LD_C(4);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(4);
+    DelayFrames(4);
 }
 
 void WaitBGMap2(void) {
@@ -75,7 +75,7 @@ void WaitBGMap2_Conv(void) {
         hram->hBGMapMode = 2;
         // LD_C(4);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(4);
+        DelayFrames(4);
     }
 // bg0:
     // LD_A(1);
@@ -83,7 +83,7 @@ void WaitBGMap2_Conv(void) {
     hram->hBGMapMode = 1;
     // LD_C(4);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(4);
+    DelayFrames(4);
     // RET;
 }
 
@@ -95,7 +95,7 @@ void IsCGB(void) {
 }
 
 bool IsCGB_Conv(void){
-    return gb_read(hCGB) == 1;
+    return hram->hCGB == 1;
 }
 
 void ApplyTilemap(void) {
@@ -128,7 +128,7 @@ void ApplyTilemap_Conv(void) {
         hram->hBGMapMode = 1;
         // LD_C(4);
         // CALL(aDelayFrames);
-        return DelayFrames_Conv(4);
+        return DelayFrames(4);
     }
     else {
         hram->hBGMapMode = 1;
@@ -225,7 +225,6 @@ void v_CopyTilemapAtOnce_Conv(void) {
     gb_write(rVBK, MBANK(avBGMap0));
     v_CopyTilemapAtOnce_CopyBGMapViaStack_Conv2(coord(0, 0, wram->wTilemap));
 
-    // In C we don't wait.
     // wait2:
     // LDH_A_addr(rLY);
     // CP_A(0x80 - 1);
@@ -301,7 +300,7 @@ void v_CopyTilemapAtOnce_CopyBGMapViaStack_Conv(uint16_t hl) {
         }
         hl += (BG_MAP_WIDTH - SCREEN_WIDTH);
     } while(--a != 0);
-    gb_write(hTilesPerCycle, 0);
+    hram->hTilesPerCycle = 0;
 }
 
 void v_CopyTilemapAtOnce_CopyBGMapViaStack_Conv2(const tile_t* sp) {
@@ -446,7 +445,7 @@ void ClearPalettes_Conv(void) {
         // LD_BC(16 * PALETTE_SIZE);
         // LD_A(0xff);
         // CALL(aByteFill);
-        ByteFill_Conv2(wram->wBGPals2, (16 * PALETTE_SIZE), 0xff);
+        ByteFill(wram->wBGPals2, (16 * PALETTE_SIZE), 0xff);
 
         // POP_AF;
         // LDH_addr_A(rSVBK);
@@ -516,7 +515,7 @@ void GetSGBLayout_Conv(uint8_t b) {
     // LDH_A_addr(hSGB);
     // AND_A_A;
     // RET_Z;
-    if(gb_read(hSGB) == 0)
+    if(hram->hSGB == 0)
         return;
 
     PREDEF_JUMP(pLoadSGBLayout);

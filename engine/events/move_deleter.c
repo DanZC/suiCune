@@ -179,7 +179,7 @@ void MoveDeletion(void){
         move_t move = wram->wPartyMon[wram->wCurPartyMon].mon.moves[res2.a - 1];
         // LD_addr_A(wNamedObjectIndex);
         // CALL(aGetMoveName);
-        GetMoveName_Conv2(move);
+        GetMoveName(move);
         // LD_HL(mMoveDeletion_AskDeleteMoveText);
         // CALL(aPrintText);
         PrintText_Conv2(AskDeleteMoveText);

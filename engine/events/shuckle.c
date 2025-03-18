@@ -64,7 +64,7 @@ void GiveShuckle(void){
     // CALL(aSkipNames);
     // LD_DE(mSpecialShuckleNickname);
     // CALL(aCopyName2);
-    CopyName2_Conv2(wram->wPartyMonNickname[wram->wPartyCount - 1], U82C(SpecialShuckleNickname));
+    CopyName2(wram->wPartyMonNickname[wram->wPartyCount - 1], U82C(SpecialShuckleNickname));
 
 //  OT.
     // LD_A_addr(wPartyCount);
@@ -73,7 +73,7 @@ void GiveShuckle(void){
     // CALL(aSkipNames);
     // LD_DE(mSpecialShuckleOT);
     // CALL(aCopyName2);
-    CopyName2_Conv2(wram->wPartyMonOT[wram->wPartyCount - 1], U82C(SpecialShuckleOT));
+    CopyName2(wram->wPartyMonOT[wram->wPartyCount - 1], U82C(SpecialShuckleOT));
 
 //  Engine flag for this event.
     // LD_HL(wDailyFlags1);

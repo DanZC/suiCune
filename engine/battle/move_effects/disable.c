@@ -103,7 +103,7 @@ void BattleCommand_Disable(void){
     *disabledMove = lastCounterMove;
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetMoveName);
-    GetMoveName_Conv2(lastCounterMove);
+    GetMoveName(lastCounterMove);
     // LD_HL(mWasDisabledText);
     // JP(mStdBattleTextbox);
     return StdBattleTextbox(WasDisabledText);

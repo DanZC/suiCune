@@ -416,7 +416,7 @@ void BattleAnim_ClearOAM(void){
         // LD_hli_A;
         // DEC_C;
         // IF_NZ goto loop2;
-        ByteFill_Conv2(wram->wVirtualOAMSprite, sizeof(wram->wVirtualOAMSprite), 0);
+        ByteFill(wram->wVirtualOAMSprite, sizeof(wram->wVirtualOAMSprite), 0);
         // RET;
         return;
     }
@@ -1354,7 +1354,7 @@ void BattleAnimCmd_ClearObjs_Conv(void){
     // INC_HL;
     // DEC_A;
     // IF_NZ goto loop;
-    ByteFill_Conv2(wram->wAnimObject, a, 0);
+    ByteFill(wram->wAnimObject, a, 0);
     // RET;
 }
 
@@ -1733,7 +1733,7 @@ static uint8_t* BattleAnimCmd_BattlerGFX_1Row_LoadFeet(uint8_t* hl, const uint8_
         // PUSH_DE;
         // LD_BC((BANK(aBattleAnimCmd_BattlerGFX_1Row) << 8) | 1);
         // CALL(aRequest2bpp);
-        CopyBytes_Conv2(hl, de, 1 * LEN_2BPP_TILE);
+        CopyBytes(hl, de, 1 * LEN_2BPP_TILE);
         // POP_DE;
         // LD_A_addr(wBattleAnimGFXTempPicHeight);
         // LD_L_A;
@@ -1869,8 +1869,8 @@ static uint8_t* BattleAnimCmd_BattlerGFX_2Row_LoadHead(uint8_t* hl, const uint8_
         // PUSH_DE;
         // LD_BC((BANK(aBattleAnimCmd_BattlerGFX_2Row_LoadHead) << 8) | 2);
         // CALL(aRequest2bpp);
-        CopyBytes_Conv2(hl, de, LEN_2BPP_TILE);
-        CopyBytes_Conv2(hl + LEN_2BPP_TILE, de + wram->wBattleAnimGFXTempPicHeight, LEN_2BPP_TILE);
+        CopyBytes(hl, de, LEN_2BPP_TILE);
+        CopyBytes(hl + LEN_2BPP_TILE, de + wram->wBattleAnimGFXTempPicHeight, LEN_2BPP_TILE);
         // POP_DE;
         // LD_A_addr(wBattleAnimGFXTempPicHeight);
         // LD_L_A;
@@ -2090,7 +2090,7 @@ void BattleAnimCmd_UpdateActorPic_Conv(void){
     // LD_B(0);
     // LD_C(6 * 6);
     // CALL(aRequest2bpp);
-    CopyBytes_Conv2((hram->hBattleTurn == TURN_PLAYER)
+    CopyBytes((hram->hBattleTurn == TURN_PLAYER)
             ? vram->vTiles2 + LEN_2BPP_TILE * 0x31
             : vram->vTiles2 + LEN_2BPP_TILE * 0x00,
             vram->vTiles0 + LEN_2BPP_TILE * 0x00,
@@ -2174,7 +2174,7 @@ void GetSubstitutePic(void){
         // LD_DE(sScratch);
         // LD_BC((BANK(aGetSubstitutePic) << 8) | 7 * 7);
         // CALL(aRequest2bpp);
-        CopyBytes_Conv2(vram->vTiles2 + LEN_2BPP_TILE * 0x00, GBToRAMAddr(sScratch), 7 * 7 * LEN_2BPP_TILE);
+        CopyBytes(vram->vTiles2 + LEN_2BPP_TILE * 0x00, GBToRAMAddr(sScratch), 7 * 7 * LEN_2BPP_TILE);
         // goto done;
     }
     else {
@@ -2200,7 +2200,7 @@ void GetSubstitutePic(void){
         // LD_DE(sScratch);
         // LD_BC((BANK(aGetSubstitutePic) << 8) | 6 * 6);
         // CALL(aRequest2bpp);
-        CopyBytes_Conv2(vram->vTiles2 + LEN_2BPP_TILE * 0x31, GBToRAMAddr(sScratch), 6 * 6 * LEN_2BPP_TILE);
+        CopyBytes(vram->vTiles2 + LEN_2BPP_TILE * 0x31, GBToRAMAddr(sScratch), 6 * 6 * LEN_2BPP_TILE);
     }
 
 // done:
@@ -2244,7 +2244,7 @@ void BattleAnimCmd_MinimizeOpp_Conv(void){
     // CALL(aGetMinimizePic);
     struct MinimizePic pic = GetMinimizePic();
     // CALL(aRequest2bpp);
-    CopyBytes_Conv2(pic.hl, pic.de, pic.c * LEN_2BPP_TILE);
+    CopyBytes(pic.hl, pic.de, pic.c * LEN_2BPP_TILE);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
 
@@ -2349,7 +2349,7 @@ void BattleAnimCmd_Minimize_Conv(void){
     struct MinimizePic pic = GetMinimizePic();
     // LD_HL(vTiles0 + LEN_2BPP_TILE * 0x00);
     // CALL(aRequest2bpp);
-    CopyBytes_Conv2(vram->vTiles0 + LEN_2BPP_TILE * 0x00, pic.de, pic.c * LEN_2BPP_TILE);
+    CopyBytes(vram->vTiles0 + LEN_2BPP_TILE * 0x00, pic.de, pic.c * LEN_2BPP_TILE);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
 

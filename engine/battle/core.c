@@ -158,13 +158,13 @@ void DoBattle(void){
     // wild:
         // LD_C(40);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(40);
+        DelayFrames(40);
     }
 
 
 // player_2:
     // CALL(aLoadTilemapToTempTilemap);
-    LoadTilemapToTempTilemap_Conv();
+    LoadTilemapToTempTilemap();
     // CALL(aCheckPlayerPartyForFitMon);
     // LD_A_D;
     // AND_A_A;
@@ -173,7 +173,7 @@ void DoBattle(void){
         return LostBattle();
     }
     // CALL(aSafeLoadTempTilemapToTilemap);
-    SafeLoadTempTilemapToTilemap_Conv();
+    SafeLoadTempTilemapToTilemap();
     // LD_A_addr(wBattleType);
     // CP_A(BATTLETYPE_DEBUG);
     // JP_Z (mDoBattle_tutorial_debug);
@@ -222,7 +222,7 @@ void DoBattle(void){
     // CALL(aSlideBattlePicOut);
     SlideBattlePicOut_Conv(coord(1, 5, wram->wTilemap), 9);
     // CALL(aLoadTilemapToTempTilemap);
-    LoadTilemapToTempTilemap_Conv();
+    LoadTilemapToTempTilemap();
     // CALL(aResetBattleParticipants);
     ResetBattleParticipants();
     // CALL(aInitBattleMon);
@@ -240,7 +240,7 @@ void DoBattle(void){
     // CALL(aEmptyBattleTextbox);
     EmptyBattleTextbox();
     // CALL(aLoadTilemapToTempTilemap);
-    LoadTilemapToTempTilemap_Conv();
+    LoadTilemapToTempTilemap();
     // CALL(aSetPlayerTurn);
     SetPlayerTurn();
     // CALL(aSpikesDamage);
@@ -281,7 +281,7 @@ void DoBattle(void){
 
 void WildFled_EnemyFled_LinkBattleCanceled(void){
     // CALL(aSafeLoadTempTilemapToTilemap);
-    SafeLoadTempTilemapToTilemap_Conv();
+    SafeLoadTempTilemapToTilemap();
     // LD_A_addr(wBattleResult);
     // AND_A(BATTLERESULT_BITMASK);
     // ADD_A(DRAW);
@@ -564,7 +564,7 @@ void HandleBetweenTurnEffects(void){
     // CALL(aUpdateBattleMonInParty);
     UpdateBattleMonInParty();
     // CALL(aLoadTilemapToTempTilemap);
-    LoadTilemapToTempTilemap_Conv();
+    LoadTilemapToTempTilemap();
     // JP(mHandleEncore);
     return HandleEncore();
 }
@@ -691,7 +691,7 @@ static void HandleBerserkGene_go(struct PartyMon* hl) {
     // LD_hl_A;
     *move = moveBackup;
     // CALL(aGetItemName);
-    GetItemName_Conv2(moveBackup);
+    GetItemName(moveBackup);
     // LD_HL(mBattleText_UsersStringBuffer1Activated);
     // CALL(aStdBattleTextbox);
     StdBattleTextbox(BattleText_UsersStringBuffer1Activated);
@@ -853,12 +853,12 @@ bool DetermineMoveOrder(void){
                 // CALL(aBattleRandom);
                 // CP_A_E;
                 // JP_C (mDetermineMoveOrder_player_first);
-                if(BattleRandom_Conv() < LOW(userEff))
+                if(BattleRandom() < LOW(userEff))
                     return true;
                 // CALL(aBattleRandom);
                 // CP_A_C;
                 // JP_C (mDetermineMoveOrder_enemy_first);
-                if(BattleRandom_Conv() < LOW(enemyEff))
+                if(BattleRandom() < LOW(enemyEff))
                     return false;
                 // goto speed_check;
             }
@@ -866,12 +866,12 @@ bool DetermineMoveOrder(void){
                 // CALL(aBattleRandom);
                 // CP_A_C;
                 // JP_C (mDetermineMoveOrder_enemy_first);
-                if(BattleRandom_Conv() < LOW(enemyEff))
+                if(BattleRandom() < LOW(enemyEff))
                     return false;
                 // CALL(aBattleRandom);
                 // CP_A_E;
                 // JP_C (mDetermineMoveOrder_player_first);
-                if(BattleRandom_Conv() < LOW(userEff))
+                if(BattleRandom() < LOW(userEff))
                     return true;
                 // goto speed_check;
             }
@@ -886,7 +886,7 @@ bool DetermineMoveOrder(void){
                 // CP_A_C;
                 // IF_NC goto speed_check;
                 // JP(mDetermineMoveOrder_enemy_first);
-                if(BattleRandom_Conv() < LOW(enemyEff))
+                if(BattleRandom() < LOW(enemyEff))
                     return false;
             }
         }
@@ -894,7 +894,7 @@ bool DetermineMoveOrder(void){
         // CP_A_E;
         // IF_NC goto speed_check;
         // JP(mDetermineMoveOrder_player_first);
-        else if(BattleRandom_Conv() < LOW(userEff))
+        else if(BattleRandom() < LOW(userEff))
             return true;
 
     // speed_check:
@@ -920,7 +920,7 @@ bool DetermineMoveOrder(void){
             // CALL(aBattleRandom);
             // CP_A(50 percent + 1);
             // JP_C (mDetermineMoveOrder_player_first);
-            if(BattleRandom_Conv() < 50 percent + 1)
+            if(BattleRandom() < 50 percent + 1)
                 return true;
             // JP(mDetermineMoveOrder_enemy_first);
             return false;
@@ -930,7 +930,7 @@ bool DetermineMoveOrder(void){
             // CALL(aBattleRandom);
             // CP_A(50 percent + 1);
             // JP_C (mDetermineMoveOrder_enemy_first);
-            if(BattleRandom_Conv() < 50 percent + 1)
+            if(BattleRandom() < 50 percent + 1)
                 return false;
         }
 
@@ -955,7 +955,7 @@ bool DetermineMoveOrder(void){
             // CALL(aBattleRandom);
             // CP_A(50 percent + 1);
             // JP_C (mDetermineMoveOrder_enemy_first);
-            if(BattleRandom_Conv() < 50 percent + 1)
+            if(BattleRandom() < 50 percent + 1)
                 return false;
             // JP(mDetermineMoveOrder_player_first);
             return true;
@@ -964,7 +964,7 @@ bool DetermineMoveOrder(void){
             // CALL(aBattleRandom);
             // CP_A(50 percent + 1);
             // JP_C (mDetermineMoveOrder_player_first);
-            if(BattleRandom_Conv() < 50 percent + 1)
+            if(BattleRandom() < 50 percent + 1)
                 return true;
             // JP(mDetermineMoveOrder_enemy_first);
             return false;
@@ -1238,7 +1238,7 @@ not_encored:
     bool selected = MoveSelectionScreen();
     // PUSH_AF;
     // CALL(aSafeLoadTempTilemapToTilemap);
-    SafeLoadTempTilemapToTilemap_Conv();
+    SafeLoadTempTilemapToTilemap();
     // CALL(aUpdateBattleHuds);
     UpdateBattleHuds();
     // LD_A_addr(wCurPlayerMove);
@@ -1529,7 +1529,7 @@ bool TryEnemyFlee_Conv(void){
 
     // CALL(aBattleRandom);
     // LD_B_A;
-    uint8_t b = BattleRandom_Conv();
+    uint8_t b = BattleRandom();
     // CP_A(50 percent + 1);
     // IF_NC goto Stay;
     if(b >= 50 percent + 1)
@@ -1717,7 +1717,7 @@ uint8_t GetMoveEffect_Conv(move_t b){
 
 void Battle_EnemyFirst(void){
     // CALL(aLoadTilemapToTempTilemap);
-    LoadTilemapToTempTilemap_Conv();
+    LoadTilemapToTempTilemap();
     // CALL(aTryEnemyFlee);
     // JP_C (mWildFled_EnemyFled_LinkBattleCanceled);
     if(TryEnemyFlee_Conv())
@@ -2051,7 +2051,7 @@ bool ResidualDamage(void){
         RefreshBattleHuds();
         // LD_C(20);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(20);
+        DelayFrames(20);
         // XOR_A_A;
         // RET;
         return true;
@@ -2100,7 +2100,7 @@ bool ResidualDamage(void){
         RefreshBattleHuds();
         // LD_C(20);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(20);
+        DelayFrames(20);
         // XOR_A_A;
         // RET;
         return true;
@@ -2134,7 +2134,7 @@ bool ResidualDamage(void){
         RefreshBattleHuds();
         // LD_C(20);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(20);
+        DelayFrames(20);
         // XOR_A_A;
         // RET;
         return true;
@@ -2179,7 +2179,7 @@ bool ResidualDamage(void){
         RefreshBattleHuds();
         // LD_C(20);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(20);
+        DelayFrames(20);
         // XOR_A_A;
         // RET;
         return true;
@@ -2318,7 +2318,7 @@ static void HandleWrap_do_it(void){
     // LD_addr_A(wFXAnimID);
     wram->wFXAnimID = *trappingMove;
     // CALL(aGetMoveName);
-    GetMoveName_Conv2(*trappingMove);
+    GetMoveName(*trappingMove);
     // DEC_hl;
     // IF_Z goto release_from_bounds;
     if(--*wrapCount != 0){
@@ -2398,7 +2398,7 @@ static void HandleLeftovers_do_it(void) {
     uint16_t effect = GetUserItem_Conv(&item);
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetItemName);
-    GetItemName_Conv2(item);
+    GetItemName(item);
     // LD_A_B;
     // CP_A(HELD_LEFTOVERS);
     // RET_NZ ;
@@ -2628,7 +2628,7 @@ static void HandleMysteryberry_do_it(void){
 
         // skip_consumption:
             // CALL(aGetItemName);
-            GetItemName_Conv2(temp);
+            GetItemName(temp);
             // CALL(aSwitchTurnCore);
             SwitchTurnCore();
             // CALL(aItemRecoveryAnim);
@@ -2782,7 +2782,7 @@ static void HandleDefrost_do_player_turn(void){
     // CALL(aBattleRandom);
     // CP_A(10 percent);
     // RET_NC ;
-    if(BattleRandom_Conv() >= 10 percent)
+    if(BattleRandom() >= 10 percent)
         return;
     // XOR_A_A;
     // LD_addr_A(wBattleMonStatus);
@@ -2813,7 +2813,7 @@ static void HandleDefrost_do_enemy_turn(void){
     // CALL(aBattleRandom);
     // CP_A(10 percent);
     // RET_NC ;
-    if(BattleRandom_Conv() >= 10 percent)
+    if(BattleRandom() >= 10 percent)
         return;
     // XOR_A_A;
     // LD_addr_A(wEnemyMonStatus);
@@ -2923,7 +2923,7 @@ void HandleSafeguard(void){
 static void HandleScreens_Copy(uint8_t* de){
     // LD_HL(wStringBuffer1);
     // JP(mCopyName2);
-    CopyName2_Conv2(wram->wStringBuffer1, de);
+    CopyName2(wram->wStringBuffer1, de);
 }
 
 static void HandleScreens_ReflectTick(uint8_t* hl, uint8_t* de){
@@ -3689,7 +3689,7 @@ void HandleEnemyMonFaint(void){
     hram->hBGMapMode = 0x1;
     // LD_C(60);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(60);
+    DelayFrames(60);
 
     // LD_A_addr(wBattleMode);
     // DEC_A;
@@ -3766,7 +3766,7 @@ void DoubleSwitch(void){
     // IF_Z goto player_1;
     if(hram->hSerialConnectionStatus != USING_EXTERNAL_CLOCK) {
         // CALL(aClearSprites);
-        ClearSprites_Conv();
+        ClearSprites();
         // hlcoord(1, 0, wTilemap);
         // LD_BC((4 << 8) | 10);
         // CALL(aClearBox);
@@ -3787,9 +3787,9 @@ void DoubleSwitch(void){
         // CALL(aEnemyPartyMonEntrance);
         EnemyPartyMonEntrance_Conv(true);
         // CALL(aClearSprites);
-        ClearSprites_Conv();
+        ClearSprites();
         // CALL(aLoadTilemapToTempTilemap);
-        LoadTilemapToTempTilemap_Conv();
+        LoadTilemapToTempTilemap();
         // POP_AF;
         // LD_addr_A(wCurPartyMon);
         wram->wCurPartyMon = cur;
@@ -3875,7 +3875,7 @@ void UpdateBattleStateAndExperienceAfterEnemyFaint(void){
     // CALL(aEmptyBattleTextbox);
     EmptyBattleTextbox();
     // CALL(aLoadTilemapToTempTilemap);
-    LoadTilemapToTempTilemap_Conv();
+    LoadTilemapToTempTilemap();
     // LD_A_addr(wBattleResult);
     // AND_A(BATTLERESULT_BITMASK);
     // LD_addr_A(wBattleResult);  // WIN
@@ -3901,7 +3901,7 @@ void UpdateBattleStateAndExperienceAfterEnemyFaint(void){
     // LD_DE(wBackupEnemyMonBaseStats);
     // LD_BC(wEnemyMonEnd - wEnemyMonBaseStats);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wBackupEnemyMonBaseStats, wram->wEnemyMonBaseStats, sizeof(wram->wEnemyMonBaseStats));
+    CopyBytes(wram->wBackupEnemyMonBaseStats, wram->wEnemyMonBaseStats, sizeof(wram->wEnemyMonBaseStats));
     // XOR_A_A;
     // LD_addr_A(wGivingExperienceToExpShareHolders);
     wram->wGivingExperienceToExpShareHolders = FALSE;
@@ -3922,7 +3922,7 @@ void UpdateBattleStateAndExperienceAfterEnemyFaint(void){
     // LD_DE(wEnemyMonBaseStats);
     // LD_BC(wEnemyMonEnd - wEnemyMonBaseStats);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wEnemyMonBaseStats, wram->wBackupEnemyMonBaseStats, sizeof(wram->wEnemyMonBaseStats));
+    CopyBytes(wram->wEnemyMonBaseStats, wram->wBackupEnemyMonBaseStats, sizeof(wram->wEnemyMonBaseStats));
     // LD_A(0x1);
     // LD_addr_A(wGivingExperienceToExpShareHolders);
     wram->wGivingExperienceToExpShareHolders = TRUE;
@@ -4223,7 +4223,7 @@ uint8_t HandleEnemySwitch_Conv(void){
             return 0;
 
         // CALL(aSafeLoadTempTilemapToTilemap);
-        SafeLoadTempTilemapToTilemap_Conv();
+        SafeLoadTempTilemapToTilemap();
     }
 
 // not_linked:
@@ -4399,7 +4399,7 @@ void WinTrainerBattle(void){
         BattleWinSlideInEnemyTrainerFrontpic();
         // LD_C(40);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(40);
+        DelayFrames(40);
         // LD_C(0x4);  // win
         // FARCALL(aMobile_PrintOpponentBattleMessage);
         Mobile_PrintOpponentBattleMessage(0x4);
@@ -4421,7 +4421,7 @@ void WinTrainerBattle(void){
         BattleWinSlideInEnemyTrainerFrontpic();
         // LD_C(40);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(40);
+        DelayFrames(40);
         // CALL(aEmptyBattleTextbox);
         EmptyBattleTextbox();
         // LD_C(BATTLETOWERTEXT_LOSS_TEXT);
@@ -4449,7 +4449,7 @@ void WinTrainerBattle(void){
     BattleWinSlideInEnemyTrainerFrontpic();
     // LD_C(40);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(40);
+    DelayFrames(40);
 
     // LD_A_addr(wBattleType);
     // CP_A(BATTLETYPE_CANLOSE);
@@ -4881,7 +4881,7 @@ bool AskUseNextPokemon_Conv(void){
     // CALL(aEmptyBattleTextbox);
     EmptyBattleTextbox();
     // CALL(aLoadTilemapToTempTilemap);
-    LoadTilemapToTempTilemap_Conv();
+    LoadTilemapToTempTilemap();
 //  We don't need to be here if we're in a Trainer battle,
 //  as that decision is made for us.
     // LD_A_addr(wBattleMode);
@@ -4953,7 +4953,7 @@ uint8_t ForcePlayerMonChoice(void){
     if(CheckMobileBattleError_Conv() || wram->wEnemyMon.hp == 0){
     // enemy_fainted_mobile_error:
         // CALL(aClearSprites);
-        ClearSprites_Conv();
+        ClearSprites();
         // CALL(aClearBGPalettes);
         ClearBGPalettes_Conv();
         // CALL(av_LoadHPBar);
@@ -4961,7 +4961,7 @@ uint8_t ForcePlayerMonChoice(void){
         // CALL(aExitMenu);
         ExitMenu_Conv2();
         // CALL(aLoadTilemapToTempTilemap);
-        LoadTilemapToTempTilemap_Conv();
+        LoadTilemapToTempTilemap();
         // CALL(aWaitBGMap);
         WaitBGMap_Conv();
         // CALL(aGetMemSGBLayout);
@@ -4976,7 +4976,7 @@ uint8_t ForcePlayerMonChoice(void){
 
 // send_out_pokemon:
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // LD_A_addr(wCurBattleMon);
     // LD_addr_A(wLastPlayerMon);
     wram->wLastPlayerMon = wram->wCurBattleMon;
@@ -5012,7 +5012,7 @@ uint8_t ForcePlayerMonChoice(void){
     // CALL(aEmptyBattleTextbox);
     EmptyBattleTextbox();
     // CALL(aLoadTilemapToTempTilemap);
-    LoadTilemapToTempTilemap_Conv();
+    LoadTilemapToTempTilemap();
     // CALL(aSetPlayerTurn);
     SetPlayerTurn();
     // CALL(aSpikesDamage);
@@ -5048,7 +5048,7 @@ void PlayerPartyMonEntrance(void){
     // CALL(aEmptyBattleTextbox);
     EmptyBattleTextbox();
     // CALL(aLoadTilemapToTempTilemap);
-    LoadTilemapToTempTilemap_Conv();
+    LoadTilemapToTempTilemap();
     // CALL(aSetPlayerTurn);
     SetPlayerTurn();
     // JP(mSpikesDamage);
@@ -5279,7 +5279,7 @@ void LostBattle(void){
 
         // LD_C(40);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(40);
+        DelayFrames(40);
 
         // CALL(aEmptyBattleTextbox);
         EmptyBattleTextbox();
@@ -5310,7 +5310,7 @@ void LostBattle(void){
 
         // LD_C(40);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(40);
+        DelayFrames(40);
 
         // LD_A_addr(wDebugFlags);
         // BIT_A(DEBUG_BATTLE_F);
@@ -5362,7 +5362,7 @@ void LostBattle(void){
 
                 // LD_C(40);
                 // CALL(aDelayFrames);
-                DelayFrames_Conv(40);
+                DelayFrames(40);
 
                 // LD_C(0x3);  // lost
                 // FARCALL(aMobile_PrintOpponentBattleMessage);
@@ -5498,7 +5498,7 @@ void MonFaintedAnimation_Conv(tile_t* de, tile_t* hl){
             // PUSH_DE;
             // LD_BC(7);
             // CALL(aCopyBytes);
-            CopyBytes_Conv2(de, hl, 7);
+            CopyBytes(de, hl, 7);
             // POP_DE;
             // POP_HL;
             // LD_BC(-SCREEN_WIDTH);
@@ -5524,7 +5524,7 @@ void MonFaintedAnimation_Conv(tile_t* de, tile_t* hl){
         PlaceStringSimple(buf, hl + 20);
         // LD_C(2);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(2);
+        DelayFrames(2);
         // POP_HL;
         hl = hl2;
         // POP_DE;
@@ -5657,7 +5657,7 @@ void SlideBattlePicOut_Conv(uint8_t* hl, uint8_t a){
         } while(--b != 0);
         // LD_C(2);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(2);
+        DelayFrames(2);
         // POP_HL;
         hl = hl2;
         // POP_BC;
@@ -5737,7 +5737,7 @@ void EnemySwitch(void){
     // LD_addr_A(wEnemyIsSwitching);
     wram->wEnemyIsSwitching = 0xff;
     // CALL(aLoadTilemapToTempTilemap);
-    LoadTilemapToTempTilemap_Conv();
+    LoadTilemapToTempTilemap();
     // JP(mPlayerSwitch);
     PlayerSwitch();
     return;
@@ -5994,7 +5994,7 @@ void LookUpTheEffectivenessOfEveryMove(uint8_t b){
         // LD_DE(wEnemyMoveStruct);
         // LD_A(BANK(aMoves));
         // CALL(aFarCopyBytes);
-        CopyBytes_Conv2(&wram->wEnemyMoveStruct, Moves + move, sizeof(wram->wEnemyMoveStruct));
+        CopyBytes(&wram->wEnemyMoveStruct, Moves + move, sizeof(wram->wEnemyMoveStruct));
         // CALL(aSetEnemyTurn);
         SetEnemyTurn();
         // CALLFAR(aBattleCheckTypeMatchup);
@@ -6036,7 +6036,7 @@ void IsThePlayerMonTypesEffectiveAgainstOTMon(uint8_t b){
     // LD_BC(BASE_CATCH_RATE - BASE_TYPES);
     // LD_A(BANK(aBaseData));
     // CALL(aFarCopyBytes);
-    CopyBytes_Conv2(wram->wEnemyMon.types, BasePokemonData + (species - 1), BASE_CATCH_RATE - BASE_TYPES);
+    CopyBytes(wram->wEnemyMon.types, BasePokemonData + (species - 1), BASE_CATCH_RATE - BASE_TYPES);
     // LD_A_addr(wBattleMonType1);
     // LD_addr_A(wPlayerMoveStruct + MOVE_TYPE);
     wram->wPlayerMoveStruct.type = wram->wBattleMon.type1;
@@ -6120,7 +6120,7 @@ uint8_t ScoreMonTypeMatchups(void){
                 // LD_B_A;
                 // CALL(aBattleRandom);
                 // AND_A(0x7);
-                a = BattleRandom_Conv() & 0x7;
+                a = BattleRandom() & 0x7;
                 // CP_A_B;
                 // IF_NC goto loop5;
                 // LD_B_A;
@@ -6489,7 +6489,7 @@ void ClearEnemyMonBox_Conv(void){
     // CALL(aExitMenu);
     ExitMenu_Conv2();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // hlcoord(1, 0, wTilemap);
     // LD_BC((4 << 8) | 10);
     // CALL(aClearBox);
@@ -7013,7 +7013,7 @@ static bool TryToRunAwayFromBattle_print_inescapable_text(const struct TextCmd* 
     // LD_addr_A(wFailedToFlee);
     wram->wFailedToFlee = TRUE;
     // CALL(aLoadTilemapToTempTilemap);
-    LoadTilemapToTempTilemap_Conv();
+    LoadTilemapToTempTilemap();
     // AND_A_A;
     // RET;
     return false;
@@ -7040,7 +7040,7 @@ static bool TryToRunAwayFromBattle_can_escape(void) {
     uint8_t result = DRAW;
     if(wram->wLinkMode != 0) {
         // CALL(aLoadTilemapToTempTilemap);
-        LoadTilemapToTempTilemap_Conv();
+        LoadTilemapToTempTilemap();
         // XOR_A_A;  // BATTLEPLAYERACTION_USEMOVE
         // LD_addr_A(wBattlePlayerAction);
         wram->wBattlePlayerAction = BATTLEPLAYERACTION_USEMOVE;
@@ -7053,7 +7053,7 @@ static bool TryToRunAwayFromBattle_can_escape(void) {
         // CALL(aLinkBattleSendReceiveAction);
         LinkBattleSendReceiveAction();
         // CALL(aSafeLoadTempTilemapToTilemap);
-        SafeLoadTempTilemapToTilemap_Conv();
+        SafeLoadTempTilemapToTilemap();
         // CALL(aCheckMobileBattleError);
         // IF_C goto mobile;
         if(CheckMobileBattleError_Conv()) {
@@ -7072,7 +7072,7 @@ static bool TryToRunAwayFromBattle_can_escape(void) {
             // CALL(aWaitSFX);
             WaitSFX_Conv();
             // CALL(aLoadTilemapToTempTilemap);
-            LoadTilemapToTempTilemap_Conv();
+            LoadTilemapToTempTilemap();
             // SCF;
             // RET;
             return true;
@@ -7108,7 +7108,7 @@ static bool TryToRunAwayFromBattle_can_escape(void) {
     // CALL(aWaitSFX);
     WaitSFX_Conv();
     // CALL(aLoadTilemapToTempTilemap);
-    LoadTilemapToTempTilemap_Conv();
+    LoadTilemapToTempTilemap();
     // SCF;
     // RET;
     return true;
@@ -7182,7 +7182,7 @@ bool TryToRunAwayFromBattle_Conv(const struct BattleMon* hl, const struct Battle
         // CALL(aSetPlayerTurn);
         SetPlayerTurn();
         // CALL(aGetItemName);
-        GetItemName_Conv2(wram->wBattleMon.item);
+        GetItemName(wram->wBattleMon.item);
         // LD_HL(mBattleText_UserFledUsingAStringBuffer1);
         // CALL(aStdBattleTextbox);
         StdBattleTextbox(BattleText_UserFledUsingAStringBuffer1);
@@ -7205,7 +7205,7 @@ bool TryToRunAwayFromBattle_Conv(const struct BattleMon* hl, const struct Battle
     // LD_A_de;
     // LDH_addr_A(hEnemyMonSpeed + 1);
     // CALL(aSafeLoadTempTilemapToTilemap);
-    SafeLoadTempTilemapToTilemap_Conv();
+    SafeLoadTempTilemapToTilemap();
     uint16_t a_speed = hl->speed[1] | (hl->speed[0] << 8);
     uint16_t b_speed = de->speed[1] | (de->speed[0] << 8);
     // LD_DE(hMultiplicand + 1);
@@ -7273,7 +7273,7 @@ bool TryToRunAwayFromBattle_Conv(const struct BattleMon* hl, const struct Battle
     // LDH_A_addr(hQuotient + 3);
     // CP_A_B;
     // IF_NC goto can_escape;
-    if(BattleRandom_Conv() < odds)
+    if(BattleRandom() < odds)
         return TryToRunAwayFromBattle_can_escape();
     // LD_A(BATTLEPLAYERACTION_USEITEM);
     // LD_addr_A(wBattlePlayerAction);
@@ -7291,14 +7291,14 @@ void InitBattleMon(void){
     // CALL(aCopyBytes);
     wram->wBattleMon.species = hl->mon.species;
     wram->wBattleMon.item = hl->mon.item;
-    CopyBytes_Conv2(&wram->wBattleMon.moves, &hl->mon.moves, NUM_MOVES * sizeof(move_t));
+    CopyBytes(&wram->wBattleMon.moves, &hl->mon.moves, NUM_MOVES * sizeof(move_t));
     // LD_BC(MON_DVS - MON_ID);
     // ADD_HL_BC;
     // LD_DE(wBattleMonDVs);
     // LD_BC(MON_POKERUS - MON_DVS);
     // CALL(aCopyBytes);
     wram->wBattleMon.dvs = wram->wPartyMon[wram->wCurPartyMon].mon.DVs;
-    CopyBytes_Conv2(&wram->wBattleMon.pp, &wram->wPartyMon[wram->wCurPartyMon].mon.PP, NUM_MOVES);
+    CopyBytes(&wram->wBattleMon.pp, &wram->wPartyMon[wram->wCurPartyMon].mon.PP, NUM_MOVES);
     wram->wBattleMon.happiness = wram->wPartyMon[wram->wCurPartyMon].mon.happiness;
     // INC_HL;
     // INC_HL;
@@ -7311,7 +7311,7 @@ void InitBattleMon(void){
     wram->wBattleMon.status[1] = hl->unused;
     wram->wBattleMon.hp = hl->HP;
     wram->wBattleMon.maxHP = hl->maxHP;
-    CopyBytes_Conv2(wram->wBattleMon.stats, hl->stats, sizeof(wram->wBattleMon.stats));
+    CopyBytes(wram->wBattleMon.stats, hl->stats, sizeof(wram->wBattleMon.stats));
     // LD_A_addr(wBattleMonSpecies);
     // LD_addr_A(wTempBattleMonSpecies);
     wram->wTempBattleMonSpecies = wram->wBattleMon.species;
@@ -7333,12 +7333,12 @@ void InitBattleMon(void){
     // LD_DE(wBattleMonNickname);
     // LD_BC(MON_NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wBattleMonNickname, wram->wPartyMonNickname[wram->wCurBattleMon], MON_NAME_LENGTH);
+    CopyBytes(wram->wBattleMonNickname, wram->wPartyMonNickname[wram->wCurBattleMon], MON_NAME_LENGTH);
     // LD_HL(wBattleMonAttack);
     // LD_DE(wPlayerStats);
     // LD_BC(PARTYMON_STRUCT_LENGTH - MON_ATK);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(&wram->wPlayerAttack, &wram->wBattleMon.attack, PARTYMON_STRUCT_LENGTH - MON_ATK);
+    CopyBytes(&wram->wPlayerAttack, &wram->wBattleMon.attack, PARTYMON_STRUCT_LENGTH - MON_ATK);
     // CALL(aApplyStatusEffectOnPlayerStats);
     ApplyStatusEffectOnPlayerStats();
     // CALL(aBadgeStatBoosts);
@@ -7469,7 +7469,7 @@ void InitEnemyMon(void){
     // CALL(aCopyBytes);
     wram->wEnemyMon.species = wram->wOTPartyMon[wram->wCurPartyMon].mon.species;
     wram->wEnemyMon.item = wram->wOTPartyMon[wram->wCurPartyMon].mon.item;
-    CopyBytes_Conv2(wram->wEnemyMon.moves, &wram->wOTPartyMon[wram->wCurPartyMon].mon.moves, NUM_MOVES * sizeof(move_t));
+    CopyBytes(wram->wEnemyMon.moves, &wram->wOTPartyMon[wram->wCurPartyMon].mon.moves, NUM_MOVES * sizeof(move_t));
     for(int i = 0; i < NUM_MOVES; ++i) {
         printf("Move %d = %02X\n", i, wram->wEnemyMon.moves[i]);
     }
@@ -7479,7 +7479,7 @@ void InitEnemyMon(void){
     // LD_BC(MON_POKERUS - MON_DVS);
     // CALL(aCopyBytes);
     wram->wEnemyMon.dvs = wram->wOTPartyMon[wram->wCurPartyMon].mon.DVs;
-    CopyBytes_Conv2(wram->wEnemyMon.pp, wram->wOTPartyMon[wram->wCurPartyMon].mon.PP, NUM_MOVES * sizeof(move_t));
+    CopyBytes(wram->wEnemyMon.pp, wram->wOTPartyMon[wram->wCurPartyMon].mon.PP, NUM_MOVES * sizeof(move_t));
     wram->wEnemyMon.happiness = wram->wOTPartyMon[wram->wCurPartyMon].mon.happiness;
     // INC_HL;
     // INC_HL;
@@ -7488,7 +7488,7 @@ void InitEnemyMon(void){
     // LD_BC(PARTYMON_STRUCT_LENGTH - MON_LEVEL);
     // CALL(aCopyBytes);
     wram->wEnemyMon.level = wram->wOTPartyMon[wram->wCurPartyMon].mon.level;
-    CopyBytes_Conv2(wram->wEnemyMon.status, &wram->wOTPartyMon[wram->wCurPartyMon].status, PARTYMON_STRUCT_LENGTH - MON_STATUS);
+    CopyBytes(wram->wEnemyMon.status, &wram->wOTPartyMon[wram->wCurPartyMon].status, PARTYMON_STRUCT_LENGTH - MON_STATUS);
     // LD_A_addr(wEnemyMonSpecies);
     // LD_addr_A(wCurSpecies);
     wram->wCurSpecies = wram->wEnemyMon.species;
@@ -7500,12 +7500,12 @@ void InitEnemyMon(void){
     // LD_DE(wEnemyMonNickname);
     // LD_BC(MON_NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wEnemyMonNickname, wram->wOTPartyMonNickname[wram->wCurPartyMon], MON_NAME_LENGTH);
+    CopyBytes(wram->wEnemyMonNickname, wram->wOTPartyMonNickname[wram->wCurPartyMon], MON_NAME_LENGTH);
     // LD_HL(wEnemyMonAttack);
     // LD_DE(wEnemyStats);
     // LD_BC(PARTYMON_STRUCT_LENGTH - MON_ATK);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wEnemyStats, wram->wEnemyMon.stats, sizeof(wram->wEnemyStats));
+    CopyBytes(wram->wEnemyStats, wram->wEnemyMon.stats, sizeof(wram->wEnemyStats));
     // CALL(aApplyStatusEffectOnEnemyStats);
     ApplyStatusEffectOnEnemyStats();
     // LD_HL(wBaseType1);
@@ -7539,7 +7539,7 @@ void InitEnemyMon(void){
 
 void SwitchPlayerMon(void){
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // LD_A_addr(wCurBattleMon);
     // LD_addr_A(wLastPlayerMon);
     wram->wLastPlayerMon = wram->wCurBattleMon;
@@ -7561,7 +7561,7 @@ void SwitchPlayerMon(void){
     // CALL(aEmptyBattleTextbox);
     EmptyBattleTextbox();
     // CALL(aLoadTilemapToTempTilemap);
-    LoadTilemapToTempTilemap_Conv();
+    LoadTilemapToTempTilemap();
     // LD_HL(wEnemyMonHP);
     // LD_A_hli;
     // OR_A_hl;
@@ -8067,7 +8067,7 @@ void UseOpponentItem(void){
     // LD_A_hl;
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetItemName);
-    GetItemName_Conv2(item);
+    GetItemName(item);
     // CALLFAR(aConsumeHeldItem);
     ConsumeHeldItem();
     // LD_HL(mRecoveredUsingText);
@@ -8219,7 +8219,7 @@ void UseConfusionHealingItem(void){
     // RES_hl(SUBSTATUS_CONFUSED);
     bit_reset(*GetBattleVarAddr(BATTLE_VARS_SUBSTATUS3_OPP), SUBSTATUS_CONFUSED);
     // CALL(aGetItemName);
-    GetItemName_Conv2(item);
+    GetItemName(item);
     // CALL(aItemRecoveryAnim);
     ItemRecoveryAnim();
     // LD_HL(mBattleText_ItemHealedConfusion);
@@ -8313,7 +8313,7 @@ static void HandleStatBoostingHeldItems_HandleItem(item_t* hl, item_t* bc, uint8
     // LD_de_A;
     *hl = NO_ITEM;
     // CALL(aGetItemName);
-    GetItemName_Conv2(itm);
+    GetItemName(itm);
     // LD_HL(mBattleText_UsersStringBuffer1Activated);
     // CALL(aStdBattleTextbox);
     StdBattleTextbox(BattleText_UsersStringBuffer1Activated);
@@ -8609,7 +8609,7 @@ void PrintPlayerHUD(void){
     // LD_DE(wTempMonLevel);
     // LD_BC(wTempMonStructEnd - wTempMonLevel);
     // CALL(aCopyBytes);  // battle_struct and party_struct end with the same data
-    CopyBytes_Conv2(&wram->wTempMon.mon.level, &wram->wBattleMon.level, (wTempMonStructEnd - wTempMonLevel));
+    CopyBytes(&wram->wTempMon.mon.level, &wram->wBattleMon.level, (wTempMonStructEnd - wTempMonLevel));
     // LD_A_addr(wCurBattleMon);
     // LD_HL(wPartyMon1Species);
     // CALL(aGetPartyLocation);
@@ -9078,7 +9078,7 @@ BattleMenu_begin:
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = 0;
     // CALL(aLoadTempTilemapToTilemap);
-    LoadTempTilemapToTilemap_Conv();
+    LoadTempTilemapToTilemap();
 
     // LD_A_addr(wBattleType);
     // CP_A(BATTLETYPE_DEBUG);
@@ -9093,7 +9093,7 @@ BattleMenu_begin:
         // CALL(aEmptyBattleTextbox);
         EmptyBattleTextbox();
         // CALL(aLoadTilemapToTempTilemap);
-        LoadTilemapToTempTilemap_Conv();
+        LoadTilemapToTempTilemap();
     }
 // ok:
 
@@ -9145,7 +9145,7 @@ BattleMenu_begin:
                 // LD_addr_A(wNumFleeAttempts);
                 wram->wNumFleeAttempts = 0;
                 // CALL(aSafeLoadTempTilemapToTilemap);
-                SafeLoadTempTilemapToTilemap_Conv();
+                SafeLoadTempTilemapToTilemap();
                 // AND_A_A;
                 // RET;
                 return false;
@@ -9202,7 +9202,7 @@ BattleMenu_begin:
                             // CALL(aFinishBattleAnim);
                             FinishBattleAnim();
                             // CALL(aLoadTilemapToTempTilemap);
-                            LoadTilemapToTempTilemap_Conv();
+                            LoadTilemapToTempTilemap();
                             // JP(mBattleMenu);
                             goto BattleMenu_begin;
                         }
@@ -9269,7 +9269,7 @@ BattleMenu_begin:
                 // CALL(av_LoadBattleFontsHPBar);
                 v_LoadBattleFontsHPBar();
                 // CALL(aClearSprites);
-                ClearSprites_Conv();
+                ClearSprites();
                 // LD_A_addr(wBattleType);
                 // CP_A(BATTLETYPE_TUTORIAL);
                 // IF_Z goto tutorial2;
@@ -9291,7 +9291,7 @@ BattleMenu_begin:
                 // CALL(aWaitBGMap);
                 WaitBGMap_Conv();
                 // CALL(aLoadTilemapToTempTilemap);
-                LoadTilemapToTempTilemap_Conv();
+                LoadTilemapToTempTilemap();
                 // CALL(aClearWindowData);
                 ClearWindowData_Conv2();
                 // CALL(aFinishBattleAnim);
@@ -9389,7 +9389,7 @@ BattleMenu_begin:
                                 // CALL(aDelayFrame);
                                 DelayFrame();
                                 // CALL(aClearSprites);
-                                ClearSprites_Conv();
+                                ClearSprites();
                                 // CALL(av_LoadHPBar);
                                 v_LoadHPBar_Conv();
                                 // CALL(aCloseWindow);
@@ -9431,7 +9431,7 @@ BattleMenu_begin:
                     if(CheckMobileBattleError_Conv()) {
                     Cancel:
                         // CALL(aClearSprites);
-                        ClearSprites_Conv();
+                        ClearSprites();
                         // CALL(aClearPalettes);
                         ClearPalettes_Conv();
                         // CALL(aDelayFrame);
@@ -9441,7 +9441,7 @@ BattleMenu_begin:
                         // CALL(aCloseWindow);
                         CloseWindow_Conv2();
                         // CALL(aLoadTilemapToTempTilemap);
-                        LoadTilemapToTempTilemap_Conv();
+                        LoadTilemapToTempTilemap();
                         // CALL(aGetMemSGBLayout);
                         GetMemSGBLayout_Conv();
                         // CALL(aSetPalettes);
@@ -9455,7 +9455,7 @@ BattleMenu_begin:
             case 0x4: {
             // BattleMenu_Run:
                 // CALL(aSafeLoadTempTilemapToTilemap);
-                SafeLoadTempTilemapToTilemap_Conv();
+                SafeLoadTempTilemapToTilemap();
                 // LD_A(0x3);
                 // LD_addr_A(wMenuCursorY);
                 wram->wMenuCursorY = 0x3;
@@ -9519,7 +9519,7 @@ bool LoadBattleMenu2(void){
         StdBattleTextbox(BattleText_LinkErrorBattleCanceled);
         // LD_C(60);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(60);
+        DelayFrames(60);
     }
 
 // error:
@@ -9720,28 +9720,28 @@ void Battle_StatsScreen(void){
     // LD_DE(vTiles0);
     // LD_BC(0x11 * LEN_2BPP_TILE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(vram->vTiles0, vram->vTiles2 + LEN_2BPP_TILE * 0x31, 0x11 * LEN_2BPP_TILE);
+    CopyBytes(vram->vTiles0, vram->vTiles2 + LEN_2BPP_TILE * 0x31, 0x11 * LEN_2BPP_TILE);
 
     // LD_HL(vTiles2);
     // LD_DE(vTiles0 + LEN_2BPP_TILE * 0x11);
     // LD_BC(0x31 * LEN_2BPP_TILE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(vram->vTiles0 + LEN_2BPP_TILE * 0x11, vram->vTiles2, 0x31 * LEN_2BPP_TILE);
+    CopyBytes(vram->vTiles0 + LEN_2BPP_TILE * 0x11, vram->vTiles2, 0x31 * LEN_2BPP_TILE);
 
     // CALL(aEnableLCD);
     EnableLCD();
 
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // CALL(aLowVolume);
-    LowVolume_Conv();
+    LowVolume();
     // XOR_A_A;  // PARTYMON
     // LD_addr_A(wMonType);
     wram->wMonType = PARTYMON;
     // FARCALL(aBattleStatsScreenInit);
     BattleStatsScreenInit();
     // CALL(aMaxVolume);
-    MaxVolume_Conv();
+    MaxVolume();
 
     // CALL(aDisableLCD);
     DisableLCD();
@@ -9750,13 +9750,13 @@ void Battle_StatsScreen(void){
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x31);
     // LD_BC(0x11 * LEN_2BPP_TILE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(vram->vTiles2 + LEN_2BPP_TILE * 0x31, vram->vTiles0, 0x11 * LEN_2BPP_TILE);
+    CopyBytes(vram->vTiles2 + LEN_2BPP_TILE * 0x31, vram->vTiles0, 0x11 * LEN_2BPP_TILE);
 
     // LD_HL(vTiles0 + LEN_2BPP_TILE * 0x11);
     // LD_DE(vTiles2);
     // LD_BC(0x31 * LEN_2BPP_TILE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(vram->vTiles2, vram->vTiles0 + LEN_2BPP_TILE * 0x11, 0x31 * LEN_2BPP_TILE);
+    CopyBytes(vram->vTiles2, vram->vTiles0 + LEN_2BPP_TILE * 0x11, 0x31 * LEN_2BPP_TILE);
 
     // CALL(aEnableLCD);
     EnableLCD();
@@ -9907,7 +9907,7 @@ void BattleMonEntrance(void){
 
     // LD_C(50);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(50);
+    DelayFrames(50);
 
     // LD_HL(wPlayerSubStatus4);
     // RES_hl(SUBSTATUS_RAGE);
@@ -9948,7 +9948,7 @@ void BattleMonEntrance(void){
     // CALL(aEmptyBattleTextbox);
     EmptyBattleTextbox();
     // CALL(aLoadTilemapToTempTilemap);
-    LoadTilemapToTempTilemap_Conv();
+    LoadTilemapToTempTilemap();
     // CALL(aSetPlayerTurn);
     SetPlayerTurn();
     // CALL(aSpikesDamage);
@@ -9962,7 +9962,7 @@ void BattleMonEntrance(void){
 void PassedBattleMonEntrance(void){
     // LD_C(50);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(50);
+    DelayFrames(50);
 
     // hlcoord(9, 7, wTilemap);
     // LD_BC((5 << 8) | 11);
@@ -9986,7 +9986,7 @@ void PassedBattleMonEntrance(void){
     // CALL(aEmptyBattleTextbox);
     EmptyBattleTextbox();
     // CALL(aLoadTilemapToTempTilemap);
-    LoadTilemapToTempTilemap_Conv();
+    LoadTilemapToTempTilemap();
     // CALL(aSetPlayerTurn);
     SetPlayerTurn();
     // JP(mSpikesDamage);
@@ -10107,7 +10107,7 @@ MoveSelectionScreen:
     // LD_DE(wListMoves_MoveIndicesBuffer);
     // LD_BC(NUM_MOVES);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wListMoves_MoveIndicesBuffer, moves, sizeof(*moves) * NUM_MOVES);
+    CopyBytes(wram->wListMoves_MoveIndicesBuffer, moves, sizeof(*moves) * NUM_MOVES);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = 0x0;
@@ -10443,7 +10443,7 @@ MoveSelectionScreen:
             // CALL(aStdBattleTextbox);
             StdBattleTextbox(BattleText_TheresNoPPLeftForThisMove);
             // CALL(aSafeLoadTempTilemapToTilemap);
-            SafeLoadTempTilemapToTilemap_Conv();
+            SafeLoadTempTilemapToTilemap();
             // JP(mMoveSelectionScreen);
             goto MoveSelectionScreen;
         }
@@ -10461,7 +10461,7 @@ MoveSelectionScreen:
             // CALL(aStdBattleTextbox);
             StdBattleTextbox(BattleText_TheMoveIsDisabled);
             // CALL(aSafeLoadTempTilemapToTilemap);
-            SafeLoadTempTilemapToTilemap_Conv();
+            SafeLoadTempTilemapToTilemap();
             // JP(mMoveSelectionScreen);
             goto MoveSelectionScreen;
         }
@@ -10588,7 +10588,7 @@ void MoveInfoBox(void){
     // AND_A(PP_MASK);
     // LD_addr_A(wStringBuffer1);
     // CALL(aMoveInfoBox_PrintPP);
-    MoveInfoBox_PrintPP(wram->wBattleMon.pp[wram->wMenuCursorY], maxpp);
+    MoveInfoBox_PrintPP(wram->wBattleMon.pp[wram->wMenuCursorY] & PP_MASK, maxpp);
     wram->wMenuCursorY++;
 
     // hlcoord(1, 9, wTilemap);
@@ -10680,7 +10680,7 @@ bool CheckPlayerHasUsableMoves(void){
     StdBattleTextbox(BattleText_MonHasNoMovesLeft);
     // LD_C(60);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(60);
+    DelayFrames(60);
     // XOR_A_A;
     // RET;
     return false;
@@ -10700,14 +10700,14 @@ void ParseEnemyAction(void){
         // CALL(aEmptyBattleTextbox);
         EmptyBattleTextbox();
         // CALL(aLoadTilemapToTempTilemap);
-        LoadTilemapToTempTilemap_Conv();
+        LoadTilemapToTempTilemap();
         // LD_A_addr(wBattlePlayerAction);
         // AND_A_A;  // BATTLEPLAYERACTION_USEMOVE?
         // CALL_Z (aLinkBattleSendReceiveAction);
         if(wram->wBattlePlayerAction == BATTLEPLAYERACTION_USEMOVE)
             LinkBattleSendReceiveAction();
         // CALL(aSafeLoadTempTilemapToTilemap);
-        SafeLoadTempTilemapToTilemap_Conv();
+        SafeLoadTempTilemapToTilemap();
         // LD_A_addr(wBattleAction);
         // CP_A(BATTLEACTION_STRUGGLE);
         // JP_Z (mParseEnemyAction_struggle);
@@ -10818,7 +10818,7 @@ void ParseEnemyAction(void){
                         // CALL(aBattleRandom);
                         // maskbits(NUM_MOVES, 0);
                         // LD_C_A;
-                        c = BattleRandom_Conv() & 3;
+                        c = BattleRandom() & 3;
                         // LD_B(0);
                         // ADD_HL_BC;
                         // LD_A_addr(wEnemyDisableCount);
@@ -10996,7 +10996,7 @@ void LoadEnemyMon(void){
     // LD_HL(wEnemyMonSpecies);
     // LD_BC(wEnemyMonEnd - wEnemyMon);
     // CALL(aByteFill);
-    ByteFill_Conv2(&wram->wEnemyMon, sizeof(wram->wEnemyMon), 0);
+    ByteFill(&wram->wEnemyMon, sizeof(wram->wEnemyMon), 0);
 
 //  We don't need to be here if we're in a link battle
     // LD_A_addr(wLinkMode);
@@ -11061,7 +11061,7 @@ void LoadEnemyMon(void){
         // CP_A(75 percent + 1);
         // LD_A(NO_ITEM);
         // IF_C goto UpdateItem;
-        else if(BattleRandom_Conv() < (75 percent + 1)) {
+        else if(BattleRandom() < (75 percent + 1)) {
             a = NO_ITEM;
         }
 
@@ -11071,7 +11071,7 @@ void LoadEnemyMon(void){
         // LD_A_addr(wBaseItem1);
         // IF_NC goto UpdateItem;
         // LD_A_addr(wBaseItem2);
-        else if(BattleRandom_Conv() < (8 percent)) {   // 8% of 25% = 2% Item2
+        else if(BattleRandom() < (8 percent)) {   // 8% of 25% = 2% Item2
             a = wram->wBaseItem2;
         }
         else {
@@ -11169,8 +11169,8 @@ InitDVs:
                 uint16_t* dvs = GetRoamMonDVs_Conv(wram->wTempEnemyMonSpecies);
                 // INC_HL;
                 // CALL(aBattleRandom);
-                uint8_t lo = BattleRandom_Conv();
-                uint8_t hi = BattleRandom_Conv();
+                uint8_t lo = BattleRandom();
+                uint8_t hi = BattleRandom();
                 // LD_hld_A;
                 // LD_C_A;
                 // CALL(aBattleRandom);
@@ -11201,10 +11201,10 @@ InitDVs:
             GenerateDVs:
             //  Generate new random DVs
                 // CALL(aBattleRandom);
-                uint8_t lo = BattleRandom_Conv();
+                uint8_t lo = BattleRandom();
                 // LD_B_A;
                 // CALL(aBattleRandom);
-                uint8_t hi = BattleRandom_Conv();
+                uint8_t hi = BattleRandom();
                 // LD_C_A;
                 bc = (hi << 8) | lo;
             }
@@ -11272,7 +11272,7 @@ InitDVs:
             // CALL(aRandom);
             // CP_A(5 percent);
             // IF_C goto CheckMagikarpArea;
-            if(LOW(wram->wMagikarpLength) == HIGH(1536) && Random_Conv() >= 5 percent) {
+            if(LOW(wram->wMagikarpLength) == HIGH(1536) && Random() >= 5 percent) {
             //  Try again if length >= 1616 mm (i.e. if LOW(length) >= 4 inches)
                 // LD_A_addr(wMagikarpLength + 1);
                 // CP_A(LOW(1616));  // should be "cp 4", since 1616 mm = 5'4", but LOW(1616) = 80
@@ -11286,7 +11286,7 @@ InitDVs:
                 // LD_A_addr(wMagikarpLength + 1);
                 // CP_A(LOW(1600));  // should be "cp 3", since 1600 mm = 5'3", but LOW(1600) = 64
                 // IF_NC goto GenerateDVs;
-                if(HIGH(wram->wMagikarpLength) >= LOW(1616) || ((Random_Conv() >= 20 percent - 1) && HIGH(wram->wMagikarpLength) >= LOW(1600)))
+                if(HIGH(wram->wMagikarpLength) >= LOW(1616) || ((Random() >= 20 percent - 1) && HIGH(wram->wMagikarpLength) >= LOW(1600)))
                     goto GenerateDVs;
             }
 
@@ -11316,7 +11316,7 @@ InitDVs:
             // IF_C goto Happiness;
             if(wram->wMapGroup != GROUP_LAKE_OF_RAGE 
             && wram->wMapGroup != MAP_LAKE_OF_RAGE
-            && Random_Conv() >= 39 percent + 1) {
+            && Random() >= 39 percent + 1) {
             //  Try again if length < 1024 mm (i.e. if HIGH(length) < 3 feet)
                 // LD_A_addr(wMagikarpLength);
                 // CP_A(HIGH(1024));  // should be "cp 3", since 1024 mm = 3'4", but HIGH(1024) = 4
@@ -11465,7 +11465,7 @@ Happiness:
         // CALL(aGetPartyLocation);
         // LD_BC(NUM_MOVES);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(moves, &wram->wOTPartyMon[wram->wCurPartyMon].mon.moves, NUM_MOVES * sizeof(move_t));
+        CopyBytes(moves, &wram->wOTPartyMon[wram->wCurPartyMon].mon.moves, NUM_MOVES * sizeof(move_t));
         for(int i = 0; i < NUM_MOVES; ++i) {
             printf("Move %d = %02X\n", i, moves[i]);
         }
@@ -11481,7 +11481,7 @@ Happiness:
         // LD_hli_A;
         // LD_hli_A;
         // LD_hl_A;
-        ByteFill_Conv2(moves, 0, 4 * sizeof(move_t));
+        ByteFill(moves, 0, 4 * sizeof(move_t));
         // LD_addr_A(wSkipMovesBeforeLevelUp);
         wram->wSkipMovesBeforeLevelUp = FALSE;
         printf("wSkipMovesBeforeLevelUp = %d\n", wram->wSkipMovesBeforeLevelUp);
@@ -11507,7 +11507,7 @@ Happiness:
         // LD_DE(wEnemyMonPP);
         // LD_BC(NUM_MOVES);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(wram->wEnemyMon.pp, wram->wOTPartyMon[wram->wCurPartyMon].mon.PP, NUM_MOVES);
+        CopyBytes(wram->wEnemyMon.pp, wram->wOTPartyMon[wram->wCurPartyMon].mon.PP, NUM_MOVES);
     }
     else {
     //  Fill wild PP
@@ -11547,7 +11547,7 @@ Happiness:
     // LD_addr_A(wNamedObjectIndex);
 
     // CALL(aGetPokemonName);
-    GetPokemonName_Conv2(wram->wTempEnemyMonSpecies);
+    GetPokemonName(wram->wTempEnemyMonSpecies);
 
 //  Did we catch it?
     // LD_A_addr(wBattleMode);
@@ -11562,7 +11562,7 @@ Happiness:
     // LD_DE(wEnemyMonNickname);
     // LD_BC(MON_NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wEnemyMonNickname, wram->wStringBuffer1, MON_NAME_LENGTH);
+    CopyBytes(wram->wEnemyMonNickname, wram->wStringBuffer1, MON_NAME_LENGTH);
 
 //  Saw this mon
     // LD_A_addr(wTempEnemyMonSpecies);
@@ -11577,7 +11577,7 @@ Happiness:
     // LD_DE(wEnemyStats);
     // LD_BC(NUM_EXP_STATS * 2);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(&wram->wEnemyAttack, wram->wEnemyMon.attack, NUM_EXP_STATS * sizeof(uint16_t));
+    CopyBytes(&wram->wEnemyAttack, wram->wEnemyMon.attack, NUM_EXP_STATS * sizeof(uint16_t));
 
     // RET;
 }
@@ -11875,7 +11875,7 @@ void BattleWinSlideInEnemyTrainerFrontpic(void){
         hram->hBGMapMode = 0x1;
         // LD_C(4);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(4);
+        DelayFrames(4);
         // POP_HL;
         // POP_BC;
         // DEC_HL;
@@ -12632,7 +12632,7 @@ uint8_t v_BattleRandom_Conv(void){
     // AND_A_A;
     // JP_Z (mRandom);
     if(wram->wLinkMode == 0)
-        return Random_Conv();
+        return Random();
 
 //  The PRNG operates in streams of 10 values.
 
@@ -13020,7 +13020,7 @@ void GiveExperiencePoints(void){
         AnimateExpBar(bExp);
         // PUSH_BC;
         // CALL(aLoadTilemapToTempTilemap);
-        LoadTilemapToTempTilemap_Conv();
+        LoadTilemapToTempTilemap();
         // POP_BC;
         // LD_HL(MON_EXP + 2);
         uint32_t bcExp = (bc->mon.exp[0] << 16) | (bc->mon.exp[1] << 8) | bc->mon.exp[2];
@@ -13196,7 +13196,7 @@ void GiveExperiencePoints(void){
                 // PUSH_BC;
                 // LD_BC(PARTYMON_STRUCT_LENGTH - MON_MAXHP);
                 // CALL(aCopyBytes);
-                CopyBytes_Conv2(wram->wBattleMon.stats, bc->stats, PARTYMON_STRUCT_LENGTH - MON_MAXHP);
+                CopyBytes(wram->wBattleMon.stats, bc->stats, PARTYMON_STRUCT_LENGTH - MON_MAXHP);
                 // POP_BC;
                 // LD_HL(MON_LEVEL);
                 // ADD_HL_BC;
@@ -13212,7 +13212,7 @@ void GiveExperiencePoints(void){
                     // LD_DE(wPlayerStats);
                     // LD_BC(PARTYMON_STRUCT_LENGTH - MON_ATK);
                     // CALL(aCopyBytes);
-                    CopyBytes_Conv2(wram->wPlayerStats, bc->stats, PARTYMON_STRUCT_LENGTH - MON_ATK);
+                    CopyBytes(wram->wPlayerStats, bc->stats, PARTYMON_STRUCT_LENGTH - MON_ATK);
                 }
 
             // transformed:
@@ -13230,7 +13230,7 @@ void GiveExperiencePoints(void){
                 // CALL(aEmptyBattleTextbox);
                 EmptyBattleTextbox();
                 // CALL(aLoadTilemapToTempTilemap);
-                LoadTilemapToTempTilemap_Conv();
+                LoadTilemapToTempTilemap();
                 // LD_A(0x1);
                 // LDH_addr_A(hBGMapMode);
                 hram->hBGMapMode = 0x1;
@@ -13254,7 +13254,7 @@ void GiveExperiencePoints(void){
                 // CALL(aStdBattleTextbox);
                 StdBattleTextbox(BattleText_StringBuffer1GrewToLevel);
                 // CALL(aLoadTilemapToTempTilemap);
-                LoadTilemapToTempTilemap_Conv();
+                LoadTilemapToTempTilemap();
             }
 
         // skip_exp_bar_animation:
@@ -13274,11 +13274,11 @@ void GiveExperiencePoints(void){
             PrintTempMonStats_Conv(coord(11, 1, wram->wTilemap), 4);
             // LD_C(30);
             // CALL(aDelayFrames);
-            DelayFrames_Conv(30);
+            DelayFrames(30);
             // CALL(aWaitPressAorB_BlinkCursor);
             WaitPressAorB_BlinkCursor_Conv();
             // CALL(aSafeLoadTempTilemapToTilemap);
-            SafeLoadTempTilemapToTilemap_Conv();
+            SafeLoadTempTilemapToTilemap();
             // XOR_A_A;  // PARTYMON
             // LD_addr_A(wMonType);
             wram->wMonType = PARTYMON;
@@ -13423,7 +13423,7 @@ static void AnimateExpBar_PlayExpBarSound(void){
     PlaySFX_Conv(SFX_EXP_BAR);
     // LD_C(10);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(10);
+    DelayFrames(10);
     // POP_BC;
     // RET;
 }
@@ -13449,7 +13449,7 @@ static void AnimateExpBar_LoopBarAnimation(uint8_t b, uint8_t c){
         hram->hBGMapMode = 0x1;
         // LD_C_D;
         // CALL(aDelayFrames);
-        DelayFrames_Conv(d);
+        DelayFrames(d);
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
         hram->hBGMapMode = 0x0;
@@ -13472,7 +13472,7 @@ static void AnimateExpBar_LoopBarAnimation(uint8_t b, uint8_t c){
         hram->hBGMapMode = 0x1;
         // LD_C_D;
         // CALL(aDelayFrames);
-        DelayFrames_Conv(d);
+        DelayFrames(d);
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
         hram->hBGMapMode = 0x0;
@@ -13633,9 +13633,9 @@ void AnimateExpBar(uint16_t exp){
         // LD_DE(wStringBuffer1);
         // LD_BC(MON_NAME_LENGTH);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(wram->wStringBuffer1, wram->wBattleMonNickname, MON_NAME_LENGTH);
+        CopyBytes(wram->wStringBuffer1, wram->wBattleMonNickname, MON_NAME_LENGTH);
         // CALL(aTerminateExpBarSound);
-        TerminateExpBarSound_Conv();
+        TerminateExpBarSound();
         // LD_DE(SFX_HIT_END_OF_EXP_BAR);
         // CALL(aPlaySFX);
         PlaySFX_Conv(SFX_HIT_END_OF_EXP_BAR);
@@ -13668,7 +13668,7 @@ void AnimateExpBar(uint16_t exp){
     // CALL(aAnimateExpBar_LoopBarAnimation);
     AnimateExpBar_LoopBarAnimation(b, c);
     // CALL(aTerminateExpBarSound);
-    TerminateExpBarSound_Conv();
+    TerminateExpBarSound();
     // POP_AF;
     // LDH_addr_A(hProduct + 2);
     // POP_AF;
@@ -14537,7 +14537,7 @@ void BattleIntro(void){
     // CALL(aClearBox);
     ClearBox_Conv2(coord(1, 0, wram->wTilemap), 10, 4);
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // LD_A_addr(wBattleMode);
     // CP_A(WILD_BATTLE);
     // CALL_Z (aUpdateEnemyHUD);
@@ -14593,7 +14593,7 @@ void BackUpBGMap2(void){
     // LD_BC(0x40 * LEN_2BPP_TILE);  // vBGMap3 - vBGMap2
     // LD_A(0x2);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wDecompressScratch, 0x40 * LEN_2BPP_TILE, 0x2);
+    ByteFill(wram->wDecompressScratch, 0x40 * LEN_2BPP_TILE, 0x2);
     // LDH_A_addr(rVBK);
     // PUSH_AF;
     // LD_A(0x1);
@@ -14603,7 +14603,7 @@ void BackUpBGMap2(void){
     // LD_BC((BANK(aBackUpBGMap2) << 8) | 0x40);
     // CALL(aRequest2bpp);
     // POP_AF;
-    CopyBytes_Conv2(bgcoord(0, 0, vram->vBGMap2), wram->wDecompressScratch, 0x40 * LEN_2BPP_TILE);
+    CopyBytes(bgcoord(0, 0, vram->vBGMap2), wram->wDecompressScratch, 0x40 * LEN_2BPP_TILE);
     // LDH_addr_A(rVBK);
     // POP_AF;
     // LDH_addr_A(rSVBK);
@@ -14772,12 +14772,12 @@ void InitEnemyWildmon(void){
     // LD_DE(wWildMonMoves);
     // LD_BC(NUM_MOVES);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wWildMonMoves, wram->wEnemyMon.moves, NUM_MOVES * sizeof(move_t));
+    CopyBytes(wram->wWildMonMoves, wram->wEnemyMon.moves, NUM_MOVES * sizeof(move_t));
     // LD_HL(wEnemyMonPP);
     // LD_DE(wWildMonPP);
     // LD_BC(NUM_MOVES);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wWildMonPP, wram->wEnemyMon.pp, NUM_MOVES);
+    CopyBytes(wram->wWildMonPP, wram->wEnemyMon.pp, NUM_MOVES);
     // LD_HL(wEnemyMonDVs);
     // PREDEF(pGetUnownLetter);
     uint8_t letter = GetUnownLetter_Conv(wram->wEnemyMon.dvs);
@@ -14875,7 +14875,7 @@ static void ExitBattle_HandleEndOfBattle(void){
         ShowLinkBattleParticipantsAfterEnd();
         // LD_C(150);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(150);
+        DelayFrames(150);
         // CALL(aDisplayLinkBattleResult);
         DisplayLinkBattleResult();
         // RET;
@@ -15050,7 +15050,7 @@ static void DisplayLinkBattleResult_Mobile_InvalidBattle(void){
     PlaceStringSimple(U82C(InvalidBattle), coord(6, 8, wram->wTilemap));
     // LD_C(200);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(200);
+    DelayFrames(200);
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // RET;
@@ -15112,7 +15112,7 @@ void DisplayLinkBattleResult(void){
     BackupMobileEventIndex();
     // LD_C(200);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(200);
+    DelayFrames(200);
 
     // LD_A(MBANK(asLinkBattleStats));
     // CALL(aOpenSRAM);
@@ -15134,7 +15134,7 @@ void DisplayLinkBattleResult(void){
     // mobile:
         // LD_C(200);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(200);
+        DelayFrames(200);
         // CALL(aClearTilemap);
         ClearTilemap_Conv2();
         // RET;
@@ -15178,7 +15178,7 @@ void v_DisplayLinkRecord(void){
     // XOR_A_A;
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wAttrmap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x0);
+    ByteFill(coord(0, 0, wram->wAttrmap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x0);
     // CALL(aWaitBGMap2);
     WaitBGMap2_Conv();
     // LD_B(SCGB_DIPLOMA);
@@ -15188,7 +15188,7 @@ void v_DisplayLinkRecord(void){
     SetPalettes_Conv();
     // LD_C(8);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(8);
+    DelayFrames(8);
     // CALL(aWaitPressAorB_BlinkCursor);
     WaitPressAorB_BlinkCursor_Conv();
     // RET;
@@ -15266,7 +15266,7 @@ void ReadAndPrintLinkBattleRecord(void){
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // CALL(aReadAndPrintLinkBattleRecord_PrintBattleRecord);
     ReadAndPrintLinkBattleRecord_PrintBattleRecord();
     // hlcoord(0, 8, wTilemap);
@@ -15302,7 +15302,7 @@ void ReadAndPrintLinkBattleRecord(void){
             // LD_DE(wLinkBattleRecordName);
             // LD_BC(NAME_LENGTH - 1);
             // CALL(aCopyBytes);
-            CopyBytes_Conv2(wram->wLinkBattleRecordName, de->name, NAME_LENGTH - 1);
+            CopyBytes(wram->wLinkBattleRecordName, de->name, NAME_LENGTH - 1);
             // LD_A(0x50);
             // LD_de_A;
             wram->wLinkBattleRecordName[NAME_LENGTH - 1] = 0x50;
@@ -15399,7 +15399,7 @@ void BattleEnd_HandleRoamMons(void){
         // CALL(aBattleRandom);
         // AND_A(0xf);
         // RET_NZ ;
-        if((BattleRandom_Conv() & 0xf) != 0x0)
+        if((BattleRandom() & 0xf) != 0x0)
             return;
     }
 
@@ -15770,7 +15770,7 @@ static void AddLastLinkBattleToLinkRecord_FindOpponentAndAppendRecord(void){
                 // LD_DE(wLinkBattleRecordBuffer);
                 // LD_BC(LINK_BATTLE_RECORD_LENGTH);
                 // CALL(aCopyBytes);
-                CopyBytes_Conv2(wram->wLinkBattleRecordName, hl, LINK_BATTLE_RECORD_LENGTH);
+                CopyBytes(wram->wLinkBattleRecordName, hl, LINK_BATTLE_RECORD_LENGTH);
                 // POP_HL;
                 // POP_BC;
                 // PUSH_HL;
@@ -15787,7 +15787,7 @@ static void AddLastLinkBattleToLinkRecord_FindOpponentAndAppendRecord(void){
                 // LD_BC(LINK_BATTLE_RECORD_LENGTH);
                 // POP_DE;
                 // CALL(aCopyBytes);
-                CopyBytes_Conv2(de, wram->wLinkBattleRecordName, LINK_BATTLE_RECORD_LENGTH);
+                CopyBytes(de, wram->wLinkBattleRecordName, LINK_BATTLE_RECORD_LENGTH);
                 // RET;
                 return;
             }
@@ -15815,11 +15815,11 @@ void AddLastLinkBattleToLinkRecord(void){
     // LD_DE(wStringBuffer1);
     // LD_BC(2);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wStringBuffer1, &wram->wOTPlayerID, 2);
+    CopyBytes(wram->wStringBuffer1, &wram->wOTPlayerID, 2);
     // LD_HL(wOTPlayerName);
     // LD_BC(NAME_LENGTH - 1);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wStringBuffer1 + 2, wram->wOTPlayerName, NAME_LENGTH - 1);
+    CopyBytes(wram->wStringBuffer1 + 2, wram->wOTPlayerName, NAME_LENGTH - 1);
     // LD_HL(sLinkBattleStats - (LINK_BATTLE_RECORD_LENGTH - 6));
     // CALL(aAddLastLinkBattleToLinkRecord_StoreResult);
     AddLastLinkBattleToLinkRecord_StoreResult(GBToRAMAddr(sLinkBattleStats - (LINK_BATTLE_RECORD_LENGTH - 6)));
@@ -15870,7 +15870,7 @@ copy:
     // LD_HL(wStringBuffer1);
     // LD_BC(LINK_BATTLE_RECORD_LENGTH - 6);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(de, wram->wStringBuffer1, LINK_BATTLE_RECORD_LENGTH - 6);
+    CopyBytes(de, wram->wStringBuffer1, LINK_BATTLE_RECORD_LENGTH - 6);
     // LD_B(6);
     uint8_t b = 6;
     // XOR_A_A;
@@ -15912,14 +15912,14 @@ static void InitBattleDisplay_BlankBGMap(void) {
     // LD_BC(BG_MAP_WIDTH * BG_MAP_HEIGHT);
     // LD_A(0x7f);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wDecompressScratch, BG_MAP_WIDTH * BG_MAP_HEIGHT, CHAR_SPACE);
+    ByteFill(wram->wDecompressScratch, BG_MAP_WIDTH * BG_MAP_HEIGHT, CHAR_SPACE);
 
     // LD_DE(wDecompressScratch);
     // hlbgcoord(0, 0, vBGMap0);
     // //LD_BC((BANK(@) << 8) | (BG_MAP_WIDTH * BG_MAP_HEIGHT) / LEN_2BPP_TILE);
     // LD_BC((BANK(aInitBattleDisplay_BlankBGMap) << 8) | (BG_MAP_WIDTH * BG_MAP_HEIGHT) / LEN_2BPP_TILE);
     // CALL(aRequest2bpp);
-    CopyBytes_Conv2(bgcoord(0, 0, vram->vBGMap0), wram->wDecompressScratch, BG_MAP_WIDTH * BG_MAP_HEIGHT);
+    CopyBytes(bgcoord(0, 0, vram->vBGMap0), wram->wDecompressScratch, BG_MAP_WIDTH * BG_MAP_HEIGHT);
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
@@ -15981,7 +15981,7 @@ void InitBattleDisplay(void){
     // CALL(aWaitBGMap);
     WaitBGMap_Conv();
     // CALL(aHideSprites);
-    HideSprites_Conv();
+    HideSprites();
     // LD_B(SCGB_BATTLE_COLORS);
     // CALL(aGetSGBLayout);
     GetSGBLayout_Conv(SCGB_BATTLE_COLORS);
@@ -16109,7 +16109,7 @@ void CopyBackpic(void){
     // LD_B_A;
     // LD_C(7 * 7);
     // CALL(aGet2bpp);
-    CopyBytes_Conv2(vram->vTiles0, vram->vTiles2 + LEN_2BPP_TILE * 0x31, 7 * 7 * LEN_2BPP_TILE);
+    CopyBytes(vram->vTiles0, vram->vTiles2 + LEN_2BPP_TILE * 0x31, 7 * 7 * LEN_2BPP_TILE);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // CALL(aCopyBackpic_LoadTrainerBackpicAsOAM);
@@ -16138,7 +16138,7 @@ void BattleStartMessage(void){
 
         // LD_C(20);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(20);
+        DelayFrames(20);
 
         // FARCALL(aBattle_GetTrainerName);
         Battle_GetTrainerName_Conv();

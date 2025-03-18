@@ -36,7 +36,7 @@ static void LoadPoisonBGPals_LoadPals(void) {
         hram->hCGBPalUpdate = TRUE;
         // LD_C(4);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(4);
+        DelayFrames(4);
         // FARCALL(av_UpdateTimePals);
         v_UpdateTimePals();
         // RET;
@@ -55,7 +55,7 @@ static void LoadPoisonBGPals_LoadPals(void) {
     DmgToCgbBGPals_Conv(a);
     // LD_C(4);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(4);
+    DelayFrames(4);
     // FARCALL(av_UpdateTimePals);
     v_UpdateTimePals();
     // RET;

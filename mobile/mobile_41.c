@@ -21,7 +21,7 @@ void StubbedTrainerRankings_HallOfFame2(void){
     uint8_t* time = GBToRAMAddr(sTrainerRankingGameTimeHOF);
     // LD_BC(4);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(time, &wram->wGameTimeHours, 2);
+    CopyBytes(time, &wram->wGameTimeHours, 2);
     time[2] = wram->wGameTimeMinutes;
     time[3] = wram->wGameTimeSeconds;
 
@@ -29,25 +29,25 @@ void StubbedTrainerRankings_HallOfFame2(void){
     // LD_DE(sTrainerRankingStepCountHOF);
     // LD_BC(4);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(GBToRAMAddr(sTrainerRankingStepCountHOF), GBToRAMAddr(sTrainerRankingStepCount), 4);
+    CopyBytes(GBToRAMAddr(sTrainerRankingStepCountHOF), GBToRAMAddr(sTrainerRankingStepCount), 4);
 
 // sTrainerRankingHealings is only a 3-byte value.
 // One extraneous byte is copied from sTrainerRankingMysteryGift.
 #if BUGFIX_HALLOFFAME_RANKING_HEALINGS
-    CopyBytes_Conv2(GBToRAMAddr(sTrainerRankingHealingsHOF), GBToRAMAddr(sTrainerRankingHealings), 3);
+    CopyBytes(GBToRAMAddr(sTrainerRankingHealingsHOF), GBToRAMAddr(sTrainerRankingHealings), 3);
 #else
     // LD_HL(sTrainerRankingHealings);
     // LD_DE(sTrainerRankingHealingsHOF);
     // LD_BC(4);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(GBToRAMAddr(sTrainerRankingHealingsHOF), GBToRAMAddr(sTrainerRankingHealings), 4);
+    CopyBytes(GBToRAMAddr(sTrainerRankingHealingsHOF), GBToRAMAddr(sTrainerRankingHealings), 4);
 #endif
 
     // LD_HL(sTrainerRankingBattles);
     // LD_DE(sTrainerRankingBattlesHOF);
     // LD_BC(3);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(GBToRAMAddr(sTrainerRankingBattlesHOF), GBToRAMAddr(sTrainerRankingBattles), 3);
+    CopyBytes(GBToRAMAddr(sTrainerRankingBattlesHOF), GBToRAMAddr(sTrainerRankingBattles), 3);
 
     // CALL(aUpdateTrainerRankingsChecksum);
     UpdateTrainerRankingsChecksum();
@@ -874,7 +874,7 @@ static void v_MobilePrintNum_Function1062b2(uint8_t* hl, uint32_t num) {
         // LDH_addr_A(hPrintNumBuffer + 2);
         // LDH_A_addr(hPrintNumBuffer + 7);
         // LDH_addr_A(hPrintNumBuffer + 3);
-        CopyBytes_Conv2(hram->hPrintNumBuffer, hram->hPrintNumBuffer + 4, 4);
+        CopyBytes(hram->hPrintNumBuffer, hram->hPrintNumBuffer + 4, 4);
         // INC_C;
         c++;
         // goto asm_1062b4;

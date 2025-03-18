@@ -48,7 +48,7 @@ void Function115dc3(void){
     // LD_HL(wVirtualOAMSprite31);
     // LD_BC(8 * SPRITEOAMSTRUCT_LENGTH);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wVirtualOAMSprite + 31, 8 * sizeof(wram->wVirtualOAMSprite[0]), 0xa0);
+    ByteFill(wram->wVirtualOAMSprite + 31, 8 * sizeof(wram->wVirtualOAMSprite[0]), 0xa0);
     // RET;
 }
 
@@ -62,7 +62,7 @@ void Function115dd3(void){
     // LD_HL(wVirtualOAMSprite31);
     // LD_BC(8 * SPRITEOAMSTRUCT_LENGTH);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wVirtualOAMSprite + 31, 8 * SPRITEOAMSTRUCT_LENGTH, 0xa0);
+    ByteFill(wram->wVirtualOAMSprite + 31, 8 * SPRITEOAMSTRUCT_LENGTH, 0xa0);
     // CALL(aFunction115e22);
     Function115e22();
     // LD_A_addr(wc309);
@@ -469,7 +469,7 @@ void Function11619d(void){
         // LD_HL(wVirtualOAM);
         // LD_BC(25 * SPRITEOAMSTRUCT_LENGTH);
         // CALL(aByteFill);
-        ByteFill_Conv2(wram->wVirtualOAMSprite, 25 * SPRITEOAMSTRUCT_LENGTH, 0xa0);
+        ByteFill(wram->wVirtualOAMSprite, 25 * SPRITEOAMSTRUCT_LENGTH, 0xa0);
     }
 
 // asm_1161b4:
@@ -527,7 +527,7 @@ void Function1161d5(void){
     // LDH_addr_A(rHDMA4);
     // LD_A(0x8);
     // LDH_addr_A(rHDMA5);
-    CopyBytes_Conv2(vram->vBGMap1, wram->wDecompressScratch, 0x80);
+    CopyBytes(vram->vBGMap1, wram->wDecompressScratch, 0x80);
 
     // LD_A(0xd0);
     // LDH_addr_A(rHDMA1);
@@ -539,7 +539,7 @@ void Function1161d5(void){
     // LDH_addr_A(rHDMA4);
     // LD_A(0x8);
     // LDH_addr_A(rHDMA5);
-    CopyBytes_Conv2(vram->vBGMap1 + 0x80, wram->wDecompressScratch + 0x80, 0x80);
+    CopyBytes(vram->vBGMap1 + 0x80, wram->wDecompressScratch + 0x80, 0x80);
 
     // LD_A(0xd1);
     // LDH_addr_A(rHDMA1);
@@ -551,7 +551,7 @@ void Function1161d5(void){
     // LDH_addr_A(rHDMA4);
     // LD_A(0x8);
     // LDH_addr_A(rHDMA5);
-    CopyBytes_Conv2(vram->vBGMap1 + 0x100, wram->wDecompressScratch + 0x100, 0x80);
+    CopyBytes(vram->vBGMap1 + 0x100, wram->wDecompressScratch + 0x100, 0x80);
 
     // LD_A(0x1);
     // LDH_addr_A(rVBK);
@@ -566,7 +566,7 @@ void Function1161d5(void){
     // LDH_addr_A(rHDMA4);
     // LD_A(0x8);
     // LDH_addr_A(rHDMA5);
-    CopyBytes_Conv2(vram->vBGMap3, wram->wDecompressScratch + 0x180, 0x80);
+    CopyBytes(vram->vBGMap3, wram->wDecompressScratch + 0x180, 0x80);
 
     // LD_A(0xd2);
     // LDH_addr_A(rHDMA1);
@@ -578,7 +578,7 @@ void Function1161d5(void){
     // LDH_addr_A(rHDMA4);
     // LD_A(0x8);
     // LDH_addr_A(rHDMA5);
-    CopyBytes_Conv2(vram->vBGMap3 + 0x80, wram->wDecompressScratch + 0x200, 0x80);
+    CopyBytes(vram->vBGMap3 + 0x80, wram->wDecompressScratch + 0x200, 0x80);
 
     // LD_A(0xd2);
     // LDH_addr_A(rHDMA1);
@@ -590,7 +590,7 @@ void Function1161d5(void){
     // LDH_addr_A(rHDMA4);
     // LD_A(0x8);
     // LDH_addr_A(rHDMA5);
-    CopyBytes_Conv2(vram->vBGMap3 + 0x100, wram->wDecompressScratch + 0x280, 0x80);
+    CopyBytes(vram->vBGMap3 + 0x100, wram->wDecompressScratch + 0x280, 0x80);
 
     // XOR_A_A;
     // LDH_addr_A(rVBK);
@@ -641,7 +641,7 @@ void Function116294(void){
     // LD_DE(wc320);
     // LD_BC(2 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wc320, wram->wBGPals1 + PALETTE_SIZE * 6, 2 * PALETTE_SIZE);
+    CopyBytes(wram->wc320, wram->wBGPals1 + PALETTE_SIZE * 6, 2 * PALETTE_SIZE);
     // LD_HL(mPichuBorderMobileBGPalettes);
     // LD_DE(wBGPals1 + PALETTE_SIZE * 7);
     // LD_BC(1 * PALETTE_SIZE);
@@ -811,7 +811,7 @@ void Function11636e(void){
     // LD_DE(wBGPals1);
     // LD_BC(8 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wBGPals1, wram->wBGPals2, 8 * PALETTE_SIZE);
+    CopyBytes(wram->wBGPals1, wram->wBGPals2, 8 * PALETTE_SIZE);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // CALL(aSetPalettes);
@@ -824,7 +824,7 @@ void Function11636e(void){
     // LD_HL(wVirtualOAM);
     // LD_BC(16 * SPRITEOAMSTRUCT_LENGTH);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wVirtualOAMSprite, 16 * SPRITEOAMSTRUCT_LENGTH, 0xa0);
+    ByteFill(wram->wVirtualOAMSprite, 16 * SPRITEOAMSTRUCT_LENGTH, 0xa0);
     // LD_A(0x90);
     // LDH_addr_A(hWY);
     hram->hWY = 0x90;
@@ -859,7 +859,7 @@ void Function1163c0(void){
     // LD_HL(wVirtualOAM);
     // LD_BC(16 * SPRITEOAMSTRUCT_LENGTH);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wVirtualOAMSprite, 16 * SPRITEOAMSTRUCT_LENGTH, 0xa0);
+    ByteFill(wram->wVirtualOAMSprite, 16 * SPRITEOAMSTRUCT_LENGTH, 0xa0);
     // CALL(aDelayFrame);
     DelayFrame();
     // FARCALL(av_RefreshSprites);
@@ -875,7 +875,7 @@ void Function1163c0(void){
     // LD_DE(wd030);
     // LD_BC(0x0010);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wd030, wram->wc320, 0x10);
+    CopyBytes(wram->wd030, wram->wc320, 0x10);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // CALL(aSetPalettes);

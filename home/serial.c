@@ -714,13 +714,13 @@ void Serial_ExchangeSyncBytes(void){
 
 void Serial_PrintWaitingTextAndSyncAndExchangeNybble(void){
     // CALL(aLoadTilemapToTempTilemap);
-    LoadTilemapToTempTilemap_Conv();
+    LoadTilemapToTempTilemap();
     // CALLFAR(aPlaceWaitingText);
     PlaceWaitingText();
     // CALL(aWaitLinkTransfer);
     WaitLinkTransfer();
     // JP(mSafeLoadTempTilemapToTilemap);
-    return SafeLoadTempTilemapToTilemap_Conv();
+    return SafeLoadTempTilemapToTilemap();
 }
 
 void Serial_SyncAndExchangeNybble(void){

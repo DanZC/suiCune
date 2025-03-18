@@ -30,7 +30,7 @@ struct MapId CopyCurrMapDE_Conv(void);
 void LookUpWildmonsForMapDE(void);
 struct WildMons LookUpWildmonsForMapDE_Conv(struct WildMons hl, struct MapId de);
 void InitRoamMons(void);
-void CheckEncounterRoamMon(void);
+bool CheckEncounterRoamMon(void);
 void UpdateRoamMons(void);
 void JumpRoamMons(void);
 void JumpRoamMon(void);

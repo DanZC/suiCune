@@ -255,7 +255,7 @@ void HDMATransfer_FillBGMap0WithBlack_Conv(void){
     // LD_HL(wDecompressScratch);
     // LD_BC(wScratchAttrmap - wDecompressScratch);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wDecompressScratch, wScratchAttrmap - wDecompressScratch, 0x60);
+    ByteFill(wram->wDecompressScratch, wScratchAttrmap - wDecompressScratch, 0x60);
     // LD_A(HIGH(wDecompressScratch));
     // LDH_addr_A(rHDMA1);
     // gb_write(rHDMA1, HIGH(wDecompressScratch));
@@ -272,7 +272,7 @@ void HDMATransfer_FillBGMap0WithBlack_Conv(void){
     // LDH_addr_A(hDMATransfer);
     // hram->hDMATransfer = 0x3f;
     // CALL(aDelayFrame);
-    CopyBytes_Conv2(vram->vBGMap0, wram->wDecompressScratch, wScratchAttrmap - wDecompressScratch);
+    CopyBytes(vram->vBGMap0, wram->wDecompressScratch, wScratchAttrmap - wDecompressScratch);
     DelayFrame();
 
     // POP_AF;

@@ -279,7 +279,7 @@ uint8_t InitMobileProfile(uint8_t c){
         wram->wMusicFadeID = MUSIC_MOBILE_ADAPTER_MENU;
         // LD_C(20);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(20);
+        DelayFrames(20);
         // LD_B(CRYSTAL_CGB_MOBILE_1);
         // CALL(aGetCrystalCGBLayout);
         GetCrystalCGBLayout(CRYSTAL_CGB_MOBILE_1);
@@ -744,7 +744,7 @@ uint8_t Function4820d(void){
         WaitBGMap_Conv();
         // LD_C(48);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(48);
+        DelayFrames(48);
     }
 
 // asm_4825c:
@@ -1336,7 +1336,7 @@ const struct MenuData MenuData_0x4851b = {
 void Function48689(void){
     // LD_C(7);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(7);
+    DelayFrames(7);
     // LD_B(CRYSTAL_CGB_MOBILE_1);
     // CALL(aGetCrystalCGBLayout);
     GetCrystalCGBLayout(CRYSTAL_CGB_MOBILE_1);
@@ -1648,7 +1648,7 @@ void Function4876f(void){
     #endif
     // LD_C(10);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(10);
+    DelayFrames(10);
     // LD_A_addr(wd473);
     // PUSH_AF;
     uint8_t d473 = wram->wAge;
@@ -2006,7 +2006,7 @@ void Function488d3(void){
     #else
     // Backup of the zip code, in case the player cancels.
     uint8_t saved[ZIPCODE_MAX_LENGTH];
-    CopyBytes_Conv2(saved, wram->wZipCode_Saved, sizeof(saved));
+    CopyBytes(saved, wram->wZipCode_Saved, sizeof(saved));
     // We look for the starting char index. We skip all non-editable chars (those with a charpool length of 1 or 0).
     // ld b, $0
     uint8_t b = 0x0;
@@ -2082,7 +2082,7 @@ void asm_48922(uint16_t bc, uint16_t de, uint8_t b, uint8_t d, uint8_t inMenu){
             if(b == 0x4) {
                 // LD_C(10);
                 // CALL(aDelayFrames);
-                DelayFrames_Conv(10); // why?
+                DelayFrames(10); // why?
             }
         }
         // JR(masm_48972); // inlined
@@ -2195,7 +2195,7 @@ void ZipCodeEditMenu(const uint8_t* saved, uint8_t b, uint8_t d, uint8_t inMenu)
         // ld b, 0
         // ld a, " "
         // call ByteFill ; fill bc bytes with the value of a, starting at hl
-        ByteFill_Conv2(coord(12 - ZIPCODE_LENGTH, 11, wram->wTilemap), ZIPCODE_LENGTH, 0x7f);
+        ByteFill(coord(12 - ZIPCODE_LENGTH, 11, wram->wTilemap), ZIPCODE_LENGTH, 0x7f);
         // ld b, e
         #elif defined(_CRYSTAL_EU)
         // hlcoord 10 - ZIPCODE_LENGTH, 11 ; Zip Code Position in MOBILE menu
@@ -2204,7 +2204,7 @@ void ZipCodeEditMenu(const uint8_t* saved, uint8_t b, uint8_t d, uint8_t inMenu)
         // ld b, 0
         // ld a, " "
         // call ByteFill ; fill bc bytes with the value of a, starting at hl
-        ByteFill_Conv2(coord(10 - ZIPCODE_LENGTH, 11, wram->wTilemap), ZIPCODE_LENGTH, 0x7f);
+        ByteFill(coord(10 - ZIPCODE_LENGTH, 11, wram->wTilemap), ZIPCODE_LENGTH, 0x7f);
         // ld b, e	
         #else
         // hlcoord 11 - ZIPCODE_LENGTH, 11 ; Zip Code Position in MOBILE menu
@@ -2213,7 +2213,7 @@ void ZipCodeEditMenu(const uint8_t* saved, uint8_t b, uint8_t d, uint8_t inMenu)
         // ld b, 0
         // ld a, " "
         // call ByteFill ; fill bc bytes with the value of a, starting at hl
-        ByteFill_Conv2(coord(11 - ZIPCODE_LENGTH, 11, wram->wTilemap), ZIPCODE_LENGTH, 0x7f);
+        ByteFill(coord(11 - ZIPCODE_LENGTH, 11, wram->wTilemap), ZIPCODE_LENGTH, 0x7f);
         // ld b, e
         #endif
         // push bc
@@ -2335,7 +2335,7 @@ void ZipCodeEditMenu(const uint8_t* saved, uint8_t b, uint8_t d, uint8_t inMenu)
         // ld [wZipCode + 0], a
         // ld a, c
         // ld [wZipCode + 1], a
-        CopyBytes_Conv2(wram->wZipCode_Saved, saved, sizeof(wram->wZipCode_Saved));
+        CopyBytes(wram->wZipCode_Saved, saved, sizeof(wram->wZipCode_Saved));
 
         // jr .quit_zip_code_edit_menu
     }
@@ -2613,15 +2613,15 @@ void DisplayZipCodeRightAlign(void){
     #if defined(_CRYSTAL_AU)
     // hlcoord 14 - ZIPCODE_LENGTH, 11 ; Zip Code Position in MOBILE menu
     // ld a, ZIPCODE_LENGTH
-    ByteFill_Conv2(coord(14 - ZIPCODE_LENGTH, 11, wram->wTilemap), ZIPCODE_LENGTH, 0x7f);
+    ByteFill(coord(14 - ZIPCODE_LENGTH, 11, wram->wTilemap), ZIPCODE_LENGTH, 0x7f);
     #elif defined(_CRYSTAL_EU)
     // hlcoord 19 - ZIPCODE_LENGTH, 11 ; Zip Code Position in MOBILE menu
     // ld a, ZIPCODE_LENGTH
-    ByteFill_Conv2(coord(19 - ZIPCODE_LENGTH, 11, wram->wTilemap), ZIPCODE_LENGTH, 0x7f);
+    ByteFill(coord(19 - ZIPCODE_LENGTH, 11, wram->wTilemap), ZIPCODE_LENGTH, 0x7f);
     #else
     // hlcoord 19 - ZIPCODE_LENGTH, 11 ; Zip Code Position in MOBILE menu
     // ld a, ZIPCODE_LENGTH
-    ByteFill_Conv2(coord(19 - ZIPCODE_LENGTH, 11, wram->wTilemap), ZIPCODE_LENGTH, 0x7f);
+    ByteFill(coord(19 - ZIPCODE_LENGTH, 11, wram->wTilemap), ZIPCODE_LENGTH, 0x7f);
     #endif
     // ld c, a
     // ld b, 0
@@ -3968,7 +3968,7 @@ void Function48d94(uint8_t* hl){
     // LDH_A_addr(hRemainder);
     // LD_C(10);
     // CALL(aSimpleDivide);
-    struct DivideResult_t res1 = SimpleDivide_Conv(x % 100, 10);
+    struct DivideResult_t res1 = SimpleDivide(x % 100, 10);
     // SLA_B;
     // SLA_B;
     // SLA_B;
@@ -3979,7 +3979,7 @@ void Function48d94(uint8_t* hl){
     // LDH_A_addr(hQuotient + 3);
     // LD_C(10);
     // CALL(aSimpleDivide);
-    struct DivideResult_t res2 = SimpleDivide_Conv(x / 100, 10);
+    struct DivideResult_t res2 = SimpleDivide(x / 100, 10);
     // SLA_B;
     // SLA_B;
     // SLA_B;
@@ -4163,7 +4163,7 @@ void SaveZipcodeWithUniversalFormat(void){
     // ld de, sZipcodeCharIndexes
     // ld bc, ZIPCODE_MAX_LENGTH
     // call CopyBytes
-    CopyBytes_Conv2(GBToRAMAddr(s5_b2f4), wram->wZipCode_Saved, ZIPCODE_MAX_LENGTH);
+    CopyBytes(GBToRAMAddr(s5_b2f4), wram->wZipCode_Saved, ZIPCODE_MAX_LENGTH);
     // call CloseSRAM
     CloseSRAM_Conv();
     return; // For now
@@ -4172,7 +4172,7 @@ void SaveZipcodeWithUniversalFormat(void){
     // ld bc, ZIPCODE_MAX_LENGTH - ZIPCODE_LENGTH
     // ld a, "@"
     // call ByteFill
-    ByteFill_Conv2(wram->wZipCode_Saved + ZIPCODE_LENGTH, ZIPCODE_MAX_LENGTH - ZIPCODE_LENGTH, 0x50);
+    ByteFill(wram->wZipCode_Saved + ZIPCODE_LENGTH, ZIPCODE_MAX_LENGTH - ZIPCODE_LENGTH, 0x50);
 
     // ld hl, wZipCode
     uint8_t* hl = wram->wZipCode_Saved;
@@ -4237,7 +4237,7 @@ void LoadZipcodeWithUniversalFormat(void){
     // ld de, wZipCode
     // ld bc, ZIPCODE_MAX_LENGTH
     // call CopyBytes
-    CopyBytes_Conv2(wram->wZipCode_Saved, GBToRAMAddr(s5_b2f4), ZIPCODE_MAX_LENGTH);
+    CopyBytes(wram->wZipCode_Saved, GBToRAMAddr(s5_b2f4), ZIPCODE_MAX_LENGTH);
     // call CloseSRAM
     CloseSRAM_Conv();
     // ret

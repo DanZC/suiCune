@@ -939,7 +939,7 @@ bool Function17d314(void){
     // LD_HL(0xaa73);
     // LD_BC(0xc);
     // CALL(aByteFill);
-    ByteFill_Conv2(GBToRAMAddr(s5_aa73), 0xc, 0x0);
+    ByteFill(GBToRAMAddr(s5_aa73), 0xc, 0x0);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // LD_A(0x2);
@@ -964,18 +964,18 @@ void Function17d370(void){
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // CALL(aClearScreen);
     ClearScreen_Conv2();
     // FARCALL(aReloadMapPart);
     ReloadMapPart_Conv();
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
     // LD_HL(vTiles0 + LEN_2BPP_TILE * 0xee);
     // LD_DE(wc608);
     // LD_BC(1 * LEN_2BPP_TILE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wc608, vram->vTiles0 + LEN_2BPP_TILE * 0xee, 1 * LEN_2BPP_TILE);
+    CopyBytes(wram->wc608, vram->vTiles0 + LEN_2BPP_TILE * 0xee, 1 * LEN_2BPP_TILE);
     // LD_A(0x1);
     // LDH_addr_A(rVBK);
     // LD_HL(mPokemonNewsGFX);
@@ -987,12 +987,12 @@ void Function17d370(void){
     // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x7f);
     // LD_BC(1 * LEN_2BPP_TILE);
     // CALL(aByteFill);
-    ByteFill_Conv2(vram->vTiles5 + LEN_2BPP_TILE * 0x7f, 1 * LEN_2BPP_TILE, 0x0);
+    ByteFill(vram->vTiles5 + LEN_2BPP_TILE * 0x7f, 1 * LEN_2BPP_TILE, 0x0);
     // LD_HL(wc608);
     // LD_DE(vTiles0 + LEN_2BPP_TILE * 0xee);
     // LD_BC(1 * LEN_2BPP_TILE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(vram->vTiles3 + LEN_2BPP_TILE * 0xee, wram->wc608, 1 * LEN_2BPP_TILE);
+    CopyBytes(vram->vTiles3 + LEN_2BPP_TILE * 0xee, wram->wc608, 1 * LEN_2BPP_TILE);
     // XOR_A_A;
     // LDH_addr_A(rVBK);
     // LD_HL(mPostalMarkGFX);
@@ -1001,7 +1001,7 @@ void Function17d370(void){
     // CALL(aCopyBytes);
     LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x60, PostalMarkGFX, 0, 1);
     // CALL(aEnableLCD);
-    EnableLCD_Conv();
+    EnableLCD();
     // CALL(aFunction17d60b);
     Function17d60b();
     // LD_A(0x0);
@@ -1016,7 +1016,7 @@ void Function17d370(void){
     // LD_DE(wBGPals1);
     // LD_BC(0x1000);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wram4, GBToRAMAddr(s6_a000 + 6), 0x1000);
+    CopyBytes(wram->wram4, GBToRAMAddr(s6_a000 + 6), 0x1000);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // RET;
@@ -1026,7 +1026,7 @@ void Function17d3f6(void){
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // CALL(aClearScreen);
     ClearScreen_Conv2();
     // FARCALL(aReloadMapPart);
@@ -1037,12 +1037,12 @@ void Function17d3f6(void){
 
 void Function17d405(void){
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
     // LD_HL(vTiles0 + LEN_2BPP_TILE * 0xee);
     // LD_DE(wc608);
     // LD_BC(1 * LEN_2BPP_TILE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wc608, vram->vTiles0 + LEN_2BPP_TILE * 0xee, 1 * LEN_2BPP_TILE);
+    CopyBytes(wram->wc608, vram->vTiles0 + LEN_2BPP_TILE * 0xee, 1 * LEN_2BPP_TILE);
     // LD_A(0x1);
     // LDH_addr_A(rVBK);
     // LD_HL(mPokemonNewsGFX);
@@ -1054,16 +1054,16 @@ void Function17d405(void){
     // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x7f);
     // LD_BC(1 * LEN_2BPP_TILE);
     // CALL(aByteFill);
-    ByteFill_Conv2(vram->vTiles2 + LEN_2BPP_TILE * 0x7f, 1 * LEN_2BPP_TILE, 0x0);
+    ByteFill(vram->vTiles2 + LEN_2BPP_TILE * 0x7f, 1 * LEN_2BPP_TILE, 0x0);
     // LD_HL(wc608);
     // LD_DE(vTiles0 + LEN_2BPP_TILE * 0xee);
     // LD_BC(1 * LEN_2BPP_TILE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(vram->vTiles3 + LEN_2BPP_TILE * 0xee, wram->wc608, 1 * LEN_2BPP_TILE);
+    CopyBytes(vram->vTiles3 + LEN_2BPP_TILE * 0xee, wram->wc608, 1 * LEN_2BPP_TILE);
     // XOR_A_A;
     // LDH_addr_A(rVBK);
     // CALL(aEnableLCD);
-    EnableLCD_Conv();
+    EnableLCD();
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(0x5);
@@ -1322,7 +1322,7 @@ void Function17d48d(void){
     // LD_DE(wCreditsTimer);
     // LD_BC(0xc);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(&wram->wcd22, hl, 0xc);
+    CopyBytes(&wram->wcd22, hl, 0xc);
     hl += 0xc;
     // XOR_A_A;
     // LD_addr_A(wcd2e);
@@ -1337,7 +1337,7 @@ void Function17d48d(void){
     // LD_DE(wcd32);
     // LD_BC(0x10);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(&wram->wcd32, hl, 0x10);
+    CopyBytes(&wram->wcd32, hl, 0x10);
     hl += 0x10;
     // LD_A_hli;
     // LD_addr_A(wcd42);
@@ -1469,7 +1469,7 @@ void Function17d5f6(void){
     // LD_DE(wBGPals1);
     // LD_BC(8 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wBGPals1, wram->wc608, 8 * PALETTE_SIZE);
+    CopyBytes(wram->wBGPals1, wram->wc608, 8 * PALETTE_SIZE);
     // LD_A(0x4);
     // LDH_addr_A(rSVBK);
     // RET;
@@ -1483,7 +1483,7 @@ void Function17d60b(void){
     // LD_DE(wc608);
     // LD_BC(0x20);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wc608, GBToRAMAddr(s5_b1d3), 0x20);
+    CopyBytes(wram->wc608, GBToRAMAddr(s5_b1d3), 0x20);
     // LD_A_addr(0xb1b1);
     // LD_C_A;
     uint8_t c = gb_read(s5_b1b1);
@@ -1591,7 +1591,7 @@ void Function17d60b(void){
     // LD_A_addr(0xb1b2);
     // LD_B_A;
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(GBToRAMAddr(s5_b1b3), &wram->wc708, gb_read16(s5_b1b1));
+    CopyBytes(GBToRAMAddr(s5_b1b3), &wram->wc708, gb_read16(s5_b1b1));
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // RET;
@@ -1640,14 +1640,14 @@ void Function17d6a1(void){
     // LD_DE(wcd60);
     // LD_BC(0x4);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(&wram->wcd60, GBToRAMAddr(hl2), 0x4);
+    CopyBytes(&wram->wcd60, GBToRAMAddr(hl2), 0x4);
     // INC_HL;
     // INC_HL;
     hl2 += 0x6;
     // LD_DE(wcd64);
     // LD_BC(0x4);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wcd64, GBToRAMAddr(hl2), 0x4);
+    CopyBytes(wram->wcd64, GBToRAMAddr(hl2), 0x4);
     hl2 += 0x4;
     // LD_A_hli;
     // LD_addr_A(wcd69);
@@ -1824,7 +1824,7 @@ void Function17d78d(void){
     // LD_DE(wBGPals1);
     // LD_BC(0x1000);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wram4, GBToRAMAddr(s6_a000 + 0x6 + bc), 0x1000);
+    CopyBytes(wram->wram4, GBToRAMAddr(s6_a000 + 0x6 + bc), 0x1000);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // XOR_A_A;
@@ -2141,7 +2141,7 @@ void Function17d93a(void){
     // LD_DE(wc708);
     // LD_BC(0x5);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(&wram->wc708, hl, 0x5);
+    CopyBytes(&wram->wc708, hl, 0x5);
     // CALL(aHlToCrashCheckPointer);
     HlToCrashCheckPointer(hl + 5);
     // CALL(aFunction17e32b);
@@ -2190,7 +2190,7 @@ void Function17d98b(void){
     // LD_DE(wc708);
     // LD_BC(0x4);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(&wram->wc708, hl, 0x4);
+    CopyBytes(&wram->wc708, hl, 0x4);
     // CALL(aHlToCrashCheckPointer);
     HlToCrashCheckPointer(hl + 4);
     // CALL(aFunction17e32b);
@@ -2240,7 +2240,7 @@ void Function17d9e3(void){
     // LD_DE(wc708);
     // LD_BC(0x7);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(&wram->wc708, hl, 0x7);
+    CopyBytes(&wram->wc708, hl, 0x7);
     // CALL(aHlToCrashCheckPointer);
     HlToCrashCheckPointer(hl + 7);
     // LD_A_addr(wc70b);
@@ -2275,7 +2275,7 @@ void Function17d9e3(void){
     // LD_A_addr(wc70e);
     // LD_B_A;
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(
+    CopyBytes(
         GBToRAMAddr(wram->wc70a | (wram->wc70b << 8)), 
         GBToRAMAddr(wram->wc708 | (wram->wc709 << 8)), 
         wram->wc70d | (wram->wc70e << 8));
@@ -2923,12 +2923,12 @@ void Function17dd49(void){
     // LD_DE(wc708);
     // LD_BC(0xa);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(&wram->wc708, hl, 0xa);
+    CopyBytes(&wram->wc708, hl, 0xa);
     // LD_A_addr(wc711);
     // LD_C_A;
     // LD_B(0);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wc712, hl + 0xa, wram->wc711);
+    CopyBytes(wram->wc712, hl + 0xa, wram->wc711);
     // LD_A_addr(wc70a);
     // CP_A(0xc0);
     // IF_C goto sram;
@@ -2955,7 +2955,7 @@ void Function17dd49(void){
     // LD_C_A;
     // LD_B(0);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wc688, GBToRAMAddr(wram->wc709 | (wram->wc70a << 8)), wram->wc711);
+    CopyBytes(wram->wc688, GBToRAMAddr(wram->wc709 | (wram->wc70a << 8)), wram->wc711);
     // LD_A_addr(wc70a);
     // CP_A(0xc0);
     // IF_C goto close_sram;
@@ -3690,7 +3690,7 @@ void Function17e1a1(void){
     // LD_DE(wc708);
     // LD_BC(0xd);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(&wram->wc708, hl, 0xd);
+    CopyBytes(&wram->wc708, hl, 0xd);
     // LD_A_addr(wc70a);
     // CP_A(0xc0);
     // IF_C goto asm_17e1bb;
@@ -3718,7 +3718,7 @@ void Function17e1a1(void){
     // LD_C_A;
     // LD_B(0);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wc608, src0, wram->wc70b);
+    CopyBytes(wram->wc608, src0, wram->wc70b);
     // LD_A_addr(wc70a);
     // CP_A(0xc0);
     // IF_C goto asm_17e1e2;
@@ -3762,7 +3762,7 @@ void Function17e1a1(void){
     // LD_C_A;
     // LD_B(0);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wc688, src1, wram->wc70b);
+    CopyBytes(wram->wc688, src1, wram->wc70b);
     // LD_A_addr(wc70e);
     // CP_A(0xc0);
     // IF_C goto asm_17e21a;
@@ -3970,7 +3970,7 @@ void Function17e2a7(void){
         // LD_DE(0xaa7f);
         // LD_BC(0xc);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(GBToRAMAddr(s5_aa7f), GBToRAMAddr(s5_aa73), 0xc);
+        CopyBytes(GBToRAMAddr(s5_aa7f), GBToRAMAddr(s5_aa73), 0xc);
         // CALL(aCloseSRAM);
         CloseSRAM_Conv();
         // RET;
@@ -4040,11 +4040,11 @@ void Function17e32b(void){
     // LD_DE(0xb0b1);
     // LD_BC(0x40);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(GBToRAMAddr(s5_b091 + 0x20), wram->wc608, 0x40);
+    CopyBytes(GBToRAMAddr(s5_b091 + 0x20), wram->wc608, 0x40);
     // LD_HL(wBGMapBuffer);
     // LD_BC(0x5b);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(GBToRAMAddr(s5_b091 + 0x60), wram->wBGMapBuffer, 0x5b);
+    CopyBytes(GBToRAMAddr(s5_b091 + 0x60), wram->wBGMapBuffer, 0x5b);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // RET;
@@ -4058,11 +4058,11 @@ void Function17e349(void){
     // LD_DE(wc608);
     // LD_BC(0x40);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wc608, GBToRAMAddr(s5_b091 + 0x20), 0x40);
+    CopyBytes(wram->wc608, GBToRAMAddr(s5_b091 + 0x20), 0x40);
     // LD_DE(wBGMapBuffer);
     // LD_BC(0x5b);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wBGMapBuffer, GBToRAMAddr(s5_b091 + 0x60), 0x5b);
+    CopyBytes(wram->wBGMapBuffer, GBToRAMAddr(s5_b091 + 0x60), 0x5b);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // RET;
@@ -4125,7 +4125,7 @@ void Function17e3e0(void){
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = 0x1;
     // CALL(aDelayFrames);
-    DelayFrames_Conv(c);
+    DelayFrames(c);
     // RET;
 }
 
@@ -4430,7 +4430,7 @@ void Function17e51b(void){
         // LD_B(0);
         // LD_A(0x7f);
         // CALL(aByteFill);
-        ByteFill_Conv2(hl, wram->wcd4f, 0x7f);
+        ByteFill(hl, wram->wcd4f, 0x7f);
         // POP_HL;
         // LD_BC(0x14);
         // ADD_HL_BC;
@@ -4570,7 +4570,7 @@ uint8_t* Function17e600(uint8_t* hl, uint16_t bc, uint8_t a){
         // PUSH_BC;
         // LD_A(0x7f);
         // CALL(aByteFill);
-        ByteFill_Conv2(hl, bc, 0x7f);
+        ByteFill(hl, bc, 0x7f);
         // POP_BC;
         // POP_HL;
         // LD_DE(0x14);
@@ -4941,7 +4941,7 @@ bool Function17f081(struct TextPrintState* state, uint8_t* saved){
         // LD_DE(wcd54);
         // LD_BC(7);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(&wram->wcd54, state->hl, 7);
+        CopyBytes(&wram->wcd54, state->hl, 7);
         // POP_BC;
         // PUSH_HL;
         uint8_t* hl = state->hl + 7;
@@ -5064,7 +5064,7 @@ bool Function17f0f8(struct TextPrintState* state, uint8_t* saved){
         // LD_DE(wcd54);
         // LD_BC(0x4);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(&wram->wcd54, state->hl, 0x4);
+        CopyBytes(&wram->wcd54, state->hl, 0x4);
         state->hl += 0x4;
         // POP_BC;
         // PUSH_HL;
@@ -5082,7 +5082,7 @@ bool Function17f0f8(struct TextPrintState* state, uint8_t* saved){
         // LD_C_A;
         // LD_B(0);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(wram->wc608, GBToRAMAddr(Function17f4f6() + (wram->wcd54 | (wram->wcd55 << 8))), wram->wcd56);
+        CopyBytes(wram->wc608, GBToRAMAddr(Function17f4f6() + (wram->wcd54 | (wram->wcd55 << 8))), wram->wcd56);
         // LD_A(0x50);
         // LD_de_A;
         wram->wc608[wram->wcd56] = 0x50;
@@ -5550,7 +5550,7 @@ bool MobileScript_PlayerName(struct TextPrintState* state, uint8_t* saved){
     // LD_DE(wc608);
     // LD_BC(NAME_LENGTH_JAPANESE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wc608, wram->wPlayerName, NAME_LENGTH);
+    CopyBytes(wram->wc608, wram->wPlayerName, NAME_LENGTH);
     // LD_A(0x4);
     // LDH_addr_A(rSVBK);
     // POP_HL;
@@ -5747,7 +5747,7 @@ bool Function17f3c9(struct TextPrintState* state, uint8_t* saved){
     // LD_DE(wc708);
     // LD_BC(12);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(&wram->wc708, &wram->wcd36, 12);
+    CopyBytes(&wram->wc708, &wram->wcd36, 12);
     // POP_DE;
     // LD_C(0x0);
     // FARCALL(aFunction11c075);
@@ -5758,7 +5758,7 @@ bool Function17f3c9(struct TextPrintState* state, uint8_t* saved){
     // LD_DE(wcd36);
     // LD_BC(12);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(&wram->wcd36, &wram->wc708, 12);
+    CopyBytes(&wram->wcd36, &wram->wc708, 12);
     // POP_BC;
     state->bc = hl;
     // POP_DE;
@@ -5894,7 +5894,7 @@ bool Function17f44f(struct TextPrintState* state, uint8_t* saved){
         // LD_DE(wcd54);
         // LD_BC(0x8);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(&wram->wcd54, state->hl, 0x8);
+        CopyBytes(&wram->wcd54, state->hl, 0x8);
         // POP_BC;
         // PUSH_HL;
         uint8_t* hl = state->hl + 0x8;
@@ -5926,7 +5926,7 @@ bool Function17f44f(struct TextPrintState* state, uint8_t* saved){
         // LD_C_A;
         // LD_B(0);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(wram->wc608, GBToRAMAddr(wram->wcd55 | (wram->wcd56 << 8)), wram->wcd57);
+        CopyBytes(wram->wc608, GBToRAMAddr(wram->wcd55 | (wram->wcd56 << 8)), wram->wcd57);
         // LD_A_addr(wcd56);
         // CP_A(0xc0);
         // IF_C goto asm_17f4af;
@@ -6267,12 +6267,12 @@ void Function17f5e4(void){
     // hlcoord(0, 0, wTilemap);
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, CHAR_SPACE);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, CHAR_SPACE);
     // LD_A(0x6);
     // hlcoord(0, 0, wAttrmap);
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wAttrmap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x6);
+    ByteFill(coord(0, 0, wram->wAttrmap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x6);
     // hlcoord(2, 1, wTilemap);
     // LD_B(0x1);
     // LD_C(0xe);

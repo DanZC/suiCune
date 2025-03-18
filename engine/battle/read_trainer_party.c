@@ -34,7 +34,7 @@ void ReadTrainerParty(void){
     // LD_BC(PARTYMON_STRUCT_LENGTH * PARTY_LENGTH);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wOTPartyMon, sizeof(wram->wOTPartyMon), 0);
+    ByteFill(wram->wOTPartyMon, sizeof(wram->wOTPartyMon), 0);
 
     // LD_A_addr(wOtherTrainerClass);
     // CP_A(CAL);
@@ -852,7 +852,7 @@ uint8_t* CopyTrainerName_Conv(const uint8_t* hl){
     // PUSH_DE;
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wStringBuffer1, hl, NAME_LENGTH);
+    CopyBytes(wram->wStringBuffer1, hl, NAME_LENGTH);
     // POP_DE;
     // RET;
     return wram->wStringBuffer1;

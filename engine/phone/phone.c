@@ -491,7 +491,7 @@ u8_flag_s CheckPhoneCall_Conv(void){
 // 50% chance for a call
     // CALL(aRandom);
     // LD_B_A;
-    uint8_t b = Random_Conv();
+    uint8_t b = Random();
     // AND_A(0b01111111);
     // CP_A_B;
     // IF_NZ goto no_call;
@@ -606,17 +606,16 @@ u8_flag_s ChooseRandomCaller_Conv(void){
 
 //  Store the number of available callers in c.
     // LD_C_A;
-    uint8_t c = wram->wNumAvailableCallers;
 //  Sample a random number between 0 and 31.
     // CALL(aRandom);
-    Random_Conv();
+    Random();
     // LDH_A_addr(hRandomAdd);
     // SWAP_A;
     // AND_A(0x1f);
     uint8_t a = ((hram->hRandomAdd >> 4) | (hram->hRandomAdd << 4)) & 0x1f;
 //  Compute that number modulo the number of available callers.
     // CALL(aSimpleDivide);
-    uint8_t rem = SimpleDivide_Conv(a, c).rem;
+    uint8_t rem = a % wram->wNumAvailableCallers;
 //  Return the caller ID you just sampled.
     // LD_C_A;
     // LD_B(0);
@@ -695,7 +694,7 @@ void GetAvailableCallers_Conv(void){
     // LD_BC(CONTACT_LIST_SIZE + 1);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(&wram->wNumAvailableCallers, CONTACT_LIST_SIZE + 1, 0);
+    ByteFill(&wram->wNumAvailableCallers, CONTACT_LIST_SIZE + 1, 0);
     // LD_DE(wPhoneList);
     uint8_t* de = wram->wPhoneList;
     // LD_A(CONTACT_LIST_SIZE);
@@ -1140,7 +1139,7 @@ void LoadCallerScript_Conv(uint8_t caller){
         // LD_A(BANK(aWrongNumber));
         // LD_HL(mWrongNumber);
         // goto proceed;
-        CopyBytes_Conv2(&gCallerContact, &WrongNumber, sizeof(gCallerContact));
+        CopyBytes(&gCallerContact, &WrongNumber, sizeof(gCallerContact));
     }
     else {
 
@@ -1153,7 +1152,7 @@ void LoadCallerScript_Conv(uint8_t caller){
     //     LD_A(BANK(aPhoneContacts));
         // uint16_t phone_struct = AddNTimes_Conv(PHONE_CONTACT_SIZE, mPhoneContacts, caller);
         // FarCopyBytes_Conv(wCallerContact, BANK(aPhoneContacts), phone_struct, PHONE_CONTACT_SIZE);
-        CopyBytes_Conv2(&gCallerContact, &PhoneContacts[caller], sizeof(gCallerContact));
+        CopyBytes(&gCallerContact, &PhoneContacts[caller], sizeof(gCallerContact));
     }
 }
 
@@ -1491,7 +1490,7 @@ void HangUp_Wait20Frames(void){
 void Phone_Wait20Frames(void){
     // LD_C(20);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(20);
+    DelayFrames(20);
     // FARCALL(aPhoneRing_CopyTilemapAtOnce);
     PhoneRing_CopyTilemapAtOnce_Conv();
     // RET;

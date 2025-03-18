@@ -93,7 +93,7 @@ static const txt_cmd_s MagikarpGuruMeasureText[] = {
         // LD_HL(wPartyMonOTs);
         // CALL(aSkipNames);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(wram->wMagikarpRecordHoldersName, wram->wPartyMonOT[res.a], NAME_LENGTH);
+        CopyBytes(wram->wMagikarpRecordHoldersName, wram->wPartyMonOT[res.a], NAME_LENGTH);
         // LD_A(MAGIKARPLENGTH_BEAT_RECORD);
         // LD_addr_A(wScriptVar);
         wram->wScriptVar = MAGIKARPLENGTH_BEAT_RECORD;

@@ -13,6 +13,7 @@
 #include "../home/audio.h"
 #include "../home/delay.h"
 #include "../home/pokedex_flags.h"
+#include "../home/math.h"
 #include "../engine/gfx/dma_transfer.h"
 #include "../engine/gfx/sprites.h"
 #include "../engine/menus/save.h"
@@ -470,7 +471,7 @@ uint8_t* CopyMobileEZChatToC608(uint8_t d, uint8_t e){
     // LD_HL(wc608);
     // LD_BC(NAME_LENGTH);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wc608, NAME_LENGTH, CHAR_TERM);
+    ByteFill(wram->wc608, NAME_LENGTH, CHAR_TERM);
     // LD_A_D;
     // AND_A_A;
     // IF_Z goto get_name;
@@ -481,7 +482,7 @@ uint8_t* CopyMobileEZChatToC608(uint8_t d, uint8_t e){
         // LD_A_E;
         // LD_addr_A(wNamedObjectIndex);
         // CALL(aGetPokemonName);
-        GetPokemonName_Conv2(e);
+        GetPokemonName(e);
         // LD_HL(wStringBuffer1);
         hl = wram->wStringBuffer1;
         // LD_BC(MON_NAME_LENGTH - 1);
@@ -512,7 +513,7 @@ uint8_t* CopyMobileEZChatToC608(uint8_t d, uint8_t e){
         const char* word = MobileEZChatCategoryPointers[d - 1][e].word;
         // ADD_HL_BC;
         // LD_BC(NAME_LENGTH_JAPANESE - 1);
-        ByteFill_Conv2(wram->wStringBuffer1, NAME_LENGTH, CHAR_TERM);
+        ByteFill(wram->wStringBuffer1, NAME_LENGTH, CHAR_TERM);
         hl = U82CA(wram->wStringBuffer1, word);
         bc = NAME_LENGTH - 1;
     }
@@ -520,7 +521,7 @@ uint8_t* CopyMobileEZChatToC608(uint8_t d, uint8_t e){
 // copy_string:
     // LD_DE(wc608);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(&wram->wc608, hl, bc);
+    CopyBytes(&wram->wc608, hl, bc);
     // LD_DE(wc608);
     // POP_AF;
     // LDH_addr_A(rSVBK);
@@ -576,7 +577,7 @@ static void EZChat_EditMenu_InitKanaMode(void){
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // CALL(aClearScreen);
     ClearScreen_Conv2();
     // CALL(aFunction11d323);
@@ -584,7 +585,7 @@ static void EZChat_EditMenu_InitKanaMode(void){
     // CALL(aSetPalettes);
     SetPalettes_Conv();
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
     // LD_HL(mSelectStartGFX);
     // LD_DE(vTiles2);
     // LD_BC(0x60);
@@ -595,7 +596,7 @@ static void EZChat_EditMenu_InitKanaMode(void){
     // CALL(aDecompress);
     LoadPNG2bppAssetToVRAM(vram->vTiles0, EZChatSlowpokeLZ);
     // CALL(aEnableLCD);
-    EnableLCD_Conv();
+    EnableLCD();
     // FARCALL(aReloadMapPart);
     ReloadMapPart_Conv();
     // FARCALL(aClearSpriteAnims);
@@ -612,7 +613,7 @@ static void EZChat_EditMenu_InitKanaMode(void){
     // LD_DE(wLYOverrides);
     // LD_BC(0x100);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wLYOverrides, wram->wc6d0, 0x100);
+    CopyBytes(wram->wLYOverrides, wram->wc6d0, 0x100);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // CALL(aEZChat_GetCategoryWordsByKana);
@@ -657,7 +658,7 @@ void Function11c254(uint8_t a){
     // LD_DE(wcd36);
     // LD_BC(12);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wMobileTimeDataBuffer, hl + (a << 3) + c, 12);
+    CopyBytes(wram->wMobileTimeDataBuffer, hl + (a << 3) + c, 12);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // RET;
@@ -668,7 +669,7 @@ void EZChat_ClearBottom12Rows(void){
     // hlcoord(0, 6, wTilemap);
     // LD_BC((SCREEN_HEIGHT - 6) * SCREEN_WIDTH);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 6, wram->wTilemap), (SCREEN_HEIGHT - 6) * SCREEN_WIDTH, 0x7f);
+    ByteFill(coord(0, 6, wram->wTilemap), (SCREEN_HEIGHT - 6) * SCREEN_WIDTH, 0x7f);
     // RET;
 }
 
@@ -727,7 +728,7 @@ void EZChat_MasterLoop(void){
     // FARCALL(aClearSpriteAnims);
     ClearSpriteAnims_Conv();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // RET;
     return;
 }
@@ -1421,12 +1422,12 @@ void Function11c4be(void){
     // hlcoord(0, 6, wAttrmap);
     // LD_BC(0xa0);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 6, wram->wAttrmap), 0xa0, 0x1);
+    ByteFill(coord(0, 6, wram->wAttrmap), 0xa0, 0x1);
     // LD_A(0x7);
     // hlcoord(0, 14, wAttrmap);
     // LD_BC(0x28);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 14, wram->wAttrmap), 0x28, 0x7);
+    ByteFill(coord(0, 14, wram->wAttrmap), 0x28, 0x7);
     // FARCALL(aReloadMapPart);
     ReloadMapPart_Conv();
     // RET;
@@ -1840,7 +1841,7 @@ void Function11c618(void){
     // hlcoord(0, 6, wAttrmap);
     // LD_BC(0xc8);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 6, wram->wAttrmap), 0xc8, 0x2);
+    ByteFill(coord(0, 6, wram->wAttrmap), 0xc8, 0x2);
     // FARCALL(aReloadMapPart);
     ReloadMapPart_Conv();
     // RET;
@@ -2478,19 +2479,18 @@ void Function11c770(void){
 // div_12:
     // LD_C(12);
     // CALL(aSimpleDivide);
-    uint8_t div = wram->wcd28 / 12;
-    uint8_t rem = wram->wcd28 % 12;
+    struct DivideResult_t res = SimpleDivide(wram->wcd28, 12);
     // AND_A_A;
     // IF_NZ goto no_need_to_floor;
-    if(rem == 0) {
+    if(res.rem == 0) {
         // DEC_B;
-        div--;
+        res.quot--;
     }
 
 // no_need_to_floor:
     // LD_A_B;
     // goto load;
-    wram->wcd29 = div;
+    wram->wcd29 = res.quot;
     return;
 }
 
@@ -3494,7 +3494,7 @@ void Function11c992(void){
         // PUSH_HL;
         // LD_BC(0x11);
         // CALL(aByteFill);
-        ByteFill_Conv2(hl, SCREEN_WIDTH - 3, 0x7f);
+        ByteFill(hl, SCREEN_WIDTH - 3, 0x7f);
         // POP_HL;
         // LD_BC(0x14);
         // ADD_HL_BC;
@@ -3512,7 +3512,7 @@ void Function11c9ab(void){
     // hlcoord(0, 6, wAttrmap);
     // LD_BC(0xc8);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 6, wram->wAttrmap), 0xc8, 0x7);
+    ByteFill(coord(0, 6, wram->wAttrmap), 0xc8, 0x7);
     // FARCALL(aReloadMapPart);
     ReloadMapPart_Conv();
     // RET;
@@ -5772,7 +5772,7 @@ void Function11d323(void){
     // LD_DE(wBGPals1);
     // LD_BC(16 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wBGPals1, Palette_11d33a, 16 * PALETTE_SIZE);
+    CopyBytes(wram->wBGPals1, Palette_11d33a, 16 * PALETTE_SIZE);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // RET;

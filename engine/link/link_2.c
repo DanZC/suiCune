@@ -14,7 +14,7 @@ void LinkMonStatsScreen(void){
     // LD_addr_A(wCurPartyMon);
     wram->wCurPartyMon = wram->wMenuCursorY - 1;
     // CALL(aLowVolume);
-    LowVolume_Conv();
+    LowVolume();
     // PREDEF(pStatsScreenInit);
     StatsScreenInit();
     // LD_A_addr(wCurPartyMon);
@@ -26,7 +26,7 @@ void LinkMonStatsScreen(void){
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // CALL(aMaxVolume);
-    MaxVolume_Conv();
+    MaxVolume();
     // FARCALL(aLoadTradeScreenBorderGFX);
     LoadTradeScreenBorderGFX();
     // FARCALL(aLink_WaitBGMap);

@@ -135,7 +135,7 @@ void v_NameRater(void){
         // LD_HL(wStringBuffer2);
         // LD_BC(MON_NAME_LENGTH);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(wram->wPartyMonNickname[wram->wCurPartyMon], wram->wStringBuffer2, MON_NAME_LENGTH);
+        CopyBytes(wram->wPartyMonNickname[wram->wCurPartyMon], wram->wStringBuffer2, MON_NAME_LENGTH);
         // LD_HL(mNameRaterFinishedText);
         txt = NameRaterFinishedText;
     }

@@ -333,14 +333,14 @@ void DoNPCTrade(void){
     // CALL(aGetTradeAttr);
     // LD_DE(wOTTrademonDVs);
     // CALL(aTrade_CopyTwoBytes);
-    CopyBytes_Conv2(&wram->wOTTrademon.dvs, GetTradeAttr()->dvs, 2);
+    CopyBytes(&wram->wOTTrademon.dvs, GetTradeAttr()->dvs, 2);
 
     // LD_HL(wPartyMon1DVs);
     // LD_BC(PARTYMON_STRUCT_LENGTH);
     // CALL(aTrade_GetAttributeOfLastPartymon);
     // LD_HL(wOTTrademonDVs);
     // CALL(aTrade_CopyTwoBytes);
-    CopyBytes_Conv2(&wram->wPartyMon[wram->wPartyCount - 1].mon.DVs, &wram->wOTTrademon.dvs, 2);
+    CopyBytes(&wram->wPartyMon[wram->wPartyCount - 1].mon.DVs, &wram->wOTTrademon.dvs, 2);
 
     // LD_E(NPCTRADE_OT_ID);
     // CALL(aGetTradeAttr);
@@ -426,7 +426,7 @@ uint8_t* GetTradeMonName(species_t a){
     // PUSH_DE;
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetBasePokemonName);
-    GetBasePokemonName_Conv2(a);
+    GetBasePokemonName(a);
     // LD_HL(wStringBuffer1);
     // POP_DE;
     // RET;
@@ -437,7 +437,7 @@ void CopyTradeName(uint8_t* de, const uint8_t* hl){
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
     // RET;
-    CopyBytes_Conv2(de, hl, NAME_LENGTH);
+    CopyBytes(de, hl, NAME_LENGTH);
 }
 
 void Trade_CopyFourCharString(void){

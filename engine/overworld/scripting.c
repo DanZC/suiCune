@@ -1356,7 +1356,7 @@ uint8_t* CurItemName_Conv(item_t item){
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetItemName);
     // RET;
-    return GetItemName_Conv2(item);
+    return GetItemName(item);
 }
 
 const txt_cmd_s PutItemInPocketText[] = {
@@ -1839,7 +1839,7 @@ void Script_playmusic_Conv(script_s* s, uint16_t music){
     // LD_addr_A(wMusicFade);
     wram->wMusicFade = 0;
     // CALL(aMaxVolume);
-    MaxVolume_Conv();
+    MaxVolume();
     // CALL(aGetScriptByte);
     // LD_E_A;
     // CALL(aGetScriptByte);
@@ -2757,7 +2757,7 @@ void Script_earthquake_Conv(script_s* s, uint8_t amt){
     // LD_DE(wEarthquakeMovementDataBuffer);
     // LD_BC(mEarthquakeMovement_End - mEarthquakeMovement);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wEarthquakeMovementDataBuffer, EarthquakeMovement, sizeof(EarthquakeMovement));
+    CopyBytes(wram->wEarthquakeMovementDataBuffer, EarthquakeMovement, sizeof(EarthquakeMovement));
     // CALL(aGetScriptByte);
     // LD_addr_A(wEarthquakeMovementDataBuffer + 1);
     wram->wEarthquakeMovementDataBuffer[1] = amt;
@@ -3625,7 +3625,7 @@ void Script_random_Conv(script_s* s, uint8_t a){
         // PUSH_BC;
         // CALL(aRandom);
         // POP_BC;
-        Random_Conv();
+        Random();
         // LDH_A_addr(hRandomAdd);
         a = hram->hRandomAdd;
     }
@@ -3640,7 +3640,7 @@ void Script_random_Conv(script_s* s, uint8_t a){
         // loop:
             // PUSH_BC;
             // CALL(aRandom);
-            Random_Conv();
+            Random();
             // POP_BC;
             // LDH_A_addr(hRandomAdd);
             a = hram->hRandomAdd;
@@ -3657,7 +3657,7 @@ void Script_random_Conv(script_s* s, uint8_t a){
     // POP_AF;
     // CALL(aSimpleDivide);
     // LD_addr_A(wScriptVar);
-    wram->wScriptVar = SimpleDivide_Conv(a, wram->wScriptVar).rem;
+    wram->wScriptVar = a % wram->wScriptVar;
     // RET;
 }
 
@@ -3770,7 +3770,7 @@ void Script_getmonname_Conv(script_s* s, uint8_t buf, species_t species){
 // gotit:
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetPokemonName);
-    GetPokemonName_Conv2(species);
+    GetPokemonName(species);
     // LD_DE(wStringBuffer1);
 
     return GetStringBuffer_Conv(buf, wram->wStringBuffer1);
@@ -3815,7 +3815,7 @@ void CopyConvertedText_Conv(uint8_t a, const uint8_t* de){
     uint8_t* hl = wram->wStringBuffer3 + (a * STRING_BUFFER_LENGTH);
     // CALL(aCopyName2);
     // RET;
-    CopyName2_Conv2(hl, de);
+    CopyName2(hl, de);
 }
 
 void Script_getitemname(void){
@@ -3847,7 +3847,7 @@ void Script_getitemname_Conv(script_s* s, item_t item, uint8_t buf){
     // CALL(aGetItemName);
     // LD_DE(wStringBuffer1);
     // JR(mGetStringBuffer);
-    return GetStringBuffer_Conv(buf, GetItemName_Conv2(item));
+    return GetStringBuffer_Conv(buf, GetItemName(item));
 }
 
 void Script_getcurlandmarkname(void){
@@ -3951,7 +3951,7 @@ void Script_gettrainerclassname_Conv(script_s* s, uint8_t buffer, uint8_t tclass
     // LD_A(TRAINER_NAME);
     // LD_addr_A(wNamedObjectType);
     // JR(mContinueToGetName);
-    return GetStringBuffer_Conv(buffer, GetName_Conv2(TRAINER_NAME, tclass));
+    return GetStringBuffer_Conv(buffer, GetName(TRAINER_NAME, tclass));
 }
 
 void Script_getmoney(void){
@@ -4045,7 +4045,7 @@ void ResetStringBuffer1_Conv(void){
     // LD_A(0x50);
     // CALL(aByteFill);
     // RET;
-    return ByteFill_Conv(wStringBuffer1, NAME_LENGTH, 0x50);
+    return ByteFill_GB(wStringBuffer1, NAME_LENGTH, 0x50);
 }
 
 void Script_getstring(void){
@@ -4070,7 +4070,7 @@ void Script_getstring_Conv(script_s* s, uint8_t a, const char* hl){
     // LD_A_addr(wScriptBank);
     // LD_HL(mCopyName1);
     // RST(aFarCall);
-    CopyName1_Conv2(U82C(hl));
+    CopyName1(U82C(hl));
     // LD_DE(wStringBuffer2);
     // JP(mGetStringBuffer);
     return GetStringBuffer_Conv(a, wram->wStringBuffer2);
@@ -5788,7 +5788,7 @@ void Script_wait_Conv(script_s* s, uint8_t a){
         // PUSH_AF;
         // LD_C(6);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(6);
+        DelayFrames(6);
         // POP_AF;
         // DEC_A;
         // IF_NZ goto loop;

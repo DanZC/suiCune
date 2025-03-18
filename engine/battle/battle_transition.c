@@ -122,7 +122,7 @@ void DoBattleTransition(void){
     // LD_BC(8 * PALETTE_SIZE);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wBGPals1, 0, 8 * PALETTE_SIZE);
+    ByteFill(wram->wBGPals1, 0, 8 * PALETTE_SIZE);
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
@@ -386,7 +386,7 @@ void StartTrainerBattle_DetermineWhichAnimation(void){
 
 void StartTrainerBattle_Finish(void){
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // LD_A(BATTLETRANSITION_END);
     // LD_addr_A(wJumptableIndex);
     wram->wJumptableIndex = BATTLETRANSITION_END;
@@ -794,7 +794,7 @@ static void StartTrainerBattle_SpeckleToBlack_BlackOutRandomTile(void) {
         do {
         // y_loop:
             // CALL(aRandom);
-            b = Random_Conv();
+            b = Random();
             // CP_A(SCREEN_HEIGHT);
             // IF_NC goto y_loop;
         } while(b >= SCREEN_HEIGHT);
@@ -804,7 +804,7 @@ static void StartTrainerBattle_SpeckleToBlack_BlackOutRandomTile(void) {
         do {
         // x_loop:
             // CALL(aRandom);
-            c = Random_Conv();
+            c = Random();
             // CP_A(SCREEN_WIDTH);
             // IF_NC goto x_loop;
         } while(c >= SCREEN_WIDTH);
@@ -907,21 +907,21 @@ static const uint8_t PokeBallTransition[] = {
 static void StartTrainerBattle_LoadPokeballGraphics_copypals(const uint16_t* hl) {
     // LD_DE(wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT);
     // CALL(aStartTrainerBattle_LoadPokeBallGraphics_copy);
-    CopyBytes_Conv2(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT, hl, 1 * PALETTE_SIZE);
+    CopyBytes(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT, hl, 1 * PALETTE_SIZE);
     // LD_DE(wBGPals2 + PALETTE_SIZE * PAL_BG_TEXT);
     // CALL(aStartTrainerBattle_LoadPokeBallGraphics_copy);
-    CopyBytes_Conv2(wram->wBGPals2 + PALETTE_SIZE * PAL_BG_TEXT, hl, 1 * PALETTE_SIZE);
+    CopyBytes(wram->wBGPals2 + PALETTE_SIZE * PAL_BG_TEXT, hl, 1 * PALETTE_SIZE);
     // LD_DE(wOBPals1 + PALETTE_SIZE * PAL_OW_TREE);
     // CALL(aStartTrainerBattle_LoadPokeBallGraphics_copy);
-    CopyBytes_Conv2(wram->wOBPals1 + PALETTE_SIZE * PAL_OW_TREE, hl, 1 * PALETTE_SIZE);
+    CopyBytes(wram->wOBPals1 + PALETTE_SIZE * PAL_OW_TREE, hl, 1 * PALETTE_SIZE);
     // LD_DE(wOBPals2 + PALETTE_SIZE * PAL_OW_TREE);
     // CALL(aStartTrainerBattle_LoadPokeBallGraphics_copy);
-    CopyBytes_Conv2(wram->wOBPals2 + PALETTE_SIZE * PAL_OW_TREE, hl, 1 * PALETTE_SIZE);
+    CopyBytes(wram->wOBPals2 + PALETTE_SIZE * PAL_OW_TREE, hl, 1 * PALETTE_SIZE);
     // LD_DE(wOBPals1 + PALETTE_SIZE * PAL_OW_ROCK);
     // CALL(aStartTrainerBattle_LoadPokeBallGraphics_copy);
-    CopyBytes_Conv2(wram->wOBPals1 + PALETTE_SIZE * PAL_OW_ROCK, hl, 1 * PALETTE_SIZE);
+    CopyBytes(wram->wOBPals1 + PALETTE_SIZE * PAL_OW_ROCK, hl, 1 * PALETTE_SIZE);
     // LD_DE(wOBPals2 + PALETTE_SIZE * PAL_OW_ROCK);
-    CopyBytes_Conv2(wram->wOBPals2 + PALETTE_SIZE * PAL_OW_ROCK, hl, 1 * PALETTE_SIZE);
+    CopyBytes(wram->wOBPals2 + PALETTE_SIZE * PAL_OW_ROCK, hl, 1 * PALETTE_SIZE);
 
 // copy:
     // PUSH_HL;
@@ -1073,14 +1073,14 @@ void StartTrainerBattle_LoadPokeBallGraphics(void){
         if((wram->wTimeOfDayPal & (NUM_DAYTIMES - 1)) == DARKNESS_F) {
             // LD_HL(mStartTrainerBattle_LoadPokeBallGraphics_darkpals);
             StartTrainerBattle_LoadPokeballGraphics_copypals(darkpals);
-            CopyBytes_Conv2(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT, darkpals, 1 * PALETTE_SIZE);
-            CopyBytes_Conv2(wram->wBGPals2 + PALETTE_SIZE * PAL_BG_TEXT, darkpals, 1 * PALETTE_SIZE);
+            CopyBytes(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT, darkpals, 1 * PALETTE_SIZE);
+            CopyBytes(wram->wBGPals2 + PALETTE_SIZE * PAL_BG_TEXT, darkpals, 1 * PALETTE_SIZE);
         }
     // not_dark:
         else {
             StartTrainerBattle_LoadPokeballGraphics_copypals(pals);
-            CopyBytes_Conv2(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT, pals, 1 * PALETTE_SIZE);
-            CopyBytes_Conv2(wram->wBGPals2 + PALETTE_SIZE * PAL_BG_TEXT, pals, 1 * PALETTE_SIZE);
+            CopyBytes(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT, pals, 1 * PALETTE_SIZE);
+            CopyBytes(wram->wBGPals2 + PALETTE_SIZE * PAL_BG_TEXT, pals, 1 * PALETTE_SIZE);
         }
         // LDH_A_addr(rSVBK);
         // PUSH_AF;

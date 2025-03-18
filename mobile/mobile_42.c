@@ -262,11 +262,11 @@ void Function1080b7(void){
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
     // CALL(aMobileTradeAnim_ClearTiles);
     MobileTradeAnim_ClearTiles();
     // CALL(aMobileTradeAnim_ClearBGMap);
@@ -291,7 +291,7 @@ void Function1080b7(void){
     LoadPNG2bppAssetToVRAM(vram->vTiles0 + LEN_2BPP_TILE * 0x20, MobileTradeSpritesGFX);
 
     // CALL(aEnableLCD);
-    EnableLCD_Conv();
+    EnableLCD();
 
     // XOR_A_A;
     // LDH_addr_A(hSCX);
@@ -365,11 +365,11 @@ void Function108157(void){
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
     // CALL(aMobileTradeAnim_ClearTiles);
     MobileTradeAnim_ClearTiles();
     // CALL(aMobileTradeAnim_ClearBGMap);
@@ -379,7 +379,7 @@ void Function108157(void){
     // CALL(aLoadFontsBattleExtra);
     LoadFontsBattleExtra_Conv();
     // CALL(aEnableLCD);
-    EnableLCD_Conv();
+    EnableLCD();
     // XOR_A_A;
     // LDH_addr_A(hSCX);
     hram->hSCX = 0;
@@ -423,14 +423,14 @@ void MobileTradeAnim_ClearTiles(void){
     // LD_BC(3 * 0x80 * LEN_2BPP_TILE);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(vram->vTiles3, 3 * 0x80 * LEN_2BPP_TILE, 0);
+    ByteFill(vram->vTiles3, 3 * 0x80 * LEN_2BPP_TILE, 0);
     // LD_A(0x0);
     // LDH_addr_A(rVBK);
     // LD_HL(vTiles0);
     // LD_BC(3 * 0x80 * LEN_2BPP_TILE);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(vram->vTiles0, 3 * 0x80 * LEN_2BPP_TILE, 0);
+    ByteFill(vram->vTiles0, 3 * 0x80 * LEN_2BPP_TILE, 0);
     // RET;
 }
 
@@ -441,14 +441,14 @@ void MobileTradeAnim_ClearBGMap(void){
     // LD_BC(2 * BG_MAP_HEIGHT * BG_MAP_WIDTH);
     // LD_A(0x0);
     // CALL(aByteFill);
-    ByteFill_Conv2(bgcoord(0, 0, vram->vBGMap2), 2 * BG_MAP_HEIGHT * BG_MAP_WIDTH, 0x0);
+    ByteFill(bgcoord(0, 0, vram->vBGMap2), 2 * BG_MAP_HEIGHT * BG_MAP_WIDTH, 0x0);
     // LD_A(0x0);
     // LDH_addr_A(rVBK);
     // hlbgcoord(0, 0, vBGMap0);
     // LD_BC(2 * BG_MAP_HEIGHT * BG_MAP_WIDTH);
     // LD_A(0x7f);
     // CALL(aByteFill);
-    ByteFill_Conv2(bgcoord(0, 0, vram->vBGMap0), 2 * BG_MAP_HEIGHT * BG_MAP_WIDTH, 0x7f);
+    ByteFill(bgcoord(0, 0, vram->vBGMap0), 2 * BG_MAP_HEIGHT * BG_MAP_WIDTH, 0x7f);
     // RET;
 }
 
@@ -516,7 +516,7 @@ void MobileTradeAnim_InitSpeciesName(uint8_t* de, species_t species){
     // POP_DE;
     // LD_BC(MON_NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(de, GetPokemonName_Conv2(species), MON_NAME_LENGTH);
+    CopyBytes(de, GetPokemonName(species), MON_NAME_LENGTH);
     // RET;
 }
 
@@ -754,7 +754,7 @@ void MobileTradeAnim_ShowPlayerMonToBeSent(void){
 // skip_cry:
     // LD_C(80);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(80);
+    DelayFrames(80);
     // CALL(aFunction108bec);
     Function108bec();
     // depixel4(10, 11, 4, 0);
@@ -768,7 +768,7 @@ void MobileTradeAnim_ShowPlayerMonToBeSent(void){
     // LD_BC(12 * SCREEN_WIDTH);
     // LD_A(0x7f);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), 12 * SCREEN_WIDTH, 0x7f);
+    ByteFill(coord(0, 0, wram->wTilemap), 12 * SCREEN_WIDTH, 0x7f);
     // LD_C(80);
     // CALL(aWaitMobileTradeSpriteAnims);
     WaitMobileTradeSpriteAnims(80);
@@ -781,11 +781,11 @@ void MobileTradeAnim_ShowOTMonFromTrade(void){
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
     // CALL(aMobileTradeAnim_ClearBGMap);
     MobileTradeAnim_ClearBGMap();
     // LD_A_addr(wOTTrademonSpecies);
@@ -795,7 +795,7 @@ void MobileTradeAnim_ShowOTMonFromTrade(void){
     // CALL(aFunction108201);
     Function108201(vram->vTiles2, wram->wOTTrademon.species,  wram->wOTTrademon.dvs);
     // CALL(aEnableLCD);
-    EnableLCD_Conv();
+    EnableLCD();
     // FARCALL(aDeinitializeAllSprites);
     DeinitializeAllSprites_Conv();
     // XOR_A_A;
@@ -954,7 +954,7 @@ void MobileTradeAnim_ShowPlayerMonForGTS(void){
 // skip_cry:
     // LD_C(80);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(80);
+    DelayFrames(80);
     // CALL(aFunction108c2b);
     Function108c2b();
     // depixel4(10, 11, 4, 0);
@@ -968,7 +968,7 @@ void MobileTradeAnim_ShowPlayerMonForGTS(void){
     // LD_BC(12 * SCREEN_WIDTH);
     // LD_A(0x7f);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), 12 * SCREEN_WIDTH, 0x7f);
+    ByteFill(coord(0, 0, wram->wTilemap), 12 * SCREEN_WIDTH, 0x7f);
     // LD_C(80);
     // CALL(aWaitMobileTradeSpriteAnims);
     WaitMobileTradeSpriteAnims(80);
@@ -981,11 +981,11 @@ void MobileTradeAnim_ShowOTMonFromGTS(void){
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
     // CALL(aMobileTradeAnim_ClearBGMap);
     MobileTradeAnim_ClearBGMap();
     // LD_A_addr(wOTTrademonSpecies);
@@ -995,7 +995,7 @@ void MobileTradeAnim_ShowOTMonFromGTS(void){
     // CALL(aFunction108201);
     Function108201(vram->vTiles2, wram->wOTTrademon.species, wram->wOTTrademon.dvs);
     // CALL(aEnableLCD);
-    EnableLCD_Conv();
+    EnableLCD();
     // FARCALL(aDeinitializeAllSprites);
     DeinitializeAllSprites_Conv();
     // CALL(aDelayFrame);
@@ -1085,11 +1085,11 @@ void MobileTradeAnim_GetOddEgg(void){
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
     // CALL(aMobileTradeAnim_ClearBGMap);
     MobileTradeAnim_ClearBGMap();
     // LD_A_addr(wOTTrademonSpecies);
@@ -1099,7 +1099,7 @@ void MobileTradeAnim_GetOddEgg(void){
     // CALL(aFunction108201);
     Function108201(vram->vTiles2, wram->wOTTrademon.species, wram->wOTTrademon.dvs);
     // CALL(aEnableLCD);
-    EnableLCD_Conv();
+    EnableLCD();
     // FARCALL(aDeinitializeAllSprites);
     DeinitializeAllSprites_Conv();
     // CALL(aDelayFrame);
@@ -1188,14 +1188,14 @@ void MobileTradeAnim_02(void){
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = 0;
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
     // CALL(aMobileTradeAnim_ClearBGMap);
     MobileTradeAnim_ClearBGMap();
     // CALL(aFunction108c80);
@@ -1203,7 +1203,7 @@ void MobileTradeAnim_02(void){
     // CALL(aFunction108c6d);
     Function108c6d();
     // CALL(aEnableLCD);
-    EnableLCD_Conv();
+    EnableLCD();
     // LD_A(0xc);
     // LDH_addr_A(hSCX);
     hram->hSCX = 0xc;
@@ -1242,14 +1242,14 @@ void MobileTradeAnim_10(void){
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = 0;
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
     // CALL(aMobileTradeAnim_ClearBGMap);
     MobileTradeAnim_ClearBGMap();
     // LD_A(0x1);
@@ -1269,7 +1269,7 @@ void MobileTradeAnim_10(void){
     // CALL(aFunction108c6d);
     Function108c6d();
     // CALL(aEnableLCD);
-    EnableLCD_Conv();
+    EnableLCD();
     // LD_A(0xc);
     // LDH_addr_A(hSCX);
     hram->hSCX = 0xc;
@@ -1306,14 +1306,14 @@ void MobileTradeAnim_11(void){
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = 0;
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
     // LD_A(0x1);
     // LDH_addr_A(rVBK);
     // LD_HL(mMobileTradeGFX);
@@ -1331,7 +1331,7 @@ void MobileTradeAnim_11(void){
     // CALL(aFunction108c6d);
     Function108c6d();
     // CALL(aEnableLCD);
-    EnableLCD_Conv();
+    EnableLCD();
     // LD_A(0x80);
     // LDH_addr_A(hSCX);
     hram->hSCX = 0x80;
@@ -1553,7 +1553,7 @@ void MobileTradeAnim_06(void){
 void MobileTradeAnim_07(void){
     // LD_C(80);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(80);
+    DelayFrames(80);
     // depixel4(30, 10, 2, 0);
     // LD_A(SPRITE_ANIM_INDEX_MOBILE_TRADE_OT_PULSE);
     // CALL(aInitSpriteAnimStruct);
@@ -1718,17 +1718,17 @@ void MobileTradeAnim_0f(void){
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
     // CALL(aMobileTradeAnim_ClearTiles);
     MobileTradeAnim_ClearTiles();
     // CALL(aMobileTradeAnim_ClearBGMap);
     MobileTradeAnim_ClearBGMap();
     // CALL(aEnableLCD);
-    EnableLCD_Conv();
+    EnableLCD();
     // CALL(aGetMobileTradeAnimByte);
     GetMobileTradeAnimByte();
     // RET;
@@ -1749,7 +1749,7 @@ void MobileTradeAnim_FadeToBlack(void){
         DmgToCgbObjPal0_Conv(bgp << 2);
         // LD_C(4);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(4);
+        DelayFrames(4);
         // goto loop;
     }
 
@@ -1781,7 +1781,7 @@ void asm_108966(const uint8_t* de){
     // LD_HL(vTiles2);
     // LD_BC((BANK(aTradeGameBoyLZ) << 8) | 0x31);
     // CALL(aRequest2bpp);
-    CopyBytes_Conv2(vram->vTiles2, de, 0x31);
+    CopyBytes(vram->vTiles2, de, 0x31);
     // CALL(aWaitTop);
     WaitTop_Conv();
     // CALL(aMobileTradeAnim_ClearTilemap);
@@ -2022,7 +2022,7 @@ void MobileTradeAnim_ClearTilemap(void){
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // LD_A(0x7f);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
     // RET;
 }
 
@@ -2215,7 +2215,7 @@ void MobileTradeAnim_DeleteSprites(void){
     // FARCALL(aDeinitializeAllSprites);
     DeinitializeAllSprites_Conv();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // RET;
 }
 
@@ -2274,13 +2274,13 @@ void Function108bec(void){
     PrintText_Conv2(MobilePlayerWillTradeMonText);
     // LD_C(80);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(80);
+    DelayFrames(80);
     // LD_HL(mFunction108bec_MobileForPartnersMonText);
     // CALL(aPrintText);
     PrintText_Conv2(MobileForPartnersMonText);
     // LD_C(80);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(80);
+    DelayFrames(80);
     // RET;
 
 // MobilePlayersMonTradeText:
@@ -2302,7 +2302,7 @@ void Function108c16(void){
     PrintText_Conv2(MobileTakeGoodCareOfMonText);
     // LD_C(80);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(80);
+    DelayFrames(80);
     // RET;
 }
 
@@ -2319,7 +2319,7 @@ void Function108c2b(void){
     PrintText_Conv2(MobilePlayersMonTrade2Text);
     // LD_C(80);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(80);
+    DelayFrames(80);
     // RET;
 }
 
@@ -2344,7 +2344,7 @@ void Function108c40(void){
         PrintText_Conv2(MobileTradeCameBackText);
         // LD_C(80);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(80);
+        DelayFrames(80);
         // RET;
     }
     else {
@@ -2354,7 +2354,7 @@ void Function108c40(void){
         PrintText_Conv2(MobileTakeGoodCareOfText);
         // LD_C(80);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(80);
+        DelayFrames(80);
         // RET;
     }
 }
@@ -2493,7 +2493,7 @@ void LoadMobileAdapterPalette(void){
     // LD_DE(wBGPals1 + 4 * PALETTE_SIZE);
     // LD_BC(1 * PALETTE_SIZE);
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->wBGPals1 + 4 * PALETTE_SIZE,
+    CopyBytes(wram->wBGPals1 + 4 * PALETTE_SIZE,
         MobileAdapterPalettes + a * PALETTE_SIZE,
         1 * PALETTE_SIZE);
     // RET;

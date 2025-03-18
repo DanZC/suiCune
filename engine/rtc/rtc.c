@@ -103,10 +103,8 @@ void GetTimeOfDay_Conv(void){
     do {
     //  if we're within the given time period,
     //  get the corresponding time of day
-        // if(hour < gb_read(hl)) break;
         if(hour < TimesOfDay[i][0]) break;
     //  else, get the next entry
-        // hl+=2;
         i++;
     //  try again
     } while(1);

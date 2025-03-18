@@ -27,7 +27,7 @@ void PlaceMenuItemName_Conv(const struct MenuData* data, uint8_t* de){
     // LD_A_addr(wMenuSelection);
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetItemName);
-    uint8_t* str = GetItemName_Conv2(wram->wMenuSelection);
+    uint8_t* str = GetItemName(wram->wMenuSelection);
     // POP_HL;
     // CALL(aPlaceString);
     PlaceStringSimple(str, de);
@@ -273,7 +273,7 @@ void StartMenu_PrintBugContestStatus(void){
     if(wram->wContestMon.mon.species != 0) {
         // LD_addr_A(wNamedObjectIndex);
         // CALL(aGetPokemonName);
-        GetPokemonName_Conv2(wram->wContestMon.mon.species);
+        GetPokemonName(wram->wContestMon.mon.species);
     }
 
 // no_contest_mon:
@@ -388,7 +388,7 @@ bool FindApricornsInBag_Conv(void){
     // DEC_A;
     // LD_BC(10);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wKurtApricornItems, 10, 0xff);
+    ByteFill(wram->wKurtApricornItems, 10, 0xff);
     // LD_HL(mApricornBalls);
     const struct U8Item* hl = ApricornBalls;
 

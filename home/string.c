@@ -103,7 +103,7 @@ void v_InitString_Conv(uint16_t hl, uint16_t de, uint8_t len){
     // INC_C;
     // CALL(aCopyBytes);
     // RET;
-    CopyBytes_Conv(dest, hl, c + 1);
+    CopyBytes_GB(dest, hl, c + 1);
 }
 
 void InitString_Conv2(uint8_t* hl, const uint8_t* de, uint8_t c){
@@ -159,5 +159,5 @@ void v_InitString_Conv2(uint8_t* hl, const uint8_t* de, uint8_t len){
     // INC_C;
     // CALL(aCopyBytes);
     // RET;
-    CopyBytes_Conv2(hl, de, c + 1);
+    CopyBytes(hl, de, c + 1);
 }

@@ -156,7 +156,7 @@ bool DoPoisonStep(void){
     // DEC_C;
     // IF_NZ goto loop_clearPoisonStepData;
     wram->wPoisonStepFlagSum = 0;
-    ByteFill_Conv2(wram->wPoisonStepPartyFlags, sizeof(wram->wPoisonStepPartyFlags), 0);
+    ByteFill(wram->wPoisonStepPartyFlags, sizeof(wram->wPoisonStepPartyFlags), 0);
 
     // XOR_A_A;
     // LD_addr_A(wCurPartyMon);

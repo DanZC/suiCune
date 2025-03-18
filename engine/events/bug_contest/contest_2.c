@@ -44,7 +44,7 @@ void SelectRandomBugContestContestants(void){
             // next:
             //  Choose a flag at uniform random to be set.
                 // CALL(aRandom);
-                a = Random_Conv();
+                a = Random();
                 // CP_A(0xff / NUM_BUG_CONTESTANTS * NUM_BUG_CONTESTANTS);
                 // IF_NC goto next;
             } while(a >= 0xff / NUM_BUG_CONTESTANTS * NUM_BUG_CONTESTANTS);

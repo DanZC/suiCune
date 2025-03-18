@@ -58,7 +58,7 @@ void BattleCommand_MirrorMove(void){
     GetMoveData_Conv(de, a);
     // CALL(aGetMoveName);
     // CALL(aCopyName1);
-    CopyName1_Conv2(GetMoveName_Conv2(a));
+    CopyName1(GetMoveName(a));
     // CALL(aCheckUserIsCharging);
     // IF_NZ goto done;
     if(!CheckUserIsCharging_Conv()) {

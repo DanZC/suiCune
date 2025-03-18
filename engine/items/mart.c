@@ -250,7 +250,7 @@ void LoadMartPointer_Conv(const item_t* ptr, uint32_t size){
     // XOR_A_A;
     // LD_BC(16);
     // CALL(aByteFill);
-    ByteFill_Conv2(&sCurMart, sizeof(sCurMart), 0);
+    ByteFill(&sCurMart, sizeof(sCurMart), 0);
     sCurMart.count = (uint8_t)size;
     // XOR_A_A;  // STANDARDMART_HOWMAYIHELPYOU
     // LD_addr_A(wMartJumptableIndex);

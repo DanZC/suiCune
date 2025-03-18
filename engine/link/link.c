@@ -40,11 +40,11 @@ void LinkCommunications(void){
     ClearBGPalettes_Conv();
     // LD_C(80);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(80);
+    DelayFrames(80);
     // CALL(aClearScreen);
     ClearScreen_Conv2();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // CALL(aUpdateSprites);
     UpdateSprites_Conv();
     // XOR_A_A;
@@ -54,7 +54,7 @@ void LinkCommunications(void){
     hram->hSCY = 0;
     // LD_C(80);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(80);
+    DelayFrames(80);
     // CALL(aClearScreen);
     ClearScreen_Conv2();
     // CALL(aUpdateSprites);
@@ -281,7 +281,7 @@ void Gen2ToGen2LinkComms(void){
     if(hram->hSerialConnectionStatus == USING_INTERNAL_CLOCK) {
         // LD_C(3);
         // CALL(aDelayFrames);
-        // DelayFrames_Conv(3);
+        // DelayFrames(3);
         // XOR_A_A;
         // LDH_addr_A(hSerialSend);
         hram->hSerialSend = 0;
@@ -313,7 +313,7 @@ void Gen2ToGen2LinkComms(void){
     PlayMusic_Conv(MUSIC_NONE);
     // LD_C(3);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(3);
+    DelayFrames(3);
     // XOR_A_A;
     // LDH_addr_A(rIF);
     gb_write(rIF, 0);
@@ -456,7 +456,7 @@ void Gen2ToGen2LinkComms(void){
         // LD_DE(wLinkOTMail);
         // LD_BC(wLinkDataEnd - wLinkOTMail);  // should be wLinkOTMailEnd - wLinkOTMail
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(wram->wLinkOTMailMessages, hl, sizeof(wram->wLinkOTMailMessages) + sizeof(wram->wLinkOTMailMetadata) + sizeof(wram->wOTPlayerMailPatchSet));
+        CopyBytes(wram->wLinkOTMailMessages, hl, sizeof(wram->wLinkOTMailMessages) + sizeof(wram->wLinkOTMailMetadata) + sizeof(wram->wOTPlayerMailPatchSet));
         // LD_HL(wLinkOTMail);
         hl = wram->wLinkOTMailMessages;
         // LD_BC((MAIL_MSG_LENGTH + 1) * PARTY_LENGTH);
@@ -513,7 +513,7 @@ void Gen2ToGen2LinkComms(void){
             // PUSH_BC;
             // LD_BC(MAIL_MSG_LENGTH + 1);
             // CALL(aCopyBytes);
-            CopyBytes_Conv2(de, hl, MAIL_MSG_LENGTH + 1);
+            CopyBytes(de, hl, MAIL_MSG_LENGTH + 1);
             // LD_A(LOW(MAIL_STRUCT_LENGTH - (MAIL_MSG_LENGTH + 1)));
             // ADD_A_E;
             // LD_E_A;
@@ -543,7 +543,7 @@ void Gen2ToGen2LinkComms(void){
             de += MAIL_MSG_LENGTH + 1;
             // LD_BC(MAIL_STRUCT_LENGTH - (MAIL_MSG_LENGTH + 1));
             // CALL(aCopyBytes);
-            CopyBytes_Conv2(de, hl, MAIL_STRUCT_LENGTH - (MAIL_MSG_LENGTH + 1));
+            CopyBytes(de, hl, MAIL_STRUCT_LENGTH - (MAIL_MSG_LENGTH + 1));
             de += MAIL_STRUCT_LENGTH - (MAIL_MSG_LENGTH + 1);
             hl += MAIL_STRUCT_LENGTH - (MAIL_MSG_LENGTH + 1);
             // POP_BC;
@@ -605,25 +605,25 @@ void Gen2ToGen2LinkComms(void){
     // LD_DE(wOTPlayerName);
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wOTPlayerName, hl, NAME_LENGTH);
+    CopyBytes(wram->wOTPlayerName, hl, NAME_LENGTH);
     hl += NAME_LENGTH;
 
     // LD_DE(wOTPartyCount);
     // LD_BC(1 + PARTY_LENGTH + 1);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(&wram->wOTPartyCount, hl, 1 + PARTY_LENGTH + 1);
+    CopyBytes(&wram->wOTPartyCount, hl, 1 + PARTY_LENGTH + 1);
     hl += 1 + PARTY_LENGTH + 1;
 
     // LD_DE(wOTPlayerID);
     // LD_BC(2);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(&wram->wOTPlayerID, hl, 2);
+    CopyBytes(&wram->wOTPlayerID, hl, 2);
     hl += 2;
 
     // LD_DE(wOTPartyMons);
     // LD_BC(wOTPartyDataEnd - wOTPartyMons);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wOTPartyMon, hl, wOTPartyDataEnd - wOTPartyMons);
+    CopyBytes(wram->wOTPartyMon, hl, wOTPartyDataEnd - wOTPartyMons);
     hl += wOTPartyDataEnd - wOTPartyMons;
 
 
@@ -640,7 +640,7 @@ void Gen2ToGen2LinkComms(void){
     if(hram->hSerialConnectionStatus == USING_INTERNAL_CLOCK) {
         // LD_C(66);
         // CALL_Z (aDelayFrames);
-        DelayFrames_Conv(66);
+        DelayFrames(66);
     }
     // LD_A_addr(wLinkMode);
     // CP_A(LINK_COLOSSEUM);
@@ -666,7 +666,7 @@ void Gen2ToGen2LinkComms(void){
         // LD_DE(wOTClassName);
         // LD_BC(NAME_LENGTH);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(wram->wOTClassName, wram->wOTPlayerName, NAME_LENGTH);
+        CopyBytes(wram->wOTClassName, wram->wOTPlayerName, NAME_LENGTH);
         // CALL(aReturnToMapFromSubmenu);
         ReturnToMapFromSubmenu();
         // LD_A_addr(wDisableTextAcceleration);
@@ -918,7 +918,7 @@ void FixDataForLinkTransfer(void){
         uint8_t num;
         do {
             // CALL(aRandom);
-            num = Random_Conv();
+            num = Random();
             // CP_A(SERIAL_PREAMBLE_BYTE);
             // IF_NC goto rn_loop;
         } while(num >= SERIAL_PREAMBLE_BYTE);
@@ -1223,41 +1223,41 @@ void Link_PrepPartyData_Gen2(void){
     // LD_HL(wPlayerName);
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(de, wram->wPlayerName, NAME_LENGTH);
+    CopyBytes(de, wram->wPlayerName, NAME_LENGTH);
     de += NAME_LENGTH;
 
-    CopyBytes_Conv2(de, &wram->wPartyCount, sizeof(wram->wPartyCount));
+    CopyBytes(de, &wram->wPartyCount, sizeof(wram->wPartyCount));
     de += sizeof(wram->wPartyCount);
     // LD_HL(wPartyCount);
     // LD_BC(1 + PARTY_LENGTH + 1);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(de, &wram->wPartySpecies, sizeof(wram->wPartySpecies));
+    CopyBytes(de, &wram->wPartySpecies, sizeof(wram->wPartySpecies));
     de += sizeof(wram->wPartySpecies);
-    CopyBytes_Conv2(de, &wram->wPartyEnd, sizeof(wram->wPartyEnd));
+    CopyBytes(de, &wram->wPartyEnd, sizeof(wram->wPartyEnd));
     de += sizeof(wram->wPartyEnd);
 
     // LD_HL(wPlayerID);
     // LD_BC(2);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(de, &wram->wPlayerID, sizeof(wram->wPlayerID));
+    CopyBytes(de, &wram->wPlayerID, sizeof(wram->wPlayerID));
     de += sizeof(wram->wPlayerID);
 
     // LD_HL(wPartyMon1Species);
     // LD_BC(PARTY_LENGTH * PARTYMON_STRUCT_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(de, wram->wPartyMon, sizeof(wram->wPartyMon));
+    CopyBytes(de, wram->wPartyMon, sizeof(wram->wPartyMon));
     de += sizeof(wram->wPartyMon);
 
     // LD_HL(wPartyMonOTs);
     // LD_BC(PARTY_LENGTH * NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(de, wram->wPartyMonOT, sizeof(wram->wPartyMonOT));
+    CopyBytes(de, wram->wPartyMonOT, sizeof(wram->wPartyMonOT));
     de += sizeof(wram->wPartyMonOT);
 
     // LD_HL(wPartyMonNicknames);
     // LD_BC(PARTY_LENGTH * MON_NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(de, wram->wPartyMonNickname, sizeof(wram->wPartyMonNickname));
+    CopyBytes(de, wram->wPartyMonNickname, sizeof(wram->wPartyMonNickname));
     de += sizeof(wram->wPartyMonNickname);
 
 //  Okay, we did all that.  Now, are we in the trade center?
@@ -1287,7 +1287,7 @@ void Link_PrepPartyData_Gen2(void){
         // PUSH_BC;
         // LD_BC(MAIL_MSG_LENGTH + 1);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(de, hl->message, sizeof(hl->message));
+        CopyBytes(de, hl->message, sizeof(hl->message));
         de += sizeof(hl->message);
         hl++;
         // LD_BC(MAIL_STRUCT_LENGTH - (MAIL_MSG_LENGTH + 1));
@@ -1309,7 +1309,7 @@ void Link_PrepPartyData_Gen2(void){
         // ADD_HL_BC;
         // LD_BC(MAIL_STRUCT_LENGTH - (MAIL_MSG_LENGTH + 1));
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(de, hl->author, sizeof(*hl) - sizeof(hl->message));
+        CopyBytes(de, hl->author, sizeof(*hl) - sizeof(hl->message));
         de += sizeof(*hl) - sizeof(hl->message);
         hl++;
         // POP_BC;
@@ -1905,7 +1905,7 @@ LinkTradePartiesMenuMasterLoop:
 
 LinkTrade_TradeStatsMenu:
     // CALL(aLoadTilemapToTempTilemap);
-    LoadTilemapToTempTilemap_Conv();
+    LoadTilemapToTempTilemap();
     // LD_A_addr(wMenuCursorY);
     // PUSH_AF;
     menuY = wram->wMenuCursorY;
@@ -2011,7 +2011,7 @@ joy_loop:
         // LD_addr_A(wMenuCursorY);
         wram->wMenuCursorY = menuY;
         // CALL(aSafeLoadTempTilemapToTilemap);
-        SafeLoadTempTilemapToTilemap_Conv();
+        SafeLoadTempTilemapToTilemap();
         // JP(mLinkTrade_PlayerPartyMenu);
         goto LinkTrade_PlayerPartyMenu;
     }
@@ -2026,7 +2026,7 @@ joy_loop:
         // FARCALL(aLinkMonStatsScreen);
         LinkMonStatsScreen();
         // CALL(aSafeLoadTempTilemapToTilemap);
-        SafeLoadTempTilemapToTilemap_Conv();
+        SafeLoadTempTilemapToTilemap();
         // hlcoord(6, 1, wTilemap);
         // LD_BC((6 << 8) | 1);
         // LD_A(0x7f);
@@ -2065,7 +2065,7 @@ joy_loop:
     LinkTradePlaceArrow();
     // LD_C(100);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(100);
+    DelayFrames(100);
     // FARCALL(aValidateOTTrademon);
     // IF_C goto abnormal;
     if(!ValidateOTTrademon_Conv(wram->wCurOTTradePartyMon)) {
@@ -2081,7 +2081,7 @@ joy_loop:
         // LD_A_hl;
         // LD_addr_A(wNamedObjectIndex);
         // CALL(aGetPokemonName);
-        GetPokemonName_Conv2(wram->wOTPartySpecies[wram->wCurOTTradePartyMon]);
+        GetPokemonName(wram->wOTPartySpecies[wram->wCurOTTradePartyMon]);
         // hlcoord(0, 12, wTilemap);
         // LD_B(4);
         // LD_C(18);
@@ -2135,7 +2135,7 @@ joy_loop:
     PrintWaitingTextAndSyncAndExchangeNybble();
     // LD_C(100);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(100);
+    DelayFrames(100);
     // JP(mInitTradeMenuDisplay);
     goto InitTradeMenuDisplay;
 
@@ -2582,7 +2582,7 @@ void LinkTrade_TradeStatsMenu(void){
     };
 
     // CALL(aLoadTilemapToTempTilemap);
-    LoadTilemapToTempTilemap_Conv();
+    LoadTilemapToTempTilemap();
     // LD_A_addr(wMenuCursorY);
     // PUSH_AF;
     uint8_t menuY = wram->wMenuCursorY;
@@ -2688,7 +2688,7 @@ joy_loop:
         // LD_addr_A(wMenuCursorY);
         wram->wMenuCursorY = menuY;
         // CALL(aSafeLoadTempTilemapToTilemap);
-        SafeLoadTempTilemapToTilemap_Conv();
+        SafeLoadTempTilemapToTilemap();
         // JP(mLinkTrade_PlayerPartyMenu);
         return LinkTrade_PlayerPartyMenu();
     }
@@ -2703,7 +2703,7 @@ joy_loop:
         // FARCALL(aLinkMonStatsScreen);
         LinkMonStatsScreen();
         // CALL(aSafeLoadTempTilemapToTilemap);
-        SafeLoadTempTilemapToTilemap_Conv();
+        SafeLoadTempTilemapToTilemap();
         // hlcoord(6, 1, wTilemap);
         // LD_BC((6 << 8) | 1);
         // LD_A(0x7f);
@@ -2742,7 +2742,7 @@ joy_loop:
     LinkTradePlaceArrow();
     // LD_C(100);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(100);
+    DelayFrames(100);
     // FARCALL(aValidateOTTrademon);
     // IF_C goto abnormal;
     if(!ValidateOTTrademon_Conv(wram->wCurOTTradePartyMon)) {
@@ -2758,7 +2758,7 @@ joy_loop:
         // LD_A_hl;
         // LD_addr_A(wNamedObjectIndex);
         // CALL(aGetPokemonName);
-        GetPokemonName_Conv2(wram->wOTPartySpecies[wram->wCurOTTradePartyMon]);
+        GetPokemonName(wram->wOTPartySpecies[wram->wCurOTTradePartyMon]);
         // hlcoord(0, 12, wTilemap);
         // LD_B(4);
         // LD_C(18);
@@ -2812,7 +2812,7 @@ joy_loop:
     PrintWaitingTextAndSyncAndExchangeNybble();
     // LD_C(100);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(100);
+    DelayFrames(100);
     // JP(mInitTradeMenuDisplay);
     return InitTradeMenuDisplay();
 }
@@ -3033,8 +3033,8 @@ void LinkTrade(void){
     // LD_DE(wBufferTrademonNickname);
     // LD_BC(MON_NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wBufferTrademonNickname,
-        GetPokemonName_Conv2(s), MON_NAME_LENGTH);
+    CopyBytes(wram->wBufferTrademonNickname,
+        GetPokemonName(s), MON_NAME_LENGTH);
     // LD_A_addr(wCurOTTradePartyMon);
     // LD_HL(wOTPartySpecies);
     // LD_C_A;
@@ -3044,7 +3044,7 @@ void LinkTrade(void){
     s = wram->wOTPartySpecies[wram->wCurOTTradePartyMon];
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetPokemonName);
-    GetPokemonName_Conv2(s);
+    GetPokemonName(s);
     // LD_HL(mLinkAskTradeForText);
     // bccoord(1, 14, wTilemap);
     // CALL(aPlaceHLTextAtBC);
@@ -3173,7 +3173,7 @@ void LinkTrade(void){
             // PUSH_BC;
             // LD_BC(MAIL_STRUCT_LENGTH);
             // CALL(aCopyBytes);
-            CopyBytes_Conv(de + (c * MAIL_STRUCT_LENGTH), 
+            CopyBytes_GB(de + (c * MAIL_STRUCT_LENGTH), 
                 hl + (c * MAIL_STRUCT_LENGTH), MAIL_STRUCT_LENGTH);
             // POP_BC;
             // goto copy_mail;
@@ -3208,7 +3208,7 @@ void LinkTrade(void){
         // LD_DE(wPlayerTrademonSenderName);
         // LD_BC(NAME_LENGTH);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(wram->wPlayerTrademon.senderName, wram->wPlayerName, NAME_LENGTH);
+        CopyBytes(wram->wPlayerTrademon.senderName, wram->wPlayerName, NAME_LENGTH);
     //  species
         // LD_A_addr(wCurTradePartyMon);
         // LD_HL(wPartySpecies);
@@ -3226,7 +3226,7 @@ void LinkTrade(void){
         // LD_DE(wPlayerTrademonOTName);
         // LD_BC(NAME_LENGTH);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(wram->wPlayerTrademon.otName, wram->wPartyMonOT[wram->wCurTradePartyMon],
+        CopyBytes(wram->wPlayerTrademon.otName, wram->wPartyMonOT[wram->wCurTradePartyMon],
             NAME_LENGTH);
     //  ID
         // LD_HL(wPartyMon1ID);
@@ -3263,7 +3263,7 @@ void LinkTrade(void){
         // LD_DE(wOTTrademonSenderName);
         // LD_BC(NAME_LENGTH);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(wram->wOTTrademon.senderName, wram->wOTPlayerName, NAME_LENGTH);
+        CopyBytes(wram->wOTTrademon.senderName, wram->wOTPlayerName, NAME_LENGTH);
     //  species
         // LD_A_addr(wCurOTTradePartyMon);
         // LD_HL(wOTPartySpecies);
@@ -3280,7 +3280,7 @@ void LinkTrade(void){
         // LD_DE(wOTTrademonOTName);
         // LD_BC(NAME_LENGTH);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(wram->wOTTrademon.otName, wram->wOTPartyMonOT[wram->wCurOTTradePartyMon],
+        CopyBytes(wram->wOTTrademon.otName, wram->wOTPartyMonOT[wram->wCurOTTradePartyMon],
             NAME_LENGTH);
     //  ID
         // LD_HL(wOTPartyMon1ID);
@@ -3346,7 +3346,7 @@ void LinkTrade(void){
 
         // LD_C(100);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(100);
+        DelayFrames(100);
         // CALL(aClearTilemap);
         ClearTilemap_Conv2();
         // CALL(aLoadFontsBattleExtra);
@@ -3386,7 +3386,7 @@ void LinkTrade(void){
         // LD_DE(wTempMonSpecies);
         // LD_BC(PARTYMON_STRUCT_LENGTH);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(&wram->wTempMon.mon.species,
+        CopyBytes(&wram->wTempMon.mon.species,
             wram->wOTPartyMon + otmon,
             PARTYMON_STRUCT_LENGTH);
         // PREDEF(pAddTempmonToParty);
@@ -3457,7 +3457,7 @@ void LinkTrade(void){
         BackupMobileEventIndex();
         // LD_C(40);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(40);
+        DelayFrames(40);
         // hlcoord(0, 12, wTilemap);
         // LD_B(4);
         // LD_C(18);
@@ -3472,7 +3472,7 @@ void LinkTrade(void){
         Link_WaitBGMap();
         // LD_C(50);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(50);
+        DelayFrames(50);
         // LD_A_addr(wLinkMode);
         // CP_A(LINK_TIMECAPSULE);
         // JP_Z (mGen2ToGen1LinkComms);
@@ -3486,7 +3486,7 @@ void LinkTrade(void){
 void InitTradeMenuDisplay_Delay(void){
     // LD_C(100);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(100);
+    DelayFrames(100);
     // JP(mInitTradeMenuDisplay);
     return InitTradeMenuDisplay();
 }
@@ -3679,7 +3679,7 @@ void EnterTimeCapsule(void){
 void WaitForOtherPlayerToExit(void){
     // LD_C(3);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(3);
+    DelayFrames(3);
     // LD_A(CONNECTION_NOT_ESTABLISHED);
     // LDH_addr_A(hSerialConnectionStatus);
     hram->hSerialConnectionStatus = CONNECTION_NOT_ESTABLISHED;
@@ -3697,7 +3697,7 @@ void WaitForOtherPlayerToExit(void){
     Network_SendByte(0);
     // LD_C(3);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(3);
+    DelayFrames(3);
     // XOR_A_A;
     // LDH_addr_A(rSB);
     // gb_write(rSB, 0);
@@ -3712,7 +3712,7 @@ void WaitForOtherPlayerToExit(void){
     Network_SendByte(0);
     // LD_C(3);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(3);
+    DelayFrames(3);
     // XOR_A_A;
     // LDH_addr_A(rSB);
     gb_write(rSB, 0);
@@ -3722,7 +3722,7 @@ void WaitForOtherPlayerToExit(void){
     gb_write(rSC, 0);
     // LD_C(3);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(3);
+    DelayFrames(3);
     // LD_A(CONNECTION_NOT_ESTABLISHED);
     // LDH_addr_A(hSerialConnectionStatus);
     hram->hSerialConnectionStatus = CONNECTION_NOT_ESTABLISHED;
@@ -3885,7 +3885,7 @@ void WaitForLinkedFriend(void){
     LinkDataReceived();
     // LD_C(50);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(50);
+    DelayFrames(50);
     // LD_A(0x1);
     // LD_addr_A(wScriptVar);
     wram->wScriptVar = TRUE;
@@ -4122,7 +4122,7 @@ void TryQuickSave(void){
     wram->wScriptVar = (Link_SaveGame())? TRUE: FALSE;
     // LD_C(30);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(30);
+    DelayFrames(30);
     // POP_AF;
     // LD_addr_A(wChosenCableClubRoom);
     wram->wChosenCableClubRoom = room;
@@ -4221,7 +4221,7 @@ void CloseLink(void){
     wram->wLinkMode = 0;
     // LD_C(3);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(3);
+    DelayFrames(3);
     // JP(mLink_ResetSerialRegistersAfterLinkClosure);
     return Link_ResetSerialRegistersAfterLinkClosure();
 }
@@ -4229,7 +4229,7 @@ void CloseLink(void){
 void FailedLinkToPast(void){
     // LD_C(40);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(40);
+    DelayFrames(40);
     // LD_A(0xe);
     // JP(mLink_EnsureSync);
     Link_EnsureSync_Conv(0xe);
@@ -4238,7 +4238,7 @@ void FailedLinkToPast(void){
 void Link_ResetSerialRegistersAfterLinkClosure(void){
     // LD_C(3);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(3);
+    DelayFrames(3);
     // LD_A(CONNECTION_NOT_ESTABLISHED);
     // LDH_addr_A(hSerialConnectionStatus);
     hram->hSerialConnectionStatus = CONNECTION_NOT_ESTABLISHED;

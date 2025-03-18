@@ -143,7 +143,7 @@ void LoadPokeComPalette(void){
     // LD_HL(mPokeComPalette);
     // LD_BC(8 * PALETTE_SIZE);
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->wBGPals1, PokeComPalette, 8 * PALETTE_SIZE);
+    CopyBytes(wram->wBGPals1, PokeComPalette, 8 * PALETTE_SIZE);
     // RET;
 }
 
@@ -197,7 +197,7 @@ void LoadBattleTowerInsidePalette(void){
     // LD_HL(mBattleTowerInsidePalette);
     // LD_BC(8 * PALETTE_SIZE);
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->wBGPals1, BattleTowerInsidePalette, 8 * PALETTE_SIZE);
+    CopyBytes(wram->wBGPals1, BattleTowerInsidePalette, 8 * PALETTE_SIZE);
     // RET;
 
 }
@@ -252,7 +252,7 @@ void LoadIcePathPalette(void){
     // LD_HL(mIcePathPalette);
     // LD_BC(8 * PALETTE_SIZE);
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->wBGPals1, IcePathPalette, 8 * PALETTE_SIZE);
+    CopyBytes(wram->wBGPals1, IcePathPalette, 8 * PALETTE_SIZE);
     // RET;
 
 }
@@ -307,7 +307,7 @@ void LoadHousePalette(void){
     // LD_HL(mHousePalette);
     // LD_BC(8 * PALETTE_SIZE);
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->wBGPals1, HousePalette, 8 * PALETTE_SIZE);
+    CopyBytes(wram->wBGPals1, HousePalette, 8 * PALETTE_SIZE);
     // RET;
 
 }
@@ -362,7 +362,7 @@ void LoadRadioTowerPalette(void){
     // LD_HL(mRadioTowerPalette);
     // LD_BC(8 * PALETTE_SIZE);
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->wBGPals1, RadioTowerPalette, 8 * PALETTE_SIZE);
+    CopyBytes(wram->wBGPals1, RadioTowerPalette, 8 * PALETTE_SIZE);
     // RET;
 
 }
@@ -464,25 +464,25 @@ void LoadMansionPalette(void){
     // LD_HL(mMansionPalette1);
     // LD_BC(8 * PALETTE_SIZE);
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->wBGPals1, MansionPalette1, 8 * PALETTE_SIZE);
+    CopyBytes(wram->wBGPals1, MansionPalette1, 8 * PALETTE_SIZE);
     // LD_A(BANK(wBGPals1));
     // LD_DE(wBGPals1 + PALETTE_SIZE * PAL_BG_YELLOW);
     // LD_HL(mMansionPalette2);
     // LD_BC(1 * PALETTE_SIZE);
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_YELLOW, MansionPalette2, 1 * PALETTE_SIZE);
+    CopyBytes(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_YELLOW, MansionPalette2, 1 * PALETTE_SIZE);
     // LD_A(BANK(wBGPals1));
     // LD_DE(wBGPals1 + PALETTE_SIZE * PAL_BG_WATER);
     // LD_HL(mMansionPalette1 + PALETTE_SIZE * 6);
     // LD_BC(1 * PALETTE_SIZE);
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_WATER, MansionPalette1 + NUM_PAL_COLORS * 6, 1 * PALETTE_SIZE);
+    CopyBytes(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_WATER, MansionPalette1 + NUM_PAL_COLORS * 6, 1 * PALETTE_SIZE);
     // LD_A(BANK(wBGPals1));
     // LD_DE(wBGPals1 + PALETTE_SIZE * PAL_BG_ROOF);
     // LD_HL(mMansionPalette1 + PALETTE_SIZE * 8);
     // LD_BC(1 * PALETTE_SIZE);
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_ROOF, MansionPalette1 + NUM_PAL_COLORS * 8, 1 * PALETTE_SIZE);
+    CopyBytes(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_ROOF, MansionPalette1 + NUM_PAL_COLORS * 8, 1 * PALETTE_SIZE);
     // RET;
 
 }

@@ -157,7 +157,7 @@ static bool EvolutionAnimation_WaitFrames_CheckPressedB(uint8_t c){
 
 static bool EvolutionAnimation_AnimationSequence(void){
     // CALL(aClearJoypad);
-    ClearJoypad_Conv();
+    ClearJoypad();
     // LD_BC((1 << 8) | 2 * 7);  // flash b times, wait c frames in between
     uint8_t b = 1;
     uint8_t c = 2 * 7;
@@ -371,7 +371,7 @@ static void EvolutionAnimation_EvolutionAnimation(void){
     // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x31);
     // LD_BC(7 * 7);
     // CALL(aRequest2bpp);
-    CopyBytes_Conv2(vram->vTiles2 + LEN_2BPP_TILE * 0x31, vram->vTiles2, 7 * 7 * LEN_2BPP_TILE);
+    CopyBytes(vram->vTiles2 + LEN_2BPP_TILE * 0x31, vram->vTiles2, 7 * 7 * LEN_2BPP_TILE);
 
     // LD_A(7 * 7);
     // LD_addr_A(wEvolutionPicOffset);
@@ -409,7 +409,7 @@ static void EvolutionAnimation_EvolutionAnimation(void){
 
     // LD_C(80);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(80);
+    DelayFrames(80);
 
     // LD_C(TRUE);
     // CALL(aEvolutionAnimation_GetSGBLayout);

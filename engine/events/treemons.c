@@ -82,7 +82,7 @@ void RockMonEncounter(void){
     // CALL(aRandomRange);
     // CP_A(4);
     // IF_NC goto no_battle;
-    if(RandomRange_Conv(10) >= 4) {
+    if(RandomRange(10) >= 4) {
         return;
     }
 
@@ -329,7 +329,7 @@ bool GetTreeMon_Conv(const uint8_t* hl){
         // CALL(aRandomRange);
         // AND_A_A;
         // JR_NZ (mNoTreeMon);
-        if(RandomRange_Conv(10))
+        if(RandomRange(10))
             return NoTreeMon();
         // JR(mSelectTreeMon);
         return SelectTreeMon(hl);
@@ -341,7 +341,7 @@ bool GetTreeMon_Conv(const uint8_t* hl){
         // CALL(aRandomRange);
         // CP_A(5);
         // JR_NC (mNoTreeMon);
-        if(RandomRange_Conv(10) >= 5)
+        if(RandomRange(10) >= 5)
             return NoTreeMon();
         // JR(mSelectTreeMon);
         return SelectTreeMon(hl);
@@ -353,7 +353,7 @@ bool GetTreeMon_Conv(const uint8_t* hl){
         // CALL(aRandomRange);
         // CP_A(8);
         // JR_NC (mNoTreeMon);
-        if(RandomRange_Conv(10) >= 8)
+        if(RandomRange(10) >= 8)
             return NoTreeMon();
         // goto skip;
 
@@ -375,7 +375,7 @@ bool GetTreeMon_Conv(const uint8_t* hl){
 bool SelectTreeMon(const uint8_t* hl){
     // LD_A(100);
     // CALL(aRandomRange);
-    uint8_t a = RandomRange_Conv(100);
+    uint8_t a = RandomRange(100);
 
     while(a >= *hl) {
     // loop:

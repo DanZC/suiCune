@@ -98,7 +98,7 @@ void RedCredits(void){
     InitDisplayForRedCredits();
     // LD_C(8);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(8);
+    DelayFrames(8);
     // CALL(aDisableSpriteUpdates);
     DisableSpriteUpdates_Conv();
     // LD_A(SPAWN_RED);
@@ -131,7 +131,7 @@ void HallOfFame_FadeOutMusic(void){
     InitDisplayForHallOfFame();
     // LD_C(100);
     // JP(mDelayFrames);
-    return DelayFrames_Conv(100);
+    return DelayFrames(100);
 }
 
 void HallOfFame_PlayMusicDE(uint16_t de){
@@ -162,7 +162,7 @@ static void AnimateHallOfFame_DisplayNewHallOfFamer(struct HOFMon* hl){
     HOF_AnimateFrontpic_Conv(coord(6, 5, wram->wTilemap), ANIM_MON_HOF);
     // LD_C(60);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(60);
+    DelayFrames(60);
     // AND_A_A;
     // RET;
 
@@ -223,7 +223,7 @@ void AnimateHallOfFame(void){
     RotateThreePalettesRight_Conv();
     // LD_C(8);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(8);
+    DelayFrames(8);
     // RET;
     return;
 }
@@ -233,7 +233,7 @@ void GetHallOfFameParty(void){
     // LD_BC(wHallOfFamePokemonListEnd - wHallOfFamePokemonList + 1);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(&wram->wHallOfFamePokemonList, sizeof(wram->wHallOfFamePokemonList), 0x0);
+    ByteFill(&wram->wHallOfFamePokemonList, sizeof(wram->wHallOfFamePokemonList), 0x0);
     // LD_A_addr(wHallOfFameCount);
     // LD_DE(wHallOfFamePokemonList);
     // LD_de_A;
@@ -317,7 +317,7 @@ void GetHallOfFameParty(void){
             // CALL(aAddNTimes);
             // LD_BC(MON_NAME_LENGTH - 1);
             // CALL(aCopyBytes);
-            CopyBytes_Conv2(de->nickname, wram->wPartyMonNickname[c], MON_NAME_LENGTH - 1);
+            CopyBytes(de->nickname, wram->wPartyMonNickname[c], MON_NAME_LENGTH - 1);
 
             // POP_BC;
             // INC_C;
@@ -364,7 +364,7 @@ void AnimateHOFMonEntrance(struct HOFMon* mon){
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // LD_A(0x7f);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x31);
     // PREDEF(pGetMonBackpic);
     GetMonBackpic_Conv(vram->vTiles2 + LEN_2BPP_TILE * 0x31, mon->species);
@@ -400,7 +400,7 @@ void AnimateHOFMonEntrance(struct HOFMon* mon){
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // LD_A(0x7f);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
     // hlcoord(6, 5, wTilemap);
     // CALL(av_PrepMonFrontpic);
     v_PrepMonFrontpic_Conv(coord(6, 5, wram->wTilemap));
@@ -642,7 +642,7 @@ bool LoadHOFTeam(void){
     // LD_DE(wHallOfFameTemp);
     // LD_BC(wHallOfFameTempEnd - wHallOfFameTemp + 1);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(GBToRAMAddr(hl), &wram->wHallOfFameTemp, (wHallOfFameTempEnd - wHallOfFameTemp + 1));
+    CopyBytes(GBToRAMAddr(hl), &wram->wHallOfFameTemp, (wHallOfFameTempEnd - wHallOfFameTemp + 1));
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // AND_A_A;
@@ -673,7 +673,7 @@ void DisplayHOFMon(const struct HOFMon* mon){
     // LD_DE(wStringBuffer2);
     // LD_BC(MON_NAME_LENGTH - 1);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wStringBuffer2, mon->nickname, MON_NAME_LENGTH - 1);
+    CopyBytes(wram->wStringBuffer2, mon->nickname, MON_NAME_LENGTH - 1);
     // LD_A(0x50);
     // LD_addr_A(wStringBuffer2 + MON_NAME_LENGTH - 1);
     wram->wStringBuffer2[MON_NAME_LENGTH - 1] = 0x50;
@@ -681,7 +681,7 @@ void DisplayHOFMon(const struct HOFMon* mon){
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // LD_A(0x7f);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
     // hlcoord(0, 0, wTilemap);
     // LD_BC((3 << 8) | SCREEN_WIDTH - 2);
     // CALL(aTextbox);
@@ -722,7 +722,7 @@ void DisplayHOFMon(const struct HOFMon* mon){
         // CALL(aGetBasePokemonName);
         // hlcoord(7, 13, wTilemap);
         // CALL(aPlaceString);
-        PlaceStringSimple(GetBasePokemonName_Conv2(species), coord(7, 13, wram->wTilemap));
+        PlaceStringSimple(GetBasePokemonName(species), coord(7, 13, wram->wTilemap));
         // LD_A(TEMPMON);
         // LD_addr_A(wMonType);
         wram->wMonType = TEMPMON;
@@ -786,7 +786,7 @@ void HOF_AnimatePlayerPic(void){
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // LD_A(0x7f);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
     // FARCALL(aGetPlayerBackpic);
     GetPlayerBackpic();
     // LD_A(0x31);
@@ -823,7 +823,7 @@ void HOF_AnimatePlayerPic(void){
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // LD_A(0x7f);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
     // FARCALL(aHOF_LoadTrainerFrontpic);
     HOF_LoadTrainerFrontpic();
     // XOR_A_A;

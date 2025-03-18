@@ -263,7 +263,7 @@ void Function11665c(void){
     // LD_addr_A(wc30f);
     wram->wc30f = (wram->wc314[3] != 0)? 0x78: 0x48;
     // CALL(aRandom);
-    Random_Conv();
+    Random();
     // LDH_A_addr(hRandomAdd);
     // AND_A(0x7);
     uint8_t a = hram->hRandomAdd & 0x7;
@@ -391,7 +391,7 @@ void Function1166f4(uint8_t a, uint8_t b, uint8_t c){
     do {
     // asm_116702:
         // CALL(aRandom);
-        Random_Conv();
+        Random();
         // LDH_A_addr(hRandomAdd);
         // AND_A(0x7);
         a2 = hram->hRandomAdd & 0x7;
@@ -436,7 +436,7 @@ void Function11671f(uint8_t a, uint8_t b, uint8_t c){
     do {
     // asm_11672d:
         // CALL(aRandom);
-        Random_Conv();
+        Random();
         // LDH_A_addr(hRandomAdd);
         // AND_A(0x7);
         a2 = hram->hRandomAdd & 0x7;

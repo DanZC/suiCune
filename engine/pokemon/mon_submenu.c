@@ -172,7 +172,7 @@ uint8_t* GetMonMenuString(uint8_t item){
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetMoveName);
     // RET;
-    return GetMoveName_Conv2(MonMenuOptions[idx].value);
+    return GetMoveName(MonMenuOptions[idx].value);
 }
 
 void GetMonSubmenuItems(void){
@@ -322,7 +322,7 @@ void ResetMonSubmenu(void){
     // LD_HL(wMonSubmenuItems);
     // LD_BC(NUM_MONMENU_ITEMS + 1);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wMonSubmenuItems, sizeof(wram->wMonSubmenuItems), 0);
+    ByteFill(wram->wMonSubmenuItems, sizeof(wram->wMonSubmenuItems), 0);
     // RET;
 
 }

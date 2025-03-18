@@ -395,7 +395,7 @@ void GetPriceToRetrieveBreedmon(const uint8_t* hl, u8_pair_s lvlGrowth){
     // LD_DE(wStringBuffer1);
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wStringBuffer1, hl, NAME_LENGTH);
+    CopyBytes(wram->wStringBuffer1, hl, NAME_LENGTH);
     // LD_HL(0);
     // LD_BC(100);
     // LD_A_addr(wStringBuffer2 + 1);
@@ -633,7 +633,7 @@ static const txt_cmd_s NoRoomForEggText[] = {
     PlaySFX_Conv(SFX_GET_EGG);
     // LD_C(120);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(120);
+    DelayFrames(120);
     // LD_HL(mDayCareManOutside_TakeGoodCareOfEggText);
     // goto Load0;
 
@@ -687,14 +687,14 @@ bool DayCare_GiveEgg(void){
     // CALL(aDayCare_GetCurrentPartyMember);
     // LD_HL(wEggMonNickname);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wPartyMonNickname[c], wram->wEggMonNickname, MON_NAME_LENGTH);
+    CopyBytes(wram->wPartyMonNickname[c], wram->wEggMonNickname, MON_NAME_LENGTH);
 
     // LD_HL(wPartyMonOTs);
     // LD_BC(NAME_LENGTH);
     // CALL(aDayCare_GetCurrentPartyMember);
     // LD_HL(wEggMonOT);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wPartyMonOT[c], wram->wEggMonOT, MON_NAME_LENGTH);
+    CopyBytes(wram->wPartyMonOT[c], wram->wEggMonOT, MON_NAME_LENGTH);
 
     // LD_HL(wPartyMon1);
     // LD_BC(PARTYMON_STRUCT_LENGTH);
@@ -702,7 +702,7 @@ bool DayCare_GiveEgg(void){
     // LD_HL(wEggMon);
     // LD_BC(BOXMON_STRUCT_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(&wram->wPartyMon[c].mon, &wram->wEggMon, BOXMON_STRUCT_LENGTH);
+    CopyBytes(&wram->wPartyMon[c].mon, &wram->wEggMon, BOXMON_STRUCT_LENGTH);
 
     // CALL(aGetBaseData);
     GetBaseData_Conv2(wram->wEggMon.species);
@@ -775,7 +775,7 @@ void DayCare_InitBreeding(void){
     do {
     // loop:
         // CALL(aRandom);
-        a = Random_Conv();
+        a = Random();
         // CP_A(150);
         // IF_C goto loop;
     } while(a < 150);
@@ -788,15 +788,15 @@ void DayCare_InitBreeding(void){
     // LD_HL(wEggMon);
     // LD_BC(BOXMON_STRUCT_LENGTH);
     // CALL(aByteFill);
-    ByteFill_Conv2(&wram->wEggMon, BOXMON_STRUCT_LENGTH, 0);
+    ByteFill(&wram->wEggMon, BOXMON_STRUCT_LENGTH, 0);
     // LD_HL(wEggMonNickname);
     // LD_BC(MON_NAME_LENGTH);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wEggMonNickname, MON_NAME_LENGTH, 0);
+    ByteFill(wram->wEggMonNickname, MON_NAME_LENGTH, 0);
     // LD_HL(wEggMonOT);
     // LD_BC(NAME_LENGTH);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wEggMonOT, NAME_LENGTH, 0);
+    ByteFill(wram->wEggMonOT, NAME_LENGTH, 0);
     // LD_A_addr(wBreedMon1DVs);
     // LD_addr_A(wTempMonDVs);
     wram->wTempMon.mon.DVs = wram->wBreedMon1.DVs;
@@ -849,7 +849,7 @@ void DayCare_InitBreeding(void){
         // LD_A(NIDORAN_F);
         // IF_C goto GotEggSpecies;
         // LD_A(NIDORAN_M);
-        wram->wCurPartySpecies = (Random_Conv() >= 50 percent + 1)? NIDORAN_M: NIDORAN_F;
+        wram->wCurPartySpecies = (Random() >= 50 percent + 1)? NIDORAN_M: NIDORAN_F;
     }
 
 // GotEggSpecies:
@@ -864,12 +864,12 @@ void DayCare_InitBreeding(void){
     // LD_HL(wEggMonNickname);
     // LD_DE(mDayCare_InitBreeding_String_EGG);
     // CALL(aCopyName2);
-    CopyName2_Conv2(wram->wEggMonNickname, U82C("EGG@"));
+    CopyName2(wram->wEggMonNickname, U82C("EGG@"));
     // LD_HL(wPlayerName);
     // LD_DE(wEggMonOT);
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wEggMonOT, wram->wPlayerName, NAME_LENGTH);
+    CopyBytes(wram->wEggMonOT, wram->wPlayerName, NAME_LENGTH);
     // XOR_A_A;
     // LD_addr_A(wEggMonItem);
     wram->wEggMon.item = NO_ITEM;
@@ -909,10 +909,10 @@ void DayCare_InitBreeding(void){
     // LD_hli_A;
     // DEC_B;
     // IF_NZ goto loop2;
-    ByteFill_Conv2(wram->wEggMon.statExp, sizeof(wram->wEggMon.statExp), 0);
+    ByteFill(wram->wEggMon.statExp, sizeof(wram->wEggMon.statExp), 0);
     // LD_HL(wEggMonDVs);
     // CALL(aRandom);
-    uint16_t dv = (Random_Conv() | (Random_Conv() << 8));
+    uint16_t dv = (Random() | (Random() << 8));
     // LD_hli_A;
     wram->wEggMon.DVs = dv;
     // LD_addr_A(wTempMonDVs);
@@ -994,7 +994,7 @@ SkipDVs:
     // LD_DE(wMonOrItemNameBuffer);
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wMonOrItemNameBuffer, wram->wStringBuffer1, NAME_LENGTH);
+    CopyBytes(wram->wMonOrItemNameBuffer, wram->wStringBuffer1, NAME_LENGTH);
     // LD_HL(wEggMonMoves);
     // LD_DE(wEggMonPP);
     // PREDEF(pFillPP);
@@ -1003,7 +1003,7 @@ SkipDVs:
     // LD_DE(wStringBuffer1);
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wStringBuffer1, wram->wMonOrItemNameBuffer, NAME_LENGTH);
+    CopyBytes(wram->wStringBuffer1, wram->wMonOrItemNameBuffer, NAME_LENGTH);
     // LD_A_addr(wBaseEggSteps);
     // LD_HL(wEggMonHappiness);
     // LD_hli_A;

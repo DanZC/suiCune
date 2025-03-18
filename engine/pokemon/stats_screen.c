@@ -464,7 +464,7 @@ void MonStatsJoypad(void){
 void StatsScreenWaitCry(void){
     // CALL(aIsSFXPlaying);
     // RET_NC ;
-    if(IsSFXPlaying_Conv())
+    if(IsSFXPlaying())
         return;
     
     // LD_A_addr(wJumptableIndex);
@@ -518,7 +518,7 @@ void StatsScreen_CopyToTempMon_Conv(void){
         // LD_DE(wTempMon);
         // LD_BC(PARTYMON_STRUCT_LENGTH);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(&wram->wTempMon, &wram->wBufferMon, sizeof(wram->wBufferMon));
+        CopyBytes(&wram->wTempMon, &wram->wBufferMon, sizeof(wram->wBufferMon));
         // goto done;
     }
     else {
@@ -949,7 +949,7 @@ void StatsScreen_InitUpperHalf(void){
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetPokemonName);
     // CALL(aPlaceString);
-    PlaceStringSimple(GetPokemonName_Conv2(wram->wBaseDexNo), coord(9, 4, wram->wTilemap) + 1);
+    PlaceStringSimple(GetPokemonName(wram->wBaseDexNo), coord(9, 4, wram->wTilemap) + 1);
     // CALL(aStatsScreen_PlaceHorizontalDivider);
     StatsScreen_PlaceHorizontalDivider();
     // CALL(aStatsScreen_PlacePageSwitchArrows);
@@ -1304,7 +1304,7 @@ static uint8_t* LoadGreenPage_GetItemName(void) {
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetItemName);
     // RET;
-    return GetItemName_Conv2(item);
+    return GetItemName(item);
 }
 
 void LoadGreenPage(void){
@@ -1324,7 +1324,7 @@ void LoadGreenPage(void){
     // LD_DE(wListMoves_MoveIndicesBuffer);
     // LD_BC(NUM_MOVES);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wListMoves_MoveIndicesBuffer, wram->wTempMon.mon.moves, NUM_MOVES);
+    CopyBytes(wram->wListMoves_MoveIndicesBuffer, wram->wTempMon.mon.moves, NUM_MOVES);
     // hlcoord(8, 10, wTilemap);
     // LD_A(SCREEN_WIDTH * 2);
     // LD_addr_A(wListMovesLineSpacing);
@@ -2164,7 +2164,7 @@ uint8_t* CopyNickname_Conv(uint8_t* hl){
         // CALL(aCopyBytes);
         // POP_DE;
         // RET;
-        CopyBytes_Conv2(wram->wStringBuffer1, hl, MON_NAME_LENGTH);
+        CopyBytes(wram->wStringBuffer1, hl, MON_NAME_LENGTH);
         return wram->wStringBuffer1;
     }
 
@@ -2203,7 +2203,7 @@ uint8_t* GetNicknamenamePointer_Conv(void){
             return wram->wOTPartyMonOT[wram->wCurPartyMon];
         case BOXMON: {
             OpenSRAM_Conv(MBANK(asBoxMonOTs));
-            CopyBytes_Conv2(wram->wStringBuffer1, GBToRAMAddr(sBoxMonOTs + (wram->wCurPartyMon * NAME_LENGTH)), NAME_LENGTH);
+            CopyBytes(wram->wStringBuffer1, GBToRAMAddr(sBoxMonOTs + (wram->wCurPartyMon * NAME_LENGTH)), NAME_LENGTH);
             CloseSRAM_Conv();
             return wram->wStringBuffer1;
         }
@@ -2235,7 +2235,7 @@ uint8_t* GetNicknamenamePointer2_Conv(void){
             return wram->wOTPartyMonNickname[wram->wCurPartyMon];
         case BOXMON: {
             OpenSRAM_Conv(MBANK(asBoxMonNicknames));
-            CopyBytes_Conv2(wram->wStringBuffer1, GBToRAMAddr(sBoxMonNicknames), MON_NAME_LENGTH);
+            CopyBytes(wram->wStringBuffer1, GBToRAMAddr(sBoxMonNicknames), MON_NAME_LENGTH);
             CloseSRAM_Conv();
             return wram->wStringBuffer1;
         }

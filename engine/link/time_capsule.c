@@ -273,7 +273,7 @@ static void PlaceTradePartnerNamesAndParty_PlaceSpeciesNames(tile_t* hl, species
         // CALL(aGetPokemonName);
         // POP_HL;
         // CALL(aPlaceString);
-        PlaceStringSimple(GetPokemonName_Conv2(de[c]), hl);
+        PlaceStringSimple(GetPokemonName(de[c]), hl);
         // POP_DE;
         // INC_DE;
         // POP_HL;

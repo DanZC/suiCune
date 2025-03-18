@@ -247,19 +247,19 @@ void v_ResetWRAM(void) {
     // LD_BC(wOptions - wVirtualOAM);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv(wVirtualOAM, wOptions - wVirtualOAM, 0);
+    ByteFill_GB(wVirtualOAM, wOptions - wVirtualOAM, 0);
 
     // LD_HL(WRAM1_Begin);
     // LD_BC(wGameData - WRAM1_Begin);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv(WRAM1_Begin, wGameData - WRAM1_Begin, 0);
+    ByteFill_GB(WRAM1_Begin, wGameData - WRAM1_Begin, 0);
 
     // LD_HL(wGameData);
     // LD_BC(wGameDataEnd - wGameData);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv(wGameData, wGameDataEnd - wGameData, 0);
+    ByteFill_GB(wGameData, wGameDataEnd - wGameData, 0);
 
     // LDH_A_addr(rLY);
     // LDH_addr_A(hUnusedBackup);
@@ -283,9 +283,9 @@ void v_ResetWRAM(void) {
     // CALL(aDelayFrame);
     // CALL(aRandom);
     // LD_addr_A(wSecretID + 1);
-    uint8_t sid_lo = Random_Conv();
+    uint8_t sid_lo = Random();
     DelayFrame();
-    uint8_t sid_hi = Random_Conv();
+    uint8_t sid_hi = Random();
     wram->wSecretID = (sid_hi << 8) | sid_lo;
 
     // LD_HL(wPartyCount);
@@ -416,7 +416,7 @@ void v_ResetWRAM(void) {
     DeleteMobileEventIndex();
 
     // CALL(aResetGameTime);
-    ResetGameTime_Conv();
+    ResetGameTime();
     // RET;
 }
 
@@ -431,7 +431,7 @@ void SetDefaultBoxNames(void) {
         uint8_t* hl2 = hl;
         // LD_DE(mSetDefaultBoxNames_Box);
         // CALL(aCopyName2);
-        hl2 = CopyName2_Conv2(hl2, U82C("BOX@"));
+        hl2 = CopyName2(hl2, U82C("BOX@"));
         // DEC_HL;
         --hl2;
         // LD_A_C;
@@ -478,7 +478,7 @@ void InitializeMagikarpHouse(void) {
     wram->wBestMagikarpLengthInches = 0x6;
     // LD_DE(mInitializeMagikarpHouse_Ralph);
     // CALL(aCopyName2);
-    CopyName2_Conv2(wram->wMagikarpRecordHoldersName, U82C("RALPH@"));
+    CopyName2(wram->wMagikarpRecordHoldersName, U82C("RALPH@"));
     // RET;
 
 // Ralph:
@@ -560,8 +560,8 @@ void LoadOrRegenerateLuckyIDNumber(void) {
         // CALL(aRandom);
         // LD_C_A;
         // CALL(aRandom);
-        id = Random_Conv() << 8;
-        id |= Random_Conv();
+        id = Random() << 8;
+        id |= Random();
     }
 
 // skip:
@@ -591,7 +591,7 @@ bool Continue(void) {
         hram->hBGMapMode = 0x1;
         // LD_C(20);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(20);
+        DelayFrames(20);
         // CALL(aConfirmContinue);
         // IF_NC goto Check1Pass;
         if(ConfirmContinue_Conv() && !Continue_CheckRTC_RestartClock()) {
@@ -620,7 +620,7 @@ bool Continue(void) {
             ClearTilemap_Conv2();
             // LD_C(20);
             // CALL(aDelayFrames);
-            DelayFrames_Conv(20);
+            DelayFrames(20);
             // FARCALL(aJumpRoamMons);
             JumpRoamMons();
             // FARCALL(aCopyMysteryGiftReceivedDecorationsToPC);
@@ -703,7 +703,7 @@ void Continue_MobileAdapterMenu(void) {
     wram->wMusicFadeID = MUSIC_MOBILE_ADAPTER_MENU;
     // LD_C(20);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(20);
+    DelayFrames(20);
     // LD_C(0x1);
     // FARCALL(aInitMobileProfile);  // mobile
     InitMobileProfile(0x1);
@@ -719,7 +719,7 @@ void Continue_MobileAdapterMenu(void) {
     wram->wMusicFadeID = MUSIC_NONE;
     // LD_C(35);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(35);
+    DelayFrames(35);
     // RET;
 }
 
@@ -1478,11 +1478,11 @@ void StorePlayerName(void) {
     // LD_BC(NAME_LENGTH);
     // LD_HL(wPlayerName);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wPlayerName, NAME_LENGTH, 0x50);
+    ByteFill(wram->wPlayerName, NAME_LENGTH, 0x50);
     // LD_HL(wPlayerName);
     // LD_DE(wStringBuffer2);
     // CALL(aCopyName2);
-    CopyName2_Conv2(wram->wPlayerName, wram->wStringBuffer2);
+    CopyName2(wram->wPlayerName, wram->wStringBuffer2);
     // RET;
 }
 
@@ -1509,7 +1509,7 @@ void ShrinkPlayer(void) {
 
     // LD_C(8);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(8);
+    DelayFrames(8);
 
     // LD_HL(mShrink1Pic);
     // LD_B(BANK(aShrink1Pic));
@@ -1518,7 +1518,7 @@ void ShrinkPlayer(void) {
 
     // LD_C(8);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(16);
+    DelayFrames(16);
 
     // LD_HL(mShrink2Pic);
     // LD_B(BANK(aShrink2Pic));
@@ -1527,7 +1527,7 @@ void ShrinkPlayer(void) {
 
     // LD_C(8);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(16);
+    DelayFrames(16);
 
     // hlcoord(6, 5, wTilemap);
     // LD_B(7);
@@ -1537,7 +1537,7 @@ void ShrinkPlayer(void) {
 
     // LD_C(3);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(3);
+    DelayFrames(3);
 
     // CALL(aIntro_PlacePlayerSprite);
     Intro_PlacePlayerSprite_Conv();
@@ -1546,7 +1546,7 @@ void ShrinkPlayer(void) {
 
     // LD_C(50);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(50);
+    DelayFrames(50);
 
     // CALL(aRotateThreePalettesRight);
     RotateThreePalettesRight_Conv();
@@ -1578,7 +1578,7 @@ void Intro_RotatePalettesLeftFrontpic(void) {
         DmgToCgbBGPals_Conv(*(hl++));
         // LD_C(10);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(10);
+        DelayFrames(10);
         // DEC_B;
         // IF_NZ goto loop;
     } while(--b != 0);
@@ -1811,7 +1811,7 @@ void StartTitleScreen(void){
     } while(!RunTitleScreen_Conv());
 
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
 
@@ -2056,7 +2056,7 @@ void TitleScreenEntrance_Conv(void){
         // LD_HL(wLYOverrides);
         // LD_BC(8 * 10);  // logo height
         // CALL(aByteFill);
-        ByteFill_Conv2(wram->wLYOverrides, 8 * 10, hram->hSCX);
+        ByteFill(wram->wLYOverrides, 8 * 10, hram->hSCX);
 
     //  Reversed signage for every other line's position.
     //  This is responsible for the interlaced effect.

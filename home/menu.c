@@ -436,7 +436,7 @@ void CopyMenuData_Conv(void) {
     uint16_t bc = (wMenuDataEnd - wMenuData);
 
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(de, hl, bc);
+    CopyBytes(de, hl, bc);
 }
 
 const struct MenuData* GetMenuData(void) {
@@ -930,11 +930,11 @@ void CopyMenuHeader_Conv(uint16_t hl) {
     // LD_DE(wMenuHeader);
     // LD_BC(wMenuHeaderEnd - wMenuHeader);
     // CALL(aCopyBytes);
-    CopyBytes_Conv(wMenuHeader, hl, (wMenuHeaderEnd - wMenuHeader));
+    CopyBytes_GB(wMenuHeader, hl, (wMenuHeaderEnd - wMenuHeader));
 
     // LDH_A_addr(hROMBank);
     // LD_addr_A(wMenuDataBank);
-    gb_write(wMenuDataBank, gb_read(hROMBank));
+    gb_write(wMenuDataBank, hram->hROMBank);
 }
 
 void CopyMenuHeader_Conv2(const struct MenuHeader* hl) {
@@ -1184,7 +1184,7 @@ void CopyNameFromMenu_Conv(uint8_t a) {
     // LD_D_H;
     // LD_E_L;
     // CALL(aCopyName1);
-    CopyName1_Conv2(U82C(data->verticalMenu.options[a]));
+    CopyName1(U82C(data->verticalMenu.options[a]));
     // POP_BC;
     // POP_HL;
     // RET;
@@ -1315,7 +1315,7 @@ bool InterpretTwoOptionMenu_Conv(void) {
     // PUSH_AF;
     // LD_C(0xf);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(0xf);
+    DelayFrames(0xf);
     // CALL(aCloseWindow);
     CloseWindow_Conv2();
     // POP_AF;
@@ -2162,10 +2162,10 @@ ClearMenuData:
 }
 
 void ClearWindowData_Conv(void) {
-    ByteFill_Conv2(&wram->wWindowStackPointer, (wMenuMetadataEnd - wMenuMetadata), 0);
-    ByteFill_Conv2(&wram->wMenuFlags, (wMenuHeaderEnd - wMenuHeader), 0);
-    ByteFill_Conv2(&wram->wMenuDataFlags, (wMenuDataEnd - wMenuData), 0);
-    ByteFill_Conv2(&wram->w2DMenuCursorInitY, (wMoreMenuDataEnd - wMoreMenuData), 0);
+    ByteFill(&wram->wWindowStackPointer, (wMenuMetadataEnd - wMenuMetadata), 0);
+    ByteFill(&wram->wMenuFlags, (wMenuHeaderEnd - wMenuHeader), 0);
+    ByteFill(&wram->wMenuDataFlags, (wMenuDataEnd - wMenuData), 0);
+    ByteFill(&wram->w2DMenuCursorInitY, (wMoreMenuDataEnd - wMoreMenuData), 0);
 
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
@@ -2195,10 +2195,10 @@ void ClearWindowData_Conv(void) {
 }
 
 void ClearWindowData_Conv2(void) {
-    ByteFill_Conv2(&wram->wWindowStackPointer, (wMenuMetadataEnd - wMenuMetadata), 0);
-    ByteFill_Conv2(&wram->wMenuFlags, (wMenuHeaderEnd - wMenuHeader), 0);
-    ByteFill_Conv2(&wram->wMenuDataFlags, (wMenuDataEnd - wMenuData), 0);
-    ByteFill_Conv2(&wram->w2DMenuCursorInitY, (wMoreMenuDataEnd - wMoreMenuData), 0);
+    ByteFill(&wram->wWindowStackPointer, (wMenuMetadataEnd - wMenuMetadata), 0);
+    ByteFill(&wram->wMenuFlags, (wMenuHeaderEnd - wMenuHeader), 0);
+    ByteFill(&wram->wMenuDataFlags, (wMenuDataEnd - wMenuData), 0);
+    ByteFill(&wram->w2DMenuCursorInitY, (wMoreMenuDataEnd - wMoreMenuData), 0);
 
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
@@ -2216,8 +2216,8 @@ void ClearWindowData_Conv2(void) {
     // LD_A_L;
     // LD_addr_A(wWindowStackPointer);
     gWindowStackPointer = 0;
-    ByteFill_Conv2(gWindowStack, sizeof(gWindowStack), 0);
-    ByteFill_Conv2(gTileBackupStack, sizeof(gTileBackupStack), 0);
+    ByteFill(gWindowStack, sizeof(gWindowStack), 0);
+    ByteFill(gTileBackupStack, sizeof(gTileBackupStack), 0);
     // LD_A_H;
     // LD_addr_A(wWindowStackPointer + 1);
     wram->wWindowStackPointer = wWindowStackBottom - 2;

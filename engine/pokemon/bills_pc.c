@@ -80,7 +80,7 @@ void v_DepositPKMN(void){
 
 // done:
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // POP_AF;
     // LDH_addr_A(hInMenu);
     hram->hInMenu = inMenu;
@@ -110,7 +110,7 @@ static void v_DepositPKMN_RunJumptable(void) {
         // LDH_addr_A(hBGMapMode);
         hram->hBGMapMode = 0;
         // CALL(aClearSprites);
-        ClearSprites_Conv();
+        ClearSprites();
         // CALL(aCopyBoxmonSpecies);
         CopyBoxmonSpecies();
         // CALL(aBillsPC_BoxName);
@@ -212,7 +212,7 @@ static void v_DepositPKMN_RunJumptable(void) {
         // LDH_addr_A(hBGMapMode);
         hram->hBGMapMode = 0;
         // CALL(aClearSprites);
-        ClearSprites_Conv();
+        ClearSprites();
         // CALL(aBillsPC_GetSelectedPokemonSpecies);
         // LD_addr_A(wCurPartySpecies);
         wram->wCurPartySpecies = BillsPC_GetSelectedPokemonSpecies_Conv();
@@ -473,7 +473,7 @@ void v_WithdrawPKMN(void){
 
 // done:
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // POP_AF;
     // LDH_addr_A(hInMenu);
     hram->hInMenu = inMenu;
@@ -505,7 +505,7 @@ static void v_WithdrawPKMN_RunJumptable(void){
         // LDH_addr_A(hBGMapMode);
         hram->hBGMapMode = 0x0;
         // CALL(aClearSprites);
-        ClearSprites_Conv();
+        ClearSprites();
         // CALL(aCopyBoxmonSpecies);
         CopyBoxmonSpecies();
         // CALL(aBillsPC_BoxName);
@@ -610,7 +610,7 @@ static void v_WithdrawPKMN_RunJumptable(void){
         // LDH_addr_A(hBGMapMode);
         hram->hBGMapMode = 0x0;
         // CALL(aClearSprites);
-        ClearSprites_Conv();
+        ClearSprites();
         // CALL(aBillsPC_GetSelectedPokemonSpecies);
         // LD_addr_A(wCurPartySpecies);
         wram->wCurPartySpecies = BillsPC_GetSelectedPokemonSpecies_Conv();
@@ -855,7 +855,7 @@ void v_MovePKMNWithoutMail(void){
 
 // done:
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // POP_AF;
     // LDH_addr_A(hInMenu);
     hram->hInMenu = inMenu;
@@ -909,7 +909,7 @@ static void v_MovePKMNWithoutMail_RunJumptable(void){
         // LDH_addr_A(hBGMapMode);
         hram->hBGMapMode = 0x0;
         // CALL(aClearSprites);
-        ClearSprites_Conv();
+        ClearSprites();
         // CALL(aCopyBoxmonSpecies);
         CopyBoxmonSpecies();
         // LD_DE(mPCString_ChooseaPKMN);
@@ -1025,7 +1025,7 @@ static void v_MovePKMNWithoutMail_RunJumptable(void){
         // LDH_addr_A(hBGMapMode);
         hram->hBGMapMode = 0x0;
         // CALL(aClearSprites);
-        ClearSprites_Conv();
+        ClearSprites();
         // CALL(aBillsPC_GetSelectedPokemonSpecies);
         // LD_addr_A(wCurPartySpecies);
         wram->wCurPartySpecies = BillsPC_GetSelectedPokemonSpecies_Conv();
@@ -1141,7 +1141,7 @@ static void v_MovePKMNWithoutMail_RunJumptable(void){
         // CALL(aBillsPC_MoveMonWOMail_BoxNameAndArrows);
         BillsPC_MoveMonWOMail_BoxNameAndArrows();
         // CALL(aClearSprites);
-        ClearSprites_Conv();
+        ClearSprites();
         // CALL(aBillsPC_UpdateInsertCursor);
         BillsPC_UpdateInsertCursor();
         // CALL(aWaitBGMap);
@@ -1241,7 +1241,7 @@ void BillsPC_InitRAM(void){
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // CALL(aBillsPC_InitGFX);
@@ -1250,7 +1250,7 @@ void BillsPC_InitRAM(void){
     // LD_BC(wBillsPCDataEnd - wBillsPCData);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wBillsPCPokemonList, (wBillsPCDataEnd - wBillsPCData), 0);
+    ByteFill(wram->wBillsPCPokemonList, (wBillsPCDataEnd - wBillsPCData), 0);
     // XOR_A_A;
     // LD_addr_A(wJumptableIndex);
     wram->wJumptableIndex = 0;
@@ -1895,7 +1895,7 @@ void PCMonInfo(void){
     // CALL(aGetBasePokemonName);
     // hlcoord(1, 14, wTilemap);
     // CALL(aPlaceString);
-    PlaceStringSimple(GetBasePokemonName_Conv2(species), coord(1, 14, wram->wTilemap));
+    PlaceStringSimple(GetBasePokemonName(species), coord(1, 14, wram->wTilemap));
 
     // hlcoord(1, 12, wTilemap);
     // CALL(aPrintLevel);
@@ -2247,7 +2247,7 @@ static void BillsPC_RefreshTextboxes_PlaceNickname(const struct BillsPCMonEntry*
                 // LD_DE(wStringBuffer1);
                 // LD_BC(MON_NAME_LENGTH);
                 // CALL(aCopyBytes);
-                CopyBytes_Conv2(wram->wStringBuffer1, nick[e], MON_NAME_LENGTH);
+                CopyBytes(wram->wStringBuffer1, nick[e], MON_NAME_LENGTH);
                 // CALL(aCloseSRAM);
                 CloseSRAM_Conv();
                 // POP_HL;
@@ -2293,7 +2293,7 @@ static void BillsPC_RefreshTextboxes_PlaceNickname(const struct BillsPCMonEntry*
                 // LD_DE(wStringBuffer1);
                 // LD_BC(MON_NAME_LENGTH);
                 // CALL(aCopyBytes);
-                CopyBytes_Conv2(wram->wStringBuffer1, GBToRAMAddr(ptr + (sBoxMonNicknames - sBox) + (e * MON_NAME_LENGTH)), MON_NAME_LENGTH);
+                CopyBytes(wram->wStringBuffer1, GBToRAMAddr(ptr + (sBoxMonNicknames - sBox) + (e * MON_NAME_LENGTH)), MON_NAME_LENGTH);
                 // CALL(aCloseSRAM);
                 CloseSRAM_Conv();
                 // POP_HL;
@@ -2330,7 +2330,7 @@ static void BillsPC_RefreshTextboxes_PlaceNickname(const struct BillsPCMonEntry*
             // LD_DE(wStringBuffer1);
             // LD_BC(MON_NAME_LENGTH);
             // CALL(aCopyBytes);
-            CopyBytes_Conv2(wram->wStringBuffer1, wram->wPartyMonNickname[e], MON_NAME_LENGTH);
+            CopyBytes(wram->wStringBuffer1, wram->wPartyMonNickname[e], MON_NAME_LENGTH);
             // POP_HL;
             // LD_DE(wStringBuffer1);
             // CALL(aPlaceString);
@@ -2469,7 +2469,7 @@ void CopyBoxmonSpecies(void){
     // LD_HL(wBillsPCPokemonList);
     // LD_BC(3 * 30);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wBillsPCPokemonList, sizeof(wram->wBillsPCPokemonList), 0);
+    ByteFill(wram->wBillsPCPokemonList, sizeof(wram->wBillsPCPokemonList), 0);
     // LD_DE(wBillsPCPokemonList);
     struct BillsPCMonEntry* de = wram->wBillsPCPokemonList;
     // XOR_A_A;
@@ -2579,7 +2579,7 @@ void BillsPC_UpdateSelectionCursor(void){
     // IF_NZ goto place_cursor;
     if(wram->wBillsPC_NumMonsInBox == 0) {
         // CALL(aClearSprites);
-        ClearSprites_Conv();
+        ClearSprites();
         // RET;
         return;
     }
@@ -2719,7 +2719,7 @@ bool BillsPC_CheckSpaceInDestination(void){
         WaitSFX_Conv();
         // LD_C(50);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(50);
+        DelayFrames(50);
         // SCF;
         // RET;
         return false;
@@ -2832,7 +2832,7 @@ NotOkay:
     WaitSFX_Conv();
     // LD_C(50);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(50);
+    DelayFrames(50);
     // SCF;
     // RET;
     return true;
@@ -2880,7 +2880,7 @@ bool BillsPC_IsMonAnEgg_Conv(void){
     WaitSFX_Conv();
     // LD_C(50);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(50);
+    DelayFrames(50);
     // SCF;
     // RET;
     return true;
@@ -2900,7 +2900,7 @@ void BillsPC_StatsScreen(void){
 
 void BillsPC_StatsScreen_Conv(void){
     // CALL(aLowVolume);
-    LowVolume_Conv();
+    LowVolume();
     // CALL(aBillsPC_CopyMon);
     BillsPC_CopyMon_Conv();
     // LD_A(TEMPMON);
@@ -2911,7 +2911,7 @@ void BillsPC_StatsScreen_Conv(void){
     // CALL(aBillsPC_InitGFX);
     BillsPC_InitGFX();
     // CALL(aMaxVolume);
-    MaxVolume_Conv();
+    MaxVolume();
     // RET;
 }
 
@@ -3110,7 +3110,7 @@ void BillsPC_CopyMon_Conv(void){
         // LD_BC(PARTYMON_STRUCT_LENGTH);
         // CALL(aCopyBytes);
         // RET;
-        return CopyBytes_Conv2(&wram->wBufferMon, &wram->wPartyMon[wram->wCurPartyMon], sizeof(struct PartyMon));
+        return CopyBytes(&wram->wBufferMon, &wram->wPartyMon[wram->wCurPartyMon], sizeof(struct PartyMon));
     }
     // CP_A(NUM_BOXES + 1);
     // IF_NZ goto box;
@@ -3135,7 +3135,7 @@ void BillsPC_CopyMon_Conv(void){
         // LD_DE(wBufferMon);
         // LD_BC(PARTYMON_STRUCT_LENGTH);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(&wram->wBufferMon, hl + wram->wCurPartyMon, sizeof(struct PartyMon));
+        CopyBytes(&wram->wBufferMon, hl + wram->wCurPartyMon, sizeof(struct PartyMon));
         // CALL(aCloseSRAM);
         CloseSRAM_Conv();
         // FARCALL(aCalcBufferMonStats);
@@ -3263,7 +3263,7 @@ bool DepositPokemon_Conv(void){
         WaitSFX_Conv();
         // LD_C(50);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(50);
+        DelayFrames(50);
         // SCF;
         // RET;
         return true;
@@ -3306,7 +3306,7 @@ bool DepositPokemon_Conv(void){
     *st.bc = 0xe7;
     // LD_C(50);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(50);
+    DelayFrames(50);
     // AND_A_A;
     // RET;
     return false;
@@ -3401,7 +3401,7 @@ bool TryWithdrawPokemon_Conv(void){
         WaitSFX_Conv();
         // LD_C(50);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(50);
+        DelayFrames(50);
         // SCF;
         // RET;
         return true;
@@ -3444,7 +3444,7 @@ bool TryWithdrawPokemon_Conv(void){
     *st.bc = 0xe7;
     // LD_C(50);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(50);
+    DelayFrames(50);
     // AND_A_A;
     // RET;
     return false;
@@ -3484,14 +3484,14 @@ void ReleasePKMN_ByePKMN(void){
     // LD_A_addr(wCurPartySpecies);
     // LD_addr_A(wTempSpecies);
     // CALL(aGetPokemonName);
-    GetPokemonName_Conv2(wram->wCurPartySpecies);
+    GetPokemonName(wram->wCurPartySpecies);
     // hlcoord(1, 16, wTilemap);
     // LD_DE(mPCString_ReleasedPKMN);
     // CALL(aPlaceString);
     PlaceStringSimple(U82C(PCString_ReleasedPKMN), coord(1, 16, wram->wTilemap));
     // LD_C(80);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(80);
+    DelayFrames(80);
     // hlcoord(0, 15, wTilemap);
     // LD_BC((1 << 8) | 18);
     // CALL(aTextbox);
@@ -3516,7 +3516,7 @@ void ReleasePKMN_ByePKMN(void){
     *st.bc = 0xe7;
     // LD_C(50);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(50);
+    DelayFrames(50);
     // RET;
 
 }
@@ -3543,7 +3543,7 @@ void MovePKMNWitoutMail_InsertMon(void){
     PlaceStringSimple(U82C(Saving_LeaveOn), coord(1, 16, wram->wTilemap));
     // LD_C(20);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(20);
+    DelayFrames(20);
     // POP_AF;
     // POP_BC;
     // POP_DE;
@@ -3822,7 +3822,7 @@ void CopyNicknameToTemp_Conv(const uint8_t (*hl)[MON_NAME_LENGTH]){
     // LD_BC(MON_NAME_LENGTH);
     // CALL(aCopyBytes);
     // RET;
-    CopyBytes_Conv2(wram->wBufferMonNickname, hl[wram->wCurPartyMon], MON_NAME_LENGTH);
+    CopyBytes(wram->wBufferMonNickname, hl[wram->wCurPartyMon], MON_NAME_LENGTH);
 }
 
 void CopyOTNameToTemp(void){
@@ -3844,7 +3844,7 @@ void CopyOTNameToTemp_Conv(const uint8_t (*hl)[NAME_LENGTH]){
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
     // RET;
-    CopyBytes_Conv2(wram->wBufferMonOT, hl[wram->wCurPartyMon], NAME_LENGTH);
+    CopyBytes(wram->wBufferMonOT, hl[wram->wCurPartyMon], NAME_LENGTH);
 }
 
 void CopyMonToTemp(void){
@@ -3862,11 +3862,11 @@ void CopyMonToTemp_Conv(const struct PartyMon* hl){
     // LD_DE(wBufferMon);
     // CALL(aCopyBytes);
     // RET;
-    CopyBytes_Conv2(&wram->wBufferMon, hl + wram->wCurPartyMon, sizeof(*hl));
+    CopyBytes(&wram->wBufferMon, hl + wram->wCurPartyMon, sizeof(*hl));
 }
 
 void CopyBoxMonToTemp_Conv(const struct BoxMon* hl){
-    CopyBytes_Conv2(&wram->wBufferMon.mon, hl + wram->wCurPartyMon, sizeof(*hl));
+    CopyBytes(&wram->wBufferMon.mon, hl + wram->wCurPartyMon, sizeof(*hl));
 }
 
 void GetBoxPointer(void){
@@ -3966,12 +3966,12 @@ void BillsPC_Jumptable(void){
 
 void BillsPC_InitGFX(void){
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
     // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x00);
     // LD_BC(0x31 * LEN_2BPP_TILE);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(vram->vTiles2 + LEN_2BPP_TILE * 0x00, 0x31 * LEN_2BPP_TILE, 0x0);
+    ByteFill(vram->vTiles2 + LEN_2BPP_TILE * 0x00, 0x31 * LEN_2BPP_TILE, 0x0);
     // CALL(aLoadStandardFont);
     LoadStandardFont_Conv();
     // CALL(aLoadFontsBattleExtra);
@@ -3987,9 +3987,9 @@ void BillsPC_InitGFX(void){
     LoadPNG2bppAssetToVRAM(vram->vTiles0 + LEN_2BPP_TILE * 0x00, PCSelectLZ);
     // LD_A(6);
     // CALL(aSkipMusic);
-    SkipMusic_Conv(3);
+    SkipMusic(3);
     // CALL(aEnableLCD);
-    EnableLCD_Conv();
+    EnableLCD();
     // RET;
 }
 
@@ -4070,7 +4070,7 @@ void BillsPC_ClearTilemap(void){
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // LD_A(0x7f);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
     // RET;
 }
 
@@ -4338,7 +4338,7 @@ void BillsPC_ChangeBoxSubmenu(void){
         // CALL(aGetBoxName);
         // LD_DE(wBoxNameBuffer);
         // CALL(aCopyName2);
-        CopyName2_Conv2(GetBoxName_Conv(wram->wMenuSelection - 1), wram->wBoxNameBuffer);
+        CopyName2(GetBoxName_Conv(wram->wMenuSelection - 1), wram->wBoxNameBuffer);
         // RET;
     } return;
     // CP_A(0x3);
@@ -4404,7 +4404,7 @@ void BillsPC_PlaceEmptyBoxString_SFX(void){
     WaitSFX_Conv();
     // LD_C(50);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(50);
+    DelayFrames(50);
     // RET;
 }
 

@@ -114,7 +114,7 @@ static void AI_Setup_discourage(uint8_t* hl) {
     // CALL(aRandom);
     // CP_A(12 percent);
     // IF_C goto checkmove;
-    if(Random_Conv() < 12 percent) 
+    if(Random() < 12 percent) 
         return;
     // INC_hl;
     // INC_hl;
@@ -740,7 +740,7 @@ void AI_Smart_LeechHit_Conv(uint8_t* hl){
         // CALL(aRandom);
         // CP_A(39 percent + 1);
         // RET_C ;
-        if(Random_Conv() >= 39 percent + 1) {
+        if(Random() >= 39 percent + 1) {
             // INC_hl;
             // RET;
             (*hl)++;
@@ -1130,7 +1130,7 @@ void AI_Smart_Selfdestruct_Conv(uint8_t* hl){
     // CALL(aRandom);
     // CP_A(8 percent);
     // RET_C ;
-    if(Random_Conv() >= 8 percent) {
+    if(Random() >= 8 percent) {
     // discourage:
         // INC_hl;
         // INC_hl;
@@ -1161,7 +1161,7 @@ void AI_Smart_DreamEater_Conv(uint8_t* hl){
     // CALL(aRandom);
     // CP_A(10 percent);
     // RET_C ;
-    if(Random_Conv() > 10 percent) {
+    if(Random() > 10 percent) {
         // DEC_hl;
         // DEC_hl;
         // DEC_hl;
@@ -1319,7 +1319,7 @@ void AI_Smart_EvasionUp_Conv(uint8_t* hl){
         // CALL(aRandom);
         // CP_A(70 percent);
         // IF_NC goto not_encouraged;
-        if(Random_Conv() >= 70 percent)
+        if(Random() >= 70 percent)
             goto not_encouraged;
 
     // greatly_encourage:
@@ -1346,7 +1346,7 @@ void AI_Smart_EvasionUp_Conv(uint8_t* hl){
         // CALL(aRandom);
         // CP_A(4 percent);
         // IF_C goto greatly_encourage;
-        if(Random_Conv() < 4 percent) {
+        if(Random() < 4 percent) {
         // greatly_encourage:
             // DEC_hl;
             // DEC_hl;
@@ -1403,7 +1403,7 @@ not_encouraged:
         // CALL(aRandom);
         // CP_A(31 percent + 1);
         // RET_C ;
-        if(Random_Conv() >= 31 percent + 1) {
+        if(Random() >= 31 percent + 1) {
             // DEC_hl;
             // DEC_hl;
             *hl -= 2;
@@ -1612,7 +1612,7 @@ void AI_Smart_MirrorMove_Conv(uint8_t* hl){
     // CALL(aRandom);
     // CP_A(10 percent);
     // RET_C ;
-    if(AICompareSpeed_Conv() && Random_Conv() >= 10 percent) {
+    if(AICompareSpeed_Conv() && Random() >= 10 percent) {
         // DEC_hl;
         (*hl)--;
         // RET;
@@ -1758,7 +1758,7 @@ void AI_Smart_AccuracyDown_Conv(uint8_t* hl){
         // CALL(aRandom);
         // CP_A(70 percent);
         // IF_NC goto not_encouraged;
-        if(Random_Conv() >= 70 percent)
+        if(Random() >= 70 percent)
             goto not_encouraged;
 
     // greatly_encourage:
@@ -1779,7 +1779,7 @@ void AI_Smart_AccuracyDown_Conv(uint8_t* hl){
         // CALL(aRandom);
         // CP_A(4 percent);
         // IF_C goto greatly_encourage;
-        if(Random_Conv() < 4 percent) {
+        if(Random() < 4 percent) {
             *hl -= 2;
             return;
         }
@@ -1831,7 +1831,7 @@ not_encouraged:
         // CALL(aRandom);
         // CP_A(31 percent + 1);
         // RET_C ;
-        if(Random_Conv() >= 31 percent + 1) {
+        if(Random() >= 31 percent + 1) {
             // DEC_hl;
             // DEC_hl;
             *hl -= 2;
@@ -1955,7 +1955,7 @@ void AI_Smart_ResetStats_Conv(uint8_t* hl){
             // CALL(aRandom);
             // CP_A(16 percent);
             // RET_C ;
-            if(Random_Conv() >= 16 percent) {
+            if(Random() >= 16 percent) {
                 // DEC_hl;
                 (*hl)--;
             }
@@ -1984,7 +1984,7 @@ void AI_Smart_ResetStats_Conv(uint8_t* hl){
             // CALL(aRandom);
             // CP_A(16 percent);
             // RET_C ;
-            if(Random_Conv() >= 16 percent) {
+            if(Random() >= 16 percent) {
                 // DEC_hl;
                 (*hl)--;
             }
@@ -2034,7 +2034,7 @@ void AI_Smart_Bide_Conv(uint8_t* hl){
     // CALL(aRandom);
     // CP_A(10 percent);
     // RET_C ;
-    if(Random_Conv() >= 10 percent) {
+    if(Random() >= 10 percent) {
         // INC_hl;
         (*hl)++;
     }
@@ -2135,7 +2135,7 @@ void AI_Smart_Moonlight_Conv(uint8_t* hl){
     // CALL(aRandom);
     // CP_A(10 percent);
     // RET_C ;
-    if(Random_Conv() >= 10 percent) {
+    if(Random() >= 10 percent) {
         // DEC_hl;
         // DEC_hl;
         (*hl) -= 2;
@@ -2189,7 +2189,7 @@ void AI_Smart_Reflect(void){
 void AI_Smart_Reflect_Conv(uint8_t* hl){
     // CALL(aAICheckEnemyMaxHP);
     // RET_C ;
-    if(!AICheckEnemyMaxHP_Conv() && Random_Conv() >= 8 percent) {
+    if(!AICheckEnemyMaxHP_Conv() && Random() >= 8 percent) {
         // CALL(aRandom);
         // CP_A(8 percent);
         // RET_C ;
@@ -2454,7 +2454,7 @@ void AI_Smart_RazorWind_Conv(uint8_t* hl){
         // CALL(aRandom);
         // CP_A(79 percent - 1);
         // RET_C ;
-        if(Random_Conv() >= 79 percent - 1) {
+        if(Random() >= 79 percent - 1) {
         // discourage:
             // INC_hl;
             (*hl)++;
@@ -2491,7 +2491,7 @@ void AI_Smart_Confuse_Conv(uint8_t* hl){
     // CALL(aRandom);
     // CP_A(10 percent);
     // IF_C goto skipdiscourage;
-    if(Random_Conv() < 10 percent) {
+    if(Random() < 10 percent) {
     // skipdiscourage:
     //  Discourage again if player's HP is below 25%.
         // CALL(aAICheckPlayerQuarterHP);
@@ -2762,7 +2762,7 @@ void AI_Smart_SpeedDownHit_Conv(uint8_t* hl){
     if(!AICheckEnemyQuarterHP_Conv()
     && wram->wPlayerTurnsTaken == 0
     && !AICompareSpeed_Conv()
-    && Random_Conv() >= 12 percent - 1) {
+    && Random() >= 12 percent - 1) {
         // DEC_hl;
         // DEC_hl;
         *hl -= 2;
@@ -2823,13 +2823,13 @@ void AI_Smart_HyperBeam_Conv(uint8_t* hl){
         // CALL(aRandom);
         // CP_A(16 percent);
         // RET_C ;
-        if(Random_Conv() < 16 percent)
+        if(Random() < 16 percent)
             return;
         // INC_hl;
         (*hl)++;
         // CALL(aAI_50_50);
         // RET_C ;
-        if(Random_Conv() < AI_50_50_Conv())
+        if(Random() < AI_50_50_Conv())
             return;
         // INC_hl;
         (*hl)++;
@@ -3230,7 +3230,7 @@ void AI_Smart_Counter_Conv(uint8_t* hl){
     // CALL(aRandom);
     // CP_A(39 percent + 1);
     // IF_C goto done;
-    if(Random_Conv() >= 39 percent + 1) {
+    if(Random() >= 39 percent + 1) {
         // DEC_hl;
         (*hl)--;
         return;
@@ -3367,7 +3367,7 @@ void AI_Smart_Encore_Conv(uint8_t* hl){
     // CALL(aRandom);
     // CP_A(28 percent - 1);
     // RET_C ;
-    if(Random_Conv() >= 28 percent - 1) {
+    if(Random() >= 28 percent - 1) {
         // DEC_hl;
         // DEC_hl;
         *hl -= 2;
@@ -3611,7 +3611,7 @@ void AI_Smart_Spite_Conv(uint8_t* hl){
                 // CALL(aRandom);
                 // CP_A(39 percent + 1);
                 // RET_C ;
-                if(Random_Conv() >= 39 percent + 1) {
+                if(Random() >= 39 percent + 1) {
                     // DEC_hl;
                     // DEC_hl;
                     *hl -= 2;
@@ -3625,7 +3625,7 @@ void AI_Smart_Spite_Conv(uint8_t* hl){
             // CALL(aRandom);
             // CP_A(39 percent + 1);
             // RET_NC ;
-            if(pp[i] < 15 && Random_Conv() >= 39 percent + 1)
+            if(pp[i] < 15 && Random() >= 39 percent + 1)
                 return;
 
         // discourage:
@@ -3977,7 +3977,7 @@ void AI_Smart_Conversion2_Conv(uint8_t* hl){
         // CALL(aRandom);
         // CP_A(10 percent);
         // RET_C ;
-        if(Random_Conv() >= 10 percent) {
+        if(Random() >= 10 percent) {
             // INC_hl;
             (*hl)++;
         }
@@ -4012,7 +4012,7 @@ void AI_Smart_Conversion2_Conv(uint8_t* hl){
         // CALL(aRandom);
         // CP_A(10 percent);
         // RET_C ;
-        if(Random_Conv() >= 10 percent) {
+        if(Random() >= 10 percent) {
             // INC_hl;
             (*hl)++;
         }
@@ -4095,7 +4095,7 @@ void AI_Smart_Disable_Conv(uint8_t* hl){
             // CP_A(39 percent + 1);
             // RET_C ;
             // DEC_hl;
-            if(Random_Conv() >= 39 percent + 1)
+            if(Random() >= 39 percent + 1)
                 --(*hl);
             // RET;
             return;
@@ -4113,7 +4113,7 @@ void AI_Smart_Disable_Conv(uint8_t* hl){
     // CALL(aRandom);
     // CP_A(8 percent);
     // RET_C ;
-    if(Random_Conv() >= 8 percent) {
+    if(Random() >= 8 percent) {
         // INC_hl;
         (*hl)++;
         // RET;
@@ -4730,7 +4730,7 @@ void AI_Smart_Protect_Conv(uint8_t* hl){
     // CALL(aRandom);
     // CP_A(8 percent);
     // RET_C ;
-    if(Random_Conv() >= 8 percent) {
+    if(Random() >= 8 percent) {
         // INC_hl;
         // INC_hl;
         *hl += 2;
@@ -4803,7 +4803,7 @@ void AI_Smart_Foresight_Conv(uint8_t* hl){
         // CALL(aRandom);
         // CP_A(39 percent + 1);
         // RET_C ;
-        if(Random_Conv() >= 39 percent + 1) {
+        if(Random() >= 39 percent + 1) {
             // DEC_hl;
             // DEC_hl;
             *hl -= 2;
@@ -4815,7 +4815,7 @@ void AI_Smart_Foresight_Conv(uint8_t* hl){
         // CALL(aRandom);
         // CP_A(8 percent);
         // RET_C ;
-        if(Random_Conv() >= 8 percent) {
+        if(Random() >= 8 percent) {
             // INC_hl;
             (*hl)++;
         }
@@ -5217,7 +5217,7 @@ void AI_Smart_Rollout_Conv(uint8_t* hl){
         // CALL(aRandom);
         // CP_A(79 percent - 1);
         // RET_NC ;
-        if(Random_Conv() < 79 percent - 1) {
+        if(Random() < 79 percent - 1) {
             // DEC_hl;
             // DEC_hl;
             *hl -= 2;
@@ -5264,7 +5264,7 @@ void AI_Smart_Attract_Conv(uint8_t* hl){
         // CALL(aRandom);
         // CP_A(79 percent - 1);
         // RET_NC ;
-        if(Random_Conv() < 79 percent - 1) {
+        if(Random() < 79 percent - 1) {
             // DEC_hl;
             --(*hl);
             // RET;
@@ -6156,7 +6156,7 @@ void AI_Smart_MirrorCoat_Conv(uint8_t* hl){
     // CALL(aRandom);
     // CP_A(39 percent + 1);
     // IF_C goto done;
-    if(Random_Conv() >= 39 percent + 1) {
+    if(Random() >= 39 percent + 1) {
         // DEC_hl;
         (*hl)--;
     }
@@ -6363,7 +6363,7 @@ void AI_Smart_Solarbeam_Conv(uint8_t* hl){
         // CP_A(10 percent);
         // RET_C ;
 
-        if(Random_Conv() >= 10 percent) {
+        if(Random() >= 10 percent) {
             // INC_hl;
             // INC_hl;
             *hl += 2;
@@ -6399,7 +6399,7 @@ void AI_Smart_Thunder_Conv(uint8_t* hl){
     // CP_A(10 percent);
     // RET_C ;
 
-    if(wram->wBattleWeather == WEATHER_SUN && Random_Conv() >= 10 percent) {
+    if(wram->wBattleWeather == WEATHER_SUN && Random() >= 10 percent) {
         // INC_hl;
         // RET;
         (*hl)++;
@@ -7165,7 +7165,7 @@ void AI_Cautious(void){
         // CP_A(90 percent + 1);
         // RET_NC ;
         
-        if(IsInMoveArray(ResidualMoves, a) && Random_Conv() < 90 percent + 1) {
+        if(IsInMoveArray(ResidualMoves, a) && Random() < 90 percent + 1) {
             // INC_hl;
             hl[i]++;
         }
@@ -7315,7 +7315,7 @@ void AI_Risky(void){
             // CALL(aRandom);
             // CP_A(79 percent - 1);
             // IF_C goto nextmove;
-            if(Random_Conv() < 79 percent - 1) {
+            if(Random() < 79 percent - 1) {
                 continue;
             }
         }
@@ -7409,7 +7409,7 @@ const struct Move* AIGetEnemyMove_Conv(move_t a){
     // LD_DE(wEnemyMoveStruct);
     // LD_A(BANK(aMoves));
     // CALL(aFarCopyBytes);
-    CopyBytes_Conv2(&wram->wEnemyMoveStruct, Moves + a, sizeof(wram->wEnemyMoveStruct));
+    CopyBytes(&wram->wEnemyMoveStruct, Moves + a, sizeof(wram->wEnemyMoveStruct));
 
     // POP_BC;
     // POP_DE;
@@ -7431,7 +7431,7 @@ bool AI_80_20_Conv(void){
     // CALL(aRandom);
     // CP_A(20 percent - 1);
     // RET;
-    return Random_Conv() < 20 percent - 1;
+    return Random() < 20 percent - 1;
 }
 
 void AI_50_50(void){
@@ -7447,5 +7447,5 @@ bool AI_50_50_Conv(void){
     // CALL(aRandom);
     // CP_A(50 percent + 1);
     // RET;
-    return Random_Conv() < 50 percent + 1;
+    return Random() < 50 percent + 1;
 }

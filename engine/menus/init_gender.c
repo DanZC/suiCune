@@ -95,7 +95,7 @@ void InitGender(void){
     wram->wPlayerGender = wram->wMenuCursorY - 1;
     // LD_C(10);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(10);
+    DelayFrames(10);
     // RET;
 }
 
@@ -110,7 +110,7 @@ void InitGenderScreen(void){
     wram->wMusicFadeID = MUSIC_NONE;
     // LD_C(8);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(8);
+    DelayFrames(8);
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // CALL(aInitCrystalData);
@@ -121,12 +121,12 @@ void InitGenderScreen(void){
     // LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
     // LD_A(0x0);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wTilemap), SCREEN_HEIGHT * SCREEN_WIDTH, 0x0);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_HEIGHT * SCREEN_WIDTH, 0x0);
     // hlcoord(0, 0, wAttrmap);
     // LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 0, wram->wAttrmap), SCREEN_HEIGHT * SCREEN_WIDTH, 0x0);
+    ByteFill(coord(0, 0, wram->wAttrmap), SCREEN_HEIGHT * SCREEN_WIDTH, 0x0);
     // RET;
 }
 
@@ -142,7 +142,7 @@ void LoadGenderScreenPal(void){
     // LD_BC(1 * PALETTE_SIZE);
     // LD_A(BANK(wBGPals1));
     // CALL(aFarCopyWRAM);
-    CopyBytes_Conv2(wram->wBGPals1, Palette, 1 * PALETTE_SIZE);
+    CopyBytes(wram->wBGPals1, Palette, 1 * PALETTE_SIZE);
     // FARCALL(aApplyPals);
     ApplyPals_Conv();
     // RET;

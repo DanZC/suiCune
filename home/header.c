@@ -1,19 +1,13 @@
 #include "../constants.h"
 #include "header.h"
 
+// Unused
 void FarCall(void) {
     JP(mFarCall_hl);
 }
 
-void Bankswitch(void) {
-    // LDH_addr_A(hROMBank);
-    // LD_addr_A(MBC3RomBank);
-    gb_write(hROMBank, REG_A);
-    gb_write(MBC3RomBank, REG_A);
-}
-
-void Bankswitch_Conv(uint8_t new_bank) {
-    gb_write(hROMBank, new_bank);
+void Bankswitch(uint8_t new_bank) {
+    hram->hROMBank = new_bank;
     gb_write(MBC3RomBank, new_bank);
 }
 
@@ -35,6 +29,7 @@ void JumpTable(void) {
 //     JP_hl;
 // }
 
+// Unused
 void Start(void) {
     NOP;
     JP(mv_Start);

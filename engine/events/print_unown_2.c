@@ -61,7 +61,7 @@ void RotateUnownFrontpic(uint8_t* de){
     // LDH_A_addr(hROMBank);
     // LD_B_A;
     // CALL(aGet2bpp);
-    CopyBytes_Conv2(de, wram->wGameboyPrinter2bppSource, 7 * 7 * LEN_2BPP_TILE);
+    CopyBytes(de, wram->wGameboyPrinter2bppSource, 7 * 7 * LEN_2BPP_TILE);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // RET;

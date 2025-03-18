@@ -224,7 +224,7 @@ bool Function4a94e(void){
     // LD_HL(wd002);
     // LD_BC(3);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wMobileAdapterPlayerSelectionBuffer, 3, 0xff);
+    ByteFill(wram->wMobileAdapterPlayerSelectionBuffer, 3, 0xff);
     // XOR_A_A;
     // LD_addr_A(wd018);
     wram->wd018 = 0x0;
@@ -276,7 +276,7 @@ asm_4a985:
     // LD_A(-1);
     // LD_BC(3);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wMobileAdapterPlayerSelectionBuffer, 3, 0xff);
+    ByteFill(wram->wMobileAdapterPlayerSelectionBuffer, 3, 0xff);
     // SCF;
     // goto asm_4a9af;
     return true;
@@ -345,7 +345,7 @@ bool Function4a9d7(void){
     // LD_DE(wMobileParticipant1Nickname);
     // LD_BC(NAME_LENGTH_JAPANESE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(gMobileParticipant1Nickname, wram->wPartyMonNickname[wram->wMobileAdapterPlayerSelectionBuffer[0]], MON_NAME_LENGTH);
+    CopyBytes(gMobileParticipant1Nickname, wram->wPartyMonNickname[wram->wMobileAdapterPlayerSelectionBuffer[0]], MON_NAME_LENGTH);
     // LD_A_addr(wd003);
     // LD_HL(wPartyMonNicknames);
     // CALL(aGetNickname);
@@ -354,7 +354,7 @@ bool Function4a9d7(void){
     // LD_DE(wMobileParticipant2Nickname);
     // LD_BC(NAME_LENGTH_JAPANESE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(gMobileParticipant2Nickname, wram->wPartyMonNickname[wram->wMobileAdapterPlayerSelectionBuffer[1]], MON_NAME_LENGTH);
+    CopyBytes(gMobileParticipant2Nickname, wram->wPartyMonNickname[wram->wMobileAdapterPlayerSelectionBuffer[1]], MON_NAME_LENGTH);
     // LD_A_addr(wd004);
     // LD_HL(wPartyMonNicknames);
     // CALL(aGetNickname);
@@ -363,7 +363,7 @@ bool Function4a9d7(void){
     // LD_DE(wMobileParticipant3Nickname);
     // LD_BC(NAME_LENGTH_JAPANESE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(gMobileParticipant3Nickname, wram->wPartyMonNickname[wram->wMobileAdapterPlayerSelectionBuffer[2]], MON_NAME_LENGTH);
+    CopyBytes(gMobileParticipant3Nickname, wram->wPartyMonNickname[wram->wMobileAdapterPlayerSelectionBuffer[2]], MON_NAME_LENGTH);
     // LD_HL(mMobileUseTheseThreeMonText);
     // CALL(aPrintText);
     PrintText_Conv2(MobileUseTheseThreeMonText);

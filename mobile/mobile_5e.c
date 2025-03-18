@@ -62,12 +62,12 @@ void Function17a6a8(uint8_t* de, uint8_t c){
     // LD_BC(0xa);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wStringBuffer2, 0xa, 0);
+    ByteFill(wram->wStringBuffer2, 0xa, 0);
     // LD_HL(wd1ea);
     // LD_BC(0x10);
     // LD_A(0xff);
     // CALL(aByteFill);
-    ByteFill_Conv2(&wram->wd1ea, 0x10, 0xff);
+    ByteFill(&wram->wd1ea, 0x10, 0xff);
     // POP_BC;
     // LD_A_C;
     // AND_A_A;
@@ -166,7 +166,7 @@ void Function17a721(uint8_t* de){
     // LD_BC(0x8);
     // LD_A(0xff);
     // CALL(aByteFill);
-    ByteFill_Conv2(de, 0x8, 0xff);
+    ByteFill(de, 0x8, 0xff);
     // POP_DE;
     // LD_HL(wd1ea);
     uint8_t* hl = &wram->wd1ea;
@@ -251,7 +251,7 @@ void Function17a770(void){
     // LDH_addr_A(hOAMUpdate);
     hram->hOAMUpdate = 0x1;
     // CALL(aHideSprites);
-    HideSprites_Conv();
+    HideSprites();
     // CALL(aFunction17a9cb);
     Function17a9cb();
     // POP_AF;
@@ -403,7 +403,7 @@ void Function17a7ff(void){
 void Function17a81a(void){
     // CALL(aIsSFXPlaying);
     // RET_NC ;
-    if(IsSFXPlaying_Conv())
+    if(IsSFXPlaying())
         return;
     // LDH_A_addr(hJoyPressed);
     // AND_A(0x3);
@@ -1121,26 +1121,26 @@ void Function17abcf(void){
     // LD_DE(wBGPals1);
     // LD_BC(6 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wBGPals1, Palette_17ac55, 6 * PALETTE_SIZE);
+    CopyBytes(wram->wBGPals1, Palette_17ac55, 6 * PALETTE_SIZE);
 
     // LD_HL(mPalette_17ac95);
     // LD_DE(wOBPals1);
     // LD_BC(8 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wOBPals1, Palette_17ac95, 8 * PALETTE_SIZE);
+    CopyBytes(wram->wOBPals1, Palette_17ac95, 8 * PALETTE_SIZE);
 
     // LD_HL(mPalette_17b4b5);
     // LD_DE(wOBPals1 + PALETTE_SIZE * 1);
     // LD_BC(2 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wOBPals1 + PALETTE_SIZE * 1, Palette_17b4b5, 2 * PALETTE_SIZE);
+    CopyBytes(wram->wOBPals1 + PALETTE_SIZE * 1, Palette_17b4b5, 2 * PALETTE_SIZE);
 
     // LD_HL(mMapObjectPals + PALETTE_SIZE * 1);
     // LD_DE(wOBPals1 + PALETTE_SIZE * 3);
     // LD_BC(1 * PALETTE_SIZE);
     // LD_A(BANK(aMapObjectPals));
     // CALL(aFarCopyBytes);
-    CopyBytes_Conv2(wram->wOBPals1 + PALETTE_SIZE * 3, MapObjectPals + PALETTE_SIZE * 1, 1 * PALETTE_SIZE);
+    CopyBytes(wram->wOBPals1 + PALETTE_SIZE * 3, MapObjectPals + PALETTE_SIZE * 1, 1 * PALETTE_SIZE);
 
     // POP_AF;
     // LDH_addr_A(rSVBK);

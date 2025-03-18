@@ -72,7 +72,7 @@ void BattleCommand_Mimic(void){
     // LD_hl(5);
     mon->pp[c] = 5;
     // CALL(aGetMoveName);
-    GetMoveName_Conv2(mon->moves[c]);
+    GetMoveName(mon->moves[c]);
     // CALL(aAnimateCurrentMove);
     AnimateCurrentMove();
     // LD_HL(mMimicLearnedMoveText);

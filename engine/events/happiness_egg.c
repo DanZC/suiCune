@@ -31,7 +31,7 @@ void GetFirstPokemonHappiness(void){
     // LD_addr_A(wScriptVar);
     wram->wScriptVar = hl->mon.happiness;
     // CALL(aGetPokemonName);
-    GetPokemonName_Conv2(*de);
+    GetPokemonName(*de);
     // JP(mCopyPokemonName_Buffer1_Buffer3);
     CopyPokemonName_Buffer1_Buffer3();
 }
@@ -48,7 +48,7 @@ void CheckFirstMonIsEgg(void){
 // egg:
     // LD_addr_A(wScriptVar);
     // CALL(aGetPokemonName);
-    GetPokemonName_Conv2(wram->wPartySpecies[0]);
+    GetPokemonName(wram->wPartySpecies[0]);
     // JP(mCopyPokemonName_Buffer1_Buffer3);
     return CopyPokemonName_Buffer1_Buffer3();
 }
@@ -364,7 +364,7 @@ void DayCareStep(void){
 
     // CALL(aRandom);
     // LD_hl_A;
-    wram->wStepsToEgg = Random_Conv();
+    wram->wStepsToEgg = Random();
     // CALLFAR(aCheckBreedmonCompatibility);
     // LD_A_addr(wBreedingCompatibility);
     uint8_t b;
@@ -394,7 +394,7 @@ void DayCareStep(void){
     // CALL(aRandom);
     // CP_A_B;
     // RET_NC ;
-    if(Random_Conv() < b){
+    if(Random() < b){
         // LD_HL(wDayCareMan);
         // RES_hl(DAYCAREMAN_MONS_COMPATIBLE_F);
         bit_reset(wram->wDayCareMan, DAYCAREMAN_MONS_COMPATIBLE_F);

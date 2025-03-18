@@ -871,7 +871,7 @@ bool Do2DMenuRTCJoypad_Conv(void){
     do {
     // loopRTC:
         // CALL(aUpdateTimeAndPals);
-        UpdateTimeAndPals_Conv();
+        UpdateTimeAndPals();
         // CALL(aMenu_WasButtonPressed);
         // RET_C ;
         if(Menu_WasButtonPressed_Conv())

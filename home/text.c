@@ -102,7 +102,7 @@ void ClearTilemap(void) {
 
 //  Fill wTilemap with blank tiles.
 void ClearTilemap_Conv(void) {
-    ByteFill_Conv(coord(0, 0, wTilemap), (wTilemapEnd - wTilemap), CHAR_SPACE);
+    ByteFill_GB(coord(0, 0, wTilemap), (wTilemapEnd - wTilemap), CHAR_SPACE);
 
     // Update the BG Map.
     // LDH_A_addr(rLCDC);
@@ -116,7 +116,7 @@ void ClearTilemap_Conv(void) {
 
 //  Fill wTilemap with blank tiles.
 void ClearTilemap_Conv2(void) {
-    ByteFill_Conv2(wram->wTilemap, sizeof(wram->wTilemap), CHAR_SPACE);
+    ByteFill(wram->wTilemap, sizeof(wram->wTilemap), CHAR_SPACE);
 
     // Update the BG Map.
     // LDH_A_addr(rLCDC);
@@ -137,12 +137,12 @@ void ClearScreen(void) {
 }
 
 void ClearScreen_Conv(void) {
-    ByteFill_Conv(coord(0, 0, wAttrmap), (SCREEN_WIDTH * SCREEN_HEIGHT), PAL_BG_TEXT);
+    ByteFill_GB(coord(0, 0, wAttrmap), (SCREEN_WIDTH * SCREEN_HEIGHT), PAL_BG_TEXT);
     ClearTilemap_Conv();
 }
 
 void ClearScreen_Conv2(void) {
-    ByteFill_Conv2(wram->wAttrmap, (SCREEN_WIDTH * SCREEN_HEIGHT), PAL_BG_TEXT);
+    ByteFill(wram->wAttrmap, (SCREEN_WIDTH * SCREEN_HEIGHT), PAL_BG_TEXT);
     ClearTilemap_Conv2();
 }
 
@@ -1643,7 +1643,7 @@ void Paragraph_Conv(struct TextPrintState* state) {
 
     // LD_C(20);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(20);
+    DelayFrames(20);
     
     // hlcoord(TEXTBOX_INNERX, TEXTBOX_INNERY, wTilemap);
     state->hl = wram->wTilemap + coordidx(TEXTBOX_INNERX, TEXTBOX_INNERY);
@@ -1953,10 +1953,10 @@ void TextScroll_Conv(struct TextPrintState* state) {
     // LD_A(0x7f);
     // LD_BC(TEXTBOX_INNERW);
     // CALL(aByteFill);
-    ByteFill_Conv2(wram->wTilemap + coordidx(TEXTBOX_INNERX, TEXTBOX_INNERY + 2), TEXTBOX_INNERW, CHAR_SPACE);
+    ByteFill(wram->wTilemap + coordidx(TEXTBOX_INNERX, TEXTBOX_INNERY + 2), TEXTBOX_INNERW, CHAR_SPACE);
     // LD_C(5);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(5);
+    DelayFrames(5);
     // RET;
 }
 
@@ -3124,7 +3124,7 @@ void TextCommand_PAUSE_Conv(struct TextPrintState* state) {
     {
         // LD_C(30);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(30);
+        DelayFrames(30);
     }
 
 // done:
@@ -3148,7 +3148,7 @@ void TextCommand_PAUSE_Conv2(struct TextCmdState* state, const struct TextCmd* c
     {
         // LD_C(30);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(30);
+        DelayFrames(30);
     }
 
 // done:
@@ -3422,7 +3422,7 @@ void TextCommand_DOTS_Conv(struct TextPrintState* state) {
         {
             // LD_C(10);
             // CALL(aDelayFrames);
-            DelayFrames_Conv(10);
+            DelayFrames(10);
         }
 
         // POP_DE;
@@ -3464,7 +3464,7 @@ void TextCommand_DOTS_Conv2(struct TextCmdState* state, const struct TextCmd* cm
         {
             // LD_C(10);
             // CALL(aDelayFrames);
-            DelayFrames_Conv(10);
+            DelayFrames(10);
         }
 
         // POP_DE;

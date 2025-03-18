@@ -228,7 +228,7 @@ void DrawPlayerHUDBorder(void){
     // LD_DE(wTrainerHUDTiles);
     // LD_BC(mDrawPlayerHUDBorder_tiles_end - mDrawPlayerHUDBorder_tiles);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wTrainerHUDTiles, tiles, sizeof(tiles));
+    CopyBytes(wram->wTrainerHUDTiles, tiles, sizeof(tiles));
     // hlcoord(18, 10, wTilemap);
     // LD_DE(-1);  // start on right
     // JR(mPlaceHUDBorderTiles);
@@ -247,7 +247,7 @@ void DrawPlayerPartyIconHUDBorder(void){
     // LD_DE(wTrainerHUDTiles);
     // LD_BC(mDrawPlayerPartyIconHUDBorder_tiles_end - mDrawPlayerPartyIconHUDBorder_tiles);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wTrainerHUDTiles, tiles, sizeof(tiles));
+    CopyBytes(wram->wTrainerHUDTiles, tiles, sizeof(tiles));
     // hlcoord(18, 10, wTilemap);
     // LD_DE(-1);  // start on right
     // JR(mPlaceHUDBorderTiles);
@@ -267,7 +267,7 @@ void DrawEnemyHUDBorder(void){
     // LD_DE(wTrainerHUDTiles);
     // LD_BC(mDrawEnemyHUDBorder_tiles_end - mDrawEnemyHUDBorder_tiles);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wTrainerHUDTiles, tiles, sizeof(tiles));
+    CopyBytes(wram->wTrainerHUDTiles, tiles, sizeof(tiles));
     // hlcoord(1, 2, wTilemap);
     // LD_DE(1);  // start on left
     // CALL(aPlaceHUDBorderTiles);

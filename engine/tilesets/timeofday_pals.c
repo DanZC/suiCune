@@ -129,9 +129,8 @@ dontchange:
 
 }
 
-bool v_TimeOfDayPals_Conv(void){
 //  return carry if pals are changed
-
+bool v_TimeOfDayPals_Conv(void){
 //  forced pals?
     // LD_HL(wTimeOfDayPalFlags);
     // BIT_hl(7);
@@ -303,7 +302,7 @@ void BattleTowerFade(void){
         hl += 3;
         // LD_C(0x7);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(0x7);
+        DelayFrames(0x7);
         // DEC_B;
         // IF_NZ goto loop;
     } while(--b != 0);
@@ -607,7 +606,7 @@ void ConvertTimePalsIncHL_Conv(const uint8_t* hl, uint8_t b){
         hl += 3;
         // LD_C(2);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(2);
+        DelayFrames(2);
         // DEC_B;
         // IF_NZ goto loop;
     } while(--b != 0);
@@ -640,7 +639,7 @@ void ConvertTimePalsDecHL_Conv(const uint8_t* hl, uint8_t b){
         hl -= 3;
         // LD_C(2);
         // CALL(aDelayFrames);
-        DelayFrames_Conv(2);
+        DelayFrames(2);
         // DEC_B;
         // IF_NZ goto loop;
     } while(--b != 0);

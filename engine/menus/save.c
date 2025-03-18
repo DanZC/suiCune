@@ -242,7 +242,7 @@ void MoveMonWOMail_InsertMon_SaveGame(uint8_t e){
     PlaySFX_Conv(SFX_SAVE);
     // LD_C(24);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(24);
+    DelayFrames(24);
     // RET;
 }
 
@@ -315,7 +315,7 @@ void AddHallOfFameEntry(void){
     // LD_DE(sHallOfFame);
     // LD_BC(wHallOfFamePokemonListEnd - wHallOfFamePokemonList + 1);
     // CALL(aCopyBytes);
-    CopyBytes_Conv(sHallOfFame, wHallOfFamePokemonList, wHallOfFamePokemonListEnd - wHallOfFamePokemonList + 1);
+    CopyBytes_GB(sHallOfFame, wHallOfFamePokemonList, wHallOfFamePokemonListEnd - wHallOfFamePokemonList + 1);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // RET;
@@ -420,7 +420,7 @@ void SavedTheGame(void){
 // wait 32 frames
     // LD_C(32);
     // CALL(aDelayFrames);
-    // DelayFrames_Conv(32);
+    // DelayFrames(32);
 // copy the original text speed setting to the stack
     // LD_A_addr(wOptions);
     // PUSH_AF;
@@ -445,7 +445,7 @@ void SavedTheGame(void){
 // wait 30 frames
     // LD_C(30);
     // CALL(aDelayFrames);
-    DelayFrames_Conv(30);
+    DelayFrames(30);
     // RET;
 }
 
@@ -587,7 +587,7 @@ void SavingDontTurnOffThePower(void){
 // Wait for 16 frames
     // LD_C(16);
     // CALL(aDelayFrames);
-    // DelayFrames_Conv(16);
+    // DelayFrames(16);
     // RET;
 }
 
@@ -627,7 +627,7 @@ void EraseLinkBattleStats(void){
     // LD_BC(sLinkBattleStatsEnd - sLinkBattleStats);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv(sLinkBattleStats, sLinkBattleStatsEnd - sLinkBattleStats, 0);
+    ByteFill_GB(sLinkBattleStats, sLinkBattleStatsEnd - sLinkBattleStats, 0);
     // JP(mCloseSRAM);
     CloseSRAM_Conv();
 }
@@ -640,7 +640,7 @@ void EraseMysteryGift(void){
     // LD_BC(sBackupMysteryGiftItemEnd - sBackupMysteryGiftItem);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv(sBackupMysteryGiftItem, sBackupMysteryGiftItemEnd - sBackupMysteryGiftItem, 0);
+    ByteFill_GB(sBackupMysteryGiftItem, sBackupMysteryGiftItemEnd - sBackupMysteryGiftItem, 0);
     // JP(mCloseSRAM);
     CloseSRAM_Conv();
 }
@@ -653,7 +653,7 @@ void EraseHallOfFame(void){
     // LD_BC(sHallOfFameEnd - sHallOfFame);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_Conv(sHallOfFame, sHallOfFameEnd - sHallOfFame, 0);
+    ByteFill_GB(sHallOfFame, sHallOfFameEnd - sHallOfFame, 0);
     // JP(mCloseSRAM);
     return CloseSRAM_Conv();
 }
@@ -770,7 +770,7 @@ void SaveOptions(void){
     // LD_DE(sOptions);
     // LD_BC(wOptionsEnd - wOptions);
     // CALL(aCopyBytes);
-    CopyBytes_Conv(sOptions, wOptions, wOptionsEnd - wOptions);
+    CopyBytes_GB(sOptions, wOptions, wOptionsEnd - wOptions);
     // LD_A_addr(wOptions);
     // AND_A(~(1 << NO_TEXT_SCROLL));
     // LD_addr_A(sOptions);
@@ -787,12 +787,12 @@ void SavePlayerData(void){
     // LD_DE(sPlayerData);
     // LD_BC(wPlayerDataEnd - wPlayerData);
     // CALL(aCopyBytes);
-    CopyBytes_Conv(sPlayerData, wPlayerData, wPlayerDataEnd - wPlayerData);
+    CopyBytes_GB(sPlayerData, wPlayerData, wPlayerDataEnd - wPlayerData);
     // LD_HL(wCurMapData);
     // LD_DE(sCurMapData);
     // LD_BC(wCurMapDataEnd - wCurMapData);
     // CALL(aCopyBytes);
-    CopyBytes_Conv(sCurMapData, wCurMapData, wCurMapDataEnd - wCurMapData);
+    CopyBytes_GB(sCurMapData, wCurMapData, wCurMapDataEnd - wCurMapData);
     // JP(mCloseSRAM);
     CloseSRAM_Conv();
 }
@@ -805,7 +805,7 @@ void SavePokemonData(void){
     // LD_DE(sPokemonData);
     // LD_BC(wPokemonDataEnd - wPokemonData);
     // CALL(aCopyBytes);
-    CopyBytes_Conv(sPokemonData, wPokemonData, wPokemonDataEnd - wPokemonData);
+    CopyBytes_GB(sPokemonData, wPokemonData, wPokemonDataEnd - wPokemonData);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // RET;
@@ -860,7 +860,7 @@ void SaveBackupOptions(void){
     // LD_DE(sBackupOptions);
     // LD_BC(wOptionsEnd - wOptions);
     // CALL(aCopyBytes);
-    CopyBytes_Conv(sBackupOptions, wOptions, wOptionsEnd - wOptions);
+    CopyBytes_GB(sBackupOptions, wOptions, wOptionsEnd - wOptions);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // RET;
@@ -874,12 +874,12 @@ void SaveBackupPlayerData(void){
     // LD_DE(sBackupPlayerData);
     // LD_BC(wPlayerDataEnd - wPlayerData);
     // CALL(aCopyBytes);
-    CopyBytes_Conv(sBackupPlayerData, wPlayerData, wPlayerDataEnd - wPlayerData);
+    CopyBytes_GB(sBackupPlayerData, wPlayerData, wPlayerDataEnd - wPlayerData);
     // LD_HL(wCurMapData);
     // LD_DE(sBackupCurMapData);
     // LD_BC(wCurMapDataEnd - wCurMapData);
     // CALL(aCopyBytes);
-    CopyBytes_Conv(sBackupCurMapData, wCurMapData, wCurMapDataEnd - wCurMapData);
+    CopyBytes_GB(sBackupCurMapData, wCurMapData, wCurMapDataEnd - wCurMapData);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // RET;
@@ -893,7 +893,7 @@ void SaveBackupPokemonData(void){
     // LD_DE(sBackupPokemonData);
     // LD_BC(wPokemonDataEnd - wPokemonData);
     // CALL(aCopyBytes);
-    CopyBytes_Conv(sBackupPokemonData, wPokemonData, wPokemonDataEnd - wPokemonData);
+    CopyBytes_GB(sBackupPokemonData, wPokemonData, wPokemonDataEnd - wPokemonData);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // RET;
@@ -1017,7 +1017,7 @@ void TryLoadSaveData(void){
         // LD_DE(wStartDay);
         // LD_BC(8);
         // CALL(aCopyBytes);
-        CopyBytes_Conv(wStartDay, sPlayerData + wStartDay - wPlayerData, 8);
+        CopyBytes_GB(wStartDay, sPlayerData + wStartDay - wPlayerData, 8);
         // LD_HL(sPlayerData + wStatusFlags - wPlayerData);
         // LD_DE(wStatusFlags);
         // LD_A_hl;
@@ -1043,7 +1043,7 @@ void TryLoadSaveData(void){
         // LD_DE(wStartDay);
         // LD_BC(8);
         // CALL(aCopyBytes);
-        CopyBytes_Conv(wStartDay, sBackupPlayerData + wStartDay - wPlayerData, 8);
+        CopyBytes_GB(wStartDay, sBackupPlayerData + wStartDay - wPlayerData, 8);
         // LD_HL(sBackupPlayerData + wStatusFlags - wPlayerData);
         // LD_DE(wStatusFlags);
         // LD_A_hl;
@@ -1060,7 +1060,7 @@ void TryLoadSaveData(void){
     // LD_DE(wOptions);
     // LD_BC(wOptionsEnd - wOptions);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(&wram->wOptions, DefaultOptions, DefaultOptions_Size);
+    CopyBytes(&wram->wOptions, DefaultOptions, DefaultOptions_Size);
     // CALL(aClearClock);
     ClearClock_Conv();
     // RET;
@@ -1084,7 +1084,7 @@ void CheckPrimarySaveFile(void){
         // LD_DE(wOptions);
         // LD_BC(wOptionsEnd - wOptions);
         // CALL(aCopyBytes);
-        CopyBytes_Conv(wOptions, sOptions, wOptionsEnd - wOptions);
+        CopyBytes_GB(wOptions, sOptions, wOptionsEnd - wOptions);
         // CALL(aCloseSRAM);
         // LD_A(TRUE);
         // LD_addr_A(wSaveFileExists);
@@ -1114,7 +1114,7 @@ void CheckBackupSaveFile(void){
         // LD_DE(wOptions);
         // LD_BC(wOptionsEnd - wOptions);
         // CALL(aCopyBytes);
-        CopyBytes_Conv(wOptions, sBackupOptions, wOptionsEnd - wOptions);
+        CopyBytes_GB(wOptions, sBackupOptions, wOptionsEnd - wOptions);
         // LD_A(0x2);
         // LD_addr_A(wSaveFileExists);
         wram->wSaveFileExists = 0x2;
@@ -1134,12 +1134,12 @@ void LoadPlayerData(void){
     // LD_DE(wPlayerData);
     // LD_BC(wPlayerDataEnd - wPlayerData);
     // CALL(aCopyBytes);
-    CopyBytes_Conv(wPlayerData, sPlayerData, wPlayerDataEnd - wPlayerData);
+    CopyBytes_GB(wPlayerData, sPlayerData, wPlayerDataEnd - wPlayerData);
     // LD_HL(sCurMapData);
     // LD_DE(wCurMapData);
     // LD_BC(wCurMapDataEnd - wCurMapData);
     // CALL(aCopyBytes);
-    CopyBytes_Conv(wCurMapData, sCurMapData, wCurMapDataEnd - wCurMapData);
+    CopyBytes_GB(wCurMapData, sCurMapData, wCurMapDataEnd - wCurMapData);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // LD_A(BANK(sBattleTowerChallengeState));
@@ -1167,7 +1167,7 @@ void LoadPokemonData(void){
     // LD_DE(wPokemonData);
     // LD_BC(wPokemonDataEnd - wPokemonData);
     // CALL(aCopyBytes);
-    CopyBytes_Conv(wPokemonData, sPokemonData, wPokemonDataEnd - wPokemonData);
+    CopyBytes_GB(wPokemonData, sPokemonData, wPokemonDataEnd - wPokemonData);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // RET;
@@ -1213,12 +1213,12 @@ void LoadBackupPlayerData(void){
     // LD_DE(wPlayerData);
     // LD_BC(wPlayerDataEnd - wPlayerData);
     // CALL(aCopyBytes);
-    CopyBytes_Conv(wPlayerData, sBackupPlayerData, wPlayerDataEnd - wPlayerData);
+    CopyBytes_GB(wPlayerData, sBackupPlayerData, wPlayerDataEnd - wPlayerData);
     // LD_HL(sBackupCurMapData);
     // LD_DE(wCurMapData);
     // LD_BC(wCurMapDataEnd - wCurMapData);
     // CALL(aCopyBytes);
-    CopyBytes_Conv(wCurMapData, sBackupCurMapData, wCurMapDataEnd - wCurMapData);
+    CopyBytes_GB(wCurMapData, sBackupCurMapData, wCurMapDataEnd - wCurMapData);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // RET;
@@ -1233,7 +1233,7 @@ void LoadBackupPokemonData(void){
     // LD_DE(wPokemonData);
     // LD_BC(wPokemonDataEnd - wPokemonData);
     // CALL(aCopyBytes);
-    CopyBytes_Conv(wPokemonData, sBackupPokemonData, wPokemonDataEnd - wPokemonData);
+    CopyBytes_GB(wPokemonData, sBackupPokemonData, wPokemonDataEnd - wPokemonData);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // RET;
@@ -1277,7 +1277,7 @@ void v_SaveData(void){
     // LD_DE(sCrystalData);
     // LD_BC(wCrystalDataEnd - wCrystalData);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(GBToRAMAddr(sCrystalData), wram->wCrystalData, wCrystalDataEnd - wCrystalData);
+    CopyBytes(GBToRAMAddr(sCrystalData), wram->wCrystalData, wCrystalDataEnd - wCrystalData);
 
 // This block originally had some mobile functionality, but since we're still in
 // BANK(sCrystalData), it instead overwrites the sixteen wEventFlags starting at 1:s4_a60e with
@@ -1302,7 +1302,7 @@ void v_LoadData(void){
     // LD_DE(wCrystalData);
     // LD_BC(wCrystalDataEnd - wCrystalData);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wCrystalData, GBToRAMAddr(sCrystalData), sizeof(wram->wCrystalData));
+    CopyBytes(wram->wCrystalData, GBToRAMAddr(sCrystalData), sizeof(wram->wCrystalData));
 
 // This block originally had some mobile functionality to mirror _SaveData above, but instead it
 // (harmlessly) writes the aforementioned wEventFlags to the unused wd479.
@@ -1364,7 +1364,7 @@ void SaveBoxAddress(uint32_t de){
     // LD_DE(wBoxPartialData);
     // LD_BC((wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCopyBytes);
-    CopyBytes_Conv(wBoxPartialData, sBox, (wBoxPartialDataEnd - wBoxPartialData));
+    CopyBytes_GB(wBoxPartialData, sBox, (wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // POP_DE;
@@ -1377,7 +1377,7 @@ void SaveBoxAddress(uint32_t de){
     // LD_HL(wBoxPartialData);
     // LD_BC((wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCopyBytes);
-    CopyBytes_Conv(de & 0xffff, wBoxPartialData, (wBoxPartialDataEnd - wBoxPartialData));
+    CopyBytes_GB(de & 0xffff, wBoxPartialData, (wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
 
@@ -1389,7 +1389,7 @@ void SaveBoxAddress(uint32_t de){
     // LD_DE(wBoxPartialData);
     // LD_BC((wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCopyBytes);
-    CopyBytes_Conv(wBoxPartialData, sBox + (wBoxPartialDataEnd - wBoxPartialData), (wBoxPartialDataEnd - wBoxPartialData));
+    CopyBytes_GB(wBoxPartialData, sBox + (wBoxPartialDataEnd - wBoxPartialData), (wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // POP_DE;
@@ -1408,7 +1408,7 @@ void SaveBoxAddress(uint32_t de){
     // LD_HL(wBoxPartialData);
     // LD_BC((wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCopyBytes);
-    CopyBytes_Conv(de & 0xffff, wBoxPartialData, (wBoxPartialDataEnd - wBoxPartialData));
+    CopyBytes_GB(de & 0xffff, wBoxPartialData, (wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
 
@@ -1420,7 +1420,7 @@ void SaveBoxAddress(uint32_t de){
     // LD_DE(wBoxPartialData);
     // LD_BC(sBoxEnd - (sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2));  // $8e
     // CALL(aCopyBytes);
-    CopyBytes_Conv(wBoxPartialData, sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2, sBoxEnd - (sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2));
+    CopyBytes_GB(wBoxPartialData, sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2, sBoxEnd - (sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2));
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // POP_DE;
@@ -1437,7 +1437,7 @@ void SaveBoxAddress(uint32_t de){
     // LD_HL(wBoxPartialData);
     // LD_BC(sBoxEnd - (sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2));  // $8e
     // CALL(aCopyBytes);
-    CopyBytes_Conv(de & 0xffff, wBoxPartialData, sBoxEnd - (sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2));
+    CopyBytes_GB(de & 0xffff, wBoxPartialData, sBoxEnd - (sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2));
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
 
@@ -1460,7 +1460,7 @@ void LoadBoxAddress(uint32_t de){
     // LD_DE(wBoxPartialData);
     // LD_BC((wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCopyBytes);
-    CopyBytes_Conv(wBoxPartialData, de & 0xffff, (wBoxPartialDataEnd - wBoxPartialData));
+    CopyBytes_GB(wBoxPartialData, de & 0xffff, (wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // LD_A(BANK(sBox));
@@ -1470,7 +1470,7 @@ void LoadBoxAddress(uint32_t de){
     // LD_DE(sBox);
     // LD_BC((wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCopyBytes);
-    CopyBytes_Conv(sBox, wBoxPartialData, (wBoxPartialDataEnd - wBoxPartialData));
+    CopyBytes_GB(sBox, wBoxPartialData, (wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // POP_HL;
@@ -1487,7 +1487,7 @@ void LoadBoxAddress(uint32_t de){
     // LD_DE(wBoxPartialData);
     // LD_BC((wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCopyBytes);
-    CopyBytes_Conv(wBoxPartialData, de & 0xffff, (wBoxPartialDataEnd - wBoxPartialData));
+    CopyBytes_GB(wBoxPartialData, de & 0xffff, (wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // LD_A(BANK(sBox));
@@ -1496,7 +1496,7 @@ void LoadBoxAddress(uint32_t de){
     // LD_DE(sBox + (wBoxPartialDataEnd - wBoxPartialData));
     // LD_BC((wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCopyBytes);
-    CopyBytes_Conv(sBox + (wBoxPartialDataEnd - wBoxPartialData), wBoxPartialData, (wBoxPartialDataEnd - wBoxPartialData));
+    CopyBytes_GB(sBox + (wBoxPartialDataEnd - wBoxPartialData), wBoxPartialData, (wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // POP_HL;
@@ -1510,7 +1510,7 @@ void LoadBoxAddress(uint32_t de){
     // LD_DE(wBoxPartialData);
     // LD_BC(sBoxEnd - (sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2));  // $8e
     // CALL(aCopyBytes);
-    CopyBytes_Conv(wBoxPartialData, de & 0xffff, sBoxEnd - (sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2));
+    CopyBytes_GB(wBoxPartialData, de & 0xffff, sBoxEnd - (sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2));
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // LD_A(BANK(sBox));
@@ -1520,7 +1520,7 @@ void LoadBoxAddress(uint32_t de){
     // LD_DE(sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2);
     // LD_BC(sBoxEnd - (sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2));  // $8e
     // CALL(aCopyBytes);
-    CopyBytes_Conv(sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2, wBoxPartialData, sBoxEnd - (sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2));
+    CopyBytes_GB(sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2, wBoxPartialData, sBoxEnd - (sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2));
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
 

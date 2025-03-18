@@ -26,7 +26,7 @@ uint8_t v_BugContestJudging(void){
     // LD_A_addr(wBugContestThirdPlaceMon);
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetPokemonName);
-    GetPokemonName_Conv2(wram->wBugContestWinners[2].mon);
+    GetPokemonName(wram->wBugContestWinners[2].mon);
     // LD_HL(mContestJudging_ThirdPlaceText);
     // CALL(aPrintText);
     PrintText_Conv2(ContestJudging_ThirdPlaceText);
@@ -36,7 +36,7 @@ uint8_t v_BugContestJudging(void){
     // LD_A_addr(wBugContestSecondPlaceMon);
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetPokemonName);
-    GetPokemonName_Conv2(wram->wBugContestWinners[1].mon);
+    GetPokemonName(wram->wBugContestWinners[1].mon);
     // LD_HL(mContestJudging_SecondPlaceText);
     // CALL(aPrintText);
     PrintText_Conv2(ContestJudging_SecondPlaceText);
@@ -46,7 +46,7 @@ uint8_t v_BugContestJudging(void){
     // LD_A_addr(wBugContestFirstPlaceMon);
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetPokemonName);
-    GetPokemonName_Conv2(wram->wBugContestWinners[0].mon);
+    GetPokemonName(wram->wBugContestWinners[0].mon);
     // LD_HL(mContestJudging_FirstPlaceText);
     // CALL(aPrintText);
     PrintText_Conv2(ContestJudging_FirstPlaceText);
@@ -133,7 +133,7 @@ void LoadContestantName(uint8_t a){
         // LD_DE(wBugContestWinnerName);
         // LD_BC(NAME_LENGTH);
         // JP(mCopyBytes);
-        return CopyBytes_Conv2(wram->wBugContestWinnerName, wram->wPlayerName, NAME_LENGTH);
+        return CopyBytes(wram->wBugContestWinnerName, wram->wPlayerName, NAME_LENGTH);
     }
 //  Find the pointer for the trainer class of the Bug Catching Contestant whose ID is in a.
     // LD_C_A;
@@ -157,7 +157,7 @@ void LoadContestantName(uint8_t a){
     // LD_DE(wBugContestWinnerName);
     // LD_BC(TRAINER_CLASS_NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wBugContestWinnerName, GetTrainerClassName_Conv(contestant->tclass), TRAINER_CLASS_NAME_LENGTH);
+    CopyBytes(wram->wBugContestWinnerName, GetTrainerClassName_Conv(contestant->tclass), TRAINER_CLASS_NAME_LENGTH);
     // LD_HL(wBugContestWinnerName);
     uint8_t* hl = wram->wBugContestWinnerName;
 //  Delete the trailing terminator and replace it with a space.
@@ -190,7 +190,7 @@ void LoadContestantName(uint8_t a){
     // LD_BC(NAME_LENGTH - 1);
     // JP(mCopyBytes);
 
-    return CopyBytes_Conv2(hl, GetTrainerName_Conv(contestant->tid, contestant->tclass), NAME_LENGTH - 1);
+    return CopyBytes(hl, GetTrainerName_Conv(contestant->tid, contestant->tclass), NAME_LENGTH - 1);
 // INCLUDE "data/events/bug_contest_winners.asm"
 }
 
@@ -249,7 +249,7 @@ void ClearContestResults(void){
     // LD_hli_A;
     // DEC_B;
     // IF_NZ goto loop;
-    ByteFill_Conv2(wram->wBugContestWinners, sizeof(wram->wBugContestWinners), 0);
+    ByteFill(wram->wBugContestWinners, sizeof(wram->wBugContestWinners), 0);
     // RET;
 
 }
@@ -265,12 +265,12 @@ void DetermineContestWinners(void){
         // LD_DE(wBugContestThirdPlaceWinnerID);
         // LD_BC(BUG_CONTESTANT_SIZE);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(wram->wBugContestWinners + 2, wram->wBugContestWinners + 1, BUG_CONTESTANT_SIZE);
+        CopyBytes(wram->wBugContestWinners + 2, wram->wBugContestWinners + 1, BUG_CONTESTANT_SIZE);
         // LD_HL(wBugContestFirstPlaceWinnerID);
         // LD_DE(wBugContestSecondPlaceWinnerID);
         // LD_BC(BUG_CONTESTANT_SIZE);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(wram->wBugContestWinners + 1, wram->wBugContestWinners + 0, BUG_CONTESTANT_SIZE);
+        CopyBytes(wram->wBugContestWinners + 1, wram->wBugContestWinners + 0, BUG_CONTESTANT_SIZE);
         // LD_HL(wBugContestFirstPlaceWinnerID);
         // CALL(aCopyTempContestant);
         CopyTempContestant(wram->wBugContestWinners + 0);
@@ -288,7 +288,7 @@ void DetermineContestWinners(void){
         // LD_DE(wBugContestThirdPlaceWinnerID);
         // LD_BC(BUG_CONTESTANT_SIZE);
         // CALL(aCopyBytes);
-        CopyBytes_Conv2(wram->wBugContestWinners + 2, wram->wBugContestWinners + 1, BUG_CONTESTANT_SIZE);
+        CopyBytes(wram->wBugContestWinners + 2, wram->wBugContestWinners + 1, BUG_CONTESTANT_SIZE);
         // LD_HL(wBugContestSecondPlaceWinnerID);
         // CALL(aCopyTempContestant);
         CopyTempContestant(wram->wBugContestWinners + 1);
@@ -324,7 +324,7 @@ void CopyTempContestant(struct BugContestWinner *hl){
     // INC_DE;
     // LD_hl_A;
     // RET;
-    CopyBytes_Conv2(hl, &wram->wBugContestTemp, sizeof(*hl));
+    CopyBytes(hl, &wram->wBugContestTemp, sizeof(*hl));
 }
 
 void ComputeAIContestantScores(void){
@@ -363,7 +363,7 @@ void ComputeAIContestantScores(void){
         // loop2:
         // 0, 1, or 2 for 1st, 2nd, or 3rd
             // CALL(aRandom);
-            a = Random_Conv() & 3;
+            a = Random() & 3;
             // AND_A(3);
             // CP_A(3);
             // IF_Z goto loop2;
@@ -386,7 +386,7 @@ void ComputeAIContestantScores(void){
         // LD_C_A;
         // LD_B(0);
         // ADD_HL_BC;
-        score += Random_Conv() & 0b111;
+        score += Random() & 0b111;
         // LD_A_H;
         // LD_addr_A(wBugContestTempScore);
         // LD_A_L;

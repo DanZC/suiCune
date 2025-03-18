@@ -101,7 +101,7 @@ void Predef(void) {
     LD_A(BANK(PredefPointers[predefId]));  // ld a, [hl]
 
     //  Switch to the new function's bank
-    Bankswitch();
+    Bankswitch(REG_A);
 
     //  Get hl back
     LD_A_addr(wPredefHL);        // ld a, [wPredefHL]
@@ -122,7 +122,7 @@ void Predef_Return(void) {
 
     POP_HL;  // pop hl
     LD_A_H;  // ld a, h
-    Bankswitch();
+    Bankswitch(REG_A);
 
     LD_A_addr(wPredefHL);      // ld a, [wPredefHL]
     LD_H_A;                    // ld h, a

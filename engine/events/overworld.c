@@ -63,7 +63,7 @@ void FieldMoveJumptableReset(void){
     // LD_HL(wFieldMoveData);
     // LD_BC(wFieldMoveDataEnd - wFieldMoveData);
     // CALL(aByteFill);
-    ByteFill_Conv2(&sFieldMoveData, sizeof(sFieldMoveData), 0);
+    ByteFill(&sFieldMoveData, sizeof(sFieldMoveData), 0);
     // RET;
 }
 
@@ -114,12 +114,12 @@ void GetPartyNickname(void){
     // LD_A_addr(wCurPartyMon);
     // CALL(aGetNickname);
     // CALL(aCopyName1);
-    CopyName1_Conv2(wram->wPartyMonNickname[wram->wCurPartyMon]);
+    CopyName1(wram->wPartyMonNickname[wram->wCurPartyMon]);
 //  copy text from wStringBuffer2 to wStringBuffer3
     // LD_DE(wStringBuffer2);
     // LD_HL(wStringBuffer3);
     // CALL(aCopyName2);
-    CopyName2_Conv2(wram->wStringBuffer3, wram->wStringBuffer2);
+    CopyName2(wram->wStringBuffer3, wram->wStringBuffer2);
     // RET;
 }
 
@@ -1120,7 +1120,7 @@ static uint8_t FlyFunction_TryFly(void) {
         // CALL(aLoadStandardMenuHeader);
         LoadStandardMenuHeader_Conv();
         // CALL(aClearSprites);
-        ClearSprites_Conv();
+        ClearSprites();
         // FARCALL(av_FlyMap);
         uint8_t e = v_FlyMap();
         // LD_A_E;
@@ -1158,7 +1158,7 @@ static uint8_t FlyFunction_TryFly(void) {
 static bool FlyFunction_FlyScript(script_s* s) {
     SCRIPT_BEGIN
     reloadmappart
-    HideSprites_Conv();
+    HideSprites();
     special(UpdateTimePals)
     FlyFromAnim();
     scall(Script_AbortBugContest)
@@ -2857,7 +2857,7 @@ static uint8_t BikeFunction_TryBike(void) {
         // CALL(aDelayFrame);
         DelayFrame();
         // CALL(aMaxVolume);
-        MaxVolume_Conv();
+        MaxVolume();
         // LD_DE(MUSIC_BICYCLE);
         // LD_A_E;
         // LD_addr_A(wMapMusic);

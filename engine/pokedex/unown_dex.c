@@ -137,7 +137,7 @@ void PrintUnownWord(void){
     // LD_BC(12);
     // LD_A(0x7f);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(4, 15, wram->wTilemap), 12, 0x7f);
+    ByteFill(coord(4, 15, wram->wTilemap), 12, 0x7f);
     // LD_A_addr(wDexCurUnownIndex);
     // LD_E_A;
     // LD_D(0);

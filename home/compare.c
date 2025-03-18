@@ -19,7 +19,7 @@ int CompareBytes(const void* de, const void* hl, uint32_t c){
 
 //  Compare bc bytes at de and hl.
 //  Return true if they all match.
-//  Depracated. Use CompareBytes instead.
+//  DEPRECATED: Use CompareBytes instead.
 bool CompareBytesLong(const void* de, const void* hl, uint16_t bc){
     const uint8_t* de_ = de;
     const uint8_t* hl_ = hl;

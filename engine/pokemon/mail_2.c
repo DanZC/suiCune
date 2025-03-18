@@ -284,11 +284,11 @@ void ReadAnyMail_Conv(const struct MailMsg* de){
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
     // CALL(aLoadFontsExtra);
     LoadFontsExtra_Conv();
     // POP_DE;
@@ -326,7 +326,7 @@ void ReadAnyMail_Conv(const struct MailMsg* de){
     // CALL(aReadAnyMail_LoadGFX);
     ReadAnyMail_LoadGFX(de);
     // CALL(aEnableLCD);
-    EnableLCD_Conv();
+    EnableLCD();
     // CALL(aWaitBGMap);
     WaitBGMap_Conv();
     // LD_A_addr(wCurMailIndex);
@@ -343,11 +343,11 @@ void ReadAnyMail_Conv(const struct MailMsg* de){
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // CALL(aDisableLCD);
-    DisableLCD_Conv();
+    DisableLCD();
     // CALL(aLoadStandardFont);
     LoadStandardFont_Conv();
     // JP(mEnableLCD);
-    return EnableLCD_Conv();
+    return EnableLCD();
 }
 
 void LoadSurfMailGFX(const struct MailMsg* bc){
@@ -735,7 +735,7 @@ void LoadBlueSkyMailGFX(const struct MailMsg* bc){
     // LD_A(0xff);
     // LD_BC(1 * LEN_2BPP_TILE);
     // CALL(aByteFill);
-    ByteFill_Conv2(hl, 1 * LEN_2BPP_TILE, 0xff);
+    ByteFill(hl, 1 * LEN_2BPP_TILE, 0xff);
     hl += 1 * LEN_2BPP_TILE;
     // LD_DE(mBlueSkyMailGrassGFX);
     // LD_C(1 * LEN_1BPP_TILE);
@@ -987,7 +987,7 @@ void LoadMusicMailGFX(const struct MailMsg* bc){
     // XOR_A_A;
     // LD_BC(1 * LEN_2BPP_TILE);
     // CALL(aByteFill);
-    ByteFill_Conv2(hl, 1 * LEN_2BPP_TILE, 0x0);
+    ByteFill(hl, 1 * LEN_2BPP_TILE, 0x0);
     hl += 1 * LEN_2BPP_TILE;
     // LD_DE(mMusicMailLargeNoteGFX);
     // LD_C(3 * LEN_1BPP_TILE);
@@ -1134,13 +1134,13 @@ void MailGFX_PlaceMessage(const struct MailMsg* hl){
     // LD_A(BANK(sPartyMail));
     // CALL(aOpenSRAM);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(&wram->wTempMail, hl, sizeof(*hl));
+    CopyBytes(&wram->wTempMail, hl, sizeof(*hl));
     // CALL(aCloseSRAM);
     // LD_HL(wTempMailAuthor);
     // LD_DE(wMonOrItemNameBuffer);
     // LD_BC(NAME_LENGTH - 1);
     // CALL(aCopyBytes);
-    CopyBytes_Conv2(wram->wMonOrItemNameBuffer, wram->wTempMail.author, NAME_LENGTH - 1);
+    CopyBytes(wram->wMonOrItemNameBuffer, wram->wTempMail.author, NAME_LENGTH - 1);
     // LD_A(0x50);
     // LD_addr_A(wTempMailAuthor);
     wram->wTempMail.author[0] = 0x50;

@@ -901,7 +901,7 @@ void GiveItem(void){
             // LD_DE(wMonOrItemNameBuffer);
             // LD_BC(MON_NAME_LENGTH);
             // CALL(aCopyBytes);
-            CopyBytes_Conv2(wram->wMonOrItemNameBuffer, GetCurNickname_Conv(), MON_NAME_LENGTH);
+            CopyBytes(wram->wMonOrItemNameBuffer, GetCurNickname_Conv(), MON_NAME_LENGTH);
             // CALL(aTryGiveItemToPartymon);
             TryGiveItemToPartymon();
             // POP_AF;
@@ -2090,7 +2090,7 @@ void Pack_InitGFX(void){
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // CALL(aClearSprites);
-    ClearSprites_Conv();
+    ClearSprites();
     // CALL(aDisableLCD);
     DisableLCD();
     // LD_HL(mPackMenuGFX);
@@ -2104,7 +2104,7 @@ void Pack_InitGFX(void){
     // LD_BC(11 * SCREEN_WIDTH);
     // LD_A(0x24);
     // CALL(aByteFill);
-    ByteFill_Conv2(coord(0, 1, wram->wTilemap), 11 * SCREEN_WIDTH, 0x24);
+    ByteFill(coord(0, 1, wram->wTilemap), 11 * SCREEN_WIDTH, 0x24);
 //  This is where the items themselves will be listed.
     // hlcoord(5, 1, wTilemap);
     // LD_BC((11 << 8) | 15);
@@ -2133,7 +2133,7 @@ void Pack_InitGFX(void){
     // CALL(aTextbox);
     Textbox_Conv2(coord(0, SCREEN_HEIGHT - 4 - 2, wram->wTilemap), 4, SCREEN_WIDTH - 2);
     // CALL(aEnableLCD);
-    EnableLCD_Conv();
+    EnableLCD();
     // CALL(aDrawPackGFX);
     DrawPackGFX(wram->wCurPocket);
     // RET;

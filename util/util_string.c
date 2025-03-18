@@ -401,10 +401,10 @@ void PrintCrystalTextFromGB(uint16_t ptr) {
             case TX_FAR: 
                 printf("text_far \"");
                 oldbank = hram->hROMBank;
-                Bankswitch_Conv(gb_read(ptr++));
+                Bankswitch(gb_read(ptr++));
                 PrintCrystalStringFromGB(gb_read16(ptr)); 
                 ptr += 2;
-                Bankswitch_Conv(oldbank);
+                Bankswitch(oldbank);
                 break;
             default: 
                 printf("text_unk\n"); break;

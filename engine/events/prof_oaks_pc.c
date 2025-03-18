@@ -105,7 +105,7 @@ static void Rate_UpdateRatingBuffer(uint8_t* hl, const uint8_t* de) {
     // LD_A(0x50);
     // LD_BC(ITEM_NAME_LENGTH);
     // CALL(aByteFill);
-    ByteFill_Conv2(hl, ITEM_NAME_LENGTH, 0x50);
+    ByteFill(hl, ITEM_NAME_LENGTH, 0x50);
     // POP_HL;
     // LD_BC((PRINTNUM_LEFTALIGN | 1 << 8) | 3);
     // CALL(aPrintNum);

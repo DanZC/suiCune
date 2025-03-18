@@ -303,7 +303,7 @@ void CheckForLuckyNumberWinners(void){
     // LD_A_addr(wCurPartySpecies);
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetPokemonName);
-    GetPokemonName_Conv2(wram->wCurPartySpecies);
+    GetPokemonName(wram->wCurPartySpecies);
     // LD_HL(mCheckForLuckyNumberWinners_LuckyNumberMatchPartyText);
     // POP_AF;
     // IF_Z goto print;
