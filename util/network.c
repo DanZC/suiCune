@@ -5,11 +5,25 @@
 #include "network.h"
 #include "../home/delay.h"
 
+/// WIP experimental networking system to replace SDLNet.
+/// To enable it, set USE_SDLNET to 0
+#define USE_SDLNET 1
+
 #if defined(NETWORKING_SUPPORT)
+#if USE_SDLNET
 #if defined(_MSC_VER)
 #include <SDL_NET.h>
 #else
 #include <SDL2/SDL_net.h>
+#endif
+#else
+#if defined(_MSC_VER)
+#include <SDL.h>
+#else
+#include <SDL2/SDL.h>
+#endif
+#include <stdlib.h>
+#include <memory.h>
 #endif
 #include "../tools/emu/peanut_gb.h"
 #include "../lib/libmobile/mobile.h"
@@ -38,6 +52,7 @@ typedef int ssize_t;
 #define UDP_PACKET_SIZE 32
 
 bool gNetworkingInit = false;
+#if USE_SDLNET
 static UDPsocket host;
 static UDPpacket* packet;
 static TCPsocket serial;
@@ -45,6 +60,23 @@ static TCPsocket cserial;
 static TCPsocket linkSocket;
 static SDLNet_SocketSet sockets;
 static IPaddress localhost;
+#else
+struct network_packet {
+    uint8_t* buffer;
+    struct mobile_addr sender;
+    int len;
+};
+
+struct network_data {
+    SOCKET udp;
+    struct network_packet udp_packet;
+    SOCKET serial;
+    SOCKET linkSocket;
+    struct mobile_addr linkAddr;
+};
+
+static struct network_data gNetworkData;
+#endif
 static uint32_t hostUniqueId;
 
 static LANClient gLANClientCandidates[16];
@@ -55,7 +87,7 @@ uint8_t gOtherPlayerGender;
 // A networking interface for suiCune. Supports both LAN (local) connections, emulating
 // the standard link cable connection, and internet (remote) connections, emulating
 // the mobile GB connection.
-// Currently, mobile connections are not emulated, but will be in the future.
+// Mobile connections use the libmobile library.
 
 //// LAN connections (link cable multiplayer)
 // Standard multiplayer features of Pokemon Crystal used the standard link cable,
@@ -134,36 +166,319 @@ static_assert(sizeof(CmdPacket_s) <= UDP_PACKET_SIZE, "");
 static void gb_serial_tx_test(const uint8_t x);
 static enum gb_serial_rx_ret_e gb_serial_rx_test(uint8_t* x);
 
-static uint16_t HostToNet16(uint16_t x) {
-    union {
-        int a;
-        char b[sizeof(int)];
-    } test = {.a=1};
-    if(test.b[0] == 1) {
-        // little-endian
-        return (x >> 8) | (x << 8);
-    }
-    return x;
-}
-
-static uint32_t HostToNet32(uint32_t x) {
-    union {
-        int a;
-        char b[sizeof(int)];
-    } test = {.a=1};
-    if(test.b[0] == 1) {
-        // little-endian
-        return ((x >> 24) & 0x000000ff)
-            | ((x >> 8)  & 0x0000ff00)
-            | ((x << 8)  & 0x00ff0000)
-            | ((x << 24) & 0xff000000);
-    }
-    return x;
-}
-
 #define MAX_TRIES_DETECT_PACKET_SENT 32
 
+// socket implementations "borrowed" from libmobile-bgb
+union u_sockaddr {
+    struct sockaddr addr;
+    struct sockaddr_in addr4;
+    struct sockaddr_in6 addr6;
+};
+
+static struct sockaddr *convert_sockaddr(socklen_t *addrlen, union u_sockaddr *u_addr, const struct mobile_addr *addr)
+{
+    if (!addr) {
+        *addrlen = 0;
+        return NULL;
+    } else if (addr->type == MOBILE_ADDRTYPE_IPV4) {
+        const struct mobile_addr4 *addr4 = (struct mobile_addr4 *)addr;
+        memset(&u_addr->addr4, 0, sizeof(u_addr->addr4));
+        u_addr->addr4.sin_family = AF_INET;
+        u_addr->addr4.sin_port = htons(addr4->port);
+        if (sizeof(struct in_addr) != sizeof(addr4->host)) return NULL;
+        memcpy(&u_addr->addr4.sin_addr.s_addr, addr4->host,
+            sizeof(struct in_addr));
+        *addrlen = sizeof(struct sockaddr_in);
+        return &u_addr->addr;
+    } else if (addr->type == MOBILE_ADDRTYPE_IPV6) {
+        const struct mobile_addr6 *addr6 = (struct mobile_addr6 *)addr;
+        memset(&u_addr->addr6, 0, sizeof(u_addr->addr6));
+        u_addr->addr6.sin6_family = AF_INET6;
+        u_addr->addr6.sin6_port = htons(addr6->port);
+        if (sizeof(struct in6_addr) != sizeof(addr6->host)) return NULL;
+        memcpy(&u_addr->addr6.sin6_addr.s6_addr, addr6->host,
+            sizeof(struct in6_addr));
+        *addrlen = sizeof(struct sockaddr_in6);
+        return &u_addr->addr;
+    } else {
+        *addrlen = 0;
+        return NULL;
+    }
+}
+
+struct mobile_addr make_mobile_addr(enum mobile_addrtype addrtype, in_addr_t host, unsigned bindport) {
+    struct mobile_addr addr;
+    addr.type = addrtype;
+    switch(addrtype) {
+        case MOBILE_ADDRTYPE_IPV4: {
+            struct mobile_addr4* addr4 = (struct mobile_addr4*)&addr;
+            addr4->host[0] = host & 0xff;
+            addr4->host[1] = (host >> 8) & 0xff;
+            addr4->host[2] = (host >> 16) & 0xff;
+            addr4->host[3] = (host >> 24) & 0xff;
+            addr4->port = bindport;
+        } break;
+        case MOBILE_ADDRTYPE_IPV6: {
+            struct mobile_addr6* addr6 = (struct mobile_addr6*)&addr;
+            addr6->host[0] = host & 0xff;
+            addr6->host[1] = (host >> 8) & 0xff;
+            addr6->host[2] = (host >> 16) & 0xff;
+            addr6->host[3] = (host >> 24) & 0xff;
+            // TODO: Finish this
+            addr6->port = bindport;
+        } break;
+        default: assert(false);
+    }
+    return addr;
+}
+
+SOCKET socket_open(enum mobile_socktype type, enum mobile_addrtype addrtype, unsigned bindport) {
+    int sock_type;
+    switch (type) {
+        case MOBILE_SOCKTYPE_TCP: sock_type = SOCK_STREAM; break;
+        case MOBILE_SOCKTYPE_UDP: sock_type = SOCK_DGRAM; break;
+        default: assert(false); return INVALID_SOCKET;
+    }
+
+    int sock_addrtype;
+    switch (addrtype) {
+        case MOBILE_ADDRTYPE_IPV4: sock_addrtype = AF_INET; break;
+        case MOBILE_ADDRTYPE_IPV6: sock_addrtype = AF_INET6; break;
+        default: assert(false); return false;
+    }
+
+    SOCKET sock = socket(sock_addrtype, sock_type, 0);
+    if (sock == INVALID_SOCKET) {
+        socket_perror("socket");
+        return INVALID_SOCKET;
+    }
+    if (socket_setblocking(sock, 0) == -1) {
+        socket_close(sock);
+        return INVALID_SOCKET;
+    }
+
+    // Set SO_REUSEADDR so that we can bind to the same port again after
+    if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR,
+            (char *)&(int){1}, sizeof(int)) == SOCKET_ERROR) {
+        socket_perror("setsockopt");
+        socket_close(sock);
+        return INVALID_SOCKET;
+    }
+
+    #ifdef SO_BROADCAST
+    // Allow LAN broadcasts with the socket
+    if(type == MOBILE_SOCKTYPE_UDP)
+    {
+        if(setsockopt(sock, SOL_SOCKET, SO_BROADCAST, 
+                (char *)&(int){1}, sizeof(int)) == SOCKET_ERROR) {
+            socket_perror("setsockopt");
+            socket_close(sock);
+            return INVALID_SOCKET;
+        }
+    }
+    #endif
+
+    // Set TCP_NODELAY to aid sending packets inmediately, reducing latency
+    if (type == MOBILE_SOCKTYPE_TCP &&
+            setsockopt(sock, IPPROTO_TCP, TCP_NODELAY,
+                (char *)&(int){1}, sizeof(int)) == SOCKET_ERROR) {
+        socket_perror("setsockopt");
+        socket_close(sock);
+        return INVALID_SOCKET;
+    }
+
+    int rc;
+    if (addrtype == MOBILE_ADDRTYPE_IPV4) {
+        struct sockaddr_in addr = {
+            .sin_family = AF_INET,
+            .sin_port = htons(bindport),
+        };
+        rc = bind(sock, (struct sockaddr *)&addr, sizeof(addr));
+    } else {
+        struct sockaddr_in6 addr = {
+            .sin6_family = AF_INET6,
+            .sin6_port = htons(bindport),
+        };
+        rc = bind(sock, (struct sockaddr *)&addr, sizeof(addr));
+    }
+    if (rc == SOCKET_ERROR) {
+        socket_perror("bind");
+        socket_close(sock);
+        return INVALID_SOCKET;
+    }
+
+    return sock;
+}
+
+bool socket_listen(SOCKET sock)
+{
+    assert(sock != INVALID_SOCKET);
+
+    if (listen(sock, 1) == SOCKET_ERROR) {
+        socket_perror("listen");
+        return false;
+    }
+
+    return true;
+}
+
+SOCKET socket_accept(SOCKET sock)
+{
+    assert(sock != INVALID_SOCKET);
+
+    if (socket_hasdata(sock) <= 0) return INVALID_SOCKET;
+    SOCKET newsock = accept(sock, NULL, NULL);
+    if (newsock == INVALID_SOCKET) {
+        socket_perror("accept");
+        return INVALID_SOCKET;
+    }
+    if (socket_setblocking(newsock, 0) == -1) return INVALID_SOCKET;
+
+    socket_close(sock);
+    return newsock;
+}
+
+int socket_connect_ip(SOCKET sock, const struct mobile_addr *addr)
+{
+    assert(sock != INVALID_SOCKET);
+
+    union u_sockaddr u_addr;
+    socklen_t sock_addrlen;
+    struct sockaddr *sock_addr = convert_sockaddr(&sock_addrlen, &u_addr, addr);
+
+    // Try to connect/check if we're connected
+    int rc = connect(sock, sock_addr, sock_addrlen);
+    int err = socket_geterror();
+    if (rc != SOCKET_ERROR) return 1;
+
+    // If the connection is in progress, try again in a bit.
+    // On windows, connect() returns EISCONN rather than no error.
+    if (err == SOCKET_EWOULDBLOCK ||
+            err == SOCKET_EINPROGRESS ||
+            err == SOCKET_EALREADY) {
+        return 0;
+    }
+    if (err == SOCKET_EISCONN) return 1;
+
+    char sock_str[SOCKET_STRADDR_MAXLEN] = {0};
+    socket_straddr(sock_str, sizeof(sock_str), sock_addr, sock_addrlen);
+    socket_seterror(err);
+    fprintf(stderr, "Could not connect (%s): ", sock_str);
+    socket_perror(NULL);
+    return -1;
+}
+
+int socket_send(SOCKET sock, const void *data, const unsigned size, const struct mobile_addr *addr)
+{
+    assert(sock != INVALID_SOCKET);
+
+    union u_sockaddr u_addr;
+    socklen_t sock_addrlen;
+    struct sockaddr *sock_addr = convert_sockaddr(&sock_addrlen, &u_addr, addr);
+
+    ssize_t len = sendto(sock, data, size, 0, sock_addr, sock_addrlen);
+    if (len == SOCKET_ERROR) {
+        // If the socket is blocking, we just haven't sent anything
+        int err = socket_geterror();
+        if (err == SOCKET_EWOULDBLOCK) return 0;
+
+        socket_perror("send");
+        return -1;
+    }
+    return (int)len;
+}
+
+int socket_recv(SOCKET sock, void *data, unsigned size, struct mobile_addr *addr)
+{
+    assert(sock != INVALID_SOCKET);
+
+    // Make sure at least one byte is in the buffer
+    if (socket_hasdata(sock) <= 0) return 0;
+
+    union u_sockaddr u_addr = {0};
+    socklen_t sock_addrlen = sizeof(u_addr);
+    struct sockaddr *sock_addr = (struct sockaddr *)&u_addr;
+
+    ssize_t len;
+    if (data) {
+        // Retrieve at least 1 byte from the buffer
+        len = recvfrom(sock, data, size, 0, sock_addr, &sock_addrlen);
+    } else {
+        // Check if at least 1 byte is available in buffer
+        char c;
+        len = recvfrom(sock, &c, 1, MSG_PEEK, sock_addr, &sock_addrlen);
+    }
+    if (len == SOCKET_ERROR) {
+        // If the socket is nonblocking, we just haven't received anything.
+        // Though this shouldn't happen thanks to the socket_hasdata check.
+        if (socket_geterror() == SOCKET_EWOULDBLOCK) return 0;
+        socket_perror("recv");
+        return -1;
+    }
+
+    // A length of 0 will be returned if the remote has disconnected.
+    if (len == 0) {
+        // Though it's only relevant to TCP sockets, as UDP sockets may receive
+        // zero-length datagrams.
+        int sock_type = 0;
+        socklen_t sock_type_len = sizeof(sock_type);
+        if (getsockopt(sock, SOL_SOCKET, SO_TYPE, (char *)&sock_type,
+                &sock_type_len) == SOCKET_ERROR) {
+            socket_perror("getsockopt");
+            return -1;
+        }
+        if (sock_type == SOCK_STREAM) return -2;
+    }
+
+    if (!data) return 0;
+
+    if (addr && sock_addrlen) {
+        if (sock_addr->sa_family == AF_INET) {
+            struct mobile_addr4 *addr4 = (struct mobile_addr4 *)addr;
+            addr4->type = MOBILE_ADDRTYPE_IPV4;
+            addr4->port = ntohs(u_addr.addr4.sin_port);
+            memcpy(addr4->host, &u_addr.addr4.sin_addr.s_addr,
+                sizeof(addr4->host));
+        } else if (sock_addr->sa_family == AF_INET6) {
+            struct mobile_addr6 *addr6 = (struct mobile_addr6 *)addr;
+            addr6->type = MOBILE_ADDRTYPE_IPV6;
+            addr6->port = ntohs(u_addr.addr6.sin6_port);
+            memcpy(addr6->host, &u_addr.addr6.sin6_addr.s6_addr,
+                sizeof(addr6->host));
+        }
+    }
+
+    return (int)len;
+}
+
+#if !USE_SDLNET
+bool NetworkStart(void) {
+#if defined(_WIN32)
+    /* Start up the windows networking */
+    WORD version_wanted = MAKEWORD(1,1);
+    WSADATA wsaData;
+
+    if ( WSAStartup(version_wanted, &wsaData) != 0 ) {
+        return false;
+    }
+#else
+    /* SIGPIPE is generated when a remote socket is closed */
+    void (*handler)(int);
+    handler = signal(SIGPIPE, SIG_IGN);
+    if ( handler != SIG_DFL ) {
+        signal(SIGPIPE, handler);
+    }
+#endif
+    return true;
+}
+#endif
+
+bool Network_ResolveHost(const char* hostname, const char* port, struct mobile_addr* addr);
+#define _s_impl(x) #x
+#define _s(x) _s_impl(x)
+
 bool NetworkInit(void) {
+#if USE_SDLNET
     if (SDLNet_Init() < 0) {
         printf("An error occurred while initializing SDL_Net.\n");
         return false;
@@ -176,7 +491,7 @@ bool NetworkInit(void) {
         packet = SDLNet_AllocPacket(UDP_PACKET_SIZE);
         packet->maxlen = UDP_PACKET_SIZE;
         packet->address.host = INADDR_ANY;
-        packet->address.port = HostToNet16(UDP_PORT);
+        packet->address.port = htons(UDP_PORT);
 
         sockets = SDLNet_AllocSocketSet(1);
 
@@ -188,16 +503,65 @@ bool NetworkInit(void) {
         gb.gb_serial_tx = gb_serial_tx_test;
         return true;
     }
+#else 
+    if(!NetworkStart()) {
+        printf("An error occurred while initializing networking.\n");
+        return false;
+    }
+
+    struct network_data* state = &gNetworkData;
+
+    state->udp = socket_open(MOBILE_SOCKTYPE_UDP, MOBILE_ADDRTYPE_IPV4, UDP_PORT);
+    if(state->udp == INVALID_SOCKET)
+        return false;
+
+    if(!Network_ResolveHost("localhost", _s(UDP_PORT), &state->udp_packet.sender)) {
+        socket_close(state->udp);
+        state->udp = INVALID_SOCKET;
+        return false;
+    }
+
+    state->udp_packet.buffer = malloc(UDP_PACKET_SIZE);
+    memset(state->udp_packet.buffer, 0, UDP_PACKET_SIZE);
+    state->linkSocket = INVALID_SOCKET;
+    memset(&state->linkAddr, 0, sizeof(state->linkAddr));
+    state->serial = INVALID_SOCKET;
+    hostUniqueId = (uint32_t)rand() + (uint32_t)time(NULL);
+    printf("Unique id: %d\n", hostUniqueId);
+    gNetworkingInit = true;
+    gNetworkState = NETSTATE_NOTHING;
+    gb.gb_serial_rx = gb_serial_rx_test;
+    gb.gb_serial_tx = gb_serial_tx_test;
+    return true;
+#endif
 }
+
+#if !USE_SDLNET
+int recv_packet(SOCKET sock, struct network_packet* packet) {
+    int size = socket_recv(sock, packet->buffer, UDP_PACKET_SIZE, &packet->sender);
+    if(size < 0)
+        return -1;
+    if(size == 0)
+        return 0;
+    packet->len = size;
+    return 1;
+}
+#endif
 
 void gb_serial_tx(const uint8_t x) {
     // send byte
     printf("Send: $%02x\n", x);
+#if USE_SDLNET
     SDLNet_TCP_Send(linkSocket, &x, sizeof(x));
+#else
+    struct network_data* state = &gNetworkData;
+    socket_send(state->linkSocket, &x, sizeof(x), &state->linkAddr);
+#endif
 }
 
 enum gb_serial_rx_ret_e gb_serial_rx(uint8_t* x) {
     // receive byte
+#if USE_SDLNET
     int ready = SDLNet_CheckSockets(sockets, 0);
     if(ready < 0) {
         printf("Error: %s\n", SDLNet_GetError());
@@ -214,24 +578,57 @@ enum gb_serial_rx_ret_e gb_serial_rx(uint8_t* x) {
         printf("Error: %s\n", SDLNet_GetError());
         return GB_SERIAL_RX_NO_CONNECTION;
     }
+#else
+    struct network_data* state = &gNetworkData;
+    int ready = socket_hasdata(state->linkSocket);
+    if(ready < 0) {
+        // printf("Error: %s\n", SDLNet_GetError());
+        return GB_SERIAL_RX_NO_CONNECTION;
+    }
+    else if(ready == 0) {
+        return GB_SERIAL_RX_NO_CONNECTION;
+    }
+    int bytes = socket_recv(state->linkSocket, x, 1, &state->linkAddr);
+    if(bytes == 0) {
+        return GB_SERIAL_RX_NO_CONNECTION;
+    }
+    else if(bytes < 0) {
+        // printf("Error: %s\n", SDLNet_GetError());
+        return GB_SERIAL_RX_NO_CONNECTION;
+    }
+#endif
     printf("Recv: $%02x\n", *x);
     return GB_SERIAL_RX_SUCCESS;
 }
 
+#if USE_SDLNET
 static void NetworkTossQueueingPackets(void) {
     // Toss any packets waiting.
     while(SDLNet_UDP_Recv(host, packet) == 1) {}
 }
+#else
+static void NetworkTossQueueingPackets(struct network_data* state) {
+    int err;
+    for(err = socket_hasdata(state->udp); err > 0; err = socket_hasdata(state->udp)) {
+        if(recv_packet(state->udp, &state->udp_packet) < 0)
+            return;
+    }
+    if(err < 0)
+        return;
+    return;
+}
+#endif
 
 bool NetworkBroadcastLAN(const uint8_t* name, uint16_t id, uint8_t gender) {
+#if USE_SDLNET
     NetworkTossQueueingPackets();
     memset(packet->data, 0, UDP_PACKET_SIZE);
     CmdPacket_s* cmd = (CmdPacket_s*)packet->data;
     cmd->type = CMD_HOST_LAN;
-    cmd->uid = HostToNet32(hostUniqueId);
+    cmd->uid = htonl(hostUniqueId);
     memset(cmd->host_lan.name, 0x50, sizeof(cmd->host_lan.name));
     memcpy(cmd->host_lan.name, name, 10);
-    cmd->host_lan.trainerId = HostToNet16(id);
+    cmd->host_lan.trainerId = htons(id);
     cmd->host_lan.gender = gender;
     packet->address.host = INADDR_BROADCAST;
     packet->len = sizeof(*cmd);
@@ -244,22 +641,52 @@ bool NetworkBroadcastLAN(const uint8_t* name, uint16_t id, uint8_t gender) {
     if(gNetworkState != NETSTATE_HOSTING)
         gNetworkState = NETSTATE_HOSTING;
     return true;
+#else
+    struct network_data* state = &gNetworkData;
+    NetworkTossQueueingPackets(state);
+
+    struct network_packet* packet = &state->udp_packet;
+    memset(packet->buffer, 0, UDP_PACKET_SIZE);
+    CmdPacket_s* cmd = (CmdPacket_s*)packet->buffer;
+    cmd->type = CMD_HOST_LAN;
+    cmd->uid = htonl(hostUniqueId);
+    memset(cmd->host_lan.name, 0x50, sizeof(cmd->host_lan.name));
+    memcpy(cmd->host_lan.name, name, 10);
+    cmd->host_lan.trainerId = htons(id);
+    cmd->host_lan.gender = gender;
+    packet->sender = make_mobile_addr(MOBILE_ADDRTYPE_IPV4, INADDR_BROADCAST, UDP_PORT);
+    packet->len = sizeof(*cmd);
+    if(socket_send(state->udp, packet->buffer, packet->len, &packet->sender) <= 0) {
+        printf("Could not send UDP packet on port %d. Is the port blocked?\n", UDP_PORT);
+        return false;
+    }
+    printf("Sent UDP packet on port %d.\n", UDP_PORT);
+    if(gNetworkState != NETSTATE_HOSTING)
+        gNetworkState = NETSTATE_HOSTING;
+    return true;
+#endif
 }
 
 void NetworkStartJoining(void) {
+#if USE_SDLNET
     NetworkTossQueueingPackets();
+#else
+    struct network_data* state = &gNetworkData;
+    NetworkTossQueueingPackets(state);
+#endif
     gNetworkState = NETSTATE_JOINING;
 }
 
 bool NetworkTryJoinLAN(uint8_t which, const uint8_t* name, uint16_t id, uint8_t gender) {
     if(which < gLANClientCandidateCount) {
+#if USE_SDLNET
         memset(packet->data, 0, UDP_PACKET_SIZE);
         CmdPacket_s* cmd = (CmdPacket_s*)packet->data;
         cmd->type = CMD_JOIN_LAN;
-        cmd->uid = HostToNet32(hostUniqueId);
+        cmd->uid = htonl(hostUniqueId);
         memset(cmd->host_lan.name, 0x50, sizeof(cmd->host_lan.name));
         memcpy(cmd->host_lan.name, name, 10);
-        cmd->host_lan.trainerId = HostToNet16(id);
+        cmd->host_lan.trainerId = htons(id);
         cmd->host_lan.gender = gender;
         packet->address.host = gLANClientCandidates[which].address;
         packet->len = sizeof(CmdPacket_s);
@@ -272,11 +699,35 @@ bool NetworkTryJoinLAN(uint8_t which, const uint8_t* name, uint16_t id, uint8_t 
             (packet->address.host >> 8) & 0xff,
             (packet->address.host >> 16) & 0xff,
             (packet->address.host >> 24) & 0xff);
+#else
+        struct network_data* state = &gNetworkData;
+        struct network_packet* packet = &gNetworkData.udp_packet;
+        memset(packet->buffer, 0, UDP_PACKET_SIZE);
+        CmdPacket_s* cmd = (CmdPacket_s*)packet->buffer;
+        cmd->type = CMD_JOIN_LAN;
+        cmd->uid = htonl(hostUniqueId);
+        memset(cmd->host_lan.name, 0x50, sizeof(cmd->host_lan.name));
+        memcpy(cmd->host_lan.name, name, 10);
+        cmd->host_lan.trainerId = htons(id);
+        cmd->host_lan.gender = gender;
+        memcpy(packet->sender._addr4.host, &gLANClientCandidates[which].address, sizeof(packet->sender._addr4.host));
+        packet->len = sizeof(CmdPacket_s);
+        if(socket_send(state->udp, packet->buffer, packet->len, &packet->sender) <= 0) {
+            printf("Could not send UDP packet on port %d. Is the port blocked?\n", UDP_PORT);
+            return false;
+        }
+        printf("Joining %d.%d.%d.%d...\n", 
+            packet->sender._addr4.host[0],
+            packet->sender._addr4.host[1],
+            packet->sender._addr4.host[2],
+            packet->sender._addr4.host[3]);
+#endif
         return true;
     }
     return false;
 }
 
+#if USE_SDLNET
 bool NetworkTryRecvUDP(void) {
     int error = SDLNet_UDP_Recv(host, packet);
     if(error == -1) {
@@ -285,6 +736,7 @@ bool NetworkTryRecvUDP(void) {
     }
     return error == 1;
 }
+#endif
 
 // Is this a duplicate of a host we already added?
 static bool NetworkCheckDuplicateLANCandidate(uint32_t uid) {
@@ -295,6 +747,7 @@ static bool NetworkCheckDuplicateLANCandidate(uint32_t uid) {
     return false;
 }
 
+#if USE_SDLNET
 static void NetworkAddLANCandidate(void) {
     LANClient* lan = gLANClientCandidates + gLANClientCandidateCount;
     lan->address = packet->address.host;
@@ -305,21 +758,53 @@ static void NetworkAddLANCandidate(void) {
         (lan->address >> 24) & 0xff);
     memset(lan->name, 0x50, sizeof(lan->name));
     CmdPacket_s* cmd = (CmdPacket_s*)packet->data;
-    lan->uid = HostToNet32(cmd->uid);
+    lan->uid = htonl(cmd->uid);
     memcpy(lan->name, cmd->host_lan.name, 10);
-    lan->trainerId = HostToNet16(cmd->host_lan.trainerId);
+    lan->trainerId = htons(cmd->host_lan.trainerId);
     lan->gender = cmd->host_lan.gender;
     gLANClientCandidateCount++;
 }
+#else
+static void NetworkAddLANCandidate(struct network_packet* packet) {
+    LANClient* lan = gLANClientCandidates + gLANClientCandidateCount;
+    lan->address = packet->sender._addr4.host[0] | 
+        (packet->sender._addr4.host[1] << 8) |
+        (packet->sender._addr4.host[2] << 16) |
+        (packet->sender._addr4.host[3] << 24);
+    printf("Received packet from %d.%d.%d.%d\n", 
+        lan->address & 0xff, 
+        (lan->address >> 8) & 0xff,
+        (lan->address >> 16) & 0xff,
+        (lan->address >> 24) & 0xff);
+    memset(lan->name, 0x50, sizeof(lan->name));
+    CmdPacket_s* cmd = (CmdPacket_s*)packet->buffer;
+    lan->uid = htonl(cmd->uid);
+    memcpy(lan->name, cmd->host_lan.name, 10);
+    lan->trainerId = htons(cmd->host_lan.trainerId);
+    lan->gender = cmd->host_lan.gender;
+    gLANClientCandidateCount++;
+}
+#endif
 
+#if USE_SDLNET
 static bool NetworkTryAddLANCandidate(void) {
     CmdPacket_s* cmd = (CmdPacket_s*)packet->data;
-    if(NetworkCheckDuplicateLANCandidate(HostToNet32(cmd->uid)))
+    if(NetworkCheckDuplicateLANCandidate(htonl(cmd->uid)))
         return false;
     NetworkAddLANCandidate();
     return true;
 }
+#else
+static bool NetworkTryAddLANCandidate(struct network_packet* packet) {
+    CmdPacket_s* cmd = (CmdPacket_s*)packet->buffer;
+    if(NetworkCheckDuplicateLANCandidate(htonl(cmd->uid)))
+        return false;
+    NetworkAddLANCandidate(packet);
+    return true;
+}
+#endif
 
+#if USE_SDLNET
 static void NetworkStageLANCandidate(void) {
     LANClient* lan = gLANClientCandidates + 0;
     lan->address = packet->address.host;
@@ -330,13 +815,34 @@ static void NetworkStageLANCandidate(void) {
         (lan->address >> 24) & 0xff);
     memset(lan->name, 0x50, sizeof(lan->name));
     CmdPacket_s* cmd = (CmdPacket_s*)packet->data;
-    lan->uid = HostToNet32(cmd->uid);
+    lan->uid = htonl(cmd->uid);
     memcpy(lan->name, cmd->host_lan.name, 10);
-    lan->trainerId = HostToNet16(cmd->host_lan.trainerId);
+    lan->trainerId = htons(cmd->host_lan.trainerId);
     lan->gender = cmd->host_lan.gender;
 }
+#else
+static void NetworkStageLANCandidate(struct network_packet* packet) {
+    LANClient* lan = gLANClientCandidates + 0;
+    lan->address = packet->sender._addr4.host[0] | 
+        (packet->sender._addr4.host[1] << 8) |
+        (packet->sender._addr4.host[2] << 16) |
+        (packet->sender._addr4.host[3] << 24);
+    printf("Received packet from %d.%d.%d.%d\n", 
+        lan->address & 0xff, 
+        (lan->address >> 8) & 0xff,
+        (lan->address >> 16) & 0xff,
+        (lan->address >> 24) & 0xff);
+    memset(lan->name, 0x50, sizeof(lan->name));
+    CmdPacket_s* cmd = (CmdPacket_s*)packet->buffer;
+    lan->uid = htonl(cmd->uid);
+    memcpy(lan->name, cmd->host_lan.name, 10);
+    lan->trainerId = htons(cmd->host_lan.trainerId);
+    lan->gender = cmd->host_lan.gender;
+}
+#endif
 
 bool NetworkCheckLAN(void) {
+#if USE_SDLNET
     if(NetworkTryRecvUDP() && gLANClientCandidateCount < 16) {
         if(packet->len < UDP_PACKET_SIZE - 16 || packet->len > UDP_PACKET_SIZE + 16) {
             printf("Packet length was not in expected range (%d-%d): %d\n", UDP_PACKET_SIZE - 16, UDP_PACKET_SIZE + 16, packet->len);
@@ -350,7 +856,7 @@ bool NetworkCheckLAN(void) {
             (packet->address.host >> 24) & 0xff);
 
         // Did we send the packet? If so, ignore it.
-        if(cmd->uid == HostToNet32(hostUniqueId))
+        if(cmd->uid == htonl(hostUniqueId))
             return false;
 
         switch(cmd->type) {
@@ -373,12 +879,58 @@ bool NetworkCheckLAN(void) {
         }
     }
     return false;
+#else
+    struct network_data* state = &gNetworkData;
+    if(recv_packet(state->udp, &state->udp_packet) > 0 && gLANClientCandidateCount < 16) {
+        struct network_packet* packet = &state->udp_packet;
+
+        if(packet->len < UDP_PACKET_SIZE - 16 || packet->len > UDP_PACKET_SIZE + 16) {
+            printf("Packet length was not in expected range (%d-%d): %d\n", UDP_PACKET_SIZE - 16, UDP_PACKET_SIZE + 16, packet->len);
+            return false;
+        }
+
+        CmdPacket_s* cmd = (CmdPacket_s*)packet->buffer;
+        printf("UDP Packet: %d.%d.%d.%d\n", 
+            packet->sender._addr4.host[0],
+            packet->sender._addr4.host[1],
+            packet->sender._addr4.host[2],
+            packet->sender._addr4.host[3]);
+
+        // Did we send the packet? If so, ignore it.
+        if(cmd->uid == htonl(hostUniqueId))
+            return false;
+
+        switch(cmd->type) {
+            case CMD_HOST_LAN:
+                if(gNetworkState == NETSTATE_JOINING) {
+                    return NetworkTryAddLANCandidate(packet);
+                }
+                return false;
+            case CMD_JOIN_LAN:
+                if(gNetworkState == NETSTATE_HOSTING) {
+                    NetworkStageLANCandidate(packet);
+                    return true;
+                }
+                return false;
+            case CMD_ACCEPT_JOIN_LAN:
+                if(gNetworkState == NETSTATE_JOINING) {
+                    return NetworkAcceptLANConnection();
+                }
+                return false;
+        }
+    }
+    return false;
+#endif
 }
 
 void NetworkClearLANCache(void) {
     gLANClientCandidateCount = 0;
     memset(gLANClientCandidates, 0, sizeof(gLANClientCandidates));
+#if USE_SDLNET
     NetworkTossQueueingPackets();
+#else
+    NetworkTossQueueingPackets(&gNetworkData);
+#endif
 }
 
 LANClient* NetworkGetLANCandidate(uint32_t which) {
@@ -389,6 +941,7 @@ uint32_t NetworkGetLANCandidateCount(void) {
     return gLANClientCandidateCount;
 }
 
+#if USE_SDLNET
 static void NetworkSetLinkSocket(TCPsocket socket) {
     if(linkSocket != NULL) {
         SDLNet_TCP_DelSocket(sockets, linkSocket);
@@ -396,13 +949,15 @@ static void NetworkSetLinkSocket(TCPsocket socket) {
     linkSocket = socket;
     SDLNet_TCP_AddSocket(sockets, linkSocket);
 }
+#endif
 
 bool NetworkLANDirectConnect(uint32_t which) {
-    serial = SDLNet_TCP_Open(&(IPaddress){.host = INADDR_ANY, .port = HostToNet16(TCP_PORT)});
+#if USE_SDLNET
+    serial = SDLNet_TCP_Open(&(IPaddress){.host = INADDR_ANY, .port = htons(TCP_PORT)});
     packet->address.host = gLANClientCandidates[which].address;
     CmdPacket_s* cmd = (CmdPacket_s*)packet->data;
     cmd->type = CMD_ACCEPT_JOIN_LAN;
-    cmd->uid = HostToNet32(hostUniqueId);
+    cmd->uid = htonl(hostUniqueId);
     SDLNet_UDP_Send(host, -1, packet);
     uint32_t timeout = 60 * 8;
     while(!(cserial = SDLNet_TCP_Accept(serial))) {
@@ -424,10 +979,53 @@ bool NetworkLANDirectConnect(uint32_t which) {
     gb.gb_serial_rx = gb_serial_rx;
     gb.gb_serial_tx = gb_serial_tx;
     return true;
+#else
+    struct network_data* state = &gNetworkData;
+    struct network_packet* packet = &gNetworkData.udp_packet;
+    state->serial = socket_open(MOBILE_SOCKTYPE_TCP, MOBILE_ADDRTYPE_IPV4, TCP_PORT);
+    if(state->serial != INVALID_SOCKET) {
+        if(socket_listen(state->serial)) {
+            memcpy(packet->sender._addr4.host, &gLANClientCandidates[which].address, 4);
+            CmdPacket_s* cmd = (CmdPacket_s*)packet->buffer;
+            cmd->type = CMD_ACCEPT_JOIN_LAN;
+            cmd->uid = htonl(hostUniqueId);
+            socket_send(state->udp, packet->buffer, packet->len, &packet->sender);
+            uint32_t timeout = 60 * 8;
+            SOCKET cserial = INVALID_SOCKET;
+            while((cserial = socket_accept(state->serial), cserial == INVALID_SOCKET)) {
+                DelayFrame();
+                if(--timeout == 0) {
+                    printf("Connection timed out...\n");
+                    socket_close(state->serial);
+                    state->serial = INVALID_SOCKET;
+                    return false;
+                }
+            }
+            state->serial = cserial;
+            state->linkSocket = state->serial;
+            printf("Hosting %d.%d.%d.%d!\n", 
+                packet->sender._addr4.host[0], 
+                packet->sender._addr4.host[1], 
+                packet->sender._addr4.host[2], 
+                packet->sender._addr4.host[3]);
+            memcpy(&state->linkAddr, &packet->sender, sizeof(state->linkAddr));
+            gNetworkState = NETSTATE_LAN_HOST;
+            gb.gb_serial_rx = gb_serial_rx;
+            gb.gb_serial_tx = gb_serial_tx;
+            return true;
+        }
+        else {
+            socket_close(state->serial);
+            state->serial = INVALID_SOCKET;
+        }
+    }
+    return false;
+#endif
 }
 
 bool NetworkAcceptLANConnection(void) {
-    serial = SDLNet_TCP_Open(&(IPaddress){.host = packet->address.host, .port = HostToNet16(TCP_PORT)});
+#if USE_SDLNET
+    serial = SDLNet_TCP_Open(&(IPaddress){.host = packet->address.host, .port = htons(TCP_PORT)});
     if(serial != NULL) {
         NetworkSetLinkSocket(serial);
         gNetworkState = NETSTATE_LAN_CLIENT;
@@ -447,9 +1045,41 @@ bool NetworkAcceptLANConnection(void) {
         (packet->address.host >> 24) & 0xff,
         SDLNet_GetError());
     return false;
+#else
+    struct network_data* state = &gNetworkData;
+    struct network_packet* packet = &gNetworkData.udp_packet;
+    state->serial = socket_open(MOBILE_SOCKTYPE_TCP, MOBILE_ADDRTYPE_IPV4, TCP_PORT);
+    if(state->serial != INVALID_SOCKET) {
+        int err = socket_connect_ip(state->serial, &packet->sender);
+        if(err > 0) {
+            state->linkSocket = state->serial;
+            gNetworkState = NETSTATE_LAN_CLIENT;
+            printf("Connected to %d.%d.%d.%d!\n",
+                packet->sender._addr4.host[0], 
+                packet->sender._addr4.host[1], 
+                packet->sender._addr4.host[2], 
+                packet->sender._addr4.host[3]);
+            memcpy(&state->linkAddr, &packet->sender, sizeof(state->linkAddr));
+            gb.gb_serial_rx = gb_serial_rx;
+            gb.gb_serial_tx = gb_serial_tx;
+            return true;
+        }
+        else {
+            socket_close(state->serial);
+            state->serial = INVALID_SOCKET;
+        }
+    }
+    printf("Error trying to connect to %d.%d.%d.%d\n",
+        packet->sender._addr4.host[0], 
+        packet->sender._addr4.host[1], 
+        packet->sender._addr4.host[2], 
+        packet->sender._addr4.host[3]);
+    return false;
+#endif
 }
 
 void NetworkCloseConnection(void) {
+#if USE_SDLNET
     if(linkSocket) {
         SDLNet_TCP_DelSocket(sockets, linkSocket);
         linkSocket = NULL;
@@ -462,12 +1092,41 @@ void NetworkCloseConnection(void) {
         SDLNet_TCP_Close(serial);
         serial = NULL;
     }
+#else
+    struct network_data* state = &gNetworkData;
+    state->linkSocket = INVALID_SOCKET;
+    if(state->serial != INVALID_SOCKET) {
+        socket_close(state->serial);
+        state->serial = INVALID_SOCKET;
+    }
+#endif
     gb.gb_serial_rx = gb_serial_rx_test;
     gb.gb_serial_tx = gb_serial_tx_test;
     gNetworkState = NETSTATE_NOTHING;
 }
 
+#if !USE_SDLNET
+void NetworkQuit(void) {
+    #if defined(_WIN32)
+    /* Clean up windows networking */
+    if ( WSACleanup() == SOCKET_ERROR ) {
+        if ( WSAGetLastError() == WSAEINPROGRESS ) {
+            WSACleanup();
+        }
+    }
+    #else
+    /* Restore the SIGPIPE handler */
+    void (*handler)(int);
+    handler = signal(SIGPIPE, SIG_DFL);
+    if ( handler != SIG_IGN ) {
+        signal(SIGPIPE, handler);
+    }
+    #endif
+}
+#endif
+
 void NetworkDeinit(void) {
+#if USE_SDLNET
     if(gNetworkingInit) {
         if(packet != NULL) {
             SDLNet_FreePacket(packet);
@@ -476,17 +1135,37 @@ void NetworkDeinit(void) {
             SDLNet_UDP_Close(host);
         }
         SDLNet_Quit();
+        gNetworkingInit = false;
     }
+#else
+    struct network_data* state = &gNetworkData;
+    if(gNetworkingInit) {
+        if(state->udp_packet.buffer != NULL) {
+            free(state->udp_packet.buffer);
+            state->udp_packet.buffer = NULL;
+        }
+        memset(&state->udp_packet, 0, sizeof(state->udp_packet));
+        if(state->udp != INVALID_SOCKET) {
+            socket_close(state->udp);
+            state->udp = INVALID_SOCKET;
+        }
+        NetworkQuit();
+        gNetworkingInit = false;
+    }
+#endif
 }
 
+#define MAX_EXCHANGE_BYTE_TRIES 60
+
 int Network_ExchangeByte(uint8_t* rx, uint8_t tx) {
+#if USE_SDLNET
     switch(gNetworkState) {
     case NETSTATE_LAN_HOST: {
         if(SDLNet_TCP_Send(linkSocket, &tx, sizeof(tx)) <= 0)
             return NETWORK_XCHG_ERROR_SEND;
 
         uint32_t tries = 0;
-        while(tries < 60) {
+        while(tries < MAX_EXCHANGE_BYTE_TRIES) {
             if(SDLNet_CheckSockets(sockets, 0) != 0) {
                 if(SDLNet_TCP_Recv(linkSocket, rx, sizeof(*rx)) <= 0)
                     return NETWORK_XCHG_ERROR_RECV;
@@ -500,7 +1179,7 @@ int Network_ExchangeByte(uint8_t* rx, uint8_t tx) {
     } break;
     case NETSTATE_LAN_CLIENT: {
         uint32_t tries = 0;
-        while(tries < 60) {
+        while(tries < MAX_EXCHANGE_BYTE_TRIES) {
             if(SDLNet_CheckSockets(sockets, 0) != 0) {
                 if(SDLNet_TCP_Recv(linkSocket, rx, sizeof(*rx)) <= 0) {
                     return NETWORK_XCHG_ERROR_RECV;
@@ -519,13 +1198,60 @@ int Network_ExchangeByte(uint8_t* rx, uint8_t tx) {
     default:
         return NETWORK_XCHG_NO_CONNECTION;
     }
+#else
+    struct network_data* state = &gNetworkData;
+    switch(gNetworkState) {
+    case NETSTATE_LAN_HOST: {
+        if(socket_send(state->linkSocket, &tx, sizeof(tx), &state->linkAddr) <= 0)
+            return NETWORK_XCHG_ERROR_SEND;
+
+        uint32_t tries = 0;
+        while(tries < MAX_EXCHANGE_BYTE_TRIES) {
+            if(socket_hasdata(state->linkSocket) > 0) {
+                if(socket_recv(state->linkSocket, rx, sizeof(*rx), &state->linkAddr) <= 0)
+                    return NETWORK_XCHG_ERROR_RECV;
+                return NETWORK_XCHG_OK;
+            }
+            DelayFrame();
+            tries++;
+        }
+
+        return NETWORK_XCHG_TIMEOUT;
+    } break;
+    case NETSTATE_LAN_CLIENT: {
+        uint32_t tries = 0;
+        while(tries < MAX_EXCHANGE_BYTE_TRIES) {
+            if(socket_hasdata(state->linkSocket) > 0) {
+                if(socket_recv(state->linkSocket, rx, sizeof(*rx), &state->linkAddr) <= 0) {
+                    return NETWORK_XCHG_ERROR_RECV;
+                }
+                if(socket_send(state->linkSocket, &tx, sizeof(tx), &state->linkAddr) <= 0) {
+                    return NETWORK_XCHG_ERROR_SEND;
+                }
+                return NETWORK_XCHG_OK;
+            }
+            DelayFrame();
+            tries++;
+        }
+
+        return NETWORK_XCHG_TIMEOUT;
+    } break;
+    default:
+        return NETWORK_XCHG_NO_CONNECTION;
+    }
+#endif
 }
 
 bool Network_SafeExchangeByte(uint8_t* rx, uint8_t tx) {
     int timeout_count = 0;
     int error;
+#if USE_SDLNET
     if(serial == NULL && cserial == NULL)
         goto no_connection;
+#else
+    if(gNetworkData.linkSocket == INVALID_SOCKET)
+        goto no_connection;
+#endif
 try_again:
     error = Network_ExchangeByte(rx, tx);
     switch(error) {
@@ -533,7 +1259,9 @@ try_again:
         return true;
     case NETWORK_XCHG_ERROR_RECV:
     case NETWORK_XCHG_ERROR_SEND:
+        #if USE_SDLNET
         printf("SDLNet error: %s\n", SDLNet_GetError());
+        #endif
         return false;
     case NETWORK_XCHG_TIMEOUT:
         printf("Timeout, trying again...\n");
@@ -550,13 +1278,14 @@ try_again:
 }
 
 int Network_ExchangeBytes(void* rx, const void* tx, int len) {
+#if USE_SDLNET
     switch(gNetworkState) {
     case NETSTATE_LAN_HOST: {
         if(SDLNet_TCP_Send(linkSocket, tx, len) < len)
             return NETWORK_XCHG_ERROR_SEND;
 
         uint32_t tries = 0;
-        while(tries < 60) {
+        while(tries < MAX_EXCHANGE_BYTE_TRIES) {
             int ready = SDLNet_CheckSockets(sockets, 0);
             if(ready < 0) {
                 return NETWORK_XCHG_ERROR_RECV;
@@ -574,7 +1303,7 @@ int Network_ExchangeBytes(void* rx, const void* tx, int len) {
     } break;
     case NETSTATE_LAN_CLIENT: {
         uint32_t tries = 0;
-        while(tries < 60) {
+        while(tries < MAX_EXCHANGE_BYTE_TRIES) {
             int ready = SDLNet_CheckSockets(sockets, 0);
             if(ready < 0) {
                 return NETWORK_XCHG_ERROR_RECV;
@@ -597,14 +1326,69 @@ int Network_ExchangeBytes(void* rx, const void* tx, int len) {
     default:
         return NETWORK_XCHG_NO_CONNECTION;
     }
+#else
+    struct network_data* state = &gNetworkData;
+    switch(gNetworkState) {
+    case NETSTATE_LAN_HOST: {
+        if(socket_send(state->linkSocket, tx, len, &state->linkAddr) < len)
+            return NETWORK_XCHG_ERROR_SEND;
+
+        uint32_t tries = 0;
+        while(tries < MAX_EXCHANGE_BYTE_TRIES) {
+            int ready = socket_hasdata(state->linkSocket);
+            if(ready < 0) {
+                return NETWORK_XCHG_ERROR_RECV;
+            }
+            else if(ready > 0) {
+                if(socket_recv(state->linkSocket, rx, len, &state->linkAddr) <= 0)
+                    return NETWORK_XCHG_ERROR_RECV;
+                return NETWORK_XCHG_OK;
+            }
+            DelayFrame();
+            tries++;
+        }
+
+        return NETWORK_XCHG_TIMEOUT;
+    } break;
+    case NETSTATE_LAN_CLIENT: {
+        uint32_t tries = 0;
+        while(tries < MAX_EXCHANGE_BYTE_TRIES) {
+            int ready = socket_hasdata(state->linkSocket);
+            if(ready < 0) {
+                return NETWORK_XCHG_ERROR_RECV;
+            }
+            else if(ready > 0) {
+                if(socket_recv(state->linkSocket, rx, len, &state->linkAddr) <= 0) {
+                    return NETWORK_XCHG_ERROR_RECV;
+                }
+                if(socket_send(state->linkSocket, tx, len, &state->linkAddr) < len) {
+                    return NETWORK_XCHG_ERROR_SEND;
+                }
+                return NETWORK_XCHG_OK;
+            }
+            DelayFrame();
+            tries++;
+        }
+
+        return NETWORK_XCHG_TIMEOUT;
+    } break;
+    default:
+        return NETWORK_XCHG_NO_CONNECTION;
+    }
+#endif
 }
 
 bool Network_SafeExchangeBytes(void *rx, const void *tx, int len)
 {
     int timeout_count = 0;
     int error;
+#if USE_SDLNET
     if(linkSocket == NULL)
         goto no_connection;
+#else
+    if(gNetworkData.linkSocket == INVALID_SOCKET)
+        goto no_connection;
+#endif
 try_again:
     error = Network_ExchangeBytes(rx, tx, len);
     switch(error) {
@@ -622,7 +1406,9 @@ try_again:
         return true;
     case NETWORK_XCHG_ERROR_RECV:
     case NETWORK_XCHG_ERROR_SEND:
+        #if USE_SDLNET
         printf("SDLNet error: %s\n", SDLNet_GetError());
+        #endif
         return false;
     case NETWORK_XCHG_TIMEOUT:
         printf("Timeout, trying again...\n");
@@ -639,19 +1425,34 @@ try_again:
 }
 
 void Network_FlushPendingPacketsAndSync(void) {
+#if USE_SDLNET
     uint8_t sink;
     while(SDLNet_CheckSockets(sockets, 0) > 0 && SDLNet_TCP_Recv(linkSocket, &sink, 1) > 0) {}
+#else
+    struct network_data* state = &gNetworkData;
+    uint8_t sink;
+    while(socket_hasdata(state->linkSocket) > 0 && socket_recv(state->linkSocket, &sink, 1, &state->linkAddr) > 0) {}
+#endif
 }
 
 int Network_SendByte(uint8_t byte) {
+#if USE_SDLNET
     if(linkSocket == NULL)
         return NETWORK_XCHG_NO_CONNECTION;
     if(SDLNet_TCP_Send(linkSocket, &byte, 1) <= 0)
         return NETWORK_XCHG_ERROR_SEND;
+#else
+    struct network_data* state = &gNetworkData;
+    if(state->linkSocket == INVALID_SOCKET)
+        return NETWORK_XCHG_NO_CONNECTION;
+    if(socket_send(state->linkSocket, &byte, 1, &state->linkAddr) <= 0)
+        return NETWORK_XCHG_ERROR_SEND;
+#endif
     return NETWORK_XCHG_OK;
 }
 
 int Network_TryRecvByte(uint8_t* dest) {
+#if USE_SDLNET
     int ready = SDLNet_CheckSockets(sockets, 0);
     if(ready < 0)
         return NETWORK_XCHG_ERROR_RECV;
@@ -663,6 +1464,20 @@ int Network_TryRecvByte(uint8_t* dest) {
             return NETWORK_XCHG_ERROR_RECV;
         return NETWORK_XCHG_OK;
     }
+#else
+    struct network_data* state = &gNetworkData;
+    int ready = socket_hasdata(state->linkSocket);
+    if(ready < 0)
+        return NETWORK_XCHG_ERROR_RECV;
+    else if(ready == 0)
+        return NETWORK_XCHG_TIMEOUT;
+    else {
+        int error = socket_recv(state->linkSocket, dest, 1, &state->linkAddr);
+        if(error <= 0)
+            return NETWORK_XCHG_ERROR_RECV;
+        return NETWORK_XCHG_OK;
+    }
+#endif
 }
 
 bool Network_SafeTryRecvByte(uint8_t* dest) {
@@ -672,23 +1487,16 @@ bool Network_SafeTryRecvByte(uint8_t* dest) {
         return true;
     default:
     case NETWORK_XCHG_ERROR_RECV:
+        #if USE_SDLNET
         printf("Error: %s\n", SDLNet_GetError());
+        #endif
         return false;
     case NETWORK_XCHG_TIMEOUT:
         return false;
     }
 }
 
-/// WIP: Better network interface without using SDLNet.
-
-// socket implementations "borrowed" from libmobile-bgb
-union u_sockaddr {
-    struct sockaddr addr;
-    struct sockaddr_in addr4;
-    struct sockaddr_in6 addr6;
-};
-
-bool network_resolve_host(const char* hostname, const char* port, struct mobile_addr* addr) {
+bool Network_ResolveHost(const char* hostname, const char* port, struct mobile_addr* addr) {
     union u_sockaddr u_addr;
     if(!resolve_host(hostname, port, &u_addr.addr)) {
         printf("%s:%s => Error\n",
@@ -752,18 +1560,6 @@ static enum gb_serial_rx_ret_e gb_serial_rx_test(uint8_t* x) {
     return GB_SERIAL_RX_NO_CONNECTION;
 }
 
-// static uint32_t GetMobileAddrHost(const struct mobile_addr* addr) {
-//     uint32_t host = (addr->_addr4.host[0])
-//         | (addr->_addr4.host[1] << 8)
-//         | (addr->_addr4.host[2] << 16)
-//         | (addr->_addr4.host[3] << 24);
-//     return host;
-// }
-
-// static uint16_t GetMobileAddrPort(const struct mobile_addr* addr) {
-//     return addr->_addr4.port;
-// }
-
 void MobileDebugLog(void* user, const char* line) {
     struct mobile_user_data* udata = user;
     if(udata->logpath) {
@@ -794,102 +1590,14 @@ void socket_impl_stop(struct mobile_user_data *state)
     }
 }
 
-static struct sockaddr *convert_sockaddr(socklen_t *addrlen, union u_sockaddr *u_addr, const struct mobile_addr *addr)
-{
-    if (!addr) {
-        *addrlen = 0;
-        return NULL;
-    } else if (addr->type == MOBILE_ADDRTYPE_IPV4) {
-        const struct mobile_addr4 *addr4 = (struct mobile_addr4 *)addr;
-        memset(&u_addr->addr4, 0, sizeof(u_addr->addr4));
-        u_addr->addr4.sin_family = AF_INET;
-        u_addr->addr4.sin_port = htons(addr4->port);
-        if (sizeof(struct in_addr) != sizeof(addr4->host)) return NULL;
-        memcpy(&u_addr->addr4.sin_addr.s_addr, addr4->host,
-            sizeof(struct in_addr));
-        *addrlen = sizeof(struct sockaddr_in);
-        return &u_addr->addr;
-    } else if (addr->type == MOBILE_ADDRTYPE_IPV6) {
-        const struct mobile_addr6 *addr6 = (struct mobile_addr6 *)addr;
-        memset(&u_addr->addr6, 0, sizeof(u_addr->addr6));
-        u_addr->addr6.sin6_family = AF_INET6;
-        u_addr->addr6.sin6_port = htons(addr6->port);
-        if (sizeof(struct in6_addr) != sizeof(addr6->host)) return NULL;
-        memcpy(&u_addr->addr6.sin6_addr.s6_addr, addr6->host,
-            sizeof(struct in6_addr));
-        *addrlen = sizeof(struct sockaddr_in6);
-        return &u_addr->addr;
-    } else {
-        *addrlen = 0;
-        return NULL;
-    }
-}
-
 bool socket_impl_open(void *data, unsigned conn, enum mobile_socktype type, enum mobile_addrtype addrtype, unsigned bindport)
 {
     struct mobile_user_data *state = data;
     assert(state->sockets[conn] == INVALID_SOCKET);
 
-    int sock_type;
-    switch (type) {
-        case MOBILE_SOCKTYPE_TCP: sock_type = SOCK_STREAM; break;
-        case MOBILE_SOCKTYPE_UDP: sock_type = SOCK_DGRAM; break;
-        default: assert(false); return false;
-    }
-
-    int sock_addrtype;
-    switch (addrtype) {
-        case MOBILE_ADDRTYPE_IPV4: sock_addrtype = AF_INET; break;
-        case MOBILE_ADDRTYPE_IPV6: sock_addrtype = AF_INET6; break;
-        default: assert(false); return false;
-    }
-
-    SOCKET sock = socket(sock_addrtype, sock_type, 0);
-    if (sock == INVALID_SOCKET) {
-        socket_perror("socket");
+    SOCKET sock = socket_open(type, addrtype, bindport);
+    if(sock == INVALID_SOCKET)
         return false;
-    }
-    if (socket_setblocking(sock, 0) == -1) {
-        socket_close(sock);
-        return false;
-    }
-
-    // Set SO_REUSEADDR so that we can bind to the same port again after
-    if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR,
-            (char *)&(int){1}, sizeof(int)) == SOCKET_ERROR) {
-        socket_perror("setsockopt");
-        socket_close(sock);
-        return false;
-    }
-
-    // Set TCP_NODELAY to aid sending packets inmediately, reducing latency
-    if (type == MOBILE_SOCKTYPE_TCP &&
-            setsockopt(sock, IPPROTO_TCP, TCP_NODELAY,
-                (char *)&(int){1}, sizeof(int)) == SOCKET_ERROR) {
-        socket_perror("setsockopt");
-        socket_close(sock);
-        return false;
-    }
-
-    int rc;
-    if (addrtype == MOBILE_ADDRTYPE_IPV4) {
-        struct sockaddr_in addr = {
-            .sin_family = AF_INET,
-            .sin_port = htons(bindport),
-        };
-        rc = bind(sock, (struct sockaddr *)&addr, sizeof(addr));
-    } else {
-        struct sockaddr_in6 addr = {
-            .sin6_family = AF_INET6,
-            .sin6_port = htons(bindport),
-        };
-        rc = bind(sock, (struct sockaddr *)&addr, sizeof(addr));
-    }
-    if (rc == SOCKET_ERROR) {
-        socket_perror("bind");
-        socket_close(sock);
-        return false;
-    }
 
     state->sockets[conn] = sock;
     return true;
@@ -907,32 +1615,8 @@ int socket_impl_connect(void *data, unsigned conn, const struct mobile_addr *add
 {
     struct mobile_user_data *state = data;
     SOCKET sock = state->sockets[conn];
-    assert(sock != INVALID_SOCKET);
 
-    union u_sockaddr u_addr;
-    socklen_t sock_addrlen;
-    struct sockaddr *sock_addr = convert_sockaddr(&sock_addrlen, &u_addr, addr);
-
-    // Try to connect/check if we're connected
-    int rc = connect(sock, sock_addr, sock_addrlen);
-    int err = socket_geterror();
-    if (rc != SOCKET_ERROR) return 1;
-
-    // If the connection is in progress, try again in a bit.
-    // On windows, connect() returns EISCONN rather than no error.
-    if (err == SOCKET_EWOULDBLOCK ||
-            err == SOCKET_EINPROGRESS ||
-            err == SOCKET_EALREADY) {
-        return 0;
-    }
-    if (err == SOCKET_EISCONN) return 1;
-
-    char sock_str[SOCKET_STRADDR_MAXLEN] = {0};
-    socket_straddr(sock_str, sizeof(sock_str), sock_addr, sock_addrlen);
-    socket_seterror(err);
-    fprintf(stderr, "Could not connect (%s): ", sock_str);
-    socket_perror(NULL);
-    return -1;
+    return socket_connect_ip(sock, addr);
 }
 
 bool socket_impl_listen(void *data, unsigned conn)
@@ -953,17 +1637,10 @@ bool socket_impl_accept(void *data, unsigned conn)
 {
     struct mobile_user_data *state = data;
     SOCKET sock = state->sockets[conn];
-    assert(sock != INVALID_SOCKET);
 
-    if (socket_hasdata(sock) <= 0) return false;
-    SOCKET newsock = accept(sock, NULL, NULL);
-    if (newsock == INVALID_SOCKET) {
-        socket_perror("accept");
+    SOCKET newsock = socket_accept(sock);
+    if(newsock == INVALID_SOCKET)
         return false;
-    }
-    if (socket_setblocking(newsock, 0) == -1) return false;
-
-    socket_close(sock);
     state->sockets[conn] = newsock;
     return true;
 }
@@ -972,87 +1649,16 @@ int socket_impl_send(void *udata, unsigned conn, const void *data, const unsigne
 {
     struct mobile_user_data *state = udata;
     SOCKET sock = state->sockets[conn];
-    assert(sock != INVALID_SOCKET);
 
-    union u_sockaddr u_addr;
-    socklen_t sock_addrlen;
-    struct sockaddr *sock_addr = convert_sockaddr(&sock_addrlen, &u_addr, addr);
-
-    ssize_t len = sendto(sock, data, size, 0, sock_addr, sock_addrlen);
-    if (len == SOCKET_ERROR) {
-        // If the socket is blocking, we just haven't sent anything
-        int err = socket_geterror();
-        if (err == SOCKET_EWOULDBLOCK) return 0;
-
-        socket_perror("send");
-        return -1;
-    }
-    return (int)len;
+    return socket_send(sock, data, size, addr);
 }
 
 int socket_impl_recv(void *udata, unsigned conn, void *data, unsigned size, struct mobile_addr *addr)
 {
     struct mobile_user_data *state = udata;
     SOCKET sock = state->sockets[conn];
-    assert(sock != INVALID_SOCKET);
 
-    // Make sure at least one byte is in the buffer
-    if (socket_hasdata(sock) <= 0) return 0;
-
-    union u_sockaddr u_addr = {0};
-    socklen_t sock_addrlen = sizeof(u_addr);
-    struct sockaddr *sock_addr = (struct sockaddr *)&u_addr;
-
-    ssize_t len;
-    if (data) {
-        // Retrieve at least 1 byte from the buffer
-        len = recvfrom(sock, data, size, 0, sock_addr, &sock_addrlen);
-    } else {
-        // Check if at least 1 byte is available in buffer
-        char c;
-        len = recvfrom(sock, &c, 1, MSG_PEEK, sock_addr, &sock_addrlen);
-    }
-    if (len == SOCKET_ERROR) {
-        // If the socket is nonblocking, we just haven't received anything.
-        // Though this shouldn't happen thanks to the socket_hasdata check.
-        if (socket_geterror() == SOCKET_EWOULDBLOCK) return 0;
-        socket_perror("recv");
-        return -1;
-    }
-
-    // A length of 0 will be returned if the remote has disconnected.
-    if (len == 0) {
-        // Though it's only relevant to TCP sockets, as UDP sockets may receive
-        // zero-length datagrams.
-        int sock_type = 0;
-        socklen_t sock_type_len = sizeof(sock_type);
-        if (getsockopt(sock, SOL_SOCKET, SO_TYPE, (char *)&sock_type,
-                &sock_type_len) == SOCKET_ERROR) {
-            socket_perror("getsockopt");
-            return -1;
-        }
-        if (sock_type == SOCK_STREAM) return -2;
-    }
-
-    if (!data) return 0;
-
-    if (addr && sock_addrlen) {
-        if (sock_addr->sa_family == AF_INET) {
-            struct mobile_addr4 *addr4 = (struct mobile_addr4 *)addr;
-            addr4->type = MOBILE_ADDRTYPE_IPV4;
-            addr4->port = ntohs(u_addr.addr4.sin_port);
-            memcpy(addr4->host, &u_addr.addr4.sin_addr.s_addr,
-                sizeof(addr4->host));
-        } else if (sock_addr->sa_family == AF_INET6) {
-            struct mobile_addr6 *addr6 = (struct mobile_addr6 *)addr;
-            addr6->type = MOBILE_ADDRTYPE_IPV6;
-            addr6->port = ntohs(u_addr.addr6.sin6_port);
-            memcpy(addr6->host, &u_addr.addr6.sin6_addr.s6_addr,
-                sizeof(addr6->host));
-        }
-    }
-
-    return (int)len;
+    return socket_recv(sock, data, size, addr);
 }
 
 // mobile_func_serial_enable - Enable serial communications
@@ -1304,15 +1910,25 @@ void MobileInit(void) {
     mobile_config_load(gMobileAdapter);
     mobile_config_set_device(gMobileAdapter, MOBILE_ADAPTER_BLUE, true);
     struct mobile_addr dns = {.type = MOBILE_ADDRTYPE_IPV4};
-    dns._addr4.type = MOBILE_ADDRTYPE_IPV4;
-    dns._addr4.host[0] = 127;
-    dns._addr4.host[1] = 0;
-    dns._addr4.host[2] = 0;
-    dns._addr4.host[3] = 1;
-    dns._addr4.port = MOBILE_DNS_PORT;
+    struct mobile_addr4* addr4 = (struct mobile_addr4*)&dns._addr4;
+    addr4->host[0] = 127;
+    addr4->host[1] = 0;
+    addr4->host[2] = 0;
+    addr4->host[3] = 1;
+    addr4->port = MOBILE_DNS_PORT;
     mobile_config_set_dns(gMobileAdapter, &dns, MOBILE_DNS1);
     mobile_config_set_p2p_port(gMobileAdapter, MOBILE_PORT);
-    mobile_config_save(gMobileAdapter);
+    mobile_config_set_relay(gMobileAdapter, &(struct mobile_addr){.type = MOBILE_ADDRTYPE_NONE});
+    // mobile_config_save(gMobileAdapter);
+
+    // struct mobile_addr relay = {.type = MOBILE_ADDRTYPE_IPV4};
+    // addr4 = (struct mobile_addr4*)&relay._addr4;
+    // addr4->host[0] = 127;
+    // addr4->host[1] = 0;
+    // addr4->host[2] = 0;
+    // addr4->host[3] = 1;
+    // addr4->port = MOBILE_DEFAULT_RELAY_PORT;
+    // mobile_config_set_relay(gMobileAdapter, &relay);
 
     MobileInitSockets(&gMobileData);
     MobileInitTimers(&gMobileData);

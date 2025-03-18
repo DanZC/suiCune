@@ -16,6 +16,10 @@
 #error "Unsupported OS"
 #endif
 
+#if !defined(_WIN32)
+#include <signal.h>
+#endif
+
 #if defined(__unix__)
 #define socket_close close
 #define socket_geterror() errno
