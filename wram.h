@@ -579,6 +579,14 @@ struct wram_s
                                 uint8_t wDebugBlackTileColor[2];
                             };
                             struct {
+                                // mobile trade mon
+                                species_t wMobileMonSpeciesBuffer;
+                                struct PartyMon wMobileMon;
+                                uint8_t wMobileMonName[MON_NAME_LENGTH];
+                                uint8_t wMobileMonOT[NAME_LENGTH];
+                                struct MailMsg wMobileMonMail;
+                            };
+                            struct {
                                 uint8_t wc608[16];
                                 uint8_t wc618[37];
                                 uint8_t wc63d[5];
@@ -1039,6 +1047,10 @@ struct wram_s
                         uint8_t wMobileSDK_SendCommandID;
                         uint8_t wc81f; // MobileSDK_TimerLatchHigh
                         uint8_t wc820; // MobileSDK_TimerLatchLow
+                        // MobileSDK_TransferStatusFlags
+                        // bit 0: transfer active?
+                        // bit 1: mobile transfer error?
+                        // bit 3: set when receiving packet?
                         uint8_t wc821;
                         uint8_t wc822;
                         uint8_t wc823[4];

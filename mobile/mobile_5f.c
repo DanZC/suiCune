@@ -19,12 +19,14 @@
 #include "../home/print_text.h"
 #include "../home/sram.h"
 #include "../home/fade.h"
+#include "../home/pokedex_flags.h"
 #include "../engine/gfx/dma_transfer.h"
 #include "../engine/gfx/color.h"
 #include "../engine/gfx/load_pics.h"
 #include "../engine/gfx/place_graphic.h"
 #include "../engine/gfx/pic_animation.h"
 #include "../engine/menus/save.h"
+#include "../engine/pokedex/unown_dex.h"
 
 uint8_t* sMobileCrashCheckPointer;
 uint8_t* gMobile_wcd20_wcd21;
@@ -631,32 +633,38 @@ bool CheckStringContainsLessThanBNextCharacters_Conv(const uint8_t* de, uint8_t 
     // RET;
 }
 
+// Mobile_SetReceiveMonPokedexFlags
 void Function17d1f1(void){
-    LD_A_addr(wCurPartySpecies);
-    DEC_A;
-    CALL(aSetSeenAndCaughtMon);
+    // LD_A_addr(wCurPartySpecies);
+    // DEC_A;
+    // CALL(aSetSeenAndCaughtMon);
+    SetSeenAndCaughtMon_Conv(wram->wCurPartySpecies - 1);
 
-    LD_A_addr(wCurPartySpecies);
-    CP_A(UNOWN);
-    IF_NZ goto asm_17d223;
+    // LD_A_addr(wCurPartySpecies);
+    // CP_A(UNOWN);
+    // IF_NZ goto asm_17d223;
+    if(wram->wCurPartySpecies == UNOWN) {
+        // LD_HL(wPartyMon1DVs);
+        // LD_A_addr(wPartyCount);
+        // DEC_A;
+        // LD_BC(PARTYMON_STRUCT_LENGTH);
+        // CALL(aAddNTimes);
+        // PREDEF(pGetUnownLetter);
+        unown_letter_t letter = GetUnownLetter_Conv(wram->wPartyMon[wram->wPartyCount - 1].mon.DVs);
+        // CALLFAR(aUpdateUnownDex);
+        UpdateUnownDex_Conv(letter);
+        // LD_A_addr(wFirstUnownSeen);
+        // AND_A_A;
+        // IF_NZ goto asm_17d223;
+        if(wram->wFirstUnownSeen == 0) {
+            // LD_A_addr(wUnownLetter);
+            // LD_addr_A(wFirstUnownSeen);
+            wram->wFirstUnownSeen = letter;
+        }
+    }
 
-    LD_HL(wPartyMon1DVs);
-    LD_A_addr(wPartyCount);
-    DEC_A;
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    CALL(aAddNTimes);
-    PREDEF(pGetUnownLetter);
-    CALLFAR(aUpdateUnownDex);
-    LD_A_addr(wFirstUnownSeen);
-    AND_A_A;
-    IF_NZ goto asm_17d223;
-
-    LD_A_addr(wUnownLetter);
-    LD_addr_A(wFirstUnownSeen);
-
-
-asm_17d223:
-    RET;
+// asm_17d223:
+    // RET;
 }
 
 //

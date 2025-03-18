@@ -172,7 +172,7 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(Function11b444),
     // add_special(Function11b5e8),
     // add_special(Function11b7e5),
-    // add_special(Function11b879),
+    add_special(Function11b879),
     // add_special(Function11b920),
     // add_special(Function11b93b),
     add_special(BattleTowerRoomMenu),
