@@ -791,7 +791,7 @@ void GetNickname_Conv(const uint8_t* hl, uint8_t a){
     // PUSH_BC;
 
     // CALL(aSkipNames);
-    hl = SkipNames_Conv2(hl, a);
+    hl = SkipNames(hl, a);
 
     // LD_DE(wStringBuffer1);
 

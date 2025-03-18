@@ -1528,7 +1528,7 @@ bool ItemIsMail_Conv(item_t d){
     // LD_HL(mMailItems);
     // LD_DE(1);
     // JP(mIsInArray);
-    return IsInArray_Conv_Item(MailItems, d) != 0xffff;
+    return IsInArray_Item(MailItems, d) != 0xffff;
 
 // INCLUDE "data/items/mail_items.asm"
 
