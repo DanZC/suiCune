@@ -47,7 +47,7 @@ void v_CardFlip(void){
     ClearSprites();
     // LD_DE(MUSIC_NONE);
     // CALL(aPlayMusic);
-    PlayMusic_Conv(MUSIC_NONE);
+    PlayMusic(MUSIC_NONE);
     // CALL(aDelayFrame);
     DelayFrame();
     // CALL(aDisableLCD);
@@ -108,7 +108,7 @@ void v_CardFlip(void){
     wram->wCardFlipCursorX = 0x2;
     // LD_DE(MUSIC_GAME_CORNER);
     // CALL(aPlayMusic);
-    PlayMusic_Conv(MUSIC_GAME_CORNER);
+    PlayMusic(MUSIC_GAME_CORNER);
 
     while(!bit_test(wram->wJumptableIndex, 7)){
     // MasterLoop:
@@ -123,11 +123,11 @@ void v_CardFlip(void){
 // leavethegame:
     // CALL(aWaitSFX);
     // LD_DE(SFX_QUIT_SLOTS);
-    WaitSFX_Conv();
+    WaitSFX();
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_QUIT_SLOTS);
+    PlaySFX(SFX_QUIT_SLOTS);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // LD_HL(wOptions);
@@ -216,7 +216,7 @@ static void v_CardFlip_CardFlip(void){
         wram->wCoins = NativeToBigEndian16(coins - 3);
         // LD_DE(SFX_TRANSACTION);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_TRANSACTION);
+        PlaySFX(SFX_TRANSACTION);
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
         hram->hBGMapMode = 0x0;
@@ -226,7 +226,7 @@ static void v_CardFlip_CardFlip(void){
         // LDH_addr_A(hBGMapMode);
         hram->hBGMapMode = 0x1;
         // CALL(aWaitSFX);
-        WaitSFX_Conv();
+        WaitSFX();
         // CALL(av_CardFlip_Increment);
         v_CardFlip_Increment();
         // RET;
@@ -290,7 +290,7 @@ static void v_CardFlip_CardFlip(void){
                 break;
             // LD_DE(SFX_KINESIS);
             // CALL(aPlaySFX);
-            PlaySFX_Conv(SFX_KINESIS);
+            PlaySFX(SFX_KINESIS);
             // CALL(aPlaceOAMCardBorder);
             PlaceOAMCardBorder(wram->wCardFlipWhichCard);
             // LD_C(4);
@@ -307,7 +307,7 @@ static void v_CardFlip_CardFlip(void){
     // next:
         // LD_DE(SFX_SLOT_MACHINE_START);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_SLOT_MACHINE_START);
+        PlaySFX(SFX_SLOT_MACHINE_START);
         // LD_A(0x3);
         uint8_t a = 0x3;
 
@@ -392,12 +392,12 @@ static void v_CardFlip_CardFlip(void){
         // CALL(aCardFlip_UpdateCursorOAM);
         CardFlip_UpdateCursorOAM();
         // CALL(aWaitSFX);
-        WaitSFX_Conv();
+        WaitSFX();
         // LD_DE(SFX_CHOOSE_A_CARD);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_CHOOSE_A_CARD);
+        PlaySFX(SFX_CHOOSE_A_CARD);
         // CALL(aWaitSFX);
-        WaitSFX_Conv();
+        WaitSFX();
         // LD_A_addr(wCardFlipNumCardsPlayed);
         // LD_E_A;
         // LD_D(0);
@@ -1163,7 +1163,7 @@ static void CardFlip_CheckWinCondition_AddCoinPlaySFX(void){
     wram->wCoins = NativeToBigEndian16(BigEndianToNative16(wram->wCoins) + 1);
     // LD_DE(SFX_PAY_DAY);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_PAY_DAY);
+    PlaySFX(SFX_PAY_DAY);
     // RET;
 }
 
@@ -1179,9 +1179,9 @@ static void CardFlip_CheckWinCondition_Payout(uint16_t de, uint8_t c){
     CardFlip_UpdateCoinBalanceDisplay(CardFlipYeahText);
     // POP_DE;
     // CALL(aPlaySFX);
-    PlaySFX_Conv(de);
+    PlaySFX(de);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // POP_BC;
 
     do {
@@ -1619,12 +1619,12 @@ WinEighteen:
     Lose:
         // LD_DE(SFX_WRONG);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_WRONG);
+        PlaySFX(SFX_WRONG);
         // LD_HL(mCardFlip_CheckWinCondition_CardFlipDarnText);
         // CALL(aCardFlip_UpdateCoinBalanceDisplay);
         CardFlip_UpdateCoinBalanceDisplay(CardFlipDarnText);
         // CALL(aWaitSFX);
-        WaitSFX_Conv();
+        WaitSFX();
         // RET;
         return;
     }
@@ -1868,7 +1868,7 @@ num_pair_down:
 play_sound:
     // LD_DE(SFX_POKEBALLS_PLACED_ON_TABLE);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_POKEBALLS_PLACED_ON_TABLE);
+    PlaySFX(SFX_POKEBALLS_PLACED_ON_TABLE);
     // RET;
     return;
 }

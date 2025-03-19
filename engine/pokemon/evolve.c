@@ -84,7 +84,7 @@ MasterLoop:
         // AND_A_A;
         // CALL_NZ (aRestartMapMusic);
         if(wram->wMonTriedToEvolve)
-            RestartMapMusic_Conv();
+            RestartMapMusic();
         // RET;
         return;
     }
@@ -390,12 +390,12 @@ MasterLoop:
 
         // LD_DE(MUSIC_NONE);
         // CALL(aPlayMusic);
-        PlayMusic_Conv(MUSIC_NONE);
+        PlayMusic(MUSIC_NONE);
         // LD_DE(SFX_CAUGHT_MON);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_CAUGHT_MON);
+        PlaySFX(SFX_CAUGHT_MON);
         // CALL(aWaitSFX);
-        WaitSFX_Conv();
+        WaitSFX();
 
         // LD_C(40);
         // CALL(aDelayFrames);

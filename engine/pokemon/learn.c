@@ -318,7 +318,7 @@ static void Text_1_2_and_Poof_Function(struct TextCmdState* state) {
     // PUSH_DE;
     // LD_DE(SFX_SWITCH_POKEMON);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_SWITCH_POKEMON);
+    PlaySFX(SFX_SWITCH_POKEMON);
     // POP_DE;
     // LD_HL(mText_1_2_and_Poof_MoveForgotText);
     state->hl = MoveForgotText;

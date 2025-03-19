@@ -38,7 +38,7 @@ void PlaySlowCry(void){
     // SafeCallGBAuto(av_PlayCry);
     v_PlayCry(cry->index);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
 
 // done:
     // RET;

@@ -1614,7 +1614,7 @@ joy_loop:
         // CALL(aPlayClickSFX);
         PlayClickSFX_Conv();
         // CALL(aWaitSFX);
-        WaitSFX_Conv();
+        WaitSFX();
         // LD_A_addr(wSwappingMove);
         // AND_A_A;
         // JP_Z (mMoveScreenLoop_exit);
@@ -1688,14 +1688,14 @@ joy_loop:
     // swap_moves:
         // LD_DE(SFX_SWITCH_POKEMON);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_SWITCH_POKEMON);
+        PlaySFX(SFX_SWITCH_POKEMON);
         // CALL(aWaitSFX);
-        WaitSFX_Conv();
+        WaitSFX();
         // LD_DE(SFX_SWITCH_POKEMON);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_SWITCH_POKEMON);
+        PlaySFX(SFX_SWITCH_POKEMON);
         // CALL(aWaitSFX);
-        WaitSFX_Conv();
+        WaitSFX();
         // hlcoord(1, 2, wTilemap);
         // LD_BC((8 << 8) | 18);
         // CALL(aClearBox);

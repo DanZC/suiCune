@@ -281,7 +281,7 @@ void CrystalIntro(void){
         if(hram->hJoyLast & (BUTTONS)) {
             // LD_DE(MUSIC_NONE);
             // CALL(aPlayMusic);
-            PlayMusic_Conv(MUSIC_NONE);
+            PlayMusic(MUSIC_NONE);
             break;
         }
         // LD_A_addr(wJumptableIndex);
@@ -560,7 +560,7 @@ static void IntroScene2(void){
         CrystalIntro_InitUnownAnim_Conv(pixel2(11, 11));
         // LD_DE(SFX_INTRO_UNOWN_1);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_INTRO_UNOWN_1);
+        PlaySFX(SFX_INTRO_UNOWN_1);
         // POP_AF;
     }
 
@@ -785,7 +785,7 @@ static void IntroScene6(void){
         CrystalIntro_InitUnownAnim_Conv(pixel2(14, 6));
         // LD_DE(SFX_INTRO_UNOWN_1);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_INTRO_UNOWN_1);
+        PlaySFX(SFX_INTRO_UNOWN_1);
         // POP_AF;
     }
     // CP_A(0x40);
@@ -809,7 +809,7 @@ static void IntroScene6(void){
         CrystalIntro_InitUnownAnim_Conv(pixel2(7, 15));
         // LD_DE(SFX_INTRO_UNOWN_2);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_INTRO_UNOWN_2);
+        PlaySFX(SFX_INTRO_UNOWN_2);
         // POP_AF;
     }
 
@@ -942,7 +942,7 @@ static void IntroScene8(void){
     // suicune_sound:
         // LD_DE(SFX_INTRO_SUICUNE_3);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_INTRO_SUICUNE_3);
+        PlaySFX(SFX_INTRO_SUICUNE_3);
     }
     // IF_NC goto animate_suicune;
     if(ctr >= 0x40) {
@@ -954,7 +954,7 @@ static void IntroScene8(void){
         // finish:
             // LD_DE(SFX_INTRO_SUICUNE_2);
             // CALL(aPlaySFX);
-            PlaySFX_Conv(SFX_INTRO_SUICUNE_2);
+            PlaySFX(SFX_INTRO_SUICUNE_2);
             // FARCALL(aDeinitializeAllSprites);
             DeinitializeAllSprites_Conv();
             // CALL(aNextIntroScene);
@@ -1056,7 +1056,7 @@ static void IntroScene10(void){
         InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_INTRO_WOOPER, pixel2(22, 6));
         // LD_DE(SFX_INTRO_PICHU);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_INTRO_PICHU);
+        PlaySFX(SFX_INTRO_PICHU);
         // RET;
         return;
     }
@@ -1070,7 +1070,7 @@ static void IntroScene10(void){
         InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_INTRO_PICHU, pixel4(21, 16, 1, 0));
         // LD_DE(SFX_INTRO_PICHU);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_INTRO_PICHU);
+        PlaySFX(SFX_INTRO_PICHU);
         // RET;
         return;
     }
@@ -1202,7 +1202,7 @@ static void IntroScene12_PlayUnownSound(void) {
             // SFXChannelsOff();
             // POP_DE;
             // CALL(aPlaySFX);
-            PlaySFX_Conv(sound);
+            PlaySFX(sound);
             // RET;
             return;
         }
@@ -1346,7 +1346,7 @@ static void IntroScene13(void){
     InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_INTRO_SUICUNE, pixel4(13, 11, 4, 0));
     // LD_DE(MUSIC_CRYSTAL_OPENING);
     // CALL(aPlayMusic);
-    PlayMusic_Conv(MUSIC_CRYSTAL_OPENING);
+    PlayMusic(MUSIC_CRYSTAL_OPENING);
     // XOR_A_A;
     // LD_addr_A(wGlobalAnimXOffset);
     wram->wGlobalAnimXOffset = 0;
@@ -1387,7 +1387,7 @@ static void IntroScene14(void){
     // jump:
         // LD_DE(SFX_INTRO_SUICUNE_4);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_INTRO_SUICUNE_4);
+        PlaySFX(SFX_INTRO_SUICUNE_4);
     }
     // IF_NC goto run_after_jump;
     if(ctr >= 0x60) {
@@ -2243,7 +2243,7 @@ static void IntroScene28(void){
     // LD_DE(SFX_INTRO_WHOOSH);
     // CALL(aPlaySFX);
     // RET;
-    PlaySFX_Conv(SFX_INTRO_WHOOSH);
+    PlaySFX(SFX_INTRO_WHOOSH);
 }
 
 void Intro_Scene24_ApplyPaletteFade(void){

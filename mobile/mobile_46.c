@@ -9554,7 +9554,7 @@ void Function11b7e5(void){
     // CALL(aCloseSubmenu);
     CloseSubmenu_Conv();
     // CALL(aRestartMapMusic);
-    RestartMapMusic_Conv();
+    RestartMapMusic();
     // RET;
 }
 

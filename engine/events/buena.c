@@ -230,7 +230,7 @@ void BuenaPrize(void){
     // Purchase:
         // LD_DE(SFX_TRANSACTION);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_TRANSACTION);
+        PlaySFX(SFX_TRANSACTION);
         // LD_HL(mBuenaPrize_BuenaHereYouGoText);
 
     // print:

@@ -1940,7 +1940,7 @@ void MovementFunction_Strength(struct Object* bc) {
                     if(!CanObjectMoveInDirection_Conv(bc)) {
                         // LD_DE(SFX_STRENGTH);
                         // CALL(aPlaySFX);
-                        PlaySFX_Conv(SFX_STRENGTH);
+                        PlaySFX(SFX_STRENGTH);
                         // CALL(aSpawnStrengthBoulderDust);
                         SpawnStrengthBoulderDust_Conv(bc);
                         // CALL(aUpdateTallGrassFlags);

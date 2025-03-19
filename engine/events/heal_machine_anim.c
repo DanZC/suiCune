@@ -142,7 +142,7 @@ static const uint8_t* const Pointers[] = {
             // PlayHealMusic:
                 // LD_DE(MUSIC_HEAL);
                 // CALL(aPlayMusic);
-                PlayMusic_Conv(MUSIC_HEAL);
+                PlayMusic(MUSIC_HEAL);
                 // JP(mHealMachineAnim_FlashPalettes8Times);
                 HealMachineAnim_FlashPalettes8Times();
             } break;
@@ -151,14 +151,14 @@ static const uint8_t* const Pointers[] = {
             // HOF_PlaySFX:
                 // LD_DE(SFX_GAME_FREAK_LOGO_GS);
                 // CALL(aPlaySFX);
-                PlaySFX_Conv(SFX_GAME_FREAK_LOGO_GS);
+                PlaySFX(SFX_GAME_FREAK_LOGO_GS);
                 // CALL(aHealMachineAnim_FlashPalettes8Times);
                 HealMachineAnim_FlashPalettes8Times();
                 // CALL(aWaitSFX);
-                WaitSFX_Conv();
+                WaitSFX();
                 // LD_DE(SFX_BOOT_PC);
                 // CALL(aPlaySFX);
-                PlaySFX_Conv(SFX_BOOT_PC);
+                PlaySFX(SFX_BOOT_PC);
                 // RET;
             } break;
             //dw ['.dummy_5'];  // never encountered
@@ -280,7 +280,7 @@ static void HealMachineAnim_LoadBallsOntoMachine(struct SpriteOAM* hl, const str
         // PUSH_DE;
         // LD_DE(SFX_SECOND_PART_OF_ITEMFINDER);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_SECOND_PART_OF_ITEMFINDER);
+        PlaySFX(SFX_SECOND_PART_OF_ITEMFINDER);
         // POP_DE;
         // LD_C(30);
         // CALL(aDelayFrames);

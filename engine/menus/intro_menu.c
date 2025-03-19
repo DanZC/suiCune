@@ -56,13 +56,13 @@
 #include "../../util/intro_jumptable.h"
 
 void Intro_MainMenu() {
-    PlayMusic_Conv(MUSIC_NONE);
+    PlayMusic(MUSIC_NONE);
     // CALL(aDelayFrame);
     DelayFrame();
     // LD_A_E;
     // LD_addr_A(wMapMusic);
     wram->wMapMusic = MUSIC_NONE;
-    PlayMusic_Conv(MUSIC_MAIN_MENU);
+    PlayMusic(MUSIC_MAIN_MENU);
     // FARCALL(aMainMenu);
     MainMenu();
     // JP(mStartTitleScreen);
@@ -1229,7 +1229,7 @@ void OakSpeech(void) {
 
     // LD_DE(MUSIC_ROUTE_30);
     // CALL(aPlayMusic);
-    PlayMusic_Conv(MUSIC_ROUTE_30);
+    PlayMusic(MUSIC_ROUTE_30);
 
     // CALL(aRotateFourPalettesRight);
     RotateFourPalettesRight_Conv();
@@ -1355,7 +1355,7 @@ void OakText2_ASM(struct TextCmdState* state) {
     // CALL(aPlayMonCry);
     PlayMonCry_Conv(WOOPER);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // LD_HL(mOakText3);
     // RET;
     state->hl = OakText3;
@@ -1503,7 +1503,7 @@ void ShrinkPlayer(void) {
 
     // LD_DE(SFX_ESCAPE_ROPE);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_ESCAPE_ROPE);
+    PlaySFX(SFX_ESCAPE_ROPE);
     // POP_AF;
     // RST(aBankswitch);
 
@@ -2096,7 +2096,7 @@ void TitleScreenEntrance_Conv(void){
 //  Play the title screen music.
     // LD_DE(MUSIC_TITLE);
     // CALL(aPlayMusic);
-    PlayMusic_Conv(MUSIC_TITLE);
+    PlayMusic(MUSIC_TITLE);
 
     // LD_A(0x88);
     // LDH_addr_A(hWY);

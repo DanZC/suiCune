@@ -1169,7 +1169,7 @@ void PlayTalkObject_Conv(void){
     // CALL(aPlaySFX);
     // POP_DE;
     // RET;
-    PlaySFX_Conv(SFX_READ_TEXT_2);
+    PlaySFX(SFX_READ_TEXT_2);
 }
 
 static u8_flag_s ObjectEventTypeArray_script(struct MapObject* bc) {

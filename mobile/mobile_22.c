@@ -2282,7 +2282,7 @@ static void Function89a57_PlayPocketSwitchSFX(void){
     // PUSH_AF;
     // LD_DE(SFX_SWITCH_POCKETS);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_SWITCH_POCKETS);
+    PlaySFX(SFX_SWITCH_POCKETS);
     // POP_AF;
     // RET;
 }
@@ -3029,7 +3029,7 @@ void Function89d0d(void){
     // CALL(aDelayFrames);
     DelayFrames(24);
     // CALL(aRestartMapMusic);
-    RestartMapMusic_Conv();
+    RestartMapMusic();
     // RET;
 }
 
@@ -3940,10 +3940,10 @@ asm_8a121:
             if(Function89174()) {
             // asm_8a14c:
                 // CALL(aWaitSFX);
-                WaitSFX_Conv();
+                WaitSFX();
                 // LD_DE(SFX_TWINKLE);
                 // CALL(aPlaySFX);
-                PlaySFX_Conv(SFX_TWINKLE);
+                PlaySFX(SFX_TWINKLE);
                 // LD_C(0x10);
                 // CALL(aDelayFrames);
                 DelayFrames(0x10);
@@ -5885,7 +5885,7 @@ uint8_t Function8aba9(void){
                 break;
             // LD_DE(SFX_WRONG);
             // CALL(aWaitPlaySFX);
-            WaitPlaySFX_Conv(SFX_WRONG);
+            WaitPlaySFX(SFX_WRONG);
             // CALL(aCloseSRAM);
             // goto asm_8abb9;
         }

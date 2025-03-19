@@ -157,7 +157,7 @@ static void v_SlotMachine_InitGFX(void){
     ClearSprites();
     // LD_DE(MUSIC_NONE);
     // CALL(aPlayMusic);
-    PlayMusic_Conv(MUSIC_NONE);
+    PlayMusic(MUSIC_NONE);
     // CALL(aDelayFrame);
     DelayFrame();
     // CALL(aDisableLCD);
@@ -292,7 +292,7 @@ static void v_SlotMachine_InitGFX(void){
     gSlotData.slotBias = SLOTS_NO_BIAS;
     // LD_DE(MUSIC_GAME_CORNER);
     // CALL(aPlayMusic);
-    PlayMusic_Conv(MUSIC_GAME_CORNER);
+    PlayMusic(MUSIC_GAME_CORNER);
     // XOR_A_A;
     // LD_addr_A(wKeepSevenBiasChance);  // 87.5% chance
     wram->wKeepSevenBiasChance = FALSE;
@@ -324,12 +324,12 @@ void v_SlotMachine(void){
         // IF_NC goto loop;
     } while(!done);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // LD_DE(SFX_QUIT_SLOTS);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_QUIT_SLOTS);
+    PlaySFX(SFX_QUIT_SLOTS);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // FARCALL(aStubbedTrainerRankings_EndSlotsWinStreak);
@@ -559,7 +559,7 @@ void SlotsAction_BetAndStart(void){
     // LD_addr_A(wReel3ManipCounter);
     gSlotData.reel3.manipCounter = 4;
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // LD_A(SFX_SLOT_MACHINE_START);
     // CALL(aSlots_PlaySFX);
     Slots_PlaySFX(SFX_SLOT_MACHINE_START);
@@ -833,7 +833,7 @@ void SlotsAction_PayoutAnim(void){
         return;
     // LD_DE(SFX_GET_COIN_FROM_SLOTS);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_GET_COIN_FROM_SLOTS);
+    PlaySFX(SFX_GET_COIN_FROM_SLOTS);
     // RET;
 }
 
@@ -2027,7 +2027,7 @@ void ReelAction_WaitSlowAdvanceReel3(struct SlotReelData* bc){
             // CALL(aSlots_StopReel);
             Slots_StopReel(bc);
             // CALL(aWaitSFX);
-            WaitSFX_Conv();
+            WaitSFX();
             // RET;
             return;
         }
@@ -2040,7 +2040,7 @@ void ReelAction_WaitSlowAdvanceReel3(struct SlotReelData* bc){
         // CALL(aSlots_StopReel);
         Slots_StopReel(bc);
         // CALL(aWaitSFX);
-        WaitSFX_Conv();
+        WaitSFX();
         // RET;
         return;
     }
@@ -2628,10 +2628,10 @@ bool Slots_AskBet(void){
 // ok:
     wram->wCoins = NativeToBigEndian16(BigEndianToNative16(wram->wCoins) - gSlotData.slotBet);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // LD_DE(SFX_PAY_DAY);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_PAY_DAY);
+    PlaySFX(SFX_PAY_DAY);
     // LD_HL(mSlots_AskBet_SlotsStartText);
     // CALL(aPrintText);
     PrintText_Conv2(SlotsStartText);
@@ -2777,7 +2777,7 @@ static void Slots_PayoutText_LinedUpSevens(void){
     // CALL(aSlots_PlaySFX);
     Slots_PlaySFX(SFX_2ND_PLACE);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
 
 //  Oddly, the rarest mode (wKeepSevenBiasChance = 1) is the one with
 //  the worse odds to favor seven symbol streaks (12.5% vs 25%).
@@ -2818,7 +2818,7 @@ static void Slots_PayoutText_LinedUpPokeballs(void){
     // CALL(aSlots_PlaySFX);
     Slots_PlaySFX(SFX_3RD_PLACE);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // RET;
 }
 
@@ -2827,7 +2827,7 @@ static void Slots_PayoutText_LinedUpMonOrCherry(void){
     // CALL(aSlots_PlaySFX);
     Slots_PlaySFX(SFX_PRESENT);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // RET;
 }
 
@@ -3058,7 +3058,7 @@ void Slots_AnimateChansey(struct SpriteAnim* bc){
             if((x & 0xf) == 0) {
                 // LD_DE(SFX_JUMP_OVER_LEDGE);
                 // CALL(aPlaySFX);
-                PlaySFX_Conv(SFX_JUMP_OVER_LEDGE);
+                PlaySFX(SFX_JUMP_OVER_LEDGE);
             }
             // RET;
             return;
@@ -3147,7 +3147,7 @@ void Slots_PlaySFX(uint16_t sfx){
     // LD_E_A;
     // LD_D(0);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(sfx);
+    PlaySFX(sfx);
     // POP_DE;
     // RET;
 }

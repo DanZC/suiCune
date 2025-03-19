@@ -1839,9 +1839,9 @@ bool RetrieveMonFromDayCareMan_Conv(void){
     wram->wCurPartySpecies = wram->wBreedMon1.species;
     // LD_DE(SFX_TRANSACTION);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_TRANSACTION);
+    PlaySFX(SFX_TRANSACTION);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // CALL(aGetBreedMon1LevelGrowth);
     u8_pair_s lvlGrowth = GetBreedMon1LevelGrowth();
     // LD_A_B;
@@ -1880,9 +1880,9 @@ bool RetrieveMonFromDayCareLady_Conv(void){
     wram->wCurPartySpecies = wram->wBreedMon2.species;
     // LD_DE(SFX_TRANSACTION);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_TRANSACTION);
+    PlaySFX(SFX_TRANSACTION);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // CALL(aGetBreedMon2LevelGrowth);
     u8_pair_s lvlGrowth = GetBreedMon2LevelGrowth();
     // LD_A_B;

@@ -1917,7 +1917,7 @@ void EggStatsScreen(void){
     // LD_DE(SFX_2_BOOPS);
     // CALL(aPlaySFX);
     // RET;
-    PlaySFX_Conv(SFX_2_BOOPS);
+    PlaySFX(SFX_2_BOOPS);
 }
 
 // void EggString(void){

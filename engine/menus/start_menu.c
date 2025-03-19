@@ -443,7 +443,7 @@ static const struct MenuHeader menuHeader = {
 
     // LD_DE(SFX_MENU);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_MENU);
+    PlaySFX(SFX_MENU);
 
     // FARCALL(aReanchorBGMap_NoOAMUpdate);
     ReanchorBGMap_NoOAMUpdate_Conv();

@@ -681,7 +681,7 @@ static u8_flag_s DoPlayerMovement_TryJump(void) {
 
     // LD_DE(SFX_JUMP_OVER_LEDGE);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_JUMP_OVER_LEDGE);
+    PlaySFX(SFX_JUMP_OVER_LEDGE);
     // LD_A(STEP_LEDGE);
     // CALL(aDoPlayerMovement_DoStep);
     DoPlayerMovement_DoStep(STEP_LEDGE);
@@ -1104,7 +1104,7 @@ static bool DoPlayerMovement_BumpSound(void) {
         return false;
     // LD_DE(SFX_BUMP);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_BUMP);
+    PlaySFX(SFX_BUMP);
     // RET;
     return true;
 }

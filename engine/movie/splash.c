@@ -49,7 +49,7 @@ bool SplashScreen(void){
 //  Reinitialize everything
     // LD_DE(MUSIC_NONE);
     // CALL(aPlayMusic);
-    PlayMusic_Conv(MUSIC_NONE);
+    PlayMusic(MUSIC_NONE);
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // CALL(aClearTilemap);
@@ -273,7 +273,7 @@ void GameFreakPresents_PlaceGameFreak(void){
     GameFreakPresents_NextScene();
     // LD_DE(SFX_GAME_FREAK_PRESENTS);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_GAME_FREAK_PRESENTS);
+    PlaySFX(SFX_GAME_FREAK_PRESENTS);
     // RET;
     return;
 
@@ -414,7 +414,7 @@ void GameFreakLogo_Bounce(struct SpriteAnim* bc){
         bc->var2 = 0;
         // LD_DE(SFX_DITTO_POP_UP);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_DITTO_POP_UP);
+        PlaySFX(SFX_DITTO_POP_UP);
         // RET;
         return;
     }
@@ -460,7 +460,7 @@ void GameFreakLogo_Bounce(struct SpriteAnim* bc){
     bc->var1 -= 48;
     // LD_DE(SFX_DITTO_BOUNCE);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_DITTO_BOUNCE);
+    PlaySFX(SFX_DITTO_BOUNCE);
     // RET;
 }
 
@@ -483,7 +483,7 @@ void GameFreakLogo_Ditto(struct SpriteAnim* bc){
         bc->var2 = 0;
         // LD_DE(SFX_DITTO_TRANSFORM);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_DITTO_TRANSFORM);
+        PlaySFX(SFX_DITTO_TRANSFORM);
         // RET;
         return;
     }

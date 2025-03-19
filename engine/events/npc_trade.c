@@ -92,7 +92,7 @@ void NPCTrade(uint8_t e){
     PrintText_Conv2(TradedForText);
 
     // CALL(aRestartMapMusic);
-    RestartMapMusic_Conv();
+    RestartMapMusic();
 
     // LD_A(TRADE_DIALOG_COMPLETE);
 
@@ -601,7 +601,7 @@ static void TradedForText_Function(struct TextCmdState* hl) {
     };
     // LD_DE(MUSIC_NONE);
     // CALL(aPlayMusic);
-    PlayMusic_Conv(MUSIC_NONE);
+    PlayMusic(MUSIC_NONE);
     // CALL(aDelayFrame);
     DelayFrame();
     // LD_HL(mTradedForText_done);

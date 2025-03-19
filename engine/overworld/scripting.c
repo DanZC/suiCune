@@ -1283,18 +1283,18 @@ void Script_specialsound_Conv(script_s* s){
     if(pocket == TM_HM) {
     // play:
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_GET_TM);
+        PlaySFX(SFX_GET_TM);
         // CALL(aWaitSFX);
-        WaitSFX_Conv();
+        WaitSFX();
         // RET;
         return;
     }
     else {
     // play:
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_ITEM);
+        PlaySFX(SFX_ITEM);
         // CALL(aWaitSFX);
-        WaitSFX_Conv();
+        WaitSFX();
         // RET;
         return;
     }
@@ -1812,7 +1812,7 @@ void Script_playmapmusic_Conv(script_s* s){
     (void)s;
     // CALL(aPlayMapMusic);
     // RET;
-    PlayMapMusic_Conv();
+    PlayMapMusic();
 }
 
 void Script_playmusic(void){
@@ -1834,7 +1834,7 @@ void Script_playmusic_Conv(script_s* s, uint16_t music){
     (void)s;
     // LD_DE(MUSIC_NONE);
     // CALL(aPlayMusic);
-    PlayMusic_Conv(MUSIC_NONE);
+    PlayMusic(MUSIC_NONE);
     // XOR_A_A;
     // LD_addr_A(wMusicFade);
     wram->wMusicFade = 0;
@@ -1845,7 +1845,7 @@ void Script_playmusic_Conv(script_s* s, uint16_t music){
     // CALL(aGetScriptByte);
     // LD_D_A;
     // CALL(aPlayMusic);
-    PlayMusic_Conv(music);
+    PlayMusic(music);
     // RET;
 }
 
@@ -1893,7 +1893,7 @@ void Script_playsound_Conv(script_s* s, uint16_t sfx){
     // LD_D_A;
     // CALL(aPlaySFX);
     // RET;
-    return PlaySFX_Conv(sfx);
+    return PlaySFX(sfx);
 }
 
 void Script_waitsfx(void){
@@ -1906,7 +1906,7 @@ void Script_waitsfx_Conv(script_s* s){
     (void)s;
     // CALL(aWaitSFX);
     // RET;
-    return WaitSFX_Conv();
+    return WaitSFX();
 }
 
 void Script_warpsound(void){
@@ -1921,7 +1921,7 @@ void Script_warpsound_Conv(script_s* s){
     // FARCALL(aGetWarpSFX);
     // CALL(aPlaySFX);
     // RET;
-    return PlaySFX_Conv(GetWarpSFX_Conv());
+    return PlaySFX(GetWarpSFX_Conv());
 }
 
 void Script_cry(void){

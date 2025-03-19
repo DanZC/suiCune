@@ -288,7 +288,7 @@ asm_4a9a1:
     // asm_4a9b0:
         // LD_DE(SFX_WRONG);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_WRONG);
+        PlaySFX(SFX_WRONG);
         // LD_HL(mMobilePickThreeMonForBattleText);
         // CALL(aPrintText);
         PrintText_Conv2(MobilePickThreeMonForBattleText);
@@ -671,9 +671,9 @@ u8_flag_s Function4ab1a(void){
                 goto asm_4ab73;
             // LD_DE(SFX_READ_TEXT_2);
             // CALL(aPlaySFX);
-            PlaySFX_Conv(SFX_READ_TEXT_2);
+            PlaySFX(SFX_READ_TEXT_2);
             // CALL(aWaitSFX);
-            WaitSFX_Conv();
+            WaitSFX();
             // XOR_A_A;
             // LD_addr_A(wd018);
             wram->wd018 = 0x0;
@@ -694,9 +694,9 @@ u8_flag_s Function4ab1a(void){
         wram->wCurPartySpecies = wram->wPartySpecies[wram->wCurPartyMon];
         // LD_DE(SFX_READ_TEXT_2);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_READ_TEXT_2);
+        PlaySFX(SFX_READ_TEXT_2);
         // CALL(aWaitSFX);
-        WaitSFX_Conv();
+        WaitSFX();
         // LD_A(0x1);
         // AND_A_A;
         // RET;
@@ -711,9 +711,9 @@ u8_flag_s Function4ab1a(void){
 asm_4ab73:
     // LD_DE(SFX_READ_TEXT_2);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_READ_TEXT_2);
+    PlaySFX(SFX_READ_TEXT_2);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // SCF;
     // RET;
     return u8_flag(0x1, true);
@@ -988,7 +988,7 @@ void Function4acaa(void){
         StaticMenuJoypad_Conv();
         // LD_DE(SFX_READ_TEXT_2);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_READ_TEXT_2);
+        PlaySFX(SFX_READ_TEXT_2);
         // LDH_A_addr(hJoyPressed);
         // BIT_A(0);
         // IF_NZ goto asm_4acf4;
@@ -1066,7 +1066,7 @@ void Function4ad17(void){
             if(*hl != 0xff) {
                 // LD_DE(SFX_WRONG);
                 // CALL(aWaitPlaySFX);
-                WaitPlaySFX_Conv(SFX_WRONG);
+                WaitPlaySFX(SFX_WRONG);
                 // LD_HL(mMobileOnlyThreeMonMayEnterText);
                 // CALL(aPrintText);
                 PrintText_Conv2(MobileOnlyThreeMonMayEnterText);

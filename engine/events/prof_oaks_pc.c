@@ -73,11 +73,11 @@ void ProfOaksPCBoot(void){
     // CALL(aRate);
     uint16_t sfx = Rate();
     // CALL(aPlaySFX);  // sfx loaded by previous Rate function call
-    PlaySFX_Conv(sfx);
+    PlaySFX(sfx);
     // CALL(aJoyWaitAorB);
     JoyWaitAorB_Conv();
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // RET;
 }
 
@@ -87,14 +87,14 @@ void ProfOaksPCRating(void){
     // PUSH_DE;
     // LD_DE(MUSIC_NONE);
     // CALL(aPlayMusic);
-    PlayMusic_Conv(MUSIC_NONE);
+    PlayMusic(MUSIC_NONE);
     // POP_DE;
     // CALL(aPlaySFX);
-    PlaySFX_Conv(sfx);
+    PlaySFX(sfx);
     // CALL(aJoyWaitAorB);
     JoyWaitAorB_Conv();
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // RET;
 
 }

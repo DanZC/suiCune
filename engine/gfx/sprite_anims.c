@@ -999,7 +999,7 @@ static void AnimSeq_SlotsChanseyEgg_Conv(struct SpriteAnim* bc){
             wram->wSlotsDelay = 0x4;
             // LD_DE(SFX_PLACE_PUZZLE_PIECE_DOWN);
             // CALL(aPlaySFX);
-            PlaySFX_Conv(SFX_PLACE_PUZZLE_PIECE_DOWN);
+            PlaySFX(SFX_PLACE_PUZZLE_PIECE_DOWN);
             // RET;
             return;
         }
@@ -1268,7 +1268,7 @@ static void AnimSeq_TradePokeBall_Conv(struct SpriteAnim* bc){
     // done:
         // LD_DE(SFX_GOT_SAFARI_BALLS);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_GOT_SAFARI_BALLS);
+        PlaySFX(SFX_GOT_SAFARI_BALLS);
         // fallthrough
 
     case 5:
@@ -1351,7 +1351,7 @@ static void AnimSeq_TradePokeBall_Conv(struct SpriteAnim* bc){
         bc->var2 -= 0xc;
         // LD_DE(SFX_SWITCH_POKEMON);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_SWITCH_POKEMON);
+        PlaySFX(SFX_SWITCH_POKEMON);
         // RET;
         return;
     }
@@ -1402,7 +1402,7 @@ static void AnimSeq_TradeTubeBulge_Conv(struct SpriteAnim* bc){
     if((a & 0x3) == 0) {
         // LD_DE(SFX_POKEBALLS_PLACED_ON_TABLE);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_POKEBALLS_PLACED_ON_TABLE);
+        PlaySFX(SFX_POKEBALLS_PLACED_ON_TABLE);
     }
     // RET;
 }

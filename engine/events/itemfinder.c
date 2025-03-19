@@ -15,10 +15,10 @@ static void ItemfinderSound(void) {
         // PUSH_BC;
         // LD_DE(SFX_SECOND_PART_OF_ITEMFINDER);
         // CALL(aWaitPlaySFX);
-        WaitPlaySFX_Conv(SFX_SECOND_PART_OF_ITEMFINDER);
+        WaitPlaySFX(SFX_SECOND_PART_OF_ITEMFINDER);
         // LD_DE(SFX_TRANSACTION);
         // CALL(aWaitPlaySFX);
-        WaitPlaySFX_Conv(SFX_TRANSACTION);
+        WaitPlaySFX(SFX_TRANSACTION);
         // POP_BC;
         // DEC_C;
         // IF_NZ goto sfx_loop;

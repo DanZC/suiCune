@@ -148,7 +148,7 @@ bool CheckCanLearnMoveTutorMove(uint8_t curMon, move_t move){
         // PUSH_DE;
         // LD_DE(SFX_WRONG);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_WRONG);
+        PlaySFX(SFX_WRONG);
         // POP_DE;
         // LD_A(BANK(aTMHMNotCompatibleText));
         // LD_HL(mTMHMNotCompatibleText);

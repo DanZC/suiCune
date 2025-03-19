@@ -139,9 +139,9 @@ void PokeGear(void){
 // done:
     // LD_DE(SFX_READ_TEXT_2);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_READ_TEXT_2);
+    PlaySFX(SFX_READ_TEXT_2);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // POP_AF;
     // LD_addr_A(wVramState);
     wram->wVramState = vramState;
@@ -2024,20 +2024,20 @@ void PokegearPhone_MakePhoneCall(void){
         hram->hInMenu = FALSE;
         // LD_DE(SFX_CALL);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_CALL);
+        PlaySFX(SFX_CALL);
         // LD_HL(mPokegearPhone_MakePhoneCall_GearEllipseText);
         // CALL(aPrintText);
         PrintText_Conv2(GearEllipseText);
         // CALL(aWaitSFX);
-        WaitSFX_Conv();
+        WaitSFX();
         // LD_DE(SFX_CALL);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_CALL);
+        PlaySFX(SFX_CALL);
         // LD_HL(mPokegearPhone_MakePhoneCall_GearEllipseText);
         // CALL(aPrintText);
         PrintText_Conv2(GearEllipseText);
         // CALL(aWaitSFX);
-        WaitSFX_Conv();
+        WaitSFX();
         // LD_A_addr(wPokegearPhoneSelectedPerson);
         // LD_B_A;
         // CALL(aMakePhoneCallFromPokegear);
@@ -2791,7 +2791,7 @@ void Pokegear_SwitchPage(void){
 void Pokegear_SwitchPage_Conv(uint8_t c, uint8_t b){
     // LD_DE(SFX_READ_TEXT_2);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_READ_TEXT_2);
+    PlaySFX(SFX_READ_TEXT_2);
     // LD_A_C;
     // LD_addr_A(wJumptableIndex);
     wram->wJumptableIndex = c;
@@ -2810,7 +2810,7 @@ void ExitPokegearRadio_HandleMusic(void){
     if(wram->wPokegearRadioMusicPlaying == RESTART_MAP_MUSIC) {
     // restart_map_music:
         // CALL(aRestartMapMusic);
-        RestartMapMusic_Conv();
+        RestartMapMusic();
         // XOR_A_A;
         // LD_addr_A(wPokegearRadioMusicPlaying);
         wram->wPokegearRadioMusicPlaying = 0;
@@ -2819,8 +2819,8 @@ void ExitPokegearRadio_HandleMusic(void){
     }
     // CP_A(ENTER_MAP_MUSIC);
     // CALL_Z (aPlayMapMusicBike);
-    else if(wram->wPokegearRadioMusicPlaying == RESTART_MAP_MUSIC) {
-        return PlayMapMusicBike_Conv();
+    else if(wram->wPokegearRadioMusicPlaying == ENTER_MAP_MUSIC) {
+        return PlayMapMusicBike();
     }
     // XOR_A_A;
     // LD_addr_A(wPokegearRadioMusicPlaying);
@@ -3783,9 +3783,9 @@ void RadioMusicRestartDE(void){
 
 void RadioMusicRestartDE_Conv(uint16_t de){
     wram->wPokegearRadioMusicPlaying = (uint8_t)(de & 0xFF);
-    PlayMusic_Conv(MUSIC_NONE);
+    PlayMusic(MUSIC_NONE);
     wram->wMapMusic = (uint8_t)(de & 0xFF);
-    PlayMusic_Conv(de);
+    PlayMusic(de);
 }
 
 void RadioMusicRestartPokemonChannel(void){
@@ -3803,8 +3803,8 @@ void RadioMusicRestartPokemonChannel(void){
 
 void RadioMusicRestartPokemonChannel_Conv(void){
     gb_write(wPokegearRadioMusicPlaying, RESTART_MAP_MUSIC);
-    PlayMusic_Conv(MUSIC_NONE);
-    PlayMusic_Conv(MUSIC_POKEMON_CHANNEL);
+    PlayMusic(MUSIC_NONE);
+    PlayMusic(MUSIC_POKEMON_CHANNEL);
 }
 
 void Radio_BackUpFarCallParams(void){
@@ -3861,7 +3861,7 @@ void NoRadioMusic(void){
 }
 
 void NoRadioMusic_Conv(void){
-    PlayMusic_Conv(MUSIC_NONE);
+    PlayMusic(MUSIC_NONE);
     wram->wPokegearRadioMusicPlaying = ENTER_MAP_MUSIC;
 }
 

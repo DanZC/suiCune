@@ -123,9 +123,9 @@ void Pokedex(void){
 // exit:
     // LD_DE(SFX_READ_TEXT_2);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_READ_TEXT_2);
+    PlaySFX(SFX_READ_TEXT_2);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // CALL(aClearSprites);
     ClearSprites();
     // LD_A_addr(wCurDexMode);
@@ -2607,7 +2607,7 @@ void Pokedex_DisplayChangingModesMessage(void){
     DelayFrames(64);
     // LD_DE(SFX_CHANGE_DEX_MODE);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_CHANGE_DEX_MODE);
+    PlaySFX(SFX_CHANGE_DEX_MODE);
     // LD_C(64);
     // CALL(aDelayFrames);
     DelayFrames(64);

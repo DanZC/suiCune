@@ -33,7 +33,7 @@ whiteout:
 static void PlayPoisonSFX(void) {
     // LD_DE(SFX_POISON);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_POISON);
+    PlaySFX(SFX_POISON);
     // LD_B(0x2);
     // PREDEF(pLoadPoisonBGPals);
     LoadPoisonBGPals();

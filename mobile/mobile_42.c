@@ -682,7 +682,7 @@ void Function1082fa(uint16_t* hl, uint8_t c){
 void MobileTradeAnim_ShowPlayerMonToBeSent(void){
     // LD_DE(MUSIC_EVOLUTION);
     // CALL(aPlayMusic2);
-    PlayMusic2_Conv(MUSIC_EVOLUTION);
+    PlayMusic2(MUSIC_EVOLUTION);
     // LD_A(0x80);
     // LDH_addr_A(hSCX);
     hram->hSCX = 0x80;
@@ -748,7 +748,7 @@ void MobileTradeAnim_ShowPlayerMonToBeSent(void){
         // LD_E_C;
         // LD_D_B;
         // CALL(aPlayCry);
-        PlayCry_Conv((uint16_t)cryIndex);
+        PlayCry((uint16_t)cryIndex);
     }
 
 // skip_cry:
@@ -763,7 +763,7 @@ void MobileTradeAnim_ShowPlayerMonToBeSent(void){
     InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_MOBILE_TRADE_SENT_BALL, pixel4(10, 11, 4, 0));
     // LD_DE(SFX_BALL_POOF);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_BALL_POOF);
+    PlaySFX(SFX_BALL_POOF);
     // hlcoord(0, 0, wTilemap);
     // LD_BC(12 * SCREEN_WIDTH);
     // LD_A(0x7f);
@@ -824,7 +824,7 @@ void MobileTradeAnim_ShowOTMonFromTrade(void){
     WaitMobileTradeSpriteAnims(48);
     // LD_DE(SFX_BALL_POOF);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_BALL_POOF);
+    PlaySFX(SFX_BALL_POOF);
     // CALL(aMobileTradeAnim_DisplayReceivedMon);
     MobileTradeAnim_DisplayReceivedMon();
     // XOR_A_A;
@@ -869,7 +869,7 @@ void MobileTradeAnim_ShowOTMonFromTrade(void){
 void MobileTradeAnim_ShowPlayerMonForGTS(void){
     // LD_DE(MUSIC_EVOLUTION);
     // CALL(aPlayMusic2);
-    PlayMusic2_Conv(MUSIC_EVOLUTION);
+    PlayMusic2(MUSIC_EVOLUTION);
     // LD_A(0x80);
     // LDH_addr_A(hSCX);
     hram->hSCX = 0x80;
@@ -948,7 +948,7 @@ void MobileTradeAnim_ShowPlayerMonForGTS(void){
         // LD_E_C;
         // LD_D_B;
         // CALL(aPlayCry);
-        PlayCry_Conv((uint16_t)cry);
+        PlayCry((uint16_t)cry);
     }
 
 // skip_cry:
@@ -963,7 +963,7 @@ void MobileTradeAnim_ShowPlayerMonForGTS(void){
     InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_MOBILE_TRADE_SENT_BALL, pixel4(10, 11, 4, 0));
     // LD_DE(SFX_BALL_POOF);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_BALL_POOF);
+    PlaySFX(SFX_BALL_POOF);
     // hlcoord(0, 0, wTilemap);
     // LD_BC(12 * SCREEN_WIDTH);
     // LD_A(0x7f);
@@ -1036,7 +1036,7 @@ void MobileTradeAnim_ShowOTMonFromGTS(void){
     WaitMobileTradeSpriteAnims(48);
     // LD_DE(SFX_BALL_POOF);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_BALL_POOF);
+    PlaySFX(SFX_BALL_POOF);
     // CALL(aMobileTradeAnim_DisplayReceivedMon);
     MobileTradeAnim_DisplayReceivedMon();
     // XOR_A_A;
@@ -1140,7 +1140,7 @@ void MobileTradeAnim_GetOddEgg(void){
     WaitMobileTradeSpriteAnims(48);
     // LD_DE(SFX_BALL_POOF);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_BALL_POOF);
+    PlaySFX(SFX_BALL_POOF);
     // CALL(aFunction108a33);
     Function108a33();
     // XOR_A_A;
@@ -1366,7 +1366,7 @@ void MobileTradeAnim_11(void){
     hram->hSCX = 0xe0;
     // LD_DE(MUSIC_EVOLUTION);
     // CALL(aPlayMusic2);
-    PlayMusic2_Conv(MUSIC_EVOLUTION);
+    PlayMusic2(MUSIC_EVOLUTION);
     // CALL(aGetMobileTradeAnimByte);
     GetMobileTradeAnimByte();
     // RET;
@@ -1375,7 +1375,7 @@ void MobileTradeAnim_11(void){
 void MobileTradeAnim_GiveTrademon1(void){
     // LD_DE(SFX_GIVE_TRADEMON);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_GIVE_TRADEMON);
+    PlaySFX(SFX_GIVE_TRADEMON);
     // LD_C(40);
     // LD_HL(wBGPals2 + PALETTE_SIZE * 6);
     // CALL(aFunction1082f0);
@@ -1478,7 +1478,7 @@ void MobileTradeAnim_GiveTrademon2(void){
     InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_MOBILE_TRADE_PING, pixel4(9, 10, 2, 0));
     // LD_DE(SFX_FORESIGHT);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_FORESIGHT);
+    PlaySFX(SFX_FORESIGHT);
     // LD_C(10);
     // CALL(aWaitMobileTradeSpriteAnims);
     WaitMobileTradeSpriteAnims(10);
@@ -1519,7 +1519,7 @@ void MobileTradeAnim_05(void){
     wram->wcf64 = 0x1;
     // LD_DE(SFX_SHARPEN);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_SHARPEN);
+    PlaySFX(SFX_SHARPEN);
     // LD_C(60);
     // CALL(aWaitMobileTradeSpriteAnims);
     WaitMobileTradeSpriteAnims(60);
@@ -1531,7 +1531,7 @@ void MobileTradeAnim_05(void){
     GetMobileTradeAnimByte();
     // LD_DE(SFX_THROW_BALL);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_THROW_BALL);
+    PlaySFX(SFX_THROW_BALL);
     // RET;
 }
 
@@ -1544,7 +1544,7 @@ void MobileTradeAnim_06(void){
     wram->wcf64 = 0x1;
     // LD_DE(SFX_SHARPEN);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_SHARPEN);
+    PlaySFX(SFX_SHARPEN);
     // CALL(aGetMobileTradeAnimByte);
     GetMobileTradeAnimByte();
     // RET;
@@ -1562,7 +1562,7 @@ void MobileTradeAnim_07(void){
     GetMobileTradeAnimByte();
     // LD_DE(SFX_THROW_BALL);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_THROW_BALL);
+    PlaySFX(SFX_THROW_BALL);
     // RET;
 }
 
@@ -1594,7 +1594,7 @@ void MobileTradeAnim_GetTrademon1(void){
     InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_MOBILE_TRADE_PING, pixel4(9, 10, 2, 0));
     // LD_DE(SFX_GLASS_TING_2);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_GLASS_TING_2);
+    PlaySFX(SFX_GLASS_TING_2);
     // CALL(aFunction108af4);
     Function108af4();
     // CALL(aMobileTradeAnim_Next);
@@ -1609,7 +1609,7 @@ void MobileTradeAnim_GetTrademon2(void){
     Function1082fa((uint16_t*)(wram->wBGPals2 + 1 * PALETTE_SIZE), 20);
     // LD_DE(SFX_GIVE_TRADEMON);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_GIVE_TRADEMON);
+    PlaySFX(SFX_GIVE_TRADEMON);
     // LD_C(20);
     // LD_HL(wBGPals2 + 1 * PALETTE_SIZE);
     // CALL(aFunction1082fa);

@@ -22,7 +22,7 @@ void GBCOnlyScreen(void){
 
     // LD_DE(MUSIC_NONE);
     // CALL(aPlayMusic);
-    PlayMusic_Conv(MUSIC_NONE);
+    PlayMusic(MUSIC_NONE);
 
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
@@ -208,7 +208,7 @@ static void DrawErrorScreen(const char* text){
 }
 
 void ErrorScreen(const char* text){
-    PlayMusic_Conv(MUSIC_NONE);
+    PlayMusic(MUSIC_NONE);
     ClearTilemap_Conv2();
     GetSGBLayout_Conv(SCGB_1E);
     SetPalettes_Conv();

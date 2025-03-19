@@ -398,7 +398,7 @@ void RunTradeAnimScript(const uint8_t* de){
     if(!wram->wUnusedTradeAnimPlayEvolutionMusic) {
         // LD_DE(MUSIC_EVOLUTION);
         // CALL(aPlayMusic2);
-        PlayMusic2_Conv(MUSIC_EVOLUTION);
+        PlayMusic2(MUSIC_EVOLUTION);
     }
 
     bool done;
@@ -791,7 +791,7 @@ void TradeAnim_GiveTrademonSFX(void){
     TradeAnim_AdvanceScriptPointer();
     // LD_DE(SFX_GIVE_TRADEMON);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_GIVE_TRADEMON);
+    PlaySFX(SFX_GIVE_TRADEMON);
     // RET;
 }
 
@@ -800,7 +800,7 @@ void TradeAnim_GetTrademonSFX(void){
     TradeAnim_AdvanceScriptPointer();
     // LD_DE(SFX_GET_TRADEMON);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_GET_TRADEMON);
+    PlaySFX(SFX_GET_TRADEMON);
     // RET;
 }
 
@@ -1002,7 +1002,7 @@ void TradeAnim_EnterLinkTube1(void){
     DmgToCgbObjPals_Conv(0b11100100, 0b11100100);
     // LD_DE(SFX_POTION);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_POTION);
+    PlaySFX(SFX_POTION);
     // CALL(aTradeAnim_IncrementJumptableIndex);
     TradeAnim_IncrementJumptableIndex();
     // RET;
@@ -1590,7 +1590,7 @@ void TradeAnim_Poof(void){
     wram->wFrameCounter = 16;
     // LD_DE(SFX_BALL_POOF);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_BALL_POOF);
+    PlaySFX(SFX_BALL_POOF);
     // RET;
 
 }

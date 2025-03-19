@@ -2714,9 +2714,9 @@ bool BillsPC_CheckSpaceInDestination(void){
         BillsPC_PlaceString_Conv(U82C(PCString_TheresNoRoom));
         // LD_DE(SFX_WRONG);
         // CALL(aWaitPlaySFX);
-        WaitPlaySFX_Conv(SFX_WRONG);
+        WaitPlaySFX(SFX_WRONG);
         // CALL(aWaitSFX);
-        WaitSFX_Conv();
+        WaitSFX();
         // LD_C(50);
         // CALL(aDelayFrames);
         DelayFrames(50);
@@ -2827,9 +2827,9 @@ NotOkay:
     BillsPC_PlaceString_Conv(de);
     // LD_DE(SFX_WRONG);
     // CALL(aWaitPlaySFX);
-    WaitPlaySFX_Conv(SFX_WRONG);
+    WaitPlaySFX(SFX_WRONG);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // LD_C(50);
     // CALL(aDelayFrames);
     DelayFrames(50);
@@ -2875,9 +2875,9 @@ bool BillsPC_IsMonAnEgg_Conv(void){
     BillsPC_PlaceString_Conv(U82C(PCString_NoReleasingEGGS));
     // LD_DE(SFX_WRONG);
     // CALL(aWaitPlaySFX);
-    WaitPlaySFX_Conv(SFX_WRONG);
+    WaitPlaySFX(SFX_WRONG);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // LD_C(50);
     // CALL(aDelayFrames);
     DelayFrames(50);
@@ -3258,9 +3258,9 @@ bool DepositPokemon_Conv(void){
         BillsPC_PlaceString_Conv(U82C(PCString_BoxFull));
         // LD_DE(SFX_WRONG);
         // CALL(aWaitPlaySFX);
-        WaitPlaySFX_Conv(SFX_WRONG);
+        WaitPlaySFX(SFX_WRONG);
         // CALL(aWaitSFX);
-        WaitSFX_Conv();
+        WaitSFX();
         // LD_C(50);
         // CALL(aDelayFrames);
         DelayFrames(50);
@@ -3396,9 +3396,9 @@ bool TryWithdrawPokemon_Conv(void){
         BillsPC_PlaceString_Conv(U82C(PCString_PartyFull));
         // LD_DE(SFX_WRONG);
         // CALL(aWaitPlaySFX);
-        WaitPlaySFX_Conv(SFX_WRONG);
+        WaitPlaySFX(SFX_WRONG);
         // CALL(aWaitSFX);
-        WaitSFX_Conv();
+        WaitSFX();
         // LD_C(50);
         // CALL(aDelayFrames);
         DelayFrames(50);
@@ -3474,10 +3474,7 @@ void ReleasePKMN_ByePKMN(void){
         // LD_E_C;
         // LD_D_B;
         // CALL(aPlayCry);
-        PUSH_DE;
-        REG_DE = (uint16_t)cry;
-        PlayCry();
-        POP_DE;
+        PlayCry((uint16_t)cry);
     }
 
 // skip_cry:
@@ -4399,9 +4396,9 @@ void BillsPC_PlaceEmptyBoxString_SFX(void){
     BillsPC_PlaceChangeBoxString_Conv(U82C(NoMonString));
     // LD_DE(SFX_WRONG);
     // CALL(aWaitPlaySFX);
-    WaitPlaySFX_Conv(SFX_WRONG);
+    WaitPlaySFX(SFX_WRONG);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // LD_C(50);
     // CALL(aDelayFrames);
     DelayFrames(50);

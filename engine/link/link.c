@@ -310,7 +310,7 @@ void Gen2ToGen2LinkComms(void){
 // player_1:
     // LD_DE(MUSIC_NONE);
     // CALL(aPlayMusic);
-    PlayMusic_Conv(MUSIC_NONE);
+    PlayMusic(MUSIC_NONE);
     // LD_C(3);
     // CALL(aDelayFrames);
     DelayFrames(3);
@@ -365,7 +365,7 @@ void Gen2ToGen2LinkComms(void){
     gb_write(rIE, ((1 << JOYPAD) | (1 << SERIAL) | (1 << TIMER) | (1 << VBLANK)));
     // LD_DE(MUSIC_NONE);
     // CALL(aPlayMusic);
-    PlayMusic_Conv(MUSIC_NONE);
+    PlayMusic(MUSIC_NONE);
 
     // CALL(aLink_CopyRandomNumbers);
     Link_CopyRandomNumbers();
@@ -634,7 +634,7 @@ void Gen2ToGen2LinkComms(void){
 
     // LD_DE(MUSIC_NONE);
     // CALL(aPlayMusic);
-    PlayMusic_Conv(MUSIC_NONE);
+    PlayMusic(MUSIC_NONE);
     // LDH_A_addr(hSerialConnectionStatus);
     // CP_A(USING_INTERNAL_CLOCK);
     if(hram->hSerialConnectionStatus == USING_INTERNAL_CLOCK) {
@@ -726,7 +726,7 @@ void Gen2ToGen2LinkComms(void){
     // ready_to_trade:
         // LD_DE(MUSIC_ROUTE_30);
         // CALL(aPlayMusic);
-        PlayMusic_Conv(MUSIC_ROUTE_30);
+        PlayMusic(MUSIC_ROUTE_30);
         // JP(mInitTradeMenuDisplay);
         return InitTradeMenuDisplay();
     }

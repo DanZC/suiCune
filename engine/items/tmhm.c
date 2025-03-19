@@ -197,9 +197,9 @@ u8_flag_s ChooseMonToLearnTMHM_NoRefresh(void){
         // PUSH_AF;
         // LD_DE(SFX_WRONG);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_WRONG);
+        PlaySFX(SFX_WRONG);
         // CALL(aWaitSFX);
-        WaitSFX_Conv();
+        WaitSFX();
         // POP_AF;
         // POP_BC;
         // POP_DE;
@@ -226,7 +226,7 @@ void TeachTMHM(void){
         // PUSH_DE;
         // LD_DE(SFX_WRONG);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_WRONG);
+        PlaySFX(SFX_WRONG);
         // POP_DE;
         // LD_HL(mTMHMNotCompatibleText);
         // CALL(aPrintText);
@@ -880,7 +880,7 @@ void TMHM_PlaySFX_ReadText2(void){
     // PUSH_DE;
     // LD_DE(SFX_READ_TEXT_2);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_READ_TEXT_2);
+    PlaySFX(SFX_READ_TEXT_2);
     // POP_DE;
     // RET;
 }

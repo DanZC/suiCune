@@ -630,7 +630,7 @@ static const txt_cmd_s NoRoomForEggText[] = {
     PrintText_Conv2(ReceivedEggText);
     // LD_DE(SFX_GET_EGG);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_GET_EGG);
+    PlaySFX(SFX_GET_EGG);
     // LD_C(120);
     // CALL(aDelayFrames);
     DelayFrames(120);

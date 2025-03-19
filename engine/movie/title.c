@@ -355,7 +355,7 @@ void v_TitleScreen(void){
     SFXChannelsOff();
     // LD_DE(SFX_TITLE_SCREEN_ENTRANCE);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_TITLE_SCREEN_ENTRANCE);
+    PlaySFX(SFX_TITLE_SCREEN_ENTRANCE);
 
     // RET;
 }

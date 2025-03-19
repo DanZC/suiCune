@@ -513,7 +513,7 @@ void OverworldHatchEgg(void){
     // CALL(aExitAllMenus);
     ExitAllMenus_Conv();
     // CALL(aRestartMapMusic);
-    RestartMapMusic_Conv();
+    RestartMapMusic();
     // JP(mCloseText);
     CloseText_Conv();
 }
@@ -1455,7 +1455,7 @@ void EggHatch_AnimationSequence(void){
     species_t curSpecies = wram->wCurSpecies;
     // LD_DE(MUSIC_NONE);
     // CALL(aPlayMusic);
-    PlayMusic_Conv(MUSIC_NONE);
+    PlayMusic(MUSIC_NONE);
     // FARCALL(aBlankScreen);
     BlankScreen();
     // CALL(aDisableLCD);
@@ -1478,7 +1478,7 @@ void EggHatch_AnimationSequence(void){
     GetEggFrontpic(vram->vTiles2 + LEN_2BPP_TILE * 0x31, EGG);
     // LD_DE(MUSIC_EVOLUTION);
     // CALL(aPlayMusic);
-    PlayMusic_Conv(MUSIC_EVOLUTION);
+    PlayMusic(MUSIC_EVOLUTION);
     // CALL(aEnableLCD);
     EnableLCD();
     // hlcoord(7, 4, wTilemap);
@@ -1549,7 +1549,7 @@ void EggHatch_AnimationSequence(void){
 // done:
     // LD_DE(SFX_EGG_HATCH);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_EGG_HATCH);
+    PlaySFX(SFX_EGG_HATCH);
     // XOR_A_A;
     // LDH_addr_A(hSCX);
     hram->hSCX = 0;
@@ -1568,7 +1568,7 @@ void EggHatch_AnimationSequence(void){
     // CALL(aHatch_ShellFragmentLoop);
     Hatch_ShellFragmentLoop();
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // LD_A_addr(wJumptableIndex);
     // LD_addr_A(wCurPartySpecies);
     wram->wCurPartySpecies = species;
@@ -1622,7 +1622,7 @@ void EggHatch_CrackShell(void){
     bc->tileID = 0x0;
     // LD_DE(SFX_EGG_CRACK);
     // JP(mPlaySFX);
-    PlaySFX_Conv(SFX_EGG_CRACK);
+    PlaySFX(SFX_EGG_CRACK);
 }
 
 void Hatch_InitShellFragments(void){
@@ -1698,7 +1698,7 @@ void Hatch_InitShellFragments(void){
 // done:
     // LD_DE(SFX_EGG_HATCH);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_EGG_HATCH);
+    PlaySFX(SFX_EGG_HATCH);
     // CALL(aEggHatch_DoAnimFrame);
     EggHatch_DoAnimFrame();
     // RET;

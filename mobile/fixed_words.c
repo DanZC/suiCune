@@ -2019,9 +2019,9 @@ void Function11c675(void){
         // .failure_to_set
             // ld de, SFX_WRONG
             // call PlaySFX
-            PlaySFX_Conv(SFX_WRONG);
+            PlaySFX(SFX_WRONG);
             // jp WaitSFX
-            return WaitSFX_Conv();
+            return WaitSFX();
         }
         // call EZChat_VerifyWordPlacement
         // call EZChatMenu_RerenderMessage
@@ -4024,7 +4024,7 @@ void Function11cb66(void){
 
 void Function11cbf5(void){
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // LD_HL(wcf64);
     // DEC_hl;
     // RET_NZ ;

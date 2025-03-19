@@ -134,7 +134,7 @@ static void DebugFlagMenu(void) {
                 EventFlagAction_Conv2(flag, RESET_FLAG);
             else
                 EventFlagAction_Conv2(flag, SET_FLAG);
-            WaitSFX_Conv();
+            WaitSFX();
         }
 
         char buffer[32];
@@ -173,7 +173,7 @@ const struct MenuHeader MenuHeader = {
     .defaultOption = 1,  // default option
 };
     ClearWindowData_Conv2();
-    PlaySFX_Conv(SFX_MENU);
+    PlaySFX(SFX_MENU);
     ReanchorBGMap_NoOAMUpdate_Conv();
 
     LoadMenuHeader_Conv2(&MenuHeader);

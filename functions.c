@@ -12,28 +12,28 @@ void init_function_pointers(void) {
 
     // home/audio.c
     CONVERTED(MaxVolume);
-    REDIRECTED(PlayMusic2);
+    // CONVERTED(PlayMusic2);
     CONVERTED(MinVolume);
     // CONVERTED(RestartMapMusic);
     // CONVERTED(IsSFXPlaying);
     CONVERTED(UpdateSound);
     REDIRECTED(FadeOutToMusic);
-    REDIRECTED(SpecialMapMusic);
-    REDIRECTED(GetMapMusic_MaybeSpecial);
-    REDIRECTED(WaitPlaySFX);
+    // CONVERTED(SpecialMapMusic);
+    // CONVERTED(GetMapMusic_MaybeSpecial);
+    // CONVERTED(WaitPlaySFX);
     REDIRECTED(PlaceBCDNumberSprite);
     CONVERTED(LowVolume);
-    REDIRECTED(PlaySFX);
+    // CONVERTED(PlaySFX);
     CONVERTED(TerminateExpBarSound);
     CONVERTED(InitSound);
-    REDIRECTED(TryRestartMapMusic);
+    // CONVERTED(TryRestartMapMusic);
     CONVERTED(FadeInToMusic);
     CONVERTED(PlayMapMusicBike);
-    CONVERTED(WaitSFX);
+    // CONVERTED(WaitSFX);
     // CONVERTED(PlayMapMusic);
-    REDIRECTED(PlayMusic);
+    // CONVERTED(PlayMusic);
     CONVERTED(FadeToMapMusic);
-    REDIRECTED(PlayCry);
+    // CONVERTED(PlayCry);
     // CONVERTED(SkipMusic);
     // CONVERTED(CheckSFX);
     CONVERTED(ChannelsOff);
@@ -107,7 +107,7 @@ void init_function_pointers(void) {
     REDIRECTED(FarDecompress);
 
     // home/delay.c
-    CONVERTED(DelayFrame);
+    // CONVERTED(DelayFrame);
     // CONVERTED(DelayFrames);
 
     // home/double_speed.c

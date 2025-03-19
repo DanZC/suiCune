@@ -284,9 +284,9 @@ void BankOfMom(void){
                     CopyBytes(wram->wMomsMoney, wram->wStringBuffer2, 3);
                     // LD_DE(SFX_TRANSACTION);
                     // CALL(aPlaySFX);
-                    PlaySFX_Conv(SFX_TRANSACTION);
+                    PlaySFX(SFX_TRANSACTION);
                     // CALL(aWaitSFX);
-                    WaitSFX_Conv();
+                    WaitSFX();
                     // LD_HL(mMomStoredMoneyText);
                     // CALL(aPrintText);
                     PrintText_Conv2(MomStoredMoneyText);
@@ -380,9 +380,9 @@ void BankOfMom(void){
                     CopyBytes(wram->wMoney, wram->wStringBuffer2, 3);
                     // LD_DE(SFX_TRANSACTION);
                     // CALL(aPlaySFX);
-                    PlaySFX_Conv(SFX_TRANSACTION);
+                    PlaySFX(SFX_TRANSACTION);
                     // CALL(aWaitSFX);
-                    WaitSFX_Conv();
+                    WaitSFX();
                     // LD_HL(mMomTakenMoneyText);
                     // CALL(aPrintText);
                     PrintText_Conv2(MomTakenMoneyText);

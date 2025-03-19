@@ -43,7 +43,7 @@ void v_DeleteSaveData(void){
     LoadFontsExtra_Conv();
     // LD_DE(MUSIC_MAIN_MENU);
     // CALL(aPlayMusic);
-    PlayMusic_Conv(MUSIC_MAIN_MENU);
+    PlayMusic(MUSIC_MAIN_MENU);
     // LD_HL(mv_DeleteSaveData_ClearAllSaveDataText);
     // CALL(aPrintText);
     PrintText_Conv2(ClearAllSaveDataText);

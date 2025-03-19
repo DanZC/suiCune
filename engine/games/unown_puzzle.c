@@ -421,7 +421,7 @@ static void UnownPuzzleJumptable_Function(void){
 // play_sfx:
     uint16_t sfx = (wram->wHoldingUnownPuzzlePiece)? SFX_MOVE_PUZZLE_PIECE: SFX_POUND;
     // CALL(aPlaySFX);
-    PlaySFX_Conv(sfx);
+    PlaySFX(sfx);
     // RET;
 }
 
@@ -451,7 +451,7 @@ void UnownPuzzle_A(void){
             return UnownPuzzle_InvalidAction();
         // LD_DE(SFX_MEGA_KICK);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_MEGA_KICK);
+        PlaySFX(SFX_MEGA_KICK);
         // LD_hl(0);
         *hl = 0;
         // LD_addr_A(wUnownPuzzleHeldPiece);
@@ -463,7 +463,7 @@ void UnownPuzzle_A(void){
         // CALL(aWaitBGMap);
         WaitBGMap_Conv();
         // CALL(aWaitSFX);
-        WaitSFX_Conv();
+        WaitSFX();
         // LD_A(TRUE);
         // LD_addr_A(wHoldingUnownPuzzlePiece);
         wram->wHoldingUnownPuzzlePiece = TRUE;
@@ -481,7 +481,7 @@ void UnownPuzzle_A(void){
         return UnownPuzzle_InvalidAction();
     // LD_DE(SFX_PLACE_PUZZLE_PIECE_DOWN);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_PLACE_PUZZLE_PIECE_DOWN);
+    PlaySFX(SFX_PLACE_PUZZLE_PIECE_DOWN);
     // LD_A_addr(wUnownPuzzleHeldPiece);
     // LD_hl_A;
     *hl = wram->wUnownPuzzleHeldPiece;
@@ -498,7 +498,7 @@ void UnownPuzzle_A(void){
     // LD_addr_A(wHoldingUnownPuzzlePiece);
     wram->wHoldingUnownPuzzlePiece = FALSE;
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // CALL(aCheckSolvedUnownPuzzle);
     // RET_NC ;
     if(!CheckSolvedUnownPuzzle())
@@ -511,9 +511,9 @@ void UnownPuzzle_A(void){
     ClearSprites();
     // LD_DE(SFX_1ST_PLACE);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_1ST_PLACE);
+    PlaySFX(SFX_1ST_PLACE);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // CALL(aSimpleWaitPressAorB);
     SimpleWaitPressAorB_Conv();
     // LD_A(TRUE);
@@ -532,9 +532,9 @@ void UnownPuzzle_Quit(void){
 void UnownPuzzle_InvalidAction(void){
     // LD_DE(SFX_WRONG);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_WRONG);
+    PlaySFX(SFX_WRONG);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // RET;
 }
 

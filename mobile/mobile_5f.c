@@ -860,7 +860,7 @@ void Function17d2ce(void){
     // LD_addr_A(wMusicFadeID + 1);
     wram->wMusicFadeID = MUSIC_MOBILE_CENTER;
     // CALL(aPlayMusic);
-    PlayMusic_Conv(MUSIC_MOBILE_CENTER);
+    PlayMusic(MUSIC_MOBILE_CENTER);
     // CALL(aReturnToMapFromSubmenu);
     ReturnToMapFromSubmenu();
     // CALL(aCloseSubmenu);
@@ -1196,7 +1196,7 @@ void Function17d48d(void){
         wram->wMapMusic = e;
         // LD_D(0x0);
         // CALL(aPlayMusic2);
-        PlayMusic2_Conv(e);
+        PlayMusic2(e);
     }
 
 // asm_17d4e0:
@@ -1844,7 +1844,7 @@ void Function17d7b4(void){
     // LD_D(0);
     uint16_t track = hl[0];
     // CALL(aPlayMusic2);
-    PlayMusic2_Conv(track);
+    PlayMusic2(track);
     // CALL(aHlToCrashCheckPointer);
     HlToCrashCheckPointer(hl + 1);
     // RET;
@@ -1859,9 +1859,9 @@ void Function17d7c2(void){
     // LD_D(0);
     uint16_t sfx = hl[0];
     // CALL(aPlaySFX);
-    PlaySFX_Conv(sfx);
+    PlaySFX(sfx);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // CALL(aHlToCrashCheckPointer);
     HlToCrashCheckPointer(hl + 1);
     // RET;
@@ -1878,9 +1878,9 @@ void Function17d7d3(void){
     // LD_D(0);
     uint16_t cry = hl[0] - 1;
     // CALL(aPlayCry);
-    PlayCry_Conv(cry);
+    PlayCry(cry);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // CALL(aHlToCrashCheckPointer);
     HlToCrashCheckPointer(hl + 1);
     // RET;

@@ -129,7 +129,7 @@ void v_UnownPrinter(void){
             // FARCALL(aPrintUnownStamp);
             PrintUnownStamp();
             // CALL(aRestartMapMusic);
-            RestartMapMusic_Conv();
+            RestartMapMusic();
             // POP_AF;
             // LD_addr_A(wJumptableIndex);
             wram->wJumptableIndex = jt;

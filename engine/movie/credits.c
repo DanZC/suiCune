@@ -479,12 +479,12 @@ void ParseCredits(void){
                 // PUSH_DE;
                 // LD_DE(MUSIC_NONE);
                 // CALL(aPlayMusic);
-                PlayMusic_Conv(MUSIC_NONE);
+                PlayMusic(MUSIC_NONE);
                 // CALL(aDelayFrame);
                 DelayFrame();
                 // POP_DE;
                 // CALL(aPlayMusic);
-                PlayMusic_Conv(MUSIC_CREDITS);
+                PlayMusic(MUSIC_CREDITS);
                 // JP(mParseCredits_loop);
                 continue;
             // CP_A(CREDITS_WAIT2);

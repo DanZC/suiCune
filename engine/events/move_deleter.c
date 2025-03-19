@@ -190,12 +190,12 @@ void MoveDeletion(void){
             // CALL(aMoveDeletion_DeleteMove);
             MoveDeletion_DeleteMove(res2.a - 1);
             // CALL(aWaitSFX);
-            WaitSFX_Conv();
+            WaitSFX();
             // LD_DE(SFX_MOVE_DELETED);
             // CALL(aPlaySFX);
-            PlaySFX_Conv(SFX_MOVE_DELETED);
+            PlaySFX(SFX_MOVE_DELETED);
             // CALL(aWaitSFX);
-            WaitSFX_Conv();
+            WaitSFX();
             // LD_HL(mMoveDeletion_DeleterForgotMoveText);
             // CALL(aPrintText);
             PrintText_Conv2(DeleterForgotMoveText);

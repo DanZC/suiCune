@@ -29,7 +29,7 @@ static void v_SwitchPartyMons_ClearSprite(uint8_t a) {
     }
     // LD_DE(SFX_SWITCH_POKEMON);
     // CALL(aWaitPlaySFX);
-    WaitPlaySFX_Conv(SFX_SWITCH_POKEMON);
+    WaitPlaySFX(SFX_SWITCH_POKEMON);
     // RET;
 }
 

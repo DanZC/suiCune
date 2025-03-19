@@ -288,7 +288,7 @@ void PlayStereoCry_Conv(species_t species){
     // CALL(av_PlayMonCry);
     v_PlayMonCry_Conv(species);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // RET;
 }
 
@@ -326,7 +326,7 @@ void PlayMonCry_Conv(species_t species){
     // CALL(aPlayMonCry2);
     PlayMonCry2_Conv(species);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // RET;
 }
 
@@ -395,7 +395,7 @@ void v_PlayMonCry_Conv(species_t species){
 
     // PUSH_DE;
     // REG_DE = (uint16_t)idx;
-    PlayCry_Conv((uint16_t)idx);
+    PlayCry((uint16_t)idx);
     // POP_DE;
 
 

@@ -1767,16 +1767,16 @@ const txt_cmd_s BallSoCloseText[] = {
 
 static void Text_GotchaMonWasCaught_Function(struct TextCmdState* state){
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // PUSH_BC;
     // LD_DE(MUSIC_NONE);
     // CALL(aPlayMusic);
-    PlayMusic_Conv(MUSIC_NONE);
+    PlayMusic(MUSIC_NONE);
     // CALL(aDelayFrame);
     DelayFrame();
     // LD_DE(MUSIC_CAPTURE);
     // CALL(aPlayMusic);
-    PlayMusic_Conv(MUSIC_CAPTURE);
+    PlayMusic(MUSIC_CAPTURE);
     // POP_BC;
     // LD_HL(mWaitButtonText);
     state->hl = WaitButtonText;
@@ -2647,7 +2647,7 @@ void HealHP_SFX_GFX(void){
     // PUSH_DE;
     // LD_DE(SFX_POTION);
     // CALL(aWaitPlaySFX);
-    WaitPlaySFX_Conv(SFX_POTION);
+    WaitPlaySFX(SFX_POTION);
     // POP_DE;
     // LD_A_addr(wCurPartyMon);
     // hlcoord(11, 0, wTilemap);
@@ -3395,7 +3395,7 @@ void XItemEffect(void){
     // FARCALL(aRaiseStat);
     RaiseStat_Conv(hl->stat);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
 
     // FARCALL(aBattleCommand_StatUpMessage);
     BattleCommand_StatUpMessage();
@@ -4028,7 +4028,7 @@ void Play_SFX_FULL_HEAL(void){
     // PUSH_DE;
     // LD_DE(SFX_FULL_HEAL);
     // CALL(aWaitPlaySFX);
-    WaitPlaySFX_Conv(SFX_FULL_HEAL);
+    WaitPlaySFX(SFX_FULL_HEAL);
     // POP_DE;
     // RET;
 }

@@ -2222,7 +2222,7 @@ static const char string_100966[] = "   min. remaining!@"; //db ['"のこり\u30
         PrintNum_Conv2(coord(4, 11, wram->wTilemap), wram->wStringBuffer2, 1, 2);
         // LD_DE(SFX_TWO_PC_BEEPS);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_TWO_PC_BEEPS);
+        PlaySFX(SFX_TWO_PC_BEEPS);
         // FARCALL(aReloadMapPart);
         ReloadMapPart_Conv();
         // LD_C(0x3c);
@@ -2239,7 +2239,7 @@ static const char string_100966[] = "   min. remaining!@"; //db ['"のこり\u30
         PlaceStringSimple(U82C(string_10095a), coord(4, 11, wram->wTilemap));
         // LD_DE(SFX_4_NOTE_DITTY);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_4_NOTE_DITTY);
+        PlaySFX(SFX_4_NOTE_DITTY);
         // FARCALL(aReloadMapPart);
         ReloadMapPart_Conv();
         // LD_C(120);
@@ -3001,9 +3001,9 @@ bool Mobile_PartyMenuSelect(void){
     wram->wCurPartySpecies = wram->wPartySpecies[wram->wCurPartyMon];
     // LD_DE(SFX_READ_TEXT_2);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_READ_TEXT_2);
+    PlaySFX(SFX_READ_TEXT_2);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // AND_A_A;
     // RET;
     return false;
@@ -3011,9 +3011,9 @@ bool Mobile_PartyMenuSelect(void){
 done:
     // LD_DE(SFX_READ_TEXT_2);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_READ_TEXT_2);
+    PlaySFX(SFX_READ_TEXT_2);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // SCF;
     // RET;
     return true;
@@ -3064,7 +3064,7 @@ bool MobileBattleMonMenu(void){
     // PUSH_AF;
     // LD_DE(SFX_READ_TEXT_2);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_READ_TEXT_2);
+    PlaySFX(SFX_READ_TEXT_2);
     // POP_AF;
     // BIT_A(1);
     // IF_Z goto asm_100d65;
@@ -3303,7 +3303,7 @@ void Function100e63(uint8_t e){
         return;
     // LD_DE(SFX_ELEVATOR_END);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_ELEVATOR_END);
+    PlaySFX(SFX_ELEVATOR_END);
     // RET;
 }
 
@@ -7054,7 +7054,7 @@ void Function102142(void){
     MenuTextbox_Conv(NewCardArrivedText);
     // LD_DE(SFX_LEVEL_UP);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_LEVEL_UP);
+    PlaySFX(SFX_LEVEL_UP);
     // CALL(aJoyWaitAorB);
     JoyWaitAorB_Conv();
     // CALL(aExitMenu);
@@ -7301,7 +7301,7 @@ void Function102274(void){
     bit_reset(wram->wcd4b, 3);
     // LD_DE(8);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_READ_TEXT_2);
+    PlaySFX(SFX_READ_TEXT_2);
     // RET;
 }
 
@@ -7345,7 +7345,7 @@ void Function102298(uint8_t e){
         bit_set(wram->wcd4b, 7);
         // LD_DE(SFX_ELEVATOR_END);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_ELEVATOR_END);
+        PlaySFX(SFX_ELEVATOR_END);
         // goto asm_1022c1;
     }
     else {
@@ -7515,7 +7515,7 @@ void Function102387(void){
     wram->wdc5f = 0;
     // LD_DE(MUSIC_ROUTE_30);
     // CALL(aPlayMusic);
-    PlayMusic_Conv(MUSIC_ROUTE_30);
+    PlayMusic(MUSIC_ROUTE_30);
     // CALL(aFunction102d9a);
     Function102d9a();
     // CALL(aFunction102dd3);
@@ -10292,7 +10292,7 @@ void Function1033af(void){
             return;
         // LD_DE(SFX_PUSH_BUTTON);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_PUSH_BUTTON);
+        PlaySFX(SFX_PUSH_BUTTON);
         // LD_BC(8);
         // CALL(aFunction10350f);
         // LD_A_addr(wd1ea);
@@ -10325,7 +10325,7 @@ void Function1033af(void){
             goto a_return;
         // LD_DE(SFX_TRANSACTION);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_TRANSACTION);
+        PlaySFX(SFX_TRANSACTION);
         // LD_HL(wd1eb);
         // SET_hl(7);
         // LD_HL(wd1eb);

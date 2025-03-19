@@ -1384,7 +1384,7 @@ void PhoneCall_Conv(Script_fn_t de){
 void Phone_NoSignal(void){
     // LD_DE(SFX_NO_SIGNAL);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_NO_SIGNAL);
+    PlaySFX(SFX_NO_SIGNAL);
     // JR(mPhone_CallEnd);
     return Phone_CallEnd();
 
@@ -1441,7 +1441,7 @@ void HangUp_Beep(void){
     // LD_DE(SFX_HANG_UP);
     // CALL(aPlaySFX);
     // RET;
-    return PlaySFX_Conv(SFX_HANG_UP);
+    return PlaySFX(SFX_HANG_UP);
 }
 
 const txt_cmd_s PhoneClickText[] = {
@@ -1469,10 +1469,10 @@ void HangUp_BoopOff(void){
 
 void Phone_StartRinging(void){
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // LD_DE(SFX_CALL);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_CALL);
+    PlaySFX(SFX_CALL);
     // CALL(aPhone_CallerTextbox);
     Phone_CallerTextbox_Conv();
     // CALL(aUpdateSprites);

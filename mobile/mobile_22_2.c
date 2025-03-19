@@ -800,9 +800,9 @@ static void UnknownText_0x8b64c_Function(struct TextCmdState* state) {
     static const txt_cmd_s string_8b663[] =  { text_end };
     // LD_DE(SFX_TWINKLE);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_TWINKLE);
+    PlaySFX(SFX_TWINKLE);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // LD_C(0x8);
     // CALL(aDelayFrames);
     DelayFrames(0x8);

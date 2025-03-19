@@ -138,12 +138,12 @@ void HallOfFame_PlayMusicDE(uint16_t de){
     // PUSH_DE;
     // LD_DE(MUSIC_NONE);
     // CALL(aPlayMusic);
-    PlayMusic_Conv(MUSIC_NONE);
+    PlayMusic(MUSIC_NONE);
     // CALL(aDelayFrame);
     DelayFrame();
     // POP_DE;
     // CALL(aPlayMusic);
-    PlayMusic_Conv(de);
+    PlayMusic(de);
     // RET;
 }
 

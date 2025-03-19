@@ -958,14 +958,14 @@ void Function17aa88(bool carry){
         return asm_17aa91();
     // LD_DE(SFX_SWITCH_POKEMON);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_SWITCH_POKEMON);
+    PlaySFX(SFX_SWITCH_POKEMON);
     // RET;
 }
 
 void asm_17aa91(void){
     // LD_DE(SFX_WRONG);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_WRONG);
+    PlaySFX(SFX_WRONG);
     // RET;
 }
 

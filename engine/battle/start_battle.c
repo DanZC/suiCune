@@ -223,7 +223,7 @@ void PlayBattleMusic_Conv(void){
     wram->wMusicFade = 0;
     // LD_DE(MUSIC_NONE);
     // CALL(aPlayMusic);
-    PlayMusic_Conv(MUSIC_NONE);
+    PlayMusic(MUSIC_NONE);
     // CALL(aDelayFrame);
     DelayFrame();
     // CALL(aMaxVolume);
@@ -363,7 +363,7 @@ void PlayBattleMusic_Conv(void){
 
 // done:
     // CALL(aPlayMusic);
-    PlayMusic_Conv(de);
+    PlayMusic(de);
 
     // POP_BC;
     // POP_DE;

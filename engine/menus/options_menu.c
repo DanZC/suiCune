@@ -127,9 +127,9 @@ void v_Option(void){
 // ExitOptions:
     // LD_DE(SFX_TRANSACTION);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_TRANSACTION);
+    PlaySFX(SFX_TRANSACTION);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // POP_AF;
     // LDH_addr_A(hInMenu);
     hram->hInMenu = inMenu;
@@ -506,7 +506,7 @@ bool Options_Sound(void){
         // IF_Z goto SetStereo;
         // goto SetMono;
         bit_toggle(wram->wOptions, STEREO);
-        RestartMapMusic_Conv();
+        RestartMapMusic();
     }
     // BIT_A(D_RIGHT_F);
     // IF_Z goto NonePressed;

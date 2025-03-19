@@ -3248,8 +3248,8 @@ void TextCommand_SOUND_Conv(struct TextPrintState* state) {
             // LD_E_hl;
             // INC_HL;
             // LD_D_hl;
-            PlaySFX_Conv(TextSFX[i+1]);
-            WaitSFX_Conv();
+            PlaySFX(TextSFX[i+1]);
+            WaitSFX();
             // CALL(aPlaySFX);
             // CALL(aWaitSFX);
             // POP_DE;
@@ -3301,8 +3301,8 @@ void TextCommand_SOUND_Conv2(struct TextCmdState* state, const struct TextCmd* c
             // LD_E_hl;
             // INC_HL;
             // LD_D_hl;
-            PlaySFX_Conv(TextSFX[i+1]);
-            WaitSFX_Conv();
+            PlaySFX(TextSFX[i+1]);
+            WaitSFX();
             // CALL(aPlaySFX);
             // CALL(aWaitSFX);
             // POP_DE;

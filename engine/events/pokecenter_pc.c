@@ -190,7 +190,7 @@ bool PC_CheckPartyForPokemon(void){
         return true;
     // LD_DE(SFX_CHOOSE_PC_OPTION);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_CHOOSE_PC_OPTION);
+    PlaySFX(SFX_CHOOSE_PC_OPTION);
     // LD_HL(mPC_CheckPartyForPokemon_PokecenterPCCantUseText);
     // CALL(aPC_DisplayText);
     PC_DisplayText_Conv(PokecenterPCCantUseText);
@@ -290,7 +290,7 @@ void PC_PlayShutdownSound(void){
     // CALL(aPC_WaitPlaySFX);
     PC_WaitPlaySFX_Conv(SFX_SHUT_DOWN_PC);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // RET;
 }
 
@@ -321,10 +321,10 @@ void PC_WaitPlaySFX(void){
 void PC_WaitPlaySFX_Conv(uint16_t sfx){
     // PUSH_DE;
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // POP_DE;
     // CALL(aPlaySFX);
-    PlaySFX_Conv(sfx);
+    PlaySFX(sfx);
     // RET;
 }
 

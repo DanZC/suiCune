@@ -328,8 +328,8 @@ void WildFled_EnemyFled_LinkBattleCanceled(void){
     if(!CheckMobileBattleError_Conv()) {
         // LD_DE(SFX_RUN);
         // CALL(aPlaySFX);
-        //PlaySFX_Conv(SFX_RUN);
-        WaitPlaySFX_Conv(SFX_RUN);
+        //PlaySFX(SFX_RUN);
+        WaitPlaySFX(SFX_RUN);
     }
 
 // skip_sfx:
@@ -4084,7 +4084,7 @@ void StopDangerSound(void){
 void FaintYourPokemon(void){
     // CALL(aStopDangerSound);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // LD_A(0xf0);
     // LD_addr_A(wCryTracks);
     wram->wCryTracks = 0xf0;
@@ -4104,15 +4104,15 @@ void FaintYourPokemon(void){
 
 void FaintEnemyPokemon(void){
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // LD_DE(SFX_KINESIS);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_KINESIS);
+    PlaySFX(SFX_KINESIS);
     // CALL(aEnemyMonFaintedAnimation);
     EnemyMonFaintedAnimation();
     // LD_DE(SFX_FAINT);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_FAINT);
+    PlaySFX(SFX_FAINT);
     // hlcoord(1, 0, wTilemap);
     // LD_BC((4 << 8) | 10);
     // CALL(aClearBox);
@@ -4621,7 +4621,7 @@ void PlayVictoryMusic(void){
     // PUSH_DE;
     // LD_DE(MUSIC_NONE);
     // CALL(aPlayMusic);
-    PlayMusic_Conv(MUSIC_NONE);
+    PlayMusic(MUSIC_NONE);
     // CALL(aDelayFrame);
     DelayFrame();
     // LD_DE(MUSIC_WILD_VICTORY);
@@ -4633,13 +4633,13 @@ void PlayVictoryMusic(void){
         // LD_DE(MUSIC_GYM_VICTORY);
         // CALL(aIsGymLeader);
         if(IsGymLeader_Conv(wram->wOtherTrainerClass)) {
-            PlayMusic_Conv(MUSIC_GYM_VICTORY);
+            PlayMusic(MUSIC_GYM_VICTORY);
             return;
         }
         // IF_C goto play_music;
         // LD_DE(MUSIC_TRAINER_VICTORY);
         else {
-            PlayMusic_Conv(MUSIC_TRAINER_VICTORY);
+            PlayMusic(MUSIC_TRAINER_VICTORY);
             return;
         }
     }
@@ -4661,7 +4661,7 @@ void PlayVictoryMusic(void){
 
 // play_music:
     // CALL(aPlayMusic);
-    PlayMusic_Conv(MUSIC_WILD_VICTORY);
+    PlayMusic(MUSIC_WILD_VICTORY);
     return;
 
 
@@ -5217,9 +5217,9 @@ bool ForcePickPartyMonInBattle(void){
 
         // LD_DE(SFX_WRONG);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_WRONG);
+        PlaySFX(SFX_WRONG);
         // CALL(aWaitSFX);
-        WaitSFX_Conv();
+        WaitSFX();
         // goto pick;
     }
 }
@@ -7070,7 +7070,7 @@ static bool TryToRunAwayFromBattle_can_escape(void) {
             }
         // skip_link_error:
             // CALL(aWaitSFX);
-            WaitSFX_Conv();
+            WaitSFX();
             // CALL(aLoadTilemapToTempTilemap);
             LoadTilemapToTempTilemap();
             // SCF;
@@ -7098,15 +7098,15 @@ static bool TryToRunAwayFromBattle_can_escape(void) {
     // PUSH_DE;
     // LD_DE(SFX_RUN);
     // CALL(aWaitPlaySFX);
-    WaitPlaySFX_Conv(SFX_RUN);
+    WaitPlaySFX(SFX_RUN);
     // POP_DE;
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // LD_HL(mBattleText_GotAwaySafely);
     // CALL(aStdBattleTextbox);
     StdBattleTextbox(BattleText_GotAwaySafely);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // CALL(aLoadTilemapToTempTilemap);
     LoadTilemapToTempTilemap();
     // SCF;
@@ -7865,14 +7865,14 @@ bool PursuitSwitch(void){
 
         // LD_DE(SFX_KINESIS);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_KINESIS);
+        PlaySFX(SFX_KINESIS);
         // CALL(aWaitSFX);
-        WaitSFX_Conv();
+        WaitSFX();
         // LD_DE(SFX_FAINT);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_FAINT);
+        PlaySFX(SFX_FAINT);
         // CALL(aWaitSFX);
-        WaitSFX_Conv();
+        WaitSFX();
         // CALL(aEnemyMonFaintedAnimation);
         EnemyMonFaintedAnimation();
         // LD_HL(mBattleText_EnemyMonFainted);
@@ -13247,9 +13247,9 @@ void GiveExperiencePoints(void){
             if(wram->wCurPartyMon != wram->wCurBattleMon){
                 // LD_DE(SFX_HIT_END_OF_EXP_BAR);
                 // CALL(aPlaySFX);
-                PlaySFX_Conv(SFX_HIT_END_OF_EXP_BAR);
+                PlaySFX(SFX_HIT_END_OF_EXP_BAR);
                 // CALL(aWaitSFX);
-                WaitSFX_Conv();
+                WaitSFX();
                 // LD_HL(mBattleText_StringBuffer1GrewToLevel);
                 // CALL(aStdBattleTextbox);
                 StdBattleTextbox(BattleText_StringBuffer1GrewToLevel);
@@ -13417,10 +13417,10 @@ const txt_cmd_s ExpPointsText[] = {
 static void AnimateExpBar_PlayExpBarSound(void){
     // PUSH_BC;
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // LD_DE(SFX_EXP_BAR);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_EXP_BAR);
+    PlaySFX(SFX_EXP_BAR);
     // LD_C(10);
     // CALL(aDelayFrames);
     DelayFrames(10);
@@ -13638,11 +13638,11 @@ void AnimateExpBar(uint16_t exp){
         TerminateExpBarSound();
         // LD_DE(SFX_HIT_END_OF_EXP_BAR);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_HIT_END_OF_EXP_BAR);
+        PlaySFX(SFX_HIT_END_OF_EXP_BAR);
         // FARCALL(aAnimateEndOfExpBar);
         AnimateEndOfExpBar_Conv();
         // CALL(aWaitSFX);
-        WaitSFX_Conv();
+        WaitSFX();
         // LD_HL(mBattleText_StringBuffer1GrewToLevel);
         // CALL(aStdBattleTextbox);
         StdBattleTextbox(BattleText_StringBuffer1GrewToLevel);
@@ -14965,7 +14965,7 @@ void CleanUpBattleRAM(void){
         // IF_NZ goto loop;
     } while(--b != 0);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // RET;
 }
 
@@ -16132,9 +16132,9 @@ void BattleStartMessage(void){
     if(wram->wBattleMode != WILD_BATTLE) {
         // LD_DE(SFX_SHINE);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_SHINE);
+        PlaySFX(SFX_SHINE);
         // CALL(aWaitSFX);
-        WaitSFX_Conv();
+        WaitSFX();
 
         // LD_C(20);
         // CALL(aDelayFrames);

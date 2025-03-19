@@ -68,9 +68,9 @@ const txt_cmd_s ContestJudging_FirstPlaceScoreText[] = {
 static void ConstestJudging_FirstPlaceText_Function(struct TextCmdState* state) {
     // LD_DE(SFX_1ST_PLACE);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_1ST_PLACE);
+    PlaySFX(SFX_1ST_PLACE);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // LD_HL(mContestJudging_FirstPlaceScoreText);
     state->hl = ContestJudging_FirstPlaceScoreText;
     // RET;
@@ -91,9 +91,9 @@ const txt_cmd_s ContestJudging_SecondPlaceScoreText[] = {
 static void ContestJudging_SecondPlaceText_Function(struct TextCmdState* state){
     // LD_DE(SFX_2ND_PLACE);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_2ND_PLACE);
+    PlaySFX(SFX_2ND_PLACE);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // LD_HL(mContestJudging_SecondPlaceScoreText);
     state->hl = ContestJudging_SecondPlaceScoreText;
     // RET;
@@ -114,9 +114,9 @@ const txt_cmd_s ContestJudging_ThirdPlaceScoreText[] = {
 static void ContestJudging_ThirdPlaceText_Function(struct TextCmdState* state) {
     // LD_DE(SFX_3RD_PLACE);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_3RD_PLACE);
+    PlaySFX(SFX_3RD_PLACE);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // LD_HL(mContestJudging_ThirdPlaceScoreText);
     state->hl = ContestJudging_ThirdPlaceScoreText;
     // RET;

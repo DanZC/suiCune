@@ -22,12 +22,12 @@ static const char CutGrassGFX[] = "gfx/overworld/cut_grass.png";
 
 void PlayWhirlpoolSound(void){
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // LD_DE(SFX_SURF);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_SURF);
+    PlaySFX(SFX_SURF);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // RET;
 }
 
@@ -85,10 +85,10 @@ void ShakeHeadbuttTree(void){
     // LD_addr_A(wFrameCounter);
     wram->wFrameCounter = 32;
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // LD_DE(SFX_SANDSTORM);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_SANDSTORM);
+    PlaySFX(SFX_SANDSTORM);
 
     while(wram->wFrameCounter != 0) {
     // loop:
@@ -245,10 +245,10 @@ void OWCutAnimation_Conv(uint8_t e){
     // CALL(aOWCutAnimation_LoadCutGFX);
     OWCutAnimation_LoadCutGFX();
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // LD_DE(SFX_PLACE_PUZZLE_PIECE_DOWN);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_PLACE_PUZZLE_PIECE_DOWN);
+    PlaySFX(SFX_PLACE_PUZZLE_PIECE_DOWN);
 
     while(!bit_test(wram->wJumptableIndex, 7)) {
     // loop:
@@ -757,7 +757,7 @@ void FlyFunction_FrameTimer(void){
             return;
         // LD_DE(SFX_FLY);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_FLY);
+        PlaySFX(SFX_FLY);
         // RET;
         return;
     }

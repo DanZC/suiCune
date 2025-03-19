@@ -1084,7 +1084,7 @@ void PromptButton_Conv(void) {
     // LD_DE(SFX_READ_TEXT_2);
     // CALL(aPlaySFX);
     // POP_DE;
-    PlaySFX_Conv(SFX_READ_TEXT_2);
+    PlaySFX(SFX_READ_TEXT_2);
     // RET;
 }
 

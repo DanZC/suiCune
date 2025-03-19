@@ -288,7 +288,7 @@ static void EvolutionAnimation_PlayEvolvedSFX(void){
         return;
     // LD_DE(SFX_EVOLVED);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_EVOLVED);
+    PlaySFX(SFX_EVOLVED);
     // LD_HL(wJumptableIndex);
     // LD_A_hl;
     // PUSH_AF;
@@ -331,7 +331,7 @@ static void EvolutionAnimation_EvolutionAnimation(void){
 
     // LD_DE(MUSIC_NONE);
     // CALL(aPlayMusic);
-    PlayMusic_Conv(MUSIC_NONE);
+    PlayMusic(MUSIC_NONE);
 
     // FARCALL(aClearSpriteAnims);
     ClearSpriteAnims_Conv();
@@ -405,7 +405,7 @@ static void EvolutionAnimation_EvolutionAnimation(void){
 // skip_cry:
     // LD_DE(MUSIC_EVOLUTION);
     // CALL(aPlayMusic);
-    PlayMusic_Conv(MUSIC_EVOLUTION);
+    PlayMusic(MUSIC_EVOLUTION);
 
     // LD_C(80);
     // CALL(aDelayFrames);

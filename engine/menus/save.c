@@ -239,7 +239,7 @@ void MoveMonWOMail_InsertMon_SaveGame(uint8_t e){
     ResumeGameLogic();
     // LD_DE(SFX_SAVE);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_SAVE);
+    PlaySFX(SFX_SAVE);
     // LD_C(24);
     // CALL(aDelayFrames);
     DelayFrames(24);
@@ -439,9 +439,9 @@ void SavedTheGame(void){
     wram->wOptions = options;
     // LD_DE(SFX_SAVE);
     // CALL(aWaitPlaySFX);
-    WaitPlaySFX_Conv(SFX_SAVE);
+    WaitPlaySFX(SFX_SAVE);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
 // wait 30 frames
     // LD_C(30);
     // CALL(aDelayFrames);

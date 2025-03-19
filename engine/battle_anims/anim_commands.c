@@ -105,7 +105,7 @@ void v_PlayBattleAnim(void){
     BattleAnimDelayFrame();
     BattleAnimDelayFrame();
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // RET;
 }
 
@@ -164,7 +164,7 @@ void BattleAnimRunScript(void){
 
 // hi_byte:
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // CALL(aPlayHitSound);
     PlayHitSound();
     // CALL(aRunBattleAnimScript);
@@ -2869,16 +2869,16 @@ void PlayHitSound(void){
     // LD_DE(SFX_DAMAGE);
     // IF_Z goto play;
     if(typeMod == EFFECTIVE)
-        return PlaySFX_Conv(SFX_DAMAGE);
+        return PlaySFX(SFX_DAMAGE);
 
     // LD_DE(SFX_SUPER_EFFECTIVE);
     // IF_NC goto play;
     else if(typeMod > EFFECTIVE)
-        return PlaySFX_Conv(SFX_SUPER_EFFECTIVE);
+        return PlaySFX(SFX_SUPER_EFFECTIVE);
 
     // LD_DE(SFX_NOT_VERY_EFFECTIVE);
     else 
-        return PlaySFX_Conv(SFX_NOT_VERY_EFFECTIVE);
+        return PlaySFX(SFX_NOT_VERY_EFFECTIVE);
 
 // play:
     // CALL(aPlaySFX);

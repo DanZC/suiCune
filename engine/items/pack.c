@@ -826,7 +826,7 @@ void RegisterItem(void){
     Pack_GetItemName();
     // LD_DE(SFX_FULL_HEAL);
     // CALL(aWaitPlaySFX);
-    WaitPlaySFX_Conv(SFX_FULL_HEAL);
+    WaitPlaySFX(SFX_FULL_HEAL);
     // LD_HL(mRegisteredItemText);
     // CALL(aPack_PrintTextNoScroll);
     Pack_PrintTextNoScroll(RegisteredItemText);
@@ -1577,7 +1577,7 @@ bool DepositSellTutorial_InterpretJoypad(void){
         // PUSH_DE;
         // LD_DE(SFX_SWITCH_POCKETS);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_SWITCH_POCKETS);
+        PlaySFX(SFX_SWITCH_POCKETS);
         // POP_DE;
         // SCF;
         // RET;
@@ -1596,7 +1596,7 @@ bool DepositSellTutorial_InterpretJoypad(void){
         // PUSH_DE;
         // LD_DE(SFX_SWITCH_POCKETS);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_SWITCH_POCKETS);
+        PlaySFX(SFX_SWITCH_POCKETS);
         // POP_DE;
         // SCF;
         // RET;
@@ -1983,10 +1983,10 @@ bool Pack_InterpretJoypad_Conv(uint8_t b, uint8_t c){
             SwitchItemsInBag();
             // LD_DE(SFX_SWITCH_POKEMON);
             // CALL(aWaitPlaySFX);
-            WaitPlaySFX_Conv(SFX_SWITCH_POKEMON);
+            WaitPlaySFX(SFX_SWITCH_POKEMON);
             // LD_DE(SFX_SWITCH_POKEMON);
             // CALL(aWaitPlaySFX);
-            WaitPlaySFX_Conv(SFX_SWITCH_POKEMON);
+            WaitPlaySFX(SFX_SWITCH_POKEMON);
 
         end_switch:
             // XOR_A_A;
@@ -2040,7 +2040,7 @@ bool Pack_InterpretJoypad_Conv(uint8_t b, uint8_t c){
         // PUSH_DE;
         // LD_DE(SFX_SWITCH_POCKETS);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_SWITCH_POCKETS);
+        PlaySFX(SFX_SWITCH_POCKETS);
         // POP_DE;
         // SCF;
         // RET;
@@ -2059,7 +2059,7 @@ bool Pack_InterpretJoypad_Conv(uint8_t b, uint8_t c){
         // PUSH_DE;
         // LD_DE(SFX_SWITCH_POCKETS);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_SWITCH_POCKETS);
+        PlaySFX(SFX_SWITCH_POCKETS);
         // POP_DE;
         // SCF;
         // RET;

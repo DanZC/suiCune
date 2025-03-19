@@ -694,12 +694,12 @@ void UseFlashTextScript(struct TextCmdState* state){
     //text_far ['_BlindingFlashText']
     //text_asm ['?']
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // LD_DE(SFX_FLASH);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_FLASH);
+    PlaySFX(SFX_FLASH);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // LD_HL(mUseFlashTextScript_BlankText);
     state->hl = BlankText;
     // RET;
@@ -2853,7 +2853,7 @@ static uint8_t BikeFunction_TryBike(void) {
         wram->wMusicFade = 0x0;
         // LD_DE(MUSIC_NONE);
         // CALL(aPlayMusic);
-        PlayMusic_Conv(MUSIC_NONE);
+        PlayMusic(MUSIC_NONE);
         // CALL(aDelayFrame);
         DelayFrame();
         // CALL(aMaxVolume);
@@ -2863,7 +2863,7 @@ static uint8_t BikeFunction_TryBike(void) {
         // LD_addr_A(wMapMusic);
         wram->wMapMusic = MUSIC_BICYCLE;
         // CALL(aPlayMusic);
-        PlayMusic_Conv(MUSIC_BICYCLE);
+        PlayMusic(MUSIC_BICYCLE);
         // LD_A(0x1);
         // RET;
         return 0x1;

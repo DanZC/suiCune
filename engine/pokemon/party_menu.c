@@ -1003,9 +1003,9 @@ u8_flag_s PartyMenuSelect(void){
 
             // LD_DE(SFX_READ_TEXT_2);
             // CALL(aPlaySFX);
-            PlaySFX_Conv(SFX_READ_TEXT_2);
+            PlaySFX(SFX_READ_TEXT_2);
             // CALL(aWaitSFX);
-            WaitSFX_Conv();
+            WaitSFX();
             // AND_A_A;
             // RET;
             return u8_flag(wram->wCurPartyMon, false);
@@ -1015,9 +1015,9 @@ u8_flag_s PartyMenuSelect(void){
 // exitmenu:
     // LD_DE(SFX_READ_TEXT_2);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_READ_TEXT_2);
+    PlaySFX(SFX_READ_TEXT_2);
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // SCF;
     // RET;
     return u8_flag(0, true);

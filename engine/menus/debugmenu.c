@@ -159,9 +159,9 @@ void DebugMenu(void) {
     sDebugMenuTilemapBuffer = malloc(sizeof(wram->wTilemap) * 2);
     sDebugMenuAttrmapBuffer = sDebugMenuTilemapBuffer + sizeof(wram->wTilemap);
 
-    PlayMusic_Conv(MUSIC_NONE);
+    PlayMusic(MUSIC_NONE);
     DelayFrame();
-    PlayMusic_Conv(DEBUG_MENU_MUSIC);
+    PlayMusic(DEBUG_MENU_MUSIC);
     DebugMenu_MenuBox();
     DebugMenu_PrintStrings();
     DebugMenu_PlaceCursor();
@@ -194,7 +194,7 @@ void DebugMenu(void) {
             break;
         DelayFrame();
     }
-    PlayMusic_Conv(MUSIC_NONE);
+    PlayMusic(MUSIC_NONE);
     DelayFrame();
 
     free(sDebugMenuTilemapBuffer); // also frees sDebugMenuAttrmapBuffer
@@ -206,13 +206,13 @@ void DebugMenu(void) {
 
 void Handler_Fight(void) {
     DebugMenu_BattleTest();
-    PlayMusic_Conv(DEBUG_MENU_MUSIC);
+    PlayMusic(DEBUG_MENU_MUSIC);
 }
 
 void Handler_Link(void) {
     // TODO: Implement this function
     DebugMenu_Link();
-    PlayMusic_Conv(DEBUG_MENU_MUSIC);
+    PlayMusic(DEBUG_MENU_MUSIC);
 }
 
 void Handler_Field(void) {
@@ -221,7 +221,7 @@ void Handler_Field(void) {
 
 void Handler_SoundTest(void) {
     DebugMenu_SoundTest();
-    PlayMusic_Conv(DEBUG_MENU_MUSIC);
+    PlayMusic(DEBUG_MENU_MUSIC);
 }
 
 void Handler_Subgame(void) {
@@ -235,7 +235,7 @@ void Handler_Anime(void) {
 void Handler_Graphics(void) {
     // TODO: Implement this function
     DebugMenu_GFXTest();
-    PlayMusic_Conv(DEBUG_MENU_MUSIC);
+    PlayMusic(DEBUG_MENU_MUSIC);
 }
 
 void Handler_Pokedex(void) {
@@ -249,43 +249,43 @@ void Handler_Trainergear(void) {
 void Handler_Stats(void) {
     // TODO: Implement this function
     DebugMenu_Stats();
-    PlayMusic_Conv(DEBUG_MENU_MUSIC);
+    PlayMusic(DEBUG_MENU_MUSIC);
 }
 
 void Handler_Pics(void) {
     // TODO: Implement this function
     DebugMenu_Pics();
-    PlayMusic_Conv(DEBUG_MENU_MUSIC);
+    PlayMusic(DEBUG_MENU_MUSIC);
 }
 
 void Handler_Script(void) {
     DebugMenu_Scripting();
-    PlayMusic_Conv(DEBUG_MENU_MUSIC);
+    PlayMusic(DEBUG_MENU_MUSIC);
 }
 
 void Handler_TradeAnim(void) {
     DebugMenu_TradeAnim();
-    PlayMusic_Conv(DEBUG_MENU_MUSIC);
+    PlayMusic(DEBUG_MENU_MUSIC);
 }
 
 void Handler_BattleAnim(void) {
     DebugMenu_BattleAnim();
-    PlayMusic_Conv(DEBUG_MENU_MUSIC);
+    PlayMusic(DEBUG_MENU_MUSIC);
 }
 
 void Handler_Credits(void) {
     DebugMenu_Credits();
-    PlayMusic_Conv(DEBUG_MENU_MUSIC);
+    PlayMusic(DEBUG_MENU_MUSIC);
 }
 
 void Handler_MysteryGift(void) {
     DebugMenu_MysteryGift();
-    PlayMusic_Conv(DEBUG_MENU_MUSIC);
+    PlayMusic(DEBUG_MENU_MUSIC);
 }
 
 void Handler_News(void) {
     DebugMenu_News();
-    PlayMusic_Conv(DEBUG_MENU_MUSIC);
+    PlayMusic(DEBUG_MENU_MUSIC);
 }
 
 static const char* DebugMenu_MusicNames[] = {
@@ -346,7 +346,7 @@ static void DebugMenu_SoundTest_PlaceSoundName(uint16_t track) {
 }
 
 void DebugMenu_SoundTest(void) {
-    PlayMusic_Conv(MUSIC_NONE);
+    PlayMusic(MUSIC_NONE);
     DelayFrame();
 
     uint8_t editingWhich = 0;
@@ -413,23 +413,23 @@ void DebugMenu_SoundTest(void) {
             wram->wTilemap[coordidx(SCREEN_WIDTH - 2, 2)] = CHAR_RIGHT_ARROW;
         }
         if(hram->hJoyPressed & (B_BUTTON)) {
-            PlayMusic_Conv(MUSIC_NONE);
+            PlayMusic(MUSIC_NONE);
             DelayFrame();
         }
         if(hram->hJoyPressed & (SELECT)) 
             break;
         if(hram->hJoyPressed & (A_BUTTON)) {
             if(editingWhich == 0) {
-                PlayMusic_Conv(MUSIC_NONE);
+                PlayMusic(MUSIC_NONE);
                 DelayFrame();
-                PlayMusic_Conv(musicTrack);
+                PlayMusic(musicTrack);
             } else {
-                PlaySFX_Conv(sound);
+                PlaySFX(sound);
             }
         }
         DelayFrame();
     }
-    PlayMusic_Conv(MUSIC_NONE);
+    PlayMusic(MUSIC_NONE);
     ClearBox_Conv2(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, SCREEN_HEIGHT);
     DelayFrame();
 }
@@ -481,7 +481,7 @@ static void DebugMenu_BattleTest_StartBattle(uint8_t tclass, uint8_t tid) {
     WaitBGMap_Conv();
     LoadFontsExtra_Conv();
     LoadStandardFont_Conv();
-    PlayMusic_Conv(MUSIC_NONE);
+    PlayMusic(MUSIC_NONE);
     DelayFrame();
 }
 
@@ -561,7 +561,7 @@ void DebugMenu_BattleTest_PlaceTrainerName(uint8_t tclass, uint8_t tid) {
 }
 
 void DebugMenu_BattleTest(void) {
-    PlayMusic_Conv(MUSIC_NONE);
+    PlayMusic(MUSIC_NONE);
     DelayFrame();
 
     uint8_t tclass = PSYCHIC_T; 
@@ -608,7 +608,7 @@ void DebugMenu_BattleTest(void) {
         }
         DelayFrame();
     }
-    PlayMusic_Conv(MUSIC_NONE);
+    PlayMusic(MUSIC_NONE);
     ClearBox_Conv2(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, SCREEN_HEIGHT);
     DelayFrame();
 }
@@ -1059,7 +1059,7 @@ void DebugMenu_TradeTest(void) {
     LinkComms_LoadPleaseWaitTextboxBorderGFX();
     SetTradeRoomBGPals();
     WaitBGMap2_Conv();
-    PlayMusic_Conv(MUSIC_ROUTE_30);
+    PlayMusic(MUSIC_ROUTE_30);
     InitTradeMenuDisplay();
     DebugMenu_RestoreTilemap();
     DebugMenu_RestoreAttrmap();

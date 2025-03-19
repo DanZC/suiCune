@@ -2274,7 +2274,7 @@ void PlayClickSFX_Conv(void) {
     // CALL(aPlaySFX);
     // POP_DE;
     // RET;
-    return PlaySFX_Conv(SFX_READ_TEXT_2);
+    return PlaySFX(SFX_READ_TEXT_2);
 }
 
 void MenuTextboxWaitButton(const struct TextCmd* hl) {

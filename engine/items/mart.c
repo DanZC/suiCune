@@ -1394,10 +1394,10 @@ const txt_cmd_s MartBoughtText[] = {
 
 void PlayTransactionSound(void){
     // CALL(aWaitSFX);
-    WaitSFX_Conv();
+    WaitSFX();
     // LD_DE(SFX_TRANSACTION);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_TRANSACTION);
+    PlaySFX(SFX_TRANSACTION);
     // RET;
 }
 

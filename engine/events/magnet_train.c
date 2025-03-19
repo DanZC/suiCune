@@ -257,7 +257,7 @@ void MagnetTrain_LoadGFX_PlayMusic(void){
 
     // LD_DE(MUSIC_MAGNET_TRAIN);
     // CALL(aPlayMusic2);
-    PlayMusic2_Conv(MUSIC_MAGNET_TRAIN);
+    PlayMusic2(MUSIC_MAGNET_TRAIN);
     // RET;
 }
 
@@ -563,7 +563,7 @@ void MagnetTrain_Jumptable(void){
         wram->wJumptableIndex = 0x80;
         // LD_DE(SFX_TRAIN_ARRIVED);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_TRAIN_ARRIVED);
+        PlaySFX(SFX_TRAIN_ARRIVED);
         // RET;
     } return;
     }

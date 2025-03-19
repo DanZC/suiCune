@@ -826,7 +826,7 @@ void AIUsedItemSound(void){
     // CALL(aPlaySFX);
     // POP_DE;
     // RET;
-    PlaySFX_Conv(SFX_FULL_HEAL);
+    PlaySFX(SFX_FULL_HEAL);
 }
 
 void EnemyUsedFullHeal(void){

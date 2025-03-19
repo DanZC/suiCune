@@ -81,7 +81,7 @@ uint8_t MonMenuLoop(void){
         uint8_t pad = StaticMenuJoypad_Conv();
         // LD_DE(SFX_READ_TEXT_2);
         // CALL(aPlaySFX);
-        PlaySFX_Conv(SFX_READ_TEXT_2);
+        PlaySFX(SFX_READ_TEXT_2);
         // LDH_A_addr(hJoyPressed);
         // BIT_A(A_BUTTON_F);
         // IF_NZ goto select;
@@ -407,7 +407,7 @@ bool BattleMonMenu(void){
     uint8_t pad = StaticMenuJoypad_Conv();
     // LD_DE(SFX_READ_TEXT_2);
     // CALL(aPlaySFX);
-    PlaySFX_Conv(SFX_READ_TEXT_2);
+    PlaySFX(SFX_READ_TEXT_2);
     // LDH_A_addr(hJoyPressed);
     // BIT_A(B_BUTTON_F);
     // IF_Z goto clear_carry;

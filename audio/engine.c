@@ -1438,7 +1438,7 @@ void PlayTrainerEncounterMusic(uint8_t e) {
     // PUSH_DE;                        // push de
     // LD_DE(MUSIC_NONE);              // ld de, MUSIC_NONE
     // CALL(aPlayMusic);               // call PlayMusic
-    PlayMusic_Conv(MUSIC_NONE);
+    PlayMusic(MUSIC_NONE);
     // CALL(mDelayFrame);              // call DelayFrame
     DelayFrame();
                                     // play new song
@@ -1450,6 +1450,6 @@ void PlayTrainerEncounterMusic(uint8_t e) {
     // ADD_HL_DE;                      // add hl, de
     // LD_E_hl;                        // ld e, [hl]
     // CALL(aPlayMusic);               // call PlayMusic
-    PlayMusic_Conv(TrainerEncounterMusic[e]);
+    PlayMusic(TrainerEncounterMusic[e]);
     // RET;                            // ret
 }

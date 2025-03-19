@@ -742,13 +742,13 @@ void Printer_ResetJoypadRegisters(void){
 void Printer_PlayMusic(void){
     // LD_DE(MUSIC_PRINTER);
     // CALL(aPlayMusic2);
-    PlayMusic2_Conv(MUSIC_PRINTER);
+    PlayMusic2(MUSIC_PRINTER);
     // RET;
 }
 
 void Printer_RestartMapMusic(void){
     // CALL(aRestartMapMusic);
-    RestartMapMusic_Conv();
+    RestartMapMusic();
     // RET;
 }
 
