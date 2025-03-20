@@ -20,6 +20,7 @@
 #include "../home/sram.h"
 #include "../home/fade.h"
 #include "../home/pokedex_flags.h"
+#include "../home/gfx.h"
 #include "../engine/gfx/dma_transfer.h"
 #include "../engine/gfx/color.h"
 #include "../engine/gfx/load_pics.h"
@@ -35,195 +36,201 @@ uint8_t* gMobile_wcd4b_wcd4c;
 uint8_t* gMobile_wcd4d_wcd4e;
 uint8_t* gMobile_wcd52_wcd53;
 
+// LoadHaveWantGFX
 void Function17c000(void){
-    CALL(aDisableLCD);
+    // CALL(aDisableLCD);
+    DisableLCD();
 
-    LD_HL(vTiles2);
-    LD_BC(0x31 * LEN_2BPP_TILE);
-    XOR_A_A;
-    CALL(aByteFill);
+    // LD_HL(vTiles2);
+    // LD_BC(0x31 * LEN_2BPP_TILE);
+    // XOR_A_A;
+    // CALL(aByteFill);
+    ByteFill(vram->vTiles0, 0x31 * LEN_2BPP_TILE, 0);
 
-    CALL(aLoadStandardFont);
-    CALL(aLoadFontsExtra);
+    // CALL(aLoadStandardFont);
+    LoadStandardFont_Conv();
+    // CALL(aLoadFontsExtra);
+    LoadFontsExtra_Conv();
 
-    LD_HL(mHaveWantMap);
-    decoord(0, 0, wTilemap);
-    bccoord(0, 0, wAttrmap);
+    // LD_HL(mHaveWantMap);
+    asset_s haveWantMap = LoadAsset(HaveWantMap);
+    uint8_t* hl = haveWantMap.ptr;
+    // decoord(0, 0, wTilemap);
+    tile_t* de = coord(0, 0, wram->wTilemap);
+    // bccoord(0, 0, wAttrmap);
+    uint8_t* bc = coord(0, 0, wram->wAttrmap);
 
-    LD_A(SCREEN_HEIGHT);
+    // LD_A(SCREEN_HEIGHT);
+    uint8_t a = SCREEN_HEIGHT;
 
-y:
-    PUSH_AF;
-    LD_A(SCREEN_WIDTH);
+    do {
+    // y:
+        // PUSH_AF;
+        // LD_A(SCREEN_WIDTH);
+        uint8_t a2 = SCREEN_WIDTH;
 
-    PUSH_HL;
+        // PUSH_HL;
+        uint8_t* hl2 = hl;
+        do {
+        // x:
+            // PUSH_AF;
+            // LD_A_hli;
+            // LD_de_A;
+            *(de++) = *(hl2++);
+            // INC_DE;
+            // LD_A_hli;
+            // LD_bc_A;
+            *(bc++) = *(hl2++);
+            // INC_BC;
+            // POP_AF;
+            // DEC_A;
+            // IF_NZ goto x;
+        } while(--a2 != 0);
+        // POP_HL;
 
-x:
-    PUSH_AF;
-    LD_A_hli;
-    LD_de_A;
-    INC_DE;
-    LD_A_hli;
-    LD_bc_A;
-    INC_BC;
-    POP_AF;
-    DEC_A;
-    IF_NZ goto x;
-    POP_HL;
+        // PUSH_BC;
+        // LD_BC(BG_MAP_WIDTH * 2);
+        // ADD_HL_BC;
+        // POP_BC;
+        hl += BG_MAP_WIDTH * 2;
 
-    PUSH_BC;
-    LD_BC(BG_MAP_WIDTH * 2);
-    ADD_HL_BC;
-    POP_BC;
+        // POP_AF;
+        // DEC_A;
+        // IF_NZ goto y;
+    } while(--a != 0);
 
-    POP_AF;
-    DEC_A;
-    IF_NZ goto y;
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
 
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
+    // LD_A(BANK(wBGPals1));
+    // LDH_addr_A(rSVBK);
 
-    LD_A(BANK(wBGPals1));
-    LDH_addr_A(rSVBK);
+    // LD_HL(mHaveWantPals);
+    // LD_DE(wBGPals1);
+    // LD_BC(16 * PALETTE_SIZE);
+    // CALL(aCopyBytes);
+    CopyBytes(wram->wBGPals1, HaveWantPals, 16 * PALETTE_SIZE);
 
-    LD_HL(mHaveWantPals);
-    LD_DE(wBGPals1);
-    LD_BC(16 * PALETTE_SIZE);
-    CALL(aCopyBytes);
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
 
-    POP_AF;
-    LDH_addr_A(rSVBK);
+    // LD_HL(mMobileSelectGFX);
+    // LD_DE(vTiles0 + LEN_2BPP_TILE * 0x30);
+    // LD_BC(0x20 * LEN_2BPP_TILE);
+    // CALL(aCopyBytes);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles0 + LEN_2BPP_TILE * 0x30, MobileSelectGFX, 0, 0x20);
 
-    LD_HL(mMobileSelectGFX);
-    LD_DE(vTiles0 + LEN_2BPP_TILE * 0x30);
-    LD_BC(0x20 * LEN_2BPP_TILE);
-    CALL(aCopyBytes);
+    // LD_A(1);
+    // LDH_addr_A(rVBK);
 
-    LD_A(1);
-    LDH_addr_A(rVBK);
+    // LD_HL(mHaveWantGFX);
+    // LD_DE(vTiles2);
+    // LD_BC(0x80 * LEN_2BPP_TILE);
+    // CALL(aCopyBytes);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles5, HaveWantGFX, 0, 0x80);
 
-    LD_HL(mHaveWantGFX);
-    LD_DE(vTiles2);
-    LD_BC(0x80 * LEN_2BPP_TILE);
-    CALL(aCopyBytes);
+    // LD_HL(mHaveWantGFX + 0x80 * LEN_2BPP_TILE);
+    // LD_DE(vTiles1);
+    // LD_BC(0x10 * LEN_2BPP_TILE);
+    // CALL(aCopyBytes);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles4, HaveWantGFX, 0x80, 0x10);
 
-    LD_HL(mHaveWantGFX + 0x80 * LEN_2BPP_TILE);
-    LD_DE(vTiles1);
-    LD_BC(0x10 * LEN_2BPP_TILE);
-    CALL(aCopyBytes);
+    // XOR_A_A;
+    // LDH_addr_A(rVBK);
 
-    XOR_A_A;
-    LDH_addr_A(rVBK);
-
-    CALL(aEnableLCD);
-    FARCALL(aReloadMapPart);
-    RET;
-
+    // CALL(aEnableLCD);
+    EnableLCD();
+    // FARCALL(aReloadMapPart);
+    ReloadMapPart_Conv();
+    // RET;
 }
 
-void HaveWantGFX(void){
-// INCBIN "gfx/mobile/havewant.2bpp"
+const char HaveWantGFX[] = "gfx/mobile/havewant.png";
+const char MobileSelectGFX[] = "gfx/mobile/select.png";
+const char HaveWantMap[] = "gfx/mobile/havewant_map.bin"; //  Interleaved tile/palette map.
 
-    return MobileSelectGFX();
-}
-
-void MobileSelectGFX(void){
-// INCBIN "gfx/mobile/select.2bpp"
-
-    return HaveWantMap();
-}
-
-void HaveWantMap(void){
-//  Interleaved tile/palette map.
-// INCBIN "gfx/mobile/havewant_map.bin"
-
-    return HaveWantPals();
-}
-
-void HaveWantPals(void){
 //  BG and OBJ palettes.
-    //rgb ['0', '0', '0']
-    //rgb ['21', '21', '21']
-    //rgb ['0', '0', '0']
-    //rgb ['0', '0', '0']
+const uint16_t HaveWantPals[] = {
+    rgb( 0,  0,  0),
+    rgb(21, 21, 21),
+    rgb( 0,  0,  0),
+    rgb( 0,  0,  0),
 
-    //rgb ['0', '0', '0']
-    //rgb ['4', '17', '29']
-    //rgb ['6', '19', '31']
-    //rgb ['31', '31', '31']
+    rgb( 0,  0,  0),
+    rgb( 4, 17, 29),
+    rgb( 6, 19, 31),
+    rgb(31, 31, 31),
 
-    //rgb ['0', '0', '0']
-    //rgb ['0', '0', '0']
-    //rgb ['0', '0', '0']
-    //rgb ['0', '0', '0']
+    rgb(0, 0, 0),
+    rgb(0, 0, 0),
+    rgb(0, 0, 0),
+    rgb(0, 0, 0),
 
-    //rgb ['0', '0', '0']
-    //rgb ['2', '13', '18']
-    //rgb ['6', '19', '31']
-    //rgb ['31', '31', '31']
+    rgb(0, 0, 0),
+    rgb(2, 13, 18),
+    rgb(6, 19, 31),
+    rgb(31, 31, 31),
 
-    //rgb ['0', '0', '0']
-    //rgb ['31', '5', '5']
-    //rgb ['29', '21', '21']
-    //rgb ['31', '31', '31']
+    rgb(0, 0, 0),
+    rgb(31, 5, 5),
+    rgb(29, 21, 21),
+    rgb(31, 31, 31),
 
-    //rgb ['0', '0', '0']
-    //rgb ['0', '0', '0']
-    //rgb ['0', '0', '0']
-    //rgb ['0', '0', '0']
+    rgb(0, 0, 0),
+    rgb(0, 0, 0),
+    rgb(0, 0, 0),
+    rgb(0, 0, 0),
 
-    //rgb ['0', '0', '0']
-    //rgb ['0', '0', '0']
-    //rgb ['0', '0', '0']
-    //rgb ['0', '0', '0']
+    rgb(0, 0, 0),
+    rgb(0, 0, 0),
+    rgb(0, 0, 0),
+    rgb(0, 0, 0),
 
-    //rgb ['0', '0', '0']
-    //rgb ['4', '17', '29']
-    //rgb ['6', '19', '31']
-    //rgb ['2', '15', '27']
+    rgb(0, 0, 0),
+    rgb(4, 17, 29),
+    rgb(6, 19, 31),
+    rgb(2, 15, 27),
 
-    //rgb ['0', '0', '0']
-    //rgb ['28', '19', '18']
-    //rgb ['25', '9', '0']
-    //rgb ['0', '0', '0']
+    rgb(0, 0, 0),
+    rgb(28, 19, 18),
+    rgb(25, 9, 0),
+    rgb(0, 0, 0),
 
-    //rgb ['0', '0', '0']
-    //rgb ['31', '27', '27']
-    //rgb ['31', '10', '4']
-    //rgb ['29', '0', '0']
+    rgb(0, 0, 0),
+    rgb(31, 27, 27),
+    rgb(31, 10, 4),
+    rgb(29, 0, 0),
 
-    //rgb ['0', '0', '0']
-    //rgb ['31', '31', '31']
-    //rgb ['26', '8', '23']
-    //rgb ['22', '0', '16']
+    rgb(0, 0, 0),
+    rgb(31, 31, 31),
+    rgb(26, 8, 23),
+    rgb(22, 0, 16),
 
-    //rgb ['0', '0', '0']
-    //rgb ['31', '31', '31']
-    //rgb ['20', '8', '31']
-    //rgb ['15', '1', '26']
+    rgb(0, 0, 0),
+    rgb(31, 31, 31),
+    rgb(20, 8, 31),
+    rgb(15, 1, 26),
 
-    //rgb ['0', '0', '0']
-    //rgb ['31', '31', '31']
-    //rgb ['17', '12', '31']
-    //rgb ['12', '6', '31']
+    rgb(0, 0, 0),
+    rgb(31, 31, 31),
+    rgb(17, 12, 31),
+    rgb(12, 6, 31),
 
-    //rgb ['0', '16', '0']
-    //rgb ['11', '11', '14']
-    //rgb ['5', '5', '7']
-    //rgb ['31', '31', '31']
+    rgb(0, 16, 0),
+    rgb(11, 11, 14),
+    rgb(5, 5, 7),
+    rgb(31, 31, 31),
 
-    //rgb ['0', '31', '0']
-    //rgb ['0', '0', '0']
-    //rgb ['0', '0', '0']
-    //rgb ['0', '0', '0']
+    rgb(0, 31, 0),
+    rgb(0, 0, 0),
+    rgb(0, 0, 0),
+    rgb(0, 0, 0),
 
-    //rgb ['16', '31', '0']
-    //rgb ['0', '0', '0']
-    //rgb ['0', '0', '0']
-    //rgb ['0', '0', '0']
-
-    return CheckStringForErrors();
-}
+    rgb(16, 31, 0),
+    rgb(0, 0, 0),
+    rgb(0, 0, 0),
+    rgb(0, 0, 0),
+};
 
 void CheckStringForErrors(void){
 //  Valid character ranges:
@@ -6414,10 +6421,10 @@ const char* const Table_17f699[] = {
 
 void Palette_17f6af(void){
 //  //  unreferenced
-    //rgb ['5', '5', '16']
-    //rgb ['8', '19', '28']
-    //rgb ['0', '0', '0']
-    //rgb ['31', '31', '31']
+    //rgb(5, 5, 16),
+    //rgb(8, 19, 28),
+    //rgb(0, 0, 0),
+    //rgb(31, 31, 31),
 }
 
 static tile_t* Function17f6b7_bcd_digit(tile_t* hl, uint8_t a) {

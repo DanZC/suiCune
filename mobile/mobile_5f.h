@@ -7,10 +7,10 @@ typedef struct ErrCodes {
     errcode_s codes[];
 } errcodes_s;
 void Function17c000(void);
-void HaveWantGFX(void);
-void MobileSelectGFX(void);
-void HaveWantMap(void);
-void HaveWantPals(void);
+extern const char HaveWantGFX[];
+extern const char MobileSelectGFX[];
+extern const char HaveWantMap[];
+extern const uint16_t HaveWantPals[];
 void CheckStringForErrors(void);
 bool CheckStringForErrors_Conv(const uint8_t* de, uint8_t c);
 void CheckStringForErrors_IgnoreTerminator(void);
