@@ -7898,6 +7898,7 @@ void Function10250c(void){
 // asm_102577:
     // LD_HL(wcd4b);
     // SET_hl(1);
+    bit_set(wram->wcd4b, 1);
     // LD_A(0);
     // LD_addr_A(wcd4a);
     wram->wcd4a = 0;
@@ -8623,7 +8624,7 @@ void Function1028da(void){
 void Function1028e8(uint8_t a){
     // LD_HL(wcd4b);
     // RES_hl(6);
-    bit_set(wram->wcd4b, 6);
+    bit_reset(wram->wcd4b, 6);
     // LD_addr_A(wcd50);
     wram->wcd50 = a;
     // FARCALL(aStartMobileInactivityTimer);
@@ -9937,46 +9938,60 @@ bool Function10307f(void){
 }
 
 void Function103094(void){
-    LD_HL(wcd4b);
-    BIT_hl(7);
-    IF_NZ goto asm_1030c0;
-    LD_A_addr(wcf42);
-    BIT_A(7);
-    IF_NZ goto asm_1030b2;
-    LD_A_addr(wcf44);
-    INC_A;
-    LD_addr_A(wcf44);
-    CP_A(0x2c);
-    RET_NZ ;
-    LD_HL(wcf42);
-    SET_hl(7);
-    RET;
-
-
-asm_1030b2:
-    LD_A_addr(wcf44);
-    DEC_A;
-    LD_addr_A(wcf44);
-    RET_NZ ;
-    LD_HL(wcf42);
-    RES_hl(7);
-    RET;
-
-
-asm_1030c0:
-    LD_HL(wcf44);
-    LD_A_hl;
-    AND_A_A;
-    IF_Z goto asm_1030ca;
-    DEC_A;
-    LD_hl_A;
-    RET_NZ ;
-
-
-asm_1030ca:
-    LD_hl(0x2c);
-    RET;
-
+    // LD_HL(wcd4b);
+    // BIT_hl(7);
+    // IF_NZ goto asm_1030c0;
+    if(bit_test(wram->wcd4b, 7)) {
+    // asm_1030c0:
+        // LD_HL(wcf44);
+        // LD_A_hl;
+        // AND_A_A;
+        // IF_Z goto asm_1030ca;
+        if(wram->wcf44 != 0) {
+            // DEC_A;
+            // LD_hl_A;
+            // RET_NZ ;
+            if(--wram->wcf44 != 0)
+                return;
+        }
+    
+    // asm_1030ca:
+        // LD_hl(0x2c);
+        wram->wcf44 = 0x2c;
+        // RET;
+        return;
+    }
+    // LD_A_addr(wcf42);
+    // BIT_A(7);
+    // IF_NZ goto asm_1030b2;
+    else if(bit_test(wram->wcf42, 7)) {
+    // asm_1030b2:
+        // LD_A_addr(wcf44);
+        // DEC_A;
+        // LD_addr_A(wcf44);
+        // RET_NZ ;
+        if(--wram->wcf44 != 0)
+            return;
+        // LD_HL(wcf42);
+        // RES_hl(7);
+        bit_reset(wram->wcf42, 7);
+        // RET;
+        return;
+    }
+    else {
+        // LD_A_addr(wcf44);
+        // INC_A;
+        // LD_addr_A(wcf44);
+        // CP_A(0x2c);
+        // RET_NZ ;
+        if(++wram->wcf44 != 0x2c)
+            return;
+        // LD_HL(wcf42);
+        // SET_hl(7);
+        bit_set(wram->wcf42, 7);
+        // RET;
+        return;
+    }
 }
 
 void Function1030cd(struct SpriteOAM* de){
