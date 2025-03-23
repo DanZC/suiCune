@@ -3952,6 +3952,7 @@ void Function17e2a7(void){
     Function17e32b();
     // XOR_A_A;
     // LD_addr_A(wcf66);
+    wram->wcf66 = 0;
     // FARCALL(aFunction118233);
     Function118233();
     // LD_DE(mPostalMarkGFX);
@@ -3970,6 +3971,7 @@ void Function17e2a7(void){
         Function17e349();
         // XOR_A_A;
         // LD_addr_A(wcd7a);
+        wram->wcd7a[0] = 0;
         // LD_A(0x5);
         // CALL(aOpenSRAM);
         OpenSRAM_Conv(MBANK(as5_aa7f));

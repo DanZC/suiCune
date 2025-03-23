@@ -587,6 +587,20 @@ struct wram_s
                                 struct MailMsg wMobileMonMail;
                             };
                             struct {
+                                uint8_t wOfferEmail[MOBILE_EMAIL_LENGTH];
+                                uint16_t wOfferTrainerID;
+                                uint16_t wOfferSecretID;
+                                uint8_t wOfferGender;
+                                species_t wOfferSpecies;
+                                uint8_t wOfferReqGender;
+                                species_t wOfferReqSpecies;
+                                uint8_t wOfferMonSender[PLAYER_NAME_LENGTH - 1];
+                                struct PartyMon wOfferMon;
+                                uint8_t wOfferMonOT[PLAYER_NAME_LENGTH - 1];
+                                uint8_t wOfferMonNick[MON_NAME_LENGTH - 1];
+                                struct MailMsg wOfferMonMail;
+                            };
+                            struct {
                                 uint8_t wc608[16];
                                 uint8_t wc618[37];
                                 uint8_t wc63d[5];

@@ -16,85 +16,105 @@
 #include "../home/menu.h"
 #include "../engine/gfx/dma_transfer.h"
 #include "../engine/gfx/sprites.h"
+#include "../engine/events/poke_seer.h"
 
+// StagePlayerOfferMonDataForTrade
 void Function170000(void){
-    LD_A_addr(0xc62b);
-    LD_addr_A(wPlayerTrademonSpecies);
-    LD_HL(0xc62e);
-    LD_DE(wPlayerTrademonSenderName);
-    LD_BC(0x0005);
-    CALL(aCopyBytes);
-    LD_A(0x50);
-    LD_de_A;
-    LD_HL(0xc663);
-    LD_DE(wPlayerTrademonOTName);
-    LD_BC(0x0005);
-    CALL(aCopyBytes);
-    LD_A(0x50);
-    LD_de_A;
-    LD_HL(0xc648);
-    LD_A_hli;
-    LD_addr_A(wPlayerTrademonDVs);
-    LD_A_hl;
-    LD_addr_A(wPlayerTrademonDVs + 1);
-    LD_HL(0xc639);
-    LD_A_hli;
-    LD_addr_A(wPlayerTrademonID);
-    LD_A_hl;
-    LD_addr_A(wPlayerTrademonID + 1);
-    LD_BC(0xc633);
-    FARCALL(aGetCaughtGender);
-    LD_A_C;
-    LD_addr_A(wPlayerTrademonCaughtData);
-    LD_A_addr(wcd81);
-    LD_addr_A(wc74e);
-    LD_HL(0xc608);
-    LD_DE(0xd800);
-    LD_BC(0x008f);
-    CALL(aCopyBytes);
-    RET;
-
+    // LD_A_addr(0xc62b);
+    // LD_addr_A(wPlayerTrademonSpecies);
+    wram->wPlayerTrademon.species = wram->wOfferSpecies;
+    // LD_HL(0xc62e);
+    // LD_DE(wPlayerTrademonSenderName);
+    // LD_BC(0x0005);
+    // CALL(aCopyBytes);
+    CopyBytes(wram->wPlayerTrademon.senderName, wram->wOfferMonSender, PLAYER_NAME_LENGTH - 1);
+    // LD_A(0x50);
+    // LD_de_A;
+    wram->wPlayerTrademon.senderName[PLAYER_NAME_LENGTH - 1] = 0x50;
+    // LD_HL(0xc663);
+    // LD_DE(wPlayerTrademonOTName);
+    // LD_BC(0x0005);
+    // CALL(aCopyBytes);
+    CopyBytes(wram->wPlayerTrademon.otName, wram->wOfferMonOT, PLAYER_NAME_LENGTH - 1);
+    // LD_A(0x50);
+    // LD_de_A;
+    wram->wPlayerTrademon.otName[PLAYER_NAME_LENGTH - 1] = 0x50;
+    // LD_HL(0xc648);
+    // LD_A_hli;
+    // LD_addr_A(wPlayerTrademonDVs);
+    // LD_A_hl;
+    // LD_addr_A(wPlayerTrademonDVs + 1);
+    wram->wPlayerTrademon.dvs = wram->wOfferMon.mon.DVs;
+    // LD_HL(0xc639);
+    // LD_A_hli;
+    // LD_addr_A(wPlayerTrademonID);
+    // LD_A_hl;
+    // LD_addr_A(wPlayerTrademonID + 1);
+    wram->wPlayerTrademon.id = wram->wOfferMon.mon.id;
+    // LD_BC(0xc633);
+    // FARCALL(aGetCaughtGender);
+    // LD_A_C;
+    // LD_addr_A(wPlayerTrademonCaughtData);
+    wram->wPlayerTrademon.caughtData = GetCaughtGender_Conv(&wram->wOfferMon.mon);
+    // LD_A_addr(wcd81);
+    // LD_addr_A(wc74e);
+    wram->wc74e[0] = wram->wcd81[0];
+    // LD_HL(0xc608);
+    // LD_DE(0xd800);
+    // LD_BC(0x008f);
+    // CALL(aCopyBytes);
+    CopyBytes(wram->w3_d800, wram->wOfferEmail, TRADE_CORNER_TRADE_REQUEST_LENGTH);
+    // RET;
 }
 
+// StageOTOfferMonDataForTrade
 void Function17005a(void){
-    LD_A(0x5);
-    CALL(aOpenSRAM);
-    LD_A_addr(0xa824);
-    LD_addr_A(wOTTrademonSpecies);
-    LD_HL(0xa827);
-    LD_DE(wOTTrademonSenderName);
-    LD_BC(NAME_LENGTH_JAPANESE - 1);
-    CALL(aCopyBytes);
-    LD_A(0x50);
-    LD_de_A;
-    LD_HL(0xa85c);
-    LD_DE(wOTTrademonOTName);
-    LD_BC(NAME_LENGTH_JAPANESE - 1);
-    CALL(aCopyBytes);
-    LD_A(0x50);
-    LD_de_A;
-    LD_HL(0xa841);
-    LD_A_hli;
-    LD_addr_A(wOTTrademonDVs);
-    LD_A_hl;
-    LD_addr_A(wOTTrademonDVs + 1);
-    LD_HL(0xa832);
-    LD_A_hli;
-    LD_addr_A(wOTTrademonID);
-    LD_A_hl;
-    LD_addr_A(wOTTrademonID + 1);
-    LD_BC(0xa82c);
-    FARCALL(aGetCaughtGender);
-    LD_A_C;
-    LD_addr_A(wOTTrademonCaughtData);
-    LD_A_addr(wcd81);
-    LD_addr_A(wc74e);
-    CALL(aCloseSRAM);
-    RET;
-
-// INCLUDE "engine/events/battle_tower/battle_tower.asm"
-
-    return Function170be4();
+    // LD_A(0x5);
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(as5_a800));
+    struct OfferMon* offer = (struct OfferMon*)GBToRAMAddr(s5_a800 + 1);
+    // LD_A_addr(0xa824);
+    // LD_addr_A(wOTTrademonSpecies);
+    wram->wOTTrademon.species = offer->species;
+    // LD_HL(0xa827);
+    // LD_DE(wOTTrademonSenderName);
+    // LD_BC(NAME_LENGTH_JAPANESE - 1);
+    // CALL(aCopyBytes);
+    CopyBytes(wram->wOTTrademon.senderName, offer->sender, PLAYER_NAME_LENGTH - 1);
+    // LD_A(0x50);
+    // LD_de_A;
+    wram->wOTTrademon.senderName[PLAYER_NAME_LENGTH - 1] = 0x50;
+    // LD_HL(0xa85c);
+    // LD_DE(wOTTrademonOTName);
+    // LD_BC(NAME_LENGTH_JAPANESE - 1);
+    // CALL(aCopyBytes);
+    CopyBytes(wram->wOTTrademon.otName, offer->OT, PLAYER_NAME_LENGTH - 1);
+    // LD_A(0x50);
+    // LD_de_A;
+    wram->wOTTrademon.otName[PLAYER_NAME_LENGTH - 1] = 0x50;
+    // LD_HL(0xa841);
+    // LD_A_hli;
+    // LD_addr_A(wOTTrademonDVs);
+    // LD_A_hl;
+    // LD_addr_A(wOTTrademonDVs + 1);
+    wram->wPlayerTrademon.dvs = offer->mon.mon.DVs;
+    // LD_HL(0xa832);
+    // LD_A_hli;
+    // LD_addr_A(wOTTrademonID);
+    // LD_A_hl;
+    // LD_addr_A(wOTTrademonID + 1);
+    wram->wPlayerTrademon.id = offer->mon.mon.id;
+    // LD_BC(0xa82c);
+    // FARCALL(aGetCaughtGender);
+    // LD_A_C;
+    // LD_addr_A(wOTTrademonCaughtData);
+    wram->wOTTrademon.caughtData = GetCaughtGender_Conv(&offer->mon.mon);
+    // LD_A_addr(wcd81);
+    // LD_addr_A(wc74e);
+    wram->wc74e[0] = wram->wcd81[0];
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
 }
 
 void Function170be4(void){

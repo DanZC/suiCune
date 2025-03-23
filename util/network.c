@@ -3,6 +3,8 @@
 #include <stdint.h>
 #include <assert.h>
 #include "network.h"
+#include "json.h"
+#include "assets.h"
 #include "../home/delay.h"
 
 /// WIP experimental networking system to replace SDLNet.
@@ -1515,6 +1517,17 @@ bool Network_ResolveHost(const char* hostname, const char* port, struct mobile_a
     return true;
 }
 
+void Network_ResolveHostToIPString(char* dest, const char* hostname, const char* port) {
+    struct mobile_addr a;
+    if(Network_ResolveHost(hostname, port, &a)) {
+        struct mobile_addr4* addr4 = (struct mobile_addr4*)&a;
+        snprintf(dest, 16, "%d.%d.%d.%d",
+            addr4->host[0], addr4->host[1],
+            addr4->host[2], addr4->host[3]);
+        return;
+    }
+}
+
 /// Mobile interface
 
 enum {
@@ -1545,6 +1558,8 @@ static void gb_serial_tx_test(const uint8_t x) {
         // FILE* f = fopen("mobile_packets.log", "a");
         // fprintf(f, "A %02X %02X\n", gMobileByte, x);
         // fclose(f);
+        if(gMobileByte == 0xD2 && x == 0x4B)
+            return;
         printf("A %02X %02X\n", gMobileByte, x);
     }
 }
@@ -1749,6 +1764,14 @@ struct mobile_config {
     } config_slot[3];
 };
 
+struct server_config {
+    char hostname[64];
+    char loginPass[20];
+    char relayServer[64];
+};
+
+static struct server_config gServerConfig;
+
 enum {
     MOBILE_CONFIG_STATUS_NONE,
     MOBILE_CONFIG_STATUS_CONFIGURING = 0x1,
@@ -1788,6 +1811,97 @@ void MobileNumberStore(uint8_t* dst, size_t size, const char* src) {
     }
 }
 
+// Additional server override values are stored in server.json.
+// These values will override existing default values for the server
+// hostname, and login password as well as some values from the mobile
+// config loaded from mobile.bin.
+void LoadMobileServerConfig(struct server_config* srv, struct mobile_config* cfg) {
+    asset_s a = LoadTextAsset("server.json");
+    if(a.ptr == NULL)
+        return;
+
+    json_value_t* root = json_parse(a.ptr, a.size);
+    if(!root) {
+        FreeAsset(a);
+        return;
+    }
+
+    json_object_t* root_object = json_value_as_object(root);
+    if(!root_object)
+        goto end;
+
+    for(json_object_element_t* it = root_object->start; it != NULL; it = it->next) {
+        if(strcmp(it->name->string, "hostname") == 0) {
+            json_string_t *s = json_value_as_string(it->value);
+            if(s == NULL)
+                continue;
+
+            if(s->string_size == 0)
+                continue;
+            
+            memset(srv->hostname, 0, sizeof(srv->hostname));
+            strncpy(srv->hostname, s->string, sizeof(srv->hostname) - 1);
+        }
+        else if(strcmp(it->name->string, "login_name") == 0) {
+            json_string_t *s = json_value_as_string(it->value);
+            if(s == NULL)
+                continue;
+
+            if(s->string_size == 0)
+                continue;
+
+            if(s->string_size != sizeof(cfg->loginName)) {
+                fprintf(stderr, "For field %s, Bad string size: %lu\n", it->name->string, s->string_size);
+                continue;
+            }
+            
+            memcpy(cfg->loginName, s->string, sizeof(cfg->loginName));
+        }
+        else if(strcmp(it->name->string, "email_id") == 0) {
+            json_string_t *s = json_value_as_string(it->value);
+            if(s == NULL)
+                continue;
+
+            if(s->string_size == 0)
+                continue;
+
+            if(s->string_size != 8) {
+                fprintf(stderr, "For field %s, Bad string size: %lu\n", it->name->string, s->string_size);
+                continue;
+            }
+            
+            memcpy(cfg->emailName, s->string, 8);
+        }
+        else if(strcmp(it->name->string, "login_pass") == 0) {
+            json_string_t *s = json_value_as_string(it->value);
+            if(s == NULL)
+                continue;
+
+            if(s->string_size == 0)
+                continue;
+            
+            memset(srv->loginPass, 0, sizeof(srv->loginPass));
+            strncpy(srv->loginPass, s->string, sizeof(srv->loginPass) - 1);
+        }
+    }
+
+end:
+    free(root);
+    FreeAsset(a);
+    return;
+}
+
+const char* Mobile_GetServerHostname(void) {
+    return gServerConfig.hostname;
+}
+
+const char* Mobile_GetServerLoginPassword(uint8_t maxLength) {
+    int len = strlen(gServerConfig.loginPass);
+    if(len == 0 || len > maxLength)
+        return NULL;
+    return gServerConfig.loginPass;
+}
+
 void MobileConfigCreateDefault(FILE* f) {
     uint8_t buffer[MOBILE_CONFIG_SIZE];
     memset(buffer, 0x0, sizeof(buffer));
@@ -1801,6 +1915,8 @@ void MobileConfigCreateDefault(FILE* f) {
     memcpy(cfg->popServer, "pop.pkmn.dion.ne.jp", sizeof(cfg->popServer));
     MobileNumberStore(cfg->config_slot[0].number, sizeof(cfg->config_slot[0].number), "0077487751");
     memcpy(cfg->config_slot[0].id, "DION DDI-POCKET", sizeof(cfg->config_slot[0].id));
+    strncpy(gServerConfig.hostname, "localhost", sizeof(gServerConfig.hostname) - 1);
+    memset(gServerConfig.loginPass, 0, sizeof(gServerConfig.loginPass));
     uint16_t checksum = 0;
     for(int i = 0; i < 0xc0 - 2; ++i) {
         checksum += buffer[i];
@@ -1821,6 +1937,7 @@ bool MobileConfigRead(void* user, void* dest, uintptr_t offset, size_t size) {
         f = fopen("mobile.bin", "rb");
     }
     fread(udata->config, 1, MOBILE_CONFIG_SIZE, f);
+    LoadMobileServerConfig(&gServerConfig, (struct mobile_config*)udata->config); // Try and overwrite default values from mobile config.
     fclose(f);
     memcpy(dest, udata->config + offset, size);
     return true;
@@ -1911,9 +2028,9 @@ void MobileInit(void) {
     mobile_config_set_device(gMobileAdapter, MOBILE_ADAPTER_BLUE, true);
     struct mobile_addr dns = {.type = MOBILE_ADDRTYPE_IPV4};
     struct mobile_addr4* addr4 = (struct mobile_addr4*)&dns._addr4;
-    addr4->host[0] = 127;
-    addr4->host[1] = 0;
-    addr4->host[2] = 0;
+    addr4->host[0] = 1;
+    addr4->host[1] = 1;
+    addr4->host[2] = 1;
     addr4->host[3] = 1;
     addr4->port = MOBILE_DNS_PORT;
     mobile_config_set_dns(gMobileAdapter, &dns, MOBILE_DNS1);

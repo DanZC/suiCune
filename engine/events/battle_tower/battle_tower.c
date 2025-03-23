@@ -1146,23 +1146,27 @@ next:
 }
 
 void Function17071b(void){
-    LD_A(BANK(sBattleTowerChallengeState));
-    CALL(aOpenSRAM);
-    LD_A(BATTLETOWER_WON_CHALLENGE);
-    LD_addr_A(sBattleTowerChallengeState);
-    CALL(aCloseSRAM);
-    RET;
-
+    // LD_A(BANK(sBattleTowerChallengeState));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asBattleTowerChallengeState));
+    // LD_A(BATTLETOWER_WON_CHALLENGE);
+    // LD_addr_A(sBattleTowerChallengeState);
+    gb_write(sBattleTowerChallengeState, BATTLETOWER_WON_CHALLENGE);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
 }
 
 void Function170729(void){
-    LD_A(BANK(sBattleTowerChallengeState));
-    CALL(aOpenSRAM);
-    LD_A(BATTLETOWER_RECEIVED_REWARD);
-    LD_addr_A(sBattleTowerChallengeState);
-    CALL(aCloseSRAM);
-    RET;
-
+    // LD_A(BANK(sBattleTowerChallengeState));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asBattleTowerChallengeState));
+    // LD_A(BATTLETOWER_RECEIVED_REWARD);
+    // LD_addr_A(sBattleTowerChallengeState);
+    gb_write(sBattleTowerChallengeState, BATTLETOWER_RECEIVED_REWARD);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
 }
 
 void BattleTower_SaveOptions(void){
@@ -1356,16 +1360,20 @@ void Function1707f4(void){
 }
 
 void Function170807(void){
-    CALL(aUpdateTime);
-    LD_A(BANK(s5_b2f9));  // aka BANK(s5_b2fa)
-    CALL(aOpenSRAM);
-    LD_A_addr(wCurDay);
-    LD_addr_A(s5_b2f9);
-    XOR_A_A;
-    LD_addr_A(s5_b2fa);
-    CALL(aCloseSRAM);
-    RET;
-
+    // CALL(aUpdateTime);
+    UpdateTime_Conv();
+    // LD_A(BANK(s5_b2f9));  // aka BANK(s5_b2fa)
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(as5_b2f9));
+    // LD_A_addr(wCurDay);
+    // LD_addr_A(s5_b2f9);
+    gb_write(s5_b2f9, wram->wCurDay);
+    // XOR_A_A;
+    // LD_addr_A(s5_b2fa);
+    gb_write(s5_b2fa, 0);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
 }
 
 void Function17081d(void){

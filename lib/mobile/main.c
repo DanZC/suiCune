@@ -3,6 +3,7 @@
 #include "../../home/compare.h"
 #include "../../home/delay.h"
 #include "../../home/mobile.h"
+#include "../../util/network.h"
 
 //  A library included as part of the Mobile Adapter GB SDK.
 
@@ -103,10 +104,10 @@ const uint8_t MobilePacket_CloseTCPConnection[] = {
 };
 
 const char URIPrefix[] = "http://";
-const char HTTPDownloadURL[] = "gameboy.datacenter.ne.jp/cgb/download";
-const char HTTPUploadURL[] = "gameboy.datacenter.ne.jp/cgb/upload";
-const char HTTPUtilityURL[] = "gameboy.datacenter.ne.jp/cgb/utility";
-const char HTTPRankingURL[] = "gameboy.datacenter.ne.jp/cgb/ranking";
+const char HTTPDownloadURL[] = "/cgb/download";
+const char HTTPUploadURL[] = "/cgb/upload";
+const char HTTPUtilityURL[] = "/cgb/utility";
+const char HTTPRankingURL[] = "/cgb/ranking";
 
 uint16_t gMobilePacketSize;
 const uint8_t* gMobilePacketPointer;
@@ -1562,6 +1563,7 @@ void Function110615(uint8_t a){
         gMobile_wc876 = --hl;
         // LD_HL(wc8ff);
         hl = wram->wc8ff;
+        Network_ResolveHostToIPString((char*)wram->wc8ff, (const char*)wram->wc8ff, "80");
         // LD_A(0x50);
         a = 0x50;
         // LD_B(0x40);
@@ -3100,7 +3102,16 @@ asm_110e00:
         // IF_NZ goto asm_110e53;
     } while(--b != 0);
     // PUSH_HL;
-    char* hl3 = hl2;
+    char* hln = hl2;
+
+    // Skip the domain name, since that can change.
+    while(*hln != '/') {
+        if(*hln == '\0')
+            goto asm_110dfd;
+        hln++;
+    }
+
+    char* hl3 = hln;
     // LD_B(lengthof(HTTPUploadURL));
     b = lengthof(HTTPUploadURL);
     // LD_C(0x0);
@@ -3128,7 +3139,7 @@ asm_110e00:
 asm_110e70:
     // POP_HL;
     // PUSH_HL;
-    hl3 = hl2;
+    hl3 = hln;
     // LD_B(lengthof(HTTPRankingURL));
     b = sizeof(HTTPRankingURL) - 1;
     // LD_C(0x0);
@@ -3156,7 +3167,7 @@ asm_110e70:
 asm_110e86:
     // POP_HL;
     // PUSH_HL;
-    hl3 = hl2;
+    hl3 = hln;
     // LD_B(sizeof(HTTPUtilityURL));
     b = sizeof(HTTPUtilityURL) - 1;
     // LD_C(0x0);
@@ -3173,7 +3184,7 @@ asm_110e86:
         if(*de != *hl3) {
         // asm_110ea2:
             // POP_HL;
-            hl3 = hl2;
+            hl3 = hln;
             // LD_B(sizeof(HTTPDownloadURL));
             b = sizeof(HTTPDownloadURL) - 1;
             // LD_C(0x0);
@@ -3877,8 +3888,16 @@ void Function1111fe(mobile_api_data_s* data){
         // DEC_B;
         // IF_NZ goto asm_111256;
     } while(--b != 0);
+    char* hln = hl2;
+
+    // Skip the domain name, since that can change.
+    while(*hln != '/') {
+        if(*hln == '\0')
+            return Function1113f7();
+        hln++;
+    }
     // PUSH_HL;
-    char* hl3 = hl2;
+    char* hl3 = hln;
     // LD_B(lengthof(HTTPDownloadURL));
     b = lengthof(HTTPDownloadURL) - 1;
     // LD_C(0x0);
@@ -3907,7 +3926,7 @@ void Function1111fe(mobile_api_data_s* data){
 asm_111275:
     // POP_HL;
     // PUSH_HL;
-    hl3 = hl2;
+    hl3 = hln;
     // LD_B(lengthof(HTTPRankingURL));
     b = lengthof(HTTPRankingURL) - 1;
     // LD_C(0x0);
@@ -3939,13 +3958,14 @@ asm_111275:
                 char ch = *(de2++);
                 // CP_A_hl;
                 // IF_NZ goto asm_1112cc;
-                if(ch != *hl2)
+                if(ch != *hln)
                     goto asm_1112cc;
                 // INC_HL;
-                hl2++;
+                hln++;
                 // DEC_B;
                 // IF_NZ goto asm_111297;
             } while(--b != 0);
+            hl2 = hln;
             goto asm_1112a0;
         }
         // INC_HL;

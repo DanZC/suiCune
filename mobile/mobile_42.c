@@ -1432,7 +1432,7 @@ void MobileTradeAnim_GiveTrademon1(void){
         }
         // CP_A(0x30);
         // IF_Z goto delete;
-        else if(hram->hSCY == 0x40) {
+        else if(hram->hSCY == 0x30) {
         // delete:
             // CALL(aMobileTradeAnim_DeleteSprites);
             MobileTradeAnim_DeleteSprites();

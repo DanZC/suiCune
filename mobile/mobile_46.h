@@ -132,7 +132,7 @@ void Function11984e(void);
 void Function1198ee(void);
 void Function1198f7(void);
 void Function119937(void);
-void Function119940(void);
+void Function119940(uint8_t* hl);
 void Function119954(void);
 void Function119973(void);
 void Function119987(void);

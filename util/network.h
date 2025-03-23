@@ -39,6 +39,8 @@ int Network_SendByte(uint8_t byte);
 int Network_TryRecvByte(uint8_t* dest);
 bool Network_SafeTryRecvByte(uint8_t* dest);
 
+void Network_ResolveHostToIPString(char* dest, const char* hostname, const char* port);
+
 void MobileInit(void);
 bool MobileCheckAdapterEnabled(void);
 bool MobileCheckSerialEnabled(void);
@@ -47,5 +49,7 @@ void MobileUpdate(void);
 uint32_t MobileTransfer(uint32_t input);
 void MobileSetDevice(int device, bool unmetered);
 void MobileQuit(void);
+const char* Mobile_GetServerHostname(void);
+const char* Mobile_GetServerLoginPassword(uint8_t maxLength);
 
 extern uint8_t gOtherPlayerGender;

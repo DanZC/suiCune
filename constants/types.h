@@ -1749,3 +1749,17 @@ struct EffectFunc
     uint8_t effect;
     void (*func)(void);
 };
+
+struct OfferMon {
+    uint8_t email[MOBILE_EMAIL_LENGTH];
+    uint16_t trainerID;
+    uint16_t secretID;
+    uint8_t gender;
+    species_t species;
+    uint8_t reqGender;
+    species_t reqSpecies;
+    uint8_t sender[PLAYER_NAME_LENGTH - 1];
+    struct PartyMon mon;
+    uint8_t OT[PLAYER_NAME_LENGTH - 1];
+    uint8_t Nick[MON_NAME_LENGTH - 1];
+};

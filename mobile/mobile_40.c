@@ -7194,6 +7194,7 @@ bool Function1021f9(void){
     // RES_hl(3);
     // IF_Z goto asm_10220f;
     if(bit_test(wram->wcd29, 3)) {
+        bit_reset(wram->wcd29, 3);
         // LD_A(0x1);  // Function102361
         // LD_addr_A(wcd49);
         wram->wcd49 = 0x1;  // Function102361
