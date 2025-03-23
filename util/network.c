@@ -1851,7 +1851,7 @@ void LoadMobileServerConfig(struct server_config* srv, struct mobile_config* cfg
                 continue;
 
             if(s->string_size != sizeof(cfg->loginName)) {
-                fprintf(stderr, "For field %s, Bad string size: %lu\n", it->name->string, s->string_size);
+                fprintf(stderr, "For field %s, Bad string size: %llu\n", it->name->string, (unsigned long long)s->string_size);
                 continue;
             }
             
@@ -1866,7 +1866,7 @@ void LoadMobileServerConfig(struct server_config* srv, struct mobile_config* cfg
                 continue;
 
             if(s->string_size != 8) {
-                fprintf(stderr, "For field %s, Bad string size: %lu\n", it->name->string, s->string_size);
+                fprintf(stderr, "For field %s, Bad string size: %llu\n", it->name->string, (unsigned long long)s->string_size);
                 continue;
             }
             
