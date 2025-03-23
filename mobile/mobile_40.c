@@ -7131,15 +7131,16 @@ bool Function1021b8(void){
     Function10218d();
     // LD_DE(wPlayerMoveStruct);
     // FARCALL(aFunction8ac70);
-    //  TODO: Convert Function8ac70
+    u8_flag_s res = Function8ac70(wram->wc608 + 7);
     // LD_A_C;
     // LD_addr_A(wStringBuffer1);
+    wram->wStringBuffer1[0] = res.a;
     // PUSH_AF;
     // CALL(aFunction1013aa);
     Function1013aa();
     // POP_AF;
     // RET;
-    return true;
+    return res.flag;
 }
 
 const txt_cmd_s NewCardArrivedText[] = {
