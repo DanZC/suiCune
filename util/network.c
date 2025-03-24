@@ -360,6 +360,12 @@ int socket_connect_ip(SOCKET sock, const struct mobile_addr *addr)
             err == SOCKET_EALREADY) {
         return 0;
     }
+// Windows will return WSAEINVAL when calling connect with a pending socket.
+// A dirty, but sufficient workaround is to treat WSAEINVAL the same as the other
+// "in progress" error codes.
+#if _WIN32
+    if (err == WSAEINVAL) return 0;
+#endif
     if (err == SOCKET_EISCONN) return 1;
 
     char sock_str[SOCKET_STRADDR_MAXLEN] = {0};
@@ -1938,6 +1944,13 @@ bool MobileConfigRead(void* user, void* dest, uintptr_t offset, size_t size) {
     }
     fread(udata->config, 1, MOBILE_CONFIG_SIZE, f);
     LoadMobileServerConfig(&gServerConfig, (struct mobile_config*)udata->config); // Try and overwrite default values from mobile config.
+// Recalculate checksum.
+    uint16_t checksum = 0;
+    for(int i = 0; i < 0xc0 - 2; ++i) {
+        checksum += udata->config[i];
+    }
+    udata->config[0xc0 - 2] = (checksum >> 8);
+    udata->config[0xc0 - 1] = (checksum & 0xff);
     fclose(f);
     memcpy(dest, udata->config + offset, size);
     return true;
