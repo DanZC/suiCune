@@ -48,7 +48,7 @@ static const struct MenuHeader v_PlayerDecorationMenu_MenuHeader = {
         .flags = STATICMENU_CURSOR | STATICMENU_WRAP,  // flags
         .setupMenu = {
             .count = 0,  // items
-            .itemArr = wram_ptr(wNumOwnedDecoCategories),
+            .itemList = (const uint8_t*[]) { wram_ptr(wNumOwnedDecoCategories) },
             .displayFunction = PlaceNthMenuStrings_Conv,
             .labelList = v_PlayerDecorationMenu_category_pointers,
         },
@@ -481,7 +481,7 @@ static const struct MenuHeader NonscrollingMenuHeader = {
         .flags = STATICMENU_CURSOR | STATICMENU_WRAP,  // flags
         .setupMenu = {
             .count = 0,  // items
-            .itemList = (const uint8_t**)wram_ptr(wDecoNameBuffer),
+            .itemList = (const uint8_t*[]) { wram_ptr(wDecoNameBuffer) },
             .displayFunction = DecorationMenuFunction,
             //dw ['DecorationAttributes'];
         },

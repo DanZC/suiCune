@@ -383,7 +383,7 @@ void Function1166f4(uint8_t a, uint8_t b, uint8_t c){
     wram->wc314[2] = b;
     // XOR_A_A;
     // LD_addr_A(wc314 + 3);
-    wram->wc314[3] = c;
+    wram->wc314[3] = 0;
     // LD_HL(wc30f);
     uint8_t* hl = &wram->wc30f;
     uint8_t a2;

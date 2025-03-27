@@ -649,7 +649,6 @@ void Function11c254(uint8_t a){
     // SLA_A;
     // SLA_A;
     // LD_C_A;
-    uint8_t c = a << 2;
     // SLA_A;
     // ADD_A_C;
     // LD_C_A;
@@ -658,7 +657,14 @@ void Function11c254(uint8_t a){
     // LD_DE(wcd36);
     // LD_BC(12);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wMobileTimeDataBuffer, hl + (a << 3) + c, 12);
+    CopyBytes(wram->wEZChatWord, hl + a*12, 12);
+// If the word data is corrupted, just erase it so that it doesn't crash.
+    for(uint32_t i = 0; i < EZCHAT_WORD_COUNT; ++i) {
+        if(wram->wEZChatWord[i].b > 14 || wram->wEZChatWord[i].a >= MobileEZChatData_WordAndPageCounts[wram->wEZChatWord[i].b].a) {
+            wram->wEZChatWord[i].b = 0;
+            wram->wEZChatWord[i].a = 0;
+        }
+    }
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // RET;
@@ -2784,6 +2790,7 @@ void EZChat_RenderWordChoices(void){
         // jr nz, .loop
         if(d == 0) {
             // ld hl, wListPointer
+            hl = wram_ptr(wListPointer);
             // add hl, de
         }
     }
@@ -3737,7 +3744,7 @@ void Function11ca7f(const char* de){
     wram->wcd2a = 0x1;
     // LD_HL(wcd24);
     // RES_hl(4);
-    bit_reset(wram->wcd2a, 4);
+    bit_reset(wram->wEZChatSpritesMask, 4);
     // CALL(aFunction11cfb5);
     // RET;
     return Function11cfb5();
@@ -3979,7 +3986,7 @@ void Function11cb66(void){
         // CALL(aFunction11cfce);
         Function11cfce(Unknown_11cfba);
         // CALL(aFunction11c38a);
-        Function11c38a();
+        EZChatMenu_MessageSetup();
         // LD_HL(wcd24);
         // SET_hl(4);
         bit_set(wram->wcd24, 4);
@@ -4524,11 +4531,13 @@ const uint8_t Unknown_11cfc2[] = {
     20, 10,  // end coords
 };
 
+// EZChatBKG_SortBy
 const uint8_t Unknown_11cfc6[] = {
     0, 12,  // start coords
     20, 6,  // end coords
 };
 
+// EZChatBKG_SortByConfirmation
 const uint8_t Unknown_11cfca[] = {
     14, 7,  // start coords
     6, 5,  // end coords
