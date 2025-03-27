@@ -529,63 +529,53 @@ asm_17d180:
 }
 
 void Mobile_CopyDefaultOTName(void){
-    LD_HL(mMobile5F_PlayersName);
-    LD_DE(wc63d);
-    LD_BC(5);
-    CALL(aCopyBytes);
-    RET;
-
+    // LD_HL(mMobile5F_PlayersName);
+    // LD_DE(wc63d);
+    // LD_BC(5);
+    // CALL(aCopyBytes);
+    U82CB(wram->wMobileMonOT, PLAYER_NAME_LENGTH, Mobile5F_PlayersName);
+    // RET;
 }
 
-void Mobile5F_PlayersName(void){
-    //db ['"クりス@@"'];
-
-    return Mobile_CopyDefaultNickname();
-}
+const char Mobile5F_PlayersName[] = "CHRIS@@"; //db ['"クりス@@"'];
 
 void Mobile_CopyDefaultNickname(void){
-    LD_HL(mMobile_CopyDefaultNickname_DefaultNickname);
-    LD_DE(wc642);
-    LD_BC(5);
-    CALL(aCopyBytes);
-    RET;
-
-
-DefaultNickname:
-    //db ['"？？？？？"'];
-
-    return Mobile_CopyDefaultMail();
+    static const char DefaultNickname[] = "??????????"; //db ['"？？？？？"'];
+    // LD_HL(mMobile_CopyDefaultNickname_DefaultNickname);
+    // LD_DE(wc642);
+    // LD_BC(5);
+    // CALL(aCopyBytes);
+    U82CB(wram->wMobileMonName, MON_NAME_LENGTH, DefaultNickname);
+    // RET;
 }
 
 void Mobile_CopyDefaultMail(void){
-    LD_A(0x50);
-    LD_HL(wc647);
-    LD_BC(MAIL_MSG_LENGTH + 1);
-    CALL(aByteFill);
-    LD_HL(mMobile_CopyDefaultMail_DefaultMessage);
-    LD_DE(wc647);
-    LD_BC(6);
-    CALL(aCopyBytes);
-    RET;
-
-
-DefaultMessage:
-    //db ['"こんにちは@"'];
-
-    return Mobile_CopyDefaultMailAuthor();
+    static const char DefaultMessage[] = "Hello@"; //db ['"こんにちは@"'];
+    // LD_A(0x50);
+    // LD_HL(wc647);
+    // LD_BC(MAIL_MSG_LENGTH + 1);
+    // CALL(aByteFill);
+    ByteFill(wram->wMobileMonMail.message, MAIL_MSG_LENGTH + 1, 0x50);
+    // LD_HL(mMobile_CopyDefaultMail_DefaultMessage);
+    // LD_DE(wc647);
+    // LD_BC(6);
+    // CALL(aCopyBytes);
+    U82CB(wram->wMobileMonMail.message, 6, DefaultMessage);
+    // RET;
 }
 
 void Mobile_CopyDefaultMailAuthor(void){
-    LD_A(0x50);
-    LD_DE(wc668);
-    LD_BC(5);
-    CALL(aByteFill);
-    LD_HL(mMobile5F_PlayersName);
-    LD_DE(wc668);
-    LD_BC(5);
-    CALL(aCopyBytes);
-    RET;
-
+    // LD_A(0x50);
+    // LD_DE(wc668);
+    // LD_BC(5);
+    // CALL(aByteFill);
+    ByteFill(wram->wMobileMonMail.author, PLAYER_NAME_LENGTH, 0x50);
+    // LD_HL(mMobile5F_PlayersName);
+    // LD_DE(wc668);
+    // LD_BC(5);
+    // CALL(aCopyBytes);
+    U82CB(wram->wMobileMonMail.author, PLAYER_NAME_LENGTH, Mobile5F_PlayersName);
+    // RET;
 }
 
 void CheckStringContainsLessThanBNextCharacters(void){
@@ -612,7 +602,7 @@ done:
 
 }
 
-bool CheckStringContainsLessThanBNextCharacters_Conv(const uint8_t* de, uint8_t b, uint8_t c){
+u8_flag_s CheckStringContainsLessThanBNextCharacters_Conv(const uint8_t* de, uint8_t b, uint8_t c){
     do {
     // loop:
         // LD_A_de;
@@ -625,7 +615,7 @@ bool CheckStringContainsLessThanBNextCharacters_Conv(const uint8_t* de, uint8_t 
         // DEC_B;
         // IF_Z goto done;
         if(--b == 0)
-            return true;
+            return u8_flag(b, true);
 
     // next_char:
         // DEC_C;
@@ -633,7 +623,7 @@ bool CheckStringContainsLessThanBNextCharacters_Conv(const uint8_t* de, uint8_t 
     } while(--c != 0);
     // AND_A_A;
     // RET;
-    return false;
+    return u8_flag(b, false);
 
 // done:
     // SCF;

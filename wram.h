@@ -2064,13 +2064,24 @@ struct wram_s
                         };
                         uint8_t skip_70[3];
                         uint8_t wd008[2];
-                        uint8_t skip_71[6];
-                        uint8_t wd010[1];
-                        uint8_t wd011[1];
+                        union {
+                            uint8_t wCardPhoneNumber[PHONE_NUMBER_LENGTH];
+                            struct {
+                                uint8_t skip_71[6];
+                                uint8_t wd010[1];
+                                uint8_t wd011[1];
+                            };
+                        };
                         uint8_t wd012;
-                        uint8_t wd013[1];
-                        uint8_t wd014[2];
-                        uint8_t skip_72[1];
+                        union {
+                            struct {
+                                uint8_t wd013;
+                                uint8_t wd014;
+                                uint8_t wd015[1];
+                                uint8_t skip_72[1];
+                            };
+                            uint8_t wd013_arr[4];
+                        };
                         uint8_t wd017[1];
                         uint8_t wd018;
                         uint8_t wd019;
@@ -3358,10 +3369,10 @@ struct wram_s
                         uint8_t w3_d893[1];
                         uint8_t w3_d894[1];
                         uint8_t w3_d895[11];
-                        uint8_t w3_d8a0[1];
-                        uint8_t w3_d8a1[1];
-                        uint8_t w3_d8a2[1];
-                        uint8_t w3_d8a3[1];
+                        uint8_t w3_d8a0;
+                        uint8_t w3_d8a1;
+                        uint8_t w3_d8a2;
+                        uint8_t w3_d8a3;
                     };
                 };
                 uint8_t skip_141[0x1c0];

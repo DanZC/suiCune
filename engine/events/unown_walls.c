@@ -44,7 +44,7 @@ void OmanyteChamber(void){
     // LD_HL(wNumItems);
     // CALL(aCheckItem);
     // IF_C goto open;
-    if(!CheckItem_Conv(WATER_STONE, &wram->wNumItems)) {
+    if(!CheckItem_Conv(WATER_STONE, wram->wItems)) {
         // LD_A_addr(wPartyCount);
         // LD_B_A;
         // INC_B;

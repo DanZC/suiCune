@@ -395,8 +395,8 @@ bool CompareLoadedAndSavedPlayerID(void){
     // LD_A_hli;
     // LD_C_hl;
     // LD_B_A;
-    uint16_t bc = (gb_read(sPlayerData + (wPlayerID - wPlayerData)) << 8)
-        | gb_read(sPlayerData + (wPlayerID - wPlayerData) + 1);
+    uint16_t bc = (gb_read(sPlayerData + (wPlayerID - wPlayerData)))
+        | (gb_read(sPlayerData + (wPlayerID - wPlayerData) + 1) << 8);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // LD_A_addr(wPlayerID);

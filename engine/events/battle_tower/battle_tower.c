@@ -12,6 +12,7 @@
 #include "../../../home/copy.h"
 #include "../../../home/delay.h"
 #include "../../../home/names.h"
+#include "../../../home/item.h"
 #include "../../../mobile/mobile_41.h"
 #include "../../../mobile/mobile_46.h"
 #include "../../../mobile/mobile_5c.h"
@@ -1067,17 +1068,27 @@ void BattleTowerAction(void){
         //dw ['CheckMobileEventIndex'];
     case BATTLETOWERACTION_CHECKMOBILEEVENT: return CheckMobileEventIndex();
         //dw ['Function1708c8'];
+    case BATTLETOWERACTION_0C: return Function1708c8();
         //dw ['Function1708f0'];
         //dw ['BattleTowerAction_EggTicket'];
+    case BATTLETOWERACTION_EGGTICKET: return BattleTowerAction_EggTicket();
         //dw ['Function1709aa'];
+    case BATTLETOWERACTION_0F: return Function1709aa();
         //dw ['Function1709bb'];
         //dw ['Function170a9c'];
+    case BATTLETOWERACTION_11: return Function170a9c();
         //dw ['Function170aa0'];
+    case BATTLETOWERACTION_12: return Function170aa0();
         //dw ['Function170aaf'];
+    case BATTLETOWERACTION_13: return Function170aaf();
         //dw ['Function170abe'];
+    case BATTLETOWERACTION_14: return Function170abe();
         //dw ['Function170ad7'];
+    case BATTLETOWERACTION_15: return Function170ad7();
         //dw ['Function170807'];
+    case BATTLETOWERACTION_16: return Function170807();
         //dw ['Function17081d'];
+    case BATTLETOWERACTION_17: return Function17081d();
         //dw ['BattleTowerAction_LevelCheck'];
         //dw ['BattleTowerAction_UbersCheck'];
         //dw ['ResetBattleTowerTrainersSRAM'];
@@ -1360,6 +1371,7 @@ void Function1707f4(void){
 }
 
 void Function170807(void){
+//  //  BattleTowerAction $16
     // CALL(aUpdateTime);
     UpdateTime_Conv();
     // LD_A(BANK(s5_b2f9));  // aka BANK(s5_b2fa)
@@ -1377,50 +1389,66 @@ void Function170807(void){
 }
 
 void Function17081d(void){
-    XOR_A_A;
-    LD_addr_A(wScriptVar);
-    LD_A(BANK(s5_b2f9));  // aka BANK(s5_b2fa)
-    CALL(aOpenSRAM);
-    LD_A_addr(s5_b2f9);
-    LD_C_A;
-    LD_A_addr(s5_b2fa);
-    LD_B_A;
-    CALL(aCloseSRAM);
-    CP_A(2);
-    IF_NC goto asm_170853;
-    PUSH_BC;
-    CALL(aUpdateTime);
-    POP_BC;
-    LD_A_addr(wCurDay);
-    SUB_A_C;
-    IF_C goto asm_170849;
-    CP_A(11);
-    IF_NC goto asm_170853;
-    LD_A_B;
-    AND_A_A;
-    IF_NZ goto asm_170853;
-    RET;
+    // XOR_A_A;
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = 0;
+    // LD_A(BANK(s5_b2f9));  // aka BANK(s5_b2fa)
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(as5_b2f9));
+    // LD_A_addr(s5_b2f9);
+    // LD_C_A;
+    uint8_t c = gb_read(s5_b2f9);
+    // LD_A_addr(s5_b2fa);
+    // LD_B_A;
+    uint8_t b = gb_read(s5_b2fa);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // CP_A(2);
+    // IF_NC goto asm_170853;
+    if(b < 2) {
+        // PUSH_BC;
+        // CALL(aUpdateTime);
+        UpdateTime_Conv();
+        // POP_BC;
+        // LD_A_addr(wCurDay);
+        // SUB_A_C;
+        // IF_C goto asm_170849;
+        if(wram->wCurDay < c) {
+        // asm_170849:
+            // LD_HL(wCurDay);
+            // LD_A(140);
+            // SUB_A_C;
+            // ADD_A_hl;
+            uint8_t a = 140 - c + wram->wCurDay;
+            // CP_A(11);
+            // RET_C ;
+            if(a < 11)
+                return;
+        }
+        // CP_A(11);
+        // IF_NC goto asm_170853;
+        // LD_A_B;
+        // AND_A_A;
+        // IF_NZ goto asm_170853;
+        // RET;
+        else if(wram->wCurDay - c < 11 && b == 0)
+            return;
+    }
 
-
-asm_170849:
-    LD_HL(wCurDay);
-    LD_A(140);
-    SUB_A_C;
-    ADD_A_hl;
-    CP_A(11);
-    RET_C ;
-
-asm_170853:
-    LD_A(1);
-    LD_addr_A(wScriptVar);
-    LD_A(BANK(s5_b2f9));  // aka BANK(s5_b2fa)
-    CALL(aOpenSRAM);
-    XOR_A_A;
-    LD_addr_A(s5_b2f9);
-    LD_addr_A(s5_b2fa);
-    CALL(aCloseSRAM);
-    RET;
-
+// asm_170853:
+    // LD_A(1);
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = 1;
+    // LD_A(BANK(s5_b2f9));  // aka BANK(s5_b2fa)
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(as5_b2f9));
+    // XOR_A_A;
+    // LD_addr_A(s5_b2f9);
+    // LD_addr_A(s5_b2fa);
+    gb_write16(s5_b2f9, 0);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
 }
 
 void SaveBattleTowerLevelGroup(void){
@@ -1509,25 +1537,33 @@ void CheckMobileEventIndex(void){
 
 void Function1708c8(void){
 //  //  BattleTowerAction $0c
-    CALL(aUpdateTime);
-    LD_A(BANK(s5_aa8b));  // aka BANK(s5_aa8c), BANK(s5_aa5d), BANK(s5_aa48), and BANK(s5_aa47)
-    CALL(aOpenSRAM);
-    LD_A_addr(wCurDay);
-    LD_addr_A(s5_aa8b);
-    XOR_A_A;
-    LD_addr_A(s5_aa8c);
-    LD_A_addr(s5_aa5d);
-    CP_A(2);
-    IF_NC goto asm_1708ec;
-    LD_A_addr(wCurDay);
-    LD_addr_A(s5_aa48);
-    LD_A(1);
-    LD_addr_A(s5_aa47);
+    // CALL(aUpdateTime);
+    UpdateTime_Conv();
+    // LD_A(BANK(s5_aa8b));  // aka BANK(s5_aa8c), BANK(s5_aa5d), BANK(s5_aa48), and BANK(s5_aa47)
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(as5_aa8b));
+    // LD_A_addr(wCurDay);
+    // LD_addr_A(s5_aa8b);
+    gb_write(s5_aa8b, wram->wCurDay);
+    // XOR_A_A;
+    // LD_addr_A(s5_aa8c);
+    gb_write(s5_aa8c, 0);
+    // LD_A_addr(s5_aa5d);
+    // CP_A(2);
+    // IF_NC goto asm_1708ec;
+    if(gb_read(s5_aa5d) < 2) {
+        // LD_A_addr(wCurDay);
+        // LD_addr_A(s5_aa48);
+        gb_write(s5_aa48, wram->wCurDay);
+        // LD_A(1);
+        // LD_addr_A(s5_aa47);
+        gb_write(s5_aa47, 1);
+    }
 
-asm_1708ec:
-    CALL(aCloseSRAM);
-    RET;
-
+// asm_1708ec:
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
 }
 
 void Function1708f0(void){
@@ -1580,98 +1616,124 @@ void Function170923(void){
 
 void BattleTowerAction_EggTicket(void){
 //  //  BattleTowerAction $0e
-    XOR_A_A;  // FALSE
-    LD_addr_A(wScriptVar);
-    LD_A(EGG_TICKET);
-    LD_addr_A(wCurItem);
-    LD_HL(wNumItems);
-    CALL(aCheckItem);
-    RET_NC ;
-    LD_A_addr(wPartyCount);
-    LD_B(0);
-    LD_C_A;
-    LD_HL(wPartySpecies);
+    uint8_t buffer[16];
+    // XOR_A_A;  // FALSE
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = FALSE;
+    // LD_A(EGG_TICKET);
+    // LD_addr_A(wCurItem);
+    wram->wCurItem = EGG_TICKET;
+    // LD_HL(wNumItems);
+    // CALL(aCheckItem);
+    // RET_NC ;
+    if(!CheckItem_Conv(EGG_TICKET, wram->wItems))
+        return;
+    // LD_A_addr(wPartyCount);
+    // LD_B(0);
+    uint8_t b = 0;
+    // LD_C_A;
+    uint8_t c = wram->wPartyCount;
+    // LD_HL(wPartySpecies);
+    species_t* hl = wram->wPartySpecies;
+    U82CA(buffer, String_MysteryJP);
 
-loop:
-    LD_A_hli;
-    CP_A(EGG);
-    IF_NZ goto not_egg;
-    PUSH_HL;
-    LD_HL(wPartyMonOTs);
-    LD_DE(NAME_LENGTH_JAPANESE);
-    LD_A_B;
-    AND_A_A;
-    IF_Z goto skip;
+    do {
+    // loop:
+        // LD_A_hli;
+        // CP_A(EGG);
+        // IF_NZ goto not_egg;
+        if(*(hl++) == EGG) {
+            // PUSH_HL;
+            // LD_HL(wPartyMonOTs);
+            // LD_DE(NAME_LENGTH_JAPANESE);
+            // LD_A_B;
+            // AND_A_A;
+            // IF_Z goto skip;
+        // loop2:
+            // ADD_HL_DE;
+            // DEC_A;
+            // IF_NZ goto loop2;
+            uint8_t* ot = wram->wPartyMonOT[b];
+        // skip:
+            // LD_DE(mString_MysteryJP);
+            uint8_t* mystery = buffer;
+            // LD_A(NAME_LENGTH_JAPANESE);
+            uint8_t a = PLAYER_NAME_LENGTH;
 
-loop2:
-    ADD_HL_DE;
-    DEC_A;
-    IF_NZ goto loop2;
+            do {
+            // compare_loop:
+                // PUSH_AF;
+                // LD_A_de;
+                // INC_DE;
+                // CP_A_hl;
+                // INC_HL;
+                // IF_NZ goto different;
+                if(*ot != *mystery)
+                    goto different;
+                // POP_AF;
+                ot++, mystery++;
+                // DEC_A;
+                // IF_NZ goto compare_loop;
+            } while(--a != 0);
+        // REMARK:
+        // this adventurous piece of code uses a hardcoded amount of dec hl to reverse the pointer in hl to point to the second-last non-terminator character of String_MysteryJP.
+        // it then overwrites it and the last character with terminators, in order to prevent this specific odd egg from triggering this check ever again.
+        // why it was chosen to blank the last two characters specifically is a mystery.
+            // for(int rept = 0; rept < 4; rept++){
+            // DEC_HL;
+            // }
+            ot -= (PLAYER_NAME_LENGTH - ((PLAYER_NAME_LENGTH - 3) + (3 / 2)));
+            // LD_A(0x50);
+            // LD_hli_A;
+            ot[0] = 0x50;
+            // LD_hli_A;
+            ot[1] = 0x50;
+            // POP_HL;
+            // LD_A(EGG_TICKET);
+            // LD_addr_A(wCurItem);
+            // LD_A(1);
+            // LD_addr_A(wItemQuantityChange);
+            wram->wItemQuantityChange = 1;
+            // LD_A(-1);
+            // LD_addr_A(wCurItemQuantity);
+            wram->wCurItemQuantity = 0xff;
+            // LD_HL(wNumItems);
+            // CALL(aTossItem);
+            TossItem_Conv((item_pocket_s*)&wram->wNumItems, EGG_TICKET);
+            // LD_A(TRUE);
+            // LD_addr_A(wScriptVar);
+            wram->wScriptVar = TRUE;
+            // RET;
+            return;
 
-skip:
-    LD_DE(mString_MysteryJP);
-    LD_A(NAME_LENGTH_JAPANESE);
+        different:
+            // POP_AF;
+            // POP_HL;
+        }
 
-compare_loop:
-    PUSH_AF;
-    LD_A_de;
-    INC_DE;
-    CP_A_hl;
-    INC_HL;
-    IF_NZ goto different;
-    POP_AF;
-    DEC_A;
-    IF_NZ goto compare_loop;
-    for(int rept = 0; rept < 4; rept++){
-    DEC_HL;
-    }
-    LD_A(0x50);
-    LD_hli_A;
-    LD_hli_A;
-    POP_HL;
-    LD_A(EGG_TICKET);
-    LD_addr_A(wCurItem);
-    LD_A(1);
-    LD_addr_A(wItemQuantityChange);
-    LD_A(-1);
-    LD_addr_A(wCurItemQuantity);
-    LD_HL(wNumItems);
-    CALL(aTossItem);
-    LD_A(TRUE);
-    LD_addr_A(wScriptVar);
-    RET;
-
-
-different:
-    POP_AF;
-    POP_HL;
-
-not_egg:
-    INC_B;
-    DEC_C;
-    IF_NZ goto loop;
-    RET;
-
+    // not_egg:
+        // INC_B;
+        ++b;
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(--c != 0);
+    // RET;
 }
 
-void String_MysteryJP(void){
-    //db ['"なぞナゾ@@"'];  // MYSTERY
-
-    return Function1709aa();
-}
+const char String_MysteryJP[] = "ODD"; //db ['"なぞナゾ@@"'];  // MYSTERY
 
 void Function1709aa(void){
 //  //  BattleTowerAction $0f
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(BANK(w3_d090));
-    LDH_addr_A(rSVBK);
-    LD_A_addr(w3_d090);
-    LD_addr_A(wScriptVar);
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    RET;
-
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(BANK(w3_d090));
+    // LDH_addr_A(rSVBK);
+    // LD_A_addr(w3_d090);
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = wram->w3_d090[0];
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // RET;
 }
 
 void Function1709bb(void){
@@ -1812,61 +1874,77 @@ no_scene_2:
 }
 
 void Function170a9c(void){
-    LD_C(FALSE);
-    JR(mSet_s5_aa8d);
-
+//  //  BattleTowerAction $11
+    // LD_C(FALSE);
+    // JR(mSet_s5_aa8d);
+    return Set_s5_aa8d(FALSE);
 }
 
 void Function170aa0(void){
-    LD_C(TRUE);
-    return Set_s5_aa8d();
+//  //  BattleTowerAction $12
+    // LD_C(TRUE);
+    return Set_s5_aa8d(TRUE);
 }
 
-void Set_s5_aa8d(void){
-    LD_A(BANK(s5_aa8d));
-    CALL(aOpenSRAM);
-    LD_A_C;
-    LD_addr_A(s5_aa8d);
-    CALL(aCloseSRAM);
-    RET;
-
+void Set_s5_aa8d(uint8_t c){
+    // LD_A(BANK(s5_aa8d));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(as5_aa8d));
+    // LD_A_C;
+    // LD_addr_A(s5_aa8d);
+    gb_write(s5_aa8d, c);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
 }
 
 void Function170aaf(void){
-    LD_A(BANK(s5_aa8d));
-    CALL(aOpenSRAM);
-    LD_A_addr(s5_aa8d);
-    LD_addr_A(wScriptVar);
-    CALL(aCloseSRAM);
-    RET;
-
+//  //  BattleTowerAction $13
+    // LD_A(BANK(s5_aa8d));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(as5_aa8d));
+    // LD_A_addr(s5_aa8d);
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = gb_read(s5_aa8d);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
 }
 
 void Function170abe(void){
-    CALL(aBattleTower_CheckSaveFileExistsAndIsYours);
-    LD_A_addr(wScriptVar);
-    AND_A_A;
-    RET_Z ;
+//  //  BattleTowerAction $14
+    // CALL(aBattleTower_CheckSaveFileExistsAndIsYours);
+    BattleTower_CheckSaveFileExistsAndIsYours();
+    // LD_A_addr(wScriptVar);
+    // AND_A_A;
+    // RET_Z ;
+    if(wram->wScriptVar == 0)
+        return;
 
-    LD_A(BANK(sBattleTowerSaveFileFlags));
-    CALL(aOpenSRAM);
-    LD_A_addr(sBattleTowerSaveFileFlags);
-    AND_A(1);
-    LD_addr_A(wScriptVar);
-    CALL(aCloseSRAM);
-    RET;
-
+    // LD_A(BANK(sBattleTowerSaveFileFlags));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asBattleTowerSaveFileFlags));
+    // LD_A_addr(sBattleTowerSaveFileFlags);
+    // AND_A(1);
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = gb_read(sBattleTowerSaveFileFlags) & 1;
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
 }
 
 void Function170ad7(void){
-    LD_A(BANK(sBattleTowerSaveFileFlags));
-    CALL(aOpenSRAM);
-    LD_A_addr(sBattleTowerSaveFileFlags);
-    OR_A(1);
-    LD_addr_A(sBattleTowerSaveFileFlags);
-    CALL(aCloseSRAM);
-    RET;
-
+//  //  BattleTowerAction $15
+    // LD_A(BANK(sBattleTowerSaveFileFlags));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asBattleTowerSaveFileFlags));
+    // LD_A_addr(sBattleTowerSaveFileFlags);
+    // OR_A(1);
+    // LD_addr_A(sBattleTowerSaveFileFlags);
+    gb_write(sBattleTowerSaveFileFlags, gb_read(sBattleTowerSaveFileFlags) | 1);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
 }
 
 void BattleTowerAction_LevelCheck(void){
@@ -1969,7 +2047,7 @@ void LoadOpponentTrainerAndPokemonWithOTSprite(void){
 }
 
 void UnusedBattleTowerDummySpecial2(void){
-    RET;
+    // RET;
 
 }
 

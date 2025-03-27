@@ -2248,15 +2248,14 @@ void Function110a5b(mobile_api_data_s* data){
     // LD_A_L;
     // OR_A_H;
     // JP_Z (mFunction110231);
-    if(data->hl == NULL)
+    if((data->l | data->h) == 0)
         return Function110231();
     // LD_A_L;
     // LD_addr_A(wc86e);
     // LD_A_H;
     // LD_addr_A(wc86f);
-    gMobile_wc86e_wc86f = data->hl;
-    wram->wc86e = (gMobile_wc86e_wc86f == NULL)? 0x0: 0x1;
-    wram->wc86f = (gMobile_wc86e_wc86f == NULL)? 0x0: 0x1;
+    wram->wc86e = data->l;
+    wram->wc86f = data->h;
     // LD_HL(wc827);
     // LD_A_E;
     // LD_hli_A;
@@ -2324,7 +2323,7 @@ void Function110a5b(mobile_api_data_s* data){
     // LD_A_hli;
     // LD_H_hl;
     // LD_L_A;
-    uint16_t hl = gMobile_wc86e_wc86f[0] | (gMobile_wc86e_wc86f[1] << 8);
+    uint16_t hl = wram->wc86e | (wram->wc86f << 8);
     // CALL(aFunction110d37);
     de = Function110d37(de, hl);
     // LD_B_C;
@@ -2627,15 +2626,14 @@ void Function110c3c(mobile_api_data_s* data){
     // LD_A_L;
     // OR_A_H;
     // JP_Z (mFunction110231);
-    if(data->hl == NULL)
+    if((data->h | data->l) == 0)
         return Function110231();
     // LD_A_L;
     // LD_addr_A(wc86e);
+    wram->wc86e = data->l;
     // LD_A_H;
     // LD_addr_A(wc86f);
-    gMobile_wc86e_wc86f = data->hl;
-    wram->wc86e = (gMobile_wc86e_wc86f == NULL)? 0x0: 0x1;
-    wram->wc86f = (gMobile_wc86e_wc86f == NULL)? 0x0: 0x1;
+    wram->wc86f = data->h;
     // CALL(aFunction112729);
     Function112729();
     // LD_DE(wMobileSDK_PacketBuffer);
@@ -2662,7 +2660,7 @@ void Function110c3c(mobile_api_data_s* data){
     // LD_H_hl;
     // LD_L_A;
     // CALL(aFunction110d37);
-    de = Function110d37((char*)wram->wMobileSDK_PacketBuffer + 12, gMobile_wc86e_wc86f[0] | (gMobile_wc86e_wc86f[1] << 8));
+    de = Function110d37((char*)wram->wMobileSDK_PacketBuffer + 12, wram->wc86e | (wram->wc86f << 8));
     // LD_B_C;
     // CALL(aFunction111f63);
     uint16_t size = Function111f63(de, LOW(bc));
@@ -2706,13 +2704,14 @@ void Function110c9e(mobile_api_data_s* data){
     // LD_A_L;
     // OR_A_H;
     // JP_Z (mFunction110231);
-    if(data->hl == NULL)
+    if((data->h | data->l) == 0)
         return Function110231();
     // LD_A_L;
     // LD_addr_A(wc86e);
+    wram->wc86e = data->l;
     // LD_A_H;
     // LD_addr_A(wc86f);
-    gMobile_wc86e_wc86f = data->hl;
+    wram->wc86f = data->h;
     // LD_HL(wc827);
     char* de = data->de;
     // LD_A_E;
@@ -2782,7 +2781,7 @@ void Function110c9e(mobile_api_data_s* data){
     // LD_H_hl;
     // LD_L_A;
     // CALL(aFunction110d37);
-    de = Function110d37((char*)wram->wMobileSDK_PacketBuffer + 11, (gMobile_wc86e_wc86f[0] | (gMobile_wc86e_wc86f[1] << 8)));
+    de = Function110d37((char*)wram->wMobileSDK_PacketBuffer + 11, (wram->wc86e | (wram->wc86f << 8)));
     // LD_B_C;
     // CALL(aFunction111f63);
     Function111f63(de, LOW(bc));

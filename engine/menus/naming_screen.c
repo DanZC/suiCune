@@ -552,7 +552,7 @@ static void NamingScreen_GetNamingScreenSetup(void) {
         //dw ['.Tomodachi'];
         case NAME_FRIEND: {
         // Tomodachi:
-            static const char oTomodachi_no_namae_sutoringu[] = "おともだち\u3000の\u3000なまえは？@";
+            static const char oTomodachi_no_namae_sutoringu[] = "FRIEND'S NAME?"; // "おともだち\u3000の\u3000なまえは？@";
             // hlcoord(3, 2, wTilemap);
             // LD_DE(mNamingScreen_oTomodachi_no_namae_sutoringu);
             // CALL(aPlaceString);

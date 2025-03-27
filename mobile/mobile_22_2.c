@@ -634,19 +634,19 @@ bool Function8b555(void){
                 // LD_BC(wd013);
                 // CALL(aFunction8b45c);
                 // IF_C goto loop;
-                if(Function8b45c(wram->wd013))
+                if(Function8b45c(wram->wd013_arr))
                     goto loop;
                 // LD_BC(wd017);
                 // LD_HL(wd013);
                 // CALL(aFunction8b3a4);
                 // IF_Z goto strings_equal;
-                if(Function8b3a4(wram->wd013, wram->wd017))
+                if(Function8b3a4(wram->wd013_arr, wram->wd017))
                     break;
                 // CALL(aFunction89448);
                 Function89448();
                 // LD_BC(wd013);
                 // CALL(aFunction8b493);
-                Function8b493(wram->wd013);
+                Function8b493(wram->wd013_arr);
                 // LD_HL(mPasscodesNotSameText);
                 // CALL(aPrintText);
                 PrintText_Conv2(PasscodesNotSameText);
@@ -660,14 +660,14 @@ bool Function8b555(void){
             // LD_DE(s4_a037);
             // LD_BC(0x4);
             // CALL(aCopyBytes);
-            CopyBytes(GBToRAMAddr(s4_a037), wram->wd013, 0x4);
+            CopyBytes(GBToRAMAddr(s4_a037), wram->wd013_arr, 0x4);
             // CALL(aCloseSRAM);
             CloseSRAM_Conv();
             // CALL(aFunction89448);
             Function89448();
             // LD_BC(wd013);
             // CALL(aFunction8b493);
-            Function8b493(wram->wd013);
+            Function8b493(wram->wd013_arr);
             // LD_HL(mPasscodeSetText);
             // CALL(aPrintText);
             PrintText_Conv2(PasscodeSetText);
@@ -717,14 +717,14 @@ const txt_cmd_s FourZerosInvalidText[] = {
 bool Function8b5e7(void){
     // LD_BC(wd013);
     // CALL(aFunction8b36c);
-    Function8b36c(wram->wd013);
+    Function8b36c(wram->wd013_arr);
     // XOR_A_A;
     // LD_addr_A(wd012);
     wram->wd012 = 0;
     // LD_addr_A(wd02e);
     wram->wd02e[0] = 0;
     // CALL(aFunction8b493);
-    Function8b493(wram->wd013);
+    Function8b493(wram->wd013_arr);
     // CALL(aFunction891ab);
     Function891ab();
     // CALL(aFunction8b4fd);
@@ -743,7 +743,7 @@ bool Function8b5e7(void){
         // LD_BC(wd013);
         // CALL(aFunction8b45c);
         // IF_C goto asm_8b63c;
-        if(Function8b45c(wram->wd013)) {
+        if(Function8b45c(wram->wd013_arr)) {
             Function89448();
             return true;
         }
@@ -751,12 +751,12 @@ bool Function8b5e7(void){
         Function89448();
         // LD_BC(wd013);
         // CALL(aFunction8b493);
-        Function8b493(wram->wd013);
+        Function8b493(wram->wd013_arr);
         // CALL(aOpenSRAMBank4);
         OpenSRAMBank4();
         // LD_HL(s4_a037);
         // CALL(aFunction8b3a4);
-        bool eq = Function8b3a4(GBToRAMAddr(s4_a037), wram->wd013);
+        bool eq = Function8b3a4(GBToRAMAddr(s4_a037), wram->wd013_arr);
         // CALL(aCloseSRAM);
         CloseSRAM_Conv();
         // IF_Z goto asm_8b635;
@@ -767,7 +767,7 @@ bool Function8b5e7(void){
         PrintText_Conv2(IncorrectPasscodeText);
         // LD_BC(wd013);
         // CALL(aFunction8b36c);
-        Function8b36c(wram->wd013);
+        Function8b36c(wram->wd013_arr);
         // goto asm_8b602;
     }
 
@@ -1324,6 +1324,7 @@ void Function8b855(void){
 
 }
 
+// MenuHeader_CardsList
 const struct MenuHeader MenuHeader_0x8b867 = {
     .flags = MENU_BACKUP_TILES,  // flags
     .coord = menu_coords(1, 3, 18, 13),
@@ -1332,6 +1333,7 @@ const struct MenuHeader MenuHeader_0x8b867 = {
     //db ['0'];
 };
 
+// MenuData_CardsList
 const struct MenuData MenuData_0x8b870 = {
     .flags = SCROLLINGMENU_ENABLE_FUNCTION3 | SCROLLINGMENU_DISPLAY_ARROWS | SCROLLINGMENU_ENABLE_RIGHT | SCROLLINGMENU_ENABLE_LEFT,  // flags
     .scrollingMenu = {
@@ -1387,7 +1389,7 @@ void Function8b88c(const struct MenuData *data, tile_t *hl){
     // LD_E(0x6);
     // ADD_HL_DE;
     // PUSH_HL;
-    hl += PLAYER_NAME_LENGTH;
+    hl += PLAYER_NAME_LENGTH + 14;
     // LD_DE(mString_89116);
     de = U82C(String_89116);
     // CALL(aFunction8931b);
@@ -1411,6 +1413,7 @@ void Function8b88c(const struct MenuData *data, tile_t *hl){
     // RET;
 }
 
+// Mobile22_DisplayCardListBottomTextBox
 void Function8b8c8(void){
     // hlcoord(0, 14, wTilemap);
     // LD_B(0x2);
