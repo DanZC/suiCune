@@ -123,7 +123,7 @@ uint8_t GetFruitTreeFlag_Conv(uint8_t b, uint8_t tree){
     // POP_DE;
     // POP_HL;
     // RET;
-    return FlagAction_Conv2(wram->wFruitTreeFlags, tree - 1, b);
+    return FlagAction(wram->wFruitTreeFlags, tree - 1, b);
 }
 
 void GetFruitTreeItem(void){

@@ -30,6 +30,7 @@
 #include "../data/tilesets.h"
 #include "../data/gb_tilesets.h"
 #include "../data/gb_map_pointers.h"
+#include "../mobile/mobile_41.h"
 
 const struct MapAttr* gMapAttrPointer;
 const uint8_t* gCurMapSceneScriptPointer;
@@ -70,7 +71,7 @@ void ClearUnusedMapBuffer(void){
     // LD_BC(wUnusedMapBufferEnd - wUnusedMapBuffer);
     // LD_A(0);
     // CALL(aByteFill);
-    ByteFill(wram->wUnusedMapBuffer, (wUnusedMapBufferEnd - wUnusedMapBuffer), 0);
+    ByteFill(wram->wUnusedMapBuffer, sizeof(wram->wUnusedMapBuffer), 0);
     // RET;
 
 }
@@ -1764,7 +1765,7 @@ uint8_t CopyMapObjectEvents_Conv(struct MapObject* hl, const struct ObjEvent* de
         hl[i].objectEventFlag = (uint16_t)de[i].eventFlag;
         if(hl[i].objectEventFlag != 0xffff)
             printf("%02d: x=%d, y=%d, script=$%04x, eventFlag=%d (%c)\n", i, hl[i].objectXCoord, hl[i].objectYCoord, hl[i].objectScript, (uint16_t)de[i].eventFlag,
-                (EventFlagAction_Conv2(hl[i].objectEventFlag, CHECK_FLAG))? '1': '0');
+                (EventFlagAction(hl[i].objectEventFlag, CHECK_FLAG))? '1': '0');
         else {
             printf("%02d: x=%d, y=%d, script=$%04x\n", i, hl[i].objectXCoord, hl[i].objectYCoord, hl[i].objectScript);
         }
@@ -5065,6 +5066,17 @@ uint16_t GetMapMusic_Conv2(void){
             return music & (RADIO_TOWER_MUSIC - 1);
         }
         return MUSIC_ROCKET_OVERTURE;
+    }
+    if(music == MUSIC_POKEMON_CENTER)
+    {
+        // Only play the mobile center music in the first and second floor of the PCC and only when the adapter has been activated.
+        if(((wram->wMapNumber == MAP_GOLDENROD_POKECENTER_1F && wram->wMapGroup == GROUP_GOLDENROD_POKECENTER_1F)
+            || ((wram->wMapNumber == MAP_POKECENTER_2F && wram->wMapGroup == GROUP_POKECENTER_2F) 
+                && (wram->wBackupMapNumber == MAP_GOLDENROD_POKECENTER_1F && wram->wBackupMapGroup == GROUP_GOLDENROD_POKECENTER_1F)))
+        && Mobile_AlwaysReturnNotCarry().flag) {
+            return MUSIC_MOBILE_CENTER;
+        }
+        return MUSIC_POKEMON_CENTER;
     }
     return music;
 }

@@ -964,7 +964,7 @@ void PokeBallEffect(void){
         // CALL(aCheckReceivedDex);
         // IF_Z goto skip_pokedex;
 
-        if(!caught && CheckReceivedDex_Conv()) {
+        if(!caught && CheckReceivedDex()) {
             // LD_HL(mNewDexDataText);
             // CALL(aPrintText);
             PrintText_Conv2(NewDexDataText);

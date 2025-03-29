@@ -19,13 +19,13 @@ void HandleNewMap(void){
     // CALL(aClearUnusedMapBuffer);
     ClearUnusedMapBuffer();
     // CALL(aResetMapBufferEventFlags);
-    ResetMapBufferEventFlags_Conv();
+    ResetMapBufferEventFlags();
     // CALL(aResetFlashIfOutOfCave);
-    ResetFlashIfOutOfCave_Conv();
+    ResetFlashIfOutOfCave();
     // CALL(aGetCurrentMapSceneID);
     GetCurrentMapSceneID_Conv();
     // CALL(aResetBikeFlags);
-    ResetBikeFlags_Conv();
+    ResetBikeFlags();
     // LD_A(MAPCALLBACK_NEWMAP);
     // CALL(aRunMapCallback);
     RunMapCallback_Conv(MAPCALLBACK_NEWMAP);

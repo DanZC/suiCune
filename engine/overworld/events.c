@@ -1682,7 +1682,7 @@ bool CheckBGEventFlag_Conv(void){
     // LD_D_H;
     // LD_B(CHECK_FLAG);
     // CALL(aEventFlagAction);
-    uint8_t a = EventFlagAction_Conv2(gCurBGEvent.condEvent->eventFlag, CHECK_FLAG);
+    uint8_t a = EventFlagAction(gCurBGEvent.condEvent->eventFlag, CHECK_FLAG);
     // LD_A_C;
     // AND_A_A;
     // POP_HL;

@@ -20,7 +20,7 @@ void SelectRandomBugContestContestants(void){
         // LD_D_hl;
         // LD_B(RESET_FLAG);
         // CALL(aEventFlagAction);
-        EventFlagAction_Conv2(BugCatchingContestantEventFlagTable[i], RESET_FLAG);
+        EventFlagAction(BugCatchingContestantEventFlagTable[i], RESET_FLAG);
         // POP_HL;
         // INC_HL;
         // INC_HL;
@@ -67,11 +67,11 @@ void SelectRandomBugContestContestants(void){
             // LD_A_C;
             // AND_A_A;
             // IF_NZ goto next;
-        } while(EventFlagAction_Conv2(flag, CHECK_FLAG) != 0);
+        } while(EventFlagAction(flag, CHECK_FLAG) != 0);
     //  Set the flag.  This will cause that sprite to not be visible in the contest.
         // LD_B(SET_FLAG);
         // CALL(aEventFlagAction);
-        EventFlagAction_Conv2(flag, SET_FLAG);
+        EventFlagAction(flag, SET_FLAG);
         // POP_BC;
     //  Check if we're done.  If so, return.  Otherwise, choose the next victim.
         // DEC_C;
@@ -96,7 +96,7 @@ uint8_t CheckBugContestContestantFlag(uint8_t a){
     // RET;
 
 // INCLUDE "data/events/bug_contest_flags.asm"
-    return EventFlagAction_Conv2(BugCatchingContestantEventFlagTable[a], CHECK_FLAG);
+    return EventFlagAction(BugCatchingContestantEventFlagTable[a], CHECK_FLAG);
 }
 
 void ContestDropOffMons(void){

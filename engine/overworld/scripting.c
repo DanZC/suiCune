@@ -1698,7 +1698,7 @@ void Script_trainerflagaction_Conv(script_s* s, uint8_t action){
     // CALL(aGetScriptByte);
     // LD_B_A;
     // CALL(aEventFlagAction);
-    uint8_t c = EventFlagAction_Conv2(de, action);
+    uint8_t c = EventFlagAction(de, action);
     // LD_A_C;
     // AND_A_A;
     // RET_Z ;
@@ -2511,7 +2511,7 @@ bool ApplyEventActionAppearDisappear_Conv(uint8_t mapObjIdx, uint8_t b){
 // okay:
     // CALL(aEventFlagAction);
     // RET;
-    return EventFlagAction_Conv2(de, b) != 0;
+    return EventFlagAction(de, b) != 0;
 }
 
 void Script_follow(void){
@@ -4832,7 +4832,7 @@ void Script_setevent_Conv(script_s* s, uint16_t flag){
     // LD_D_A;
     // LD_B(SET_FLAG);
     // CALL(aEventFlagAction);
-    EventFlagAction_Conv2(flag, SET_FLAG);
+    EventFlagAction(flag, SET_FLAG);
     // RET;
 }
 
@@ -4855,7 +4855,7 @@ void Script_clearevent_Conv(script_s* s, uint16_t flag){
     // LD_D_A;
     // LD_B(RESET_FLAG);
     // CALL(aEventFlagAction);
-    EventFlagAction_Conv2(flag, RESET_FLAG);
+    EventFlagAction(flag, RESET_FLAG);
     // RET;
 }
 
@@ -4885,7 +4885,7 @@ void Script_checkevent_Conv(script_s* s, uint16_t flag){
     // LD_D_A;
     // LD_B(CHECK_FLAG);
     // CALL(aEventFlagAction);
-    if(EventFlagAction_Conv2(flag, CHECK_FLAG) == 0) {
+    if(EventFlagAction(flag, CHECK_FLAG) == 0) {
         wram->wScriptVar = FALSE;
     }
     else {

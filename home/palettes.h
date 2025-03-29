@@ -16,7 +16,6 @@ void CopyPals(void);
 void CopyPals_Conv(uint16_t hl, uint16_t de, uint8_t b, uint8_t c);
 void CopyPals_Conv2(uint16_t* hl, const uint16_t* de, uint8_t b, uint8_t c);
 void ClearVBank1(void);
-void ClearVBank1_Conv(void);
 void GSReloadPalettes(void);
 void ReloadSpritesNoPalettes(void);
 void SwapTextboxPalettes(void);

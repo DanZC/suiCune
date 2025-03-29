@@ -46,6 +46,6 @@ void SetMemEvent(void){
     // LD_E_A;
     // LD_B(SET_FLAG);
     // CALL(aEventFlagAction);
-    EventFlagAction_Conv2(wram->wHiddenItemEvent, SET_FLAG);
+    EventFlagAction(wram->wHiddenItemEvent, SET_FLAG);
     // RET;
 }

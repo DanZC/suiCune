@@ -1006,17 +1006,17 @@ static void TrainerWalkToPlayer_GetPathToPlayer(uint8_t b, uint8_t c, uint8_t d)
     uint8_t y1 = de->nextMapY;
     // POP_AF;
     // CALL(aComputePathToWalkToPlayer);
-    ComputePathToWalkToPlayer_Conv(x2, y2, x1, y1, d);
+    ComputePathToWalkToPlayer(x2, y2, x1, y1, d);
     // RET;
 }
 
 void TrainerWalkToPlayer(void){
     // LDH_A_addr(hLastTalked);
     // CALL(aInitMovementBuffer);
-    InitMovementBuffer_Conv(hram->hLastTalked);
+    InitMovementBuffer(hram->hLastTalked);
     // LD_A(movement_step_sleep);
     // CALL(aAppendToMovementBuffer);
-    AppendToMovementBuffer_Conv(movement_step_sleep);
+    AppendToMovementBuffer(movement_step_sleep);
     // LD_A_addr(wWalkingIntoNPC);
     // DEC_A;
     // IF_Z goto TerminateStep;
@@ -1028,13 +1028,13 @@ void TrainerWalkToPlayer(void){
         // CALL(aTrainerWalkToPlayer_GetPathToPlayer);
         TrainerWalkToPlayer_GetPathToPlayer(hram->hLastTalked, PLAYER, 1);
         // CALL(aDecrementMovementBufferCount);
-        DecrementMovementBufferCount_Conv();
+        DecrementMovementBufferCount();
     }
 
 // TerminateStep:
     // LD_A(movement_step_end);
     // CALL(aAppendToMovementBuffer);
-    AppendToMovementBuffer_Conv(movement_step_end);
+    AppendToMovementBuffer(movement_step_end);
     // RET;
 }
 
@@ -1060,13 +1060,13 @@ static uint8_t SurfStartStep_GetMovementData(void){
 
 void SurfStartStep(void){
     // CALL(aInitMovementBuffer);
-    InitMovementBuffer_Conv(PLAYER);
+    InitMovementBuffer(PLAYER);
     // CALL(aSurfStartStep_GetMovementData);
     // CALL(aAppendToMovementBuffer);
-    AppendToMovementBuffer_Conv(SurfStartStep_GetMovementData());
+    AppendToMovementBuffer(SurfStartStep_GetMovementData());
     // LD_A(movement_step_end);
     // CALL(aAppendToMovementBuffer);
-    AppendToMovementBuffer_Conv(movement_step_end);
+    AppendToMovementBuffer(movement_step_end);
     // RET;
 }
 

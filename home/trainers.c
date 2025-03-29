@@ -229,7 +229,7 @@ bool v_CheckTrainerBattle_Conv(void){
         // POP_BC;
         // AND_A_A;
         // IF_Z goto startbattle;
-        if(!EventFlagAction_Conv2(eventFlag, CHECK_FLAG)) {
+        if(!EventFlagAction(eventFlag, CHECK_FLAG)) {
         // startbattle:
             // POP_DE;
             // POP_AF;

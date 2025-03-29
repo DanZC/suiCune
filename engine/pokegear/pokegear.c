@@ -389,7 +389,7 @@ ssaqua:
 }
 
 void Pokegear_LoadGFX_Conv(void){
-    ClearVBank1_Conv();
+    ClearVBank1();
     // FarDecompress_Conv(BANK(aTownMapGFX), mTownMapGFX, vTiles2);
     LoadPNG2bppAssetToVRAM(vram->vTiles2, TownMapGFX);
     // FarDecompress_Conv(BANK(aPokegearGFX), mPokegearGFX, (vTiles2 + LEN_2BPP_TILE * 0x30));

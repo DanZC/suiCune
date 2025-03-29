@@ -616,7 +616,7 @@ void HatchEggs(void){
                 // LD_DE(EVENT_TOGEPI_HATCHED);
                 // LD_B(SET_FLAG);
                 // CALL(aEventFlagAction);
-                EventFlagAction_Conv(EVENT_TOGEPI_HATCHED, SET_FLAG);
+                EventFlagAction(EVENT_TOGEPI_HATCHED, SET_FLAG);
             }
 
         // nottogepi:

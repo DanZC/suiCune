@@ -696,7 +696,7 @@ uint8_t DecorationFlagAction(uint8_t c, uint8_t b){
     // CALL(aGetDecorationFlag);
     // POP_BC;
     // CALL(aEventFlagAction);
-    return EventFlagAction_Conv2(GetDecorationFlag(c), b);
+    return EventFlagAction(GetDecorationFlag(c), b);
     // RET;
 }
 
@@ -1837,7 +1837,7 @@ void SetPosterVisibility(void){
 // ok:
     // LD_DE(EVENT_PLAYERS_ROOM_POSTER);
     // JP(mEventFlagAction);
-    EventFlagAction_Conv2(EVENT_PLAYERS_ROOM_POSTER, b);
+    EventFlagAction(EVENT_PLAYERS_ROOM_POSTER, b);
 }
 
 void SetDecorationTile(void){
@@ -1913,7 +1913,7 @@ void ToggleDecorationVisibility_Conv(uint8_t* hl, uint16_t de, uint8_t a){
     // hide:
         // LD_B(SET_FLAG);
         // JP(mEventFlagAction);
-        EventFlagAction_Conv2(de, SET_FLAG);
+        EventFlagAction(de, SET_FLAG);
         return;
     }
     // CALL(av_GetDecorationSprite);
@@ -1921,7 +1921,7 @@ void ToggleDecorationVisibility_Conv(uint8_t* hl, uint16_t de, uint8_t a){
     *hl = v_GetDecorationSprite_Conv(a);
     // LD_B(RESET_FLAG);
     // JP(mEventFlagAction);
-    EventFlagAction_Conv2(de, RESET_FLAG);
+    EventFlagAction(de, RESET_FLAG);
 }
 
 void v_GetDecorationSprite(void){

@@ -1291,7 +1291,7 @@ void Move2DMenuCursor(void){
 
 void Move2DMenuCursor_Conv(void){
     // LD_HL(wCursorCurrentTile);
-    uint8_t* hl = GBToRAMAddr(wram->wCursorCurrentTile);
+    uint8_t* hl = wram->wTilemap + (wram->wCursorCurrentTile - 1);
     // LD_A_hli;
     // LD_H_hl;
     // LD_L_A;
@@ -1392,7 +1392,7 @@ void Place2DMenuCursor_Conv(void){
 // got_row:
     // LD_C(SCREEN_WIDTH);
     // CALL(aAddNTimes);
-    hl = AddNTimes(hl, SCREEN_WIDTH, (b - 1) * c);
+    hl += SCREEN_WIDTH * (b - 1) * c;
     // LD_A_addr(w2DMenuCursorOffsets);
     // AND_A(0xf);
     // LD_C_A;
@@ -1430,7 +1430,7 @@ void Place2DMenuCursor_Conv(void){
     // LD_addr_A(wCursorCurrentTile);
     // LD_A_H;
     // LD_addr_A(wCursorCurrentTile + 1);
-    wram->wCursorCurrentTile = RAMAddrToGB(hl);
+    wram->wCursorCurrentTile = (hl - wram->wTilemap) + 1;
     // RET;
 
 }

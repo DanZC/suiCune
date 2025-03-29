@@ -873,7 +873,7 @@ bool BuyMenuLoop(void){
         // LD_B(SET_FLAG);
         // LD_HL(wBargainShopFlags);
         // CALL(aFlagAction);
-        FlagAction_Conv2(&wram->wBargainShopFlags, wram->wMartItemID, SET_FLAG);
+        FlagAction(&wram->wBargainShopFlags, wram->wMartItemID, SET_FLAG);
         // CALL(aPlayTransactionSound);
         PlayTransactionSound();
         // LD_DE(wMoney);
@@ -938,7 +938,7 @@ bool BargainShopAskPurchaseQuantity(void){
     // LD_A_C;
     // AND_A_A;
     // IF_NZ goto SoldOut;
-    if(FlagAction_Conv2(&wram->wBargainShopFlags, wram->wMartItemID, CHECK_FLAG)){
+    if(FlagAction(&wram->wBargainShopFlags, wram->wMartItemID, CHECK_FLAG)){
     // SoldOut:
         // LD_A(MARTTEXT_SOLD_OUT);
         // CALL(aLoadBuyMenuText);

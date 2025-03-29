@@ -1,10 +1,4 @@
-void InitMovementBuffer(void);
-void InitMovementBuffer_Conv(uint8_t a);
+void InitMovementBuffer(uint8_t a);
 void DecrementMovementBufferCount(void);
-void DecrementMovementBufferCount_Conv(void);
-void AppendToMovementBuffer(void);
-void AppendToMovementBuffer_Conv(uint8_t a);
-void AppendToMovementBufferNTimes(void);
-void ComputePathToWalkToPlayer(void);
-void ComputePathToWalkToPlayer_Conv(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint8_t a);
-uint8_t ComputePathToWalkToPlayer_GetMovementData_Conv(uint8_t b, uint8_t a);
+void AppendToMovementBuffer(uint8_t a);
+void ComputePathToWalkToPlayer(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint8_t a);

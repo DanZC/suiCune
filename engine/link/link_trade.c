@@ -409,7 +409,7 @@ static void LinkTradeMenu_UpdateCursor(void) {
     // LD_A_hli;
     // LD_H_hl;
     // LD_L_A;
-    tile_t* hl = (tile_t*)GBToRAMAddr(wram->wCursorCurrentTile);
+    tile_t* hl = wram->wTilemap + (wram->wCursorCurrentTile - 1);
     // LD_A_hl;
     // CP_A(0x1f);
     // IF_NZ goto not_currently_selected;
@@ -499,7 +499,7 @@ static void LinkTradeMenu_UpdateCursor(void) {
     // LD_addr_A(wCursorCurrentTile);
     // LD_A_H;
     // LD_addr_A(wCursorCurrentTile + 1);
-    wram->wCursorCurrentTile = RAMAddrToGB(hl + a);
+    wram->wCursorCurrentTile = ((hl + a) - wram->wTilemap) + 1;
     // RET;
     return;
 }

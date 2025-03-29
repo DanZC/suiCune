@@ -21,7 +21,7 @@ void HoOhChamber(void){
         // LD_DE(EVENT_WALL_OPENED_IN_HO_OH_CHAMBER);
         // LD_B(SET_FLAG);
         // CALL(aEventFlagAction);
-        EventFlagAction_Conv2(EVENT_WALL_OPENED_IN_HO_OH_CHAMBER, SET_FLAG);
+        EventFlagAction(EVENT_WALL_OPENED_IN_HO_OH_CHAMBER, SET_FLAG);
     }
 
 // done:
@@ -36,7 +36,7 @@ void OmanyteChamber(void){
     // LD_A_C;
     // AND_A_A;
     // IF_NZ goto nope;
-    if(EventFlagAction_Conv2(EVENT_WALL_OPENED_IN_OMANYTE_CHAMBER, CHECK_FLAG))
+    if(EventFlagAction(EVENT_WALL_OPENED_IN_OMANYTE_CHAMBER, CHECK_FLAG))
         return;
 
     // LD_A(WATER_STONE);
@@ -77,7 +77,7 @@ void OmanyteChamber(void){
     // LD_DE(EVENT_WALL_OPENED_IN_OMANYTE_CHAMBER);
     // LD_B(SET_FLAG);
     // CALL(aEventFlagAction);
-    EventFlagAction_Conv2(EVENT_WALL_OPENED_IN_OMANYTE_CHAMBER, SET_FLAG);
+    EventFlagAction(EVENT_WALL_OPENED_IN_OMANYTE_CHAMBER, SET_FLAG);
 
 // nope:
     // RET;
@@ -132,7 +132,7 @@ bool SpecialAerodactylChamber_Conv(void){
     // LD_DE(EVENT_WALL_OPENED_IN_AERODACTYL_CHAMBER);
     // LD_B(SET_FLAG);
     // CALL(aEventFlagAction);
-    EventFlagAction_Conv2(EVENT_WALL_OPENED_IN_AERODACTYL_CHAMBER, SET_FLAG);
+    EventFlagAction(EVENT_WALL_OPENED_IN_AERODACTYL_CHAMBER, SET_FLAG);
 
     // SCF;
     // goto done;
@@ -189,7 +189,7 @@ void SpecialKabutoChamber_Conv(void){
         // LD_DE(EVENT_WALL_OPENED_IN_KABUTO_CHAMBER);
         // LD_B(SET_FLAG);
         // CALL(aEventFlagAction);
-        EventFlagAction_Conv2(EVENT_WALL_OPENED_IN_KABUTO_CHAMBER, SET_FLAG);
+        EventFlagAction(EVENT_WALL_OPENED_IN_KABUTO_CHAMBER, SET_FLAG);
     }
 
 // done:

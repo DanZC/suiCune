@@ -363,11 +363,11 @@ void init_function_pointers(void) {
     // REDIRECTED(MobileReceive);
 
     // home/movement.c
-    // REDIRECTED(ComputePathToWalkToPlayer);
-    // REDIRECTED(DecrementMovementBufferCount);
-    // REDIRECTED(InitMovementBuffer);
-    // REDIRECTED(AppendToMovementBufferNTimes);
-    // REDIRECTED(AppendToMovementBuffer);
+    // CONVERTED(ComputePathToWalkToPlayer);
+    // CONVERTED(DecrementMovementBufferCount);
+    // CONVERTED(InitMovementBuffer);
+    // CONVERTED(AppendToMovementBufferNTimes);
+    // CONVERTED(AppendToMovementBuffer);
 
     // home/names.c
     // CONVERTED(GetItemName);
@@ -381,7 +381,7 @@ void init_function_pointers(void) {
 
     // home/palettes.c
     REDIRECTED(UpdatePalsIfCGB);
-    REDIRECTED(ClearVBank1);
+    // CONVERTED(ClearVBank1);
     // REDIRECTED(DmgToCgbObjPal0);
     REDIRECTED(UpdateCGBPals);
     REDIRECTED(DmgToCgbBGPals);

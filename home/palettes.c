@@ -734,33 +734,10 @@ void CopyPals_Conv2(uint16_t* hl, const uint16_t* de, uint8_t b, uint8_t c){
 }
 
 void ClearVBank1(void){
-        LDH_A_addr(hCGB);
-    AND_A_A;
-    RET_Z ;
-
-    LD_A(1);
-    LDH_addr_A(rVBK);
-
-    LD_HL(VRAM_Begin);
-    LD_BC(VRAM_End - VRAM_Begin);
-    XOR_A_A;
-    CALL(aByteFill);
-
-    LD_A(0);
-    LDH_addr_A(rVBK);
-    RET;
-
-}
-
-void ClearVBank1_Conv(void){
     if(hram->hCGB == 0) 
         return;
 
-    gb_write(rVBK, 1);
-
-    ByteFill_GB(VRAM_Begin, (VRAM_End - VRAM_Begin), 0);
-
-    gb_write(rVBK, 0);
+    ByteFill(vram->vTiles3, (VRAM_End - VRAM_Begin), 0);
 }
 
 void GSReloadPalettes(void){

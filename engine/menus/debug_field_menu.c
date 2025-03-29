@@ -1,4 +1,5 @@
 #include "../../constants.h"
+#include "menu_2.h"
 #include "../../home/menu.h"
 #include "../../home/delay.h"
 #include "../../home/copy.h"
@@ -13,12 +14,14 @@
 #include "../../home/flag.h"
 #include "../../home/joypad.h"
 #include "../../home/text.h"
+#include "../../home/scrolling_menu.h"
 #include "../events/overworld.h"
 #include "../events/specials.h"
 #include "../overworld/init_map.h"
 #include "../overworld/map_setup.h"
 #include "../pokegear/pokegear.h"
 #include "../phone/phone.h"
+#include "../../mobile/mobile_5f.h"
 #include "../../util/scripting.h"
 
 enum {
@@ -28,6 +31,7 @@ enum {
     DEBUGFIELDITEM_UNOWN,
     DEBUGFIELDITEM_FLAG,
     DEBUGFIELDITEM_WILD_BATTLE,
+    DEBUGFIELDITEM_MOBILE,
     DEBUGFIELDITEM_EXIT,
     DEBUGFIELDITEM_COUNT,
 };
@@ -109,6 +113,41 @@ static void DebugWildBattle(species_t species, uint8_t level){
     hram->hMenuReturn = HMENURETURN_SCRIPT;
 }
 
+enum {
+    DEBUGMOBILE_DOWNLOAD_NEWS,
+    DEBUGMOBILE_BACK,
+    DEBUGMOBILE_COUNT,
+};
+
+const struct MenuHeader DebugMobileConnection_Menu = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(1, 1, 16, 10),
+    .data = &(struct MenuData) {
+        .flags = STATICMENU_CURSOR,
+        .verticalMenu = {
+            .count = DEBUGMOBILE_COUNT,
+            .options = (const char*[]) {
+                [DEBUGMOBILE_DOWNLOAD_NEWS] = "DOWNLOAD NEWS",
+                [DEBUGMOBILE_BACK] = "BACK",
+            },
+        },
+    },
+    .defaultOption = DEBUGMOBILE_BACK,
+};
+
+static void DebugMobileConnection(void) {
+    LoadMenuHeader_Conv2(&DebugMobileConnection_Menu);
+    bool cancel = !VerticalMenu_Conv();
+    if(!cancel && wram->wMenuCursorY != DEBUGMOBILE_COUNT) {
+        switch(wram->wMenuCursorY - 1) {
+            case DEBUGMOBILE_DOWNLOAD_NEWS: Function17d2b6(); break;
+            case DEBUGMOBILE_BACK: break;
+        }
+    }
+    ExitMenu_Conv2();
+    return;
+}
+
 static void DebugFlagMenu(void) {
     LoadStandardMenuHeader_Conv();
     Textbox_Conv2(coord(0, 0, wram->wTilemap), 6, 12);
@@ -130,15 +169,15 @@ static void DebugFlagMenu(void) {
 
         if(hram->hJoyPressed & (A_BUTTON)) {
             PlayClickSFX_Conv();
-            if(EventFlagAction_Conv2(flag, CHECK_FLAG))
-                EventFlagAction_Conv2(flag, RESET_FLAG);
+            if(EventFlagAction(flag, CHECK_FLAG))
+                EventFlagAction(flag, RESET_FLAG);
             else
-                EventFlagAction_Conv2(flag, SET_FLAG);
+                EventFlagAction(flag, SET_FLAG);
             WaitSFX();
         }
 
         char buffer[32];
-        sprintf(buffer, "FLAG - %03d<LF>  %s@", flag, EventFlagAction_Conv2(flag, CHECK_FLAG)? "ON": "OFF");
+        sprintf(buffer, "FLAG - %03d<LF>  %s@", flag, EventFlagAction(flag, CHECK_FLAG)? "ON": "OFF");
         ClearBox_Conv2(coord(2, 2, wram->wTilemap), 11, 5);
         PlaceStringSimple(U82C(buffer), coord(2, 2, wram->wTilemap));
 
@@ -166,6 +205,7 @@ const struct MenuHeader MenuHeader = {
                 "UNOWN@",
                 "FLAG@",
                 "WILD@",
+                "MOBILE",
                 "EXIT@",
             },
         },
@@ -220,6 +260,9 @@ loop:
         case DEBUGFIELDITEM_WILD_BATTLE:
             DebugWildBattle(CHARIZARD, 45);
             break;
+        case DEBUGFIELDITEM_MOBILE:
+            DebugMobileConnection();
+            goto loop;
         case DEBUGFIELDITEM_EXIT:
             break;
         }

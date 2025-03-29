@@ -2824,7 +2824,7 @@ void LinkTradeOTPartymonMenuCheckCancel(void){
     if(wram->wMenuCursorY != 1)
         return LinkTradePartiesMenuMasterLoop();
     // CALL(aHideCursor);
-    uint8_t* hl = HideCursor_Conv();
+    tile_t* hl = HideCursor_Conv();
 
     // PUSH_HL;
     // PUSH_BC;

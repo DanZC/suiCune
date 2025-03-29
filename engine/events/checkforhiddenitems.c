@@ -161,7 +161,7 @@ bool CheckForHiddenItems_Conv(void){
         // LD_E_L;
         // LD_B(CHECK_FLAG);
         // CALL(aEventFlagAction);
-        uint8_t flag = EventFlagAction_Conv2(bg[i].hiddenItem->eventFlag, CHECK_FLAG);
+        uint8_t flag = EventFlagAction(bg[i].hiddenItem->eventFlag, CHECK_FLAG);
         // LD_A_C;
         // AND_A_A;
         // IF_Z goto itemnearby;

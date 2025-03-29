@@ -121,7 +121,8 @@ void PlaceHollowCursor_Conv(void) {
     // LD_L_A;
     // LD_hl(CHAR_RIGHT_CURSOR_SEL);
     // RET;
-    *(uint8_t*)GBToRAMAddr(wram->wCursorCurrentTile) = CHAR_RIGHT_CURSOR_SEL;
+    if(wram->wCursorCurrentTile != 0)
+        wram->wTilemap[wram->wCursorCurrentTile - 1] = CHAR_RIGHT_CURSOR_SEL;
 }
 
 void HideCursor(void) {
@@ -134,8 +135,11 @@ void HideCursor(void) {
 }
 
 uint8_t* HideCursor_Conv(void){
-    *(uint8_t*)GBToRAMAddr(wram->wCursorCurrentTile) = CHAR_SPACE;
-    return (uint8_t*)GBToRAMAddr(wram->wCursorCurrentTile);
+    if(wram->wCursorCurrentTile != 0) {
+        wram->wTilemap[wram->wCursorCurrentTile - 1] = CHAR_SPACE;
+        return wram->wTilemap + (wram->wCursorCurrentTile - 1);
+    }
+    return NULL;
 }
 
 void PushWindow(void) {

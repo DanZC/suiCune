@@ -46,7 +46,7 @@ enum {
 static uint8_t PokemonCenterPC_ChooseWhichPCListToUse(void) {
     // CALL(aCheckReceivedDex);
     // IF_NZ goto got_dex;
-    if(!CheckReceivedDex_Conv()) {
+    if(!CheckReceivedDex()) {
         // LD_A(PCPC_BEFORE_POKEDEX);
         // RET;
         return PCPC_BEFORE_POKEDEX;
