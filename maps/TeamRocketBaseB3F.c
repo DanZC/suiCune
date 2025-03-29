@@ -271,10 +271,9 @@ bool TrainerScientistMitch_Script(script_s* s) {
     s_end
     SCRIPT_END
 }
-bool TeamRocketBaseB3FLockedDoor(script_s* s) {
+const struct ConditionalEvent TeamRocketBaseB3FLockedDoor = conditional_event(EVENT_OPENED_DOOR_TO_GIOVANNIS_OFFICE, TeamRocketBaseB3FLockedDoor_Script);
+bool TeamRocketBaseB3FLockedDoor_Script(script_s* s) {
     SCRIPT_BEGIN
-    //conditional_event(EVENT_OPENED_DOOR_TO_GIOVANNIS_OFFICE, .Script)
-Script:
     opentext
     checkevent(EVENT_LEARNED_SLOWPOKETAIL)
     iffalse(NeedsPassword)

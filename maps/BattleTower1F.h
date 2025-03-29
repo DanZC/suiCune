@@ -13,6 +13,8 @@ bool Script_Menu_ChallengeExplanationCancel(script_s* s);
 bool Script_ChooseChallenge(script_s* s);
 bool Script_ResumeBattleTowerChallenge(script_s* s);
 bool Script_WalkToBattleTowerElevator(script_s* s);
+bool Script_AskRegisterRecord(script_s* s);
+bool Script_RegisterRecord(script_s* s);
 bool Script_GivePlayerHisPrize(script_s* s);
 bool Script_YourPackIsStuffedFull(script_s* s);
 bool Script_BattleTowerIntroductionYesNo(script_s* s);

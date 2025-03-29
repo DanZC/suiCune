@@ -6359,7 +6359,7 @@ void Function11a1e6(void){
     uint8_t* de = Function11a1ff(wram->wc346, U82C(String_11a706));
     // LD_HL(wcd85);
     // CALL(aFunction11a1ff);
-    de = Function11a1ff(de, wram->wcd85);
+    // de = Function11a1ff(de, wram->wcd85);
     // LD_HL(mString_11a70b);
     // CALL(aFunction11a1ff);
     // de = Function11a1ff(de, U82C(String_11a70b));
@@ -7217,17 +7217,17 @@ const char String_11a661[] =
             "Dialing the"      //db ['"これから\u3000モバイルセンターに"'];
 	t_next  "MOBILE CENTER…@"; //next ['"でんわ<WO>かけます@"']
 
-const char String_11a679[] = 
-            "Is the MOBILE"     //db ['"モバイルアダプタ<NO>じゅんびは"'];
-	t_next  "ADAPTER ready?@";  //next ['"できて\u3000いますか？@"']
+const char String_11a679[] = // Originally "Is the MOBILE ADAPTER ready?"
+            "Are you ready"     //db ['"モバイルアダプタ<NO>じゅんびは"'];
+	t_next  "to connect?";  //next ['"できて\u3000いますか？@"']
 
 const char String_11a692[] =
             "Please wait"       //db ['"でんわ<WO>かけています"'];
     t_next  "a moment…@";       //next ['"しばらく\u3000おまちください@"']
 
-const char String_11a6aa[] = 
-            "Charges will"  //db ['"でんわをかけると\u3000つうわりょう"'];
-    t_next  "apply.@";      //next ['"せつぞくりょう<GA>かかります@"']
+const char String_11a6aa[] = // Originally "Charges will apply"
+            "Please follow"  //db ['"でんわをかけると\u3000つうわりょう"'];
+    t_next  "the rules.";      //next ['"せつぞくりょう<GA>かかります@"']
 
 const char String_11a6c8[] = "Connected.@"; //db ['"せつぞく\u3000しました@"'];
 
@@ -7241,7 +7241,7 @@ const char String_11a6f1[] =
             "This is a"         //db ['"この\u3000サービスには"'];
     t_next  "free service.@";   //next ['"つうわりょう<NO>ほかに@"']
 
-const char String_11a706[] = "Cost:@"; //db ['"おかね<GA>@"'];
+const char String_11a706[] = "Download?"; // Originally "Cost:"  //db ['"おかね<GA>@"'];
 
 void String_11a70b(void){
     //db ['"えん"'];
@@ -10089,6 +10089,7 @@ void Function11b6b3(void){
 
 }
 
+// SanitizeMobileMonAndAddItToParty
 void Function11b6b4(void){
     // LD_A(0x5);
     // CALL(aOpenSRAM);

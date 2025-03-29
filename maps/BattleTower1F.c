@@ -12,8 +12,8 @@ enum {
 };
 
 const Script_fn_t BattleTower1F_SceneScripts[] = {
-    BattleTower1F_MapScripts_Scene0 , //  SCENE_DEFAULT,
-    BattleTower1F_MapScripts_Scene1 , //  SCENE_FINISHED,
+    BattleTower1F_MapScripts_Scene0 , //  SCENE_BATTLETOWER1F_CHECKSTATE,
+    BattleTower1F_MapScripts_Scene1 , //  SCENE_BATTLETOWER1F_NOOP,
 };
 
 const struct MapCallback BattleTower1F_MapCallbacks[] = {
@@ -78,8 +78,8 @@ bool BattleTower1F_MapScripts_Scene0(script_s* s) {
     special(BattleTowerAction)
     ifequal(0x0, SkipEverything)
     ifequal(0x2, LeftWithoutSaving)
-    ifequal(0x3, SkipEverything)
-    ifequal(0x4, SkipEverything)
+    // ifequal(0x3, SkipEverything)
+    // ifequal(0x4, SkipEverything)
     opentext
     writetext(Text_WeveBeenWaitingForYou)
     waitbutton
@@ -87,13 +87,17 @@ bool BattleTower1F_MapScripts_Scene0(script_s* s) {
     sdefer(Script_ResumeBattleTowerChallenge)
     s_end
 LeftWithoutSaving:
+    setval(BATTLETOWERACTION_13)
+    special(BattleTowerAction)
+    ifnotequal(0x00, skip) // $70CB
     sdefer(BattleTower_LeftWithoutSaving)
+skip:
     setval(BATTLETOWERACTION_CHALLENGECANCELED)
     special(BattleTowerAction)
     setval(BATTLETOWERACTION_06)
     special(BattleTowerAction)
 SkipEverything:
-    setscene(SCENE_FINISHED)
+    setscene(SCENE_BATTLETOWER1F_NOOP)
     SCRIPT_FALLTHROUGH(BattleTower1F_MapScripts_Scene1)
 }
 bool BattleTower1F_MapScripts_Scene1(script_s* s) {
@@ -104,11 +108,19 @@ bool BattleTower1F_MapScripts_Scene1(script_s* s) {
 bool BattleTower1FRulesSign(script_s* s) {
     SCRIPT_BEGIN
     opentext
+    special(Mobile_DummyReturnFalse)
+    iftrue(mobile)
     writetext(Text_ReadBattleTowerRules)
     yesorno
     iffalse(skip)
     writetext(Text_BattleTowerRules)
     waitbutton
+    goto skip;
+mobile:
+    writetext(Text_CheckTheLeaderHonorRoll)
+    yesorno
+    iffalse(skip)
+    special(Function1704e1) // special $78
 skip:
     closetext
     s_end
@@ -116,16 +128,40 @@ skip:
 }
 bool BattleTower1FReceptionistScript(script_s* s) {
     SCRIPT_BEGIN
+    special(Mobile_DummyReturnFalse)
+    iftrue(mobile)
     setval(BATTLETOWERACTION_GET_CHALLENGE_STATE) // readmem sBattleTowerChallengeState
     special(BattleTowerAction)
     ifequal_jump(0x3, Script_BeatenAllTrainers2) // maps/BattleTowerBattleRoom.asm
     opentext
+idk2:
     writetext(Text_BattleTowerWelcomesYou)
     promptbutton
     setval(BATTLETOWERACTION_CHECK_EXPLANATION_READ) // if new save file: bit 1, [sBattleTowerSaveFileFlags]
     special(BattleTowerAction)
     ifnotequal_jump(0x0, Script_Menu_ChallengeExplanationCancel)
     sjump(Script_BattleTowerIntroductionYesNo)
+mobile:
+    opentext
+    setval(BATTLETOWERACTION_CHECKSAVEFILEISYOURS)
+    special(BattleTowerAction)
+    iffalse(idk2) // $711F
+    setval(BATTLETOWERACTION_13)
+    special(BattleTowerAction)
+    ifnotequal(0x00, idk2) // $711F
+    setval(BATTLETOWERACTION_05)
+	special(BattleTowerAction)
+	ifequal(0x00, idk2) //$711F
+	ifequal(0x08, idk2) //$711B
+	writetext(Text_RegisterRecordOnFile_Mobile) // $7709 ???
+	yesorno
+	iffalse(idk2) // $711F
+	writetext(Text_SaveBeforeConnecting_Mobile) // $76A1
+	yesorno
+	iffalse_jump(Script_BattleTowerHopeToServeYouAgain) //$71E3
+	special(TryQuickSave)
+	iffalse_jump(Script_BattleTowerHopeToServeYouAgain) // $71E3
+    sjump(Script_RegisterRecord) // $71BB
     SCRIPT_END
 }
 bool Script_Menu_ChallengeExplanationCancel(script_s* s) {
@@ -134,12 +170,16 @@ bool Script_Menu_ChallengeExplanationCancel(script_s* s) {
     setval(TRUE)
     special(Menu_ChallengeExplanationCancel)
     ifequal_jump(1, Script_ChooseChallenge)
-    ifequal_jump(2, Script_BattleTowerExplanation)
+    ifequal_jump(2, Script_ChooseChallenge2)
+    ifequal_jump(3, Script_BattleTowerExplanation)
+    ifequal_jump(5, Script_StartChallenge)
     sjump(Script_BattleTowerHopeToServeYouAgain)
     SCRIPT_END
 }
 bool Script_ChooseChallenge(script_s* s) {
     SCRIPT_BEGIN
+    special(Mobile_DummyReturnFalse)
+    iftrue(mobile)
     setval(BATTLETOWERACTION_RESETDATA) // ResetBattleTowerTrainerSRAM
     special(BattleTowerAction)
     special(CheckForBattleTowerRules)
@@ -147,7 +187,7 @@ bool Script_ChooseChallenge(script_s* s) {
     writetext(Text_SaveBeforeEnteringBattleRoom)
     yesorno
     iffalse_jump(Script_Menu_ChallengeExplanationCancel)
-    setscene(SCENE_DEFAULT)
+    setscene(SCENE_BATTLETOWER1F_CHECKSTATE)
     special(TryQuickSave)
     iffalse_jump(Script_Menu_ChallengeExplanationCancel)
     setscene(SCENE_FINISHED)
@@ -164,13 +204,39 @@ bool Script_ChooseChallenge(script_s* s) {
     setval(BATTLETOWERACTION_CHOOSEREWARD)
     special(BattleTowerAction)
     sjump(Script_WalkToBattleTowerElevator)
+mobile:
+    special(CheckForBattleTowerRules)
+    ifnotequal_jump(FALSE, Script_WaitButton)
+    writetext(Text_SaveBeforeConnecting_Mobile)
+    yesorno
+    iffalse_jump(Script_Menu_ChallengeExplanationCancel)
+    setscene(SCENE_BATTLETOWER1F_CHECKSTATE)
+    special(TryQuickSave)
+    iffalse_jump(Script_Menu_ChallengeExplanationCancel)
+    setscene(SCENE_FINISHED)
+    setval(BATTLETOWERACTION_SET_EXPLANATION_READ) // set 1, [sBattleTowerSaveFileFlags]
+    special(BattleTowerAction)
+    special(BattleTowerRoomMenu)
+    ifequal_jump(0xa, Script_Menu_ChallengeExplanationCancel)
+    ifnotequal_jump(0x0, Script_MobileError)
+    setval(BATTLETOWERACTION_11)
+    special(BattleTowerAction)
+    writetext(Text_RightThisWayToYourBattleRoom)
+    waitbutton
+    setval(BATTLETOWERACTION_SAVELEVELGROUP)
+    special(BattleTowerAction)
+    closetext
+    sjump(Script_WalkToBattleTowerElevator)
     SCRIPT_END
 }
 bool Script_ResumeBattleTowerChallenge(script_s* s) {
     SCRIPT_BEGIN
     closetext
+    special(Mobile_DummyReturnFalse)
+    iftrue(mobile)
     setval(BATTLETOWERACTION_LOADLEVELGROUP) // load choice of level group
     special(BattleTowerAction)
+mobile:
     SCRIPT_FALLTHROUGH(Script_WalkToBattleTowerElevator)
 }
 bool Script_WalkToBattleTowerElevator(script_s* s) {
@@ -189,6 +255,26 @@ bool Script_WalkToBattleTowerElevator(script_s* s) {
     applymovement(PLAYER, MovementData_BattleTowerHallwayPlayerEntersBattleRoom)
     warpcheck
     s_end
+    SCRIPT_END
+}
+bool Script_AskRegisterRecord(script_s* s) { // 71B4
+    SCRIPT_BEGIN
+	writetext(Text_AskRegisterRecord_Mobile)//$7523
+	yesorno
+	iffalse_jump(Script_BattleTowerHopeToServeYouAgain) //$71E3
+    SCRIPT_FALLTHROUGH(Script_RegisterRecord)
+}
+bool Script_RegisterRecord(script_s* s) {
+    SCRIPT_BEGIN
+	special(Function170114) // 76
+	ifequal_jump(0x0A, Script_BattleTowerHopeToServeYouAgain) //$71E3
+	ifnotequal_jump(0x00, Script_MobileError)//$7283
+	setval(BATTLETOWERACTION_06)
+	special(BattleTowerAction)
+	writetext(Text_YourRegistrationIsComplete)//$753F
+	waitbutton
+	closetext
+	s_end
     SCRIPT_END
 }
 bool Script_GivePlayerHisPrize(script_s* s) {
@@ -258,7 +344,7 @@ bool Script_WaitButton(script_s* s) {
 }
 bool Script_ChooseChallenge2(script_s* s) {
     SCRIPT_BEGIN
-    writetext(Text_SaveBeforeEnteringBattleRoom)
+    writetext(Text_SaveBeforeConnecting_Mobile)
     yesorno
     iffalse_jump(Script_Menu_ChallengeExplanationCancel)
     special(TryQuickSave)

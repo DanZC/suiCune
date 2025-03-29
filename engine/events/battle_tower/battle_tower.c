@@ -13,6 +13,8 @@
 #include "../../../home/delay.h"
 #include "../../../home/names.h"
 #include "../../../home/item.h"
+#include "../../../home/map.h"
+#include "../../../home/compare.h"
 #include "../../../mobile/mobile_41.h"
 #include "../../../mobile/mobile_46.h"
 #include "../../../mobile/mobile_5c.h"
@@ -28,12 +30,14 @@ void BattleTowerRoomMenu(void){
     // RET;
 }
 
+// Mobile_BattleRoomMenuSpecial
 void Function1700ba(void){
 //  special
-    CALL(aInitBattleTowerChallengeRAM);
-    FARCALL(aFunction11811a);
-    RET;
-
+    // CALL(aInitBattleTowerChallengeRAM);
+    InitBattleTowerChallengeRAM();
+    // FARCALL(aFunction11811a);
+    Function11811a();
+    // RET;
 }
 
 void Function1700c4(void){
@@ -1075,6 +1079,7 @@ void BattleTowerAction(void){
         //dw ['Function1709aa'];
     case BATTLETOWERACTION_0F: return Function1709aa();
         //dw ['Function1709bb'];
+    case BATTLETOWERACTION_10: return Function1709bb();
         //dw ['Function170a9c'];
     case BATTLETOWERACTION_11: return Function170a9c();
         //dw ['Function170aa0'];
@@ -1090,12 +1095,16 @@ void BattleTowerAction(void){
         //dw ['Function17081d'];
     case BATTLETOWERACTION_17: return Function17081d();
         //dw ['BattleTowerAction_LevelCheck'];
+    case BATTLETOWERACTION_LEVEL_CHECK: return BattleTowerAction_LevelCheck();
         //dw ['BattleTowerAction_UbersCheck'];
+    case BATTLETOWERACTION_UBERS_CHECK: return BattleTowerAction_UbersCheck();
         //dw ['ResetBattleTowerTrainersSRAM'];
     case BATTLETOWERACTION_RESETDATA: return ResetBattleTowerTrainersSRAM();
         //dw ['BattleTower_GiveReward'];
         //dw ['Function17071b'];
+    case BATTLETOWERACTION_1C: return Function17071b();
         //dw ['Function170729'];
+    case BATTLETOWERACTION_1D: return Function170729();
         //dw ['BattleTower_RandomlyChooseReward'];
         //dw ['BattleTower_SaveOptions'];
     }
@@ -1738,139 +1747,170 @@ void Function1709aa(void){
 
 void Function1709bb(void){
 //  //  BattleTowerAction $10
-    XOR_A_A;  // FALSE
-    LD_addr_A(wScriptVar);
-    LD_A(BANK(s5_a800));
-    CALL(aOpenSRAM);
-    LD_A_addr(s5_a800);
-    CALL(aCloseSRAM);
-    CP_A(6);
-    IF_NC goto invalid;
-    LD_E_A;
-    LD_D(0);
-    LD_HL(mFunction1709bb_Jumptable);
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    JP_hl;
+    // XOR_A_A;  // FALSE
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = FALSE;
+    // LD_A(BANK(s5_a800));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(as5_a800));
+    // LD_A_addr(s5_a800);
+    uint8_t a = gb_read(s5_a800);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // CP_A(6);
+    // IF_NC goto invalid;
+    if(a >= 6) {
+    // invalid:
+        // LD_A(BANK(s5_a800));
+        // CALL(aOpenSRAM);
+        OpenSRAM_Conv(MBANK(as5_a800));
+        // XOR_A_A;
+        // LD_addr_A(s5_a800);
+        gb_write(s5_a800, 0);
+        // CALL(aCloseSRAM);
+        CloseSRAM_Conv();
+        // RET;
+        return;
+    }
+    // LD_E_A;
+    // LD_D(0);
+    // LD_HL(mFunction1709bb_Jumptable);
+    // ADD_HL_DE;
+    // ADD_HL_DE;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // JP_hl;
+    switch(a) {
+    // Jumptable:
+        case 0: //dw ['.NoAction'];
+        case 1: //dw ['.NoAction'];
+        // NoAction:
+            // RET;
+            return;
+        case 2: //dw ['.DoAction1'];
+        case 3: //dw ['.DoAction1'];
+        // DoAction1:
+            // LD_A(BANK(s5_a800));
+            // CALL(aOpenSRAM);
+            OpenSRAM_Conv(MBANK(as5_a800));
+            // LD_A(1);
+            // LD_addr_A(s5_a800);
+            gb_write(s5_a800, 1);
+            // CALL(aCloseSRAM);
+            CloseSRAM_Conv();
+            return;
+        case 4: //dw ['.Action4'];
+        // Action4:
+            // LD_A(BANK(s5_b023));  // aka BANK(s5_a825) and BANK(s5_a826)
+            // CALL(aOpenSRAM);
+            OpenSRAM_Conv(MBANK(as5_b023));
+            // LD_HL(s5_b023);
+            // LD_DE(wc608);
+            // LD_BC(105);
+            // CALL(aCopyBytes);
+            CopyBytes(wram->wc608, GBToRAMAddr(s5_b023), 105);
+            // LD_A_addr(s5_a825);
+            // LD_addr_A(wcd30);
+            wram->wcd30 = gb_read(s5_a825);
+            // LD_A_addr(s5_a826);
+            // LD_addr_A(wcd31);
+            wram->wcd31 = gb_read(s5_a826);
+            // CALL(aCloseSRAM);
+            CloseSRAM_Conv();
+            // FARCALL(aFunction11b6b4);
+            Function11b6b4();
+            // FARCALL(aFunction17d0f3);
+            Function17d0f3();
+            // LD_A(TRUE);
+            // LD_addr_A(wScriptVar);
+            wram->wScriptVar = TRUE;
+            // RET;
+            return;
+        case 5: //dw ['.Action5'];
+        // Action5:
+            // LD_A(0);  // ???
+            // CALL(aOpenSRAM);
+            // LD_HL(wRTC);
+            // LD_DE(wc608);
+            // LD_BC(4);
+            // CALL(aCopyBytes);
+            CopyBytes(wram->wc608, wram->wRTC, 4);
+            // CALL(aCloseSRAM);
+            // LD_A(BANK(s5_b08c));
+            // CALL(aOpenSRAM);
+            OpenSRAM_Conv(MBANK(as5_b08c));
+            // LD_HL(s5_b08c);
+            // LD_DE(wc608);
+            // LD_C(4);
 
+        // compare_loop:
+            // LD_A_de;
+            // INC_DE;
+            // CP_A_hl;
+            // IF_NZ goto different;
+            // INC_HL;
+            // DEC_C;
+            // IF_NZ goto compare_loop;
+            if(CompareBytes(wram->wc608, GBToRAMAddr(s5_b08c), 4) == 0) {
+                // CALL(aCloseSRAM);
+                CloseSRAM_Conv();
+                // LD_A_addr(wMapGroup);
+                // LD_B_A;
+                // LD_A_addr(wMapNumber);
+                // LD_C_A;
+                // CALL(aGetMapSceneID);
+                uint8_t* var = GetMapSceneID_Conv2(wram->wMapGroup, wram->wMapNumber);
+                // LD_A_D;
+                // OR_A_E;
+                // IF_Z goto no_scene;
+                // LD_A_de;
+                // AND_A_A;
+                // RET_NZ ;
+                if(var != NULL && *var != 0)
+                    return;
 
-invalid:
-    LD_A(BANK(s5_a800));
-    CALL(aOpenSRAM);
-    XOR_A_A;
-    LD_addr_A(s5_a800);
-    CALL(aCloseSRAM);
-    RET;
+            // no_scene:
+                // LD_A(TRUE);
+                // LD_addr_A(wScriptVar);
+                wram->wScriptVar = TRUE;
+                // RET;
+                return;
+            }
+            else {
+            // different:
+                // CALL(aCloseSRAM);
+                CloseSRAM_Conv();
+                // LD_A(BANK(s5_a800));
+                // CALL(aOpenSRAM);
+                OpenSRAM_Conv(MBANK(as5_a800));
+                // XOR_A_A;
+                // LD_addr_A(s5_a800);
+                gb_write(s5_a800, 0);
+                // CALL(aCloseSRAM);
+                CloseSRAM_Conv();
+                // LD_addr_A(wScriptVar);
+                wram->wScriptVar = FALSE;
+                // LD_A_addr(wMapGroup);
+                // LD_B_A;
+                // LD_A_addr(wMapNumber);
+                // LD_C_A;
+                // CALL(aGetMapSceneID);
+                uint8_t* var = GetMapSceneID_Conv2(wram->wMapGroup, wram->wMapNumber);
+                // LD_A_D;
+                // OR_A_E;
+                // IF_Z goto no_scene_2;
+                // XOR_A_A;
+                // LD_de_A;
+                if(var != NULL)
+                    *var = 0;
 
-
-Jumptable:
-    //dw ['.NoAction'];
-    //dw ['.NoAction'];
-    //dw ['.DoAction1'];
-    //dw ['.DoAction1'];
-    //dw ['.Action4'];
-    //dw ['.Action5'];
-
-
-DoAction1:
-    LD_A(BANK(s5_a800));
-    CALL(aOpenSRAM);
-    LD_A(1);
-    LD_addr_A(s5_a800);
-    CALL(aCloseSRAM);
-
-
-NoAction:
-    RET;
-
-
-Action4:
-    LD_A(BANK(s5_b023));  // aka BANK(s5_a825) and BANK(s5_a826)
-    CALL(aOpenSRAM);
-    LD_HL(s5_b023);
-    LD_DE(wc608);
-    LD_BC(105);
-    CALL(aCopyBytes);
-    LD_A_addr(s5_a825);
-    LD_addr_A(wcd30);
-    LD_A_addr(s5_a826);
-    LD_addr_A(wcd31);
-    CALL(aCloseSRAM);
-    FARCALL(aFunction11b6b4);
-    FARCALL(aFunction17d0f3);
-    LD_A(TRUE);
-    LD_addr_A(wScriptVar);
-    RET;
-
-
-Action5:
-    LD_A(0);  // ???
-    CALL(aOpenSRAM);
-    LD_HL(wRTC);
-    LD_DE(wc608);
-    LD_BC(4);
-    CALL(aCopyBytes);
-    CALL(aCloseSRAM);
-    LD_A(BANK(s5_b08c));
-    CALL(aOpenSRAM);
-    LD_HL(s5_b08c);
-    LD_DE(wc608);
-    LD_C(4);
-
-compare_loop:
-    LD_A_de;
-    INC_DE;
-    CP_A_hl;
-    IF_NZ goto different;
-    INC_HL;
-    DEC_C;
-    IF_NZ goto compare_loop;
-    CALL(aCloseSRAM);
-    LD_A_addr(wMapGroup);
-    LD_B_A;
-    LD_A_addr(wMapNumber);
-    LD_C_A;
-    CALL(aGetMapSceneID);
-    LD_A_D;
-    OR_A_E;
-    IF_Z goto no_scene;
-    LD_A_de;
-    AND_A_A;
-    RET_NZ ;
-
-
-no_scene:
-    LD_A(TRUE);
-    LD_addr_A(wScriptVar);
-    RET;
-
-
-different:
-    CALL(aCloseSRAM);
-    LD_A(BANK(s5_a800));
-    CALL(aOpenSRAM);
-    XOR_A_A;
-    LD_addr_A(s5_a800);
-    CALL(aCloseSRAM);
-    LD_addr_A(wScriptVar);
-    LD_A_addr(wMapGroup);
-    LD_B_A;
-    LD_A_addr(wMapNumber);
-    LD_C_A;
-    CALL(aGetMapSceneID);
-    LD_A_D;
-    OR_A_E;
-    IF_Z goto no_scene_2;
-    XOR_A_A;
-    LD_de_A;
-
-
-no_scene_2:
-    RET;
-
+            // no_scene_2:
+                // RET;
+                return;
+            }
+            break;
+    }
 }
 
 void Function170a9c(void){
@@ -1948,47 +1988,65 @@ void Function170ad7(void){
 }
 
 void BattleTowerAction_LevelCheck(void){
-    LD_A(BANK(s5_b2fb));
-    CALL(aOpenSRAM);
-    LD_A_addr(s5_b2fb);
-    CALL(aCloseSRAM);
-    LD_C(10);
-    CALL(aSimpleDivide);
-    LD_A_B;
-    LD_addr_A(wcd4f);
-    XOR_A_A;
-    LD_addr_A(wScriptVar);
-    FARCALL(aBattleTower_LevelCheck);
-    RET_NC ;
-    LD_A(BANK(s5_b2fb));
-    CALL(aOpenSRAM);
-    LD_A_addr(s5_b2fb);
-    CALL(aCloseSRAM);
-    LD_addr_A(wScriptVar);
-    RET;
-
+    // LD_A(BANK(s5_b2fb));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(as5_b2fb));
+    // LD_A_addr(s5_b2fb);
+    uint8_t a = gb_read(s5_b2fb);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // LD_C(10);
+    // CALL(aSimpleDivide);
+    // LD_A_B;
+    // LD_addr_A(wcd4f);
+    wram->wcd4f = a / 10;
+    // XOR_A_A;
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = FALSE;
+    // FARCALL(aBattleTower_LevelCheck);
+    // RET_NC ;
+    if(!BattleTower_LevelCheck())
+        return;
+    // LD_A(BANK(s5_b2fb));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(as5_b2fb));
+    // LD_A_addr(s5_b2fb);
+    wram->wScriptVar = gb_read(s5_b2fb);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // LD_addr_A(wScriptVar);
+    // RET;
 }
 
 void BattleTowerAction_UbersCheck(void){
-    LD_A(BANK(s5_b2fb));
-    CALL(aOpenSRAM);
-    LD_A_addr(s5_b2fb);
-    CALL(aCloseSRAM);
-    LD_C(10);
-    CALL(aSimpleDivide);
-    LD_A_B;
-    LD_addr_A(wcd4f);
-    XOR_A_A;
-    LD_addr_A(wScriptVar);
-    FARCALL(aBattleTower_UbersCheck);
-    RET_NC ;
-    LD_A(BANK(s5_b2fb));
-    CALL(aOpenSRAM);
-    LD_A_addr(s5_b2fb);
-    CALL(aCloseSRAM);
-    LD_addr_A(wScriptVar);
-    RET;
-
+    // LD_A(BANK(s5_b2fb));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(as5_b2fb));
+    // LD_A_addr(s5_b2fb);
+    uint8_t a = gb_read(s5_b2fb);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // LD_C(10);
+    // CALL(aSimpleDivide);
+    // LD_A_B;
+    // LD_addr_A(wcd4f);
+    wram->wcd4f = a / 10;
+    // XOR_A_A;
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = FALSE;
+    // FARCALL(aBattleTower_UbersCheck);
+    // RET_NC ;
+    if(!BattleTower_UbersCheck())
+        return;
+    // LD_A(BANK(s5_b2fb));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(as5_b2fb));
+    // LD_A_addr(s5_b2fb);
+    wram->wScriptVar = gb_read(s5_b2fb);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // LD_addr_A(wScriptVar);
+    // RET;
 }
 
 void LoadOpponentTrainerAndPokemonWithOTSprite(void){

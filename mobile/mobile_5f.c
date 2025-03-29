@@ -2,6 +2,7 @@
 #include "mobile_5f.h"
 #include "mobile_12.h"
 #include "mobile_41.h"
+#include "mobile_42.h"
 #include "mobile_46.h"
 #include "fixed_words.h"
 #include "../charmap.h"
@@ -26,8 +27,11 @@
 #include "../engine/gfx/load_pics.h"
 #include "../engine/gfx/place_graphic.h"
 #include "../engine/gfx/pic_animation.h"
+#include "../engine/events/battle_tower/battle_tower.h"
+#include "../engine/events/poke_seer.h"
 #include "../engine/menus/save.h"
 #include "../engine/pokedex/unown_dex.h"
+#include "../engine/pokemon/evolve.h"
 
 uint8_t* sMobileCrashCheckPointer;
 uint8_t* gMobile_wcd20_wcd21;
@@ -468,64 +472,87 @@ bool CheckStringForErrors_IgnoreTerminator_Conv(const uint8_t* de, uint8_t c){
 }
 
 void Function17d0f3(void){
-    LD_A_addr(wc608 + 5);
-    LD_addr_A(wOTTrademonSpecies);
-    LD_addr_A(wCurPartySpecies);
-    LD_A_addr(wcd81);
-    LD_addr_A(wc74e);
-    LD_HL(wc608 + 53);
-    LD_DE(wOTTrademonOTName);
-    LD_BC(5);
-    CALL(aCopyBytes);
-    LD_A(0x50);
-    LD_de_A;
-    LD_A_addr(wc608 + 11);
-    LD_addr_A(wOTTrademonID);
-    LD_A_addr(wc608 + 12);
-    LD_addr_A(wOTTrademonID + 1);
-    LD_HL(wc608 + 26);
-    LD_A_hli;
-    LD_addr_A(wOTTrademonDVs);
-    LD_A_hl;
-    LD_addr_A(wOTTrademonDVs + 1);
-    LD_BC(wc608 + 5);
-    FARCALL(aGetCaughtGender);
-    LD_A_C;
-    LD_addr_A(wOTTrademonCaughtData);
-    CALL(aSpeechTextbox);
-    CALL(aFadeToMenu);
-    FARCALL(aFunction10804d);
-    FARCALL(aFunction17d1f1);
-    LD_A(0x1);
-    LD_addr_A(wForceEvolution);
-    LD_A(LINK_TRADECENTER);
-    LD_addr_A(wLinkMode);
-    FARCALL(aEvolvePokemon);
-    XOR_A_A;
-    LD_addr_A(wLinkMode);
-    FARCALL(aSaveAfterLinkTrade);
-    LD_A(0x5);
-    CALL(aOpenSRAM);
-    LD_A(0x5);
-    LD_addr_A(0xa800);
-    CALL(aCloseSRAM);
-    LD_A_addr(wMapGroup);
-    LD_B_A;
-    LD_A_addr(wMapNumber);
-    LD_C_A;
-    CALL(aGetMapSceneID);
-    LD_A_D;
-    OR_A_E;
-    IF_Z goto asm_17d180;
-    LD_A(0x1);
-    LD_de_A;
+    // LD_A_addr(wc608 + 5);
+    // LD_addr_A(wOTTrademonSpecies);
+    wram->wOTTrademon.species = wram->wOfferSpecies;
+    // LD_addr_A(wCurPartySpecies);
+    wram->wCurPartySpecies = wram->wOfferSpecies;
+    // LD_A_addr(wcd81);
+    // LD_addr_A(wc74e);
+    wram->wc74e[0] = wram->wcd81[0];
+    // LD_HL(wc608 + 53);
+    // LD_DE(wOTTrademonOTName);
+    // LD_BC(5);
+    // CALL(aCopyBytes);
+    CopyBytes(wram->wOTTrademon.otName, wram->wOfferMonOT, PLAYER_NAME_LENGTH - 1);
+    // LD_A(0x50);
+    // LD_de_A;
+    wram->wOTTrademon.otName[PLAYER_NAME_LENGTH - 1] = 0x50;
+    // LD_A_addr(wc608 + 11);
+    // LD_addr_A(wOTTrademonID);
+    // LD_A_addr(wc608 + 12);
+    // LD_addr_A(wOTTrademonID + 1);
+    wram->wOTTrademon.id = wram->wOfferMon.mon.id;
+    // LD_HL(wc608 + 26);
+    // LD_A_hli;
+    // LD_addr_A(wOTTrademonDVs);
+    // LD_A_hl;
+    // LD_addr_A(wOTTrademonDVs + 1);
+    wram->wOTTrademon.dvs = wram->wOfferMon.mon.DVs;
+    // LD_BC(wc608 + 5);
+    // FARCALL(aGetCaughtGender);
+    // LD_A_C;
+    // LD_addr_A(wOTTrademonCaughtData);
+    wram->wOTTrademon.caughtData = GetCaughtGender_Conv(&wram->wOfferMon.mon);
+    // CALL(aSpeechTextbox);
+    SpeechTextbox_Conv2();
+    // CALL(aFadeToMenu);
+    FadeToMenu_Conv();
+    // FARCALL(aFunction10804d);
+    Function10804d();
+    // FARCALL(aFunction17d1f1);
+    Function17d1f1();
+    // LD_A(0x1);
+    // LD_addr_A(wForceEvolution);
+    wram->wForceEvolution = TRUE;
+    // LD_A(LINK_TRADECENTER);
+    // LD_addr_A(wLinkMode);
+    wram->wLinkMode = LINK_TRADECENTER;
+    // FARCALL(aEvolvePokemon);
+    EvolvePokemon();
+    // XOR_A_A;
+    // LD_addr_A(wLinkMode);
+    wram->wLinkMode = LINK_NULL;
+    // FARCALL(aSaveAfterLinkTrade);
+    SaveAfterLinkTrade();
+    // LD_A(0x5);
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(as5_a800));
+    // LD_A(0x5);
+    // LD_addr_A(0xa800);
+    gb_write(s5_a800, 0x5);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // LD_A_addr(wMapGroup);
+    // LD_B_A;
+    // LD_A_addr(wMapNumber);
+    // LD_C_A;
+    // CALL(aGetMapSceneID);
+    uint8_t* var = GetMapSceneID_Conv2(wram->wMapGroup, wram->wMapNumber);
+    // LD_A_D;
+    // OR_A_E;
+    // IF_Z goto asm_17d180;
+    // LD_A(0x1);
+    // LD_de_A;
+    if(var != NULL)
+        *var = 0x1;
 
-
-asm_17d180:
-    CALL(aCloseSubmenu);
-    CALL(aRestartMapMusic);
-    RET;
-
+// asm_17d180:
+    // CALL(aCloseSubmenu);
+    CloseSubmenu_Conv();
+    // CALL(aRestartMapMusic);
+    RestartMapMusic();
+    // RET;
 }
 
 void Mobile_CopyDefaultOTName(void){
@@ -686,12 +713,30 @@ void Menu_ChallengeExplanationCancel(void){
         // goto Load_Interpret;
     }
     else {
-    // English:
-        // LD_A(0x4);
-        // LD_addr_A(wScriptVar);
-        wram->wScriptVar = 0x4;
-        // LD_HL(mMenuHeader_ChallengeExplanationCancel);  // English Menu
-        LoadMenuHeader_Conv2(&MenuHeader_ChallengeExplanationCancel);
+    // .jr_05f_5234:
+        // farcall BattleTower_CheckSaveFileExistsAndIsYours
+        BattleTower_CheckSaveFileExistsAndIsYours();
+        // ld a, [wScriptVar]
+        // and a
+        // jr nz, .jr_05f_524a
+        if(wram->wScriptVar == 0x0 || !CheckPreviousBattleTowerStreakData()) {
+        // English:
+            // LD_A(0x4);
+            // LD_addr_A(wScriptVar);
+            wram->wScriptVar = 0x4;
+            // LD_HL(mMenuHeader_ChallengeExplanationCancel);  // English Menu
+            LoadMenuHeader_Conv2(&MenuHeader_ChallengeExplanationCancel);
+        }
+        else {
+        // .jr_05f_524a:
+            // call Call_05f_5261
+            // jr c, .English
+            // ld a, $05
+            // ld [wScriptVar], a
+            wram->wScriptVar = 0x5;
+            // ld hl, MenuHeader_ChallengeRegisterExplanationCancel;$52f2
+            LoadMenuHeader_Conv2(&MenuHeader_ChallengeRegisterExplanationCancel);
+        }
     }
 
 // Load_Interpret:
@@ -701,6 +746,40 @@ void Menu_ChallengeExplanationCancel(void){
     // CALL(aCloseWindow);
     CloseWindow_Conv2();
     // RET;
+}
+
+bool CheckPreviousBattleTowerStreakData(void){
+    // ld a, BANK(s5_aa8e);$05
+    // call OpenSRAM;$2f9d
+    OpenSRAM_Conv(MBANK(as5_aa8e));
+    // ld hl, s5_aa8e
+    const uint8_t* hl = GBToRAMAddr(s5_aa8e);
+    // ld bc, BATTLE_TOWER_STRUCT_LENGTH * BATTLETOWER_STREAK_LENGTH;$0594
+    uint16_t bc = BATTLE_TOWER_STRUCT_LENGTH * BATTLETOWER_STREAK_LENGTH;
+    do {
+    // jr_05f_526c:
+        // ld a, [hl+]
+        uint8_t a = *(hl++);
+        // and a
+        // jr nz, jr_05f_527b
+        if(a != 0) {
+        // jr_05f_527b:
+            // call CloseSRAM;$2fad
+            CloseSRAM_Conv();
+            // ret
+            return true;
+        }
+        // dec bc
+        // ld a, b
+        // or a
+        // and a
+        // jr nz, jr_05f_526c
+    } while(--bc != 0);
+    // call CloseSRAM;$2fad
+    CloseSRAM_Conv();
+    // scf
+    // ret
+    return false;
 }
 
 // Mobile_RunChallengeExplanationMenu
@@ -764,7 +843,7 @@ const struct MenuData MenuData_17d272 = {
 
 const struct MenuHeader MenuHeader_ChallengeExplanationCancel = {
     .flags = MENU_BACKUP_TILES,  // flags
-    .coord = menu_coords(0, 0, 14, 7),
+    .coord = menu_coords(0, 0, 15, 9),
     .data = &MenuData_ChallengeExplanationCancel,
     .defaultOption = 1,  // default option
 };
@@ -772,9 +851,31 @@ const struct MenuHeader MenuHeader_ChallengeExplanationCancel = {
 const struct MenuData MenuData_ChallengeExplanationCancel = {
     .flags = STATICMENU_CURSOR | STATICMENU_WRAP,  // flags
     .verticalMenu = {
-        .count = 3,
+        .count = 4,
         .options = (const char*[]){
             "Challenge@",
+            "Honor Roll@",
+            "Explanation@",
+            "Cancel@",
+        },
+    },
+};
+
+const struct MenuHeader MenuHeader_ChallengeRegisterExplanationCancel = {
+    .flags = MENU_BACKUP_TILES,  // flags
+    .coord = menu_coords(0, 0, 15, 11),
+    .data = &MenuData_ChallengeRegisterExplanationCancel,
+    .defaultOption = 1,  // default option
+};
+
+const struct MenuData MenuData_ChallengeRegisterExplanationCancel = {
+    .flags = STATICMENU_CURSOR | STATICMENU_WRAP,  // flags
+    .verticalMenu = {
+        .count = 5,
+        .options = (const char*[]){
+            "Challenge@",
+            "Honor Roll@",
+            "Previous Room@",
             "Explanation@",
             "Cancel@",
         },

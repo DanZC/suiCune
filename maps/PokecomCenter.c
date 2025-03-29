@@ -96,7 +96,6 @@ const struct MapEvents PokecomCenter_MapEvents = {
 
 bool PokecomCenter_MapScripts_Scene0(script_s* s) {
     SCRIPT_BEGIN
-    s_end
     setval(BATTLETOWERACTION_10) // 5671d checks if a trade was made
     special(BattleTowerAction)
     iffalse_jump(GoldenrodPokecenter1F_noTrade) //$2967

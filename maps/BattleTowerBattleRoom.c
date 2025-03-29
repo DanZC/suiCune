@@ -132,10 +132,13 @@ bool Script_DontBattleNextOpponent(script_s* s) {
     writetext(Text_SaveAndEndTheSession)
     yesorno
     iffalse_jump(Script_DontSaveAndEndTheSession)
+    special(Mobile_DummyReturnFalse)
+    iftrue(mobile)
     setval(BATTLETOWERACTION_SAVELEVELGROUP) // save level group
     special(BattleTowerAction)
     setval(BATTLETOWERACTION_SAVEOPTIONS) // choose reward
     special(BattleTowerAction)
+mobile:
     setval(BATTLETOWERACTION_SAVE_AND_QUIT) // quicksave
     special(BattleTowerAction)
     playsound(SFX_SAVE)
@@ -168,10 +171,15 @@ bool Script_FailedBattleTowerChallenge(script_s* s) {
     setval(BATTLETOWERACTION_CHALLENGECANCELED)
     special(BattleTowerAction)
     opentext
+    special(Mobile_DummyReturnFalse)
+    iftrue(mobile)
     writetext(Text_ThanksForVisiting)
     waitbutton
     closetext
     s_end
+mobile:
+    writetext(Text_ThankYou)
+    sjump(Script_AskRegisterRecord)
     SCRIPT_END
 }
 bool Script_BeatenAllTrainers(script_s* s) {
@@ -183,9 +191,23 @@ bool Script_BeatenAllTrainers(script_s* s) {
 }
 bool Script_BeatenAllTrainers2(script_s* s) {
     SCRIPT_BEGIN
+    special(Mobile_DummyReturnFalse)
+    iftrue(mobile)
     opentext
     writetext(Text_CongratulationsYouveBeatenAllTheTrainers)
     sjump(Script_GivePlayerHisPrize)
+mobile:
+    setval(BATTLETOWERACTION_13)
+	special(BattleTowerAction)
+	ifequal_jump(1, Script_ChallengeCanceled) // $7a90
+	setval(BATTLETOWERACTION_05)
+	special(BattleTowerAction)
+	ifequal_jump(8, Script_TooMuchTimeElapsedNoRegister) //$7a84
+	setval(BATTLETOWERACTION_CHALLENGECANCELED)
+	special(BattleTowerAction)
+	opentext
+	writetext(Text_BeatenAllTheTrainers_Mobile)//$74ca
+	sjump(Script_AskRegisterRecord)//$71b4
     SCRIPT_END
 }
 bool Script_TooMuchTimeElapsedNoRegister(script_s* s) {
