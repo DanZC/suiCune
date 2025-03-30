@@ -25,7 +25,7 @@ void CheckStringContainsLessThanBNextCharacters(void);
 u8_flag_s CheckStringContainsLessThanBNextCharacters_Conv(const uint8_t* de, uint8_t b, uint8_t c);
 void Function17d1f1(void);
 void Menu_ChallengeExplanationCancel(void);
-bool Call_05f_5261(void);
+bool CheckPreviousBattleTowerStreakData(void);
 void Function17d246(void);
 extern const struct MenuHeader MenuHeader_17d26a;
 extern const struct MenuData MenuData_17d272;
