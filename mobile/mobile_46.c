@@ -128,46 +128,66 @@ void BattleTowerRoomMenu_DoNothing(void){
 }
 
 void Function11805f(void){
-    LD_A(0x1);
-    LD_addr_A(wcd38);
-    CALL(aBattleTowerRoomMenu_InitRAM);
-    LD_A(0x18);
-    LD_addr_A(wcd33);
-    LD_A(0x19);
-    LD_addr_A(wcd34);
-    LD_A(0x4);
-    LD_addr_A(wc3f0);
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(0x3);
-    LDH_addr_A(rSVBK);
+    // LD_A(0x1);
+    // LD_addr_A(wcd38);
+    wram->wcd38 = 0x1;
+    // CALL(aBattleTowerRoomMenu_InitRAM);
+    BattleTowerRoomMenu_InitRAM();
+    // LD_A(0x18);
+    // LD_addr_A(wcd33);
+    wram->wcd33 = 0x18;
+    // LD_A(0x19);
+    // LD_addr_A(wcd34);
+    wram->wcd34 = 0x19;
+    // LD_A(0x4);
+    // LD_addr_A(wc3f0);
+    wram->wc3f0 = 0x4;
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    uint8_t svbk = gb_read(rSVBK);
+    // LD_A(0x3);
+    // LDH_addr_A(rSVBK);
+    gb_write(rSVBK, 0x3);
 
-asm_11807d:
-    CALL(aJoyTextDelay);
-    CALL(aFunction118473);
-    LD_A_addr(wBattleTowerRoomMenuJumptableIndex);
-    CP_A(0x1b);
-    IF_C goto asm_118090;
-    LD_A_addr(wcd34);
-    LD_addr_A(wBattleTowerRoomMenuJumptableIndex);
+    do {
+    // asm_11807d:
+        // CALL(aJoyTextDelay);
+        JoyTextDelay_Conv();
+        // CALL(aFunction118473);
+        Function118473();
+        // LD_A_addr(wBattleTowerRoomMenuJumptableIndex);
+        // CP_A(0x1b);
+        // IF_C goto asm_118090;
+        if(wram->wBattleTowerRoomMenuJumptableIndex >= 0x1b) {
+            // LD_A_addr(wcd34);
+            // LD_addr_A(wBattleTowerRoomMenuJumptableIndex);
+            wram->wBattleTowerRoomMenuJumptableIndex = wram->wcd34;
+        }
 
-
-asm_118090:
-    CALL(aFunction11857c);
-    CALL(aBattleTowerRoomMenu_WriteMessage);
-    FARCALL(aFunction115dd3);
-    FARCALL(aFunction11619d);
-    CALL(aDelayFrame);
-    LD_A_addr(wBattleTowerRoomMenuJumptableIndex);
-    LD_HL(wcd33);
-    CP_A_hl;
-    IF_NZ goto asm_11807d;
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    CALL(aBattleTowerRoomMenu_Cleanup);
-    CALL(aReturnToMapFromSubmenu);
-    RET;
-
+    // asm_118090:
+        // CALL(aFunction11857c);
+        Function11857c();
+        // CALL(aBattleTowerRoomMenu_WriteMessage);
+        BattleTowerRoomMenu_WriteMessage();
+        // FARCALL(aFunction115dd3);
+        Function115dd3();
+        // FARCALL(aFunction11619d);
+        Function11619d();
+        // CALL(aDelayFrame);
+        DelayFrame();
+        // LD_A_addr(wBattleTowerRoomMenuJumptableIndex);
+        // LD_HL(wcd33);
+        // CP_A_hl;
+        // IF_NZ goto asm_11807d;
+    } while(wram->wBattleTowerRoomMenuJumptableIndex != wram->wcd33);
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    gb_write(rSVBK, svbk);
+    // CALL(aBattleTowerRoomMenu_Cleanup);
+    BattleTowerRoomMenu_Cleanup();
+    // CALL(aReturnToMapFromSubmenu);
+    ReturnToMapFromSubmenu();
+    // RET;
 }
 
 void Function1180b8(void){
@@ -953,39 +973,39 @@ void BattleTowerRoomMenu_Jumptable(void){
 
 void Function11857c(void){
     //jumptable ['.Jumptable', 'wBattleTowerRoomMenuJumptableIndex']
+    printf("Send Battle Tower Record Jumptable 0x%02x\n", wram->wBattleTowerRoomMenuJumptableIndex);
 
-
-Jumptable:
-    //dw ['Function11886e'];
-    //dw ['Function118880'];
-    //dw ['Function11878d'];
-    //dw ['Function1188b0'];
-    //dw ['Function11878d'];
-    //dw ['Function1188b8'];
-    //dw ['Function11878d'];
-    //dw ['Function1188c0'];
-    //dw ['Function11878d'];
-    //dw ['Function1188c8'];
-    //dw ['Function11878d'];
-    //dw ['Function118903'];
-    //dw ['Function118a7a'];
-    //dw ['Function11878d'];
-    //dw ['Function11891c'];
-    //dw ['Function1198ee'];
-    //dw ['Function1198f7'];
-    //dw ['Function11878d'];
-    //dw ['Function119937'];
-    //dw ['Function118e6d'];
-    //dw ['Function11878d'];
-    //dw ['Function118e76'];
-    //dw ['Function118e7e'];
-    //dw ['Function11878d'];
-    //dw ['BattleTowerRoomMenu_DoNothing'];
-    //dw ['Function118e76'];
-    //dw ['BattleTowerRoomMenu_CallRoomMenu2'];
-    //dw ['Function118e76'];
-
-    return Function1185c3();
+// Jumptable:
+    switch(wram->wBattleTowerRoomMenuJumptableIndex) {
+        case 0x00: return Function11886e(); //dw ['Function11886e'];
+        case 0x01: return Function118880(); //dw ['Function118880'];
+        case 0x02: return Function11878d(); //dw ['Function11878d'];
+        case 0x03: return Function1188b0(); //dw ['Function1188b0'];
+        case 0x04: return Function11878d(); //dw ['Function11878d'];
+        case 0x05: return Function1188b8(); //dw ['Function1188b8'];
+        case 0x06: return Function11878d(); //dw ['Function11878d'];
+        case 0x07: return Function1188c0(); //dw ['Function1188c0'];
+        case 0x08: return Function11878d(); //dw ['Function11878d'];
+        case 0x09: return Function1188c8(); //dw ['Function1188c8'];
+        case 0x0a: return Function11878d(); //dw ['Function11878d'];
+        case 0x0b: return Function118903(); //dw ['Function118903'];
+        case 0x0c: return Function118a7a(); //dw ['Function118a7a'];
+        case 0x0d: return Function11878d(); //dw ['Function11878d'];
+        case 0x0e: return Function11891c(); //dw ['Function11891c'];
+        case 0x0f: return Function1198ee(); //dw ['Function1198ee'];
+        case 0x10: return Function1198f7(); //dw ['Function1198f7'];
+        case 0x11: return Function11878d(); //dw ['Function11878d'];
+        case 0x12: return Function119937(); //dw ['Function119937'];
+        case 0x13: return Function118e6d(); //dw ['Function118e6d'];
+        case 0x14: return Function11878d(); //dw ['Function11878d'];
+        case 0x15: return Function118e76(); //dw ['Function118e76'];
+        case 0x16: return Function118e7e(); //dw ['Function118e7e'];
+        case 0x17: return Function11878d(); //dw ['Function11878d'];
+        case 0x18: return BattleTowerRoomMenu_DoNothing(); //dw ['BattleTowerRoomMenu_DoNothing'];
+        case 0x19: return Function118e76(); //dw ['Function118e76'];
+        case 0x1a: return BattleTowerRoomMenu_CallRoomMenu2(); //dw ['BattleTowerRoomMenu_CallRoomMenu2'];
+        case 0x1b: return Function118e76(); //dw ['Function118e76'];
+    }
 }
 
 // Mobile_DownloadNewsJumptable?
@@ -1883,6 +1903,11 @@ void Function118a65(void){
 }
 
 void Function118a7a(void){
+    char buffer[128];
+    memset(buffer, 0, sizeof(buffer));
+    snprintf(buffer, sizeof(buffer) - 1, "http://%s%s",
+        Mobile_GetServerHostname(),
+        BattleDownloadURL);
     // LD_HL(mBattleDownloadURL);
     // LD_DE(wcc60);
     // LD_BC(0x80);
@@ -4526,52 +4551,69 @@ void Function11984e(void){
 }
 
 void Function1198ee(void){
-    LD_HL(mText_RegisteringRecord);
-    CALL(aBattleTowerRoomMenu_SetMessage);
-    CALL(aBattleTowerRoomMenu_IncrementJumptable);
+    // LD_HL(mText_RegisteringRecord);
+    // CALL(aBattleTowerRoomMenu_SetMessage);
+    BattleTowerRoomMenu_SetMessage(Text_RegisteringRecord);
+    // CALL(aBattleTowerRoomMenu_IncrementJumptable);
+    BattleTowerRoomMenu_IncrementJumptable();
 
     return Function1198f7();
 }
 
 void Function1198f7(void){
-    LD_A_addr(wc31a);
-    AND_A_A;
-    RET_NZ ;
-    LD_HL(wc608 + 2);
-    CALL(aFunction119940);
-    LD_HL(w3_d800);
-    LD_A(LOW(wc608));
-    LD_hli_A;
-    LD_A(HIGH(wc608));
-    LD_hli_A;
-    LD_A(0xf6);
-    LD_hli_A;
-    XOR_A_A;
-    LD_hli_A;
-    LD_A(LOW(wc708));
-    LD_hli_A;
-    LD_A(HIGH(wc708));
-    LD_hli_A;
-    LD_A_addr(wcd51);
-    LD_hli_A;
-    LD_A_addr(wcd52);
-    LD_hli_A;
-    CALL(aFunction119eb4);
-    CALL(aFunction119ec2);
-    LD_A(0x40);
-    LD_addr_A(wcd89);
-    LD_HL(w3_d800);
-    LD_DE(w3_de00);
-    LD_BC(0x200);
-    LD_A(MOBILEAPI_16);
-    JP(mFunction119e2b);
-
+    // LD_A_addr(wc31a);
+    // AND_A_A;
+    // RET_NZ ;
+    if(wram->wc31a != 0)
+        return;
+    // LD_HL(wc608 + 2);
+    // CALL(aFunction119940);
+    Function119940(wram->wc608 + 2);
+    // LD_HL(w3_d800);
+    uint8_t* hl = wram->w3_d800;
+    // LD_A(LOW(wc608));
+    // LD_hli_A;
+    *(hl++) = LOW(wc608);
+    // LD_A(HIGH(wc608));
+    // LD_hli_A;
+    *(hl++) = HIGH(wc608);
+    // LD_A(0xf6);
+    // LD_hli_A;
+    *(hl++) = LOW(0xf6);
+    // XOR_A_A;
+    // LD_hli_A;
+    *(hl++) = HIGH(0xf6);
+    // LD_A(LOW(wc708));
+    // LD_hli_A;
+    *(hl++) = LOW(wc708);
+    // LD_A(HIGH(wc708));
+    // LD_hli_A;
+    *(hl++) = HIGH(wc708);
+    // LD_A_addr(wcd51);
+    // LD_hli_A;
+    *(hl++) = wram->wcd51;
+    // LD_A_addr(wcd52);
+    // LD_hli_A;
+    *(hl++) = wram->wcd52;
+    // CALL(aFunction119eb4);
+    // CALL(aFunction119ec2);
+    Function119ec2(Function119eb4(hl));
+    // LD_A(0x40);
+    // LD_addr_A(wcd89);
+    wram->wcd89 = 0x40;
+    // LD_HL(w3_d800);
+    // LD_DE(w3_de00);
+    // LD_BC(0x200);
+    // LD_A(MOBILEAPI_16);
+    // JP(mFunction119e2b);
+    return Function119e2b(MOBILEAPI_16, &(mobile_api_data_s){.de = wram->w3_de00, .hl = wram->w3_d800, .bc = 0x200});
 }
 
 void Function119937(void){
-    FARCALL(aFunction1707f4);
-    JP(mBattleTowerRoomMenu_IncrementJumptable);
-
+    // FARCALL(aFunction1707f4);
+    Function1707f4();
+    // JP(mBattleTowerRoomMenu_IncrementJumptable);
+    return BattleTowerRoomMenu_IncrementJumptable();
 }
 
 void Function119940(uint8_t* hl){
@@ -7684,15 +7726,13 @@ void Text_ReceivedOddEgg(void){
     //text ['"ODD EGG"']
     //line ['"was received!"']
     //done ['?']
-
-    return Text_RegisteringRecord();
 }
 
-void Text_RegisteringRecord(void){
-    //text ['"Registering your"']
-    //line ['"record…"']
-    //done ['?']
-}
+const txt_cmd_s Text_RegisteringRecord[] = {
+    text_start("Registering your"
+        t_line "record…"
+        t_done )
+};
 
 void Text_BattleRoomVisitLimit(void){
 //  //  unreferenced

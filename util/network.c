@@ -1942,7 +1942,10 @@ bool MobileConfigRead(void* user, void* dest, uintptr_t offset, size_t size) {
         fclose(temp);
         f = fopen("mobile.bin", "rb");
     }
-    fread(udata->config, 1, MOBILE_CONFIG_SIZE, f);
+    size_t read = fread(udata->config, 1, MOBILE_CONFIG_SIZE, f);
+    while(read < MOBILE_CONFIG_SIZE) {
+        read += fread(udata->config, 1, MOBILE_CONFIG_SIZE, f);
+    }
     LoadMobileServerConfig(&gServerConfig, (struct mobile_config*)udata->config); // Try and overwrite default values from mobile config.
 // Recalculate checksum.
     uint16_t checksum = 0;

@@ -262,7 +262,7 @@ extern const txt_cmd_s Text_ReceivedNews[];
 extern const txt_cmd_s Text_QuitReadingNews[];
 void Text_CanceledSendingSaveFile(void);
 void Text_ReceivedOddEgg(void);
-void Text_RegisteringRecord(void);
+extern const txt_cmd_s Text_RegisteringRecord[];
 void Text_BattleRoomVisitLimit(void);
 extern const txt_cmd_s Text_PartyMonTopsThisLevel[];
 extern const txt_cmd_s Text_UberRestriction[];

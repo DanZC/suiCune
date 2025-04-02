@@ -83,24 +83,31 @@ void Function1700c4(void){
 
 }
 
+static void Function170114_Function170121(void){
+    // LD_A(BANK(s5_a948));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(as5_a948));
+    // LD_HL(s5_a948);
+    // LD_DE(wc608);
+    // LD_BC(246);
+    // CALL(aCopyBytes);
+    CopyBytes(wram->wc608, GBToRAMAddr(s5_a948), 246);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // CALL(aFunction170c8b);
+    Function170c8b();
+    // RET;
+}
+
+// Mobile_RegisterRecordSpecial
 void Function170114(void){
-    CALL(aInitBattleTowerChallengeRAM);
-    CALL(aFunction170114_Function170121);
-    FARCALL(aFunction11805f);
-    RET;
-
-
-Function170121:
-    LD_A(BANK(s5_a948));
-    CALL(aOpenSRAM);
-    LD_HL(s5_a948);
-    LD_DE(wc608);
-    LD_BC(246);
-    CALL(aCopyBytes);
-    CALL(aCloseSRAM);
-    CALL(aFunction170c8b);
-    RET;
-
+    // CALL(aInitBattleTowerChallengeRAM);
+    InitBattleTowerChallengeRAM();
+    // CALL(aFunction170114_Function170121);
+    Function170114_Function170121();
+    // FARCALL(aFunction11805f);
+    Function11805f();
+    // RET;
 }
 
 void Function170139(void){

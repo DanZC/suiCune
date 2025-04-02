@@ -258,17 +258,22 @@ asm_170c7d:
 }
 
 void Function170c8b(void){
-    LD_HL(wLastEnemyCounterMove);
-    LD_B(0x5);
+    // LD_HL(wLastEnemyCounterMove);
+    uint8_t* hl = wram->wc608 + 0xf1;
+    // LD_B(0x5);
+    uint8_t b = 0x5;
 
-asm_170c90:
-    LD_A_hl;
-    XOR_A(0xff);
-    LD_hli_A;
-    DEC_B;
-    IF_NZ goto asm_170c90;
-    RET;
-
+    do {
+    // asm_170c90:
+        // LD_A_hl;
+        // XOR_A(0xff);
+        // LD_hli_A;
+        *hl ^= 0xff;
+        hl++;
+        // DEC_B;
+        // IF_NZ goto asm_170c90;
+    } while(--b != 0);
+    // RET;
 }
 
 void CheckBTMonMovesForErrors(void){
