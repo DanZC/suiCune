@@ -6,6 +6,7 @@
 #include "../../overworld/overworld.h"
 #include "../../pokemon/health.h"
 #include "../../battle/core.h"
+#include "../../gfx/dma_transfer.h"
 #include "../../../home/sram.h"
 #include "../../../home/time.h"
 #include "../../../home/audio.h"
@@ -15,6 +16,10 @@
 #include "../../../home/item.h"
 #include "../../../home/map.h"
 #include "../../../home/compare.h"
+#include "../../../home/text.h"
+#include "../../../home/tilemap.h"
+#include "../../../home/clear_sprites.h"
+#include "../../../home/joypad.h"
 #include "../../../mobile/mobile_41.h"
 #include "../../../mobile/mobile_46.h"
 #include "../../../mobile/mobile_5c.h"
@@ -755,297 +760,395 @@ done:
 
 }
 
+static void Function1704e1_DrawBorder(void){
+    // hlcoord(0, 4, wTilemap);
+    tile_t* hl = coord(0, 4, wram->wTilemap);
+    // LD_A(0x79);
+    // LD_hli_A;
+    *(hl++) = 0x79;
+    // LD_C(SCREEN_WIDTH - 2);
+    uint8_t c = SCREEN_WIDTH - 2;
+
+    do {
+    // top_border_loop:
+        // LD_A(0x7a);
+        // LD_hli_A;
+        *(hl++) = 0x7a;
+        // DEC_C;
+        // IF_NZ goto top_border_loop;
+    } while(--c != 0);
+    // LD_A(0x7b);
+    // LD_hli_A;
+    *(hl++) = 0x7b;
+    // LD_DE(SCREEN_WIDTH);
+    // LD_C(12);
+    c = SCREEN_HEIGHT - 4;
+
+    do {
+    // left_border_loop:
+        // LD_A(0x7c);
+        // LD_hl_A;
+        *hl = 0x7c;
+        // ADD_HL_DE;
+        hl += SCREEN_WIDTH;
+        // DEC_C;
+        // IF_NZ goto left_border_loop;
+    } while(--c != 0);
+    // LD_A(0x7d);
+    // LD_hli_A;
+    *(hl++) = 0x7d;
+    // LD_C(SCREEN_WIDTH - 2);
+    c = SCREEN_WIDTH - 2;
+
+    do {
+    // bottom_border_loop:
+        // LD_A(0x7a);
+        // LD_hli_A;
+        *(hl++) = 0x7a;
+        // DEC_C;
+        // IF_NZ goto bottom_border_loop;
+    } while(--c != 0);
+    // LD_A(0x7e);
+    // LD_hl_A;
+    *hl = 0x7e;
+    // LD_DE(-SCREEN_WIDTH);
+    // ADD_HL_DE;
+    hl -= SCREEN_WIDTH;
+    // LD_C(12);
+    c = SCREEN_HEIGHT - 4;
+
+    do {
+    // right_border_loop:
+        // LD_A(0x7c);
+        // LD_hl_A;
+        *hl = 0x7c;
+        // ADD_HL_DE;
+        hl -= SCREEN_WIDTH;
+        // DEC_C;
+        // IF_NZ goto right_border_loop;
+    } while(--c != 0);
+    // RET;
+}
+
+static void Function1704e1_ClearBox(void){
+    // hlcoord(1, 5, wTilemap);
+    tile_t* hl = coord(1, 5, wram->wTilemap);
+    // XOR_A_A;
+    // LD_B(12);
+    uint8_t b = 12;
+
+    do {
+    // clearbox_row:
+        // LD_C(SCREEN_WIDTH - 2);
+        uint8_t c = SCREEN_WIDTH - 2;
+
+        do {
+        // clearbox_column:
+            // LD_hli_A;
+            *(hl++) = 0;
+            // DEC_C;
+            // IF_NZ goto clearbox_column;
+        } while(--c != 0);
+        // INC_HL;
+        // INC_HL;
+        hl += 2;
+        // DEC_B;
+        // IF_NZ goto clearbox_row;
+    } while(--b != 0);
+    // RET;
+}
+
+static void Function1704e1_PlaceUpDownArrows(void) {
+    // LD_A_addr(wNrOfBeatenBattleTowerTrainers);
+    // AND_A_A;
+    // IF_Z goto nope;
+    if(wram->wNrOfBeatenBattleTowerTrainers != 0) {
+        // hlcoord(18, 5, wTilemap);
+        // LD_A(0x61);
+        // LD_hl_A;
+        *coord(18, 5, wram->wTilemap) = 0x61;
+    }
+
+// nope:
+    // LD_A_addr(wNrOfBeatenBattleTowerTrainers);
+    // CP_A(60);
+    // RET_Z ;
+    if(wram->wNrOfBeatenBattleTowerTrainers == HONOR_ROLL_DATA_LENGTH - (PLAYER_NAME_LENGTH - 1) * 12)
+        return;
+
+    // hlcoord(18, 16, wTilemap);
+    // LD_A(0xee);
+    // LD_hl_A;
+    *coord(18, 16, wram->wTilemap) = 0xee;
+    // RET;
+}
+
+static void Function1704e1_PlaceTextItems(void){
+    // CALL(aFunction1704e1_ClearBox);
+    Function1704e1_ClearBox();
+    // CALL(aFunction1704e1_PlaceUpDownArrows);
+    Function1704e1_PlaceUpDownArrows();
+    // LD_A(0x50);
+    // LD_addr_A(wcd4e);
+    wram->wcd4e = 0x50;
+    // LD_HL(wc608);
+    // LD_A_addr(wNrOfBeatenBattleTowerTrainers);
+    // LD_C_A;
+    // XOR_A_A;
+    // LD_B_A;
+    // ADD_HL_BC;
+    // PUSH_HL;
+    // POP_BC;
+    uint8_t* bc = wram->wc608 + wram->wNrOfBeatenBattleTowerTrainers;
+    // hlcoord(1, 6, wTilemap);
+    tile_t* hl = coord(1, 6, wram->wTilemap);
+    // LD_A(6);
+    uint8_t a = 6;
+
+    do {
+    // loop1:
+        // PUSH_AF;
+        // PUSH_HL;
+        tile_t* hl2 = hl;
+        // LD_A(3);
+        uint8_t a2 = 3;
+
+        do {
+        // loop2:
+            // PUSH_AF;
+            // LD_DE(wcd49);
+            uint8_t* de = &wram->wcd49;
+            // LD_A_bc;
+            // AND_A_A;
+            // IF_Z goto fill_with_e3;
+            if(*bc != 0) {
+            //  .copy
+                // LD_A(5);
+                uint8_t a3 = PLAYER_NAME_LENGTH - 1;
+
+                do {
+                // loop3a:
+                    // PUSH_AF;
+                    // LD_A_bc;
+                    // LD_de_A;
+                    // INC_BC;
+                    // INC_DE;
+                    *(de++) = *(bc++);
+                    // POP_AF;
+                    // DEC_A;
+                    // IF_NZ goto loop3a;
+                } while(--a3 != 0);
+                // goto rejoin;
+            }
+            else {
+            // fill_with_e3:
+                // LD_A(5);
+                uint8_t a3 = PLAYER_NAME_LENGTH - 1;
+
+                do {
+                // loop3b:
+                    // PUSH_AF;
+                    // LD_A(0xe3);
+                    // LD_de_A;
+                    // INC_DE;
+                    *(de++) = 0xe3;
+                    // INC_BC;
+                    bc++;
+                    // POP_AF;
+                    // DEC_A;
+                    // IF_NZ goto loop3b;
+                } while(--a3 != 0);
+            }
+
+        // rejoin:
+            // LD_DE(wcd49);
+            // PUSH_BC;
+            struct TextPrintState st = {.de = &wram->wcd49, .hl = hl2};
+            // CALL(aPlaceString);
+            PlaceString_Conv(&st, st.hl);
+            // LD_DE(NAME_LENGTH_JAPANESE);
+            // ADD_HL_DE;
+            hl2 = st.hl + PLAYER_NAME_LENGTH;
+            // POP_BC;
+            // POP_AF;
+            // DEC_A;
+            // IF_NZ goto loop2;
+        } while(--a2 != 0);
+        // POP_HL;
+        // LD_DE(0x28);
+        // ADD_HL_DE;
+        hl += SCREEN_WIDTH * 2;
+        // POP_AF;
+        // DEC_A;
+        // IF_NZ goto loop1;
+    } while(--a != 0);
+    // RET;
+}
+
+static void Function1704e1_NextJumptableFunction(void){
+    // LD_HL(wJumptableIndex);
+    // INC_hl;
+    wram->wJumptableIndex++;
+    // RET;
+}
+
+// Mobile_ViewHonorRoll_JumptableLoop
+void Function1704e1_JumptableLoop(void){
+    static const char String_Mail[] = "ROOM:@"; //db ['"ルーム@"'];
+    static const char String_PastReaders[] = "HONOR ROLL@"; //db ['"れきだいりーダーいちらん@"'];
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
+    // CALL(aClearSprites);
+    ClearSprites();
+    // CALL(aClearScreen);
+    ClearScreen_Conv2();
+
+    while(1) {
+    // loop:
+        // CALL(aJoyTextDelay);
+        JoyTextDelay_Conv();
+        // LD_A_addr(wJumptableIndex);
+        // BIT_A(7);
+        // IF_NZ goto done;
+        if(bit_test(wram->wJumptableIndex, 7))
+            break;
+        // CALL(aFunction1704e1_DoJumptable);
+        // DoJumptable:
+            //jumptable ['.dw', 'wJumptableIndex']
+        switch(wram->wJumptableIndex) {
+        // dw:
+
+        case 0: //dw ['.Jumptable_0'];
+        // Jumptable_0:
+            // LD_A(BANK(s5_a89c));
+            // CALL(aOpenSRAM);
+            OpenSRAM_Conv(MBANK(as5_a89c));
+
+            // LD_HL(s5_a89c);
+            // LD_DE(wStringBuffer3);
+            // LD_BC(22);
+            // CALL(aCopyBytes);
+            CopyBytes(wram->wStringBuffer3, GBToRAMAddr(s5_a89c), 22);
+            wram->wStringBuffer3[22] = 0x50;
+
+            // LD_HL(s5_a8b2);
+            // LD_DE(wc608);
+            // LD_BC(150);
+            // CALL(aCopyBytes);
+            CopyBytes(wram->wc608, GBToRAMAddr(s5_a8b2), HONOR_ROLL_DATA_LENGTH);
+
+            // CALL(aCloseSRAM);
+            CloseSRAM_Conv();
+            // hlcoord(1, 1, wTilemap);
+            // LD_DE(wStringBuffer3);
+            // CALL(aPlaceString);
+            PlaceStringSimple(wram->wStringBuffer3, coord(1, 1, wram->wTilemap));
+            // hlcoord(1, 3, wTilemap);
+            // LD_DE(mFunction1704e1_String_Mail);
+            // CALL(aPlaceString);
+            PlaceStringSimple(U82C(String_Mail), coord(11, 1, wram->wTilemap));
+            // hlcoord(4, 3, wTilemap);
+            // LD_DE(wStringBuffer4);
+            // CALL(aPlaceString);
+            PlaceStringSimple(wram->wStringBuffer4, coord(16, 1, wram->wTilemap));
+            // hlcoord(8, 3, wTilemap);
+            // LD_DE(mFunction1704e1_String_PastReaders);
+            // CALL(aPlaceString);
+            PlaceStringSimple(U82C(String_PastReaders), coord(1, 3, wram->wTilemap));
+            // CALL(aFunction1704e1_DrawBorder);
+            Function1704e1_DrawBorder();
+            // CALL(aFunction1704e1_PlaceTextItems);
+            Function1704e1_PlaceTextItems();
+            // goto NextJumptableFunction;
+            Function1704e1_NextJumptableFunction();
+            break;
+
+        case 1: //dw ['.Jumptable_1'];
+        // Jumptable_1:
+            // CALL(aSetPalettes);
+            SetPalettes_Conv();
+            // CALL(aFunction1704e1_NextJumptableFunction);
+            Function1704e1_NextJumptableFunction();
+            fallthrough;
+
+        case 2: //dw ['.Jumptable_2'];
+        // Jumptable_2:
+            // LD_HL(hJoyPressed);
+            // LD_A_hl;
+            // AND_A(A_BUTTON);
+            // IF_NZ goto pressed_a_or_b;
+            // LD_A_hl;
+            // AND_A(B_BUTTON);
+            // IF_NZ goto pressed_a_or_b;
+            if(hram->hJoyPressed & (A_BUTTON | B_BUTTON)) {
+            // pressed_a_or_b:
+                // LD_HL(wJumptableIndex);
+                // SET_hl(7);
+                bit_set(wram->wJumptableIndex, 7);
+                // RET;
+                break;
+            }
+            // LD_A_hl;
+            // AND_A(D_UP);
+            // IF_NZ goto pressed_up;
+            else if(hram->hJoyPressed & D_UP) {
+            // pressed_up:
+                // LD_A_addr(wNrOfBeatenBattleTowerTrainers);
+                // AND_A_A;
+                // RET_Z ;
+                if(wram->wNrOfBeatenBattleTowerTrainers != 0) {
+                    // SUB_A(15);
+                    // LD_addr_A(wNrOfBeatenBattleTowerTrainers);
+                    wram->wNrOfBeatenBattleTowerTrainers -= (PLAYER_NAME_LENGTH - 1) * 2;
+                    // CALL(aFunction1704e1_PlaceTextItems);
+                    Function1704e1_PlaceTextItems();
+                }
+                // RET;
+                break;
+            }
+            // LD_A_hl;
+            // AND_A(D_DOWN);
+            // IF_NZ goto pressed_down;
+            else if(hram->hJoyPressed & D_DOWN) {
+            // pressed_down:
+                // LD_A_addr(wNrOfBeatenBattleTowerTrainers);
+                // CP_A(60);
+                // RET_Z ;
+                if(wram->wNrOfBeatenBattleTowerTrainers != HONOR_ROLL_DATA_LENGTH - (PLAYER_NAME_LENGTH - 1) * 12) {
+                    // ADD_A(15);
+                    // LD_addr_A(wNrOfBeatenBattleTowerTrainers);
+                    wram->wNrOfBeatenBattleTowerTrainers += (PLAYER_NAME_LENGTH - 1) * 2;
+                    // CALL(aFunction1704e1_PlaceTextItems);
+                    Function1704e1_PlaceTextItems();
+                }
+                // RET;
+                break;
+            }
+            // RET;
+            break;
+        }
+        // FARCALL(aReloadMapPart);
+        ReloadMapPart_Conv();
+        // goto loop;
+    }
+
+// done:
+    // RET;
+}
+
+// Mobile_ViewHonorRollSpecial
 void Function1704e1(void){
-    CALL(aSpeechTextbox);
-    CALL(aFadeToMenu);
-    CALL(aInitBattleTowerChallengeRAM);
-    CALL(aFunction1704e1_JumptableLoop);
-    CALL(aCloseSubmenu);
-    RET;
-
-
-JumptableLoop:
-    CALL(aClearBGPalettes);
-    CALL(aClearSprites);
-    CALL(aClearScreen);
-
-loop:
-    CALL(aJoyTextDelay);
-    LD_A_addr(wJumptableIndex);
-    BIT_A(7);
-    IF_NZ goto done;
-    CALL(aFunction1704e1_DoJumptable);
-    FARCALL(aReloadMapPart);
-    goto loop;
-
-
-done:
-    RET;
-
-
-DoJumptable:
-    //jumptable ['.dw', 'wJumptableIndex']
-
-
-dw:
-    //dw ['.Jumptable_0'];
-    //dw ['.Jumptable_1'];
-    //dw ['.Jumptable_2'];
-
-
-Jumptable_0:
-    LD_A(BANK(s5_a89c));
-    CALL(aOpenSRAM);
-
-    LD_HL(s5_a89c);
-    LD_DE(wStringBuffer3);
-    LD_BC(22);
-    CALL(aCopyBytes);
-
-    LD_HL(s5_a8b2);
-    LD_DE(wc608);
-    LD_BC(150);
-    CALL(aCopyBytes);
-
-    CALL(aCloseSRAM);
-    hlcoord(1, 1, wTilemap);
-    LD_DE(wStringBuffer3);
-    CALL(aPlaceString);
-    hlcoord(1, 3, wTilemap);
-    LD_DE(mFunction1704e1_String_Mail);
-    CALL(aPlaceString);
-    hlcoord(4, 3, wTilemap);
-    LD_DE(wStringBuffer4);
-    CALL(aPlaceString);
-    hlcoord(8, 3, wTilemap);
-    LD_DE(mFunction1704e1_String_PastReaders);
-    CALL(aPlaceString);
-    CALL(aFunction1704e1_DrawBorder);
-    CALL(aFunction1704e1_PlaceTextItems);
-    goto NextJumptableFunction;
-
-
-Jumptable_1:
-    CALL(aSetPalettes);
-    CALL(aFunction1704e1_NextJumptableFunction);
-
-
-Jumptable_2:
-    LD_HL(hJoyPressed);
-    LD_A_hl;
-    AND_A(A_BUTTON);
-    IF_NZ goto pressed_a_or_b;
-    LD_A_hl;
-    AND_A(B_BUTTON);
-    IF_NZ goto pressed_a_or_b;
-    LD_A_hl;
-    AND_A(D_UP);
-    IF_NZ goto pressed_up;
-    LD_A_hl;
-    AND_A(D_DOWN);
-    IF_NZ goto pressed_down;
-    RET;
-
-
-pressed_up:
-    LD_A_addr(wNrOfBeatenBattleTowerTrainers);
-    AND_A_A;
-    RET_Z ;
-    SUB_A(15);
-    LD_addr_A(wNrOfBeatenBattleTowerTrainers);
-    CALL(aFunction1704e1_PlaceTextItems);
-    RET;
-
-
-pressed_down:
-    LD_A_addr(wNrOfBeatenBattleTowerTrainers);
-    CP_A(60);
-    RET_Z ;
-    ADD_A(15);
-    LD_addr_A(wNrOfBeatenBattleTowerTrainers);
-    CALL(aFunction1704e1_PlaceTextItems);
-    RET;
-
-
-pressed_a_or_b:
-    LD_HL(wJumptableIndex);
-    SET_hl(7);
-    RET;
-
-
-NextJumptableFunction:
-    LD_HL(wJumptableIndex);
-    INC_hl;
-    RET;
-
-
-DrawBorder:
-    hlcoord(0, 4, wTilemap);
-    LD_A(0x79);
-    LD_hli_A;
-    LD_C(SCREEN_WIDTH - 2);
-
-top_border_loop:
-    LD_A(0x7a);
-    LD_hli_A;
-    DEC_C;
-    IF_NZ goto top_border_loop;
-    LD_A(0x7b);
-    LD_hli_A;
-    LD_DE(SCREEN_WIDTH);
-    LD_C(12);
-
-left_border_loop:
-    LD_A(0x7c);
-    LD_hl_A;
-    ADD_HL_DE;
-    DEC_C;
-    IF_NZ goto left_border_loop;
-    LD_A(0x7d);
-    LD_hli_A;
-    LD_C(SCREEN_WIDTH - 2);
-
-bottom_border_loop:
-    LD_A(0x7a);
-    LD_hli_A;
-    DEC_C;
-    IF_NZ goto bottom_border_loop;
-    LD_A(0x7e);
-    LD_hl_A;
-    LD_DE(-SCREEN_WIDTH);
-    ADD_HL_DE;
-    LD_C(12);
-
-right_border_loop:
-    LD_A(0x7c);
-    LD_hl_A;
-    ADD_HL_DE;
-    DEC_C;
-    IF_NZ goto right_border_loop;
-    RET;
-
-
-PlaceTextItems:
-    CALL(aFunction1704e1_ClearBox);
-    CALL(aFunction1704e1_PlaceUpDownArrows);
-    LD_A(0x50);
-    LD_addr_A(wcd4e);
-    LD_HL(wc608);
-    LD_A_addr(wNrOfBeatenBattleTowerTrainers);
-    LD_C_A;
-    XOR_A_A;
-    LD_B_A;
-    ADD_HL_BC;
-    PUSH_HL;
-    POP_BC;
-    hlcoord(1, 6, wTilemap);
-    LD_A(6);
-
-loop1:
-    PUSH_AF;
-    PUSH_HL;
-    LD_A(3);
-
-loop2:
-    PUSH_AF;
-    LD_DE(wcd49);
-    LD_A_bc;
-    AND_A_A;
-    IF_Z goto fill_with_e3;
-//  .copy
-    LD_A(5);
-
-loop3a:
-    PUSH_AF;
-    LD_A_bc;
-    LD_de_A;
-    INC_BC;
-    INC_DE;
-    POP_AF;
-    DEC_A;
-    IF_NZ goto loop3a;
-    goto rejoin;
-
-
-fill_with_e3:
-    LD_A(5);
-
-loop3b:
-    PUSH_AF;
-    LD_A(0xe3);
-    LD_de_A;
-    INC_DE;
-    INC_BC;
-    POP_AF;
-    DEC_A;
-    IF_NZ goto loop3b;
-
-
-rejoin:
-    LD_DE(wcd49);
-    PUSH_BC;
-    CALL(aPlaceString);
-    LD_DE(NAME_LENGTH_JAPANESE);
-    ADD_HL_DE;
-    POP_BC;
-    POP_AF;
-    DEC_A;
-    IF_NZ goto loop2;
-    POP_HL;
-    LD_DE(0x28);
-    ADD_HL_DE;
-    POP_AF;
-    DEC_A;
-    IF_NZ goto loop1;
-    RET;
-
-
-ClearBox:
-    hlcoord(1, 5, wTilemap);
-    XOR_A_A;
-    LD_B(12);
-
-clearbox_row:
-    LD_C(SCREEN_WIDTH - 2);
-
-clearbox_column:
-    LD_hli_A;
-    DEC_C;
-    IF_NZ goto clearbox_column;
-    INC_HL;
-    INC_HL;
-    DEC_B;
-    IF_NZ goto clearbox_row;
-    RET;
-
-
-PlaceUpDownArrows:
-    LD_A_addr(wNrOfBeatenBattleTowerTrainers);
-    AND_A_A;
-    IF_Z goto nope;
-    hlcoord(18, 5, wTilemap);
-    LD_A(0x61);
-    LD_hl_A;
-
-
-nope:
-    LD_A_addr(wNrOfBeatenBattleTowerTrainers);
-    CP_A(60);
-    RET_Z ;
-    hlcoord(18, 16, wTilemap);
-    LD_A(0xee);
-    LD_hl_A;
-    RET;
-
-
-String_Mail:
-    //db ['"ルーム@"'];
-
-
-String_PastReaders:
-    //db ['"れきだいりーダーいちらん@"'];
-
-    return BattleTowerAction();
+    // CALL(aSpeechTextbox);
+    SpeechTextbox_Conv2();
+    // CALL(aFadeToMenu);
+    FadeToMenu_Conv();
+    // CALL(aInitBattleTowerChallengeRAM);
+    InitBattleTowerChallengeRAM();
+    // CALL(aFunction1704e1_JumptableLoop);
+    Function1704e1_JumptableLoop();
+    // CALL(aCloseSubmenu);
+    CloseSubmenu_Conv();
+    // RET;
 }
 
 void BattleTowerAction(void){

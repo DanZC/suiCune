@@ -971,6 +971,63 @@ void BattleTowerRoomMenu_Jumptable(void){
     }
 }
 
+void BattleTowerRoomMenu_Mobile_Jumptable(void) {
+    // the jumptable in the japanese version
+    switch(wram->wBattleTowerRoomMenuJumptableIndex) {
+        case 0x00: return BattleTowerRoomMenu_PickLevelMessage(); // BattleTowerRoomMenu_PickLevelMessage ;6849
+        case 0x01: return BattleTowerRoomMenu_PlacePickLevelMenu(); //7C49
+        case 0x02: return BattleTowerRoomMenu_UpdatePickLevelMenu(); //C849
+        case 0x03: return BattleTowerRoomMenu_Mobile_03(); //9A4A
+        case 0x04: return Function11886e(); //B448
+        case 0x05: return Function118880(); //C648
+        case 0x06: return Function11878d(); //D347
+        case 0x07: return Function1188b0(); //F648
+        case 0x08: return Function11878d(); //D347
+        case 0x09: return Function1188b8(); //FE48
+        case 0x0a: return Function11878d(); //D347
+        case 0x0b: return Function1188c0(); //0649
+        case 0x0c: return Function11878d(); //D347
+        case 0x0d: return Function1188c8(); //0E49
+        case 0x0e: return Function11878d(); //D347
+        case 0x0f: return Function118903(); //4949
+        case 0x10: return Function118a65(); //4E4D
+        case 0x11: return Function11878d(); //D347
+        case 0x12: return Function11891c(); //6249
+        // case 0x13: return Function118a54(); //3D4D
+        case 0x14: return Function11878d(); //D347
+        // case 0x15: return RemovedFunction(); //A84A
+        // case 0x16: return RemovedFunction2(); //D84A
+        // case 0x17: return RemovedFunction3(); //244B
+        // case 0x18: return RemovedFunction4(); //4D4C
+        // case 0x19: return RemovedFunction5(); //D54C
+        // case 0x1a: return RemovedFunction6(); //DE4C
+        // case 0x1b: return RemovedFunction7(); //154D
+        case 0x1c: return Function11878d(); //D347
+        // case 0x1d: return ValidateBattleDownload(); //5B50
+        // case 0x1e: return LogoutOfIsp(); //9351
+        case 0x1f: return Function11878d(); //D347
+        case 0x20: return Function118e76(); //9C51
+        case 0x21: return Function118e7e(); //A451
+        case 0x22: return Function11878d(); //D347
+        case 0x23: return BattleTowerRoomMenu_DoNothing(); //5E40
+        case 0x24: return BattleTowerRoomMenu_PartyMonTopsThisLevelMessage(); //B260
+        case 0x25: return BattleTowerRoomMenu_WaitForMessage(); //BB60
+        case 0x26: return BattleTowerRoomMenu_DelayRestartMenu(); //C860
+        case 0x27: return BattleTowerRoomMenu_QuitMessage(); //1261
+        case 0x28: return BattleTowerRoomMenu_PlaceYesNoMenu(); //2E61
+        case 0x29: return BattleTowerRoomMenu_UpdateYesNoMenu(); //3B61
+        case 0x2a: return BattleTowerRoomMenu_UberRestrictionMessage(); //A760
+        case 0x2b: return BattleTowerRoomMenu_WaitForMessage(); //BB60
+        case 0x2c: return BattleTowerRoomMenu_DelayRestartMenu(); //C860
+        case 0x2d: return Function118e76(); //9C51
+        case 0x2e: return BattleTowerRoomMenu_CallRoomMenu2(); // Function118e7e AD51
+        // case 0x2f: return RemovedFunction9(); //6060
+        // case 0x30: return RemovedFunction10(); //6960
+        // case 0x31: return RemovedFunction11(); //7660
+        case 0x32: return Function118e76(); //9C51
+    }
+}
+
 void Function11857c(void){
     //jumptable ['.Jumptable', 'wBattleTowerRoomMenuJumptableIndex']
     printf("Send Battle Tower Record Jumptable 0x%02x\n", wram->wBattleTowerRoomMenuJumptableIndex);
@@ -1592,6 +1649,7 @@ uint8_t* Function1188e7(void){
     return de;
 }
 
+// StopPichuMobileAnimation
 void Function118903(void){
     // LD_A_addr(wc3f0);
     // LD_addr_A(wc319);
@@ -1878,28 +1936,48 @@ void BattleTowerRoomMenu_UpdatePickLevelMenu(void){
     // RET;
 }
 
+void BattleTowerRoomMenu_Mobile_03(void){ // 4A9A
+    // ld a, [$c31a];$c340
+    // and a
+    // ret nz
+    if(wram->wc31a != 0)
+        return;
+
+    // ld a, [wcd4f];$cd43
+    // ld [$cd61], a ;$cd55
+    wram->wcd61[0] = wram->wcd4f;
+    // jp BattleTowerRoomMenu_IncrementJumptable
+    return BattleTowerRoomMenu_IncrementJumptable();
+}
+
 void Function118a54(void){
 //  //  unreferenced
-    LD_A_addr(wcd55);
-    LD_L_A;
-    LD_A_addr(wcd56);
-    LD_H_A;
-    LD_DE(wc3ec);
-    LD_BC(0x0004);
-    JP(mFunction118ae4);
-
+    // LD_A_addr(wcd55);
+    // LD_L_A;
+    // LD_A_addr(wcd56);
+    // LD_H_A;
+    // LD_DE(wc3ec);
+    // LD_BC(0x0004);
+    // JP(mFunction118ae4);
+    return Function118ae4();
 }
 
 void Function118a65(void){
 //  //  unreferenced
-    LD_HL(mBattleDownloadURL);
-    LD_DE(wcc60);
-    LD_BC(0x80);
-    CALL(aCopyBytes);
-    LD_DE(w3_d000);
-    LD_BC(0x1000);
-    JP(mFunction118b10);
-
+    char buffer[128];
+    memset(buffer, 0, sizeof(buffer));
+    snprintf(buffer, sizeof(buffer) - 1, "http://%s%s",
+        Mobile_GetServerHostname(),
+        BattleDownloadURL);
+    // LD_HL(mBattleDownloadURL);
+    // LD_DE(wcc60);
+    // LD_BC(0x80);
+    // CALL(aCopyBytes);
+    CopyBytes(wram->wcc60_str, buffer, 0x80);
+    // LD_DE(w3_d000);
+    // LD_BC(0x1000);
+    // JP(mFunction118b10);
+    Function118b10(wram->w3_d000, 0x1000);
 }
 
 void Function118a7a(void){
@@ -1912,7 +1990,7 @@ void Function118a7a(void){
     // LD_DE(wcc60);
     // LD_BC(0x80);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wcc60_str, BattleDownloadURL, 0x80);
+    CopyBytes(wram->wcc60_str, buffer, 0x80);
     // LD_DE(w3_d000);
     // LD_BC(0x1000);
     // JP(mFunction118b10);
@@ -10017,6 +10095,7 @@ void Function11b5e8(void){
     CloseSRAM_Conv();
     // LD_A(0x5);
     // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(as5_b08c));
     // LD_HL(0xc608);
     // LD_DE(0xb08c);
     // LD_BC(4);
@@ -10321,11 +10400,10 @@ void Function11b6b4(void){
 
 // ReceiveMonFromTradeCornerSpecial
 void Function11b7e5(void){
-    struct BoxMon* mon = (struct BoxMon*)(wram->wc608 + 0x5);
     // LD_A_addr(0xc60d);  // species
     // LD_addr_A(wOTTrademonSpecies);
     // LD_addr_A(wCurPartySpecies);
-    wram->wCurPartySpecies = wram->wOTTrademon.species = mon->species;
+    wram->wCurPartySpecies = wram->wOTTrademon.species = wram->wMobileMon.mon.species;
     // LD_A_addr(wcd81);
     // LD_addr_A(wc74e);
     wram->wc74e[0] = wram->wcd81[0];
@@ -10333,26 +10411,26 @@ void Function11b7e5(void){
     // LD_DE(wOTTrademonOTName);
     // LD_BC(5);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wOTTrademon.otName, wram->wc63d, NAME_LENGTH);
+    CopyBytes(wram->wOTTrademon.otName, wram->wMobileMonOT, PLAYER_NAME_LENGTH - 1);
     // LD_A(0x50);
     // LD_de_A;
-    wram->wc63d[NAME_LENGTH] = 0x50;
+    wram->wMobileMonOT[PLAYER_NAME_LENGTH - 1] = 0x50;
     // LD_A_addr(0xc60d + MON_ID);  // id
     // LD_addr_A(wOTTrademonID);
     // LD_A_addr(0xc60d + MON_ID + 1);
     // LD_addr_A(wOTTrademonID + 1);
-    wram->wOTTrademon.id = (wram->wc608[0x5 + MON_ID] | (wram->wc608[0x5 + MON_ID + 1] << 8));
+    wram->wOTTrademon.id = wram->wMobileMon.mon.id;
     // LD_HL(0xc60d + MON_DVS);  // dvs
     // LD_A_hli;
     // LD_addr_A(wOTTrademonDVs);
     // LD_A_hl;
     // LD_addr_A(wOTTrademonDVs + 1);
-    wram->wOTTrademon.dvs = (wram->wc608[0x5 + MON_DVS] | (wram->wc608[0x5 + MON_DVS + 1] << 8));
+    wram->wOTTrademon.dvs = wram->wMobileMon.mon.DVs;
     // LD_BC(0xc60d);  // pokemon_data_start
     // FARCALL(aGetCaughtGender);
     // LD_A_C;
     // LD_addr_A(wOTTrademonCaughtData);
-    wram->wOTTrademon.caughtData = GetCaughtGender_Conv(mon);
+    wram->wOTTrademon.caughtData = GetCaughtGender_Conv(&wram->wMobileMon.mon);
     // CALL(aSpeechTextbox);
     SpeechTextbox_Conv2();
     // CALL(aFadeToMenu);
@@ -10561,7 +10639,7 @@ void Function11b93b(void){
     // LD_DE(0xc608);
     // LD_BC(0x008f);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wc608, GBToRAMAddr(s5_a825 - 2), 0x8f);
+    CopyBytes(&wram->wOfferGender, GBToRAMAddr(s5_a800 + 0x23), TRADE_CORNER_TRADE_REQUEST_LENGTH);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
 
@@ -10590,7 +10668,7 @@ void Function11b93b(void){
     // LD_A(HIGH(0xc64b));
     // LD_addr_A(wMobileMonMailPointer + 1);
     // CALL(aAddMobileMonToParty);
-    AddMobileMonToParty(&wram->wMobileMonSpeciesBuffer, &wram->wMobileMon, wram->wMobileMonOT, wram->wMobileMonName, &wram->wMobileMonMail);
+    AddMobileMonToParty(&wram->wOfferSpecies, &wram->wOfferMon, wram->wOfferMonOT, wram->wOfferMonNick, &wram->wOfferMonMail);
     // FARCALL(aSaveAfterLinkTrade);
     SaveAfterLinkTrade();
     // RET;

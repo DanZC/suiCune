@@ -179,7 +179,7 @@ void (*const SpecialsPointers[])(void) = {
     add_special(Function1700ba),
     add_special(Function170114),
     add_special(BattleTowerBattle),
-    // add_special(Function1704e1),
+    add_special(Function1704e1),
     add_special(UnusedBattleTowerDummySpecial1), // Unused
     add_special(LoadOpponentTrainerAndPokemonWithOTSprite),
     add_special(Function11ba38),

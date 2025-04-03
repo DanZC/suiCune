@@ -7,6 +7,9 @@
 #define BATTLETOWER_TRAINERDATALENGTH (18 * 2)                                                                                             // 0x24
 #define BATTLE_TOWER_STRUCT_LENGTH (NAME_LENGTH + BATTLETOWER_PARTY_LENGTH * NICKNAMED_MON_STRUCT_LENGTH + BATTLETOWER_TRAINERDATALENGTH)  // 0xe0
 
+#define HONOR_ROLL_ENTRIES 30
+#define HONOR_ROLL_DATA_LENGTH (PLAYER_NAME_LENGTH - 1) * HONOR_ROLL_ENTRIES
+
 // BattleTowerAction setval arguments (see engine/events/battle_tower/battle_tower.asm)
 enum {
     BATTLETOWERACTION_CHECK_EXPLANATION_READ,

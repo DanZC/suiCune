@@ -48,6 +48,7 @@ void Function11891c(void);
 void BattleTowerRoomMenu_PickLevelMessage(void);
 void BattleTowerRoomMenu_PlacePickLevelMenu(void);
 void BattleTowerRoomMenu_UpdatePickLevelMenu(void);
+void BattleTowerRoomMenu_Mobile_03(void);
 void Function118a54(void);
 void Function118a65(void);
 void Function118a7a(void);

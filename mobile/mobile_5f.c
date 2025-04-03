@@ -474,9 +474,9 @@ bool CheckStringForErrors_IgnoreTerminator_Conv(const uint8_t* de, uint8_t c){
 void Function17d0f3(void){
     // LD_A_addr(wc608 + 5);
     // LD_addr_A(wOTTrademonSpecies);
-    wram->wOTTrademon.species = wram->wOfferSpecies;
+    wram->wOTTrademon.species = wram->wMobileMon.mon.species;
     // LD_addr_A(wCurPartySpecies);
-    wram->wCurPartySpecies = wram->wOfferSpecies;
+    wram->wCurPartySpecies = wram->wMobileMon.mon.species;
     // LD_A_addr(wcd81);
     // LD_addr_A(wc74e);
     wram->wc74e[0] = wram->wcd81[0];
@@ -484,7 +484,7 @@ void Function17d0f3(void){
     // LD_DE(wOTTrademonOTName);
     // LD_BC(5);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wOTTrademon.otName, wram->wOfferMonOT, PLAYER_NAME_LENGTH - 1);
+    CopyBytes(wram->wOTTrademon.otName, wram->wMobileMonOT, PLAYER_NAME_LENGTH - 1);
     // LD_A(0x50);
     // LD_de_A;
     wram->wOTTrademon.otName[PLAYER_NAME_LENGTH - 1] = 0x50;
@@ -492,18 +492,18 @@ void Function17d0f3(void){
     // LD_addr_A(wOTTrademonID);
     // LD_A_addr(wc608 + 12);
     // LD_addr_A(wOTTrademonID + 1);
-    wram->wOTTrademon.id = wram->wOfferMon.mon.id;
+    wram->wOTTrademon.id = wram->wMobileMon.mon.id;
     // LD_HL(wc608 + 26);
     // LD_A_hli;
     // LD_addr_A(wOTTrademonDVs);
     // LD_A_hl;
     // LD_addr_A(wOTTrademonDVs + 1);
-    wram->wOTTrademon.dvs = wram->wOfferMon.mon.DVs;
+    wram->wOTTrademon.dvs = wram->wMobileMon.mon.DVs;
     // LD_BC(wc608 + 5);
     // FARCALL(aGetCaughtGender);
     // LD_A_C;
     // LD_addr_A(wOTTrademonCaughtData);
-    wram->wOTTrademon.caughtData = GetCaughtGender_Conv(&wram->wOfferMon.mon);
+    wram->wOTTrademon.caughtData = GetCaughtGender_Conv(&wram->wMobileMon.mon);
     // CALL(aSpeechTextbox);
     SpeechTextbox_Conv2();
     // CALL(aFadeToMenu);

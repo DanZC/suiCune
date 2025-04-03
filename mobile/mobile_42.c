@@ -1062,7 +1062,6 @@ void MobileTradeAnim_ShowOTMonFromGTS(void){
     // CALL(aGetSGBLayout);
     GetSGBLayout_Conv(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
     // LD_A(0b11100100);  // 3,2,1,0
-    GetSGBLayout_Conv(0b11100100);
     // CALL(aDmgToCgbBGPals);
     DmgToCgbBGPals_Conv(0b11100100);
     // LD_A_addr(wOTTrademonSpecies);
