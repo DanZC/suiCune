@@ -3080,8 +3080,10 @@ asm_110e00:
     // LD_A(0xc8);
     // CP_A_H;
     // IF_Z goto asm_110dfd;
-    if(addr == 0xc880)
+    if(addr == 0xc880) {
+        printf("error: addr is $c880\n");
         goto asm_110dfd;
+    }
 // asm_110e4a:
     // PUSH_HL;
     // PUSH_DE;
@@ -3099,8 +3101,10 @@ asm_110e00:
         // INC_DE;
         // CP_A_hl;
         // IF_NZ goto asm_110df9;
-        if(*de != *hl2)
+        if(*de != *hl2) {
+            printf("error: missing URI prefix: %s\n", hl2);
             goto asm_110dfd;
+        }
         // INC_HL;
         hl2++, de++;
         // DEC_B;
@@ -3111,8 +3115,10 @@ asm_110e00:
 
     // Skip the domain name, since that can change.
     while(*hln != '/') {
-        if(*hln == '\0')
+        if(*hln == '\0') {
+            printf("error: no path\n");
             goto asm_110dfd;
+        }
         hln++;
     }
 
@@ -3235,13 +3241,17 @@ asm_110eb3:
     // LD_C(0x12);
     // CALL(aFunction11039a);
     // JP_C (mFunction110ddd_asm_110df9);
-    if(Function11039a(&hl4, 0x12))
+    if(Function11039a(&hl4, 0x12)) {
+        printf("error: Function11039a error 1\n");
         goto asm_110dfd;
+    }
     // LD_C(0x12);
     // CALL(aFunction11039a);
     // JP_C (mFunction110ddd_asm_110df9);
-    if(Function11039a(&hl4, 0x12))
+    if(Function11039a(&hl4, 0x12)) {
+        printf("error: Function11039a error 2\n");
         goto asm_110dfd;
+    }
     // LD_C(0x1);
     c = 0x1;
 
@@ -3261,8 +3271,10 @@ asm_110ecb:
     // XOR_A_A;
     // OR_A_C;
     // JP_NZ (mFunction110ddd_asm_110dfa);
-    if(bc >= 0x400)
+    if(bc >= 0x400) {
+        printf("error: Length is bigger than 0x400\n");
         goto asm_110dfd;
+    }
 
 asm_110ee3:
     // LD_HL(wc98b);

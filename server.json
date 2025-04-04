@@ -3,5 +3,7 @@
     "use_ssl": false,
     "login_name": "",
     "email_id": "",
+    "pop_host": "",
+    "mail_host": "",
     "login_pass": ""
 }

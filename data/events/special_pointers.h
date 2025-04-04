@@ -177,6 +177,7 @@ enum {
     special_const(InitialSetDSTFlag),
     special_const(InitialClearDSTFlag),
     special_const(UnusedDummySpecial), // unused
+    special_const(BattleTowerRoomMenu_Mobile),
 };
 
 extern void (*const SpecialsPointers[])(void);

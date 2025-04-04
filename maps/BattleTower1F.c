@@ -67,6 +67,7 @@ const struct MapEvents BattleTower1F_MapEvents = {
 //// CODE
 #include "../constants.h"
 #include "../util/scripting.h"
+#include "../engine/events/battle_tower/battle_tower.h"
 #include "BattleTower1F.h"
 
 bool BattleTower1F_MapScripts_Scene0(script_s* s) {
@@ -180,6 +181,8 @@ bool Script_ChooseChallenge(script_s* s) {
     SCRIPT_BEGIN
     special(Mobile_DummyReturnFalse)
     iftrue(mobile)
+    setval(BATTLE_TOWER_LOCAL)
+    writemem(&gBattleTowerType)
     setval(BATTLETOWERACTION_RESETDATA) // ResetBattleTowerTrainerSRAM
     special(BattleTowerAction)
     special(CheckForBattleTowerRules)
@@ -205,6 +208,8 @@ bool Script_ChooseChallenge(script_s* s) {
     special(BattleTowerAction)
     sjump(Script_WalkToBattleTowerElevator)
 mobile:
+    setval(BATTLE_TOWER_MOBILE)
+    writemem(&gBattleTowerType)
     special(CheckForBattleTowerRules)
     ifnotequal_jump(FALSE, Script_WaitButton)
     writetext(Text_SaveBeforeConnecting_Mobile)
@@ -216,7 +221,7 @@ mobile:
     setscene(SCENE_FINISHED)
     setval(BATTLETOWERACTION_SET_EXPLANATION_READ) // set 1, [sBattleTowerSaveFileFlags]
     special(BattleTowerAction)
-    special(BattleTowerRoomMenu)
+    special(BattleTowerRoomMenu_Mobile)
     ifequal_jump(0xa, Script_Menu_ChallengeExplanationCancel)
     ifnotequal_jump(0x0, Script_MobileError)
     setval(BATTLETOWERACTION_11)

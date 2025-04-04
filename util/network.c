@@ -1848,6 +1848,28 @@ void LoadMobileServerConfig(struct server_config* srv, struct mobile_config* cfg
             memset(srv->hostname, 0, sizeof(srv->hostname));
             strncpy(srv->hostname, s->string, sizeof(srv->hostname) - 1);
         }
+        if(strcmp(it->name->string, "pop_host") == 0) {
+            json_string_t *s = json_value_as_string(it->value);
+            if(s == NULL)
+                continue;
+
+            if(s->string_size == 0 || s->string_size > sizeof(cfg->popServer))
+                continue;
+            
+            memset(cfg->popServer, 0, sizeof(cfg->popServer));
+            strncpy(cfg->popServer, s->string, sizeof(cfg->popServer));
+        }
+        if(strcmp(it->name->string, "mail_host") == 0) {
+            json_string_t *s = json_value_as_string(it->value);
+            if(s == NULL)
+                continue;
+
+            if(s->string_size == 0 || s->string_size > sizeof(cfg->smtpServer))
+                continue;
+            
+            memset(cfg->smtpServer, 0, sizeof(cfg->smtpServer));
+            strncpy(cfg->smtpServer, s->string, sizeof(cfg->smtpServer));
+        }
         else if(strcmp(it->name->string, "login_name") == 0) {
             json_string_t *s = json_value_as_string(it->value);
             if(s == NULL)

@@ -118,15 +118,17 @@ void Function17005a(void){
 }
 
 void Function170be4(void){
-    LD_A(BANK(s5_a894));
-    CALL(aOpenSRAM);
-    XOR_A_A;
-    LD_HL(s5_a894);
-    LD_BC(6 + 2);
-    CALL(aByteFill);
-    CALL(aCloseSRAM);
-    RET;
-
+    // LD_A(BANK(s5_a894));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(as5_a894));
+    // XOR_A_A;
+    // LD_HL(s5_a894);
+    // LD_BC(6 + 2);
+    // CALL(aByteFill);
+    ByteFill(GBToRAMAddr(s5_a894), 6+2, 0);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
 }
 
 void Clears5_a89a(void){

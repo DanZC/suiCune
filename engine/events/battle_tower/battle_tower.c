@@ -25,6 +25,9 @@
 #include "../../../mobile/mobile_5c.h"
 #include "../../../mobile/mobile_5f.h"
 #include "../../../data/trainers/sprites.h"
+#include "../../../data/battle_tower/unknown_levels.h"
+
+uint8_t gBattleTowerType = BATTLE_TOWER_LOCAL;
 
 void BattleTowerRoomMenu(void){
 //  special
@@ -32,6 +35,15 @@ void BattleTowerRoomMenu(void){
     InitBattleTowerChallengeRAM();
     // FARCALL(av_BattleTowerRoomMenu);
     v_BattleTowerRoomMenu();
+    // RET;
+}
+
+void BattleTowerRoomMenu_Mobile(void){
+//  special
+    // CALL(aInitBattleTowerChallengeRAM);
+    InitBattleTowerChallengeRAM();
+    // FARCALL(av_BattleTowerRoomMenu);
+    v_BattleTowerRoomMenuMobile();
     // RET;
 }
 
@@ -46,46 +58,57 @@ void Function1700ba(void){
 }
 
 void Function1700c4(void){
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(BANK(w3_d202TrainerData));  // aka BANK(w3_dffc) and BANK(w3_d202Name)
-    LDH_addr_A(rSVBK);
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(BANK(w3_d202TrainerData));  // aka BANK(w3_dffc) and BANK(w3_d202Name)
+    // LDH_addr_A(rSVBK);
 
-    CALL(aFunction17042c);
+    // CALL(aFunction17042c);
+    Function17042c();
 
-    LD_A(BANK(s5_be45));  // aka BANK(s5_be46), BANK(s5_aa41), and BANK(s5_aa5d)
-    CALL(aOpenSRAM);
-    LD_A(1);
-    LD_addr_A(s5_be45);
-    XOR_A_A;
-    LD_addr_A(s5_be46);
-    LD_HL(w3_dffc);
-    LD_DE(s5_aa41);
-    LD_BC(4);
-    CALL(aCopyBytes);
-    LD_HL(w3_d202Name);
-    LD_DE(s5_aa8e);
-    LD_BC(BATTLETOWER_STREAK_LENGTH * 0xcc);  // length of battle tower struct from japanese games?
-    CALL(aCopyBytes);
-    LD_HL(s5_aa5d);  // some sort of count
-    LD_A_hl;
-    INC_hl;
-    INC_HL;
-    SLA_A;
-    SLA_A;
-    LD_E_A;
-    LD_D(0);
-    ADD_HL_DE;
-    LD_E_L;
-    LD_D_H;
-    LD_HL(w3_dffc);
-    LD_BC(4);
-    CALL(aCopyBytes);
-    CALL(aCloseSRAM);
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    RET;
-
+    // LD_A(BANK(s5_be45));  // aka BANK(s5_be46), BANK(s5_aa41), and BANK(s5_aa5d)
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(as5_be45));
+    // LD_A(1);
+    // LD_addr_A(s5_be45);
+    gb_write(s5_be45, 1);
+    // XOR_A_A;
+    // LD_addr_A(s5_be46);
+    gb_write(s5_be45, 0);
+    // LD_HL(w3_dffc);
+    // LD_DE(s5_aa41);
+    // LD_BC(4);
+    // CALL(aCopyBytes);
+    CopyBytes(GBToRAMAddr(s5_aa41), wram->w3_dffc, 4);
+    // LD_HL(w3_d202Name);
+    // LD_DE(s5_aa8e);
+    // LD_BC(BATTLETOWER_STREAK_LENGTH * 0xcc);  // length of battle tower struct from japanese games?
+    // CALL(aCopyBytes);
+    CopyBytes(GBToRAMAddr(s5_aa8e), wram->w3_d202.name, BATTLETOWER_STREAK_LENGTH * BATTLE_TOWER_STRUCT_LENGTH);
+    // LD_HL(s5_aa5d);  // some sort of count
+    uint8_t* hl = GBToRAMAddr(s5_aa5d);
+    // LD_A_hl;
+    uint8_t a = *hl;
+    // INC_hl;
+    (*hl)++;
+    // INC_HL;
+    hl++;
+    // SLA_A;
+    // SLA_A;
+    // LD_E_A;
+    // LD_D(0);
+    // ADD_HL_DE;
+    // LD_E_L;
+    // LD_D_H;
+    // LD_HL(w3_dffc);
+    // LD_BC(4);
+    // CALL(aCopyBytes);
+    CopyBytes(hl + (a << 2), wram->w3_dffc, 4);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // RET;
 }
 
 static void Function170114_Function170121(void){
@@ -358,6 +381,10 @@ void ReadBTTrainerParty(void){
 //  Initialise the BattleTower-Trainer and his mon
     // CALL(aCopyBTTrainer_FromBT_OT_TowBT_OTTemp);
     CopyBTTrainer_FromBT_OT_TowBT_OTTemp();
+    if(gBattleTowerType == BATTLE_TOWER_MOBILE) {
+    // TODO: Convert ValidateBTParty
+        // ValidateBTParty();
+    }
 
 //  Check the nicknames for illegal characters, and replace bad nicknames
 //  with their species names.
@@ -627,77 +654,93 @@ done_moves:
 
 const char BT_ChrisName[] = "CHRIS@";
 
+// Sanitize Battle Tower Trainer Data?
 void Function17042c(void){
-    LD_HL(w3_d202TrainerData);
-    LD_A(BATTLETOWER_STREAK_LENGTH);
+    // LD_HL(w3_d202TrainerData);
+    struct BattleTowerData* hl = &wram->w3_d202;
+    // LD_A(BATTLETOWER_STREAK_LENGTH);
+    uint8_t a = BATTLETOWER_STREAK_LENGTH;
 
-loop:
-    PUSH_AF;
-    PUSH_HL;
-    LD_C(BATTLETOWER_TRAINERDATALENGTH / 2);
+    do {
+    // loop:
+        // PUSH_AF;
+        // PUSH_HL;
+        // LD_C(BATTLETOWER_TRAINERDATALENGTH / 2);
+        uint8_t* data = hl->trainerData;
+        uint8_t c = BATTLETOWER_TRAINERDATALENGTH / 2;
 
-loop2:
-// First byte is a comparison value.
-    LD_A_hli;
-    LD_B_A;
-// Second byte is a lookup index.
-    LD_A_hli;
-    AND_A_A;
-    IF_Z goto empty;
-    CP_A(15);
-    IF_NC goto copy_data;
+        do {
+        // loop2:
+        // First byte is a comparison value.
+            // LD_A_hli;
+            // LD_B_A;
+            uint8_t b = *(data++);
+        // Second byte is a lookup index.
+            // LD_A_hli;
+            uint8_t b2 = *(data++);
+            // AND_A_A;
+            // IF_Z goto empty;
+            if(b2 == 0) {
+            // empty:
+            // If a == 0 and b >= $fc, overwrite the current trainer's data with
+            // Unknown17047e, and exit the inner loop.
+                // LD_A_B;
+                // CP_A(0xfc);
+                // IF_NC goto copy_data;
+                if(b >= 0xfc) {
+                copy_data:
+                    // POP_DE;
+                    // PUSH_DE;
+                    // LD_HL(mUnknown_17047e);
+                    // LD_BC(BATTLETOWER_TRAINERDATALENGTH);
+                    // CALL(aCopyBytes);
+                    CopyBytes(hl->trainerData, Unknown_17047e, BATTLETOWER_TRAINERDATALENGTH);
+                    break;
+                }
+                
+            }
+            // CP_A(15);
+            // IF_NC goto copy_data;
+            else if(b2 >= 15) {
+                goto copy_data;
+            }
 
-    PUSH_HL;
-    LD_HL(mUnknown_170470);
-    DEC_A;
-    LD_E_A;
-    LD_D(0);
-    ADD_HL_DE;
-    LD_A_hl;
-    POP_HL;
+            // PUSH_HL;
+            // LD_HL(mUnknown_170470);
+            // DEC_A;
+            // LD_E_A;
+            // LD_D(0);
+            // ADD_HL_DE;
+            // LD_A_hl;
+            b2 = Unknown_170470[b2 - 1];
+            // POP_HL;
 
-// If Unknown_170470[a-1] <= b, overwrite the current trainer's data
-// with Unknown17047e, and exit the inner loop.
-    CP_A_B;
-    IF_C goto copy_data;
-    IF_Z goto copy_data;
-    goto next_iteration;
+        // If Unknown_170470[a-1] <= b, overwrite the current trainer's data
+        // with Unknown17047e, and exit the inner loop.
+            // CP_A_B;
+            // IF_C goto copy_data;
+            // IF_Z goto copy_data;
+            if(b2 <= b)
+                goto copy_data;
+            // goto next_iteration;
 
+        // next_iteration:
+            // DEC_C;
+            // IF_NZ goto loop2;
+        } while(--c != 0);
+        // goto next_trainer;
 
-empty:
-// If a == 0 and b >= $fc, overwrite the current trainer's data with
-// Unknown17047e, and exit the inner loop.
-    LD_A_B;
-    CP_A(0xfc);
-    IF_NC goto copy_data;
-
-
-next_iteration:
-    DEC_C;
-    IF_NZ goto loop2;
-    goto next_trainer;
-
-
-copy_data:
-    POP_DE;
-    PUSH_DE;
-    LD_HL(mUnknown_17047e);
-    LD_BC(BATTLETOWER_TRAINERDATALENGTH);
-    CALL(aCopyBytes);
-
-
-next_trainer:
-    POP_HL;
-    LD_DE(BATTLE_TOWER_STRUCT_LENGTH);
-    ADD_HL_DE;
-    POP_AF;
-    DEC_A;
-    IF_NZ goto loop;
-    RET;
-
+    // next_trainer:
+        // POP_HL;
+        // LD_DE(BATTLE_TOWER_STRUCT_LENGTH);
+        // ADD_HL_DE;
+        hl++;
+        // POP_AF;
+        // DEC_A;
+        // IF_NZ goto loop;
+    } while(--a != 0);
+    // RET;
 // INCLUDE "data/battle_tower/unknown_levels.asm"
-
-    return CopyBTTrainer_FromBT_OT_TowBT_OTTemp();
 }
 
 //  copy the BattleTower-Trainer data that lies at 'wBT_OTTrainer' to 'wBT_OTTemp'
@@ -735,29 +778,32 @@ void SkipBattleTowerTrainer(void){
 
 }
 
-void Function1704ca(void){
+struct BattleTowerData* Function1704ca(void){
 //  //  unreferenced
-    LD_A_addr(s5_be46);
-    CP_A(BATTLETOWER_STREAK_LENGTH);
-    IF_C goto not_max;
-    LD_A(BATTLETOWER_STREAK_LENGTH - 1);
+    // LD_A_addr(s5_be46);
+    uint8_t a = gb_read(s5_be46);
+    // CP_A(BATTLETOWER_STREAK_LENGTH);
+    // IF_C goto not_max;
+    if(a >= BATTLETOWER_STREAK_LENGTH) {
+        // LD_A(BATTLETOWER_STREAK_LENGTH - 1);
+        a = BATTLETOWER_STREAK_LENGTH - 1;
+    }
 
+// not_max:
+    // LD_HL(s5_aa8e + BATTLE_TOWER_STRUCT_LENGTH * (BATTLETOWER_STREAK_LENGTH - 1));
+    // LD_DE(-BATTLE_TOWER_STRUCT_LENGTH);
 
-not_max:
-    LD_HL(s5_aa8e + BATTLE_TOWER_STRUCT_LENGTH * (BATTLETOWER_STREAK_LENGTH - 1));
-    LD_DE(-BATTLE_TOWER_STRUCT_LENGTH);
+// loop:
+    // AND_A_A;
+    // IF_Z goto done;
+    // ADD_HL_DE;
+    // DEC_A;
+    // goto loop;
+    struct BattleTowerData* data = (struct BattleTowerData*)GBToRAMAddr(s5_aa8e + BATTLE_TOWER_STRUCT_LENGTH * (BATTLETOWER_STREAK_LENGTH - 1 - a));
 
-loop:
-    AND_A_A;
-    IF_Z goto done;
-    ADD_HL_DE;
-    DEC_A;
-    goto loop;
-
-
-done:
-    RET;
-
+// done:
+    // RET;
+    return data;
 }
 
 static void Function1704e1_DrawBorder(void){
@@ -890,7 +936,7 @@ static void Function1704e1_PlaceTextItems(void){
     Function1704e1_PlaceUpDownArrows();
     // LD_A(0x50);
     // LD_addr_A(wcd4e);
-    wram->wcd4e = 0x50;
+    wram->wcd50 = 0x50;
     // LD_HL(wc608);
     // LD_A_addr(wNrOfBeatenBattleTowerTrainers);
     // LD_C_A;
@@ -911,7 +957,7 @@ static void Function1704e1_PlaceTextItems(void){
         // PUSH_HL;
         tile_t* hl2 = hl;
         // LD_A(3);
-        uint8_t a2 = 3;
+        uint8_t a2 = 2;
 
         do {
         // loop2:
@@ -2160,24 +2206,55 @@ void BattleTowerAction_UbersCheck(void){
 }
 
 void LoadOpponentTrainerAndPokemonWithOTSprite(void){
-    // FARCALL(aLoadOpponentTrainerAndPokemon);
-    LoadOpponentTrainerAndPokemon();
-    // LDH_A_addr(rSVBK);
-    // PUSH_AF;
-    // LD_A(BANK(wBT_OTTrainerClass));
-    // LDH_addr_A(rSVBK);
-    // LD_HL(wBT_OTTrainerClass);
-    // LD_A_hl;
-    // DEC_A;
-    // LD_C_A;
-    // LD_B(0);
-    // POP_AF;
-    // LDH_addr_A(rSVBK);
+    uint8_t tclass;
+    if(gBattleTowerType == BATTLE_TOWER_LOCAL) {
+        // FARCALL(aLoadOpponentTrainerAndPokemon);
+        LoadOpponentTrainerAndPokemon();
+        // LDH_A_addr(rSVBK);
+        // PUSH_AF;
+        // LD_A(BANK(wBT_OTTrainerClass));
+        // LDH_addr_A(rSVBK);
+        // LD_HL(wBT_OTTrainerClass);
+        // LD_A_hl;
+        // DEC_A;
+        // LD_C_A;
+        // LD_B(0);
+        // POP_AF;
+        // LDH_addr_A(rSVBK);
+        tclass = wram->wBT_OTTrainer.trainerClass - 1;
+    }
+    else {
+        // ld a, $05
+        // call OpenSRAM;$2f9d
+        OpenSRAM_Conv(MBANK(as5_a800));
+        // call Function1704ca;Call_05c_44d4
+        struct BattleTowerData* data = Function1704ca();
+        // ld de, NAME_LENGTH - 1;$0005
+        // add hl, de
+    
+        // ld a, [hl]
+        // dec a
+        tclass = data->trainerClass - 1;
+    
+        // cp $42 ; highest existing valid trainer class
+        // jr c, .jr_05c_4aa6
+        if(tclass >= MYSTICALMAN - 1) {
+            // ld a, $16
+            // ld [hl], a
+            // dec a
+            data->trainerClass = YOUNGSTER;
+            tclass = YOUNGSTER - 1;
+        }
+    
+    // .jr_05c_4aa6;
+        // ld c, a
+        // ld b, 0
+    }
     // LD_HL(mBTTrainerClassSprites);
     // ADD_HL_BC;
     // LD_A_hl;
     // LD_addr_A(wBTTempOTSprite);
-    wram->wBTTempOTSprite = BTTrainerClassSprites[wram->wBT_OTTrainer.trainerClass - 1];
+    wram->wBTTempOTSprite = BTTrainerClassSprites[tclass];
 
 //  Load sprite of the opponent trainer
 //  because s/he is chosen randomly and appears out of nowhere

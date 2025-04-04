@@ -60,6 +60,7 @@ const struct MapEvents BattleTowerBattleRoom_MapEvents = {
 //// CODE
 #include "../constants.h"
 #include "../util/scripting.h"
+#include "../engine/events/battle_tower/battle_tower.h"
 #include "BattleTowerBattleRoom.h"
 
 bool BattleTowerBattleRoom_MapScripts_EnterBattleRoom(script_s* s) {
@@ -132,8 +133,8 @@ bool Script_DontBattleNextOpponent(script_s* s) {
     writetext(Text_SaveAndEndTheSession)
     yesorno
     iffalse_jump(Script_DontSaveAndEndTheSession)
-    special(Mobile_DummyReturnFalse)
-    iftrue(mobile)
+    readmem(&gBattleTowerType)
+    ifequal(BATTLE_TOWER_MOBILE, mobile)
     setval(BATTLETOWERACTION_SAVELEVELGROUP) // save level group
     special(BattleTowerAction)
     setval(BATTLETOWERACTION_SAVEOPTIONS) // choose reward
@@ -171,8 +172,8 @@ bool Script_FailedBattleTowerChallenge(script_s* s) {
     setval(BATTLETOWERACTION_CHALLENGECANCELED)
     special(BattleTowerAction)
     opentext
-    special(Mobile_DummyReturnFalse)
-    iftrue(mobile)
+    readmem(&gBattleTowerType)
+    ifequal(BATTLE_TOWER_MOBILE, mobile)
     writetext(Text_ThanksForVisiting)
     waitbutton
     closetext
@@ -191,8 +192,8 @@ bool Script_BeatenAllTrainers(script_s* s) {
 }
 bool Script_BeatenAllTrainers2(script_s* s) {
     SCRIPT_BEGIN
-    special(Mobile_DummyReturnFalse)
-    iftrue(mobile)
+    readmem(&gBattleTowerType)
+    ifequal(BATTLE_TOWER_MOBILE, mobile)
     opentext
     writetext(Text_CongratulationsYouveBeatenAllTheTrainers)
     sjump(Script_GivePlayerHisPrize)

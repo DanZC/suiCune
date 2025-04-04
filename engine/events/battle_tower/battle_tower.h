@@ -1,4 +1,5 @@
 void BattleTowerRoomMenu(void);
+void BattleTowerRoomMenu_Mobile(void);
 void Function1700ba(void);
 void Function1700c4(void);
 void Function170114(void);
@@ -14,7 +15,7 @@ extern const char BT_ChrisName[];
 void Function17042c(void);
 void CopyBTTrainer_FromBT_OT_TowBT_OTTemp(void);
 void SkipBattleTowerTrainer(void);
-void Function1704ca(void);
+struct BattleTowerData* Function1704ca(void);
 void Function1704e1(void);
 void BattleTowerAction(void);
 void ResetBattleTowerTrainersSRAM(void);
@@ -56,5 +57,11 @@ void BattleTowerAction_UbersCheck(void);
 void LoadOpponentTrainerAndPokemonWithOTSprite(void);
 void UnusedBattleTowerDummySpecial2(void);
 void CheckForBattleTowerRules(void);
+
+extern uint8_t gBattleTowerType;
+enum {
+    BATTLE_TOWER_LOCAL,
+    BATTLE_TOWER_MOBILE,
+};
 //#include "data/battle_tower/unknown_levels.h"
 //#include "data/trainers/sprites.h"

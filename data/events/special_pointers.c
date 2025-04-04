@@ -227,4 +227,5 @@ void (*const SpecialsPointers[])(void) = {
     // add_special(UnusedFindItemInPCOrBag),
     add_special(InitialSetDSTFlag),
     add_special(InitialClearDSTFlag),
+    add_special(BattleTowerRoomMenu_Mobile),
 };
