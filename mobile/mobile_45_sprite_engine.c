@@ -875,7 +875,7 @@ void Function1163c0(void){
     // LD_DE(wd030);
     // LD_BC(0x0010);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wd030, wram->wc320, 0x10);
+    CopyBytes(wram->wBGPals1 + 6 * PALETTE_SIZE, wram->wc320, 2 * PALETTE_SIZE);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // CALL(aSetPalettes);
@@ -1111,7 +1111,7 @@ asm_11650b:
         if(wram->wc3f3 < *hl) {
             // XOR_A(0xff);
             // INC_A;
-            bc = ((wram->wc3f3 - *hl) ^ 0xff) + 1;
+            bc = (((wram->wc3f3 - *hl) ^ 0xff) + 1) & 0xff;
         }
         else {
             bc = wram->wc3f3 - *hl;

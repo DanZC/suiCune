@@ -4014,6 +4014,31 @@ void LoadSelectedPartiesForColosseum(void){
     // RET;
 }
 
+void LoadSelectedPartyForBattleTower(void){
+    // XOR_A_A;
+    // LD_HL(wStringBuffer2);
+    // LD_BC(9);
+    // CALL(aByteFill);
+    ByteFill(wram->wStringBuffer2, 9, 0);
+    // LD_HL(wPlayerMonSelection);
+    // LD_DE(wPartyCount);
+    // CALL(aLoadSelectedPartiesForColosseum_CopyThreeSpecies);
+    LoadSelectedPartiesForColosseum_CopyThreeSpecies(&wram->wPartyCount, wram->wPlayerMonSelection);
+    // LD_HL(wPlayerMonSelection);
+    // LD_DE(wPartyMon1Species);
+    // CALL(aLoadSelectedPartiesForColosseum_CopyPartyStruct);
+    LoadSelectedPartiesForColosseum_CopyPartyStruct(wram->wPartyMon, wram->wPlayerMonSelection);
+    // LD_HL(wPlayerMonSelection);
+    // LD_DE(wPartyMonOTs);
+    // CALL(aLoadSelectedPartiesForColosseum_CopyName);
+    LoadSelectedPartiesForColosseum_CopyName(wram->wPartyMonOT[0], wram->wPlayerMonSelection);
+    // LD_HL(wPlayerMonSelection);
+    // LD_DE(wPartyMonNicknames);
+    // CALL(aLoadSelectedPartiesForColosseum_CopyName);
+    LoadSelectedPartiesForColosseum_CopyName(wram->wPartyMonNickname[0], wram->wPlayerMonSelection);
+    // RET;
+}
+
 // Mobile_StartLinkMode?
 void Function1011f1(void){
     // LD_A(BANK(s4_a60c));

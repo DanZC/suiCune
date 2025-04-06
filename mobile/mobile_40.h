@@ -174,6 +174,7 @@ void Function101050(void);
 void Function10107d(void);
 uint16_t Function1010de(const uint8_t* hl, uint16_t bc);
 void LoadSelectedPartiesForColosseum(void);
+void LoadSelectedPartyForBattleTower(void);
 void Function1011f1(void);
 void Function101220(void);
 void Function101225(void);

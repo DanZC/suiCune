@@ -36,12 +36,14 @@
 #include "../engine/pokemon/move_mon.h"
 #include "../engine/pokedex/pokedex.h"
 #include "../util/network.h"
+#include "../charmap.h"
 #include <stddef.h>
 #include <string.h>
 
-static uint8_t gMobileMessageBuffer[256];
+// static uint8_t gMobileMessageBuffer[256];
 
 static uint8_t* gMobileMessagePtr; // wc31b-wc31c
+static const txt_cmd_s* gMobileTextPtr; // wc31b-wc31c
 static tile_t* gMobileMessageDestPtr; // wc31d-wc31e
 static const char** gMobileStringList; // wcd4b-wdc4c
 uint8_t* gMobile_wcd4d; // wcd4d-wcd4e
@@ -343,7 +345,7 @@ void v_BattleTowerRoomMenuMobile(void){
     // XOR_A_A;
     // LD_addr_A(wcd38);
     wram->wcd38 = 0;
-    return Function118125();
+    return Mobile_BattleTowerRoomMenu();
 }
 
 void Mobile_BattleTowerRoomMenu(void){
@@ -1787,6 +1789,7 @@ void BattleTowerRoomMenu_PlacePickLevelMenu(void){
     *coord(16, 8, wram->wAttrmap) |= 0x40;
     // CALL(aWaitBGMap2);
     WaitBGMap2_Conv();
+    UpdateSprites_Conv();
     // LD_A(0x1);
     // LD_addr_A(wcd4f);
     wram->wcd4f = 0x1;
@@ -1870,10 +1873,12 @@ void BattleTowerRoomMenu_UpdatePickLevelMenu(void){
         a = *(hl++);
         // CP_A(0x50);
         // IF_Z goto asm_1189c4;
+        if(a == CHAR_TERM)
+            break;
         // CP_A(0x7f);
         // IF_Z goto asm_1189c2;
-        if(a == 0x50 || a == 0x7f)
-            break;
+        if(a == CHAR_SPACE)
+            continue;
         // LD_bc_A;
         // INC_BC;
         *(bc++) = a;
@@ -1941,9 +1946,14 @@ void BattleTowerRoomMenu_UpdatePickLevelMenu(void){
             }
 
         // asm_118a30:
-            // LD_A_addr(wcd4f);
-            // LD_addr_A(w3_d800);
-            wram->w3_d800[0] = wram->wcd4f;
+            if(gBattleTowerType == BATTLE_TOWER_LOCAL) {
+                // LD_A_addr(wcd4f);
+                // LD_addr_A(w3_d800);
+                wram->w3_d800[0] = wram->wcd4f;
+            }
+            else {
+                BattleTowerRoomMenu_SetMessage(Text_LinkingWithCenter);
+            }
             // JP(mBattleTowerRoomMenu_IncrementJumptable);
             return BattleTowerRoomMenu_IncrementJumptable();
         }
@@ -2383,7 +2393,7 @@ void BattleTowerRoomMenu_Mobile_18(void){
     uint8_t a = wram->wcd4f;
     // cp $0a
     // jr nz, jr_046_4c5a
-    if(a != 0xa) {
+    if(a == 0xa) {
         // ld c, $01
         bc = 1;
         // xor a
@@ -3007,6 +3017,7 @@ void Function118d35(void){
         // IF_NZ goto asm_118d7b;
         if(size != BATTLE_TOWER_STRUCT_LENGTH * BATTLETOWER_STREAK_LENGTH) {
         // asm_118d7b:
+            printf("Battle Download Error: Expected size %d, got %d.\n", BATTLE_TOWER_STRUCT_LENGTH * BATTLETOWER_STREAK_LENGTH, size);
             // LD_A(0xd3);
             // JP(mSetMobileErrorCode);
             return SetMobileErrorCode(0xd3);
@@ -3388,6 +3399,7 @@ void Function118ec6(void){
     CopyBytes(wram->wc320, &wram->w3_d80e, 0x0026);
     // XOR_A_A;
     // LD_addr_A(wc31f);
+    wram->wc31f = 0;
     // LD_A(0x20);
     // LD_addr_A(wc31b);
     // LD_A(0xc3);
@@ -5427,10 +5439,10 @@ void Function1198f7(void){
     *(hl++) = HIGH(wc708);
     // LD_A_addr(wcd51);
     // LD_hli_A;
-    *(hl++) = wram->wcd51;
+    *(hl++) = w3_d000 + wram->wcd51;
     // LD_A_addr(wcd52);
     // LD_hli_A;
-    *(hl++) = wram->wcd52;
+    *(hl++) = w3_d000 + wram->wcd52;
     // CALL(aFunction119eb4);
     // CALL(aFunction119ec2);
     Function119ec2(Function119eb4(hl));
@@ -6355,7 +6367,7 @@ const struct MenuHeader MenuHeader_119cf7 = {
 const struct MenuHeader MenuData_119cff = {
 //  //  unreferenced
     .flags = MENU_BACKUP_TILES,  // flags
-    .coord = menu_coords(15, 7, SCREEN_WIDTH - 1, TEXTBOX_Y - 1),
+    .coord = menu_coords(12, 7, SCREEN_WIDTH - 1, TEXTBOX_Y - 1),
     .data = NULL,
     .defaultOption = 0,  // default option
 };
@@ -7410,11 +7422,11 @@ bool BattleTowerRoomMenu2_UpdateYesNoMenu(void){
             // hlcoord(15, 8, wTilemap);
             // LD_A(0xed);
             // LD_hl_A;
-            *coord(15, 8, wram->wTilemap) = 0xed;
+            *coord(15, 8, wram->wTilemap) = CHAR_RIGHT_CURSOR;
             // hlcoord(15, 10, wTilemap);
             // LD_A(0x7f);
             // LD_hl_A;
-            *coord(15, 10, wram->wTilemap) = 0x7f;
+            *coord(15, 10, wram->wTilemap) = CHAR_SPACE;
         }
         // goto asm_11a24c;
     }
@@ -7438,11 +7450,11 @@ bool BattleTowerRoomMenu2_UpdateYesNoMenu(void){
             // hlcoord(15, 8, wTilemap);
             // LD_A(0x7f);
             // LD_hl_A;
-            *coord(15, 8, wram->wTilemap) = 0x7f;
+            *coord(15, 8, wram->wTilemap) = CHAR_SPACE;
             // hlcoord(15, 10, wTilemap);
             // LD_A(0xed);
             // LD_hl_A;
-            *coord(15, 10, wram->wTilemap) = 0xed;
+            *coord(15, 10, wram->wTilemap) = CHAR_RIGHT_CURSOR;
         }
         // goto asm_11a24c;
     }
@@ -8044,7 +8056,7 @@ void Function11a5b9(void){
     wram->wMenuBorderRightCoord = 0x13;
     // LD_A(0x5);
     // LD_addr_A(wMenuBorderBottomCoord);
-    wram->wMenuBorderRightCoord = 0x5;
+    wram->wMenuBorderBottomCoord = 0x5;
     // CALL(aPushWindow);
     PushWindow_Conv();
     // hlcoord(0, 0, wAttrmap);
@@ -8405,6 +8417,7 @@ void BattleTowerRoomMenu_WriteMessage(void){
 }
 
 void Function11a90f(void){
+    uint8_t buf[0x008c];
     // LD_A(0x1);
     // LDH_addr_A(rSVBK);
     // CALL(aSpeechTextbox);
@@ -8413,65 +8426,92 @@ void Function11a90f(void){
     // LD_HL(wc320);
     // LD_BC(0x008c);
     // CALL(aByteFill);
-    ByteFill(wram->wc320, 0x008c, 0x50);
+    ByteFill(wram->wc320, 0x008c, CHAR_TERM);
     // LD_A_addr(wc31b);
     // LD_L_A;
     // LD_A_addr(wc31c);
     // LD_H_A;
-    const uint8_t* hl = gMobileMessagePtr;
+    // const uint8_t* hl = gMobileMessagePtr;
+    const struct TextCmd* cmd = gMobileTextPtr;
     // LD_DE(wc320);
     uint8_t* de = wram->wc320;
 
     uint8_t a;
-
-asm_11a92c:
-    // LD_A_hli;
-    a = *(hl++);
-    // CP_A(0x57);
-    // IF_Z goto asm_11a94f;
-    if(a == 0x57)
-        goto asm_11a94f;
-    // CP_A(0x0);
-    // IF_Z goto asm_11a92c;
-    // CP_A(0x50);
-    // IF_Z goto asm_11a92c;
-    if(a == 0x0 || a == 0x50)
-        goto asm_11a92c;
-    // CP_A(0x1);
-    // IF_Z goto asm_11a941;
-    if(a != 0x1) {
-        // LD_de_A;
-        // INC_DE;
-        *(de++) = a;
-        goto asm_11a92c;
+    uint8_t* dst = buf;
+    while(cmd->cmd != TX_END) {
+        if(dst - buf >= (long)sizeof(buf)) {
+            buf[sizeof(buf) - 1] = CHAR_TERM;
+            break;
+        }
+        if(cmd->cmd == TX_START) {
+            const uint8_t* src = U82C(cmd->text);
+            while(*src != CHAR_TERM && (dst - buf) < (long)sizeof(buf)) {
+                if(*src == CHAR_DONE) {
+                    *dst = CHAR_DONE;
+                    goto end_cmd_buf;
+                }
+                *(dst++) = *(src++);
+            }
+        } else if(cmd->cmd == TX_RAM) {
+            uint8_t* p = cmd->ram;
+            while(*p != CHAR_TERM && (dst - buf) < (long)sizeof(buf))
+                *(dst++) = *(p++);
+        }
+        cmd++;
     }
+end_cmd_buf:
 
-// asm_11a941:
-    // LD_A_hli;
-    // LD_C_A;
-    // LD_A_hli;
-    // LD_B_A;
-    const uint8_t* bc = GBToRAMAddr(hl[0] | (hl[1] << 8));
+    const uint8_t* hl = buf;
 
-    do {
-    // asm_11a945:
-        // LD_A_bc;
-        uint8_t n = *bc;
-        // INC_BC;
-        bc++;
+    while(1) {
+    // asm_11a92c:
+        // LD_A_hli;
+        a = *(hl++);
+        // CP_A(0x57);
+        // IF_Z goto asm_11a94f;
+        if(a == CHAR_DONE)
+            break;
+        // CP_A(0x0);
+        // IF_Z goto asm_11a92c;
         // CP_A(0x50);
         // IF_Z goto asm_11a92c;
-        if(n == 0x50)
-            goto asm_11a92c;
-        // LD_de_A;
-        *de = n;
-        // INC_DE;
-        de++;
-        // goto asm_11a945;
-    } while(1);
+        if(a == CHAR_NULL || a == CHAR_TERM)
+            continue;
+        // CP_A(0x1);
+        // IF_Z goto asm_11a941;
+        // if(a != 0x1) {
+            // LD_de_A;
+            // INC_DE;
+        *(de++) = a;
+            // goto asm_11a92c;
+        // }
 
+    // asm_11a941:
+        // LD_A_hli;
+        // LD_C_A;
+        // LD_A_hli;
+        // LD_B_A;
+        // const uint8_t* bc = GBToRAMAddr(hl[0] | (hl[1] << 8));
 
-asm_11a94f:
+        // do {
+        // // asm_11a945:
+        //     // LD_A_bc;
+        //     uint8_t n = *bc;
+        //     // INC_BC;
+        //     bc++;
+        //     // CP_A(0x50);
+        //     // IF_Z goto asm_11a92c;
+        //     if(n == 0x50)
+        //         goto asm_11a92c;
+        //     // LD_de_A;
+        //     *de = n;
+        //     // INC_DE;
+        //     de++;
+        //     // goto asm_11a945;
+        // } while(1);
+    }
+
+// asm_11a94f:
     // XOR_A_A;
     // LD_addr_A(wc31f);
     wram->wc31f = 0;
@@ -8546,7 +8586,7 @@ void Function11a971(void){
         // LD_A_addr(wcd8d);
         // CP_A(0x50);
         // IF_NZ goto asm_11a9bf;
-        if(wram->wcd8d[0] == 0x50) {
+        if(wram->wcd8d[0] == CHAR_TERM) {
             // XOR_A_A;
             // LD_addr_A(wc31a);
             wram->wc31a = 0;
@@ -8563,12 +8603,11 @@ void Function11a971(void){
 }
 
 void BattleTowerRoomMenu_SetMessage(const txt_cmd_s* hl){
-    U82CA(gMobileMessageBuffer, hl->text);
     // LD_A_L;
     // LD_addr_A(wc31b);
     // LD_A_H;
     // LD_addr_A(wc31c);
-    gMobileMessagePtr = gMobileMessageBuffer;
+    gMobileTextPtr = hl;
     // LD_A(0x1);
     // LD_addr_A(wc31a);
     wram->wc31a = 0x1;
@@ -8707,12 +8746,12 @@ const txt_cmd_s Text_ExitGymLeaderHonorRoll[] = {
         t_done )
 };
 
-void Text_LinkingWithCenter(void){
+const txt_cmd_s Text_LinkingWithCenter[] = {
 //  //  unreferenced
-    //text ['"Linking with the"']
-    //line ['"CENTER…"']
-    //done ['?']
-}
+    text_start("Linking with the"
+        t_line "CENTER…"
+        t_done )
+};
 
 const txt_cmd_s Text_WhatLevelDoYouWantToChallenge[] = {
     text_start("What level do you"
@@ -10733,18 +10772,9 @@ void Function11b483(void){
     // ADD_HL_DE;
     // POP_DE;
     // PUSH_DE;
-#if !defined(_MSC_VER)
-    // MSVC doesn't like this
-    const uint16_t* statxp = (uint16_t*)((uint8_t*)&wram->wOfferMon + offsetof(struct BoxMon, statExp));
-    uint16_t* stats = (uint16_t*)((uint8_t*)&wram->wOfferMon + offsetof(struct PartyMon, maxHP));
-#else
-    // GCC doesn't like this
-    const uint16_t* statxp = ((const struct BoxMon*)&wram->wOfferMon)->statExp;
-    uint16_t* stats = &(((struct PartyMon*)&wram->wOfferMon)->maxHP);
-#endif
     // LD_B(TRUE);
     // PREDEF(pCalcMonStats);
-    CalcMonStats_Conv(stats, statxp, wram->wOfferMon.mon.DVs, TRUE);
+    CalcMonStats_PartyMon(&wram->wOfferMon, TRUE);
     // POP_DE;
     // LD_H_D;
     // LD_L_E;
@@ -11233,18 +11263,9 @@ void Function11b6b4(void){
 
     // LD_HL(0xc60d + MON_STAT_EXP - 1);
     // LD_DE(0xc60d + MON_MAXHP);
-#if !defined(_MSC_VER)
-    // MSVC doesn't like this
-    const uint16_t* statxp = (uint16_t*)((uint8_t*)&wram->wMobileMon + offsetof(struct BoxMon, statExp));
-    uint16_t* stats = (uint16_t*)((uint8_t*)&wram->wMobileMon + offsetof(struct PartyMon, maxHP));
-#else
-    // GCC doesn't like this
-    const uint16_t* statxp = ((const struct BoxMon*)&wram->wMobileMon)->statExp;
-    uint16_t* stats = &(((struct PartyMon*)&wram->wMobileMon)->maxHP);
-#endif
     // LD_B(TRUE);
     // PREDEF(pCalcMonStats);
-    CalcMonStats_Conv(stats, statxp, wram->wMobileMon.mon.DVs, TRUE);
+    CalcMonStats_PartyMon(&wram->wMobileMon, TRUE);
     // LD_DE(0xc60d + MON_MAXHP);
     // LD_HL(0xc60d + MON_HP);
     // LD_A_de;

@@ -36,6 +36,7 @@ void ComputeNPCTrademonStats(void);
 void ComputeNPCTrademonStats_Conv(uint8_t curPartyMon);
 void CalcMonStats(void);
 void CalcMonStats_Conv(uint16_t* stats, const uint16_t* statExp, uint16_t dvs, uint8_t b);
+void CalcMonStats_PartyMon(struct PartyMon* mon, uint8_t b);
 void CalcMonStatC(void);
 uint16_t CalcMonStatC_Conv(const uint16_t* statExp, uint16_t dvs, uint8_t b, uint8_t c);
 void GivePoke(void);

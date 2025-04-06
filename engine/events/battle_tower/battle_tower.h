@@ -57,6 +57,10 @@ void BattleTowerAction_UbersCheck(void);
 void LoadOpponentTrainerAndPokemonWithOTSprite(void);
 void UnusedBattleTowerDummySpecial2(void);
 void CheckForBattleTowerRules(void);
+void BattleTowerAction_SavePokemonSelection(void);
+void BattleTowerAction_LoadPokemonSelection(void);
+void BattleTowerAction_ReloadPartyMon(void);
+void BattleTowerAction_ApplyPartyMonSelection(void);
 
 extern uint8_t gBattleTowerType;
 enum {

@@ -3348,10 +3348,12 @@ struct wram_s
                         struct BattleTowerData w3_d742;
                     };
                     struct {
+                        uint8_t pad_w3[0xc * 6]; // Additional padding due to struct BattleTowerData size changing.
                         uint8_t skip_137[0xbe];
                         uint8_t w3_d800[BG_MAP_WIDTH * SCREEN_HEIGHT];
                     };
                     struct {
+                        uint8_t pad_w3_[0xc * 6]; // Ditto.
                         uint8_t skip_138[0xbe];
                         uint8_t wBTChoiceOfLvlGroup;
                         uint8_t skip_139[0x1];

@@ -725,8 +725,7 @@ bool DayCare_GiveEgg(void){
     // PUSH_BC;
     // LD_B(FALSE);
     // PREDEF(pCalcMonStats);
-    CalcMonStats_Conv((uint16_t*)(wram_ptr(wPartyMon1Stats) + (c * PARTYMON_STRUCT_LENGTH)), 
-        (uint16_t*)(wram_ptr(wPartyMon1StatExp) + (c * PARTYMON_STRUCT_LENGTH)), bc->mon.DVs, FALSE);
+    CalcMonStats_PartyMon(bc, FALSE);
     // POP_BC;
     // LD_HL(MON_HP);
     // ADD_HL_BC;

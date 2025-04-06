@@ -2545,8 +2545,7 @@ void Function110af4(mobile_api_data_s* data){
     // LD_A(0);
     // ADC_A(0);
     // LD_hl_A;
-    uint16_t c82d = wram->wc82d | (wram->wc82e << 8);
-    c82d += e;
+    uint16_t c82d = wram->wc993 + e;
     wram->wc82d = LOW(c82d);
     wram->wc82e = HIGH(c82d);
     // XOR_A_A;

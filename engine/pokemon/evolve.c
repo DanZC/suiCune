@@ -408,20 +408,11 @@ MasterLoop:
         // CALL(aGetBaseData);
         GetBaseData_Conv2(wram->wCurSpecies);
 
-#if !defined(_MSC_VER)
-        // MSVC doesn't like this
-        const uint16_t* statxp = (uint16_t*)((uint8_t*)&wram->wTempMon + offsetof(struct BoxMon, statExp));
-        uint16_t* stats = (uint16_t*)((uint8_t*)&wram->wTempMon + offsetof(struct PartyMon, maxHP));
-#else
-        // GCC doesn't like this
-        const uint16_t* statxp = ((const struct BoxMon*)&wram->wTempMon)->statExp;
-        uint16_t* stats = &(((struct PartyMon*)&wram->wTempMon)->maxHP);
-#endif
         // LD_HL(wTempMonExp + 2);
         // LD_DE(wTempMonMaxHP);
         // LD_B(TRUE);
         // PREDEF(pCalcMonStats);
-        CalcMonStats_Conv(stats, statxp, wram->wTempMon.mon.DVs, TRUE);
+        CalcMonStats_PartyMon(&wram->wTempMon, TRUE);
 
         // LD_A_addr(wCurPartyMon);
         // LD_HL(wPartyMons);

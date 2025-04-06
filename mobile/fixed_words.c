@@ -305,7 +305,7 @@ void PrintEZChatBattleMessage(tile_t* de, const uint8_t* bc){
     // LD_addr_A(wcf64);
     wram->wcf64 = 18;
     // LD_A(6);
-    uint8_t a = 6;
+    uint8_t a = EASY_CHAT_MESSAGE_WORD_COUNT;
 
     do {
     // loop:
@@ -369,7 +369,7 @@ void PrintEZChatBattleMessage(tile_t* de, const uint8_t* bc){
             *hl = CHAR_NEXT;
             // RRA;
             // IF_C goto got_line_terminator;
-            if((wram->wJumptableIndex & 0x80) == 0x0) {
+            if((wram->wJumptableIndex & 1) == 0x0) {
             // else, insert "<CONT>"
                 // LD_hl(0x55);
                 *hl = CHAR_CONT;

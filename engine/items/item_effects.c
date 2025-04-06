@@ -1944,15 +1944,6 @@ void NoEffectMessage(void){
 }
 
 void UpdateStatsAfterItem(struct PartyMon* hl){
-#if !defined(_MSC_VER)
-    // MSVC doesn't like this
-    const uint16_t* statxp = (uint16_t*)((uint8_t*)hl + offsetof(struct BoxMon, statExp));
-    uint16_t* stats = (uint16_t*)((uint8_t*)hl + offsetof(struct PartyMon, maxHP));
-#else
-    // GCC doesn't like this
-    const uint16_t* statxp = ((const struct BoxMon*)hl)->statExp;
-    uint16_t* stats = ((const struct PartyMon*)hl)->maxHP;
-#endif
     // LD_A(MON_MAXHP);
     // CALL(aGetPartyParamLocation);
     // LD_D_H;
@@ -1961,7 +1952,7 @@ void UpdateStatsAfterItem(struct PartyMon* hl){
     // CALL(aGetPartyParamLocation);
     // LD_B(TRUE);
     // PREDEF_JUMP(pCalcMonStats);
-    CalcMonStats_Conv(stats, statxp, hl->mon.DVs, TRUE);
+    CalcMonStats_PartyMon(hl, TRUE);
 }
 
 void RareCandy_StatBooster_ExitMenu(void){

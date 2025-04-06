@@ -184,4 +184,6 @@
 
 #define jumpstd2(_std)              SCRIPT_EVCMD(Script_jumpstd_Conv, _std)
 
+#define battletoweraction(_action)  s->position = SCRIPT_MAX_FARLABELS + __LINE__; Script_setval_Conv(s, _action); Script_special_Conv(s, SP_BattleTowerAction); return false; case SCRIPT_MAX_FARLABELS + __LINE__:
+
 #define far_label(_name)            case _name:

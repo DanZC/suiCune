@@ -219,6 +219,7 @@ bool Script_TooMuchTimeElapsedNoRegister(script_s* s) {
     writetext(Text_TooMuchTimeElapsedNoRegister)
     waitbutton
     closetext
+    battletoweraction(BATTLETOWERACTION_RELOAD_PARTY)
     s_end
     SCRIPT_END
 }
@@ -233,6 +234,7 @@ bool Script_ChallengeCanceled(script_s* s) {
     writetext(Text_WeHopeToServeYouAgain)
     waitbutton
     closetext
+    battletoweraction(BATTLETOWERACTION_RELOAD_PARTY)
     s_end
     SCRIPT_END
 }

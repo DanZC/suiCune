@@ -1,8 +1,11 @@
 #include "../../../constants.h"
 #include "trainer_text.h"
 #include "../../../home/text.h"
+#include "../../../home/sram.h"
+#include "../../../home/copy.h"
 #include "../../../data/battle_tower/trainer_text.h"
 #include "../../../data/trainers/genders.h"
+#include "../../../mobile/fixed_words.h"
 
 struct TrainerTexts {
     const txt_cmd_s** greetings;
@@ -160,12 +163,75 @@ const struct TrainerTexts BTFemaleTrainerTexts = {
     },
 };
 
+struct EZChatAddr {
+    uint8_t* hl;
+    uint8_t a;
+};
+
+// Call_047_4033
+// get address of easy chat data
+struct EZChatAddr BattleTowerText_GetEZChatAddress(uint8_t a) {
+    // dec a
+    uint8_t i = gb_read(sNrOfBeatenBattleTowerTrainers);
+    // sla a
+    // sla a
+    //	ld c, a
+    // sla a
+    //	add c
+    // ld c, a
+    // ld b, $00
+    // ld de, -BATTLE_TOWER_STRUCT_LENGTH
+    // ld hl, s5_aa8e + BATTLE_TOWER_STRUCT_LENGTH * (BATTLETOWER_STREAK_LENGTH - 1) + (BATTLE_TOWER_STRUCT_LENGTH - EASY_CHAT_MESSAGE_LENGTH * 3);$affe easy chat data for trainer
+    // add hl, bc
+    // ld a, [sNrOfBeatenBattleTowerTrainers];$aa3f
+    // ret
+    return (struct EZChatAddr){
+        .a = i, 
+        .hl = (((struct BattleTowerData*)GBToRAMAddr(s5_aa8e)) + (BATTLETOWER_STREAK_LENGTH - 1 - i))->trainerData + (EASY_CHAT_MESSAGE_LENGTH * (a - 1)),
+    };
+}
 
 void BattleTowerText(uint8_t c){
 //  Print text c for trainer [wBT_OTTrainerClass]
 //  1: Intro text
 //  2: Player lost
 //  3: Player won
+    // ld a, $05
+    // call OpenSRAM;$2f9d
+    OpenSRAM_Conv(MBANK(as5_a800));
+    struct EZChatAddr addr = BattleTowerText_GetEZChatAddress(c);
+    // ld a, c
+    // cp $01
+    // jr nz, jr_047_400f
+    // call Call_047_4033
+    // jr jr_047_4016
+    // jr_047_400f:
+    // call Call_047_4033
+    // and a
+    // jr z, jr_047_401d
+    // dec a
+    // jr_047_4016:
+    // and a
+    // jr z, jr_047_401d
+
+    // dec a
+    // add hl, de
+    // jr jr_047_4016
+
+// jr_047_401d:
+    // ld de, $c688
+    // ld bc, EASY_CHAT_MESSAGE_LENGTH
+    // call CopyBytes;$2ff2
+    CopyBytes(wram->wc688, addr.hl, EASY_CHAT_MESSAGE_LENGTH);
+    // call CloseSRAM;$2fad
+    CloseSRAM_Conv();
+    // ld de, $c5b9
+    // ld bc, $c688
+    // call PrintEZChatBattleMessage;Call_047_40b3
+    PrintEZChatBattleMessage(coord(1, 14, wram->wTilemap), wram->wc688);
+    // ret
+    return;
+#if 0
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(BANK(wBT_OTTrainerClass));
@@ -276,7 +342,7 @@ void BattleTowerText(uint8_t c){
     // CALL(aPlaceHLTextAtBC);
     PlaceHLTextAtBC_Conv2(coord(1, 14, wram->wTilemap), txt);
     // RET;
-
+#endif
 // INCLUDE "mobile/fixed_words.asm"
 
 // INCLUDE "data/trainers/genders.asm"

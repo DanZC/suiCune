@@ -428,7 +428,7 @@ void SavedTheGame(void){
 // set text speed to medium
     // LD_A(TEXT_DELAY_MED);
     // LD_addr_A(wOptions);
-    wram->wOptions = TEXT_DELAY_MED;
+    wram->wOptions = TEXT_DELAY_FAST;
 // <PLAYER> saved the game!
     // LD_HL(mSavedTheGameText);
     // CALL(aPrintText);
@@ -1278,6 +1278,7 @@ void v_SaveData(void){
     // LD_BC(wCrystalDataEnd - wCrystalData);
     // CALL(aCopyBytes);
     CopyBytes(GBToRAMAddr(sCrystalData), wram->wCrystalData, wCrystalDataEnd - wCrystalData);
+    CloseSRAM_Conv();
 
 // This block originally had some mobile functionality, but since we're still in
 // BANK(sCrystalData), it instead overwrites the sixteen wEventFlags starting at 1:s4_a60e with
@@ -1289,6 +1290,15 @@ void v_SaveData(void){
     // LD_addr_A(s4_a60e + 0);
     // LD_A_hli;
     // LD_addr_A(s4_a60e + 1);
+    // ld a, BANK(s4_a60e)
+    // call OpenSRAM
+    OpenSRAM_Conv(MBANK(as4_a60e));
+    // ld hl, wd479
+    // ld a, [hli]
+    // ld [s4_a60e + 0], a
+    // ld a, [hli]
+    // ld [s4_a60e + 1], a
+    CopyBytes(GBToRAMAddr(s4_a60e), wram->wd479, 2);
 
     // JP(mCloseSRAM);
     CloseSRAM_Conv();
@@ -1312,6 +1322,17 @@ void v_LoadData(void){
     // LD_hli_A;
     // LD_A_addr(s4_a60e + 1);
     // LD_hli_A;
+    // call CloseSRAM
+    CloseSRAM_Conv();
+    // ld a, BANK(s4_a60e)
+    // call OpenSRAM
+    OpenSRAM_Conv(MBANK(as4_a60e));
+    // ld hl, wd479
+    // ld a, [s4_a60e + 0]
+    // ld [hli], a
+    // ld a, [s4_a60e + 1]
+    // ld [hli], a
+    CopyBytes(wram->wd479, GBToRAMAddr(s4_a60e), 2);
 
     // JP(mCloseSRAM);
     CloseSRAM_Conv();

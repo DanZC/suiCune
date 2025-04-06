@@ -147,7 +147,7 @@ void WritePartyMenuTilemap(void){
             //dw ['PlacePartyMonTMHMCompatibility'];
             //dw ['PlacePartyMonEvoStoneCompatibility'];
             case PARTYMENUQUALITY_GENDER:       PlacePartyMonGender();      break;
-            //dw ['PlacePartyMonMobileBattleSelection'];
+            case PARTYMENUQUALITY_MOBILE_SELECTION: PlacePartyMonMobileBattleSelection(); break;
         }
         // POP_HL;
         // goto loop;
@@ -710,91 +710,122 @@ void PlacePartyMonGender(void){
 }
 
 void PlacePartyMonMobileBattleSelection(void){
-    LD_A_addr(wPartyCount);
-    AND_A_A;
-    RET_Z ;
-    LD_C_A;
-    LD_B(0);
-    hlcoord(12, 1, wTilemap);
+    static const char * const Strings_1_2_3[] = {
+        "FIRST", "SECOND", "THIRD"  // 1st, 2nd, 3rd
+    };
+    static const char String_Able[] = "ABLE"; // "さんかしない@" ; Cancel
+    static const char String_NotAble[] = "NOT ABLE";
+    static const char String_Kettei_Yameru[] = "OK  CANCEL"; // "けってい　　やめる@" ; Quit
+    // LD_A_addr(wPartyCount);
+    // AND_A_A;
+    // RET_Z ;
+    if(wram->wPartyCount == 0)
+        return;
+    // LD_C_A;
+    uint8_t c = wram->wPartyCount;
+    // LD_B(0);
+    uint8_t b = 0;
+    // hlcoord(12, 1, wTilemap);
+    tile_t* hl = coord(12, 2, wram->wTilemap);
 
-loop:
-    PUSH_BC;
-    PUSH_HL;
-    LD_DE(mPlacePartyMonMobileBattleSelection_String_Sanka_Shinai);
-    CALL(aPlaceString);
-    POP_HL;
-    LD_DE(2 * SCREEN_WIDTH);
-    ADD_HL_DE;
-    POP_BC;
-    INC_B;
-    DEC_C;
-    IF_NZ goto loop;
-    LD_A_L;
-    LD_E(MON_NAME_LENGTH);
-    SUB_A_E;
-    LD_L_A;
-    LD_A_H;
-    SBC_A(0x0);
-    LD_H_A;
-    LD_DE(mPlacePartyMonMobileBattleSelection_String_Kettei_Yameru);
-    CALL(aPlaceString);
-    LD_B(0x3);
-    LD_C(0x0);
-    LD_HL(wd002);
-    LD_A_hl;
+    do {
+    // loop:
+        // PUSH_BC;
+        // PUSH_HL;
+        if(!PartyMenuCheckEgg_Conv(b)) {
+        // .mon_able	
+            // push hl
+            // ld de, .String_Able
+            // call PlaceString
+            PlaceStringSimple(U82C(String_Able), hl);
+            // pop hl
+        }
+        else {
+            // LD_DE(mPlacePartyMonMobileBattleSelection_String_Sanka_Shinai);
+            // CALL(aPlaceString);
+            PlaceStringSimple(U82C(String_NotAble), hl);
+            // POP_HL;
+        }
+        // LD_DE(2 * SCREEN_WIDTH);
+        // ADD_HL_DE;
+        hl += 2 * SCREEN_WIDTH;
+        // POP_BC;
+        // INC_B;
+        b++;
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(--c != 0);
+    // LD_A_L;
+    // LD_E(MON_NAME_LENGTH);
+    // SUB_A_E;
+    // LD_L_A;
+    // LD_A_H;
+    // SBC_A(0x0);
+    // LD_H_A;
+    hl -= MON_NAME_LENGTH + 20;
+    // LD_DE(mPlacePartyMonMobileBattleSelection_String_Kettei_Yameru);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(String_Kettei_Yameru), hl);
+    // LD_B(0x3);
+    b = 0x3;
+    // LD_C(0x0);
+    c = 0x0;
+    // LD_HL(wd002);
+    uint8_t* hl2 = &wram->wd002;
+    // LD_A_hl;
+    uint8_t a = *hl2;
 
-loop2:
-    PUSH_HL;
-    PUSH_BC;
-    hlcoord(12, 1, wTilemap);
+    do {
+    // loop2:
+        // PUSH_HL;
+        // PUSH_BC;
 
-loop3:
-    AND_A_A;
-    IF_Z goto done;
-    LD_DE(2 * SCREEN_WIDTH);
-    ADD_HL_DE;
-    DEC_A;
-    goto loop3;
+    // loop3:
+        // AND_A_A;
+        // IF_Z goto done;
+        // LD_DE(2 * SCREEN_WIDTH);
+        // ADD_HL_DE;
+        // DEC_A;
+        // goto loop3;
 
+    // done:
+        // LD_DE(mPlacePartyMonMobileBattleSelection_String_Banme);
+        // PUSH_HL;
+        tile_t* hl3 = coord(12, 2, wram->wTilemap) + SCREEN_WIDTH * 2 * a;
+        // CALL(aPlaceString);
+        // POP_HL;
+        // POP_BC;
+        // PUSH_BC;
+        // PUSH_HL;
+        // LD_A_C;
+        // LD_HL(mPlacePartyMonMobileBattleSelection_Strings_1_2_3);
+        // CALL(aGetNthString);
+        // LD_D_H;
+        // LD_E_L;
+        // POP_HL;
+        // CALL(aPlaceString);
+        PlaceStringSimple(U82C(Strings_1_2_3[c]), hl3);
+        // POP_BC;
+        // POP_HL;
+        // INC_HL;
+        hl2++;
+        // LD_A_hl;
+        a = *hl2;
+        // INC_C;
+        c++;
+        // DEC_B;
+        // RET_Z ;
+        // goto loop2;
+    } while(--b != 0);
 
-done:
-    LD_DE(mPlacePartyMonMobileBattleSelection_String_Banme);
-    PUSH_HL;
-    CALL(aPlaceString);
-    POP_HL;
-    POP_BC;
-    PUSH_BC;
-    PUSH_HL;
-    LD_A_C;
-    LD_HL(mPlacePartyMonMobileBattleSelection_Strings_1_2_3);
-    CALL(aGetNthString);
-    LD_D_H;
-    LD_E_L;
-    POP_HL;
-    CALL(aPlaceString);
-    POP_BC;
-    POP_HL;
-    INC_HL;
-    LD_A_hl;
-    INC_C;
-    DEC_B;
-    RET_Z ;
-    goto loop2;
-
-
-String_Banme:
+// String_Banme:
     //db ['"\u3000ばんめ\u3000\u3000@"'];  // Place
 
-String_Sanka_Shinai:
+// String_Sanka_Shinai:
     //db ['"さんかしない@"'];  // Cancel
 
-String_Kettei_Yameru:
+// String_Kettei_Yameru:
     //db ['"けってい\u3000\u3000やめる@"'];  // Quit
-
-Strings_1_2_3:
-    //db ['"１@"', '"２@"', '"３@"'];  // 1st, 2nd, 3rd
-
-    return PartyMenuCheckEgg();
 }
 
 void PartyMenuCheckEgg(void){

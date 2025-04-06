@@ -668,9 +668,7 @@ void HatchEggs(void){
             // ADD_HL_BC;
             // LD_B(FALSE);
             // PREDEF(pCalcMonStats);
-            CalcMonStats_Conv((uint16_t*)wram_ptr(wPartyMon1Stats) + PARTYMON_STRUCT_LENGTH * mon, 
-                (const uint16_t*)wram_ptr(wPartyMon1StatExp) + PARTYMON_STRUCT_LENGTH * mon,
-                hl->mon.DVs, FALSE);
+            CalcMonStats_PartyMon(hl, FALSE);
             // POP_BC;
             // LD_HL(MON_MAXHP);
             // ADD_HL_BC;

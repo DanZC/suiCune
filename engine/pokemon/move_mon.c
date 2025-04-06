@@ -833,14 +833,12 @@ initstats:
     }
     else {
     // generatestats:
-        const uint16_t* statxp = (uint16_t*)((uint8_t*)hl + offsetof(struct BoxMon, statExp));
-        uint16_t* stats = (uint16_t*)((uint8_t*)hl + offsetof(struct PartyMon, maxHP));
         // POP_HL;
         // LD_BC(MON_STAT_EXP - 1);
         // ADD_HL_BC;
         // LD_B(FALSE);
         // CALL(aCalcMonStats);
-        CalcMonStats_Conv(stats, statxp, hl->mon.DVs, FALSE);
+        CalcMonStats_PartyMon(hl, FALSE);
     }
 
 // registerunowndex:
@@ -1673,9 +1671,7 @@ breedmon:
         // PUSH_BC;
         // LD_B(TRUE);
         // CALL(aCalcMonStats);
-        uint16_t* stats = (uint16_t*)(((uint8_t*)pmon) + offsetof(struct PartyMon, maxHP));
-        uint16_t* statExp = (uint16_t*)(((uint8_t*)&pmon->mon) + offsetof(struct BoxMon, statExp));
-        CalcMonStats_Conv(stats, statExp, pmon->mon.DVs, TRUE);
+        CalcMonStats_PartyMon(pmon, TRUE);
         // POP_BC;
 
         // LD_A_addr(wPokemonWithdrawDepositParameter);
@@ -2092,8 +2088,7 @@ bool RetrieveBreedmon_Conv(void){
     // PUSH_BC;
     // LD_B(TRUE);
     // CALL(aCalcMonStats);
-    CalcMonStats_Conv((uint16_t*)(wram_ptr(wPartyMon1Stats) + (c * PARTYMON_STRUCT_LENGTH)), 
-        (uint16_t*)(wram_ptr(wPartyMon1StatExp) + (c * PARTYMON_STRUCT_LENGTH)), partymon->mon.DVs, TRUE);
+    CalcMonStats_PartyMon(partymon, TRUE);
     // LD_HL(wPartyMon1Moves);
     // LD_A_addr(wPartyCount);
     // DEC_A;
@@ -3472,11 +3467,9 @@ void ComputeNPCTrademonStats_Conv(uint8_t curPartyMon){
     uint16_t max_hp = bc->maxHP;
     // LD_A(MON_STAT_EXP - 1);
     // CALL(aGetPartyParamLocation);
-    uint16_t* stats = (uint16_t*)(((uint8_t*)bc) + offsetof(struct PartyMon, maxHP));
-    uint16_t* statExp = (uint16_t*)(((uint8_t*)bc) + offsetof(struct BoxMon, statExp));
     // LD_B(TRUE);
     // CALL(aCalcMonStats);
-    CalcMonStats_Conv(stats, statExp, bc->mon.DVs, TRUE);
+    CalcMonStats_PartyMon(bc, TRUE);
     // POP_DE;
     // LD_A(MON_HP);
     // CALL(aGetPartyParamLocation);
@@ -3542,6 +3535,19 @@ void CalcMonStats_Conv(uint16_t* stats, const uint16_t* statExp, uint16_t dvs, u
         c++;
     }
     // RET;
+}
+
+void CalcMonStats_PartyMon(struct PartyMon* mon, uint8_t b){
+#if !defined(_MSC_VER)
+    // MSVC doesn't like this
+    const uint16_t* statxp = (uint16_t*)((uint8_t*)mon + offsetof(struct BoxMon, statExp));
+    uint16_t* stats = (uint16_t*)((uint8_t*)mon + offsetof(struct PartyMon, maxHP));
+#else
+    // GCC doesn't like this
+    const uint16_t* statxp = ((const struct BoxMon*)mon)->statExp;
+    uint16_t* stats = ((const struct PartyMon*)mon)->maxHP;
+#endif
+    return CalcMonStats_Conv(stats, statxp, mon->mon.DVs, b);
 }
 
 void CalcMonStatC(void){

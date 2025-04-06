@@ -68,6 +68,8 @@ const struct MapEvents BattleTower1F_MapEvents = {
 #include "../constants.h"
 #include "../util/scripting.h"
 #include "../engine/events/battle_tower/battle_tower.h"
+#include "../engine/menus/save.h"
+#include "../mobile/mobile_40.h"
 #include "BattleTower1F.h"
 
 bool BattleTower1F_MapScripts_Scene0(script_s* s) {
@@ -179,12 +181,12 @@ bool Script_Menu_ChallengeExplanationCancel(script_s* s) {
 }
 bool Script_ChooseChallenge(script_s* s) {
     SCRIPT_BEGIN
+    setval(BATTLETOWERACTION_RESETDATA) // ResetBattleTowerTrainerSRAM
+    special(BattleTowerAction)
     special(Mobile_DummyReturnFalse)
     iftrue(mobile)
     setval(BATTLE_TOWER_LOCAL)
     writemem(&gBattleTowerType)
-    setval(BATTLETOWERACTION_RESETDATA) // ResetBattleTowerTrainerSRAM
-    special(BattleTowerAction)
     special(CheckForBattleTowerRules)
     ifnotequal_jump(FALSE, Script_WaitButton)
     writetext(Text_SaveBeforeEnteringBattleRoom)
@@ -210,20 +212,25 @@ bool Script_ChooseChallenge(script_s* s) {
 mobile:
     setval(BATTLE_TOWER_MOBILE)
     writemem(&gBattleTowerType)
-    special(CheckForBattleTowerRules)
-    ifnotequal_jump(FALSE, Script_WaitButton)
     writetext(Text_SaveBeforeConnecting_Mobile)
     yesorno
     iffalse_jump(Script_Menu_ChallengeExplanationCancel)
     setscene(SCENE_BATTLETOWER1F_CHECKSTATE)
     special(TryQuickSave)
     iffalse_jump(Script_Menu_ChallengeExplanationCancel)
+    special(Function10383c)
+    iftrue_jump(Script_Menu_ChallengeExplanationCancel)
+    battletoweraction(BATTLETOWERACTION_SAVESELECTION)
+    battletoweraction(BATTLETOWERACTION_APPLY_SELECTION)
+    special(UpdateSprites)
+    special(CheckForBattleTowerRules)
+    ifnotequal_jump(FALSE, Script_BattleTowerEndChallenge)
     setscene(SCENE_FINISHED)
     setval(BATTLETOWERACTION_SET_EXPLANATION_READ) // set 1, [sBattleTowerSaveFileFlags]
     special(BattleTowerAction)
     special(BattleTowerRoomMenu_Mobile)
-    ifequal_jump(0xa, Script_Menu_ChallengeExplanationCancel)
-    ifnotequal_jump(0x0, Script_MobileError)
+    ifequal_jump(0xa, Script_BattleTowerLoopToMenu)
+    ifnotequal_jump(0x0, Script_BattleTowerError)
     setval(BATTLETOWERACTION_11)
     special(BattleTowerAction)
     writetext(Text_RightThisWayToYourBattleRoom)
@@ -241,7 +248,10 @@ bool Script_ResumeBattleTowerChallenge(script_s* s) {
     iftrue(mobile)
     setval(BATTLETOWERACTION_LOADLEVELGROUP) // load choice of level group
     special(BattleTowerAction)
+    sjump(Script_WalkToBattleTowerElevator)
 mobile:
+    battletoweraction(BATTLETOWERACTION_LOADSELECTION)
+    battletoweraction(BATTLETOWERACTION_APPLY_SELECTION)
     SCRIPT_FALLTHROUGH(Script_WalkToBattleTowerElevator)
 }
 bool Script_WalkToBattleTowerElevator(script_s* s) {
@@ -273,11 +283,12 @@ bool Script_RegisterRecord(script_s* s) {
     SCRIPT_BEGIN
 	special(Function170114) // 76
 	ifequal_jump(0x0A, Script_BattleTowerHopeToServeYouAgain) //$71E3
-	ifnotequal_jump(0x00, Script_MobileError)//$7283
+	ifnotequal_jump(0x00, Script_BattleTowerError)//$7283
 	setval(BATTLETOWERACTION_06)
 	special(BattleTowerAction)
 	writetext(Text_YourRegistrationIsComplete)//$753F
 	waitbutton
+    battletoweraction(BATTLETOWERACTION_RELOAD_PARTY)
 	closetext
 	s_end
     SCRIPT_END
@@ -328,6 +339,7 @@ bool Script_BattleTowerSkipExplanation(script_s* s) {
 bool Script_BattleTowerHopeToServeYouAgain(script_s* s) {
     SCRIPT_BEGIN
     writetext(Text_WeHopeToServeYouAgain)
+    battletoweraction(BATTLETOWERACTION_RELOAD_PARTY)
     waitbutton
     closetext
     s_end
@@ -336,6 +348,28 @@ bool Script_BattleTowerHopeToServeYouAgain(script_s* s) {
 bool Script_MobileError2(script_s* s) {
     SCRIPT_BEGIN
     special(BattleTowerMobileError)
+    closetext
+    s_end
+    SCRIPT_END
+}
+bool Script_BattleTowerEndChallenge(script_s* s) {
+    SCRIPT_BEGIN
+    waitbutton
+    battletoweraction(BATTLETOWERACTION_RELOAD_PARTY)
+    closetext
+    s_end
+    SCRIPT_END
+}
+bool Script_BattleTowerLoopToMenu(script_s* s) {
+    SCRIPT_BEGIN
+    battletoweraction(BATTLETOWERACTION_RELOAD_PARTY)
+    sjump(Script_Menu_ChallengeExplanationCancel)
+    SCRIPT_END
+}
+bool Script_BattleTowerError(script_s* s) {
+    SCRIPT_BEGIN
+    special(BattleTowerMobileError)
+    battletoweraction(BATTLETOWERACTION_RELOAD_PARTY)
     closetext
     s_end
     SCRIPT_END

@@ -284,7 +284,7 @@ extern const txt_cmd_s Text_PartyMonTopsThisLevel[];
 extern const txt_cmd_s Text_UberRestriction[];
 extern const txt_cmd_s Text_CancelBattleRoomChallenge[];
 extern const txt_cmd_s Text_ExitGymLeaderHonorRoll[];
-void Text_LinkingWithCenter(void);
+extern const txt_cmd_s Text_LinkingWithCenter[];
 extern const txt_cmd_s Text_WhatLevelDoYouWantToChallenge[];
 extern const txt_cmd_s Text_CheckBattleRoomListByMaxLevel[];
 extern const txt_cmd_s Text_EnterWhichBattleRoom[];
