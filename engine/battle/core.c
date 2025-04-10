@@ -346,6 +346,7 @@ void BattleTurn(void){
     // loop:
         // SET_PC(aBattleTurn);
         // CALL(aStubbed_Increments5_a89a);
+        Stubbed_Increments5_a89a();
         // CALL(aCheckContestBattleOver);
         // JP_C (mBattleTurn_quit);
         if(CheckContestBattleOver_Conv())
@@ -458,25 +459,36 @@ quit:
     // RET;
 }
 
+// IncrementMobileTurnCounter
 void Stubbed_Increments5_a89a(void){
-    RET;
-    LD_A(MBANK(as5_a89a));  // MBC30 bank used by JP Crystal// inaccessible by MBC3
-    CALL(aOpenSRAM);
-    LD_HL(s5_a89a + 1);  // address of MBC30 bank
-    INC_hl;
-    IF_NZ goto finish;
-    DEC_HL;
-    INC_hl;
-    IF_NZ goto finish;
-    DEC_hl;
-    INC_HL;
-    DEC_hl;
+    // RET;
+    // LD_A(MBANK(as5_a89a));  // MBC30 bank used by JP Crystal// inaccessible by MBC3
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(as5_a89a));
+    // LD_HL(s5_a89a + 1);  // address of MBC30 bank
+    // INC_hl;
+    // IF_NZ goto finish;
+    uint16_t turnCounter = gb_read(s5_a89a + 1) | (gb_read(s5_a89a + 0) << 8);
+    // DEC_HL;
+    // INC_hl;
+    // IF_NZ goto finish;
+    if(turnCounter + 1 > 0xffff) {
+        // DEC_hl;
+        // INC_HL;
+        // DEC_hl;
+        gb_write(s5_a89a + 1, 0xff);
+        gb_write(s5_a89a + 0, 0xff);
+    }
+    else {
+        gb_write(s5_a89a + 1, LOW(turnCounter + 1));
+        gb_write(s5_a89a + 0, HIGH(turnCounter + 1));
+    }
 
 
-finish:
-    CALL(aCloseSRAM);
-    RET;
-
+// finish:
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
 }
 
 void HandleBetweenTurnEffects(void){

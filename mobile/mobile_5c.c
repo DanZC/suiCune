@@ -146,117 +146,156 @@ void Clears5_a89a(void){
 
 }
 
+// FillBattleStatsForBattleRecord
 void Function170c06(void){
 //  //  unreferenced
-    LD_A(BANK(s5_a894));
-    CALL(aOpenSRAM);
-    LD_HL(s5_a894);
-    LD_A_addr(wBattleResult);
-    AND_A_A;  // WIN?
-    IF_NZ goto asm_170c15;
-    INC_hl;
+    // LD_A(BANK(s5_a894));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(as5_a894));
+    // LD_HL(s5_a894);
+    uint8_t* hl = GBToRAMAddr(s5_a894);
+    // LD_A_addr(wBattleResult);
+    // AND_A_A;  // WIN?
+    // IF_NZ goto asm_170c15;
+    // INC_hl;
+    if(wram->wBattleResult == WIN)
+        hl[0]++;
 
+// asm_170c15:
+    // INC_HL;
+    // INC_HL;
+    uint16_t hl2 = hl[2] | (hl[1] << 8);
+    uint16_t hl3 = gb_read(s5_a89a + 1) | (gb_read(s5_a89a) << 8);
+    // LD_A_addr(s5_a89a + 1);
+    // ADD_A_hl;
+    // LD_hld_A;
+    // LD_A_addr(s5_a89a);
+    // ADC_A_hl;
+    // LD_hli_A;
+    // IF_NC goto asm_170c27;
+    if(hl2 + hl3 > 0xffff) {
+        // LD_A(0xff);
+        // LD_hld_A;
+        // LD_hli_A;
+        hl[2] = 0xff;
+        hl[1] = 0xff;
+    }
+    else {
+        hl[2] = LOW(hl2 + hl3);
+        hl[1] = HIGH(hl2 + hl3);
+    }
 
-asm_170c15:
-    INC_HL;
-    INC_HL;
-    LD_A_addr(s5_a89a + 1);
-    ADD_A_hl;
-    LD_hld_A;
-    LD_A_addr(s5_a89a);
-    ADC_A_hl;
-    LD_hli_A;
-    IF_NC goto asm_170c27;
-    LD_A(0xff);
-    LD_hld_A;
-    LD_hli_A;
+// asm_170c27:
+    // INC_HL;
+    // PUSH_HL;
+    // LD_DE(0);
+    uint16_t de = 0;
+    // XOR_A_A;
+    // LD_addr_A(wTempByteValue);
 
+    for(uint8_t i = 0; i < BATTLETOWER_PARTY_LENGTH; ++i) {
+    // asm_170c30:
+        // LD_HL(wPartyMon1HP);
+        // LD_A_addr(wTempByteValue);
+        // CALL(aGetPartyLocation);
+        // LD_A_hli;
+        // LD_B_A;
+        // LD_C_hl;
+        uint16_t hp = NativeToBigEndian16(wram->wPartyMon[i].HP);
+        // INC_HL;
+        // INC_HL;
+        uint16_t maxhp = NativeToBigEndian16(wram->wPartyMon[i].maxHP);
+        // LD_A_hld;
+        // SUB_A_C;
+        // LD_C_A;
+        // LD_A_hl;
+        // SBC_A_B;
+        // LD_B_A;
+        uint16_t damageTaken = maxhp - hp;
+        // PUSH_DE;
+        // POP_HL;
+        // ADD_HL_BC;
+        // PUSH_HL;
+        // POP_DE;
+        // IF_C goto asm_170c58;
+        if(de + damageTaken > 0xffff) {
+            de = 0xffff;
+            break;
+        }
+        de += damageTaken;
+        // LD_A_addr(wTempByteValue);
+        // INC_A;
+        // LD_addr_A(wTempByteValue);
+        // CP_A(0x3);
+        // IF_C goto asm_170c30;
+    }
+    // goto asm_170c5b;
 
-asm_170c27:
-    INC_HL;
-    PUSH_HL;
-    LD_DE(0);
-    XOR_A_A;
-    LD_addr_A(wTempByteValue);
+// asm_170c58:
+    // LD_DE(-1);
 
-asm_170c30:
-    LD_HL(wPartyMon1HP);
-    LD_A_addr(wTempByteValue);
-    CALL(aGetPartyLocation);
-    LD_A_hli;
-    LD_B_A;
-    LD_C_hl;
-    INC_HL;
-    INC_HL;
-    LD_A_hld;
-    SUB_A_C;
-    LD_C_A;
-    LD_A_hl;
-    SBC_A_B;
-    LD_B_A;
-    PUSH_DE;
-    POP_HL;
-    ADD_HL_BC;
-    PUSH_HL;
-    POP_DE;
-    IF_C goto asm_170c58;
-    LD_A_addr(wTempByteValue);
-    INC_A;
-    LD_addr_A(wTempByteValue);
-    CP_A(0x3);
-    IF_C goto asm_170c30;
-    goto asm_170c5b;
+// asm_170c5b:
+    // POP_HL;
+    // INC_HL;
+    hl2 = hl[4] | (hl[3] << 8);
+    // LD_A_E;
+    // ADD_A_hl;
+    // LD_hld_A;
+    // LD_A_D;
+    // ADC_A_hl;
+    // LD_hli_A;
+    // IF_NC goto asm_170c69;
+    if(hl2 + de > 0xffff) {
+        // LD_A(0xff);
+        // LD_hld_A;
+        hl[4] = LOW(0xffff);
+        // LD_hli_A;
+        hl[3] = HIGH(0xffff);
+    }
+    else {
+        hl[4] = LOW(hl2 + de);
+        hl[3] = HIGH(hl2 + de);
+    }
 
+// asm_170c69:
+    // INC_HL;
+    // PUSH_HL;
+    // LD_B(0x0);
+    // LD_C(0x0);
+    uint8_t c = 0x0;
 
-asm_170c58:
-    LD_DE(-1);
+    for(uint8_t b = 0; b < BATTLETOWER_PARTY_LENGTH; ++b) {
+    // asm_170c6f:
+        // LD_HL(wPartyMon1HP);
+        // LD_A_B;
+        // PUSH_BC;
+        // CALL(aGetPartyLocation);
+        // POP_BC;
+        // LD_A_hli;
+        // OR_A_hl;
+        uint16_t hp = NativeToBigEndian16(wram->wPartyMon[b].HP);
+        // IF_NZ goto asm_170c7d;
+        // INC_C;
+        if(hp == 0)
+            c++;
 
-
-asm_170c5b:
-    POP_HL;
-    INC_HL;
-    LD_A_E;
-    ADD_A_hl;
-    LD_hld_A;
-    LD_A_D;
-    ADC_A_hl;
-    LD_hli_A;
-    IF_NC goto asm_170c69;
-    LD_A(0xff);
-    LD_hld_A;
-    LD_hli_A;
-
-
-asm_170c69:
-    INC_HL;
-    PUSH_HL;
-    LD_B(0x0);
-    LD_C(0x0);
-
-asm_170c6f:
-    LD_HL(wPartyMon1HP);
-    LD_A_B;
-    PUSH_BC;
-    CALL(aGetPartyLocation);
-    POP_BC;
-    LD_A_hli;
-    OR_A_hl;
-    IF_NZ goto asm_170c7d;
-    INC_C;
-
-
-asm_170c7d:
-    INC_B;
-    LD_A_B;
-    CP_A(0x3);
-    IF_C goto asm_170c6f;
-    POP_HL;
-    LD_A_hl;
-    ADD_A_C;
-    LD_hl_A;
-    CALL(aCloseSRAM);
-    RET;
-
+    // asm_170c7d:
+        // INC_B;
+        // LD_A_B;
+        // CP_A(0x3);
+        // IF_C goto asm_170c6f;
+    }
+    // POP_HL;
+    // LD_A_hl;
+    // ADD_A_C;
+    // LD_hl_A;
+    hl[5] += c;
+    // CALL(aCloseSRAM);
+    printf("Battle record stats: %d, %d, %d, %d\n",
+        hl[0], hl[2] | (hl[1] << 8), hl[4] | (hl[3] << 8),
+        hl[5]);
+    CloseSRAM_Conv();
+    // RET;
 }
 
 void Function170c8b(void){

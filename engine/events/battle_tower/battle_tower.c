@@ -419,6 +419,7 @@ void RunBattleTowerTrainer(void){
 
     // PREDEF(pStartBattle);
     StartBattle_Conv();
+    Function170c06();
 
     // FARCALL(aLoadPokemonData);
     if(gBattleTowerType == BATTLE_TOWER_LOCAL)
