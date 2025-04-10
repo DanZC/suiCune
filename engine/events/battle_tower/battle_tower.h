@@ -4,6 +4,7 @@ void Function1700ba(void);
 void Function1700c4(void);
 void Function170114(void);
 void Function170139(void);
+void BattleTower_GenerateFakeRecord(void);
 void BattleTowerBattle(void);
 void UnusedBattleTowerDummySpecial1(void);
 void InitBattleTowerChallengeRAM(void);

@@ -351,6 +351,7 @@ void v_BattleTowerRoomMenuMobile(void){
 void Mobile_BattleTowerRoomMenu(void){
     // CALL(aBattleTowerRoomMenu_InitRAM);
     BattleTowerRoomMenu_InitRAM();
+    wram->wBattleTowerRoomMenuJumptableIndex = 0x0;
     // LD_A(0x3);
     // LD_addr_A(wcd33);
     wram->wcd33 = 0x23;
@@ -362,8 +363,10 @@ void Mobile_BattleTowerRoomMenu(void){
     wram->wc3f0 = 0x4;
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
+    uint8_t svbk = gb_read(rSVBK);
     // LD_A(0x3);
     // LDH_addr_A(rSVBK);
+    gb_write(rSVBK, 0x3);
 
     do {
     // loop:
@@ -401,6 +404,7 @@ void Mobile_BattleTowerRoomMenu(void){
     wram->w3_d000[0] = 0;
     // POP_AF;
     // LDH_addr_A(rSVBK);
+    gb_write(rSVBK, svbk);
     // CALL(aBattleTowerRoomMenu_Cleanup);
     BattleTowerRoomMenu_Cleanup();
     // CALL(aFunction118180);
@@ -474,6 +478,7 @@ void Function118180(void){
 void Function1181da(void){
     // CALL(aBattleTowerRoomMenu_InitRAM);
     BattleTowerRoomMenu_InitRAM();
+    wram->wBattleTowerRoomMenuJumptableIndex = 0x0;
     // LD_A(0x2);
     // LD_addr_A(wcd38);
     wram->wcd38 = 0x2;
@@ -5427,10 +5432,10 @@ void Function1198f7(void){
     *(hl++) = HIGH(wc608);
     // LD_A(0xf6);
     // LD_hli_A;
-    *(hl++) = LOW(0xf6);
+    *(hl++) = LOW(BATTLE_TOWER_DATA_UPLOAD_LENGTH);
     // XOR_A_A;
     // LD_hli_A;
-    *(hl++) = HIGH(0xf6);
+    *(hl++) = HIGH(BATTLE_TOWER_DATA_UPLOAD_LENGTH);
     // LD_A(LOW(wc708));
     // LD_hli_A;
     *(hl++) = LOW(wc708);
@@ -5439,10 +5444,10 @@ void Function1198f7(void){
     *(hl++) = HIGH(wc708);
     // LD_A_addr(wcd51);
     // LD_hli_A;
-    *(hl++) = w3_d000 + wram->wcd51;
+    *(hl++) = LOW(w3_d000 + ((wram->wcd52 << 8) | wram->wcd51));
     // LD_A_addr(wcd52);
     // LD_hli_A;
-    *(hl++) = w3_d000 + wram->wcd52;
+    *(hl++) = HIGH(w3_d000 + ((wram->wcd52 << 8) | wram->wcd51));
     // CALL(aFunction119eb4);
     // CALL(aFunction119ec2);
     Function119ec2(Function119eb4(hl));

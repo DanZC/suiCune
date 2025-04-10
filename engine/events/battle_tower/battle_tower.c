@@ -2,6 +2,7 @@
 #include "battle_tower.h"
 #include "rules.h"
 #include "load_trainer.h"
+#include "get_trainer_class.h"
 #include "../../menus/save.h"
 #include "../../overworld/overworld.h"
 #include "../../pokemon/health.h"
@@ -31,6 +32,22 @@
 #include "../../../data/battle_tower/unknown_levels.h"
 
 uint8_t gBattleTowerType = BATTLE_TOWER_LOCAL;
+struct BattleRecord {
+    uint8_t room[2];
+    uint8_t email[MOBILE_EMAIL_LENGTH];
+    uint16_t trainerID;
+    uint16_t secretID;
+    uint8_t name[PLAYER_NAME_LENGTH - 1];
+    uint8_t tclass;
+    struct NicknamedMon party[BATTLETOWER_PARTY_LENGTH];
+    uint8_t EZChatStart[EASY_CHAT_MESSAGE_LENGTH];
+    uint8_t EZChatWin[EASY_CHAT_MESSAGE_LENGTH];
+    uint8_t EZChatLose[EASY_CHAT_MESSAGE_LENGTH];
+    uint8_t numTrainersDefeated;
+    uint16_t numTurnsRequired;
+    uint16_t damageTaken;
+    uint8_t numFaintedMons;
+} gBattleRecord;
 
 void BattleTowerRoomMenu(void){
 //  special
@@ -122,7 +139,7 @@ static void Function170114_Function170121(void){
     // LD_DE(wc608);
     // LD_BC(246);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wc608, GBToRAMAddr(s5_a948), 246);
+    CopyBytes(wram->wc608, GBToRAMAddr(s5_a948), BATTLE_TOWER_DATA_UPLOAD_LENGTH);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // CALL(aFunction170c8b);
@@ -141,120 +158,184 @@ void Function170114(void){
     // RET;
 }
 
+static void Function170139_DecToBin(const uint8_t* de, uint16_t* hl, uint16_t bc){
+    // LD_A_de;
+    // INC_DE;
+    uint8_t a = *(de++);
+    // AND_A_A;
+    // RET_Z ;
+
+// digit_loop:
+    // ADD_HL_BC;
+    // DEC_A;
+    // IF_NZ goto digit_loop;
+    // RET;
+    *hl += bc * a;
+}
+
 void Function170139(void){
 //  //  unreferenced
 //  Convert the 4-digit decimal number at s5_aa41 into binary
-    LD_A(BANK(s5_aa41));
-    CALL(aOpenSRAM);
-    LD_DE(s5_aa41);
-    LD_H(0);
-    LD_L_H;
-    LD_BC(1000);
-    CALL(aFunction170139_DecToBin);
-    LD_BC(100);
-    CALL(aFunction170139_DecToBin);
-    LD_BC(10);
-    CALL(aFunction170139_DecToBin);
-    LD_A_de;
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    CALL(aCloseSRAM);
+    // LD_A(BANK(s5_aa41));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(as5_aa41));
+    // LD_DE(s5_aa41);
+    uint8_t* de = GBToRAMAddr(s5_aa41);
+    // LD_H(0);
+    // LD_L_H;
+    uint16_t hl = 0;
+    // LD_BC(1000);
+    // CALL(aFunction170139_DecToBin);
+    Function170139_DecToBin(de+0, &hl, 1000);
+    // LD_BC(100);
+    // CALL(aFunction170139_DecToBin);
+    Function170139_DecToBin(de+1, &hl, 100);
+    // LD_BC(10);
+    // CALL(aFunction170139_DecToBin);
+    Function170139_DecToBin(de+2, &hl, 10);
+    // LD_A_de;
+    // LD_C_A;
+    // LD_B(0);
+    // ADD_HL_BC;
+    hl += de[3];
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
 //  Store that number in wc608
-    LD_A_H;
-    LD_addr_A(wc608);
-    LD_A_L;
-    LD_addr_A(wc608 + 1);
-    LD_HL(wBT_OTTempMon1DVs);
-    LD_A_addr(wPlayerID);
-    LD_hli_A;
-    LD_A_addr(wPlayerID + 1);
-    LD_hli_A;
-    LD_A_addr(wSecretID);
-    LD_hli_A;
-    LD_A_addr(wSecretID + 1);
-    LD_hli_A;
-    LD_E_L;
-    LD_D_H;
-    LD_HL(wPlayerName);
-    LD_BC(NAME_LENGTH_JAPANESE - 1);
-    CALL(aCopyBytes);
-    LD_BC(wPlayerID);
-    LD_DE(wPlayerGender);
-    FARCALL(aGetMobileOTTrainerClass);
-    LD_DE(wBT_OTTempMon1CaughtGender);
-    LD_A_C;
-    LD_de_A;
-    INC_DE;
-    LD_A(LOW(wPartyMons));
-    LD_addr_A(wcd49);
-    LD_A(HIGH(wPartyMons));
-    LD_addr_A(wcd4a);
-    LD_A(LOW(wPartyMonNicknames));
-    LD_addr_A(wcd4b);
-    LD_A(HIGH(wPartyMonNicknames));
-    LD_addr_A(wcd4c);
-    LD_A(3);
+    // LD_A_H;
+    // LD_addr_A(wc608);
+    gBattleRecord.room[0] = HIGH(hl);
+    // LD_A_L;
+    // LD_addr_A(wc608 + 1);
+    gBattleRecord.room[1] = LOW(hl);
+    // LD_HL(wBT_OTTempMon1DVs);
+    // LD_A_addr(wPlayerID);
+    // LD_hli_A;
+    // LD_A_addr(wPlayerID + 1);
+    // LD_hli_A;
+    gBattleRecord.trainerID = wram->wPlayerID;
+    // LD_A_addr(wSecretID);
+    // LD_hli_A;
+    // LD_A_addr(wSecretID + 1);
+    // LD_hli_A;
+    gBattleRecord.secretID = wram->wSecretID;
+    // LD_E_L;
+    // LD_D_H;
+    // LD_HL(wPlayerName);
+    // LD_BC(NAME_LENGTH_JAPANESE - 1);
+    // CALL(aCopyBytes);
+    CopyBytes(gBattleRecord.name, wram->wPlayerName, PLAYER_NAME_LENGTH - 1);
+    // LD_BC(wPlayerID);
+    // LD_DE(wPlayerGender);
+    // FARCALL(aGetMobileOTTrainerClass);
+    // LD_DE(wBT_OTTempMon1CaughtGender);
+    // LD_A_C;
+    // LD_de_A;
+    gBattleRecord.tclass = GetMobileOTTrainerClass(&wram->wPlayerGender, (const uint8_t *)&wram->wPlayerID);
+    // INC_DE;
+    // LD_A(LOW(wPartyMons));
+    // LD_addr_A(wcd49);
+    // LD_A(HIGH(wPartyMons));
+    // LD_addr_A(wcd4a);
+    // LD_A(LOW(wPartyMonNicknames));
+    // LD_addr_A(wcd4b);
+    // LD_A(HIGH(wPartyMonNicknames));
+    // LD_addr_A(wcd4c);
+    // LD_A(3);
+    for(uint8_t i = 0; i < BATTLETOWER_PARTY_LENGTH; ++i) {
+    // CopyLoop:
+        // PUSH_AF;
+        // LD_A_addr(wcd49);
+        // LD_L_A;
+        // LD_A_addr(wcd4a);
+        // LD_H_A;
+        // LD_BC(PARTYMON_STRUCT_LENGTH);
+        // CALL(aCopyBytes);
+        // LD_A_L;
+        // LD_addr_A(wcd49);
+        // LD_A_H;
+        // LD_addr_A(wcd4a);
+        CopyBytes(&gBattleRecord.party[i].pmon, wram->wPartyMon + i, sizeof(gBattleRecord.party[i].pmon));
+        // LD_A_addr(wcd4b);
+        // LD_L_A;
+        // LD_A_addr(wcd4c);
+        // LD_H_A;
+        // LD_BC(6);
+        // CALL(aCopyBytes);
+        CopyBytes(&gBattleRecord.party[i].nickname, wram->wPartyMonNickname[i], sizeof(gBattleRecord.party[i].nickname));
+        // LD_A_L;
+        // LD_addr_A(wcd4b);
+        // LD_A_H;
+        // LD_addr_A(wcd4c);
+        // POP_AF;
+        // DEC_A;
+        // IF_NZ goto CopyLoop;
+    }
 
-CopyLoop:
-    PUSH_AF;
-    LD_A_addr(wcd49);
-    LD_L_A;
-    LD_A_addr(wcd4a);
-    LD_H_A;
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    CALL(aCopyBytes);
-    LD_A_L;
-    LD_addr_A(wcd49);
-    LD_A_H;
-    LD_addr_A(wcd4a);
-    LD_A_addr(wcd4b);
-    LD_L_A;
-    LD_A_addr(wcd4c);
-    LD_H_A;
-    LD_BC(6);
-    CALL(aCopyBytes);
-    LD_A_L;
-    LD_addr_A(wcd4b);
-    LD_A_H;
-    LD_addr_A(wcd4c);
-    POP_AF;
-    DEC_A;
-    IF_NZ goto CopyLoop;
+    // LD_A(BANK(s4_a013));
+    OpenSRAM_Conv(MBANK(as4_a013));
+    // CALL(aOpenSRAM);
+    // LD_HL(s4_a013);
+    // LD_BC(36);
+    // CALL(aCopyBytes);
+    CopyBytes(gBattleRecord.EZChatStart, GBToRAMAddr(s4_a013), EASY_CHAT_MESSAGE_LENGTH * 3);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
 
-    LD_A(BANK(s4_a013));
-    CALL(aOpenSRAM);
-    LD_HL(s4_a013);
-    LD_BC(36);
-    CALL(aCopyBytes);
-    CALL(aCloseSRAM);
+    // LD_A(BANK(s5_a894));  // aka BANK(s5_a948)
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(as5_a894));
+    // LD_HL(s5_a894);
+    // LD_BC(6);
+    // CALL(aCopyBytes);
+    CopyBytes(&gBattleRecord.numTrainersDefeated, GBToRAMAddr(s5_a894), 6);
+    // LD_HL(wc608);
+    // LD_DE(s5_a948);
+    // LD_BC(246);
+    // CALL(aCopyBytes);
+    CopyBytes(wram->wc608, &gBattleRecord, BATTLE_TOWER_DATA_UPLOAD_LENGTH);
+    CopyBytes(GBToRAMAddr(s5_a948), wram->wc608, BATTLE_TOWER_DATA_UPLOAD_LENGTH);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
+}
 
-    LD_A(BANK(s5_a894));  // aka BANK(s5_a948)
-    CALL(aOpenSRAM);
-    LD_HL(s5_a894);
-    LD_BC(6);
-    CALL(aCopyBytes);
-    LD_HL(wc608);
-    LD_DE(s5_a948);
-    LD_BC(246);
-    CALL(aCopyBytes);
-    CALL(aCloseSRAM);
-    RET;
+void BattleTower_GenerateFakeRecord(void){
+//  Convert the 4-digit decimal number at s5_aa41 into binary
+    OpenSRAM_Conv(MBANK(as5_aa41));
+    uint8_t* de = GBToRAMAddr(s5_aa41);
+    uint16_t hl = 0;
+    Function170139_DecToBin(de+0, &hl, 1000);
+    Function170139_DecToBin(de+1, &hl, 100);
+    Function170139_DecToBin(de+2, &hl, 10);
+    hl += de[3];
+    CloseSRAM_Conv();
+//  Store that number in wc608
+    gBattleRecord.room[0] = HIGH(hl);
+    gBattleRecord.room[1] = LOW(hl);
+    gBattleRecord.trainerID = wram->wPlayerID;
+    gBattleRecord.secretID = wram->wSecretID;
+    CopyBytes(gBattleRecord.name, wram->wPlayerName, PLAYER_NAME_LENGTH - 1);
+    gBattleRecord.tclass = GetMobileOTTrainerClass(&wram->wPlayerGender, (const uint8_t *)&wram->wPlayerID);
 
+    for(uint8_t i = 0; i < BATTLETOWER_PARTY_LENGTH; ++i) {
+        CopyBytes(&gBattleRecord.party[i].pmon, wram->wPartyMon + i, sizeof(gBattleRecord.party[i].pmon));
+        CopyBytes(&gBattleRecord.party[i].nickname, wram->wPartyMonNickname[i], sizeof(gBattleRecord.party[i].nickname));
+    }
 
-DecToBin:
-    LD_A_de;
-    INC_DE;
-    AND_A_A;
-    RET_Z ;
+    OpenSRAM_Conv(MBANK(as4_a013));
+    CopyBytes(gBattleRecord.EZChatStart, GBToRAMAddr(s4_a013), EASY_CHAT_MESSAGE_LENGTH);
+    CopyBytes(gBattleRecord.EZChatWin, GBToRAMAddr(s4_a013) + 1 * EASY_CHAT_MESSAGE_LENGTH, EASY_CHAT_MESSAGE_LENGTH);
+    CopyBytes(gBattleRecord.EZChatLose, GBToRAMAddr(s4_a013) + 2 * EASY_CHAT_MESSAGE_LENGTH, EASY_CHAT_MESSAGE_LENGTH);
+    CloseSRAM_Conv();
 
-
-digit_loop:
-    ADD_HL_BC;
-    DEC_A;
-    IF_NZ goto digit_loop;
-    RET;
-
+    OpenSRAM_Conv(MBANK(as5_a894));  // aka BANK(s5_a948)
+    gBattleRecord.numTrainersDefeated = 0;
+    gBattleRecord.numFaintedMons = 3;
+    gBattleRecord.numTurnsRequired = 8;
+    gBattleRecord.damageTaken = 4096;
+    CopyBytes(wram->wc608, &gBattleRecord, BATTLE_TOWER_DATA_UPLOAD_LENGTH);
+    CopyBytes(GBToRAMAddr(s5_a948), wram->wc608, BATTLE_TOWER_DATA_UPLOAD_LENGTH);
+    CloseSRAM_Conv();
 }
 
 void BattleTowerBattle(void){
@@ -381,6 +462,7 @@ void RunBattleTowerTrainer(void){
     // LD_A(TRUE);
     // LD_addr_A(wBattleTowerBattleEnded);
     wram->wBattleTowerBattleEnded = TRUE;
+    Function170139();
     // RET;
 }
 
