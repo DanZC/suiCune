@@ -204,12 +204,12 @@ struct SpriteAnim* Mobile_InitAnimatedMonIcon_Conv(void){
     // ADD_HL_BC;
     // LD_A(9 * 8);
     // LD_hl_A;
-    bc->xCoord = 9 * 8;
+    bc->xCoord = 3 * TILE_WIDTH;
     // LD_HL(SPRITEANIMSTRUCT_YCOORD);
     // ADD_HL_BC;
     // LD_A(9 * 8);
     // LD_hl_A;
-    bc->yCoord = 9 * 8;
+    bc->yCoord = 16 * TILE_WIDTH;
     // RET;
     return bc;
 }
@@ -251,12 +251,12 @@ void Mobile_InitPartyMenuBGPal71_Conv(void){
     // ADD_HL_BC;
     // LD_A(3 * 8);
     // LD_hl_A;
-    bc->xCoord = 3 * 8;
+    bc->xCoord = 6 * TILE_WIDTH;
     // LD_HL(SPRITEANIMSTRUCT_YCOORD);
     // ADD_HL_BC;
     // LD_A(12 * 8);
     // LD_hl_A;
-    bc->yCoord = 12 * 8;
+    bc->yCoord = 9 * TILE_WIDTH;
     // LD_A_C;
     // LD_addr_A(wc608);
     // LD_A_B;

@@ -8746,7 +8746,7 @@ const txt_cmd_s Text_CancelBattleRoomChallenge[] = {
 };
 
 const txt_cmd_s Text_ExitGymLeaderHonorRoll[] = {
-    text_start("Exit GYM LEADER"
+    text_start("Exit ROOM LEADER"
         t_line "HONOR ROLL?"
         t_done )
 };
@@ -8786,11 +8786,10 @@ const txt_cmd_s Text_WhichBattleRoom[] = {
 const txt_cmd_s Text_ThisBattleRoomPleaseWait[] = {
 //  //  unreferenced
     text_ram(wram_ptr(wStringBuffer3))
-    text_start("\'s ROOM"
-        t_line "@")
+    text_start("\'s ROOM ")
     text_ram(wram_ptr(wStringBuffer4))
     text_start("?"
-        t_cont "Please wait…"
+        t_line "Please wait…"
         t_done )
 };
 
@@ -8906,11 +8905,14 @@ void Function11acb7(void){
     // decoord(6, 6, wTilemap);
     // LD_A_hli;
     // LD_de_A;
-    *coord(6, 6, wram->wTilemap) = *(hl++);
+    *coord(1, 12, wram->wTilemap) = *(hl++);
     // decoord(0, 7, wTilemap);
     // LD_BC(7);
     // CALL(aCopyBytes);
-    CopyBytes(coord(0, 7, wram->wTilemap), hl, 7);
+    // CopyBytes(coord(2, 6, wram->wTilemap), hl, 7);
+    for(int i = 0; i < 7; ++i) {
+        *coord(2, 6 + i, wram->wTilemap) = hl[i];
+    }
     hl += 7;
     // LD_A_addr(wcd49);
     // INC_A;
@@ -8941,7 +8943,31 @@ void Function11acb7(void){
     // decoord(3, 9, wTilemap);
     // LD_BC(7);
     // CALL(aCopyBytes);
-    CopyBytes(coord(3, 9, wram->wTilemap), hl, 7);
+    // CopyBytes(coord(4, 8, wram->wTilemap), hl, 7);
+    // vertical
+    // ld a, [hli]
+    // ld [de], a
+    // decoord 4, 9
+    // ld a, [hli]
+    // ld [de], a
+    // decoord 4, 10
+    // ld a, [hli]
+    // ld [de], a
+    // decoord 4, 11
+    // ld a, [hli]
+    // ld [de], a
+    // decoord 4, 12
+    // ld a, [hli]
+    // ld [de], a
+    // decoord 4, 13
+    // ld a, [hli]
+    // ld [de], a
+    // decoord 4, 14
+    // ld a, [hli]
+    // ld [de], a
+    for(int i = 0; i < 7; ++i) {
+        *coord(4, 8 + i, wram->wTilemap) = hl[i];
+    }
     hl += 7;
     // LD_A_addr(wcd4a);
     // INC_A;
@@ -9065,7 +9091,7 @@ void Function11ad95(void){
     // hlcoord(10, 10, wAttrmap);
     // LD_BC((8 << 8) | 8);
     // CALL(aFunction11afd6);
-    Function11afd6(coord(10, 10, wram->wAttrmap), 8, 10);
+    Function11afd6(coord(8, 10, wram->wAttrmap), 8, 10);
     // FARCALL(aReloadMapPart);
     ReloadMapPart_Conv();
     // CALL(aFunction11ad8a);
@@ -9157,12 +9183,12 @@ void Function11adc4(void){
             if(wram->wMenuCursorY == 0x2) {
             // asm_11ae23:
                 // CALL(aFunction11b267);
-                Function11b267(coord(2, 14, wram->wTilemap));
+                Function11b267(coord(6, 4, wram->wTilemap));
                 // goto asm_11ae2b;
             }
             else {
                 // CALL(aFunction11b272);
-                Function11b272(coord(2, 14, wram->wTilemap));
+                Function11b272(coord(6, 4, wram->wTilemap));
                 // goto asm_11ae2b;
             }
         }
@@ -9326,7 +9352,7 @@ void Function11ae98(void){
         // hlcoord(2, 14, wTilemap);
         // LD_A(0x7f);
         // LD_hl_A;
-        *coord(2, 14, wram->wTilemap) = 0x7f;
+        *coord(6, 4, wram->wTilemap) = 0x7f;
         // LD_A(0x1);
         // LD_addr_A(wJumptableIndex);
         wram->wJumptableIndex = 0x1;
@@ -9678,7 +9704,7 @@ void Function11b082(void){
     Function11b242();
     // LD_A(0x7);
     // LD_addr_A(wc7d3);
-    wram->wc7d3[0] = 0x7;
+    wram->wc7d3[0] = 0x4;
     // CALL(aFunction11b099);
     Function11b099();
     // CALL(aFunction11b295);
@@ -9754,7 +9780,7 @@ void Function11b099(void){
     // LD_B_A;
     // XOR_A_A;
     // CALL(aFunction11b236);
-    Function11b236(coord(11, 1, wram->wTilemap), wram->wc7d3[0] * 2, 0x6, 0);
+    Function11b236(coord(7, 7, wram->wTilemap), wram->wc7d3[0] * 2, 0xb, 0);
     // LD_A_addr(wc7d0);
     // LD_E_A;
     // LD_D(0);
@@ -9764,7 +9790,7 @@ void Function11b099(void){
     // LD_D_H;
     uint8_t* de = wram->wPokedexOrder + wram->wc7d0[0];
     // hlcoord(11, 2, wTilemap);
-    tile_t* hl = coord(11, 2, wram->wTilemap);
+    tile_t* hl = coord(7, 8, wram->wTilemap);
     // LD_A_addr(wc7d3);
     uint8_t a = wram->wc7d3[0];
 
@@ -10130,13 +10156,13 @@ void Function11b242(void){
     // hlcoord(3, 4, wTilemap);
     // LD_DE(wStringBuffer3);
     // CALL(aPlaceString);
-    PlaceStringSimple(wram->wStringBuffer3, coord(3, 4, wram->wTilemap));
+    PlaceStringSimple(wram->wStringBuffer3, coord(8, 2, wram->wTilemap));
     // XOR_A_A;
     // LD_addr_A(wMonType);
     // FARCALL(aGetGender);
     u8_flag_s res = GetGender_Conv(0);
     // hlcoord(1, 4, wTilemap);
-    tile_t* hl = coord(1, 4, wram->wTilemap);
+    tile_t* hl = coord(6, 2, wram->wTilemap);
     // LD_A_addr(wCurPartySpecies);
     // LD_BC(wcd2f);
     uint8_t* bc = &wram->wcd2f;
@@ -10221,11 +10247,11 @@ void Function11b295(void){
     // hlcoord(4, 13, wTilemap);
     // LD_DE(mString_11b308);
     // CALL(aPlaceString);
-    PlaceStringSimple(U82C(String_11b308), coord(4, 13, wram->wTilemap));
+    // PlaceStringSimple(U82C(String_11b308), coord(4, 13, wram->wTilemap));
     // hlcoord(4, 14, wTilemap);
     // LD_DE(mString_11b308);
     // CALL(aPlaceString);
-    PlaceStringSimple(U82C(String_11b308), coord(4, 14, wram->wTilemap));
+    PlaceStringSimple(U82C(String_11b308), coord(8, 4, wram->wTilemap));
     // CALL(aFunction11b20b);
     Function11b20b();
     // CALL(aCheckSeenMemMon);
@@ -10250,7 +10276,7 @@ void Function11b295(void){
         FlyFunction_GetMonIcon_Conv(bc[0x0003]);
         // hlcoord(4, 14, wTilemap);
         // PUSH_HL;
-        hl = coord(4, 14, wram->wTilemap);
+        hl = coord(8, 4, wram->wTilemap);
         // CALL(aGetPokemonName);
         de = GetPokemonName(wram->wTempSpecies);
         // goto asm_11b2e7;
@@ -10266,10 +10292,10 @@ void Function11b295(void){
         // ADD_HL_BC;
         // LD_A(0x50);
         // LD_hl_A;
-        bc[0x0007] = 0x50;
+        bc[0x0007] = 0x60;
         // hlcoord(4, 13, wTilemap);
         // PUSH_HL;
-        hl = coord(4, 13, wram->wTilemap);
+        hl = coord(8, 4, wram->wTilemap);
         // LD_DE(mString_11b30e);
         de = U82C(String_11b30e);
     }
@@ -10325,20 +10351,21 @@ void Function11b314(void){
 
 void Function11b31b(void){
     static const uint8_t Coords[] = {
-        dbpixel4(3, 11, 2, 6),  //  0
-        dbpixel4(3, 12, 2, 6),  //  1
-        dbpixel4(3, 13, 2, 6),  //  2
-        dbpixel4(3, 14, 2, 6),  //  3
-        dbpixel4(3, 15, 2, 6),  //  4
-        dbpixel4(3, 16, 2, 6),  //  5
-        dbpixel4(3, 17, 2, 6),  //  6
-        dbpixel4(4, 11, 2, 6),  //  7
-        dbpixel4(4, 12, 2, 6),  //  8
-        dbpixel4(4, 13, 2, 6),  //  9
-        dbpixel4(4, 14, 2, 6),  // 10
-        dbpixel4(4, 15, 2, 6),  // 11
-        dbpixel4(4, 16, 2, 6),  // 12
-        dbpixel4(4, 17, 2, 6),  // 13
+        dbpixel4( 9,  7, 0, 7),  //  0
+        dbpixel4( 9,  8, 0, 7),  //  1
+        dbpixel4( 9,  9, 0, 6),  //  2
+
+        dbpixel4( 9, 15, 0, 9),  //  3
+        dbpixel4( 9, 17, 0, 0),  //  4
+        dbpixel4( 9, 18, 0, 0),  //  5
+        dbpixel4(10,  7, 6, 7),  //  6
+        dbpixel4(10,  8, 6, 7),  //  7
+        dbpixel4(10,  9, 6, 6),  //  8
+        dbpixel4(10, 15, 6, 9),  //  9
+        dbpixel4(10, 17, 6, 0),  // 10
+        dbpixel4(10, 18, 6, 0),  // 11
+        // dbpixel4(4, 16, 2, 6),  // 12
+        // dbpixel4(4, 17, 2, 6),  // 13
         (uint8_t)-1,
     };
     
@@ -10346,16 +10373,16 @@ void Function11b31b(void){
     //   //  vtiles
         0x30,  //  0
         0x31,  //  1
-        0x31,  //  2
-        0x31,  //  3
+        0x4c,  //  2
+        0x4d,  //  3
         0x31,  //  4
-        0x31,  //  5
-        0x32,  //  6
-        0x40,  //  7
-        0x41,  //  8
-        0x41,  //  9
+        0x32,  //  5
+        0x40,  //  6
+        0x41,  //  7
+        0x4e,  //  8
+        0x4f,  //  9
         0x41,  // 10
-        0x41,  // 11
+        0x42,  // 11
         0x41,  // 12
         0x42,  // 13
     };
@@ -10364,14 +10391,14 @@ void Function11b31b(void){
     //   //  vtiles
         0x30,  //  0
         0x31,  //  1
-        0x31,  //  2
+        0x4c,  //  2
         0x39,  //  3
         0x39,  //  4
         0x39,  //  5
-        0x39,  //  6
-        0x40,  //  7
-        0x41,  //  8
-        0x41,  //  9
+        0x40,  //  6
+        0x41,  //  7
+        0x4e,  //  8
+        0x39,  //  9
         0x39,  // 10
         0x39,  // 11
         0x39,  // 12
