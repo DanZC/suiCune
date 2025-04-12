@@ -969,7 +969,7 @@ static void Function1704e1_DrawBorder(void){
     *(hl++) = 0x7b;
     // LD_DE(SCREEN_WIDTH);
     // LD_C(12);
-    c = SCREEN_HEIGHT - 4;
+    c = SCREEN_HEIGHT - 6;
 
     do {
     // left_border_loop:
@@ -1002,7 +1002,7 @@ static void Function1704e1_DrawBorder(void){
     // ADD_HL_DE;
     hl -= SCREEN_WIDTH;
     // LD_C(12);
-    c = SCREEN_HEIGHT - 4;
+    c = SCREEN_HEIGHT - 6;
 
     do {
     // right_border_loop:

@@ -1,6 +1,7 @@
 #include "../../constants.h"
 #include "party_menu.h"
 #include "mon_stats.h"
+#include "health.h"
 #include "../../home/delay.h"
 #include "../../home/audio.h"
 #include "../../home/gfx.h"
@@ -12,11 +13,13 @@
 #include "../../home/print_text.h"
 #include "../../home/sprite_updates.h"
 #include "../../home/map.h"
+#include "../items/tmhm2.h"
 #include "../gfx/color.h"
 #include "../gfx/sprites.h"
 #include "../gfx/mon_icons.h"
 #include "../../data/party_menu_qualities.h"
 #include "../../data/text/common.h"
+#include "../../data/pokemon/evos_attacks_pointers.h"
 
 u8_flag_s SelectMonFromParty(void){
     // CALL(aDisableSpriteUpdates);
@@ -139,15 +142,15 @@ void WritePartyMenuTilemap(void){
         // RST(aJumpTable);
         switch(a) {
         //  entries correspond to PARTYMENUQUALITY_* constants
-            case PARTYMENUQUALITY_NICKNAMES:    PlacePartyNicknames();      break;
-            case PARTYMENUQUALITY_HP_BAR:       PlacePartyHPBar();          break;
-            case PARTYMENUQUALITY_HP_DIGITS:    PlacePartyMenuHPDigits();   break;
-            case PARTYMENUQUALITY_LEVEL:        PlacePartyMonLevel();       break;
-            case PARTYMENUQUALITY_STATUS:       PlacePartyMonStatus();      break;
-            //dw ['PlacePartyMonTMHMCompatibility'];
-            //dw ['PlacePartyMonEvoStoneCompatibility'];
-            case PARTYMENUQUALITY_GENDER:       PlacePartyMonGender();      break;
-            case PARTYMENUQUALITY_MOBILE_SELECTION: PlacePartyMonMobileBattleSelection(); break;
+            case PARTYMENUQUALITY_NICKNAMES:        PlacePartyNicknames();                  break;
+            case PARTYMENUQUALITY_HP_BAR:           PlacePartyHPBar();                      break;
+            case PARTYMENUQUALITY_HP_DIGITS:        PlacePartyMenuHPDigits();               break;
+            case PARTYMENUQUALITY_LEVEL:            PlacePartyMonLevel();                   break;
+            case PARTYMENUQUALITY_STATUS:           PlacePartyMonStatus();                  break;
+            case PARTYMENUQUALITY_TMHM_COMPAT:      PlacePartyMonTMHMCompatibility();       break;
+            case PARTYMENUQUALITY_EVO_STONE_COMPAT: PlacePartyMonEvoStoneCompatibility();   break;
+            case PARTYMENUQUALITY_GENDER:           PlacePartyMonGender();                  break;
+            case PARTYMENUQUALITY_MOBILE_SELECTION: PlacePartyMonMobileBattleSelection();   break;
         }
         // POP_HL;
         // goto loop;
@@ -209,7 +212,6 @@ void PlacePartyNicknames(void){
 void PlacePartyHPBar(void){
     // XOR_A_A;
     // LD_addr_A(wSGBPals);
-    wram->wSGBPals[0] = 0;
     // LD_A_addr(wPartyCount);
     // AND_A_A;
     // RET_Z ;
@@ -236,14 +238,14 @@ void PlacePartyHPBar(void){
             // LD_D(0x6);
             // LD_B(0x0);
             // CALL(aDrawBattleHPBar);
-            DrawBattleHPBar_Conv(hl, 0x6, e, 0x0, c);
+            DrawBattleHPBar_Conv(hl, 0x6, e, 0x0, HIGH(wram->wPartyMon[b].HP));
             // LD_HL(wHPPals);
             // LD_A_addr(wSGBPals);
             // LD_C_A;
             // LD_B(0);
             // ADD_HL_BC;
             // CALL(aSetHPPal);
-            SetHPPal_Conv(wram->wHPPals, e);
+            SetHPPal_Conv(wram->wHPPals + b, e);
             // LD_B(SCGB_PARTY_MENU_HP_BARS);
             // CALL(aGetSGBLayout);
             GetSGBLayout_Conv(SCGB_PARTY_MENU_HP_BARS);
@@ -251,7 +253,6 @@ void PlacePartyHPBar(void){
     // skip:
         // LD_HL(wSGBPals);
         // INC_hl;
-        wram->wSGBPals[0]++;
         // POP_HL;
         // LD_DE(2 * SCREEN_WIDTH);
         // ADD_HL_DE;
@@ -327,7 +328,7 @@ uint8_t PlacePartymonHPBar_Conv(uint8_t b){
     // LD_E_A;
     uint16_t de = BigEndianToNative16(wram->wPartyMon[b].maxHP);
     // PREDEF(pComputeHPBarPixels);
-    return bc * (6 * 8) / de;
+    return ComputeHPBarPixels_Conv(bc, de);
     // RET;
 }
 
@@ -497,153 +498,169 @@ void PlacePartyMonStatus(void){
     // RET;
 }
 
+static uint8_t* PlacePartyMonTMHMCompatibility_PlaceAbleNotAble(uint8_t c){
+    static const char string_able[] = "ABLE@";
+    static const char string_not_able[] = "NOT ABLE@";
+    // LD_A_C;
+    // AND_A_A;
+    // IF_NZ goto able;
+    if(c == 0) {
+        // LD_DE(mPlacePartyMonTMHMCompatibility_string_not_able);
+        // RET;
+        return U82C(string_not_able);
+    }
+    else {
+    // able:
+        // LD_DE(mPlacePartyMonTMHMCompatibility_string_able);
+        // RET;
+        return U82C(string_able);
+    }
+}
+
 void PlacePartyMonTMHMCompatibility(void){
-    LD_A_addr(wPartyCount);
-    AND_A_A;
-    RET_Z ;
-    LD_C_A;
-    LD_B(0);
-    hlcoord(12, 2, wTilemap);
+    // LD_A_addr(wPartyCount);
+    // AND_A_A;
+    // RET_Z ;
+    if(wram->wPartyCount == 0)
+        return;
+    // LD_C_A;
+    uint8_t c = wram->wPartyCount;
+    // LD_B(0);
+    uint8_t b = 0;
+    // hlcoord(12, 2, wTilemap);
+    tile_t* hl = coord(12, 2, wram->wTilemap);
 
-loop:
-    PUSH_BC;
-    PUSH_HL;
-    CALL(aPartyMenuCheckEgg);
-    IF_Z goto next;
-    PUSH_HL;
-    LD_HL(wPartySpecies);
-    LD_E_B;
-    LD_D(0);
-    ADD_HL_DE;
-    LD_A_hl;
-    LD_addr_A(wCurPartySpecies);
-    PREDEF(pCanLearnTMHMMove);
-    POP_HL;
-    CALL(aPlacePartyMonTMHMCompatibility_PlaceAbleNotAble);
-    CALL(aPlaceString);
+    do {
+    // loop:
+        // PUSH_BC;
+        // PUSH_HL;
+        // CALL(aPartyMenuCheckEgg);
+        // IF_Z goto next;
+        if(!PartyMenuCheckEgg_Conv(b)) {
+            // PUSH_HL;
+            // LD_HL(wPartySpecies);
+            // LD_E_B;
+            // LD_D(0);
+            // ADD_HL_DE;
+            // LD_A_hl;
+            // LD_addr_A(wCurPartySpecies);
+            // PREDEF(pCanLearnTMHMMove);
+            uint8_t c = CanLearnTMHMMove_Conv(wram->wPartySpecies[b], wram->wCurItem);
+            // POP_HL;
+            // CALL(aPlacePartyMonTMHMCompatibility_PlaceAbleNotAble);
+            // CALL(aPlaceString);
+            PlaceStringSimple(PlacePartyMonTMHMCompatibility_PlaceAbleNotAble(c), hl);
+        }
 
+    // next:
+        // POP_HL;
+        // LD_DE(SCREEN_WIDTH * 2);
+        // ADD_HL_DE;
+        hl += SCREEN_WIDTH * 2;
+        // POP_BC;
+        // INC_B;
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(b++, --c != 0);
+    // RET;
+}
 
-next:
-    POP_HL;
-    LD_DE(SCREEN_WIDTH * 2);
-    ADD_HL_DE;
-    POP_BC;
-    INC_B;
-    DEC_C;
-    IF_NZ goto loop;
-    RET;
+static uint8_t* PlacePartyMonEvoStoneCompatibility_DetermineCompatibility(const struct EvoData* data) {
+    static const char string_able[] = "ABLE@";
+    static const char string_not_able[] = "NOT ABLE@";
+    // LD_DE(wStringBuffer1);
+    // LD_A(BANK(aEvosAttacksPointers));
+    // LD_BC(2);
+    // CALL(aFarCopyBytes);
+    // LD_HL(wStringBuffer1);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // LD_DE(wStringBuffer1);
+    // LD_A(BANK("Evolutions and Attacks"));
+    // LD_BC(10);
+    // CALL(aFarCopyBytes);
+    // LD_HL(wStringBuffer1);
 
+    for(uint8_t a = data->type; a != 0; a = (++data)->type) {
+    // loop2:
+        // LD_A_hli;
+        // AND_A_A;
+        // IF_Z goto nope;
+        // INC_HL;
+        // INC_HL;
+        // CP_A(EVOLVE_ITEM);
+        // IF_NZ goto loop2;
+        // DEC_HL;
+        // DEC_HL;
+        // LD_A_addr(wCurItem);
+        // CP_A_hl;
+        // INC_HL;
+        // INC_HL;
+        // IF_NZ goto loop2;
+        if(a == EVOLVE_ITEM && data->item.useItem == wram->wCurItem) {
+            // LD_DE(mPlacePartyMonEvoStoneCompatibility_string_able);
+            // RET;
+            return U82C(string_able);
+        }
+    }
 
-PlaceAbleNotAble:
-    LD_A_C;
-    AND_A_A;
-    IF_NZ goto able;
-    LD_DE(mPlacePartyMonTMHMCompatibility_string_not_able);
-    RET;
-
-
-able:
-    LD_DE(mPlacePartyMonTMHMCompatibility_string_able);
-    RET;
-
-
-string_able:
-    //db ['"ABLE@"'];
-
-
-string_not_able:
-    //db ['"NOT ABLE@"'];
-
-    return PlacePartyMonEvoStoneCompatibility();
+// nope:
+    // LD_DE(mPlacePartyMonEvoStoneCompatibility_string_not_able);
+    // RET;
+    return U82C(string_not_able);
 }
 
 void PlacePartyMonEvoStoneCompatibility(void){
-    LD_A_addr(wPartyCount);
-    AND_A_A;
-    RET_Z ;
-    LD_C_A;
-    LD_B(0);
-    hlcoord(12, 2, wTilemap);
+    // LD_A_addr(wPartyCount);
+    // AND_A_A;
+    // RET_Z ;
+    if(wram->wPartyCount == 0)
+        return;
+    // LD_C_A;
+    uint8_t c = wram->wPartyCount;
+    // LD_B(0);
+    uint8_t b = 0;
+    // hlcoord(12, 2, wTilemap);
+    tile_t* hl = coord(12, 2, wram->wTilemap);
 
-loop:
-    PUSH_BC;
-    PUSH_HL;
-    CALL(aPartyMenuCheckEgg);
-    IF_Z goto next;
-    PUSH_HL;
-    LD_A_B;
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    LD_HL(wPartyMon1Species);
-    CALL(aAddNTimes);
-    LD_A_hl;
-    DEC_A;
-    LD_E_A;
-    LD_D(0);
-    LD_HL(mEvosAttacksPointers);
-    ADD_HL_DE;
-    ADD_HL_DE;
-    CALL(aPlacePartyMonEvoStoneCompatibility_DetermineCompatibility);
-    POP_HL;
-    CALL(aPlaceString);
+    do {
+    // loop:
+        // PUSH_BC;
+        // PUSH_HL;
+        // CALL(aPartyMenuCheckEgg);
+        // IF_Z goto next;
+        if(!PartyMenuCheckEgg_Conv(b)) {
+            // PUSH_HL;
+            // LD_A_B;
+            // LD_BC(PARTYMON_STRUCT_LENGTH);
+            // LD_HL(wPartyMon1Species);
+            // CALL(aAddNTimes);
+            // LD_A_hl;
+            // DEC_A;
+            // LD_E_A;
+            // LD_D(0);
+            // LD_HL(mEvosAttacksPointers);
+            const struct EvoData* evos = EvosAttacksPointers[wram->wEvolutionOldSpecies - 1]->evolutions;
+            // ADD_HL_DE;
+            // ADD_HL_DE;
+            // CALL(aPlacePartyMonEvoStoneCompatibility_DetermineCompatibility);
+            // POP_HL;
+            // CALL(aPlaceString);
+            PlaceStringSimple(PlacePartyMonEvoStoneCompatibility_DetermineCompatibility(evos), hl);
+        }
 
-
-next:
-    POP_HL;
-    LD_DE(2 * SCREEN_WIDTH);
-    ADD_HL_DE;
-    POP_BC;
-    INC_B;
-    DEC_C;
-    IF_NZ goto loop;
-    RET;
-
-
-DetermineCompatibility:
-    LD_DE(wStringBuffer1);
-    LD_A(BANK(aEvosAttacksPointers));
-    LD_BC(2);
-    CALL(aFarCopyBytes);
-    LD_HL(wStringBuffer1);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    LD_DE(wStringBuffer1);
-    // LD_A(BANK("Evolutions and Attacks"));
-    LD_BC(10);
-    CALL(aFarCopyBytes);
-    LD_HL(wStringBuffer1);
-
-loop2:
-    LD_A_hli;
-    AND_A_A;
-    IF_Z goto nope;
-    INC_HL;
-    INC_HL;
-    CP_A(EVOLVE_ITEM);
-    IF_NZ goto loop2;
-    DEC_HL;
-    DEC_HL;
-    LD_A_addr(wCurItem);
-    CP_A_hl;
-    INC_HL;
-    INC_HL;
-    IF_NZ goto loop2;
-    LD_DE(mPlacePartyMonEvoStoneCompatibility_string_able);
-    RET;
-
-
-nope:
-    LD_DE(mPlacePartyMonEvoStoneCompatibility_string_not_able);
-    RET;
-
-
-string_able:
-    //db ['"ABLE@"'];
-
-string_not_able:
-    //db ['"NOT ABLE@"'];
-
-    return PlacePartyMonGender();
+    // next:
+        // POP_HL;
+        // LD_DE(2 * SCREEN_WIDTH);
+        // ADD_HL_DE;
+        hl += 2 * SCREEN_WIDTH;
+        // POP_BC;
+        // INC_B;
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(b++, --c != 0);
+    // RET;
 }
 
 void PlacePartyMonGender(void){

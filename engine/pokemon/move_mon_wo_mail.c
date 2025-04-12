@@ -206,7 +206,7 @@ void InsertDataIntoBoxOrParty_Conv(uint8_t* hl, const uint8_t* de, uint16_t bc){
     // ADD_HL_BC;
     // LD_D_H;
     // LD_E_L;
-    uint8_t* de2 = hl + (bc * wram->wNextBoxOrPartyIndex);
+    uint8_t* de2 = hl + (bc * (wram->wNextBoxOrPartyIndex - 1));
     // POP_HL;
     hl = de2 - bc;
 

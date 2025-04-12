@@ -2212,7 +2212,7 @@ void BattleAnimFunction_Recover(struct BattleAnim* bc) {
         // LD_HL(BATTLEANIMSTRUCT_VAR1);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->var1 = (bc->param & 0xf) << 4;
+        bc->var1 = (bc->param & 0xf) << 3;
         // LD_HL(BATTLEANIMSTRUCT_PARAM);
         // ADD_HL_BC;
         // LD_hl(0x1);

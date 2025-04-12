@@ -240,7 +240,6 @@ void v_PrepMonFrontpic_Conv(uint8_t* hl){
     // CALL(aIsAPokemon);
     // IF_C goto not_pokemon;
     if(IsAPokemon_Conv(wram->wCurPartySpecies)) {
-
         // PUSH_HL;
         // LD_DE(vTiles2);
         // PREDEF(pGetMonFrontpic);
@@ -248,6 +247,7 @@ void v_PrepMonFrontpic_Conv(uint8_t* hl){
         // POP_HL;
         // XOR_A_A;
         // LDH_addr_A(hGraphicStartTile);
+        hram->hGraphicStartTile = 0;
         // LD_BC((7 << 8) | 7);
         // PREDEF(pPlaceGraphic);
         PlaceGraphicYStagger_Conv(hl, 7, 7);

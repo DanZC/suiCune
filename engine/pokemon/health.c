@@ -195,7 +195,7 @@ uint8_t ComputeHPBarPixels_Conv(uint16_t bc, uint16_t de){
     // LD_A_B;
     // OR_A_C;
     // IF_Z goto zero;
-    if(bc == 0)
+    if(bc == 0 || de == 0)
         return 0;
     // PUSH_HL;
     // XOR_A_A;
