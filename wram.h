@@ -778,6 +778,10 @@ struct wram_s
                                 uint8_t wc7d2[1];
                                 uint8_t wc7d3[2];
                             };
+                            struct {
+                                uint8_t wc6d0_[56];
+                                uint8_t wMobilePasswordBuffer[MOBILE_LOGIN_PASSWORD_LENGTH];
+                            };
                         };
                     };
                 };

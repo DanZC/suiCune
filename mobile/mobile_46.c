@@ -1670,7 +1670,7 @@ void Function1188c8(void){
     // CALL(aFunction1188e7);
     const uint8_t* de = Function1188e7();
     // LD_HL(wc708);
-    uint8_t* hl = &wram->wc708;
+    uint8_t* hl = wram->wMobilePasswordBuffer;
     uint8_t a;
 
     do {
@@ -1690,7 +1690,7 @@ void Function1188c8(void){
     // LD_HL(wc708);
     // LD_A(MOBILEAPI_03);
     // JP(mFunction119e2b);
-    Function119e2b(MOBILEAPI_03, &(mobile_api_data_s){.hl = &wram->wc708});
+    Function119e2b(MOBILEAPI_03, &(mobile_api_data_s){.hl = wram->wMobilePasswordBuffer});
 }
 
 uint8_t* Function1188e7(void){
@@ -6744,14 +6744,8 @@ uint8_t* Function119ec2(uint8_t* hl){
         *(hl++) = 0;
         return hl;
     }
-// Temporary fix while mobile login password is unimplemented
-    const char FakePassword[] = "0000000a";
-    printf("Using fake password\n");
-    for(const char* str = FakePassword; *str != 0; str++) {
-        *(hl++) = *str;
-    }
-    *(hl++) = 0;
-    return hl;
+
+    printf("Using stored password in SRAM\n");
 // End
     // LD_A(BANK(sMobileLoginPassword));
     // CALL(aOpenSRAM);
@@ -6990,9 +6984,14 @@ bool Function119f98(void){
 }
 
 void Function11a00e(void){
-// Completely bypass password system for now
-    return;
-//
+// If we have a password set in the server.json file, we don't
+// need to enter one.
+    const char* set_password = Mobile_GetServerLoginPassword(8);
+    if(set_password != NULL) {
+        return;
+    }
+// If we have a saved password in SRAM, we don't need to
+// enter one.
     // LD_A(BANK(sMobileLoginPassword));
     // CALL(aOpenSRAM);
     OpenSRAM_Conv(MBANK(asMobileLoginPassword));
@@ -7021,7 +7020,7 @@ void Function11a00e(void){
     // LD_A_addr(wBGMapPalBuffer);
     // AND_A_A;
     // IF_Z goto asm_11a039;
-    if(wram->wBGMapPalBuffer[0] == 0) {
+    if(wram->wcd48 == 0) {
     // asm_11a039:
         // LD_A(BANK(w3_d800));
         // LDH_addr_A(rSVBK);
@@ -7060,55 +7059,81 @@ void Function11a00e(void){
     }
     // DEC_A;
     // IF_Z goto asm_11a081;
-    else if(wram->wBGMapPalBuffer[0] == 1) {
+    else if(wram->wcd48 == 1) {
     // asm_11a081:
         // XOR_A_A;
         // LD_addr_A(wMenuBorderLeftCoord);
+        wram->wMenuBorderLeftCoord = 0;
         // LD_addr_A(wMenuBorderTopCoord);
+        wram->wMenuBorderTopCoord = 0;
         // LD_A(0x13);
         // LD_addr_A(wMenuBorderRightCoord);
+        wram->wMenuBorderRightCoord = 0x13;
         // LD_A(0x5);
         // LD_addr_A(wMenuBorderBottomCoord);
+        wram->wMenuBorderBottomCoord = 0x5;
         // CALL(aPushWindow);
+        PushWindow_Conv();
         // FARCALL(aFunction11765d);
+        Function11765d();
         // FARCALL(aFunction117ab4);
+        Function117ab4();
         // FARCALL(aStubbed_Function106462);
         // FARCALL(aFunction106464);
+        Function106464();
         // CALL(aExitMenu);
+        ExitMenu_Conv2();
         // FARCALL(aReloadMapPart);
+        ReloadMapPart_Conv();
         // FARCALL(aFunction115d99);
+        Function115d99();
         // LD_C(0x0);
         // FARCALL(aFunction115e18);
+        Function115e18(0x0);
         // LD_A(0x1);
         // LD_addr_A(wc305);
+        wram->wc305 = 0x1;
         // RET;
+        return;
     }
     // JP(mFunction11a0ca);
     return Function11a0ca();
 }
 
 void Function11a0ca(void){
-    XOR_A_A;
-    LD_addr_A(wMenuBorderLeftCoord);
-    LD_addr_A(wMenuBorderTopCoord);
-    LD_A(0x13);
-    LD_addr_A(wMenuBorderRightCoord);
-    LD_A(0x11);
-    LD_addr_A(wMenuBorderBottomCoord);
-    CALL(aPushWindow);
-    FARCALL(aFunction11765d);
-    FARCALL(aFunction17d3f6);
-    FARCALL(aStubbed_Function106462);
-    FARCALL(aFunction106464);
-    CALL(aExitMenu);
-    FARCALL(aReloadMapPart);
-    FARCALL(aFunction115d99);
-    LD_C(0x0);
-    FARCALL(aFunction115e18);
-    LD_A(0x1);
-    LD_addr_A(wc305);
-    RET;
-
+    // XOR_A_A;
+    // LD_addr_A(wMenuBorderLeftCoord);
+    wram->wMenuBorderLeftCoord = 0;
+    // LD_addr_A(wMenuBorderTopCoord);
+    wram->wMenuBorderTopCoord = 0;
+    // LD_A(0x13);
+    // LD_addr_A(wMenuBorderRightCoord);
+    wram->wMenuBorderRightCoord = 0x13;
+    // LD_A(0x11);
+    // LD_addr_A(wMenuBorderBottomCoord);
+    wram->wMenuBorderBottomCoord = 0x11;
+    // CALL(aPushWindow);
+    PushWindow_Conv();
+    // FARCALL(aFunction11765d);
+    Function11765d();
+    // FARCALL(aFunction17d3f6);
+    Function17d3f6();
+    // FARCALL(aStubbed_Function106462);
+    // FARCALL(aFunction106464);
+    Function106464();
+    // CALL(aExitMenu);
+    ExitMenu_Conv2();
+    // FARCALL(aReloadMapPart);
+    ReloadMapPart_Conv();
+    // FARCALL(aFunction115d99);
+    Function115d99();
+    // LD_C(0x0);
+    // FARCALL(aFunction115e18);
+    Function115e18(0x0);
+    // LD_A(0x1);
+    // LD_addr_A(wc305);
+    wram->wc305 = 0x1;
+    // RET;
 }
 
 bool Function11a113(void){

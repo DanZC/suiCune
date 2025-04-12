@@ -1032,7 +1032,7 @@ const char String_171c73[] =
             "MOBILE CENTER" //db ['"モバイルセンターを\u3000けってい"'];
     t_next  "set.@";        //next ['"しました@"']
 
-// LoadEnterPasswordGFX
+// LoadPasswordScreenGFX
 void Function171c87(void){
     // CALL(aDisableLCD);
     DisableLCD();
@@ -1051,7 +1051,8 @@ void Function171c87(void){
     // decoord(0, 0, wTilemap);
     // LD_BC(0x168);
     // CALL(aCopyBytes);
-    LoadAssetToBuffer(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, PasswordTopTilemap);
+    LoadAssetToBuffer(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * 7, PasswordTopTilemap);
+    LoadAssetToBuffer(coord(0, 7, wram->wTilemap), SCREEN_WIDTH * 11, PasswordBottomTilemap);
     // LD_HL(mMobilePasswordAttrmap);
     // decoord(0, 0, wAttrmap);
     // LD_BC(0x168);
@@ -1068,6 +1069,7 @@ void Function171c87(void){
     // RET;
 }
 
+// LoadPasswordScreenPals
 void Function171ccd(void){
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
@@ -1092,34 +1094,43 @@ void Function171ccd(void){
     // RET;
 }
 
+// PasswordScreen_DoShift
 void Function171cf0(void){
-    XOR_A_A;
-    hlcoord(4, 15, wTilemap);
-    LD_hli_A;
-    LD_hli_A;
-    LD_A_addr(wcd4b);
-    XOR_A(0x1);
-    LD_addr_A(wcd4b);
-    AND_A_A;
-    IF_NZ goto shifted;
-    LD_HL(mPasswordBottomTilemap);
-    decoord(0, 7, wTilemap);
-    LD_BC(0x8c);
-    CALL(aCopyBytes);
-    hlcoord(3, 16, wTilemap);
-    LD_DE(mString_172e3f);
-    JP(mPlaceString);
-
-
-shifted:
-    LD_HL(mPasswordShiftTilemap);
-    decoord(0, 7, wTilemap);
-    LD_BC(0x8c);
-    CALL(aCopyBytes);
-    hlcoord(3, 16, wTilemap);
-    LD_DE(mString_172e4e);
-    JP(mPlaceString);
-
+    // XOR_A_A;
+    // hlcoord(4, 15, wTilemap);
+    // LD_hli_A;
+    *coord(4, 15, wram->wTilemap) = 0;
+    // LD_hli_A;
+    *coord(5, 15, wram->wTilemap) = 0;
+    // LD_A_addr(wcd4b);
+    // XOR_A(0x1);
+    // LD_addr_A(wcd4b);
+    wram->wcd4b ^= 0x1;
+    // AND_A_A;
+    // IF_NZ goto shifted;
+    if(wram->wcd4b == 0) {
+        // LD_HL(mPasswordBottomTilemap);
+        // decoord(0, 7, wTilemap);
+        // LD_BC(0x8c);
+        // CALL(aCopyBytes);
+        LoadAssetToBuffer(coord(0, 7, wram->wTilemap), 7 * SCREEN_WIDTH, PasswordBottomTilemap);
+        // hlcoord(3, 16, wTilemap);
+        // LD_DE(mString_172e3f);
+        // JP(mPlaceString);
+        PlaceStringSimple(U82C(String_172e3f), coord(2, 16, wram->wTilemap));
+    }
+    else {
+    // shifted:
+        // LD_HL(mPasswordShiftTilemap);
+        // decoord(0, 7, wTilemap);
+        // LD_BC(0x8c);
+        // CALL(aCopyBytes);
+        LoadAssetToBuffer(coord(0, 7, wram->wTilemap), 7 * SCREEN_WIDTH, PasswordShiftTilemap);
+        // hlcoord(3, 16, wTilemap);
+        // LD_DE(mString_172e4e);
+        // JP(mPlaceString);
+        PlaceStringSimple(U82C(String_172e4e), coord(2, 16, wram->wTilemap));
+    }
 }
 
 void Function171d2b(void){
@@ -1210,7 +1221,7 @@ const char ChooseMobileCenterTilemap[] = "gfx/mobile/mobile_center.tilemap";
 const char MobilePasswordAttrmap[] = "gfx/mobile/password.attrmap";
 const char ChooseMobileCenterAttrmap[] = "gfx/mobile/mobile_center.attrmap";
 
-const char PasswordSlowpokeLZ[] = "gfx/pokedex/slowpoke.png";
+const char PasswordSlowpokeLZ[] = "gfx/pokedex/slowpoke_mobile.png";
 
 const char String_172e31[] = "Enter PASSWORD@"; // "パスワード<WO>いれてください@"
 const char String_172e3f[] = " SWAP QUIT  OK @"; // "きりかえ\u3000やめる\u3000\u3000けってい@"
