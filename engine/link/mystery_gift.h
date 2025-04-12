@@ -7,7 +7,7 @@ void ReceiveMysteryGiftDataPayload(void);
 void ReceiveMysteryGiftDataPayload_GotRegionPrefix(void);
 void SendMysteryGiftDataPayload(void);
 void EndOrContinueMysteryGiftIRCommunication(void);
-void ExchangeNameCardData(void);
+uint8_t ExchangeNameCardData(void);
 void ReceiveNameCardDataPayload(void);
 void SendNameCardDataPayload(void);
 void EndNameCardIRCommunication(void);
@@ -54,8 +54,8 @@ extern const char MysteryGiftGFX[];
 void DoNameCardSwap(void);
 void StageDataForNameCard(void);
 void InitNameCardLayout(void);
-void CardTradeGFX(void);
-void CardTradeSpriteGFX(void);
+extern const char CardTradeGFX[];
+extern const char CardTradeSpriteGFX[];
 //#include "gfx/mystery_gift/mystery_gift.2bpp"
 //#include "gfx/mystery_gift/card_trade.2bpp"
 //#include "gfx/mystery_gift/card_sprite.2bpp"

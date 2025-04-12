@@ -27,6 +27,7 @@
 #include "../engine/gfx/crystal_layouts.h"
 #include "../engine/gfx/load_pics.h"
 #include "../engine/gfx/place_graphic.h"
+#include "../engine/link/mystery_gift.h"
 #include "../engine/printer/printer.h"
 #include "../engine/events/battle_tower/get_trainer_class.h"
 #include "../data/trainers/palettes.h"
@@ -5991,7 +5992,7 @@ void Function8ab93(void){
     // CALL(aLoadStandardMenuHeader);
     LoadStandardMenuHeader_Conv();
     // FARCALL(aDoNameCardSwap);
-    //  TODO: Convert DoNameCardSwap
+    DoNameCardSwap();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aFunction891fe);

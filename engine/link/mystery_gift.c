@@ -14,6 +14,8 @@
 #include "../../home/joypad.h"
 #include "../smallflag.h"
 #include "../overworld/decorations.h"
+#include "../gfx/crystal_layouts.h"
+#include "../../mobile/mobile_22.h"
 #include "../../mobile/mobile_41.h"
 #include "../../data/text/common.h"
 
@@ -768,59 +770,64 @@ quit:
 
 }
 
-void ExchangeNameCardData(void){
-    NOP;
-    FARCALL(aClearChannels);
-    CALL(aInitializeIRCommunicationInterrupts);
+uint8_t ExchangeNameCardData(void){
+    // static const char String_ExchangingData_BToCancel[] = 
+    //            "Exchanging"
+    //     t_next "data<...> <...>"
+    //     t_next "Press B to"
+    //     t_next "cancel.";
+    // NOP;
+    // FARCALL(aClearChannels);
+    // CALL(aInitializeIRCommunicationInterrupts);
+// TODO: Finish implementing this.
+    return MG_CANCELED;
 
+// restart:
+    // CALL(aBeginIRCommunication);
+    // CALL(aInitializeIRCommunicationRoles);
+    // LDH_A_addr(hMGStatusFlags);
+    // CP_A(MG_CANCELED);
+    // JP_Z (mEndNameCardIRCommunication);
+    // CP_A(MG_OKAY);
+    // IF_NZ goto restart;
 
-restart:
-    CALL(aBeginIRCommunication);
-    CALL(aInitializeIRCommunicationRoles);
-    LDH_A_addr(hMGStatusFlags);
-    CP_A(MG_CANCELED);
-    JP_Z (mEndNameCardIRCommunication);
-    CP_A(MG_OKAY);
-    IF_NZ goto restart;
-
-    LDH_A_addr(hMGRole);
-    CP_A(IR_SENDER);
-    IF_Z goto sender;
+    // LDH_A_addr(hMGRole);
+    // CP_A(IR_SENDER);
+    // IF_Z goto sender;
 //  receiver
 // Receive the data payload
-    CALL(aReceiveNameCardDataPayload);
-    JP_NZ (mEndNameCardIRCommunication);
+    // CALL(aReceiveNameCardDataPayload);
+    // JP_NZ (mEndNameCardIRCommunication);
 // Switch roles
-    CALL(aBeginSendingIRCommunication);
-    JP_NZ (mEndNameCardIRCommunication);
+    // CALL(aBeginSendingIRCommunication);
+    // JP_NZ (mEndNameCardIRCommunication);
 // Send the data payload
-    CALL(aSendNameCardDataPayload);
-    JP_NZ (mEndNameCardIRCommunication);
+    // CALL(aSendNameCardDataPayload);
+    // JP_NZ (mEndNameCardIRCommunication);
 // Switch roles
-    CALL(aBeginReceivingIRCommunication);
-    JP_NZ (mEndNameCardIRCommunication);
+    // CALL(aBeginReceivingIRCommunication);
+    // JP_NZ (mEndNameCardIRCommunication);
 // Receive an empty block
-    CALL(aReceiveEmptyIRDataBlock);
-    JP(mEndNameCardIRCommunication);
+    // CALL(aReceiveEmptyIRDataBlock);
+    // JP(mEndNameCardIRCommunication);
 
 
-sender:
+// sender:
 // Send the data payload
-    CALL(aSendNameCardDataPayload);
-    JP_NZ (mEndNameCardIRCommunication);
+    // CALL(aSendNameCardDataPayload);
+    // JP_NZ (mEndNameCardIRCommunication);
 // Switch roles
-    CALL(aBeginReceivingIRCommunication);
-    JP_NZ (mEndNameCardIRCommunication);
+    // CALL(aBeginReceivingIRCommunication);
+    // JP_NZ (mEndNameCardIRCommunication);
 // Receive the data payload
-    CALL(aReceiveNameCardDataPayload);
-    JP_NZ (mEndNameCardIRCommunication);
+    // CALL(aReceiveNameCardDataPayload);
+    // JP_NZ (mEndNameCardIRCommunication);
 // Switch roles
-    CALL(aBeginSendingIRCommunication);
-    JP_NZ (mEndNameCardIRCommunication);
+    // CALL(aBeginSendingIRCommunication);
+    // JP_NZ (mEndNameCardIRCommunication);
 // Send an empty block
-    CALL(aSendEmptyIRDataBlock);
-    JP(mEndNameCardIRCommunication);
-
+    // CALL(aSendEmptyIRDataBlock);
+    // JP(mEndNameCardIRCommunication);
 }
 
 void ReceiveNameCardDataPayload(void){
@@ -2038,356 +2045,453 @@ void InitMysteryGiftLayout(void){
 
 const char MysteryGiftGFX[] = "gfx/mystery_gift/mystery_gift.png";
 
+static void DoNameCardSwap_ClearScreen(void){
+    // CALL(aClearSprites);
+    ClearSprites();
+    // CALL(aClearTilemap);
+    ClearTilemap_Conv2();
+    // CALL(aEnableLCD);
+    EnableLCD();
+    // CALL(aWaitBGMap);
+    WaitBGMap_Conv();
+    // LD_B(SCGB_DIPLOMA);
+    // CALL(aGetSGBLayout);
+    GetSGBLayout_Conv(SCGB_DIPLOMA);
+    // CALL(aSetPalettes);
+    SetPalettes_Conv();
+    // RET;
+}
+
+static void DoNameCardSwap_SlideNameCardUpOffScreen(void){
+    // LD_C(16);
+    uint8_t c = 16;
+
+    while(1) {
+    // loop:
+        // LD_HL(wVirtualOAMSprite00YCoord);
+        struct SpriteOAM* hl = wram->wVirtualOAMSprite;
+        // LD_B(8);
+        uint8_t b = 8;
+
+        do {
+        // dec_y_loop:
+            // DEC_hl;
+            hl->yCoord--;
+            // for(int rept = 0; rept < SPRITEOAMSTRUCT_LENGTH; rept++){
+            // INC_HL;
+            // }
+            hl++;
+            // DEC_B;
+            // IF_NZ goto dec_y_loop;
+        } while(--b != 0);
+
+        // LD_HL(wVirtualOAMSprite08YCoord);
+        hl = wram->wVirtualOAMSprite + 0x8;
+        // LD_B(8);
+        b = 8;
+
+        do {
+        // inc_y_loop:
+            // INC_hl;
+            hl->yCoord++;
+            // for(int rept = 0; rept < SPRITEOAMSTRUCT_LENGTH; rept++){
+            // INC_HL;
+            // }
+            hl++;
+            // DEC_B;
+            // IF_NZ goto inc_y_loop;
+        } while(--b != 0);
+        // DEC_C;
+        // RET_Z ;
+        if(--c == 0)
+            return;
+        // PUSH_BC;
+        // LD_C(4);
+        // CALL(aDelayFrames);
+        DelayFrames(4);
+        // POP_BC;
+        // goto loop;
+    }
+}
+
 void DoNameCardSwap(void){
-    CALL(aClearTilemap);
-    CALL(aClearSprites);
-    CALL(aWaitBGMap);
-    CALL(aInitNameCardLayout);
-    hlcoord(3, 8, wTilemap);
-    LD_DE(mDoNameCardSwap_String_PressAToLink_BToCancel_JP);
-    CALL(aPlaceString);
-    CALL(aWaitBGMap);
-    CALL(aStageDataForNameCard);
-    CALL(aClearMysteryGiftTrainer);
-    LD_A(wNameCardDataEnd - wNameCardData);
-    LD_addr_A(wMysteryGiftStagedDataLength);
-    LDH_A_addr(rIE);
-    PUSH_AF;
-    CALL(aExchangeNameCardData);
-    LD_D_A;
-    XOR_A_A;
-    LDH_addr_A(rIF);
-    POP_AF;
-    LDH_addr_A(rIE);
-    LD_A_D;
-    CP_A(0x10);
-    JP_Z (mDoNameCardSwap_LinkCanceled);
-    CP_A(MG_OKAY);
-    JP_NZ (mDoNameCardSwap_CommunicationError);
-    CALL(aDoNameCardSwap_SlideNameCardUpOffScreen);
-    LD_C(60);
-    CALL(aDelayFrames);
-    CALL(aDoNameCardSwap_ClearScreen);
-    LD_HL(mDoNameCardSwap_NameCardReceivedCardText);
-    CALL(aPrintText);
-    LD_DE(wNameCardData);
-    FARCALL(aFunction8ac70);
-    LD_A_C;
-    LD_addr_A(wTextDecimalByte);
-    LD_HL(mDoNameCardSwap_NameCardNotRegisteredCardText);
-    IF_C goto PrintTextAndExit;
-    LD_HL(mDoNameCardSwap_NameCardListedCardText);
-    goto PrintTextAndExit;
+    static const txt_cmd_s NameCardReceivedCardText[] = {
+        text_far(v_NameCardReceivedCardText)
+        text_end
+    };
+    static const txt_cmd_s NameCardListedCardText[] = {
+        text_far(v_NameCardListedCardText)
+        text_end
+    };
+    static const txt_cmd_s NameCardNotRegisteredCardText[] = {
+        text_far(v_NameCardNotRegisteredCardText)
+        text_end
+    };
+    static const txt_cmd_s NameCardLinkCancelledText[] = {
+        text_far(v_NameCardLinkCancelledText)
+        text_end
+    };
+    static const txt_cmd_s NameCardCommErrorText[] = {
+        text_far(v_NameCardLinkCommErrorText)
+        text_end
+    };
 
-
-SlideNameCardUpOffScreen:
-    LD_C(16);
-
-loop:
-    LD_HL(wVirtualOAMSprite00YCoord);
-    LD_B(8);
-
-dec_y_loop:
-    DEC_hl;
-    for(int rept = 0; rept < SPRITEOAMSTRUCT_LENGTH; rept++){
-    INC_HL;
+    static const char String_PressAToLink_BToCancel_JP[] =
+               "Press A to" //db ['"エーボタン<WO>おすと"'];
+        t_next "link device"//next ['"つうしん<PKMN>おこなわれるよ！"']
+        t_next "Press B to" //next ['"ビーボタン<WO>おすと"']
+        t_next "cancel it.";//next ['"つうしん<WO>ちゅうし\u3000します"']
+                            //db ['"@"'];
+    while(1) {
+        // CALL(aClearTilemap);
+        ClearTilemap_Conv2();
+        // CALL(aClearSprites);
+        ClearSprites();
+        // CALL(aWaitBGMap);
+        WaitBGMap_Conv();
+        // CALL(aInitNameCardLayout);
+        InitNameCardLayout();
+        // hlcoord(3, 8, wTilemap);
+        // LD_DE(mDoNameCardSwap_String_PressAToLink_BToCancel_JP);
+        // CALL(aPlaceString);
+        PlaceStringSimple(U82C(String_PressAToLink_BToCancel_JP), coord(3, 8, wram->wTilemap));
+        // CALL(aWaitBGMap);
+        WaitBGMap_Conv();
+        // CALL(aStageDataForNameCard);
+        StageDataForNameCard();
+        // CALL(aClearMysteryGiftTrainer);
+        ClearMysteryGiftTrainer();
+        // LD_A(wNameCardDataEnd - wNameCardData);
+        // LD_addr_A(wMysteryGiftStagedDataLength);
+        wram->wMysteryGiftStagedDataLength = sizeof(wram->wNameCardData);
+        // LDH_A_addr(rIE);
+        // PUSH_AF;
+        // CALL(aExchangeNameCardData);
+        // LD_D_A;
+        uint8_t d = ExchangeNameCardData();
+        // XOR_A_A;
+        // LDH_addr_A(rIF);
+        // POP_AF;
+        // LDH_addr_A(rIE);
+        // LD_A_D;
+        // CP_A(0x10);
+        // JP_Z (mDoNameCardSwap_LinkCanceled);
+        if(d == MG_CANCELED) {
+        // LinkCanceled:
+            // CALL(aDoNameCardSwap_ClearScreen);
+            DoNameCardSwap_ClearScreen();
+            // LD_HL(mDoNameCardSwap_NameCardLinkCancelledText);
+            // goto PrintTextAndExit;
+        // PrintTextAndExit:
+            // CALL(aPrintText);
+            PrintText_Conv2(NameCardLinkCancelledText);
+            // LD_A(LCDC_DEFAULT);
+            // LDH_addr_A(rLCDC);
+            // RET;
+            return;
+        }
+        // CP_A(MG_OKAY);
+        // JP_NZ (mDoNameCardSwap_CommunicationError);
+        else if(d != MG_OKAY) {
+        // CommunicationError:
+            // CALL(aDoNameCardSwap_ClearScreen);
+            DoNameCardSwap_ClearScreen();
+            // LD_HL(mDoNameCardSwap_NameCardCommErrorText);
+            // CALL(aPrintText);
+            PrintText_Conv2(NameCardCommErrorText);
+            // JP(mDoNameCardSwap);
+            continue;
+        }
+        // CALL(aDoNameCardSwap_SlideNameCardUpOffScreen);
+        DoNameCardSwap_SlideNameCardUpOffScreen();
+        // LD_C(60);
+        // CALL(aDelayFrames);
+        DelayFrames(60);
+        // CALL(aDoNameCardSwap_ClearScreen);
+        DoNameCardSwap_ClearScreen();
+        // LD_HL(mDoNameCardSwap_NameCardReceivedCardText);
+        // CALL(aPrintText);
+        PrintText_Conv2(NameCardReceivedCardText);
+        // LD_DE(wNameCardData);
+        // FARCALL(aFunction8ac70);
+        u8_flag_s res = Function8ac70(wram->wNameCardData);
+        // LD_A_C;
+        // LD_addr_A(wTextDecimalByte);
+        wram->wTextDecimalByte = res.a;
+        // LD_HL(mDoNameCardSwap_NameCardNotRegisteredCardText);
+        // IF_C goto PrintTextAndExit;
+        // LD_HL(mDoNameCardSwap_NameCardListedCardText);
+        // goto PrintTextAndExit;
+        const txt_cmd_s* text = (res.flag)? NameCardNotRegisteredCardText: NameCardListedCardText;
+    // PrintTextAndExit:
+        // CALL(aPrintText);
+        PrintText_Conv2(text);
+        // LD_A(LCDC_DEFAULT);
+        // LDH_addr_A(rLCDC);
+        // RET;
+        return;
     }
-    DEC_B;
-    IF_NZ goto dec_y_loop;
-    LD_HL(wVirtualOAMSprite08YCoord);
-    LD_B(8);
-
-inc_y_loop:
-    INC_hl;
-    for(int rept = 0; rept < SPRITEOAMSTRUCT_LENGTH; rept++){
-    INC_HL;
-    }
-    DEC_B;
-    IF_NZ goto inc_y_loop;
-    DEC_C;
-    RET_Z ;
-    PUSH_BC;
-    LD_C(4);
-    CALL(aDelayFrames);
-    POP_BC;
-    goto loop;
-
-
-LinkCanceled:
-    CALL(aDoNameCardSwap_ClearScreen);
-    LD_HL(mDoNameCardSwap_NameCardLinkCancelledText);
-    goto PrintTextAndExit;
-
-
-CommunicationError:
-    CALL(aDoNameCardSwap_ClearScreen);
-    LD_HL(mDoNameCardSwap_NameCardCommErrorText);
-    CALL(aPrintText);
-    JP(mDoNameCardSwap);
-
-
-PrintTextAndExit:
-    CALL(aPrintText);
-    LD_A(LCDC_DEFAULT);
-    LDH_addr_A(rLCDC);
-    RET;
-
-
-String_PressAToLink_BToCancel_JP:
-    //db ['"エーボタン<WO>おすと"'];
-    //next ['"つうしん<PKMN>おこなわれるよ！"']
-    //next ['"ビーボタン<WO>おすと"']
-    //next ['"つうしん<WO>ちゅうし\u3000します"']
-    //db ['"@"'];
-
-
-NameCardReceivedCardText:
-    //text_far ['_NameCardReceivedCardText']
-    //text_end ['?']
-
-
-NameCardListedCardText:
-    //text_far ['_NameCardListedCardText']
-    //text_end ['?']
-
-
-NameCardNotRegisteredCardText:
-    //text_far ['_NameCardNotRegisteredCardText']
-    //text_end ['?']
-
-
-NameCardLinkCancelledText:
-    //text_far ['_NameCardLinkCancelledText']
-    //text_end ['?']
-
-
-NameCardCommErrorText:
-    //text_far ['_NameCardLinkCommErrorText']
-    //text_end ['?']
-
-
-ClearScreen:
-    CALL(aClearSprites);
-    CALL(aClearTilemap);
-    CALL(aEnableLCD);
-    CALL(aWaitBGMap);
-    LD_B(SCGB_DIPLOMA);
-    CALL(aGetSGBLayout);
-    CALL(aSetPalettes);
-    RET;
-
 }
 
 void StageDataForNameCard(void){
-    LD_DE(wMysteryGiftStaging);
-    LD_A(BANK(sPlayerData));
-    CALL(aOpenSRAM);
-    LD_HL(sPlayerData + wPlayerName - wPlayerData);
-    LD_BC(NAME_LENGTH);
-    CALL(aCopyBytes);
-    LD_HL(sPlayerData + wPlayerID - wPlayerData);
-    LD_BC(2);
-    CALL(aCopyBytes);
-    LD_HL(sPlayerData + wSecretID - wPlayerData);
-    LD_BC(2);
-    CALL(aCopyBytes);
-    CALL(aCloseSRAM);
-    LD_A(BANK(sCrystalData));
-    CALL(aOpenSRAM);
-    LD_A_addr(sCrystalData + 0);
-    LD_de_A;
-    INC_DE;
-    LD_A(BANK(s4_a603));  // aka BANK(s4_a007) // MBC30 bank used by JP Crystal// inaccessible by MBC3
-    CALL(aOpenSRAM);
-    LD_HL(s4_a603);  // address of MBC30 bank
-    LD_BC(8);
-    CALL(aCopyBytes);
-    LD_HL(s4_a007);  // address of MBC30 bank
-    LD_BC(12);
-    CALL(aCopyBytes);
-    CALL(aCloseSRAM);
-    RET;
+    // LD_DE(wMysteryGiftStaging);
+    uint8_t* de = wram->wMysteryGiftStaging;
+    // LD_A(BANK(sPlayerData));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asPlayerData));
+    // LD_HL(sPlayerData + wPlayerName - wPlayerData);
+    // LD_BC(NAME_LENGTH);
+    // CALL(aCopyBytes);
+    CopyBytes(de, GBToRAMAddr(sPlayerData + wPlayerName - wPlayerData), NAME_LENGTH);
+    de += NAME_LENGTH;
+    // LD_HL(sPlayerData + wPlayerID - wPlayerData);
+    // LD_BC(2);
+    // CALL(aCopyBytes);
+    CopyBytes(de, GBToRAMAddr(sPlayerData + wPlayerID - wPlayerData), 2);
+    de += 2;
+    // LD_HL(sPlayerData + wSecretID - wPlayerData);
+    // LD_BC(2);
+    // CALL(aCopyBytes);
+    CopyBytes(de, GBToRAMAddr(sPlayerData + wSecretID - wPlayerData), 2);
+    de += 2;
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // LD_A(BANK(sCrystalData));
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(asCrystalData));
+    // LD_A_addr(sCrystalData + 0);
+    // LD_de_A;
+    *(de++) = gb_read(sCrystalData);
+    // INC_DE;
+    CloseSRAM_Conv();
+    // LD_A(BANK(s4_a603));  // aka BANK(s4_a007) // MBC30 bank used by JP Crystal// inaccessible by MBC3
+    // CALL(aOpenSRAM);
+    OpenSRAM_Conv(MBANK(as4_a603));
+    // LD_HL(s4_a603);  // address of MBC30 bank
+    // LD_BC(8);
+    // CALL(aCopyBytes);
+    CopyBytes(de, GBToRAMAddr(s4_a603), 8);
+    de += 8;
+    // LD_HL(s4_a007);  // address of MBC30 bank
+    // LD_BC(12);
+    // CALL(aCopyBytes);
+    CopyBytes(de, GBToRAMAddr(s4_a007), 12);
+    // CALL(aCloseSRAM);
+    CloseSRAM_Conv();
+    // RET;
+}
 
+static tile_t* InitNameCardLayout_LoadNRow(tile_t* hl, uint8_t a, uint8_t b) {
+    // LD_B(6);
+    // goto row_loop;
+
+// Load11Row:
+    // LD_B(11);
+    // goto row_loop;
+
+// Load12Row:
+    // LD_B(12);
+
+    do {
+    // row_loop:
+        // LD_hli_A;
+        // INC_A;
+        *(hl++) = a++;
+        // DEC_B;
+        // IF_NZ goto row_loop;
+    } while(--b != 0);
+    // RET;
+    return hl;
+}
+
+static tile_t* InitNameCardLayout_LoadNColumn(tile_t* hl, uint8_t a, uint8_t b){
+    // LD_B(9);
+    // goto column_loop;
+
+// Load11Column:
+    // LD_B(11);
+    // goto column_loop;
+
+// Load14Column:
+    // LD_B(14);
+
+    do {
+    // column_loop:
+        // LD_hl_A;
+        *hl = a;
+        // LD_DE(SCREEN_WIDTH);
+        // ADD_HL_DE;
+        hl += SCREEN_WIDTH;
+        // DEC_B;
+        // IF_NZ goto column_loop;
+    } while(--b != 0);
+    // RET;
+    return hl;
+}
+
+
+static void InitNameCardLayout_Load16Row(tile_t* hl, uint8_t a) {
+    // LD_B(16);
+    uint8_t b = 16;
+
+    do {
+    // row_loop_no_inc:
+        // LD_hli_A;
+        *(hl++) = a;
+        // DEC_B;
+        // IF_NZ goto row_loop_no_inc;
+    } while(--b != 0);
+    // RET;
 }
 
 void InitNameCardLayout(void){
-    CALL(aClearBGPalettes);
-    CALL(aDisableLCD);
-    LD_HL(mCardTradeGFX);
-    LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
-    LD_A(BANK(aCardTradeGFX));
-    LD_BC(0x40 * LEN_2BPP_TILE);
-    CALL(aFarCopyBytes);
-    LD_HL(mCardTradeSpriteGFX);
-    LD_DE(vTiles0 + LEN_2BPP_TILE * 0x00);
-    LD_A(BANK(aCardTradeSpriteGFX));
-    LD_BC(8 * LEN_2BPP_TILE);
-    CALL(aFarCopyBytes);
-    hlcoord(0, 0, wTilemap);
-    LD_A(0x3f);
-    LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
-    CALL(aByteFill);
-    hlcoord(3, 7, wTilemap);
-    LD_BC((9 << 8) | 15);
-    CALL(aClearBox);
-    hlcoord(0, 0, wTilemap);
-    LD_A(0x0);
-    LD_hli_A;
-    INC_A;
-    LD_hl_A;
-    hlcoord(0, 1, wTilemap);
-    INC_A;
-    LD_hli_A;
-    INC_A;
-    LD_hl_A;
-    hlcoord(4, 2, wTilemap);
-    LD_A(0x13);
-    CALL(aInitNameCardLayout_Load11Row);
-    hlcoord(4, 3, wTilemap);
-    LD_A(0x1e);
-    CALL(aInitNameCardLayout_Load12Row);
-    hlcoord(4, 4, wTilemap);
-    LD_A(0x2a);
-    CALL(aInitNameCardLayout_Load12Row);
-    hlcoord(1, 2, wTilemap);
-    LD_hl(0x4);
-    hlcoord(1, 3, wTilemap);
-    LD_A(0x5);
-    CALL(aInitNameCardLayout_Load14Column);
-    LD_A(0x9);
-    hlcoord(18, 5, wTilemap);
-    CALL(aInitNameCardLayout_Load11Column);
-    hlcoord(2, 5, wTilemap);
-    LD_A(0xb);
-    CALL(aInitNameCardLayout_Load16Row);
-    hlcoord(2, 16, wTilemap);
-    LD_A(0x7);
-    CALL(aInitNameCardLayout_Load16Row);
-    hlcoord(2, 5, wTilemap);
-    LD_A(0xd);
-    CALL(aInitNameCardLayout_Load6Row);
-    hlcoord(8, 5, wTilemap);
-    LD_hl(0xc);
-    hlcoord(18, 5, wTilemap);
-    LD_hl(0xa);
-    hlcoord(18, 16, wTilemap);
-    LD_hl(0x8);
-    hlcoord(1, 16, wTilemap);
-    LD_hl(0x6);
-    hlcoord(2, 6, wTilemap);
-    LD_A(0x37);
-    CALL(aInitNameCardLayout_Load16Row);
-    hlcoord(2, 15, wTilemap);
-    LD_A(0x3d);
-    CALL(aInitNameCardLayout_Load16Row);
-    hlcoord(2, 6, wTilemap);
-    LD_A(0x39);
-    CALL(aInitNameCardLayout_Load9Column);
-    hlcoord(17, 6, wTilemap);
-    LD_A(0x3b);
-    CALL(aInitNameCardLayout_Load9Column);
-    hlcoord(2, 6, wTilemap);
-    LD_hl(0x36);
-    hlcoord(17, 6, wTilemap);
-    LD_hl(0x38);
-    hlcoord(2, 15, wTilemap);
-    LD_hl(0x3c);
-    hlcoord(17, 15, wTilemap);
-    LD_hl(0x3e);
-    LD_DE(wVirtualOAMSprite00);
-    LD_HL(mInitNameCardLayout_NameCardOAMData);
-    LD_BC(16 * SPRITEOAMSTRUCT_LENGTH);
-    CALL(aCopyBytes);
-    CALL(aEnableLCD);
-    CALL(aWaitBGMap);
-    LD_B(CRYSTAL_CGB_NAME_CARD);
-    FARCALL(aGetCrystalCGBLayout);
-    JP(mSetPalettes);
-
-
-Load6Row:
-    LD_B(6);
-    goto row_loop;
-
-
-Load11Row:
-    LD_B(11);
-    goto row_loop;
-
-
-Load12Row:
-    LD_B(12);
-
-
-row_loop:
-    LD_hli_A;
-    INC_A;
-    DEC_B;
-    IF_NZ goto row_loop;
-    RET;
-
-
-Load9Column:
-    LD_B(9);
-    goto column_loop;
-
-
-Load11Column:
-    LD_B(11);
-    goto column_loop;
-
-
-Load14Column:
-    LD_B(14);
-
-
-column_loop:
-    LD_hl_A;
-    LD_DE(SCREEN_WIDTH);
-    ADD_HL_DE;
-    DEC_B;
-    IF_NZ goto column_loop;
-    RET;
-
-
-Load16Row:
-    LD_B(16);
-
-row_loop_no_inc:
-    LD_hli_A;
-    DEC_B;
-    IF_NZ goto row_loop_no_inc;
-    RET;
-
-
-NameCardOAMData:
-    //dbsprite ['6', '2', '4', '1', '0x00', '0']
-    //dbsprite ['7', '2', '4', '1', '0x01', '0']
-    //dbsprite ['8', '2', '4', '1', '0x02', '0']
-    //dbsprite ['9', '2', '4', '1', '0x03', '0']
-    //dbsprite ['6', '3', '4', '1', '0x04', '0']
-    //dbsprite ['7', '3', '4', '1', '0x05', '0']
-    //dbsprite ['8', '3', '4', '1', '0x06', '0']
-    //dbsprite ['9', '3', '4', '1', '0x07', '0']
-    //dbsprite ['11', '0', '4', '1', '0x00', '0']
-    //dbsprite ['12', '0', '4', '1', '0x01', '0']
-    //dbsprite ['13', '0', '4', '1', '0x02', '0']
-    //dbsprite ['14', '0', '4', '1', '0x03', '0']
-    //dbsprite ['11', '1', '4', '1', '0x04', '0']
-    //dbsprite ['12', '1', '4', '1', '0x05', '0']
-    //dbsprite ['13', '1', '4', '1', '0x06', '0']
-    //dbsprite ['14', '1', '4', '1', '0x07', '0']
-
-    return CardTradeGFX();
+    static const uint8_t NameCardOAMData[] = {
+        dbsprite( 6,  2,  4,  1, 0x00, 0),
+        dbsprite( 7,  2,  4,  1, 0x01, 0),
+        dbsprite( 8,  2,  4,  1, 0x02, 0),
+        dbsprite( 9,  2,  4,  1, 0x03, 0),
+        dbsprite( 6,  3,  4,  1, 0x04, 0),
+        dbsprite( 7,  3,  4,  1, 0x05, 0),
+        dbsprite( 8,  3,  4,  1, 0x06, 0),
+        dbsprite( 9,  3,  4,  1, 0x07, 0),
+        dbsprite(11,  0,  4,  1, 0x00, 0),
+        dbsprite(12,  0,  4,  1, 0x01, 0),
+        dbsprite(13,  0,  4,  1, 0x02, 0),
+        dbsprite(14,  0,  4,  1, 0x03, 0),
+        dbsprite(11,  1,  4,  1, 0x04, 0),
+        dbsprite(12,  1,  4,  1, 0x05, 0),
+        dbsprite(13,  1,  4,  1, 0x06, 0),
+        dbsprite(14,  1,  4,  1, 0x07, 0),
+    };
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes_Conv();
+    // CALL(aDisableLCD);
+    DisableLCD();
+    // LD_HL(mCardTradeGFX);
+    // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
+    // LD_A(BANK(aCardTradeGFX));
+    // LD_BC(0x40 * LEN_2BPP_TILE);
+    // CALL(aFarCopyBytes);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x00, CardTradeGFX, 0, 0x40);
+    // LD_HL(mCardTradeSpriteGFX);
+    // LD_DE(vTiles0 + LEN_2BPP_TILE * 0x00);
+    // LD_A(BANK(aCardTradeSpriteGFX));
+    // LD_BC(8 * LEN_2BPP_TILE);
+    // CALL(aFarCopyBytes);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles0 + LEN_2BPP_TILE * 0x00, CardTradeSpriteGFX, 0, 8);
+    // hlcoord(0, 0, wTilemap);
+    // LD_A(0x3f);
+    // LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
+    // CALL(aByteFill);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_HEIGHT * SCREEN_WIDTH, 0x3f);
+    // hlcoord(3, 7, wTilemap);
+    // LD_BC((9 << 8) | 15);
+    // CALL(aClearBox);
+    ClearBox_Conv2(coord(3, 7, wram->wTilemap), 15, 9);
+    // hlcoord(0, 0, wTilemap);
+    // LD_A(0x0);
+    // LD_hli_A;
+    *coord(0, 0, wram->wTilemap) = 0x0;
+    // INC_A;
+    // LD_hl_A;
+    *coord(1, 0, wram->wTilemap) = 0x1;
+    // hlcoord(0, 1, wTilemap);
+    // INC_A;
+    // LD_hli_A;
+    *coord(0, 1, wram->wTilemap) = 0x2;
+    // INC_A;
+    // LD_hl_A;
+    *coord(1, 1, wram->wTilemap) = 0x3;
+    // hlcoord(4, 2, wTilemap);
+    // LD_A(0x13);
+    // CALL(aInitNameCardLayout_Load11Row);
+    InitNameCardLayout_LoadNRow(coord(4, 2, wram->wTilemap), 0x13, 11);
+    // hlcoord(4, 3, wTilemap);
+    // LD_A(0x1e);
+    // CALL(aInitNameCardLayout_Load12Row);
+    InitNameCardLayout_LoadNRow(coord(4, 3, wram->wTilemap), 0x1e, 12);
+    // hlcoord(4, 4, wTilemap);
+    // LD_A(0x2a);
+    // CALL(aInitNameCardLayout_Load12Row);
+    InitNameCardLayout_LoadNRow(coord(4, 4, wram->wTilemap), 0x2a, 12);
+    // hlcoord(1, 2, wTilemap);
+    // LD_hl(0x4);
+    *coord(1, 2, wram->wTilemap) = 0x4;
+    // hlcoord(1, 3, wTilemap);
+    // LD_A(0x5);
+    // CALL(aInitNameCardLayout_Load14Column);
+    InitNameCardLayout_LoadNColumn(coord(1, 3, wram->wTilemap), 0x5, 14);
+    // LD_A(0x9);
+    // hlcoord(18, 5, wTilemap);
+    // CALL(aInitNameCardLayout_Load11Column);
+    InitNameCardLayout_LoadNColumn(coord(18, 5, wram->wTilemap), 0x9, 11);
+    // hlcoord(2, 5, wTilemap);
+    // LD_A(0xb);
+    // CALL(aInitNameCardLayout_Load16Row);
+    InitNameCardLayout_Load16Row(coord(2, 5, wram->wTilemap), 0xb);
+    // hlcoord(2, 16, wTilemap);
+    // LD_A(0x7);
+    // CALL(aInitNameCardLayout_Load16Row);
+    InitNameCardLayout_Load16Row(coord(2, 16, wram->wTilemap), 0x7);
+    // hlcoord(2, 5, wTilemap);
+    // LD_A(0xd);
+    // CALL(aInitNameCardLayout_Load6Row);
+    InitNameCardLayout_LoadNRow(coord(2, 5, wram->wTilemap), 0xd, 6);
+    // hlcoord(8, 5, wTilemap);
+    // LD_hl(0xc);
+    *coord(8, 5, wram->wTilemap) = 0xc;
+    // hlcoord(18, 5, wTilemap);
+    // LD_hl(0xa);
+    *coord(18, 5, wram->wTilemap) = 0xa;
+    // hlcoord(18, 16, wTilemap);
+    // LD_hl(0x8);
+    *coord(18, 16, wram->wTilemap) = 0x8;
+    // hlcoord(1, 16, wTilemap);
+    // LD_hl(0x6);
+    *coord(1, 16, wram->wTilemap) = 0x6;
+    // hlcoord(2, 6, wTilemap);
+    // LD_A(0x37);
+    // CALL(aInitNameCardLayout_Load16Row);
+    InitNameCardLayout_Load16Row(coord(2, 6, wram->wTilemap), 0x37);
+    // hlcoord(2, 15, wTilemap);
+    // LD_A(0x3d);
+    // CALL(aInitNameCardLayout_Load16Row);
+    InitNameCardLayout_Load16Row(coord(2, 15, wram->wTilemap), 0x3d);
+    // hlcoord(2, 6, wTilemap);
+    // LD_A(0x39);
+    // CALL(aInitNameCardLayout_Load9Column);
+    InitNameCardLayout_LoadNColumn(coord(2, 6, wram->wTilemap), 0x39, 9);
+    // hlcoord(17, 6, wTilemap);
+    // LD_A(0x3b);
+    // CALL(aInitNameCardLayout_Load9Column);
+    InitNameCardLayout_LoadNColumn(coord(17, 6, wram->wTilemap), 0x3b, 9);
+    // hlcoord(2, 6, wTilemap);
+    // LD_hl(0x36);
+    *coord(2, 6, wram->wTilemap) = 0x36;
+    // hlcoord(17, 6, wTilemap);
+    // LD_hl(0x38);
+    *coord(17, 6, wram->wTilemap) = 0x38;
+    // hlcoord(2, 15, wTilemap);
+    // LD_hl(0x3c);
+    *coord(2, 15, wram->wTilemap) = 0x3c;
+    // hlcoord(17, 15, wTilemap);
+    // LD_hl(0x3e);
+    *coord(17, 15, wram->wTilemap) = 0x3e;
+    // LD_DE(wVirtualOAMSprite00);
+    // LD_HL(mInitNameCardLayout_NameCardOAMData);
+    // LD_BC(16 * SPRITEOAMSTRUCT_LENGTH);
+    // CALL(aCopyBytes);
+    CopyBytes(wram->wVirtualOAMSprite, NameCardOAMData, 16 * SPRITEOAMSTRUCT_LENGTH);
+    // CALL(aEnableLCD);
+    EnableLCD();
+    // CALL(aWaitBGMap);
+    WaitBGMap_Conv();
+    // LD_B(CRYSTAL_CGB_NAME_CARD);
+    // FARCALL(aGetCrystalCGBLayout);
+    GetCrystalCGBLayout(CRYSTAL_CGB_NAME_CARD);
+    // JP(mSetPalettes);
+    SetPalettes_Conv();
 }
 
-void CardTradeGFX(void){
-// INCBIN "gfx/mystery_gift/card_trade.2bpp"
-
-    return CardTradeSpriteGFX();
-}
-
-void CardTradeSpriteGFX(void){
-// INCBIN "gfx/mystery_gift/card_sprite.2bpp"
-
-}
+const char CardTradeGFX[] = "gfx/mystery_gift/card_trade.png";
+const char CardTradeSpriteGFX[] = "gfx/mystery_gift/card_sprite.png";
