@@ -212,6 +212,7 @@ void PlacePartyNicknames(void){
 void PlacePartyHPBar(void){
     // XOR_A_A;
     // LD_addr_A(wSGBPals);
+    wram->wSGBPals[0] = 0;
     // LD_A_addr(wPartyCount);
     // AND_A_A;
     // RET_Z ;
@@ -245,7 +246,7 @@ void PlacePartyHPBar(void){
             // LD_B(0);
             // ADD_HL_BC;
             // CALL(aSetHPPal);
-            SetHPPal_Conv(wram->wHPPals + b, e);
+            SetHPPal_Conv(wram->wHPPals + wram->wSGBPals[0], e);
             // LD_B(SCGB_PARTY_MENU_HP_BARS);
             // CALL(aGetSGBLayout);
             GetSGBLayout_Conv(SCGB_PARTY_MENU_HP_BARS);
@@ -253,6 +254,7 @@ void PlacePartyHPBar(void){
     // skip:
         // LD_HL(wSGBPals);
         // INC_hl;
+        wram->wSGBPals[0]++;
         // POP_HL;
         // LD_DE(2 * SCREEN_WIDTH);
         // ADD_HL_DE;
