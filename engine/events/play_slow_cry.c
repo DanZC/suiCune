@@ -8,7 +8,7 @@ void PlaySlowCry(void){
     // LD_A_addr(wScriptVar);
     // CALL(aLoadCry);
     // IF_C goto done;
-    const struct PokemonCry* cry = LoadCry_Conv2(wram->wScriptVar);
+    const struct PokemonCry* cry = LoadCry(wram->wScriptVar);
     if(cry == NULL)
         return;
 

@@ -6,24 +6,10 @@
 
 //  Functions dealing with palettes.
 
-void UpdatePalsIfCGB(void){
-    //  update bgp data from wBGPals2
-//  update obp data from wOBPals2
-//  return carry if successful
-
-//  check cgb
-    SET_PC(aUpdatePalsIfCGB);
-    LDH_A_addr(hCGB);
-    AND_A_A;
-    RET_Z ;
-
-    return UpdateCGBPals();
-}
-
 //  update bgp data from wBGPals2
 //  update obp data from wOBPals2
 //  return true if successful
-bool UpdatePalsIfCGB_Conv(void){
+bool UpdatePalsIfCGB(void){
 //  check cgb
     // LDH_A_addr(hCGB);
     // AND_A_A;
@@ -31,23 +17,11 @@ bool UpdatePalsIfCGB_Conv(void){
     if(hram->hCGB == 0)
         return false;
 
-    return UpdateCGBPals_Conv();
-}
-
-void UpdateCGBPals(void){
-    //  return carry if successful
-//  any pals to update?
-    SET_PC(aUpdateCGBPals);
-    LDH_A_addr(hCGBPalUpdate);
-    AND_A_A;
-    RET_Z ;
-// fallthrough
-
-    return ForceUpdateCGBPals();
+    return UpdateCGBPals();
 }
 
 //  return true if successful
-bool UpdateCGBPals_Conv(void){
+bool UpdateCGBPals(void){
 //  any pals to update?
     // LDH_A_addr(hCGBPalUpdate);
     // AND_A_A;
@@ -242,11 +216,9 @@ void DmgToCgbBGPals_Conv(uint8_t a){
 
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
-    uint8_t svbk = gb_read(rSVBK);
 
     // LD_A(MBANK(awBGPals2));
     // LDH_addr_A(rSVBK);
-    gb_write(rSVBK, MBANK(awBGPals2));
 
 //  copy & reorder bg pal buffer
     // LD_HL(wBGPals2);  // to
@@ -257,7 +229,7 @@ void DmgToCgbBGPals_Conv(uint8_t a){
 //  all pals
     // LD_C(8);
     // CALL(aCopyPals);
-    CopyPals_Conv(wBGPals2, wBGPals1, gb_read(rBGP), 8);
+    CopyPals(wram->wBGPals2, wram->wBGPals1, gb_read(rBGP), 8);
 //  request pal update
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
@@ -265,7 +237,6 @@ void DmgToCgbBGPals_Conv(uint8_t a){
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
-    gb_write(rSVBK, svbk);
 
     return;
 }
@@ -338,11 +309,9 @@ void DmgToCgbObjPals_Conv(uint8_t d, uint8_t e){
     
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
-    uint8_t svbk = gb_read(rSVBK);
 
     // LD_A(MBANK(awOBPals2));
     // LDH_addr_A(rSVBK);
-    gb_write(rSVBK, MBANK(awOBPals2));
 
 //  copy & reorder obj pal buffer
     // LD_HL(wOBPals2);  // to
@@ -353,7 +322,7 @@ void DmgToCgbObjPals_Conv(uint8_t d, uint8_t e){
 //  all pals
     // LD_C(8);
     // CALL(aCopyPals);
-    CopyPals_Conv(wOBPals2, wOBPals1, gb_read(rOBP0), 8);
+    CopyPals(wram->wOBPals2, wram->wOBPals1, gb_read(rOBP0), 8);
 //  request pal update
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
@@ -361,7 +330,6 @@ void DmgToCgbObjPals_Conv(uint8_t d, uint8_t e){
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
-    gb_write(rSVBK, svbk);
 }
 
 void DmgToCgbObjPal0(void){
@@ -429,7 +397,6 @@ void DmgToCgbObjPal0_Conv(uint8_t a){
     // PUSH_AF;
     // LD_A(MBANK(awOBPals2));
     // LDH_addr_A(rSVBK);
-    wbank_push(MBANK(awOBPals2));
 
     // LD_HL(wOBPals2 + PALETTE_SIZE * 0);
     // LD_DE(wOBPals1 + PALETTE_SIZE * 0);
@@ -437,14 +404,13 @@ void DmgToCgbObjPal0_Conv(uint8_t a){
     // LD_B_A;
     // LD_C(1);
     // CALL(aCopyPals);
-    CopyPals_Conv(wOBPals2 + PALETTE_SIZE * 0, wOBPals1 + PALETTE_SIZE * 0, gb_read(rOBP0), 1);
+    CopyPals(wram->wOBPals2 + PALETTE_SIZE * 0, wram->wOBPals1 + PALETTE_SIZE * 0, gb_read(rOBP0), 1);
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
     hram->hCGBPalUpdate = TRUE;
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
-    wbank_pop;
 
     // POP_BC;
     // POP_DE;
@@ -514,7 +480,6 @@ void DmgToCgbObjPal1_Conv(uint8_t a){
     // PUSH_AF;
     // LD_A(MBANK(awOBPals2));
     // LDH_addr_A(rSVBK);
-    wbank_push(MBANK(awOBPals2));
 
     // LD_HL(wOBPals2 + PALETTE_SIZE * 1);
     // LD_DE(wOBPals1 + PALETTE_SIZE * 1);
@@ -522,14 +487,13 @@ void DmgToCgbObjPal1_Conv(uint8_t a){
     // LD_B_A;
     // LD_C(1);
     // CALL(aCopyPals);
-    CopyPals_Conv(wOBPals2 + PALETTE_SIZE * 1, wOBPals1 + PALETTE_SIZE * 1, gb_read(rOBP1), 1);
+    CopyPals(wram->wOBPals2 + PALETTE_SIZE * 1, wram->wOBPals1 + PALETTE_SIZE * 1, gb_read(rOBP1), 1);
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
     hram->hCGBPalUpdate = TRUE;
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
-    wbank_pop;
 
     // POP_BC;
     // POP_DE;
@@ -541,64 +505,75 @@ void DmgToCgbObjPal1_Conv(uint8_t a){
     // RET;
 }
 
-void CopyPals(void){
-    //  copy c palettes in order b from de to hl
+void CopyPals(void* hl_, const void* de_, uint8_t b, uint8_t c){
+    uint16_t* hl = hl_;
+    const uint16_t* de = de_;
+    do {
+        // PUSH_BC;
+        uint8_t bsaved = b;
+        // LD_C(NUM_PAL_COLORS);
+        uint8_t n = NUM_PAL_COLORS;
 
-    PUSH_BC;
-    LD_C(NUM_PAL_COLORS);
+        do {
+            // PUSH_DE;
+            // PUSH_HL;
 
-loop:
-        PUSH_DE;
-    PUSH_HL;
+        //  get pal color
+            // LD_A_B;
+            // maskbits(1 << PAL_COLOR_SIZE, 0);
+            uint8_t palc = b & (0b11);
+        //  2 bytes per color
+            // ADD_A_A;
+            // LD_L_A;
+            // LD_H(0);
+            // ADD_HL_DE;
 
-//  get pal color
-    LD_A_B;
-    maskbits(1 << PAL_COLOR_SIZE, 0);
-//  2 bytes per color
-    ADD_A_A;
-    LD_L_A;
-    LD_H(0);
-    ADD_HL_DE;
-    LD_E_hl;
-    INC_HL;
-    LD_D_hl;
+            // LD_E_hl;
+            // INC_HL;
+            // LD_D_hl;
+            uint16_t pal = de[palc];
 
-//  dest
-    POP_HL;
-//  write color
-    LD_hl_E;
-    INC_HL;
-    LD_hl_D;
-    INC_HL;
-//  next pal color
-    for(int rept = 0; rept < PAL_COLOR_SIZE; rept++){
-    SRL_B;
-    }
-//  source
-    POP_DE;
-//  done pal?
-    DEC_C;
-    IF_NZ goto loop;
+        //  dest
+            // POP_HL;
+        //  write color
+            // LD_hl_E;
+            // INC_HL;
+            // LD_hl_D;
+            // INC_HL;
+            *hl = pal;
+            hl++;
 
-//  de += 8 (next pal)
-    LD_A(PALETTE_SIZE);
-    ADD_A_E;
-    IF_NC goto ok;
-    INC_D;
+        //  next pal color
+            // for(int rept = 0; rept < PAL_COLOR_SIZE; rept++){
+            // SRL_B;
+            // }
+            b >>= PAL_COLOR_SIZE;
+        //  source
+            // POP_DE;
+        //  done pal?
+            // DEC_C;
+            // IF_NZ goto loop;
+        } while(--n != 0);
 
-ok:
-        LD_E_A;
+    //  de += 8 (next pal)
+        // LD_A(PALETTE_SIZE);
+        // ADD_A_E;
+        // IF_NC goto ok;
+        // INC_D;
+    // ok:
+        // LD_E_A;
+        de += NUM_PAL_COLORS;
 
-//  how many more pals?
-    POP_BC;
-    DEC_C;
-    JR_NZ (mCopyPals);
-    RET;
-
+    //  how many more pals?
+        // POP_BC;
+        b = bsaved;
+        // DEC_C;
+        // JR_NZ (mCopyPals);
+    } while(--c != 0);
 }
 
 //  copy c palettes in order b from de to hl
-void CopyPals_Conv(uint16_t hl, uint16_t de, uint8_t b, uint8_t c){
+void CopyPals_GB(uint16_t hl, uint16_t de, uint8_t b, uint8_t c){
     do {
         // PUSH_BC;
         uint8_t bsaved = b;
@@ -668,71 +643,6 @@ void CopyPals_Conv(uint16_t hl, uint16_t de, uint8_t b, uint8_t c){
     } while(--c != 0);
 }
 
-void CopyPals_Conv2(uint16_t* hl, const uint16_t* de, uint8_t b, uint8_t c){
-    do {
-        // PUSH_BC;
-        uint8_t bsaved = b;
-        // LD_C(NUM_PAL_COLORS);
-        uint8_t n = NUM_PAL_COLORS;
-
-        do {
-            // PUSH_DE;
-            // PUSH_HL;
-
-        //  get pal color
-            // LD_A_B;
-            // maskbits(1 << PAL_COLOR_SIZE, 0);
-            uint8_t palc = b & (0b11);
-        //  2 bytes per color
-            // ADD_A_A;
-            // LD_L_A;
-            // LD_H(0);
-            // ADD_HL_DE;
-
-            // LD_E_hl;
-            // INC_HL;
-            // LD_D_hl;
-            uint16_t pal = de[palc];
-
-        //  dest
-            // POP_HL;
-        //  write color
-            // LD_hl_E;
-            // INC_HL;
-            // LD_hl_D;
-            // INC_HL;
-            *hl = pal;
-            hl++;
-
-        //  next pal color
-            // for(int rept = 0; rept < PAL_COLOR_SIZE; rept++){
-            // SRL_B;
-            // }
-            b >>= PAL_COLOR_SIZE;
-        //  source
-            // POP_DE;
-        //  done pal?
-            // DEC_C;
-            // IF_NZ goto loop;
-        } while(--n != 0);
-
-    //  de += 8 (next pal)
-        // LD_A(PALETTE_SIZE);
-        // ADD_A_E;
-        // IF_NC goto ok;
-        // INC_D;
-    // ok:
-        // LD_E_A;
-        de += PALETTE_SIZE;
-
-    //  how many more pals?
-        // POP_BC;
-        b = bsaved;
-        // DEC_C;
-        // JR_NZ (mCopyPals);
-    } while(--c != 0);
-}
-
 void ClearVBank1(void){
     if(hram->hCGB == 0) 
         return;
@@ -771,23 +681,12 @@ void ReloadSpritesNoPalettes(void){
 }
 
 void SwapTextboxPalettes(void){
-    HOMECALL(av_SwapTextboxPalettes);
-    RET;
-}
-
-void SwapTextboxPalettes_Conv(void){
     // HOMECALL(av_SwapTextboxPalettes);
     // RET;
     return v_SwapTextboxPalettes_Conv();
 }
 
-void ScrollBGMapPalettes(void){
-    HOMECALL(av_ScrollBGMapPalettes);
-    RET;
-
-}
-
-void ScrollBGMapPalettes_Conv(uint8_t c){
+void ScrollBGMapPalettes(uint8_t c){
     // HOMECALL(av_ScrollBGMapPalettes);
     // RET;
     return v_ScrollBGMapPalettes_Conv(c);

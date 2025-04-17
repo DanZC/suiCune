@@ -134,7 +134,7 @@ void GetMonFrontpic_Conv(uint8_t* de){
     wram->wCurSpecies = wram->wCurPartySpecies;
     // CALL(aIsAPokemon);
     // RET_C ;
-    if(!IsAPokemon_Conv(wram->wCurSpecies))
+    if(!IsAPokemon(wram->wCurSpecies))
         return;
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
@@ -170,7 +170,7 @@ void GetAnimatedFrontpic_Conv(uint8_t* de, uint8_t frame){
     wram->wCurSpecies = wram->wCurPartySpecies;
     // CALL(aIsAPokemon);
     // RET_C ;
-    if(!IsAPokemon_Conv(wram->wCurSpecies))
+    if(!IsAPokemon(wram->wCurSpecies))
         return;
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
@@ -551,7 +551,7 @@ void GetMonBackpic_Conv(uint8_t* de, species_t species){
     // LD_A_addr(wCurPartySpecies);
     // CALL(aIsAPokemon);
     // RET_C ;
-    if(!IsAPokemon_Conv(species))
+    if(!IsAPokemon(species))
         return;
 
     // LD_A_addr(wCurPartySpecies);

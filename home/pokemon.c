@@ -13,28 +13,7 @@
 #include "../data/pokemon/unown_pic_pointers.h"
 #include "../data/pokemon/cries.h"
 
-void IsAPokemon(void){
-    //  Return carry if species a is not a Pokemon.
-    AND_A_A;
-    IF_Z goto NotAPokemon;
-    CP_A(EGG);
-    IF_Z goto Pokemon;
-    CP_A(NUM_POKEMON + 1);
-    IF_C goto Pokemon;
-
-
-NotAPokemon:
-        SCF;
-    RET;
-
-
-Pokemon:
-        AND_A_A;
-    RET;
-
-}
-
-bool IsAPokemon_Conv(species_t species) {
+bool IsAPokemon(species_t species) {
     // Pokemon index 0 is not a pokemon
     if(species == 0) return false;
 
@@ -239,7 +218,7 @@ void v_PrepMonFrontpic_Conv(uint8_t* hl){
     // LD_A_addr(wCurPartySpecies);
     // CALL(aIsAPokemon);
     // IF_C goto not_pokemon;
-    if(IsAPokemon_Conv(wram->wCurPartySpecies)) {
+    if(IsAPokemon(wram->wCurPartySpecies)) {
         // PUSH_HL;
         // LD_DE(vTiles2);
         // PREDEF(pGetMonFrontpic);
@@ -406,69 +385,8 @@ void v_PlayMonCry_Conv(species_t species){
     // RET;
 }
 
-void LoadCry(void){
-    //  Load cry bc.
-
-    CALL(aGetCryIndex);
-    RET_C ;
-
-    LDH_A_addr(hROMBank);
-    PUSH_AF;
-    LD_A(BANK(aPokemonCries));
-    RST(aBankswitch);
-
-    LD_HL(mPokemonCries);
-    for(int rept = 0; rept < MON_CRY_LENGTH; rept++){
-    ADD_HL_BC;
-    }
-
-    LD_E_hl;
-    INC_HL;
-    LD_D_hl;
-    INC_HL;
-
-    LD_A_hli;
-    LD_addr_A(wCryPitch);
-    LD_A_hli;
-    LD_addr_A(wCryPitch + 1);
-    LD_A_hli;
-    LD_addr_A(wCryLength);
-    LD_A_hl;
-    LD_addr_A(wCryLength + 1);
-
-    POP_AF;
-    RST(aBankswitch);
-    AND_A_A;
-    RET;
-
-}
-
-uint16_t LoadCry_Conv(species_t a){
-    //  Load cry bc.
-    int16_t index = GetCryIndex_Conv(a);
-    if(index < 0) return 0;
-    uint16_t i = (uint16_t)index;
-
-    uint8_t oldBank = hram->hROMBank;
-    Bankswitch(BANK(aPokemonCries));
-
-    uint16_t hl = mPokemonCries + (MON_CRY_LENGTH * i);
-
-    uint16_t de = gb_read16(hl);
-    hl += 2;
-
-    gb_write(wCryPitch, gb_read(hl++));
-    gb_write(wCryPitch + 1, gb_read(hl++));
-    gb_write(wCryLength, gb_read(hl++));
-    gb_write(wCryLength + 1, gb_read(hl));
-
-    Bankswitch(oldBank);
-
-    return de;
-}
-
 //  Load cry bc.
-const struct PokemonCry* LoadCry_Conv2(species_t a){
+const struct PokemonCry* LoadCry(species_t a){
     int16_t index = GetCryIndex_Conv2(a);
     if(index < 0) 
         return NULL;

@@ -290,7 +290,7 @@ void OverworldTextModeSwitch_Conv(void){
     // CALL(aLoadMapPart);
     LoadMapPart_Conv();
     // CALL(aSwapTextboxPalettes);
-    SwapTextboxPalettes_Conv();
+    SwapTextboxPalettes();
     // RET;
 }
 
@@ -2804,7 +2804,7 @@ void ScrollMapUp(void){
     BackupBGMapRow_Conv(wram->wBGMapBuffer, hl);
     // LD_C(2 * SCREEN_WIDTH);
     // CALL(aScrollBGMapPalettes);
-    ScrollBGMapPalettes_Conv(2 * SCREEN_WIDTH);
+    ScrollBGMapPalettes(2 * SCREEN_WIDTH);
     // LD_A_addr(wBGMapAnchor);
     // LD_E_A;
     // LD_A_addr(wBGMapAnchor + 1);
@@ -2825,7 +2825,7 @@ void ScrollMapDown(void){
     BackupBGMapRow_Conv(wram->wBGMapBuffer, hl);
     // LD_C(2 * SCREEN_WIDTH);
     // CALL(aScrollBGMapPalettes);
-    ScrollBGMapPalettes_Conv(2 * SCREEN_WIDTH);
+    ScrollBGMapPalettes(2 * SCREEN_WIDTH);
     // LD_A_addr(wBGMapAnchor);
     // LD_L_A;
     // LD_A_addr(wBGMapAnchor + 1);
@@ -2855,7 +2855,7 @@ void ScrollMapLeft(void){
     BackupBGMapColumn_Conv(wram->wBGMapBuffer, coord(0, 0, wram->wTilemap));
     // LD_C(2 * SCREEN_HEIGHT);
     // CALL(aScrollBGMapPalettes);
-    ScrollBGMapPalettes_Conv(2 * SCREEN_HEIGHT);
+    ScrollBGMapPalettes(2 * SCREEN_HEIGHT);
     // LD_A_addr(wBGMapAnchor);
     // LD_E_A;
     // LD_A_addr(wBGMapAnchor + 1);
@@ -2875,7 +2875,7 @@ void ScrollMapRight(void){
     BackupBGMapColumn_Conv(wram->wBGMapBuffer, coord(SCREEN_WIDTH - 2, 0, wram->wTilemap));
     // LD_C(2 * SCREEN_HEIGHT);
     // CALL(aScrollBGMapPalettes);
-    ScrollBGMapPalettes_Conv(2 * SCREEN_HEIGHT);
+    ScrollBGMapPalettes(2 * SCREEN_HEIGHT);
     // LD_A_addr(wBGMapAnchor);
     // LD_E_A;
     uint8_t e = LOW(wram->wBGMapAnchor);

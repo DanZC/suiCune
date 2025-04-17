@@ -1782,7 +1782,7 @@ void asm_108966(const uint8_t* de){
     // CALL(aRequest2bpp);
     CopyBytes(vram->vTiles2, de, 0x31);
     // CALL(aWaitTop);
-    WaitTop_Conv();
+    WaitTop();
     // CALL(aMobileTradeAnim_ClearTilemap);
     MobileTradeAnim_ClearTilemap();
     // hlcoord(7, 2, wTilemap);
@@ -1803,7 +1803,7 @@ void Function10898a(species_t species, uint16_t dvs){
     // CALL(aMobileTradeAnim_GetFrontpic);
     MobileTradeAnim_GetFrontpic(vram->vTiles2, species, dvs);
     // CALL(aWaitTop);
-    WaitTop_Conv();
+    WaitTop();
     // CALL(aMobileTradeAnim_ClearTilemap);
     MobileTradeAnim_ClearTilemap();
     // hlcoord(7, 2, wTilemap);
@@ -1881,7 +1881,7 @@ void MobileTradeAnim_DisplayEggData(void){
         t_next  "" //next ['"<ID>№<DOT>？？？？？"']
                 "";//db ['"@"'];
     // CALL(aWaitTop);
-    WaitTop_Conv();
+    WaitTop();
     // CALL(aMobileTradeAnim_ClearTilemap);
     MobileTradeAnim_ClearTilemap();
     // LD_A(HIGH(vBGMap1));
@@ -1905,7 +1905,7 @@ void Function108a33(void){
     static const char OddEgg[] = "";
     //db ['"なぞのタマゴ@"'];
     // CALL(aWaitTop);
-    WaitTop_Conv();
+    WaitTop();
     // CALL(aMobileTradeAnim_ClearTilemap);
     MobileTradeAnim_ClearTilemap();
     // LD_A(HIGH(vBGMap1));
@@ -1954,7 +1954,7 @@ void MobileTradeAnim_MonDisplay_UpdateBGMap(void){
     // CALL(aWaitBGMap);
     WaitBGMap_Conv();
     // CALL(aWaitTop);
-    WaitTop_Conv();
+    WaitTop();
     // LD_A(HIGH(vBGMap0));
     // LDH_addr_A(hBGMapAddress + 1);
     hram->hBGMapAddress = (hram->hBGMapAddress & 0xff) | (vBGMap0 & 0xff00);

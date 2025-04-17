@@ -392,7 +392,7 @@ static void NamingScreen_SetUpNamingScreen(void) {
     // CALL(aWaitBGMap);
     WaitBGMap_Conv();
     // CALL(aWaitTop);
-    WaitTop_Conv();
+    WaitTop();
     // CALL(aSetPalettes);
     SetPalettes_Conv();
     // CALL(aNamingScreen_InitNameEntry);
@@ -654,7 +654,7 @@ bool NamingScreen_IsTargetBox(void){
 
 void NamingScreen_InitText(void){
     // CALL(aWaitTop);
-    WaitTop_Conv();
+    WaitTop();
     // hlcoord(0, 0, wTilemap);
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // LD_A(NAMINGSCREEN_BORDER);
@@ -1756,7 +1756,7 @@ static void v_ComposeMailMessage_PlaceMailCharset(uint8_t* de){
 
 static void v_ComposeMailMessage_InitCharset(void){
     // CALL(aWaitTop);
-    WaitTop_Conv();
+    WaitTop();
     // hlcoord(0, 0, wTilemap);
     // LD_BC(6 * SCREEN_WIDTH);
     // LD_A(NAMINGSCREEN_BORDER);
@@ -1825,7 +1825,7 @@ static void v_ComposeMailMessage_InitBlankMail(void) {
     // CALL(aWaitBGMap);
     WaitBGMap_Conv();
     // CALL(aWaitTop);
-    WaitTop_Conv();
+    WaitTop();
     // LD_A(0b11100100);
     // CALL(aDmgToCgbBGPals);
     DmgToCgbBGPals_Conv(0b11100100);

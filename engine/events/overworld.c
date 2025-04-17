@@ -352,7 +352,7 @@ static uint8_t CutFunction_CheckAble(void) {
 static uint8_t CutFunction_DoCut(void) {
     // LD_HL(mScript_CutFromMenu);
     // CALL(aQueueScript);
-    QueueScript_Conv2(Script_CutFromMenu);
+    QueueScript(Script_CutFromMenu);
     // LD_A(0x81);
     // RET;
     return 0x81;
@@ -669,7 +669,7 @@ void FlashFunction(void){
 void UseFlash(void){
     // LD_HL(mScript_UseFlash);
     // JP(mQueueScript);
-    QueueScript_Conv2(Script_UseFlash);
+    QueueScript(Script_UseFlash);
 }
 
 bool Script_UseFlash(script_s* s){
@@ -760,7 +760,7 @@ static uint8_t SurfFunction_DoSurf(void) {
     GetPartyNickname();
     // LD_HL(mSurfFromMenuScript);
     // CALL(aQueueScript);
-    QueueScript_Conv2(SurfFromMenuScript);
+    QueueScript(SurfFromMenuScript);
     // LD_A(0x81);
     // RET;
     return 0x81;
@@ -1188,7 +1188,7 @@ static bool FlyFunction_FlyScript(script_s* s) {
 static uint8_t FlyFunction_DoFly(void) {
     // LD_HL(mFlyFunction_FlyScript);
     // CALL(aQueueScript);
-    QueueScript_Conv2(FlyFunction_FlyScript);
+    QueueScript(FlyFunction_FlyScript);
     // LD_A(0x81);
     // RET;
     return 0x81;
@@ -1246,7 +1246,7 @@ static uint8_t WaterfallFunction_TryWaterfall(void){
     }
     // LD_HL(mScript_WaterfallFromMenu);
     // CALL(aQueueScript);
-    QueueScript_Conv2(Script_WaterfallFromMenu);
+    QueueScript(Script_WaterfallFromMenu);
     // LD_A(0x81);
     // RET;
     return 0x81;
@@ -1550,7 +1550,7 @@ static uint8_t EscapeRopeOrDig_DoDig(void){
     if(wram->wEscapeRopeOrDigType == ESCAPE_TYPE_DIG) {
         // LD_HL(mEscapeRopeOrDig_UsedDigScript);
         // CALL(aQueueScript);
-        QueueScript_Conv2(EscapeRopeOrDig_UsedDigScript);
+        QueueScript(EscapeRopeOrDig_UsedDigScript);
         // LD_A(0x81);
         // RET;
         return 0x81;
@@ -1561,7 +1561,7 @@ static uint8_t EscapeRopeOrDig_DoDig(void){
     SpecialKabutoChamber_Conv();
     // LD_HL(mEscapeRopeOrDig_UsedEscapeRopeScript);
     // CALL(aQueueScript);
-    QueueScript_Conv2(EscapeRopeOrDig_UsedEscapeRopeScript);
+    QueueScript(EscapeRopeOrDig_UsedEscapeRopeScript);
     // LD_A(0x81);
     // RET;
     return 0x81;
@@ -1688,7 +1688,7 @@ static uint8_t TeleportFunction_DoTeleport(void){
     GetPartyNickname();
     // LD_HL(mTeleportFunction_TeleportScript);
     // CALL(aQueueScript);
-    QueueScript_Conv2(TeleportFunction_TeleportScript);
+    QueueScript(TeleportFunction_TeleportScript);
     // LD_A(0x81);
     // RET;
     return 0x81;
@@ -1758,7 +1758,7 @@ static uint8_t StrengthFunction_TryStrength(void){
 // UseStrength:
     // LD_HL(mScript_StrengthFromMenu);
     // CALL(aQueueScript);
-    QueueScript_Conv2(Script_StrengthFromMenu);
+    QueueScript(Script_StrengthFromMenu);
     // LD_A(0x81);
     // RET;
     return 0x81;
@@ -1927,7 +1927,7 @@ static uint8_t WhirlpoolFunction_TryWhirlpool(void){
 static uint8_t WhirlpoolFunction_DoWhirlpool(void){
     // LD_HL(mScript_WhirlpoolFromMenu);
     // CALL(aQueueScript);
-    QueueScript_Conv2(Script_WhirlpoolFromMenu);
+    QueueScript(Script_WhirlpoolFromMenu);
     // LD_A(0x81);
     // RET;
     return 0x81;
@@ -2212,7 +2212,7 @@ uint8_t TryHeadbuttFromMenu_Conv(void){
 
     // LD_HL(mHeadbuttFromMenuScript);
     // CALL(aQueueScript);
-    QueueScript_Conv2(HeadbuttFromMenuScript);
+    QueueScript(HeadbuttFromMenuScript);
     // LD_A(0x81);
     // RET;
     return 0x81;
@@ -2363,7 +2363,7 @@ uint8_t TryRockSmashFromMenu_Conv(void){
 
     // LD_HL(mRockSmashFromMenuScript);
     // CALL(aQueueScript);
-    QueueScript_Conv2(RockSmashFromMenuScript);
+    QueueScript(RockSmashFromMenuScript);
     // LD_A(0x81);
     // RET;
     return 0x81;
@@ -2584,7 +2584,7 @@ static uint8_t FishFunction_FishGotSomething(void) {
     // sFieldMoveData.fishingResult = 0x1; // Never read
     // LD_HL(mScript_GotABite);
     // CALL(aQueueScript);
-    QueueScript_Conv2(Script_GotABite);
+    QueueScript(Script_GotABite);
     // LD_A(0x81);
     // RET;
     return 0x81;
@@ -2597,7 +2597,7 @@ static uint8_t FishFunction_FishNoBite(void) {
     // sFieldMoveData.fishingResult = 0x2; // Never read
     // LD_HL(mScript_NotEvenANibble);
     // CALL(aQueueScript);
-    QueueScript_Conv2(Script_NotEvenANibble);
+    QueueScript(Script_NotEvenANibble);
     // LD_A(0x81);
     // RET;
     return 0x81;
@@ -2609,7 +2609,7 @@ static uint8_t FishFunction_FishNoFish(void) {
     // sFieldMoveData.fishingResult = 0x0; // Never read
     // LD_HL(mScript_NotEvenANibble2);
     // CALL(aQueueScript);
-    QueueScript_Conv2(Script_NotEvenANibble2);
+    QueueScript(Script_NotEvenANibble2);
     // LD_A(0x81);
     // RET;
     return 0x81;
@@ -2847,7 +2847,7 @@ static uint8_t BikeFunction_TryBike(void) {
         // LD_DE(mScript_GetOnBike_Register);
         // CALL(aBikeFunction_CheckIfRegistered);
         // CALL(aQueueScript);
-        QueueScript_Conv2(BikeFunction_CheckIfRegistered(Script_GetOnBike, Script_GetOnBike_Register));
+        QueueScript(BikeFunction_CheckIfRegistered(Script_GetOnBike, Script_GetOnBike_Register));
         // XOR_A_A;
         // LD_addr_A(wMusicFade);
         wram->wMusicFade = 0x0;
@@ -2893,7 +2893,7 @@ static uint8_t BikeFunction_TryBike(void) {
 
     // done:
         // CALL(aQueueScript);
-        QueueScript_Conv2(script);
+        QueueScript(script);
         // LD_A(0x1);
         // RET;
         return 0x1;

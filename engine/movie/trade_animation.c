@@ -915,7 +915,7 @@ void TradeAnim_PlaceTrademonStatsOnTubeAnim(uint8_t a){
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // CALL(aWaitTop);
-    WaitTop_Conv();
+    WaitTop();
     // LD_A(HIGH(vBGMap1));
     // LDH_addr_A(hBGMapAddress + 1);
     hram->hBGMapAddress = vBGMap1;
@@ -963,7 +963,7 @@ void TradeAnim_PlaceTrademonStatsOnTubeAnim(uint8_t a){
     // CALL(aWaitBGMap);
     WaitBGMap_Conv();
     // CALL(aWaitTop);
-    WaitTop_Conv();
+    WaitTop();
     // LD_A(HIGH(vBGMap0));
     // LDH_addr_A(hBGMapAddress + 1);
     hram->hBGMapAddress = vBGMap0;
@@ -976,7 +976,7 @@ void TradeAnim_EnterLinkTube1(void){
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // CALL(aWaitTop);
-    WaitTop_Conv();
+    WaitTop();
     // LD_A(0xa0);
     // LDH_addr_A(hSCX);
     hram->hSCX = 0xa0;
@@ -1119,7 +1119,7 @@ void TradeAnim_TextboxScrollStart(void){
 
 void TradeAnim_ScrollOutRight(void){
     // CALL(aWaitTop);
-    WaitTop_Conv();
+    WaitTop();
     // LD_A(HIGH(vBGMap1));
     // LDH_addr_A(hBGMapAddress + 1);
     hram->hBGMapAddress = vBGMap1;
@@ -1134,7 +1134,7 @@ void TradeAnim_ScrollOutRight(void){
     // CALL(aDelayFrame);
     DelayFrame();
     // CALL(aWaitTop);
-    WaitTop_Conv();
+    WaitTop();
     // LD_A(HIGH(vBGMap0));
     // LDH_addr_A(hBGMapAddress + 1);
     hram->hBGMapAddress = vBGMap0;
@@ -1295,7 +1295,7 @@ void TradeAnim_ShowFrontpic(const uint8_t* de){
     // CALL(aRequest2bpp);
     CopyBytes(vram->vTiles2, de, 0x31 * LEN_2BPP_TILE);
     // CALL(aWaitTop);
-    WaitTop_Conv();
+    WaitTop();
     // CALL(aTradeAnim_BlankTilemap);
     TradeAnim_BlankTilemap();
     // hlcoord(7, 2, wTilemap);
@@ -1433,7 +1433,7 @@ void TrademonStats_MonTemplate(void){
         t_next "OT/"
         t_next "<ID>№.";
     // CALL(aWaitTop);
-    WaitTop_Conv();
+    WaitTop();
     // CALL(aTradeAnim_BlankTilemap);
     TradeAnim_BlankTilemap();
     // LD_A(HIGH(vBGMap1));
@@ -1456,7 +1456,7 @@ void TrademonStats_Egg(void){
         t_next "OT/?????"
         t_next "<ID>№.?????";
     // CALL(aWaitTop);
-    WaitTop_Conv();
+    WaitTop();
     // CALL(aTradeAnim_BlankTilemap);
     TradeAnim_BlankTilemap();
     // LD_A(HIGH(vBGMap1));
@@ -1480,7 +1480,7 @@ void TrademonStats_WaitBGMap(void){
     // CALL(aWaitBGMap);
     WaitBGMap_Conv();
     // CALL(aWaitTop);
-    WaitTop_Conv();
+    WaitTop();
     // LD_A(HIGH(vBGMap0));
     // LDH_addr_A(hBGMapAddress + 1);
     hram->hBGMapAddress = vBGMap0;
@@ -1839,7 +1839,7 @@ void TradeAnim_TakeCareOfText(void){
         text_end
     };
     // CALL(aWaitTop);
-    WaitTop_Conv();
+    WaitTop();
     // hlcoord(0, 10, wTilemap);
     // LD_BC(8 * SCREEN_WIDTH);
     // LD_A(0x7f);

@@ -41,7 +41,7 @@ void v_CardKey(void){
             //  Let's use the Card Key.
                 // LD_HL(mv_CardKey_CardKeyScript);
                 // CALL(aQueueScript);
-                QueueScript_Conv2(CardKeyScript);
+                QueueScript(CardKeyScript);
                 // LD_A(TRUE);
                 // LD_addr_A(wItemEffectSucceeded);
                 wram->wItemEffectSucceeded = TRUE;

@@ -13,7 +13,7 @@ static bool SweetScentFromMenu_SweetScent(script_s* s);
 void SweetScentFromMenu(void){
     // LD_HL(mSweetScentFromMenu_SweetScent);
     // CALL(aQueueScript);
-    QueueScript_Conv2(SweetScentFromMenu_SweetScent);
+    QueueScript(SweetScentFromMenu_SweetScent);
     // LD_A(0x1);
     // LD_addr_A(wFieldMoveSucceeded);
     wram->wFieldMoveSucceeded = TRUE;

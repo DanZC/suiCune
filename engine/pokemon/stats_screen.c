@@ -1460,7 +1460,7 @@ static void StatsScreen_PlaceFrontpic_get_animation(void) {
     // LD_A_addr(wCurPartySpecies);
     // CALL(aIsAPokemon);
     // RET_C ;
-    if(!IsAPokemon_Conv(wram->wCurPartySpecies))
+    if(!IsAPokemon(wram->wCurPartySpecies))
         return;
     // CALL(aStatsScreen_LoadTextboxSpaceGFX);
     StatsScreen_LoadTextboxSpaceGFX();

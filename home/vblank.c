@@ -293,7 +293,7 @@ void VBlank0_Conv(void) {
 
         // CALL(aUpdatePalsIfCGB);
         // IF_C goto done;
-        if(UpdateCGBPals_Conv()) break;
+        if(UpdateCGBPals()) break;
 
         // CALL(aDMATransfer);
         // IF_C break;
@@ -481,8 +481,7 @@ void VBlank1_Conv(void) {
 
     // CALL(aUpdatePals);
     // IF_C goto done;
-    if(!UpdatePals_Conv()) {
-
+    if(!UpdatePals()) {
         // CALL(aUpdateBGMap);
         UpdateBGMap_Conv();
         // CALL(aServe2bppRequest_VBlank);
@@ -546,29 +545,10 @@ void VBlank1_Conv(void) {
     // RET;
 }
 
-void UpdatePals(void) {
-        //  update pals for either dmg or cgb
-
-    LDH_A_addr(hCGB);
-    AND_A_A;
-    JP_NZ(mUpdateCGBPals);
-
-    // update gb pals
-    LD_A_addr(wBGP);
-    LDH_addr_A(rBGP);
-    LD_A_addr(wOBP0);
-    LDH_addr_A(rOBP0);
-    LD_A_addr(wOBP1);
-    LDH_addr_A(rOBP1);
-
-    AND_A_A;
-    RET;
-}
-
 //  update pals for either dmg or cgb
-bool UpdatePals_Conv(void) {
+bool UpdatePals(void) {
     if(hram->hCGB != 0)
-        return UpdateCGBPals_Conv();
+        return UpdateCGBPals();
 
     // update gb pals
     gb_write(rBGP, wram->wBGP);
@@ -864,7 +844,7 @@ void VBlank5_Conv(void) {
 
     // CALL(aUpdatePalsIfCGB);
     // IF_C goto done;
-    if(!UpdatePalsIfCGB_Conv()){
+    if(!UpdatePalsIfCGB()){
         // CALL(aUpdateBGMap);
         UpdateBGMap_Conv();
         // CALL(aServe2bppRequest);
@@ -958,7 +938,7 @@ void VBlank6_Conv(void) {
 
     // CALL(aUpdateCGBPals);
     // IF_C goto done;
-    if(!UpdateCGBPals_Conv()){
+    if(!UpdateCGBPals()){
         // CALL(aServe2bppRequest);
         Serve2bppRequest();
         // CALL(aServe1bppRequest);

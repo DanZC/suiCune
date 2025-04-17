@@ -380,15 +380,15 @@ void init_function_pointers(void) {
     // CONVERTED(NamesPointers);
 
     // home/palettes.c
-    REDIRECTED(UpdatePalsIfCGB);
+    // CONVERTED(UpdatePalsIfCGB);
     // CONVERTED(ClearVBank1);
     // REDIRECTED(DmgToCgbObjPal0);
-    REDIRECTED(UpdateCGBPals);
+    // CONVERTED(UpdateCGBPals);
     REDIRECTED(DmgToCgbBGPals);
     REDIRECTED(DmgToCgbObjPals);
-    REDIRECTED(CopyPals);
-    // REDIRECTED(SwapTextboxPalettes);
-    // REDIRECTED(ScrollBGMapPalettes);
+    // CONVERTED(CopyPals);
+    // CONVERTED(SwapTextboxPalettes);
+    // CONVERTED(ScrollBGMapPalettes);
     REDIRECTED(ForceUpdateCGBPals);
     // REDIRECTED(DmgToCgbObjPal1);
     CONVERTED(ReloadSpritesNoPalettes);
@@ -638,7 +638,7 @@ void init_function_pointers(void) {
     // home/vblank.c
     REDIRECTED(VBlank3);
     REDIRECTED(VBlank1);
-    REDIRECTED(UpdatePals);
+    // CONVERTED(UpdatePals);
     REDIRECTED(VBlank2);
     REDIRECTED(VBlank);
     REDIRECTED(VBlank0);

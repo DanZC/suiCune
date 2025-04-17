@@ -58,7 +58,7 @@ SquirtbottleNothingScript:
 void v_Squirtbottle(void){
     // LD_HL(mv_Squirtbottle_SquirtbottleScript);
     // CALL(aQueueScript);
-    QueueScript_Conv2(SquirtbottleScript);
+    QueueScript(SquirtbottleScript);
     // LD_A(0x1);
     // LD_addr_A(wItemEffectSucceeded);
     wram->wItemEffectSucceeded = 0x1;

@@ -15,7 +15,7 @@ void v_SacredAsh(void){
 
     // LD_HL(mSacredAshScript);
     // CALL(aQueueScript);
-    QueueScript_Conv2(SacredAshScript);
+    QueueScript(SacredAshScript);
     // LD_A(0x1);
     // LD_addr_A(wItemEffectSucceeded);
     wram->wItemEffectSucceeded = TRUE;

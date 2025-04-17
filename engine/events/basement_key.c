@@ -35,7 +35,7 @@ void v_BasementKey(void){
         //  Let's use the Basement Key
             // LD_HL(mv_BasementKey_BasementKeyScript);
             // CALL(aQueueScript);
-            QueueScript_Conv2(BasementKeyScript);
+            QueueScript(BasementKeyScript);
             // LD_A(TRUE);
             // LD_addr_A(wItemEffectSucceeded);
             wram->wItemEffectSucceeded = TRUE;

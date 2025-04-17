@@ -1400,7 +1400,7 @@ void GetHatchlingFrontpic(tile_t* de, species_t a){
 void Hatch_UpdateFrontpicBGMapCenter(tile_t* hl, uint8_t b, uint8_t c, uint8_t a){
     // PUSH_AF;
     // CALL(aWaitTop);
-    WaitTop_Conv();
+    WaitTop();
     // PUSH_HL;
     // PUSH_BC;
     // hlcoord(0, 0, wTilemap);

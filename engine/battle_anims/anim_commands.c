@@ -242,7 +242,7 @@ void BattleAnimClearHud(void){
     // CALL(aBattleAnimDelayFrame);
     BattleAnimDelayFrame();
     // CALL(aWaitTop);
-    WaitTop_Conv();
+    WaitTop();
     // CALL(aClearActorHud);
     ClearActorHud();
     // LD_A(0x1);
@@ -255,7 +255,7 @@ void BattleAnimClearHud(void){
     BattleAnimDelayFrame();
     BattleAnimDelayFrame();
     // CALL(aWaitTop);
-    WaitTop_Conv();
+    WaitTop();
     // RET;
 }
 
@@ -263,7 +263,7 @@ void BattleAnimRestoreHuds(void){
     // CALL(aBattleAnimDelayFrame);
     BattleAnimDelayFrame();
     // CALL(aWaitTop);
-    WaitTop_Conv();
+    WaitTop();
 
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
@@ -289,7 +289,7 @@ void BattleAnimRestoreHuds(void){
     BattleAnimDelayFrame();
     BattleAnimDelayFrame();
     // CALL(aWaitTop);
-    WaitTop_Conv();
+    WaitTop();
     // RET;
 }
 
@@ -2796,7 +2796,7 @@ void BattleAnimCmd_Cry_Conv(uint8_t cry){
 // done_cry_tracks:
     // PUSH_HL;
     // CALL(aLoadCry);
-    const struct PokemonCry* cryData = LoadCry_Conv2(species);
+    const struct PokemonCry* cryData = LoadCry(species);
     // POP_HL;
     // IF_C goto done;
     if(cryData) {
@@ -2961,7 +2961,7 @@ void ClearBattleAnims(void){
 
 void BattleAnim_RevertPals(void){
     // CALL(aWaitTop);
-    WaitTop_Conv();
+    WaitTop();
     // LD_A(0b11100100);
     // LD_addr_A(wBGP);
     wram->wBGP = 0b11100100;
@@ -3004,14 +3004,14 @@ void BattleAnim_SetBGPals(uint8_t bgp){
     // LD_B_A;
     // LD_C(7);
     // CALL(aCopyPals);
-    CopyPals_Conv2((uint16_t*)wram_ptr(wBGPals2), (const uint16_t*)wram_ptr(wBGPals1), gb_read(rBGP), 7);
+    CopyPals(wram->wBGPals2, wram->wBGPals1, gb_read(rBGP), 7);
     // LD_HL(wOBPals2);
     // LD_DE(wOBPals1);
     // LDH_A_addr(rBGP);
     // LD_B_A;
     // LD_C(2);
     // CALL(aCopyPals);
-    CopyPals_Conv2((uint16_t*)wram_ptr(wOBPals2), (const uint16_t*)wram_ptr(wOBPals1), gb_read(rBGP), 2);
+    CopyPals(wram->wOBPals2, wram->wOBPals1, gb_read(rBGP), 2);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // LD_A(TRUE);
@@ -3038,7 +3038,7 @@ void BattleAnim_SetOBPals(uint8_t obp0){
     // LD_B_A;
     // LD_C(2);
     // CALL(aCopyPals);
-    CopyPals_Conv2((uint16_t*)(wram_ptr(wOBPals2) + PALETTE_SIZE * PAL_BATTLE_OB_GRAY), (const uint16_t*)(wram_ptr(wOBPals1) + PALETTE_SIZE * PAL_BATTLE_OB_GRAY), gb_read(rOBP0), 2);
+    CopyPals(wram->wOBPals2 + PALETTE_SIZE * PAL_BATTLE_OB_GRAY, wram->wOBPals1 + PALETTE_SIZE * PAL_BATTLE_OB_GRAY, gb_read(rOBP0), 2);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // LD_A(TRUE);

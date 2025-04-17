@@ -657,7 +657,7 @@ uint8_t StartMenu_Quit_Conv(void) {
         // LD_A(BANK(aBugCatchingContestReturnToGateScript));
         // LD_HL(mBugCatchingContestReturnToGateScript);
         // CALL(aFarQueueScript);
-        QueueScript_Conv2(BugCatchingContestReturnToGateScript);
+        QueueScript(BugCatchingContestReturnToGateScript);
         // LD_A(STARTMENURET_EXIT_MENU_RUN_SCRIPT);
         // RET;
         return STARTMENURET_EXIT_MENU_RUN_SCRIPT;

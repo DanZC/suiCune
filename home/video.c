@@ -235,28 +235,8 @@ bool UpdateBGMapBuffer_Conv(void) {
     return true;
 }
 
+//  Wait until the top third of the BG Map is being updated.
 void WaitTop(void) {
-    //  Wait until the top third of the BG Map is being updated.
-
-    LDH_A_addr(hBGMapMode);
-    AND_A_A;
-    RET_Z;
-
-    LDH_A_addr(hBGMapThird);
-    AND_A_A;
-    IF_Z goto done;
-
-    CALL(aDelayFrame);
-    JR(mWaitTop);
-
-done:
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    RET;
-}
-
-void WaitTop_Conv(void) {
-    //  Wait until the top third of the BG Map is being updated.
 
     while(1)
     {

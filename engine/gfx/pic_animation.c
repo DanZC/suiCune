@@ -583,7 +583,7 @@ bool AnimateMon_CheckIfPokemon_Conv(void){
         return false;
     // CALL(aIsAPokemon);
     // IF_C goto fail;
-    return IsAPokemon_Conv(wram->wCurPartySpecies);
+    return IsAPokemon(wram->wCurPartySpecies);
     // AND_A_A;
     // RET;
 

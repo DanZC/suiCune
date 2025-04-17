@@ -55,7 +55,7 @@ void PokeSeer(void){
 
         // CALL(aIsAPokemon);
         // IF_C goto no_mon;
-        if(!IsAPokemon_Conv(wram->wCurPartySpecies)) {
+        if(!IsAPokemon(wram->wCurPartySpecies)) {
         // no_mon:
             // RET;
             return;

@@ -73,7 +73,7 @@ void ItemFinder(void){
 // resume:
     Script_fn_t script = (found)? Script_FoundSomething: Script_FoundNothing;
     // CALL(aQueueScript);
-    QueueScript_Conv2(script);
+    QueueScript(script);
     // LD_A(0x1);
     // LD_addr_A(wItemEffectSucceeded);
     wram->wItemEffectSucceeded = 0x1;

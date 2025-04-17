@@ -31,7 +31,7 @@ void AnimateTrademonFrontpic(void){
     // LD_A_addr(wOTTrademonSpecies);
     // CALL(aIsAPokemon);
     // RET_C ;
-    if(!IsAPokemon_Conv(wram->wOTTrademon.species))
+    if(!IsAPokemon(wram->wOTTrademon.species))
         return;
     // FARCALL(aShowOTTrademonStats);
     ShowOTTrademonStats();
