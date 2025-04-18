@@ -41,23 +41,23 @@ typedef struct {
     void (*handler)(void); // This function is called when the option is selected
 } DebugMenuOption;
 
-void Handler_Fight(void);
-void Handler_Link(void);
-void Handler_Field(void);
-void Handler_SoundTest(void);
-void Handler_Subgame(void);
-void Handler_Anime(void);
-void Handler_Graphics(void);
-void Handler_Pokedex(void);
-void Handler_Trainergear(void);
-void Handler_Stats(void);
-void Handler_Pics(void);
-void Handler_Script(void);
-void Handler_TradeAnim(void);
-void Handler_BattleAnim(void);
-void Handler_Credits(void);
-void Handler_MysteryGift(void);
-void Handler_News(void);
+static void Handler_Fight(void);
+static void Handler_Link(void);
+static void Handler_Field(void);
+static void Handler_SoundTest(void);
+static void Handler_Subgame(void);
+static void Handler_Anime(void);
+static void Handler_Graphics(void);
+static void Handler_Pokedex(void);
+static void Handler_Trainergear(void);
+static void Handler_Stats(void);
+static void Handler_Pics(void);
+static void Handler_Script(void);
+static void Handler_TradeAnim(void);
+static void Handler_BattleAnim(void);
+static void Handler_Credits(void);
+static void Handler_MysteryGift(void);
+static void Handler_News(void);
 
 static DebugMenuOption debugMenuOptions[] = {
     {"FIGHT@", Handler_Fight},
@@ -204,86 +204,82 @@ void DebugMenu(void) {
     hram->hInMenu = inMenu;
 }
 
-void Handler_Fight(void) {
+static void Handler_Fight(void) {
     DebugMenu_BattleTest();
     PlayMusic(DEBUG_MENU_MUSIC);
 }
 
-void Handler_Link(void) {
-    // TODO: Implement this function
+static void Handler_Link(void) {
     DebugMenu_Link();
     PlayMusic(DEBUG_MENU_MUSIC);
 }
 
-void Handler_Field(void) {
+static void Handler_Field(void) {
     // TODO: Implement this function
 }
 
-void Handler_SoundTest(void) {
+static void Handler_SoundTest(void) {
     DebugMenu_SoundTest();
     PlayMusic(DEBUG_MENU_MUSIC);
 }
 
-void Handler_Subgame(void) {
+static void Handler_Subgame(void) {
     // TODO: Implement this function
 }
 
-void Handler_Anime(void) {
+static void Handler_Anime(void) {
     // TODO: Implement this function
 }
 
-void Handler_Graphics(void) {
-    // TODO: Implement this function
+static void Handler_Graphics(void) {
     DebugMenu_GFXTest();
     PlayMusic(DEBUG_MENU_MUSIC);
 }
 
-void Handler_Pokedex(void) {
+static void Handler_Pokedex(void) {
     // TODO: Implement this function
 }
 
-void Handler_Trainergear(void) {
+static void Handler_Trainergear(void) {
     // TODO: Implement this function
 }
 
-void Handler_Stats(void) {
-    // TODO: Implement this function
+static void Handler_Stats(void) {
     DebugMenu_Stats();
     PlayMusic(DEBUG_MENU_MUSIC);
 }
 
-void Handler_Pics(void) {
-    // TODO: Implement this function
+static void Handler_Pics(void) {
     DebugMenu_Pics();
     PlayMusic(DEBUG_MENU_MUSIC);
 }
 
-void Handler_Script(void) {
+static void Handler_Script(void) {
     DebugMenu_Scripting();
     PlayMusic(DEBUG_MENU_MUSIC);
 }
 
-void Handler_TradeAnim(void) {
+static void Handler_TradeAnim(void) {
     DebugMenu_TradeAnim();
     PlayMusic(DEBUG_MENU_MUSIC);
 }
 
-void Handler_BattleAnim(void) {
+static void Handler_BattleAnim(void) {
     DebugMenu_BattleAnim();
     PlayMusic(DEBUG_MENU_MUSIC);
 }
 
-void Handler_Credits(void) {
+static void Handler_Credits(void) {
     DebugMenu_Credits();
     PlayMusic(DEBUG_MENU_MUSIC);
 }
 
-void Handler_MysteryGift(void) {
+static void Handler_MysteryGift(void) {
     DebugMenu_MysteryGift();
     PlayMusic(DEBUG_MENU_MUSIC);
 }
 
-void Handler_News(void) {
+static void Handler_News(void) {
     DebugMenu_News();
     PlayMusic(DEBUG_MENU_MUSIC);
 }

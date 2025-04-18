@@ -451,7 +451,7 @@ void HOF_SlideFrontpic(void){
 //  Print the number of times the player has entered the Hall of Fame.
 //  If that number is at least HOF_MASTER_COUNT, print "HOF Master!" instead.
 static bool v_HallOfFamePC_DisplayMonAndStrings(uint8_t counter){
-    static const char HOFMaster[] = "\tHOF Master!";
+    static const char HOFMaster[] = "    HOF Master!";
     static const char TimeFamer[] = "    -Time Famer";
     // LD_A_addr(wHallOfFameMonCounter);
     // CP_A(PARTY_LENGTH);
@@ -642,7 +642,7 @@ bool LoadHOFTeam(void){
     // LD_DE(wHallOfFameTemp);
     // LD_BC(wHallOfFameTempEnd - wHallOfFameTemp + 1);
     // CALL(aCopyBytes);
-    CopyBytes(GBToRAMAddr(hl), &wram->wHallOfFameTemp, (wHallOfFameTempEnd - wHallOfFameTemp + 1));
+    CopyBytes(&wram->wHallOfFameTemp, GBToRAMAddr(hl), (wHallOfFameTempEnd - wHallOfFameTemp + 1));
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // AND_A_A;

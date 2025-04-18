@@ -2569,7 +2569,7 @@ void LinkTradePartiesMenuMasterLoop(void){
 }
 
 void LinkTrade_TradeStatsMenu(void){
-    static const char String_Stats_Trade[] = "STATS\t TRADE@";
+    static const char String_Stats_Trade[] = "STATS     TRADE@";
 
     static const txt_cmd_s LinkTradeCantBattleText[] = {
         text_far(v_LinkTradeCantBattleText)

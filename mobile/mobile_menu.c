@@ -2,6 +2,7 @@
 #include "mobile_menu.h"
 #include "mobile_12.h"
 #include "mobile_22.h"
+#include "mobile_45_stadium.h"
 #include "mobile_5c.h"
 #include "fixed_words.h"
 #include "../engine/menus/main_menu.h"
@@ -985,7 +986,7 @@ bool MainMenu_MobileStudium(void){
     // PUSH_BC;
     // PUSH_DE;
     // FARCALL(aMobileStudium);
-    //  TODO: Convert Mobile Stadium
+    MobileStudium();
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // POP_DE;

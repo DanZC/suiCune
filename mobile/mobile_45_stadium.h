@@ -50,7 +50,7 @@ void Function117c4a(void);
 void Function117c89(void);
 extern const struct MenuHeader MenuHeader_117cbc;
 extern const struct MenuHeader MenuHeader_117cc4;
-void YesNo117ccc(void);
+extern const char YesNo117ccc[];
 extern const txt_cmd_s MobileStadiumEntryText[];
 extern const txt_cmd_s MobileStadiumSuccessText[];
 void MobileStudium_JumptableIncrement(void);

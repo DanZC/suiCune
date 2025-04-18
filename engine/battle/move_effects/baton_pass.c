@@ -145,7 +145,6 @@ void BatonPass_LinkPlayerSwitch(void){
     LoadStandardMenuHeader_Conv();
     // LD_HL(mLinkBattleSendReceiveAction);
     // CALL(aCallBattleCore);
-// TODO: Convert LinkBattleSendReceiveAction
     LinkBattleSendReceiveAction();
     // CALL(aCloseWindow);
     CloseWindow_Conv2();
