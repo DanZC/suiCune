@@ -243,7 +243,7 @@ void WaitTop(void) {
         // LDH_A_addr(hBGMapMode);
         // AND_A_A;
         // RET_Z;
-        if(hram->hBGMapMode == 0)
+        if(hram->hBGMapMode == BGMAPMODE_NONE)
             return;
 
         // LDH_A_addr(hBGMapThird);
@@ -260,7 +260,7 @@ void WaitTop(void) {
 // done:
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // RET;
 }
 
@@ -425,6 +425,10 @@ static void UpdateBGMap_update(uint8_t* dst, const uint8_t* hl) {
     // DEC_A;  // 1
     // IF_Z goto middle;
     // 2
+#if ENHANCEMENT_DRAW_BG_IN_ONE_FRAME
+    sp = hl;
+    hram->hBGMapThird = 0;
+#else
     const uint8_t map_third = hram->hBGMapThird;
     switch(map_third) {
 
@@ -490,14 +494,18 @@ static void UpdateBGMap_update(uint8_t* dst, const uint8_t* hl) {
         hram->hBGMapThird = 1;
         break;
     }
-
+#endif
 // start:
     //  Which third to update next time
     // LDH_addr_A(hBGMapThird);
 
     //  Rows of tiles in a third
     // LD_A(THIRD_HEIGHT);
+#if ENHANCEMENT_DRAW_BG_IN_ONE_FRAME
+    uint8_t a = SCREEN_HEIGHT;
+#else
     uint8_t a = THIRD_HEIGHT;
+#endif
 
     //  Discrepancy between wTilemap and BGMap
     // LD_BC(BG_MAP_WIDTH - (SCREEN_WIDTH - 1));
@@ -558,17 +566,17 @@ void UpdateBGMap_Conv(void) {
     // LDH_A_addr(hBGMapMode);
     // AND_A_A;  // 0
     // RET_Z;
-    if(hram->hBGMapMode == 0)
+    if(hram->hBGMapMode == BGMAPMODE_NONE)
         return;
 
     //  BG Map 0
     // DEC_A;  // 1
     // IF_Z goto Tiles;
-    if(hram->hBGMapMode == 1)
+    if(hram->hBGMapMode == BGMAPMODE_UPDATE_TILES)
         return UpdateBGMap_Tiles(GBToRAMAddr(hram->hBGMapAddress));
     // DEC_A;  // 2
     // IF_Z goto Attr;
-    if(hram->hBGMapMode == 2)
+    if(hram->hBGMapMode == BGMAPMODE_UPDATE_ATTRS)
         return UpdateBGMap_Attr((uint8_t*)GBToRAMAddr(hram->hBGMapAddress) + VRAM_BANK_SIZE);
 
     //  BG Map 1
@@ -590,13 +598,13 @@ void UpdateBGMap_Conv(void) {
     uint8_t bgmapmode = hram->hBGMapMode;
     // CP_A(3);
     // CALL_Z(aUpdateBGMap_Tiles);
-    if(bgmapmode == 3) {
+    if(bgmapmode == BGMAPMODE_UPDATE_VTILES1) {
         UpdateBGMap_Tiles(vram->vBGMap1);
     }
     // POP_AF;
     // CP_A(4);
     // CALL_Z(aUpdateBGMap_Attr);
-    if(bgmapmode == 4) {
+    if(bgmapmode == BGMAPMODE_UPDATE_VATTRS1) {
         UpdateBGMap_Attr(vram->vBGMap3);
     }
 

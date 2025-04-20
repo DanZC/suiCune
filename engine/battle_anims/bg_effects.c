@@ -945,7 +945,7 @@ void BattleBGEffect_HideMon_Conv(struct BattleBGEffect* bc) {
             hram->hBGMapThird = 0x0;
             // LD_A(0x1);
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = 0x1;
+            hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
             // RET;
         } return;
         // if (index == 1) return BattleBGEffects_IncAnonJumptableIndex();
@@ -960,7 +960,7 @@ void BattleBGEffect_HideMon_Conv(struct BattleBGEffect* bc) {
         // four:
             // XOR_A_A;
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = 0x0;
+            hram->hBGMapMode = BGMAPMODE_NONE;
             // CALL(aEndBattleBGEffect);
             EndBattleBGEffect_Conv(bc);
             // RET;
@@ -1223,7 +1223,7 @@ void BattleBGEffect_BattlerObj_1Row_Conv(struct BattleBGEffect* bc) {
             ClearBox_Conv2(hl, c, b);
             // LD_A(0x1);
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = 0x1;
+            hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
             // POP_BC;
             // RET;
         } return;
@@ -1239,7 +1239,7 @@ void BattleBGEffect_BattlerObj_1Row_Conv(struct BattleBGEffect* bc) {
         // five:
             // XOR_A_A;
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = 0x0;
+            hram->hBGMapMode = BGMAPMODE_NONE;
             // CALL(aEndBattleBGEffect);
             EndBattleBGEffect_Conv(bc);
             // RET;
@@ -1421,7 +1421,7 @@ void BattleBGEffect_BattlerObj_2Row_Conv(struct BattleBGEffect* bc) {
             ClearBox_Conv2(hl, c, b);
             // LD_A(0x1);
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = 0x1;
+            hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
             // POP_BC;
             // RET;
         } return;
@@ -1437,7 +1437,7 @@ void BattleBGEffect_BattlerObj_2Row_Conv(struct BattleBGEffect* bc) {
         // five:
             // XOR_A_A;
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = 0x0;
+            hram->hBGMapMode = BGMAPMODE_NONE;
             // CALL(aEndBattleBGEffect);
             EndBattleBGEffect_Conv(bc);
             // RET;
@@ -1697,7 +1697,7 @@ anon_dw:
             hram->hBGMapThird = 0x0;
             // LD_A(0x1);
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = 0x1;
+            hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
             // CALL(aBattleBGEffects_IncAnonJumptableIndex);
             BattleBGEffects_IncAnonJumptableIndex_Conv(bc);
             // LD_HL(BG_EFFECT_STRUCT_PARAM);
@@ -1715,7 +1715,7 @@ anon_dw:
         // four:
             // XOR_A_A;
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = 0x0;
+            hram->hBGMapMode = BGMAPMODE_NONE;
             // LD_HL(BG_EFFECT_STRUCT_PARAM);
             // ADD_HL_BC;
             // LD_A_hl;
@@ -2398,7 +2398,7 @@ void BattleBGEffect_RunPicResizeScript_Conv(struct BattleBGEffect* bc, const uin
             BattleBGEffects_IncAnonJumptableIndex_Conv(bc);
             // LD_A(0x1);
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = 0x1;
+            hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
             // RET;
             return;
         } return;
@@ -2411,7 +2411,7 @@ void BattleBGEffect_RunPicResizeScript_Conv(struct BattleBGEffect* bc, const uin
         // restart:
             // XOR_A_A;
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = 0x0;
+            hram->hBGMapMode = BGMAPMODE_NONE;
             // LD_HL(BG_EFFECT_STRUCT_JT_INDEX);
             // ADD_HL_BC;
             // LD_hl(0x0);
@@ -2423,7 +2423,7 @@ void BattleBGEffect_RunPicResizeScript_Conv(struct BattleBGEffect* bc, const uin
         end:
             // XOR_A_A;
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = 0x0;
+            hram->hBGMapMode = BGMAPMODE_NONE;
             // CALL(aEndBattleBGEffect);
             EndBattleBGEffect_Conv(bc);
             // RET;

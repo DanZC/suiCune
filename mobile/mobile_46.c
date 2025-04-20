@@ -6826,7 +6826,7 @@ bool BattleTowerRoomMenu2(void){
     // LDH_addr_A(rSVBK);
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // RET;
     return result;
 }
@@ -8837,7 +8837,7 @@ void Function11ac3e(void){
 void Function11ac51(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_HL(wOptions);
     // LD_A_hl;
     // PUSH_AF;
@@ -9928,12 +9928,12 @@ void Function11b0ff(void){
         wram->wcd4c = (wram->wcd4c + 1) & 0x3;
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0;
+        hram->hBGMapMode = BGMAPMODE_NONE;
         // CALL(aFunction11b099);
         Function11b099();
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x1;
+        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // RET;
     }
     else {

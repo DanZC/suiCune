@@ -385,7 +385,7 @@ void AnimateHOFMonEntrance(struct HOFMon* mon){
     WaitBGMap_Conv();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_B(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
     // CALL(aGetSGBLayout);
     GetSGBLayout_Conv(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
@@ -408,7 +408,7 @@ void AnimateHOFMonEntrance(struct HOFMon* mon){
     WaitBGMap_Conv();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LDH_addr_A(hSCY);
     hram->hSCY = 0x0;
     // CALL(aHOF_SlideFrontpic);
@@ -653,7 +653,7 @@ bool LoadHOFTeam(void){
 void DisplayHOFMon(const struct HOFMon* mon){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_A_hli;
     // LD_addr_A(wTempMonSpecies);
     wram->wTempMon.mon.species = mon->species;
@@ -806,7 +806,7 @@ void HOF_AnimatePlayerPic(void){
     WaitBGMap_Conv();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_addr_A(wCurPartySpecies);
     wram->wCurPartySpecies = 0x0;
     // LD_B(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
@@ -840,14 +840,14 @@ void HOF_AnimatePlayerPic(void){
     WaitBGMap_Conv();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LDH_addr_A(hSCY);
     hram->hSCY = 0x0;
     // CALL(aHOF_SlideFrontpic);
     HOF_SlideFrontpic();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // hlcoord(0, 2, wTilemap);
     // LD_BC((8 << 8) | 9);
     // CALL(aTextbox);

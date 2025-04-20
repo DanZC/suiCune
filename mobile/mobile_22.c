@@ -310,14 +310,14 @@ void Mobile22_PromptButton(void){
 void Mobile22_SetBGMapMode0(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // RET;
 }
 
 void Mobile22_SetBGMapMode1(void){
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // RET;
 }
 

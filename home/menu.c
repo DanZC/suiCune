@@ -1069,7 +1069,7 @@ void Call_ExitMenu(void) {
 void VerticalMenu(void) {
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     CALL(aMenuBox);
     CALL(aUpdateSprites);
     CALL(aPlaceVerticalMenuItems);
@@ -1097,7 +1097,7 @@ okay:
 bool VerticalMenu_Conv(void) {
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aMenuBox);
     MenuBox_Conv();
     // CALL(aUpdateSprites);
@@ -1519,7 +1519,7 @@ void MenuWriteText(void) {
 void MenuWriteText_Conv(void) {
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     const struct MenuData* data = GetMenuData();
     // CALL(aGetMenuIndexSet);              // sort out the text
     const uint8_t* idxSet = GetMenuIndexSet_Conv2(data);

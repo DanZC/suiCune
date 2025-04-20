@@ -610,7 +610,7 @@ void DebugMenu_BattleTest(void) {
 }
 
 void DebugMenu_GFXTest(void) {
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     ClearBox_Conv2(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, SCREEN_HEIGHT);
     ByteFill(vram->vTiles0, 2048, 0);
     ByteFill(vram->vTiles1, 2048, 0);

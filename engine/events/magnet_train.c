@@ -141,7 +141,7 @@ void MagnetTrain(void){
     hram->hSCX = scx;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
@@ -210,7 +210,7 @@ void MagnetTrain_LoadGFX_PlayMusic(void){
     EnableLCD();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LDH_addr_A(hSCX);
     hram->hSCX = 0x0;
     // LDH_addr_A(hSCY);

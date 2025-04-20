@@ -66,7 +66,7 @@ static void EvolutionAnimation_ReplaceFrontpic(void){
     // PUSH_BC;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // hlcoord(7, 2, wTilemap);
     tile_t* hl = coord(7, 2, wram->wTilemap);
     // LD_BC((7 << 8) | 7);
@@ -98,7 +98,7 @@ static void EvolutionAnimation_ReplaceFrontpic(void){
     } while(--b != 0);
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // CALL(aWaitBGMap);
     WaitBGMap_Conv();
     // POP_BC;
@@ -350,7 +350,7 @@ static void EvolutionAnimation_EvolutionAnimation(void){
     WaitBGMap_Conv();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
 
     // LD_A_addr(wEvolutionOldSpecies);
     // LD_addr_A(wPlayerHPPal);
@@ -392,7 +392,7 @@ static void EvolutionAnimation_EvolutionAnimation(void){
 
     // LD_A(1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
 
     // CALL(aEvolutionAnimation_check_statused);
     // IF_C goto skip_cry;

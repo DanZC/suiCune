@@ -383,7 +383,7 @@ static void LinkTradeMenu_UpdateBGMapAndOAM(void) {
     hram->hOAMUpdate = oam;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // RET;
 }
 

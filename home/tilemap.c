@@ -36,12 +36,16 @@ void WaitBGMap_Conv(void) {
     //  Tell VBlank to update BG Map
     // LD_A(1);  // BG Map 0 tiles
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 1;  // BG Map 0 tiles 
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;  // BG Map 0 tiles 
 
     //  Wait for it to do its magic
     // LD_C(4);
     // CALL(aDelayFrames);
+#if ENHANCEMENT_DRAW_BG_IN_ONE_FRAME
+    DelayFrame();
+#else
     DelayFrames(4);
+#endif
 }
 
 void WaitBGMap2(void) {
@@ -72,18 +76,26 @@ void WaitBGMap2_Conv(void) {
     if(hram->hCGB != 0) {
         // LD_A(2);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 2;
+        hram->hBGMapMode = BGMAPMODE_UPDATE_ATTRS;
         // LD_C(4);
         // CALL(aDelayFrames);
+#if ENHANCEMENT_DRAW_BG_IN_ONE_FRAME
+        DelayFrame();
+#else
         DelayFrames(4);
+#endif
     }
 // bg0:
     // LD_A(1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // LD_C(4);
     // CALL(aDelayFrames);
+#if ENHANCEMENT_DRAW_BG_IN_ONE_FRAME
+    DelayFrame();
+#else
     DelayFrames(4);
+#endif
     // RET;
 }
 
@@ -125,13 +137,18 @@ dmg:
 void ApplyTilemap_Conv(void) {
     if(hram->hCGB == 0 || wram->wSpriteUpdatesEnabled == 0) {
         //  WaitBGMap
-        hram->hBGMapMode = 1;
+        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // LD_C(4);
         // CALL(aDelayFrames);
-        return DelayFrames(4);
+#if ENHANCEMENT_DRAW_BG_IN_ONE_FRAME
+        DelayFrame();
+#else
+        DelayFrames(4);
+#endif
+        return;
     }
     else {
-        hram->hBGMapMode = 1;
+        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // JR(mCopyTilemapAtOnce);
         return CopyTilemapAtOnce_Conv();
     }
@@ -208,7 +225,7 @@ wait2:
 
 void v_CopyTilemapAtOnce_Conv(void) {
     uint8_t bg_map_mode = hram->hBGMapMode;
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
 
     uint8_t map_anims = hram->hMapAnims;
     hram->hMapAnims = 0;

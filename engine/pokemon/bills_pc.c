@@ -108,7 +108,7 @@ static void v_DepositPKMN_RunJumptable(void) {
     // Init:
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0;
+        hram->hBGMapMode = BGMAPMODE_NONE;
         // CALL(aClearSprites);
         ClearSprites();
         // CALL(aCopyBoxmonSpecies);
@@ -186,14 +186,14 @@ static void v_DepositPKMN_RunJumptable(void) {
         BillsPC_UpdateSelectionCursor();
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0;
+        hram->hBGMapMode = BGMAPMODE_NONE;
         // CALL(aBillsPC_RefreshTextboxes);
         BillsPC_RefreshTextboxes();
         // CALL(aPCMonInfo);
         PCMonInfo();
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x1;
+        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // CALL(aDelayFrame);
         DelayFrame();
         // CALL(aDelayFrame);
@@ -210,7 +210,7 @@ static void v_DepositPKMN_RunJumptable(void) {
     // WhatsUp:
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0;
+        hram->hBGMapMode = BGMAPMODE_NONE;
         // CALL(aClearSprites);
         ClearSprites();
         // CALL(aBillsPC_GetSelectedPokemonSpecies);
@@ -503,7 +503,7 @@ static void v_WithdrawPKMN_RunJumptable(void){
         wram->wBillsPC_LoadedBox = NUM_BOXES + 1;
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x0;
+        hram->hBGMapMode = BGMAPMODE_NONE;
         // CALL(aClearSprites);
         ClearSprites();
         // CALL(aCopyBoxmonSpecies);
@@ -580,14 +580,14 @@ static void v_WithdrawPKMN_RunJumptable(void){
         BillsPC_UpdateSelectionCursor();
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x0;
+        hram->hBGMapMode = BGMAPMODE_NONE;
         // CALL(aBillsPC_RefreshTextboxes);
         BillsPC_RefreshTextboxes();
         // CALL(aPCMonInfo);
         PCMonInfo();
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x1;
+        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // CALL(aDelayFrame);
         DelayFrame();
         // CALL(aDelayFrame);
@@ -608,7 +608,7 @@ static void v_WithdrawPKMN_RunJumptable(void){
     // PrepSubmenu:
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x0;
+        hram->hBGMapMode = BGMAPMODE_NONE;
         // CALL(aClearSprites);
         ClearSprites();
         // CALL(aBillsPC_GetSelectedPokemonSpecies);
@@ -907,7 +907,7 @@ static void v_MovePKMNWithoutMail_RunJumptable(void){
     // Init:
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x0;
+        hram->hBGMapMode = BGMAPMODE_NONE;
         // CALL(aClearSprites);
         ClearSprites();
         // CALL(aCopyBoxmonSpecies);
@@ -998,14 +998,14 @@ static void v_MovePKMNWithoutMail_RunJumptable(void){
         BillsPC_UpdateSelectionCursor();
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x0;
+        hram->hBGMapMode = BGMAPMODE_NONE;
         // CALL(aBillsPC_RefreshTextboxes);
         BillsPC_RefreshTextboxes();
         // CALL(aPCMonInfo);
         PCMonInfo();
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x1;
+        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // CALL(aDelayFrame);
         DelayFrame();
         // CALL(aDelayFrame);
@@ -1023,7 +1023,7 @@ static void v_MovePKMNWithoutMail_RunJumptable(void){
     // PrepSubmenu:
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x0;
+        hram->hBGMapMode = BGMAPMODE_NONE;
         // CALL(aClearSprites);
         ClearSprites();
         // CALL(aBillsPC_GetSelectedPokemonSpecies);
@@ -1127,7 +1127,7 @@ static void v_MovePKMNWithoutMail_RunJumptable(void){
     // PrepInsertCursor:
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x0;
+        hram->hBGMapMode = BGMAPMODE_NONE;
         // CALL(aCopyBoxmonSpecies);
         CopyBoxmonSpecies();
         // LD_DE(mPCString_MoveToWhere);
@@ -1222,12 +1222,12 @@ static void v_MovePKMNWithoutMail_RunJumptable(void){
         BillsPC_UpdateInsertCursor();
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x0;
+        hram->hBGMapMode = BGMAPMODE_NONE;
         // CALL(aBillsPC_RefreshTextboxes);
         BillsPC_RefreshTextboxes();
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x1;
+        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // CALL(aDelayFrame);
         DelayFrame();
         // CALL(aDelayFrame);
@@ -4024,7 +4024,7 @@ void v_ChangeBox(void){
     // loop:
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x0;
+        hram->hBGMapMode = BGMAPMODE_NONE;
         // CALL(aBillsPC_PrintBoxName);
         BillsPC_PrintBoxName();
         // CALL(aBillsPC_PlaceChooseABoxString);
@@ -4062,7 +4062,7 @@ void v_ChangeBox(void){
 void BillsPC_ClearTilemap(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // hlcoord(0, 0, wTilemap);
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // LD_A(0x7f);
@@ -4431,7 +4431,7 @@ void BillsPC_PlaceChangeBoxString_Conv(uint8_t* de){
     PlaceStringSimple(de, coord(1, 16, wram->wTilemap));
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // RET;
 
 }

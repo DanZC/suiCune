@@ -182,7 +182,7 @@ uint8_t Kurt_SelectApricorn_Conv(void){
         wram->wMenuCursorPosition = wram->wMenuSelection;
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0;
+        hram->hBGMapMode = BGMAPMODE_NONE;
         // CALL(aInitScrollingMenu);
         InitScrollingMenu_Conv();
         // CALL(aUpdateSprites);
@@ -299,7 +299,7 @@ bool Kurt_SelectQuantity_Conv(void){
     // loop:
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x0;
+        hram->hBGMapMode = BGMAPMODE_NONE;
         // CALL(aMenuBox);
         MenuBox_Conv();
         // CALL(aUpdateSprites);

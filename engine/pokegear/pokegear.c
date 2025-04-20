@@ -583,7 +583,7 @@ void Pokegear_InitJumptableIndices_Conv(void){
 void InitPokegearTilemap(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // hlcoord(0, 0, wTilemap);
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // LD_A(0x4f);
@@ -757,7 +757,7 @@ PlacePhoneBars:
 }
 
 void InitPokegearTilemap_Conv(void){
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     ByteFill(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x4F);
     uint8_t card = wram->wPokegearCard & (NUM_POKEGEAR_CARDS - 1);
     switch(card)
@@ -838,11 +838,11 @@ void InitPokegearTilemap_UpdateBGMap_Conv(void) {
         return;
     }
 
-    hram->hBGMapMode = 0x2;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_ATTRS;
     // LD_C(3);
     // CALL(aDelayFrames);
     DelayFrames(3);
-    hram->hBGMapMode = 0x1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
 }
 
 void InitPokegearTilemap_PlacePhoneBars_Conv() {
@@ -1118,13 +1118,13 @@ static void PokegearClock_Joypad_UpdateClock(void) {
     // PEEK("UpdateClock");
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aPokegear_UpdateClock);
     // Pokegear_UpdateClock();
     Pokegear_UpdateClock_Conv();
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // RET;
 }
 
@@ -2152,7 +2152,7 @@ void PokegearPhone_GetDPad(void){
 done_joypad_same_page:
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aPokegearPhone_UpdateCursor);
     PokegearPhone_UpdateCursor();
     // CALL(aWaitBGMap);
@@ -2164,7 +2164,7 @@ done_joypad_same_page:
 done_joypad_update_page:
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aPokegearPhone_UpdateDisplayList);
     PokegearPhone_UpdateDisplayList();
     // CALL(aWaitBGMap);
@@ -2594,7 +2594,7 @@ bool PokegearPhoneContactSubmenu_Conv(void){
 // got_menu_data:
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // PUSH_HL;
     // PUSH_DE;
     // LD_A_de;
@@ -2683,12 +2683,12 @@ bool PokegearPhoneContactSubmenu_Conv(void){
         // a_b:
             // XOR_A_A;
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = 0;
+            hram->hBGMapMode = BGMAPMODE_NONE;
             // CALL(aPokegearPhone_UpdateDisplayList);
             PokegearPhone_UpdateDisplayList();
             // LD_A(0x1);
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = 0x1;
+            hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
             // POP_HL;
             // LDH_A_addr(hJoyPressed);
             // AND_A(B_BUTTON);
@@ -2726,7 +2726,7 @@ bool PokegearPhoneContactSubmenu_Conv(void){
                         PokegearPhone_DeletePhoneNumber();
                         // XOR_A_A;
                         // LDH_addr_A(hBGMapMode);
-                        hram->hBGMapMode = 0;
+                        hram->hBGMapMode = BGMAPMODE_NONE;
                         // CALL(aPokegearPhone_UpdateDisplayList);
                         PokegearPhone_UpdateDisplayList();
                         // LD_HL(mPokegearAskWhoCallText);
@@ -3410,13 +3410,13 @@ void UpdateRadioStation_Conv(void){
                 return;
             // XOR_A_A;
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = 0;
+            hram->hBGMapMode = BGMAPMODE_NONE;
             // hlcoord(2, 9, wTilemap);
             // CALL(aPlaceString);
             PlaceStringSimple(U82C(de), coord(2, 9, wram->wTilemap));
             // LD_A(0x1);
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = 0x1;
+            hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
             // RET;
             return;
         }
@@ -3848,7 +3848,7 @@ void NoRadioStation_Conv(void){
     wram->wPokegearRadioChannelBank = 0;
     // gb_write16(wPokegearRadioChannelAddr, 0);
     gPokegearRadioChannelAddr = NULL;
-    hram->hBGMapMode = 0x1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
 }
 
 void NoRadioMusic(void){
@@ -3881,7 +3881,7 @@ void NoRadioName(void){
 void NoRadioName_Conv(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
 
     // hlcoord(1, 8, wTilemap);
     // LD_BC((3 << 8) | 18);
@@ -4101,7 +4101,7 @@ void v_TownMap(void){
     wram->wTownMapCursorLandmark = landmark;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(av_TownMap_InitTilemap);
     v_TownMap_InitTilemap();
     // CALL(aWaitBGMap2);
@@ -4491,7 +4491,7 @@ static void v_FlyMap_HandleDPad(void){
     WaitBGMap_Conv();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // RET;
 }
 
@@ -4510,7 +4510,7 @@ uint8_t v_FlyMap(void){
     hram->hInMenu = 0x1;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // FARCALL(aClearSpriteAnims);
     ClearSpriteAnims_Conv();
     // CALL(aLoadTownMapGFX);
@@ -5164,7 +5164,7 @@ void Pokedex_GetArea(uint8_t e, species_t species){
     ClearSprites();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_A(0x1);
     // LDH_addr_A(hInMenu);
     hram->hInMenu = 0x1;
@@ -5205,7 +5205,7 @@ void Pokedex_GetArea(uint8_t e, species_t species){
     SetPalettes_Conv();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // XOR_A_A;  // JOHTO_REGION
     // CALL(aPokedex_GetArea_GetAndPlaceNest);
     Pokedex_GetArea_GetAndPlaceNest(JOHTO_REGION, species);
@@ -5300,13 +5300,17 @@ void TownMapBGUpdate_Conv(uint16_t hl){
     //  BG Map mode 2 (palettes)
         // LD_A(2);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 2;
+        hram->hBGMapMode = BGMAPMODE_UPDATE_ATTRS;
     //  The BG Map is updated in thirds, so we wait
 
     //  3 frames to update the whole screen's palettes.
         // LD_C(3);
         // CALL(aDelayFrames);
+#if ENHANCEMENT_DRAW_BG_IN_ONE_FRAME
+        DelayFrame();
+#else
         DelayFrames(3);
+#endif
     }
 // tiles:
 //  Update BG Map tiles
@@ -5315,7 +5319,7 @@ void TownMapBGUpdate_Conv(uint16_t hl){
 //  Turn off BG Map update
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // RET;
     return;
 }
@@ -5812,7 +5816,7 @@ static void EntireFlyMap_HandleDPad(void){
     WaitBGMap_Conv();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // RET;
 }
 
@@ -5837,7 +5841,7 @@ uint8_t EntireFlyMap(void){
     hram->hInMenu = 0x1;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // FARCALL(aClearSpriteAnims);
     ClearSpriteAnims_Conv();
     // CALL(aLoadTownMapGFX);

@@ -28,7 +28,7 @@ void v_InitScrollingMenu_Conv(const struct MenuData* data){
     // LD_addr_A(wMenuJoypad);
     wram->wMenuJoypad = 0;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // INC_A;
     // LDH_addr_A(hInMenu);
     hram->hInMenu = TRUE;
@@ -44,7 +44,7 @@ void v_InitScrollingMenu_Conv(const struct MenuData* data){
     ApplyTilemap_Conv();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // RET;
 }
 
@@ -93,13 +93,13 @@ void v_ScrollingMenu_Conv(const struct MenuData* data){
             ScrollingMenu_InitDisplay_Conv(data);
             // LD_A(1);
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = 1;
+            hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
             // LD_C(3);
             // CALL(aDelayFrames);
             DelayFrames(3);
             // XOR_A_A;
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = 0;
+            hram->hBGMapMode = BGMAPMODE_NONE;
             // RET;
         }
         // goto loop;
@@ -146,7 +146,7 @@ void ScrollingMenu_InitDisplay(void){
 void ScrollingMenu_InitDisplay_Conv(const struct MenuData* data){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_HL(wOptions);
     // LD_A_hl;
     // PUSH_AF;

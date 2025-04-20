@@ -1192,7 +1192,7 @@ void MobileTradeAnim_02(void){
     ClearTilemap_Conv2();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aDisableLCD);
     DisableLCD();
     // CALL(aMobileTradeAnim_ClearBGMap);
@@ -1246,7 +1246,7 @@ void MobileTradeAnim_10(void){
     ClearTilemap_Conv2();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aDisableLCD);
     DisableLCD();
     // CALL(aMobileTradeAnim_ClearBGMap);
@@ -1310,7 +1310,7 @@ void MobileTradeAnim_11(void){
     ClearTilemap_Conv2();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aDisableLCD);
     DisableLCD();
     // LD_A(0x1);

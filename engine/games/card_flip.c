@@ -219,12 +219,12 @@ static void v_CardFlip_CardFlip(void){
         PlaySFX(SFX_TRANSACTION);
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x0;
+        hram->hBGMapMode = BGMAPMODE_NONE;
         // CALL(aCardFlip_PrintCoinBalance);
         CardFlip_PrintCoinBalance();
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x1;
+        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // CALL(aWaitSFX);
         WaitSFX();
         // CALL(av_CardFlip_Increment);
@@ -241,7 +241,7 @@ static void v_CardFlip_CardFlip(void){
         };
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x0;
+        hram->hBGMapMode = BGMAPMODE_NONE;
         // hlcoord(0, 0, wTilemap);
         // LD_BC((12 << 8) | 9);
         // CALL(aCardFlip_FillGreenBox);
@@ -254,7 +254,7 @@ static void v_CardFlip_CardFlip(void){
         coord(9, 0, wram->wTilemap)[SCREEN_WIDTH * wram->wCardFlipNumCardsPlayed] = CARDFLIP_LIGHT_ON;
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x1;
+        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // LD_C(20);
         // CALL(aDelayFrames);
         DelayFrames(20);
@@ -263,7 +263,7 @@ static void v_CardFlip_CardFlip(void){
         PlaceCardFaceDown(coord(2, 0, wram->wTilemap));
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x1;
+        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // LD_C(20);
         // CALL(aDelayFrames);
         DelayFrames(20);
@@ -476,7 +476,7 @@ static void v_CardFlip_CardFlip(void){
             CardFlip_InitTilemap();
             // LD_A(0x1);
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = 0x1;
+            hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
             // CALL(aCardFlip_ShuffleDeck);
             CardFlip_ShuffleDeck();
             // LD_HL(mv_CardFlip_CardFlipShuffledText);
@@ -598,7 +598,7 @@ void PlaceCardFaceDown(tile_t* hl){
     };
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_DE(mPlaceCardFaceDown_FaceDownCardTilemap);
     // LD_BC((6 << 8) | 5);
     // CALL(aCardFlip_CopyToBox);
@@ -632,7 +632,7 @@ void CardFlip_DisplayCardFaceUp(tile_t* hl){
     #undef _C
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // PUSH_HL;
     // PUSH_HL;
 // Flip the card face up.
@@ -751,7 +751,7 @@ void CardFlip_PrintCoinBalance(void){
 void CardFlip_InitTilemap(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // hlcoord(0, 0, wTilemap);
     // LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
     // LD_A(0x29);
@@ -888,7 +888,7 @@ void CardFlip_ShiftDigitsUpOnePixel(void){
 void CardFlip_BlankDiscardedCardSlot(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_A_addr(wCardFlipFaceUpCard);
     // LD_E_A;
     // LD_D(0);

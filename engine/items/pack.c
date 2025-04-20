@@ -125,7 +125,7 @@ void Pack_RunJumptable(void) {
         // InitGFX:
             // XOR_A_A;
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = 0;
+            hram->hBGMapMode = BGMAPMODE_NONE;
             // CALL(aPack_InitGFX);
             Pack_InitGFX();
             // LD_A_addr(wPackJumptableIndex);
@@ -285,7 +285,7 @@ void Pack_RunJumptable(void) {
             DrawPocketName(TM_HM_POCKET);
             // XOR_A_A;
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = 0;
+            hram->hBGMapMode = BGMAPMODE_NONE;
             // CALL(aWaitBGMap_DrawPackGFX);
             WaitBGMap_DrawPackGFX();
             // CALL(aPack_JumptableNext);
@@ -376,7 +376,7 @@ void Pack_RunJumptable(void) {
             // declined:
                 // XOR_A_A;
                 // LDH_addr_A(hBGMapMode);
-                hram->hBGMapMode = 0x0;
+                hram->hBGMapMode = BGMAPMODE_NONE;
                 // CALL(aPack_InitGFX);
                 Pack_InitGFX();
                 // CALL(aWaitBGMap_DrawPackGFX);
@@ -708,7 +708,7 @@ void UseItem(void){
             DoItemEffect();
             // XOR_A_A;
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = 0x0;
+            hram->hBGMapMode = BGMAPMODE_NONE;
             // CALL(aPack_InitGFX);
             Pack_InitGFX();
             // CALL(aWaitBGMap_DrawPackGFX);
@@ -924,7 +924,7 @@ void GiveItem(void){
     wram->wOptions = options;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aPack_InitGFX);
     Pack_InitGFX();
     // CALL(aWaitBGMap_DrawPackGFX);
@@ -952,7 +952,7 @@ static void BattlePack_RunJumptable(void) {
         // InitGFX:
             // XOR_A_A;
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = 0;
+            hram->hBGMapMode = BGMAPMODE_NONE;
             // CALL(aPack_InitGFX);
             Pack_InitGFX();
             // LD_A_addr(wPackJumptableIndex);
@@ -1112,7 +1112,7 @@ static void BattlePack_RunJumptable(void) {
             DrawPocketName(TM_HM_POCKET);
             // XOR_A_A;
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = 0;
+            hram->hBGMapMode = BGMAPMODE_NONE;
             // CALL(aWaitBGMap_DrawPackGFX);
             WaitBGMap_DrawPackGFX();
             // LD_HL(mPackEmptyText);
@@ -1295,7 +1295,7 @@ void TMHMSubmenu(uint8_t a){
                             break;
                         // XOR_A_A;
                         // LDH_addr_A(hBGMapMode);
-                        hram->hBGMapMode = 0x0;
+                        hram->hBGMapMode = BGMAPMODE_NONE;
                         // CALL(aPack_InitGFX);
                         Pack_InitGFX();
                         // CALL(aWaitBGMap_DrawPackGFX);
@@ -1394,7 +1394,7 @@ void InitPackBuffers(void){
 void DepositSellInitPackBuffers(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_addr_A(wJumptableIndex);  // PACKSTATE_INITGFX
     wram->wJumptableIndex = PACKSTATE_INITGFX;
     // LD_addr_A(wPackJumptableIndex);  // PACKSTATE_INITGFX

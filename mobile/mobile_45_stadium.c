@@ -1006,7 +1006,7 @@ void Function117bb6(void){
     Function117c89();
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // FARCALL(aFunction118284);
     //  TODO: Convert Function118284
     // CALL(aClearSprites);

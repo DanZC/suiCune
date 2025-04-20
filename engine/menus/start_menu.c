@@ -267,7 +267,7 @@ static bool StartMenu_GetInput(void) {
 //  Return carry on exit, and no-carry on selection.
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aStartMenu__DrawMenuAccount);
     StartMenu_DrawMenuAccount();
     // CALL(aSetUpMenu);

@@ -502,7 +502,7 @@ void CallInSafeGFXMode_Conv(void(*hl)(void)) {
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     // LDH_addr_A(hMapAnims);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     hram->hMapAnims = 0;
     // LDH_A_addr(rSVBK);
     // PUSH_AF;

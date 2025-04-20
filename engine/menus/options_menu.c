@@ -82,7 +82,7 @@ void v_Option(void){
     wram->wJumptableIndex = 0;
     // INC_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // CALL(aWaitBGMap);
     WaitBGMap_Conv();
     // LD_B(SCGB_DIPLOMA);

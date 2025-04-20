@@ -13,7 +13,7 @@ void BlankScreen(void){
     DisableSpriteUpdates_Conv();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // CALL(aClearSprites);

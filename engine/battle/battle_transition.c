@@ -54,7 +54,7 @@ static void DoBattleTransition_InitGFX(void) {
     DelayFrame();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_HL(wJumptableIndex);
     // XOR_A_A;
     // LD_hli_A;
@@ -409,7 +409,7 @@ void StartTrainerBattle_SetUpBGMap(void){
     // LD_addr_A(wBattleTransitionCounter);
     wram->wBattleTransitionCounter = 0;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // RET;
 
 }
@@ -642,7 +642,7 @@ static const int8_t wedge5[] = {4, 0, 3, 0, 3, 0, 2, 0, 2, 0, 1, 0, 1, 0, 1, -1}
 
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_A_addr(wBattleTransitionCounter);
     // LD_E_A;
     // LD_D(0);
@@ -742,7 +742,7 @@ static const int8_t wedge5[] = {4, 0, 3, 0, 3, 0, 2, 0, 2, 0, 1, 0, 1, 0, 1, -1}
         }
         // LD_A(1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 1;
+        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // CALL(aDelayFrame);
         // CALL(aDelayFrame);
         DelayFrame();
@@ -756,7 +756,7 @@ static const int8_t wedge5[] = {4, 0, 3, 0, 3, 0, 2, 0, 2, 0, 1, 0, 1, 0, 1, -1}
 // end:
     // LD_A(1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // CALL(aDelayFrame);
     // CALL(aDelayFrame);
     // CALL(aDelayFrame);
@@ -765,7 +765,7 @@ static const int8_t wedge5[] = {4, 0, 3, 0, 3, 0, 2, 0, 2, 0, 1, 0, 1, 0, 1, -1}
     DelayFrame();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_A(BATTLETRANSITION_FINISH);
     // LD_addr_A(wJumptableIndex);
     wram->wJumptableIndex = BATTLETRANSITION_FINISH;
@@ -784,7 +784,7 @@ void StartTrainerBattle_SetUpForRandomScatterOutro(void){
     wram->wBattleTransitionCounter = 0x10;
     // LD_A(1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // RET;
 }
 
@@ -845,7 +845,7 @@ void StartTrainerBattle_SpeckleToBlack(void){
     // done:
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x1;
+        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // CALL(aDelayFrame);
         DelayFrame();
         // CALL(aDelayFrame);
@@ -854,7 +854,7 @@ void StartTrainerBattle_SpeckleToBlack(void){
         DelayFrame();
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0;
+        hram->hBGMapMode = BGMAPMODE_NONE;
         // LD_A(BATTLETRANSITION_FINISH);
         // LD_addr_A(wJumptableIndex);
         wram->wJumptableIndex = BATTLETRANSITION_FINISH;
@@ -959,7 +959,7 @@ void StartTrainerBattle_LoadPokeBallGraphics(void){
 
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
 
     // hlcoord(0, 0, wAttrmap);
     uint8_t* hl = wram->wAttrmap;
@@ -1056,7 +1056,7 @@ void StartTrainerBattle_LoadPokeBallGraphics(void){
     if(hram->hCGB == 0) {
         // LD_A(1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 1;
+        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // CALL(aDelayFrame);
         // CALL(aDelayFrame);
         DelayFrame();
@@ -1264,7 +1264,7 @@ void StartTrainerBattle_ZoomToBlack(void){
         // LD_H_A;
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0;
+        hram->hBGMapMode = BGMAPMODE_NONE;
         // CALL(aStartTrainerBattle_ZoomToBlack_Copy);
         StartTrainerBattle_ZoomToBlack_Copy(boxes[i].start, boxes[i].w, boxes[i].h);
         // CALL(aWaitBGMap);

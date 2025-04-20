@@ -31,7 +31,7 @@ void v_UnownPuzzle(void){
     ClearSprites();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aDisableLCD);
     // LD_HL(STARTOF("Miscellaneous"));  // includes wPuzzlePieces
     // LD_BC(SIZEOF("Miscellaneous"));

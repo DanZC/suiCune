@@ -737,7 +737,7 @@ void MainMenu_PrintCurrentTimeAndDay_Conv(void){
         return;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aMainMenu_PrintCurrentTimeAndDay_PlaceBox);
     MainMenu_PrintCurrentTimeAndDay_PlaceBox();
     // LD_HL(wOptions);
@@ -753,7 +753,7 @@ void MainMenu_PrintCurrentTimeAndDay_Conv(void){
     wram->wOptions = temp;
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // RET;
 }
 

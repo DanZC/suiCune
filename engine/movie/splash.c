@@ -203,7 +203,7 @@ void GameFreakPresentsInit(void){
     hram->hSCY = 0;
     // LD_A(1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // LD_A(144);
     // LDH_addr_A(hWY);
     hram->hWY = SCREEN_HEIGHT_PX;

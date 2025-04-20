@@ -122,7 +122,7 @@ void WritePartyMenuTilemap(void){
     bit_set(wram->wOptions, NO_TEXT_SCROLL);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // hlcoord(0, 0, wTilemap);
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // LD_A(0x7f);

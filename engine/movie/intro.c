@@ -463,7 +463,7 @@ static void IntroScene1(void){
     ClearTilemap_Conv2();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_A(0x1);
     // LDH_addr_A(rVBK);
     // gb_write(rVBK, 0x1);
@@ -583,7 +583,7 @@ static void IntroScene3(void){
     DelayFrames(TRANSITION_WAIT_FRAMES);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_A(0x1);
     // LDH_addr_A(rVBK);
     // gb_write(rVBK, 0x1);
@@ -685,7 +685,7 @@ static void IntroScene5(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     // LDH_addr_A(hLCDCPointer);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     hram->hLCDCPointer = 0;
     // LD_A(0x1);
     // LDH_addr_A(rVBK);
@@ -832,7 +832,7 @@ static void IntroScene7(void){
     DelayFrames(TRANSITION_WAIT_FRAMES);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
 
     // LD_A(0x1);
     // LDH_addr_A(rVBK);
@@ -1001,7 +1001,7 @@ static void IntroScene9(void){
     ByteFill(coord(0, 15, wram->wAttrmap), 3 * SCREEN_WIDTH, 0x3);
     // LD_A(0x2);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x2;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_ATTRS;
     // CALL(aDelayFrame);
     // CALL(aDelayFrame);
     // CALL(aDelayFrame);
@@ -1016,7 +1016,7 @@ static void IntroScene9(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     // LDH_addr_A(hBGMapAddress);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     hram->hBGMapAddress = vBGMap0 + 0x0;
     // LD_addr_A(wGlobalAnimXOffset);
     wram->wGlobalAnimXOffset = 0;
@@ -1089,7 +1089,7 @@ static void IntroScene11(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     // LDH_addr_A(hLCDCPointer);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     hram->hLCDCPointer = 0;
     // LD_A(0x1);
     // LDH_addr_A(rVBK);
@@ -1282,7 +1282,7 @@ static void IntroScene13(void){
     DelayFrames(TRANSITION_WAIT_FRAMES);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_A(0x1);
     // LDH_addr_A(rVBK);
     // gb_write(rVBK, 0x1);
@@ -1437,7 +1437,7 @@ static void IntroScene15(void){
     DelayFrames(TRANSITION_WAIT_FRAMES);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_A(0x1);
     // LDH_addr_A(rVBK);
     // gb_write(rVBK, 0x1);
@@ -1569,7 +1569,7 @@ static void IntroScene17(void){
     DelayFrames(TRANSITION_WAIT_FRAMES);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_A(0x1);
     // LDH_addr_A(rVBK);
     // gb_write(rVBK, 0x1);
@@ -1674,7 +1674,7 @@ static void IntroScene19(void){
     DelayFrames(TRANSITION_WAIT_FRAMES);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_A(0x1);
     // LDH_addr_A(rVBK);
     // gb_write(rVBK, 0x1);
@@ -1913,7 +1913,7 @@ static void IntroScene21(void){
     DelayFrames(3);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_addr_A(wIntroSceneFrameCounter);
     // LD_addr_A(wIntroSceneTimer);
     wram->wIntroSceneFrameCounter = 0;
@@ -2107,7 +2107,7 @@ static void IntroScene26(void){
     DelayFrames(TRANSITION_WAIT_FRAMES);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_A(0x1);
     // LDH_addr_A(rVBK);
     // gb_write(rVBK, 0x1);
@@ -2966,7 +2966,7 @@ static void Intro_Scene16_AnimateSuicune(void){
     // PrepareForSuicuneSwap:
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0;
+        hram->hBGMapMode = BGMAPMODE_NONE;
         // RET;
         return;
     }
@@ -3003,7 +3003,7 @@ static void Intro_ColoredSuicuneFrameSwap(void){
     } while(--bc != 0);
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // RET;
 }
 

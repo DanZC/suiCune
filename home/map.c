@@ -4323,7 +4323,7 @@ void FadeToMenu(void){
 void FadeToMenu_Conv(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aLoadStandardMenuHeader);
     LoadStandardMenuHeader_Conv();
     // FARCALL(aFadeOutPalettes);

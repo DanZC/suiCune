@@ -5310,7 +5310,7 @@ void Script_reloadmappart_Conv(script_s* s){
     (void)s;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aOverworldTextModeSwitch);
     OverworldTextModeSwitch_Conv();
     // CALL(aGetMovementPermissions);

@@ -180,7 +180,7 @@ static bool InitMapNameSign_CheckSpecialMap(uint8_t a) {
 void InitMapNameSign_Conv(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // FARCALL(aInitMapNameSign_inefficient_farcall);  // this is a waste of 6 ROM bytes and 6 stack bytes
     // RET;
 

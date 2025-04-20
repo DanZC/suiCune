@@ -456,7 +456,7 @@ void HPBarAnim_BGMapUpdate(void){
             if(wram->wCurPartyMon != 0x2 && wram->wCurPartyMon != 0x5){
                 // LD_A(0x2);
                 // LDH_addr_A(hBGMapMode);
-                hram->hBGMapMode = 0x2;
+                hram->hBGMapMode = BGMAPMODE_UPDATE_ATTRS;
                 // LD_A_C;
                 // LDH_addr_A(hBGMapThird);
                 hram->hBGMapThird = c;
@@ -467,7 +467,7 @@ void HPBarAnim_BGMapUpdate(void){
         // skip_delay:
             // LD_A(0x1);
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = 0x1;
+            hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
             // LD_A_C;
             // LDH_addr_A(hBGMapThird);
             hram->hBGMapThird = c;
@@ -485,7 +485,7 @@ void HPBarAnim_BGMapUpdate(void){
                 c++;
                 // LD_A(0x2);
                 // LDH_addr_A(hBGMapMode);
-                hram->hBGMapMode = 0x2;
+                hram->hBGMapMode = BGMAPMODE_UPDATE_ATTRS;
                 // LD_A_C;
                 // LDH_addr_A(hBGMapThird);
                 hram->hBGMapThird = c;
@@ -493,7 +493,7 @@ void HPBarAnim_BGMapUpdate(void){
                 DelayFrame();
                 // LD_A(0x1);
                 // LDH_addr_A(hBGMapMode);
-                hram->hBGMapMode = 0x1;
+                hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
                 // LD_A_C;
                 // LDH_addr_A(hBGMapThird);
                 hram->hBGMapThird = c;

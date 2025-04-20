@@ -96,7 +96,7 @@ void v_PlayBattleAnim(void){
 
     // LD_A(1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
 
     // CALL(aBattleAnimDelayFrame);
     // CALL(aBattleAnimDelayFrame);
@@ -247,7 +247,7 @@ void BattleAnimClearHud(void){
     ClearActorHud();
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // CALL(aBattleAnimDelayFrame);
     // CALL(aBattleAnimDelayFrame);
     // CALL(aBattleAnimDelayFrame);
@@ -281,7 +281,7 @@ void BattleAnimRestoreHuds(void){
 
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // CALL(aBattleAnimDelayFrame);
     // CALL(aBattleAnimDelayFrame);
     // CALL(aBattleAnimDelayFrame);
@@ -2982,7 +2982,7 @@ void BattleAnim_RevertPals(void){
     BattleAnimDelayFrame();
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // RET;
 }
 

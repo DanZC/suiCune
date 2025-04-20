@@ -2750,7 +2750,7 @@ void ItemActionText(uint8_t text){
 void ItemActionTextWaitButton(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // hlcoord(0, 0, wTilemap);
     // LD_BC(wTilemapEnd - wTilemap);
     // LD_A(0x7f);
@@ -2761,7 +2761,7 @@ void ItemActionTextWaitButton(void){
     ItemActionText(wram->wPartyMenuActionText);
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // LD_C(50);
     // CALL(aDelayFrames);
     DelayFrames(50);

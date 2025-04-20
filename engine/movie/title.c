@@ -107,7 +107,7 @@ void v_TitleScreen(void){
 //  Turn BG Map update off
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
 
 //  Reset timing variables
     // LD_HL(wJumptableIndex);
@@ -344,7 +344,7 @@ void v_TitleScreen(void){
 
 //  Update BG Map 0 (bank 0)
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
 
     // XOR_A_A;
     // LD_addr_A(wSuicuneFrame);
@@ -429,12 +429,12 @@ void SuicuneFrameIterator_Conv(void){
     uint8_t d = Frames[((a & 0b11000) << 1) >> 4];
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aLoadSuicuneFrame);
     LoadSuicuneFrame_Conv(d);
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // LD_A(0x3);
     // LDH_addr_A(hBGMapThird);
     hram->hBGMapThird = 0x3;

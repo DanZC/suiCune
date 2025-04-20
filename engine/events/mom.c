@@ -663,7 +663,7 @@ void Mom_ContinueMenuSetup(const char* de){
     // PUSH_DE;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // hlcoord(0, 0, wTilemap);
     // LD_BC((6 << 8) | 18);
     // CALL(aTextbox);
@@ -848,7 +848,7 @@ bool Mom_WithdrawDepositMenuJoypad(void){
         Mom_WithdrawDepositMenuJoypad_dpadaction();
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0;
+        hram->hBGMapMode = BGMAPMODE_NONE;
         // hlcoord(12, 6, wTilemap);
         // LD_BC(7);
         // LD_A(0x7f);

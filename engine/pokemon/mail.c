@@ -971,7 +971,7 @@ void MailboxPC(void){
         CopyMenuHeader_Conv2(&MailboxPC_TopMenuHeader);
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x0;
+        hram->hBGMapMode = BGMAPMODE_NONE;
         // CALL(aInitScrollingMenu);
         InitScrollingMenu_Conv();
         // CALL(aUpdateSprites);

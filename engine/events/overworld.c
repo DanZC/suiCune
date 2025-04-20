@@ -510,7 +510,7 @@ void CutDownTreeOrGrass(void){
     *sFieldMoveData.cutWhirlpoolOverworldBlockAddr = sFieldMoveData.cutWhirlpoolReplacementBlock;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aOverworldTextModeSwitch);
     OverworldTextModeSwitch_Conv();
     // CALL(aUpdateSprites);
@@ -2074,7 +2074,7 @@ void DisappearWhirlpool(void){
     *sFieldMoveData.cutWhirlpoolOverworldBlockAddr = sFieldMoveData.cutWhirlpoolReplacementBlock;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aOverworldTextModeSwitch);
     OverworldTextModeSwitch_Conv();
     // LD_A_addr(wCutWhirlpoolAnimationType);
@@ -2764,7 +2764,7 @@ const uint8_t MovementData_CastRod[] = {
 void PutTheRodAway(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_A(0x1);
     // LD_addr_A(wPlayerAction);
     wram->wPlayerStruct.action = 0x1;

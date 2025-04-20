@@ -99,14 +99,14 @@ void CloseText_Conv(void){
     ClearWindowData_Conv2();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aOverworldTextModeSwitch);
     OverworldTextModeSwitch_Conv();
     // CALL(av_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
     v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aSafeUpdateSprites);
     SafeUpdateSprites_Conv();
     // LD_A(0x90);
@@ -235,7 +235,7 @@ void SafeUpdateSprites_Conv(void){
     uint8_t bgmapmode = hram->hBGMapMode;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_A(0x1);
     // LDH_addr_A(hOAMUpdate);
     hram->hOAMUpdate = 0x1;

@@ -1264,7 +1264,7 @@ not_encored:
 // struggle:
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // POP_AF;
     // RET_NZ ;
     if(selected)
@@ -2095,7 +2095,7 @@ bool ResidualDamage(void){
         SubtractHPFromUser_Conv(amount);
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x1;
+        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // CALL(aRestoreHP);
         RestoreHP_Conv(amount);
         // LD_HL(mLeechSeedSapsText);
@@ -3698,7 +3698,7 @@ void HandleEnemyMonFaint(void){
 
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // LD_C(60);
     // CALL(aDelayFrames);
     DelayFrames(60);
@@ -6497,7 +6497,7 @@ void ClearEnemyMonBox(void){
 void ClearEnemyMonBox_Conv(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aExitMenu);
     ExitMenu_Conv2();
     // CALL(aClearSprites);
@@ -6595,7 +6595,7 @@ void ShowSetEnemyMonAndSendOutAnimation(void){
     UpdateEnemyHUD();
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // RET;
 }
 
@@ -7593,7 +7593,7 @@ void SendOutPlayerMon(void){
     WaitBGMap_Conv();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aGetBattleMonBackpic);
     GetBattleMonBackpic();
     // XOR_A_A;
@@ -7663,7 +7663,7 @@ void SendOutPlayerMon(void){
     UpdatePlayerHUD();
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // RET;
 }
 
@@ -8458,7 +8458,7 @@ void UpdatePlayerHUD(void){
 void DrawPlayerHUD(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
 
 // Clear the area
     // hlcoord(9, 7, wTilemap);
@@ -8501,7 +8501,7 @@ void DrawPlayerHUD(void){
 uint8_t DrawPlayerHUD_Conv(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
 
 // Clear the area
     // hlcoord(9, 7, wTilemap);
@@ -8857,7 +8857,7 @@ static uint8_t DrawEnemyHUD_draw_bar(uint8_t c, uint8_t e, uint8_t d) {
 uint8_t DrawEnemyHUD_Conv(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
 
     // hlcoord(1, 0, wTilemap);
     // LD_BC((4 << 8) | 11);
@@ -9088,7 +9088,7 @@ bool BattleMenu(void){
 BattleMenu_begin:
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aLoadTempTilemapToTilemap);
     LoadTempTilemapToTilemap();
 
@@ -9140,7 +9140,7 @@ BattleMenu_begin:
     // next:
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x1;
+        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // LD_A_addr(wBattleMenuCursorPosition);
         // CP_A(0x1);
         // JP_Z (mBattleMenu_Fight);
@@ -9277,7 +9277,7 @@ BattleMenu_begin:
             // ball:
                 // XOR_A_A;
                 // LDH_addr_A(hBGMapMode);
-                hram->hBGMapMode = 0;
+                hram->hBGMapMode = BGMAPMODE_NONE;
                 // CALL(av_LoadBattleFontsHPBar);
                 v_LoadBattleFontsHPBar();
                 // CALL(aClearSprites);
@@ -10122,7 +10122,7 @@ MoveSelectionScreen:
     CopyBytes(wram->wListMoves_MoveIndicesBuffer, moves, sizeof(*moves) * NUM_MOVES);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
 
     tile_t* hl;
     uint8_t b;
@@ -10281,7 +10281,7 @@ MoveSelectionScreen:
     // interpret_joypad:
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x1;
+        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // CALL(aScrollingMenuJoypad);
         uint8_t joypad = ScrollingMenuJoypad_Conv();
         // BIT_A(D_UP_F);
@@ -10535,7 +10535,7 @@ void MoveInfoBox(void){
     static const char Type[] = "TYPE/";
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
 
     // hlcoord(0, 8, wTilemap);
     // LD_B(3);
@@ -11859,7 +11859,7 @@ void BattleWinSlideInEnemyTrainerFrontpic(void){
         // RET_Z ;
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x0;
+        hram->hBGMapMode = BGMAPMODE_NONE;
         // LDH_addr_A(hBGMapThird);
         hram->hBGMapThird = 0x0;
         // LD_D(0x0);
@@ -11884,7 +11884,7 @@ void BattleWinSlideInEnemyTrainerFrontpic(void){
 
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x1;
+        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // LD_C(4);
         // CALL(aDelayFrames);
         DelayFrames(4);
@@ -13245,7 +13245,7 @@ void GiveExperiencePoints(void){
                 LoadTilemapToTempTilemap();
                 // LD_A(0x1);
                 // LDH_addr_A(hBGMapMode);
-                hram->hBGMapMode = 0x1;
+                hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
             }
 
         // skip_active_mon_update:
@@ -13458,13 +13458,13 @@ static void AnimateExpBar_LoopBarAnimation(uint8_t b, uint8_t c){
         // POP_DE;
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x1;
+        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // LD_C_D;
         // CALL(aDelayFrames);
         DelayFrames(d);
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x0;
+        hram->hBGMapMode = BGMAPMODE_NONE;
         // POP_BC;
         // LD_A_C;
         // CP_A_B;
@@ -13481,13 +13481,13 @@ static void AnimateExpBar_LoopBarAnimation(uint8_t b, uint8_t c){
         // POP_DE;
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x1;
+        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // LD_C_D;
         // CALL(aDelayFrames);
         DelayFrames(d);
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x0;
+        hram->hBGMapMode = BGMAPMODE_NONE;
         // DEC_D;
         // IF_NZ goto min_number_of_frames;
         // LD_D(1);
@@ -13504,7 +13504,7 @@ static void AnimateExpBar_LoopBarAnimation(uint8_t b, uint8_t c){
 // end_animation:
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // RET;
 }
 
@@ -14537,7 +14537,7 @@ void BattleIntro(void){
     gb_write(rLCDC, gb_read(rLCDC) | (1 << rLCDC_WINDOW_TILEMAP));
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aEmptyBattleTextbox);
     EmptyBattleTextbox();
     // hlcoord(9, 7, wTilemap);
@@ -14557,7 +14557,7 @@ void BattleIntro(void){
         UpdateEnemyHUD();
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // RET;
 }
 
@@ -15972,12 +15972,12 @@ void InitBattleDisplay(void){
     WaitBGMap_Conv();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // FARCALL(aBattleIntroSlidingPics);
     BattleIntroSlidingPics();
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // LD_A(0x31);
     // LDH_addr_A(hGraphicStartTile);
     hram->hGraphicStartTile = 0x31;

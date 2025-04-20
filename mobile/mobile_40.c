@@ -2173,7 +2173,7 @@ void Function1008e0(void){
     // PUSH_BC;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_A(0x03);
     // LDH_addr_A(hVBlank);
     hram->hVBlank = 0x03;
@@ -2741,7 +2741,7 @@ static uint8_t Mobile_MoveSelectionScreen_GetMoveSelection(void){
 Top:
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aMobile_MoveSelectionScreen_ListMoves);
     Mobile_MoveSelectionScreen_ListMoves();
     // CALL(aFunction100c98);
@@ -3103,7 +3103,7 @@ void Function100d67(void){
     CopyMenuHeader_Conv2(&Function100d67_MenuHeader);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aMenuBox);
     MenuBox_Conv();
     // CALL(aUpdateSprites);
@@ -10194,7 +10194,7 @@ bool Function103302(void){
 void Function103309(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_HL(wd1ea);
     // LD_BC(10);
     // XOR_A_A;

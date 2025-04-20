@@ -393,7 +393,7 @@ bool Function8b45c(uint8_t* bc){
         Function89c44(d, e, b, c);
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x1;
+        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // POP_BC;
         // CALL(aFunction8b3dd);
         done = Function8b3dd(bc, &e);

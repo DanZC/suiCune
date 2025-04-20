@@ -310,7 +310,7 @@ void MobileSystemSplashScreen_InitGFX(void){
     Function16cc02();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aEnableLCD);
     EnableLCD();
     // RET;

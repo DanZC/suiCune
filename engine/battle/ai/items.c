@@ -812,7 +812,7 @@ void AIUpdateHUD(void){
     UpdateEnemyHUD();
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // LD_HL(wEnemyItemState);
     // DEC_hl;
     wram->wEnemyItemState--;

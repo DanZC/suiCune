@@ -911,7 +911,7 @@ void StatsScreen_InitUpperHalf(void){
     StatsScreen_PlaceHPBar();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_A_addr(wBaseDexNo);
     // LD_addr_A(wTextDecimalByte);
     wram->wTextDecimalByte = wram->wBaseDexNo;
@@ -1078,7 +1078,7 @@ void StatsScreen_LoadGFX(void){
     wram->wCurSpecies = wram->wBaseDexNo;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aStatsScreen_LoadGFX_ClearBox);
     StatsScreen_LoadGFX_ClearBox();
     // CALL(aStatsScreen_LoadGFX_PageTilemap);
@@ -1822,7 +1822,7 @@ void StatsScreenSpaceGFX(void){
 void EggStatsScreen(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_HL(wCurHPPal);
     // CALL(aSetHPPal);
     SetHPPal_Conv(&wram->wCurHPPal, wram->wStatsScreenFlags);

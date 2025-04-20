@@ -33,7 +33,7 @@ void Pokepic(void){
     DelayFrames(10);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_A_addr(wCurPartySpecies);
     // LD_addr_A(wCurSpecies);
     wram->wCurSpecies = wram->wCurPartySpecies;
@@ -74,7 +74,7 @@ void ClosePokepic(void){
     GetMemSGBLayout_Conv();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aOverworldTextModeSwitch);
     OverworldTextModeSwitch_Conv();
     // CALL(aApplyTilemap);

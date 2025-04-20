@@ -937,7 +937,7 @@ bool NamingScreenJoypadLoop(void){
 static void NamingScreenJoypadLoop_UpdateStringEntry(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // hlcoord(1, 5, wTilemap);
     // CALL(aNamingScreen_IsTargetBox);
     // IF_NZ goto got_coords;
@@ -960,7 +960,7 @@ static void NamingScreenJoypadLoop_UpdateStringEntry(void){
     PlaceStringSimple(gNamingScreenDestinationPointer, gNamingScreenStringEntryCoord);
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // RET;
 }
 
@@ -1698,7 +1698,7 @@ void LoadNamingScreenGFX(void){
     // LD_addr_A(wNamingScreenLetterCase);
     wram->wNamingScreenLetterCase = 0;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_addr_A(wNamingScreenCurNameLength);
     wram->wNamingScreenCurNameLength = 0;
     // LD_A(0x7);
@@ -1852,7 +1852,7 @@ static void v_ComposeMailMessage_InitBlankMail(void) {
 static void v_ComposeMailMessage_Update(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // hlcoord(1, 1, wTilemap);
     // LD_BC((4 << 8) | 18);
     // CALL(aClearBox);
@@ -1866,7 +1866,7 @@ static void v_ComposeMailMessage_Update(void){
     PlaceStringSimple(gNamingScreenDestinationPointer, coord(2, 2, wram->wTilemap));
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // RET;
 }
 

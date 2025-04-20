@@ -1819,7 +1819,7 @@ void SetUpMoveScreenBG(void){
     ClearSprites();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // FARCALL(aLoadStatsScreenPageTilesGFX);
     LoadStatsScreenPageTilesGFX_Conv();
     // FARCALL(aClearSpriteAnims2);
@@ -1883,7 +1883,7 @@ void SetUpMoveScreenBG(void){
 void SetUpMoveList(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_addr_A(wSwappingMove);
     wram->wSwappingMove = 0;
     // LD_addr_A(wMonType);
@@ -1941,7 +1941,7 @@ void PrepareToPlaceMoveData(void){
 void PlaceMoveData(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // hlcoord(0, 10, wTilemap);
     // LD_DE(mString_MoveType_Top);
     // CALL(aPlaceString);
@@ -1991,7 +1991,7 @@ void PlaceMoveData(void){
     PrintMoveDescription_Conv(coord(1, 14, wram->wTilemap), wram->wCurSpecies);
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // RET;
 }
 

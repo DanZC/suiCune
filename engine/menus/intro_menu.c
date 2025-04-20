@@ -218,7 +218,7 @@ void DebugRoom(void) {
 void ResetWRAM(void) {
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(av_ResetWRAM);
     v_ResetWRAM();
     // RET;
@@ -592,7 +592,7 @@ bool Continue(void) {
         DisplaySaveInfoOnContinue_Conv();
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x1;
+        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // LD_C(20);
         // CALL(aDelayFrames);
         DelayFrames(20);
@@ -1015,7 +1015,7 @@ static const struct MenuHeader MenuHeader_NoDex = {
 void Continue_LoadMenuHeader_Conv(uint8_t d, uint8_t e) {
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_HL(mContinue_LoadMenuHeader_MenuHeader_Dex);
     // LD_A_addr(wStatusFlags);
     // BIT_A(STATUSFLAGS_POKEDEX_F);

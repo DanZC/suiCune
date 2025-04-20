@@ -4223,7 +4223,7 @@ void Function17e3e0(void){
     HlToCrashCheckPointer(hl);
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // CALL(aDelayFrames);
     DelayFrames(c);
     // RET;

@@ -210,7 +210,7 @@ void StartMap(void){
     // LD_BC(wMapStatusEnd - wMapStatus);
     // CALL(aByteFill);
     ByteFill(&wram->wMapStatus, wMapStatusEnd - wMapStatus, 0);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // FARCALL(aInitCallReceiveDelay);
     InitCallReceiveDelay();
     // CALL(aClearJoypad);

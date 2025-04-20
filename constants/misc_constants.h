@@ -48,3 +48,12 @@ enum {
 
 // hall of fame
 #define HOF_MASTER_COUNT 200
+
+// hBGMapMode constants
+enum {
+    BGMAPMODE_NONE,
+    BGMAPMODE_UPDATE_TILES,
+    BGMAPMODE_UPDATE_ATTRS,
+    BGMAPMODE_UPDATE_VTILES1,
+    BGMAPMODE_UPDATE_VATTRS1,
+};

@@ -2145,7 +2145,7 @@ void BuenasPassword1(void){
         uint8_t bgMapMode = hram->hBGMapMode;
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0;
+        hram->hBGMapMode = BGMAPMODE_NONE;
         // LD_DE(mBuenasPasswordChannelName);
         // hlcoord(2, 9, wTilemap);
         // CALL(aPlaceString);

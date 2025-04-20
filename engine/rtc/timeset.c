@@ -32,7 +32,7 @@ static const char String_min[] = "min.@";
 static void InitClock_ClearScreen(void) {
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // hlcoord(0, 0, wTilemap);
     // LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
     // XOR_A_A;
@@ -40,7 +40,7 @@ static void InitClock_ClearScreen(void) {
     ByteFill(coord(0, 0, wram->wTilemap), SCREEN_HEIGHT * SCREEN_WIDTH, 0);
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // RET;
 }
 
@@ -78,7 +78,7 @@ void InitClock(void){
     GetSGBLayout_Conv(SCGB_DIPLOMA);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aLoadStandardFont);
     LoadStandardFont_Conv();
     // LD_DE(mTimeSetBackgroundGFX);
@@ -850,7 +850,7 @@ static bool SetDayOfWeek_GetJoypadAction(void) {
 // finish_dpad:
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // hlcoord(10, 4, wTilemap);
     // LD_B(2);
     // LD_C(9);

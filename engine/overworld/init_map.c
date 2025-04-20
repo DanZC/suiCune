@@ -86,7 +86,7 @@ static void ReanchorBGMap_NoOAMUpdate_ReanchorBGMap(void) {
     // LDH_addr_A(hLCDCPointer);
     // LDH_addr_A(hBGMapMode);
     hram->hLCDCPointer = 0;
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_A(0x90);
     // LDH_addr_A(hWY);
     hram->hWY = 0x90;
@@ -106,7 +106,7 @@ static void ReanchorBGMap_NoOAMUpdate_ReanchorBGMap(void) {
     hram->hCGBPalUpdate = TRUE;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LDH_addr_A(hWY);
     hram->hWY = 0;
     // FARCALL(aHDMATransfer_FillBGMap0WithBlack);  // no need to farcall

@@ -130,7 +130,7 @@ void Draw2DMenu(void){
 void Draw2DMenu_Conv(const struct MenuData* data){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aMenuBox);
     MenuBox_Conv();
     // CALL(aPlace2DMenuItemStrings);
@@ -817,7 +817,7 @@ static void MenuJoypadLoop_BGMap_OAM(void) {
     hram->hOAMUpdate = temp;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // RET;
 }
 
@@ -1724,7 +1724,7 @@ done:
 void v_ExitMenu_Conv(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
 
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
@@ -1785,7 +1785,7 @@ void v_ExitMenu_Conv2(void){
     printf("gWindowStackPointer = %d\n", gWindowStackPointer - 1);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
 
     // LDH_A_addr(rSVBK);
     // PUSH_AF;

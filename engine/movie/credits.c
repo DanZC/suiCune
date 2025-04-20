@@ -123,7 +123,7 @@ void Credits(uint8_t b){
     hram->hInMenu = TRUE;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_addr_A(wCreditsPos);
     // LD_addr_A(wCreditsPos + 1);
     wram->wCreditsPos = 0;
@@ -276,7 +276,7 @@ void Credits_LoopBack(void){
 void Credits_PrepBGMapUpdate(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // JP(mCredits_Next);
     return Credits_Next();
 }
@@ -300,7 +300,7 @@ void Credits_UpdateGFXRequestPath(void){
 void Credits_RequestGFX(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_A(8);
     // LD_addr_A(wRequested2bppSize);
     // JP(mCredits_Next);
@@ -390,7 +390,7 @@ void ParseCredits(void){
 //  starting from line 5.
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // hlcoord(0, 5, wTilemap);
     // LD_BC(SCREEN_WIDTH * 12);
     // LD_A(0x7f);
@@ -438,7 +438,7 @@ void ParseCredits(void){
                 hram->hBGMapThird = 0x0;
                 // LD_A(1);
                 // LDH_addr_A(hBGMapMode);
-                hram->hBGMapMode = 1;
+                hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
 
             // done:
                 // JP(mCredits_Next);
@@ -609,7 +609,7 @@ static void ConstructCreditsTilemap_InitTopPortion(tile_t* hl) {
 void ConstructCreditsTilemap(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_A(0xc);
     // LDH_addr_A(hBGMapAddress);
     hram->hBGMapAddress = (hram->hBGMapAddress & 0xff00) | 0xc;
@@ -664,7 +664,7 @@ void ConstructCreditsTilemap(void){
     WaitBGMap2_Conv();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LDH_addr_A(hBGMapAddress);
     hram->hBGMapAddress = (hram->hBGMapAddress & 0xff00) | 0x0;
     // hlcoord(0, 0, wTilemap);

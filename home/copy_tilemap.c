@@ -24,13 +24,13 @@ void LoadTilemapToTempTilemap(void){
 void SafeLoadTempTilemapToTilemap(void){
     //     XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aLoadTempTilemapToTilemap);
     LoadTempTilemapToTilemap();
     // LD_A(1);
     // LDH_addr_A(hBGMapMode);
     // RET;
-    hram->hBGMapMode = 1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
 }
 
 //  Load wTempTilemap into wTilemap

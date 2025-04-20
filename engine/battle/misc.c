@@ -24,7 +24,7 @@ static struct PicCoords GetPlayerBackpicCoords_Conv(void){
 void v_DisappearUser(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto player;
@@ -64,7 +64,7 @@ void v_AppearUserLowerSub(void){
 void AppearUser(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto player;
@@ -95,7 +95,7 @@ void AppearUser(void){
 void FinishAppearDisappearUser(void){
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // RET;
 }
 

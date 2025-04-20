@@ -73,7 +73,7 @@ void PhoneRing_CopyTilemapAtOnce_Conv(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     uint8_t mode_temp = hram->hBGMapMode;
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
 
     // LDH_A_addr(hMapAnims);
     // PUSH_AF;

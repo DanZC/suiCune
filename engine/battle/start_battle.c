@@ -86,14 +86,14 @@ void FindFirstAliveMonAndStartBattle(void){
     v_LoadBattleFontsHPBar();
     // LD_A(1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aClearTilemap);
     ClearTilemap_Conv2();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // LDH_addr_A(hWY);
     hram->hWY = 0x0;
     // LDH_addr_A(rWY);

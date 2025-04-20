@@ -297,7 +297,7 @@ void BattleCommand_CheckTurn(void){
             UpdatePlayerHUD();
             // LD_A(0x1);
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = 0x1;
+            hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
             // LD_HL(wPlayerSubStatus1);
             // RES_hl(SUBSTATUS_NIGHTMARE);
             bit_reset(wram->wPlayerSubStatus1, SUBSTATUS_NIGHTMARE);
@@ -591,7 +591,7 @@ void CheckEnemyTurn(void){
             // CALL(aCallBattleCore);
             // LD_A(0x1);
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = 0x1;
+            hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
             // LD_HL(wEnemySubStatus1);
             // RES_hl(SUBSTATUS_NIGHTMARE);
             bit_reset(wram->wEnemySubStatus1, SUBSTATUS_NIGHTMARE);
@@ -918,7 +918,7 @@ void HitConfusion(void){
     UpdatePlayerHUD();
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // LD_C(TRUE);
     // CALL(aDoPlayerDamage);
     DoPlayerDamage_Conv(true);
@@ -7098,7 +7098,7 @@ void MinimizeDropSub(void){
 
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aCallBattleCore);
     hl();
     // CALL(aWaitBGMap);
@@ -8079,7 +8079,7 @@ void BattleCommand_RaiseSubNoAnim(void){
 // PlayerTurn:
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aCallBattleCore);
     if(hram->hBattleTurn == TURN_PLAYER)
         GetBattleMonBackpic();
@@ -8100,7 +8100,7 @@ void BattleCommand_LowerSubNoAnim(void){
 // PlayerTurn:
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aCallBattleCore);
     if(hram->hBattleTurn == TURN_PLAYER)
         DropPlayerSub();
@@ -9959,7 +9959,7 @@ void BattleCommand_Paralyze(void){
         AnimateCurrentMove();
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x1;
+        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // LD_A(BATTLE_VARS_STATUS_OPP);
         // CALL(aGetBattleVarAddr);
         // SET_hl(PAR);

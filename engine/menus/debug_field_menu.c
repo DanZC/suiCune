@@ -273,5 +273,5 @@ loop:
     hram->hOAMUpdate = oamUpdate;
     CloseWindow_Conv2();
     v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv();
-    hram->hBGMapMode = 0;
+    hram->hBGMapMode = BGMAPMODE_NONE;
 }

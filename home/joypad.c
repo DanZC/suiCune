@@ -1053,7 +1053,7 @@ void PromptButton_wait_input_Conv(void) {
 
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = 0x1;
+        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
 
         // CALL(aDelayFrame);
         DelayFrame();

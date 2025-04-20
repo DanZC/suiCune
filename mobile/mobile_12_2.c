@@ -927,7 +927,7 @@ void Function4ac58(void){
 // asm_4ac96:
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = 0x1;
+    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // CALL(aFunction4acaa);
     Function4acaa();
     // CALL(aExitMenu);
