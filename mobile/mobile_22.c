@@ -27,6 +27,7 @@
 #include "../engine/gfx/crystal_layouts.h"
 #include "../engine/gfx/load_pics.h"
 #include "../engine/gfx/place_graphic.h"
+#include "../engine/link/lan.h"
 #include "../engine/link/mystery_gift.h"
 #include "../engine/printer/printer.h"
 #include "../engine/events/battle_tower/get_trainer_class.h"
@@ -5987,6 +5988,8 @@ void Function8ab3b(void){
 }
 
 void Function8ab93(void){
+    if(!LANTryConnection())
+        return;
     // CALL(aClearBGPalettes);
     ClearBGPalettes_Conv();
     // CALL(aLoadStandardMenuHeader);
@@ -6000,6 +6003,7 @@ void Function8ab93(void){
     // CALL(aFunction89b28);
     Function89b28();
     // RET;
+    LANCloseConnection();
 }
 
 uint8_t Function8aba9(void){

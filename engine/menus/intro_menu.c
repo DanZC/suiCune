@@ -53,6 +53,7 @@
 #include "../movie/splash.h"
 #include "../movie/intro.h"
 #include "../movie/title.h"
+#include "../link/lan.h"
 #include "../../util/intro_jumptable.h"
 
 void Intro_MainMenu() {
@@ -142,7 +143,10 @@ void MysteryGift(void) {
     // FARCALL(aDoMysteryGiftIfDayHasPassed);
     DoMysteryGiftIfDayHasPassed();
     // FARCALL(aDoMysteryGift);
+    if(!LANTryConnection())
+        return;
     DoMysteryGift();
+    LANCloseConnection();
     // RET;
 }
 

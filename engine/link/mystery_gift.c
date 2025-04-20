@@ -1,7 +1,6 @@
 #include "../../constants.h"
 #include "mystery_gift.h"
 #include "mystery_gift_2.h"
-#include "lan.h"
 #include "../../util/network.h"
 #include "../../home/sram.h"
 #include "../../home/copy.h"
@@ -454,111 +453,89 @@ uint8_t ExchangeMysteryGiftData(void){
     // NOP;
     // FARCALL(aClearChannels);
     // CALL(aInitializeIRCommunicationInterrupts);
-    LANConnection();
-    if(wram->wScriptVar == FALSE)
-        return MG_CANCELED;
 
     PlaceStringSimple(U82C(String_ExchangingData_BToCancel), coord(3, 8, wram->wTilemap));
-    Network_FlushPendingPacketsAndSync();
 
-    int res;
-    do {
+    while(1) {
     // restart:
-        GetJoypad_Conv2();
         // CALL(aBeginIRCommunication);
+        BeginIRCommunication();
         // CALL(aInitializeIRCommunicationRoles);
-        res = Network_ExchangeBytes(&wram->wMysteryGiftGameVersion, wram->wMysteryGiftStaging, 80);
+        hram->hMGRole = (hram->hSerialConnectionStatus == USING_INTERNAL_CLOCK)
+            ? IR_SENDER
+            : IR_RECEIVER;
         // LDH_A_addr(hMGStatusFlags);
         // CP_A(MG_CANCELED);
         // JP_Z (mEndOrContinueMysteryGiftIRCommunication);
-        if(res == NETWORK_XCHG_NO_CONNECTION || bit_test(hram->hJoyPressed, B_BUTTON_F)) {
-            LANCloseConnection();
-            return MG_CANCELED;
-        }
         // CP_A(MG_OKAY);
         // IF_NZ goto restart;
-        DelayFrame();
-    } while(res != NETWORK_XCHG_OK);
 
-    Network_FlushPendingPacketsAndSync();
-    StagePartyDataForMysteryGift();
-    do {
-    // restart:
-        GetJoypad_Conv2();
-        // CALL(aBeginIRCommunication);
-        // CALL(aInitializeIRCommunicationRoles);
-        res = Network_ExchangeBytes(wram->wMysteryGiftTrainer, wram->wMysteryGiftStaging, sizeof(wram->wMysteryGiftTrainer));
-        // LDH_A_addr(hMGStatusFlags);
-        // CP_A(MG_CANCELED);
-        // JP_Z (mEndOrContinueMysteryGiftIRCommunication);
-        if(res == NETWORK_XCHG_NO_CONNECTION || bit_test(hram->hJoyPressed, B_BUTTON_F)) {
-            LANCloseConnection();
-            return MG_CANCELED;
+        // LDH_A_addr(hMGRole);
+        // CP_A(IR_SENDER);
+        // JR_Z (mSenderExchangeMysteryGiftDataPayloads);
+        if(hram->hMGRole == IR_SENDER) {
+            SenderExchangeMysteryGiftDataPayloads();
+            return EndOrContinueMysteryGiftIRCommunication();
         }
-        // CP_A(MG_OKAY);
+    //  receiver
+        // LD_HL(hMGExchangedByte);
+        // LD_B(1);
+        // CALL(aTryReceivingIRDataBlock);
+        // IF_NZ goto failed;
+        if(TryReceivingIRDataBlock(&hram->hMGExchangedByte, 1)) {
+            // CALL(aReceiveMysteryGiftDataPayload_GotRegionPrefix);
+            // JP_NZ (mEndOrContinueMysteryGiftIRCommunication);
+            if(!ReceiveMysteryGiftDataPayload_GotRegionPrefix())
+                return EndOrContinueMysteryGiftIRCommunication();
+            // JR(mReceiverExchangeMysteryGiftDataPayloads_GotPayload);
+            ReceiverExchangeMysteryGiftDataPayloads_GotPayload();
+            return EndOrContinueMysteryGiftIRCommunication();
+        }
+
+    // failed:
+    // Delay frame
+
+    // wait_frame:
+        // LDH_A_addr(rLY);
+        // CP_A(LY_VBLANK);
+        // IF_C goto wait_frame;
+
+        // LD_C(LOW(rRP));
+        // LD_A(rRP_ENABLE_READ_MASK);
+        // LDH_c_A;
+
+        // LD_B(60 * 4);  // 4 seconds
+
+    // continue_:
+        // PUSH_BC;
+        // CALL(aMysteryGift_UpdateJoypad);
+        // LD_B(1 << rRP_RECEIVING);
+        // LD_C(LOW(rRP));
+
+    // in_vblank:
+        // LDH_A_c;
+        // AND_A_B;
+        // LD_B_A;
+        // LDH_A_addr(rLY);
+        // CP_A(LY_VBLANK);
+        // IF_NC goto in_vblank;
+
+    // wait_vblank:
+        // LDH_A_c;
+        // AND_A_B;
+        // LD_B_A;
+        // LDH_A_addr(rLY);
+        // CP_A(LY_VBLANK);
+        // IF_C goto wait_vblank;
+        // LD_A_B;
+        // POP_BC;
+    // Restart if the 4-second timeout has elapsed
+        // DEC_B;
+        // IF_Z goto restart;
+    // Restart if rRP is not receiving data
+        // OR_A_A;
         // IF_NZ goto restart;
-        DelayFrame();
-    } while(res != NETWORK_XCHG_OK);
-
-    LANCloseConnection();
-    return MG_OKAY;
-
-    // LDH_A_addr(hMGRole);
-    // CP_A(IR_SENDER);
-    // JR_Z (mSenderExchangeMysteryGiftDataPayloads);
-//  receiver
-    // LD_HL(hMGExchangedByte);
-    // LD_B(1);
-    // CALL(aTryReceivingIRDataBlock);
-    // IF_NZ goto failed;
-    // CALL(aReceiveMysteryGiftDataPayload_GotRegionPrefix);
-    // JP_NZ (mEndOrContinueMysteryGiftIRCommunication);
-    // JR(mReceiverExchangeMysteryGiftDataPayloads_GotPayload);
-
-
-// failed:
-// Delay frame
-
-// wait_frame:
-    // LDH_A_addr(rLY);
-    // CP_A(LY_VBLANK);
-    // IF_C goto wait_frame;
-
-    // LD_C(LOW(rRP));
-    // LD_A(rRP_ENABLE_READ_MASK);
-    // LDH_c_A;
-
-    // LD_B(60 * 4);  // 4 seconds
-
-// continue_:
-    // PUSH_BC;
-    // CALL(aMysteryGift_UpdateJoypad);
-    // LD_B(1 << rRP_RECEIVING);
-    // LD_C(LOW(rRP));
-
-// in_vblank:
-    // LDH_A_c;
-    // AND_A_B;
-    // LD_B_A;
-    // LDH_A_addr(rLY);
-    // CP_A(LY_VBLANK);
-    // IF_NC goto in_vblank;
-
-// wait_vblank:
-    // LDH_A_c;
-    // AND_A_B;
-    // LD_B_A;
-    // LDH_A_addr(rLY);
-    // CP_A(LY_VBLANK);
-    // IF_C goto wait_vblank;
-    // LD_A_B;
-    // POP_BC;
-// Restart if the 4-second timeout has elapsed
-    // DEC_B;
-    // IF_Z goto restart;
-// Restart if rRP is not receiving data
-    // OR_A_A;
-    // IF_NZ goto restart;
+    }
 // Check if we've pressed the B button to cancel
     // LDH_A_addr(hMGJoypadReleased);
     // BIT_A(B_BUTTON_F);
@@ -571,203 +548,282 @@ uint8_t ExchangeMysteryGiftData(void){
 
 void ReceiverExchangeMysteryGiftDataPayloads(void){
 // Receive the data payload
-    CALL(aReceiveMysteryGiftDataPayload);
-    JP_NZ (mEndOrContinueMysteryGiftIRCommunication);
+    // CALL(aReceiveMysteryGiftDataPayload);
+    // JP_NZ (mEndOrContinueMysteryGiftIRCommunication);
+    if(!ReceiveMysteryGiftDataPayload())
+        return;
 // fallthrough
     return ReceiverExchangeMysteryGiftDataPayloads_GotPayload();
 }
 
 void ReceiverExchangeMysteryGiftDataPayloads_GotPayload(void){
 // Switch roles
-    CALL(aBeginSendingIRCommunication);
-    JP_NZ (mEndOrContinueMysteryGiftIRCommunication);
+    // CALL(aBeginSendingIRCommunication);
+    // JP_NZ (mEndOrContinueMysteryGiftIRCommunication);
+    if(!BeginSendingIRCommunication())
+        return;
 // Send the data payload
-    CALL(aSendMysteryGiftDataPayload);
-    JP_NZ (mEndOrContinueMysteryGiftIRCommunication);
+    // CALL(aSendMysteryGiftDataPayload);
+    // JP_NZ (mEndOrContinueMysteryGiftIRCommunication);
+    if(!SendMysteryGiftDataPayload())
+        return;
 // Switch roles
-    CALL(aBeginReceivingIRCommunication);
-    JP_NZ (mEndOrContinueMysteryGiftIRCommunication);
+    // CALL(aBeginReceivingIRCommunication);
+    // JP_NZ (mEndOrContinueMysteryGiftIRCommunication);
+    if(!BeginReceivingIRCommunication())
+        return;
 // Receive an empty block
-    CALL(aReceiveEmptyIRDataBlock);
-    JP(mEndOrContinueMysteryGiftIRCommunication);
-
+    // CALL(aReceiveEmptyIRDataBlock);
+    ReceiveEmptyIRDataBlock();
+    // JP(mEndOrContinueMysteryGiftIRCommunication);
 }
 
 void SenderExchangeMysteryGiftDataPayloads(void){
 // Send the data payload
-    CALL(aSendMysteryGiftDataPayload);
-    JP_NZ (mEndOrContinueMysteryGiftIRCommunication);
+    // CALL(aSendMysteryGiftDataPayload);
+    // JP_NZ (mEndOrContinueMysteryGiftIRCommunication);
+    if(!SendMysteryGiftDataPayload())
+        return;
 // Switch roles
-    CALL(aBeginReceivingIRCommunication);
-    JP_NZ (mEndOrContinueMysteryGiftIRCommunication);
+    // CALL(aBeginReceivingIRCommunication);
+    // JP_NZ (mEndOrContinueMysteryGiftIRCommunication);
+    if(!BeginReceivingIRCommunication())
+        return;
 // Receive the data payload
-    CALL(aReceiveMysteryGiftDataPayload);
-    JP_NZ (mEndOrContinueMysteryGiftIRCommunication);
+    // CALL(aReceiveMysteryGiftDataPayload);
+    // JP_NZ (mEndOrContinueMysteryGiftIRCommunication);
+    if(!ReceiveMysteryGiftDataPayload())
+        return;
 // Switch roles
-    CALL(aBeginSendingIRCommunication);
-    JP_NZ (mEndOrContinueMysteryGiftIRCommunication);
+    // CALL(aBeginSendingIRCommunication);
+    // JP_NZ (mEndOrContinueMysteryGiftIRCommunication);
+    if(!BeginSendingIRCommunication())
+        return;
 // Send an empty block
-    CALL(aSendEmptyIRDataBlock);
-    JP(mEndOrContinueMysteryGiftIRCommunication);
+    // CALL(aSendEmptyIRDataBlock);
+    SendEmptyIRDataBlock();
+    // JP(mEndOrContinueMysteryGiftIRCommunication);
 
 }
 
-void ReceiveMysteryGiftDataPayload(void){
+bool ReceiveMysteryGiftDataPayload(void){
 // Receive the region prefix
-    LD_HL(hMGExchangedByte);
-    LD_B(1);
-    CALL(aTryReceivingIRDataBlock);
-    RET_NZ ;
+    // LD_HL(hMGExchangedByte);
+    // LD_B(1);
+    // CALL(aTryReceivingIRDataBlock);
+    // RET_NZ ;
+    if(!TryReceivingIRDataBlock(&hram->hMGExchangedByte, 1))
+        return false;
 // fallthrough
     return ReceiveMysteryGiftDataPayload_GotRegionPrefix();
 }
 
-void ReceiveMysteryGiftDataPayload_GotRegionPrefix(void){
+bool ReceiveMysteryGiftDataPayload_GotRegionPrefix(void){
 // Receive an empty block
-    CALL(aReceiveEmptyIRDataBlock);
-    LDH_A_addr(hMGStatusFlags);
-    CP_A(MG_OKAY);
-    RET_NZ ;
+    // CALL(aReceiveEmptyIRDataBlock);
+    ReceiveEmptyIRDataBlock();
+    // LDH_A_addr(hMGStatusFlags);
+    // CP_A(MG_OKAY);
+    // RET_NZ ;
+    if(hram->hMGStatusFlags != MG_OKAY)
+        return false;
 // Verify the received region prefix
-    LDH_A_addr(hMGExchangedByte);
-    CP_A(REGION_PREFIX);
-    JP_NZ (mWrongMysteryGiftRegion);
-    LD_A(REGION_CODE);
-    LDH_addr_A(hMGExchangedByte);
+    // LDH_A_addr(hMGExchangedByte);
+    // CP_A(REGION_PREFIX);
+    // JP_NZ (mWrongMysteryGiftRegion);
+    if(hram->hMGExchangedByte != REGION_PREFIX)
+        return WrongMysteryGiftRegion();
+    // LD_A(REGION_CODE);
+    // LDH_addr_A(hMGExchangedByte);
+    hram->hMGExchangedByte = REGION_CODE;
 // Switch roles
-    CALL(aBeginSendingIRCommunication);
-    RET_NZ ;
+    // CALL(aBeginSendingIRCommunication);
+    // RET_NZ ;
+    if(!BeginSendingIRCommunication())
+        return false;
 // Send the region code
-    LD_HL(hMGExchangedByte);
-    LD_B(1);
-    CALL(aTrySendingIRDataBlock);
-    RET_NZ ;
+    // LD_HL(hMGExchangedByte);
+    // LD_B(1);
+    // CALL(aTrySendingIRDataBlock);
+    // RET_NZ ;
+    if(!TrySendingIRDataBlock(&hram->hMGExchangedByte, 1))
+        return false;
 // Send an empty block
-    CALL(aSendEmptyIRDataBlock);
-    LDH_A_addr(hMGStatusFlags);
-    CP_A(MG_OKAY);
-    RET_NZ ;
+    // CALL(aSendEmptyIRDataBlock);
+    SendEmptyIRDataBlock();
+    // LDH_A_addr(hMGStatusFlags);
+    // CP_A(MG_OKAY);
+    // RET_NZ ;
+    if(hram->hMGStatusFlags != MG_OKAY)
+        return false;
 // Switch roles
-    CALL(aBeginReceivingIRCommunication);
-    RET_NZ ;
+    // CALL(aBeginReceivingIRCommunication);
+    // RET_NZ ;
+    if(!BeginReceivingIRCommunication())
+        return false;
 // Receive the staged data
-    LD_HL(wMysteryGiftTrainer);
-    LD_A_addr(wMysteryGiftStagedDataLength);
-    LD_B_A;
-    CALL(aTryReceivingIRDataBlock);
-    RET_NZ ;
+    // LD_HL(wMysteryGiftTrainer);
+    // LD_A_addr(wMysteryGiftStagedDataLength);
+    // LD_B_A;
+    // CALL(aTryReceivingIRDataBlock);
+    // RET_NZ ;
+    if(!TryReceivingIRDataBlock(wram->wMysteryGiftTrainer, wram->wMysteryGiftStagedDataLength))
+        return false;
 // Receive an empty block
-    CALL(aReceiveEmptyIRDataBlock);
-    LDH_A_addr(hMGStatusFlags);
-    CP_A(MG_OKAY);
-    RET;
-
+    // CALL(aReceiveEmptyIRDataBlock);
+    ReceiveEmptyIRDataBlock();
+    // LDH_A_addr(hMGStatusFlags);
+    // CP_A(MG_OKAY);
+    // RET;
+    return hram->hMGStatusFlags == MG_OKAY;
 }
 
-void SendMysteryGiftDataPayload(void){
+bool SendMysteryGiftDataPayload(void){
 // Send the region prefix
-    LD_A(REGION_PREFIX);
-    LDH_addr_A(hMGExchangedByte);
-    LD_HL(hMGExchangedByte);
-    LD_B(1);
-    CALL(aTrySendingIRDataBlock);
-    RET_NZ ;
+    // LD_A(REGION_PREFIX);
+    // LDH_addr_A(hMGExchangedByte);
+    // LD_HL(hMGExchangedByte);
+    // LD_B(1);
+    // CALL(aTrySendingIRDataBlock);
+    // RET_NZ ;
+    if(!TrySendingIRDataBlock(&hram->hMGExchangedByte, 1))
+        return false;
 // Send an empty block
-    CALL(aSendEmptyIRDataBlock);
-    LDH_A_addr(hMGStatusFlags);
-    CP_A(MG_OKAY);
-    RET_NZ ;
+    // CALL(aSendEmptyIRDataBlock);
+    // LDH_A_addr(hMGStatusFlags);
+    // CP_A(MG_OKAY);
+    // RET_NZ ;
+    if(hram->hMGStatusFlags != MG_OKAY)
+        return false;
 // Switch roles
-    CALL(aBeginReceivingIRCommunication);
-    RET_NZ ;
+    // CALL(aBeginReceivingIRCommunication);
+    // RET_NZ ;
+    if(!BeginReceivingIRCommunication())
+        return false;
 // Receive the region code
-    LD_HL(hMGExchangedByte);
-    LD_B(1);
-    CALL(aTryReceivingIRDataBlock);
-    RET_NZ ;
+    // LD_HL(hMGExchangedByte);
+    // LD_B(1);
+    // CALL(aTryReceivingIRDataBlock);
+    // RET_NZ ;
+    if(!TryReceivingIRDataBlock(&hram->hMGExchangedByte, 1))
+        return false;
 // Receive an empty block
-    CALL(aReceiveEmptyIRDataBlock);
-    LDH_A_addr(hMGStatusFlags);
-    CP_A(MG_OKAY);
-    RET_NZ ;
+    // CALL(aReceiveEmptyIRDataBlock);
+    ReceiveEmptyIRDataBlock();
+    // LDH_A_addr(hMGStatusFlags);
+    // CP_A(MG_OKAY);
+    // RET_NZ ;
+    if(hram->hMGStatusFlags != MG_OKAY)
+        return false;
 // Verify the received region code
-    LDH_A_addr(hMGExchangedByte);
-    CP_A(REGION_CODE);
-    JP_NZ (mWrongMysteryGiftRegion);
+    // LDH_A_addr(hMGExchangedByte);
+    // CP_A(REGION_CODE);
+    // JP_NZ (mWrongMysteryGiftRegion);
+    if(hram->hMGExchangedByte != REGION_CODE)
+        return WrongMysteryGiftRegion();
 // Switch roles
-    CALL(aBeginSendingIRCommunication);
-    RET_NZ ;
+    // CALL(aBeginSendingIRCommunication);
+    // RET_NZ ;
+    if(!BeginSendingIRCommunication())
+        return false;
 // Send the staged data
-    LD_HL(wMysteryGiftStaging);
-    LD_A_addr(wMysteryGiftStagedDataLength);
-    LD_B_A;
-    CALL(aTrySendingIRDataBlock);
-    RET_NZ ;
+    // LD_HL(wMysteryGiftStaging);
+    // LD_A_addr(wMysteryGiftStagedDataLength);
+    // LD_B_A;
+    // CALL(aTrySendingIRDataBlock);
+    // RET_NZ ;
+    if(!TrySendingIRDataBlock(wram->wMysteryGiftStaging, wram->wMysteryGiftStagedDataLength))
+        return false;
 // Send an empty block
-    CALL(aSendEmptyIRDataBlock);
-    LDH_A_addr(hMGStatusFlags);
-    CP_A(MG_OKAY);
-    RET;
-
+    // CALL(aSendEmptyIRDataBlock);
+    SendEmptyIRDataBlock();
+    // LDH_A_addr(hMGStatusFlags);
+    // CP_A(MG_OKAY);
+    // RET;
+    return hram->hMGStatusFlags == MG_OKAY;
 }
 
-void EndOrContinueMysteryGiftIRCommunication(void){
-    NOP;
-    LDH_A_addr(hMGStatusFlags);
+uint8_t EndOrContinueMysteryGiftIRCommunication(void){
+begin:
+    // NOP;
+    // LDH_A_addr(hMGStatusFlags);
 // Quit if player canceled
-    CP_A(MG_CANCELED);
-    IF_Z goto quit;
+    // CP_A(MG_CANCELED);
+    // IF_Z goto quit;
 // Quit if there was a communication error
-    CP_A(MG_OKAY);
-    IF_NZ goto quit;
+    // CP_A(MG_OKAY);
+    // IF_NZ goto quit;
+    if(hram->hMGStatusFlags == MG_CANCELED 
+    || hram->hMGStatusFlags != MG_OKAY)
+        goto quit;
 // Quit if all messages are sent/received
-    LD_HL(wMysteryGiftMessageCount);
-    DEC_hl;
-    IF_Z goto quit;
+    // LD_HL(wMysteryGiftMessageCount);
+    // DEC_hl;
+    // IF_Z goto quit;
+    if(--wram->wMysteryGiftMessageCount == 0)
+        goto quit;
 // Quit if communicating with Pokémon Pikachu 2 device
-    LD_HL(wMysteryGiftTrainer);
-    LD_DE(wMysteryGiftPartnerData);
-    LD_BC(wMysteryGiftPartnerDataEnd - wMysteryGiftPartnerData);
-    CALL(aCopyBytes);
-    LD_A_addr(wMysteryGiftTrainer);  // first byte is the version
-    CP_A(POKEMON_PIKACHU_2_VERSION);
-    IF_NC goto quit;
+    // LD_HL(wMysteryGiftTrainer);
+    // LD_DE(wMysteryGiftPartnerData);
+    // LD_BC(wMysteryGiftPartnerDataEnd - wMysteryGiftPartnerData);
+    // CALL(aCopyBytes);
+    CopyBytes(&wram->wMysteryGiftGameVersion, wram->wMysteryGiftTrainer, wMysteryGiftPartnerDataEnd - wMysteryGiftPartnerData);
+    // LD_A_addr(wMysteryGiftTrainer);  // first byte is the version
+    // CP_A(POKEMON_PIKACHU_2_VERSION);
+    // IF_NC goto quit;
+    if(wram->wMysteryGiftTrainer[0] >= POKEMON_PIKACHU_2_VERSION)
+        goto quit;
 
 // Prepare the second message for wMysteryGiftTrainer
-    FARCALL(aStagePartyDataForMysteryGift);
-    CALL(aClearMysteryGiftTrainer);
-    LD_A(wMysteryGiftTrainerEnd - wMysteryGiftTrainer);
-    LD_addr_A(wMysteryGiftStagedDataLength);
+    // FARCALL(aStagePartyDataForMysteryGift);
+    StagePartyDataForMysteryGift();
+    // CALL(aClearMysteryGiftTrainer);
+    ClearMysteryGiftTrainer();
+    // LD_A(wMysteryGiftTrainerEnd - wMysteryGiftTrainer);
+    // LD_addr_A(wMysteryGiftStagedDataLength);
+    wram->wMysteryGiftStagedDataLength = wMysteryGiftTrainerEnd - wMysteryGiftTrainer;
 
-    LDH_A_addr(hMGRole);
-    CP_A(IR_SENDER);
-    IF_Z goto sender;
-//  receiver
-    CALL(aBeginReceivingIRCommunication);
-    JR_NZ (mEndOrContinueMysteryGiftIRCommunication);
-    JP(mReceiverExchangeMysteryGiftDataPayloads);
+    // LDH_A_addr(hMGRole);
+    // CP_A(IR_SENDER);
+    // IF_Z goto sender;
+    if(hram->hMGRole == IR_SENDER) {
+    // sender:
+        // CALL(aBeginSendingIRCommunication);
+        // JR_NZ (mEndOrContinueMysteryGiftIRCommunication);
+        if(!BeginSendingIRCommunication())
+            goto begin;
+        // JP(mSenderExchangeMysteryGiftDataPayloads);
+        SenderExchangeMysteryGiftDataPayloads();
+        goto begin;
+    }
+    else {
+    //  receiver
+        // CALL(aBeginReceivingIRCommunication);
+        // JR_NZ (mEndOrContinueMysteryGiftIRCommunication);
+        if(!BeginReceivingIRCommunication())
+            goto begin;
+        // JP(mReceiverExchangeMysteryGiftDataPayloads);
+        ReceiverExchangeMysteryGiftDataPayloads();
+        goto begin;
+    }
 
-
-sender:
-    CALL(aBeginSendingIRCommunication);
-    JR_NZ (mEndOrContinueMysteryGiftIRCommunication);
-    JP(mSenderExchangeMysteryGiftDataPayloads);
-
-
-quit:
-    LDH_A_addr(hMGStatusFlags);
-    PUSH_AF;
-    CALL(aEndIRCommunication);
-    XOR_A_A;
-    LDH_addr_A(rIF);
-    LDH_A_addr(rIE);
-    OR_A(1 << VBLANK);
-    LDH_addr_A(rIE);
-    NOP;
-    CALL(aDelayFrame);
-    POP_AF;
-    RET;
-
+quit:;
+    // LDH_A_addr(hMGStatusFlags);
+    // PUSH_AF;
+    uint8_t statusFlags = hram->hMGStatusFlags;
+    // CALL(aEndIRCommunication);
+    EndIRCommunication();
+    // XOR_A_A;
+    // LDH_addr_A(rIF);
+    // LDH_A_addr(rIE);
+    // OR_A(1 << VBLANK);
+    // LDH_addr_A(rIE);
+    // NOP;
+    // CALL(aDelayFrame);
+    DelayFrame();
+    // POP_AF;
+    // RET;
+    return statusFlags;
 }
 
 uint8_t ExchangeNameCardData(void){
@@ -780,11 +836,14 @@ uint8_t ExchangeNameCardData(void){
     // FARCALL(aClearChannels);
     // CALL(aInitializeIRCommunicationInterrupts);
 // TODO: Finish implementing this.
-    return MG_CANCELED;
 
 // restart:
     // CALL(aBeginIRCommunication);
+    BeginIRCommunication();
     // CALL(aInitializeIRCommunicationRoles);
+    hram->hMGRole = (hram->hSerialConnectionStatus == USING_INTERNAL_CLOCK)
+        ? IR_SENDER
+        : IR_RECEIVER;
     // LDH_A_addr(hMGStatusFlags);
     // CP_A(MG_CANCELED);
     // JP_Z (mEndNameCardIRCommunication);
@@ -794,194 +853,265 @@ uint8_t ExchangeNameCardData(void){
     // LDH_A_addr(hMGRole);
     // CP_A(IR_SENDER);
     // IF_Z goto sender;
-//  receiver
-// Receive the data payload
-    // CALL(aReceiveNameCardDataPayload);
-    // JP_NZ (mEndNameCardIRCommunication);
-// Switch roles
-    // CALL(aBeginSendingIRCommunication);
-    // JP_NZ (mEndNameCardIRCommunication);
-// Send the data payload
-    // CALL(aSendNameCardDataPayload);
-    // JP_NZ (mEndNameCardIRCommunication);
-// Switch roles
-    // CALL(aBeginReceivingIRCommunication);
-    // JP_NZ (mEndNameCardIRCommunication);
+    if(hram->hMGRole == IR_SENDER) {
+    // sender:
+    // Send the data payload
+        // CALL(aSendNameCardDataPayload);
+        // JP_NZ (mEndNameCardIRCommunication);
+        if(!SendNameCardDataPayload())
+            return EndNameCardIRCommunication();
+    // Switch roles
+        // CALL(aBeginReceivingIRCommunication);
+        // JP_NZ (mEndNameCardIRCommunication);
+        if(!BeginReceivingIRCommunication())
+            return EndNameCardIRCommunication();
+    // Receive the data payload
+        // CALL(aReceiveNameCardDataPayload);
+        // JP_NZ (mEndNameCardIRCommunication);
+        if(!ReceiveNameCardDataPayload())
+            return EndNameCardIRCommunication();
+    // Switch roles
+        // CALL(aBeginSendingIRCommunication);
+        // JP_NZ (mEndNameCardIRCommunication);
+        if(!BeginSendingIRCommunication())
+            return EndNameCardIRCommunication();
+    // Send an empty block
+        // CALL(aSendEmptyIRDataBlock);
+        SendEmptyIRDataBlock();
+        // JP(mEndNameCardIRCommunication);
+    }
+    else {
+    //  receiver
+    // Receive the data payload
+        // CALL(aReceiveNameCardDataPayload);
+        // JP_NZ (mEndNameCardIRCommunication);
+        if(!ReceiveNameCardDataPayload())
+            return EndNameCardIRCommunication();
+    // Switch roles
+        // CALL(aBeginSendingIRCommunication);
+        // JP_NZ (mEndNameCardIRCommunication);
+        if(!BeginSendingIRCommunication())
+            return EndNameCardIRCommunication();
+    // Send the data payload
+        // CALL(aSendNameCardDataPayload);
+        // JP_NZ (mEndNameCardIRCommunication);
+        if(!SendNameCardDataPayload())
+            return EndNameCardIRCommunication();
+    // Switch roles
+        // CALL(aBeginReceivingIRCommunication);
+        // JP_NZ (mEndNameCardIRCommunication);
+        if(!BeginReceivingIRCommunication())
+            return EndNameCardIRCommunication();
+    // Receive an empty block
+        // CALL(aReceiveEmptyIRDataBlock);
+        ReceiveEmptyIRDataBlock();
+        // JP(mEndNameCardIRCommunication);
+    }
+    return EndNameCardIRCommunication();
+}
+
+bool ReceiveNameCardDataPayload(void){
+// Receive the Name Card prefix
+    // LD_HL(hMGExchangedByte);
+    // LD_B(1);
+    // CALL(aTryReceivingIRDataBlock);
+    // RET_NZ ;
+    if(!TryReceivingIRDataBlock(&hram->hMGExchangedByte, 1))
+        return false;
 // Receive an empty block
     // CALL(aReceiveEmptyIRDataBlock);
-    // JP(mEndNameCardIRCommunication);
-
-
-// sender:
-// Send the data payload
-    // CALL(aSendNameCardDataPayload);
-    // JP_NZ (mEndNameCardIRCommunication);
-// Switch roles
-    // CALL(aBeginReceivingIRCommunication);
-    // JP_NZ (mEndNameCardIRCommunication);
-// Receive the data payload
-    // CALL(aReceiveNameCardDataPayload);
-    // JP_NZ (mEndNameCardIRCommunication);
+    ReceiveEmptyIRDataBlock();
+    // LDH_A_addr(hMGStatusFlags);
+    // CP_A(MG_OKAY);
+    // RET_NZ ;
+    if(hram->hMGStatusFlags != MG_OKAY)
+        return false;
+// Verify the received Name Card prefix
+    // LDH_A_addr(hMGExchangedByte);
+    // CP_A(NAME_CARD_PREFIX);
+    // JP_NZ (mWrongMysteryGiftRegion);
+    if(hram->hMGExchangedByte != NAME_CARD_PREFIX)
+        return WrongMysteryGiftRegion();
+    // SWAP_A;
+    // LDH_addr_A(hMGExchangedByte);
+    hram->hMGExchangedByte = (hram->hMGExchangedByte >> 4) | (hram->hMGExchangedByte << 4);
 // Switch roles
     // CALL(aBeginSendingIRCommunication);
-    // JP_NZ (mEndNameCardIRCommunication);
+    // RET_NZ ;
+    if(!BeginSendingIRCommunication())
+        return false;
+// Send the swapped Name Card prefix
+    // LD_HL(hMGExchangedByte);
+    // LD_B(1);
+    // CALL(aTrySendingIRDataBlock);
+    // RET_NZ ;
+    if(!TrySendingIRDataBlock(&hram->hMGExchangedByte, 1))
+        return false;
 // Send an empty block
     // CALL(aSendEmptyIRDataBlock);
-    // JP(mEndNameCardIRCommunication);
-}
-
-void ReceiveNameCardDataPayload(void){
-// Receive the Name Card prefix
-    LD_HL(hMGExchangedByte);
-    LD_B(1);
-    CALL(aTryReceivingIRDataBlock);
-    RET_NZ ;
-// Receive an empty block
-    CALL(aReceiveEmptyIRDataBlock);
-    LDH_A_addr(hMGStatusFlags);
-    CP_A(MG_OKAY);
-    RET_NZ ;
-// Verify the received Name Card prefix
-    LDH_A_addr(hMGExchangedByte);
-    CP_A(NAME_CARD_PREFIX);
-    JP_NZ (mWrongMysteryGiftRegion);
-    SWAP_A;
-    LDH_addr_A(hMGExchangedByte);
+    SendEmptyIRDataBlock();
+    // LDH_A_addr(hMGStatusFlags);
+    // CP_A(MG_OKAY);
+    // RET_NZ ;
+    if(hram->hMGStatusFlags != MG_OKAY)
+        return false;
 // Switch roles
-    CALL(aBeginSendingIRCommunication);
-    RET_NZ ;
-// Send the swapped Name Card prefix
-    LD_HL(hMGExchangedByte);
-    LD_B(1);
-    CALL(aTrySendingIRDataBlock);
-    RET_NZ ;
-// Send an empty block
-    CALL(aSendEmptyIRDataBlock);
-    LDH_A_addr(hMGStatusFlags);
-    CP_A(MG_OKAY);
-    RET_NZ ;
-// Switch roles
-    CALL(aBeginReceivingIRCommunication);
-    RET_NZ ;
+    // CALL(aBeginReceivingIRCommunication);
+    // RET_NZ ;
+    if(!BeginReceivingIRCommunication())
+        return false;
 // Receive the staged data
-    LD_HL(wNameCardData);
-    LD_A_addr(wMysteryGiftStagedDataLength);
-    LD_B_A;
-    CALL(aTryReceivingIRDataBlock);
-    RET_NZ ;
+    // LD_HL(wNameCardData);
+    // LD_A_addr(wMysteryGiftStagedDataLength);
+    // LD_B_A;
+    // CALL(aTryReceivingIRDataBlock);
+    // RET_NZ ;
+    if(!TryReceivingIRDataBlock(wram->wNameCardData, wram->wMysteryGiftStagedDataLength))
+        return false;
 // Receive an empty block
-    CALL(aReceiveEmptyIRDataBlock);
-    LDH_A_addr(hMGStatusFlags);
-    CP_A(MG_OKAY);
-    RET;
-
+    // CALL(aReceiveEmptyIRDataBlock);
+    ReceiveEmptyIRDataBlock();
+    // LDH_A_addr(hMGStatusFlags);
+    // CP_A(MG_OKAY);
+    // RET;
+    return hram->hMGStatusFlags == MG_OKAY;
 }
 
-void SendNameCardDataPayload(void){
+bool SendNameCardDataPayload(void){
 // Send the Name Card prefix
-    LD_A(NAME_CARD_PREFIX);
-    LDH_addr_A(hMGExchangedByte);
-    LD_HL(hMGExchangedByte);
-    LD_B(1);
-    CALL(aTrySendingIRDataBlock);
-    RET_NZ ;
+    // LD_A(NAME_CARD_PREFIX);
+    // LDH_addr_A(hMGExchangedByte);
+    hram->hMGExchangedByte = NAME_CARD_PREFIX;
+    // LD_HL(hMGExchangedByte);
+    // LD_B(1);
+    // CALL(aTrySendingIRDataBlock);
+    // RET_NZ ;
+    if(!TrySendingIRDataBlock(&hram->hMGExchangedByte, 1))
+        return false;
 // Send an empty block
-    CALL(aSendEmptyIRDataBlock);
-    LDH_A_addr(hMGStatusFlags);
-    CP_A(MG_OKAY);
-    RET_NZ ;
+    // CALL(aSendEmptyIRDataBlock);
+    SendEmptyIRDataBlock();
+    // LDH_A_addr(hMGStatusFlags);
+    // CP_A(MG_OKAY);
+    // RET_NZ ;
+    if(hram->hMGStatusFlags != MG_OKAY)
+        return false;
 // Switch roles
-    CALL(aBeginReceivingIRCommunication);
-    RET_NZ ;
+    // CALL(aBeginReceivingIRCommunication);
+    // RET_NZ ;
+    if(!BeginReceivingIRCommunication())
+        return false;
 // Receive the swapped Name Card prefix
-    LD_HL(hMGExchangedByte);
-    LD_B(1);
-    CALL(aTryReceivingIRDataBlock);
-    RET_NZ ;
+    // LD_HL(hMGExchangedByte);
+    // LD_B(1);
+    // CALL(aTryReceivingIRDataBlock);
+    // RET_NZ ;
+    if(!TryReceivingIRDataBlock(&hram->hMGExchangedByte, 1))
+        return false;
 // Receive an empty block
-    CALL(aReceiveEmptyIRDataBlock);
-    LDH_A_addr(hMGStatusFlags);
-    CP_A(MG_OKAY);
-    RET_NZ ;
+    // CALL(aReceiveEmptyIRDataBlock);
+    ReceiveEmptyIRDataBlock();
+    // LDH_A_addr(hMGStatusFlags);
+    // CP_A(MG_OKAY);
+    // RET_NZ ;
+    if(hram->hMGStatusFlags != MG_OKAY)
+        return false;
 // Verify the received swapped Name Card prefix
-    LDH_A_addr(hMGExchangedByte);
-    SWAP_A;
-    CP_A(NAME_CARD_PREFIX);
-    JP_NZ (mWrongMysteryGiftRegion);
+    // LDH_A_addr(hMGExchangedByte);
+    // SWAP_A;
+    // CP_A(NAME_CARD_PREFIX);
+    // JP_NZ (mWrongMysteryGiftRegion);
+    if(((hram->hMGExchangedByte >> 4) | (hram->hMGExchangedByte << 4)) != NAME_CARD_PREFIX)
+        return WrongMysteryGiftRegion();
 // Switch roles
-    CALL(aBeginSendingIRCommunication);
-    RET_NZ ;
+    // CALL(aBeginSendingIRCommunication);
+    // RET_NZ ;
+    if(!BeginSendingIRCommunication())
+        return false;
 // Send the staged data
-    LD_HL(wMysteryGiftStaging);
-    LD_A_addr(wMysteryGiftStagedDataLength);
-    LD_B_A;
-    CALL(aTrySendingIRDataBlock);
-    RET_NZ ;
+    // LD_HL(wMysteryGiftStaging);
+    // LD_A_addr(wMysteryGiftStagedDataLength);
+    // LD_B_A;
+    // CALL(aTrySendingIRDataBlock);
+    // RET_NZ ;
+    if(!TrySendingIRDataBlock(wram->wMysteryGiftStaging, wram->wMysteryGiftStagedDataLength))
+        return false;
 // Send an empty block
-    CALL(aSendEmptyIRDataBlock);
-    LDH_A_addr(hMGStatusFlags);
-    CP_A(MG_OKAY);
-    RET;
-
+    // CALL(aSendEmptyIRDataBlock);
+    SendEmptyIRDataBlock();
+    // LDH_A_addr(hMGStatusFlags);
+    // CP_A(MG_OKAY);
+    // RET;
+    return hram->hMGStatusFlags == MG_OKAY;
 }
 
-void EndNameCardIRCommunication(void){
-    NOP;
-    LDH_A_addr(hMGStatusFlags);
-    PUSH_AF;
-    CALL(aEndIRCommunication);
-    XOR_A_A;
-    LDH_addr_A(rIF);
-    LDH_A_addr(rIE);
-    OR_A(1 << VBLANK);
-    LDH_addr_A(rIE);
-    NOP;
-    CALL(aDelayFrame);
-    POP_AF;
-    RET;
-
+uint8_t EndNameCardIRCommunication(void){
+    // NOP;
+    // LDH_A_addr(hMGStatusFlags);
+    uint8_t statusFlags = hram->hMGStatusFlags;
+    // PUSH_AF;
+    // CALL(aEndIRCommunication);
+    EndIRCommunication();
+    // XOR_A_A;
+    // LDH_addr_A(rIF);
+    // LDH_A_addr(rIE);
+    // OR_A(1 << VBLANK);
+    // LDH_addr_A(rIE);
+    // NOP;
+    // CALL(aDelayFrame);
+    DelayFrame();
+    // POP_AF;
+    // RET;
+    return statusFlags;
 }
 
-void WrongMysteryGiftRegion(void){
-    LD_A(MG_WRONG_PREFIX);
-    LDH_addr_A(hMGStatusFlags);
-    AND_A_A;
-    RET;
-
+bool WrongMysteryGiftRegion(void){
+    // LD_A(MG_WRONG_PREFIX);
+    // LDH_addr_A(hMGStatusFlags);
+    hram->hMGStatusFlags |= MG_WRONG_PREFIX;
+    // AND_A_A;
+    // RET;
+    return false;
 }
 
-void BeginSendingIRCommunication(void){
-    CALL(aBeginIRCommunication);
-    CALL(aSendIRHelloMessage);
-    LDH_A_addr(hMGStatusFlags);
-    CP_A(MG_OKAY);
-    RET;
-
+bool BeginSendingIRCommunication(void){
+    // CALL(aBeginIRCommunication);
+    BeginIRCommunication();
+    // CALL(aSendIRHelloMessage);
+    SendIRHelloMessage();
+    // LDH_A_addr(hMGStatusFlags);
+    // CP_A(MG_OKAY);
+    // RET;
+    return hram->hMGStatusFlags == MG_OKAY;
 }
 
-void BeginReceivingIRCommunication(void){
-    CALL(aBeginIRCommunication);
-    CALL(aReceiveIRHelloMessage);
-    LDH_A_addr(hMGStatusFlags);
-    CP_A(MG_OKAY);
-    RET;
-
+bool BeginReceivingIRCommunication(void){
+    // CALL(aBeginIRCommunication);
+    BeginIRCommunication();
+    // CALL(aReceiveIRHelloMessage);
+    ReceiveIRHelloMessage();
+    // LDH_A_addr(hMGStatusFlags);
+    // CP_A(MG_OKAY);
+    // RET;
+    return hram->hMGStatusFlags == MG_OKAY;
 }
 
-void TrySendingIRDataBlock(void){
-    CALL(aSendIRDataBlock);
-    LDH_A_addr(hMGStatusFlags);
-    CP_A(MG_OKAY);
-    RET;
-
+bool TrySendingIRDataBlock(const uint8_t* hl, uint8_t b){
+    // CALL(aSendIRDataBlock);
+    SendIRDataBlock(hl, b);
+    // LDH_A_addr(hMGStatusFlags);
+    // CP_A(MG_OKAY);
+    // RET;
+    return hram->hMGStatusFlags == MG_OKAY;
 }
 
-void TryReceivingIRDataBlock(void){
-    CALL(aReceiveIRDataBlock);
-    LDH_A_addr(hMGStatusFlags);
-    CP_A(MG_OKAY);
-    RET;
-
+bool TryReceivingIRDataBlock(uint8_t* hl, uint8_t b){
+    // CALL(aReceiveIRDataBlock);
+    ReceiveIRDataBlock(hl, b);
+    // LDH_A_addr(hMGStatusFlags);
+    // CP_A(MG_OKAY);
+    // RET;
+    return hram->hMGStatusFlags == MG_OKAY;
 }
 
 void InitializeIRCommunicationInterrupts(void){
@@ -1034,21 +1164,22 @@ void StartSlowIRTimer(void){
 }
 
 void BeginIRCommunication(void){
-    LD_A(rRP_ENABLE_READ_MASK);
-    CALL(aToggleIRCommunication);
-    LD_A(IR_RECEIVER);
-    LDH_addr_A(hMGRole);
-    RET;
-
+    // LD_A(rRP_ENABLE_READ_MASK);
+    // CALL(aToggleIRCommunication);
+    ToggleIRCommunication(rRP_ENABLE_READ_MASK);
+    // LD_A(IR_RECEIVER);
+    // LDH_addr_A(hMGRole);
+    hram->hMGRole = IR_RECEIVER;
+    // RET;
 }
 
 void EndIRCommunication(void){
-    XOR_A_A;
-    CALL(aToggleIRCommunication);
-    LD_A(rTAC_65536_HZ);
-    LDH_addr_A(rTAC);
-    RET;
-
+    // XOR_A_A;
+    // CALL(aToggleIRCommunication);
+    ToggleIRCommunication(0);
+    // LD_A(rTAC_65536_HZ);
+    // LDH_addr_A(rTAC);
+    // RET;
 }
 
 void ReceiveInfraredLEDOn(void){
@@ -1113,16 +1244,15 @@ wait:
     LDH_addr_A(rIF);
     //halt ['?']
     goto wait;
-
-    return InitializeIRCommunicationRoles();
 }
 
 void InitializeIRCommunicationRoles(void){
-    LD_D(0);
-    LD_E_D;
+    // LD_D(0);
+    // LD_E_D;
 
-    LD_A(IR_RECEIVER);
-    LDH_addr_A(hMGRole);
+    // LD_A(IR_RECEIVER);
+    // LDH_addr_A(hMGRole);
+    hram->hMGRole = IR_RECEIVER;
 
 loop:
     CALL(aMysteryGift_UpdateJoypad);
@@ -1238,141 +1368,153 @@ void SendIRHelloMessage(void){
 
 }
 
-void ToggleIRCommunication(void){
-    LDH_addr_A(rRP);
-    LD_A(MG_START_END);
-    LDH_addr_A(hMGStatusFlags);
-    RET;
-
+void ToggleIRCommunication(uint8_t a){
+    // LDH_addr_A(rRP);
+    (void)a;
+    // LD_A(MG_START_END);
+    // LDH_addr_A(hMGStatusFlags);
+    hram->hMGStatusFlags = MG_START_END;
+    // RET;
 }
 
-void SendIRDataBlock(void){
 //  Send b bytes of data in three messages:
 //  1. two bytes: MESSAGE_PREFIX and the length b
 //  2. b bytes: the actual data
 //  3. two bytes: a little-endian checksum
 //  Then receive a one-byte acknowledgement message: the status.
-    XOR_A_A;
-    LDH_addr_A(hMGChecksum + 0);
-    LDH_addr_A(hMGChecksum + 1);
-    PUSH_HL;
-    PUSH_BC;
-    LD_C(LOW(rRP));
-    LD_D(61);
-    CALL(aSendInfraredLEDOff);
-    LD_HL(hMGExchangedWord);
-    LD_A(MESSAGE_PREFIX);
-    LD_hli_A;
-    LD_hl_B;
-    DEC_HL;
-    LD_B(2);
-    CALL(aSendIRDataMessage);
-    POP_BC;
-    POP_HL;
-    CALL(aSendIRDataMessage);
-    LDH_A_addr(hMGChecksum + 0);
-    LDH_addr_A(hMGExchangedWord + 0);
-    LDH_A_addr(hMGChecksum + 1);
-    LDH_addr_A(hMGExchangedWord + 1);
-    PUSH_HL;
-    LD_HL(hMGExchangedWord);
-    LD_B(2);
-    CALL(aSendIRDataMessage);
-    LD_HL(hMGStatusFlags);
-    LD_B(1);
-    CALL(aReceiveIRDataMessage);
-    LDH_A_addr(hMGExchangedWord + 0);
-    LDH_addr_A(hMGChecksum + 0);
-    LDH_A_addr(hMGExchangedWord + 1);
-    LDH_addr_A(hMGChecksum + 1);
-    POP_HL;
-    RET;
-
+void SendIRDataBlock(const uint8_t* hl, uint8_t b){
+    // XOR_A_A;
+    // LDH_addr_A(hMGChecksum + 0);
+    // LDH_addr_A(hMGChecksum + 1);
+    hram->hMGChecksum = 0;
+    // PUSH_HL;
+    // PUSH_BC;
+    // LD_C(LOW(rRP));
+    // LD_D(61);
+    // CALL(aSendInfraredLEDOff);
+    // LD_HL(hMGExchangedWord);
+    // LD_A(MESSAGE_PREFIX);
+    // LD_hli_A;
+    hram->hMGExchangedWord[0] = MESSAGE_PREFIX;
+    // LD_hl_B;
+    hram->hMGExchangedWord[1] = b;
+    // DEC_HL;
+    // LD_B(2);
+    // CALL(aSendIRDataMessage);
+    SendIRDataMessage(hram->hMGExchangedWord, 2);
+    // POP_BC;
+    // POP_HL;
+    // CALL(aSendIRDataMessage);
+    SendIRDataMessage(hl, b);
+    // LDH_A_addr(hMGChecksum + 0);
+    // LDH_addr_A(hMGExchangedWord + 0);
+    hram->hMGExchangedWord[0] = LOW(hram->hMGChecksum);
+    // LDH_A_addr(hMGChecksum + 1);
+    // LDH_addr_A(hMGExchangedWord + 1);
+    hram->hMGExchangedWord[1] = HIGH(hram->hMGChecksum);
+    // PUSH_HL;
+    // LD_HL(hMGExchangedWord);
+    // LD_B(2);
+    // CALL(aSendIRDataMessage);
+    SendIRDataMessage(hram->hMGExchangedWord, 2);
+    // LD_HL(hMGStatusFlags);
+    // LD_B(1);
+    // CALL(aReceiveIRDataMessage);
+    ReceiveIRDataMessage(&hram->hMGStatusFlags, 1);
+    // LDH_A_addr(hMGExchangedWord + 0);
+    // LDH_addr_A(hMGChecksum + 0);
+    // LDH_A_addr(hMGExchangedWord + 1);
+    // LDH_addr_A(hMGChecksum + 1);
+    hram->hMGChecksum = hram->hMGExchangedWord[0] | (hram->hMGExchangedWord[1] << 8);
+    // POP_HL;
+    // RET;
 }
 
-void SendIRDataMessage(void){
 //  Send b bytes of data one bit at a time, and update the checksum.
-    LD_C(LOW(rRP));
+void SendIRDataMessage(const uint8_t* hl, uint8_t b){
+    for(uint8_t i = 0; i < b; ++i) {
+        Network_SendByte(hl[i]);
+        hram->hMGChecksum += hl[i];
+    }
+    // LD_C(LOW(rRP));
 
-    LD_D(5);
-    CALL(aSendInfraredLEDOff);
-    LD_D(5);
-    CALL(aSendInfraredLEDOn);
-    LD_D(21);
-    CALL(aSendInfraredLEDOff);
+    // LD_D(5);
+    // CALL(aSendInfraredLEDOff);
+    // LD_D(5);
+    // CALL(aSendInfraredLEDOn);
+    // LD_D(21);
+    // CALL(aSendInfraredLEDOff);
 
 // b = -b - 1// then count up to 0
-    LD_A_B;
-    CPL;
-    LD_B_A;
+    // LD_A_B;
+    // CPL;
+    // LD_B_A;
 
-    LD_A(-12);
-    LDH_addr_A(rTMA);
+    // LD_A(-12);
+    // LDH_addr_A(rTMA);
 
-byte_loop:
-    INC_B;
-    IF_Z goto done;
-    LD_A(8);
-    LDH_addr_A(hMGNumBits);
+// byte_loop:
+    // INC_B;
+    // IF_Z goto done;
+    // LD_A(8);
+    // LDH_addr_A(hMGNumBits);
 // Get the next data byte
-    LD_A_hli;
-    LD_E_A;
+    // LD_A_hli;
+    // LD_E_A;
 // Add the next data byte to the checksum
-    LDH_A_addr(hMGChecksum + 0);
-    ADD_A_E;
-    LDH_addr_A(hMGChecksum + 0);
-    LDH_A_addr(hMGChecksum + 1);
-    ADC_A(0);
-    LDH_addr_A(hMGChecksum + 1);
+    // LDH_A_addr(hMGChecksum + 0);
+    // ADD_A_E;
+    // LDH_addr_A(hMGChecksum + 0);
+    // LDH_A_addr(hMGChecksum + 1);
+    // ADC_A(0);
+    // LDH_addr_A(hMGChecksum + 1);
 // Send each bit of the byte
 
-bit_loop:
-    XOR_A_A;
-    LDH_addr_A(rIF);
+// bit_loop:
+    // XOR_A_A;
+    // LDH_addr_A(rIF);
     //halt ['?']
-    LD_A(rRP_ENABLE_READ_MASK | (1 << rRP_LED_ON));
-    LDH_addr_A(rRP);
+    // LD_A(rRP_ENABLE_READ_MASK | (1 << rRP_LED_ON));
+    // LDH_addr_A(rRP);
 // Turn the LED off for longer if the bit is 1
-    LD_D(1);
-    LD_A_E;
-    RLCA;
-    LD_E_A;
-    IF_NC goto wait;
-    INC_D;
+    // LD_D(1);
+    // LD_A_E;
+    // RLCA;
+    // LD_E_A;
+    // IF_NC goto wait;
+    // INC_D;
 
-wait:
-    LDH_A_addr(rTIMA);
-    CP_A(-8);
-    IF_C goto wait;
-    LD_A(rRP_ENABLE_READ_MASK);
-    LDH_addr_A(rRP);
-    DEC_D;
-    IF_Z goto no_halt;
-    XOR_A_A;
-    LDH_addr_A(rIF);
+// wait:
+    // LDH_A_addr(rTIMA);
+    // CP_A(-8);
+    // IF_C goto wait;
+    // LD_A(rRP_ENABLE_READ_MASK);
+    // LDH_addr_A(rRP);
+    // DEC_D;
+    // IF_Z goto no_halt;
+    // XOR_A_A;
+    // LDH_addr_A(rIF);
     //halt ['?']
 
-no_halt:
-    LDH_A_addr(hMGNumBits);
-    DEC_A;
-    IF_Z goto byte_loop;
-    LDH_addr_A(hMGNumBits);
-    goto bit_loop;
+// no_halt:
+    // LDH_A_addr(hMGNumBits);
+    // DEC_A;
+    // IF_Z goto byte_loop;
+    // LDH_addr_A(hMGNumBits);
+    // goto bit_loop;
 
-
-done:
-    LD_A(-2);
-    LDH_addr_A(rTMA);
-    XOR_A_A;
-    LDH_addr_A(rIF);
+// done:
+    // LD_A(-2);
+    // LDH_addr_A(rTMA);
+    // XOR_A_A;
+    // LDH_addr_A(rIF);
     //halt ['?']
 
-    LD_D(5);
-    CALL(aSendInfraredLEDOn);
-    LD_D(17);
-    CALL(aSendInfraredLEDOff);
-    RET;
-
+    // LD_D(5);
+    // CALL(aSendInfraredLEDOn);
+    // LD_D(17);
+    // CALL(aSendInfraredLEDOff);
+    // RET;
 }
 
 void InfraredLEDReceiveTimedOut(void){
@@ -1384,191 +1526,221 @@ void InfraredLEDReceiveTimedOut(void){
 }
 
 void ReceivedWrongIRChecksum(void){
-    LDH_A_addr(hMGStatusFlags);
-    OR_A(MG_WRONG_CHECKSUM);
-    LDH_addr_A(hMGStatusFlags);
-    RET;
-
+    // LDH_A_addr(hMGStatusFlags);
+    // OR_A(MG_WRONG_CHECKSUM);
+    // LDH_addr_A(hMGStatusFlags);
+    hram->hMGStatusFlags |= MG_WRONG_CHECKSUM;
+    // RET;
 }
 
 void ReceivedWrongIRMessagePrefix(void){
-    LDH_A_addr(hMGStatusFlags);
-    OR_A(MG_WRONG_PREFIX);
-    LDH_addr_A(hMGStatusFlags);
-    RET;
-
+    // LDH_A_addr(hMGStatusFlags);
+    // OR_A(MG_WRONG_PREFIX);
+    // LDH_addr_A(hMGStatusFlags);
+    hram->hMGStatusFlags |= MG_WRONG_PREFIX;
+    // RET;
 }
 
-void ReceiveIRDataBlock(void){
 //  Receive b bytes of data in three messages:
 //  1. two bytes: MESSAGE_PREFIX and the length b
 //  2. b bytes: the actual data
 //  3. two bytes: a little-endian checksum
 //  Then send a one-byte acknowledgement message: the status.
-    XOR_A_A;
-    LDH_addr_A(hMGChecksum + 0);
-    LDH_addr_A(hMGChecksum + 1);
-    PUSH_BC;
-    PUSH_HL;
-    LD_HL(hMGExchangedWord);
-    LD_B(2);
-    CALL(aReceiveIRDataMessage);
-    LDH_A_addr(hMGExchangedWord + 1);
-    LDH_addr_A(hMGUnusedMsgLength);
-    LD_B_A;
-    POP_HL;
-    POP_AF;
-    CP_A_B;
-    JP_C (mReceivedWrongIRMessagePrefix);
-    LDH_A_addr(hMGExchangedWord + 0);
-    CP_A(MESSAGE_PREFIX);
-    JP_NZ (mReceivedWrongIRMessagePrefix);
-    CALL(aReceiveIRDataMessage);
-    LDH_A_addr(hMGChecksum + 0);
-    LD_D_A;
-    LDH_A_addr(hMGChecksum + 1);
-    LD_E_A;
-    PUSH_HL;
-    PUSH_DE;
-    LD_HL(hMGExchangedWord);
-    LD_B(2);
-    CALL(aReceiveIRDataMessage);
-    POP_DE;
-    LD_HL(hMGExchangedWord);
-    LD_A_hli;
-    XOR_A_D;
-    LD_B_A;
-    LD_A_hl;
-    XOR_A_E;
-    OR_A_B;
-    CALL_NZ (aReceivedWrongIRChecksum);
-    PUSH_DE;
+void ReceiveIRDataBlock(uint8_t* hl, uint8_t b){
+    // XOR_A_A;
+    // LDH_addr_A(hMGChecksum + 0);
+    // LDH_addr_A(hMGChecksum + 1);
+    hram->hMGChecksum = 0;
+    // PUSH_BC;
+    // PUSH_HL;
+    // LD_HL(hMGExchangedWord);
+    // LD_B(2);
+    // CALL(aReceiveIRDataMessage);
+    ReceiveIRDataMessage((uint8_t*)&hram->hMGExchangedWord, 2);
+    // LDH_A_addr(hMGExchangedWord + 1);
+    // LDH_addr_A(hMGUnusedMsgLength);
+    // LD_B_A;
+    uint8_t b2 = hram->hMGExchangedWord[1];
+    // POP_HL;
+    // POP_AF;
+    // CP_A_B;
+    // JP_C (mReceivedWrongIRMessagePrefix);
+    if(b2 < b)
+        return ReceivedWrongIRMessagePrefix();
+    // LDH_A_addr(hMGExchangedWord + 0);
+    // CP_A(MESSAGE_PREFIX);
+    // JP_NZ (mReceivedWrongIRMessagePrefix);
+    if(hram->hMGExchangedWord[0] != MESSAGE_PREFIX)
+        return ReceivedWrongIRMessagePrefix();
+    // CALL(aReceiveIRDataMessage);
+    ReceiveIRDataMessage(hl, b2);
+    // LDH_A_addr(hMGChecksum + 0);
+    // LD_D_A;
+    // LDH_A_addr(hMGChecksum + 1);
+    // LD_E_A;
+    uint16_t de = hram->hMGChecksum;
+    // PUSH_HL;
+    // PUSH_DE;
+    // LD_HL(hMGExchangedWord);
+    // LD_B(2);
+    // CALL(aReceiveIRDataMessage);
+    ReceiveIRDataMessage(hram->hMGExchangedWord, 2);
+    // POP_DE;
+    // LD_HL(hMGExchangedWord);
+    // LD_A_hli;
+    // XOR_A_D;
+    // LD_B_A;
+    // LD_A_hl;
+    // XOR_A_E;
+    // OR_A_B;
+    // CALL_NZ (aReceivedWrongIRChecksum);
+    if(de != (hram->hMGExchangedWord[0] | hram->hMGExchangedWord[1] << 8))
+        ReceivedWrongIRChecksum();
+    // PUSH_DE;
 
-    LD_D(61);
-    CALL(aSendInfraredLEDOff);
+    // LD_D(61);
+    // CALL(aSendInfraredLEDOff);
 
-    LD_HL(hMGStatusFlags);
-    LD_B(1);
-    CALL(aSendIRDataMessage);
+    // LD_HL(hMGStatusFlags);
+    // LD_B(1);
+    // CALL(aSendIRDataMessage);
+    SendIRDataMessage(&hram->hMGStatusFlags, 1);
 
-    POP_DE;
-    POP_HL;
-    LD_A_D;
-    LDH_addr_A(hMGChecksum + 0);
-    LD_A_E;
-    LDH_addr_A(hMGChecksum + 1);
-    RET;
-
+    // POP_DE;
+    // POP_HL;
+    // LD_A_D;
+    // LDH_addr_A(hMGChecksum + 0);
+    // LD_A_E;
+    // LDH_addr_A(hMGChecksum + 1);
+    hram->hMGChecksum = de;
+    // RET;
 }
 
-void ReceiveIRDataMessage(void){
-    LD_C(LOW(rRP));
+#define MAX_IR_RECV_TRIES 8
+bool ReceiveIRDataMessage(uint8_t* hl, uint8_t b){
+    // LD_C(LOW(rRP));
 
-    LD_D(0);
-    CALL(aReceiveInfraredLEDOff);
-    JP_Z (mInfraredLEDReceiveTimedOut);
-    LD_D(0);
-    CALL(aReceiveInfraredLEDOn);
-    JP_Z (mInfraredLEDReceiveTimedOut);
-    LD_D(0);
-    CALL(aReceiveInfraredLEDOff);
-    JP_Z (mInfraredLEDReceiveTimedOut);
+    // LD_D(0);
+    // CALL(aReceiveInfraredLEDOff);
+    // JP_Z (mInfraredLEDReceiveTimedOut);
+    // LD_D(0);
+    // CALL(aReceiveInfraredLEDOn);
+    // JP_Z (mInfraredLEDReceiveTimedOut);
+    // LD_D(0);
+    // CALL(aReceiveInfraredLEDOff);
+    // JP_Z (mInfraredLEDReceiveTimedOut);
+    for(uint8_t i = 0; i < b; ++i) {
+        uint8_t byte;
+        int try_count = 0;
+        while(try_count < MAX_IR_RECV_TRIES) {
+            int res = Network_TryRecvByte(&byte);
+            if(res == NETWORK_XCHG_OK)
+                break;
+            try_count++;
+            DelayFrame();
+        }
+        if(try_count >= MAX_IR_RECV_TRIES) {
+            return false;
+        }
+        hl[i] = byte;
+        hram->hMGChecksum += byte;
+    }
+    return true;
 
-    LD_A_B;
-    CPL;
-    LD_B_A;
-    XOR_A_A;
-    LDH_addr_A(hMGPrevTIMA);
+    // LD_A_B;
+    // CPL;
+    // LD_B_A;
+    // XOR_A_A;
+    // LDH_addr_A(hMGPrevTIMA);
 
-    CALL(aStartSlowIRTimer);
+    // CALL(aStartSlowIRTimer);
 
-main_loop:
-    INC_B;
-    IF_Z goto done;
-    LD_A(8);
-    LDH_addr_A(hMGNumBits);
+// main_loop:
+    // INC_B;
+    // IF_Z goto done;
+    // LD_A(8);
+    // LDH_addr_A(hMGNumBits);
 
-inner_loop:
-    LD_D(0);
+// inner_loop:
+    // LD_D(0);
 
-recv_loop:
-    INC_D;
-    IF_Z goto recv_done;
-    LDH_A_c;
-    BIT_A(rRP_RECEIVING);
-    IF_Z goto recv_loop;
-    LD_D(0);
+// recv_loop:
+    // INC_D;
+    // IF_Z goto recv_done;
+    // LDH_A_c;
+    // BIT_A(rRP_RECEIVING);
+    // IF_Z goto recv_loop;
+    // LD_D(0);
 
-recv_done:
+// recv_done:
 
-send_loop:
-    INC_D;
-    IF_Z goto send_done;
-    LDH_A_c;
-    BIT_A(rRP_RECEIVING);
-    IF_NZ goto send_loop;
+// send_loop:
+    // INC_D;
+    // IF_Z goto send_done;
+    // LDH_A_c;
+    // BIT_A(rRP_RECEIVING);
+    // IF_NZ goto send_loop;
 
-send_done:
-    LDH_A_addr(hMGPrevTIMA);
-    LD_D_A;
-    LDH_A_addr(rTIMA);
-    LDH_addr_A(hMGPrevTIMA);
-    SUB_A_D;
-    CP_A(0x12);
-    IF_C goto zero;
-    SET_E(0);
-    goto ok;
+// send_done:
+    // LDH_A_addr(hMGPrevTIMA);
+    // LD_D_A;
+    // LDH_A_addr(rTIMA);
+    // LDH_addr_A(hMGPrevTIMA);
+    // SUB_A_D;
+    // CP_A(0x12);
+    // IF_C goto zero;
+    // SET_E(0);
+    // goto ok;
 
-zero:
-    RES_E(0);
+// zero:
+    // RES_E(0);
 
-ok:
-    LDH_A_addr(hMGNumBits);
-    DEC_A;
-    LDH_addr_A(hMGNumBits);
-    IF_Z goto continue_;
-    LD_A_E;
-    RLCA;
-    LD_E_A;
-    goto inner_loop;
-
-
-continue_:
-    LD_A_E;
-    LD_hli_A;
-    LDH_A_addr(hMGChecksum + 0);
-    ADD_A_E;
-    LDH_addr_A(hMGChecksum + 0);
-    LDH_A_addr(hMGChecksum + 1);
-    ADC_A(0);
-    LDH_addr_A(hMGChecksum + 1);
-    goto main_loop;
+// ok:
+    // LDH_A_addr(hMGNumBits);
+    // DEC_A;
+    // LDH_addr_A(hMGNumBits);
+    // IF_Z goto continue_;
+    // LD_A_E;
+    // RLCA;
+    // LD_E_A;
+    // goto inner_loop;
 
 
-done:
-    CALL(aStartFastIRTimer);
-    XOR_A_A;
-    LDH_addr_A(rIF);
-    LD_D(0);
-    CALL(aReceiveInfraredLEDOn);
-    JP_Z (mInfraredLEDReceiveTimedOut);
+// continue_:
+    // LD_A_E;
+    // LD_hli_A;
+    // LDH_A_addr(hMGChecksum + 0);
+    // ADD_A_E;
+    // LDH_addr_A(hMGChecksum + 0);
+    // LDH_A_addr(hMGChecksum + 1);
+    // ADC_A(0);
+    // LDH_addr_A(hMGChecksum + 1);
+    // goto main_loop;
 
-    LD_D(16);
-    CALL(aSendInfraredLEDOff);
-    RET;
 
+// done:
+    // CALL(aStartFastIRTimer);
+    // XOR_A_A;
+    // LDH_addr_A(rIF);
+    // LD_D(0);
+    // CALL(aReceiveInfraredLEDOn);
+    // JP_Z (mInfraredLEDReceiveTimedOut);
+
+    // LD_D(16);
+    // CALL(aSendInfraredLEDOff);
+    // RET;
 }
 
 void SendEmptyIRDataBlock(void){
-    LD_B(0);
-    JP(mSendIRDataBlock);
-
+    // LD_B(0);
+    // JP(mSendIRDataBlock);
+    return SendIRDataBlock(NULL, 0);
 }
 
 void ReceiveEmptyIRDataBlock(void){
-    LD_B(0);
-    JP(mReceiveIRDataBlock);
-
+    // LD_B(0);
+    // JP(mReceiveIRDataBlock);
+    return ReceiveIRDataBlock(NULL, 0);
 }
 
 void MysteryGift_UpdateJoypad(void){

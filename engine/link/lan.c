@@ -82,6 +82,11 @@ void LANConnection(void) {
     CloseWindow_Conv2();
 }
 
+bool LANTryConnection(void) {
+    LANConnection();
+    return wram->wScriptVar != FALSE;
+}
+
 void LANCloseConnection(void) {
     NetworkCloseConnection();
 }

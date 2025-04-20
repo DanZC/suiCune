@@ -177,7 +177,7 @@ BadgeRequiredText:
 }
 
 //  Check engine flag a (ENGINE_ZEPHYRBADGE thru ENGINE_EARTHBADGE)
-//  Display "Badge required" text and return carry if the badge is not owned
+//  Display "Badge required" text and return carry (false) if the badge is not owned
 bool CheckBadge_Conv(uint16_t de){
     // CALL(aCheckEngineFlag);
     // RET_NC ;
@@ -1232,7 +1232,7 @@ static uint8_t WaterfallFunction_TryWaterfall(void){
     // FARCALL(aCheckBadge);
     // LD_A(0x80);
     // RET_C ;
-    if(CheckBadge_Conv(ENGINE_RISINGBADGE))
+    if(!CheckBadge_Conv(ENGINE_RISINGBADGE))
         return 0x80;
     // CALL(aCheckMapCanWaterfall);
     // IF_C goto failed;
@@ -1735,7 +1735,7 @@ static uint8_t StrengthFunction_TryStrength(void){
     // LD_DE(ENGINE_PLAINBADGE);
     // CALL(aCheckBadge);
     // IF_C goto Failed;
-    if(CheckBadge_Conv(ENGINE_PLAINBADGE)) {
+    if(!CheckBadge_Conv(ENGINE_PLAINBADGE)) {
     // Failed:
         // LD_A(0x80);
         // RET;
@@ -1905,7 +1905,7 @@ static uint8_t WhirlpoolFunction_TryWhirlpool(void){
     // LD_DE(ENGINE_GLACIERBADGE);
     // CALL(aCheckBadge);
     // IF_C goto noglacierbadge;
-    if(CheckBadge_Conv(ENGINE_GLACIERBADGE)) {
+    if(!CheckBadge_Conv(ENGINE_GLACIERBADGE)) {
     // noglacierbadge:
         // LD_A(0x80);
         // RET;

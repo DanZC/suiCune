@@ -1069,7 +1069,10 @@ void DebugMenu_MysteryGift(void) {
     DebugMenu_SaveAttrmap();
     ClearScreen_Conv2();
 
-    DoMysteryGift();
+    if(LANTryConnection()) {
+        DoMysteryGift();
+        LANCloseConnection();
+    }
 
     DebugMenu_RestoreTilemap();
     DebugMenu_RestoreAttrmap();

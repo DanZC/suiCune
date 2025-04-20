@@ -165,7 +165,7 @@ struct __attribute__((packed)) hram_s
             // 41
             uint8_t hMGExchangedByte;
             // 42
-            uint16_t hMGExchangedWord;
+            uint8_t hMGExchangedWord[2];
             // 44
             uint8_t hMGNumBits;
             // 45
@@ -260,7 +260,7 @@ struct __attribute__((packed)) hram_s
             // 41
             uint8_t hMGExchangedByte;
             // 42
-            uint16_t hMGExchangedWord;
+            uint8_t hMGExchangedWord[2];
             // 44
             uint8_t hMGNumBits;
             // 45
