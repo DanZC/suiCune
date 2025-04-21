@@ -182,11 +182,6 @@ void DoMysteryGift(void){
         text_far(v_MysteryGiftSentText)
         text_end
     };
-    OpenSRAM_Conv(MBANK(asPlayerData));
-    wram->wPlayerGender = gb_read(sCrystalData);
-    CopyBytes(&wram->wPlayerID,  GBToRAMAddr(sPlayerData + (wPlayerID - wPlayerData)), 2);
-    CopyBytes(wram->wPlayerName, GBToRAMAddr(sPlayerData + (wPlayerName - wPlayerData)), NAME_LENGTH);
-    CloseSRAM_Conv();
     // static const char String_PressAToLink_BToCancel[] = 
     //            "Press A to"
     //     t_next "link IR-Device"
@@ -845,6 +840,7 @@ uint8_t ExchangeNameCardData(void){
         ? IR_SENDER
         : IR_RECEIVER;
     // LDH_A_addr(hMGStatusFlags);
+    hram->hMGStatusFlags = MG_OKAY;
     // CP_A(MG_CANCELED);
     // JP_Z (mEndNameCardIRCommunication);
     // CP_A(MG_OKAY);
@@ -1281,34 +1277,47 @@ not_canceled:
 }
 
 void ReceiveIRHelloMessage(void){
-    LD_C(LOW(rRP));
-    LD_D(0);
-    LD_E_D;
+    uint8_t x;
+    // LD_C(LOW(rRP));
+    // LD_D(0);
+    // LD_E_D;
+    uint32_t try_count = 0;
 
-    CALL(aReceiveInfraredLEDOff);
-    JP_Z (mInfraredLEDReceiveTimedOut);
-    LD_D_E;
-    CALL(aReceiveInfraredLEDOn);
-    JP_Z (mInfraredLEDReceiveTimedOut);
-    CALL(aReceiveInfraredLEDOff);
-    JP_Z (mInfraredLEDReceiveTimedOut);
-    CALL(aReceiveInfraredLEDOn);
-    JP_Z (mInfraredLEDReceiveTimedOut);
+    // CALL(aReceiveInfraredLEDOff);
+    // JP_Z (mInfraredLEDReceiveTimedOut);
+    // LD_D_E;
+    // CALL(aReceiveInfraredLEDOn);
+    // JP_Z (mInfraredLEDReceiveTimedOut);
+    // CALL(aReceiveInfraredLEDOff);
+    // JP_Z (mInfraredLEDReceiveTimedOut);
+    // CALL(aReceiveInfraredLEDOn);
+    // JP_Z (mInfraredLEDReceiveTimedOut);
+    while(try_count++ < 1000) {
+        int err = Network_TryRecvByte(&x);
+        if(err == NETWORK_XCHG_ERROR_RECV)
+            return InfraredLEDReceiveTimedOut();
+        else if(err == NETWORK_XCHG_OK) {
+            hram->hMGStatusFlags = MG_OKAY;
+            return;
+        }
+        DelayFrame();
+    }
+    return InfraredLEDReceiveTimedOut();
 
-    LD_A(MG_OKAY);
-    LDH_addr_A(hMGStatusFlags);
+    // LD_A(MG_OKAY);
+    // LDH_addr_A(hMGStatusFlags);
 
-    LD_D(61);
-    CALL(aSendInfraredLEDOff);
-    LD_D(5);
-    CALL(aSendInfraredLEDOn);
-    LD_D(21);
-    CALL(aSendInfraredLEDOff);
-    LD_D(5);
-    CALL(aSendInfraredLEDOn);
-    LD_D(5);
-    CALL(aSendInfraredLEDOff);
-    RET;
+    // LD_D(61);
+    // CALL(aSendInfraredLEDOff);
+    // LD_D(5);
+    // CALL(aSendInfraredLEDOn);
+    // LD_D(21);
+    // CALL(aSendInfraredLEDOff);
+    // LD_D(5);
+    // CALL(aSendInfraredLEDOn);
+    // LD_D(5);
+    // CALL(aSendInfraredLEDOff);
+    // RET;
 
 }
 
@@ -1330,42 +1339,44 @@ wait_loop:
 }
 
 void SendIRHelloMessage(void){
-    LD_A(IR_SENDER);
-    LDH_addr_A(hMGRole);
+    // LD_A(IR_SENDER);
+    // LDH_addr_A(hMGRole);
+    hram->hMGRole = IR_SENDER;
 
-    LD_C(LOW(rRP));
-    LD_D(0);
-    LD_E_D;
+    // LD_C(LOW(rRP));
+    // LD_D(0);
+    // LD_E_D;
 
-    LD_D(61);
-    CALL(aSendInfraredLEDOff);
-    LD_D(5);
-    CALL(aSendInfraredLEDOn);
-    LD_D(21);
-    CALL(aSendInfraredLEDOff);
-    LD_D(5);
-    CALL(aSendInfraredLEDOn);
-    LD_D(5);
-    CALL(aSendInfraredLEDOff);
+    // LD_D(61);
+    // CALL(aSendInfraredLEDOff);
+    // LD_D(5);
+    // CALL(aSendInfraredLEDOn);
+    // LD_D(21);
+    // CALL(aSendInfraredLEDOff);
+    // LD_D(5);
+    // CALL(aSendInfraredLEDOn);
+    // LD_D(5);
+    // CALL(aSendInfraredLEDOff);
+    Network_SendByte(0);
 
-    LD_D_E;
-    CALL(aReceiveInfraredLEDOff);
-    JP_Z (mInfraredLEDReceiveTimedOut);
-    LD_D_E;
-    CALL(aReceiveInfraredLEDOn);
-    JP_Z (mInfraredLEDReceiveTimedOut);
-    CALL(aReceiveInfraredLEDOff);
-    JP_Z (mInfraredLEDReceiveTimedOut);
-    CALL(aReceiveInfraredLEDOn);
-    JP_Z (mInfraredLEDReceiveTimedOut);
+    // LD_D_E;
+    // CALL(aReceiveInfraredLEDOff);
+    // JP_Z (mInfraredLEDReceiveTimedOut);
+    // LD_D_E;
+    // CALL(aReceiveInfraredLEDOn);
+    // JP_Z (mInfraredLEDReceiveTimedOut);
+    // CALL(aReceiveInfraredLEDOff);
+    // JP_Z (mInfraredLEDReceiveTimedOut);
+    // CALL(aReceiveInfraredLEDOn);
+    // JP_Z (mInfraredLEDReceiveTimedOut);
 
-    LD_D(61);
-    CALL(aSendInfraredLEDOff);
+    // LD_D(61);
+    // CALL(aSendInfraredLEDOff);
 
-    LD_A(MG_OKAY);
-    LDH_addr_A(hMGStatusFlags);
-    RET;
-
+    // LD_A(MG_OKAY);
+    // LDH_addr_A(hMGStatusFlags);
+    hram->hMGStatusFlags = MG_OKAY;
+    // RET;
 }
 
 void ToggleIRCommunication(uint8_t a){
@@ -1433,7 +1444,13 @@ void SendIRDataBlock(const uint8_t* hl, uint8_t b){
 //  Send b bytes of data one bit at a time, and update the checksum.
 void SendIRDataMessage(const uint8_t* hl, uint8_t b){
     for(uint8_t i = 0; i < b; ++i) {
-        Network_SendByte(hl[i]);
+        uint32_t try_count = 0;
+        while(Network_SendByte(hl[i]) < NETWORK_XCHG_OK) {
+            if(try_count++ >= 1000) {
+                return InfraredLEDReceiveTimedOut();
+            }
+            fprintf(stderr, "Error sending byte: %02x\n", hl[i]);
+        }
         hram->hMGChecksum += hl[i];
     }
     // LD_C(LOW(rRP));
@@ -1518,11 +1535,11 @@ void SendIRDataMessage(const uint8_t* hl, uint8_t b){
 }
 
 void InfraredLEDReceiveTimedOut(void){
-    LDH_A_addr(hMGStatusFlags);
-    OR_A(MG_TIMED_OUT);
-    LDH_addr_A(hMGStatusFlags);
-    RET;
-
+    // LDH_A_addr(hMGStatusFlags);
+    // OR_A(MG_TIMED_OUT);
+    // LDH_addr_A(hMGStatusFlags);
+    hram->hMGStatusFlags |= MG_TIMED_OUT;
+    // RET;
 }
 
 void ReceivedWrongIRChecksum(void){

@@ -143,6 +143,13 @@ void MysteryGift(void) {
     // FARCALL(aDoMysteryGiftIfDayHasPassed);
     DoMysteryGiftIfDayHasPassed();
     // FARCALL(aDoMysteryGift);
+
+    OpenSRAM_Conv(MBANK(asPlayerData));
+    wram->wPlayerGender = gb_read(sCrystalData);
+    CopyBytes(&wram->wPlayerID,  GBToRAMAddr(sPlayerData + (wPlayerID - wPlayerData)), 2);
+    CopyBytes(wram->wPlayerName, GBToRAMAddr(sPlayerData + (wPlayerName - wPlayerData)), NAME_LENGTH);
+    CloseSRAM_Conv();
+
     if(!LANTryConnection())
         return;
     DoMysteryGift();

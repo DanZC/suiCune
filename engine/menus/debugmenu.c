@@ -1069,6 +1069,12 @@ void DebugMenu_MysteryGift(void) {
     DebugMenu_SaveAttrmap();
     ClearScreen_Conv2();
 
+    OpenSRAM_Conv(MBANK(asPlayerData));
+    wram->wPlayerGender = gb_read(sCrystalData);
+    CopyBytes(&wram->wPlayerID,  GBToRAMAddr(sPlayerData + (wPlayerID - wPlayerData)), 2);
+    CopyBytes(wram->wPlayerName, GBToRAMAddr(sPlayerData + (wPlayerName - wPlayerData)), NAME_LENGTH);
+    CloseSRAM_Conv();
+
     if(LANTryConnection()) {
         DoMysteryGift();
         LANCloseConnection();

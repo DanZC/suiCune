@@ -150,8 +150,8 @@ void LANConnection_Host(void) {
             wram->wStringBuffer1[11] = CHAR_TERM;
             PrintText_Conv2(Text_WillYouAccept);
             bool yes = YesNoBox_Conv();
-            CloseWindow_Conv2();
             if(yes) {
+                CloseWindow_Conv2();
                 LoadStandardMenuHeader_Conv();
                 SpeechTextbox_Conv2();
                 PlaceStringSimple(U82C("Waiting for a<LINE>response…"), coord(TEXTBOX_INNERX, TEXTBOX_INNERY, wram->wTilemap));
@@ -270,8 +270,8 @@ void LANConnection_Join(void) {
             wram->wStringBuffer1[11] = CHAR_TERM;
             PrintText_Conv2(Text_WillYouConnect);
             bool yes = YesNoBox_Conv();
-            CloseWindow_Conv2();
             if(yes) {
+                CloseWindow_Conv2();
                 LoadStandardMenuHeader_Conv();
                 SpeechTextbox_Conv2();
                 PlaceStringSimple(U82C("Waiting for a<LINE>response…"), coord(TEXTBOX_INNERX, TEXTBOX_INNERY, wram->wTilemap));
