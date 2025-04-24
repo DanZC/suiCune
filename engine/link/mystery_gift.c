@@ -677,6 +677,7 @@ bool SendMysteryGiftDataPayload(void){
 // Send the region prefix
     // LD_A(REGION_PREFIX);
     // LDH_addr_A(hMGExchangedByte);
+    hram->hMGExchangedByte = REGION_PREFIX;
     // LD_HL(hMGExchangedByte);
     // LD_B(1);
     // CALL(aTrySendingIRDataBlock);
@@ -685,6 +686,7 @@ bool SendMysteryGiftDataPayload(void){
         return false;
 // Send an empty block
     // CALL(aSendEmptyIRDataBlock);
+    SendEmptyIRDataBlock();
     // LDH_A_addr(hMGStatusFlags);
     // CP_A(MG_OKAY);
     // RET_NZ ;
@@ -1594,7 +1596,7 @@ void ReceiveIRDataBlock(uint8_t* hl, uint8_t b){
     // POP_AF;
     // CP_A_B;
     // JP_C (mReceivedWrongIRMessagePrefix);
-    if(b2 < b)
+    if(b < b2)
         return ReceivedWrongIRMessagePrefix();
     // LDH_A_addr(hMGExchangedWord + 0);
     // CP_A(MESSAGE_PREFIX);
@@ -1645,7 +1647,7 @@ void ReceiveIRDataBlock(uint8_t* hl, uint8_t b){
     // RET;
 }
 
-#define MAX_IR_RECV_TRIES 8
+#define MAX_IR_RECV_TRIES 60
 bool ReceiveIRDataMessage(uint8_t* hl, uint8_t b){
     // LD_C(LOW(rRP));
 

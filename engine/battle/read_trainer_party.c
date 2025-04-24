@@ -54,7 +54,10 @@ void ReadTrainerParty(void){
         // CALL(aTrainerType2);
         // REG_DE = sMysteryGiftTrainer;
         // TrainerType2();
-        struct TrainerParty p = {.pmoves = GBToRAMAddr(sMysteryGiftTrainer)};
+        struct TrainerPartyMoves* moves = GBToRAMAddr(sMysteryGiftTrainer);
+        uint8_t size = 0;
+        for(; size < 6 && moves[size].species != 0xff && moves[size].level != 0xff; size++) {}
+        struct TrainerParty p = {.pmoves = moves, .size = size};
         TrainerType2_Conv(&p);
         // CALL(aCloseSRAM);
         CloseSRAM_Conv();
