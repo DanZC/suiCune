@@ -17,7 +17,7 @@
 
 static void NewPokedexEntry_ReturnFromDexRegistration(void) {
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aLoadFontsExtra);
     LoadFontsExtra_Conv();
     // CALL(aLoadStandardFont);
@@ -25,7 +25,7 @@ static void NewPokedexEntry_ReturnFromDexRegistration(void) {
     // FARCALL(aPokedex_PlaceFrontpicTopLeftCorner);
     Pokedex_PlaceFrontpicTopLeftCorner();
     // CALL(aWaitBGMap2);
-    WaitBGMap2_Conv();
+    WaitBGMap2();
     // FARCALL(aGetEnemyMonDVs);
     // LD_A_hli;
     // LD_addr_A(wTempMonDVs);
@@ -34,9 +34,9 @@ static void NewPokedexEntry_ReturnFromDexRegistration(void) {
     wram->wTempMon.mon.DVs = GetEnemyMonDVs_Conv();
     // LD_B(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
+    GetSGBLayout(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // RET;
 }
 
@@ -50,9 +50,9 @@ void NewPokedexEntry(void){
     // CALL(aLowVolume);
     LowVolume();
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aUpdateSprites);
     UpdateSprites_Conv();
     // CALL(aClearSprites);

@@ -341,14 +341,14 @@ void ClearActorHud(void){
         // hlcoord(9, 7, wTilemap);
         // LD_BC((5 << 8) | 11);
         // CALL(aClearBox);
-        ClearBox_Conv2(coord(9, 7, wram->wTilemap), 11, 5);
+        ClearBox(coord(9, 7, wram->wTilemap), 11, 5);
         // RET;
         return;
     }
     else {
         // hlcoord(1, 0, wTilemap);
         // LD_BC((4 << 8) | 10);
-        ClearBox_Conv2(coord(1, 0, wram->wTilemap), 10, 4);
+        ClearBox(coord(1, 0, wram->wTilemap), 10, 4);
         // CALL(aClearBox);
         // RET;
         return;
@@ -2506,7 +2506,7 @@ void BattleAnimCmd_BeatUp_Conv(void){
     wram->wCurPartySpecies = species;
     // LD_B(SCGB_BATTLE_COLORS);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_BATTLE_COLORS);
+    GetSGBLayout(SCGB_BATTLE_COLORS);
 
     // POP_AF;
     // LDH_addr_A(rSVBK);

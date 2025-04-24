@@ -178,12 +178,12 @@ static void StartMenu_DrawMenuAccount(void) {
     // hlcoord(0, 13, wTilemap);
     // LD_BC((5 << 8) | 10);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(0, 13, wram->wTilemap), 10, 5);
+    ClearBox(coord(0, 13, wram->wTilemap), 10, 5);
     // hlcoord(0, 13, wTilemap);
     // LD_B(3);
     // LD_C(8);
     // JP(mTextboxPalette);
-    TextboxPalette_Conv2(coord(0, 13, wram->wTilemap), 8, 3);
+    TextboxPalette(coord(0, 13, wram->wTilemap), 8, 3);
 }
 
 static void StartMenu__DrawBugContestStatusBox(void) {
@@ -337,7 +337,7 @@ static void StartMenu_MenuString(const char** items, uint8_t* de, uint8_t a) {
 
 static void StartMenu_Clear(void) {
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aCall_ExitMenu);
     ExitMenu_Conv2();
     // CALL(aReloadTilesetAndPalettes);
@@ -910,7 +910,7 @@ choosemenu:
     // LD_addr_A(wPartyMenuActionText);  // Choose a POKéMON.
     wram->wPartyMenuActionText = 0;
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
 
 menu:
     // FARCALL(aLoadPartyMenuGFX);
@@ -927,9 +927,9 @@ menunoreload:
     // FARCALL(aPrintPartyMenuText);
     PrintPartyMenuText();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // CALL(aSetPalettes);  // load regular palettes?
-    SetPalettes_Conv();
+    SetPalettes();
     // CALL(aDelayFrame);
     DelayFrame();
     // FARCALL(aPartyMenuSelect);

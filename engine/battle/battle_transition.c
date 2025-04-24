@@ -8,8 +8,8 @@
 #include "../../home/palettes.h"
 #include "../../home/clear_sprites.h"
 #include "../../home/random.h"
+#include "../../home/sine.h"
 #include "../overworld/map_objects.h"
-#include "../math/sine.h"
 
 static const char TrainerBattlePokeballTiles[] = "gfx/overworld/trainer_battle_pokeball_tiles.png";
 
@@ -539,7 +539,7 @@ static void StartTrainerBattle_DoSineWave(void) {
         // CALL(aStartTrainerBattle_DrawSineWave);
         // LD_bc_A;
         // INC_BC;
-        wram->wLYOverrides[a] = StartTrainerBattle_DrawSineWave_Conv(e, d);
+        wram->wLYOverrides[a] = Sine(e, d);
         // POP_DE;
         // LD_A_E;
         // ADD_A(2);
@@ -1179,19 +1179,6 @@ void WipeLYOverrides_Conv(void){
     }
 }
 
-void StartTrainerBattle_DrawSineWave(void){
-    //calc_sine_wave ['?']
-
-    // return StartTrainerBattle_ZoomToBlack();
-    REG_A = StartTrainerBattle_DrawSineWave_Conv(REG_A, REG_D);
-    RET;
-}
-
-uint8_t StartTrainerBattle_DrawSineWave_Conv(uint8_t a, uint8_t d){
-    //calc_sine_wave ['?']
-    return v_Sine_Conv(a, d);
-}
-
 static void StartTrainerBattle_ZoomToBlack_Copy(uint8_t* hl, uint8_t c, uint8_t b) {
     // LD_A(BATTLETRANSITION_BLACK);
 
@@ -1268,7 +1255,7 @@ void StartTrainerBattle_ZoomToBlack(void){
         // CALL(aStartTrainerBattle_ZoomToBlack_Copy);
         StartTrainerBattle_ZoomToBlack_Copy(boxes[i].start, boxes[i].w, boxes[i].h);
         // CALL(aWaitBGMap);
-        WaitBGMap_Conv();
+        WaitBGMap();
         // goto loop;
     }
 

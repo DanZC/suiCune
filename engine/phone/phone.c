@@ -1464,7 +1464,7 @@ const txt_cmd_s PhoneEllipseText[] = {
 void HangUp_BoopOff(void){
     // CALL(aSpeechTextbox);
     // RET;
-    return SpeechTextbox_Conv2();
+    return SpeechTextbox();
 }
 
 void Phone_StartRinging(void){
@@ -1545,7 +1545,7 @@ void Phone_CallerTextbox_Conv(void){
     // LD_C(SCREEN_WIDTH - 2);
     // CALL(aTextbox);
     // RET;
-    return Textbox_Conv2(coord(0, 0, wram->wTilemap), 2, SCREEN_WIDTH - 2);
+    return Textbox(coord(0, 0, wram->wTilemap), 2, SCREEN_WIDTH - 2);
 }
 
 void GetCallerClassAndName(void){

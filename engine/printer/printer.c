@@ -114,7 +114,7 @@ void PrintDexEntry(void){
     // FARCALL(aPrintPage1);
     PrintPage1();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // LD_A(0b11100100);
     // CALL(aDmgToCgbBGPals);
     DmgToCgbBGPals_Conv(0b11100100);
@@ -812,7 +812,7 @@ void PlacePrinterStatusString(void){
     // hlcoord(0, 5, wTilemap);
     // LD_BC((10 << 8) | 18);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 5, wram->wTilemap), 10, 18);
+    Textbox(coord(0, 5, wram->wTilemap), 10, 18);
     // POP_AF;
     // LD_E_A;
     // LD_D(0);
@@ -998,7 +998,7 @@ void PrintPCBox_Page4(void){
     // hlcoord(1, 15, wTilemap);
     // LD_BC((2 << 8) | 18);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(1, 15, wram->wTilemap), 18, 2);
+    ClearBox(coord(1, 15, wram->wTilemap), 18, 2);
     // CALL(aPrinter_PlaceSideBorders);
     Printer_PlaceSideBorders();
     // CALL(aPrinter_PlaceBottomBorders);

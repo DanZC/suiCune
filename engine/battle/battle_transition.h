@@ -19,8 +19,6 @@ void StartTrainerBattle_LoadPokeBallGraphics(void);
 // void PokeBallTransition(void);
 void WipeLYOverrides(void);
 void WipeLYOverrides_Conv(void);
-void StartTrainerBattle_DrawSineWave(void);
-uint8_t StartTrainerBattle_DrawSineWave_Conv(uint8_t a, uint8_t d);
 void StartTrainerBattle_ZoomToBlack(void);
 void UnusedWaitBGMapOnce(void);
 //#include "gfx/overworld/trainer_battle_pokeball_tiles.2bpp"

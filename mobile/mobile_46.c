@@ -1793,7 +1793,7 @@ void BattleTowerRoomMenu_PlacePickLevelMenu(void){
     // LD_hl_A;
     *coord(16, 8, wram->wAttrmap) |= 0x40;
     // CALL(aWaitBGMap2);
-    WaitBGMap2_Conv();
+    WaitBGMap2();
     UpdateSprites_Conv();
     // LD_A(0x1);
     // LD_addr_A(wcd4f);
@@ -2110,7 +2110,7 @@ void BattleTowerRoomMenu_Mobile_16(void){
     // ld [hl], a
     *coord(16, 8, wram->wAttrmap) |= 0x40;
     // call WaitBGMap2;$31cc
-    WaitBGMap2_Conv();
+    WaitBGMap2();
     // ld a, $01
     // ld [wcd4b], a;$cd3f
     wram->wcd4b = 0x1;
@@ -3396,7 +3396,7 @@ void Function118ec6(void){
     // CALL(aFunction118440);
     Function118440();
     // CALL(aSpeechTextbox);
-    SpeechTextbox_Conv2();
+    SpeechTextbox();
     // LD_HL(w3_d80e);
     // LD_DE(wc320);
     // LD_BC(0x0026);
@@ -8451,7 +8451,7 @@ void Function11a90f(void){
     // LD_A(0x1);
     // LDH_addr_A(rSVBK);
     // CALL(aSpeechTextbox);
-    SpeechTextbox_Conv2();
+    SpeechTextbox();
     // LD_A(0x50);
     // LD_HL(wc320);
     // LD_BC(0x008c);
@@ -8646,7 +8646,7 @@ void BattleTowerRoomMenu_SetMessage(const txt_cmd_s* hl){
 
 void Function11a9ce(void){
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aReloadTilesetAndPalettes);
     ReloadTilesetAndPalettes_Conv();
     // CALL(aCall_ExitMenu);
@@ -8821,7 +8821,7 @@ const txt_cmd_s Text_ThisBattleRoomPleaseWait[] = {
 // Mobile_HaveWantScreenSpecial
 void Function11ac3e(void){
     // CALL(aSpeechTextbox);
-    SpeechTextbox_Conv2();
+    SpeechTextbox();
     // CALL(aFadeToMenu);
     FadeToMenu_Conv();
     // CALLFAR(aClearSpriteAnims2);
@@ -9013,11 +9013,11 @@ void Function11acb7(void){
 
 void Function11ad1b(void){
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // FARCALL(aFunction17c000);
     Function17c000();
     // LD_A_addr(wMenuCursorY);
@@ -9737,7 +9737,7 @@ void Function11b082(void){
     // CALL(aFunction11b275);
     Function11b275();
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // JP(mFunction11ad8a);
     return Function11ad8a();
 }
@@ -10145,7 +10145,7 @@ bool CheckCaughtMemMon(void){
     // POP_HL;
     // POP_DE;
     // RET;
-    return CheckCaughtMon_Conv(wram->wTempSpecies - 1);
+    return CheckCaughtMon(wram->wTempSpecies - 1);
 }
 
 bool CheckSeenMemMon(void){
@@ -10157,12 +10157,12 @@ bool CheckSeenMemMon(void){
     // POP_HL;
     // POP_DE;
     // RET;
-    return CheckSeenMon_Conv(wram->wTempSpecies - 1);
+    return CheckSeenMon(wram->wTempSpecies - 1);
 }
 
 void Function11b236(uint8_t* hl, uint8_t b, uint8_t c, uint8_t a){
     // JP(mFillBoxWithByte);
-    FillBoxWithByte_Conv2(hl, c, b, a);
+    FillBoxWithByte(hl, c, b, a);
 }
 
 // DoJumptable?
@@ -11370,7 +11370,7 @@ void Function11b7e5(void){
     // LD_addr_A(wOTTrademonCaughtData);
     wram->wOTTrademon.caughtData = GetCaughtGender_Conv(&wram->wMobileMon.mon);
     // CALL(aSpeechTextbox);
-    SpeechTextbox_Conv2();
+    SpeechTextbox();
     // CALL(aFadeToMenu);
     FadeToMenu_Conv();
     // FARCALL(aMobileTradeAnimation_ReceiveGetmonFromGTS);

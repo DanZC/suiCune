@@ -1,15 +1,8 @@
 #include "../../constants.h"
 #include "sine.h"
 
-// void v_Sine(void){
-// //  a = d * sin(e * pi/32)
-//     // LD_A_E;
-//     //calc_sine_wave ['?']
-
-// }
-
 //  a = d * sin(e * pi/32)
-uint8_t v_Sine_Conv(uint8_t e, uint8_t d){
+uint8_t v_Sine(uint8_t e, uint8_t d){
     static const uint16_t Sinetable[] = {
         0x0000,0x0019,0x0032,0x004a,0x0062,0x0079,0x008e,0x00a2,
         0x00b5,0x00c6,0x00d5,0x00e2,0x00ed,0x00f5,0x00fb,0x00ff,

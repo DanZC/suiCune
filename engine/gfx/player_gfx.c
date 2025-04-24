@@ -134,7 +134,7 @@ void MovePlayerPic_Conv(uint8_t* hl, int16_t de){
         // LDH_addr_A(hBGMapThird);
         hram->hBGMapThird = 0;
         // CALL(aWaitBGMap);
-        WaitBGMap_Conv();
+        WaitBGMap();
         // CALL(aDelayFrame);
         DelayFrame();
         // POP_DE;
@@ -156,7 +156,7 @@ void MovePlayerPic_Conv(uint8_t* hl, int16_t de){
         // LD_H_A;
         // LD_BC((7 << 8) | 7);
         // CALL(aClearBox);
-        ClearBox_Conv2(hl - de, 7, 7);
+        ClearBox(hl - de, 7, 7);
         // POP_BC;
         // POP_HL;
         // goto loop;
@@ -290,7 +290,7 @@ void GetChrisBackpic(void){
 
 void HOF_LoadTrainerFrontpic(void){
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
@@ -323,7 +323,7 @@ void HOF_LoadTrainerFrontpic(void){
     LoadPNG2bppAssetSectionToVRAM(vram->vTiles2, pic, 0, 7 * 7);
 
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;

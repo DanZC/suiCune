@@ -21,7 +21,7 @@
 
 bool MainMenu_Mobile(void){
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // LD_A(MUSIC_MOBILE_ADAPTER_MENU);
     // LD_addr_A(wMapMusic);
     wram->wMapMusic = MUSIC_MOBILE_ADAPTER_MENU;
@@ -36,13 +36,13 @@ bool MainMenu_Mobile(void){
 // MobileMenu_Init
 void Function49f0a(void){
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aFunction4a3a7);
     Function4a3a7();
     // CALL(aFunction4a492);
     Function4a492();
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // return Function49f16();
     //  TODO: Finish converting Function49f16
 }
@@ -68,16 +68,16 @@ entry:
     // LD_B(4);
     // LD_C(SCREEN_HEIGHT);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 12, wram->wTilemap), 4, SCREEN_HEIGHT);
+    Textbox(coord(0, 12, wram->wTilemap), 4, SCREEN_HEIGHT);
     // XOR_A_A;
     // LD_DE(mString_0x49fe9);
     // hlcoord(1, 14, wTilemap);
     // CALL(aPlaceString);
     PlaceStringSimple(U82C(MobileStrings2[0]), coord(1, 14, wram->wTilemap));
     // CALL(aWaitBGMap2);
-    WaitBGMap2_Conv();
+    WaitBGMap2();
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // CALL(aStaticMenuJoypad);
     uint8_t joypad = StaticMenuJoypad_Conv();
     // LD_HL(wMenuCursorY);
@@ -119,9 +119,9 @@ entry:
         b_button:
             // POP_BC;
             // CALL(aClearBGPalettes);
-            ClearBGPalettes_Conv();
+            ClearBGPalettes();
             // CALL(aClearTilemap);
-            ClearTilemap_Conv2();
+            ClearTilemap();
             // LD_A(MUSIC_MAIN_MENU);
             // LD_addr_A(wMapMusic);
             wram->wMapMusic = MUSIC_MAIN_MENU;
@@ -145,7 +145,7 @@ entry:
         // LD_B(4);
         // LD_C(SCREEN_HEIGHT);
         // CALL(aClearBox);
-        ClearBox_Conv2(coord(1, 13, wram->wTilemap), SCREEN_HEIGHT, 4);
+        ClearBox(coord(1, 13, wram->wTilemap), SCREEN_HEIGHT, 4);
         // hlcoord(1, 14, wTilemap);
         // CALL(aPlaceString);
         PlaceStringSimple(U82C(MobileStrings2[wram->wMenuCursorY - 1]), coord(1, 14, wram->wTilemap));
@@ -162,7 +162,7 @@ entry:
         // LD_C(0x1);
         // hlcoord(5, 1, wTilemap);
         // CALL(aClearBox);
-        ClearBox_Conv2(coord(4, 1, wram->wTilemap), 0x1, 0xa);
+        ClearBox(coord(4, 1, wram->wTilemap), 0x1, 0xa);
         // JP(mFunction49f16_joy_loop);
 
     // joy_loop:
@@ -248,7 +248,7 @@ void Function4a098(void){
     // CALL(aPlaceHollowCursor);
     PlaceHollowCursor_Conv();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // CALL(aLoadStandardMenuHeader);
     LoadStandardMenuHeader_Conv();
     // FARCALL(aFunction89de0);
@@ -300,7 +300,7 @@ void Function4a0c2(void){
     uint8_t a = InitMobileProfile(0x1);
     // PUSH_AF;
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // POP_AF;
     // AND_A_A;
     // IF_NZ goto skip_save;
@@ -323,14 +323,14 @@ void Function4a100(void){
     // CALL(aMenuClickSound);
     MenuClickSound_Conv(2);
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aFunction4a13b);
     Function4a13b();
     Function4a149();
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
 
     return asm_4a111();
 }
@@ -409,7 +409,7 @@ entry:
     // LD_B(0x4);
     // LD_C(0x12);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 12, wram->wTilemap), 0x4, 0x12);
+    Textbox(coord(0, 12, wram->wTilemap), 0x4, 0x12);
     // LD_A_addr(wMenuCursorY);
     // DEC_A;
     // LD_HL(mStrings_4a23d);
@@ -420,14 +420,14 @@ entry:
     // LD_B(0x4);
     // LD_C(0x12);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(1, 13, wram->wTilemap), 0x12, 0x4);
+    ClearBox(coord(1, 13, wram->wTilemap), 0x12, 0x4);
     // hlcoord(1, 14, wTilemap);
     // CALL(aPlaceString);
     PlaceStringSimple(U82C(Strings_4a23d[wram->wMenuCursorY - 1]), coord(1, 14, wram->wTilemap));
     // FARCALL(aMobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
     Mobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv();
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // CALL(aStaticMenuJoypad);
     uint8_t joypad = StaticMenuJoypad_Conv();
     // LD_HL(wMenuCursorY);
@@ -477,7 +477,7 @@ entry:
         // LD_B(0x4);
         // LD_C(0x12);
         // CALL(aClearBox);
-        ClearBox_Conv2(coord(1, 13, wram->wTilemap), 0x12, 0x4);
+        ClearBox(coord(1, 13, wram->wTilemap), 0x12, 0x4);
         // hlcoord(1, 14, wTilemap);
         // CALL(aPlaceString);
         PlaceStringSimple(U82C(Strings_4a23d[wram->wMenuCursorY - 1]), coord(1, 14, wram->wTilemap));
@@ -493,7 +493,7 @@ entry:
         // LD_BC((6 << 8) | 1);
         // hlcoord(2, 3, wTilemap);
         // CALL(aClearBox);
-        ClearBox_Conv2(coord(2, 3, wram->wTilemap), 1, 6);
+        ClearBox(coord(2, 3, wram->wTilemap), 1, 6);
         // JP(mFunction4a195); // Inlined
         // CALL(aScrollingMenuJoypad);
         joypad = ScrollingMenuJoypad_Conv();
@@ -577,7 +577,7 @@ void Function4a20e(void){
     // FARCALL(aFunction1719c8);
     Function1719c8();
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aDelayFrame);
     DelayFrame();
     // JR(mFunction4a239);
@@ -634,7 +634,7 @@ bool Function4a28a(void){
     // CALL(aPlaceHollowCursor);
     PlaceHollowCursor_Conv();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // CALL(aLoadStandardMenuHeader);
     LoadStandardMenuHeader_Conv();
     // LD_A(0x5);
@@ -687,7 +687,7 @@ bool Function4a28a(void){
             // LD_B(3);
             // LD_C(4);
             // CALL(aTextbox);
-            Textbox_Conv2(coord(14, 7, wram->wTilemap), 3, 4);
+            Textbox(coord(14, 7, wram->wTilemap), 3, 4);
             // FARCALL(aMobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
             Mobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv();
             // LD_HL(mDeletePassword_YesNo_MenuHeader);
@@ -736,7 +736,7 @@ bool Function4a28a(void){
 // asm_4a2df:
     // FARCALL(aFunction11765d); // TOOD: Convert Function Function11765d
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aCall_ExitMenu);
     ExitMenu_Conv2();
     // CALL(aLoadFontsExtra);
@@ -988,7 +988,7 @@ bool MainMenu_MobileStudium(void){
     // FARCALL(aMobileStudium);
     MobileStudium();
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // POP_DE;
     // POP_BC;
     // LD_A_B;
@@ -1011,7 +1011,7 @@ bool MainMenu_MobileStudium(void){
 void Function4a4c4(void){
 entry:
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aFunction4a3a7);
     Function4a3a7();
     // CALL(aFunction4a492);
@@ -1019,7 +1019,7 @@ entry:
     // CALL(aFunction4a680);
     Function4a680();
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // LD_C(20);
     // CALL(aDelayFrames);
     DelayFrames(20);
@@ -1052,7 +1052,7 @@ entry:
     // LD_B(0x4);
     // LD_C(0x12);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 12, wram->wTilemap), 0x4, 0x12);
+    Textbox(coord(0, 12, wram->wTilemap), 0x4, 0x12);
     // XOR_A_A;
     // LD_HL(mStrings_4a5f6);
     // LD_D_H;
@@ -1069,9 +1069,9 @@ entry:
     // CALL(aPlaceString);
     PlaceStringSimple(U82C(Strings_4a5f6[1]), coord(1, 16, wram->wTilemap));
     // CALL(aWaitBGMap2);
-    WaitBGMap2_Conv();
+    WaitBGMap2();
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // CALL(aStaticMenuJoypad);
     uint8_t joypad = StaticMenuJoypad_Conv();
     // LD_HL(wMenuCursorY);
@@ -1113,9 +1113,9 @@ entry:
         asm_4a574:
             // POP_BC;
             // CALL(aClearBGPalettes);
-            ClearBGPalettes_Conv();
+            ClearBGPalettes();
             // CALL(aClearTilemap);
-            ClearTilemap_Conv2();
+            ClearTilemap();
             // JP(mFunction49f0a);
             Function49f0a();
             return;
@@ -1137,7 +1137,7 @@ entry:
         // LD_B(0x4);
         // LD_C(0x12);
         // CALL(aClearBox);
-        ClearBox_Conv2(coord(1, 13, wram->wTilemap), 0x12, 0x4);
+        ClearBox(coord(1, 13, wram->wTilemap), 0x12, 0x4);
         // hlcoord(1, 14, wTilemap);
         // CALL(aPlaceString);
         PlaceStringSimple(U82C(Strings_4a5f6[y]), coord(1, 14, wram->wTilemap));
@@ -1162,7 +1162,7 @@ entry:
         // LD_C(0x1);
         // hlcoord(3, 1, wTilemap);
         // CALL(aClearBox);
-        ClearBox_Conv2(coord(3, 1, wram->wTilemap), 0x1, 0xa);
+        ClearBox(coord(3, 1, wram->wTilemap), 0x1, 0xa);
         // JP(mFunction4a545); // inlined
         // CALL(aScrollingMenuJoypad);
         joypad = ScrollingMenuJoypad_Conv();
@@ -1219,9 +1219,9 @@ entry:
 //     asm_4a574:
 //         // POP_BC;
 //         // CALL(aClearBGPalettes);
-//         ClearBGPalettes_Conv();
+//         ClearBGPalettes();
 //         // CALL(aClearTilemap);
-//         ClearTilemap_Conv2();
+//         ClearTilemap();
 //         // JP(mFunction49f0a);
 //         return Function49f0a();
 //     }
@@ -1242,7 +1242,7 @@ entry:
 //     // LD_B(0x4);
 //     // LD_C(0x12);
 //     // CALL(aClearBox);
-//     ClearBox_Conv2(coord(1, 13, wram->wTilemap), 0x12, 0x4);
+//     ClearBox(coord(1, 13, wram->wTilemap), 0x12, 0x4);
 //     // hlcoord(1, 14, wTilemap);
 //     // CALL(aPlaceString);
 //     PlaceStringSimple(U82C(Strings_4a5f6[y]), coord(1, 14, wram->wTilemap));
@@ -1270,7 +1270,7 @@ entry:
 //     // LD_C(0x1);
 //     // hlcoord(3, 1, wTilemap);
 //     // CALL(aClearBox);
-//     ClearBox_Conv2(coord(3, 1, wram->wTilemap), 0x1, 0xa);
+//     ClearBox(coord(3, 1, wram->wTilemap), 0x1, 0xa);
 //     // JP(mFunction4a545);
 // }
 
@@ -1343,10 +1343,10 @@ void Function4a6ab(void){
     // CALL(aMenuClickSound);
     MenuClickSound_Conv(0x2);
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // LD_B(SCGB_DIPLOMA);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_DIPLOMA);
+    GetSGBLayout(SCGB_DIPLOMA);
     // FARCALL(aFunction11c1ab); //  TODO: Convert EZ Chat stuff
     Function11c1ab();
     // POP_BC;

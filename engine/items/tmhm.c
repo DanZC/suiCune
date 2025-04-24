@@ -49,7 +49,7 @@ bool TMHMPocket_Conv(void){
     // CALL(aPlaceHollowCursor);
     PlaceHollowCursor_Conv();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_A_addr(wCurItem);
     // DEC_A;
     // LD_addr_A(wCurItemQuantity);
@@ -145,7 +145,7 @@ u8_flag_s ChooseMonToLearnTMHM(void){
     // CALL(aCopyBytes);
     CopyBytes(wram->wTMHMMoveNameBackup, wram->wStringBuffer2, MOVE_NAME_LENGTH - 1);
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     return ChooseMonToLearnTMHM_NoRefresh();
 }
 
@@ -167,9 +167,9 @@ u8_flag_s ChooseMonToLearnTMHM_NoRefresh(void){
         // FARCALL(aPrintPartyMenuText);
         PrintPartyMenuText();
         // CALL(aWaitBGMap);
-        WaitBGMap_Conv();
+        WaitBGMap();
         // CALL(aSetPalettes);
-        SetPalettes_Conv();
+        SetPalettes();
         // CALL(aDelayFrame);
         DelayFrame();
         // FARCALL(aPartyMenuSelect);
@@ -415,7 +415,7 @@ bool TMHM_PocketLoop_Conv(void){
         // LD_B(4);
         // LD_C(SCREEN_WIDTH - 2);
         // CALL(aTextbox);
-        Textbox_Conv2(coord(0, 12, wram->wTilemap), 4, SCREEN_WIDTH - 2);
+        Textbox(coord(0, 12, wram->wTilemap), 4, SCREEN_WIDTH - 2);
         // LD_A_addr(wCurItem);
         // CP_A(NUM_TMS + NUM_HMS + 1);
         // JR_NC (mTMHM_JoypadLoop);
@@ -682,7 +682,7 @@ uint8_t TMHM_DisplayPocketItems(void){
     // LD_BC((10 << 8) | 15);
     // LD_A(0x7f);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(5, 2, wram->wTilemap), 15, 10);
+    ClearBox(coord(5, 2, wram->wTilemap), 15, 10);
     // CALL(aTMHM_GetCurrentPocketPosition);
     uint8_t c = TMHM_GetCurrentPocketPosition();
     // LD_D(0x5);

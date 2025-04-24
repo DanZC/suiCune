@@ -11,7 +11,7 @@ void UpdateItemDescription(void){
     // LD_B(4);
     // LD_C(SCREEN_WIDTH - 2);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 12, wram->wTilemap), 4, SCREEN_WIDTH - 2);
+    Textbox(coord(0, 12, wram->wTilemap), 4, SCREEN_WIDTH - 2);
     // LD_A_addr(wMenuSelection);
     // CP_A(-1);
     // RET_Z ;

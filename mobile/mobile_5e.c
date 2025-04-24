@@ -97,7 +97,7 @@ void Function17a6a8(uint8_t* de, uint8_t c){
     // FARCALL(aFunction49420);
     Function49420();
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // CALL(aDelayFrame);
     DelayFrame();
     // RET;
@@ -736,7 +736,7 @@ void Function17a97b(void){
     // hlcoord(1, 1, wTilemap);
     // LD_BC((2 << 8) | 18);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(1, 1, wram->wTilemap), 18, 2);
+    ClearBox(coord(1, 1, wram->wTilemap), 18, 2);
     // hlcoord(3, 2, wTilemap);
     tile_t* hl = coord(3, 2, wram->wTilemap);
     // LD_DE(wd1ea);
@@ -1208,7 +1208,7 @@ void Function17ac46(tile_t* hl, uint8_t b, uint8_t c){
     }
     else {
         // CALL(aTextbox);
-        Textbox_Conv2(hl, b, c);
+        Textbox(hl, b, c);
         // RET;
     }
 }

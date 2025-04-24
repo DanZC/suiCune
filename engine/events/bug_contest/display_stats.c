@@ -14,9 +14,9 @@ void DisplayCaughtContestMonStats(void){
     static const char Stock[] = " STOCK <PKMN> @";
     static const char This[] = " THIS <PKMN>  @";
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aLoadFontsBattleExtra);
@@ -33,13 +33,13 @@ void DisplayCaughtContestMonStats(void){
     // LD_B(4);
     // LD_C(13);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 0, wram->wTilemap), 4, 13);
+    Textbox(coord(0, 0, wram->wTilemap), 4, 13);
 
     // hlcoord(0, 6, wTilemap);
     // LD_B(4);
     // LD_C(13);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 6, wram->wTilemap), 4, 13);
+    Textbox(coord(0, 6, wram->wTilemap), 4, 13);
 
     // hlcoord(2, 0, wTilemap);
     // LD_DE(mDisplayCaughtContestMonStats_Stock);
@@ -111,12 +111,12 @@ void DisplayCaughtContestMonStats(void){
     wram->wOptions = options;
 
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_B(SCGB_DIPLOMA);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_DIPLOMA);
+    GetSGBLayout(SCGB_DIPLOMA);
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // RET;
 }
 

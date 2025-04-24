@@ -841,7 +841,7 @@ void OaksPKMNTalk10(void){
     // CALL(aPrintText);
     PrintText_Conv2(OPT_RestartText);
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_HL(mOPT_PokemonChannelText);
     // CALL(aPrintText);
     PrintText_Conv2(OPT_PokemonChannelText);
@@ -1022,7 +1022,7 @@ void PokedexShow1(void){
         // CALL(aCheckCaughtMon);
         // POP_BC;
         // IF_Z goto loop;
-    } while(!CheckCaughtMon_Conv(a));
+    } while(!CheckCaughtMon(a));
     // INC_C;
     // LD_A_C;
     // LD_addr_A(wCurPartySpecies);
@@ -1340,7 +1340,7 @@ void BenFernMusic5(void){
     // LD_HL(mBenFernText2A);
     // IF_Z goto SunTueThurSun;
     // LD_HL(mBenFernText2B);
-    if((GetWeekday_Conv() & 1) == 0) {
+    if((GetWeekday() & 1) == 0) {
         return NextRadioLine_Conv(BenFernText2A, POKEMON_MUSIC_6);
     }
     else {
@@ -1357,7 +1357,7 @@ void BenFernMusic6(void){
     // LD_HL(mBenFernText3A);
     // IF_Z goto SunTueThurSun;
     // LD_HL(mBenFernText3B);
-    if((GetWeekday_Conv() & 1) == 0) {
+    if((GetWeekday() & 1) == 0) {
         return NextRadioLine_Conv(BenFernText3A, POKEMON_MUSIC_7);
     }
     else {
@@ -1382,7 +1382,7 @@ void StartPokemonMusicChannel(void){
     // AND_A(1);
     // IF_Z goto SunTueThurSun;
     // LD_DE(MUSIC_POKEMON_LULLABY);
-    if(GetWeekday_Conv() & 1) {
+    if(GetWeekday() & 1) {
         RadioMusicRestartDE_Conv(MUSIC_POKEMON_LULLABY);
     }
     else {

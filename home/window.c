@@ -160,7 +160,7 @@ void OpenText_Conv(void){
     // CALL(aReanchorBGMap_NoOAMUpdate);  // clear bgmap
     ReanchorBGMap_NoOAMUpdate_Conv();
     // CALL(aSpeechTextbox);
-    SpeechTextbox_Conv2();
+    SpeechTextbox();
     // CALL(av_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);  // anchor bgmap
     v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv();  // anchor bgmap
     // CALL(aLoadFonts_NoOAMUpdate);  // load font

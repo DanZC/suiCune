@@ -214,9 +214,9 @@ void Function16c0dc(void){
 
 void Function16c0ec(void){
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearScreen);
-    ClearScreen_Conv2();
+    ClearScreen();
     // PUSH_AF;
     // LD_A(0xff);
     // LD_addr_A(wd002);
@@ -462,7 +462,7 @@ bool Function16c943(void){
     // FARCALL(aApplyPals);
     ApplyPals_Conv();
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(0x1);
@@ -609,7 +609,7 @@ bool Function16ca11(void){
     // FARCALL(aApplyPals);
     ApplyPals_Conv();
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(0x1);

@@ -10,12 +10,12 @@
 
 void BlankScreen(void){
     // CALL(aDisableSpriteUpdates);
-    DisableSpriteUpdates_Conv();
+    DisableSpriteUpdates();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearSprites);
     ClearSprites();
     // hlcoord(0, 0, wTilemap);
@@ -29,9 +29,9 @@ void BlankScreen(void){
     // CALL(aByteFill);
     ByteFill(coord(0, 0, wram->wAttrmap), wAttrmapEnd - wAttrmap, 0x7);
     // CALL(aWaitBGMap2);
-    WaitBGMap2_Conv();
+    WaitBGMap2();
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // RET;
 }
 

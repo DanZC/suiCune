@@ -1,10 +1,10 @@
 #include "../../constants.h"
 #include "celebi.h"
-#include "../math/sine.h"
 #include "../gfx/sprites.h"
 #include "../../home/sprite_anims.h"
 #include "../../home/copy.h"
 #include "../../home/delay.h"
+#include "../../home/sine.h"
 
 #define SPECIALCELEBIEVENT_CELEBI (0x84)
 
@@ -231,7 +231,7 @@ void UpdateCelebiPosition(struct SpriteAnim* bc){
     // LD_HL(SPRITEANIMSTRUCT_XOFFSET);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->xOffset = CelebiEvent_Cosine(var3, d);
+    bc->xOffset = Cosine(var3, d);
     // LD_D_A;
     d = bc->xOffset;
     // LD_HL(SPRITEANIMSTRUCT_XCOORD);
@@ -332,13 +332,6 @@ void UpdateCelebiPosition(struct SpriteAnim* bc){
 
 // done:
     // RET;
-}
-
-uint8_t CelebiEvent_Cosine(uint8_t a, uint8_t d){
-//  a = d * cos(a * pi/32)
-    // ADD_A(0b010000);  // cos(x) = sin(x + pi/2)
-    //calc_sine_wave ['?']
-    return v_Sine_Conv(a + 0b010000, d);
 }
 
 uint8_t GetCelebiSpriteTile(struct SpriteAnim* bc, uint8_t d){

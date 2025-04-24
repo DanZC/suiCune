@@ -336,7 +336,7 @@ MasterLoop:
         // hlcoord(0, 0, wTilemap);
         // LD_BC((12 << 8) | 20);
         // CALL(aClearBox);
-        ClearBox_Conv2(coord(0, 0, wram->wTilemap), 20, 12);
+        ClearBox(coord(0, 0, wram->wTilemap), 20, 12);
 
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
@@ -358,7 +358,7 @@ MasterLoop:
             // CALL(aPrintText);
             PrintText_Conv2(StoppedEvolvingText);
             // CALL(aClearTilemap);
-            ClearTilemap_Conv2();
+            ClearTilemap();
             // POP_HL;
             // JP(mEvolveAfterBattle_MasterLoop);
             goto MasterLoop;
@@ -402,7 +402,7 @@ MasterLoop:
         DelayFrames(40);
 
         // CALL(aClearTilemap);
-        ClearTilemap_Conv2();
+        ClearTilemap();
         // CALL(aUpdateSpeciesNameIfNotNicknamed);
         UpdateSpeciesNameIfNotNicknamed();
         // CALL(aGetBaseData);
@@ -458,7 +458,7 @@ MasterLoop:
         // LD_A_addr(wTempSpecies);
         // DEC_A;
         // CALL(aSetSeenAndCaughtMon);
-        SetSeenAndCaughtMon_Conv(wram->wCurSpecies - 1);
+        SetSeenAndCaughtMon(wram->wCurSpecies - 1);
 
         // LD_A_addr(wTempSpecies);
         // CP_A(UNOWN);

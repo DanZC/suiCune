@@ -1469,7 +1469,7 @@ static void PokeAnim_PlaceGraphic_ClearBox(void) {
     // LD_C(7);
     // CALL(aClearBox);
     // RET;
-    return ClearBox_Conv2(lPokeAnimCoord, 7, 7);
+    return ClearBox(lPokeAnimCoord, 7, 7);
 }
 
 void PokeAnim_PlaceGraphic_Conv(void){

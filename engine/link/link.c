@@ -37,12 +37,12 @@
 
 void LinkCommunications(void){
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // LD_C(80);
     // CALL(aDelayFrames);
     DelayFrames(80);
     // CALL(aClearScreen);
-    ClearScreen_Conv2();
+    ClearScreen();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aUpdateSprites);
@@ -56,7 +56,7 @@ void LinkCommunications(void){
     // CALL(aDelayFrames);
     DelayFrames(80);
     // CALL(aClearScreen);
-    ClearScreen_Conv2();
+    ClearScreen();
     // CALL(aUpdateSprites);
     UpdateSprites_Conv();
     // CALL(aLoadStandardFont);
@@ -66,7 +66,7 @@ void LinkCommunications(void){
     // FARCALL(aLinkComms_LoadPleaseWaitTextboxBorderGFX);
     LinkComms_LoadPleaseWaitTextboxBorderGFX();
     // CALL(aWaitBGMap2);
-    WaitBGMap2_Conv();
+    WaitBGMap2();
     // hlcoord(3, 8, wTilemap);
     // LD_B(2);
     // LD_C(12);
@@ -81,7 +81,7 @@ void LinkCommunications(void){
     // CALL(aSetTradeRoomBGPals);
     SetTradeRoomBGPals();
     // CALL(aWaitBGMap2);
-    WaitBGMap2_Conv();
+    WaitBGMap2();
     // LD_HL(wLinkByteTimeout);
     //assert ['LOW(SERIAL_LINK_BYTE_TIMEOUT) == 0'];
     // XOR_A_A;  // LOW(SERIAL_LINK_BYTE_TIMEOUT)
@@ -650,7 +650,7 @@ void Gen2ToGen2LinkComms(void){
         // LD_addr_A(wOtherTrainerClass);
         wram->wOtherTrainerClass = (bit_test(gOtherPlayerGender, PLAYERGENDER_FEMALE_F))? JODI: CAL;
         // CALL(aClearScreen);
-        ClearScreen_Conv2();
+        ClearScreen();
         // FARCALL(aLink_WaitBGMap);
         Link_WaitBGMap();
 
@@ -773,12 +773,12 @@ void LinkTimeout(void){
     // CALL(aRotateThreePalettesRight);
     RotateThreePalettesRight_Conv();
     // CALL(aClearScreen);
-    ClearScreen_Conv2();
+    ClearScreen();
     // LD_B(SCGB_DIPLOMA);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_DIPLOMA);
+    GetSGBLayout(SCGB_DIPLOMA);
     // CALL(aWaitBGMap2);
-    WaitBGMap2_Conv();
+    WaitBGMap2();
     // RET;
 }
 
@@ -1801,7 +1801,7 @@ void InitTradeMenuDisplay(void){
 
 InitTradeMenuDisplay:
     // CALL(aClearScreen);
-    ClearScreen_Conv2();
+    ClearScreen();
     // CALL(aLoadTradeScreenBorderGFX);
     LoadTradeScreenBorderGFX();
     // FARCALL(aInitTradeSpeciesList);
@@ -1891,7 +1891,7 @@ LinkTrade_PlayerPartyMenu:
     // LD_addr_A(w2DMenuFlags2);
     wram->w2DMenuFlags2 = 0;
     // CALL(aWaitBGMap2);
-    WaitBGMap2_Conv();
+    WaitBGMap2();
     goto LinkTradePartymonMenuLoop;
 
 LinkTradePartiesMenuMasterLoop:
@@ -2480,7 +2480,7 @@ void LinkTrade_PlayerPartyMenu(void){
     // LD_addr_A(w2DMenuFlags2);
     wram->w2DMenuFlags2 = 0;
     // CALL(aWaitBGMap2);
-    WaitBGMap2_Conv();
+    WaitBGMap2();
 
     return LinkTradePartymonMenuLoop();
 }
@@ -2904,12 +2904,12 @@ void ExitLinkCommunications(void){
     // CALL(aRotateThreePalettesRight);
     RotateThreePalettesRight_Conv();
     // CALL(aClearScreen);
-    ClearScreen_Conv2();
+    ClearScreen();
     // LD_B(SCGB_DIPLOMA);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_DIPLOMA);
+    GetSGBLayout(SCGB_DIPLOMA);
     // CALL(aWaitBGMap2);
-    WaitBGMap2_Conv();
+    WaitBGMap2();
     // XOR_A_A;
     // LD_addr_A(wUnusedLinkCommunicationByte);
     wram->wUnusedLinkCommunicationByte = 0;
@@ -3096,7 +3096,7 @@ void LinkTrade(void){
     // CALL(aCall_ExitMenu);
     ExitMenu_Conv2();
     // CALL(aWaitBGMap2);
-    WaitBGMap2_Conv();
+    WaitBGMap2();
     // POP_AF;
     // BIT_A(1);
     // IF_NZ goto canceled;
@@ -3348,12 +3348,12 @@ void LinkTrade(void){
         // CALL(aDelayFrames);
         DelayFrames(100);
         // CALL(aClearTilemap);
-        ClearTilemap_Conv2();
+        ClearTilemap();
         // CALL(aLoadFontsBattleExtra);
         LoadFontsBattleExtra_Conv();
         // LD_B(SCGB_DIPLOMA);
         // CALL(aGetSGBLayout);
-        GetSGBLayout_Conv(SCGB_DIPLOMA);
+        GetSGBLayout(SCGB_DIPLOMA);
         // LDH_A_addr(hSerialConnectionStatus);
         // CP_A(USING_EXTERNAL_CLOCK);
         // IF_Z goto player_2;
@@ -3398,7 +3398,7 @@ void LinkTrade(void){
         // CALLFAR(aEvolvePokemon);
         EvolvePokemon();
         // CALL(aClearScreen);
-        ClearScreen_Conv2();
+        ClearScreen();
         // CALL(aLoadTradeScreenBorderGFX);
         LoadTradeScreenBorderGFX();
         // CALL(aSetTradeRoomBGPals);
@@ -3531,7 +3531,7 @@ void SetTradeRoomBGPals(void){
     // FARCALL(aLoadTradeRoomBGPals);  // just a nested farcall// so wasteful
     LoadTradeRoomBGPals();
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // RET;
 }
 
@@ -3904,7 +3904,7 @@ void CheckLinkTimeout_Receptionist(void){
     // LD_hl_A;
     wram->wLinkTimeoutFrames = 0x300;
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_A(0x2);
     // LDH_addr_A(hVBlank);
     hram->hVBlank = 0x2;
@@ -4187,11 +4187,11 @@ void TradeCenter(void){
     // LD_addr_A(wLinkMode);
     wram->wLinkMode = LINK_TRADECENTER;
     // CALL(aDisableSpriteUpdates);
-    DisableSpriteUpdates_Conv();
+    DisableSpriteUpdates();
     // CALLFAR(aLinkCommunications);
     LinkCommunications();
     // CALL(aEnableSpriteUpdates);
-    EnableSpriteUpdates_Conv();
+    EnableSpriteUpdates();
     // XOR_A_A;
     // LDH_addr_A(hVBlank);
     hram->hVBlank = 0;
@@ -4204,11 +4204,11 @@ void Colosseum(void){
     // LD_addr_A(wLinkMode);
     wram->wLinkMode = LINK_COLOSSEUM;
     // CALL(aDisableSpriteUpdates);
-    DisableSpriteUpdates_Conv();
+    DisableSpriteUpdates();
     // CALLFAR(aLinkCommunications);
     LinkCommunications();
     // CALL(aEnableSpriteUpdates);
-    EnableSpriteUpdates_Conv();
+    EnableSpriteUpdates();
     // XOR_A_A;
     // LDH_addr_A(hVBlank);
     hram->hVBlank = 0;

@@ -102,7 +102,7 @@ void Function117699(void){
     // CALL(aByteFill);
     ByteFill(wram->wMobilePasswordBuffer, MOBILE_LOGIN_PASSWORD_LENGTH, 0x0);
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearSprites);
     ClearSprites();
     // FARCALL(aFunction171c87);
@@ -138,9 +138,9 @@ void Function1176ee(void){
     // FARCALL(aClearSpriteAnims);
     ClearSpriteAnims_Conv();
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearScreen);
-    ClearScreen_Conv2();
+    ClearScreen();
     // CALL(aClearSprites);
     ClearSprites();
     // RET;
@@ -623,7 +623,7 @@ void Function1178e8(void){
 // MobilePassword_SavedPasswordConfirmation
 void Function117942(void){
     // CALL(aSpeechTextbox);
-    SpeechTextbox_Conv2();
+    SpeechTextbox();
     // hlcoord(1, 14, wTilemap);
     // LD_DE(mSavedPasswordString);
     // CALL(aPlaceString);
@@ -800,7 +800,7 @@ void Function117a94(void){
     // LD_addr_A(wcf66);
     wram->wcf66 = 0;
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearSprites);
     ClearSprites();
     // FARCALL(aFunction172e78);
@@ -812,7 +812,7 @@ void Function117a94(void){
 
 void Function117ab4(void){
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearSprites);
     ClearSprites();
     // FARCALL(aFunction172e78);
@@ -842,7 +842,7 @@ void Function117acd(void){
 
 // asm_117ae2:
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearSprites);
     ClearSprites();
     // RET;

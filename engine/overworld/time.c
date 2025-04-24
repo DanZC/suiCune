@@ -548,7 +548,7 @@ void UnusedCheckSwarmFlag(void){
 static uint8_t RestartLuckyNumberCountdown_GetDaysUntilNextFriday(void) {
     // CALL(aGetWeekday);
     // LD_C_A;
-    uint8_t c = GetWeekday_Conv();
+    uint8_t c = GetWeekday();
     // LD_A(FRIDAY);
     // SUB_A_C;
     // IF_Z goto friday_saturday;

@@ -24,9 +24,9 @@ void v_UnownPuzzle(void){
     // LDH_addr_A(hInMenu);
     hram->hInMenu = 0x1;
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aClearSprites);
     ClearSprites();
     // XOR_A_A;
@@ -84,10 +84,10 @@ void v_UnownPuzzle(void){
     // LDH_addr_A(rLCDC);
     gb_write(rLCDC, 0b10010011);
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_B(SCGB_UNOWN_PUZZLE);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_UNOWN_PUZZLE);
+    GetSGBLayout(SCGB_UNOWN_PUZZLE);
     // LD_A(0xe4);
     // CALL(aDmgToCgbBGPals);
     DmgToCgbBGPals_Conv(0xe4);
@@ -140,9 +140,9 @@ void v_UnownPuzzle(void){
     // LDH_addr_A(hInMenu);
     hram->hInMenu = inMenu;
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aClearSprites);
     ClearSprites();
     // LD_A(LCDC_DEFAULT);
@@ -461,7 +461,7 @@ void UnownPuzzle_A(void){
         // CALL(aFillUnoccupiedPuzzleSpace);
         FillUnoccupiedPuzzleSpace();
         // CALL(aWaitBGMap);
-        WaitBGMap_Conv();
+        WaitBGMap();
         // CALL(aWaitSFX);
         WaitSFX();
         // LD_A(TRUE);
@@ -488,7 +488,7 @@ void UnownPuzzle_A(void){
     // CALL(aPlaceUnownPuzzlePieceGFX);
     PlaceUnownPuzzlePieceGFX();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // XOR_A_A;
     // LD_addr_A(wUnownPuzzleHeldPiece);
     wram->wUnownPuzzleHeldPiece = 0;

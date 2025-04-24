@@ -126,7 +126,7 @@ void NewGame_ClearTilemapEtc(void) {
     // LDH_addr_A(hMapAnims);
     hram->hMapAnims = 0x0;
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aLoadFontsExtra);
     LoadFontsExtra_Conv();
     // CALL(aLoadStandardFont);
@@ -622,13 +622,13 @@ bool Continue(void) {
             // LD_addr_A(wMusicFadeID + 1);
             wram->wMusicFadeID = MUSIC_NONE;
             // CALL(aClearBGPalettes);
-            ClearBGPalettes_Conv();
+            ClearBGPalettes();
             // CALL(aContinue_MobileAdapterMenu);
             Continue_MobileAdapterMenu();
             // CALL(aCloseWindow);
             CloseWindow_Conv2();
             // CALL(aClearTilemap);
-            ClearTilemap_Conv2();
+            ClearTilemap();
             // LD_C(20);
             // CALL(aDelayFrames);
             DelayFrames(20);
@@ -1157,7 +1157,7 @@ tile_t* Continue_DisplayBadgeCount_Conv(tile_t* hl) {
     // LD_HL(wJohtoBadges);
     // LD_B(2);
     // CALL(aCountSetBits);
-    uint8_t count = CountSetBits_Conv2(wram->wJohtoBadges, 2);
+    uint8_t count = CountSetBits(wram->wJohtoBadges, 2);
     // POP_HL;
     // LD_DE(wNumSetBits);
     // LD_BC((1 << 8) | 2);
@@ -1196,7 +1196,7 @@ tile_t* Continue_DisplayPokedexNumCaught_Conv(tile_t* hl) {
     // else
     //     LD_B(NUM_POKEMON / 8);
     // CALL(aCountSetBits);
-    uint8_t count = CountSetBits_Conv2(wram->wPokedexCaught, (NUM_POKEMON % 8)? NUM_POKEMON / 8 + 1: NUM_POKEMON / 8);
+    uint8_t count = CountSetBits(wram->wPokedexCaught, (NUM_POKEMON % 8)? NUM_POKEMON / 8 + 1: NUM_POKEMON / 8);
     // POP_HL;
     // LD_DE(wNumSetBits);
     // LD_BC((1 << 8) | 3);
@@ -1236,7 +1236,7 @@ void OakSpeech(void) {
     // CALL(aRotateFourPalettesLeft);
     RotateFourPalettesLeft_Conv();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
 
     // LD_DE(MUSIC_ROUTE_30);
     // CALL(aPlayMusic);
@@ -1257,7 +1257,7 @@ void OakSpeech(void) {
 
     // LD_B(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
+    GetSGBLayout(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
     // CALL(aIntro_RotatePalettesLeftFrontpic);
     Intro_RotatePalettesLeftFrontpic();
 
@@ -1267,7 +1267,7 @@ void OakSpeech(void) {
     // CALL(aRotateThreePalettesRight);
     RotateThreePalettesRight_Conv();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
 
     // LD_A(WOOPER);
     // LD_addr_A(wCurSpecies);
@@ -1288,7 +1288,7 @@ void OakSpeech(void) {
 
     // LD_B(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
+    GetSGBLayout(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
     // CALL(aIntro_WipeInFrontpic);
     Intro_WipeInFrontpic();
 
@@ -1301,7 +1301,7 @@ void OakSpeech(void) {
     // CALL(aRotateThreePalettesRight);
     RotateThreePalettesRight_Conv();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
 
     // XOR_A_A;
     // LD_addr_A(wCurPartySpecies);
@@ -1314,7 +1314,7 @@ void OakSpeech(void) {
 
     // LD_B(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
+    GetSGBLayout(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
     // CALL(aIntro_RotatePalettesLeftFrontpic);
     Intro_RotatePalettesLeftFrontpic();
 
@@ -1324,7 +1324,7 @@ void OakSpeech(void) {
     // CALL(aRotateThreePalettesRight);
     RotateThreePalettesRight_Conv();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
 
     // XOR_A_A;
     // LD_addr_A(wCurPartySpecies);
@@ -1334,7 +1334,7 @@ void OakSpeech(void) {
 
     // LD_B(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
+    GetSGBLayout(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
     // CALL(aIntro_RotatePalettesLeftFrontpic);
     Intro_RotatePalettesLeftFrontpic();
 
@@ -1433,12 +1433,12 @@ void NamePlayer(void) {
         // CALL(aRotateThreePalettesRight);
         RotateThreePalettesRight_Conv();
         // CALL(aClearTilemap);
-        ClearTilemap_Conv2();
+        ClearTilemap();
 
         // CALL(aLoadFontsExtra);
         LoadFontsExtra_Conv();
         // CALL(aWaitBGMap);
-        WaitBGMap_Conv();
+        WaitBGMap();
 
         // XOR_A_A;
         // LD_addr_A(wCurPartySpecies);
@@ -1448,7 +1448,7 @@ void NamePlayer(void) {
 
         // LD_B(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
         // CALL(aGetSGBLayout);
-        GetSGBLayout_Conv(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
+        GetSGBLayout(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
         // CALL(aRotateThreePalettesLeft);
         RotateThreePalettesLeft_Conv();
 
@@ -1458,14 +1458,14 @@ void NamePlayer(void) {
         // BIT_A(PLAYERGENDER_FEMALE_F);
         // IF_Z goto Male;
         if(bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F)) {
-            InitName_Conv2(wram->wPlayerName, U82C(Kris));
+            InitName(wram->wPlayerName, U82C(Kris));
         }
         // LD_DE(mNamePlayer_Kris);
 
     // Male:
         // CALL(aInitName);
         else {
-            InitName_Conv2(wram->wPlayerName, U82C(Chris));
+            InitName(wram->wPlayerName, U82C(Chris));
         }
         // RET;
     }
@@ -1544,7 +1544,7 @@ void ShrinkPlayer(void) {
     // LD_B(7);
     // LD_C(7);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(6, 5, wram->wTilemap), 7, 7);
+    ClearBox(coord(6, 5, wram->wTilemap), 7, 7);
 
     // LD_C(3);
     // CALL(aDelayFrames);
@@ -1562,7 +1562,7 @@ void ShrinkPlayer(void) {
     // CALL(aRotateThreePalettesRight);
     RotateThreePalettesRight_Conv();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // RET;
 }
 
@@ -1824,7 +1824,7 @@ void StartTitleScreen(void){
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
@@ -1833,9 +1833,9 @@ void StartTitleScreen(void){
     // RES_hl(rLCDC_SPRITE_SIZE);  // 8x8
     gb_write(rLCDC, gb_read(rLCDC) & ~(1 << rLCDC_SPRITE_SIZE));
     // CALL(aClearScreen);
-    ClearScreen_Conv2();
+    ClearScreen();
     // CALL(aWaitBGMap2);
-    WaitBGMap2_Conv();
+    WaitBGMap2();
     // XOR_A_A;
     // LDH_addr_A(hLCDCPointer);
     hram->hLCDCPointer = 0x0;
@@ -1851,7 +1851,7 @@ void StartTitleScreen(void){
     hram->hWY = 0x90;
     // LD_B(SCGB_DIPLOMA);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_DIPLOMA);
+    GetSGBLayout(SCGB_DIPLOMA);
     // CALL(aUpdateTimePals);
     UpdateTimePals();
     // LD_A_addr(wTitleScreenSelectedOption);
@@ -2505,7 +2505,7 @@ void UpdateTitleTrailSprite(void) {
 
 void Copyright(void) {
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aLoadFontsExtra);
     LoadFontsExtra_Conv();
     // LD_DE(mCopyrightGFX);
@@ -2543,9 +2543,9 @@ void GameInit(void) {
     // CALL(aClearWindowData);
     ClearWindowData_Conv2();
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // LD_A(HIGH(vBGMap0));
     // LDH_addr_A(hBGMapAddress + 1);
     // XOR_A_A;  // LOW(vBGMap0)
@@ -2561,7 +2561,7 @@ void GameInit(void) {
     // LDH_addr_A(hWY);
     hram->hWY = 0x90;
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
 
 #if !PM_HIDDEN_NETWORK
     MobileAdapterCheck();

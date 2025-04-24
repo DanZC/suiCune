@@ -41,12 +41,12 @@ void v_Option(void){
     // LD_hl(TRUE);
     hram->hInMenu = TRUE;
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // hlcoord(0, 0, wTilemap);
     // LD_B(SCREEN_HEIGHT - 2);
     // LD_C(SCREEN_WIDTH - 2);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 0, wram->wTilemap), SCREEN_HEIGHT - 2, SCREEN_WIDTH - 2);
+    Textbox(coord(0, 0, wram->wTilemap), SCREEN_HEIGHT - 2, SCREEN_WIDTH - 2);
     // hlcoord(2, 2, wTilemap);
     // LD_DE(mStringOptions);
     // CALL(aPlaceString);
@@ -84,12 +84,12 @@ void v_Option(void){
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_B(SCGB_DIPLOMA);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_DIPLOMA);
+    GetSGBLayout(SCGB_DIPLOMA);
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
 
     while(1) {
     // joypad_loop:

@@ -401,11 +401,11 @@ bool BillsPC_ChangeBoxMenu(void){
 void ClearPCItemScreen(void){
     // CALL(aDisableSpriteUpdates);
     // XOR_A_A;
-    DisableSpriteUpdates_Conv();
+    DisableSpriteUpdates();
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearSprites);
     ClearSprites();
     // hlcoord(0, 0, wTilemap);
@@ -416,15 +416,15 @@ void ClearPCItemScreen(void){
     // hlcoord(0, 0, wTilemap);
     // LD_BC((10 << 8) | 18);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 0, wram->wTilemap), 10, 18);
+    Textbox(coord(0, 0, wram->wTilemap), 10, 18);
     // hlcoord(0, 12, wTilemap);
     // LD_BC((4 << 8) | 18);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 12, wram->wTilemap), 4, 18);
+    Textbox(coord(0, 12, wram->wTilemap), 4, 18);
     // CALL(aWaitBGMap2);
-    WaitBGMap2_Conv();
+    WaitBGMap2();
     // CALL(aSetPalettes);  // load regular palettes?
-    SetPalettes_Conv();
+    SetPalettes();
     // RET;
 }
 

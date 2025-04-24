@@ -447,7 +447,7 @@ void Function8b4a4(uint8_t* bc){
     uint8_t b, c;
     tile_t* hl = Function8b4d8(&b, &c);
     // CALL(aTextbox);
-    Textbox_Conv2(hl, b, c);
+    Textbox(hl, b, c);
     // POP_DE;
     // POP_BC;
     // CALL(aFunction8b4cc);
@@ -848,7 +848,7 @@ bool Function8b664(uint8_t* bc){
 
 void Function8b677(void){
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aDisableLCD);
     DisableLCD();
     // CALL(aFunction8b690);
@@ -862,7 +862,7 @@ void Function8b677(void){
     // CALL(aFunction891ab);
     Function891ab();
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // RET;
 }
 
@@ -1419,7 +1419,7 @@ void Function8b8c8(void){
     // LD_B(0x2);
     // LD_C(0x12);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 14, wram->wTilemap), 0x2, 0x12);
+    Textbox(coord(0, 14, wram->wTilemap), 0x2, 0x12);
     // LD_A_addr(wd033);
     // LD_B(0);
     // LD_C_A;

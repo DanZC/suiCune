@@ -156,11 +156,11 @@ void Pokedex(void){
 
 void InitPokedex(void){
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aPokedex_LoadGFX);
     Pokedex_LoadGFX();
 
@@ -410,7 +410,7 @@ void Pokedex_InitMainScreen(void){
     // LDH_addr_A(hWY);
     hram->hWY = 0;
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
 
     // CALL(aPokedex_ResetBGMapMode);
     Pokedex_ResetBGMapMode();
@@ -558,7 +558,7 @@ void Pokedex_InitDexEntryScreen(void){
     // CALL(aPokedex_DrawFootprint);
     Pokedex_DrawFootprint();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_A(0xa7);
     // LDH_addr_A(hWX);
     hram->hWX = 0xa7;
@@ -636,7 +636,7 @@ void Pokedex_Page(void){
     // FARCALL(aDisplayDexEntry);
     DisplayDexEntry(species);
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // RET;
 }
 
@@ -667,7 +667,7 @@ void Pokedex_ReinitDexEntryScreen(void){
     // CALL(aPokedex_LoadSelectedMonTiles);
     Pokedex_LoadSelectedMonTiles();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // CALL(aPokedex_GetSelectedMon);
     // LD_addr_A(wCurPartySpecies);
     wram->wCurPartySpecies = Pokedex_GetSelectedMon();
@@ -731,7 +731,7 @@ void DexEntryScreen_MenuActionJumptable(uint8_t a){
         // CALL(aPokedex_LoadSelectedMonTiles);
         Pokedex_LoadSelectedMonTiles();
         // CALL(aWaitBGMap);
-        WaitBGMap_Conv();
+        WaitBGMap();
         // CALL(aPokedex_GetSelectedMon);
         // LD_addr_A(wCurPartySpecies);
         wram->wCurPartySpecies = Pokedex_GetSelectedMon();
@@ -781,7 +781,7 @@ void DexEntryScreen_MenuActionJumptable(uint8_t a){
         // LD_addr_A(wPrevDexEntryBackup);
         wram->wPrevDexEntryBackup = prevDexEntry;
         // CALL(aClearBGPalettes);
-        ClearBGPalettes_Conv();
+        ClearBGPalettes();
         // CALL(aDisableLCD);
         DisableLCD();
         // CALL(aPokedex_LoadInvertedFont);
@@ -791,7 +791,7 @@ void DexEntryScreen_MenuActionJumptable(uint8_t a){
         // CALL(aEnableLCD);
         EnableLCD();
         // CALL(aWaitBGMap);
-        WaitBGMap_Conv();
+        WaitBGMap();
         // LD_A(POKEDEX_SCX);
         // LDH_addr_A(hSCX);
         hram->hSCX = POKEDEX_SCX;
@@ -830,7 +830,7 @@ void Pokedex_InitOptionScreen(void){
     // CALL(aPokedex_DisplayModeDescription);
     Pokedex_DisplayModeDescription();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_A(SCGB_POKEDEX_SEARCH_OPTION);
     // CALL(aPokedex_GetSGBLayout);
     Pokedex_GetSGBLayout(SCGB_POKEDEX_SEARCH_OPTION);
@@ -997,7 +997,7 @@ void Pokedex_InitSearchScreen(void){
     // FARCALL(aDoDexSearchSlowpokeFrame);
     DoDexSearchSlowpokeFrame();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_A(SCGB_POKEDEX_SEARCH_OPTION);
     // CALL(aPokedex_GetSGBLayout);
     Pokedex_GetSGBLayout(SCGB_POKEDEX_SEARCH_OPTION);
@@ -1089,7 +1089,7 @@ void Pokedex_UpdateSearchScreen(void){
                 // CALL(aPokedex_PlaceSearchScreenTypeStrings);
                 Pokedex_PlaceSearchScreenTypeStrings();
                 // CALL(aWaitBGMap);
-                WaitBGMap_Conv();
+                WaitBGMap();
                 // RET;
                 return;
             }
@@ -1171,7 +1171,7 @@ void Pokedex_InitSearchResultsScreen(void){
     // LDH_addr_A(hWY);
     hram->hWY = 0x0;
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // CALL(aPokedex_ResetBGMapMode);
     Pokedex_ResetBGMapMode();
     // FARCALL(aDrawPokedexSearchResultsWindow);
@@ -1277,7 +1277,7 @@ void Pokedex_InitUnownMode(void){
     // FARCALL(aPrintUnownWord);
     PrintUnownWord();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_A(SCGB_POKEDEX_UNOWN_MODE);
     // CALL(aPokedex_GetSGBLayout);
     Pokedex_GetSGBLayout(SCGB_POKEDEX_UNOWN_MODE);
@@ -1697,7 +1697,7 @@ void Pokedex_DrawMainScreenBG(void){
     // LD_HL(wPokedexSeen);
     // LD_B(wEndPokedexSeen - wPokedexSeen);
     // CALL(aCountSetBits);
-    uint8_t seen = CountSetBits_Conv2(wram->wPokedexSeen, sizeof(wram->wPokedexSeen));
+    uint8_t seen = CountSetBits(wram->wPokedexSeen, sizeof(wram->wPokedexSeen));
     // LD_DE(wNumSetBits);
     // hlcoord(5, 12, wTilemap);
     // LD_BC((1 << 8) | 3);
@@ -1710,7 +1710,7 @@ void Pokedex_DrawMainScreenBG(void){
     // LD_HL(wPokedexCaught);
     // LD_B(wEndPokedexCaught - wPokedexCaught);
     // CALL(aCountSetBits);
-    uint8_t caught = CountSetBits_Conv2(wram->wPokedexCaught, sizeof(wram->wPokedexCaught));
+    uint8_t caught = CountSetBits(wram->wPokedexCaught, sizeof(wram->wPokedexCaught));
     // LD_DE(wNumSetBits);
     // hlcoord(5, 15, wTilemap);
     // LD_BC((1 << 8) | 3);
@@ -2367,7 +2367,7 @@ bool Pokedex_CheckCaught(species_t species){
     // LD_A_addr(wTempSpecies);
     // DEC_A;
     // CALL(aCheckCaughtMon);
-    return CheckCaughtMon_Conv(species - 1);
+    return CheckCaughtMon(species - 1);
     // POP_HL;
     // POP_DE;
     // RET;
@@ -2379,7 +2379,7 @@ bool Pokedex_CheckSeen(species_t species){
     // LD_A_addr(wTempSpecies);
     // DEC_A;
     // CALL(aCheckSeenMon);
-    return CheckSeenMon_Conv(species - 1);
+    return CheckSeenMon(species - 1);
     // POP_HL;
     // POP_DE;
     // RET;
@@ -3344,7 +3344,7 @@ bool Pokedex_ArrowCursorDelay(void){
 
 void Pokedex_FillBox(tile_t* hl, uint8_t w, uint8_t h, uint8_t byte){
     // JP(mFillBoxWithByte);
-    return FillBoxWithByte_Conv2(hl, w, h, byte);
+    return FillBoxWithByte(hl, w, h, byte);
 }
 
 void Pokedex_BlackOutBG(void){
@@ -3378,7 +3378,7 @@ void Pokedex_ApplyPrintPals(void){
 void Pokedex_GetSGBLayout(uint8_t a){
     // LD_B_A;
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(a);
+    GetSGBLayout(a);
 
     return Pokedex_ApplyUsualPals();
 }
@@ -3668,7 +3668,7 @@ void v_NewPokedexEntry(void){
     // CALL(aEnableLCD);
     EnableLCD();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // CALL(aGetBaseData);
     GetBaseData_Conv2(wram->wTempSpecies);
     // LD_DE(vTiles2);

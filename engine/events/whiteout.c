@@ -54,11 +54,11 @@ bug_contest:
 
 void OverworldBGMap(void){
     // CALL(aClearPalettes);
-    ClearPalettes_Conv();
+    ClearPalettes();
     // CALL(aClearScreen);
-    ClearScreen_Conv2();
+    ClearScreen();
     // CALL(aWaitBGMap2);
-    WaitBGMap2_Conv();
+    WaitBGMap2();
     // CALL(aHideSprites);
     HideSprites();
     // CALL(aRotateThreePalettesLeft);
@@ -69,9 +69,9 @@ void OverworldBGMap(void){
 void BattleBGMap(void){
     // LD_B(SCGB_BATTLE_GRAYSCALE);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_BATTLE_GRAYSCALE);
+    GetSGBLayout(SCGB_BATTLE_GRAYSCALE);
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // RET;
 }
 

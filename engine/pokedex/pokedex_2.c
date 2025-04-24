@@ -154,7 +154,7 @@ void DisplayDexEntry(species_t a){
     // POP_HL;
     // POP_BC;
     // RET_Z ;
-    if(!CheckCaughtMon_Conv(wram->wTempSpecies - 1))
+    if(!CheckCaughtMon(wram->wTempSpecies - 1))
         return;
 //  Get the height of the Pokemon.
     // LD_A_addr(wCurPartySpecies);
@@ -223,7 +223,7 @@ void DisplayDexEntry(species_t a){
     // LD_BC((5 << 8) | SCREEN_WIDTH - 2);
     // hlcoord(2, 11, wTilemap);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(2, 11, wram->wTilemap), SCREEN_WIDTH - 2, 5);
+    ClearBox(coord(2, 11, wram->wTilemap), SCREEN_WIDTH - 2, 5);
     // hlcoord(1, 10, wTilemap);
     // LD_BC(SCREEN_WIDTH - 1);
     // LD_A(0x61);  // horizontal divider
@@ -264,7 +264,7 @@ void DisplayDexEntry(species_t a){
     // LD_BC((5 << 8) | SCREEN_WIDTH - 2);
     // hlcoord(2, 11, wTilemap);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(2, 11, wram->wTilemap), SCREEN_WIDTH - 2, 5);
+    ClearBox(coord(2, 11, wram->wTilemap), SCREEN_WIDTH - 2, 5);
     // hlcoord(1, 10, wTilemap);
     // LD_BC(SCREEN_WIDTH - 1);
     // LD_A(0x61);

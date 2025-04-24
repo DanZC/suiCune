@@ -117,7 +117,7 @@ static void PlaceLANConnectionMenuCursor(uint32_t selection) {
 }
 
 void LANConnection_Host(void) {
-    SpeechTextbox_Conv2();
+    SpeechTextbox();
     LoadStandardMenuHeader_Conv();
     PlaceStringSimple(U82C("Hosting…<LINE>Please wait…"), coord(TEXTBOX_INNERX, TEXTBOX_INNERY, wram->wTilemap));
 
@@ -153,7 +153,7 @@ void LANConnection_Host(void) {
             if(yes) {
                 CloseWindow_Conv2();
                 LoadStandardMenuHeader_Conv();
-                SpeechTextbox_Conv2();
+                SpeechTextbox();
                 PlaceStringSimple(U82C("Waiting for a<LINE>response…"), coord(TEXTBOX_INNERX, TEXTBOX_INNERY, wram->wTilemap));
                 bool success = NetworkLANDirectConnect(0);
                 CloseWindow_Conv2();
@@ -210,7 +210,7 @@ static bool LANConnection_TryJoin(uint8_t which) {
 }
 
 void LANConnection_Join(void) {
-    SpeechTextbox_Conv2();
+    SpeechTextbox();
     LoadStandardMenuHeader_Conv();
     PlaceStringSimple(U82C("Searching for<LINE>players…"), coord(TEXTBOX_INNERX, TEXTBOX_INNERY, wram->wTilemap));
 
@@ -218,7 +218,7 @@ void LANConnection_Join(void) {
 
     uint32_t selection = 0;
 
-    Textbox_Conv2(coord(6, 0, wram->wTilemap), TEXTBOX_Y - 2, SCREEN_WIDTH - 6 - 2);
+    Textbox(coord(6, 0, wram->wTilemap), TEXTBOX_Y - 2, SCREEN_WIDTH - 6 - 2);
     PlaceLANConnectionItems();
     PlaceLANConnectionMenuCursor(selection);
     UpdateSprites_Conv();
@@ -237,7 +237,7 @@ void LANConnection_Join(void) {
         GetJoypad_Conv2();
 
         if(frameCount < 8 * 60 && NetworkCheckLAN()) {
-            ClearBox_Conv2(coord(9, 1, wram->wTilemap), TEXTBOX_Y - 2, SCREEN_WIDTH - 8 - 3);
+            ClearBox(coord(9, 1, wram->wTilemap), TEXTBOX_Y - 2, SCREEN_WIDTH - 8 - 3);
             PlaceLANConnectionItems();
             PlaceLANConnectionMenuCursor(selection);
             DelayFrame();
@@ -273,7 +273,7 @@ void LANConnection_Join(void) {
             if(yes) {
                 CloseWindow_Conv2();
                 LoadStandardMenuHeader_Conv();
-                SpeechTextbox_Conv2();
+                SpeechTextbox();
                 PlaceStringSimple(U82C("Waiting for a<LINE>response…"), coord(TEXTBOX_INNERX, TEXTBOX_INNERY, wram->wTilemap));
                 bool success = LANConnection_TryJoin(selection);
                 CloseWindow_Conv2();

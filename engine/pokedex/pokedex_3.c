@@ -41,7 +41,7 @@ void DrawPokedexListWindow(void){
     // hlcoord(0, 1, wTilemap);
     // LD_BC((15 << 8) | 11);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(0, 1, wram->wTilemap), 11, 15);
+    ClearBox(coord(0, 1, wram->wTilemap), 11, 15);
     // LD_A(0x34);
     // hlcoord(0, 0, wTilemap);
     // LD_BC(11);
@@ -150,7 +150,7 @@ void DrawPokedexSearchResultsWindow(void){
     // hlcoord(0, 12, wTilemap);
     // LD_BC((5 << 8) | 11);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(0, 12, wram->wTilemap), 11, 5);
+    ClearBox(coord(0, 12, wram->wTilemap), 11, 5);
     // LD_DE(mDrawPokedexSearchResultsWindow_esults_D);
     // hlcoord(0, 12, wTilemap);
     // CALL(aPlaceString);
@@ -190,7 +190,7 @@ void DrawDexEntryScreenRightEdge(void){
     // CALL(aPokedex_FillColumn2);
     Pokedex_FillColumn2(coord(19, 0, wram->wAttrmap), 0x0, SCREEN_HEIGHT);
     // CALL(aWaitBGMap2);
-    WaitBGMap2_Conv();
+    WaitBGMap2();
     // POP_HL;
     // LD_A_L;
     // LDH_addr_A(hBGMapAddress);

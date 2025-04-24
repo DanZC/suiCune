@@ -74,9 +74,9 @@ void InitGender(void){
     // CALL(aLoadGenderScreenLightBlueTile);
     LoadGenderScreenLightBlueTile();
     // CALL(aWaitBGMap2);
-    WaitBGMap2_Conv();
+    WaitBGMap2();
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // LD_HL(mAreYouABoyOrAreYouAGirlText);
     // CALL(aPrintText);
     PrintText_Conv2(AreYouABoyOrAreYouAGirlText);
@@ -84,7 +84,7 @@ void InitGender(void){
     // CALL(aLoadMenuHeader);
     LoadMenuHeader_Conv2(&InitGender_MenuHeader);
     // CALL(aWaitBGMap2);
-    WaitBGMap2_Conv();
+    WaitBGMap2();
     // CALL(aVerticalMenu);
     VerticalMenu_Conv();
     // CALL(aCloseWindow);
@@ -112,7 +112,7 @@ void InitGenderScreen(void){
     // CALL(aDelayFrames);
     DelayFrames(8);
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aInitCrystalData);
     InitCrystalData();
     // CALL(aLoadFontsExtra);

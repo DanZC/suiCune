@@ -83,7 +83,7 @@ static void RestartClock_PrintTime(void) {
     // LD_B(5);
     // LD_C(18);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 5, wram->wTilemap), 5, 18);
+    Textbox(coord(0, 5, wram->wTilemap), 5, 18);
     // decoord(1, 8, wTilemap);
     // LD_A_addr(wRestartClockDay);
     // LD_B_A;
@@ -241,7 +241,7 @@ static bool RestartClock_SetClock(void) {
     UpdateTime_Conv();
     // CALL(aGetWeekday);
     // LD_addr_A(wRestartClockDay);
-    wram->wRestartClockDay = GetWeekday_Conv();
+    wram->wRestartClockDay = GetWeekday();
     // LDH_A_addr(hHours);
     // LD_addr_A(wRestartClockHour);
     wram->wRestartClockHour = hram->hHours;
@@ -324,7 +324,7 @@ uint8_t RestartClock(void){
     // CALL(aLoadStandardMenuHeader);
     LoadStandardMenuHeader_Conv();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
 
     static const txt_cmd_s ClockSetWithControlPadText[] = {
         text_far(v_ClockSetWithControlPadText)

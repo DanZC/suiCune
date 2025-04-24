@@ -341,7 +341,7 @@ bool v_PlayersHousePC(void){
     if(v_PlayersPC(PLAYERSPC_HOUSE).a != 0) {
     // changed_deco_tiles:
         // CALL(aClearBGPalettes);
-        ClearBGPalettes_Conv();
+        ClearBGPalettes();
         // LD_C(TRUE);
         // RET;
         return true;
@@ -852,7 +852,7 @@ u8_flag_s PlayerDepositItemMenu(void){
     // IF_C goto nope;
     if(PlayerDepositItemMenu_CheckItemsInBag()) {
         // CALL(aDisableSpriteUpdates);
-        DisableSpriteUpdates_Conv();
+        DisableSpriteUpdates();
         // CALL(aLoadStandardMenuHeader);
         LoadStandardMenuHeader_Conv();
         // FARCALL(aDepositSellInitPackBuffers);
@@ -936,7 +936,7 @@ bool PCItemsJoypad(void){
         // LD_B(10);
         // LD_C(18);
         // CALL(aTextbox);
-        Textbox_Conv2(coord(0, 0, wram->wTilemap), 10, 18);
+        Textbox(coord(0, 0, wram->wTilemap), 10, 18);
         // LD_A_addr(wPCItemsCursor);
         // LD_addr_A(wMenuCursorPosition);
         wram->wMenuCursorPosition = wram->wPCItemsCursor;

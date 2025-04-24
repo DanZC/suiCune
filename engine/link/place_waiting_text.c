@@ -14,7 +14,7 @@ void PlaceWaitingText(void){
     // IF_Z goto notinbattle;
     if(wram->wBattleMode != 0) {
         // CALL(aTextbox);
-        Textbox_Conv2(coord(3, 10, wram->wTilemap), 1, 11);
+        Textbox(coord(3, 10, wram->wTilemap), 1, 11);
         // goto proceed;
     } else {
     // notinbattle:

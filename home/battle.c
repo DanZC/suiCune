@@ -249,7 +249,7 @@ void RefreshBattleHuds(void){
     // CALL(aDelayFrames);
     DelayFrames(3);
     // JP(mWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
 }
 
 void UpdateBattleHuds(void){
@@ -312,7 +312,7 @@ void MobileTextBorder(void){
 void BattleTextbox_GB(uint16_t hl){
     // PUSH_HL;
     // CALL(aSpeechTextbox);
-    SpeechTextbox_Conv();
+    SpeechTextbox();
 
     // CALL(aMobileTextBorder);
     MobileTextBorder();
@@ -333,7 +333,7 @@ void BattleTextbox_GB(uint16_t hl){
 void BattleTextbox(const struct TextCmd* hl){
     // PUSH_HL;
     // CALL(aSpeechTextbox);
-    SpeechTextbox_Conv2();
+    SpeechTextbox();
 
     // CALL(aMobileTextBorder);
     MobileTextBorder();

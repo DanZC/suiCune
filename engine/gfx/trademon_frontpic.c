@@ -45,7 +45,7 @@ void AnimateTrademonFrontpic(void){
     wram->wTempMon.mon.DVs = wram->wOTTrademon.dvs;
     // LD_B(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
+    GetSGBLayout(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
     // LD_A(0b11100100);  // 3,2,1,0
     // CALL(aDmgToCgbBGPals);
     DmgToCgbBGPals_Conv(0b11100100);

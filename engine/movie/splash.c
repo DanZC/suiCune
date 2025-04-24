@@ -13,7 +13,7 @@
 #include "../gfx/sprites.h"
 #include "gbc_only.h"
 #include "../../gfx/misc.h"
-#include "../math/sine.h"
+#include "../../home/sine.h"
 #include "../../charmap.h"
 
  // "gfx/splash/ditto_fade.pal";
@@ -51,9 +51,9 @@ bool SplashScreen(void){
     // CALL(aPlayMusic);
     PlayMusic(MUSIC_NONE);
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // LD_A(HIGH(vBGMap0));
     // LDH_addr_A(hBGMapAddress + 1);
     // XOR_A_A;  // LOW(vBGMap0)
@@ -69,12 +69,12 @@ bool SplashScreen(void){
     // LDH_addr_A(hWY);
     hram->hWY = SCREEN_HEIGHT_PX;
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_B(SCGB_GAMEFREAK_LOGO);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_GAMEFREAK_LOGO);
+    GetSGBLayout(SCGB_GAMEFREAK_LOGO);
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // LD_C(10);
     // CALL(aDelayFrames);
     DelayFrames(10);
@@ -83,12 +83,12 @@ bool SplashScreen(void){
     // CALLFAR(aCopyright);
     Copyright();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_C(100);
     // CALL(aDelayFrames);
     DelayFrames(100);
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
 
 //  Stop here if not in GBC mode
     // FARCALL(aGBCOnlyScreen);
@@ -217,7 +217,7 @@ void GameFreakPresentsEnd(void){
     // FARCALL(aClearSpriteAnims);
     ClearSpriteAnims_Conv();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aClearSprites);
     ClearSprites();
     // LD_C(16);
@@ -439,7 +439,7 @@ void GameFreakLogo_Bounce(struct SpriteAnim* bc){
     // LD_HL(SPRITEANIMSTRUCT_YOFFSET);
     // ADD_HL_BC;
     // LD_hl_E;
-    bc->yOffset = v_Sine_Conv(sineOffset, jumpHeight);
+    bc->yOffset = Sine(sineOffset, jumpHeight);
 
 //  Decrement the sine offset
     // LD_HL(SPRITEANIMSTRUCT_VAR2);  // sine offset

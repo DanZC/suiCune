@@ -879,7 +879,7 @@ static void MailboxPC_Submenu(void){
                 // LD_addr_A(wPartyMenuActionText);
                 wram->wPartyMenuActionText = 0x0;
                 // CALL(aClearBGPalettes);
-                ClearBGPalettes_Conv();
+                ClearBGPalettes();
 
                 while(1) {
                 // try_again:
@@ -894,9 +894,9 @@ static void MailboxPC_Submenu(void){
                     // FARCALL(aPrintPartyMenuText);
                     PrintPartyMenuText();
                     // CALL(aWaitBGMap);
-                    WaitBGMap_Conv();
+                    WaitBGMap();
                     // CALL(aSetPalettes);
-                    SetPalettes_Conv();
+                    SetPalettes();
                     // CALL(aDelayFrame);
                     DelayFrame();
                     // FARCALL(aPartyMenuSelect);

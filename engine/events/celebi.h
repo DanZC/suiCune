@@ -6,7 +6,6 @@ void CelebiEvent_SpawnLeaf(void);
 extern const char SpecialCelebiLeafGFX[];
 extern const char SpecialCelebiGFX[];
 void UpdateCelebiPosition(struct SpriteAnim* bc);
-uint8_t CelebiEvent_Cosine(uint8_t a, uint8_t d);
 uint8_t GetCelebiSpriteTile(struct SpriteAnim* bc, uint8_t d);
 void CelebiEvent_SetBattleType(void);
 void CheckCaughtCelebi(void);

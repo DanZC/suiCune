@@ -5,6 +5,7 @@
 #include "../../home/text.h"
 #include "../../home/delay.h"
 #include "../../home/palettes.h"
+#include "../../home/sine.h"
 
 // static int8_t* lBattlePicResizeTempPointer;
 
@@ -938,7 +939,7 @@ void BattleBGEffect_HideMon_Conv(struct BattleBGEffect* bc) {
 
         // got_pointer:
             // CALL(aClearBox);
-            ClearBox_Conv2(hl, c, b);
+            ClearBox(hl, c, b);
             // POP_BC;
             // XOR_A_A;
             // LDH_addr_A(hBGMapThird);
@@ -1220,7 +1221,7 @@ void BattleBGEffect_BattlerObj_1Row_Conv(struct BattleBGEffect* bc) {
 
         // okay2:
             // CALL(aClearBox);
-            ClearBox_Conv2(hl, c, b);
+            ClearBox(hl, c, b);
             // LD_A(0x1);
             // LDH_addr_A(hBGMapMode);
             hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
@@ -1418,7 +1419,7 @@ void BattleBGEffect_BattlerObj_2Row_Conv(struct BattleBGEffect* bc) {
 
         // okay2:
             // CALL(aClearBox);
-            ClearBox_Conv2(hl, c, b);
+            ClearBox(hl, c, b);
             // LD_A(0x1);
             // LDH_addr_A(hBGMapMode);
             hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
@@ -2300,7 +2301,7 @@ void BattleBGEffect_RunPicResizeScript_Conv(struct BattleBGEffect* bc, const uin
                 // LD_L_A;
                 // REG_HL = Coords[*hl2];
                 // CALL(aClearBox);
-                ClearBox_Conv2(wram->wTilemap + Coords[*hl2], c, b);
+                ClearBox(wram->wTilemap + Coords[*hl2], c, b);
                 // POP_BC;
                 // RET;
                 goto zero;
@@ -3275,7 +3276,7 @@ void BattleBGEffect_DoubleTeam_Conv(struct BattleBGEffect* bc) {
             // ADD_HL_BC;
             // ADD_A_hl;
             // CALL(aBattleBGEffect_DoubleTeam_UpdateLYOverrides);
-            BattleBGEffect_DoubleTeam_UpdateLYOverrides(bc->param + BattleBGEffects_Sine_Conv(bc->battleTurn, 0x2));
+            BattleBGEffect_DoubleTeam_UpdateLYOverrides(bc->param + Sine(bc->battleTurn, 0x2));
             // LD_HL(BG_EFFECT_STRUCT_BATTLE_TURN);
             // ADD_HL_BC;
             // LD_A_hl;
@@ -4495,7 +4496,7 @@ void BattleBGEffect_WobbleMon_Conv(struct BattleBGEffect* bc) {
             // LD_D(0x8);
             // CALL(aBattleBGEffects_Sine);
             // CALL(aBGEffect_FillLYOverridesBackup);
-            BGEffect_FillLYOverridesBackup_Conv(BattleBGEffects_Sine_Conv(bc->param, 0x8));
+            BGEffect_FillLYOverridesBackup_Conv(Sine(bc->param, 0x8));
             // LD_HL(BG_EFFECT_STRUCT_PARAM);
             // ADD_HL_BC;
             // LD_A_hl;
@@ -4615,14 +4616,14 @@ void BattleBGEffect_Flail_Conv(struct BattleBGEffect* bc) {
             // LD_D(0x6);
             // CALL(aBattleBGEffects_Sine);
             // PUSH_AF;
-            uint8_t a = BattleBGEffects_Sine_Conv(bc->param, 0x6);
+            uint8_t a = Sine(bc->param, 0x6);
             // LD_HL(BG_EFFECT_STRUCT_BATTLE_TURN);
             // ADD_HL_BC;
             // LD_A_hl;
             // LD_D(0x2);
             // CALL(aBattleBGEffects_Sine);
             // LD_E_A;
-            uint8_t e = BattleBGEffects_Sine_Conv(bc->battleTurn, 0x2);
+            uint8_t e = Sine(bc->battleTurn, 0x2);
             // POP_AF;
             // ADD_A_E;
             // CALL(aBGEffect_FillLYOverridesBackup);
@@ -4873,7 +4874,7 @@ void BattleBGEffect_BounceDown_Conv(struct BattleBGEffect* bc) {
             // CALL(aBattleBGEffects_Cosine);
             // ADD_A(0x10);
             // LD_D_A;
-            uint8_t d = BattleBGEffects_Cosine_Conv(bc->param, 0x10) + 0x10;
+            uint8_t d = Cosine(bc->param, 0x10) + 0x10;
             // POP_AF;
             // ADD_A_D;
             // CALL(aBGEffect_DisplaceLYOverridesBackup);
@@ -5695,7 +5696,7 @@ void BattleBGEffect_WobblePlayer_Conv(struct BattleBGEffect* bc) {
                 // LD_D(0x6);
                 // CALL(aBattleBGEffects_Sine);
                 // CALL(aBGEffect_FillLYOverridesBackup);
-                BGEffect_FillLYOverridesBackup_Conv(BattleBGEffects_Sine_Conv(bc->param, 0x6));
+                BGEffect_FillLYOverridesBackup_Conv(Sine(bc->param, 0x6));
                 // LD_HL(BG_EFFECT_STRUCT_PARAM);
                 // ADD_HL_BC;
                 // LD_A_hl;
@@ -5948,7 +5949,7 @@ void BattleBGEffect_WobbleScreen_Conv(struct BattleBGEffect* bc) {
     // LD_D(0x6);
     // CALL(aBattleBGEffects_Sine);
     // LDH_addr_A(hSCX);
-    hram->hSCX = BattleBGEffects_Sine_Conv(bc->param, 0x6);
+    hram->hSCX = Sine(bc->param, 0x6);
     // LD_HL(BG_EFFECT_STRUCT_PARAM);
     // ADD_HL_BC;
     // LD_A_hl;
@@ -6898,7 +6899,7 @@ void DeformScreen_Conv(uint8_t d, uint8_t e) {
             // LD_A_addr(wBattleSineWaveTempProgress);
             // CALL(aBattleBGEffects_Sine);
             // LD_bc_A;
-            hl[c] = BattleBGEffects_Sine_Conv(wram->wBattleSineWaveTempProgress, wram->wBattleSineWaveTempAmplitude);
+            hl[c] = Sine(wram->wBattleSineWaveTempProgress, wram->wBattleSineWaveTempAmplitude);
         }
 
     // next:
@@ -6975,7 +6976,7 @@ void InitSurfWaves_Conv(uint8_t d, uint8_t e) {
         // CALL(aBattleBGEffects_Sine);
         // LD_bc_A;
         // INC_BC;
-        *(bc++) = BattleBGEffects_Sine_Conv(wram->wBattleSineWaveTempProgress, wram->wBattleSineWaveTempAmplitude);
+        *(bc++) = Sine(wram->wBattleSineWaveTempProgress, wram->wBattleSineWaveTempAmplitude);
         // LD_A_addr(wBattleSineWaveTempOffset);
         // LD_HL(wBattleSineWaveTempProgress);
         // ADD_A_hl;
@@ -7104,7 +7105,7 @@ void DeformWater_Conv(uint8_t d, uint8_t e, uint8_t a) {
         // PUSH_HL;
         // CALL(aBattleBGEffects_Sine);
         // LD_E_A;
-        uint8_t e2 = BattleBGEffects_Sine_Conv(wram->wBattleSineWaveTempOffset, wram->wBattleSineWaveTempAmplitude);
+        uint8_t e2 = Sine(wram->wBattleSineWaveTempOffset, wram->wBattleSineWaveTempAmplitude);
         // POP_HL;
         // LDH_A_addr(hLYOverrideEnd);
         // CP_A_C;
@@ -7422,7 +7423,7 @@ uint8_t BattleBGEffects_Sine_Conv(uint8_t e, uint8_t d) {
     // CALLFAR(aBattleAnim_Sine_e);
     // LD_A_E;
     // RET;
-    return BattleAnim_Sine_Conv(e, d);
+    return Sine(e, d);
 }
 
 void BattleBGEffects_Cosine(void) {
@@ -7439,5 +7440,5 @@ uint8_t BattleBGEffects_Cosine_Conv(uint8_t e, uint8_t d) {
     // CALLFAR(aBattleAnim_Cosine_e);
     // LD_A_E;
     // RET;
-    return BattleAnim_Cosine_Conv(e, d);
+    return Cosine(e, d);
 }

@@ -13,7 +13,7 @@
 #include "../../home/menu.h"
 #include "../../home/random.h"
 #include "../../home/joypad.h"
-#include "../battle_anims/functions.h"
+#include "../../home/sine.h"
 #include "../gfx/sprites.h"
 #include "../../mobile/mobile_41.h"
 #include "../../data/text/common.h"
@@ -150,9 +150,9 @@ static void v_SlotMachine_InitGFX_LoadSlotTiles(uint8_t* dest) {
 
 static void v_SlotMachine_InitGFX(void){
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aClearSprites);
     ClearSprites();
     // LD_DE(MUSIC_NONE);
@@ -169,7 +169,7 @@ static void v_SlotMachine_InitGFX(void){
     ByteFill(bgcoord(0, 0, vram->vBGMap0), sizeof(vram->vBGMap0), 0x7f);
     // LD_B(SCGB_SLOT_MACHINE);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_SLOT_MACHINE);
+    GetSGBLayout(SCGB_SLOT_MACHINE);
     // CALLFAR(aClearSpriteAnims);
     ClearSpriteAnims_Conv();
     // LD_HL(wSlots);
@@ -331,7 +331,7 @@ void v_SlotMachine(void){
     // CALL(aWaitSFX);
     WaitSFX();
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // FARCALL(aStubbedTrainerRankings_EndSlotsWinStreak);
     StubbedTrainerRankings_EndSlotsWinStreak();
     // LD_HL(wOptions);
@@ -2959,7 +2959,7 @@ void Slots_AnimateGolem(struct SpriteAnim* bc){
             // LD_HL(SPRITEANIMSTRUCT_YOFFSET);
             // ADD_HL_BC;
             // LD_hl_A;
-            bc->yOffset = BattleAnim_Sine_e_Conv(var1, 14 * 8);
+            bc->yOffset = Sine(var1, 14 * 8);
             // RET;
             return;
         }

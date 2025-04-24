@@ -260,10 +260,10 @@ void AnimateHPBar_Conv(tile_t* hl, uint8_t which){
     // struct cpu_registers_s regs = gb.cpu_reg;
     // regs.hl = RAMAddrToGB(hl);
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // CALL(av_AnimateHPBar);
     v_AnimateHPBar(hl);
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // RET;
 }

@@ -2558,7 +2558,7 @@ void MapTextbox_Conv(const struct TextCmd* text){
 
     // PUSH_HL;
     // CALL(aSpeechTextbox);
-    SpeechTextbox_Conv2();
+    SpeechTextbox();
     // CALL(aSafeUpdateSprites);
     SafeUpdateSprites_Conv();
     // LD_A(1);
@@ -4331,7 +4331,7 @@ void FadeToMenu_Conv(void){
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aDisableSpriteUpdates);
-    DisableSpriteUpdates_Conv();
+    DisableSpriteUpdates();
     // RET;
 }
 
@@ -4347,7 +4347,7 @@ void CloseSubmenu(void){
 
 void CloseSubmenu_Conv(void){
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aReloadTilesetAndPalettes);
     ReloadTilesetAndPalettes_Conv();
     // CALL(aUpdateSprites);
@@ -4371,7 +4371,7 @@ void ExitAllMenus(void){
 
 void ExitAllMenus_Conv(void){
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aCall_ExitMenu);
     ExitMenu_Conv2();
     // CALL(aReloadTilesetAndPalettes);
@@ -4397,15 +4397,15 @@ void FinishExitMenu(void){
 void FinishExitMenu_Conv(void){
     // LD_B(SCGB_MAPPALS);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_MAPPALS);
+    GetSGBLayout(SCGB_MAPPALS);
     // FARCALL(aLoadOW_BGPal7);
     LoadOW_BGPal7();
     // CALL(aWaitBGMap2);
-    WaitBGMap2_Conv();
+    WaitBGMap2();
     // FARCALL(aFadeInPalettes);
     FadeInPalettes();
     // CALL(aEnableSpriteUpdates);
-    EnableSpriteUpdates_Conv();
+    EnableSpriteUpdates();
     // RET;
 }
 
@@ -4441,7 +4441,7 @@ void ReturnToMapWithSpeechTextbox_Conv(void){
     // LD_addr_A(wSpriteUpdatesEnabled);
     wram->wSpriteUpdatesEnabled = 0x1;
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aReloadTilesetAndPalettes);
@@ -4449,17 +4449,17 @@ void ReturnToMapWithSpeechTextbox_Conv(void){
     // hlcoord(0, 12, wTilemap);
     // LD_BC((4 << 8) | 18);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 12, wram->wTilemap), 4, 18);
+    Textbox(coord(0, 12, wram->wTilemap), 4, 18);
     // LD_HL(wVramState);
     // SET_hl(0);
     bit_set(wram->wVramState, 0);
     // CALL(aUpdateSprites);
     UpdateSprites_Conv();
     // CALL(aWaitBGMap2);
-    WaitBGMap2_Conv();
+    WaitBGMap2();
     // LD_B(SCGB_MAPPALS);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_MAPPALS);
+    GetSGBLayout(SCGB_MAPPALS);
     // FARCALL(aLoadOW_BGPal7);
     LoadOW_BGPal7();
     // CALL(aUpdateTimePals);

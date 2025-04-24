@@ -2,7 +2,7 @@
 #include "functions.h"
 #include "core.h"
 #include "helpers.h"
-#include "../math/sine.h"
+#include "../../home/sine.h"
 #include "../../data/battle_anims/ball_colors.h"
 
 void DoBattleAnimFrame(void) {
@@ -358,7 +358,7 @@ bool BattleAnimFunction_ThrowFromUserToTarget(struct BattleAnim* bc) {
     // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->yOffset = BattleAnim_Sine_Conv(var1, bc->param);
+    bc->yOffset = Sine(var1, bc->param);
     // Carry flag denotes success
     // SCF;
     // RET;
@@ -404,11 +404,11 @@ void BattleAnimFunction_MoveWaveToTarget(struct BattleAnim* bc) {
     // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->yOffset = BattleAnim_Sine_Conv(var1, 0x10);
+    bc->yOffset = Sine(var1, 0x10);
     // POP_DE;
     // POP_AF;
     // CALL(aBattleAnim_Cosine);
-    int8_t res = (int8_t)BattleAnim_Cosine_Conv(var1, 0x10);
+    int8_t res = (int8_t)Cosine(var1, 0x10);
     // LD_HL(BATTLEANIMSTRUCT_XOFFSET);
     // ADD_HL_BC;
     // SRA_A;
@@ -470,14 +470,14 @@ void BattleAnimFunction_MoveInCircle(struct BattleAnim* bc) {
         // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->yOffset = BattleAnim_Sine_Conv(bc->var1, bc->param);
+        bc->yOffset = Sine(bc->var1, bc->param);
         // POP_DE;
         // POP_AF;
         // CALL(aBattleAnim_Cosine);
         // LD_HL(BATTLEANIMSTRUCT_XOFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->xOffset = BattleAnim_Cosine_Conv(bc->var1, bc->param);
+        bc->xOffset = Cosine(bc->var1, bc->param);
         // LD_HL(BATTLEANIMSTRUCT_VAR1);
         // ADD_HL_BC;
         // INC_hl;
@@ -626,7 +626,7 @@ void BattleAnimFunction_PokeBall(struct BattleAnim* bc) {
         // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->yOffset = BattleAnim_Sine_Conv(bc->var1, bc->var2);
+        bc->yOffset = Sine(bc->var1, bc->var2);
         // LD_HL(BATTLEANIMSTRUCT_VAR1);
         // ADD_HL_BC;
         // LD_A_hl;
@@ -703,7 +703,7 @@ void BattleAnimFunction_PokeBall(struct BattleAnim* bc) {
         // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->yOffset = BattleAnim_Sine_Conv(bc->var1, bc->var2);
+        bc->yOffset = Sine(bc->var1, bc->var2);
         // LD_HL(BATTLEANIMSTRUCT_VAR1);
         // ADD_HL_BC;
         // LD_A_hl;
@@ -964,7 +964,7 @@ void BattleAnimFunction_Drop(struct BattleAnim* bc) {
         // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->yOffset = BattleAnim_Sine_Conv(bc->var1, bc->var2);
+        bc->yOffset = Sine(bc->var1, bc->var2);
         // LD_HL(BATTLEANIMSTRUCT_VAR1);
         // ADD_HL_BC;
         // INC_hl;
@@ -1084,7 +1084,7 @@ void BattleAnimFunction_MoveFromUserToTargetSpinAround(struct BattleAnim* bc) {
             // LD_A_hl;
             // LD_D(0x18);
             // CALL(aBattleAnim_Cosine);
-            int8_t cos = (int8_t)BattleAnim_Cosine_Conv(bc->var1, 0x18);
+            int8_t cos = (int8_t)Cosine(bc->var1, 0x18);
             // SUB_A(0x18);
             // SRA_A;
             // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
@@ -1099,7 +1099,7 @@ void BattleAnimFunction_MoveFromUserToTargetSpinAround(struct BattleAnim* bc) {
             // LD_HL(BATTLEANIMSTRUCT_XOFFSET);
             // ADD_HL_BC;
             // LD_hl_A;
-            bc->xOffset = BattleAnim_Sine_Conv(bc->var1, 0x18);
+            bc->xOffset = Sine(bc->var1, 0x18);
             // LD_HL(BATTLEANIMSTRUCT_PARAM);
             // ADD_HL_BC;
             // LD_A_hl;
@@ -1312,14 +1312,14 @@ void BattleAnimFunction_FireBlast(struct BattleAnim* bc) {
         // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->yOffset = BattleAnim_Sine_Conv(bc->var1, 0x10);
+        bc->yOffset = Sine(bc->var1, 0x10);
         // POP_DE;
         // POP_AF;
         // CALL(aBattleAnim_Cosine);
         // LD_HL(BATTLEANIMSTRUCT_XOFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->xOffset = BattleAnim_Cosine_Conv(bc->var1, 0x10);
+        bc->xOffset = Cosine(bc->var1, 0x10);
         // LD_HL(BATTLEANIMSTRUCT_VAR1);
         // ADD_HL_BC;
         // INC_hl;
@@ -1463,7 +1463,7 @@ void BattleAnimFunction_RazorLeaf(struct BattleAnim* bc) {
         // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->yOffset = BattleAnim_Sine_Conv(bc->var1--, bc->param & 0x3f);
+        bc->yOffset = Sine(bc->var1--, bc->param & 0x3f);
         // CALL(aBattleAnim_ScatterHorizontal);
         int16_t de = BattleAnim_ScatterHorizontal(bc);
         // LD_HL(BATTLEANIMSTRUCT_VAR2);
@@ -1511,7 +1511,7 @@ void BattleAnimFunction_RazorLeaf(struct BattleAnim* bc) {
         // LD_HL(BATTLEANIMSTRUCT_XOFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->xOffset = BattleAnim_Sine_Conv(bc->var1, 0x10);
+        bc->xOffset = Sine(bc->var1, 0x10);
         // LD_HL(BATTLEANIMSTRUCT_PARAM);
         // ADD_HL_BC;
         // BIT_hl(6);
@@ -1712,7 +1712,7 @@ void BattleAnimFunction_RockSmash(struct BattleAnim* bc) {
         // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->yOffset = BattleAnim_Sine_Conv(bc->var1--, bc->param & 0x3f);
+        bc->yOffset = Sine(bc->var1--, bc->param & 0x3f);
         // CALL(aBattleAnim_ScatterHorizontal);
         int16_t de = BattleAnim_ScatterHorizontal(bc);
         // LD_HL(BATTLEANIMSTRUCT_VAR2);
@@ -1919,7 +1919,7 @@ void BattleAnimFunction_Surf(struct BattleAnim* bc) {
         // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->yOffset = BattleAnim_Sine_Conv(bc->var1, 0x10);
+        bc->yOffset = Sine(bc->var1, 0x10);
         // LD_HL(BATTLEANIMSTRUCT_YCOORD);
         // ADD_HL_BC;
         // ADD_A_hl;
@@ -2036,7 +2036,7 @@ void BattleAnimFunction_Sing(struct BattleAnim* bc) {
         // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->yOffset = BattleAnim_Sine_Conv(bc->var1--, 0x8);
+        bc->yOffset = Sine(bc->var1--, 0x8);
         // RET;
         return;
     }
@@ -2079,7 +2079,7 @@ void BattleAnimFunction_WaterGun(struct BattleAnim* bc) {
             // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
             // ADD_HL_BC;
             // LD_hl_A;
-            bc->yOffset = BattleAnim_Sine_Conv(bc->var1--, 0x8);
+            bc->yOffset = Sine(bc->var1--, 0x8);
             // RET;
             return;
         }
@@ -2248,14 +2248,14 @@ void BattleAnimFunction_Recover(struct BattleAnim* bc) {
         // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->yOffset = BattleAnim_Sine_Conv(a, bc->var2);
+        bc->yOffset = Sine(a, bc->var2);
         // POP_DE;
         // POP_AF;
         // CALL(aBattleAnim_Cosine);
         // LD_HL(BATTLEANIMSTRUCT_XOFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->xOffset = BattleAnim_Cosine_Conv(a, bc->var2);
+        bc->xOffset = Cosine(a, bc->var2);
         // LD_HL(BATTLEANIMSTRUCT_PARAM);
         // ADD_HL_BC;
         // LD_A_hl;
@@ -2379,7 +2379,7 @@ void BattleAnimFunction_Clamp_Encore(struct BattleAnim* bc) {
         // LD_HL(BATTLEANIMSTRUCT_XOFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->xOffset = BattleAnim_Sine_Conv(bc->var1, bc->param);
+        bc->xOffset = Sine(bc->var1, bc->param);
         // BIT_A(7);
         // IF_NZ goto load_no_inc;
         if(bit_test(bc->xOffset, 7)) {
@@ -2497,7 +2497,7 @@ void BattleAnimFunction_Bite(struct BattleAnim* bc) {
         // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->yOffset = BattleAnim_Sine_Conv(bc->var1, bc->param);
+        bc->yOffset = Sine(bc->var1, bc->param);
         // BIT_A(7);
         // IF_NZ goto flipped2;
         if(bit_test(bc->yOffset, 7)) {
@@ -2587,14 +2587,14 @@ void BattleAnimFunction_SolarBeam(struct BattleAnim* bc) {
         // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->yOffset = BattleAnim_Sine_Conv(bc->param, bc->var1);
+        bc->yOffset = Sine(bc->param, bc->var1);
         // POP_DE;
         // POP_AF;
         // CALL(aBattleAnim_Cosine);
         // LD_HL(BATTLEANIMSTRUCT_XOFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->xOffset = BattleAnim_Cosine_Conv(bc->param, bc->var1);
+        bc->xOffset = Cosine(bc->param, bc->var1);
         // LD_HL(BATTLEANIMSTRUCT_VAR1);
         // ADD_HL_BC;
         // LD_A_hl;
@@ -2654,7 +2654,7 @@ static void BattleAnimFunction_Gust_GustWobble(struct BattleAnim* bc) {
     // PUSH_AF;
     // PUSH_DE;
     // CALL(aBattleAnim_Sine);
-    int8_t sine = (int8_t)BattleAnim_Sine_Conv(bc->var1, d);
+    int8_t sine = (int8_t)Sine(bc->var1, d);
     // SRA_A;
     // SRA_A;
     // SRA_A;
@@ -2672,7 +2672,7 @@ static void BattleAnimFunction_Gust_GustWobble(struct BattleAnim* bc) {
     // LD_HL(BATTLEANIMSTRUCT_XOFFSET);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->xOffset = BattleAnim_Cosine_Conv(bc->var1, d);
+    bc->xOffset = Cosine(bc->var1, d);
     // LD_HL(BATTLEANIMSTRUCT_VAR1);
     // ADD_HL_BC;
     // LD_A_hl;
@@ -2970,7 +2970,7 @@ void BattleAnim_StepThrownToTarget(struct BattleAnim* bc, uint8_t* hl, uint8_t a
     // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->yOffset = BattleAnim_Sine_Conv(a, 0x20);
+    bc->yOffset = Sine(a, 0x20);
     // LD_HL(BATTLEANIMSTRUCT_FIX_Y);
     // ADD_HL_BC;
     // LD_A_hl;
@@ -3201,7 +3201,7 @@ void BattleAnimFunction_Kick(struct BattleAnim* bc) {
         // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->yOffset = BattleAnim_Sine_Conv(bc->var1++, 0x8);
+        bc->yOffset = Sine(bc->var1++, 0x8);
         // RET;
         return;
     }
@@ -3216,7 +3216,7 @@ static void BattleAnimFunction_Egg_EggVerticalWaveMotion(struct BattleAnim* bc) 
     // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->yOffset = BattleAnim_Sine_Conv(bc->var1, bc->var2);
+    bc->yOffset = Sine(bc->var1, bc->var2);
     // LD_HL(BATTLEANIMSTRUCT_VAR1);
     // ADD_HL_BC;
     // INC_hl;
@@ -3445,7 +3445,7 @@ void BattleAnimFunction_Egg(struct BattleAnim* bc) {
         // LD_HL(BATTLEANIMSTRUCT_XOFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->xOffset = BattleAnim_Sine_Conv(var1, 0x2);
+        bc->xOffset = Sine(var1, 0x2);
         // RET;
     } return;
 
@@ -3490,7 +3490,7 @@ void BattleAnimFunction_Egg(struct BattleAnim* bc) {
         // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->yOffset = BattleAnim_Sine_Conv(bc->var1, 0x20);
+        bc->yOffset = Sine(bc->var1, 0x20);
         // LD_HL(BATTLEANIMSTRUCT_VAR1);
         // ADD_HL_BC;
         // LD_A_hl;
@@ -3563,7 +3563,7 @@ static void BattleAnimFunction_Sound_SoundWaveMotion(struct BattleAnim* bc) {
     // LD_HL(BATTLEANIMSTRUCT_XOFFSET);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->xOffset = BattleAnim_Sine_Conv(var2, 0x10);
+    bc->xOffset = Sine(var2, 0x10);
     // LD_HL(BATTLEANIMSTRUCT_PARAM);
     // ADD_HL_BC;
     // LD_A_hl;
@@ -3718,14 +3718,14 @@ void BattleAnimFunction_ConfuseRay(struct BattleAnim* bc) {
         // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->yOffset = BattleAnim_Sine_Conv(var2, param);
+        bc->yOffset = Sine(var2, param);
         // POP_DE;
         // POP_AF;
         // CALL(aBattleAnim_Cosine);
         // LD_HL(BATTLEANIMSTRUCT_XOFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->xOffset = BattleAnim_Cosine_Conv(var2, param);
+        bc->xOffset = Cosine(var2, param);
         // LD_HL(BATTLEANIMSTRUCT_XCOORD);
         // ADD_HL_BC;
         // LD_A_hl;
@@ -3810,7 +3810,7 @@ void BattleAnimFunction_Dizzy(struct BattleAnim* bc) {
         // PUSH_AF;
         // PUSH_DE;
         // CALL(aBattleAnim_Sine);
-        int8_t sine = (int8_t)BattleAnim_Sine_Conv(bc->param, 0x10);
+        int8_t sine = (int8_t)Sine(bc->param, 0x10);
         // SRA_A;
         // SRA_A;
         // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
@@ -3823,7 +3823,7 @@ void BattleAnimFunction_Dizzy(struct BattleAnim* bc) {
         // LD_HL(BATTLEANIMSTRUCT_XOFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->xOffset = BattleAnim_Cosine_Conv(bc->param, 0x10);
+        bc->xOffset = Cosine(bc->param, 0x10);
         // LD_HL(BATTLEANIMSTRUCT_PARAM);
         // ADD_HL_BC;
         // LD_A_hl;
@@ -3931,7 +3931,7 @@ void BattleAnimFunction_FloatUp(struct BattleAnim* bc) {
     // LD_HL(BATTLEANIMSTRUCT_XOFFSET);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->xOffset = BattleAnim_Sine_Conv(var1, 0x4);
+    bc->xOffset = Sine(var1, 0x4);
     // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
     // ADD_HL_BC;
     // LD_D_hl;
@@ -3969,7 +3969,7 @@ void BattleAnimFunction_Dig(struct BattleAnim* bc) {
     // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->yOffset = BattleAnim_Sine_Conv(var1, 0x10);
+    bc->yOffset = Sine(var1, 0x10);
     // LD_HL(BATTLEANIMSTRUCT_XCOORD);
     // ADD_HL_BC;
     // INC_hl;
@@ -4118,7 +4118,7 @@ void BattleAnimFunction_SpiralDescent(struct BattleAnim* bc) {
     // PUSH_AF;
     // PUSH_DE;
     // CALL(aBattleAnim_Sine);
-    int8_t sine = (int8_t)BattleAnim_Sine_Conv(bc->var1, 0x18);
+    int8_t sine = (int8_t)Sine(bc->var1, 0x18);
     // SRA_A;
     // SRA_A;
     // SRA_A;
@@ -4135,7 +4135,7 @@ void BattleAnimFunction_SpiralDescent(struct BattleAnim* bc) {
     // LD_HL(BATTLEANIMSTRUCT_XOFFSET);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->xOffset = BattleAnim_Cosine_Conv(bc->var1, 0x18);
+    bc->xOffset = Cosine(bc->var1, 0x18);
     // LD_HL(BATTLEANIMSTRUCT_VAR1);
     // ADD_HL_BC;
     // INC_hl;
@@ -4172,7 +4172,7 @@ void BattleAnimFunction_PetalDance(struct BattleAnim* bc) {
     // PUSH_AF;
     // PUSH_DE;
     // CALL(aBattleAnim_Sine);
-    int8_t sine = BattleAnim_Sine_Conv(bc->var1, 0x18);
+    int8_t sine = Sine(bc->var1, 0x18);
     // SRA_A;
     // SRA_A;
     // SRA_A;
@@ -4189,7 +4189,7 @@ void BattleAnimFunction_PetalDance(struct BattleAnim* bc) {
     // LD_HL(BATTLEANIMSTRUCT_XOFFSET);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->xOffset = BattleAnim_Cosine_Conv(bc->var1, 0x18);
+    bc->xOffset = Cosine(bc->var1, 0x18);
     // LD_HL(BATTLEANIMSTRUCT_VAR1);
     // ADD_HL_BC;
     // INC_hl;
@@ -4251,7 +4251,7 @@ void BattleAnimFunction_PoisonGas(struct BattleAnim* bc) {
         // LD_HL(BATTLEANIMSTRUCT_XOFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->xOffset = BattleAnim_Cosine_Conv(bc->var1++, 0x18);
+        bc->xOffset = Cosine(bc->var1++, 0x18);
         // LD_HL(BATTLEANIMSTRUCT_XCOORD);
         // ADD_HL_BC;
         // LD_A_hl;
@@ -4282,7 +4282,7 @@ void BattleAnimFunction_SmokeFlameWheel(struct BattleAnim* bc) {
     // PUSH_AF;
     // PUSH_DE;
     // CALL(aBattleAnim_Sine);
-    int8_t sine = (int8_t)BattleAnim_Sine_Conv(bc->param, 0x18);
+    int8_t sine = (int8_t)Sine(bc->param, 0x18);
     // SRA_A;
     // SRA_A;
     // SRA_A;
@@ -4299,7 +4299,7 @@ void BattleAnimFunction_SmokeFlameWheel(struct BattleAnim* bc) {
     // LD_HL(BATTLEANIMSTRUCT_XOFFSET);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->xOffset = BattleAnim_Cosine_Conv(bc->param, 0x18);
+    bc->xOffset = Cosine(bc->param, 0x18);
     // LD_HL(BATTLEANIMSTRUCT_PARAM);
     // ADD_HL_BC;
     // INC_hl;
@@ -4339,7 +4339,7 @@ void BattleAnimFunction_SacredFire(struct BattleAnim* bc) {
     // PUSH_AF;
     // PUSH_DE;
     // CALL(aBattleAnim_Sine);
-    int8_t sine = (int8_t)BattleAnim_Sine_Conv(bc->param, 0x18);
+    int8_t sine = (int8_t)Sine(bc->param, 0x18);
     // SRA_A;
     // SRA_A;
     // SRA_A;
@@ -4356,7 +4356,7 @@ void BattleAnimFunction_SacredFire(struct BattleAnim* bc) {
     // LD_HL(BATTLEANIMSTRUCT_XOFFSET);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->xOffset = BattleAnim_Cosine_Conv(bc->param, 0x18);
+    bc->xOffset = Cosine(bc->param, 0x18);
     // LD_HL(BATTLEANIMSTRUCT_PARAM);
     // ADD_HL_BC;
     // INC_hl;
@@ -4434,7 +4434,7 @@ void BattleAnimFunction_PresentSmokescreen(struct BattleAnim* bc) {
         // ADD_HL_BC;
         // LD_D_hl;
         // CALL(aBattleAnim_Sine);
-        uint8_t sine = BattleAnim_Sine_Conv(bc->var1, bc->var2);
+        uint8_t sine = Sine(bc->var1, bc->var2);
         // BIT_A(7);
         // IF_NZ goto negative;
         if(!bit_test(sine, 7)) {
@@ -4546,7 +4546,7 @@ void BattleAnimFunction_Horn(struct BattleAnim* bc) {
         // LD_HL(BATTLEANIMSTRUCT_XOFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->xOffset = BattleAnim_Sine_Conv(bc->var2, 0x8);
+        bc->xOffset = Sine(bc->var2, 0x8);
         // SRA_A;
         // XOR_A(0xff);
         // INC_A;
@@ -4603,7 +4603,7 @@ void BattleAnimFunction_Needle(struct BattleAnim* bc) {
         // LD_A_hl;
         // LD_D(0x10);
         // CALL(aBattleAnim_Sine);
-        uint8_t sine = BattleAnim_Sine_Conv(bc->var1, 0x10);
+        uint8_t sine = Sine(bc->var1, 0x10);
         // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
         // ADD_HL_BC;
         // BIT_A(7);
@@ -4687,7 +4687,7 @@ void BattleAnimFunction_ThiefPayday(struct BattleAnim* bc) {
         // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->yOffset = BattleAnim_Sine_Conv(bc->var1, bc->var2);
+        bc->yOffset = Sine(bc->var1, bc->var2);
         // LD_HL(BATTLEANIMSTRUCT_VAR1);
         // ADD_HL_BC;
         // LD_A_hl;
@@ -4739,14 +4739,14 @@ void BattleAnimFunction_AbsorbCircle(struct BattleAnim* bc) {
     // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->yOffset = BattleAnim_Sine_Conv(bc->param, bc->var1);
+    bc->yOffset = Sine(bc->param, bc->var1);
     // POP_DE;
     // POP_AF;
     // CALL(aBattleAnim_Cosine);
     // LD_HL(BATTLEANIMSTRUCT_XOFFSET);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->xOffset = BattleAnim_Cosine_Conv(bc->param, bc->var1);
+    bc->xOffset = Cosine(bc->param, bc->var1);
     // LD_HL(BATTLEANIMSTRUCT_PARAM);
     // ADD_HL_BC;
     // INC_hl;
@@ -4822,14 +4822,14 @@ void BattleAnimFunction_Conversion(struct BattleAnim* bc) {
     // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->yOffset = BattleAnim_Sine_Conv(param, bc->var1);
+    bc->yOffset = Sine(param, bc->var1);
     // POP_DE;
     // POP_AF;
     // CALL(aBattleAnim_Cosine);
     // LD_HL(BATTLEANIMSTRUCT_XOFFSET);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->xOffset = BattleAnim_Cosine_Conv(param, bc->var1);
+    bc->xOffset = Cosine(param, bc->var1);
     // LD_HL(BATTLEANIMSTRUCT_VAR2);
     // ADD_HL_BC;
     // LD_A_hl;
@@ -4895,7 +4895,7 @@ void BattleAnimFunction_Bonemerang(struct BattleAnim* bc) {
         // LD_HL(BATTLEANIMSTRUCT_YCOORD);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->yCoord = bc->var2 + BattleAnim_Sine_Conv(bc->param, 0x30);
+        bc->yCoord = bc->var2 + Sine(bc->param, 0x30);
         // LD_HL(BATTLEANIMSTRUCT_PARAM);
         // ADD_HL_BC;
         // LD_A_hl;
@@ -4905,7 +4905,7 @@ void BattleAnimFunction_Bonemerang(struct BattleAnim* bc) {
         // LD_HL(BATTLEANIMSTRUCT_XOFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->xOffset = BattleAnim_Cosine_Conv(bc->param + 0x8, 0x30);
+        bc->xOffset = Cosine(bc->param + 0x8, 0x30);
         // LD_HL(BATTLEANIMSTRUCT_PARAM);
         // ADD_HL_BC;
         // INC_hl;
@@ -4939,7 +4939,7 @@ void BattleAnimFunction_Shiny(struct BattleAnim* bc) {
         // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->yOffset = BattleAnim_Sine_Conv(bc->param, 0x10);
+        bc->yOffset = Sine(bc->param, 0x10);
         // LD_HL(BATTLEANIMSTRUCT_PARAM);
         // ADD_HL_BC;
         // LD_A_hl;
@@ -4948,7 +4948,7 @@ void BattleAnimFunction_Shiny(struct BattleAnim* bc) {
         // LD_HL(BATTLEANIMSTRUCT_XOFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->xOffset = BattleAnim_Cosine_Conv(bc->param, 0x10);
+        bc->xOffset = Cosine(bc->param, 0x10);
         // LD_HL(BATTLEANIMSTRUCT_VAR2);  // unused?
         // ADD_HL_BC;
         // LD_hl(0xf);
@@ -5090,7 +5090,7 @@ void BattleAnimFunction_GrowthSwordsDance(struct BattleAnim* bc) {
     // LD_A_hl;
     // LD_D(0x18);
     // CALL(aBattleAnim_Sine);
-    int8_t sine = (int8_t)BattleAnim_Sine_Conv(bc->param, 0x18);
+    int8_t sine = (int8_t)Sine(bc->param, 0x18);
     // SRA_A;
     // SRA_A;
     // SRA_A;
@@ -5110,7 +5110,7 @@ void BattleAnimFunction_GrowthSwordsDance(struct BattleAnim* bc) {
     // LD_HL(BATTLEANIMSTRUCT_XOFFSET);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->xOffset = BattleAnim_Cosine_Conv(bc->param++, 0x18);
+    bc->xOffset = Cosine(bc->param++, 0x18);
     // LD_HL(BATTLEANIMSTRUCT_VAR2);
     // ADD_HL_BC;
     // DEC_hl;
@@ -5346,14 +5346,14 @@ void BattleAnimFunction_MetronomeHand(struct BattleAnim* bc) {
     // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->yOffset = BattleAnim_Sine_Conv(var1, 0x2);
+    bc->yOffset = Sine(var1, 0x2);
     // POP_AF;
     // LD_D(0x8);
     // CALL(aBattleAnim_Cosine);
     // LD_HL(BATTLEANIMSTRUCT_XOFFSET);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->xOffset = BattleAnim_Cosine_Conv(var1, 0x8);
+    bc->xOffset = Cosine(var1, 0x8);
     // RET;
 }
 
@@ -5382,7 +5382,7 @@ void BattleAnimFunction_MetronomeSparkleSketch(struct BattleAnim* bc) {
     // LD_HL(BATTLEANIMSTRUCT_XOFFSET);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->xOffset = BattleAnim_Cosine_Conv(bc->param, 0x8);
+    bc->xOffset = Cosine(bc->param, 0x8);
     // LD_HL(BATTLEANIMSTRUCT_PARAM);
     // ADD_HL_BC;
     // LD_A_hl;
@@ -5447,7 +5447,7 @@ void BattleAnimFunction_SafeguardProtect(struct BattleAnim* bc) {
     // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->yOffset = BattleAnim_Sine_Conv(bc->param, 0x18);
+    bc->yOffset = Sine(bc->param, 0x18);
     // POP_DE;
     // POP_AF;
     // CALL(aBattleAnim_Cosine);
@@ -5455,7 +5455,7 @@ void BattleAnimFunction_SafeguardProtect(struct BattleAnim* bc) {
     // ADD_HL_BC;
     // SRA_A;
     // LD_hl_A;
-    bc->xOffset = (uint8_t)((int8_t)BattleAnim_Cosine_Conv(bc->param, 0x18) >> 1);
+    bc->xOffset = (uint8_t)((int8_t)Cosine(bc->param, 0x18) >> 1);
     // LD_HL(BATTLEANIMSTRUCT_PARAM);
     // ADD_HL_BC;
     // LD_A_hl;
@@ -5525,14 +5525,14 @@ void BattleAnimFunction_LockOnMindReader(struct BattleAnim* bc) {
             // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
             // ADD_HL_BC;
             // LD_hl_A;
-            bc->yOffset = BattleAnim_Sine_Conv(bc->param, var1);
+            bc->yOffset = Sine(bc->param, var1);
             // POP_DE;
             // POP_AF;
             // CALL(aBattleAnim_Cosine);
             // LD_HL(BATTLEANIMSTRUCT_XOFFSET);
             // ADD_HL_BC;
             // LD_hl_A;
-            bc->xOffset = BattleAnim_Cosine_Conv(bc->param, var1);
+            bc->xOffset = Cosine(bc->param, var1);
             // RET;
             return;
         }
@@ -5604,7 +5604,7 @@ void BattleAnimFunction_HealBellNotes(struct BattleAnim* bc) {
             // LD_HL(BATTLEANIMSTRUCT_XOFFSET);
             // ADD_HL_BC;
             // LD_hl_A;
-            bc->xOffset = BattleAnim_Cosine_Conv(bc->var1++, 0x18);
+            bc->xOffset = Cosine(bc->var1++, 0x18);
             // LD_HL(BATTLEANIMSTRUCT_YCOORD);
             // ADD_HL_BC;
             // LD_A_hl;
@@ -5645,7 +5645,7 @@ void BattleAnimFunction_BatonPass(struct BattleAnim* bc) {
     // LD_A_hl;
     // INC_hl;
     // CALL(aBattleAnim_Sine);
-    uint8_t sine = BattleAnim_Sine_Conv(bc->var1++, bc->param);
+    uint8_t sine = Sine(bc->var1++, bc->param);
     // BIT_A(7);
     // IF_NZ goto negative;
     if(!bit_test(sine, 7)) {
@@ -5697,14 +5697,14 @@ void BattleAnimFunction_EncoreBellyDrum(struct BattleAnim* bc) {
         // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->yOffset = BattleAnim_Sine_Conv(bc->param, var1);
+        bc->yOffset = Sine(bc->param, var1);
         // POP_DE;
         // POP_AF;
         // CALL(aBattleAnim_Cosine);
         // LD_HL(BATTLEANIMSTRUCT_XOFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->xOffset = BattleAnim_Cosine_Conv(bc->param, var1);
+        bc->xOffset = Cosine(bc->param, var1);
         // RET;
         return;
     }
@@ -5743,14 +5743,14 @@ void BattleAnimFunction_SwaggerMorningSun(struct BattleAnim* bc) {
     // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->yOffset = BattleAnim_Sine_Conv(param & 0x3f, var1);
+    bc->yOffset = Sine(param & 0x3f, var1);
     // POP_DE;
     // POP_AF;
     // CALL(aBattleAnim_Cosine);
     // LD_HL(BATTLEANIMSTRUCT_XOFFSET);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->xOffset = BattleAnim_Cosine_Conv(param & 0x3f, var1);
+    bc->xOffset = Cosine(param & 0x3f, var1);
     // RET;
 }
 
@@ -5881,7 +5881,7 @@ void BattleAnimFunction_PerishSong(struct BattleAnim* bc) {
     // PUSH_AF;
     // PUSH_DE;
     // CALL(aBattleAnim_Sine);
-    int8_t sine = (int8_t)BattleAnim_Sine_Conv(param, 0x50);
+    int8_t sine = (int8_t)Sine(param, 0x50);
     // SRA_A;
     // SRA_A;
     // LD_HL(BATTLEANIMSTRUCT_VAR1);
@@ -5898,7 +5898,7 @@ void BattleAnimFunction_PerishSong(struct BattleAnim* bc) {
     // LD_HL(BATTLEANIMSTRUCT_XOFFSET);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->xOffset = BattleAnim_Cosine_Conv(param, 0x50);
+    bc->xOffset = Cosine(param, 0x50);
     // RET;
 }
 
@@ -6218,7 +6218,7 @@ void BattleAnimFunction_AncientPower(struct BattleAnim* bc) {
     // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->yOffset = -BattleAnim_Sine_Conv(bc->var1++, bc->param);
+    bc->yOffset = -Sine(bc->var1++, bc->param);
     // RET;
 }
 
@@ -6228,7 +6228,7 @@ void BattleAnim_StepCircle(struct BattleAnim* bc, uint8_t a, uint8_t d) {
     // PUSH_AF;
     // PUSH_DE;
     // CALL(aBattleAnim_Sine);
-    int8_t res = (int8_t)BattleAnim_Sine_Conv(a, d);
+    int8_t res = (int8_t)Sine(a, d);
     // SRA_A;
     // SRA_A;
     // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
@@ -6241,7 +6241,7 @@ void BattleAnim_StepCircle(struct BattleAnim* bc, uint8_t a, uint8_t d) {
     // LD_HL(BATTLEANIMSTRUCT_XOFFSET);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->xOffset = BattleAnim_Cosine_Conv(a, d);
+    bc->xOffset = Cosine(a, d);
     // RET;
 }
 
@@ -6288,78 +6288,6 @@ void BattleAnim_IncAnonJumptableIndex(void) {
     ADD_HL_BC;
     INC_hl;
     RET;
-}
-
-void BattleAnim_Cosine(void) {
-    SET_PC(aBattleAnim_Cosine);
-    //  a = d * cos(a * pi/32)
-    ADD_A(0b010000);  // cos(x) = sin(x + pi/2)
-                      // fallthrough
-    return BattleAnim_Sine();
-}
-
-uint8_t BattleAnim_Cosine_Conv(uint8_t a, uint8_t d) {
-    // SET_PC(aBattleAnim_Cosine);
-    //  a = d * cos(a * pi/32)
-    // ADD_A(0b010000);  // cos(x) = sin(x + pi/2)
-                      // fallthrough
-    return BattleAnim_Sine_Conv(a + 0b010000, d);
-}
-
-void BattleAnim_Sine(void) {
-    SET_PC(aBattleAnim_Sine);
-    //  a = d * sin(a * pi/32)
-    // calc_sine_wave ['BattleAnimSineWave']
-    REG_A = v_Sine_Conv(REG_A, REG_D);
-
-    // return BattleAnim_Sine_e();
-}
-
-uint8_t BattleAnim_Sine_Conv(uint8_t a, uint8_t d) {
-    // SET_PC(aBattleAnim_Sine);
-    //  a = d * sin(a * pi/32)
-    // calc_sine_wave ['BattleAnimSineWave']
-    return v_Sine_Conv(a, d);
-
-    // return BattleAnim_Sine_e();
-}
-
-void BattleAnim_Sine_e(void) {
-    SET_PC(aBattleAnim_Sine_e);
-    // LD_A_E;
-    REG_A = REG_E;
-    // CALL(aBattleAnim_Sine);
-    REG_E = BattleAnim_Cosine_Conv(REG_A, REG_D);
-    // LD_E_A;
-    // RET;
-}
-
-uint8_t BattleAnim_Sine_e_Conv(uint8_t e, uint8_t d) {
-    // SET_PC(aBattleAnim_Sine_e);
-    // LD_A_E;
-    // CALL(aBattleAnim_Sine);
-    // LD_E_A;
-    // RET;
-    return BattleAnim_Sine_Conv(e, d);
-}
-
-void BattleAnim_Cosine_e(void) {
-    SET_PC(aBattleAnim_Cosine_e);
-    // LD_A_E;
-    REG_A = REG_E;
-    // CALL(aBattleAnim_Cosine);
-    REG_E = BattleAnim_Cosine_Conv(REG_A, REG_D);
-    // LD_E_A;
-    // RET;
-}
-
-uint8_t BattleAnim_Cosine_e_Conv(uint8_t e, uint8_t d) {
-    // SET_PC(aBattleAnim_Cosine_e);
-    // LD_A_E;
-    // CALL(aBattleAnim_Cosine);
-    // LD_E_A;
-    // RET;
-    return BattleAnim_Cosine_Conv(e, d);
 }
 
 void BattleAnim_AbsSinePrecise(void) {

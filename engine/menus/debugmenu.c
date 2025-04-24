@@ -145,7 +145,7 @@ void DebugMenu_MoveCursor(int8_t dir) {
 #define DEBUG_MENU_MUSIC MUSIC_NONE
 
 static void DebugMenu_MenuBox(void) {
-    return Textbox_Conv2(Coord2Tile_Conv(4, 0), (MAX_OPTIONS_PER_PAGE + 1) * 2, MAX_OPTION_STRING_LENGTH + 1);
+    return Textbox(Coord2Tile_Conv(4, 0), (MAX_OPTIONS_PER_PAGE + 1) * 2, MAX_OPTION_STRING_LENGTH + 1);
 }
 
 void DebugMenu(void) {
@@ -318,7 +318,7 @@ static const char* DebugMenu_SoundNames[] = {
 };
 
 static void DebugMenu_SoundTest_PlaceMusicName(uint16_t track) {
-    ClearBox_Conv2(wram->wTilemap + coordidx(2, 2), SCREEN_WIDTH - 4, 1);
+    ClearBox(wram->wTilemap + coordidx(2, 2), SCREEN_WIDTH - 4, 1);
     if(track >= lengthof(DebugMenu_MusicNames) || DebugMenu_MusicNames[track] == NULL) {
         char buf[10];
         sprintf(buf, "M%03X", track);
@@ -330,7 +330,7 @@ static void DebugMenu_SoundTest_PlaceMusicName(uint16_t track) {
 }
 
 static void DebugMenu_SoundTest_PlaceSoundName(uint16_t track) {
-    ClearBox_Conv2(wram->wTilemap + coordidx(2, 6), SCREEN_WIDTH - 4, 1);
+    ClearBox(wram->wTilemap + coordidx(2, 6), SCREEN_WIDTH - 4, 1);
     if(track >= lengthof(DebugMenu_SoundNames) || DebugMenu_SoundNames[track] == NULL) {
         char buf[10];
         sprintf(buf, "SE%03X", track);
@@ -349,8 +349,8 @@ void DebugMenu_SoundTest(void) {
     uint16_t musicTrack = MUSIC_NONE;
     uint16_t sound = SFX_ITEM;
 
-    ClearBox_Conv2(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, SCREEN_HEIGHT);
-    Textbox_Conv2(wram->wTilemap + coordidx(TEXTBOX_X, TEXTBOX_Y), TEXTBOX_INNERH, TEXTBOX_INNERW);
+    ClearBox(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, SCREEN_HEIGHT);
+    Textbox(wram->wTilemap + coordidx(TEXTBOX_X, TEXTBOX_Y), TEXTBOX_INNERH, TEXTBOX_INNERW);
     PlaceStringSimple(Utf8ToCrystal("A-PLAY  B-STOP<LINE>START- BACK@"), wram->wTilemap + coordidx(TEXTBOX_INNERX, TEXTBOX_INNERY));
     PlaceStringSimple(Utf8ToCrystal("MUSIC@"), wram->wTilemap + coordidx(0, 0));
     PlaceStringSimple(Utf8ToCrystal("SOUND EFFECT@"), wram->wTilemap + coordidx(0, 4));
@@ -426,13 +426,13 @@ void DebugMenu_SoundTest(void) {
         DelayFrame();
     }
     PlayMusic(MUSIC_NONE);
-    ClearBox_Conv2(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, SCREEN_HEIGHT);
+    ClearBox(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, SCREEN_HEIGHT);
     DelayFrame();
 }
 
 static void DebugMenu_BattleTest_StartBattle(uint8_t tclass, uint8_t tid) {
-    ClearTilemap_Conv2();
-    WaitBGMap_Conv();
+    ClearTilemap();
+    WaitBGMap();
     DelayFrames(10);
     wram->wMapTileset = TILESET_JOHTO;
     LoadMapTileset_Conv2();
@@ -473,8 +473,8 @@ static void DebugMenu_BattleTest_StartBattle(uint8_t tclass, uint8_t tid) {
     bit_reset(wram->wDebugFlags, DEBUG_BATTLE_F);
 
     wbank_pop;
-    ClearTilemap_Conv2();
-    WaitBGMap_Conv();
+    ClearTilemap();
+    WaitBGMap();
     LoadFontsExtra_Conv();
     LoadStandardFont_Conv();
     PlayMusic(MUSIC_NONE);
@@ -563,8 +563,8 @@ void DebugMenu_BattleTest(void) {
     uint8_t tclass = PSYCHIC_T; 
     uint8_t tid = NATHAN;
 
-    ClearBox_Conv2(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, SCREEN_HEIGHT);
-    Textbox_Conv2(wram->wTilemap + coordidx(TEXTBOX_X, TEXTBOX_Y), TEXTBOX_INNERH, TEXTBOX_INNERW);
+    ClearBox(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, SCREEN_HEIGHT);
+    Textbox(wram->wTilemap + coordidx(TEXTBOX_X, TEXTBOX_Y), TEXTBOX_INNERH, TEXTBOX_INNERW);
     PlaceStringSimple(Utf8ToCrystal("A- FIGHT  LR- MV<LINE>B- BACK@"), wram->wTilemap + coordidx(TEXTBOX_INNERX, TEXTBOX_INNERY));
     DebugMenu_BattleTest_PlaceTrainerName(tclass, tid);
 
@@ -576,42 +576,42 @@ void DebugMenu_BattleTest(void) {
         int8_t vdir = -((hram->hJoyPressed & D_UP)? 1: 0) + ((hram->hJoyPressed & D_DOWN)? 1: 0);
         if(hdir > 0) {
             DebugMenu_BattleTest_GetNextTrainer(&tclass, &tid);
-            ClearBox_Conv2(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, 7);
+            ClearBox(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, 7);
             DebugMenu_BattleTest_PlaceTrainerName(tclass, tid);
         }
         else if(hdir < 0) {
             DebugMenu_BattleTest_GetPrevTrainer(&tclass, &tid);
-            ClearBox_Conv2(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, 7);
+            ClearBox(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, 7);
             DebugMenu_BattleTest_PlaceTrainerName(tclass, tid);
         }
         if(vdir > 0) {
             DebugMenu_BattleTest_GetNextTrainerClass(&tclass, &tid);
-            ClearBox_Conv2(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, 7);
+            ClearBox(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, 7);
             DebugMenu_BattleTest_PlaceTrainerName(tclass, tid);
         }
         else if(vdir < 0) {
             DebugMenu_BattleTest_GetPrevTrainerClass(&tclass, &tid);
-            ClearBox_Conv2(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, 7);
+            ClearBox(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, 7);
             DebugMenu_BattleTest_PlaceTrainerName(tclass, tid);
         }
         if(hram->hJoyPressed & (B_BUTTON)) 
             break;
         if(hram->hJoyPressed & (A_BUTTON)) {
             DebugMenu_BattleTest_StartBattle(tclass, tid);
-            Textbox_Conv2(wram->wTilemap + coordidx(TEXTBOX_X, TEXTBOX_Y), TEXTBOX_INNERH, TEXTBOX_INNERW);
+            Textbox(wram->wTilemap + coordidx(TEXTBOX_X, TEXTBOX_Y), TEXTBOX_INNERH, TEXTBOX_INNERW);
             PlaceStringSimple(Utf8ToCrystal("A- FIGHT  LR- MV<LINE>B- BACK@"), wram->wTilemap + coordidx(TEXTBOX_INNERX, TEXTBOX_INNERY));
             DebugMenu_BattleTest_PlaceTrainerName(tclass, tid);
         }
         DelayFrame();
     }
     PlayMusic(MUSIC_NONE);
-    ClearBox_Conv2(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, SCREEN_HEIGHT);
+    ClearBox(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, SCREEN_HEIGHT);
     DelayFrame();
 }
 
 void DebugMenu_GFXTest(void) {
     hram->hBGMapMode = BGMAPMODE_NONE;
-    ClearBox_Conv2(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, SCREEN_HEIGHT);
+    ClearBox(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, SCREEN_HEIGHT);
     ByteFill(vram->vTiles0, 2048, 0);
     ByteFill(vram->vTiles1, 2048, 0);
     ByteFill(vram->vTiles2, 2048, 0);
@@ -628,7 +628,7 @@ void DebugMenu_GFXTest(void) {
     for(int i = 0; i < 256; i++) {
         *coord((i & 0xf) + 2, ((i & 0xf0) >> 4) + 1, wram->wTilemap) = i;
     }
-    WaitBGMap_Conv();
+    WaitBGMap();
     DelayFrame();
 
     while(1)
@@ -644,7 +644,7 @@ void DebugMenu_GFXTest(void) {
         DelayFrame();
     }
 
-    ClearBox_Conv2(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, SCREEN_HEIGHT);
+    ClearBox(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, SCREEN_HEIGHT);
     ByteFill(vram->vTiles0, 2048, 0);
     ByteFill(vram->vTiles1, 2048, 0);
     ByteFill(vram->vTiles2, 2048, 0);
@@ -669,13 +669,13 @@ void DebugMenu_Stats(void) {
     StatsScreenInit();
 
     DebugMenu_RestoreAttrmap();
-    ClearScreen_Conv2();
+    ClearScreen();
     v_LoadFontsExtra1_Conv();
     v_LoadFontsExtra2_Conv();
     v_LoadStandardFont_Conv();
-    SetPalettes_Conv();
-    // TextboxPalette_Conv2(wram->wTilemap, SCREEN_WIDTH, SCREEN_HEIGHT);
-    WaitBGMap2_Conv();
+    SetPalettes();
+    // TextboxPalette(wram->wTilemap, SCREEN_WIDTH, SCREEN_HEIGHT);
+    WaitBGMap2();
     // DelayFrame();
 }
 
@@ -685,13 +685,13 @@ void DebugMenu_Pics_PlaceStrings(species_t* sp) {
     PlaceStringSimple(U82C(buf), coord(0, 0, wram->wTilemap));
     uint8_t size = BasePokemonData[*sp - 1].picSize;
     sprintf(buf, "SIZE - %d, %d@", size & 0xf, size >> 4);
-    ClearBox_Conv2(coord(0, 2, wram->wTilemap), SCREEN_WIDTH, 1);
+    ClearBox(coord(0, 2, wram->wTilemap), SCREEN_WIDTH, 1);
     PlaceStringSimple(U82C(buf), coord(0, 2, wram->wTilemap));
 }
 
 static void DebugMenu_Pics_DoAnim(species_t sp) {
     uint16_t palbuf[3 * NUM_PAL_COLORS];
-    ClearBox_Conv2(coord(2, 4, wram->wTilemap), 7, 7);
+    ClearBox(coord(2, 4, wram->wTilemap), 7, 7);
 
     DelayFrame();
 
@@ -701,7 +701,7 @@ static void DebugMenu_Pics_DoAnim(species_t sp) {
     LoadMonAnimation_Conv(coord(2, 4, wram->wTilemap), 0x0, ANIM_MON_MENU);
     GetPlayerOrMonPalettePointer_Conv(palbuf, wram->wCurSpecies, wram->wTempMon.mon.DVs);
     LoadPalette_White_Col1_Col2_Black_Conv((uint16_t*)wram->wBGPals1 + 4, palbuf);
-    SetPalettes_Conv();
+    SetPalettes();
 
     while(!SetUpPokeAnim_Conv()) {
         HDMATransferTilemapToWRAMBank3_Conv();
@@ -715,7 +715,7 @@ static void DebugMenu_Pics_SetLayout(void) {
 void DebugMenu_Pics(void) {
     DebugMenu_SaveTilemap();
     DebugMenu_SaveAttrmap();
-    ClearScreen_Conv2();
+    ClearScreen();
     v_LoadFontsExtra1_Conv();
     v_LoadFontsExtra2_Conv();
     v_LoadStandardFont_Conv();
@@ -762,9 +762,9 @@ void DebugMenu_Pics(void) {
     v_LoadFontsExtra1_Conv();
     v_LoadFontsExtra2_Conv();
     v_LoadStandardFont_Conv();
-    TextboxPalette_Conv2(wram->wTilemap, SCREEN_WIDTH - 2, SCREEN_HEIGHT - 2);
-    ClearScreen_Conv2();
-    WaitBGMap2_Conv();
+    TextboxPalette(wram->wTilemap, SCREEN_WIDTH - 2, SCREEN_HEIGHT - 2);
+    ClearScreen();
+    WaitBGMap2();
     // DelayFrame();
 }
 
@@ -790,11 +790,11 @@ static const txt_cmd_s DebugMenu_TestText_No[] = {
 };
 
 void DebugMenu_Scripting(void) {
-    ClearScreen_Conv2();
+    ClearScreen();
     v_LoadFontsExtra1_Conv();
     v_LoadFontsExtra2_Conv();
     v_LoadStandardFont_Conv();
-    WaitBGMap_Conv();
+    WaitBGMap();
 
     PrintText_Conv2(DebugMenu_TestText);
     bool res = YesNoBox_Conv();
@@ -805,15 +805,15 @@ void DebugMenu_Scripting(void) {
         PrintText_Conv2(DebugMenu_TestText_No);
     }
 
-    ClearTilemap_Conv2();
+    ClearTilemap();
     ByteFill(vram->vTiles0, 2048, 0);
     ByteFill(vram->vTiles1, 2048, 0);
     ByteFill(vram->vTiles2, 2048, 0);
     v_LoadFontsExtra1_Conv();
     v_LoadFontsExtra2_Conv();
     v_LoadStandardFont_Conv();
-    TextboxPalette_Conv2(wram->wTilemap, SCREEN_WIDTH - 2, SCREEN_HEIGHT - 2);
-    WaitBGMap_Conv();
+    TextboxPalette(wram->wTilemap, SCREEN_WIDTH - 2, SCREEN_HEIGHT - 2);
+    WaitBGMap();
     DelayFrame();
 }
 
@@ -834,11 +834,11 @@ const txt_cmd_s Text_LANTestFail[] = {
 void DebugMenu_Link(void) {
     DebugMenu_SaveTilemap();
     DebugMenu_SaveAttrmap();
-    ClearScreen_Conv2();
+    ClearScreen();
     v_LoadFontsExtra1_Conv();
     v_LoadFontsExtra2_Conv();
     v_LoadStandardFont_Conv();
-    WaitBGMap_Conv();
+    WaitBGMap();
 
     OpenSRAM_Conv(MBANK(asPlayerData));
     CopyBytes_GB(wCrystalData, sCrystalData, wCrystalDataEnd - wCrystalData);
@@ -862,7 +862,7 @@ void DebugMenu_Link(void) {
     CloseWindow_Conv2();
 
     NetworkCloseConnection();
-    ClearScreen_Conv2();
+    ClearScreen();
     DelayFrames(4);
     DebugMenu_RestoreTilemap();
     DebugMenu_RestoreAttrmap();
@@ -874,7 +874,7 @@ void DebugMenu_Link(void) {
 void DebugMenu_TradeAnim(void) {
     DebugMenu_SaveTilemap();
     DebugMenu_SaveAttrmap();
-    ClearScreen_Conv2();
+    ClearScreen();
     wram->wPlayerTrademon.species = BULBASAUR;
     wram->wOTTrademon.species = CHARMANDER;
     U82CA(wram->wPlayerTrademon.otName, "PLAYER@");
@@ -906,7 +906,7 @@ static void DebugMenu_BattleAnim_PlaceText(uint16_t move) {
 void DebugMenu_BattleAnim(void) {
     DebugMenu_SaveTilemap();
     DebugMenu_SaveAttrmap();
-    ClearScreen_Conv2();
+    ClearScreen();
     uint16_t anim = NO_MOVE + 1;
 
     uint8_t options = wram->wOptions;
@@ -948,13 +948,13 @@ void DebugMenu_BattleAnim(void) {
     GetBattleMonBackpic();
     wram->wTempBattleMonSpecies = wram->wPartyMon[0].mon.species;
     wram->wTempEnemyMonSpecies = wram->wOTPartySpecies[0];
-    GetSGBLayout_Conv(SCGB_BATTLE_COLORS);
+    GetSGBLayout(SCGB_BATTLE_COLORS);
     hram->hGraphicStartTile = 0x31;
     PlaceGraphicYStagger_Conv(coord(2, 6, wram->wTilemap), 6, 6);
     GetEnemyMonFrontpic();
     hram->hGraphicStartTile = 0;
     PlaceGraphicYStagger_Conv(coord(12, 0, wram->wTilemap), 7, 7);
-    SpeechTextbox_Conv2();
+    SpeechTextbox();
     DebugMenu_BattleAnim_PlaceText(anim);
     ApplyTilemap_Conv();
 
@@ -969,32 +969,32 @@ void DebugMenu_BattleAnim(void) {
         if(dir < 0) {
             anim--;
             if(anim == NO_MOVE) anim = NUM_BATTLE_ANIMS + 1;
-            SpeechTextbox_Conv2();
+            SpeechTextbox();
             DebugMenu_BattleAnim_PlaceText(anim);
         }
         else if(dir > 0) {
             anim++;
             if(anim > NUM_BATTLE_ANIMS + 1) anim = NO_MOVE + 1;
-            SpeechTextbox_Conv2();
+            SpeechTextbox();
             DebugMenu_BattleAnim_PlaceText(anim);
         }
 
         if(dir2 < 0) {
             if(anim < NO_MOVE + 10) anim = NO_MOVE + 1;
             else anim -= 10;
-            SpeechTextbox_Conv2();
+            SpeechTextbox();
             DebugMenu_BattleAnim_PlaceText(anim);
         }
         else if(dir2 > 0) {
             if(anim > (NUM_BATTLE_ANIMS + 1) - 10) anim = NUM_BATTLE_ANIMS + 1;
             else anim += 10;
-            SpeechTextbox_Conv2();
+            SpeechTextbox();
             DebugMenu_BattleAnim_PlaceText(anim);
         }
 
         if(hram->hJoyPressed & SELECT) {
             hram->hBattleTurn ^= 1;
-            SpeechTextbox_Conv2();
+            SpeechTextbox();
             DebugMenu_BattleAnim_PlaceText(anim);
         }
 
@@ -1012,7 +1012,7 @@ void DebugMenu_BattleAnim(void) {
                 wram->wBattleAnimParam = 0;
             }
             wram->wNumHits = 1;
-            WaitBGMap_Conv();
+            WaitBGMap();
             PlayBattleAnim();
             FinishBattleAnim();
             EmptyBattleTextbox();
@@ -1021,7 +1021,7 @@ void DebugMenu_BattleAnim(void) {
         DelayFrame();
     }
     wram->wOptions = options;
-    ClearScreen_Conv2();
+    ClearScreen();
     DelayFrames(4);
     DebugMenu_RestoreTilemap();
     DebugMenu_RestoreAttrmap();
@@ -1031,7 +1031,7 @@ void DebugMenu_BattleAnim(void) {
 }
 
 void DebugMenu_Credits(void) {
-    ClearScreen_Conv2();
+    ClearScreen();
     InitDisplayForRedCredits();
     Credits(0);
 }
@@ -1039,7 +1039,7 @@ void DebugMenu_Credits(void) {
 void DebugMenu_TradeTest(void) {
     DebugMenu_SaveTilemap();
     DebugMenu_SaveAttrmap();
-    ClearScreen_Conv2();
+    ClearScreen();
     U82CA(wram->wPlayerName, "PLAYER@");
     U82CA(wram->wOTPlayerName, "OTHER@");
     wram->wPartyCount = 1;
@@ -1054,7 +1054,7 @@ void DebugMenu_TradeTest(void) {
     U82CA(wram->wOTPartyMonNickname[0], "MORGANA@");
     LinkComms_LoadPleaseWaitTextboxBorderGFX();
     SetTradeRoomBGPals();
-    WaitBGMap2_Conv();
+    WaitBGMap2();
     PlayMusic(MUSIC_ROUTE_30);
     InitTradeMenuDisplay();
     DebugMenu_RestoreTilemap();
@@ -1067,7 +1067,7 @@ void DebugMenu_TradeTest(void) {
 void DebugMenu_MysteryGift(void) {
     DebugMenu_SaveTilemap();
     DebugMenu_SaveAttrmap();
-    ClearScreen_Conv2();
+    ClearScreen();
 
     OpenSRAM_Conv(MBANK(asPlayerData));
     wram->wPlayerGender = gb_read(sCrystalData);

@@ -43,14 +43,14 @@ void MoveTutor(void){
     // CALL(aFadeToMenu);
     FadeToMenu_Conv();
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearScreen);
-    ClearScreen_Conv2();
+    ClearScreen();
     // CALL(aDelayFrame);
     DelayFrame();
     // LD_B(SCGB_PACKPALS);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_PACKPALS);
+    GetSGBLayout(SCGB_PACKPALS);
     // XOR_A_A;
     // LD_addr_A(wItemAttributeValue);
     wram->wItemAttributeValue = 0x0;

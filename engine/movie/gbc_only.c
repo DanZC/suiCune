@@ -25,7 +25,7 @@ void GBCOnlyScreen(void){
     PlayMusic(MUSIC_NONE);
 
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
 
     // LD_HL(mGBCOnlyGFX);
     // LD_DE(wGBCOnlyDecompressBuffer);
@@ -36,8 +36,8 @@ void GBCOnlyScreen(void){
     // CALL(aDecompress);
     // POP_AF;
     // LDH_addr_A(rSVBK);
-    GetSGBLayout_Conv(SCGB_1E);
-    SetPalettes_Conv();
+    GetSGBLayout(SCGB_1E);
+    SetPalettes();
 
     // LD_DE(wGBCOnlyDecompressBuffer);
     // LD_HL(vTiles2);
@@ -55,7 +55,7 @@ void GBCOnlyScreen(void){
     DrawGBCOnlyScreen();
 
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
 
 //  better luck next time
 
@@ -209,13 +209,13 @@ static void DrawErrorScreen(const char* text){
 
 void ErrorScreen(const char* text){
     PlayMusic(MUSIC_NONE);
-    ClearTilemap_Conv2();
-    GetSGBLayout_Conv(SCGB_1E);
-    SetPalettes_Conv();
+    ClearTilemap();
+    GetSGBLayout(SCGB_1E);
+    SetPalettes();
     LoadPNG2bppAssetSectionToVRAM(vram->vTiles2, GBCOnlyGFX, 0, 84);
     LoadPNG1bppAssetSectionToVRAM(vram->vTiles1, Font, 0, 0x80);
     DrawErrorScreen(text);
-    WaitBGMap_Conv();
+    WaitBGMap();
 
 //  better luck next time
 

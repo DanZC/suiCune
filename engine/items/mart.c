@@ -818,7 +818,7 @@ bool BuyMenuLoop(void){
     // LD_addr_A(wMenuCursorPositionBackup);
     wram->wMenuCursorPositionBackup = wram->wMenuCursorY;
     // CALL(aSpeechTextbox);
-    SpeechTextbox_Conv2();
+    SpeechTextbox();
     // LD_A_addr(wMenuJoypad);
     // CP_A(B_BUTTON);
     // IF_Z goto set_carry;
@@ -889,7 +889,7 @@ bool BuyMenuLoop(void){
 
 // cancel:
     // CALL(aSpeechTextbox);
-    SpeechTextbox_Conv2();
+    SpeechTextbox();
     // AND_A_A;
     // RET;
     return false;
@@ -1222,7 +1222,7 @@ static void SellMenu_TryToSellItem(void) {
                 // hlcoord(1, 14, wTilemap);
                 // LD_BC((3 << 8) | 18);
                 // CALL(aClearBox);
-                ClearBox_Conv2(coord(1, 14, wram->wTilemap), 18, 3);
+                ClearBox(coord(1, 14, wram->wTilemap), 18, 3);
                 // LD_HL(mMartSellPriceText);
                 // CALL(aPrintTextboxText);
                 PrintTextboxText_Conv2(MartSellPriceText);
@@ -1242,7 +1242,7 @@ static void SellMenu_TryToSellItem(void) {
                     // hlcoord(1, 14, wTilemap);
                     // LD_BC((3 << 8) | 18);
                     // CALL(aClearBox);
-                    ClearBox_Conv2(coord(1, 14, wram->wTilemap), 18, 3);
+                    ClearBox(coord(1, 14, wram->wTilemap), 18, 3);
                     // LD_HL(mMartBoughtText);
                     // CALL(aPrintTextboxText);
                     PrintTextboxText_Conv2(MartBoughtText);
@@ -1278,7 +1278,7 @@ static void SellMenu_TryToSellItem(void) {
 
 void SellMenu(void){
     // CALL(aDisableSpriteUpdates);
-    DisableSpriteUpdates_Conv();
+    DisableSpriteUpdates();
     // FARCALL(aDepositSellInitPackBuffers);
     DepositSellInitPackBuffers();
 

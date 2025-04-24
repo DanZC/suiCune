@@ -11,7 +11,7 @@ void DisplayUsedMoveText(void){
     // CALL(aBattleTextbox);
     BattleTextbox(UsedMoveText);
     // JP(mWaitBGMap);
-    return WaitBGMap_Conv();
+    return WaitBGMap();
 }
 
 const txt_cmd_s UsedMoveText[] = {

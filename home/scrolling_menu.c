@@ -42,7 +42,7 @@ static void ScrollingMenu_UpdatePalettes(void){
     if(bit_test(wram->wVramState, 0))
         return UpdateTimePals();
     // JP(mSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
 }
 
 uint8_t ScrollingMenu_Conv(void){
@@ -108,7 +108,7 @@ void InitScrollingMenu_Conv(void){
     // CALL(aCoord2Tile);
     // POP_BC;
     // JP(mTextbox);
-    Textbox_Conv2(Coord2Tile_Conv(wram->wMenuBorderLeftCoord - 1, wram->wMenuBorderTopCoord - 1), d, e);
+    Textbox(Coord2Tile_Conv(wram->wMenuBorderLeftCoord - 1, wram->wMenuBorderTopCoord - 1), d, e);
 }
 
 void JoyTextDelay_ForcehJoyDown(void){

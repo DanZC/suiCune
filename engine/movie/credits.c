@@ -31,9 +31,9 @@ void Credits(uint8_t b){
     // LDH_addr_A(rSVBK);
 
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aClearSprites);
     ClearSprites();
 
@@ -108,7 +108,7 @@ void Credits(uint8_t b){
     // CALL(aGetCreditsPalette);
     GetCreditsPalette();
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // LDH_A_addr(hVBlank);
     // PUSH_AF;
     uint8_t vblank = hram->hVBlank;
@@ -148,7 +148,7 @@ void Credits(uint8_t b){
 
 // exit_credits:
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // XOR_A_A;
     // LDH_addr_A(hLCDCPointer);
     hram->hLCDCPointer = 0x0;
@@ -457,7 +457,7 @@ void ParseCredits(void){
                 // CALL(aGetCreditsPalette);
                 GetCreditsPalette();
                 // CALL(aSetPalettes);  // update hw pal registers
-                SetPalettes_Conv();
+                SetPalettes();
                 // goto loop;
                 continue;
             // CP_A(CREDITS_CLEAR);
@@ -661,7 +661,7 @@ void ConstructCreditsTilemap(void){
     ByteFill(coord(0, 17, wram->wAttrmap), SCREEN_WIDTH, 0x1);
 
     // CALL(aWaitBGMap2);
-    WaitBGMap2_Conv();
+    WaitBGMap2();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
@@ -671,7 +671,7 @@ void ConstructCreditsTilemap(void){
     // CALL(aConstructCreditsTilemap_InitTopPortion);
     ConstructCreditsTilemap_InitTopPortion(coord(0, 0, wram->wTilemap));
     // CALL(aWaitBGMap2);
-    WaitBGMap2_Conv();
+    WaitBGMap2();
     // RET;
 
 }

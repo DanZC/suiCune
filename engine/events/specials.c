@@ -91,12 +91,12 @@ void GameCornerPrizeMonCheckDex(void){
     // DEC_A;
     // CALL(aCheckCaughtMon);
     // RET_NZ ;
-    if(CheckCaughtMon_Conv(wram->wScriptVar - 1))
+    if(CheckCaughtMon(wram->wScriptVar - 1))
         return;
     // LD_A_addr(wScriptVar);
     // DEC_A;
     // CALL(aSetSeenAndCaughtMon);
-    SetSeenAndCaughtMon_Conv(wram->wScriptVar - 1);
+    SetSeenAndCaughtMon(wram->wScriptVar - 1);
     // CALL(aFadeToMenu);
     FadeToMenu_Conv();
     // LD_A_addr(wScriptVar);
@@ -182,7 +182,7 @@ void NameRival(void){
     // LD_HL(wRivalName);
     // LD_DE(mNameRival_DefaultName);
     // CALL(aInitName);
-    InitName_Conv2(wram->wRivalName, U82C(DefaultName));
+    InitName(wram->wRivalName, U82C(DefaultName));
     // RET;
 }
 

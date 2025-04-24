@@ -1184,11 +1184,11 @@ void Function1704e1_JumptableLoop(void){
     static const char String_Mail[] = "ROOM:@"; //db ['"ルーム@"'];
     static const char String_PastReaders[] = "HONOR ROLL@"; //db ['"れきだいりーダーいちらん@"'];
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aClearScreen);
-    ClearScreen_Conv2();
+    ClearScreen();
 
     while(1) {
     // loop:
@@ -1253,7 +1253,7 @@ void Function1704e1_JumptableLoop(void){
         case 1: //dw ['.Jumptable_1'];
         // Jumptable_1:
             // CALL(aSetPalettes);
-            SetPalettes_Conv();
+            SetPalettes();
             // CALL(aFunction1704e1_NextJumptableFunction);
             Function1704e1_NextJumptableFunction();
             fallthrough;
@@ -1326,7 +1326,7 @@ void Function1704e1_JumptableLoop(void){
 // Mobile_ViewHonorRollSpecial
 void Function1704e1(void){
     // CALL(aSpeechTextbox);
-    SpeechTextbox_Conv2();
+    SpeechTextbox();
     // CALL(aFadeToMenu);
     FadeToMenu_Conv();
     // CALL(aInitBattleTowerChallengeRAM);

@@ -25,7 +25,7 @@ void PlaceDiplomaOnScreen(void){
         t_next "Congratulations!";
     // CALL(aClearBGPalettes);
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aDisableLCD);
@@ -58,12 +58,12 @@ void PlaceDiplomaOnScreen(void){
     // CALL(aEnableLCD);
     EnableLCD();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_B(SCGB_DIPLOMA);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_DIPLOMA);
+    GetSGBLayout(SCGB_DIPLOMA);
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // CALL(aDelayFrame);
     DelayFrame();
     // RET;

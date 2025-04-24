@@ -476,8 +476,8 @@ void init_function_pointers(void) {
     // REDIRECTED(SetBitsForTimeCapsuleRequestIfNotLinked);
 
     // home/sine.c
-    REDIRECTED(Cosine);
-    REDIRECTED(Sine);
+    // CONVERTED(Cosine);
+    // CONVERTED(Sine);
 
     // home/sprite_anims.c
     // REDIRECTED(InitSpriteAnimStruct);
@@ -545,7 +545,7 @@ void init_function_pointers(void) {
     // REDIRECTED(PlaceGenderedPlayerName);
     // REDIRECTED(PlaceWatashi);
     // REDIRECTED(PlacePOKeText);
-    REDIRECTED(FillBoxWithByte);
+    // CONVERTED(FillBoxWithByte);
     // REDIRECTED(GameFreakText);
     REDIRECTED(TextCommand_DOTS);
     // REDIRECTED(NullChar);
@@ -577,7 +577,7 @@ void init_function_pointers(void) {
     REDIRECTED(PlaceHLTextAtBC);
     // REDIRECTED(PlaceMoveUsersName);
     // REDIRECTED(PCCharText);
-    REDIRECTED(ClearBox);
+    // CONVERTED(ClearBox);
     // REDIRECTED(PrintRedsName);
     // REDIRECTED(EnemyText);
     REDIRECTED(TextCommand_DECIMAL);
@@ -678,7 +678,7 @@ void init_function_pointers(void) {
     REDIRECTED(CopyAttrmapAndTilemapToWRAMBank3);
     REDIRECTED(GetMemSGBLayout);
     REDIRECTED(GetHPPal);
-    REDIRECTED(GetSGBLayout);
+    // CONVERTED(GetSGBLayout);
     REDIRECTED(ApplyTilemap);
     REDIRECTED(WaitBGMap2);
     REDIRECTED(ClearPalettes);
@@ -931,7 +931,7 @@ void init_function_pointers(void) {
     // CONVERTED(BattleAnimFunction_MoveWaveToTarget);
     // CONVERTED(BattleAnimFunction_FloatUp);
     // CONVERTED(BattleAnimFunction_ThrowFromUserToTargetAndDisappear);
-    CONVERTED(BattleAnim_Cosine_e);
+    // CONVERTED(BattleAnim_Cosine_e);
     // CONVERTED(BattleAnimFunction_MoveFromUserToTargetSpinAround);
     // CONVERTED(BattleAnimFunction_SacredFire);
     // CONVERTED(BattleAnimFunction_PerishSong);
@@ -947,14 +947,14 @@ void init_function_pointers(void) {
     // CONVERTED(BattleAnimFunction_SwaggerMorningSun);
     // CONVERTED(BattleAnimFunction_BatonPass);
     // CONVERTED(BattleAnimFunction_LeechSeed);
-    CONVERTED(BattleAnim_Sine_e);
+    // CONVERTED(BattleAnim_Sine_e);
     // CONVERTED(BattleAnimFunction_Recover);
     // REDIRECTED(BattleAnimSineWave);
     // CONVERTED(BattleAnimFunction_Conversion);
     // CONVERTED(BattleAnimFunction_BetaPursuit);
     // CONVERTED(BattleAnimFunction_Horn);
     // CONVERTED(BattleAnimFunction_Bite);
-    REDIRECTED(BattleAnim_Cosine);
+    // CONVERTED(BattleAnim_Cosine);
     // CONVERTED(BattleAnimFunction_Absorb);
     // REDIRECTED(GetBallAnimPal);
     // CONVERTED(BattleAnimFunction_ConfuseRay);
@@ -970,7 +970,7 @@ void init_function_pointers(void) {
     // CONVERTED(BattleAnimFunction_GrowthSwordsDance);
     // CONVERTED(BattleAnimFunction_WaterGun);
     // CONVERTED(BattleAnimFunction_Needle);
-    REDIRECTED(BattleAnim_Sine);
+    // CONVERTED(BattleAnim_Sine);
     // CONVERTED(BattleAnimFunction_Sound);
     // CONVERTED(BattleAnimFunction_PoisonGas);
     // CONVERTED(BattleAnimFunction_String);
@@ -2023,7 +2023,7 @@ void init_function_pointers(void) {
     CONVERTED(StartTrainerBattle_SetUpForWavyOutro);
     CONVERTED(StartTrainerBattle_SpeckleToBlack);
     REDIRECTED(WipeLYOverrides);
-    REDIRECTED(StartTrainerBattle_DrawSineWave);
+    // CONVERTED(StartTrainerBattle_DrawSineWave);
     CONVERTED(StartTrainerBattle_SetUpForRandomScatterOutro);
     REDIRECTED(StartTrainerBattle_LoadPokeBallGraphics);
     REDIRECTED(LoadTrainerBattlePokeballTiles);
@@ -2101,10 +2101,10 @@ void init_function_pointers(void) {
     REDIRECTED(GetSpriteAnimFrame);
     // REDIRECTED(InitSpriteAnimBuffer);
     // REDIRECTED(AnimateEndOfExpBar);
-    REDIRECTED(Sprites_Sine);
+    // CONVERTED(Sprites_Sine);
     REDIRECTED(UpdateAnimFrame);
     REDIRECTED(AddOrSubtractX);
-    REDIRECTED(Sprites_Cosine);
+    // CONVERTED(Sprites_Cosine);
     // REDIRECTED(DeinitializeAllSprites);
     // REDIRECTED(v_ReinitSpriteAnimFrame);
     // REDIRECTED(v_InitSpriteAnimStruct);

@@ -42,7 +42,7 @@ void v_DisappearUser(void){
 
 // okay:
     // CALL(aClearBox);
-    ClearBox_Conv2(ccoords.hl, ccoords.c, ccoords.b);
+    ClearBox(ccoords.hl, ccoords.c, ccoords.b);
     // JR(mFinishAppearDisappearUser);
     return FinishAppearDisappearUser();
 }

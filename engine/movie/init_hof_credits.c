@@ -14,9 +14,9 @@ void InitDisplayForHallOfFame(void){
         text_end
     };
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aDisableLCD);
@@ -46,17 +46,17 @@ void InitDisplayForHallOfFame(void){
     // CALL(aPrintText);
     PrintText_Conv2(SavingRecordText);
     // CALL(aWaitBGMap2);
-    WaitBGMap2_Conv();
+    WaitBGMap2();
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // RET;
 }
 
 void InitDisplayForRedCredits(void){
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aDisableLCD);
@@ -99,9 +99,9 @@ void InitDisplayForRedCredits(void){
     // CALL(aEnableLCD);
     EnableLCD();
     // CALL(aWaitBGMap2);
-    WaitBGMap2_Conv();
+    WaitBGMap2();
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // RET;
 
 }

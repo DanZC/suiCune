@@ -326,9 +326,9 @@ static void PrintWaitingTextAndSyncAndExchangeNybble_PrintWaitingText(void) {
     // CALL(aPlaceString);
     PlaceStringSimple(U82C(Waiting), coord(5, 11, wram->wTilemap));
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // CALL(aWaitBGMap2);
-    WaitBGMap2_Conv();
+    WaitBGMap2();
     // LD_C(50);
     // JP(mDelayFrames);
     DelayFrames(50);
@@ -344,7 +344,7 @@ void PrintWaitingTextAndSyncAndExchangeNybble(void){
     // CALL(aCall_ExitMenu);
     ExitMenu_Conv2();
     // CALL(aWaitBGMap2);
-    WaitBGMap2_Conv();
+    WaitBGMap2();
     // RET;
 }
 
@@ -377,7 +377,7 @@ static void LinkTradeMenu_UpdateBGMapAndOAM(void) {
     // LDH_addr_A(hOAMUpdate);
     hram->hOAMUpdate = 0x1;
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // POP_AF;
     // LDH_addr_A(hOAMUpdate);
     hram->hOAMUpdate = oam;

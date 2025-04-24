@@ -884,7 +884,7 @@ void Script_promptbutton_Conv(script_s* s){
     // LDH_addr_A(hOAMUpdate);
     hram->hOAMUpdate = 0x1;
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // CALL(aPromptButton);
     PromptButton_Conv();
     // POP_AF;

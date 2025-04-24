@@ -1,6 +1,6 @@
 #include "../../constants.h"
 #include "sprites.h"
-#include "../math/sine.h"
+#include "../../home/sine.h"
 #include "../../home/delay.h"
 #include "../../home/clear_sprites.h"
 #include "../../data/sprite_anims/framesets.h"
@@ -1360,37 +1360,6 @@ void UnusedLoadSpriteAnimGFX(void){
 
 // INCLUDE "data/sprite_anims/unused_gfx.asm"
 
-    return Sprites_Cosine();
-}
-
-void Sprites_Cosine(void){
-//  a = d * cos(a * pi/32)
-    ADD_A(0b010000);  // cos(x) = sin(x + pi/2)
-// fallthrough
-    REG_A = v_Sine_Conv(REG_A, REG_D);
-    // return Sprites_Sine();
-}
-
-//  a = d * cos(a * pi/32)
-uint8_t Sprites_Cosine_Conv(uint8_t a, uint8_t d){
-    // ADD_A(0b010000);  
-// fallthrough
-    return Sprites_Sine_Conv(a + 0b010000, d); // cos(x) = sin(x + pi/2)
-}
-
-void Sprites_Sine(void){
-//  a = d * sin(a * pi/32)
-    
-    //calc_sine_wave ['?']
-    REG_A = v_Sine_Conv(REG_A, REG_D);
-
-    // return AnimateEndOfExpBar();
-}
-
-//  a = d * sin(a * pi/32)
-uint8_t Sprites_Sine_Conv(uint8_t a, uint8_t d){   
-    //calc_sine_wave ['?']
-    return v_Sine_Conv(a, d);
 }
 
 void AnimateEndOfExpBar(void){
@@ -1489,7 +1458,7 @@ static void AnimateEndOfExpBar_AnimateFrame(uint8_t d){
         // POP_DE;
         // ADD_A(13 * TILE_WIDTH);
         // LD_hli_A;  // y
-        hl->yCoord = Sprites_Sine_Conv(a, d) + (13 * TILE_WIDTH);
+        hl->yCoord = Sine(a, d) + (13 * TILE_WIDTH);
 
         // POP_AF;
         // PUSH_DE;
@@ -1499,7 +1468,7 @@ static void AnimateEndOfExpBar_AnimateFrame(uint8_t d){
         // POP_DE;
         // ADD_A(10 * TILE_WIDTH + 4);
         // LD_hli_A;  // x
-        hl->xCoord = Sprites_Cosine_Conv(a, d) + (10 * TILE_WIDTH + 4);
+        hl->xCoord = Cosine(a, d) + (10 * TILE_WIDTH + 4);
 
         // LD_A(0x0);
         // LD_hli_A;  // tile id

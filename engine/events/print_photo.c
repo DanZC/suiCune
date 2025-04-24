@@ -52,7 +52,7 @@ void PhotoStudio(void){
     // CALL(aPrintText);
     PrintText_Conv2(HoldStillText);
     // CALL(aDisableSpriteUpdates);
-    DisableSpriteUpdates_Conv();
+    DisableSpriteUpdates();
     // FARCALL(aPrintPartymon);
     PrintPartymon();
     // CALL(aReturnToMapWithSpeechTextbox);

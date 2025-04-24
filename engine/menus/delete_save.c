@@ -36,7 +36,7 @@ void v_DeleteSaveData(void){
     BlankScreen();
     // LD_B(SCGB_DIPLOMA);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_DIPLOMA);
+    GetSGBLayout(SCGB_DIPLOMA);
     // CALL(aLoadStandardFont);
     LoadStandardFont_Conv();
     // CALL(aLoadFontsExtra);

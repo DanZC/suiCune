@@ -214,7 +214,7 @@ static uint8_t* VarAction_CountCaughtMons(void) {
     // LD_HL(wPokedexCaught);
     // LD_B(wEndPokedexCaught - wPokedexCaught);
     // CALL(aCountSetBits);
-    uint8_t a = CountSetBits_Conv2(wram->wPokedexCaught, sizeof(wram->wPokedexCaught));
+    uint8_t a = CountSetBits(wram->wPokedexCaught, sizeof(wram->wPokedexCaught));
     // LD_A_addr(wNumSetBits);
     wram->wNumSetBits = a;
     // JP(mv_GetVarAction_loadstringbuffer2);
@@ -226,7 +226,7 @@ static uint8_t* VarAction_CountBadges(void) {
     // LD_HL(wBadges);
     // LD_B(2);
     // CALL(aCountSetBits);
-    uint8_t a = CountSetBits_Conv2(wram->wJohtoBadges, 1) + CountSetBits_Conv2(wram->wKantoBadges, 1);
+    uint8_t a = CountSetBits(wram->wJohtoBadges, 1) + CountSetBits(wram->wKantoBadges, 1);
     // LD_A_addr(wNumSetBits);
     wram->wNumSetBits = a;
     // JP(mv_GetVarAction_loadstringbuffer2);
@@ -239,7 +239,7 @@ static uint8_t* VarAction_CountSeenMons(void) {
     // LD_HL(wPokedexSeen);
     // LD_B(wEndPokedexSeen - wPokedexSeen);
     // CALL(aCountSetBits);
-    uint8_t a = CountSetBits_Conv2(wram->wPokedexSeen, sizeof(wram->wPokedexSeen));
+    uint8_t a = CountSetBits(wram->wPokedexSeen, sizeof(wram->wPokedexSeen));
     // LD_A_addr(wNumSetBits);
     wram->wNumSetBits = a;
     // JP(mv_GetVarAction_loadstringbuffer2);
@@ -260,7 +260,7 @@ static uint8_t* VarAction_DayOfWeek(void) {
 //  The day of the week.
     // CALL(aGetWeekday);
     // JP(mv_GetVarAction_loadstringbuffer2);
-    return VarAction_loadstringbuffer2(GetWeekday_Conv());
+    return VarAction_loadstringbuffer2(GetWeekday());
 }
 
 static uint8_t* VarAction_UnownCaught(void) {

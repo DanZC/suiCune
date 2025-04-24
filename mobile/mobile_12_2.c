@@ -232,9 +232,9 @@ bool Function4a94e(void){
     wram->wd019 = 0x0;
     // LD_B(SCGB_PACKPALS);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_PACKPALS);
+    GetSGBLayout(SCGB_PACKPALS);
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // CALL(aFunction4aa22);
     u8_flag_s res = Function4aa22();
     // IF_C goto asm_4a985;
@@ -379,7 +379,7 @@ const txt_cmd_s MobileUseTheseThreeMonText[] = {
 
 u8_flag_s Function4aa22(void){
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
 
     return Function4aa25();
 }
@@ -409,9 +409,9 @@ u8_flag_s Function4aa34(void){
     // CALL(aFunction4aab6);
     Function4aab6();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // CALL(aDelayFrame);
     DelayFrame();
     // CALL(aFunction4ab1a);
@@ -853,7 +853,7 @@ bool Function4abc3(uint8_t a){
     // hlcoord(0, 1, wTilemap);
     // LD_BC((13 << 8) | 1);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(0, 1, wram->wTilemap), 1, 13);
+    ClearBox(coord(0, 1, wram->wTilemap), 1, 13);
     // CALL(aFunction4aab6);
     Function4aab6();
     // LD_A_addr(wPartyCount);
@@ -892,7 +892,7 @@ void Function4ac58(void){
     // LD_BC((2 << 8) | 18);
     // hlcoord(1, 15, wTilemap);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(1, 15, wram->wTilemap), 18, 2);
+    ClearBox(coord(1, 15, wram->wTilemap), 18, 2);
     // FARCALL(aFreezeMonIcons);
     FreezeMonIcons_Conv();
     // LD_HL(mMenuHeader_0x4aca2);
@@ -906,7 +906,7 @@ void Function4ac58(void){
         // LD_B(0x3);
         // LD_C(0x7);
         // CALL(aTextbox);
-        Textbox_Conv2(coord(9, 13, wram->wTilemap), 0x3, 0x9);
+        Textbox(coord(9, 13, wram->wTilemap), 0x3, 0x9);
         // hlcoord(13, 14, wTilemap);
         // LD_DE(mString_4ada7);
         // CALL(aPlaceString);
@@ -919,7 +919,7 @@ void Function4ac58(void){
         // LD_B(0x7);
         // LD_C(0x7);
         // CALL(aTextbox);
-        Textbox_Conv2(coord(9, 9, wram->wTilemap), 0x7, 0x9);
+        Textbox(coord(9, 9, wram->wTilemap), 0x7, 0x9);
         // CALL(aFunction4ad68);
         Function4ad68();
     }
@@ -1100,7 +1100,7 @@ void Function4ad56(void){
     // FARCALL(aOpenPartyStats);
     OpenPartyStats();
     // CALL(aWaitBGMap2);
-    WaitBGMap2_Conv();
+    WaitBGMap2();
     // RET;
 }
 

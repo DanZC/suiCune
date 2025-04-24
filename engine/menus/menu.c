@@ -811,7 +811,7 @@ static void MenuJoypadLoop_BGMap_OAM(void) {
     // LDH_addr_A(hOAMUpdate);
     hram->hOAMUpdate = 0x1;
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // POP_AF;
     // LDH_addr_A(hOAMUpdate);
     hram->hOAMUpdate = temp;
@@ -1902,7 +1902,7 @@ void Error_Cant_ExitMenu_Conv(void){
     PrintText_Conv2(WindowPoppingErrorText);
     // PrintText_Conv(WindowPoppingErrorText);
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
 
 infinite_loop:
     DelayFrame();

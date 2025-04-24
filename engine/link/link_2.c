@@ -22,9 +22,9 @@ void LinkMonStatsScreen(void){
     // LD_addr_A(wMenuCursorY);
     wram->wMenuCursorY = wram->wCurPartyMon + 1;
     // CALL(aClearScreen);
-    ClearScreen_Conv2();
+    ClearScreen();
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aMaxVolume);
     MaxVolume();
     // FARCALL(aLoadTradeScreenBorderGFX);
@@ -36,15 +36,15 @@ void LinkMonStatsScreen(void){
     // FARCALL(aSetTradeRoomBGPals);
     SetTradeRoomBGPals();
     // CALL(aWaitBGMap2);
-    WaitBGMap2_Conv();
+    WaitBGMap2();
     // RET;
 }
 
 void Link_WaitBGMap(void){
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // CALL(aWaitBGMap2);
-    WaitBGMap2_Conv();
+    WaitBGMap2();
     // RET;
 }
 

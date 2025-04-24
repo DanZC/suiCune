@@ -461,7 +461,7 @@ static void DSTChecks_ClearBox(void) {
     // hlcoord(1, 14, wTilemap);
     // LD_BC((3 << 8) | 18);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(1, 14, wram->wTilemap), 18, 3);
+    ClearBox(coord(1, 14, wram->wTilemap), 18, 3);
     // RET;
 }
 
@@ -667,7 +667,7 @@ void Mom_ContinueMenuSetup(const char* de){
     // hlcoord(0, 0, wTilemap);
     // LD_BC((6 << 8) | 18);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 0, wram->wTilemap), 6, 18);
+    Textbox(coord(0, 0, wram->wTilemap), 6, 18);
     // hlcoord(1, 2, wTilemap);
     // LD_DE(mMom_SavedString);
     // CALL(aPlaceString);
@@ -876,7 +876,7 @@ bool Mom_WithdrawDepositMenuJoypad(void){
     // skip:
         // CALL(aWaitBGMap);
         // goto loop;
-    } while(WaitBGMap_Conv(), 1);
+    } while(WaitBGMap(), 1);
 }
 
 const txt_cmd_s MomLeavingText1[] = {

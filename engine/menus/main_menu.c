@@ -102,9 +102,9 @@ void MainMenu(void){
         ClearTilemapEtc_Conv();
         // LD_B(SCGB_DIPLOMA);
         // CALL(aGetSGBLayout);
-        GetSGBLayout_Conv(SCGB_DIPLOMA);
+        GetSGBLayout(SCGB_DIPLOMA);
         // CALL(aSetPalettes);
-        SetPalettes_Conv();
+        SetPalettes();
         // LD_HL(wGameTimerPaused);
         // RES_hl(GAME_TIMER_PAUSED_F);
         bit_reset(wram->wGameTimerPaused, GAME_TIMER_PAUSED_F);
@@ -124,7 +124,7 @@ void MainMenu(void){
         if(!q)
             return;
         // CALL(aClearTilemap);
-        ClearTilemap_Conv2();
+        ClearTilemap();
         // LD_A_addr(wMenuSelection);
         // LD_HL(mMainMenu_Jumptable);
         // RST(aJumpTable);
@@ -617,14 +617,14 @@ static void MainMenu_PrintCurrentTimeAndDay_PlaceBox(void) {
     // TimeFail:
         // CALL(aSpeechTextbox);
         // RET;
-        return SpeechTextbox_Conv2();
+        return SpeechTextbox();
     }
     // hlcoord(0, 14, wTilemap);
     // LD_B(2);
     // LD_C(18);
     // CALL(aTextbox);
     // RET;
-    return Textbox_Conv2(coord(0, 14, wram->wTilemap), 2, 18);
+    return Textbox(coord(0, 14, wram->wTilemap), 2, 18);
 }
 
 static void MainMenu_PrintCurrentTimeAndDay_PrintDayOfWeek(uint8_t wd, uint8_t* de) {
@@ -701,7 +701,7 @@ static void MainMenu_PrintCurrentTimeAndDay_PlaceTime(void) {
     // LD_B_A;
     // decoord(1, 15, wTilemap);
     // CALL(aMainMenu_PrintCurrentTimeAndDay_PrintDayOfWeek);
-    MainMenu_PrintCurrentTimeAndDay_PrintDayOfWeek(GetWeekday_Conv(), coord(1, 15, wram->wTilemap));
+    MainMenu_PrintCurrentTimeAndDay_PrintDayOfWeek(GetWeekday(), coord(1, 15, wram->wTilemap));
     // decoord(4, 16, wTilemap);
     // LDH_A_addr(hHours);
     // LD_C_A;
@@ -773,7 +773,7 @@ void ClearTilemapEtc_Conv(void){
     // LDH_addr_A(hMapAnims);
     hram->hMapAnims = 0;
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aLoadFontsExtra);
     LoadFontsExtra_Conv();
     // CALL(aLoadStandardFont);

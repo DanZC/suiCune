@@ -538,7 +538,7 @@ void Function1719ed(void){
     // LD_addr_A(wcd4b);
     wram->wcd4b = 0xff;
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearSprites);
     ClearSprites();
     // FARCALL(aFunction171d2b);
@@ -971,7 +971,7 @@ void Function171c2c(void){
     // CALL(aExitMenu);
     ExitMenu_Conv2();
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // JR(masm_171c60);
     return asm_171c60();
 }
@@ -993,7 +993,7 @@ void Function171c41(void){
     if(--wram->wcd4c != 0)
         return;
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // FARCALL(aStubbed_Function106462);
     Stubbed_Function106462();
     // FARCALL(aFunction106464);
@@ -1088,7 +1088,7 @@ void Function171ccd(void){
     // LD_hl_A;
     wram->wOBPals1[PALETTE_SIZE * 0 + PAL_COLOR_SIZE * 1 + 1] = LOW(PALRGB_WHITE);
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // RET;
@@ -1281,7 +1281,7 @@ void Function172eb9(void){
     // CALL(aCopyBytes);
     CopyBytes(wram->wBGPals2, Palette_172edf, 8 * PALETTE_SIZE);
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // RET;

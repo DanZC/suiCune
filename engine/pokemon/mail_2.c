@@ -282,11 +282,11 @@ static void ReadAnyMail_loop(void){
 void ReadAnyMail_Conv(const struct MailMsg* de){
     // PUSH_DE;
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aDisableLCD);
     DisableLCD();
     // CALL(aLoadFontsExtra);
@@ -328,20 +328,20 @@ void ReadAnyMail_Conv(const struct MailMsg* de){
     // CALL(aEnableLCD);
     EnableLCD();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_A_addr(wCurMailIndex);
     // LD_E_A;
     // FARCALL(aLoadMailPalettes);
     LoadMailPalettes(wram->wCurMailIndex);
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // XOR_A_A;
     // LDH_addr_A(hJoyPressed);
     hram->hJoyPressed = 0x0;
     // CALL(aReadAnyMail_loop);
     ReadAnyMail_loop();
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aDisableLCD);
     DisableLCD();
     // CALL(aLoadStandardFont);

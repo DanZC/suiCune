@@ -6,33 +6,13 @@
 #include "../engine/gfx/cgb_layouts.h"
 
 void ClearBGPalettes(void) {
-    // SET_PC(aClearBGPalettes);
     // CALL(aClearPalettes);
-    // return WaitBGMap();
-    return ClearBGPalettes_Conv();
-    // RET;
-}
+    ClearPalettes();
 
-void ClearBGPalettes_Conv(void) {
-    // CALL(aClearPalettes);
-    ClearPalettes_Conv();
-
-    return WaitBGMap_Conv(); // Maybe not necessary in C?
+    return WaitBGMap(); // Maybe not necessary in C?
 }
 
 void WaitBGMap(void) {
-    SET_PC(aWaitBGMap);
-    return WaitBGMap_Conv();
-    //  Tell VBlank to update BG Map
-    LD_A(1);  // BG Map 0 tiles
-    LDH_addr_A(hBGMapMode);
-    //  Wait for it to do its magic
-    LD_C(4);
-    CALL(aDelayFrames);
-    RET;
-}
-
-void WaitBGMap_Conv(void) {
     //  Tell VBlank to update BG Map
     // LD_A(1);  // BG Map 0 tiles
     // LDH_addr_A(hBGMapMode);
@@ -49,26 +29,6 @@ void WaitBGMap_Conv(void) {
 }
 
 void WaitBGMap2(void) {
-    SET_PC(aWaitBGMap2);
-    LDH_A_addr(hCGB);
-    AND_A_A;
-    IF_Z goto bg0;
-
-    LD_A(2);
-    LDH_addr_A(hBGMapMode);
-    LD_C(4);
-    CALL(aDelayFrames);
-
-bg0:
-
-    LD_A(1);
-    LDH_addr_A(hBGMapMode);
-    LD_C(4);
-    CALL(aDelayFrames);
-    RET;
-}
-
-void WaitBGMap2_Conv(void) {
     // SET_PC(aWaitBGMap2);
     // LDH_A_addr(hCGB);
     // AND_A_A;
@@ -160,7 +120,7 @@ void CGBOnly_CopyTilemapAtOnce(void) {
     // AND_A_A;
     // JR_Z(mWaitBGMap);
     if(hram->hCGB == 0)
-        return WaitBGMap_Conv();
+        return WaitBGMap();
 
     return CopyTilemapAtOnce_Conv();
 }
@@ -345,34 +305,9 @@ void v_CopyTilemapAtOnce_CopyBGMapViaStack_Conv2(const tile_t* sp) {
     hram->hTilesPerCycle = 0;
 }
 
-void SetPalettes(void) {
-    SET_PC(aSetPalettes);
-    //  Inits the Palettes
-    //  depending on the system the monochromes palettes or color palettes
-    LDH_A_addr(hCGB);
-    AND_A_A;
-    IF_NZ goto SetPalettesForGameBoyColor;
-    LD_A(0b11100100);
-    LDH_addr_A(rBGP);
-    LD_A(0b11010000);
-    LDH_addr_A(rOBP0);
-    LDH_addr_A(rOBP1);
-    RET;
-
-SetPalettesForGameBoyColor:
-
-    PUSH_DE;
-    LD_A(0b11100100);
-    CALL(aDmgToCgbBGPals);
-    LD_DE((0b11100100 << 8) | 0b11100100);
-    CALL(aDmgToCgbObjPals);
-    POP_DE;
-    RET;
-}
-
 //  Inits the Palettes
 //  depending on the system the monochromes palettes or color palettes
-void SetPalettes_Conv(void) {
+void SetPalettes(void) {
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // IF_NZ goto SetPalettesForGameBoyColor;
@@ -402,60 +337,19 @@ void SetPalettes_Conv(void) {
     gb_write(rOBP1, 0b11010000);
 }
 
-void ClearPalettes(void) {
-    SET_PC(aClearPalettes);
-    //  Make all palettes white
-
-    //  CGB: make all the palette colors white
-    LDH_A_addr(hCGB);
-    AND_A_A;
-    IF_NZ goto cgb;
-
-    //  DMG: just change palettes to 0 (white)
-    XOR_A_A;
-    LDH_addr_A(rBGP);
-    LDH_addr_A(rOBP0);
-    LDH_addr_A(rOBP1);
-    RET;
-
-cgb:
-
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-
-    LD_A(MBANK(awBGPals2));
-    LDH_addr_A(rSVBK);
-
-    //  Fill wBGPals2 and wOBPals2 with $ffff (white)
-    LD_HL(wBGPals2);
-    LD_BC(16 * PALETTE_SIZE);
-    LD_A(0xff);
-    CALL(aByteFill);
-
-    POP_AF;
-    LDH_addr_A(rSVBK);
-
-    //  Request palette update
-    LD_A(TRUE);
-    LDH_addr_A(hCGBPalUpdate);
-    RET;
-}
-
 //  Make all palettes white
-//  CGB: make all the palette colors white
-void ClearPalettes_Conv(void) {
+void ClearPalettes(void) {
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // IF_NZ goto cgb;
     if(hram->hCGB != 0)
     {
+        //  CGB: make all the palette colors white
         // LDH_A_addr(rSVBK);
         // PUSH_AF;
-        // uint8_t vbk_temp = gb_read(rSVBK);
 
         // LD_A(MBANK(awBGPals2));
         // LDH_addr_A(rSVBK);
-        // gb_write(rSVBK, MBANK(awBGPals2));
 
         //  Fill wBGPals2 and wOBPals2 with $ffff (white)
         // LD_HL(wBGPals2);
@@ -466,7 +360,6 @@ void ClearPalettes_Conv(void) {
 
         // POP_AF;
         // LDH_addr_A(rSVBK);
-        // gb_write(rSVBK, vbk_temp);
 
         //  Request palette update
         // LD_A(TRUE);
@@ -477,7 +370,7 @@ void ClearPalettes_Conv(void) {
         return;
     }
 
-    //  DMG: just change palettes to 0 (white)
+//  DMG: just change palettes to 0 (white)
     // XOR_A_A;
     // LDH_addr_A(rBGP);
     // LDH_addr_A(rOBP0);
@@ -488,38 +381,13 @@ void ClearPalettes_Conv(void) {
 }
 
 void GetMemSGBLayout(void) {
-    SET_PC(aGetMemSGBLayout);
-    LD_B(SCGB_DEFAULT);
-    return GetSGBLayout();
-}
-
-void GetSGBLayout(void) {
-    SET_PC(aGetSGBLayout);
-    //  load sgb packets unless dmg
-
-    LDH_A_addr(hCGB);
-    AND_A_A;
-    IF_NZ goto sgb;
-
-    LDH_A_addr(hSGB);
-    AND_A_A;
-    RET_Z;
-
-sgb:
-
-    PREDEF_JUMP(pLoadSGBLayout);
-
-    return SetHPPal();
-}
-
-void GetMemSGBLayout_Conv(void) {
     // LD_B(SCGB_DEFAULT);
     // return GetSGBLayout();
-    return GetSGBLayout_Conv(SCGB_DEFAULT);
+    return GetSGBLayout(SCGB_DEFAULT);
 }
 
 //  load sgb packets unless dmg
-void GetSGBLayout_Conv(uint8_t b) {
+void GetSGBLayout(uint8_t b) {
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // IF_NZ goto sgb;
@@ -535,7 +403,7 @@ void GetSGBLayout_Conv(uint8_t b) {
     if(hram->hSGB == 0)
         return;
 
-    PREDEF_JUMP(pLoadSGBLayout);
+    // PREDEF_JUMP(pLoadSGBLayout);
 }
 
 void SetHPPal(void) {

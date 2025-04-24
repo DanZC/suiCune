@@ -733,7 +733,7 @@ void GetTrainerPic_Conv(uint8_t* de, uint8_t tclass){
     if(tclass == 0 || tclass >= NUM_TRAINER_CLASSES + 1)
         return;
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
@@ -768,7 +768,7 @@ void GetTrainerPic_Conv(uint8_t* de, uint8_t tclass){
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_A(1);
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;

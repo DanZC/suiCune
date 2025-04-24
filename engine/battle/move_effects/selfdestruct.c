@@ -53,7 +53,7 @@ void BattleCommand_Selfdestruct(void){
     // FARCALL(aDrawEnemyHUD);
     DrawEnemyHUD_Conv();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // JP(mRefreshBattleHuds);
     return RefreshBattleHuds();
 }

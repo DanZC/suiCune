@@ -40,9 +40,9 @@ void v_CardFlip(void){
     // SET_hl(NO_TEXT_SCROLL);
     bit_set(wram->wOptions, NO_TEXT_SCROLL);
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aClearSprites);
     ClearSprites();
     // LD_DE(MUSIC_NONE);
@@ -89,7 +89,7 @@ void v_CardFlip(void){
     // CALL(aEnableLCD);
     EnableLCD();
     // CALL(aWaitBGMap2);
-    WaitBGMap2_Conv();
+    WaitBGMap2();
     // LD_A(0b11100100);
     // CALL(aDmgToCgbBGPals);
     DmgToCgbBGPals_Conv(0b11100100);
@@ -129,7 +129,7 @@ void v_CardFlip(void){
     // CALL(aWaitSFX);
     WaitSFX();
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // LD_HL(wOptions);
     // RES_hl(4);
     bit_reset(wram->wOptions, NO_TEXT_SCROLL);
@@ -271,7 +271,7 @@ static void v_CardFlip_CardFlip(void){
         // CALL(aPlaceCardFaceDown);
         PlaceCardFaceDown(coord(2, 6, wram->wTilemap));
         // CALL(aWaitBGMap);
-        WaitBGMap_Conv();
+        WaitBGMap();
         // LD_HL(mv_CardFlip_CardFlipChooseACardText);
         // CALL(aCardFlip_UpdateCoinBalanceDisplay);
         CardFlip_UpdateCoinBalanceDisplay(CardFlipChooseACardText);
@@ -422,7 +422,7 @@ static void v_CardFlip_CardFlip(void){
         // CALL(aCardFlip_DisplayCardFaceUp);
         CardFlip_DisplayCardFaceUp(hl);
         // CALL(aWaitBGMap2);
-        WaitBGMap2_Conv();
+        WaitBGMap2();
         // CALL(av_CardFlip_Increment);
         v_CardFlip_Increment();
         // RET;
@@ -721,7 +721,7 @@ void CardFlip_UpdateCoinBalanceDisplay(const txt_cmd_s* hl){
     // LD_B(4);
     // LD_C(SCREEN_WIDTH - 2);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 12, wram->wTilemap), 4, SCREEN_WIDTH - 2);
+    Textbox(coord(0, 12, wram->wTilemap), 4, SCREEN_WIDTH - 2);
     // POP_HL;
     // CALL(aPrintTextboxText);
     PrintTextboxText_Conv2(hl);
@@ -735,7 +735,7 @@ void CardFlip_PrintCoinBalance(void){
     // LD_B(1);
     // LD_C(9);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(9, 15, wram->wTilemap), 1, 9);
+    Textbox(coord(9, 15, wram->wTilemap), 1, 9);
     // hlcoord(10, 16, wTilemap);
     // LD_DE(mCardFlip_PrintCoinBalance_CoinStr);
     // CALL(aPlaceString);
@@ -767,7 +767,7 @@ void CardFlip_InitTilemap(void){
     // hlcoord(0, 12, wTilemap);
     // LD_BC((4 << 8) | 18);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 12, wram->wTilemap), 4, 18);
+    Textbox(coord(0, 12, wram->wTilemap), 4, 18);
     // RET;
 }
 

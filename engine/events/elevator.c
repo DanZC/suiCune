@@ -270,7 +270,7 @@ void Elevator_GetCurrentFloorText(void){
     // LD_B(4);
     // LD_C(8);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 0, wram->wTilemap), 4, 8);
+    Textbox(coord(0, 0, wram->wTilemap), 4, 8);
     // hlcoord(1, 2, wTilemap);
     // LD_DE(mElevator_CurrentFloorText);
     // CALL(aPlaceString);

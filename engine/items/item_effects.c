@@ -43,6 +43,7 @@
 #include "../pokemon/evolve.h"
 #include "../pokemon/caught_data.h"
 #include "../pokedex/new_pokedex_entry.h"
+#include "../pokegear/pokegear.h"
 #include "../smallflag.h"
 #include "../../mobile/mobile_41.h"
 #include "../../data/moves/moves.h"
@@ -94,7 +95,7 @@ void v_DoItemEffect_Conv(item_t item){
     case BRIGHTPOWDER:  return NoEffect();  // BRIGHTPOWDER
     case GREAT_BALL:    return PokeBallEffect();  // GREAT_BALL
     case POKE_BALL:     return PokeBallEffect();  // POKE_BALL
-    //dw ['TownMapEffect'];  // TOWN_MAP
+    case TOWN_MAP:      return TownMapEffect();  // TOWN_MAP
     case BICYCLE:       return BicycleEffect();  // BICYCLE
     case MOON_STONE:    return EvoStoneEffect();  // MOON_STONE
     case ANTIDOTE:      return StatusHealingEffect();  // ANTIDOTE
@@ -949,14 +950,14 @@ void PokeBallEffect(void){
         // LD_A_addr(wTempSpecies);
         // DEC_A;
         // CALL(aCheckCaughtMon);
-        bool caught = CheckCaughtMon_Conv(wram->wEnemyMon.species - 1);
+        bool caught = CheckCaughtMon(wram->wEnemyMon.species - 1);
 
         // LD_A_C;
         // PUSH_AF;
         // LD_A_addr(wTempSpecies);
         // DEC_A;
         // CALL(aSetSeenAndCaughtMon);
-        SetSeenAndCaughtMon_Conv(wram->wEnemyMon.species - 1);
+        SetSeenAndCaughtMon(wram->wEnemyMon.species - 1);
         // POP_AF;
         // AND_A_A;
         // IF_NZ goto skip_pokedex;
@@ -1071,7 +1072,7 @@ void PokeBallEffect(void){
                     // POP_HL;
                     // LD_DE(wStringBuffer1);
                     // CALL(aInitName);
-                    InitName_Conv2(nick, wram->wStringBuffer1);
+                    InitName(nick, wram->wStringBuffer1);
                 }
                 // JP(mPokeBallEffect_return_from_capture);
             }
@@ -1150,7 +1151,7 @@ void PokeBallEffect(void){
                     // LD_HL(sBoxMonNicknames);
                     // LD_DE(wStringBuffer1);
                     // CALL(aInitName);
-                    InitName_Conv2(GBToRAMAddr(sBoxMonNicknames), wram->wStringBuffer1);
+                    InitName(GBToRAMAddr(sBoxMonNicknames), wram->wStringBuffer1);
 
                     // CALL(aCloseSRAM);
                     CloseSRAM_Conv();
@@ -1213,9 +1214,9 @@ return_from_capture:
     // IF_Z goto toss;
     if(wram->wWildMon != 0) {
         // CALL(aClearBGPalettes);
-        ClearBGPalettes_Conv();
+        ClearBGPalettes();
         // CALL(aClearTilemap);
-        ClearTilemap_Conv2();
+        ClearTilemap();
     }
 
 // toss:
@@ -1816,9 +1817,9 @@ void ReturnToBattle_UseBall(void){
 }
 
 void TownMapEffect(void){
-    FARCALL(aPokegearMap);
-    RET;
-
+    // FARCALL(aPokegearMap);
+    // RET;
+    return PokegearMap_Conv(JOHTO_REGION);
 }
 
 void BicycleEffect(void){
@@ -1940,7 +1941,7 @@ void NoEffectMessage(void){
     // CALL(aPrintText);
     PrintText_Conv2(ItemWontHaveEffectText);
     // JP(mClearPalettes);
-    ClearPalettes_Conv();
+    ClearPalettes();
 }
 
 void UpdateStatsAfterItem(struct PartyMon* hl){
@@ -1960,7 +1961,7 @@ void RareCandy_StatBooster_ExitMenu(void){
     // LD_addr_A(wItemEffectSucceeded);
     wram->wItemEffectSucceeded = FALSE;
     // JP(mClearPalettes);
-    return ClearPalettes_Conv();
+    return ClearPalettes();
 }
 
 const txt_cmd_s ItemStatRoseText[] = {
@@ -2133,7 +2134,7 @@ void RareCandyEffect(void){
     // LD_B(10);
     // LD_C(9);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(9, 0, wram->wTilemap), 10, 9);
+    Textbox(coord(9, 0, wram->wTilemap), 10, 9);
 
     // hlcoord(11, 1, wTilemap);
     // LD_BC(4);
@@ -2658,7 +2659,7 @@ static u8_flag_s UseItem_SelectMon_SelectMon(uint8_t b) {
     // PUSH_DE;
     // PUSH_BC;
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aChooseMonToUseItemOn);
     return ChooseMonToUseItemOn();
     // POP_BC;
@@ -2703,9 +2704,9 @@ u8_flag_s ChooseMonToUseItemOn(void){
     // FARCALL(aPrintPartyMenuText);
     PrintPartyMenuText();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // CALL(aDelayFrame);
     DelayFrame();
     // FARCALL(aPartyMenuSelect);
@@ -2730,9 +2731,9 @@ void ItemActionText(uint8_t text){
     // FARCALL(aPrintPartyMenuActionText);
     PrintPartyMenuActionText();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // CALL(aDelayFrame);
     DelayFrame();
     // POP_BC;
@@ -2785,7 +2786,7 @@ void StatusHealer_ExitMenu(void){
 
 void StatusHealer_ClearPalettes(void){
     // CALL(aClearPalettes);
-    ClearPalettes_Conv();
+    ClearPalettes();
     // RET;
 }
 
@@ -3656,6 +3657,7 @@ loop2:
     // LD_addr_A(wUsePPUp);
     wram->wUsePPUp = TRUE;
     // CALL(aApplyPPUp);
+    ApplyPPUp();
     // CALL(aPlay_SFX_FULL_HEAL);
     Play_SFX_FULL_HEAL();
 
@@ -3668,7 +3670,7 @@ loop2:
 
 void FinishPPRestore(void){
     // CALL(aClearPalettes);
-    ClearPalettes_Conv();
+    ClearPalettes();
     // JP(mUseDisposableItem);
     UseDisposableItem();
 }
@@ -3813,7 +3815,7 @@ void PPRestoreItem_NoEffect(void){
 
 void PPRestoreItem_Cancel(void){
     // CALL(aClearPalettes);
-    ClearPalettes_Conv();
+    ClearPalettes();
     // XOR_A_A;
     // LD_addr_A(wItemEffectSucceeded);
     wram->wItemEffectSucceeded = FALSE;
@@ -4218,49 +4220,53 @@ void ItemGotOffText(void){
 //  //  unreferenced
     //text_far ['_ItemGotOffText']
     //text_end ['?']
-
-    return ApplyPPUp();
 }
 
 void ApplyPPUp(void){
-    LD_A(MON_MOVES);
-    CALL(aGetPartyParamLocation);
-    PUSH_HL;
-    LD_DE(wPPUpPPBuffer);
-    PREDEF(pFillPP);
-    POP_HL;
-    LD_BC(MON_PP - MON_MOVES);
-    ADD_HL_BC;
-    LD_DE(wPPUpPPBuffer);
-    LD_B(0);
+    // LD_A(MON_MOVES);
+    // CALL(aGetPartyParamLocation);
+    struct PartyMon* mon = wram->wPartyMon + wram->wCurPartyMon;
+    // PUSH_HL;
+    // LD_DE(wPPUpPPBuffer);
+    // PREDEF(pFillPP);
+    FillPP_Conv(wram->wPPUpPPBuffer, mon->mon.moves);
+    // POP_HL;
+    // LD_BC(MON_PP - MON_MOVES);
+    // ADD_HL_BC;
+    // LD_DE(wPPUpPPBuffer);
+    uint8_t* de = wram->wPPUpPPBuffer;
+    // LD_B(0);
+    uint8_t b = 0;
 
-loop:
-    INC_B;
-    LD_A_B;
-    CP_A(NUM_MOVES + 1);
-    RET_Z ;
-    LD_A_addr(wUsePPUp);
-    DEC_A;  // FALSE?
-    IF_NZ goto use;
-    LD_A_addr(wMenuCursorY);
-    INC_A;
-    CP_A_B;
-    IF_NZ goto skip;
+    while(++b != NUM_MOVES) {
+    // loop:
+        // INC_B;
+        // LD_A_B;
+        // CP_A(NUM_MOVES + 1);
+        // RET_Z ;
+        // LD_A_addr(wUsePPUp);
+        // DEC_A;  // FALSE?
+        // IF_NZ goto use;
+        // LD_A_addr(wMenuCursorY);
+        // INC_A;
+        // CP_A_B;
+        // IF_NZ goto skip;
+        if(wram->wUsePPUp != TRUE || wram->wMenuCursorY == b) {
+        // use:
+            // LD_A_hl;
+            // AND_A(PP_UP_MASK);
+            // LD_A_de;  // wasted cycle
+            // CALL_NZ (aComputeMaxPP);
+            if((mon->mon.PP[b-1] & PP_UP_MASK) != 0) {
+                ComputeMaxPP_Conv(mon->mon.PP[b-1], *de);
+            }
+        }
 
-
-use:
-    LD_A_hl;
-    AND_A(PP_UP_MASK);
-    LD_A_de;  // wasted cycle
-    CALL_NZ (aComputeMaxPP);
-
-
-skip:
-    INC_HL;
-    INC_DE;
-    goto loop;
-
-    return ComputeMaxPP();
+    // skip:
+        // INC_HL;
+        // INC_DE;
+        // goto loop;
+    }
 }
 
 void ComputeMaxPP(void){

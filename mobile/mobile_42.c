@@ -260,11 +260,11 @@ void Function1080b7(void){
     // LD_addr_A(wJumptableIndex);
     wram->wJumptableIndex = 0;
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aDisableLCD);
     DisableLCD();
     // CALL(aMobileTradeAnim_ClearTiles);
@@ -363,11 +363,11 @@ void Function108157(void){
     // LD_addr_A(wJumptableIndex);
     wram->wJumptableIndex = 0;
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aDisableLCD);
     DisableLCD();
     // CALL(aMobileTradeAnim_ClearTiles);
@@ -709,12 +709,12 @@ void MobileTradeAnim_ShowPlayerMonToBeSent(void){
     wram->wTempMon.mon.DVs = wram->wPlayerTrademon.dvs;
     // LD_B(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
+    GetSGBLayout(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
     // LD_A(0b11100100);  // 3,2,1,0
     // CALL(aDmgToCgbBGPals);
     DmgToCgbBGPals_Conv(0b11100100);
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
 
     while(hram->hWX != 0x7) {
     // loop:
@@ -779,11 +779,11 @@ void MobileTradeAnim_ShowPlayerMonToBeSent(void){
 
 void MobileTradeAnim_ShowOTMonFromTrade(void){
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aDisableLCD);
     DisableLCD();
     // CALL(aMobileTradeAnim_ClearBGMap);
@@ -848,7 +848,7 @@ void MobileTradeAnim_ShowOTMonFromTrade(void){
     wram->wTempMon.mon.DVs = wram->wOTTrademon.dvs;
     // LD_B(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
+    GetSGBLayout(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
     // LD_A(0b11100100);  // 3,2,1,0
     // CALL(aDmgToCgbBGPals);
     DmgToCgbBGPals_Conv(0b11100100);
@@ -909,12 +909,12 @@ void MobileTradeAnim_ShowPlayerMonForGTS(void){
     wram->wTempMon.mon.DVs = wram->wPlayerTrademon.dvs;
     // LD_B(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
+    GetSGBLayout(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
     // LD_A(0b11100100);  // 3,2,1,0
     // CALL(aDmgToCgbBGPals);
     DmgToCgbBGPals_Conv(0b11100100);
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
 
     while(hram->hWX != 0x7) {
     // loop:
@@ -979,11 +979,11 @@ void MobileTradeAnim_ShowPlayerMonForGTS(void){
 
 void MobileTradeAnim_ShowOTMonFromGTS(void){
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aDisableLCD);
     DisableLCD();
     // CALL(aMobileTradeAnim_ClearBGMap);
@@ -1060,7 +1060,7 @@ void MobileTradeAnim_ShowOTMonFromGTS(void){
     wram->wTempMon.mon.DVs = wram->wOTTrademon.dvs;
     // LD_B(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
+    GetSGBLayout(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
     // LD_A(0b11100100);  // 3,2,1,0
     // CALL(aDmgToCgbBGPals);
     DmgToCgbBGPals_Conv(0b11100100);
@@ -1082,11 +1082,11 @@ void MobileTradeAnim_ShowOTMonFromGTS(void){
 
 void MobileTradeAnim_GetOddEgg(void){
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aDisableLCD);
     DisableLCD();
     // CALL(aMobileTradeAnim_ClearBGMap);
@@ -1163,7 +1163,7 @@ void MobileTradeAnim_GetOddEgg(void){
     wram->wTempMon.mon.DVs = wram->wOTTrademon.dvs;
     // LD_B(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
+    GetSGBLayout(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
     // LD_A(0b11100100);  // 3,2,1,0
     // CALL(aDmgToCgbBGPals);
     DmgToCgbBGPals_Conv(0b11100100);
@@ -1185,11 +1185,11 @@ void MobileTradeAnim_02(void){
     // FARCALL(aDeinitializeAllSprites);
     DeinitializeAllSprites_Conv();
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
@@ -1239,11 +1239,11 @@ void MobileTradeAnim_10(void){
     // FARCALL(aDeinitializeAllSprites);
     DeinitializeAllSprites_Conv();
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
@@ -1303,11 +1303,11 @@ void MobileTradeAnim_10(void){
 
 void MobileTradeAnim_11(void){
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
@@ -1715,11 +1715,11 @@ void MobileTradeAnim_0f(void){
     // FARCALL(aDeinitializeAllSprites);
     DeinitializeAllSprites_Conv();
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aDisableLCD);
     DisableLCD();
     // CALL(aMobileTradeAnim_ClearTiles);
@@ -1793,7 +1793,7 @@ void asm_108966(const uint8_t* de){
     // PREDEF(pPlaceGraphic);
     PlaceGraphicYStagger_Conv(coord(7, 2, wram->wTilemap), 7, 7);
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // RET;
 
 }
@@ -1814,7 +1814,7 @@ void Function10898a(species_t species, uint16_t dvs){
     // PREDEF(pPlaceGraphic);
     PlaceGraphicYStagger_Conv(coord(7, 2, wram->wTilemap), 7, 7);
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // RET;
 }
 
@@ -1891,7 +1891,7 @@ void MobileTradeAnim_DisplayEggData(void){
     // LD_B(6);
     // LD_C(9);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(5, 0, wram->wTilemap), 6, 9);
+    Textbox(coord(5, 0, wram->wTilemap), 6, 9);
     // hlcoord(6, 2, wTilemap);
     // LD_DE(mMobileTradeAnim_DisplayEggData_EggTemplate);
     // CALL(aPlaceString);
@@ -1915,7 +1915,7 @@ void Function108a33(void){
     // LD_B(6);
     // LD_C(9);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(5, 0, wram->wTilemap), 6, 9);
+    Textbox(coord(5, 0, wram->wTilemap), 6, 9);
     // hlcoord(7, 4, wTilemap);
     // LD_DE(mFunction108a33_OddEgg);
     // CALL(aPlaceString);
@@ -1942,7 +1942,7 @@ void MobileTradeAnim_LoadMonTemplate(void){
     // LD_B(6);
     // LD_C(10);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(4, 0, wram->wTilemap), 6, 10);
+    Textbox(coord(4, 0, wram->wTilemap), 6, 10);
     // hlcoord(5, 0, wTilemap);
     // LD_DE(mMobileTradeAnim_LoadMonTemplate_MonTemplate);
     // CALL(aPlaceString);
@@ -1952,7 +1952,7 @@ void MobileTradeAnim_LoadMonTemplate(void){
 
 void MobileTradeAnim_MonDisplay_UpdateBGMap(void){
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // CALL(aWaitTop);
     WaitTop();
     // LD_A(HIGH(vBGMap0));

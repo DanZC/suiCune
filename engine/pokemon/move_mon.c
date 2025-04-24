@@ -644,11 +644,11 @@ bool GeneratePartyMonStats_Conv(struct PartyMon* hl, species_t species, uint8_t 
         // DEC_A;
         // PUSH_DE;
         // CALL(aCheckCaughtMon);
-        CheckCaughtMon_Conv(species - 1);
+        CheckCaughtMon(species - 1);
         // LD_A_addr(wTempSpecies);
         // DEC_A;
         // CALL(aSetSeenAndCaughtMon);
-        SetSeenAndCaughtMon_Conv(species - 1);
+        SetSeenAndCaughtMon(species - 1);
         // POP_DE;
 
         // POP_HL;
@@ -1090,7 +1090,7 @@ bool AddTempmonToParty_Conv(void){
     if(wram->wCurPartySpecies != EGG) {
         // DEC_A;
         // CALL(aSetSeenAndCaughtMon);
-        SetSeenAndCaughtMon_Conv(wram->wCurPartySpecies - 1);
+        SetSeenAndCaughtMon(wram->wCurPartySpecies - 1);
         // LD_HL(wPartyMon1Happiness);
         // LD_A_addr(wPartyCount);
         // DEC_A;
@@ -2502,7 +2502,7 @@ bool SendMonIntoBox_Conv(void){
     // LD_A_addr(wCurPartySpecies);
     // DEC_A;
     // CALL(aSetSeenAndCaughtMon);
-    SetSeenAndCaughtMon_Conv(wram->wCurPartySpecies - 1);
+    SetSeenAndCaughtMon(wram->wCurPartySpecies - 1);
     // LD_A_addr(wCurPartySpecies);
     // CP_A(UNOWN);
     // IF_NZ goto not_unown;
@@ -2769,11 +2769,11 @@ bool GiveEgg_Conv(void){
 //  sure that we aren't newly setting flags.
     // PUSH_AF;
     // CALL(aCheckCaughtMon);
-    bool caught = CheckCaughtMon_Conv(pspecies);
+    bool caught = CheckCaughtMon(pspecies);
     // POP_AF;
     // PUSH_BC;
     // CALL(aCheckSeenMon);
-    bool seen = CheckSeenMon_Conv(pspecies);
+    bool seen = CheckSeenMon(pspecies);
     // PUSH_BC;
 
     // CALL(aTryAddMonToParty);
@@ -4499,7 +4499,7 @@ void InitNickname_Conv(uint8_t* hl){
     // CALL(aLoadStandardMenuHeader);
     LoadStandardMenuHeader_Conv();
     // CALL(aDisableSpriteUpdates);
-    DisableSpriteUpdates_Conv();
+    DisableSpriteUpdates();
     // POP_DE;
     // PUSH_DE;
     // LD_B(NAME_MON);
@@ -4508,7 +4508,7 @@ void InitNickname_Conv(uint8_t* hl){
     // POP_HL;
     // LD_DE(wStringBuffer1);
     // CALL(aInitName);
-    InitName_Conv2(hl, wram->wStringBuffer1);
+    InitName(hl, wram->wStringBuffer1);
     // LD_A(0x4);  // ExitAllMenus is in bank 0// maybe it used to be in bank 4
     // LD_HL(mExitAllMenus);
     ExitAllMenus_Conv();

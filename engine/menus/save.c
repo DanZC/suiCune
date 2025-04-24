@@ -52,7 +52,7 @@ bool SaveMenu(void){
     // FARCALL(aDisplaySaveInfoOnSave);
     DisplaySaveInfoOnSave_Conv();
     // CALL(aSpeechTextbox);
-    SpeechTextbox_Conv2();
+    SpeechTextbox();
     // CALL(aUpdateSprites);
     UpdateSprites_Conv();
     // FARCALL(aSaveMenu_CopyTilemapAtOnce);

@@ -17,7 +17,7 @@ void Reset(void) {
     // LDH_addr_A(hMapAnims);
     hram->hMapAnims = 0;
     // CALL(aClearPalettes);
-    ClearPalettes_Conv();
+    ClearPalettes();
     // XOR_A_A;
     // LDH_addr_A(rIF);
     gb_write(rIF, 0);

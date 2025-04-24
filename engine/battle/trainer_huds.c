@@ -281,7 +281,7 @@ void DrawEnemyHUDBorder(void){
     // DEC_A;
     // CALL(aCheckCaughtMon);
     // RET_Z ;
-    if(!CheckCaughtMon_Conv(wram->wTempEnemyMonSpecies))
+    if(!CheckCaughtMon(wram->wTempEnemyMonSpecies))
         return;
     // hlcoord(1, 1, wTilemap);
     // LD_hl(0x5d);
@@ -444,14 +444,14 @@ void LoadBallIconGFX(void){
 
 void v_ShowLinkBattleParticipants(void){
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aLoadFontsExtra);
     LoadFontsExtra_Conv();
     // hlcoord(2, 3, wTilemap);
     // LD_B(9);
     // LD_C(14);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(2, 3, wram->wTilemap), 9, 14);
+    Textbox(coord(2, 3, wram->wTilemap), 9, 14);
     // hlcoord(4, 5, wTilemap);
     // LD_DE(wPlayerName);
     // CALL(aPlaceString);
@@ -471,9 +471,9 @@ void v_ShowLinkBattleParticipants(void){
     LinkBattle_TrainerHuds();
     // LD_B(SCGB_DIPLOMA);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_DIPLOMA);
+    GetSGBLayout(SCGB_DIPLOMA);
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // LD_A(0xe4);
     // LDH_addr_A(rOBP0);
     gb_write(rOBP0, 0xe4);

@@ -8,7 +8,7 @@ void SaveMenu_CopyTilemapAtOnce(void) {
     // AND_A_A;
     // JP_Z(mWaitBGMap);
     if(hram->hCGB == 0)
-        return WaitBGMap_Conv();
+        return WaitBGMap();
     return v_CopyTilemapAtOnce_Conv();
 
     //  The following is a modified version of _CopyTilemapAtOnce

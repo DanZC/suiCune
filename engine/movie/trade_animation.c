@@ -265,11 +265,11 @@ static void RunTradeAnimScript_TradeAnimLayout(void) {
     // LD_addr_A(wJumptableIndex);
     wram->wJumptableIndex = 0;
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aDisableLCD);
     DisableLCD();
     // CALL(aLoadFontsBattleExtra);
@@ -571,10 +571,10 @@ void TradeAnim_InitTubeAnim(uint16_t de, uint8_t b, uint8_t a){
     bc->jumptableIndex = b;
 
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_B(SCGB_TRADE_TUBE);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_TRADE_TUBE);
+    GetSGBLayout(SCGB_TRADE_TUBE);
     // LD_A(0b11100100);  // 3,2,1,0
     // CALL(aDmgToCgbBGPals);
     DmgToCgbBGPals_Conv(0b11100100);
@@ -722,9 +722,9 @@ void TradeAnim_TubeToOT8(void){
 
 void TradeAnim_TubeToPlayer8(void){
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aDisableLCD);
@@ -747,7 +747,7 @@ void TradeAnim_TubeToPlayer8(void){
     // CALL(aLoadTradeBallAndCableGFX);
     LoadTradeBallAndCableGFX();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // CALL(aTradeAnim_NormalPals);
     TradeAnim_NormalPals();
     // CALL(aTradeAnim_AdvanceScriptPointer);
@@ -913,14 +913,14 @@ void TradeAnim_CopyTradeGameBoyTilemap(uint8_t* hl){
 void TradeAnim_PlaceTrademonStatsOnTubeAnim(uint8_t a){
     // PUSH_AF;
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aWaitTop);
     WaitTop();
     // LD_A(HIGH(vBGMap1));
     // LDH_addr_A(hBGMapAddress + 1);
     hram->hBGMapAddress = vBGMap1;
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // hlcoord(0, 0, wTilemap);
     // LD_BC(SCREEN_WIDTH);
     // LD_A(0x7a);
@@ -961,20 +961,20 @@ void TradeAnim_PlaceTrademonStatsOnTubeAnim(uint8_t a){
     // CALL(aByteFill);
     ByteFill(coord(7, 2, wram->wTilemap), 6, a);
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // CALL(aWaitTop);
     WaitTop();
     // LD_A(HIGH(vBGMap0));
     // LDH_addr_A(hBGMapAddress + 1);
     hram->hBGMapAddress = vBGMap0;
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // RET;
 }
 
 void TradeAnim_EnterLinkTube1(void){
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aWaitTop);
     WaitTop();
     // LD_A(0xa0);
@@ -990,10 +990,10 @@ void TradeAnim_EnterLinkTube1(void){
     TradeAnim_CopyBoxFromDEtoHL(coord(8, 2, wram->wTilemap), (uint8_t*)de.ptr, 3, 12);
     FreeAsset(de);
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_B(SCGB_TRADE_TUBE);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_TRADE_TUBE);
+    GetSGBLayout(SCGB_TRADE_TUBE);
     // LD_A(0b11100100);  // 3,2,1,0
     // CALL(aDmgToCgbBGPals);
     DmgToCgbBGPals_Conv(0b11100100);
@@ -1036,7 +1036,7 @@ void TradeAnim_ExitLinkTube(void){
     if(hram->hSCX == 0xa0) {
     // done:
         // CALL(aClearTilemap);
-        ClearTilemap_Conv2();
+        ClearTilemap();
         // XOR_A_A;
         // LDH_addr_A(hSCX);
         hram->hSCX = 0x0;
@@ -1124,7 +1124,7 @@ void TradeAnim_ScrollOutRight(void){
     // LDH_addr_A(hBGMapAddress + 1);
     hram->hBGMapAddress = vBGMap1;
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_A(0x7);
     // LDH_addr_A(hWX);
     hram->hWX = 0x7;
@@ -1139,7 +1139,7 @@ void TradeAnim_ScrollOutRight(void){
     // LDH_addr_A(hBGMapAddress + 1);
     hram->hBGMapAddress = vBGMap0;
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aTradeAnim_IncrementJumptableIndex);
     TradeAnim_IncrementJumptableIndex();
     // RET;
@@ -1156,7 +1156,7 @@ void TradeAnim_ScrollOutRight2(void){
         // LDH_addr_A(hBGMapAddress + 1);
         hram->hBGMapAddress = vBGMap1;
         // CALL(aWaitBGMap);
-        WaitBGMap_Conv();
+        WaitBGMap();
         // LD_A(0x7);
         // LDH_addr_A(hWX);
         hram->hWX = 0x7;
@@ -1190,7 +1190,7 @@ void TradeAnim_ShowGivemonData(void){
     wram->wTempMon.mon.DVs = wram->wPlayerTrademon.dvs;
     // LD_B(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
+    GetSGBLayout(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
     // LD_A(0b11100100);  // 3,2,1,0
     // CALL(aDmgToCgbBGPals);
     DmgToCgbBGPals_Conv(0b11100100);
@@ -1226,7 +1226,7 @@ void TradeAnim_ShowGetmonData(void){
     wram->wTempMon.mon.DVs = wram->wOTTrademon.dvs;
     // LD_B(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
+    GetSGBLayout(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
     // LD_A(0b11100100);  // 3,2,1,0
     // CALL(aDmgToCgbBGPals);
     DmgToCgbBGPals_Conv(0b11100100);
@@ -1306,7 +1306,7 @@ void TradeAnim_ShowFrontpic(const uint8_t* de){
     // PREDEF(pPlaceGraphic);
     PlaceGraphicYStagger_Conv(coord(7, 2, wram->wTilemap), 7, 7);
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // RET;
 
 }
@@ -1443,7 +1443,7 @@ void TrademonStats_MonTemplate(void){
     // LD_B(0x6);
     // LD_C(0xd);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(3, 0, wram->wTilemap), 0x6, 0xd);
+    Textbox(coord(3, 0, wram->wTilemap), 0x6, 0xd);
     // hlcoord(4, 0, wTilemap);
     // LD_DE(mTrademonStats_MonTemplate_OTMonData);
     // CALL(aPlaceString);
@@ -1466,7 +1466,7 @@ void TrademonStats_Egg(void){
     // LD_B(6);
     // LD_C(13);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(3, 0, wram->wTilemap), 6, 13);
+    Textbox(coord(3, 0, wram->wTilemap), 6, 13);
     // hlcoord(4, 2, wTilemap);
     // LD_DE(mTrademonStats_Egg_EggData);
     // CALL(aPlaceString);
@@ -1478,7 +1478,7 @@ void TrademonStats_Egg(void){
 
 void TrademonStats_WaitBGMap(void){
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // CALL(aWaitTop);
     WaitTop();
     // LD_A(HIGH(vBGMap0));
@@ -1846,7 +1846,7 @@ void TradeAnim_TakeCareOfText(void){
     // CALL(aByteFill);
     ByteFill(coord(0, 10, wram->wTilemap), 8 * SCREEN_WIDTH, 0x7f);
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_HL(mTradeAnim_TakeCareOfText_TakeGoodCareOfMonText);
     // CALL(aPrintText);
     PrintText_Conv2(TakeGoodCareOfMonText);

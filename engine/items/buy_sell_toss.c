@@ -297,7 +297,7 @@ void BuySell_DisplaySubtotal(tile_t* hl, uint32_t price){
     // CALL(aPrintNum);
     PrintNum_Conv2(hl, hram->hMoneyTemp, PRINTNUM_MONEY | 3, 6);
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // RET;
 }
 

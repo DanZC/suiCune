@@ -189,11 +189,11 @@ void DoMysteryGift(void){
     //     t_next "cancel it.";
     while(1) {
         // CALL(aClearTilemap);
-        ClearTilemap_Conv2();
+        ClearTilemap();
         // CALL(aClearSprites);
         ClearSprites();
         // CALL(aWaitBGMap);
-        WaitBGMap_Conv();
+        WaitBGMap();
         // CALL(aInitMysteryGiftLayout);
         InitMysteryGiftLayout();
         // hlcoord(3, 8, wTilemap);
@@ -201,7 +201,7 @@ void DoMysteryGift(void){
         // CALL(aPlaceString);
         // PlaceStringSimple(U82C(String_PressAToLink_BToCancel), coord(3, 8, wram->wTilemap));
         // CALL(aWaitBGMap);
-        WaitBGMap_Conv();
+        WaitBGMap();
 
     // Prepare the first of two messages for wMysteryGiftPartnerData
         // FARCALL(aStageDataForMysteryGift);
@@ -228,16 +228,16 @@ void DoMysteryGift(void){
 
         // PUSH_DE;
         // CALL(aClearTilemap);
-        ClearTilemap_Conv2();
+        ClearTilemap();
         // CALL(aEnableLCD);
         EnableLCD();
         // CALL(aWaitBGMap);
-        WaitBGMap_Conv();
+        WaitBGMap();
         // LD_B(SCGB_DIPLOMA);
         // CALL(aGetSGBLayout);
-        GetSGBLayout_Conv(SCGB_DIPLOMA);
+        GetSGBLayout(SCGB_DIPLOMA);
         // CALL(aSetPalettes);
-        SetPalettes_Conv();
+        SetPalettes();
         // POP_DE;
 
         // hlcoord(2, 8, wTilemap);
@@ -2106,7 +2106,7 @@ static void InitMysteryGiftLayout_Load16Row(tile_t* hl, tile_t a) {
 
 void InitMysteryGiftLayout(void){
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aDisableLCD);
     DisableLCD();
     // LD_HL(mMysteryGiftGFX);
@@ -2123,7 +2123,7 @@ void InitMysteryGiftLayout(void){
     // hlcoord(3, 7, wTilemap);
     // LD_BC((9 << 8) | 15);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(3, 7, wram->wTilemap), 15, 9);
+    ClearBox(coord(3, 7, wram->wTilemap), 15, 9);
     // hlcoord(0, 0, wTilemap);
     // LD_A(0x0);
     // LD_hli_A;
@@ -2223,12 +2223,12 @@ void InitMysteryGiftLayout(void){
     // CALL(aEnableLCD);
     EnableLCD();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_B(SCGB_MYSTERY_GIFT);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_MYSTERY_GIFT);
+    GetSGBLayout(SCGB_MYSTERY_GIFT);
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // RET;
 }
 
@@ -2238,16 +2238,16 @@ static void DoNameCardSwap_ClearScreen(void){
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aEnableLCD);
     EnableLCD();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_B(SCGB_DIPLOMA);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_DIPLOMA);
+    GetSGBLayout(SCGB_DIPLOMA);
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // RET;
 }
 
@@ -2333,11 +2333,11 @@ void DoNameCardSwap(void){
                             //db ['"@"'];
     while(1) {
         // CALL(aClearTilemap);
-        ClearTilemap_Conv2();
+        ClearTilemap();
         // CALL(aClearSprites);
         ClearSprites();
         // CALL(aWaitBGMap);
-        WaitBGMap_Conv();
+        WaitBGMap();
         // CALL(aInitNameCardLayout);
         InitNameCardLayout();
         // hlcoord(3, 8, wTilemap);
@@ -2345,7 +2345,7 @@ void DoNameCardSwap(void){
         // CALL(aPlaceString);
         PlaceStringSimple(U82C(String_PressAToLink_BToCancel_JP), coord(3, 8, wram->wTilemap));
         // CALL(aWaitBGMap);
-        WaitBGMap_Conv();
+        WaitBGMap();
         // CALL(aStageDataForNameCard);
         StageDataForNameCard();
         // CALL(aClearMysteryGiftTrainer);
@@ -2553,7 +2553,7 @@ void InitNameCardLayout(void){
         dbsprite(14,  1,  4,  1, 0x07, 0),
     };
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aDisableLCD);
     DisableLCD();
     // LD_HL(mCardTradeGFX);
@@ -2576,7 +2576,7 @@ void InitNameCardLayout(void){
     // hlcoord(3, 7, wTilemap);
     // LD_BC((9 << 8) | 15);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(3, 7, wram->wTilemap), 15, 9);
+    ClearBox(coord(3, 7, wram->wTilemap), 15, 9);
     // hlcoord(0, 0, wTilemap);
     // LD_A(0x0);
     // LD_hli_A;
@@ -2674,12 +2674,12 @@ void InitNameCardLayout(void){
     // CALL(aEnableLCD);
     EnableLCD();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_B(CRYSTAL_CGB_NAME_CARD);
     // FARCALL(aGetCrystalCGBLayout);
     GetCrystalCGBLayout(CRYSTAL_CGB_NAME_CARD);
     // JP(mSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
 }
 
 const char CardTradeGFX[] = "gfx/mystery_gift/card_trade.png";

@@ -2202,7 +2202,7 @@ static const char string_100966[] = "   min. remaining!@"; //db ['"のこり\u30
     // LD_B(0x01);
     // LD_C(0x0b);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(3, 10, wram->wTilemap), 0x01, 0x0b);
+    Textbox(coord(3, 10, wram->wTilemap), 0x01, 0x0b);
     // LD_A_addr(wcd6d);
     // LD_C_A;
     // LD_A(0x0a);
@@ -2722,7 +2722,7 @@ static void Mobile_MoveSelectionScreen_ListMoves(void){
     // LD_B(8);
     // LD_C(8);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 8, wram->wTilemap), 8, 8);
+    Textbox(coord(0, 8, wram->wTilemap), 8, 8);
     // LD_HL(wBattleMonMoves);
     // LD_DE(wListMoves_MoveIndicesBuffer);
     // LD_BC(NUM_MOVES);
@@ -3111,7 +3111,7 @@ void Function100d67(void){
     // CALL(aPlaceVerticalMenuItems);
     PlaceVerticalMenuItems_Conv2();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // CALL(aCopyMenuData);
     // CALL(aInitVerticalMenuCursor);
     InitVerticalMenuCursor_Conv(GetMenuData());
@@ -4368,7 +4368,7 @@ uint8_t Function10138b(void){
 
 void Function1013aa(void){
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aCall_ExitMenu);
     ExitMenu_Conv2();
     // CALL(aReloadTilesetAndPalettes);
@@ -5606,7 +5606,7 @@ void Function101913(void){
 
 void Function10194b(void){
     // CALL(aDisableSpriteUpdates);
-    DisableSpriteUpdates_Conv();
+    DisableSpriteUpdates();
     // CALL(aClearSprites);
     ClearSprites();
     // FARCALL(aFunction1021f9);
@@ -5717,14 +5717,14 @@ void v_StartMobileBattle(void){
     // FARCALL(aBlankScreen);
     BlankScreen();
     // CALL(aSpeechTextbox);
-    SpeechTextbox_Conv2();
+    SpeechTextbox();
     // FARCALL(aFunction100846);
     Function100846();
     // LD_C(120);
     // CALL(aDelayFrames);
     DelayFrames(120);
     // FARCALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(av_StartMobileBattle_CopyOTDetails);
     v_StartMobileBattle_CopyOTDetails();
     // CALL(aStartMobileBattle);
@@ -9197,7 +9197,7 @@ void Function102bac(void){
     // CALL(aFunction102d9a);
     Function102d9a();
     // CALL(aClearPalettes);
-    ClearPalettes_Conv();
+    ClearPalettes();
     // CALL(aDelayFrame);
     DelayFrame();
     // CALL(aMaxVolume);
@@ -9477,7 +9477,7 @@ void Function102d48(void){
     if(wram->wTempSpecies != EGG) {
         // DEC_A;
         // CALL(aSetSeenAndCaughtMon);
-        SetSeenAndCaughtMon_Conv(wram->wTempSpecies - 1);
+        SetSeenAndCaughtMon(wram->wTempSpecies - 1);
         // LD_A_addr(wcd4c);
         // DEC_A;
         // LD_BC(PARTYMON_STRUCT_LENGTH);
@@ -9582,7 +9582,7 @@ void Function102dec(void){
     // FARCALL(aFunction49742);
     Function49742();
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // CALL(aDelayFrame);
     DelayFrame();
     // RET;
@@ -9599,7 +9599,7 @@ static const char waiting[] = "Waiting...!@";
     // IF_Z goto link_battle;
     if(wram->wBattleMode != 0) {
         // CALL(aTextbox);
-        Textbox_Conv2(coord(3, 10, wram->wTilemap), 1, 11);
+        Textbox(coord(3, 10, wram->wTilemap), 1, 11);
         // goto okay;
     }
     else {
@@ -10556,14 +10556,14 @@ void Function1034e0(uint16_t hl, uint8_t b, uint8_t c){
     // PUSH_BC;
     // PUSH_HL;
     // CALL(aClearBox);
-    ClearBox_Conv2(wram->wTilemap + hl, c, b);
+    ClearBox(wram->wTilemap + hl, c, b);
     // POP_HL;
     // LD_BC(wAttrmap - wTilemap);
     // ADD_HL_BC;
     // POP_BC;
     // LD_A(0x06);
     // CALL(aFillBoxWithByte);
-    FillBoxWithByte_Conv2(wram->wAttrmap + hl, c, b, 0x6);
+    FillBoxWithByte(wram->wAttrmap + hl, c, b, 0x6);
     // RET;
 }
 

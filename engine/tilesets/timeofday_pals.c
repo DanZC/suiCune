@@ -200,7 +200,7 @@ bool v_TimeOfDayPals_Conv(void){
 //  update sgb pals
     // LD_B(SCGB_MAPPALS);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_MAPPALS);
+    GetSGBLayout(SCGB_MAPPALS);
 
 //  restore bg palette 7
     // LD_HL(wOBPals1 - 1);  // last byte in wBGPals1

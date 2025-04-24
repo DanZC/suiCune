@@ -106,7 +106,7 @@ void NPCTrade(uint8_t e){
 
 static void NPCTrade_TradeAnimation(void){
     // CALL(aDisableSpriteUpdates);
-    DisableSpriteUpdates_Conv();
+    DisableSpriteUpdates();
     // LD_A_addr(wJumptableIndex);
     // PUSH_AF;
     uint8_t jumptableIndex = wram->wJumptableIndex;

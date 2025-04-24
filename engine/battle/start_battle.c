@@ -42,7 +42,7 @@ void ShowLinkBattleParticipants_Conv(void){
     // CALL(aDelayFrames);
     DelayFrames(150);
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aClearSprites);
     ClearSprites();
     // RET;
@@ -90,7 +90,7 @@ void FindFirstAliveMonAndStartBattle(void){
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;

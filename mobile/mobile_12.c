@@ -220,7 +220,7 @@ uint8_t InitMobileProfile(uint8_t c){
     if(c == 0)
         InitCrystalData();
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     LoadZipcodeWithUniversalFormat();
     RetrieveZipcodeInfo(wram->wPrefecture);
     // CALL(aFunction48d3d);
@@ -258,7 +258,7 @@ uint8_t InitMobileProfile(uint8_t c){
     // CALL(aFunction4a3a7);
     Function4a3a7();
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // LD_A_addr(wd002);
     // BIT_A(6);
     // IF_Z goto asm_4808a;
@@ -284,12 +284,12 @@ uint8_t InitMobileProfile(uint8_t c){
         // CALL(aGetCrystalCGBLayout);
         GetCrystalCGBLayout(CRYSTAL_CGB_MOBILE_1);
         // CALL(aClearBGPalettes);
-        ClearBGPalettes_Conv();
+        ClearBGPalettes();
         // hlcoord(0, 0, wTilemap);
         // LD_B(2);
         // LD_C(20);
         // CALL(aClearBox);
-        ClearBox_Conv2(coord(0, 0, wram->wTilemap), 20, 2);
+        ClearBox(coord(0, 0, wram->wTilemap), 20, 2);
         // hlcoord(0, 1, wTilemap);
         // LD_A(0xc);
         // LD_hl_A;
@@ -389,7 +389,7 @@ uint8_t InitMobileProfile(uint8_t c){
     // LD_B(0x2);
     // LD_C(0x12);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 14, wram->wTilemap), 0x2, 0x12);
+    Textbox(coord(0, 14, wram->wTilemap), 0x2, 0x12);
     // hlcoord(1, 16, wTilemap);
     // LD_DE(mMobileString_PersonalInfo);
     // CALL(aPlaceString);
@@ -397,9 +397,9 @@ uint8_t InitMobileProfile(uint8_t c){
     // CALL(aFunction48187);
     Function48187();
     // CALL(aWaitBGMap2);
-    WaitBGMap2_Conv();
+    WaitBGMap2();
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // CALL(aStaticMenuJoypad);
     uint8_t joypad = StaticMenuJoypad_Conv();
     // LD_HL(wMenuCursorY);
@@ -429,13 +429,13 @@ uint8_t InitMobileProfile(uint8_t c){
         if(bit_test(wram->wd002, 6) && bit_test(wram->wd479[0], 1) && bit_test(joypad, B_BUTTON_F)) {
         // b_button:
             // CALL(aClearBGPalettes);
-            ClearBGPalettes_Conv();
+            ClearBGPalettes();
             // CALL(aFunction48d30);
             // Function48d30();
             SaveZipcodeWithUniversalFormat();
             // POP_BC;
             // CALL(aClearTilemap);
-            ClearTilemap_Conv2();
+            ClearTilemap();
             // LD_A(0xff);
             // RET;
             return 0xff;
@@ -467,7 +467,7 @@ uint8_t InitMobileProfile(uint8_t c){
             // LD_C(1);
             // hlcoord(1, 6, wTilemap);
             // CALL(aClearBox);
-            ClearBox_Conv2(coord(1, 6, wram->wTilemap), 1, 7);
+            ClearBox(coord(1, 6, wram->wTilemap), 1, 7);
             // JP(mFunction48157);
         }
         else {
@@ -475,7 +475,7 @@ uint8_t InitMobileProfile(uint8_t c){
             // LD_C(1);
             // hlcoord(1, 4, wTilemap);
             // CALL(aClearBox);
-            ClearBox_Conv2(coord(1, 4, wram->wTilemap), 1, 9);
+            ClearBox(coord(1, 4, wram->wTilemap), 1, 9);
             // JP(mFunction48157);
         }
 
@@ -573,7 +573,7 @@ static const char String_TellLater[] = "Tell Later@";
         // LD_BC((1 << 8) | 4);
         // hlcoord(2, 12, wTilemap);
         // CALL(aClearBox);
-        ClearBox_Conv2(coord(2, 12, wram->wTilemap), 4, 1);
+        ClearBox(coord(2, 12, wram->wTilemap), 4, 1);
         // goto asm_481ad;
     }
     else {
@@ -597,13 +597,13 @@ static const char String_TellLater[] = "Tell Later@";
         // hlcoord(11, 4, wTilemap);
         // CALL(aClearBox);  
         #if defined(_CRYSTAL_JP)
-        ClearBox_Conv2(coord(11, 4, wram->wTilemap), 8, 1);
+        ClearBox(coord(11, 4, wram->wTilemap), 8, 1);
         #elif defined(_CRYSTAL_AU)
-        ClearBox_Conv2(coord(9, 5, wram->wTilemap), 8, 1);
+        ClearBox(coord(9, 5, wram->wTilemap), 8, 1);
         #elif defined(_CRYSTAL_EU)
-        ClearBox_Conv2(coord(10, 5, wram->wTilemap), 8, 1);
+        ClearBox(coord(10, 5, wram->wTilemap), 8, 1);
         #else
-        ClearBox_Conv2(coord(8, 5, wram->wTilemap), 8, 1);
+        ClearBox(coord(8, 5, wram->wTilemap), 8, 1);
         #endif
     }
 
@@ -615,13 +615,13 @@ static const char String_TellLater[] = "Tell Later@";
         // hlcoord(11, 6, wTilemap);
         // CALL(aClearBox);
         #if defined(_CRYSTAL_JP)
-        ClearBox_Conv2(coord(11, 6, wram->wTilemap), 8, 1);
+        ClearBox(coord(11, 6, wram->wTilemap), 8, 1);
         #elif defined(_CRYSTAL_AU)
-        ClearBox_Conv2(coord(11, 7, wram->wTilemap), 8, 1);
+        ClearBox(coord(11, 7, wram->wTilemap), 8, 1);
         #elif defined(_CRYSTAL_EU)
-        ClearBox_Conv2(coord(10, 7, wram->wTilemap), 8, 1);
+        ClearBox(coord(10, 7, wram->wTilemap), 8, 1);
         #else
-        ClearBox_Conv2(coord(7, 7, wram->wTilemap), 8, 1);
+        ClearBox(coord(7, 7, wram->wTilemap), 8, 1);
         #endif
     }
 
@@ -633,13 +633,13 @@ static const char String_TellLater[] = "Tell Later@";
         // hlcoord(11, 7, wTilemap);
         // CALL(aClearBox);
         #if defined(_CRYSTAL_JP)
-        ClearBox_Conv2(coord(11, 7, wram->wTilemap), 8, 2);
+        ClearBox(coord(11, 7, wram->wTilemap), 8, 2);
         #elif defined(_CRYSTAL_AU)
-        ClearBox_Conv2(coord(11, 9, wram->wTilemap), 8, 2);
+        ClearBox(coord(11, 9, wram->wTilemap), 8, 2);
         #elif defined(_CRYSTAL_EU)
-        ClearBox_Conv2(coord(10, 9, wram->wTilemap), 8, 2);
+        ClearBox(coord(10, 9, wram->wTilemap), 8, 2);
         #else
-        ClearBox_Conv2(coord(10, 9, wram->wTilemap), 8, 2);
+        ClearBox(coord(10, 9, wram->wTilemap), 8, 2);
         #endif
     }
 
@@ -656,13 +656,13 @@ static const char String_TellLater[] = "Tell Later@";
         // hlcoord(11, 10, wTilemap);
         // CALL(aClearBox);
         #if defined(_CRYSTAL_JP)
-        ClearBox_Conv2(coord(11, 10, wram->wTilemap), 8, 1);
+        ClearBox(coord(11, 10, wram->wTilemap), 8, 1);
         #elif defined(_CRYSTAL_AU)
-        ClearBox_Conv2(coord(9, 11, wram->wTilemap), 9, 1);
+        ClearBox(coord(9, 11, wram->wTilemap), 9, 1);
         #elif defined(_CRYSTAL_EU)
-        ClearBox_Conv2(coord(10, 11, wram->wTilemap), 9, 1);
+        ClearBox(coord(10, 11, wram->wTilemap), 9, 1);
         #else
-        ClearBox_Conv2(coord(10, 11, wram->wTilemap), 9, 1);
+        ClearBox(coord(10, 11, wram->wTilemap), 9, 1);
         #endif
         // goto asm_48201;
         return;
@@ -735,13 +735,13 @@ uint8_t Function4820d(void){
         // LD_B(0x2);
         // LD_C(0x12);
         // CALL(aClearBox);
-        ClearBox_Conv2(coord(1, 15, wram->wTilemap), 0x12, 0x2);
+        ClearBox(coord(1, 15, wram->wTilemap), 0x12, 0x2);
         // LD_DE(mMobileString_ProfileChanged);
         // hlcoord(1, 16, wTilemap);
         // CALL(aPlaceString);
         PlaceStringSimple(U82C(MobileString_ProfileChanged), coord(1, 16, wram->wTilemap));
         // CALL(aWaitBGMap);
-        WaitBGMap_Conv();
+        WaitBGMap();
         // LD_C(48);
         // CALL(aDelayFrames);
         DelayFrames(48);
@@ -749,16 +749,16 @@ uint8_t Function4820d(void){
 
 // asm_4825c:
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aFunction48d30);
     // Function48d30();
     SaveZipcodeWithUniversalFormat();
     // POP_BC;
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // LD_B(SCGB_DIPLOMA);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_DIPLOMA);
+    GetSGBLayout(SCGB_DIPLOMA);
     // LD_HL(wd479);
     // SET_hl(1);
     bit_set(wram->wd479[0], 1);
@@ -779,7 +779,7 @@ void Function48283(void){
     // LD_BC((2 << 8) | 18);
     // hlcoord(1, 15, wTilemap);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(1, 15, wram->wTilemap), 18, 2);
+    ClearBox(coord(1, 15, wram->wTilemap), 18, 2);
     // RET;
 }
 
@@ -820,7 +820,7 @@ void asm_4828d(void){
     PlaceStringSimple(U82C(Strings_484fb[1]), coord(14, 6, wram->wTilemap));
 #endif
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_A_addr(wPlayerGender);
     // INC_A;
     // LD_addr_A(wMenuCursorPosition);
@@ -1069,18 +1069,18 @@ void Function483bb(void){
     // LD_C(0x8);
     // hlcoord(11, 7, wTilemap);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(11, 7, wram->wTilemap), 0x8, 0x2);
+    ClearBox(coord(11, 7, wram->wTilemap), 0x8, 0x2);
     // hlcoord(11, 8, wTilemap);
     // CALL(aPlaceString);
     PlaceStringSimple(U82C(pref), coord(11, 8, wram->wTilemap));
     #elif defined(_CRYSTAL_AU)
-    ClearBox_Conv2(coord(11, 8, wram->wTilemap), 0x8, 0x2);
+    ClearBox(coord(11, 8, wram->wTilemap), 0x8, 0x2);
     PlaceStringSimple(U82C(pref), coord(19 - REGION_CODE_STRING_LENGTH, 9, wram->wTilemap));
     #elif defined(_CRYSTAL_EU)
-    ClearBox_Conv2(coord(9, 8, wram->wTilemap), 0x8, 0x2);
+    ClearBox(coord(9, 8, wram->wTilemap), 0x8, 0x2);
     PlaceStringSimple(U82C(pref), coord(16 - REGION_CODE_STRING_LENGTH, 9, wram->wTilemap));
     #else
-    ClearBox_Conv2(coord(11, 8, wram->wTilemap), 0x8, 0x2);
+    ClearBox(coord(11, 8, wram->wTilemap), 0x8, 0x2);
     PlaceStringSimple(U82C(pref), coord(17 - REGION_CODE_STRING_LENGTH, 9, wram->wTilemap));
     #endif
     // RET;
@@ -1341,12 +1341,12 @@ void Function48689(void){
     // CALL(aGetCrystalCGBLayout);
     GetCrystalCGBLayout(CRYSTAL_CGB_MOBILE_1);
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // hlcoord(0, 0, wTilemap);
     // LD_B(4);
     // LD_C(SCREEN_WIDTH);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(0, 0, wram->wTilemap), SCREEN_WIDTH, 4);
+    ClearBox(coord(0, 0, wram->wTilemap), SCREEN_WIDTH, 4);
     // hlcoord(0, 2, wTilemap);
     // LD_A(0xc);
     // LD_hl_A;
@@ -1592,7 +1592,7 @@ void Function4876f(void){
     Function48cdc(coord(11, 6, wram->wTilemap), 0x1, 0x7);
     #endif
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_A_addr(wd473);
     // AND_A_A;
     // IF_Z goto asm_487ab;
@@ -1908,7 +1908,7 @@ u8_flag_s Function4880e(void){
     Function487ec(coord(12, 7, wram->wTilemap));
     #endif
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_A(0x1);
     // AND_A_A;
     // RET;
@@ -1949,7 +1949,7 @@ void Function488d3(void){
     if(Function48a3a())
         return;
     #if !defined(_CRYSTAL_JP)
-    ClearBox_Conv2(coord(8, 12, wram->wTilemap), 10 - ZIPCODE_LENGTH, 1);
+    ClearBox(coord(8, 12, wram->wTilemap), 10 - ZIPCODE_LENGTH, 1);
     #endif
     // LD_HL(mMenuHeader_0x4850e);
     // CALL(aLoadMenuHeader);
@@ -1983,7 +1983,7 @@ void Function488d3(void){
     DisplayZipCode(coord(19 - ZIPCODE_LENGTH, 11, wram->wTilemap));
     #endif
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     #if defined(_CRYSTAL_JP)
     // LD_A_addr(wd475);
     // LD_B_A;
@@ -2114,7 +2114,7 @@ void asm_48922(uint16_t bc, uint16_t de, uint8_t b, uint8_t d, uint8_t inMenu){
 
     // asm_48994:
         // CALL(aWaitBGMap);
-        WaitBGMap_Conv();
+        WaitBGMap();
         // POP_AF;
         // POP_BC;
         // JR_NC (masm_48922);
@@ -2177,7 +2177,7 @@ void asm_48922(uint16_t bc, uint16_t de, uint8_t b, uint8_t d, uint8_t inMenu){
     // hlcoord(11, 9, wTilemap);
     // LD_BC((1 << 8) | 8);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(11, 9, wram->wTilemap), 8, 1);
+    ClearBox(coord(11, 9, wram->wTilemap), 8, 1);
     // POP_AF;
     // LDH_addr_A(hInMenu);
     hram->hInMenu = inMenu;
@@ -2305,7 +2305,7 @@ void ZipCodeEditMenu(const uint8_t* saved, uint8_t b, uint8_t d, uint8_t inMenu)
 
     // .skip_all_blinking
         // call WaitBGMap
-        WaitBGMap_Conv();
+        WaitBGMap();
         // pop af
         // pop bc
         // jp nc, ZipCodeEditMenu ; If the player didn't validate the zipcode save (didn't press A).
@@ -2381,15 +2381,15 @@ void ZipCodeEditMenu(const uint8_t* saved, uint8_t b, uint8_t d, uint8_t inMenu)
     #if defined(_CRYSTAL_AU)
     // hlcoord 17, 11 ; Location of a clear box to clear any excess characters if 'Tell Now' is selected, but cannot overlap the position of the zip code itself, because otherwise it will clear that too.
     // ld a, 6 - ZIPCODE_LENGTH ; Determines the size of the clearing box
-    ClearBox_Conv2(coord(17, 11, wram->wTilemap), 6 - ZIPCODE_LENGTH + b, 1);
+    ClearBox(coord(17, 11, wram->wTilemap), 6 - ZIPCODE_LENGTH + b, 1);
     #elif defined(_CRYSTAL_EU)
     // hlcoord 9, 11 ; Location of a clear box to clear any excess characters if 'Tell Now' is selected, but cannot overlap the position of the zip code itself, because otherwise it will clear that too.
     // ld a, 10 - ZIPCODE_LENGTH ; Determines the size of the clearing box
-    ClearBox_Conv2(coord(9, 11, wram->wTilemap), 10 - ZIPCODE_LENGTH + b, 1);
+    ClearBox(coord(9, 11, wram->wTilemap), 10 - ZIPCODE_LENGTH + b, 1);
     #else
     // hlcoord 9, 11 ; Location of a clear box to clear any excess characters if 'Tell Now' is selected, but cannot overlap the position of the zip code itself, because otherwise it will clear that too.
     // ld a, 10 - ZIPCODE_LENGTH ; Determines the size of the clearing box
-    ClearBox_Conv2(coord(9, 11, wram->wTilemap), 10 - ZIPCODE_LENGTH + b, 1);
+    ClearBox(coord(9, 11, wram->wTilemap), 10 - ZIPCODE_LENGTH + b, 1);
     #endif
     // add b ; We increase the clearbox width, in case the zipcode has been shifted to the right.
     // ld c, a
@@ -2462,7 +2462,7 @@ void Function4895a(void){
 
 // // asm_48994:
 //     // CALL(aWaitBGMap);
-//     WaitBGMap_Conv();
+//     WaitBGMap();
 //     // POP_AF;
 //     // POP_BC;
 //     // JR_NC (masm_48922);

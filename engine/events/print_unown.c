@@ -39,9 +39,9 @@ void v_UnownPrinter(void){
     // LD_addr_A(wOptions);
     bit_set(wram->wOptions, NO_TEXT_SCROLL);
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
 
     // LD_DE(mUnownDexATile);
     // LD_HL(vTiles0 + LEN_2BPP_TILE * UNOWNSTAMP_BOLD_A);
@@ -58,17 +58,17 @@ void v_UnownPrinter(void){
     // hlcoord(0, 0, wTilemap);
     // LD_BC((3 << 8) | 18);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 0, wram->wTilemap), 3, 18);
+    Textbox(coord(0, 0, wram->wTilemap), 3, 18);
 
     // hlcoord(0, 5, wTilemap);
     // LD_BC((7 << 8) | 7);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 5, wram->wTilemap), 7, 7);
+    Textbox(coord(0, 5, wram->wTilemap), 7, 7);
 
     // hlcoord(0, 14, wTilemap);
     // LD_BC((2 << 8) | 18);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 14, wram->wTilemap), 2, 8);
+    Textbox(coord(0, 14, wram->wTilemap), 2, 8);
 
     // hlcoord(1, 2, wTilemap);
     // LD_DE(mAlphRuinsStampString);
@@ -91,7 +91,7 @@ void v_UnownPrinter(void){
     // CALL(av_UnownPrinter_UpdateUnownFrontpic);
     v_UnownPrinter_UpdateUnownFrontpic();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
 
     // LD_A(UNOWN);
     // LD_addr_A(wCurPartySpecies);
@@ -103,9 +103,9 @@ void v_UnownPrinter(void){
 
     // LD_B(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
+    GetSGBLayout(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
 
     while(1){
     // joy_loop:
@@ -189,7 +189,7 @@ static void v_UnownPrinter_UpdateUnownFrontpic(void){
         // hlcoord(1, 6, wTilemap);
         // LD_BC((7 << 8) | 7);
         // CALL(aClearBox);
-        ClearBox_Conv2(coord(1, 6, wram->wTilemap), 7, 7);
+        ClearBox(coord(1, 6, wram->wTilemap), 7, 7);
         // hlcoord(1, 9, wTilemap);
         // LD_DE(mUnownDexVacantString);
         // CALL(aPlaceString);

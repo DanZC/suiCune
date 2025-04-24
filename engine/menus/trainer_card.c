@@ -121,11 +121,11 @@ static const char BadgeGFX2[] = "gfx/trainer_card/badges.png";
 
 static void TrainerCard_InitRAM(void) {
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aDisableLCD);
     DisableLCD();
 
@@ -157,14 +157,14 @@ static void TrainerCard_InitRAM(void) {
     // CALL(aEnableLCD);
     EnableLCD();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_B(SCGB_TRAINER_CARD);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_TRAINER_CARD);
+    GetSGBLayout(SCGB_TRAINER_CARD);
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_HL(wJumptableIndex);
     // XOR_A_A;  // TRAINERCARDSTATE_PAGE1_LOADGFX
     // LD_hli_A;  // wJumptableIndex
@@ -200,7 +200,7 @@ void TrainerCard_Page1_LoadGFX(void){
     // CALL(aTrainerCard_InitBorder);
     TrainerCard_InitBorder(coord(0, 8, wram->wTilemap), 6);
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_DE(mCardStatusGFX);
     // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x29);
     // LD_BC((BANK(aCardStatusGFX) << 8) | 86);
@@ -250,7 +250,7 @@ void TrainerCard_Page2_LoadGFX(void){
     // CALL(aTrainerCard_InitBorder);
     TrainerCard_InitBorder(coord(0, 8, wram->wTilemap), 6);
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_DE(mLeaderGFX);
     // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x29);
     // LD_BC((BANK(aLeaderGFX) << 8) | 86);
@@ -317,7 +317,7 @@ void TrainerCard_Page3_LoadGFX(void){
     // CALL(aTrainerCard_InitBorder);
     TrainerCard_InitBorder(coord(0, 8, wram->wTilemap), 6);
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_DE(mLeaderGFX2);
     // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x29);
     // LD_BC((BANK(aLeaderGFX2) << 8) | 86);
@@ -434,7 +434,7 @@ void TrainerCard_Page1_PrintDexCaught_GameTime(void){
     // LD_B(wEndPokedexCaught - wPokedexCaught);
     // CALL(aCountSetBits);
     // LD_DE(wNumSetBits);
-    uint8_t setbits = CountSetBits_Conv2(wram->wPokedexCaught, sizeof(wram->wPokedexCaught));
+    uint8_t setbits = CountSetBits(wram->wPokedexCaught, sizeof(wram->wPokedexCaught));
     // hlcoord(15, 10, wTilemap);
     // LD_BC((1 << 8) | 3);
     // CALL(aPrintNum);
@@ -453,7 +453,7 @@ void TrainerCard_Page1_PrintDexCaught_GameTime(void){
     // hlcoord(1, 9, wTilemap);
     // LD_BC((2 << 8) | 17);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(1, 9, wram->wTilemap), 17, 2);
+    ClearBox(coord(1, 9, wram->wTilemap), 17, 2);
     // RET;
 
 

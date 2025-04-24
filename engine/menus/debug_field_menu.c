@@ -150,8 +150,8 @@ static void DebugMobileConnection(void) {
 
 static void DebugFlagMenu(void) {
     LoadStandardMenuHeader_Conv();
-    Textbox_Conv2(coord(0, 0, wram->wTilemap), 6, 12);
-    WaitBGMap_Conv();
+    Textbox(coord(0, 0, wram->wTilemap), 6, 12);
+    WaitBGMap();
     uint16_t flag = EVENT_TEMPORARY_UNTIL_MAP_RELOAD_1;
     while(1) {
         GetJoypad_Conv2();
@@ -178,14 +178,14 @@ static void DebugFlagMenu(void) {
 
         char buffer[32];
         sprintf(buffer, "FLAG - %03d<LF>  %s@", flag, EventFlagAction(flag, CHECK_FLAG)? "ON": "OFF");
-        ClearBox_Conv2(coord(2, 2, wram->wTilemap), 11, 5);
+        ClearBox(coord(2, 2, wram->wTilemap), 11, 5);
         PlaceStringSimple(U82C(buffer), coord(2, 2, wram->wTilemap));
 
         DelayFrame();
     }
 
     CloseWindow_Conv2();
-    WaitBGMap_Conv();
+    WaitBGMap();
 }
 
 void DebugFieldMenu(void) {
@@ -235,7 +235,7 @@ loop:
             uint8_t spawn = EntireFlyMap();
             if(spawn == 0xff || spawn >= NUM_SPAWNS) {
                 CloseWindow_Conv2();
-                // WaitBGMap_Conv();
+                // WaitBGMap();
                 ExitAllMenus_Conv();
                 break;
             }

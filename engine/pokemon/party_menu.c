@@ -23,18 +23,18 @@
 
 u8_flag_s SelectMonFromParty(void){
     // CALL(aDisableSpriteUpdates);
-    DisableSpriteUpdates_Conv();
+    DisableSpriteUpdates();
     // XOR_A_A;
     // LD_addr_A(wPartyMenuActionText);
     wram->wPartyMenuActionText = 0;
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aInitPartyMenuLayout);
     InitPartyMenuLayout();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // CALL(aDelayFrame);
     DelayFrame();
     // CALL(aPartyMenuSelect);
@@ -67,18 +67,18 @@ u8_flag_s SelectTradeOrDayCareMon_Conv(uint8_t b){
     // LD_addr_A(wPartyMenuActionText);
     wram->wPartyMenuActionText = b;
     // CALL(aDisableSpriteUpdates);
-    DisableSpriteUpdates_Conv();
+    DisableSpriteUpdates();
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aInitPartyMenuLayout);
     InitPartyMenuLayout();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_B(SCGB_PARTY_MENU);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_PARTY_MENU);
+    GetSGBLayout(SCGB_PARTY_MENU);
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // CALL(aDelayFrame);
     DelayFrame();
     // CALL(aPartyMenuSelect);
@@ -249,7 +249,7 @@ void PlacePartyHPBar(void){
             SetHPPal_Conv(wram->wHPPals + wram->wSGBPals[0], e);
             // LD_B(SCGB_PARTY_MENU_HP_BARS);
             // CALL(aGetSGBLayout);
-            GetSGBLayout_Conv(SCGB_PARTY_MENU_HP_BARS);
+            GetSGBLayout(SCGB_PARTY_MENU_HP_BARS);
         }
     // skip:
         // LD_HL(wSGBPals);
@@ -267,7 +267,7 @@ void PlacePartyHPBar(void){
     } while(--c != 0);
     // LD_B(SCGB_PARTY_MENU);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_PARTY_MENU);
+    GetSGBLayout(SCGB_PARTY_MENU);
     // RET;
 }
 
@@ -1100,7 +1100,7 @@ void PrintPartyMenuText(void){
     // hlcoord(0, 14, wTilemap);
     // LD_BC((2 << 8) | 18);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 14, wram->wTilemap), 2, 18);
+    Textbox(coord(0, 14, wram->wTilemap), 2, 18);
     // LD_A_addr(wPartyCount);
     // AND_A_A;
     // IF_NZ goto haspokemon;

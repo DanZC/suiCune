@@ -2989,7 +2989,7 @@ void StepFunction_TeleportFrom_Conv(struct Object* bc) {
         // LD_HL(OBJECT_SPRITE_Y_OFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->spriteYOffset = Sine_Conv(++bc->field_1F, 0x60) - 0x60;
+        bc->spriteYOffset = Sine(++bc->field_1F, 0x60) - 0x60;
         // LD_HL(OBJECT_STEP_DURATION);
         // ADD_HL_BC;
         // DEC_hl;
@@ -3175,7 +3175,7 @@ void StepFunction_TeleportTo_Conv(struct Object* bc) {
         // LD_HL(OBJECT_SPRITE_Y_OFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->spriteYOffset = Sine_Conv(++bc->field_1F, 0x60) - 0x60;
+        bc->spriteYOffset = Sine(++bc->field_1F, 0x60) - 0x60;
         // LD_HL(OBJECT_STEP_DURATION);
         // ADD_HL_BC;
         // DEC_hl;
@@ -3359,7 +3359,7 @@ void StepFunction_Skyfall_Conv(struct Object* bc) {
         // LD_HL(OBJECT_SPRITE_Y_OFFSET);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->spriteYOffset = Sine_Conv(++bc->field_1F, 0x60) - 0x60;
+        bc->spriteYOffset = Sine(++bc->field_1F, 0x60) - 0x60;
         // LD_HL(OBJECT_STEP_DURATION);
         // ADD_HL_BC;
         // DEC_hl;

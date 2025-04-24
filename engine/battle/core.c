@@ -3782,7 +3782,7 @@ void DoubleSwitch(void){
         // hlcoord(1, 0, wTilemap);
         // LD_BC((4 << 8) | 10);
         // CALL(aClearBox);
-        ClearBox_Conv2(coord(1, 0, wram->wTilemap), 10, 4);
+        ClearBox(coord(1, 0, wram->wTilemap), 10, 4);
         // CALL(aPlayerPartyMonEntrance);
         PlayerPartyMonEntrance();
         // LD_A(0x1);
@@ -4108,7 +4108,7 @@ void FaintYourPokemon(void){
     // hlcoord(9, 7, wTilemap);
     // LD_BC((5 << 8) | 11);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(9, 7, wram->wTilemap), 11, 5);
+    ClearBox(coord(9, 7, wram->wTilemap), 11, 5);
     // LD_HL(mBattleText_MonFainted);
     // JP(mStdBattleTextbox);
     return StdBattleTextbox(BattleText_MonFainted);
@@ -4128,7 +4128,7 @@ void FaintEnemyPokemon(void){
     // hlcoord(1, 0, wTilemap);
     // LD_BC((4 << 8) | 10);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(1, 0, wram->wTilemap), 10, 4);
+    ClearBox(coord(1, 0, wram->wTilemap), 10, 4);
     // LD_HL(mBattleText_EnemyMonFainted);
     // JP(mStdBattleTextbox);
     return StdBattleTextbox(BattleText_EnemyMonFainted);
@@ -4219,7 +4219,7 @@ uint8_t HandleEnemySwitch_Conv(void){
     // CALL(aUpdateHPPal);
     UpdateHPPal_Conv(&wram->wEnemyHPPal, HP_BAR_LENGTH_PX);
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // FARCALL(aEnemySwitch_TrainerHud);
     EnemySwitch_TrainerHud();
     // LD_A_addr(wLinkMode);
@@ -4450,9 +4450,9 @@ void WinTrainerBattle(void){
         if(wram->wPayDayMoney[0] | wram->wPayDayMoney[1] | wram->wPayDayMoney[2])
             return;
         // CALL(aClearTilemap);
-        ClearTilemap_Conv2();
+        ClearTilemap();
         // CALL(aClearBGPalettes);
-        ClearBGPalettes_Conv();
+        ClearBGPalettes();
         // RET;
         return;
     }
@@ -4967,7 +4967,7 @@ uint8_t ForcePlayerMonChoice(void){
         // CALL(aClearSprites);
         ClearSprites();
         // CALL(aClearBGPalettes);
-        ClearBGPalettes_Conv();
+        ClearBGPalettes();
         // CALL(av_LoadHPBar);
         v_LoadHPBar_Conv();
         // CALL(aExitMenu);
@@ -4975,11 +4975,11 @@ uint8_t ForcePlayerMonChoice(void){
         // CALL(aLoadTilemapToTempTilemap);
         LoadTilemapToTempTilemap();
         // CALL(aWaitBGMap);
-        WaitBGMap_Conv();
+        WaitBGMap();
         // CALL(aGetMemSGBLayout);
-        GetMemSGBLayout_Conv();
+        GetMemSGBLayout();
         // CALL(aSetPalettes);
-        SetPalettes_Conv();
+        SetPalettes();
         // XOR_A_A;
         // LD_C_A;
         // RET;
@@ -5002,7 +5002,7 @@ uint8_t ForcePlayerMonChoice(void){
     // CALL(aResetPlayerStatLevels);
     ResetPlayerStatLevels();
     // CALL(aClearPalettes);
-    ClearPalettes_Conv();
+    ClearPalettes();
     // CALL(aDelayFrame);
     DelayFrame();
     // CALL(av_LoadHPBar);
@@ -5010,9 +5010,9 @@ uint8_t ForcePlayerMonChoice(void){
     // CALL(aCloseWindow);
     CloseWindow_Conv2();
     // CALL(aGetMemSGBLayout);
-    GetMemSGBLayout_Conv();
+    GetMemSGBLayout();
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // CALL(aSendOutMonText);
     SendOutMonText();
     // CALL(aNewBattleMonStatus);
@@ -5126,7 +5126,7 @@ bool IsMobileBattle_Conv(void){
 
 void SetUpBattlePartyMenu(void){
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     return SetUpBattlePartyMenu_Loop();
 }
 
@@ -5149,9 +5149,9 @@ void JumpToPartyMenuAndPrintText(void){
     // FARCALL(aPrintPartyMenuText);
     PrintPartyMenuText();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // CALL(aDelayFrame);
     DelayFrame();
     // RET;
@@ -5285,7 +5285,7 @@ void LostBattle(void){
         // hlcoord(0, 0, wTilemap);
         // LD_BC((8 << 8) | 21);
         // CALL(aClearBox);
-        ClearBox_Conv2(coord(0, 0, wram->wTilemap), 21, 8);
+        ClearBox(coord(0, 0, wram->wTilemap), 21, 8);
         // CALL(aBattleWinSlideInEnemyTrainerFrontpic);
         BattleWinSlideInEnemyTrainerFrontpic();
 
@@ -5301,9 +5301,9 @@ void LostBattle(void){
         // CALL(aWaitPressAorB_BlinkCursor);
         WaitPressAorB_BlinkCursor_Conv();
         // CALL(aClearTilemap);
-        ClearTilemap_Conv2();
+        ClearTilemap();
         // CALL(aClearBGPalettes);
-        ClearBGPalettes_Conv();
+        ClearBGPalettes();
         // RET;
         return;
     }
@@ -5316,7 +5316,7 @@ void LostBattle(void){
         // hlcoord(0, 0, wTilemap);
         // LD_BC((8 << 8) | 21);
         // CALL(aClearBox);
-        ClearBox_Conv2(coord(0, 0, wram->wTilemap), 21, 8);
+        ClearBox(coord(0, 0, wram->wTilemap), 21, 8);
         // CALL(aBattleWinSlideInEnemyTrainerFrontpic);
         BattleWinSlideInEnemyTrainerFrontpic();
 
@@ -5368,7 +5368,7 @@ void LostBattle(void){
                 // hlcoord(0, 0, wTilemap);
                 // LD_BC((8 << 8) | 21);
                 // CALL(aClearBox);
-                ClearBox_Conv2(coord(0, 0, wram->wTilemap), 21, 8);
+                ClearBox(coord(0, 0, wram->wTilemap), 21, 8);
                 // CALL(aBattleWinSlideInEnemyTrainerFrontpic);
                 BattleWinSlideInEnemyTrainerFrontpic();
 
@@ -5393,9 +5393,9 @@ void LostBattle(void){
     //  Grayscale
         // LD_B(SCGB_BATTLE_GRAYSCALE);
         // CALL(aGetSGBLayout);
-        GetSGBLayout_Conv(SCGB_BATTLE_GRAYSCALE);
+        GetSGBLayout(SCGB_BATTLE_GRAYSCALE);
         // CALL(aSetPalettes);
-        SetPalettes_Conv();
+        SetPalettes();
         // goto end;
     }
 
@@ -6445,7 +6445,7 @@ bool OfferSwitch_Conv(void){
             // LD_addr_A(wCurBattleMon);
             wram->wCurBattleMon = wram->wCurPartyMon;
             // CALL(aClearPalettes);
-            ClearPalettes_Conv();
+            ClearPalettes();
             // CALL(aDelayFrame);
             DelayFrame();
             // CALL(av_LoadHPBar);
@@ -6465,7 +6465,7 @@ bool OfferSwitch_Conv(void){
 
     // canceled_switch:
         // CALL(aClearPalettes);
-        ClearPalettes_Conv();
+        ClearPalettes();
         // CALL(aDelayFrame);
         DelayFrame();
         // CALL(av_LoadHPBar);
@@ -6505,9 +6505,9 @@ void ClearEnemyMonBox_Conv(void){
     // hlcoord(1, 0, wTilemap);
     // LD_BC((4 << 8) | 10);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(1, 0, wram->wTilemap), 10, 4);
+    ClearBox(coord(1, 0, wram->wTilemap), 10, 4);
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // JP(mFinishBattleAnim);
     return FinishBattleAnim();
 }
@@ -6520,7 +6520,7 @@ void ShowBattleTextEnemySentOut(void){
     // CALL(aStdBattleTextbox);
     StdBattleTextbox(BattleText_EnemySentOut);
     // JP(mWaitBGMap);
-    return WaitBGMap_Conv();
+    return WaitBGMap();
 
 }
 
@@ -7588,9 +7588,9 @@ void SendOutPlayerMon(void){
     // LD_B(7);
     // LD_C(8);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(1, 5, wram->wTilemap), 8, 7);
+    ClearBox(coord(1, 5, wram->wTilemap), 8, 7);
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
@@ -7784,7 +7784,7 @@ void SpikesDamage(void){
     bc();
 
     // JP(mWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
 
 
 // hl:
@@ -8464,7 +8464,7 @@ void DrawPlayerHUD(void){
     // hlcoord(9, 7, wTilemap);
     // LD_BC((5 << 8) | 11);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(9, 7, wram->wTilemap), 11, 5);
+    ClearBox(coord(9, 7, wram->wTilemap), 11, 5);
 
     FARCALL(aDrawPlayerHUDBorder);
 
@@ -8507,7 +8507,7 @@ uint8_t DrawPlayerHUD_Conv(void){
     // hlcoord(9, 7, wTilemap);
     // LD_BC((5 << 8) | 11);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(9, 7, wram->wTilemap), 11, 5);
+    ClearBox(coord(9, 7, wram->wTilemap), 11, 5);
 
     // FARCALL(aDrawPlayerHUDBorder);
     DrawPlayerHUDBorder();
@@ -8862,7 +8862,7 @@ uint8_t DrawEnemyHUD_Conv(void){
     // hlcoord(1, 0, wTilemap);
     // LD_BC((4 << 8) | 11);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(1, 0, wram->wTilemap), 11, 4);
+    ClearBox(coord(1, 0, wram->wTilemap), 11, 4);
 
     // FARCALL(aDrawEnemyHUDBorder);
     DrawEnemyHUDBorder();
@@ -9198,7 +9198,7 @@ BattleMenu_begin:
                         if(wram->wBattlePlayerAction == BATTLEPLAYERACTION_USEMOVE) {
                         // didnt_use_item:
                             // CALL(aClearPalettes);
-                            ClearPalettes_Conv();
+                            ClearPalettes();
                             // CALL(aDelayFrame);
                             DelayFrame();
                             // CALL(av_LoadBattleFontsHPBar);
@@ -9210,7 +9210,7 @@ BattleMenu_begin:
                             // CALL(aExitMenu);
                             ExitMenu_Conv2();
                             // CALL(aWaitBGMap);
-                            WaitBGMap_Conv();
+                            WaitBGMap();
                             // CALL(aFinishBattleAnim);
                             FinishBattleAnim();
                             // CALL(aLoadTilemapToTempTilemap);
@@ -9260,7 +9260,7 @@ BattleMenu_begin:
                     // CALL(aClearWindowData);
                     ClearWindowData_Conv2();
                     // CALL(aSetPalettes);
-                    SetPalettes_Conv();
+                    SetPalettes();
                     // SCF;
                     // RET;
                     return true;
@@ -9271,7 +9271,7 @@ BattleMenu_begin:
                 // IF_Z goto ball;
                 if(CheckItemPocket_Conv(wram->wCurItem) != BALL) {
                     // CALL(aClearBGPalettes);
-                    ClearBGPalettes_Conv();
+                    ClearBGPalettes();
                 }
 
             // ball:
@@ -9301,7 +9301,7 @@ BattleMenu_begin:
                 // CALL(aUpdateBattleHUDs);
                 UpdateBattleHUDs();
                 // CALL(aWaitBGMap);
-                WaitBGMap_Conv();
+                WaitBGMap();
                 // CALL(aLoadTilemapToTempTilemap);
                 LoadTilemapToTempTilemap();
                 // CALL(aClearWindowData);
@@ -9323,7 +9323,7 @@ BattleMenu_begin:
                 // CALL(aLoadStandardMenuHeader);
                 LoadStandardMenuHeader_Conv();
                 // CALL(aClearBGPalettes);
-                ClearBGPalettes_Conv();
+                ClearBGPalettes();
 
                 while(1) {
                 BattleMenuPKMN_Loop:
@@ -9397,7 +9397,7 @@ BattleMenu_begin:
                                 // LD_addr_A(wBattlePlayerAction);
                                 wram->wBattlePlayerAction = BATTLEPLAYERACTION_SWITCH;
                                 // CALL(aClearPalettes);
-                                ClearPalettes_Conv();
+                                ClearPalettes();
                                 // CALL(aDelayFrame);
                                 DelayFrame();
                                 // CALL(aClearSprites);
@@ -9407,9 +9407,9 @@ BattleMenu_begin:
                                 // CALL(aCloseWindow);
                                 CloseWindow_Conv2();
                                 // CALL(aGetMemSGBLayout);
-                                GetMemSGBLayout_Conv();
+                                GetMemSGBLayout();
                                 // CALL(aSetPalettes);
-                                SetPalettes_Conv();
+                                SetPalettes();
                                 // LD_A_addr(wCurPartyMon);
                                 // LD_addr_A(wCurBattleMon);
                                 wram->wCurBattleMon = wram->wCurPartyMon;
@@ -9445,7 +9445,7 @@ BattleMenu_begin:
                         // CALL(aClearSprites);
                         ClearSprites();
                         // CALL(aClearPalettes);
-                        ClearPalettes_Conv();
+                        ClearPalettes();
                         // CALL(aDelayFrame);
                         DelayFrame();
                         // CALL(av_LoadHPBar);
@@ -9455,9 +9455,9 @@ BattleMenu_begin:
                         // CALL(aLoadTilemapToTempTilemap);
                         LoadTilemapToTempTilemap();
                         // CALL(aGetMemSGBLayout);
-                        GetMemSGBLayout_Conv();
+                        GetMemSGBLayout();
                         // CALL(aSetPalettes);
-                        SetPalettes_Conv();
+                        SetPalettes();
                         // JP(mBattleMenu);
                         goto BattleMenu_begin;
                     }
@@ -9938,7 +9938,7 @@ void BattleMonEntrance(void){
     // hlcoord(9, 7, wTilemap);
     // LD_BC((5 << 8) | 11);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(9, 7, wram->wTilemap), 11, 5);
+    ClearBox(coord(9, 7, wram->wTilemap), 11, 5);
 
     // LD_A_addr(wCurBattleMon);
     // LD_addr_A(wCurPartyMon);
@@ -9979,7 +9979,7 @@ void PassedBattleMonEntrance(void){
     // hlcoord(9, 7, wTilemap);
     // LD_BC((5 << 8) | 11);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(9, 7, wram->wTilemap), 5, 11);
+    ClearBox(coord(9, 7, wram->wTilemap), 5, 11);
 
     // LD_A_addr(wCurPartyMon);
     // LD_addr_A(wCurBattleMon);
@@ -10149,7 +10149,7 @@ MoveSelectionScreen:
 
 // got_dims:
     // CALL(aTextbox);
-    Textbox_Conv2(hl, b, c);
+    Textbox(hl, b, c);
 
     // hlcoord(6, 17 - NUM_MOVES, wTilemap);
     // LD_A_addr(wMoveSelectionMenuType);
@@ -10541,7 +10541,7 @@ void MoveInfoBox(void){
     // LD_B(3);
     // LD_C(9);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 8, wram->wTilemap), 3, 9);
+    Textbox(coord(0, 8, wram->wTilemap), 3, 9);
     // CALL(aMobileTextBorder);
     MobileTextBorder();
 
@@ -12758,7 +12758,7 @@ void Call_PlayBattleAnim_Conv(uint16_t de){
     // LD_addr_A(wFXAnimID + 1);
     wram->wFXAnimID = de;
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // PREDEF_JUMP(pPlayBattleAnim);
     PlayBattleAnim();
 }
@@ -12770,9 +12770,9 @@ void FinishBattleAnim(void){
     // PUSH_HL;
     // LD_B(SCGB_BATTLE_COLORS);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_BATTLE_COLORS);
+    GetSGBLayout(SCGB_BATTLE_COLORS);
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // CALL(aDelayFrame);
     DelayFrame();
     // POP_HL;
@@ -13279,7 +13279,7 @@ void GiveExperiencePoints(void){
             // LD_B(10);
             // LD_C(9);
             // CALL(aTextbox);
-            Textbox_Conv2(coord(9, 0, wram->wTilemap), 10, 9);
+            Textbox(coord(9, 0, wram->wTilemap), 10, 9);
             // hlcoord(11, 1, wTilemap);
             // LD_BC(4);
             // PREDEF(pPrintTempMonStats);
@@ -14515,7 +14515,7 @@ void BattleIntro(void){
     // FARCALL(aFindFirstAliveMonAndStartBattle);
     FindFirstAliveMonAndStartBattle();
     // CALL(aDisableSpriteUpdates);
-    DisableSpriteUpdates_Conv();
+    DisableSpriteUpdates();
     // FARCALL(aClearBattleRAM);
     ClearBattleRAM_Conv();
     // CALL(aInitEnemy);
@@ -14524,7 +14524,7 @@ void BattleIntro(void){
     BackUpBGMap2();
     // LD_B(SCGB_BATTLE_GRAYSCALE);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_BATTLE_GRAYSCALE);
+    GetSGBLayout(SCGB_BATTLE_GRAYSCALE);
     // LD_HL(rLCDC);
     // RES_hl(rLCDC_WINDOW_TILEMAP);  // select vBGMap0/vBGMap2
     gb_write(rLCDC, gb_read(rLCDC) & ((1 << rLCDC_WINDOW_TILEMAP) ^ 0xff));
@@ -14543,11 +14543,11 @@ void BattleIntro(void){
     // hlcoord(9, 7, wTilemap);
     // LD_BC((5 << 8) | 11);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(9, 7, wram->wTilemap), 11, 5);
+    ClearBox(coord(9, 7, wram->wTilemap), 11, 5);
     // hlcoord(1, 0, wTilemap);
     // LD_BC((4 << 8) | 10);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(1, 0, wram->wTilemap), 10, 4);
+    ClearBox(coord(1, 0, wram->wTilemap), 10, 4);
     // CALL(aClearSprites);
     ClearSprites();
     // LD_A_addr(wBattleMode);
@@ -15030,9 +15030,9 @@ void CheckPayDay(void){
     if(!bit_test(wram->wInBattleTowerBattle, 0))
         return;
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // RET;
 }
 
@@ -15048,7 +15048,7 @@ void ShowLinkBattleParticipantsAfterEnd(void){
     // LD_hl_A;
     wram->wOTPartyMon[wram->wCurOTMon].status = wram->wEnemyMon.status[0];
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // FARCALL(av_ShowLinkBattleParticipants);
     v_ShowLinkBattleParticipants();
     // RET;
@@ -15064,7 +15064,7 @@ static void DisplayLinkBattleResult_Mobile_InvalidBattle(void){
     // CALL(aDelayFrames);
     DelayFrames(200);
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // RET;
 }
 
@@ -15148,7 +15148,7 @@ void DisplayLinkBattleResult(void){
         // CALL(aDelayFrames);
         DelayFrames(200);
         // CALL(aClearTilemap);
-        ClearTilemap_Conv2();
+        ClearTilemap();
         // RET;
         return;
     }
@@ -15156,7 +15156,7 @@ void DisplayLinkBattleResult(void){
         // CALL(aWaitPressAorB_BlinkCursor);
         WaitPressAorB_BlinkCursor_Conv();
         // CALL(aClearTilemap);
-        ClearTilemap_Conv2();
+        ClearTilemap();
         // RET;
         return;
     }
@@ -15192,12 +15192,12 @@ void v_DisplayLinkRecord(void){
     // CALL(aByteFill);
     ByteFill(coord(0, 0, wram->wAttrmap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x0);
     // CALL(aWaitBGMap2);
-    WaitBGMap2_Conv();
+    WaitBGMap2();
     // LD_B(SCGB_DIPLOMA);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_DIPLOMA);
+    GetSGBLayout(SCGB_DIPLOMA);
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // LD_C(8);
     // CALL(aDelayFrames);
     DelayFrames(8);
@@ -15276,7 +15276,7 @@ void ReadAndPrintLinkBattleRecord(void){
     static const char Format[] = "  ---  <LF>"
         "         -    -    -";
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aReadAndPrintLinkBattleRecord_PrintBattleRecord);
@@ -15945,13 +15945,13 @@ void InitBattleDisplay(void){
     // LD_B(4);
     // LD_C(18);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 12, wram->wTilemap), 4, 18);
+    Textbox(coord(0, 12, wram->wTilemap), 4, 18);
     // FARCALL(aMobileTextBorder);
     MobileTextBorder();
     // hlcoord(1, 5, wTilemap);
     // LD_BC((3 << 8) | 7);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(1, 5, wram->wTilemap), 7, 3);
+    ClearBox(coord(1, 5, wram->wTilemap), 7, 3);
     // CALL(aLoadStandardFont);
     LoadStandardFont_Conv();
     // CALL(av_LoadBattleFontsHPBar);
@@ -15969,7 +15969,7 @@ void InitBattleDisplay(void){
     // LDH_addr_A(rWY);
     gb_write(rWY, 0x90);
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
@@ -15991,14 +15991,14 @@ void InitBattleDisplay(void){
     // LDH_addr_A(rWY);
     gb_write(rWY, 0x0);
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // CALL(aHideSprites);
     HideSprites();
     // LD_B(SCGB_BATTLE_COLORS);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_BATTLE_COLORS);
+    GetSGBLayout(SCGB_BATTLE_COLORS);
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // LD_A(0x90);
     // LDH_addr_A(hWY);
     hram->hWY = 0x90;

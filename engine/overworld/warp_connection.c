@@ -593,7 +593,7 @@ void LoadMapGraphics(void){
 void LoadMapPalettes(void){
     // LD_B(SCGB_MAPPALS);
     // JP(mGetSGBLayout);
-    return GetSGBLayout_Conv(SCGB_MAPPALS);
+    return GetSGBLayout(SCGB_MAPPALS);
 }
 
 void RefreshMapSprites(void){

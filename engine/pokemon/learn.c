@@ -194,7 +194,7 @@ u8_flag_s ForgetMove(struct PartyMon* mon){
         // LD_B(NUM_MOVES * 2);
         // LD_C(MOVE_NAME_LENGTH);
         // CALL(aTextbox);
-        Textbox_Conv2(coord(5, 2, wram->wTilemap), NUM_MOVES * 2, MOVE_NAME_LENGTH);
+        Textbox(coord(5, 2, wram->wTilemap), NUM_MOVES * 2, MOVE_NAME_LENGTH);
         // hlcoord(5 + 2, 2 + 2, wTilemap);
         // LD_A(SCREEN_WIDTH * 2);
         // LD_addr_A(wListMovesLineSpacing);

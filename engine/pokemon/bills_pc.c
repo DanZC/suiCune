@@ -132,7 +132,7 @@ static void v_DepositPKMN_RunJumptable(void) {
         // CALL(aBillsPC_ApplyPalettes);
         BillsPC_ApplyPalettes(SCGB_BILLS_PC);
         // CALL(aWaitBGMap);
-        WaitBGMap_Conv();
+        WaitBGMap();
         // CALL(aBillsPC_UpdateSelectionCursor);
         BillsPC_UpdateSelectionCursor();
         // CALL(aBillsPC_IncrementJumptableIndex);
@@ -527,7 +527,7 @@ static void v_WithdrawPKMN_RunJumptable(void){
         // CALL(aBillsPC_ApplyPalettes);
         BillsPC_ApplyPalettes(SCGB_BILLS_PC);
         // CALL(aWaitBGMap);
-        WaitBGMap_Conv();
+        WaitBGMap();
         // CALL(aBillsPC_UpdateSelectionCursor);
         BillsPC_UpdateSelectionCursor();
         // CALL(aBillsPC_IncrementJumptableIndex);
@@ -931,7 +931,7 @@ static void v_MovePKMNWithoutMail_RunJumptable(void){
         // CALL(aBillsPC_ApplyPalettes);
         BillsPC_ApplyPalettes(SCGB_BILLS_PC);
         // CALL(aWaitBGMap);
-        WaitBGMap_Conv();
+        WaitBGMap();
         // CALL(aBillsPC_UpdateSelectionCursor);
         BillsPC_UpdateSelectionCursor();
         // CALL(aBillsPC_IncrementJumptableIndex);
@@ -1145,7 +1145,7 @@ static void v_MovePKMNWithoutMail_RunJumptable(void){
         // CALL(aBillsPC_UpdateInsertCursor);
         BillsPC_UpdateInsertCursor();
         // CALL(aWaitBGMap);
-        WaitBGMap_Conv();
+        WaitBGMap();
         // CALL(aBillsPC_IncrementJumptableIndex);
         BillsPC_IncrementJumptableIndex();
         // RET;
@@ -1239,11 +1239,11 @@ static void v_MovePKMNWithoutMail_RunJumptable(void){
 
 void BillsPC_InitRAM(void){
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aBillsPC_InitGFX);
     BillsPC_InitGFX();
     // LD_HL(wBillsPCData);
@@ -1741,7 +1741,7 @@ void BillsPC_PlaceString_Conv(uint8_t* de){
     // hlcoord(0, 15, wTilemap);
     // LD_BC((1 << 8) | 18);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 15, wram->wTilemap), 1, 18);
+    Textbox(coord(0, 15, wram->wTilemap), 1, 18);
     // POP_DE;
     // hlcoord(1, 16, wTilemap);
     // CALL(aPlaceString);
@@ -1765,7 +1765,7 @@ void BillsPC_BoxName(void){
     // hlcoord(8, 0, wTilemap);
     // LD_BC((1 << 8) | 10);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(8, 0, wram->wTilemap), 1, 10);
+    Textbox(coord(8, 0, wram->wTilemap), 1, 10);
 
     uint8_t* de;
     // LD_A_addr(wBillsPC_LoadedBox);
@@ -1813,12 +1813,12 @@ void PCMonInfo(void){
     // hlcoord(0, 0, wTilemap);
     // LD_BC((15 << 8) | 8);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(0, 0, wram->wTilemap), 8, 15);
+    ClearBox(coord(0, 0, wram->wTilemap), 8, 15);
 
     // hlcoord(8, 14, wTilemap);
     // LD_BC((1 << 8) | 3);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(8, 14, wram->wTilemap), 3, 1);
+    ClearBox(coord(8, 14, wram->wTilemap), 3, 1);
 
     // CALL(aBillsPC_GetSelectedPokemonSpecies);
     species_t species = BillsPC_GetSelectedPokemonSpecies_Conv();
@@ -2355,7 +2355,7 @@ void BillsPC_RefreshTextboxes(void){
     // hlcoord(8, 2, wTilemap);
     // LD_BC((10 << 8) | 10);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(8, 2, wram->wTilemap), 10, 10);
+    Textbox(coord(8, 2, wram->wTilemap), 10, 10);
 
     // hlcoord(8, 2, wTilemap);
     // LD_hl(0x7d);
@@ -3278,17 +3278,17 @@ bool DepositPokemon_Conv(void){
     // hlcoord(0, 0, wTilemap);
     // LD_BC((15 << 8) | 8);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(0, 0, wram->wTilemap), 8, 15);
+    ClearBox(coord(0, 0, wram->wTilemap), 8, 15);
     // hlcoord(8, 14, wTilemap);
     // LD_BC((1 << 8) | 3);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(8, 14, wram->wTilemap), 3, 1);
+    ClearBox(coord(8, 14, wram->wTilemap), 3, 1);
     // hlcoord(0, 15, wTilemap);
     // LD_BC((1 << 8) | 18);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 15, wram->wTilemap), 1, 18);
+    Textbox(coord(0, 15, wram->wTilemap), 1, 18);
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // hlcoord(1, 16, wTilemap);
     // LD_DE(mPCString_Stored);
     struct TextPrintState st = {.hl = coord(1, 16, wram->wTilemap), .de = U82C(PCString_Stored)};
@@ -3416,17 +3416,17 @@ bool TryWithdrawPokemon_Conv(void){
     // hlcoord(0, 0, wTilemap);
     // LD_BC((15 << 8) | 8);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(0, 0, wram->wTilemap), 8, 15);
+    ClearBox(coord(0, 0, wram->wTilemap), 8, 15);
     // hlcoord(8, 14, wTilemap);
     // LD_BC((1 << 8) | 3);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(8, 14, wram->wTilemap), 3, 1);
+    ClearBox(coord(8, 14, wram->wTilemap), 3, 1);
     // hlcoord(0, 15, wTilemap);
     // LD_BC((1 << 8) | 18);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 15, wram->wTilemap), 1, 18);
+    Textbox(coord(0, 15, wram->wTilemap), 1, 18);
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // hlcoord(1, 16, wTilemap);
     // LD_DE(mPCString_Got);
     // CALL(aPlaceString);
@@ -3454,18 +3454,18 @@ void ReleasePKMN_ByePKMN(void){
     // hlcoord(0, 0, wTilemap);
     // LD_BC((15 << 8) | 8);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(0, 0, wram->wTilemap), 8, 15);
+    ClearBox(coord(0, 0, wram->wTilemap), 8, 15);
     // hlcoord(8, 14, wTilemap);
     // LD_BC((1 << 8) | 3);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(8, 14, wram->wTilemap), 3, 1);
+    ClearBox(coord(8, 14, wram->wTilemap), 3, 1);
     // hlcoord(0, 15, wTilemap);
     // LD_BC((1 << 8) | 18);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 15, wram->wTilemap), 1, 18);
+    Textbox(coord(0, 15, wram->wTilemap), 1, 18);
 
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_A_addr(wCurPartySpecies);
     // CALL(aGetCryIndex);
     int16_t cry = GetCryIndex_Conv2(wram->wCurPartySpecies);
@@ -3492,7 +3492,7 @@ void ReleasePKMN_ByePKMN(void){
     // hlcoord(0, 15, wTilemap);
     // LD_BC((1 << 8) | 18);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 15, wram->wTilemap), 1, 18);
+    Textbox(coord(0, 15, wram->wTilemap), 1, 18);
     // hlcoord(1, 16, wTilemap);
     // LD_DE(mPCString_Bye);
     struct TextPrintState st = {.hl = coord(1, 16, wram->wTilemap), .de = U82C(PCString_Bye)};
@@ -3533,7 +3533,7 @@ void MovePKMNWitoutMail_InsertMon(void){
     // hlcoord(0, 15, wTilemap);
     // LD_BC((1 << 8) | 18);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 15, wram->wTilemap), 1, 18);
+    Textbox(coord(0, 15, wram->wTilemap), 1, 18);
     // hlcoord(1, 16, wTilemap);
     // LD_DE(mMovePKMNWitoutMail_InsertMon_Saving_LeaveOn);
     // CALL(aPlaceString);
@@ -3939,7 +3939,7 @@ uint32_t GetBoxPointer_Conv(uint8_t b){
 void BillsPC_ApplyPalettes(uint8_t a){
     // LD_B_A;
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(a);
+    GetSGBLayout(a);
     // LD_A(0b11100100);
     // CALL(aDmgToCgbBGPals);
     DmgToCgbBGPals_Conv(0b11100100);
@@ -4038,7 +4038,7 @@ void v_ChangeBox(void){
         // hlcoord(0, 4, wTilemap);
         // LD_BC((8 << 8) | 9);
         // CALL(aTextbox);
-        Textbox_Conv2(coord(0, 4, wram->wTilemap), 8, 9);
+        Textbox(coord(0, 4, wram->wTilemap), 8, 9);
         // CALL(aScrollingMenu);
         uint8_t joypad = ScrollingMenu_Conv();
         // LD_A_addr(wMenuJoypad);
@@ -4141,7 +4141,7 @@ void BillsPC_PrintBoxCountAndCapacity(void){
     // hlcoord(11, 7, wTilemap);
     // LD_BC((5 << 8) | 7);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(11, 7, wram->wTilemap), 5, 7);
+    Textbox(coord(11, 7, wram->wTilemap), 5, 7);
     // LD_A_addr(wMenuSelection);
     // CP_A(-1);
     // RET_Z ;
@@ -4244,7 +4244,7 @@ void BillsPC_PrintBoxName(void){
     // LD_B(2);
     // LD_C(18);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 0, wram->wTilemap), 2, 18);
+    Textbox(coord(0, 0, wram->wTilemap), 2, 18);
     // hlcoord(1, 2, wTilemap);
     // LD_DE(mBillsPC_PrintBoxName_Current);
     // CALL(aPlaceString);
@@ -4316,7 +4316,7 @@ void BillsPC_ChangeBoxSubmenu(void){
         // FARCALL(aNamingScreen);
         NamingScreen_Conv(wram->wBoxNameBuffer, NAME_BOX);
         // CALL(aClearTilemap);
-        ClearTilemap_Conv2();
+        ClearTilemap();
         // CALL(aLoadStandardFont);
         LoadStandardFont_Conv();
         // CALL(aLoadFontsBattleExtra);
@@ -4329,7 +4329,7 @@ void BillsPC_ChangeBoxSubmenu(void){
         // LD_HL(wBoxNameBuffer);
         // LD_C(BOX_NAME_LENGTH - 1);
         // CALL(aInitString);
-        InitString_Conv2(wram->wBoxNameBuffer, GetBoxName_Conv(wram->wMenuSelection - 1), BOX_NAME_LENGTH - 1);
+        InitString(wram->wBoxNameBuffer, GetBoxName_Conv(wram->wMenuSelection - 1), BOX_NAME_LENGTH - 1);
         // LD_A_addr(wMenuSelection);
         // DEC_A;
         // CALL(aGetBoxName);
@@ -4424,7 +4424,7 @@ void BillsPC_PlaceChangeBoxString_Conv(uint8_t* de){
     // hlcoord(0, 14, wTilemap);
     // LD_BC((2 << 8) | 18);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 14, wram->wTilemap), 2, 18);
+    Textbox(coord(0, 14, wram->wTilemap), 2, 18);
     // POP_DE;
     // hlcoord(1, 16, wTilemap);
     // CALL(aPlaceString);

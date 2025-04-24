@@ -58,13 +58,13 @@ void PhoneRing_CopyTilemapAtOnce_Conv(void){
     // AND_A_A;
     // JP_Z (mWaitBGMap);
     if(hram->hCGB == 0)
-        return WaitBGMap_Conv();
+        return WaitBGMap();
     
     // LD_A_addr(wSpriteUpdatesEnabled);
     // CP_A(0x0);
     // JP_Z (mWaitBGMap);
     if(wram->wSpriteUpdatesEnabled == 0x0)
-        return WaitBGMap_Conv();
+        return WaitBGMap();
 
 //  The following is a modified version of _CopyTilemapAtOnce
 //  that waits for [rLY] to be LY_VBLANK - 1 instead of $80 - 1.

@@ -575,15 +575,15 @@ static void EZChat_EditMenu_InitKanaMode(void){
     // CALL(aFunction11c254);
     Function11c254(wram->wMenuCursorY - 1);
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aClearScreen);
-    ClearScreen_Conv2();
+    ClearScreen();
     // CALL(aFunction11d323);
     Function11d323();
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // CALL(aDisableLCD);
     DisableLCD();
     // LD_HL(mSelectStartGFX);
@@ -5885,7 +5885,7 @@ static bool EZChat_GetSeenPokemonByKana_CheckSeenMon(species_t a){
     // POP_BC;
     // POP_HL;
     // RET;
-    return CheckSeenMon_Conv(a - 1);
+    return CheckSeenMon(a - 1);
 }
 
 void EZChat_GetSeenPokemonByKana(void){

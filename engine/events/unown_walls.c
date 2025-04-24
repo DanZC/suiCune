@@ -258,7 +258,7 @@ void DisplayUnownWords(void){
     // CALL(av_DisplayUnownWords_FillAttr);
     v_DisplayUnownWords_FillAttr(hl, de);
     // CALL(aWaitBGMap2);
-    WaitBGMap2_Conv();
+    WaitBGMap2();
     // CALL(aJoyWaitAorB);
     JoyWaitAorB_Conv();
     // CALL(aPlayClickSFX);

@@ -54,11 +54,11 @@ void PrintPage1(void){
     // hlcoord(2, 11, wPrinterTilemapBuffer);
     // LD_BC((5 << 8) | 18);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(2, 11, wram->wPrinterTilemapBuffer), 18, 5);
+    ClearBox(coord(2, 11, wram->wPrinterTilemapBuffer), 18, 5);
     // LD_A_addr(wTempSpecies);
     // DEC_A;
     // CALL(aCheckCaughtMon);
-    bool caught = CheckCaughtMon_Conv(wram->wTempSpecies - 1);
+    bool caught = CheckCaughtMon(wram->wTempSpecies - 1);
     // PUSH_AF;
     // LD_A_addr(wTempSpecies);
     // LD_B_A;
@@ -146,7 +146,7 @@ void PrintPage2(void){
     // LD_A_addr(wTempSpecies);
     // DEC_A;
     // CALL(aCheckCaughtMon);
-    bool caught = CheckCaughtMon_Conv(wram->wTempSpecies - 1);
+    bool caught = CheckCaughtMon(wram->wTempSpecies - 1);
     // PUSH_AF;
     // LD_A_addr(wTempSpecies);
     // LD_B_A;
@@ -204,9 +204,9 @@ const char GBPrinterString_PrinterError4[] =
 
 void PrintPartyMonPage1(void){
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aClearSprites);
     ClearSprites();
     // XOR_A_A;
@@ -242,7 +242,7 @@ void PrintPartyMonPage1(void){
     // LD_B(9);
     // LD_C(18);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 7, wram->wTilemap), 9, 18);
+    Textbox(coord(0, 7, wram->wTilemap), 9, 18);
     // hlcoord(8, 2, wTilemap);
     // LD_A_addr(wTempMonLevel);
     // CALL(aPrintLevel_Force3Digits);
@@ -330,12 +330,12 @@ void PrintPartyMonPage1(void){
     // CALL(av_PrepMonFrontpic);
     v_PrepMonFrontpic_Conv(coord(0, 0, wram->wTilemap));
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_B(SCGB_STATS_SCREEN_HP_PALS);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_STATS_SCREEN_HP_PALS);
+    GetSGBLayout(SCGB_STATS_SCREEN_HP_PALS);
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // RET;
 }
 
@@ -348,9 +348,9 @@ static void PrintPartyMonPage2_PrintTempMonStats(tile_t* hl, uint16_t de){
 
 void PrintPartyMonPage2(void){
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aClearSprites);
     ClearSprites();
     // XOR_A_A;
@@ -367,7 +367,7 @@ void PrintPartyMonPage2(void){
     // LD_B(15);
     // LD_C(18);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 0, wram->wTilemap), 15, 18);
+    Textbox(coord(0, 0, wram->wTilemap), 15, 18);
     // LD_BC(SCREEN_WIDTH);
     // decoord(0, 0, wTilemap);
     // hlcoord(0, 1, wTilemap);
@@ -410,12 +410,12 @@ void PrintPartyMonPage2(void){
     // CALL(aPrintPartyMonPage2_PrintTempMonStats);
     PrintPartyMonPage2_PrintTempMonStats(coord(16, 15, wram->wTilemap), wram->wTempMon.speed);
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_B(SCGB_STATS_SCREEN_HP_PALS);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_STATS_SCREEN_HP_PALS);
+    GetSGBLayout(SCGB_STATS_SCREEN_HP_PALS);
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // RET;
 }
 

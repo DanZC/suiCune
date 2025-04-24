@@ -43,7 +43,7 @@ void BlindingFlash(void){
     UpdateTimeOfDayPal();
     // LD_B(SCGB_MAPPALS);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_MAPPALS);
+    GetSGBLayout(SCGB_MAPPALS);
     // FARCALL(aLoadOW_BGPal7);
     LoadOW_BGPal7();
     // FARCALL(aFadeInPalettes);
@@ -112,7 +112,7 @@ void ShakeHeadbuttTree(void){
     // CALL(aOverworldTextModeSwitch);
     OverworldTextModeSwitch_Conv();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
@@ -169,7 +169,7 @@ void HideHeadbuttTree(void){
     loc[SCREEN_WIDTH]   = grass_block;
     loc[SCREEN_WIDTH+1] = grass_block;
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;

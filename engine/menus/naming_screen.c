@@ -42,7 +42,7 @@ void v_NamingScreen(void){
 
 void v_NamingScreen_Conv(uint8_t* de, uint8_t b){
     // CALL(aDisableSpriteUpdates);
-    DisableSpriteUpdates_Conv();
+    DisableSpriteUpdates();
     // CALL(aNamingScreen);
     NamingScreen_Conv(de, b);
     // CALL(aReturnToMapWithSpeechTextbox);
@@ -374,10 +374,10 @@ void NamingScreen_Conv(uint8_t* de, uint8_t b){
 
 static void NamingScreen_SetUpNamingScreen(void) {
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // LD_B(SCGB_DIPLOMA);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_DIPLOMA);
+    GetSGBLayout(SCGB_DIPLOMA);
     // CALL(aDisableLCD);
     DisableLCD();
     // CALL(aLoadNamingScreenGFX);
@@ -390,11 +390,11 @@ static void NamingScreen_SetUpNamingScreen(void) {
     // CALL(aNamingScreen_GetNamingScreenSetup);
     NamingScreen_GetNamingScreenSetup();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // CALL(aWaitTop);
     WaitTop();
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // CALL(aNamingScreen_InitNameEntry);
     NamingScreen_InitNameEntry();
     // RET;
@@ -666,9 +666,9 @@ void NamingScreen_InitText(void){
     // IF_NZ goto not_box;
     // LD_BC((4 << 8) | 18);
     if(NamingScreen_IsTargetBox())
-        ClearBox_Conv2(coord(1, 1, wram->wTilemap), 18, 4);
+        ClearBox(coord(1, 1, wram->wTilemap), 18, 4);
     else
-        ClearBox_Conv2(coord(1, 1, wram->wTilemap), 18, 6);
+        ClearBox(coord(1, 1, wram->wTilemap), 18, 6);
 
 // not_box:
     // CALL(aClearBox);
@@ -702,13 +702,13 @@ void NamingScreen_ApplyTextInputMode(const char* de){
 // not_box_2:
     // CALL(aClearBox);
     if(NamingScreen_IsTargetBox())
-        ClearBox_Conv2(coord(1, 6, wram->wTilemap), 18, 9);
+        ClearBox(coord(1, 6, wram->wTilemap), 18, 9);
     else
-        ClearBox_Conv2(coord(1, 8, wram->wTilemap), 18, 7);
+        ClearBox(coord(1, 8, wram->wTilemap), 18, 7);
     // hlcoord(1, 16, wTilemap);
     // LD_BC((1 << 8) | 18);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(1, 16, wram->wTilemap), 18, 1);
+    ClearBox(coord(1, 16, wram->wTilemap), 18, 1);
     // POP_DE;
     uint8_t* hl;
     uint8_t b;
@@ -947,7 +947,7 @@ static void NamingScreenJoypadLoop_UpdateStringEntry(void){
 // got_coords:
     // LD_BC((1 << 8) | 18);
     // CALL(aClearBox);
-    ClearBox_Conv2(hl, 18, 1);
+    ClearBox(hl, 18, 1);
     // LD_HL(wNamingScreenDestinationPointer);
     // LD_E_hl;
     // INC_HL;
@@ -1770,7 +1770,7 @@ static void v_ComposeMailMessage_InitCharset(void){
     // hlcoord(1, 1, wTilemap);
     // LD_BC((4 << 8) | (SCREEN_WIDTH - 2));
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(1, 1, wram->wTilemap), SCREEN_WIDTH - 2, 4);
+    ClearBox(coord(1, 1, wram->wTilemap), SCREEN_WIDTH - 2, 4);
     // LD_DE(mMailEntry_Uppercase);
     return v_ComposeMailMessage_PlaceMailCharset(U82C(MailEntry_Uppercase));
 }
@@ -1778,7 +1778,7 @@ static void v_ComposeMailMessage_InitCharset(void){
 static void v_ComposeMailMessage_InitBlankMail(void) {
     static const char MailIcon[] = "gfx/icons/mail_big.png";
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aDisableLCD);
     DisableLCD();
     // CALL(aLoadNamingScreenGFX);
@@ -1821,9 +1821,9 @@ static void v_ComposeMailMessage_InitBlankMail(void) {
     }
     // LD_B(SCGB_DIPLOMA);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_DIPLOMA);
+    GetSGBLayout(SCGB_DIPLOMA);
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // CALL(aWaitTop);
     WaitTop();
     // LD_A(0b11100100);
@@ -1856,7 +1856,7 @@ static void v_ComposeMailMessage_Update(void){
     // hlcoord(1, 1, wTilemap);
     // LD_BC((4 << 8) | 18);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(1, 1, wram->wTilemap), 18, 4);
+    ClearBox(coord(1, 1, wram->wTilemap), 18, 4);
     // LD_HL(wNamingScreenDestinationPointer);
     // LD_E_hl;
     // INC_HL;

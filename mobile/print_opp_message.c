@@ -10,7 +10,7 @@ void Mobile_PrintOpponentBattleMessage(uint8_t c){
     // LD_A_C;
     // PUSH_AF;
     // CALL(aSpeechTextbox);
-    SpeechTextbox_Conv2();
+    SpeechTextbox();
     // CALL(aMobileTextBorder);
     MobileTextBorder();
     // POP_AF;

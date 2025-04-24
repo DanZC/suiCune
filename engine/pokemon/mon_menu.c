@@ -316,7 +316,7 @@ u8_pair_s PokemonActionSubmenu(void){
     // hlcoord(1, 15, wTilemap);
     // LD_BC((2 << 8) | 18);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(1, 15, wram->wTilemap), 18, 2);
+    ClearBox(coord(1, 15, wram->wTilemap), 18, 2);
     // FARCALL(aMonSubmenu);
     MonSubmenu();
     // CALL(aGetCurNickname);
@@ -395,9 +395,9 @@ u8_pair_s SwitchPartyMons(void){
         // LD_hl(0xec);
         coord(0, 1, wram->wTilemap)[SCREEN_WIDTH * 2 * (wram->wSwitchMon - 1)] = 0xec;
         // CALL(aWaitBGMap);
-        WaitBGMap_Conv();
+        WaitBGMap();
         // CALL(aSetPalettes);
-        SetPalettes_Conv();
+        SetPalettes();
         // CALL(aDelayFrame);
         DelayFrame();
 
@@ -509,11 +509,11 @@ u8_pair_s GiveTakePartyMonItem(void){
         // CALL(aLoadStandardMenuHeader);
         LoadStandardMenuHeader_Conv();
         // CALL(aClearPalettes);
-        ClearPalettes_Conv();
+        ClearPalettes();
         // CALL(aGiveTakePartyMonItem_GiveItem);
         GiveTakePartyMonItem_GiveItem();
         // CALL(aClearPalettes);
-        ClearPalettes_Conv();
+        ClearPalettes();
         // CALL(aLoadFontsBattleExtra);
         LoadFontsBattleExtra_Conv();
         // CALL(aExitMenu);
@@ -539,7 +539,7 @@ cancel:
 
 void TryGiveItemToPartymon(void){
     // CALL(aSpeechTextbox);
-    SpeechTextbox_Conv2();
+    SpeechTextbox();
     // CALL(aPartyMonItemName);
     PartyMonItemName_Conv(wram->wCurItem);
     // CALL(aGetPartyItemLocation);
@@ -638,7 +638,7 @@ void GivePartyItem(item_t item){
 
 void TakePartyItem(void){
     // CALL(aSpeechTextbox);
-    SpeechTextbox_Conv2();
+    SpeechTextbox();
     // CALL(aGetPartyItemLocation);
     item_t* itm = GetPartyItemLocation();
     // LD_A_hl;
@@ -1403,7 +1403,7 @@ static bool ChooseMoveToDelete_ChooseMoveToDelete(void){
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // POP_AF;
     // RET;
     return quit;
@@ -1426,7 +1426,7 @@ u8_flag_s ChooseMoveToDelete_Conv(void){
     wram->wOptions = options;
     // PUSH_AF;
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // POP_AF;
     // RET;
     return u8_flag(wram->wMenuCursorY, quit);
@@ -1457,7 +1457,7 @@ u8_pair_s ManagePokemonMoves(void){
         // LD_addr_A(wOptions);
         wram->wOptions = options;
         // CALL(aClearBGPalettes);
-        ClearBGPalettes_Conv();
+        ClearBGPalettes();
     }
 
 // egg:
@@ -1630,7 +1630,7 @@ joy_loop:
         // hlcoord(1, 2, wTilemap);
         // LD_BC((8 << 8) | (SCREEN_WIDTH - 2));
         // CALL(aClearBox);
-        ClearBox_Conv2(coord(1, 2, wram->wTilemap), SCREEN_WIDTH - 2, 8);
+        ClearBox(coord(1, 2, wram->wTilemap), SCREEN_WIDTH - 2, 8);
         // JP(mMoveScreenLoop_loop);
         goto loop;
     }
@@ -1699,11 +1699,11 @@ joy_loop:
         // hlcoord(1, 2, wTilemap);
         // LD_BC((8 << 8) | 18);
         // CALL(aClearBox);
-        ClearBox_Conv2(coord(1, 2, wram->wTilemap), 18, 8);
+        ClearBox(coord(1, 2, wram->wTilemap), 18, 8);
         // hlcoord(10, 10, wTilemap);
         // LD_BC((1 << 8) | 9);
         // CALL(aClearBox);
-        ClearBox_Conv2(coord(10, 10, wram->wTilemap), 9, 1);
+        ClearBox(coord(10, 10, wram->wTilemap), 9, 1);
         // JP(mMoveScreenLoop_loop);
         goto loop;
     }
@@ -1779,7 +1779,7 @@ moving_move:
     // hlcoord(1, 12, wTilemap);
     // LD_BC((5 << 8) | (SCREEN_WIDTH - 2));
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(1, 12, wram->wTilemap), SCREEN_WIDTH - 2, 5);
+    ClearBox(coord(1, 12, wram->wTilemap), SCREEN_WIDTH - 2, 5);
     // hlcoord(1, 12, wTilemap);
     // LD_DE(mString_MoveWhere);
     // CALL(aPlaceString);
@@ -1797,7 +1797,7 @@ exit:
     // CALL(aClearSprites);
     ClearSprites();
     // JP(mClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
 }
 
 const uint8_t MoveScreen2DMenuData[] = {
@@ -1812,9 +1812,9 @@ const char String_MoveWhere[] = "Where?@";
 
 void SetUpMoveScreenBG(void){
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aClearSprites);
     ClearSprites();
     // XOR_A_A;
@@ -1839,16 +1839,16 @@ void SetUpMoveScreenBG(void){
     // LD_B(9);
     // LD_C(18);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 1, wram->wTilemap), 9, 18);
+    Textbox(coord(0, 1, wram->wTilemap), 9, 18);
     // hlcoord(0, 11, wTilemap);
     // LD_B(5);
     // LD_C(18);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 11, wram->wTilemap), 5, 18);
+    Textbox(coord(0, 11, wram->wTilemap), 5, 18);
     // hlcoord(2, 0, wTilemap);
     // LD_BC((2 << 8) | 3);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(2, 0, wram->wTilemap), 3, 2);
+    ClearBox(coord(2, 0, wram->wTilemap), 3, 2);
     // XOR_A_A;
     // LD_addr_A(wMonType);
     wram->wMonType = 0;
@@ -1873,11 +1873,11 @@ void SetUpMoveScreenBG(void){
     SetHPPal_Conv(&wram->wPlayerHPPal, e);
     // LD_B(SCGB_MOVE_LIST);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_MOVE_LIST);
+    GetSGBLayout(SCGB_MOVE_LIST);
     // hlcoord(16, 0, wTilemap);
     // LD_BC((1 << 8) | 3);
     // JP(mClearBox);
-    return ClearBox_Conv2(coord(16, 0, wram->wTilemap), 3, 1);
+    return ClearBox(coord(16, 0, wram->wTilemap), 3, 1);
 }
 
 void SetUpMoveList(void){
@@ -1905,9 +1905,9 @@ void SetUpMoveList(void){
     // PREDEF(pListMovePP);
     ListMovePP_Conv(coord(10, 4, wram->wTilemap));
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // LD_A_addr(wNumMoves);
     // INC_A;
     // LD_addr_A(w2DMenuNumRows);
@@ -1916,7 +1916,7 @@ void SetUpMoveList(void){
     // LD_B(5);
     // LD_C(18);
     // JP(mTextbox);
-    return Textbox_Conv2(coord(0, 11, wram->wTilemap), 5, 18);
+    return Textbox(coord(0, 11, wram->wTilemap), 5, 18);
 }
 
 void PrepareToPlaceMoveData(void){
@@ -1935,7 +1935,7 @@ void PrepareToPlaceMoveData(void){
     // hlcoord(1, 12, wTilemap);
     // LD_BC((5 << 8) | 18);
     // JP(mClearBox);
-    return ClearBox_Conv2(coord(1, 12, wram->wTilemap), 18, 5);
+    return ClearBox(coord(1, 12, wram->wTilemap), 18, 5);
 }
 
 void PlaceMoveData(void){

@@ -606,7 +606,7 @@ void HatchEggs(void){
             wram->wCurPartyMon = mon;
             // DEC_A;
             // CALL(aSetSeenAndCaughtMon);
-            SetSeenAndCaughtMon_Conv(partySpecies - 1);
+            SetSeenAndCaughtMon(partySpecies - 1);
 
             // LD_A_addr(wCurPartySpecies);
             // CP_A(TOGEPI);
@@ -728,7 +728,7 @@ void HatchEggs(void){
                 // POP_HL;
                 // LD_DE(wStringBuffer1);
                 // CALL(aInitName);
-                InitName_Conv2(wram->wPartyMonNickname[mon], wram->wStringBuffer1);
+                InitName(wram->wPartyMonNickname[mon], wram->wStringBuffer1);
                 // goto next;
             }
             else {
@@ -1423,9 +1423,9 @@ void Hatch_UpdateFrontpicBGMapCenter(tile_t* hl, uint8_t b, uint8_t c, uint8_t a
     // CALL(aHatch_LoadFrontpicPal);
     Hatch_LoadFrontpicPal(a);
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // JP(mWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
 }
 
 void EggHatch_DoAnimFrame(void){
@@ -1587,7 +1587,7 @@ void Hatch_LoadFrontpicPal(uint8_t a){
     // LD_B(SCGB_EVOLUTION);
     // LD_C(0x0);
     // JP(mGetSGBLayout);
-    return GetSGBLayout_Conv(SCGB_EVOLUTION);
+    return GetSGBLayout(SCGB_EVOLUTION);
 }
 
 void EggHatch_CrackShell(void){

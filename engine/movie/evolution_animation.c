@@ -24,7 +24,7 @@ static void EvolutionAnimation_GetSGBLayout(bool c){
         return v_CGB_Evolution2();
     }
     else {
-        return GetSGBLayout_Conv(SCGB_EVOLUTION);
+        return GetSGBLayout(SCGB_EVOLUTION);
     }
 }
 
@@ -100,7 +100,7 @@ static void EvolutionAnimation_ReplaceFrontpic(void){
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // POP_BC;
     // RET;
 }
@@ -347,7 +347,7 @@ static void EvolutionAnimation_EvolutionAnimation(void){
     // LD_addr_A(wLowHealthAlarm);
     wram->wLowHealthAlarm = 0x0;
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;

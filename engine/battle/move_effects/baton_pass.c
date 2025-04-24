@@ -43,7 +43,7 @@ void BattleCommand_BatonPass(void){
 
     //  Return to battle scene
         // CALL(aClearPalettes);
-        ClearPalettes_Conv();
+        ClearPalettes();
         // FARCALL(av_LoadBattleFontsHPBar);
         v_LoadBattleFontsHPBar();
         // CALL(aCloseWindow);
@@ -53,12 +53,12 @@ void BattleCommand_BatonPass(void){
         // hlcoord(1, 0, wTilemap);
         // LD_BC((4 << 8) | 10);
         // CALL(aClearBox);
-        ClearBox_Conv2(coord(1, 0, wram->wTilemap), 10, 4);
+        ClearBox(coord(1, 0, wram->wTilemap), 10, 4);
         // LD_B(SCGB_BATTLE_COLORS);
         // CALL(aGetSGBLayout);
-        GetSGBLayout_Conv(SCGB_BATTLE_COLORS);
+        GetSGBLayout(SCGB_BATTLE_COLORS);
         // CALL(aSetPalettes);
-        SetPalettes_Conv();
+        SetPalettes();
         // CALL(aBatonPass_LinkPlayerSwitch);
         BatonPass_LinkPlayerSwitch();
 

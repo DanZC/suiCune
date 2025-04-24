@@ -70,12 +70,12 @@ void InitClock(void){
     // CALL(aRotateFourPalettesLeft);
     RotateFourPalettesLeft_Conv();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aClearSprites);
     ClearSprites();
     // LD_B(SCGB_DIPLOMA);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_DIPLOMA);
+    GetSGBLayout(SCGB_DIPLOMA);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
@@ -99,7 +99,7 @@ void InitClock(void){
     // CALL(aInitClock_ClearScreen);
     InitClock_ClearScreen();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // CALL(aRotateFourPalettesRight);
     RotateFourPalettesRight_Conv();
     // LD_HL(mOakTimeWokeUpText);
@@ -123,7 +123,7 @@ void InitClock(void){
         // LD_B(2);
         // LD_C(15);
         // CALL(aTextbox);
-        Textbox_Conv2(coord(3, 7, wram->wTilemap), 2, 15);
+        Textbox(coord(3, 7, wram->wTilemap), 2, 15);
         // hlcoord(11, 7, wTilemap);
         // LD_hl(0x1);
         *coord(11, 7, wram->wTilemap) = TILE_TIMESET_UP;
@@ -171,7 +171,7 @@ void InitClock(void){
         // hlcoord(11, 7, wTilemap);
         // LD_BC((2 << 8) | 7);
         // CALL(aTextbox);
-        Textbox_Conv2(coord(11, 7, wram->wTilemap), 2, 7);
+        Textbox(coord(11, 7, wram->wTilemap), 2, 7);
         // hlcoord(15, 7, wTilemap);
         // LD_hl(0x1);
         *coord(15, 7, wram->wTilemap) = TILE_TIMESET_UP;
@@ -352,7 +352,7 @@ bool SetHour_Conv(void){
     // CALL(aDisplayHourOClock);
     DisplayHourOClock_Conv(coord(4, 9, wram->wTilemap));
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // AND_A_A;
     // RET;
     return false;
@@ -547,7 +547,7 @@ bool SetMinutes_Conv(void){
     // CALL(aDisplayMinutesWithMinString);
     DisplayMinutesWithMinString_Conv(coord(12, 9, wram->wTilemap));
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // AND_A_A;
     // RET;
     return false;
@@ -855,12 +855,12 @@ static bool SetDayOfWeek_GetJoypadAction(void) {
     // LD_B(2);
     // LD_C(9);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(10, 4, wram->wTilemap), 9, 2);
+    ClearBox(coord(10, 4, wram->wTilemap), 9, 2);
     // hlcoord(10, 5, wTilemap);
     // CALL(aSetDayOfWeek_PlaceWeekdayString);
     SetDayOfWeek_PlaceWeekdayString(coord(10, 5, wram->wTilemap));
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // AND_A_A;
     // RET;
     return false;
@@ -892,7 +892,7 @@ void SetDayOfWeek(void){
         // hlcoord(0, 12, wTilemap);
         // LD_BC((4 << 8) | 18);
         // CALL(aTextbox);
-        Textbox_Conv2(coord(0, 12, wram->wTilemap), 4, 18);
+        Textbox(coord(0, 12, wram->wTilemap), 4, 18);
         // CALL(aLoadStandardMenuHeader);
         LoadStandardMenuHeader_Conv();
         // LD_HL(mSetDayOfWeek_OakTimeWhatDayIsItText);
@@ -902,7 +902,7 @@ void SetDayOfWeek(void){
         // LD_B(2);
         // LD_C(9);
         // CALL(aTextbox);
-        Textbox_Conv2(coord(9, 3, wram->wTilemap), 2, 9);
+        Textbox(coord(9, 3, wram->wTilemap), 2, 9);
         // hlcoord(14, 3, wTilemap);
         // LD_hl(TIMESET_UP_ARROW);
         *coord(14, 3, wram->wTilemap) = TIMESET_UP_ARROW;
@@ -974,7 +974,7 @@ void InitialSetDSTFlag(void){
     // hlcoord(1, 14, wTilemap);
     // LD_BC((3 << 8) | 18);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(1, 14, wram->wTilemap), 18, 3);
+    ClearBox(coord(1, 14, wram->wTilemap), 18, 3);
     // LD_HL(mInitialSetDSTFlag_Text);
     // CALL(aPlaceHLTextAtBC);
     PlaceHLTextAtBC_Conv2(coord(1, 14, wram->wTilemap), (struct TextCmd[]){ text_asm(InitialSetDSTFlag_Text) });
@@ -1012,7 +1012,7 @@ void InitialClearDSTFlag(void){
     // hlcoord(1, 14, wTilemap);
     // LD_BC((3 << 8) | 18);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(1, 14, wram->wTilemap), 18, 3);
+    ClearBox(coord(1, 14, wram->wTilemap), 18, 3);
     // LD_HL(mInitialClearDSTFlag_Text);
     // CALL(aPlaceHLTextAtBC);
     PlaceHLTextAtBC_Conv2(coord(1, 14, wram->wTilemap), (struct TextCmd[]){ text_asm(InitialClearDSTFlag_Text) });
@@ -1132,7 +1132,7 @@ void MrChrono(void){
     // hlcoord(1, 14, wTilemap);
     // LD_BC((3 << 8) | (SCREEN_WIDTH - 2));
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(1, 14, wram->wTilemap), (SCREEN_WIDTH - 2), 3);
+    ClearBox(coord(1, 14, wram->wTilemap), (SCREEN_WIDTH - 2), 3);
     // LD_HL(mMrChrono_Text);
     // CALL(aPlaceHLTextAtBC);
     PlaceHLTextAtBC_Conv2(coord(1, 14, wram->wTilemap), (struct TextCmd[]){ text_asm(MrChrono_Text) });

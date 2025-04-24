@@ -621,7 +621,7 @@ void MenuBox_Conv(void) {
     // DEC_B;
     // DEC_C;
     // JP(mTextbox);
-    return Textbox_Conv2(ptr, h - 1, w - 1);
+    return Textbox(ptr, h - 1, w - 1);
 }
 
 void GetMenuTextStartCoord(void) {
@@ -723,7 +723,7 @@ void ClearMenuBoxInterior(void) {
     // DEC_B;
     // DEC_C;
     // CALL(aClearBox);
-    ClearBox_Conv2(hl, c, b);
+    ClearBox(hl, c, b);
     // RET;
 }
 
@@ -736,7 +736,7 @@ void ClearWholeMenuBox(void) {
     // INC_C;
     // INC_B;
     // CALL(aClearBox);
-    ClearBox_Conv2(hl, c + 1, b + 1);
+    ClearBox(hl, c + 1, b + 1);
     // RET;
 }
 

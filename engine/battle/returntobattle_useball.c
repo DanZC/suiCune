@@ -7,9 +7,9 @@
 
 void v_ReturnToBattle_UseBall(void){
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // LD_A_addr(wBattleType);
     // CP_A(BATTLETYPE_TUTORIAL);
     // IF_Z goto gettutorialbackpic;
@@ -30,14 +30,14 @@ void v_ReturnToBattle_UseBall(void){
     // FARCALL(av_LoadBattleFontsHPBar);
     v_LoadBattleFontsHPBar();
     // CALL(aGetMemSGBLayout);
-    GetMemSGBLayout_Conv();
+    GetMemSGBLayout();
     // CALL(aCloseWindow);
     CloseWindow_Conv2();
     // CALL(aLoadStandardMenuHeader);
     LoadStandardMenuHeader_Conv();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // JP(mSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
 
 }

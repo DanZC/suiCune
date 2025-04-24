@@ -29,14 +29,12 @@ struct SpriteAnim* InitSpriteAnimStruct_Conv(uint8_t a, uint16_t de){
     // LD_A(BANK(av_InitSpriteAnimStruct));
     // RST(aBankswitch);
     // LD_A_addr(wSpriteAnimID);
-    bank_push(BANK(av_InitSpriteAnimStruct));
 
     // CALL(av_InitSpriteAnimStruct);
     struct SpriteAnim* bc = v_InitSpriteAnimStruct_Conv(a, de);
 
     // POP_AF;
     // RST(aBankswitch);
-    bank_pop;
 
     // RET;
     return bc;
@@ -69,14 +67,12 @@ void ReinitSpriteAnimFrame_Conv(struct SpriteAnim* bc, uint8_t a){
     // LD_A(BANK(av_ReinitSpriteAnimFrame));
     // RST(aBankswitch);
     // LD_A_addr(wSpriteAnimID);
-    bank_push(BANK(av_ReinitSpriteAnimFrame));
 
     // CALL(av_ReinitSpriteAnimFrame);
     v_ReinitSpriteAnimFrame_Conv(bc, a);
 
     // POP_AF;
     // RST(aBankswitch);
-    bank_pop;
 
     // RET;
 }

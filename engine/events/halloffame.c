@@ -37,7 +37,7 @@ void HallOfFame(void){
     // LD_addr_A(wGameLogicPaused);
     wram->wGameLogicPaused = 1;
     // CALL(aDisableSpriteUpdates);
-    DisableSpriteUpdates_Conv();
+    DisableSpriteUpdates();
     // LD_A(SPAWN_LANCE);
     // LD_addr_A(wSpawnAfterChampion);
     wram->wSpawnAfterChampion = SPAWN_LANCE;
@@ -100,7 +100,7 @@ void RedCredits(void){
     // CALL(aDelayFrames);
     DelayFrames(8);
     // CALL(aDisableSpriteUpdates);
-    DisableSpriteUpdates_Conv();
+    DisableSpriteUpdates();
     // LD_A(SPAWN_RED);
     // LD_addr_A(wSpawnAfterChampion);
     wram->wSpawnAfterChampion = SPAWN_RED;
@@ -155,7 +155,7 @@ static void AnimateHallOfFame_DisplayNewHallOfFamer(struct HOFMon* hl){
     // CALL(aPlaceString);
     PlaceStringSimple(U82C("New Hall of Famer!"), coord(1, 2, wram->wTilemap));
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // decoord(6, 5, wTilemap);
     // LD_C(ANIM_MON_HOF);
     // PREDEF(pHOF_AnimateFrontpic);
@@ -341,7 +341,7 @@ void GetHallOfFameParty(void){
 void AnimateHOFMonEntrance(struct HOFMon* mon){
     // PUSH_HL;
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // FARCALL(aResetDisplayBetweenHallOfFameMons);
     ResetDisplayBetweenHallOfFameMons();
     // POP_HL;
@@ -382,15 +382,15 @@ void AnimateHOFMonEntrance(struct HOFMon* mon){
     // LDH_addr_A(hSCX);
     hram->hSCY = 0x90;
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_B(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
+    GetSGBLayout(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // CALL(aHOF_SlideBackpic);
     HOF_SlideBackpic();
     // XOR_A_A;
@@ -405,7 +405,7 @@ void AnimateHOFMonEntrance(struct HOFMon* mon){
     // CALL(av_PrepMonFrontpic);
     v_PrepMonFrontpic_Conv(coord(6, 5, wram->wTilemap));
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
@@ -475,7 +475,7 @@ static bool v_HallOfFamePC_DisplayMonAndStrings(uint8_t counter){
 // okay:
     // PUSH_HL;
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // POP_HL;
     // CALL(aDisplayHOFMon);
     DisplayHOFMon(mon);
@@ -518,12 +518,12 @@ static bool v_HallOfFamePC_DisplayMonAndStrings(uint8_t counter){
     // CALL(aPlaceString);
     PlaceStringSimple(U82C(""), hl);
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_B(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
+    GetSGBLayout(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // decoord(6, 5, wTilemap);
     // LD_C(ANIM_MON_HOF);
     // PREDEF(pHOF_AnimateFrontpic);
@@ -685,11 +685,11 @@ void DisplayHOFMon(const struct HOFMon* mon){
     // hlcoord(0, 0, wTilemap);
     // LD_BC((3 << 8) | SCREEN_WIDTH - 2);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 0, wram->wTilemap), 3, SCREEN_WIDTH - 2);
+    Textbox(coord(0, 0, wram->wTilemap), 3, SCREEN_WIDTH - 2);
     // hlcoord(0, 12, wTilemap);
     // LD_BC((4 << 8) | SCREEN_WIDTH - 2);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 12, wram->wTilemap), 4, SCREEN_WIDTH - 2);
+    Textbox(coord(0, 12, wram->wTilemap), 4, SCREEN_WIDTH - 2);
     // LD_A_addr(wTempMonSpecies);
     // LD_addr_A(wCurPartySpecies);
     wram->wCurPartySpecies = wram->wTempMon.mon.species;
@@ -776,7 +776,7 @@ void DisplayHOFMon(const struct HOFMon* mon){
 void HOF_AnimatePlayerPic(void){
     static const char PlayTime[] = "PLAY TIME";
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // LD_HL(vTiles2 + LEN_2BPP_TILE * HALLOFFAME_COLON);
     // LD_DE(mFontExtra + 13 * LEN_2BPP_TILE);  // "<COLON>"
     // LD_BC((BANK(aFontExtra) << 8) | 1);
@@ -803,7 +803,7 @@ void HOF_AnimatePlayerPic(void){
     // LDH_addr_A(hSCX);
     hram->hSCX = 0x90;
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
@@ -811,9 +811,9 @@ void HOF_AnimatePlayerPic(void){
     wram->wCurPartySpecies = 0x0;
     // LD_B(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
+    GetSGBLayout(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // CALL(aHOF_SlideBackpic);
     HOF_SlideBackpic();
     // XOR_A_A;
@@ -837,7 +837,7 @@ void HOF_AnimatePlayerPic(void){
     // LDH_addr_A(hSCX);
     hram->hSCX = 0xc0;
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
@@ -851,11 +851,11 @@ void HOF_AnimatePlayerPic(void){
     // hlcoord(0, 2, wTilemap);
     // LD_BC((8 << 8) | 9);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 2, wram->wTilemap), 8, 9);
+    Textbox(coord(0, 2, wram->wTilemap), 8, 9);
     // hlcoord(0, 12, wTilemap);
     // LD_BC((4 << 8) | 18);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 12, wram->wTilemap), 4, 18);
+    Textbox(coord(0, 12, wram->wTilemap), 4, 18);
     // hlcoord(2, 4, wTilemap);
     // LD_DE(wPlayerName);
     // CALL(aPlaceString);
@@ -891,7 +891,7 @@ void HOF_AnimatePlayerPic(void){
     // CALL(aPrintNum);
     PrintNum_Conv2(hl, &wram->wGameTimeMinutes, PRINTNUM_LEADINGZEROS | 1, 2);
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // FARCALL(aProfOaksPCRating);
     ProfOaksPCRating();
     // RET;

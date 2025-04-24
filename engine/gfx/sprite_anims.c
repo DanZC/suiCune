@@ -2,6 +2,7 @@
 #include "sprite_anims.h"
 #include "sprites.h"
 #include "../../home/audio.h"
+#include "../../home/sine.h"
 #include "../movie/splash.h"
 #include "../movie/trade_animation.h"
 #include "../pokegear/pokegear.h"
@@ -2151,7 +2152,7 @@ void AnimSeqs_Sine(void){
 static uint8_t AnimSeqs_Sine_Conv(uint8_t a, uint8_t d){
     // CALL(aSprites_Sine);
     // RET;
-    return Sprites_Sine_Conv(a, d);
+    return Sine(a, d);
 }
 
 void AnimSeqs_Cosine(void){
@@ -2163,5 +2164,5 @@ void AnimSeqs_Cosine(void){
 static uint8_t AnimSeqs_Cosine_Conv(uint8_t a, uint8_t d){
     // CALL(aSprites_Cosine);
     // RET;
-    return Sprites_Cosine_Conv(a, d);
+    return Cosine(a, d);
 }

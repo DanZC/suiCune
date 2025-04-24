@@ -98,11 +98,11 @@ static const uint16_t TitleScreenPalettes[] = {
 
 void v_TitleScreen(void){
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
 
 //  Turn BG Map update off
     // XOR_A_A;

@@ -115,7 +115,7 @@ void MagnetTrain(void){
     // LDH_addr_A(hVBlank);
     hram->hVBlank = vblank;
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // XOR_A_A;
     // LDH_addr_A(hLCDCPointer);
     hram->hLCDCPointer = 0x0;
@@ -131,7 +131,7 @@ void MagnetTrain(void){
     // LD_addr_A(wRequested2bppDest + 1);
     // LD_addr_A(wRequested2bppSize);
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
 
     // POP_AF;
     // LDH_addr_A(hSCY);
@@ -192,7 +192,7 @@ void MagnetTrain_UpdateLYOverrides(void){
 
 void MagnetTrain_LoadGFX_PlayMusic(void){
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aDisableLCD);
@@ -601,7 +601,7 @@ void MagnetTrain_Jumptable_FirstRunThrough(void){
     wram->wEnvironment = TOWN;
     // LD_B(SCGB_MAPPALS);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_MAPPALS);
+    GetSGBLayout(SCGB_MAPPALS);
     // CALL(aUpdateTimePals);
     UpdateTimePals();
 

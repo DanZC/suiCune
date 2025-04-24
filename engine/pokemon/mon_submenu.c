@@ -390,7 +390,7 @@ bool BattleMonMenu(void){
     // CALL(aPlaceVerticalMenuItems);
     PlaceVerticalMenuItems_Conv2();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // CALL(aCopyMenuData);
     const struct MenuData* data = GetMenuData();
     // LD_A_addr(wMenuDataFlags);

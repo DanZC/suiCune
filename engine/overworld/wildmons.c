@@ -1835,7 +1835,7 @@ void RandomUnseenWildMon(void){
     // CALL(aCheckSeenMon);
     // POP_BC;
     // IF_NZ goto done;
-    if(CheckSeenMon_Conv(rare - 1)){
+    if(CheckSeenMon(rare - 1)){
         wram->wScriptVar = 0x1;
         return;
     }

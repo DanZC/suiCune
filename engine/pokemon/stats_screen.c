@@ -123,9 +123,9 @@ void StatsScreenInit_Common(void (*hl)(void)){
     // PUSH_BC;
     // PUSH_HL;
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aUpdateSprites);
     UpdateSprites_Conv();
     // FARCALL(aStatsScreen_LoadFont);
@@ -134,9 +134,9 @@ void StatsScreenInit_Common(void (*hl)(void)){
     // CALL(av_hl_);
     hl();
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // POP_BC;
 
 // restore old values
@@ -319,9 +319,9 @@ void MonStatsInit(void){
     // RES_hl(6);
     bit_reset(wram->wStatsScreenFlags, 6);
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // FARCALL(aHDMATransferTilemapToWRAMBank3);
     HDMATransferTilemapToWRAMBank3_Conv();
     // CALL(aStatsScreen_CopyToTempMon);
@@ -882,7 +882,7 @@ static void StatsScreen_PlaceHPBar(void) {
     SetHPPal_Conv(&wram->wCurHPPal, ComputeHPBarPixels_Conv(BigEndianToNative16(wram->wTempMon.HP), BigEndianToNative16(wram->wTempMon.maxHP)));
     // LD_B(SCGB_STATS_SCREEN_HP_PALS);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_STATS_SCREEN_HP_PALS);
+    GetSGBLayout(SCGB_STATS_SCREEN_HP_PALS);
     // CALL(aDelayFrame);
     DelayFrame();
     // RET;
@@ -1031,7 +1031,7 @@ static void StatsScreen_LoadGFX_ClearBox(void) {
     // hlcoord(0, 8, wTilemap);
     // LD_BC((10 << 8) | 20);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(0, 8, wram->wTilemap), 20, 10);
+    ClearBox(coord(0, 8, wram->wTilemap), 20, 10);
     // RET;
 }
 
@@ -1097,7 +1097,7 @@ void StatsScreen_LoadGFX(void){
         return;
     }
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // RET;
     return;
 }
@@ -1514,7 +1514,7 @@ void StatsScreen_PlaceFrontpic(void){
         // CALL(aPlayMonCry2);
         PlayMonCry2_Conv(wram->wCurPartySpecies);
         // CALL(aSetPalettes);
-        SetPalettes_Conv();
+        SetPalettes();
         // RET;
         return;
     }
@@ -1525,13 +1525,13 @@ void StatsScreen_PlaceFrontpic(void){
         // CALL(aStatsScreen_PlaceFrontpic_AnimateMon);
         StatsScreen_PlaceFrontpic_AnimateMon();
         // CALL(aSetPalettes);
-        SetPalettes_Conv();
+        SetPalettes();
         // RET;
         return;
     }
 
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // CALL(aStatsScreen_PlaceFrontpic_AnimateMon);
     StatsScreen_PlaceFrontpic_AnimateMon();
     // LD_A_addr(wCurPartySpecies);
@@ -1898,7 +1898,7 @@ void EggStatsScreen(void){
     // SET_hl(5);
     bit_set(wram->wStatsScreenFlags, 5);
     // CALL(aSetPalettes);  // pals
-    SetPalettes_Conv();
+    SetPalettes();
     // CALL(aDelayFrame);
     DelayFrame();
     // hlcoord(0, 0, wTilemap);

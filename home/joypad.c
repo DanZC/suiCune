@@ -718,7 +718,7 @@ void WaitButton_Conv(void) {
     hram->hOAMUpdate = 1;
 
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
 
     // CALL(aJoyWaitAorB);
     JoyWaitAorB_Conv();

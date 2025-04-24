@@ -146,7 +146,7 @@ void DisplayCoinCaseBalance(void){
     // LD_B(1);
     // LD_C(7);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(11, 0, wram->wTilemap), 1, 7);
+    Textbox(coord(11, 0, wram->wTilemap), 1, 7);
     // hlcoord(12, 0, wTilemap);
     // LD_DE(mCoinString);
     // CALL(aPlaceString);
@@ -168,7 +168,7 @@ void DisplayMoneyAndCoinBalance(void){
     // LD_B(3);
     // LD_C(13);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(5, 0, wram->wTilemap), 3, 13);
+    Textbox(coord(5, 0, wram->wTilemap), 3, 13);
     // hlcoord(6, 1, wTilemap);
     // LD_DE(mMoneyString);
     // CALL(aPlaceString);
@@ -235,7 +235,7 @@ void StartMenu_DrawBugContestStatusBox(void){
     // LD_B(5);
     // LD_C(17);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 0, wram->wTilemap), 5, 17);
+    Textbox(coord(0, 0, wram->wTilemap), 5, 17);
     // RET;
 }
 

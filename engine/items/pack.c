@@ -860,7 +860,7 @@ void GiveItem(void){
     // LD_addr_A(wPartyMenuActionText);
     wram->wPartyMenuActionText = PARTYMENUACTION_GIVE_ITEM;
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // FARCALL(aLoadPartyMenuGFX);
     LoadPartyMenuGFX();
     // FARCALL(aInitPartyMenuWithCancel);
@@ -875,9 +875,9 @@ void GiveItem(void){
         // FARCALL(aPrintPartyMenuText);
         PrintPartyMenuText();
         // CALL(aWaitBGMap);
-        WaitBGMap_Conv();
+        WaitBGMap();
         // CALL(aSetPalettes);
-        SetPalettes_Conv();
+        SetPalettes();
         // CALL(aDelayFrame);
         DelayFrame();
         // FARCALL(aPartyMenuSelect);
@@ -1279,7 +1279,7 @@ void TMHMSubmenu(uint8_t a){
                         if(wram->wItemEffectSucceeded != 0){
                         // ReturnToBattle:
                             // CALL(aClearBGPalettes);
-                            ClearBGPalettes_Conv();
+                            ClearBGPalettes();
                             break;
                         }
                         // RET;
@@ -1823,7 +1823,7 @@ void Pack_PrintTextNoScroll(const txt_cmd_s* hl){
 
 void WaitBGMap_DrawPackGFX(void){
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     return DrawPackGFX(wram->wCurPocket);
 }
 
@@ -2086,9 +2086,9 @@ bool Pack_InterpretJoypad_Conv(uint8_t b, uint8_t c){
 
 void Pack_InitGFX(void){
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearTilemap);
-    ClearTilemap_Conv2();
+    ClearTilemap();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aDisableLCD);
@@ -2109,7 +2109,7 @@ void Pack_InitGFX(void){
     // hlcoord(5, 1, wTilemap);
     // LD_BC((11 << 8) | 15);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(5, 1, wram->wTilemap), 15, 11);
+    ClearBox(coord(5, 1, wram->wTilemap), 15, 11);
 //  ◀▶ POCKET       ▼▲ ITEMS
     // hlcoord(0, 0, wTilemap);
     // LD_A(0x28);
@@ -2131,7 +2131,7 @@ void Pack_InitGFX(void){
     // hlcoord(0, SCREEN_HEIGHT - 4 - 2, wTilemap);
     // LD_BC((4 << 8) | SCREEN_WIDTH - 2);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, SCREEN_HEIGHT - 4 - 2, wram->wTilemap), 4, SCREEN_WIDTH - 2);
+    Textbox(coord(0, SCREEN_HEIGHT - 4 - 2, wram->wTilemap), 4, SCREEN_WIDTH - 2);
     // CALL(aEnableLCD);
     EnableLCD();
     // CALL(aDrawPackGFX);
@@ -2241,18 +2241,18 @@ void ClearPocketList(void){
     // hlcoord(5, 2, wTilemap);
     // LD_BC((10 << 8) | SCREEN_WIDTH - 5);
     // CALL(aClearBox);
-    ClearBox_Conv2(coord(5, 2, wram->wTilemap), SCREEN_WIDTH - 5, 10);
+    ClearBox(coord(5, 2, wram->wTilemap), SCREEN_WIDTH - 5, 10);
     // RET;
 }
 
 void Pack_InitColors(void){
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // LD_B(SCGB_PACKPALS);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_PACKPALS);
+    GetSGBLayout(SCGB_PACKPALS);
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // CALL(aDelayFrame);
     DelayFrame();
     // RET;

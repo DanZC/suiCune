@@ -187,7 +187,7 @@ void Function891ca(void){
     // CALL(aFunction891b8);
     Function891b8();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // POP_BC;
     // RET;
 }
@@ -209,7 +209,7 @@ void Function891de(void){
     // CALL(aMobile22_SetBGMapMode0);
     Mobile22_SetBGMapMode0();
     // CALL(aClearPalettes);
-    ClearPalettes_Conv();
+    ClearPalettes();
     // hlcoord(0, 0, wAttrmap);
     // LD_A(0x7);
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
@@ -943,7 +943,7 @@ void Function894ca(uint8_t d){
     // CALL(aFunction8a60d);
     Function8a60d();
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // POP_BC;
     // RET;
 }
@@ -1832,9 +1832,9 @@ void Function89844(uint8_t* bc){
     Function897af(bc);
     // PUSH_BC;
     // CALL(aWaitBGMap2);
-    WaitBGMap2_Conv();
+    WaitBGMap2();
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // POP_BC;
     // RET;
 }
@@ -2276,7 +2276,7 @@ void Function89a2e(void){
     // LD_B(0x2);
     // LD_C(0x6);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(9, 12, wram->wTilemap), 0x2, 0x8);
+    Textbox(coord(9, 12, wram->wTilemap), 0x2, 0x8);
     // hlcoord(13, 13, wTilemap);
     // LD_DE(mString_89a4e);
     // CALL(aPlaceString);
@@ -2518,7 +2518,7 @@ void Function89b28(void){
     // CALL(aFunction891de);
     Function891de();
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aFunction893e2);
     Function893e2();
     // CALL(aCall_ExitMenu);
@@ -2526,7 +2526,7 @@ void Function89b28(void){
     // CALL(aFunction891ab);
     Function891ab();
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // RET;
 }
 
@@ -3035,7 +3035,7 @@ void Function89d0d(void){
     // LDH_addr_A(rSVBK);
 
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // FARCALL(aPrintMail);
     PrintMail();
     // CALL(aMobile22_SetBGMapMode1);
@@ -3342,7 +3342,7 @@ void Function89e6f(void){
     // CALL(aFunction891ab);
     Function891ab();
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // JP(mFunction89e36);
     Function89e36();
 }
@@ -3390,14 +3390,14 @@ void Function89eb9(void){
     // CALL(aFunction891ab);
     Function891ab();
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // JP(mFunction89e36);
     Function89e36();
 }
 
 void Function89ee1(void){
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aFunction893e2);
     Function893e2();
     // CALL(aMobile22_SetBGMapMode0);
@@ -3665,7 +3665,7 @@ void Function89fce(void){
     // CALL(aFunction89448);
     Function89448();
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // CALL(aFunction891ab);
     Function891ab();
     // JP(mFunction89e36);
@@ -3684,7 +3684,7 @@ void Function89ff6(void){
     // CALL(aFunction891fe);
     Function891fe();
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aFunction893cc);
     Function893cc();
     // CALL(aFunction89807);
@@ -4060,7 +4060,7 @@ void Function8a1b0(void){
     // LD_B(0x4);
     // LD_C(0x12);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 12, wram->wTilemap), 0x4, 0x12);
+    Textbox(coord(0, 12, wram->wTilemap), 0x4, 0x12);
     // hlcoord(1, 14, wTilemap);
     // LD_A_addr(wMenuCursorY);
     // LD_DE(mStrings_8a1cc);
@@ -4151,7 +4151,7 @@ bool Function8a241(void){
         // CALL(aFunction891de);
         Function891de();
         // CALL(aClearBGPalettes);
-        ClearBGPalettes_Conv();
+        ClearBGPalettes();
         // CALL(aCall_ExitMenu);
         ExitMenu_Conv2();
         // CALL(aFunction891de);
@@ -4164,7 +4164,7 @@ bool Function8a241(void){
 
 bool Function8a262(void){
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aFunction893e2);
     Function893e2();
     // CALL(aMobile22_SetBGMapMode0);
@@ -4198,7 +4198,7 @@ bool Function8a262(void){
     // CALL(aFunction891ab);
     Function891ab();
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // CALL(aFunction8b5e7);
     // RET;
     return Function8b5e7();
@@ -4350,7 +4350,7 @@ uint8_t Function8a31c(uint8_t c){
         // CALL(aFunction891ab);
         Function891ab();
         // CALL(aSetPalettes);
-        SetPalettes_Conv();
+        SetPalettes();
         // CALL(aFunction8a383);
         res = Function8a383();
         // IF_C goto asm_8a370;
@@ -4561,7 +4561,7 @@ void Function8a453(void){
     // LD_B(0x4);
     // LD_C(0x12);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 12, wram->wTilemap), 0x4, 0x12);
+    Textbox(coord(0, 12, wram->wTilemap), 0x4, 0x12);
     // hlcoord(1, 14, wTilemap);
     // LD_DE(mString_8a476);
     // LD_A_addr(wMenuSelection);
@@ -4987,7 +4987,7 @@ void Function8a679(void){
         // CALL(aFunction891de);
         Function891de();
         // CALL(aClearBGPalettes);
-        ClearBGPalettes_Conv();
+        ClearBGPalettes();
         // CALL(aFunction893cc);
         Function893cc();
         // CALL(aOpenSRAMBank4);
@@ -5064,7 +5064,7 @@ void Function8a6cd(void){
     // CALL(aFunction891de);
     Function891de();
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aFunction893cc);
     Function893cc();
     // CALL(aOpenSRAMBank4);
@@ -5126,7 +5126,7 @@ void Function8a6cd(void){
                     // CALL(aPlaceString);
                     PlaceStringSimple(U82C(String_89135), coord(1, 13, wram->wTilemap));
                     // CALL(aWaitBGMap);
-                    WaitBGMap_Conv();
+                    WaitBGMap();
                     // LD_A(0x2);
                     // CALL(aFunction89254);
                     // IF_C goto asm_8a6e5;
@@ -5156,7 +5156,7 @@ void Function8a6cd(void){
 
 // asm_8a742:
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aFunction89448);
     Function89448();
     // CALL(aFunction891d3);
@@ -5237,7 +5237,7 @@ bool Function8a78c(void){
     // LD_E_L;
     // LD_HL(wd002);
     // CALL(aInitName);
-    InitName_Conv2(&wram->wd002, bc + 0x0);
+    InitName(&wram->wd002, bc + 0x0);
     // CALL(aCloseSRAM);
     CloseSRAM_Conv();
     // CALL(aDelayFrame);
@@ -5247,7 +5247,7 @@ bool Function8a78c(void){
     // CALL(aFunction891de);
     Function891de();
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aFunction893cc);
     Function893cc();
     // CALL(aOpenSRAMBank4);
@@ -5293,7 +5293,7 @@ bool Function8a7cb(void){
     // CALL(aFunction891de);
     Function891de();
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aFunction893cc);
     Function893cc();
     // CALL(aOpenSRAMBank4);
@@ -5371,7 +5371,7 @@ bool Function8a818(void){
             // CALL(aPlaceString);
             PlaceStringSimple(U82C(string_8a868), coord(1, 13, wram->wTilemap));
             // CALL(aWaitBGMap);
-            WaitBGMap_Conv();
+            WaitBGMap();
             // CALL(aJoyWaitAorB);
             JoyWaitAorB_Conv();
         }
@@ -5389,7 +5389,7 @@ bool Function8a818(void){
     // CALL(aPlaceString);
     PlaceStringSimple(de, coord(1, 13, wram->wTilemap));
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // CALL(aJoyWaitAorB);
     JoyWaitAorB_Conv();
     // AND_A_A;
@@ -5437,7 +5437,7 @@ void Function8a8c3(void){
     // CALL(aFunction891de);
     Function891de();
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aFunction893cc);
     Function893cc();
     // CALL(aOpenSRAMBank4);
@@ -5477,7 +5477,7 @@ void Function8a8c3(void){
         // CALL(aPlaceString);
         PlaceStringSimple(U82C(String_8a926), coord(1, 13, wram->wTilemap));
         // CALL(aWaitBGMap);
-        WaitBGMap_Conv();
+        WaitBGMap();
         // CALL(aJoyWaitAorB);
         JoyWaitAorB_Conv();
     }
@@ -5712,7 +5712,7 @@ void Function8aa0a(void){
     // CALL(aFunction891fe);
     Function891fe();
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aFunction893cc);
     Function893cc();
     // CALL(aFunction89807);
@@ -5807,7 +5807,7 @@ bool Function8aa73(void){
     // CALL(aFunction891fe);
     Function891fe();
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aFunction893cc);
     Function893cc();
     // CALL(aFunction89807);
@@ -5851,7 +5851,7 @@ bool Function8aab6(void){
         // CALL(aPlaceString);
         PlaceStringSimple(U82C(String_8aaf0), coord(1, 13, wram->wTilemap));
         // CALL(aWaitBGMap);
-        WaitBGMap_Conv();
+        WaitBGMap();
         // CALL(aJoyWaitAorB);
         JoyWaitAorB_Conv();
     }
@@ -5874,7 +5874,7 @@ bool Function8ab00(void){
     // CALL(aPlaceString);
     PlaceStringSimple(U82C(String_8911c), coord(1, 13, wram->wTilemap));
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // CALL(aMobile22_PromptButton);
     Mobile22_PromptButton();
     // AND_A_A;
@@ -5953,7 +5953,7 @@ void Function8ab3b(void){
         // CALL(aFunction891fe);
         Function891fe();
         // CALL(aClearBGPalettes);
-        ClearBGPalettes_Conv();
+        ClearBGPalettes();
         // CALL(aFunction893cc);
         Function893cc();
         // CALL(aFunction89807);
@@ -5991,7 +5991,7 @@ void Function8ab93(void){
     if(!LANTryConnection())
         return;
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aLoadStandardMenuHeader);
     LoadStandardMenuHeader_Conv();
     // FARCALL(aDoNameCardSwap);
@@ -6064,7 +6064,7 @@ uint8_t Function8aba9(void){
         // CALL(aFunction891de);
         Function891de();
         // CALL(aClearBGPalettes);
-        ClearBGPalettes_Conv();
+        ClearBGPalettes();
         // CALL(aFunction893cc);
         Function893cc();
         // CALL(aOpenSRAMBank4);
@@ -6106,7 +6106,7 @@ uint8_t Function8aba9(void){
         // LD_B(0x4);
         // LD_C(0x12);
         // CALL(aTextbox);
-        Textbox_Conv2(coord(0, 12, wram->wTilemap), 0x4, 0x12);
+        Textbox(coord(0, 12, wram->wTilemap), 0x4, 0x12);
         // hlcoord(1, 14, wTilemap);
         // LD_DE(mString_8ac3b);
         // CALL(aPlaceString);
@@ -6133,7 +6133,7 @@ void Function8ac4e(uint8_t* de){
     // CALL(aFunction891de);
     Function891de();
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aFunction893cc);
     Function893cc();
     // POP_BC;
@@ -6301,7 +6301,7 @@ asm_8ad0b:
     // CALL(aFunction891de);
     Function891de();
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aFunction893cc);
     Function893cc();
     // CALL(aOpenSRAMBank4);
@@ -6348,7 +6348,7 @@ asm_8ad0b:
     // LD_B(0x4);
     // LD_C(0x12);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 12, wram->wTilemap), 0x4, 0x12);
+    Textbox(coord(0, 12, wram->wTilemap), 0x4, 0x12);
     // LD_DE(mString_8ad89);
     // hlcoord(1, 14, wTilemap);
     // CALL(aPlaceString);
@@ -6364,7 +6364,7 @@ asm_8ad0b:
     // LD_B(0x4);
     // LD_C(0x12);
     // CALL(aTextbox);
-    Textbox_Conv2(coord(0, 12, wram->wTilemap), 0x4, 0x12);
+    Textbox(coord(0, 12, wram->wTilemap), 0x4, 0x12);
     // LD_DE(mString_8ad9c);
     // hlcoord(1, 14, wTilemap);
     // CALL(aPlaceString);

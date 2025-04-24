@@ -1133,7 +1133,7 @@ static uint8_t FlyFunction_TryFly(void) {
             // CALL(aCloseWindow);
             CloseWindow_Conv2();
             // CALL(aWaitBGMap);
-            WaitBGMap_Conv();
+            WaitBGMap();
             // LD_A(0x80);
             // RET;
             return 0x80;

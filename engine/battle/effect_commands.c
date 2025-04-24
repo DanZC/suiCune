@@ -7102,7 +7102,7 @@ void MinimizeDropSub(void){
     // CALL(aCallBattleCore);
     hl();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // JP(mBattleCommand_MoveDelay);
     return BattleCommand_MoveDelay();
 }
@@ -8086,7 +8086,7 @@ void BattleCommand_RaiseSubNoAnim(void){
     else
         GetEnemyMonFrontpic();
     // JP(mWaitBGMap);
-    return WaitBGMap_Conv();
+    return WaitBGMap();
 
 }
 
@@ -8107,7 +8107,7 @@ void BattleCommand_LowerSubNoAnim(void){
     else
         DropEnemySub();
     // JP(mWaitBGMap);
-    return WaitBGMap_Conv();
+    return WaitBGMap();
 }
 
 void CalcPlayerStats(void){
@@ -8550,7 +8550,7 @@ void BattleCommand_ForceSwitch(void){
             // hlcoord(9, 7, wTilemap);
             // LD_BC((5 << 8) | 11);
             // CALL(aClearBox);
-            ClearBox_Conv2(coord(9, 7, wram->wTilemap), 11, 5);
+            ClearBox(coord(9, 7, wram->wTilemap), 11, 5);
             // LD_C(20);
             // CALL(aDelayFrames);
             DelayFrames(20);
@@ -8634,7 +8634,7 @@ void BattleCommand_ForceSwitch(void){
             // hlcoord(1, 0, wTilemap);
             // LD_BC((4 << 8) | 10);
             // CALL(aClearBox);
-            ClearBox_Conv2(coord(1, 0, wram->wTilemap), 10, 4);
+            ClearBox(coord(1, 0, wram->wTilemap), 10, 4);
             // LD_C(20);
             // CALL(aDelayFrames);
             DelayFrames(20);

@@ -505,7 +505,7 @@ void Function17d0f3(void){
     // LD_addr_A(wOTTrademonCaughtData);
     wram->wOTTrademon.caughtData = GetCaughtGender_Conv(&wram->wMobileMon.mon);
     // CALL(aSpeechTextbox);
-    SpeechTextbox_Conv2();
+    SpeechTextbox();
     // CALL(aFadeToMenu);
     FadeToMenu_Conv();
     // FARCALL(aFunction10804d);
@@ -662,7 +662,7 @@ void Function17d1f1(void){
     // LD_A_addr(wCurPartySpecies);
     // DEC_A;
     // CALL(aSetSeenAndCaughtMon);
-    SetSeenAndCaughtMon_Conv(wram->wCurPartySpecies - 1);
+    SetSeenAndCaughtMon(wram->wCurPartySpecies - 1);
 
     // LD_A_addr(wCurPartySpecies);
     // CP_A(UNOWN);
@@ -933,7 +933,7 @@ void Function17d2ce(void){
     if(Function17d314())
         return;
     // CALL(aSpeechTextbox);
-    SpeechTextbox_Conv2();
+    SpeechTextbox();
     // CALL(aFadeToMenu);
     FadeToMenu_Conv();
     // LDH_A_addr(rSVBK);
@@ -1060,11 +1060,11 @@ void Function17d370(void){
     // LD_addr_A(wcd6c);
     wram->wcd6c = 0xff;
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aClearScreen);
-    ClearScreen_Conv2();
+    ClearScreen();
     // FARCALL(aReloadMapPart);
     ReloadMapPart_Conv();
     // CALL(aDisableLCD);
@@ -1122,11 +1122,11 @@ void Function17d370(void){
 
 void Function17d3f6(void){
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aClearScreen);
-    ClearScreen_Conv2();
+    ClearScreen();
     // FARCALL(aReloadMapPart);
     ReloadMapPart_Conv();
 
@@ -1172,7 +1172,7 @@ void Function17d405(void){
     // CALL(aCopyBytes);
     LoadPaletteAssetColorsToBuffer(wram->wBGPals1, 8 * PALETTE_SIZE, PokemonNewsPalettes, 0, 8 * NUM_PAL_COLORS);
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // RET;
@@ -1500,7 +1500,7 @@ void Function17d48d(void){
 
 void Function17d5be(void){
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // CALL(aFunction17e438);
     Function17e438();
 
@@ -1929,7 +1929,7 @@ void Function17d78d(void){
     // LD_addr_A(wcd77);
     wram->wcd77 = 0;
     // CALL(aClearBGPalettes);
-    ClearBGPalettes_Conv();
+    ClearBGPalettes();
     // RET;
 }
 
@@ -2259,7 +2259,7 @@ void Function17d93a(void){
     // FARCALL(aLoadMonPaletteAsNthBGPal);
     LoadMonPaletteAsNthBGPal(wram->wc70c);
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // LD_A_addr(wc708);
     // LD_L_A;
     // LD_A_addr(wc709);
@@ -2308,7 +2308,7 @@ void Function17d98b(void){
     // FARCALL(aLoadTrainerClassPaletteAsNthBGPal);
     LoadTrainerClassPaletteAsNthBGPal(wram->wc70b);
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // LD_A_addr(wc708);
     // LD_E_A;
     // LD_A_addr(wc709);
@@ -4114,7 +4114,7 @@ void Function17e309(void){
     // CALL(aFunction17dcaf);
     Function17dcaf();
     // CALL(aClearScreen);
-    ClearScreen_Conv2();
+    ClearScreen();
     // CALL(aFunction17e349);
     Function17e349();
     // CALL(aFunction17d5f6);
@@ -4249,7 +4249,7 @@ void Function17e3f0(void){
         if((hram->hJoyPressed & A_BUTTON) || (hram->hJoyPressed & B_BUTTON))
             return;
         // CALL(aWaitBGMap);
-        WaitBGMap_Conv();
+        WaitBGMap();
         // goto asm_17e3f6;
     }
 }
@@ -6344,7 +6344,7 @@ void Function17f5d2(void){
     // FARCALL(aHDMATransferAttrmapAndTilemapToWRAMBank3);
     HDMATransferAttrmapAndTilemapToWRAMBank3_Conv();
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // LD_A(0x1);
     // LD_addr_A(wc303);
     wram->wc303 = 0x1;

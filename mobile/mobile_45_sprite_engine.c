@@ -648,7 +648,7 @@ void Function116294(void){
     // CALL(aCopyBytes);
     LoadPaletteAssetToBuffer(wram->wBGPals1 + PALETTE_SIZE * 7, 1 * PALETTE_SIZE, PichuBorderMobileBGPalettes, 1 * NUM_PAL_COLORS);
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // LD_A(0x30);
@@ -674,7 +674,7 @@ void Function1162cb(void){
     // CALL(aCopyBytes);
     LoadPaletteAssetToBuffer(wram->wOBPals1 + 2 * PALETTE_SIZE, 6 * PALETTE_SIZE, PichuBorderMobileOBPalettes, 6 * NUM_PAL_COLORS);
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // RET;
@@ -815,7 +815,7 @@ void Function11636e(void){
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(0x1);
@@ -866,7 +866,7 @@ void Function1163c0(void){
     v_RefreshSprites();
     // LD_B(SCGB_MAPPALS);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_MAPPALS);
+    GetSGBLayout(SCGB_MAPPALS);
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(0x5);
@@ -879,7 +879,7 @@ void Function1163c0(void){
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // CALL(aSetPalettes);
-    SetPalettes_Conv();
+    SetPalettes();
     // CALL(aDelayFrame);
     DelayFrame();
     // LD_A(0x90);

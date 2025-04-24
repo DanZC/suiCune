@@ -642,7 +642,7 @@ void PrintWinLossText_Conv(void){
     // CALL(aFarPrintText);
     PrintText_Conv2(textPtr);
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // CALL(aWaitPressAorB_BlinkCursor);
     WaitPressAorB_BlinkCursor_Conv();
     // RET;

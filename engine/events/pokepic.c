@@ -29,7 +29,7 @@ void Pokepic(void){
     ApplyTilemap_Conv();
     // LD_B(SCGB_POKEPIC);
     // CALL(aGetSGBLayout);
-    GetSGBLayout_Conv(SCGB_POKEPIC);
+    GetSGBLayout(SCGB_POKEPIC);
     DelayFrames(10);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
@@ -57,7 +57,7 @@ void Pokepic(void){
     // PREDEF(pPlaceGraphic);
     PlaceGraphicYStagger_Conv(hl, 7, 7);
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // RET;
 
 }
@@ -69,9 +69,9 @@ void ClosePokepic(void){
     // CALL(aClearMenuBoxInterior);
     ClearMenuBoxInterior();
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
     // CALL(aGetMemSGBLayout);
-    GetMemSGBLayout_Conv();
+    GetMemSGBLayout();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;

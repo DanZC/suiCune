@@ -16,65 +16,12 @@
 // If you encounter text problems, set the value below to 0.
 #define USE_CONVERTED_TEXT 1
 
-void ClearBox(void) {
-    //  Fill a c*b box at hl with blank tiles.
-    LD_A(0x7f);
-    // fallthrough
-
-    return FillBoxWithByte();
-}
-
-void FillBoxWithByte(void) {
-row:
-    SET_PC(aFillBoxWithByte_row);
-    PUSH_BC;
-    PUSH_HL;
-
-col:
-    SET_PC(aFillBoxWithByte_col);
-    LD_hli_A;
-    DEC_C;
-    IF_NZ goto col;
-    POP_HL;
-    LD_BC(SCREEN_WIDTH);
-    ADD_HL_BC;
-    POP_BC;
-    DEC_B;
-    IF_NZ goto row;
-    RET;
-}
-
-//  Fill a c*b box at hl with blank tiles.
-void ClearBox_Conv(uint16_t hl, uint16_t bc) {
-    //  Fill a c*b box at hl with blank tiles.
-    return FillBoxWithByte_Conv(hl, bc, CHAR_SPACE);
-}
-
 //  Fill a w*h box at hl with blank tiles.
-void ClearBox_Conv2(tile_t* hl, uint8_t w, uint8_t h) {
-    return FillBoxWithByte_Conv2(hl, w, h, CHAR_SPACE);
+void ClearBox(tile_t* hl, uint8_t w, uint8_t h) {
+    return FillBoxWithByte(hl, w, h, CHAR_SPACE);
 }
 
-void FillBoxWithByte_Conv(uint16_t hl, uint16_t bc, uint8_t byte) {
-    uint16_t bctemp, hltemp;
-
-    do {
-        bctemp = bc;
-        hltemp = hl;
-
-        do {
-            gb_write(hl++, byte);
-            bc--;
-        } while((bc & 0xFF) != 0);
-        hl = hltemp;
-        hl += SCREEN_WIDTH;
-        bc = bctemp;
-
-        bc -= 0x100;
-    } while(((bc & 0xFF00) >> 8) != 0);
-}
-
-void FillBoxWithByte_Conv2(tile_t* hl, uint8_t w, uint8_t h, uint8_t byte) {
+void FillBoxWithByte(tile_t* hl, uint8_t w, uint8_t h, uint8_t byte) {
     do {
         int i = 0;
         uint8_t w2 = w;
@@ -85,37 +32,8 @@ void FillBoxWithByte_Conv2(tile_t* hl, uint8_t w, uint8_t h, uint8_t byte) {
     } while(--h != 0);
 }
 
+//  Fill wTilemap with blank tiles.
 void ClearTilemap(void) {
-    //  Fill wTilemap with blank tiles.
-
-    hlcoord(0, 0, wTilemap);
-    LD_A(0x7f);
-    LD_BC(wTilemapEnd - wTilemap);
-    CALL(aByteFill);
-
-    // Update the BG Map.
-    LDH_A_addr(rLCDC);
-    BIT_A(rLCDC_ENABLE);
-    RET_Z;
-    JP(mWaitBGMap);
-}
-
-//  Fill wTilemap with blank tiles.
-void ClearTilemap_Conv(void) {
-    ByteFill_GB(coord(0, 0, wTilemap), (wTilemapEnd - wTilemap), CHAR_SPACE);
-
-    // Update the BG Map.
-    // LDH_A_addr(rLCDC);
-    // BIT_A(rLCDC_ENABLE);
-    if(!bit_test(gb_read(rLCDC), rLCDC_ENABLE))
-        return;
-    // RET_Z;
-    // JP(mWaitBGMap);
-    return WaitBGMap_Conv();
-}
-
-//  Fill wTilemap with blank tiles.
-void ClearTilemap_Conv2(void) {
     ByteFill(wram->wTilemap, sizeof(wram->wTilemap), CHAR_SPACE);
 
     // Update the BG Map.
@@ -125,144 +43,23 @@ void ClearTilemap_Conv2(void) {
         return;
     // RET_Z;
     // JP(mWaitBGMap);
-    return WaitBGMap_Conv();
+    return WaitBGMap();
 }
 
 void ClearScreen(void) {
-    LD_A(PAL_BG_TEXT);
-    hlcoord(0, 0, wAttrmap);
-    LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
-    CALL(aByteFill);
-    JR(mClearTilemap);
-}
-
-void ClearScreen_Conv(void) {
-    ByteFill_GB(coord(0, 0, wAttrmap), (SCREEN_WIDTH * SCREEN_HEIGHT), PAL_BG_TEXT);
-    ClearTilemap_Conv();
-}
-
-void ClearScreen_Conv2(void) {
     ByteFill(wram->wAttrmap, (SCREEN_WIDTH * SCREEN_HEIGHT), PAL_BG_TEXT);
-    ClearTilemap_Conv2();
-}
-
-void Textbox(void) {
-    //  Draw a text box at hl with room for b lines of c characters each.
-    //  Places a border around the textbox, then switches the palette to the
-    //  text black-and-white scheme.
-    PUSH_BC;
-    PUSH_HL;
-    CALL(aTextboxBorder);
-    POP_HL;
-    POP_BC;
-    JR(mTextboxPalette);
+    ClearTilemap();
 }
 
 //  Draw a text box at hl with room for b lines of c characters each.
 //  Places a border around the textbox, then switches the palette to the
 //  text black-and-white scheme.
-void Textbox_Conv(uint16_t hl, uint8_t b, uint8_t c) {
-    TextboxBorder_Conv(hl, b, c);
-    return TextboxPalette_Conv(hl, c, b);
+void Textbox(tile_t* hl, uint8_t b, uint8_t c) {
+    TextboxBorder(hl, b, c);
+    return TextboxPalette(hl, c, b);
 }
 
-//  Draw a text box at hl with room for b lines of c characters each.
-//  Places a border around the textbox, then switches the palette to the
-//  text black-and-white scheme.
-void Textbox_Conv2(tile_t* hl, uint8_t b, uint8_t c) {
-    TextboxBorder_Conv2(hl, b, c);
-    return TextboxPalette_Conv2(hl, c, b);
-}
-
-void TextboxBorder(void) {
-    // Top
-    PUSH_HL;
-    LD_A(0x79);
-    LD_hli_A;
-    INC_A;  // "─"
-    CALL(aTextboxBorder_PlaceChars);
-    INC_A;  // "┐"
-    LD_hl_A;
-    POP_HL;
-
-    // Middle
-    LD_DE(SCREEN_WIDTH);
-    ADD_HL_DE;
-
-row:
-    PUSH_HL;
-    LD_A(0x7c);
-    LD_hli_A;
-    LD_A(0x7f);
-    CALL(aTextboxBorder_PlaceChars);
-    LD_hl(0x7c);
-    POP_HL;
-
-    LD_DE(SCREEN_WIDTH);
-    ADD_HL_DE;
-    DEC_B;
-    IF_NZ goto row;
-
-    // Bottom
-    LD_A(0x7d);
-    LD_hli_A;
-    LD_A(0x7a);
-    CALL(aTextboxBorder_PlaceChars);
-    LD_hl(0x7e);
-
-    RET;
-
-PlaceChars:
-    //  Place char a c times.
-    LD_D_C;
-
-loop:
-    LD_hli_A;
-    DEC_D;
-    IF_NZ goto loop;
-    RET;
-}
-
-void TextboxBorder_Conv(uint16_t hl, uint8_t b, uint8_t c) {
-    uint16_t temphl = hl;
-    uint8_t id = 0x79;
-
-//  Place char id x times.
-#define TEXTBOXBORDER_PLACECHARS(x) \
-    do { \
-        uint8_t d = (x); \
-\
-        do { \
-            gb_write(hl++, id); \
-        } while(--d != 0); \
-    } while(0)
-
-    // Top
-    gb_write(hl++, id++);
-    TEXTBOXBORDER_PLACECHARS(c);
-    gb_write(hl, id);
-
-    hl = temphl + SCREEN_WIDTH;
-
-    // Middle
-    do {
-        temphl = hl; 
-        gb_write(hl++, 0x7c);
-        id = 0x7f;
-        TEXTBOXBORDER_PLACECHARS(c);
-        gb_write(hl, 0x7c);
-        hl = temphl + SCREEN_WIDTH;
-    } while(--b != 0);
-
-    // Bottom
-    gb_write(hl++, 0x7d);
-    id = 0x7a;
-    TEXTBOXBORDER_PLACECHARS(c);
-    gb_write(hl, 0x7e);
-}
-#undef TEXTBOXBORDER_PLACECHARS
-
-void TextboxBorder_Conv2(tile_t* hl, uint8_t b, uint8_t c) {
+void TextboxBorder(tile_t* hl, uint8_t b, uint8_t c) {
     tile_t* temphl = hl;
     uint8_t id = CHAR_FRAME_TOP_LEFT;
 
@@ -300,55 +97,8 @@ void TextboxBorder_Conv2(tile_t* hl, uint8_t b, uint8_t c) {
     *(hl) = CHAR_FRAME_BOTTOM_RIGHT;
 }
 
-void TextboxPalette(void) {
-    //  Fill text box width c height b at hl with pal 7
-    LD_DE(wAttrmap - wTilemap);
-    ADD_HL_DE;
-    INC_B;
-    INC_B;
-    INC_C;
-    INC_C;
-    LD_A(PAL_BG_TEXT);
-
-col:
-    PUSH_BC;
-    PUSH_HL;
-
-row:
-    LD_hli_A;
-    DEC_C;
-    IF_NZ goto row;
-    POP_HL;
-    LD_DE(SCREEN_WIDTH);
-    ADD_HL_DE;
-    POP_BC;
-    DEC_B;
-    IF_NZ goto col;
-    RET;
-}
-
 //  Fill text box width c height b at hl with pal 7
-void TextboxPalette_Conv(uint16_t hl, uint8_t c, uint8_t b) {
-    hl += (wAttrmap - wTilemap);
-    b += 2;
-    c += 2;
-
-    do {
-        uint8_t tempc = c;
-        uint8_t tempb = b;
-        uint16_t temphl = hl;
-
-        do {
-            gb_write(hl++, PAL_BG_TEXT);
-        } while(--c != 0);
-        hl = temphl + SCREEN_WIDTH;
-        b = tempb;
-        c = tempc;
-    } while(--b != 0);
-}
-
-//  Fill text box width c height b at hl with pal 7
-void TextboxPalette_Conv2(uint8_t* hl, uint8_t c, uint8_t b) {
+void TextboxPalette(uint8_t* hl, uint8_t c, uint8_t b) {
     hl += (wAttrmap - wTilemap);
     b += 2;
     c += 2;
@@ -360,22 +110,9 @@ void TextboxPalette_Conv2(uint8_t* hl, uint8_t c, uint8_t b) {
     }
 }
 
+//  Standard textbox.
 void SpeechTextbox(void) {
-    //  Standard textbox.
-    hlcoord(TEXTBOX_X, TEXTBOX_Y, wTilemap);
-    LD_B(TEXTBOX_INNERH);
-    LD_C(TEXTBOX_INNERW);
-    JP(mTextbox);
-}
-
-//  Standard textbox.
-void SpeechTextbox_Conv(void) {
-    return Textbox_Conv(coord(TEXTBOX_X, TEXTBOX_Y, wTilemap), TEXTBOX_INNERH, TEXTBOX_INNERW);
-}
-
-//  Standard textbox.
-void SpeechTextbox_Conv2(void) {
-    return Textbox_Conv2(coord(TEXTBOX_X, TEXTBOX_Y, wram->wTilemap), TEXTBOX_INNERH, TEXTBOX_INNERW);
+    return Textbox(coord(TEXTBOX_X, TEXTBOX_Y, wram->wTilemap), TEXTBOX_INNERH, TEXTBOX_INNERW);
 }
 
 void GameFreakText(void) {
@@ -444,7 +181,7 @@ void BuenaPrintText_Conv(uint8_t* hl) {
     // hlcoord(TEXTBOX_INNERX, TEXTBOX_INNERY, wTilemap);
     // LD_BC(((TEXTBOX_INNERH - 1) << 8) | TEXTBOX_INNERW);
     // CALL(aClearBox);
-    ClearBox_Conv2(wram->wTilemap + coordidx(TEXTBOX_INNERX, TEXTBOX_INNERY), TEXTBOX_INNERW, (TEXTBOX_INNERH - 1));
+    ClearBox(wram->wTilemap + coordidx(TEXTBOX_INNERX, TEXTBOX_INNERY), TEXTBOX_INNERW, (TEXTBOX_INNERH - 1));
     // POP_HL;
     // fallthrough
 
@@ -456,7 +193,7 @@ void BuenaPrintText_Conv2(const struct TextCmd* hl) {
     // hlcoord(TEXTBOX_INNERX, TEXTBOX_INNERY, wTilemap);
     // LD_BC(((TEXTBOX_INNERH - 1) << 8) | TEXTBOX_INNERW);
     // CALL(aClearBox);
-    ClearBox_Conv2(wram->wTilemap + coordidx(TEXTBOX_INNERX, TEXTBOX_INNERY), TEXTBOX_INNERW, (TEXTBOX_INNERH - 1));
+    ClearBox(wram->wTilemap + coordidx(TEXTBOX_INNERX, TEXTBOX_INNERY), TEXTBOX_INNERW, (TEXTBOX_INNERH - 1));
     // POP_HL;
     // fallthrough
 
@@ -494,7 +231,7 @@ void SetUpTextbox(void) {
 }
 
 void SetUpTextbox_Conv(void) {
-    SpeechTextbox_Conv2();
+    SpeechTextbox();
     // CALL(aUpdateSprites);
     UpdateSprites_Conv();
     ApplyTilemap_Conv();
@@ -1630,13 +1367,13 @@ void Paragraph_Conv(struct TextPrintState* state) {
 // linkbattle:
     // CALL(aText_WaitBGMap);
     // CALL(aPromptButton);
-    Text_WaitBGMap_Conv();
+    Text_WaitBGMap();
     PromptButton_Conv();
     
     // hlcoord(TEXTBOX_INNERX, TEXTBOX_INNERY, wTilemap);
     // LD_BC(((TEXTBOX_INNERH - 1) << 8) | TEXTBOX_INNERW);
     // CALL(aClearBox);
-    ClearBox_Conv2(wram->wTilemap + coordidx(TEXTBOX_INNERX, TEXTBOX_INNERY), TEXTBOX_INNERW, (TEXTBOX_INNERH - 1));
+    ClearBox(wram->wTilemap + coordidx(TEXTBOX_INNERX, TEXTBOX_INNERY), TEXTBOX_INNERW, (TEXTBOX_INNERH - 1));
     
     // CALL(aUnloadBlinkingCursor);
     UnloadBlinkingCursor_Conv();
@@ -1685,7 +1422,7 @@ void v_ContText_Conv(struct TextPrintState* state) {
 
 // communication:
     // CALL(aText_WaitBGMap);
-    Text_WaitBGMap_Conv();
+    Text_WaitBGMap();
 
     // PUSH_DE;
     // CALL(aPromptButton);
@@ -1822,7 +1559,7 @@ bool PromptText_Conv(struct TextPrintState* state) {
 // ok:
     // CALL(aText_WaitBGMap);
     // CALL(aPromptButton);
-    Text_WaitBGMap_Conv();
+    Text_WaitBGMap();
     PromptButton_Conv();
 
     // LD_A_addr(wLinkMode);
@@ -1961,21 +1698,6 @@ void TextScroll_Conv(struct TextPrintState* state) {
 }
 
 void Text_WaitBGMap(void) {
-    PUSH_BC;
-    LDH_A_addr(hOAMUpdate);
-    PUSH_AF;
-    LD_A(1);
-    LDH_addr_A(hOAMUpdate);
-
-    CALL(aWaitBGMap);
-
-    POP_AF;
-    LDH_addr_A(hOAMUpdate);
-    POP_BC;
-    RET;
-}
-
-void Text_WaitBGMap_Conv(void) {
     // PUSH_BC;
     // LDH_A_addr(hOAMUpdate);
     // PUSH_AF;
@@ -1986,7 +1708,7 @@ void Text_WaitBGMap_Conv(void) {
     hram->hOAMUpdate = 1;
 
     // CALL(aWaitBGMap);
-    WaitBGMap_Conv();
+    WaitBGMap();
 
     // POP_AF;
     // LDH_addr_A(hOAMUpdate);
@@ -2715,7 +2437,7 @@ void TextCommand_BOX_Conv(struct TextPrintState* state) {
     // LD_H_D;
     // LD_L_E;
     // CALL(aTextbox);
-    Textbox_Conv2(de, b, c);
+    Textbox(de, b, c);
 
     // POP_HL;
     // RET;
@@ -2742,7 +2464,7 @@ void TextCommand_BOX_Conv2(struct TextCmdState* state, const struct TextCmd* cmd
     // LD_H_D;
     // LD_L_E;
     // CALL(aTextbox);
-    Textbox_Conv2(de, b, c);
+    Textbox(de, b, c);
 
     // POP_HL;
     // RET;
@@ -3714,7 +3436,7 @@ void TextCommand_DAY_Conv(struct TextPrintState* state) {
     static const char* Day = "DAY@";
 
     // CALL(aGetWeekday);
-    uint8_t wd = GetWeekday_Conv();
+    uint8_t wd = GetWeekday();
 
     // PUSH_HL;
     // PUSH_BC;
@@ -3804,7 +3526,7 @@ void TextCommand_DAY_Conv2(struct TextCmdState* state, const struct TextCmd* cmd
     static const char* Day = "DAY@";
 
     // CALL(aGetWeekday);
-    uint8_t wd = GetWeekday_Conv();
+    uint8_t wd = GetWeekday();
 
     // PUSH_HL;
     // PUSH_BC;
