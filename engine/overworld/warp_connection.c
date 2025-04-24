@@ -227,7 +227,7 @@ bool EnterMapConnection_Conv(void){
         // LD_addr_A(wOverworldMapAnchor);
         // LD_A_H;
         // LD_addr_A(wOverworldMapAnchor + 1);
-        wram->wOverworldMapAnchor = wOverworldMapBlocks + (uint16_t)(gMapConnections[SOUTH_F].connectionWindow + (wram->wXCoord >> 1) - wram->wOverworldMapBlocks);
+        wram->wOverworldMapAnchor = (uint16_t)(gMapConnections[SOUTH_F].connectionWindow + (wram->wXCoord >> 1) - wram->wOverworldMapBlocks);
         return true;
     // CP_A(UP);
     // JP_Z (mEnterMapConnection_north);
@@ -259,7 +259,7 @@ bool EnterMapConnection_Conv(void){
         // LD_addr_A(wOverworldMapAnchor);
         // LD_A_H;
         // LD_addr_A(wOverworldMapAnchor + 1);
-        wram->wOverworldMapAnchor = wOverworldMapBlocks + (uint16_t)(gMapConnections[NORTH_F].connectionWindow + (wram->wXCoord >> 1) - wram->wOverworldMapBlocks);
+        wram->wOverworldMapAnchor = (uint16_t)(gMapConnections[NORTH_F].connectionWindow + (wram->wXCoord >> 1) - wram->wOverworldMapBlocks);
         // JP(mEnterMapConnection_done);
         return true;
     // CP_A(LEFT);
@@ -297,8 +297,7 @@ bool EnterMapConnection_Conv(void){
         // ADD_HL_DE;
         // DEC_C;
         // IF_NZ goto loop;
-        wram->wOverworldMapAnchor = wOverworldMapBlocks + (uint16_t)((gMapConnections[WEST_F].connectionWindow + ((gMapConnections[WEST_F].connectedMapWidth + 6) * (wram->wYCoord >> 1))) - wram->wOverworldMapBlocks);
-
+        wram->wOverworldMapAnchor = (uint16_t)((gMapConnections[WEST_F].connectionWindow + ((gMapConnections[WEST_F].connectedMapWidth + 6) * (wram->wYCoord >> 1))) - wram->wOverworldMapBlocks);
     // skip_to_load:
         // LD_A_L;
         // LD_addr_A(wOverworldMapAnchor);
@@ -347,7 +346,7 @@ bool EnterMapConnection_Conv(void){
         // LD_addr_A(wOverworldMapAnchor);
         // LD_A_H;
         // LD_addr_A(wOverworldMapAnchor + 1);
-        wram->wOverworldMapAnchor = wOverworldMapBlocks + (uint16_t)((gMapConnections[EAST_F].connectionWindow + ((gMapConnections[EAST_F].connectedMapWidth + 6) * (wram->wYCoord >> 1))) - wram->wOverworldMapBlocks);
+        wram->wOverworldMapAnchor = (uint16_t)((gMapConnections[EAST_F].connectionWindow + ((gMapConnections[EAST_F].connectedMapWidth + 6) * (wram->wYCoord >> 1))) - wram->wOverworldMapBlocks);
         // JP(mEnterMapConnection_done);
         return true;
     // JP_Z (mEnterMapConnection_east);
@@ -867,7 +866,7 @@ void GetMapScreenCoords(void){
     // LD_C_A;
     // LD_B(0);
     // ADD_HL_BC;
-    uint16_t hl = wOverworldMapBlocks + x;
+    uint16_t hl = x;
     // LD_A_addr(wMapWidth);
     // ADD_A(MAP_CONNECTION_PADDING_WIDTH * 2);
     // LD_C_A;
@@ -898,7 +897,6 @@ void GetMapScreenCoords(void){
     // LD_A_H;
     // LD_addr_A(wOverworldMapAnchor + 1);
     wram->wOverworldMapAnchor = hl;
-    printf("load anchor=%d\n", wram->wOverworldMapAnchor - wOverworldMapBlocks);
     // LD_A_addr(wYCoord);
     // AND_A(1);
     // LD_addr_A(wMetatileStandingY);

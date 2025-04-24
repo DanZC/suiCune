@@ -445,10 +445,7 @@ void LoadMetatiles_Conv(void){
     // LD_E_A;
     // LD_A_addr(wOverworldMapAnchor + 1);
     // LD_D_A;
-    uint8_t* de = AbsGBBankAddrToRAMAddr(MBANK(awOverworldMapBlocks), wram->wOverworldMapAnchor);
-    if(!de) {
-        de = wram->wSurroundingTiles;
-    }
+    uint8_t* de = wram->wOverworldMapBlocks + wram->wOverworldMapAnchor;
     // LD_HL(wSurroundingTiles);
     uint8_t* hl = wram->wSurroundingTiles;
     // LD_B(SCREEN_META_HEIGHT);
@@ -3307,7 +3304,7 @@ void BufferScreen_Conv(void){
     // LD_A_hli;
     // LD_H_hl;
     // LD_L_A;
-    const uint8_t* hl = AbsGBBankAddrToRAMAddr(MBANK(awOverworldMapBlocks), wram->wOverworldMapAnchor);
+    const uint8_t* hl = wram->wOverworldMapBlocks + wram->wOverworldMapAnchor;
     // LD_DE(wScreenSave);
     uint8_t* de = wram->wScreenSave;
     // LD_C(SCREEN_META_HEIGHT);
@@ -3347,12 +3344,12 @@ void SaveScreen(void){
     // LD_A_hli;
     // LD_H_hl;
     // LD_L_A;
-    tile_t* hl = GBToRAMAddr(wram->wOverworldMapAnchor);
+    tile_t* hl = wram->wOverworldMapBlocks + wram->wOverworldMapAnchor;
     // LD_DE(wScreenSave);
     // LD_A_addr(wMapWidth);
     // ADD_A(6);
     // LDH_addr_A(hMapObjectIndex);
-    hram->hMapObjectIndex = wram->wMapWidth + 6;
+    hram->hConnectionStripLength = wram->wMapWidth + 6;
     // LD_A_addr(wPlayerStepDirection);
     // AND_A_A;
     tile_t* de;
@@ -3380,7 +3377,7 @@ void SaveScreen(void){
             // LD_C_A;
             // LD_B(0);
             // ADD_HL_BC;
-            hl += hram->hMapObjectIndex;
+            hl += hram->hConnectionStripLength;
             goto vertical;
         }
         // CP_A(LEFT);
@@ -3390,6 +3387,7 @@ void SaveScreen(void){
             // LD_DE(wScreenSave + 1);
             de = wram->wScreenSave + 1;
             // INC_HL;
+            hl++;
             goto horizontal;
 
         horizontal:
@@ -3415,7 +3413,7 @@ void LoadConnectionBlockData(void){
     // LD_A_hli;
     // LD_H_hl;
     // LD_L_A;
-    uint8_t* hl = AbsGBBankAddrToRAMAddr(MBANK(awOverworldMapBlocks), wram->wOverworldMapAnchor);
+    uint8_t* hl = wram->wOverworldMapBlocks + wram->wOverworldMapAnchor;
     // LD_A_addr(wMapWidth);
     // ADD_A(6);
     // LDH_addr_A(hConnectionStripLength);
