@@ -265,7 +265,7 @@ void DoMysteryGift(void){
             // CALL(aPrintText);
             PrintText_Conv2(MysteryGiftCommErrorText);
             // JP(mDoMysteryGift);
-            continue;
+            return;
         }
         // LD_A_addr(wMysteryGiftGameVersion);
         // CP_A(POKEMON_PIKACHU_2_VERSION);
@@ -442,7 +442,7 @@ void DoMysteryGift(void){
 uint8_t ExchangeMysteryGiftData(void){
     static const char String_ExchangingData_BToCancel[] = 
                "Exchanging"
-        t_next "data<...> <...>"
+        t_next "data<……> <……>"
         t_next "Press B to"
         t_next "cancel.";
     // NOP;
@@ -456,14 +456,14 @@ uint8_t ExchangeMysteryGiftData(void){
         // CALL(aBeginIRCommunication);
         BeginIRCommunication();
         // CALL(aInitializeIRCommunicationRoles);
-        hram->hMGRole = (hram->hSerialConnectionStatus == USING_INTERNAL_CLOCK)
-            ? IR_SENDER
-            : IR_RECEIVER;
+        InitializeIRCommunicationRoles();
         // LDH_A_addr(hMGStatusFlags);
         // CP_A(MG_CANCELED);
         // JP_Z (mEndOrContinueMysteryGiftIRCommunication);
         // CP_A(MG_OKAY);
         // IF_NZ goto restart;
+        if(hram->hMGStatusFlags != MG_OKAY)
+            return EndOrContinueMysteryGiftIRCommunication();
 
         // LDH_A_addr(hMGRole);
         // CP_A(IR_SENDER);
@@ -836,11 +836,8 @@ uint8_t ExchangeNameCardData(void){
     // CALL(aBeginIRCommunication);
     BeginIRCommunication();
     // CALL(aInitializeIRCommunicationRoles);
-    hram->hMGRole = (hram->hSerialConnectionStatus == USING_INTERNAL_CLOCK)
-        ? IR_SENDER
-        : IR_RECEIVER;
+    InitializeIRCommunicationRoles();
     // LDH_A_addr(hMGStatusFlags);
-    hram->hMGStatusFlags = MG_OKAY;
     // CP_A(MG_CANCELED);
     // JP_Z (mEndNameCardIRCommunication);
     // CP_A(MG_OKAY);
@@ -1248,30 +1245,35 @@ void InitializeIRCommunicationRoles(void){
 
     // LD_A(IR_RECEIVER);
     // LDH_addr_A(hMGRole);
-    hram->hMGRole = IR_RECEIVER;
+    hram->hMGRole = (hram->hSerialConnectionStatus == USING_INTERNAL_CLOCK)
+        ? IR_SENDER
+        : IR_RECEIVER;
 
-loop:
-    CALL(aMysteryGift_UpdateJoypad);
-    LD_B(1 << rRP_RECEIVING);
-    LD_C(LOW(rRP));
-// Check if we've pressed the B button to cancel
-    LDH_A_addr(hMGJoypadReleased);
-    BIT_A(B_BUTTON_F);
-    IF_Z goto not_canceled;
-    LD_A(MG_CANCELED);
-    LDH_addr_A(hMGStatusFlags);
-    RET;
+    if(hram->hMGRole == IR_SENDER) {
+        SendIRHelloMessage();
+        return;
+    }
+    // loop:
+        // CALL(aMysteryGift_UpdateJoypad);
+        // LD_B(1 << rRP_RECEIVING);
+        // LD_C(LOW(rRP));
+    // Check if we've pressed the B button to cancel
+        // LDH_A_addr(hMGJoypadReleased);
+        // BIT_A(B_BUTTON_F);
+        // IF_Z goto not_canceled;
+        // LD_A(MG_CANCELED);
+        // LDH_addr_A(hMGStatusFlags);
+        // RET;
 
-
-not_canceled:
-// Check if we've pressed the A button to start sending
-    BIT_A(A_BUTTON_F);
-    JR_NZ (mSendIRHelloMessageAfterDelay);
-// If rRP is not receiving data, keep checking for input
-    LDH_A_c;
-    AND_A_B;
-    IF_NZ goto loop;
-// fallthrough
+    // not_canceled:
+    // Check if we've pressed the A button to start sending
+        // BIT_A(A_BUTTON_F);
+        // JR_NZ (mSendIRHelloMessageAfterDelay);
+    // If rRP is not receiving data, keep checking for input
+        // LDH_A_c;
+        // AND_A_B;
+        // IF_NZ goto loop;
+    // fallthrough
 
     return ReceiveIRHelloMessage();
 }
@@ -1292,7 +1294,7 @@ void ReceiveIRHelloMessage(void){
     // JP_Z (mInfraredLEDReceiveTimedOut);
     // CALL(aReceiveInfraredLEDOn);
     // JP_Z (mInfraredLEDReceiveTimedOut);
-    while(try_count++ < 1000) {
+    while(try_count++ < 600) {
         int err = Network_TryRecvByte(&x);
         if(err == NETWORK_XCHG_ERROR_RECV)
             return InfraredLEDReceiveTimedOut();
@@ -1347,6 +1349,7 @@ void SendIRHelloMessage(void){
     // LD_D(0);
     // LD_E_D;
 
+    uint32_t try_count = 0;
     // LD_D(61);
     // CALL(aSendInfraredLEDOff);
     // LD_D(5);
@@ -1357,7 +1360,17 @@ void SendIRHelloMessage(void){
     // CALL(aSendInfraredLEDOn);
     // LD_D(5);
     // CALL(aSendInfraredLEDOff);
-    Network_SendByte(0);
+    while(try_count++ < 600) {
+        int err = Network_SendByte(61);
+        if(err == NETWORK_XCHG_ERROR_RECV)
+            return InfraredLEDReceiveTimedOut();
+        else if(err == NETWORK_XCHG_OK) {
+            hram->hMGStatusFlags = MG_OKAY;
+            return;
+        }
+        DelayFrame();
+    }
+    return InfraredLEDReceiveTimedOut();
 
     // LD_D_E;
     // CALL(aReceiveInfraredLEDOff);
@@ -1375,7 +1388,6 @@ void SendIRHelloMessage(void){
 
     // LD_A(MG_OKAY);
     // LDH_addr_A(hMGStatusFlags);
-    hram->hMGStatusFlags = MG_OKAY;
     // RET;
 }
 
