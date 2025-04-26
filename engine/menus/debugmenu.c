@@ -16,6 +16,7 @@
 #include "../../data/trainers/class_names.h"
 #include "../../data/trainers/parties.h"
 #include "../../data/pokemon/base_stats.h"
+#include "../../mobile/mobile_42.h"
 #include "../../mobile/mobile_5f.h"
 #include "../gfx/load_font.h"
 #include "../gfx/place_graphic.h"
@@ -260,7 +261,8 @@ static void Handler_Script(void) {
 }
 
 static void Handler_TradeAnim(void) {
-    DebugMenu_TradeAnim();
+    // DebugMenu_TradeAnim();
+    DebugMenu_MobileTradeAnim();
     PlayMusic(DEBUG_MENU_MUSIC);
 }
 
@@ -1176,4 +1178,17 @@ loop:
     v_LoadFontsExtra2_Conv();
     v_LoadStandardFont_Conv();
     DelayFrames(4);
+}
+
+void DebugMenu_MobileTradeAnim(void) {
+    DebugMenu_SaveTilemap();
+    DebugMenu_SaveAttrmap();
+    ClearScreen();
+    DebugMobileTrade();
+    Function108026();
+    DebugMenu_RestoreTilemap();
+    DebugMenu_RestoreAttrmap();
+    v_LoadFontsExtra1_Conv();
+    v_LoadFontsExtra2_Conv();
+    v_LoadStandardFont_Conv();
 }

@@ -22,6 +22,7 @@ void DebugMenu_BattleAnim(void);
 void DebugMenu_Credits(void);
 void DebugMenu_MysteryGift(void);
 void DebugMenu_News(void);
+void DebugMenu_MobileTradeAnim(void);
 // void debugMenuOptionField();
 // void debugMenuOptionFight();
 // void debugMenuOptionSubGames();

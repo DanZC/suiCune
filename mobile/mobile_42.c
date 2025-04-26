@@ -314,7 +314,9 @@ void Function1080b7(void){
     // LD_HL(vTiles0);
     // LD_BC((BANK(aTradeBallGFX) << 8) | 6);
     // CALL(aRequest2bpp);
-    LoadPNG2bppAssetSectionToVRAM(vram->vTiles0, TradeBallGFX, 0, 6);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles0 + 0 * LEN_2BPP_TILE, TradeBallGFX, 0, 1);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles0 + 1 * LEN_2BPP_TILE, TradeBallGFX, 2, 1);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles0 + 2 * LEN_2BPP_TILE, TradeBallGFX, 4, 4);
 
     // LD_DE(mTradePoofGFX);
     // LD_HL(vTiles0 + LEN_2BPP_TILE * 0x06);
@@ -896,7 +898,9 @@ void MobileTradeAnim_ShowPlayerMonForGTS(void){
     // LD_HL(vTiles0);
     // LD_BC((BANK(aTradeBallGFX) << 8) | 6);
     // CALL(aRequest2bpp);
-    LoadPNG2bppAssetSectionToVRAM(vram->vTiles0, TradeBallGFX, 0, 6);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles0 + 0 * LEN_2BPP_TILE, TradeBallGFX, 0, 1);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles0 + 1 * LEN_2BPP_TILE, TradeBallGFX, 2, 1);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles0 + 2 * LEN_2BPP_TILE, TradeBallGFX, 4, 4);
     // LD_DE(mTradePoofGFX);
     // LD_HL(vTiles0 + LEN_2BPP_TILE * 0x06);
     // LD_BC((BANK(aTradePoofGFX) << 8) | 12);
@@ -1004,7 +1008,9 @@ void MobileTradeAnim_ShowOTMonFromGTS(void){
     // LD_HL(vTiles0);
     // LD_BC((BANK(aTradeBallGFX) << 8) | 6);
     // CALL(aRequest2bpp);
-    LoadPNG2bppAssetSectionToVRAM(vram->vTiles0, TradeBallGFX, 0, 6);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles0 + 0 * LEN_2BPP_TILE, TradeBallGFX, 0, 1);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles0 + 1 * LEN_2BPP_TILE, TradeBallGFX, 2, 1);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles0 + 2 * LEN_2BPP_TILE, TradeBallGFX, 4, 4);
     // LD_DE(mTradePoofGFX);
     // LD_HL(vTiles0 + LEN_2BPP_TILE * 0x06);
     // LD_BC((BANK(aTradePoofGFX) << 8) | 12);
@@ -1107,7 +1113,9 @@ void MobileTradeAnim_GetOddEgg(void){
     // LD_HL(vTiles0);
     // LD_BC((BANK(aTradeBallGFX) << 8) | 6);
     // CALL(aRequest2bpp);
-    LoadPNG2bppAssetSectionToVRAM(vram->vTiles0, TradeBallGFX, 0, 6);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles0 + 0 * LEN_2BPP_TILE, TradeBallGFX, 0, 1);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles0 + 1 * LEN_2BPP_TILE, TradeBallGFX, 2, 1);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles0 + 2 * LEN_2BPP_TILE, TradeBallGFX, 4, 4);
     // LD_DE(mTradePoofGFX);
     // LD_HL(vTiles0 + LEN_2BPP_TILE * 0x06);
     // LD_BC((BANK(aTradePoofGFX) << 8) | 12);
@@ -1780,7 +1788,7 @@ void asm_108966(const uint8_t* de){
     // LD_HL(vTiles2);
     // LD_BC((BANK(aTradeGameBoyLZ) << 8) | 0x31);
     // CALL(aRequest2bpp);
-    CopyBytes(vram->vTiles2, de, 0x31);
+    CopyBytes(vram->vTiles2, de, 0x31 * LEN_2BPP_TILE);
     // CALL(aWaitTop);
     WaitTop();
     // CALL(aMobileTradeAnim_ClearTilemap);
@@ -1891,11 +1899,11 @@ void MobileTradeAnim_DisplayEggData(void){
     // LD_B(6);
     // LD_C(9);
     // CALL(aTextbox);
-    Textbox(coord(5, 0, wram->wTilemap), 6, 9);
+    Textbox(coord(3, 0, wram->wTilemap), 6, 13);
     // hlcoord(6, 2, wTilemap);
     // LD_DE(mMobileTradeAnim_DisplayEggData_EggTemplate);
     // CALL(aPlaceString);
-    PlaceStringSimple(U82C(EggTemplate), coord(6, 2, wram->wTilemap));
+    PlaceStringSimple(U82C(EggTemplate), coord(4, 2, wram->wTilemap));
     // CALL(aMobileTradeAnim_MonDisplay_UpdateBGMap);
     MobileTradeAnim_MonDisplay_UpdateBGMap();
     // RET;
@@ -1915,11 +1923,11 @@ void Function108a33(void){
     // LD_B(6);
     // LD_C(9);
     // CALL(aTextbox);
-    Textbox(coord(5, 0, wram->wTilemap), 6, 9);
+    Textbox(coord(4, 0, wram->wTilemap), 6, 10);
     // hlcoord(7, 4, wTilemap);
     // LD_DE(mFunction108a33_OddEgg);
     // CALL(aPlaceString);
-    PlaceStringSimple(U82C(OddEgg), coord(7, 4, wram->wTilemap));
+    PlaceStringSimple(U82C(OddEgg), coord(6, 4, wram->wTilemap));
     // CALL(aMobileTradeAnim_MonDisplay_UpdateBGMap);
     MobileTradeAnim_MonDisplay_UpdateBGMap();
     // RET;
@@ -1933,6 +1941,7 @@ void MobileTradeAnim_LoadMonTemplate(void){
         t_next  "<ID>№<DOT>"//next ['"<ID>№<DOT>"']
                 "";         //db ['"@"'];
     // CALL(aWaitTop);
+    WaitTop();
     // CALL(aMobileTradeAnim_ClearTilemap);
     MobileTradeAnim_ClearTilemap();
     // LD_A(HIGH(vBGMap1));
@@ -1942,11 +1951,11 @@ void MobileTradeAnim_LoadMonTemplate(void){
     // LD_B(6);
     // LD_C(10);
     // CALL(aTextbox);
-    Textbox(coord(4, 0, wram->wTilemap), 6, 10);
+    Textbox(coord(3, 0, wram->wTilemap), 6, 13);
     // hlcoord(5, 0, wTilemap);
     // LD_DE(mMobileTradeAnim_LoadMonTemplate_MonTemplate);
     // CALL(aPlaceString);
-    PlaceStringSimple(U82C(MonTemplate), coord(5, 0, wram->wTilemap));
+    PlaceStringSimple(U82C(MonTemplate), coord(4, 0, wram->wTilemap));
     // RET;
 }
 
@@ -1965,14 +1974,14 @@ void MobileTradeAnim_MonDisplay_PrintSpeciesNumber(species_t species){
     // hlcoord(9, 0, wTilemap);
     // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 3);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(9, 0, wram->wTilemap), &species, PRINTNUM_LEADINGZEROS | 1, 3);
+    PrintNum_Conv2(coord(10, 0, wram->wTilemap), &species, PRINTNUM_LEADINGZEROS | 1, 3);
     // RET;
 }
 
 void MobileTradeAnim_MonDisplay_PrintSpeciesName(uint8_t* de){
     // hlcoord(5, 2, wTilemap);
     // CALL(aPlaceString);
-    PlaceStringSimple(de, coord(5, 2, wram->wTilemap));
+    PlaceStringSimple(de, coord(4, 2, wram->wTilemap));
     // RET;
 }
 
@@ -1993,7 +2002,7 @@ void MobileTradeAnim_MonDisplay_PrintOTNameAndGender(uint8_t* de, uint8_t a){
     // PUSH_AF;
     // hlcoord(8, 4, wTilemap);
     // CALL(aPlaceString);
-    struct TextPrintState st = {.de = de, .hl = coord(8, 4, wram->wTilemap)};
+    struct TextPrintState st = {.de = de, .hl = coord(7, 4, wram->wTilemap)};
     PlaceString_Conv(&st, st.hl);
     // INC_BC;
     st.bc++;
@@ -2012,7 +2021,7 @@ void MobileTradeAnim_MonDisplay_PrintIDNumber(const void* de){
     // hlcoord(8, 6, wTilemap);
     // LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 5);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(8, 6, wram->wTilemap), de, PRINTNUM_LEADINGZEROS | 2, 5);
+    PrintNum_Conv2(coord(7, 6, wram->wTilemap), de, PRINTNUM_LEADINGZEROS | 2, 5);
     // RET;
 }
 
@@ -2390,77 +2399,85 @@ void DebugMobileTrade(void){
 //  //  unreferenced
 //  localization error: NAME_LENGTH (11) should be NAME_LENGTH_JAPANESE (6) here
 
-    LD_HL(mDebugMobileTrade_DebugTradeData);
-    LD_A_hli;
-    LD_addr_A(wPlayerTrademonSpecies);
+    // LD_HL(mDebugMobileTrade_DebugTradeData);
+    // LD_A_hli;
+    // LD_addr_A(wPlayerTrademonSpecies);
+    wram->wPlayerTrademon.species = VENUSAUR;
 
-    LD_DE(wPlayerTrademonSenderName);
-    LD_C(NAME_LENGTH);
+    // LD_DE(wPlayerTrademonSenderName);
+    // LD_C(NAME_LENGTH);
 
-your_name_loop:
-    LD_A_hli;
-    LD_de_A;
-    INC_DE;
-    DEC_C;
-    IF_NZ goto your_name_loop;
+// your_name_loop:
+    // LD_A_hli;
+    // LD_de_A;
+    // INC_DE;
+    // DEC_C;
+    // IF_NZ goto your_name_loop;
+    U82CA(wram->wPlayerTrademon.senderName, "GAMEFREAK");
 
-    LD_DE(wPlayerTrademonID);
-    LD_C(2);
+    // LD_DE(wPlayerTrademonID);
+    // LD_C(2);
 
-your_id_loop:
-    LD_A_hli;
-    LD_de_A;
-    INC_DE;
-    DEC_C;
-    IF_NZ goto your_id_loop;
+// your_id_loop:
+    // LD_A_hli;
+    // LD_de_A;
+    // INC_DE;
+    // DEC_C;
+    // IF_NZ goto your_id_loop;
+    wram->wPlayerTrademon.id = 0x0123;
 
-    LD_DE(wPlayerTrademonOTName);
-    LD_C(NAME_LENGTH);
+    // LD_DE(wPlayerTrademonOTName);
+    // LD_C(NAME_LENGTH);
 
-your_ot_loop:
-    LD_A_hli;
-    LD_de_A;
-    INC_DE;
-    DEC_C;
-    IF_NZ goto your_ot_loop;
+// your_ot_loop:
+    // LD_A_hli;
+    // LD_de_A;
+    // INC_DE;
+    // DEC_C;
+    // IF_NZ goto your_ot_loop;
+    U82CA(wram->wPlayerTrademon.otName, "KABIN");
 
-    LD_A_hli;
-    LD_addr_A(wOTTrademonSpecies);
+    // LD_A_hli;
+    // LD_addr_A(wOTTrademonSpecies);
+    wram->wOTTrademon.species = CHARIZARD;
 
-    LD_DE(wOTTrademonSenderName);
-    LD_C(NAME_LENGTH);
+    // LD_DE(wOTTrademonSenderName);
+    // LD_C(NAME_LENGTH);
 
-their_name_loop:
-    LD_A_hli;
-    LD_de_A;
-    INC_DE;
-    DEC_C;
-    IF_NZ goto their_name_loop;
+// their_name_loop:
+    // LD_A_hli;
+    // LD_de_A;
+    // INC_DE;
+    // DEC_C;
+    // IF_NZ goto their_name_loop;
+    U82CA(wram->wOTTrademon.senderName, "CREATURE");
 
-    LD_DE(wOTTrademonID);
-    LD_C(2);
+    // LD_DE(wOTTrademonID);
+    // LD_C(2);
 
-their_id_loop:
-    LD_A_hli;
-    LD_de_A;
-    INC_DE;
-    DEC_C;
-    IF_NZ goto their_id_loop;
+// their_id_loop:
+    // LD_A_hli;
+    // LD_de_A;
+    // INC_DE;
+    // DEC_C;
+    // IF_NZ goto their_id_loop;
+    wram->wOTTrademon.id = 0x0456;
 
-    LD_DE(wOTTrademonOTName);
-    LD_C(NAME_LENGTH);
+    // LD_DE(wOTTrademonOTName);
+    // LD_C(NAME_LENGTH);
 
-their_ot_loop:
-    LD_A_hli;
-    LD_de_A;
-    INC_DE;
-    DEC_C;
-    IF_NZ goto their_ot_loop;
+// their_ot_loop:
+    // LD_A_hli;
+    // LD_de_A;
+    // INC_DE;
+    // DEC_C;
+    // IF_NZ goto their_ot_loop;
+    U82CA(wram->wOTTrademon.otName, "MATSUMIYA");
 
-    RET;
+    // RET;
 
 
-DebugTradeData:
+// DebugTradeData:
     //db ['VENUSAUR'];
     //db ['"ゲーフり@@"'];
     //dw ['0x0123'];
@@ -2469,8 +2486,6 @@ DebugTradeData:
     //db ['"クりーチャ@"'];
     //dw ['0x0456'];
     //db ['"マツミヤ@@"'];
-
-    return LoadMobileAdapterPalette();
 }
 
 void LoadMobileAdapterPalette(void){
