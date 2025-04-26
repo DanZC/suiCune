@@ -82,13 +82,13 @@ void InitGender(void){
     PrintText_Conv2(AreYouABoyOrAreYouAGirlText);
     // LD_HL(mInitGender_MenuHeader);
     // CALL(aLoadMenuHeader);
-    LoadMenuHeader_Conv2(&InitGender_MenuHeader);
+    LoadMenuHeader(&InitGender_MenuHeader);
     // CALL(aWaitBGMap2);
     WaitBGMap2();
     // CALL(aVerticalMenu);
-    VerticalMenu_Conv();
+    VerticalMenu();
     // CALL(aCloseWindow);
-    CloseWindow_Conv2();
+    CloseWindow();
     // LD_A_addr(wMenuCursorY);
     // DEC_A;
     // LD_addr_A(wPlayerGender);
@@ -116,7 +116,7 @@ void InitGenderScreen(void){
     // CALL(aInitCrystalData);
     InitCrystalData();
     // CALL(aLoadFontsExtra);
-    LoadFontsExtra_Conv();
+    LoadFontsExtra();
     // hlcoord(0, 0, wTilemap);
     // LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
     // LD_A(0x0);

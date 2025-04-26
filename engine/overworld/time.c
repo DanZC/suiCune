@@ -54,11 +54,11 @@ void NextCallReceiveDelay(void){
     // LD_H_A;
     // LD_A(BANK(sDebugTimeCyclesSinceLastCall));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asDebugTimeCyclesSinceLastCall));
+    OpenSRAM(MBANK(asDebugTimeCyclesSinceLastCall));
     // LD_A_addr(sDebugTimeCyclesSinceLastCall);
     uint8_t a2 = gb_read(sDebugTimeCyclesSinceLastCall);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // DEC_A;
     // CP_A(2);
     // IF_NC goto debug_ok;
@@ -142,7 +142,7 @@ void InitNDaysCountdown_Conv(uint8_t* hl, uint8_t n){
     hl[0] = n;
     // PUSH_HL;
     // CALL(aUpdateTime);
-    UpdateTime_Conv();
+    UpdateTime();
     // POP_HL;
     // INC_HL;
     // CALL(aCopyDayToHL);
@@ -191,7 +191,7 @@ void RestartReceiveCallDelay_Conv(uint8_t a){
     // LD_hl_A;
     wram->wReceiveCallDelay_MinsRemaining = a;
     // CALL(aUpdateTime);
-    UpdateTime_Conv();
+    UpdateTime();
     // LD_HL(wReceiveCallDelay_StartTime);
     // CALL(aCopyDayHourMinToHL);
     CopyDayHourMinToHL_Conv(wram->wReceiveCallDelay_StartTime);
@@ -364,7 +364,7 @@ void StartBugContestTimer_Conv(void){
     // LD_addr_A(wBugContestSecsRemaining);
     wram->wBugContestSecsRemaining = BUG_CONTEST_SECONDS;
     // CALL(aUpdateTime);
-    UpdateTime_Conv();
+    UpdateTime();
     // LD_HL(wBugContestStartTime);
     // CALL(aCopyDayHourMinSecToHL);
     CopyDayHourMinSecToHL_Conv(wram->wBugContestStartTime);
@@ -464,7 +464,7 @@ bool CheckBugContestTimer_Conv(void){
 
 void InitializeStartDay(void){
     // CALL(aUpdateTime);
-    UpdateTime_Conv();
+    UpdateTime();
     // LD_HL(wTimerEventStartDay);
     // CALL(aCopyDayToHL);
     CopyDayToHL_Conv(&wram->wTimerEventStartDay);
@@ -588,7 +588,7 @@ bool v_CheckLuckyNumberShowFlag_Conv(void){
 void DoMysteryGiftIfDayHasPassed(void){
     // LD_A(BANK(sMysteryGiftTimer));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asMysteryGiftTimer));
+    OpenSRAM(MBANK(asMysteryGiftTimer));
     // LD_HL(sMysteryGiftTimer);
     // LD_A_hli;
     // LD_addr_A(wTempMysteryGiftTimer);
@@ -596,7 +596,7 @@ void DoMysteryGiftIfDayHasPassed(void){
     // LD_addr_A(wTempMysteryGiftTimer + 1);
     wram->wTempMysteryGiftTimer = gb_read16(sMysteryGiftTimer);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 
     // LD_HL(wTempMysteryGiftTimer);
     // CALL(aCheckDayDependentEventHL);
@@ -606,7 +606,7 @@ void DoMysteryGiftIfDayHasPassed(void){
         // CALL(aInitOneDayCountdown);
         InitOneDayCountdown_Conv((uint8_t*)&wram->wTempMysteryGiftTimer);
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
         // FARCALL(aResetDailyMysteryGiftLimitIfUnlocked);
         ResetDailyMysteryGiftLimitIfUnlocked();
     }
@@ -614,7 +614,7 @@ void DoMysteryGiftIfDayHasPassed(void){
 // not_timed_out:
     // LD_A(BANK(sMysteryGiftTimer));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asMysteryGiftTimer));
+    OpenSRAM(MBANK(asMysteryGiftTimer));
     // LD_HL(wTempMysteryGiftTimer);
     // LD_A_hli;
     // LD_addr_A(sMysteryGiftTimer);
@@ -622,7 +622,7 @@ void DoMysteryGiftIfDayHasPassed(void){
     // LD_addr_A(sMysteryGiftTimer + 1);
     gb_write(sMysteryGiftTimer, wram->wTempMysteryGiftTimer);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 

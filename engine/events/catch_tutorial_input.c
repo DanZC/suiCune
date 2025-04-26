@@ -51,6 +51,6 @@ void v_DudeAutoInput(const uint8_t* hl){
     // LD_A(BANK(aDudeAutoInputs));
     // CALL(aStartAutoInput);
     // RET;
-    return StartAutoInput_Conv2(hl);
+    return StartAutoInput(hl);
 }
 

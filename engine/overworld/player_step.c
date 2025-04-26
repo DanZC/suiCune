@@ -89,7 +89,7 @@ void HandlePlayerStep(void){
         return;
     case 1:
     //dw ['BufferScreen'];
-        BufferScreen_Conv();
+        BufferScreen();
         return;
     case 2:
     //dw ['.mobile'];
@@ -349,7 +349,7 @@ void UpdateOverworldMap(void){
         // CALL(aUpdateOverworldMap_ScrollOverworldMapDown);
         UpdateOverworldMap_ScrollOverworldMapDown();
         // CALL(aLoadMapPart);
-        LoadMapPart_Conv();
+        LoadMapPart();
         // CALL(aScrollMapDown);
         ScrollMapDown();
         // RET;
@@ -360,7 +360,7 @@ void UpdateOverworldMap(void){
         // CALL(aUpdateOverworldMap_ScrollOverworldMapUp);
         UpdateOverworldMap_ScrollOverworldMapUp();
         // CALL(aLoadMapPart);
-        LoadMapPart_Conv();
+        LoadMapPart();
         // CALL(aScrollMapUp);
         ScrollMapUp();
         // RET;
@@ -371,7 +371,7 @@ void UpdateOverworldMap(void){
         // CALL(aUpdateOverworldMap_ScrollOverworldMapLeft);
         UpdateOverworldMap_ScrollOverworldMapLeft();
         // CALL(aLoadMapPart);
-        LoadMapPart_Conv();
+        LoadMapPart();
         // CALL(aScrollMapLeft);
         ScrollMapLeft();
         // RET;
@@ -382,7 +382,7 @@ void UpdateOverworldMap(void){
         // CALL(aUpdateOverworldMap_ScrollOverworldMapRight);
         UpdateOverworldMap_ScrollOverworldMapRight();
         // CALL(aLoadMapPart);
-        LoadMapPart_Conv();
+        LoadMapPart();
         // CALL(aScrollMapRight);
         ScrollMapRight();
         // RET;

@@ -56,7 +56,7 @@ void PhotoStudio(void){
     // FARCALL(aPrintPartymon);
     PrintPartymon();
     // CALL(aReturnToMapWithSpeechTextbox);
-    ReturnToMapWithSpeechTextbox_Conv();
+    ReturnToMapWithSpeechTextbox();
     // LDH_A_addr(hPrinter);
     // AND_A_A;
     // IF_NZ goto cancel;

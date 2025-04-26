@@ -87,7 +87,7 @@ void PlaceMenuItemQuantity_Conv(const struct MenuData* data, tile_t* de){
 void PlaceMoneyTopRight(void){
     // LD_HL(mMoneyTopRightMenuHeader);
     // CALL(aCopyMenuHeader);
-    CopyMenuHeader_Conv2(&MoneyTopRightMenuHeader);
+    CopyMenuHeader(&MoneyTopRightMenuHeader);
     // JR(mPlaceMoneyTextbox);
     return PlaceMoneyTextbox();
 }
@@ -95,7 +95,7 @@ void PlaceMoneyTopRight(void){
 void PlaceMoneyBottomLeft(void){
     // LD_HL(mMoneyBottomLeftMenuHeader);
     // CALL(aCopyMenuHeader);
-    CopyMenuHeader_Conv2(&MoneyBottomLeftMenuHeader);
+    CopyMenuHeader(&MoneyBottomLeftMenuHeader);
     // JR(mPlaceMoneyTextbox);
     return PlaceMoneyTextbox();
 }
@@ -104,21 +104,21 @@ void PlaceMoneyAtTopLeftOfTextbox(void){
     // LD_HL(mMoneyTopRightMenuHeader);
     // LD_DE((0 << 8) | 11);
     // CALL(aOffsetMenuHeader);
-    OffsetMenuHeader_Conv2(&MoneyTopRightMenuHeader, 0, 11);
+    OffsetMenuHeader(&MoneyTopRightMenuHeader, 0, 11);
 
     return PlaceMoneyTextbox();
 }
 
 void PlaceMoneyTextbox(void){
     // CALL(aMenuBox);
-    MenuBox_Conv();
+    MenuBox();
     // CALL(aMenuBoxCoord2Tile);
     // LD_DE(SCREEN_WIDTH + 1);
     // ADD_HL_DE;
     // LD_DE(wMoney);
     // LD_BC((PRINTNUM_MONEY | 3 << 8) | 6);
     // CALL(aPrintNum);
-    PrintNum_Conv2(MenuBoxCoord2Tile_Conv() + SCREEN_WIDTH + 1, &wram->wMoney, PRINTNUM_MONEY | 3, 6);
+    PrintNum_Conv2(MenuBoxCoord2Tile() + SCREEN_WIDTH + 1, &wram->wMoney, PRINTNUM_MONEY | 3, 6);
     // RET;
 }
 

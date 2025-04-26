@@ -39,9 +39,9 @@ bool v_2DMenu__Conv(void){
     // CALL(aDraw2DMenu);
     Draw2DMenu_Conv(data);
     // CALL(aUpdateSprites);
-    UpdateSprites_Conv();
+    UpdateSprites();
     // CALL(aApplyTilemap);
-    ApplyTilemap_Conv();
+    ApplyTilemap();
     // CALL(aGet2DMenuSelection);
     // RET;
     return Get2DMenuSelection_Conv(data);
@@ -72,9 +72,9 @@ bool v_InterpretBattleMenu_Conv(void){
     // FARCALL(aMobileTextBorder);
     MobileTextBorder();
     // CALL(aUpdateSprites);
-    UpdateSprites_Conv();
+    UpdateSprites();
     // CALL(aApplyTilemap);
-    ApplyTilemap_Conv();
+    ApplyTilemap();
     // CALL(aGet2DMenuSelection);
     // RET;
     return Get2DMenuSelection_Conv(data);
@@ -132,7 +132,7 @@ void Draw2DMenu_Conv(const struct MenuData* data){
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aMenuBox);
-    MenuBox_Conv();
+    MenuBox();
     // CALL(aPlace2DMenuItemStrings);
     Place2DMenuItemStrings_Conv(data);
     // RET;
@@ -149,9 +149,9 @@ bool Get2DMenuSelection_Conv(const struct MenuData* data){
     // CALL(aInit2DMenuCursorPosition);
     Init2DMenuCursorPosition_Conv(data);
     // CALL(aStaticMenuJoypad);
-    uint8_t a = StaticMenuJoypad_Conv();
+    uint8_t a = StaticMenuJoypad();
     // CALL(aMenuClickSound);
-    MenuClickSound_Conv(a);
+    MenuClickSound(a);
     return Mobile_GetMenuSelection_Conv(data);
 }
 
@@ -205,7 +205,7 @@ bool Mobile_GetMenuSelection_Conv(const struct MenuData* data){
     if(bit_test(data->flags, STATICMENU_ENABLE_SELECT_F)) {
         // CALL(aGetMenuJoypad);
         // BIT_A(SELECT_F);
-        if(bit_test(GetMenuJoypad_Conv(), SELECT_F))
+        if(bit_test(GetMenuJoypad(), SELECT_F))
             return true;
         // IF_NZ goto quit1;
     }
@@ -218,7 +218,7 @@ bool Mobile_GetMenuSelection_Conv(const struct MenuData* data){
         // CALL(aGetMenuJoypad);
         // BIT_A(B_BUTTON_F);
         // IF_NZ goto quit2;
-        if(bit_test(GetMenuJoypad_Conv(), B_BUTTON_F))
+        if(bit_test(GetMenuJoypad(), B_BUTTON_F))
             return true;
     }
 
@@ -346,9 +346,9 @@ void Place2DMenuItemStrings_Conv(const struct MenuData* data){
     const char **de = data->_2dMenu.options;
     // CALL(aGetMenuTextStartCoord);
     uint8_t b, c;
-    GetMenuTextStartCoord_Conv2(data, &b, &c);
+    GetMenuTextStartCoord(data, &b, &c);
     // CALL(aCoord2Tile);
-    uint8_t* hl = Coord2Tile_Conv(c, b);
+    uint8_t* hl = Coord2Tile(c, b);
     // CALL(aGet2DMenuNumberOfRows);
     // LD_B_A;
     b = Get2DMenuNumberOfRows_Conv2(data);
@@ -367,7 +367,7 @@ void Place2DMenuItemStrings_Conv(const struct MenuData* data){
             // PUSH_BC;
             // LD_A_addr(wMenuData_2DMenuItemStringsBank);
             // CALL(aPlace2DMenuItemName);
-            Place2DMenuItemName_Conv(hl, *de);
+            Place2DMenuItemName(hl, *de);
             // INC_DE;
             de++;
             // LD_A_addr(wMenuData_2DMenuSpacing);
@@ -556,7 +556,7 @@ static void Init2DMenuCursorPosition_InitFlags_c(const struct MenuData* data) {
 void Init2DMenuCursorPosition_Conv(const struct MenuData* data){
     // CALL(aGetMenuTextStartCoord);
     uint8_t b, c;
-    GetMenuTextStartCoord_Conv2(data, &b, &c);
+    GetMenuTextStartCoord(data, &b, &c);
     // LD_A_B;
     // LD_addr_A(w2DMenuCursorInitY);
     wram->w2DMenuCursorInitY = b;
@@ -720,7 +720,7 @@ uint8_t MobileMenuJoypad_Conv(void){
     // CALL(aGetMenuJoypad);
     // LD_C_A;
     // RET;
-    return GetMenuJoypad_Conv();
+    return GetMenuJoypad();
 }
 
 void Function241d5(void){
@@ -846,7 +846,7 @@ void MenuJoypadLoop_Conv(void){
         // LD_A_addr(wMenuJoypadFilter);
         // AND_A_B;
         // IF_Z goto loop;
-    } while((GetMenuJoypad_Conv() & wram->wMenuJoypadFilter) == 0);
+    } while((GetMenuJoypad() & wram->wMenuJoypadFilter) == 0);
 
 // done:
     // RET;
@@ -916,11 +916,11 @@ bool Menu_WasButtonPressed_Conv(void){
 
 // skip_to_joypad:
     // CALL(aJoyTextDelay);
-    JoyTextDelay_Conv();
+    JoyTextDelay();
     // CALL(aGetMenuJoypad);
     // AND_A_A;
     // RET_Z ;
-    if(!GetMenuJoypad_Conv())
+    if(!GetMenuJoypad())
         return false;
     // SCF;
     // RET;
@@ -1070,7 +1070,7 @@ a_b_start_select:
 
 bool v_2DMenuInterpretJoypad_Conv(void){
     // CALL(aGetMenuJoypad);
-    uint8_t a = GetMenuJoypad_Conv();
+    uint8_t a = GetMenuJoypad();
     // BIT_A(A_BUTTON_F);
     // JP_NZ (mv_2DMenuInterpretJoypad_a_b_start_select);
     // BIT_A(B_BUTTON_F);
@@ -1371,7 +1371,7 @@ void Place2DMenuCursor_Conv(void){
     // LD_A_addr(w2DMenuCursorInitX);
     // LD_C_A;
     // CALL(aCoord2Tile);
-    uint8_t* hl = Coord2Tile_Conv(wram->w2DMenuCursorInitX, wram->w2DMenuCursorInitY);
+    uint8_t* hl = Coord2Tile(wram->w2DMenuCursorInitX, wram->w2DMenuCursorInitY);
     // LD_A_addr(w2DMenuCursorOffsets);
     // SWAP_A;
     // AND_A(0xf);
@@ -1547,7 +1547,7 @@ ret:
 static uint8_t* v_PushWindow_copy(uint8_t* de, const uint8_t* hl) {
     // CALL(aGetMenuBoxDims);
     uint8_t b, c;
-    GetMenuBoxDims_Conv(&c, &b);
+    GetMenuBoxDims(&c, &b);
     // INC_B;
     // INC_C;
     b++, c++;
@@ -1638,10 +1638,10 @@ void v_PushWindow_Conv(void){
         // CALL(aMenuBoxCoord2Tile);
         // CALL(av_PushWindow_copy);
         uint8_t* de = gTileBackupStack[gWindowStackPointer];
-        de = v_PushWindow_copy(de, MenuBoxCoord2Tile_Conv());
+        de = v_PushWindow_copy(de, MenuBoxCoord2Tile());
         // CALL(aMenuBoxCoord2Attr);
         // CALL(av_PushWindow_copy);
-        v_PushWindow_copy(de, MenuBoxCoord2Attr_Conv());
+        v_PushWindow_copy(de, MenuBoxCoord2Attr());
         // goto done;
     }
     else {
@@ -1679,108 +1679,6 @@ void v_PushWindow_Conv(void){
 }
 
 void v_ExitMenu(void){
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(MBANK(awWindowStack));
-    LDH_addr_A(rSVBK);
-
-    CALL(aGetWindowStackTop);
-    LD_A_L;
-    OR_A_H;
-    JP_Z (mError_Cant_ExitMenu);
-    LD_A_L;
-    LD_addr_A(wWindowStackPointer);
-    LD_A_H;
-    LD_addr_A(wWindowStackPointer + 1);
-    CALL(aPopWindow);
-    LD_A_addr(wMenuFlags);
-    BIT_A(0);
-    IF_Z goto loop;
-    LD_D_H;
-    LD_E_L;
-    CALL(aRestoreTileBackup);
-
-
-loop:
-    CALL(aGetWindowStackTop);
-    LD_A_H;
-    OR_A_L;
-    IF_Z goto done;
-    CALL(aPopWindow);
-
-
-done:
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    LD_HL(wWindowStackSize);
-    DEC_hl;
-    RET;
-
-}
-
-void v_ExitMenu_Conv(void){
-    // XOR_A_A;
-    // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
-
-    // LDH_A_addr(rSVBK);
-    // PUSH_AF;
-    // LD_A(MBANK(awWindowStack));
-    // LDH_addr_A(rSVBK);
-    wbank_push(MBANK(awWindowStack));
-
-    // CALL(aGetWindowStackTop);
-    // LD_A_L;
-    // OR_A_H;
-    // JP_Z (mError_Cant_ExitMenu);
-    uint16_t hl = GetWindowStackTop_Conv();
-    if(hl == 0) {
-        return Error_Cant_ExitMenu_Conv();
-    }
-    // LD_A_L;
-    // LD_addr_A(wWindowStackPointer);
-    // LD_A_H;
-    // LD_addr_A(wWindowStackPointer + 1);
-    wram->wWindowStackPointer = hl;
-    // CALL(aPopWindow);
-    PopWindow_Conv(hl);
-    // LD_A_addr(wMenuFlags);
-    // BIT_A(0);
-    // IF_Z goto loop;
-    if(bit_test(wram->wMenuFlags, 0)) {
-        // LD_D_H;
-        // LD_E_L;
-        // CALL(aRestoreTileBackup);
-        RestoreTileBackup_Conv(GBToRAMAddr(hl));
-    }
-
-
-// loop:
-    // CALL(aGetWindowStackTop);
-    hl = GetWindowStackTop_Conv();
-    // LD_A_H;
-    // OR_A_L;
-    // IF_Z goto done;
-    if(hl != 0) {
-        // CALL(aPopWindow);
-        PopWindow_Conv(hl);
-    }
-
-
-// done:
-    // POP_AF;
-    // LDH_addr_A(rSVBK);
-    wbank_pop;
-    // LD_HL(wWindowStackSize);
-    // DEC_hl;
-    wram->wWindowStackSize--;
-    // RET;
-}
-
-void v_ExitMenu_Conv2(void){
     PEEK("");
     printf("gWindowStackPointer = %d\n", gWindowStackPointer - 1);
     // XOR_A_A;
@@ -1813,7 +1711,7 @@ void v_ExitMenu_Conv2(void){
         // LD_D_H;
         // LD_E_L;
         // CALL(aRestoreTileBackup);
-        RestoreTileBackup_Conv2(gTileBackupStack[gWindowStackPointer]);
+        RestoreTileBackup(gTileBackupStack[gWindowStackPointer]);
     }
 
 

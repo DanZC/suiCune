@@ -41,17 +41,17 @@ const struct MenuHeader BattleMenuHeader = {
 bool LoadBattleMenu_Conv(void){
     // LD_HL(mBattleMenuHeader);
     // CALL(aLoadMenuHeader);
-    LoadMenuHeader_Conv2(&BattleMenuHeader);
+    LoadMenuHeader(&BattleMenuHeader);
     // LD_A_addr(wBattleMenuCursorPosition);
     // LD_addr_A(wMenuCursorPosition);
     wram->wMenuCursorPosition = wram->wBattleMenuCursorPosition;
     // CALL(aInterpretBattleMenu);
-    u8_flag_s res = InterpretBattleMenu_Conv();
+    u8_flag_s res = InterpretBattleMenu();
     // LD_A_addr(wMenuCursorPosition);
     // LD_addr_A(wBattleMenuCursorPosition);
     wram->wBattleMenuCursorPosition = wram->wMenuCursorPosition;
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // RET;
     return res.flag;
 }
@@ -87,7 +87,7 @@ static const struct MenuHeader ContestBattleMenuHeader = {
 void ContestBattleMenu(void){
     // LD_HL(mContestBattleMenuHeader);
     // CALL(aLoadMenuHeader);
-    LoadMenuHeader_Conv2(&ContestBattleMenuHeader);
+    LoadMenuHeader(&ContestBattleMenuHeader);
 // fallthrough
 
     return CommonBattleMenu();
@@ -98,12 +98,12 @@ void CommonBattleMenu(void){
     // LD_addr_A(wMenuCursorPosition);
     wram->wMenuCursorPosition = wram->wBattleMenuCursorPosition;
     // CALL(av_2DMenu);
-    u8_flag_s res = v_2DMenu_Conv();
+    u8_flag_s res = v_2DMenu();
     // LD_A_addr(wMenuCursorPosition);
     // LD_addr_A(wBattleMenuCursorPosition);
     wram->wBattleMenuCursorPosition = res.a;
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // RET;
 }
 

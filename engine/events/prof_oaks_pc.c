@@ -47,10 +47,10 @@ const struct Rating OakRatings[] = {
 void ProfOaksPC(void){
     // LD_HL(mOakPCText1);
     // CALL(aMenuTextbox);
-    MenuTextbox_Conv(OakPCText1);
+    MenuTextbox(OakPCText1);
     // CALL(aYesNoBox);
     // IF_C goto shutdown;
-    if(YesNoBox_Conv()) {
+    if(YesNoBox()) {
         // CALL(aProfOaksPCBoot);  // player chose "yes"?
         ProfOaksPCBoot();
     }
@@ -60,9 +60,9 @@ void ProfOaksPC(void){
     // CALL(aPrintText);
     PrintText_Conv2(OakPCText4);
     // CALL(aJoyWaitAorB);
-    JoyWaitAorB_Conv();
+    JoyWaitAorB();
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // RET;
 }
 
@@ -75,7 +75,7 @@ void ProfOaksPCBoot(void){
     // CALL(aPlaySFX);  // sfx loaded by previous Rate function call
     PlaySFX(sfx);
     // CALL(aJoyWaitAorB);
-    JoyWaitAorB_Conv();
+    JoyWaitAorB();
     // CALL(aWaitSFX);
     WaitSFX();
     // RET;
@@ -92,7 +92,7 @@ void ProfOaksPCRating(void){
     // CALL(aPlaySFX);
     PlaySFX(sfx);
     // CALL(aJoyWaitAorB);
-    JoyWaitAorB_Conv();
+    JoyWaitAorB();
     // CALL(aWaitSFX);
     WaitSFX();
     // RET;
@@ -145,7 +145,7 @@ uint16_t Rate(void){
     // CALL(aPrintText);
     PrintText_Conv2(OakPCText3);
     // CALL(aJoyWaitAorB);
-    JoyWaitAorB_Conv();
+    JoyWaitAorB();
     // LD_A_addr(wTempPokedexCaughtCount);
     // LD_HL(mOakRatings);
     // CALL(aFindOakRating);

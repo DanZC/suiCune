@@ -94,7 +94,7 @@ void SetFacingStanding(struct Object* bc){
 }
 
 void SetFacingCurrent(struct Object* bc){
-    bc->facingStep = GetSpriteDirection_Conv(bc);
+    bc->facingStep = GetSpriteDirection(bc);
 }
 
 void SetFacingStandAction(struct Object* bc){
@@ -132,7 +132,7 @@ void SetFacingStepAction(struct Object* bc){
     // LD_HL(OBJECT_FACING_STEP);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->facingStep = GetSpriteDirection_Conv(bc) | d;
+    bc->facingStep = GetSpriteDirection(bc) | d;
     // RET;
 }
 
@@ -165,7 +165,7 @@ void SetFacingSkyfall(struct Object* bc){
     // ADD_HL_BC;
     // LD_hl_A;
     // RET;
-    bc->facingStep = GetSpriteDirection_Conv(bc) | d;
+    bc->facingStep = GetSpriteDirection(bc) | d;
 }
 
 void SetFacingBumpAction(struct Object* bc){
@@ -196,7 +196,7 @@ void SetFacingBumpAction(struct Object* bc){
     // ADD_HL_BC;
     // LD_hl_A;
     // RET;
-    bc->facingStep = GetSpriteDirection_Conv(bc) | d;
+    bc->facingStep = GetSpriteDirection(bc) | d;
 }
 
 void SetFacingCounterclockwiseSpin(struct Object* bc){
@@ -274,7 +274,7 @@ void CounterclockwiseSpinAction(struct Object* bc){
 
 void SetFacingFish(struct Object* bc){
     // CALL(aGetSpriteDirection);
-    uint8_t a = GetSpriteDirection_Conv(bc);
+    uint8_t a = GetSpriteDirection(bc);
     // RRCA;
     // RRCA;
     // ADD_A(FACING_FISH_DOWN);
@@ -481,7 +481,7 @@ void DeleteMapObject_Conv(struct Object* obj) {
     // LD_HL(OBJECT_SPRITE);
     // ADD_HL_BC;
     // LD_hl(-1);
-    GetMapObject_Conv(a)->structId = 0xff;
+    GetMapObject(a)->structId = 0xff;
 
 // ok:
 
@@ -1082,7 +1082,7 @@ void SetTallGrassFlags_Conv(struct Object* bc, uint8_t a) {
     // IF_Z goto set;
     // CALL(aCheckGrassTile);
     // IF_C goto reset;
-    if(!CheckSuperTallGrassTile_Conv(a) && !CheckGrassTile_Conv(a)) {
+    if(!CheckSuperTallGrassTile(a) && !CheckGrassTile(a)) {
     // reset:
         // LD_HL(OBJECT_FLAGS2);
         // ADD_HL_BC;
@@ -1260,7 +1260,7 @@ void GetNextTile_Conv(struct Object* bc) {
     // LD_HL(OBJECT_NEXT_TILE);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->nextTile = GetCoordTile_Conv(bc->nextMapX, bc->nextMapY);
+    bc->nextTile = GetCoordTile(bc->nextMapX, bc->nextMapY);
     // RET;
 }
 
@@ -1507,7 +1507,7 @@ uint8_t RestoreDefaultMovement_Conv(struct Object* bc) {
     }
     // PUSH_BC;
     // CALL(aGetMapObject);
-    struct MapObject* obj = GetMapObject_Conv(bc->mapObjectIndex);
+    struct MapObject* obj = GetMapObject(bc->mapObjectIndex);
     // LD_HL(MAPOBJECT_MOVEMENT);
     // ADD_HL_BC;
     // LD_A_hl;
@@ -1633,7 +1633,7 @@ void StepFunction_Reset_Conv(struct Object* bc) {
     uint8_t e = bc->nextMapY;
     // PUSH_BC;
     // CALL(aGetCoordTile);
-    uint8_t tile = GetCoordTile_Conv(d, e);
+    uint8_t tile = GetCoordTile(d, e);
     // POP_BC;
     // LD_HL(OBJECT_NEXT_TILE);
     // ADD_HL_BC;
@@ -1734,7 +1734,7 @@ void StepFunction_FromMovement_Conv(struct Object* bc) {
     Field1c_ZeroAnonJumptableIndex(bc);
     // CALL(aGetSpriteMovementFunction);
     // LD_A_hl;
-    uint8_t func = GetSpriteMovementFunction_Conv(bc);
+    uint8_t func = GetSpriteMovementFunction(bc);
     // LD_HL(mStepFunction_FromMovement_Pointers);
     // RST(aJumpTable);
     Pointers[func](bc);
@@ -1914,7 +1914,7 @@ void MovementFunction_Strength(struct Object* bc) {
             // LD_A_hl;
             // CALL(aCheckPitTile);
             // IF_Z goto on_pit;
-            if(CheckPitTile_Conv(bc->nextTile)) {
+            if(CheckPitTile(bc->nextTile)) {
             // on_pit:
                 // CALL(aObjectMovementByte_IncAnonJumptableIndex);
                 ObjectMovementByte_IncAnonJumptableIndex(bc);
@@ -1991,7 +1991,7 @@ void MovementFunction_FollowNotExact(struct Object* bc) {
     // LD_A_hl;
     // PUSH_BC;
     // CALL(aGetObjectStruct);
-    struct Object* de = GetObjectStruct_Conv(bc->range);
+    struct Object* de = GetObjectStruct(bc->range);
     // LD_HL(OBJECT_DIRECTION_WALKING);
     // ADD_HL_BC;
     // LD_A_hl;
@@ -2405,7 +2405,7 @@ struct Object* InitMovementField1dField1e(struct Object* bc) {
     // LD_D_B;
     // LD_E_C;
     // POP_BC;
-    struct Object* de = GetObjectStruct_Conv(range);
+    struct Object* de = GetObjectStruct(range);
     // LD_HL(OBJECT_1D);
     uint16_t vptr = de - &wram->wPlayerStruct;
     // ADD_HL_BC;
@@ -3681,7 +3681,7 @@ void StepFunction_Restore_Conv(struct Object* bc) {
         // LD_HL(OBJECT_FACING);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->facing = GetInitialFacing_Conv(RestoreDefaultMovement_Conv(bc));
+        bc->facing = GetInitialFacing(RestoreDefaultMovement_Conv(bc));
         // CALL(aField1c_IncAnonJumptableIndex);
         Field1c_IncAnonJumptableIndex(bc);
         // fallthrough
@@ -4498,7 +4498,7 @@ uint8_t GetMovementByte_Conv(struct Object* bc) {
     // LD_HL(wMovementDataBank);
     // CALL(av_GetMovementByte);
     // RET;
-    return v_GetMovementByte_Conv(gMovementDataAddr, bc);
+    return v_GetMovementByte(gMovementDataAddr, bc);
 }
 
 void GetIndexedMovementByte1(void) {
@@ -4828,7 +4828,7 @@ static u8_flag_s GetFollowerNextMovementByte_CancelFollowIfLeaderMissing(void) {
     if(wram->wObjectFollow_Leader != 0xff) {
         // PUSH_BC;
         // CALL(aGetObjectStruct);
-        struct Object* bc = GetObjectStruct_Conv(wram->wObjectFollow_Leader);
+        struct Object* bc = GetObjectStruct(wram->wObjectFollow_Leader);
         // LD_HL(OBJECT_SPRITE);
         // ADD_HL_BC;
         // LD_A_hl;
@@ -5199,7 +5199,7 @@ void InitTempObject(void) {
 void InitTempObject_Conv(void) {
     // SET_PC(aInitTempObject);
     // CALL(aFindFirstEmptyObjectStruct);
-    struct Object* de = FindFirstEmptyObjectStruct_Conv();
+    struct Object* de = FindFirstEmptyObjectStruct();
     // RET_NC;
     if(de == NULL)
         return;
@@ -5337,7 +5337,7 @@ void UpdateAllObjectsFrozen_Conv(void) {
         hram->hMapObjectIndex = a;
         // CALL(aDoesObjectHaveASprite);
         // IF_Z goto ok;
-        if(DoesObjectHaveASprite_Conv(&bc[a])) {
+        if(DoesObjectHaveASprite(&bc[a])) {
             // CALL(aUpdateObjectFrozen);
             UpdateObjectFrozen_Conv(&bc[a]);
         }
@@ -5446,7 +5446,7 @@ void RespawnObject_Conv(uint8_t a) {
     if(a >= NUM_OBJECTS)
         return;
     // CALL(aGetMapObject);
-    struct MapObject* bc = GetMapObject_Conv(a);
+    struct MapObject* bc = GetMapObject(a);
     // LD_HL(MAPOBJECT_OBJECT_STRUCT_ID);
     // ADD_HL_BC;
     // LD_A_hl;
@@ -5459,10 +5459,10 @@ void RespawnObject_Conv(uint8_t a) {
     if(bc->structId >= NUM_OBJECT_STRUCTS)
         return;
     // CALL(aGetObjectStruct);
-    struct Object* obj = GetObjectStruct_Conv(bc->structId);
+    struct Object* obj = GetObjectStruct(bc->structId);
     // CALL(aDoesObjectHaveASprite);
     // RET_Z;
-    if(!DoesObjectHaveASprite_Conv(obj))
+    if(!DoesObjectHaveASprite(obj))
         return;
     // CALL(aUpdateRespawnedObjectFrozen);
     UpdateRespawnedObjectFrozen_Conv(obj);
@@ -5604,7 +5604,7 @@ void UpdateObjectNextTile_Conv(struct Object* bc) {
     // LD_HL(OBJECT_NEXT_TILE);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->nextTile = GetCoordTile_Conv(bc->nextMapX, bc->nextMapY);
+    bc->nextTile = GetCoordTile(bc->nextMapX, bc->nextMapY);
     // FARCALL(aUpdateTallGrassFlags);  // no need to farcall
     UpdateTallGrassFlags_Conv(bc);
     // RET;
@@ -5984,7 +5984,7 @@ bool CheckObjectCoveredByTextbox_Conv(struct Object* bc) {
                     // LD_A_hl;
                     // CP_A(FIRST_REGULAR_TEXT_CHAR);
                     // IF_NC goto nope;
-                    if(*(Coord2Tile_Conv(xcoord, ycoord)) >= FIRST_REGULAR_TEXT_CHAR)
+                    if(*(Coord2Tile(xcoord, ycoord)) >= FIRST_REGULAR_TEXT_CHAR)
                         return true;
                 // ok8:
                     // DEC_D;
@@ -6040,7 +6040,7 @@ void DoStepsForAllObjects(void) {
         hram->hMapObjectIndex = a;
         // CALL(aDoesObjectHaveASprite);
         // IF_Z goto next;
-        if(DoesObjectHaveASprite_Conv(bc + a)) {
+        if(DoesObjectHaveASprite(bc + a)) {
             // CALL(aHandleObjectStep);
             HandleObjectStep_Conv(bc + a);
         }
@@ -6131,7 +6131,7 @@ void v_ContinueSpawnFacing_Conv(uint8_t a) {
     // SET_PC(av_ContinueSpawnFacing);
     // LD_BC(wPlayerStruct);
     // CALL(aSetSpriteDirection);
-    SetSpriteDirection_Conv(&wram->wPlayerStruct, a);
+    SetSpriteDirection(&wram->wPlayerStruct, a);
     // RET;
 }
 
@@ -6232,7 +6232,7 @@ void SetLeaderIfVisible(void) {
 bool SetLeaderIfVisible_Conv(uint8_t a) {
     // SET_PC(aSetLeaderIfVisible);
     // CALL(aCheckObjectVisibility);
-    struct Object* bc = CheckObjectVisibility_Conv(a);
+    struct Object* bc = CheckObjectVisibility(a);
     // RET_C;
     if(bc == NULL)
         return false;
@@ -6300,7 +6300,7 @@ bool SetFollowerIfVisible_Conv(uint8_t a) {
     // POP_AF;
     // CALL(aCheckObjectVisibility);
     // RET_C;
-    struct Object* bc = CheckObjectVisibility_Conv(a);
+    struct Object* bc = CheckObjectVisibility(a);
     if(bc == NULL)
         return false;
     // LD_HL(OBJECT_MOVEMENTTYPE);
@@ -6338,7 +6338,7 @@ void ResetFollower_Conv(void) {
     if(wram->wObjectFollow_Follower == 0xff)
         return;
     // CALL(aGetObjectStruct);
-    struct Object* bc = GetObjectStruct_Conv(wram->wObjectFollow_Follower);
+    struct Object* bc = GetObjectStruct(wram->wObjectFollow_Follower);
     // FARCALL(aResetObject);  // no need to farcall
     ResetObject_Conv(bc);
     // LD_A(-1);
@@ -6367,7 +6367,7 @@ bool FreezeAllOtherObjects_Conv(uint8_t c) {
     // LD_A_C;
     // CALL(aCheckObjectVisibility);
     // RET_C;
-    struct Object* bc = CheckObjectVisibility_Conv(c);
+    struct Object* bc = CheckObjectVisibility(c);
     if(bc == NULL)
         return false;
     // PUSH_BC;
@@ -6433,7 +6433,7 @@ void FreezeAllObjects_Conv(void) {
         struct Object* bc = (&wram->wPlayerStruct + i);
         // CALL(aDoesObjectHaveASprite);
         // IF_Z goto next;
-        if(!DoesObjectHaveASprite_Conv(bc))
+        if(!DoesObjectHaveASprite(bc))
             continue;
         // LD_HL(OBJECT_FLAGS2);
         // ADD_HL_BC;
@@ -6486,7 +6486,7 @@ void v_UnfreezeFollowerObject_Conv(uint8_t c) {
         return;
     // PUSH_BC;
     // CALL(aGetObjectStruct);
-    struct Object* bc2 = GetObjectStruct_Conv(wram->wObjectFollow_Leader);
+    struct Object* bc2 = GetObjectStruct(wram->wObjectFollow_Leader);
     // LD_HL(OBJECT_MAP_OBJECT_INDEX);
     // ADD_HL_BC;
     // LD_A_hl;
@@ -6501,7 +6501,7 @@ void v_UnfreezeFollowerObject_Conv(uint8_t c) {
     if(wram->wObjectFollow_Follower == 0xff)
         return;
     // CALL(aGetObjectStruct);
-    struct Object* bc = GetObjectStruct_Conv(wram->wObjectFollow_Follower);
+    struct Object* bc = GetObjectStruct(wram->wObjectFollow_Follower);
     // LD_HL(OBJECT_FLAGS2);
     // ADD_HL_BC;
     // RES_hl(FROZEN_F);
@@ -6642,7 +6642,7 @@ static void ResetObject_set_standing_Conv(struct Object* bc) {
     };
 
     // CALL(aGetSpriteDirection);
-    uint8_t dir = GetSpriteDirection_Conv(bc);
+    uint8_t dir = GetSpriteDirection(bc);
     // RRCA;
     // RRCA;
     // LD_E_A;
@@ -6672,7 +6672,7 @@ void ResetObject_Conv(struct Object* bc) {
         return ResetObject_set_standing_Conv(bc);
     // PUSH_BC;
     // CALL(aGetMapObject);
-    struct MapObject* obj = GetMapObject_Conv(bc->mapObjectIndex);
+    struct MapObject* obj = GetMapObject(bc->mapObjectIndex);
     // LD_HL(MAPOBJECT_MOVEMENT);
     // ADD_HL_BC;
     // LD_A_hl;
@@ -6868,7 +6868,7 @@ void ApplyBGMapAnchorToObjects_Conv(void) {
         struct Object* bc = (&wram->wPlayerStruct + i);
         // CALL(aDoesObjectHaveASprite);
         // IF_Z goto skip;
-        if(!DoesObjectHaveASprite_Conv(bc))
+        if(!DoesObjectHaveASprite(bc))
             continue;
         // LD_HL(OBJECT_SPRITE_X);
         // ADD_HL_BC;
@@ -6927,7 +6927,7 @@ static void InitSprites_DeterminePriorities(void) {
         // LD_A_hl;
         // CP_A(STANDING);
         // IF_Z goto skip;
-        if(!DoesObjectHaveASprite_Conv(bc) || bc->facingStep == (uint8_t)STANDING) {
+        if(!DoesObjectHaveASprite(bc) || bc->facingStep == (uint8_t)STANDING) {
         // skip:
 
         //     LD_HL(OBJECT_LENGTH);

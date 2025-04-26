@@ -19,9 +19,9 @@ static void NewPokedexEntry_ReturnFromDexRegistration(void) {
     // CALL(aClearTilemap);
     ClearTilemap();
     // CALL(aLoadFontsExtra);
-    LoadFontsExtra_Conv();
+    LoadFontsExtra();
     // CALL(aLoadStandardFont);
-    LoadStandardFont_Conv();
+    LoadStandardFont();
     // FARCALL(aPokedex_PlaceFrontpicTopLeftCorner);
     Pokedex_PlaceFrontpicTopLeftCorner();
     // CALL(aWaitBGMap2);
@@ -54,7 +54,7 @@ void NewPokedexEntry(void){
     // CALL(aClearTilemap);
     ClearTilemap();
     // CALL(aUpdateSprites);
-    UpdateSprites_Conv();
+    UpdateSprites();
     // CALL(aClearSprites);
     ClearSprites();
     // LD_A_addr(wPokedexStatus);
@@ -70,14 +70,14 @@ void NewPokedexEntry(void){
     // FARCALL(av_NewPokedexEntry);
     v_NewPokedexEntry();
     // CALL(aWaitPressAorB_BlinkCursor);
-    WaitPressAorB_BlinkCursor_Conv();
+    WaitPressAorB_BlinkCursor();
     // LD_A(1);  // page 2
     // LD_addr_A(wPokedexStatus);
     wram->wPokedexStatus = 1;
     // FARCALL(aDisplayDexEntry);
     DisplayDexEntry(wram->wTempSpecies);
     // CALL(aWaitPressAorB_BlinkCursor);
-    WaitPressAorB_BlinkCursor_Conv();
+    WaitPressAorB_BlinkCursor();
     // POP_AF;
     // LD_addr_A(wPokedexStatus);
     wram->wPokedexStatus = pokedexStatus;

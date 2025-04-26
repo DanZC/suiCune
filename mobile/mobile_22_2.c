@@ -223,7 +223,7 @@ u8_flag_s Function8b3dd(uint8_t* bc, uint8_t* e){
     // PUSH_BC;
     // CALL(aJoyTextDelay_ForcehJoyDown);  // joypad
     // LD_A_C;
-    uint8_t c = JoyTextDelay_ForcehJoyDown_Conv();
+    uint8_t c = JoyTextDelay_ForcehJoyDown();
     // POP_BC;
     // POP_DE;
     // BIT_A(A_BUTTON_F);
@@ -236,7 +236,7 @@ u8_flag_s Function8b3dd(uint8_t* bc, uint8_t* e){
         if(*e == 0x3) {
         // e_is_zero:
             // CALL(aPlayClickSFX);
-            PlayClickSFX_Conv();
+            PlayClickSFX();
             // LD_D(0x0);
             // SCF;
             // RET;
@@ -262,7 +262,7 @@ u8_flag_s Function8b3dd(uint8_t* bc, uint8_t* e){
         // IF_NZ goto e_is_not_zero;
         if(*e == 0) {
             // CALL(aPlayClickSFX);
-            PlayClickSFX_Conv();
+            PlayClickSFX();
             // LD_D(-1);
             // CALL(aFunction8b385);
             Function8b385(bc, -1, *e);
@@ -662,7 +662,7 @@ bool Function8b555(void){
             // CALL(aCopyBytes);
             CopyBytes(GBToRAMAddr(s4_a037), wram->wd013_arr, 0x4);
             // CALL(aCloseSRAM);
-            CloseSRAM_Conv();
+            CloseSRAM();
             // CALL(aFunction89448);
             Function89448();
             // LD_BC(wd013);
@@ -758,7 +758,7 @@ bool Function8b5e7(void){
         // CALL(aFunction8b3a4);
         bool eq = Function8b3a4(GBToRAMAddr(s4_a037), wram->wd013_arr);
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
         // IF_Z goto asm_8b635;
         if(eq)
             break;
@@ -1170,7 +1170,7 @@ uint8_t Function8b7bd(void){
     Function8b855();
     // LD_HL(mMenuHeader_0x8b867);
     // CALL(aCopyMenuHeader);
-    CopyMenuHeader_Conv2(&MenuHeader_0x8b867);
+    CopyMenuHeader(&MenuHeader_0x8b867);
     // LD_A_addr(wd030);
     // LD_addr_A(wMenuCursorPosition);
     wram->wMenuCursorPosition = wram->wd030[0];
@@ -1208,11 +1208,11 @@ uint8_t Function8b7bd(void){
         // CALL(aFunction8b75d);
         Function8b75d();
         // CALL(aUpdateSprites);
-        UpdateSprites_Conv();
+        UpdateSprites();
         // CALL(aMobile_EnableSpriteUpdates);
         Mobile_EnableSpriteUpdates();
         // CALL(aScrollingMenu);
-        ScrollingMenu_Conv();
+        ScrollingMenu();
         // CALL(aMobile_DisableSpriteUpdates);
         Mobile_DisableSpriteUpdates();
         // LD_A_addr(wMenuJoypad);
@@ -1409,7 +1409,7 @@ void Function8b88c(const struct MenuData *data, tile_t *hl){
     // CALL(aPlaceString);
     PlaceStringSimple(de, hl);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -1489,7 +1489,7 @@ void Function8b94a(uint8_t a){
 uint8_t Function8b960(void){
     // LD_HL(mMenuHeader_0x8b9ac);
     // CALL(aLoadMenuHeader);
-    LoadMenuHeader_Conv2(&MenuHeader_0x8b9ac);
+    LoadMenuHeader(&MenuHeader_0x8b9ac);
     // CALL(aFunction8b9e9);
     // IF_C goto asm_8b97a;
     const struct MenuHeader* hl;
@@ -1522,7 +1522,7 @@ uint8_t Function8b960(void){
     // CALL(aFunction89d85);
     u8_flag_s res = Function89d85(Function8b9ab);
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // IF_C goto asm_8b99c;
     if(res.flag)
         return 0;
@@ -1657,7 +1657,7 @@ asm_8ba0c:;
         // IF_NZ goto asm_8ba10;
     } while(a != 0xff);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // POP_AF;
     // RET;
     return cy;

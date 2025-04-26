@@ -30,7 +30,7 @@ void v_CardKey(void){
         // IF_NZ goto nope;
         if((wram->wPlayerStruct.facing & 0b1100) == OW_UP) {
             // CALL(aGetFacingTileCoord);
-            struct CoordsTileId res = GetFacingTileCoord_Conv();
+            struct CoordsTileId res = GetFacingTileCoord();
             // LD_A_D;
             // CP_A(18);
             // IF_NZ goto nope;

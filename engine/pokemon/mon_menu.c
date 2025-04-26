@@ -183,7 +183,7 @@ static void TossItemFromPC_CantToss(void) {
     };
     // LD_HL(mTossItemFromPC_ItemsTooImportantText);
     // CALL(aMenuTextboxBackup);
-    MenuTextboxBackup_Conv(ItemsTooImportantText);
+    MenuTextboxBackup(ItemsTooImportantText);
     // RET;
 }
 
@@ -222,26 +222,26 @@ bool TossItemFromPC_Conv(item_pocket_s* de){
     }
     // LD_HL(mTossItemFromPC_ItemsTossOutHowManyText);
     // CALL(aMenuTextbox);
-    MenuTextbox_Conv(ItemsTossOutHowManyText);
+    MenuTextbox(ItemsTossOutHowManyText);
     // FARCALL(aSelectQuantityToToss);
     bool quit = SelectQuantityToToss();
     // PUSH_AF;
     // CALL(aCloseWindow);
-    CloseWindow_Conv2();
+    CloseWindow();
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // POP_AF;
     // IF_C goto quit;
     if(quit)
         return true;
     // LD_HL(mTossItemFromPC_ItemsThrowAwayText);
     // CALL(aMenuTextbox);
-    MenuTextbox_Conv(ItemsThrowAwayText);
+    MenuTextbox(ItemsThrowAwayText);
     // CALL(aYesNoBox);
-    bool yes = YesNoBox_Conv();
+    bool yes = YesNoBox();
     // PUSH_AF;
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // POP_AF;
     // IF_C goto quit;
     if(yes) {
@@ -253,9 +253,9 @@ bool TossItemFromPC_Conv(item_pocket_s* de){
         PartyMonItemName_Conv(wram->wCurItem);
         // LD_HL(mTossItemFromPC_ItemsDiscardedText);
         // CALL(aMenuTextbox);
-        MenuTextbox_Conv(ItemsDiscardedText);
+        MenuTextbox(ItemsDiscardedText);
         // CALL(aExitMenu);
-        ExitMenu_Conv2();
+        ExitMenu();
         // AND_A_A;
         // RET;
         return false;
@@ -458,7 +458,7 @@ static void GiveTakePartyMonItem_GiveItem(void){
             // LD_A_addr(wItemAttributeValue);
             // AND_A_A;
             // IF_NZ goto next;
-            if(CheckTossableItem_Conv(wram->wCurItem)) {
+            if(CheckTossableItem(wram->wCurItem)) {
                 // CALL(aTryGiveItemToPartymon);
                 TryGiveItemToPartymon();
                 // goto quit;
@@ -469,7 +469,7 @@ static void GiveTakePartyMonItem_GiveItem(void){
     // next:
         // LD_HL(mItemCantHeldText);
         // CALL(aMenuTextboxBackup);
-        MenuTextboxBackup_Conv(ItemCantHeldText);
+        MenuTextboxBackup(ItemCantHeldText);
         // goto loop;
     }
 
@@ -487,11 +487,11 @@ u8_pair_s GiveTakePartyMonItem(void){
 
     // LD_HL(mGiveTakeItemMenuData);
     // CALL(aLoadMenuHeader);
-    LoadMenuHeader_Conv2(&GiveTakeItemMenuData);
+    LoadMenuHeader(&GiveTakeItemMenuData);
     // CALL(aVerticalMenu);
-    bool quit = !VerticalMenu_Conv();
+    bool quit = !VerticalMenu();
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // IF_C goto cancel;
     if(quit)
         goto cancel;
@@ -507,7 +507,7 @@ u8_pair_s GiveTakePartyMonItem(void){
     // IF_NZ goto take;
     if(wram->wMenuCursorY == 1) {
         // CALL(aLoadStandardMenuHeader);
-        LoadStandardMenuHeader_Conv();
+        LoadStandardMenuHeader();
         // CALL(aClearPalettes);
         ClearPalettes();
         // CALL(aGiveTakePartyMonItem_GiveItem);
@@ -515,9 +515,9 @@ u8_pair_s GiveTakePartyMonItem(void){
         // CALL(aClearPalettes);
         ClearPalettes();
         // CALL(aLoadFontsBattleExtra);
-        LoadFontsBattleExtra_Conv();
+        LoadFontsBattleExtra();
         // CALL(aExitMenu);
-        ExitMenu_Conv2();
+        ExitMenu();
         // LD_A(0);
         // RET;
         return u8_pair(0, 0);
@@ -553,7 +553,7 @@ void TryGiveItemToPartymon(void){
         GiveItemToPokemon(wram->wCurItem);
         // LD_HL(mPokemonHoldItemText);
         // CALL(aMenuTextboxBackup);
-        MenuTextboxBackup_Conv(PokemonHoldItemText);
+        MenuTextboxBackup(PokemonHoldItemText);
         // CALL(aGivePartyItem);
         GivePartyItem(wram->wCurItem);
         // RET;
@@ -568,7 +568,7 @@ void TryGiveItemToPartymon(void){
     // please_remove_mail:
         // LD_HL(mPokemonRemoveMailText);
         // CALL(aMenuTextboxBackup);
-        MenuTextbox_Conv(PokemonRemoveMailText);
+        MenuTextbox(PokemonRemoveMailText);
         // RET;
         return;
     }
@@ -596,7 +596,7 @@ void TryGiveItemToPartymon(void){
         if(ReceiveItemFromPokemon(*itm)) {
             // LD_HL(mPokemonSwapItemText);
             // CALL(aMenuTextboxBackup);
-            MenuTextboxBackup_Conv(PokemonSwapItemText);
+            MenuTextboxBackup(PokemonSwapItemText);
             // LD_A_addr(wNamedObjectIndex);
             // LD_addr_A(wCurItem);
             // CALL(aGivePartyItem);
@@ -612,7 +612,7 @@ void TryGiveItemToPartymon(void){
         ReceiveItemFromPokemon(wram->wCurItem);
         // LD_HL(mItemStorageFullText);
         // CALL(aMenuTextboxBackup);
-        MenuTextboxBackup_Conv(ItemStorageFullText);
+        MenuTextboxBackup(ItemStorageFullText);
     }
 
 // abort:
@@ -660,21 +660,21 @@ void TakePartyItem(void){
             GetItemName(item);
             // LD_HL(mPokemonTookItemText);
             // CALL(aMenuTextboxBackup);
-            MenuTextboxBackup_Conv(PokemonTookItemText);
+            MenuTextboxBackup(PokemonTookItemText);
             // goto done;
         }
         else {
         // item_storage_full:
             // LD_HL(mItemStorageFullText);
             // CALL(aMenuTextboxBackup);
-            MenuTextboxBackup_Conv(ItemStorageFullText);
+            MenuTextboxBackup(ItemStorageFullText);
         }
     }
     else {
     // not_holding_item:
         // LD_HL(mPokemonNotHoldingText);
         // CALL(aMenuTextboxBackup);
-        MenuTextboxBackup_Conv(PokemonNotHoldingText);
+        MenuTextboxBackup(PokemonNotHoldingText);
         // goto done;
     }
 
@@ -776,11 +776,11 @@ void StartMenuYesNo(void){
 
 bool StartMenuYesNo_Conv(const struct TextCmd* hl){
     // CALL(aMenuTextbox);
-    MenuTextbox_Conv(hl);
+    MenuTextbox(hl);
     // CALL(aYesNoBox);
-    bool res = YesNoBox_Conv();
+    bool res = YesNoBox();
     // JP(mExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     return res;
 }
 
@@ -810,7 +810,7 @@ void ComposeMailMessage(void){
     // CALL(aAddNTimes);
     // LD_D_H;
     // LD_E_L;
-    OpenSRAM_Conv(MBANK(asPartyMail));
+    OpenSRAM(MBANK(asPartyMail));
     struct MailMsg* de = ((struct MailMsg*)GBToRAMAddr(sPartyMail)) + wram->wCurPartyMon;
     // LD_HL(wTempMail);
     // LD_BC(MAIL_STRUCT_LENGTH);
@@ -819,7 +819,7 @@ void ComposeMailMessage(void){
     // CALL(aCopyBytes);
     CopyBytes(de, &wram->wTempMail, sizeof(*de));
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -895,11 +895,11 @@ u8_pair_s MonMailAction(void){
 //  Show the READ/TAKE/QUIT menu.
     // LD_HL(mMonMailAction_MenuHeader);
     // CALL(aLoadMenuHeader);
-    LoadMenuHeader_Conv2(&MonMailAction_MenuHeader);
+    LoadMenuHeader(&MonMailAction_MenuHeader);
     // CALL(aVerticalMenu);
-    bool cancel = !VerticalMenu_Conv();
+    bool cancel = !VerticalMenu();
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
 
 //  Interpret the menu.
     // JP_C (mMonMailAction_done);
@@ -938,14 +938,14 @@ u8_pair_s MonMailAction(void){
                         GetCurNickname_Conv();
                         // LD_HL(mMonMailAction_MailDetachedText);
                         // CALL(aMenuTextboxBackup);
-                        MenuTextboxBackup_Conv(MailDetachedText);
+                        MenuTextboxBackup(MailDetachedText);
                         // goto done;
                     }
                     else {
                     // BagIsFull:
                         // LD_HL(mMonMailAction_MailNoSpaceText);
                         // CALL(aMenuTextboxBackup);
-                        MenuTextboxBackup_Conv(MailNoSpaceText);
+                        MenuTextboxBackup(MailNoSpaceText);
                         // goto done;
                     }
                 }
@@ -960,13 +960,13 @@ u8_pair_s MonMailAction(void){
                 // MailboxFull:
                     // LD_HL(mMonMailAction_MailboxFullText);
                     // CALL(aMenuTextboxBackup);
-                    MenuTextboxBackup_Conv(MailboxFullText);
+                    MenuTextboxBackup(MailboxFullText);
                     // goto done;
                 }
                 else {
                     // LD_HL(mMonMailAction_MailSentToPCText);
                     // CALL(aMenuTextboxBackup);
-                    MenuTextboxBackup_Conv(MailSentToPCText);
+                    MenuTextboxBackup(MailSentToPCText);
                     // goto done;
                 }
             }
@@ -982,7 +982,7 @@ u8_pair_s MonMailAction(void){
 
 u8_pair_s OpenPartyStats(void){
     // CALL(aLoadStandardMenuHeader);
-    LoadStandardMenuHeader_Conv();
+    LoadStandardMenuHeader();
     // CALL(aClearSprites);
     ClearSprites();
 //  PartyMon
@@ -996,7 +996,7 @@ u8_pair_s OpenPartyStats(void){
     // CALL(aMaxVolume);
     MaxVolume();
     // CALL(aCall_ExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // LD_A(0);
     // RET;
     return u8_pair(0, 0);
@@ -1353,7 +1353,7 @@ static bool ChooseMoveToDelete_ChooseMoveToDelete(void){
     SetUpMoveScreenBG();
     // LD_DE(mDeleteMoveScreen2DMenuData);
     // CALL(aLoad2DMenuData);
-    Load2DMenuData_Conv(DeleteMoveScreen2DMenuData);
+    Load2DMenuData(DeleteMoveScreen2DMenuData);
     // CALL(aSetUpMoveList);
     SetUpMoveList();
     // LD_HL(w2DMenuFlags1);
@@ -1372,7 +1372,7 @@ static bool ChooseMoveToDelete_ChooseMoveToDelete(void){
 
     // loop:
         // CALL(aScrollingMenuJoypad);
-        uint8_t pad = ScrollingMenuJoypad_Conv();
+        uint8_t pad = ScrollingMenuJoypad();
         // BIT_A(B_BUTTON_F);
         // JP_NZ (mChooseMoveToDelete_b_button);
         if(bit_test(pad, B_BUTTON_F)) {
@@ -1417,7 +1417,7 @@ u8_flag_s ChooseMoveToDelete_Conv(void){
     // SET_hl(NO_TEXT_SCROLL);
     bit_set(wram->wOptions, NO_TEXT_SCROLL);
     // CALL(aLoadFontsBattleExtra);
-    LoadFontsBattleExtra_Conv();
+    LoadFontsBattleExtra();
     // CALL(aChooseMoveToDelete_ChooseMoveToDelete);
     bool quit = ChooseMoveToDelete_ChooseMoveToDelete();
     // POP_BC;
@@ -1593,7 +1593,7 @@ Loop:
     PlaceMoveScreenArrows();
     // LD_DE(mMoveScreen2DMenuData);
     // CALL(aLoad2DMenuData);
-    Load2DMenuData_Conv(MoveScreen2DMenuData);
+    Load2DMenuData(MoveScreen2DMenuData);
 
 loop:
     // CALL(aSetUpMoveList);
@@ -1606,13 +1606,13 @@ loop:
 
 joy_loop:
     // CALL(aScrollingMenuJoypad);
-    a = ScrollingMenuJoypad_Conv();
+    a = ScrollingMenuJoypad();
     // BIT_A(1);
     // JP_NZ (mMoveScreenLoop_b_button);
     if(bit_test(a, B_BUTTON_F)) {
     // b_button:
         // CALL(aPlayClickSFX);
-        PlayClickSFX_Conv();
+        PlayClickSFX();
         // CALL(aWaitSFX);
         WaitSFX();
         // LD_A_addr(wSwappingMove);
@@ -1639,7 +1639,7 @@ joy_loop:
     if(bit_test(a, A_BUTTON_F)) {
     // a_button:
         // CALL(aPlayClickSFX);
-        PlayClickSFX_Conv();
+        PlayClickSFX();
         // CALL(aWaitSFX);
         // LD_A_addr(wSwappingMove);
         // AND_A_A;
@@ -1649,7 +1649,7 @@ joy_loop:
             // LD_addr_A(wSwappingMove);
             wram->wSwappingMove = wram->wMenuCursorY;
             // CALL(aPlaceHollowCursor);
-            PlaceHollowCursor_Conv();
+            PlaceHollowCursor();
             // JP(mMoveScreenLoop_moving_move);
             goto moving_move;
         }

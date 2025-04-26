@@ -1384,7 +1384,7 @@ CloseSRAM_And_ClearCarryFlag:
 bool SendGetMonIntoFromBox_Conv(uint8_t param){
     // LD_A(BANK(sBoxCount));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBoxCount));
+    OpenSRAM(MBANK(asBoxCount));
     // LD_A_addr(wPokemonWithdrawDepositParameter);
     // AND_A_A;
     // IF_Z goto check_IfPartyIsFull;
@@ -1714,7 +1714,7 @@ breedmon:
 
 // CloseSRAM_And_ClearCarryFlag:
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // AND_A_A;
     // RET;
     return false;
@@ -1722,7 +1722,7 @@ breedmon:
 
 bool CloseSRAM_And_SetCarryFlag(void){
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // SCF;
     // RET;
     return true;
@@ -2359,7 +2359,7 @@ full:
 bool SendMonIntoBox_Conv(void){
     // LD_A(BANK(sBoxCount));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBoxCount));
+    OpenSRAM(MBANK(asBoxCount));
     // LD_DE(sBoxCount);
     // LD_A_de;
     uint8_t boxCount = gb_read(sBoxCount);
@@ -2368,7 +2368,7 @@ bool SendMonIntoBox_Conv(void){
     if(boxCount >= MONS_PER_BOX) {
     // full:
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
         // AND_A_A;
         // RET;
         return false;
@@ -2531,7 +2531,7 @@ bool SendMonIntoBox_Conv(void){
     RestorePPOfDepositedPokemon(0);
 
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // SCF;
     // RET;
     return true;
@@ -3180,7 +3180,7 @@ void RemoveMonFromPartyOrBox_Conv(uint8_t param){
         // AND_A_A;
         // JP_NZ (mCloseSRAM);
         if(param != REMOVE_PARTY)
-            return CloseSRAM_Conv();
+            return CloseSRAM();
         // LD_A_addr(wLinkMode);
         // AND_A_A;
         // RET_NZ ;
@@ -3189,14 +3189,14 @@ void RemoveMonFromPartyOrBox_Conv(uint8_t param){
     // Shift mail
         // LD_A(BANK(sPartyMail));
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(asPartyMail));
+        OpenSRAM(MBANK(asPartyMail));
     // If this is the last mon in our party, no need to shift mail.
         // LD_HL(wPartyCount);
         // LD_A_addr(wCurPartyMon);
         // CP_A_hl;
         // IF_Z goto close_sram;
         if(wram->wPartyCount == wram->wCurPartyMon)
-            return CloseSRAM_Conv();
+            return CloseSRAM();
     // Shift our mail messages up.
         // LD_HL(sPartyMail);
         // LD_BC(MAIL_STRUCT_LENGTH);
@@ -3233,12 +3233,12 @@ void RemoveMonFromPartyOrBox_Conv(uint8_t param){
 
     // close_sram:
         // JP(mCloseSRAM);
-        return CloseSRAM_Conv();
+        return CloseSRAM();
     }
     else {
         // LD_A(BANK(sBoxCount));
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(asBoxCount));
+        OpenSRAM(MBANK(asBoxCount));
         // LD_HL(sBoxCount);
         gb_write(sBoxCount, gb_read(sBoxCount) - 1);
         sptr = sBoxCount + wram->wCurPartyMon + 1;
@@ -3367,7 +3367,7 @@ void RemoveMonFromPartyOrBox_Conv(uint8_t param){
         }
     // Mail time!
 
-        return CloseSRAM_Conv();
+        return CloseSRAM();
     // finish:
         // LD_A_addr(wPokemonWithdrawDepositParameter);
         // AND_A_A;
@@ -4360,7 +4360,7 @@ uint8_t GivePoke_Conv(uint8_t b, const char* nickname, const char* otName){
         // send_to_box:
             // LD_A(BANK(sBoxMonOTs));
             // CALL(aOpenSRAM);
-            OpenSRAM_Conv(MBANK(asBoxMonOTs));
+            OpenSRAM(MBANK(asBoxMonOTs));
             // LD_DE(sBoxMonOTs);
             uint16_t de2 = sBoxMonOTs;
 
@@ -4389,7 +4389,7 @@ uint8_t GivePoke_Conv(uint8_t b, const char* nickname, const char* otName){
             // LD_hl_A;
             gb_write(sBoxMon1ID + 1, Random());
             // CALL(aCloseSRAM);
-            CloseSRAM_Conv();
+            CloseSRAM();
             // FARCALL(aSetGiftBoxMonCaughtData);
             SetGiftBoxMonCaughtData(b);
             // goto skip_nickname;
@@ -4450,14 +4450,14 @@ uint8_t GivePoke_Conv(uint8_t b, const char* nickname, const char* otName){
     PrintText_Conv2(WasSentToBillsPCText);
     // LD_A(BANK(sBoxMonNicknames));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBoxMonNicknames));
+    OpenSRAM(MBANK(asBoxMonNicknames));
     // LD_HL(wMonOrItemNameBuffer);
     // LD_DE(sBoxMonNicknames);
     // LD_BC(MON_NAME_LENGTH);
     // CALL(aCopyBytes);
     CopyBytes_GB(sBoxMonNicknames, wMonOrItemNameBuffer, MON_NAME_LENGTH);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // LD_B(0x1);
     // RET;
     return 0x1;
@@ -4497,7 +4497,7 @@ void InitNickname(void){
 void InitNickname_Conv(uint8_t* hl){
     // PUSH_DE;
     // CALL(aLoadStandardMenuHeader);
-    LoadStandardMenuHeader_Conv();
+    LoadStandardMenuHeader();
     // CALL(aDisableSpriteUpdates);
     DisableSpriteUpdates();
     // POP_DE;
@@ -4511,7 +4511,7 @@ void InitNickname_Conv(uint8_t* hl){
     InitName(hl, wram->wStringBuffer1);
     // LD_A(0x4);  // ExitAllMenus is in bank 0// maybe it used to be in bank 4
     // LD_HL(mExitAllMenus);
-    ExitAllMenus_Conv();
+    ExitAllMenus();
     // RST(aFarCall);
     // RET;
 

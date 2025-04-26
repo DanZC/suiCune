@@ -28,49 +28,7 @@
 struct PhoneContact gCallerContact;
 Script_fn_t gPhoneCaller;
 
-void AddPhoneNumber(void){
-    CALL(av_CheckCellNum);
-    IF_C goto cant_add;
-    CALL(aPhone_FindOpenSlot);
-    IF_NC goto cant_add;
-    LD_hl_C;
-    XOR_A_A;
-    RET;
-
-
-cant_add:
-    SCF;
-    RET;
-
-}
-
-bool AddPhoneNumber_Conv(uint8_t c){
-    // CALL(av_CheckCellNum);
-    uint16_t hl = v_CheckCellNum_Conv(c);
-
-    // IF_C goto cant_add;
-    if(hl != 0)
-    {
-        return false;
-    }
-
-    // CALL(aPhone_FindOpenSlot);
-    // IF_NC goto cant_add;
-    hl = Phone_FindOpenSlot_Conv(c);
-    if(hl == 0)
-    {
-        return false;
-    }
-
-    // LD_hl_C;
-    gb_write(hl, c);
-    
-    // XOR_A_A;
-    // RET;
-    return true;
-}
-
-bool AddPhoneNumber_Conv2(uint8_t c){
+bool AddPhoneNumber(uint8_t c){
     // CALL(av_CheckCellNum);
     uint8_t* hl = v_CheckCellNum_Conv2(c);
 
@@ -479,7 +437,7 @@ static bool CheckPhoneCall_timecheck(void) {
 u8_flag_s CheckPhoneCall_Conv(void){
     // CALL(aCheckStandingOnEntrance);
     // IF_Z goto no_call;
-    if(CheckStandingOnEntrance_Conv())
+    if(CheckStandingOnEntrance())
         return u8_flag(0, false);
 
     // CALL(aCheckPhoneCall_timecheck);
@@ -501,7 +459,7 @@ u8_flag_s CheckPhoneCall_Conv(void){
     // CALL(aGetMapPhoneService);
     // AND_A_A;
     // IF_NZ goto no_call;
-    if(GetMapPhoneService_Conv() != 0)
+    if(GetMapPhoneService() != 0)
         return u8_flag(0, false);
 
     // CALL(aGetAvailableCallers);
@@ -518,7 +476,7 @@ u8_flag_s CheckPhoneCall_Conv(void){
     // LD_A(BANK(aScript_ReceivePhoneCall));
     // LD_HL(mScript_ReceivePhoneCall);
     // CALL(aCallScript);
-    uint8_t a = CallScript_Conv2(Script_ReceivePhoneCall);
+    uint8_t a = CallScript(Script_ReceivePhoneCall);
     // SCF;
     // RET;
     return u8_flag(a, true);
@@ -864,7 +822,7 @@ bool CheckSpecialPhoneCall_Conv(void){
     // LD_A(BANK(aCheckSpecialPhoneCall_script));
     // LD_HL(mCheckSpecialPhoneCall_script);
     // CALL(aCallScript);
-    CallScript_Conv2(CheckSpecialPhoneCall_script);
+    CallScript(CheckSpecialPhoneCall_script);
     // SCF;
     // RET;
     return true;
@@ -1006,12 +964,12 @@ void MakePhoneCallFromPokegear_Conv(uint8_t caller){
     // LD_A_addr(wLinkMode);
     // AND_A_A;
     // IF_NZ goto OutOfArea;
-    if(wram->wLinkMode != LINK_NULL || GetMapPhoneService_Conv() != 0) {
+    if(wram->wLinkMode != LINK_NULL || GetMapPhoneService() != 0) {
     OutOfArea:
         // LD_B(BANK(aLoadOutOfAreaScript));
         // LD_DE(mLoadOutOfAreaScript);
         // CALL(aExecuteCallbackScript);
-        ExecuteCallbackScript_Conv(LoadOutOfAreaScript);
+        ExecuteCallbackScript(LoadOutOfAreaScript);
         // RET;
         return;
     }
@@ -1081,7 +1039,7 @@ void MakePhoneCallFromPokegear_Conv(uint8_t caller){
     // LD_B(BANK(aLoadPhoneScriptBank));
     // LD_DE(mLoadPhoneScriptBank);
     // CALL(aExecuteCallbackScript);
-    ExecuteCallbackScript_Conv(LoadPhoneScriptBank);
+    ExecuteCallbackScript(LoadPhoneScriptBank);
     // RET;
 
 }
@@ -1476,7 +1434,7 @@ void Phone_StartRinging(void){
     // CALL(aPhone_CallerTextbox);
     Phone_CallerTextbox_Conv();
     // CALL(aUpdateSprites);
-    UpdateSprites_Conv();
+    UpdateSprites();
     // FARCALL(aPhoneRing_CopyTilemapAtOnce);
     PhoneRing_CopyTilemapAtOnce_Conv();
     // RET;
@@ -1779,7 +1737,7 @@ struct CallerLocation GetCallerLocation_Conv(void){
     uint8_t mnum = PhoneContacts[wram->wCurCaller].mapNumber;
     // PUSH_BC;
     // CALL(aGetWorldMapLocation);
-    uint8_t landmark = GetWorldMapLocation_Conv2(mgroup, mnum);
+    uint8_t landmark = GetWorldMapLocation(mgroup, mnum);
     // LD_E_A;
     // FARCALL(aGetLandmarkName);
     GetLandmarkName_Conv(landmark);

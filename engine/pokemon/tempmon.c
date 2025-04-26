@@ -297,13 +297,13 @@ species_t GetMonSpecies_Conv(uint8_t e) {
         // boxmon:
             // LD_A(BANK(sBoxSpecies));
             // CALL(aOpenSRAM);
-            OpenSRAM_Conv(MBANK(asBoxSpecies));
+            OpenSRAM(MBANK(asBoxSpecies));
             // LD_HL(sBoxSpecies);
             // CALL(aGetMonSpecies_done);
             a = gb_read(sBoxSpecies + e);
             wram->wCurPartySpecies = a;
             // CALL(aCloseSRAM);
-            CloseSRAM_Conv();
+            CloseSRAM();
             // RET;
             return a;
         case TEMPMON:

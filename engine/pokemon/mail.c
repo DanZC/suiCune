@@ -43,7 +43,7 @@ bool SendMailToPC(uint8_t b){
             uint16_t source = sPartyMail + MAIL_STRUCT_LENGTH * b;
             // LD_A(BANK(sMailboxCount));
             // CALL(aOpenSRAM);
-            OpenSRAM_Conv(MBANK(asMailboxCount));
+            OpenSRAM(MBANK(asMailboxCount));
             // LD_BC(MAIL_STRUCT_LENGTH);
             // CALL(aCopyBytes);
             CopyBytes(GBToRAMAddr(dest), GBToRAMAddr(source), MAIL_STRUCT_LENGTH);
@@ -60,7 +60,7 @@ bool SendMailToPC(uint8_t b){
             // INC_hl;
             gb_write(sMailboxCount, gb_read(sMailboxCount) + 1);
             // CALL(aCloseSRAM);
-            CloseSRAM_Conv();
+            CloseSRAM();
             // XOR_A_A;
             // RET;
             return false;
@@ -77,7 +77,7 @@ bool SendMailToPC(uint8_t b){
 void DeleteMailFromPC(uint8_t b){
     // LD_A(BANK(sMailboxCount));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asMailboxCount));
+    OpenSRAM(MBANK(asMailboxCount));
     // LD_A_B;
     // PUSH_BC;
     // LD_HL(sMailboxes);
@@ -117,11 +117,11 @@ void DeleteMailFromPC(uint8_t b){
     // DEC_hl;
     gb_write(sMailboxCount, gb_read(sMailboxCount) - 1);
     // JP(mCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 }
 
 void ReadMailMessage(uint8_t b){
-    OpenSRAM_Conv(MBANK(asMailboxes));
+    OpenSRAM(MBANK(asMailboxes));
     // LD_A_B;
     // LD_HL(sMailboxes);
     // LD_BC(MAIL_STRUCT_LENGTH);
@@ -131,13 +131,13 @@ void ReadMailMessage(uint8_t b){
     // FARCALL(aReadAnyMail);
     ReadAnyMail_Conv(GBToRAMAddr(sMailboxes + MAIL_STRUCT_LENGTH * b));
     // RET;
-    CloseSRAM_Conv();
+    CloseSRAM();
 }
 
 void MoveMailFromPCToParty(uint8_t b){
     // LD_A(BANK(sMailboxCount));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asMailboxCount));
+    OpenSRAM(MBANK(asMailboxCount));
     // PUSH_BC;
     // LD_A_B;
     // LD_BC(MAIL_STRUCT_LENGTH);
@@ -168,7 +168,7 @@ void MoveMailFromPCToParty(uint8_t b){
     // LD_hl_D;
     wram->wPartyMon[wram->wCurPartyMon].mon.item = hl->type;
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // POP_BC;
     // JP(mDeleteMailFromPC);
     return DeleteMailFromPC(b);
@@ -177,12 +177,12 @@ void MoveMailFromPCToParty(uint8_t b){
 uint8_t GetMailboxCount(void){
     // LD_A(BANK(sMailboxCount));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asMailboxCount));
+    OpenSRAM(MBANK(asMailboxCount));
     // LD_A_addr(sMailboxCount);
     // LD_C_A;
     uint8_t c = gb_read(sMailboxCount);
     // JP(mCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     return c;
 }
 
@@ -288,7 +288,7 @@ void CheckPokeMail_Conv(const char* message){
 
     // LD_A(BANK(sPartyMail));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asPartyMail));
+    OpenSRAM(MBANK(asPartyMail));
     // LD_A_addr(wCurPartyMon);
     // LD_HL(sPartyMail);
     // LD_BC(MAIL_STRUCT_LENGTH);
@@ -322,7 +322,7 @@ void CheckPokeMail_Conv(const char* message){
         // LD_A(POKEMAIL_WRONG_MAIL);
         // IF_NZ goto close_sram_return;
         if(b != c) {
-            CloseSRAM_Conv();
+            CloseSRAM();
             wram->wScriptVar = POKEMAIL_WRONG_MAIL;
             return;
         }
@@ -340,7 +340,7 @@ void CheckPokeMail_Conv(const char* message){
     // LD_A(POKEMAIL_LAST_MON);
     // IF_C goto close_sram_return;
     if(CheckCurPartyMonFainted_Conv()) {
-        CloseSRAM_Conv();
+        CloseSRAM();
         wram->wScriptVar = POKEMAIL_LAST_MON;
         return;
     }
@@ -439,7 +439,7 @@ void GivePokeMail_Conv(const struct Pokemail* mail){
     // LD_BC(MAIL_MSG_LENGTH + 1);
     // LD_A(BANK(sPartyMail));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asPartyMail));
+    OpenSRAM(MBANK(asPartyMail));
     // CALL(aCopyBytes);
     struct MailMsg* de = (struct MailMsg*)GBToRAMAddr(partyMail);
     CopyBytes(de->message, wram->wMonMailMessageBuffer, MAIL_MSG_LENGTH + 1);
@@ -471,13 +471,13 @@ void GivePokeMail_Conv(const struct Pokemail* mail){
     // LD_de_A;
     de->type = mail->item;
     // JP(mCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 }
 
 void BackupPartyMonMail(void){
     // LD_A(BANK(sPartyMail));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asPartyMail));
+    OpenSRAM(MBANK(asPartyMail));
     // LD_HL(sPartyMail);
     // LD_DE(sPartyMailBackup);
     // LD_BC(PARTY_LENGTH * MAIL_STRUCT_LENGTH);
@@ -489,13 +489,13 @@ void BackupPartyMonMail(void){
     // CALL(aCopyBytes);
     CopyBytes_GB(sMailboxCountBackup, sMailboxCount, 1 + MAILBOX_CAPACITY * MAIL_STRUCT_LENGTH);
     // JP(mCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 }
 
 void RestorePartyMonMail(void){
     // LD_A(BANK(sPartyMail));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asPartyMail));
+    OpenSRAM(MBANK(asPartyMail));
     // LD_HL(sPartyMailBackup);
     // LD_DE(sPartyMail);
     // LD_BC(PARTY_LENGTH * MAIL_STRUCT_LENGTH);
@@ -507,13 +507,13 @@ void RestorePartyMonMail(void){
     // CALL(aCopyBytes);
     CopyBytes_GB(sMailboxCount, sMailboxCountBackup, 1 + MAILBOX_CAPACITY * MAIL_STRUCT_LENGTH);
     // JP(mCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 }
 
 void DeletePartyMonMail(void){
     // LD_A(BANK(sPartyMail));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asPartyMail));
+    OpenSRAM(MBANK(asPartyMail));
     // XOR_A_A;
     // LD_HL(sPartyMail);
     // LD_BC(PARTY_LENGTH * MAIL_STRUCT_LENGTH);
@@ -525,7 +525,7 @@ void DeletePartyMonMail(void){
     // CALL(aByteFill);
     ByteFill_GB(sMailboxCount, 1 + MAILBOX_CAPACITY * MAIL_STRUCT_LENGTH, 0);
     // JP(mCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 }
 
 void IsAnyMonHoldingMail(void){
@@ -601,14 +601,14 @@ void v_PlayerMailBoxMenu(void){
     // nomail:
         // LD_HL(mv_PlayerMailBoxMenu_EmptyMailboxText);
         // JP(mMenuTextboxBackup);
-        return MenuTextboxBackup_Conv(EmptyMailboxText);
+        return MenuTextboxBackup(EmptyMailboxText);
     }
     // CALL(aLoadStandardMenuHeader);
-    LoadStandardMenuHeader_Conv();
+    LoadStandardMenuHeader();
     // CALL(aMailboxPC);
     MailboxPC();
     // JP(mCloseWindow);
-    CloseWindow_Conv2();
+    CloseWindow();
 }
 
 void InitMail(void){
@@ -649,11 +649,11 @@ done:
 bool InitMail_Conv(void){
     // LD_A(BANK(sMailboxCount));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asMailboxCount));
+    OpenSRAM(MBANK(asMailboxCount));
     // LD_A_addr(sMailboxCount);
     uint8_t mailboxCount = gb_read(sMailboxCount);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 
 //  initialize wMailboxCount from sMailboxCount
     // LD_HL(wMailboxCount);
@@ -697,7 +697,7 @@ uint8_t* MailboxPC_GetMailAuthor(uint8_t a){
     // CALL(aAddNTimes);
     // LD_A(BANK(sMailboxCount));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asMailboxCount));
+    OpenSRAM(MBANK(asMailboxCount));
     struct MailMsg* hl = ((struct MailMsg*)GBToRAMAddr(sMailbox1)) + (a - 1);
     // LD_DE(wStringBuffer2);
     // PUSH_DE;
@@ -708,7 +708,7 @@ uint8_t* MailboxPC_GetMailAuthor(uint8_t a){
     // LD_de_A;
     wram->wStringBuffer1[NAME_LENGTH - 1] = 0x50;
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // POP_DE;
     // RET;
     return wram->wStringBuffer1;
@@ -766,7 +766,7 @@ static item_t MailboxPC_GetMailType(uint8_t sel) {
     // PUSH_AF;
     // LD_A(BANK(sMailboxCount));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asMailboxCount));
+    OpenSRAM(MBANK(asMailboxCount));
     // POP_AF;
     // LD_HL(sMailbox1Type);
     // LD_BC(MAIL_STRUCT_LENGTH);
@@ -775,7 +775,7 @@ static item_t MailboxPC_GetMailType(uint8_t sel) {
     // LD_addr_A(wCurItem);
     wram->wCurItem = gb_read(sMailbox1Type + MAIL_STRUCT_LENGTH * sel);
     // JP(mCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     return wram->wCurItem;
 }
 
@@ -806,11 +806,11 @@ static void MailboxPC_Submenu(void){
     };
     // LD_HL(mMailboxPC_SubMenuHeader);
     // CALL(aLoadMenuHeader);
-    LoadMenuHeader_Conv2(&MailboxPC_SubMenuHeader);
+    LoadMenuHeader(&MailboxPC_SubMenuHeader);
     // CALL(aVerticalMenu);
-    bool cancel = VerticalMenu_Conv();
+    bool cancel = VerticalMenu();
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // IF_C goto subexit;
     if(!cancel) {
         // LD_A_addr(wMenuCursorY);
@@ -823,24 +823,24 @@ static void MailboxPC_Submenu(void){
             case 0: 
             // ReadMail:
                 // CALL(aFadeToMenu);
-                FadeToMenu_Conv();
+                FadeToMenu();
                 // LD_A_addr(wMenuSelection);
                 // DEC_A;
                 // LD_B_A;
                 // CALL(aReadMailMessage);
                 ReadMailMessage(wram->wMenuSelection - 1);
                 // JP(mCloseSubmenu);
-                return CloseSubmenu_Conv();
+                return CloseSubmenu();
             //dw ['.PutInPack'];
             case 1: {
             // PutInPack:
                 // LD_HL(mMailboxPC_MailMessageLostText);
                 // CALL(aMenuTextbox);
-                MenuTextbox_Conv(MailMessageLostText);
+                MenuTextbox(MailMessageLostText);
                 // CALL(aYesNoBox);
-                bool cancel = !YesNoBox_Conv();
+                bool cancel = !YesNoBox();
                 // CALL(aExitMenu);
-                ExitMenu_Conv2();
+                ExitMenu();
                 // RET_C ;
                 if(cancel)
                     return;
@@ -857,7 +857,7 @@ static void MailboxPC_Submenu(void){
                 if(!ReceiveItem_Conv((item_pocket_s*)&wram->wNumItems, item, 1)) {
                     // LD_HL(mMailboxPC_MailPackFullText);
                     // JP(mMenuTextboxBackup);
-                    return MenuTextboxBackup_Conv(MailPackFullText);
+                    return MenuTextboxBackup(MailPackFullText);
                 }
 
             // put_in_bag:
@@ -868,13 +868,13 @@ static void MailboxPC_Submenu(void){
                 DeleteMailFromPC(wram->wMenuSelection - 1);
                 // LD_HL(mMailboxPC_MailClearedPutAwayText);
                 // JP(mMenuTextboxBackup);
-                return MenuTextboxBackup_Conv(MailClearedPutAwayText);
+                return MenuTextboxBackup(MailClearedPutAwayText);
             }
             //dw ['.AttachMail'];
             case 2: {
             // AttachMail:
                 // CALL(aFadeToMenu);
-                FadeToMenu_Conv();
+                FadeToMenu();
                 // XOR_A_A;
                 // LD_addr_A(wPartyMenuActionText);
                 wram->wPartyMenuActionText = 0x0;
@@ -903,7 +903,7 @@ static void MailboxPC_Submenu(void){
                     u8_flag_s res = PartyMenuSelect();
                     // IF_C goto exit2;
                     if(res.flag)
-                        return CloseSubmenu_Conv();
+                        return CloseSubmenu();
                     // LD_A_addr(wCurPartySpecies);
                     // CP_A(EGG);
                     // IF_Z goto egg;
@@ -940,7 +940,7 @@ static void MailboxPC_Submenu(void){
 
             // exit2:
                 // JP(mCloseSubmenu);
-                return CloseSubmenu_Conv();
+                return CloseSubmenu();
             }
             //dw ['.Cancel'];
             default:
@@ -968,14 +968,14 @@ void MailboxPC(void){
         InitMail_Conv();
         // LD_HL(mMailboxPC_TopMenuHeader);
         // CALL(aCopyMenuHeader);
-        CopyMenuHeader_Conv2(&MailboxPC_TopMenuHeader);
+        CopyMenuHeader(&MailboxPC_TopMenuHeader);
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
         hram->hBGMapMode = BGMAPMODE_NONE;
         // CALL(aInitScrollingMenu);
-        InitScrollingMenu_Conv();
+        InitScrollingMenu();
         // CALL(aUpdateSprites);
-        UpdateSprites_Conv();
+        UpdateSprites();
 
         // LD_A_addr(wCurMessageIndex);
         // LD_addr_A(wMenuCursorPosition);
@@ -984,7 +984,7 @@ void MailboxPC(void){
         // LD_addr_A(wMenuScrollPosition);
         wram->wMenuScrollPosition = wram->wCurMessageScrollPosition;
         // CALL(aScrollingMenu);
-        ScrollingMenu_Conv();
+        ScrollingMenu();
         // LD_A_addr(wMenuScrollPosition);
         // LD_addr_A(wCurMessageScrollPosition);
         wram->wCurMessageScrollPosition = wram->wMenuScrollPosition;

@@ -199,7 +199,7 @@ bool DoPoisonStep(void){
         // LD_A(BANK(aDoPoisonStep_Script_MonFaintedToPoison));
         // LD_HL(mDoPoisonStep_Script_MonFaintedToPoison);
         // CALL(aCallScript);
-        CallScript_Conv2(Script_MonFaintedToPoison);
+        CallScript(Script_MonFaintedToPoison);
         // SCF;
         // RET;
         return true;

@@ -237,7 +237,7 @@ void WaitSFX(void) {
         gb.display.WY = gb.gb_reg.WY;
         gb.display.window_clear = 0;
         gb_finish_frame();
-        VBlank_Conv();
+        VBlank();
     }
 }
 
@@ -517,7 +517,7 @@ static uint16_t GetMapMusic_MaybeSpecial(void) {
         return music;
     // CALL(aGetMapMusic);      // call GetMapMusic
     // RET;                     // ret
-    return GetMapMusic_Conv2();
+    return GetMapMusic();
 }
 
 void PlaceBCDNumberSprite(void) {

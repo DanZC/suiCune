@@ -146,7 +146,7 @@ void DebugMenu_MoveCursor(int8_t dir) {
 #define DEBUG_MENU_MUSIC MUSIC_NONE
 
 static void DebugMenu_MenuBox(void) {
-    return Textbox(Coord2Tile_Conv(4, 0), (MAX_OPTIONS_PER_PAGE + 1) * 2, MAX_OPTION_STRING_LENGTH + 1);
+    return Textbox(Coord2Tile(4, 0), (MAX_OPTIONS_PER_PAGE + 1) * 2, MAX_OPTION_STRING_LENGTH + 1);
 }
 
 void DebugMenu(void) {
@@ -169,7 +169,7 @@ void DebugMenu(void) {
     while(1)
     {
         wram->wDisableTextAcceleration = 0;
-        GetJoypad_Conv2();
+        GetJoypad();
         int8_t dir = -((hram->hJoyPressed & D_UP)? 1: 0) + ((hram->hJoyPressed & D_DOWN)? 1: 0);
         if(dir != 0) {
             DebugMenu_MoveCursor(dir);
@@ -182,7 +182,7 @@ void DebugMenu(void) {
                 currentPage * MAX_OPTIONS_PER_PAGE + cursorIndex >= numberOfOptions) {
                 currentPage = (currentPage + 1) % ((numberOfOptions + MAX_OPTIONS_PER_PAGE - 1) / MAX_OPTIONS_PER_PAGE);
                 cursorIndex = 0;
-                PlayClickSFX_Conv();
+                PlayClickSFX();
             } else {
                 debugMenuOptions[currentPage * MAX_OPTIONS_PER_PAGE + cursorIndex].handler();
             }
@@ -364,7 +364,7 @@ void DebugMenu_SoundTest(void) {
     while(1)
     {
         wram->wDisableTextAcceleration = 0;
-        GetJoypad_Conv2();
+        GetJoypad();
         int8_t dir = -((hram->hJoyPressed & D_LEFT)? 1: 0) + ((hram->hJoyPressed & D_RIGHT)? 1: 0);
         if(dir != 0) {
             if(editingWhich == 0) {
@@ -437,7 +437,7 @@ static void DebugMenu_BattleTest_StartBattle(uint8_t tclass, uint8_t tid) {
     WaitBGMap();
     DelayFrames(10);
     wram->wMapTileset = TILESET_JOHTO;
-    LoadMapTileset_Conv2();
+    LoadMapTileset();
 
     // Rival name and Player name are null by default. 
     U82CB(wram->wRivalName, NAME_LENGTH, "???@");
@@ -477,8 +477,8 @@ static void DebugMenu_BattleTest_StartBattle(uint8_t tclass, uint8_t tid) {
     wbank_pop;
     ClearTilemap();
     WaitBGMap();
-    LoadFontsExtra_Conv();
-    LoadStandardFont_Conv();
+    LoadFontsExtra();
+    LoadStandardFont();
     PlayMusic(MUSIC_NONE);
     DelayFrame();
 }
@@ -573,7 +573,7 @@ void DebugMenu_BattleTest(void) {
     while(1)
     {
         wram->wDisableTextAcceleration = 0;
-        GetJoypad_Conv2();
+        GetJoypad();
         int8_t hdir = -((hram->hJoyPressed & D_LEFT)? 1: 0) + ((hram->hJoyPressed & D_RIGHT)? 1: 0);
         int8_t vdir = -((hram->hJoyPressed & D_UP)? 1: 0) + ((hram->hJoyPressed & D_DOWN)? 1: 0);
         if(hdir > 0) {
@@ -636,7 +636,7 @@ void DebugMenu_GFXTest(void) {
     while(1)
     {
         wram->wDisableTextAcceleration = 0;
-        GetJoypad_Conv2();
+        GetJoypad();
         if(hram->hJoyPressed & (B_BUTTON)) 
             break;
         if(hram->hJoyPressed & (A_BUTTON))  {
@@ -732,7 +732,7 @@ void DebugMenu_Pics(void) {
 
     while(1)
     {
-        GetJoypad_Conv2();
+        GetJoypad();
 
         if(hram->hJoyPressed & (B_BUTTON))
             break;
@@ -799,7 +799,7 @@ void DebugMenu_Scripting(void) {
     WaitBGMap();
 
     PrintText_Conv2(DebugMenu_TestText);
-    bool res = YesNoBox_Conv();
+    bool res = YesNoBox();
     if(res) {
         PrintText_Conv2(DebugMenu_TestText_Yes);
     }
@@ -842,11 +842,11 @@ void DebugMenu_Link(void) {
     v_LoadStandardFont_Conv();
     WaitBGMap();
 
-    OpenSRAM_Conv(MBANK(asPlayerData));
+    OpenSRAM(MBANK(asPlayerData));
     CopyBytes_GB(wCrystalData, sCrystalData, wCrystalDataEnd - wCrystalData);
     CopyBytes_GB(wPlayerID, sPlayerData + (wPlayerID - wPlayerData), 2);
     CopyBytes_GB(wPlayerName, sPlayerData + (wPlayerName - wPlayerData), NAME_LENGTH);
-    CloseSRAM_Conv();
+    CloseSRAM();
 
     printf("NAME: "); PrintCrystalStringFromRAM(wram->wPlayerName); printf("\n");
     printf("GENDER: %s\n", (bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))? "FEMALE": "MALE");
@@ -854,14 +854,14 @@ void DebugMenu_Link(void) {
 
     LANConnection();
     
-    LoadStandardMenuHeader_Conv();
+    LoadStandardMenuHeader();
     if(wram->wScriptVar == FALSE) {
         PrintText_Conv2(Text_LANTestFail);
     }
     else {
         PrintText_Conv2(Text_LANTestSuccess);
     }
-    CloseWindow_Conv2();
+    CloseWindow();
 
     NetworkCloseConnection();
     ClearScreen();
@@ -958,10 +958,10 @@ void DebugMenu_BattleAnim(void) {
     PlaceGraphicYStagger_Conv(coord(12, 0, wram->wTilemap), 7, 7);
     SpeechTextbox();
     DebugMenu_BattleAnim_PlaceText(anim);
-    ApplyTilemap_Conv();
+    ApplyTilemap();
 
     while(1) {
-        GetJoypad_Conv2();
+        GetJoypad();
         if(hram->hJoyPressed & (B_BUTTON))
             break;
         
@@ -1071,11 +1071,11 @@ void DebugMenu_MysteryGift(void) {
     DebugMenu_SaveAttrmap();
     ClearScreen();
 
-    OpenSRAM_Conv(MBANK(asPlayerData));
+    OpenSRAM(MBANK(asPlayerData));
     wram->wPlayerGender = gb_read(sCrystalData);
     CopyBytes(&wram->wPlayerID,  GBToRAMAddr(sPlayerData + (wPlayerID - wPlayerData)), 2);
     CopyBytes(wram->wPlayerName, GBToRAMAddr(sPlayerData + (wPlayerName - wPlayerData)), NAME_LENGTH);
-    CloseSRAM_Conv();
+    CloseSRAM();
 
     if(LANTryConnection()) {
         DoMysteryGift();
@@ -1134,10 +1134,10 @@ static const struct MenuHeader Menu_NewsMenu = {
 };
 
 static void DebugMenu_News_DeleteNews(void) {
-    OpenSRAM_Conv(MBANK(as5_aa72));
+    OpenSRAM(MBANK(as5_aa72));
     gb_write(s5_aa72, 0);
     ByteFill(GBToRAMAddr(s5_aa73), 0xc, 0x0);
-    CloseSRAM_Conv();
+    CloseSRAM();
 }
 
 void DebugMenu_News(void) {
@@ -1146,16 +1146,16 @@ void DebugMenu_News(void) {
 
 loop:
     PrintText_Conv2(Text_NewsMenuTop);
-    LoadMenuHeader_Conv2(&Menu_NewsMenu);
+    LoadMenuHeader(&Menu_NewsMenu);
 
-    bool cancel = !VerticalMenu_Conv();
-    ExitMenu_Conv2();
+    bool cancel = !VerticalMenu();
+    ExitMenu();
     if(!cancel) {
         switch(wram->wMenuCursorY) {
             case 1:
                 PrintText_Conv2(Text_NewsDeleteConfirm);
 
-                if(YesNoBox_Conv()) {
+                if(YesNoBox()) {
                     DebugMenu_News_DeleteNews();
                     PrintText_Conv2(Text_NewsDeleted);
                 }

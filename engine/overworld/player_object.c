@@ -44,13 +44,13 @@ void SpawnPlayer(void){
     // LD_A(PLAYER);
     // LD_HL(mPlayerObjectTemplate);
     // CALL(aCopyPlayerObjectTemplate);
-    CopyPlayerObjectTemplate_Conv(&PlayerObjectTemplate, PLAYER);
+    CopyPlayerObjectTemplate(&PlayerObjectTemplate, PLAYER);
     // LD_B(PLAYER);
     // CALL(aPlayerSpawn_ConvertCoords);
     PlayerSpawn_ConvertCoords_Conv(PLAYER);
     // LD_A(PLAYER_OBJECT);
     // CALL(aGetMapObject);
-    struct MapObject* bc = GetMapObject_Conv(PLAYER_OBJECT);
+    struct MapObject* bc = GetMapObject(PLAYER_OBJECT);
     // LD_HL(MAPOBJECT_COLOR);
     // ADD_HL_BC;
     // LD_E((PAL_NPC_RED << 4) | OBJECTTYPE_SCRIPT);
@@ -107,7 +107,7 @@ void CopyDECoordsToMapObject_Conv(uint8_t d, uint8_t e, uint8_t b){
     // PUSH_DE;
     // LD_A_B;
     // CALL(aGetMapObject);
-    struct MapObject* bc = GetMapObject_Conv(b);
+    struct MapObject* bc = GetMapObject(b);
     // POP_DE;
     // LD_HL(MAPOBJECT_X_COORD);
     // ADD_HL_BC;
@@ -170,7 +170,7 @@ void WriteObjectXY(void){
 void WriteObjectXY_Conv(uint8_t b){
     // LD_A_B;
     // CALL(aCheckObjectVisibility);
-    struct Object* bc = CheckObjectVisibility_Conv(b);
+    struct Object* bc = CheckObjectVisibility(b);
     if(bc == NULL)
         return;
     // RET_C ;
@@ -269,7 +269,7 @@ uint8_t CopyObjectStruct_Conv(struct MapObject* bc, uint8_t a){
     // CALL(aCheckObjectMask);
     // AND_A_A;
     // RET_NZ ;  // masked
-    if(CheckObjectMask_Conv(a) != 0)
+    if(CheckObjectMask(a) != 0)
         return 1;
 
     // LD_HL(wObjectStructs + OBJECT_LENGTH * 1);
@@ -400,12 +400,12 @@ static void CopyMapObjectToObjectStruct_CopyMapObjectToTempObject_Conv(struct Ma
 
     // CALL(aGetSpriteVTile);
     // LD_addr_A(wTempObjectCopySpriteVTile);
-    wram->wTempObjectCopySpriteVTile = GetSpriteVTile_Conv(bc->sprite, mapObjIdx);
+    wram->wTempObjectCopySpriteVTile = GetSpriteVTile(bc->sprite, mapObjIdx);
 
     // LD_A_hl;
     // CALL(aGetSpritePalette);
     // LD_addr_A(wTempObjectCopyPalette);
-    wram->wTempObjectCopyPalette = GetSpritePalette_Conv(bc->sprite);
+    wram->wTempObjectCopyPalette = GetSpritePalette(bc->sprite);
 
     // LD_HL(MAPOBJECT_COLOR);
     // ADD_HL_BC;
@@ -904,7 +904,7 @@ void CopyTempObjectToObjectStruct_Conv(struct Object* de){
 
     // LD_A_addr(wTempObjectCopyMovement);
     // CALL(aCopySpriteMovementData);
-    CopySpriteMovementData_Conv(de, wram->wTempObjectCopyMovement);
+    CopySpriteMovementData(de, wram->wTempObjectCopyMovement);
 
     // LD_A_addr(wTempObjectCopyPalette);
     // LD_HL(OBJECT_PALETTE);
@@ -963,12 +963,12 @@ static void TrainerWalkToPlayer_GetPathToPlayer(uint8_t b, uint8_t c, uint8_t d)
 //  get player object struct, load to de
     // LD_A_C;
     // CALL(aGetMapObject);
-    struct MapObject* bc = GetMapObject_Conv(c);
+    struct MapObject* bc = GetMapObject(c);
     // LD_HL(MAPOBJECT_OBJECT_STRUCT_ID);
     // ADD_HL_BC;
     // LD_A_hl;
     // CALL(aGetObjectStruct);
-    struct Object* de = GetObjectStruct_Conv(bc->structId);
+    struct Object* de = GetObjectStruct(bc->structId);
     // LD_D_B;
     // LD_E_C;
 
@@ -976,12 +976,12 @@ static void TrainerWalkToPlayer_GetPathToPlayer(uint8_t b, uint8_t c, uint8_t d)
     // POP_BC;
     // LD_A_B;
     // CALL(aGetMapObject);
-    struct MapObject* bc2 = GetMapObject_Conv(b);
+    struct MapObject* bc2 = GetMapObject(b);
     // LD_HL(MAPOBJECT_OBJECT_STRUCT_ID);
     // ADD_HL_BC;
     // LD_A_hl;
     // CALL(aGetObjectStruct);
-    struct Object* de2 = GetObjectStruct_Conv(bc2->structId);
+    struct Object* de2 = GetObjectStruct(bc2->structId);
 
 //  get last talked coords, load to bc
     // LD_HL(OBJECT_NEXT_MAP_X);
@@ -1285,7 +1285,7 @@ static uint8_t GetRelativeFacing_GetFacing_e_relativeto_d(uint8_t e, uint8_t d) 
 //  load the coordinates of object d into bc
     // LD_A_D;
     // CALL(aGetObjectStruct);
-    struct Object* hl = GetObjectStruct_Conv(d);
+    struct Object* hl = GetObjectStruct(d);
     // LD_HL(OBJECT_NEXT_MAP_X);
     // ADD_HL_BC;
     // LD_A_hl;
@@ -1299,7 +1299,7 @@ static uint8_t GetRelativeFacing_GetFacing_e_relativeto_d(uint8_t e, uint8_t d) 
 //  load the coordinates of object e into de
     // LD_A_E;
     // CALL(aGetObjectStruct);
-    hl = GetObjectStruct_Conv(e);
+    hl = GetObjectStruct(e);
     // LD_HL(OBJECT_NEXT_MAP_X);
     // ADD_HL_BC;
     // LD_D_hl;
@@ -1399,7 +1399,7 @@ same_y_1:
 uint8_t GetRelativeFacing_Conv(uint8_t e, uint8_t d){
     // LD_A_D;
     // CALL(aGetMapObject);
-    struct MapObject* bc = GetMapObject_Conv(d);
+    struct MapObject* bc = GetMapObject(d);
     // LD_HL(MAPOBJECT_OBJECT_STRUCT_ID);
     // ADD_HL_BC;
     // LD_A_hl;
@@ -1411,7 +1411,7 @@ uint8_t GetRelativeFacing_Conv(uint8_t e, uint8_t d){
     d = bc->structId;
     // LD_A_E;
     // CALL(aGetMapObject);
-    bc = GetMapObject_Conv(e);
+    bc = GetMapObject(e);
     // LD_HL(MAPOBJECT_OBJECT_STRUCT_ID);
     // ADD_HL_BC;
     // LD_A_hl;
@@ -1500,7 +1500,7 @@ same_xy:
 static u8_flag_s QueueFollowerFirstStep_QueueFirstStep(void) {
     // LD_A_addr(wObjectFollow_Leader);
     // CALL(aGetObjectStruct);
-    struct Object* leader = GetObjectStruct_Conv(wram->wObjectFollow_Leader);
+    struct Object* leader = GetObjectStruct(wram->wObjectFollow_Leader);
     // LD_HL(OBJECT_NEXT_MAP_X);
     // ADD_HL_BC;
     // LD_D_hl;
@@ -1511,7 +1511,7 @@ static u8_flag_s QueueFollowerFirstStep_QueueFirstStep(void) {
     uint8_t e = leader->nextMapY;
     // LD_A_addr(wObjectFollow_Follower);
     // CALL(aGetObjectStruct);
-    struct Object* follower = GetObjectStruct_Conv(wram->wObjectFollow_Follower);
+    struct Object* follower = GetObjectStruct(wram->wObjectFollow_Follower);
     // LD_HL(OBJECT_NEXT_MAP_X);
     // ADD_HL_BC;
     // LD_A_D;

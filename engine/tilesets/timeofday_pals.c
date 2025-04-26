@@ -18,7 +18,7 @@ void DummyPredef36(void){
 
 void UpdateTimeOfDayPal(void){
     // CALL(aUpdateTime);
-    UpdateTime_Conv();
+    UpdateTime();
     // LD_A_addr(wTimeOfDay);
     // LD_addr_A(wCurTimeOfDay);
     wram->wCurTimeOfDay = wram->wTimeOfDay;

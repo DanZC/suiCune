@@ -99,7 +99,7 @@ void BankOfMom(void){
                 PrintText_Conv2(MomLeavingText1);
                 // CALL(aYesNoBox);
                 // IF_C goto DontSaveMoney;
-                if(YesNoBox_Conv()) {
+                if(YesNoBox()) {
                     // LD_HL(mMomLeavingText2);
                     // CALL(aPrintText);
                     PrintText_Conv2(MomLeavingText2);
@@ -132,7 +132,7 @@ void BankOfMom(void){
                 PrintText_Conv2(MomIsThisAboutYourMoneyText);
                 // CALL(aYesNoBox);
                 // IF_C goto nope;
-                if(YesNoBox_Conv()) {
+                if(YesNoBox()) {
                     // LD_A(0x3);
                     // goto done_2;
                     wram->wJumptableIndex = BANKOFMOM_ACCESS_BANK_OF_MOM;
@@ -156,14 +156,14 @@ void BankOfMom(void){
                 // CALL(aPrintText);
                 PrintText_Conv2(MomBankWhatDoYouWantToDoText);
                 // CALL(aLoadStandardMenuHeader);
-                LoadStandardMenuHeader_Conv();
+                LoadStandardMenuHeader();
                 // LD_HL(mBankOfMom_MenuHeader);
                 // CALL(aCopyMenuHeader);
-                CopyMenuHeader_Conv2(&BankOfMom_MenuHeader);
+                CopyMenuHeader(&BankOfMom_MenuHeader);
                 // CALL(aVerticalMenu);
-                bool nocancel = VerticalMenu_Conv();
+                bool nocancel = VerticalMenu();
                 // CALL(aCloseWindow);
-                CloseWindow_Conv2();
+                CloseWindow();
                 // IF_C goto cancel;
                 if(!nocancel)
                     goto cancel;
@@ -225,7 +225,7 @@ void BankOfMom(void){
                 // LD_addr_A(wMomBankDigitCursorPosition);
                 wram->wMomBankDigitCursorPosition = 5;
                 // CALL(aLoadStandardMenuHeader);
-                LoadStandardMenuHeader_Conv();
+                LoadStandardMenuHeader();
                 // CALL(aMom_SetUpDepositMenu);
                 Mom_SetUpDepositMenu();
                 // CALL(aMom_Wait10Frames);
@@ -233,7 +233,7 @@ void BankOfMom(void){
                 // CALL(aMom_WithdrawDepositMenuJoypad);
                 bool cancel = Mom_WithdrawDepositMenuJoypad();
                 // CALL(aCloseWindow);
-                CloseWindow_Conv2();
+                CloseWindow();
                 // IF_C goto CancelDeposit;
                 // LD_HL(wStringBuffer2);
                 // LD_A_hli;
@@ -321,7 +321,7 @@ void BankOfMom(void){
                 // LD_addr_A(wMomBankDigitCursorPosition);
                 wram->wMomBankDigitCursorPosition = 5;
                 // CALL(aLoadStandardMenuHeader);
-                LoadStandardMenuHeader_Conv();
+                LoadStandardMenuHeader();
                 // CALL(aMom_SetUpWithdrawMenu);
                 Mom_SetUpWithdrawMenu();
                 // CALL(aMom_Wait10Frames);
@@ -329,7 +329,7 @@ void BankOfMom(void){
                 // CALL(aMom_WithdrawDepositMenuJoypad);
                 bool cancel = Mom_WithdrawDepositMenuJoypad();
                 // CALL(aCloseWindow);
-                CloseWindow_Conv2();
+                CloseWindow();
                 // IF_C goto CancelWithdraw;
                 // LD_HL(wStringBuffer2);
                 // LD_A_hli;
@@ -407,7 +407,7 @@ void BankOfMom(void){
                 PrintText_Conv2(MomSaveMoneyText);
                 // CALL(aYesNoBox);
                 // IF_C goto StopSavingMoney;
-                if(YesNoBox_Conv()) {
+                if(YesNoBox()) {
                     // LD_A((1 << MOM_ACTIVE_F) | (1 << MOM_SAVING_SOME_MONEY_F));
                     // LD_addr_A(wMomSavingMoney);
                     wram->wMomSavingMoney = (1 << MOM_ACTIVE_F) | (1 << MOM_SAVING_SOME_MONEY_F);
@@ -576,7 +576,7 @@ void DSTChecks(void){
         PlaceHLTextAtBC_Conv2(coord(1, 14, wram->wTilemap), TimesetAskAdjustDSTText);
         // CALL(aYesNoBox);
         // RET_C ;
-        if(!YesNoBox_Conv())
+        if(!YesNoBox())
             return;
         // CALL(aDSTChecks_ClearBox);
         DSTChecks_ClearBox();
@@ -602,7 +602,7 @@ void DSTChecks(void){
         PlaceHLTextAtBC_Conv2(coord(1, 14, wram->wTilemap), TimesetAskDSTText);
         // CALL(aYesNoBox);
         // RET_C ;
-        if(!YesNoBox_Conv())
+        if(!YesNoBox())
             return;
         // LD_A_addr(wDST);
         // SET_A(7);
@@ -624,7 +624,7 @@ void DSTChecks(void){
     PlaceHLTextAtBC_Conv2(coord(1, 14, wram->wTilemap), TimesetAskNotDSTText);
     // CALL(aYesNoBox);
     // RET_C ;
-    if(!YesNoBox_Conv())
+    if(!YesNoBox())
         return;
     // LD_A_addr(wDST);
     // RES_A(7);
@@ -696,7 +696,7 @@ void Mom_ContinueMenuSetup(const char* de){
     // CALL(aPrintNum);
     PrintNum_Conv2(coord(12, 6, wram->wTilemap), wram->wStringBuffer2, PRINTNUM_MONEY | PRINTNUM_LEADINGZEROS | 3, 6);
     // CALL(aUpdateSprites);
-    UpdateSprites_Conv();
+    UpdateSprites();
     // CALL(aCGBOnly_CopyTilemapAtOnce);
     CGBOnly_CopyTilemapAtOnce();
     // RET;
@@ -824,7 +824,7 @@ bool Mom_WithdrawDepositMenuJoypad(void){
     do {
     // loop:
         // CALL(aJoyTextDelay);
-        JoyTextDelay_Conv();
+        JoyTextDelay();
         // LD_HL(hJoyPressed);
         // LD_A_hl;
         // AND_A(B_BUTTON);

@@ -49,7 +49,7 @@ void ReadTrainerParty(void){
     // cal2:
         // LD_A(MBANK(asMysteryGiftTrainer));
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(asMysteryGiftTrainer));
+        OpenSRAM(MBANK(asMysteryGiftTrainer));
         // LD_DE(sMysteryGiftTrainer);
         // CALL(aTrainerType2);
         // REG_DE = sMysteryGiftTrainer;
@@ -60,7 +60,7 @@ void ReadTrainerParty(void){
         struct TrainerParty p = {.pmoves = moves, .size = size};
         TrainerType2_Conv(&p);
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
         // goto done;
     }
     else {
@@ -777,22 +777,22 @@ uint8_t* GetTrainerName_Conv(uint8_t tid, uint8_t tclass){
     if(tclass == CAL || tclass == JODI) {
         // LD_A(MBANK(asMysteryGiftTrainerHouseFlag));
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(asMysteryGiftTrainerHouseFlag));
+        OpenSRAM(MBANK(asMysteryGiftTrainerHouseFlag));
         // LD_A_addr(sMysteryGiftTrainerHouseFlag);
         // AND_A_A;
         uint8_t flag = gb_read(sMysteryGiftTrainerHouseFlag);
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
         // IF_Z goto not_cal2;
         if(flag != 0) {
             // LD_A(BANK(asMysteryGiftPartnerName));
             // CALL(aOpenSRAM);
-            OpenSRAM_Conv(MBANK(asMysteryGiftPartnerName));
+            OpenSRAM(MBANK(asMysteryGiftPartnerName));
             // LD_HL(sMysteryGiftPartnerName);
             // CALL(aCopyTrainerName);
             // JP(mCloseSRAM);
             uint8_t* name = CopyTrainerName_Conv(GBToRAMAddr(sMysteryGiftPartnerName));
-            CloseSRAM_Conv();
+            CloseSRAM();
             return name;
         }
     }

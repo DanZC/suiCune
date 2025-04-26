@@ -36,13 +36,13 @@ void CheckPartyFullAfterContest(void){
     // TryAddToBox:
         // LD_A(BANK(sBoxCount));
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(asBoxCount));
+        OpenSRAM(MBANK(asBoxCount));
         // LD_HL(sBoxCount);
         // LD_A_hl;
         uint8_t boxCount = gb_read(sBoxCount);
         // CP_A(MONS_PER_BOX);
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
         // IF_NC goto BoxFull;
         if(boxCount < MONS_PER_BOX) {
             // XOR_A_A;
@@ -82,28 +82,28 @@ void CheckPartyFullAfterContest(void){
         // Box_SkipNickname:
             // LD_A(BANK(sBoxMonNicknames));
             // CALL(aOpenSRAM);
-            OpenSRAM_Conv(MBANK(asBoxMonNicknames));
+            OpenSRAM(MBANK(asBoxMonNicknames));
             // LD_DE(sBoxMonNicknames);
             // LD_BC(MON_NAME_LENGTH);
             // CALL(aCopyBytes);
             CopyBytes(GBToRAMAddr(sBoxMonNicknames), hl, MON_NAME_LENGTH);
             // CALL(aCloseSRAM);
-            CloseSRAM_Conv();
+            CloseSRAM();
         }
 
     // BoxFull:
         // LD_A(BANK(sBoxMon1Level));
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(asBoxMon1Level));
+        OpenSRAM(MBANK(asBoxMon1Level));
         // LD_A_addr(sBoxMon1Level);
         // LD_addr_A(wCurPartyLevel);
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
         // CALL(aSetBoxMonCaughtData);
         SetBoxMonCaughtData(gb_read(sBoxMon1Level));
         // LD_A(BANK(sBoxMon1CaughtLocation));
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(asBoxMon1CaughtLocation));
+        OpenSRAM(MBANK(asBoxMon1CaughtLocation));
         // LD_HL(sBoxMon1CaughtLocation);
         // LD_A_hl;
         // AND_A(CAUGHT_GENDER_MASK);
@@ -112,7 +112,7 @@ void CheckPartyFullAfterContest(void){
         // LD_hl_A;
         gb_write(sBoxMon1CaughtLocation, (gb_read(sBoxMon1CaughtLocation) & CAUGHT_GENDER_MASK) | LANDMARK_NATIONAL_PARK);
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
         // XOR_A_A;
         // LD_addr_A(wContestMon);
         wram->wContestMon.mon.species = 0;
@@ -223,7 +223,7 @@ bool GiveANickname_YesNo(void){
     // CALL(aPrintText);
     PrintText_Conv2(CaughtAskNicknameText);
     // JP(mYesNoBox);
-    return YesNoBox_Conv();
+    return YesNoBox();
 }
 
 const txt_cmd_s CaughtAskNicknameText[] = {
@@ -319,7 +319,7 @@ void SetBoxmonOrEggmonCaughtData_Conv(struct BoxMon* boxmon, uint8_t level){
 // NotPokecenter2F:
     // CALL(aGetWorldMapLocation);
     // LD_B_A;
-    uint8_t loc = GetWorldMapLocation_Conv2(b, c);
+    uint8_t loc = GetWorldMapLocation(b, c);
     // LD_A_addr(wPlayerGender);
     // RRCA;  // shift bit 0 (PLAYERGENDER_FEMALE_F) to bit 7 (CAUGHT_GENDER_MASK)
     uint8_t gender = (wram->wPlayerGender << 7);
@@ -332,12 +332,12 @@ void SetBoxmonOrEggmonCaughtData_Conv(struct BoxMon* boxmon, uint8_t level){
 void SetBoxMonCaughtData(uint8_t level){
     // LD_A(BANK(sBoxMon1CaughtLevel));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBoxMon1CaughtLevel));
+    OpenSRAM(MBANK(asBoxMon1CaughtLevel));
     // LD_HL(sBoxMon1CaughtLevel);
     // CALL(aSetBoxmonOrEggmonCaughtData);
     SetBoxmonOrEggmonCaughtData_Conv((struct BoxMon*)GBToRAMAddr(sBoxMon1CaughtLevel), level);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -345,14 +345,14 @@ void SetGiftBoxMonCaughtData(uint8_t b){
     // PUSH_BC;
     // LD_A(BANK(sBoxMon1CaughtLevel));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBoxMon1CaughtLevel));
+    OpenSRAM(MBANK(asBoxMon1CaughtLevel));
     // LD_HL(sBoxMon1CaughtLevel);
     struct BoxMon* hl = (struct BoxMon*)GBToRAMAddr(sBoxMon1CaughtLevel);
     // POP_BC;
     // CALL(aSetGiftMonCaughtData);
     SetGiftMonCaughtData_Conv(hl, b);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 

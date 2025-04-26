@@ -12,7 +12,7 @@ void RotateUnownFrontpic(uint8_t* de){
     // PUSH_DE;
     // XOR_A_A;  // BANK(sScratch)
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asScratch));
+    OpenSRAM(MBANK(asScratch));
     // LD_HL(sScratch);
     uint8_t* hl = GBToRAMAddr(sScratch);
     // LD_BC(0);
@@ -63,7 +63,7 @@ void RotateUnownFrontpic(uint8_t* de){
     // CALL(aGet2bpp);
     CopyBytes(de, wram->wGameboyPrinter2bppSource, 7 * 7 * LEN_2BPP_TILE);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 

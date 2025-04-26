@@ -1498,8 +1498,8 @@ struct MenuData {
             } title;
         } verticalMenu;
         struct {
-            uint8_t cols;
             uint8_t rows;
+            uint8_t cols;
             uint8_t spacing;
             const char** const options;
         } _2dMenu;
@@ -1507,8 +1507,8 @@ struct MenuData {
             union {
                 uint8_t count;
                 struct {
-                    uint8_t cols;
                     uint8_t rows;
+                    uint8_t cols;
                 };
             };
             union {

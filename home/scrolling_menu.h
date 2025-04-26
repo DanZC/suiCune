@@ -1,6 +1,3 @@
-void ScrollingMenu(void);
-uint8_t ScrollingMenu_Conv(void);
+uint8_t ScrollingMenu(void);
 void InitScrollingMenu(void);
-void InitScrollingMenu_Conv(void);
-void JoyTextDelay_ForcehJoyDown(void);
-uint8_t JoyTextDelay_ForcehJoyDown_Conv(void);
+uint8_t JoyTextDelay_ForcehJoyDown(void);

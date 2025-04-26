@@ -37,7 +37,7 @@ static void DoBattleTransition_InitGFX(void) {
         // FARCALL(aReanchorBGMap_NoOAMUpdate);
         ReanchorBGMap_NoOAMUpdate_Conv();
         // CALL(aUpdateSprites);
-        UpdateSprites_Conv();
+        UpdateSprites();
         // CALL(aDelayFrame);
         DelayFrame();
         // CALL(aDoBattleTransition_NonMobile_LoadPokeballTiles);

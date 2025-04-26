@@ -122,23 +122,11 @@ done:
 
 void UpdatePlayerSprite(void) {
     // FARCALL(av_UpdatePlayerSprite);
-    v_UpdatePlayerSprite_Conv();
-    RET;
-}
-
-void UpdatePlayerSprite_Conv(void) {
-    // FARCALL(av_UpdatePlayerSprite);
     // RET;
     return v_UpdatePlayerSprite_Conv();
 }
 
 void LoadStandardFont(void) {
-    // FARCALL(av_LoadStandardFont);
-    v_LoadStandardFont_Conv();
-    RET;
-}
-
-void LoadStandardFont_Conv(void) {
     // FARCALL(av_LoadStandardFont);
     // RET;
     return v_LoadStandardFont_Conv();
@@ -146,23 +134,11 @@ void LoadStandardFont_Conv(void) {
 
 void LoadFontsBattleExtra(void) {
     // FARCALL(av_LoadFontsBattleExtra);
-    v_LoadFontsBattleExtra_Conv();
-    RET;
-}
-
-void LoadFontsBattleExtra_Conv(void) {
-    // FARCALL(av_LoadFontsBattleExtra);
     // RET;
     return v_LoadFontsBattleExtra_Conv();
 }
 
 void LoadFontsExtra(void) {
-    FARCALL(av_LoadFontsExtra1);
-    FARCALL(av_LoadFontsExtra2);
-    RET;
-}
-
-void LoadFontsExtra_Conv(void) {
     // FARCALL(av_LoadFontsExtra1);
     // FARCALL(av_LoadFontsExtra2);
     // RET;
@@ -200,7 +176,7 @@ void DecompressRequest2bpp_Conv(uint8_t b, uint16_t hl, uint8_t c) {
     // LD_A(MBANK(asScratch));
     // CALL(aOpenSRAM);
     // PUSH_BC;
-    OpenSRAM_Conv(MBANK(asScratch));
+    OpenSRAM(MBANK(asScratch));
 
     // LD_DE(sScratch);
     // LD_A_B;
@@ -214,7 +190,7 @@ void DecompressRequest2bpp_Conv(uint8_t b, uint16_t hl, uint8_t c) {
     // CALL(aRequest2bpp);
     Request2bpp_Conv(b, sScratch, hl, c);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 

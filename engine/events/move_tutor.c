@@ -41,7 +41,7 @@ static move_t MoveTutor_GetMoveTutorMove(void){
 
 void MoveTutor(void){
     // CALL(aFadeToMenu);
-    FadeToMenu_Conv();
+    FadeToMenu();
     // CALL(aClearBGPalettes);
     ClearBGPalettes();
     // CALL(aClearScreen);
@@ -95,7 +95,7 @@ void MoveTutor(void){
 
 quit:
     // CALL(aCloseSubmenu);
-    CloseSubmenu_Conv();
+    CloseSubmenu();
     // RET;
 }
 
@@ -109,7 +109,7 @@ static const struct MenuHeader CheckCanLearnMoveTutorMove_MenuHeader = {
 bool CheckCanLearnMoveTutorMove(uint8_t curMon, move_t move){
     // LD_HL(mCheckCanLearnMoveTutorMove_MenuHeader);
     // CALL(aLoadMenuHeader);
-    LoadMenuHeader_Conv2(&CheckCanLearnMoveTutorMove_MenuHeader);
+    LoadMenuHeader(&CheckCanLearnMoveTutorMove_MenuHeader);
 
     // PREDEF(pCanLearnTMHMMove);
     uint8_t canLearn = CanLearnTMHMMove_Conv(wram->wCurPartySpecies, move);
@@ -138,7 +138,7 @@ bool CheckCanLearnMoveTutorMove(uint8_t curMon, move_t move){
             // goto learned;
         // learned:
             // CALL(aExitMenu);
-            ExitMenu_Conv2();
+            ExitMenu();
             // SCF;
             // RET;
             return true;
@@ -159,7 +159,7 @@ bool CheckCanLearnMoveTutorMove(uint8_t curMon, move_t move){
 
 // didnt_learn:
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // AND_A_A;
     // RET;
     return false;

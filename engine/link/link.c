@@ -46,7 +46,7 @@ void LinkCommunications(void){
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aUpdateSprites);
-    UpdateSprites_Conv();
+    UpdateSprites();
     // XOR_A_A;
     // LDH_addr_A(hSCX);
     hram->hSCX = 0;
@@ -58,11 +58,11 @@ void LinkCommunications(void){
     // CALL(aClearScreen);
     ClearScreen();
     // CALL(aUpdateSprites);
-    UpdateSprites_Conv();
+    UpdateSprites();
     // CALL(aLoadStandardFont);
-    LoadStandardFont_Conv();
+    LoadStandardFont();
     // CALL(aLoadFontsBattleExtra);
-    LoadFontsBattleExtra_Conv();
+    LoadFontsBattleExtra();
     // FARCALL(aLinkComms_LoadPleaseWaitTextboxBorderGFX);
     LinkComms_LoadPleaseWaitTextboxBorderGFX();
     // CALL(aWaitBGMap2);
@@ -1276,7 +1276,7 @@ void Link_PrepPartyData_Gen2(void){
 //  Copy all the mail messages to wLinkPlayerMailMessages
     // LD_A(BANK(sPartyMail));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asPartyMail));
+    OpenSRAM(MBANK(asPartyMail));
     // LD_HL(sPartyMail);
     const struct MailMsg* hl = (const struct MailMsg*)GBToRAMAddr(sPartyMail);
     // LD_B(PARTY_LENGTH);
@@ -1367,7 +1367,7 @@ void Link_PrepPartyData_Gen2(void){
         // IF_NZ goto loop4;
     } while(--b != 0);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 
     // LD_HL(wLinkPlayerMailMessages);
     hl2 = wram->wLinkPlayerMailMessages;
@@ -1955,7 +1955,7 @@ joy_loop:
     // LD_addr_A(w2DMenuFlags2);
     wram->w2DMenuFlags2 = 0;
     // CALL(aScrollingMenuJoypad);
-    uint8_t a = ScrollingMenuJoypad_Conv();
+    uint8_t a = ScrollingMenuJoypad();
     // BIT_A(D_RIGHT_F);
     // IF_NZ goto d_right;
     if(bit_test(a, D_RIGHT_F)) {
@@ -1992,7 +1992,7 @@ joy_loop:
         // LD_addr_A(w2DMenuFlags2);
         wram->w2DMenuFlags2 = 0;
         // CALL(aScrollingMenuJoypad);
-        uint8_t joy = ScrollingMenuJoypad_Conv();
+        uint8_t joy = ScrollingMenuJoypad();
         // BIT_A(D_LEFT_F);
         // JP_NZ (mLinkTrade_TradeStatsMenu_joy_loop);
         if(bit_test(joy, D_LEFT_F))
@@ -2043,7 +2043,7 @@ joy_loop:
 
 // try_trade:
     // CALL(aPlaceHollowCursor);
-    PlaceHollowCursor_Conv();
+    PlaceHollowCursor();
     // POP_AF;
     // LD_addr_A(wMenuCursorY);
     wram->wMenuCursorY = menuY;
@@ -2183,7 +2183,7 @@ LinkTradeOTPartymonMenuLoop:
     // LD_addr_A(wMonType);
     wram->wMonType = 0;
     // CALL(aHideCursor);
-    hl = HideCursor_Conv();
+    hl = HideCursor();
     // PUSH_HL;
     // PUSH_BC;
     // LD_BC(NAME_LENGTH);
@@ -2229,7 +2229,7 @@ LinkTradePartymonMenuLoop:
         // LD_addr_A(wMonType);
         wram->wMonType = OTPARTYMON;
         // CALL(aHideCursor);
-        tile_t* hl = HideCursor_Conv();
+        tile_t* hl = HideCursor();
         // PUSH_HL;
         // PUSH_BC;
         // LD_BC(NAME_LENGTH);
@@ -2258,7 +2258,7 @@ LinkTradePartymonMenuLoop:
     if(wram->wMenuCursorY != wram->wPartyCount)
         goto LinkTradePartiesMenuMasterLoop;
     // CALL(aHideCursor);
-    hl = HideCursor_Conv();
+    hl = HideCursor();
     // PUSH_HL;
     // PUSH_BC;
     // LD_BC(NAME_LENGTH);
@@ -2277,7 +2277,7 @@ LinkTradeOTPartymonMenuCheckCancel:
     if(wram->wMenuCursorY != 1)
         goto LinkTradePartiesMenuMasterLoop;
     // CALL(aHideCursor);
-    hl = HideCursor_Conv();
+    hl = HideCursor();
 
     // PUSH_HL;
     // PUSH_BC;
@@ -2300,7 +2300,7 @@ LinkTradePartymonMenuCheckCancel:
         do {
         // loop2:
             // CALL(aJoyTextDelay);
-            JoyTextDelay_Conv();
+            JoyTextDelay();
             DelayFrame();
             // LDH_A_addr(hJoyLast);
             // AND_A_A;
@@ -2430,7 +2430,7 @@ void LinkTradeOTPartymonMenuLoop(void){
     // LD_addr_A(wMonType);
     wram->wMonType = 0;
     // CALL(aHideCursor);
-    tile_t* hl = HideCursor_Conv();
+    tile_t* hl = HideCursor();
     // PUSH_HL;
     // PUSH_BC;
     // LD_BC(NAME_LENGTH);
@@ -2516,7 +2516,7 @@ void LinkTradePartymonMenuLoop(void){
         // LD_addr_A(wMonType);
         wram->wMonType = OTPARTYMON;
         // CALL(aHideCursor);
-        tile_t* hl = HideCursor_Conv();
+        tile_t* hl = HideCursor();
         // PUSH_HL;
         // PUSH_BC;
         // LD_BC(NAME_LENGTH);
@@ -2545,7 +2545,7 @@ void LinkTradePartymonMenuLoop(void){
     if(wram->wMenuCursorY != wram->wPartyCount)
         return LinkTradePartiesMenuMasterLoop();
     // CALL(aHideCursor);
-    tile_t* hl = HideCursor_Conv();
+    tile_t* hl = HideCursor();
     // PUSH_HL;
     // PUSH_BC;
     // LD_BC(NAME_LENGTH);
@@ -2632,7 +2632,7 @@ joy_loop:
     // LD_addr_A(w2DMenuFlags2);
     wram->w2DMenuFlags2 = 0;
     // CALL(aScrollingMenuJoypad);
-    uint8_t a = ScrollingMenuJoypad_Conv();
+    uint8_t a = ScrollingMenuJoypad();
     // BIT_A(D_RIGHT_F);
     // IF_NZ goto d_right;
     if(bit_test(a, D_RIGHT_F)) {
@@ -2669,7 +2669,7 @@ joy_loop:
         // LD_addr_A(w2DMenuFlags2);
         wram->w2DMenuFlags2 = 0;
         // CALL(aScrollingMenuJoypad);
-        uint8_t joy = ScrollingMenuJoypad_Conv();
+        uint8_t joy = ScrollingMenuJoypad();
         // BIT_A(D_LEFT_F);
         // JP_NZ (mLinkTrade_TradeStatsMenu_joy_loop);
         if(bit_test(joy, D_LEFT_F))
@@ -2720,7 +2720,7 @@ joy_loop:
 
 // try_trade:
     // CALL(aPlaceHollowCursor);
-    PlaceHollowCursor_Conv();
+    PlaceHollowCursor();
     // POP_AF;
     // LD_addr_A(wMenuCursorY);
     wram->wMenuCursorY = menuY;
@@ -2824,7 +2824,7 @@ void LinkTradeOTPartymonMenuCheckCancel(void){
     if(wram->wMenuCursorY != 1)
         return LinkTradePartiesMenuMasterLoop();
     // CALL(aHideCursor);
-    tile_t* hl = HideCursor_Conv();
+    tile_t* hl = HideCursor();
 
     // PUSH_HL;
     // PUSH_BC;
@@ -2850,7 +2850,7 @@ void LinkTradePartymonMenuCheckCancel(void){
         do {
         // loop2:
             // CALL(aJoyTextDelay);
-            JoyTextDelay_Conv();
+            JoyTextDelay();
             // LDH_A_addr(hJoyLast);
             // AND_A_A;
             // IF_Z goto loop2;
@@ -3050,7 +3050,7 @@ void LinkTrade(void){
     // CALL(aPlaceHLTextAtBC);
     PlaceHLTextAtBC_Conv2(coord(1, 14, wram->wTilemap), LinkAskTradeForText);
     // CALL(aLoadStandardMenuHeader);
-    LoadStandardMenuHeader_Conv();
+    LoadStandardMenuHeader();
     // hlcoord(10, 7, wTilemap);
     // LD_B(3);
     // LD_C(7);
@@ -3092,9 +3092,9 @@ void LinkTrade(void){
     Link_WaitBGMap();
     // CALL(aScrollingMenuJoypad);
     // PUSH_AF;
-    uint8_t joypad = ScrollingMenuJoypad_Conv();
+    uint8_t joypad = ScrollingMenuJoypad();
     // CALL(aCall_ExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // CALL(aWaitBGMap2);
     WaitBGMap2();
     // POP_AF;
@@ -3155,7 +3155,7 @@ void LinkTrade(void){
         uint16_t de = sPartyMail + (wram->wCurTradePartyMon * MAIL_STRUCT_LENGTH); 
         // LD_A(BANK(sPartyMail));
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(asPartyMail));
+        OpenSRAM(MBANK(asPartyMail));
         // LD_D_H;
         // LD_E_L;
         // LD_BC(MAIL_STRUCT_LENGTH);
@@ -3200,7 +3200,7 @@ void LinkTrade(void){
             gb_write(de2 + i, src[i]);
         }
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
 
     //  Buffer player data
     //  nickname
@@ -3350,7 +3350,7 @@ void LinkTrade(void){
         // CALL(aClearTilemap);
         ClearTilemap();
         // CALL(aLoadFontsBattleExtra);
-        LoadFontsBattleExtra_Conv();
+        LoadFontsBattleExtra();
         // LD_B(SCGB_DIPLOMA);
         // CALL(aGetSGBLayout);
         GetSGBLayout(SCGB_DIPLOMA);

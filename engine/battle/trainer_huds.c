@@ -446,7 +446,7 @@ void v_ShowLinkBattleParticipants(void){
     // CALL(aClearBGPalettes);
     ClearBGPalettes();
     // CALL(aLoadFontsExtra);
-    LoadFontsExtra_Conv();
+    LoadFontsExtra();
     // hlcoord(2, 3, wTilemap);
     // LD_B(9);
     // LD_C(14);

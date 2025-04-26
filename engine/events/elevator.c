@@ -223,7 +223,7 @@ static const txt_cmd_s AskFloorElevatorText[] = {
 
 u8_flag_s Elevator_AskWhichFloor_Conv(void){
     // CALL(aLoadStandardMenuHeader);
-    LoadStandardMenuHeader_Conv();
+    LoadStandardMenuHeader();
     // LD_HL(mAskFloorElevatorText);
     // CALL(aPrintText);
     PrintText_Conv2(AskFloorElevatorText);
@@ -231,18 +231,18 @@ u8_flag_s Elevator_AskWhichFloor_Conv(void){
     Elevator_GetCurrentFloorText();
     // LD_HL(mElevator_MenuHeader);
     // CALL(aCopyMenuHeader);
-    CopyMenuHeader_Conv2(&Elevator_MenuHeader);
+    CopyMenuHeader(&Elevator_MenuHeader);
     // CALL(aInitScrollingMenu);
-    InitScrollingMenu_Conv();
+    InitScrollingMenu();
     // CALL(aUpdateSprites);
-    UpdateSprites_Conv();
+    UpdateSprites();
     // XOR_A_A;
     // LD_addr_A(wMenuScrollPosition);
     wram->wMenuScrollPosition = 0;
     // CALL(aScrollingMenu);
-    uint8_t joypad = ScrollingMenu_Conv();
+    uint8_t joypad = ScrollingMenu();
     // CALL(aCloseWindow);
-    CloseWindow_Conv2();
+    CloseWindow();
     // LD_A_addr(wMenuJoypad);
     // CP_A(B_BUTTON);
     // IF_Z goto cancel;

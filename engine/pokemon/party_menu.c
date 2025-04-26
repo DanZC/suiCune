@@ -40,7 +40,7 @@ u8_flag_s SelectMonFromParty(void){
     // CALL(aPartyMenuSelect);
     u8_flag_s res = PartyMenuSelect();
     // CALL(aReturnToMapWithSpeechTextbox);
-    ReturnToMapWithSpeechTextbox_Conv();
+    ReturnToMapWithSpeechTextbox();
     // RET;
     return res;
 }
@@ -84,7 +84,7 @@ u8_flag_s SelectTradeOrDayCareMon_Conv(uint8_t b){
     // CALL(aPartyMenuSelect);
     u8_flag_s res = PartyMenuSelect();
     // CALL(aReturnToMapWithSpeechTextbox);
-    ReturnToMapWithSpeechTextbox_Conv();
+    ReturnToMapWithSpeechTextbox();
     // RET;
     return res;
 }
@@ -105,7 +105,7 @@ void InitPartyMenuLayout(void){
 
 void LoadPartyMenuGFX(void){
     // CALL(aLoadFontsBattleExtra);
-    LoadFontsBattleExtra_Conv();
+    LoadFontsBattleExtra();
     // CALLFAR(aInitPartyMenuPalettes);
     InitPartyMenuPalettes_Conv();
     // CALLFAR(aClearSpriteAnims2);
@@ -946,7 +946,7 @@ void InitPartyMenuWithCancel(void){
     wram->wSwitchMon = 0;
     // LD_DE(mPartyMenu2DMenuData);
     // CALL(aLoad2DMenuData);
-    Load2DMenuData_Conv(PartyMenu2DMenuData);
+    Load2DMenuData(PartyMenu2DMenuData);
     // LD_A_addr(wPartyCount);
     // INC_A;
     // LD_addr_A(w2DMenuNumRows);  // list length
@@ -980,7 +980,7 @@ void InitPartyMenuNoCancel(void){
 //  no cancel
     // LD_DE(mPartyMenu2DMenuData);
     // CALL(aLoad2DMenuData);
-    Load2DMenuData_Conv(PartyMenu2DMenuData);
+    Load2DMenuData(PartyMenu2DMenuData);
     // LD_A_addr(wPartyCount);
     // LD_addr_A(w2DMenuNumRows);  // list length
     wram->w2DMenuNumRows = wram->wPartyCount;
@@ -1021,9 +1021,9 @@ const uint8_t PartyMenu2DMenuData[] = {
 //  returns true if exitted menu.
 u8_flag_s PartyMenuSelect(void){
     // CALL(aStaticMenuJoypad);
-    StaticMenuJoypad_Conv();
+    StaticMenuJoypad();
     // CALL(aPlaceHollowCursor);
-    PlaceHollowCursor_Conv();
+    PlaceHollowCursor();
     // LD_A_addr(wPartyCount);
     // INC_A;
     // LD_B_A;

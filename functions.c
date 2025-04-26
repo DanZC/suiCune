@@ -219,8 +219,8 @@ void init_function_pointers(void) {
     // REDIRECTED(GetJoypad);
     // REDIRECTED(SimpleWaitPressAorB);
     // REDIRECTED(JoyWaitAorB);
-    REDIRECTED(BlinkCursor);
-    REDIRECTED(WaitPressAorB_BlinkCursor);
+    // CONVERTED(BlinkCursor);
+    // CONVERTED(WaitPressAorB_BlinkCursor);
     // REDIRECTED(WaitButton);
     // REDIRECTED(StartAutoInput);
 
@@ -488,8 +488,8 @@ void init_function_pointers(void) {
     // REDIRECTED(EnableSpriteUpdates);
 
     // home/sram.c
-    REDIRECTED(CloseSRAM);
-    REDIRECTED(OpenSRAM);
+    // CONVERTED(CloseSRAM);
+    // CONVERTED(OpenSRAM);
 
     // home/stone_queue.c
     // REDIRECTED(HandleStoneQueue);
@@ -636,25 +636,25 @@ void init_function_pointers(void) {
     // REDIRECTED(CheckTrainerBattle);
 
     // home/vblank.c
-    REDIRECTED(VBlank3);
-    REDIRECTED(VBlank1);
+    // CONVERTED(VBlank3);
+    // CONVERTED(VBlank1);
     // CONVERTED(UpdatePals);
-    REDIRECTED(VBlank2);
-    REDIRECTED(VBlank);
-    REDIRECTED(VBlank0);
-    REDIRECTED(VBlank5);
-    REDIRECTED(VBlank6);
-    REDIRECTED(VBlank4);
+    // CONVERTED(VBlank2);
+    CONVERTED(VBlank);
+    // CONVERTED(VBlank0);
+    // CONVERTED(VBlank5);
+    // CONVERTED(VBlank6);
+    // CONVERTED(VBlank4);
 
     // home/video.c
-    REDIRECTED(WaitTop);
-    REDIRECTED(DMATransfer);
-    REDIRECTED(UpdateBGMapBuffer);
-    REDIRECTED(Serve1bppRequest);
-    REDIRECTED(UpdateBGMap);
-    REDIRECTED(v_Serve2bppRequest);
-    REDIRECTED(Serve2bppRequest_VBlank);
-    REDIRECTED(Serve2bppRequest);
+    CONVERTED(WaitTop);
+    // CONVERTED(DMATransfer);
+    // CONVERTED(UpdateBGMapBuffer);
+    CONVERTED(Serve1bppRequest);
+    CONVERTED(UpdateBGMap);
+    CONVERTED(v_Serve2bppRequest);
+    CONVERTED(Serve2bppRequest_VBlank);
+    CONVERTED(Serve2bppRequest);
     CONVERTED(AnimateTileset);
 
     // home/window.c
@@ -666,7 +666,7 @@ void init_function_pointers(void) {
     REDIRECTED(v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
 
     // home/tilemap.c
-    REDIRECTED(IsCGB);
+    // CONVERTED(IsCGB);
     REDIRECTED(SetHPPal);
     CONVERTED(WaitBGMap);
     REDIRECTED(CGBOnly_CopyTilemapAtOnce);

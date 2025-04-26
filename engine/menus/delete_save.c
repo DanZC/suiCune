@@ -38,9 +38,9 @@ void v_DeleteSaveData(void){
     // CALL(aGetSGBLayout);
     GetSGBLayout(SCGB_DIPLOMA);
     // CALL(aLoadStandardFont);
-    LoadStandardFont_Conv();
+    LoadStandardFont();
     // CALL(aLoadFontsExtra);
-    LoadFontsExtra_Conv();
+    LoadFontsExtra();
     // LD_DE(MUSIC_MAIN_MENU);
     // CALL(aPlayMusic);
     PlayMusic(MUSIC_MAIN_MENU);
@@ -49,10 +49,10 @@ void v_DeleteSaveData(void){
     PrintText_Conv2(ClearAllSaveDataText);
     // LD_HL(mv_DeleteSaveData_NoYesMenuHeader);
     // CALL(aCopyMenuHeader);
-    CopyMenuHeader_Conv2(&NoYesMenuHeader);
+    CopyMenuHeader(&NoYesMenuHeader);
     // CALL(aVerticalMenu);
     // RET_C ;
-    if(VerticalMenu_Conv() && wram->wMenuCursorY != 1) {
+    if(VerticalMenu() && wram->wMenuCursorY != 1) {
         // LD_A_addr(wMenuCursorY);
         // CP_A(1);
         // RET_Z ;

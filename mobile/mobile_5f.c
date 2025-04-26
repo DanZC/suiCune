@@ -52,9 +52,9 @@ void Function17c000(void){
     ByteFill(vram->vTiles0, 0x31 * LEN_2BPP_TILE, 0);
 
     // CALL(aLoadStandardFont);
-    LoadStandardFont_Conv();
+    LoadStandardFont();
     // CALL(aLoadFontsExtra);
-    LoadFontsExtra_Conv();
+    LoadFontsExtra();
 
     // LD_HL(mHaveWantMap);
     asset_s haveWantMap = LoadAsset(HaveWantMap);
@@ -507,7 +507,7 @@ void Function17d0f3(void){
     // CALL(aSpeechTextbox);
     SpeechTextbox();
     // CALL(aFadeToMenu);
-    FadeToMenu_Conv();
+    FadeToMenu();
     // FARCALL(aFunction10804d);
     Function10804d();
     // FARCALL(aFunction17d1f1);
@@ -527,18 +527,18 @@ void Function17d0f3(void){
     SaveAfterLinkTrade();
     // LD_A(0x5);
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as5_a800));
+    OpenSRAM(MBANK(as5_a800));
     // LD_A(0x5);
     // LD_addr_A(0xa800);
     gb_write(s5_a800, 0x5);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // LD_A_addr(wMapGroup);
     // LD_B_A;
     // LD_A_addr(wMapNumber);
     // LD_C_A;
     // CALL(aGetMapSceneID);
-    uint8_t* var = GetMapSceneID_Conv2(wram->wMapGroup, wram->wMapNumber);
+    uint8_t* var = GetMapSceneID(wram->wMapGroup, wram->wMapNumber);
     // LD_A_D;
     // OR_A_E;
     // IF_Z goto asm_17d180;
@@ -549,7 +549,7 @@ void Function17d0f3(void){
 
 // asm_17d180:
     // CALL(aCloseSubmenu);
-    CloseSubmenu_Conv();
+    CloseSubmenu();
     // CALL(aRestartMapMusic);
     RestartMapMusic();
     // RET;
@@ -709,7 +709,7 @@ void Menu_ChallengeExplanationCancel(void){
         // LD_addr_A(wScriptVar);
         wram->wScriptVar = 0x4;
         // LD_HL(mMenuHeader_17d26a);  // Japanese Menu, where you can choose 'News' as an option
-        LoadMenuHeader_Conv2(&MenuHeader_17d26a);
+        LoadMenuHeader(&MenuHeader_17d26a);
         // goto Load_Interpret;
     }
     else {
@@ -725,7 +725,7 @@ void Menu_ChallengeExplanationCancel(void){
             // LD_addr_A(wScriptVar);
             wram->wScriptVar = 0x4;
             // LD_HL(mMenuHeader_ChallengeExplanationCancel);  // English Menu
-            LoadMenuHeader_Conv2(&MenuHeader_ChallengeExplanationCancel);
+            LoadMenuHeader(&MenuHeader_ChallengeExplanationCancel);
         }
         else {
         // .jr_05f_524a:
@@ -735,7 +735,7 @@ void Menu_ChallengeExplanationCancel(void){
             // ld [wScriptVar], a
             wram->wScriptVar = 0x5;
             // ld hl, MenuHeader_ChallengeRegisterExplanationCancel;$52f2
-            LoadMenuHeader_Conv2(&MenuHeader_ChallengeRegisterExplanationCancel);
+            LoadMenuHeader(&MenuHeader_ChallengeRegisterExplanationCancel);
         }
     }
 
@@ -744,14 +744,14 @@ void Menu_ChallengeExplanationCancel(void){
     // CALL(aFunction17d246);
     Function17d246();
     // CALL(aCloseWindow);
-    CloseWindow_Conv2();
+    CloseWindow();
     // RET;
 }
 
 bool CheckPreviousBattleTowerStreakData(void){
     // ld a, BANK(s5_aa8e);$05
     // call OpenSRAM;$2f9d
-    OpenSRAM_Conv(MBANK(as5_aa8e));
+    OpenSRAM(MBANK(as5_aa8e));
     // ld hl, s5_aa8e
     const uint8_t* hl = GBToRAMAddr(s5_aa8e);
     // ld bc, BATTLE_TOWER_STRUCT_LENGTH * BATTLETOWER_STREAK_LENGTH;$0594
@@ -765,7 +765,7 @@ bool CheckPreviousBattleTowerStreakData(void){
         if(a != 0) {
         // jr_05f_527b:
             // call CloseSRAM;$2fad
-            CloseSRAM_Conv();
+            CloseSRAM();
             // ret
             return true;
         }
@@ -776,7 +776,7 @@ bool CheckPreviousBattleTowerStreakData(void){
         // jr nz, jr_05f_526c
     } while(--bc != 0);
     // call CloseSRAM;$2fad
-    CloseSRAM_Conv();
+    CloseSRAM();
     // scf
     // ret
     return false;
@@ -786,7 +786,7 @@ bool CheckPreviousBattleTowerStreakData(void){
 void Function17d246(void){
     // CALL(aVerticalMenu);
     // IF_C goto Exit;
-    if(!VerticalMenu_Conv()){
+    if(!VerticalMenu()){
     // Exit:
         // LD_A(0x4);
         // LD_addr_A(wScriptVar);
@@ -912,11 +912,11 @@ void Function17d2c0(void){
 void Function17d2ce(void){
     // LD_A(BANK(s5_aa72));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as5_aa72));
+    OpenSRAM(MBANK(as5_aa72));
     // LD_A_addr(s5_aa72);
     uint8_t aa72 = gb_read(s5_aa72);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // AND_A_A;
     // IF_NZ goto asm_17d2e2;
     if(aa72 == 0) {
@@ -935,7 +935,7 @@ void Function17d2ce(void){
     // CALL(aSpeechTextbox);
     SpeechTextbox();
     // CALL(aFadeToMenu);
-    FadeToMenu_Conv();
+    FadeToMenu();
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     uint8_t svbk = gb_read(rSVBK);
@@ -962,7 +962,7 @@ void Function17d2ce(void){
     // CALL(aReturnToMapFromSubmenu);
     ReturnToMapFromSubmenu();
     // CALL(aCloseSubmenu);
-    CloseSubmenu_Conv();
+    CloseSubmenu();
     // RET;
 }
 
@@ -971,17 +971,17 @@ void Function17d2ce(void){
 bool Function17d314(void){
     // LD_A(0x5);
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as5_b1b1));
+    OpenSRAM(MBANK(as5_b1b1));
     // LD_A_addr(0xb1b1);
     uint8_t b1b1 = gb_read(s5_b1b1);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // CP_A(0x21);
     // IF_NC goto asm_17d354;
     if(b1b1 < 0x21) {
         // LD_A(0x6);
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(as6_a000));
+        OpenSRAM(MBANK(as6_a000));
         // LD_L(0x0);
         // LD_H_L;
     // Calculate checksum?
@@ -1020,7 +1020,7 @@ bool Function17d314(void){
         uint16_t checksum = (gb_read(s6_a000 + 0x2) | (gb_read(s6_a000 + 0x3) << 8));
         if(hl == checksum) {
             // CALL(aCloseSRAM);
-            CloseSRAM_Conv();
+            CloseSRAM();
             // AND_A_A;
             // RET;
             return false;
@@ -1029,17 +1029,17 @@ bool Function17d314(void){
 
 // asm_17d354:
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // LD_A(0x5);
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as5_aa73));
+    OpenSRAM(MBANK(as5_aa73));
     // XOR_A_A;
     // LD_HL(0xaa73);
     // LD_BC(0xc);
     // CALL(aByteFill);
     ByteFill(GBToRAMAddr(s5_aa73), 0xc, 0x0);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // LD_A(0x2);
     // LD_addr_A(wScriptVar);
     wram->wScriptVar = 0x2;
@@ -1109,14 +1109,14 @@ void Function17d370(void){
     gMobile_wcd20_wcd21 = wram->wram4;
     // LD_A(0x6);
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as6_a000));
+    OpenSRAM(MBANK(as6_a000));
     // LD_HL(0xa006);
     // LD_DE(wBGPals1);
     // LD_BC(0x1000);
     // CALL(aCopyBytes);
     CopyBytes(wram->wram4, GBToRAMAddr(s6_a000 + 6), 0x1000);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -1183,7 +1183,7 @@ void Function17d45a(void){
     while(1) {
     // asm_17d45a:
         // CALL(aJoyTextDelay);
-        JoyTextDelay_Conv();
+        JoyTextDelay();
         // LD_A_addr(wcd77);
         // BIT_A(7);
         // IF_NZ goto asm_17d46f;
@@ -1576,7 +1576,7 @@ void Function17d5f6(void){
 void Function17d60b(void){
     // LD_A(0x5);
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as5_b1d3));
+    OpenSRAM(MBANK(as5_b1d3));
     // LD_HL(0xb1d3);
     // LD_DE(wc608);
     // LD_BC(0x20);
@@ -1594,10 +1594,10 @@ void Function17d60b(void){
     // LD_H_A;
     uint16_t hl = gb_read16(s5_b1b3);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // LD_A(0x6);
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as6_a000));
+    OpenSRAM(MBANK(as6_a000));
     // LD_DE(wc708);
     uint8_t* de = &wram->wc708;
     // LD_A_C;
@@ -1678,10 +1678,10 @@ void Function17d60b(void){
 
 // asm_17d684:
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // LD_A(0x5);
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as5_b1b1));
+    OpenSRAM(MBANK(as5_b1b1));
     // LD_HL(wc708);
     // LD_DE(0xb1b3);
     // LD_A_addr(0xb1b1);
@@ -1691,7 +1691,7 @@ void Function17d60b(void){
     // CALL(aCopyBytes);
     CopyBytes(GBToRAMAddr(s5_b1b3), &wram->wc708, gb_read16(s5_b1b1));
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -1703,7 +1703,7 @@ void Function17d6a1(void){
     // LD_B(0);
     // LD_A(0x5);
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as5_b1d3));
+    OpenSRAM(MBANK(as5_b1d3));
     // LD_HL(0xb1d3);
     // ADD_HL_BC;
     // ADD_HL_BC;
@@ -1725,10 +1725,10 @@ void Function17d6a1(void){
     // LD_L_C;
     uint16_t hl2 = hl[0] | (hl[1] << 8);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // LD_A(0x6);
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as6_a000));
+    OpenSRAM(MBANK(as6_a000));
     // LD_A_L;
     // LD_addr_A(wcd5e);
     // LD_A_H;
@@ -1760,7 +1760,7 @@ void Function17d6a1(void){
     // LD_addr_A(wcd6b);
     wram->wcd6b = HIGH(hl2);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // POP_HL;
     // RET;
 }
@@ -1916,7 +1916,7 @@ void Function17d78d(void){
     hl = HlToCrashCheckPointer(hl + 2);
     // LD_A(0x6);
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as6_a000));
+    OpenSRAM(MBANK(as6_a000));
     // LD_HL(0xa006);
     // ADD_HL_BC;
     // LD_DE(wBGPals1);
@@ -1924,7 +1924,7 @@ void Function17d78d(void){
     // CALL(aCopyBytes);
     CopyBytes(wram->wram4, GBToRAMAddr(s6_a000 + 0x6 + bc), 0x1000);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // XOR_A_A;
     // LD_addr_A(wcd77);
     wram->wcd77 = 0;
@@ -2353,7 +2353,7 @@ void Function17d9e3(void){
     // asm_17da01:
         // LD_A_addr(wc70c);
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(wram->wc70c);
+        OpenSRAM(wram->wc70c);
     }
     else {
         gb_write(rSVBK, wram->wc70c);
@@ -2386,7 +2386,7 @@ void Function17d9e3(void){
     if(c70b < 0xc0) {
     // asm_17da2d:
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
     }
 
     gb_write(rSVBK, svbk);
@@ -3034,7 +3034,7 @@ void Function17dd49(void){
     // sram:
         // LD_A_addr(wc708);
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(wram->wc708);
+        OpenSRAM(wram->wc708);
     }
     else {
         // LD_A_addr(wc708);
@@ -3060,7 +3060,7 @@ void Function17dd49(void){
     if(wram->wc70a < 0xc0) {
     // close_sram:
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
     }
     else {
         // LD_A(0x4);
@@ -3796,7 +3796,7 @@ void Function17e1a1(void){
     // asm_17e1bb:
         // LD_A_addr(wc708);
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(wram->wc708);
+        OpenSRAM(wram->wc708);
     }
     else {
         // LD_A_addr(wc708);
@@ -3823,7 +3823,7 @@ void Function17e1a1(void){
     if(wram->wc70a < 0xc0) {
     // asm_17e1e2:
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
     }
     else {
         // LD_A(0x4);
@@ -3840,7 +3840,7 @@ void Function17e1a1(void){
     // asm_17e1f3:
         // LD_A_addr(wc70c);
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(wram->wc70c);
+        OpenSRAM(wram->wc70c);
     }
     else {
         // LD_A_addr(wc70c);
@@ -3867,7 +3867,7 @@ void Function17e1a1(void){
     if(wram->wc70e < 0xc0) {
     // asm_17e21a:
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
     }
     else {
         // LD_A(0x4);
@@ -4065,14 +4065,14 @@ void Function17e2a7(void){
         wram->wcd7a[0] = 0;
         // LD_A(0x5);
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(as5_aa7f));
+        OpenSRAM(MBANK(as5_aa7f));
         // LD_HL(0xaa73);
         // LD_DE(0xaa7f);
         // LD_BC(0xc);
         // CALL(aCopyBytes);
         CopyBytes(GBToRAMAddr(s5_aa7f), GBToRAMAddr(s5_aa73), 0xc);
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
         // RET;
         return;
     }
@@ -4135,7 +4135,7 @@ void Function17e309(void){
 void Function17e32b(void){
     // LD_A(0x5);
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as5_b091));
+    OpenSRAM(MBANK(as5_b091));
     // LD_HL(wc608);
     // LD_DE(0xb0b1);
     // LD_BC(0x40);
@@ -4146,14 +4146,14 @@ void Function17e32b(void){
     // CALL(aCopyBytes);
     CopyBytes(GBToRAMAddr(s5_b091 + 0x60), wram->wBGMapBuffer, 0x5b);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
 void Function17e349(void){
     // LD_A(0x5);
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as5_b091));
+    OpenSRAM(MBANK(as5_b091));
     // LD_HL(0xb0b1);
     // LD_DE(wc608);
     // LD_BC(0x40);
@@ -4164,7 +4164,7 @@ void Function17e349(void){
     // CALL(aCopyBytes);
     CopyBytes(wram->wBGMapBuffer, GBToRAMAddr(s5_b091 + 0x60), 0x5b);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 
 // inc_crash_check_pointer_farcall: MACRO
@@ -4238,7 +4238,7 @@ void Function17e3f0(void){
     while(1) {
     // asm_17e3f6:
         // CALL(aJoyTextDelay);
-        JoyTextDelay_Conv();
+        JoyTextDelay();
         // LD_HL(hJoyPressed);
         // LD_A_hl;
         // AND_A(0x1);
@@ -4962,7 +4962,7 @@ const char PokemonNewsPalettes[] = "gfx/mobile/pokemon_news.pal";
 void RunMobileScript(struct TextPrintState* state){
     // LD_A(0x6);
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as6_a000));
+    OpenSRAM(MBANK(as6_a000));
     // INC_DE;
     state->de++;
 
@@ -4977,7 +4977,7 @@ void RunMobileScript(struct TextPrintState* state){
 
 // finished:
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -5699,14 +5699,14 @@ bool MobileScript_Prefecture(struct TextPrintState* state, uint8_t* saved){
     // asm_17f355:
         // LD_A(BANK(s5_b2f3));
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(as5_b2f3));
+        OpenSRAM(MBANK(as5_b2f3));
         // LD_A_addr(s5_b2f3);
         c = gb_read(s5_b2f3);
     }
     else {
         // LD_A(BANK(sCrystalData));
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(asCrystalData));
+        OpenSRAM(MBANK(asCrystalData));
         // LD_A_addr(sCrystalData + 2);
         // goto asm_17f35d;
         c = gb_read(sCrystalData + 2);
@@ -5715,7 +5715,7 @@ bool MobileScript_Prefecture(struct TextPrintState* state, uint8_t* saved){
 // asm_17f35d:
     // LD_C_A;
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // LD_DE(wc608);
     // FARCALL(aFunction48c63);
     Function48c63(wram->wc608, c);
@@ -5767,10 +5767,10 @@ bool Function17f382(struct TextPrintState* state, uint8_t* saved){
     if(!bit_test(wram->wcd55, 7)) {
         // LD_A(BANK(sCrystalData));
         // CALL(aOpenSRAM);
-        // OpenSRAM_Conv(MBANK(asCrystalData));
+        // OpenSRAM(MBANK(asCrystalData));
         // LD_DE(sCrystalData + 3);
         // de = GBToRAMAddr(sCrystalData + 3);
-        OpenSRAM_Conv(MBANK(as5_b2f4));
+        OpenSRAM(MBANK(as5_b2f4));
         de = GBToRAMAddr(s5_b2f4);
         pref = wram->wPrefecture;
         // goto asm_17f3ab;
@@ -5779,7 +5779,7 @@ bool Function17f382(struct TextPrintState* state, uint8_t* saved){
     // asm_17f3a3:
         // LD_A(BANK(s5_b2f4));
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(as5_b2f4));
+        OpenSRAM(MBANK(as5_b2f4));
         // LD_DE(s5_b2f4);
         de = GBToRAMAddr(s5_b2f4);
         pref = gb_read(s5_b2f3);
@@ -5822,7 +5822,7 @@ bool Function17f382(struct TextPrintState* state, uint8_t* saved){
 
 // .display_done
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // LD_A_L;
     // LD_addr_A(wcd52);
     // LD_A_H;
@@ -6007,7 +6007,7 @@ bool Function17f44f(struct TextPrintState* state, uint8_t* saved){
         // asm_17f488:
             // LD_A_addr(wcd54);
             // CALL(aOpenSRAM);
-            OpenSRAM_Conv(wram->wcd54);
+            OpenSRAM(wram->wcd54);
         }
         else {
             // LD_A_addr(wcd54);
@@ -6039,10 +6039,10 @@ bool Function17f44f(struct TextPrintState* state, uint8_t* saved){
         else {
         // asm_17f4af:
             // CALL(aCloseSRAM);
-            CloseSRAM_Conv();
+            CloseSRAM();
             // LD_A(0x6);
             // CALL(aOpenSRAM);
-            OpenSRAM_Conv(MBANK(as6_a000));
+            OpenSRAM(MBANK(as6_a000));
         }
     
     // asm_17f4b7:
@@ -6217,7 +6217,7 @@ bool Function17f524(void){
 
 void BattleTowerMobileError(void){
     // CALL(aFadeToMenu);
-    FadeToMenu_Conv();
+    FadeToMenu();
     // XOR_A_A;
     // LD_addr_A(wc303);
     wram->wc303 = 0x0;
@@ -6232,7 +6232,7 @@ void BattleTowerMobileError(void){
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // CALL(aExitAllMenus);
-    ExitAllMenus_Conv();
+    ExitAllMenus();
     // RET;
 
 }
@@ -6295,12 +6295,12 @@ static void DisplayMobileError_deinit(void){
 // asm_17f5a1:
     // LD_A(BANK(sMobileLoginPassword));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asMobileLoginPassword));
+    OpenSRAM(MBANK(asMobileLoginPassword));
     // XOR_A_A;
     // LD_addr_A(sMobileLoginPassword);
     gb_write(sMobileLoginPassword, 0x0);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -6308,7 +6308,7 @@ void DisplayMobileError(void){
     while(1) {
     // loop:
         // CALL(aJoyTextDelay);
-        JoyTextDelay_Conv();
+        JoyTextDelay();
         // CALL(aDisplayMobileError_RunJumptable);
         DisplayMobileError_RunJumptable();
         // LD_A_addr(wc303);
@@ -6331,7 +6331,7 @@ void Function17f5c3(void){
     // CALL(aFunction17f5e4);
     Function17f5e4();
     // FARCALL(aFinishExitMenu);
-    FinishExitMenu_Conv();
+    FinishExitMenu();
     // LD_A(0x1);
     // LD_addr_A(wc303);
     wram->wc303 = 0x1;

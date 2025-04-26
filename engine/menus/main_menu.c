@@ -77,7 +77,7 @@ void MainMenu(void){
             //dw ['MainMenuItems'];
             .itemList = MainMenuItems,
             //dw ['PlaceMenuStrings'];
-            .displayFunction = PlaceMenuStrings_Conv,
+            .displayFunction = PlaceMenuStrings,
             //dw ['.Strings'];
             .stringsList = Strings,
         },
@@ -115,11 +115,11 @@ void MainMenu(void){
         MainMenu_PrintCurrentTimeAndDay_Conv();
         // LD_HL(mMainMenu_MenuHeader);
         // CALL(aLoadMenuHeader);
-        LoadMenuHeader_Conv2(&MainMenu_MenuHeader);
+        LoadMenuHeader(&MainMenu_MenuHeader);
         // CALL(aMainMenuJoypadLoop);
         bool q = MainMenuJoypadLoop_Conv();
         // CALL(aCloseWindow);
-        CloseWindow_Conv2();
+        CloseWindow();
         // IF_C goto quit;
         if(!q)
             return;
@@ -374,12 +374,12 @@ uint8_t MainMenu_GetWhichMenu_Conv(void){
         return MAINMENU_CONTINUE;
     // LD_A(MBANK(asNumDailyMysteryGiftPartnerIDs));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asNumDailyMysteryGiftPartnerIDs));
+    OpenSRAM(MBANK(asNumDailyMysteryGiftPartnerIDs));
     // LD_A_addr(sNumDailyMysteryGiftPartnerIDs);
     uint8_t a = gb_read(sNumDailyMysteryGiftPartnerIDs);
     // CP_A(-1);  // locked?
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // IF_NZ goto mystery_gift;
     if(a != 0xff) {
     // mystery_gift:
@@ -456,7 +456,7 @@ b_button:
 
 bool MainMenuJoypadLoop_Conv(void){
     // CALL(aSetUpMenu);
-    SetUpMenu_Conv();
+    SetUpMenu();
 
 // loop:
     while(1)
@@ -468,7 +468,7 @@ bool MainMenuJoypadLoop_Conv(void){
         // LD_addr_A(w2DMenuFlags1);
         bit_set(wram->w2DMenuFlags1, 5);
         // CALL(aGetScrollingMenuJoypad);
-        GetScrollingMenuJoypad_Conv2();
+        GetScrollingMenuJoypad();
         // LD_A_addr(wMenuJoypad);
         // CP_A(B_BUTTON);
         // IF_Z goto b_button;
@@ -485,7 +485,7 @@ bool MainMenuJoypadLoop_Conv(void){
             // CALL(aPlayClickSFX);
             // AND_A_A;
             // RET;
-            PlayClickSFX_Conv();
+            PlayClickSFX();
             return true;
         }
         // goto loop;
@@ -610,7 +610,7 @@ Day:
 static void MainMenu_PrintCurrentTimeAndDay_PlaceBox(void) {
 // PlaceBox:
     // CALL(aCheckRTCStatus);
-    uint8_t a = CheckRTCStatus_Conv();
+    uint8_t a = CheckRTCStatus();
     // AND_A(0b10000000);  // Day count exceeded 16383
     // IF_NZ goto TimeFail;
     if((a & 0b10000000) != 0) {   // Day count exceeded 16383    
@@ -683,7 +683,7 @@ static void MainMenu_PrintCurrentTimeAndDay_PlaceTime(void) {
     // CALL(aCheckRTCStatus);
     // AND_A(0x80);
     // JP_NZ (mMainMenu_PrintCurrentTimeAndDay_PrintTimeNotSet);
-    if(CheckRTCStatus_Conv() & 0x80) {
+    if(CheckRTCStatus() & 0x80) {
     // PrintTimeNotSet:
         // hlcoord(1, 14, wTilemap);
         // LD_DE(mMainMenu_PrintCurrentTimeAndDay_TimeNotSetString);
@@ -696,7 +696,7 @@ static void MainMenu_PrintCurrentTimeAndDay_PlaceTime(void) {
         //db ['"TIME NOT SET@"'];
     }
     // CALL(aUpdateTime);
-    UpdateTime_Conv();
+    UpdateTime();
     // CALL(aGetWeekday);
     // LD_B_A;
     // decoord(1, 15, wTilemap);
@@ -775,11 +775,11 @@ void ClearTilemapEtc_Conv(void){
     // CALL(aClearTilemap);
     ClearTilemap();
     // CALL(aLoadFontsExtra);
-    LoadFontsExtra_Conv();
+    LoadFontsExtra();
     // CALL(aLoadStandardFont);
-    LoadStandardFont_Conv();
+    LoadStandardFont();
     // CALL(aClearWindowData);
-    ClearWindowData_Conv2();
+    ClearWindowData();
     // RET;
 }
 

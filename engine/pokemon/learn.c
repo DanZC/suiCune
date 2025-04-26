@@ -154,7 +154,7 @@ uint8_t LearnMove(move_t toLearn){
         PrintText_Conv2(StopLearningMoveText);
         // CALL(aYesNoBox);
         // JP_C (mLearnMove_loop);
-    } while(!YesNoBox_Conv());
+    } while(!YesNoBox());
 
     // LD_HL(mDidNotLearnMoveText);
     // CALL(aPrintText);
@@ -172,7 +172,7 @@ u8_flag_s ForgetMove(struct PartyMon* mon){
     // CALL(aYesNoBox);
     // POP_HL;
     // RET_C ;
-    if(!YesNoBox_Conv())
+    if(!YesNoBox())
         return u8_flag(0, true);
     // LD_BC(-NUM_MOVES);
     // ADD_HL_BC;
@@ -232,7 +232,7 @@ u8_flag_s ForgetMove(struct PartyMon* mon){
         // LD_addr_A(w2DMenuCursorOffsets);
         wram->w2DMenuCursorOffsets = 0x0;
         // CALL(aStaticMenuJoypad);
-        uint8_t res = StaticMenuJoypad_Conv();
+        uint8_t res = StaticMenuJoypad();
         // PUSH_AF;
         // CALL(aSafeLoadTempTilemapToTilemap);
         SafeLoadTempTilemapToTilemap();

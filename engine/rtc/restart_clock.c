@@ -26,7 +26,7 @@ struct WrapAroundTime {
     uint8_t xCoord;
 };
 
-struct WrapAroundTime RestartClock_GetWraparoundTime(uint8_t a){
+static struct WrapAroundTime RestartClock_GetWraparoundTime(uint8_t a){
     static const struct WrapAroundTime WrapAroundTimes[] = {
     //  entries correspond to RESTART_CLOCK_* constants
     // wraparound_time: MACRO
@@ -67,7 +67,7 @@ static void RestartClock_PlaceChars(uint8_t a, uint8_t d, uint8_t e) {
     // DEC_A;
     // LD_B_A;
     // CALL(aCoord2Tile);
-    uint8_t* hl = Coord2Tile_Conv(wa.xCoord, wram->wRestartClockUpArrowYCoord - 1);
+    uint8_t* hl = Coord2Tile(wa.xCoord, wram->wRestartClockUpArrowYCoord - 1);
     // POP_DE;
     // LD_hl_D;
     hl[0] = d;
@@ -123,7 +123,7 @@ static u8_flag_s RestartClock_joy_loop(void) {
     while(1) {
     // joy_loop:
         // CALL(aJoyTextDelay_ForcehJoyDown);
-        uint8_t a = JoyTextDelay_ForcehJoyDown_Conv();
+        uint8_t a = JoyTextDelay_ForcehJoyDown();
         // LD_C_A;
         // PUSH_AF;
         // CALL(aRestartClock_PrintTime);
@@ -238,7 +238,7 @@ static bool RestartClock_SetClock(void) {
     // LD_addr_A(wRestartClockUpArrowYCoord);
     wram->wRestartClockUpArrowYCoord = 8;
     // CALL(aUpdateTime);
-    UpdateTime_Conv();
+    UpdateTime();
     // CALL(aGetWeekday);
     // LD_addr_A(wRestartClockDay);
     wram->wRestartClockDay = GetWeekday();
@@ -272,7 +272,7 @@ static bool RestartClock_SetClock(void) {
     PrintText_Conv2(ClockIsThisOKText);
     // CALL(aYesNoBox);
     // IF_C goto cancel;
-    if(!YesNoBox_Conv()) {
+    if(!YesNoBox()) {
     // cancel:
         // LD_A(TRUE);
         // RET;
@@ -287,7 +287,7 @@ static bool RestartClock_SetClock(void) {
     // XOR_A_A;
     // LD_addr_A(wStringBuffer2 + 3);
     // CALL(aInitTime);
-    InitTime_Conv(wram->wRestartClockDay, wram->wRestartClockHour, wram->wRestartClockMin, 0);
+    InitTime(wram->wRestartClockDay, wram->wRestartClockHour, wram->wRestartClockMin, 0);
     // CALL(aRestartClock_PrintTime);
     RestartClock_PrintTime();
 
@@ -299,7 +299,7 @@ static bool RestartClock_SetClock(void) {
     // CALL(aPrintText);
     PrintText_Conv2(ClockHasResetText);
     // CALL(aWaitPressAorB_BlinkCursor);
-    WaitPressAorB_BlinkCursor_Conv();
+    WaitPressAorB_BlinkCursor();
     // XOR_A_A;  // FALSE
     // RET;
     return false;
@@ -322,7 +322,7 @@ uint8_t RestartClock(void){
     // SET_hl(NO_TEXT_SCROLL);
     bit_set(wram->wOptions, NO_TEXT_SCROLL);
     // CALL(aLoadStandardMenuHeader);
-    LoadStandardMenuHeader_Conv();
+    LoadStandardMenuHeader();
     // CALL(aClearTilemap);
     ClearTilemap();
 
@@ -336,7 +336,7 @@ uint8_t RestartClock(void){
     // CALL(aRestartClock_SetClock);
     bool cancel = RestartClock_SetClock();
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // POP_BC;
     // LD_HL(wOptions);
     // LD_hl_B;
@@ -347,15 +347,13 @@ uint8_t RestartClock(void){
     return cancel? TRUE: FALSE;
 }
 
-void JPHourString(void){
+// void JPHourString(void){
 //  //  unreferenced
     //db ['"じ@"'];  // HR
+    // return JPMinuteString();
+// }
 
-    return JPMinuteString();
-}
-
-void JPMinuteString(void){
+// void JPMinuteString(void){
 //  //  unreferenced
     //db ['"ふん@"'];  // MIN
-
-}
+// }

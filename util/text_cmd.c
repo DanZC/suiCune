@@ -12,8 +12,8 @@ struct TextCmd TestText[] = {
 };
 
 void ShowTestText(void) {
-    OpenText_Conv();
-    MapTextbox_Conv(TestText);
-    CloseText_Conv();
+    OpenText();
+    MapTextbox(TestText);
+    CloseText();
 }
 

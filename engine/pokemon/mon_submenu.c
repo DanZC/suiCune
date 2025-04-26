@@ -32,7 +32,7 @@ static void MonSubmenu_GetTopCoord(void){
     // LD_addr_A(wMenuBorderTopCoord);
     wram->wMenuBorderTopCoord = 1 + wram->wMenuBorderBottomCoord - 2 * (wram->wMonSubmenuCount + 1);
     // CALL(aMenuBox);
-    MenuBox_Conv();
+    MenuBox();
     // RET;
 }
 
@@ -46,7 +46,7 @@ void MonSubmenu(void){
     FreezeMonIcons_Conv();
     // LD_HL(mMonSubmenu_MenuHeader);
     // CALL(aLoadMenuHeader);
-    LoadMenuHeader_Conv2(&MonSubmenu_MenuHeader);
+    LoadMenuHeader(&MonSubmenu_MenuHeader);
     // CALL(aMonSubmenu_GetTopCoord);
     MonSubmenu_GetTopCoord();
     // CALL(aPopulateMonMenu);
@@ -60,7 +60,7 @@ void MonSubmenu(void){
     wram->wMenuSelection = MonMenuLoop();
 
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // RET;
 }
 
@@ -73,12 +73,12 @@ uint8_t MonMenuLoop(void){
         // LD_addr_A(wMenuDataItems);
         struct MenuData data = {.flags = MENU_UNUSED_3 | MENU_BACKUP_TILES_2, .verticalMenu = {.count = wram->wMonSubmenuCount}};
         // CALL(aInitVerticalMenuCursor);
-        InitVerticalMenuCursor_Conv(&data);
+        InitVerticalMenuCursor(&data);
         // LD_HL(w2DMenuFlags1);
         // SET_hl(6);
         bit_set(wram->w2DMenuFlags1, 6);
         // CALL(aStaticMenuJoypad);
-        uint8_t pad = StaticMenuJoypad_Conv();
+        uint8_t pad = StaticMenuJoypad();
         // LD_DE(SFX_READ_TEXT_2);
         // CALL(aPlaySFX);
         PlaySFX(SFX_READ_TEXT_2);
@@ -113,7 +113,7 @@ void PopulateMonMenu(void){
     // CALL(aMenuBoxCoord2Tile);
     // LD_BC(2 * SCREEN_WIDTH + 2);
     // ADD_HL_BC;
-    uint8_t* hl = MenuBoxCoord2Tile_Conv() + 2 * SCREEN_WIDTH + 2;
+    uint8_t* hl = MenuBoxCoord2Tile() + 2 * SCREEN_WIDTH + 2;
     // LD_DE(wMonSubmenuItems);
     const uint8_t* de = wram->wMonSubmenuItems;
 
@@ -379,16 +379,16 @@ static struct MenuHeader BattleMonMenu_MenuHeader = {
 bool BattleMonMenu(void){
     // LD_HL(mBattleMonMenu_MenuHeader);
     // CALL(aCopyMenuHeader);
-    CopyMenuHeader_Conv2(&BattleMonMenu_MenuHeader);
+    CopyMenuHeader(&BattleMonMenu_MenuHeader);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aMenuBox);
-    MenuBox_Conv();
+    MenuBox();
     // CALL(aUpdateSprites);
-    UpdateSprites_Conv();
+    UpdateSprites();
     // CALL(aPlaceVerticalMenuItems);
-    PlaceVerticalMenuItems_Conv2();
+    PlaceVerticalMenuItems();
     // CALL(aWaitBGMap);
     WaitBGMap();
     // CALL(aCopyMenuData);
@@ -399,12 +399,12 @@ bool BattleMonMenu(void){
     if(!bit_test(data->flags, 7))
         return true;
     // CALL(aInitVerticalMenuCursor);
-    InitVerticalMenuCursor_Conv(data);
+    InitVerticalMenuCursor(data);
     // LD_HL(w2DMenuFlags1);
     // SET_hl(6);
     bit_set(wram->w2DMenuFlags1, 6);
     // CALL(aStaticMenuJoypad);
-    uint8_t pad = StaticMenuJoypad_Conv();
+    uint8_t pad = StaticMenuJoypad();
     // LD_DE(SFX_READ_TEXT_2);
     // CALL(aPlaySFX);
     PlaySFX(SFX_READ_TEXT_2);

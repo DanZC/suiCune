@@ -41,8 +41,6 @@ void Place2DMenuCursor_Conv(void);
 void v_PushWindow(void);
 void v_PushWindow_Conv(void);
 void v_ExitMenu(void);
-void v_ExitMenu_Conv(void);
-void v_ExitMenu_Conv2(void);
 void RestoreOverworldMapTiles(void);
 void Error_Cant_ExitMenu(void);
 void Error_Cant_ExitMenu_Conv(void);

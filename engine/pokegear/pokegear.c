@@ -111,9 +111,9 @@ void PokeGear(void){
     // loop:
         // SET_PC(aPokeGear_loop);
         // CALL(aUpdateTime);
-        UpdateTime_Conv();
+        UpdateTime();
         // CALL(aJoyTextDelay);
-        JoyTextDelay_Conv();
+        JoyTextDelay();
         // LD_A_addr(wJumptableIndex);
         // BIT_A(7);
         // IF_NZ goto done;
@@ -401,7 +401,7 @@ void Pokegear_LoadGFX_Conv(void){
     // FarDecompress_Conv(BANK(aPokegearSpritesGFX), mPokegearSpritesGFX, vTiles0);
     LoadPNG2bppAssetToVRAM(vram->vTiles0, PokegearSpritesGFX);
 
-    uint8_t landmark = GetWorldMapLocation_Conv2(wram->wMapGroup, wram->wMapNumber);
+    uint8_t landmark = GetWorldMapLocation(wram->wMapGroup, wram->wMapNumber);
     if(landmark == LANDMARK_FAST_SHIP) {
         LoadPNG2bppAssetSectionToVRAM(vram->vTiles0 + LEN_2BPP_TILE * 0x10, FastShipGFX, 0, 8);
         return;
@@ -494,10 +494,10 @@ void TownMap_GetCurrentLandmark(void){
 }
 
 uint8_t TownMap_GetCurrentLandmark_Conv(void){
-    uint8_t landmark = GetWorldMapLocation_Conv2(wram->wMapGroup, wram->wMapNumber);
+    uint8_t landmark = GetWorldMapLocation(wram->wMapGroup, wram->wMapNumber);
     if(landmark == LANDMARK_SPECIAL)
     {
-        landmark = GetWorldMapLocation_Conv2(wram->wBackupMapGroup, wram->wBackupMapNumber);
+        landmark = GetWorldMapLocation(wram->wBackupMapGroup, wram->wBackupMapNumber);
     }
     return landmark;
 }
@@ -538,7 +538,7 @@ void TownMap_InitCursorAndPlayerIconPositions_Conv(void){
     //LD_A_addr(wMapNumber);
     //LD_C_A;
     //CALL(aGetWorldMapLocation);
-    uint8_t landmark = GetWorldMapLocation_Conv2(gb_read(wMapGroup), gb_read(wMapNumber));
+    uint8_t landmark = GetWorldMapLocation(gb_read(wMapGroup), gb_read(wMapNumber));
 
     //CP_A(LANDMARK_FAST_SHIP);
     //IF_Z goto FastShip;
@@ -556,7 +556,7 @@ void TownMap_InitCursorAndPlayerIconPositions_Conv(void){
     //IF_NZ goto LoadLandmark;
     if(landmark == LANDMARK_SPECIAL)
     {
-        landmark = GetWorldMapLocation_Conv2(wram->wBackupMapGroup, wram->wBackupMapNumber);
+        landmark = GetWorldMapLocation(wram->wBackupMapGroup, wram->wBackupMapNumber);
     }
 
     //LD_addr_A(wPokegearMapPlayerIconLandmark);
@@ -854,7 +854,7 @@ void InitPokegearTilemap_PlacePhoneBars_Conv() {
     *(hl++) = tile;
 
     // CALL(aGetMapPhoneService);
-    uint8_t srv = GetMapPhoneService_Conv();
+    uint8_t srv = GetMapPhoneService();
     if(srv != 0)
     {
         return;
@@ -1249,7 +1249,7 @@ void Pokegear_UpdateClock_Conv(void){
         text_end
     };
     // PEEK("UpdateClock");
-    UpdateTime_Conv();
+    UpdateTime();
     // hlcoord(3, 5, wTilemap);
     // LD_BC((5 << 8) | 14);
     // CALL(aClearBox);
@@ -2015,7 +2015,7 @@ void PokegearPhone_MakePhoneCall(void){
     // CALL(aGetMapPhoneService);
     // AND_A_A;
     // IF_NZ goto no_service;
-    if(!GetMapPhoneService_Conv()) {
+    if(!GetMapPhoneService()) {
         // LD_HL(wOptions);
         // RES_hl(NO_TEXT_SCROLL);
         bit_reset(wram->wOptions, NO_TEXT_SCROLL);
@@ -2633,7 +2633,7 @@ bool PokegearPhoneContactSubmenu_Conv(void){
     // loop:
         // PUSH_DE;
         // CALL(aJoyTextDelay);
-        JoyTextDelay_Conv();
+        JoyTextDelay();
         // POP_DE;
         // LD_HL(hJoyPressed);
         // LD_A_hl;
@@ -2715,11 +2715,11 @@ bool PokegearPhoneContactSubmenu_Conv(void){
                 // Delete:
                     // LD_HL(mPokegearAskDeleteText);
                     // CALL(aMenuTextbox);
-                    MenuTextbox_Conv(PokegearAskDeleteText);
+                    MenuTextbox(PokegearAskDeleteText);
                     // CALL(aYesNoBox);
-                    bool cancel = !YesNoBox_Conv();
+                    bool cancel = !YesNoBox();
                     // CALL(aExitMenu);
-                    ExitMenu_Conv2();
+                    ExitMenu();
                     // IF_C goto CancelDelete;
                     if(!cancel) {
                         // CALL(aPokegearPhone_DeletePhoneNumber);
@@ -3915,7 +3915,7 @@ static void v_TownMap_loop(uint8_t d, uint8_t e){
     do {
     // loop:
         // CALL(aJoyTextDelay);
-        JoyTextDelay_Conv();
+        JoyTextDelay();
         // LD_HL(hJoyPressed);
         // LD_A_hl;
         // AND_A(B_BUTTON);
@@ -4292,7 +4292,7 @@ void PlayRadio_Conv(uint8_t e){
     while(1) {
     // loop:
         // CALL(aJoyTextDelay);
-        JoyTextDelay_Conv();
+        JoyTextDelay();
         // LDH_A_addr(hJoyPressed);
         // AND_A(A_BUTTON | B_BUTTON);
         // IF_NZ goto stop;
@@ -4362,9 +4362,9 @@ const char* LoadStation_PokemonChannel_Conv(void){
     // CALL(aIsInJohto);
     // AND_A_A;
     // IF_NZ goto kanto;
-    if(IsInJohto_Conv() == JOHTO_REGION) {
+    if(IsInJohto() == JOHTO_REGION) {
         // CALL(aUpdateTime);
-        UpdateTime_Conv();
+        UpdateTime();
         // LD_A_addr(wTimeOfDay);
         // AND_A_A;
         // JP_Z (mLoadStation_PokedexShow);
@@ -4533,7 +4533,7 @@ uint8_t v_FlyMap(void){
     while(1) {
     // loop:
         // CALL(aJoyTextDelay);
-        JoyTextDelay_Conv();
+        JoyTextDelay();
         // LD_HL(hJoyPressed);
         // LD_A_hl;
         // AND_A(B_BUTTON);
@@ -4757,7 +4757,7 @@ void FlyMap(void){
     // LD_A_addr(wMapNumber);
     // LD_C_A;
     // CALL(aGetWorldMapLocation);
-    uint8_t loc = GetWorldMapLocation_Conv2(wram->wMapGroup, wram->wMapNumber);
+    uint8_t loc = GetWorldMapLocation(wram->wMapGroup, wram->wMapNumber);
 //  If we're not in a valid location, i.e. Pokecenter floor 2F,
 //  the backup map information is used.
     // CP_A(LANDMARK_SPECIAL);
@@ -4768,7 +4768,7 @@ void FlyMap(void){
         // LD_A_addr(wBackupMapNumber);
         // LD_C_A;
         // CALL(aGetWorldMapLocation);
-        loc = GetWorldMapLocation_Conv2(wram->wBackupMapGroup, wram->wBackupMapNumber);
+        loc = GetWorldMapLocation(wram->wBackupMapGroup, wram->wBackupMapNumber);
     }
 
 // CheckRegion:
@@ -5213,7 +5213,7 @@ void Pokedex_GetArea(uint8_t e, species_t species){
     while(1) {
     // loop:
         // CALL(aJoyTextDelay);
-        JoyTextDelay_Conv();
+        JoyTextDelay();
         // LD_HL(hJoyPressed);
         // LD_A_hl;
         // AND_A(A_BUTTON | B_BUTTON);
@@ -5885,7 +5885,7 @@ uint8_t EntireFlyMap(void){
     while(1) {
     // loop:
         // CALL(aJoyTextDelay);
-        JoyTextDelay_Conv();
+        JoyTextDelay();
         // LD_HL(hJoyPressed);
         // LD_A_hl;
         // AND_A(B_BUTTON);

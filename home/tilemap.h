@@ -1,10 +1,8 @@
 void ClearBGPalettes(void);
 void WaitBGMap(void);
 void WaitBGMap2(void);
-void IsCGB(void);
-bool IsCGB_Conv(void);
+bool IsCGB(void);
 void ApplyTilemap(void);
-void ApplyTilemap_Conv(void);
 void CGBOnly_CopyTilemapAtOnce(void);
 void CopyTilemapAtOnce(void);
 void CopyTilemapAtOnce_Conv(void);

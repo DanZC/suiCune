@@ -105,7 +105,7 @@ static const struct MenuHeader PokemonCenterPC_TopMenu = {
                 },
             },
             //dw ['PlaceNthMenuStrings'];
-            .displayFunction = PlaceNthMenuStrings_Conv,
+            .displayFunction = PlaceNthMenuStrings,
             //dw ['.Jumptable'];
             .labelList = (struct LabeledMenuItem[]){
             // Jumptable:
@@ -143,7 +143,7 @@ void PokemonCenterPC(void){
     PC_DisplayTextWaitMenu_Conv(PokecenterPCWhoseText);
     // LD_HL(mPokemonCenterPC_TopMenu);
     // CALL(aLoadMenuHeader);
-    LoadMenuHeader_Conv2(&PokemonCenterPC_TopMenu);
+    LoadMenuHeader(&PokemonCenterPC_TopMenu);
 
     u8_flag_s res;
     do {
@@ -156,13 +156,13 @@ void PokemonCenterPC(void){
         wram->wWhichIndexSet = PokemonCenterPC_ChooseWhichPCListToUse();
         // CALL(aDoNthMenu);
         // IF_C goto shutdown;
-        res = DoNthMenu_Conv();
+        res = DoNthMenu();
         if(res.flag)
             break;
         // LD_A_addr(wMenuSelection);
         // LD_HL(mPokemonCenterPC_Jumptable);
         // CALL(aMenuJumptable);
-        res = MenuJumptable_Conv();
+        res = MenuJumptable();
         // IF_NC goto loop;
     } while(!res.flag);
 
@@ -170,9 +170,9 @@ void PokemonCenterPC(void){
     // CALL(aPC_PlayShutdownSound);
     PC_PlayShutdownSound();
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // CALL(aCloseWindow);
-    CloseWindow_Conv2();
+    CloseWindow();
     // RET;
     return;
 }
@@ -260,11 +260,11 @@ u8_flag_s HallOfFamePC(void){
     // CALL(aPC_PlayChoosePCSound);
     PC_PlayChoosePCSound();
     // CALL(aFadeToMenu);
-    FadeToMenu_Conv();
+    FadeToMenu();
     // FARCALL(av_HallOfFamePC);
     v_HallOfFamePC();
     // CALL(aCloseSubmenu);
-    CloseSubmenu_Conv();
+    CloseSubmenu();
     // AND_A_A;
     // RET;
     return u8_flag(0, false);
@@ -347,11 +347,11 @@ bool v_PlayersHousePC(void){
         return true;
     }
     // CALL(aOverworldTextModeSwitch);
-    OverworldTextModeSwitch_Conv();
+    OverworldTextModeSwitch();
     // CALL(aApplyTilemap);
-    ApplyTilemap_Conv();
+    ApplyTilemap();
     // CALL(aUpdateSprites);
-    UpdateSprites_Conv();
+    UpdateSprites();
     // CALL(aPC_PlayShutdownSound);
     PC_PlayShutdownSound();
     // LD_C(FALSE);
@@ -372,7 +372,7 @@ static u8_flag_s v_PlayersPC_PlayersPC(void) {
     wram->wPCItemsScrollPosition = 0;
     // LD_HL(mPlayersPCMenuData);
     // CALL(aLoadMenuHeader);
-    LoadMenuHeader_Conv2(&PlayersPCMenuData);
+    LoadMenuHeader(&PlayersPCMenuData);
 
     u8_flag_s jumptableRes;
     do {
@@ -380,23 +380,23 @@ static u8_flag_s v_PlayersPC_PlayersPC(void) {
         // CALL(aUpdateTimePals);
         UpdateTimePals();
         // CALL(aDoNthMenu);
-        u8_flag_s res = DoNthMenu_Conv();
+        u8_flag_s res = DoNthMenu();
         // IF_C goto turn_off;
         if(res.flag) {
         // turn_off:
             // XOR_A_A;
-            ExitMenu_Conv2();
+            ExitMenu();
             return u8_flag(0, false);
         }
         // CALL(aMenuJumptable);
-        jumptableRes = MenuJumptable_Conv();
+        jumptableRes = MenuJumptable();
         // IF_NC goto loop;
     } while(!jumptableRes.flag);
     // goto done;
 
 // done:
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // RET;
     return jumptableRes;
 }
@@ -411,7 +411,7 @@ u8_flag_s v_PlayersPC(uint8_t b){
     // CALL(av_PlayersPC_PlayersPC);
     u8_flag_s res = v_PlayersPC_PlayersPC();
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // RET;
     return res;
 }
@@ -468,7 +468,7 @@ const struct MenuHeader PlayersPCMenuData = {
             .count = 0,  // # items?
             //dw ['.WhichPC'];
             .itemList = PlayersPCMenuData_WhichPC,
-            .displayFunction = PlaceNthMenuStrings_Conv,
+            .displayFunction = PlaceNthMenuStrings,
             .labelList = PlayersPCMenuPointers,
         },
     },
@@ -518,7 +518,7 @@ void PC_DisplayTextWaitMenu_Conv(const txt_cmd_s* hl){
     // LD_addr_A(wOptions);
     bit_set(wram->wOptions, NO_TEXT_SCROLL);
     // CALL(aMenuTextbox);
-    MenuTextbox_Conv(hl);
+    MenuTextbox(hl);
     // POP_AF;
     // LD_addr_A(wOptions);
     wram->wOptions = options;
@@ -561,13 +561,13 @@ static void PlayerWithdrawItemMenu_Submenu(void) {
     // askquantity:
         // LD_HL(mPlayerWithdrawItemMenu_PlayersPCHowManyWithdrawText);
         // CALL(aMenuTextbox);
-        MenuTextbox_Conv(PlayersPCHowManyWithdrawText);
+        MenuTextbox(PlayersPCHowManyWithdrawText);
         // FARCALL(aSelectQuantityToToss);
         bool quit = SelectQuantityToToss();
         // CALL(aExitMenu);
-        ExitMenu_Conv2();
+        ExitMenu();
         // CALL(aExitMenu);
-        ExitMenu_Conv2();
+        ExitMenu();
         // IF_C goto done;
         if(quit)
             return;
@@ -588,7 +588,7 @@ static void PlayerWithdrawItemMenu_Submenu(void) {
     // PackFull:
         // LD_HL(mPlayerWithdrawItemMenu_PlayersPCNoRoomWithdrawText);
         // CALL(aMenuTextboxBackup);
-        MenuTextboxBackup_Conv(PlayersPCNoRoomWithdrawText);
+        MenuTextboxBackup(PlayersPCNoRoomWithdrawText);
         // RET;
         return;
     }
@@ -605,12 +605,12 @@ static void PlayerWithdrawItemMenu_Submenu(void) {
     PartyMonItemName_Conv(wram->wCurItem);
     // LD_HL(mPlayerWithdrawItemMenu_PlayersPCWithdrewItemsText);
     // CALL(aMenuTextbox);
-    MenuTextbox_Conv(PlayersPCWithdrewItemsText);
+    MenuTextbox(PlayersPCWithdrewItemsText);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // RET;
     return;
 
@@ -620,7 +620,7 @@ static void PlayerWithdrawItemMenu_Submenu(void) {
 
 u8_flag_s PlayerWithdrawItemMenu(void){
     // CALL(aLoadStandardMenuHeader);
-    LoadStandardMenuHeader_Conv();
+    LoadStandardMenuHeader();
     // FARCALL(aClearPCItemScreen);
     ClearPCItemScreen();
 
@@ -638,7 +638,7 @@ u8_flag_s PlayerWithdrawItemMenu(void){
 
 // quit:
     // CALL(aCloseSubmenu);
-    CloseSubmenu_Conv();
+    CloseSubmenu();
     // XOR_A_A;
     // RET;
     return u8_flag(0, false);
@@ -646,7 +646,7 @@ u8_flag_s PlayerWithdrawItemMenu(void){
 
 u8_flag_s PlayerTossItemMenu(void){
     // CALL(aLoadStandardMenuHeader);
-    LoadStandardMenuHeader_Conv();
+    LoadStandardMenuHeader();
     // FARCALL(aClearPCItemScreen);
     ClearPCItemScreen();
 
@@ -666,7 +666,7 @@ u8_flag_s PlayerTossItemMenu(void){
 
 // quit:
     // CALL(aCloseSubmenu);
-    CloseSubmenu_Conv();
+    CloseSubmenu();
     // XOR_A_A;
     // RET;
     return u8_flag(0, false);
@@ -703,7 +703,7 @@ static bool PlayerDepositItemMenu_CheckItemsInBag(void) {
         return true;
     // LD_HL(mPlayerDepositItemMenu_PlayersPCNoItemsText);
     // CALL(aMenuTextboxBackup);
-    MenuTextboxBackup_Conv(PlayersPCNoItemsText);
+    MenuTextboxBackup(PlayersPCNoItemsText);
     // SCF;
     // RET;
     return false;
@@ -738,14 +738,14 @@ static void PlayerDepositItemMenu_DepositItem(void) {
     // AskQuantity:
         // LD_HL(mPlayerDepositItemMenu_PlayersPCHowManyDepositText);
         // CALL(aMenuTextbox);
-        MenuTextbox_Conv(PlayersPCHowManyDepositText);
+        MenuTextbox(PlayersPCHowManyDepositText);
         // FARCALL(aSelectQuantityToToss);
         bool quit = SelectQuantityToToss();
         // PUSH_AF;
         // CALL(aExitMenu);
-        ExitMenu_Conv2();
+        ExitMenu();
         // CALL(aExitMenu);
-        ExitMenu_Conv2();
+        ExitMenu();
         // POP_AF;
         // IF_C goto DeclinedToDeposit;
         if(quit) {
@@ -854,7 +854,7 @@ u8_flag_s PlayerDepositItemMenu(void){
         // CALL(aDisableSpriteUpdates);
         DisableSpriteUpdates();
         // CALL(aLoadStandardMenuHeader);
-        LoadStandardMenuHeader_Conv();
+        LoadStandardMenuHeader();
         // FARCALL(aDepositSellInitPackBuffers);
         DepositSellInitPackBuffers();
 
@@ -876,7 +876,7 @@ u8_flag_s PlayerDepositItemMenu(void){
 
     // close:
         // CALL(aCloseSubmenu);
-        CloseSubmenu_Conv();
+        CloseSubmenu();
     }
 
 // nope:
@@ -931,7 +931,7 @@ bool PCItemsJoypad(void){
         wram->wSpriteUpdatesEnabled = FALSE;
         // LD_HL(mPCItemsJoypad_PCItemsMenuData);
         // CALL(aCopyMenuHeader);
-        CopyMenuHeader_Conv2(&PCItemsMenuData);
+        CopyMenuHeader(&PCItemsMenuData);
         // hlcoord(0, 0, wTilemap);
         // LD_B(10);
         // LD_C(18);
@@ -944,7 +944,7 @@ bool PCItemsJoypad(void){
         // LD_addr_A(wMenuScrollPosition);
         wram->wMenuScrollPosition = wram->wPCItemsScrollPosition;
         // CALL(aScrollingMenu);
-        uint8_t joypad = ScrollingMenu_Conv();
+        uint8_t joypad = ScrollingMenu();
         // LD_A_addr(wMenuScrollPosition);
         // LD_addr_A(wPCItemsScrollPosition);
         wram->wPCItemsScrollPosition = wram->wMenuScrollPosition;
@@ -998,7 +998,7 @@ bool PCItemsJoypad(void){
                 // FARCALL(aScrollingMenu_ClearLeftColumn);
                 ScrollingMenu_ClearLeftColumn_Conv();
                 // CALL(aPlaceHollowCursor);
-                PlaceHollowCursor_Conv();
+                PlaceHollowCursor();
                 // AND_A_A;
                 // RET;
                 return false;
@@ -1033,9 +1033,9 @@ void PC_DisplayText(void){
 
 void PC_DisplayText_Conv(const struct TextCmd* hl) {
     // CALL(aMenuTextbox);
-    MenuTextbox_Conv(hl);
+    MenuTextbox(hl);
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // RET;
 }
 

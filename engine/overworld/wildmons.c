@@ -234,7 +234,7 @@ static u8_flag_s FindNest_AppendNest(uint8_t group, uint8_t map) {
     // PUSH_DE;
     // CALL(aGetWorldMapLocation);
     // LD_C_A;
-    uint8_t c = GetWorldMapLocation_Conv2(group, map);
+    uint8_t c = GetWorldMapLocation(group, map);
     // hlcoord(0, 0, wTilemap);
     tile_t* hl2 = coord(0, 0, wram->wTilemap);
     // LD_DE(SCREEN_WIDTH * SCREEN_HEIGHT);
@@ -509,7 +509,7 @@ uint8_t GetMapEncounterRate_Conv(void){
     // LD_A(wWaterEncounterRate - wMornEncounterRate);
     uint8_t a = wWaterEncounterRate - wMornEncounterRate;
     // IF_Z goto ok;
-    if(!CheckOnWater_Conv()) {
+    if(!CheckOnWater()) {
         // LD_A_addr(wTimeOfDay);
         a = wram->wTimeOfDay;
     }
@@ -803,7 +803,7 @@ bool ChooseWildEncounter_Conv(void){
     // LD_BC(NUM_GRASSMON * 2);
     // CALL(aAddNTimes);
     // LD_DE(mGrassMonProbTable);
-    const uint8_t* de = (CheckOnWater_Conv())? WaterMonProbTable: GrassMonProbTable;
+    const uint8_t* de = (CheckOnWater())? WaterMonProbTable: GrassMonProbTable;
 
 // watermon:
 //  hl contains the pointer to the wild mon data, let's save that to the stack
@@ -845,7 +845,7 @@ bool ChooseWildEncounter_Conv(void){
 //  If the Pokemon is encountered by surfing, we need to give the levels some variety.
     // CALL(aCheckOnWater);
     // IF_NZ goto ok;
-    if(CheckOnWater_Conv()) {
+    if(CheckOnWater()) {
     //  Check if we buff the wild mon, and by how much.
         // CALL(aRandom);
         uint8_t r = Random();
@@ -1010,7 +1010,7 @@ void LoadWildMonDataPointer(void){
 struct WildMons LoadWildMonDataPointer_Conv(void){
     // CALL(aCheckOnWater);
     // JR_Z (mv_WaterWildmonLookup);
-    if(CheckOnWater_Conv())
+    if(CheckOnWater())
         return v_WaterWildmonLookup_Conv();
     // return v_GrassWildmonLookup();
     return v_GrassWildmonLookup_Conv();
@@ -1039,7 +1039,7 @@ struct WildMons v_GrassWildmonLookup_Conv(void){
         return mons;
     // LD_HL(mJohtoGrassWildMons);
     // LD_DE(mKantoGrassWildMons);
-    const struct WildGrassMons* hl = (IsInJohto_Conv() == JOHTO_REGION)? JohtoGrassWildMons: KantoGrassWildMons;
+    const struct WildGrassMons* hl = (IsInJohto() == JOHTO_REGION)? JohtoGrassWildMons: KantoGrassWildMons;
     // CALL(av_JohtoWildmonCheck);
     // LD_BC(GRASS_WILDDATA_LENGTH);
     // JR(mv_NormalWildmonOK);
@@ -1067,7 +1067,7 @@ struct WildMons v_WaterWildmonLookup_Conv(void){
     // LD_HL(mJohtoWaterWildMons);
     // LD_DE(mKantoWaterWildMons);
     // CALL(av_JohtoWildmonCheck);
-    const struct WildWaterMons* hl = (IsInJohto_Conv() == JOHTO_REGION)? JohtoWaterWildMons: KantoWaterWildMons;
+    const struct WildWaterMons* hl = (IsInJohto() == JOHTO_REGION)? JohtoWaterWildMons: KantoWaterWildMons;
     // LD_BC(WATER_WILDDATA_LENGTH);
     // JR(mv_NormalWildmonOK);
     return v_NormalWildmonOK_Conv((struct WildMons){.type = 1, .waterMons = hl});
@@ -1356,7 +1356,7 @@ bool CheckEncounterRoamMon(void){
 //  Don't trigger an encounter if we're on water.
     // CALL(aCheckOnWater);
     // IF_Z goto DontEncounterRoamMon;
-    if(CheckOnWater_Conv())
+    if(CheckOnWater())
         return false;
 //  Load the current map group and number to de
     // CALL(aCopyCurrMapDE);

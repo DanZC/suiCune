@@ -70,7 +70,7 @@ void BuenasPassword(void){
     wram->wWhichIndexSet = 0;
     // LD_HL(mBuenasPassword_MenuHeader);
     // CALL(aCopyMenuHeader);
-    CopyMenuHeader_Conv2(&BuenasPassword_MenuHeader);
+    CopyMenuHeader(&BuenasPassword_MenuHeader);
     // LD_A_addr(wBuenasPassword);
     // LD_C_A;
     uint8_t c = wram->wBuenasPassword;
@@ -82,9 +82,9 @@ void BuenasPassword(void){
     // LD_addr_A(wMenuBorderRightCoord);
     wram->wMenuBorderRightCoord = wram->wMenuBorderLeftCoord + c + 0x2;
     // CALL(aPushWindow);
-    PushWindow_Conv();
+    PushWindow();
     // CALL(aDoNthMenu);  // menu
-    DoNthMenu_Conv();
+    DoNthMenu();
     // FARCALL(aBuena_ExitMenu);
     Buena_ExitMenu();
     // LD_B(0x0);
@@ -161,7 +161,7 @@ void BuenaPrize(void){
         // CALL(aDelayFrame);
         DelayFrame();
         // CALL(aUpdateSprites);
-        UpdateSprites_Conv();
+        UpdateSprites();
         // CALL(aPrintBlueCardBalance);
         PrintBlueCardBalance();
         // CALL(aBuena_PrizeMenu);
@@ -182,7 +182,7 @@ void BuenaPrize(void){
         BuenaPrintText_Conv2(BuenaIsThatRightText);
         // CALL(aYesNoBox);
         // IF_C goto loop;
-        if(!YesNoBox_Conv())
+        if(!YesNoBox())
             continue;
 
         // LD_A_addr(wMenuSelectionQuantity);
@@ -241,23 +241,23 @@ void BuenaPrize(void){
 
 // done:
     // CALL(aCloseWindow);
-    CloseWindow_Conv2();
+    CloseWindow();
     // CALL(aCloseWindow);
-    CloseWindow_Conv2();
+    CloseWindow();
     // LD_HL(mBuenaPrize_BuenaComeAgainText);
     // CALL(aPrintText);
     PrintText_Conv2(BuenaComeAgainText);
     // CALL(aJoyWaitAorB);
-    JoyWaitAorB_Conv();
+    JoyWaitAorB();
     // CALL(aPlayClickSFX);
-    PlayClickSFX_Conv();
+    PlayClickSFX();
     // RET;
 }
 
 void Buena_DisplayBlueCardBalance(void){
     // LD_HL(mBlueCardBalanceMenuHeader);
     // CALL(aLoadMenuHeader);
-    LoadMenuHeader_Conv2(&BlueCardBalanceMenuHeader);
+    LoadMenuHeader(&BlueCardBalanceMenuHeader);
     // RET;
 }
 
@@ -269,16 +269,16 @@ static void PrintBlueCardBalance_DrawBox(const uint8_t* de) {
     hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_HL(mBlueCardBalanceMenuHeader);
     // CALL(aCopyMenuHeader);
-    CopyMenuHeader_Conv2(&BlueCardBalanceMenuHeader);
+    CopyMenuHeader(&BlueCardBalanceMenuHeader);
     // CALL(aMenuBox);
-    MenuBox_Conv();
+    MenuBox();
     // CALL(aUpdateSprites);
-    UpdateSprites_Conv();
+    UpdateSprites();
     // CALL(aMenuBoxCoord2Tile);
     // LD_BC(SCREEN_WIDTH + 1);
     // ADD_HL_BC;
     // LD_DE(mPrintBlueCardBalance_Points_string);
-    struct TextPrintState st = {.de = U82C(Points_string), .hl = MenuBoxCoord2Tile_Conv() + SCREEN_WIDTH + 1};
+    struct TextPrintState st = {.de = U82C(Points_string), .hl = MenuBoxCoord2Tile() + SCREEN_WIDTH + 1};
     // CALL(aPlaceString);
     PlaceString_Conv(&st, st.hl);
     // LD_H_B;
@@ -321,7 +321,7 @@ void Buena_PlacePrizeMenuBox(void){
     // LD_HL(mBuena_PlacePrizeMenuBox_MenuHeader);
     // CALL(aLoadMenuHeader);
     // RET;
-    LoadMenuHeader_Conv2(&MenuHeader);
+    LoadMenuHeader(&MenuHeader);
 }
 
 static void Buena_PrizeMenu_PrintPrizeItem(const struct MenuData* data, tile_t* de){
@@ -395,7 +395,7 @@ static const struct MenuHeader Buena_PrizeMenu_MenuHeader = {
 uint8_t Buena_PrizeMenu(void){
     // LD_HL(mBuena_PrizeMenu_MenuHeader);
     // CALL(aCopyMenuHeader);
-    CopyMenuHeader_Conv2(&Buena_PrizeMenu_MenuHeader);
+    CopyMenuHeader(&Buena_PrizeMenu_MenuHeader);
     // LD_A_addr(wMenuSelection);
     // LD_addr_A(wMenuCursorPosition);
     wram->wMenuCursorPosition = wram->wMenuSelection;
@@ -405,11 +405,11 @@ uint8_t Buena_PrizeMenu(void){
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aInitScrollingMenu);
-    InitScrollingMenu_Conv();
+    InitScrollingMenu();
     // CALL(aUpdateSprites);
-    UpdateSprites_Conv();
+    UpdateSprites();
     // CALL(aScrollingMenu);
-    uint8_t c = ScrollingMenu_Conv();
+    uint8_t c = ScrollingMenu();
     // LD_A_addr(wMenuSelection);
     // LD_C_A;
     uint8_t sel = wram->wMenuSelection;

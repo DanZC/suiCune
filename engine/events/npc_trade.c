@@ -41,7 +41,7 @@ void NPCTrade(uint8_t e){
     // CALL(aYesNoBox);
     // LD_A(TRADE_DIALOG_CANCEL);
     // IF_C goto done;
-    if(!YesNoBox_Conv()) {
+    if(!YesNoBox()) {
         return PrintTradeText(TRADE_DIALOG_CANCEL);
     }
 
@@ -123,7 +123,7 @@ static void NPCTrade_TradeAnimation(void){
     // LD_addr_A(wJumptableIndex);
     wram->wJumptableIndex = jumptableIndex;
     // CALL(aReturnToMapWithSpeechTextbox);
-    ReturnToMapWithSpeechTextbox_Conv();
+    ReturnToMapWithSpeechTextbox();
     // RET;
 }
 

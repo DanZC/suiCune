@@ -14,7 +14,7 @@ void StubbedTrainerRankings_HallOfFame2(void){
     // RET;
     // LD_A(BANK(sTrainerRankingGameTimeHOF));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asTrainerRankingGameTimeHOF));
+    OpenSRAM(MBANK(asTrainerRankingGameTimeHOF));
 
     // LD_HL(wGameTimeHours);
     // LD_DE(sTrainerRankingGameTimeHOF);
@@ -52,7 +52,7 @@ void StubbedTrainerRankings_HallOfFame2(void){
     // CALL(aUpdateTrainerRankingsChecksum);
     UpdateTrainerRankingsChecksum();
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -60,7 +60,7 @@ void StubbedTrainerRankings_MagikarpLength(void){
     // RET;
     // LD_A(BANK(sTrainerRankingLongestMagikarp));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asTrainerRankingLongestMagikarp));
+    OpenSRAM(MBANK(asTrainerRankingLongestMagikarp));
     // LD_DE(wMagikarpLength);
     uint16_t curLength = BigEndianToNative16(wram->wMagikarpLength);
     // LD_HL(sTrainerRankingLongestMagikarp);
@@ -133,7 +133,7 @@ void StubbedTrainerRankings_MagikarpLength(void){
     // CALL(aUpdateTrainerRankingsChecksum);
     UpdateTrainerRankingsChecksum();
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -141,7 +141,7 @@ void StubbedTrainerRankings_BugContestScore(uint16_t new_score){
     // RET;
     // LD_A(BANK(sTrainerRankingBugContestScore));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asTrainerRankingBugContestScore));
+    OpenSRAM(MBANK(asTrainerRankingBugContestScore));
     // LDH_A_addr(hProduct);
     // LD_HL(sTrainerRankingBugContestScore);
     uint16_t saved_score = (gb_read(sTrainerRankingBugContestScore) << 8) | gb_read(sTrainerRankingBugContestScore + 1);
@@ -171,7 +171,7 @@ void StubbedTrainerRankings_BugContestScore(uint16_t new_score){
     // CALL(aUpdateTrainerRankingsChecksum);
     UpdateTrainerRankingsChecksum();
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -179,7 +179,7 @@ void StubbedTrainerRankings_AddToSlotsWinStreak(void){
     // RET;
     // LD_A(BANK(sTrainerRankingCurrentSlotsStreak));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asTrainerRankingCurrentSlotsStreak));
+    OpenSRAM(MBANK(asTrainerRankingCurrentSlotsStreak));
     uint16_t streak = gb_read(sTrainerRankingCurrentSlotsStreak + 1) | (gb_read(sTrainerRankingCurrentSlotsStreak) << 8);
 
 // Increment the current streak
@@ -223,7 +223,7 @@ void StubbedTrainerRankings_AddToSlotsWinStreak(void){
     // CALL(aUpdateTrainerRankingsChecksum);
     UpdateTrainerRankingsChecksum();
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -231,7 +231,7 @@ void StubbedTrainerRankings_EndSlotsWinStreak(void){
     // RET;
     // LD_A(BANK(sTrainerRankingCurrentSlotsStreak));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asTrainerRankingCurrentSlotsStreak));
+    OpenSRAM(MBANK(asTrainerRankingCurrentSlotsStreak));
     // LD_HL(sTrainerRankingCurrentSlotsStreak);
     // XOR_A_A;
     // LD_hli_A;
@@ -240,7 +240,7 @@ void StubbedTrainerRankings_EndSlotsWinStreak(void){
     // CALL(aUpdateTrainerRankingsChecksum);
     UpdateTrainerRankingsChecksum();
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -279,7 +279,7 @@ void StubbedTrainerRankings_AddToBattlePayouts(const uint8_t* bc){
     // RET;
     // LD_A(BANK(sTrainerRankingTotalBattlePayouts));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asTrainerRankingTotalBattlePayouts));
+    OpenSRAM(MBANK(asTrainerRankingTotalBattlePayouts));
     // LD_HL(sTrainerRankingTotalBattlePayouts + 3);
     uint8_t* hl = GBToRAMAddr(sTrainerRankingTotalBattlePayouts);
     // LD_A_bc;
@@ -320,7 +320,7 @@ void StubbedTrainerRankings_AddToBattlePayouts(const uint8_t* bc){
     // CALL(aUpdateTrainerRankingsChecksum);
     UpdateTrainerRankingsChecksum();
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -336,12 +336,12 @@ void StubbedTrainerRankings_BattleTowerWins(void){
     // RET;
     // LD_A(BANK(s5_aa8d));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as5_aa8d));
+    OpenSRAM(MBANK(as5_aa8d));
     // LD_A_addr(s5_aa8d);
     // AND_A_A;
     uint8_t a = gb_read(s5_aa8d);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET_NZ ;
     if(a != 0)
         return;
@@ -615,7 +615,7 @@ void StubbedTrainerRankings_Increment1Byte(uint16_t hl){
 void StubbedTrainerRankings_Increment(uint16_t v, uint16_t bc){
     // LD_A(BANK(sTrainerRankings));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asTrainerRankings));
+    OpenSRAM(MBANK(asTrainerRankings));
     // PUSH_HL;
     uint8_t* hl = GBToRAMAddr(v);
     // PUSH_DE;
@@ -671,7 +671,7 @@ void StubbedTrainerRankings_Increment(uint16_t v, uint16_t bc){
     // CALL(aUpdateTrainerRankingsChecksum);
     UpdateTrainerRankingsChecksum();
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // POP_BC;
     // RET;
 }
@@ -681,11 +681,11 @@ void UpdateTrainerRankingsChecksum2(void){
     // RET;
     // LD_A(BANK(sTrainerRankings));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asTrainerRankings));
+    OpenSRAM(MBANK(asTrainerRankings));
     // CALL(aUpdateTrainerRankingsChecksum);
     UpdateTrainerRankingsChecksum();
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -737,38 +737,38 @@ uint16_t CalculateTrainerRankingsChecksum(void){
 void BackupMobileEventIndex(void){
     // LD_A(BANK(sMobileEventIndex));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asMobileEventIndex));
+    OpenSRAM(MBANK(asMobileEventIndex));
     // LD_A_addr(sMobileEventIndex);
     // PUSH_AF;
     uint8_t mobileEventIndex = gb_read(sMobileEventIndex);
     // LD_A(BANK(sMobileEventIndexBackup));
     // CALL(aOpenSRAM);
-    CloseSRAM_Conv();
-    OpenSRAM_Conv(MBANK(asMobileEventIndexBackup));
+    CloseSRAM();
+    OpenSRAM(MBANK(asMobileEventIndexBackup));
     // POP_AF;
     // LD_addr_A(sMobileEventIndexBackup);
     gb_write(sMobileEventIndexBackup, mobileEventIndex);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
 void RestoreMobileEventIndex(void){
     // LD_A(BANK(sMobileEventIndexBackup));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asMobileEventIndexBackup));
+    OpenSRAM(MBANK(asMobileEventIndexBackup));
     // LD_A_addr(sMobileEventIndexBackup);
     // PUSH_AF;
     uint8_t mobileEventIndexBackup = gb_read(sMobileEventIndexBackup);
     // LD_A(BANK(sMobileEventIndex));
     // CALL(aOpenSRAM);
-    CloseSRAM_Conv();
-    OpenSRAM_Conv(MBANK(asMobileEventIndex));
+    CloseSRAM();
+    OpenSRAM(MBANK(asMobileEventIndex));
     // POP_AF;
     // LD_addr_A(sMobileEventIndex);
     gb_write(sMobileEventIndex, mobileEventIndexBackup);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -789,12 +789,12 @@ void VerifyTrainerRankingsChecksum(void){
 void DeleteMobileEventIndex(void){
     // LD_A(BANK(sMobileEventIndex));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asMobileEventIndex));
+    OpenSRAM(MBANK(asMobileEventIndex));
     // XOR_A_A;
     // LD_addr_A(sMobileEventIndex);
     gb_write(sMobileEventIndex, 0);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -1142,21 +1142,21 @@ void SetMobileAdapterStatus(uint8_t c){
     // RET;
     // LD_A(BANK(s4_b000));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as4_b000));
+    OpenSRAM(MBANK(as4_b000));
     // LD_A_C;
     // CPL;
     // LD_addr_A(s4_b000);
     gb_write(s4_b000, ~c);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // LD_A(BANK(s7_a800));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as7_a800));
+    OpenSRAM(MBANK(as7_a800));
     // LD_A_C;
     // LD_addr_A(s7_a800);
     gb_write(s7_a800, c);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -1175,21 +1175,21 @@ u8_flag_s Mobile_AlwaysReturnNotCarry(void){
 u8_flag_s CheckMobileAdapterStatus(void){
     // LD_A(BANK(s4_b000));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as4_b000));
+    OpenSRAM(MBANK(as4_b000));
     // LD_A_addr(s4_b000);
     // CPL;
     // LD_B_A;
     uint8_t b = ~gb_read(s4_b000);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // LD_A(BANK(s7_a800));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as7_a800));
+    OpenSRAM(MBANK(as7_a800));
     // LD_A_addr(s7_a800);
     // LD_C_A;
     uint8_t c = gb_read(s7_a800);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // LD_A_C;
     // CP_A_B;
     // IF_NZ goto nope;

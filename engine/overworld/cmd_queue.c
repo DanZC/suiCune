@@ -539,7 +539,7 @@ static bool CmdQueue_Type3_IsPlayerFacingDown(void) {
     // AND_A_A;
     // POP_BC;
     // RET;
-    return GetSpriteDirection_Conv(&wram->wPlayerStruct) != 0;
+    return GetSpriteDirection(&wram->wPlayerStruct) != 0;
 }
 
 static void CmdQueue_Type3_PlayerNotFacingDown(uint8_t* bc) {
@@ -689,7 +689,7 @@ void CmdQueue_StoneTable_Conv(struct CmdQueue* bc){
         // LD_A_hl;
         // CALL(aCheckPitTile);
         // IF_NZ goto next;
-        if(!CheckPitTile_Conv(de[i].nextTile))
+        if(!CheckPitTile(de[i].nextTile))
             continue;
 
         // LD_HL(OBJECT_DIRECTION_WALKING);

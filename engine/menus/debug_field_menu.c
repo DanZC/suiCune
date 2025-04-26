@@ -136,25 +136,25 @@ const struct MenuHeader DebugMobileConnection_Menu = {
 };
 
 static void DebugMobileConnection(void) {
-    LoadMenuHeader_Conv2(&DebugMobileConnection_Menu);
-    bool cancel = !VerticalMenu_Conv();
+    LoadMenuHeader(&DebugMobileConnection_Menu);
+    bool cancel = !VerticalMenu();
     if(!cancel && wram->wMenuCursorY != DEBUGMOBILE_COUNT) {
         switch(wram->wMenuCursorY - 1) {
             case DEBUGMOBILE_DOWNLOAD_NEWS: Function17d2b6(); break;
             case DEBUGMOBILE_BACK: break;
         }
     }
-    ExitMenu_Conv2();
+    ExitMenu();
     return;
 }
 
 static void DebugFlagMenu(void) {
-    LoadStandardMenuHeader_Conv();
+    LoadStandardMenuHeader();
     Textbox(coord(0, 0, wram->wTilemap), 6, 12);
     WaitBGMap();
     uint16_t flag = EVENT_TEMPORARY_UNTIL_MAP_RELOAD_1;
     while(1) {
-        GetJoypad_Conv2();
+        GetJoypad();
         if(hram->hJoyPressed & (B_BUTTON))
             break;
 
@@ -168,7 +168,7 @@ static void DebugFlagMenu(void) {
         }
 
         if(hram->hJoyPressed & (A_BUTTON)) {
-            PlayClickSFX_Conv();
+            PlayClickSFX();
             if(EventFlagAction(flag, CHECK_FLAG))
                 EventFlagAction(flag, RESET_FLAG);
             else
@@ -184,7 +184,7 @@ static void DebugFlagMenu(void) {
         DelayFrame();
     }
 
-    CloseWindow_Conv2();
+    CloseWindow();
     WaitBGMap();
 }
 
@@ -212,38 +212,38 @@ const struct MenuHeader MenuHeader = {
     },
     .defaultOption = 1,  // default option
 };
-    ClearWindowData_Conv2();
+    ClearWindowData();
     PlaySFX(SFX_MENU);
     ReanchorBGMap_NoOAMUpdate_Conv();
 
-    LoadMenuHeader_Conv2(&MenuHeader);
-    SafeUpdateSprites_Conv();
-    v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv();
+    LoadMenuHeader(&MenuHeader);
+    SafeUpdateSprites();
+    v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap();
     LoadFonts_NoOAMUpdate_Conv();
     UpdateTimePals();
 
 loop:
-    bool no_cancel = VerticalMenu_Conv();
+    bool no_cancel = VerticalMenu();
 
     if(no_cancel) {
         switch(wram->wMenuCursorY - 1) {
         case DEBUGFIELDITEM_TELEPORT: {
-            FadeToMenu_Conv();
+            FadeToMenu();
             hram->hMapAnims = 0;
             ClearSprites();
-            LoadStandardMenuHeader_Conv();
+            LoadStandardMenuHeader();
             uint8_t spawn = EntireFlyMap();
             if(spawn == 0xff || spawn >= NUM_SPAWNS) {
-                CloseWindow_Conv2();
+                CloseWindow();
                 // WaitBGMap();
-                ExitAllMenus_Conv();
+                ExitAllMenus();
                 break;
             }
             gQueuedScriptAddr = DebugTeleportScript;
             wram->wDefaultSpawnpoint = spawn;
-            CloseWindow_Conv2();
+            CloseWindow();
             hram->hMenuReturn = HMENURETURN_SCRIPT;
-            ExitAllMenus_Conv();
+            ExitAllMenus();
         } break;
         case DEBUGFIELDITEM_FLAG:
             DebugFlagMenu();
@@ -269,9 +269,9 @@ loop:
     }
     uint8_t oamUpdate = hram->hOAMUpdate;
     hram->hOAMUpdate = 1;
-    LoadFontsExtra_Conv();
+    LoadFontsExtra();
     hram->hOAMUpdate = oamUpdate;
-    CloseWindow_Conv2();
-    v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv();
+    CloseWindow();
+    v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap();
     hram->hBGMapMode = BGMAPMODE_NONE;
 }

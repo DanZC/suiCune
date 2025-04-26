@@ -94,7 +94,7 @@ void v_Option(void){
     while(1) {
     // joypad_loop:
         // CALL(aJoyTextDelay);
-        JoyTextDelay_Conv();
+        JoyTextDelay();
         // LDH_A_addr(hJoyPressed);
         // AND_A(START | B_BUTTON);
         // IF_NZ goto ExitOptions;
@@ -815,7 +815,7 @@ bool UpdateFrame(void){
     // LD_hl_A;
     *coord(16, 15, wram->wTilemap) = 0xf7 + wram->wTextboxFrame;
     // CALL(aLoadFontsExtra);
-    LoadFontsExtra_Conv();
+    LoadFontsExtra();
     // AND_A_A;
     // RET;
     return false;

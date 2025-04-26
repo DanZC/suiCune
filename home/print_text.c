@@ -153,7 +153,7 @@ void PrintLetterDelay_Conv(void) {
     while(1) {
     // checkjoypad:
     // CALL(aGetJoypad);
-        GetJoypad_Conv2();
+        GetJoypad();
 
         //  input override
         // LD_A_addr(wDisableTextAcceleration);

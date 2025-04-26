@@ -51,7 +51,7 @@
 //     // CP_A(MAX_MYSTERY_GIFT_PARTNERS);
 //     bool res = gb_read(sNumDailyMysteryGiftPartnerIDs) >= MAX_MYSTERY_GIFT_PARTNERS;
 //     // JP(mCloseSRAM);
-//     CloseSRAM_Conv();
+//     CloseSRAM();
 //     return res;
 // }
 
@@ -83,7 +83,7 @@
 //         if(ReverseEndian16(*hl) == bc) {
 //         // Yes:
 //             // SCF;
-//             CloseSRAM_Conv();
+//             CloseSRAM();
 //             return true;
 //         }
 
@@ -95,7 +95,7 @@
 
 // // No:
 //     // JP(mCloseSRAM);
-//     CloseSRAM_Conv();
+//     CloseSRAM();
 //     return false;
 // }
 
@@ -119,7 +119,7 @@ static void DoMysteryGift_AddMysteryGiftPartnerID(void){
     // LD_hl_A;
     hl[numIDs] = wram->wMysteryGiftPartnerID;
     // JP(mCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 }
 
 static void DoMysteryGift_SaveMysteryGiftTrainerName(void){
@@ -144,7 +144,7 @@ static void DoMysteryGift_SaveMysteryGiftTrainerName(void){
     // CALL(aCopyBytes);
     CopyBytes(GBToRAMAddr(sMysteryGiftTrainer), wram->wMysteryGiftTrainer, sizeof(wram->wMysteryGiftTrainer));
     // JP(mCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 }
 
 void DoMysteryGift(void){
@@ -396,7 +396,7 @@ void DoMysteryGift(void){
         gb_write(sBackupMysteryGiftItem, item);
         // LD_addr_A(wNamedObjectIndex);
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
         // CALL(aGetItemName);
         GetItemName(item);
         // LD_HL(mDoMysteryGift_MysteryGiftSentText);  // sent item/decoration
@@ -1834,7 +1834,7 @@ bool CheckAndSetMysteryGiftDecorationAlreadyReceived(uint8_t c){
     // CALL(aPredef);
     uint8_t res = SmallFarFlagAction_Conv((uint8_t*)GBToRAMAddr(sMysteryGiftDecorationsReceived), c, CHECK_FLAG);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // LD_A_C;
     // AND_A_A;
     // POP_BC;
@@ -1848,7 +1848,7 @@ bool CheckAndSetMysteryGiftDecorationAlreadyReceived(uint8_t c){
     // PREDEF(pSmallFarFlagAction);
     SmallFarFlagAction_Conv((uint8_t*)GBToRAMAddr(sMysteryGiftDecorationsReceived), c, SET_FLAG);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // XOR_A_A;
     // RET;
     return false;
@@ -1885,7 +1885,7 @@ void CopyMysteryGiftReceivedDecorationsToPC(void){
         // IF_C goto loop;
     }
     // JP(mCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 }
 
 //  If [sMysteryGiftUnlocked] was -1, this sets both
@@ -1906,7 +1906,7 @@ void UnlockMysteryGift(void){
     }
 // ok:
     // JP(mCloseSRAM);
-    return CloseSRAM_Conv();
+    return CloseSRAM();
 }
 
 void ResetDailyMysteryGiftLimitIfUnlocked(void){
@@ -1923,7 +1923,7 @@ void ResetDailyMysteryGiftLimitIfUnlocked(void){
 
 // dont_clear:
     // JP(mCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 }
 
 void BackupMysteryGift(void){
@@ -1943,7 +1943,7 @@ void BackupMysteryGift(void){
     // LD_de_A;
     gb_write(sBackupMysteryGiftItem + 1, gb_read(sMysteryGiftItem + 1));
     // JP(mCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 }
 
 void RestoreMysteryGift(void){
@@ -1963,7 +1963,7 @@ void RestoreMysteryGift(void){
     // LD_de_A;
     gb_write(sMysteryGiftItem + 1, gb_read(sBackupMysteryGiftItem + 1));
     // JP(mCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 }
 
 void ClearMysteryGiftTrainer(void){
@@ -1983,7 +1983,7 @@ void ClearMysteryGiftTrainer(void){
 void GetMysteryGiftBank(void){
     // LD_A(BANK(sMysteryGiftData));
     // JP(mOpenSRAM);
-    OpenSRAM_Conv(MBANK(asMysteryGiftData));
+    OpenSRAM(MBANK(asMysteryGiftData));
 }
 
 //  You will be sending this data to your mystery gift partner.
@@ -1992,7 +1992,7 @@ void GetMysteryGiftBank(void){
 void StagePartyDataForMysteryGift(void){
     // LD_A(BANK(sPokemonData));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asPokemonData));
+    OpenSRAM(MBANK(asPokemonData));
     // LD_DE(wMysteryGiftStaging);
     uint8_t* de = wram->wMysteryGiftStaging;
     // LD_BC(sPokemonData + wPartyMons - wPokemonData);
@@ -2055,7 +2055,7 @@ void StagePartyDataForMysteryGift(void){
     // LD_A(wMysteryGiftTrainerEnd - wMysteryGiftTrainer);
     // LD_addr_A(wUnusedMysteryGiftStagedDataLength);
     // JP(mCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 }
 
 static void InitMysteryGiftLayout_LoadNGFX(tile_t* hl, tile_t a, uint8_t b) {
@@ -2441,7 +2441,7 @@ void StageDataForNameCard(void){
     uint8_t* de = wram->wMysteryGiftStaging;
     // LD_A(BANK(sPlayerData));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asPlayerData));
+    OpenSRAM(MBANK(asPlayerData));
     // LD_HL(sPlayerData + wPlayerName - wPlayerData);
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
@@ -2458,18 +2458,18 @@ void StageDataForNameCard(void){
     CopyBytes(de, GBToRAMAddr(sPlayerData + wSecretID - wPlayerData), 2);
     de += 2;
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // LD_A(BANK(sCrystalData));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asCrystalData));
+    OpenSRAM(MBANK(asCrystalData));
     // LD_A_addr(sCrystalData + 0);
     // LD_de_A;
     *(de++) = gb_read(sCrystalData);
     // INC_DE;
-    CloseSRAM_Conv();
+    CloseSRAM();
     // LD_A(BANK(s4_a603));  // aka BANK(s4_a007) // MBC30 bank used by JP Crystal// inaccessible by MBC3
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as4_a603));
+    OpenSRAM(MBANK(as4_a603));
     // LD_HL(s4_a603);  // address of MBC30 bank
     // LD_BC(8);
     // CALL(aCopyBytes);
@@ -2480,7 +2480,7 @@ void StageDataForNameCard(void){
     // CALL(aCopyBytes);
     CopyBytes(de, GBToRAMAddr(s4_a007), 12);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 

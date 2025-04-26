@@ -211,7 +211,7 @@ void Init(void) {
     hram->hBGMapAddress = vBGMap1;
 
     // FARCALL(aStartClock);
-    StartClock_Conv();
+    StartClock();
 
     // XOR_A_A;  // SRAM_DISABLE
     // LD_addr_A(MBC3LatchClock);
@@ -287,7 +287,7 @@ void ClearWRAM(void) {
 void ClearsScratch(void) {
     // LD_A(BANK(sScratch));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asScratch));
+    OpenSRAM(MBANK(asScratch));
 
     // LD_HL(sScratch);
     // LD_BC(0x20);
@@ -296,7 +296,7 @@ void ClearsScratch(void) {
     ByteFill_GB(sScratch, 0x20, 0);
 
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 

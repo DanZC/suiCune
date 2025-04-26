@@ -9,7 +9,7 @@ bool UpdateTimeAndPals(void){
     if(wram->wSpriteUpdatesEnabled == FALSE)
         return false;
 
-    UpdateTime_Conv();
+    UpdateTime();
 
 //  obj update on?
     uint8_t vram_state = wram->wVramState;

@@ -128,27 +128,27 @@ void NewGame_ClearTilemapEtc(void) {
     // CALL(aClearTilemap);
     ClearTilemap();
     // CALL(aLoadFontsExtra);
-    LoadFontsExtra_Conv();
+    LoadFontsExtra();
     // CALL(aLoadStandardFont);
-    LoadStandardFont_Conv();
+    LoadStandardFont();
     // CALL(aClearWindowData);
-    ClearWindowData_Conv2();
+    ClearWindowData();
     // RET;
 
 }
 
 void MysteryGift(void) {
     // CALL(aUpdateTime);
-    UpdateTime_Conv();
+    UpdateTime();
     // FARCALL(aDoMysteryGiftIfDayHasPassed);
     DoMysteryGiftIfDayHasPassed();
     // FARCALL(aDoMysteryGift);
 
-    OpenSRAM_Conv(MBANK(asPlayerData));
+    OpenSRAM(MBANK(asPlayerData));
     wram->wPlayerGender = gb_read(sCrystalData);
     CopyBytes(&wram->wPlayerID,  GBToRAMAddr(sPlayerData + (wPlayerID - wPlayerData)), 2);
     CopyBytes(wram->wPlayerName, GBToRAMAddr(sPlayerData + (wPlayerName - wPlayerData)), NAME_LENGTH);
-    CloseSRAM_Conv();
+    CloseSRAM();
 
     if(!LANTryConnection())
         return;
@@ -314,12 +314,12 @@ void v_ResetWRAM(void) {
 
     // LD_A(MBANK(asBoxCount));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBoxCount));
+    OpenSRAM(MBANK(asBoxCount));
     // LD_HL(sBoxCount);
     // CALL(av_ResetWRAM_InitList);
     v_ResetWRAM_InitMonList((uint8_t*)GBToRAMAddr(sBoxCount), (species_t*)GBToRAMAddr(sBoxSpecies));
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 
     // LD_HL(wNumItems);
     // CALL(av_ResetWRAM_InitList);
@@ -357,7 +357,7 @@ void v_ResetWRAM(void) {
 
     // LD_A(MBANK(asMysteryGiftItem));  // aka BANK(sMysteryGiftUnlocked)
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asMysteryGiftItem));
+    OpenSRAM(MBANK(asMysteryGiftItem));
     // LD_HL(sMysteryGiftItem);
     uint8_t* hl = GBToRAMAddr(sMysteryGiftItem);
     // XOR_A_A;
@@ -368,7 +368,7 @@ void v_ResetWRAM(void) {
     // LD_hl_A;
     hl[1] = (uint8_t)-1;
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 
     // CALL(aLoadOrRegenerateLuckyIDNumber);
     LoadOrRegenerateLuckyIDNumber();
@@ -549,7 +549,7 @@ void InitializeWorld(void) {
 void LoadOrRegenerateLuckyIDNumber(void) {
     // LD_A(MBANK(asLuckyIDNumber));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asLuckyIDNumber));
+    OpenSRAM(MBANK(asLuckyIDNumber));
     // LD_A_addr(wCurDay);
     // INC_A;
     // LD_B_A;
@@ -584,7 +584,7 @@ void LoadOrRegenerateLuckyIDNumber(void) {
     // LD_addr_A(wLuckyIDNumber + 1);
     // LD_addr_A(sLuckyIDNumber + 1);
     // JP(mCloseSRAM);
-    return CloseSRAM_Conv();
+    return CloseSRAM();
 }
 
 bool Continue(void) {
@@ -594,7 +594,7 @@ bool Continue(void) {
         // FARCALL(av_LoadData);
         v_LoadData();
         // CALL(aLoadStandardMenuHeader);
-        LoadStandardMenuHeader_Conv();
+        LoadStandardMenuHeader();
         // CALL(aDisplaySaveInfoOnContinue);
         DisplaySaveInfoOnContinue_Conv();
         // LD_A(0x1);
@@ -626,7 +626,7 @@ bool Continue(void) {
             // CALL(aContinue_MobileAdapterMenu);
             Continue_MobileAdapterMenu();
             // CALL(aCloseWindow);
-            CloseWindow_Conv2();
+            CloseWindow();
             // CALL(aClearTilemap);
             ClearTilemap();
             // LD_C(20);
@@ -637,7 +637,7 @@ bool Continue(void) {
             // FARCALL(aCopyMysteryGiftReceivedDecorationsToPC);
             CopyMysteryGiftReceivedDecorationsToPC();
             // FARCALL(aClockContinue);
-            ClockContinue_Conv();
+            ClockContinue();
             // LD_A_addr(wSpawnAfterChampion);
             // CP_A(SPAWN_LANCE);
             // IF_Z goto SpawnAfterE4;
@@ -665,7 +665,7 @@ bool Continue(void) {
             }
         }
         // CALL(aCloseWindow);
-        CloseWindow_Conv2();
+        CloseWindow();
         // goto FailToLoad;
     }
 
@@ -762,7 +762,7 @@ bool ConfirmContinue_Conv(void) {
         // CALL(aDelayFrame);
         DelayFrame();
         // CALL(aGetJoypad);
-        GetJoypad_Conv2();
+        GetJoypad();
         // LD_HL(hJoyPressed);
         // BIT_hl(A_BUTTON_F);
         // IF_NZ goto PressA;
@@ -783,7 +783,7 @@ bool Continue_CheckRTC_RestartClock(void) {
     // CALL(aCheckRTCStatus);
     // AND_A(0b10000000);  // Day count exceeded 16383
     // IF_Z goto pass;
-    if((CheckRTCStatus_Conv() & 0b10000000) != 0) {
+    if((CheckRTCStatus() & 0b10000000) != 0) {
         // FARCALL(aRestartClock);
         uint8_t c = RestartClock();
         // LD_A_C;
@@ -855,7 +855,7 @@ void DisplaySaveInfoOnContinue_Conv(void) {
     // CALL(aCheckRTCStatus);
     // AND_A(0b10000000);
     // IF_Z goto clock_ok;
-    if((CheckRTCStatus_Conv() & 0b10000000) != 0) {
+    if((CheckRTCStatus() & 0b10000000) != 0) {
         // LD_DE((4 << 8) | 8);
         // CALL(aDisplayContinueDataWithRTCError);
         // RET;
@@ -900,9 +900,9 @@ void DisplayNormalContinueData_Conv(uint8_t d, uint8_t e) {
     // CALL(aContinue_PrintGameTime);
     Continue_PrintGameTime_Conv(hl);
     // CALL(aLoadFontsExtra);
-    LoadFontsExtra_Conv();
+    LoadFontsExtra();
     // CALL(aUpdateSprites);
-    UpdateSprites_Conv();
+    UpdateSprites();
     // RET;
 }
 
@@ -924,9 +924,9 @@ void DisplayContinueDataWithRTCError_Conv(uint8_t d, uint8_t e) {
     // CALL(aContinue_UnknownGameTime);
     Continue_UnknownGameTime(hl);
     // CALL(aLoadFontsExtra);
-    LoadFontsExtra_Conv();
+    LoadFontsExtra();
     // CALL(aUpdateSprites);
-    UpdateSprites_Conv();
+    UpdateSprites();
     // RET;
 }
 
@@ -1033,11 +1033,11 @@ void Continue_LoadMenuHeader_Conv(uint8_t d, uint8_t e) {
 // show_menu:
     const struct MenuHeader* hl = (bit_test(wram->wStatusFlags, STATUSFLAGS_POKEDEX_F))? &MenuHeader_Dex: &MenuHeader_NoDex;
     // CALL(av_OffsetMenuHeader);
-    v_OffsetMenuHeader_Conv(hl, d, e);
+    v_OffsetMenuHeader(hl, d, e);
     // CALL(aMenuBox);
-    MenuBox_Conv();
+    MenuBox();
     // CALL(aPlaceVerticalMenuItems);
-    PlaceVerticalMenuItems_Conv2();
+    PlaceVerticalMenuItems();
     // RET;
 
 
@@ -1088,7 +1088,7 @@ tile_t* Continue_DisplayBadgesDexPlayerName_Conv(void) {
     static const char Player[] = "<PLAYER>@";
     uint8_t buf[16];
     // CALL(aMenuBoxCoord2Tile);
-    tile_t* hl = MenuBoxCoord2Tile_Conv();
+    tile_t* hl = MenuBoxCoord2Tile();
     // PUSH_HL;
     // decoord(13, 4, 0);
     // ADD_HL_DE;
@@ -1436,7 +1436,7 @@ void NamePlayer(void) {
         ClearTilemap();
 
         // CALL(aLoadFontsExtra);
-        LoadFontsExtra_Conv();
+        LoadFontsExtra();
         // CALL(aWaitBGMap);
         WaitBGMap();
 
@@ -1553,7 +1553,7 @@ void ShrinkPlayer(void) {
     // CALL(aIntro_PlacePlayerSprite);
     Intro_PlacePlayerSprite_Conv();
     // CALL(aLoadFontsExtra);
-    LoadFontsExtra_Conv();
+    LoadFontsExtra();
 
     // LD_C(50);
     // CALL(aDelayFrames);
@@ -2273,7 +2273,7 @@ void TitleScreenMain_Conv(void) {
 
         //  Save data can be deleted by pressing Up + B + Select.
         // CALL(aGetJoypad);
-        GetJoypad_Conv2();
+        GetJoypad();
         // LD_HL(hJoyDown);
         // LD_A_hl;
         // AND_A(D_UP + B_BUTTON + SELECT);
@@ -2507,7 +2507,7 @@ void Copyright(void) {
     // CALL(aClearTilemap);
     ClearTilemap();
     // CALL(aLoadFontsExtra);
-    LoadFontsExtra_Conv();
+    LoadFontsExtra();
     // LD_DE(mCopyrightGFX);
     // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x60);
     // LD_BC((BANK(aCopyrightGFX) << 8) | 29);
@@ -2541,7 +2541,7 @@ void GameInit(void) {
     // FARCALL(aTryLoadSaveData);
     TryLoadSaveData();
     // CALL(aClearWindowData);
-    ClearWindowData_Conv2();
+    ClearWindowData();
     // CALL(aClearBGPalettes);
     ClearBGPalettes();
     // CALL(aClearTilemap);

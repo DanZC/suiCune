@@ -274,7 +274,7 @@ void CrystalIntro(void){
     while(1)
     {
         // CALL(aJoyTextDelay);
-        JoyTextDelay_Conv();
+        JoyTextDelay();
         // LDH_A_addr(hJoyLast);
         // AND_A(BUTTONS);
         // IF_NZ goto ShutOffMusic;

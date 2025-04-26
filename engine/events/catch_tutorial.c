@@ -95,11 +95,11 @@ void CatchTutorial(void){
             // LD_HL(mCatchTutorial_AutoInput);
             // LD_A(BANK(aCatchTutorial_AutoInput));
             // CALL(aStartAutoInput);
-            StartAutoInput_Conv2(AutoInput);
+            StartAutoInput(AutoInput);
             // CALLFAR(aStartBattle);
             StartBattle_Conv();
             // CALL(aStopAutoInput);
-            StopAutoInput_Conv2();
+            StopAutoInput();
             // POP_AF;
 
             // LD_addr_A(wOptions);

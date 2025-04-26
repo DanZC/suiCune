@@ -173,15 +173,15 @@ void ShowPlayerNamingChoices(void){
 // got_header:
     const struct MenuHeader *hdr = (bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))? &KrisNameMenuHeader: &ChrisNameMenuHeader;
     // CALL(aLoadMenuHeader);
-    LoadMenuHeader_Conv2(hdr);
+    LoadMenuHeader(hdr);
     // CALL(aVerticalMenu);
-    VerticalMenu_Conv();
+    VerticalMenu();
     // LD_A_addr(wMenuCursorY);
     // DEC_A;
     // CALL(aCopyNameFromMenu);
-    CopyNameFromMenu_Conv(wram->wMenuCursorY - 1);
+    CopyNameFromMenu(wram->wMenuCursorY - 1);
     // CALL(aCloseWindow);
-    CloseWindow_Conv2();
+    CloseWindow();
     // RET;
 
 // INCLUDE "data/player_names.asm"

@@ -233,8 +233,8 @@ void SetUpTextbox(void) {
 void SetUpTextbox_Conv(void) {
     SpeechTextbox();
     // CALL(aUpdateSprites);
-    UpdateSprites_Conv();
-    ApplyTilemap_Conv();
+    UpdateSprites();
+    ApplyTilemap();
 }
 
 void PlaceString(void) {
@@ -1368,7 +1368,7 @@ void Paragraph_Conv(struct TextPrintState* state) {
     // CALL(aText_WaitBGMap);
     // CALL(aPromptButton);
     Text_WaitBGMap();
-    PromptButton_Conv();
+    PromptButton();
     
     // hlcoord(TEXTBOX_INNERX, TEXTBOX_INNERY, wTilemap);
     // LD_BC(((TEXTBOX_INNERH - 1) << 8) | TEXTBOX_INNERW);
@@ -1427,7 +1427,7 @@ void v_ContText_Conv(struct TextPrintState* state) {
     // PUSH_DE;
     // CALL(aPromptButton);
     // POP_DE;
-    PromptButton_Conv();
+    PromptButton();
 
     // LD_A_addr(wLinkMode);
     // OR_A_A;
@@ -1560,7 +1560,7 @@ bool PromptText_Conv(struct TextPrintState* state) {
     // CALL(aText_WaitBGMap);
     // CALL(aPromptButton);
     Text_WaitBGMap();
-    PromptButton_Conv();
+    PromptButton();
 
     // LD_A_addr(wLinkMode);
     // CP_A(LINK_COLOSSEUM);
@@ -2532,7 +2532,7 @@ void TextCommand_PROMPT_BUTTON_Conv(struct TextPrintState* state) {
     // PUSH_BC;
     // CALL(aPromptButton);
     // POP_BC;
-    PromptButton_Conv();
+    PromptButton();
 
     // CALL(aUnloadBlinkingCursor);
     UnloadBlinkingCursor_Conv();
@@ -2561,7 +2561,7 @@ void TextCommand_PROMPT_BUTTON_Conv2(struct TextCmdState* state, const struct Te
     // PUSH_BC;
     // CALL(aPromptButton);
     // POP_BC;
-    PromptButton_Conv();
+    PromptButton();
 
     // CALL(aUnloadBlinkingCursor);
     UnloadBlinkingCursor_Conv();
@@ -2837,7 +2837,7 @@ void TextCommand_PAUSE_Conv(struct TextPrintState* state) {
     // PUSH_HL;
     // PUSH_BC;
     // CALL(aGetJoypad);
-    GetJoypad_Conv2();
+    GetJoypad();
 
     // LDH_A_addr(hJoyDown);
     // AND_A(A_BUTTON | B_BUTTON);
@@ -2861,7 +2861,7 @@ void TextCommand_PAUSE_Conv2(struct TextCmdState* state, const struct TextCmd* c
     // PUSH_HL;
     // PUSH_BC;
     // CALL(aGetJoypad);
-    GetJoypad_Conv2();
+    GetJoypad();
 
     // LDH_A_addr(hJoyDown);
     // AND_A(A_BUTTON | B_BUTTON);
@@ -3135,7 +3135,7 @@ void TextCommand_DOTS_Conv(struct TextPrintState* state) {
         *(hl++) = 0x75;
         
         // CALL(aGetJoypad);
-        GetJoypad_Conv2();
+        GetJoypad();
 
         // LDH_A_addr(hJoyDown);
         // AND_A(A_BUTTON | B_BUTTON);
@@ -3177,7 +3177,7 @@ void TextCommand_DOTS_Conv2(struct TextCmdState* state, const struct TextCmd* cm
         *(hl++) = 0x75;
         
         // CALL(aGetJoypad);
-        GetJoypad_Conv2();
+        GetJoypad();
 
         // LDH_A_addr(hJoyDown);
         // AND_A(A_BUTTON | B_BUTTON);
@@ -3222,7 +3222,7 @@ void TextCommand_WAIT_BUTTON_Conv(struct TextPrintState* state) {
     // POP_BC;
     // POP_HL;
     // RET;
-    PromptButton_Conv();
+    PromptButton();
 }
 
 //  wait for button press
@@ -3234,7 +3234,7 @@ void TextCommand_WAIT_BUTTON_Conv2(struct TextCmdState* state, const struct Text
     // POP_BC;
     // POP_HL;
     // RET;
-    PromptButton_Conv();
+    PromptButton();
 }
 
 void TextCommand_STRINGBUFFER(void) {

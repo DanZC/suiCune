@@ -32,9 +32,9 @@ void v_ReturnToBattle_UseBall(void){
     // CALL(aGetMemSGBLayout);
     GetMemSGBLayout();
     // CALL(aCloseWindow);
-    CloseWindow_Conv2();
+    CloseWindow();
     // CALL(aLoadStandardMenuHeader);
-    LoadStandardMenuHeader_Conv();
+    LoadStandardMenuHeader();
     // CALL(aWaitBGMap);
     WaitBGMap();
     // JP(mSetPalettes);

@@ -7,7 +7,7 @@
 void InsertPokemonIntoBox(void){
     // LD_A(BANK(sBoxCount));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBoxCount));
+    OpenSRAM(MBANK(asBoxCount));
     // LD_HL(sBoxCount);
     // CALL(aInsertSpeciesIntoBoxOrParty);
     InsertSpeciesIntoBoxOrParty_Conv(GBToRAMAddr(sBoxCount), GBToRAMAddr(sBoxSpecies));
@@ -53,7 +53,7 @@ void InsertPokemonIntoBox(void){
     // FARCALL(aRestorePPOfDepositedPokemon);
     RestorePPOfDepositedPokemon(wram->wCurPartyMon);
     // JP(mCloseSRAM);
-    return CloseSRAM_Conv();
+    return CloseSRAM();
 }
 
 void InsertPokemonIntoParty(void){

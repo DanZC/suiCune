@@ -549,7 +549,7 @@ static bool v_HallOfFamePC_DisplayTeam(void){
         while(1) {
         // loop:
             // CALL(aJoyTextDelay);
-            JoyTextDelay_Conv();
+            JoyTextDelay();
             // LD_HL(hJoyLast);
             // LD_A_hl;
             // AND_A(B_BUTTON);
@@ -590,7 +590,7 @@ static bool v_HallOfFamePC_DisplayTeam(void){
 
 void v_HallOfFamePC(void){
     // CALL(aLoadFontsBattleExtra);
-    LoadFontsBattleExtra_Conv();
+    LoadFontsBattleExtra();
     // XOR_A_A;
     // LD_addr_A(wJumptableIndex);
     wram->wJumptableIndex = 0;
@@ -625,14 +625,14 @@ bool LoadHOFTeam(void){
     uint16_t hl = sHallOfFame + (wHallOfFameTempEnd - wHallOfFameTemp + 1) * index;
     // LD_A(BANK(sHallOfFame));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asHallOfFame));
+    OpenSRAM(MBANK(asHallOfFame));
     // LD_A_hl;
     // AND_A_A;
     // IF_Z goto absent;
     if(gb_read(hl) == 0) {
     // absent:
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
 
     // invalid:
         // SCF;
@@ -644,7 +644,7 @@ bool LoadHOFTeam(void){
     // CALL(aCopyBytes);
     CopyBytes(&wram->wHallOfFameTemp, GBToRAMAddr(hl), (wHallOfFameTempEnd - wHallOfFameTemp + 1));
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // AND_A_A;
     // RET;
     return false;

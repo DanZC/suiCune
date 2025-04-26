@@ -841,7 +841,7 @@ void SlotsAction_RestartOrQuit(void){
     // CALL(aSlots_DeilluminateBetLights);
     Slots_DeilluminateBetLights();
     // CALL(aWaitPressAorB_BlinkCursor);
-    WaitPressAorB_BlinkCursor_Conv();
+    WaitPressAorB_BlinkCursor();
     // CALL(aSlots_AskPlayAgain);
     // IF_C goto exit_slots;
     if(Slots_AskPlayAgain()) {
@@ -2587,11 +2587,11 @@ bool Slots_AskBet(void){
         PrintText_Conv2(SlotsBetHowManyCoinsText);
         // LD_HL(mSlots_AskBet_MenuHeader);
         // CALL(aLoadMenuHeader);
-        LoadMenuHeader_Conv2(&Slots_AskBet_MenuHeader);
+        LoadMenuHeader(&Slots_AskBet_MenuHeader);
         // CALL(aVerticalMenu);
-        bool cancel = !VerticalMenu_Conv();
+        bool cancel = !VerticalMenu();
         // CALL(aCloseWindow);
-        CloseWindow_Conv2();
+        CloseWindow();
         // RET_C ;
         if(cancel)
             return true;
@@ -2668,15 +2668,15 @@ bool Slots_AskPlayAgain(void){
         // CALL(aPrintText);
         PrintText_Conv2(SlotsPlayAgainText);
         // CALL(aLoadMenuTextbox);
-        LoadMenuTextbox_Conv();
+        LoadMenuTextbox();
         // LD_BC((14 << 8) | 12);
         // CALL(aPlaceYesNoBox);
-        PlaceYesNoBox_Conv(14, 12);
+        PlaceYesNoBox(14, 12);
         // LD_A_addr(wMenuCursorY);
         // DEC_A;
         uint8_t cursor = wram->wMenuCursorY;
         // CALL(aCloseWindow);
-        CloseWindow_Conv2();
+        CloseWindow();
         // AND_A_A;
         // IF_NZ goto exit_slots;
         if(cursor == 1) {

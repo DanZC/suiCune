@@ -121,7 +121,7 @@ static void v_SwitchPartyMons_SwapMonAndMail(uint8_t from, uint8_t to) {
     // LD_BC(MAIL_STRUCT_LENGTH);
     // CALL(aAddNTimes);
     // PUSH_HL;
-    OpenSRAM_Conv(MBANK(asPartyMail));
+    OpenSRAM(MBANK(asPartyMail));
     struct MailMsg* hl = (struct MailMsg*)GBToRAMAddr(sPartyMail);
     // LD_DE(wSwitchMonBuffer);
     // LD_BC(MAIL_STRUCT_LENGTH);
@@ -144,7 +144,7 @@ static void v_SwitchPartyMons_SwapMonAndMail(uint8_t from, uint8_t to) {
     // CALL(aCopyBytes);
     CopyBytes(hl + from, wram->wSwitchMonBuffer, MAIL_STRUCT_LENGTH);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // POP_BC;
     // POP_DE;
     // POP_HL;

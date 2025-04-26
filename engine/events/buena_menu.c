@@ -10,7 +10,7 @@ static bool AskRememberPassword_DoMenu(void){
     // PUSH_BC;
     // LD_HL(mYesNoMenuHeader);
     // CALL(aCopyMenuHeader);
-    CopyMenuHeader_Conv2(&YesNoMenuHeader);
+    CopyMenuHeader(&YesNoMenuHeader);
     // POP_BC;
     // LD_A_B;
     // LD_addr_A(wMenuBorderLeftCoord);
@@ -25,9 +25,9 @@ static bool AskRememberPassword_DoMenu(void){
     // LD_addr_A(wMenuBorderBottomCoord);
     wram->wMenuBorderBottomCoord = wram->wMenuBorderTopCoord + 0x4;
     // CALL(aPushWindow);
-    PushWindow_Conv();
+    PushWindow();
     // CALL(aVerticalMenu);
-    bool cancel = !VerticalMenu_Conv();
+    bool cancel = !VerticalMenu();
     // PUSH_AF;
     // LD_C(15);
     // CALL(aDelayFrames);
@@ -71,9 +71,9 @@ void Buena_ExitMenu(void){
     // PUSH_AF;
     uint8_t oamUpdate = hram->hOAMUpdate;
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // CALL(aUpdateSprites);
-    UpdateSprites_Conv();
+    UpdateSprites();
     // XOR_A_A;
     // LDH_addr_A(hOAMUpdate);
     hram->hOAMUpdate = 0;
@@ -83,7 +83,7 @@ void Buena_ExitMenu(void){
     // LDH_addr_A(hOAMUpdate);
     hram->hOAMUpdate = 0x1;
     // CALL(aApplyTilemap);
-    ApplyTilemap_Conv();
+    ApplyTilemap();
     // POP_AF;
     // LDH_addr_A(hOAMUpdate);
     hram->hOAMUpdate = oamUpdate;

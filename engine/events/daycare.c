@@ -194,7 +194,7 @@ bool DayCareLadyIntroText(uint8_t* hl, uint8_t a){
     PrintDayCareText(a);
     // CALL(aYesNoBox);
     // RET;
-    return YesNoBox_Conv();
+    return YesNoBox();
 }
 
 bool DayCareManIntroText(uint8_t* hl, uint8_t a){
@@ -204,7 +204,7 @@ bool DayCareManIntroText(uint8_t* hl, uint8_t a){
     PrintDayCareText(a);
     // CALL(aYesNoBox);
     // RET;
-    return YesNoBox_Conv();
+    return YesNoBox();
 }
 
 u8_flag_s DayCareAskDepositPokemon(void){
@@ -304,7 +304,7 @@ u8_flag_s DayCare_AskWithdrawBreedMon(void){
         PrintDayCareText(DAYCARETEXT_GENIUSES);
         // CALL(aYesNoBox);
         // IF_C goto refused;
-        if(!YesNoBox_Conv()) {
+        if(!YesNoBox()) {
         // refused:
             // LD_A(DAYCARETEXT_OH_FINE);
             // SCF;
@@ -316,7 +316,7 @@ u8_flag_s DayCare_AskWithdrawBreedMon(void){
         PrintDayCareText(DAYCARETEXT_ASK_WITHDRAW);
         // CALL(aYesNoBox);
         // IF_C goto refused;
-        if(!YesNoBox_Conv()) {
+        if(!YesNoBox()) {
         // refused:
             // LD_A(DAYCARETEXT_OH_FINE);
             // SCF;
@@ -331,7 +331,7 @@ u8_flag_s DayCare_AskWithdrawBreedMon(void){
         // CALL(aYesNoBox);
         // IF_C goto refused;
         // goto check_money;
-        if(!YesNoBox_Conv()) {
+        if(!YesNoBox()) {
         // refused:
             // LD_A(DAYCARETEXT_OH_FINE);
             // SCF;
@@ -599,7 +599,7 @@ static const txt_cmd_s NoRoomForEggText[] = {
     PrintText_Conv2(FoundAnEggText);
     // CALL(aYesNoBox);
     // IF_C goto Declined;
-    if(!YesNoBox_Conv()) {
+    if(!YesNoBox()) {
         PrintText_Conv2(IllKeepItThanksText);
         wram->wScriptVar = FALSE;
         return;

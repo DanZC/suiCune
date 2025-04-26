@@ -508,7 +508,7 @@ OTIDScore:
 
 static uint8_t GetTreeScore_CoordScore(void) {
     // CALL(aGetFacingTileCoord);
-    struct CoordsTileId cid = GetFacingTileCoord_Conv();
+    struct CoordsTileId cid = GetFacingTileCoord();
     // LD_HL(0);
     // LD_C_E;
     // LD_B(0);

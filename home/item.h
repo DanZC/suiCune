@@ -1,6 +1,5 @@
 void DoItemEffect(void);
-void CheckTossableItem(void);
-bool CheckTossableItem_Conv(item_t item);
+bool CheckTossableItem(item_t item);
 void TossItem(void);
 bool TossItem_Conv(item_pocket_s* pocket, item_t item);
 void ReceiveItem(void);

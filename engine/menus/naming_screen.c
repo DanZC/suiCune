@@ -46,7 +46,7 @@ void v_NamingScreen_Conv(uint8_t* de, uint8_t b){
     // CALL(aNamingScreen);
     NamingScreen_Conv(de, b);
     // CALL(aReturnToMapWithSpeechTextbox);
-    ReturnToMapWithSpeechTextbox_Conv();
+    ReturnToMapWithSpeechTextbox();
     // RET;
 }
 
@@ -897,7 +897,7 @@ static void NamingScreenJoypadLoop_Jumptable(void) {
 
 bool NamingScreenJoypadLoop(void){
     // CALL(aJoyTextDelay);
-    JoyTextDelay_Conv();
+    JoyTextDelay();
     // LD_A_addr(wJumptableIndex);
     // BIT_A(7);
     // IF_NZ goto quit;
@@ -1647,9 +1647,9 @@ void LoadNamingScreenGFX(void){
     // CALLFAR(aClearSpriteAnims);
     ClearSpriteAnims_Conv();
     // CALL(aLoadStandardFont);
-    LoadStandardFont_Conv();
+    LoadStandardFont();
     // CALL(aLoadFontsExtra);
-    LoadFontsExtra_Conv();
+    LoadFontsExtra();
 
     // LD_DE(mNamingScreenGFX_MiddleLine);
     // LD_HL(vTiles0 + LEN_2BPP_TILE * NAMINGSCREEN_MIDDLELINE);
@@ -2031,7 +2031,7 @@ static void v_ComposeMailMessage_DoJumptable(void){
 
 static bool v_ComposeMailMessage_DoMailEntry(void){
     // CALL(aJoyTextDelay);
-    JoyTextDelay_Conv();
+    JoyTextDelay();
     // LD_A_addr(wJumptableIndex);
     // BIT_A(7);
     // IF_NZ goto exit_mail;

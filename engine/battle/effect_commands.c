@@ -5498,11 +5498,11 @@ void DoEnemyDamage_Conv(bool ignoreSub){
         // PUSH_AF;
         // LD_A(MBANK(asSkipBattle));
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(asSkipBattle));
+        OpenSRAM(MBANK(asSkipBattle));
         // LD_A_addr(sSkipBattle);
         uint8_t skipBattle = gb_read(sSkipBattle);
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
         // OR_A_A;
     // If [sSkipBattle] is nonzero, skip the "jr nc, .no_underflow" check,
     // so any attack deals maximum damage to the enemy.

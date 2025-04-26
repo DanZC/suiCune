@@ -47,7 +47,7 @@ bool TMHMPocket_Conv(void){
     if(!exit)
         return false;
     // CALL(aPlaceHollowCursor);
-    PlaceHollowCursor_Conv();
+    PlaceHollowCursor();
     // CALL(aWaitBGMap);
     WaitBGMap();
     // LD_A_addr(wCurItem);
@@ -126,7 +126,7 @@ bool AskTeachTMHM(void){
         // CALL(aPrintText);
         PrintText_Conv2(ContainedMoveText);
         // CALL(aYesNoBox);
-        quit = !YesNoBox_Conv();
+        quit = !YesNoBox();
     }
 
 // NotTMHM:
@@ -435,7 +435,7 @@ bool TMHM_PocketLoop_Conv(void){
         TMHM_DisplayPocketItems();
         // CALL(aStaticMenuJoypad);
         // LD_B_A;
-        uint8_t b = StaticMenuJoypad_Conv();
+        uint8_t b = StaticMenuJoypad();
         // LD_A_addr(wMenuCursorY);
         // DEC_A;
         // LD_addr_A(wTMHMPocketCursor);

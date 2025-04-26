@@ -268,7 +268,7 @@ void Function17a781(void){
     // LDH_addr_A(hInMenu);
     hram->hInMenu = 0x1;
     // CALL(aJoyTextDelay);
-    JoyTextDelay_Conv();
+    JoyTextDelay();
     // POP_AF;
     // LDH_addr_A(hInMenu);
     hram->hInMenu = inMenu;
@@ -411,7 +411,7 @@ void Function17a81a(void){
     if((hram->hJoyPressed & (A_BUTTON | B_BUTTON)) == 0)
         return;
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // CALL(aFunction17ac1d);
     Function17ac1d();
     // CALL(aFunction17ac2a);
@@ -660,7 +660,7 @@ bool Function17a91e(void){
 
 // asm_17a92c:
     // CALL(aLoadStandardMenuHeader);
-    LoadStandardMenuHeader_Conv();
+    LoadStandardMenuHeader();
     // CALL(aFunction17a99e);
     Function17a99e();
     // LD_HL(0xd088);

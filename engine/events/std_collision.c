@@ -55,7 +55,7 @@ bool CheckFacingTileForStdScript_Conv(uint8_t c){
             // LD_A(BANK(aScript_JumpStdFromRAM));
             // LD_HL(mScript_JumpStdFromRAM);
             // CALL(aCallScript);
-            CallScript_Conv2(Script_JumpStdFromRAM);
+            CallScript(Script_JumpStdFromRAM);
             // SCF;
             // RET;
             return true;

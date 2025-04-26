@@ -35,7 +35,7 @@ void Kurt_PrintTextHowMany(void){
 
 void SelectApricornForKurt(void){
     // CALL(aLoadStandardMenuHeader);
-    LoadStandardMenuHeader_Conv();
+    LoadStandardMenuHeader();
     // LD_C(0x1);
     uint8_t c = 0x1;
     // XOR_A_A;
@@ -82,7 +82,7 @@ void SelectApricornForKurt(void){
 
 done:
     // CALL(aCall_ExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // RET;
 }
 
@@ -176,7 +176,7 @@ uint8_t Kurt_SelectApricorn_Conv(void){
     if(FindApricornsInBag_Conv()) {
         // LD_HL(mKurt_SelectApricorn_MenuHeader);
         // CALL(aCopyMenuHeader);
-        CopyMenuHeader_Conv2(&Kurt_SelectApricorn_MenuHeader);
+        CopyMenuHeader(&Kurt_SelectApricorn_MenuHeader);
         // LD_A_addr(wMenuSelection);
         // LD_addr_A(wMenuCursorPosition);
         wram->wMenuCursorPosition = wram->wMenuSelection;
@@ -184,11 +184,11 @@ uint8_t Kurt_SelectApricorn_Conv(void){
         // LDH_addr_A(hBGMapMode);
         hram->hBGMapMode = BGMAPMODE_NONE;
         // CALL(aInitScrollingMenu);
-        InitScrollingMenu_Conv();
+        InitScrollingMenu();
         // CALL(aUpdateSprites);
-        UpdateSprites_Conv();
+        UpdateSprites();
         // CALL(aScrollingMenu);
-        uint8_t joypad = ScrollingMenu_Conv();
+        uint8_t joypad = ScrollingMenu();
         // LD_A_addr(wMenuJoypad);
         // CP_A(B_BUTTON);
         // IF_Z goto nope;
@@ -281,7 +281,7 @@ bool Kurt_SelectQuantity_Conv(void){
     // IF_Z goto done;
     uint8_t q = Kurt_GetQuantityOfApricorn_Conv(wram->wCurItem);
     if(q == 0) {
-        CloseWindow_Conv2();
+        CloseWindow();
         return false;
     }
     // LD_A_addr(wItemQuantityChange);
@@ -292,7 +292,7 @@ bool Kurt_SelectQuantity_Conv(void){
     wram->wItemQuantityChange = 0x1;
     // LD_HL(mKurt_SelectQuantity_MenuHeader);
     // CALL(aLoadMenuHeader);
-    LoadMenuHeader_Conv2(&Kurt_SelectQuantity_MenuHeader);
+    LoadMenuHeader(&Kurt_SelectQuantity_MenuHeader);
 
     u8_flag_s res;
     do {
@@ -301,15 +301,15 @@ bool Kurt_SelectQuantity_Conv(void){
         // LDH_addr_A(hBGMapMode);
         hram->hBGMapMode = BGMAPMODE_NONE;
         // CALL(aMenuBox);
-        MenuBox_Conv();
+        MenuBox();
         // CALL(aUpdateSprites);
-        UpdateSprites_Conv();
+        UpdateSprites();
         // CALL(aKurt_SelectQuantity_PlaceApricornName);
         Kurt_SelectQuantity_PlaceApricornName();
         // CALL(aPlaceApricornQuantity);
         PlaceApricornQuantity();
         // CALL(aApplyTilemap);
-        ApplyTilemap_Conv();
+        ApplyTilemap();
         // FARCALL(aKurt_SelectQuantity_InterpretJoypad);
         res = Kurt_SelectQuantity_InterpretJoypad();
         // IF_NC goto loop;
@@ -317,7 +317,7 @@ bool Kurt_SelectQuantity_Conv(void){
 
     // PUSH_BC;
     // CALL(aPlayClickSFX);
-    PlayClickSFX_Conv();
+    PlayClickSFX();
     // POP_BC;
     // LD_A_B;
     // CP_A(-1);
@@ -332,7 +332,7 @@ bool Kurt_SelectQuantity_Conv(void){
 
 // done:
     // CALL(aCloseWindow);
-    CloseWindow_Conv2();
+    CloseWindow();
     // RET;
     return f;
 }
@@ -344,7 +344,7 @@ static void Kurt_SelectQuantity_PlaceApricornName(void){
     // LD_D_H;
     // LD_E_L;
     // FARCALL(aPlaceMenuItemName);
-    PlaceMenuItemName_Conv(GetMenuData(), MenuBoxCoord2Tile_Conv() + SCREEN_WIDTH + 1);
+    PlaceMenuItemName_Conv(GetMenuData(), MenuBoxCoord2Tile() + SCREEN_WIDTH + 1);
     // RET;
 }
 
@@ -352,7 +352,7 @@ void PlaceApricornQuantity(void){
     // CALL(aMenuBoxCoord2Tile);
     // LD_DE(2 * SCREEN_WIDTH + 10);
     // ADD_HL_DE;
-    tile_t* hl = MenuBoxCoord2Tile_Conv() + 2 * SCREEN_WIDTH + 10;
+    tile_t* hl = MenuBoxCoord2Tile() + 2 * SCREEN_WIDTH + 10;
     // LD_hl(0xf1);
     *hl = 0xf1;
     // INC_HL;

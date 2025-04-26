@@ -273,7 +273,7 @@ static void RunTradeAnimScript_TradeAnimLayout(void) {
     // CALL(aDisableLCD);
     DisableLCD();
     // CALL(aLoadFontsBattleExtra);
-    LoadFontsBattleExtra_Conv();
+    LoadFontsBattleExtra();
     // CALLFAR(aClearSpriteAnims);
     ClearSpriteAnims_Conv();
     // LDH_A_addr(hCGB);
@@ -433,7 +433,7 @@ bool DoTradeAnimation(void){
     if(bit_test(wram->wJumptableIndex, 7)) {
     // finished:
         // CALL(aLoadStandardFont);
-        LoadStandardFont_Conv();
+        LoadStandardFont();
         // SCF;
         // RET;
         return true;

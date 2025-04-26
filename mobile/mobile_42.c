@@ -272,9 +272,9 @@ void Function1080b7(void){
     // CALL(aMobileTradeAnim_ClearBGMap);
     MobileTradeAnim_ClearBGMap();
     // CALL(aLoadStandardFont);
-    LoadStandardFont_Conv();
+    LoadStandardFont();
     // CALL(aLoadFontsBattleExtra);
-    LoadFontsBattleExtra_Conv();
+    LoadFontsBattleExtra();
 
     // LD_A(0x1);
     // LDH_addr_A(rVBK);
@@ -377,9 +377,9 @@ void Function108157(void){
     // CALL(aMobileTradeAnim_ClearBGMap);
     MobileTradeAnim_ClearBGMap();
     // CALL(aLoadStandardFont);
-    LoadStandardFont_Conv();
+    LoadStandardFont();
     // CALL(aLoadFontsBattleExtra);
-    LoadFontsBattleExtra_Conv();
+    LoadFontsBattleExtra();
     // CALL(aEnableLCD);
     EnableLCD();
     // XOR_A_A;
@@ -575,9 +575,9 @@ bool MobileTradeAnim_JumptableLoop(void){
     // LDH_addr_A(hWY);
     hram->hWY = 0x90;
     // CALL(aLoadStandardFont);
-    LoadStandardFont_Conv();
+    LoadStandardFont();
     // CALL(aLoadFontsBattleExtra);
-    LoadFontsBattleExtra_Conv();
+    LoadFontsBattleExtra();
     // FARCALL(aStubbed_Function106462);
     Stubbed_Function106462();
     // FARCALL(aFunction106464);

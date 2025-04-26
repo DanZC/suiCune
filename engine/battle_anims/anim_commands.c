@@ -2118,7 +2118,7 @@ void BattleAnimCmd_RaiseSub_Conv(void){
 
     // XOR_A_A;  // BANK(sScratch)
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asScratch));
+    OpenSRAM(MBANK(asScratch));
 
     return GetSubstitutePic();
 }
@@ -2205,7 +2205,7 @@ void GetSubstitutePic(void){
 
 // done:
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
@@ -2240,13 +2240,13 @@ void BattleAnimCmd_MinimizeOpp_Conv(void){
 
     // XOR_A_A;  // BANK(sScratch)
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asScratch));
+    OpenSRAM(MBANK(asScratch));
     // CALL(aGetMinimizePic);
     struct MinimizePic pic = GetMinimizePic();
     // CALL(aRequest2bpp);
     CopyBytes(pic.hl, pic.de, pic.c * LEN_2BPP_TILE);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
@@ -2344,14 +2344,14 @@ void BattleAnimCmd_Minimize_Conv(void){
 
     // XOR_A_A;  // BANK(sScratch)
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asScratch));
+    OpenSRAM(MBANK(asScratch));
     // CALL(aGetMinimizePic);
     struct MinimizePic pic = GetMinimizePic();
     // LD_HL(vTiles0 + LEN_2BPP_TILE * 0x00);
     // CALL(aRequest2bpp);
     CopyBytes(vram->vTiles0 + LEN_2BPP_TILE * 0x00, pic.de, pic.c * LEN_2BPP_TILE);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 
     // POP_AF;
     // LDH_addr_A(rSVBK);

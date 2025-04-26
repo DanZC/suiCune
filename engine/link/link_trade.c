@@ -336,13 +336,13 @@ static void PrintWaitingTextAndSyncAndExchangeNybble_PrintWaitingText(void) {
 
 void PrintWaitingTextAndSyncAndExchangeNybble(void){
     // CALL(aLoadStandardMenuHeader);
-    LoadStandardMenuHeader_Conv();
+    LoadStandardMenuHeader();
     // CALL(aPrintWaitingTextAndSyncAndExchangeNybble_PrintWaitingText);
     PrintWaitingTextAndSyncAndExchangeNybble_PrintWaitingText();
     // FARCALL(aWaitLinkTransfer);
     WaitLinkTransfer();
     // CALL(aCall_ExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // CALL(aWaitBGMap2);
     WaitBGMap2();
     // RET;
@@ -433,7 +433,7 @@ static void LinkTradeMenu_UpdateCursor(void) {
     // LD_A_addr(w2DMenuCursorInitX);
     // LD_C_A;
     // CALL(aCoord2Tile);
-    hl = Coord2Tile_Conv(wram->w2DMenuCursorInitX, wram->w2DMenuCursorInitY);
+    hl = Coord2Tile(wram->w2DMenuCursorInitX, wram->w2DMenuCursorInitY);
     // LD_A_addr(w2DMenuCursorOffsets);
     // SWAP_A;
     // AND_A(0xf);
@@ -516,7 +516,7 @@ static bool LinkTradeMenu_TryAnims(void) {
     }
 // skip_anims:
     // CALL(aJoyTextDelay);
-    JoyTextDelay_Conv();
+    JoyTextDelay();
     DelayFrame();
     // CALL(aLinkTradeMenu_GetJoypad);
     // AND_A_A;

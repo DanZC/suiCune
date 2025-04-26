@@ -9,20 +9,8 @@ void DoItemEffect(void){
     v_DoItemEffect_Conv(wram->wCurItem);
 }
 
-void CheckTossableItem(void){
-        PUSH_HL;
-    PUSH_DE;
-    PUSH_BC;
-    FARCALL(av_CheckTossableItem);
-    POP_BC;
-    POP_DE;
-    POP_HL;
-    RET;
-
-}
-
 //  Return false if item can't be removed from the bag.
-bool CheckTossableItem_Conv(item_t item){
+bool CheckTossableItem(item_t item){
     // PUSH_HL;
     // PUSH_DE;
     // PUSH_BC;

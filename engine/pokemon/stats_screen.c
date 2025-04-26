@@ -127,7 +127,7 @@ void StatsScreenInit_Common(void (*hl)(void)){
     // CALL(aClearTilemap);
     ClearTilemap();
     // CALL(aUpdateSprites);
-    UpdateSprites_Conv();
+    UpdateSprites();
     // FARCALL(aStatsScreen_LoadFont);
     StatsScreen_LoadFont_Conv();
     // POP_HL;
@@ -578,7 +578,7 @@ set_carry:
 
 bool StatsScreen_GetJoypad_Conv(uint8_t* a){
     // CALL(aGetJoypad);
-    GetJoypad_Conv2();
+    GetJoypad();
     // LD_A_addr(wMonType);
     // CP_A(TEMPMON);
     // IF_NZ goto not_tempmon;
@@ -1734,7 +1734,7 @@ u8_flag_s StatsScreen_GetAnimationParam_Conv(void){
             // LD_C_L;
             // LD_A(BANK(sBoxMons));
             // CALL(aOpenSRAM);
-            OpenSRAM_Conv(MBANK(asBoxMons));
+            OpenSRAM(MBANK(asBoxMons));
             struct PartyMon* bc = GBToRAMAddr(sBoxMons + (wram->wCurPartyMon * PARTYMON_STRUCT_LENGTH));
             // CALL(aStatsScreen_GetAnimationParam_CheckEggFaintedFrzSlp);
             u8_flag_s res;
@@ -1750,7 +1750,7 @@ u8_flag_s StatsScreen_GetAnimationParam_Conv(void){
             }
             // PUSH_AF;
             // CALL(aCloseSRAM);
-            CloseSRAM_Conv();
+            CloseSRAM();
             // POP_AF;
             // RET;
             return res;
@@ -2202,9 +2202,9 @@ uint8_t* GetNicknamenamePointer_Conv(void){
         case OTPARTYMON:
             return wram->wOTPartyMonOT[wram->wCurPartyMon];
         case BOXMON: {
-            OpenSRAM_Conv(MBANK(asBoxMonOTs));
+            OpenSRAM(MBANK(asBoxMonOTs));
             CopyBytes(wram->wStringBuffer1, GBToRAMAddr(sBoxMonOTs + (wram->wCurPartyMon * NAME_LENGTH)), NAME_LENGTH);
-            CloseSRAM_Conv();
+            CloseSRAM();
             return wram->wStringBuffer1;
         }
         case TEMPMON:
@@ -2234,9 +2234,9 @@ uint8_t* GetNicknamenamePointer2_Conv(void){
         case OTPARTYMON:
             return wram->wOTPartyMonNickname[wram->wCurPartyMon];
         case BOXMON: {
-            OpenSRAM_Conv(MBANK(asBoxMonNicknames));
+            OpenSRAM(MBANK(asBoxMonNicknames));
             CopyBytes(wram->wStringBuffer1, GBToRAMAddr(sBoxMonNicknames), MON_NAME_LENGTH);
-            CloseSRAM_Conv();
+            CloseSRAM();
             return wram->wStringBuffer1;
         }
         case TEMPMON:

@@ -110,7 +110,7 @@ void LoadRTCStartTime(void) {
 
     uint8_t buffer[8];
     memset(buffer, 0, sizeof(buffer));
-    OpenSRAM_Conv(MBANK(asPlayerData));
+    OpenSRAM(MBANK(asPlayerData));
     buffer[0] = gb_read(sPlayerData + (wRTC - wPlayerData) + 4);
     buffer[1] = gb_read(sPlayerData + (wRTC - wPlayerData) + 5);
     buffer[2] = gb_read(sPlayerData + (wRTC - wPlayerData) + 6);
@@ -129,7 +129,7 @@ void LoadRTCStartTime(void) {
                     | ((uint64_t)(uint8_t)buffer[7] << 56ull);
     if(!(time_t)value || (time_t)value == -1) {
         printf("No RTC data found. Start timestamp is %lld. Loading day at 0.\n", (long long)(time_t)value);
-        CloseSRAM_Conv();
+        CloseSRAM();
         sStartTimestamp = 0;
         return;
     }
@@ -141,7 +141,7 @@ void LoadRTCStartTime(void) {
         strftime(tempTimeBuffer, sizeof(tempTimeBuffer), "%a %Y-%m-%d %H:%M:%S", localtime(&sLastTimestamp));
         printf("Current timestamp is %lld (%s).\n", (long long)sLastTimestamp, tempTimeBuffer);
     }
-    CloseSRAM_Conv();
+    CloseSRAM();
 }
 
 void RTCSyncWithSystemTime(void) {

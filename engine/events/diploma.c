@@ -13,7 +13,7 @@ void v_Diploma(void){
     // CALL(aPlaceDiplomaOnScreen);
     PlaceDiplomaOnScreen();
     // CALL(aWaitPressAorB_BlinkCursor);
-    WaitPressAorB_BlinkCursor_Conv();
+    WaitPressAorB_BlinkCursor();
     // RET;
 }
 

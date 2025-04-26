@@ -198,7 +198,7 @@ void BattleTowerText(uint8_t c){
 //  3: Player won
     // ld a, $05
     // call OpenSRAM;$2f9d
-    OpenSRAM_Conv(MBANK(as5_a800));
+    OpenSRAM(MBANK(as5_a800));
     struct EZChatAddr addr = BattleTowerText_GetEZChatAddress(c);
     // ld a, c
     // cp $01
@@ -224,7 +224,7 @@ void BattleTowerText(uint8_t c){
     // call CopyBytes;$2ff2
     CopyBytes(wram->wc688, addr.hl, EASY_CHAT_MESSAGE_LENGTH);
     // call CloseSRAM;$2fad
-    CloseSRAM_Conv();
+    CloseSRAM();
     // ld de, $c5b9
     // ld bc, $c688
     // call PrintEZChatBattleMessage;Call_047_40b3

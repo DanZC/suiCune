@@ -19,15 +19,15 @@ bool SelectMenu(void){
     if(!CheckRegisteredItem()) {
     // NotRegistered:
         // CALL(aOpenText);
-        OpenText_Conv();
+        OpenText();
         // LD_B(BANK(aMayRegisterItemText));
         // LD_HL(mMayRegisterItemText);
         // CALL(aMapTextbox);
-        MapTextbox_Conv(MayRegisterItemText);
+        MapTextbox(MayRegisterItemText);
         // CALL(aWaitButton);
-        WaitButton_Conv();
+        WaitButton();
         // JP(mCloseText);
-        CloseText_Conv();
+        CloseText();
         return false;
     }
     // JP(mUseRegisteredItem);
@@ -181,7 +181,7 @@ SwitchTo:
     case ITEMMENU_NOUSE:
     // CantUse:
         // CALL(aRefreshScreen);
-        RefreshScreen_Conv();
+        RefreshScreen();
         goto _cantuse;
     //dw ['.NoFunction'];
     //dw ['.NoFunction'];
@@ -191,11 +191,11 @@ SwitchTo:
     case 3:
     // NoFunction:
         // CALL(aOpenText);
-        OpenText_Conv();
+        OpenText();
         // CALL(aCantUseItem);
         CantUseItem();
         // CALL(aCloseText);
-        CloseText_Conv();
+        CloseText();
         // AND_A_A;
         // RET;
         return false;
@@ -203,11 +203,11 @@ SwitchTo:
     case ITEMMENU_CURRENT:
     // Current:
         // CALL(aOpenText);
-        OpenText_Conv();
+        OpenText();
         // CALL(aDoItemEffect);
         DoItemEffect();
         // CALL(aCloseText);
-        CloseText_Conv();
+        CloseText();
         // AND_A_A;
         // RET;
         return false;
@@ -215,15 +215,15 @@ SwitchTo:
     case ITEMMENU_PARTY:
     // Party:
         // CALL(aRefreshScreen);
-        RefreshScreen_Conv();
+        RefreshScreen();
         // CALL(aFadeToMenu);
-        FadeToMenu_Conv();
+        FadeToMenu();
         // CALL(aDoItemEffect);
         DoItemEffect();
         // CALL(aCloseSubmenu);
-        CloseSubmenu_Conv();
+        CloseSubmenu();
         // CALL(aCloseText);
-        CloseText_Conv();
+        CloseText();
         // AND_A_A;
         // RET;
         return false;
@@ -231,7 +231,7 @@ SwitchTo:
     case ITEMMENU_CLOSE:
     // Overworld:
         // CALL(aRefreshScreen);
-        RefreshScreen_Conv();
+        RefreshScreen();
         // LD_A(1);
         // LD_addr_A(wUsingItemWithSelect);
         wram->wUsingItemWithSelect = TRUE;
@@ -248,7 +248,7 @@ SwitchTo:
             // CALL(aCantUseItem);
             CantUseItem();
             // CALL(aCloseText);
-            CloseText_Conv();
+            CloseText();
             // AND_A_A;
             // RET;
             return false;

@@ -12,7 +12,7 @@ static uint32_t sBuySellItemPrice;
 bool SelectQuantityToToss(void){
     // LD_HL(mTossItem_MenuHeader);
     // CALL(aLoadMenuHeader);
-    LoadMenuHeader_Conv2(&TossItem_MenuHeader);
+    LoadMenuHeader(&TossItem_MenuHeader);
     // CALL(aToss_Sell_Loop);
     // RET;
     return Toss_Sell_Loop();
@@ -32,7 +32,7 @@ bool RooftopSale_SelectQuantityToBuy(uint16_t price){
     sBuySellItemPrice = (uint32_t)price;
     // LD_HL(mBuyItem_MenuHeader);
     // CALL(aLoadMenuHeader);
-    LoadMenuHeader_Conv2(&BuyItem_MenuHeader);
+    LoadMenuHeader(&BuyItem_MenuHeader);
     // CALL(aToss_Sell_Loop);
     // RET;
     return Toss_Sell_Loop();
@@ -48,7 +48,7 @@ bool SelectQuantityToSell(void){
     sBuySellItemPrice = (uint32_t)price;
     // LD_HL(mSellItem_MenuHeader);
     // CALL(aLoadMenuHeader);
-    LoadMenuHeader_Conv2(&SellItem_MenuHeader);
+    LoadMenuHeader(&SellItem_MenuHeader);
     // CALL(aToss_Sell_Loop);
     // RET;
     return Toss_Sell_Loop();
@@ -83,7 +83,7 @@ bool Toss_Sell_Loop(void){
 
 u8_flag_s BuySellToss_InterpretJoypad(void){
     // CALL(aJoyTextDelay_ForcehJoyDown);  // get joypad
-    uint8_t c = JoyTextDelay_ForcehJoyDown_Conv();
+    uint8_t c = JoyTextDelay_ForcehJoyDown();
     // BIT_C(B_BUTTON_F);
     // IF_NZ goto b;
     if(bit_test(c, B_BUTTON_F)){
@@ -196,9 +196,9 @@ u8_flag_s BuySellToss_InterpretJoypad(void){
 
 void BuySellToss_UpdateQuantityDisplay(void){
     // CALL(aMenuBox);
-    MenuBox_Conv();
+    MenuBox();
     // CALL(aMenuBoxCoord2Tile);
-    tile_t* hl = MenuBoxCoord2Tile_Conv();
+    tile_t* hl = MenuBoxCoord2Tile();
     // LD_DE(SCREEN_WIDTH + 1);
     // ADD_HL_DE;
     // LD_hl(0xf1);

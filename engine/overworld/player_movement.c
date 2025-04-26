@@ -227,7 +227,7 @@ static u8_flag_s DoPlayerMovement_CheckTile(void) {
     // LD_C_A;
     // CALL(aCheckWhirlpoolTile);
     // IF_C goto not_whirlpool;
-    if(CheckWhirlpoolTile_Conv(wram->wPlayerStruct.nextTile))
+    if(CheckWhirlpoolTile(wram->wPlayerStruct.nextTile))
         return u8_flag(PLAYERMOVEMENT_FORCE_TURN, true);
     // LD_A(PLAYERMOVEMENT_FORCE_TURN);
     // SCF;
@@ -418,7 +418,7 @@ static u8_flag_s DoPlayerMovement_TryStep(void) {
     // LD_A_addr(wPlayerStandingTile);
     // CALL(aCheckIceTile);
     // IF_NC goto ice;
-    if(CheckIceTile_Conv(wram->wPlayerStruct.nextTile))
+    if(CheckIceTile(wram->wPlayerStruct.nextTile))
         return (u8_flag_s) {.a = DoPlayerMovement_DoStep(STEP_ICE), .flag = true};
 
 //  Downhill riding is slower when not moving down.
@@ -602,7 +602,7 @@ static uint8_t DoPlayerMovement_CheckSurfable(uint8_t a) {
     // CALL(aGetTileCollision);
     // CP_A(WATER_TILE);
     // IF_Z goto Water;
-    uint8_t col = GetTileCollision_Conv(a);
+    uint8_t col = GetTileCollision(a);
     if(col == WATER_TILE)
         return 0;
 
@@ -756,7 +756,7 @@ static u8_flag_s DoPlayerMovement_CheckWarp(void) {
 
     // CALL(aWarpCheck);
     // IF_NC goto not_warp;
-    if(!WarpCheck_Conv())
+    if(!WarpCheck())
         return u8_flag(PLAYERMOVEMENT_NORMAL, false);
 
     // CALL(aDoPlayerMovement_StandInPlace);
@@ -1094,7 +1094,7 @@ static bool DoPlayerMovement_CheckWalkable(uint8_t a) {
     // RET_Z ;
     // SCF;
     // RET;
-    return GetTileCollision_Conv(a) == LAND_TILE;
+    return GetTileCollision(a) == LAND_TILE;
 }
 
 static bool DoPlayerMovement_BumpSound(void) {
@@ -1115,7 +1115,7 @@ static void DoPlayerMovement_GetOutOfWater(void) {
     // LD_addr_A(wPlayerState);
     wram->wPlayerState = PLAYER_NORMAL;
     // CALL(aUpdatePlayerSprite);  // UpdateSprites
-    UpdatePlayerSprite_Conv();
+    UpdatePlayerSprite();
     // POP_BC;
     // RET;
 }
@@ -1193,7 +1193,7 @@ bool CheckStandingOnIce_Conv(void){
     // LD_A_addr(wPlayerStandingTile);
     // CALL(aCheckIceTile);
     // IF_NC goto yep;
-    if(CheckIceTile_Conv(wram->wPlayerStruct.nextTile))
+    if(CheckIceTile(wram->wPlayerStruct.nextTile))
         return true;
     // LD_A_addr(wPlayerState);
     // CP_A(PLAYER_SKATE);

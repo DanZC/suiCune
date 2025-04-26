@@ -4,7 +4,7 @@
 
 void DelayFrame(void){
     //  Wait for one frame
-    VBlank_Conv();
+    VBlank();
     gb.display.WY = gb.gb_reg.WY;
     gb.display.window_clear = 0;
     gb_finish_frame();

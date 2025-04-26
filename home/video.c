@@ -5,26 +5,8 @@
 
 //  Functions dealing with VRAM.
 
-void DMATransfer(void) {
-    //  Return carry if the transfer is completed.
-
-    LDH_A_addr(hDMATransfer);
-    AND_A_A;
-    RET_Z;
-
-    //  Start transfer
-    LDH_addr_A(rHDMA5);
-
-    //  Execution is halted until the transfer is complete.
-
-    XOR_A_A;
-    LDH_addr_A(hDMATransfer);
-    SCF;
-    RET;
-}
-
 //  Return true if the transfer is completed.
-bool DMATransfer_Conv(void) {
+bool DMATransfer(void) {
     // LDH_A_addr(hDMATransfer);
     // AND_A_A;
     // RET_Z;
@@ -46,91 +28,11 @@ bool DMATransfer_Conv(void) {
     return true;
 }
 
-void UpdateBGMapBuffer(void) {
-    //  Copy [hBGMapTileCount] 16x8 tiles from wBGMapBuffer
-    //  to bg map addresses in wBGMapBufferPointers.
-
-    //  [hBGMapTileCount] must be even since this is done in pairs.
-
-    //  Return carry on success.
-
-    LDH_A_addr(hBGMapUpdate);
-    AND_A_A;
-    RET_Z;
-
-    LDH_A_addr(rVBK);
-    PUSH_AF;
-
-    //  Relocate the stack pointer to wBGMapBufferPointers
-    LD_addr_SP(hSPBuffer);
-    LD_HL(wBGMapBufferPointers);
-    LD_SP_HL;
-
-    //  We can now pop the addresses of affected spots on the BG Map
-
-    LD_HL(wBGMapPalBuffer);
-    LD_DE(wBGMapBuffer);
-
-next:
-    //  Copy a pair of 16x8 blocks (one 16x16 block)
-
-    for (int rept = 0; rept < 2; rept++) {
-        //  Get our BG Map address
-        POP_BC;
-
-        //  Palettes
-        LD_A(1);
-        LDH_addr_A(rVBK);
-
-        LD_A_hli;
-        LD_bc_A;
-        INC_C;
-        LD_A_hli;
-        LD_bc_A;
-        DEC_C;
-
-        //  Tiles
-        LD_A(0);
-        LDH_addr_A(rVBK);
-
-        LD_A_de;
-        INC_DE;
-        LD_bc_A;
-        INC_C;
-        LD_A_de;
-        INC_DE;
-        LD_bc_A;
-    }
-
-    //  We've done 2 16x8 blocks
-    LDH_A_addr(hBGMapTileCount);
-    DEC_A;
-    DEC_A;
-    LDH_addr_A(hBGMapTileCount);
-
-    IF_NZ goto next;
-
-    //  Restore the stack pointer
-    LDH_A_addr(hSPBuffer);
-    LD_L_A;
-    LDH_A_addr(hSPBuffer + 1);
-    LD_H_A;
-    LD_SP_HL;
-
-    POP_AF;
-    LDH_addr_A(rVBK);
-
-    XOR_A_A;
-    LDH_addr_A(hBGMapUpdate);
-    SCF;
-    RET;
-}
-
 //  Copy [hBGMapTileCount] 16x8 tiles from wBGMapBuffer
 //  to bg map addresses in wBGMapBufferPointers.
 //  [hBGMapTileCount] must be even since this is done in pairs.
 //  Return true on success.
-bool UpdateBGMapBuffer_Conv(void) {
+bool UpdateBGMapBuffer(void) {
 
     // LDH_A_addr(hBGMapUpdate);
     // AND_A_A;
@@ -146,16 +48,15 @@ bool UpdateBGMapBuffer_Conv(void) {
     // LD_addr_SP(hSPBuffer);
     // LD_HL(wBGMapBufferPointers);
     // LD_SP_HL;
-    uint16_t sp = wBGMapBufferPointers;
+    uint8_t* sp = wram->wBGMapBufferPointers;
 
     //  We can now pop the addresses of affected spots on the BG Map
 
     // LD_HL(wBGMapPalBuffer);
     // LD_DE(wBGMapBuffer);
-    uint16_t hl = wBGMapPalBuffer;
-    uint16_t de = wBGMapBuffer;
+    uint8_t* hl = wram->wBGMapPalBuffer;
+    uint8_t* de = wram->wBGMapBuffer;
     uint16_t bc = 0;
-    uint8_t tc;
 
     do {
         //  Copy a pair of 16x8 blocks (one 16x16 block)
@@ -163,7 +64,7 @@ bool UpdateBGMapBuffer_Conv(void) {
         for (int rept = 0; rept < 2; rept++) {
             //  Get our BG Map address
             // POP_BC;
-            bc = gb_read(sp + 0) | (gb_read(sp + 1) << 8);
+            bc = sp[0] | (sp[1] << 8);
             sp += 2;
 
             //  Palettes
@@ -173,14 +74,14 @@ bool UpdateBGMapBuffer_Conv(void) {
 
             // LD_A_hli;
             // LD_bc_A;
-            gb_write(bc, gb_read(hl++));
+            gb_write(bc, *(hl++));
 
             // INC_C;
             bc++;
 
             // LD_A_hli;
             // LD_bc_A;
-            gb_write(bc, gb_read(hl++));
+            gb_write(bc, *(hl++));
 
             // DEC_C;
             bc--;
@@ -193,7 +94,7 @@ bool UpdateBGMapBuffer_Conv(void) {
             // LD_A_de;
             // INC_DE;
             // LD_bc_A;
-            gb_write(bc, gb_read(de++));
+            gb_write(bc, *(de++));
 
             // INC_C;
             bc++;
@@ -201,7 +102,7 @@ bool UpdateBGMapBuffer_Conv(void) {
             // LD_A_de;
             // INC_DE;
             // LD_bc_A;
-            gb_write(bc, gb_read(de++));
+            gb_write(bc, *(de++));
         }
 
         //  We've done 2 16x8 blocks
@@ -209,11 +110,9 @@ bool UpdateBGMapBuffer_Conv(void) {
         // DEC_A;
         // DEC_A;
         // LDH_addr_A(hBGMapTileCount);
-        tc = hram->hBGMapTileCount - 2;
-        hram->hBGMapTileCount = tc;
-
+        hram->hBGMapTileCount -= 2;
     // IF_NZ goto next;
-    } while(tc != 0);
+    } while(hram->hBGMapTileCount != 0);
 
     //  Restore the stack pointer
     // LDH_A_addr(hSPBuffer);
@@ -262,156 +161,6 @@ void WaitTop(void) {
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
     // RET;
-}
-
-void UpdateBGMap(void) {
-    //  Update the BG Map, in thirds, from wTilemap and wAttrmap.
-
-    LDH_A_addr(hBGMapMode);
-    AND_A_A;  // 0
-    RET_Z;
-
-    //  BG Map 0
-    DEC_A;  // 1
-    IF_Z goto Tiles;
-    DEC_A;  // 2
-    IF_Z goto Attr;
-
-    //  BG Map 1
-    DEC_A;  // useless
-
-    LDH_A_addr(hBGMapAddress);
-    LD_L_A;
-    LDH_A_addr(hBGMapAddress + 1);
-    LD_H_A;
-    PUSH_HL;
-
-    XOR_A_A;  // LOW(vBGMap1)
-    LDH_addr_A(hBGMapAddress);
-    LD_A(HIGH(vBGMap1));
-    LDH_addr_A(hBGMapAddress + 1);
-
-    LDH_A_addr(hBGMapMode);
-    PUSH_AF;
-    CP_A(3);
-    CALL_Z(aUpdateBGMap_Tiles);
-    POP_AF;
-    CP_A(4);
-    CALL_Z(aUpdateBGMap_Attr);
-
-    POP_HL;
-    LD_A_L;
-    LDH_addr_A(hBGMapAddress);
-    LD_A_H;
-    LDH_addr_A(hBGMapAddress + 1);
-    RET;
-
-Attr:
-    LD_A(1);
-    LDH_addr_A(rVBK);
-
-    hlcoord(0, 0, wAttrmap);
-    CALL(aUpdateBGMap_update);
-
-    LD_A(0);
-    LDH_addr_A(rVBK);
-    RET;
-
-Tiles:
-    hlcoord(0, 0, wTilemap);
-
-update:
-    LD_addr_SP(hSPBuffer);
-
-    //  Which third?
-    LDH_A_addr(hBGMapThird);
-    AND_A_A;  // 0
-    IF_Z goto top;
-    DEC_A;  // 1
-    IF_Z goto middle;
-    // 2
-
-#define THIRD_HEIGHT (SCREEN_HEIGHT / 3)
-
-    //  bottom
-    LD_DE(2 * THIRD_HEIGHT * SCREEN_WIDTH);
-    ADD_HL_DE;
-    LD_SP_HL;
-
-    LDH_A_addr(hBGMapAddress + 1);
-    LD_H_A;
-    LDH_A_addr(hBGMapAddress);
-    LD_L_A;
-
-    LD_DE(2 * THIRD_HEIGHT * BG_MAP_WIDTH);
-    ADD_HL_DE;
-
-    //  Next time: top third
-    XOR_A_A;
-    goto start;
-
-middle:
-    LD_DE(THIRD_HEIGHT * SCREEN_WIDTH);
-    ADD_HL_DE;
-    LD_SP_HL;
-
-    LDH_A_addr(hBGMapAddress + 1);
-    LD_H_A;
-    LDH_A_addr(hBGMapAddress);
-    LD_L_A;
-
-    LD_DE(THIRD_HEIGHT * BG_MAP_WIDTH);
-    ADD_HL_DE;
-
-    //  Next time: bottom third
-    LD_A(2);
-    goto start;
-
-top:
-    LD_SP_HL;
-
-    LDH_A_addr(hBGMapAddress + 1);
-    LD_H_A;
-    LDH_A_addr(hBGMapAddress);
-    LD_L_A;
-
-    //  Next time: middle third
-    LD_A(1);
-
-start:
-    //  Which third to update next time
-    LDH_addr_A(hBGMapThird);
-
-    //  Rows of tiles in a third
-    LD_A(THIRD_HEIGHT);
-
-    //  Discrepancy between wTilemap and BGMap
-    LD_BC(BG_MAP_WIDTH - (SCREEN_WIDTH - 1));
-
-row:
-    //  Copy a row of 20 tiles
-    for (int rept = 0; rept < SCREEN_WIDTH / 2 - 1; rept++) {
-        POP_DE;
-        LD_hl_E;
-        INC_L;
-        LD_hl_D;
-        INC_L;
-    }
-    POP_DE;
-    LD_hl_E;
-    INC_L;
-    LD_hl_D;
-
-    ADD_HL_BC;
-    DEC_A;
-    IF_NZ goto row;
-
-    LDH_A_addr(hSPBuffer);
-    LD_L_A;
-    LDH_A_addr(hSPBuffer + 1);
-    LD_H_A;
-    LD_SP_HL;
-    RET;
 }
 
 static void UpdateBGMap_update(uint8_t* dst, const uint8_t* hl) {
@@ -562,7 +311,7 @@ static void UpdateBGMap_Attr(uint8_t* dst) {
 }
 
 //  Update the BG Map, in thirds, from wTilemap and wAttrmap.
-void UpdateBGMap_Conv(void) {
+void UpdateBGMap(void) {
     // LDH_A_addr(hBGMapMode);
     // AND_A_A;  // 0
     // RET_Z;

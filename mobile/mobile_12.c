@@ -244,7 +244,7 @@ uint8_t InitMobileProfile(uint8_t c){
     // CALL(aFunction486bf);
     Function486bf();
     // CALL(aLoadFontsExtra);
-    LoadFontsExtra_Conv();
+    LoadFontsExtra();
     // LD_DE(mMobileUpArrowGFX);
     // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x10);
     // LD_BC((BANK(aMobileUpArrowGFX) << 8) | 1);
@@ -401,7 +401,7 @@ uint8_t InitMobileProfile(uint8_t c){
     // CALL(aSetPalettes);
     SetPalettes();
     // CALL(aStaticMenuJoypad);
-    uint8_t joypad = StaticMenuJoypad_Conv();
+    uint8_t joypad = StaticMenuJoypad();
     // LD_HL(wMenuCursorY);
     // LD_B_hl;
     // PUSH_BC;
@@ -482,7 +482,7 @@ uint8_t InitMobileProfile(uint8_t c){
     // Function48157:
         // Inlined
         // CALL(aScrollingMenuJoypad);
-        joypad = ScrollingMenuJoypad_Conv();
+        joypad = ScrollingMenuJoypad();
         // LD_HL(wMenuCursorY);
         // LD_B_hl;
         b = wram->wMenuCursorY;
@@ -692,7 +692,7 @@ asm_481f1:
 // MobileProfileOptionPressed
 uint8_t Function4820d(void){
     // CALL(aPlaceHollowCursor);
-    PlaceHollowCursor_Conv();
+    PlaceHollowCursor();
     // LD_HL(wMenuCursorY);
     // LD_A_hl;
     // PUSH_AF;
@@ -725,7 +725,7 @@ uint8_t Function4820d(void){
     }
     // LD_A(0x2);
     // CALL(aMenuClickSound);
-    MenuClickSound_Conv(0x2);
+    MenuClickSound(0x2);
     // LD_A_addr(wd002);
     // BIT_A(6);
     // IF_Z goto asm_4825c;
@@ -793,7 +793,7 @@ void asm_4828d(void){
     PlaceStringSimple(U82C(MobileDesc_Gender), coord(1, 16, wram->wTilemap));
     // LD_HL(mMenuHeader_0x484f1);
     // CALL(aLoadMenuHeader);
-    LoadMenuHeader_Conv2(&MenuHeader_0x484f1);
+    LoadMenuHeader(&MenuHeader_0x484f1);
     // CALL(aFunction4873c);
     Function4873c();
 #if defined(_CRYSTAL_JP)
@@ -826,11 +826,11 @@ void asm_4828d(void){
     // LD_addr_A(wMenuCursorPosition);
     wram->wMenuCursorPosition = wram->wPlayerGender + 1;
     // CALL(aStaticMenuJoypad);
-    uint8_t joypad = StaticMenuJoypad_Conv();
+    uint8_t joypad = StaticMenuJoypad();
     // CALL(aPlayClickSFX);
-    PlayClickSFX_Conv();
+    PlayClickSFX();
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // BIT_A(0);
     // JP_Z (mFunction4840c);
     if(bit_test(joypad, A_BUTTON_F)) {
@@ -891,10 +891,10 @@ void Function48304(void){
     PlaceStringSimple(U82C(MobileDesc_Address), coord(1, 16, wram->wTilemap));
     // LD_HL(mMenuHeader_0x48504);
     // CALL(aLoadMenuHeader);
-    LoadMenuHeader_Conv2(&MenuHeader_0x48504);
+    LoadMenuHeader(&MenuHeader_0x48504);
     // LD_HL(mMenuHeader_0x48513);
     // CALL(aLoadMenuHeader);
-    LoadMenuHeader_Conv2(&MenuHeader_0x48513);
+    LoadMenuHeader(&MenuHeader_0x48513);
     // hlcoord(10, 0, wTilemap);
     // LD_B(0xc);
     // LD_C(0x8);
@@ -935,7 +935,7 @@ void Function48304(void){
     do {
     // asm_48348:
         // CALL(aScrollingMenu);
-        uint8_t a = ScrollingMenu_Conv();
+        uint8_t a = ScrollingMenu();
         // LD_DE(0x629);
         // CALL(aFunction48383);
         cont = Function48383(a, 0x629);
@@ -953,8 +953,8 @@ void Function48304(void){
     // PUSH_AF;
     // CALL(aExitMenu);
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
-    ExitMenu_Conv2();
+    ExitMenu();
+    ExitMenu();
     // POP_AF;
     // LDH_A_addr(hJoyPressed);
     // BIT_A(0);
@@ -1571,7 +1571,7 @@ void Function4876f(void){
     PlaceStringSimple(U82C(MobileDesc_Age), coord(1, 16, wram->wTilemap));
     // LD_HL(mMenuHeader_0x48509);
     // CALL(aLoadMenuHeader);
-    LoadMenuHeader_Conv2(&MenuHeader_0x48509);
+    LoadMenuHeader(&MenuHeader_0x48509);
     // LDH_A_addr(hInMenu);
     // PUSH_AF;
     uint8_t inMenu = hram->hInMenu;
@@ -1657,7 +1657,7 @@ void Function4876f(void){
     do {
     // asm_487c6:
         // CALL(aJoyTextDelay);
-        JoyTextDelay_Conv();
+        JoyTextDelay();
         DelayFrame();
         // CALL(aFunction4880e);
         res = Function4880e();
@@ -1665,7 +1665,7 @@ void Function4876f(void){
     } while(!res.flag);
     // LD_A(0x1);
     // CALL(aMenuClickSound);
-    MenuClickSound_Conv(0x1);
+    MenuClickSound(0x1);
     // POP_BC;
     // IF_NZ goto asm_487da;
     if(res.a == 0) {
@@ -1677,7 +1677,7 @@ void Function4876f(void){
 // asm_487da:
     // LD_A_addr(wd473);
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // hlcoord(11, 6, wTilemap);
     // CALL(aFunction487ec);
     #if defined(_CRYSTAL_JP)
@@ -1953,7 +1953,7 @@ void Function488d3(void){
     #endif
     // LD_HL(mMenuHeader_0x4850e);
     // CALL(aLoadMenuHeader);
-    LoadMenuHeader_Conv2(&MenuHeader_0x4850e);
+    LoadMenuHeader(&MenuHeader_0x4850e);
     // LDH_A_addr(hInMenu);
     // PUSH_AF;
     uint8_t inMenu = hram->hInMenu;
@@ -2040,7 +2040,7 @@ void asm_48922(uint16_t bc, uint16_t de, uint8_t b, uint8_t d, uint8_t inMenu){
     do {
         // PUSH_BC;
         // CALL(aJoyTextDelay);
-        JoyTextDelay_Conv();
+        JoyTextDelay();
         DelayFrame();
         // LDH_A_addr(hJoyDown);
         // AND_A_A;
@@ -2160,13 +2160,13 @@ void asm_48922(uint16_t bc, uint16_t de, uint8_t b, uint8_t d, uint8_t inMenu){
     // PUSH_HL;
     // LD_A(0x1);
     // CALL(aMenuClickSound);
-    MenuClickSound_Conv(0x1);
+    MenuClickSound(0x1);
     // POP_HL;
     // POP_DE;
     // POP_BC;
     // POP_AF;
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // hlcoord(11, 10, wTilemap);
     // CALL(aFunction489ea);
     #if defined(_CRYSTAL_JP)
@@ -2218,7 +2218,7 @@ void ZipCodeEditMenu(const uint8_t* saved, uint8_t b, uint8_t d, uint8_t inMenu)
         #endif
         // push bc
         // call JoyTextDelay
-        JoyTextDelay_Conv();
+        JoyTextDelay();
         // ldh a, [hJoyDown]
         // and a
         // jp z, InputZipcodeCharacters_B0 ; If no button is pressed, jump to InputZipcodeCharacters_B0.
@@ -2367,7 +2367,7 @@ void ZipCodeEditMenu(const uint8_t* saved, uint8_t b, uint8_t d, uint8_t inMenu)
     // push hl
     // ld a, $1
     // call MenuClickSound ; We hear this sound when we leave the zipcode edition code.
-    MenuClickSound_Conv(0x1);
+    MenuClickSound(0x1);
     // farcall Mobile22_Clear24FirstOAM
     Function89448();
     // pop hl
@@ -2375,7 +2375,7 @@ void ZipCodeEditMenu(const uint8_t* saved, uint8_t b, uint8_t d, uint8_t inMenu)
     // pop bc
     // pop af
     // call ExitMenu
-    ExitMenu_Conv2();
+    ExitMenu();
     // call DisplayZipCodeRightAlign
     DisplayZipCodeRightAlign();
     #if defined(_CRYSTAL_AU)
@@ -2785,7 +2785,7 @@ const char String_48a38[] = "-@";
 bool Function48a3a(void){
     // LD_HL(mMenuHeader_0x48a9c);
     // CALL(aLoadMenuHeader);
-    LoadMenuHeader_Conv2(&MenuHeader_0x48a9c);
+    LoadMenuHeader(&MenuHeader_0x48a9c);
     // CALL(aFunction4873c);
     Function4873c();
     // LD_A(0xa);
@@ -2820,11 +2820,11 @@ bool Function48a3a(void){
     #endif
     // CALL(aStaticMenuJoypad);
     // PUSH_AF;
-    uint8_t joypad = StaticMenuJoypad_Conv();
+    uint8_t joypad = StaticMenuJoypad();
     // CALL(aPlayClickSFX);
-    PlayClickSFX_Conv();
+    PlayClickSFX();
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // POP_AF;
     // BIT_A(1);
     // JP_NZ (mFunction48a9a);
@@ -4158,14 +4158,14 @@ void SaveZipcodeWithUniversalFormat(void){
 
     // ld a, BANK(sZipcodeCharIndexes)
     // call OpenSRAM
-    OpenSRAM_Conv(MBANK(as5_b2f4));
+    OpenSRAM(MBANK(as5_b2f4));
     // ld hl, wZipCode
     // ld de, sZipcodeCharIndexes
     // ld bc, ZIPCODE_MAX_LENGTH
     // call CopyBytes
     CopyBytes(GBToRAMAddr(s5_b2f4), wram->wZipCode_Saved, ZIPCODE_MAX_LENGTH);
     // call CloseSRAM
-    CloseSRAM_Conv();
+    CloseSRAM();
     return; // For now
 
     // ld hl, wZipCode + ZIPCODE_LENGTH
@@ -4232,13 +4232,13 @@ void SaveZipcodeWithUniversalFormat(void){
 void LoadZipcodeWithUniversalFormat(void){
     // ld a, BANK(sZipcodeCharIndexes)
     // call OpenSRAM
-    OpenSRAM_Conv(MBANK(as5_b2f4));
+    OpenSRAM(MBANK(as5_b2f4));
     // ld hl, sZipcodeCharIndexes
     // ld de, wZipCode
     // ld bc, ZIPCODE_MAX_LENGTH
     // call CopyBytes
     CopyBytes(wram->wZipCode_Saved, GBToRAMAddr(s5_b2f4), ZIPCODE_MAX_LENGTH);
     // call CloseSRAM
-    CloseSRAM_Conv();
+    CloseSRAM();
     // ret
 }

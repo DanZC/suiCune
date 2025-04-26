@@ -101,7 +101,7 @@ bool SplashScreen(void){
     while(1) {
     // joy_loop:
         // CALL(aJoyTextDelay);
-        JoyTextDelay_Conv();
+        JoyTextDelay();
         // LDH_A_addr(hJoyLast);
         // AND_A(BUTTONS);
         // IF_NZ goto pressed_button;

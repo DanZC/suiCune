@@ -23,7 +23,7 @@ bool SendScreenToPrinter(void){
     do {
     // loop:
         // CALL(aJoyTextDelay);
-        JoyTextDelay_Conv();
+        JoyTextDelay();
         // CALL(aCheckCancelPrint);
         // IF_C goto cancel;
         if(CheckCancelPrint()) {
@@ -373,7 +373,7 @@ void PrintUnownStamp(void){
     while(1){
     // loop:
         // CALL(aJoyTextDelay);
-        JoyTextDelay_Conv();
+        JoyTextDelay();
         // CALL(aCheckCancelPrint);
         // IF_C goto done;
         if(CheckCancelPrint())
@@ -1021,7 +1021,7 @@ void PrintPCBox_Page4(void){
 void Printer_PrintBoxListSegment(tile_t* hl, uint16_t de, uint8_t c){
     // LD_A_addr(wBankOfBoxToPrint);
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(wram->wBankOfBoxToPrint);
+    OpenSRAM(wram->wBankOfBoxToPrint);
     species_t* boxSpecies = (species_t*)GBToRAMAddr(de);
 
     while(1) {
@@ -1147,7 +1147,7 @@ void Printer_PrintBoxListSegment(tile_t* hl, uint16_t de, uint8_t c){
 
 max_length:
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 

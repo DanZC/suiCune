@@ -23,25 +23,25 @@ void HandleNewMap(void){
     // CALL(aResetFlashIfOutOfCave);
     ResetFlashIfOutOfCave();
     // CALL(aGetCurrentMapSceneID);
-    GetCurrentMapSceneID_Conv();
+    GetCurrentMapSceneID();
     // CALL(aResetBikeFlags);
     ResetBikeFlags();
     // LD_A(MAPCALLBACK_NEWMAP);
     // CALL(aRunMapCallback);
-    RunMapCallback_Conv(MAPCALLBACK_NEWMAP);
+    RunMapCallback(MAPCALLBACK_NEWMAP);
     return HandleContinueMap();
 }
 
 void HandleContinueMap(void){
-    GetCurrentMapSceneID_Conv();
+    GetCurrentMapSceneID();
     // FARCALL(aClearCmdQueue);
     ClearCmdQueue();
     // LD_A(MAPCALLBACK_CMDQUEUE);
     // CALL(aRunMapCallback);
-    RunMapCallback_Conv(MAPCALLBACK_CMDQUEUE);
+    RunMapCallback(MAPCALLBACK_CMDQUEUE);
     // CALL(aGetMapTimeOfDay);
     // LD_addr_A(wMapTimeOfDay);
-    wram->wMapTimeOfDay = GetMapTimeOfDay_Conv();
+    wram->wMapTimeOfDay = GetMapTimeOfDay();
     // RET;
 }
 
@@ -364,7 +364,7 @@ static void EnterMapWarp_SaveDigWarp(void) {
     // CALL(aGetMapEnvironment);
     // CALL(aCheckOutdoorMap);
     // RET_NZ ;
-    if(!CheckOutdoorMap_Conv(GetMapEnvironment_Conv2()))
+    if(!CheckOutdoorMap(GetMapEnvironment()))
         return;
     // LD_A_addr(wNextMapGroup);
     // LD_B_A;
@@ -373,7 +373,7 @@ static void EnterMapWarp_SaveDigWarp(void) {
     // CALL(aGetAnyMapEnvironment);
     // CALL(aCheckIndoorMap);
     // RET_NZ ;
-    if(!CheckIndoorMap_Conv(GetAnyMapEnvironment_Conv2(wram->wNextMapGroup, wram->wNextMapNumber)))
+    if(!CheckIndoorMap(GetAnyMapEnvironment(wram->wNextMapGroup, wram->wNextMapNumber)))
         return;
 
 //  MOUNT_MOON_SQUARE and TIN_TOWER_ROOF are outdoor maps within indoor maps.
@@ -409,7 +409,7 @@ static void EnterMapWarp_SetSpawn(void) {
     // CALL(aGetMapEnvironment);
     // CALL(aCheckOutdoorMap);
     // RET_NZ ;
-    if(!CheckOutdoorMap_Conv(GetMapEnvironment_Conv2()))
+    if(!CheckOutdoorMap(GetMapEnvironment()))
         return;
     // LD_A_addr(wNextMapGroup);
     // LD_B_A;
@@ -418,7 +418,7 @@ static void EnterMapWarp_SetSpawn(void) {
     // CALL(aGetAnyMapEnvironment);
     // CALL(aCheckIndoorMap);
     // RET_NZ ;
-    if(!CheckIndoorMap_Conv(GetAnyMapEnvironment_Conv2(wram->wNextMapGroup, wram->wNextMapNumber)))
+    if(!CheckIndoorMap(GetAnyMapEnvironment(wram->wNextMapGroup, wram->wNextMapNumber)))
         return;
     // LD_A_addr(wNextMapGroup);
     // LD_B_A;
@@ -427,7 +427,7 @@ static void EnterMapWarp_SetSpawn(void) {
 
 //  Respawn in Pokémon Centers.
     // CALL(aGetAnyMapTileset);
-    uint8_t tileset = GetAnyMapTileset_Conv2(wram->wNextMapGroup, wram->wNextMapNumber);
+    uint8_t tileset = GetAnyMapTileset(wram->wNextMapGroup, wram->wNextMapNumber);
     // LD_A_C;
     // CP_A(TILESET_POKECENTER);
     // IF_Z goto pokecenter_pokecom;
@@ -561,7 +561,7 @@ void LoadMapTimeOfDay(void){
     // FARCALL(aUpdateTimeOfDayPal);
     UpdateTimeOfDayPal();
     // CALL(aOverworldTextModeSwitch);
-    OverworldTextModeSwitch_Conv();
+    OverworldTextModeSwitch();
     // CALL(aLoadMapTimeOfDay_ClearBGMap);
     LoadMapTimeOfDay_ClearBGMap();
     // CALL(aLoadMapTimeOfDay_PushAttrmap);
@@ -571,9 +571,9 @@ void LoadMapTimeOfDay(void){
 
 void LoadMapGraphics(void){
     // CALL(aLoadMapTileset);
-    LoadMapTileset_Conv2();
+    LoadMapTileset();
     // CALL(aLoadTilesetGFX);
-    LoadTilesetGFX_Conv();
+    LoadTilesetGFX();
     // XOR_A_A;
     // LDH_addr_A(hMapAnims);
     hram->hMapAnims = 0;
@@ -583,7 +583,7 @@ void LoadMapGraphics(void){
     // FARCALL(aRefreshSprites);
     RefreshSprites_Conv();
     // CALL(aLoadFontsExtra);
-    LoadFontsExtra_Conv();
+    LoadFontsExtra();
     // FARCALL(aLoadOverworldFont);
     LoadOverworldFont_Conv();
     // RET;
@@ -614,7 +614,7 @@ void RefreshMapSprites(void){
         // SET_hl(0);
         bit_set(wram->wVramState, 0);
         // CALL(aSafeUpdateSprites);
-        SafeUpdateSprites_Conv();
+        SafeUpdateSprites();
     }
 // skip:
     // LD_A_addr(wPlayerSpriteSetupFlags);

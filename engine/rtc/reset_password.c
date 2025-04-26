@@ -48,9 +48,9 @@ void v_ResetClock(void){
     // CALL(aGetSGBLayout);
     GetSGBLayout(SCGB_DIPLOMA);
     // CALL(aLoadStandardFont);
-    LoadStandardFont_Conv();
+    LoadStandardFont();
     // CALL(aLoadFontsExtra);
-    LoadFontsExtra_Conv();
+    LoadFontsExtra();
     // LD_DE(MUSIC_MAIN_MENU);
     // CALL(aPlayMusic);
     PlayMusic(MUSIC_MAIN_MENU);
@@ -59,13 +59,13 @@ void v_ResetClock(void){
     PrintText_Conv2(PasswordAskResetClockText);
     // LD_HL(mv_ResetClock_NoYes_MenuHeader);
     // CALL(aCopyMenuHeader);
-    CopyMenuHeader_Conv2(&NoYes_MenuHeader);
+    CopyMenuHeader(&NoYes_MenuHeader);
     // CALL(aVerticalMenu);
     // RET_C ;
     // LD_A_addr(wMenuCursorY);
     // CP_A(1);
     // RET_Z ;
-    if(!VerticalMenu_Conv() || wram->wMenuCursorY == 1)
+    if(!VerticalMenu() || wram->wMenuCursorY == 1)
         return;
 // TODO: Actually convert clock reset password system.
 // For now, the system is automatically bypassed.
@@ -73,12 +73,12 @@ void v_ResetClock(void){
     // IF_C goto wrongpassword;
     // LD_A(BANK(sRTCStatusFlags));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asRTCStatusFlags));
+    OpenSRAM(MBANK(asRTCStatusFlags));
     // LD_A(0x80);
     // LD_addr_A(sRTCStatusFlags);
     gb_write(sRTCStatusFlags, 0x80);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // LD_HL(mv_ResetClock_PasswordAskResetText);
     // CALL(aPrintText);
     PrintText_Conv2(PasswordAskResetText);

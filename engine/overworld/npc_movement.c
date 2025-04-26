@@ -205,7 +205,7 @@ bool WillObjectBumpIntoWater_Conv(struct Object* bc){
     // CALL(aGetTileCollision);
     // AND_A_A;  // LAND_TILE
     // JR_Z (mWillObjectBumpIntoTile);
-    if(GetTileCollision_Conv(bc->nextTile) == LAND_TILE)
+    if(GetTileCollision(bc->nextTile) == LAND_TILE)
         return WillObjectBumpIntoTile_Conv(bc);
     // SCF;
     // RET;
@@ -237,7 +237,7 @@ bool WillObjectBumpIntoLand_Conv(struct Object* bc){
     // CALL(aGetTileCollision);
     // CP_A(WATER_TILE);
     // JR_Z (mWillObjectBumpIntoTile);
-    if(GetTileCollision_Conv(bc->nextTile) == WATER_TILE)
+    if(GetTileCollision(bc->nextTile) == WATER_TILE)
         return WillObjectBumpIntoTile_Conv(bc);
     // SCF;
     // RET;
@@ -558,13 +558,13 @@ bool WillObjectRemainOnWater_Conv(struct Object* bc, uint8_t d, uint8_t e){
     // POP_DE;
     // AND_A_A;  // LAND_TILE
     // IF_NZ goto not_land;
-    if(GetTileCollision_Conv(GetCoordTile_Conv(d2, e2)) != LAND_TILE)
+    if(GetTileCollision(GetCoordTile(d2, e2)) != LAND_TILE)
         return true;
     // CALL(aGetCoordTile);
     // CALL(aGetTileCollision);
     // AND_A_A;  // LAND_TILE
     // IF_NZ goto not_land;
-    if(GetTileCollision_Conv(GetCoordTile_Conv(d, e)) != LAND_TILE)
+    if(GetTileCollision(GetCoordTile(d, e)) != LAND_TILE)
         return true;
     // XOR_A_A;
     // RET;
@@ -620,12 +620,12 @@ standing:
 
 struct Object* CheckFacingObject_Conv(void){
     // CALL(aGetFacingTileCoord);
-    struct CoordsTileId res = GetFacingTileCoord_Conv();
+    struct CoordsTileId res = GetFacingTileCoord();
 
 //  Double the distance for counter tiles.
     // CALL(aCheckCounterTile);
     // IF_NZ goto not_counter;
-    if(CheckCounterTile_Conv(res.tileId)) {
+    if(CheckCounterTile(res.tileId)) {
 
         // LD_A_addr(wPlayerStandingMapX);
         // SUB_A_D;
@@ -828,7 +828,7 @@ struct Object* IsNPCAtCoord_Conv(uint8_t d, uint8_t e){
         // LDH_addr_A(hObjectStructIndex);
         // CALL(aDoesObjectHaveASprite);
         // IF_Z goto next;
-        if(!DoesObjectHaveASprite_Conv(bc))
+        if(!DoesObjectHaveASprite(bc))
             continue;
 
         // LD_HL(OBJECT_FLAGS1);

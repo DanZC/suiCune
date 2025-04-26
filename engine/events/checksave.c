@@ -29,7 +29,7 @@ ok:
 uint8_t CheckSave_Conv(void){
     // LD_A(BANK(sCheckValue1));  // aka BANK(sCheckValue2)
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asCheckValue1));
+    OpenSRAM(MBANK(asCheckValue1));
     // LD_A_addr(sCheckValue1);
     // LD_B_A;
     uint8_t b = gb_read(sCheckValue1);
@@ -37,7 +37,7 @@ uint8_t CheckSave_Conv(void){
     // LD_C_A;
     uint8_t c = gb_read(sCheckValue2);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // LD_A_B;
     // CP_A(SAVE_CHECK_VALUE_1);
     // IF_NZ goto ok;

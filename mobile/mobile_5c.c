@@ -71,7 +71,7 @@ void Function170000(void){
 void Function17005a(void){
     // LD_A(0x5);
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as5_a800));
+    OpenSRAM(MBANK(as5_a800));
     struct OfferMon* offer = (struct OfferMon*)GBToRAMAddr(s5_a800 + 1);
     // LD_A_addr(0xa824);
     // LD_addr_A(wOTTrademonSpecies);
@@ -113,35 +113,35 @@ void Function17005a(void){
     // LD_addr_A(wc74e);
     wram->wc74e[0] = wram->wcd81[0];
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
 void Function170be4(void){
     // LD_A(BANK(s5_a894));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as5_a894));
+    OpenSRAM(MBANK(as5_a894));
     // XOR_A_A;
     // LD_HL(s5_a894);
     // LD_BC(6 + 2);
     // CALL(aByteFill);
     ByteFill(GBToRAMAddr(s5_a894), 6+2, 0);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
 void Clears5_a89a(void){
     // LD_A(BANK(s5_a89a));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as5_a89a));
+    OpenSRAM(MBANK(as5_a89a));
     // LD_HL(s5_a89a);
     // XOR_A_A;
     // LD_hli_A;
     // LD_hl_A;
     gb_write16(s5_a89a, 0);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 
 }
@@ -151,7 +151,7 @@ void Function170c06(void){
 //  //  unreferenced
     // LD_A(BANK(s5_a894));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as5_a894));
+    OpenSRAM(MBANK(as5_a894));
     // LD_HL(s5_a894);
     uint8_t* hl = GBToRAMAddr(s5_a894);
     // LD_A_addr(wBattleResult);
@@ -294,7 +294,7 @@ void Function170c06(void){
     printf("Battle record stats: %d, %d, %d, %d\n",
         hl[0], hl[2] | (hl[1] << 8), hl[4] | (hl[3] << 8),
         hl[5]);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -555,7 +555,7 @@ void Function171a11(void){
     while(1) {
     // loop:
         // CALL(aJoyTextDelay);
-        JoyTextDelay_Conv();
+        JoyTextDelay();
         // LD_A_addr(wcd49);
         // BIT_A(7);
         // IF_NZ goto done;
@@ -845,7 +845,7 @@ void Function171b85(void){
     // JP_NZ (mFunction171bbd);
     if(hram->hJoyPressed & A_BUTTON) {
         // CALL(aPlayClickSFX);
-        PlayClickSFX_Conv();
+        PlayClickSFX();
         // LD_A(0x8);
         // LD_addr_A(wcd23);
         wram->wcd23 = 0x8;
@@ -923,17 +923,17 @@ void Function171bdc(void){
 void Function171beb(void){
     // LD_A(0x5);
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as5_aa4a));
+    OpenSRAM(MBANK(as5_aa4a));
     // LD_A_addr(wcd4a);
     // LD_addr_A(0xaa4a);
     gb_write(s5_aa4a, wram->wcd4a);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // LD_HL(mMenuHeader_171c6b);
     // CALL(aLoadMenuHeader);
-    LoadMenuHeader_Conv2(&MenuHeader_171c6b);
+    LoadMenuHeader(&MenuHeader_171c6b);
     // CALL(aMenuBox);
-    MenuBox_Conv();
+    MenuBox();
     // CALL(aMenuBoxCoord2Tile);
     // FARCALL(aReloadMapPart);
     ReloadMapPart_Conv();
@@ -969,7 +969,7 @@ void Function171c2c(void){
     if(--wram->wcd4c != 0)
         return;
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // CALL(aClearBGPalettes);
     ClearBGPalettes();
     // JR(masm_171c60);

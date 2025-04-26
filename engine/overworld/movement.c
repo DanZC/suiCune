@@ -228,7 +228,7 @@ void Movement_skyfall_top(struct Object* bc){
 
 void Movement_step_dig(struct Object* bc){
     // CALL(aGetSpriteDirection);
-    uint8_t a = GetSpriteDirection_Conv(bc);
+    uint8_t a = GetSpriteDirection(bc);
     // RLCA;
     a = (a << 1) | (a >> 7);
     // RLCA;
@@ -259,7 +259,7 @@ void Movement_step_dig(struct Object* bc){
 
 void Movement_return_dig(struct Object* bc){
     // CALL(aGetSpriteDirection);
-    uint8_t a = GetSpriteDirection_Conv(bc);
+    uint8_t a = GetSpriteDirection(bc);
     // RLCA;
     a = (a << 1) | (a >> 7);
     // RLCA;
@@ -1017,7 +1017,7 @@ void NormalStep(struct Object* bc, uint8_t a){
 
     // CALL(aCheckGrassTile);
     // IF_C goto skip_grass;
-    if(CheckSuperTallGrassTile_Conv(bc->nextTile) || CheckGrassTile_Conv(bc->nextTile)) {
+    if(CheckSuperTallGrassTile(bc->nextTile) || CheckGrassTile(bc->nextTile)) {
     // shake_grass:
         // CALL(aShakeGrass);
         ShakeGrass_Conv(bc);

@@ -781,7 +781,7 @@ void Script_writetext_Conv(script_s* s, const struct TextCmd* text){
     // LD_B_A;
     // CALL(aMapTextbox);
     // RET;
-    return MapTextbox_Conv(text);
+    return MapTextbox(text);
 }
 
 void Script_farwritetext(void){
@@ -843,7 +843,7 @@ void Script_repeattext_Conv(script_s* s, uint16_t hl){
     // REG_B = wram->wScriptTextBank;
     // REG_HL = wram->wScriptTextAddr;
     // CALL(aMapTextbox);
-    MapTextbox_Conv(lScriptText);
+    MapTextbox(lScriptText);
     // RET;
 
 
@@ -859,7 +859,7 @@ void Script_waitbutton(void){
 void Script_waitbutton_Conv(script_s* s){
     (void)s;
     // JP(mWaitButton);
-    return WaitButton_Conv();
+    return WaitButton();
 }
 
 void Script_promptbutton(void){
@@ -886,7 +886,7 @@ void Script_promptbutton_Conv(script_s* s){
     // CALL(aWaitBGMap);
     WaitBGMap();
     // CALL(aPromptButton);
-    PromptButton_Conv();
+    PromptButton();
     // POP_AF;
     // LDH_addr_A(hOAMUpdate);
     // RET;
@@ -910,7 +910,7 @@ void Script_yesorno_Conv(script_s* s){
     // CALL(aYesNoBox);
     // LD_A(FALSE);
     // IF_C goto no;
-    if(YesNoBox_Conv()) {
+    if(YesNoBox()) {
         // LD_A(TRUE);
         wram->wScriptVar = TRUE;
     }
@@ -944,9 +944,9 @@ void Script_loadmenu_Conv(script_s* s, const struct MenuHeader* header){
     // LD_DE(mLoadMenuHeader);
     // LD_A_addr(wScriptBank);
     // CALL(aCall_a_de);
-    LoadMenuHeader_Conv2(header);
+    LoadMenuHeader(header);
     // CALL(aUpdateSprites);
-    UpdateSprites_Conv();
+    UpdateSprites();
     // RET;
 }
 
@@ -960,9 +960,9 @@ void Script_closewindow(void){
 void Script_closewindow_Conv(script_s* s){
     (void)s;
     // CALL(aCloseWindow);
-    CloseWindow_Conv2();
+    CloseWindow();
     // CALL(aUpdateSprites);
-    UpdateSprites_Conv();
+    UpdateSprites();
     // RET;
 }
 
@@ -1029,7 +1029,7 @@ void Script_verticalmenu_Conv(script_s* s){
     // LD_A_addr(wScriptBank);
     // LD_HL(mVerticalMenu);
     // RST(aFarCall);
-    bool cancel = !VerticalMenu_Conv();
+    bool cancel = !VerticalMenu();
     // LD_A_addr(wMenuCursorY);
     // IF_NC goto ok;
     // XOR_A_A;
@@ -1058,7 +1058,7 @@ void Script__2dmenu_Conv(script_s* s){
     (void)s;
     // LD_A_addr(wScriptBank);
     // LD_HL(mv_2DMenu);
-    u8_flag_s res = v_2DMenu_Conv();
+    u8_flag_s res = v_2DMenu();
     // RST(aFarCall);
     // LD_A_addr(wMenuCursorPosition);
     // IF_NC goto ok;
@@ -1229,7 +1229,7 @@ void Script_itemnotify_Conv(script_s* s){
     // LD_B(BANK(aPutItemInPocketText));
     // LD_HL(mPutItemInPocketText);
     // CALL(aMapTextbox);
-    MapTextbox_Conv(PutItemInPocketText);
+    MapTextbox(PutItemInPocketText);
     // RET;
 
 }
@@ -1252,7 +1252,7 @@ void Script_pocketisfull_Conv(script_s* s){
     // LD_B(BANK(aPocketIsFullText));
     // LD_HL(mPocketIsFullText);
     // CALL(aMapTextbox);
-    MapTextbox_Conv(PocketIsFullText);
+    MapTextbox(PocketIsFullText);
     // RET;
 }
 
@@ -1508,12 +1508,12 @@ void Script_askforphonenumber_Conv(script_s* s, uint8_t contact){
     // CALL(aYesNoBox);
     // IF_C goto refused;
     uint8_t var;
-    if(YesNoBox_Conv()) {
+    if(YesNoBox()) {
         // CALL(aGetScriptByte);
         // LD_C_A;
         // FARCALL(aAddPhoneNumber);
         // IF_C goto phonefull;
-        if(AddPhoneNumber_Conv2(contact)) {
+        if(AddPhoneNumber(contact)) {
             // XOR_A_A;  // PHONE_CONTACT_GOT
             // goto done;
             var = PHONE_CONTACT_GOT;
@@ -1636,9 +1636,9 @@ void Script_trainertext_Conv(script_s* s, uint8_t a){
     // LD_B_A;
     switch(a) {
     default:
-    case TRAINERTEXT_SEEN: return MapTextbox_Conv(gSeenTextPointer);
-    case TRAINERTEXT_WIN:  return MapTextbox_Conv(gWinTextPointer);
-    case TRAINERTEXT_LOSS: return MapTextbox_Conv(gLossTextPointer);
+    case TRAINERTEXT_SEEN: return MapTextbox(gSeenTextPointer);
+    case TRAINERTEXT_WIN:  return MapTextbox(gWinTextPointer);
+    case TRAINERTEXT_LOSS: return MapTextbox(gLossTextPointer);
     }
     // CALL(aMapTextbox);
     // RET;
@@ -2061,7 +2061,7 @@ void ApplyMovement_Conv(uint8_t c, const uint8_t* hl){
     // LD_B_A;
     // CALL(aGetMovementData);
     // RET_C ;
-    if(!GetMovementData_Conv(c, hl))
+    if(!GetMovementData(c, hl))
         return;
 
     // LD_A(SCRIPT_WAIT_MOVEMENT);
@@ -2306,7 +2306,7 @@ loop:
 static void ApplyObjectFacing_DisableTextTiles(void) {
 // DisableTextTiles:
     // CALL(aLoadMapPart);
-    LoadMapPart_Conv();
+    LoadMapPart();
     // hlcoord(0, 0, wTilemap);
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     uint8_t* hl = wram->wTilemap + coordidx(0, 0);
@@ -2330,7 +2330,7 @@ bool ApplyObjectFacing_Conv(uint8_t d, uint8_t e){
     // PUSH_DE;
     // CALL(aCheckObjectVisibility);
     // IF_C goto not_visible;
-    struct Object* bc = CheckObjectVisibility_Conv(d);
+    struct Object* bc = CheckObjectVisibility(d);
     if(bc == NULL)
         return false;
     // LD_HL(OBJECT_SPRITE);
@@ -2351,7 +2351,7 @@ bool ApplyObjectFacing_Conv(uint8_t d, uint8_t e){
     // POP_DE;
     // LD_A_E;
     // CALL(aSetSpriteDirection);
-    SetSpriteDirection_Conv(bc, e);
+    SetSpriteDirection(bc, e);
     // LD_HL(wVramState);
     // BIT_hl(6);
     // IF_NZ goto text_state;
@@ -2362,7 +2362,7 @@ bool ApplyObjectFacing_Conv(uint8_t d, uint8_t e){
 
 // text_state:
     // CALL(aUpdateSprites);
-    UpdateSprites_Conv();
+    UpdateSprites();
     // RET;
     return true;
 
@@ -2415,7 +2415,7 @@ void Script_appear_Conv(script_s* s, uint8_t a){
     // CALL(aGetScriptObject);
     uint8_t obj = GetScriptObject_Conv(a);
     // CALL(aUnmaskCopyMapObjectStruct);
-    UnmaskCopyMapObjectStruct_Conv(obj);
+    UnmaskCopyMapObjectStruct(obj);
     // LDH_A_addr(hMapObjectIndex);
     // LD_B(0);  // clear
     // CALL(aApplyEventActionAppearDisappear);
@@ -2453,7 +2453,7 @@ void Script_disappear_Conv(script_s* s, uint8_t a){
 
 // ok:
     // CALL(aDeleteObjectStruct);
-    DeleteObjectStruct_Conv(obj);
+    DeleteObjectStruct(obj);
     // LDH_A_addr(hMapObjectIndex);
     // LD_B(1);  // set
     // CALL(aApplyEventActionAppearDisappear);
@@ -2489,7 +2489,7 @@ okay:
 bool ApplyEventActionAppearDisappear_Conv(uint8_t mapObjIdx, uint8_t b){
     // PUSH_BC;
     // CALL(aGetMapObject);
-    struct MapObject* bc = GetMapObject_Conv(mapObjIdx);
+    struct MapObject* bc = GetMapObject(mapObjIdx);
     // LD_HL(MAPOBJECT_EVENT_FLAG);
     // ADD_HL_BC;
     // POP_BC;
@@ -2886,7 +2886,7 @@ void Script_startbattle(void){
 void Script_startbattle_Conv(script_s* s){
     (void)s;
     // CALL(aBufferScreen);
-    BufferScreen_Conv();
+    BufferScreen();
     // PREDEF(pStartBattle);
     StartBattle_Conv();
     // LD_A_addr(wBattleResult);
@@ -2910,7 +2910,7 @@ void Script_catchtutorial_Conv(script_s* s, uint8_t type){
     // LD_addr_A(wBattleType);
     wram->wBattleType = type;
     // CALL(aBufferScreen);
-    BufferScreen_Conv();
+    BufferScreen();
     // FARCALL(aCatchTutorial);
     CatchTutorial();
     // JP(mScript_reloadmap);
@@ -3016,7 +3016,7 @@ void Script_reloadmap_Conv(script_s* s){
     hram->hMapEntryMethod = MAPSETUP_RELOADMAP;
     // LD_A(MAPSTATUS_ENTER);
     // CALL(aLoadMapStatus);
-    LoadMapStatus_Conv(MAPSTATUS_ENTER);
+    LoadMapStatus(MAPSTATUS_ENTER);
     // CALL(aStopScript);
     StopScript_Conv();
     // RET;
@@ -3327,7 +3327,7 @@ no_scene:
 
 void Script_checkscene_Conv(script_s* s) {
     (void)s;
-    wram->wScriptVar = CheckScenes_Conv();
+    wram->wScriptVar = CheckScenes();
 }
 
 void Script_checkmapscene(void){
@@ -3358,7 +3358,7 @@ void Script_checkmapscene_Conv(script_s* s, uint8_t group, uint8_t map){
     // CALL(aGetScriptByte);
     // LD_C_A;
     // CALL(aGetMapSceneID);
-    uint8_t* de = GetMapSceneID_Conv2(group, map);
+    uint8_t* de = GetMapSceneID(group, map);
     // LD_A_D;
     // OR_A_E;
     // IF_Z goto no_scene;
@@ -3433,7 +3433,7 @@ void DoScene_Conv(uint8_t group, uint8_t map, uint8_t scene){
     // CALL(aGetMapSceneID);
     // LD_A_D;
     // OR_A_E;
-    uint8_t* de = GetMapSceneID_Conv2(group, map);
+    uint8_t* de = GetMapSceneID(group, map);
     // IF_Z goto no_scene;
     if(de != NULL) {
         // CALL(aGetScriptByte);
@@ -3867,7 +3867,7 @@ void Script_getcurlandmarkname_Conv(script_s* s, uint8_t b){
     // LD_C_A;
     // CALL(aGetWorldMapLocation);
     (void)s;
-    uint8_t loc = GetWorldMapLocation_Conv2(wram->wMapGroup, wram->wMapNumber);
+    uint8_t loc = GetWorldMapLocation(wram->wMapGroup, wram->wMapNumber);
 
     return ConvertLandmarkToText_Conv(loc, b);
 }
@@ -4587,7 +4587,7 @@ void Script_addcellnum_Conv(script_s* s, uint8_t contact){
     // LD_C_A;
     // FARCALL(aAddPhoneNumber);
     // RET_NC ;
-    if(AddPhoneNumber_Conv2(contact))
+    if(AddPhoneNumber(contact))
         return;
     // LD_A(TRUE);
     // LD_addr_A(wScriptVar);
@@ -5104,7 +5104,7 @@ void Script_warp_Conv(script_s* s, uint8_t group, uint8_t num, uint8_t x, uint8_
         hram->hMapEntryMethod = MAPSETUP_BADWARP;
         // LD_A(MAPSTATUS_ENTER);
         // CALL(aLoadMapStatus);
-        LoadMapStatus_Conv(MAPSTATUS_ENTER);
+        LoadMapStatus(MAPSTATUS_ENTER);
         // CALL(aStopScript);
         StopScript_Conv();
         // RET;
@@ -5129,7 +5129,7 @@ void Script_warp_Conv(script_s* s, uint8_t group, uint8_t num, uint8_t x, uint8_
     hram->hMapEntryMethod = MAPSETUP_WARP;
     // LD_A(MAPSTATUS_ENTER);
     // CALL(aLoadMapStatus);
-    LoadMapStatus_Conv(MAPSTATUS_ENTER);
+    LoadMapStatus(MAPSTATUS_ENTER);
     // CALL(aStopScript);
     StopScript_Conv();
     // RET;
@@ -5289,7 +5289,7 @@ void Script_changeblock_Conv(script_s* s, uint8_t x, uint8_t y, uint8_t b){
     // CALL(aGetBlockLocation);
     // CALL(aGetScriptByte);
     // LD_hl_A;
-    *GetBlockLocation_Conv(x + 4, y + 4) = b;
+    *GetBlockLocation(x + 4, y + 4) = b;
     // CALL(aBufferScreen);
     BufferScreen();
     // RET;
@@ -5312,13 +5312,13 @@ void Script_reloadmappart_Conv(script_s* s){
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aOverworldTextModeSwitch);
-    OverworldTextModeSwitch_Conv();
+    OverworldTextModeSwitch();
     // CALL(aGetMovementPermissions);
     GetMovementPermissions();
     // FARCALL(aReloadMapPart);
     ReloadMapPart_Conv();
     // CALL(aUpdateSprites);
-    UpdateSprites_Conv();
+    UpdateSprites();
     // RET;
 }
 
@@ -5334,7 +5334,7 @@ void Script_warpcheck_Conv(script_s* s){
     (void)s;
     // CALL(aWarpCheck);
     // RET_NC ;
-    if(!WarpCheck_Conv())
+    if(!WarpCheck())
         return;
     // FARCALL(aEnableEvents);
     EnableEvents();
@@ -5365,7 +5365,7 @@ void Script_newloadmap_Conv(script_s* s, uint8_t method){
     hram->hMapEntryMethod = method;
     // LD_A(MAPSTATUS_ENTER);
     // CALL(aLoadMapStatus);
-    LoadMapStatus_Conv(MAPSTATUS_ENTER);
+    LoadMapStatus(MAPSTATUS_ENTER);
     // CALL(aStopScript);
     StopScript_Conv();
     // RET;
@@ -5393,7 +5393,7 @@ void Script_opentext(void){
 void Script_opentext_Conv(script_s* s){
     (void)s;
     // CALL(aOpenText);
-    OpenText_Conv();
+    OpenText();
     // RET;
 }
 
@@ -5409,7 +5409,7 @@ void Script_refreshscreen_Conv(script_s* s){
     // CALL(aRefreshScreen);
     // CALL(aGetScriptByte);
     // RET;
-    RefreshScreen_Conv();
+    RefreshScreen();
 }
 
 void Script_writeunusedbyte(void){
@@ -5436,9 +5436,9 @@ void Script_closetext(void){
 void Script_closetext_Conv(script_s* s){
     (void)s;
     // CALL(av_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
-    v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv();
+    v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap();
     // CALL(aCloseText);
-    CloseText_Conv();
+    CloseText();
     // RET;
 }
 
@@ -5466,7 +5466,7 @@ void Script_autoinput_Conv(script_s* s, const uint8_t* autoinput){
     // LD_H_A;
     // POP_AF;
     // CALL(aStartAutoInput);
-    StartAutoInput_Conv2(autoinput);
+    StartAutoInput(autoinput);
     // RET;
 }
 
@@ -5756,7 +5756,7 @@ void ReturnFromCredits(script_s* s){
     Script_endall_Conv(s);
     // LD_A(MAPSTATUS_DONE);
     // CALL(aLoadMapStatus);
-    LoadMapStatus_Conv(MAPSTATUS_DONE);
+    LoadMapStatus(MAPSTATUS_DONE);
     // CALL(aStopScript);
     StopScript_Conv();
     // RET;

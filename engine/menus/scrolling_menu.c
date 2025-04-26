@@ -41,7 +41,7 @@ void v_InitScrollingMenu_Conv(const struct MenuData* data){
     // CALL(aScrollingMenu_InitDisplay);
     ScrollingMenu_InitDisplay_Conv(data);
     // CALL(aApplyTilemap);
-    ApplyTilemap_Conv();
+    ApplyTilemap();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
@@ -109,7 +109,7 @@ void v_ScrollingMenu_Conv(const struct MenuData* data){
     if(res.a == 0xff)
         res.a = 0;
     // CALL(aMenuClickSound);
-    MenuClickSound_Conv(res.a);
+    MenuClickSound(res.a);
     // LD_addr_A(wMenuJoypad);
     wram->wMenuJoypad = res.a;
     printf("%c%c%c%c%c%c%c%c\n", 
@@ -319,7 +319,7 @@ u8_flag_s ScrollingMenuJoyAction_Conv(const struct MenuData* data){
     do {
     // loop:
         // CALL(aScrollingMenuJoypad);
-        ScrollingMenuJoypad_Conv();
+        ScrollingMenuJoypad();
         // LDH_A_addr(hJoyLast);
         // AND_A(D_PAD);
         // LD_B_A;
@@ -333,7 +333,7 @@ u8_flag_s ScrollingMenuJoyAction_Conv(const struct MenuData* data){
         if(bit_test(input, A_BUTTON_F)) {
         // a_button:
             // CALL(aPlaceHollowCursor);
-            PlaceHollowCursor_Conv();
+            PlaceHollowCursor();
             // LD_A_addr(wMenuCursorY);
             // DEC_A;
             // CALL(aScrollingMenu_GetListItemCoordAndFunctionArgs);
@@ -549,7 +549,7 @@ void ScrollingMenu_ClearLeftColumn_Conv(void){
     // CALL(aMenuBoxCoord2Tile);
     // LD_DE(SCREEN_WIDTH);
     // ADD_HL_DE;
-    tile_t* hl = MenuBoxCoord2Tile_Conv() + SCREEN_WIDTH;
+    tile_t* hl = MenuBoxCoord2Tile() + SCREEN_WIDTH;
     // LD_DE(2 * SCREEN_WIDTH);
     // LD_A_addr(wMenuData_ScrollingMenuHeight);
     uint8_t a = GetMenuData()->scrollingMenu.rows;
@@ -1016,14 +1016,14 @@ void ScrollingMenu_UpdateDisplay_Conv(const struct MenuData* data){
         // LD_C_A;
         // CALL(aCoord2Tile);
         // LD_hl(0x61);
-        *Coord2Tile_Conv(wram->wMenuBorderRightCoord, wram->wMenuBorderTopCoord) = CHAR_UP_ARROW;
+        *Coord2Tile(wram->wMenuBorderRightCoord, wram->wMenuBorderTopCoord) = CHAR_UP_ARROW;
     }
 
 // okay:
     // CALL(aMenuBoxCoord2Tile);
     // LD_BC(SCREEN_WIDTH + 1);
     // ADD_HL_BC;
-    uint8_t* hl = MenuBoxCoord2Tile_Conv() + SCREEN_WIDTH + 1;
+    uint8_t* hl = MenuBoxCoord2Tile() + SCREEN_WIDTH + 1;
     // LD_A_addr(wMenuData_ScrollingMenuHeight);
     // LD_B_A;
     uint8_t b = data->scrollingMenu.rows;
@@ -1088,7 +1088,7 @@ void ScrollingMenu_UpdateDisplay_Conv(const struct MenuData* data){
         // LD_C_A;
         // CALL(aCoord2Tile);
         // LD_hl(0xee);
-        *Coord2Tile_Conv(wram->wMenuBorderRightCoord, wram->wMenuBorderBottomCoord) = CHAR_DOWN_CURSOR;
+        *Coord2Tile(wram->wMenuBorderRightCoord, wram->wMenuBorderBottomCoord) = CHAR_DOWN_CURSOR;
     }
 
 // done:
@@ -1214,7 +1214,7 @@ void ScrollingMenu_PlaceCursor_Conv(const struct MenuData* data){
     // LD_C_A;
     // CALL(aCoord2Tile);
     // LD_hl(0xec);
-    *Coord2Tile_Conv(wram->wMenuBorderLeftCoord, b) = CHAR_RIGHT_CURSOR_SEL;
+    *Coord2Tile(wram->wMenuBorderLeftCoord, b) = CHAR_RIGHT_CURSOR_SEL;
 
 // done:
     // RET;

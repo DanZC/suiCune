@@ -125,7 +125,7 @@ void StageDataForMysteryGift(void){
     // INC_DE;  // wMysteryGiftStaging+1
     // LD_A(BANK(sGameData));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asGameData));
+    OpenSRAM(MBANK(asGameData));
     // LD_HL(sPlayerData + wPlayerID - wPlayerData);
     uint16_t id = gb_read16(sPlayerData + wPlayerID - wPlayerData);
     // LD_A_hli;
@@ -155,7 +155,7 @@ void StageDataForMysteryGift(void){
     // LD_de_A;
     // INC_DE;  // wMysteryGiftStaging+15
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // CALL(aRandom);
     // AND_A(1);
     // LD_de_A;
@@ -174,7 +174,7 @@ void StageDataForMysteryGift(void){
     // INC_DE;  // wMysteryGiftStaging+18
     // LD_A(BANK(sBackupMysteryGiftItem));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBackupMysteryGiftItem));
+    OpenSRAM(MBANK(asBackupMysteryGiftItem));
     // LD_A_addr(sBackupMysteryGiftItem);
     // LD_de_A;
     *(de++) = gb_read(sBackupMysteryGiftItem);
@@ -185,7 +185,7 @@ void StageDataForMysteryGift(void){
     // LD_A(wMysteryGiftPlayerDataEnd - wMysteryGiftPlayerData);
     // LD_addr_A(wUnusedMysteryGiftStagedDataLength);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // LD_HL(wMysteryGiftStaging);
     // LD_DE(wMysteryGiftPlayerData);
     // LD_BC(wMysteryGiftPlayerDataEnd - wMysteryGiftPlayerData);

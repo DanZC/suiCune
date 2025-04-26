@@ -337,10 +337,10 @@ tile_t* MobileHome_PlaceBox(tile_t* hl, uint8_t b, uint8_t c){
 // MobileHome_DrawMenuBox?
 void Function3f7c(void){
     // CALL(aMenuBoxCoord2Tile);
-    uint8_t* hl = MenuBoxCoord2Tile_Conv();
+    uint8_t* hl = MenuBoxCoord2Tile();
     uint8_t c, b;
     // CALL(aGetMenuBoxDims);
-    GetMenuBoxDims_Conv(&c, &b);
+    GetMenuBoxDims(&c, &b);
     // DEC_B;
     // DEC_C;
     // CALL(aFunction3eea);

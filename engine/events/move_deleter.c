@@ -126,7 +126,7 @@ void MoveDeletion(void){
     PrintText_Conv2(DeleterIntroText);
     // CALL(aYesNoBox);
     // IF_C goto declined;
-    if(YesNoBox_Conv()) {
+    if(YesNoBox()) {
         // LD_HL(mMoveDeletion_DeleterAskWhichMonText);
         // CALL(aPrintText);
         PrintText_Conv2(DeleterAskWhichMonText);
@@ -163,12 +163,12 @@ void MoveDeletion(void){
         // CALL(aPrintText);
         PrintText_Conv2(DeleterAskWhichMoveText);
         // CALL(aLoadStandardMenuHeader);
-        LoadStandardMenuHeader_Conv();
+        LoadStandardMenuHeader();
         // FARCALL(aChooseMoveToDelete);
         u8_flag_s res2 = ChooseMoveToDelete_Conv();
         // PUSH_AF;
         // CALL(aReturnToMapWithSpeechTextbox);
-        ReturnToMapWithSpeechTextbox_Conv();
+        ReturnToMapWithSpeechTextbox();
         // POP_AF;
         // IF_C goto declined;
         if(res2.flag)
@@ -186,7 +186,7 @@ void MoveDeletion(void){
         // CALL(aYesNoBox);
         // POP_BC;
         // IF_C goto declined;
-        if(YesNoBox_Conv()) {
+        if(YesNoBox()) {
             // CALL(aMoveDeletion_DeleteMove);
             MoveDeletion_DeleteMove(res2.a - 1);
             // CALL(aWaitSFX);

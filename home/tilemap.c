@@ -59,42 +59,11 @@ void WaitBGMap2(void) {
     // RET;
 }
 
-void IsCGB(void) {
-    SET_PC(aIsCGB);
-    LDH_A_addr(hCGB);
-    AND_A_A;
-    RET;
-}
-
-bool IsCGB_Conv(void){
+bool IsCGB(void){
     return hram->hCGB == 1;
 }
 
 void ApplyTilemap(void) {
-    SET_PC(aApplyTilemap);
-    LDH_A_addr(hCGB);
-    AND_A_A;
-    IF_Z goto dmg;
-
-    LD_A_addr(wSpriteUpdatesEnabled);
-    CP_A(0);
-    IF_Z goto dmg;
-
-    LD_A(1);
-    LDH_addr_A(hBGMapMode);
-    JR(mCopyTilemapAtOnce);
-
-dmg:
-
-    //  WaitBGMap
-    LD_A(1);
-    LDH_addr_A(hBGMapMode);
-    LD_C(4);
-    CALL(aDelayFrames);
-    RET;
-}
-
-void ApplyTilemap_Conv(void) {
     if(hram->hCGB == 0 || wram->wSpriteUpdatesEnabled == 0) {
         //  WaitBGMap
         hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;

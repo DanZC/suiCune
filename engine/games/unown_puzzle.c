@@ -103,7 +103,7 @@ void v_UnownPuzzle(void){
     while(1) {
     // loop:
         // CALL(aJoyTextDelay);
-        JoyTextDelay_Conv();
+        JoyTextDelay();
         // LD_A_addr(wJumptableIndex);
         // BIT_A(7);
         // IF_NZ goto quit;
@@ -515,7 +515,7 @@ void UnownPuzzle_A(void){
     // CALL(aWaitSFX);
     WaitSFX();
     // CALL(aSimpleWaitPressAorB);
-    SimpleWaitPressAorB_Conv();
+    SimpleWaitPressAorB();
     // LD_A(TRUE);
     // LD_addr_A(wSolvedUnownPuzzle);
     wram->wSolvedUnownPuzzle = TRUE;
@@ -1152,7 +1152,7 @@ static void UnownPuzzle_AddPuzzlePieceBorders_LoadGFX(tile_t* hl, const tile_t* 
 
 void UnownPuzzle_AddPuzzlePieceBorders(void){
     // LD_HL(mPuzzlePieceBorderData);
-    OpenSRAM_Conv(MBANK(asScratch));
+    OpenSRAM(MBANK(asScratch));
     // LD_A(8);
     uint8_t* de = (uint8_t*)GBToRAMAddr(sScratch);
     LoadPNG2bppAssetToVRAM(de, TileBordersGFX);
@@ -1181,7 +1181,7 @@ void UnownPuzzle_AddPuzzlePieceBorders(void){
         // DEC_A;
         // IF_NZ goto loop;
     }
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 

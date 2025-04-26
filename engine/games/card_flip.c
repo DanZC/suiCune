@@ -53,9 +53,9 @@ void v_CardFlip(void){
     // CALL(aDisableLCD);
     DisableLCD();
     // CALL(aLoadStandardFont);
-    LoadStandardFont_Conv();
+    LoadStandardFont();
     // CALL(aLoadFontsExtra);
-    LoadFontsExtra_Conv();
+    LoadFontsExtra();
 
     // LD_HL(mCardFlipLZ01);
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
@@ -161,7 +161,7 @@ static void v_CardFlip_CardFlip(void){
         CardFlip_UpdateCoinBalanceDisplay(CardFlipPlayWithThreeCoinsText);
         // CALL(aYesNoBox);
         // IF_C goto SaidNo;
-        if(YesNoBox_Conv()){
+        if(YesNoBox()){
             // CALL(aCardFlip_ShuffleDeck);
             CardFlip_ShuffleDeck();
             // CALL(av_CardFlip_Increment);
@@ -282,7 +282,7 @@ static void v_CardFlip_CardFlip(void){
         while(1){
         // loop:
             // CALL(aJoyTextDelay);
-            JoyTextDelay_Conv();
+            JoyTextDelay();
             // LDH_A_addr(hJoyLast);
             // AND_A(A_BUTTON);
             // IF_NZ goto next;
@@ -361,7 +361,7 @@ static void v_CardFlip_CardFlip(void){
         while(1){
         // betloop:
             // CALL(aJoyTextDelay);
-            JoyTextDelay_Conv();
+            JoyTextDelay();
             // LDH_A_addr(hJoyLast);
             // AND_A(A_BUTTON);
             // IF_NZ goto betdone;
@@ -434,7 +434,7 @@ static void v_CardFlip_CardFlip(void){
         // CALL(aCardFlip_CheckWinCondition);
         CardFlip_CheckWinCondition();
         // CALL(aWaitPressAorB_BlinkCursor);
-        WaitPressAorB_BlinkCursor_Conv();
+        WaitPressAorB_BlinkCursor();
         // CALL(av_CardFlip_Increment);
         v_CardFlip_Increment();
         // RET;
@@ -458,7 +458,7 @@ static void v_CardFlip_CardFlip(void){
         CardFlip_UpdateCoinBalanceDisplay(CardFlipPlayAgainText);
         // CALL(aYesNoBox);
         // IF_NC goto Continue;
-        if(!YesNoBox_Conv()){
+        if(!YesNoBox()){
             // CALL(av_CardFlip_Increment);
             v_CardFlip_Increment();
             // RET;

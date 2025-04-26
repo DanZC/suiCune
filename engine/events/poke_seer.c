@@ -34,7 +34,7 @@ void PokeSeer(void){
     // CALL(aPrintSeerText);
     PrintSeerText(SEER_INTRO);
     // CALL(aJoyWaitAorB);
-    JoyWaitAorB_Conv();
+    JoyWaitAorB();
 
     // LD_B(PARTY_LENGTH);
     // FARCALL(aSelectMonFromParty);

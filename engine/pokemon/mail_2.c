@@ -35,7 +35,7 @@ enum {
 };
 
 void ReadPartyMonMail(void){
-    OpenSRAM_Conv(MBANK(asPartyMail));
+    OpenSRAM(MBANK(asPartyMail));
     // LD_A_addr(wCurPartyMon);
     // LD_HL(sPartyMail);
     // LD_BC(MAIL_STRUCT_LENGTH);
@@ -44,7 +44,7 @@ void ReadPartyMonMail(void){
     // LD_E_L;
     const struct MailMsg* de = ((struct MailMsg*)GBToRAMAddr(sPartyMail)) + wram->wCurPartyMon;
     ReadAnyMail_Conv(de);
-    CloseSRAM_Conv();
+    CloseSRAM();
 }
 
 void ReadAnyMail(void){
@@ -252,7 +252,7 @@ static void ReadAnyMail_LoadGFX(const struct MailMsg* de){
 static void ReadAnyMail_loop(void){
     while(1) {
         // CALL(aGetJoypad);
-        GetJoypad_Conv2();
+        GetJoypad();
         DelayFrame();
         // LDH_A_addr(hJoyPressed);
         // AND_A(A_BUTTON | B_BUTTON | START);
@@ -290,7 +290,7 @@ void ReadAnyMail_Conv(const struct MailMsg* de){
     // CALL(aDisableLCD);
     DisableLCD();
     // CALL(aLoadFontsExtra);
-    LoadFontsExtra_Conv();
+    LoadFontsExtra();
     // POP_DE;
     // PUSH_DE;
     // LD_A(BANK(sPartyMail));
@@ -345,7 +345,7 @@ void ReadAnyMail_Conv(const struct MailMsg* de){
     // CALL(aDisableLCD);
     DisableLCD();
     // CALL(aLoadStandardFont);
-    LoadStandardFont_Conv();
+    LoadStandardFont();
     // JP(mEnableLCD);
     return EnableLCD();
 }

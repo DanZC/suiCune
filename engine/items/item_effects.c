@@ -505,12 +505,12 @@ void PokeBallEffect(void){
     if(wram->wPartyCount == PARTY_LENGTH) {
         // LD_A(BANK(sBoxCount));
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(asBoxCount));
+        OpenSRAM(MBANK(asBoxCount));
         // LD_A_addr(sBoxCount);
         // CP_A(MONS_PER_BOX);
         uint8_t boxCount = gb_read(sBoxCount);
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
         // JP_Z (mBall_BoxIsFullMessage);
         if(boxCount >= MONS_PER_BOX)
             return Ball_BoxIsFullMessage();
@@ -1043,7 +1043,7 @@ void PokeBallEffect(void){
 
                 // CALL(aYesNoBox);
                 // JP_C (mPokeBallEffect_return_from_capture);
-                if(YesNoBox_Conv()) {
+                if(YesNoBox()) {
                     // LD_A_addr(wPartyCount);
                     // DEC_A;
                     // LD_addr_A(wCurPartyMon);
@@ -1067,7 +1067,7 @@ void PokeBallEffect(void){
                     RotateThreePalettesRight_Conv();
 
                     // CALL(aLoadStandardFont);
-                    LoadStandardFont_Conv();
+                    LoadStandardFont();
 
                     // POP_HL;
                     // LD_DE(wStringBuffer1);
@@ -1089,7 +1089,7 @@ void PokeBallEffect(void){
 
                 // LD_A(BANK(sBoxCount));
                 // CALL(aOpenSRAM);
-                OpenSRAM_Conv(MBANK(asBoxCount));
+                OpenSRAM(MBANK(asBoxCount));
 
                 // LD_A_addr(sBoxCount);
                 // CP_A(MONS_PER_BOX);
@@ -1113,7 +1113,7 @@ void PokeBallEffect(void){
 
             // SkipBoxMonFriendBall:
                 // CALL(aCloseSRAM);
-                CloseSRAM_Conv();
+                CloseSRAM();
 
                 // LD_HL(mAskGiveNicknameText);
                 // CALL(aPrintText);
@@ -1126,7 +1126,7 @@ void PokeBallEffect(void){
 
                 // CALL(aYesNoBox);
                 // IF_C goto SkipBoxMonNickname;
-                if(YesNoBox_Conv()) {
+                if(YesNoBox()) {
                     // XOR_A_A;
                     // LD_addr_A(wCurPartyMon);
                     wram->wCurPartyMon = 0x0;
@@ -1140,7 +1140,7 @@ void PokeBallEffect(void){
 
                     // LD_A(BANK(sBoxMonNicknames));
                     // CALL(aOpenSRAM);
-                    OpenSRAM_Conv(MBANK(asBoxMonNicknames));
+                    OpenSRAM(MBANK(asBoxMonNicknames));
 
                     // LD_HL(wMonOrItemNameBuffer);
                     // LD_DE(sBoxMonNicknames);
@@ -1154,13 +1154,13 @@ void PokeBallEffect(void){
                     InitName(GBToRAMAddr(sBoxMonNicknames), wram->wStringBuffer1);
 
                     // CALL(aCloseSRAM);
-                    CloseSRAM_Conv();
+                    CloseSRAM();
                 }
                 
             // SkipBoxMonNickname:
                 // LD_A(BANK(sBoxMonNicknames));
                 // CALL(aOpenSRAM);
-                OpenSRAM_Conv(MBANK(asBoxMonNicknames));
+                OpenSRAM(MBANK(asBoxMonNicknames));
 
                 // LD_HL(sBoxMonNicknames);
                 // LD_DE(wMonOrItemNameBuffer);
@@ -1169,7 +1169,7 @@ void PokeBallEffect(void){
                 CopyBytes(wram->wMonOrItemNameBuffer, GBToRAMAddr(sBoxMonNicknames), MON_NAME_LENGTH);
 
                 // CALL(aCloseSRAM);
-                CloseSRAM_Conv();
+                CloseSRAM();
 
                 // LD_HL(mBallSentToPCText);
                 // CALL(aPrintText);
@@ -1178,7 +1178,7 @@ void PokeBallEffect(void){
                 // CALL(aRotateThreePalettesRight);
                 RotateThreePalettesRight_Conv();
                 // CALL(aLoadStandardFont);
-                LoadStandardFont_Conv();
+                LoadStandardFont();
                 // goto return_from_capture;
             }
         }
@@ -2142,7 +2142,7 @@ void RareCandyEffect(void){
     PrintTempMonStats_Conv(coord(11, 1, wram->wTilemap), 4);
 
     // CALL(aWaitPressAorB_BlinkCursor);
-    WaitPressAorB_BlinkCursor_Conv();
+    WaitPressAorB_BlinkCursor();
 
     // XOR_A_A;  // PARTYMON
     // LD_addr_A(wMonType);
@@ -2767,7 +2767,7 @@ void ItemActionTextWaitButton(void){
     // CALL(aDelayFrames);
     DelayFrames(50);
     // JP(mWaitPressAorB_BlinkCursor);
-    return WaitPressAorB_BlinkCursor_Conv();
+    return WaitPressAorB_BlinkCursor();
 }
 
 void StatusHealer_NoEffect(void){
@@ -3188,7 +3188,7 @@ static u8_flag_s Softboiled_MilkDrinkFunction_SelectMilkDrinkRecipient(uint8_t b
         // PUSH_BC;
         // LD_HL(mSoftboiled_MilkDrinkFunction_ItemCantUseOnMonText);
         // CALL(aMenuTextboxBackup);
-        MenuTextboxBackup_Conv(ItemCantUseOnMonText);
+        MenuTextboxBackup(ItemCantUseOnMonText);
         // POP_BC;
         // goto loop;
     }
@@ -3232,7 +3232,7 @@ void Softboiled_MilkDrinkFunction(void){
         // CALL(aItemActionText);
         ItemActionText(PARTYMENUTEXT_HEAL_HP);
         // CALL(aJoyWaitAorB);
-        JoyWaitAorB_Conv();
+        JoyWaitAorB();
     }
 
 // skip:
@@ -4033,7 +4033,7 @@ void UseItemText(void){
     // CALL(aPlay_SFX_FULL_HEAL);
     Play_SFX_FULL_HEAL();
     // CALL(aWaitPressAorB_BlinkCursor);
-    WaitPressAorB_BlinkCursor_Conv();
+    WaitPressAorB_BlinkCursor();
     return UseDisposableItem();
 }
 

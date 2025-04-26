@@ -88,7 +88,7 @@ void Function1700c4(void){
 
     // LD_A(BANK(s5_be45));  // aka BANK(s5_be46), BANK(s5_aa41), and BANK(s5_aa5d)
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as5_be45));
+    OpenSRAM(MBANK(as5_be45));
     // LD_A(1);
     // LD_addr_A(s5_be45);
     gb_write(s5_be45, 1);
@@ -125,7 +125,7 @@ void Function1700c4(void){
     // CALL(aCopyBytes);
     CopyBytes(hl + (a << 2), wram->w3_dffc, 4);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // RET;
@@ -134,14 +134,14 @@ void Function1700c4(void){
 static void Function170114_Function170121(void){
     // LD_A(BANK(s5_a948));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as5_a948));
+    OpenSRAM(MBANK(as5_a948));
     // LD_HL(s5_a948);
     // LD_DE(wc608);
     // LD_BC(246);
     // CALL(aCopyBytes);
     CopyBytes(wram->wc608, GBToRAMAddr(s5_a948), BATTLE_TOWER_DATA_UPLOAD_LENGTH);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // CALL(aFunction170c8b);
     Function170c8b();
     // RET;
@@ -178,7 +178,7 @@ void Function170139(void){
 //  Convert the 4-digit decimal number at s5_aa41 into binary
     // LD_A(BANK(s5_aa41));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as5_aa41));
+    OpenSRAM(MBANK(as5_aa41));
     // LD_DE(s5_aa41);
     uint8_t* de = GBToRAMAddr(s5_aa41);
     // LD_H(0);
@@ -199,7 +199,7 @@ void Function170139(void){
     // ADD_HL_BC;
     hl += de[3];
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 //  Store that number in wc608
     // LD_A_H;
     // LD_addr_A(wc608);
@@ -272,18 +272,18 @@ void Function170139(void){
     }
 
     // LD_A(BANK(s4_a013));
-    OpenSRAM_Conv(MBANK(as4_a013));
+    OpenSRAM(MBANK(as4_a013));
     // CALL(aOpenSRAM);
     // LD_HL(s4_a013);
     // LD_BC(36);
     // CALL(aCopyBytes);
     CopyBytes(gBattleRecord.EZChatStart, GBToRAMAddr(s4_a013), EASY_CHAT_MESSAGE_LENGTH * 3);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 
     // LD_A(BANK(s5_a894));  // aka BANK(s5_a948)
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as5_a894));
+    OpenSRAM(MBANK(as5_a894));
     // LD_HL(s5_a894);
     // LD_BC(6);
     // CALL(aCopyBytes);
@@ -295,20 +295,20 @@ void Function170139(void){
     CopyBytes(wram->wc608, &gBattleRecord, BATTLE_TOWER_DATA_UPLOAD_LENGTH);
     CopyBytes(GBToRAMAddr(s5_a948), wram->wc608, BATTLE_TOWER_DATA_UPLOAD_LENGTH);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
 void BattleTower_GenerateFakeRecord(void){
 //  Convert the 4-digit decimal number at s5_aa41 into binary
-    OpenSRAM_Conv(MBANK(as5_aa41));
+    OpenSRAM(MBANK(as5_aa41));
     uint8_t* de = GBToRAMAddr(s5_aa41);
     uint16_t hl = 0;
     Function170139_DecToBin(de+0, &hl, 1000);
     Function170139_DecToBin(de+1, &hl, 100);
     Function170139_DecToBin(de+2, &hl, 10);
     hl += de[3];
-    CloseSRAM_Conv();
+    CloseSRAM();
 //  Store that number in wc608
     gBattleRecord.room[0] = HIGH(hl);
     gBattleRecord.room[1] = LOW(hl);
@@ -322,20 +322,20 @@ void BattleTower_GenerateFakeRecord(void){
         CopyBytes(&gBattleRecord.party[i].nickname, wram->wPartyMonNickname[i], sizeof(gBattleRecord.party[i].nickname));
     }
 
-    OpenSRAM_Conv(MBANK(as4_a013));
+    OpenSRAM(MBANK(as4_a013));
     CopyBytes(gBattleRecord.EZChatStart, GBToRAMAddr(s4_a013), EASY_CHAT_MESSAGE_LENGTH);
     CopyBytes(gBattleRecord.EZChatWin, GBToRAMAddr(s4_a013) + 1 * EASY_CHAT_MESSAGE_LENGTH, EASY_CHAT_MESSAGE_LENGTH);
     CopyBytes(gBattleRecord.EZChatLose, GBToRAMAddr(s4_a013) + 2 * EASY_CHAT_MESSAGE_LENGTH, EASY_CHAT_MESSAGE_LENGTH);
-    CloseSRAM_Conv();
+    CloseSRAM();
 
-    OpenSRAM_Conv(MBANK(as5_a894));  // aka BANK(s5_a948)
+    OpenSRAM(MBANK(as5_a894));  // aka BANK(s5_a948)
     gBattleRecord.numTrainersDefeated = 0;
     gBattleRecord.numFaintedMons = 3;
     gBattleRecord.numTurnsRequired = 8;
     gBattleRecord.damageTaken = 4096;
     CopyBytes(wram->wc608, &gBattleRecord, BATTLE_TOWER_DATA_UPLOAD_LENGTH);
     CopyBytes(GBToRAMAddr(s5_a948), wram->wc608, BATTLE_TOWER_DATA_UPLOAD_LENGTH);
-    CloseSRAM_Conv();
+    CloseSRAM();
 }
 
 void BattleTowerBattle(void){
@@ -436,12 +436,12 @@ void RunBattleTowerTrainer(void){
             StubbedTrainerRankings_BattleTowerWins();
         // LD_A(BANK(sNrOfBeatenBattleTowerTrainers));
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(asNrOfBeatenBattleTowerTrainers));
+        OpenSRAM(MBANK(asNrOfBeatenBattleTowerTrainers));
         // LD_A_addr(sNrOfBeatenBattleTowerTrainers);
         // LD_addr_A(wNrOfBeatenBattleTowerTrainers);
         wram->wNrOfBeatenBattleTowerTrainers = gb_read(sNrOfBeatenBattleTowerTrainers);
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
         // LD_HL(wStringBuffer3);
         // LD_A_addr(wNrOfBeatenBattleTowerTrainers);
         // ADD_A(0xf7);
@@ -659,11 +659,11 @@ void ValidateBTParty(void){
         GetBaseData_Conv2(hl->mon.mon.species);
         // LD_A(BANK(s5_b2fb));
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(as5_b2fb));
+        OpenSRAM(MBANK(as5_b2fb));
         // LD_A_addr(s5_b2fb);  // s5_b2fb // max level?
         uint8_t max = gb_read(s5_b2fb);
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
         // LD_E_A;
         // LD_HL(MON_LEVEL);
         // ADD_HL_BC;
@@ -878,7 +878,7 @@ void CopyBTTrainer_FromBT_OT_TowBT_OTTemp(void){
 
         // LD_A(BANK(sBattleTowerChallengeState));
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(asBattleTowerChallengeState));
+        OpenSRAM(MBANK(asBattleTowerChallengeState));
         // LD_A(BATTLETOWER_CHALLENGE_IN_PROGRESS);
         // LD_addr_A(sBattleTowerChallengeState);
         gb_write(sBattleTowerChallengeState, BATTLETOWER_CHALLENGE_IN_PROGRESS);
@@ -886,30 +886,30 @@ void CopyBTTrainer_FromBT_OT_TowBT_OTTemp(void){
         // INC_hl;
         gb_write(sNrOfBeatenBattleTowerTrainers, gb_read(sNrOfBeatenBattleTowerTrainers) + 1);
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
     }
     else {
         // ld a, BANK(sBattleTowerChallengeState)
         // call OpenSRAM
-        OpenSRAM_Conv(MBANK(asBattleTowerChallengeState));
+        OpenSRAM(MBANK(asBattleTowerChallengeState));
         // ld a, BATTLETOWER_CHALLENGE_IN_PROGRESS
         // ld [sBattleTowerChallengeState], a ; sBattleTowerChallengeState = $aa3e in jp
         gb_write(sBattleTowerChallengeState, BATTLETOWER_CHALLENGE_IN_PROGRESS);
-        CloseSRAM_Conv();
-        OpenSRAM_Conv(MBANK(as5_a800));
+        CloseSRAM();
+        OpenSRAM(MBANK(as5_a800));
         // call Function1704ca;Call_05c_44d4
         // ld de, wBT_OTTemp
         // ld bc, BATTLE_TOWER_STRUCT_LENGTH;$00cc ; jp battle tower data length
         // call CopyBytes;$2ff2
         CopyBytes(&wram->wBT_OTTemp, Function1704ca(), sizeof(wram->wBT_OTTemp));
         printf("BTTrainer (class: %d)\n", wram->wBT_OTTemp.trainerClass);
-        CloseSRAM_Conv();
-        OpenSRAM_Conv(MBANK(asBattleTowerChallengeState));
+        CloseSRAM();
+        OpenSRAM(MBANK(asBattleTowerChallengeState));
         // ld hl, sNrOfBeatenBattleTowerTrainers
         // inc [hl]
         gb_write(sNrOfBeatenBattleTowerTrainers, gb_read(sNrOfBeatenBattleTowerTrainers) + 1);
         // call CloseSRAM
-        CloseSRAM_Conv();
+        CloseSRAM();
     }
     return SkipBattleTowerTrainer();
 }
@@ -1193,7 +1193,7 @@ void Function1704e1_JumptableLoop(void){
     while(1) {
     // loop:
         // CALL(aJoyTextDelay);
-        JoyTextDelay_Conv();
+        JoyTextDelay();
         // LD_A_addr(wJumptableIndex);
         // BIT_A(7);
         // IF_NZ goto done;
@@ -1209,7 +1209,7 @@ void Function1704e1_JumptableLoop(void){
         // Jumptable_0:
             // LD_A(BANK(s5_a89c));
             // CALL(aOpenSRAM);
-            OpenSRAM_Conv(MBANK(as5_a89c));
+            OpenSRAM(MBANK(as5_a89c));
 
             // LD_HL(s5_a89c);
             // LD_DE(wStringBuffer3);
@@ -1225,7 +1225,7 @@ void Function1704e1_JumptableLoop(void){
             CopyBytes(wram->wc608, GBToRAMAddr(s5_a8b2), HONOR_ROLL_DATA_LENGTH);
 
             // CALL(aCloseSRAM);
-            CloseSRAM_Conv();
+            CloseSRAM();
             // hlcoord(1, 1, wTilemap);
             // LD_DE(wStringBuffer3);
             // CALL(aPlaceString);
@@ -1328,13 +1328,13 @@ void Function1704e1(void){
     // CALL(aSpeechTextbox);
     SpeechTextbox();
     // CALL(aFadeToMenu);
-    FadeToMenu_Conv();
+    FadeToMenu();
     // CALL(aInitBattleTowerChallengeRAM);
     InitBattleTowerChallengeRAM();
     // CALL(aFunction1704e1_JumptableLoop);
     Function1704e1_JumptableLoop();
     // CALL(aCloseSubmenu);
-    CloseSubmenu_Conv();
+    CloseSubmenu();
     // RET;
 }
 
@@ -1415,7 +1415,7 @@ void BattleTowerAction(void){
 void ResetBattleTowerTrainersSRAM(void){
     // LD_A(BANK(sBTTrainers));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBTTrainers));
+    OpenSRAM(MBANK(asBTTrainers));
 
     // LD_A(0xff);
     // LD_HL(sBTTrainers);
@@ -1428,7 +1428,7 @@ void ResetBattleTowerTrainersSRAM(void){
     gb_write(sNrOfBeatenBattleTowerTrainers, 0);
 
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 
     // RET;
 }
@@ -1469,24 +1469,24 @@ next:
 void Function17071b(void){
     // LD_A(BANK(sBattleTowerChallengeState));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBattleTowerChallengeState));
+    OpenSRAM(MBANK(asBattleTowerChallengeState));
     // LD_A(BATTLETOWER_WON_CHALLENGE);
     // LD_addr_A(sBattleTowerChallengeState);
     gb_write(sBattleTowerChallengeState, BATTLETOWER_WON_CHALLENGE);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
 void Function170729(void){
     // LD_A(BANK(sBattleTowerChallengeState));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBattleTowerChallengeState));
+    OpenSRAM(MBANK(asBattleTowerChallengeState));
     // LD_A(BATTLETOWER_RECEIVED_REWARD);
     // LD_addr_A(sBattleTowerChallengeState);
     gb_write(sBattleTowerChallengeState, BATTLETOWER_RECEIVED_REWARD);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -1532,13 +1532,13 @@ void BattleTowerAction_CheckExplanationRead(void){
 
     // LD_A(BANK(sBattleTowerSaveFileFlags));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBattleTowerSaveFileFlags));
+    OpenSRAM(MBANK(asBattleTowerSaveFileFlags));
     // LD_A_addr(sBattleTowerSaveFileFlags);
     // AND_A(2);
     // LD_addr_A(wScriptVar);
     wram->wScriptVar = gb_read(sBattleTowerSaveFileFlags) & 2;
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 
 }
@@ -1547,12 +1547,12 @@ void BattleTowerAction_GetChallengeState(void){
     // LD_HL(sBattleTowerChallengeState);
     // LD_A(BANK(sBattleTowerChallengeState));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBattleTowerChallengeState));
+    OpenSRAM(MBANK(asBattleTowerChallengeState));
     // LD_A_hl;
     // LD_addr_A(wScriptVar);
     wram->wScriptVar = gb_read(sBattleTowerChallengeState);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 
 }
@@ -1560,13 +1560,13 @@ void BattleTowerAction_GetChallengeState(void){
 void BattleTowerAction_SetExplanationRead(void){
     // LD_A(BANK(sBattleTowerSaveFileFlags));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBattleTowerSaveFileFlags));
+    OpenSRAM(MBANK(asBattleTowerSaveFileFlags));
     // LD_A_addr(sBattleTowerSaveFileFlags);
     // OR_A(2);
     // LD_addr_A(sBattleTowerSaveFileFlags);
     gb_write(sBattleTowerSaveFileFlags, gb_read(sBattleTowerSaveFileFlags) | 2);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 
 }
@@ -1585,12 +1585,12 @@ void BattleTowerAction_SetByteToCancelChallenge(void){
 void SetBattleTowerChallengeState(uint8_t c){
     // LD_A(BANK(sBattleTowerChallengeState));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBattleTowerChallengeState));
+    OpenSRAM(MBANK(asBattleTowerChallengeState));
     // LD_A_C;
     // LD_addr_A(sBattleTowerChallengeState);
     gb_write(sBattleTowerChallengeState, c);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 
 }
@@ -1598,7 +1598,7 @@ void SetBattleTowerChallengeState(uint8_t c){
 void Function1707ac(void){
     // LD_A(BANK(s5_aa8c));  // aka BANK(s5_be46)
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as5_aa8c));
+    OpenSRAM(MBANK(as5_aa8c));
     // LD_A_addr(s5_aa8c);
     // LD_B_A;
     uint8_t b = gb_read(s5_aa8c);
@@ -1606,7 +1606,7 @@ void Function1707ac(void){
     // LD_addr_A(wScriptVar);
     wram->wScriptVar = gb_read(s5_be46);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // AND_A_A;
     // RET_Z ;
     if(!wram->wScriptVar)
@@ -1617,15 +1617,15 @@ void Function1707ac(void){
     if(b < 2) {
         // PUSH_BC;
         // CALL(aUpdateTime);
-        UpdateTime_Conv();
+        UpdateTime();
         // POP_BC;
         // LD_A(BANK(s5_aa8c));
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(as5_aa8c));
+        OpenSRAM(MBANK(as5_aa8c));
         // LD_A_addr(s5_aa8b);
         uint8_t c = gb_read(s5_aa8b);
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
         // LD_C_A;
         // LD_A_addr(wCurDay);
         uint8_t day = wram->wCurDay;
@@ -1667,7 +1667,7 @@ void Function1707ac(void){
 void Function1707f4(void){
     // LD_A(BANK(s5_be46));  // aka BANK(s5_aa8b) and BANK(s5_aa8c)
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as5_be46));
+    OpenSRAM(MBANK(as5_be46));
     // XOR_A_A;
     // LD_addr_A(s5_be46);
     gb_write(s5_be46, 0);
@@ -1675,7 +1675,7 @@ void Function1707f4(void){
     // LD_addr_A(s5_aa8c);
     gb_write16(s5_aa8b, 0);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 
 }
@@ -1683,10 +1683,10 @@ void Function1707f4(void){
 void Function170807(void){
 //  //  BattleTowerAction $16
     // CALL(aUpdateTime);
-    UpdateTime_Conv();
+    UpdateTime();
     // LD_A(BANK(s5_b2f9));  // aka BANK(s5_b2fa)
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as5_b2f9));
+    OpenSRAM(MBANK(as5_b2f9));
     // LD_A_addr(wCurDay);
     // LD_addr_A(s5_b2f9);
     gb_write(s5_b2f9, wram->wCurDay);
@@ -1694,7 +1694,7 @@ void Function170807(void){
     // LD_addr_A(s5_b2fa);
     gb_write(s5_b2fa, 0);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -1704,7 +1704,7 @@ void Function17081d(void){
     wram->wScriptVar = 0;
     // LD_A(BANK(s5_b2f9));  // aka BANK(s5_b2fa)
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as5_b2f9));
+    OpenSRAM(MBANK(as5_b2f9));
     // LD_A_addr(s5_b2f9);
     // LD_C_A;
     uint8_t c = gb_read(s5_b2f9);
@@ -1712,13 +1712,13 @@ void Function17081d(void){
     // LD_B_A;
     uint8_t b = gb_read(s5_b2fa);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // CP_A(2);
     // IF_NC goto asm_170853;
     if(b < 2) {
         // PUSH_BC;
         // CALL(aUpdateTime);
-        UpdateTime_Conv();
+        UpdateTime();
         // POP_BC;
         // LD_A_addr(wCurDay);
         // SUB_A_C;
@@ -1751,20 +1751,20 @@ void Function17081d(void){
     wram->wScriptVar = 1;
     // LD_A(BANK(s5_b2f9));  // aka BANK(s5_b2fa)
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as5_b2f9));
+    OpenSRAM(MBANK(as5_b2f9));
     // XOR_A_A;
     // LD_addr_A(s5_b2f9);
     // LD_addr_A(s5_b2fa);
     gb_write16(s5_b2f9, 0);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
 void SaveBattleTowerLevelGroup(void){
     // LD_A(BANK(sBTChoiceOfLevelGroup));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBTChoiceOfLevelGroup));
+    OpenSRAM(MBANK(asBTChoiceOfLevelGroup));
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(BANK(wBTChoiceOfLvlGroup));
@@ -1775,7 +1775,7 @@ void SaveBattleTowerLevelGroup(void){
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -1783,7 +1783,7 @@ void SaveBattleTowerLevelGroup(void){
 void LoadBattleTowerLevelGroup(void){
     // LD_A(BANK(sBTChoiceOfLevelGroup));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBTChoiceOfLevelGroup));
+    OpenSRAM(MBANK(asBTChoiceOfLevelGroup));
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(BANK(wBTChoiceOfLvlGroup));
@@ -1794,7 +1794,7 @@ void LoadBattleTowerLevelGroup(void){
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 
 }
@@ -1836,22 +1836,22 @@ void Function1708b1(void){
 void CheckMobileEventIndex(void){
     // LD_A(BANK(sMobileEventIndex));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asMobileEventIndex));
+    OpenSRAM(MBANK(asMobileEventIndex));
     // LD_A_addr(sMobileEventIndex);
     // LD_addr_A(wScriptVar);
     wram->wScriptVar = gb_read(sMobileEventIndex);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
 void Function1708c8(void){
 //  //  BattleTowerAction $0c
     // CALL(aUpdateTime);
-    UpdateTime_Conv();
+    UpdateTime();
     // LD_A(BANK(s5_aa8b));  // aka BANK(s5_aa8c), BANK(s5_aa5d), BANK(s5_aa48), and BANK(s5_aa47)
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as5_aa8b));
+    OpenSRAM(MBANK(as5_aa8b));
     // LD_A_addr(wCurDay);
     // LD_addr_A(s5_aa8b);
     gb_write(s5_aa8b, wram->wCurDay);
@@ -1872,7 +1872,7 @@ void Function1708c8(void){
 
 // asm_1708ec:
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -1908,7 +1908,7 @@ void Function1708f0(void){
 void Function170923(void){
     // LD_A(BANK(s5_aa48));  // aka BANK(s5_aa47) and BANK(s5_aa5d)
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as5_aa48));
+    OpenSRAM(MBANK(as5_aa48));
     // XOR_A_A;
     // LD_addr_A(s5_aa48);
     gb_write(s5_aa48, 0);
@@ -1920,7 +1920,7 @@ void Function170923(void){
     // CALL(aByteFill);
     ByteFill(hl, MOBILE_LOGIN_PASSWORD_LENGTH, 0);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -2053,23 +2053,23 @@ void Function1709bb(void){
     wram->wScriptVar = FALSE;
     // LD_A(BANK(s5_a800));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as5_a800));
+    OpenSRAM(MBANK(as5_a800));
     // LD_A_addr(s5_a800);
     uint8_t a = gb_read(s5_a800);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // CP_A(6);
     // IF_NC goto invalid;
     if(a >= 6) {
     // invalid:
         // LD_A(BANK(s5_a800));
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(as5_a800));
+        OpenSRAM(MBANK(as5_a800));
         // XOR_A_A;
         // LD_addr_A(s5_a800);
         gb_write(s5_a800, 0);
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
         // RET;
         return;
     }
@@ -2094,18 +2094,18 @@ void Function1709bb(void){
         // DoAction1:
             // LD_A(BANK(s5_a800));
             // CALL(aOpenSRAM);
-            OpenSRAM_Conv(MBANK(as5_a800));
+            OpenSRAM(MBANK(as5_a800));
             // LD_A(1);
             // LD_addr_A(s5_a800);
             gb_write(s5_a800, 1);
             // CALL(aCloseSRAM);
-            CloseSRAM_Conv();
+            CloseSRAM();
             return;
         case 4: //dw ['.Action4'];
         // Action4:
             // LD_A(BANK(s5_b023));  // aka BANK(s5_a825) and BANK(s5_a826)
             // CALL(aOpenSRAM);
-            OpenSRAM_Conv(MBANK(as5_b023));
+            OpenSRAM(MBANK(as5_b023));
             // LD_HL(s5_b023);
             // LD_DE(wc608);
             // LD_BC(105);
@@ -2118,7 +2118,7 @@ void Function1709bb(void){
             // LD_addr_A(wcd31);
             wram->wcd31 = gb_read(s5_a826);
             // CALL(aCloseSRAM);
-            CloseSRAM_Conv();
+            CloseSRAM();
             // FARCALL(aFunction11b6b4);
             Function11b6b4();
             // FARCALL(aFunction17d0f3);
@@ -2140,7 +2140,7 @@ void Function1709bb(void){
             // CALL(aCloseSRAM);
             // LD_A(BANK(s5_b08c));
             // CALL(aOpenSRAM);
-            OpenSRAM_Conv(MBANK(as5_b08c));
+            OpenSRAM(MBANK(as5_b08c));
             // LD_HL(s5_b08c);
             // LD_DE(wc608);
             // LD_C(4);
@@ -2155,13 +2155,13 @@ void Function1709bb(void){
             // IF_NZ goto compare_loop;
             if(CompareBytes(wram->wc608, GBToRAMAddr(s5_b08c), 4) == 0) {
                 // CALL(aCloseSRAM);
-                CloseSRAM_Conv();
+                CloseSRAM();
                 // LD_A_addr(wMapGroup);
                 // LD_B_A;
                 // LD_A_addr(wMapNumber);
                 // LD_C_A;
                 // CALL(aGetMapSceneID);
-                uint8_t* var = GetMapSceneID_Conv2(wram->wMapGroup, wram->wMapNumber);
+                uint8_t* var = GetMapSceneID(wram->wMapGroup, wram->wMapNumber);
                 // LD_A_D;
                 // OR_A_E;
                 // IF_Z goto no_scene;
@@ -2181,15 +2181,15 @@ void Function1709bb(void){
             else {
             // different:
                 // CALL(aCloseSRAM);
-                CloseSRAM_Conv();
+                CloseSRAM();
                 // LD_A(BANK(s5_a800));
                 // CALL(aOpenSRAM);
-                OpenSRAM_Conv(MBANK(as5_a800));
+                OpenSRAM(MBANK(as5_a800));
                 // XOR_A_A;
                 // LD_addr_A(s5_a800);
                 gb_write(s5_a800, 0);
                 // CALL(aCloseSRAM);
-                CloseSRAM_Conv();
+                CloseSRAM();
                 // LD_addr_A(wScriptVar);
                 wram->wScriptVar = FALSE;
                 // LD_A_addr(wMapGroup);
@@ -2197,7 +2197,7 @@ void Function1709bb(void){
                 // LD_A_addr(wMapNumber);
                 // LD_C_A;
                 // CALL(aGetMapSceneID);
-                uint8_t* var = GetMapSceneID_Conv2(wram->wMapGroup, wram->wMapNumber);
+                uint8_t* var = GetMapSceneID(wram->wMapGroup, wram->wMapNumber);
                 // LD_A_D;
                 // OR_A_E;
                 // IF_Z goto no_scene_2;
@@ -2230,12 +2230,12 @@ void Function170aa0(void){
 void Set_s5_aa8d(uint8_t c){
     // LD_A(BANK(s5_aa8d));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as5_aa8d));
+    OpenSRAM(MBANK(as5_aa8d));
     // LD_A_C;
     // LD_addr_A(s5_aa8d);
     gb_write(s5_aa8d, c);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -2243,12 +2243,12 @@ void Function170aaf(void){
 //  //  BattleTowerAction $13
     // LD_A(BANK(s5_aa8d));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as5_aa8d));
+    OpenSRAM(MBANK(as5_aa8d));
     // LD_A_addr(s5_aa8d);
     // LD_addr_A(wScriptVar);
     wram->wScriptVar = gb_read(s5_aa8d);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -2264,13 +2264,13 @@ void Function170abe(void){
 
     // LD_A(BANK(sBattleTowerSaveFileFlags));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBattleTowerSaveFileFlags));
+    OpenSRAM(MBANK(asBattleTowerSaveFileFlags));
     // LD_A_addr(sBattleTowerSaveFileFlags);
     // AND_A(1);
     // LD_addr_A(wScriptVar);
     wram->wScriptVar = gb_read(sBattleTowerSaveFileFlags) & 1;
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -2278,24 +2278,24 @@ void Function170ad7(void){
 //  //  BattleTowerAction $15
     // LD_A(BANK(sBattleTowerSaveFileFlags));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBattleTowerSaveFileFlags));
+    OpenSRAM(MBANK(asBattleTowerSaveFileFlags));
     // LD_A_addr(sBattleTowerSaveFileFlags);
     // OR_A(1);
     // LD_addr_A(sBattleTowerSaveFileFlags);
     gb_write(sBattleTowerSaveFileFlags, gb_read(sBattleTowerSaveFileFlags) | 1);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
 void BattleTowerAction_LevelCheck(void){
     // LD_A(BANK(s5_b2fb));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as5_b2fb));
+    OpenSRAM(MBANK(as5_b2fb));
     // LD_A_addr(s5_b2fb);
     uint8_t a = gb_read(s5_b2fb);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // LD_C(10);
     // CALL(aSimpleDivide);
     // LD_A_B;
@@ -2310,11 +2310,11 @@ void BattleTowerAction_LevelCheck(void){
         return;
     // LD_A(BANK(s5_b2fb));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as5_b2fb));
+    OpenSRAM(MBANK(as5_b2fb));
     // LD_A_addr(s5_b2fb);
     wram->wScriptVar = gb_read(s5_b2fb);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // LD_addr_A(wScriptVar);
     // RET;
 }
@@ -2322,11 +2322,11 @@ void BattleTowerAction_LevelCheck(void){
 void BattleTowerAction_UbersCheck(void){
     // LD_A(BANK(s5_b2fb));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as5_b2fb));
+    OpenSRAM(MBANK(as5_b2fb));
     // LD_A_addr(s5_b2fb);
     uint8_t a = gb_read(s5_b2fb);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // LD_C(10);
     // CALL(aSimpleDivide);
     // LD_A_B;
@@ -2341,11 +2341,11 @@ void BattleTowerAction_UbersCheck(void){
         return;
     // LD_A(BANK(s5_b2fb));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as5_b2fb));
+    OpenSRAM(MBANK(as5_b2fb));
     // LD_A_addr(s5_b2fb);
     wram->wScriptVar = gb_read(s5_b2fb);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // LD_addr_A(wScriptVar);
     // RET;
 }
@@ -2371,7 +2371,7 @@ void LoadOpponentTrainerAndPokemonWithOTSprite(void){
     else {
         // ld a, $05
         // call OpenSRAM;$2f9d
-        OpenSRAM_Conv(MBANK(as5_a800));
+        OpenSRAM(MBANK(as5_a800));
         // call Function1704ca;Call_05c_44d4
         struct BattleTowerData* data = Function1704ca();
         // ld de, NAME_LENGTH - 1;$0005
@@ -2458,15 +2458,15 @@ void CheckForBattleTowerRules(void){
 }
 
 void BattleTowerAction_SavePokemonSelection(void) {
-    OpenSRAM_Conv(MBANK(asBattleTowerChallengeState));
+    OpenSRAM(MBANK(asBattleTowerChallengeState));
     CopyBytes(GBToRAMAddr(0xbe60), wram->wPlayerMonSelection, 3);
-    CloseSRAM_Conv();
+    CloseSRAM();
 }
 
 void BattleTowerAction_LoadPokemonSelection(void) {
-    OpenSRAM_Conv(MBANK(asBattleTowerChallengeState));
+    OpenSRAM(MBANK(asBattleTowerChallengeState));
     CopyBytes(wram->wPlayerMonSelection, GBToRAMAddr(0xbe60), 3);
-    CloseSRAM_Conv();
+    CloseSRAM();
 }
 
 void BattleTowerAction_ReloadPartyMon(void) {

@@ -829,7 +829,7 @@ void Function11636e(void){
     // LDH_addr_A(hWY);
     hram->hWY = 0x90;
     // CALL(aUpdateSprites);
-    UpdateSprites_Conv();
+    UpdateSprites();
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // FARCALL(aReloadMapPart);
@@ -886,7 +886,7 @@ void Function1163c0(void){
     // LDH_addr_A(hWY);
     hram->hWY = 0x90;
     // CALL(aUpdateSprites);
-    UpdateSprites_Conv();
+    UpdateSprites();
     // FARCALL(av_ClearSprites);
     v_ClearSprites();
     // POP_AF;

@@ -64,7 +64,7 @@ ok:
 void PlayRadioShow_Conv(void){
     if((wram->wCurRadioLine < POKE_FLUTE_RADIO)
     && (bit_test(wram->wStatusFlags2, STATUSFLAGS2_ROCKETS_IN_RADIO_TOWER_F))
-    && (IsInJohto_Conv() == JOHTO_REGION))
+    && (IsInJohto() == JOHTO_REGION))
     {
         //  Team Rocket broadcasts on all stations.
         wram->wCurRadioLine = ROCKET_RADIO;
@@ -541,7 +541,7 @@ void OaksPKMNTalk4(void){
     // CALL(aGetWorldMapLocation);
     // LD_E_A;
     // FARCALL(aGetLandmarkName);
-    GetLandmarkName_Conv(GetWorldMapLocation_Conv2(map.mapGroup, map.mapNumber));
+    GetLandmarkName_Conv(GetWorldMapLocation(map.mapGroup, map.mapNumber));
     // LD_HL(mOPT_OakText1);
     // CALL(aCopyRadioTextToRAM);
     CopyRadioTextToRAM_Conv(OPT_OakText1);
@@ -1912,7 +1912,7 @@ void PeoplePlaces6(void){
     // CALL(aGetWorldMapLocation);
     // LD_E_A;
     // FARCALL(aGetLandmarkName);
-    GetLandmarkName_Conv(GetWorldMapLocation_Conv2(map.mapGroup, map.mapNumber));
+    GetLandmarkName_Conv(GetWorldMapLocation(map.mapGroup, map.mapNumber));
     // LD_HL(mPnP_Text5);
     // LD_A(PLACES_AND_PEOPLE_7);
     // JP(mNextRadioLine);
@@ -2624,7 +2624,7 @@ void BuenasPassword21(void){
 
 bool BuenasPasswordCheckTime(void){
     // CALL(aUpdateTime);
-    UpdateTime_Conv();
+    UpdateTime();
     // LDH_A_addr(hHours);
     // CP_A(NITE_HOUR);
     // RET;

@@ -219,7 +219,7 @@ found:
 //  TODO: Lots of gotos. Try and fix them.
 bool Function4a94e(void){
     // CALL(aFadeToMenu);
-    FadeToMenu_Conv();
+    FadeToMenu();
     // LD_A(-1);
     // LD_HL(wd002);
     // LD_BC(3);
@@ -271,7 +271,7 @@ asm_4a985:
 
 // asm_4a990:
     // CALL(aCloseSubmenu);
-    CloseSubmenu_Conv();
+    CloseSubmenu();
     // LD_HL(wd002);
     // LD_A(-1);
     // LD_BC(3);
@@ -299,7 +299,7 @@ asm_4a9a1:
     if(!Function4a9d7())
         goto asm_4a974;
     // CALL(aCloseSubmenu);
-    CloseSubmenu_Conv();
+    CloseSubmenu();
     // AND_A_A;
 
 // asm_4a9af:
@@ -369,7 +369,7 @@ bool Function4a9d7(void){
     PrintText_Conv2(MobileUseTheseThreeMonText);
     // CALL(aYesNoBox);
     // RET;
-    return YesNoBox_Conv();
+    return YesNoBox();
 }
 
 const txt_cmd_s MobileUseTheseThreeMonText[] = {
@@ -638,7 +638,7 @@ u8_flag_s Function4ab1a(void){
         // CALL(aFunction4adf7);
         Function4adf7();
         // CALL(aStaticMenuJoypad);
-        joypad = StaticMenuJoypad_Conv();
+        joypad = StaticMenuJoypad();
         // CALL(aFunction4abc3);
         // IF_C goto asm_4ab1a;
     } while(Function4abc3(joypad));
@@ -646,7 +646,7 @@ u8_flag_s Function4ab1a(void){
     // CALL(aFunction4ab99);
     // CALL_NC (aPlaceHollowCursor);
     if(!Function4ab99(joypad))
-        PlaceHollowCursor_Conv();
+        PlaceHollowCursor();
     // POP_AF;
     // BIT_A(1);
     // IF_NZ goto asm_4ab6d;
@@ -897,7 +897,7 @@ void Function4ac58(void){
     FreezeMonIcons_Conv();
     // LD_HL(mMenuHeader_0x4aca2);
     // CALL(aLoadMenuHeader);
-    LoadMenuHeader_Conv2(&MenuHeader_0x4aca2);
+    LoadMenuHeader(&MenuHeader_0x4aca2);
     // LD_HL(wd019);
     // BIT_hl(1);
     // IF_Z goto asm_4ac89;
@@ -931,7 +931,7 @@ void Function4ac58(void){
     // CALL(aFunction4acaa);
     Function4acaa();
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // AND_A_A;
     // RET;
 }
@@ -980,12 +980,12 @@ void Function4acaa(void){
         // LD_addr_A(wMenuCursorPosition);
         wram->wMenuCursorPosition = 0x1;
         // CALL(aInitVerticalMenuCursor);
-        InitVerticalMenuCursor_Conv(&data);
+        InitVerticalMenuCursor(&data);
         // LD_HL(w2DMenuFlags1);
         // SET_hl(6);
         bit_set(wram->w2DMenuFlags1, 6);
         // CALL(aStaticMenuJoypad);
-        StaticMenuJoypad_Conv();
+        StaticMenuJoypad();
         // LD_DE(SFX_READ_TEXT_2);
         // CALL(aPlaySFX);
         PlaySFX(SFX_READ_TEXT_2);

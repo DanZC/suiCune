@@ -213,7 +213,7 @@ void PrintPartyMonPage1(void){
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aLoadFontsBattleExtra);
-    LoadFontsBattleExtra_Conv();
+    LoadFontsBattleExtra();
 
     // LD_DE(mGBPrinterHPIcon);
     // LD_HL(vTiles2 + LEN_2BPP_TILE * PRINTPARTY_HP);
@@ -357,7 +357,7 @@ void PrintPartyMonPage2(void){
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aLoadFontsBattleExtra);
-    LoadFontsBattleExtra_Conv();
+    LoadFontsBattleExtra();
     // XOR_A_A;
     // LD_addr_A(wMonType);
     wram->wMonType = PARTYMON;

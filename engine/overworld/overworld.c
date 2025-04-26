@@ -255,7 +255,7 @@ void AddMapSprites_Conv(void){
     // CALL(aGetMapEnvironment);
     // CALL(aCheckOutdoorMap);
     // IF_Z goto outdoor;
-    if(!CheckOutdoorMap_Conv(GetMapEnvironment_Conv2())) {
+    if(!CheckOutdoorMap(GetMapEnvironment())) {
         // CALL(aAddIndoorSprites);
         AddIndoorSprites_Conv();
         // RET;
@@ -369,7 +369,7 @@ void LoadUsedSpritesGFX(void){
 void LoadUsedSpritesGFX_Conv(void){
     // LD_A(MAPCALLBACK_SPRITES);
     // CALL(aRunMapCallback);
-    RunMapCallback_Conv(MAPCALLBACK_SPRITES);
+    RunMapCallback(MAPCALLBACK_SPRITES);
     // CALL(aGetUsedSprites);
     GetUsedSprites_Conv();
     // CALL(aLoadMiscTiles);
@@ -411,7 +411,7 @@ void LoadMiscTiles_Conv(void){
     // LD_C(EMOTE_GRASS_RUSTLE);
     // IF_Z goto outdoor;
     // LD_C(EMOTE_BOULDER_DUST);
-    uint8_t c = CheckOutdoorMap_Conv(GetMapEnvironment_Conv2())? EMOTE_GRASS_RUSTLE: EMOTE_BOULDER_DUST;
+    uint8_t c = CheckOutdoorMap(GetMapEnvironment())? EMOTE_GRASS_RUSTLE: EMOTE_BOULDER_DUST;
 
 // outdoor:
     // FARCALL(aLoadEmote);

@@ -100,7 +100,7 @@ bool CheckOwnMonAnywhere(species_t species){
 // Run CheckOwnMon on each Pokémon in the PC.
     // LD_A(BANK(sBoxCount));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBoxCount));
+    OpenSRAM(MBANK(asBoxCount));
     // LD_A_addr(sBoxCount);
     // AND_A_A;
     // IF_Z goto boxes;
@@ -121,7 +121,7 @@ bool CheckOwnMonAnywhere(species_t species){
             if(CheckOwnMon(bmon, *ots, species)) {
             // found!
                 // CALL(aCloseSRAM);
-                CloseSRAM_Conv();
+                CloseSRAM();
                 // RET;
                 return true;
             }
@@ -142,7 +142,7 @@ bool CheckOwnMonAnywhere(species_t species){
 
 // boxes:
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 
     // LD_C(0);
     uint8_t c = 0;
@@ -166,7 +166,7 @@ bool CheckOwnMonAnywhere(species_t species){
         uint32_t boxAddr = SearchBoxAddressTable[c];
         // LD_A_hli;
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(boxAddr));
+        OpenSRAM(MBANK(boxAddr));
 
         // LD_A_hli;
         // LD_H_hl;
@@ -209,7 +209,7 @@ bool CheckOwnMonAnywhere(species_t species){
             // found!
                 // POP_BC;
                 // CALL(aCloseSRAM);
-                CloseSRAM_Conv();
+                CloseSRAM();
                 // RET;
                 return true;
             }
@@ -236,7 +236,7 @@ bool CheckOwnMonAnywhere(species_t species){
 
 // not found
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // AND_A_A;
     // RET;
     return false;

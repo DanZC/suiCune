@@ -505,17 +505,17 @@ bool DoEggStep(void){
 
 void OverworldHatchEgg(void){
     // CALL(aRefreshScreen);
-    RefreshScreen_Conv();
+    RefreshScreen();
     // CALL(aLoadStandardMenuHeader);
-    LoadStandardMenuHeader_Conv();
+    LoadStandardMenuHeader();
     // CALL(aHatchEggs);
     HatchEggs();
     // CALL(aExitAllMenus);
-    ExitAllMenus_Conv();
+    ExitAllMenus();
     // CALL(aRestartMapMusic);
     RestartMapMusic();
     // JP(mCloseText);
-    CloseText_Conv();
+    CloseText();
 }
 
 static void Text_HatchEgg_Function(struct TextCmdState* state);
@@ -715,7 +715,7 @@ void HatchEggs(void){
             // POP_DE;
             // IF_C goto nonickname;
 
-            if(YesNoBox_Conv()) {
+            if(YesNoBox()) {
                 // LD_A(TRUE);
                 // LD_addr_A(wUnusedEggHatchFlag);
                 // XOR_A_A;
@@ -1730,7 +1730,7 @@ void DayCareMon1(void){
     if(!bit_test(wram->wDayCareLady, DAYCARELADY_HAS_MON_F))
         return DayCareMonCursor();
     // CALL(aPromptButton);
-    PromptButton_Conv();
+    PromptButton();
     // LD_HL(wBreedMon2Nickname);
     // CALL(aDayCareMonCompatibilityText);
     // JP(mPrintText);
@@ -1750,7 +1750,7 @@ void DayCareMon2(void){
     if(!bit_test(wram->wDayCareMan, DAYCARELADY_HAS_MON_F))
         return DayCareMonCursor();
     // CALL(aPromptButton);
-    PromptButton_Conv();
+    PromptButton();
     // LD_HL(wBreedMon1Nickname);
     // CALL(aDayCareMonCompatibilityText);
     // JP(mPrintText);

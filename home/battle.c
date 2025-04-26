@@ -318,10 +318,10 @@ void BattleTextbox_GB(uint16_t hl){
     MobileTextBorder();
 
     // CALL(aUpdateSprites);
-    UpdateSprites_Conv();
+    UpdateSprites();
 
     // CALL(aApplyTilemap);
-    ApplyTilemap_Conv();
+    ApplyTilemap();
 
     // POP_HL;
     // CALL(aPrintTextboxText);
@@ -339,10 +339,10 @@ void BattleTextbox(const struct TextCmd* hl){
     MobileTextBorder();
 
     // CALL(aUpdateSprites);
-    UpdateSprites_Conv();
+    UpdateSprites();
 
     // CALL(aApplyTilemap);
-    ApplyTilemap_Conv();
+    ApplyTilemap();
 
     // POP_HL;
     // CALL(aPrintTextboxText);

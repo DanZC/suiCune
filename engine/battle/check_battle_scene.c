@@ -9,9 +9,9 @@ bool CheckBattleScene_Conv(void) {
         if(gb_read(wcd2f) != 0) {
             return bit_test(wram->w5_dc00[0], 0);
         }
-        OpenSRAM_Conv(MBANK(as4_a60c));  // MBC30 bank used by JP Crystal// inaccessible by MBC3
+        OpenSRAM(MBANK(as4_a60c));  // MBC30 bank used by JP Crystal// inaccessible by MBC3
         uint8_t c = gb_read(s4_a60c);
-        CloseSRAM_Conv();
+        CloseSRAM();
         return bit_test(c, 0);
     }
     return !bit_test(wram->wOptions, BATTLE_SCENE);

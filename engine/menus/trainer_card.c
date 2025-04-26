@@ -65,9 +65,9 @@ void TrainerCard(void){
     while(1) {
     // loop:
         // CALL(aUpdateTime);
-        UpdateTime_Conv();
+        UpdateTime();
         // CALL(aJoyTextDelay);
-        JoyTextDelay_Conv();
+        JoyTextDelay();
         // LD_A_addr(wJumptableIndex);
         // BIT_A(7);
         // IF_NZ goto quit;

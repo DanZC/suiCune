@@ -110,7 +110,7 @@ void v_UnownPrinter(void){
     while(1){
     // joy_loop:
         // CALL(aJoyTextDelay);
-        JoyTextDelay_Conv();
+        JoyTextDelay();
 
         // LDH_A_addr(hJoyPressed);
         // AND_A(B_BUTTON);
@@ -164,7 +164,7 @@ static void v_UnownPrinter_Load2bppToSRAM(void){
 
     // LD_A(BANK(sScratch));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asScratch));
+    OpenSRAM(MBANK(asScratch));
     // LD_DE(wDecompressScratch);
     // LD_HL(sScratch);
     // LDH_A_addr(hROMBank);
@@ -173,7 +173,7 @@ static void v_UnownPrinter_Load2bppToSRAM(void){
     // CALL(aGet2bpp);
     CopyBytes(GBToRAMAddr(sScratch), wram->wDecompressScratch, 0x31 * LEN_2BPP_TILE);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
@@ -196,7 +196,7 @@ static void v_UnownPrinter_UpdateUnownFrontpic(void){
         PlaceStringSimple(U82C(UnownDexVacantString), coord(1, 9, wram->wTilemap));
         // XOR_A_A;  // sScratch
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(asScratch));
+        OpenSRAM(MBANK(asScratch));
         // LD_HL(sScratch);
         // LD_BC(0x31 * LEN_2BPP_TILE);
         // XOR_A_A;
@@ -210,7 +210,7 @@ static void v_UnownPrinter_UpdateUnownFrontpic(void){
         // CALL(aGet2bpp);
         CopyBytes(vram->vTiles2 + LEN_2BPP_TILE * 0x31, GBToRAMAddr(sScratch), 0x31 * LEN_2BPP_TILE);
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
         // LD_C(20);
         // CALL(aDelayFrames);
         DelayFrames(20);

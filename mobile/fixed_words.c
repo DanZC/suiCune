@@ -642,7 +642,7 @@ void Function11c254(uint8_t a){
     // PUSH_AF;
     // LD_A(BANK(s4_a007));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as4_a007));
+    OpenSRAM(MBANK(as4_a007));
     // LD_HL(s4_a007);
     uint8_t* hl = GBToRAMAddr(s4_a007);
     // POP_AF;
@@ -666,7 +666,7 @@ void Function11c254(uint8_t a){
         }
     }
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -712,7 +712,7 @@ void EZChat_MasterLoop(void){
     while(1) {
     // loop:
         // CALL(aJoyTextDelay);
-        JoyTextDelay_Conv();
+        JoyTextDelay();
         // LDH_A_addr(hJoyPressed);
         // LDH_addr_A(hJoypadPressed);
         hram->hJoypadPressed = hram->hJoyPressed;
@@ -1190,7 +1190,7 @@ void Function11c3ed(void){
     else if(hram->hJoypadPressed & B_BUTTON) {
     // asm_11c41a:
         // CALL(aPlayClickSFX);
-        PlayClickSFX_Conv();
+        PlayClickSFX();
 
     asm_11c41d:
         // LD_HL(wcd24);
@@ -1379,7 +1379,7 @@ void Function11c3ed(void){
     // LD_addr_A(wJumptableIndex);
     wram->wJumptableIndex = a;
     // CALL(aPlayClickSFX);
-    PlayClickSFX_Conv();
+    PlayClickSFX();
     // RET;
     return;
 }
@@ -1548,7 +1548,7 @@ void Function11c53d(void){
             Function11ca6a(wram->wEZChatSelection);
             EZChatMenu_RerenderMessage();
             // CALL(aPlayClickSFX);
-            PlayClickSFX_Conv();
+            PlayClickSFX();
             // RET;
             return;
         }
@@ -1751,7 +1751,7 @@ void Function11c53d(void){
     // LD_addr_A(wJumptableIndex);
     wram->wJumptableIndex = a;
     // CALL(aPlayClickSFX);
-    PlayClickSFX_Conv();
+    PlayClickSFX();
     // RET;
     return;
 
@@ -2091,7 +2091,7 @@ void Function11c675(void){
         // set 3, [hl]
         bit_set(wram->wEZChatSpritesMask, 3);
         // call PlayClickSFX
-        PlayClickSFX_Conv();
+        PlayClickSFX();
         // ret
         return;
     }
@@ -3567,7 +3567,7 @@ void Function11c9c3(void){
         // LD_addr_A(wJumptableIndex);
         wram->wJumptableIndex = 0x4;
         // CALL(aPlayClickSFX);
-        PlayClickSFX_Conv();
+        PlayClickSFX();
         // RET;
         return;
     }
@@ -3769,7 +3769,7 @@ void Function11cab3(void){
     if(hram->hJoypadPressed & A_BUTTON) {
     // asm_11cace:
         // CALL(aPlayClickSFX);
-        PlayClickSFX_Conv();
+        PlayClickSFX();
         // LD_A_hl;
         // AND_A_A;
         // IF_NZ goto asm_11cafc;
@@ -3808,7 +3808,7 @@ void Function11cab3(void){
     else if(hram->hJoypadPressed & B_BUTTON) {
     // asm_11caf9:
         // CALL(aPlayClickSFX);
-        PlayClickSFX_Conv();
+        PlayClickSFX();
 
     asm_11cafc:
         // LD_HL(wcd24);
@@ -3911,12 +3911,12 @@ void Function11cb66(void){
         if(wram->wcd2a != 0) {
         // asm_11cbd4:
             // CALL(aPlayClickSFX);
-            PlayClickSFX_Conv();
+            PlayClickSFX();
             goto asm_11cbd7;
         }
         // LD_A(BANK(s4_a007));
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(as4_a007));
+        OpenSRAM(MBANK(as4_a007));
         // LD_HL(s4_a007);
         // LD_A_addr(wMenuCursorY);
         // DEC_A;
@@ -3943,9 +3943,9 @@ void Function11cb66(void){
             // IF_NZ goto asm_11cba2;
         }
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
         // CALL(aPlayClickSFX);
-        PlayClickSFX_Conv();
+        PlayClickSFX();
         // LD_DE(mUnknown_11cfc6);
         // CALL(aFunction11cfce);
         Function11cfce(Unknown_11cfc6);

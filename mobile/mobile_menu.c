@@ -79,7 +79,7 @@ entry:
     // CALL(aSetPalettes);
     SetPalettes();
     // CALL(aStaticMenuJoypad);
-    uint8_t joypad = StaticMenuJoypad_Conv();
+    uint8_t joypad = StaticMenuJoypad();
     // LD_HL(wMenuCursorY);
     // LD_B_hl;
     uint8_t cursorY = wram->wMenuCursorY;
@@ -110,7 +110,7 @@ entry:
             }
             // LD_A(1);
             // CALL(aMenuClickSound);
-            MenuClickSound_Conv(1);
+            MenuClickSound(1);
             goto b_button;
         }
         // BIT_A(B_BUTTON_F);
@@ -167,7 +167,7 @@ entry:
 
     // joy_loop:
         // CALL(aScrollingMenuJoypad);
-        joypad = ScrollingMenuJoypad_Conv();
+        joypad = ScrollingMenuJoypad();
         // LD_HL(wMenuCursorY);
         // LD_B_hl;
         // PUSH_BC;
@@ -244,17 +244,17 @@ void MobileMenu_InitMenuBuffers(void){
 void Function4a098(void){
     // LD_A(2);
     // CALL(aMenuClickSound);
-    MenuClickSound_Conv(2);
+    MenuClickSound(2);
     // CALL(aPlaceHollowCursor);
-    PlaceHollowCursor_Conv();
+    PlaceHollowCursor();
     // CALL(aWaitBGMap);
     WaitBGMap();
     // CALL(aLoadStandardMenuHeader);
-    LoadStandardMenuHeader_Conv();
+    LoadStandardMenuHeader();
     // FARCALL(aFunction89de0);
     Function89de0();
     // CALL(aCall_ExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // CALL(aMG_Mobile_Layout_LoadPals);
     MG_Mobile_Layout_LoadPals();
     // CALL(aFunction4a485);
@@ -268,7 +268,7 @@ void Function4a098(void){
 void Function4a0b9(void){
     // LD_A(2);
     // CALL(aMenuClickSound);
-    MenuClickSound_Conv(2);
+    MenuClickSound(2);
     // POP_BC;
     // JP(mFunction4a4c4);
     Function4a4c4();
@@ -279,17 +279,17 @@ void Function4a0c2(void){
     // return asm_4a111(); // Dummied out
     // LD_A(2);
     // CALL(aMenuClickSound);
-    MenuClickSound_Conv(2);
+    MenuClickSound(2);
     // LD_A(BANK(sPlayerData));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asPlayerData));
+    OpenSRAM(MBANK(asPlayerData));
     // LD_HL(sPlayerData + wPlayerName - wPlayerData);
     // LD_DE(wPlayerName);
     // LD_BC(NAME_LENGTH_JAPANESE);
     // CALL(aCopyBytes);
     CopyBytes(wram->wPlayerName, GBToRAMAddr(sPlayerData + wPlayerName - wPlayerData), NAME_LENGTH);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // FARCALL(av_LoadData);
     v_LoadData();
     // LD_C(2);
@@ -321,7 +321,7 @@ void Function4a0c2(void){
 void Function4a100(void){
     // LD_A(2);
     // CALL(aMenuClickSound);
-    MenuClickSound_Conv(2);
+    MenuClickSound(2);
     // CALL(aClearBGPalettes);
     ClearBGPalettes();
     // CALL(aFunction4a13b);
@@ -339,7 +339,7 @@ void Function4a100(void){
 void asm_4a111(void){
     // POP_BC;
     // CALL(aLoadFontsExtra);
-    LoadFontsExtra_Conv();
+    LoadFontsExtra();
     // JP(mFunction49f0a);
     Function49f0a();
     // Just return and have the caller loop
@@ -429,7 +429,7 @@ entry:
     // CALL(aSetPalettes);
     SetPalettes();
     // CALL(aStaticMenuJoypad);
-    uint8_t joypad = StaticMenuJoypad_Conv();
+    uint8_t joypad = StaticMenuJoypad();
     // LD_HL(wMenuCursorY);
     // LD_B_hl;
     // PUSH_BC;
@@ -452,7 +452,7 @@ entry:
             }
             // LD_A(0x1);
             // CALL(aMenuClickSound);
-            MenuClickSound_Conv(0x1);
+            MenuClickSound(0x1);
             goto asm_4a1ba;
         }
         // BIT_A(1);
@@ -496,7 +496,7 @@ entry:
         ClearBox(coord(2, 3, wram->wTilemap), 1, 6);
         // JP(mFunction4a195); // Inlined
         // CALL(aScrollingMenuJoypad);
-        joypad = ScrollingMenuJoypad_Conv();
+        joypad = ScrollingMenuJoypad();
         // LD_HL(wMenuCursorY);
         // LD_B_hl;
         // PUSH_BC;
@@ -573,7 +573,7 @@ const char String_4a1ef[] =
 void Function4a20e(void){
     // LD_A(0x1);
     // CALL(aMenuClickSound);
-    MenuClickSound_Conv(0x1);
+    MenuClickSound(0x1);
     // FARCALL(aFunction1719c8);
     Function1719c8();
     // CALL(aClearBGPalettes);
@@ -588,7 +588,7 @@ void Function4a20e(void){
 void Function4a221(void){
     // LD_A(0x1);
     // CALL(aMenuClickSound);
-    MenuClickSound_Conv(0x1);
+    MenuClickSound(0x1);
     // CALL(aFunction4a28a);
     // JR_C (mFunction4a239);
     if(Function4a28a())
@@ -632,18 +632,18 @@ bool Function4a28a(void){
     // CALL(aFunction4a6d8);
     Function4a6d8(coord(2, 3, wram->wTilemap), 6, 1, 0x7f);
     // CALL(aPlaceHollowCursor);
-    PlaceHollowCursor_Conv();
+    PlaceHollowCursor();
     // CALL(aWaitBGMap);
     WaitBGMap();
     // CALL(aLoadStandardMenuHeader);
-    LoadStandardMenuHeader_Conv();
+    LoadStandardMenuHeader();
     // LD_A(0x5);
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asMobileLoginPassword));
+    OpenSRAM(MBANK(asMobileLoginPassword));
     // LD_A_addr(0xaa4b);
     uint8_t a = gb_read(sMobileLoginPassword);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // AND_A_A;
     // IF_Z goto asm_4a2df;
     if(a != 0) {
@@ -662,9 +662,9 @@ bool Function4a28a(void){
         Function4a118();
         // CALL(aScrollingMenuJoypad);
         // PUSH_AF;
-        uint8_t joypad = ScrollingMenuJoypad_Conv();
+        uint8_t joypad = ScrollingMenuJoypad();
         // CALL(aPlayClickSFX);
-        PlayClickSFX_Conv();
+        PlayClickSFX();
         // POP_AF;
         // BIT_A(B_BUTTON_F);
         // IF_NZ goto quit;
@@ -679,7 +679,7 @@ bool Function4a28a(void){
         else if(wram->wMenuCursorY == 0x2) {
         // DeleteLoginPassword:
             // CALL(aPlaceHollowCursor);
-            PlaceHollowCursor_Conv();
+            PlaceHollowCursor();
             // LD_HL(mDeleteSavedLoginPasswordText);
             // CALL(aPrintText);
             PrintText_Conv2(DeleteSavedLoginPasswordText);
@@ -692,9 +692,9 @@ bool Function4a28a(void){
             Mobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv();
             // LD_HL(mDeletePassword_YesNo_MenuHeader);
             // CALL(aLoadMenuHeader);
-            LoadMenuHeader_Conv2(&DeletePassword_YesNo_MenuHeader);
+            LoadMenuHeader(&DeletePassword_YesNo_MenuHeader);
             // CALL(aVerticalMenu);
-            bool cancel = !VerticalMenu_Conv();
+            bool cancel = !VerticalMenu();
             // BIT_A(B_BUTTON_F);
             // IF_NZ goto dont_delete_password;
             // LD_A_addr(wMenuCursorY);
@@ -703,28 +703,28 @@ bool Function4a28a(void){
             if(!cancel && wram->wMenuCursorY != 0x2) {
                 // LD_A(BANK(sMobileLoginPassword));
                 // CALL(aOpenSRAM);
-                OpenSRAM_Conv(MBANK(asMobileLoginPassword));
+                OpenSRAM(MBANK(asMobileLoginPassword));
                 // LD_HL(sMobileLoginPassword);
                 // XOR_A_A;
                 // LD_BC(MOBILE_LOGIN_PASSWORD_LENGTH);
                 // CALL(aByteFill);
                 ByteFill(GBToRAMAddr(sMobileLoginPassword), MOBILE_LOGIN_PASSWORD_LENGTH, 0x0);
                 // CALL(aCloseSRAM);
-                CloseSRAM_Conv();
+                CloseSRAM();
                 // LD_HL(mDeletedTheLoginPasswordText);
                 // CALL(aPrintText);
                 PrintText_Conv2(DeletedTheLoginPasswordText);
                 // CALL(aJoyWaitAorB);
-                JoyWaitAorB_Conv();
+                JoyWaitAorB();
             }
 
         // dont_delete_password:
             // CALL(aExitMenu);
-            ExitMenu_Conv2();
+            ExitMenu();
 
         quit:
             // CALL(aCall_ExitMenu);
-            ExitMenu_Conv2();
+            ExitMenu();
             // FARCALL(aMobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
             Mobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv();
             // XOR_A_A;
@@ -738,9 +738,9 @@ bool Function4a28a(void){
     // CALL(aClearBGPalettes);
     ClearBGPalettes();
     // CALL(aCall_ExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // CALL(aLoadFontsExtra);
-    LoadFontsExtra_Conv();
+    LoadFontsExtra();
     // SCF;
     // RET;
     return true;
@@ -1073,7 +1073,7 @@ entry:
     // CALL(aSetPalettes);
     SetPalettes();
     // CALL(aStaticMenuJoypad);
-    uint8_t joypad = StaticMenuJoypad_Conv();
+    uint8_t joypad = StaticMenuJoypad();
     // LD_HL(wMenuCursorY);
     // LD_B_hl;
     // PUSH_BC;
@@ -1104,7 +1104,7 @@ entry:
             }
             // LD_A(0x1);
             // CALL(aMenuClickSound);
-            MenuClickSound_Conv(0x1);
+            MenuClickSound(0x1);
             goto asm_4a574;
         }
         // BIT_A(1);
@@ -1165,7 +1165,7 @@ entry:
         ClearBox(coord(3, 1, wram->wTilemap), 0x1, 0xa);
         // JP(mFunction4a545); // inlined
         // CALL(aScrollingMenuJoypad);
-        joypad = ScrollingMenuJoypad_Conv();
+        joypad = ScrollingMenuJoypad();
         // LD_HL(wMenuCursorY);
         // LD_B_hl;
         // PUSH_BC;
@@ -1178,7 +1178,7 @@ entry:
 // MobileMenu_MessagesContinue
 // void Function4a545(void){
 //     // CALL(aScrollingMenuJoypad);
-//     uint8_t joypad = ScrollingMenuJoypad_Conv();
+//     uint8_t joypad = ScrollingMenuJoypad();
 //     // LD_HL(wMenuCursorY);
 //     // LD_B_hl;
 //     // PUSH_BC;
@@ -1210,7 +1210,7 @@ entry:
 //         }
 //         // LD_A(0x1);
 //         // CALL(aMenuClickSound);
-//         MenuClickSound_Conv(0x1);
+//         MenuClickSound(0x1);
 //         goto asm_4a574;
 //     }
 //     // BIT_A(1);
@@ -1341,7 +1341,7 @@ void Function4a680(void){
 void Function4a6ab(void){
     // LD_A(0x2);
     // CALL(aMenuClickSound);
-    MenuClickSound_Conv(0x2);
+    MenuClickSound(0x2);
     // CALL(aClearBGPalettes);
     ClearBGPalettes();
     // LD_B(SCGB_DIPLOMA);
@@ -1351,7 +1351,7 @@ void Function4a6ab(void){
     Function11c1ab();
     // POP_BC;
     // CALL(aLoadFontsExtra);
-    LoadFontsExtra_Conv();
+    LoadFontsExtra();
     // JP(mFunction4a4c4);
     // return Function4a4c4();
     // Just return and have caller return to this function

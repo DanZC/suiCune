@@ -174,7 +174,7 @@ void CheckForLuckyNumberWinners(void){
     } while(--d != 0);
     // LD_A(BANK(sBox));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBox));
+    OpenSRAM(MBANK(asBox));
     // LD_A_addr(sBoxCount);
     // AND_A_A;
     // IF_Z goto SkipOpenBox;
@@ -214,7 +214,7 @@ void CheckForLuckyNumberWinners(void){
 
 // SkipOpenBox:
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // LD_C(0x0);
     uint8_t c = 0x0;
 
@@ -233,7 +233,7 @@ void CheckForLuckyNumberWinners(void){
         // ADD_HL_BC;
         // LD_A_hli;
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(BoxBankAddresses[c]));
+        OpenSRAM(MBANK(BoxBankAddresses[c]));
         // LD_A_hli;
         // LD_H_hl;
         // LD_L_A;  // hl now contains the address of the loaded box in SRAM
@@ -288,7 +288,7 @@ void CheckForLuckyNumberWinners(void){
     } while(++c < NUM_BOXES);
 
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // LD_A_addr(wScriptVar);
     // AND_A_A;
     // RET_Z ;  // found nothing

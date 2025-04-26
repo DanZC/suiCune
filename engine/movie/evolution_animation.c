@@ -129,7 +129,7 @@ static bool EvolutionAnimation_WaitFrames_CheckPressedB(uint8_t c){
         DelayFrame();
         // PUSH_BC;
         // CALL(aJoyTextDelay);
-        JoyTextDelay_Conv();
+        JoyTextDelay();
         // LDH_A_addr(hJoyDown);
         // POP_BC;
         // AND_A(B_BUTTON);

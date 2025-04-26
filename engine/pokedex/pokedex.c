@@ -106,7 +106,7 @@ void Pokedex(void){
     while(1) {
     // main:
         // CALL(aJoyTextDelay);
-        JoyTextDelay_Conv();
+        JoyTextDelay();
         // LD_A_addr(wJumptableIndex);
         // BIT_A(7);
         // IF_NZ goto exit;
@@ -290,7 +290,7 @@ void Pokedex_GetLandmark(void){
     // LD_A_addr(wMapNumber);
     // LD_C_A;
     // CALL(aGetWorldMapLocation);
-    uint8_t loc = GetWorldMapLocation_Conv2(wram->wMapGroup, wram->wMapNumber);
+    uint8_t loc = GetWorldMapLocation(wram->wMapGroup, wram->wMapNumber);
 
     // CP_A(LANDMARK_SPECIAL);
     // IF_NZ goto load;
@@ -301,7 +301,7 @@ void Pokedex_GetLandmark(void){
         // LD_A_addr(wBackupMapNumber);
         // LD_C_A;
         // CALL(aGetWorldMapLocation);
-        loc = GetWorldMapLocation_Conv2(wram->wBackupMapGroup, wram->wBackupMapNumber);
+        loc = GetWorldMapLocation(wram->wBackupMapGroup, wram->wBackupMapNumber);
     }
 
 // load:
@@ -3416,7 +3416,7 @@ void Pokedex_LoadSelectedMonTiles(void){
     // QuestionMark:
         // LD_A(BANK(sScratch));
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(asScratch));
+        OpenSRAM(MBANK(asScratch));
         // FARCALL(aLoadQuestionMarkPic);
         LoadQuestionMarkPic();
         // LD_HL(vTiles2);
@@ -3427,7 +3427,7 @@ void Pokedex_LoadSelectedMonTiles(void){
         // CALL(aGet2bpp);
         CopyBytes(vram->vTiles2, GBToRAMAddr(sScratch), 7 * 7 * LEN_2BPP_TILE);
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
         // RET;
         return;
     }
@@ -3506,7 +3506,7 @@ void Pokedex_LoadGFX(void){
     // CALL(aPokedex_LoadInvertedFont);
     Pokedex_LoadInvertedFont();
     // CALL(aLoadFontsExtra);
-    LoadFontsExtra_Conv();
+    LoadFontsExtra();
     // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x60);
     // LD_BC(0x20 * LEN_2BPP_TILE);
     // CALL(aPokedex_InvertTiles);
@@ -3541,7 +3541,7 @@ void Pokedex_LoadGFX(void){
 
 void Pokedex_LoadInvertedFont(void){
     // CALL(aLoadStandardFont);
-    LoadStandardFont_Conv();
+    LoadStandardFont();
     // LD_HL(vTiles1);
     // LD_BC(0x80 * LEN_2BPP_TILE);
 
@@ -3582,7 +3582,7 @@ bool Pokedex_CheckSGB(void){
 void Pokedex_LoadUnownFont(void){
     // LD_A(BANK(sScratch));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asScratch));
+    OpenSRAM(MBANK(asScratch));
     // LD_HL(mUnownFont);
 // sScratch + $188 was the address of sDecompressBuffer in pokegold
     // LD_DE(sScratch + 0x188);
@@ -3600,7 +3600,7 @@ void Pokedex_LoadUnownFont(void){
     // CALL(aRequest2bpp);
     CopyBytes(vram->vTiles2 + LEN_2BPP_TILE * FIRST_UNOWN_CHAR, GBToRAMAddr(sScratch + 0x188), (NUM_UNOWN + 1) * LEN_2BPP_TILE);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -3641,9 +3641,9 @@ void v_NewPokedexEntry(void){
     // CALL(aDisableLCD);
     DisableLCD();
     // CALL(aLoadStandardFont);
-    LoadStandardFont_Conv();
+    LoadStandardFont();
     // CALL(aLoadFontsExtra);
-    LoadFontsExtra_Conv();
+    LoadFontsExtra();
     // CALL(aPokedex_LoadGFX);
     Pokedex_LoadGFX();
     // CALL(aPokedex_LoadAnyFootprint);

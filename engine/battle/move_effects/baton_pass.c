@@ -34,7 +34,7 @@ void BattleCommand_BatonPass(void){
 
     //  Transition into switchmon menu
         // CALL(aLoadStandardMenuHeader);
-        LoadStandardMenuHeader_Conv();
+        LoadStandardMenuHeader();
         // FARCALL(aSetUpBattlePartyMenu);
         SetUpBattlePartyMenu();
 
@@ -47,7 +47,7 @@ void BattleCommand_BatonPass(void){
         // FARCALL(av_LoadBattleFontsHPBar);
         v_LoadBattleFontsHPBar();
         // CALL(aCloseWindow);
-        CloseWindow_Conv2();
+        CloseWindow();
         // CALL(aClearSprites);
         ClearSprites();
         // hlcoord(1, 0, wTilemap);
@@ -142,12 +142,12 @@ void BatonPass_LinkPlayerSwitch(void){
     wram->wBattlePlayerAction = BATTLEPLAYERACTION_USEITEM;
 
     // CALL(aLoadStandardMenuHeader);
-    LoadStandardMenuHeader_Conv();
+    LoadStandardMenuHeader();
     // LD_HL(mLinkBattleSendReceiveAction);
     // CALL(aCallBattleCore);
     LinkBattleSendReceiveAction();
     // CALL(aCloseWindow);
-    CloseWindow_Conv2();
+    CloseWindow();
 
     // XOR_A_A;  // BATTLEPLAYERACTION_USEMOVE
     // LD_addr_A(wBattlePlayerAction);
@@ -163,7 +163,7 @@ void BatonPass_LinkEnemySwitch(void){
         return;
 
     // CALL(aLoadStandardMenuHeader);
-    LoadStandardMenuHeader_Conv();
+    LoadStandardMenuHeader();
     // LD_HL(mLinkBattleSendReceiveAction);
     // CALL(aCallBattleCore);
     LinkBattleSendReceiveAction();
@@ -187,7 +187,7 @@ void BatonPass_LinkEnemySwitch(void){
 
 // switch_:
     // JP(mCloseWindow);
-    return CloseWindow_Conv2();
+    return CloseWindow();
 }
 
 void FailedBatonPass(void){

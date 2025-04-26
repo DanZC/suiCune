@@ -65,7 +65,7 @@ void v_NameRater(void){
     PrintText_Conv2(NameRaterHelloText);
     // CALL(aYesNoBox);
     // JP_C (mv_NameRater_cancel);
-    if(!YesNoBox_Conv())
+    if(!YesNoBox())
         return PrintText_Conv2(NameRaterComeAgainText);
 //  Select a Pokemon from your party
     // LD_HL(mNameRaterWhichMonText);
@@ -96,7 +96,7 @@ void v_NameRater(void){
     PrintText_Conv2(NameRaterBetterNameText);
     // CALL(aYesNoBox);
     // IF_C goto cancel;
-    if(!YesNoBox_Conv())
+    if(!YesNoBox())
         return PrintText_Conv2(NameRaterComeAgainText);
 //  What name shall I give it then?
     // LD_HL(mNameRaterWhatNameText);

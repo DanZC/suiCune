@@ -357,9 +357,9 @@ void HandleMapTimeAndJoypad(void){
         return;
 
     // CALL(aUpdateTime);
-    UpdateTime_Conv();
+    UpdateTime();
     // CALL(aGetJoypad);
-    GetJoypad_Conv2();
+    GetJoypad();
     // CALL(aTimeOfDayPals);
     TimeOfDayPals();
     // RET;
@@ -606,7 +606,7 @@ u8_flag_s CheckTrainerBattle_GetPlayerEvent_Conv(void){
     // NOP;
     // CALL(aCheckTrainerBattle);
     // IF_NC goto nope;
-    if(!CheckTrainerBattle_Conv())
+    if(!CheckTrainerBattle())
         return u8_flag(0, false);
 
     // LD_A(PLAYEREVENT_SEENBYTRAINER);
@@ -711,12 +711,12 @@ u8_flag_s CheckTileEvent_Conv(void){
 
         // CALL(aCheckWarpTile);
         // IF_C goto warp_tile;
-        if(CheckWarpTile_Conv()) {
+        if(CheckWarpTile()) {
         // warp_tile:
             // LD_A_addr(wPlayerStandingTile);
             // CALL(aCheckPitTile);
             // IF_NZ goto not_pit;
-            if(CheckPitTile_Conv(wram->wPlayerStruct.nextTile)) {
+            if(CheckPitTile(wram->wPlayerStruct.nextTile)) {
                 // LD_A(PLAYEREVENT_FALL);
                 // SCF;
                 // RET;
@@ -738,7 +738,7 @@ u8_flag_s CheckTileEvent_Conv(void){
     if(CheckCoordEventScriptFlag()) {
         // CALL(aCheckCurrentMapCoordEvents);
         // IF_C goto coord_event;
-        const struct CoordEvent* ev = CheckCurrentMapCoordEvents_Conv();
+        const struct CoordEvent* ev = CheckCurrentMapCoordEvents();
         if(ev != NULL) {
         // coord_event:
             // LD_HL(wCurCoordEventScriptAddr);
@@ -748,7 +748,7 @@ u8_flag_s CheckTileEvent_Conv(void){
             // CALL(aGetMapScriptsBank);
             // CALL(aCallScript);
             // RET;
-            return u8_flag(CallScript_Conv2(ev->script), true);
+            return u8_flag(CallScript(ev->script), true);
         }
     }
 
@@ -898,7 +898,7 @@ u8_flag_s RunSceneScript_Conv(void){
     // CALL(aCheckScenes);
     // CP_A_C;
     // IF_NC goto nope;
-    uint8_t c = CheckScenes_Conv();
+    uint8_t c = CheckScenes();
     if(c == 0xff || c >= gCurMapSceneScriptCount)
         return u8_flag(0, false);
 
@@ -917,7 +917,7 @@ u8_flag_s RunSceneScript_Conv(void){
     // CALL(aGetFarWord);
     // CALL(aGetMapScriptsBank);
     // CALL(aCallScript);
-    CallScript_Conv2(script);
+    CallScript(script);
 
     // LD_HL(wScriptFlags);
     // RES_hl(3);
@@ -940,7 +940,7 @@ u8_flag_s RunSceneScript_Conv(void){
     // LD_L_A;
     // LD_A_addr(wDeferredScriptBank);
     // CALL(aCallScript);
-    uint8_t a = CallScript_Conv2(gDeferredScriptAddr);
+    uint8_t a = CallScript(gDeferredScriptAddr);
     // SCF;
     // RET;
     return u8_flag(a, true);
@@ -1026,7 +1026,7 @@ u8_flag_s CheckTimeEvents_Conv(void){
         // CALL(aCallScript);
         // SCF;
         // RET;
-        return u8_flag(CallScript_Conv2(BugCatchingContestOverScript), true);
+        return u8_flag(CallScript(BugCatchingContestOverScript), true);
     }
     // XOR_A_A;
     // RET;
@@ -1185,14 +1185,14 @@ static u8_flag_s ObjectEventTypeArray_script(struct MapObject* bc) {
         Script_fn_t hl = gCurMapObjectEventsPointer[bc->objectScript].script;
         // CALL(aCallScript);
         // RET;
-        return u8_flag(CallScript_Conv2(hl), true);
+        return u8_flag(CallScript(hl), true);
     }
     else {
-        printf("script_gb=$%08x\n", (GetMapScriptsBank_Conv() << 14) | (bc->objectScript & 0x3fff));
-        if(!redirectFunc[(GetMapScriptsBank_Conv() << 14) | (bc->objectScript & 0x3fff)])
-            return u8_flag(CallScript_Conv2(ObjectEvent), true);
-        Script_fn_t script = (Script_fn_t)redirectFunc[(GetMapScriptsBank_Conv() << 14) | (bc->objectScript & 0x3fff)];
-        return u8_flag(CallScript_Conv2(script), true);
+        printf("script_gb=$%08x\n", (GetMapScriptsBank() << 14) | (bc->objectScript & 0x3fff));
+        if(!redirectFunc[(GetMapScriptsBank() << 14) | (bc->objectScript & 0x3fff)])
+            return u8_flag(CallScript(ObjectEvent), true);
+        Script_fn_t script = (Script_fn_t)redirectFunc[(GetMapScriptsBank() << 14) | (bc->objectScript & 0x3fff)];
+        return u8_flag(CallScript(script), true);
     }
 }
 
@@ -1213,13 +1213,13 @@ static u8_flag_s ObjectEventTypeArray_itemball(struct MapObject* bc) {
         wram->wItemBallQuantity = ball->quantity;
     }
     else {
-        if(redirectFunc[(GetMapScriptsBank_Conv() << 14) | (bc->objectScript & 0x3fff)]) {
-            const struct ItemBall* ball = (const struct ItemBall*)redirectFunc[(GetMapScriptsBank_Conv() << 14) | (bc->objectScript & 0x3fff)];
+        if(redirectFunc[(GetMapScriptsBank() << 14) | (bc->objectScript & 0x3fff)]) {
+            const struct ItemBall* ball = (const struct ItemBall*)redirectFunc[(GetMapScriptsBank() << 14) | (bc->objectScript & 0x3fff)];
             wram->wItemBallItemID = ball->item;
             wram->wItemBallQuantity = ball->quantity;
         }
         else {
-            FarCopyBytes_Conv(wItemBallData, GetMapScriptsBank_Conv(), bc->objectScript, wItemBallDataEnd - wItemBallData);
+            FarCopyBytes_Conv(wItemBallData, GetMapScriptsBank(), bc->objectScript, wItemBallDataEnd - wItemBallData);
         }
     }
     // LD_A(PLAYEREVENT_ITEMBALL);
@@ -1231,7 +1231,7 @@ static u8_flag_s ObjectEventTypeArray_itemball(struct MapObject* bc) {
 static u8_flag_s ObjectEventTypeArray_trainer(struct MapObject* bc) {
     (void)bc;
     // CALL(aTalkToTrainer);
-    TalkToTrainer_Conv();
+    TalkToTrainer();
     // LD_A(PLAYEREVENT_TALKTOTRAINER);
     // SCF;
     // RET;
@@ -1347,7 +1347,7 @@ u8_flag_s TryObjectEvent_Conv(void){
 
     // LDH_A_addr(hLastTalked);
     // CALL(aGetMapObject);
-    struct MapObject* mobj = GetMapObject_Conv(hram->hLastTalked);
+    struct MapObject* mobj = GetMapObject(hram->hLastTalked);
     // LD_HL(MAPOBJECT_COLOR);
     // ADD_HL_BC;
     // LD_A_hl;
@@ -1406,7 +1406,7 @@ is_bg_event:
 u8_flag_s TryBGEvent_Conv(void){
     // CALL(aCheckFacingBGEvent);
     // IF_C goto is_bg_event;
-    if(CheckFacingBGEvent_Conv()) {
+    if(CheckFacingBGEvent()) {
     // is_bg_event:
         // LD_A_addr(wCurBGEventType);
         // LD_HL(mBGEventJumptable);
@@ -1578,7 +1578,7 @@ u8_flag_s BGEventJumptable_Conv(uint8_t a){
             // LD_L_A;
             // CALL(aGetMapScriptsBank);
             // CALL(aCallScript);
-            b = CallScript_Conv2(gCurBGEvent.script);
+            b = CallScript(gCurBGEvent.script);
             // SCF;
             // RET;
             return u8_flag(b, true);
@@ -1599,7 +1599,7 @@ u8_flag_s BGEventJumptable_Conv(uint8_t a){
             // LD_A(BANK(aHiddenItemScript));
             // LD_HL(mHiddenItemScript);
             // CALL(aCallScript);
-            b = CallScript_Conv2(HiddenItemScript);
+            b = CallScript(HiddenItemScript);
             // SCF;
             // RET;
             return u8_flag(b, true);
@@ -1641,7 +1641,7 @@ u8_flag_s BGEventJumptable_Conv(uint8_t a){
             // CALL(aGetFarWord);
             // CALL(aGetMapScriptsBank);
             // CALL(aCallScript);
-            b = CallScript_Conv2(gCurBGEvent.condEvent->script);
+            b = CallScript(gCurBGEvent.condEvent->script);
             // SCF;
             // RET;
             return u8_flag(b, true);
@@ -1761,7 +1761,7 @@ u8_flag_s PlayerMovement_Conv(void){
         // LD_C_A;
         // SCF;
         // RET;
-        return u8_flag(CallScript_Conv2(Script_ForcedMovement), true);
+        return u8_flag(CallScript(Script_ForcedMovement), true);
 
     case PLAYERMOVEMENT_CONTINUE:
     // continue_:
@@ -1885,7 +1885,7 @@ u8_flag_s CheckMenuOW_Conv(void){
     uint8_t a = hram->hJoyPressed;
 
     if(bit_test(a, SELECT_F) && bit_test(hram->hJoyDown, B_BUTTON_F)) {
-        return u8_flag(CallScript_Conv2(DebugFieldMenuScript), true);
+        return u8_flag(CallScript(DebugFieldMenuScript), true);
     }
     // BIT_A(SELECT_F);
     // IF_NZ goto Select;
@@ -1898,7 +1898,7 @@ u8_flag_s CheckMenuOW_Conv(void){
         // CALL(aCallScript);
         // SCF;
         // RET;
-        return u8_flag(CallScript_Conv2(SelectMenuScript), true);
+        return u8_flag(CallScript(SelectMenuScript), true);
     }
 
     // BIT_A(START_F);
@@ -1909,7 +1909,7 @@ u8_flag_s CheckMenuOW_Conv(void){
         // CALL(aCallScript);
         // SCF;
         // RET;
-        return u8_flag(CallScript_Conv2(StartMenuScript), true);
+        return u8_flag(CallScript(StartMenuScript), true);
     }
 
 // NoMenu:
@@ -2177,7 +2177,7 @@ bool DoRepelStep_Conv(void){
     // LD_A(BANK(aRepelWoreOffScript));
     // LD_HL(mRepelWoreOffScript);
     // CALL(aCallScript);
-    CallScript_Conv2(RepelWoreOffScript);
+    CallScript(RepelWoreOffScript);
     // SCF;
     // RET;
     return true;
@@ -2345,7 +2345,7 @@ u8_flag_s RunMemScript_Conv(void){
     // LD_L_A;
     // LD_A_addr(wMapReentryScriptBank);
     // CALL(aCallScript);
-    uint8_t a = CallScript_Conv2(gMapReentryScriptAddress);
+    uint8_t a = CallScript(gMapReentryScriptAddress);
     // SCF;
 //  Clear the buffer for the next script.
     // PUSH_AF;
@@ -2463,7 +2463,7 @@ done:
 
 u8_flag_s TryTileCollisionEvent_Conv(void){
     // CALL(aGetFacingTileCoord);
-    struct CoordsTileId cid = GetFacingTileCoord_Conv();
+    struct CoordsTileId cid = GetFacingTileCoord();
     // LD_addr_A(wFacingTileID);
     wram->wFacingTileID = cid.tileId;
     // LD_C_A;
@@ -2472,7 +2472,7 @@ u8_flag_s TryTileCollisionEvent_Conv(void){
     if(!CheckFacingTileForStdScript_Conv(cid.tileId)) {
         // CALL(aCheckCutTreeTile);
         // IF_NZ goto whirlpool;
-        if(CheckCutTreeTile_Conv(cid.tileId)) {
+        if(CheckCutTreeTile(cid.tileId)) {
             // FARCALL(aTryCutOW);
             // goto done;
             TryCutOW_Conv();
@@ -2483,7 +2483,7 @@ u8_flag_s TryTileCollisionEvent_Conv(void){
         // LD_A_addr(wFacingTileID);
         // CALL(aCheckWhirlpoolTile);
         // IF_NZ goto waterfall;
-        else if(CheckWhirlpoolTile_Conv(cid.tileId)) {
+        else if(CheckWhirlpoolTile(cid.tileId)) {
             // FARCALL(aTryWhirlpoolOW);
             TryWhirlpoolOW_Conv();
             // goto done;
@@ -2493,7 +2493,7 @@ u8_flag_s TryTileCollisionEvent_Conv(void){
         // LD_A_addr(wFacingTileID);
         // CALL(aCheckWaterfallTile);
         // IF_NZ goto headbutt;
-        else if(CheckWaterfallTile_Conv(cid.tileId)) {
+        else if(CheckWaterfallTile(cid.tileId)) {
             // FARCALL(aTryWaterfallOW);
             TryWaterfallOW_Conv();
             // goto done;
@@ -2503,7 +2503,7 @@ u8_flag_s TryTileCollisionEvent_Conv(void){
         // LD_A_addr(wFacingTileID);
         // CALL(aCheckHeadbuttTreeTile);
         // IF_NZ goto surf;
-        else if(CheckHeadbuttTreeTile_Conv(cid.tileId)) {
+        else if(CheckHeadbuttTreeTile(cid.tileId)) {
             // FARCALL(aTryHeadbuttOW);
             // IF_C goto done;
             // goto noevent;
@@ -2529,7 +2529,7 @@ u8_flag_s TryTileCollisionEvent_Conv(void){
 
 // done:
     // CALL(aPlayClickSFX);
-    PlayClickSFX_Conv();
+    PlayClickSFX();
     // LD_A(0xff);
     // SCF;
     // RET;
@@ -2606,7 +2606,7 @@ u8_flag_s RandomEncounter_Conv(void){
         // LD_A(BANK(aBugCatchingContestBattleScript));
         // LD_HL(mBugCatchingContestBattleScript);
         // goto done;
-        return u8_flag(CallScript_Conv2(BugCatchingContestBattleScript), true);
+        return u8_flag(CallScript(BugCatchingContestBattleScript), true);
     }
     // FARCALL(aTryWildEncounter);
     // IF_NZ goto nope;
@@ -2630,7 +2630,7 @@ u8_flag_s RandomEncounter_Conv(void){
     // CALL(aCallScript);
     // SCF;
     // RET;
-    return u8_flag(CallScript_Conv2(WildBattleScript), true);
+    return u8_flag(CallScript(WildBattleScript), true);
 }
 
 bool WildBattleScript(script_s* s){
@@ -2690,7 +2690,7 @@ bool CanUseSweetScent_Conv(void){
     // LD_A_addr(wPlayerStandingTile);
     // CALL(aCheckIceTile);
     // IF_Z goto no;
-    if(CheckIceTile_Conv(wram->wPlayerStruct.nextTile))
+    if(CheckIceTile(wram->wPlayerStruct.nextTile))
         return false;
     // SCF;
     // RET;
@@ -2885,7 +2885,7 @@ bool TryWildEncounter_BugContest_Conv(void){
     // LD_B(40 percent);
     // IF_Z goto ok;
     // LD_B(20 percent);
-    uint8_t b = (CheckSuperTallGrassTile_Conv(wram->wPlayerStruct.nextTile))
+    uint8_t b = (CheckSuperTallGrassTile(wram->wPlayerStruct.nextTile))
         ? 40 percent
         : 20 percent;
 
@@ -3005,7 +3005,7 @@ bool DoBikeStep_Conv(void){
     // CALL(aGetMapPhoneService);
     // AND_A_A;
     // IF_NZ goto NoCall;
-    if(GetMapPhoneService_Conv())
+    if(GetMapPhoneService())
         return false;
 
 // Check the bike step count and check whether we've

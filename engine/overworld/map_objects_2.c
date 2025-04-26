@@ -147,7 +147,7 @@ uint8_t GetObjectTimeMask_Conv(struct MapObject* bc){
     // CALL(aCheckObjectTime);
     // LD_A(-1);
     // RET_C ;
-    if(CheckObjectTime_Conv(bc))
+    if(CheckObjectTime(bc))
         return 0xff;
     // XOR_A_A;
     // RET;

@@ -128,7 +128,7 @@ void HerbShop(void){
     // CALL(aFarReadMart);
     FarReadMart_Conv();
     // CALL(aLoadStandardMenuHeader);
-    LoadStandardMenuHeader_Conv();
+    LoadStandardMenuHeader();
     // LD_HL(mHerbShopLadyIntroText);
     // CALL(aMartTextbox);
     MartTextbox(HerbShopLadyIntroText);
@@ -148,7 +148,7 @@ void BargainShop(void){
     // CALL(aReadMart);
     ReadMart();
     // CALL(aLoadStandardMenuHeader);
-    LoadStandardMenuHeader_Conv();
+    LoadStandardMenuHeader();
     // LD_HL(mBargainShopIntroText);
     // CALL(aMartTextbox);
     MartTextbox(BargainShopIntroText);
@@ -175,7 +175,7 @@ void Pharmacist(void){
     // CALL(aFarReadMart);
     FarReadMart_Conv();
     // CALL(aLoadStandardMenuHeader);
-    LoadStandardMenuHeader_Conv();
+    LoadStandardMenuHeader();
     // LD_HL(mPharmacyIntroText);
     // CALL(aMartTextbox);
     MartTextbox(PharmacyIntroText);
@@ -204,7 +204,7 @@ void RooftopSale(void){
     // CALL(aReadMart);
     ReadMart();
     // CALL(aLoadStandardMenuHeader);
-    LoadStandardMenuHeader_Conv();
+    LoadStandardMenuHeader();
     // LD_HL(mMartWelcomeText);
     // CALL(aMartTextbox);
     MartTextbox(MartWelcomeText);
@@ -307,7 +307,7 @@ const item_t* GetMart_Conv(uint16_t de){
 
 static uint8_t StandardMart_HowMayIHelpYou(void){
     // CALL(aLoadStandardMenuHeader);
-    LoadStandardMenuHeader_Conv();
+    LoadStandardMenuHeader();
     // LD_HL(mMartWelcomeText);
     // CALL(aPrintText);
     PrintText_Conv2(MartWelcomeText);
@@ -319,10 +319,10 @@ static uint8_t StandardMart_HowMayIHelpYou(void){
 static uint8_t StandardMart_TopMenu(void){
     // LD_HL(mMenuHeader_BuySell);
     // CALL(aCopyMenuHeader);
-    CopyMenuHeader_Conv2(&MenuHeader_BuySell);
+    CopyMenuHeader(&MenuHeader_BuySell);
     // CALL(aVerticalMenu);
     // IF_C goto quit;
-    if(!VerticalMenu_Conv())
+    if(!VerticalMenu())
         return STANDARDMART_QUIT;
     // LD_A_addr(wMenuCursorY);
     // CP_A(0x1);
@@ -348,7 +348,7 @@ static uint8_t StandardMart_TopMenu(void){
 static uint8_t StandardMart_Buy(void) {
 // Buy:
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // CALL(aFarReadMart);
     FarReadMart_Conv();
     // CALL(aBuyMenu);
@@ -361,7 +361,7 @@ static uint8_t StandardMart_Buy(void) {
 
 static uint8_t StandardMart_Sell(void){
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // CALL(aSellMenu);
     SellMenu();
     // LD_A(STANDARDMART_ANYTHINGELSE);
@@ -372,7 +372,7 @@ static uint8_t StandardMart_Sell(void){
 static uint8_t StandardMart_Quit(void) {
 // Quit:
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // LD_HL(mMartComeAgainText);
     // CALL(aMartTextbox);
     MartTextbox(MartComeAgainText);
@@ -383,7 +383,7 @@ static uint8_t StandardMart_Quit(void) {
 
 static uint8_t StandardMart_AnythingElse(void){
     // CALL(aLoadStandardMenuHeader);
-    LoadStandardMenuHeader_Conv();
+    LoadStandardMenuHeader();
     // LD_HL(mMartAskMoreText);
     // CALL(aPrintText);
     PrintText_Conv2(MartAskMoreText);
@@ -682,7 +682,7 @@ void ReadMart(void){
 
 void BuyMenu(void){
     // CALL(aFadeToMenu);
-    FadeToMenu_Conv();
+    FadeToMenu();
     // FARCALL(aBlankScreen);
     BlankScreen();
     // XOR_A_A;
@@ -700,7 +700,7 @@ void BuyMenu(void){
         // IF_NC goto loop;
     } while(!quit);
     // CALL(aCloseSubmenu);
-    CloseSubmenu_Conv();
+    CloseSubmenu();
     // RET;
 }
 
@@ -799,10 +799,10 @@ bool BuyMenuLoop(void){
     // FARCALL(aPlaceMoneyTopRight);
     PlaceMoneyTopRight();
     // CALL(aUpdateSprites);
-    UpdateSprites_Conv();
+    UpdateSprites();
     // LD_HL(mMenuHeader_Buy);
     // CALL(aCopyMenuHeader);
-    CopyMenuHeader_Conv2(&MenuHeader_Buy);
+    CopyMenuHeader(&MenuHeader_Buy);
     // LD_A_addr(wMenuCursorPositionBackup);
     // LD_addr_A(wMenuCursorPosition);
     wram->wMenuCursorPosition = wram->wMenuCursorPositionBackup;
@@ -810,7 +810,7 @@ bool BuyMenuLoop(void){
     // LD_addr_A(wMenuScrollPosition);
     wram->wMenuScrollPosition = wram->wMenuScrollPositionBackup;
     // CALL(aScrollingMenu);
-    ScrollingMenu_Conv();
+    ScrollingMenu();
     // LD_A_addr(wMenuScrollPosition);
     // LD_addr_A(wMenuScrollPositionBackup);
     wram->wMenuScrollPositionBackup = wram->wMenuScrollPosition;
@@ -847,7 +847,7 @@ bool BuyMenuLoop(void){
             // CALL(aLoadBuyMenuText);
             LoadBuyMenuText(MARTTEXT_NOT_ENOUGH_MONEY);
             // CALL(aJoyWaitAorB);
-            JoyWaitAorB_Conv();
+            JoyWaitAorB();
             // AND_A_A;
             // RET;
             return false;
@@ -862,7 +862,7 @@ bool BuyMenuLoop(void){
             // CALL(aLoadBuyMenuText);
             LoadBuyMenuText(MARTTEXT_BAG_FULL);
             // CALL(aJoyWaitAorB);
-            JoyWaitAorB_Conv();
+            JoyWaitAorB();
             // AND_A_A;
             // RET;
             return false;
@@ -884,7 +884,7 @@ bool BuyMenuLoop(void){
         // CALL(aLoadBuyMenuText);
         LoadBuyMenuText(MARTTEXT_HERE_YOU_GO);
         // CALL(aJoyWaitAorB);
-        JoyWaitAorB_Conv();
+        JoyWaitAorB();
     }
 
 // cancel:
@@ -909,7 +909,7 @@ bool StandardMartAskPurchaseQuantity(void){
     // FARCALL(aSelectQuantityToBuy);
     bool cancel = SelectQuantityToBuy();
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // RET;
     return cancel;
 }
@@ -922,7 +922,7 @@ bool MartConfirmPurchase(void){
     LoadBuyMenuText(MARTTEXT_COSTS_THIS_MUCH);
     // CALL(aYesNoBox);
     // RET;
-    return YesNoBox_Conv();
+    return YesNoBox();
 }
 
 bool BargainShopAskPurchaseQuantity(void){
@@ -944,7 +944,7 @@ bool BargainShopAskPurchaseQuantity(void){
         // CALL(aLoadBuyMenuText);
         LoadBuyMenuText(MARTTEXT_SOLD_OUT);
         // CALL(aJoyWaitAorB);
-        JoyWaitAorB_Conv();
+        JoyWaitAorB();
         // SCF;
         // RET;
         return true;
@@ -1010,7 +1010,7 @@ bool RooftopSaleAskPurchaseQuantity(void){
     // FARCALL(aRooftopSale_SelectQuantityToBuy);
     bool cancel = RooftopSale_SelectQuantityToBuy(price);
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // RET;
     return cancel;
 }
@@ -1216,7 +1216,7 @@ static void SellMenu_TryToSellItem(void) {
             // FARCALL(aSelectQuantityToSell);
             bool declined = SelectQuantityToSell();
             // CALL(aExitMenu);
-            ExitMenu_Conv2();
+            ExitMenu();
             // IF_C goto declined;
             if(!declined) {
                 // hlcoord(1, 14, wTilemap);
@@ -1228,7 +1228,7 @@ static void SellMenu_TryToSellItem(void) {
                 PrintTextboxText_Conv2(MartSellPriceText);
                 // CALL(aYesNoBox);
                 // IF_C goto declined;
-                if(YesNoBox_Conv()) {
+                if(YesNoBox()) {
                     // LD_DE(wMoney);
                     // LD_BC(hMoneyTemp);
                     // CALL(aGiveMoney);
@@ -1251,13 +1251,13 @@ static void SellMenu_TryToSellItem(void) {
                     // FARCALL(aPlaceMoneyBottomLeft);
                     PlaceMoneyBottomLeft();
                     // CALL(aJoyWaitAorB);
-                    JoyWaitAorB_Conv();
+                    JoyWaitAorB();
                 }
             }
 
         // declined:
             // CALL(aExitMenu);
-            ExitMenu_Conv2();
+            ExitMenu();
             // AND_A_A;
             // RET;
             return;
@@ -1298,7 +1298,7 @@ void SellMenu(void){
 
 // quit:
     // CALL(aReturnToMapWithSpeechTextbox);
-    ReturnToMapWithSpeechTextbox_Conv();
+    ReturnToMapWithSpeechTextbox();
     // AND_A_A;
     // RET;
     return;
@@ -1403,10 +1403,10 @@ void PlayTransactionSound(void){
 
 void MartTextbox(const txt_cmd_s* hl){
     // CALL(aMenuTextbox);
-    MenuTextbox_Conv(hl);
+    MenuTextbox(hl);
     // CALL(aJoyWaitAorB);
-    JoyWaitAorB_Conv();
+    JoyWaitAorB();
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // RET;
 }

@@ -91,12 +91,12 @@ static void ReanchorBGMap_NoOAMUpdate_ReanchorBGMap(void) {
     // LDH_addr_A(hWY);
     hram->hWY = 0x90;
     // CALL(aOverworldTextModeSwitch);
-    OverworldTextModeSwitch_Conv();
+    OverworldTextModeSwitch();
     // LD_A(HIGH(vBGMap1));
     // CALL(aReanchorBGMap_NoOAMUpdate_LoadBGMapAddrIntoHRAM);
     ReanchorBGMap_NoOAMUpdate_LoadBGMapAddrIntoHRAM(HIGH(vBGMap1));
     // CALL(av_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
-    v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv();
+    v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap();
     // FARCALL(aLoadOW_BGPal7);
     LoadOW_BGPal7();
     // FARCALL(aApplyPals);
@@ -188,14 +188,14 @@ LoadGFX:
 static void LoadFonts_NoOAMUpdate_LoadGFX(void) {
 // LoadGFX:
     // CALL(aLoadFontsExtra);
-    LoadFontsExtra_Conv();
+    LoadFontsExtra();
     // LD_A(0x90);
     // LDH_addr_A(hWY);
     hram->hWY = 0x90;
     // CALL(aSafeUpdateSprites);
-    SafeUpdateSprites_Conv();
+    SafeUpdateSprites();
     // CALL(aLoadStandardFont);
-    LoadStandardFont_Conv();
+    LoadStandardFont();
     // RET;
 }
 

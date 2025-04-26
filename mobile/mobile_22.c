@@ -55,7 +55,7 @@ void OpenSRAMBank4(void){
     // PUSH_AF;
     // LD_A(0x4);
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(0x4);
+    OpenSRAM(0x4);
     // POP_AF;
     // RET;
 }
@@ -301,9 +301,9 @@ void Function8921f(tile_t* hl, uint8_t b, uint8_t c){
 
 void Mobile22_PromptButton(void){
     // CALL(aJoyWaitAorB);
-    JoyWaitAorB_Conv();
+    JoyWaitAorB();
     // CALL(aPlayClickSFX);
-    PlayClickSFX_Conv();
+    PlayClickSFX();
     // RET;
 }
 
@@ -363,7 +363,7 @@ bool Function89261(uint8_t a, uint8_t b, uint8_t c){
     // PUSH_BC;
     // LD_HL(mMenuHeader_0x892a3);
     // CALL(aCopyMenuHeader);
-    CopyMenuHeader_Conv2(&MenuHeader_0x892a3);
+    CopyMenuHeader(&MenuHeader_0x892a3);
     // POP_BC;
     // LD_HL(wMenuBorderTopCoord);
     // LD_A_C;
@@ -384,19 +384,19 @@ bool Function89261(uint8_t a, uint8_t b, uint8_t c){
     // LD_addr_A(wMenuCursorPosition);
     wram->wMenuCursorPosition = a;
     // CALL(aPushWindow);
-    PushWindow_Conv();
+    PushWindow();
     // CALL(aMobile22_SetBGMapMode0);
     Mobile22_SetBGMapMode0();
     // CALL(aMobile_EnableSpriteUpdates);
     Mobile_EnableSpriteUpdates();
     // CALL(aVerticalMenu);
-    bool cancel = !VerticalMenu_Conv();
+    bool cancel = !VerticalMenu();
     // PUSH_AF;
     // LD_C(0xa);
     // CALL(aDelayFrames);
     DelayFrames(0xa);
     // CALL(aCloseWindow);
-    CloseWindow_Conv2();
+    CloseWindow();
     // CALL(aMobile_DisableSpriteUpdates);
     Mobile_DisableSpriteUpdates();
     // POP_AF;
@@ -733,9 +733,9 @@ void Function893b3(void){
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aLoadStandardFont);
-    LoadStandardFont_Conv();
+    LoadStandardFont();
     // CALL(aLoadFontsExtra);
-    LoadFontsExtra_Conv();
+    LoadFontsExtra();
     // CALL(aFunction893ef);
     Function893ef();
     // CALL(aFunction8942b);
@@ -754,9 +754,9 @@ void Function893cc(void){
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aLoadStandardFont);
-    LoadStandardFont_Conv();
+    LoadStandardFont();
     // CALL(aLoadFontsExtra);
-    LoadFontsExtra_Conv();
+    LoadFontsExtra();
     // CALL(aFunction893ef);
     Function893ef();
     // CALL(aFunction89464);
@@ -2361,7 +2361,7 @@ static bool Function89a57_Function89ac7(void){
     // CALL(aFunction89a57_Function89ad4);
     bool res = Function89a57_Function89ad4(Function8931b());
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
     return res;
 }
@@ -2427,7 +2427,7 @@ static bool Function89a57_MoveCursorUp(void){
 
 u8_flag_s Function89a57(void){
     // CALL(aJoyTextDelay_ForcehJoyDown);  // joypad
-    uint8_t c = JoyTextDelay_ForcehJoyDown_Conv();
+    uint8_t c = JoyTextDelay_ForcehJoyDown();
     // BIT_C(D_UP_F);
     // IF_NZ goto d_up;
     if(bit_test(c, D_UP_F)) {
@@ -2522,7 +2522,7 @@ void Function89b28(void){
     // CALL(aFunction893e2);
     Function893e2();
     // CALL(aCall_ExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // CALL(aFunction891ab);
     Function891ab();
     // CALL(aSetPalettes);
@@ -2832,7 +2832,7 @@ static const uint8_t ScrollData1[] = {
     3, 0, 0, 0,
 };
     // CALL(aJoyTextDelay_ForcehJoyDown);  // joypad
-    uint8_t c = JoyTextDelay_ForcehJoyDown_Conv();
+    uint8_t c = JoyTextDelay_ForcehJoyDown();
     // LD_B(0x0);
     // BIT_C(A_BUTTON_F);
     // IF_Z goto not_a_button;
@@ -3051,16 +3051,16 @@ void Function89d0d(void){
 void Function89d5e(const struct MenuHeader *hl, uint8_t a){
     // PUSH_AF;
     // CALL(aCopyMenuHeader);
-    CopyMenuHeader_Conv2(hl);
+    CopyMenuHeader(hl);
     // POP_AF;
     // LD_addr_A(wMenuCursorPosition);
     wram->wMenuCursorPosition = a;
     // CALL(aMobile22_SetBGMapMode0);
     Mobile22_SetBGMapMode0();
     // CALL(aPlaceVerticalMenuItems);
-    PlaceVerticalMenuItems_Conv2();
+    PlaceVerticalMenuItems();
     // CALL(aInitVerticalMenuCursor);
-    InitVerticalMenuCursor_Conv(GetMenuData());
+    InitVerticalMenuCursor(GetMenuData());
     // LD_HL(w2DMenuFlags1);
     // SET_hl(7);
     bit_set(wram->w2DMenuFlags1, 7);
@@ -3146,14 +3146,14 @@ u8_flag_s Function89dab(void){
         if(wram->wMenuCursorY == wram->w2DMenuNumRows)
             goto asm_89dd9;
         // CALL(aPlayClickSFX);
-        PlayClickSFX_Conv();
+        PlayClickSFX();
         // LD_A_addr(w2DMenuNumRows);
         // LD_C_A;
         // LD_A_addr(wMenuCursorY);
         // CP_A_C;
         // IF_Z goto asm_89dd9;
         // CALL(aPlaceHollowCursor);
-        PlaceHollowCursor_Conv();
+        PlaceHollowCursor();
         // SCF;
         // RET;
         return u8_flag(wram->wMenuCursorY, true);
@@ -3163,7 +3163,7 @@ u8_flag_s Function89dab(void){
     else if(bit_test(c, B_BUTTON_F)) {
     asm_89dd9:
         // CALL(aPlayClickSFX);
-        PlayClickSFX_Conv();
+        PlayClickSFX();
         // LD_A(0x1);
         // AND_A_A;
         // RET;
@@ -3227,7 +3227,7 @@ bool Function89e0a(void){
     // CALL(aFunction8b3b0);
     u8_flag_s res = Function8b3b0();
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // LD_HL(mJumptable_89e18);
     // RST(aJumpTable);
     // RET;
@@ -3250,7 +3250,7 @@ bool Function89e1e(void){
     // CALL(aFunction8b36c);
     Function8b36c(GBToRAMAddr(s4_a037));
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // XOR_A_A;
     // LD_addr_A(wd02d);
     wram->wd02d = 0;
@@ -3704,7 +3704,7 @@ void Function89ff6(void){
     // CALL(aFunction89381);
     Function89381(wram->wd008, GBToRAMAddr(s4_a603));
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // CALL(aFunction8987f);
     Function8987f();
     // CALL(aOpenSRAMBank4);
@@ -3714,7 +3714,7 @@ void Function89ff6(void){
     // CALL(aFunction89a0c);
     Function89a0c(coord(1, 13, wram->wTilemap), GBToRAMAddr(s4_a007));
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // CALL(aFunction891ab);
     Function891ab();
     // CALL(aMobile22_PromptButton);
@@ -3934,7 +3934,7 @@ bool Function8a116(void){
     wram->wd030[0] = 0x1;
     // LD_HL(mMenuHeader_0x8a176);
     // CALL(aLoadMenuHeader);
-    LoadMenuHeader_Conv2(&MenuHeader_0x8a176);
+    LoadMenuHeader(&MenuHeader_0x8a176);
 
 asm_8a121:
     // CALL(aMobile22_SetBGMapMode0);
@@ -3970,7 +3970,7 @@ asm_8a121:
             // goto asm_8a15a;
         // asm_8a15a:
             // CALL(aExitMenu);
-            ExitMenu_Conv2();
+            ExitMenu();
             // CALL(aFunction891de);
             Function891de();
             // CALL(aFunction893e2);
@@ -3998,7 +3998,7 @@ asm_8a121:
     // CALL(aMobile_EnableSpriteUpdates);
     Mobile_EnableSpriteUpdates();
     // CALL(aCloseWindow);
-    CloseWindow_Conv2();
+    CloseWindow();
     // CALL(aMobile_DisableSpriteUpdates);
     Mobile_DisableSpriteUpdates();
     // SCF;
@@ -4132,7 +4132,7 @@ const txt_cmd_s MobileCardFolderDeletedText[] = {
 
 bool Function8a241(void){
     // CALL(aLoadStandardMenuHeader);
-    LoadStandardMenuHeader_Conv();
+    LoadStandardMenuHeader();
     // CALL(aFunction891fe);
     Function891fe();
     // CALL(aFunction8a262);
@@ -4153,7 +4153,7 @@ bool Function8a241(void){
         // CALL(aClearBGPalettes);
         ClearBGPalettes();
         // CALL(aCall_ExitMenu);
-        ExitMenu_Conv2();
+        ExitMenu();
         // CALL(aFunction891de);
         Function891de();
         // AND_A_A;
@@ -4207,7 +4207,7 @@ bool Function8a262(void){
 bool Function8a2aa(void){
     // LD_HL(mMenuHeader_0x8a2ef);
     // CALL(aLoadMenuHeader);
-    LoadMenuHeader_Conv2(&MenuHeader_0x8a2ef);
+    LoadMenuHeader(&MenuHeader_0x8a2ef);
     // LD_HL(mMobileCardFolderAskOpenOldText);
     // CALL(aPrintText);
     PrintText_Conv2(MobileCardFolderAskOpenOldText);
@@ -4230,7 +4230,7 @@ bool Function8a2aa(void){
     else {
     // asm_8a2cf:
         // CALL(aExitMenu);
-        ExitMenu_Conv2();
+        ExitMenu();
         // CALL(aFunction8a241);
         // IF_C goto asm_8a2ed;
         if(!Function8a241()) {
@@ -4238,7 +4238,7 @@ bool Function8a2aa(void){
             // CALL(aFunction8a313);
             Function8a313(0x1);
             // CALL(aCloseSRAM);
-            CloseSRAM_Conv();
+            CloseSRAM();
             // CALL(aFunction891de);
             Function891de();
             // CALL(aFunction89245);
@@ -4256,7 +4256,7 @@ bool Function8a2aa(void){
 
 // asm_8a2ea:
     // CALL(aCloseWindow);
-    CloseWindow_Conv2();
+    CloseWindow();
 
 // asm_8a2ed:
     // SCF;
@@ -4290,7 +4290,7 @@ void Function8a2fe(uint8_t a){
     // CALL(aByteFill);
     ByteFill(GBToRAMAddr(s4_a603), 0x8, 0xff);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -4327,9 +4327,9 @@ uint8_t Function8a31c(uint8_t c){
     // LD_addr_A(wMenuSelection);
     wram->wMenuSelection = c;
     // CALL(aPlaceVerticalMenuItems);
-    PlaceVerticalMenuItems_Conv2();
+    PlaceVerticalMenuItems();
     // CALL(aInitVerticalMenuCursor);
-    InitVerticalMenuCursor_Conv(GetMenuData());
+    InitVerticalMenuCursor(GetMenuData());
     // LD_HL(w2DMenuFlags1);
     // SET_hl(7);
     bit_set(wram->w2DMenuFlags1, 7);
@@ -4359,7 +4359,7 @@ uint8_t Function8a31c(uint8_t c){
             // CALL(aFunction89448);
             Function89448();
             // CALL(aPlaceHollowCursor);
-            PlaceHollowCursor_Conv();
+            PlaceHollowCursor();
             // CALL(aFunction8a3a2);
             Function8a3a2();
             // LD_A_addr(wMenuSelection);
@@ -4398,7 +4398,7 @@ u8_flag_s Function8a383(void){
     if(bit_test(c, A_BUTTON_F)) {
     // asm_8a399:
         // CALL(aPlayClickSFX);
-        PlayClickSFX_Conv();
+        PlayClickSFX();
         // SCF;
         // RET;
         return u8_flag(1, true);
@@ -4408,7 +4408,7 @@ u8_flag_s Function8a383(void){
     if(bit_test(c, B_BUTTON_F)) {
     // asm_8a39e:
         // CALL(aPlayClickSFX);
-        PlayClickSFX_Conv();
+        PlayClickSFX();
         // RET;
         return u8_flag(1, false);
     }
@@ -4464,7 +4464,7 @@ void Function8a3b2(void){
 
 // asm_8a3db:
     // CALL(aCopyMenuHeader);
-    CopyMenuHeader_Conv2(hl);
+    CopyMenuHeader(hl);
     // RET;
 }
 
@@ -4476,7 +4476,7 @@ bool Function8a3df(void){
     // CALL(aFunction89b45);
     bool res = Function89b45(hl);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // LD_HL(wd002);
     // IF_C goto asm_8a3f8;
     if(res) {
@@ -4911,7 +4911,7 @@ const uint16_t Palette_8a624[] = {
 
 void Function8a62c(void){
     // CALL(aLoadStandardMenuHeader);
-    LoadStandardMenuHeader_Conv();
+    LoadStandardMenuHeader();
     // CALL(aFunction891fe);
     Function891fe();
     // XOR_A_A;
@@ -4997,7 +4997,7 @@ void Function8a679(void){
         // CALL(aFunction89844);
         Function89844(bc);
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
         // CALL(aOpenSRAMBank4);
         OpenSRAMBank4();
         // CALL(aFunction8939a);
@@ -5010,7 +5010,7 @@ void Function8a679(void){
         // CALL(aFunction891ab);
         Function891ab();
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
 
         do {
         // asm_8a6a3:
@@ -5044,7 +5044,7 @@ bool Jumptable_8a6bc(uint8_t a){
 
 bool Function8a6c0(void){
     // CALL(aPlayClickSFX);
-    PlayClickSFX_Conv();
+    PlayClickSFX();
     // AND_A_A;
     // RET;
     return false;
@@ -5052,7 +5052,7 @@ bool Function8a6c0(void){
 
 bool Function8a6c5(void){
     // CALL(aPlayClickSFX);
-    PlayClickSFX_Conv();
+    PlayClickSFX();
     // CALL(aFunction89d0d);
     Function89d0d();
     // SCF;
@@ -5076,7 +5076,7 @@ void Function8a6cd(void){
     // CALL(aFunction8a757);
     Function8a757(bc);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 
     bool done = false;
     do {
@@ -5095,7 +5095,7 @@ void Function8a6cd(void){
         // LD_addr_A(wd02f);
         wram->wd02f[0] = 0;
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
 
         u8_flag_s res;
         do {
@@ -5112,7 +5112,7 @@ void Function8a6cd(void){
                 // CALL(aFunction8a765);
                 bool carry = Function8a765();
                 // CALL(aCloseSRAM);
-                CloseSRAM_Conv();
+                CloseSRAM();
                 // IF_NC goto asm_8a73f;
                 if(carry) {
                     // CALL(aMobile22_SetBGMapMode0);
@@ -5136,14 +5136,14 @@ void Function8a6cd(void){
             
             // asm_8a73f:
                 // CALL(aCloseSRAM);
-                CloseSRAM_Conv();
+                CloseSRAM();
             }
             // LD_A_B;
             // AND_A_A;
             // IF_Z goto asm_8a6fb;
         } while(res.a == 0);
         // CALL(aPlayClickSFX);
-        PlayClickSFX_Conv();
+        PlayClickSFX();
         // CALL(aFunction89448);
         Function89448();
         // LD_A_addr(wd011);
@@ -5239,11 +5239,11 @@ bool Function8a78c(void){
     // CALL(aInitName);
     InitName(&wram->wd002, bc + 0x0);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // CALL(aDelayFrame);
     DelayFrame();
     // CALL(aJoyTextDelay);
-    JoyTextDelay_Conv();
+    JoyTextDelay();
     // CALL(aFunction891de);
     Function891de();
     // CALL(aClearBGPalettes);
@@ -5256,7 +5256,7 @@ bool Function8a78c(void){
     // CALL(aFunction89844);
     Function89844(bc);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // AND_A_A;
     // RET;
     return false;
@@ -5309,7 +5309,7 @@ bool Function8a7cb(void){
     // CALL(aFunction891ab);
     Function891ab();
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // AND_A_A;
     // RET;
     return false;
@@ -5373,12 +5373,12 @@ bool Function8a818(void){
             // CALL(aWaitBGMap);
             WaitBGMap();
             // CALL(aJoyWaitAorB);
-            JoyWaitAorB_Conv();
+            JoyWaitAorB();
         }
 
     // asm_8a863:
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
         // SCF;
         // RET;
         return true;
@@ -5391,7 +5391,7 @@ bool Function8a818(void){
     // CALL(aWaitBGMap);
     WaitBGMap();
     // CALL(aJoyWaitAorB);
-    JoyWaitAorB_Conv();
+    JoyWaitAorB();
     // AND_A_A;
     // RET;
     return false;
@@ -5407,7 +5407,7 @@ bool Function8a8a1(void){
     // CALL(aFunction8a765);
     bool carry = Function8a765();
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // IF_NC goto asm_8a8bf;
     if(carry) {
         // CALL(aFunction89a23);
@@ -5451,7 +5451,7 @@ void Function8a8c3(void){
     // CALL(aFunction89856);
     Function89856(bc);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // CALL(aFunction891ab);
     Function891ab();
     // hlcoord(1, 13, wTilemap);
@@ -5467,7 +5467,7 @@ void Function8a8c3(void){
         // CALL(aFunction892b4);
         Function892b4();
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
         // CALL(aFunction89a23);
         Function89a23();
         // CALL(aMobile22_SetBGMapMode0);
@@ -5479,7 +5479,7 @@ void Function8a8c3(void){
         // CALL(aWaitBGMap);
         WaitBGMap();
         // CALL(aJoyWaitAorB);
-        JoyWaitAorB_Conv();
+        JoyWaitAorB();
     }
 
 // asm_8a90f:
@@ -5569,7 +5569,7 @@ void Function8a930(void){
         
         // asm_8a995:
             // CALL(aCloseSRAM);
-            CloseSRAM_Conv();
+            CloseSRAM();
             // RET;        
             return;
         }
@@ -5584,7 +5584,7 @@ void Function8a930(void){
 void Function8a999(void){
     // LD_HL(mMenuHeader_0x8a9c9);
     // CALL(aLoadMenuHeader);
-    LoadMenuHeader_Conv2(&MenuHeader_0x8a9c9);
+    LoadMenuHeader(&MenuHeader_0x8a9c9);
     // LD_C(0x1);
     uint8_t c = 0x1;
     u8_pair_flag_s res;
@@ -5596,7 +5596,7 @@ void Function8a999(void){
         // PUSH_BC;
         // PUSH_DE;
         // CALL(aLoadStandardMenuHeader);
-        LoadStandardMenuHeader_Conv();
+        LoadStandardMenuHeader();
         // POP_DE;
         // DEC_E;
         // LD_A_E;
@@ -5616,7 +5616,7 @@ void Function8a999(void){
     // CALL(aMobile_EnableSpriteUpdates);
     Mobile_EnableSpriteUpdates();
     // CALL(aCloseWindow);
-    CloseWindow_Conv2();
+    CloseWindow();
     // CALL(aMobile_DisableSpriteUpdates);
     Mobile_DisableSpriteUpdates();
     // RET;
@@ -5708,7 +5708,7 @@ void Function8aa0a(void){
     // CALL(aFunction89381);
     Function89381(wram->wCardPhoneNumber, GBToRAMAddr(s4_a603));
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // CALL(aFunction891fe);
     Function891fe();
     // CALL(aClearBGPalettes);
@@ -5751,7 +5751,7 @@ asm_8aa43:
     if(res.a == 0)
         goto asm_8aa43;
     // CALL(aPlayClickSFX);
-    PlayClickSFX_Conv();
+    PlayClickSFX();
     // CALL(aFunction89448);
     Function89448();
     // LD_A_addr(wd011);
@@ -5853,12 +5853,12 @@ bool Function8aab6(void){
         // CALL(aWaitBGMap);
         WaitBGMap();
         // CALL(aJoyWaitAorB);
-        JoyWaitAorB_Conv();
+        JoyWaitAorB();
     }
 
 // asm_8aaeb:
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // SCF;
     // RET;
     return true;
@@ -5891,7 +5891,7 @@ bool Function8ab11(void){
     // CALL(aFunction89185);
     bool eq = Function89185(GBToRAMAddr(s4_a603), wram->wCardPhoneNumber, PHONE_NUMBER_LENGTH);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // IF_Z goto asm_8ab37;
     if(eq)
         return true;
@@ -5920,7 +5920,7 @@ bool Function8ab11(void){
 static bool Function8ab3b_JoypadLoop(void){
     while(1) {
         // CALL(aJoyTextDelay_ForcehJoyDown);
-        uint8_t c = JoyTextDelay_ForcehJoyDown_Conv();
+        uint8_t c = JoyTextDelay_ForcehJoyDown();
         // BIT_C(A_BUTTON_F);
         // IF_NZ goto a_b_button;
         // BIT_C(B_BUTTON_F);
@@ -5928,7 +5928,7 @@ static bool Function8ab3b_JoypadLoop(void){
         if(bit_test(c, A_BUTTON_F) || bit_test(c, B_BUTTON_F)) {
         // a_b_button:
             // CALL(aPlayClickSFX);
-            PlayClickSFX_Conv();
+            PlayClickSFX();
             // AND_A_A;
             // RET;
             return false;
@@ -5937,7 +5937,7 @@ static bool Function8ab3b_JoypadLoop(void){
         // IF_Z goto JoypadLoop;
         else if(bit_test(c, START_F)) {
             // CALL(aPlayClickSFX);
-            PlayClickSFX_Conv();
+            PlayClickSFX();
             // CALL(aFunction89d0d);
             Function89d0d();
             // SCF;
@@ -5968,7 +5968,7 @@ void Function8ab3b(void){
         // CALL(aFunction89381);
         Function89381(wram->wd008, GBToRAMAddr(s4_a603));
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
         // CALL(aFunction8987f);
         Function8987f();
         // CALL(aOpenSRAMBank4);
@@ -5978,7 +5978,7 @@ void Function8ab3b(void){
         // CALL(aFunction89a0c);
         Function89a0c(coord(1, 13, wram->wTilemap), GBToRAMAddr(s4_a007));
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
         // CALL(aFunction891ab);
         Function891ab();
         // CALL(aFunction8ab3b_JoypadLoop);
@@ -5993,7 +5993,7 @@ void Function8ab93(void){
     // CALL(aClearBGPalettes);
     ClearBGPalettes();
     // CALL(aLoadStandardMenuHeader);
-    LoadStandardMenuHeader_Conv();
+    LoadStandardMenuHeader();
     // FARCALL(aDoNameCardSwap);
     DoNameCardSwap();
     // CALL(aClearSprites);
@@ -6045,7 +6045,7 @@ uint8_t Function8aba9(void){
             // CALL(aFunction89b45);
             bool carry = Function89b45(bc + PLAYER_NAME_LENGTH * 2 + 2 + 2 + 1);
             // CALL(aCloseSRAM);
-            CloseSRAM_Conv();
+            CloseSRAM();
             // IF_C goto asm_8abe2;
             if(carry)
                 break;
@@ -6058,7 +6058,7 @@ uint8_t Function8aba9(void){
 
     // asm_8abe2:
         // CALL(aPlayClickSFX);
-        PlayClickSFX_Conv();
+        PlayClickSFX();
 
     asm_8abe5:
         // CALL(aFunction891de);
@@ -6083,7 +6083,7 @@ uint8_t Function8aba9(void){
         // CALL(aFunction899fe);
         Function899fe(coord(1, 13, wram->wTilemap), bc);
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
         // CALL(aFunction891ab);
         Function891ab();
 
@@ -6187,7 +6187,7 @@ start:
         if(Function89259(0x2))
             goto start;
         // CALL(aLoadStandardFont);
-        LoadStandardFont_Conv();
+        LoadStandardFont();
         // POP_DE;
         // LD_C(0x0);
         // SCF;
@@ -6205,7 +6205,7 @@ start:
     // CALL(aFunction8932d);
     uint8_t* res = Function8932d(bc);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // IF_NC goto asm_8acb0;
     if(res == NULL) {
         // CALL(aOpenSRAMBank4);
@@ -6215,7 +6215,7 @@ start:
         // CALL(aFunction89b45);
         bool carry = Function89b45(bc + PLAYER_NAME_LENGTH * 2 + 2 + 2 + 1);
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
         // IF_NC goto asm_8accc;
         if(carry) {
             // CALL(aOpenSRAMBank4);
@@ -6223,7 +6223,7 @@ start:
             // CALL(aFunction892b7);
             Function892b7(bc);
             // CALL(aCloseSRAM);
-            CloseSRAM_Conv();
+            CloseSRAM();
             // goto asm_8accc;
         }
     }
@@ -6277,9 +6277,9 @@ start:
 
 asm_8ace4:
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // CALL(aLoadStandardFont);
-    LoadStandardFont_Conv();
+    LoadStandardFont();
     // LD_A_addr(wd02f);
     // LD_C_A;
     // AND_A_A;
@@ -6319,7 +6319,7 @@ asm_8ad0b:
     // CALL(aFunction899fe);
     Function899fe(coord(1, 13, wram->wTilemap), bc);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // CALL(aFunction891ab);
     Function891ab();
     // POP_BC;
@@ -6426,7 +6426,7 @@ bool Function8adcc(void){
     // CALL(aFunction8b3b0);
     u8_flag_s res = Function8b3b0();
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET_NC ;
     if(!res.flag)
         return false;

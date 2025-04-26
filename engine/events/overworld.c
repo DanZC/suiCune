@@ -185,7 +185,7 @@ bool CheckBadge_Conv(uint16_t de){
         return true;
     // LD_HL(mCheckBadge_BadgeRequiredText);
     // CALL(aMenuTextboxBackup);  // push text to queue
-    MenuTextboxBackup_Conv((struct TextCmd[]) {
+    MenuTextboxBackup((struct TextCmd[]) {
         text_far(v_BadgeRequiredText)
         text_end
     });
@@ -314,7 +314,7 @@ bool CheckPartyMove_Conv(move_t d){
 void FieldMoveFailed(void){
     // LD_HL(mFieldMoveFailed_CantUseItemText);
     // CALL(aMenuTextboxBackup);
-    MenuTextboxBackup_Conv((struct TextCmd[]) {
+    MenuTextboxBackup((struct TextCmd[]) {
         text_far(v_CantUseItemText)
         text_end
     });
@@ -361,7 +361,7 @@ static uint8_t CutFunction_DoCut(void) {
 static uint8_t CutFunction_FailCut(void) {
     // LD_HL(mCutNothingText);
     // CALL(aMenuTextboxBackup);
-    MenuTextboxBackup_Conv(CutNothingText);
+    MenuTextboxBackup(CutNothingText);
     // LD_A(0x80);
     // RET;
     return 0x80;
@@ -440,7 +440,7 @@ fail:
 bool CheckMapForSomethingToCut_Conv(void){
 // Does the collision data of the facing tile permit cutting?
     // CALL(aGetFacingTileCoord);
-    struct CoordsTileId cid = GetFacingTileCoord_Conv();
+    struct CoordsTileId cid = GetFacingTileCoord();
     // LD_C_A;
     // PUSH_DE;
     // FARCALL(aCheckCutCollision);
@@ -451,7 +451,7 @@ bool CheckMapForSomethingToCut_Conv(void){
 // Get the location of the current block in wOverworldMapBlocks.
     // CALL(aGetBlockLocation);
     // LD_C_hl;
-    uint8_t* hl = GetBlockLocation_Conv((uint8_t)cid.x, (uint8_t)cid.y);
+    uint8_t* hl = GetBlockLocation((uint8_t)cid.x, (uint8_t)cid.y);
 // See if that block contains something that can be cut.
     // PUSH_HL;
     // LD_HL(mCutTreeBlockPointers);
@@ -512,9 +512,9 @@ void CutDownTreeOrGrass(void){
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aOverworldTextModeSwitch);
-    OverworldTextModeSwitch_Conv();
+    OverworldTextModeSwitch();
     // CALL(aUpdateSprites);
-    UpdateSprites_Conv();
+    UpdateSprites();
     // CALL(aDelayFrame);
     DelayFrame();
     // LD_A_addr(wCutWhirlpoolAnimationType);
@@ -522,15 +522,15 @@ void CutDownTreeOrGrass(void){
     // FARCALL(aOWCutAnimation);
     OWCutAnimation_Conv(sFieldMoveData.cutWhirlpoolAnimationType);
     // CALL(aBufferScreen);
-    BufferScreen_Conv();
+    BufferScreen();
     // CALL(aGetMovementPermissions);
     GetMovementPermissions();
     // CALL(aUpdateSprites);
-    UpdateSprites_Conv();
+    UpdateSprites();
     // CALL(aDelayFrame);
     DelayFrame();
     // CALL(aLoadStandardFont);
-    LoadStandardFont_Conv();
+    LoadStandardFont();
     // RET;
 }
 
@@ -737,7 +737,7 @@ static uint8_t SurfFunction_TrySurf(void) {
     }
     // CALL(aGetFacingTileCoord);
     // CALL(aGetTileCollision);
-    uint8_t col = GetTileCollision_Conv(GetFacingTileCoord_Conv().tileId);
+    uint8_t col = GetTileCollision(GetFacingTileCoord().tileId);
     // CP_A(WATER_TILE);
     // IF_NZ goto cannotsurf;
     // CALL(aCheckDirection);
@@ -769,7 +769,7 @@ static uint8_t SurfFunction_DoSurf(void) {
 static uint8_t SurfFunction_FailSurf(void) {
     // LD_HL(mCantSurfText);
     // CALL(aMenuTextboxBackup);
-    MenuTextboxBackup_Conv(CantSurfText);
+    MenuTextboxBackup(CantSurfText);
     // LD_A(0x80);
     // RET;
     return 0x80;
@@ -778,7 +778,7 @@ static uint8_t SurfFunction_FailSurf(void) {
 static uint8_t SurfFunction_AlreadySurfing(void) {
     // LD_HL(mAlreadySurfingText);
     // CALL(aMenuTextboxBackup);
-    MenuTextboxBackup_Conv(AlreadySurfingText);
+    MenuTextboxBackup(AlreadySurfingText);
     // LD_A(0x80);
     // RET;
     return 0x80;
@@ -1035,7 +1035,7 @@ bool TrySurfOW_Conv(void){
     // CALL(aGetTileCollision);
     // CP_A(WATER_TILE);
     // IF_NZ goto quit;
-    if(GetTileCollision_Conv(wram->wFacingTileID) != WATER_TILE)
+    if(GetTileCollision(wram->wFacingTileID) != WATER_TILE)
         return false;
 
 //  Check tile permissions.
@@ -1071,7 +1071,7 @@ bool TrySurfOW_Conv(void){
     // LD_A(BANK(aAskSurfScript));
     // LD_HL(mAskSurfScript);
     // CALL(aCallScript);
-    CallScript_Conv2(AskSurfScript);
+    CallScript(AskSurfScript);
 
     // SCF;
     // RET;
@@ -1112,13 +1112,13 @@ static uint8_t FlyFunction_TryFly(void) {
     // CALL(aGetMapEnvironment);
     // CALL(aCheckOutdoorMap);
     // IF_Z goto outdoors;
-    if(CheckOutdoorMap_Conv(GetMapEnvironment_Conv2())) {
+    if(CheckOutdoorMap(GetMapEnvironment())) {
     // outdoors:
         // XOR_A_A;
         // LDH_addr_A(hMapAnims);
         hram->hMapAnims = 0;
         // CALL(aLoadStandardMenuHeader);
-        LoadStandardMenuHeader_Conv();
+        LoadStandardMenuHeader();
         // CALL(aClearSprites);
         ClearSprites();
         // FARCALL(av_FlyMap);
@@ -1131,7 +1131,7 @@ static uint8_t FlyFunction_TryFly(void) {
         if(e == 0xff || e >= NUM_SPAWNS) {
         // illegal:
             // CALL(aCloseWindow);
-            CloseWindow_Conv2();
+            CloseWindow();
             // CALL(aWaitBGMap);
             WaitBGMap();
             // LD_A(0x80);
@@ -1142,7 +1142,7 @@ static uint8_t FlyFunction_TryFly(void) {
         // LD_addr_A(wDefaultSpawnpoint);
         wram->wDefaultSpawnpoint = e;
         // CALL(aCloseWindow);
-        CloseWindow_Conv2();
+        CloseWindow();
         // LD_A(0x1);
         // RET;
         return 0x1;
@@ -1176,7 +1176,7 @@ static bool FlyFunction_FlyScript(script_s* s) {
         // CALL(aDelayFrame);
         DelayFrame();
         // CALL(aUpdatePlayerSprite);
-        UpdatePlayerSprite_Conv();
+        UpdatePlayerSprite();
         // FARCALL(aLoadOverworldFont);
         LoadOverworldFont_Conv();
         // RET;
@@ -1293,7 +1293,7 @@ bool CheckMapCanWaterfall_Conv(void){
 // failed:
     // SCF;
     // RET;
-    return ((wram->wPlayerStruct.facing & 0xc) == FACE_UP && CheckWaterfallTile_Conv(wram->wTileUp))? true: false;
+    return ((wram->wPlayerStruct.facing & 0xc) == FACE_UP && CheckWaterfallTile(wram->wTileUp))? true: false;
 }
 
 bool Script_WaterfallFromMenu(script_s* s){
@@ -1311,7 +1311,7 @@ static void CheckContinueWaterfall(void) {
     // LD_A_addr(wPlayerStandingTile);
     // CALL(aCheckWaterfallTile);
     // RET_Z ;
-    if(CheckWaterfallTile_Conv(wram->wPlayerStruct.nextTile))
+    if(CheckWaterfallTile(wram->wPlayerStruct.nextTile))
         return;
     // FARCALL(aStubbedTrainerRankings_Waterfall);
     // LD_A(0x1);
@@ -1385,7 +1385,7 @@ bool TryWaterfallOW_Conv(void){
         // LD_A(BANK(aScript_AskWaterfall));
         // LD_HL(mScript_AskWaterfall);
         // CALL(aCallScript);
-        CallScript_Conv2(Script_AskWaterfall);
+        CallScript(Script_AskWaterfall);
         // SCF;
         // RET;
         return true;
@@ -1395,7 +1395,7 @@ bool TryWaterfallOW_Conv(void){
     // LD_A(BANK(aScript_CantDoWaterfall));
     // LD_HL(mScript_CantDoWaterfall);
     // CALL(aCallScript);
-    CallScript_Conv2(Script_CantDoWaterfall);
+    CallScript(Script_CantDoWaterfall);
     // SCF;
     // RET;
     return true;
@@ -1504,7 +1504,7 @@ static bool EscapeRopeOrDig_UsedDigScript(script_s* s) {
 
 static uint8_t EscapeRopeOrDig_CheckCanDig(void){
     // CALL(aGetMapEnvironment);
-    uint8_t env = GetMapEnvironment_Conv2();
+    uint8_t env = GetMapEnvironment();
     // CP_A(CAVE);
     // IF_Z goto incave;
     // CP_A(DUNGEON);
@@ -1578,11 +1578,11 @@ static uint8_t EscapeRopeOrDig_FailDig(void) {
     if(wram->wEscapeRopeOrDigType == ESCAPE_TYPE_DIG) {
         // LD_HL(mEscapeRopeOrDig_CantUseDigText);
         // CALL(aMenuTextbox);
-        MenuTextbox_Conv(CantUseDigText);
+        MenuTextbox(CantUseDigText);
         // CALL(aWaitPressAorB_BlinkCursor);
-        WaitPressAorB_BlinkCursor_Conv();
+        WaitPressAorB_BlinkCursor();
         // CALL(aCloseWindow);
-        CloseWindow_Conv2();
+        CloseWindow();
     }
 
 // failescaperope:
@@ -1622,11 +1622,11 @@ void EscapeRopeOrDig(uint8_t escapeType){
 
 static uint8_t TeleportFunction_TryTeleport(void){
     // CALL(aGetMapEnvironment);
-    uint8_t env = GetMapEnvironment_Conv2();
+    uint8_t env = GetMapEnvironment();
     // CALL(aCheckOutdoorMap);
     // IF_Z goto CheckIfSpawnPoint;
     // goto nope;
-    if(CheckOutdoorMap_Conv(env)){
+    if(CheckOutdoorMap(env)){
     // CheckIfSpawnPoint:
         // LD_A_addr(wLastSpawnMapGroup);
         // LD_D_A;
@@ -1701,7 +1701,7 @@ static uint8_t TeleportFunction_FailTeleport(void){
     };
     // LD_HL(mTeleportFunction_CantUseTeleportText);
     // CALL(aMenuTextboxBackup);
-    MenuTextboxBackup_Conv(CantUseTeleportText);
+    MenuTextboxBackup(CantUseTeleportText);
     // LD_A(0x80);
     // RET;
     return 0x80;
@@ -2005,16 +2005,16 @@ failed:
 
 bool TryWhirlpoolMenu_Conv(void){
     // CALL(aGetFacingTileCoord);
-    struct CoordsTileId cid = GetFacingTileCoord_Conv();
+    struct CoordsTileId cid = GetFacingTileCoord();
     // LD_C_A;
     // PUSH_DE;
     // CALL(aCheckWhirlpoolTile);
     // POP_DE;
     // IF_C goto failed;
-    if(!CheckWhirlpoolTile_Conv(cid.tileId))
+    if(!CheckWhirlpoolTile(cid.tileId))
         return false;
     // CALL(aGetBlockLocation);
-    uint8_t* hl = GetBlockLocation_Conv(cid.x, cid.y);
+    uint8_t* hl = GetBlockLocation(cid.x, cid.y);
     // LD_C_hl;
     // PUSH_HL;
     // LD_HL(mWhirlpoolBlockPointers);
@@ -2076,13 +2076,13 @@ void DisappearWhirlpool(void){
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aOverworldTextModeSwitch);
-    OverworldTextModeSwitch_Conv();
+    OverworldTextModeSwitch();
     // LD_A_addr(wCutWhirlpoolAnimationType);
     // LD_E_A;
     // FARCALL(aPlayWhirlpoolSound);
     PlayWhirlpoolSound();
     // CALL(aBufferScreen);
-    BufferScreen_Conv();
+    BufferScreen();
     // CALL(aGetMovementPermissions);
     GetMovementPermissions();
     // RET;
@@ -2128,7 +2128,7 @@ bool TryWhirlpoolOW_Conv(void){
         // LD_A(BANK(aScript_AskWhirlpoolOW));
         // LD_HL(mScript_AskWhirlpoolOW);
         // CALL(aCallScript);
-        CallScript_Conv2(Script_AskWhirlpoolOW);
+        CallScript(Script_AskWhirlpoolOW);
         // SCF;
         // RET;
         return true;
@@ -2138,7 +2138,7 @@ bool TryWhirlpoolOW_Conv(void){
     // LD_A(BANK(aScript_MightyWhirlpool));
     // LD_HL(mScript_MightyWhirlpool);
     // CALL(aCallScript);
-    CallScript_Conv2(Script_MightyWhirlpool);
+    CallScript(Script_MightyWhirlpool);
     // SCF;
     // RET;
     return true;
@@ -2198,10 +2198,10 @@ no_tree:
 
 uint8_t TryHeadbuttFromMenu_Conv(void){
     // CALL(aGetFacingTileCoord);
-    struct CoordsTileId cid = GetFacingTileCoord_Conv();
+    struct CoordsTileId cid = GetFacingTileCoord();
     // CALL(aCheckHeadbuttTreeTile);
     // IF_NZ goto no_tree;
-    if(!CheckHeadbuttTreeTile_Conv(cid.tileId)) {
+    if(!CheckHeadbuttTreeTile(cid.tileId)) {
     // no_tree:
         // CALL(aFieldMoveFailed);
         FieldMoveFailed();
@@ -2289,7 +2289,7 @@ bool TryHeadbuttOW_Conv(void){
         // LD_A(BANK(aAskHeadbuttScript));
         // LD_HL(mAskHeadbuttScript);
         // CALL(aCallScript);
-        CallScript_Conv2(AskHeadbuttScript);
+        CallScript(AskHeadbuttScript);
         // SCF;
         // RET;
         return true;
@@ -2415,7 +2415,7 @@ u8_flag_s GetFacingObject_Conv(void){
     // LD_D_A;
     // AND_A_A;
     // RET;
-    return u8_flag(GetMapObject_Conv(bc->mapObjectIndex)->objectMovement, true);
+    return u8_flag(GetMapObject(bc->mapObjectIndex)->objectMovement, true);
 
 // fail:
     // SCF;
@@ -2524,7 +2524,7 @@ static uint8_t FishFunction_TryFish(void) {
     // CP_A(WATER_TILE);
     // IF_Z goto facingwater;
     if(wram->wPlayerState == PLAYER_SURF || wram->wPlayerState == PLAYER_SURF_PIKA
-    || GetTileCollision_Conv(GetFacingTileCoord_Conv().tileId) != WATER_TILE) {
+    || GetTileCollision(GetFacingTileCoord().tileId) != WATER_TILE) {
     // fail:
         // LD_A(0x3);
         // RET;
@@ -2533,7 +2533,7 @@ static uint8_t FishFunction_TryFish(void) {
 
 // facingwater:
     // CALL(aGetFishingGroup);
-    uint8_t fishGroup = GetFishingGroup_Conv2();
+    uint8_t fishGroup = GetFishingGroup();
     // AND_A_A;
     // IF_NZ goto goodtofish;
     if(fishGroup == 0) {
@@ -2769,9 +2769,9 @@ void PutTheRodAway(void){
     // LD_addr_A(wPlayerAction);
     wram->wPlayerStruct.action = 0x1;
     // CALL(aUpdateSprites);
-    UpdateSprites_Conv();
+    UpdateSprites();
     // CALL(aUpdatePlayerSprite);
-    UpdatePlayerSprite_Conv();
+    UpdatePlayerSprite();
     // RET;
 }
 
@@ -2793,7 +2793,7 @@ const txt_cmd_s UnusedNothingHereText[] ={
 
 static bool BikeFunction_CheckEnvironment(void) {
     // CALL(aGetMapEnvironment);
-    uint8_t env = GetMapEnvironment_Conv2();
+    uint8_t env = GetMapEnvironment();
     // CALL(aCheckOutdoorMap);
     // IF_Z goto ok;
     // CP_A(CAVE);
@@ -2801,14 +2801,14 @@ static bool BikeFunction_CheckEnvironment(void) {
     // CP_A(GATE);
     // IF_Z goto ok;
     // goto nope;
-    if(CheckOutdoorMap_Conv(env)
+    if(CheckOutdoorMap(env)
     || env == CAVE
     || env == GATE) {
     // ok:
         // CALL(aGetPlayerStandingTile);
         // AND_A(0xf);  // lo nybble only
         // IF_NZ goto nope;  // not FLOOR_TILE
-        if((GetPlayerStandingTile_Conv() & 0xf) == 0) {
+        if((GetPlayerStandingTile() & 0xf) == 0) {
             // XOR_A_A;
             // RET;
             return true;
@@ -3034,7 +3034,7 @@ u8_flag_s TryCutOW_Conv(void){
         // CALL(aCallScript);
         // SCF;
         // RET;
-        return u8_flag(CallScript_Conv2(AskCutScript), true);
+        return u8_flag(CallScript(AskCutScript), true);
     }
 
 // cant_cut:
@@ -3043,7 +3043,7 @@ u8_flag_s TryCutOW_Conv(void){
     // CALL(aCallScript);
     // SCF;
     // RET;
-    return u8_flag(CallScript_Conv2(CantCutScript), true);
+    return u8_flag(CallScript(CantCutScript), true);
 }
 
 static void AskCutScript_CheckMap(void) {

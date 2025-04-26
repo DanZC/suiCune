@@ -98,14 +98,14 @@ void GameCornerPrizeMonCheckDex(void){
     // CALL(aSetSeenAndCaughtMon);
     SetSeenAndCaughtMon(wram->wScriptVar - 1);
     // CALL(aFadeToMenu);
-    FadeToMenu_Conv();
+    FadeToMenu();
     // LD_A_addr(wScriptVar);
     // LD_addr_A(wNamedObjectIndex);
     wram->wNamedObjectIndex = wram->wScriptVar;
     // FARCALL(aNewPokedexEntry);
     NewPokedexEntry();
     // CALL(aExitAllMenus);
-    ExitAllMenus_Conv();
+    ExitAllMenus();
     // RET;
 }
 
@@ -194,31 +194,31 @@ void NameRater(void){
 
 void OverworldTownMap(void){
     // CALL(aFadeToMenu);
-    FadeToMenu_Conv();
+    FadeToMenu();
     // FARCALL(av_TownMap);
     v_TownMap();
     // CALL(aExitAllMenus);
-    ExitAllMenus_Conv();
+    ExitAllMenus();
     // RET;
 }
 
 void UnownPrinter(void){
     // CALL(aFadeToMenu);
-    FadeToMenu_Conv();
+    FadeToMenu();
     // FARCALL(av_UnownPrinter);
     v_UnownPrinter();
     // CALL(aExitAllMenus);
-    ExitAllMenus_Conv();
+    ExitAllMenus();
     // RET;
 }
 
 void DisplayLinkRecord(void){
     // CALL(aFadeToMenu);
-    FadeToMenu_Conv();
+    FadeToMenu();
     // FARCALL(av_DisplayLinkRecord);
     v_DisplayLinkRecord();
     // CALL(aExitAllMenus);
-    ExitAllMenus_Conv();
+    ExitAllMenus();
     // RET;
 }
 
@@ -235,7 +235,7 @@ void PlayersHousePC(void){
 void CheckMysteryGift(void){
     // LD_A(BANK(sMysteryGiftItem));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asMysteryGiftItem));
+    OpenSRAM(MBANK(asMysteryGiftItem));
     // LD_A_addr(sMysteryGiftItem);
     // AND_A_A;
     // IF_Z goto no;
@@ -244,7 +244,7 @@ void CheckMysteryGift(void){
     // LD_addr_A(wScriptVar);
     wram->wScriptVar = (gb_read(sMysteryGiftItem) == 0)? FALSE: gb_read(sMysteryGiftItem) + 1;
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -255,7 +255,7 @@ void GetMysteryGiftItem(void){
     };
     // LD_A(BANK(sMysteryGiftItem));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asMysteryGiftItem));
+    OpenSRAM(MBANK(asMysteryGiftItem));
     // LD_A_addr(sMysteryGiftItem);
     // LD_addr_A(wCurItem);
     wram->wCurItem = gb_read(sMysteryGiftItem);
@@ -267,7 +267,7 @@ void GetMysteryGiftItem(void){
     if(!ReceiveItem_Conv((item_pocket_s*)&wram->wNumItems, wram->wCurItem, 1)) {
     // no_room:
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
         // XOR_A_A;
         // LD_addr_A(wScriptVar);
         wram->wScriptVar = FALSE;
@@ -278,7 +278,7 @@ void GetMysteryGiftItem(void){
     // LD_addr_A(sMysteryGiftItem);
     gb_write(sMysteryGiftItem, NO_ITEM);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // LD_A_addr(wCurItem);
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetItemName);
@@ -310,14 +310,14 @@ void MapRadio(void){
 
 void UnownPuzzle(void){
     // CALL(aFadeToMenu);
-    FadeToMenu_Conv();
+    FadeToMenu();
     // FARCALL(av_UnownPuzzle);
     v_UnownPuzzle();
     // LD_A_addr(wSolvedUnownPuzzle);
     // LD_addr_A(wScriptVar);
     wram->wScriptVar = wram->wSolvedUnownPuzzle;
     // CALL(aExitAllMenus);
-    ExitAllMenus_Conv();
+    ExitAllMenus();
     // RET;
 }
 
@@ -358,7 +358,7 @@ void UnusedMemoryGame(void){
 void StartGameCornerGame(void (*func)(void)){
     // CALL(aFarQueueScript);
     // CALL(aFadeToMenu);
-    FadeToMenu_Conv();
+    FadeToMenu();
     // LD_HL(wQueuedScriptBank);
     // LD_A_hli;
     // PUSH_AF;
@@ -369,7 +369,7 @@ void StartGameCornerGame(void (*func)(void)){
     // RST(aFarCall);
     func();
     // CALL(aExitAllMenus);
-    ExitAllMenus_Conv();
+    ExitAllMenus();
     // RET;
 }
 
@@ -630,31 +630,31 @@ void FadeOutMusic(void){
 
 void Diploma(void){
     // CALL(aFadeToMenu);
-    FadeToMenu_Conv();
+    FadeToMenu();
     // FARCALL(av_Diploma);
     v_Diploma();
     // CALL(aExitAllMenus);
-    ExitAllMenus_Conv();
+    ExitAllMenus();
     // RET;
 }
 
 void PrintDiploma(void){
     // CALL(aFadeToMenu);
-    FadeToMenu_Conv();
+    FadeToMenu();
     // FARCALL(av_PrintDiploma);
     v_PrintDiploma();
     // CALL(aExitAllMenus);
-    ExitAllMenus_Conv();
+    ExitAllMenus();
     // RET;
 }
 
 void TrainerHouse(void){
     // LD_A(BANK(sMysteryGiftTrainerHouseFlag));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asMysteryGiftTrainerHouseFlag));
+    OpenSRAM(MBANK(asMysteryGiftTrainerHouseFlag));
     // LD_A_addr(sMysteryGiftTrainerHouseFlag);
     // LD_addr_A(wScriptVar);
     wram->wScriptVar = gb_read(sMysteryGiftTrainerHouseFlag);
     // JP(mCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 }

@@ -199,7 +199,7 @@ static void HealMachineAnim_LoadPalettes(void) {
     uint16_t buf[16];
     // CALL(aIsCGB);
     // IF_NZ goto cgb;
-    if(!IsCGB_Conv()) {
+    if(!IsCGB()) {
         // LD_A(0b11100000);
         // LDH_addr_A(rOBP1);
         gb_write(rOBP1, 0b11100000);
@@ -294,7 +294,7 @@ static void HealMachineAnim_LoadBallsOntoMachine(struct SpriteOAM* hl, const str
 static void HealMachineAnim_FlashPalettes(void){
     // CALL(aIsCGB);
     // IF_NZ goto go;
-    if(!IsCGB_Conv()) {
+    if(!IsCGB()) {
         // LDH_A_addr(rOBP1);
         // XOR_A(0b00101000);
         // LDH_addr_A(rOBP1);

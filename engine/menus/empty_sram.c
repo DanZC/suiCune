@@ -5,14 +5,14 @@
 
 static void EmptyBank(uint8_t bank) {
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(bank);
+    OpenSRAM(bank);
     // LD_HL(SRAM_Begin);
     // LD_BC(SRAM_End - SRAM_Begin);
     // XOR_A_A;
     // CALL(aByteFill);
     ByteFill_GB(SRAM_Begin, SRAM_End - SRAM_Begin, 0x0);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 

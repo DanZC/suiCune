@@ -28,7 +28,7 @@ static bool v_BillsPC_CheckCanUsePC(void) {
         return true;
     // LD_HL(mv_BillsPC_PCGottaHavePokemonText);
     // CALL(aMenuTextboxBackup);
-    MenuTextboxBackup_Conv(PCGottaHavePokemonText);
+    MenuTextboxBackup(PCGottaHavePokemonText);
     // SCF;
     // RET;
     return false;
@@ -43,7 +43,7 @@ static void v_BillsPC_LogIn(void) {
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aLoadStandardMenuHeader);
-    LoadStandardMenuHeader_Conv();
+    LoadStandardMenuHeader();
     // CALL(aClearPCItemScreen);
     ClearPCItemScreen();
     // LD_HL(wOptions);
@@ -59,13 +59,13 @@ static void v_BillsPC_LogIn(void) {
     // LD_addr_A(wOptions);
     wram->wOptions = options;
     // CALL(aLoadFontsBattleExtra);
-    LoadFontsBattleExtra_Conv();
+    LoadFontsBattleExtra();
     // RET;
 }
 
 static void v_BillsPC_LogOut(void) {
     // CALL(aCloseSubmenu);
-    CloseSubmenu_Conv();
+    CloseSubmenu();
     // RET;
 }
 
@@ -90,7 +90,7 @@ static const struct MenuHeader v_BillsPC_MenuHeader = {
                 }
             },
             //dw ['PlaceMenuStrings'];
-            .displayFunction = PlaceMenuStrings_Conv,
+            .displayFunction = PlaceMenuStrings,
             //dw ['.strings'];
             .stringsList = (const char*[]) {
             // strings:
@@ -108,7 +108,7 @@ static const struct MenuHeader v_BillsPC_MenuHeader = {
 static void v_BillsPC_UseBillsPC(void) {
     // LD_HL(mv_BillsPC_MenuHeader);
     // CALL(aLoadMenuHeader);
-    LoadMenuHeader_Conv2(&v_BillsPC_MenuHeader);
+    LoadMenuHeader(&v_BillsPC_MenuHeader);
     // LD_A(0x1);
     uint8_t a = 0x1;
 
@@ -124,7 +124,7 @@ static void v_BillsPC_UseBillsPC(void) {
         // LDH_addr_A(hBGMapMode);
         hram->hBGMapMode = BGMAPMODE_NONE;
         // CALL(aDoNthMenu);
-        u8_flag_s menuRes = DoNthMenu_Conv();
+        u8_flag_s menuRes = DoNthMenu();
         // IF_C goto cancel;
         if(menuRes.flag)
             break;
@@ -142,7 +142,7 @@ static void v_BillsPC_UseBillsPC(void) {
 
 // cancel:
     // CALL(aCloseWindow);
-    CloseWindow_Conv2();
+    CloseWindow();
     // RET;
 }
 
@@ -191,7 +191,7 @@ bool BillsPC_MovePKMNMenu(void){
         text_end
     };
     // CALL(aLoadStandardMenuHeader);
-    LoadStandardMenuHeader_Conv();
+    LoadStandardMenuHeader();
     // FARCALL(aIsAnyMonHoldingMail);
     // IF_NC goto no_mail;
     if(IsAnyMonHoldingMail_Conv()) {
@@ -216,7 +216,7 @@ bool BillsPC_MovePKMNMenu(void){
 
 // quit:
     // CALL(aCloseWindow);
-    CloseWindow_Conv2();
+    CloseWindow();
     // AND_A_A;
     // RET;
     return false;
@@ -224,7 +224,7 @@ bool BillsPC_MovePKMNMenu(void){
 
 bool BillsPC_DepositMenu(void){
     // CALL(aLoadStandardMenuHeader);
-    LoadStandardMenuHeader_Conv();
+    LoadStandardMenuHeader();
     // FARCALL(av_DepositPKMN);
     v_DepositPKMN();
     // CALL(aReturnToMapFromSubmenu);
@@ -232,7 +232,7 @@ bool BillsPC_DepositMenu(void){
     // CALL(aClearPCItemScreen);
     ClearPCItemScreen();
     // CALL(aCloseWindow);
-    CloseWindow_Conv2();
+    CloseWindow();
     // AND_A_A;
     // RET;
     return false;
@@ -354,7 +354,7 @@ bool CheckCurPartyMonFainted_Conv(void){
 
 bool BillsPC_WithdrawMenu(void){
     // CALL(aLoadStandardMenuHeader);
-    LoadStandardMenuHeader_Conv();
+    LoadStandardMenuHeader();
     // FARCALL(av_WithdrawPKMN);
     v_WithdrawPKMN();
     // CALL(aReturnToMapFromSubmenu);
@@ -362,7 +362,7 @@ bool BillsPC_WithdrawMenu(void){
     // CALL(aClearPCItemScreen);
     ClearPCItemScreen();
     // CALL(aCloseWindow);
-    CloseWindow_Conv2();
+    CloseWindow();
     // AND_A_A;
     // RET;
     return false;
@@ -453,11 +453,11 @@ void CopyBoxmonToTempMon_Conv(void){
     // LD_BC(BOXMON_STRUCT_LENGTH);
     // LD_A(BANK(sBoxMon1Species));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBoxMon1Species));
+    OpenSRAM(MBANK(asBoxMon1Species));
     // CALL(aCopyBytes);
     CopyBytes(&wram->wTempMon.mon, hl, sizeof(*hl));
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 

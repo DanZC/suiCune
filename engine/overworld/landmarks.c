@@ -163,7 +163,7 @@ int RegionCheck_Conv(void){
     // LD_A_addr(wMapNumber);
     // LD_C_A;
     // CALL(aGetWorldMapLocation);
-    uint8_t loc = GetWorldMapLocation_Conv2(wram->wMapGroup, wram->wMapNumber);
+    uint8_t loc = GetWorldMapLocation(wram->wMapGroup, wram->wMapNumber);
     // CP_A(LANDMARK_FAST_SHIP);  // S.S. Aqua
     // IF_Z goto johto;
     if(loc == LANDMARK_FAST_SHIP)
@@ -177,7 +177,7 @@ int RegionCheck_Conv(void){
         // LD_A_addr(wBackupMapNumber);
         // LD_C_A;
         // CALL(aGetWorldMapLocation);
-        loc = GetWorldMapLocation_Conv2(wram->wBackupMapGroup, wram->wBackupMapNumber);
+        loc = GetWorldMapLocation(wram->wBackupMapGroup, wram->wBackupMapNumber);
     }
 
 

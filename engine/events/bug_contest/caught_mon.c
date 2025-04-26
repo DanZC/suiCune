@@ -44,7 +44,7 @@ void BugContest_SetCaughtContestMon(void){
         DisplayCaughtContestMonStats();
         // LD_BC((14 << 8) | 7);
         // CALL(aPlaceYesNoBox);
-        bool yes = PlaceYesNoBox_Conv(14, 7);
+        bool yes = PlaceYesNoBox(14, 7);
         // RET_C ;
         if(!yes)
             return;

@@ -119,7 +119,7 @@ bool SpecialAerodactylChamber_Conv(void){
     // PUSH_BC;
 
     // CALL(aGetMapAttributesPointer);
-    const struct MapAttr* attr = GetMapAttributesPointer_Conv2();
+    const struct MapAttr* attr = GetMapAttributesPointer();
     // LD_A_H;
     // CP_A(HIGH(aRuinsOfAlphAerodactylChamber_MapAttributes));
     // IF_NZ goto nope;
@@ -178,7 +178,7 @@ void SpecialKabutoChamber_Conv(void){
     // PUSH_DE;
 
     // CALL(aGetMapAttributesPointer);
-    const struct MapAttr* attr = GetMapAttributesPointer_Conv2();
+    const struct MapAttr* attr = GetMapAttributesPointer();
     // LD_A_H;
     // CP_A(HIGH(aRuinsOfAlphKabutoChamber_MapAttributes));
     // IF_NZ goto done;
@@ -216,18 +216,18 @@ void DisplayUnownWords(void){
 
 // load:
     // CALL(aLoadMenuHeader);
-    LoadMenuHeader_Conv2(hdr);
+    LoadMenuHeader(hdr);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aMenuBox);
-    MenuBox_Conv();
+    MenuBox();
     // CALL(aUpdateSprites);
-    UpdateSprites_Conv();
+    UpdateSprites();
     // CALL(aApplyTilemap);
-    ApplyTilemap_Conv();
+    ApplyTilemap();
     // CALL(aMenuBoxCoord2Tile);
-    tile_t* hl = MenuBoxCoord2Tile_Conv();
+    tile_t* hl = MenuBoxCoord2Tile();
     // INC_HL;
     // LD_D(0);
     // LD_E(SCREEN_WIDTH);
@@ -260,11 +260,11 @@ void DisplayUnownWords(void){
     // CALL(aWaitBGMap2);
     WaitBGMap2();
     // CALL(aJoyWaitAorB);
-    JoyWaitAorB_Conv();
+    JoyWaitAorB();
     // CALL(aPlayClickSFX);
-    PlayClickSFX_Conv();
+    PlayClickSFX();
     // CALL(aCloseWindow);
-    CloseWindow_Conv2();
+    CloseWindow();
     // RET;
 // INCLUDE "data/events/unown_walls.asm"
 }

@@ -295,14 +295,14 @@ static uint8_t* VarAction_BoxFreeSpace(void) {
 //  Remaining slots in the current box.
     // LD_A(BANK(sBoxCount));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBoxCount));
+    OpenSRAM(MBANK(asBoxCount));
     // LD_HL(sBoxCount);
     // LD_A(MONS_PER_BOX);
     // SUB_A_hl;
     // LD_B_A;
     uint8_t b = MONS_PER_BOX - gb_read(sBoxCount);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // LD_A_B;
     // JP(mv_GetVarAction_loadstringbuffer2);
     return VarAction_loadstringbuffer2(b);

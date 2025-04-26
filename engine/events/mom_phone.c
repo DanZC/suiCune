@@ -105,7 +105,7 @@ void MomTriesToBuySomething(void){
     // CALL(aGetMapPhoneService);
     // AND_A_A;
     // RET_NZ ;
-    if(GetMapPhoneService_Conv())
+    if(GetMapPhoneService())
         return;
     // XOR_A_A;
     // LD_addr_A(wWhichMomItemSet);

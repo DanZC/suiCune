@@ -48,13 +48,13 @@ static_assert(lengthof(BoxAddresses) == NUM_BOXES, "");
 
 bool SaveMenu(void){
     // CALL(aLoadStandardMenuHeader);
-    LoadStandardMenuHeader_Conv();
+    LoadStandardMenuHeader();
     // FARCALL(aDisplaySaveInfoOnSave);
     DisplaySaveInfoOnSave_Conv();
     // CALL(aSpeechTextbox);
     SpeechTextbox();
     // CALL(aUpdateSprites);
-    UpdateSprites_Conv();
+    UpdateSprites();
     // FARCALL(aSaveMenu_CopyTilemapAtOnce);
     SaveMenu_CopyTilemapAtOnce();
     // LD_HL(mWouldYouLikeToSaveTheGameText);
@@ -71,7 +71,7 @@ bool SaveMenu(void){
             // CALL(aResumeGameLogic);
             ResumeGameLogic();
             // CALL(aExitMenu);
-            ExitMenu_Conv2();
+            ExitMenu();
             // AND_A_A;
             // RET;
             return true;
@@ -80,7 +80,7 @@ bool SaveMenu(void){
 
 // refused:
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // CALL(aGSReloadPalettes);
     // FARCALL(aSaveMenu_CopyTilemapAtOnce);
     SaveMenu_CopyTilemapAtOnce();
@@ -93,7 +93,7 @@ void SaveAfterLinkTrade(void){
     // CALL(aPauseGameLogic);
     PauseGameLogic();
     // FARCALL(aStageRTCTimeForSave);
-    StageRTCTimeForSave_Conv();
+    StageRTCTimeForSave();
     // FARCALL(aBackupMysteryGift);
     BackupMysteryGift();
     // CALL(aSavePokemonData);
@@ -107,7 +107,7 @@ void SaveAfterLinkTrade(void){
     // FARCALL(aBackupPartyMonMail);
     BackupPartyMonMail();
     // FARCALL(aSaveRTC);
-    SaveRTC_Conv();
+    SaveRTC();
     // CALL(aResumeGameLogic);
     ResumeGameLogic();
     // RET;
@@ -117,11 +117,11 @@ void ChangeBoxSaveGame(uint8_t box){
     // PUSH_DE;
     // LD_HL(mChangeBoxSaveText);
     // CALL(aMenuTextbox);
-    MenuTextbox_Conv(ChangeBoxSaveText);
+    MenuTextbox(ChangeBoxSaveText);
     // CALL(aYesNoBox);
-    bool yes = YesNoBox_Conv();
+    bool yes = YesNoBox();
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // IF_C goto refused;
     // CALL(aAskOverwriteSaveFile);
     // IF_C goto refused;
@@ -204,7 +204,7 @@ void MoveMonWOMail_InsertMon_SaveGame(uint8_t e){
     // LD_addr_A(wSaveFileExists);
     wram->wSaveFileExists = TRUE;
     // FARCALL(aStageRTCTimeForSave);
-    StageRTCTimeForSave_Conv();
+    StageRTCTimeForSave();
     // FARCALL(aBackupMysteryGift);
     BackupMysteryGift();
     // CALL(aValidateSave);
@@ -232,7 +232,7 @@ void MoveMonWOMail_InsertMon_SaveGame(uint8_t e){
     // FARCALL(aBackupMobileEventIndex);
     BackupMobileEventIndex();
     // FARCALL(aSaveRTC);
-    SaveRTC_Conv();
+    SaveRTC();
     // CALL(aLoadBox);
     LoadBox();
     // CALL(aResumeGameLogic);
@@ -249,11 +249,11 @@ void MoveMonWOMail_InsertMon_SaveGame(uint8_t e){
 bool StartMoveMonWOMail_SaveGame(void){
     // LD_HL(mMoveMonWOMailSaveText);
     // CALL(aMenuTextbox);
-    MenuTextbox_Conv(MoveMonWOMailSaveText);
+    MenuTextbox(MoveMonWOMailSaveText);
     // CALL(aYesNoBox);
-    bool yes = YesNoBox_Conv();
+    bool yes = YesNoBox();
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // IF_C goto refused;
     // CALL(aAskOverwriteSaveFile);
     // IF_C goto refused;
@@ -292,7 +292,7 @@ void ResumeGameLogic(void){
 void AddHallOfFameEntry(void){
     // LD_A(BANK(sHallOfFame));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asHallOfFame));
+    OpenSRAM(MBANK(asHallOfFame));
     // LD_HL(sHallOfFame + HOF_LENGTH * (NUM_HOF_TEAMS - 1) - 1);
     uint16_t hl = sHallOfFame + HOF_LENGTH * (NUM_HOF_TEAMS - 1) - 1;
     // LD_DE(sHallOfFame + HOF_LENGTH * NUM_HOF_TEAMS - 1);
@@ -317,7 +317,7 @@ void AddHallOfFameEntry(void){
     // CALL(aCopyBytes);
     CopyBytes_GB(sHallOfFame, wHallOfFamePokemonList, wHallOfFamePokemonListEnd - wHallOfFamePokemonList + 1);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -369,16 +369,16 @@ bool AskOverwriteSaveFile(void){
 bool SaveTheGame_yesorno(const txt_cmd_s* hl){
     // LD_B(BANK(aWouldYouLikeToSaveTheGameText));
     // CALL(aMapTextbox);
-    MapTextbox_Conv(hl);
+    MapTextbox(hl);
     // CALL(aLoadMenuTextbox);
-    LoadMenuTextbox_Conv();
+    LoadMenuTextbox();
     // LD_BC((0 << 8) | 7);
     // CALL(aPlaceYesNoBox);
-    v_YesNoBox_Conv(0, 7);
+    v_YesNoBox(0, 7);
     // LD_A_addr(wMenuCursorY);
     // DEC_A;
     // CALL(aCloseWindow);
-    CloseWindow_Conv2();
+    CloseWindow();
     // PUSH_AF;
     // CALL(aGSReloadPalettes);
     // POP_AF;
@@ -390,7 +390,7 @@ bool SaveTheGame_yesorno(const txt_cmd_s* hl){
 bool CompareLoadedAndSavedPlayerID(void){
     // LD_A(BANK(sPlayerData));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asPlayerData));
+    OpenSRAM(MBANK(asPlayerData));
     // LD_HL(sPlayerData + (wPlayerID - wPlayerData));
     // LD_A_hli;
     // LD_C_hl;
@@ -398,7 +398,7 @@ bool CompareLoadedAndSavedPlayerID(void){
     uint16_t bc = (gb_read(sPlayerData + (wPlayerID - wPlayerData)))
         | (gb_read(sPlayerData + (wPlayerID - wPlayerData) + 1) << 8);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // LD_A_addr(wPlayerID);
     // CP_A_B;
     // RET_NZ ;
@@ -454,7 +454,7 @@ void v_SaveGameData(void){
     // LD_addr_A(wSaveFileExists);
     wram->wSaveFileExists = TRUE;
     // FARCALL(aStageRTCTimeForSave);
-    StageRTCTimeForSave_Conv();
+    StageRTCTimeForSave();
     // FARCALL(aBackupMysteryGift);
     BackupMysteryGift();
     // CALL(aValidateSave);
@@ -486,10 +486,10 @@ void v_SaveGameData(void){
     // FARCALL(aBackupMobileEventIndex);
     BackupMobileEventIndex();
     // FARCALL(aSaveRTC);
-    SaveRTC_Conv();
+    SaveRTC();
     // LD_A(BANK(sBattleTowerChallengeState));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBattleTowerChallengeState));
+    OpenSRAM(MBANK(asBattleTowerChallengeState));
     // LD_A_addr(sBattleTowerChallengeState);
     uint8_t a = gb_read(sBattleTowerChallengeState);
     // CP_A(BATTLETOWER_RECEIVED_REWARD);
@@ -502,7 +502,7 @@ void v_SaveGameData(void){
 
 // ok:
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -606,13 +606,13 @@ void ErasePreviousSave(void){
     EraseBattleTowerStatus();
     // LD_A(BANK(sStackTop));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asStackTop));
+    OpenSRAM(MBANK(asStackTop));
     // XOR_A_A;
     // LD_addr_A(sStackTop + 0);
     // LD_addr_A(sStackTop + 1);
     gb_write16(sStackTop, 0);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // LD_A(0x1);
     // LD_addr_A(wSavedAtLeastOnce);
     wram->wSavedAtLeastOnce = 0x1;
@@ -622,40 +622,40 @@ void ErasePreviousSave(void){
 void EraseLinkBattleStats(void){
     // LD_A(BANK(sLinkBattleStats));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asLinkBattleStats));
+    OpenSRAM(MBANK(asLinkBattleStats));
     // LD_HL(sLinkBattleStats);
     // LD_BC(sLinkBattleStatsEnd - sLinkBattleStats);
     // XOR_A_A;
     // CALL(aByteFill);
     ByteFill_GB(sLinkBattleStats, sLinkBattleStatsEnd - sLinkBattleStats, 0);
     // JP(mCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 }
 
 void EraseMysteryGift(void){
     // LD_A(BANK(sBackupMysteryGiftItem));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBackupMysteryGiftItem));
+    OpenSRAM(MBANK(asBackupMysteryGiftItem));
     // LD_HL(sBackupMysteryGiftItem);
     // LD_BC(sBackupMysteryGiftItemEnd - sBackupMysteryGiftItem);
     // XOR_A_A;
     // CALL(aByteFill);
     ByteFill_GB(sBackupMysteryGiftItem, sBackupMysteryGiftItemEnd - sBackupMysteryGiftItem, 0);
     // JP(mCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 }
 
 void EraseHallOfFame(void){
     // LD_A(BANK(sHallOfFame));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asHallOfFame));
+    OpenSRAM(MBANK(asHallOfFame));
     // LD_HL(sHallOfFame);
     // LD_BC(sHallOfFameEnd - sHallOfFame);
     // XOR_A_A;
     // CALL(aByteFill);
     ByteFill_GB(sHallOfFame, sHallOfFameEnd - sHallOfFame, 0);
     // JP(mCloseSRAM);
-    return CloseSRAM_Conv();
+    return CloseSRAM();
 }
 
 void Function14d18(void){
@@ -681,12 +681,12 @@ Data:
 void EraseBattleTowerStatus(void){
     // LD_A(BANK(sBattleTowerChallengeState));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBattleTowerChallengeState));
+    OpenSRAM(MBANK(asBattleTowerChallengeState));
     // XOR_A_A;
     // LD_addr_A(sBattleTowerChallengeState);
     gb_write(sBattleTowerChallengeState, 0);
     // JP(mCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 }
 
 void SaveData(void){
@@ -751,7 +751,7 @@ void HallOfFame_InitSaveIfNeeded(void){
 void ValidateSave(void){
     // LD_A(BANK(sCheckValue1));  // aka BANK(sCheckValue2)
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asCheckValue1));
+    OpenSRAM(MBANK(asCheckValue1));
     // LD_A(SAVE_CHECK_VALUE_1);
     // LD_addr_A(sCheckValue1);
     gb_write(sCheckValue1, SAVE_CHECK_VALUE_1);
@@ -759,13 +759,13 @@ void ValidateSave(void){
     // LD_addr_A(sCheckValue2);
     gb_write(sCheckValue2, SAVE_CHECK_VALUE_2);
     // JP(mCloseSRAM);
-    return CloseSRAM_Conv();
+    return CloseSRAM();
 }
 
 void SaveOptions(void){
     // LD_A(BANK(sOptions));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asOptions));
+    OpenSRAM(MBANK(asOptions));
     // LD_HL(wOptions);
     // LD_DE(sOptions);
     // LD_BC(wOptionsEnd - wOptions);
@@ -776,13 +776,13 @@ void SaveOptions(void){
     // LD_addr_A(sOptions);
     gb_write(sOptions, wram->wOptions & ~(1 << NO_TEXT_SCROLL));
     // JP(mCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 }
 
 void SavePlayerData(void){
     // LD_A(BANK(sPlayerData));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asPlayerData));
+    OpenSRAM(MBANK(asPlayerData));
     // LD_HL(wPlayerData);
     // LD_DE(sPlayerData);
     // LD_BC(wPlayerDataEnd - wPlayerData);
@@ -794,20 +794,20 @@ void SavePlayerData(void){
     // CALL(aCopyBytes);
     CopyBytes_GB(sCurMapData, wCurMapData, wCurMapDataEnd - wCurMapData);
     // JP(mCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 }
 
 void SavePokemonData(void){
     // LD_A(BANK(sPokemonData));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asPokemonData));
+    OpenSRAM(MBANK(asPokemonData));
     // LD_HL(wPokemonData);
     // LD_DE(sPokemonData);
     // LD_BC(wPokemonDataEnd - wPokemonData);
     // CALL(aCopyBytes);
     CopyBytes_GB(sPokemonData, wPokemonData, wPokemonDataEnd - wPokemonData);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -824,7 +824,7 @@ void SaveChecksum(void){
     // LD_BC(sGameDataEnd - sGameData);
     // LD_A(BANK(sGameData));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asGameData));
+    OpenSRAM(MBANK(asGameData));
     // CALL(aChecksum);
     uint16_t checksum = Checksum(GBToRAMAddr(sGameData), sGameDataEnd - sGameData);
     // LD_A_E;
@@ -833,14 +833,14 @@ void SaveChecksum(void){
     // LD_addr_A(sChecksum + 1);
     gb_write16(sChecksum, checksum);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
 void ValidateBackupSave(void){
     // LD_A(BANK(sBackupCheckValue1));  // aka BANK(sBackupCheckValue2)
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBackupCheckValue1));
+    OpenSRAM(MBANK(asBackupCheckValue1));
     // LD_A(SAVE_CHECK_VALUE_1);
     // LD_addr_A(sBackupCheckValue1);
     gb_write(sBackupCheckValue1, SAVE_CHECK_VALUE_1);
@@ -848,28 +848,28 @@ void ValidateBackupSave(void){
     // LD_addr_A(sBackupCheckValue2);
     gb_write(sBackupCheckValue2, SAVE_CHECK_VALUE_2);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
 void SaveBackupOptions(void){
     // LD_A(BANK(sBackupOptions));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBackupOptions));
+    OpenSRAM(MBANK(asBackupOptions));
     // LD_HL(wOptions);
     // LD_DE(sBackupOptions);
     // LD_BC(wOptionsEnd - wOptions);
     // CALL(aCopyBytes);
     CopyBytes_GB(sBackupOptions, wOptions, wOptionsEnd - wOptions);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
 void SaveBackupPlayerData(void){
     // LD_A(BANK(sBackupPlayerData));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBackupPlayerData));
+    OpenSRAM(MBANK(asBackupPlayerData));
     // LD_HL(wPlayerData);
     // LD_DE(sBackupPlayerData);
     // LD_BC(wPlayerDataEnd - wPlayerData);
@@ -881,21 +881,21 @@ void SaveBackupPlayerData(void){
     // CALL(aCopyBytes);
     CopyBytes_GB(sBackupCurMapData, wCurMapData, wCurMapDataEnd - wCurMapData);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
 void SaveBackupPokemonData(void){
     // LD_A(BANK(sBackupPokemonData));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBackupPokemonData));
+    OpenSRAM(MBANK(asBackupPokemonData));
     // LD_HL(wPokemonData);
     // LD_DE(sBackupPokemonData);
     // LD_BC(wPokemonDataEnd - wPokemonData);
     // CALL(aCopyBytes);
     CopyBytes_GB(sBackupPokemonData, wPokemonData, wPokemonDataEnd - wPokemonData);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -904,7 +904,7 @@ void SaveBackupChecksum(void){
     // LD_BC(sBackupGameDataEnd - sBackupGameData);
     // LD_A(BANK(sBackupGameData));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBackupGameData));
+    OpenSRAM(MBANK(asBackupGameData));
     // CALL(aChecksum);
     uint16_t checksum = Checksum(GBToRAMAddr(sBackupGameData), sBackupGameDataEnd - sBackupGameData);
     // LD_A_E;
@@ -913,7 +913,7 @@ void SaveBackupChecksum(void){
     // LD_addr_A(sBackupChecksum + 1);
     gb_write16(sBackupChecksum, checksum);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -1012,7 +1012,7 @@ void TryLoadSaveData(void){
     if(wram->wSaveFileExists) {
         // LD_A(BANK(sPlayerData));
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(asPlayerData));
+        OpenSRAM(MBANK(asPlayerData));
         // LD_HL(sPlayerData + wStartDay - wPlayerData);
         // LD_DE(wStartDay);
         // LD_BC(8);
@@ -1024,7 +1024,7 @@ void TryLoadSaveData(void){
         // LD_de_A;
         gb_write(wStatusFlags, gb_read(sPlayerData + wStatusFlags - wPlayerData));
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
         // RET;
         return;
     }
@@ -1038,7 +1038,7 @@ void TryLoadSaveData(void){
     if(wram->wSaveFileExists) {
         // LD_A(BANK(sBackupPlayerData));
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(asBackupPlayerData));
+        OpenSRAM(MBANK(asBackupPlayerData));
         // LD_HL(sBackupPlayerData + wStartDay - wPlayerData);
         // LD_DE(wStartDay);
         // LD_BC(8);
@@ -1050,7 +1050,7 @@ void TryLoadSaveData(void){
         // LD_de_A;
         gb_write(wStatusFlags, gb_read(sBackupPlayerData + wStatusFlags - wPlayerData));
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
         // RET;
         return;
     }
@@ -1062,7 +1062,7 @@ void TryLoadSaveData(void){
     // CALL(aCopyBytes);
     CopyBytes(&wram->wOptions, DefaultOptions, DefaultOptions_Size);
     // CALL(aClearClock);
-    ClearClock_Conv();
+    ClearClock();
     // RET;
 
 // INCLUDE "data/default_options.asm"
@@ -1071,7 +1071,7 @@ void TryLoadSaveData(void){
 void CheckPrimarySaveFile(void){
     // LD_A(BANK(sCheckValue1));  // aka BANK(sCheckValue2)
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asCheckValue1));
+    OpenSRAM(MBANK(asCheckValue1));
     // LD_A_addr(sCheckValue1);
     // CP_A(SAVE_CHECK_VALUE_1);
     // IF_NZ goto nope;
@@ -1094,14 +1094,14 @@ void CheckPrimarySaveFile(void){
 
 // nope:
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
 void CheckBackupSaveFile(void){
     // LD_A(BANK(sBackupCheckValue1));  // aka BANK(sBackupCheckValue2)
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBackupCheckValue1));
+    OpenSRAM(MBANK(asBackupCheckValue1));
     // LD_A_addr(sBackupCheckValue1);
     // CP_A(SAVE_CHECK_VALUE_1);
     // IF_NZ goto nope;
@@ -1122,14 +1122,14 @@ void CheckBackupSaveFile(void){
 
 // nope:
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
 void LoadPlayerData(void){
     // LD_A(BANK(sPlayerData));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asPlayerData));
+    OpenSRAM(MBANK(asPlayerData));
     // LD_HL(sPlayerData);
     // LD_DE(wPlayerData);
     // LD_BC(wPlayerDataEnd - wPlayerData);
@@ -1141,10 +1141,10 @@ void LoadPlayerData(void){
     // CALL(aCopyBytes);
     CopyBytes_GB(wCurMapData, sCurMapData, wCurMapDataEnd - wCurMapData);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // LD_A(BANK(sBattleTowerChallengeState));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBattleTowerChallengeState));
+    OpenSRAM(MBANK(asBattleTowerChallengeState));
     // LD_A_addr(sBattleTowerChallengeState);
     // CP_A(BATTLETOWER_RECEIVED_REWARD);
     // IF_NZ goto not_4;
@@ -1155,21 +1155,21 @@ void LoadPlayerData(void){
     }
 // not_4:
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
 void LoadPokemonData(void){
     // LD_A(BANK(sPokemonData));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asPokemonData));
+    OpenSRAM(MBANK(asPokemonData));
     // LD_HL(sPokemonData);
     // LD_DE(wPokemonData);
     // LD_BC(wPokemonDataEnd - wPokemonData);
     // CALL(aCopyBytes);
     CopyBytes_GB(wPokemonData, sPokemonData, wPokemonDataEnd - wPokemonData);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -1186,7 +1186,7 @@ bool VerifyChecksum(void){
     // LD_BC(sGameDataEnd - sGameData);
     // LD_A(BANK(sGameData));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asGameData));
+    OpenSRAM(MBANK(asGameData));
     // CALL(aChecksum);
     uint16_t checksum = Checksum(GBToRAMAddr(sGameData), sGameDataEnd - sGameData);
     // LD_A_addr(sChecksum + 0);
@@ -1199,7 +1199,7 @@ bool VerifyChecksum(void){
 // fail:
     // PUSH_AF;
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // POP_AF;
     // RET;
     return success;
@@ -1208,7 +1208,7 @@ bool VerifyChecksum(void){
 void LoadBackupPlayerData(void){
     // LD_A(BANK(sBackupPlayerData));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBackupPlayerData));
+    OpenSRAM(MBANK(asBackupPlayerData));
     // LD_HL(sBackupPlayerData);
     // LD_DE(wPlayerData);
     // LD_BC(wPlayerDataEnd - wPlayerData);
@@ -1220,7 +1220,7 @@ void LoadBackupPlayerData(void){
     // CALL(aCopyBytes);
     CopyBytes_GB(wCurMapData, sBackupCurMapData, wCurMapDataEnd - wCurMapData);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 
 }
@@ -1228,14 +1228,14 @@ void LoadBackupPlayerData(void){
 void LoadBackupPokemonData(void){
     // LD_A(BANK(sBackupPokemonData));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBackupPokemonData));
+    OpenSRAM(MBANK(asBackupPokemonData));
     // LD_HL(sBackupPokemonData);
     // LD_DE(wPokemonData);
     // LD_BC(wPokemonDataEnd - wPokemonData);
     // CALL(aCopyBytes);
     CopyBytes_GB(wPokemonData, sBackupPokemonData, wPokemonDataEnd - wPokemonData);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 
 }
@@ -1245,7 +1245,7 @@ bool VerifyBackupChecksum(void){
     // LD_BC(sBackupGameDataEnd - sBackupGameData);
     // LD_A(BANK(sBackupGameData));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBackupGameData));
+    OpenSRAM(MBANK(asBackupGameData));
     // CALL(aChecksum);
     uint16_t checksum = Checksum(GBToRAMAddr(sBackupGameData), sBackupGameDataEnd - sBackupGameData);
     // LD_A_addr(sBackupChecksum + 0);
@@ -1258,7 +1258,7 @@ bool VerifyBackupChecksum(void){
 // fail:
     // PUSH_AF;
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // POP_AF;
     // RET;
     return success;
@@ -1272,13 +1272,13 @@ void v_SaveData(void){
 
     // LD_A(BANK(sCrystalData));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asCrystalData));
+    OpenSRAM(MBANK(asCrystalData));
     // LD_HL(wCrystalData);
     // LD_DE(sCrystalData);
     // LD_BC(wCrystalDataEnd - wCrystalData);
     // CALL(aCopyBytes);
     CopyBytes(GBToRAMAddr(sCrystalData), wram->wCrystalData, wCrystalDataEnd - wCrystalData);
-    CloseSRAM_Conv();
+    CloseSRAM();
 
 // This block originally had some mobile functionality, but since we're still in
 // BANK(sCrystalData), it instead overwrites the sixteen wEventFlags starting at 1:s4_a60e with
@@ -1292,7 +1292,7 @@ void v_SaveData(void){
     // LD_addr_A(s4_a60e + 1);
     // ld a, BANK(s4_a60e)
     // call OpenSRAM
-    OpenSRAM_Conv(MBANK(as4_a60e));
+    OpenSRAM(MBANK(as4_a60e));
     // ld hl, wd479
     // ld a, [hli]
     // ld [s4_a60e + 0], a
@@ -1301,13 +1301,13 @@ void v_SaveData(void){
     CopyBytes(GBToRAMAddr(s4_a60e), wram->wd479, 2);
 
     // JP(mCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 }
 
 void v_LoadData(void){
     // LD_A(BANK(sCrystalData));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asCrystalData));
+    OpenSRAM(MBANK(asCrystalData));
     // LD_HL(sCrystalData);
     // LD_DE(wCrystalData);
     // LD_BC(wCrystalDataEnd - wCrystalData);
@@ -1323,10 +1323,10 @@ void v_LoadData(void){
     // LD_A_addr(s4_a60e + 1);
     // LD_hli_A;
     // call CloseSRAM
-    CloseSRAM_Conv();
+    CloseSRAM();
     // ld a, BANK(s4_a60e)
     // call OpenSRAM
-    OpenSRAM_Conv(MBANK(as4_a60e));
+    OpenSRAM(MBANK(as4_a60e));
     // ld hl, wd479
     // ld a, [s4_a60e + 0]
     // ld [hli], a
@@ -1335,7 +1335,7 @@ void v_LoadData(void){
     CopyBytes(wram->wd479, GBToRAMAddr(s4_a60e), 2);
 
     // JP(mCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 }
 
 uint32_t GetBoxAddress(void){
@@ -1380,39 +1380,39 @@ void SaveBoxAddress(uint32_t de){
     // PUSH_DE;
     // LD_A(BANK(sBox));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBox));
+    OpenSRAM(MBANK(asBox));
     // LD_HL(sBox);
     // LD_DE(wBoxPartialData);
     // LD_BC((wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCopyBytes);
     CopyBytes_GB(wBoxPartialData, sBox, (wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // POP_DE;
     // POP_AF;
 //  Save it to the target box.
     // PUSH_AF;
     // PUSH_DE;
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(de));
+    OpenSRAM(MBANK(de));
     // LD_HL(wBoxPartialData);
     // LD_BC((wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCopyBytes);
     CopyBytes_GB(de & 0xffff, wBoxPartialData, (wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 
 //  Load the second part of the active box.
     // LD_A(BANK(sBox));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBox));
+    OpenSRAM(MBANK(asBox));
     // LD_HL(sBox + (wBoxPartialDataEnd - wBoxPartialData));
     // LD_DE(wBoxPartialData);
     // LD_BC((wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCopyBytes);
     CopyBytes_GB(wBoxPartialData, sBox + (wBoxPartialDataEnd - wBoxPartialData), (wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // POP_DE;
     // POP_AF;
 
@@ -1425,25 +1425,25 @@ void SaveBoxAddress(uint32_t de){
     // PUSH_AF;
     // PUSH_DE;
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(de));
+    OpenSRAM(MBANK(de));
     // LD_HL(wBoxPartialData);
     // LD_BC((wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCopyBytes);
     CopyBytes_GB(de & 0xffff, wBoxPartialData, (wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 
 //  Load the third and final part of the active box.
     // LD_A(BANK(sBox));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBox));
+    OpenSRAM(MBANK(asBox));
     // LD_HL(sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2);
     // LD_DE(wBoxPartialData);
     // LD_BC(sBoxEnd - (sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2));  // $8e
     // CALL(aCopyBytes);
     CopyBytes_GB(wBoxPartialData, sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2, sBoxEnd - (sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2));
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // POP_DE;
     // POP_AF;
 
@@ -1454,13 +1454,13 @@ void SaveBoxAddress(uint32_t de){
     de += (wBoxPartialDataEnd - wBoxPartialData);
 //  Save it to the final part of the target box.
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(de));
+    OpenSRAM(MBANK(de));
     // LD_HL(wBoxPartialData);
     // LD_BC(sBoxEnd - (sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2));  // $8e
     // CALL(aCopyBytes);
     CopyBytes_GB(de & 0xffff, wBoxPartialData, sBoxEnd - (sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2));
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 
     // POP_HL;
     // RET;
@@ -1477,23 +1477,23 @@ void LoadBoxAddress(uint32_t de){
     // PUSH_AF;
     // PUSH_HL;
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(de));
+    OpenSRAM(MBANK(de));
     // LD_DE(wBoxPartialData);
     // LD_BC((wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCopyBytes);
     CopyBytes_GB(wBoxPartialData, de & 0xffff, (wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // LD_A(BANK(sBox));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBox));
+    OpenSRAM(MBANK(asBox));
     // LD_HL(wBoxPartialData);
     // LD_DE(sBox);
     // LD_BC((wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCopyBytes);
     CopyBytes_GB(sBox, wBoxPartialData, (wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // POP_HL;
     // POP_AF;
 
@@ -1504,13 +1504,13 @@ void LoadBoxAddress(uint32_t de){
     // PUSH_AF;
     // PUSH_HL;
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(de));
+    OpenSRAM(MBANK(de));
     // LD_DE(wBoxPartialData);
     // LD_BC((wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCopyBytes);
     CopyBytes_GB(wBoxPartialData, de & 0xffff, (wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // LD_A(BANK(sBox));
     // CALL(aOpenSRAM);
     // LD_HL(wBoxPartialData);
@@ -1519,7 +1519,7 @@ void LoadBoxAddress(uint32_t de){
     // CALL(aCopyBytes);
     CopyBytes_GB(sBox + (wBoxPartialDataEnd - wBoxPartialData), wBoxPartialData, (wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // POP_HL;
     // POP_AF;
 //  Load part 3
@@ -1527,23 +1527,23 @@ void LoadBoxAddress(uint32_t de){
     // ADD_HL_DE;
     de += (wBoxPartialDataEnd - wBoxPartialData);
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(de));
+    OpenSRAM(MBANK(de));
     // LD_DE(wBoxPartialData);
     // LD_BC(sBoxEnd - (sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2));  // $8e
     // CALL(aCopyBytes);
     CopyBytes_GB(wBoxPartialData, de & 0xffff, sBoxEnd - (sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2));
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // LD_A(BANK(sBox));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asBox));
+    OpenSRAM(MBANK(asBox));
     // LD_HL(wBoxPartialData);
     // LD_DE(sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2);
     // LD_BC(sBoxEnd - (sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2));  // $8e
     // CALL(aCopyBytes);
     CopyBytes_GB(sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2, wBoxPartialData, sBoxEnd - (sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2));
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 
     // POP_HL;
     // RET;
@@ -1559,7 +1559,7 @@ void EraseBoxes(void){
         // PUSH_BC;
         // LD_A_hli;
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(hl[i].address));
+        OpenSRAM(MBANK(hl[i].address));
         // LD_A_hli;
         // LD_E_A;
         // LD_A_hli;
@@ -1599,7 +1599,7 @@ void EraseBoxes(void){
         // LD_de_A;
         gb_write(de2, 0);
         // CALL(aCloseSRAM);
-        CloseSRAM_Conv();
+        CloseSRAM();
         // POP_BC;
         // DEC_C;
         // IF_NZ goto next;

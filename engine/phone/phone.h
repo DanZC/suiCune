@@ -1,6 +1,4 @@
-void AddPhoneNumber(void);
-bool AddPhoneNumber_Conv(uint8_t c);
-bool AddPhoneNumber_Conv2(uint8_t c);
+bool AddPhoneNumber(uint8_t c);
 void DelCellNum(void);
 bool DelCellNum_Conv(uint8_t c);
 bool DelCellNum_Conv2(uint8_t c);

@@ -159,7 +159,7 @@ void SuspendMapAnims(void){
 void LoadMapObjects(void){
     // LD_A(MAPCALLBACK_OBJECTS);
     // CALL(aRunMapCallback);
-    RunMapCallback_Conv(MAPCALLBACK_OBJECTS);
+    RunMapCallback(MAPCALLBACK_OBJECTS);
     // FARCALL(aLoadObjectMasks);
     LoadObjectMasks();
     // FARCALL(aInitializeVisibleSprites);
@@ -205,7 +205,7 @@ static bool CheckUpdatePlayerSprite_CheckBiking(void) {
 static bool CheckUpdatePlayerSprite_CheckSurfing(void) {
     // CALL(aCheckOnWater);
     // IF_NZ goto nope2;
-    if(CheckOnWater_Conv()) {
+    if(CheckOnWater()) {
         // LD_A_addr(wPlayerState);
         // CP_A(PLAYER_SURF);
         // IF_Z goto is_surfing;
@@ -244,7 +244,7 @@ static bool CheckUpdatePlayerSprite_CheckSurfing2(void) {
             return false;
         default:
             // CALL(aGetMapEnvironment);
-            switch(GetMapEnvironment_Conv2()) {
+            switch(GetMapEnvironment()) {
                 default:
                     return false;
                 // CP_A(INDOOR);
@@ -304,7 +304,7 @@ void CheckUpdatePlayerSprite(void){
 
 ok:
     // CALL(aUpdatePlayerSprite);
-    UpdatePlayerSprite_Conv();
+    UpdatePlayerSprite();
     // RET;
 }
 

@@ -110,7 +110,7 @@ void ShakeHeadbuttTree(void){
 
 // done:
     // CALL(aOverworldTextModeSwitch);
-    OverworldTextModeSwitch_Conv();
+    OverworldTextModeSwitch();
     // CALL(aWaitBGMap);
     WaitBGMap();
     // XOR_A_A;
@@ -129,7 +129,7 @@ void ShakeHeadbuttTree(void){
     // CALL(aGet1bpp);
     LoadPNG1bppAssetSectionToVRAM(vram->vTiles1, Font, 0, 12);
     // CALL(aUpdatePlayerSprite);
-    UpdatePlayerSprite_Conv();
+    UpdatePlayerSprite();
     // RET;
 }
 

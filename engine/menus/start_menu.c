@@ -271,7 +271,7 @@ static bool StartMenu_GetInput(void) {
     // CALL(aStartMenu__DrawMenuAccount);
     StartMenu_DrawMenuAccount();
     // CALL(aSetUpMenu);
-    SetUpMenu_Conv();
+    SetUpMenu();
     wram->w2DMenuNumRows = wram->wMenuItemsList[0];
     // LD_A(0xff);
     // LD_addr_A(wMenuSelection);
@@ -282,7 +282,7 @@ static bool StartMenu_GetInput(void) {
         // CALL(aStartMenu_PrintMenuAccount);
         StartMenu_PrintMenuAccount();
         // CALL(aGetScrollingMenuJoypad);
-        GetScrollingMenuJoypad_Conv2();
+        GetScrollingMenuJoypad();
         // LD_A_addr(wMenuJoypad);
         // CP_A(B_BUTTON);
         // IF_Z goto b;
@@ -297,7 +297,7 @@ static bool StartMenu_GetInput(void) {
         if(wram->wMenuJoypad == A_BUTTON) {
         // a:
             // CALL(aPlayClickSFX);
-            PlayClickSFX_Conv();
+            PlayClickSFX();
             // AND_A_A;
             // RET;
             return false;
@@ -339,21 +339,21 @@ static void StartMenu_Clear(void) {
     // CALL(aClearBGPalettes);
     ClearBGPalettes();
     // CALL(aCall_ExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // CALL(aReloadTilesetAndPalettes);
-    ReloadTilesetAndPalettes_Conv();
+    ReloadTilesetAndPalettes();
     // CALL(aStartMenu_DrawMenuAccount);
     StartMenu_DrawMenuAccount();
     // CALL(aDrawVariableLengthMenuBox);
-    DrawVariableLengthMenuBox_Conv();
+    DrawVariableLengthMenuBox();
     // CALL(aStartMenu_DrawBugContestStatus);
     StartMenu_DrawBugContestStatus();
     // CALL(aUpdateSprites);
-    UpdateSprites_Conv();
+    UpdateSprites();
     // CALL(aGSReloadPalettes);
     GSReloadPalettes();
     // CALL(aFinishExitMenu);
-    FinishExitMenu_Conv();
+    FinishExitMenu();
     // RET;
 }
 
@@ -439,7 +439,7 @@ static const struct MenuHeader menuHeader = {
 };
 
     // CALL(aClearWindowData);
-    ClearWindowData_Conv2();
+    ClearWindowData();
 
     // LD_DE(SFX_MENU);
     // CALL(aPlaySFX);
@@ -454,10 +454,10 @@ static const struct MenuHeader menuHeader = {
     // IF_Z goto GotMenuData;
     // LD_HL(mStartMenu_ContestMenuHeader);
     if(bit_test(wram->wStatusFlags2, STATUSFLAGS2_BUG_CONTEST_TIMER_F)) {
-        LoadMenuHeader_Conv2(&contestMenuHeader);
+        LoadMenuHeader(&contestMenuHeader);
     }
     else {
-        LoadMenuHeader_Conv2(&menuHeader);
+        LoadMenuHeader(&menuHeader);
     }
 
 
@@ -471,13 +471,13 @@ static const struct MenuHeader menuHeader = {
     // CALL(aStartMenu_DrawMenuAccount);
     StartMenu_DrawMenuAccount();
     // CALL(aDrawVariableLengthMenuBox);
-    DrawVariableLengthMenuBox_Conv();
+    DrawVariableLengthMenuBox();
     // CALL(aStartMenu_DrawBugContestStatusBox);
     StartMenu__DrawBugContestStatusBox();
     // CALL(aSafeUpdateSprites);
-    SafeUpdateSprites_Conv();
+    SafeUpdateSprites();
     // CALL(av_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
-    v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv();
+    v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap();
     // FARCALL(aLoadFonts_NoOAMUpdate);
     LoadFonts_NoOAMUpdate_Conv();
     // CALL(aStartMenu_DrawBugContestStatus);
@@ -498,9 +498,9 @@ static const struct MenuHeader menuHeader = {
         // LD_addr_A(wBattleMenuCursorPosition);
         wram->wBattleMenuCursorPosition = wram->wMenuCursorPosition;
         // CALL(aPlayClickSFX);
-        PlayClickSFX_Conv();
+        PlayClickSFX();
         // CALL(aPlaceHollowCursor);
-        PlaceHollowCursor_Conv();
+        PlaceHollowCursor();
         // CALL(aStartMenu_OpenMenu);
         uint8_t a = StartMenu_OpenMenu();
 
@@ -529,7 +529,7 @@ static const struct MenuHeader menuHeader = {
                     // LDH_addr_A(hOAMUpdate);
                     hram->hOAMUpdate = 1;
                     // CALL(aLoadFontsExtra);
-                    LoadFontsExtra_Conv();
+                    LoadFontsExtra();
                     // POP_AF;
                     // LDH_addr_A(hOAMUpdate);
                     hram->hOAMUpdate = oamUpdate;
@@ -538,11 +538,11 @@ static const struct MenuHeader menuHeader = {
             case STARTMENURET_RETURN_END:
             // ReturnEnd:
                 // CALL(aExitMenu);
-                ExitMenu_Conv2();
+                ExitMenu();
 
             ReturnEnd2:
                 // CALL(aCloseText);
-                CloseText_Conv();
+                CloseText();
                 // CALL(aUpdateTimePals);
                 UpdateTimePals();
                 // RET;
@@ -550,7 +550,7 @@ static const struct MenuHeader menuHeader = {
             case STARTMENURET_EXIT_MENU_CALL_FUNC_CLOSE_TEXT:
             // ExitMenuCallFuncCloseText:
                 // CALL(aExitMenu);
-                ExitMenu_Conv2();
+                ExitMenu();
                 // LD_HL(wQueuedScriptAddr);
                 // LD_A_hli;
                 // LD_H_hl;
@@ -562,7 +562,7 @@ static const struct MenuHeader menuHeader = {
             case STARTMENURET_EXIT_MENU_RUN_SCRIPT_CLOSE_TEXT:
             // ExitMenuRunScriptCloseText:
                 // CALL(aExitMenu);
-                ExitMenu_Conv2();
+                ExitMenu();
                 // LD_A(HMENURETURN_SCRIPT);
                 // LDH_addr_A(hMenuReturn);
                 hram->hMenuReturn = HMENURETURN_SCRIPT;
@@ -570,7 +570,7 @@ static const struct MenuHeader menuHeader = {
             case STARTMENURET_EXIT_MENU_RUN_SCRIPT:
             // ExitMenuRunScript:
                 // CALL(aExitMenu);
-                ExitMenu_Conv2();
+                ExitMenu();
                 // LD_A(HMENURETURN_SCRIPT);
                 // LDH_addr_A(hMenuReturn);
                 hram->hMenuReturn = HMENURETURN_SCRIPT;
@@ -586,7 +586,7 @@ static const struct MenuHeader menuHeader = {
 
     // Reopen:
         // CALL(aUpdateSprites);
-        UpdateSprites_Conv();
+        UpdateSprites();
         // CALL(aUpdateTimePals);
         UpdateTimePals();
         // CALL(aStartMenu_SetUpMenuItems);
@@ -688,7 +688,7 @@ saved:
 //  Save the game.
 uint8_t StartMenu_Save_Conv(void) {
     // CALL(aBufferScreen);
-    BufferScreen_Conv();
+    BufferScreen();
     // FARCALL(aSaveMenu);
     // IF_NC goto saved;
     if(SaveMenu()) {
@@ -715,7 +715,7 @@ void StartMenu_Option(void){
 //  Game options.
 uint8_t StartMenu_Option_Conv(void) {
     // CALL(aFadeToMenu);
-    FadeToMenu_Conv();
+    FadeToMenu();
     // FARCALL(aOption);
     Option_Conv();
     // LD_A(STARTMENURET_RETURN_REDRAW);
@@ -737,11 +737,11 @@ void StartMenu_Status(void){
 //  Player status.
 uint8_t StartMenu_Status_Conv(void) {
     // CALL(aFadeToMenu);
-    FadeToMenu_Conv();
+    FadeToMenu();
     // FARCALL(aTrainerCard);
     TrainerCard();
     // CALL(aCloseSubmenu);
-    CloseSubmenu_Conv();
+    CloseSubmenu();
     // LD_A(STARTMENURET_REOPEN);
     // RET;
     return STARTMENURET_REOPEN;
@@ -767,9 +767,9 @@ empty:
 uint8_t StartMenu_Pokedex_Conv(void) {
     if(wram->wPartyCount == 0)
         return STARTMENURET_REOPEN;
-    FadeToMenu_Conv();
+    FadeToMenu();
     Pokedex();
-    CloseSubmenu_Conv();
+    CloseSubmenu();
     return STARTMENURET_REOPEN;
 }
 
@@ -785,11 +785,11 @@ void StartMenu_Pokegear(void){
 //  Pokegear
 uint8_t StartMenu_Pokegear_Conv(void) {
     // CALL(aFadeToMenu);
-    FadeToMenu_Conv();
+    FadeToMenu();
     // FARCALL(aPokeGear);
     PokeGear();
     // CALL(aCloseSubmenu);
-    CloseSubmenu_Conv();
+    CloseSubmenu();
     // LD_A(STARTMENURET_REOPEN);
     // RET;
     return STARTMENURET_REOPEN;
@@ -815,7 +815,7 @@ used_item:
 
 uint8_t StartMenu_Pack_Conv(void) {
     // CALL(aFadeToMenu);
-    FadeToMenu_Conv();
+    FadeToMenu();
     // FARCALL(aPack);
     Pack();
     // LD_A_addr(wPackUsedItem);
@@ -823,7 +823,7 @@ uint8_t StartMenu_Pack_Conv(void) {
     // IF_NZ goto used_item;
     if(wram->wPackUsedItem == NO_ITEM){
         // CALL(aCloseSubmenu);
-        CloseSubmenu_Conv();
+        CloseSubmenu();
         // LD_A(STARTMENURET_REOPEN);
         // RET;
         return STARTMENURET_REOPEN;
@@ -831,7 +831,7 @@ uint8_t StartMenu_Pack_Conv(void) {
 
 // used_item:
     // CALL(aExitAllMenus);
-    ExitAllMenus_Conv();
+    ExitAllMenus();
     // LD_A(STARTMENURET_EXIT_MENU_RUN_SCRIPT);
     // RET;
     return STARTMENURET_EXIT_MENU_RUN_SCRIPT;
@@ -902,7 +902,7 @@ uint8_t StartMenu_Pokemon_Conv(void) {
         goto l_return;
 
     // CALL(aFadeToMenu);
-    FadeToMenu_Conv();
+    FadeToMenu();
 
 
 choosemenu:
@@ -955,7 +955,7 @@ menunoreload:
 
 l_return:
     // CALL(aCloseSubmenu);
-    CloseSubmenu_Conv();
+    CloseSubmenu();
     // LD_A(STARTMENURET_REOPEN);
     // RET;
     return STARTMENURET_REOPEN;
@@ -965,7 +965,7 @@ quit:
     // LD_A_B;
     // PUSH_AF;
     // CALL(aExitAllMenus);
-    ExitAllMenus_Conv();
+    ExitAllMenus();
     // POP_AF;
     // RET;
     return submenu_res.b;

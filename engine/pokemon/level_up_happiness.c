@@ -20,7 +20,7 @@ void LevelUpHappinessMod(void){
     // LD_C(HAPPINESS_GAINLEVEL);
     // IF_NZ goto ok;
     // LD_C(HAPPINESS_GAINLEVELATHOME);
-    uint8_t c = (d == GetWorldMapLocation_Conv2(wram->wMapGroup, wram->wMapNumber))
+    uint8_t c = (d == GetWorldMapLocation(wram->wMapGroup, wram->wMapNumber))
         ? HAPPINESS_GAINLEVELATHOME
         : HAPPINESS_GAINLEVEL;
 

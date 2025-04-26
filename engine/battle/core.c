@@ -464,7 +464,7 @@ void Stubbed_Increments5_a89a(void){
     // RET;
     // LD_A(MBANK(as5_a89a));  // MBC30 bank used by JP Crystal// inaccessible by MBC3
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(as5_a89a));
+    OpenSRAM(MBANK(as5_a89a));
     // LD_HL(s5_a89a + 1);  // address of MBC30 bank
     // INC_hl;
     // IF_NZ goto finish;
@@ -487,7 +487,7 @@ void Stubbed_Increments5_a89a(void){
 
 // finish:
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 }
 
@@ -1258,7 +1258,7 @@ not_encored:
     // IF_Z goto struggle;
     if(wram->wCurPlayerMove != STRUGGLE) {
         // CALL(aPlayClickSFX);
-        PlayClickSFX_Conv();
+        PlayClickSFX();
     }
 
 // struggle:
@@ -4440,7 +4440,7 @@ void WinTrainerBattle(void){
         // FARCALL(aBattleTowerText);
         BattleTowerText(BATTLETOWERTEXT_LOSS_TEXT);
         // CALL(aWaitPressAorB_BlinkCursor);
-        WaitPressAorB_BlinkCursor_Conv();
+        WaitPressAorB_BlinkCursor();
         // LD_HL(wPayDayMoney);
         // LD_A_hli;
         // OR_A_hl;
@@ -4477,7 +4477,7 @@ void WinTrainerBattle(void){
     // IF_NZ goto skip_win_loss_text;
     if(!bit_test(wram->wDebugFlags, DEBUG_BATTLE_F)){
         // CALL(aPrintWinLossText);
-        PrintWinLossText_Conv();
+        PrintWinLossText();
     }
 
 // skip_win_loss_text:
@@ -4911,7 +4911,7 @@ bool AskUseNextPokemon_Conv(void){
     // loop:
         // LD_BC((1 << 8) | 7);
         // CALL(aPlaceYesNoBox);
-        bool yes = v_YesNoBox_Conv(1, 7);
+        bool yes = v_YesNoBox(1, 7);
         // LD_A_addr(wMenuCursorY);
         // IF_C goto pressed_b;
         if(yes) {
@@ -4936,7 +4936,7 @@ uint8_t ForcePlayerMonChoice(void){
     // CALL(aEmptyBattleTextbox);
     EmptyBattleTextbox();
     // CALL(aLoadStandardMenuHeader);
-    LoadStandardMenuHeader_Conv();
+    LoadStandardMenuHeader();
     // CALL(aSetUpBattlePartyMenu);
     SetUpBattlePartyMenu();
     // CALL(aForcePickPartyMonInBattle);
@@ -4971,7 +4971,7 @@ uint8_t ForcePlayerMonChoice(void){
         // CALL(av_LoadHPBar);
         v_LoadHPBar_Conv();
         // CALL(aExitMenu);
-        ExitMenu_Conv2();
+        ExitMenu();
         // CALL(aLoadTilemapToTempTilemap);
         LoadTilemapToTempTilemap();
         // CALL(aWaitBGMap);
@@ -5008,7 +5008,7 @@ uint8_t ForcePlayerMonChoice(void){
     // CALL(av_LoadHPBar);
     v_LoadHPBar_Conv();
     // CALL(aCloseWindow);
-    CloseWindow_Conv2();
+    CloseWindow();
     // CALL(aGetMemSGBLayout);
     GetMemSGBLayout();
     // CALL(aSetPalettes);
@@ -5299,7 +5299,7 @@ void LostBattle(void){
         // FARCALL(aBattleTowerText);
         BattleTowerText(BATTLETOWERTEXT_WIN_TEXT);
         // CALL(aWaitPressAorB_BlinkCursor);
-        WaitPressAorB_BlinkCursor_Conv();
+        WaitPressAorB_BlinkCursor();
         // CALL(aClearTilemap);
         ClearTilemap();
         // CALL(aClearBGPalettes);
@@ -5329,7 +5329,7 @@ void LostBattle(void){
         // IF_NZ goto skip_win_loss_text;
         if(!bit_test(wram->wDebugFlags, DEBUG_BATTLE_F)) {
             // CALL(aPrintWinLossText);
-            PrintWinLossText_Conv();
+            PrintWinLossText();
         }
 
     // skip_win_loss_text:
@@ -5889,7 +5889,7 @@ void ResetEnemyBattleVars(void){
     // CALL(aEmptyBattleTextbox);
     EmptyBattleTextbox();
     // JP(mLoadStandardMenuHeader);
-    LoadStandardMenuHeader_Conv();
+    LoadStandardMenuHeader();
 
 }
 
@@ -6426,7 +6426,7 @@ bool OfferSwitch_Conv(void){
     StdBattleTextbox(BattleText_EnemyIsAboutToUseWillPlayerChangeMon);
     // LD_BC((1 << 8) | 7);
     // CALL(aPlaceYesNoBox);
-    v_YesNoBox_Conv(1, 7);
+    v_YesNoBox(1, 7);
     // LD_A_addr(wMenuCursorY);
     // DEC_A;
     // IF_NZ goto said_no;
@@ -6499,7 +6499,7 @@ void ClearEnemyMonBox_Conv(void){
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // CALL(aClearSprites);
     ClearSprites();
     // hlcoord(1, 0, wTilemap);
@@ -9181,7 +9181,7 @@ BattleMenu_begin:
                 }
 
                 // CALL(aLoadStandardMenuHeader);
-                LoadStandardMenuHeader_Conv();
+                LoadStandardMenuHeader();
 
                 // LD_A_addr(wBattleType);
                 // CP_A(BATTLETYPE_TUTORIAL);
@@ -9208,7 +9208,7 @@ BattleMenu_begin:
                             // CALL(aGetEnemyMonFrontpic);
                             GetEnemyMonFrontpic();
                             // CALL(aExitMenu);
-                            ExitMenu_Conv2();
+                            ExitMenu();
                             // CALL(aWaitBGMap);
                             WaitBGMap();
                             // CALL(aFinishBattleAnim);
@@ -9258,7 +9258,7 @@ BattleMenu_begin:
                     // LD_addr_A(wBattleResult);  // WIN
                     wram->wBattleResult &= BATTLERESULT_BITMASK;
                     // CALL(aClearWindowData);
-                    ClearWindowData_Conv2();
+                    ClearWindowData();
                     // CALL(aSetPalettes);
                     SetPalettes();
                     // SCF;
@@ -9297,7 +9297,7 @@ BattleMenu_begin:
                 // LD_addr_A(wMenuCursorY);
                 wram->wMenuCursorY = 0x1;
                 // CALL(aExitMenu);
-                ExitMenu_Conv2();
+                ExitMenu();
                 // CALL(aUpdateBattleHUDs);
                 UpdateBattleHUDs();
                 // CALL(aWaitBGMap);
@@ -9305,7 +9305,7 @@ BattleMenu_begin:
                 // CALL(aLoadTilemapToTempTilemap);
                 LoadTilemapToTempTilemap();
                 // CALL(aClearWindowData);
-                ClearWindowData_Conv2();
+                ClearWindowData();
                 // CALL(aFinishBattleAnim);
                 FinishBattleAnim();
                 // AND_A_A;
@@ -9315,13 +9315,13 @@ BattleMenu_begin:
             case 0x2: {
             // BattleMenu_PKMN:
                 // CALL(aLoadStandardMenuHeader);
-                LoadStandardMenuHeader_Conv();
+                LoadStandardMenuHeader();
 
             BattleMenuPKMN_ReturnFromStats:
                 // CALL(aExitMenu);
-                ExitMenu_Conv2();
+                ExitMenu();
                 // CALL(aLoadStandardMenuHeader);
-                LoadStandardMenuHeader_Conv();
+                LoadStandardMenuHeader();
                 // CALL(aClearBGPalettes);
                 ClearBGPalettes();
 
@@ -9349,7 +9349,7 @@ BattleMenu_begin:
                         if(BattleMenu_PKMN_GetMenu())
                             break;
                         // CALL(aPlaceHollowCursor);
-                        PlaceHollowCursor_Conv();
+                        PlaceHollowCursor();
                         // LD_A_addr(wMenuCursorY);
                         switch(wram->wMenuCursorY) {
                             // CP_A(0x1);  // SWITCH
@@ -9405,7 +9405,7 @@ BattleMenu_begin:
                                 // CALL(av_LoadHPBar);
                                 v_LoadHPBar_Conv();
                                 // CALL(aCloseWindow);
-                                CloseWindow_Conv2();
+                                CloseWindow();
                                 // CALL(aGetMemSGBLayout);
                                 GetMemSGBLayout();
                                 // CALL(aSetPalettes);
@@ -9451,7 +9451,7 @@ BattleMenu_begin:
                         // CALL(av_LoadHPBar);
                         v_LoadHPBar_Conv();
                         // CALL(aCloseWindow);
-                        CloseWindow_Conv2();
+                        CloseWindow();
                         // CALL(aLoadTilemapToTempTilemap);
                         LoadTilemapToTempTilemap();
                         // CALL(aGetMemSGBLayout);
@@ -9829,11 +9829,11 @@ bool PlayerSwitch(void){
     // IF_Z goto not_linked;
     if(wram->wLinkMode != 0) {
         // CALL(aLoadStandardMenuHeader);
-        LoadStandardMenuHeader_Conv();
+        LoadStandardMenuHeader();
         // CALL(aLinkBattleSendReceiveAction);
         LinkBattleSendReceiveAction();
         // CALL(aCloseWindow);
-        CloseWindow_Conv2();
+        CloseWindow();
     }
 
 // not_linked:
@@ -10283,7 +10283,7 @@ MoveSelectionScreen:
         // LDH_addr_A(hBGMapMode);
         hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // CALL(aScrollingMenuJoypad);
-        uint8_t joypad = ScrollingMenuJoypad_Conv();
+        uint8_t joypad = ScrollingMenuJoypad();
         // BIT_A(D_UP_F);
         // JP_NZ (mMoveSelectionScreen_pressed_up);
         if(bit_test(joypad, D_UP_F)) {
@@ -13288,7 +13288,7 @@ void GiveExperiencePoints(void){
             // CALL(aDelayFrames);
             DelayFrames(30);
             // CALL(aWaitPressAorB_BlinkCursor);
-            WaitPressAorB_BlinkCursor_Conv();
+            WaitPressAorB_BlinkCursor();
             // CALL(aSafeLoadTempTilemapToTilemap);
             SafeLoadTempTilemapToTilemap();
             // XOR_A_A;  // PARTYMON
@@ -15128,7 +15128,7 @@ void DisplayLinkBattleResult(void){
 
     // LD_A(MBANK(asLinkBattleStats));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asLinkBattleStats));
+    OpenSRAM(MBANK(asLinkBattleStats));
 
     // CALL(aAddLastLinkBattleToLinkRecord);
     //  TODO: Convert AddLastLinkBattleToLinkRecord
@@ -15138,7 +15138,7 @@ void DisplayLinkBattleResult(void){
 
 
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 
     // CALL(aIsMobileBattle2);
     // IF_Z goto mobile;
@@ -15154,7 +15154,7 @@ void DisplayLinkBattleResult(void){
     }
     else {
         // CALL(aWaitPressAorB_BlinkCursor);
-        WaitPressAorB_BlinkCursor_Conv();
+        WaitPressAorB_BlinkCursor();
         // CALL(aClearTilemap);
         ClearTilemap();
         // RET;
@@ -15179,13 +15179,13 @@ bool IsMobileBattle2_Conv(void){
 void v_DisplayLinkRecord(void){
     // LD_A(MBANK(asLinkBattleStats));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asLinkBattleStats));
+    OpenSRAM(MBANK(asLinkBattleStats));
 
     // CALL(aReadAndPrintLinkBattleRecord);
     ReadAndPrintLinkBattleRecord();
 
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // hlcoord(0, 0, wAttrmap);
     // XOR_A_A;
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
@@ -15202,7 +15202,7 @@ void v_DisplayLinkRecord(void){
     // CALL(aDelayFrames);
     DelayFrames(8);
     // CALL(aWaitPressAorB_BlinkCursor);
-    WaitPressAorB_BlinkCursor_Conv();
+    WaitPressAorB_BlinkCursor();
     // RET;
 }
 
@@ -15953,7 +15953,7 @@ void InitBattleDisplay(void){
     // CALL(aClearBox);
     ClearBox(coord(1, 5, wram->wTilemap), 7, 3);
     // CALL(aLoadStandardFont);
-    LoadStandardFont_Conv();
+    LoadStandardFont();
     // CALL(av_LoadBattleFontsHPBar);
     v_LoadBattleFontsHPBar();
     // CALL(aInitBattleDisplay_BlankBGMap);

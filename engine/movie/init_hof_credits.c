@@ -22,9 +22,9 @@ void InitDisplayForHallOfFame(void){
     // CALL(aDisableLCD);
     DisableLCD();
     // CALL(aLoadStandardFont);
-    LoadStandardFont_Conv();
+    LoadStandardFont();
     // CALL(aLoadFontsBattleExtra);
-    LoadFontsBattleExtra_Conv();
+    LoadFontsBattleExtra();
     // hlbgcoord(0, 0, vBGMap0);
     // LD_BC(vBGMap1 - vBGMap0);
     // LD_A(0x7f);
@@ -62,9 +62,9 @@ void InitDisplayForRedCredits(void){
     // CALL(aDisableLCD);
     DisableLCD();
     // CALL(aLoadStandardFont);
-    LoadStandardFont_Conv();
+    LoadStandardFont();
     // CALL(aLoadFontsBattleExtra);
-    LoadFontsBattleExtra_Conv();
+    LoadFontsBattleExtra();
     // hlbgcoord(0, 0, vBGMap0);
     // LD_BC(vBGMap1 - vBGMap0);
     // LD_A(0x7f);

@@ -80,7 +80,7 @@ void InitClock(void){
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aLoadStandardFont);
-    LoadStandardFont_Conv();
+    LoadStandardFont();
     // LD_DE(mTimeSetBackgroundGFX);
     // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x00);
     // LD_BC((BANK(aTimeSetBackgroundGFX) << 8) | 1);
@@ -140,7 +140,7 @@ void InitClock(void){
         do {
         // SetHourLoop:
             // CALL(aJoyTextDelay);
-            JoyTextDelay_Conv();
+            JoyTextDelay();
             // CALL(aSetHour);
             // IF_NC goto SetHourLoop;
         } while(!SetHour_Conv());
@@ -154,7 +154,7 @@ void InitClock(void){
         PrintText_Conv2(OakTimeWhatHoursText);
         // CALL(aYesNoBox);
         // IF_NC goto HourIsSet;
-        if(YesNoBox_Conv())
+        if(YesNoBox())
             break;
         // CALL(aInitClock_ClearScreen);
         InitClock_ClearScreen();
@@ -188,7 +188,7 @@ void InitClock(void){
         do {
         // SetMinutesLoop:
             // CALL(aJoyTextDelay);
-            JoyTextDelay_Conv();
+            JoyTextDelay();
             // CALL(aSetMinutes);
             // IF_NC goto SetMinutesLoop;
         } while(!SetMinutes_Conv());
@@ -202,7 +202,7 @@ void InitClock(void){
         PrintText_Conv2(OakTimeWhoaMinutesText);
         // CALL(aYesNoBox);
         // IF_NC goto MinutesAreSet;
-        if(YesNoBox_Conv())
+        if(YesNoBox())
             break;
         // CALL(aInitClock_ClearScreen);
         InitClock_ClearScreen();
@@ -212,12 +212,12 @@ void InitClock(void){
 
 // MinutesAreSet:
     // CALL(aInitTimeOfDay);
-    InitTimeOfDay_Conv(wram->wInitHourBuffer, wram->wInitMinuteBuffer);
+    InitTimeOfDay(wram->wInitHourBuffer, wram->wInitMinuteBuffer);
     // LD_HL(mOakText_ResponseToSetTime);
     // CALL(aPrintText);
     PrintText_Conv2(OakText_ResponseToSetTime);
     // CALL(aWaitPressAorB_BlinkCursor);
-    WaitPressAorB_BlinkCursor_Conv();
+    WaitPressAorB_BlinkCursor();
     // POP_AF;
     // LDH_addr_A(hInMenu);
     hram->hInMenu = inMenu;
@@ -894,7 +894,7 @@ void SetDayOfWeek(void){
         // CALL(aTextbox);
         Textbox(coord(0, 12, wram->wTilemap), 4, 18);
         // CALL(aLoadStandardMenuHeader);
-        LoadStandardMenuHeader_Conv();
+        LoadStandardMenuHeader();
         // LD_HL(mSetDayOfWeek_OakTimeWhatDayIsItText);
         // CALL(aPrintText);
         PrintText_Conv2(OakTimeWhatDayIsItText);
@@ -913,7 +913,7 @@ void SetDayOfWeek(void){
         // CALL(aSetDayOfWeek_PlaceWeekdayString);
         SetDayOfWeek_PlaceWeekdayString(coord(10, 5, wram->wTilemap));
         // CALL(aApplyTilemap);
-        ApplyTilemap_Conv();
+        ApplyTilemap();
         // LD_C(10);
         // CALL(aDelayFrames);
         DelayFrames(10);
@@ -921,26 +921,26 @@ void SetDayOfWeek(void){
         do {
         // loop2:
             // CALL(aJoyTextDelay);
-            JoyTextDelay_Conv();
+            JoyTextDelay();
             // CALL(aSetDayOfWeek_GetJoypadAction);
             // IF_NC goto loop2;
         } while(!SetDayOfWeek_GetJoypadAction());
         // CALL(aExitMenu);
-        ExitMenu_Conv2();
+        ExitMenu();
         // CALL(aUpdateSprites);
-        UpdateSprites_Conv();
+        UpdateSprites();
         // LD_HL(mSetDayOfWeek_ConfirmWeekdayText);
         // CALL(aPrintText);
         PrintText_Conv2(ConfirmWeekdayText);
         // CALL(aYesNoBox);
         // IF_C goto loop;
-    } while(!YesNoBox_Conv());
+    } while(!YesNoBox());
     // LD_A_addr(wTempDayOfWeek);
     // LD_addr_A(wStringBuffer2);
     // CALL(aInitDayOfWeek);
-    InitDayOfWeek_Conv(wram->wTempDayOfWeek);
+    InitDayOfWeek(wram->wTempDayOfWeek);
     // CALL(aLoadStandardFont);
-    LoadStandardFont_Conv();
+    LoadStandardFont();
     // POP_AF;
     // LDH_addr_A(hInMenu);
     hram->hInMenu = inMenu;
@@ -953,7 +953,7 @@ static void InitialSetDSTFlag_Text(struct TextCmdState* state) {
         text_end
     };
     // CALL(aUpdateTime);
-    UpdateTime_Conv();
+    UpdateTime();
     // LDH_A_addr(hHours);
     // LD_B_A;
     // LDH_A_addr(hMinutes);
@@ -991,7 +991,7 @@ static void InitialClearDSTFlag_Text(struct TextCmdState* state) {
     };
 
     // CALL(aUpdateTime);
-    UpdateTime_Conv();
+    UpdateTime();
     // LDH_A_addr(hHours);
     // LD_B_A;
     // LDH_A_addr(hMinutes);
@@ -1053,7 +1053,7 @@ static void MrChrono_Text(struct TextCmdState* state) {
 // Text:
     //text_asm ['?']
     // CALL(aUpdateTime);
-    UpdateTime_Conv();
+    UpdateTime();
 
     // hlcoord(1, 14, wTilemap);
     // LD_hl(0x91);

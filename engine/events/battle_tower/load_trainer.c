@@ -67,7 +67,7 @@ void LoadOpponentTrainerAndPokemon(void){
 
         // LD_A(BANK(sBTTrainers));
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(asBTTrainers));
+        OpenSRAM(MBANK(asBTTrainers));
 
         // LD_C(BATTLETOWER_STREAK_LENGTH);
         c = BATTLETOWER_STREAK_LENGTH;
@@ -97,7 +97,7 @@ void LoadOpponentTrainerAndPokemon(void){
     hl[c] = b;
 
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 
     // PUSH_AF;
 //  Copy name (10 bytes) and class (1 byte) of trainer
@@ -145,7 +145,7 @@ void LoadRandomBattleTowerMon(struct BattleTowerPartyMon* de){
         // PUSH_BC;
         // LD_A(BANK(sBTMonOfTrainers));
         // CALL(aOpenSRAM);
-        OpenSRAM_Conv(MBANK(asBTMonOfTrainers));
+        OpenSRAM(MBANK(asBTMonOfTrainers));
         const struct NicknamedMon* hl;
 
         do {
@@ -297,7 +297,7 @@ void LoadRandomBattleTowerMon(struct BattleTowerPartyMon* de){
     // LD_addr_A(sBTMonPrevTrainer3);
     gb_write(sBTMonPrevTrainer3, wram->wBT_OTTrainer.party[2].mon.mon.species);
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
     // RET;
 
 // INCLUDE "data/battle_tower/classes.asm"

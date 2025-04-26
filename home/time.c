@@ -21,88 +21,27 @@ void Timer(void){
     // RET;
 }
 
-void LatchClock(void){
-    //  latch clock counter data
-    LD_A(0);
-    LD_addr_A(MBC3LatchClock);
-    LD_A(1);
-    LD_addr_A(MBC3LatchClock);
-    RET;
-
-}
-
 //  latch clock counter data
-void LatchClock_Conv(void){
+void LatchClock(void){
     gb_write(MBC3LatchClock, 0);
     gb_write(MBC3LatchClock, 1);
 }
 
-void UpdateTime(void){
-        CALL(aGetClock);
-    CALL(aFixDays);
-    CALL(aFixTime);
-    FARCALL(aGetTimeOfDay);
-    RET;
-
-}
-
-void UpdateTime_Conv(void) {
-    GetClock_Conv();
-    FixDays_Conv();
-    FixTime_Conv();
-    GetTimeOfDay_Conv();
-}
-
-void GetClock(void){
-    //  store clock data in hRTCDayHi-hRTCSeconds
-
-//  enable clock r/w
-    LD_A(SRAM_ENABLE);
-    LD_addr_A(MBC3SRamEnable);
-
-//  clock data is 'backwards' in hram
-
-    CALL(aLatchClock);
-    LD_HL(MBC3SRamBank);
-    LD_DE(MBC3RTC);
-
-    LD_hl(RTC_S);
-    LD_A_de;
-    maskbits(60, 0);
-    LDH_addr_A(hRTCSeconds);
-
-    LD_hl(RTC_M);
-    LD_A_de;
-    maskbits(60, 0);
-    LDH_addr_A(hRTCMinutes);
-
-    LD_hl(RTC_H);
-    LD_A_de;
-    maskbits(24, 0);
-    LDH_addr_A(hRTCHours);
-
-    LD_hl(RTC_DL);
-    LD_A_de;
-    LDH_addr_A(hRTCDayLo);
-
-    LD_hl(RTC_DH);
-    LD_A_de;
-    LDH_addr_A(hRTCDayHi);
-
-//  unlatch clock / disable clock r/w
-    CALL(aCloseSRAM);
-    RET;
-
+void UpdateTime(void) {
+    GetClock();
+    FixDays();
+    FixTime();
+    GetTimeOfDay();
 }
 
 //  store clock data in hRTCDayHi-hRTCSeconds
-void GetClock_Conv(void){
+void GetClock(void){
 //  enable clock r/w
     gb_write(MBC3SRamEnable, SRAM_ENABLE);
 
 //  clock data is 'backwards' in hram
     UpdateRTC();
-    LatchClock_Conv();
+    LatchClock();
     //LD_HL(MBC3SRamBank);
     //LD_DE(MBC3RTC);
 
@@ -132,79 +71,11 @@ void GetClock_Conv(void){
     hram->hRTCDayHi = gb_read(MBC3RTC);
 
 //  unlatch clock / disable clock r/w
-    CloseSRAM_Conv();
-}
-
-void FixDays(void){
-    //  fix day count
-//  mod by 140
-
-//  check if day count > 255 (bit 8 set)
-    LDH_A_addr(hRTCDayHi);  // DH
-    BIT_A(0);
-    IF_Z goto daylo;
-//  reset dh (bit 8)
-    RES_A(0);
-    LDH_addr_A(hRTCDayHi);
-
-//  mod 140
-//  mod twice since bit 8 (DH) was set
-    LDH_A_addr(hRTCDayLo);
-
-modh:
-        SUB_A(140);
-    IF_NC goto modh;
-
-modl:
-        SUB_A(140);
-    IF_NC goto modl;
-    ADD_A(140);
-
-//  update dl
-    LDH_addr_A(hRTCDayLo);
-
-//  flag for sRTCStatusFlags
-    LD_A(0b01000000);
-    goto set;
-
-
-daylo:
-    //  quit if fewer than 140 days have passed
-    LDH_A_addr(hRTCDayLo);
-    CP_A(140);
-    IF_C goto quit;
-
-//  mod 140
-
-mod:
-        SUB_A(140);
-    IF_NC goto mod;
-    ADD_A(140);
-
-//  update dl
-    LDH_addr_A(hRTCDayLo);
-
-//  flag for sRTCStatusFlags
-    LD_A(0b00100000);
-
-
-set:
-    //  update clock with modded day value
-    PUSH_AF;
-    CALL(aSetClock);
-    POP_AF;
-    SCF;
-    RET;
-
-
-quit:
-        XOR_A_A;
-    RET;
-
+    CloseSRAM();
 }
 
 //  fix day count
-uint8_t FixDays_Conv(void){
+uint8_t FixDays(void){
 //  fix day count
 //  mod by 140
     uint8_t result;
@@ -223,25 +94,25 @@ uint8_t FixDays_Conv(void){
         // LDH_A_addr(hRTCDayLo);
         uint8_t a = hram->hRTCDayLo;
 
-        uint8_t carry;
-        do {
+        // uint8_t carry;
+        // do {
         // modh:
             // SUB_A(140);
-            a = SubCarry8(a, 140, 0, &carry);
+            // a = SubCarry8(a, 140, 0, &carry);
             // IF_NC goto modh;
-        } while(!carry);
-        do {
+        // } while(!carry);
+        // do {
         // modl:
             // SUB_A(140);
             // IF_NC goto modl;
-            a = SubCarry8(a, 140, 0, &carry);
+            // a = SubCarry8(a, 140, 0, &carry);
             // ADD_A(140);
-        } while(!carry);
-        a += 140;
+        // } while(!carry);
+        // a += 140;
 
     //  update dl
         // LDH_addr_A(hRTCDayLo);
-        hram->hRTCDayLo = a;
+        hram->hRTCDayLo = (a | 0x100) % 140;
 
     //  flag for sRTCStatusFlags
         // LD_A(0b01000000);
@@ -259,20 +130,14 @@ uint8_t FixDays_Conv(void){
         }
 
     //  mod 140
-        uint8_t a = hram->hRTCDayLo;
-        uint8_t carry;
-        do {
         // mod:
             // SUB_A(140);
-            a = SubCarry8(a, 140, 0, &carry);
             // IF_NC goto mod;
-        } while(!carry);
         // ADD_A(140);
-        a += 140;
 
     //  update dl
         // LDH_addr_A(hRTCDayLo);
-        hram->hRTCDayLo = a;
+        hram->hRTCDayLo %= 140;
 
     //  flag for sRTCStatusFlags
         // LD_A(0b00100000);
@@ -283,7 +148,7 @@ uint8_t FixDays_Conv(void){
     //  update clock with modded day value
     // PUSH_AF;
     // CALL(aSetClock);
-    SetClock_Conv();
+    SetClock();
     // POP_AF;
     // SCF;
     // RET;
@@ -294,62 +159,9 @@ uint8_t FixDays_Conv(void){
     // RET;
 }
 
-void FixTime(void){
-    //  add ingame time (set at newgame) to current time
-//  store time in wCurDay, hHours, hMinutes, hSeconds
-
-//  second
-    LDH_A_addr(hRTCSeconds);
-    LD_C_A;
-    LD_A_addr(wStartSecond);
-    ADD_A_C;
-    SUB_A(60);
-    IF_NC goto updatesec;
-    ADD_A(60);
-
-updatesec:
-        LDH_addr_A(hSeconds);
-
-//  minute
-    CCF;  // carry is set, so turn it off
-    LDH_A_addr(hRTCMinutes);
-    LD_C_A;
-    LD_A_addr(wStartMinute);
-    ADC_A_C;
-    SUB_A(60);
-    IF_NC goto updatemin;
-    ADD_A(60);
-
-updatemin:
-        LDH_addr_A(hMinutes);
-
-//  hour
-    CCF;  // carry is set, so turn it off
-    LDH_A_addr(hRTCHours);
-    LD_C_A;
-    LD_A_addr(wStartHour);
-    ADC_A_C;
-    SUB_A(24);
-    IF_NC goto updatehr;
-    ADD_A(24);
-
-updatehr:
-        LDH_addr_A(hHours);
-
-//  day
-    CCF;  // carry is set, so turn it off
-    LDH_A_addr(hRTCDayLo);
-    LD_C_A;
-    LD_A_addr(wStartDay);
-    ADC_A_C;
-    LD_addr_A(wCurDay);
-    RET;
-
-}
-
 //  add ingame time (set at newgame) to current time
 //  store time in wCurDay, hHours, hMinutes, hSeconds
-void FixTime_Conv(void){
+void FixTime(void){
 //  second
     uint8_t carry = 0;
     uint8_t curr_sec = hram->hRTCSeconds;
@@ -396,16 +208,7 @@ void FixTime_Conv(void){
     wram->wCurDay = day;
 }
 
-void InitTimeOfDay(void){
-        XOR_A_A;
-    LD_addr_A(wStringBuffer2);
-    LD_A(0);  // useless
-    LD_addr_A(wStringBuffer2 + 3);
-    JR(mInitTime);
-
-}
-
-void InitTimeOfDay_Conv(uint8_t hour, uint8_t min){
+void InitTimeOfDay(uint8_t hour, uint8_t min){
     // XOR_A_A;
     // LD_addr_A(wStringBuffer2);
 
@@ -413,24 +216,12 @@ void InitTimeOfDay_Conv(uint8_t hour, uint8_t min){
     // LD_addr_A(wStringBuffer2 + 3);
 
     // JR(mInitTime);
-    InitTime_Conv(0, hour, min, 0);
+    InitTime(0, hour, min, 0);
 }
 
-void InitDayOfWeek(void){
-        CALL(aUpdateTime);
-    LDH_A_addr(hHours);
-    LD_addr_A(wStringBuffer2 + 1);
-    LDH_A_addr(hMinutes);
-    LD_addr_A(wStringBuffer2 + 2);
-    LDH_A_addr(hSeconds);
-    LD_addr_A(wStringBuffer2 + 3);
-    JR(mInitTime);  // useless
-
-}
-
-void InitDayOfWeek_Conv(uint8_t day){
+void InitDayOfWeek(uint8_t day){
     // CALL(aUpdateTime);
-    UpdateTime_Conv();
+    UpdateTime();
 
     // LDH_A_addr(hHours);
     // LD_addr_A(wStringBuffer2 + 1);
@@ -442,22 +233,16 @@ void InitDayOfWeek_Conv(uint8_t day){
     // LD_addr_A(wStringBuffer2 + 3);
 
     // JR(mInitTime);  // useless
-    return InitTime_Conv(day, hram->hHours, hram->hMinutes, hram->hSeconds);
+    return InitTime(day, hram->hHours, hram->hMinutes, hram->hSeconds);
 }
 
-void InitTime(void){
-        FARCALL(av_InitTime);
-    RET;
-
-}
-
-void InitTime_Conv(uint8_t days, uint8_t hours, uint8_t mins, uint8_t secs){
+void InitTime(uint8_t days, uint8_t hours, uint8_t mins, uint8_t secs){
     // bank_push(BANK(av_InitTime));
-    v_InitTime_Conv(days, hours, mins, secs);
+    v_InitTime(days, hours, mins, secs);
     // bank_pop;
 }
 
-static void ClearClock_ClearhRTC_Conv() {
+static void ClearClock_ClearhRTC() {
     hram->hRTCSeconds = 0;
     hram->hRTCMinutes = 0;
     hram->hRTCHours = 0;
@@ -465,37 +250,20 @@ static void ClearClock_ClearhRTC_Conv() {
     hram->hRTCDayHi = 0;
 }
 
-void ClearClock_Conv(void){
-    ClearClock_ClearhRTC_Conv();
-    SetClock_Conv();
-}
-
 void ClearClock(void){
-        CALL(aClearClock_ClearhRTC);
-    CALL(aSetClock);
-    RET;
-
-
-ClearhRTC:
-        XOR_A_A;
-    LDH_addr_A(hRTCSeconds);
-    LDH_addr_A(hRTCMinutes);
-    LDH_addr_A(hRTCHours);
-    LDH_addr_A(hRTCDayLo);
-    LDH_addr_A(hRTCDayHi);
-    RET;
-
+    ClearClock_ClearhRTC();
+    SetClock();
 }
 
 //  set clock data from hram
-void SetClock_Conv(void){
+void SetClock(void){
 //  enable clock r/w
     gb_write(MBC3SRamEnable, SRAM_ENABLE);
 
 //  set clock data
 //  stored 'backwards' in hram
 
-    LatchClock_Conv();
+    LatchClock();
     const uint16_t hl = MBC3SRamBank;
     const uint16_t de = MBC3RTC;
 
@@ -525,56 +293,7 @@ void SetClock_Conv(void){
     gb_write(de, dayhi);
 
 //  cleanup
-    CloseSRAM_Conv();  // unlatch clock, disable clock r/w
-}
-
-void SetClock(void){
-    //  set clock data from hram
-
-//  enable clock r/w
-    LD_A(SRAM_ENABLE);
-    LD_addr_A(MBC3SRamEnable);
-
-//  set clock data
-//  stored 'backwards' in hram
-
-    CALL(aLatchClock);
-    LD_HL(MBC3SRamBank);
-    LD_DE(MBC3RTC);
-
-//  seems to be a halt check that got partially commented out
-//  this block is totally pointless
-    LD_hl(RTC_DH);
-    LD_A_de;
-    BIT_A(6);  // halt
-    LD_de_A;
-
-//  seconds
-    LD_hl(RTC_S);
-    LDH_A_addr(hRTCSeconds);
-    LD_de_A;
-//  minutes
-    LD_hl(RTC_M);
-    LDH_A_addr(hRTCMinutes);
-    LD_de_A;
-//  hours
-    LD_hl(RTC_H);
-    LDH_A_addr(hRTCHours);
-    LD_de_A;
-//  day lo
-    LD_hl(RTC_DL);
-    LDH_A_addr(hRTCDayLo);
-    LD_de_A;
-//  day hi
-    LD_hl(RTC_DH);
-    LDH_A_addr(hRTCDayHi);
-    RES_A(6);  // make sure timer is active
-    LD_de_A;
-
-//  cleanup
-    CALL(aCloseSRAM);  // unlatch clock, disable clock r/w
-    RET;
-
+    CloseSRAM();  // unlatch clock, disable clock r/w
 }
 
 void ClearRTCStatus(void){
@@ -591,60 +310,35 @@ void ClearRTCStatus(void){
 
 }
 
-void RecordRTCStatus(void){
-    //  append flags to sRTCStatusFlags
-    LD_HL(sRTCStatusFlags);
-    PUSH_AF;
-    LD_A(MBANK(asRTCStatusFlags));
-    CALL(aOpenSRAM);
-    POP_AF;
-    OR_A_hl;
-    LD_hl_A;
-    CALL(aCloseSRAM);
-    RET;
-
-}
-
 //  append flags to sRTCStatusFlags
-void RecordRTCStatus_Conv(uint8_t a){
+void RecordRTCStatus(uint8_t a){
     // LD_HL(sRTCStatusFlags);
-    uint16_t hl = sRTCStatusFlags;
 
     // PUSH_AF;
     // LD_A(BANK(sRTCStatusFlags));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asRTCStatusFlags));
+    OpenSRAM(MBANK(asRTCStatusFlags));
 
     // POP_AF;
     // OR_A_hl;
     // LD_hl_A;
-    gb_write(hl, a | gb_read(hl));
+    gb_write(sRTCStatusFlags, gb_read(sRTCStatusFlags) | a);
 
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
-}
-
-void CheckRTCStatus(void){
-    //  check sRTCStatusFlags
-    LD_A(MBANK(asRTCStatusFlags));
-    CALL(aOpenSRAM);
-    LD_A_addr(sRTCStatusFlags);
-    CALL(aCloseSRAM);
-    RET;
-
+    CloseSRAM();
 }
 
 //  check sRTCStatusFlags
-uint8_t CheckRTCStatus_Conv(void){
+uint8_t CheckRTCStatus(void){
     // LD_A(BANK(sRTCStatusFlags));
     // CALL(aOpenSRAM);
-    OpenSRAM_Conv(MBANK(asRTCStatusFlags));
+    OpenSRAM(MBANK(asRTCStatusFlags));
 
     // LD_A_addr(sRTCStatusFlags);
     uint8_t flags = gb_read(sRTCStatusFlags);
     
     // CALL(aCloseSRAM);
-    CloseSRAM_Conv();
+    CloseSRAM();
 
     // RET;
     return flags;

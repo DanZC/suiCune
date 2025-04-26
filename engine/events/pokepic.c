@@ -20,13 +20,13 @@ static const struct MenuHeader PokepicMenuHeader = {
 void Pokepic(void){
     // LD_HL(mPokepicMenuHeader);
     // CALL(aCopyMenuHeader);
-    CopyMenuHeader_Conv2(&PokepicMenuHeader);
+    CopyMenuHeader(&PokepicMenuHeader);
     // CALL(aMenuBox);
-    MenuBox_Conv();
+    MenuBox();
     // CALL(aUpdateSprites);
-    UpdateSprites_Conv();
+    UpdateSprites();
     // CALL(aApplyTilemap);
-    ApplyTilemap_Conv();
+    ApplyTilemap();
     // LD_B(SCGB_POKEPIC);
     // CALL(aGetSGBLayout);
     GetSGBLayout(SCGB_POKEPIC);
@@ -49,7 +49,7 @@ void Pokepic(void){
     // INC_A;
     // LD_C_A;
     // CALL(aCoord2Tile);
-    uint8_t* hl = Coord2Tile_Conv(wram->wMenuBorderLeftCoord + 1, wram->wMenuBorderTopCoord + 1);
+    uint8_t* hl = Coord2Tile(wram->wMenuBorderLeftCoord + 1, wram->wMenuBorderTopCoord + 1);
     // LD_A(0x80);
     // LDH_addr_A(hGraphicStartTile);
     hram->hGraphicStartTile = 0x80;
@@ -65,7 +65,7 @@ void Pokepic(void){
 void ClosePokepic(void){
     // LD_HL(mPokepicMenuHeader);
     // CALL(aCopyMenuHeader);
-    CopyMenuHeader_Conv2(&PokepicMenuHeader);
+    CopyMenuHeader(&PokepicMenuHeader);
     // CALL(aClearMenuBoxInterior);
     ClearMenuBoxInterior();
     // CALL(aWaitBGMap);
@@ -76,12 +76,12 @@ void ClosePokepic(void){
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aOverworldTextModeSwitch);
-    OverworldTextModeSwitch_Conv();
+    OverworldTextModeSwitch();
     // CALL(aApplyTilemap);
-    ApplyTilemap_Conv();
+    ApplyTilemap();
     // CALL(aUpdateSprites);
-    UpdateSprites_Conv();
+    UpdateSprites();
     // CALL(aLoadStandardFont);
-    LoadStandardFont_Conv();
+    LoadStandardFont();
     // RET;
 }

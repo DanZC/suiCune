@@ -49,7 +49,7 @@ void Pack(void){
     while(1) {
     // loop:
         // CALL(aJoyTextDelay);
-        JoyTextDelay_Conv();
+        JoyTextDelay();
         // LD_A_addr(wJumptableIndex);
         // BIT_A(7);
         // IF_NZ goto done;
@@ -156,7 +156,7 @@ void Pack_RunJumptable(void) {
         // ItemsPocketMenu:
             // LD_HL(mItemsPocketMenuHeader);
             // CALL(aCopyMenuHeader);
-            CopyMenuHeader_Conv2(&ItemsPocketMenuHeader);
+            CopyMenuHeader(&ItemsPocketMenuHeader);
             // LD_A_addr(wItemsPocketCursor);
             // LD_addr_A(wMenuCursorPosition);
             wram->wMenuCursorPosition = wram->wItemsPocketCursor;
@@ -164,7 +164,7 @@ void Pack_RunJumptable(void) {
             // LD_addr_A(wMenuScrollPosition);
             wram->wMenuScrollPosition = wram->wItemsPocketScrollPosition;
             // CALL(aScrollingMenu);
-            ScrollingMenu_Conv();
+            ScrollingMenu();
             // LD_A_addr(wMenuScrollPosition);
             // LD_addr_A(wItemsPocketScrollPosition);
             wram->wItemsPocketScrollPosition = wram->wMenuScrollPosition;
@@ -202,7 +202,7 @@ void Pack_RunJumptable(void) {
         // BallsPocketMenu:
             // LD_HL(mBallsPocketMenuHeader);
             // CALL(aCopyMenuHeader);
-            CopyMenuHeader_Conv2(&BallsPocketMenuHeader);
+            CopyMenuHeader(&BallsPocketMenuHeader);
             // LD_A_addr(wBallsPocketCursor);
             // LD_addr_A(wMenuCursorPosition);
             wram->wMenuCursorPosition = wram->wBallsPocketCursor;
@@ -210,7 +210,7 @@ void Pack_RunJumptable(void) {
             // LD_addr_A(wMenuScrollPosition);
             wram->wMenuScrollPosition = wram->wBallsPocketScrollPosition;
             // CALL(aScrollingMenu);
-            ScrollingMenu_Conv();
+            ScrollingMenu();
             // LD_A_addr(wMenuScrollPosition);
             // LD_addr_A(wBallsPocketScrollPosition);
             wram->wBallsPocketScrollPosition = wram->wMenuScrollPosition;
@@ -248,7 +248,7 @@ void Pack_RunJumptable(void) {
         // KeyItemsPocketMenu:
             // LD_HL(mKeyItemsPocketMenuHeader);
             // CALL(aCopyMenuHeader);
-            CopyMenuHeader_Conv2(&KeyItemsPocketMenuHeader);
+            CopyMenuHeader(&KeyItemsPocketMenuHeader);
             // LD_A_addr(wKeyItemsPocketCursor);
             // LD_addr_A(wMenuCursorPosition);
             wram->wMenuCursorPosition = wram->wKeyItemsPocketCursor;
@@ -256,7 +256,7 @@ void Pack_RunJumptable(void) {
             // LD_addr_A(wMenuScrollPosition);
             wram->wMenuScrollPosition = wram->wKeyItemsPocketScrollPosition;
             // CALL(aScrollingMenu);
-            ScrollingMenu_Conv();
+            ScrollingMenu();
             // LD_A_addr(wMenuScrollPosition);
             // LD_addr_A(wKeyItemsPocketScrollPosition);
             wram->wKeyItemsPocketScrollPosition = wram->wMenuScrollPosition;
@@ -321,11 +321,11 @@ void Pack_RunJumptable(void) {
         // load_jump:
             // PUSH_DE;
             // CALL(aLoadMenuHeader);
-            LoadMenuHeader_Conv2(hl);
+            LoadMenuHeader(hl);
             // CALL(aVerticalMenu);
-            bool quit = !VerticalMenu_Conv();
+            bool quit = !VerticalMenu();
             // CALL(aExitMenu);
-            ExitMenu_Conv2();
+            ExitMenu();
             // POP_HL;
             // RET_C ;
             if(quit)
@@ -478,11 +478,11 @@ static void Pack_ItemBallsKey_LoadSubmenu(void){
 // build_menu:
     // PUSH_DE;
     // CALL(aLoadMenuHeader);
-    LoadMenuHeader_Conv2(hl);
+    LoadMenuHeader(hl);
     // CALL(aVerticalMenu);
-    bool quit = !VerticalMenu_Conv();
+    bool quit = !VerticalMenu();
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // POP_HL;
     // RET_C ;
     if(quit)
@@ -728,7 +728,7 @@ void TossMenu(void){
     bool quit = SelectQuantityToToss();
     // PUSH_AF;
     // CALL(aExitMenu);
-    ExitMenu_Conv2();
+    ExitMenu();
     // POP_AF;
     // IF_C goto finish;
     if(!quit){
@@ -736,12 +736,12 @@ void TossMenu(void){
         Pack_GetItemName();
         // LD_HL(mAskQuantityThrowAwayText);
         // CALL(aMenuTextbox);
-        MenuTextbox_Conv(AskQuantityThrowAwayText);
+        MenuTextbox(AskQuantityThrowAwayText);
         // CALL(aYesNoBox);
-        bool yes = YesNoBox_Conv();
+        bool yes = YesNoBox();
         // PUSH_AF;
         // CALL(aExitMenu);
-        ExitMenu_Conv2();
+        ExitMenu();
         // POP_AF;
         // IF_C goto finish;
         if(yes){
@@ -983,7 +983,7 @@ static void BattlePack_RunJumptable(void) {
         // ItemsPocketMenu:
             // LD_HL(mItemsPocketMenuHeader);
             // CALL(aCopyMenuHeader);
-            CopyMenuHeader_Conv2(&ItemsPocketMenuHeader);
+            CopyMenuHeader(&ItemsPocketMenuHeader);
             // LD_A_addr(wItemsPocketCursor);
             // LD_addr_A(wMenuCursorPosition);
             wram->wMenuCursorPosition = wram->wItemsPocketCursor;
@@ -991,7 +991,7 @@ static void BattlePack_RunJumptable(void) {
             // LD_addr_A(wMenuScrollPosition);
             wram->wMenuScrollPosition = wram->wItemsPocketScrollPosition;
             // CALL(aScrollingMenu);
-            ScrollingMenu_Conv();
+            ScrollingMenu();
             // LD_A_addr(wMenuScrollPosition);
             // LD_addr_A(wItemsPocketScrollPosition);
             wram->wItemsPocketScrollPosition = wram->wMenuScrollPosition;
@@ -1029,7 +1029,7 @@ static void BattlePack_RunJumptable(void) {
         // BallsPocketMenu:
             // LD_HL(mBallsPocketMenuHeader);
             // CALL(aCopyMenuHeader);
-            CopyMenuHeader_Conv2(&BallsPocketMenuHeader);
+            CopyMenuHeader(&BallsPocketMenuHeader);
             // LD_A_addr(wBallsPocketCursor);
             // LD_addr_A(wMenuCursorPosition);
             wram->wMenuCursorPosition = wram->wBallsPocketCursor;
@@ -1037,7 +1037,7 @@ static void BattlePack_RunJumptable(void) {
             // LD_addr_A(wMenuScrollPosition);
             wram->wMenuScrollPosition = wram->wBallsPocketScrollPosition;
             // CALL(aScrollingMenu);
-            ScrollingMenu_Conv();
+            ScrollingMenu();
             // LD_A_addr(wMenuScrollPosition);
             // LD_addr_A(wBallsPocketScrollPosition);
             wram->wBallsPocketScrollPosition = wram->wMenuScrollPosition;
@@ -1075,7 +1075,7 @@ static void BattlePack_RunJumptable(void) {
         // KeyItemsPocketMenu:
             // LD_HL(mKeyItemsPocketMenuHeader);
             // CALL(aCopyMenuHeader);
-            CopyMenuHeader_Conv2(&KeyItemsPocketMenuHeader);
+            CopyMenuHeader(&KeyItemsPocketMenuHeader);
             // LD_A_addr(wKeyItemsPocketCursor);
             // LD_addr_A(wMenuCursorPosition);
             wram->wMenuCursorPosition = wram->wKeyItemsPocketCursor;
@@ -1083,7 +1083,7 @@ static void BattlePack_RunJumptable(void) {
             // LD_addr_A(wMenuScrollPosition);
             wram->wMenuScrollPosition = wram->wKeyItemsPocketScrollPosition;
             // CALL(aScrollingMenu);
-            ScrollingMenu_Conv();
+            ScrollingMenu();
             // LD_A_addr(wMenuScrollPosition);
             // LD_addr_A(wKeyItemsPocketScrollPosition);
             wram->wKeyItemsPocketScrollPosition = wram->wMenuScrollPosition;
@@ -1157,7 +1157,7 @@ void BattlePack(void){
     while(1) {
     // loop:
         // CALL(aJoyTextDelay);
-        JoyTextDelay_Conv();
+        JoyTextDelay();
         // LD_A_addr(wJumptableIndex);
         // BIT_A(7);
         // IF_NZ goto end;
@@ -1232,11 +1232,11 @@ void TMHMSubmenu(uint8_t a){
     // proceed:
         // PUSH_DE;
         // CALL(aLoadMenuHeader);
-        LoadMenuHeader_Conv2(&UsableMenuHeader);
+        LoadMenuHeader(&UsableMenuHeader);
         // CALL(aVerticalMenu);
-        bool quit = !VerticalMenu_Conv();
+        bool quit = !VerticalMenu();
         // CALL(aExitMenu);
-        ExitMenu_Conv2();
+        ExitMenu();
         // POP_HL;
         // RET_C ;
         if(quit)
@@ -1343,11 +1343,11 @@ void TMHMSubmenu(uint8_t a){
     // proceed:
         // PUSH_DE;
         // CALL(aLoadMenuHeader);
-        LoadMenuHeader_Conv2(&UnusableMenuHeader);
+        LoadMenuHeader(&UnusableMenuHeader);
         // CALL(aVerticalMenu);
-        bool quit = !VerticalMenu_Conv();
+        bool quit = !VerticalMenu();
         // CALL(aExitMenu);
-        ExitMenu_Conv2();
+        ExitMenu();
         // POP_HL;
         // RET_C ;
         if(quit)
@@ -1428,7 +1428,7 @@ static void DepositSellPack_RunJumptable(void){
             InitPocket(ITEM_POCKET);
             // LD_HL(mPC_Mart_ItemsPocketMenuHeader);
             // CALL(aCopyMenuHeader);
-            CopyMenuHeader_Conv2(&PC_Mart_ItemsPocketMenuHeader);
+            CopyMenuHeader(&PC_Mart_ItemsPocketMenuHeader);
             // LD_A_addr(wItemsPocketCursor);
             // LD_addr_A(wMenuCursorPosition);
             wram->wMenuCursorPosition = wram->wItemsPocketCursor;
@@ -1436,7 +1436,7 @@ static void DepositSellPack_RunJumptable(void){
             // LD_addr_A(wMenuScrollPosition);
             wram->wMenuScrollPosition = wram->wItemsPocketScrollPosition;
             // CALL(aScrollingMenu);
-            ScrollingMenu_Conv();
+            ScrollingMenu();
             // LD_A_addr(wMenuScrollPosition);
             // LD_addr_A(wItemsPocketScrollPosition);
             wram->wItemsPocketScrollPosition = wram->wMenuScrollPosition;
@@ -1453,7 +1453,7 @@ static void DepositSellPack_RunJumptable(void){
             InitPocket(BALL_POCKET);
             // LD_HL(mPC_Mart_BallsPocketMenuHeader);
             // CALL(aCopyMenuHeader);
-            CopyMenuHeader_Conv2(&PC_Mart_BallsPocketMenuHeader);
+            CopyMenuHeader(&PC_Mart_BallsPocketMenuHeader);
             // LD_A_addr(wBallsPocketCursor);
             // LD_addr_A(wMenuCursorPosition);
             wram->wMenuCursorPosition = wram->wBallsPocketCursor;
@@ -1461,7 +1461,7 @@ static void DepositSellPack_RunJumptable(void){
             // LD_addr_A(wMenuScrollPosition);
             wram->wMenuScrollPosition = wram->wBallsPocketScrollPosition;
             // CALL(aScrollingMenu);
-            ScrollingMenu_Conv();
+            ScrollingMenu();
             // LD_A_addr(wMenuScrollPosition);
             // LD_addr_A(wBallsPocketScrollPosition);
             wram->wBallsPocketScrollPosition = wram->wMenuScrollPosition;
@@ -1478,7 +1478,7 @@ static void DepositSellPack_RunJumptable(void){
             InitPocket(KEY_ITEM_POCKET);
             // LD_HL(mPC_Mart_KeyItemsPocketMenuHeader);
             // CALL(aCopyMenuHeader);
-            CopyMenuHeader_Conv2(&PC_Mart_KeyItemsPocketMenuHeader);
+            CopyMenuHeader(&PC_Mart_KeyItemsPocketMenuHeader);
             // LD_A_addr(wKeyItemsPocketCursor);
             // LD_addr_A(wMenuCursorPosition);
             wram->wMenuCursorPosition = wram->wKeyItemsPocketCursor;
@@ -1486,7 +1486,7 @@ static void DepositSellPack_RunJumptable(void){
             // LD_addr_A(wMenuScrollPosition);
             wram->wMenuScrollPosition = wram->wKeyItemsPocketScrollPosition;
             // CALL(aScrollingMenu);
-            ScrollingMenu_Conv();
+            ScrollingMenu();
             // LD_A_addr(wMenuScrollPosition);
             // LD_addr_A(wKeyItemsPocketScrollPosition);
             wram->wKeyItemsPocketScrollPosition = wram->wMenuScrollPosition;
@@ -1694,7 +1694,7 @@ static void TutorialPack_RunJumptable(void) {
             // LD_HL(mTutorialPack_ItemsMenuHeader);
             // goto DisplayPocket;
             InitPocket(ITEM_POCKET);
-            CopyMenuHeader_Conv2(&TutorialPack_ItemsMenuHeader);
+            CopyMenuHeader(&TutorialPack_ItemsMenuHeader);
             break;
         //dw ['.Balls'];
         case BALL_POCKET:
@@ -1703,7 +1703,7 @@ static void TutorialPack_RunJumptable(void) {
             // LD_HL(mTutorialPack_BallsMenuHeader);
             // goto DisplayPocket;
             InitPocket(BALL_POCKET);
-            CopyMenuHeader_Conv2(&TutorialPack_BallsMenuHeader);
+            CopyMenuHeader(&TutorialPack_BallsMenuHeader);
             break;
         //dw ['.KeyItems'];
         case KEY_ITEM_POCKET:
@@ -1712,7 +1712,7 @@ static void TutorialPack_RunJumptable(void) {
             // LD_HL(mTutorialPack_KeyItemsMenuHeader);
             // goto DisplayPocket;
             InitPocket(KEY_ITEM_POCKET);
-            CopyMenuHeader_Conv2(&TutorialPack_KeyItemsMenuHeader);
+            CopyMenuHeader(&TutorialPack_KeyItemsMenuHeader);
             break;
         //dw ['.TMHM'];
         case TM_HM_POCKET:
@@ -1737,7 +1737,7 @@ static void TutorialPack_RunJumptable(void) {
     // POP_HL;
     // CALL(aCopyMenuHeader);
     // CALL(aScrollingMenu);
-    ScrollingMenu_Conv();
+    ScrollingMenu();
     // RET;
 }
 
