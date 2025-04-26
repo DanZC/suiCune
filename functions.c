@@ -1218,8 +1218,8 @@ void init_function_pointers(void) {
     // CONVERTED(PlayTrainerEncounterMusic);
 
     // home/map.c
-    REDIRECTED(ClearBGMapBuffer);
-    REDIRECTED(UpdateBGMapColumn);
+    CONVERTED(ClearBGMapBuffer);
+    // CONVERTED(UpdateBGMapColumn);
     // REDIRECTED(ReadMapScripts);
     // REDIRECTED(GetAnyMapAttributesBank);
     // REDIRECTED(GetMapScriptsBank);
@@ -1239,8 +1239,8 @@ void init_function_pointers(void) {
 #endif
     // REDIRECTED(GetMapPointer);
     // REDIRECTED(CopyMapPartialAndAttributes);
-    REDIRECTED(GetWorldMapLocation);
-    REDIRECTED(GetMapMusic);
+    // CONVERTED(GetWorldMapLocation);
+    // CONVERTED(GetMapMusic);
     // REDIRECTED(UpdateBGMapRow);
     // REDIRECTED(CheckFacingBGEvent);
     CONVERTED(LoadMapTileset);
@@ -1269,7 +1269,7 @@ void init_function_pointers(void) {
     // REDIRECTED(BufferScreen);
     // REDIRECTED(CheckScenes);
     // REDIRECTED(ReadMapSceneScripts);
-    REDIRECTED(MapTextbox);
+    // CONVERTED(MapTextbox);
     // REDIRECTED(Map_DummyFunction);
     // REDIRECTED(CopyMapAttributes);
     // REDIRECTED(SwitchToMapAttributesBank);
