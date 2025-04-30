@@ -55,7 +55,7 @@ const char HeadbuttTreeGFX[] = "gfx/overworld/headbutt_tree.png";
 
 void ShakeHeadbuttTree(void){
     // FARCALL(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // LD_DE(mCutGrassGFX);
     // LD_HL(vTiles0 + LEN_2BPP_TILE * FIELDMOVE_GRASS);
     // LD_BC((BANK(aCutGrassGFX) << 8) | 4);
@@ -69,7 +69,7 @@ void ShakeHeadbuttTree(void){
     // CALL(aCut_Headbutt_GetPixelFacing);
     // LD_A(SPRITE_ANIM_INDEX_HEADBUTT);
     // CALL(aInitSpriteAnimStruct);
-    struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_HEADBUTT, Cut_Headbutt_GetPixelFacing_Conv());
+    struct SpriteAnim* bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_HEADBUTT, Cut_Headbutt_GetPixelFacing_Conv());
     // LD_HL(SPRITEANIMSTRUCT_TILE_ID);
     // ADD_HL_BC;
     // LD_hl(FIELDMOVE_TREE);
@@ -78,7 +78,7 @@ void ShakeHeadbuttTree(void){
     // LD_addr_A(wCurSpriteOAMAddr);
     wram->wCurSpriteOAMAddr = 36 * SPRITEOAMSTRUCT_LENGTH;
     // FARCALL(aDoNextFrameForAllSprites);
-    DoNextFrameForAllSprites_Conv();
+    DoNextFrameForAllSprites();
     // CALL(aHideHeadbuttTree);
     HideHeadbuttTree();
     // LD_A(32);
@@ -102,7 +102,7 @@ void ShakeHeadbuttTree(void){
         // LD_addr_A(wCurSpriteOAMAddr);
         wram->wCurSpriteOAMAddr = 36 * SPRITEOAMSTRUCT_LENGTH;
         // FARCALL(aDoNextFrameForAllSprites);
-        DoNextFrameForAllSprites_Conv();
+        DoNextFrameForAllSprites();
         // CALL(aDelayFrame);
         DelayFrame();
         // goto loop;
@@ -117,7 +117,7 @@ void ShakeHeadbuttTree(void){
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
     // FARCALL(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // LD_HL(wVirtualOAMSprite36);
     // LD_BC(wVirtualOAMEnd - wVirtualOAMSprite36);
     // XOR_A_A;
@@ -220,7 +220,7 @@ LoadCutGFX:
 
 static void OWCutAnimation_LoadCutGFX(void) {
     // CALLFAR(aClearSpriteAnims);  // pointless to farcall
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // LD_DE(mCutGrassGFX);
     // LD_HL(vTiles0 + LEN_2BPP_TILE * FIELDMOVE_GRASS);
     // LD_BC((BANK(aCutGrassGFX) << 8) | 4);
@@ -259,7 +259,7 @@ void OWCutAnimation_Conv(uint8_t e){
         // LD_addr_A(wCurSpriteOAMAddr);
         wram->wCurSpriteOAMAddr = 36 * SPRITEOAMSTRUCT_LENGTH;
         // CALLFAR(aDoNextFrameForAllSprites);
-        DoNextFrameForAllSprites_Conv();
+        DoNextFrameForAllSprites();
         // CALL(aOWCutJumptable);
         OWCutJumptable();
         // CALL(aDelayFrame);
@@ -289,7 +289,7 @@ void Cut_SpawnAnimateTree(void){
     uint16_t pixel = Cut_Headbutt_GetPixelFacing_Conv();
     // LD_A(SPRITE_ANIM_INDEX_CUT_TREE);  // cut tree
     // CALL(aInitSpriteAnimStruct);
-    struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_CUT_TREE, pixel);
+    struct SpriteAnim* bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_CUT_TREE, pixel);
     // LD_HL(SPRITEANIMSTRUCT_TILE_ID);
     // ADD_HL_BC;
     // LD_hl(FIELDMOVE_TREE);
@@ -386,7 +386,7 @@ struct SpriteAnim* Cut_SpawnLeaf_Conv(uint16_t de, uint8_t a){
     // PUSH_AF;
     // LD_A(SPRITE_ANIM_INDEX_LEAF);  // leaf
     // CALL(aInitSpriteAnimStruct);
-    struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_LEAF, de);
+    struct SpriteAnim* bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_LEAF, de);
     // LD_HL(SPRITEANIMSTRUCT_TILE_ID);
     // ADD_HL_BC;
     // LD_hl(FIELDMOVE_GRASS);
@@ -568,7 +568,7 @@ void FlyFromAnim(void){
     // depixel4(10, 10, 4, 0);
     // LD_A(SPRITE_ANIM_INDEX_RED_WALK);
     // CALL(aInitSpriteAnimStruct);
-    struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_RED_WALK, pixel4(10, 10, 4, 0));
+    struct SpriteAnim* bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_RED_WALK, pixel4(10, 10, 4, 0));
     // LD_HL(SPRITEANIMSTRUCT_TILE_ID);
     // ADD_HL_BC;
     // LD_hl(FIELDMOVE_FLY);
@@ -590,7 +590,7 @@ void FlyFromAnim(void){
         // LD_addr_A(wCurSpriteOAMAddr);
         wram->wCurSpriteOAMAddr = 0 * SPRITEOAMSTRUCT_LENGTH;
         // CALLFAR(aDoNextFrameForAllSprites);
-        DoNextFrameForAllSprites_Conv();
+        DoNextFrameForAllSprites();
         // CALL(aFlyFunction_FrameTimer);
         FlyFunction_FrameTimer();
         // CALL(aDelayFrame);
@@ -646,7 +646,7 @@ void FlyToAnim(void){
     // depixel4(31, 10, 4, 0);
     // LD_A(SPRITE_ANIM_INDEX_RED_WALK);
     // CALL(aInitSpriteAnimStruct);
-    struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_RED_WALK, pixel4(31, 10, 4, 0));
+    struct SpriteAnim* bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_RED_WALK, pixel4(31, 10, 4, 0));
     // LD_HL(SPRITEANIMSTRUCT_TILE_ID);
     // ADD_HL_BC;
     // LD_hl(FIELDMOVE_FLY);
@@ -672,7 +672,7 @@ void FlyToAnim(void){
         // LD_addr_A(wCurSpriteOAMAddr);
         wram->wCurSpriteOAMAddr = 0 * SPRITEOAMSTRUCT_LENGTH;
         // CALLFAR(aDoNextFrameForAllSprites);
-        DoNextFrameForAllSprites_Conv();
+        DoNextFrameForAllSprites();
         // CALL(aFlyFunction_FrameTimer);
         FlyFunction_FrameTimer();
         // CALL(aDelayFrame);
@@ -691,7 +691,7 @@ void FlyToAnim(void){
 
 void FlyFunction_InitGFX(void){
     // CALLFAR(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // LD_DE(mCutGrassGFX);
     // LD_HL(vTiles0 + LEN_2BPP_TILE * FIELDMOVE_GRASS);
     // LD_BC((BANK(aCutGrassGFX) << 8) | 4);
@@ -731,7 +731,7 @@ static void FlyFunction_FrameTimer_SpawnLeaf(void) {
     // LD_E(0);
     // LD_A(SPRITE_ANIM_INDEX_FLY_LEAF);
     // CALL(aInitSpriteAnimStruct);
-    struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_FLY_LEAF, de);
+    struct SpriteAnim* bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_FLY_LEAF, de);
     // LD_HL(SPRITEANIMSTRUCT_TILE_ID);
     // ADD_HL_BC;
     // LD_hl(FIELDMOVE_GRASS);

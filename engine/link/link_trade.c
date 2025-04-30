@@ -511,7 +511,7 @@ static bool LinkTradeMenu_TryAnims(void) {
     if(bit_test(wram->w2DMenuFlags1, 6)) {
         // FARCALL(aPlaySpriteAnimationsAndDelayFrame);
         bank_push(BANK(aPlaySpriteAnimationsAndDelayFrame));
-        PlaySpriteAnimationsAndDelayFrame_Conv();
+        PlaySpriteAnimationsAndDelayFrame();
         bank_pop;
     }
 // skip_anims:

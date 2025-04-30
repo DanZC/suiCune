@@ -438,20 +438,20 @@ static void NamingScreen_GetNamingScreenSetup(void) {
             // hlcoord(5, 2, wTilemap);
             // CALL(aPlaceString);
             struct TextPrintState st = {.de = GetPokemonName(wram->wCurPartySpecies), .hl = coord(5, 2, wram->wTilemap)};
-            PlaceString_Conv(&st, st.hl);
+            PlaceString(&st, st.hl);
             // LD_L_C;
             // LD_H_B;
             st.hl = st.bc;
             // LD_DE(mNamingScreen_NicknameStrings);
             st.de = U82C(NicknameStrings);
             // CALL(aPlaceString);
-            PlaceString_Conv(&st, st.hl);
+            PlaceString(&st, st.hl);
             // INC_DE;
             st.de++;
             // hlcoord(5, 4, wTilemap);
             st.hl = coord(5, 4, wram->wTilemap);
             // CALL(aPlaceString);
-            PlaceString_Conv(&st, st.hl);
+            PlaceString(&st, st.hl);
             // FARCALL(aGetGender);
             // IF_C goto genderless;
             u8_flag_s res = GetGender_Conv(wram->wMonType);
@@ -536,7 +536,7 @@ static void NamingScreen_GetNamingScreenSetup(void) {
             // depixel4(4, 4, 4, 0);
             // LD_A(SPRITE_ANIM_INDEX_RED_WALK);
             // CALL(aInitSpriteAnimStruct);
-            struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_RED_WALK, pixel4(4, 4, 4, 0));
+            struct SpriteAnim* bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_RED_WALK, pixel4(4, 4, 4, 0));
             // LD_HL(SPRITEANIMSTRUCT_FRAMESET_ID);
             // ADD_HL_BC;
             // LD_hl(0x0);
@@ -602,7 +602,7 @@ static void NamingScreen_LoadSprite(const char* path) {
     // LD_A_B;
     // depixel4(4, 4, 4, 0);
     // CALL(aInitSpriteAnimStruct);
-    InitSpriteAnimStruct_Conv(b, pixel4(4, 4, 4, 0));
+    InitSpriteAnimStruct(b, pixel4(4, 4, 4, 0));
     // RET;
 }
 
@@ -769,7 +769,7 @@ static void NamingScreenJoypadLoop_Jumptable(void) {
     // got_cursor_position:
         // LD_A(SPRITE_ANIM_INDEX_NAMING_SCREEN_CURSOR);
         // CALL(aInitSpriteAnimStruct);
-        struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_NAMING_SCREEN_CURSOR, px);
+        struct SpriteAnim* bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_NAMING_SCREEN_CURSOR, px);
         // LD_A_C;
         // LD_addr_A(wNamingScreenCursorObjectPointer);
         // LD_A_B;
@@ -905,7 +905,7 @@ bool NamingScreenJoypadLoop(void){
         // CALL(aNamingScreenJoypadLoop_RunJumptable);
         NamingScreenJoypadLoop_Jumptable();
         // FARCALL(aPlaySpriteAnimationsAndDelayFrame);
-        PlaySpriteAnimationsAndDelayFrame_Conv();
+        PlaySpriteAnimationsAndDelayFrame();
         // CALL(aNamingScreenJoypadLoop_UpdateStringEntry);
         NamingScreenJoypadLoop_UpdateStringEntry();
         // CALL(aDelayFrame);
@@ -917,7 +917,7 @@ bool NamingScreenJoypadLoop(void){
 
 // quit:
     // CALLFAR(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // CALL(aClearSprites);
     ClearSprites();
     // XOR_A_A;
@@ -1645,7 +1645,7 @@ void LoadNamingScreenGFX(void){
     // CALL(aClearSprites);
     ClearSprites();
     // CALLFAR(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // CALL(aLoadStandardFont);
     LoadStandardFont();
     // CALL(aLoadFontsExtra);
@@ -1800,7 +1800,7 @@ static void v_ComposeMailMessage_InitBlankMail(void) {
     // depixel2(3, 2);
     // LD_A(SPRITE_ANIM_INDEX_PARTY_MON);
     // CALL(aInitSpriteAnimStruct);
-    struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_PARTY_MON, pixel2(3, 2));
+    struct SpriteAnim* bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_PARTY_MON, pixel2(3, 2));
 
     // LD_HL(SPRITEANIMSTRUCT_ANIM_SEQ_ID);
     // ADD_HL_BC;
@@ -1828,10 +1828,10 @@ static void v_ComposeMailMessage_InitBlankMail(void) {
     WaitTop();
     // LD_A(0b11100100);
     // CALL(aDmgToCgbBGPals);
-    DmgToCgbBGPals_Conv(0b11100100);
+    DmgToCgbBGPals(0b11100100);
     // LD_A(0b11100100);
     // CALL(aDmgToCgbObjPal0);
-    DmgToCgbObjPal0_Conv(0b11100100);
+    DmgToCgbObjPal0(0b11100100);
     // CALL(aNamingScreen_InitNameEntry);
     NamingScreen_InitNameEntry();
     // LD_HL(wNamingScreenDestinationPointer);
@@ -1881,7 +1881,7 @@ static void v_ComposeMailMessage_DoJumptable(void){
             // depixel2(9, 2);
             // LD_A(SPRITE_ANIM_INDEX_COMPOSE_MAIL_CURSOR);
             // CALL(aInitSpriteAnimStruct);
-            struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_COMPOSE_MAIL_CURSOR, pixel2(9, 2));
+            struct SpriteAnim* bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_COMPOSE_MAIL_CURSOR, pixel2(9, 2));
             // LD_A_C;
             // LD_addr_A(wNamingScreenCursorObjectPointer);
             // LD_A_B;
@@ -2039,7 +2039,7 @@ static bool v_ComposeMailMessage_DoMailEntry(void){
         // CALL(av_ComposeMailMessage_DoJumptable);
         v_ComposeMailMessage_DoJumptable();
         // FARCALL(aPlaySpriteAnimationsAndDelayFrame);
-        PlaySpriteAnimationsAndDelayFrame_Conv();
+        PlaySpriteAnimationsAndDelayFrame();
         // CALL(av_ComposeMailMessage_Update);
         v_ComposeMailMessage_Update();
         // CALL(aDelayFrame);
@@ -2051,7 +2051,7 @@ static bool v_ComposeMailMessage_DoMailEntry(void){
 
 // exit_mail:
     // CALLFAR(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // CALL(aClearSprites);
     ClearSprites();
     // XOR_A_A;

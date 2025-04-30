@@ -79,7 +79,7 @@ void InitGender(void){
     SetPalettes();
     // LD_HL(mAreYouABoyOrAreYouAGirlText);
     // CALL(aPrintText);
-    PrintText_Conv2(AreYouABoyOrAreYouAGirlText);
+    PrintText(AreYouABoyOrAreYouAGirlText);
     // LD_HL(mInitGender_MenuHeader);
     // CALL(aLoadMenuHeader);
     LoadMenuHeader(&InitGender_MenuHeader);

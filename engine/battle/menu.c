@@ -168,5 +168,5 @@ static void PrintParkBallsRemaining(void) {
     // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
     // CALL(aPrintNum);
     // RET;
-    PrintNum_Conv2(coord(13, 16, wram->wTilemap), &wram->wParkBallsRemaining, PRINTNUM_LEADINGZEROS | 1, 2);
+    PrintNum(coord(13, 16, wram->wTilemap), &wram->wParkBallsRemaining, PRINTNUM_LEADINGZEROS | 1, 2);
 }

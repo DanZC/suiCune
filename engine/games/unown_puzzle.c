@@ -90,10 +90,10 @@ void v_UnownPuzzle(void){
     GetSGBLayout(SCGB_UNOWN_PUZZLE);
     // LD_A(0xe4);
     // CALL(aDmgToCgbBGPals);
-    DmgToCgbBGPals_Conv(0xe4);
+    DmgToCgbBGPals(0xe4);
     // LD_A(0x24);
     // CALL(aDmgToCgbObjPal0);
-    DmgToCgbObjPal0_Conv(0x24);
+    DmgToCgbObjPal0(0x24);
     // XOR_A_A;
     // LD_addr_A(wSolvedUnownPuzzle);
     wram->wSolvedUnownPuzzle = FALSE;

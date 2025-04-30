@@ -343,7 +343,7 @@ void HPBarAnim_RedrawHPBar(tile_t* hl, uint8_t d, uint8_t e, uint8_t b, uint8_t 
 
 // skip:
     // CALL(aDrawBattleHPBar);
-    DrawBattleHPBar_Conv(hl, d, e, b, c);
+    DrawBattleHPBar(hl, d, e, b, c);
     // RET;
 }
 
@@ -388,7 +388,7 @@ void HPBarAnim_UpdateHPRemaining(tile_t* hl){
     // LD_DE(wStringBuffer2);
     // LD_BC((2 << 8) | 3);
     // CALL(aPrintNum);
-    PrintNum_Conv2(hl, wram->wStringBuffer2, 2, 3);
+    PrintNum(hl, wram->wStringBuffer2, 2, 3);
     // POP_HL;
     // RET;
 }
@@ -401,7 +401,7 @@ void HPBarAnim_PaletteUpdate(uint8_t e){
         return;
     // LD_HL(wCurHPAnimPal);
     // CALL(aSetHPPal);
-    SetHPPal_Conv(&wram->wCurHPAnimPal, e);
+    SetHPPal(&wram->wCurHPAnimPal, e);
     // LD_A_addr(wCurHPAnimPal);
     // LD_C_A;
     // FARCALL(aApplyHPBarPals);

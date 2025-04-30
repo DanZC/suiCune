@@ -62,46 +62,46 @@ void v_NameRater(void){
 //  Introduce himself
     // LD_HL(mNameRaterHelloText);
     // CALL(aPrintText);
-    PrintText_Conv2(NameRaterHelloText);
+    PrintText(NameRaterHelloText);
     // CALL(aYesNoBox);
     // JP_C (mv_NameRater_cancel);
     if(!YesNoBox())
-        return PrintText_Conv2(NameRaterComeAgainText);
+        return PrintText(NameRaterComeAgainText);
 //  Select a Pokemon from your party
     // LD_HL(mNameRaterWhichMonText);
     // CALL(aPrintText);
-    PrintText_Conv2(NameRaterWhichMonText);
+    PrintText(NameRaterWhichMonText);
     // FARCALL(aSelectMonFromParty);
     u8_flag_s res = SelectMonFromParty();
     // IF_C goto cancel;
     if(res.flag)
-        return PrintText_Conv2(NameRaterComeAgainText);
+        return PrintText(NameRaterComeAgainText);
 //  He can't rename an egg...
     // LD_A_addr(wCurPartySpecies);
     // CP_A(EGG);
     // IF_Z goto egg;
     if(wram->wCurPartySpecies == EGG) {
-        return PrintText_Conv2(NameRaterEggText);
+        return PrintText(NameRaterEggText);
     }
 //  ... or a Pokemon you got from a trade.
     // CALL(aGetCurNickname);
-    GetCurNickname_Conv();
+    GetCurNickname();
     // CALL(aCheckIfMonIsYourOT);
     // IF_C goto traded;
     if(!CheckIfMonIsYourOT_Conv(wram->wCurPartyMon))
-        return PrintText_Conv2(NameRaterPerfectNameText);
+        return PrintText(NameRaterPerfectNameText);
 //  This name is good, but we can do better.  How about it?
     // LD_HL(mNameRaterBetterNameText);
     // CALL(aPrintText);
-    PrintText_Conv2(NameRaterBetterNameText);
+    PrintText(NameRaterBetterNameText);
     // CALL(aYesNoBox);
     // IF_C goto cancel;
     if(!YesNoBox())
-        return PrintText_Conv2(NameRaterComeAgainText);
+        return PrintText(NameRaterComeAgainText);
 //  What name shall I give it then?
     // LD_HL(mNameRaterWhatNameText);
     // CALL(aPrintText);
-    PrintText_Conv2(NameRaterWhatNameText);
+    PrintText(NameRaterWhatNameText);
 //  Load the new nickname into wStringBuffer2
     // XOR_A_A;  // PARTYMON
     // LD_addr_A(wMonType);
@@ -110,7 +110,7 @@ void v_NameRater(void){
     // LD_addr_A(wNamedObjectIndex);
     // LD_addr_A(wCurSpecies);
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(wram->wCurPartySpecies);
+    GetBaseData(wram->wCurPartySpecies);
     // LD_B(NAME_MON);
     // LD_DE(wStringBuffer2);
     // FARCALL(av_NamingScreen);
@@ -143,13 +143,13 @@ void v_NameRater(void){
 // samename:
     // PUSH_HL;
     // CALL(aGetCurNickname);
-    GetCurNickname_Conv();
+    GetCurNickname();
     // LD_HL(mNameRaterNamedText);
     // CALL(aPrintText);
-    PrintText_Conv2(NameRaterNamedText);
+    PrintText(NameRaterNamedText);
     // POP_HL;
     // goto done;
-    return PrintText_Conv2(txt);
+    return PrintText(txt);
 
 // traded:
     // LD_HL(mNameRaterPerfectNameText);

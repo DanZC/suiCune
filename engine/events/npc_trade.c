@@ -78,7 +78,7 @@ void NPCTrade(uint8_t e){
 
     // LD_HL(mNPCTradeCableText);
     // CALL(aPrintText);
-    PrintText_Conv2(NPCTradeCableText);
+    PrintText(NPCTradeCableText);
 
     // CALL(aDoNPCTrade);
     DoNPCTrade();
@@ -89,7 +89,7 @@ void NPCTrade(uint8_t e){
 
     // LD_HL(mTradedForText);
     // CALL(aPrintText);
-    PrintText_Conv2(TradedForText);
+    PrintText(TradedForText);
 
     // CALL(aRestartMapMusic);
     RestartMapMusic();
@@ -173,7 +173,7 @@ uint8_t TradeFlagAction(uint8_t b){
     // LD_A_addr(wJumptableIndex);
     // LD_C_A;
     // PREDEF(pSmallFarFlagAction);
-    uint8_t c = SmallFarFlagAction_Conv(wram->wTradeFlags, wram->wJumptableIndex, b);
+    uint8_t c = SmallFarFlagAction(wram->wTradeFlags, wram->wJumptableIndex, b);
     // LD_A_C;
     // AND_A_A;
     // RET;
@@ -556,7 +556,7 @@ void PrintTradeText(uint8_t a){
     // LD_H_hl;
     // LD_L_A;
     // CALL(aPrintText);
-    PrintText_Conv2(TradeTexts[a*4 + wram->wTradeDialog]);
+    PrintText(TradeTexts[a*4 + wram->wTradeDialog]);
     // RET;
 }
 

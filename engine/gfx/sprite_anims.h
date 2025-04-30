@@ -1,5 +1,4 @@
-void DoAnimFrame(void);
-void DoAnimFrame_Conv(struct SpriteAnim* bc);
+void DoAnimFrame(struct SpriteAnim* bc);
 // void AnimSeq_Null(void);
 // void AnimSeq_PartyMon(void);
 // void AnimSeq_PartyMonSwitch(void);

@@ -121,10 +121,10 @@ bool AskTeachTMHM(void){
 
     // TM:
         // CALL(aPrintText);
-        PrintText_Conv2((wram->wCurItem < HM01)? BootedTMText: BootedHMText);
+        PrintText((wram->wCurItem < HM01)? BootedTMText: BootedHMText);
         // LD_HL(mContainedMoveText);
         // CALL(aPrintText);
-        PrintText_Conv2(ContainedMoveText);
+        PrintText(ContainedMoveText);
         // CALL(aYesNoBox);
         quit = !YesNoBox();
     }
@@ -216,7 +216,7 @@ void TeachTMHM(void){
     // LD_A_addr(wCurPartyMon);
     // LD_HL(wPartyMonNicknames);
     // CALL(aGetNickname);
-    GetNickname_Conv(wram->wPartyMonNickname[0], wram->wCurPartyMon);
+    GetNickname(wram->wPartyMonNickname[0], wram->wCurPartyMon);
     // POP_BC;
 
     // LD_A_C;
@@ -230,7 +230,7 @@ void TeachTMHM(void){
         // POP_DE;
         // LD_HL(mTMHMNotCompatibleText);
         // CALL(aPrintText);
-        PrintText_Conv2(TMHMNotCompatibleText);
+        PrintText(TMHMNotCompatibleText);
         // goto nope;
         return;
     }
@@ -731,7 +731,7 @@ uint8_t TMHM_DisplayPocketItems(void){
             // LD_DE(wTempTMHM);
             // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
             // CALL(aPrintNum);
-            PrintNum_Conv2(lineCoord, &wram->wTempTMHM, PRINTNUM_LEADINGZEROS | 1, 2);
+            PrintNum(lineCoord, &wram->wTempTMHM, PRINTNUM_LEADINGZEROS | 1, 2);
             // goto okay;
         }
         else {
@@ -746,7 +746,7 @@ uint8_t TMHM_DisplayPocketItems(void){
             // LD_DE(wTempTMHM);
             // LD_BC((PRINTNUM_LEFTALIGN | 1 << 8) | 2);
             // CALL(aPrintNum);
-            PrintNum_Conv2(lineCoord + 1, &tm, PRINTNUM_LEADINGZEROS | 1, 2);
+            PrintNum(lineCoord + 1, &tm, PRINTNUM_LEADINGZEROS | 1, 2);
             // POP_AF;
             // LD_addr_A(wTempTMHM);
         }
@@ -785,7 +785,7 @@ uint8_t TMHM_DisplayPocketItems(void){
             // LD_DE(wTempTMHM);
             // LD_BC((1 << 8) | 2);
             // CALL(aPrintNum);
-            PrintNum_Conv2(lineCoord + 1, &b, 1, 2);
+            PrintNum(lineCoord + 1, &b, 1, 2);
         }
 
     // hm2:

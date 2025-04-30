@@ -1395,7 +1395,7 @@ void HangUp_ShutDown(void){
 void HangUp_Beep(void){
     // LD_HL(mPhoneClickText);
     // CALL(aPrintText);
-    PrintText_Conv2(PhoneClickText);
+    PrintText(PhoneClickText);
     // LD_DE(SFX_HANG_UP);
     // CALL(aPlaySFX);
     // RET;
@@ -1411,7 +1411,7 @@ void HangUp_BoopOn(void){
     // LD_HL(mPhoneEllipseText);
     // CALL(aPrintText);
     // RET;
-    return PrintText_Conv2(PhoneEllipseText);
+    return PrintText(PhoneEllipseText);
 }
 
 const txt_cmd_s PhoneEllipseText[] = {
@@ -1657,7 +1657,7 @@ void GetCallerName_Conv(uint8_t* hl, struct TrainerId c){
     // PUSH_BC;
     // CALL(aPlaceString);
     struct TextPrintState state = {.de = name, .hl = hl};
-    PlaceString_Conv(&state, hl);
+    PlaceString(&state, hl);
     // LD_A(0x9c);
     // LD_bc_A;
     *state.bc = 0x9c;

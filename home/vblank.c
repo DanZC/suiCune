@@ -342,7 +342,7 @@ static void VBlank3(void) {
     // AND_A_A;
     // CALL_NZ(aForceUpdateCGBPals);
     // IF_C goto done;
-    if(hram->hCGBPalUpdate == 0 || !ForceUpdateCGBPals_Conv()) {
+    if(hram->hCGBPalUpdate == 0 || !ForceUpdateCGBPals()) {
 
         // CALL(aUpdateBGMap);
         UpdateBGMap();

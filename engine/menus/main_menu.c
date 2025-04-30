@@ -649,14 +649,14 @@ static void MainMenu_PrintCurrentTimeAndDay_PrintDayOfWeek(uint8_t wd, uint8_t* 
     // POP_HL;
     // CALL(aPlaceString);
     struct TextPrintState st = {.hl=de, .de=Utf8ToCrystal(Days[wd])};
-    PlaceString_Conv(&st, de);
+    PlaceString(&st, de);
     // LD_H_B;
     // LD_L_C;
     // LD_DE(mMainMenu_PrintCurrentTimeAndDay_Day);
     // CALL(aPlaceString);
     st.hl = st.bc;
     st.de = Utf8ToCrystal("DAY@");
-    PlaceString_Conv(&st, st.hl);
+    PlaceString(&st, st.hl);
     // RET;
 
 
@@ -713,7 +713,7 @@ static void MainMenu_PrintCurrentTimeAndDay_PlaceTime(void) {
     // LD_DE(hMinutes);
     // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
     // CALL(aPrintNum);
-    PrintNum_Conv2(hl, &hram->hMinutes, PRINTNUM_LEADINGZEROS | 1, 2);
+    PrintNum(hl, &hram->hMinutes, PRINTNUM_LEADINGZEROS | 1, 2);
     // RET;
     return;
 

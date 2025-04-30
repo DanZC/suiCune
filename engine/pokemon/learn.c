@@ -87,7 +87,7 @@ uint8_t LearnMove(move_t toLearn){
         GetMoveName(moves[idx]);
         // LD_HL(mText_1_2_and_Poof);  // 1, 2 and…
         // CALL(aPrintText);
-        PrintText_Conv2(Text_1_2_and_Poof);
+        PrintText(Text_1_2_and_Poof);
         // POP_DE;
         // POP_HL;
 
@@ -143,7 +143,7 @@ uint8_t LearnMove(move_t toLearn){
     // learned:
         // LD_HL(mLearnedMoveText);
         // CALL(aPrintText);
-        PrintText_Conv2(LearnedMoveText);
+        PrintText(LearnedMoveText);
         // LD_B(1);
         // RET;
         return 1;
@@ -151,14 +151,14 @@ uint8_t LearnMove(move_t toLearn){
     cancel:
         // LD_HL(mStopLearningMoveText);
         // CALL(aPrintText);
-        PrintText_Conv2(StopLearningMoveText);
+        PrintText(StopLearningMoveText);
         // CALL(aYesNoBox);
         // JP_C (mLearnMove_loop);
     } while(!YesNoBox());
 
     // LD_HL(mDidNotLearnMoveText);
     // CALL(aPrintText);
-    PrintText_Conv2(DidNotLearnMoveText);
+    PrintText(DidNotLearnMoveText);
     // LD_B(0);
     // RET;
     return 0;
@@ -168,7 +168,7 @@ u8_flag_s ForgetMove(struct PartyMon* mon){
     // PUSH_HL;
     // LD_HL(mAskForgetMoveText);
     // CALL(aPrintText);
-    PrintText_Conv2(AskForgetMoveText);
+    PrintText(AskForgetMoveText);
     // CALL(aYesNoBox);
     // POP_HL;
     // RET_C ;
@@ -189,7 +189,7 @@ u8_flag_s ForgetMove(struct PartyMon* mon){
         // PUSH_HL;
         // LD_HL(mMoveAskForgetText);
         // CALL(aPrintText);
-        PrintText_Conv2(MoveAskForgetText);
+        PrintText(MoveAskForgetText);
         // hlcoord(5, 2, wTilemap);
         // LD_B(NUM_MOVES * 2);
         // LD_C(MOVE_NAME_LENGTH);
@@ -269,7 +269,7 @@ u8_flag_s ForgetMove(struct PartyMon* mon){
     // hmmove:
         // LD_HL(mMoveCantForgetHMText);
         // CALL(aPrintText);
-        PrintText_Conv2(MoveCantForgetHMText);
+        PrintText(MoveCantForgetHMText);
         // POP_HL;
         // goto loop;
     }

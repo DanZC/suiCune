@@ -9,7 +9,7 @@ void SaveMenu_CopyTilemapAtOnce(void) {
     // JP_Z(mWaitBGMap);
     if(hram->hCGB == 0)
         return WaitBGMap();
-    return v_CopyTilemapAtOnce_Conv();
+    return v_CopyTilemapAtOnce();
 
     //  The following is a modified version of _CopyTilemapAtOnce
     //  that waits for [rLY] to be $60 instead of $80 - 1.

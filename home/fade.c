@@ -26,8 +26,8 @@ static const uint8_t IncGradGBPalTable[][3] = {
 
 //  Functions to fade the screen in and out.
 
-static void RotatePalettesRight_Conv(const uint8_t* pal, uint8_t amount);
-static void RotatePalettesLeft_Conv(const uint8_t* pal, uint8_t amount);
+static void RotatePalettesRight(const uint8_t* pal, uint8_t amount);
+static void RotatePalettesLeft(const uint8_t* pal, uint8_t amount);
 
 void TimeOfDayFade(void){
     //  //  unreferenced
@@ -53,22 +53,6 @@ okay:
 }
 
 void RotateFourPalettesRight(void){
-        LDH_A_addr(hCGB);
-    AND_A_A;
-    IF_Z goto dmg;
-    LD_HL(mIncGradGBPalTable_00);
-    LD_B(4);
-    JR(mRotatePalettesRight);
-
-
-dmg:
-        LD_HL(mIncGradGBPalTable_08);
-    LD_B(4);
-    JR(mRotatePalettesRight);
-
-}
-
-void RotateFourPalettesRight_Conv(void){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // IF_Z goto dmg;
@@ -76,30 +60,15 @@ void RotateFourPalettesRight_Conv(void){
         // LD_HL(mIncGradGBPalTable_00);
         // LD_B(4);
         // JR(mRotatePalettesRight);
-        return RotatePalettesRight_Conv(IncGradGBPalTable[0], 4);
+        return RotatePalettesRight(IncGradGBPalTable[0], 4);
     }
     // LD_HL(mIncGradGBPalTable_08);
     // LD_B(4);
     // JR(mRotatePalettesRight);
-    return RotatePalettesRight_Conv(IncGradGBPalTable[8], 4);
+    return RotatePalettesRight(IncGradGBPalTable[8], 4);
 }
 
 void RotateThreePalettesRight(void){
-        LDH_A_addr(hCGB);
-    AND_A_A;
-    IF_Z goto dmg;
-    LD_HL(mIncGradGBPalTable_05);
-    LD_B(3);
-    JR(mRotatePalettesRight);
-
-
-dmg:
-        LD_HL(mIncGradGBPalTable_13);
-    LD_B(3);
-    return RotatePalettesRight();
-}
-
-void RotateThreePalettesRight_Conv(void){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // IF_Z goto dmg;
@@ -107,48 +76,28 @@ void RotateThreePalettesRight_Conv(void){
         // LD_HL(mIncGradGBPalTable_05);
         // LD_B(3);
         // JR(mRotatePalettesRight);
-        return RotatePalettesRight_Conv(IncGradGBPalTable[5], 3);
+        return RotatePalettesRight(IncGradGBPalTable[5], 3);
     }
     // LD_HL(mIncGradGBPalTable_13);
     // LD_B(3);
-    return RotatePalettesRight_Conv(IncGradGBPalTable[13], 3);
-}
-
-void RotatePalettesRight(void){
-    //  Rotate palettes to the right and fill with loaded colors from the left
-//  If we're already at the leftmost color, fill with the leftmost color
-    PUSH_DE;
-    LD_A_hli;
-    CALL(aDmgToCgbBGPals);
-    LD_A_hli;
-    LD_E_A;
-    LD_A_hli;
-    LD_D_A;
-    CALL(aDmgToCgbObjPals);
-    LD_C(8);
-    CALL(aDelayFrames);
-    POP_DE;
-    DEC_B;
-    JR_NZ (mRotatePalettesRight);
-    RET;
-
+    return RotatePalettesRight(IncGradGBPalTable[13], 3);
 }
 
 //  Rotate palettes to the right and fill with loaded colors from the left
 //  If we're already at the leftmost color, fill with the leftmost color
-void RotatePalettesRight_Conv(const uint8_t* pal, uint8_t amount){
+static void RotatePalettesRight(const uint8_t* pal, uint8_t amount){
     do {
         // PUSH_DE;
         // LD_A_hli;
         // CALL(aDmgToCgbBGPals);
-        DmgToCgbBGPals_Conv(*pal);
+        DmgToCgbBGPals(*pal);
         pal++;
         // LD_A_hli;
         // LD_E_A;
         // LD_A_hli;
         // LD_D_A;
         // CALL(aDmgToCgbObjPals);
-        DmgToCgbObjPals_Conv(pal[1], pal[0]);
+        DmgToCgbObjPals(pal[1], pal[0]);
         pal += 2;
         // LD_C(8);
         // CALL(aDelayFrames);
@@ -162,22 +111,6 @@ void RotatePalettesRight_Conv(const uint8_t* pal, uint8_t amount){
 }
 
 void RotateFourPalettesLeft(void){
-        LDH_A_addr(hCGB);
-    AND_A_A;
-    IF_Z goto dmg;
-    LD_HL(mIncGradGBPalTable_04 - 1);
-    LD_B(4);
-    JR(mRotatePalettesLeft);
-
-
-dmg:
-        LD_HL(mIncGradGBPalTable_12 - 1);
-    LD_B(4);
-    JR(mRotatePalettesLeft);
-
-}
-
-void RotateFourPalettesLeft_Conv(void){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // IF_Z goto dmg;
@@ -185,31 +118,16 @@ void RotateFourPalettesLeft_Conv(void){
         // LD_HL(mIncGradGBPalTable_04 - 1);
         // LD_B(4);
         // JR(mRotatePalettesLeft);
-        return RotatePalettesLeft_Conv(&IncGradGBPalTable[4][-1], 4);
+        return RotatePalettesLeft(&IncGradGBPalTable[4][-1], 4);
     }
     
     // LD_HL(mIncGradGBPalTable_12 - 1);
     // LD_B(4);
     // JR(mRotatePalettesLeft);
-    return RotatePalettesLeft_Conv(&IncGradGBPalTable[12][-1], 4);
+    return RotatePalettesLeft(&IncGradGBPalTable[12][-1], 4);
 }
 
 void RotateThreePalettesLeft(void){
-        LDH_A_addr(hCGB);
-    AND_A_A;
-    IF_Z goto dmg;
-    LD_HL(mIncGradGBPalTable_07 - 1);
-    LD_B(3);
-    JR(mRotatePalettesLeft);
-
-
-dmg:
-        LD_HL(mIncGradGBPalTable_15 - 1);
-    LD_B(3);
-    return RotatePalettesLeft();
-}
-
-void RotateThreePalettesLeft_Conv(void){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // IF_Z goto dmg;
@@ -217,37 +135,17 @@ void RotateThreePalettesLeft_Conv(void){
         // LD_HL(mIncGradGBPalTable_07 - 1);
         // LD_B(3);
         // JR(mRotatePalettesLeft);
-        return RotatePalettesLeft_Conv(&IncGradGBPalTable[07][-1], 3);
+        return RotatePalettesLeft(&IncGradGBPalTable[07][-1], 3);
     }
 
     // LD_HL(mIncGradGBPalTable_15 - 1);
     // LD_B(3);
-    return RotatePalettesLeft_Conv(&IncGradGBPalTable[15][-1], 3);
-}
-
-void RotatePalettesLeft(void){
-    //  Rotate palettes to the left and fill with loaded colors from the right
-//  If we're already at the rightmost color, fill with the rightmost color
-    PUSH_DE;
-    LD_A_hld;
-    LD_D_A;
-    LD_A_hld;
-    LD_E_A;
-    CALL(aDmgToCgbObjPals);
-    LD_A_hld;
-    CALL(aDmgToCgbBGPals);
-    LD_C(8);
-    CALL(aDelayFrames);
-    POP_DE;
-    DEC_B;
-    JR_NZ (mRotatePalettesLeft);
-    RET;
-
+    return RotatePalettesLeft(&IncGradGBPalTable[15][-1], 3);
 }
 
 //  Rotate palettes to the left and fill with loaded colors from the right
 //  If we're already at the rightmost color, fill with the rightmost color
-void RotatePalettesLeft_Conv(const uint8_t* pal, uint8_t amount){
+static void RotatePalettesLeft(const uint8_t* pal, uint8_t amount){
     do {
         // PUSH_DE;
         // LD_A_hld;
@@ -255,11 +153,11 @@ void RotatePalettesLeft_Conv(const uint8_t* pal, uint8_t amount){
         // LD_A_hld;
         // LD_E_A;
         // CALL(aDmgToCgbObjPals);
-        DmgToCgbObjPals_Conv(pal[0], pal[-1]);
+        DmgToCgbObjPals(pal[0], pal[-1]);
         pal -= 2;
         // LD_A_hld;
         // CALL(aDmgToCgbBGPals);
-        DmgToCgbBGPals_Conv(pal[0]);
+        DmgToCgbBGPals(pal[0]);
         pal--;
         // LD_C(8);
         // CALL(aDelayFrames);

@@ -30,15 +30,15 @@ static void EvolutionAnimation_GetSGBLayout(bool c){
 
 static void EvolutionAnimation_PlaceFrontpic(species_t species){
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(species);
+    GetBaseData(species);
     // hlcoord(7, 2, wTilemap);
     // JP(mPrepMonFrontpic);
-    PrepMonFrontpic_Conv(coord(7, 2, wram->wTilemap));
+    PrepMonFrontpic(coord(7, 2, wram->wTilemap));
 }
 
 static void EvolutionAnimation_LoadFrontpic(species_t species){
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(species);
+    GetBaseData(species);
     // LD_A(0x1);
     // LD_addr_A(wBoxAlignment);
     wram->wBoxAlignment = 0x1;
@@ -194,7 +194,7 @@ static void EvolutionAnimation_GenerateBallOfLight(uint8_t e){
     // depixel2(9, 11);
     // LD_A(SPRITE_ANIM_INDEX_EVOLUTION_BALL_OF_LIGHT);
     // CALL(aInitSpriteAnimStruct);
-    struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_EVOLUTION_BALL_OF_LIGHT, pixel2(9, 11));
+    struct SpriteAnim* bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_EVOLUTION_BALL_OF_LIGHT, pixel2(9, 11));
     // LD_HL(SPRITEANIMSTRUCT_JUMPTABLE_INDEX);
     // ADD_HL_BC;
     // LD_A_addr(wJumptableIndex);
@@ -246,7 +246,7 @@ static bool EvolutionAnimation_balls_of_light(void){
 static void EvolutionAnimation_AnimateBallsOfLight(void){
     // PUSH_BC;
     // CALLFAR(aPlaySpriteAnimations);
-    PlaySpriteAnimations_Conv();
+    PlaySpriteAnimations();
 // a = (([hVBlankCounter] + 4) / 2) % NUM_PALETTES
     // LDH_A_addr(hVBlankCounter);
     // AND_A(0b1110);
@@ -334,7 +334,7 @@ static void EvolutionAnimation_EvolutionAnimation(void){
     PlayMusic(MUSIC_NONE);
 
     // FARCALL(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
 
     // LD_DE(mEvolutionAnimation_GFX);
     // LD_HL(vTiles0);
@@ -399,7 +399,7 @@ static void EvolutionAnimation_EvolutionAnimation(void){
     if(!EvolutionAnimation_check_statused()) {
         // LD_A_addr(wEvolutionOldSpecies);
         // CALL(aPlayMonCry);
-        PlayMonCry_Conv(wram->wEvolutionOldSpecies);
+        PlayMonCry(wram->wEvolutionOldSpecies);
     }
 
 // skip_cry:
@@ -435,7 +435,7 @@ static void EvolutionAnimation_EvolutionAnimation(void){
         // CALL(aEvolutionAnimation_PlayEvolvedSFX);
         EvolutionAnimation_PlayEvolvedSFX();
         // FARCALL(aClearSpriteAnims);
-        ClearSpriteAnims_Conv();
+        ClearSpriteAnims();
         // CALL(aEvolutionAnimation_check_statused);
         // RET_C ;
         if(EvolutionAnimation_check_statused())
@@ -443,7 +443,7 @@ static void EvolutionAnimation_EvolutionAnimation(void){
 
         // LD_A_addr(wPlayerHPPal);
         // CALL(aPlayMonCry);
-        PlayMonCry_Conv(wram->wPlayerHPPal);
+        PlayMonCry(wram->wPlayerHPPal);
         // RET;
         return;
     }
@@ -469,7 +469,7 @@ static void EvolutionAnimation_EvolutionAnimation(void){
     // CALL(aEvolutionAnimation_PlayEvolvedSFX);
     EvolutionAnimation_PlayEvolvedSFX();
     // FARCALL(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // CALL(aEvolutionAnimation_check_statused);
     // IF_C goto no_anim;
     if(EvolutionAnimation_check_statused())

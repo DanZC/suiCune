@@ -526,7 +526,7 @@ bool GeneratePartyMonStats_Conv(struct PartyMon* hl, species_t species, uint8_t 
     // LD_A_addr(wCurPartySpecies);
     // LD_addr_A(wCurSpecies);
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(species);
+    GetBaseData(species);
     // LD_A_addr(wBaseDexNo);
     // LD_de_A;
     hl->mon.species = wram->wBaseDexNo;
@@ -2069,7 +2069,7 @@ bool RetrieveBreedmon_Conv(void){
     // CALL(aCopyBytes);
     CopyBytes(&wram->wPartyMon[c].mon, breedmon, BOXMON_STRUCT_LENGTH);
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(wram->wCurSpecies);
+    GetBaseData(wram->wCurSpecies);
     // CALL(aGetLastPartyMon);
     // LD_B_D;
     // LD_C_E;
@@ -2402,7 +2402,7 @@ bool SendMonIntoBox_Conv(void){
     } while(a != 0xff);
 
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(wram->wCurPartySpecies);
+    GetBaseData(wram->wCurPartySpecies);
     // CALL(aShiftBoxMon);
     ShiftBoxMon_Conv();
 
@@ -2794,7 +2794,7 @@ bool GiveEgg_Conv(void){
         // LD_HL(wPokedexCaught);
         // LD_B(RESET_FLAG);
         // PREDEF(pSmallFarFlagAction);
-        SmallFarFlagAction_Conv(wram->wPokedexCaught, pspecies, RESET_FLAG);
+        SmallFarFlagAction(wram->wPokedexCaught, pspecies, RESET_FLAG);
     }
 
 // skip_caught_flag:
@@ -2813,7 +2813,7 @@ bool GiveEgg_Conv(void){
         // LD_HL(wPokedexSeen);
         // LD_B(RESET_FLAG);
         // PREDEF(pSmallFarFlagAction);
-        SmallFarFlagAction_Conv(wram->wPokedexSeen, pspecies, RESET_FLAG);
+        SmallFarFlagAction(wram->wPokedexSeen, pspecies, RESET_FLAG);
     }
 
 // skip_seen_flag:
@@ -3111,7 +3111,7 @@ void RemoveMonFromPartyOrBox_Conv(uint8_t param){
 
         // party2:
             // CALL(aCopyDataUntil);
-            CopyDataUntil_Conv2(wram->wPartyMonOT[wram->wCurPartyMon], 
+            CopyDataUntil(wram->wPartyMonOT[wram->wCurPartyMon], 
                 wram->wPartyMonOT[wram->wCurPartyMon] + MON_NAME_LENGTH,
                 wram->wPartyMonNickname);
         // Shift the struct
@@ -3144,7 +3144,7 @@ void RemoveMonFromPartyOrBox_Conv(uint8_t param){
 
         // copy:
             // CALL(aCopyDataUntil);
-            CopyDataUntil_Conv2(wram->wPartyMon + wram->wCurPartyMon, 
+            CopyDataUntil(wram->wPartyMon + wram->wCurPartyMon, 
                 wram->wPartyMon + wram->wCurPartyMon + 1,
                 wram->wPartyMonOT);
         // Shift the nicknames
@@ -3170,7 +3170,7 @@ void RemoveMonFromPartyOrBox_Conv(uint8_t param){
 
         // party7:
             // CALL(aCopyDataUntil);
-            CopyDataUntil_Conv2(wram->wPartyMonNickname[wram->wCurPartyMon], 
+            CopyDataUntil(wram->wPartyMonNickname[wram->wCurPartyMon], 
                 wram->wPartyMonNickname[wram->wCurPartyMon + 1],
                 wram->wPartyMonNicknamesEnd);
         // Mail time!
@@ -3300,7 +3300,7 @@ void RemoveMonFromPartyOrBox_Conv(uint8_t param){
 
         // party2:
             // CALL(aCopyDataUntil);
-            CopyDataUntil_Conv2(ots[wram->wCurPartyMon], 
+            CopyDataUntil(ots[wram->wCurPartyMon], 
                 ots[wram->wCurPartyMon] + MON_NAME_LENGTH,
                 GBToRAMAddr(sBoxMonNicknames));
         // Shift the struct
@@ -3334,7 +3334,7 @@ void RemoveMonFromPartyOrBox_Conv(uint8_t param){
         // copy:
             struct BoxMon* boxMons = (struct BoxMon*)GBToRAMAddr(sBoxMons);
             // CALL(aCopyDataUntil);
-            CopyDataUntil_Conv2(boxMons + wram->wCurPartyMon, 
+            CopyDataUntil(boxMons + wram->wCurPartyMon, 
                 boxMons + wram->wCurPartyMon + 1,
                 GBToRAMAddr(sBoxMonOTs));
         // Shift the nicknames
@@ -3361,7 +3361,7 @@ void RemoveMonFromPartyOrBox_Conv(uint8_t param){
         // party7:
             uint8_t (*nicknames)[MON_NAME_LENGTH] = GBToRAMAddr(sBoxMonNicknames);
             // CALL(aCopyDataUntil);
-            CopyDataUntil_Conv2(nicknames[wram->wCurPartyMon], 
+            CopyDataUntil(nicknames[wram->wCurPartyMon], 
                 nicknames[wram->wCurPartyMon + 1],
                 GBToRAMAddr(sBoxMonNicknamesEnd));
         }
@@ -3458,7 +3458,7 @@ void ComputeNPCTrademonStats_Conv(uint8_t curPartyMon){
     // LD_addr_A(wCurSpecies);
     wram->wCurSpecies = bc->mon.species;
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(bc->mon.species);
+    GetBaseData(bc->mon.species);
     // LD_A(MON_MAXHP);
     // CALL(aGetPartyParamLocation);
     // LD_D_H;
@@ -4447,7 +4447,7 @@ uint8_t GivePoke_Conv(uint8_t b, const char* nickname, const char* otName){
         return 0;
     // LD_HL(mWasSentToBillsPCText);
     // CALL(aPrintText);
-    PrintText_Conv2(WasSentToBillsPCText);
+    PrintText(WasSentToBillsPCText);
     // LD_A(BANK(sBoxMonNicknames));
     // CALL(aOpenSRAM);
     OpenSRAM(MBANK(asBoxMonNicknames));

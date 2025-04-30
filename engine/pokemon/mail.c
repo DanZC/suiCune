@@ -911,7 +911,7 @@ static void MailboxPC_Submenu(void){
                     // egg:
                         // LD_HL(mMailboxPC_MailEggText);
                         // CALL(aPrintText);
-                        PrintText_Conv2(MailEggText);
+                        PrintText(MailEggText);
                         // goto try_again;
                         continue;
                     }
@@ -924,7 +924,7 @@ static void MailboxPC_Submenu(void){
                         break;
                     // LD_HL(mMailboxPC_MailAlreadyHoldingItemText);
                     // CALL(aPrintText);
-                    PrintText_Conv2(MailAlreadyHoldingItemText);
+                    PrintText(MailAlreadyHoldingItemText);
                     // goto try_again;
                 }
 
@@ -936,7 +936,7 @@ static void MailboxPC_Submenu(void){
                 MoveMailFromPCToParty(wram->wMenuSelection - 1);
                 // LD_HL(mMailboxPC_MailMovedFromBoxText);
                 // CALL(aPrintText);
-                PrintText_Conv2(MailMovedFromBoxText);
+                PrintText(MailMovedFromBoxText);
 
             // exit2:
                 // JP(mCloseSubmenu);

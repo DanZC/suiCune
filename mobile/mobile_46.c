@@ -2184,7 +2184,7 @@ void BattleTowerRoomMenu_Mobile_17(void){
         // ld de, wcd4b;$cd3f
         // ld bc, $8103
         // call PrintNum;$3164
-        PrintNum_Conv2(hl, &wram->wcd4b, PRINTNUM_LEADINGZEROS | 1, 3);
+        PrintNum(hl, &wram->wcd4b, PRINTNUM_LEADINGZEROS | 1, 3);
         // pop hl
         // ldh a, [rSVBK]
         // push af
@@ -7548,12 +7548,12 @@ bool Function11a302(void){
         // LD_DE(wcd68);
         // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
         // CALL(aPrintNum);
-        PrintNum_Conv2(coord(4, 4, wram->wTilemap), &wram->wcd68, PRINTNUM_LEADINGZEROS | 1, 2);
+        PrintNum(coord(4, 4, wram->wTilemap), &wram->wcd68, PRINTNUM_LEADINGZEROS | 1, 2);
         // hlcoord(14, 4, wTilemap);
         // LD_DE(wcd67);
         // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
         // CALL(aPrintNum);
-        PrintNum_Conv2(coord(12, 4, wram->wTilemap), &wram->wcd67, PRINTNUM_LEADINGZEROS | 1, 2);
+        PrintNum(coord(12, 4, wram->wTilemap), &wram->wcd67, PRINTNUM_LEADINGZEROS | 1, 2);
         // LD_A(0x80);
         // LD_addr_A(wMobileInactivityTimerMinutes);
         wram->wMobileInactivityTimerMinutes = 0x80;
@@ -8607,7 +8607,7 @@ void Function11a971(void){
         // LD_DE(wcd8d);
         struct TextPrintState st = {.de = wram->wcd8d, .hl = gMobileMessageDestPtr};
         // CALL(aPlaceString);
-        PlaceString_Conv(&st, st.hl);
+        PlaceString(&st, st.hl);
         // LD_A_C;
         // LD_addr_A(wc31d);
         // LD_A_B;
@@ -8825,7 +8825,7 @@ void Function11ac3e(void){
     // CALL(aFadeToMenu);
     FadeToMenu();
     // CALLFAR(aClearSpriteAnims2);
-    ClearSpriteAnims2_Conv();
+    ClearSpriteAnims2();
     // CALL(aFunction11ac51);
     Function11ac51();
     // CALL(aCloseSubmenu);
@@ -8893,7 +8893,7 @@ void Function11ac51(void){
         // LD_addr_A(wCurSpriteOAMAddr);
         wram->wCurSpriteOAMAddr = 30 * SPRITEOAMSTRUCT_LENGTH;
         // FARCALL(aDoNextFrameForAllSprites);
-        DoNextFrameForAllSprites_Conv();
+        DoNextFrameForAllSprites();
         // FARCALL(aReloadMapPart);
         ReloadMapPart_Conv();
         // goto loop;
@@ -9769,7 +9769,7 @@ static bool Function11b099_CheckSeenFlag(tile_t** hl){
     // LD_DE(mFunction11b099_EmptySlot);
     struct TextPrintState st = {.hl = *hl, .de = U82C(EmptySlot)};
     // CALL(aPlaceString);
-    PlaceString_Conv(&st, st.hl);
+    PlaceString(&st, st.hl);
     *hl = st.hl;
     // SCF;
     // RET;
@@ -10251,7 +10251,7 @@ void Function11b279(void){
     // IF_Z goto asm_11b28f;
     if(CheckSeenMemMon()) {
         // CALL(aGetBaseData);
-        GetBaseData_Conv2(wram->wCurSpecies);
+        GetBaseData(wram->wCurSpecies);
         // LD_A_addr(wBaseGender);
         // LD_addr_A(wcf65);
         wram->wcf65 = wram->wBaseGender;
@@ -10816,7 +10816,7 @@ void Function11b483(void){
     // LD_addr_A(wCurSpecies);
     wram->wCurSpecies = wram->wOfferMon.mon.species;
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(wram->wOfferMon.mon.species);
+    GetBaseData(wram->wOfferMon.mon.species);
     // LD_HL(MON_LEVEL);
     // ADD_HL_DE;
     // LD_A_hl;
@@ -11296,7 +11296,7 @@ void Function11b6b4(void){
     // LD_addr_A(wCurSpecies);
     wram->wCurSpecies = wram->wcd31;
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(wram->wCurSpecies);
+    GetBaseData(wram->wCurSpecies);
     // LD_HL(0xc60d + MON_LEVEL);
     // LD_A_hl;
     // CP_A(MIN_LEVEL);

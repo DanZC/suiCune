@@ -396,12 +396,12 @@ void TrainerCard_PrintTopHalfOfCard(void){
     // LD_DE(wPlayerID);
     // LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 5);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(5, 4, wram->wTilemap), &wram->wPlayerID, PRINTNUM_LEADINGZEROS | 2, 5);
+    PrintNum(coord(5, 4, wram->wTilemap), &wram->wPlayerID, PRINTNUM_LEADINGZEROS | 2, 5);
     // hlcoord(7, 6, wTilemap);
     // LD_DE(wMoney);
     // LD_BC((PRINTNUM_MONEY | 3 << 8) | 6);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(7, 6, wram->wTilemap), &wram->wMoney, PRINTNUM_MONEY | 3, 6);
+    PrintNum(coord(7, 6, wram->wTilemap), &wram->wMoney, PRINTNUM_MONEY | 3, 6);
     // hlcoord(1, 3, wTilemap);
     // LD_DE(mTrainerCard_PrintTopHalfOfCard_HorizontalDivider);
     // CALL(aTrainerCardSetup_PlaceTilemapString);
@@ -438,7 +438,7 @@ void TrainerCard_Page1_PrintDexCaught_GameTime(void){
     // hlcoord(15, 10, wTilemap);
     // LD_BC((1 << 8) | 3);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(15, 10, wram->wTilemap), &setbits, 1, 3);
+    PrintNum(coord(15, 10, wram->wTilemap), &setbits, 1, 3);
     // CALL(aTrainerCard_Page1_PrintGameTime);
     TrainerCard_Page1_PrintGameTime();
     // hlcoord(2, 8, wTilemap);
@@ -678,12 +678,12 @@ void TrainerCard_Page1_PrintGameTime(void){
     // LD_DE(wGameTimeHours);
     // LD_BC((2 << 8) | 4);
     // CALL(aPrintNum);
-    hl = PrintNum_Conv2(hl, &wram->wGameTimeHours, 2, 4);
+    hl = PrintNum(hl, &wram->wGameTimeHours, 2, 4);
     // INC_HL;
     // LD_DE(wGameTimeMinutes);
     // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
     // CALL(aPrintNum);
-    PrintNum_Conv2(hl + 1, &wram->wGameTimeMinutes, PRINTNUM_LEADINGZEROS | 1, 2);
+    PrintNum(hl + 1, &wram->wGameTimeMinutes, PRINTNUM_LEADINGZEROS | 1, 2);
     // LDH_A_addr(hVBlankCounter);
     // AND_A(0x1f);
     // RET_NZ ;

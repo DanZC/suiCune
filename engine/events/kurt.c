@@ -18,7 +18,7 @@ void Kurt_PrintTextWhichApricorn(void){
     };
     // LD_HL(mKurt_PrintTextWhichApricorn_WhichApricornText);
     // CALL(aPrintText);
-    PrintText_Conv2(WhichApricornText);
+    PrintText(WhichApricornText);
     // RET;
 }
 
@@ -29,7 +29,7 @@ void Kurt_PrintTextHowMany(void){
     };
     // LD_HL(mKurt_PrintTextHowMany_HowManyShouldIMakeText);
     // CALL(aPrintText);
-    PrintText_Conv2(HowManyShouldIMakeText);
+    PrintText(HowManyShouldIMakeText);
     // RET;
 }
 
@@ -359,7 +359,7 @@ void PlaceApricornQuantity(void){
     // LD_DE(wItemQuantityChange);
     // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
     // JP(mPrintNum);
-    PrintNum_Conv2(hl + 1, &wram->wItemQuantityChange, PRINTNUM_LEADINGZEROS | 1, 2);
+    PrintNum(hl + 1, &wram->wItemQuantityChange, PRINTNUM_LEADINGZEROS | 1, 2);
 }
 
 void Kurt_GetQuantityOfApricorn(void){

@@ -30,63 +30,10 @@ bool UpdateCGBPals(void){
         return false;
 // fallthrough
 
-    return ForceUpdateCGBPals_Conv();
+    return ForceUpdateCGBPals();
 }
 
-void ForceUpdateCGBPals(void){
-    SET_PC(aForceUpdateCGBPals);
-        LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(MBANK(awBGPals2));
-    LDH_addr_A(rSVBK);
-
-    LD_HL(wBGPals2);
-
-//  copy 8 pals to bgpd
-    LD_A(1 << rBGPI_AUTO_INCREMENT);
-    LDH_addr_A(rBGPI);
-    LD_C(LOW(rBGPD));
-    LD_B(8 / 2);
-
-bgp:
-        for(int rept = 0; rept < (1 * PALETTE_SIZE) * 2; rept++){
-    LD_A_hli;
-    LDH_c_A;
-    }
-
-    DEC_B;
-    IF_NZ goto bgp;
-
-//  hl is now wOBPals2
-
-//  copy 8 pals to obpd
-    LD_A(1 << rOBPI_AUTO_INCREMENT);
-    LDH_addr_A(rOBPI);
-    LD_C(LOW(rOBPD));
-    LD_B(8 / 2);
-
-obp:
-        for(int rept = 0; rept < (1 * PALETTE_SIZE) * 2; rept++){
-    LD_A_hli;
-    LDH_c_A;
-    }
-
-    DEC_B;
-    IF_NZ goto obp;
-
-    POP_AF;
-    LDH_addr_A(rSVBK);
-
-//  clear pal update queue
-    XOR_A_A;
-    LDH_addr_A(hCGBPalUpdate);
-
-    SCF;
-    RET;
-
-}
-
-bool ForceUpdateCGBPals_Conv(void){
+bool ForceUpdateCGBPals(void){
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     uint8_t svbk = gb_read(rSVBK);
@@ -151,58 +98,9 @@ bool ForceUpdateCGBPals_Conv(void){
     return true;
 }
 
-void DmgToCgbBGPals(void){
-    //  exists to forego reinserting cgb-converted image data
-
-//  input: a -> bgp
-
-    LDH_addr_A(rBGP);
-    PUSH_AF;
-
-//  Don't need to be here if DMG
-    LDH_A_addr(hCGB);
-    AND_A_A;
-    IF_Z goto end;
-
-    PUSH_HL;
-    PUSH_DE;
-    PUSH_BC;
-
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-
-    LD_A(MBANK(awBGPals2));
-    LDH_addr_A(rSVBK);
-
-//  copy & reorder bg pal buffer
-    LD_HL(wBGPals2);  // to
-    LD_DE(wBGPals1);  // from
-//  order
-    LDH_A_addr(rBGP);
-    LD_B_A;
-//  all pals
-    LD_C(8);
-    CALL(aCopyPals);
-//  request pal update
-    LD_A(TRUE);
-    LDH_addr_A(hCGBPalUpdate);
-
-    POP_AF;
-    LDH_addr_A(rSVBK);
-
-    POP_BC;
-    POP_DE;
-    POP_HL;
-
-end:
-        POP_AF;
-    RET;
-
-}
-
 //  exists to forego reinserting cgb-converted image data
 //  input: a -> bgp
-void DmgToCgbBGPals_Conv(uint8_t a){
+void DmgToCgbBGPals(uint8_t a){
     // LDH_addr_A(rBGP);
     gb_write(rBGP, a);
 
@@ -241,58 +139,10 @@ void DmgToCgbBGPals_Conv(uint8_t a){
     return;
 }
 
-void DmgToCgbObjPals(void){
-    //  exists to forego reinserting cgb-converted image data
-
-//  input: d -> obp1
-//         e -> obp2
-
-    LD_A_E;
-    LDH_addr_A(rOBP0);
-    LD_A_D;
-    LDH_addr_A(rOBP1);
-
-    LDH_A_addr(hCGB);
-    AND_A_A;
-    RET_Z ;
-
-    PUSH_HL;
-    PUSH_DE;
-    PUSH_BC;
-
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-
-    LD_A(MBANK(awOBPals2));
-    LDH_addr_A(rSVBK);
-
-//  copy & reorder obj pal buffer
-    LD_HL(wOBPals2);  // to
-    LD_DE(wOBPals1);  // from
-//  order
-    LDH_A_addr(rOBP0);
-    LD_B_A;
-//  all pals
-    LD_C(8);
-    CALL(aCopyPals);
-//  request pal update
-    LD_A(TRUE);
-    LDH_addr_A(hCGBPalUpdate);
-
-    POP_AF;
-    LDH_addr_A(rSVBK);
-
-    POP_BC;
-    POP_DE;
-    POP_HL;
-    RET;
-
-}
-
 //  exists to forego reinserting cgb-converted image data
 //  input: d -> obp1
 //         e -> obp2
-void DmgToCgbObjPals_Conv(uint8_t d, uint8_t e){
+void DmgToCgbObjPals(uint8_t d, uint8_t e){
     // LD_A_E;
     // LDH_addr_A(rOBP0);
     gb_write(rOBP0, e);
@@ -332,48 +182,7 @@ void DmgToCgbObjPals_Conv(uint8_t d, uint8_t e){
     // LDH_addr_A(rSVBK);
 }
 
-void DmgToCgbObjPal0(void){
-        LDH_addr_A(rOBP0);
-    PUSH_AF;
-
-//  Don't need to be here if not CGB
-    LDH_A_addr(hCGB);
-    AND_A_A;
-    IF_Z goto dmg;
-
-    PUSH_HL;
-    PUSH_DE;
-    PUSH_BC;
-
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(MBANK(awOBPals2));
-    LDH_addr_A(rSVBK);
-
-    LD_HL(wOBPals2 + PALETTE_SIZE * 0);
-    LD_DE(wOBPals1 + PALETTE_SIZE * 0);
-    LDH_A_addr(rOBP0);
-    LD_B_A;
-    LD_C(1);
-    CALL(aCopyPals);
-    LD_A(TRUE);
-    LDH_addr_A(hCGBPalUpdate);
-
-    POP_AF;
-    LDH_addr_A(rSVBK);
-
-    POP_BC;
-    POP_DE;
-    POP_HL;
-
-
-dmg:
-        POP_AF;
-    RET;
-
-}
-
-void DmgToCgbObjPal0_Conv(uint8_t a){
+void DmgToCgbObjPal0(uint8_t a){
     // LDH_addr_A(rOBP0);
     gb_write(rOBP0, a);
     // PUSH_AF;
@@ -417,47 +226,7 @@ void DmgToCgbObjPal0_Conv(uint8_t a){
     // POP_HL;
 }
 
-void DmgToCgbObjPal1(void){
-        LDH_addr_A(rOBP1);
-    PUSH_AF;
-
-    LDH_A_addr(hCGB);
-    AND_A_A;
-    IF_Z goto dmg;
-
-    PUSH_HL;
-    PUSH_DE;
-    PUSH_BC;
-
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(MBANK(awOBPals2));
-    LDH_addr_A(rSVBK);
-
-    LD_HL(wOBPals2 + PALETTE_SIZE * 1);
-    LD_DE(wOBPals1 + PALETTE_SIZE * 1);
-    LDH_A_addr(rOBP1);
-    LD_B_A;
-    LD_C(1);
-    CALL(aCopyPals);
-    LD_A(TRUE);
-    LDH_addr_A(hCGBPalUpdate);
-
-    POP_AF;
-    LDH_addr_A(rSVBK);
-
-    POP_BC;
-    POP_DE;
-    POP_HL;
-
-
-dmg:
-        POP_AF;
-    RET;
-
-}
-
-void DmgToCgbObjPal1_Conv(uint8_t a){
+void DmgToCgbObjPal1(uint8_t a){
     // LDH_addr_A(rOBP1);
     // PUSH_AF;
     gb_write(rOBP1, a);

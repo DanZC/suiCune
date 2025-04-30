@@ -325,7 +325,7 @@ void BattleTextbox_GB(uint16_t hl){
 
     // POP_HL;
     // CALL(aPrintTextboxText);
-    PrintTextboxText_Conv(GBToRAMAddr(hl));
+    PrintTextboxText_GB(GBToRAMAddr(hl));
     // RET;
 }
 
@@ -346,7 +346,7 @@ void BattleTextbox(const struct TextCmd* hl){
 
     // POP_HL;
     // CALL(aPrintTextboxText);
-    PrintTextboxText_Conv2(hl);
+    PrintTextboxText(hl);
     // RET;
 }
 

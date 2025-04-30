@@ -184,7 +184,7 @@ uint8_t DrawHP_Conv(uint8_t* hl, uint8_t b, uint8_t which){
     // PUSH_HL;
     // PUSH_HL;
     // CALL(aDrawBattleHPBar);
-    DrawBattleHPBar_Conv(hl, HIGH(de), LOW(de), b, LOW(bc));
+    DrawBattleHPBar(hl, HIGH(de), LOW(de), b, LOW(bc));
     // POP_HL;
 
 //  Print HP
@@ -200,7 +200,7 @@ uint8_t DrawHP_Conv(uint8_t* hl, uint8_t b, uint8_t which){
 // not_boxmon_2:
     // LD_BC((2 << 8) | 3);
     // CALL(aPrintNum);
-    hl = PrintNum_Conv2(hl + coord(1, 1, 0), maxhpval, 2, 3);
+    hl = PrintNum(hl + coord(1, 1, 0), maxhpval, 2, 3);
 
     // LD_A(0xf3);
     // LD_hli_A;
@@ -210,7 +210,7 @@ uint8_t DrawHP_Conv(uint8_t* hl, uint8_t b, uint8_t which){
     // LD_DE(wTempMonMaxHP);
     // LD_BC((2 << 8) | 3);
     // CALL(aPrintNum);
-    PrintNum_Conv2(hl, &wram->wTempMon.maxHP, 2, 3);
+    PrintNum(hl, &wram->wTempMon.maxHP, 2, 3);
     // POP_HL;
     // POP_DE;
     // RET;
@@ -284,23 +284,23 @@ void PrintTempMonStats_Conv(uint8_t* hl, uint16_t bc){
     // LD_DE(wTempMonAttack);
     // LD_BC((2 << 8) | 3);
     // CALL(aPrintTempMonStats_PrintStat);
-    PrintNum_Conv2(hl, &wram->wTempMon.attack, 2, 3);
+    PrintNum(hl, &wram->wTempMon.attack, 2, 3);
     hl += SCREEN_WIDTH * 2;
     // LD_DE(wTempMonDefense);
     // CALL(aPrintTempMonStats_PrintStat);
-    PrintNum_Conv2(hl, &wram->wTempMon.defense, 2, 3);
+    PrintNum(hl, &wram->wTempMon.defense, 2, 3);
     hl += SCREEN_WIDTH * 2;
     // LD_DE(wTempMonSpclAtk);
     // CALL(aPrintTempMonStats_PrintStat);
-    PrintNum_Conv2(hl, &wram->wTempMon.spclAtk, 2, 3);
+    PrintNum(hl, &wram->wTempMon.spclAtk, 2, 3);
     hl += SCREEN_WIDTH * 2;
     // LD_DE(wTempMonSpclDef);
     // CALL(aPrintTempMonStats_PrintStat);
-    PrintNum_Conv2(hl, &wram->wTempMon.spclDef, 2, 3);
+    PrintNum(hl, &wram->wTempMon.spclDef, 2, 3);
     hl += SCREEN_WIDTH * 2;
     // LD_DE(wTempMonSpeed);
     // JP(mPrintNum);
-    PrintNum_Conv2(hl, &wram->wTempMon.speed, 2, 3);
+    PrintNum(hl, &wram->wTempMon.speed, 2, 3);
     hl += SCREEN_WIDTH * 2;
 
 
@@ -766,14 +766,14 @@ void ListMovePP_Conv(uint8_t* hl){
         // LD_DE(wStringBuffer1 + 4);
         // LD_BC((1 << 8) | 2);
         // CALL(aPrintNum);
-        hl3 = PrintNum_Conv2(hl3, &monpp, 1, 2);
+        hl3 = PrintNum(hl3, &monpp, 1, 2);
         // LD_A(0xf3);
         // LD_hli_A;
         *(hl3++) = CHAR_FWD_SLASH;
         // LD_DE(wTempPP);
         // LD_BC((1 << 8) | 2);
         // CALL(aPrintNum);
-        hl3 = PrintNum_Conv2(hl3, &maxpp, 1, 2);
+        hl3 = PrintNum(hl3, &maxpp, 1, 2);
         // POP_HL;
         // LD_A_addr(wListMovesLineSpacing);
         // LD_E_A;

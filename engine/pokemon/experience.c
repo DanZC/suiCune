@@ -43,7 +43,7 @@ uint8_t CalcLevel_Conv(struct PartyMon* mon){
     // LD_A_addr(wTempMonSpecies);
     // LD_addr_A(wCurSpecies);
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(mon->mon.species);
+    GetBaseData(mon->mon.species);
     // LD_D(1);
     uint8_t d = 1;
 

@@ -305,7 +305,7 @@ void Function1080b7(void){
     // LDH_addr_A(hWY);
     hram->hWY = 0x90;
     // FARCALL(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
 
     // CALL(aDelayFrame);
     DelayFrame();
@@ -394,7 +394,7 @@ void Function108157(void){
     // LDH_addr_A(hWY);
     hram->hWY = 0x90;
     // FARCALL(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // XOR_A_A;  // SPRITE_ANIM_DICT_DEFAULT
     // LD_HL(wSpriteAnimDict);
     // LD_hli_A;
@@ -464,7 +464,7 @@ void MobileTradeAnim_GetFrontpic(uint8_t* de, species_t species, uint16_t dvs){
     // LD_addr_A(wCurSpecies);
     wram->wCurSpecies = wram->wCurPartySpecies = species;
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(species);
+    GetBaseData(species);
     // POP_DE;
     // PREDEF(pGetMonFrontpic);
     GetMonFrontpic_Conv(de);
@@ -481,7 +481,7 @@ void Function108201(uint8_t* de, species_t species, uint16_t dvs){
     // LD_addr_A(wCurSpecies);
     wram->wCurSpecies = wram->wCurPartySpecies = species;
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(species);
+    GetBaseData(species);
     // POP_DE;
     // PREDEF(pGetAnimatedFrontpic);
     GetAnimatedFrontpic_Conv(de, 0);
@@ -624,7 +624,7 @@ void WaitMobileTradeSpriteAnims(uint8_t c){
     // loop:
         // PUSH_BC;
         // FARCALL(aPlaySpriteAnimations);
-        PlaySpriteAnimations_Conv();
+        PlaySpriteAnimations();
         // POP_BC;
         // CALL(aDelayFrame);
         DelayFrame();
@@ -639,7 +639,7 @@ void Function1082db(void){
     do {
     // loop:
         // FARCALL(aPlaySpriteAnimations);
-        PlaySpriteAnimations_Conv();
+        PlaySpriteAnimations();
         // FARCALL(aSetUpPokeAnim);
         done = SetUpPokeAnim_Conv();
         // FARCALL(aHDMATransferTilemapToWRAMBank3);
@@ -670,7 +670,7 @@ void Function1082fa(uint16_t* hl, uint8_t c){
         // PUSH_HL;
         // PUSH_BC;
         // FARCALL(aPlaySpriteAnimations);
-        PlaySpriteAnimations_Conv();
+        PlaySpriteAnimations();
         // POP_BC;
         // POP_HL;
         // CALL(aDelayFrame);
@@ -714,7 +714,7 @@ void MobileTradeAnim_ShowPlayerMonToBeSent(void){
     GetSGBLayout(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
     // LD_A(0b11100100);  // 3,2,1,0
     // CALL(aDmgToCgbBGPals);
-    DmgToCgbBGPals_Conv(0b11100100);
+    DmgToCgbBGPals(0b11100100);
     // CALL(aWaitBGMap);
     WaitBGMap();
 
@@ -744,7 +744,7 @@ void MobileTradeAnim_ShowPlayerMonToBeSent(void){
     hram->hSCX = 0;
     // LD_A_addr(wPlayerTrademonSpecies);
     // CALL(aGetCryIndex);
-    int16_t cryIndex = GetCryIndex_Conv2(wram->wPlayerTrademon.species);
+    int16_t cryIndex = GetCryIndex(wram->wPlayerTrademon.species);
     // IF_C goto skip_cry;
     if(cryIndex >= 0) {
         // LD_E_C;
@@ -762,7 +762,7 @@ void MobileTradeAnim_ShowPlayerMonToBeSent(void){
     // depixel4(10, 11, 4, 0);
     // LD_A(SPRITE_ANIM_INDEX_MOBILE_TRADE_SENT_BALL);
     // CALL(aInitSpriteAnimStruct);
-    InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_MOBILE_TRADE_SENT_BALL, pixel4(10, 11, 4, 0));
+    InitSpriteAnimStruct(SPRITE_ANIM_INDEX_MOBILE_TRADE_SENT_BALL, pixel4(10, 11, 4, 0));
     // LD_DE(SFX_BALL_POOF);
     // CALL(aPlaySFX);
     PlaySFX(SFX_BALL_POOF);
@@ -799,7 +799,7 @@ void MobileTradeAnim_ShowOTMonFromTrade(void){
     // CALL(aEnableLCD);
     EnableLCD();
     // FARCALL(aDeinitializeAllSprites);
-    DeinitializeAllSprites_Conv();
+    DeinitializeAllSprites();
     // XOR_A_A;
     // LDH_addr_A(hSCX);
     hram->hSCX = 0x0;
@@ -814,7 +814,7 @@ void MobileTradeAnim_ShowOTMonFromTrade(void){
     // depixel4(10, 11, 4, 0);
     // LD_A(SPRITE_ANIM_INDEX_MOBILE_TRADE_OT_BALL);
     // CALL(aInitSpriteAnimStruct);
-    InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_MOBILE_TRADE_OT_BALL, pixel4(10, 11, 4, 0));
+    InitSpriteAnimStruct(SPRITE_ANIM_INDEX_MOBILE_TRADE_OT_BALL, pixel4(10, 11, 4, 0));
     // CALL(aFunction108b45);
     Function108b45();
     // LD_A(0x1);
@@ -853,7 +853,7 @@ void MobileTradeAnim_ShowOTMonFromTrade(void){
     GetSGBLayout(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
     // LD_A(0b11100100);  // 3,2,1,0
     // CALL(aDmgToCgbBGPals);
-    DmgToCgbBGPals_Conv(0b11100100);
+    DmgToCgbBGPals(0b11100100);
     // CALL(aFunction108963);
     Function108963();
     // LD_A_addr(wOTTrademonSpecies);
@@ -916,7 +916,7 @@ void MobileTradeAnim_ShowPlayerMonForGTS(void){
     GetSGBLayout(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
     // LD_A(0b11100100);  // 3,2,1,0
     // CALL(aDmgToCgbBGPals);
-    DmgToCgbBGPals_Conv(0b11100100);
+    DmgToCgbBGPals(0b11100100);
     // CALL(aWaitBGMap);
     WaitBGMap();
 
@@ -946,7 +946,7 @@ void MobileTradeAnim_ShowPlayerMonForGTS(void){
     hram->hSCX = 0;
     // LD_A_addr(wPlayerTrademonSpecies);
     // CALL(aGetCryIndex);
-    int16_t cry = GetCryIndex_Conv2(wram->wPlayerTrademon.species);
+    int16_t cry = GetCryIndex(wram->wPlayerTrademon.species);
     // IF_C goto skip_cry;
     if(cry >= 0) {
         // LD_E_C;
@@ -964,7 +964,7 @@ void MobileTradeAnim_ShowPlayerMonForGTS(void){
     // depixel4(10, 11, 4, 0);
     // LD_A(SPRITE_ANIM_INDEX_MOBILE_TRADE_SENT_BALL);
     // CALL(aInitSpriteAnimStruct);
-    InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_MOBILE_TRADE_SENT_BALL, pixel4(10, 11, 4, 0));
+    InitSpriteAnimStruct(SPRITE_ANIM_INDEX_MOBILE_TRADE_SENT_BALL, pixel4(10, 11, 4, 0));
     // LD_DE(SFX_BALL_POOF);
     // CALL(aPlaySFX);
     PlaySFX(SFX_BALL_POOF);
@@ -1001,7 +1001,7 @@ void MobileTradeAnim_ShowOTMonFromGTS(void){
     // CALL(aEnableLCD);
     EnableLCD();
     // FARCALL(aDeinitializeAllSprites);
-    DeinitializeAllSprites_Conv();
+    DeinitializeAllSprites();
     // CALL(aDelayFrame);
     DelayFrame();
     // LD_DE(mTradeBallGFX);
@@ -1030,7 +1030,7 @@ void MobileTradeAnim_ShowOTMonFromGTS(void){
     // depixel4(10, 11, 4, 0);
     // LD_A(SPRITE_ANIM_INDEX_MOBILE_TRADE_OT_BALL);
     // CALL(aInitSpriteAnimStruct);
-    InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_MOBILE_TRADE_OT_BALL, pixel4(10, 11, 4, 0));
+    InitSpriteAnimStruct(SPRITE_ANIM_INDEX_MOBILE_TRADE_OT_BALL, pixel4(10, 11, 4, 0));
     // CALL(aFunction108b45);
     Function108b45();
     // LD_A(0x1);
@@ -1069,7 +1069,7 @@ void MobileTradeAnim_ShowOTMonFromGTS(void){
     GetSGBLayout(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
     // LD_A(0b11100100);  // 3,2,1,0
     // CALL(aDmgToCgbBGPals);
-    DmgToCgbBGPals_Conv(0b11100100);
+    DmgToCgbBGPals(0b11100100);
     // LD_A_addr(wOTTrademonSpecies);
     // LD_HL(wOTTrademonDVs);
     // CALL(aFunction10898a);
@@ -1106,7 +1106,7 @@ void MobileTradeAnim_GetOddEgg(void){
     // CALL(aEnableLCD);
     EnableLCD();
     // FARCALL(aDeinitializeAllSprites);
-    DeinitializeAllSprites_Conv();
+    DeinitializeAllSprites();
     // CALL(aDelayFrame);
     DelayFrame();
     // LD_DE(mTradeBallGFX);
@@ -1135,7 +1135,7 @@ void MobileTradeAnim_GetOddEgg(void){
     // depixel4(10, 11, 4, 0);
     // LD_A(SPRITE_ANIM_INDEX_MOBILE_TRADE_OT_BALL);
     // CALL(aInitSpriteAnimStruct);
-    InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_MOBILE_TRADE_OT_BALL, pixel4(10, 11, 4, 0));
+    InitSpriteAnimStruct(SPRITE_ANIM_INDEX_MOBILE_TRADE_OT_BALL, pixel4(10, 11, 4, 0));
     // CALL(aFunction108b45);
     Function108b45();
     // LD_A(0x1);
@@ -1174,7 +1174,7 @@ void MobileTradeAnim_GetOddEgg(void){
     GetSGBLayout(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
     // LD_A(0b11100100);  // 3,2,1,0
     // CALL(aDmgToCgbBGPals);
-    DmgToCgbBGPals_Conv(0b11100100);
+    DmgToCgbBGPals(0b11100100);
     // LD_A_addr(wOTTrademonSpecies);
     // LD_HL(wOTTrademonDVs);
     // CALL(aFunction10898a);
@@ -1191,7 +1191,7 @@ void MobileTradeAnim_GetOddEgg(void){
 
 void MobileTradeAnim_02(void){
     // FARCALL(aDeinitializeAllSprites);
-    DeinitializeAllSprites_Conv();
+    DeinitializeAllSprites();
     // CALL(aClearBGPalettes);
     ClearBGPalettes();
     // CALL(aClearSprites);
@@ -1245,7 +1245,7 @@ void MobileTradeAnim_02(void){
 
 void MobileTradeAnim_10(void){
     // FARCALL(aDeinitializeAllSprites);
-    DeinitializeAllSprites_Conv();
+    DeinitializeAllSprites();
     // CALL(aClearBGPalettes);
     ClearBGPalettes();
     // CALL(aClearSprites);
@@ -1405,7 +1405,7 @@ void MobileTradeAnim_GiveTrademon1(void){
             // depixel4(10, 11, 4, 0);
             // LD_A(SPRITE_ANIM_INDEX_MOBILE_TRADE_CABLE_BULGE);
             // CALL(aInitSpriteAnimStruct);
-            InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_MOBILE_TRADE_CABLE_BULGE, pixel4(10, 11, 4, 0));
+            InitSpriteAnimStruct(SPRITE_ANIM_INDEX_MOBILE_TRADE_CABLE_BULGE, pixel4(10, 11, 4, 0));
         }
 
     // next:
@@ -1431,7 +1431,7 @@ void MobileTradeAnim_GiveTrademon1(void){
             // depixel4(10, 11, 4, 0);
             // LD_A(SPRITE_ANIM_INDEX_MOBILE_TRADE_CABLE_BULGE);
             // CALL(aInitSpriteAnimStruct);
-            InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_MOBILE_TRADE_CABLE_BULGE, pixel4(10, 11, 4, 0));
+            InitSpriteAnimStruct(SPRITE_ANIM_INDEX_MOBILE_TRADE_CABLE_BULGE, pixel4(10, 11, 4, 0));
             // XOR_A_A;
             // CALL(aFunction108ad4);
             Function108ad4(0);
@@ -1482,7 +1482,7 @@ void MobileTradeAnim_GiveTrademon2(void){
     // depixel4(9, 10, 2, 0);
     // LD_A(SPRITE_ANIM_INDEX_MOBILE_TRADE_PING);
     // CALL(aInitSpriteAnimStruct);
-    InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_MOBILE_TRADE_PING, pixel4(9, 10, 2, 0));
+    InitSpriteAnimStruct(SPRITE_ANIM_INDEX_MOBILE_TRADE_PING, pixel4(9, 10, 2, 0));
     // LD_DE(SFX_FORESIGHT);
     // CALL(aPlaySFX);
     PlaySFX(SFX_FORESIGHT);
@@ -1495,7 +1495,7 @@ void MobileTradeAnim_GiveTrademon2(void){
     // depixel4(9, 10, 2, 0);
     // LD_A(SPRITE_ANIM_INDEX_MOBILE_TRADE_SENT_PULSE);
     // CALL(aInitSpriteAnimStruct);
-    InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_MOBILE_TRADE_SENT_PULSE, pixel4(9, 10, 2, 0));
+    InitSpriteAnimStruct(SPRITE_ANIM_INDEX_MOBILE_TRADE_SENT_PULSE, pixel4(9, 10, 2, 0));
 
     while(hram->hSCY != 0x90) {
     // loop:
@@ -1533,7 +1533,7 @@ void MobileTradeAnim_05(void){
     // depixel4(30, 10, 2, 0);
     // LD_A(SPRITE_ANIM_INDEX_MOBILE_TRADE_OT_PULSE);
     // CALL(aInitSpriteAnimStruct);
-    InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_MOBILE_TRADE_OT_PULSE, pixel4(30, 10, 2, 0));
+    InitSpriteAnimStruct(SPRITE_ANIM_INDEX_MOBILE_TRADE_OT_PULSE, pixel4(30, 10, 2, 0));
     // CALL(aGetMobileTradeAnimByte);
     GetMobileTradeAnimByte();
     // LD_DE(SFX_THROW_BALL);
@@ -1564,7 +1564,7 @@ void MobileTradeAnim_07(void){
     // depixel4(30, 10, 2, 0);
     // LD_A(SPRITE_ANIM_INDEX_MOBILE_TRADE_OT_PULSE);
     // CALL(aInitSpriteAnimStruct);
-    InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_MOBILE_TRADE_OT_PULSE, pixel4(30, 10, 2, 0));
+    InitSpriteAnimStruct(SPRITE_ANIM_INDEX_MOBILE_TRADE_OT_PULSE, pixel4(30, 10, 2, 0));
     // CALL(aGetMobileTradeAnimByte);
     GetMobileTradeAnimByte();
     // LD_DE(SFX_THROW_BALL);
@@ -1594,11 +1594,11 @@ void MobileTradeAnim_GetTrademon1(void){
 
 // done:
     // FARCALL(aDeinitializeAllSprites);
-    DeinitializeAllSprites_Conv();
+    DeinitializeAllSprites();
     // depixel4(9, 10, 2, 0);
     // LD_A(SPRITE_ANIM_INDEX_MOBILE_TRADE_PING);
     // CALL(aInitSpriteAnimStruct);
-    InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_MOBILE_TRADE_PING, pixel4(9, 10, 2, 0));
+    InitSpriteAnimStruct(SPRITE_ANIM_INDEX_MOBILE_TRADE_PING, pixel4(9, 10, 2, 0));
     // LD_DE(SFX_GLASS_TING_2);
     // CALL(aPlaySFX);
     PlaySFX(SFX_GLASS_TING_2);
@@ -1640,7 +1640,7 @@ void MobileTradeAnim_GetTrademon2(void){
             // depixel4(10, 11, 4, 0);
             // LD_A(SPRITE_ANIM_INDEX_MOBILE_TRADE_CABLE_BULGE);
             // CALL(aInitSpriteAnimStruct);
-            InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_MOBILE_TRADE_CABLE_BULGE, pixel4(10, 11, 4, 0));
+            InitSpriteAnimStruct(SPRITE_ANIM_INDEX_MOBILE_TRADE_CABLE_BULGE, pixel4(10, 11, 4, 0));
             // goto asm_1088e7;
         }
         // CP_A(0x40);
@@ -1661,7 +1661,7 @@ void MobileTradeAnim_GetTrademon2(void){
             // depixel4(10, 11, 4, 0);
             // LD_A(SPRITE_ANIM_INDEX_MOBILE_TRADE_CABLE_BULGE);
             // CALL(aInitSpriteAnimStruct);
-            InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_MOBILE_TRADE_CABLE_BULGE, pixel4(10, 11, 4, 0));
+            InitSpriteAnimStruct(SPRITE_ANIM_INDEX_MOBILE_TRADE_CABLE_BULGE, pixel4(10, 11, 4, 0));
             // XOR_A_A;
             // CALL(aFunction108ad4);
             Function108ad4(0);
@@ -1721,7 +1721,7 @@ void MobileTradeAnim_0f(void){
     // CALL(aWaitMobileTradeSpriteAnims);
     WaitMobileTradeSpriteAnims(40);
     // FARCALL(aDeinitializeAllSprites);
-    DeinitializeAllSprites_Conv();
+    DeinitializeAllSprites();
     // CALL(aClearBGPalettes);
     ClearBGPalettes();
     // CALL(aClearSprites);
@@ -1751,9 +1751,9 @@ void MobileTradeAnim_FadeToBlack(void){
         // SLA_A;
         // SLA_A;
         // CALL(aDmgToCgbBGPals);
-        DmgToCgbBGPals_Conv(bgp << 2);
+        DmgToCgbBGPals(bgp << 2);
         // CALL(aDmgToCgbObjPal0);
-        DmgToCgbObjPal0_Conv(bgp << 2);
+        DmgToCgbObjPal0(bgp << 2);
         // LD_C(4);
         // CALL(aDelayFrames);
         DelayFrames(4);
@@ -1763,9 +1763,9 @@ void MobileTradeAnim_FadeToBlack(void){
 // blank:
     // XOR_A_A;
     // CALL(aDmgToCgbBGPals);
-    DmgToCgbBGPals_Conv(0);
+    DmgToCgbBGPals(0);
     // CALL(aDmgToCgbObjPal0);
-    DmgToCgbObjPal0_Conv(0);
+    DmgToCgbObjPal0(0);
     // CALL(aGetMobileTradeAnimByte);
     GetMobileTradeAnimByte();
     // RET;
@@ -1974,7 +1974,7 @@ void MobileTradeAnim_MonDisplay_PrintSpeciesNumber(species_t species){
     // hlcoord(9, 0, wTilemap);
     // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 3);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(10, 0, wram->wTilemap), &species, PRINTNUM_LEADINGZEROS | 1, 3);
+    PrintNum(coord(10, 0, wram->wTilemap), &species, PRINTNUM_LEADINGZEROS | 1, 3);
     // RET;
 }
 
@@ -2003,7 +2003,7 @@ void MobileTradeAnim_MonDisplay_PrintOTNameAndGender(uint8_t* de, uint8_t a){
     // hlcoord(8, 4, wTilemap);
     // CALL(aPlaceString);
     struct TextPrintState st = {.de = de, .hl = coord(7, 4, wram->wTilemap)};
-    PlaceString_Conv(&st, st.hl);
+    PlaceString(&st, st.hl);
     // INC_BC;
     st.bc++;
     // POP_AF;
@@ -2021,7 +2021,7 @@ void MobileTradeAnim_MonDisplay_PrintIDNumber(const void* de){
     // hlcoord(8, 6, wTilemap);
     // LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 5);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(7, 6, wram->wTilemap), de, PRINTNUM_LEADINGZEROS | 2, 5);
+    PrintNum(coord(7, 6, wram->wTilemap), de, PRINTNUM_LEADINGZEROS | 2, 5);
     // RET;
 }
 
@@ -2098,10 +2098,10 @@ void Function108af4(void){
     // LDH_addr_A(rSVBK);
     // LD_A(0b11100100);  // 3,2,1,0
     // CALL(aDmgToCgbObjPal0);
-    DmgToCgbObjPal0_Conv(0b11100100);
+    DmgToCgbObjPal0(0b11100100);
     // LD_A(0b11100100);  // 3,2,1,0
     // CALL(aDmgToCgbBGPals);
-    DmgToCgbBGPals_Conv(0b11100100);
+    DmgToCgbBGPals(0b11100100);
     // CALL(aDelayFrame);
     DelayFrame();
     // RET;
@@ -2221,7 +2221,7 @@ void Function108b98(void){
 
 void MobileTradeAnim_DeleteSprites(void){
     // FARCALL(aDeinitializeAllSprites);
-    DeinitializeAllSprites_Conv();
+    DeinitializeAllSprites();
     // CALL(aClearSprites);
     ClearSprites();
     // RET;
@@ -2241,7 +2241,7 @@ void MobileTradeAnim_AnimateSentPulse(struct SpriteAnim* bc){
     if(bc->yCoord == (uint8_t)(-1 * 8 - 6)) {
     // delete:
         // FARCALL(aDeinitializeSprite);
-        DeinitializeSprite_Conv(bc);
+        DeinitializeSprite(bc);
         // RET;
         return;
     }
@@ -2279,13 +2279,13 @@ void Function108bec(void){
     hram->hWY = 0x90;
     // LD_HL(mFunction108bec_MobilePlayerWillTradeMonText);
     // CALL(aPrintText);
-    PrintText_Conv2(MobilePlayerWillTradeMonText);
+    PrintText(MobilePlayerWillTradeMonText);
     // LD_C(80);
     // CALL(aDelayFrames);
     DelayFrames(80);
     // LD_HL(mFunction108bec_MobileForPartnersMonText);
     // CALL(aPrintText);
-    PrintText_Conv2(MobileForPartnersMonText);
+    PrintText(MobileForPartnersMonText);
     // LD_C(80);
     // CALL(aDelayFrames);
     DelayFrames(80);
@@ -2307,7 +2307,7 @@ void Function108c16(void){
     hram->hWY = 0x90;
     // LD_HL(mFunction108c16_MobileTakeGoodCareOfMonText);
     // CALL(aPrintText);
-    PrintText_Conv2(MobileTakeGoodCareOfMonText);
+    PrintText(MobileTakeGoodCareOfMonText);
     // LD_C(80);
     // CALL(aDelayFrames);
     DelayFrames(80);
@@ -2324,7 +2324,7 @@ void Function108c2b(void){
     hram->hWY = 0x90;
     // LD_HL(mFunction108c2b_MobilePlayersMonTrade2Text);
     // CALL(aPrintText);
-    PrintText_Conv2(MobilePlayersMonTrade2Text);
+    PrintText(MobilePlayersMonTrade2Text);
     // LD_C(80);
     // CALL(aDelayFrames);
     DelayFrames(80);
@@ -2349,7 +2349,7 @@ void Function108c40(void){
     if(wram->wcf65 & 0b10000000) {
         // LD_HL(mFunction108c40_MobileTradeCameBackText);
         // CALL(aPrintText);
-        PrintText_Conv2(MobileTradeCameBackText);
+        PrintText(MobileTradeCameBackText);
         // LD_C(80);
         // CALL(aDelayFrames);
         DelayFrames(80);
@@ -2359,7 +2359,7 @@ void Function108c40(void){
     // Getmon:
         // LD_HL(mFunction108c40_MobileTakeGoodCareOfText);
         // CALL(aPrintText);
-        PrintText_Conv2(MobileTakeGoodCareOfText);
+        PrintText(MobileTakeGoodCareOfText);
         // LD_C(80);
         // CALL(aDelayFrames);
         DelayFrames(80);

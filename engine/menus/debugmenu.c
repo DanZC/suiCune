@@ -798,13 +798,13 @@ void DebugMenu_Scripting(void) {
     v_LoadStandardFont_Conv();
     WaitBGMap();
 
-    PrintText_Conv2(DebugMenu_TestText);
+    PrintText(DebugMenu_TestText);
     bool res = YesNoBox();
     if(res) {
-        PrintText_Conv2(DebugMenu_TestText_Yes);
+        PrintText(DebugMenu_TestText_Yes);
     }
     else {
-        PrintText_Conv2(DebugMenu_TestText_No);
+        PrintText(DebugMenu_TestText_No);
     }
 
     ClearTilemap();
@@ -856,10 +856,10 @@ void DebugMenu_Link(void) {
     
     LoadStandardMenuHeader();
     if(wram->wScriptVar == FALSE) {
-        PrintText_Conv2(Text_LANTestFail);
+        PrintText(Text_LANTestFail);
     }
     else {
-        PrintText_Conv2(Text_LANTestSuccess);
+        PrintText(Text_LANTestSuccess);
     }
     CloseWindow();
 
@@ -1145,7 +1145,7 @@ void DebugMenu_News(void) {
     DebugMenu_SaveAttrmap();
 
 loop:
-    PrintText_Conv2(Text_NewsMenuTop);
+    PrintText(Text_NewsMenuTop);
     LoadMenuHeader(&Menu_NewsMenu);
 
     bool cancel = !VerticalMenu();
@@ -1153,19 +1153,19 @@ loop:
     if(!cancel) {
         switch(wram->wMenuCursorY) {
             case 1:
-                PrintText_Conv2(Text_NewsDeleteConfirm);
+                PrintText(Text_NewsDeleteConfirm);
 
                 if(YesNoBox()) {
                     DebugMenu_News_DeleteNews();
-                    PrintText_Conv2(Text_NewsDeleted);
+                    PrintText(Text_NewsDeleted);
                 }
                 goto loop;
             case 2: {
                 if(Function17d314()) {
-                    PrintText_Conv2(Text_NewsIsCorrupt);
+                    PrintText(Text_NewsIsCorrupt);
                 }
                 else {
-                    PrintText_Conv2(Text_NewsIsOk);
+                    PrintText(Text_NewsIsOk);
                 }
             } goto loop;
             case 3:break;

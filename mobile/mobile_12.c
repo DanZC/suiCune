@@ -1723,7 +1723,7 @@ void Function487ff(tile_t* hl, const uint8_t* de){
     // LD_B(PRINTNUM_LEADINGZEROS | 1);
     // LD_C(3);
     // CALL(aPrintNum);
-    PrintNum_Conv2(hl, de, PRINTNUM_LEADINGZEROS | 1, 3);
+    PrintNum(hl, de, PRINTNUM_LEADINGZEROS | 1, 3);
     // RET;
 }
 
@@ -2575,7 +2575,7 @@ void Function489ea(tile_t* hl){
     // LD_DE(mString_48a38);
     // CALL(aPlaceString);
     struct TextPrintState st = {.hl = hl + 3, .de = U82C(String_48a38)};
-    PlaceString_Conv(&st, st.hl);
+    PlaceString(&st, st.hl);
     // LD_A_addr(wd477);
     // AND_A(0xf0);
     // SWAP_A;

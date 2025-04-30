@@ -269,7 +269,7 @@ static bool RestartClock_SetClock(void) {
     };
     // LD_HL(mRestartClock_ClockIsThisOKText);
     // CALL(aPrintText);
-    PrintText_Conv2(ClockIsThisOKText);
+    PrintText(ClockIsThisOKText);
     // CALL(aYesNoBox);
     // IF_C goto cancel;
     if(!YesNoBox()) {
@@ -297,7 +297,7 @@ static bool RestartClock_SetClock(void) {
     };
     // LD_HL(mRestartClock_ClockHasResetText);
     // CALL(aPrintText);
-    PrintText_Conv2(ClockHasResetText);
+    PrintText(ClockHasResetText);
     // CALL(aWaitPressAorB_BlinkCursor);
     WaitPressAorB_BlinkCursor();
     // XOR_A_A;  // FALSE
@@ -314,7 +314,7 @@ uint8_t RestartClock(void){
 //  If we're here, we had an RTC overflow.
     // LD_HL(mRestartClock_ClockTimeMayBeWrongText);
     // CALL(aPrintText);
-    PrintText_Conv2(ClockTimeMayBeWrongText);
+    PrintText(ClockTimeMayBeWrongText);
     // LD_HL(wOptions);
     // LD_A_hl;
     // PUSH_AF;
@@ -332,7 +332,7 @@ uint8_t RestartClock(void){
     };
     // LD_HL(mRestartClock_ClockSetWithControlPadText);
     // CALL(aPrintText);
-    PrintText_Conv2(ClockSetWithControlPadText);
+    PrintText(ClockSetWithControlPadText);
     // CALL(aRestartClock_SetClock);
     bool cancel = RestartClock_SetClock();
     // CALL(aExitMenu);

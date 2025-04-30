@@ -111,7 +111,7 @@ void BattleTower_PleaseReturnWhenReady(void){
     };
     // LD_HL(mBattleTower_PleaseReturnWhenReady_BattleTowerReturnWhenReadyText);
     // CALL(aPrintText);
-    PrintText_Conv2(BattleTowerReturnWhenReadyText);
+    PrintText(BattleTowerReturnWhenReadyText);
     // RET;
 }
 
@@ -176,11 +176,11 @@ static void BattleTower_ExecuteJumptable_PrintFailureText(const struct BattleTow
     // AND_A_A;
     // CALL_Z (aBattleTower_ExecuteJumptable_PrintFirstText);
     if(*b == 0) {
-        PrintText_Conv2(table->error_text);
+        PrintText(table->error_text);
     }
     // POP_BC;
     // CALL(aBattleTower_ExecuteJumptable_PrintNthText);
-    PrintText_Conv2(table->table[c].text);
+    PrintText(table->table[c].text);
     // LD_B(1);
     *b = 1;
     // POP_DE;

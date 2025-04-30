@@ -220,7 +220,7 @@ void AnimateHallOfFame(void){
     // LD_addr_A(wMusicFade);
     wram->wMusicFade = 0x4;
     // CALL(aRotateThreePalettesRight);
-    RotateThreePalettesRight_Conv();
+    RotateThreePalettesRight();
     // LD_C(8);
     // CALL(aDelayFrames);
     DelayFrames(8);
@@ -403,7 +403,7 @@ void AnimateHOFMonEntrance(struct HOFMon* mon){
     ByteFill(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
     // hlcoord(6, 5, wTilemap);
     // CALL(av_PrepMonFrontpic);
-    v_PrepMonFrontpic_Conv(coord(6, 5, wram->wTilemap));
+    v_PrepMonFrontpic(coord(6, 5, wram->wTilemap));
     // CALL(aWaitBGMap);
     WaitBGMap();
     // XOR_A_A;
@@ -508,7 +508,7 @@ static bool v_HallOfFamePC_DisplayMonAndStrings(uint8_t counter){
         // LD_DE(wHallOfFameTempWinCount);
         // LD_BC((1 << 8) | 3);
         // CALL(aPrintNum);
-        PrintNum_Conv2(coord(2, 2, wram->wTilemap), &wram->wHallOfFameTemp.winCount, 1, 3);
+        PrintNum(coord(2, 2, wram->wTilemap), &wram->wHallOfFameTemp.winCount, 1, 3);
         // hlcoord(11, 2, wTilemap);
         hl = coord(11, 2, wram->wTilemap);
     }
@@ -703,7 +703,7 @@ void DisplayHOFMon(const struct HOFMon* mon){
     wram->wBoxAlignment = 0x0;
     // hlcoord(6, 5, wTilemap);
     // CALL(av_PrepMonFrontpic);
-    v_PrepMonFrontpic_Conv(coord(6, 5, wram->wTilemap));
+    v_PrepMonFrontpic(coord(6, 5, wram->wTilemap));
     // LD_A_addr(wCurPartySpecies);
     // CP_A(EGG);
     // IF_Z goto print_id_no;
@@ -718,7 +718,7 @@ void DisplayHOFMon(const struct HOFMon* mon){
         // LD_DE(wTextDecimalByte);
         // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 3);
         // CALL(aPrintNum);
-        PrintNum_Conv2(coord(3, 13, wram->wTilemap), &species, PRINTNUM_LEADINGZEROS | sizeof(species), 3);
+        PrintNum(coord(3, 13, wram->wTilemap), &species, PRINTNUM_LEADINGZEROS | sizeof(species), 3);
         // CALL(aGetBasePokemonName);
         // hlcoord(7, 13, wTilemap);
         // CALL(aPlaceString);
@@ -752,7 +752,7 @@ void DisplayHOFMon(const struct HOFMon* mon){
         PlaceStringSimple(wram->wStringBuffer2, coord(8, 15, wram->wTilemap));
         // hlcoord(1, 16, wTilemap);
         // CALL(aPrintLevel);
-        PrintLevel_Conv(coord(1, 16, wram->wTilemap), wram->wTempMon.mon.level);
+        PrintLevel(coord(1, 16, wram->wTilemap), wram->wTempMon.mon.level);
     }
 
 // print_id_no:
@@ -769,7 +769,7 @@ void DisplayHOFMon(const struct HOFMon* mon){
     // LD_DE(wTempMonID);
     // LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 5);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(10, 16, wram->wTilemap), &wram->wTempMon.mon.id, PRINTNUM_LEADINGZEROS | 2, 5);
+    PrintNum(coord(10, 16, wram->wTilemap), &wram->wTempMon.mon.id, PRINTNUM_LEADINGZEROS | 2, 5);
     // RET;
 }
 
@@ -873,7 +873,7 @@ void HOF_AnimatePlayerPic(void){
     // LD_DE(wPlayerID);
     // LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 5);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(4, 6, wram->wTilemap), &wram->wPlayerID, PRINTNUM_LEADINGZEROS | 2, 5);
+    PrintNum(coord(4, 6, wram->wTilemap), &wram->wPlayerID, PRINTNUM_LEADINGZEROS | 2, 5);
     // hlcoord(1, 8, wTilemap);
     // LD_DE(mHOF_AnimatePlayerPic_PlayTime);
     // CALL(aPlaceString);
@@ -882,14 +882,14 @@ void HOF_AnimatePlayerPic(void){
     // LD_DE(wGameTimeHours);
     // LD_BC((2 << 8) | 3);
     // CALL(aPrintNum);
-    uint8_t* hl = PrintNum_Conv2(coord(3, 9, wram->wTilemap), &wram->wGameTimeHours, 2, 3);
+    uint8_t* hl = PrintNum(coord(3, 9, wram->wTilemap), &wram->wGameTimeHours, 2, 3);
     // LD_hl(HALLOFFAME_COLON);
     // INC_HL;
     *(hl++) = HALLOFFAME_COLON;
     // LD_DE(wGameTimeMinutes);
     // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
     // CALL(aPrintNum);
-    PrintNum_Conv2(hl, &wram->wGameTimeMinutes, PRINTNUM_LEADINGZEROS | 1, 2);
+    PrintNum(hl, &wram->wGameTimeMinutes, PRINTNUM_LEADINGZEROS | 1, 2);
     // CALL(aWaitBGMap);
     WaitBGMap();
     // FARCALL(aProfOaksPCRating);

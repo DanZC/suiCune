@@ -143,10 +143,10 @@ static void BattleIntroSlidingPics_subfunction1(void) {
     hram->hSCX = 0x90;
     // LD_A(0b11100100);
     // CALL(aDmgToCgbBGPals);
-    DmgToCgbBGPals_Conv(0b11100100);
+    DmgToCgbBGPals(0b11100100);
     // LD_DE((0b11100100 << 8) | 0b11100100);
     // CALL(aDmgToCgbObjPals);
-    DmgToCgbObjPals_Conv(0b11100100, 0b11100100);
+    DmgToCgbObjPals(0b11100100, 0b11100100);
     // RET;
 }
 

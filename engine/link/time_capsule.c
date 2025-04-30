@@ -134,7 +134,7 @@ bool ValidateOTTrademon_Conv(uint8_t mon){
     // LD_addr_A(wCurSpecies);
     wram->wCurSpecies = a;
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(a);
+    GetBaseData(a);
     // LD_HL(wLinkOTPartyMonTypes);
     // ADD_HL_BC;
     // ADD_HL_BC;
@@ -292,7 +292,7 @@ void PlaceTradePartnerNamesAndParty(void){
     // LD_DE(wPlayerName);
     // CALL(aPlaceString);
     struct TextPrintState st = {.de = wram->wPlayerName, .hl = coord(4, 0, wram->wTilemap)};
-    PlaceString_Conv(&st, st.hl);
+    PlaceString(&st, st.hl);
     // LD_A(0x14);
     // LD_bc_A;
     *st.bc = 0x14;
@@ -301,7 +301,7 @@ void PlaceTradePartnerNamesAndParty(void){
     // LD_DE(wOTPlayerName);
     st.de = wram->wOTPlayerName;
     // CALL(aPlaceString);
-    PlaceString_Conv(&st, st.hl);
+    PlaceString(&st, st.hl);
     // LD_A(0x14);
     // LD_bc_A;
     *st.bc = 0x14;

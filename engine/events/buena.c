@@ -148,14 +148,14 @@ void BuenaPrize(void){
     Buena_DisplayBlueCardBalance();
     // LD_HL(mBuenaPrize_BuenaAskWhichPrizeText);
     // CALL(aPrintText);
-    PrintText_Conv2(BuenaAskWhichPrizeText);
+    PrintText(BuenaAskWhichPrizeText);
     goto okay; // TODO: Figure out a graceful way to remove this goto.
 
     while(1) {
     // loop:
         // LD_HL(mBuenaPrize_BuenaAskWhichPrizeText);
         // CALL(aBuenaPrintText);
-        BuenaPrintText_Conv2(BuenaAskWhichPrizeText);
+        BuenaPrintText(BuenaAskWhichPrizeText);
 
     okay:
         // CALL(aDelayFrame);
@@ -179,7 +179,7 @@ void BuenaPrize(void){
         GetItemName(prize->id);
         // LD_HL(mBuenaPrize_BuenaIsThatRightText);
         // CALL(aBuenaPrintText);
-        BuenaPrintText_Conv2(BuenaIsThatRightText);
+        BuenaPrintText(BuenaIsThatRightText);
         // CALL(aYesNoBox);
         // IF_C goto loop;
         if(!YesNoBox())
@@ -197,7 +197,7 @@ void BuenaPrize(void){
         // InsufficientBalance:
             // LD_HL(mBuenaPrize_BuenaNotEnoughPointsText);
             // goto print;
-            BuenaPrintText_Conv2(BuenaNotEnoughPointsText);
+            BuenaPrintText(BuenaNotEnoughPointsText);
             continue;
         }
 
@@ -214,7 +214,7 @@ void BuenaPrize(void){
         // BagFull:
             // LD_HL(mBuenaPrize_BuenaNoRoomText);
             // goto print;
-            BuenaPrintText_Conv2(BuenaNoRoomText);
+            BuenaPrintText(BuenaNoRoomText);
             continue;
         }
         // LD_A_hl;
@@ -235,7 +235,7 @@ void BuenaPrize(void){
 
     // print:
         // CALL(aBuenaPrintText);
-        BuenaPrintText_Conv2(BuenaHereYouGoText);
+        BuenaPrintText(BuenaHereYouGoText);
         // goto loop;
     }
 
@@ -246,7 +246,7 @@ void BuenaPrize(void){
     CloseWindow();
     // LD_HL(mBuenaPrize_BuenaComeAgainText);
     // CALL(aPrintText);
-    PrintText_Conv2(BuenaComeAgainText);
+    PrintText(BuenaComeAgainText);
     // CALL(aJoyWaitAorB);
     JoyWaitAorB();
     // CALL(aPlayClickSFX);
@@ -280,7 +280,7 @@ static void PrintBlueCardBalance_DrawBox(const uint8_t* de) {
     // LD_DE(mPrintBlueCardBalance_Points_string);
     struct TextPrintState st = {.de = U82C(Points_string), .hl = MenuBoxCoord2Tile() + SCREEN_WIDTH + 1};
     // CALL(aPlaceString);
-    PlaceString_Conv(&st, st.hl);
+    PlaceString(&st, st.hl);
     // LD_H_B;
     // LD_L_C;
     // INC_HL;
@@ -293,7 +293,7 @@ static void PrintBlueCardBalance_DrawBox(const uint8_t* de) {
     // POP_DE;
     // LD_BC((1 << 8) | 2);
     // CALL(aPrintNum);
-    PrintNum_Conv2(st.hl, de, 1, 2);
+    PrintNum(st.hl, de, 1, 2);
     // RET;
 }
 

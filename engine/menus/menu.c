@@ -910,7 +910,7 @@ bool Menu_WasButtonPressed_Conv(void){
     if(bit_test(wram->w2DMenuFlags1, 6)) {
         bank_push(BANK(aPlaySpriteAnimationsAndDelayFrame));
         // CALLFAR(aPlaySpriteAnimationsAndDelayFrame);
-        PlaySpriteAnimationsAndDelayFrame_Conv();
+        PlaySpriteAnimationsAndDelayFrame();
         bank_pop;
     }
 
@@ -1797,8 +1797,8 @@ void Error_Cant_ExitMenu_Conv(void){
     };
     // LD_HL(mError_Cant_ExitMenu_WindowPoppingErrorText);
     // CALL(aPrintText);
-    PrintText_Conv2(WindowPoppingErrorText);
-    // PrintText_Conv(WindowPoppingErrorText);
+    PrintText(WindowPoppingErrorText);
+    // PrintText_GB(WindowPoppingErrorText);
     // CALL(aWaitBGMap);
     WaitBGMap();
 

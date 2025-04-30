@@ -35,7 +35,7 @@ static void DoBattleTransition_InitGFX(void) {
     }
     else {
         // FARCALL(aReanchorBGMap_NoOAMUpdate);
-        ReanchorBGMap_NoOAMUpdate_Conv();
+        ReanchorBGMap_NoOAMUpdate();
         // CALL(aUpdateSprites);
         UpdateSprites();
         // CALL(aDelayFrame);
@@ -43,7 +43,7 @@ static void DoBattleTransition_InitGFX(void) {
         // CALL(aDoBattleTransition_NonMobile_LoadPokeballTiles);
         LoadTrainerBattlePokeballTiles_Conv();
         // CALL(aBattleStart_CopyTilemapAtOnce);
-        CopyTilemapAtOnce_Conv();
+        CopyTilemapAtOnce();
         // goto resume;
     }
 // resume:
@@ -131,7 +131,7 @@ void DoBattleTransition(void){
     // LD_addr_A(wBGP);
     wram->wBGP = 0b11111111;
     // CALL(aDmgToCgbBGPals);
-    DmgToCgbBGPals_Conv(0b11111111);
+    DmgToCgbBGPals(0b11111111);
     // CALL(aDelayFrame);
     DelayFrame();
     // XOR_A_A;
@@ -462,7 +462,7 @@ static bool StartTrainerBattle_Flash_DoFlashAnimation(void) {
         // LD_addr_A(wBGP);
         wram->wBGP = a;
         // CALL(aDmgToCgbBGPals);
-        DmgToCgbBGPals_Conv(a);
+        DmgToCgbBGPals(a);
         // AND_A_A;
         // RET;
         return false;
@@ -1103,7 +1103,7 @@ void StartTrainerBattle_LoadPokeBallGraphics(void){
         // CALL(aDelayFrame);
         DelayFrame();
         // CALL(aBattleStart_CopyTilemapAtOnce);
-        CopyTilemapAtOnce_Conv();
+        CopyTilemapAtOnce();
     }
 
 

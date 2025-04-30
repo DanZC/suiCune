@@ -68,7 +68,7 @@ static const txt_cmd_s MagikarpGuruMeasureText[] = {
     StubbedTrainerRankings_MagikarpLength();
     // LD_HL(mCheckMagikarpLength_MagikarpGuruMeasureText);
     // CALL(aPrintText);
-    PrintText_Conv2(MagikarpGuruMeasureText);
+    PrintText(MagikarpGuruMeasureText);
 
 // Did we beat the record?
     // LD_HL(wMagikarpLength);
@@ -129,14 +129,14 @@ void PrintMagikarpLength(void){
     // LD_DE(wMagikarpLength);
     // LD_BC((PRINTNUM_LEFTALIGN | 1 << 8) | 2);
     // CALL(aPrintNum);
-    uint8_t* hl = PrintNum_Conv2(wram->wStringBuffer1, &e, PRINTNUM_LEFTALIGN | 1, 2);
+    uint8_t* hl = PrintNum(wram->wStringBuffer1, &e, PRINTNUM_LEFTALIGN | 1, 2);
     // LD_hl(0x6e);
     // INC_HL;
     *(hl++) = CHAR_FEET;
     // LD_DE(wMagikarpLength + 1);
     // LD_BC((PRINTNUM_LEFTALIGN | 1 << 8) | 2);
     // CALL(aPrintNum);
-    hl = PrintNum_Conv2(hl, &d, PRINTNUM_LEFTALIGN | 1, 2);
+    hl = PrintNum(hl, &d, PRINTNUM_LEFTALIGN | 1, 2);
     // LD_hl(0x6f);
     // INC_HL;
     *(hl++) = CHAR_INCHES;
@@ -606,7 +606,7 @@ void MagikarpHouseSign(void){
     PrintMagikarpLength();
     // LD_HL(mMagikarpHouseSign_KarpGuruRecordText);
     // CALL(aPrintText);
-    PrintText_Conv2((struct TextCmd[]) {
+    PrintText((struct TextCmd[]) {
     // KarpGuruRecordText:
         text_far(v_KarpGuruRecordText)
         text_end

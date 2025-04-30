@@ -132,8 +132,8 @@ void init_function_pointers(void) {
     // REDIRECTED(IncGradGBPalTable_01);
     // REDIRECTED(IncGradGBPalTable_10);
     // REDIRECTED(IncGradGBPalTable_15);
-    REDIRECTED(RotatePalettesLeft);
-    REDIRECTED(RotatePalettesRight);
+    // CONVERTED(RotatePalettesLeft);
+    // CONVERTED(RotatePalettesRight);
     // REDIRECTED(IncGradGBPalTable_13);
     REDIRECTED(RotateFourPalettesLeft);
     // REDIRECTED(IncGradGBPalTable_00);
@@ -384,12 +384,12 @@ void init_function_pointers(void) {
     // CONVERTED(ClearVBank1);
     // REDIRECTED(DmgToCgbObjPal0);
     // CONVERTED(UpdateCGBPals);
-    REDIRECTED(DmgToCgbBGPals);
-    REDIRECTED(DmgToCgbObjPals);
+    // CONVERTED(DmgToCgbBGPals);
+    // CONVERTED(DmgToCgbObjPals);
     // CONVERTED(CopyPals);
     // CONVERTED(SwapTextboxPalettes);
     // CONVERTED(ScrollBGMapPalettes);
-    REDIRECTED(ForceUpdateCGBPals);
+    // CONVERTED(ForceUpdateCGBPals);
     // REDIRECTED(DmgToCgbObjPal1);
     CONVERTED(ReloadSpritesNoPalettes);
     CONVERTED(GSReloadPalettes);
@@ -428,19 +428,19 @@ void init_function_pointers(void) {
     REDIRECTED(Predef_Return);
 
     // home/print_bcd.c
-    REDIRECTED(PrintBCDNumber);
-    REDIRECTED(PrintBCDDigit);
+    // CONVERTED(PrintBCDNumber);
+    // CONVERTED(PrintBCDDigit);
 
     // home/printer.c
     // REDIRECTED(PrinterReceive);
     // REDIRECTED(AskSerial);
 
     // home/print_text.c
-    REDIRECTED(CopyDataUntil);
-    REDIRECTED(PrintNum);
-    REDIRECTED(FarPrintText);
+    // CONVERTED(CopyDataUntil);
+    // CONVERTED(PrintNum);
+    // CONVERTED(FarPrintText);
     // CONVERTED(MobilePrintNum);
-    REDIRECTED(PrintLetterDelay);
+    // CONVERTED(PrintLetterDelay);
     REDIRECTED(CallPointerAt);
 
     // home/queue_script.c
@@ -503,25 +503,25 @@ void init_function_pointers(void) {
     // REDIRECTED(PlaceWatashiText);
     // REDIRECTED(String_Space);
     // REDIRECTED(PlaceNextChar);
-    REDIRECTED(TextCommand_RAM);
-    REDIRECTED(TextCommand_STRINGBUFFER);
+    // CONVERTED(TextCommand_RAM);
+    // CONVERTED(TextCommand_STRINGBUFFER);
     // REDIRECTED(TextboxPalette);
     // REDIRECTED(v_ContText);
     // REDIRECTED(CheckDict);  // Manualy convert?
     // REDIRECTED(PCChar);
     // REDIRECTED(PlaceString);
     // REDIRECTED(LineFeedChar);
-    REDIRECTED(TextCommand_SOUND);
+    // CONVERTED(TextCommand_SOUND);
     // REDIRECTED(Paragraph);
     // REDIRECTED(PokeFluteTerminator);
     // REDIRECTED(Diacritic);
     // REDIRECTED(PlaceMoveTargetsName);
     // REDIRECTED(TMCharText);
-    REDIRECTED(TextCommand_START);
+    // CONVERTED(TextCommand_START);
     // REDIRECTED(PlaceKokoWaText);
     // REDIRECTED(PlacePOKe);
     // REDIRECTED(LineChar);
-    REDIRECTED(TextCommand_FAR);
+    // CONVERTED(TextCommand_FAR);
     // REDIRECTED(TrainerCharText);
     // REDIRECTED(KougekiText);
     // REDIRECTED(PlacePOKEText);
@@ -532,12 +532,12 @@ void init_function_pointers(void) {
     // REDIRECTED(PlaceJPRoute);
     // REDIRECTED(RocketCharText);
     // REDIRECTED(MobileScriptChar);
-    REDIRECTED(TextCommand_SCROLL);
+    // CONVERTED(TextCommand_SCROLL);
     // REDIRECTED(PlaceBattlersName);
     // REDIRECTED(TextSFX);
     // REDIRECTED(NextLineChar);
     // REDIRECTED(TextboxBorder);
-    REDIRECTED(TextCommand_PROMPT_BUTTON);
+    // CONVERTED(TextCommand_PROMPT_BUTTON);
     // REDIRECTED(v_ContTextNoPause);
     // REDIRECTED(CarriageReturnChar);
     CONVERTED(UnloadBlinkingCursor);
@@ -547,47 +547,47 @@ void init_function_pointers(void) {
     // REDIRECTED(PlacePOKeText);
     // CONVERTED(FillBoxWithByte);
     // REDIRECTED(GameFreakText);
-    REDIRECTED(TextCommand_DOTS);
+    // CONVERTED(TextCommand_DOTS);
     // REDIRECTED(NullChar);
     // REDIRECTED(PlaceDexEnd);
-    REDIRECTED(TextCommand_MOVE);
+    // CONVERTED(TextCommand_MOVE);
     // REDIRECTED(PrintText);
     // REDIRECTED(Textbox);
     // REDIRECTED(SixDotsChar);
     // REDIRECTED(PlaceKokoWa);
     // REDIRECTED(PlaceCommandCharacter);
-    REDIRECTED(TextCommand_BCD);
-    REDIRECTED(TextCommand_LOW);
-    REDIRECTED(TextCommand_WAIT_BUTTON);
+    // CONVERTED(TextCommand_BCD);
+    // CONVERTED(TextCommand_LOW);
+    // CONVERTED(TextCommand_WAIT_BUTTON);
     // REDIRECTED(SpeechTextbox);
     // REDIRECTED(BuenaPrintText);
     // REDIRECTED(PlaceKougeki);
     // REDIRECTED(SixDotsCharText);
     CONVERTED(LoadBlinkingCursor);
-    REDIRECTED(DoTextUntilTerminator);
-    REDIRECTED(DoTextUntilTerminator_TextCommand);
+    // CONVERTED(DoTextUntilTerminator);
+    // CONVERTED(DoTextUntilTerminator_TextCommand);
     // REDIRECTED(ContText);
     // REDIRECTED(PrintPlayerName);
     // REDIRECTED(DummyChar);
     // REDIRECTED(RocketChar);
-    REDIRECTED(TextCommand_START_ASM);
+    // CONVERTED(TextCommand_START_ASM);
     // REDIRECTED(PrintRivalName);
     // REDIRECTED(PlaceFarString);
     // REDIRECTED(ClearScreen);
-    REDIRECTED(PlaceHLTextAtBC);
+    // CONVERTED(PlaceHLTextAtBC);
     // REDIRECTED(PlaceMoveUsersName);
     // REDIRECTED(PCCharText);
     // CONVERTED(ClearBox);
     // REDIRECTED(PrintRedsName);
     // REDIRECTED(EnemyText);
-    REDIRECTED(TextCommand_DECIMAL);
+    // CONVERTED(TextCommand_DECIMAL);
     // REDIRECTED(PrintGreensName);
-    REDIRECTED(TextCommand_CRY);
+    // CONVERTED(TextCommand_CRY);
     // REDIRECTED(RadioTerminator);
-    REDIRECTED(TextCommand_PAUSE);
+    // CONVERTED(TextCommand_PAUSE);
     // REDIRECTED(TrainerChar);
     // REDIRECTED(TextScroll);
-    REDIRECTED(TextCommand_DAY);
+    // CONVERTED(TextCommand_DAY);
     // REDIRECTED(PromptText);
     // REDIRECTED(PlaceEnemysName);
     // REDIRECTED(DoneText);
@@ -595,7 +595,7 @@ void init_function_pointers(void) {
     // REDIRECTED(TextCommands);
     // REDIRECTED(SetUpTextbox);
     // REDIRECTED(KunSuffixText);
-    REDIRECTED(TextCommand_BOX);
+    // CONVERTED(TextCommand_BOX);
     // CONVERTED(ClearTilemap);
     // REDIRECTED(PlacePOKE);
     // REDIRECTED(PlacePKMN);
@@ -667,17 +667,17 @@ void init_function_pointers(void) {
 
     // home/tilemap.c
     // CONVERTED(IsCGB);
-    REDIRECTED(SetHPPal);
+    // CONVERTED(SetHPPal);
     CONVERTED(WaitBGMap);
     REDIRECTED(CGBOnly_CopyTilemapAtOnce);
     REDIRECTED(v_CopyTilemapAtOnce);
-    REDIRECTED(v_CopyTilemapAtOnce_CopyBGMapViaStack);
+    // CONVERTED(v_CopyTilemapAtOnce_CopyBGMapViaStack);
     REDIRECTED(SetPalettes);
     CONVERTED(ClearBGPalettes);
     REDIRECTED(CopyTilemapAtOnce);
     REDIRECTED(CopyAttrmapAndTilemapToWRAMBank3);
     REDIRECTED(GetMemSGBLayout);
-    REDIRECTED(GetHPPal);
+    // CONVERTED(GetHPPal);
     // CONVERTED(GetSGBLayout);
     REDIRECTED(ApplyTilemap);
     REDIRECTED(WaitBGMap2);
@@ -2098,27 +2098,27 @@ void init_function_pointers(void) {
     // REDIRECTED(ClearSpriteAnims);
     // REDIRECTED(PlaySpriteAnimationsAndDelayFrame);
     // REDIRECTED(DoNextFrameForFirst16Sprites);
-    REDIRECTED(GetSpriteAnimFrame);
+    // CONVERTED(GetSpriteAnimFrame);
     // REDIRECTED(InitSpriteAnimBuffer);
     // REDIRECTED(AnimateEndOfExpBar);
     // CONVERTED(Sprites_Sine);
-    REDIRECTED(UpdateAnimFrame);
-    REDIRECTED(AddOrSubtractX);
+    // CONVERTED(UpdateAnimFrame);
+    // CONVERTED(AddOrSubtractX);
     // CONVERTED(Sprites_Cosine);
     // REDIRECTED(DeinitializeAllSprites);
     // REDIRECTED(v_ReinitSpriteAnimFrame);
     // REDIRECTED(v_InitSpriteAnimStruct);
     REDIRECTED(PlaySpriteAnimations);
-    REDIRECTED(GetSpriteOAMAttr);
+    // CONVERTED(GetSpriteOAMAttr);
     REDIRECTED(DoNextFrameForAllSprites);
-    REDIRECTED(GetSpriteAnimVTile);
-    REDIRECTED(GetFrameOAMPointer);
+    // CONVERTED(GetSpriteAnimVTile);
+    // CONVERTED(GetFrameOAMPointer);
     // REDIRECTED(SGBEndOfExpBarGFX);
     // REDIRECTED(ClearSpriteAnims2);
     // REDIRECTED(UnusedLoadSpriteAnimGFX);
     // REDIRECTED(EndOfExpBarGFX);
-    REDIRECTED(DeinitializeSprite);
-    REDIRECTED(AddOrSubtractY);
+    // CONVERTED(DeinitializeSprite);
+    // CONVERTED(AddOrSubtractY);
 
     // engine/gfx/sprite_anims.c
     // REDIRECTED(AnimSeq_PartyMonSwitch);
@@ -2159,7 +2159,7 @@ void init_function_pointers(void) {
     // REDIRECTED(AnimSeq_RevealNewMon);
     // REDIRECTED(AnimSeq_IntroSuicune);
     // REDIRECTED(AnimSeq_Null);
-    REDIRECTED(DoAnimFrame);
+    // CONVERTED(DoAnimFrame);
     // REDIRECTED(AnimSeq_PartyMonSelected);
 
     // engine/gfx/player_gfx.c

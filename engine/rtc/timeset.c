@@ -68,7 +68,7 @@ void InitClock(void){
     // CALL(aDelayFrames);
     DelayFrames(8);
     // CALL(aRotateFourPalettesLeft);
-    RotateFourPalettesLeft_Conv();
+    RotateFourPalettesLeft();
     // CALL(aClearTilemap);
     ClearTilemap();
     // CALL(aClearSprites);
@@ -101,10 +101,10 @@ void InitClock(void){
     // CALL(aWaitBGMap);
     WaitBGMap();
     // CALL(aRotateFourPalettesRight);
-    RotateFourPalettesRight_Conv();
+    RotateFourPalettesRight();
     // LD_HL(mOakTimeWokeUpText);
     // CALL(aPrintText);
-    PrintText_Conv2(OakTimeWokeUpText);
+    PrintText(OakTimeWokeUpText);
     // LD_HL(wTimeSetBuffer);
     // LD_BC(wTimeSetBufferEnd - wTimeSetBuffer);
     // XOR_A_A;
@@ -118,7 +118,7 @@ void InitClock(void){
     // loop:
         // LD_HL(mOakTimeWhatTimeIsItText);
         // CALL(aPrintText);
-        PrintText_Conv2(OakTimeWhatTimeIsItText);
+        PrintText(OakTimeWhatTimeIsItText);
         // hlcoord(3, 7, wTilemap);
         // LD_B(2);
         // LD_C(15);
@@ -151,7 +151,7 @@ void InitClock(void){
         InitClock_ClearScreen();
         // LD_HL(mOakTimeWhatHoursText);
         // CALL(aPrintText);
-        PrintText_Conv2(OakTimeWhatHoursText);
+        PrintText(OakTimeWhatHoursText);
         // CALL(aYesNoBox);
         // IF_NC goto HourIsSet;
         if(YesNoBox())
@@ -167,7 +167,7 @@ void InitClock(void){
     // HourIsSet:
         // LD_HL(mOakTimeHowManyMinutesText);
         // CALL(aPrintText);
-        PrintText_Conv2(OakTimeHowManyMinutesText);
+        PrintText(OakTimeHowManyMinutesText);
         // hlcoord(11, 7, wTilemap);
         // LD_BC((2 << 8) | 7);
         // CALL(aTextbox);
@@ -199,7 +199,7 @@ void InitClock(void){
         InitClock_ClearScreen();
         // LD_HL(mOakTimeWhoaMinutesText);
         // CALL(aPrintText);
-        PrintText_Conv2(OakTimeWhoaMinutesText);
+        PrintText(OakTimeWhoaMinutesText);
         // CALL(aYesNoBox);
         // IF_NC goto MinutesAreSet;
         if(YesNoBox())
@@ -215,7 +215,7 @@ void InitClock(void){
     InitTimeOfDay(wram->wInitHourBuffer, wram->wInitMinuteBuffer);
     // LD_HL(mOakText_ResponseToSetTime);
     // CALL(aPrintText);
-    PrintText_Conv2(OakText_ResponseToSetTime);
+    PrintText(OakText_ResponseToSetTime);
     // CALL(aWaitPressAorB_BlinkCursor);
     WaitPressAorB_BlinkCursor();
     // POP_AF;
@@ -389,7 +389,7 @@ uint8_t* DisplayHourOClock_Conv(uint8_t* hl){
     // LD_DE(mString_oclock);
     // CALL(aPlaceString);
     struct TextPrintState st = {.de = U82C(String_oclock), .hl = hl + 1};
-    PlaceString_Conv(&st, st.hl);
+    PlaceString(&st, st.hl);
     // POP_HL;
     // RET;
     return st.bc;
@@ -575,7 +575,7 @@ uint8_t* DisplayMinutesWithMinString_Conv(uint8_t* hl){
     // LD_DE(mString_min);
     // CALL(aPlaceString);
     struct TextPrintState st = {.hl = hl + 1, .de = U82C(String_min)};
-    PlaceString_Conv(&st, st.hl);
+    PlaceString(&st, st.hl);
     // RET;
     return st.bc;
 }
@@ -603,7 +603,7 @@ uint8_t* PrintTwoDigitNumberLeftAlign_Conv(uint8_t* hl, uint8_t* de){
     // LD_BC((PRINTNUM_LEFTALIGN | 1 << 8) | 2);
     // CALL(aPrintNum);
     // RET;
-    return PrintNum_Conv2(hl, de, PRINTNUM_LEFTALIGN | 1, 2);
+    return PrintNum(hl, de, PRINTNUM_LEFTALIGN | 1, 2);
 }
 
 const txt_cmd_s OakTimeWokeUpText[] = {
@@ -695,7 +695,7 @@ static void OakText_ResponseToSetTime_Function(struct TextCmdState* state){
     // CALL(aPrintNum);
     // LD_B_H;
     // LD_C_L;
-    state->bc = PrintNum_Conv2(hl + 1, &wram->wInitMinuteBuffer, PRINTNUM_LEADINGZEROS | 1, 2);
+    state->bc = PrintNum(hl + 1, &wram->wInitMinuteBuffer, PRINTNUM_LEADINGZEROS | 1, 2);
     // LD_A_addr(wInitHourBuffer);
     // CP_A(MORN_HOUR);
     // IF_C goto nite;
@@ -759,7 +759,7 @@ static uint8_t* SetDayOfWeek_PlaceWeekdayString(uint8_t* hl) {
     // POP_HL;
     // CALL(aPlaceString);
     struct TextPrintState st = {.hl = hl, .de = U82CA(buf, de)};
-    PlaceString_Conv(&st, st.hl);
+    PlaceString(&st, st.hl);
     // RET;
     return st.bc;
 }
@@ -897,7 +897,7 @@ void SetDayOfWeek(void){
         LoadStandardMenuHeader();
         // LD_HL(mSetDayOfWeek_OakTimeWhatDayIsItText);
         // CALL(aPrintText);
-        PrintText_Conv2(OakTimeWhatDayIsItText);
+        PrintText(OakTimeWhatDayIsItText);
         // hlcoord(9, 3, wTilemap);
         // LD_B(2);
         // LD_C(9);
@@ -931,7 +931,7 @@ void SetDayOfWeek(void){
         UpdateSprites();
         // LD_HL(mSetDayOfWeek_ConfirmWeekdayText);
         // CALL(aPrintText);
-        PrintText_Conv2(ConfirmWeekdayText);
+        PrintText(ConfirmWeekdayText);
         // CALL(aYesNoBox);
         // IF_C goto loop;
     } while(!YesNoBox());
@@ -977,7 +977,7 @@ void InitialSetDSTFlag(void){
     ClearBox(coord(1, 14, wram->wTilemap), 18, 3);
     // LD_HL(mInitialSetDSTFlag_Text);
     // CALL(aPlaceHLTextAtBC);
-    PlaceHLTextAtBC_Conv2(coord(1, 14, wram->wTilemap), (struct TextCmd[]){ text_asm(InitialSetDSTFlag_Text) });
+    PlaceHLTextAtBC(coord(1, 14, wram->wTilemap), (struct TextCmd[]){ text_asm(InitialSetDSTFlag_Text) });
     // RET;
 
 //Text:
@@ -1015,7 +1015,7 @@ void InitialClearDSTFlag(void){
     ClearBox(coord(1, 14, wram->wTilemap), 18, 3);
     // LD_HL(mInitialClearDSTFlag_Text);
     // CALL(aPlaceHLTextAtBC);
-    PlaceHLTextAtBC_Conv2(coord(1, 14, wram->wTilemap), (struct TextCmd[]){ text_asm(InitialClearDSTFlag_Text) });
+    PlaceHLTextAtBC(coord(1, 14, wram->wTilemap), (struct TextCmd[]){ text_asm(InitialClearDSTFlag_Text) });
     // RET;
 
 
@@ -1026,7 +1026,7 @@ void InitialClearDSTFlag(void){
 static tile_t* MrChrono_PrintTime(tile_t* hl, uint8_t* de) {
     // LD_BC((1 << 8) | 3);
     // CALL(aPrintNum);
-    hl = PrintNum_Conv2(hl, de, 1, 3);
+    hl = PrintNum(hl, de, 1, 3);
     // LD_hl(0xe8);
     *hl = CHAR_PERIOD;
     // INC_HL;
@@ -1035,7 +1035,7 @@ static tile_t* MrChrono_PrintTime(tile_t* hl, uint8_t* de) {
     de++;
     // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
     // CALL(aPrintNum);
-    hl = PrintNum_Conv2(hl, de, PRINTNUM_LEADINGZEROS | 1, 2);
+    hl = PrintNum(hl, de, PRINTNUM_LEADINGZEROS | 1, 2);
     // LD_hl(0x9c);
     *hl = CHAR_COLON2;
     // INC_HL;
@@ -1044,7 +1044,7 @@ static tile_t* MrChrono_PrintTime(tile_t* hl, uint8_t* de) {
     de++;
     // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
     // CALL(aPrintNum);
-    hl = PrintNum_Conv2(hl, de, PRINTNUM_LEADINGZEROS | 1, 2);
+    hl = PrintNum(hl, de, PRINTNUM_LEADINGZEROS | 1, 2);
     // RET;
     return hl;
 }
@@ -1135,7 +1135,7 @@ void MrChrono(void){
     ClearBox(coord(1, 14, wram->wTilemap), (SCREEN_WIDTH - 2), 3);
     // LD_HL(mMrChrono_Text);
     // CALL(aPlaceHLTextAtBC);
-    PlaceHLTextAtBC_Conv2(coord(1, 14, wram->wTilemap), (struct TextCmd[]){ text_asm(MrChrono_Text) });
+    PlaceHLTextAtBC(coord(1, 14, wram->wTilemap), (struct TextCmd[]){ text_asm(MrChrono_Text) });
     // RET;
 }
 
@@ -1165,7 +1165,7 @@ uint8_t* PrintHour_Conv(uint8_t* de, uint8_t c){
     const char* s = GetTimeOfDayString_Conv(c);
     // CALL(aPlaceString);
     struct TextPrintState st = {.hl = de, .de = U82C(s)};
-    PlaceString_Conv(&st, st.hl);
+    PlaceString(&st, st.hl);
     // LD_L_C;
     // LD_H_B;
     // INC_HL;

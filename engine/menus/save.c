@@ -432,7 +432,7 @@ void SavedTheGame(void){
 // <PLAYER> saved the game!
     // LD_HL(mSavedTheGameText);
     // CALL(aPrintText);
-    PrintText_Conv2(SavedTheGameText);
+    PrintText(SavedTheGameText);
 // restore the original text speed setting
     // POP_AF;
     // LD_addr_A(wOptions);
@@ -579,7 +579,7 @@ void SavingDontTurnOffThePower(void){
 // SAVING... DON'T TURN OFF THE POWER.
     // LD_HL(mSavingDontTurnOffThePowerText);
     // CALL(aPrintText);
-    // PrintText_Conv2(SavingDontTurnOffThePowerText);
+    // PrintText(SavingDontTurnOffThePowerText);
 // Restore the text speed setting
     // POP_AF;
     // LD_addr_A(wOptions);
@@ -990,7 +990,7 @@ bool TryLoadSaveFile(void){
     bit_set(wram->wOptions, NO_TEXT_SCROLL);
     // LD_HL(mSaveFileCorruptedText);
     // CALL(aPrintText);
-    PrintText_Conv2(SaveFileCorruptedText);
+    PrintText(SaveFileCorruptedText);
     // POP_AF;
     // LD_addr_A(wOptions);
     wram->wOptions = options;

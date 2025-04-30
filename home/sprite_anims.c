@@ -2,25 +2,7 @@
 #include "sprite_anims.h"
 #include "../engine/gfx/sprites.h"
 
-void InitSpriteAnimStruct(void){
-        LD_addr_A(wSpriteAnimID);
-    LDH_A_addr(hROMBank);
-    PUSH_AF;
-
-    LD_A(BANK(av_InitSpriteAnimStruct));
-    RST(aBankswitch);
-    LD_A_addr(wSpriteAnimID);
-
-    CALL(av_InitSpriteAnimStruct);
-
-    POP_AF;
-    RST(aBankswitch);
-
-    RET;
-
-}
-
-struct SpriteAnim* InitSpriteAnimStruct_Conv(uint8_t a, uint16_t de){
+struct SpriteAnim* InitSpriteAnimStruct(uint8_t a, uint16_t de){
     // LD_addr_A(wSpriteAnimID);
     wram->wSpriteAnimID = a;
     // LDH_A_addr(hROMBank);
@@ -31,7 +13,7 @@ struct SpriteAnim* InitSpriteAnimStruct_Conv(uint8_t a, uint16_t de){
     // LD_A_addr(wSpriteAnimID);
 
     // CALL(av_InitSpriteAnimStruct);
-    struct SpriteAnim* bc = v_InitSpriteAnimStruct_Conv(a, de);
+    struct SpriteAnim* bc = v_InitSpriteAnimStruct(a, de);
 
     // POP_AF;
     // RST(aBankswitch);
@@ -40,25 +22,7 @@ struct SpriteAnim* InitSpriteAnimStruct_Conv(uint8_t a, uint16_t de){
     return bc;
 }
 
-void ReinitSpriteAnimFrame(void){
-        LD_addr_A(wSpriteAnimID);
-    LDH_A_addr(hROMBank);
-    PUSH_AF;
-
-    LD_A(BANK(av_ReinitSpriteAnimFrame));
-    RST(aBankswitch);
-    LD_A_addr(wSpriteAnimID);
-
-    CALL(av_ReinitSpriteAnimFrame);
-
-    POP_AF;
-    RST(aBankswitch);
-
-    RET;
-
-}
-
-void ReinitSpriteAnimFrame_Conv(struct SpriteAnim* bc, uint8_t a){
+void ReinitSpriteAnimFrame(struct SpriteAnim* bc, uint8_t a){
     // LD_addr_A(wSpriteAnimID);
     wram->wSpriteAnimID = a;
     // LDH_A_addr(hROMBank);
@@ -69,7 +33,7 @@ void ReinitSpriteAnimFrame_Conv(struct SpriteAnim* bc, uint8_t a){
     // LD_A_addr(wSpriteAnimID);
 
     // CALL(av_ReinitSpriteAnimFrame);
-    v_ReinitSpriteAnimFrame_Conv(bc, a);
+    v_ReinitSpriteAnimFrame(bc, a);
 
     // POP_AF;
     // RST(aBankswitch);

@@ -38,7 +38,7 @@ void Pokepic(void){
     // LD_addr_A(wCurSpecies);
     wram->wCurSpecies = wram->wCurPartySpecies;
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(wram->wCurPartySpecies);
+    GetBaseData(wram->wCurPartySpecies);
     // LD_DE(vTiles1);
     // PREDEF(pGetMonFrontpic);
     GetMonFrontpic_Conv(vram->vTiles1);

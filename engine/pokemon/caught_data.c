@@ -27,7 +27,7 @@ void CheckPartyFullAfterContest(void){
     // LD_addr_A(wCurPartySpecies);
     // LD_addr_A(wCurSpecies);
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(wram->wContestMon.mon.species);
+    GetBaseData(wram->wContestMon.mon.species);
     // LD_HL(wPartyCount);
     // LD_A_hl;
     // CP_A(PARTY_LENGTH);
@@ -221,7 +221,7 @@ void CheckPartyFullAfterContest(void){
 bool GiveANickname_YesNo(void){
     // LD_HL(mCaughtAskNicknameText);
     // CALL(aPrintText);
-    PrintText_Conv2(CaughtAskNicknameText);
+    PrintText(CaughtAskNicknameText);
     // JP(mYesNoBox);
     return YesNoBox();
 }

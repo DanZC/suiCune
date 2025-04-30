@@ -16,12 +16,12 @@ static bool CheckForLuckyNumberWinners_CompareLuckyNumberToMonID(struct BoxMon* 
     // LD_HL(wMonIDDigitsBuffer);
     // LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 5);
     // CALL(aPrintNum);
-    PrintNum_Conv2(wram->wMonIDDigitsBuffer, &mon->id, PRINTNUM_LEADINGZEROS | 2, 5);
+    PrintNum(wram->wMonIDDigitsBuffer, &mon->id, PRINTNUM_LEADINGZEROS | 2, 5);
     // LD_HL(wLuckyNumberDigitsBuffer);
     // LD_DE(wLuckyIDNumber);
     // LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 5);
     // CALL(aPrintNum);
-    PrintNum_Conv2(wram->wLuckyNumberDigitsBuffer, &wram->wLuckyIDNumber, PRINTNUM_LEADINGZEROS | 2, 5);
+    PrintNum(wram->wLuckyNumberDigitsBuffer, &wram->wLuckyIDNumber, PRINTNUM_LEADINGZEROS | 2, 5);
     // LD_B(5);
     uint8_t b = 5;
     // LD_C(0);
@@ -308,14 +308,14 @@ void CheckForLuckyNumberWinners(void){
     // POP_AF;
     // IF_Z goto print;
     if(wram->wTempByteValue == 0) {
-        PrintText_Conv2(LuckyNumberMatchPartyText);
+        PrintText(LuckyNumberMatchPartyText);
     }
     else {
         // LD_HL(mCheckForLuckyNumberWinners_LuckyNumberMatchPCText);
 
     // print:
         // JP(mPrintText);
-        PrintText_Conv2(LuckyNumberMatchPCText);
+        PrintText(LuckyNumberMatchPCText);
     }
 }
 
@@ -324,7 +324,7 @@ void PrintTodaysLuckyNumber(void){
     // LD_DE(wLuckyIDNumber);
     // LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 5);
     // CALL(aPrintNum);
-    PrintNum_Conv2(wram->wStringBuffer3, &wram->wLuckyIDNumber, PRINTNUM_LEADINGZEROS | 2, 5);
+    PrintNum(wram->wStringBuffer3, &wram->wLuckyIDNumber, PRINTNUM_LEADINGZEROS | 2, 5);
     // LD_A(0x50);
     // LD_addr_A(wStringBuffer3 + 5);
     wram->wStringBuffer3[5] = 0x50;

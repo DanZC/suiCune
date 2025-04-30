@@ -285,7 +285,7 @@ void GetMysteryGiftItem(void){
     GetItemName(wram->wCurItem);
     // LD_HL(mGetMysteryGiftItem_ReceiveItemText);
     // CALL(aPrintText);
-    PrintText_Conv2(ReceiveItemText);
+    PrintText(ReceiveItemText);
     // LD_A(TRUE);
     // LD_addr_A(wScriptVar);
     wram->wScriptVar = TRUE;
@@ -392,7 +392,7 @@ bool CheckCoinsAndCoinCase(void){
         // goto print;
     // print:
         // CALL(aPrintText);
-        PrintText_Conv2(NoCoinsText);
+        PrintText(NoCoinsText);
         // SCF;
         // RET;
         return false;
@@ -407,7 +407,7 @@ bool CheckCoinsAndCoinCase(void){
         // LD_HL(mCheckCoinsAndCoinCase_NoCoinCaseText);
     // print:
         // CALL(aPrintText);
-        PrintText_Conv2(NoCoinCaseText);
+        PrintText(NoCoinCaseText);
         // SCF;
         // RET;
         return false;
@@ -583,7 +583,7 @@ void SnorlaxAwake(void){
 void PlayCurMonCry(void){
     // LD_A_addr(wCurPartySpecies);
     // JP(mPlayMonCry);
-    PlayMonCry_Conv(wram->wCurPartySpecies);
+    PlayMonCry(wram->wCurPartySpecies);
 }
 
 void GameboyCheck(void){

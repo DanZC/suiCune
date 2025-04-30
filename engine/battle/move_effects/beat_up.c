@@ -50,7 +50,7 @@ void BattleCommand_BeatUp(void){
         // LD_A_addr(wCurBeatUpPartyMon);
         // LD_HL(wPartyMonNicknames);
         // CALL(aGetNickname);
-        GetNickname_Conv(wram->wPartyMonNickname[0], wram->wCurBeatUpPartyMon);
+        GetNickname(wram->wPartyMonNickname[0], wram->wCurBeatUpPartyMon);
         // LD_A(MON_HP);
         // CALL(aGetBeatupMonLocation);
         struct PartyMon* mon = GetBeatupMonLocation();
@@ -103,7 +103,7 @@ void BattleCommand_BeatUp(void){
         // LD_addr_A(wCurSpecies);
         wram->wCurSpecies = wram->wEnemyMon.species;
         // CALL(aGetBaseData);
-        GetBaseData_Conv2(wram->wEnemyMon.species);
+        GetBaseData(wram->wEnemyMon.species);
         // LD_A_addr(wBaseDefense);
         // LD_C_A;
         gBattleCmdState.c = wram->wBaseDefense;
@@ -115,7 +115,7 @@ void BattleCommand_BeatUp(void){
         // LD_addr_A(wCurSpecies);
         wram->wCurSpecies = mon->mon.species;
         // CALL(aGetBaseData);
-        GetBaseData_Conv2(mon->mon.species);
+        GetBaseData(mon->mon.species);
         // LD_A_addr(wBaseAttack);
         // POP_BC;
         // LD_B_A;
@@ -255,7 +255,7 @@ void BattleCommand_BeatUp(void){
         // LD_addr_A(wCurSpecies);
         wram->wCurSpecies = wram->wBattleMon.species;
         // CALL(aGetBaseData);
-        GetBaseData_Conv2(wram->wBattleMon.species);
+        GetBaseData(wram->wBattleMon.species);
         // LD_A_addr(wBaseDefense);
         // LD_C_A;
         gBattleCmdState.c = wram->wBaseDefense;
@@ -267,7 +267,7 @@ void BattleCommand_BeatUp(void){
         // LD_addr_A(wCurSpecies);
         wram->wCurSpecies = mon->mon.species;
         // CALL(aGetBaseData);
-        GetBaseData_Conv2(mon->mon.species);
+        GetBaseData(mon->mon.species);
         // LD_A_addr(wBaseAttack);
         // POP_BC;
         // LD_B_A;

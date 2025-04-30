@@ -322,10 +322,10 @@ MasterLoop:
         // LD_HL(wPartyMonNicknames);
         // CALL(aGetNickname);
         // CALL(aCopyName1);
-        CopyName1(GetCurNickname_Conv());
+        CopyName1(GetCurNickname());
         // LD_HL(mEvolvingText);
         // CALL(aPrintText);
-        PrintText_Conv2(EvolvingText);
+        PrintText(EvolvingText);
 
         // LD_C(50);
         // CALL(aDelayFrames);
@@ -356,7 +356,7 @@ MasterLoop:
         // Inlined CancelEvolution to reduce stack smashing. 
             // LD_HL(mStoppedEvolvingText);
             // CALL(aPrintText);
-            PrintText_Conv2(StoppedEvolvingText);
+            PrintText(StoppedEvolvingText);
             // CALL(aClearTilemap);
             ClearTilemap();
             // POP_HL;
@@ -366,7 +366,7 @@ MasterLoop:
 
         // LD_HL(mCongratulationsYourPokemonText);
         // CALL(aPrintText);
-        PrintText_Conv2(CongratulationsYourPokemonText);
+        PrintText(CongratulationsYourPokemonText);
 
         // POP_HL;
 
@@ -384,7 +384,7 @@ MasterLoop:
         // PUSH_HL;
         // LD_HL(mEvolvedIntoText);
         // CALL(aPrintTextboxText);
-        PrintTextboxText_Conv2(EvolvedIntoText);
+        PrintTextboxText(EvolvedIntoText);
         // FARCALL(aStubbedTrainerRankings_MonsEvolved);
         StubbedTrainerRankings_MonsEvolved();
 
@@ -406,7 +406,7 @@ MasterLoop:
         // CALL(aUpdateSpeciesNameIfNotNicknamed);
         UpdateSpeciesNameIfNotNicknamed();
         // CALL(aGetBaseData);
-        GetBaseData_Conv2(wram->wCurSpecies);
+        GetBaseData(wram->wCurSpecies);
 
         // LD_HL(wTempMonExp + 2);
         // LD_DE(wTempMonMaxHP);
@@ -1057,7 +1057,7 @@ uint8_t EvoFlagAction(uint8_t* hl, uint8_t c, uint8_t b){
     // PREDEF(pSmallFarFlagAction);
     // POP_DE;
     // RET;
-    return SmallFarFlagAction_Conv(hl, c, b);
+    return SmallFarFlagAction(hl, c, b);
 }
 
 void GetPreEvolution(void){

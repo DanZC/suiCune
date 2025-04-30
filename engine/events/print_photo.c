@@ -35,7 +35,7 @@ void PhotoStudio(void){
 
     // LD_HL(mPhotoStudio_WhichMonPhotoText);
     // CALL(aPrintText);
-    PrintText_Conv2(WhichMonPhotoText);
+    PrintText(WhichMonPhotoText);
     // FARCALL(aSelectMonFromParty);
     // IF_C goto cancel;
     SelectMonFromParty();
@@ -45,12 +45,12 @@ void PhotoStudio(void){
     if(wram->wCurPartySpecies == EGG) {
     // egg:
         // LD_HL(mPhotoStudio_EggPhotoText);
-        return PrintText_Conv2(EggPhotoText);
+        return PrintText(EggPhotoText);
     }
 
     // LD_HL(mPhotoStudio_HoldStillText);
     // CALL(aPrintText);
-    PrintText_Conv2(HoldStillText);
+    PrintText(HoldStillText);
     // CALL(aDisableSpriteUpdates);
     DisableSpriteUpdates();
     // FARCALL(aPrintPartymon);
@@ -64,7 +64,7 @@ void PhotoStudio(void){
     // cancel:
         // LD_HL(mPhotoStudio_NoPhotoText);
         // goto print_text;
-        return PrintText_Conv2(NoPhotoText);
+        return PrintText(NoPhotoText);
     }
     // LD_HL(mPhotoStudio_PrestoAllDoneText);
     // goto print_text;
@@ -72,5 +72,5 @@ void PhotoStudio(void){
 // print_text:
     // CALL(aPrintText);
     // RET;
-    return PrintText_Conv2(PrestoAllDoneText);
+    return PrintText(PrestoAllDoneText);
 }

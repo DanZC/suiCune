@@ -117,7 +117,7 @@ void PrintDexEntry(void){
     ClearTilemap();
     // LD_A(0b11100100);
     // CALL(aDmgToCgbBGPals);
-    DmgToCgbBGPals_Conv(0b11100100);
+    DmgToCgbBGPals(0b11100100);
     // CALL(aDelayFrame);
     DelayFrame();
 
@@ -1123,7 +1123,7 @@ void Printer_PrintBoxListSegment(tile_t* hl, uint16_t de, uint8_t c){
             uint8_t level = ((struct BoxMon*)GBToRAMAddr(wram->wAddrOfBoxToPrint + 2 + MONS_PER_BOX))[wram->wWhichBoxMonToPrint].level;
             // POP_HL;
             // CALL(aPrintLevel_Force3Digits);
-            PrintLevel_Force3Digits_Conv(hl2, level);
+            PrintLevel_Force3Digits(hl2, level);
         }
     // ok2:
         // LD_HL(wWhichBoxMonToPrint);

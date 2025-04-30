@@ -135,7 +135,7 @@ void EZChat_RenderOneWord(struct TextPrintState* st, uint8_t d, uint8_t e) {
     if(carry)
         return;
     // call PlaceString
-    PlaceString_Conv(st, hl);
+    PlaceString(st, hl);
     // and a
     // ret
     return;
@@ -430,7 +430,7 @@ void PrintEZChatBattleMessage(tile_t* de, const uint8_t* bc){
     // POP_BC;
     // LD_HL(wc618);
     // CALL(aPlaceHLTextAtBC);
-    PlaceHLTextAtBC_Conv2(de, EZChatTextBuffer);
+    PlaceHLTextAtBC(de, EZChatTextBuffer);
 // restore the original values of [wJumptableIndex] and [wcf64]
     // POP_HL;
     // LD_A_L;
@@ -600,7 +600,7 @@ static void EZChat_EditMenu_InitKanaMode(void){
     // FARCALL(aReloadMapPart);
     ReloadMapPart_Conv();
     // FARCALL(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // FARCALL(aLoadPokemonData);
     LoadPokemonData();
     // FARCALL(aPokedex_ABCMode);
@@ -724,7 +724,7 @@ void EZChat_MasterLoop(void){
         // CALL(aEZChat_MasterLoop_DoJumptableFunction);
         EZChat_MasterLoop_DoJumptableFunction();
         // FARCALL(aPlaySpriteAnimations);
-        PlaySpriteAnimations_Conv();
+        PlaySpriteAnimations();
         // FARCALL(aReloadMapPart);
         ReloadMapPart_Conv();
         // goto loop;
@@ -732,7 +732,7 @@ void EZChat_MasterLoop(void){
 
 // exit:
     // FARCALL(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // CALL(aClearSprites);
     ClearSprites();
     // RET;
@@ -749,12 +749,12 @@ static void EZChat_MasterLoop_DoJumptableFunction(void){
             // depixel4(3, 1, 2, 5);
             // LD_A(SPRITE_ANIM_INDEX_EZCHAT_CURSOR);
             // CALL(aInitSpriteAnimStruct);
-            InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_EZCHAT_CURSOR, pixel4(3, 1, 2, 5));
+            InitSpriteAnimStruct(SPRITE_ANIM_INDEX_EZCHAT_CURSOR, pixel4(3, 1, 2, 5));
             // depixel4(8, 1, 2, 5);
 
             // LD_A(SPRITE_ANIM_INDEX_EZCHAT_CURSOR);
             // CALL(aInitSpriteAnimStruct);
-            struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_EZCHAT_CURSOR, pixel4(8, 1, 2, 5));
+            struct SpriteAnim* bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_EZCHAT_CURSOR, pixel4(8, 1, 2, 5));
             // LD_HL(SPRITEANIMSTRUCT_VAR1);
             // ADD_HL_BC;
             // LD_A(0x1);
@@ -764,7 +764,7 @@ static void EZChat_MasterLoop_DoJumptableFunction(void){
             // depixel4(9, 2, 2, 0);
             // LD_A(SPRITE_ANIM_INDEX_EZCHAT_CURSOR);
             // CALL(aInitSpriteAnimStruct);
-            bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_EZCHAT_CURSOR, pixel4(9, 2, 2, 0));
+            bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_EZCHAT_CURSOR, pixel4(9, 2, 2, 0));
             // LD_HL(SPRITEANIMSTRUCT_VAR1);
             // ADD_HL_BC;
             // LD_A(0x3);
@@ -774,7 +774,7 @@ static void EZChat_MasterLoop_DoJumptableFunction(void){
             // depixel2(10, 16);
             // LD_A(SPRITE_ANIM_INDEX_EZCHAT_CURSOR);
             // CALL(aInitSpriteAnimStruct);
-            bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_EZCHAT_CURSOR, pixel2(10, 16));
+            bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_EZCHAT_CURSOR, pixel2(10, 16));
             // LD_HL(SPRITEANIMSTRUCT_VAR1);
             // ADD_HL_BC;
             // LD_A(0x4);
@@ -784,7 +784,7 @@ static void EZChat_MasterLoop_DoJumptableFunction(void){
             // depixel2(10, 4);
             // LD_A(SPRITE_ANIM_INDEX_EZCHAT_CURSOR);
             // CALL(aInitSpriteAnimStruct);
-            bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_EZCHAT_CURSOR, pixel2(10, 4));
+            bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_EZCHAT_CURSOR, pixel2(10, 4));
             // LD_HL(SPRITEANIMSTRUCT_VAR1);
             // ADD_HL_BC;
             // LD_A(0x5);
@@ -794,7 +794,7 @@ static void EZChat_MasterLoop_DoJumptableFunction(void){
             // depixel2(10, 2);
             // LD_A(SPRITE_ANIM_INDEX_EZCHAT_CURSOR);
             // CALL(aInitSpriteAnimStruct);
-            bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_EZCHAT_CURSOR, pixel2(10, 2));
+            bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_EZCHAT_CURSOR, pixel2(10, 2));
             // LD_HL(SPRITEANIMSTRUCT_VAR1);
             // ADD_HL_BC;
             // LD_A(0x2);
@@ -5373,7 +5373,7 @@ static const uint8_t FramesetsIDs_Two[] = {
             }
         // .zero_sprite_anim_frame
             // call ReinitSpriteAnimFrame
-            ReinitSpriteAnimFrame_Conv(bc, a);
+            ReinitSpriteAnimFrame(bc, a);
             // ld e, $1 ; Category Menu Index (?) (May be the priority of which the selection boxes appear (0 is highest))
             e = 0x1;
             // ld a, [wEZChatSelection]
@@ -5416,7 +5416,7 @@ static const uint8_t FramesetsIDs_Two[] = {
             null_cursor_out:
                 // ld a, SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_2
                 // call ReinitSpriteAnimFrame
-                ReinitSpriteAnimFrame_Conv(bc, SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_2);
+                ReinitSpriteAnimFrame(bc, SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_2);
                 // xor a
                 a = 0;
                 // ld hl, .coords_null
@@ -5433,14 +5433,14 @@ static const uint8_t FramesetsIDs_Two[] = {
             if((wram->wEZChatCategorySelection & 0xf) >= EZCHAT_CATEGORY_CANC) {
                 // ld a, SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_1
                 // call ReinitSpriteAnimFrame
-                ReinitSpriteAnimFrame_Conv(bc, SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_1);
+                ReinitSpriteAnimFrame(bc, SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_1);
                 // jr .got_sprite
             }
             else {
             // .not_menu
                 // ld a, SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_2
                 // call ReinitSpriteAnimFrame
-                ReinitSpriteAnimFrame_Conv(bc, SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_2);
+                ReinitSpriteAnimFrame(bc, SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_2);
             }
         // .got_sprite
             // pop af
@@ -5486,7 +5486,7 @@ static const uint8_t FramesetsIDs_Two[] = {
             // add hl, de
             // ld a, [hl]
             // call ReinitSpriteAnimFrame
-            ReinitSpriteAnimFrame_Conv(bc, FramesetsIDs_Two[wram->wEZChatSortedSelection]);
+            ReinitSpriteAnimFrame(bc, FramesetsIDs_Two[wram->wEZChatSortedSelection]);
 
             // ld a, [wEZChatSortedSelection]
             // sla a
@@ -5500,7 +5500,7 @@ static const uint8_t FramesetsIDs_Two[] = {
         // three:
             // LD_A(SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_2);
             // CALL(aReinitSpriteAnimFrame);
-            ReinitSpriteAnimFrame_Conv(bc, SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_2);
+            ReinitSpriteAnimFrame(bc, SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_2);
             // LD_A_addr(wMobileCommsJumptableIndex);
             // SLA_A;
             a = wram->wEZChatWordSelection * 2;
@@ -5513,7 +5513,7 @@ static const uint8_t FramesetsIDs_Two[] = {
         // four:
             // LD_A(SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_2);
             // CALL(aReinitSpriteAnimFrame);
-            ReinitSpriteAnimFrame_Conv(bc, SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_2);
+            ReinitSpriteAnimFrame(bc, SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_2);
             // LD_A_addr(wcd2a);
             // SLA_A;
             a = wram->wcd2a * 2;
@@ -5527,7 +5527,7 @@ static const uint8_t FramesetsIDs_Two[] = {
         // five:
             // LD_A(SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_2);
             // CALL(aReinitSpriteAnimFrame);
-            ReinitSpriteAnimFrame_Conv(bc, SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_2);
+            ReinitSpriteAnimFrame(bc, SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_2);
             // LD_A_addr(wcd2c);
             // SLA_A;
             a = wram->wcd2c * 2;
@@ -5541,7 +5541,7 @@ static const uint8_t FramesetsIDs_Two[] = {
         // six:
             // LD_A(SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_5);
             // CALL(aReinitSpriteAnimFrame);
-            ReinitSpriteAnimFrame_Conv(bc, SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_5);
+            ReinitSpriteAnimFrame(bc, SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_5);
         // X = [wcd4a] * 8 + 24
             // LD_A_addr(wcd4a);
             // SLA_A;
@@ -5579,7 +5579,7 @@ static const uint8_t FramesetsIDs_Two[] = {
 
         // got_frameset:
             // CALL(aReinitSpriteAnimFrame);
-            ReinitSpriteAnimFrame_Conv(bc, frameset);
+            ReinitSpriteAnimFrame(bc, frameset);
             // LD_A_addr(wEZChatCursorYCoord);
             // CP_A(0x4);
             // IF_Z goto asm_11d1b1;
@@ -5656,7 +5656,7 @@ static const uint8_t FramesetsIDs_Two[] = {
         // ten:
             // LD_A(SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_1);
             // CALL(aReinitSpriteAnimFrame);
-            ReinitSpriteAnimFrame_Conv(bc, SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_1);
+            ReinitSpriteAnimFrame(bc, SPRITE_ANIM_FRAMESET_EZCHAT_CURSOR_1);
             // LD_A(0x8);
             // LD_E_A;
             // CALL(aAnimateEZChatCursor_UpdateObjectFlags);
@@ -5691,7 +5691,7 @@ static const uint8_t FramesetsIDs_Two[] = {
 eight_nine_load:
     // PUSH_DE;
     // CALL(aReinitSpriteAnimFrame);
-    ReinitSpriteAnimFrame_Conv(bc, a);
+    ReinitSpriteAnimFrame(bc, a);
     // LD_A_addr(wcd4a);
     // SLA_A;
     // SLA_A;

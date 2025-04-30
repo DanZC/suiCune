@@ -268,7 +268,7 @@ u8_flag_s DayCareAskDepositPokemon(void){
     // LD_HL(wPartyMonNicknames);
     // LD_A_addr(wCurPartyMon);
     // CALL(aGetNickname);
-    GetNickname_Conv(wram->wPartyMonNickname[0], res.a);
+    GetNickname(wram->wPartyMonNickname[0], res.a);
     // AND_A_A;
     // RET;
     return u8_flag(res.a, false);
@@ -286,7 +286,7 @@ void DayCare_DepositPokemonText(void){
     PrintDayCareText(DAYCARETEXT_DEPOSIT);
     // LD_A_addr(wCurPartySpecies);
     // CALL(aPlayMonCry);
-    PlayMonCry_Conv(wram->wCurPartySpecies);
+    PlayMonCry(wram->wCurPartySpecies);
     // LD_A(DAYCARETEXT_COME_BACK_LATER);
     // CALL(aPrintDayCareText);
     PrintDayCareText(DAYCARETEXT_COME_BACK_LATER);
@@ -378,7 +378,7 @@ void DayCare_GetBackMonForMoney(void){
     PrintDayCareText(DAYCARETEXT_WITHDRAW);
     // LD_A_addr(wCurPartySpecies);
     // CALL(aPlayMonCry);
-    PlayMonCry_Conv(wram->wCurPartySpecies);
+    PlayMonCry(wram->wCurPartySpecies);
     // LD_A(DAYCARETEXT_GOT_BACK);
     // CALL(aPrintDayCareText);
     PrintDayCareText(DAYCARETEXT_GOT_BACK);
@@ -549,7 +549,7 @@ void PrintDayCareText(uint8_t a){
     // LD_L_A;
     // CALL(aPrintText);
     // RET;
-    PrintText_Conv2(TextTable[a]);
+    PrintText(TextTable[a]);
 }
 
 void DayCareManOutside(void){
@@ -588,7 +588,7 @@ static const txt_cmd_s NoRoomForEggText[] = {
     if(!bit_test(wram->wDayCareMan, DAYCAREMAN_HAS_EGG_F)) {
         // LD_HL(mDayCareManOutside_NotYetText);
         // CALL(aPrintText);
-        PrintText_Conv2(NotYetText);
+        PrintText(NotYetText);
         // RET;
         return;
     }
@@ -596,11 +596,11 @@ static const txt_cmd_s NoRoomForEggText[] = {
 // AskGiveEgg:
     // LD_HL(mDayCareManOutside_FoundAnEggText);
     // CALL(aPrintText);
-    PrintText_Conv2(FoundAnEggText);
+    PrintText(FoundAnEggText);
     // CALL(aYesNoBox);
     // IF_C goto Declined;
     if(!YesNoBox()) {
-        PrintText_Conv2(IllKeepItThanksText);
+        PrintText(IllKeepItThanksText);
         wram->wScriptVar = FALSE;
         return;
     }
@@ -611,7 +611,7 @@ static const txt_cmd_s NoRoomForEggText[] = {
     // PartyFull:
         // LD_HL(mDayCareManOutside_NoRoomForEggText);
         // CALL(aPrintText);
-        PrintText_Conv2(NoRoomForEggText);
+        PrintText(NoRoomForEggText);
         // LD_A(TRUE);
         // LD_addr_A(wScriptVar);
         wram->wScriptVar = TRUE;
@@ -627,7 +627,7 @@ static const txt_cmd_s NoRoomForEggText[] = {
     DayCare_InitBreeding();
     // LD_HL(mDayCareManOutside_ReceivedEggText);
     // CALL(aPrintText);
-    PrintText_Conv2(ReceivedEggText);
+    PrintText(ReceivedEggText);
     // LD_DE(SFX_GET_EGG);
     // CALL(aPlaySFX);
     PlaySFX(SFX_GET_EGG);
@@ -642,7 +642,7 @@ static const txt_cmd_s NoRoomForEggText[] = {
 
 // Load0:
     // CALL(aPrintText);
-    PrintText_Conv2(TakeGoodCareOfEggText);
+    PrintText(TakeGoodCareOfEggText);
     // XOR_A_A;  // FALSE
     // LD_addr_A(wScriptVar);
     wram->wScriptVar = FALSE;
@@ -705,7 +705,7 @@ bool DayCare_GiveEgg(void){
     CopyBytes(&wram->wPartyMon[c].mon, &wram->wEggMon, BOXMON_STRUCT_LENGTH);
 
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(wram->wEggMon.species);
+    GetBaseData(wram->wEggMon.species);
     // LD_A_addr(wPartyCount);
     // DEC_A;
     // LD_HL(wPartyMon1);
@@ -859,7 +859,7 @@ void DayCare_InitBreeding(void){
     wram->wEggMon.species = wram->wCurPartySpecies;
 
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(wram->wEggMon.species);
+    GetBaseData(wram->wEggMon.species);
     // LD_HL(wEggMonNickname);
     // LD_DE(mDayCare_InitBreeding_String_EGG);
     // CALL(aCopyName2);

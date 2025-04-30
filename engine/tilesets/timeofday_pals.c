@@ -568,13 +568,13 @@ void DmgToCgbTimePals_Conv(const uint8_t* hl){
     // PUSH_DE;
     // LD_A_hli;
     // CALL(aDmgToCgbBGPals);
-    DmgToCgbBGPals_Conv(hl[0]);
+    DmgToCgbBGPals(hl[0]);
     // LD_A_hli;
     // LD_E_A;
     // LD_A_hli;
     // LD_D_A;
     // CALL(aDmgToCgbObjPals);
-    DmgToCgbObjPals_Conv(hl[2], hl[1]);
+    DmgToCgbObjPals(hl[2], hl[1]);
     // POP_DE;
     // POP_HL;
     // RET;

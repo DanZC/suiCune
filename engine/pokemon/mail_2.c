@@ -963,7 +963,7 @@ void LoadPortraitMailGFX(const struct MailMsg* bc){
     wram->wUnownLetter = 0x1; // Maybe in the future take into account the holding unown's DVs.
     // hlcoord(1, 10, wTilemap);
     // CALL(aPrepMonFrontpic);
-    PrepMonFrontpic_Conv(coord(1, 10, wram->wTilemap));
+    PrepMonFrontpic(coord(1, 10, wram->wTilemap));
     // POP_HL;
     // JP(mMailGFX_PlaceMessage);
     MailGFX_PlaceMessage(bc);

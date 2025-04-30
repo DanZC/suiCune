@@ -3,98 +3,6 @@
 #include "../charmap.h"
 #include "print_text.h"
 
-void PrintBCDNumber(void){
-    //  function to print a BCD (Binary-coded decimal) number
-//  de = address of BCD number
-//  hl = destination address
-//  c = flags and length
-//  bit 7: if set, do not print leading zeroes
-//         if unset, print leading zeroes
-//  bit 6: if set, left-align the string (do not pad empty digits with spaces)
-//         if unset, right-align the string
-//  bit 5: if set, print currency symbol at the beginning of the string
-//         if unset, do not print the currency symbol
-//  bits 0-4: length of BCD number in bytes
-//  Note that bits 5 and 7 are modified during execution. The above reflects
-//  their meaning at the beginning of the functions's execution.
-    LD_B_C;  // save flags in b
-    RES_C(PRINTNUM_LEADINGZEROS_F);
-    RES_C(PRINTNUM_LEFTALIGN_F);
-    RES_C(PRINTNUM_MONEY_F);  // c now holds the length
-    BIT_B(PRINTNUM_MONEY_F);
-    IF_Z goto loop;
-    BIT_B(PRINTNUM_LEADINGZEROS_F);
-    IF_NZ goto loop;  // skip currency symbol
-    LD_hl(0xf0);
-    INC_HL;
-
-loop:
-        LD_A_de;
-    SWAP_A;
-    CALL(aPrintBCDDigit);  // print upper digit
-    LD_A_de;
-    CALL(aPrintBCDDigit);  // print lower digit
-    INC_DE;
-    DEC_C;
-    IF_NZ goto loop;
-    BIT_B(PRINTNUM_LEADINGZEROS_F);
-    IF_Z goto done;  // if so, we are done
-//  every digit of the BCD number is zero
-    BIT_B(PRINTNUM_LEFTALIGN_F);
-    IF_NZ goto skipLeftAlignmentAdjustment;
-//  the string is left-aligned
-    DEC_HL;
-
-skipLeftAlignmentAdjustment:
-        BIT_B(PRINTNUM_MONEY_F);
-    IF_Z goto skipCurrencySymbol;
-    LD_hl(0xf0);  // currency symbol
-    INC_HL;
-
-skipCurrencySymbol:
-        LD_hl(0xf6);
-    CALL(aPrintLetterDelay);
-    INC_HL;
-
-done:
-        RET;
-
-}
-
-void PrintBCDDigit(void){
-        AND_A(0b00001111);
-    AND_A_A;
-    IF_Z goto zeroDigit;
-//  nonzero digit
-    BIT_B(PRINTNUM_LEADINGZEROS_F);  // have any non-space characters been printed?
-    IF_Z goto outputDigit;
-//  if bit 7 is set, then no numbers have been printed yet
-    BIT_B(PRINTNUM_MONEY_F);
-    IF_Z goto skipCurrencySymbol;
-    LD_hl(0xf0);
-    INC_HL;
-    RES_B(PRINTNUM_MONEY_F);
-
-skipCurrencySymbol:
-        RES_B(PRINTNUM_LEADINGZEROS_F);  // unset 7 to indicate that a nonzero digit has been reached
-
-outputDigit:
-        ADD_A(0xf6);
-    LD_hli_A;
-    JP(mPrintLetterDelay);
-
-
-zeroDigit:
-        BIT_B(PRINTNUM_LEADINGZEROS_F);  // either printing leading zeroes or already reached a nonzero digit?
-    IF_Z goto outputDigit;  // if so, print a zero digit
-    BIT_B(PRINTNUM_LEFTALIGN_F);
-    RET_NZ ;
-    LD_A(0x7f);
-    LD_hli_A;  // if right-aligned, "print" a space by advancing the pointer
-    RET;
-
-}
-
 //  function to print a BCD (Binary-coded decimal) number
 //  de = address of BCD number
 //  hl = destination address
@@ -108,7 +16,7 @@ zeroDigit:
 //  bits 0-4: length of BCD number in bytes
 //  Note that bits 5 and 7 are modified during execution. The above reflects
 //  their meaning at the beginning of the functions's execution.
-uint8_t* PrintBCDNumber_Conv(uint8_t* hl, const uint8_t* de, uint8_t c){
+uint8_t* PrintBCDNumber(uint8_t* hl, const uint8_t* de, uint8_t c){
     // LD_B_C;  // save flags in b
     // RES_C(PRINTNUM_LEADINGZEROS_F);
     // RES_C(PRINTNUM_LEFTALIGN_F);
@@ -129,10 +37,10 @@ uint8_t* PrintBCDNumber_Conv(uint8_t* hl, const uint8_t* de, uint8_t c){
         // LD_A_de;
         uint8_t digit = *(de++);
         // SWAP_A;
-        hl = PrintBCDDigit_Conv((digit >> 4) & 0xf, &b, hl);
+        hl = PrintBCDDigit((digit >> 4) & 0xf, &b, hl);
         // CALL(aPrintBCDDigit);  // print upper digit
         // LD_A_de;
-        hl = PrintBCDDigit_Conv(digit & 0xf, &b, hl);
+        hl = PrintBCDDigit(digit & 0xf, &b, hl);
         // CALL(aPrintBCDDigit);  // print lower digit
         // INC_DE;
         // DEC_C;
@@ -164,14 +72,14 @@ uint8_t* PrintBCDNumber_Conv(uint8_t* hl, const uint8_t* de, uint8_t c){
     // CALL(aPrintLetterDelay);
     // INC_HL;
     *(hl++) = 0xf6;
-    PrintLetterDelay_Conv();
+    PrintLetterDelay();
 
 // done:
     // RET;
     return hl;
 }
 
-uint8_t* PrintBCDDigit_Conv(uint8_t a, uint8_t* b, uint8_t* hl){
+uint8_t* PrintBCDDigit(uint8_t a, uint8_t* b, uint8_t* hl){
     // AND_A(0b00001111);
     // AND_A_A;
     // IF_Z goto zeroDigit;
@@ -202,7 +110,7 @@ uint8_t* PrintBCDDigit_Conv(uint8_t a, uint8_t* b, uint8_t* hl){
         // JP(mPrintLetterDelay);
         a += 0xf6;
         *(hl++) = a;
-        PrintLetterDelay_Conv();
+        PrintLetterDelay();
         return hl;
     }
 
@@ -212,7 +120,7 @@ uint8_t* PrintBCDDigit_Conv(uint8_t a, uint8_t* b, uint8_t* hl){
     if(!bit_test(*b, PRINTNUM_LEADINGZEROS_F)) {
         a += 0xf6;
         *(hl++) = a;
-        PrintLetterDelay_Conv();
+        PrintLetterDelay();
         return hl;
     }
     // BIT_B(PRINTNUM_LEFTALIGN_F);

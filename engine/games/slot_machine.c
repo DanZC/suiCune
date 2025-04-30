@@ -171,7 +171,7 @@ static void v_SlotMachine_InitGFX(void){
     // CALL(aGetSGBLayout);
     GetSGBLayout(SCGB_SLOT_MACHINE);
     // CALLFAR(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // LD_HL(wSlots);
     // LD_BC(wSlotsDataEnd - wSlots);
     // XOR_A_A;
@@ -346,7 +346,7 @@ void v_SlotMachine(void){
 void Slots_GetPals(void){
     // LD_A(0b11100100);
     // CALL(aDmgToCgbBGPals);
-    DmgToCgbBGPals_Conv(0b11100100);
+    DmgToCgbBGPals(0b11100100);
     // LD_DE((0b11100100 << 8) | 0b11100100);
     // LDH_A_addr(hCGB);
     // AND_A_A;
@@ -355,7 +355,7 @@ void Slots_GetPals(void){
 
 // cgb:
     // CALL(aDmgToCgbObjPals);
-    DmgToCgbObjPals_Conv(0b11100100, 0b11100100);
+    DmgToCgbObjPals(0b11100100, 0b11100100);
     // RET;
 }
 
@@ -364,12 +364,12 @@ static void SlotsLoop_PrintCoinsAndPayout(void){
     // LD_DE(wCoins);
     // LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 4);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(5, 1, wram->wTilemap), &wram->wCoins, PRINTNUM_LEADINGZEROS | 2, 4);
+    PrintNum(coord(5, 1, wram->wTilemap), &wram->wCoins, PRINTNUM_LEADINGZEROS | 2, 4);
     // hlcoord(11, 1, wTilemap);
     // LD_DE(wPayout);
     // LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 4);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(11, 1, wram->wTilemap), &gSlotData.payout, PRINTNUM_LEADINGZEROS | 2, 4);
+    PrintNum(coord(11, 1, wram->wTilemap), &gSlotData.payout, PRINTNUM_LEADINGZEROS | 2, 4);
     // RET;
 }
 
@@ -418,7 +418,7 @@ bool SlotsLoop(void){
     // LD_addr_A(wCurSpriteOAMAddr);
     wram->wCurSpriteOAMAddr = 0x0;
     // CALLFAR(aDoNextFrameForFirst16Sprites);
-    DoNextFrameForFirst16Sprites_Conv();
+    DoNextFrameForFirst16Sprites();
     // CALL(aSlotsLoop_PrintCoinsAndPayout);
     SlotsLoop_PrintCoinsAndPayout();
     // CALL(aSlotsLoop_Stubbed_AlternateMatchingSevensPalette);
@@ -736,7 +736,7 @@ void SlotsAction_FlashScreen(void){
         // LD_E_A;
         // LD_D_A;
         // CALL(aDmgToCgbObjPals);
-        DmgToCgbObjPals_Conv(a, a);
+        DmgToCgbObjPals(a, a);
         // RET;
         return;
     }
@@ -757,7 +757,7 @@ void SlotsAction_GiveEarnedCoins(void){
     gSlotData.firstTwoReelsMatchingSevens = FALSE;
     // LD_A(0b11100100);
     // CALL(aDmgToCgbBGPals);
-    DmgToCgbBGPals_Conv(0b11100100);
+    DmgToCgbBGPals(0b11100100);
     // CALL(aSlots_GetPayout);
     Slots_GetPayout();
     // XOR_A_A;
@@ -1717,7 +1717,7 @@ void ReelAction_InitGolem(struct SlotReelData* bc){
     // depixel2(12, 13);
     // LD_A(SPRITE_ANIM_INDEX_SLOTS_GOLEM);
     // CALL(aInitSpriteAnimStruct);
-    struct SpriteAnim* anim = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_SLOTS_GOLEM, pixel2(12, 13));
+    struct SpriteAnim* anim = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_SLOTS_GOLEM, pixel2(12, 13));
     // LD_HL(SPRITEANIMSTRUCT_VAR3);
     // ADD_HL_BC;
     // POP_AF;
@@ -1803,7 +1803,7 @@ void ReelAction_InitChansey(struct SlotReelData* bc){
     // depixel2(12, 0);
     // LD_A(SPRITE_ANIM_INDEX_SLOTS_CHANSEY);
     // CALL(aInitSpriteAnimStruct);
-    InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_SLOTS_CHANSEY, pixel2(12, 0));
+    InitSpriteAnimStruct(SPRITE_ANIM_INDEX_SLOTS_CHANSEY, pixel2(12, 0));
     // POP_BC;
     // XOR_A_A;
     // LD_addr_A(wSlotsDelay);
@@ -2584,7 +2584,7 @@ bool Slots_AskBet(void){
     // loop:
         // LD_HL(mSlots_AskBet_SlotsBetHowManyCoinsText);
         // CALL(aPrintText);
-        PrintText_Conv2(SlotsBetHowManyCoinsText);
+        PrintText(SlotsBetHowManyCoinsText);
         // LD_HL(mSlots_AskBet_MenuHeader);
         // CALL(aLoadMenuHeader);
         LoadMenuHeader(&Slots_AskBet_MenuHeader);
@@ -2613,7 +2613,7 @@ bool Slots_AskBet(void){
             break;
         // LD_HL(mSlots_AskBet_SlotsNotEnoughCoinsText);
         // CALL(aPrintText);
-        PrintText_Conv2(SlotsNotEnoughCoinsText);
+        PrintText(SlotsNotEnoughCoinsText);
         // goto loop;
     }
 
@@ -2634,7 +2634,7 @@ bool Slots_AskBet(void){
     PlaySFX(SFX_PAY_DAY);
     // LD_HL(mSlots_AskBet_SlotsStartText);
     // CALL(aPrintText);
-    PrintText_Conv2(SlotsStartText);
+    PrintText(SlotsStartText);
     // AND_A_A;
     // RET;
     return false;
@@ -2656,7 +2656,7 @@ bool Slots_AskPlayAgain(void){
     if(wram->wCoins == 0) {
         // LD_HL(mSlots_AskPlayAgain_SlotsRanOutOfCoinsText);
         // CALL(aPrintText);
-        PrintText_Conv2(SlotsRanOutOfCoinsText);
+        PrintText(SlotsRanOutOfCoinsText);
         // LD_C(60);
         // CALL(aDelayFrames);
         DelayFrames(60);
@@ -2666,7 +2666,7 @@ bool Slots_AskPlayAgain(void){
     // you_have_coins:
         // LD_HL(mSlots_AskPlayAgain_SlotsPlayAgainText);
         // CALL(aPrintText);
-        PrintText_Conv2(SlotsPlayAgainText);
+        PrintText(SlotsPlayAgainText);
         // CALL(aLoadMenuTextbox);
         LoadMenuTextbox();
         // LD_BC((14 << 8) | 12);
@@ -2851,7 +2851,7 @@ void Slots_PayoutText(void){
     if(gSlotData.slotMatched == SLOTS_NO_MATCH) {
         // LD_HL(mSlots_PayoutText_SlotsDarnText);
         // CALL(aPrintText);
-        PrintText_Conv2(Slots_PayoutText_SlotsDarnText);
+        PrintText(Slots_PayoutText_SlotsDarnText);
         // FARCALL(aStubbedTrainerRankings_EndSlotsWinStreak);
         StubbedTrainerRankings_EndSlotsWinStreak();
         // RET;
@@ -2881,7 +2881,7 @@ void Slots_PayoutText(void){
 // l_return:
     // LD_HL(mSlots_PayoutText_Text_PrintPayout);
     // CALL(aPrintText);
-    PrintText_Conv2(Slots_PayoutText_Text_PrintPayout);
+    PrintText(Slots_PayoutText_Text_PrintPayout);
     // FARCALL(aStubbedTrainerRankings_AddToSlotsWinStreak);
     StubbedTrainerRankings_AddToSlotsWinStreak();
     // RET;
@@ -3126,7 +3126,7 @@ void Slots_AnimateChansey(struct SpriteAnim* bc){
         // depixel4(12, 13, 0, 4);
         // LD_A(SPRITE_ANIM_INDEX_SLOTS_EGG);
         // CALL(aInitSpriteAnimStruct);
-        InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_SLOTS_EGG, pixel4(12, 13, 0, 4));
+        InitSpriteAnimStruct(SPRITE_ANIM_INDEX_SLOTS_EGG, pixel4(12, 13, 0, 4));
         // POP_BC;
         // RET;
     } return;

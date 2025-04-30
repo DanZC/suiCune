@@ -52,7 +52,7 @@ static void LoadPoisonBGPals_LoadPals(void) {
 
 // convert_pals:
     // CALL(aDmgToCgbBGPals);
-    DmgToCgbBGPals_Conv(a);
+    DmgToCgbBGPals(a);
     // LD_C(4);
     // CALL(aDelayFrames);
     DelayFrames(4);

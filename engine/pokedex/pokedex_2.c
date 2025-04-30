@@ -130,7 +130,7 @@ void DisplayDexEntry(species_t a){
     // hlcoord(9, 5, wTilemap);
     struct TextPrintState st = {.de = U82C(entry->category), .hl = coord(9, 5, wram->wTilemap)};
     // CALL(aPlaceFarString);  // dex species
-    PlaceString_Conv(&st, st.hl);
+    PlaceString(&st, st.hl);
     // LD_H_B;
     // LD_L_C;
     st.hl = st.bc;
@@ -146,7 +146,7 @@ void DisplayDexEntry(species_t a){
     // LD_DE(wTempSpecies);
     // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 3);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(4, 8, wram->wTilemap), &wram->wTempSpecies, PRINTNUM_LEADINGZEROS | 1, 3);
+    PrintNum(coord(4, 8, wram->wTilemap), &wram->wTempSpecies, PRINTNUM_LEADINGZEROS | 1, 3);
 //  Check to see if we caught it.  Get out of here if we haven't.
     // LD_A_addr(wTempSpecies);
     // DEC_A;
@@ -183,7 +183,7 @@ void DisplayDexEntry(species_t a){
         // hlcoord(12, 7, wTilemap);
         // LD_BC((2 << 8) | (2 << 4) | 4);
         // CALL(aPrintNum);
-        PrintNum_Conv2(coord(12, 7, wram->wTilemap), &height, 2, (2 << 4) | 4);
+        PrintNum(coord(12, 7, wram->wTilemap), &height, 2, (2 << 4) | 4);
     //  Replace the decimal point with a ft symbol
         // hlcoord(14, 7, wTilemap);
         // LD_hl(0x5e);
@@ -214,7 +214,7 @@ void DisplayDexEntry(species_t a){
         // hlcoord(11, 9, wTilemap);
         // LD_BC((2 << 8) | (4 << 4) | 5);
         // CALL(aPrintNum);
-        PrintNum_Conv2(coord(11, 9, wram->wTilemap), &weight, 2, (4 << 4) | 5);
+        PrintNum(coord(11, 9, wram->wTilemap), &weight, 2, (4 << 4) | 5);
         // POP_DE;
     }
 
@@ -250,7 +250,7 @@ void DisplayDexEntry(species_t a){
     // CALL(aPlaceFarString);
     st.de = U82C(entry->description);
     st.hl = coord(2, 11, wram->wTilemap);
-    PlaceString_Conv(&st, st.hl);
+    PlaceString(&st, st.hl);
     // POP_BC;
     // LD_A_addr(wPokedexStatus);
     // OR_A_A;  // check for page 2
@@ -290,7 +290,7 @@ void DisplayDexEntry(species_t a){
     // hlcoord(2, 11, wTilemap);
     st.hl = coord(2, 11, wram->wTilemap);
     // CALL(aPlaceFarString);
-    PlaceString_Conv(&st, st.hl);
+    PlaceString(&st, st.hl);
     // RET;
 }
 

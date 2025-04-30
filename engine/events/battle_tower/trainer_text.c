@@ -340,7 +340,7 @@ void BattleTowerText(uint8_t c){
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // CALL(aPlaceHLTextAtBC);
-    PlaceHLTextAtBC_Conv2(coord(1, 14, wram->wTilemap), txt);
+    PlaceHLTextAtBC(coord(1, 14, wram->wTilemap), txt);
     // RET;
 #endif
 // INCLUDE "mobile/fixed_words.asm"

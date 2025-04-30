@@ -20,11 +20,11 @@ void RefreshScreen(void){
     // RST(aBankswitch);
 
     // CALL(aReanchorBGMap_NoOAMUpdate);
-    ReanchorBGMap_NoOAMUpdate_Conv();
+    ReanchorBGMap_NoOAMUpdate();
     // CALL(av_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
     v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap();
     // CALL(aLoadFonts_NoOAMUpdate);
-    LoadFonts_NoOAMUpdate_Conv();
+    LoadFonts_NoOAMUpdate();
 
     // POP_AF;
     // RST(aBankswitch);
@@ -84,13 +84,13 @@ void OpenText(void){
     // RST(aBankswitch);
 
     // CALL(aReanchorBGMap_NoOAMUpdate);  // clear bgmap
-    ReanchorBGMap_NoOAMUpdate_Conv();
+    ReanchorBGMap_NoOAMUpdate();
     // CALL(aSpeechTextbox);
     SpeechTextbox();
     // CALL(av_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);  // anchor bgmap
     v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap();  // anchor bgmap
     // CALL(aLoadFonts_NoOAMUpdate);  // load font
-    LoadFonts_NoOAMUpdate_Conv();
+    LoadFonts_NoOAMUpdate();
     // POP_AF;
     // RST(aBankswitch);
 

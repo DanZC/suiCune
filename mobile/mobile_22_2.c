@@ -604,7 +604,7 @@ bool Function8b555(void){
     loop:
         // LD_HL(mEnterNewPasscodeText);
         // CALL(aPrintText);
-        PrintText_Conv2(EnterNewPasscodeText);
+        PrintText(EnterNewPasscodeText);
         // LD_BC(wd017);
         // CALL(aFunction8b45c);
         // IF_C goto asm_8b5c8;
@@ -630,7 +630,7 @@ bool Function8b555(void){
             // asm_8b57c:
                 // LD_HL(mConfirmPasscodeText);
                 // CALL(aPrintText);
-                PrintText_Conv2(ConfirmPasscodeText);
+                PrintText(ConfirmPasscodeText);
                 // LD_BC(wd013);
                 // CALL(aFunction8b45c);
                 // IF_C goto loop;
@@ -649,7 +649,7 @@ bool Function8b555(void){
                 Function8b493(wram->wd013_arr);
                 // LD_HL(mPasscodesNotSameText);
                 // CALL(aPrintText);
-                PrintText_Conv2(PasscodesNotSameText);
+                PrintText(PasscodesNotSameText);
                 // goto asm_8b57c;
             }
         
@@ -670,7 +670,7 @@ bool Function8b555(void){
             Function8b493(wram->wd013_arr);
             // LD_HL(mPasscodeSetText);
             // CALL(aPrintText);
-            PrintText_Conv2(PasscodeSetText);
+            PrintText(PasscodeSetText);
             // AND_A_A;
         
         // asm_8b5c8:
@@ -683,7 +683,7 @@ bool Function8b555(void){
         }
         // LD_HL(mFourZerosInvalidText);
         // CALL(aPrintText);
-        PrintText_Conv2(FourZerosInvalidText);
+        PrintText(FourZerosInvalidText);
         // goto loop;
     }
 }
@@ -739,7 +739,7 @@ bool Function8b5e7(void){
     // asm_8b602:
         // LD_HL(mEnterPasscodeText);
         // CALL(aPrintText);
-        PrintText_Conv2(EnterPasscodeText);
+        PrintText(EnterPasscodeText);
         // LD_BC(wd013);
         // CALL(aFunction8b45c);
         // IF_C goto asm_8b63c;
@@ -764,7 +764,7 @@ bool Function8b5e7(void){
             break;
         // LD_HL(mIncorrectPasscodeText);
         // CALL(aPrintText);
-        PrintText_Conv2(IncorrectPasscodeText);
+        PrintText(IncorrectPasscodeText);
         // LD_BC(wd013);
         // CALL(aFunction8b36c);
         Function8b36c(wram->wd013_arr);
@@ -774,7 +774,7 @@ bool Function8b5e7(void){
 // asm_8b635:
     // LD_HL(mUnknownText_0x8b64c);
     // CALL(aPrintText);
-    PrintText_Conv2(UnknownText_0x8b64c);
+    PrintText(UnknownText_0x8b64c);
     // AND_A_A;
 
 // asm_8b63c:
@@ -1354,7 +1354,7 @@ void Function8b880(const struct MenuData *data, tile_t *de){
     // LD_DE(wMenuSelection);
     // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
     // CALL(aPrintNum);
-    PrintNum_Conv2(de, &wram->wMenuSelection, PRINTNUM_LEADINGZEROS | 1, 2);
+    PrintNum(de, &wram->wMenuSelection, PRINTNUM_LEADINGZEROS | 1, 2);
     // RET;
 }
 

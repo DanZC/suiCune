@@ -20,7 +20,7 @@ void GetTrademonFrontpic(void){
     // LD_addr_A(wCurSpecies);
     wram->wCurPartySpecies = wram->wOTTrademon.species;
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(wram->wOTTrademon.species);
+    GetBaseData(wram->wOTTrademon.species);
     // POP_DE;
     // PREDEF(pGetAnimatedFrontpic);
     GetAnimatedFrontpic_Conv(vram->vTiles2, 0);
@@ -48,7 +48,7 @@ void AnimateTrademonFrontpic(void){
     GetSGBLayout(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
     // LD_A(0b11100100);  // 3,2,1,0
     // CALL(aDmgToCgbBGPals);
-    DmgToCgbBGPals_Conv(0b11100100);
+    DmgToCgbBGPals(0b11100100);
     // FARCALL(aTradeAnim_ShowGetmonFrontpic);
     TradeAnim_ShowGetmonFrontpic();
     // LD_A_addr(wOTTrademonSpecies);

@@ -98,7 +98,7 @@ void MagnetTrain(void){
         // BIT_A(7);
         // IF_NZ goto done;
         // CALLFAR(aPlaySpriteAnimations);
-        PlaySpriteAnimations_Conv();
+        PlaySpriteAnimations();
         // CALL(aMagnetTrain_Jumptable);
         MagnetTrain_Jumptable();
         // CALL(aMagnetTrain_UpdateLYOverrides);
@@ -198,7 +198,7 @@ void MagnetTrain_LoadGFX_PlayMusic(void){
     // CALL(aDisableLCD);
     DisableLCD();
     // CALLFAR(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // CALL(aSetMagnetTrainPals);
     SetMagnetTrainPals();
     // CALL(aDrawMagnetTrain);
@@ -454,7 +454,7 @@ void MagnetTrain_Jumptable(void){
         // LDH_addr_A(rSVBK);
         // LD_A_B;
         // CALL(aInitSpriteAnimStruct);
-        struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(b, wram->wMagnetTrainPlayerSpriteInitX | (((8 + 2) * TILE_WIDTH + 5) << 8));
+        struct SpriteAnim* bc = InitSpriteAnimStruct(b, wram->wMagnetTrainPlayerSpriteInitX | (((8 + 2) * TILE_WIDTH + 5) << 8));
         // LD_HL(SPRITEANIMSTRUCT_TILE_ID);
         // ADD_HL_BC;
         // LD_hl(0);
@@ -571,7 +571,7 @@ void MagnetTrain_Jumptable(void){
 
 void MagnetTrain_Jumptable_FirstRunThrough(void){
     // FARCALL(aPlaySpriteAnimations);
-    PlaySpriteAnimations_Conv();
+    PlaySpriteAnimations();
     // CALL(aMagnetTrain_Jumptable);
     MagnetTrain_Jumptable();
     // CALL(aMagnetTrain_UpdateLYOverrides);

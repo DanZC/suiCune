@@ -4102,7 +4102,7 @@ void FaintYourPokemon(void){
     wram->wCryTracks = 0xf0;
     // LD_A_addr(wBattleMonSpecies);
     // CALL(aPlayStereoCry);
-    PlayStereoCry_Conv(wram->wBattleMon.species);
+    PlayStereoCry(wram->wBattleMon.species);
     // CALL(aPlayerMonFaintedAnimation);
     PlayerMonFaintedAnimation();
     // hlcoord(9, 7, wTilemap);
@@ -4810,7 +4810,7 @@ void UpdateFaintedPlayerMon(void){
     // LD_HL(wBattleParticipantsNotFainted);
     // LD_B(RESET_FLAG);
     // PREDEF(pSmallFarFlagAction);
-    SmallFarFlagAction_Conv(&wram->wBattleParticipantsNotFainted, wram->wCurBattleMon, RESET_FLAG);
+    SmallFarFlagAction(&wram->wBattleParticipantsNotFainted, wram->wCurBattleMon, RESET_FLAG);
     // LD_HL(wEnemySubStatus3);
     // RES_hl(SUBSTATUS_IN_LOOP);
     bit_reset(wram->wEnemySubStatus3, SUBSTATUS_IN_LOOP);
@@ -5910,11 +5910,11 @@ void AddBattleParticipant(void){
     // LD_B(SET_FLAG);
     // PUSH_BC;
     // PREDEF(pSmallFarFlagAction);
-    SmallFarFlagAction_Conv(&wram->wBattleParticipantsNotFainted, c, SET_FLAG);
+    SmallFarFlagAction(&wram->wBattleParticipantsNotFainted, c, SET_FLAG);
     // POP_BC;
     // LD_HL(wBattleParticipantsIncludingFainted);
     // PREDEF_JUMP(pSmallFarFlagAction);
-    return SmallFarFlagAction_Conv(&wram->wBattleParticipantsIncludingFainted, c, SET_FLAG), (void)0;
+    return SmallFarFlagAction(&wram->wBattleParticipantsIncludingFainted, c, SET_FLAG), (void)0;
 }
 
 uint8_t FindMonInOTPartyToSwitchIntoBattle(void){
@@ -6532,7 +6532,7 @@ void ShowSetEnemyMonAndSendOutAnimation(void){
     // LD_addr_A(wCurSpecies);
     wram->wCurSpecies = wram->wTempEnemyMonSpecies;
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(wram->wTempEnemyMonSpecies);
+    GetBaseData(wram->wTempEnemyMonSpecies);
     // LD_A(OTPARTYMON);
     // LD_addr_A(wMonType);
     wram->wMonType = OTPARTYMON;
@@ -6586,7 +6586,7 @@ void ShowSetEnemyMonAndSendOutAnimation(void){
             wram->wCryTracks = 0xf;
             // LD_A_addr(wTempEnemyMonSpecies);
             // CALL(aPlayStereoCry);
-            PlayStereoCry_Conv(wram->wTempEnemyMonSpecies);
+            PlayStereoCry(wram->wTempEnemyMonSpecies);
         }
     }
 
@@ -7332,7 +7332,7 @@ void InitBattleMon(void){
     // LD_addr_A(wCurSpecies);
     wram->wCurSpecies = wram->wBattleMon.species;
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(wram->wBattleMon.species);
+    GetBaseData(wram->wBattleMon.species);
     // LD_A_addr(wBaseType1);
     // LD_addr_A(wBattleMonType1);
     wram->wBattleMon.type1 = wram->wBaseType1;
@@ -7505,7 +7505,7 @@ void InitEnemyMon(void){
     // LD_addr_A(wCurSpecies);
     wram->wCurSpecies = wram->wEnemyMon.species;
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(wram->wEnemyMon.species);
+    GetBaseData(wram->wEnemyMon.species);
     // LD_HL(wOTPartyMonNicknames);
     // LD_A_addr(wCurPartyMon);
     // CALL(aSkipNames);
@@ -7654,7 +7654,7 @@ void SendOutPlayerMon(void){
         wram->wCryTracks = 0xf0;
         // LD_A_addr(wCurPartySpecies);
         // CALL(aPlayStereoCry);
-        PlayStereoCry_Conv(wram->wCurPartySpecies);
+        PlayStereoCry(wram->wCurPartySpecies);
     }
 
 
@@ -7859,7 +7859,7 @@ bool PursuitSwitch(void){
         // LD_HL(wBattleParticipantsNotFainted);
         // LD_B(RESET_FLAG);
         // PREDEF(pSmallFarFlagAction);
-        SmallFarFlagAction_Conv(&wram->wBattleParticipantsNotFainted, wram->wLastPlayerMon, RESET_FLAG);
+        SmallFarFlagAction(&wram->wBattleParticipantsNotFainted, wram->wLastPlayerMon, RESET_FLAG);
         // CALL(aPlayerMonFaintedAnimation);
         PlayerMonFaintedAnimation();
         // LD_HL(mBattleText_MonFainted);
@@ -8424,14 +8424,14 @@ void UpdateBattleHUDs(void){
     uint8_t e = DrawPlayerHUD_Conv();
     // LD_HL(wPlayerHPPal);
     // CALL(aSetHPPal);
-    SetHPPal_Conv(&wram->wPlayerHPPal, e);
+    SetHPPal(&wram->wPlayerHPPal, e);
     // CALL(aCheckDanger);
     CheckDanger();
     // CALL(aDrawEnemyHUD);
     e = DrawEnemyHUD_Conv();
     // LD_HL(wEnemyHPPal);
     // CALL(aSetHPPal);
-    SetHPPal_Conv(&wram->wEnemyHPPal, e);
+    SetHPPal(&wram->wEnemyHPPal, e);
     // POP_BC;
     // POP_DE;
     // POP_HL;
@@ -8602,7 +8602,7 @@ void PrintPlayerHUD(void){
     Battle_DummyFunction();
     // CALL(aPlaceString);
     struct TextPrintState st = {.hl = coord(10, 7, wram->wTilemap), .de = wram->wBattleMonNickname};
-    PlaceString_Conv(&st, st.hl);
+    PlaceString(&st, st.hl);
 
     // PUSH_BC;
 
@@ -8632,7 +8632,7 @@ void PrintPlayerHUD(void){
     // LD_addr_A(wCurSpecies);
     wram->wCurSpecies = a;
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(a);
+    GetBaseData(a);
 
     // POP_HL;
     // DEC_HL;
@@ -8684,7 +8684,7 @@ void PrintPlayerHUD(void){
     // LD_A_addr(wBattleMonLevel);
     // LD_addr_A(wTempMonLevel);
     // JP(mPrintLevel);
-    PrintLevel_Conv(hl2, wram->wBattleMon.level);
+    PrintLevel(hl2, wram->wBattleMon.level);
 }
 
 void UpdateEnemyHUD(void){
@@ -8849,7 +8849,7 @@ static uint8_t DrawEnemyHUD_draw_bar(uint8_t c, uint8_t e, uint8_t d) {
     // hlcoord(2, 2, wTilemap);
     // LD_B(0);
     // CALL(aDrawBattleHPBar);
-    DrawBattleHPBar_Conv(coord(2, 2, wram->wTilemap), d, e, 0, c);
+    DrawBattleHPBar(coord(2, 2, wram->wTilemap), d, e, 0, c);
     // RET;
     return e;
 }
@@ -8873,14 +8873,14 @@ uint8_t DrawEnemyHUD_Conv(void){
     // LD_addr_A(wCurPartySpecies);
     wram->wCurPartySpecies = wram->wTempEnemyMonSpecies;
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(wram->wTempEnemyMonSpecies);
+    GetBaseData(wram->wTempEnemyMonSpecies);
     // LD_DE(wEnemyMonNickname);
     // hlcoord(1, 0, wTilemap);
     // CALL(aBattle_DummyFunction);
     Battle_DummyFunction();
     // CALL(aPlaceString);
     struct TextPrintState state = {.hl = coord(1, 0, wram->wTilemap), .de = wram->wEnemyMonNickname};
-    PlaceString_Conv(&state, state.hl);
+    PlaceString(&state, state.hl);
     // LD_H_B;
     // LD_L_C;
     // DEC_HL;
@@ -8942,7 +8942,7 @@ uint8_t DrawEnemyHUD_Conv(void){
         // LD_A_addr(wEnemyMonLevel);
         // LD_addr_A(wTempMonLevel);
         // CALL(aPrintLevel);
-        PrintLevel_Conv(coord(6, 1, wram->wTilemap) - ((gender.flag)? 1: 0), wram->wEnemyMon.level);
+        PrintLevel(coord(6, 1, wram->wTilemap) - ((gender.flag)? 1: 0), wram->wEnemyMon.level);
     }
 
 // skip_level:
@@ -9055,7 +9055,7 @@ void UpdateHPPal_Conv(uint8_t* hl, uint8_t e){
     // LD_B_hl;
     uint8_t b = *hl;
     // CALL(aSetHPPal);
-    SetHPPal_Conv(hl, e);
+    SetHPPal(hl, e);
     // LD_A_hl;
     // CP_A_B;
     // RET_Z ;
@@ -10515,7 +10515,7 @@ static void MoveInfoBox_PrintPP(uint8_t pp, uint8_t maxpp){
     // LD_DE(wStringBuffer1);
     // LD_BC((1 << 8) | 2);
     // CALL(aPrintNum);
-    PrintNum_Conv2(hl, &pp, 1, 2);
+    PrintNum(hl, &pp, 1, 2);
     // POP_HL;
     // INC_HL;
     // INC_HL;
@@ -10526,7 +10526,7 @@ static void MoveInfoBox_PrintPP(uint8_t pp, uint8_t maxpp){
     // LD_DE(wNamedObjectIndex);
     // LD_BC((1 << 8) | 2);
     // CALL(aPrintNum);
-    PrintNum_Conv2(hl, &maxpp, 1, 2);
+    PrintNum(hl, &maxpp, 1, 2);
     // RET;
 }
 
@@ -11039,7 +11039,7 @@ void LoadEnemyMon(void){
 
 //  Grab the BaseData for this species
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(wram->wTempEnemyMonSpecies);
+    GetBaseData(wram->wTempEnemyMonSpecies);
 
 //  Let's get the item:
 
@@ -11583,7 +11583,7 @@ Happiness:
     // LD_B(SET_FLAG);
     // LD_HL(wPokedexSeen);
     // PREDEF(pSmallFarFlagAction);
-    SmallFarFlagAction_Conv(wram->wPokedexSeen, wram->wTempEnemyMonSpecies - 1, SET_FLAG);
+    SmallFarFlagAction(wram->wPokedexSeen, wram->wTempEnemyMonSpecies - 1, SET_FLAG);
 
     // LD_HL(wEnemyMonStats);
     // LD_DE(wEnemyStats);
@@ -12878,7 +12878,7 @@ void GiveExperiencePoints(void){
         // AND_A_A;
         // POP_BC;
         // JP_Z (mGiveExperiencePoints_next_mon);
-        if(SmallFarFlagAction_Conv(&wram->wBattleParticipantsNotFainted, wram->wCurPartyMon, CHECK_FLAG) == 0)
+        if(SmallFarFlagAction(&wram->wBattleParticipantsNotFainted, wram->wCurPartyMon, CHECK_FLAG) == 0)
             goto next_mon;
 
     //  give stat exp
@@ -13019,7 +13019,7 @@ void GiveExperiencePoints(void){
         // LD_A_addr(wCurPartyMon);
         // LD_HL(wPartyMonNicknames);
         // CALL(aGetNickname);
-        GetNickname_Conv(wram->wPartyMonNickname[0], wram->wCurPartyMon);
+        GetNickname(wram->wPartyMonNickname[0], wram->wCurPartyMon);
         // LD_HL(mText_MonGainedExpPoint);
         // CALL(aBattleTextbox);
         BattleTextbox(Text_MonGainedExpPoint);
@@ -13074,7 +13074,7 @@ void GiveExperiencePoints(void){
         // LD_addr_A(wCurSpecies);
         wram->wCurSpecies = wram->wPartySpecies[wram->wCurPartyMon];
         // CALL(aGetBaseData);
-        GetBaseData_Conv2(wram->wCurSpecies);
+        GetBaseData(wram->wCurSpecies);
         // PUSH_BC;
         // LD_D(MAX_LEVEL);
         // CALLFAR(aCalcExpAtLevel);
@@ -13145,7 +13145,7 @@ void GiveExperiencePoints(void){
             wram->wCurSpecies = bc->mon.species;
             // LD_addr_A(wTempSpecies);  // unused?
             // CALL(aGetBaseData);
-            GetBaseData_Conv2(wram->wCurSpecies);
+            GetBaseData(wram->wCurSpecies);
             // LD_HL(MON_MAXHP + 1);
             // ADD_HL_BC;
             // LD_A_hld;
@@ -13326,7 +13326,7 @@ void GiveExperiencePoints(void){
             // LD_C_A;
             // LD_B(SET_FLAG);
             // PREDEF(pSmallFarFlagAction);
-            SmallFarFlagAction_Conv(wram->wEvolvableFlags, wram->wCurPartyMon, SET_FLAG);
+            SmallFarFlagAction(wram->wEvolvableFlags, wram->wCurPartyMon, SET_FLAG);
             // POP_AF;
             // LD_addr_A(wCurPartyLevel);
             wram->wCurPartyLevel = lvl;
@@ -13652,7 +13652,7 @@ void AnimateExpBar(uint16_t exp){
         // CALL(aPlaySFX);
         PlaySFX(SFX_HIT_END_OF_EXP_BAR);
         // FARCALL(aAnimateEndOfExpBar);
-        AnimateEndOfExpBar_Conv();
+        AnimateEndOfExpBar();
         // CALL(aWaitSFX);
         WaitSFX();
         // LD_HL(mBattleText_StringBuffer1GrewToLevel);
@@ -14390,7 +14390,7 @@ void DropEnemySub(void){
     // LD_addr_A(wCurPartySpecies);
     wram->wCurPartySpecies = wram->wEnemyMon.species;
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(wram->wEnemyMon.species);
+    GetBaseData(wram->wEnemyMon.species);
     // LD_HL(wEnemyMonDVs);
     // PREDEF(pGetUnownLetter);
     GetUnownLetter_Conv(wram->wEnemyMon.dvs);
@@ -15249,7 +15249,7 @@ static void ReadAndPrintLinkBattleRecord_PrintBattleRecord(void){
 
     // LD_BC((2 << 8) | 4);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(6, 4, wram->wTilemap), GBToRAMAddr(sLinkBattleWins), 2, 4);
+    PrintNum(coord(6, 4, wram->wTilemap), GBToRAMAddr(sLinkBattleWins), 2, 4);
 
     // hlcoord(11, 4, wTilemap);
     // LD_DE(sLinkBattleLosses);
@@ -15257,7 +15257,7 @@ static void ReadAndPrintLinkBattleRecord_PrintBattleRecord(void){
 
     // LD_BC((2 << 8) | 4);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(11, 4, wram->wTilemap), GBToRAMAddr(sLinkBattleLosses), 2, 4);
+    PrintNum(coord(11, 4, wram->wTilemap), GBToRAMAddr(sLinkBattleLosses), 2, 4);
 
     // hlcoord(16, 4, wTilemap);
     // LD_DE(sLinkBattleDraws);
@@ -15265,7 +15265,7 @@ static void ReadAndPrintLinkBattleRecord_PrintBattleRecord(void){
 
     // LD_BC((2 << 8) | 4);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(16, 4, wram->wTilemap), GBToRAMAddr(sLinkBattleDraws), 2, 4);
+    PrintNum(coord(16, 4, wram->wTilemap), GBToRAMAddr(sLinkBattleDraws), 2, 4);
 
 // quit:
     // RET;
@@ -15336,7 +15336,7 @@ void ReadAndPrintLinkBattleRecord(void){
             // LD_DE(wLinkBattleRecordWins);
             // LD_BC((2 << 8) | 4);
             // CALL(aPrintNum);
-            PrintNum_Conv2(hl2, &wram->wLinkBattleRecordWins, 2, 4);
+            PrintNum(hl2, &wram->wLinkBattleRecordWins, 2, 4);
             // POP_HL;
             // LD_DE(5);
             // ADD_HL_DE;
@@ -15345,7 +15345,7 @@ void ReadAndPrintLinkBattleRecord(void){
             // LD_DE(wLinkBattleRecordLosses);
             // LD_BC((2 << 8) | 4);
             // CALL(aPrintNum);
-            PrintNum_Conv2(hl2, &wram->wLinkBattleRecordLosses, 2, 4);
+            PrintNum(hl2, &wram->wLinkBattleRecordLosses, 2, 4);
             // POP_HL;
             // LD_DE(5);
             // ADD_HL_DE;
@@ -15353,7 +15353,7 @@ void ReadAndPrintLinkBattleRecord(void){
             // LD_DE(wLinkBattleRecordDraws);
             // LD_BC((2 << 8) | 4);
             // CALL(aPrintNum);
-            PrintNum_Conv2(hl2, &wram->wLinkBattleRecordDraws, 2, 4);
+            PrintNum(hl2, &wram->wLinkBattleRecordDraws, 2, 4);
             // goto next;
         }
 
@@ -16199,7 +16199,7 @@ void BattleStartMessage(void){
                 wram->wCryTracks = 0xf;
                 // LD_A_addr(wTempEnemyMonSpecies);
                 // CALL(aPlayStereoCry);
-                PlayStereoCry_Conv(wram->wTempEnemyMonSpecies);
+                PlayStereoCry(wram->wTempEnemyMonSpecies);
             }
         }
     // skip_cry:

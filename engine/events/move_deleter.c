@@ -123,13 +123,13 @@ void MoveDeletion(void){
     };
     // LD_HL(mMoveDeletion_DeleterIntroText);
     // CALL(aPrintText);
-    PrintText_Conv2(DeleterIntroText);
+    PrintText(DeleterIntroText);
     // CALL(aYesNoBox);
     // IF_C goto declined;
     if(YesNoBox()) {
         // LD_HL(mMoveDeletion_DeleterAskWhichMonText);
         // CALL(aPrintText);
-        PrintText_Conv2(DeleterAskWhichMonText);
+        PrintText(DeleterAskWhichMonText);
         // FARCALL(aSelectMonFromParty);
         u8_flag_s res = SelectMonFromParty();
         // IF_C goto declined;
@@ -143,7 +143,7 @@ void MoveDeletion(void){
             // LD_HL(mMoveDeletion_MailEggText);
             // CALL(aPrintText);
             // RET;
-            return PrintText_Conv2(MailEggText);
+            return PrintText(MailEggText);
         }
         // LD_A_addr(wCurPartyMon);
         // LD_HL(wPartyMon1Moves + 1);
@@ -157,11 +157,11 @@ void MoveDeletion(void){
             // LD_HL(mMoveDeletion_MoveKnowsOneText);
             // CALL(aPrintText);
             // RET;
-            return PrintText_Conv2(MoveKnowsOneText);
+            return PrintText(MoveKnowsOneText);
         }
         // LD_HL(mMoveDeletion_DeleterAskWhichMoveText);
         // CALL(aPrintText);
-        PrintText_Conv2(DeleterAskWhichMoveText);
+        PrintText(DeleterAskWhichMoveText);
         // CALL(aLoadStandardMenuHeader);
         LoadStandardMenuHeader();
         // FARCALL(aChooseMoveToDelete);
@@ -182,7 +182,7 @@ void MoveDeletion(void){
         GetMoveName(move);
         // LD_HL(mMoveDeletion_AskDeleteMoveText);
         // CALL(aPrintText);
-        PrintText_Conv2(AskDeleteMoveText);
+        PrintText(AskDeleteMoveText);
         // CALL(aYesNoBox);
         // POP_BC;
         // IF_C goto declined;
@@ -198,7 +198,7 @@ void MoveDeletion(void){
             WaitSFX();
             // LD_HL(mMoveDeletion_DeleterForgotMoveText);
             // CALL(aPrintText);
-            PrintText_Conv2(DeleterForgotMoveText);
+            PrintText(DeleterForgotMoveText);
             // RET;
             return;
         }
@@ -207,6 +207,6 @@ void MoveDeletion(void){
 declined:
     // LD_HL(mMoveDeletion_DeleterNoComeAgainText);
     // CALL(aPrintText);
-    PrintText_Conv2(DeleterNoComeAgainText);
+    PrintText(DeleterNoComeAgainText);
     // RET;
 }

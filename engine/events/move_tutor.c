@@ -118,7 +118,7 @@ bool CheckCanLearnMoveTutorMove(uint8_t curMon, move_t move){
     // LD_A_addr(wCurPartyMon);
     // LD_HL(wPartyMonNicknames);
     // CALL(aGetNickname);
-    GetNickname_Conv(wram->wPartyMonNickname[0], curMon);
+    GetNickname(wram->wPartyMonNickname[0], curMon);
     // POP_BC;
 
     // LD_A_C;
@@ -153,7 +153,7 @@ bool CheckCanLearnMoveTutorMove(uint8_t curMon, move_t move){
         // LD_A(BANK(aTMHMNotCompatibleText));
         // LD_HL(mTMHMNotCompatibleText);
         // CALL(aFarPrintText);
-        PrintText_Conv2(TMHMNotCompatibleText);
+        PrintText(TMHMNotCompatibleText);
         // goto didnt_learn;
     }
 

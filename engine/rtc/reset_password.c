@@ -56,7 +56,7 @@ void v_ResetClock(void){
     PlayMusic(MUSIC_MAIN_MENU);
     // LD_HL(mv_ResetClock_PasswordAskResetClockText);
     // CALL(aPrintText);
-    PrintText_Conv2(PasswordAskResetClockText);
+    PrintText(PasswordAskResetClockText);
     // LD_HL(mv_ResetClock_NoYes_MenuHeader);
     // CALL(aCopyMenuHeader);
     CopyMenuHeader(&NoYes_MenuHeader);
@@ -81,14 +81,14 @@ void v_ResetClock(void){
     CloseSRAM();
     // LD_HL(mv_ResetClock_PasswordAskResetText);
     // CALL(aPrintText);
-    PrintText_Conv2(PasswordAskResetText);
+    PrintText(PasswordAskResetText);
     // RET;
     return;
 
 wrongpassword:
     // LD_HL(mv_ResetClock_PasswordWrongText);
     // CALL(aPrintText);
-    PrintText_Conv2(PasswordWrongText);
+    PrintText(PasswordWrongText);
     // RET;
     return;
 }

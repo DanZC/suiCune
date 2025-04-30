@@ -110,7 +110,7 @@ void Function117699(void){
     // FARCALL(aReloadMapPart);
     ReloadMapPart_Conv();
     // FARCALL(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // RET;
 }
 
@@ -128,7 +128,7 @@ void Function1176ee(void){
         // CALL(aFunction117719);
         Jumptable_117728();
         // FARCALL(aPlaySpriteAnimations);
-        PlaySpriteAnimations_Conv();
+        PlaySpriteAnimations();
         // FARCALL(aReloadMapPart);
         ReloadMapPart_Conv();
         // goto loop;
@@ -136,7 +136,7 @@ void Function1176ee(void){
 
 // quit:
     // FARCALL(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // CALL(aClearBGPalettes);
     ClearBGPalettes();
     // CALL(aClearScreen);
@@ -171,7 +171,7 @@ void Function117738(void){
     // depixel2(6, 3);
     // LD_A(0x1d);
     // CALL(aInitSpriteAnimStruct);
-    struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_EZCHAT_CURSOR, pixel2(6, 3));
+    struct SpriteAnim* bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_EZCHAT_CURSOR, pixel2(6, 3));
     // LD_HL(0xc);
     // ADD_HL_BC;
     // LD_A(0x6);
@@ -180,7 +180,7 @@ void Function117738(void){
     // depixel2(9, 4);
     // LD_A(0x1d);
     // CALL(aInitSpriteAnimStruct);
-    bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_EZCHAT_CURSOR, pixel2(9, 4));
+    bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_EZCHAT_CURSOR, pixel2(9, 4));
     // LD_HL(0xc);
     // ADD_HL_BC;
     // LD_A(0x7);
@@ -892,7 +892,7 @@ void Function117b14(void){
 void Function117b28(void){
     // LD_HL(mMobileStadiumEntryText);
     // CALL(aPrintText);
-    PrintText_Conv2(MobileStadiumEntryText);
+    PrintText(MobileStadiumEntryText);
     // JP(mMobileStudium_JumptableIncrement);
     return MobileStudium_JumptableIncrement();
 }
@@ -1123,7 +1123,7 @@ void Function117c4a(void){
     ReloadMapPart_Conv();
     // LD_HL(mMobileStadiumSuccessText);
     // CALL(aPrintText);
-    PrintText_Conv2(MobileStadiumSuccessText);
+    PrintText(MobileStadiumSuccessText);
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(0x5);
@@ -1150,7 +1150,7 @@ void Function117c4a(void){
         // IF_NZ goto loop;
     } while(--c != 0);
     // CALL(aRotateThreePalettesRight);
-    RotateThreePalettesRight_Conv();
+    RotateThreePalettesRight();
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // LD_A(0x80);

@@ -47,7 +47,7 @@ uint8_t CanLearnTMHMMove_Conv(species_t species, move_t move){
     // LD_A_addr(wCurPartySpecies);
     // LD_addr_A(wCurSpecies);
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(species);
+    GetBaseData(species);
     // LD_HL(wBaseTMHM);
     // PUSH_HL;
 
@@ -87,7 +87,7 @@ uint8_t CanLearnTMHMMove_Conv(species_t species, move_t move){
     // PUSH_DE;
     // LD_D(0);
     // PREDEF(pSmallFarFlagAction);
-    return SmallFarFlagAction_Conv(wram->wBaseTMHM, c, CHECK_FLAG);
+    return SmallFarFlagAction(wram->wBaseTMHM, c, CHECK_FLAG);
     // POP_DE;
     // RET;
 

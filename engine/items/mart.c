@@ -310,7 +310,7 @@ static uint8_t StandardMart_HowMayIHelpYou(void){
     LoadStandardMenuHeader();
     // LD_HL(mMartWelcomeText);
     // CALL(aPrintText);
-    PrintText_Conv2(MartWelcomeText);
+    PrintText(MartWelcomeText);
     // LD_A(STANDARDMART_TOPMENU);
     // RET;
     return STANDARDMART_TOPMENU;
@@ -386,7 +386,7 @@ static uint8_t StandardMart_AnythingElse(void){
     LoadStandardMenuHeader();
     // LD_HL(mMartAskMoreText);
     // CALL(aPrintText);
-    PrintText_Conv2(MartAskMoreText);
+    PrintText(MartAskMoreText);
     // LD_A(STANDARDMART_TOPMENU);
     // RET;
     return STANDARDMART_TOPMENU;
@@ -596,7 +596,7 @@ void GetMartPrice_Conv(item_price_s* hl, uint16_t price){
     // LD_DE(wStringBuffer2);
     // LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 6);  // 6 digits
     // CALL(aPrintNum);
-    PrintNum_Conv2(wram->wStringBuffer1, &value, PRINTNUM_LEADINGZEROS | 2, 6);
+    PrintNum(wram->wStringBuffer1, &value, PRINTNUM_LEADINGZEROS | 2, 6);
     // POP_HL;
 
     // LD_DE(wStringBuffer1);
@@ -722,7 +722,7 @@ void LoadBuyMenuText(uint8_t a){
     // LD_H_hl;
     // LD_L_A;
     // CALL(aPrintText);
-    PrintText_Conv2(GetMartDialogGroup(wram->wMartType)->texts[a]);
+    PrintText(GetMartDialogGroup(wram->wMartType)->texts[a]);
     // RET;
 }
 
@@ -1047,7 +1047,7 @@ static void MenuHeader_PrintBCDPrices(const struct MenuData* data, tile_t* de){
     // ADD_HL_BC;
     // LD_C(PRINTNUM_LEADINGZEROS | PRINTNUM_MONEY | 3);
     // CALL(aPrintBCDNumber);
-    PrintNum_Conv2(de + SCREEN_WIDTH, price, PRINTNUM_MONEY | 3, 6);
+    PrintNum(de + SCREEN_WIDTH, price, PRINTNUM_MONEY | 3, 6);
     // RET;
 }
 
@@ -1201,7 +1201,7 @@ static void SellMenu_TryToSellItem(void) {
             if(!v_CheckTossableItem_Conv(wram->wCurItem)){
                 // LD_HL(mMartCantBuyText);
                 // CALL(aPrintText);
-                PrintText_Conv2(MartCantBuyText);
+                PrintText(MartCantBuyText);
                 // AND_A_A;
                 // RET;
                 return;
@@ -1210,7 +1210,7 @@ static void SellMenu_TryToSellItem(void) {
         // okay_to_sell:
             // LD_HL(mMartSellHowManyText);
             // CALL(aPrintText);
-            PrintText_Conv2(MartSellHowManyText);
+            PrintText(MartSellHowManyText);
             // FARCALL(aPlaceMoneyAtTopLeftOfTextbox);
             PlaceMoneyAtTopLeftOfTextbox();
             // FARCALL(aSelectQuantityToSell);
@@ -1225,7 +1225,7 @@ static void SellMenu_TryToSellItem(void) {
                 ClearBox(coord(1, 14, wram->wTilemap), 18, 3);
                 // LD_HL(mMartSellPriceText);
                 // CALL(aPrintTextboxText);
-                PrintTextboxText_Conv2(MartSellPriceText);
+                PrintTextboxText(MartSellPriceText);
                 // CALL(aYesNoBox);
                 // IF_C goto declined;
                 if(YesNoBox()) {
@@ -1245,7 +1245,7 @@ static void SellMenu_TryToSellItem(void) {
                     ClearBox(coord(1, 14, wram->wTilemap), 18, 3);
                     // LD_HL(mMartBoughtText);
                     // CALL(aPrintTextboxText);
-                    PrintTextboxText_Conv2(MartBoughtText);
+                    PrintTextboxText(MartBoughtText);
                     // CALL(aPlayTransactionSound);
                     PlayTransactionSound();
                     // FARCALL(aPlaceMoneyBottomLeft);

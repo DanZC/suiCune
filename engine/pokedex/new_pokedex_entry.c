@@ -84,7 +84,7 @@ void NewPokedexEntry(void){
     // CALL(aMaxVolume);
     MaxVolume();
     // CALL(aRotateThreePalettesRight);
-    RotateThreePalettesRight_Conv();
+    RotateThreePalettesRight();
     // LDH_A_addr(hSCX);
     // ADD_A(-POKEDEX_SCX);
     // LDH_addr_A(hSCX);

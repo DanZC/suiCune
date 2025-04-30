@@ -68,43 +68,43 @@ void DisplayCaughtContestMonStats(void){
     // hlcoord(1, 2, wTilemap);
     // CALL(aPlaceString);
     struct TextPrintState st = {.hl = coord(1, 2, wram->wTilemap), .de = GetPokemonName(wram->wContestMon.mon.species)};
-    PlaceString_Conv(&st, st.hl);
+    PlaceString(&st, st.hl);
 
     // LD_H_B;
     // LD_L_C;
     // LD_A_addr(wContestMonLevel);
     // LD_addr_A(wTempMonLevel);
     // CALL(aPrintLevel);
-    PrintLevel_Conv(st.bc, wram->wContestMon.mon.level);
+    PrintLevel(st.bc, wram->wContestMon.mon.level);
 
     // LD_DE(wEnemyMonNickname);
     st.de = wram->wEnemyMonNickname;
     // hlcoord(1, 8, wTilemap);
     st.hl = coord(1, 8, wram->wTilemap);
     // CALL(aPlaceString);
-    PlaceString_Conv(&st, st.hl);
+    PlaceString(&st, st.hl);
 
     // LD_H_B;
     // LD_L_C;
     // LD_A_addr(wEnemyMonLevel);
     // LD_addr_A(wTempMonLevel);
     // CALL(aPrintLevel);
-    PrintLevel_Conv(st.bc, wram->wEnemyMon.level);
+    PrintLevel(st.bc, wram->wEnemyMon.level);
 
     // hlcoord(11, 4, wTilemap);
     // LD_DE(wContestMonMaxHP);
     // LD_BC((2 << 8) | 3);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(11, 4, wram->wTilemap), &wram->wContestMon.maxHP, 2, 3);
+    PrintNum(coord(11, 4, wram->wTilemap), &wram->wContestMon.maxHP, 2, 3);
 
     // hlcoord(11, 10, wTilemap);
     // LD_DE(wEnemyMonMaxHP);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(11, 10, wram->wTilemap), &wram->wEnemyMon.maxHP, 2, 3);
+    PrintNum(coord(11, 10, wram->wTilemap), &wram->wEnemyMon.maxHP, 2, 3);
 
     // LD_HL(mContestAskSwitchText);
     // CALL(aPrintText);
-    PrintText_Conv2(ContestAskSwitchText);
+    PrintText(ContestAskSwitchText);
 
     // POP_AF;
     // LD_addr_A(wOptions);
@@ -134,7 +134,7 @@ void DisplayAlreadyCaughtText(species_t a){
     GetPokemonName(a);
     // LD_HL(mDisplayAlreadyCaughtText_ContestAlreadyCaughtText);
     // JP(mPrintText);
-    PrintText_Conv2(ContestAlreadyCaughtText);
+    PrintText(ContestAlreadyCaughtText);
 }
 
 // void DummyPredef2F(void){

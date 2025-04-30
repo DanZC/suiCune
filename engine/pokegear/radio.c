@@ -317,7 +317,7 @@ void PrintRadioLine_Conv(uint8_t a){
     {
         // REG_A = lines_printed;
         // CALL(aPrintTextboxText);
-        PrintTextboxText_Conv2(gRadioText);
+        PrintTextboxText(gRadioText);
     }
     else 
     {
@@ -327,13 +327,13 @@ void PrintRadioLine_Conv(uint8_t a){
         {
             // REG_A = lines_printed;
             // CALL(aPrintTextboxText);
-            PrintTextboxText_Conv2(gRadioText);
+            PrintTextboxText(gRadioText);
         }
         else 
         {
             // bccoord(1, 16, wTilemap);
             // CALL(aPlaceHLTextAtBC);
-            PlaceHLTextAtBC_Conv2(coord(1, 16, wram->wTilemap), gRadioText);
+            PlaceHLTextAtBC(coord(1, 16, wram->wTilemap), gRadioText);
         }
     }
     wram->wCurRadioLine = RADIO_SCROLL;
@@ -839,12 +839,12 @@ void OaksPKMNTalk10(void){
     RadioMusicRestartPokemonChannel_Conv();
     // LD_HL(mOPT_RestartText);
     // CALL(aPrintText);
-    PrintText_Conv2(OPT_RestartText);
+    PrintText(OPT_RestartText);
     // CALL(aWaitBGMap);
     WaitBGMap();
     // LD_HL(mOPT_PokemonChannelText);
     // CALL(aPrintText);
-    PrintText_Conv2(OPT_PokemonChannelText);
+    PrintText(OPT_PokemonChannelText);
     // LD_A(OAKS_POKEMON_TALK_11);
     // LD_addr_A(wCurRadioLine);
     wram->wCurRadioLine = OAKS_POKEMON_TALK_11;
@@ -915,7 +915,7 @@ void OaksPKMNTalk14(void){
     RadioMusicRestartDE_Conv(MUSIC_POKEMON_TALK);
     // LD_HL(mOaksPKMNTalk14_terminator);
     // CALL(aPrintText);
-    PrintText_Conv2((struct TextCmd[]){
+    PrintText((struct TextCmd[]){
         text_start("@")
         text_end
     });
@@ -1376,7 +1376,7 @@ void BenFernMusic7(void){
 void StartPokemonMusicChannel(void){
     // CALL(aRadioTerminator);
     // CALL(aPrintText);
-    PrintText_Conv2(RadioTerminator_Conv());
+    PrintText(RadioTerminator());
     // LD_DE(MUSIC_POKEMON_MARCH);
     // CALL(aGetWeekday);
     // AND_A(1);
@@ -1507,7 +1507,7 @@ void LuckyNumberShow8(void){
     // LD_DE(wLuckyIDNumber);
     // LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 5);
     // CALL(aPrintNum);
-    PrintNum_Conv2(wram->wStringBuffer1, &wram->wLuckyIDNumber, PRINTNUM_LEADINGZEROS | 2, 5);
+    PrintNum(wram->wStringBuffer1, &wram->wLuckyIDNumber, PRINTNUM_LEADINGZEROS | 2, 5);
     // LD_A(0x50);
     // LD_addr_A(wStringBuffer1 + 5);
     wram->wStringBuffer1[5] = CHAR_TERM;
@@ -2780,7 +2780,7 @@ void StartRadioStation_Conv(void){
 
     // CALL(aRadioTerminator);
     // CALL(aPrintText);
-    PrintText_Conv2(RadioTerminator_Conv());
+    PrintText(RadioTerminator());
 
     uint16_t hl = RadioChannelSongs[wram->wCurRadioLine];
     RadioMusicRestartDE_Conv(hl);

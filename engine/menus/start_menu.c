@@ -446,7 +446,7 @@ static const struct MenuHeader menuHeader = {
     PlaySFX(SFX_MENU);
 
     // FARCALL(aReanchorBGMap_NoOAMUpdate);
-    ReanchorBGMap_NoOAMUpdate_Conv();
+    ReanchorBGMap_NoOAMUpdate();
 
     // LD_HL(wStatusFlags2);
     // BIT_hl(STATUSFLAGS2_BUG_CONTEST_TIMER_F);
@@ -479,7 +479,7 @@ static const struct MenuHeader menuHeader = {
     // CALL(av_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
     v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap();
     // FARCALL(aLoadFonts_NoOAMUpdate);
-    LoadFonts_NoOAMUpdate_Conv();
+    LoadFonts_NoOAMUpdate();
     // CALL(aStartMenu_DrawBugContestStatus);
     StartMenu_DrawBugContestStatus();
     // CALL(aUpdateTimePals);

@@ -45,7 +45,7 @@ void HealMachineAnim(void){
     HealMachineAnim_DoJumptableFunctions();
     // LD_A_addr(wHealMachineTempOBP1);
     // CALL(aDmgToCgbObjPal1);
-    DmgToCgbObjPal1_Conv(wram->wHealMachineTempOBP1);
+    DmgToCgbObjPal1(wram->wHealMachineTempOBP1);
     // RET;
     return;
 }

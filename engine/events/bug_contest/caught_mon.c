@@ -14,7 +14,7 @@ static void BugContest_SetCaughtContestMon_generatestats(void) {
     // LD_addr_A(wCurSpecies);
     // LD_addr_A(wCurPartySpecies);
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(wram->wTempEnemyMonSpecies);
+    GetBaseData(wram->wTempEnemyMonSpecies);
     // XOR_A_A;
     // LD_BC(PARTYMON_STRUCT_LENGTH);
     // LD_HL(wContestMon);
@@ -59,7 +59,7 @@ void BugContest_SetCaughtContestMon(void){
     GetPokemonName(wram->wTempEnemyMonSpecies);
     // LD_HL(mBugContest_SetCaughtContestMon_ContestCaughtMonText);
     // CALL(aPrintText);
-    PrintText_Conv2(ContestCaughtMonText);
+    PrintText(ContestCaughtMonText);
     // RET;
     return;
 }

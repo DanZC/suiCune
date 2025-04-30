@@ -227,7 +227,7 @@ static bool CheckBreedmonCompatibility_CheckBreedingGroupCompatibility(void){
     // LD_addr_A(wCurSpecies);
     wram->wCurSpecies = wram->wBreedMon2.species;
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(wram->wCurSpecies);
+    GetBaseData(wram->wCurSpecies);
     // LD_A_addr(wBaseEggGroups);
     // CP_A(EGG_NONE * 0x11);
     // IF_Z goto Incompatible;
@@ -238,7 +238,7 @@ static bool CheckBreedmonCompatibility_CheckBreedingGroupCompatibility(void){
     // LD_addr_A(wCurSpecies);
     wram->wCurSpecies = wram->wBreedMon1.species;
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(wram->wCurSpecies);
+    GetBaseData(wram->wCurSpecies);
     // LD_A_addr(wBaseEggGroups);
     // CP_A(EGG_NONE * 0x11);
     // IF_Z goto Incompatible;
@@ -255,7 +255,7 @@ static bool CheckBreedmonCompatibility_CheckBreedingGroupCompatibility(void){
     // LD_addr_A(wCurSpecies);
     wram->wCurSpecies = wram->wBreedMon2.species;
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(wram->wCurSpecies);
+    GetBaseData(wram->wCurSpecies);
     // LD_A_addr(wBaseEggGroups);
     // PUSH_AF;
     // AND_A(0xf);
@@ -276,7 +276,7 @@ static bool CheckBreedmonCompatibility_CheckBreedingGroupCompatibility(void){
     wram->wCurSpecies = wram->wBreedMon1.species;
     // PUSH_BC;
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(wram->wCurSpecies);
+    GetBaseData(wram->wCurSpecies);
     // POP_BC;
     // LD_A_addr(wBaseEggGroups);
     // PUSH_AF;
@@ -546,7 +546,7 @@ static void Text_HatchEgg_Function(struct TextCmdState* state) {
     EggHatch_AnimationSequence();
     // LD_HL(mHatchEggs_BreedClearboxText);
     // CALL(aPrintText);
-    PrintText_Conv2(BreedClearboxText);
+    PrintText(BreedClearboxText);
     // POP_AF;
     // LD_addr_A(wCurPartySpecies);
     // POP_BC;
@@ -636,7 +636,7 @@ void HatchEggs(void){
             // LD_addr_A(wUnusedEggHatchFlag);
             wram->wUnusedEggHatchFlag = 0;
             // CALL(aGetBaseData);
-            GetBaseData_Conv2(partySpecies);
+            GetBaseData(partySpecies);
             // LD_A_addr(wCurPartyMon);
             // LD_HL(wPartyMon1);
             // LD_BC(PARTYMON_STRUCT_LENGTH);
@@ -700,7 +700,7 @@ void HatchEggs(void){
             CopyBytes(wram->wPartyMonOT[mon], wram->wPlayerName, NAME_LENGTH);
             // LD_HL(mHatchEggs_Text_HatchEgg);
             // CALL(aPrintText);
-            PrintText_Conv2(Text_HatchEgg);
+            PrintText(Text_HatchEgg);
             // LD_A_addr(wCurPartyMon);
             // LD_HL(wPartyMonNicknames);
             // LD_BC(MON_NAME_LENGTH);
@@ -710,7 +710,7 @@ void HatchEggs(void){
             // PUSH_DE;
             // LD_HL(mHatchEggs_BreedAskNicknameText);
             // CALL(aPrintText);
-            PrintText_Conv2(BreedAskNicknameText);
+            PrintText(BreedAskNicknameText);
             // CALL(aYesNoBox);
             // POP_DE;
             // IF_C goto nonickname;
@@ -1372,7 +1372,7 @@ void GetEggFrontpic(tile_t* de, species_t a){
     // LD_addr_A(wCurSpecies);
     wram->wCurSpecies = a;
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(a);
+    GetBaseData(a);
     // LD_HL(wBattleMonDVs);
     // PREDEF(pGetUnownLetter);
     GetUnownLetter_Conv(wram->wBattleMon.dvs);
@@ -1388,7 +1388,7 @@ void GetHatchlingFrontpic(tile_t* de, species_t a){
     // LD_addr_A(wCurSpecies);
     wram->wCurSpecies = a;
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(a);
+    GetBaseData(a);
     // LD_HL(wBattleMonDVs);
     // PREDEF(pGetUnownLetter);
     GetUnownLetter_Conv(wram->wBattleMon.dvs);
@@ -1433,7 +1433,7 @@ void EggHatch_DoAnimFrame(void){
     // PUSH_DE;
     // PUSH_BC;
     // CALLFAR(aPlaySpriteAnimations);
-    PlaySpriteAnimations_Conv();
+    PlaySpriteAnimations();
     // CALL(aDelayFrame);
     DelayFrame();
     // POP_BC;
@@ -1465,7 +1465,7 @@ void EggHatch_AnimationSequence(void){
     // CALL(aFarCopyBytes);
     LoadPNG2bppAssetSectionToVRAM(vram->vTiles0 + LEN_2BPP_TILE * 0x00, EggHatchGFX, 0, 2);
     // FARCALL(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
     // LD_A_addr(wJumptableIndex);
     // CALL(aGetHatchlingFrontpic);
@@ -1613,7 +1613,7 @@ void EggHatch_CrackShell(void){
     // LD_E(11 * 8);
     // LD_A(SPRITE_ANIM_INDEX_EGG_CRACK);
     // CALL(aInitSpriteAnimStruct);
-    struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_EGG_CRACK, de);
+    struct SpriteAnim* bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_EGG_CRACK, de);
     // LD_HL(SPRITEANIMSTRUCT_TILE_ID);
     // ADD_HL_BC;
     // LD_hl(0x0);
@@ -1644,7 +1644,7 @@ void Hatch_InitShellFragments(void){
         -1,
     };
     // FARCALL(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // LD_HL(mHatch_InitShellFragments_SpriteData);
     const uint8_t* hl = SpriteData;
 
@@ -1669,7 +1669,7 @@ void Hatch_InitShellFragments(void){
 
         // LD_A(SPRITE_ANIM_INDEX_EGG_HATCH);
         // CALL(aInitSpriteAnimStruct);
-        struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_EGG_HATCH, (d << 8) | e);
+        struct SpriteAnim* bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_EGG_HATCH, (d << 8) | e);
 
         // LD_HL(SPRITEANIMSTRUCT_TILE_ID);
         // ADD_HL_BC;
@@ -1720,10 +1720,10 @@ void Hatch_ShellFragmentLoop(void){
 void DayCareMon1(void){
     // LD_HL(mLeftWithDayCareManText);
     // CALL(aPrintText);
-    PrintText_Conv2(LeftWithDayCareManText);
+    PrintText(LeftWithDayCareManText);
     // LD_A_addr(wBreedMon1Species);
     // CALL(aPlayMonCry);
-    PlayMonCry_Conv(wram->wBreedMon1.species);
+    PlayMonCry(wram->wBreedMon1.species);
     // LD_A_addr(wDayCareLady);
     // BIT_A(DAYCARELADY_HAS_MON_F);
     // JR_Z (mDayCareMonCursor);
@@ -1734,16 +1734,16 @@ void DayCareMon1(void){
     // LD_HL(wBreedMon2Nickname);
     // CALL(aDayCareMonCompatibilityText);
     // JP(mPrintText);
-    PrintText_Conv2(DayCareMonCompatibilityText_Conv(wram->wBreedMon2Nickname));
+    PrintText(DayCareMonCompatibilityText_Conv(wram->wBreedMon2Nickname));
 }
 
 void DayCareMon2(void){
     // LD_HL(mLeftWithDayCareLadyText);
     // CALL(aPrintText);
-    PrintText_Conv2(LeftWithDayCareLadyText);
+    PrintText(LeftWithDayCareLadyText);
     // LD_A_addr(wBreedMon2Species);
     // CALL(aPlayMonCry);
-    PlayMonCry_Conv(wram->wBreedMon1.species);
+    PlayMonCry(wram->wBreedMon1.species);
     // LD_A_addr(wDayCareMan);
     // BIT_A(DAYCAREMAN_HAS_MON_F);
     // JR_Z (mDayCareMonCursor);
@@ -1754,7 +1754,7 @@ void DayCareMon2(void){
     // LD_HL(wBreedMon1Nickname);
     // CALL(aDayCareMonCompatibilityText);
     // JP(mPrintText);
-    PrintText_Conv2(DayCareMonCompatibilityText_Conv(wram->wBreedMon1Nickname));
+    PrintText(DayCareMonCompatibilityText_Conv(wram->wBreedMon1Nickname));
 }
 
 void DayCareMonCursor(void){

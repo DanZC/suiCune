@@ -108,11 +108,11 @@ void GetName_GB(void){
     // LD_A_addr(wNamedObjectType);
     // CP_A(MON_NAME);
     // IF_NZ goto NotPokeName;
-    if(gb_read(wNamedObjectType) == MON_NAME) 
+    if(wram->wNamedObjectType == MON_NAME) 
     {
         // LD_A_addr(wCurSpecies);
         // LD_addr_A(wNamedObjectIndex);
-        gb_write(wNamedObjectIndex, gb_read(wCurSpecies));
+        wram->wNamedObjectIndex = wram->wCurSpecies;
 
         // CALL(aGetPokemonName);
         GetPokemonName_GB();
@@ -131,7 +131,7 @@ void GetName_GB(void){
         // DEC_A;
         // LD_E_A;
         // LD_D(0);
-        de = (gb_read(wNamedObjectType) - 1) & 0xFF;
+        de = (wram->wNamedObjectType - 1) & 0xFF;
 
         // LD_HL(mNamesPointers);
         uint16_t hl = mNamesPointers;

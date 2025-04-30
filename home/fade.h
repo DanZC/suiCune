@@ -1,14 +1,8 @@
 void TimeOfDayFade(void);
 void RotateFourPalettesRight(void);
-void RotateFourPalettesRight_Conv(void);
 void RotateThreePalettesRight(void);
-void RotateThreePalettesRight_Conv(void);
-void RotatePalettesRight(void);
 void RotateFourPalettesLeft(void);
-void RotateFourPalettesLeft_Conv(void);
 void RotateThreePalettesLeft(void);
-void RotateThreePalettesLeft_Conv(void);
-void RotatePalettesLeft(void);
 // void IncGradGBPalTable_00(void);
 // void IncGradGBPalTable_01(void);
 // void IncGradGBPalTable_02(void);

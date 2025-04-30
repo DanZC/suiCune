@@ -54,7 +54,7 @@ static void v_BillsPC_LogIn(void) {
     bit_set(wram->wOptions, NO_TEXT_SCROLL);
     // LD_HL(mv_BillsPC_PCWhatText);
     // CALL(aPrintText);
-    PrintText_Conv2(PCWhatText);
+    PrintText(PCWhatText);
     // POP_AF;
     // LD_addr_A(wOptions);
     wram->wOptions = options;
@@ -197,7 +197,7 @@ bool BillsPC_MovePKMNMenu(void){
     if(IsAnyMonHoldingMail_Conv()) {
         // LD_HL(mBillsPC_MovePKMNMenu_PCMonHoldingMailText);
         // CALL(aPrintText);
-        PrintText_Conv2(PCMonHoldingMailText);
+        PrintText(PCMonHoldingMailText);
         // goto quit;
     }
     else {

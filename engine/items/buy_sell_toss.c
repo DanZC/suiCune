@@ -207,7 +207,7 @@ void BuySellToss_UpdateQuantityDisplay(void){
     // LD_DE(wItemQuantityChange);
     // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
     // CALL(aPrintNum);
-    hl = PrintNum_Conv2(hl + SCREEN_WIDTH + 2, &wram->wItemQuantityChange, PRINTNUM_LEADINGZEROS | 1, 2);
+    hl = PrintNum(hl + SCREEN_WIDTH + 2, &wram->wItemQuantityChange, PRINTNUM_LEADINGZEROS | 1, 2);
 
     void (*const func)(tile_t*) = (void (*)(tile_t*))GetMenuData();
     // LD_A_addr(wMenuDataPointer);
@@ -295,7 +295,7 @@ void BuySell_DisplaySubtotal(tile_t* hl, uint32_t price){
     // LD_DE(hMoneyTemp);
     // LD_BC((PRINTNUM_MONEY | 3 << 8) | 6);
     // CALL(aPrintNum);
-    PrintNum_Conv2(hl, hram->hMoneyTemp, PRINTNUM_MONEY | 3, 6);
+    PrintNum(hl, hram->hMoneyTemp, PRINTNUM_MONEY | 3, 6);
     // CALL(aWaitBGMap);
     WaitBGMap();
     // RET;

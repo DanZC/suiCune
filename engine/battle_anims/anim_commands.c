@@ -2899,10 +2899,10 @@ void BattleAnimAssignPals(void){
         // LD_addr_A(wOBP1);
         wram->wOBP1 = 0b11100100;
         // CALL(aDmgToCgbBGPals);
-        DmgToCgbBGPals_Conv(0b11100100);
+        DmgToCgbBGPals(0b11100100);
         // LD_DE((0b11100100 << 8) | 0b11100100);
         // CALL(aDmgToCgbObjPals);
-        DmgToCgbObjPals_Conv(0b11100100, 0b11100100);
+        DmgToCgbObjPals(0b11100100, 0b11100100);
         // RET;
         return;
     }
@@ -2972,7 +2972,7 @@ void BattleAnim_RevertPals(void){
     // CALL(aDmgToCgbBGPals);
     // LD_DE((0b11100100 << 8) | 0b11100100);
     // CALL(aDmgToCgbObjPals);
-    DmgToCgbObjPals_Conv(0b11100100, 0b11100100);
+    DmgToCgbObjPals(0b11100100, 0b11100100);
     // XOR_A_A;
     // LDH_addr_A(hSCX);
     hram->hSCX = 0;

@@ -273,7 +273,7 @@ u8_flag_s HallOfFamePC(void){
 u8_flag_s TurnOffPC(void){
     // LD_HL(mPokecenterPCOaksClosedText);
     // CALL(aPrintText);
-    PrintText_Conv2(PokecenterPCOaksClosedText);
+    PrintText(PokecenterPCOaksClosedText);
     // SCF;
     // RET;
     return u8_flag(0, true);
@@ -771,7 +771,7 @@ static void PlayerDepositItemMenu_DepositItem(void) {
     // NoRoomInPC:
         // LD_HL(mPlayerDepositItemMenu_PlayersPCNoRoomDepositText);
         // CALL(aPrintText);
-        PrintText_Conv2(PlayersPCNoRoomDepositText);
+        PrintText(PlayersPCNoRoomDepositText);
         // RET;
         return;
     }
@@ -788,7 +788,7 @@ static void PlayerDepositItemMenu_DepositItem(void) {
     PartyMonItemName_Conv(wram->wCurItem);
     // LD_HL(mPlayerDepositItemMenu_PlayersPCDepositItemsText);
     // CALL(aPrintText);
-    PrintText_Conv2(PlayersPCDepositItemsText);
+    PrintText(PlayersPCDepositItemsText);
     // RET;
 }
 

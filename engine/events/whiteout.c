@@ -62,7 +62,7 @@ void OverworldBGMap(void){
     // CALL(aHideSprites);
     HideSprites();
     // CALL(aRotateThreePalettesLeft);
-    RotateThreePalettesLeft_Conv();
+    RotateThreePalettesLeft();
     // RET;
 }
 

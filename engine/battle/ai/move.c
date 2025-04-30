@@ -152,7 +152,7 @@ void AIChooseMove(void){
         // PREDEF(pSmallFarFlagAction);
         // LD_D_C;
         // POP_BC;
-        uint8_t d = SmallFarFlagAction_Conv((uint8_t*)&hl->aiMoveWeights, c, CHECK_FLAG);
+        uint8_t d = SmallFarFlagAction((uint8_t*)&hl->aiMoveWeights, c, CHECK_FLAG);
 
         // INC_C;
         // PUSH_BC;

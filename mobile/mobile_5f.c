@@ -1408,7 +1408,7 @@ void Function17d48d(void){
         // ADD_HL_BC;
         // CALL(aPlaceString);
         struct TextPrintState st = {.de = hl, .hl = coord(0, 0, wram->wTilemap) + bc, .bc = coord(0, 0, wram->wTilemap)};
-        PlaceString_Conv(&st, st.hl);
+        PlaceString(&st, st.hl);
         // PUSH_DE;
         // POP_HL;
         // INC_HL;
@@ -2849,7 +2849,7 @@ void Function17dc9f(void){
     // CALL(aHlToCrashCheckPointer);
     HlToCrashCheckPointer(IncCrashCheckPointer());
     // CALL(aRotateFourPalettesLeft);
-    RotateFourPalettesLeft_Conv();
+    RotateFourPalettesLeft();
     // RET;
 }
 
@@ -2887,7 +2887,7 @@ void Function17dcaf(void){
         // IF_NZ goto asm_17dcbb;
     } while(--c != 0);
     // CALL(aRotateThreePalettesRight);
-    RotateThreePalettesRight_Conv();
+    RotateThreePalettesRight();
     // LD_A(0x4);
     // LDH_addr_A(rSVBK);
     // RET;
@@ -2984,7 +2984,7 @@ void Function17dd13(void){
     // POP_BC;
     // POP_HL;
     // CALL(aPlaceHLTextAtBC);
-    PlaceHLTextAtBC_Conv(hl, coord(0, 0, wram->wTilemap) + bc);
+    PlaceHLTextAtBC_GB(hl, coord(0, 0, wram->wTilemap) + bc);
     // RET;
 }
 
@@ -4404,7 +4404,7 @@ void Function17e451(void){
             // POP_HL;
             // CALL(aPlaceString);
             struct TextPrintState st = {.de = gMobile_wcd20_wcd21 + de2, .hl = hl2, .bc = bc};
-            PlaceString_Conv(&st, st.hl);
+            PlaceString(&st, st.hl);
             // POP_BC;
             // POP_HL;
             // LD_A_addr(wcd26);
@@ -5191,7 +5191,7 @@ bool Function17f0f8(struct TextPrintState* state, uint8_t* saved){
         // LD_DE(wc608);
         state->de = wram->wc608;
         // CALL(aPlaceString);
-        PlaceString_Conv(state, state->hl);
+        PlaceString(state, state->hl);
         // LD_A_C;
         // LD_addr_A(wcd52);
         // LD_A_B;
@@ -5330,7 +5330,7 @@ bool Function17f181(struct TextPrintState* state, uint8_t* saved){
         // LD_DE(wc608);
         state->de = wram->wc608;
         // CALL(aPlaceString);
-        PlaceString_Conv(state, state->hl);
+        PlaceString(state, state->hl);
         // LD_A_C;
         // LD_addr_A(wcd52);
         // LD_A_B;
@@ -5482,7 +5482,7 @@ bool Function17f220(struct TextPrintState* state, uint8_t* saved){
         // POP_HL;
         state->hl = bc;
         // CALL(aPlaceString);
-        PlaceString_Conv(state, state->hl);
+        PlaceString(state, state->hl);
         // LD_A_C;
         // LD_addr_A(wcd52);
         // LD_A_B;
@@ -5658,7 +5658,7 @@ bool MobileScript_PlayerName(struct TextPrintState* state, uint8_t* saved){
     // LD_DE(wc608);
     state->de = wram->wc608;
     // CALL(aPlaceString);
-    PlaceString_Conv(state, state->hl);
+    PlaceString(state, state->hl);
     // LD_A_C;
     // LD_addr_A(wcd52);
     // LD_A_B;
@@ -5723,7 +5723,7 @@ bool MobileScript_Prefecture(struct TextPrintState* state, uint8_t* saved){
     // LD_DE(wc608);
     state->de = wram->wc608;
     // CALL(aPlaceString);
-    PlaceString_Conv(state, state->hl);
+    PlaceString(state, state->hl);
     // LD_A_C;
     // LD_addr_A(wcd52);
     // LD_A_B;
@@ -5910,7 +5910,7 @@ bool Function17f3f0(struct TextPrintState* state, uint8_t* saved){
     // POP_HL;
     state->hl = hl;
     // CALL(aPlaceString);
-    PlaceString_Conv(state, state->hl);
+    PlaceString(state, state->hl);
     // POP_AF;
     // LD_E_A;
     // LD_D(0);
@@ -7209,7 +7209,7 @@ bool Function17ff3c(void){
     // LD_DE(wMobileErrorCodeBuffer);
     // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 3);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(14, 2, wram->wTilemap), wram->wMobileErrorCodeBuffer, PRINTNUM_LEADINGZEROS | 1, 3);
+    PrintNum(coord(14, 2, wram->wTilemap), wram->wMobileErrorCodeBuffer, PRINTNUM_LEADINGZEROS | 1, 3);
     // POP_AF;
     // LD_addr_A(wMobileErrorCodeBuffer);
     wram->wMobileErrorCodeBuffer[0] = temp;

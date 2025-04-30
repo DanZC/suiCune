@@ -379,7 +379,7 @@ void PrintWinLossText(void){
     // LD_L_A;
     // CALL(aGetMapScriptsBank);
     // CALL(aFarPrintText);
-    PrintText_Conv2(textPtr);
+    PrintText(textPtr);
     // CALL(aWaitBGMap);
     WaitBGMap();
     // CALL(aWaitPressAorB_BlinkCursor);

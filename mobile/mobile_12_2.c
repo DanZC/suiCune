@@ -291,7 +291,7 @@ asm_4a9a1:
         PlaySFX(SFX_WRONG);
         // LD_HL(mMobilePickThreeMonForBattleText);
         // CALL(aPrintText);
-        PrintText_Conv2(MobilePickThreeMonForBattleText);
+        PrintText(MobilePickThreeMonForBattleText);
         goto asm_4a974;
     }
     // CALL(aFunction4a9d7);
@@ -366,7 +366,7 @@ bool Function4a9d7(void){
     CopyBytes(gMobileParticipant3Nickname, wram->wPartyMonNickname[wram->wMobileAdapterPlayerSelectionBuffer[2]], MON_NAME_LENGTH);
     // LD_HL(mMobileUseTheseThreeMonText);
     // CALL(aPrintText);
-    PrintText_Conv2(MobileUseTheseThreeMonText);
+    PrintText(MobileUseTheseThreeMonText);
     // CALL(aYesNoBox);
     // RET;
     return YesNoBox();
@@ -586,7 +586,7 @@ void Function4aad3(void){
     // CALL(aFunction4aa7a);
     Function4aa7a();
     // FARCALL(aPlaySpriteAnimations);
-    PlaySpriteAnimations_Conv();
+    PlaySpriteAnimations();
     // RET;
 }
 
@@ -1069,7 +1069,7 @@ void Function4ad17(void){
                 WaitPlaySFX(SFX_WRONG);
                 // LD_HL(mMobileOnlyThreeMonMayEnterText);
                 // CALL(aPrintText);
-                PrintText_Conv2(MobileOnlyThreeMonMayEnterText);
+                PrintText(MobileOnlyThreeMonMayEnterText);
                 // RET;
             }
         }

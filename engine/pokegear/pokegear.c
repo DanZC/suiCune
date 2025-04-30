@@ -122,14 +122,8 @@ void PokeGear(void){
         // CALL(aPokegearJumptable);
         PokegearJumptable();
 
-        // SAVE_REGS;
-        {
-            bank_push(BANK(aPlaySpriteAnimations));
-            // FARCALL(aPlaySpriteAnimations);
-            PlaySpriteAnimations_Conv();
-            bank_pop;
-        }
-        // RESTORE_REGS;
+        // FARCALL(aPlaySpriteAnimations);
+        PlaySpriteAnimations();
         // CALL(aDelayFrame);
         DelayFrame();
         // goto loop;
@@ -277,7 +271,7 @@ void PokeGear_InitTilemap_Conv(void) {
     Pokegear_LoadGFX_Conv();
     // CALL(aPokegear_LoadGFX);
     // FARCALL(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // CALL(aInitPokegearModeIndicatorArrow);
     InitPokegearModeIndicatorArrow_Conv();
     // LD_A(8);
@@ -333,7 +327,7 @@ void PokeGear_InitTilemap_Conv(void) {
         return;
     // LD_A(0b11100100);
     // CALL(aDmgToCgbObjPal0);
-    DmgToCgbObjPal0_Conv(0b11100100);
+    DmgToCgbObjPal0(0b11100100);
     //RET;
 }
 
@@ -436,7 +430,7 @@ void InitPokegearModeIndicatorArrow_Conv(void){
     // depixel4(4, 2, 4, 0);
     // LD_A(SPRITE_ANIM_INDEX_POKEGEAR_ARROW);
     // CALL(aInitSpriteAnimStruct);
-    struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_POKEGEAR_ARROW, pixel4(4, 2, 4, 0));
+    struct SpriteAnim* bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_POKEGEAR_ARROW, pixel4(4, 2, 4, 0));
     // LD_HL(SPRITEANIMSTRUCT_TILE_ID);
     // ADD_HL_BC;
     // LD_hl(0x0);
@@ -1101,7 +1095,7 @@ void PokegearClock_Init_Conv(void) {
 
     // REG_HL = mPokegearPressButtonText;
     // CALL(aPrintText);
-    PrintText_Conv2(PokegearPressButtonText);
+    PrintText(PokegearPressButtonText);
 
     // LD_HL(wJumptableIndex);
     // INC_hl;
@@ -1266,7 +1260,7 @@ void Pokegear_UpdateClock_Conv(void){
     // LD_HL(mPokegear_UpdateClock_GearTodayText);
     // bccoord(6, 6, wTilemap);
     // CALL(aPlaceHLTextAtBC);
-    PlaceHLTextAtBC_Conv2(coord(6, 6, wram->wTilemap), GearTodayText);
+    PlaceHLTextAtBC(coord(6, 6, wram->wTilemap), GearTodayText);
 }
 
 void PokegearMap_CheckRegion(void){
@@ -1599,7 +1593,7 @@ void PokegearMap_InitPlayerIcon_Conv(uint8_t landmark){
 // got_gender:
     // LD_A_B;
     // CALL(aInitSpriteAnimStruct);
-    struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(b, pixel2(0, 0));
+    struct SpriteAnim* bc = InitSpriteAnimStruct(b, pixel2(0, 0));
     // LD_HL(SPRITEANIMSTRUCT_TILE_ID);
     // ADD_HL_BC;
     // LD_hl(0x10);
@@ -1646,7 +1640,7 @@ struct SpriteAnim* PokegearMap_InitCursor_Conv(uint8_t landmark) {
     // depixel2(0, 0);
     // LD_A(SPRITE_ANIM_INDEX_POKEGEAR_ARROW);
     // CALL(aInitSpriteAnimStruct);
-    struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_POKEGEAR_ARROW, pixel2(0, 0));
+    struct SpriteAnim* bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_POKEGEAR_ARROW, pixel2(0, 0));
     // LD_HL(SPRITEANIMSTRUCT_TILE_ID);
     // ADD_HL_BC;
     // LD_hl(0x04);
@@ -1775,7 +1769,7 @@ void PokegearRadio_Init(void){
     // depixel4(4, 10, 4, 4);
     // LD_A(SPRITE_ANIM_INDEX_RADIO_TUNING_KNOB);
     // CALL(aInitSpriteAnimStruct);
-    struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_RADIO_TUNING_KNOB, pixel4(4, 10, 4, 4));
+    struct SpriteAnim* bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_RADIO_TUNING_KNOB, pixel4(4, 10, 4, 4));
     // LD_HL(SPRITEANIMSTRUCT_TILE_ID);
     // ADD_HL_BC;
     // LD_hl(0x08);
@@ -1887,7 +1881,7 @@ void PokegearPhone_Init_Conv(void){
     ExitPokegearRadio_HandleMusic();
     // LD_HL(mPokegearAskWhoCallText);
     // CALL(aPrintText);
-    PrintText_Conv2(PokegearAskWhoCallText);
+    PrintText(PokegearAskWhoCallText);
     // RET;
 
 }
@@ -2027,7 +2021,7 @@ void PokegearPhone_MakePhoneCall(void){
         PlaySFX(SFX_CALL);
         // LD_HL(mPokegearPhone_MakePhoneCall_GearEllipseText);
         // CALL(aPrintText);
-        PrintText_Conv2(GearEllipseText);
+        PrintText(GearEllipseText);
         // CALL(aWaitSFX);
         WaitSFX();
         // LD_DE(SFX_CALL);
@@ -2035,7 +2029,7 @@ void PokegearPhone_MakePhoneCall(void){
         PlaySFX(SFX_CALL);
         // LD_HL(mPokegearPhone_MakePhoneCall_GearEllipseText);
         // CALL(aPrintText);
-        PrintText_Conv2(GearEllipseText);
+        PrintText(GearEllipseText);
         // CALL(aWaitSFX);
         WaitSFX();
         // LD_A_addr(wPokegearPhoneSelectedPerson);
@@ -2064,13 +2058,13 @@ void PokegearPhone_MakePhoneCall(void){
         Phone_NoSignal();
         // LD_HL(mPokegearPhone_MakePhoneCall_GearOutOfServiceText);
         // CALL(aPrintText);
-        PrintText_Conv2(GearOutOfServiceText);
+        PrintText(GearOutOfServiceText);
         // LD_A(POKEGEARSTATE_PHONEJOYPAD);
         // LD_addr_A(wJumptableIndex);
         wram->wJumptableIndex = POKEGEARSTATE_PHONEJOYPAD;
         // LD_HL(mPokegearAskWhoCallText);
         // CALL(aPrintText);
-        PrintText_Conv2(PokegearAskWhoCallText);
+        PrintText(PokegearAskWhoCallText);
         //RET;
     }
 }
@@ -2088,7 +2082,7 @@ void PokegearPhone_FinishPhoneCall(void){
     wram->wJumptableIndex = POKEGEARSTATE_PHONEJOYPAD;
     // LD_HL(mPokegearAskWhoCallText);
     // CALL(aPrintText);
-    PrintText_Conv2(PokegearAskWhoCallText);
+    PrintText(PokegearAskWhoCallText);
     //RET;
 
 }
@@ -2731,7 +2725,7 @@ bool PokegearPhoneContactSubmenu_Conv(void){
                         PokegearPhone_UpdateDisplayList();
                         // LD_HL(mPokegearAskWhoCallText);
                         // CALL(aPrintText);
-                        PrintText_Conv2(PokegearAskWhoCallText);
+                        PrintText(PokegearAskWhoCallText);
                         // CALL(aWaitBGMap);
                         WaitBGMap();
                     }
@@ -2746,7 +2740,7 @@ bool PokegearPhoneContactSubmenu_Conv(void){
             Cancel:
                 // LD_HL(mPokegearAskWhoCallText);
                 // CALL(aPrintText);
-                PrintText_Conv2(PokegearAskWhoCallText);
+                PrintText(PokegearAskWhoCallText);
                 // SCF;
                 // RET;
                 return true;
@@ -3972,11 +3966,7 @@ static void v_TownMap_loop(uint8_t d, uint8_t e){
         loop2:
             // PUSH_DE;
             // FARCALL(aPlaySpriteAnimations);
-            {
-                bank_push(BANK(aPlaySpriteAnimations));
-                PlaySpriteAnimations_Conv();
-                bank_pop;
-            }
+            PlaySpriteAnimations();
             // POP_DE;
             // CALL(aDelayFrame);
             DelayFrame();
@@ -4086,7 +4076,7 @@ void v_TownMap(void){
     // CALL(aPokegear_LoadGFX);
     Pokegear_LoadGFX_Conv();
     // FARCALL(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // LD_A(8);
     // CALL(aSkipMusic);
     SkipMusic(4);
@@ -4141,7 +4131,7 @@ void v_TownMap(void){
     else {
         // LD_A(0b11100100);
         // CALL(aDmgToCgbObjPal0);
-        DmgToCgbObjPal0_Conv(0b11100100);
+        DmgToCgbObjPal0(0b11100100);
         // CALL(aDelayFrame);
         DelayFrame();
 
@@ -4266,7 +4256,7 @@ static void PlayRadio_PlayStation(uint8_t e) {
     // hlcoord(2, 14, wTilemap);
     // CALL(aPlaceString);
     struct TextPrintState st = {.de = U82C(de), .hl = coord(2, 14, wram->wTilemap)};
-    PlaceString_Conv(&st, st.hl);
+    PlaceString(&st, st.hl);
     // LD_H_B;
     // LD_L_C;
     // LD_hl(0x73);
@@ -4512,7 +4502,7 @@ uint8_t v_FlyMap(void){
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
     // FARCALL(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // CALL(aLoadTownMapGFX);
     LoadTownMapGFX_Conv();
     // LD_DE(mFlyMapLabelBorderGFX);
@@ -4565,7 +4555,7 @@ uint8_t v_FlyMap(void){
         // CALL(aGetMapCursorCoordinates);
         GetMapCursorCoordinates();
         // FARCALL(aPlaySpriteAnimations);
-        PlaySpriteAnimations_Conv();
+        PlaySpriteAnimations();
         // CALL(aDelayFrame);
         DelayFrame();
         // goto loop;
@@ -4723,7 +4713,7 @@ uint8_t HasVisitedSpawn(uint8_t c){
     // PREDEF(pSmallFarFlagAction);
     // LD_A_C;
     // RET;
-    return SmallFarFlagAction_Conv(wram->wVisitedSpawns, c, CHECK_FLAG);
+    return SmallFarFlagAction(wram->wVisitedSpawns, c, CHECK_FLAG);
 
 // INCLUDE "data/maps/flypoints.asm"
 }
@@ -4891,14 +4881,14 @@ static void PlaceString_MonsNest(species_t species) {
     // hlcoord(2, 0, wTilemap);
     struct TextPrintState st = {.hl = coord(2, 0, wram->wTilemap), .de = de};
     // CALL(aPlaceString);
-    PlaceString_Conv(&st, st.hl);
+    PlaceString(&st, st.hl);
     // LD_H_B;
     // LD_L_C;
     st.hl = st.bc;
     // LD_DE(mPokedex_GetArea_String_SNest);
     st.de = U82C(String_SNest);
     // CALL(aPlaceString);
-    PlaceString_Conv(&st, st.hl);
+    PlaceString(&st, st.hl);
     // RET;
 }
 
@@ -5559,7 +5549,7 @@ void TownMapMon(void){
     // depixel2(0, 0);
     // LD_A(SPRITE_ANIM_INDEX_PARTY_MON);
     // CALL(aInitSpriteAnimStruct);
-    struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_PARTY_MON, pixel2(0, 0));
+    struct SpriteAnim* bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_PARTY_MON, pixel2(0, 0));
     // LD_HL(SPRITEANIMSTRUCT_TILE_ID);
     // ADD_HL_BC;
     // LD_hl(0x08);
@@ -5592,7 +5582,7 @@ struct SpriteAnim* TownMapMon_Conv(void){
     // depixel2(0, 0);
     // LD_A(SPRITE_ANIM_INDEX_PARTY_MON);
     // CALL(aInitSpriteAnimStruct);
-    struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_PARTY_MON, pixel2(0, 0));
+    struct SpriteAnim* bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_PARTY_MON, pixel2(0, 0));
     // LD_HL(SPRITEANIMSTRUCT_TILE_ID);
     // ADD_HL_BC;
     // LD_hl(0x08);
@@ -5685,7 +5675,7 @@ struct SpriteAnim* TownMapPlayerIcon_Conv(uint8_t location){
 // got_gender:
     // LD_A_B;
     // CALL(aInitSpriteAnimStruct);
-    struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(b, pixel2(0, 0));
+    struct SpriteAnim* bc = InitSpriteAnimStruct(b, pixel2(0, 0));
     // LD_HL(SPRITEANIMSTRUCT_TILE_ID);
     // ADD_HL_BC;
     // LD_hl(0x10);
@@ -5843,7 +5833,7 @@ uint8_t EntireFlyMap(void){
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
     // FARCALL(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // CALL(aLoadTownMapGFX);
     LoadTownMapGFX_Conv();
     // LD_DE(mFlyMapLabelBorderGFX);
@@ -5917,7 +5907,7 @@ uint8_t EntireFlyMap(void){
         // CALL(aGetMapCursorCoordinates);
         GetMapCursorCoordinates();
         // FARCALL(aPlaySpriteAnimations);
-        PlaySpriteAnimations_Conv();
+        PlaySpriteAnimations();
         // CALL(aDelayFrame);
         DelayFrame();
         // goto loop;

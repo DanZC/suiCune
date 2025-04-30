@@ -332,7 +332,7 @@ void FadeMapMusicAndPalettes(void){
     // LD_addr_A(wMusicFade);
     wram->wMusicFade = 0x4;
     // CALL(aRotateThreePalettesRight);
-    RotateThreePalettesRight_Conv();
+    RotateThreePalettesRight();
     // RET;
 
 }

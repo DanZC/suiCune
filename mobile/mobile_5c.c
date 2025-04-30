@@ -546,7 +546,7 @@ void Function1719ed(void){
     // FARCALL(aReloadMapPart);
     ReloadMapPart_Conv();
     // FARCALL(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // RET;
 }
 
@@ -564,7 +564,7 @@ void Function171a11(void){
         // CALL(aFunction171a36);
         Function171a36();
         // FARCALL(aPlaySpriteAnimations);
-        PlaySpriteAnimations_Conv();
+        PlaySpriteAnimations();
         // FARCALL(aReloadMapPart);
         ReloadMapPart_Conv();
         // goto loop;
@@ -572,7 +572,7 @@ void Function171a11(void){
 
 // done:
     // FARCALL(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // CALL(aClearSprites);
     ClearSprites();
     // RET;
@@ -791,7 +791,7 @@ void Function171b4b(void){
     // depixel2(8, 2);
     // LD_A(SPRITE_ANIM_INDEX_EZCHAT_CURSOR);
     // CALL(aInitSpriteAnimStruct);
-    struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_EZCHAT_CURSOR, pixel2(8, 2));
+    struct SpriteAnim* bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_EZCHAT_CURSOR, pixel2(8, 2));
     // LD_HL(SPRITEANIMSTRUCT_VAR1);
     // ADD_HL_BC;
     // LD_A(0x8);
@@ -801,7 +801,7 @@ void Function171b4b(void){
     // depixel2(8, 19);
     // LD_A(SPRITE_ANIM_INDEX_EZCHAT_CURSOR);
     // CALL(aInitSpriteAnimStruct);
-    bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_EZCHAT_CURSOR, pixel2(8, 19));
+    bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_EZCHAT_CURSOR, pixel2(8, 19));
     // LD_HL(SPRITEANIMSTRUCT_VAR1);
     // ADD_HL_BC;
     // LD_A(0x9);
@@ -811,7 +811,7 @@ void Function171b4b(void){
     // depixel4(17, 14, 2, 0);
     // LD_A(SPRITE_ANIM_INDEX_EZCHAT_CURSOR);
     // CALL(aInitSpriteAnimStruct);
-    bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_EZCHAT_CURSOR, pixel4(17, 14, 2, 0));
+    bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_EZCHAT_CURSOR, pixel4(17, 14, 2, 0));
     // LD_HL(SPRITEANIMSTRUCT_VAR1);
     // ADD_HL_BC;
     // LD_A(0xa);

@@ -1053,7 +1053,7 @@ bool AI_Switch(void){
     if(!fainted) {
         // LD_HL(mEnemyWithdrewText);
         // CALL(aPrintText);
-        PrintText_Conv2(EnemyWithdrewText);
+        PrintText(EnemyWithdrewText);
     }
 
 // skiptext:
@@ -1263,7 +1263,7 @@ void PrintText_UsedItemOn(void){
     CopyBytes(wram->wMonOrItemNameBuffer, GetItemName(wram->wCurEnemyItem), ITEM_NAME_LENGTH);
     // LD_HL(mEnemyUsedOnText);
     // JP(mPrintText);
-    return PrintText_Conv2(EnemyUsedOnText);
+    return PrintText(EnemyUsedOnText);
 }
 
 const txt_cmd_s EnemyUsedOnText[] = {

@@ -67,7 +67,7 @@ static void Script_MonFaintedToPoison_CheckWhitedOut(void) {
             GetPartyNickname();
             // LD_HL(mDoPoisonStep_PoisonFaintText);
             // CALL(aPrintText);
-            PrintText_Conv2(PoisonFaintText);
+            PrintText(PoisonFaintText);
         }
 
     // mon_not_fainted:

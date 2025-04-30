@@ -96,13 +96,13 @@ void BankOfMom(void){
             // InitializeBank:
                 // LD_HL(mMomLeavingText1);
                 // CALL(aPrintText);
-                PrintText_Conv2(MomLeavingText1);
+                PrintText(MomLeavingText1);
                 // CALL(aYesNoBox);
                 // IF_C goto DontSaveMoney;
                 if(YesNoBox()) {
                     // LD_HL(mMomLeavingText2);
                     // CALL(aPrintText);
-                    PrintText_Conv2(MomLeavingText2);
+                    PrintText(MomLeavingText2);
                     // LD_A((1 << MOM_ACTIVE_F) | (1 << MOM_SAVING_SOME_MONEY_F));
                     // goto done_1;
                     wram->wMomSavingMoney = (1 << MOM_ACTIVE_F) | (1 << MOM_SAVING_SOME_MONEY_F);
@@ -118,7 +118,7 @@ void BankOfMom(void){
                 // LD_addr_A(wMomSavingMoney);
                 // LD_HL(mMomLeavingText3);
                 // CALL(aPrintText);
-                PrintText_Conv2(MomLeavingText3);
+                PrintText(MomLeavingText3);
                 // LD_A(0x8);
                 // LD_addr_A(wJumptableIndex);
                 wram->wJumptableIndex = BANKOFMOM_EXIT;
@@ -129,7 +129,7 @@ void BankOfMom(void){
             // IsThisAboutYourMoney:
                 // LD_HL(mMomIsThisAboutYourMoneyText);
                 // CALL(aPrintText);
-                PrintText_Conv2(MomIsThisAboutYourMoneyText);
+                PrintText(MomIsThisAboutYourMoneyText);
                 // CALL(aYesNoBox);
                 // IF_C goto nope;
                 if(YesNoBox()) {
@@ -154,7 +154,7 @@ void BankOfMom(void){
             // AccessBankOfMom:
                 // LD_HL(mMomBankWhatDoYouWantToDoText);
                 // CALL(aPrintText);
-                PrintText_Conv2(MomBankWhatDoYouWantToDoText);
+                PrintText(MomBankWhatDoYouWantToDoText);
                 // CALL(aLoadStandardMenuHeader);
                 LoadStandardMenuHeader();
                 // LD_HL(mBankOfMom_MenuHeader);
@@ -212,7 +212,7 @@ void BankOfMom(void){
             // StoreMoney:
                 // LD_HL(mMomStoreMoneyText);
                 // CALL(aPrintText);
-                PrintText_Conv2(MomStoreMoneyText);
+                PrintText(MomStoreMoneyText);
                 // XOR_A_A;
                 // LD_HL(wStringBuffer2);
                 // LD_hli_A;
@@ -251,7 +251,7 @@ void BankOfMom(void){
                     // InsufficientFundsInWallet:
                         // LD_HL(mMomInsufficientFundsInWalletText);
                         // CALL(aPrintText);
-                        PrintText_Conv2(MomInsufficientFundsInWalletText);
+                        PrintText(MomInsufficientFundsInWalletText);
                         // RET;
                         break;
                     }
@@ -269,7 +269,7 @@ void BankOfMom(void){
                     // NotEnoughRoomInBank:
                         // LD_HL(mMomNotEnoughRoomInBankText);
                         // CALL(aPrintText);
-                        PrintText_Conv2(MomNotEnoughRoomInBankText);
+                        PrintText(MomNotEnoughRoomInBankText);
                         // RET;
                         break;
                     }
@@ -289,7 +289,7 @@ void BankOfMom(void){
                     WaitSFX();
                     // LD_HL(mMomStoredMoneyText);
                     // CALL(aPrintText);
-                    PrintText_Conv2(MomStoredMoneyText);
+                    PrintText(MomStoredMoneyText);
                     // LD_A(0x8);
                     // goto done_4;
                     wram->wJumptableIndex = BANKOFMOM_EXIT;
@@ -308,7 +308,7 @@ void BankOfMom(void){
             // TakeMoney:
                 // LD_HL(mMomTakeMoneyText);
                 // CALL(aPrintText);
-                PrintText_Conv2(MomTakeMoneyText);
+                PrintText(MomTakeMoneyText);
                 // XOR_A_A;
                 // LD_HL(wStringBuffer2);
                 // LD_hli_A;
@@ -352,7 +352,7 @@ void BankOfMom(void){
                     // InsufficientFundsInBank:
                         // LD_HL(mMomHaventSavedThatMuchText);
                         // CALL(aPrintText);
-                        PrintText_Conv2(MomHaventSavedThatMuchText);
+                        PrintText(MomHaventSavedThatMuchText);
                         // RET;
                         break;
                     }
@@ -365,7 +365,7 @@ void BankOfMom(void){
                     // NotEnoughRoomInWallet:
                         // LD_HL(mMomNotEnoughRoomInWalletText);
                         // CALL(aPrintText);
-                        PrintText_Conv2(MomNotEnoughRoomInWalletText);
+                        PrintText(MomNotEnoughRoomInWalletText);
                         // RET;
                         break;
                     }
@@ -385,7 +385,7 @@ void BankOfMom(void){
                     WaitSFX();
                     // LD_HL(mMomTakenMoneyText);
                     // CALL(aPrintText);
-                    PrintText_Conv2(MomTakenMoneyText);
+                    PrintText(MomTakenMoneyText);
                     // LD_A(0x8);
                     wram->wJumptableIndex = BANKOFMOM_EXIT;
                     // goto done_5;
@@ -404,7 +404,7 @@ void BankOfMom(void){
             // StopOrStartSavingMoney:
                 // LD_HL(mMomSaveMoneyText);
                 // CALL(aPrintText);
-                PrintText_Conv2(MomSaveMoneyText);
+                PrintText(MomSaveMoneyText);
                 // CALL(aYesNoBox);
                 // IF_C goto StopSavingMoney;
                 if(YesNoBox()) {
@@ -413,7 +413,7 @@ void BankOfMom(void){
                     wram->wMomSavingMoney = (1 << MOM_ACTIVE_F) | (1 << MOM_SAVING_SOME_MONEY_F);
                     // LD_HL(mMomStartSavingMoneyText);
                     // CALL(aPrintText);
-                    PrintText_Conv2(MomStartSavingMoneyText);
+                    PrintText(MomStartSavingMoneyText);
                     // LD_A(0x8);
                     // LD_addr_A(wJumptableIndex);
                     wram->wJumptableIndex = BANKOFMOM_EXIT;
@@ -435,7 +435,7 @@ void BankOfMom(void){
             // JustDoWhatYouCan:
                 // LD_HL(mMomJustDoWhatYouCanText);
                 // CALL(aPrintText);
-                PrintText_Conv2(MomJustDoWhatYouCanText);
+                PrintText(MomJustDoWhatYouCanText);
                 fallthrough;
             //dw ['.AskDST'];
             case BANKOFMOM_EXIT:
@@ -573,7 +573,7 @@ void DSTChecks(void){
         // bccoord(1, 14, wTilemap);
         // LD_HL(mDSTChecks_TimesetAskAdjustDSTText);
         // CALL(aPlaceHLTextAtBC);
-        PlaceHLTextAtBC_Conv2(coord(1, 14, wram->wTilemap), TimesetAskAdjustDSTText);
+        PlaceHLTextAtBC(coord(1, 14, wram->wTilemap), TimesetAskAdjustDSTText);
         // CALL(aYesNoBox);
         // RET_C ;
         if(!YesNoBox())
@@ -583,7 +583,7 @@ void DSTChecks(void){
         // bccoord(1, 14, wTilemap);
         // LD_HL(mDSTChecks_MomLostGearBookletText);
         // CALL(aPlaceHLTextAtBC);
-        PlaceHLTextAtBC_Conv2(coord(1, 14, wram->wTilemap), MomLostGearBookletText);
+        PlaceHLTextAtBC(coord(1, 14, wram->wTilemap), MomLostGearBookletText);
         // RET;
         return;
     }
@@ -599,7 +599,7 @@ void DSTChecks(void){
     // SetDST:
         // LD_HL(mDSTChecks_TimesetAskDSTText);
         // CALL(aPlaceHLTextAtBC);
-        PlaceHLTextAtBC_Conv2(coord(1, 14, wram->wTilemap), TimesetAskDSTText);
+        PlaceHLTextAtBC(coord(1, 14, wram->wTilemap), TimesetAskDSTText);
         // CALL(aYesNoBox);
         // RET_C ;
         if(!YesNoBox())
@@ -615,13 +615,13 @@ void DSTChecks(void){
         // bccoord(1, 14, wTilemap);
         // LD_HL(mDSTChecks_TimesetDSTText);
         // CALL(aPlaceHLTextAtBC);
-        PlaceHLTextAtBC_Conv2(coord(1, 14, wram->wTilemap), TimesetDSTText);
+        PlaceHLTextAtBC(coord(1, 14, wram->wTilemap), TimesetDSTText);
         // RET;
         return;
     }
     // LD_HL(mDSTChecks_TimesetAskNotDSTText);
     // CALL(aPlaceHLTextAtBC);
-    PlaceHLTextAtBC_Conv2(coord(1, 14, wram->wTilemap), TimesetAskNotDSTText);
+    PlaceHLTextAtBC(coord(1, 14, wram->wTilemap), TimesetAskNotDSTText);
     // CALL(aYesNoBox);
     // RET_C ;
     if(!YesNoBox())
@@ -637,7 +637,7 @@ void DSTChecks(void){
     // bccoord(1, 14, wTilemap);
     // LD_HL(mDSTChecks_TimesetNotDSTText);
     // CALL(aPlaceHLTextAtBC);
-    PlaceHLTextAtBC_Conv2(coord(1, 14, wram->wTilemap), TimesetNotDSTText);
+    PlaceHLTextAtBC(coord(1, 14, wram->wTilemap), TimesetNotDSTText);
     // RET;
     return;
 
@@ -676,7 +676,7 @@ void Mom_ContinueMenuSetup(const char* de){
     // LD_DE(wMomsMoney);
     // LD_BC((PRINTNUM_MONEY | 3 << 8) | 6);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(12, 2, wram->wTilemap), wram->wMomsMoney, PRINTNUM_MONEY | 3, 6);
+    PrintNum(coord(12, 2, wram->wTilemap), wram->wMomsMoney, PRINTNUM_MONEY | 3, 6);
     // hlcoord(1, 4, wTilemap);
     // LD_DE(mMom_HeldString);
     // CALL(aPlaceString);
@@ -685,7 +685,7 @@ void Mom_ContinueMenuSetup(const char* de){
     // LD_DE(wMoney);
     // LD_BC((PRINTNUM_MONEY | 3 << 8) | 6);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(12, 4, wram->wTilemap), wram->wMoney, PRINTNUM_MONEY | 3, 6);
+    PrintNum(coord(12, 4, wram->wTilemap), wram->wMoney, PRINTNUM_MONEY | 3, 6);
     // hlcoord(1, 6, wTilemap);
     // POP_DE;
     // CALL(aPlaceString);
@@ -694,7 +694,7 @@ void Mom_ContinueMenuSetup(const char* de){
     // LD_DE(wStringBuffer2);
     // LD_BC((PRINTNUM_MONEY | PRINTNUM_LEADINGZEROS | 3 << 8) | 6);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(12, 6, wram->wTilemap), wram->wStringBuffer2, PRINTNUM_MONEY | PRINTNUM_LEADINGZEROS | 3, 6);
+    PrintNum(coord(12, 6, wram->wTilemap), wram->wStringBuffer2, PRINTNUM_MONEY | PRINTNUM_LEADINGZEROS | 3, 6);
     // CALL(aUpdateSprites);
     UpdateSprites();
     // CALL(aCGBOnly_CopyTilemapAtOnce);
@@ -858,7 +858,7 @@ bool Mom_WithdrawDepositMenuJoypad(void){
         // LD_DE(wStringBuffer2);
         // LD_BC((PRINTNUM_MONEY | PRINTNUM_LEADINGZEROS | 3 << 8) | 6);
         // CALL(aPrintNum);
-        PrintNum_Conv2(coord(12, 6, wram->wTilemap), wram->wStringBuffer2, PRINTNUM_MONEY | PRINTNUM_LEADINGZEROS | 3, 6);
+        PrintNum(coord(12, 6, wram->wTilemap), wram->wStringBuffer2, PRINTNUM_MONEY | PRINTNUM_LEADINGZEROS | 3, 6);
         // LDH_A_addr(hVBlankCounter);
         // AND_A(0x10);
         // IF_NZ goto skip;

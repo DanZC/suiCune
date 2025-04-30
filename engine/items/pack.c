@@ -901,7 +901,7 @@ void GiveItem(void){
             // LD_DE(wMonOrItemNameBuffer);
             // LD_BC(MON_NAME_LENGTH);
             // CALL(aCopyBytes);
-            CopyBytes(wram->wMonOrItemNameBuffer, GetCurNickname_Conv(), MON_NAME_LENGTH);
+            CopyBytes(wram->wMonOrItemNameBuffer, GetCurNickname(), MON_NAME_LENGTH);
             // CALL(aTryGiveItemToPartymon);
             TryGiveItemToPartymon();
             // POP_AF;
@@ -914,7 +914,7 @@ void GiveItem(void){
         }
         // LD_HL(mGiveItem_AnEggCantHoldAnItemText);
         // CALL(aPrintText);
-        PrintText_Conv2(AnEggCantHoldAnItemText);
+        PrintText(AnEggCantHoldAnItemText);
         // goto loop;
     }
 
@@ -1814,7 +1814,7 @@ void Pack_PrintTextNoScroll(const txt_cmd_s* hl){
     // LD_addr_A(wOptions);
     bit_set(wram->wOptions, NO_TEXT_SCROLL);
     // CALL(aPrintText);
-    PrintText_Conv2(hl);
+    PrintText(hl);
     // POP_AF;
     // LD_addr_A(wOptions);
     wram->wOptions = options;

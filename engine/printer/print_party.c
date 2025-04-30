@@ -246,7 +246,7 @@ void PrintPartyMonPage1(void){
     // hlcoord(8, 2, wTilemap);
     // LD_A_addr(wTempMonLevel);
     // CALL(aPrintLevel_Force3Digits);
-    PrintLevel_Force3Digits_Conv(coord(8, 2, wram->wTilemap), wram->wTempMon.mon.level);
+    PrintLevel_Force3Digits(coord(8, 2, wram->wTilemap), wram->wTempMon.mon.level);
     // hlcoord(12, 2, wTilemap);
     // LD_hl(PRINTPARTY_HP);
     *coord(12, 2, wram->wTilemap) = PRINTPARTY_HP;
@@ -254,7 +254,7 @@ void PrintPartyMonPage1(void){
     // LD_DE(wTempMonMaxHP);
     // LD_BC((2 << 8) | 3);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(13, 2, wram->wTilemap), &wram->wTempMon.maxHP, 2, 3);
+    PrintNum(coord(13, 2, wram->wTilemap), &wram->wTempMon.maxHP, 2, 3);
     // LD_A_addr(wCurPartySpecies);
     // LD_addr_A(wNamedObjectIndex);
     // LD_addr_A(wCurSpecies);
@@ -281,7 +281,7 @@ void PrintPartyMonPage1(void){
     // LD_DE(wNamedObjectIndex);
     // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 3);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(10, 0, wram->wTilemap), &wram->wCurSpecies, PRINTNUM_LEADINGZEROS | 1, 3);
+    PrintNum(coord(10, 0, wram->wTilemap), &wram->wCurSpecies, PRINTNUM_LEADINGZEROS | 1, 3);
     // hlcoord(1, 9, wTilemap);
     // LD_DE(mPrintParty_OTString);
     // CALL(aPlaceString);
@@ -299,7 +299,7 @@ void PrintPartyMonPage1(void){
     // LD_DE(wTempMonID);
     // LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 5);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(4, 11, wram->wTilemap), &wram->wTempMon.mon.id, PRINTNUM_LEADINGZEROS | 2, 5);
+    PrintNum(coord(4, 11, wram->wTilemap), &wram->wTempMon.mon.id, PRINTNUM_LEADINGZEROS | 2, 5);
     // hlcoord(1, 14, wTilemap);
     // LD_DE(mPrintParty_MoveString);
     // CALL(aPlaceString);
@@ -328,7 +328,7 @@ void PrintPartyMonPage1(void){
 // got_alignment:
     // hlcoord(0, 0, wTilemap);
     // CALL(av_PrepMonFrontpic);
-    v_PrepMonFrontpic_Conv(coord(0, 0, wram->wTilemap));
+    v_PrepMonFrontpic(coord(0, 0, wram->wTilemap));
     // CALL(aWaitBGMap);
     WaitBGMap();
     // LD_B(SCGB_STATS_SCREEN_HP_PALS);
@@ -342,7 +342,7 @@ void PrintPartyMonPage1(void){
 static void PrintPartyMonPage2_PrintTempMonStats(tile_t* hl, uint16_t de){
     // LD_BC((2 << 8) | 3);
     // CALL(aPrintNum);
-    PrintNum_Conv2(hl, &de, 2, 3);
+    PrintNum(hl, &de, 2, 3);
     // RET;
 }
 

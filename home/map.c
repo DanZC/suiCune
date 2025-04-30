@@ -1634,7 +1634,7 @@ void MapTextbox(const struct TextCmd* text){
     ApplyTilemap();
     // POP_HL;
     // CALL(aPrintTextboxText);
-    PrintTextboxText_Conv2(text);
+    PrintTextboxText(text);
     // XOR_A_A;
     // LDH_addr_A(hOAMUpdate);
     hram->hOAMUpdate = 0;

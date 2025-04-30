@@ -121,11 +121,7 @@ bool SplashScreen(void){
         // CALL(aGameFreakPresentsScene);
         GameFreakPresentsScene();
         // FARCALL(aPlaySpriteAnimations);
-        {
-            bank_push(BANK(aPlaySpriteAnimations));
-            PlaySpriteAnimations_Conv();
-            bank_pop;
-        }
+        PlaySpriteAnimations();
         // CALL(aDelayFrame);
         DelayFrame();
         // goto joy_loop;
@@ -173,11 +169,11 @@ void GameFreakPresentsInit(void){
     // LDH_addr_A(rSVBK);
 
     // FARCALL(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // depixel4(10, 11, 4, 0);
     // LD_A(SPRITE_ANIM_INDEX_GAMEFREAK_LOGO);
     // CALL(aInitSpriteAnimStruct);
-    struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_GAMEFREAK_LOGO, pixel4(10, 11, 4, 0));
+    struct SpriteAnim* bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_GAMEFREAK_LOGO, pixel4(10, 11, 4, 0));
     // LD_HL(SPRITEANIMSTRUCT_YOFFSET);
     // ADD_HL_BC;
     // LD_hl(160);
@@ -209,13 +205,13 @@ void GameFreakPresentsInit(void){
     hram->hWY = SCREEN_HEIGHT_PX;
     // LD_DE((0b11100100 << 8) | 0b11100100);
     // CALL(aDmgToCgbObjPals);
-    DmgToCgbObjPals_Conv(0b11100100, 0b11100100);
+    DmgToCgbObjPals(0b11100100, 0b11100100);
     // RET;
 }
 
 void GameFreakPresentsEnd(void){
     // FARCALL(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // CALL(aClearTilemap);
     ClearTilemap();
     // CALL(aClearSprites);

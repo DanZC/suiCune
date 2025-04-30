@@ -531,7 +531,7 @@ void PokeBallEffect(void){
     bit_reset(wram->wOptions, NO_TEXT_SCROLL);
     // LD_HL(mItemUsedText);
     // CALL(aPrintText);
-    PrintText_Conv2(ItemUsedText);
+    PrintText(ItemUsedText);
 
     // LD_A_addr(wEnemyMonCatchRate);
     // LD_B_A;
@@ -791,7 +791,7 @@ void PokeBallEffect(void){
         // LD_HL(mBallBrokeFreeText);
         // JP_Z (mPokeBallEffect_shake_and_break_free);
         if(wram->wThrownBallWobbleCount == 1) {
-            PrintText_Conv2(BallBrokeFreeText);
+            PrintText(BallBrokeFreeText);
             ClearSprites();
             goto return_from_capture;
         }
@@ -799,7 +799,7 @@ void PokeBallEffect(void){
         // LD_HL(mBallAppearedCaughtText);
         // JP_Z (mPokeBallEffect_shake_and_break_free);
         else if(wram->wThrownBallWobbleCount == 2) {
-            PrintText_Conv2(BallAppearedCaughtText);
+            PrintText(BallAppearedCaughtText);
             ClearSprites();
             goto return_from_capture;
         }
@@ -807,7 +807,7 @@ void PokeBallEffect(void){
         // LD_HL(mBallAlmostHadItText);
         // JP_Z (mPokeBallEffect_shake_and_break_free);
         else if(wram->wThrownBallWobbleCount == 3) {
-            PrintText_Conv2(BallAlmostHadItText);
+            PrintText(BallAlmostHadItText);
             ClearSprites();
             goto return_from_capture;
         }
@@ -815,7 +815,7 @@ void PokeBallEffect(void){
         // LD_HL(mBallSoCloseText);
         // JP_Z (mPokeBallEffect_shake_and_break_free);
         else if(wram->wThrownBallWobbleCount == 4) {
-            PrintText_Conv2(BallSoCloseText);
+            PrintText(BallSoCloseText);
             ClearSprites();
             goto return_from_capture;
         }
@@ -932,7 +932,7 @@ void PokeBallEffect(void){
 
     // shake_and_break_free:
         // CALL(aPrintText);
-        PrintText_Conv2(Text_GotchaMonWasCaught);
+        PrintText(Text_GotchaMonWasCaught);
         // CALL(aClearSprites);
         ClearSprites();
     }
@@ -942,7 +942,7 @@ void PokeBallEffect(void){
 
         // LD_HL(mText_GotchaMonWasCaught);
         // CALL(aPrintText);
-        PrintText_Conv2(Text_GotchaMonWasCaught);
+        PrintText(Text_GotchaMonWasCaught);
 
         // CALL(aClearSprites);
         ClearSprites();
@@ -968,7 +968,7 @@ void PokeBallEffect(void){
         if(!caught && CheckReceivedDex()) {
             // LD_HL(mNewDexDataText);
             // CALL(aPrintText);
-            PrintText_Conv2(NewDexDataText);
+            PrintText(NewDexDataText);
 
             // CALL(aClearSprites);
             ClearSprites();
@@ -1034,7 +1034,7 @@ void PokeBallEffect(void){
             // SkipPartyMonFriendBall:
                 // LD_HL(mAskGiveNicknameText);
                 // CALL(aPrintText);
-                PrintText_Conv2(AskGiveNicknameText);
+                PrintText(AskGiveNicknameText);
 
                 // LD_A_addr(wCurPartySpecies);
                 // LD_addr_A(wNamedObjectIndex);
@@ -1064,7 +1064,7 @@ void PokeBallEffect(void){
                     NamingScreen_Conv(nick, NAME_MON);
 
                     // CALL(aRotateThreePalettesRight);
-                    RotateThreePalettesRight_Conv();
+                    RotateThreePalettesRight();
 
                     // CALL(aLoadStandardFont);
                     LoadStandardFont();
@@ -1117,7 +1117,7 @@ void PokeBallEffect(void){
 
                 // LD_HL(mAskGiveNicknameText);
                 // CALL(aPrintText);
-                PrintText_Conv2(AskGiveNicknameText);
+                PrintText(AskGiveNicknameText);
 
                 // LD_A_addr(wCurPartySpecies);
                 // LD_addr_A(wNamedObjectIndex);
@@ -1173,10 +1173,10 @@ void PokeBallEffect(void){
 
                 // LD_HL(mBallSentToPCText);
                 // CALL(aPrintText);
-                PrintText_Conv2(BallSentToPCText);
+                PrintText(BallSentToPCText);
 
                 // CALL(aRotateThreePalettesRight);
-                RotateThreePalettesRight_Conv();
+                RotateThreePalettesRight();
                 // CALL(aLoadStandardFont);
                 LoadStandardFont();
                 // goto return_from_capture;
@@ -1926,7 +1926,7 @@ void VitaminEffect(void){
 
     // LD_HL(mItemStatRoseText);
     // CALL(aPrintText);
-    PrintText_Conv2(ItemStatRoseText);
+    PrintText(ItemStatRoseText);
 
     // LD_C(HAPPINESS_USEDITEM);
     // FARCALL(aChangeHappiness);
@@ -1939,7 +1939,7 @@ void VitaminEffect(void){
 void NoEffectMessage(void){
     // LD_HL(mItemWontHaveEffectText);
     // CALL(aPrintText);
-    PrintText_Conv2(ItemWontHaveEffectText);
+    PrintText(ItemWontHaveEffectText);
     // JP(mClearPalettes);
     ClearPalettes();
 }
@@ -2034,11 +2034,11 @@ void RareCandy_StatBooster_GetParameters(void){
     // LD_addr_A(wCurPartyLevel);
     wram->wCurPartyLevel = hl->mon.level;
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(wram->wCurPartySpecies);
+    GetBaseData(wram->wCurPartySpecies);
     // LD_A_addr(wCurPartyMon);
     // LD_HL(wPartyMonNicknames);
     // CALL(aGetNickname);
-    GetCurNickname_Conv();
+    GetCurNickname();
     // RET;
 }
 
@@ -2428,13 +2428,13 @@ uint8_t RevivePokemon(void){
         // AND_A_A;
         // IF_Z goto skip_to_revive;
 
-        if(SmallFarFlagAction_Conv(&wram->wBattleParticipantsIncludingFainted, wram->wCurPartyMon, CHECK_FLAG)) {
+        if(SmallFarFlagAction(&wram->wBattleParticipantsIncludingFainted, wram->wCurPartyMon, CHECK_FLAG)) {
             // LD_A_addr(wCurPartyMon);
             // LD_C_A;
             // LD_HL(wBattleParticipantsNotFainted);
             // LD_B(SET_FLAG);
             // PREDEF(pSmallFarFlagAction);
-            SmallFarFlagAction_Conv(&wram->wBattleParticipantsNotFainted, wram->wCurPartyMon, SET_FLAG);
+            SmallFarFlagAction(&wram->wBattleParticipantsNotFainted, wram->wCurPartyMon, SET_FLAG);
         }
     }
 
@@ -3281,7 +3281,7 @@ void UseRepel(uint8_t b){
     // LD_HL(mRepelUsedEarlierIsStillInEffectText);
     // JP_NZ (mPrintText);
     if(wram->wRepelEffect)
-        return PrintText_Conv2(RepelUsedEarlierIsStillInEffectText);
+        return PrintText(RepelUsedEarlierIsStillInEffectText);
 
     // LD_A_B;
     // LD_addr_A(wRepelEffect);
@@ -3590,7 +3590,7 @@ loop2:
 
 // ppup:
     // CALL(aPrintText);
-    PrintText_Conv2(text);
+    PrintText(text);
 
     // LD_A_addr(wCurMoveNum);
     uint8_t curMoveNum = wram->wCurMoveNum;
@@ -3644,7 +3644,7 @@ loop2:
     // CantUsePPUpOnSketch:
         // LD_HL(mPPIsMaxedOutText);
         // CALL(aPrintText);
-        PrintText_Conv2(PPIsMaxedOutText);
+        PrintText(PPIsMaxedOutText);
         goto loop2;
     }
 
@@ -3663,7 +3663,7 @@ loop2:
 
     // LD_HL(mPPsIncreasedText);
     // CALL(aPrintText);
-    PrintText_Conv2(PPsIncreasedText);
+    PrintText(PPsIncreasedText);
 
     return FinishPPRestore();
 }
@@ -3745,7 +3745,7 @@ void BattleRestorePP(void){
     Play_SFX_FULL_HEAL();
     // LD_HL(mPPRestoredText);
     // CALL(aPrintText);
-    PrintText_Conv2(PPRestoredText);
+    PrintText(PPRestoredText);
     // JR(mFinishPPRestore);
     return FinishPPRestore();
 }
@@ -4029,7 +4029,7 @@ void Play_SFX_FULL_HEAL(void){
 void UseItemText(void){
     // LD_HL(mItemUsedText);
     // CALL(aPrintText);
-    PrintText_Conv2(ItemUsedText);
+    PrintText(ItemUsedText);
     // CALL(aPlay_SFX_FULL_HEAL);
     Play_SFX_FULL_HEAL();
     // CALL(aWaitPressAorB_BlinkCursor);
@@ -4066,10 +4066,10 @@ void UseBallInTrainerBattle(void){
     PlayBattleAnim();
     // LD_HL(mBallBlockedText);
     // CALL(aPrintText);
-    PrintText_Conv2(BallBlockedText);
+    PrintText(BallBlockedText);
     // LD_HL(mBallDontBeAThiefText);
     // CALL(aPrintText);
-    PrintText_Conv2(BallDontBeAThiefText);
+    PrintText(BallDontBeAThiefText);
     // JR(mUseDisposableItem);
     return UseDisposableItem();
 }
@@ -4077,7 +4077,7 @@ void UseBallInTrainerBattle(void){
 void WontHaveAnyEffect_NotUsedMessage(void){
     // LD_HL(mItemWontHaveEffectText);
     // CALL(aPrintText);
-    PrintText_Conv2(ItemWontHaveEffectText);
+    PrintText(ItemWontHaveEffectText);
 
 // Item wasn't used.
     // LD_A(0x2);
@@ -4089,13 +4089,13 @@ void WontHaveAnyEffect_NotUsedMessage(void){
 void LooksBitterMessage(void){
     // LD_HL(mItemLooksBitterText);
     // JP(mPrintText);
-    PrintText_Conv2(ItemLooksBitterText);
+    PrintText(ItemLooksBitterText);
 }
 
 void Ball_BoxIsFullMessage(void){
     // LD_HL(mBallBoxFullText);
     // CALL(aPrintText);
-    PrintText_Conv2(BallBoxFullText);
+    PrintText(BallBoxFullText);
 
 // Item wasn't used.
     // LD_A(0x2);
@@ -4150,7 +4150,7 @@ void CantUseItemMessage(const txt_cmd_s* hl){
     // LD_addr_A(wItemEffectSucceeded);
     wram->wItemEffectSucceeded = 0x0;
     // JP(mPrintText);
-    return PrintText_Conv2(hl);
+    return PrintText(hl);
 }
 
 const txt_cmd_s ItemLooksBitterText[] = {

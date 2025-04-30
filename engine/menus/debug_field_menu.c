@@ -214,12 +214,12 @@ const struct MenuHeader MenuHeader = {
 };
     ClearWindowData();
     PlaySFX(SFX_MENU);
-    ReanchorBGMap_NoOAMUpdate_Conv();
+    ReanchorBGMap_NoOAMUpdate();
 
     LoadMenuHeader(&MenuHeader);
     SafeUpdateSprites();
     v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap();
-    LoadFonts_NoOAMUpdate_Conv();
+    LoadFonts_NoOAMUpdate();
     UpdateTimePals();
 
 loop:

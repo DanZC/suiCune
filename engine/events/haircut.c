@@ -129,7 +129,7 @@ void HaircutOrGrooming_Conv(const uint8_t (*hl)[3]){
     }
     // PUSH_HL;
     // CALL(aGetCurNickname);
-    GetCurNickname_Conv();
+    GetCurNickname();
     // CALL(aCopyPokemonName_Buffer1_Buffer3);
     CopyPokemonName_Buffer1_Buffer3();
     // POP_HL;

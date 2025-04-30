@@ -607,7 +607,6 @@ void AnimateTileset(void) {
     // PUSH_AF;
     // LD_A(MBANK(awTilesetAnim));
     // LDH_addr_A(rSVBK);
-    wbank_push(MBANK(awTilesetAnim));
 
     // LDH_A_addr(rVBK);
     // PUSH_AF;
@@ -625,7 +624,6 @@ void AnimateTileset(void) {
     gb_write(rVBK, vbk);
     // POP_AF;
     // LDH_addr_A(rSVBK);
-    wbank_pop;
     // POP_AF;
     // RST(aBankswitch);
     // RET;

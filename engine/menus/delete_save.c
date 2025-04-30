@@ -46,7 +46,7 @@ void v_DeleteSaveData(void){
     PlayMusic(MUSIC_MAIN_MENU);
     // LD_HL(mv_DeleteSaveData_ClearAllSaveDataText);
     // CALL(aPrintText);
-    PrintText_Conv2(ClearAllSaveDataText);
+    PrintText(ClearAllSaveDataText);
     // LD_HL(mv_DeleteSaveData_NoYesMenuHeader);
     // CALL(aCopyMenuHeader);
     CopyMenuHeader(&NoYesMenuHeader);

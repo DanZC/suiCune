@@ -99,5 +99,5 @@ bool PokedexFlagAction(uint8_t* hl, dex_t c, uint8_t b){
     // LD_A_C;
     // AND_A_A;
     // RET;
-    return SmallFarFlagAction_Conv(hl, (uint8_t)c, b) != 0;
+    return SmallFarFlagAction(hl, (uint8_t)c, b) != 0;
 }

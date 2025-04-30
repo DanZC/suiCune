@@ -769,9 +769,9 @@ void LinkTimeout(void){
     // POP_HL;
     // bccoord(1, 14, wTilemap);
     // CALL(aPlaceHLTextAtBC);
-    PlaceHLTextAtBC_Conv2(coord(1, 14, wram->wTilemap), LinkTimeoutText);
+    PlaceHLTextAtBC(coord(1, 14, wram->wTilemap), LinkTimeoutText);
     // CALL(aRotateThreePalettesRight);
-    RotateThreePalettesRight_Conv();
+    RotateThreePalettesRight();
     // CALL(aClearScreen);
     ClearScreen();
     // LD_B(SCGB_DIPLOMA);
@@ -2092,7 +2092,7 @@ joy_loop:
         // LD_HL(mLinkTrade_TradeStatsMenu_LinkAbnormalMonText);
         // bccoord(1, 14, wTilemap);
         // CALL(aPlaceHLTextAtBC);
-        PlaceHLTextAtBC_Conv2(coord(1, 14, wram->wTilemap), LinkAbnormalMonText);
+        PlaceHLTextAtBC(coord(1, 14, wram->wTilemap), LinkAbnormalMonText);
     }
     else {
         // FARCALL(aCheckAnyOtherAliveMonsForTrade);
@@ -2114,7 +2114,7 @@ joy_loop:
         // LD_HL(mLinkTrade_TradeStatsMenu_LinkTradeCantBattleText);
         // bccoord(1, 14, wTilemap);
         // CALL(aPlaceHLTextAtBC);
-        PlaceHLTextAtBC_Conv2(coord(1, 14, wram->wTilemap), LinkTradeCantBattleText);
+        PlaceHLTextAtBC(coord(1, 14, wram->wTilemap), LinkTradeCantBattleText);
         // goto cancel_trade;
     }
 
@@ -2769,7 +2769,7 @@ joy_loop:
         // LD_HL(mLinkTrade_TradeStatsMenu_LinkAbnormalMonText);
         // bccoord(1, 14, wTilemap);
         // CALL(aPlaceHLTextAtBC);
-        PlaceHLTextAtBC_Conv2(coord(1, 14, wram->wTilemap), LinkAbnormalMonText);
+        PlaceHLTextAtBC(coord(1, 14, wram->wTilemap), LinkAbnormalMonText);
     }
     else {
         // FARCALL(aCheckAnyOtherAliveMonsForTrade);
@@ -2791,7 +2791,7 @@ joy_loop:
         // LD_HL(mLinkTrade_TradeStatsMenu_LinkTradeCantBattleText);
         // bccoord(1, 14, wTilemap);
         // CALL(aPlaceHLTextAtBC);
-        PlaceHLTextAtBC_Conv2(coord(1, 14, wram->wTilemap), LinkTradeCantBattleText);
+        PlaceHLTextAtBC(coord(1, 14, wram->wTilemap), LinkTradeCantBattleText);
         // goto cancel_trade;
     }
 
@@ -2902,7 +2902,7 @@ void LinkTradePartymonMenuCheckCancel(void){
 
 void ExitLinkCommunications(void){
     // CALL(aRotateThreePalettesRight);
-    RotateThreePalettesRight_Conv();
+    RotateThreePalettesRight();
     // CALL(aClearScreen);
     ClearScreen();
     // LD_B(SCGB_DIPLOMA);
@@ -3048,7 +3048,7 @@ void LinkTrade(void){
     // LD_HL(mLinkAskTradeForText);
     // bccoord(1, 14, wTilemap);
     // CALL(aPlaceHLTextAtBC);
-    PlaceHLTextAtBC_Conv2(coord(1, 14, wram->wTilemap), LinkAskTradeForText);
+    PlaceHLTextAtBC(coord(1, 14, wram->wTilemap), LinkAskTradeForText);
     // CALL(aLoadStandardMenuHeader);
     LoadStandardMenuHeader();
     // hlcoord(10, 7, wTilemap);

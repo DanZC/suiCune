@@ -1082,7 +1082,7 @@ void Script_battletowertext(void){
 void Script_battletowertext_Conv(script_s* s, uint8_t text){
     (void)s;
     // CALL(aSetUpTextbox);
-    SetUpTextbox_Conv();
+    SetUpTextbox();
     // CALL(aGetScriptByte);
     // LD_C_A;
     // FARCALL(aBattleTowerText);
@@ -1954,7 +1954,7 @@ void Script_cry_Conv(script_s* s, species_t id){
 
 // ok:
     // CALL(aPlayMonCry);
-    PlayMonCry_Conv(id);
+    PlayMonCry(id);
     // RET;
 }
 
@@ -3974,7 +3974,7 @@ void Script_getmoney_Conv(script_s* s, uint8_t buffer, uint8_t which){
     // LD_HL(wStringBuffer1);
     // LD_BC((PRINTNUM_LEFTALIGN | 3 << 8) | 6);
     // CALL(aPrintNum);
-    PrintNum_Conv2(wram->wStringBuffer1, de, PRINTNUM_LEFTALIGN | 3, 6);
+    PrintNum(wram->wStringBuffer1, de, PRINTNUM_LEFTALIGN | 3, 6);
     // LD_DE(wStringBuffer1);
     // JP(mGetStringBuffer);
     return GetStringBuffer_Conv(buffer, wram->wStringBuffer1);
@@ -3999,7 +3999,7 @@ void Script_getcoins_Conv(script_s* s, uint8_t a){
     // LD_DE(wCoins);
     // LD_BC((PRINTNUM_LEFTALIGN | 2 << 8) | 6);
     // CALL(aPrintNum);
-    PrintNum_Conv2(wram->wStringBuffer1, (uint8_t*)&wram->wCoins, (PRINTNUM_LEFTALIGN | 2), 6);
+    PrintNum(wram->wStringBuffer1, (uint8_t*)&wram->wCoins, (PRINTNUM_LEFTALIGN | 2), 6);
     // LD_DE(wStringBuffer1);
     // JP(mGetStringBuffer);
     return GetStringBuffer_Conv(a, wram->wStringBuffer1);
@@ -4024,7 +4024,7 @@ void Script_getnum_Conv(script_s* s, uint8_t a){
     // LD_HL(wStringBuffer1);
     // LD_BC((PRINTNUM_LEFTALIGN | 1 << 8) | 3);
     // CALL(aPrintNum);
-    PrintNum_Conv2(wram->wStringBuffer1, &wram->wScriptVar, (PRINTNUM_LEFTALIGN | 1), 3);
+    PrintNum(wram->wStringBuffer1, &wram->wScriptVar, (PRINTNUM_LEFTALIGN | 1), 3);
     // LD_DE(wStringBuffer1);
     // JP(mGetStringBuffer);
     return GetStringBuffer_Conv(a, wram->wStringBuffer1);

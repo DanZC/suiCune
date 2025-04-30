@@ -226,7 +226,7 @@ u8_flag_s Elevator_AskWhichFloor_Conv(void){
     LoadStandardMenuHeader();
     // LD_HL(mAskFloorElevatorText);
     // CALL(aPrintText);
-    PrintText_Conv2(AskFloorElevatorText);
+    PrintText(AskFloorElevatorText);
     // CALL(aElevator_GetCurrentFloorText);
     Elevator_GetCurrentFloorText();
     // LD_HL(mElevator_MenuHeader);
@@ -275,7 +275,7 @@ void Elevator_GetCurrentFloorText(void){
     // LD_DE(mElevator_CurrentFloorText);
     // CALL(aPlaceString);
     struct TextPrintState st = {.de = U82C(Elevator_CurrentFloorText), .hl = coord(1, 2, wram->wTilemap)};
-    PlaceString_Conv(&st, st.hl);
+    PlaceString(&st, st.hl);
     // hlcoord(4, 4, wTilemap);
     // CALL(aElevator_GetCurrentFloorString);
     Elevator_GetCurrentFloorString(coord(4, 4, wram->wTilemap));

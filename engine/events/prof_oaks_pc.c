@@ -58,7 +58,7 @@ void ProfOaksPC(void){
 // shutdown:
     // LD_HL(mOakPCText4);
     // CALL(aPrintText);
-    PrintText_Conv2(OakPCText4);
+    PrintText(OakPCText4);
     // CALL(aJoyWaitAorB);
     JoyWaitAorB();
     // CALL(aExitMenu);
@@ -69,7 +69,7 @@ void ProfOaksPC(void){
 void ProfOaksPCBoot(void){
     // LD_HL(mOakPCText2);
     // CALL(aPrintText);
-    PrintText_Conv2(OakPCText2);
+    PrintText(OakPCText2);
     // CALL(aRate);
     uint16_t sfx = Rate();
     // CALL(aPlaySFX);  // sfx loaded by previous Rate function call
@@ -109,7 +109,7 @@ static void Rate_UpdateRatingBuffer(uint8_t* hl, const uint8_t* de) {
     // POP_HL;
     // LD_BC((PRINTNUM_LEFTALIGN | 1 << 8) | 3);
     // CALL(aPrintNum);
-    PrintNum_Conv2(hl, de, PRINTNUM_LEFTALIGN | 1, 3);
+    PrintNum(hl, de, PRINTNUM_LEFTALIGN | 1, 3);
     // RET;
 }
 
@@ -143,7 +143,7 @@ uint16_t Rate(void){
     Rate_UpdateRatingBuffers(seen, caught);
     // LD_HL(mOakPCText3);
     // CALL(aPrintText);
-    PrintText_Conv2(OakPCText3);
+    PrintText(OakPCText3);
     // CALL(aJoyWaitAorB);
     JoyWaitAorB();
     // LD_A_addr(wTempPokedexCaughtCount);
@@ -154,7 +154,7 @@ uint16_t Rate(void){
     FindOakRating(caught, &sfx, &text);
     // PUSH_DE;
     // CALL(aPrintText);
-    PrintText_Conv2(text);
+    PrintText(text);
     // POP_DE;
     // RET;
     return sfx;

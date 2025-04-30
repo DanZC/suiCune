@@ -250,7 +250,7 @@ void DoMysteryGift(void){
             // LD_HL(mDoMysteryGift_MysteryGiftCanceledText);  // Link has been canceled
             // goto PrintTextAndExit;
             // CALL(aPrintText);
-            PrintText_Conv2(MysteryGiftCanceledText);
+            PrintText(MysteryGiftCanceledText);
             // LD_A(LCDC_DEFAULT);
             // LDH_addr_A(rLCDC);
             gb_write(rLCDC, LCDC_DEFAULT);
@@ -263,7 +263,7 @@ void DoMysteryGift(void){
         // CommunicationError:
             // LD_HL(mDoMysteryGift_MysteryGiftCommErrorText);  // Communication error
             // CALL(aPrintText);
-            PrintText_Conv2(MysteryGiftCommErrorText);
+            PrintText(MysteryGiftCommErrorText);
             // JP(mDoMysteryGift);
             return;
         }
@@ -277,7 +277,7 @@ void DoMysteryGift(void){
             // LD_HL(mDoMysteryGift_MysteryGiftFiveADayText);  // Only 5 gifts a day
             // JP_NC (mDoMysteryGift_PrintTextAndExit);
             if(DoMysteryGift_CheckAlreadyGotFiveGiftsToday()) {
-                PrintText_Conv2(MysteryGiftFiveADayText);
+                PrintText(MysteryGiftFiveADayText);
                 // LD_A(LCDC_DEFAULT);
                 // LDH_addr_A(rLCDC);
                 gb_write(rLCDC, LCDC_DEFAULT);
@@ -288,7 +288,7 @@ void DoMysteryGift(void){
             // LD_HL(mDoMysteryGift_MysteryGiftOneADayText);  // Only one gift a day per person
             // JP_C (mDoMysteryGift_PrintTextAndExit);
             if(DoMysteryGift_CheckAlreadyGotAGiftFromThatPerson()) {
-                PrintText_Conv2(MysteryGiftOneADayText);
+                PrintText(MysteryGiftOneADayText);
                 // LD_A(LCDC_DEFAULT);
                 // LDH_addr_A(rLCDC);
                 gb_write(rLCDC, LCDC_DEFAULT);
@@ -307,7 +307,7 @@ void DoMysteryGift(void){
             // LD_HL(mDoMysteryGift_RetrieveMysteryGiftText);  // receive gift at counter
             // goto PrintTextAndExit;
             // CALL(aPrintText);
-            PrintText_Conv2(RetrieveMysteryGiftText);
+            PrintText(RetrieveMysteryGiftText);
             // LD_A(LCDC_DEFAULT);
             // LDH_addr_A(rLCDC);
             gb_write(rLCDC, LCDC_DEFAULT);
@@ -321,7 +321,7 @@ void DoMysteryGift(void){
         // FriendNotReady:
             // LD_HL(mDoMysteryGift_YourFriendIsNotReadyText);  // friend not ready
             // CALL(aPrintText);
-            PrintText_Conv2(YourFriendIsNotReadyText);
+            PrintText(YourFriendIsNotReadyText);
             // LD_A(LCDC_DEFAULT);
             // LDH_addr_A(rLCDC);
             gb_write(rLCDC, LCDC_DEFAULT);
@@ -375,7 +375,7 @@ void DoMysteryGift(void){
                 // LD_HL(mDoMysteryGift_MysteryGiftSentHomeText);  // sent decoration to home
                 // goto PrintTextAndExit;
                 // CALL(aPrintText);
-                PrintText_Conv2(MysteryGiftSentHomeText);
+                PrintText(MysteryGiftSentHomeText);
                 // LD_A(LCDC_DEFAULT);
                 // LDH_addr_A(rLCDC);
                 gb_write(rLCDC, LCDC_DEFAULT);
@@ -402,7 +402,7 @@ void DoMysteryGift(void){
         // LD_HL(mDoMysteryGift_MysteryGiftSentText);  // sent item/decoration
         // goto PrintTextAndExit;
         // CALL(aPrintText);
-        PrintText_Conv2(MysteryGiftSentText);
+        PrintText(MysteryGiftSentText);
         // LD_A(LCDC_DEFAULT);
         // LDH_addr_A(rLCDC);
         gb_write(rLCDC, LCDC_DEFAULT);
@@ -1832,7 +1832,7 @@ bool CheckAndSetMysteryGiftDecorationAlreadyReceived(uint8_t c){
     // PUSH_HL;
     // PUSH_BC;
     // CALL(aPredef);
-    uint8_t res = SmallFarFlagAction_Conv((uint8_t*)GBToRAMAddr(sMysteryGiftDecorationsReceived), c, CHECK_FLAG);
+    uint8_t res = SmallFarFlagAction((uint8_t*)GBToRAMAddr(sMysteryGiftDecorationsReceived), c, CHECK_FLAG);
     // CALL(aCloseSRAM);
     CloseSRAM();
     // LD_A_C;
@@ -1846,7 +1846,7 @@ bool CheckAndSetMysteryGiftDecorationAlreadyReceived(uint8_t c){
     GetMysteryGiftBank();
     // LD_B(SET_FLAG);
     // PREDEF(pSmallFarFlagAction);
-    SmallFarFlagAction_Conv((uint8_t*)GBToRAMAddr(sMysteryGiftDecorationsReceived), c, SET_FLAG);
+    SmallFarFlagAction((uint8_t*)GBToRAMAddr(sMysteryGiftDecorationsReceived), c, SET_FLAG);
     // CALL(aCloseSRAM);
     CloseSRAM();
     // XOR_A_A;
@@ -1866,7 +1866,7 @@ void CopyMysteryGiftReceivedDecorationsToPC(void){
         // LD_B(CHECK_FLAG);
         // LD_HL(sMysteryGiftDecorationsReceived);
         // PREDEF(pSmallFarFlagAction);
-        uint8_t a = SmallFarFlagAction_Conv(hl, c, CHECK_FLAG);
+        uint8_t a = SmallFarFlagAction(hl, c, CHECK_FLAG);
         // LD_A_C;
         // AND_A_A;
         // POP_BC;
@@ -2387,7 +2387,7 @@ void DoNameCardSwap(void){
             // goto PrintTextAndExit;
         // PrintTextAndExit:
             // CALL(aPrintText);
-            PrintText_Conv2(NameCardLinkCancelledText);
+            PrintText(NameCardLinkCancelledText);
             // LD_A(LCDC_DEFAULT);
             // LDH_addr_A(rLCDC);
             // RET;
@@ -2401,7 +2401,7 @@ void DoNameCardSwap(void){
             DoNameCardSwap_ClearScreen();
             // LD_HL(mDoNameCardSwap_NameCardCommErrorText);
             // CALL(aPrintText);
-            PrintText_Conv2(NameCardCommErrorText);
+            PrintText(NameCardCommErrorText);
             // JP(mDoNameCardSwap);
             continue;
         }
@@ -2414,7 +2414,7 @@ void DoNameCardSwap(void){
         DoNameCardSwap_ClearScreen();
         // LD_HL(mDoNameCardSwap_NameCardReceivedCardText);
         // CALL(aPrintText);
-        PrintText_Conv2(NameCardReceivedCardText);
+        PrintText(NameCardReceivedCardText);
         // LD_DE(wNameCardData);
         // FARCALL(aFunction8ac70);
         u8_flag_s res = Function8ac70(wram->wNameCardData);
@@ -2428,7 +2428,7 @@ void DoNameCardSwap(void){
         const txt_cmd_s* text = (res.flag)? NameCardNotRegisteredCardText: NameCardListedCardText;
     // PrintTextAndExit:
         // CALL(aPrintText);
-        PrintText_Conv2(text);
+        PrintText(text);
         // LD_A(LCDC_DEFAULT);
         // LDH_addr_A(rLCDC);
         // RET;

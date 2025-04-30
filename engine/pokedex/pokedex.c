@@ -570,7 +570,7 @@ void Pokedex_InitDexEntryScreen(void){
     Pokedex_GetSGBLayout(SCGB_POKEDEX);
     // LD_A_addr(wCurPartySpecies);
     // CALL(aPlayMonCry);
-    PlayMonCry_Conv(wram->wCurPartySpecies);
+    PlayMonCry(wram->wCurPartySpecies);
     // CALL(aPokedex_IncrementDexPointer);
     Pokedex_IncrementDexPointer();
     // RET;
@@ -676,7 +676,7 @@ void Pokedex_ReinitDexEntryScreen(void){
     Pokedex_GetSGBLayout(SCGB_POKEDEX);
     // LD_A_addr(wCurPartySpecies);
     // CALL(aPlayMonCry);
-    PlayMonCry_Conv(mon);
+    PlayMonCry(mon);
     // LD_HL(wJumptableIndex);
     // DEC_hl;
     wram->wJumptableIndex--;
@@ -749,7 +749,7 @@ void DexEntryScreen_MenuActionJumptable(uint8_t a){
         // LD_E_C;
         // LD_D_B;
         // CALL(aPlayCry);
-        PlayMonCry2_Conv(Pokedex_GetSelectedMon());
+        PlayMonCry2(Pokedex_GetSelectedMon());
         // RET;
         return;
 
@@ -1702,7 +1702,7 @@ void Pokedex_DrawMainScreenBG(void){
     // hlcoord(5, 12, wTilemap);
     // LD_BC((1 << 8) | 3);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(5, 12, wram->wTilemap), &seen, 1, 3);
+    PrintNum(coord(5, 12, wram->wTilemap), &seen, 1, 3);
     // hlcoord(1, 14, wTilemap);
     // LD_DE(mString_OWN);
     // CALL(aPokedex_PlaceString);
@@ -1715,7 +1715,7 @@ void Pokedex_DrawMainScreenBG(void){
     // hlcoord(5, 15, wTilemap);
     // LD_BC((1 << 8) | 3);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(5, 15, wram->wTilemap), &caught, 1, 3);
+    PrintNum(coord(5, 15, wram->wTilemap), &caught, 1, 3);
     // hlcoord(1, 17, wTilemap);
     // LD_DE(mString_SELECT_OPTION);
     // CALL(aPokedex_PlaceString);
@@ -1906,7 +1906,7 @@ void Pokedex_DrawSearchResultsScreenBG(void){
     // hlcoord(1, 16, wTilemap);
     // LD_BC((1 << 8) | 3);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(1, 16, wram->wTilemap), &wram->wDexSearchResultCount, 1, 3);
+    PrintNum(coord(1, 16, wram->wTilemap), &wram->wDexSearchResultCount, 1, 3);
     // hlcoord(8, 0, wTilemap);
     // LD_hl(0x59);
     *coord(8, 0, wram->wTilemap) = 0x59;
@@ -2284,7 +2284,7 @@ void Pokedex_PrintNumberIfOldMode(tile_t* hl, species_t a){
         // LD_DE(wTempSpecies);
         // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 3);
         // CALL(aPrintNum);
-        PrintNum_Conv2(hl-SCREEN_WIDTH, &a, PRINTNUM_LEADINGZEROS | 1, 3);
+        PrintNum(hl-SCREEN_WIDTH, &a, PRINTNUM_LEADINGZEROS | 1, 3);
         // POP_HL;
         // RET;
     }
@@ -2822,7 +2822,7 @@ static void Pokedex_SearchForMons_Search(uint8_t a){
         // PUSH_HL;
         // PUSH_DE;
         // CALL(aGetBaseData);
-        GetBaseData_Conv2(*hl);
+        GetBaseData(*hl);
         // POP_DE;
         // POP_HL;
         // LD_A_addr(wDexConvertedMonType);
@@ -3366,10 +3366,10 @@ void Pokedex_BlackOutBG(void){
 void Pokedex_ApplyPrintPals(void){
     // LD_A(0xff);
     // CALL(aDmgToCgbBGPals);
-    DmgToCgbBGPals_Conv(0xff);
+    DmgToCgbBGPals(0xff);
     // LD_A(0xff);
     // CALL(aDmgToCgbObjPal0);
-    DmgToCgbObjPal0_Conv(0xff);
+    DmgToCgbObjPal0(0xff);
     // CALL(aDelayFrame);
     DelayFrame();
     // RET;
@@ -3387,10 +3387,10 @@ void Pokedex_ApplyUsualPals(void){
 //  This applies the palettes used for most Pokédex screens.
     // LD_A(0xe4);
     // CALL(aDmgToCgbBGPals);
-    DmgToCgbBGPals_Conv(0xe4);
+    DmgToCgbBGPals(0xe4);
     // LD_A(0xe0);
     // CALL(aDmgToCgbObjPal0);
-    DmgToCgbObjPal0_Conv(0xe0);
+    DmgToCgbObjPal0(0xe0);
     // RET;
 }
 
@@ -3438,7 +3438,7 @@ void Pokedex_LoadSelectedMonTiles(void){
     // LD_addr_A(wCurPartySpecies);
     wram->wCurPartySpecies = selected;
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(wram->wCurPartySpecies);
+    GetBaseData(wram->wCurPartySpecies);
     // LD_DE(vTiles2);
     // PREDEF(pGetMonFrontpic);
     GetMonFrontpic_Conv(vram->vTiles2);
@@ -3620,7 +3620,7 @@ void Pokedex_LoadUnownFrontpicTiles(void){
     // LD_addr_A(wCurPartySpecies);
     wram->wCurPartySpecies = UNOWN;
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(UNOWN);
+    GetBaseData(UNOWN);
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
     // PREDEF(pGetMonFrontpic);
     GetMonFrontpic_Conv(vram->vTiles2 + LEN_2BPP_TILE * 0x00);
@@ -3670,7 +3670,7 @@ void v_NewPokedexEntry(void){
     // CALL(aWaitBGMap);
     WaitBGMap();
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(wram->wTempSpecies);
+    GetBaseData(wram->wTempSpecies);
     // LD_DE(vTiles2);
     // PREDEF(pGetMonFrontpic);
     GetMonFrontpic_Conv(vram->vTiles2);
@@ -3679,7 +3679,7 @@ void v_NewPokedexEntry(void){
     Pokedex_GetSGBLayout(SCGB_POKEDEX);
     // LD_A_addr(wCurPartySpecies);
     // CALL(aPlayMonCry);
-    PlayMonCry_Conv(wram->wTempSpecies);
+    PlayMonCry(wram->wTempSpecies);
     // RET;
 
 }

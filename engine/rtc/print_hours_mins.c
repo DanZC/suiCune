@@ -129,8 +129,8 @@ uint8_t* PrintHoursMins_Conv(uint8_t* de, uint8_t b, uint8_t c){
     // REG_DE = de;
     // REG_BC = ((1 << 8) | 2);
     // CALL(aPrintNum);
-    hl = PrintNum_Conv2(hl, values + 1, 1, 2);
-    // hl = PrintNum_Conv(hl, de, 1, 2);
+    hl = PrintNum(hl, values + 1, 1, 2);
+    // hl = PrintNum_GB(hl, de, 1, 2);
     // LD_hl(0x9c);
     // INC_HL;
     // gb_write(REG_HL++, 0x9c);
@@ -146,8 +146,8 @@ uint8_t* PrintHoursMins_Conv(uint8_t* de, uint8_t b, uint8_t c){
     // REG_DE = de;
     // REG_BC = ((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
     // CALL(aPrintNum);
-    // hl = PrintNum_Conv(hl, de, 1 | PRINTNUM_LEADINGZEROS, 2);
-    hl = PrintNum_Conv2(hl, values, 1 | PRINTNUM_LEADINGZEROS, 2);
+    // hl = PrintNum_GB(hl, de, 1 | PRINTNUM_LEADINGZEROS, 2);
+    hl = PrintNum(hl, values, 1 | PRINTNUM_LEADINGZEROS, 2);
     // hl = REG_HL;
     // REG_SP += 2;
     // POP_BC;
@@ -158,8 +158,8 @@ uint8_t* PrintHoursMins_Conv(uint8_t* de, uint8_t b, uint8_t c){
     // INC_HL;
     // CALL(aPlaceString);
     struct TextPrintState st = {.de = U82C(am_pm_str), .hl = hl + 1};
-    PlaceString_Conv(&st, hl + 1);
-    // PlaceString_Conv(&(struct TextPrintState){.de = Utf8ToCrystal(am_pm_str), .hl = hl + 1, .bc = (b << 8) | c}, hl + 1);
+    PlaceString(&st, hl + 1);
+    // PlaceString(&(struct TextPrintState){.de = Utf8ToCrystal(am_pm_str), .hl = hl + 1, .bc = (b << 8) | c}, hl + 1);
     // RET;
     return st.bc;
 }

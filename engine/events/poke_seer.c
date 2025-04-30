@@ -251,7 +251,7 @@ void GetCaughtLevel(void){
     // LD_DE(wSeerCaughtLevel);
     // LD_BC((PRINTNUM_LEFTALIGN | 1 << 8) | 3);
     // CALL(aPrintNum);
-    PrintNum_Conv2(wram->wSeerCaughtLevelString, &wram->wSeerCaughtLevel, PRINTNUM_LEFTALIGN | 1, 3);
+    PrintNum(wram->wSeerCaughtLevelString, &wram->wSeerCaughtLevel, PRINTNUM_LEFTALIGN | 1, 3);
     // RET;
 }
 
@@ -386,7 +386,7 @@ void PrintSeerText(uint8_t a){
     // LD_H_hl;
     // LD_L_A;
     // CALL(aPrintText);
-    PrintText_Conv2(SeerTexts[a]);
+    PrintText(SeerTexts[a]);
     // RET;
 }
 
@@ -482,7 +482,7 @@ void SeerAdvice(void){
             // LD_H_hl;
             // LD_L_A;
             // CALL(aPrintText);
-            PrintText_Conv2(hl->text);
+            PrintText(hl->text);
             // RET;
             return;
         }

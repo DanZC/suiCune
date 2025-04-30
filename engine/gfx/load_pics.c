@@ -220,7 +220,7 @@ void v_GetFrontpic(void){
 void v_GetFrontpic_Conv(uint8_t* de, uint8_t frame){
     // PUSH_DE;
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(wram->wCurSpecies);
+    GetBaseData(wram->wCurSpecies);
     // LD_A_addr(wBasePicSize);
     // AND_A(0xf);
     // LD_B_A;

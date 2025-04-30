@@ -109,7 +109,7 @@ void LoadPartyMenuGFX(void){
     // CALLFAR(aInitPartyMenuPalettes);
     InitPartyMenuPalettes_Conv();
     // CALLFAR(aClearSpriteAnims2);
-    ClearSpriteAnims2_Conv();
+    ClearSpriteAnims2();
     // RET;
 }
 
@@ -239,14 +239,14 @@ void PlacePartyHPBar(void){
             // LD_D(0x6);
             // LD_B(0x0);
             // CALL(aDrawBattleHPBar);
-            DrawBattleHPBar_Conv(hl, 0x6, e, 0x0, HIGH(wram->wPartyMon[b].HP));
+            DrawBattleHPBar(hl, 0x6, e, 0x0, HIGH(wram->wPartyMon[b].HP));
             // LD_HL(wHPPals);
             // LD_A_addr(wSGBPals);
             // LD_C_A;
             // LD_B(0);
             // ADD_HL_BC;
             // CALL(aSetHPPal);
-            SetHPPal_Conv(wram->wHPPals + wram->wSGBPals[0], e);
+            SetHPPal(wram->wHPPals + wram->wSGBPals[0], e);
             // LD_B(SCGB_PARTY_MENU_HP_BARS);
             // CALL(aGetSGBLayout);
             GetSGBLayout(SCGB_PARTY_MENU_HP_BARS);
@@ -366,7 +366,7 @@ void PlacePartyMenuHPDigits(void){
             // PUSH_DE;
             // LD_BC((2 << 8) | 3);
             // CALL(aPrintNum);
-            uint8_t* hl2 = PrintNum_Conv2(hl, &hp, 2, 3);
+            uint8_t* hl2 = PrintNum(hl, &hp, 2, 3);
             // POP_DE;
             // LD_A(0xf3);
             // LD_hli_A;
@@ -376,7 +376,7 @@ void PlacePartyMenuHPDigits(void){
             uint16_t maxHP = wram->wPartyMon[b].maxHP;
             // LD_BC((2 << 8) | 3);
             // CALL(aPrintNum);
-            PrintNum_Conv2(hl2, &maxHP, 2, 3);
+            PrintNum(hl2, &maxHP, 2, 3);
         }
 
     // next:
@@ -437,7 +437,7 @@ void PlacePartyMonLevel(void){
             // LD_BC((PRINTNUM_LEFTALIGN | 1 << 8) | 3);
         //  .okay
             // CALL(aPrintNum);
-            PrintNum_Conv2(hl2, &wram->wPartyMon[b].mon.level, PRINTNUM_LEFTALIGN | 1, 3);
+            PrintNum(hl2, &wram->wPartyMon[b].mon.level, PRINTNUM_LEFTALIGN | 1, 3);
         }
 
     // next:
@@ -931,11 +931,7 @@ void InitPartyMenuGFX(void){
         // IF_NZ goto loop;
     } while(--c != 0);
     // CALLFAR(aPlaySpriteAnimations);
-    {
-        bank_push(BANK(aPlaySpriteAnimations));
-        PlaySpriteAnimations_Conv();
-        bank_pop;
-    }
+    PlaySpriteAnimations();
     // RET;
 }
 
@@ -1156,7 +1152,7 @@ static void PrintPartyMenuActionText_PrintText(const txt_cmd_s* text) {
     // LD_addr_A(wOptions);
     bit_set(wram->wOptions, NO_TEXT_SCROLL);
     // CALL(aPrintText);
-    PrintText_Conv2(text);
+    PrintText(text);
     // POP_AF;
     // LD_addr_A(wOptions);
     wram->wOptions = options;
@@ -1220,7 +1216,7 @@ void PrintPartyMenuActionText(void){
     // LD_A_addr(wCurPartyMon);
     // LD_HL(wPartyMonNicknames);
     // CALL(aGetNickname);
-    GetCurNickname_Conv();
+    GetCurNickname();
     // LD_A_addr(wPartyMenuActionText);
     // AND_A(0xf);
     // LD_HL(mPrintPartyMenuActionText_MenuActionTexts);

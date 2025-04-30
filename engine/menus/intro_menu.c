@@ -109,7 +109,7 @@ void PrintDayOfWeek_Conv(tile_t* de, uint8_t b) {
     // POP_HL;
     // CALL(aPlaceString);
     struct TextPrintState st = {.de = U82C(days[b]), .hl = de};
-    PlaceString_Conv(&st, st.hl);
+    PlaceString(&st, st.hl);
     static const char Day[] = "DAY@";
     // LD_H_B;
     // LD_L_C;
@@ -117,7 +117,7 @@ void PrintDayOfWeek_Conv(tile_t* de, uint8_t b) {
     // LD_DE(mPrintDayOfWeek_Day);
     st.de = U82C(Day);
     // CALL(aPlaceString);
-    PlaceString_Conv(&st, st.hl);
+    PlaceString(&st, st.hl);
     // RET;
 }
 
@@ -1162,7 +1162,7 @@ tile_t* Continue_DisplayBadgeCount_Conv(tile_t* hl) {
     // LD_DE(wNumSetBits);
     // LD_BC((1 << 8) | 2);
     // JP(mPrintNum);
-    return PrintNum_Conv2(hl, &count, 1, 2);
+    return PrintNum(hl, &count, 1, 2);
 }
 
 void Continue_DisplayPokedexNumCaught(void) {
@@ -1201,7 +1201,7 @@ tile_t* Continue_DisplayPokedexNumCaught_Conv(tile_t* hl) {
     // LD_DE(wNumSetBits);
     // LD_BC((1 << 8) | 3);
     // JP(mPrintNum);
-    return PrintNum_Conv2(hl, &count, 1, 3);
+    return PrintNum(hl, &count, 1, 3);
 }
 
 void Continue_DisplayGameTime(void) {
@@ -1220,21 +1220,21 @@ void Continue_DisplayGameTime_Conv(tile_t* hl) {
     // LD_DE(wGameTimeHours);
     // LD_BC((2 << 8) | 3);
     // CALL(aPrintNum);
-    hl = PrintNum_Conv2(hl, &wram->wGameTimeHours, 2, 3);
+    hl = PrintNum(hl, &wram->wGameTimeHours, 2, 3);
     // LD_hl(0x6d);
     // INC_HL;
     *(hl++) = 0x6d;
     // LD_DE(wGameTimeMinutes);
     // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
     // JP(mPrintNum);
-    PrintNum_Conv2(hl, &wram->wGameTimeMinutes, PRINTNUM_LEADINGZEROS | 1, 2);
+    PrintNum(hl, &wram->wGameTimeMinutes, PRINTNUM_LEADINGZEROS | 1, 2);
 }
 
 void OakSpeech(void) {
     // FARCALL(aInitClock);
     InitClock();
     // CALL(aRotateFourPalettesLeft);
-    RotateFourPalettesLeft_Conv();
+    RotateFourPalettesLeft();
     // CALL(aClearTilemap);
     ClearTilemap();
 
@@ -1243,9 +1243,9 @@ void OakSpeech(void) {
     PlayMusic(MUSIC_ROUTE_30);
 
     // CALL(aRotateFourPalettesRight);
-    RotateFourPalettesRight_Conv();
+    RotateFourPalettesRight();
     // CALL(aRotateThreePalettesRight);
-    RotateThreePalettesRight_Conv();
+    RotateThreePalettesRight();
     // XOR_A_A;
     // LD_addr_A(wCurPartySpecies);
     wram->wCurPartySpecies = 0x0;
@@ -1263,9 +1263,9 @@ void OakSpeech(void) {
 
     // LD_HL(mOakText1);
     // CALL(aPrintText);
-    PrintText_Conv2(OakText1);
+    PrintText(OakText1);
     // CALL(aRotateThreePalettesRight);
-    RotateThreePalettesRight_Conv();
+    RotateThreePalettesRight();
     // CALL(aClearTilemap);
     ClearTilemap();
 
@@ -1275,11 +1275,11 @@ void OakSpeech(void) {
     // LD_addr_A(wCurPartySpecies);
     wram->wCurPartySpecies = WOOPER;
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(WOOPER);
+    GetBaseData(WOOPER);
 
     // hlcoord(6, 4, wTilemap);
     // CALL(aPrepMonFrontpic);
-    PrepMonFrontpic_Conv(coord(6, 4, wram->wTilemap));
+    PrepMonFrontpic(coord(6, 4, wram->wTilemap));
 
     // XOR_A_A;
     // LD_addr_A(wTempMonDVs);
@@ -1294,12 +1294,12 @@ void OakSpeech(void) {
 
     // LD_HL(mOakText2);
     // CALL(aPrintText);
-    PrintText_Conv2(OakText2);
+    PrintText(OakText2);
     // LD_HL(mOakText4);
     // CALL(aPrintText);
-    PrintText_Conv2(OakText4);
+    PrintText(OakText4);
     // CALL(aRotateThreePalettesRight);
-    RotateThreePalettesRight_Conv();
+    RotateThreePalettesRight();
     // CALL(aClearTilemap);
     ClearTilemap();
 
@@ -1320,9 +1320,9 @@ void OakSpeech(void) {
 
     // LD_HL(mOakText5);
     // CALL(aPrintText);
-    PrintText_Conv2(OakText5);
+    PrintText(OakText5);
     // CALL(aRotateThreePalettesRight);
-    RotateThreePalettesRight_Conv();
+    RotateThreePalettesRight();
     // CALL(aClearTilemap);
     ClearTilemap();
 
@@ -1340,12 +1340,12 @@ void OakSpeech(void) {
 
     // LD_HL(mOakText6);
     // CALL(aPrintText);
-    PrintText_Conv2(OakText6);
+    PrintText(OakText6);
     // CALL(aNamePlayer);
     NamePlayer();
     // LD_HL(mOakText7);
     // CALL(aPrintText);
-    PrintText_Conv2(OakText7);
+    PrintText(OakText7);
     // RET;
 }
 
@@ -1364,7 +1364,7 @@ const txt_cmd_s OakText2[] = {
 void OakText2_ASM(struct TextCmdState* state) {
     // LD_A(WOOPER);
     // CALL(aPlayMonCry);
-    PlayMonCry_Conv(WOOPER);
+    PlayMonCry(WOOPER);
     // CALL(aWaitSFX);
     WaitSFX();
     // LD_HL(mOakText3);
@@ -1431,7 +1431,7 @@ void NamePlayer(void) {
         NamingScreen_Conv(wram->wPlayerName, NAME_PLAYER);
 
         // CALL(aRotateThreePalettesRight);
-        RotateThreePalettesRight_Conv();
+        RotateThreePalettesRight();
         // CALL(aClearTilemap);
         ClearTilemap();
 
@@ -1450,7 +1450,7 @@ void NamePlayer(void) {
         // CALL(aGetSGBLayout);
         GetSGBLayout(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
         // CALL(aRotateThreePalettesLeft);
-        RotateThreePalettesLeft_Conv();
+        RotateThreePalettesLeft();
 
         // LD_HL(wPlayerName);
         // LD_DE(mNamePlayer_Chris);
@@ -1560,7 +1560,7 @@ void ShrinkPlayer(void) {
     DelayFrames(50);
 
     // CALL(aRotateThreePalettesRight);
-    RotateThreePalettesRight_Conv();
+    RotateThreePalettesRight();
     // CALL(aClearTilemap);
     ClearTilemap();
     // RET;
@@ -1586,7 +1586,7 @@ void Intro_RotatePalettesLeftFrontpic(void) {
     // loop:
         // LD_A_hli;
         // CALL(aDmgToCgbBGPals);
-        DmgToCgbBGPals_Conv(*(hl++));
+        DmgToCgbBGPals(*(hl++));
         // LD_C(10);
         // CALL(aDelayFrames);
         DelayFrames(10);
@@ -1604,7 +1604,7 @@ void Intro_WipeInFrontpic(void) {
     DelayFrame();
     // LD_A(0b11100100);
     // CALL(aDmgToCgbBGPals);
-    DmgToCgbBGPals_Conv(0b11100100);
+    DmgToCgbBGPals(0b11100100);
 
     while(1) {
     // loop:

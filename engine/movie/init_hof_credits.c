@@ -44,7 +44,7 @@ void InitDisplayForHallOfFame(void){
     EnableLCD();
     // LD_HL(mInitDisplayForHallOfFame_SavingRecordText);
     // CALL(aPrintText);
-    PrintText_Conv2(SavingRecordText);
+    PrintText(SavingRecordText);
     // CALL(aWaitBGMap2);
     WaitBGMap2();
     // CALL(aSetPalettes);

@@ -1907,7 +1907,7 @@ void Function898aa(void){
     // LD_DE(wMenuSelection);
     // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(5, 1, wram->wTilemap), &wram->wMenuSelection, PRINTNUM_LEADINGZEROS | 1, 2);
+    PrintNum(coord(5, 1, wram->wTilemap), &wram->wMenuSelection, PRINTNUM_LEADINGZEROS | 1, 2);
     // POP_BC;
     // RET;
 }
@@ -1980,7 +1980,7 @@ void Function898f3(uint8_t* bc){
         // hlcoord(5, 5, wTilemap);
         // LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 5);
         // CALL(aPrintNum);
-        PrintNum_Conv2(coord(5, 6, wram->wTilemap), bc + PLAYER_NAME_LENGTH * 2, PRINTNUM_LEADINGZEROS | 2, 5);
+        PrintNum(coord(5, 6, wram->wTilemap), bc + PLAYER_NAME_LENGTH * 2, PRINTNUM_LEADINGZEROS | 2, 5);
         // goto asm_89913;
     }
 
@@ -2157,7 +2157,7 @@ void Function8999c(tile_t* hl){
     // LD_DE(wPlayerName);
     // CALL(aPlaceString);
     struct TextPrintState st = {.de = wram->wPlayerName, .hl = hl};
-    PlaceString_Conv(&st, st.hl);
+    PlaceString(&st, st.hl);
     // INC_BC;
     // LD_H_B;
     // LD_L_C;
@@ -2165,7 +2165,7 @@ void Function8999c(tile_t* hl){
     // LD_DE(mString_899ac);
     st.de = U82C(String_899ac);
     // CALL(aPlaceString);
-    PlaceString_Conv(&st, st.hl);
+    PlaceString(&st, st.hl);
     // RET;
 }
 
@@ -2194,7 +2194,7 @@ void Function899c9(tile_t* hl){
     // LD_DE(wPlayerID);
     // LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 5);
     // CALL(aPrintNum);
-    PrintNum_Conv2(hl, &wram->wPlayerID, PRINTNUM_LEADINGZEROS | 2, 5);
+    PrintNum(hl, &wram->wPlayerID, PRINTNUM_LEADINGZEROS | 2, 5);
     // RET;
 }
 
@@ -3675,7 +3675,7 @@ void Function89fce(void){
 void Function89fed(void){
     // LD_HL(mMobileCardFolderIntro1Text);
     // CALL(aPrintText);
-    PrintText_Conv2(MobileCardFolderIntro1Text);
+    PrintText(MobileCardFolderIntro1Text);
     // JP(mFunction89e36);
     Function89e36(); // Goto the next function
 }
@@ -3728,7 +3728,7 @@ void Function8a03d(void){
     // CALL(aMobile_EnableSpriteUpdates);
     Mobile_EnableSpriteUpdates();
     // CALL(aPrintText);
-    PrintText_Conv2(MobileCardFolderIntro2Text);
+    PrintText(MobileCardFolderIntro2Text);
     // CALL(aMobile_DisableSpriteUpdates);
     Mobile_DisableSpriteUpdates();
     // JP(mFunction89e36);
@@ -3738,7 +3738,7 @@ void Function8a03d(void){
 void Function8a04c(void){
     // LD_HL(mMobileCardFolderIntro3Text);
     // CALL(aPrintText);
-    PrintText_Conv2(MobileCardFolderIntro3Text);
+    PrintText(MobileCardFolderIntro3Text);
     // JP(mFunction89e36);
     Function89e36();
 }
@@ -3886,7 +3886,7 @@ void Function8a0e6(void){
 void Function8a0ec(void){
     // LD_HL(mMobileCardFolderIntro4Text);
     // CALL(aPrintText);
-    PrintText_Conv2(MobileCardFolderIntro4Text);
+    PrintText(MobileCardFolderIntro4Text);
     // JP(mFunction89e36);
     Function89e36();
 }
@@ -4089,7 +4089,7 @@ const char* const Strings_8a1cc[] = {
 bool Function8a20d(void){
     // LD_HL(mMobileCardFolderAskDeleteText);
     // CALL(aPrintText);
-    PrintText_Conv2(MobileCardFolderAskDeleteText);
+    PrintText(MobileCardFolderAskDeleteText);
     // LD_A(0x2);
     // CALL(aFunction89259);
     // RET_C ;
@@ -4097,7 +4097,7 @@ bool Function8a20d(void){
         return true;
     // LD_HL(mMobileCardFolderDeleteAreYouSureText);
     // CALL(aPrintText);
-    PrintText_Conv2(MobileCardFolderDeleteAreYouSureText);
+    PrintText(MobileCardFolderDeleteAreYouSureText);
     // LD_A(0x2);
     // CALL(aFunction89259);
     // RET_C ;
@@ -4108,7 +4108,7 @@ bool Function8a20d(void){
     Function8a2fe(0);
     // LD_HL(mMobileCardFolderDeletedText);
     // CALL(aPrintText);
-    PrintText_Conv2(MobileCardFolderDeletedText);
+    PrintText(MobileCardFolderDeletedText);
     // XOR_A_A;
     // AND_A_A;
     // RET;
@@ -4210,14 +4210,14 @@ bool Function8a2aa(void){
     LoadMenuHeader(&MenuHeader_0x8a2ef);
     // LD_HL(mMobileCardFolderAskOpenOldText);
     // CALL(aPrintText);
-    PrintText_Conv2(MobileCardFolderAskOpenOldText);
+    PrintText(MobileCardFolderAskOpenOldText);
     // LD_A(0x1);
     // CALL(aFunction89259);
     // IF_NC goto asm_8a2cf;
     if(Function89259(0x1)) {
         // LD_HL(mMobileCardFolderAskDeleteOldText);
         // CALL(aPrintText);
-        PrintText_Conv2(MobileCardFolderAskDeleteOldText);
+        PrintText(MobileCardFolderAskDeleteOldText);
         // LD_A(0x2);
         // CALL(aFunction89259);
         // IF_C goto asm_8a2ea;
@@ -6180,7 +6180,7 @@ start:
     // asm_8acf0:
         // LD_HL(mMobileCardFolderFinishRegisteringCardsText);
         // CALL(aPrintText);
-        PrintText_Conv2(MobileCardFolderFinishRegisteringCardsText);
+        PrintText(MobileCardFolderFinishRegisteringCardsText);
         // LD_A(0x2);
         // CALL(aFunction89259);
         // JP_C (mFunction8ac7c);

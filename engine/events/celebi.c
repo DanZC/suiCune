@@ -58,7 +58,7 @@ void CelebiShrineEvent(void){
     // depixel4(0, 10, 7, 0);
     // LD_A(SPRITE_ANIM_INDEX_CELEBI);
     // CALL(aInitSpriteAnimStruct);
-    struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_CELEBI, pixel4(0, 10, 7, 0));
+    struct SpriteAnim* bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_CELEBI, pixel4(0, 10, 7, 0));
     // LD_HL(SPRITEANIMSTRUCT_TILE_ID);
     // ADD_HL_BC;
     // LD_hl(SPECIALCELEBIEVENT_CELEBI);
@@ -93,7 +93,7 @@ void CelebiShrineEvent(void){
         // LD_addr_A(wCurSpriteOAMAddr);
         wram->wCurSpriteOAMAddr = 36 * SPRITEOAMSTRUCT_LENGTH;
         // FARCALL(aDoNextFrameForAllSprites);
-        DoNextFrameForAllSprites_Conv();
+        DoNextFrameForAllSprites();
         // CALL(aCelebiEvent_CountDown);
         CelebiEvent_CountDown();
         // LD_C(2);
@@ -118,7 +118,7 @@ void CelebiShrineEvent(void){
 
 void LoadCelebiGFX(void){
     // FARCALL(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // LD_DE(mSpecialCelebiLeafGFX);
     // LD_HL(vTiles1);
     // LD_BC((BANK(aSpecialCelebiLeafGFX) << 8) | 4);
@@ -186,7 +186,7 @@ static void UpdateCelebiPosition_FreezeCelebiPosition(struct SpriteAnim* bc){
     // ADD_HL_BC;
     // LD_A(SPRITE_ANIM_FRAMESET_CELEBI_LEFT);
     // CALL(aReinitSpriteAnimFrame);
-    ReinitSpriteAnimFrame_Conv(bc, SPRITE_ANIM_FRAMESET_CELEBI_LEFT);
+    ReinitSpriteAnimFrame(bc, SPRITE_ANIM_FRAMESET_CELEBI_LEFT);
     // RET;
 }
 
@@ -318,7 +318,7 @@ void UpdateCelebiPosition(struct SpriteAnim* bc){
         // ADD_HL_BC;
         // LD_A(SPRITE_ANIM_FRAMESET_CELEBI_RIGHT);
         // CALL(aReinitSpriteAnimFrame);
-        ReinitSpriteAnimFrame_Conv(bc, SPRITE_ANIM_FRAMESET_CELEBI_RIGHT);
+        ReinitSpriteAnimFrame(bc, SPRITE_ANIM_FRAMESET_CELEBI_RIGHT);
         // goto done;
     }
     else {
@@ -327,7 +327,7 @@ void UpdateCelebiPosition(struct SpriteAnim* bc){
         // ADD_HL_BC;
         // LD_A(SPRITE_ANIM_FRAMESET_CELEBI_LEFT);
         // CALL(aReinitSpriteAnimFrame);
-        ReinitSpriteAnimFrame_Conv(bc, SPRITE_ANIM_FRAMESET_CELEBI_LEFT);
+        ReinitSpriteAnimFrame(bc, SPRITE_ANIM_FRAMESET_CELEBI_LEFT);
     }
 
 // done:

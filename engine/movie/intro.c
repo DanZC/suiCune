@@ -268,7 +268,7 @@ void CrystalIntro(void){
     LoadPNG2bppAssetSectionToVRAM(IntroGrass4GFX, IntroGrassGFX[3], 0, 1);
 
     // Uncomment line below to fix Suicune colors when disabling ditto/copyright splash screen.
-    // DmgToCgbObjPals_Conv(0b11100100, 0b11100100);
+    // DmgToCgbObjPals(0b11100100, 0b11100100);
 
 // loop:
     while(1)
@@ -291,12 +291,8 @@ void CrystalIntro(void){
             break;
         // CALL(aIntroSceneJumper);
         IntroSceneJumper();
-        {
-            bank_push(BANK(aPlaySpriteAnimations));
-            // FARCALL(aPlaySpriteAnimations);
-            PlaySpriteAnimations_Conv();
-            bank_pop;
-        }
+        // FARCALL(aPlaySpriteAnimations);
+        PlaySpriteAnimations();
         // CALL(aDelayFrame);
         DelayFrame();
         // JP(mCrystalIntro_loop);
@@ -522,7 +518,7 @@ static void IntroScene1(void){
     // LDH_addr_A(hWY);
     hram->hWY = 0x90;
     // FARCALL(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // CALL(aIntro_SetCGBPalUpdate);
     hram->hCGBPalUpdate = TRUE;
     // XOR_A_A;
@@ -745,7 +741,7 @@ static void IntroScene5(void){
     // LDH_addr_A(hWY);
     hram->hWY = 0x90;
     // FARCALL(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // CALL(aIntro_SetCGBPalUpdate);
     hram->hCGBPalUpdate = TRUE;
     // XOR_A_A;
@@ -908,12 +904,12 @@ static void IntroScene7(void){
     // CALL(aIntro_ResetLYOverrides);
     Intro_ResetLYOverrides_Conv();
     // FARCALL(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     //depixel ['13', '27', '4', '0']
     // depixel4(13, 27, 4, 0);
     // LD_A(SPRITE_ANIM_INDEX_INTRO_SUICUNE);
     // CALL(aInitSpriteAnimStruct);
-    InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_INTRO_SUICUNE, pixel4(13, 27, 4, 0));
+    InitSpriteAnimStruct(SPRITE_ANIM_INDEX_INTRO_SUICUNE, pixel4(13, 27, 4, 0));
     // LD_A(0xf0);
     // LD_addr_A(wGlobalAnimXOffset);
     wram->wGlobalAnimXOffset = 0xf0;
@@ -956,7 +952,7 @@ static void IntroScene8(void){
             // CALL(aPlaySFX);
             PlaySFX(SFX_INTRO_SUICUNE_2);
             // FARCALL(aDeinitializeAllSprites);
-            DeinitializeAllSprites_Conv();
+            DeinitializeAllSprites();
             // CALL(aNextIntroScene);
             // RET;
             NextIntroScene();
@@ -1053,7 +1049,7 @@ static void IntroScene10(void){
         // depixel2(22, 6);
         // LD_A(SPRITE_ANIM_INDEX_INTRO_WOOPER);
         // CALL(aInitSpriteAnimStruct);
-        InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_INTRO_WOOPER, pixel2(22, 6));
+        InitSpriteAnimStruct(SPRITE_ANIM_INDEX_INTRO_WOOPER, pixel2(22, 6));
         // LD_DE(SFX_INTRO_PICHU);
         // CALL(aPlaySFX);
         PlaySFX(SFX_INTRO_PICHU);
@@ -1067,7 +1063,7 @@ static void IntroScene10(void){
         // depixel4(21, 16, 1, 0);
         // LD_A(SPRITE_ANIM_INDEX_INTRO_PICHU);
         // CALL(aInitSpriteAnimStruct);
-        InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_INTRO_PICHU, pixel4(21, 16, 1, 0));
+        InitSpriteAnimStruct(SPRITE_ANIM_INDEX_INTRO_PICHU, pixel4(21, 16, 1, 0));
         // LD_DE(SFX_INTRO_PICHU);
         // CALL(aPlaySFX);
         PlaySFX(SFX_INTRO_PICHU);
@@ -1143,7 +1139,7 @@ static void IntroScene11(void){
     // LDH_addr_A(hWY);
     hram->hWY = 0x90;
     // FARCALL(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // CALL(aIntro_SetCGBPalUpdate);
     hram->hCGBPalUpdate = TRUE;
     // XOR_A_A;
@@ -1339,11 +1335,11 @@ static void IntroScene13(void){
     // LDH_addr_A(hWY);
     hram->hWY = 0x90;
     // FARCALL(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // depixel4(13, 11, 4, 0);
     // LD_A(SPRITE_ANIM_INDEX_INTRO_SUICUNE);
     // CALL(aInitSpriteAnimStruct);
-    InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_INTRO_SUICUNE, pixel4(13, 11, 4, 0));
+    InitSpriteAnimStruct(SPRITE_ANIM_INDEX_INTRO_SUICUNE, pixel4(13, 11, 4, 0));
     // LD_DE(MUSIC_CRYSTAL_OPENING);
     // CALL(aPlayMusic);
     PlayMusic(MUSIC_CRYSTAL_OPENING);
@@ -1401,7 +1397,7 @@ static void IntroScene14(void){
         if(wram->wGlobalAnimXOffset < 0x88) {
         // disappear:
             // FARCALL(aDeinitializeAllSprites);
-            DeinitializeAllSprites_Conv();
+            DeinitializeAllSprites();
             // RET;
             return;
         }
@@ -1504,19 +1500,19 @@ static void IntroScene15(void){
     // LDH_addr_A(hWY);
     hram->hWY = 0x90;
     // FARCALL(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // CALL(aIntro_SetCGBPalUpdate);
     hram->hCGBPalUpdate = TRUE;
     //depixel ['8', '5']
     // depixel2(8, 5);
     // LD_A(SPRITE_ANIM_INDEX_INTRO_UNOWN_F);
     // CALL(aInitSpriteAnimStruct);
-    InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_INTRO_UNOWN_F, pixel2(8, 5));
+    InitSpriteAnimStruct(SPRITE_ANIM_INDEX_INTRO_UNOWN_F, pixel2(8, 5));
     //depixel ['12', '0']
     // depixel2(12, 0);
     // LD_A(SPRITE_ANIM_INDEX_INTRO_SUICUNE_AWAY);
     // CALL(aInitSpriteAnimStruct);
-    InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_INTRO_SUICUNE_AWAY, pixel2(12, 0));
+    InitSpriteAnimStruct(SPRITE_ANIM_INDEX_INTRO_SUICUNE_AWAY, pixel2(12, 0));
     // XOR_A_A;
     // LD_addr_A(wIntroSceneFrameCounter);
     // LD_addr_A(wIntroSceneTimer);
@@ -1623,7 +1619,7 @@ static void IntroScene17(void){
     // LDH_addr_A(hWY);
     hram->hWY = 0x90;
     // FARCALL(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // CALL(aIntro_SetCGBPalUpdate);
     hram->hCGBPalUpdate = TRUE;
     // XOR_A_A;
@@ -1742,7 +1738,7 @@ static void IntroScene19(void){
     // LDH_addr_A(hWY);
     hram->hWY = 0x90;
     // FARCALL(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // LD_HL(wSpriteAnimDict);
     // XOR_A_A;  // SPRITE_ANIM_DICT_DEFAULT
     // LD_hli_A;
@@ -1755,7 +1751,7 @@ static void IntroScene19(void){
     // depixel2(12, 0);
     // LD_A(SPRITE_ANIM_INDEX_INTRO_SUICUNE_AWAY);
     // CALL(aInitSpriteAnimStruct);
-    InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_INTRO_SUICUNE_AWAY, pixel2(12, 0));
+    InitSpriteAnimStruct(SPRITE_ANIM_INDEX_INTRO_SUICUNE_AWAY, pixel2(12, 0));
     // XOR_A_A;
     // LD_addr_A(wIntroSceneFrameCounter);
     // LD_addr_A(wIntroSceneTimer);
@@ -1934,7 +1930,7 @@ static void IntroScene22(void){
     if(ctr >= 0x8) {
     // done:
         // FARCALL(aDeinitializeAllSprites);
-        DeinitializeAllSprites_Conv();
+        DeinitializeAllSprites();
         // CALL(aNextIntroScene);
         NextIntroScene();
         // RET;
@@ -2163,7 +2159,7 @@ static void IntroScene26(void){
     // LDH_addr_A(hWY);
     hram->hWY = 0x90;
     // FARCALL(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // CALL(aIntro_SetCGBPalUpdate);
     hram->hCGBPalUpdate = TRUE;
     // XOR_A_A;
@@ -2334,7 +2330,7 @@ static void CrystalIntro_InitUnownAnim_Conv(uint16_t de){
     // PUSH_DE;
     // LD_A(SPRITE_ANIM_INDEX_INTRO_UNOWN);
     // CALL(aInitSpriteAnimStruct);
-    struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_INTRO_UNOWN, de);
+    struct SpriteAnim* bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_INTRO_UNOWN, de);
     // LD_HL(SPRITEANIMSTRUCT_VAR1);
     // ADD_HL_BC;
     // LD_hl(0x8);
@@ -2342,12 +2338,12 @@ static void CrystalIntro_InitUnownAnim_Conv(uint16_t de){
     // LD_A(SPRITE_ANIM_FRAMESET_INTRO_UNOWN_4);
     // CALL(aReinitSpriteAnimFrame);
     // POP_DE;
-    ReinitSpriteAnimFrame_Conv(bc, SPRITE_ANIM_FRAMESET_INTRO_UNOWN_4);
+    ReinitSpriteAnimFrame(bc, SPRITE_ANIM_FRAMESET_INTRO_UNOWN_4);
 
     // PUSH_DE;
     // LD_A(SPRITE_ANIM_INDEX_INTRO_UNOWN);
     // CALL(aInitSpriteAnimStruct);
-    bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_INTRO_UNOWN, de);
+    bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_INTRO_UNOWN, de);
     // LD_HL(SPRITEANIMSTRUCT_VAR1);
     // ADD_HL_BC;
     // LD_hl(0x18);
@@ -2355,12 +2351,12 @@ static void CrystalIntro_InitUnownAnim_Conv(uint16_t de){
     // LD_A(SPRITE_ANIM_FRAMESET_INTRO_UNOWN_3);
     // CALL(aReinitSpriteAnimFrame);
     // POP_DE;
-    ReinitSpriteAnimFrame_Conv(bc, SPRITE_ANIM_FRAMESET_INTRO_UNOWN_3);
+    ReinitSpriteAnimFrame(bc, SPRITE_ANIM_FRAMESET_INTRO_UNOWN_3);
 
     // PUSH_DE;
     // LD_A(SPRITE_ANIM_INDEX_INTRO_UNOWN);
     // CALL(aInitSpriteAnimStruct);
-    bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_INTRO_UNOWN, de);
+    bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_INTRO_UNOWN, de);
     // LD_HL(SPRITEANIMSTRUCT_VAR1);
     // ADD_HL_BC;
     // LD_hl(0x28);
@@ -2368,11 +2364,11 @@ static void CrystalIntro_InitUnownAnim_Conv(uint16_t de){
     // LD_A(SPRITE_ANIM_FRAMESET_INTRO_UNOWN_1);
     // CALL(aReinitSpriteAnimFrame);
     // POP_DE;
-    ReinitSpriteAnimFrame_Conv(bc, SPRITE_ANIM_FRAMESET_INTRO_UNOWN_1);
+    ReinitSpriteAnimFrame(bc, SPRITE_ANIM_FRAMESET_INTRO_UNOWN_1);
 
     // LD_A(SPRITE_ANIM_INDEX_INTRO_UNOWN);
     // CALL(aInitSpriteAnimStruct);
-    bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_INTRO_UNOWN, de);
+    bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_INTRO_UNOWN, de);
     // LD_HL(SPRITEANIMSTRUCT_VAR1);
     // ADD_HL_BC;
     // LD_hl(0x38);
@@ -2380,7 +2376,7 @@ static void CrystalIntro_InitUnownAnim_Conv(uint16_t de){
     // LD_A(SPRITE_ANIM_FRAMESET_INTRO_UNOWN_2);
     // CALL(aReinitSpriteAnimFrame);
     // RET;
-    ReinitSpriteAnimFrame_Conv(bc, SPRITE_ANIM_FRAMESET_INTRO_UNOWN_2);
+    ReinitSpriteAnimFrame(bc, SPRITE_ANIM_FRAMESET_INTRO_UNOWN_2);
 }
 
 void CrystalIntro_UnownFade(void){

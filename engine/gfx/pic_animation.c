@@ -507,7 +507,7 @@ void PokeAnim_Finish(void){
 void PokeAnim_Cry(void){
     // LD_A_addr(wPokeAnimSpecies);
     // CALL(av_PlayMonCry);
-    v_PlayMonCry_Conv(pokeAnim->species);
+    v_PlayMonCry(pokeAnim->species);
     // LD_A_addr(wPokeAnimSceneIndex);
     // INC_A;
     // LD_addr_A(wPokeAnimSceneIndex);
@@ -518,7 +518,7 @@ void PokeAnim_Cry(void){
 void PokeAnim_CryNoWait(void){
     // LD_A_addr(wPokeAnimSpecies);
     // CALL(aPlayMonCry2);
-    PlayMonCry2_Conv(pokeAnim->species);
+    PlayMonCry2(pokeAnim->species);
     // LD_A_addr(wPokeAnimSceneIndex);
     // INC_A;
     // LD_addr_A(wPokeAnimSceneIndex);
@@ -532,7 +532,7 @@ void PokeAnim_StereoCry(void){
     wram->wCryTracks = 0xf;
     // LD_A_addr(wPokeAnimSpecies);
     // CALL(aPlayStereoCry2);
-    PlayStereoCry2_Conv(pokeAnim->species);
+    PlayStereoCry2(pokeAnim->species);
     // LD_A_addr(wPokeAnimSceneIndex);
     // INC_A;
     // LD_addr_A(wPokeAnimSceneIndex);
@@ -1876,7 +1876,7 @@ uint8_t PokeAnim_GetFrontpicDims_Conv(void){
     // LD_addr_A(wCurSpecies);
     wram->wCurSpecies = wram->wCurPartySpecies;
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(wram->wCurSpecies);
+    GetBaseData(wram->wCurSpecies);
     // LD_A_addr(wBasePicSize);
     // AND_A(0xf);
     // LD_C_A;

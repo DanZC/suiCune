@@ -656,7 +656,7 @@ void ValidateBTParty(void){
     // valid:
         // LD_addr_A(wCurSpecies);
         // CALL(aGetBaseData);
-        GetBaseData_Conv2(hl->mon.mon.species);
+        GetBaseData(hl->mon.mon.species);
         // LD_A(BANK(s5_b2fb));
         // CALL(aOpenSRAM);
         OpenSRAM(MBANK(as5_b2fb));
@@ -1152,7 +1152,7 @@ static void Function1704e1_PlaceTextItems(void){
             // PUSH_BC;
             struct TextPrintState st = {.de = &wram->wcd49, .hl = hl2};
             // CALL(aPlaceString);
-            PlaceString_Conv(&st, st.hl);
+            PlaceString(&st, st.hl);
             // LD_DE(NAME_LENGTH_JAPANESE);
             // ADD_HL_DE;
             hl2 = st.hl + PLAYER_NAME_LENGTH;

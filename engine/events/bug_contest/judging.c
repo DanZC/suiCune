@@ -29,7 +29,7 @@ uint8_t v_BugContestJudging(void){
     GetPokemonName(wram->wBugContestWinners[2].mon);
     // LD_HL(mContestJudging_ThirdPlaceText);
     // CALL(aPrintText);
-    PrintText_Conv2(ContestJudging_ThirdPlaceText);
+    PrintText(ContestJudging_ThirdPlaceText);
     // LD_A_addr(wBugContestSecondPlaceWinnerID);
     // CALL(aLoadContestantName);
     LoadContestantName(wram->wBugContestWinners[1].winnerID);
@@ -39,7 +39,7 @@ uint8_t v_BugContestJudging(void){
     GetPokemonName(wram->wBugContestWinners[1].mon);
     // LD_HL(mContestJudging_SecondPlaceText);
     // CALL(aPrintText);
-    PrintText_Conv2(ContestJudging_SecondPlaceText);
+    PrintText(ContestJudging_SecondPlaceText);
     // LD_A_addr(wBugContestFirstPlaceWinnerID);
     // CALL(aLoadContestantName);
     LoadContestantName(wram->wBugContestWinners[0].winnerID);
@@ -49,7 +49,7 @@ uint8_t v_BugContestJudging(void){
     GetPokemonName(wram->wBugContestWinners[0].mon);
     // LD_HL(mContestJudging_FirstPlaceText);
     // CALL(aPrintText);
-    PrintText_Conv2(ContestJudging_FirstPlaceText);
+    PrintText(ContestJudging_FirstPlaceText);
     // JP(mBugContest_GetPlayersResult);
     return BugContest_GetPlayersResult();
 }

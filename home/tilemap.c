@@ -79,7 +79,7 @@ void ApplyTilemap(void) {
     else {
         hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // JR(mCopyTilemapAtOnce);
-        return CopyTilemapAtOnce_Conv();
+        return CopyTilemapAtOnce();
     }
 }
 
@@ -91,16 +91,11 @@ void CGBOnly_CopyTilemapAtOnce(void) {
     if(hram->hCGB == 0)
         return WaitBGMap();
 
-    return CopyTilemapAtOnce_Conv();
+    return CopyTilemapAtOnce();
 }
 
 void CopyTilemapAtOnce(void) {
-    SET_PC(aCopyTilemapAtOnce);
-    JR(mv_CopyTilemapAtOnce);
-}
-
-void CopyTilemapAtOnce_Conv(void) {
-    return v_CopyTilemapAtOnce_Conv();
+    return v_CopyTilemapAtOnce();
 }
 
 void CopyAttrmapAndTilemapToWRAMBank3(void) {
@@ -111,51 +106,8 @@ void CopyAttrmapAndTilemapToWRAMBank3(void) {
 }
 
 void v_CopyTilemapAtOnce(void) {
-    SET_PC(av_CopyTilemapAtOnce);
-    LDH_A_addr(hBGMapMode);
-    PUSH_AF;
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-
-    LDH_A_addr(hMapAnims);
-    PUSH_AF;
-    XOR_A_A;
-    LDH_addr_A(hMapAnims);
-
-wait:
-
-    LDH_A_addr(rLY);
-    CP_A(0x80 - 1);
-    // IF_C goto wait;
-
-    NOP;
-    LD_A(MBANK(avBGMap2));
-    LDH_addr_A(rVBK);
-    hlcoord(0, 0, wAttrmap);
-    CALL(av_CopyTilemapAtOnce_CopyBGMapViaStack);
-    LD_A(MBANK(avBGMap0));
-    LDH_addr_A(rVBK);
-    hlcoord(0, 0, wTilemap);
-    CALL(av_CopyTilemapAtOnce_CopyBGMapViaStack);
-
-wait2:
-
-    LDH_A_addr(rLY);
-    CP_A(0x80 - 1);
-    // IF_C goto wait2;
-    NOP;
-
-    POP_AF;
-    LDH_addr_A(hMapAnims);
-    POP_AF;
-    LDH_addr_A(hBGMapMode);
-    RET;
-}
-
-void v_CopyTilemapAtOnce_Conv(void) {
     uint8_t bg_map_mode = hram->hBGMapMode;
     hram->hBGMapMode = BGMAPMODE_NONE;
-
     uint8_t map_anims = hram->hMapAnims;
     hram->hMapAnims = 0;
 
@@ -166,10 +118,10 @@ void v_CopyTilemapAtOnce_Conv(void) {
     // IF_C goto wait;
 
     gb_write(rVBK, MBANK(avBGMap2));
-    v_CopyTilemapAtOnce_CopyBGMapViaStack_Conv2(coord(0, 0, wram->wAttrmap));
+    v_CopyTilemapAtOnce_CopyBGMapViaStack(coord(0, 0, wram->wAttrmap));
 
     gb_write(rVBK, MBANK(avBGMap0));
-    v_CopyTilemapAtOnce_CopyBGMapViaStack_Conv2(coord(0, 0, wram->wTilemap));
+    v_CopyTilemapAtOnce_CopyBGMapViaStack(coord(0, 0, wram->wTilemap));
 
     // wait2:
     // LDH_A_addr(rLY);
@@ -181,76 +133,8 @@ void v_CopyTilemapAtOnce_Conv(void) {
     hram->hBGMapMode = bg_map_mode;
 }
 
-void v_CopyTilemapAtOnce_CopyBGMapViaStack(void) {
-    //  Copy all tiles to vBGMap
-    LD_addr_SP(hSPBuffer);
-    LD_SP_HL;
-    LDH_A_addr(hBGMapAddress + 1);
-    LD_H_A;
-    LD_L(0);
-    LD_A(SCREEN_HEIGHT);
-    LDH_addr_A(hTilesPerCycle);
-    LD_B(1 << 1);  // not in v/hblank
-    LD_C(LOW(rSTAT));
-
-loop:
-
-    for (int rept = 0; rept < SCREEN_WIDTH / 2; rept++) {
-        POP_DE;
-        //  if in v/hblank, wait until not in v/hblank
-        LDH_A_c;
-        AND_A_B;
-        // IF_NZ goto loop\@;
-        //  load vBGMap
-        LD_hl_E;
-        INC_L;
-        LD_hl_D;
-        INC_L;
-    }
-
-    LD_DE(BG_MAP_WIDTH - SCREEN_WIDTH);
-    ADD_HL_DE;
-    LDH_A_addr(hTilesPerCycle);
-    DEC_A;
-    LDH_addr_A(hTilesPerCycle);
-    IF_NZ goto loop;
-
-    LDH_A_addr(hSPBuffer);
-    LD_L_A;
-    LDH_A_addr(hSPBuffer + 1);
-    LD_H_A;
-    LD_SP_HL;
-    RET;
-}
-
-void v_CopyTilemapAtOnce_CopyBGMapViaStack_Conv(uint16_t hl) {
-    //  Copy all tiles to vBGMap
-    uint16_t sp = hl;
-    hl = hram->hBGMapAddress & 0x1fff;
-    hram->hTilesPerCycle = SCREEN_HEIGHT;
-    // uint8_t b = 1 << 1;
-    // uint8_t c = LOW(rSTAT);
-    uint8_t a = SCREEN_HEIGHT;
-    do {
-        for (int rept = 0; rept < SCREEN_WIDTH / 2; rept++) {
-            uint8_t e = gb_read(sp++);
-            uint8_t d = gb_read(sp++);
-            //  if in v/hblank, wait until not in v/hblank
-            // LDH_A_c;
-            // AND_A_B;
-            // IF_NZ goto loop\@;
-            //  load vBGMap
-
-            gb_write(hl++, e);
-            gb_write(hl++, d);
-        }
-        hl += (BG_MAP_WIDTH - SCREEN_WIDTH);
-    } while(--a != 0);
-    hram->hTilesPerCycle = 0;
-}
-
-void v_CopyTilemapAtOnce_CopyBGMapViaStack_Conv2(const tile_t* sp) {
-    //  Copy all tiles to vBGMap
+//  Copy all tiles to vBGMap
+void v_CopyTilemapAtOnce_CopyBGMapViaStack(const tile_t* sp) {
     tile_t* hl = GBToRAMAddr(hram->hBGMapAddress & 0xff00);
     hram->hTilesPerCycle = SCREEN_HEIGHT;
     // uint8_t b = 1 << 1;
@@ -285,11 +169,11 @@ void SetPalettes(void) {
         // PUSH_DE;
         // LD_A(0b11100100);
         // CALL(aDmgToCgbBGPals);
-        DmgToCgbBGPals_Conv(0b11100100);
+        DmgToCgbBGPals(0b11100100);
 
         // LD_DE((0b11100100 << 8) | 0b11100100);
         // CALL(aDmgToCgbObjPals);
-        DmgToCgbObjPals_Conv(0b11100100, 0b11100100);
+        DmgToCgbObjPals(0b11100100, 0b11100100);
         
         // POP_DE;
         return;
@@ -375,39 +259,17 @@ void GetSGBLayout(uint8_t b) {
     // PREDEF_JUMP(pLoadSGBLayout);
 }
 
-void SetHPPal(void) {
-    SET_PC(aSetHPPal);
-    //  Set palette for hp bar pixel length e at hl.
-    CALL(aGetHPPal);
-    LD_hl_D;
-    RET;
-}
-
 //  Set palette for hp bar pixel length e at hl.
-void SetHPPal_Conv(uint8_t* hl, uint8_t e) {
+void SetHPPal(uint8_t* hl, uint8_t e) {
     // SET_PC(aSetHPPal);
     // CALL(aGetHPPal);
     // LD_hl_D;
     // RET;
-    *hl = GetHPPal_Conv(e);
-}
-
-void GetHPPal(void) {
-    SET_PC(aGetHPPal);
-    //  Get palette for hp bar pixel length e in d.
-    LD_D(HP_GREEN);
-    LD_A_E;
-    CP_A((HP_BAR_LENGTH_PX * 50 / 100));  // 24
-    RET_NC;
-    INC_D;                                // HP_YELLOW
-    CP_A((HP_BAR_LENGTH_PX * 21 / 100));  // 10
-    RET_NC;
-    INC_D;  // HP_RED
-    RET;
+    *hl = GetHPPal(e);
 }
 
 //  Get palette for hp bar pixel length e in d.
-uint8_t GetHPPal_Conv(uint8_t e) {
+uint8_t GetHPPal(uint8_t e) {
     // LD_D(HP_GREEN);
     // LD_A_E;
     // CP_A((HP_BAR_LENGTH_PX * 50 / 100));  // 24

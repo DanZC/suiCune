@@ -418,7 +418,7 @@ struct SpriteAnim* InitPartyMenuIcon_Conv(void){
 //  type is partymon icon
     // LD_A(SPRITE_ANIM_INDEX_PARTY_MON);
     // CALL(av_InitSpriteAnimStruct);
-    struct SpriteAnim* bc = v_InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_PARTY_MON, (y << 8) | x);
+    struct SpriteAnim* bc = v_InitSpriteAnimStruct(SPRITE_ANIM_INDEX_PARTY_MON, (y << 8) | x);
     // POP_AF;
     // LD_HL(SPRITEANIMSTRUCT_TILE_ID);
     // ADD_HL_BC;
@@ -486,7 +486,7 @@ void SetPartyMonIconAnimSpeed_Conv(struct SpriteAnim* bc){
         // LD_HL(mSetPartyMonIconAnimSpeed_speeds);
         // ADD_HL_DE;
         // LD_B_hl;
-        a = speeds[GetHPPal_Conv(e)];
+        a = speeds[GetHPPal(e)];
         // RET;
     }
     // LD_A_B;
@@ -533,7 +533,7 @@ void NamingScreen_InitAnimatedMonIcon_Conv(void){
     // depixel4(4, 4, 4, 0);
     // LD_A(SPRITE_ANIM_INDEX_PARTY_MON);
     // CALL(av_InitSpriteAnimStruct);
-    struct SpriteAnim* bc = v_InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_PARTY_MON, pixel4(4, 4, 4, 0));
+    struct SpriteAnim* bc = v_InitSpriteAnimStruct(SPRITE_ANIM_INDEX_PARTY_MON, pixel4(4, 4, 4, 0));
     // LD_HL(SPRITEANIMSTRUCT_ANIM_SEQ_ID);
     // ADD_HL_BC;
     // LD_hl(SPRITE_ANIM_SEQ_NULL);
@@ -570,7 +570,7 @@ void MoveList_InitAnimatedMonIcon_Conv(void){
     // LD_E(4 * 8 + 4);
     // LD_A(SPRITE_ANIM_INDEX_PARTY_MON);
     // CALL(av_InitSpriteAnimStruct);
-    struct SpriteAnim* bc = v_InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_PARTY_MON, pixel4(3, 4, 2, 4));
+    struct SpriteAnim* bc = v_InitSpriteAnimStruct(SPRITE_ANIM_INDEX_PARTY_MON, pixel4(3, 4, 2, 4));
     // LD_HL(SPRITEANIMSTRUCT_ANIM_SEQ_ID);
     // ADD_HL_BC;
     // LD_hl(SPRITE_ANIM_SEQ_NULL);

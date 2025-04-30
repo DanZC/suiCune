@@ -980,7 +980,7 @@ uint8_t FindEnemyMonsImmuneToLastCounterMove_Conv(void){
                 // LD_A_hl;
                 // LD_addr_A(wCurSpecies);
                 // CALL(aGetBaseData);
-                GetBaseData_Conv2(hl->mon.species);
+                GetBaseData(hl->mon.species);
 
             // the player's last move is damaging...
                 // LD_A_addr(wLastPlayerCounterMove);
@@ -1469,7 +1469,7 @@ uint8_t FindEnemyMonsThatResistPlayer_Conv(uint8_t c){
         // PUSH_HL;
         // LD_addr_A(wCurSpecies);
         // CALL(aGetBaseData);
-        GetBaseData_Conv2(*hl);
+        GetBaseData(*hl);
         uint8_t type;
         // LD_A_addr(wLastPlayerCounterMove);
         // AND_A_A;

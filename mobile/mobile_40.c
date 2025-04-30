@@ -1637,7 +1637,7 @@ static tile_t* Function100697_asm_1006b4(tile_t* hl, uint8_t* de) {
     // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
     // CALL(aPrintNum);
     // RET;
-    return PrintNum_Conv2(hl, de, PRINTNUM_LEADINGZEROS | 1, 2);
+    return PrintNum(hl, de, PRINTNUM_LEADINGZEROS | 1, 2);
 }
 
 void Function100697(tile_t* hl, uint8_t* de){
@@ -1660,7 +1660,7 @@ void Function100697(tile_t* hl, uint8_t* de){
     // LD_DE(mString1006c2);
     struct TextPrintState st = {.de = U82C(String1006c2), .hl = hl};
     // CALL(aPlaceString);
-    PlaceString_Conv(&st, st.hl);
+    PlaceString(&st, st.hl);
     // LD_H_B;
     // LD_L_C;
     // POP_DE;
@@ -2059,7 +2059,7 @@ void Function100846(void){
         // hlcoord(1, 14, wTilemap);
         struct TextPrintState st = {.de = U82C(String_10088e), .hl = coord(1, 14, wram->wTilemap)};
         // CALL(aPlaceString);
-        PlaceString_Conv(&st, st.hl);
+        PlaceString(&st, st.hl);
         // LD_H_B;
         // LD_L_C;
         // LD_DE(mString_10089f);
@@ -2219,7 +2219,7 @@ static const char string_100966[] = "   min. remaining!@"; //db ['"のこり\u30
         // LD_BC((1 << 8) | 2);
         // LD_DE(wStringBuffer2);
         // CALL(aPrintNum);
-        PrintNum_Conv2(coord(4, 11, wram->wTilemap), wram->wStringBuffer2, 1, 2);
+        PrintNum(coord(4, 11, wram->wTilemap), wram->wStringBuffer2, 1, 2);
         // LD_DE(SFX_TWO_PC_BEEPS);
         // CALL(aPlaySFX);
         PlaySFX(SFX_TWO_PC_BEEPS);
@@ -2958,7 +2958,7 @@ bool Mobile_PartyMenuSelect(void){
         c = MobileMenuJoypad_Conv();
         // PUSH_BC;
         // FARCALL(aPlaySpriteAnimations);
-        PlaySpriteAnimations_Conv();
+        PlaySpriteAnimations();
         // FARCALL(aHDMATransferTilemapToWRAMBank3);
         HDMATransferTilemapToWRAMBank3_Conv();
         // CALL(aMobileComms_CheckInactivityTimer);
@@ -3041,7 +3041,7 @@ bool MobileBattleMonMenu(void){
         c = MobileMenuJoypad_Conv();
         // PUSH_BC;
         // FARCALL(aPlaySpriteAnimations);
-        PlaySpriteAnimations_Conv();
+        PlaySpriteAnimations();
         // FARCALL(aHDMATransferTilemapToWRAMBank3);
         HDMATransferTilemapToWRAMBank3_Conv();
         // CALL(aMobileComms_CheckInactivityTimer);
@@ -7103,7 +7103,7 @@ void Function102142(void){
         Function102180();
         // LD_HL(mCardWasListedText);
         // CALL(aPrintText);
-        PrintText_Conv2(CardWasListedText);
+        PrintText(CardWasListedText);
     }
 
 // asm_10217c:
@@ -9676,7 +9676,7 @@ void Function102e4f(void){
     // hlcoord(4, 0, wTilemap);
     struct TextPrintState st = {.de = wram->wPlayerName, .hl = coord(4, 0, wram->wTilemap)};
     // CALL(aPlaceString);
-    PlaceString_Conv(&st, st.hl);
+    PlaceString(&st, st.hl);
     // LD_A(0x14);
     // LD_bc_A;
     *st.bc = 0x14;
@@ -9685,7 +9685,7 @@ void Function102e4f(void){
     // hlcoord(4, 8, wTilemap);
     st.hl = coord(4, 8, wram->wTilemap);
     // CALL(aPlaceString);
-    PlaceString_Conv(&st, st.hl);
+    PlaceString(&st, st.hl);
     // LD_A(0x14);
     // LD_bc_A;
     *st.bc = 0x14;
@@ -9729,7 +9729,7 @@ void Function102ea8(void){
     GetPokemonName(wram->wOTPartySpecies[wram->wcd4d - 1]);
     // LD_HL(mTradingMonForOTMonText);
     // CALL(aPrintTextboxText);
-    PrintTextboxText_Conv2(TradingMonForOTMonText);
+    PrintTextboxText(TradingMonForOTMonText);
     // RET;
 }
 
@@ -9828,7 +9828,7 @@ void Function102f85(void){
     // CALL(aPlaceString);
     // LD_DE(mString_102fcc);
     // CALL(aPlaceString);
-    PlaceHLTextAtBC_Conv2(coord(1, 14, wram->wTilemap), MobileTrade_Text_YourFriendsMonIsAbnormal);
+    PlaceHLTextAtBC(coord(1, 14, wram->wTilemap), MobileTrade_Text_YourFriendsMonIsAbnormal);
     // RET;
 }
 
@@ -10807,7 +10807,7 @@ void Mobile_SelectThreeMons(void){
     if(bit_test(res.a, 7)){
         // LD_HL(mMobileBattleMustPickThreeMonText);
         // CALL(aPrintText);
-        PrintText_Conv2(MobileBattleMustPickThreeMonText);
+        PrintText(MobileBattleMustPickThreeMonText);
         // CALL(aYesNoBox);
         // IF_C goto asm_103696;
         if(YesNoBox()){
@@ -10844,7 +10844,7 @@ void Mobile_SelectThreeMons(void){
         if(!test){
             // LD_HL(mMobileBattleMoreInfoText);
             // CALL(aPrintText);
-            PrintText_Conv2(MobileBattleMoreInfoText);
+            PrintText(MobileBattleMoreInfoText);
             // CALL(aYesNoBox);
             // IF_C goto asm_1036b5;
             if(YesNoBox()){
@@ -10920,7 +10920,7 @@ void Mobile_SelectThreeMons(void){
 void Function1036f9(void){
     // LD_HL(mMobileBattleRulesText);
     // CALL(aPrintText);
-    PrintText_Conv2(MobileBattleRulesText);
+    PrintText(MobileBattleRulesText);
     // RET;
 }
 
@@ -10947,7 +10947,7 @@ bool Function103700(void){
     // five_or_more_mins:
         // LD_HL(mWouldYouLikeToMobileBattleText);
         // CALL(aPrintText);
-        PrintText_Conv2(WouldYouLikeToMobileBattleText);
+        PrintText(WouldYouLikeToMobileBattleText);
         // AND_A_A;
         // RET;
         return false;
@@ -10958,7 +10958,7 @@ bool Function103700(void){
     // two_to_five_mins:
         // LD_HL(mWantAQuickMobileBattleText);
         // CALL(aPrintText);
-        PrintText_Conv2(WantAQuickMobileBattleText);
+        PrintText(WantAQuickMobileBattleText);
         // AND_A_A;
         // RET;
         return false;
@@ -10969,7 +10969,7 @@ bool Function103700(void){
     // one_min:
         // LD_HL(mWantToRushThroughAMobileBattleText);
         // CALL(aPrintText);
-        PrintText_Conv2(WantToRushThroughAMobileBattleText);
+        PrintText(WantToRushThroughAMobileBattleText);
         // AND_A_A;
         // RET;
         return false;
@@ -10979,7 +10979,7 @@ bool Function103700(void){
     // times_up:
         // LD_HL(mPleaseTryAgainTomorrowText);
         // CALL(aPrintText);
-        PrintText_Conv2(PleaseTryAgainTomorrowText);
+        PrintText(PleaseTryAgainTomorrowText);
         // CALL(aJoyWaitAorB);
         JoyWaitAorB();
         // SCF;
@@ -11122,7 +11122,7 @@ void Function1037c2(void){
     if(enough_time && wram->wdc5f != 0) {
         // LD_HL(mTryAgainUsingSameSettingsText);
         // CALL(aPrintText);
-        PrintText_Conv2(TryAgainUsingSameSettingsText);
+        PrintText(TryAgainUsingSameSettingsText);
         // CALL(aYesNoBox);
         bool yes = YesNoBox();
         // IF_C goto nope;
@@ -11158,12 +11158,12 @@ void Function1037eb(void){
     if(MobileCheckRemainingBattleTime()) {
         // LD_HL(mMobileBattleLessThanOneMinuteLeftText);
         // CALL(aPrintText);
-        PrintText_Conv2(MobileBattleLessThanOneMinuteLeftText);
+        PrintText(MobileBattleLessThanOneMinuteLeftText);
         // CALL(aJoyWaitAorB);
         JoyWaitAorB();
         // LD_HL(mMobileBattleNoTimeLeftForLinkingText);
         // CALL(aPrintText);
-        PrintText_Conv2(MobileBattleNoTimeLeftForLinkingText);
+        PrintText(MobileBattleNoTimeLeftForLinkingText);
         // CALL(aJoyWaitAorB);
         JoyWaitAorB();
         // XOR_A_A;
@@ -11245,7 +11245,7 @@ void Function10383c(void){
     wram->wPlayerMonSelection[2] = 0x0;
     // LD_HL(mPickThreeMonForMobileBattleText);
     // CALL(aPrintText);
-    PrintText_Conv2(PickThreeMonForMobileBattleText);
+    PrintText(PickThreeMonForMobileBattleText);
     // CALL(aJoyWaitAorB);
     JoyWaitAorB();
     // FARCALL(aScript_reloadmappart);
@@ -11289,7 +11289,7 @@ void Function10387b(void){
     wram->wStringBuffer2[0] = MobileBattleGetRemainingTime().b;
     // LD_HL(mMobileBattleRemainingTimeText);
     // CALL(aPrintText);
-    PrintText_Conv2(MobileBattleRemainingTimeText);
+    PrintText(MobileBattleRemainingTimeText);
     // CALL(aJoyWaitAorB);
     JoyWaitAorB();
     // RET;

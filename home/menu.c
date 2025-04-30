@@ -279,7 +279,7 @@ void PlaceVerticalMenuItems(void) {
         // PUSH_BC;
         // CALL(aPlaceString);
         st.de = U82C(data->verticalMenu.options[b]);
-        PlaceString_Conv(&st, st.hl);
+        PlaceString(&st, st.hl);
         // INC_DE;
         // LD_BC(2 * SCREEN_WIDTH);
         // ADD_HL_BC;
@@ -303,7 +303,7 @@ void PlaceVerticalMenuItems(void) {
     // ADD_HL_BC;
     // st.hl = MenuBoxCoord2Tile() + *(st.de++);
     // JP(mPlaceString);
-    // PlaceString_Conv(&st, st.hl);
+    // PlaceString(&st, st.hl);
 }
 
 void MenuBox(void) {
@@ -510,7 +510,7 @@ void MenuTextbox(const struct TextCmd* hl) {
     LoadMenuTextbox();
     // POP_HL;
     // JP(mPrintText);
-    PrintText_Conv2(hl);
+    PrintText(hl);
 }
 
 void Menu_DummyFunction(void) {

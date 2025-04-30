@@ -1877,7 +1877,7 @@ void PCMonInfo(void){
     // PREDEF(pGetUnownLetter);
     GetUnownLetter_Conv(wram->wTempMon.mon.DVs);
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(species);
+    GetBaseData(species);
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
     // PREDEF(pGetMonFrontpic);
     GetMonFrontpic_Conv(vram->vTiles2 + LEN_2BPP_TILE * 0x00);
@@ -1899,7 +1899,7 @@ void PCMonInfo(void){
 
     // hlcoord(1, 12, wTilemap);
     // CALL(aPrintLevel);
-    PrintLevel_Conv(coord(1, 12, wram->wTilemap), wram->wTempMon.mon.level);
+    PrintLevel(coord(1, 12, wram->wTilemap), wram->wTempMon.mon.level);
 
     // LD_A(0x3);
     // LD_addr_A(wMonType);
@@ -2995,7 +2995,7 @@ void StatsScreenDPad_Conv(void){
         // PREDEF(pGetUnownLetter);
         GetUnownLetter_Conv(wram->wTempMon.mon.DVs);
         // CALL(aGetBaseData);
-        GetBaseData_Conv2(wram->wCurSpecies);
+        GetBaseData(wram->wCurSpecies);
         // CALL(aBillsPC_CopyMon);
         BillsPC_CopyMon_Conv();
 
@@ -3246,7 +3246,7 @@ bool DepositPokemon_Conv(void){
     // LD_HL(wPartyMonNicknames);
     // LD_A_addr(wCurPartyMon);
     // CALL(aGetNickname);
-    GetNickname_Conv(wram->wPartyMonNickname[0], wram->wCurPartyMon);
+    GetNickname(wram->wPartyMonNickname[0], wram->wCurPartyMon);
     // LD_A(PC_DEPOSIT);
     // LD_addr_A(wPokemonWithdrawDepositParameter);
     // PREDEF(pSendGetMonIntoFromBox);
@@ -3274,7 +3274,7 @@ bool DepositPokemon_Conv(void){
     RemoveMonFromPartyOrBox_Conv(REMOVE_PARTY);
     // LD_A_addr(wCurPartySpecies);
     // CALL(aPlayMonCry);
-    PlayMonCry_Conv(wram->wCurPartySpecies);
+    PlayMonCry(wram->wCurPartySpecies);
     // hlcoord(0, 0, wTilemap);
     // LD_BC((15 << 8) | 8);
     // CALL(aClearBox);
@@ -3293,14 +3293,14 @@ bool DepositPokemon_Conv(void){
     // LD_DE(mPCString_Stored);
     struct TextPrintState st = {.hl = coord(1, 16, wram->wTilemap), .de = U82C(PCString_Stored)};
     // CALL(aPlaceString);
-    PlaceString_Conv(&st, st.hl);
+    PlaceString(&st, st.hl);
     // LD_L_C;
     // LD_H_B;
     st.hl = st.bc;
     // LD_DE(wStringBuffer1);
     st.de = wram->wStringBuffer1;
     // CALL(aPlaceString);
-    PlaceString_Conv(&st, st.hl);
+    PlaceString(&st, st.hl);
     // LD_A(0xe7);
     // LD_bc_A;
     *st.bc = 0xe7;
@@ -3382,7 +3382,7 @@ bool TryWithdrawPokemon_Conv(void){
     // LD_A_addr(wCurPartyMon);
     // LD_HL(sBoxMonNicknames);
     // CALL(aGetNickname);
-    GetNickname_Conv((const uint8_t*)GBToRAMAddr(sBoxMonNicknames), wram->wCurPartyMon);
+    GetNickname((const uint8_t*)GBToRAMAddr(sBoxMonNicknames), wram->wCurPartyMon);
     // CALL(aCloseSRAM);
     CloseSRAM();
     // XOR_A_A;
@@ -3412,7 +3412,7 @@ bool TryWithdrawPokemon_Conv(void){
     RemoveMonFromPartyOrBox_Conv(REMOVE_BOX);
     // LD_A_addr(wCurPartySpecies);
     // CALL(aPlayMonCry);
-    PlayMonCry_Conv(wram->wCurPartySpecies);
+    PlayMonCry(wram->wCurPartySpecies);
     // hlcoord(0, 0, wTilemap);
     // LD_BC((15 << 8) | 8);
     // CALL(aClearBox);
@@ -3431,14 +3431,14 @@ bool TryWithdrawPokemon_Conv(void){
     // LD_DE(mPCString_Got);
     // CALL(aPlaceString);
     struct TextPrintState st = {.hl = coord(1, 16, wram->wTilemap), .de = U82C(PCString_Got)};
-    PlaceString_Conv(&st, st.hl);
+    PlaceString(&st, st.hl);
     // LD_L_C;
     // LD_H_B;
     st.hl = st.bc;
     // LD_DE(wStringBuffer1);
     st.de = wram->wStringBuffer1;
     // CALL(aPlaceString);
-    PlaceString_Conv(&st, st.hl);
+    PlaceString(&st, st.hl);
     // LD_A(0xe7);
     // LD_bc_A;
     *st.bc = 0xe7;
@@ -3468,7 +3468,7 @@ void ReleasePKMN_ByePKMN(void){
     WaitBGMap();
     // LD_A_addr(wCurPartySpecies);
     // CALL(aGetCryIndex);
-    int16_t cry = GetCryIndex_Conv2(wram->wCurPartySpecies);
+    int16_t cry = GetCryIndex(wram->wCurPartySpecies);
     // IF_C goto skip_cry;
     if(cry >= 0) {
         // LD_E_C;
@@ -3497,7 +3497,7 @@ void ReleasePKMN_ByePKMN(void){
     // LD_DE(mPCString_Bye);
     struct TextPrintState st = {.hl = coord(1, 16, wram->wTilemap), .de = U82C(PCString_Bye)};
     // CALL(aPlaceString);
-    PlaceString_Conv(&st, st.hl);
+    PlaceString(&st, st.hl);
     // LD_L_C;
     // LD_H_B;
     st.hl = st.bc;
@@ -3506,7 +3506,7 @@ void ReleasePKMN_ByePKMN(void){
     // LD_DE(wStringBuffer1);
     st.de = wram->wStringBuffer1;
     // CALL(aPlaceString);
-    PlaceString_Conv(&st, st.hl);
+    PlaceString(&st, st.hl);
     // LD_L_C;
     // LD_H_B;
     // LD_hl(0xe7);
@@ -3942,10 +3942,10 @@ void BillsPC_ApplyPalettes(uint8_t a){
     GetSGBLayout(a);
     // LD_A(0b11100100);
     // CALL(aDmgToCgbBGPals);
-    DmgToCgbBGPals_Conv(0b11100100);
+    DmgToCgbBGPals(0b11100100);
     // LD_A(0b11111100);
     // CALL(aDmgToCgbObjPal0);
-    DmgToCgbObjPal0_Conv(0b11111100);
+    DmgToCgbObjPal0(0b11111100);
     // RET;
 }
 
@@ -4158,7 +4158,7 @@ void BillsPC_PrintBoxCountAndCapacity(void){
     // LD_DE(wTextDecimalByte);
     // LD_BC((1 << 8) | 2);
     // CALL(aPrintNum);
-    uint8_t* hl = PrintNum_Conv2(coord(13, 11, wram->wTilemap), &count, 1, 2);
+    uint8_t* hl = PrintNum(coord(13, 11, wram->wTilemap), &count, 1, 2);
     // LD_DE(mBillsPC_PrintBoxCountAndCapacity_OutOf20);
     // CALL(aPlaceString);
     PlaceStringSimple(U82C(OutOf20), hl);

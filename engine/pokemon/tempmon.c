@@ -54,7 +54,7 @@ void CopyMonToTempMon_Conv(void){
     // LD_addr_A(wCurSpecies);
     wram->wCurSpecies = wram->wCurPartySpecies;
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(wram->wCurPartySpecies);
+    GetBaseData(wram->wCurPartySpecies);
 
     // LD_A_addr(wMonType);
     // LD_HL(wPartyMon1Species);

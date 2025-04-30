@@ -67,7 +67,7 @@ void LANConnection_Join(void);
 void LANConnection(void) {
     NetworkClearLANCache();
     LoadStandardMenuHeader();
-    PrintText_Conv2(Text_AskHostOrJoin);
+    PrintText(Text_AskHostOrJoin);
     LoadMenuHeader(&Menu_HostOrJoin);
     bool noCancel = VerticalMenu();
     CloseWindow();
@@ -123,7 +123,7 @@ void LANConnection_Host(void) {
 
     if(!NetworkBroadcastLAN(wram->wPlayerName, wram->wPlayerID, wram->wPlayerGender)) {
         CloseWindow();
-        PrintText_Conv2(Text_Cancelled);
+        PrintText(Text_Cancelled);
         CloseWindow();
         wram->wScriptVar = FALSE;
         return;
@@ -137,7 +137,7 @@ void LANConnection_Host(void) {
         uint8_t pad = hram->hJoyPressed;
         if(pad & B_BUTTON) {
             CloseWindow();
-            PrintText_Conv2(Text_Cancelled);
+            PrintText(Text_Cancelled);
             CloseWindow();
             NetworkCloseConnection();
             wram->wScriptVar = FALSE;
@@ -148,7 +148,7 @@ void LANConnection_Host(void) {
             const LANClient* candidate = NetworkGetLANCandidate(0);
             CopyBytes(wram->wStringBuffer1, candidate->name, sizeof(candidate->name) - 1);
             wram->wStringBuffer1[11] = CHAR_TERM;
-            PrintText_Conv2(Text_WillYouAccept);
+            PrintText(Text_WillYouAccept);
             bool yes = YesNoBox();
             if(yes) {
                 CloseWindow();
@@ -177,7 +177,7 @@ void LANConnection_Host(void) {
         if((frameCount & 0x7f) == 0x7f) {
             if(!NetworkBroadcastLAN(wram->wPlayerName, wram->wPlayerID, wram->wPlayerGender)) {
                 CloseWindow();
-                PrintText_Conv2(Text_Cancelled);
+                PrintText(Text_Cancelled);
                 CloseWindow();
                 NetworkCloseConnection();
                 wram->wScriptVar = FALSE;
@@ -185,7 +185,7 @@ void LANConnection_Host(void) {
             }
         }
     }
-    PrintText_Conv2(Text_CouldntFindAny);
+    PrintText(Text_CouldntFindAny);
     CloseWindow();
     CloseWindow();
     wram->wScriptVar = FALSE;
@@ -227,7 +227,7 @@ void LANConnection_Join(void) {
     int frameCount = 0;
     for(;;++frameCount) {
         if(frameCount >= 8 * 60 && NetworkGetLANCandidateCount() == 0) {
-            PrintText_Conv2(Text_CouldntFindAny);
+            PrintText(Text_CouldntFindAny);
             CloseWindow();
             wram->wScriptVar = FALSE;
             CloseWindow();
@@ -259,7 +259,7 @@ void LANConnection_Join(void) {
             CloseWindow();
             if(selection >= candidateCount) {
                 wram->wScriptVar = FALSE;
-                PrintText_Conv2(Text_Cancelled);
+                PrintText(Text_Cancelled);
                 NetworkCloseConnection();
                 CloseWindow();
                 return;
@@ -268,7 +268,7 @@ void LANConnection_Join(void) {
             const LANClient* candidate = NetworkGetLANCandidate(selection);
             CopyBytes(wram->wStringBuffer1, candidate->name, sizeof(candidate->name) - 1);
             wram->wStringBuffer1[11] = CHAR_TERM;
-            PrintText_Conv2(Text_WillYouConnect);
+            PrintText(Text_WillYouConnect);
             bool yes = YesNoBox();
             if(yes) {
                 CloseWindow();

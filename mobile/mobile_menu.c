@@ -682,7 +682,7 @@ bool Function4a28a(void){
             PlaceHollowCursor();
             // LD_HL(mDeleteSavedLoginPasswordText);
             // CALL(aPrintText);
-            PrintText_Conv2(DeleteSavedLoginPasswordText);
+            PrintText(DeleteSavedLoginPasswordText);
             // hlcoord(14, 7, wTilemap);
             // LD_B(3);
             // LD_C(4);
@@ -713,7 +713,7 @@ bool Function4a28a(void){
                 CloseSRAM();
                 // LD_HL(mDeletedTheLoginPasswordText);
                 // CALL(aPrintText);
-                PrintText_Conv2(DeletedTheLoginPasswordText);
+                PrintText(DeletedTheLoginPasswordText);
                 // CALL(aJoyWaitAorB);
                 JoyWaitAorB();
             }

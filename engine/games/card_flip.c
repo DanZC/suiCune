@@ -92,10 +92,10 @@ void v_CardFlip(void){
     WaitBGMap2();
     // LD_A(0b11100100);
     // CALL(aDmgToCgbBGPals);
-    DmgToCgbBGPals_Conv(0b11100100);
+    DmgToCgbBGPals(0b11100100);
     // LD_DE((0b11100100 << 8) | 0b11100100);
     // CALL(aDmgToCgbObjPals);
-    DmgToCgbObjPals_Conv(0b11100100, 0b11100100);
+    DmgToCgbObjPals(0b11100100, 0b11100100);
     // CALL(aDelayFrame);
     DelayFrame();
     // XOR_A_A;
@@ -481,7 +481,7 @@ static void v_CardFlip_CardFlip(void){
             CardFlip_ShuffleDeck();
             // LD_HL(mv_CardFlip_CardFlipShuffledText);
             // CALL(aPrintText);
-            PrintText_Conv2(CardFlipShuffledText);
+            PrintText(CardFlipShuffledText);
             // goto LoopAround;
         }
         else {
@@ -724,7 +724,7 @@ void CardFlip_UpdateCoinBalanceDisplay(const txt_cmd_s* hl){
     Textbox(coord(0, 12, wram->wTilemap), 4, SCREEN_WIDTH - 2);
     // POP_HL;
     // CALL(aPrintTextboxText);
-    PrintTextboxText_Conv2(hl);
+    PrintTextboxText(hl);
     // CALL(aCardFlip_PrintCoinBalance);
     CardFlip_PrintCoinBalance();
     // RET;
@@ -744,7 +744,7 @@ void CardFlip_PrintCoinBalance(void){
     // LD_DE(wCoins);
     // LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 4);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(15, 16, wram->wTilemap), &wram->wCoins, PRINTNUM_LEADINGZEROS | 2, 4);
+    PrintNum(coord(15, 16, wram->wTilemap), &wram->wCoins, PRINTNUM_LEADINGZEROS | 2, 4);
     // RET;
 }
 

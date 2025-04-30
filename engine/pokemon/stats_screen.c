@@ -513,7 +513,7 @@ void StatsScreen_CopyToTempMon_Conv(void){
         // LD_addr_A(wCurSpecies);
         wram->wCurSpecies = wram->wBufferMon.mon.species;
         // CALL(aGetBaseData);
-        GetBaseData_Conv2(wram->wBufferMon.mon.species);
+        GetBaseData(wram->wBufferMon.mon.species);
         // LD_HL(wBufferMon);
         // LD_DE(wTempMon);
         // LD_BC(PARTYMON_STRUCT_LENGTH);
@@ -879,7 +879,7 @@ static void StatsScreen_PlaceHPBar(void) {
     // FARCALL(aComputeHPBarPixels);
     // LD_HL(wCurHPPal);
     // CALL(aSetHPPal);
-    SetHPPal_Conv(&wram->wCurHPPal, ComputeHPBarPixels_Conv(BigEndianToNative16(wram->wTempMon.HP), BigEndianToNative16(wram->wTempMon.maxHP)));
+    SetHPPal(&wram->wCurHPPal, ComputeHPBarPixels_Conv(BigEndianToNative16(wram->wTempMon.HP), BigEndianToNative16(wram->wTempMon.maxHP)));
     // LD_B(SCGB_STATS_SCREEN_HP_PALS);
     // CALL(aGetSGBLayout);
     GetSGBLayout(SCGB_STATS_SCREEN_HP_PALS);
@@ -928,10 +928,10 @@ void StatsScreen_InitUpperHalf(void){
     // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 3);
     // LD_DE(wTextDecimalByte);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(10, 0, wram->wTilemap), &wram->wTextDecimalByte, PRINTNUM_LEADINGZEROS | 1, 3);
+    PrintNum(coord(10, 0, wram->wTilemap), &wram->wTextDecimalByte, PRINTNUM_LEADINGZEROS | 1, 3);
     // hlcoord(14, 0, wTilemap);
     // CALL(aPrintLevel);
-    PrintLevel_Conv(coord(14, 0, wram->wTilemap), wram->wTempMon.mon.level);
+    PrintLevel(coord(14, 0, wram->wTilemap), wram->wTempMon.mon.level);
     // LD_HL(mStatsScreen_InitUpperHalf_NicknamePointers);
     // CALL(aGetNicknamenamePointer);
     // CALL(aCopyNickname);
@@ -1115,7 +1115,7 @@ static void LoadPinkPage_PrintNextLevel(uint8_t* hl) {
     }
 // AtMaxLevel:
     // CALL(aPrintLevel);
-    PrintLevel_Conv(hl, wram->wTempMon.mon.level);
+    PrintLevel(hl, wram->wTempMon.mon.level);
     // POP_AF;
     // LD_addr_A(wTempMonLevel);
     wram->wTempMon.mon.level = a;
@@ -1258,14 +1258,14 @@ void LoadPinkPage(void){
     // LD_BC((3 << 8) | 7);
     // LD_DE(wTempMonExp);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(13, 10, wram->wTilemap), wram->wTempMon.mon.exp, 3, 7);
+    PrintNum(coord(13, 10, wram->wTilemap), wram->wTempMon.mon.exp, 3, 7);
     // CALL(aLoadPinkPage_CalcExpToNextLevel);
     LoadPinkPage_CalcExpToNextLevel();
     // hlcoord(13, 13, wTilemap);
     // LD_BC((3 << 8) | 7);
     // LD_DE(wExpToNextLevel);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(13, 13, wram->wTilemap), wram->wExpToNextLevel, 3, 7);
+    PrintNum(coord(13, 13, wram->wTilemap), wram->wExpToNextLevel, 3, 7);
     // LD_DE(mLoadPinkPage_LevelUpStr);
     // hlcoord(10, 12, wTilemap);
     // CALL(aPlaceString);
@@ -1368,7 +1368,7 @@ static void LoadBluePage_PlaceOTInfo(void) {
     // LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 5);
     // LD_DE(wTempMonID);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(2, 10, wram->wTilemap), &wram->wTempMon.mon.id, PRINTNUM_LEADINGZEROS | 2, 5);
+    PrintNum(coord(2, 10, wram->wTilemap), &wram->wTempMon.mon.id, PRINTNUM_LEADINGZEROS | 2, 5);
     // LD_HL(mLoadBluePage_OTNamePointers);
     // CALL(aGetNicknamenamePointer);
     // CALL(aCopyNickname);
@@ -1447,12 +1447,12 @@ static void StatsScreen_PlaceFrontpic_AnimateMon(void) {
         wram->wBoxAlignment = 0;
         // hlcoord(0, 0, wTilemap);
         // CALL(av_PrepMonFrontpic);
-        return v_PrepMonFrontpic_Conv(coord(0, 0, wram->wTilemap));
+        return v_PrepMonFrontpic(coord(0, 0, wram->wTilemap));
         // RET;
     }
     // hlcoord(0, 0, wTilemap);
     // CALL(aPrepMonFrontpic);
-    return PrepMonFrontpic_Conv(coord(0, 0, wram->wTilemap));
+    return PrepMonFrontpic(coord(0, 0, wram->wTilemap));
     // RET;
 }
 
@@ -1512,7 +1512,7 @@ void StatsScreen_PlaceFrontpic(void){
         StatsScreen_PlaceFrontpic_AnimateEgg();
         // LD_A_addr(wCurPartySpecies);
         // CALL(aPlayMonCry2);
-        PlayMonCry2_Conv(wram->wCurPartySpecies);
+        PlayMonCry2(wram->wCurPartySpecies);
         // CALL(aSetPalettes);
         SetPalettes();
         // RET;
@@ -1536,7 +1536,7 @@ void StatsScreen_PlaceFrontpic(void){
     StatsScreen_PlaceFrontpic_AnimateMon();
     // LD_A_addr(wCurPartySpecies);
     // CALL(aPlayMonCry2);
-    PlayMonCry2_Conv(wram->wCurPartySpecies);
+    PlayMonCry2(wram->wCurPartySpecies);
     // RET;
     return;
 
@@ -1825,7 +1825,7 @@ void EggStatsScreen(void){
     hram->hBGMapMode = BGMAPMODE_NONE;
     // LD_HL(wCurHPPal);
     // CALL(aSetHPPal);
-    SetHPPal_Conv(&wram->wCurHPPal, wram->wStatsScreenFlags);
+    SetHPPal(&wram->wCurHPPal, wram->wStatsScreenFlags);
     // LD_B(SCGB_STATS_SCREEN_HP_PALS);
     // CALL(aGetSGBLayout);
     // CALL(aStatsScreen_PlaceHorizontalDivider);
@@ -1903,7 +1903,7 @@ void EggStatsScreen(void){
     DelayFrame();
     // hlcoord(0, 0, wTilemap);
     // CALL(aPrepMonFrontpic);
-    PrepMonFrontpic_Conv(coord(0, 0, wram->wTilemap));
+    PrepMonFrontpic(coord(0, 0, wram->wTilemap));
     // FARCALL(aHDMATransferTilemapToWRAMBank3);
     HDMATransferTilemapToWRAMBank3_Conv();
     // CALL(aStatsScreen_AnimateEgg);

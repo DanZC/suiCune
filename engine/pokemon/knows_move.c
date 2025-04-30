@@ -48,7 +48,7 @@ static const txt_cmd_s KnowsMoveText[] = {
         // knows_move:
             // LD_HL(mKnowsMove_KnowsMoveText);
             // CALL(aPrintText);
-            PrintText_Conv2(KnowsMoveText);
+            PrintText(KnowsMoveText);
             // SCF;
             // RET;
             return true;

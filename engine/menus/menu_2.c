@@ -76,7 +76,7 @@ void PlaceMenuItemQuantity_Conv(const struct MenuData* data, tile_t* de){
         // LD_DE(wMenuSelectionQuantity);
         // LD_BC((1 << 8) | 2);
         // CALL(aPrintNum);
-        PrintNum_Conv2(de + 0x16, &wram->wMenuSelectionQuantity, 1, 2);
+        PrintNum(de + 0x16, &wram->wMenuSelectionQuantity, 1, 2);
     }
 
 // done:
@@ -118,7 +118,7 @@ void PlaceMoneyTextbox(void){
     // LD_DE(wMoney);
     // LD_BC((PRINTNUM_MONEY | 3 << 8) | 6);
     // CALL(aPrintNum);
-    PrintNum_Conv2(MenuBoxCoord2Tile() + SCREEN_WIDTH + 1, &wram->wMoney, PRINTNUM_MONEY | 3, 6);
+    PrintNum(MenuBoxCoord2Tile() + SCREEN_WIDTH + 1, &wram->wMoney, PRINTNUM_MONEY | 3, 6);
     // RET;
 }
 
@@ -159,7 +159,7 @@ void DisplayCoinCaseBalance(void){
     // LD_BC((2 << 8) | 4);
     // hlcoord(13, 1, wTilemap);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(13, 1, wram->wTilemap), &wram->wCoins, 2, 4);
+    PrintNum(coord(13, 1, wram->wTilemap), &wram->wCoins, 2, 4);
     // RET;
 }
 
@@ -177,7 +177,7 @@ void DisplayMoneyAndCoinBalance(void){
     // LD_DE(wMoney);
     // LD_BC((PRINTNUM_MONEY | 3 << 8) | 6);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(12, 1, wram->wTilemap), wram->wMoney, PRINTNUM_MONEY | 3, 6);
+    PrintNum(coord(12, 1, wram->wTilemap), wram->wMoney, PRINTNUM_MONEY | 3, 6);
     // hlcoord(6, 3, wTilemap);
     // LD_DE(mCoinString);
     // CALL(aPlaceString);
@@ -186,7 +186,7 @@ void DisplayMoneyAndCoinBalance(void){
     // LD_DE(wCoins);
     // LD_BC((2 << 8) | 4);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(15, 3, wram->wTilemap), &wram->wCoins, 2, 4);
+    PrintNum(coord(15, 3, wram->wTilemap), &wram->wCoins, 2, 4);
     // RET;
 }
 
@@ -260,7 +260,7 @@ void StartMenu_PrintBugContestStatus(void){
     // LD_DE(wParkBallsRemaining);
     // LD_BC((PRINTNUM_LEFTALIGN | 1 << 8) | 2);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(8, 5, wram->wTilemap), &wram->wParkBallsRemaining, PRINTNUM_LEFTALIGN | 1, 2);
+    PrintNum(coord(8, 5, wram->wTilemap), &wram->wParkBallsRemaining, PRINTNUM_LEFTALIGN | 1, 2);
     // hlcoord(1, 1, wTilemap);
     // LD_DE(mStartMenu_PrintBugContestStatus_CaughtString);
     // CALL(aPlaceString);
@@ -288,7 +288,7 @@ void StartMenu_PrintBugContestStatus(void){
         // LD_DE(mStartMenu_PrintBugContestStatus_LevelString);
         // CALL(aPlaceString);
         struct TextPrintState st = {.hl = coord(1, 3, wram->wTilemap), .de = U82C(LevelString)};
-        PlaceString_Conv(&st, st.hl);
+        PlaceString(&st, st.hl);
         // LD_A_addr(wContestMonLevel);
         // LD_H_B;
         // LD_L_C;
@@ -296,7 +296,7 @@ void StartMenu_PrintBugContestStatus(void){
         // INC_HL;
         // LD_C(3);
         // CALL(aPrint8BitNumLeftAlign);
-        Print8BitNumLeftAlign_Conv(st.hl + 1, wram->wContestMon.mon.level, 3);
+        Print8BitNumLeftAlign(st.hl + 1, wram->wContestMon.mon.level, 3);
     }
 
 // skip_level:

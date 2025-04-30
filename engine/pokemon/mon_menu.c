@@ -320,7 +320,7 @@ u8_pair_s PokemonActionSubmenu(void){
     // FARCALL(aMonSubmenu);
     MonSubmenu();
     // CALL(aGetCurNickname);
-    GetCurNickname_Conv();
+    GetCurNickname();
     // LD_A_addr(wMenuSelection);
     // LD_HL(mPokemonActionSubmenu_Actions);
     // LD_DE(3);
@@ -501,7 +501,7 @@ u8_pair_s GiveTakePartyMonItem(void){
     // LD_DE(wMonOrItemNameBuffer);
     // LD_BC(MON_NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wMonOrItemNameBuffer, GetCurNickname_Conv(), MON_NAME_LENGTH);
+    CopyBytes(wram->wMonOrItemNameBuffer, GetCurNickname(), MON_NAME_LENGTH);
     // LD_A_addr(wMenuCursorY);
     // CP_A(1);
     // IF_NZ goto take;
@@ -935,7 +935,7 @@ u8_pair_s MonMailAction(void){
                         // LD_hl(0x0);
                         *GetPartyItemLocation() = NO_ITEM;
                         // CALL(aGetCurNickname);
-                        GetCurNickname_Conv();
+                        GetCurNickname();
                         // LD_HL(mMonMailAction_MailDetachedText);
                         // CALL(aMenuTextboxBackup);
                         MenuTextboxBackup(MailDetachedText);
@@ -1227,7 +1227,7 @@ u8_pair_s MonMenu_Softboiled_MilkDrink(void){
     // NotEnoughHP:
         // LD_HL(mMonMenu_Softboiled_MilkDrink_PokemonNotEnoughHPText);
         // CALL(aPrintText);
-        PrintText_Conv2(PokemonNotEnoughHPText);
+        PrintText(PokemonNotEnoughHPText);
     }
 
 // finish:
@@ -1823,7 +1823,7 @@ void SetUpMoveScreenBG(void){
     // FARCALL(aLoadStatsScreenPageTilesGFX);
     LoadStatsScreenPageTilesGFX_Conv();
     // FARCALL(aClearSpriteAnims2);
-    ClearSpriteAnims2_Conv();
+    ClearSpriteAnims2();
     // LD_A_addr(wCurPartyMon);
     // LD_E_A;
     // LD_D(0);
@@ -1858,19 +1858,19 @@ void SetUpMoveScreenBG(void){
     // hlcoord(5, 1, wTilemap);
     // CALL(aPlaceString);
     struct TextPrintState st = {.de = wram->wPartyMonNickname[wram->wCurPartyMon], .hl = coord(5, 1, wram->wTilemap)};
-    PlaceString_Conv(&st, st.hl);
+    PlaceString(&st, st.hl);
     // PUSH_BC;
     // FARCALL(aCopyMonToTempMon);
     CopyMonToTempMon_Conv();
     // POP_HL;
     // CALL(aPrintLevel);
-    PrintLevel_Conv(st.bc, wram->wTempMon.mon.level);
+    PrintLevel(st.bc, wram->wTempMon.mon.level);
     // LD_HL(wPlayerHPPal);
     // CALL(aSetHPPal);
     uint16_t bc = BigEndianToNative16(wram->wPartyMon[wram->wCurPartyMon].HP);
     uint16_t de = BigEndianToNative16(wram->wPartyMon[wram->wCurPartyMon].maxHP);
     uint8_t e = bc * (6 * 8) / de;
-    SetHPPal_Conv(&wram->wPlayerHPPal, e);
+    SetHPPal(&wram->wPlayerHPPal, e);
     // LD_B(SCGB_MOVE_LIST);
     // CALL(aGetSGBLayout);
     GetSGBLayout(SCGB_MOVE_LIST);
@@ -1981,7 +1981,7 @@ void PlaceMoveData(void){
         // LD_DE(wTextDecimalByte);
         // LD_BC((1 << 8) | 3);
         // CALL(aPrintNum);
-        PrintNum_Conv2(coord(16, 12, wram->wTilemap), &power, 1, 3);
+        PrintNum(coord(16, 12, wram->wTilemap), &power, 1, 3);
         // goto description;
     }
 

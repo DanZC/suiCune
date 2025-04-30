@@ -275,7 +275,7 @@ static void RunTradeAnimScript_TradeAnimLayout(void) {
     // CALL(aLoadFontsBattleExtra);
     LoadFontsBattleExtra();
     // CALLFAR(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // IF_Z goto NotCGB;
@@ -441,11 +441,7 @@ bool DoTradeAnimation(void){
     // CALL(aDoTradeAnimation_DoTradeAnimCommand);
     DoTradeAnimation_DoTradeAnimCommand();
     // CALLFAR(aPlaySpriteAnimations);
-    {
-        bank_push(BANK(aPlaySpriteAnimations));
-        PlaySpriteAnimations_Conv();
-        bank_pop;
-    }
+    PlaySpriteAnimations();
     // LD_HL(wFrameCounter2);
     // INC_hl;
     wram->wFrameCounter2++;
@@ -523,7 +519,7 @@ void TradeAnim_InitTubeAnim(uint16_t de, uint8_t b, uint8_t a){
     // CALL(aDisableLCD);
     DisableLCD();
     // CALLFAR(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // hlbgcoord(20, 3, vBGMap0);
     // LD_BC(12);
     // LD_A(0x60);
@@ -551,7 +547,7 @@ void TradeAnim_InitTubeAnim(uint16_t de, uint8_t b, uint8_t a){
     // POP_DE;
     // LD_A(SPRITE_ANIM_INDEX_TRADEMON_ICON);
     // CALL(aInitSpriteAnimStruct);
-    struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_TRADEMON_ICON, de);
+    struct SpriteAnim* bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_TRADEMON_ICON, de);
 
     // LD_HL(SPRITEANIMSTRUCT_JUMPTABLE_INDEX);
     // ADD_HL_BC;
@@ -562,7 +558,7 @@ void TradeAnim_InitTubeAnim(uint16_t de, uint8_t b, uint8_t a){
     // POP_DE;
     // LD_A(SPRITE_ANIM_INDEX_TRADEMON_BUBBLE);
     // CALL(aInitSpriteAnimStruct);
-    bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_TRADEMON_BUBBLE, de);
+    bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_TRADEMON_BUBBLE, de);
 
     // LD_HL(SPRITEANIMSTRUCT_JUMPTABLE_INDEX);
     // ADD_HL_BC;
@@ -577,10 +573,10 @@ void TradeAnim_InitTubeAnim(uint16_t de, uint8_t b, uint8_t a){
     GetSGBLayout(SCGB_TRADE_TUBE);
     // LD_A(0b11100100);  // 3,2,1,0
     // CALL(aDmgToCgbBGPals);
-    DmgToCgbBGPals_Conv(0b11100100);
+    DmgToCgbBGPals(0b11100100);
     // LD_A(0b11010000);
     // CALL(aDmgToCgbObjPal0);
-    DmgToCgbObjPal0_Conv(0b11010000);
+    DmgToCgbObjPal0(0b11010000);
 
     // CALL(aTradeAnim_IncrementJumptableIndex);
     TradeAnim_IncrementJumptableIndex();
@@ -730,7 +726,7 @@ void TradeAnim_TubeToPlayer8(void){
     // CALL(aDisableLCD);
     DisableLCD();
     // CALLFAR(aClearSpriteAnims);
-    ClearSpriteAnims_Conv();
+    ClearSpriteAnims();
     // hlbgcoord(0, 0, vBGMap0);
     // LD_BC(VRAM_End - vBGMap0);
     // LD_A(0x7f);
@@ -996,10 +992,10 @@ void TradeAnim_EnterLinkTube1(void){
     GetSGBLayout(SCGB_TRADE_TUBE);
     // LD_A(0b11100100);  // 3,2,1,0
     // CALL(aDmgToCgbBGPals);
-    DmgToCgbBGPals_Conv(0b11100100);
+    DmgToCgbBGPals(0b11100100);
     // LD_DE((0b11100100 << 8) | 0b11100100);  // 3,2,1,0, 3,2,1,0
     // CALL(aDmgToCgbObjPals);
-    DmgToCgbObjPals_Conv(0b11100100, 0b11100100);
+    DmgToCgbObjPals(0b11100100, 0b11100100);
     // LD_DE(SFX_POTION);
     // CALL(aPlaySFX);
     PlaySFX(SFX_POTION);
@@ -1193,18 +1189,18 @@ void TradeAnim_ShowGivemonData(void){
     GetSGBLayout(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
     // LD_A(0b11100100);  // 3,2,1,0
     // CALL(aDmgToCgbBGPals);
-    DmgToCgbBGPals_Conv(0b11100100);
+    DmgToCgbBGPals(0b11100100);
     // CALL(aTradeAnim_ShowGivemonFrontpic);
     TradeAnim_ShowGivemonFrontpic();
 
     // LD_A_addr(wPlayerTrademonSpecies);
     // CALL(aGetCryIndex);
     // IF_C goto skip_cry;
-    if(GetCryIndex_Conv(wram->wPlayerTrademon.species) >= 0) {
+    if(GetCryIndex(wram->wPlayerTrademon.species) >= 0) {
         // LD_E_C;
         // LD_D_B;
         // CALL(aPlayCry);
-        v_PlayMonCry_Conv(wram->wPlayerTrademon.species);
+        v_PlayMonCry(wram->wPlayerTrademon.species);
     }
 
 // skip_cry:
@@ -1229,7 +1225,7 @@ void TradeAnim_ShowGetmonData(void){
     GetSGBLayout(SCGB_PLAYER_OR_MON_FRONTPIC_PALS);
     // LD_A(0b11100100);  // 3,2,1,0
     // CALL(aDmgToCgbBGPals);
-    DmgToCgbBGPals_Conv(0b11100100);
+    DmgToCgbBGPals(0b11100100);
     // CALL(aTradeAnim_ShowGetmonFrontpic);
     TradeAnim_ShowGetmonFrontpic();
     // CALL(aTradeAnim_AdvanceScriptPointer);
@@ -1256,7 +1252,7 @@ void TradeAnim_GetFrontpic(uint8_t* de, uint16_t dvs, species_t species){
     wram->wCurPartySpecies = species;
     // LD_addr_A(wCurSpecies);
     // CALL(aGetBaseData);
-    GetBaseData_Conv2(species);
+    GetBaseData(species);
     // POP_DE;
     // PREDEF(pGetMonFrontpic);
     GetMonFrontpic_Conv(de);
@@ -1491,7 +1487,7 @@ void TrademonStats_PrintSpeciesNumber(species_t species){
     // hlcoord(10, 0, wTilemap);
     // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 3);
     // CALL(aPrintNum);
-    uint8_t* hl = PrintNum_Conv2(coord(10, 0, wram->wTilemap), &species, PRINTNUM_LEADINGZEROS | sizeof(species), 3);
+    uint8_t* hl = PrintNum(coord(10, 0, wram->wTilemap), &species, PRINTNUM_LEADINGZEROS | sizeof(species), 3);
     // LD_hl(0x7f);
     *hl = 0x7f;
     // RET;
@@ -1518,7 +1514,7 @@ void TrademonStats_PrintOTName(uint8_t* de, uint8_t caughtData){
     // hlcoord(7, 4, wTilemap);
     // CALL(aPlaceString);
     struct TextPrintState st = {.hl = coord(7, 4, wram->wTilemap), .de = de};
-    PlaceString_Conv(&st, st.hl);
+    PlaceString(&st, st.hl);
     // INC_BC;
     st.bc++;
     // POP_AF;
@@ -1539,7 +1535,7 @@ void TrademonStats_PrintTrademonID(uint16_t id){
     // hlcoord(7, 6, wTilemap);
     // LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 5);
     // CALL(aPrintNum);
-    PrintNum_Conv2(coord(7, 6, wram->wTilemap), &id, PRINTNUM_LEADINGZEROS | 2, 5);
+    PrintNum(coord(7, 6, wram->wTilemap), &id, PRINTNUM_LEADINGZEROS | 2, 5);
     // RET;
 }
 
@@ -1547,7 +1543,7 @@ void TradeAnim_RockingBall(void){
     // depixel4(10, 11, 4, 0);
     // LD_A(SPRITE_ANIM_INDEX_TRADE_POKE_BALL);
     // CALL(aInitSpriteAnimStruct);
-    InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_TRADE_POKE_BALL, pixel4(10, 11, 4, 0));
+    InitSpriteAnimStruct(SPRITE_ANIM_INDEX_TRADE_POKE_BALL, pixel4(10, 11, 4, 0));
     // CALL(aTradeAnim_AdvanceScriptPointer);
     TradeAnim_AdvanceScriptPointer();
     // LD_A(32);
@@ -1561,7 +1557,7 @@ void TradeAnim_DropBall(void){
     // depixel4(10, 11, 4, 0);
     // LD_A(SPRITE_ANIM_INDEX_TRADE_POKE_BALL);
     // CALL(aInitSpriteAnimStruct);
-    struct SpriteAnim* bc = InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_TRADE_POKE_BALL, pixel4(10, 11, 4, 0));
+    struct SpriteAnim* bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_TRADE_POKE_BALL, pixel4(10, 11, 4, 0));
     // LD_HL(SPRITEANIMSTRUCT_JUMPTABLE_INDEX);
     // ADD_HL_BC;
     // LD_hl(0x1);
@@ -1582,7 +1578,7 @@ void TradeAnim_Poof(void){
     // depixel4(10, 11, 4, 0);
     // LD_A(SPRITE_ANIM_INDEX_TRADE_POOF);
     // CALL(aInitSpriteAnimStruct);
-    InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_TRADE_POOF, pixel4(10, 11, 4, 0));
+    InitSpriteAnimStruct(SPRITE_ANIM_INDEX_TRADE_POOF, pixel4(10, 11, 4, 0));
     // CALL(aTradeAnim_AdvanceScriptPointer);
     TradeAnim_AdvanceScriptPointer();
     // LD_A(16);
@@ -1598,11 +1594,11 @@ void TradeAnim_Poof(void){
 void TradeAnim_BulgeThroughTube(void){
     // LD_A(0b11100100);  // 3,2,1,0
     // CALL(aDmgToCgbObjPal0);
-    DmgToCgbObjPal0_Conv(0b11100100);
+    DmgToCgbObjPal0(0b11100100);
     // depixel2(5, 11);
     // LD_A(SPRITE_ANIM_INDEX_TRADE_TUBE_BULGE);
     // CALL(aInitSpriteAnimStruct);
-    InitSpriteAnimStruct_Conv(SPRITE_ANIM_INDEX_TRADE_TUBE_BULGE, pixel2(5, 11));
+    InitSpriteAnimStruct(SPRITE_ANIM_INDEX_TRADE_TUBE_BULGE, pixel2(5, 11));
     // CALL(aTradeAnim_AdvanceScriptPointer);
     TradeAnim_AdvanceScriptPointer();
     // LD_A(64);
@@ -1781,7 +1777,7 @@ void TradeAnim_SentToOTText(void){
     // time_capsule:
         // LD_HL(mTradeAnim_SentToOTText_MonWasSentToText);
         // CALL(aPrintText);
-        PrintText_Conv2(MonWasSentToText);
+        PrintText(MonWasSentToText);
         // CALL(aTradeAnim_Wait80Frames);
         TradeAnim_Wait80Frames();
         // CALL(aTradeAnim_AdvanceScriptPointer);
@@ -1791,13 +1787,13 @@ void TradeAnim_SentToOTText(void){
     }
     // LD_HL(mTradeAnim_SentToOTText_MonNameSentToText);
     // CALL(aPrintText);
-    PrintText_Conv2(MonNameSentToText);
+    PrintText(MonNameSentToText);
     // LD_C(189);
     // CALL(aDelayFrames);
     DelayFrames(189);
     // LD_HL(mTradeAnim_SentToOTText_MonWasSentToText);
     // CALL(aPrintText);
-    PrintText_Conv2(MonWasSentToText);
+    PrintText(MonWasSentToText);
     // CALL(aTradeAnim_Wait80Frames);
     TradeAnim_Wait80Frames();
     // LD_C(128);
@@ -1820,12 +1816,12 @@ void TradeAnim_OTBidsFarewell(void){
     };
     // LD_HL(mTradeAnim_OTBidsFarewell_BidsFarewellToMonText);
     // CALL(aPrintText);
-    PrintText_Conv2(BidsFarewellToMonText);
+    PrintText(BidsFarewellToMonText);
     // CALL(aTradeAnim_Wait80Frames);
     TradeAnim_Wait80Frames();
     // LD_HL(mTradeAnim_OTBidsFarewell_MonNameBidsFarewellText);
     // CALL(aPrintText);
-    PrintText_Conv2(MonNameBidsFarewellText);
+    PrintText(MonNameBidsFarewellText);
     // CALL(aTradeAnim_Wait80Frames);
     TradeAnim_Wait80Frames();
     // CALL(aTradeAnim_AdvanceScriptPointer);
@@ -1849,7 +1845,7 @@ void TradeAnim_TakeCareOfText(void){
     WaitBGMap();
     // LD_HL(mTradeAnim_TakeCareOfText_TakeGoodCareOfMonText);
     // CALL(aPrintText);
-    PrintText_Conv2(TakeGoodCareOfMonText);
+    PrintText(TakeGoodCareOfMonText);
     // CALL(aTradeAnim_Wait80Frames);
     TradeAnim_Wait80Frames();
     // CALL(aTradeAnim_AdvanceScriptPointer);
@@ -1868,12 +1864,12 @@ void TradeAnim_OTSendsText1(void){
     };
     // LD_HL(mTradeAnim_OTSendsText1_ForYourMonSendsText);
     // CALL(aPrintText);
-    PrintText_Conv2(ForYourMonSendsText);
+    PrintText(ForYourMonSendsText);
     // CALL(aTradeAnim_Wait80Frames);
     TradeAnim_Wait80Frames();
     // LD_HL(mTradeAnim_OTSendsText1_OTSendsText);
     // CALL(aPrintText);
-    PrintText_Conv2(OTSendsText);
+    PrintText(OTSendsText);
     // CALL(aTradeAnim_Wait80Frames);
     TradeAnim_Wait80Frames();
     // LD_C(14);
@@ -1895,12 +1891,12 @@ void TradeAnim_OTSendsText2(void){
     };
     // LD_HL(mTradeAnim_OTSendsText2_WillTradeText);
     // CALL(aPrintText);
-    PrintText_Conv2(WillTradeText);
+    PrintText(WillTradeText);
     // CALL(aTradeAnim_Wait80Frames);
     TradeAnim_Wait80Frames();
     // LD_HL(mTradeAnim_OTSendsText2_ForYourMonWillTradeText);
     // CALL(aPrintText);
-    PrintText_Conv2(ForYourMonWillTradeText);
+    PrintText(ForYourMonWillTradeText);
     // CALL(aTradeAnim_Wait80Frames);
     TradeAnim_Wait80Frames();
     // LD_C(14);
@@ -1965,10 +1961,10 @@ void TradeAnim_NormalPals(void){
 
 // not_sgb:
     // CALL(aDmgToCgbObjPal0);
-    DmgToCgbObjPal0_Conv(a);
+    DmgToCgbObjPal0(a);
     // LD_A(0b11100100);  // 3,2,1,0
     // CALL(aDmgToCgbBGPals);
-    DmgToCgbBGPals_Conv(0b11100100);
+    DmgToCgbBGPals(0b11100100);
     // RET;
 }
 
@@ -2005,7 +2001,7 @@ void TradeAnim_FlashBGPals(void){
     // LDH_A_addr(rBGP);
     // XOR_A(0b00111100);
     // CALL(aDmgToCgbBGPals);
-    DmgToCgbBGPals_Conv(gb_read(rBGP) ^ 0b00111100);
+    DmgToCgbBGPals(gb_read(rBGP) ^ 0b00111100);
     // RET;
 }
 

@@ -1849,7 +1849,7 @@ void RandomUnseenWildMon(void){
     GetPokemonName(rare);
     // LD_HL(mRandomUnseenWildMon_JustSawSomeRareMonText);
     // CALL(aPrintText);
-    PrintText_Conv2(JustSawSomeRareMonText);
+    PrintText(JustSawSomeRareMonText);
     // XOR_A_A;
     // LD_addr_A(wScriptVar);
     wram->wScriptVar = 0x0;
