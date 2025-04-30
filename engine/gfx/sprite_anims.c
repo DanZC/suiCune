@@ -582,7 +582,7 @@ static void AnimSeq_UnusedCursor(struct SpriteAnim* bc){
 static void AnimSeq_PokegearArrow(struct SpriteAnim* bc){
     // REG_BC = (bc - wram->wSpriteAnim) * SPRITEANIMSTRUCT_LENGTH + wSpriteAnimationStructs;
     // CALLFAR(aAnimatePokegearModeIndicatorArrow);
-    AnimatePokegearModeIndicatorArrow_Conv(bc);
+    AnimatePokegearModeIndicatorArrow(bc);
 }
 
 static void AnimSeq_MemoryGameCursor(struct SpriteAnim* bc){
@@ -838,7 +838,7 @@ static void AnimSeq_RevealNewMon(struct SpriteAnim* bc){
 static void AnimSeq_RadioTuningKnob(struct SpriteAnim* bc){
     // REG_BC = (bc - wram->wSpriteAnim) * SPRITEANIMSTRUCT_LENGTH + wSpriteAnimationStructs;
     // CALLFAR(aAnimateTuningKnob);
-    AnimateTuningKnob_Conv(bc);
+    AnimateTuningKnob(bc);
 }
 
 static void AnimSeq_CutLeaves(struct SpriteAnim* bc){

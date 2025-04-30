@@ -58,7 +58,7 @@ uint8_t FlagAction(uint8_t* flag, uint16_t bit, uint8_t func){
 }
 
 bool CheckReceivedDex(void){
-    return EngineFlagAction_Conv(ENGINE_POKEDEX, CHECK_FLAG);
+    return EngineFlagAction(ENGINE_POKEDEX, CHECK_FLAG);
 }
 
 //  //  unreferenced

@@ -706,7 +706,7 @@ static void MainMenu_PrintCurrentTimeAndDay_PlaceTime(void) {
     // LDH_A_addr(hHours);
     // LD_C_A;
     // FARCALL(aPrintHour);
-    uint8_t* hl = PrintHour_Conv(coord(4, 16, wram->wTilemap), hram->hHours);
+    uint8_t* hl = PrintHour(coord(4, 16, wram->wTilemap), hram->hHours);
     // LD_hl(0x9c);
     *(hl++) = CHAR_COLON2;
     // INC_HL;

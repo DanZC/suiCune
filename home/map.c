@@ -1603,7 +1603,7 @@ void ExecuteCallbackScript(Script_fn_t de){
     // SET_hl(1);
     bit_set(wram->wScriptFlags, 1);
     // FARCALL(aEnableScriptMode);
-    EnableScriptMode_Conv();
+    EnableScriptMode();
     // FARCALL(aScriptEvents);
     ScriptEvents_Conv();
     // POP_AF;

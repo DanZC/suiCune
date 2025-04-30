@@ -58,6 +58,12 @@ struct OverworldTileRes {
 
 struct OverworldTileRes CheckOverworldTileArrays_Conv(const struct BlockPointer* hl, tile_t c);
 
+static bool CheckMapForSomethingToCut(void);
+static uint8_t GetSurfType(void);
+static bool CheckDirection(void);
+static bool CheckMapCanWaterfall(void);
+static uint8_t TryHeadbuttFromMenu(void);
+
 void FieldMoveJumptableReset(void){
     // XOR_A_A;
     // LD_HL(wFieldMoveData);
@@ -67,26 +73,9 @@ void FieldMoveJumptableReset(void){
     // RET;
 }
 
-void FieldMoveJumptable(void){
-    LD_A_addr(wFieldMoveJumptableIndex);
-    RST(aJumpTable);
-    LD_addr_A(wFieldMoveJumptableIndex);
-    BIT_A(7);
-    IF_NZ goto okay;
-    AND_A_A;
-    RET;
-
-
-okay:
-    AND_A(0x7f);
-    SCF;
-    RET;
-
-}
-
 typedef uint8_t (*field_move_fn_t)(void);
 
-u8_flag_s FieldMoveJumptable_Conv(const field_move_fn_t jumptable[]){
+u8_flag_s FieldMoveJumptable(const field_move_fn_t jumptable[]){
     // LD_A_addr(wFieldMoveJumptableIndex);
     // RST(aJumpTable);
     // LD_addr_A(wFieldMoveJumptableIndex);
@@ -123,29 +112,12 @@ void GetPartyNickname(void){
     // RET;
 }
 
-void CheckEngineFlag(void){
-//  Check engine flag de
-//  Return carry if flag is not set
-    LD_B(CHECK_FLAG);
-    FARCALL(aEngineFlagAction);
-    LD_A_C;
-    AND_A_A;
-    IF_NZ goto isset;
-    SCF;
-    RET;
-
-isset:
-    XOR_A_A;
-    RET;
-
-}
-
 //  Check engine flag de
 //  Return carry (false) if flag is not set
-bool CheckEngineFlag_Conv(uint16_t de){
+bool CheckEngineFlag(uint16_t de){
     // LD_B(CHECK_FLAG);
     // FARCALL(aEngineFlagAction);
-    bool isset = EngineFlagAction_Conv(de, CHECK_FLAG);
+    bool isset = EngineFlagAction(de, CHECK_FLAG);
     // LD_A_C;
     // AND_A_A;
     // IF_NZ goto isset;
@@ -158,30 +130,12 @@ bool CheckEngineFlag_Conv(uint16_t de){
     return isset;
 }
 
-void CheckBadge(void){
-//  Check engine flag a (ENGINE_ZEPHYRBADGE thru ENGINE_EARTHBADGE)
-//  Display "Badge required" text and return carry if the badge is not owned
-    CALL(aCheckEngineFlag);
-    RET_NC ;
-    LD_HL(mCheckBadge_BadgeRequiredText);
-    CALL(aMenuTextboxBackup);  // push text to queue
-    SCF;
-    RET;
-
-
-BadgeRequiredText:
-    //text_far ['_BadgeRequiredText']
-    //text_end ['?']
-
-    return CheckPartyMove();
-}
-
 //  Check engine flag a (ENGINE_ZEPHYRBADGE thru ENGINE_EARTHBADGE)
 //  Display "Badge required" text and return carry (false) if the badge is not owned
-bool CheckBadge_Conv(uint16_t de){
+bool CheckBadge(uint16_t de){
     // CALL(aCheckEngineFlag);
     // RET_NC ;
-    if(CheckEngineFlag_Conv(de))
+    if(CheckEngineFlag(de))
         return true;
     // LD_HL(mCheckBadge_BadgeRequiredText);
     // CALL(aMenuTextboxBackup);  // push text to queue
@@ -197,60 +151,9 @@ bool CheckBadge_Conv(uint16_t de){
     // return CheckPartyMove();
 }
 
-void CheckPartyMove(void){
-//  Check if a monster in your party has move d.
-
-    LD_E(0);
-    XOR_A_A;
-    LD_addr_A(wCurPartyMon);
-
-loop:
-    LD_C_E;
-    LD_B(0);
-    LD_HL(wPartySpecies);
-    ADD_HL_BC;
-    LD_A_hl;
-    AND_A_A;
-    IF_Z goto no;
-    CP_A(-1);
-    IF_Z goto no;
-    CP_A(EGG);
-    IF_Z goto next;
-
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    LD_HL(wPartyMon1Moves);
-    LD_A_E;
-    CALL(aAddNTimes);
-    LD_B(NUM_MOVES);
-
-check:
-    LD_A_hli;
-    CP_A_D;
-    IF_Z goto yes;
-    DEC_B;
-    IF_NZ goto check;
-
-
-next:
-    INC_E;
-    goto loop;
-
-
-yes:
-    LD_A_E;
-    LD_addr_A(wCurPartyMon);  // which mon has the move
-    XOR_A_A;
-    RET;
-
-no:
-    SCF;
-    RET;
-
-}
-
 //  Check if a monster in your party has move d.
 //  Returns carry (false) if no monster has the move.
-bool CheckPartyMove_Conv(move_t d){
+bool CheckPartyMove(move_t d){
     // LD_E(0);
     uint8_t e;
     // XOR_A_A;
@@ -329,7 +232,7 @@ static uint8_t CutFunction_CheckAble(void) {
     // LD_DE(ENGINE_HIVEBADGE);
     // CALL(aCheckBadge);
     // IF_C goto nohivebadge;
-    if(!CheckBadge_Conv(ENGINE_HIVEBADGE)) {
+    if(!CheckBadge(ENGINE_HIVEBADGE)) {
     // nohivebadge:
         // LD_A(0x80);
         // RET;
@@ -337,7 +240,7 @@ static uint8_t CutFunction_CheckAble(void) {
     }
     // CALL(aCheckMapForSomethingToCut);
     // IF_C goto nothingtocut;
-    if(!CheckMapForSomethingToCut_Conv()) {
+    if(!CheckMapForSomethingToCut()) {
     // nothingtocut:
         // LD_A(0x2);
         // RET;
@@ -381,7 +284,7 @@ void CutFunction(void){
     // loop:
         // LD_HL(mCutFunction_Jumptable);
         // CALL(aFieldMoveJumptable);
-        res = FieldMoveJumptable_Conv(Jumptable);
+        res = FieldMoveJumptable(Jumptable);
         // IF_NC goto loop;
     } while(!res.flag);
     // AND_A(0x7f);
@@ -401,43 +304,7 @@ const txt_cmd_s CutNothingText[] = {
     text_end
 };
 
-void CheckMapForSomethingToCut(void){
-// Does the collision data of the facing tile permit cutting?
-    CALL(aGetFacingTileCoord);
-    LD_C_A;
-    PUSH_DE;
-    FARCALL(aCheckCutCollision);
-    POP_DE;
-    IF_NC goto fail;
-// Get the location of the current block in wOverworldMapBlocks.
-    CALL(aGetBlockLocation);
-    LD_C_hl;
-// See if that block contains something that can be cut.
-    PUSH_HL;
-    LD_HL(mCutTreeBlockPointers);
-    CALL(aCheckOverworldTileArrays);
-    POP_HL;
-    IF_NC goto fail;
-// Save the Cut field move data
-    LD_A_L;
-    LD_addr_A(wCutWhirlpoolOverworldBlockAddr);
-    LD_A_H;
-    LD_addr_A(wCutWhirlpoolOverworldBlockAddr + 1);
-    LD_A_B;
-    LD_addr_A(wCutWhirlpoolReplacementBlock);
-    LD_A_C;
-    LD_addr_A(wCutWhirlpoolAnimationType);
-    XOR_A_A;
-    RET;
-
-
-fail:
-    SCF;
-    RET;
-
-}
-
-bool CheckMapForSomethingToCut_Conv(void){
+static bool CheckMapForSomethingToCut(void){
 // Does the collision data of the facing tile permit cutting?
     // CALL(aGetFacingTileCoord);
     struct CoordsTileId cid = GetFacingTileCoord();
@@ -628,7 +495,7 @@ static uint8_t FlashFunction_CheckUseFlash(void) {
     // LD_DE(ENGINE_ZEPHYRBADGE);
     // FARCALL(aCheckBadge);
     // IF_C goto nozephyrbadge;
-    if(!CheckBadge_Conv(ENGINE_ZEPHYRBADGE)) {
+    if(!CheckBadge(ENGINE_ZEPHYRBADGE)) {
     // nozephyrbadge:
         // LD_A(0x80);
         // RET;
@@ -709,7 +576,7 @@ static uint8_t SurfFunction_TrySurf(void) {
     // LD_DE(ENGINE_FOGBADGE);
     // CALL(aCheckBadge);
     // IF_C goto nofogbadge;
-    if(!CheckBadge_Conv(ENGINE_FOGBADGE)) {
+    if(!CheckBadge(ENGINE_FOGBADGE)) {
     // nofogbadge:
         // LD_A(0x80);
         // RET;
@@ -744,7 +611,7 @@ static uint8_t SurfFunction_TrySurf(void) {
     // IF_C goto cannotsurf;
     // FARCALL(aCheckFacingObject);
     // IF_C goto cannotsurf;
-    if(col == WATER_TILE && !CheckDirection_Conv() && CheckFacingObject_Conv() == NULL) {
+    if(col == WATER_TILE && !CheckDirection() && CheckFacingObject_Conv() == NULL) {
         // LD_A(0x1);
         // RET;
         return 0x1;
@@ -755,7 +622,7 @@ static uint8_t SurfFunction_TrySurf(void) {
 static uint8_t SurfFunction_DoSurf(void) {
     // CALL(aGetSurfType);
     // LD_addr_A(wSurfingPlayerState);
-    wram->wSurfingPlayerState = GetSurfType_Conv();
+    wram->wSurfingPlayerState = GetSurfType();
     // CALL(aGetPartyNickname);
     GetPartyNickname();
     // LD_HL(mSurfFromMenuScript);
@@ -799,7 +666,7 @@ void SurfFunction(void){
     // loop:
         // LD_HL(mSurfFunction_Jumptable);
         // CALL(aFieldMoveJumptable);
-        res = FieldMoveJumptable_Conv(Jumptable);
+        res = FieldMoveJumptable(Jumptable);
         // IF_NC goto loop;
     } while(!res.flag);
     // AND_A(0x7f);
@@ -856,28 +723,9 @@ const txt_cmd_s AlreadySurfingText[] = {
     text_end
 };
 
-void GetSurfType(void){
 //  Surfing on Pikachu uses an alternate sprite.
 //  This is done by using a separate movement type.
-
-    LD_A_addr(wCurPartyMon);
-    LD_E_A;
-    LD_D(0);
-    LD_HL(wPartySpecies);
-    ADD_HL_DE;
-
-    LD_A_hl;
-    CP_A(PIKACHU);
-    LD_A(PLAYER_SURF_PIKA);
-    RET_Z ;
-    LD_A(PLAYER_SURF);
-    RET;
-
-}
-
-//  Surfing on Pikachu uses an alternate sprite.
-//  This is done by using a separate movement type.
-uint8_t GetSurfType_Conv(void){
+static uint8_t GetSurfType(void){
     // LD_A_addr(wCurPartyMon);
     // LD_E_A;
     // LD_D(0);
@@ -894,51 +742,15 @@ uint8_t GetSurfType_Conv(void){
     return (sp == PIKACHU)? PLAYER_SURF_PIKA: PLAYER_SURF;
 }
 
-void CheckDirection(void){
-//  Return carry if a tile permission prevents you
+//  Return true (carry) if a tile permission prevents you
 //  from moving in the direction you're facing.
-
-//  Get player direction
-    LD_A_addr(wPlayerDirection);
-    AND_A(0b00001100);  // bits 2 and 3 contain direction
-    RRCA;
-    RRCA;
-    LD_E_A;
-    LD_D(0);
-    LD_HL(mCheckDirection_Directions);
-    ADD_HL_DE;
-
-//  Can you walk in this direction?
-    LD_A_addr(wTilePermissions);
-    AND_A_hl;
-    IF_NZ goto quit;
-    XOR_A_A;
-    RET;
-
-
-quit:
-    SCF;
-    RET;
-
-
-Directions:
-    //db ['FACE_DOWN'];
-    //db ['FACE_UP'];
-    //db ['FACE_LEFT'];
-    //db ['FACE_RIGHT'];
-
-    return TrySurfOW();
-}
-
-bool CheckDirection_Conv(void){
+static bool CheckDirection(void){
     const uint8_t Directions[] = {
         FACE_DOWN,
         FACE_UP,
         FACE_LEFT,
         FACE_RIGHT,
     };
-//  Return carry if a tile permission prevents you
-//  from moving in the direction you're facing.
 
 //  Get player direction
     // LD_A_addr(wPlayerDirection);
@@ -967,60 +779,9 @@ bool CheckDirection_Conv(void){
     return true;
 }
 
-void TrySurfOW(void){
 //  Checking a tile in the overworld.
 //  Return carry if fail is allowed.
-
-//  Don't ask to surf if already fail.
-    LD_A_addr(wPlayerState);
-    CP_A(PLAYER_SURF_PIKA);
-    IF_Z goto quit;
-    CP_A(PLAYER_SURF);
-    IF_Z goto quit;
-
-//  Must be facing water.
-    LD_A_addr(wFacingTileID);
-    CALL(aGetTileCollision);
-    CP_A(WATER_TILE);
-    IF_NZ goto quit;
-
-//  Check tile permissions.
-    CALL(aCheckDirection);
-    IF_C goto quit;
-
-    LD_DE(ENGINE_FOGBADGE);
-    CALL(aCheckEngineFlag);
-    IF_C goto quit;
-
-    LD_D(SURF);
-    CALL(aCheckPartyMove);
-    IF_C goto quit;
-
-    LD_HL(wBikeFlags);
-    BIT_hl(BIKEFLAGS_ALWAYS_ON_BIKE_F);
-    IF_NZ goto quit;
-
-    CALL(aGetSurfType);
-    LD_addr_A(wSurfingPlayerState);
-    CALL(aGetPartyNickname);
-
-    LD_A(BANK(aAskSurfScript));
-    LD_HL(mAskSurfScript);
-    CALL(aCallScript);
-
-    SCF;
-    RET;
-
-
-quit:
-    XOR_A_A;
-    RET;
-
-}
-
-//  Checking a tile in the overworld.
-//  Return carry if fail is allowed.
-bool TrySurfOW_Conv(void){
+bool TrySurfOW(void){
 //  Don't ask to surf if already fail.
     // LD_A_addr(wPlayerState);
     // CP_A(PLAYER_SURF_PIKA);
@@ -1041,19 +802,19 @@ bool TrySurfOW_Conv(void){
 //  Check tile permissions.
     // CALL(aCheckDirection);
     // IF_C goto quit;
-    if(CheckDirection_Conv())
+    if(CheckDirection())
         return false;
 
     // LD_DE(ENGINE_FOGBADGE);
     // CALL(aCheckEngineFlag);
     // IF_C goto quit;
-    if(!CheckEngineFlag_Conv(ENGINE_FOGBADGE))
+    if(!CheckEngineFlag(ENGINE_FOGBADGE))
         return false;
 
     // LD_D(SURF);
     // CALL(aCheckPartyMove);
     // IF_C goto quit;
-    if(!CheckPartyMove_Conv(SURF))
+    if(!CheckPartyMove(SURF))
         return false;
 
     // LD_HL(wBikeFlags);
@@ -1064,7 +825,7 @@ bool TrySurfOW_Conv(void){
 
     // CALL(aGetSurfType);
     // LD_addr_A(wSurfingPlayerState);
-    wram->wSurfingPlayerState = GetSurfType_Conv();
+    wram->wSurfingPlayerState = GetSurfType();
     // CALL(aGetPartyNickname);
     GetPartyNickname();
 
@@ -1103,7 +864,7 @@ static uint8_t FlyFunction_TryFly(void) {
     // LD_DE(ENGINE_STORMBADGE);
     // CALL(aCheckBadge);
     // IF_C goto nostormbadge;
-    if(!CheckBadge_Conv(ENGINE_STORMBADGE)) {
+    if(!CheckBadge(ENGINE_STORMBADGE)) {
     // nostormbadge:
         // LD_A(0x82);
         // RET;
@@ -1216,7 +977,7 @@ void FlyFunction(void){
     // loop:
         // LD_HL(mFlyFunction_Jumptable);
         // CALL(aFieldMoveJumptable);
-        res = FieldMoveJumptable_Conv(Jumptable);
+        res = FieldMoveJumptable(Jumptable);
         // IF_NC goto loop;
     } while(!res.flag);
     // AND_A(0x7f);
@@ -1232,11 +993,11 @@ static uint8_t WaterfallFunction_TryWaterfall(void){
     // FARCALL(aCheckBadge);
     // LD_A(0x80);
     // RET_C ;
-    if(!CheckBadge_Conv(ENGINE_RISINGBADGE))
+    if(!CheckBadge(ENGINE_RISINGBADGE))
         return 0x80;
     // CALL(aCheckMapCanWaterfall);
     // IF_C goto failed;
-    if(!CheckMapCanWaterfall_Conv()) {
+    if(!CheckMapCanWaterfall()) {
     // failed:
         // CALL(aFieldMoveFailed);
         FieldMoveFailed();
@@ -1260,25 +1021,7 @@ void WaterfallFunction(void){
     // RET;
 }
 
-void CheckMapCanWaterfall(void){
-    LD_A_addr(wPlayerDirection);
-    AND_A(0xc);
-    CP_A(FACE_UP);
-    IF_NZ goto failed;
-    LD_A_addr(wTileUp);
-    CALL(aCheckWaterfallTile);
-    IF_NZ goto failed;
-    XOR_A_A;
-    RET;
-
-
-failed:
-    SCF;
-    RET;
-
-}
-
-bool CheckMapCanWaterfall_Conv(void){
+static bool CheckMapCanWaterfall(void){
     // LD_A_addr(wPlayerDirection);
     // AND_A(0xc);
     // CP_A(FACE_UP);
@@ -1345,32 +1088,7 @@ loop:
     SCRIPT_END
 }
 
-void TryWaterfallOW(void){
-    LD_D(WATERFALL);
-    CALL(aCheckPartyMove);
-    IF_C goto failed;
-    LD_DE(ENGINE_RISINGBADGE);
-    CALL(aCheckEngineFlag);
-    IF_C goto failed;
-    CALL(aCheckMapCanWaterfall);
-    IF_C goto failed;
-    LD_A(BANK(aScript_AskWaterfall));
-    LD_HL(mScript_AskWaterfall);
-    CALL(aCallScript);
-    SCF;
-    RET;
-
-
-failed:
-    LD_A(BANK(aScript_CantDoWaterfall));
-    LD_HL(mScript_CantDoWaterfall);
-    CALL(aCallScript);
-    SCF;
-    RET;
-
-}
-
-bool TryWaterfallOW_Conv(void){
+bool TryWaterfallOW(void){
     // LD_D(WATERFALL);
     // CALL(aCheckPartyMove);
     // IF_C goto failed;
@@ -1379,9 +1097,9 @@ bool TryWaterfallOW_Conv(void){
     // IF_C goto failed;
     // CALL(aCheckMapCanWaterfall);
     // IF_C goto failed;
-    if(CheckPartyMove_Conv(WATERFALL)
-    && CheckEngineFlag_Conv(ENGINE_RISINGBADGE)
-    && CheckMapCanWaterfall_Conv()) {
+    if(CheckPartyMove(WATERFALL)
+    && CheckEngineFlag(ENGINE_RISINGBADGE)
+    && CheckMapCanWaterfall()) {
         // LD_A(BANK(aScript_AskWaterfall));
         // LD_HL(mScript_AskWaterfall);
         // CALL(aCallScript);
@@ -1605,7 +1323,7 @@ void EscapeRopeOrDig(uint8_t escapeType){
     // loop:
         // LD_HL(mEscapeRopeOrDig_DigTable);
         // CALL(aFieldMoveJumptable);
-        res = FieldMoveJumptable_Conv(DigTable);
+        res = FieldMoveJumptable(DigTable);
         // IF_NC goto loop;
     } while(!res.flag);
     // AND_A(0x7f);
@@ -1721,7 +1439,7 @@ void TeleportFunction(void){
     // loop:
         // LD_HL(mTeleportFunction_Jumptable);
         // CALL(aFieldMoveJumptable);
-        res = FieldMoveJumptable_Conv(Jumptable);
+        res = FieldMoveJumptable(Jumptable);
         // IF_NC goto loop;
     } while(!res.flag);
     // AND_A(0x7f);
@@ -1735,7 +1453,7 @@ static uint8_t StrengthFunction_TryStrength(void){
     // LD_DE(ENGINE_PLAINBADGE);
     // CALL(aCheckBadge);
     // IF_C goto Failed;
-    if(!CheckBadge_Conv(ENGINE_PLAINBADGE)) {
+    if(!CheckBadge(ENGINE_PLAINBADGE)) {
     // Failed:
         // LD_A(0x80);
         // RET;
@@ -1870,7 +1588,7 @@ void TryStrengthOW(void){
     // LD_DE(ENGINE_PLAINBADGE);
     // CALL(aCheckEngineFlag);
     // IF_C goto nope;
-    if(!CheckPartyMove_Conv(STRENGTH) || !CheckEngineFlag_Conv(ENGINE_PLAINBADGE)) {
+    if(!CheckPartyMove(STRENGTH) || !CheckEngineFlag(ENGINE_PLAINBADGE)) {
         wram->wScriptVar = 1;
         return;
     }
@@ -1905,7 +1623,7 @@ static uint8_t WhirlpoolFunction_TryWhirlpool(void){
     // LD_DE(ENGINE_GLACIERBADGE);
     // CALL(aCheckBadge);
     // IF_C goto noglacierbadge;
-    if(!CheckBadge_Conv(ENGINE_GLACIERBADGE)) {
+    if(!CheckBadge(ENGINE_GLACIERBADGE)) {
     // noglacierbadge:
         // LD_A(0x80);
         // RET;
@@ -1913,7 +1631,7 @@ static uint8_t WhirlpoolFunction_TryWhirlpool(void){
     }
     // CALL(aTryWhirlpoolMenu);
     // IF_C goto failed;
-    if(!TryWhirlpoolMenu_Conv()) {
+    if(!TryWhirlpoolMenu()) {
     // failed:
         // LD_A(0x2);
         // RET;
@@ -1955,7 +1673,7 @@ void WhirlpoolFunction(void){
     // loop:
         // LD_HL(mWhirlpoolFunction_Jumptable);
         // CALL(aFieldMoveJumptable);
-        res = FieldMoveJumptable_Conv(Jumptable);
+        res = FieldMoveJumptable(Jumptable);
         // IF_NC goto loop;
     } while(!res.flag);
     // AND_A(0x7f);
@@ -1970,40 +1688,7 @@ const txt_cmd_s UseWhirlpoolText[] = {
     text_end
 };
 
-void TryWhirlpoolMenu(void){
-    CALL(aGetFacingTileCoord);
-    LD_C_A;
-    PUSH_DE;
-    CALL(aCheckWhirlpoolTile);
-    POP_DE;
-    IF_C goto failed;
-    CALL(aGetBlockLocation);
-    LD_C_hl;
-    PUSH_HL;
-    LD_HL(mWhirlpoolBlockPointers);
-    CALL(aCheckOverworldTileArrays);
-    POP_HL;
-    IF_NC goto failed;
-// Save the Whirlpool field move data
-    LD_A_L;
-    LD_addr_A(wCutWhirlpoolOverworldBlockAddr);
-    LD_A_H;
-    LD_addr_A(wCutWhirlpoolOverworldBlockAddr + 1);
-    LD_A_B;
-    LD_addr_A(wCutWhirlpoolReplacementBlock);
-    LD_A_C;
-    LD_addr_A(wCutWhirlpoolAnimationType);
-    XOR_A_A;
-    RET;
-
-
-failed:
-    SCF;
-    RET;
-
-}
-
-bool TryWhirlpoolMenu_Conv(void){
+bool TryWhirlpoolMenu(void){
     // CALL(aGetFacingTileCoord);
     struct CoordsTileId cid = GetFacingTileCoord();
     // LD_C_A;
@@ -2088,32 +1773,7 @@ void DisappearWhirlpool(void){
     // RET;
 }
 
-void TryWhirlpoolOW(void){
-    LD_D(WHIRLPOOL);
-    CALL(aCheckPartyMove);
-    IF_C goto failed;
-    LD_DE(ENGINE_GLACIERBADGE);
-    CALL(aCheckEngineFlag);
-    IF_C goto failed;
-    CALL(aTryWhirlpoolMenu);
-    IF_C goto failed;
-    LD_A(BANK(aScript_AskWhirlpoolOW));
-    LD_HL(mScript_AskWhirlpoolOW);
-    CALL(aCallScript);
-    SCF;
-    RET;
-
-
-failed:
-    LD_A(BANK(aScript_MightyWhirlpool));
-    LD_HL(mScript_MightyWhirlpool);
-    CALL(aCallScript);
-    SCF;
-    RET;
-
-}
-
-bool TryWhirlpoolOW_Conv(void){
+bool TryWhirlpoolOW(void){
     // LD_D(WHIRLPOOL);
     // CALL(aCheckPartyMove);
     // IF_C goto failed;
@@ -2122,9 +1782,9 @@ bool TryWhirlpoolOW_Conv(void){
     // IF_C goto failed;
     // CALL(aTryWhirlpoolMenu);
     // IF_C goto failed;
-    if(CheckPartyMove_Conv(WHIRLPOOL)
-    && CheckEngineFlag_Conv(ENGINE_GLACIERBADGE)
-    && TryWhirlpoolMenu_Conv()) {
+    if(CheckPartyMove(WHIRLPOOL)
+    && CheckEngineFlag(ENGINE_GLACIERBADGE)
+    && TryWhirlpoolMenu()) {
         // LD_A(BANK(aScript_AskWhirlpoolOW));
         // LD_HL(mScript_AskWhirlpoolOW);
         // CALL(aCallScript);
@@ -2174,29 +1834,11 @@ void HeadbuttFunction(void){
     // CALL(aTryHeadbuttFromMenu);
     // AND_A(0x7f);
     // LD_addr_A(wFieldMoveSucceeded);
-    wram->wFieldMoveSucceeded = TryHeadbuttFromMenu_Conv() & 0x7f;
+    wram->wFieldMoveSucceeded = TryHeadbuttFromMenu() & 0x7f;
     // RET;
 }
 
-void TryHeadbuttFromMenu(void){
-    CALL(aGetFacingTileCoord);
-    CALL(aCheckHeadbuttTreeTile);
-    IF_NZ goto no_tree;
-
-    LD_HL(mHeadbuttFromMenuScript);
-    CALL(aQueueScript);
-    LD_A(0x81);
-    RET;
-
-
-no_tree:
-    CALL(aFieldMoveFailed);
-    LD_A(0x80);
-    RET;
-
-}
-
-uint8_t TryHeadbuttFromMenu_Conv(void){
+static uint8_t TryHeadbuttFromMenu(void){
     // CALL(aGetFacingTileCoord);
     struct CoordsTileId cid = GetFacingTileCoord();
     // CALL(aCheckHeadbuttTreeTile);
@@ -2244,7 +1886,6 @@ bool HeadbuttScript(script_s* s){
     reloadmappart
     ShakeHeadbuttTree();
 
-    //callasm ['TreeMonEncounter']
     TreeMonEncounter();
     wram->wScriptVar = FALSE;
     iffalse(no_battle)
@@ -2263,29 +1904,11 @@ no_battle:
     SCRIPT_END
 }
 
-void TryHeadbuttOW(void){
-    LD_D(HEADBUTT);
-    CALL(aCheckPartyMove);
-    IF_C goto no;
-
-    LD_A(BANK(aAskHeadbuttScript));
-    LD_HL(mAskHeadbuttScript);
-    CALL(aCallScript);
-    SCF;
-    RET;
-
-
-no:
-    XOR_A_A;
-    RET;
-
-}
-
-bool TryHeadbuttOW_Conv(void){
+bool TryHeadbuttOW(void){
     // LD_D(HEADBUTT);
     // CALL(aCheckPartyMove);
     // IF_C goto no;
-    if(CheckPartyMove_Conv(HEADBUTT)) {
+    if(CheckPartyMove(HEADBUTT)) {
         // LD_A(BANK(aAskHeadbuttScript));
         // LD_HL(mAskHeadbuttScript);
         // CALL(aCallScript);
@@ -2321,34 +1944,14 @@ void RockSmashFunction(void){
     // CALL(aTryRockSmashFromMenu);
     // AND_A(0x7f);
     // LD_addr_A(wFieldMoveSucceeded);
-    wram->wFieldMoveSucceeded = TryRockSmashFromMenu_Conv() & 0x7f;
+    wram->wFieldMoveSucceeded = TryRockSmashFromMenu() & 0x7f;
     // RET;
 }
 
-void TryRockSmashFromMenu(void){
-    CALL(aGetFacingObject);
-    IF_C goto no_rock;
-    LD_A_D;
-    CP_A(SPRITEMOVEDATA_SMASHABLE_ROCK);
-    IF_NZ goto no_rock;
-
-    LD_HL(mRockSmashFromMenuScript);
-    CALL(aQueueScript);
-    LD_A(0x81);
-    RET;
-
-
-no_rock:
-    CALL(aFieldMoveFailed);
-    LD_A(0x80);
-    RET;
-
-}
-
-uint8_t TryRockSmashFromMenu_Conv(void){
+uint8_t TryRockSmashFromMenu(void){
     // CALL(aGetFacingObject);
     // IF_C goto no_rock;
-    u8_flag_s res = GetFacingObject_Conv();
+    u8_flag_s res = GetFacingObject();
     // LD_A_D;
     // CP_A(SPRITEMOVEDATA_SMASHABLE_ROCK);
     // IF_NZ goto no_rock;
@@ -2369,32 +1972,7 @@ uint8_t TryRockSmashFromMenu_Conv(void){
     return 0x81;
 }
 
-void GetFacingObject(void){
-    FARCALL(aCheckFacingObject);
-    IF_NC goto fail;
-
-    LDH_A_addr(hObjectStructIndex);
-    CALL(aGetObjectStruct);
-    LD_HL(OBJECT_MAP_OBJECT_INDEX);
-    ADD_HL_BC;
-    LD_A_hl;
-    LDH_addr_A(hLastTalked);
-    CALL(aGetMapObject);
-    LD_HL(MAPOBJECT_MOVEMENT);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_D_A;
-    AND_A_A;
-    RET;
-
-
-fail:
-    SCF;
-    RET;
-
-}
-
-u8_flag_s GetFacingObject_Conv(void){
+u8_flag_s GetFacingObject(void){
     // FARCALL(aCheckFacingObject);
     // IF_NC goto fail;
     struct Object* bc = CheckFacingObject_Conv();
@@ -2506,11 +2084,7 @@ void HasRockSmash(void){
 // done:
     // LD_addr_A(wScriptVar);
     // RET;
-    wram->wScriptVar = (CheckPartyMove_Conv(ROCK_SMASH))? 0: 1;
-}
-
-void FishFunction(void){
-    return FishFunction_Conv(REG_E);
+    wram->wScriptVar = (CheckPartyMove(ROCK_SMASH))? 0: 1;
 }
 
 static uint8_t FishFunction_TryFish(void) {
@@ -2615,7 +2189,7 @@ static uint8_t FishFunction_FishNoFish(void) {
     return 0x81;
 }
 
-void FishFunction_Conv(uint8_t rod){
+void FishFunction(uint8_t rod){
     const field_move_fn_t Jumptable[] = {
         FishFunction_TryFish,
         FishFunction_FishNoBite,
@@ -2636,7 +2210,7 @@ void FishFunction_Conv(uint8_t rod){
     // loop:
         // LD_HL(mFishFunction_FishTable);
         // CALL(aFieldMoveJumptable);
-        res = FieldMoveJumptable_Conv(Jumptable);
+        res = FieldMoveJumptable(Jumptable);
         // IF_NC goto loop;
     } while(!res.flag);
     // AND_A(0x7f);
@@ -2994,32 +2568,7 @@ const txt_cmd_s GotOffBikeText[] = {
     text_end
 };
 
-void TryCutOW(void){
-    LD_D(CUT);
-    CALL(aCheckPartyMove);
-    IF_C goto cant_cut;
-
-    LD_DE(ENGINE_HIVEBADGE);
-    CALL(aCheckEngineFlag);
-    IF_C goto cant_cut;
-
-    LD_A(BANK(aAskCutScript));
-    LD_HL(mAskCutScript);
-    CALL(aCallScript);
-    SCF;
-    RET;
-
-
-cant_cut:
-    LD_A(BANK(aCantCutScript));
-    LD_HL(mCantCutScript);
-    CALL(aCallScript);
-    SCF;
-    RET;
-
-}
-
-u8_flag_s TryCutOW_Conv(void){
+u8_flag_s TryCutOW(void){
     // LD_D(CUT);
     // CALL(aCheckPartyMove);
     // IF_C goto cant_cut;
@@ -3028,7 +2577,7 @@ u8_flag_s TryCutOW_Conv(void){
     // CALL(aCheckEngineFlag);
     // IF_C goto cant_cut;
 
-    if(CheckPartyMove_Conv(CUT) && CheckEngineFlag_Conv(ENGINE_HIVEBADGE)) {
+    if(CheckPartyMove(CUT) && CheckEngineFlag(ENGINE_HIVEBADGE)) {
         // LD_A(BANK(aAskCutScript));
         // LD_HL(mAskCutScript);
         // CALL(aCallScript);
@@ -3054,7 +2603,7 @@ static void AskCutScript_CheckMap(void) {
     // LD_A(TRUE);
     // LD_addr_A(wScriptVar);
     // RET;
-    wram->wScriptVar = (CheckMapForSomethingToCut_Conv())? TRUE: FALSE;
+    wram->wScriptVar = (CheckMapForSomethingToCut())? TRUE: FALSE;
 }
 
 bool AskCutScript(script_s* s){

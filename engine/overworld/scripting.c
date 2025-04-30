@@ -66,16 +66,6 @@ void EnableScriptMode(void){
     // LD_addr_A(wScriptMode);
     // POP_AF;
     wram->wScriptMode = SCRIPT_READ;
-    RET;
-
-}
-
-void EnableScriptMode_Conv(void){
-    // PUSH_AF;
-    // LD_A(SCRIPT_READ);
-    // LD_addr_A(wScriptMode);
-    // POP_AF;
-    wram->wScriptMode = SCRIPT_READ;
     // RET;
 }
 
@@ -4617,7 +4607,7 @@ void Script_delcellnum_Conv(script_s* s, uint8_t c){
     // LD_C_A;
     // FARCALL(aDelCellNum);
     // RET_NC ;
-    if(DelCellNum_Conv2(c))
+    if(DelCellNum(c))
         return;
     // LD_A(TRUE);
     // LD_addr_A(wScriptVar);
@@ -4650,7 +4640,7 @@ void Script_checkcellnum_Conv(script_s* s, uint8_t c){
     // LD_C_A;
     // FARCALL(aCheckCellNum);
     // RET_NC ;
-    if(v_CheckCellNum_Conv2(c) == NULL)
+    if(CheckCellNum(c) == NULL)
         return;
     // LD_A(TRUE);
     // LD_addr_A(wScriptVar);
@@ -4993,7 +4983,7 @@ void v_EngineFlagAction(void){
 bool v_EngineFlagAction_Conv(uint16_t de, uint8_t b){
     // FARCALL(aEngineFlagAction);
     // RET;
-    return EngineFlagAction_Conv(de, b);
+    return EngineFlagAction(de, b);
 }
 
 void Script_wildoff(void){

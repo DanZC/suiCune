@@ -49,21 +49,20 @@ static void IntroSceneJumper(void);
 static void NextIntroScene(void);
 
 static void CrystalIntro_InitRAMAddrs(void);
-static void CrystalIntro_InitUnownAnim_Conv(uint16_t de);
-static void CrystalIntro_UnownFade_Conv(uint8_t a);
+static void CrystalIntro_InitUnownAnim(uint16_t de);
+static void CrystalIntro_UnownFade(uint8_t a);
 
-static void Intro_FadeUnownWordPals_Conv(uint8_t a);
-static void Intro_LoadTilemap_Conv(uint8_t* tilemap);
+static void Intro_FadeUnownWordPals(uint8_t a);
+static void Intro_LoadTilemap(uint8_t* tilemap);
 static void Intro_Scene16_AnimateSuicune(void);
 static void Intro_ColoredSuicuneFrameSwap(void);
-static void Intro_RustleGrass_Conv(void);
-static void Intro_SetCGBPalUpdate(void);
-static void Intro_ClearBGPals_Conv(void);
+static void Intro_RustleGrass(void);
+static void Intro_ClearBGPals(void);
 // static void Intro_DecompressRequest2bpp_128Tiles_Conv(uint16_t hl, uint16_t de);
 // static void Intro_DecompressRequest2bpp_255Tiles_Conv(uint16_t hl, uint16_t de);
 // static void Intro_DecompressRequest2bpp_64Tiles_Conv(uint16_t hl, uint16_t de);
-static void Intro_ResetLYOverrides_Conv(void);
-static void Intro_PerspectiveScrollBG_Conv(void);
+static void Intro_ResetLYOverrides(void);
+static void Intro_PerspectiveScrollBG(void);
 
 // void IntroSuicuneRunGFX(void){
 // INCBIN "gfx/intro/suicune_run.2bpp.lz"
@@ -452,7 +451,7 @@ static void NextIntroScene(void){
 static void IntroScene1(void){
 //  Setup the next scene.
     // CALL(aIntro_ClearBGPals);
-    Intro_ClearBGPals_Conv();
+    Intro_ClearBGPals();
     // CALL(aClearSprites);
     // CALL(aClearTilemap);
     ClearSprites();
@@ -553,7 +552,7 @@ static void IntroScene2(void){
         //depixel ['11', '11']
         // depixel2(11, 11);
         // CALL(aCrystalIntro_InitUnownAnim);
-        CrystalIntro_InitUnownAnim_Conv(pixel2(11, 11));
+        CrystalIntro_InitUnownAnim(pixel2(11, 11));
         // LD_DE(SFX_INTRO_UNOWN_1);
         // CALL(aPlaySFX);
         PlaySFX(SFX_INTRO_UNOWN_1);
@@ -564,14 +563,14 @@ static void IntroScene2(void){
     wram->wIntroSceneTimer = a;
     // XOR_A_A;
     // CALL(aCrystalIntro_UnownFade);
-    CrystalIntro_UnownFade_Conv(0);
+    CrystalIntro_UnownFade(0);
     // RET;
 }
 
 static void IntroScene3(void){
 //  More setup. Transition to the outdoor scene.
     // CALL(aIntro_ClearBGPals);
-    Intro_ClearBGPals_Conv();
+    Intro_ClearBGPals();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aClearTilemap);
@@ -633,7 +632,7 @@ static void IntroScene3(void){
     // LDH_addr_A(hWY);
     hram->hWY = 0x90;
     // CALL(aIntro_ResetLYOverrides);
-    Intro_ResetLYOverrides_Conv();
+    Intro_ResetLYOverrides();
     // CALL(aIntro_SetCGBPalUpdate);
     hram->hCGBPalUpdate = TRUE;
     // XOR_A_A;
@@ -648,7 +647,7 @@ static void IntroScene3(void){
 static void IntroScene4(void){
 //  Scroll the outdoor panorama for a bit.
     // CALL(aIntro_PerspectiveScrollBG);
-    Intro_PerspectiveScrollBG_Conv();
+    Intro_PerspectiveScrollBG();
     // LD_HL(wIntroSceneFrameCounter);
     // LD_A_hl;
     // CP_A(0x80);
@@ -672,7 +671,7 @@ static void IntroScene4(void){
 static void IntroScene5(void){
 //  Go back to the Unown.
     // CALL(aIntro_ClearBGPals);
-    Intro_ClearBGPals_Conv();
+    Intro_ClearBGPals();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aClearTilemap);
@@ -778,7 +777,7 @@ static void IntroScene6(void){
         // //depixel ['14', '6']
         // depixel2(14, 6);
         // CALL(aCrystalIntro_InitUnownAnim);
-        CrystalIntro_InitUnownAnim_Conv(pixel2(14, 6));
+        CrystalIntro_InitUnownAnim(pixel2(14, 6));
         // LD_DE(SFX_INTRO_UNOWN_1);
         // CALL(aPlaySFX);
         PlaySFX(SFX_INTRO_UNOWN_1);
@@ -791,7 +790,7 @@ static void IntroScene6(void){
         wram->wIntroSceneTimer = ctr;
         // LD_A(0x1);
         // CALL(aCrystalIntro_UnownFade);
-        CrystalIntro_UnownFade_Conv(0x1);
+        CrystalIntro_UnownFade(0x1);
         // RET;
         return;
     }
@@ -802,7 +801,7 @@ static void IntroScene6(void){
         //depixel ['7', '15']
         // depixel2(7, 15);
         // CALL(aCrystalIntro_InitUnownAnim);
-        CrystalIntro_InitUnownAnim_Conv(pixel2(7, 15));
+        CrystalIntro_InitUnownAnim(pixel2(7, 15));
         // LD_DE(SFX_INTRO_UNOWN_2);
         // CALL(aPlaySFX);
         PlaySFX(SFX_INTRO_UNOWN_2);
@@ -813,14 +812,14 @@ static void IntroScene6(void){
     wram->wIntroSceneTimer = ctr;
     // XOR_A_A;
     // CALL(aCrystalIntro_UnownFade);
-    CrystalIntro_UnownFade_Conv(0);
+    CrystalIntro_UnownFade(0);
     // RET;
 }
 
 static void IntroScene7(void){
 //  Back to the outdoor scene.
     // CALL(aIntro_ClearBGPals);
-    Intro_ClearBGPals_Conv();
+    Intro_ClearBGPals();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aClearTilemap);
@@ -902,7 +901,7 @@ static void IntroScene7(void){
     // LDH_addr_A(hWY);
     hram->hWY = 0x90;
     // CALL(aIntro_ResetLYOverrides);
-    Intro_ResetLYOverrides_Conv();
+    Intro_ResetLYOverrides();
     // FARCALL(aClearSpriteAnims);
     ClearSpriteAnims();
     //depixel ['13', '27', '4', '0']
@@ -966,7 +965,7 @@ static void IntroScene8(void){
     }
 
     // CALL(aIntro_PerspectiveScrollBG);
-    Intro_PerspectiveScrollBG_Conv();
+    Intro_PerspectiveScrollBG();
     // return;
     // RET;
 
@@ -1028,7 +1027,7 @@ static void IntroScene9(void){
 static void IntroScene10(void){
 //  Wooper and Pichu enter.
     // CALL(aIntro_RustleGrass);
-    Intro_RustleGrass_Conv();
+    Intro_RustleGrass();
     // LD_HL(wIntroSceneFrameCounter);
     // LD_A_hl;
     // INC_hl;
@@ -1076,7 +1075,7 @@ static void IntroScene10(void){
 static void IntroScene11(void){
 //  Back to Unown again.
     // CALL(aIntro_ClearBGPals);
-    Intro_ClearBGPals_Conv();
+    Intro_ClearBGPals();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aClearTilemap);
@@ -1243,7 +1242,7 @@ static void IntroScene12(void){
         // SWAP_A;
         a = (a << 4) | (a >> 4);
         // CALL(aCrystalIntro_UnownFade);
-        CrystalIntro_UnownFade_Conv(a);
+        CrystalIntro_UnownFade(a);
         // RET;
         return;
     }
@@ -1261,7 +1260,7 @@ static void IntroScene12(void){
         // SWAP_A;
         a = (a << 4) | (a >> 4);
         // CALL(aCrystalIntro_UnownFade);
-        CrystalIntro_UnownFade_Conv(a);
+        CrystalIntro_UnownFade(a);
         // RET;
         return;
     }
@@ -1270,7 +1269,7 @@ static void IntroScene12(void){
 static void IntroScene13(void){
 //  Switch scenes again.
     // CALL(aIntro_ClearBGPals);
-    Intro_ClearBGPals_Conv();
+    Intro_ClearBGPals();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aClearTilemap);
@@ -1425,7 +1424,7 @@ static void IntroScene14(void){
 static void IntroScene15(void){
 //  Transition to a new scene.
     // CALL(aIntro_ClearBGPals);
-    Intro_ClearBGPals_Conv();
+    Intro_ClearBGPals();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aClearTilemap);
@@ -1466,7 +1465,7 @@ static void IntroScene15(void){
     // CALL(aIntro_DecompressRequest2bpp_64Tiles);
     // Intro_DecompressRequest2bpp_64Tiles_Conv(mIntroSuicuneJumpTilemap, bgcoord(0, 0, vBGMap0));
     // CALL(aIntro_LoadTilemap);
-    Intro_LoadTilemap_Conv(Load2bppBinaryAssetToBuffer(coord(0, 0, vram->vBGMap0), sizeof(vram->vBGMap0), IntroSuicuneJumpTilemap, 0, 64));
+    Intro_LoadTilemap(Load2bppBinaryAssetToBuffer(coord(0, 0, vram->vBGMap0), sizeof(vram->vBGMap0), IntroSuicuneJumpTilemap, 0, 64));
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(MBANK(awBGPals1));
@@ -1557,7 +1556,7 @@ static void IntroScene16(void){
 static void IntroScene17(void){
 //  ...
     // CALL(aIntro_ClearBGPals);
-    Intro_ClearBGPals_Conv();
+    Intro_ClearBGPals();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aClearTilemap);
@@ -1662,7 +1661,7 @@ static void IntroScene18(void){
 static void IntroScene19(void){
 //  More setup.
     // CALL(aIntro_ClearBGPals);
-    Intro_ClearBGPals_Conv();
+    Intro_ClearBGPals();
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aClearTilemap);
@@ -1704,7 +1703,7 @@ static void IntroScene19(void){
     // CALL(aIntro_DecompressRequest2bpp_64Tiles);
     // Intro_DecompressRequest2bpp_64Tiles_Conv(mIntroSuicuneBackTilemap, bgcoord(0, 0, vBGMap0));
     // CALL(aIntro_LoadTilemap);
-    Intro_LoadTilemap_Conv(Load2bppBinaryAssetToBuffer(bgcoord(0, 0, vram->vBGMap0), sizeof(vram->vBGMap0), IntroSuicuneBackTilemap, 0, 64));
+    Intro_LoadTilemap(Load2bppBinaryAssetToBuffer(bgcoord(0, 0, vram->vBGMap0), sizeof(vram->vBGMap0), IntroSuicuneBackTilemap, 0, 64));
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(MBANK(awBGPals1));
@@ -1763,7 +1762,7 @@ static void IntroScene19(void){
 }
 
 //  Spawn the palette for the nth Unown
-static void Intro_Scene20_AppearUnown_Conv(uint8_t pal){
+static void Intro_Scene20_AppearUnown(uint8_t pal){
     static const char pal1[] = "gfx/intro/unown_1.pal";
     static const char pal2[] = "gfx/intro/unown_2.pal";
     // AND_A_A;
@@ -1873,7 +1872,7 @@ static void IntroScene20(void){
         wram->wIntroSceneTimer = (c & 0x1c) >> 2;
         // XOR_A_A;
         // CALL(aIntro_Scene20_AppearUnown);
-        Intro_Scene20_AppearUnown_Conv(0);
+        Intro_Scene20_AppearUnown(0);
         // RET;
         return;
     }
@@ -1951,7 +1950,7 @@ static void IntroScene23(void){
 }
 
 //  load the (a)th palette from .FadePals to all wBGPals2
-static void Intro_Scene24_ApplyPaletteFade_Conv(uint8_t a){
+static void Intro_Scene24_ApplyPaletteFade(uint8_t a){
     // Fade to white.
     static const uint16_t FadePals[] = {
         rgb(24, 12,  9),
@@ -2071,7 +2070,7 @@ static void IntroScene24(void){
     // AND_A(0x1c);
     // SLA_A;
     // CALL(aIntro_Scene24_ApplyPaletteFade);
-    Intro_Scene24_ApplyPaletteFade_Conv((ctr & 0x1c) << 1);
+    Intro_Scene24_ApplyPaletteFade((ctr & 0x1c) << 1);
     // RET;
 }
 
@@ -2202,7 +2201,7 @@ static void IntroScene27(void){
     // AND_A(0x70);
     // SWAP_A;
     // CALL(aIntro_FadeUnownWordPals);
-    Intro_FadeUnownWordPals_Conv((ctr & 0x70) >> 4);
+    Intro_FadeUnownWordPals((ctr & 0x70) >> 4);
     // RET;
 }
 
@@ -2242,91 +2241,7 @@ static void IntroScene28(void){
     PlaySFX(SFX_INTRO_WHOOSH);
 }
 
-void Intro_Scene24_ApplyPaletteFade(void){
-//  load the (a)th palette from .FadePals to all wBGPals2
-    LD_HL(mIntro_Scene24_ApplyPaletteFade_FadePals);
-    ADD_A_L;
-    LD_L_A;
-    LD_A(0x0);
-    ADC_A_H;
-    LD_H_A;
-
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(MBANK(awBGPals2));
-    LDH_addr_A(rSVBK);
-    LD_DE(wBGPals2);
-    LD_B(8);  // number of BG pals
-
-loop1:
-    PUSH_HL;
-    LD_C(1 * PALETTE_SIZE);
-
-loop2:
-    LD_A_hli;
-    LD_de_A;
-    INC_DE;
-    DEC_C;
-    IF_NZ goto loop2;
-    POP_HL;
-    DEC_B;
-    IF_NZ goto loop1;
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    LD_A(TRUE);
-    LDH_addr_A(hCGBPalUpdate);
-    RET;
-
-
-// FadePals:
-// INCLUDE "gfx/intro/fade.pal"
-
-    // return CrystalIntro_InitUnownAnim();
-}
-
-void CrystalIntro_InitUnownAnim(void){
-    PUSH_DE;
-    LD_A(SPRITE_ANIM_INDEX_INTRO_UNOWN);
-    CALL(aInitSpriteAnimStruct);
-    LD_HL(SPRITEANIMSTRUCT_VAR1);
-    ADD_HL_BC;
-    LD_hl(0x8);
-    LD_A(SPRITE_ANIM_FRAMESET_INTRO_UNOWN_4);
-    CALL(aReinitSpriteAnimFrame);
-    POP_DE;
-
-    PUSH_DE;
-    LD_A(SPRITE_ANIM_INDEX_INTRO_UNOWN);
-    CALL(aInitSpriteAnimStruct);
-    LD_HL(SPRITEANIMSTRUCT_VAR1);
-    ADD_HL_BC;
-    LD_hl(0x18);
-    LD_A(SPRITE_ANIM_FRAMESET_INTRO_UNOWN_3);
-    CALL(aReinitSpriteAnimFrame);
-    POP_DE;
-
-    PUSH_DE;
-    LD_A(SPRITE_ANIM_INDEX_INTRO_UNOWN);
-    CALL(aInitSpriteAnimStruct);
-    LD_HL(SPRITEANIMSTRUCT_VAR1);
-    ADD_HL_BC;
-    LD_hl(0x28);
-    LD_A(SPRITE_ANIM_FRAMESET_INTRO_UNOWN_1);
-    CALL(aReinitSpriteAnimFrame);
-    POP_DE;
-
-    LD_A(SPRITE_ANIM_INDEX_INTRO_UNOWN);
-    CALL(aInitSpriteAnimStruct);
-    LD_HL(SPRITEANIMSTRUCT_VAR1);
-    ADD_HL_BC;
-    LD_hl(0x38);
-    LD_A(SPRITE_ANIM_FRAMESET_INTRO_UNOWN_2);
-    CALL(aReinitSpriteAnimFrame);
-    RET;
-
-}
-
-static void CrystalIntro_InitUnownAnim_Conv(uint16_t de){
+static void CrystalIntro_InitUnownAnim(uint16_t de){
     // PUSH_DE;
     // LD_A(SPRITE_ANIM_INDEX_INTRO_UNOWN);
     // CALL(aInitSpriteAnimStruct);
@@ -2379,113 +2294,7 @@ static void CrystalIntro_InitUnownAnim_Conv(uint16_t de){
     ReinitSpriteAnimFrame(bc, SPRITE_ANIM_FRAMESET_INTRO_UNOWN_2);
 }
 
-void CrystalIntro_UnownFade(void){
-    ADD_A_A;
-    ADD_A_A;
-    ADD_A_A;
-    LD_E_A;
-    LD_D(0);
-    LD_HL(wBGPals2);
-    ADD_HL_DE;
-    INC_HL;
-    INC_HL;
-    LD_A_addr(wIntroSceneTimer);
-    AND_A(0b111111);
-    CP_A(0b011111);
-    IF_Z goto okay;
-    IF_C goto okay;
-    LD_C_A;
-    LD_A(0b111111);
-    SUB_A_C;
-
-okay:
-
-    LD_C_A;
-    LD_B(0);
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(MBANK(awBGPals2));
-    LDH_addr_A(rSVBK);
-
-    PUSH_HL;
-    PUSH_BC;
-    LD_HL(wBGPals2);
-    LD_BC(8 * PALETTE_SIZE);
-    XOR_A_A;
-    CALL(aByteFill);
-    POP_BC;
-    POP_HL;
-
-    PUSH_HL;
-    LD_HL(mCrystalIntro_UnownFade_BWFade);
-    ADD_HL_BC;
-    ADD_HL_BC;
-    LD_A_hli;
-    LD_D_hl;
-    LD_E_A;
-    POP_HL;
-    LD_A_E;
-    LD_hli_A;
-    LD_A_D;
-    LD_hli_A;
-
-    PUSH_HL;
-    LD_HL(mCrystalIntro_UnownFade_BlackLBlueFade);
-    ADD_HL_BC;
-    ADD_HL_BC;
-    LD_A_hli;
-    LD_D_hl;
-    LD_E_A;
-    POP_HL;
-    LD_A_E;
-    LD_hli_A;
-    LD_A_D;
-    LD_hli_A;
-
-    PUSH_HL;
-    LD_HL(mCrystalIntro_UnownFade_BlackBlueFade);
-    ADD_HL_BC;
-    ADD_HL_BC;
-    LD_A_hli;
-    LD_D_hl;
-    LD_E_A;
-    POP_HL;
-    LD_A_E;
-    LD_hli_A;
-    LD_A_D;
-    LD_hli_A;
-
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    LD_A(TRUE);
-    LDH_addr_A(hCGBPalUpdate);
-    RET;
-
-
-BWFade:
-//  Fade between black and white.
-    for(int hue = 0; hue < 32; hue++){
-    //rgb ['hue', 'hue', 'hue']
-    }
-
-
-BlackLBlueFade:
-//  Fade between black and light blue.
-    for(int hue = 0; hue < 32; hue++){
-    //rgb ['0', 'hue / 2', 'hue']
-    }
-
-
-BlackBlueFade:
-//  Fade between black and blue.
-    for(int hue = 0; hue < 32; hue++){
-    //rgb ['0', '0', 'hue']
-    }
-
-    // return Intro_Scene20_AppearUnown();
-}
-
-static void CrystalIntro_UnownFade_Conv(uint8_t a){
+static void CrystalIntro_UnownFade(uint8_t a){
 // BWFade:
 //  Fade between black and white.
     // for(int hue = 0; hue < 32; hue++){
@@ -2635,146 +2444,7 @@ static void CrystalIntro_UnownFade_Conv(uint8_t a){
     // RET;
 }
 
-void Intro_Scene20_AppearUnown(void){
-//  Spawn the palette for the nth Unown
-    AND_A_A;
-    IF_NZ goto load_pal_2;
-
-    LD_HL(mIntro_Scene20_AppearUnown_pal1);
-    goto got_pointer;
-
-
-load_pal_2:
-    LD_HL(mIntro_Scene20_AppearUnown_pal2);
-
-
-got_pointer:
-    LD_A_addr(wIntroSceneTimer);
-    AND_A(0x7);
-    ADD_A_A;
-    ADD_A_A;
-    ADD_A_A;
-    LD_C_A;
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(MBANK(awBGPals2));
-    LDH_addr_A(rSVBK);
-
-    PUSH_BC;
-    LD_DE(wBGPals2);
-
-    LD_A_C;
-    ADD_A_E;
-    LD_E_A;
-    LD_A(0x0);
-    ADC_A_D;
-    LD_D_A;
-
-    LD_BC(1 * PALETTE_SIZE);
-    CALL(aCopyBytes);
-    POP_BC;
-
-    LD_DE(wBGPals1);
-    LD_A_C;
-    ADD_A_E;
-    LD_E_A;
-    LD_A(0x0);
-    ADC_A_D;
-    LD_D_A;
-
-    LD_BC(1 * PALETTE_SIZE);
-    CALL(aCopyBytes);
-
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    LD_A(TRUE);
-    LDH_addr_A(hCGBPalUpdate);
-    RET;
-
-
-// pal1:
-// INCLUDE "gfx/intro/unown_1.pal"
-
-
-// pal2:
-// INCLUDE "gfx/intro/unown_2.pal"
-
-    // return Intro_FadeUnownWordPals();
-}
-
-void Intro_FadeUnownWordPals(void){
-    ADD_A_A;
-    ADD_A_A;
-    ADD_A_A;
-    LD_E_A;
-    LD_D(0);
-    LD_HL(wBGPals2);
-    ADD_HL_DE;
-    for(int rept = 0; rept < 4; rept++){
-    INC_HL;
-    }
-    LD_A_addr(wIntroSceneTimer);
-    ADD_A_A;
-    LD_C_A;
-    LD_B(0);
-
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(MBANK(awBGPals2));
-    LDH_addr_A(rSVBK);
-
-    PUSH_HL;
-    LD_HL(mIntro_FadeUnownWordPals_FastFadePalettes);
-    ADD_HL_BC;
-    LD_A_hli;
-    LD_D_hl;
-    LD_E_A;
-    POP_HL;
-    LD_A_E;
-    LD_hli_A;
-    LD_A_D;
-    LD_hli_A;
-
-    PUSH_HL;
-    LD_HL(mIntro_FadeUnownWordPals_SlowFadePalettes);
-    ADD_HL_BC;
-    LD_A_hli;
-    LD_D_hl;
-    LD_E_A;
-    POP_HL;
-    LD_A_E;
-    LD_hli_A;
-    LD_A_D;
-    LD_hli_A;
-
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    LD_A(TRUE);
-    LDH_addr_A(hCGBPalUpdate);
-    RET;
-
-
-// FastFadePalettes:
-// hue = 31
-//     for(int rept = 0; rept < 8; rept++){
-//     //rgb ['hue', 'hue', 'hue']
-// hue -= 1
-//     //rgb ['hue', 'hue', 'hue']
-// hue -= 2
-//     }
-
-
-// SlowFadePalettes:
-// hue = 31
-//     for(int rept = 0; rept < 16; rept++){
-//     //rgb ['hue', 'hue', 'hue']
-// hue -= 1
-//     }
-
-    // return Intro_LoadTilemap();
-}
-
-static void Intro_FadeUnownWordPals_Conv(uint8_t a){
+static void Intro_FadeUnownWordPals(uint8_t a){
 // FastFadePalettes:
 // hue = 31
 //     for(int rept = 0; rept < 8; rept++){
@@ -2873,41 +2543,7 @@ static void Intro_FadeUnownWordPals_Conv(uint8_t a){
     // RET;
 }
 
-void Intro_LoadTilemap(void){
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(MBANK(awDecompressScratch));
-    LDH_addr_A(rSVBK);
-
-    LD_HL(wDecompressScratch);
-    decoord(0, 0, wTilemap);
-    LD_B(SCREEN_HEIGHT);
-
-row:
-    LD_C(SCREEN_WIDTH);
-
-col:
-    LD_A_hli;
-    LD_de_A;
-    INC_DE;
-    DEC_C;
-    IF_NZ goto col;
-    LD_A(BG_MAP_WIDTH - SCREEN_WIDTH);
-    ADD_A_L;
-    LD_L_A;
-    LD_A(0);
-    ADC_A_H;
-    LD_H_A;
-    DEC_B;
-    IF_NZ goto row;
-
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    RET;
-
-}
-
-static void Intro_LoadTilemap_Conv(uint8_t* tilemap){
+static void Intro_LoadTilemap(uint8_t* tilemap){
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(MBANK(awDecompressScratch));
@@ -3003,39 +2639,7 @@ static void Intro_ColoredSuicuneFrameSwap(void){
     // RET;
 }
 
-void Intro_RustleGrass(void){
-    LD_A_addr(wIntroSceneFrameCounter);
-    CP_A(36);
-    RET_NC ;
-    AND_A(0xc);
-    SRL_A;
-    LD_E_A;
-    LD_D(0);
-    LD_HL(mIntro_RustleGrass_RustlingGrassPointers);
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_addr_A(wRequested2bppSource);
-    LD_A_hli;
-    LD_addr_A(wRequested2bppSource + 1);
-    LD_A(LOW(vTiles2 + LEN_2BPP_TILE * 0x09));
-    LD_addr_A(wRequested2bppDest);
-    LD_A(HIGH(vTiles2 + LEN_2BPP_TILE * 0x09));
-    LD_addr_A(wRequested2bppDest + 1);
-    LD_A(4);
-    LD_addr_A(wRequested2bppSize);
-    RET;
-
-
-RustlingGrassPointers:
-    //dw ['IntroGrass1GFX'];
-    //dw ['IntroGrass2GFX'];
-    //dw ['IntroGrass3GFX'];
-    //dw ['IntroGrass2GFX'];
-
-    return Intro_SetCGBPalUpdate();
-}
-
-static void Intro_RustleGrass_Conv(void){
+static void Intro_RustleGrass(void){
     static const uint8_t* RustlingGrassPointers[] = {
         IntroGrass1GFX,
         IntroGrass2GFX,
@@ -3072,39 +2676,17 @@ static void Intro_RustleGrass_Conv(void){
 }
 
 // Useless function?
-static void Intro_SetCGBPalUpdate(void){
-    LD_A(TRUE);
-    LDH_addr_A(hCGBPalUpdate);
-    RET;
-}
+// static void Intro_SetCGBPalUpdate(void){
+    // LD_A(TRUE);
+    // LDH_addr_A(hCGBPalUpdate);
+    // RET;
+// }
 
-void Intro_ClearBGPals(void){
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(MBANK(awBGPals2));
-    LDH_addr_A(rSVBK);
-
-    LD_HL(wBGPals2);
-    LD_BC(16 * PALETTE_SIZE);
-    XOR_A_A;
-    CALL(aByteFill);
-
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    LD_A(TRUE);
-    LDH_addr_A(hCGBPalUpdate);
-    CALL(aDelayFrame);
-    CALL(aDelayFrame);
-    RET;
-
-}
-
-static void Intro_ClearBGPals_Conv(void){
+static void Intro_ClearBGPals(void){
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(MBANK(awBGPals2));
     // LDH_addr_A(rSVBK);
-    // wbank_push(MBANK(awBGPals2));
 
     // LD_HL(wBGPals2);
     // LD_BC(16 * PALETTE_SIZE);
@@ -3114,7 +2696,6 @@ static void Intro_ClearBGPals_Conv(void){
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
-    // wbank_pop;
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
     hram->hCGBPalUpdate = TRUE;
@@ -3229,31 +2810,11 @@ void Intro_DecompressRequest2bpp_64Tiles(void){
 //     gb_write(rSVBK, svbk);
 // }
 
-void Intro_ResetLYOverrides(void){
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(MBANK(awLYOverrides));
-    LDH_addr_A(rSVBK);
-
-    LD_HL(wLYOverrides);
-    LD_BC(wLYOverridesEnd - wLYOverrides);
-    XOR_A_A;
-    CALL(aByteFill);
-
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    LD_A(LOW(rSCX));
-    LDH_addr_A(hLCDCPointer);
-    RET;
-}
-
-static void Intro_ResetLYOverrides_Conv(void){
+static void Intro_ResetLYOverrides(void){
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(MBANK(awLYOverrides));
     // LDH_addr_A(rSVBK);
-    // uint8_t svbk = gb_read(rSVBK);
-    // gb_write(rSVBK, MBANK(awLYOverrides));
 
     // LD_HL(wLYOverrides);
     // LD_BC(wLYOverridesEnd - wLYOverrides);
@@ -3263,54 +2824,17 @@ static void Intro_ResetLYOverrides_Conv(void){
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
-    // gb_write(rSVBK, svbk);
     // LD_A(LOW(rSCX));
     // LDH_addr_A(hLCDCPointer);
     // RET;
     hram->hLCDCPointer = LOW(rSCX);
 }
 
-void Intro_PerspectiveScrollBG(void){
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(MBANK(awLYOverrides));
-    LDH_addr_A(rSVBK);
-// Scroll the grass every frame.
-// Scroll the trees every other frame and at half speed.
-// This creates an illusion of perspective.
-    LD_A_addr(wIntroSceneFrameCounter);
-    AND_A(0x1);
-    IF_Z goto skip;
-// trees in the back
-    LD_HL(wLYOverrides);
-    LD_A_hl;
-    INC_A;
-    LD_BC(0x5f);
-    CALL(aByteFill);
-
-skip:
-// grass in the front
-    LD_HL(wLYOverrides + 0x5f);
-    LD_A_hl;
-    INC_A;
-    INC_A;
-    LD_BC(0x31);
-    CALL(aByteFill);
-    LD_A_addr(wLYOverrides + 0);
-    LDH_addr_A(hSCX);
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    RET;
-
-}
-
-static void Intro_PerspectiveScrollBG_Conv(void){
+static void Intro_PerspectiveScrollBG(void){
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
-    // uint8_t svbk = gb_read(rSVBK);
     // LD_A(MBANK(awLYOverrides));
     // LDH_addr_A(rSVBK);
-    // gb_write(rSVBK, MBANK(awLYOverrides));
 // Scroll the grass every frame.
 // Scroll the trees every other frame and at half speed.
 // This creates an illusion of perspective.
@@ -3342,5 +2866,4 @@ static void Intro_PerspectiveScrollBG_Conv(void){
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // RET;
-    // gb_write(rSVBK, svbk);
 }

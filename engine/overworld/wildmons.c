@@ -1763,7 +1763,7 @@ void RandomUnseenWildMon(void){
     // FARCALL(aGetCallerLocation);
     // LD_D_B;
     // LD_E_C;
-    struct CallerLocation loc = GetCallerLocation_Conv();
+    struct CallerLocation loc = GetCallerLocation();
     // LD_HL(mJohtoGrassWildMons);
     // LD_BC(GRASS_WILDDATA_LENGTH);
     // CALL(aLookUpWildmonsForMapDE);
@@ -1866,7 +1866,7 @@ void RandomPhoneWildMon(void){
     // FARCALL(aGetCallerLocation);
     // LD_D_B;
     // LD_E_C;
-    struct CallerLocation loc = GetCallerLocation_Conv();
+    struct CallerLocation loc = GetCallerLocation();
     // LD_HL(mJohtoGrassWildMons);
     // LD_BC(GRASS_WILDDATA_LENGTH);
     // CALL(aLookUpWildmonsForMapDE);
@@ -1917,7 +1917,7 @@ void RandomPhoneWildMon(void){
 //  Get a random monster owned by the trainer who's calling.
 void RandomPhoneMon(void){
     // FARCALL(aGetCallerLocation);
-    struct CallerLocation loc = GetCallerLocation_Conv();
+    struct CallerLocation loc = GetCallerLocation();
     // LD_HL(mTrainerGroups);
     // LD_A_D;
     // DEC_A;

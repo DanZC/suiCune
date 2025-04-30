@@ -304,7 +304,7 @@ void MapRadio(void){
     // LD_A_addr(wScriptVar);
     // LD_E_A;
     // FARCALL(aPlayRadio);
-    PlayRadio_Conv(wram->wScriptVar);
+    PlayRadio(wram->wScriptVar);
     // RET;
 }
 

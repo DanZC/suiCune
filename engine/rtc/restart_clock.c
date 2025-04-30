@@ -95,7 +95,7 @@ static void RestartClock_PrintTime(void) {
     // LD_C_A;
     // decoord(11, 8, wTilemap);
     // FARCALL(aPrintHoursMins);
-    PrintHoursMins_Conv(coord(11, 8, wram->wTilemap), wram->wRestartClockHour, wram->wRestartClockMin);
+    PrintHoursMins(coord(11, 8, wram->wTilemap), wram->wRestartClockHour, wram->wRestartClockMin);
     // LD_A_addr(wRestartClockPrevDivision);
     // LD_DE((CHAR_SPACE << 8) | CHAR_SPACE);
     // CALL(aRestartClock_PlaceChars);

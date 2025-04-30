@@ -34,36 +34,127 @@ static uint8_t* gPokedexShowDescPtr;
 static uint8_t gPokedexShowTextBuffer[SCREEN_WIDTH*2];
 static uint8_t* gPokedexShowTextPtr;
 
-void PlayRadioShow(void){
-//  If we're already in the radio program proper, we don't need to be here.
-    LD_A_addr(wCurRadioLine);
-    CP_A(POKE_FLUTE_RADIO);
-    IF_NC goto ok;
-//  If Team Rocket is not occupying the radio tower, we don't need to be here.
-    LD_A_addr(wStatusFlags2);
-    BIT_A(STATUSFLAGS2_ROCKETS_IN_RADIO_TOWER_F);
-    IF_Z goto ok;
-//  If we're in Kanto, we don't need to be here.
-    CALL(aIsInJohto);
-    AND_A_A;
-    IF_NZ goto ok;
-//  Team Rocket broadcasts on all stations.
-    LD_A(ROCKET_RADIO);
-    LD_addr_A(wCurRadioLine);
+static void PrintRadioLine(uint8_t a);
+static void RadioScroll(void);
+static void PlaceRadioString(tile_t* hl, uint8_t* de, uint8_t line);
 
-ok:
-//  Jump to the currently loaded station.  The index to which we need to jump is in wCurRadioLine.
-    //jumptable ['RadioJumptable', 'wCurRadioLine']
+static void OaksPKMNTalk1(void);
+static void OaksPKMNTalk2(void);
+static void OaksPKMNTalk3(void);
+static void OaksPKMNTalk4(void);
+static void OaksPKMNTalk5(void);
+static void OaksPKMNTalk6(void);
+static void OaksPKMNTalk7(void);
+static void OaksPKMNTalk8(void);
+static void OaksPKMNTalk9(void);
+static void OaksPKMNTalk10(void);
+static void OaksPKMNTalk11(void);
+static void OaksPKMNTalk12(void);
+static void OaksPKMNTalk13(void);
+static void OaksPKMNTalk14(void);
 
-    CALL(aRadioJumptable);
-}
+static void CopyBottomLineToTopLine(void);
+static void ClearBottomLine(void);
+
+static void PokedexShow1(void);
+static void PokedexShow2(void);
+static void PokedexShow3(void);
+static void PokedexShow4(void);
+static void PokedexShow5(void);
+static void PokedexShow6(void);
+static void PokedexShow7(void);
+static void PokedexShow8(void);
+static void CopyDexEntry(void);
+static uint8_t* CopyDexEntryPart1(void);
+static uint8_t* CopyDexEntryPart2(void);
+
+static void BenMonMusic1(void);
+static void BenMonMusic2(void);
+static void BenMonMusic3(void);
+static void FernMonMusic1(void);
+static void FernMonMusic2(void);
+static void BenFernMusic4(void);
+static void BenFernMusic5(void);
+static void BenFernMusic6(void);
+static void BenFernMusic7(void);
+static void StartPokemonMusicChannel(void);
+
+static void LuckyNumberShow1(void);
+static void LuckyNumberShow2(void);
+static void LuckyNumberShow3(void);
+static void LuckyNumberShow4(void);
+static void LuckyNumberShow5(void);
+static void LuckyNumberShow6(void);
+static void LuckyNumberShow7(void);
+static void LuckyNumberShow8(void);
+static void LuckyNumberShow9(void);
+static void LuckyNumberShow10(void);
+static void LuckyNumberShow11(void);
+static void LuckyNumberShow12(void);
+static void LuckyNumberShow13(void);
+static void LuckyNumberShow14(void);
+static void LuckyNumberShow15(void);
+
+static void PeoplePlaces1(void);
+static void PeoplePlaces2(void);
+static void PeoplePlaces3(void);
+static void PeoplePlaces4(void);
+static void PeoplePlaces5(void);
+static void PeoplePlaces6(void);
+static void PeoplePlaces7(void);
+
+static void RocketRadio1(void);
+static void RocketRadio2(void);
+static void RocketRadio3(void);
+static void RocketRadio4(void);
+static void RocketRadio5(void);
+static void RocketRadio6(void);
+static void RocketRadio7(void);
+static void RocketRadio8(void);
+static void RocketRadio9(void);
+static void RocketRadio10(void);
+
+static void PokeFluteRadio(void);
+static void UnownRadio(void);
+static void EvolutionRadio(void);
+
+static void BuenasPassword1(void);
+static void BuenasPassword2(void);
+static void BuenasPassword3(void);
+static void BuenasPassword4(void);
+static void BuenasPassword5(void);
+static void BuenasPassword6(void);
+static void BuenasPassword7(void);
+static void BuenasPasswordAfterMidnight(const txt_cmd_s* hl);
+static void BuenasPassword8(void);
+static void BuenasPassword9(void);
+static void BuenasPassword10(void);
+static void BuenasPassword11(void);
+static void BuenasPassword12(void);
+static void BuenasPassword13(void);
+static void BuenasPassword14(void);
+static void BuenasPassword15(void);
+static void BuenasPassword16(void);
+static void BuenasPassword17(void);
+static void BuenasPassword18(void);
+static void BuenasPassword19(void);
+static void BuenasPassword20(void);
+static void BuenasPassword21(void);
+static bool BuenasPasswordCheckTime(void);
+
+static void CopyRadioTextToRAM(const struct TextCmd* hl);
+static void StartRadioStation(void);
+static void NextRadioLine(const struct TextCmd* hl, uint8_t station);
 
 //  If we're not already in the radio program proper
 //  and Team Rocket is occupying the radio tower
 //  and we're in Johto.
-void PlayRadioShow_Conv(void){
+void PlayRadioShow(void){
+//  If we're already in the radio program proper, we don't need to be here.
     if((wram->wCurRadioLine < POKE_FLUTE_RADIO)
+//  If Team Rocket is not occupying the radio tower, we don't need to be here.
     && (bit_test(wram->wStatusFlags2, STATUSFLAGS2_ROCKETS_IN_RADIO_TOWER_F))
+//  If we're in Kanto, we don't need to be here.
     && (IsInJohto() == JOHTO_REGION))
     {
         //  Team Rocket broadcasts on all stations.
@@ -166,7 +257,7 @@ void (*const Radio_Stations[])(void) = {
     [BUENAS_PASSWORD_19] = BuenasPassword19,
     [BUENAS_PASSWORD_20] = BuenasPassword20,
     [BUENAS_PASSWORD_21] = BuenasPassword21,
-    [RADIO_SCROLL] = RadioScroll_Conv,
+    [RADIO_SCROLL] = RadioScroll,
 //  More Pokemon Channel stuff
     [POKEDEX_SHOW_6] = PokedexShow6,
     [POKEDEX_SHOW_7] = PokedexShow7,
@@ -277,39 +368,9 @@ void RadioJumptable(void){
     //dw ['PokedexShow7'];  // $56
     //dw ['PokedexShow8'];  // $57
     //assert_table_length ['NUM_RADIO_SEGMENTS']
-
-    return PrintRadioLine();
 }
 
-void PrintRadioLine(void){
-    LD_addr_A(wNextRadioLine);
-    LD_HL(wRadioText);
-    LD_A_addr(wNumRadioLinesPrinted);
-    CP_A(2);
-    IF_NC goto print;
-    INC_HL;
-    LD_hl(TX_START);
-    INC_A;
-    LD_addr_A(wNumRadioLinesPrinted);
-    CP_A(2);
-    IF_NZ goto print;
-    bccoord(1, 16, wTilemap);
-    CALL(aPlaceHLTextAtBC);
-    goto skip;
-
-print:
-    CALL(aPrintTextboxText);
-
-skip:
-    LD_A(RADIO_SCROLL);
-    LD_addr_A(wCurRadioLine);
-    LD_A(100);
-    LD_addr_A(wRadioTextDelay);
-    RET;
-
-}
-
-void PrintRadioLine_Conv(uint8_t a){
+static void PrintRadioLine(uint8_t a){
     wram->wNextRadioLine = a;
     // REG_HL = wRadioText;
     uint8_t lines_printed = wram->wNumRadioLinesPrinted;
@@ -360,25 +421,7 @@ next:
 
 }
 
-void RadioScroll(void){
-    LD_HL(wRadioTextDelay);
-    LD_A_hl;
-    AND_A_A;
-    IF_Z goto proceed;
-    DEC_hl;
-    RET;
-
-proceed:
-    LD_A_addr(wNextRadioLine);
-    LD_addr_A(wCurRadioLine);
-    LD_A_addr(wNumRadioLinesPrinted);
-    CP_A(1);
-    CALL_NZ (aCopyBottomLineToTopLine);
-    JP(mClearBottomLine);
-
-}
-
-void RadioScroll_Conv(void){
+static void RadioScroll(void){
     if(wram->wRadioTextDelay == 0)
     {
         wram->wCurRadioLine = wram->wNextRadioLine;
@@ -394,34 +437,51 @@ void RadioScroll_Conv(void){
     wram->wRadioTextDelay--;
 }
 
-void OaksPKMNTalk1(void){
+static void OaksPKMNTalk1(void){
+    static const txt_cmd_s OPT_IntroText1[] = {
+        text_far(v_OPT_IntroText1)
+        text_end
+    };
     // LD_A(5);
     // LD_addr_A(wOaksPKMNTalkSegmentCounter);
     wram->wOaksPKMNTalkSegmentCounter = 5;
     // CALL(aStartRadioStation);
-    StartRadioStation_Conv();
+    StartRadioStation();
     // LD_HL(mOPT_IntroText1);
     // LD_A(OAKS_POKEMON_TALK_2);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(OPT_IntroText1, OAKS_POKEMON_TALK_2);
+    return NextRadioLine(OPT_IntroText1, OAKS_POKEMON_TALK_2);
 }
 
-void OaksPKMNTalk2(void){
+static void OaksPKMNTalk2(void){
+    static const txt_cmd_s OPT_IntroText2[] = {
+        text_far(v_OPT_IntroText2)
+        text_end
+    };
     // LD_HL(mOPT_IntroText2);
     // LD_A(OAKS_POKEMON_TALK_3);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(OPT_IntroText2, OAKS_POKEMON_TALK_3);
+    return NextRadioLine(OPT_IntroText2, OAKS_POKEMON_TALK_3);
 }
 
-void OaksPKMNTalk3(void){
+static void OaksPKMNTalk3(void){
+    static const txt_cmd_s OPT_IntroText3[] = {
+        text_far(v_OPT_IntroText3)
+        text_end
+    };
     // LD_HL(mOPT_IntroText3);
     // LD_A(OAKS_POKEMON_TALK_4);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(OPT_IntroText3, OAKS_POKEMON_TALK_4);
+    return NextRadioLine(OPT_IntroText3, OAKS_POKEMON_TALK_4);
 }
 
 //  Choose a random route, and a random Pokemon from that route.
-void OaksPKMNTalk4(void){
+static void OaksPKMNTalk4(void){
+    static const txt_cmd_s OPT_OakText1[] = {
+        text_far(v_OPT_OakText1)
+        text_end
+    };
+
     uint8_t a;
 // sample:
     do {
@@ -459,7 +519,7 @@ void OaksPKMNTalk4(void){
             // POP_BC;
             // LD_A(OAKS_POKEMON_TALK);
             // JP(mPrintRadioLine);
-            return PrintRadioLine_Conv(OAKS_POKEMON_TALK);
+            return PrintRadioLine(OAKS_POKEMON_TALK);
         }
         // INC_HL;
         // CP_A_B;
@@ -544,58 +604,40 @@ void OaksPKMNTalk4(void){
     GetLandmarkName_Conv(GetWorldMapLocation(map.mapGroup, map.mapNumber));
     // LD_HL(mOPT_OakText1);
     // CALL(aCopyRadioTextToRAM);
-    CopyRadioTextToRAM_Conv(OPT_OakText1);
+    CopyRadioTextToRAM(OPT_OakText1);
     // LD_A(OAKS_POKEMON_TALK_5);
     // JP(mPrintRadioLine);
-    return PrintRadioLine_Conv(OAKS_POKEMON_TALK_5);
+    return PrintRadioLine(OAKS_POKEMON_TALK_5);
 // INCLUDE "data/radio/oaks_pkmn_talk_routes.asm"
 }
 
-void OaksPKMNTalk5(void){
+static void OaksPKMNTalk5(void){
+    static const txt_cmd_s OPT_OakText2[] = {
+        text_far(v_OPT_OakText2)
+        text_end
+    };
     // LD_HL(mOPT_OakText2);
     // LD_A(OAKS_POKEMON_TALK_6);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(OPT_OakText2, OAKS_POKEMON_TALK_6);
+    return NextRadioLine(OPT_OakText2, OAKS_POKEMON_TALK_6);
 }
 
-void OaksPKMNTalk6(void){
+static void OaksPKMNTalk6(void){
+    static const txt_cmd_s OPT_OakText3[] = {
+        text_far(v_OPT_OakText3)
+        text_end
+    };
     // LD_HL(mOPT_OakText3);
     // LD_A(OAKS_POKEMON_TALK_7);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(OPT_OakText3, OAKS_POKEMON_TALK_7);
+    return NextRadioLine(OPT_OakText3, OAKS_POKEMON_TALK_7);
 }
 
-const txt_cmd_s OPT_IntroText1[] = {
-    text_far(v_OPT_IntroText1)
-    text_end
-};
-
-const txt_cmd_s OPT_IntroText2[] = {
-    text_far(v_OPT_IntroText2)
-    text_end
-};
-
-const txt_cmd_s OPT_IntroText3[] = {
-    text_far(v_OPT_IntroText3)
-    text_end
-};
-
-const txt_cmd_s OPT_OakText1[] = {
-    text_far(v_OPT_OakText1)
-    text_end
-};
-
-const txt_cmd_s OPT_OakText2[] = {
-    text_far(v_OPT_OakText2)
-    text_end
-};
-
-const txt_cmd_s OPT_OakText3[] = {
-    text_far(v_OPT_OakText3)
-    text_end
-};
-
-void OaksPKMNTalk7(void){
+static void OaksPKMNTalk7(void){
+    static const txt_cmd_s OPT_MaryText1[] = {
+        text_far(v_OPT_MaryText1)
+        text_end
+    };
     // LD_A_addr(wCurPartySpecies);
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetPokemonName);
@@ -603,15 +645,10 @@ void OaksPKMNTalk7(void){
     // LD_HL(mOPT_MaryText1);
     // LD_A(OAKS_POKEMON_TALK_8);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(OPT_MaryText1, OAKS_POKEMON_TALK_8);
+    return NextRadioLine(OPT_MaryText1, OAKS_POKEMON_TALK_8);
 }
 
-const txt_cmd_s OPT_MaryText1[] = {
-    text_far(v_OPT_MaryText1)
-    text_end
-};
-
-void OaksPKMNTalk8(void){
+static void OaksPKMNTalk8(void){
     static const txt_cmd_s OPT_SweetAdorablyText[] = {
         text_far(v_OPT_SweetAdorablyText)
         text_end
@@ -713,10 +750,10 @@ void OaksPKMNTalk8(void){
     // LD_L_A;
     // LD_A(OAKS_POKEMON_TALK_9);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(Adverbs[a], OAKS_POKEMON_TALK_9);
+    return NextRadioLine(Adverbs[a], OAKS_POKEMON_TALK_9);
 }
 
-void OaksPKMNTalk9(void){
+static void OaksPKMNTalk9(void){
     static const txt_cmd_s OPT_CuteText[] = {
         text_far(v_OPT_CuteText)
         text_end
@@ -826,17 +863,24 @@ void OaksPKMNTalk9(void){
         // LD_addr_A(wOaksPKMNTalkSegmentCounter);
         wram->wOaksPKMNTalkSegmentCounter = 5;
         // LD_A(OAKS_POKEMON_TALK_10);
-        return NextRadioLine_Conv(txt, OAKS_POKEMON_TALK_10);
+        return NextRadioLine(txt, OAKS_POKEMON_TALK_10);
     }
 
 // ok:
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(txt, OAKS_POKEMON_TALK_4);
+    return NextRadioLine(txt, OAKS_POKEMON_TALK_4);
 }
 
-void OaksPKMNTalk10(void){
+static void OaksPKMNTalk10(void){
+    static const txt_cmd_s OPT_PokemonChannelText[] = {
+        text_far(v_OPT_PokemonChannelText)
+        text_end
+    };
+    static const txt_cmd_s OPT_RestartText[] = {
+        text_end
+    };
     // FARCALL(aRadioMusicRestartPokemonChannel);
-    RadioMusicRestartPokemonChannel_Conv();
+    RadioMusicRestartPokemonChannel();
     // LD_HL(mOPT_RestartText);
     // CALL(aPrintText);
     PrintText(OPT_RestartText);
@@ -854,16 +898,7 @@ void OaksPKMNTalk10(void){
     // RET;
 }
 
-const txt_cmd_s OPT_PokemonChannelText[] = {
-    text_far(v_OPT_PokemonChannelText)
-    text_end
-};
-
-const txt_cmd_s OPT_RestartText[] = {
-    text_end
-};
-
-void OaksPKMNTalk11(void){
+static void OaksPKMNTalk11(void){
     static const char pokemon_string[] = "#MON@";
     // LD_HL(wRadioTextDelay);
     // DEC_hl;
@@ -874,10 +909,10 @@ void OaksPKMNTalk11(void){
     // LD_DE(mOaksPKMNTalk11_pokemon_string);
     // LD_A(OAKS_POKEMON_TALK_12);
     // JP(mPlaceRadioString);
-    return PlaceRadioString_Conv(coord(9, 14, wram->wTilemap), U82CA(wram->wStringBuffer2, pokemon_string), OAKS_POKEMON_TALK_12);
+    return PlaceRadioString(coord(9, 14, wram->wTilemap), U82CA(wram->wStringBuffer2, pokemon_string), OAKS_POKEMON_TALK_12);
 }
 
-void OaksPKMNTalk12(void){
+static void OaksPKMNTalk12(void){
     static const char pokemon_channel_string[] = "#MON Channel@";
     // LD_HL(wRadioTextDelay);
     // DEC_hl;
@@ -888,10 +923,10 @@ void OaksPKMNTalk12(void){
     // LD_DE(mOaksPKMNTalk12_pokemon_channel_string);
     // LD_A(OAKS_POKEMON_TALK_13);
     // JP(mPlaceRadioString);
-    return PlaceRadioString_Conv(coord(1, 16, wram->wTilemap), U82CA(wram->wStringBuffer2, pokemon_channel_string), OAKS_POKEMON_TALK_13);
+    return PlaceRadioString(coord(1, 16, wram->wTilemap), U82CA(wram->wStringBuffer2, pokemon_channel_string), OAKS_POKEMON_TALK_13);
 }
 
-void OaksPKMNTalk13(void){
+static void OaksPKMNTalk13(void){
     // LD_HL(wRadioTextDelay);
     // DEC_hl;
     // RET_NZ ;
@@ -901,10 +936,10 @@ void OaksPKMNTalk13(void){
     // LD_DE(mOaksPKMNTalk13_terminator);
     // LD_A(OAKS_POKEMON_TALK_14);
     // JP(mPlaceRadioString);
-    return PlaceRadioString_Conv(coord(12, 16, wram->wTilemap), U82C("@"), OAKS_POKEMON_TALK_14);
+    return PlaceRadioString(coord(12, 16, wram->wTilemap), U82C("@"), OAKS_POKEMON_TALK_14);
 }
 
-void OaksPKMNTalk14(void){
+static void OaksPKMNTalk14(void){
     // LD_HL(wRadioTextDelay);
     // DEC_hl;
     // RET_NZ ;
@@ -912,7 +947,7 @@ void OaksPKMNTalk14(void){
         return;
     // LD_DE(MUSIC_POKEMON_TALK);
     // CALLFAR(aRadioMusicRestartDE);
-    RadioMusicRestartDE_Conv(MUSIC_POKEMON_TALK);
+    RadioMusicRestartDE(MUSIC_POKEMON_TALK);
     // LD_HL(mOaksPKMNTalk14_terminator);
     // CALL(aPrintText);
     PrintText((struct TextCmd[]){
@@ -934,15 +969,7 @@ void OaksPKMNTalk14(void){
     // RET;
 }
 
-void PlaceRadioString(void){
-    LD_addr_A(wCurRadioLine);
-    LD_A(100);
-    LD_addr_A(wRadioTextDelay);
-    JP(mPlaceString);
-
-}
-
-void PlaceRadioString_Conv(tile_t* hl, uint8_t* de, uint8_t line){
+static void PlaceRadioString(tile_t* hl, uint8_t* de, uint8_t line){
     // LD_addr_A(wCurRadioLine);
     wram->wCurRadioLine = line;
     // LD_A(100);
@@ -952,7 +979,7 @@ void PlaceRadioString_Conv(tile_t* hl, uint8_t* de, uint8_t line){
     return PlaceStringSimple(de, hl);
 }
 
-void CopyBottomLineToTopLine(void){
+static void CopyBottomLineToTopLine(void){
     // hlcoord(0, 15, wTilemap);
     // decoord(0, 13, wTilemap);
     // LD_BC(SCREEN_WIDTH * 2);
@@ -960,7 +987,7 @@ void CopyBottomLineToTopLine(void){
     CopyBytes(coord(0, 13, wram->wTilemap), coord(0, 15, wram->wTilemap), SCREEN_WIDTH * 2);
 }
 
-void ClearBottomLine(void){
+static void ClearBottomLine(void){
     // hlcoord(1, 15, wTilemap);
     // LD_BC(SCREEN_WIDTH - 2);
     // LD_A(0x7f);
@@ -1000,10 +1027,14 @@ PokedexEntryBanks:
     return PokedexShow1();
 }
 
-void PokedexShow1(void){
+static const txt_cmd_s PokedexShowText[] = {
+    text_far(v_PokedexShowText)
+    text_end
+};
+
+static void PokedexShow1(void){
     // CALL(aStartRadioStation);
-    StartRadioStation_Conv();
-    // TODO: Convert Pokedex Show
+    StartRadioStation();
     // wram->wNumRadioLinesPrinted = 1;
     // return;
 
@@ -1033,10 +1064,10 @@ void PokedexShow1(void){
     // LD_HL(mPokedexShowText);
     // LD_A(POKEDEX_SHOW_2);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(PokedexShowText, POKEDEX_SHOW_2);
+    return NextRadioLine(PokedexShowText, POKEDEX_SHOW_2);
 }
 
-void PokedexShow2(void){
+static void PokedexShow2(void){
     // LD_A_addr(wCurPartySpecies);
     // DEC_A;
     species_t a = wram->wCurPartySpecies - 1;
@@ -1057,18 +1088,18 @@ void PokedexShow2(void){
     // PUSH_AF;
     // PUSH_HL;
     // CALL(aCopyDexEntryPart1);
-    uint8_t* dst = CopyDexEntryPart1_Conv();
+    uint8_t* dst = CopyDexEntryPart1();
     // DEC_HL;
     // LD_hl(0x57);
     *(dst - 1) = 0x57;
     gPokedexShowText[1].cmd = TX_END;
     // LD_HL(wPokedexShowPointerAddr);
     // CALL(aCopyRadioTextToRAM);
-    CopyRadioTextToRAM_Conv(gPokedexShowText);
+    CopyRadioTextToRAM(gPokedexShowText);
     // POP_HL;
     // POP_AF;
     // CALL(aCopyDexEntryPart2);
-    uint8_t* de = CopyDexEntryPart2_Conv();
+    uint8_t* de = CopyDexEntryPart2();
     // for(int rept = 0; rept < 4; rept++){
     // INC_HL;
     // }
@@ -1079,78 +1110,58 @@ void PokedexShow2(void){
     gPokedexShowDescPtr = de;
     // LD_A(POKEDEX_SHOW_3);
     // JP(mPrintRadioLine);
-    return PrintRadioLine_Conv(POKEDEX_SHOW_3);
+    return PrintRadioLine(POKEDEX_SHOW_3);
 }
 
-void PokedexShow3(void){
+static void PokedexShow3(void){
     // CALL(aCopyDexEntry);
-    CopyDexEntry_Conv();
+    CopyDexEntry();
     // LD_A(POKEDEX_SHOW_4);
     // JP(mPrintRadioLine);
-    return PrintRadioLine_Conv(POKEDEX_SHOW_4);
+    return PrintRadioLine(POKEDEX_SHOW_4);
 }
 
-void PokedexShow4(void){
+static void PokedexShow4(void){
     // CALL(aCopyDexEntry);
-    CopyDexEntry_Conv();
+    CopyDexEntry();
     // LD_A(POKEDEX_SHOW_5);
     // JP(mPrintRadioLine);
-    return PrintRadioLine_Conv(POKEDEX_SHOW_5);
+    return PrintRadioLine(POKEDEX_SHOW_5);
 }
 
-void PokedexShow5(void){
+static void PokedexShow5(void){
     // CALL(aCopyDexEntry);
-    CopyDexEntry_Conv();
+    CopyDexEntry();
     // LD_A(POKEDEX_SHOW_6);
     // JP(mPrintRadioLine);
-    return PrintRadioLine_Conv(POKEDEX_SHOW_6);
+    return PrintRadioLine(POKEDEX_SHOW_6);
 }
 
-void PokedexShow6(void){
+static void PokedexShow6(void){
     // CALL(aCopyDexEntry);
-    CopyDexEntry_Conv();
+    CopyDexEntry();
     // LD_A(POKEDEX_SHOW_7);
     // JP(mPrintRadioLine);
-    return PrintRadioLine_Conv(POKEDEX_SHOW_7);
+    return PrintRadioLine(POKEDEX_SHOW_7);
 }
 
-void PokedexShow7(void){
+static void PokedexShow7(void){
     // CALL(aCopyDexEntry);
-    CopyDexEntry_Conv();
+    CopyDexEntry();
     // LD_A(POKEDEX_SHOW_8);
     // JP(mPrintRadioLine);
-    return PrintRadioLine_Conv(POKEDEX_SHOW_8);
+    return PrintRadioLine(POKEDEX_SHOW_8);
 }
 
-void PokedexShow8(void){
+static void PokedexShow8(void){
     // CALL(aCopyDexEntry);
-    CopyDexEntry_Conv();
+    CopyDexEntry();
     // LD_A(POKEDEX_SHOW);
     // JP(mPrintRadioLine);
-    return PrintRadioLine_Conv(POKEDEX_SHOW);
+    return PrintRadioLine(POKEDEX_SHOW);
 }
 
-void CopyDexEntry(void){
-    LD_A_addr(wPokedexShowPointerAddr);
-    LD_L_A;
-    LD_A_addr(wPokedexShowPointerAddr + 1);
-    LD_H_A;
-    LD_A_addr(wPokedexShowPointerBank);
-    PUSH_AF;
-    PUSH_HL;
-    CALL(aCopyDexEntryPart1);
-    DEC_HL;
-    LD_hl(0x57);
-    LD_HL(wPokedexShowPointerAddr);
-    CALL(aCopyRadioTextToRAM);
-    POP_HL;
-    POP_AF;
-    CALL(aCopyDexEntryPart2);
-    RET;
-
-}
-
-void CopyDexEntry_Conv(void){
+static void CopyDexEntry(void){
     // LD_A_addr(wPokedexShowPointerAddr);
     // LD_L_A;
     // LD_A_addr(wPokedexShowPointerAddr + 1);
@@ -1159,45 +1170,22 @@ void CopyDexEntry_Conv(void){
     // PUSH_AF;
     // PUSH_HL;
     // CALL(aCopyDexEntryPart1);
-    uint8_t* hl = CopyDexEntryPart1_Conv();
+    uint8_t* hl = CopyDexEntryPart1();
     // DEC_HL;
     // LD_hl(0x57);
-    *(hl - 1) = 0x57;
+    *(hl - 1) = CHAR_DONE;
     // LD_HL(wPokedexShowPointerAddr);
     // CALL(aCopyRadioTextToRAM);
-    CopyRadioTextToRAM_Conv(gPokedexShowText);
+    CopyRadioTextToRAM(gPokedexShowText);
     // POP_HL;
     // POP_AF;
     // CALL(aCopyDexEntryPart2);
-    CopyDexEntryPart2_Conv();
+    CopyDexEntryPart2();
     // RET;
 
 }
 
-void CopyDexEntryPart1(void){
-    LD_DE(wPokedexShowPointerBank);
-    LD_BC(SCREEN_WIDTH - 1);
-    CALL(aFarCopyBytes);
-    LD_HL(wPokedexShowPointerAddr);
-    LD_hl(TX_START);
-    INC_HL;
-    LD_hl(0x4f);
-    INC_HL;
-
-loop:
-    LD_A_hli;
-    CP_A(0x50);
-    RET_Z ;
-    CP_A(0x4e);
-    RET_Z ;
-    CP_A(0x5f);
-    RET_Z ;
-    goto loop;
-
-    return CopyDexEntryPart2();
-}
-
-uint8_t* CopyDexEntryPart1_Conv(void){
+static uint8_t* CopyDexEntryPart1(void){
     // LD_DE(wPokedexShowPointerBank);
     // LD_BC(SCREEN_WIDTH - 1);
     // CALL(aFarCopyBytes);
@@ -1228,32 +1216,7 @@ uint8_t* CopyDexEntryPart1_Conv(void){
     // return CopyDexEntryPart2();
 }
 
-void CopyDexEntryPart2(void){
-    LD_D_A;
-
-loop:
-    LD_A_D;
-    CALL(aGetFarByte);
-    INC_HL;
-    CP_A(0x50);
-    IF_Z goto okay;
-    CP_A(0x4e);
-    IF_Z goto okay;
-    CP_A(0x5f);
-    IF_NZ goto loop;
-
-okay:
-    LD_A_L;
-    LD_addr_A(wPokedexShowPointerAddr);
-    LD_A_H;
-    LD_addr_A(wPokedexShowPointerAddr + 1);
-    LD_A_D;
-    LD_addr_A(wPokedexShowPointerBank);
-    RET;
-
-}
-
-uint8_t* CopyDexEntryPart2_Conv(void){
+static uint8_t* CopyDexEntryPart2(void){
     // LD_D_A;
     uint8_t* de = gPokedexShowDescPtr;
     uint8_t a;
@@ -1283,97 +1246,142 @@ uint8_t* CopyDexEntryPart2_Conv(void){
     // RET;
 }
 
-const txt_cmd_s PokedexShowText[] = {
-    text_far(v_PokedexShowText)
+static const txt_cmd_s BenIntroText1[] = {
+    text_far(v_BenIntroText1)
     text_end
 };
 
-void BenMonMusic1(void){
+static const txt_cmd_s BenIntroText2[] = {
+    text_far(v_BenIntroText2)
+    text_end
+};
+
+static const txt_cmd_s BenIntroText3[] = {
+    text_far(v_BenIntroText3)
+    text_end
+};
+
+static const txt_cmd_s FernIntroText1[] = {
+    text_far(v_FernIntroText1)
+    text_end
+};
+
+static const txt_cmd_s FernIntroText2[] = {
+    text_far(v_FernIntroText2)
+    text_end
+};
+
+static const txt_cmd_s BenFernText1[] = {
+    text_far(v_BenFernText1)
+    text_end
+};
+
+static const txt_cmd_s BenFernText2A[] = {
+    text_far(v_BenFernText2A)
+    text_end
+};
+
+static const txt_cmd_s BenFernText2B[] = {
+    text_far(v_BenFernText2B)
+    text_end
+};
+
+static const txt_cmd_s BenFernText3A[] = {
+    text_far(v_BenFernText3A)
+    text_end
+};
+
+static const txt_cmd_s BenFernText3B[] = {
+    text_far(v_BenFernText3B)
+    text_end
+};
+
+static void BenMonMusic1(void){
     // CALL(aStartPokemonMusicChannel);
     StartPokemonMusicChannel();
     // LD_HL(mBenIntroText1);
     // LD_A(POKEMON_MUSIC_2);
     // JP(mNextRadioLine);
-    NextRadioLine_Conv(BenIntroText1, POKEMON_MUSIC_2);
+    NextRadioLine(BenIntroText1, POKEMON_MUSIC_2);
 }
 
-void BenMonMusic2(void){
+static void BenMonMusic2(void){
     // LD_HL(mBenIntroText2);
     // LD_A(POKEMON_MUSIC_3);
     // JP(mNextRadioLine);
-    NextRadioLine_Conv(BenIntroText2, POKEMON_MUSIC_3);
+    NextRadioLine(BenIntroText2, POKEMON_MUSIC_3);
 }
 
-void BenMonMusic3(void){
+static void BenMonMusic3(void){
     // LD_HL(mBenIntroText3);
     // LD_A(POKEMON_MUSIC_4);
     // JP(mNextRadioLine);
-    NextRadioLine_Conv(BenIntroText3, POKEMON_MUSIC_4);
+    NextRadioLine(BenIntroText3, POKEMON_MUSIC_4);
 }
 
-void FernMonMusic1(void){
+static void FernMonMusic1(void){
     // CALL(aStartPokemonMusicChannel);
     StartPokemonMusicChannel();
     // LD_HL(mFernIntroText1);
     // LD_A(LETS_ALL_SING_2);
     // JP(mNextRadioLine);
-    NextRadioLine_Conv(FernIntroText1, LETS_ALL_SING_2);
+    NextRadioLine(FernIntroText1, LETS_ALL_SING_2);
 }
 
-void FernMonMusic2(void){
+static void FernMonMusic2(void){
     // LD_HL(mFernIntroText2);
     // LD_A(POKEMON_MUSIC_4);
     // JP(mNextRadioLine);
-    NextRadioLine_Conv(FernIntroText2, POKEMON_MUSIC_4);
+    NextRadioLine(FernIntroText2, POKEMON_MUSIC_4);
 }
 
-void BenFernMusic4(void){
+static void BenFernMusic4(void){
     // LD_HL(mBenFernText1);
     // LD_A(POKEMON_MUSIC_5);
     // JP(mNextRadioLine);
-    NextRadioLine_Conv(BenFernText1, POKEMON_MUSIC_5);
+    NextRadioLine(BenFernText1, POKEMON_MUSIC_5);
 }
 
-void BenFernMusic5(void){
+static void BenFernMusic5(void){
     // CALL(aGetWeekday);
     // AND_A(1);
     // LD_HL(mBenFernText2A);
     // IF_Z goto SunTueThurSun;
     // LD_HL(mBenFernText2B);
     if((GetWeekday() & 1) == 0) {
-        return NextRadioLine_Conv(BenFernText2A, POKEMON_MUSIC_6);
+        return NextRadioLine(BenFernText2A, POKEMON_MUSIC_6);
     }
     else {
-        return NextRadioLine_Conv(BenFernText2B, POKEMON_MUSIC_6);
+        return NextRadioLine(BenFernText2B, POKEMON_MUSIC_6);
     }
 // SunTueThurSun:
     // LD_A(POKEMON_MUSIC_6);
     // JP(mNextRadioLine);
 }
 
-void BenFernMusic6(void){
+static void BenFernMusic6(void){
     // CALL(aGetWeekday);
     // AND_A(1);
     // LD_HL(mBenFernText3A);
     // IF_Z goto SunTueThurSun;
     // LD_HL(mBenFernText3B);
     if((GetWeekday() & 1) == 0) {
-        return NextRadioLine_Conv(BenFernText3A, POKEMON_MUSIC_7);
+        return NextRadioLine(BenFernText3A, POKEMON_MUSIC_7);
     }
     else {
-        return NextRadioLine_Conv(BenFernText3B, POKEMON_MUSIC_7);
+        return NextRadioLine(BenFernText3B, POKEMON_MUSIC_7);
     }
 // SunTueThurSun:
     // LD_A(POKEMON_MUSIC_7);
     // JP(mNextRadioLine);
 }
 
-void BenFernMusic7(void){
+static void BenFernMusic7(void){
     // RET;
     return;
 }
 
-void StartPokemonMusicChannel(void){
+static void StartPokemonMusicChannel(void){
     // CALL(aRadioTerminator);
     // CALL(aPrintText);
     PrintText(RadioTerminator());
@@ -1383,69 +1391,85 @@ void StartPokemonMusicChannel(void){
     // IF_Z goto SunTueThurSun;
     // LD_DE(MUSIC_POKEMON_LULLABY);
     if(GetWeekday() & 1) {
-        RadioMusicRestartDE_Conv(MUSIC_POKEMON_LULLABY);
+        RadioMusicRestartDE(MUSIC_POKEMON_LULLABY);
     }
     else {
     // SunTueThurSun:
-        RadioMusicRestartDE_Conv(MUSIC_POKEMON_MARCH);
+        RadioMusicRestartDE(MUSIC_POKEMON_MARCH);
         // CALLFAR(aRadioMusicRestartDE);
     }
     // RET;
 }
 
-const txt_cmd_s BenIntroText1[] = {
-    text_far(v_BenIntroText1)
+// Lucky Number Show
+static const txt_cmd_s LC_Text1[] = {
+    text_far(v_LC_Text1)
     text_end
 };
 
-const txt_cmd_s BenIntroText2[] = {
-    text_far(v_BenIntroText2)
+static const txt_cmd_s LC_Text2[] = {
+    text_far(v_LC_Text2)
     text_end
 };
 
-const txt_cmd_s BenIntroText3[] = {
-    text_far(v_BenIntroText3)
+static const txt_cmd_s LC_Text3[] = {
+    text_far(v_LC_Text3)
     text_end
 };
 
-const txt_cmd_s FernIntroText1[] = {
-    text_far(v_FernIntroText1)
+static const txt_cmd_s LC_Text4[] = {
+    text_far(v_LC_Text4)
     text_end
 };
 
-const txt_cmd_s FernIntroText2[] = {
-    text_far(v_FernIntroText2)
+static const txt_cmd_s LC_Text5[] = {
+    text_far(v_LC_Text5)
     text_end
 };
 
-const txt_cmd_s BenFernText1[] = {
-    text_far(v_BenFernText1)
+static const txt_cmd_s LC_Text6[] = {
+    text_far(v_LC_Text6)
     text_end
 };
 
-const txt_cmd_s BenFernText2A[] = {
-    text_far(v_BenFernText2A)
+static const txt_cmd_s LC_Text7[] = {
+    text_far(v_LC_Text7)
     text_end
 };
 
-const txt_cmd_s BenFernText2B[] = {
-    text_far(v_BenFernText2B)
+static const txt_cmd_s LC_Text8[] = {
+    text_far(v_LC_Text8)
     text_end
 };
 
-const txt_cmd_s BenFernText3A[] = {
-    text_far(v_BenFernText3A)
+static const txt_cmd_s LC_Text9[] = {
+    text_far(v_LC_Text9)
     text_end
 };
 
-const txt_cmd_s BenFernText3B[] = {
-    text_far(v_BenFernText3B)
+static const txt_cmd_s LC_Text10[] = {
+    text_far(v_LC_Text10)
     text_end
 };
 
-void LuckyNumberShow1(void){
+static const txt_cmd_s LC_Text11[] = {
+    text_far(v_LC_Text11)
+    text_end
+};
+
+static const txt_cmd_s LC_DragText1[] = {
+    text_far(v_LC_DragText1)
+    text_end
+};
+
+static const txt_cmd_s LC_DragText2[] = {
+    text_far(v_LC_DragText2)
+    text_end
+};
+
+static void LuckyNumberShow1(void){
     // CALL(aStartRadioStation);
-    StartRadioStation_Conv();
+    StartRadioStation();
     // CALLFAR(aCheckLuckyNumberShowFlag);
     CheckLuckyNumberShowFlag();
     // IF_NC goto dontreset;
@@ -1457,52 +1481,52 @@ void LuckyNumberShow1(void){
     // LD_HL(mLC_Text1);
     // LD_A(LUCKY_NUMBER_SHOW_2);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(LC_Text1, LUCKY_NUMBER_SHOW_2);
+    return NextRadioLine(LC_Text1, LUCKY_NUMBER_SHOW_2);
 }
 
-void LuckyNumberShow2(void){
+static void LuckyNumberShow2(void){
     // LD_HL(mLC_Text2);
     // LD_A(LUCKY_NUMBER_SHOW_3);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(LC_Text2, LUCKY_NUMBER_SHOW_3);
+    return NextRadioLine(LC_Text2, LUCKY_NUMBER_SHOW_3);
 }
 
-void LuckyNumberShow3(void){
+static void LuckyNumberShow3(void){
     // LD_HL(mLC_Text3);
     // LD_A(LUCKY_NUMBER_SHOW_4);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(LC_Text3, LUCKY_NUMBER_SHOW_4);
+    return NextRadioLine(LC_Text3, LUCKY_NUMBER_SHOW_4);
 }
 
-void LuckyNumberShow4(void){
+static void LuckyNumberShow4(void){
     // LD_HL(mLC_Text4);
     // LD_A(LUCKY_NUMBER_SHOW_5);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(LC_Text4, LUCKY_NUMBER_SHOW_5);
+    return NextRadioLine(LC_Text4, LUCKY_NUMBER_SHOW_5);
 }
 
-void LuckyNumberShow5(void){
+static void LuckyNumberShow5(void){
     // LD_HL(mLC_Text5);
     // LD_A(LUCKY_NUMBER_SHOW_6);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(LC_Text5, LUCKY_NUMBER_SHOW_6);
+    return NextRadioLine(LC_Text5, LUCKY_NUMBER_SHOW_6);
 }
 
-void LuckyNumberShow6(void){
+static void LuckyNumberShow6(void){
     // LD_HL(mLC_Text6);
     // LD_A(LUCKY_NUMBER_SHOW_7);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(LC_Text6, LUCKY_NUMBER_SHOW_7);
+    return NextRadioLine(LC_Text6, LUCKY_NUMBER_SHOW_7);
 }
 
-void LuckyNumberShow7(void){
+static void LuckyNumberShow7(void){
     // LD_HL(mLC_Text7);
     // LD_A(LUCKY_NUMBER_SHOW_8);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(LC_Text7, LUCKY_NUMBER_SHOW_8);
+    return NextRadioLine(LC_Text7, LUCKY_NUMBER_SHOW_8);
 }
 
-void LuckyNumberShow8(void){
+static void LuckyNumberShow8(void){
     // LD_HL(wStringBuffer1);
     // LD_DE(wLuckyIDNumber);
     // LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 5);
@@ -1514,182 +1538,199 @@ void LuckyNumberShow8(void){
     // LD_HL(mLC_Text8);
     // LD_A(LUCKY_NUMBER_SHOW_9);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(LC_Text8, LUCKY_NUMBER_SHOW_9);
+    return NextRadioLine(LC_Text8, LUCKY_NUMBER_SHOW_9);
 }
 
-void LuckyNumberShow9(void){
+static void LuckyNumberShow9(void){
     // LD_HL(mLC_Text9);
     // LD_A(LUCKY_NUMBER_SHOW_10);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(LC_Text9, LUCKY_NUMBER_SHOW_10);
+    return NextRadioLine(LC_Text9, LUCKY_NUMBER_SHOW_10);
 }
 
-void LuckyNumberShow10(void){
+static void LuckyNumberShow10(void){
     // LD_HL(mLC_Text7);
     // LD_A(LUCKY_NUMBER_SHOW_11);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(LC_Text7, LUCKY_NUMBER_SHOW_11);
+    return NextRadioLine(LC_Text7, LUCKY_NUMBER_SHOW_11);
 }
 
-void LuckyNumberShow11(void){
+static void LuckyNumberShow11(void){
     // LD_HL(mLC_Text8);
     // LD_A(LUCKY_NUMBER_SHOW_12);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(LC_Text8, LUCKY_NUMBER_SHOW_12);
+    return NextRadioLine(LC_Text8, LUCKY_NUMBER_SHOW_12);
 }
 
-void LuckyNumberShow12(void){
+static void LuckyNumberShow12(void){
     // LD_HL(mLC_Text10);
     // LD_A(LUCKY_NUMBER_SHOW_13);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(LC_Text10, LUCKY_NUMBER_SHOW_13);
+    return NextRadioLine(LC_Text10, LUCKY_NUMBER_SHOW_13);
 }
 
-void LuckyNumberShow13(void){
+static void LuckyNumberShow13(void){
     // LD_HL(mLC_Text11);
     // CALL(aRandom);
     // AND_A_A;
     // LD_A(LUCKY_CHANNEL);
     // IF_NZ goto okay;
     if(Random() != 0) {
-        return NextRadioLine_Conv(LC_Text11, LUCKY_CHANNEL);
+        return NextRadioLine(LC_Text11, LUCKY_CHANNEL);
     }
     else { // 1/256 chance.
     // LD_A(LUCKY_NUMBER_SHOW_14);
     // okay:
         // JP(mNextRadioLine);
-        return NextRadioLine_Conv(LC_Text11, LUCKY_NUMBER_SHOW_14);
+        return NextRadioLine(LC_Text11, LUCKY_NUMBER_SHOW_14);
     }
 }
 
-void LuckyNumberShow14(void){
+static void LuckyNumberShow14(void){
     // LD_HL(mLC_DragText1);
     // LD_A(LUCKY_NUMBER_SHOW_15);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(LC_DragText1, LUCKY_NUMBER_SHOW_15);
+    return NextRadioLine(LC_DragText1, LUCKY_NUMBER_SHOW_15);
 }
 
-void LuckyNumberShow15(void){
+static void LuckyNumberShow15(void){
     // LD_HL(mLC_DragText2);
     // LD_A(LUCKY_CHANNEL);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(LC_DragText2, LUCKY_CHANNEL);
+    return NextRadioLine(LC_DragText2, LUCKY_CHANNEL);
 }
 
-const txt_cmd_s LC_Text1[] = {
-    text_far(v_LC_Text1)
+// People and Places
+static const txt_cmd_s PnP_CuteText[] = {
+    text_far(v_PnP_CuteText)
     text_end
 };
 
-const txt_cmd_s LC_Text2[] = {
-    text_far(v_LC_Text2)
+static const txt_cmd_s PnP_LazyText[] = {
+    text_far(v_PnP_LazyText)
     text_end
 };
 
-const txt_cmd_s LC_Text3[] = {
-    text_far(v_LC_Text3)
+static const txt_cmd_s PnP_HappyText[] = {
+    text_far(v_PnP_HappyText)
     text_end
 };
 
-const txt_cmd_s LC_Text4[] = {
-    text_far(v_LC_Text4)
+static const txt_cmd_s PnP_NoisyText[] = {
+    text_far(v_PnP_NoisyText)
     text_end
 };
 
-const txt_cmd_s LC_Text5[] = {
-    text_far(v_LC_Text5)
+static const txt_cmd_s PnP_PrecociousText[] = {
+    text_far(v_PnP_PrecociousText)
     text_end
 };
 
-const txt_cmd_s LC_Text6[] = {
-    text_far(v_LC_Text6)
+static const txt_cmd_s PnP_BoldText[] = {
+    text_far(v_PnP_BoldText)
     text_end
 };
 
-const txt_cmd_s LC_Text7[] = {
-    text_far(v_LC_Text7)
+static const txt_cmd_s PnP_PickyText[] = {
+    text_far(v_PnP_PickyText)
     text_end
 };
 
-const txt_cmd_s LC_Text8[] = {
-    text_far(v_LC_Text8)
+static const txt_cmd_s PnP_SortOfOKText[] = {
+    text_far(v_PnP_SortOfOKText)
     text_end
 };
 
-const txt_cmd_s LC_Text9[] = {
-    text_far(v_LC_Text9)
+static const txt_cmd_s PnP_SoSoText[] = {
+    text_far(v_PnP_SoSoText)
     text_end
 };
 
-const txt_cmd_s LC_Text10[] = {
-    text_far(v_LC_Text10)
+static const txt_cmd_s PnP_GreatText[] = {
+    text_far(v_PnP_GreatText)
     text_end
 };
 
-const txt_cmd_s LC_Text11[] = {
-    text_far(v_LC_Text11)
+static const txt_cmd_s PnP_MyTypeText[] = {
+    text_far(v_PnP_MyTypeText)
     text_end
 };
 
-const txt_cmd_s LC_DragText1[] = {
-    text_far(v_LC_DragText1)
+static const txt_cmd_s PnP_CoolText[] = {
+    text_far(v_PnP_CoolText)
     text_end
 };
 
-const txt_cmd_s LC_DragText2[] = {
-    text_far(v_LC_DragText2)
+static const txt_cmd_s PnP_InspiringText[] = {
+    text_far(v_PnP_InspiringText)
     text_end
 };
 
-void PeoplePlaces1(void){
+static const txt_cmd_s PnP_WeirdText[] = {
+    text_far(v_PnP_WeirdText)
+    text_end
+};
+
+static const txt_cmd_s PnP_RightForMeText[] = {
+    text_far(v_PnP_RightForMeText)
+    text_end
+};
+
+static const txt_cmd_s PnP_OddText[] = {
+    text_far(v_PnP_OddText)
+    text_end
+};
+
+static void PeoplePlaces1(void){
+    static const txt_cmd_s PnP_Text1[] = {
+        text_far(v_PnP_Text1)
+        text_end
+    };
     // CALL(aStartRadioStation);
-    StartRadioStation_Conv();
+    StartRadioStation();
     // LD_HL(mPnP_Text1);
     // LD_A(PLACES_AND_PEOPLE_2);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(PnP_Text1, PLACES_AND_PEOPLE_2);
+    return NextRadioLine(PnP_Text1, PLACES_AND_PEOPLE_2);
 }
 
-void PeoplePlaces2(void){
+static void PeoplePlaces2(void){
+    static const txt_cmd_s PnP_Text2[] = {
+        text_far(v_PnP_Text2)
+        text_end
+    };
     // LD_HL(mPnP_Text2);
     // LD_A(PLACES_AND_PEOPLE_3);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(PnP_Text2, PLACES_AND_PEOPLE_3);
+    return NextRadioLine(PnP_Text2, PLACES_AND_PEOPLE_3);
 }
 
-void PeoplePlaces3(void){
+static void PeoplePlaces3(void){
+    static const txt_cmd_s PnP_Text3[] = {
+        text_far(v_PnP_Text3)
+        text_end
+    };
     // LD_HL(mPnP_Text3);
     // CALL(aRandom);
     // CP_A(49 percent - 1);
     // LD_A(PLACES_AND_PEOPLE_4);  // People
     // IF_C goto ok;
     if(Random() < 49 percent - 1) {
-        return NextRadioLine_Conv(PnP_Text3, PLACES_AND_PEOPLE_4);
+        return NextRadioLine(PnP_Text3, PLACES_AND_PEOPLE_4);
     }
     else {
         // LD_A(PLACES_AND_PEOPLE_6);  // Places
     // ok:
         // JP(mNextRadioLine);
-        return NextRadioLine_Conv(PnP_Text3, PLACES_AND_PEOPLE_6);
+        return NextRadioLine(PnP_Text3, PLACES_AND_PEOPLE_6);
     }
 }
 
-const txt_cmd_s PnP_Text1[] = {
-    text_far(v_PnP_Text1)
-    text_end
-};
-
-const txt_cmd_s PnP_Text2[] = {
-    text_far(v_PnP_Text2)
-    text_end
-};
-
-const txt_cmd_s PnP_Text3[] = {
-    text_far(v_PnP_Text3)
-    text_end
-};
-
-void PeoplePlaces4(void){
+static void PeoplePlaces4(void){
+    const txt_cmd_s PnP_Text4[] = {
+        text_far(v_PnP_Text4)
+        text_end
+    };
 //  //  People
     uint8_t a;
     const uint8_t* hl;
@@ -1744,16 +1785,11 @@ void PeoplePlaces4(void){
     // LD_HL(mPnP_Text4);
     // LD_A(PLACES_AND_PEOPLE_5);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(PnP_Text4, PLACES_AND_PEOPLE_5);
+    return NextRadioLine(PnP_Text4, PLACES_AND_PEOPLE_5);
 // INCLUDE "data/radio/pnp_hidden_people.asm"
 }
 
-const txt_cmd_s PnP_Text4[] = {
-    text_far(v_PnP_Text4)
-    text_end
-};
-
-void PeoplePlaces5(void){
+static void PeoplePlaces5(void){
     static const struct TextCmd* const Adjectives[] = {
         //table_width ['2', 'PeoplePlaces5.Adjectives']
         PnP_CuteText,
@@ -1793,105 +1829,29 @@ void PeoplePlaces5(void){
     // LD_A(PLACES_AND_PEOPLE);
     // IF_C goto ok;
     if(Random() < 4 percent) {
-        return NextRadioLine_Conv(hl, PLACES_AND_PEOPLE);
+        return NextRadioLine(hl, PLACES_AND_PEOPLE);
     }
     // CALL(aRandom);
     // CP_A(49 percent - 1);
     // LD_A(PLACES_AND_PEOPLE_4);  // People
     // IF_C goto ok;
     else if(Random() < 49 percent - 1) {
-        return NextRadioLine_Conv(hl, PLACES_AND_PEOPLE_4);
+        return NextRadioLine(hl, PLACES_AND_PEOPLE_4);
     }
     // LD_A(PLACES_AND_PEOPLE_6);  // Places
     else {
-        return NextRadioLine_Conv(hl, PLACES_AND_PEOPLE_6);
+        return NextRadioLine(hl, PLACES_AND_PEOPLE_6);
     }
 
 // ok:
     // JP(mNextRadioLine);
 }
 
-const txt_cmd_s PnP_CuteText[] = {
-    text_far(v_PnP_CuteText)
-    text_end
-};
-
-const txt_cmd_s PnP_LazyText[] = {
-    text_far(v_PnP_LazyText)
-    text_end
-};
-
-const txt_cmd_s PnP_HappyText[] = {
-    text_far(v_PnP_HappyText)
-    text_end
-};
-
-const txt_cmd_s PnP_NoisyText[] = {
-    text_far(v_PnP_NoisyText)
-    text_end
-};
-
-const txt_cmd_s PnP_PrecociousText[] = {
-    text_far(v_PnP_PrecociousText)
-    text_end
-};
-
-const txt_cmd_s PnP_BoldText[] = {
-    text_far(v_PnP_BoldText)
-    text_end
-};
-
-const txt_cmd_s PnP_PickyText[] = {
-    text_far(v_PnP_PickyText)
-    text_end
-};
-
-const txt_cmd_s PnP_SortOfOKText[] = {
-    text_far(v_PnP_SortOfOKText)
-    text_end
-};
-
-const txt_cmd_s PnP_SoSoText[] = {
-    text_far(v_PnP_SoSoText)
-    text_end
-};
-
-const txt_cmd_s PnP_GreatText[] = {
-    text_far(v_PnP_GreatText)
-    text_end
-};
-
-const txt_cmd_s PnP_MyTypeText[] = {
-    text_far(v_PnP_MyTypeText)
-    text_end
-};
-
-const txt_cmd_s PnP_CoolText[] = {
-    text_far(v_PnP_CoolText)
-    text_end
-};
-
-const txt_cmd_s PnP_InspiringText[] = {
-    text_far(v_PnP_InspiringText)
-    text_end
-};
-
-const txt_cmd_s PnP_WeirdText[] = {
-    text_far(v_PnP_WeirdText)
-    text_end
-};
-
-const txt_cmd_s PnP_RightForMeText[] = {
-    text_far(v_PnP_RightForMeText)
-    text_end
-};
-
-const txt_cmd_s PnP_OddText[] = {
-    text_far(v_PnP_OddText)
-    text_end
-};
-
-void PeoplePlaces6(void){
+static void PeoplePlaces6(void){
+    static const txt_cmd_s PnP_Text5[] = {
+        text_far(v_PnP_Text5)
+        text_end
+    };
 //  //  Places
     uint8_t a;
     do {
@@ -1916,16 +1876,11 @@ void PeoplePlaces6(void){
     // LD_HL(mPnP_Text5);
     // LD_A(PLACES_AND_PEOPLE_7);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(PnP_Text5, PLACES_AND_PEOPLE_7);
+    return NextRadioLine(PnP_Text5, PLACES_AND_PEOPLE_7);
 // INCLUDE "data/radio/pnp_places.asm"
 }
 
-const txt_cmd_s PnP_Text5[] = {
-    text_far(v_PnP_Text5)
-    text_end
-};
-
-void PeoplePlaces7(void){
+static void PeoplePlaces7(void){
     static const struct TextCmd* Adjectives[] = {
     //table_width ['2', 'PeoplePlaces7.Adjectives']
         PnP_CuteText,
@@ -1960,186 +1915,270 @@ void PeoplePlaces7(void){
     // LD_H_hl;
     // LD_L_A;
     // CALL(aCopyRadioTextToRAM);
-    CopyRadioTextToRAM_Conv(Adjectives[Random() & 0xf]);
+    CopyRadioTextToRAM(Adjectives[Random() & 0xf]);
     // CALL(aRandom);
     // CP_A(4 percent);
     // LD_A(PLACES_AND_PEOPLE);
     // IF_C goto ok;
     if(Random() < 4 percent) {
-        return PrintRadioLine_Conv(PLACES_AND_PEOPLE);
+        return PrintRadioLine(PLACES_AND_PEOPLE);
     }
     // CALL(aRandom);
     // CP_A(49 percent - 1);
     // LD_A(PLACES_AND_PEOPLE_4);  // People
     // IF_C goto ok;
     else if(Random() < 49 percent - 1) {
-        return PrintRadioLine_Conv(PLACES_AND_PEOPLE_4);
+        return PrintRadioLine(PLACES_AND_PEOPLE_4);
     }
     // LD_A(PLACES_AND_PEOPLE_6);  // Places
     else {
-        return PrintRadioLine_Conv(PLACES_AND_PEOPLE_6);
+        return PrintRadioLine(PLACES_AND_PEOPLE_6);
     }
 // ok:
     // JP(mPrintRadioLine);
 }
 
-void RocketRadio1(void){
+// Rocket Radio
+static void RocketRadio1(void){
+    static const txt_cmd_s RocketRadioText1[] = {
+        text_far(v_RocketRadioText1)
+        text_end
+    };
     // CALL(aStartRadioStation);
-    StartRadioStation_Conv();
+    StartRadioStation();
     // LD_HL(mRocketRadioText1);
     // LD_A(ROCKET_RADIO_2);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(RocketRadioText1, ROCKET_RADIO_2);
+    return NextRadioLine(RocketRadioText1, ROCKET_RADIO_2);
 }
 
-void RocketRadio2(void){
+static void RocketRadio2(void){
+    static const txt_cmd_s RocketRadioText2[] = {
+        text_far(v_RocketRadioText2)
+        text_end
+    };
     // LD_HL(mRocketRadioText2);
     // LD_A(ROCKET_RADIO_3);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(RocketRadioText2, ROCKET_RADIO_3);
+    return NextRadioLine(RocketRadioText2, ROCKET_RADIO_3);
 }
 
-void RocketRadio3(void){
+static void RocketRadio3(void){
+    static const txt_cmd_s RocketRadioText3[] = {
+        text_far(v_RocketRadioText3)
+        text_end
+    };
     // LD_HL(mRocketRadioText3);
     // LD_A(ROCKET_RADIO_4);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(RocketRadioText3, ROCKET_RADIO_4);
+    return NextRadioLine(RocketRadioText3, ROCKET_RADIO_4);
 }
 
-void RocketRadio4(void){
+static void RocketRadio4(void){
+    static const txt_cmd_s RocketRadioText4[] = {
+        text_far(v_RocketRadioText4)
+        text_end
+    };
     // LD_HL(mRocketRadioText4);
     // LD_A(ROCKET_RADIO_5);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(RocketRadioText4, ROCKET_RADIO_5);
+    return NextRadioLine(RocketRadioText4, ROCKET_RADIO_5);
 }
 
-void RocketRadio5(void){
+static void RocketRadio5(void){
+    static const txt_cmd_s RocketRadioText5[] = {
+        text_far(v_RocketRadioText5)
+        text_end
+    };
     // LD_HL(mRocketRadioText5);
     // LD_A(ROCKET_RADIO_6);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(RocketRadioText5, ROCKET_RADIO_6);
+    return NextRadioLine(RocketRadioText5, ROCKET_RADIO_6);
 }
 
-void RocketRadio6(void){
+static void RocketRadio6(void){
+    static const txt_cmd_s RocketRadioText6[] = {
+        text_far(v_RocketRadioText6)
+        text_end
+    };
     // LD_HL(mRocketRadioText6);
     // LD_A(ROCKET_RADIO_7);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(RocketRadioText6, ROCKET_RADIO_7);
+    return NextRadioLine(RocketRadioText6, ROCKET_RADIO_7);
 }
 
-void RocketRadio7(void){
+static void RocketRadio7(void){
+    static const txt_cmd_s RocketRadioText7[] = {
+        text_far(v_RocketRadioText7)
+        text_end
+    };
     // LD_HL(mRocketRadioText7);
     // LD_A(ROCKET_RADIO_8);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(RocketRadioText7, ROCKET_RADIO_8);
+    return NextRadioLine(RocketRadioText7, ROCKET_RADIO_8);
 }
 
-void RocketRadio8(void){
+static void RocketRadio8(void){
+    static const txt_cmd_s RocketRadioText8[] = {
+        text_far(v_RocketRadioText8)
+        text_end
+    };
     // LD_HL(mRocketRadioText8);
     // LD_A(ROCKET_RADIO_9);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(RocketRadioText8, ROCKET_RADIO_9);
+    return NextRadioLine(RocketRadioText8, ROCKET_RADIO_9);
 }
 
-void RocketRadio9(void){
+static void RocketRadio9(void){
+    static const txt_cmd_s RocketRadioText9[] = {
+        text_far(v_RocketRadioText9)
+        text_end
+    };
     // LD_HL(mRocketRadioText9);
     // LD_A(ROCKET_RADIO_10);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(RocketRadioText9, ROCKET_RADIO_10);
+    return NextRadioLine(RocketRadioText9, ROCKET_RADIO_10);
 }
 
-void RocketRadio10(void){
+static void RocketRadio10(void){
+    static const txt_cmd_s RocketRadioText10[] = {
+        text_far(v_RocketRadioText10)
+        text_end
+    };
     // LD_HL(mRocketRadioText10);
     // LD_A(ROCKET_RADIO);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(RocketRadioText10, ROCKET_RADIO);
+    return NextRadioLine(RocketRadioText10, ROCKET_RADIO);
 }
 
-const txt_cmd_s RocketRadioText1[] = {
-    text_far(v_RocketRadioText1)
-    text_end
-};
-
-const txt_cmd_s RocketRadioText2[] = {
-    text_far(v_RocketRadioText2)
-    text_end
-};
-
-const txt_cmd_s RocketRadioText3[] = {
-    text_far(v_RocketRadioText3)
-    text_end
-};
-
-const txt_cmd_s RocketRadioText4[] = {
-    text_far(v_RocketRadioText4)
-    text_end
-};
-
-const txt_cmd_s RocketRadioText5[] = {
-    text_far(v_RocketRadioText5)
-    text_end
-};
-
-const txt_cmd_s RocketRadioText6[] = {
-    text_far(v_RocketRadioText6)
-    text_end
-};
-
-const txt_cmd_s RocketRadioText7[] = {
-    text_far(v_RocketRadioText7)
-    text_end
-};
-
-const txt_cmd_s RocketRadioText8[] = {
-    text_far(v_RocketRadioText8)
-    text_end
-};
-
-const txt_cmd_s RocketRadioText9[] = {
-    text_far(v_RocketRadioText9)
-    text_end
-};
-
-const txt_cmd_s RocketRadioText10[] = {
-    text_far(v_RocketRadioText10)
-    text_end
-};
-
-void PokeFluteRadio(void){
+static void PokeFluteRadio(void){
     // CALL(aStartRadioStation);
-    StartRadioStation_Conv();
+    StartRadioStation();
     // LD_A(1);
     // LD_addr_A(wNumRadioLinesPrinted);
     wram->wNumRadioLinesPrinted = 1;
     // RET;
 }
 
-void UnownRadio(void){
+static void UnownRadio(void){
     // CALL(aStartRadioStation);
-    StartRadioStation_Conv();
+    StartRadioStation();
     // LD_A(1);
     // LD_addr_A(wNumRadioLinesPrinted);
     wram->wNumRadioLinesPrinted = 1;
     // RET;
 }
 
-void EvolutionRadio(void){
+static void EvolutionRadio(void){
     // CALL(aStartRadioStation);
-    StartRadioStation_Conv();
+    StartRadioStation();
     // LD_A(1);
     // LD_addr_A(wNumRadioLinesPrinted);
     wram->wNumRadioLinesPrinted = 1;
     // RET;
 }
 
-void BuenasPassword1(void){
+// Buena's Password
+static const char BuenasPasswordChannelName[] = "BUENA\'S PASSWORD@";
+
+static const txt_cmd_s BuenaRadioText1[] = {
+    text_far(v_BuenaRadioText1)
+    text_end
+};
+
+static const txt_cmd_s BuenaRadioText2[] = {
+    text_far(v_BuenaRadioText2)
+    text_end
+};
+
+static const txt_cmd_s BuenaRadioText3[] = {
+    text_far(v_BuenaRadioText3)
+    text_end
+};
+
+static const txt_cmd_s BuenaRadioText4[] = {
+    text_far(v_BuenaRadioText4)
+    text_end
+};
+
+static const txt_cmd_s BuenaRadioText5[] = {
+    text_far(v_BuenaRadioText5)
+    text_end
+};
+
+static const txt_cmd_s BuenaRadioText6[] = {
+    text_far(v_BuenaRadioText6)
+    text_end
+};
+
+static const txt_cmd_s BuenaRadioText7[] = {
+    text_far(v_BuenaRadioText7)
+    text_end
+};
+
+static const txt_cmd_s BuenaRadioMidnightText1[] = {
+    text_far(v_BuenaRadioMidnightText1)
+    text_end
+};
+
+static const txt_cmd_s BuenaRadioMidnightText2[] = {
+    text_far(v_BuenaRadioMidnightText2)
+    text_end
+};
+
+static const txt_cmd_s BuenaRadioMidnightText3[] = {
+    text_far(v_BuenaRadioMidnightText3)
+    text_end
+};
+
+static const txt_cmd_s BuenaRadioMidnightText4[] = {
+    text_far(v_BuenaRadioMidnightText4)
+    text_end
+};
+
+static const txt_cmd_s BuenaRadioMidnightText5[] = {
+    text_far(v_BuenaRadioMidnightText5)
+    text_end
+};
+
+static const txt_cmd_s BuenaRadioMidnightText6[] = {
+    text_far(v_BuenaRadioMidnightText6)
+    text_end
+};
+
+static const txt_cmd_s BuenaRadioMidnightText7[] = {
+    text_far(v_BuenaRadioMidnightText7)
+    text_end
+};
+
+static const txt_cmd_s BuenaRadioMidnightText8[] = {
+    text_far(v_BuenaRadioMidnightText8)
+    text_end
+};
+
+static const txt_cmd_s BuenaRadioMidnightText9[] = {
+    text_far(v_BuenaRadioMidnightText9)
+    text_end
+};
+
+static const txt_cmd_s BuenaRadioMidnightText10[] = {
+    text_far(v_BuenaRadioMidnightText10)
+    text_end
+};
+
+static const txt_cmd_s BuenaOffTheAirText[] = {
+    text_far(v_BuenaOffTheAirText)
+    text_end
+};
+
+static void BuenasPassword1(void){
 //  Determine if we need to be here
     // CALL(aBuenasPasswordCheckTime);
     // JP_NC (mBuenasPassword1_PlayPassword);
     if(!BuenasPasswordCheckTime()) {
     // PlayPassword:
         // CALL(aStartRadioStation);
-        StartRadioStation_Conv();
+        StartRadioStation();
         // LDH_A_addr(hBGMapMode);
         // PUSH_AF;
         uint8_t bgMapMode = hram->hBGMapMode;
@@ -2156,7 +2195,7 @@ void BuenasPassword1(void){
         // LD_HL(mBuenaRadioText1);
         // LD_A(BUENAS_PASSWORD_2);
         // JP(mNextRadioLine);
-        return NextRadioLine_Conv(BuenaRadioText1, BUENAS_PASSWORD_2);
+        return NextRadioLine(BuenaRadioText1, BUENAS_PASSWORD_2);
     }
     // LD_A_addr(wNumRadioLinesPrinted);
     // AND_A_A;
@@ -2167,14 +2206,14 @@ void BuenasPassword1(void){
     return BuenasPassword8();
 }
 
-void BuenasPassword2(void){
+static void BuenasPassword2(void){
     // LD_HL(mBuenaRadioText2);
     // LD_A(BUENAS_PASSWORD_3);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(BuenaRadioText2, BUENAS_PASSWORD_3);
+    return NextRadioLine(BuenaRadioText2, BUENAS_PASSWORD_3);
 }
 
-void BuenasPassword3(void){
+static void BuenasPassword3(void){
     // CALL(aBuenasPasswordCheckTime);
     // LD_HL(mBuenaRadioText3);
     // JP_C (mBuenasPasswordAfterMidnight);
@@ -2182,10 +2221,10 @@ void BuenasPassword3(void){
         return BuenasPasswordAfterMidnight(BuenaRadioText3);
     // LD_A(BUENAS_PASSWORD_4);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(BuenaRadioText3, BUENAS_PASSWORD_4);
+    return NextRadioLine(BuenaRadioText3, BUENAS_PASSWORD_4);
 }
 
-void BuenasPassword4(void){
+static void BuenasPassword4(void){
     // CALL(aBuenasPasswordCheckTime);
     // JP_C (mBuenasPassword8);
     if(BuenasPasswordCheckTime())
@@ -2234,121 +2273,16 @@ void BuenasPassword4(void){
     // LD_C_A;
     uint8_t c = wram->wBuenasPassword;
     // CALL(aGetBuenasPassword);
-    GetBuenasPassword_Conv(&c);
+    GetBuenasPassword(&c);
     // LD_HL(mBuenaRadioText4);
     // LD_A(BUENAS_PASSWORD_5);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(BuenaRadioText4, BUENAS_PASSWORD_5);
-}
-
-void GetBuenasPassword(void){
-//  The password indices are held in c.  High nybble contains the group index, low nybble contains the word index.
-//  Load the password group pointer in hl.
-    LD_A_C;
-    SWAP_A;
-    AND_A(0xf);
-    LD_HL(mBuenasPasswordTable);
-    LD_D(0);
-    LD_E_A;
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-//  Get the password type and store it in b.
-    LD_A_hli;
-    LD_B_A;
-    PUSH_HL;
-    INC_HL;
-//  Get the password index.
-    LD_A_C;
-    AND_A(0xf);
-    LD_C_A;
-    PUSH_HL;
-    LD_HL(mGetBuenasPassword_StringFunctionJumptable);
-    LD_E_B;
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    POP_DE;  // de now contains the pointer to the value of this week's password, in Blue Card Points.
-    CALL(av_hl_);
-    POP_HL;
-    LD_C_hl;
-    RET;
-
-
-StringFunctionJumptable:
-//  entries correspond to BUENA_* constants
-    //table_width ['2', 'GetBuenasPassword.StringFunctionJumptable']
-    //dw ['.Mon'];  // BUENA_MON
-    //dw ['.Item'];  // BUENA_ITEM
-    //dw ['.Move'];  // BUENA_MOVE
-    //dw ['.RawString'];  // BUENA_STRING
-    //assert_table_length ['NUM_BUENA_FUNCTIONS']
-
-
-Mon:
-    CALL(aGetBuenasPassword_GetTheIndex);
-    CALL(aGetPokemonName);
-    RET;
-
-
-Item:
-    CALL(aGetBuenasPassword_GetTheIndex);
-    CALL(aGetItemName);
-    RET;
-
-
-Move:
-    CALL(aGetBuenasPassword_GetTheIndex);
-    CALL(aGetMoveName);
-    RET;
-
-
-GetTheIndex:
-    LD_H(0);
-    LD_L_C;
-    ADD_HL_DE;
-    LD_A_hl;
-    LD_addr_A(wNamedObjectIndex);
-    RET;
-
-
-RawString:
-//  Get the string from the table...
-    LD_A_C;
-    AND_A_A;
-    IF_Z goto skip;
-
-read_loop:
-    LD_A_de;
-    INC_DE;
-    CP_A(0x50);
-    IF_NZ goto read_loop;
-    DEC_C;
-    IF_NZ goto read_loop;
-//  ... and copy it into wStringBuffer1.
-
-skip:
-    LD_HL(wStringBuffer1);
-
-copy_loop:
-    LD_A_de;
-    INC_DE;
-    LD_hli_A;
-    CP_A(0x50);
-    IF_NZ goto copy_loop;
-    LD_DE(wStringBuffer1);
-    RET;
-
-// INCLUDE "data/radio/buenas_passwords.asm"
+    return NextRadioLine(BuenaRadioText4, BUENAS_PASSWORD_5);
 }
 
 //  The password indices are held in c.  High nybble contains the group index, low nybble contains the word index.
 //  Load the password group pointer in hl.
-uint8_t* GetBuenasPassword_Conv(uint8_t* c_){
+uint8_t* GetBuenasPassword(uint8_t* c_){
     uint8_t c = *c_;
     // LD_A_C;
     // SWAP_A;
@@ -2456,21 +2390,21 @@ uint8_t* GetBuenasPassword_Conv(uint8_t* c_){
 // INCLUDE "data/radio/buenas_passwords.asm"
 }
 
-void BuenasPassword5(void){
+static void BuenasPassword5(void){
     // LD_HL(mBuenaRadioText5);
     // LD_A(BUENAS_PASSWORD_6);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(BuenaRadioText5, BUENAS_PASSWORD_6);
+    return NextRadioLine(BuenaRadioText5, BUENAS_PASSWORD_6);
 }
 
-void BuenasPassword6(void){
+static void BuenasPassword6(void){
     // LD_HL(mBuenaRadioText6);
     // LD_A(BUENAS_PASSWORD_7);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(BuenaRadioText6, BUENAS_PASSWORD_7);
+    return NextRadioLine(BuenaRadioText6, BUENAS_PASSWORD_7);
 }
 
-void BuenasPassword7(void){
+static void BuenasPassword7(void){
     // CALL(aBuenasPasswordCheckTime);
     // LD_HL(mBuenaRadioText7);
     // JR_C (mBuenasPasswordAfterMidnight);
@@ -2478,10 +2412,10 @@ void BuenasPassword7(void){
         return BuenasPasswordAfterMidnight(BuenaRadioText7);
     // LD_A(BUENAS_PASSWORD);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(BuenaRadioText7, BUENAS_PASSWORD);
+    return NextRadioLine(BuenaRadioText7, BUENAS_PASSWORD);
 }
 
-void BuenasPasswordAfterMidnight(const txt_cmd_s* hl){
+static void BuenasPasswordAfterMidnight(const txt_cmd_s* hl){
     // PUSH_HL;
     // LD_HL(wDailyFlags2);
     // RES_hl(DAILYFLAGS2_BUENAS_PASSWORD_F);
@@ -2489,104 +2423,104 @@ void BuenasPasswordAfterMidnight(const txt_cmd_s* hl){
     // POP_HL;
     // LD_A(BUENAS_PASSWORD_8);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(hl, BUENAS_PASSWORD_8);
+    return NextRadioLine(hl, BUENAS_PASSWORD_8);
 }
 
-void BuenasPassword8(void){
+static void BuenasPassword8(void){
     // LD_HL(wDailyFlags2);
     // RES_hl(DAILYFLAGS2_BUENAS_PASSWORD_F);
     bit_reset(wram->wDailyFlags2, DAILYFLAGS2_BUENAS_PASSWORD_F);
     // LD_HL(mBuenaRadioMidnightText10);
     // LD_A(BUENAS_PASSWORD_9);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(BuenaRadioMidnightText10, BUENAS_PASSWORD_9);
+    return NextRadioLine(BuenaRadioMidnightText10, BUENAS_PASSWORD_9);
 }
 
-void BuenasPassword9(void){
+static void BuenasPassword9(void){
     // LD_HL(mBuenaRadioMidnightText1);
     // LD_A(BUENAS_PASSWORD_10);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(BuenaRadioMidnightText1, BUENAS_PASSWORD_10);
+    return NextRadioLine(BuenaRadioMidnightText1, BUENAS_PASSWORD_10);
 }
 
-void BuenasPassword10(void){
+static void BuenasPassword10(void){
     // LD_HL(mBuenaRadioMidnightText2);
     // LD_A(BUENAS_PASSWORD_11);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(BuenaRadioMidnightText2, BUENAS_PASSWORD_11);
+    return NextRadioLine(BuenaRadioMidnightText2, BUENAS_PASSWORD_11);
 }
 
-void BuenasPassword11(void){
+static void BuenasPassword11(void){
     // LD_HL(mBuenaRadioMidnightText3);
     // LD_A(BUENAS_PASSWORD_12);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(BuenaRadioMidnightText3, BUENAS_PASSWORD_12);
+    return NextRadioLine(BuenaRadioMidnightText3, BUENAS_PASSWORD_12);
 }
 
-void BuenasPassword12(void){
+static void BuenasPassword12(void){
     // LD_HL(mBuenaRadioMidnightText4);
     // LD_A(BUENAS_PASSWORD_13);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(BuenaRadioMidnightText4, BUENAS_PASSWORD_13);
+    return NextRadioLine(BuenaRadioMidnightText4, BUENAS_PASSWORD_13);
 }
 
-void BuenasPassword13(void){
+static void BuenasPassword13(void){
     // LD_HL(mBuenaRadioMidnightText5);
     // LD_A(BUENAS_PASSWORD_14);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(BuenaRadioMidnightText5, BUENAS_PASSWORD_14);
+    return NextRadioLine(BuenaRadioMidnightText5, BUENAS_PASSWORD_14);
 }
 
-void BuenasPassword14(void){
+static void BuenasPassword14(void){
     // LD_HL(mBuenaRadioMidnightText6);
     // LD_A(BUENAS_PASSWORD_15);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(BuenaRadioMidnightText6, BUENAS_PASSWORD_15);
+    return NextRadioLine(BuenaRadioMidnightText6, BUENAS_PASSWORD_15);
 }
 
-void BuenasPassword15(void){
+static void BuenasPassword15(void){
     // LD_HL(mBuenaRadioMidnightText7);
     // LD_A(BUENAS_PASSWORD_16);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(BuenaRadioMidnightText7, BUENAS_PASSWORD_16);
+    return NextRadioLine(BuenaRadioMidnightText7, BUENAS_PASSWORD_16);
 }
 
-void BuenasPassword16(void){
+static void BuenasPassword16(void){
     // LD_HL(mBuenaRadioMidnightText8);
     // LD_A(BUENAS_PASSWORD_17);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(BuenaRadioMidnightText8, BUENAS_PASSWORD_17);
+    return NextRadioLine(BuenaRadioMidnightText8, BUENAS_PASSWORD_17);
 }
 
-void BuenasPassword17(void){
+static void BuenasPassword17(void){
     // LD_HL(mBuenaRadioMidnightText9);
     // LD_A(BUENAS_PASSWORD_18);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(BuenaRadioMidnightText9, BUENAS_PASSWORD_18);
+    return NextRadioLine(BuenaRadioMidnightText9, BUENAS_PASSWORD_18);
 }
 
-void BuenasPassword18(void){
+static void BuenasPassword18(void){
     // LD_HL(mBuenaRadioMidnightText10);
     // LD_A(BUENAS_PASSWORD_19);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(BuenaRadioMidnightText10, BUENAS_PASSWORD_19);
+    return NextRadioLine(BuenaRadioMidnightText10, BUENAS_PASSWORD_19);
 }
 
-void BuenasPassword19(void){
+static void BuenasPassword19(void){
     // LD_HL(mBuenaRadioMidnightText10);
     // LD_A(BUENAS_PASSWORD_20);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(BuenaRadioMidnightText10, BUENAS_PASSWORD_20);
+    return NextRadioLine(BuenaRadioMidnightText10, BUENAS_PASSWORD_20);
 }
 
-void BuenasPassword20(void){
+static void BuenasPassword20(void){
     // LDH_A_addr(hBGMapMode);
     // PUSH_AF;
     uint8_t bgMapMode = hram->hBGMapMode;
     // FARCALL(aNoRadioMusic);
-    NoRadioMusic_Conv();
+    NoRadioMusic();
     // FARCALL(aNoRadioName);
-    NoRadioName_Conv();
+    NoRadioName();
     // POP_AF;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = bgMapMode;
@@ -2602,10 +2536,10 @@ void BuenasPassword20(void){
     // LD_HL(mBuenaOffTheAirText);
     // LD_A(BUENAS_PASSWORD_21);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(BuenaOffTheAirText, BUENAS_PASSWORD_21);
+    return NextRadioLine(BuenaOffTheAirText, BUENAS_PASSWORD_21);
 }
 
-void BuenasPassword21(void){
+static void BuenasPassword21(void){
     // LD_A(BUENAS_PASSWORD);
     // LD_addr_A(wCurRadioLine);
     wram->wCurRadioLine = BUENAS_PASSWORD;
@@ -2619,10 +2553,10 @@ void BuenasPassword21(void){
     // LD_HL(mBuenaOffTheAirText);
     // LD_A(BUENAS_PASSWORD_21);
     // JP(mNextRadioLine);
-    return NextRadioLine_Conv(BuenaOffTheAirText, BUENAS_PASSWORD_21);
+    return NextRadioLine(BuenaOffTheAirText, BUENAS_PASSWORD_21);
 }
 
-bool BuenasPasswordCheckTime(void){
+static bool BuenasPasswordCheckTime(void){
     // CALL(aUpdateTime);
     UpdateTime();
     // LDH_A_addr(hHours);
@@ -2631,109 +2565,7 @@ bool BuenasPasswordCheckTime(void){
     return hram->hHours < NITE_HOUR;
 }
 
-const char BuenasPasswordChannelName[] = "BUENA\'S PASSWORD@";
-
-const txt_cmd_s BuenaRadioText1[] = {
-    text_far(v_BuenaRadioText1)
-    text_end
-};
-
-const txt_cmd_s BuenaRadioText2[] = {
-    text_far(v_BuenaRadioText2)
-    text_end
-};
-
-const txt_cmd_s BuenaRadioText3[] = {
-    text_far(v_BuenaRadioText3)
-    text_end
-};
-
-const txt_cmd_s BuenaRadioText4[] = {
-    text_far(v_BuenaRadioText4)
-    text_end
-};
-
-const txt_cmd_s BuenaRadioText5[] = {
-    text_far(v_BuenaRadioText5)
-    text_end
-};
-
-const txt_cmd_s BuenaRadioText6[] = {
-    text_far(v_BuenaRadioText6)
-    text_end
-};
-
-const txt_cmd_s BuenaRadioText7[] = {
-    text_far(v_BuenaRadioText7)
-    text_end
-};
-
-const txt_cmd_s BuenaRadioMidnightText1[] = {
-    text_far(v_BuenaRadioMidnightText1)
-    text_end
-};
-
-const txt_cmd_s BuenaRadioMidnightText2[] = {
-    text_far(v_BuenaRadioMidnightText2)
-    text_end
-};
-
-const txt_cmd_s BuenaRadioMidnightText3[] = {
-    text_far(v_BuenaRadioMidnightText3)
-    text_end
-};
-
-const txt_cmd_s BuenaRadioMidnightText4[] = {
-    text_far(v_BuenaRadioMidnightText4)
-    text_end
-};
-
-const txt_cmd_s BuenaRadioMidnightText5[] = {
-    text_far(v_BuenaRadioMidnightText5)
-    text_end
-};
-
-const txt_cmd_s BuenaRadioMidnightText6[] = {
-    text_far(v_BuenaRadioMidnightText6)
-    text_end
-};
-
-const txt_cmd_s BuenaRadioMidnightText7[] = {
-    text_far(v_BuenaRadioMidnightText7)
-    text_end
-};
-
-const txt_cmd_s BuenaRadioMidnightText8[] = {
-    text_far(v_BuenaRadioMidnightText8)
-    text_end
-};
-
-const txt_cmd_s BuenaRadioMidnightText9[] = {
-    text_far(v_BuenaRadioMidnightText9)
-    text_end
-};
-
-const txt_cmd_s BuenaRadioMidnightText10[] = {
-    text_far(v_BuenaRadioMidnightText10)
-    text_end
-};
-
-const txt_cmd_s BuenaOffTheAirText[] = {
-    text_far(v_BuenaOffTheAirText)
-    text_end
-};
-
-void CopyRadioTextToRAM(void){
-    LD_A_hl;
-    CP_A(TX_FAR);
-    JP_Z (mFarCopyRadioText);
-    LD_DE(wRadioText);
-    LD_BC(2 * SCREEN_WIDTH);
-    JP(mCopyBytes);
-
-}
-
-void CopyRadioTextToRAM_Conv(const struct TextCmd* hl){
+static void CopyRadioTextToRAM(const struct TextCmd* hl){
     // LD_A_hl;
     // CP_A(TX_FAR);
     // JP_Z (mFarCopyRadioText);
@@ -2743,38 +2575,7 @@ void CopyRadioTextToRAM_Conv(const struct TextCmd* hl){
     gRadioText = hl;
 }
 
-void StartRadioStation(void){
-    LD_A_addr(wNumRadioLinesPrinted);
-    AND_A_A;
-    RET_NZ ;
-    CALL(aRadioTerminator);
-    CALL(aPrintText);
-    LD_HL(mRadioChannelSongs);
-    LD_A_addr(wCurRadioLine);
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    ADD_HL_BC;
-    LD_E_hl;
-    INC_HL;
-    LD_D_hl;
-    CALLFAR(aRadioMusicRestartDE);
-    RET;
-
-// INCLUDE "data/radio/channel_music.asm"
-
-    return NextRadioLine();
-}
-
-void NextRadioLine(void){
-    PUSH_AF;
-    CALL(aCopyRadioTextToRAM);
-    POP_AF;
-    JP(mPrintRadioLine);
-
-}
-
-void StartRadioStation_Conv(void){
+static void StartRadioStation(void){
     if(wram->wNumRadioLinesPrinted != 0)
         return;
 
@@ -2783,15 +2584,15 @@ void StartRadioStation_Conv(void){
     PrintText(RadioTerminator());
 
     uint16_t hl = RadioChannelSongs[wram->wCurRadioLine];
-    RadioMusicRestartDE_Conv(hl);
+    RadioMusicRestartDE(hl);
 
 // INCLUDE "data/radio/channel_music.asm"
 }
 
-void NextRadioLine_Conv(const struct TextCmd* hl, uint8_t station){
+static void NextRadioLine(const struct TextCmd* hl, uint8_t station){
     // PUSH_AF;
     // CALL(aCopyRadioTextToRAM);
-    CopyRadioTextToRAM_Conv(hl);
+    CopyRadioTextToRAM(hl);
     // POP_AF;
-    PrintRadioLine_Conv(station);
+    PrintRadioLine(station);
 }

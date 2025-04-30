@@ -1918,7 +1918,7 @@ bool RunTitleScreen_Conv(void){
     // CALL(aTitleScreenScene);
     TitleScreenScene_Conv(wram->wJumptableIndex);
     // FARCALL(aSuicuneFrameIterator);
-    SuicuneFrameIterator_Conv();
+    SuicuneFrameIterator();
     // CALL(aDelayFrame);
     DelayFrame();
     // AND_A_A;
@@ -2090,7 +2090,7 @@ void TitleScreenEntrance_Conv(void){
         }
 
         // FARCALL(aAnimateTitleCrystal);
-        AnimateTitleCrystal_Conv();
+        AnimateTitleCrystal();
         // RET;
         return;
     }

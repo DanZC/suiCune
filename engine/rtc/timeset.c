@@ -29,6 +29,14 @@ static const char TimeSetDownArrowGFX[] = "gfx/new_game/down_arrow.png";
 static const char String_oclock[] = "o\'clock@";
 static const char String_min[] = "min.@";
 
+static uint8_t* DisplayHourOClock(uint8_t* hl);
+static bool SetHour(void);
+static bool SetMinutes(void);
+static uint8_t* DisplayMinutesWithMinString(uint8_t* hl);
+static uint8_t* PrintTwoDigitNumberLeftAlign(uint8_t* hl, uint8_t* de);
+static const char* GetTimeOfDayString(uint8_t c);
+static uint8_t AdjustHourForAMorPM(uint8_t c);
+
 static void InitClock_ClearScreen(void) {
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
@@ -132,7 +140,7 @@ void InitClock(void){
         *coord(11, 10, wram->wTilemap) = TILE_TIMESET_DOWN;
         // hlcoord(4, 9, wTilemap);
         // CALL(aDisplayHourOClock);
-        DisplayHourOClock_Conv(coord(4, 9, wram->wTilemap));
+        DisplayHourOClock(coord(4, 9, wram->wTilemap));
         // LD_C(10);
         // CALL(aDelayFrames);
         DelayFrames(10);
@@ -143,7 +151,7 @@ void InitClock(void){
             JoyTextDelay();
             // CALL(aSetHour);
             // IF_NC goto SetHourLoop;
-        } while(!SetHour_Conv());
+        } while(!SetHour());
 
         // LD_A_addr(wInitHourBuffer);
         // LD_addr_A(wStringBuffer2 + 1);
@@ -180,7 +188,7 @@ void InitClock(void){
         *coord(15, 10, wram->wTilemap) = TILE_TIMESET_DOWN;
         // hlcoord(12, 9, wTilemap);
         // CALL(aDisplayMinutesWithMinString);
-        DisplayMinutesWithMinString_Conv(coord(12, 9, wram->wTilemap));
+        DisplayMinutesWithMinString(coord(12, 9, wram->wTilemap));
         // LD_C(10);
         // CALL(aDelayFrames);
         DelayFrames(10);
@@ -191,7 +199,7 @@ void InitClock(void){
             JoyTextDelay();
             // CALL(aSetMinutes);
             // IF_NC goto SetMinutesLoop;
-        } while(!SetMinutes_Conv());
+        } while(!SetMinutes());
 
         // LD_A_addr(wInitMinuteBuffer);
         // LD_addr_A(wStringBuffer2 + 2);
@@ -224,67 +232,7 @@ void InitClock(void){
     // RET;
 }
 
-void SetHour(void){
-    LDH_A_addr(hJoyPressed);
-    AND_A(A_BUTTON);
-    IF_NZ goto Confirm;
-
-    LD_HL(hJoyLast);
-    LD_A_hl;
-    AND_A(D_UP);
-    IF_NZ goto up;
-    LD_A_hl;
-    AND_A(D_DOWN);
-    IF_NZ goto down;
-    CALL(aDelayFrame);
-    AND_A_A;
-    RET;
-
-
-down:
-    LD_HL(wInitHourBuffer);
-    LD_A_hl;
-    AND_A_A;
-    IF_NZ goto DecreaseThroughMidnight;
-    LD_A(23 + 1);
-
-DecreaseThroughMidnight:
-    DEC_A;
-    LD_hl_A;
-    goto okay;
-
-
-up:
-    LD_HL(wInitHourBuffer);
-    LD_A_hl;
-    CP_A(23);
-    IF_C goto AdvanceThroughMidnight;
-    LD_A(-1);
-
-AdvanceThroughMidnight:
-    INC_A;
-    LD_hl_A;
-
-
-okay:
-    hlcoord(4, 9, wTilemap);
-    LD_A(0x7f);
-    LD_BC(15);
-    CALL(aByteFill);
-    hlcoord(4, 9, wTilemap);
-    CALL(aDisplayHourOClock);
-    CALL(aWaitBGMap);
-    AND_A_A;
-    RET;
-
-
-Confirm:
-    SCF;
-    RET;
-
-}
-
-bool SetHour_Conv(void){
+static bool SetHour(void){
     // LDH_A_addr(hJoyPressed);
     // AND_A(A_BUTTON);
     // IF_NZ goto Confirm;
@@ -350,7 +298,7 @@ bool SetHour_Conv(void){
     ByteFill(coord(4, 9, wram->wTilemap), 15, 0x7f);
     // hlcoord(4, 9, wTilemap);
     // CALL(aDisplayHourOClock);
-    DisplayHourOClock_Conv(coord(4, 9, wram->wTilemap));
+    DisplayHourOClock(coord(4, 9, wram->wTilemap));
     // CALL(aWaitBGMap);
     WaitBGMap();
     // AND_A_A;
@@ -362,29 +310,14 @@ bool SetHour_Conv(void){
     // RET;
 }
 
-void DisplayHourOClock(void){
-    PUSH_HL;
-    LD_A_addr(wInitHourBuffer);
-    LD_C_A;
-    LD_E_L;
-    LD_D_H;
-    CALL(aPrintHour);
-    INC_HL;
-    LD_DE(mString_oclock);
-    CALL(aPlaceString);
-    POP_HL;
-    RET;
-
-}
-
-uint8_t* DisplayHourOClock_Conv(uint8_t* hl){
+static uint8_t* DisplayHourOClock(uint8_t* hl){
     // PUSH_HL;
     // LD_A_addr(wInitHourBuffer);
     // LD_C_A;
     // LD_E_L;
     // LD_D_H;
     // CALL(aPrintHour);
-    hl = PrintHour_Conv(hl, wram->wInitHourBuffer);
+    hl = PrintHour(hl, wram->wInitHourBuffer);
     // INC_HL;
     // LD_DE(mString_oclock);
     // CALL(aPlaceString);
@@ -424,64 +357,7 @@ void DisplayHoursMinutesWithMinString(void){
 
 }
 
-void SetMinutes(void){
-    LDH_A_addr(hJoyPressed);
-    AND_A(A_BUTTON);
-    IF_NZ goto a_button;
-    LD_HL(hJoyLast);
-    LD_A_hl;
-    AND_A(D_UP);
-    IF_NZ goto d_up;
-    LD_A_hl;
-    AND_A(D_DOWN);
-    IF_NZ goto d_down;
-    CALL(aDelayFrame);
-    AND_A_A;
-    RET;
-
-
-d_down:
-    LD_HL(wInitMinuteBuffer);
-    LD_A_hl;
-    AND_A_A;
-    IF_NZ goto decrease;
-    LD_A(59 + 1);
-
-decrease:
-    DEC_A;
-    LD_hl_A;
-    goto finish_dpad;
-
-
-d_up:
-    LD_HL(wInitMinuteBuffer);
-    LD_A_hl;
-    CP_A(59);
-    IF_C goto increase;
-    LD_A(-1);
-
-increase:
-    INC_A;
-    LD_hl_A;
-
-finish_dpad:
-    hlcoord(12, 9, wTilemap);
-    LD_A(0x7f);
-    LD_BC(7);
-    CALL(aByteFill);
-    hlcoord(12, 9, wTilemap);
-    CALL(aDisplayMinutesWithMinString);
-    CALL(aWaitBGMap);
-    AND_A_A;
-    RET;
-
-a_button:
-    SCF;
-    RET;
-
-}
-
-bool SetMinutes_Conv(void){
+static bool SetMinutes(void){
     // LDH_A_addr(hJoyPressed);
     // AND_A(A_BUTTON);
     // IF_NZ goto a_button;
@@ -545,7 +421,7 @@ bool SetMinutes_Conv(void){
     ByteFill(coord(12, 9, wram->wTilemap), 7, 0x7f);
     // hlcoord(12, 9, wTilemap);
     // CALL(aDisplayMinutesWithMinString);
-    DisplayMinutesWithMinString_Conv(coord(12, 9, wram->wTilemap));
+    DisplayMinutesWithMinString(coord(12, 9, wram->wTilemap));
     // CALL(aWaitBGMap);
     WaitBGMap();
     // AND_A_A;
@@ -557,20 +433,10 @@ bool SetMinutes_Conv(void){
     // RET;
 }
 
-void DisplayMinutesWithMinString(void){
-    LD_DE(wInitMinuteBuffer);
-    CALL(aPrintTwoDigitNumberLeftAlign);
-    INC_HL;
-    LD_DE(mString_min);
-    CALL(aPlaceString);
-    RET;
-
-}
-
-uint8_t* DisplayMinutesWithMinString_Conv(uint8_t* hl){
+static uint8_t* DisplayMinutesWithMinString(uint8_t* hl){
     // LD_DE(wInitMinuteBuffer);
     // CALL(aPrintTwoDigitNumberLeftAlign);
-    hl = PrintTwoDigitNumberLeftAlign_Conv(hl, &wram->wInitMinuteBuffer);
+    hl = PrintTwoDigitNumberLeftAlign(hl, &wram->wInitMinuteBuffer);
     // INC_HL;
     // LD_DE(mString_min);
     // CALL(aPlaceString);
@@ -580,19 +446,7 @@ uint8_t* DisplayMinutesWithMinString_Conv(uint8_t* hl){
     return st.bc;
 }
 
-void PrintTwoDigitNumberLeftAlign(void){
-    PUSH_HL;
-    LD_A(0x7f);
-    LD_hli_A;
-    LD_hl_A;
-    POP_HL;
-    LD_BC((PRINTNUM_LEFTALIGN | 1 << 8) | 2);
-    CALL(aPrintNum);
-    RET;
-
-}
-
-uint8_t* PrintTwoDigitNumberLeftAlign_Conv(uint8_t* hl, uint8_t* de){
+static uint8_t* PrintTwoDigitNumberLeftAlign(uint8_t* hl, uint8_t* de){
     // PUSH_HL;
     // LD_A(0x7f);
     // LD_hli_A;
@@ -631,7 +485,7 @@ static const txt_cmd_s OakTimeWhatHoursText_OakTimeHoursQuestionMarkText[] = {
 static void OakTimeWhatHoursText_Function(struct TextCmdState* state){
     // hlcoord(1, 16, wTilemap);
     // CALL(aDisplayHourOClock);
-    state->bc = DisplayHourOClock_Conv(coord(1, 16, wram->wTilemap));
+    state->bc = DisplayHourOClock(coord(1, 16, wram->wTilemap));
     // LD_HL(mOakTimeWhatHoursText_OakTimeHoursQuestionMarkText);
     state->hl = OakTimeWhatHoursText_OakTimeHoursQuestionMarkText;
     // RET;
@@ -657,7 +511,7 @@ static const txt_cmd_s OakTimeWhoaMinutesText_OakTimeMinutesQuestionMarkText[] =
 static void OakTimeWhoaMinutesText_Function(struct TextCmdState* state){
     // hlcoord(7, 14, wTilemap);
     // CALL(aDisplayMinutesWithMinString);
-    state->bc = DisplayMinutesWithMinString_Conv(coord(7, 14, wram->wTilemap));
+    state->bc = DisplayMinutesWithMinString(coord(7, 14, wram->wTilemap));
     // LD_HL(mOakTimeWhoaMinutesText_OakTimeMinutesQuestionMarkText);
     state->hl = OakTimeWhoaMinutesText_OakTimeMinutesQuestionMarkText;
     // RET;
@@ -686,7 +540,7 @@ static void OakText_ResponseToSetTime_Function(struct TextCmdState* state){
     // LD_A_addr(wInitHourBuffer);
     // LD_C_A;
     // CALL(aPrintHour);
-    uint8_t* hl = PrintHour_Conv(coord(1, 14, wram->wTilemap), wram->wInitHourBuffer);
+    uint8_t* hl = PrintHour(coord(1, 14, wram->wTilemap), wram->wInitHourBuffer);
     // LD_hl(0x9c);
     *hl = CHAR_COLON2;
     // INC_HL;
@@ -960,7 +814,7 @@ static void InitialSetDSTFlag_Text(struct TextCmdState* state) {
     // LD_C_A;
     // decoord(1, 14, wTilemap);
     // FARCALL(aPrintHoursMins);
-    state->bc = PrintHoursMins_Conv(coord(1, 14, wram->wTilemap), hram->hHours, hram->hMinutes);
+    state->bc = PrintHoursMins(coord(1, 14, wram->wTilemap), hram->hHours, hram->hMinutes);
     // LD_HL(mInitialSetDSTFlag_DSTIsThatOKText);
     state->hl = DSTIsThatOKText;
     // RET;
@@ -998,7 +852,7 @@ static void InitialClearDSTFlag_Text(struct TextCmdState* state) {
     // LD_C_A;
     // decoord(1, 14, wTilemap);
     // FARCALL(aPrintHoursMins);
-    state->bc = PrintHoursMins_Conv(coord(1, 14, wram->wTilemap), hram->hHours, hram->hMinutes);
+    state->bc = PrintHoursMins(coord(1, 14, wram->wTilemap), hram->hHours, hram->hMinutes);
     // LD_HL(mInitialClearDSTFlag_TimeAskOkayText);
     state->hl = TimeAskOkayText;
     // RET;
@@ -1139,30 +993,12 @@ void MrChrono(void){
     // RET;
 }
 
-void PrintHour(void){
-    LD_L_E;
-    LD_H_D;
-    PUSH_BC;
-    CALL(aGetTimeOfDayString);
-    CALL(aPlaceString);
-    LD_L_C;
-    LD_H_B;
-    INC_HL;
-    POP_BC;
-    CALL(aAdjustHourForAMorPM);
-    LD_addr_A(wTextDecimalByte);
-    LD_DE(wTextDecimalByte);
-    CALL(aPrintTwoDigitNumberLeftAlign);
-    RET;
-
-}
-
-uint8_t* PrintHour_Conv(uint8_t* de, uint8_t c){
+uint8_t* PrintHour(uint8_t* de, uint8_t c){
     // LD_L_E;
     // LD_H_D;
     // PUSH_BC;
     // CALL(aGetTimeOfDayString);
-    const char* s = GetTimeOfDayString_Conv(c);
+    const char* s = GetTimeOfDayString(c);
     // CALL(aPlaceString);
     struct TextPrintState st = {.hl = de, .de = U82C(s)};
     PlaceString(&st, st.hl);
@@ -1173,48 +1009,14 @@ uint8_t* PrintHour_Conv(uint8_t* de, uint8_t c){
     // POP_BC;
     // CALL(aAdjustHourForAMorPM);
     // LD_addr_A(wTextDecimalByte);
-    wram->wTextDecimalByte = AdjustHourForAMorPM_Conv(c);
+    wram->wTextDecimalByte = AdjustHourForAMorPM(c);
     // LD_DE(wTextDecimalByte);
     // CALL(aPrintTwoDigitNumberLeftAlign);
     // RET;
-    return PrintTwoDigitNumberLeftAlign_Conv(hl, &wram->wTextDecimalByte);
+    return PrintTwoDigitNumberLeftAlign(hl, &wram->wTextDecimalByte);
 }
 
-void GetTimeOfDayString(void){
-    LD_A_C;
-    CP_A(MORN_HOUR);
-    IF_C goto nite;
-    CP_A(DAY_HOUR);
-    IF_C goto morn;
-    CP_A(NITE_HOUR);
-    IF_C goto day;
-
-nite:
-    LD_DE(mGetTimeOfDayString_nite_string);
-    RET;
-
-morn:
-    LD_DE(mGetTimeOfDayString_morn_string);
-    RET;
-
-day:
-    LD_DE(mGetTimeOfDayString_day_string);
-    RET;
-
-
-nite_string:
-// db "NITE@"
-
-morn_string:
-// db "MORN@"
-
-day_string:
-//  db "DAY@"
-
-    return AdjustHourForAMorPM();
-}
-
-const char* GetTimeOfDayString_Conv(uint8_t c){
+static const char* GetTimeOfDayString(uint8_t c){
     // LD_A_C;
     // CP_A(MORN_HOUR);
     // IF_C goto nite;
@@ -1254,26 +1056,8 @@ const char* GetTimeOfDayString_Conv(uint8_t c){
     // return AdjustHourForAMorPM();
 }
 
-void AdjustHourForAMorPM(void){
 //  Convert the hour stored in c (0-23) to a 1-12 value
-    LD_A_C;
-    OR_A_A;
-    IF_Z goto midnight;
-    CP_A(NOON_HOUR);
-    RET_C ;
-    RET_Z ;
-    SUB_A(NOON_HOUR);
-    RET;
-
-
-midnight:
-    LD_A(NOON_HOUR);
-    RET;
-
-}
-
-//  Convert the hour stored in c (0-23) to a 1-12 value
-uint8_t AdjustHourForAMorPM_Conv(uint8_t c){
+static uint8_t AdjustHourForAMorPM(uint8_t c){
     // LD_A_C;
     // OR_A_A;
     // IF_Z goto midnight;

@@ -16,7 +16,7 @@ static void CheckCanUseSquirtbottle(void) {
     // IF_NZ goto nope;
     if(wram->wMapGroup == GROUP_ROUTE_36 && wram->wMapNumber == MAP_ROUTE_36) {
         // FARCALL(aGetFacingObject);
-        u8_flag_s res = GetFacingObject_Conv();
+        u8_flag_s res = GetFacingObject();
         // IF_C goto nope;
         // LD_A_D;
         // CP_A(SPRITEMOVEDATA_SUDOWOODO);

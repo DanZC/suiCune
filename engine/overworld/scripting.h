@@ -1,5 +1,4 @@
 void EnableScriptMode(void);
-void EnableScriptMode_Conv(void);
 void ScriptEvents(void);
 void ScriptEvents_Conv(void);
 void EndScript(void);

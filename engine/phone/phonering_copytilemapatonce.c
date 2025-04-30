@@ -53,7 +53,7 @@ static void PhoneRing_CopyTilemapAtOnce_CopyBGMapViaStack(tile_t* hl, const tile
     // RET;
 }
 
-void PhoneRing_CopyTilemapAtOnce_Conv(void){
+void PhoneRing_CopyTilemapAtOnce(void){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // JP_Z (mWaitBGMap);
@@ -166,10 +166,4 @@ void PhoneRing_CopyTilemapAtOnce_Conv(void){
 //     LD_SP_HL;
 //     RET;
 
-}
-
-void PhoneRing_CopyTilemapAtOnce(void) {
-    PEEK("");
-    PhoneRing_CopyTilemapAtOnce_Conv();
-    RET;
 }

@@ -70,7 +70,7 @@ static bool DebugSpecialPhoneCall(script_s* s){
 }
 
 static void DebugPhoneCall(void){
-    LoadCallerScript_Conv(0x00);
+    LoadCallerScript(0x00);
     gQueuedScriptAddr = DebugSpecialPhoneCall;
     hram->hMenuReturn = HMENURETURN_SCRIPT;
     wram->wSpecialPhoneCallID = SPECIALCALL_BIKESHOP;

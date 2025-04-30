@@ -316,7 +316,7 @@ static bool HandleStoneQueue_WarpAction(struct Object* de, const struct Stonetab
         // CALL(aCallMapScript);
         CallMapScript(script);
         // FARCALL(aEnableScriptMode);
-        EnableScriptMode_Conv();
+        EnableScriptMode();
         // SCF;
         // RET;
         return true;

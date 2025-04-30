@@ -1819,7 +1819,7 @@ void ReturnToBattle_UseBall(void){
 void TownMapEffect(void){
     // FARCALL(aPokegearMap);
     // RET;
-    return PokegearMap_Conv(JOHTO_REGION);
+    return PokegearMap(JOHTO_REGION);
 }
 
 void BicycleEffect(void){
@@ -3548,7 +3548,7 @@ void SuperRodEffect(void){
 void UseRod(uint8_t rod){
     // FARCALL(aFishFunction);
     // RET;
-    return FishFunction_Conv(rod);
+    return FishFunction(rod);
 }
 
 void ItemfinderEffect(void){

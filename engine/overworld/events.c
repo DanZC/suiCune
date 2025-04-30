@@ -559,7 +559,7 @@ bool PlayerEvents_Conv(void){
 // ok:
     // PUSH_AF;
     // FARCALL(aEnableScriptMode);
-    EnableScriptMode_Conv();
+    EnableScriptMode();
     // POP_AF;
 
     // LD_addr_A(wScriptRunning);
@@ -924,7 +924,7 @@ u8_flag_s RunSceneScript_Conv(void){
     bit_reset(wram->wScriptFlags, 3);
 
     // FARCALL(aEnableScriptMode);
-    EnableScriptMode_Conv();
+    EnableScriptMode();
     // FARCALL(aScriptEvents);
     ScriptEvents_Conv();
 
@@ -1011,7 +1011,7 @@ u8_flag_s CheckTimeEvents_Conv(void){
         CheckPokerusTick_Conv();
         // FARCALL(aCheckPhoneCall);
         // RET_C ;
-        u8_flag_s res = CheckPhoneCall_Conv();
+        u8_flag_s res = CheckPhoneCall();
         if(res.flag)
             return res;
         return u8_flag(0, false);
@@ -2054,7 +2054,7 @@ u8_flag_s CountStep_Conv(void){
 // If there is a special phone call, don't count the step.
     // FARCALL(aCheckSpecialPhoneCall);
     // IF_C goto doscript;
-    if(CheckSpecialPhoneCall_Conv())
+    if(CheckSpecialPhoneCall())
         goto doscript;
 
 // If Repel wore off, don't count the step.
@@ -2475,7 +2475,7 @@ u8_flag_s TryTileCollisionEvent_Conv(void){
         if(CheckCutTreeTile(cid.tileId)) {
             // FARCALL(aTryCutOW);
             // goto done;
-            TryCutOW_Conv();
+            TryCutOW();
         }
 
 
@@ -2485,7 +2485,7 @@ u8_flag_s TryTileCollisionEvent_Conv(void){
         // IF_NZ goto waterfall;
         else if(CheckWhirlpoolTile(cid.tileId)) {
             // FARCALL(aTryWhirlpoolOW);
-            TryWhirlpoolOW_Conv();
+            TryWhirlpoolOW();
             // goto done;
         }
 
@@ -2495,7 +2495,7 @@ u8_flag_s TryTileCollisionEvent_Conv(void){
         // IF_NZ goto headbutt;
         else if(CheckWaterfallTile(cid.tileId)) {
             // FARCALL(aTryWaterfallOW);
-            TryWaterfallOW_Conv();
+            TryWaterfallOW();
             // goto done;
         }
 
@@ -2507,7 +2507,7 @@ u8_flag_s TryTileCollisionEvent_Conv(void){
             // FARCALL(aTryHeadbuttOW);
             // IF_C goto done;
             // goto noevent;
-            if(!TryHeadbuttOW_Conv())
+            if(!TryHeadbuttOW())
                 return u8_flag(0, false);
         }
 
@@ -2515,7 +2515,7 @@ u8_flag_s TryTileCollisionEvent_Conv(void){
         // FARCALL(aTrySurfOW);
         // IF_NC goto noevent;
         // goto done;
-        else if(TrySurfOW_Conv()) {
+        else if(TrySurfOW()) {
 
         }
 

@@ -229,7 +229,7 @@ void v_TitleScreen(void){
     // LD_D(0x80);
     // LD_E(20);
     // CALL(aDrawTitleGraphic);
-    DrawTitleGraphic_Conv(coord(0, 3, wram->wTilemap), 7, 20, 0x80, 20);
+    DrawTitleGraphic(coord(0, 3, wram->wTilemap), 7, 20, 0x80, 20);
 
 //  Draw copyright text
     // hlbgcoord(3, 0, vBGMap1);
@@ -237,17 +237,17 @@ void v_TitleScreen(void){
     // LD_D(0xc);
     // LD_E(16);
     // CALL(aDrawTitleGraphic);
-    // DrawTitleGraphic_Conv(bgcoord(3, 0, vram->vBGMap1), 1, 13, 0xc, 16);
-    DrawTitleGraphic_Conv(bgcoord(3, 0, vram->vBGMap1), 1, 13, 0xc, 16);
+    // DrawTitleGraphic(bgcoord(3, 0, vram->vBGMap1), 1, 13, 0xc, 16);
+    DrawTitleGraphic(bgcoord(3, 0, vram->vBGMap1), 1, 13, 0xc, 16);
 
 //  Initialize running Suicune?
     // LD_D(0x0);
     // CALL(aLoadSuicuneFrame);
-    LoadSuicuneFrame_Conv(0x0);
+    LoadSuicuneFrame(0x0);
 
 //  Initialize background crystal
     // CALL(aInitializeBackground);
-    InitializeBackground_Conv();
+    InitializeBackground();
 
 //  Update palette colors
     // LDH_A_addr(rSVBK);
@@ -361,44 +361,6 @@ void v_TitleScreen(void){
 }
 
 void SuicuneFrameIterator(void){
-    LD_HL(wSuicuneFrame);
-    LD_A_hl;
-    LD_C_A;
-    INC_hl;
-
-//  Only do this once every eight frames
-    AND_A(0b111);
-    RET_NZ ;
-
-    LD_A_C;
-    AND_A(0b11000);
-    SLA_A;
-    SWAP_A;
-    LD_E_A;
-    LD_D(0);
-    LD_HL(mSuicuneFrameIterator_Frames);
-    ADD_HL_DE;
-    LD_D_hl;
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    CALL(aLoadSuicuneFrame);
-    LD_A(0x1);
-    LDH_addr_A(hBGMapMode);
-    LD_A(0x3);
-    LDH_addr_A(hBGMapThird);
-    RET;
-
-
-Frames:
-    //db ['0x80'];  // vTiles3 tile $80
-    //db ['0x88'];  // vTiles3 tile $88
-    //db ['0x00'];  // vTiles5 tile $00
-    //db ['0x08'];  // vTiles5 tile $08
-
-    return LoadSuicuneFrame();
-}
-
-void SuicuneFrameIterator_Conv(void){
     static const uint8_t Frames[] = {
         0x80,  // vTiles3 tile $80
         0x88,  // vTiles3 tile $88
@@ -431,7 +393,7 @@ void SuicuneFrameIterator_Conv(void){
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(aLoadSuicuneFrame);
-    LoadSuicuneFrame_Conv(d);
+    LoadSuicuneFrame(d);
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
@@ -441,37 +403,9 @@ void SuicuneFrameIterator_Conv(void){
     // RET;
 }
 
-void LoadSuicuneFrame(void){
-    hlcoord(6, 12, wTilemap);
-    LD_B(6);
-
-bgrows:
-    LD_C(8);
-
-col:
-    LD_A_D;
-    LD_hli_A;
-    INC_D;
-    DEC_C;
-    IF_NZ goto col;
-    LD_A(SCREEN_WIDTH - 8);
-    ADD_A_L;
-    LD_L_A;
-    LD_A(0);
-    ADC_A_H;
-    LD_H_A;
-    LD_A(8);
-    ADD_A_D;
-    LD_D_A;
-    DEC_B;
-    IF_NZ goto bgrows;
-    RET;
-
-}
-
-void LoadSuicuneFrame_Conv(uint8_t d){
+void LoadSuicuneFrame(uint8_t d){
     // hlcoord(6, 12, wTilemap);
-    uint8_t* hl = coord(6, 12, wram->wTilemap);
+    tile_t* hl = coord(6, 12, wram->wTilemap);
     // LD_B(6);
     uint8_t b = 6;
 
@@ -506,46 +440,13 @@ void LoadSuicuneFrame_Conv(uint8_t d){
     // RET;
 }
 
-void DrawTitleGraphic(void){
 //  input:
 //    hl: draw location
 //    b: height
 //    c: width
 //    d: tile to start drawing from
 //    e: number of tiles to advance for each bgrows
-
-bgrows:
-    PUSH_DE;
-    PUSH_BC;
-    PUSH_HL;
-
-col:
-    LD_A_D;
-    LD_hli_A;
-    INC_D;
-    DEC_C;
-    IF_NZ goto col;
-    POP_HL;
-    LD_BC(SCREEN_WIDTH);
-    ADD_HL_BC;
-    POP_BC;
-    POP_DE;
-    LD_A_E;
-    ADD_A_D;
-    LD_D_A;
-    DEC_B;
-    IF_NZ goto bgrows;
-    RET;
-
-}
-
-//  input:
-//    hl: draw location
-//    b: height
-//    c: width
-//    d: tile to start drawing from
-//    e: number of tiles to advance for each bgrows
-void DrawTitleGraphic_Conv(uint8_t* hl, uint8_t b, uint8_t c, uint8_t d, uint8_t e){
+void DrawTitleGraphic(tile_t* hl, uint8_t b, uint8_t c, uint8_t d, uint8_t e){
     do {
     // bgrows:
         // PUSH_DE;
@@ -553,7 +454,7 @@ void DrawTitleGraphic_Conv(uint8_t* hl, uint8_t b, uint8_t c, uint8_t d, uint8_t
         // PUSH_BC;
         uint8_t c2 = c;
         // PUSH_HL;
-        uint8_t* hl2 = hl;
+        tile_t* hl2 = hl;
 
         do {
         // col:
@@ -580,47 +481,6 @@ void DrawTitleGraphic_Conv(uint8_t* hl, uint8_t b, uint8_t c, uint8_t d, uint8_t
         // IF_NZ goto bgrows;
     } while(--b != 0);
     // RET;
-}
-
-void InitializeBackground(void){
-    LD_HL(wVirtualOAMSprite00);
-    LD_D(-0x22);
-    LD_E(0x0);
-    LD_C(5);
-
-loop:
-    PUSH_BC;
-    CALL(aInitializeBackground_InitColumn);
-    POP_BC;
-    LD_A(0x10);
-    ADD_A_D;
-    LD_D_A;
-    DEC_C;
-    IF_NZ goto loop;
-    RET;
-
-
-InitColumn:
-    LD_C(0x6);
-    LD_B(0x40);
-
-loop2:
-    LD_A_D;
-    LD_hli_A;  // y
-    LD_A_B;
-    LD_hli_A;  // x
-    ADD_A(0x8);
-    LD_B_A;
-    LD_A_E;
-    LD_hli_A;  // tile id
-    INC_E;
-    INC_E;
-    LD_A(0 | PRIORITY);
-    LD_hli_A;  // attributes
-    DEC_C;
-    IF_NZ goto loop2;
-    RET;
-
 }
 
 static void InitializeBackground_InitColumn(struct SpriteOAM* hl, uint8_t d, uint8_t e) {
@@ -654,7 +514,7 @@ static void InitializeBackground_InitColumn(struct SpriteOAM* hl, uint8_t d, uin
     // RET;
 }
 
-void InitializeBackground_Conv(void){
+void InitializeBackground(void){
     // LD_HL(wVirtualOAMSprite00);
     struct SpriteOAM* hl = wram->wVirtualOAMSprite;
     // LD_D(-0x22);
@@ -679,35 +539,8 @@ void InitializeBackground_Conv(void){
 
 }
 
+//  Move the title screen crystal downward until it's fully visible
 void AnimateTitleCrystal(void){
-//  Move the title screen crystal downward until it's fully visible
-
-//  Stop at y=6
-//  y is really from the bottom of the sprite, which is two tiles high
-    LD_HL(wVirtualOAMSprite00YCoord);
-    LD_A_hl;
-    CP_A(6 + 2 * TILE_WIDTH);
-    RET_Z ;
-
-//  Move all 30 parts of the crystal down by 2
-    LD_C(30);
-
-loop:
-    LD_A_hl;
-    ADD_A(2);
-    LD_hli_A;  // y
-    for(int rept = 0; rept < SPRITEOAMSTRUCT_LENGTH - 1; rept++){
-    INC_HL;
-    }
-    DEC_C;
-    IF_NZ goto loop;
-
-    RET;
-
-}
-
-//  Move the title screen crystal downward until it's fully visible
-void AnimateTitleCrystal_Conv(void){
 //  Stop at y=6
 //  y is really from the bottom of the sprite, which is two tiles high
     // LD_HL(wVirtualOAMSprite00YCoord);

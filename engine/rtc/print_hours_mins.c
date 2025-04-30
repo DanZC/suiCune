@@ -24,60 +24,9 @@ void PrintFiveDigitNumber(void){
 
 }
 
-void PrintHoursMins(void){
-//  Hours in b, minutes in c
-    LD_A_B;
-    CP_A(12);
-    PUSH_AF;
-    IF_C goto AM;
-    IF_Z goto PM;
-    SUB_A(12);
-    goto PM;
-
-AM:
-    OR_A_A;
-    IF_NZ goto PM;
-    LD_A(12);
-
-PM:
-    LD_B_A;
-//  Crazy stuff happening with the stack
-    PUSH_BC;
-    LD_HL_SP(1);
-    PUSH_DE;
-    PUSH_HL;
-    POP_DE;
-    POP_HL;
-    LD_hl(0x7f);
-    LD_BC((1 << 8) | 2);
-    CALL(aPrintNum);
-    LD_hl(0x9c);
-    INC_HL;
-    LD_D_H;
-    LD_E_L;
-    LD_HL_SP(0);
-    PUSH_DE;
-    PUSH_HL;
-    POP_DE;
-    POP_HL;
-    LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
-    CALL(aPrintNum);
-    POP_BC;
-    LD_DE(mString_AM);
-    POP_AF;
-    IF_C goto place_am_pm;
-    LD_DE(mString_PM);
-
-place_am_pm:
-    INC_HL;
-    CALL(aPlaceString);
-    RET;
-
-}
-
 //  Prints hours and minutes to tilemap destination de.
 //  Hours in b, minutes in c
-uint8_t* PrintHoursMins_Conv(uint8_t* de, uint8_t b, uint8_t c){
+tile_t* PrintHoursMins(tile_t* de, uint8_t b, uint8_t c){
     static const char String_AM[] = "AM@";
     static const char String_PM[] = "PM@";
 
@@ -85,13 +34,11 @@ uint8_t* PrintHoursMins_Conv(uint8_t* de, uint8_t b, uint8_t c){
     // CP_A(12);
     // PUSH_AF;
     // IF_C goto AM;
-    // uint16_t am_pm_str;
     const char* am_pm_str;
     if(b < 12) {
         // OR_A_A;
         // IF_NZ goto PM;
         // LD_A(12);
-        // am_pm_str = mString_AM;
         am_pm_str = String_AM;
         if(b == 0) 
             b = 12;
